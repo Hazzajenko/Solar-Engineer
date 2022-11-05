@@ -1,0 +1,29 @@
+{
+  "name": "Fronius Tauro ECO 100-3-D",
+  "max_input_current": 175,
+  "start_up_voltage": 650,
+  "mpp_voltage_range_low": 580,
+  "mpp_voltage_range_high": 930,
+  "tracker_amount": 3,
+  "trackers": [
+    {
+      "id": 0,
+      "maxInputCurrent": 75,
+      "maxShortCircuitCurrent": 125
+    },
+    {
+      "id": 1,
+      "maxInputCurrent": 75,
+      "maxShortCircuitCurrent": 125
+    },
+    {
+      "id": 2,
+      "maxInputCurrent": 75,
+      "maxShortCircuitCurrent": 125
+    }
+  ],
+  "ac_nominal_output": 100,
+  "max_output_power": 100,
+  "ac_output_current": 152,
+  "european_efficiency": 98.5
+}

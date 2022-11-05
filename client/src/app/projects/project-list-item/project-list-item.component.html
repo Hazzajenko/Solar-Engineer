@@ -1,0 +1,28 @@
+<!--<section class="card">
+  <h2 class="cardTitle">{{project?.name}}</h2>
+  <p class="cardDescription">{{project?.createdAt}}</p>
+  <p>{{project?.inverterAmount}} Inverters</p>
+  &lt;!&ndash;  <Link
+      class="cardDocumentation"
+      href={documentation}
+      target="_blank"
+      rel="noreferrer"
+    >
+    Documentation
+    </Link>&ndash;&gt;
+</section>-->
+<section *ngIf="project" class="card">
+  <h2>{{project.name}}</h2>
+  <h5>{{project.createdAt | date}}</h5>
+  <h5>{{project.inverterAmount}} Inverters</h5>
+
+</section>
+<!--  <Link
+    class="cardDocumentation"
+    href={documentation}
+    target="_blank"
+    rel="noreferrer"
+  >
+  Documentation
+  </Link>-->
+

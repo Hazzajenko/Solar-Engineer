@@ -1,0 +1,28 @@
+<ng-container *ngIf="store$ | async let store">
+  <div class="container">
+    <mat-selection-list #userProjects *ngFor="let inverter of store.inverters" [multiple]="false">
+      <mat-list-option (click)="onRouteToInverter(inverter)" [value]="inverter">
+        {{inverter.name}}
+        <!--            <app-project-list-item [project]="project"></app-project-list-item>-->
+      </mat-list-option>
+    </mat-selection-list>
+  </div>
+</ng-container>
+<mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
+  <!-- This is the tree node template for leaf nodes -->
+  <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding="true">
+    <!-- use a disabled button to provide padding for tree leaf -->
+    <button disabled mat-icon-button></button>
+    {{node.name}}
+  </mat-tree-node>
+  <!-- This is the tree node template for expandable nodes -->
+  <mat-tree-node *matTreeNodeDef="let node;when: hasChild" matTreeNodePadding="true">
+    <button [attr.aria-label]="'Toggle ' + node.name" mat-icon-button
+            matTreeNodeToggle>
+      <mat-icon class="mat-icon-rtl-mirror">
+        {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+      </mat-icon>
+    </button>
+    {{node.name}}
+  </mat-tree-node>
+</mat-tree>
