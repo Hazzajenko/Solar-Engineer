@@ -7,7 +7,7 @@ import { Store } from '@ngrx/store';
 import { AppState } from '../store/app.state';
 import { selectAllProjects } from './projects-store/projects/projects.selectors';
 import { InvertersService } from './services/inverters.service';
-import { TreenodeService } from './services/treenode.service';
+import { TreeNodesService } from './services/tree-nodes.service';
 
 @Component({
   selector: 'app-projects',
@@ -18,12 +18,12 @@ export class ProjectsComponent implements OnInit {
   projects$: Observable<ProjectModel[]> | undefined;
 
   constructor(
-    private projects: ProjectsService,
     private router: Router,
     private store: Store<AppState>,
+    private projects: ProjectsService,
     private inverters: InvertersService,
     private route: ActivatedRoute,
-    private treenodes: TreenodeService
+    private treenodes: TreeNodesService
   ) {}
 
   ngOnInit(): void {
@@ -42,9 +42,11 @@ export class ProjectsComponent implements OnInit {
   }
 
   onRouteToProject(project: ProjectModel) {
-    this.inverters.getInvertersByProjectId(project.id).then(async () => {
+    this.projects.getDataByProjectId(project.id).then(async () => {
+      // this.inverters.getInvertersByProjectId(project.id).then(async () => {
       // await this.router.navigateByUrl(`/projects/${project.id}`);
-      this.treenodes.initTreeNode(project.id);
+      // this.treenodes.initTreeNode(project.id);
+
       await this.router.navigate([`${project.id}`], { relativeTo: this.route });
     });
   }

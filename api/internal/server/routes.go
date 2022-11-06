@@ -31,8 +31,23 @@ func (s *Server) Routes() *chi.Mux {
 		r.Put("/", s.Handlers.AddUserToProject)
 
 		r.Route("/{projectId}", func(r chi.Router) {
-			r.Get("/", s.Handlers.GetInvertersByProjectId)
+			r.Get("/", s.Handlers.GetProjectById)
+			r.Get("/all", s.Handlers.GetDataForProject)
+			r.Get("/inverters", s.Handlers.GetInvertersByProjectId)
+			r.Get("/trackers", s.Handlers.GetTrackersByProjectId)
+			r.Get("/strings", s.Handlers.GetStringsByProjectId)
 			r.Post("/", s.Handlers.CreateInverter)
+
+			r.Route("/{inverterId}", func(r chi.Router) {
+				r.Get("/", s.Handlers.GetTrackersByInverterId)
+				r.Post("/", s.Handlers.CreateTracker)
+
+				r.Route("/{trackerId}", func(r chi.Router) {
+					r.Post("/", s.Handlers.CreateString)
+
+				})
+
+			})
 		})
 	})
 	return s.Router

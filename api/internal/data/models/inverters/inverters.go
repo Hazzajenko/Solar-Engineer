@@ -8,20 +8,20 @@ import (
 
 type Inverter struct {
 	ID                  int64     `json:"id"`
-	ProjectId           int64     `json:"project_id"`
+	ProjectId           int64     `json:"projectId"`
 	Name                string    `json:"name"`
-	CreatedAt           time.Time `json:"created_at"`
-	CreatedBy           int64     `json:"created_by"`
+	CreatedAt           time.Time `json:"createdAt"`
+	CreatedBy           int64     `json:"createdBy"`
 	Version             int       `json:"-"`
-	TrackerAmount       int       `json:"tracker_amount"`
-	AcNominalOutput     int       `json:"ac_nominal_output"`
-	AcOutputCurrent     int       `json:"ac_output_current"`
-	EuropeanEfficiency  int       `json:"european_efficiency"`
-	MaxInputCurrent     int       `json:"max_input_current"`
-	MaxOutputPower      int       `json:"max_output_power"`
-	MppVoltageRangeLow  int       `json:"mpp_voltage_range_low"`
-	MppVoltageRangeHigh int       `json:"mpp_voltage_range_high"`
-	StartUpVoltage      int       `json:"start_up_voltage"`
+	TrackerAmount       int       `json:"trackerAmount"`
+	AcNominalOutput     int       `json:"acNominalOutput"`
+	AcOutputCurrent     int       `json:"acOutputCurrent"`
+	EuropeanEfficiency  int       `json:"europeanEfficiency"`
+	MaxInputCurrent     int       `json:"maxInputCurrent"`
+	MaxOutputPower      int       `json:"maxOutputPower"`
+	MppVoltageRangeLow  int       `json:"mppVoltageRangeLow"`
+	MppVoltageRangeHigh int       `json:"mppVoltageRangeHigh"`
+	StartUpVoltage      int       `json:"startUpVoltage"`
 }
 
 type InverterModel struct {
@@ -109,29 +109,8 @@ func (p *InverterModel) GetInvertersByProjectId(projectId int64) ([]*Inverter, e
 		WHERE project_id = $1
 		`
 
-	//args := []any{project.Name, project.CreatedBy}
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
-
-	/*	for rows.Next() {
-		var project Project
-
-		err := rows.Scan(
-			//&totalRecords,
-			&project.ID,
-			&project.Name,
-			&project.CreatedAt,
-			//&project.CreatedBy,
-			&project.InverterAmount,
-			//pq.Array(&movie.Genres),
-			&project.Version,
-		)
-		if err != nil {
-			return nil, err
-		}
-
-		projects = append(projects, &project)
-	}*/
 
 	rows, err := p.DB.QueryContext(ctx, query, projectId)
 	if err != nil {
@@ -140,15 +119,6 @@ func (p *InverterModel) GetInvertersByProjectId(projectId int64) ([]*Inverter, e
 			return nil, err
 		}
 	}
-	/*	rows, err := p.DB.QueryContext(ctx, query, projectId).Scan(
-		&inverters.ID,
-		&movie.CreatedAt,
-		&movie.Title,
-		&movie.Year,
-		&movie.Runtime,
-		pq.Array(&movie.Genres),
-		&movie.Version,
-	)*/
 
 	defer rows.Close()
 	var inverters []*Inverter
@@ -156,7 +126,6 @@ func (p *InverterModel) GetInvertersByProjectId(projectId int64) ([]*Inverter, e
 		var inverter Inverter
 
 		err := rows.Scan(
-			//&totalRecords,
 			&inverter.ID,
 			&inverter.ProjectId,
 			&inverter.Name,
@@ -164,7 +133,6 @@ func (p *InverterModel) GetInvertersByProjectId(projectId int64) ([]*Inverter, e
 			&inverter.CreatedBy,
 			&inverter.TrackerAmount,
 			&inverter.AcNominalOutput,
-			//pq.Array(&movie.Genres),
 			&inverter.Version,
 		)
 		if err != nil {

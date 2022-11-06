@@ -24,6 +24,8 @@ import { JwtModule } from '@auth0/angular-jwt';
 import { JwtInterceptor } from './interceptors/jwt.interceptor';
 import { MatTreeModule } from '@angular/material/tree';
 import { MatIconModule } from '@angular/material/icon';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatMenuModule } from '@angular/material/menu';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -70,6 +72,8 @@ export function tokenGetter() {
     MatButtonModule,
     MatTreeModule,
     MatIconModule,
+    MatCheckboxModule,
+    MatMenuModule,
   ],
   providers: [
     {

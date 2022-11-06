@@ -1,0 +1,12 @@
+{
+  "brand": "longi",
+  "model": "himo555m",
+  "pmax": 555,
+  "voc": 49.95,
+  "isc": 14.04,
+  "vmp": 42.1,
+  "imp": 13.19,
+  "iscTemp": 0.05,
+  "vocTemp": -0.265,
+  "pmaxTemp": -0.34
+}

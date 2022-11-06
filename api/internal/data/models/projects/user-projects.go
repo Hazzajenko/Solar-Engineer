@@ -6,8 +6,8 @@ import (
 )
 
 type UserProject struct {
-	UserId    int64 `json:"user_id"`
-	ProjectId int64 `json:"project_id"`
+	UserId    int64 `json:"userId"`
+	ProjectId int64 `json:"projectId"`
 	Role      int   `json:"role"`
 }
 

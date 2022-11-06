@@ -1,8 +1,10 @@
 package handlers
 
 import (
+	"fmt"
 	"github.com/Hazzajenko/gosolarbackend/internal/data/models/projects"
 	"github.com/Hazzajenko/gosolarbackend/internal/json"
+	"github.com/go-chi/chi/v5"
 	"net/http"
 	"strconv"
 	"strings"
@@ -101,23 +103,6 @@ func (h *Handlers) AddUserToProject(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handlers) GetUserProjects(w http.ResponseWriter, r *http.Request) {
-	/*	var input struct {
-			UserId    int64 `json:"user_id"`
-			ProjectId int64 `json:"project_id"`
-			Role      int   `json:"role"`
-		}
-
-		err := h.Json.DecodeJSON(w, r, &input)
-		if err != nil {
-			h.Errors.ServerErrorResponse(w, r, err)
-			return
-		}
-
-		userProject := &projects.UserProject{
-			UserId:    input.UserId,
-			ProjectId: input.ProjectId,
-			Role:      input.Role,
-		}*/
 
 	getAllProjects, err := h.Models.Projects.GetAll()
 	if err != nil {
@@ -130,6 +115,113 @@ func (h *Handlers) GetUserProjects(w http.ResponseWriter, r *http.Request) {
 
 	err = h.Json.ResponseJSON(w, http.StatusAccepted,
 		json.Envelope{"projects": getAllProjects},
+		nil)
+	/*	err = h.Json.ResponseJSON(w, http.StatusAccepted,
+		getAllProjects,
+		nil)*/
+	if err != nil {
+		h.Errors.ServerErrorResponse(w, r, err)
+	}
+}
+
+func (h *Handlers) GetProjectById(w http.ResponseWriter, r *http.Request) {
+	bearerHeader := r.Header.Get("Authorization")
+	bearer := strings.Replace(bearerHeader, "Bearer ", "", 1)
+
+	idString, err := h.Tokens.GetUserIdFromToken(bearer)
+	if err != nil {
+		h.Logger.PrintError(err, nil)
+	}
+	userId, err := strconv.Atoi(idString)
+	fmt.Println(userId)
+
+	projectIdString := chi.URLParam(r, "projectId")
+	projectId, err := strconv.Atoi(projectIdString)
+	if err != nil {
+		h.Logger.PrintError(err, nil)
+	}
+	fmt.Println(projectId)
+
+	project, err := h.Models.Projects.Get(int64(projectId))
+	if err != nil {
+		switch {
+		default:
+			h.Errors.ServerErrorResponse(w, r, err)
+		}
+		return
+	}
+
+	err = h.Json.ResponseJSON(w, http.StatusAccepted,
+		json.Envelope{"project": project},
+		nil)
+	/*	err = h.Json.ResponseJSON(w, http.StatusAccepted,
+		project,
+		nil)*/
+	if err != nil {
+		h.Errors.ServerErrorResponse(w, r, err)
+	}
+}
+
+func (h *Handlers) GetDataForProject(w http.ResponseWriter, r *http.Request) {
+	bearerHeader := r.Header.Get("Authorization")
+	bearer := strings.Replace(bearerHeader, "Bearer ", "", 1)
+
+	idString, err := h.Tokens.GetUserIdFromToken(bearer)
+	if err != nil {
+		h.Logger.PrintError(err, nil)
+	}
+	userId, err := strconv.Atoi(idString)
+	fmt.Println(userId)
+
+	projectIdString := chi.URLParam(r, "projectId")
+	projectId, err := strconv.Atoi(projectIdString)
+	if err != nil {
+		h.Logger.PrintError(err, nil)
+	}
+	fmt.Println(projectId)
+
+	project, err := h.Models.Projects.Get(int64(projectId))
+	if err != nil {
+		switch {
+		default:
+			h.Errors.ServerErrorResponse(w, r, err)
+		}
+		return
+	}
+	inverters, err := h.Models.Inverters.GetInvertersByProjectId(int64(projectId))
+	if err != nil {
+		switch {
+		default:
+			h.Errors.ServerErrorResponse(w, r, err)
+		}
+		return
+	}
+
+	trackers, err := h.Models.Trackers.GetTrackersByProjectId(int64(projectId))
+	if err != nil {
+		switch {
+		default:
+			h.Errors.ServerErrorResponse(w, r, err)
+		}
+		return
+	}
+
+	stringsByProjectId, err := h.Models.Strings.GetStringsByProjectId(int64(projectId))
+	if err != nil {
+		switch {
+		default:
+			h.Errors.ServerErrorResponse(w, r, err)
+		}
+		return
+	}
+
+	err = h.Json.ResponseJSON(w, http.StatusAccepted,
+		json.Envelope{
+			"project":            project,
+			"inverters":          inverters,
+			"trackers":           trackers,
+			"stringsByProjectId": stringsByProjectId,
+		},
 		nil)
 	/*	err = h.Json.ResponseJSON(w, http.StatusAccepted,
 		getAllProjects,

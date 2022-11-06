@@ -1,7 +1,7 @@
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity';
 import { createReducer, on } from '@ngrx/store';
 import * as TreeNodeActions from './tree-node.actions';
-import { ProjectNode } from '../../services/treenode.service';
+import { ProjectNode } from '../../services/tree-nodes.service';
 
 export const selectTreeNodeId = (b: ProjectNode): number => b.id;
 

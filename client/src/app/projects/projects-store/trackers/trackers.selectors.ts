@@ -1,6 +1,7 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 import * as State from './trackers.reducer';
 import { selectRouteParams } from '../../../store/router.selectors';
+import { TrackerModel } from '../../projects-models/tracker.model';
 
 export const selectTrackersState =
   createFeatureSelector<State.TrackerState>('trackers');
@@ -27,3 +28,8 @@ export const selectTrackersByInverterIdRouteParams = createSelector(
   (trackers, { inverterId }) =>
     trackers.filter((tracker) => tracker.inverterId === Number(inverterId))
 );
+
+export const selectTrackersByProjectId = (props: { projectId: number }) =>
+  createSelector(selectAllTrackers, (trackers: TrackerModel[]) =>
+    trackers.filter((tracker) => tracker.projectId === Number(props.projectId))
+  );

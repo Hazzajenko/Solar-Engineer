@@ -1,0 +1,17 @@
+[
+  {
+  "maxInputCurrent": 75,
+  "maxShortCircuitCurrent": 125,
+  "numberOfDcConnections": 7
+  },
+  {
+  "maxInputCurrent": 75,
+  "maxShortCircuitCurrent": 125,
+  "numberOfDcConnections": 7
+  },
+  {
+  "maxInputCurrent": 75,
+  "maxShortCircuitCurrent": 125,
+  "numberOfDcConnections": 8
+  }
+]

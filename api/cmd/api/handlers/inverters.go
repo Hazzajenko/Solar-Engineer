@@ -33,15 +33,6 @@ func (h *Handlers) CreateInverter(w http.ResponseWriter, r *http.Request) {
 	data := inverters.Inverter{}
 	_ = json2.Unmarshal([]byte(file), &data)
 	h.Logger.PrintInfo(data.Name, nil)
-	/*	var input struct {
-			Name string `json:"name"`
-		}
-
-		err = h.Json.DecodeJSON(w, r, &input)
-		if err != nil {
-			h.Errors.ServerErrorResponse(w, r, err)
-			return
-		}*/
 
 	inverter := &inverters.Inverter{
 		ProjectId:           int64(projectId),
@@ -80,21 +71,7 @@ func (h *Handlers) CreateInverter(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	/*
-		userProject := &projects.UserProject{
-			UserId:    int64(userId),
-			ProjectId: result.ID,
-			Role:      0,
-		}
 
-		err = h.Models.Projects.AddProjectToUser(userProject)
-		if err != nil {
-			switch {
-			default:
-				h.Errors.ServerErrorResponse(w, r, err)
-			}
-			return
-		}*/
 	err = h.Json.ResponseJSON(w, http.StatusAccepted,
 		json.Envelope{"inverter": result},
 		nil)
@@ -121,35 +98,6 @@ func (h *Handlers) GetInvertersByProjectId(w http.ResponseWriter, r *http.Reques
 	userId, err := strconv.Atoi(idString)
 	fmt.Println(userId)
 
-	/*	file, err := os.ReadFile("assets/json/inverters/tauroeco100-3-d.json")
-		data := inverters.Inverter{}
-		_ = json2.Unmarshal([]byte(file), &data)
-		h.Logger.PrintInfo(data.Name, nil)*/
-	/*	var input struct {
-			ProjectId int64 `json:"project_id"`
-		}
-
-		err = h.Json.DecodeJSON(w, r, &input)
-		if err != nil {
-			h.Errors.ServerErrorResponse(w, r, err)
-			return
-		}*/
-
-	/*	inverter := &inverters.Inverter{
-			ProjectId:           input.ProjectId,
-			Name:                input.Name,
-			CreatedBy:           int64(userId),
-			TrackerAmount:       input.TrackerAmount,
-			AcNominalOutput:     input.AcNominalOutput,
-			AcOutputCurrent:     input.AcOutputCurrent,
-			EuropeanEfficiency:  input.EuropeanEfficiency,
-			MaxInputCurrent:     input.MaxInputCurrent,
-			MaxOutputPower:      input.MaxOutputPower,
-			MppVoltageRangeLow:  input.MppVoltageRangeLow,
-			MppVoltageRangeHigh: input.MppVoltageRangeHigh,
-			StartUpVoltage:      input.StartUpVoltage,
-		}
-	*/
 	result, err := h.Models.Inverters.GetInvertersByProjectId(int64(projectId))
 	if err != nil {
 		switch {
@@ -158,21 +106,7 @@ func (h *Handlers) GetInvertersByProjectId(w http.ResponseWriter, r *http.Reques
 		}
 		return
 	}
-	/*
-		userProject := &projects.UserProject{
-			UserId:    int64(userId),
-			ProjectId: result.ID,
-			Role:      0,
-		}
 
-		err = h.Models.Projects.AddProjectToUser(userProject)
-		if err != nil {
-			switch {
-			default:
-				h.Errors.ServerErrorResponse(w, r, err)
-			}
-			return
-		}*/
 	err = h.Json.ResponseJSON(w, http.StatusAccepted,
 		json.Envelope{"inverters": result},
 		nil)

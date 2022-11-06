@@ -6,8 +6,8 @@ import (
 )
 
 type ProjectInverter struct {
-	ProjectId  int64 `json:"project_id"`
-	InverterId int64 `json:"inverter_id"`
+	ProjectId  int64 `json:"projectId"`
+	InverterId int64 `json:"inverterId"`
 }
 
 func (p *InverterModel) InsertProjectInverter(projectInverter *ProjectInverter) error {

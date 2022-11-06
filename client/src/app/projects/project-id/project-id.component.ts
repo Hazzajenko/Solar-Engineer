@@ -1,121 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../store/app.state';
-import { combineLatest, map, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { InverterModel } from '../projects-models/inverter.model';
-import { selectInvertersByProjectIdRouteParams } from '../projects-store/inverters/inverters.selectors';
-import { selectProjectByRouteParams } from '../projects-store/projects/projects.selectors';
 import { ProjectModel } from '../projects-models/project.model';
-import { FlatTreeControl } from '@angular/cdk/tree';
 import {
-  MatTreeFlatDataSource,
-  MatTreeFlattener,
-} from '@angular/material/tree';
-
-/**
- * Food data with nested structure.
- * Each node has a name and an optional list of children.
- */
-interface FoodNode {
-  name: string;
-  children?: FoodNode[];
-}
-
-enum type {
-  INVERTER,
-  TRACKER,
-  STRING,
-  PANEL,
-}
-
-interface InverterNode {
-  name: string;
-  type: type;
-  children?: InverterNode[];
-}
-
-/*interface InverterNode {
-  name: string;
-  trackers?: TrackerNode[];
-}*/
-
-interface TrackerNode {
-  name: string;
-  strings?: StringNode[];
-}
-
-interface StringNode {
-  name: string;
-  panels?: PanelNode;
-}
-
-interface PanelNode {
-  name: string;
-}
-
-const TREE_DATA: FoodNode[] = [
-  {
-    name: 'Fruit',
-    children: [{ name: 'Apple' }, { name: 'Banana' }, { name: 'Fruit loops' }],
-  },
-  {
-    name: 'Vegetables',
-    children: [
-      {
-        name: 'Green',
-        children: [{ name: 'Broccoli' }, { name: 'Brussels sprouts' }],
-      },
-      {
-        name: 'Orange',
-        children: [{ name: 'Pumpkins' }, { name: 'Carrots' }],
-      },
-    ],
-  },
-];
-
-const PROJECT_DATA: InverterNode[] = [
-  {
-    name: 'Fruit',
-    type: type.INVERTER,
-    children: [
-      { name: 'Apple', type: type.TRACKER },
-      { name: 'Banana', type: type.TRACKER },
-      {
-        name: 'Fruit loops',
-        type: type.TRACKER,
-      },
-    ],
-  },
-  {
-    name: 'Vegetables',
-    type: type.INVERTER,
-    children: [
-      {
-        name: 'Green',
-        type: type.TRACKER,
-        children: [
-          { name: 'Broccoli', type: type.STRING },
-          { name: 'Brussels sprouts', type: type.STRING },
-        ],
-      },
-      {
-        name: 'Orange',
-        type: type.TRACKER,
-        children: [
-          { name: 'Pumpkins', type: type.STRING },
-          { name: 'Carrots', type: type.STRING },
-        ],
-      },
-    ],
-  },
-];
-
-/** Flat node with expandable and level information */
-interface ExampleFlatNode {
-  expandable: boolean;
-  name: string;
-  level: number;
-}
+  FlatNode,
+  ProjectNode,
+  TreeNodesService,
+} from '../services/tree-nodes.service';
+import { selectAllTreeNodes } from '../projects-store/tree-node/tree-node.selectors';
+import { SelectionModel } from '@angular/cdk/collections';
+import { MatMenuTrigger } from '@angular/material/menu';
 
 @Component({
   selector: 'app-project-id',
@@ -123,55 +19,184 @@ interface ExampleFlatNode {
   styleUrls: ['./project-id.component.scss'],
 })
 export class ProjectIdComponent implements OnInit {
-  treeControl = new FlatTreeControl<ExampleFlatNode>(
-    (node) => node.level,
-    (node) => node.expandable
-  );
+  // we create an object that contains coordinates
+  menuTopLeftPosition = { x: '0', y: '0' };
+
+  // reference to the MatMenuTrigger in the DOM
+  @ViewChild(MatMenuTrigger, { static: true }) matMenuTrigger!: MatMenuTrigger;
+  treeControl = this.treeNodes.treeControl;
+  treeFlattener = this.treeNodes.treeFlattener;
+  dataSource = this.treeNodes.dataSource;
+  /** The selection for checklist */
+  checklistSelection = new SelectionModel<FlatNode>(false /* multiple */);
   store$?: Observable<{
     project?: ProjectModel;
     inverters?: InverterModel[];
   }>;
 
-  constructor(private store: Store<AppState>) {
-    this.dataSource.data = PROJECT_DATA;
+  constructor(
+    private store: Store<AppState>,
+    private treeNodes: TreeNodesService
+  ) {
+    // this.dataSource.data = PROJECT_DATA;
   }
 
-  hasChild = (_: number, node: ExampleFlatNode) => node.expandable;
+  hasChild = (_: number, node: FlatNode) => node.expandable;
 
   ngOnInit(): void {
-    this.store$ = combineLatest([
-      this.store.select(selectProjectByRouteParams),
-      this.store.select(selectInvertersByProjectIdRouteParams),
-    ]).pipe(
-      map(([project, inverters]) => ({
-        project,
-        inverters,
-      }))
+    this.store.select(selectAllTreeNodes).subscribe((treeNodes) => {
+      this.dataSource.data = treeNodes;
+    });
+  }
+
+  onRightClick(event: MouseEvent, item: ProjectNode) {
+    // preventDefault avoids to show the visualization of the right-click menu of the browser
+    event.preventDefault();
+
+    // we record the mouse position in our object
+    this.menuTopLeftPosition.x = event.clientX + 'px';
+    console.log(this.menuTopLeftPosition.x);
+    this.menuTopLeftPosition.y = event.clientY + 'px';
+    console.log(this.menuTopLeftPosition.y);
+    // we open the menu
+    // we pass to the menu the information about our object
+    this.matMenuTrigger.menuData = { item: item };
+
+    // we open the menu
+    this.matMenuTrigger.openMenu();
+  }
+
+  todoLeafItemSelectionToggle(node: FlatNode): void {
+    // this.checklistSelection.toggle(node);
+    this.checklistSelection.setSelection(node);
+    console.log(this.checklistSelection.selected);
+    console.log('toggle: ', node);
+    this.checkAllParentsSelection(node);
+  }
+
+  getLevel = (node: FlatNode) => node.level;
+  hasNoContent = (_: number, _nodeData: FlatNode) => _nodeData.name === '';
+
+  checkAllParentsSelection(node: FlatNode): void {
+    let parent: FlatNode | null = this.getParentNode(node);
+    while (parent) {
+      this.checkRootNodeSelection(parent);
+      parent = this.getParentNode(parent);
+    }
+  }
+
+  checkRootNodeSelection(node: FlatNode): void {
+    const nodeSelected = this.checklistSelection.isSelected(node);
+    const descendants = this.treeControl.getDescendants(node);
+    const descAllSelected =
+      descendants.length > 0 &&
+      descendants.every((child) => {
+        return this.checklistSelection.isSelected(child);
+      });
+    if (nodeSelected && !descAllSelected) {
+      this.checklistSelection.deselect(node);
+    } else if (!nodeSelected && descAllSelected) {
+      this.checklistSelection.select(node);
+    }
+  }
+
+  getParentNode(node: FlatNode): FlatNode | null {
+    const currentLevel = this.getLevel(node);
+
+    if (currentLevel < 1) {
+      return null;
+    }
+
+    const startIndex = this.treeControl.dataNodes.indexOf(node) - 1;
+
+    for (let i = startIndex; i >= 0; i--) {
+      const currentNode = this.treeControl.dataNodes[i];
+
+      if (this.getLevel(currentNode) < currentLevel) {
+        return currentNode;
+      }
+    }
+    return null;
+  }
+
+  insertItem(parent: ProjectNode, name: string) {
+    if (parent.children) {
+      parent.children.push({ item: name } as unknown as ProjectNode);
+      /*      this.dataChange.next(this.data);
+            this.dataSource.data.push();*/
+    }
+  }
+
+  updateItem(node: ProjectNode, name: string) {
+    node.name = name;
+    // this.dataChange.next(this.data);
+  }
+
+  descendantsAllSelected(node: FlatNode): boolean {
+    const descendants = this.treeControl.getDescendants(node);
+    const descAllSelected =
+      descendants.length > 0 &&
+      descendants.every((child) => {
+        return this.checklistSelection.isSelected(child);
+      });
+    return descAllSelected;
+  }
+
+  /** Whether part of the descendants are selected */
+  descendantsPartiallySelected(node: FlatNode): boolean {
+    const descendants = this.treeControl.getDescendants(node);
+    const result = descendants.some((child) =>
+      this.checklistSelection.isSelected(child)
     );
-    this.store
-      .select(selectProjectByRouteParams)
-      .subscribe((res) => console.log(res));
-    this.store
-      .select(selectInvertersByProjectIdRouteParams)
-      .subscribe((res) => console.log(res));
+    return result && !this.descendantsAllSelected(node);
+  }
+
+  /** Toggle the to-do item selection. Select/deselect all the descendants node */
+  todoItemSelectionToggle(node: FlatNode): void {
+    this.checklistSelection.toggle(node);
+    const descendants = this.treeControl.getDescendants(node);
+    this.checklistSelection.isSelected(node)
+      ? this.checklistSelection.select(...descendants)
+      : this.checklistSelection.deselect(...descendants);
+
+    // Force update for the parent
+    descendants.forEach((child) => this.checklistSelection.isSelected(child));
+    this.checkAllParentsSelection(node);
   }
 
   onRouteToInverter(inverter: InverterModel) {}
 
-  private _transformer = (node: InverterNode, level: number) => {
-    return {
-      expandable: !!node.children && node.children.length > 0,
-      name: node.name,
-      level: node.type,
-    };
-  };
+  /** Select the category so we can insert the new item. */
+  /*  addNewItem(node: FlatNode) {
+      const parentNode = this.flatNodeMap.get(node);
+      this._database.insertItem(parentNode!, '');
+      this.treeControl.expand(node);
+    }
 
-  treeFlattener = new MatTreeFlattener(
-    this._transformer,
-    (node) => node.level,
-    (node) => node.expandable,
-    (node) => node.children
-  );
-  // @ts-ignore
-  dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
+    /!** Save the node to database *!/
+    saveNode(node: FlatNode, itemValue: string) {
+      const nestedNode = this.flatNodeMap.get(node);
+      this._database.updateItem(nestedNode!, itemValue);
+    }*/
+
+  /*  private _transformer = (node: InverterNode, level: number) => {
+      return {
+        expandable: !!node.children && node.children.length > 0,
+        name: node.name,
+        level: node.type,
+      };
+    };
+
+    treeFlattener = new MatTreeFlattener(
+      this._transformer,
+      (node) => node.level,
+      (node) => node.expandable,
+      (node) => node.children
+    );
+
+    // @ts-ignore
+    dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);*/
+  click() {
+    console.log('click');
+  }
 }

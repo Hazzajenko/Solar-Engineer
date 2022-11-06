@@ -10,4 +10,6 @@ export interface TrackerModel {
   panelAmount?: number;
   // parallelLinks?: ParallelModel[];
   createdAt?: string;
+  createdBy: number;
+  version: number;
 }

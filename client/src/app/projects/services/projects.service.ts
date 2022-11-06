@@ -5,9 +5,23 @@ import { environment } from '../../../environments/environment';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../store/app.state';
 import { addUserProjects } from '../projects-store/projects/projects.actions';
+import { InverterModel } from '../projects-models/inverter.model';
+import { TrackerModel } from '../projects-models/tracker.model';
+import { StringModel } from '../projects-models/string.model';
+import { addInvertersByProjectId } from '../projects-store/inverters/inverters.actions';
+import { addTrackersByProjectId } from '../projects-store/trackers/trackers.actions';
+import { addStringsByProjectId } from '../projects-store/strings/strings.actions';
+import { TreeNodesService } from './tree-nodes.service';
 
 export interface ProjectsEnvelope {
   projects: ProjectModel[];
+}
+
+export interface ProjectDataEnvelope {
+  project: ProjectModel;
+  inverters: InverterModel[];
+  trackers: TrackerModel[];
+  stringsByProjectId: StringModel[];
 }
 
 @Injectable({
@@ -16,7 +30,8 @@ export interface ProjectsEnvelope {
 export class ProjectsService {
   constructor(
     private http: HttpClient,
-    private store: Store<AppState>
+    private store: Store<AppState>,
+    private treeNodes: TreeNodesService
   ) /*    private store: Store<AppState>,
         private inverters: InvertersService*/ {}
 
@@ -40,6 +55,51 @@ export class ProjectsService {
           },
           complete: () => {
             console.log('getUserProjects');
+          },
+        })
+    );
+  }
+
+  getDataByProjectId(projectId: number): Promise<ProjectDataEnvelope> {
+    return new Promise<ProjectDataEnvelope>((resolve, reject) =>
+      this.http
+        .get<ProjectDataEnvelope>(
+          environment.apiUrl + `/projects/${projectId}/all`
+        )
+        .subscribe({
+          next: (envelope) => {
+            this.store.dispatch(
+              addInvertersByProjectId({ inverters: envelope.inverters })
+            );
+            this.store.dispatch(
+              addTrackersByProjectId({ trackers: envelope.trackers })
+            );
+            this.store.dispatch(
+              addStringsByProjectId({
+                stringModels: envelope.stringsByProjectId,
+              })
+            );
+            /*            if (envelope.stringsByProjectId) {
+                          if (envelope.stringsByProjectId.length > 1) {
+                            this.store.dispatch(
+                              addStringsByProjectId({
+                                stringModels: envelope.stringsByProjectId,
+                              })
+                            );
+                          }
+                          envelope.stringsByProjectId.map((stringModel) => {
+                            this.store.dispatch(addString({ stringModel }));
+                          });
+                        }*/
+
+            resolve(envelope);
+          },
+          error: (err) => {
+            reject(err);
+          },
+          complete: () => {
+            console.log('getDataByProjectId');
+            this.treeNodes.initTreeNode(projectId);
           },
         })
     );

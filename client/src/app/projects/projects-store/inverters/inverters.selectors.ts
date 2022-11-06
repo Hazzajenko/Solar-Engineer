@@ -26,13 +26,13 @@ export const selectInvertersByProjectIdRouteParams = createSelector(
   selectAllInverters,
   selectRouteParams,
   (inverters, { projectId }) =>
-    inverters.filter((inverter) => inverter.project_id === Number(projectId))
+    inverters.filter((inverter) => inverter.projectId === Number(projectId))
 );
 
-export const selectInvertersByProjectId = (props: { project_id: string }) =>
+export const selectInvertersByProjectId = (props: { projectId: number }) =>
   createSelector(selectAllInverters, (inverters: InverterModel[]) =>
     inverters.filter(
-      (inverter) => inverter.project_id === Number(props.project_id)
+      (inverter) => inverter.projectId === Number(props.projectId)
     )
   );
 /*

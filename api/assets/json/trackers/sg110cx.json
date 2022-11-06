@@ -1,0 +1,61 @@
+{
+  "brand": "Sungrow",
+  "name": "SG110CX",
+  "maxInputCurrent": 175,
+  "startUpVoltage": 250,
+  "mppVoltageRangeLow": 200,
+  "mppVoltageRangeHigh": 1000,
+  "maxPvGeneratorPower": 150,
+  "trackerAmount": 9,
+  "trackers": [
+    {
+      "id": 0,
+      "maxInputCurrent": 26,
+      "maxShortCircuitCurrent": 40
+    },
+    {
+      "id": 1,
+      "maxInputCurrent": 26,
+      "maxShortCircuitCurrent": 40
+    },
+    {
+      "id": 2,
+      "maxInputCurrent": 26,
+      "maxShortCircuitCurrent": 40
+    },
+    {
+      "id": 3,
+      "maxInputCurrent": 26,
+      "maxShortCircuitCurrent": 40
+    },
+    {
+      "id": 4,
+      "maxInputCurrent": 26,
+      "maxShortCircuitCurrent": 40
+    },
+    {
+      "id": 5,
+      "maxInputCurrent": 26,
+      "maxShortCircuitCurrent": 40
+    },
+    {
+      "id": 6,
+      "maxInputCurrent": 26,
+      "maxShortCircuitCurrent": 40
+    },
+    {
+      "id": 7,
+      "maxInputCurrent": 26,
+      "maxShortCircuitCurrent": 40
+    },
+    {
+      "id": 8,
+      "maxInputCurrent": 26,
+      "maxShortCircuitCurrent": 40
+    }
+  ],
+  "acNominalOutput": 110,
+  "maxOutputPower": 110,
+  "acOutputCurrent": 158.8,
+  "europeanEfficiency": 98.5
+}

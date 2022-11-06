@@ -1,5 +1,5 @@
 import { createAction, props } from '@ngrx/store';
-import { ProjectNode } from '../../services/treenode.service';
+import { ProjectNode } from '../../services/tree-nodes.service';
 
 export const addTreeNode = createAction(
   '[TreeNode Service] Add TreeNode',

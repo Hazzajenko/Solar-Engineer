@@ -3,16 +3,17 @@ package projects
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"time"
 )
 
 type Project struct {
 	ID             int64     `json:"id"`
 	Name           string    `json:"name"`
-	CreatedAt      time.Time `json:"created_at"`
-	CreatedBy      int64     `json:"created_by"`
+	CreatedAt      time.Time `json:"createdAt"`
+	CreatedBy      int64     `json:"createdBy"`
 	Version        int       `json:"-"`
-	InverterAmount int       `json:"inverter_amount"`
+	InverterAmount int       `json:"inverterAmount"`
 }
 
 type ProjectModel struct {
@@ -45,7 +46,8 @@ func (p *ProjectModel) Insert(project *Project) (*Project, error) {
 
 func (p *ProjectModel) GetAll() ([]*Project, error) {
 	query := `
-		SELECT * FROM projects
+		SELECT id, name, created_at, created_by, inverter_amount, version 
+		FROM projects
 		`
 
 	//args := []any{project.Name, project.CreatedBy}
@@ -66,13 +68,11 @@ func (p *ProjectModel) GetAll() ([]*Project, error) {
 		var project Project
 
 		err := rows.Scan(
-			//&totalRecords,
 			&project.ID,
 			&project.Name,
 			&project.CreatedAt,
-			//&project.CreatedBy,
+			&project.CreatedBy,
 			&project.InverterAmount,
-			//pq.Array(&movie.Genres),
 			&project.Version,
 		)
 		if err != nil {
@@ -87,4 +87,39 @@ func (p *ProjectModel) GetAll() ([]*Project, error) {
 	}
 
 	return projects, nil
+}
+
+func (p *ProjectModel) Get(projectId int64) (*Project, error) {
+	if projectId < 1 {
+		return nil, errors.New("record not found")
+	}
+
+	query := `
+		SELECT id, name, created_at, created_by, inverter_amount, version 
+		FROM projects
+		WHERE id = $1
+		`
+	var project Project
+	//args := []any{project.Name, project.CreatedBy}
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	err := p.DB.QueryRowContext(ctx, query, projectId).Scan(
+		&project.ID,
+		&project.Name,
+		&project.CreatedAt,
+		&project.CreatedBy,
+		&project.InverterAmount,
+		&project.Version,
+	)
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return nil, errors.New("record not found")
+		default:
+			return nil, err
+		}
+	}
+
+	return &project, nil
 }
