@@ -105,7 +105,23 @@ func (p *InverterModel) Insert(inverter *Inverter) (*Inverter, error) {
 
 func (p *InverterModel) GetInvertersByProjectId(projectId int64) ([]*Inverter, error) {
 	query := `
-		SELECT id, project_id, name, created_at, created_by, tracker_amount, ac_nominal_output, version FROM inverters
+		SELECT
+			id, 
+		    project_id, 
+		    name, 
+		    created_at, 
+		    created_by, 
+			tracker_amount,
+			ac_nominal_output, 
+			ac_output_current, 
+			european_efficiency, 
+			max_input_current, 
+			max_output_power, 
+			mpp_voltage_range_low, 
+			mpp_voltage_range_high, 
+			start_up_voltage,
+		    version
+		FROM inverters
 		WHERE project_id = $1
 		`
 
@@ -133,6 +149,13 @@ func (p *InverterModel) GetInvertersByProjectId(projectId int64) ([]*Inverter, e
 			&inverter.CreatedBy,
 			&inverter.TrackerAmount,
 			&inverter.AcNominalOutput,
+			&inverter.AcOutputCurrent,
+			&inverter.EuropeanEfficiency,
+			&inverter.MaxInputCurrent,
+			&inverter.MaxOutputPower,
+			&inverter.MppVoltageRangeLow,
+			&inverter.MppVoltageRangeHigh,
+			&inverter.StartUpVoltage,
 			&inverter.Version,
 		)
 		if err != nil {

@@ -28,7 +28,7 @@ func (p *StringModel) Insert(string *String) (*String, error) {
 		INSERT INTO strings(
 							project_id,
 							inverter_id,
-		                     tracker_id,
+		                    tracker_id,
 							name, 
 							created_by, 
 		                    is_in_parallel,

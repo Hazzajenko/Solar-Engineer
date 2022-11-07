@@ -1,10 +1,9 @@
 export interface PanelModel {
-  id?: number;
-  projectId?: number;
+  id: number;
+  projectId: number;
   inverterId?: number;
   trackerId?: number;
-  brand?: string;
-  model?: string;
+  stringId: number;
   name?: string;
   currentAtMaximumPower?: number;
   shortCircuitCurrent?: number;

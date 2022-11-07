@@ -1,7 +1,7 @@
 import * as ProjectsActions from './projects.actions';
 import { createReducer, on } from '@ngrx/store';
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity';
-import { ProjectModel } from '../../projects-models/project.model';
+import { ProjectModel } from '../../models/project.model';
 
 export const selectProjectId = (b: ProjectModel): number => b.id;
 export const sortByProjectName = (a: ProjectModel, b: ProjectModel): number =>

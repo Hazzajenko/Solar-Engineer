@@ -1,7 +1,7 @@
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity';
 import { createReducer, on } from '@ngrx/store';
 import * as UserProjectsActions from './user-projects.actions';
-import { UserProjectModel } from '../../projects-models/user-project.model';
+import { UserProjectModel } from '../../models/user-project.model';
 
 export const selectUserProjectId = (b: UserProjectModel): number => b.userId;
 

@@ -3,9 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../store/app.state';
-import { InverterModel } from '../projects-models/inverter.model';
-import { addInvertersByProjectId } from '../projects-store/inverters/inverters.actions';
-import { addTreeNode } from '../projects-store/tree-node/tree-node.actions';
+import { InverterModel } from '../models/inverter.model';
+import { addInvertersByProjectId } from '../store/inverters/inverters.actions';
+import { addTreeNode } from '../store/tree-node/tree-node.actions';
 import { type } from './tree-nodes.service';
 
 interface InvertersEnvelope {

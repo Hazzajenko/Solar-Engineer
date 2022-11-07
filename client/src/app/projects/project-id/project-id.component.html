@@ -1,34 +1,34 @@
-<ng-container *ngIf="store$ | async let store">
+<!--<ng-container *ngIf="store$ | async let store">
   <div class="container">
     <mat-selection-list #userProjects *ngFor="let inverter of store.inverters" [multiple]="false">
       <mat-list-option (click)="onRouteToInverter(inverter)" [value]="inverter">
         {{inverter.name}}
-        <!--            <app-project-list-item [project]="project"></app-project-list-item>-->
+        &lt;!&ndash;            <app-project-list-item [project]="project"></app-project-list-item>&ndash;&gt;
       </mat-list-option>
     </mat-selection-list>
   </div>
 </ng-container>
-<mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
-  <!-- This is the tree node template for leaf nodes -->
-  <!--  <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding="true">
+<mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="example-tree">
+  &lt;!&ndash; This is the tree node template for leaf nodes &ndash;&gt;
+  &lt;!&ndash;  <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding="true">
       &lt;!&ndash; use a disabled button to provide padding for tree leaf &ndash;&gt;
       <button disabled mat-icon-button></button>
       {{node.name}}
-    </mat-tree-node>-->
+    </mat-tree-node>&ndash;&gt;
   <mat-tree-node (contextmenu)="onRightClick($event, node)" *matTreeNodeDef="let node" matTreeNodeToggle
                  matTreeNodePadding="true">
     <button mat-icon-button></button>
-    <!--    <button mat-icon-button disabled></button>-->
+    &lt;!&ndash;    <button mat-icon-button disabled></button>&ndash;&gt;
     {{node.name}}
-    <!--    <mat-checkbox class="checklist-leaf-node"
+    &lt;!&ndash;    <mat-checkbox class="checklist-leaf-node"
                       [checked]="checklistSelection.isSelected(node)"
                       (change)="todoLeafItemSelectionToggle(node)"
-        >{{node.name}}</mat-checkbox>-->
-    <mat-checkbox class="checklist-leaf-node"
-                  [checked]="checklistSelection.isSelected(node)"
-                  (change)="todoLeafItemSelectionToggle(node)">{{node.item}}</mat-checkbox>
+        >{{node.name}}</mat-checkbox>&ndash;&gt;
+    &lt;!&ndash;    <mat-checkbox class="checklist-leaf-node"
+                      [checked]="checklistSelection.isSelected(node)"
+                      (change)="todoLeafItemSelectionToggle(node)">{{node.item}}</mat-checkbox>&ndash;&gt;
   </mat-tree-node>
-  <!-- This is the tree node template for expandable nodes -->
+  &lt;!&ndash; This is the tree node template for expandable nodes &ndash;&gt;
   <mat-tree-node *matTreeNodeDef="let node;when: hasChild" matTreeNodePadding="true">
     <button [attr.aria-label]="'Toggle ' + node.name" mat-icon-button
             matTreeNodeToggle>
@@ -36,14 +36,16 @@
         {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
       </mat-icon>
     </button>
-    <!--    <mat-checkbox [checked]="descendantsAllSelected(node)"
+    &lt;!&ndash;    <mat-checkbox [checked]="descendantsAllSelected(node)"
                       [indeterminate]="descendantsPartiallySelected(node)"
-                      (change)="todoItemSelectionToggle(node)">{{node.item}}</mat-checkbox>-->
-    <!--    <button mat-icon-button (click)="addNewItem(node)">-->
-    <!--    <mat-icon>add</mat-icon>-->
+                      (change)="todoItemSelectionToggle(node)">{{node.item}}</mat-checkbox>&ndash;&gt;
+    &lt;!&ndash;    <button mat-icon-button (click)="addNewItem(node)">&ndash;&gt;
+    &lt;!&ndash;    <mat-icon>add</mat-icon>&ndash;&gt;
+    &lt;!&ndash;    <h1>{{node.name}}</h1>&ndash;&gt;
+    &lt;!&ndash;    <h4>{{node.name}}</h4>&ndash;&gt;
     {{node.name}}
   </mat-tree-node>
-  <!--    <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle matTreeNodePadding="true">
+  &lt;!&ndash;    <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle matTreeNodePadding="true">
         <button mat-icon-button disabled></button>
         <mat-checkbox class="checklist-leaf-node"
                       [checked]="checklistSelection.isSelected(node)"
@@ -51,17 +53,17 @@
         &lt;!&ndash;    <mat-checkbox class="checklist-leaf-node"
                           [checked]="checklistSelection.isSelected(node)"
                           (change)="todoLeafItemSelectionToggle(node)">{{node.item}}</mat-checkbox>&ndash;&gt;
-      </mat-tree-node>-->
+      </mat-tree-node>&ndash;&gt;
   <mat-tree-node *matTreeNodeDef="let node; when: hasNoContent" matTreeNodePadding="true">
     <button mat-icon-button disabled></button>
     <mat-form-field appearance="fill">
       <mat-label>New item...</mat-label>
       <input matInput #itemValue placeholder="Ex. Lettuce">
     </mat-form-field>
-    <!--    <button mat-button (click)="saveNode(node, itemValue.value)">Save</button>-->
+    &lt;!&ndash;    <button mat-button (click)="saveNode(node, itemValue.value)">Save</button>&ndash;&gt;
   </mat-tree-node>
 
-  <!--    <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding="true">
+  &lt;!&ndash;    <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding="true">
         <button mat-icon-button matTreeNodeToggle
                 [attr.aria-label]="'Toggle ' + node.item">
           <mat-icon class="mat-icon-rtl-mirror">
@@ -74,8 +76,49 @@
             <button mat-icon-button (click)="addNewItem(node)">&ndash;&gt;
         <mat-icon>add</mat-icon>
         &lt;!&ndash;    </button>&ndash;&gt;
-      </mat-tree-node>-->
-</mat-tree>
+      </mat-tree-node>&ndash;&gt;
+</mat-tree>-->
+
+<ng-container *ngIf="store$ | async as store">
+  <ng-container *ngIf="store.inverters">
+    <div *ngFor="let inverter of store.inverters; let i = index">
+      <div>
+        <button mat-stroked-button color="primary" (click)="toggleInverter(inverter, i)">
+          {{inverter.name}}{{i}}
+        </button>
+        {{inverter.trackerAmount}} Trackers
+      </div>
+      <ng-container *ngIf="store.trackers">
+        <div *ngIf="inverterBool[i]">
+          <div *ngFor="let tracker of store.trackers; let a = index">
+            <div class="tracker-item" *ngIf="tracker.inverterId === inverter.id">
+              <button mat-stroked-button color="secondary"
+                      (click)="toggleTracker(tracker, a)">{{tracker.name}}{{a}}</button>
+              <div *ngIf="trackerBool[a]">
+                <div *ngFor="let stringModel of store.strings; let b = index">
+                  <div class="string-item" *ngIf="stringModel.trackerId === tracker.id">
+                    <button mat-stroked-button color="secondary"
+                            (click)="toggleString(stringModel, b)">{{stringModel.name}}{{b}}</button>
+                    <div *ngIf="stringBool[b]">
+                      <div *ngIf="store.panels">
+                        <div *ngFor="let panel of store.panels; let c = index">
+                          <div *ngIf="panel.stringId === stringModel.id">
+                            {{panel.name}}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+
+  </ng-container>
+</ng-container>
 
 <!-- an hidden div is created to set the position of appearance of the menu-->
 <div style="visibility: hidden; position: fixed;"

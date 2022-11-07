@@ -3,11 +3,11 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../store/app.state';
-import { InverterModel } from '../projects-models/inverter.model';
-import { addTreeNode } from '../projects-store/tree-node/tree-node.actions';
+import { InverterModel } from '../models/inverter.model';
+import { addTreeNode } from '../store/tree-node/tree-node.actions';
 import { type } from './tree-nodes.service';
-import { TrackerModel } from '../projects-models/tracker.model';
-import { addTrackersByProjectId } from '../projects-store/trackers/trackers.actions';
+import { TrackerModel } from '../models/tracker.model';
+import { addTrackersByProjectId } from '../store/trackers/trackers.actions';
 
 interface TrackersEnvelope {
   trackers: TrackerModel[];

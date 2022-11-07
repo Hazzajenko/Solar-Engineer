@@ -1,17 +1,24 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../store/app.state';
-import { Observable } from 'rxjs';
-import { InverterModel } from '../projects-models/inverter.model';
-import { ProjectModel } from '../projects-models/project.model';
+import { combineLatest, Observable } from 'rxjs';
+import { InverterModel } from '../models/inverter.model';
 import {
   FlatNode,
   ProjectNode,
   TreeNodesService,
 } from '../services/tree-nodes.service';
-import { selectAllTreeNodes } from '../projects-store/tree-node/tree-node.selectors';
+import { selectAllTreeNodes } from '../store/tree-node/tree-node.selectors';
 import { SelectionModel } from '@angular/cdk/collections';
 import { MatMenuTrigger } from '@angular/material/menu';
+import { selectInvertersByProjectId } from '../store/inverters/inverters.selectors';
+import { selectTrackersByProjectId } from '../store/trackers/trackers.selectors';
+import { selectStringsByProjectId } from '../store/strings/strings.selectors';
+import { selectPanelsByProjectId } from '../store/panels/panels.selectors';
+import { map } from 'rxjs/operators';
+import { TrackerModel } from '../models/tracker.model';
+import { StringModel } from '../models/string.model';
+import { PanelModel } from '../models/panel.model';
 
 @Component({
   selector: 'app-project-id',
@@ -21,6 +28,9 @@ import { MatMenuTrigger } from '@angular/material/menu';
 export class ProjectIdComponent implements OnInit {
   // we create an object that contains coordinates
   menuTopLeftPosition = { x: '0', y: '0' };
+  inverterBool: boolean[] = [false, false, false];
+  trackerBool: boolean[] = [false, false, false];
+  stringBool: boolean[] = [false, false, false];
 
   // reference to the MatMenuTrigger in the DOM
   @ViewChild(MatMenuTrigger, { static: true }) matMenuTrigger!: MatMenuTrigger;
@@ -30,8 +40,11 @@ export class ProjectIdComponent implements OnInit {
   /** The selection for checklist */
   checklistSelection = new SelectionModel<FlatNode>(false /* multiple */);
   store$?: Observable<{
-    project?: ProjectModel;
+    // project?: ProjectModel;
     inverters?: InverterModel[];
+    trackers?: TrackerModel[];
+    strings?: StringModel[];
+    panels?: PanelModel[];
   }>;
 
   constructor(
@@ -44,6 +57,36 @@ export class ProjectIdComponent implements OnInit {
   hasChild = (_: number, node: FlatNode) => node.expandable;
 
   ngOnInit(): void {
+    this.store$ = combineLatest([
+      this.store.select(
+        selectInvertersByProjectId({
+          projectId: 3,
+        })
+      ),
+      this.store.select(
+        selectTrackersByProjectId({
+          projectId: 3,
+        })
+      ),
+      this.store.select(
+        selectStringsByProjectId({
+          projectId: 3,
+        })
+      ),
+      this.store.select(
+        selectPanelsByProjectId({
+          projectId: 3,
+        })
+      ),
+    ]).pipe(
+      map(([inverters, trackers, strings, panels]) => ({
+        inverters,
+        trackers,
+        strings,
+        panels,
+      }))
+    );
+
     this.store.select(selectAllTreeNodes).subscribe((treeNodes) => {
       this.dataSource.data = treeNodes;
     });
@@ -198,5 +241,20 @@ export class ProjectIdComponent implements OnInit {
     dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);*/
   click() {
     console.log('click');
+  }
+
+  toggleInverter(inverter: InverterModel, index: number) {
+    this.inverterBool[index] = !this.inverterBool[index];
+    console.log(this.inverterBool[index]);
+  }
+
+  toggleTracker(tracker: TrackerModel, index: number) {
+    this.trackerBool[index] = !this.trackerBool[index];
+    console.log(this.trackerBool[index]);
+  }
+
+  toggleString(stringModel: StringModel, index: number) {
+    this.stringBool[index] = !this.stringBool[index];
+    console.log(this.stringBool[index]);
   }
 }

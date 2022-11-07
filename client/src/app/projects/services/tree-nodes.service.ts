@@ -2,16 +2,17 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../store/app.state';
-import { selectInvertersByProjectId } from '../projects-store/inverters/inverters.selectors';
+import { selectInvertersByProjectId } from '../store/inverters/inverters.selectors';
 import { combineLatest } from 'rxjs';
-import { selectTrackersByProjectId } from '../projects-store/trackers/trackers.selectors';
-import { selectStringsByProjectId } from '../projects-store/strings/strings.selectors';
-import { addTreeNode } from '../projects-store/tree-node/tree-node.actions';
+import { selectTrackersByProjectId } from '../store/trackers/trackers.selectors';
+import { selectStringsByProjectId } from '../store/strings/strings.selectors';
+import { addTreeNode } from '../store/tree-node/tree-node.actions';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import {
   MatTreeFlatDataSource,
   MatTreeFlattener,
 } from '@angular/material/tree';
+import { selectPanelsByProjectId } from '../store/panels/panels.selectors';
 
 export enum type {
   INVERTER,
@@ -58,7 +59,12 @@ export class TreeNodesService {
           projectId,
         })
       ),
-    ]).subscribe(([inverters, trackers, strings]) => {
+      this.store.select(
+        selectPanelsByProjectId({
+          projectId,
+        })
+      ),
+    ]).subscribe(([inverters, trackers, strings, panels]) => {
       console.log('inverters', inverters);
       console.log('trackers', trackers);
       console.log('strings', strings);
@@ -94,6 +100,19 @@ export class TreeNodesService {
               type: type.STRING,
               children: [],
             };
+            const stringPanels = panels.filter(
+              (panel) => panel.stringId === trackerString.id
+            );
+            stringPanels.map((stringPanel) => {
+              const panelNode: ProjectNode = {
+                id: stringPanel.id,
+                projectId: stringPanel.projectId,
+                name: stringPanel.name,
+                type: type.PANEL,
+                children: [],
+              };
+              stringNode.children?.push(panelNode);
+            });
             trackerNode.children?.push(stringNode);
           });
           inverterNode.children?.push(trackerNode);

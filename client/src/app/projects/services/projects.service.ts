@@ -1,17 +1,19 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { ProjectModel } from '../projects-models/project.model';
+import { ProjectModel } from '../models/project.model';
 import { environment } from '../../../environments/environment';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../store/app.state';
-import { addUserProjects } from '../projects-store/projects/projects.actions';
-import { InverterModel } from '../projects-models/inverter.model';
-import { TrackerModel } from '../projects-models/tracker.model';
-import { StringModel } from '../projects-models/string.model';
-import { addInvertersByProjectId } from '../projects-store/inverters/inverters.actions';
-import { addTrackersByProjectId } from '../projects-store/trackers/trackers.actions';
-import { addStringsByProjectId } from '../projects-store/strings/strings.actions';
+import { addUserProjects } from '../store/projects/projects.actions';
+import { InverterModel } from '../models/inverter.model';
+import { TrackerModel } from '../models/tracker.model';
+import { StringModel } from '../models/string.model';
+import { addInvertersByProjectId } from '../store/inverters/inverters.actions';
+import { addTrackersByProjectId } from '../store/trackers/trackers.actions';
+import { addStringsByProjectId } from '../store/strings/strings.actions';
 import { TreeNodesService } from './tree-nodes.service';
+import { addPanelsByProjectId } from '../store/panels/panels.actions';
+import { PanelModel } from '../models/panel.model';
 
 export interface ProjectsEnvelope {
   projects: ProjectModel[];
@@ -22,6 +24,7 @@ export interface ProjectDataEnvelope {
   inverters: InverterModel[];
   trackers: TrackerModel[];
   stringsByProjectId: StringModel[];
+  panels: PanelModel[];
 }
 
 @Injectable({
@@ -77,6 +80,11 @@ export class ProjectsService {
             this.store.dispatch(
               addStringsByProjectId({
                 stringModels: envelope.stringsByProjectId,
+              })
+            );
+            this.store.dispatch(
+              addPanelsByProjectId({
+                panels: envelope.panels,
               })
             );
             /*            if (envelope.stringsByProjectId) {

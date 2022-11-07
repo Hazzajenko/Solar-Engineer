@@ -1,7 +1,7 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 import * as State from './trackers.reducer';
 import { selectRouteParams } from '../../../store/router.selectors';
-import { TrackerModel } from '../../projects-models/tracker.model';
+import { TrackerModel } from '../../models/tracker.model';
 
 export const selectTrackersState =
   createFeatureSelector<State.TrackerState>('trackers');

@@ -1,7 +1,7 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 import * as State from './strings.reducer';
 import { selectRouteParams } from '../../../store/router.selectors';
-import { StringModel } from '../../projects-models/string.model';
+import { StringModel } from '../../models/string.model';
 
 export const selectStringsState =
   createFeatureSelector<State.StringState>('strings');

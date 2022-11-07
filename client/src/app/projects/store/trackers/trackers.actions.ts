@@ -1,5 +1,5 @@
 import { createAction, props } from '@ngrx/store';
-import { TrackerModel } from '../../projects-models/tracker.model';
+import { TrackerModel } from '../../models/tracker.model';
 
 export const addTracker = createAction(
   '[Trackers Service] Add Tracker',

@@ -1,0 +1,2 @@
+DROP TABLE IF EXISTS panels;
+DROP TABLE IF EXISTS strings_panels;

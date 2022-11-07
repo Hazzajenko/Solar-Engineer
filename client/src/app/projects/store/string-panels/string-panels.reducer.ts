@@ -1,7 +1,7 @@
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity';
 import { createReducer, on } from '@ngrx/store';
 import * as StringPanelsActions from './string-panels.actions';
-import { StringPanelModel } from '../../projects-models/string-panel.model';
+import { StringPanelModel } from '../../models/string-panel.model';
 
 export const selectStringPanelId = (b: StringPanelModel): number => b.id;
 

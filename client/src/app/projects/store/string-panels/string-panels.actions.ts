@@ -1,5 +1,5 @@
 import { createAction, props } from '@ngrx/store';
-import { StringPanelModel } from '../../projects-models/string-panel.model';
+import { StringPanelModel } from '../../models/string-panel.model';
 
 export const addStringPanel = createAction(
   '[StringPanels Service] Add StringPanel',

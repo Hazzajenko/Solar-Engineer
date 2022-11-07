@@ -1,12 +1,14 @@
 {
-  "brand": "longi",
-  "model": "himo555m",
-  "pmax": 555,
-  "voc": 49.95,
-  "isc": 14.04,
-  "vmp": 42.1,
-  "imp": 13.19,
-  "iscTemp": 0.05,
-  "vocTemp": -0.265,
-  "pmaxTemp": -0.34
+  "name": "Longi Himo555m",
+  "currentAtMaximumPower": 13.19,
+  "shortCircuitCurrent": 14.01,
+  "shortCircuitCurrentTemp": 0.050,
+  "maximumPower": 555,
+  "maximumPowerTemp": -0.340,
+  "voltageAtMaximumPower": 42.10,
+  "openCircuitVoltage": 49.95,
+  "openCircuitVoltageTemp": -0.265,
+  "length": 2256,
+  "width": 1133,
+  "weight": 27.2
 }

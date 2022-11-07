@@ -1,5 +1,5 @@
 import { createAction, props } from '@ngrx/store';
-import { StringModel } from '../../projects-models/string.model';
+import { StringModel } from '../../models/string.model';
 
 export const addString = createAction(
   '[Strings Service] Add String',

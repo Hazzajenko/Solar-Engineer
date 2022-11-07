@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS projects (
     name text NOT NULL,
     created_at timestamp(0) with time zone NOT NULL DEFAULT NOW(),
     created_by bigserial NOT NULL REFERENCES users ON DELETE CASCADE,
+    inverter_amount bigint NOT NULL DEFAULT 0,
     version integer NOT NULL DEFAULT 1
 );
 

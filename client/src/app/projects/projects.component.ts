@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ProjectsService } from './services/projects.service';
 import { Observable } from 'rxjs';
-import { ProjectModel } from './projects-models/project.model';
+import { ProjectModel } from './models/project.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { AppState } from '../store/app.state';
-import { selectAllProjects } from './projects-store/projects/projects.selectors';
+import { selectAllProjects } from './store/projects/projects.selectors';
 import { InvertersService } from './services/inverters.service';
 import { TreeNodesService } from './services/tree-nodes.service';
 

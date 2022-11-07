@@ -1,5 +1,5 @@
 import { createAction, props } from '@ngrx/store';
-import { UserProjectModel } from '../../projects-models/user-project.model';
+import { UserProjectModel } from '../../models/user-project.model';
 
 export const addUserProject = createAction(
   '[UserProjects Service] Add UserProject',

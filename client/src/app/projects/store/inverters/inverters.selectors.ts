@@ -1,7 +1,7 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 import * as State from './inverters.reducer';
 import { selectRouteParams } from '../../../store/router.selectors';
-import { InverterModel } from '../../projects-models/inverter.model';
+import { InverterModel } from '../../models/inverter.model';
 
 export const selectInvertersState =
   createFeatureSelector<State.InverterState>('inverters');

@@ -1,4 +1,4 @@
-import { TrackerModel } from '../../projects-models/tracker.model';
+import { TrackerModel } from '../../models/tracker.model';
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity';
 import { createReducer, on } from '@ngrx/store';
 import * as TrackerActions from './trackers.actions';
