@@ -3,6 +3,7 @@ package strings
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"time"
 )
 
@@ -14,9 +15,9 @@ type String struct {
 	Name         string    `json:"name"`
 	CreatedAt    time.Time `json:"createdAt"`
 	CreatedBy    int64     `json:"createdBy"`
-	Version      int       `json:"-"`
+	Version      int32     `json:"version"`
 	IsInParallel bool      `json:"isInParallel"`
-	PanelAmount  int       `json:"maxOutputPower"`
+	PanelAmount  int64     `json:"panelAmount"`
 }
 
 type StringModel struct {
@@ -133,4 +134,56 @@ func (p *StringModel) GetStringsByProjectId(projectId int64) ([]*String, error) 
 	}
 
 	return strings, nil
+}
+
+func (p *StringModel) UpdateString(string *String) (*String, error) {
+	query := `
+		UPDATE strings
+		SET name = $1, is_in_parallel = $2, panel_amount = $3, inverter_id = $4, tracker_id = $5, version = version + 1
+		WHERE id = $6 AND version = $7
+		RETURNING  id, 
+		    project_id, 
+		    inverter_id,
+		    tracker_id,
+		    name, 
+		    created_at, 
+		    created_by, 
+			is_in_parallel, 
+			panel_amount, 
+			version`
+	args := []any{
+		string.Name,
+		string.IsInParallel,
+		string.PanelAmount,
+		string.InverterId,
+		string.TrackerId,
+		string.ID,
+		string.Version,
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	var result String
+
+	err := p.DB.QueryRowContext(ctx, query, args...).Scan(
+		&result.ID,
+		&result.ProjectId,
+		&result.InverterId,
+		&result.TrackerId,
+		&result.Name,
+		&result.CreatedAt,
+		&result.CreatedBy,
+		&result.IsInParallel,
+		&result.PanelAmount,
+		&result.Version)
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return nil, errors.New("edit conflict")
+		default:
+			return nil, err
+		}
+	}
+
+	return &result, nil
 }

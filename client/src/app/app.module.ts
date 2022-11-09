@@ -31,6 +31,10 @@ import { MatSortModule } from '@angular/material/sort';
 import { JwtInterceptor } from './interceptors/jwt.interceptor';
 import { InverterViewComponent } from './projects/project-id/views/inverter-view/inverter-view.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { GridLayoutComponent } from './projects/project-id/views/grid-layout/grid-layout.component';
+import { ProjectViewComponent } from './projects/project-id/views/project-view/project-view.component';
+import { TrackerViewComponent } from './projects/project-id/views/tracker-view/tracker-view.component';
+import { StringViewComponent } from './projects/project-id/views/string-view/string-view.component';
 
 export function tokenGetter() {
   console.log(localStorage.getItem('token'));
@@ -46,6 +50,10 @@ export function tokenGetter() {
     LoginComponent,
     ProjectTreeComponent,
     InverterViewComponent,
+    GridLayoutComponent,
+    ProjectViewComponent,
+    TrackerViewComponent,
+    StringViewComponent,
   ],
   imports: [
     BrowserModule,

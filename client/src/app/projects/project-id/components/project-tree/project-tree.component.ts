@@ -146,6 +146,24 @@ export class ProjectTreeComponent implements OnInit {
 
   taskDrop(event: CdkDragDrop<StringModel, any>) {
     moveItemInArray(this.strings!, event.previousIndex, event.currentIndex);
+    console.log('previousIndex', event.previousIndex);
+    console.log('currentIndex', event.currentIndex);
+    console.log(event);
     console.log(event.item.data);
+    const string = event.item.data;
+    console.log(event.item.data.trackerId);
+    const newTracker = Number(event.container.id);
+    const update: StringModel = {
+      id: string.id,
+      projectId: string.projectId,
+      inverterId: string.inverterId,
+      trackerId: newTracker,
+      name: string.name,
+      isInParallel: string.isInParallel,
+      panelAmount: string.panelAmount,
+      version: string.version,
+    };
+
+    this.stringsService.updateString(3, update).then((res) => console.log(res));
   }
 }

@@ -169,3 +169,64 @@ func (h *Handlers) GetStringsByProjectId(w http.ResponseWriter, r *http.Request)
 		h.Errors.ServerErrorResponse(w, r, err)
 	}
 }
+
+func (h *Handlers) UpdateString(w http.ResponseWriter, r *http.Request) {
+	bearerHeader := r.Header.Get("Authorization")
+	bearer := strings.Replace(bearerHeader, "Bearer ", "", 1)
+
+	projectIdString := chi.URLParam(r, "projectId")
+	projectId, err := strconv.Atoi(projectIdString)
+	if err != nil {
+		h.Logger.PrintError(err, nil)
+	}
+	fmt.Println(projectId)
+
+	idString, err := h.Tokens.GetUserIdFromToken(bearer)
+	if err != nil {
+		h.Logger.PrintError(err, nil)
+	}
+	userId, err := strconv.Atoi(idString)
+	fmt.Println(userId)
+
+	var input struct {
+		Name         string `json:"name"`
+		IsInParallel bool   `json:"isInParallel"`
+		InverterId   int64  `json:"inverterId"`
+		TrackerId    int64  `json:"trackerId"`
+		ID           int64  `json:"id"`
+		Version      int32  `json:"version"`
+		PanelAmount  int64  `json:"panelAmount"`
+	}
+
+	err = h.Json.DecodeJSON(w, r, &input)
+	if err != nil {
+		h.Errors.ServerErrorResponse(w, r, err)
+		return
+	}
+
+	updateString := &stringModels.String{
+		ID:           input.ID,
+		InverterId:   input.InverterId,
+		TrackerId:    input.TrackerId,
+		Name:         input.Name,
+		Version:      input.Version,
+		IsInParallel: input.IsInParallel,
+		PanelAmount:  input.PanelAmount,
+	}
+
+	result, err := h.Models.Strings.UpdateString(updateString)
+	if err != nil {
+		switch {
+		default:
+			h.Errors.ServerErrorResponse(w, r, err)
+		}
+		return
+	}
+
+	err = h.Json.ResponseJSON(w, http.StatusAccepted,
+		json.Envelope{"string": result},
+		nil)
+	if err != nil {
+		h.Errors.ServerErrorResponse(w, r, err)
+	}
+}

@@ -4,7 +4,7 @@ import { environment } from '../../../environments/environment';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../store/app.state';
 import { StringModel } from '../models/string.model';
-import { addString } from '../store/strings/strings.actions';
+import { addString, updateString } from '../store/strings/strings.actions';
 
 interface StringsEnvelope {
   strings: StringModel[];
@@ -67,6 +67,39 @@ export class StringsService {
           },
           complete: () => {
             console.log('createString');
+          },
+        })
+    );
+  }
+
+  updateString(
+    projectId: number,
+    string: StringModel
+  ): Promise<StringEnvelope> {
+    return new Promise<StringEnvelope>((resolve, reject) =>
+      this.http
+        .post<StringEnvelope>(
+          environment.apiUrl + `/projects/${projectId}/strings`,
+          {
+            name: string.name,
+            isInParallel: string.isInParallel,
+            inverterId: string.inverterId,
+            trackerId: string.trackerId,
+            id: string.id,
+            version: string.version,
+            panelAmount: string.panelAmount,
+          }
+        )
+        .subscribe({
+          next: (envelope) => {
+            this.store.dispatch(updateString({ string: envelope.string }));
+            resolve(envelope);
+          },
+          error: (err) => {
+            reject(err);
+          },
+          complete: () => {
+            console.log('updateString');
           },
         })
     );

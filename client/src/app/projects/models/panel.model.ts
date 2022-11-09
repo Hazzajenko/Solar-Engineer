@@ -5,6 +5,7 @@ export interface PanelModel {
   trackerId?: number;
   stringId: number;
   name?: string;
+  location: string;
   currentAtMaximumPower?: number;
   shortCircuitCurrent?: number;
   shortCircuitCurrentTemp?: number;

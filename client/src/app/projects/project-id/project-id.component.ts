@@ -20,6 +20,16 @@ import { TrackerModel } from '../models/tracker.model';
 import { StringModel } from '../models/string.model';
 import { PanelModel } from '../models/panel.model';
 import { ProjectsService } from '../services/projects.service';
+import { selectProjectByRouteParams } from '../store/projects/projects.selectors';
+import { ProjectModel } from '../models/project.model';
+
+export interface ProjectStore {
+  project?: ProjectModel;
+  inverters?: InverterModel[];
+  trackers?: TrackerModel[];
+  strings?: StringModel[];
+  panels?: PanelModel[];
+}
 
 @Component({
   selector: 'app-project-id',
@@ -40,13 +50,7 @@ export class ProjectIdComponent implements OnInit {
   dataSource = this.treeNodes.dataSource;
   /** The selection for checklist */
   checklistSelection = new SelectionModel<FlatNode>(false /* multiple */);
-  store$?: Observable<{
-    // project?: ProjectModel;
-    inverters?: InverterModel[];
-    trackers?: TrackerModel[];
-    strings?: StringModel[];
-    panels?: PanelModel[];
-  }>;
+  store$?: Observable<ProjectStore>;
   view?: InverterModel;
 
   constructor(
@@ -60,6 +64,9 @@ export class ProjectIdComponent implements OnInit {
   hasChild = (_: number, node: FlatNode) => node.expandable;
 
   ngOnInit(): void {
+    this.store
+      .select(selectProjectByRouteParams)
+      .subscribe((project) => console.log(project));
     this.projects.getDataByProjectId(3).then(async () => {
       // this.inverters.getInvertersByProjectId(project.id).then(async () => {
       // await this.router.navigateByUrl(`/projects/${project.id}`);
@@ -67,6 +74,7 @@ export class ProjectIdComponent implements OnInit {
       // await this.router.navigate([`${project.id}`], { relativeTo: this.route });
     });
     this.store$ = combineLatest([
+      this.store.select(selectProjectByRouteParams),
       this.store.select(
         selectInvertersByProjectId({
           projectId: 3,
@@ -88,7 +96,8 @@ export class ProjectIdComponent implements OnInit {
         })
       ),
     ]).pipe(
-      map(([inverters, trackers, strings, panels]) => ({
+      map(([project, inverters, trackers, strings, panels]) => ({
+        project,
         inverters,
         trackers,
         strings,

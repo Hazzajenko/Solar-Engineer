@@ -24,6 +24,16 @@ export const stringsReducer = createReducer(
 
   on(StringsActions.addStringsByProjectId, (state, { stringModels }) =>
     stringAdapter.addMany(stringModels, state)
+  ),
+
+  on(StringsActions.updateString, (state, { string }) =>
+    stringAdapter.updateOne(
+      {
+        id: string.id,
+        changes: string,
+      },
+      state
+    )
   )
 );
 

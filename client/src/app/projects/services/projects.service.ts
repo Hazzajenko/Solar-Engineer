@@ -4,7 +4,10 @@ import { ProjectModel } from '../models/project.model';
 import { environment } from '../../../environments/environment';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../store/app.state';
-import { addUserProjects } from '../store/projects/projects.actions';
+import {
+  addUserProjects,
+  selectProject,
+} from '../store/projects/projects.actions';
 import { InverterModel } from '../models/inverter.model';
 import { TrackerModel } from '../models/tracker.model';
 import { StringModel } from '../models/string.model';
@@ -17,6 +20,10 @@ import { PanelModel } from '../models/panel.model';
 
 export interface ProjectsEnvelope {
   projects: ProjectModel[];
+}
+
+export interface ProjectEnvelope {
+  project: ProjectModel;
 }
 
 export interface ProjectDataEnvelope {
@@ -63,6 +70,25 @@ export class ProjectsService {
     );
   }
 
+  getProjectById(projectId: number): Promise<ProjectEnvelope> {
+    return new Promise<ProjectEnvelope>((resolve, reject) =>
+      this.http
+        .get<ProjectEnvelope>(environment.apiUrl + `/projects/${projectId}`)
+        .subscribe({
+          next: (envelope) => {
+            this.store.dispatch(selectProject({ project: envelope.project }));
+            resolve(envelope);
+          },
+          error: (err) => {
+            reject(err);
+          },
+          complete: () => {
+            console.log('getProjectById');
+          },
+        })
+    );
+  }
+
   getDataByProjectId(projectId: number): Promise<ProjectDataEnvelope> {
     return new Promise<ProjectDataEnvelope>((resolve, reject) =>
       this.http
@@ -71,6 +97,8 @@ export class ProjectsService {
         )
         .subscribe({
           next: (envelope) => {
+            this.store.dispatch(selectProject({ project: envelope.project }));
+            resolve(envelope);
             this.store.dispatch(
               addInvertersByProjectId({ inverters: envelope.inverters })
             );

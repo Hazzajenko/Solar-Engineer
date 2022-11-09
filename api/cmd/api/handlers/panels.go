@@ -64,6 +64,7 @@ func (h *Handlers) CreatePanel(w http.ResponseWriter, r *http.Request) {
 		TrackerId:               int64(trackerId),
 		StringId:                int64(stringId),
 		Name:                    data.Name,
+		Location:                data.Location,
 		CreatedAt:               time.Time{},
 		CreatedBy:               int64(userId),
 		CurrentAtMaximumPower:   data.CurrentAtMaximumPower,

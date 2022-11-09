@@ -15,3 +15,8 @@ export const addStringsByProjectId = createAction(
   '[Strings Service] Add Strings By TrackerId',
   props<{ stringModels: StringModel[] }>()
 );
+
+export const updateString = createAction(
+  '[Strings Service] Update String',
+  props<{ string: StringModel }>()
+);

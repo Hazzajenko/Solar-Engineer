@@ -14,6 +14,7 @@ type Panel struct {
 	TrackerId               int64           `json:"trackerId"`
 	StringId                int64           `json:"stringId"`
 	Name                    string          `json:"name"`
+	Location                string          `json:"location"`
 	CreatedAt               time.Time       `json:"createdAt"`
 	CreatedBy               int64           `json:"createdBy"`
 	CurrentAtMaximumPower   decimal.Decimal `json:"currentAtMaximumPower"`
@@ -42,6 +43,7 @@ func (p *PanelModel) Insert(panel *Panel) (*Panel, error) {
 		                    tracker_id,
 		                    string_id,
 							name, 
+							location,
 							created_by, 
 							current_at_maximum_power, 
 							short_circuit_current, 
@@ -60,7 +62,8 @@ func (p *PanelModel) Insert(panel *Panel) (*Panel, error) {
 		    inverter_id,
 		    tracker_id,
 		    string_id,
-		    name, 
+		    name,
+		    location,
 		    created_at, 
 		    created_by, 
 			current_at_maximum_power, 
@@ -82,6 +85,7 @@ func (p *PanelModel) Insert(panel *Panel) (*Panel, error) {
 		panel.TrackerId,
 		panel.StringId,
 		panel.Name,
+		panel.Location,
 		panel.CreatedBy,
 		panel.CurrentAtMaximumPower,
 		panel.ShortCircuitCurrent,
@@ -106,6 +110,7 @@ func (p *PanelModel) Insert(panel *Panel) (*Panel, error) {
 		&result.TrackerId,
 		&result.StringId,
 		&result.Name,
+		&result.Location,
 		&result.CreatedAt,
 		&result.CreatedBy,
 		&result.CurrentAtMaximumPower,
@@ -137,7 +142,8 @@ func (p *PanelModel) GetPanelsByProjectId(projectId int64) ([]*Panel, error) {
 		       inverter_id, 
 		       tracker_id, 
 		       string_id, 
-		       name, 
+		       name,
+		       location,
 		       created_at, 				
 		       created_by, 			
 		       current_at_maximum_power, 				
@@ -178,6 +184,7 @@ func (p *PanelModel) GetPanelsByProjectId(projectId int64) ([]*Panel, error) {
 			&panel.TrackerId,
 			&panel.StringId,
 			&panel.Name,
+			&panel.Location,
 			&panel.CreatedAt,
 			&panel.CreatedBy,
 			&panel.CurrentAtMaximumPower,
