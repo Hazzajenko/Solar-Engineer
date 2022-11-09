@@ -79,46 +79,52 @@
       </mat-tree-node>&ndash;&gt;
 </mat-tree>-->
 
-<ng-container *ngIf="store$ | async as store">
-  <ng-container *ngIf="store.inverters">
-    <div *ngFor="let inverter of store.inverters; let i = index">
-      <div>
-        <button mat-stroked-button color="primary" (click)="toggleInverter(inverter, i)">
-          {{inverter.name}}{{i}}
-        </button>
-        {{inverter.trackerAmount}} Trackers
-      </div>
-      <ng-container *ngIf="store.trackers">
-        <div *ngIf="inverterBool[i]">
-          <div *ngFor="let tracker of store.trackers; let a = index">
-            <div class="tracker-item" *ngIf="tracker.inverterId === inverter.id">
-              <button mat-stroked-button color="secondary"
-                      (click)="toggleTracker(tracker, a)">{{tracker.name}}{{a}}</button>
-              <div *ngIf="trackerBool[a]">
-                <div *ngFor="let stringModel of store.strings; let b = index">
-                  <div class="string-item" *ngIf="stringModel.trackerId === tracker.id">
-                    <button mat-stroked-button color="secondary"
-                            (click)="toggleString(stringModel, b)">{{stringModel.name}}{{b}}</button>
-                    <div *ngIf="stringBool[b]">
-                      <div *ngIf="store.panels">
-                        <div *ngFor="let panel of store.panels; let c = index">
-                          <div *ngIf="panel.stringId === stringModel.id">
-                            {{panel.name}}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </ng-container>
-    </div>
+<!--<div class="row">-->
+<!--
+<div class="col">
+  One of three columns
+</div>
+<div class="col">
+  One of three columns
+</div>
+<div class="col">
+  One of three columns
+</div>
+-->
 
+
+<div class="project-container">
+  <ng-container *ngIf="store$ | async; let store">
+    <div class="project-container__project-tree">
+      <app-project-tree [inverters]="store.inverters" [trackers]="store.trackers" [strings]="store.strings"
+                        [panels]="store.panels" (inverterView)="updateView($event)"></app-project-tree>
+    </div>
+    <div class="project-container__project-display">
+      <!--      <app-project-tree [inverters]="store.inverters" [trackers]="store.trackers" [strings]="store.strings"
+                              [panels]="store.panels"></app-project-tree>-->
+      <app-inverter-view [inverter]="view"></app-inverter-view>
+    </div>
   </ng-container>
-</ng-container>
+</div>
+
+<!--<mat-grid-list cols="4" rowHeight="600px">
+  <ng-container *ngIf="store$ | async; let store">
+    <mat-grid-tile
+      class="blue"
+      [colspan]="1"
+      [rowspan]="1">
+      <app-project-tree [inverters]="store.inverters" [trackers]="store.trackers" [strings]="store.strings"
+                        [panels]="store.panels"></app-project-tree>
+    </mat-grid-tile>
+    <mat-grid-tile
+      class="blue"
+      [colspan]="3"
+      [rowspan]="1">
+      Text2
+    </mat-grid-tile>
+  </ng-container>
+</mat-grid-list>-->
+
 
 <!-- an hidden div is created to set the position of appearance of the menu-->
 <div style="visibility: hidden; position: fixed;"

@@ -1,0 +1,168 @@
+<div
+  cdkDropList
+  cdkDropListOrientation="horizontal"
+  (cdkDropListDropped)="drop($event)"
+  class="project-tree">
+
+  <button (click)="createInverter(3)">Create inverter</button>
+  <ng-container *ngIf="inverters">
+    <div *ngFor="let inverter of inverters; let i = index">
+      <div class="project-tree__inverter-item">
+
+        <!--      <button mat-stroked-button color="primary" (click)="toggleInverter(inverter, i)">
+                {{inverter.name}}{{i}}
+              </button>-->
+        <div>
+          <button (click)="toggleInverter(inverter, i)" [attr.aria-label]="'Toggle ' + inverter.name" mat-icon-button>
+            <mat-icon class="mat-icon-rtl-mirror">
+              {{inverterBool[i] ? 'expand_more' : 'chevron_right'}}
+            </mat-icon>
+
+          </button>
+          <span>{{inverter.name}}</span>
+          <!--          <button mat-icon-button [matMenuTriggerFor]="menu" [matMenuTriggerData]="{item: inverter}">
+                      <mat-icon>more_vert</mat-icon>
+                    </button>-->
+
+        </div>
+        <!--      {{inverter.trackerAmount}} Trackers-->
+
+        <ng-container *ngIf="trackers">
+          <div *ngIf="inverterBool[i]">
+            <!--            <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">-->
+            <!--              <mat-icon>more_vert</mat-icon>-->
+            <!--            </button>-->
+            <!--            <button mat-icon-button (click)="openMenu($event, inverter)" aria-label="Example icon-button with a menu">
+                          <mat-icon>more_vert</mat-icon>
+                        </button>-->
+            <div class="project-tree__inverter-item__button-menu">
+              <button mat-icon-button (click)="createTracker(3, inverter)">
+                <mat-icon>add_circle</mat-icon>
+              </button>
+              <button mat-icon-button [matMenuTriggerFor]="menu" [matMenuTriggerData]="{item: inverter}">
+                <mat-icon>settings</mat-icon>
+              </button>
+              <button mat-icon-button [matMenuTriggerFor]="menu" [matMenuTriggerData]="{item: inverter}">
+                <mat-icon>delete</mat-icon>
+              </button>
+              <button mat-icon-button [matMenuTriggerFor]="menu" [matMenuTriggerData]="{item: inverter}">
+                <mat-icon>open_in_new</mat-icon>
+              </button>
+              <button mat-icon-button (click)="selectNewView(inverter)">
+                <mat-icon>chevron_right</mat-icon>
+              </button>
+            </div>
+
+
+            <div *ngFor="let tracker of trackers; let a = index">
+              <div class="project-tree__tracker-item" *ngIf="tracker.inverterId === inverter.id">
+                <!--              <button mat-stroked-button color="secondary"
+                                      (click)="toggleTracker(tracker, a)">{{tracker.name}}{{a}}</button>-->
+
+                <div>
+                  <button (click)="toggleTracker(tracker, a)" [attr.aria-label]="'Toggle ' + tracker.name"
+                          mat-icon-button>
+                    <mat-icon class="mat-icon-rtl-mirror">
+                      {{trackerBool[a] ? 'expand_more' : 'chevron_right'}}
+                    </mat-icon>
+                  </button>
+                  {{tracker.name}}
+                </div>
+                <!--                <tr>
+                                  <td>{{tracker.name}}</td>
+                                  <td>{{tracker.inverterId}}</td>
+                                  <td>{{tracker.maxInputCurrent}}</td>
+                                  <td>{{tracker.maxShortCircuitCurrent}}</td>
+                                  <td>{{tracker.stringAmount}}</td>
+                                </tr>-->
+                <div cdkDropList
+                     cdkDropListOrientation="vertical"
+                     (cdkDropListDropped)="taskDrop($event)" *ngIf="trackerBool[a]">
+                  <div class="project-tree__tracker-item__button-menu">
+                    <button mat-icon-button (click)="createString(3, inverter, tracker)">
+                      <mat-icon>add_circle</mat-icon>
+                    </button>
+                    <button mat-icon-button [matMenuTriggerFor]="menu" [matMenuTriggerData]="{item: inverter}">
+                      <mat-icon>settings</mat-icon>
+                    </button>
+                    <button mat-icon-button [matMenuTriggerFor]="menu" [matMenuTriggerData]="{item: inverter}">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                    <button mat-icon-button [matMenuTriggerFor]="menu" [matMenuTriggerData]="{item: inverter}">
+                      <mat-icon>open_in_new</mat-icon>
+                    </button>
+                    <button mat-icon-button (click)="selectNewView(inverter)">
+                      <mat-icon>chevron_right</mat-icon>
+                    </button>
+                  </div>
+                  <div
+                    [cdkDragData]="stringModel"
+                    cdkDrag *ngFor="let stringModel of strings; let b = index">
+                    <div class="project-tree__string-item" *ngIf="stringModel.trackerId === tracker.id">
+                      <mat-icon cdkDragHandle class="project-tree__string-item__handle">drag_indicator</mat-icon>
+                      <!--                      <button mat-stroked-button color="secondary"
+                                                    (click)="toggleString(stringModel, b)">{{stringModel.name}}{{b}}</button>-->
+                      <button (click)="toggleString(stringModel, b)" [attr.aria-label]="'Toggle ' + stringModel.name"
+                              mat-icon-button>
+                        <mat-icon class="mat-icon-rtl-mirror">
+                          {{stringBool[b] ? 'expand_more' : 'chevron_right'}}
+                        </mat-icon>
+                      </button>
+                      {{stringModel.name}}
+                      <div *ngIf="stringBool[b]">
+                        <div class="project-tree__string-item__button-menu">
+                          <button mat-icon-button (click)="createPanel(3, inverter, tracker, stringModel)">
+                            <mat-icon>add_circle</mat-icon>
+                          </button>
+                          <button mat-icon-button [matMenuTriggerFor]="menu" [matMenuTriggerData]="{item: inverter}">
+                            <mat-icon>settings</mat-icon>
+                          </button>
+                          <button mat-icon-button [matMenuTriggerFor]="menu" [matMenuTriggerData]="{item: inverter}">
+                            <mat-icon>delete</mat-icon>
+                          </button>
+                          <button mat-icon-button [matMenuTriggerFor]="menu" [matMenuTriggerData]="{item: inverter}">
+                            <mat-icon>open_in_new</mat-icon>
+                          </button>
+                          <button mat-icon-button (click)="selectNewView(inverter)">
+                            <mat-icon>chevron_right</mat-icon>
+                          </button>
+                        </div>
+                        <div *ngIf="panels">
+                          <div *ngFor="let panel of panels; let c = index">
+                            <div class="project-tree__panel-item">
+                              <div *ngIf="panel.stringId === stringModel.id">
+                                {{panel.name}}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!--          </table>-->
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </ng-container>
+</div>
+
+
+<div style="visibility: hidden; position: fixed;"
+     [style.left]="menuTopLeftPosition.x"
+     [style.top]="menuTopLeftPosition.y"
+     [matMenuTriggerFor]="menu"></div>
+
+<!-- standard material menu -->
+<mat-menu #menu="matMenu">
+  <ng-template matMenuContent let-inverter="item">
+    <!--    <label>{{inverter.name}}</label>-->
+    <button mat-menu-item (click)="click()">Add Tracker</button>
+    <button mat-menu-item (click)="click()">Edit</button>
+    <button mat-menu-item (click)="click()">View</button>
+    <button mat-menu-item (click)="click()">Delete</button>
+  </ng-template>
+</mat-menu>

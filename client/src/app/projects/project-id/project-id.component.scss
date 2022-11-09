@@ -1,16 +1,62 @@
+.project-container {
+  display: flex;
+  //justify-content: space-between;
+  //align-items: center;
+
+  &__project-tree {
+    background: lightblue;
+    flex: 0 0 25%;
+  }
+
+  &__project-display {
+    background: #669966;
+    flex: 0 0 75%;
+  }
+}
+
+/*
 .container {
   display: flex;
   flex-direction: column;
-  height: 200px;
+  height: 600px;
   max-width: 1100px;
   margin: 0 auto;
   padding: 0 30px;
-  align-items: center;
+  align-items: start;
   justify-content: start;
-  /*  justify-content: center;
+  !*  justify-content: center;
     align-content: center;
-    align-self: center;*/
+    align-self: center;*!
 }
+
+mat-grid-tile {
+  background: lightblue;
+}
+
+.blue {
+  background: lightblue;
+}
+
+.inverter-item {
+  padding-left: 20px;
+  //padding-bottom: 200px;
+
+  !*  &:hover {
+      color: yellow;
+    }*!
+
+  .tracker-item {
+    //padding-top: 2px;
+    padding-left: 20px;
+
+    .string-item {
+      //padding-top: 2px;
+      padding-left: 20px;
+
+    }
+  }
+}
+
 
 .item {
   margin: 10px;
@@ -42,7 +88,7 @@
   list-style-type: none;
 }
 
-/* This padding sets alignment of the nested nodes. */
+!* This padding sets alignment of the nested nodes. *!
 .example-tree .mat-nested-tree-node div[role="group"] {
   padding-left: 40px;
 }
@@ -52,13 +98,6 @@
   padding-left: 40px;
 }
 
-.tracker-item {
-  padding-left: 20px;
-}
-
-.string-item {
-  padding-left: 40px;
-}
 
 h1,
 h3 {
@@ -75,8 +114,9 @@ h3 {
   color: black;
 }
 
-/*
+!*
 .mat-tree-node button {
   padding: 10px;
 }
+*!
 */

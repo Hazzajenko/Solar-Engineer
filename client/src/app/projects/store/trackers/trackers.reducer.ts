@@ -22,7 +22,7 @@ export const trackersReducer = createReducer(
     trackerAdapter.addOne(tracker, state)
   ),
 
-  on(TrackerActions.addTrackersByProjectId, (state, { trackers }) =>
+  on(TrackerActions.addTrackers, (state, { trackers }) =>
     trackerAdapter.addMany(trackers, state)
   )
 );

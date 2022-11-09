@@ -9,7 +9,7 @@ import { InverterModel } from '../models/inverter.model';
 import { TrackerModel } from '../models/tracker.model';
 import { StringModel } from '../models/string.model';
 import { addInvertersByProjectId } from '../store/inverters/inverters.actions';
-import { addTrackersByProjectId } from '../store/trackers/trackers.actions';
+import { addTrackers } from '../store/trackers/trackers.actions';
 import { addStringsByProjectId } from '../store/strings/strings.actions';
 import { TreeNodesService } from './tree-nodes.service';
 import { addPanelsByProjectId } from '../store/panels/panels.actions';
@@ -74,9 +74,7 @@ export class ProjectsService {
             this.store.dispatch(
               addInvertersByProjectId({ inverters: envelope.inverters })
             );
-            this.store.dispatch(
-              addTrackersByProjectId({ trackers: envelope.trackers })
-            );
+            this.store.dispatch(addTrackers({ trackers: envelope.trackers }));
             this.store.dispatch(
               addStringsByProjectId({
                 stringModels: envelope.stringsByProjectId,

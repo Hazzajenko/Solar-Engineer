@@ -11,7 +11,7 @@ export const addTrackersToInverter = createAction(
   props<{ trackers: TrackerModel[] }>()
 );
 
-export const addTrackersByProjectId = createAction(
+export const addTrackers = createAction(
   '[Trackers Service] Add Trackers By InverterId',
   props<{ trackers: TrackerModel[] }>()
 );

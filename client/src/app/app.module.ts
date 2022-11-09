@@ -21,13 +21,19 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { JwtModule } from '@auth0/angular-jwt';
-import { JwtInterceptor } from './interceptors/jwt.interceptor';
 import { MatTreeModule } from '@angular/material/tree';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { ProjectTreeComponent } from './projects/project-id/components/project-tree/project-tree.component';
+import { MatSortModule } from '@angular/material/sort';
+import { JwtInterceptor } from './interceptors/jwt.interceptor';
+import { InverterViewComponent } from './projects/project-id/views/inverter-view/inverter-view.component';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 export function tokenGetter() {
+  console.log(localStorage.getItem('token'));
   return localStorage.getItem('token');
 }
 
@@ -38,6 +44,8 @@ export function tokenGetter() {
     ProjectListItemComponent,
     ProjectIdComponent,
     LoginComponent,
+    ProjectTreeComponent,
+    InverterViewComponent,
   ],
   imports: [
     BrowserModule,
@@ -48,7 +56,7 @@ export function tokenGetter() {
     JwtModule.forRoot({
       config: {
         tokenGetter: tokenGetter,
-        allowedDomains: ['https://localhost:7048'],
+        allowedDomains: ['http://localhost:3000'],
         // disallowedRoutes: ["http://example.com/examplebadroute/"],
       },
     }),
@@ -74,6 +82,9 @@ export function tokenGetter() {
     MatIconModule,
     MatCheckboxModule,
     MatMenuModule,
+    MatGridListModule,
+    MatSortModule,
+    DragDropModule,
   ],
   providers: [
     {

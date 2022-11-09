@@ -163,15 +163,15 @@ func (h *Handlers) GetProjectById(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handlers) GetDataForProject(w http.ResponseWriter, r *http.Request) {
-	bearerHeader := r.Header.Get("Authorization")
-	bearer := strings.Replace(bearerHeader, "Bearer ", "", 1)
+	/*	bearerHeader := r.Header.Get("Authorization")
+		bearer := strings.Replace(bearerHeader, "Bearer ", "", 1)
 
-	idString, err := h.Tokens.GetUserIdFromToken(bearer)
-	if err != nil {
-		h.Logger.PrintError(err, nil)
-	}
-	userId, err := strconv.Atoi(idString)
-	fmt.Println(userId)
+		idString, err := h.Tokens.GetUserIdFromToken(bearer)
+		if err != nil {
+			h.Logger.PrintError(err, nil)
+		}
+		userId, err := strconv.Atoi(idString)
+		fmt.Println(userId)*/
 
 	projectIdString := chi.URLParam(r, "projectId")
 	projectId, err := strconv.Atoi(projectIdString)

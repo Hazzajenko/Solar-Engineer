@@ -19,6 +19,7 @@ import { map } from 'rxjs/operators';
 import { TrackerModel } from '../models/tracker.model';
 import { StringModel } from '../models/string.model';
 import { PanelModel } from '../models/panel.model';
+import { ProjectsService } from '../services/projects.service';
 
 @Component({
   selector: 'app-project-id',
@@ -46,10 +47,12 @@ export class ProjectIdComponent implements OnInit {
     strings?: StringModel[];
     panels?: PanelModel[];
   }>;
+  view?: InverterModel;
 
   constructor(
     private store: Store<AppState>,
-    private treeNodes: TreeNodesService
+    private treeNodes: TreeNodesService,
+    private projects: ProjectsService
   ) {
     // this.dataSource.data = PROJECT_DATA;
   }
@@ -57,6 +60,12 @@ export class ProjectIdComponent implements OnInit {
   hasChild = (_: number, node: FlatNode) => node.expandable;
 
   ngOnInit(): void {
+    this.projects.getDataByProjectId(3).then(async () => {
+      // this.inverters.getInvertersByProjectId(project.id).then(async () => {
+      // await this.router.navigateByUrl(`/projects/${project.id}`);
+      // this.treenodes.initTreeNode(project.id);
+      // await this.router.navigate([`${project.id}`], { relativeTo: this.route });
+    });
     this.store$ = combineLatest([
       this.store.select(
         selectInvertersByProjectId({
@@ -256,5 +265,10 @@ export class ProjectIdComponent implements OnInit {
   toggleString(stringModel: StringModel, index: number) {
     this.stringBool[index] = !this.stringBool[index];
     console.log(this.stringBool[index]);
+  }
+
+  updateView(event: InverterModel) {
+    console.log(event);
+    this.view = event;
   }
 }

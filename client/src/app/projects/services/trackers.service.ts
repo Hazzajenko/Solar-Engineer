@@ -7,7 +7,7 @@ import { InverterModel } from '../models/inverter.model';
 import { addTreeNode } from '../store/tree-node/tree-node.actions';
 import { type } from './tree-nodes.service';
 import { TrackerModel } from '../models/tracker.model';
-import { addTrackersByProjectId } from '../store/trackers/trackers.actions';
+import { addTrackers } from '../store/trackers/trackers.actions';
 
 interface TrackersEnvelope {
   trackers: TrackerModel[];
@@ -27,9 +27,7 @@ export class TrackersService {
         )
         .subscribe({
           next: (envelope) => {
-            this.store.dispatch(
-              addTrackersByProjectId({ trackers: envelope.trackers })
-            );
+            this.store.dispatch(addTrackers({ trackers: envelope.trackers }));
             resolve(envelope);
           },
           error: (err) => {
@@ -42,13 +40,47 @@ export class TrackersService {
     );
   }
 
+  createTrackers(
+    projectId: number,
+    inverterId: number
+  ): Promise<TrackersEnvelope> {
+    // const token = localStorage.getItem('token');
+    /*    console.log(token);
+        this.store.select(selectToken).subscribe((token) => {
+          console.log('hello');
+          console.log(token);
+          if (token) {
+            console.log(token);
+          }
+        });*/
+    return new Promise<TrackersEnvelope>((resolve, reject) =>
+      this.http
+        .post<TrackersEnvelope>(
+          environment.apiUrl + `/projects/${projectId}/${inverterId}`,
+          {}
+        )
+        .subscribe({
+          next: (envelope) => {
+            this.store.dispatch(addTrackers({ trackers: envelope.trackers }));
+            resolve(envelope);
+          },
+          error: (err) => {
+            reject(err);
+          },
+          complete: () => {
+            console.log('createTrackers');
+          },
+        })
+    );
+  }
+
   breakDownInvertersForTreeNode(inverters: InverterModel[]) {
     inverters.map((inverter) => {
       this.store.dispatch(
         addTreeNode({
           treeNode: {
             id: inverter.id,
-            projectId: inverter.project_id,
+            projectId: inverter.projectId,
             name: inverter.name,
             type: type.INVERTER,
             children: [],

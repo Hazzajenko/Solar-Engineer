@@ -9,7 +9,7 @@ import { Observable } from 'rxjs';
 import { selectUser } from './store/auth.selectors';
 import { map, take } from 'rxjs/operators';
 
-import { signIn } from './store/auth.actions';
+import { addToken, signIn } from './store/auth.actions';
 import { AppState } from '../store/app.state';
 
 export interface SignInRequest {
@@ -78,9 +78,10 @@ export class AuthService {
             this.currentUser = res.user;
             const tokenPayload = decode(res.token);
             console.log(tokenPayload);
-            localStorage.setItem('token', JSON.stringify(res.token));
+            localStorage.setItem('token', res.token);
 
             this.store.dispatch(signIn({ user: res.user }));
+            this.store.dispatch(addToken({ token: res.token }));
             resolve(res);
           },
           error: (err: any) => {

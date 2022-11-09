@@ -128,7 +128,7 @@ func (h *Handlers) CreateString(w http.ResponseWriter, r *http.Request) {
 	}*/
 
 	err = h.Json.ResponseJSON(w, http.StatusAccepted,
-		json.Envelope{"strings": result},
+		json.Envelope{"string": result},
 		nil)
 	if err != nil {
 		h.Errors.ServerErrorResponse(w, r, err)
