@@ -14,6 +14,7 @@ type Panel struct {
 	TrackerId               int64           `json:"trackerId"`
 	StringId                int64           `json:"stringId"`
 	Name                    string          `json:"name"`
+	Model                   int             `json:"model"`
 	Location                string          `json:"location"`
 	CreatedAt               time.Time       `json:"createdAt"`
 	CreatedBy               int64           `json:"createdBy"`
@@ -28,7 +29,7 @@ type Panel struct {
 	Length                  int64           `json:"length"`
 	Weight                  decimal.Decimal `json:"weight"`
 	Width                   int64           `json:"width"`
-	Version                 int             `json:"-"`
+	Version                 int32           `json:"version"`
 }
 
 type PanelModel struct {
@@ -56,13 +57,14 @@ func (p *PanelModel) Insert(panel *Panel) (*Panel, error) {
 							length, 
 							weight, 
 							width)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)
 		RETURNING  id, 
 		    project_id, 
 		    inverter_id,
 		    tracker_id,
 		    string_id,
 		    name,
+		    model,
 		    location,
 		    created_at, 
 		    created_by, 
@@ -110,6 +112,7 @@ func (p *PanelModel) Insert(panel *Panel) (*Panel, error) {
 		&result.TrackerId,
 		&result.StringId,
 		&result.Name,
+		&result.Model,
 		&result.Location,
 		&result.CreatedAt,
 		&result.CreatedBy,
@@ -143,6 +146,7 @@ func (p *PanelModel) GetPanelsByProjectId(projectId int64) ([]*Panel, error) {
 		       tracker_id, 
 		       string_id, 
 		       name,
+		       model,
 		       location,
 		       created_at, 				
 		       created_by, 			
@@ -184,6 +188,7 @@ func (p *PanelModel) GetPanelsByProjectId(projectId int64) ([]*Panel, error) {
 			&panel.TrackerId,
 			&panel.StringId,
 			&panel.Name,
+			&panel.Model,
 			&panel.Location,
 			&panel.CreatedAt,
 			&panel.CreatedBy,

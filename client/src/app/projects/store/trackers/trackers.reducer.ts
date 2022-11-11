@@ -24,6 +24,16 @@ export const trackersReducer = createReducer(
 
   on(TrackerActions.addTrackers, (state, { trackers }) =>
     trackerAdapter.addMany(trackers, state)
+  ),
+
+  on(TrackerActions.updateTracker, (state, { tracker }) =>
+    trackerAdapter.updateOne(
+      {
+        id: tracker.id,
+        changes: tracker,
+      },
+      state
+    )
   )
 );
 

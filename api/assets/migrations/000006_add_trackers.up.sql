@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS trackers (
     project_id bigint NOT NULL REFERENCES projects ON DELETE CASCADE,
     inverter_id bigint NOT NULL REFERENCES inverters ON DELETE CASCADE,
     name text NOT NULL,
+    model integer NOT NULL DEFAULT 1,
     created_at timestamp(0) with time zone NOT NULL DEFAULT NOW(),
     created_by bigserial NOT NULL REFERENCES users ON DELETE CASCADE,
     max_input_current bigint NOT NULL DEFAULT 0,

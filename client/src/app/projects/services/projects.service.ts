@@ -14,7 +14,6 @@ import { StringModel } from '../models/string.model';
 import { addInvertersByProjectId } from '../store/inverters/inverters.actions';
 import { addTrackers } from '../store/trackers/trackers.actions';
 import { addStringsByProjectId } from '../store/strings/strings.actions';
-import { TreeNodesService } from './tree-nodes.service';
 import { addPanelsByProjectId } from '../store/panels/panels.actions';
 import { PanelModel } from '../models/panel.model';
 
@@ -40,8 +39,7 @@ export interface ProjectDataEnvelope {
 export class ProjectsService {
   constructor(
     private http: HttpClient,
-    private store: Store<AppState>,
-    private treeNodes: TreeNodesService
+    private store: Store<AppState>
   ) /*    private store: Store<AppState>,
         private inverters: InvertersService*/ {}
 
@@ -133,7 +131,6 @@ export class ProjectsService {
           },
           complete: () => {
             console.log('getDataByProjectId');
-            this.treeNodes.initTreeNode(projectId);
           },
         })
     );

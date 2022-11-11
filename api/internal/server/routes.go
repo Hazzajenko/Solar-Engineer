@@ -39,6 +39,7 @@ func (s *Server) Routes() *chi.Mux {
 			r.Get("/panels", s.Handlers.GetPanelsByProjectId)
 			r.Post("/", s.Handlers.CreateInverter)
 			r.Post("/strings", s.Handlers.UpdateString)
+			r.Post("/panels", s.Handlers.UpdatePanelLocation)
 
 			r.Route("/{inverterId}", func(r chi.Router) {
 				r.Get("/", s.Handlers.GetTrackersByInverterId)

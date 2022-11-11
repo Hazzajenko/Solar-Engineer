@@ -1,7 +1,10 @@
+import { UnitModel } from './unit.model';
+
 export interface TrackerModel {
   id: number;
   projectId: number;
   inverterId: number;
+  model?: UnitModel;
   name: string;
   maxInputCurrent?: number;
   maxShortCircuitCurrent?: number;

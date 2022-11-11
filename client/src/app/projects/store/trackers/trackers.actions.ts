@@ -15,3 +15,8 @@ export const addTrackers = createAction(
   '[Trackers Service] Add Trackers By InverterId',
   props<{ trackers: TrackerModel[] }>()
 );
+
+export const updateTracker = createAction(
+  '[Trackers Service] Update Tracker',
+  props<{ tracker: TrackerModel }>()
+);

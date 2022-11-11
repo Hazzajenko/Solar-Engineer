@@ -12,7 +12,8 @@ type Inverter struct {
 	Name                string    `json:"name"`
 	CreatedAt           time.Time `json:"createdAt"`
 	CreatedBy           int64     `json:"createdBy"`
-	Version             int       `json:"-"`
+	Model               int       `json:"model"`
+	Version             int       `json:"version"`
 	TrackerAmount       int       `json:"trackerAmount"`
 	AcNominalOutput     int       `json:"acNominalOutput"`
 	AcOutputCurrent     int       `json:"acOutputCurrent"`
@@ -47,6 +48,7 @@ func (p *InverterModel) Insert(inverter *Inverter) (*Inverter, error) {
 		RETURNING  id, 
 		    project_id, 
 		    name, 
+		    model,
 		    created_at, 
 		    created_by, 
 			tracker_amount,
@@ -81,6 +83,7 @@ func (p *InverterModel) Insert(inverter *Inverter) (*Inverter, error) {
 		&result.ID,
 		&result.ProjectId,
 		&result.Name,
+		&result.Model,
 		&result.CreatedAt,
 		&result.CreatedBy,
 		&result.TrackerAmount,
@@ -109,6 +112,7 @@ func (p *InverterModel) GetInvertersByProjectId(projectId int64) ([]*Inverter, e
 			id, 
 		    project_id, 
 		    name, 
+		    model,
 		    created_at, 
 		    created_by, 
 			tracker_amount,
@@ -145,6 +149,7 @@ func (p *InverterModel) GetInvertersByProjectId(projectId int64) ([]*Inverter, e
 			&inverter.ID,
 			&inverter.ProjectId,
 			&inverter.Name,
+			&inverter.Model,
 			&inverter.CreatedAt,
 			&inverter.CreatedBy,
 			&inverter.TrackerAmount,

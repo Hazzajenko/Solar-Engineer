@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS strings (
     inverter_id bigint NOT NULL REFERENCES inverters ON DELETE CASCADE,
     tracker_id bigint NOT NULL REFERENCES trackers ON DELETE CASCADE,
     name text NOT NULL,
+    model integer NOT NULL DEFAULT 2,
     created_at timestamp(0) with time zone NOT NULL DEFAULT NOW(),
     created_by bigserial NOT NULL REFERENCES users ON DELETE CASCADE,
     is_in_parallel bool NOT NULL DEFAULT false,

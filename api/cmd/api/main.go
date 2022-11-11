@@ -4,6 +4,7 @@ import (
 	handlers2 "github.com/Hazzajenko/gosolarbackend/cmd/api/handlers"
 	"github.com/Hazzajenko/gosolarbackend/internal/data"
 	errors2 "github.com/Hazzajenko/gosolarbackend/internal/errors"
+	helpers2 "github.com/Hazzajenko/gosolarbackend/internal/helpers"
 	json2 "github.com/Hazzajenko/gosolarbackend/internal/json"
 	"github.com/Hazzajenko/gosolarbackend/internal/logger"
 	server2 "github.com/Hazzajenko/gosolarbackend/internal/server"
@@ -67,7 +68,8 @@ func main() {
 	errors := errors2.InitErrors(customLogger, &json)
 	//key := "pei3einoh0Beem6uM6Ungohn2heiv5lah1ael4joopie5JaigeikoozaoTew2Eh6"
 	tokens := tokens2.InitTokens(key)
-	handlers := handlers2.InitHandlers(models, customLogger, &tokens, &json, &errors)
+	helpers := helpers2.InitHelpers()
+	handlers := handlers2.InitHandlers(models, customLogger, &tokens, &json, &errors, &helpers)
 
 	server := server2.InitServer(r, &handlers)
 	server.Middleware()

@@ -35,6 +35,9 @@ import { GridLayoutComponent } from './projects/project-id/views/grid-layout/gri
 import { ProjectViewComponent } from './projects/project-id/views/project-view/project-view.component';
 import { TrackerViewComponent } from './projects/project-id/views/tracker-view/tracker-view.component';
 import { StringViewComponent } from './projects/project-id/views/string-view/string-view.component';
+import { ButtonMenuComponent } from './projects/project-id/components/project-tree/button-menu/button-menu.component';
+import { TestPipePipe } from './pipes/test-pipe.pipe';
+import { FilterPanelsPipe } from './pipes/filter-panels.pipe';
 
 export function tokenGetter() {
   console.log(localStorage.getItem('token'));
@@ -54,6 +57,9 @@ export function tokenGetter() {
     ProjectViewComponent,
     TrackerViewComponent,
     StringViewComponent,
+    ButtonMenuComponent,
+    TestPipePipe,
+    FilterPanelsPipe,
   ],
   imports: [
     BrowserModule,

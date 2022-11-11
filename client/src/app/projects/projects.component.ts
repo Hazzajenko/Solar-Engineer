@@ -7,7 +7,6 @@ import { Store } from '@ngrx/store';
 import { AppState } from '../store/app.state';
 import { selectAllProjects } from './store/projects/projects.selectors';
 import { InvertersService } from './services/inverters.service';
-import { TreeNodesService } from './services/tree-nodes.service';
 
 @Component({
   selector: 'app-projects',
@@ -22,8 +21,7 @@ export class ProjectsComponent implements OnInit {
     private store: Store<AppState>,
     private projects: ProjectsService,
     private inverters: InvertersService,
-    private route: ActivatedRoute,
-    private treenodes: TreeNodesService
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {

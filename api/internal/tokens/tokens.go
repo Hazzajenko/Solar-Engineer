@@ -94,3 +94,26 @@ func (t *Tokens) GetUserIdFromToken(tokenString string) (string, error) {
 
 	return myClaims.Subject, nil
 }
+
+func (t *Tokens) GetUserIdInt64FromToken(tokenString string) (int64, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &UserClaims{}, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, errors.New("unexpected signing method")
+		}
+		return []byte(t.SigningKey), nil
+	})
+
+	if err != nil {
+		return 0, err
+	}
+
+	myClaims := token.Claims.(*UserClaims)
+
+	result, err := strconv.ParseInt(myClaims.Subject, 10, 64)
+	if err != nil {
+		return 0, err
+	}
+	return result, nil
+
+	//return myClaims.Subject, nil
+}

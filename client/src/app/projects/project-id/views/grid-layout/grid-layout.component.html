@@ -1,27 +1,30 @@
-<div class="row" *ngFor="let n of numSequence(10);
+<div cdkDropListGroup>
+  <div class="row" *ngFor="let n of numSequence(10);
            let i = index;">
-  <!--  {{i}}-->
-  <div class="col" *ngFor="let n of numSequence(10);
+    <!--  {{i}}-->
+    <div class="col" *ngFor="let n of numSequence(10);
            let a = index;">
 
-    <div
-      cdkDropList [id]="i.toString() + a"
-      cdkDropListOrientation="vertical"
-      (cdkDropListDropped)="taskDrop($event)"
-      class="drop-zone">
-      |{{i}}{{a}}|
+      <div
+        cdkDropList [id]="i.toString() + a"
 
-      <div *ngFor="let panel of panels">
-        <div
-          *ngIf="panel.location === i.toString() + a"
-          cdkDrag
-          class="panel">
-          {{panel.location}}
+        (cdkDropListDropped)="taskDrop($event)"
+        class="drop-zone">
+        |{{i}}{{a}}|
+
+        <div *ngFor="let panel of panels">
+          <div
+            [cdkDragData]="panel"
+            *ngIf="panel.location === i.toString() + a"
+            cdkDrag
+            class="panel">
+            {{panel.location}}
+          </div>
         </div>
+
+
       </div>
-
-
     </div>
-  </div>
 
+  </div>
 </div>

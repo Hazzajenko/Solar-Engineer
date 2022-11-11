@@ -5,6 +5,7 @@ import { Store } from '@ngrx/store';
 import { AppState } from '../../store/app.state';
 import { StringModel } from '../models/string.model';
 import { addString, updateString } from '../store/strings/strings.actions';
+import { TrackerModel } from '../models/tracker.model';
 
 interface StringsEnvelope {
   strings: StringModel[];
@@ -12,6 +13,11 @@ interface StringsEnvelope {
 
 interface StringEnvelope {
   string: StringModel;
+}
+
+interface CreateStringResponse {
+  string: StringModel;
+  tracker: TrackerModel;
 }
 
 @Injectable({
@@ -44,22 +50,24 @@ export class StringsService {
   createString(
     projectId: number,
     inverterId: number,
-    trackerId: number,
+    tracker: TrackerModel,
     name: string
-  ): Promise<StringEnvelope> {
-    return new Promise<StringEnvelope>((resolve, reject) =>
+  ): Promise<CreateStringResponse> {
+    return new Promise<CreateStringResponse>((resolve, reject) =>
       this.http
-        .post<StringEnvelope>(
+        .post<CreateStringResponse>(
           environment.apiUrl +
-            `/projects/${projectId}/${inverterId}/${trackerId}`,
+            `/projects/${projectId}/${inverterId}/${tracker.id}`,
           {
             name,
             isInParallel: false,
+            // tracker,
           }
         )
         .subscribe({
           next: (envelope) => {
             this.store.dispatch(addString({ stringModel: envelope.string }));
+            // this.store.dispatch(updateTracker({ tracker: envelope.tracker }));
             resolve(envelope);
           },
           error: (err) => {

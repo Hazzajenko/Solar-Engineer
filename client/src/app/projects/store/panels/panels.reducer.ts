@@ -21,6 +21,16 @@ export const panelsReducer = createReducer(
 
   on(PanelsActions.addPanelsByProjectId, (state, { panels }) =>
     panelAdapter.addMany(panels, state)
+  ),
+
+  on(PanelsActions.updatePanel, (state, { panel }) =>
+    panelAdapter.updateOne(
+      {
+        id: panel.id,
+        changes: panel,
+      },
+      state
+    )
   )
 );
 

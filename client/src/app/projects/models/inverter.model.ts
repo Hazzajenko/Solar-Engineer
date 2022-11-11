@@ -1,6 +1,9 @@
+import { UnitModel } from './unit.model';
+
 export interface InverterModel {
   id: number;
   projectId: number;
+  model?: UnitModel;
   name: string;
   brand: string;
   createdBy: number;

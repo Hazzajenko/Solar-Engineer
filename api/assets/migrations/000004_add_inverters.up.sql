@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS inverters (
     created_at timestamp(0) with time zone NOT NULL DEFAULT NOW(),
     created_by bigserial NOT NULL REFERENCES users ON DELETE CASCADE,
     version integer NOT NULL DEFAULT 1,
+    model integer NOT NULL DEFAULT 0,
     project_id bigint NOT NULL REFERENCES projects ON DELETE CASCADE,
     tracker_amount integer NOT NULL,
     ac_nominal_output bigint NOT NULL,

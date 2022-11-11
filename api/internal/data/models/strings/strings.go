@@ -13,6 +13,7 @@ type String struct {
 	InverterId   int64     `json:"inverterId"`
 	TrackerId    int64     `json:"trackerId"`
 	Name         string    `json:"name"`
+	Model        int       `json:"model"`
 	CreatedAt    time.Time `json:"createdAt"`
 	CreatedBy    int64     `json:"createdBy"`
 	Version      int32     `json:"version"`
@@ -40,6 +41,7 @@ func (p *StringModel) Insert(string *String) (*String, error) {
 		    inverter_id,
 		    tracker_id,
 		    name, 
+		    model,
 		    created_at, 
 		    created_by, 
 			is_in_parallel, 
@@ -64,6 +66,7 @@ func (p *StringModel) Insert(string *String) (*String, error) {
 		&result.InverterId,
 		&result.TrackerId,
 		&result.Name,
+		&result.Model,
 		&result.CreatedAt,
 		&result.CreatedBy,
 		&result.IsInParallel,
@@ -79,6 +82,55 @@ func (p *StringModel) Insert(string *String) (*String, error) {
 	return &result, nil
 }
 
+func (p *StringModel) Get(stringId int64) (*String, error) {
+	if stringId < 1 {
+		return nil, errors.New("record not found")
+	}
+
+	query := `
+		SELECT id, 
+		       project_id, 
+		       inverter_id, 
+		       tracker_id, 
+		       name, 
+		       model,
+		       created_at, 
+		       created_by,
+		       is_in_parallel,
+		       panel_amount, 
+		       version FROM strings
+		WHERE id = $1
+		`
+	var stringModel String
+	//args := []any{project.Name, project.CreatedBy}
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	err := p.DB.QueryRowContext(ctx, query, stringId).Scan(
+		&stringModel.ID,
+		&stringModel.ProjectId,
+		&stringModel.InverterId,
+		&stringModel.TrackerId,
+		&stringModel.Name,
+		&stringModel.Model,
+		&stringModel.CreatedAt,
+		&stringModel.CreatedBy,
+		&stringModel.IsInParallel,
+		&stringModel.PanelAmount,
+		&stringModel.Version,
+	)
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return nil, errors.New("record not found")
+		default:
+			return nil, err
+		}
+	}
+
+	return &stringModel, nil
+}
+
 func (p *StringModel) GetStringsByProjectId(projectId int64) ([]*String, error) {
 	query := `
 		SELECT id, 
@@ -86,6 +138,7 @@ func (p *StringModel) GetStringsByProjectId(projectId int64) ([]*String, error) 
 		       inverter_id, 
 		       tracker_id, 
 		       name, 
+		       model,
 		       created_at, 
 		       created_by,
 		       is_in_parallel,
@@ -116,6 +169,7 @@ func (p *StringModel) GetStringsByProjectId(projectId int64) ([]*String, error) 
 			&stringModel.InverterId,
 			&stringModel.TrackerId,
 			&stringModel.Name,
+			&stringModel.Model,
 			&stringModel.CreatedAt,
 			&stringModel.CreatedBy,
 			&stringModel.IsInParallel,
@@ -134,56 +188,4 @@ func (p *StringModel) GetStringsByProjectId(projectId int64) ([]*String, error) 
 	}
 
 	return strings, nil
-}
-
-func (p *StringModel) UpdateString(string *String) (*String, error) {
-	query := `
-		UPDATE strings
-		SET name = $1, is_in_parallel = $2, panel_amount = $3, inverter_id = $4, tracker_id = $5, version = version + 1
-		WHERE id = $6 AND version = $7
-		RETURNING  id, 
-		    project_id, 
-		    inverter_id,
-		    tracker_id,
-		    name, 
-		    created_at, 
-		    created_by, 
-			is_in_parallel, 
-			panel_amount, 
-			version`
-	args := []any{
-		string.Name,
-		string.IsInParallel,
-		string.PanelAmount,
-		string.InverterId,
-		string.TrackerId,
-		string.ID,
-		string.Version,
-	}
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
-
-	var result String
-
-	err := p.DB.QueryRowContext(ctx, query, args...).Scan(
-		&result.ID,
-		&result.ProjectId,
-		&result.InverterId,
-		&result.TrackerId,
-		&result.Name,
-		&result.CreatedAt,
-		&result.CreatedBy,
-		&result.IsInParallel,
-		&result.PanelAmount,
-		&result.Version)
-	if err != nil {
-		switch {
-		case errors.Is(err, sql.ErrNoRows):
-			return nil, errors.New("edit conflict")
-		default:
-			return nil, err
-		}
-	}
-
-	return &result, nil
 }

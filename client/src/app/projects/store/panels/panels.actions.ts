@@ -10,3 +10,8 @@ export const addPanelsByProjectId = createAction(
   '[Panels Service] Add Panels',
   props<{ panels: PanelModel[] }>()
 );
+
+export const updatePanel = createAction(
+  '[Panels Service] Update Panel',
+  props<{ panel: PanelModel }>()
+);

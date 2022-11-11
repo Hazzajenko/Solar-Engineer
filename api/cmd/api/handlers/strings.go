@@ -14,36 +14,35 @@ func (h *Handlers) CreateString(w http.ResponseWriter, r *http.Request) {
 	bearerHeader := r.Header.Get("Authorization")
 	bearer := strings.Replace(bearerHeader, "Bearer ", "", 1)
 
-	idString, err := h.Tokens.GetUserIdFromToken(bearer)
+	/*	idString, err := h.Tokens.GetUserIdFromToken(bearer)
+		if err != nil {
+			h.Logger.PrintError(err, nil)
+		}
+		userId, err := strconv.Atoi(idString)*/
+	userId, err := h.Tokens.GetUserIdInt64FromToken(bearer)
 	if err != nil {
 		h.Logger.PrintError(err, nil)
 	}
-	userId, err := strconv.Atoi(idString)
 
-	projectIdString := chi.URLParam(r, "projectId")
-	projectId, err := strconv.Atoi(projectIdString)
+	projectId, err := h.Helpers.GetInt64FromURLParam(chi.URLParam(r, "projectId"))
 	if err != nil {
 		h.Logger.PrintError(err, nil)
 	}
-	fmt.Println(projectId)
 
-	inverterIdString := chi.URLParam(r, "inverterId")
-	inverterId, err := strconv.Atoi(inverterIdString)
+	inverterId, err := h.Helpers.GetInt64FromURLParam(chi.URLParam(r, "inverterId"))
 	if err != nil {
 		h.Logger.PrintError(err, nil)
 	}
-	fmt.Println(inverterId)
 
-	trackerIdString := chi.URLParam(r, "trackerId")
-	trackerId, err := strconv.Atoi(trackerIdString)
+	trackerId, err := h.Helpers.GetInt64FromURLParam(chi.URLParam(r, "trackerId"))
 	if err != nil {
 		h.Logger.PrintError(err, nil)
 	}
-	fmt.Println(trackerId)
 
 	var input struct {
 		Name         string `json:"name"`
 		IsInParallel bool   `json:"isInParallel"`
+		//Tracker      trackers.Tracker `json:"tracker"`
 	}
 
 	err = h.Json.DecodeJSON(w, r, &input)
@@ -53,11 +52,11 @@ func (h *Handlers) CreateString(w http.ResponseWriter, r *http.Request) {
 	}
 
 	stringModel := &stringModels.String{
-		ProjectId:    int64(projectId),
-		InverterId:   int64(inverterId),
-		TrackerId:    int64(trackerId),
+		ProjectId:    projectId,
+		InverterId:   inverterId,
+		TrackerId:    trackerId,
 		Name:         input.Name,
-		CreatedBy:    int64(userId),
+		CreatedBy:    userId,
 		IsInParallel: input.IsInParallel,
 		PanelAmount:  0,
 	}
@@ -86,46 +85,20 @@ func (h *Handlers) CreateString(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	/*file, err := os.ReadFile("assets/json/trackers/tauroeco100-3-d.json")
-	var data []trackers.Tracker
-	var result []*trackers.Tracker
-
-	//data := inverters.Inverter{}
-	_ = json2.Unmarshal([]byte(file), &data)
-	for index, item := range data {
-		tracker := &trackers.Tracker{
-			ProjectId:              int64(projectId),
-			InverterId:             int64(inverterId),
-			Name:                   fmt.Sprintf("Tracker %d", index),
-			CreatedBy:              int64(userId),
-			MaxInputCurrent:        item.MaxInputCurrent,
-			MaxShortCircuitCurrent: item.MaxShortCircuitCurrent,
+	/*	tracker := &trackers.Tracker{
+			ID:           input.Tracker.ID,
+			StringAmount: input.Tracker.StringAmount,
+			Version:      input.Tracker.Version,
 		}
 
-		itemResult, err := h.Models.Trackers.Insert(tracker)
+		trackerResult, err := h.Models.Trackers.UpdateStringAmount(tracker)
 		if err != nil {
 			switch {
 			default:
 				h.Errors.ServerErrorResponse(w, r, err)
 			}
 			return
-		}
-		result = append(result, itemResult)
-
-		inverterTracker := &trackers.InverterTracker{
-			InverterId: int64(inverterId),
-			TrackerId:  itemResult.ID,
-		}
-
-		err = h.Models.Trackers.InsertInverterTracker(inverterTracker)
-		if err != nil {
-			switch {
-			default:
-				h.Errors.ServerErrorResponse(w, r, err)
-			}
-			return
-		}
-	}*/
+		}*/
 
 	err = h.Json.ResponseJSON(w, http.StatusAccepted,
 		json.Envelope{"string": result},

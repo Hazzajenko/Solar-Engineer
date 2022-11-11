@@ -3,9 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../store/app.state';
-import { InverterModel } from '../models/inverter.model';
-import { addTreeNode } from '../store/tree-node/tree-node.actions';
-import { type } from './tree-nodes.service';
 import { TrackerModel } from '../models/tracker.model';
 import { addTrackers } from '../store/trackers/trackers.actions';
 
@@ -72,21 +69,5 @@ export class TrackersService {
           },
         })
     );
-  }
-
-  breakDownInvertersForTreeNode(inverters: InverterModel[]) {
-    inverters.map((inverter) => {
-      this.store.dispatch(
-        addTreeNode({
-          treeNode: {
-            id: inverter.id,
-            projectId: inverter.projectId,
-            name: inverter.name,
-            type: type.INVERTER,
-            children: [],
-          },
-        })
-      );
-    });
   }
 }

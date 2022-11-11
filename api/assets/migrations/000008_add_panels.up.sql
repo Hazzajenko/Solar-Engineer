@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS panels (
     tracker_id bigint NOT NULL REFERENCES trackers ON DELETE CASCADE,
     string_id bigint NOT NULL REFERENCES strings ON DELETE CASCADE,
     name text NOT NULL,
+    model integer NOT NULL DEFAULT 3,
     location text NOT NULL,
     created_at timestamp(0) with time zone NOT NULL DEFAULT NOW(),
     created_by bigserial NOT NULL REFERENCES users ON DELETE CASCADE,

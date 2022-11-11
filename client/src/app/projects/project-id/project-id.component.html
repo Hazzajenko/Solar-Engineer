@@ -104,7 +104,8 @@
                               [panels]="store.panels"></app-project-tree>-->
       <!--      <app-inverter-view [inverter]="view"></app-inverter-view>-->
       <!--      <app-project-view [store]="store"></app-project-view>-->
-      <app-grid-layout></app-grid-layout>
+      <app-grid-layout [inverters]="store.inverters" [trackers]="store.trackers" [strings]="store.strings"
+                       [panels]="store.panels"></app-grid-layout>
     </div>
   </ng-container>
 

@@ -8,8 +8,6 @@ import {
   addInverter,
   addInvertersByProjectId,
 } from '../store/inverters/inverters.actions';
-import { addTreeNode } from '../store/tree-node/tree-node.actions';
-import { type } from './tree-nodes.service';
 
 interface InvertersEnvelope {
   inverters: InverterModel[];
@@ -77,21 +75,5 @@ export class InvertersService {
           },
         })
     );
-  }
-
-  breakDownInvertersForTreeNode(inverters: InverterModel[]) {
-    inverters.map((inverter) => {
-      this.store.dispatch(
-        addTreeNode({
-          treeNode: {
-            id: inverter.id,
-            projectId: inverter.projectId,
-            name: inverter.name,
-            type: type.INVERTER,
-            children: [],
-          },
-        })
-      );
-    });
   }
 }

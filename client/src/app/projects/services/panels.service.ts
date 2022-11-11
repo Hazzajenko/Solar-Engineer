@@ -4,7 +4,8 @@ import { environment } from '../../../environments/environment';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../store/app.state';
 import { PanelModel } from '../models/panel.model';
-import { addPanel } from '../store/panels/panels.actions';
+import { addPanel, updatePanel } from '../store/panels/panels.actions';
+import { StringModel } from '../models/string.model';
 
 interface PanelsEnvelope {
   panels: PanelModel[];
@@ -12,6 +13,11 @@ interface PanelsEnvelope {
 
 interface PanelEnvelope {
   panel: PanelModel;
+}
+
+interface CreatePanelResponse {
+  panel: PanelModel;
+  string: StringModel;
 }
 
 @Injectable({
@@ -45,18 +51,21 @@ export class PanelsService {
     projectId: number,
     inverterId: number,
     trackerId: number,
-    stringId: number
-  ): Promise<PanelEnvelope> {
-    return new Promise<PanelEnvelope>((resolve, reject) =>
+    string: StringModel
+  ): Promise<CreatePanelResponse> {
+    return new Promise<CreatePanelResponse>((resolve, reject) =>
       this.http
-        .post<PanelEnvelope>(
+        .post<CreatePanelResponse>(
           environment.apiUrl +
-            `/projects/${projectId}/${inverterId}/${trackerId}/${stringId}`,
-          {}
+            `/projects/${projectId}/${inverterId}/${trackerId}/${string.id}`,
+          {
+            // string,
+          }
         )
         .subscribe({
           next: (envelope) => {
             this.store.dispatch(addPanel({ panel: envelope.panel }));
+            // this.store.dispatch(updateString({ string: envelope.string }));
             resolve(envelope);
           },
           error: (err) => {
@@ -64,6 +73,35 @@ export class PanelsService {
           },
           complete: () => {
             console.log('createPanel');
+          },
+        })
+    );
+  }
+
+  updatePanel(projectId: number, panel: PanelModel): Promise<PanelEnvelope> {
+    return new Promise<PanelEnvelope>((resolve, reject) =>
+      this.http
+        .post<PanelEnvelope>(
+          environment.apiUrl + `/projects/${projectId}/panels`,
+          {
+            id: panel.id,
+            inverterId: panel.inverterId,
+            trackerId: panel.trackerId,
+            stringId: panel.stringId,
+            location: panel.location,
+            version: panel.version,
+          }
+        )
+        .subscribe({
+          next: (envelope) => {
+            this.store.dispatch(updatePanel({ panel: envelope.panel }));
+            resolve(envelope);
+          },
+          error: (err) => {
+            reject(err);
+          },
+          complete: () => {
+            console.log('updatePanel');
           },
         })
     );

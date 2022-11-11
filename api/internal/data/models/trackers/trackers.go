@@ -3,22 +3,24 @@ package trackers
 import (
 	"context"
 	"database/sql"
+	"github.com/shopspring/decimal"
 	"time"
 )
 
 type Tracker struct {
-	ID                     int64     `json:"id"`
-	ProjectId              int64     `json:"projectId"`
-	InverterId             int64     `json:"inverterId"`
-	Name                   string    `json:"name"`
-	CreatedAt              time.Time `json:"createdAt"`
-	CreatedBy              int64     `json:"createdBy"`
-	Version                int       `json:"-"`
-	MaxInputCurrent        int       `json:"maxShortCircuitCurrent"`
-	MaxShortCircuitCurrent int       `json:"acOutputCurrent"`
-	StringAmount           int       `json:"europeanEfficiency"`
-	ParallelAmount         int       `json:"maxInputCurrent"`
-	PanelAmount            int       `json:"maxOutputPower"`
+	ID                     int64           `json:"id"`
+	ProjectId              int64           `json:"projectId"`
+	InverterId             int64           `json:"inverterId"`
+	Name                   string          `json:"name"`
+	Model                  int             `json:"model"`
+	CreatedAt              time.Time       `json:"createdAt"`
+	CreatedBy              int64           `json:"createdBy"`
+	Version                int32           `json:"version"`
+	MaxInputCurrent        decimal.Decimal `json:"maxShortCircuitCurrent"`
+	MaxShortCircuitCurrent decimal.Decimal `json:"acOutputCurrent"`
+	StringAmount           int             `json:"europeanEfficiency"`
+	ParallelAmount         int             `json:"maxInputCurrent"`
+	PanelAmount            int             `json:"maxOutputPower"`
 }
 
 type TrackerModel struct {
@@ -39,6 +41,7 @@ func (p *TrackerModel) Insert(tracker *Tracker) (*Tracker, error) {
 		    project_id, 
 		    inverter_id,
 		    name, 
+		    model,
 		    created_at, 
 		    created_by, 
 			max_input_current,
@@ -64,6 +67,7 @@ func (p *TrackerModel) Insert(tracker *Tracker) (*Tracker, error) {
 		&result.ProjectId,
 		&result.InverterId,
 		&result.Name,
+		&result.Model,
 		&result.CreatedAt,
 		&result.CreatedBy,
 		&result.MaxInputCurrent,
@@ -71,7 +75,8 @@ func (p *TrackerModel) Insert(tracker *Tracker) (*Tracker, error) {
 		&result.StringAmount,
 		&result.ParallelAmount,
 		&result.PanelAmount,
-		&result.Version)
+		&result.Version,
+	)
 	if err != nil {
 		switch {
 		default:
@@ -88,6 +93,7 @@ func (p *TrackerModel) GetTrackersByProjectId(projectId int64) ([]*Tracker, erro
 		       project_id, 
 		       inverter_id, 
 		       name, 
+		       model,
 		       created_at, 
 		       created_by,
 		       max_input_current,
@@ -120,6 +126,7 @@ func (p *TrackerModel) GetTrackersByProjectId(projectId int64) ([]*Tracker, erro
 			&tracker.ProjectId,
 			&tracker.InverterId,
 			&tracker.Name,
+			&tracker.Model,
 			&tracker.CreatedAt,
 			&tracker.CreatedBy,
 			&tracker.MaxInputCurrent,
@@ -149,6 +156,7 @@ func (p *TrackerModel) GetTrackersByInverterId(inverterId int64) ([]*Tracker, er
 		       project_id, 
 		       inverter_id, 
 		       name, 
+		       model,
 		       created_at, 
 		       created_by,
 		       max_input_current,
@@ -181,6 +189,7 @@ func (p *TrackerModel) GetTrackersByInverterId(inverterId int64) ([]*Tracker, er
 			&tracker.ProjectId,
 			&tracker.InverterId,
 			&tracker.Name,
+			&tracker.Model,
 			&tracker.CreatedAt,
 			&tracker.CreatedBy,
 			&tracker.MaxInputCurrent,
