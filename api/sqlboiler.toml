@@ -1,0 +1,18 @@
+output   = "my_models"
+wipe     = true
+no-tests = true
+add-enum-types = true
+
+[auto-columns]
+created = "created_at"
+
+[psql]
+dbname = "solarbackend"
+host   = "localhost"
+port   = 5432
+user   = "postgres"
+pass   = "password"
+#schema = "solarbackend"
+sslmode = "disable"
+blacklist = ["schema_migrations", "projects_inverters",  "inverters_trackers", "trackers_strings", "strings_panels"]
+

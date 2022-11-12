@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	boiler "github.com/Hazzajenko/gosolarbackend/my_models"
 	"time"
 )
 
@@ -89,29 +90,40 @@ func (p *ProjectModel) GetAll() ([]*Project, error) {
 	return projects, nil
 }
 
-func (p *ProjectModel) Get(projectId int64) (*Project, error) {
+func (p *ProjectModel) Get(projectId int64) (*boiler.ProjectSlice, error) {
 	if projectId < 1 {
 		return nil, errors.New("record not found")
 	}
 
-	query := `
-		SELECT id, name, created_at, created_by, inverter_amount, version 
-		FROM projects
-		WHERE id = $1
-		`
-	var project Project
-	//args := []any{project.Name, project.CreatedBy}
+	/*	query := `
+			SELECT id, name, created_at, created_by, inverter_amount, version
+			FROM projects
+			WHERE id = $1
+			`
+		var project Project
+		//args := []any{project.Name, project.CreatedBy}
+		ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+		defer cancel()
+
+		err := p.DB.QueryRowContext(ctx, query, projectId).Scan(
+			&project.ID,
+			&project.Name,
+			&project.CreatedAt,
+			&project.CreatedBy,
+			&project.InverterAmount,
+			&project.Version,
+		)
+		if err != nil {
+			switch {
+			case errors.Is(err, sql.ErrNoRows):
+				return nil, errors.New("record not found")
+			default:
+				return nil, err
+			}
+		}*/
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
-
-	err := p.DB.QueryRowContext(ctx, query, projectId).Scan(
-		&project.ID,
-		&project.Name,
-		&project.CreatedAt,
-		&project.CreatedBy,
-		&project.InverterAmount,
-		&project.Version,
-	)
+	project, err := boiler.Projects(boiler.ProjectWhere.ID.EQ(projectId)).All(ctx, p.DB)
 	if err != nil {
 		switch {
 		case errors.Is(err, sql.ErrNoRows):

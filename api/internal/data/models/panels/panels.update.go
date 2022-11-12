@@ -32,6 +32,7 @@ func (p *PanelModel) UpdatePanelLocation(panel *Panel) (*Panel, error) {
 			length, 								
 			weight, 				
 			width,
+		    color,
 			version`
 	args := []any{
 		panel.InverterId,
@@ -67,6 +68,7 @@ func (p *PanelModel) UpdatePanelLocation(panel *Panel) (*Panel, error) {
 		&panel.Length,
 		&panel.Weight,
 		&panel.Width,
+		&panel.Color,
 		&panel.Version,
 	)
 	if err != nil {

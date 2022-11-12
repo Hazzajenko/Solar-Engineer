@@ -71,6 +71,17 @@ func (h *Handlers) CreatePanel(w http.ResponseWriter, r *http.Request) {
 		h.Logger.PrintError(err, nil)
 	}
 	fmt.Println(stringId)
+
+	var input struct {
+		//StringId int64  `json:"stringId"`
+		Location string `json:"location"`
+	}
+
+	err = h.Json.DecodeJSON(w, r, &input)
+	if err != nil {
+		h.Errors.ServerErrorResponse(w, r, err)
+		return
+	}
 	/*
 		var input struct {
 			String strings2.String `json:"string"`
@@ -91,6 +102,29 @@ func (h *Handlers) CreatePanel(w http.ResponseWriter, r *http.Request) {
 			return
 		}*/
 
+	isLocationFree, err := h.Models.Panels.CheckIfLocationIsFree(input.Location)
+	if err != nil {
+		switch {
+		default:
+			h.Errors.ServerErrorResponse(w, r, err)
+		}
+		return
+	}
+	/*	if isLocationFree.ID > 0 {
+		switch {
+		default:
+			h.Logger.PrintInfo("location not free", nil)
+		}
+		return
+	}*/
+	if isLocationFree != nil {
+		switch {
+		default:
+			h.Logger.PrintInfo("location not free", nil)
+		}
+		return
+	}
+
 	file, err := os.ReadFile("assets/json/panels/longi555m.json")
 	var data panels.Panel
 	//var result []*trackers.Tracker
@@ -104,7 +138,7 @@ func (h *Handlers) CreatePanel(w http.ResponseWriter, r *http.Request) {
 		TrackerId:               trackerId,
 		StringId:                stringId,
 		Name:                    data.Name,
-		Location:                data.Location,
+		Location:                input.Location,
 		CreatedAt:               time.Time{},
 		CreatedBy:               userId,
 		CurrentAtMaximumPower:   data.CurrentAtMaximumPower,
@@ -129,19 +163,19 @@ func (h *Handlers) CreatePanel(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	stringPanel := &panels.StringPanel{
-		StringId: stringId,
-		PanelId:  result.ID,
-	}
-
-	err = h.Models.Panels.InsertStringPanel(stringPanel)
-	if err != nil {
-		switch {
-		default:
-			h.Errors.ServerErrorResponse(w, r, err)
+	/*	stringPanel := &panels.StringPanel{
+			StringId: stringId,
+			PanelId:  result.ID,
 		}
-		return
-	}
+
+		err = h.Models.Panels.InsertStringPanel(stringPanel)
+		if err != nil {
+			switch {
+			default:
+				h.Errors.ServerErrorResponse(w, r, err)
+			}
+			return
+		}*/
 	/*
 		stringModel := &strings2.String{
 			ID:          input.String.ID,

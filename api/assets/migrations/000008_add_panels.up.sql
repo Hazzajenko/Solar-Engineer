@@ -23,11 +23,11 @@ CREATE TABLE IF NOT EXISTS panels (
     version integer NOT NULL DEFAULT 1
 );
 
-CREATE TABLE IF NOT EXISTS strings_panels (
+/*CREATE TABLE IF NOT EXISTS strings_panels (
     string_id bigint NOT NULL REFERENCES strings ON DELETE CASCADE,
     panel_id bigint NOT NULL REFERENCES panels ON DELETE CASCADE,
     panel_amount bigint NOT NULL DEFAULT 0,
     PRIMARY KEY (string_id, panel_id),
     CONSTRAINT fk_strings FOREIGN KEY(string_id) REFERENCES strings(id),
     CONSTRAINT fk_panels FOREIGN KEY(panel_id) REFERENCES panels(id)
-);
+);*/

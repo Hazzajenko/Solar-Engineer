@@ -12,10 +12,10 @@ CREATE TABLE IF NOT EXISTS strings (
     version integer NOT NULL DEFAULT 1
 );
 
-CREATE TABLE IF NOT EXISTS trackers_strings (
+/*CREATE TABLE IF NOT EXISTS trackers_strings (
     tracker_id bigint NOT NULL REFERENCES trackers ON DELETE CASCADE,
     string_id bigint NOT NULL REFERENCES strings ON DELETE CASCADE,
     PRIMARY KEY (tracker_id, string_id),
     CONSTRAINT fk_trackers FOREIGN KEY(tracker_id) REFERENCES trackers(id),
     CONSTRAINT fk_strings FOREIGN KEY(string_id) REFERENCES strings(id)
-);
+);*/

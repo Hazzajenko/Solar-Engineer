@@ -14,10 +14,10 @@ CREATE TABLE IF NOT EXISTS trackers (
     version integer NOT NULL DEFAULT 1
 );
 
-CREATE TABLE IF NOT EXISTS inverters_trackers (
+/*CREATE TABLE IF NOT EXISTS inverters_trackers (
     inverter_id bigint NOT NULL REFERENCES inverters ON DELETE CASCADE,
     tracker_id bigint NOT NULL REFERENCES trackers ON DELETE CASCADE,
     PRIMARY KEY (inverter_id, tracker_id),
     CONSTRAINT fk_inverters FOREIGN KEY(inverter_id) REFERENCES inverters(id),
     CONSTRAINT fk_trackers FOREIGN KEY(tracker_id) REFERENCES trackers(id)
-);
+);*/

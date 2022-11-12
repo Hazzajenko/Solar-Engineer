@@ -1,0 +1,25 @@
+<p>grid-inventory works!</p>
+<div class="grid-inventory-container">
+  <ng-container *ngIf="strings">
+    <div class="grid-inventory-container__strings">
+      <h3>Strings</h3>
+      <div *ngFor="let string of strings">
+        {{ string.name }}
+      </div>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="panels">
+    <div
+      (cdkDropListDropped)="taskDrop($event)"
+      [cdkDropListConnectedTo]="gridNumbers"
+      cdkDropList
+      class="grid-inventory-container__panels"
+      id="panels"
+    >
+      <h3>Panels</h3>
+      <div *ngFor="let panel of panels" [cdkDragData]="panel" cdkDrag>
+        {{ panel.location }}
+      </div>
+    </div>
+  </ng-container>
+</div>

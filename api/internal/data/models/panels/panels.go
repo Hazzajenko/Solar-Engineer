@@ -3,6 +3,7 @@ package panels
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"github.com/shopspring/decimal"
 	"time"
 )
@@ -29,11 +30,57 @@ type Panel struct {
 	Length                  int64           `json:"length"`
 	Weight                  decimal.Decimal `json:"weight"`
 	Width                   int64           `json:"width"`
+	Color                   string          `json:"color"`
 	Version                 int32           `json:"version"`
 }
 
 type PanelModel struct {
 	DB *sql.DB
+}
+
+func (p *PanelModel) CheckIfLocationIsFree(location string) (*Panel, error) {
+	query := `
+			SELECT id, name, location, version
+			FROM panels
+			WHERE location = $1
+			`
+	var panel Panel
+	//args := []any{project.Name, project.CreatedBy}
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	err := p.DB.QueryRowContext(ctx, query, location).Scan(
+		&panel.ID,
+		&panel.Name,
+		&panel.Location,
+		&panel.Version,
+	)
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return nil, nil
+		default:
+			return nil, err
+		}
+	}
+
+	return &panel, nil
+	/*	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+		defer cancel()
+		panel, err := boiler.Panels(boiler.PanelWhere.Location.EQ(location)).All(ctx, p.DB)
+		if err != nil {
+			switch {
+			case errors.Is(err, sql.ErrNoRows):
+				return false, errors.New("record not found")
+			default:
+				return false, err
+			}
+		}
+		if panel == nil {
+			return false, err
+		}
+
+		return true, nil*/
 }
 
 func (p *PanelModel) Insert(panel *Panel) (*Panel, error) {
@@ -161,6 +208,7 @@ func (p *PanelModel) GetPanelsByProjectId(projectId int64) ([]*Panel, error) {
 		       length, 								
 		       weight, 				
 		       width,
+		       color,
 		       version FROM panels
 		WHERE project_id = $1
 		`
@@ -203,6 +251,7 @@ func (p *PanelModel) GetPanelsByProjectId(projectId int64) ([]*Panel, error) {
 			&panel.Length,
 			&panel.Weight,
 			&panel.Width,
+			&panel.Color,
 			&panel.Version,
 		)
 		if err != nil {

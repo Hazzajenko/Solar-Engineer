@@ -1,23 +1,23 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../environments/environment';
-import { Store } from '@ngrx/store';
-import { AppState } from '../../store/app.state';
-import { PanelModel } from '../models/panel.model';
-import { addPanel, updatePanel } from '../store/panels/panels.actions';
-import { StringModel } from '../models/string.model';
+import { Injectable } from '@angular/core'
+import { HttpClient } from '@angular/common/http'
+import { environment } from '../../../environments/environment'
+import { Store } from '@ngrx/store'
+import { AppState } from '../../store/app.state'
+import { PanelModel } from '../models/panel.model'
+import { addPanel, updatePanel } from '../store/panels/panels.actions'
+import { StringModel } from '../models/string.model'
 
 interface PanelsEnvelope {
-  panels: PanelModel[];
+  panels: PanelModel[]
 }
 
 interface PanelEnvelope {
-  panel: PanelModel;
+  panel: PanelModel
 }
 
 interface CreatePanelResponse {
-  panel: PanelModel;
-  string: StringModel;
+  panel: PanelModel
+  string: StringModel
 }
 
 @Injectable({
@@ -51,7 +51,7 @@ export class PanelsService {
     projectId: number,
     inverterId: number,
     trackerId: number,
-    string: StringModel
+    string: StringModel,
   ): Promise<CreatePanelResponse> {
     return new Promise<CreatePanelResponse>((resolve, reject) =>
       this.http
@@ -60,22 +60,55 @@ export class PanelsService {
             `/projects/${projectId}/${inverterId}/${trackerId}/${string.id}`,
           {
             // string,
-          }
+          },
         )
         .subscribe({
           next: (envelope) => {
-            this.store.dispatch(addPanel({ panel: envelope.panel }));
+            this.store.dispatch(addPanel({ panel: envelope.panel }))
             // this.store.dispatch(updateString({ string: envelope.string }));
-            resolve(envelope);
+            resolve(envelope)
           },
           error: (err) => {
-            reject(err);
+            reject(err)
           },
           complete: () => {
-            console.log('createPanel');
+            console.log('createPanel')
           },
-        })
-    );
+        }),
+    )
+  }
+
+  createPanelFromGrid(
+    projectId: number,
+    inverterId: number,
+    trackerId: number,
+    string: StringModel,
+    location: string,
+  ): Promise<CreatePanelResponse> {
+    return new Promise<CreatePanelResponse>((resolve, reject) =>
+      this.http
+        .post<CreatePanelResponse>(
+          environment.apiUrl +
+            `/projects/${projectId}/${inverterId}/${trackerId}/${string.id}`,
+          {
+            // string,
+            location,
+          },
+        )
+        .subscribe({
+          next: (envelope) => {
+            this.store.dispatch(addPanel({ panel: envelope.panel }))
+            // this.store.dispatch(updateString({ string: envelope.string }));
+            resolve(envelope)
+          },
+          error: (err) => {
+            reject(err)
+          },
+          complete: () => {
+            console.log('createPanel')
+          },
+        }),
+    )
   }
 
   updatePanel(projectId: number, panel: PanelModel): Promise<PanelEnvelope> {
@@ -90,20 +123,20 @@ export class PanelsService {
             stringId: panel.stringId,
             location: panel.location,
             version: panel.version,
-          }
+          },
         )
         .subscribe({
           next: (envelope) => {
-            this.store.dispatch(updatePanel({ panel: envelope.panel }));
-            resolve(envelope);
+            this.store.dispatch(updatePanel({ panel: envelope.panel }))
+            resolve(envelope)
           },
           error: (err) => {
-            reject(err);
+            reject(err)
           },
           complete: () => {
-            console.log('updatePanel');
+            console.log('updatePanel')
           },
-        })
-    );
+        }),
+    )
   }
 }

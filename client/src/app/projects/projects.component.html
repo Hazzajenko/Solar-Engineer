@@ -1,13 +1,13 @@
-<div class="containerOuter">
-  <div class="containerInner">
-    <h1 class="title">
-      Solar <span class="titlePink">Engineer</span>
+<div class='containerOuter'>
+  <div class='containerInner'>
+    <h1 class='title'>
+      Solar <span class='titlePink'>Engineer</span>
     </h1>
 
-    <div *ngIf="projects$ | async as projects">
+    <div *ngIf='projects$ | async as projects'>
       <div>
-        <mat-selection-list #userProjects *ngFor="let project of projects" [multiple]="false">
-          <mat-list-option (click)="onRouteToProject(project)" [value]="project">
+        <mat-selection-list #userProjects *ngFor='let project of projects' [multiple]='false'>
+          <mat-list-option (click)='onRouteToProject(project)' [value]='project'>
             {{project.name}}
             <!--            <app-project-list-item [project]="project"></app-project-list-item>-->
           </mat-list-option>

@@ -92,23 +92,86 @@
 </div>
 -->
 
-
-<div class="project-container">
+<!--<div class="project-container">
   <ng-container *ngIf="store$ | async; let store">
-    <div class="project-container__project-tree">
-      <app-project-tree [inverters]="store.inverters" [trackers]="store.trackers" [strings]="store.strings"
-                        [panels]="store.panels" (inverterView)="updateView($event)"></app-project-tree>
-    </div>
-    <div class="project-container__project-display">
-      <!--      <app-project-tree [inverters]="store.inverters" [trackers]="store.trackers" [strings]="store.strings"
-                              [panels]="store.panels"></app-project-tree>-->
-      <!--      <app-inverter-view [inverter]="view"></app-inverter-view>-->
-      <!--      <app-project-view [store]="store"></app-project-view>-->
-      <app-grid-layout [inverters]="store.inverters" [trackers]="store.trackers" [strings]="store.strings"
-                       [panels]="store.panels"></app-grid-layout>
-    </div>
+    <ng-container *ngIf="gridState$ | async; let grid">
+      <div class="project-container__project-tree">
+        <app-project-tree
+          (inverterView)="updateView($event)"
+          [inverters]="store.inverters"
+          [panels]="store.panels"
+          [strings]="store.strings"
+          [trackers]="store.trackers"
+        ></app-project-tree>
+      </div>
+      <div class="project-container__project-display">
+        &lt;!&ndash;      <app-project-tree [inverters]="store.inverters" [trackers]="store.trackers" [strings]="store.strings"
+                                [panels]="store.panels"></app-project-tree>&ndash;&gt;
+        &lt;!&ndash;      <app-inverter-view [inverter]="view"></app-inverter-view>&ndash;&gt;
+        &lt;!&ndash;      <app-project-view [store]="store"></app-project-view>&ndash;&gt;
+        <app-grid-layout
+          [inverters]="store.inverters"
+          [panels]="store.panels"
+          [selectedStringId]="grid.selectedStringId"
+          [strings]="store.strings"
+          [trackers]="store.trackers"
+        ></app-grid-layout>
+      </div>
+    </ng-container>
   </ng-container>
-
+</div>-->
+<div class="project-container-v2">
+  <ng-container *ngIf="store$ | async; let store">
+    <ng-container *ngIf="gridState$ | async; let grid">
+      <ng-container *ngIf="trackerTree$ | async; let tree">
+        <div class="project-container__project-tree">
+          <!--          <app-project-tree
+                      (inverterView)="updateView($event)"
+                      [inverters]="store.inverters"
+                      [panels]="store.panels"
+                      [strings]="store.strings"
+                      [trackers]="store.trackers"
+                    ></app-project-tree>-->
+          <app-tracker-tree
+            [inverter]="tree.inverter"
+            [panels]="tree.panels"
+            [project]="tree.project"
+            [strings]="tree.strings"
+            [tracker]="tree.tracker"
+          ></app-tracker-tree>
+        </div>
+        <div class="project-container-v2__project-display">
+          <!--      <app-project-tree [inverters]="store.inverters" [trackers]="store.trackers" [strings]="store.strings"
+                                  [panels]="store.panels"></app-project-tree>-->
+          <!--      <app-inverter-view [inverter]="view"></app-inverter-view>-->
+          <!--      <app-project-view [store]="store"></app-project-view>-->
+          <app-grid-layout
+            [inverters]="store.inverters"
+            [panels]="store.panels"
+            [selectedStringId]="grid.selectedStringId"
+            [strings]="store.strings"
+            [trackers]="store.trackers"
+          ></app-grid-layout>
+        </div>
+        <div class="project-container-v2__project-inventory">
+          <app-grid-inventory
+            [inverters]="store.inverters"
+            [panels]="store.panels"
+            [selectedStringId]="grid.selectedStringId"
+            [strings]="store.strings"
+            [trackers]="store.trackers"
+          ></app-grid-inventory>
+          <!--        <app-project-tree
+                    (inverterView)="updateView($event)"
+                    [inverters]="store.inverters"
+                    [panels]="store.panels"
+                    [strings]="store.strings"
+                    [trackers]="store.trackers"
+                  ></app-project-tree>-->
+        </div>
+      </ng-container>
+    </ng-container>
+  </ng-container>
 </div>
 
 <!--<mat-grid-list cols="4" rowHeight="600px">
@@ -129,19 +192,20 @@
   </ng-container>
 </mat-grid-list>-->
 
-
 <!-- an hidden div is created to set the position of appearance of the menu-->
-<div style="visibility: hidden; position: fixed;"
-     [style.left]="menuTopLeftPosition.x"
-     [style.top]="menuTopLeftPosition.y"
-     [matMenuTriggerFor]="rightMenu"></div>
+<div
+  [matMenuTriggerFor]="rightMenu"
+  [style.left]="menuTopLeftPosition.x"
+  [style.top]="menuTopLeftPosition.y"
+  style="visibility: hidden; position: fixed"
+></div>
 
 <!-- standard material menu -->
 <mat-menu #rightMenu="matMenu">
-  <ng-template matMenuContent let-item="item">
-    <label>{{item.name}}</label>
-    <button mat-menu-item (click)="click()">Add</button>
-    <button mat-menu-item (click)="click()">Edit</button>
+  <ng-template let-item="item" matMenuContent>
+    <label>{{ item.name }}</label>
+    <button (click)="click()" mat-menu-item>Add</button>
+    <button (click)="click()" mat-menu-item>Edit</button>
     <button mat-menu-item>Delete</button>
   </ng-template>
 </mat-menu>
