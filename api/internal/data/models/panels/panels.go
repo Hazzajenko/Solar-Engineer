@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	boiler "github.com/Hazzajenko/gosolarbackend/my_models"
 	"github.com/shopspring/decimal"
 	"time"
 )
@@ -185,85 +186,102 @@ func (p *PanelModel) Insert(panel *Panel) (*Panel, error) {
 	return &result, nil
 }
 
-func (p *PanelModel) GetPanelsByProjectId(projectId int64) ([]*Panel, error) {
-	query := `
-		SELECT id, 
-		       project_id, 
-		       inverter_id, 
-		       tracker_id, 
-		       string_id, 
-		       name,
-		       model,
-		       location,
-		       created_at, 				
-		       created_by, 			
-		       current_at_maximum_power, 				
-		       short_circuit_current, 				
-		       short_circuit_current_temp, 					
-		       maximum_power,				
-		       maximum_power_temp, 				
-		       voltage_at_maximum_power, 				
-		       open_circuit_voltage, 				
-		       open_circuit_voltage_temp, 							
-		       length, 								
-		       weight, 				
-		       width,
-		       color,
-		       version FROM panels
-		WHERE project_id = $1
-		`
+func (p *PanelModel) GetPanelsByProjectId(projectId int64) (*boiler.PanelSlice, error) {
+	if projectId < 1 {
+		return nil, errors.New("record not found")
+	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
-
-	rows, err := p.DB.QueryContext(ctx, query, projectId)
+	panels, err := boiler.Panels(boiler.PanelWhere.ProjectID.EQ(projectId)).All(ctx, p.DB)
 	if err != nil {
 		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return nil, errors.New("record not found")
 		default:
 			return nil, err
 		}
 	}
 
-	defer rows.Close()
-	var panels []*Panel
-	for rows.Next() {
-		var panel Panel
+	return &panels, nil
+	/*	query := `
+			SELECT id,
+			       project_id,
+			       inverter_id,
+			       tracker_id,
+			       string_id,
+			       name,
+			       model,
+			       location,
+			       created_at,
+			       created_by,
+			       current_at_maximum_power,
+			       short_circuit_current,
+			       short_circuit_current_temp,
+			       maximum_power,
+			       maximum_power_temp,
+			       voltage_at_maximum_power,
+			       open_circuit_voltage,
+			       open_circuit_voltage_temp,
+			       length,
+			       weight,
+			       width,
+			       color,
+			       version FROM panels
+			WHERE project_id = $1
+			`
 
-		err := rows.Scan(
-			&panel.ID,
-			&panel.ProjectId,
-			&panel.InverterId,
-			&panel.TrackerId,
-			&panel.StringId,
-			&panel.Name,
-			&panel.Model,
-			&panel.Location,
-			&panel.CreatedAt,
-			&panel.CreatedBy,
-			&panel.CurrentAtMaximumPower,
-			&panel.ShortCircuitCurrent,
-			&panel.ShortCircuitCurrentTemp,
-			&panel.MaximumPower,
-			&panel.MaximumPowerTemp,
-			&panel.VoltageAtMaximumPower,
-			&panel.OpenCircuitVoltage,
-			&panel.OpenCircuitVoltageTemp,
-			&panel.Length,
-			&panel.Weight,
-			&panel.Width,
-			&panel.Color,
-			&panel.Version,
-		)
+		ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+		defer cancel()
+
+		rows, err := p.DB.QueryContext(ctx, query, projectId)
 		if err != nil {
+			switch {
+			default:
+				return nil, err
+			}
+		}
+
+		defer rows.Close()
+		var panels []*Panel
+		for rows.Next() {
+			var panel Panel
+
+			err := rows.Scan(
+				&panel.ID,
+				&panel.ProjectId,
+				&panel.InverterId,
+				&panel.TrackerId,
+				&panel.StringId,
+				&panel.Name,
+				&panel.Model,
+				&panel.Location,
+				&panel.CreatedAt,
+				&panel.CreatedBy,
+				&panel.CurrentAtMaximumPower,
+				&panel.ShortCircuitCurrent,
+				&panel.ShortCircuitCurrentTemp,
+				&panel.MaximumPower,
+				&panel.MaximumPowerTemp,
+				&panel.VoltageAtMaximumPower,
+				&panel.OpenCircuitVoltage,
+				&panel.OpenCircuitVoltageTemp,
+				&panel.Length,
+				&panel.Weight,
+				&panel.Width,
+				&panel.Color,
+				&panel.Version,
+			)
+			if err != nil {
+				return nil, err
+			}
+
+			panels = append(panels, &panel)
+		}
+
+		if err = rows.Err(); err != nil {
 			return nil, err
 		}
 
-		panels = append(panels, &panel)
-	}
-
-	if err = rows.Err(); err != nil {
-		return nil, err
-	}
-
-	return panels, nil
+		return panels, nil*/
 }

@@ -124,14 +124,7 @@
   <ng-container *ngIf="store$ | async; let store">
     <ng-container *ngIf="gridState$ | async; let grid">
       <ng-container *ngIf="trackerTree$ | async; let tree">
-        <div class="project-container__project-tree">
-          <!--          <app-project-tree
-                      (inverterView)="updateView($event)"
-                      [inverters]="store.inverters"
-                      [panels]="store.panels"
-                      [strings]="store.strings"
-                      [trackers]="store.trackers"
-                    ></app-project-tree>-->
+        <div class="project-container-v2__project-tree">
           <app-tracker-tree
             [inverter]="tree.inverter"
             [panels]="tree.panels"
@@ -141,10 +134,6 @@
           ></app-tracker-tree>
         </div>
         <div class="project-container-v2__project-display">
-          <!--      <app-project-tree [inverters]="store.inverters" [trackers]="store.trackers" [strings]="store.strings"
-                                  [panels]="store.panels"></app-project-tree>-->
-          <!--      <app-inverter-view [inverter]="view"></app-inverter-view>-->
-          <!--      <app-project-view [store]="store"></app-project-view>-->
           <app-grid-layout
             [inverters]="store.inverters"
             [panels]="store.panels"
@@ -154,45 +143,45 @@
           ></app-grid-layout>
         </div>
         <div class="project-container-v2__project-inventory">
-          <app-grid-inventory
-            [inverters]="store.inverters"
-            [panels]="store.panels"
-            [selectedStringId]="grid.selectedStringId"
-            [strings]="store.strings"
-            [trackers]="store.trackers"
-          ></app-grid-inventory>
-          <!--        <app-project-tree
-                    (inverterView)="updateView($event)"
-                    [inverters]="store.inverters"
-                    [panels]="store.panels"
-                    [strings]="store.strings"
-                    [trackers]="store.trackers"
-                  ></app-project-tree>-->
+          <app-string-stats></app-string-stats>
         </div>
       </ng-container>
     </ng-container>
   </ng-container>
 </div>
 
-<!--<mat-grid-list cols="4" rowHeight="600px">
+<!--
+<div class="project-container-v3">
   <ng-container *ngIf="store$ | async; let store">
-    <mat-grid-tile
-      class="blue"
-      [colspan]="1"
-      [rowspan]="1">
-      <app-project-tree [inverters]="store.inverters" [trackers]="store.trackers" [strings]="store.strings"
-                        [panels]="store.panels"></app-project-tree>
-    </mat-grid-tile>
-    <mat-grid-tile
-      class="blue"
-      [colspan]="3"
-      [rowspan]="1">
-      Text2
-    </mat-grid-tile>
+    <ng-container *ngIf="gridState$ | async; let grid">
+      <ng-container *ngIf="trackerTree$ | async; let tree">
+        <div class="project-container-v3__project-tree">
+          <app-tracker-tree
+            [inverter]="tree.inverter"
+            [panels]="tree.panels"
+            [project]="tree.project"
+            [strings]="tree.strings"
+            [tracker]="tree.tracker"
+          ></app-tracker-tree>
+        </div>
+        <div class="project-container-v3__project-design">
+          <app-grid-layout
+            [inverters]="store.inverters"
+            [panels]="store.panels"
+            [selectedStringId]="grid.selectedStringId"
+            [strings]="store.strings"
+            [trackers]="store.trackers"
+          ></app-grid-layout>
+        </div>
+        <div class="project-container-v3__project-stats">
+          <app-string-stats></app-string-stats>
+        </div>
+      </ng-container>
+    </ng-container>
   </ng-container>
-</mat-grid-list>-->
+</div>
+-->
 
-<!-- an hidden div is created to set the position of appearance of the menu-->
 <div
   [matMenuTriggerFor]="rightMenu"
   [style.left]="menuTopLeftPosition.x"
@@ -200,7 +189,6 @@
   style="visibility: hidden; position: fixed"
 ></div>
 
-<!-- standard material menu -->
 <mat-menu #rightMenu="matMenu">
   <ng-template let-item="item" matMenuContent>
     <label>{{ item.name }}</label>

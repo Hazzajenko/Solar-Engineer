@@ -3,7 +3,7 @@ package tokens
 import (
 	"errors"
 	"fmt"
-	"github.com/Hazzajenko/gosolarbackend/internal/data/models/users"
+	boiler "github.com/Hazzajenko/gosolarbackend/my_models"
 	"github.com/golang-jwt/jwt/v4"
 	"strconv"
 	"time"
@@ -26,7 +26,7 @@ func InitTokens(key string) Tokens {
 	}
 }
 
-func (t *Tokens) CreateToken(user *users.User) (string, error) {
+func (t *Tokens) CreateToken(user *boiler.User) (string, error) {
 
 	claims := UserClaims{
 		RegisteredClaims: jwt.RegisteredClaims{
@@ -34,13 +34,14 @@ func (t *Tokens) CreateToken(user *users.User) (string, error) {
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			NotBefore: jwt.NewNumericDate(time.Now()),
 			Issuer:    "solarengineer.dev",
-			Subject:   strconv.Itoa(int(user.ID)),
-			ID:        strconv.Itoa(int(user.ID)),
+			Subject:   strconv.FormatInt(user.ID, 10),
+			ID:        strconv.FormatInt(user.ID, 10),
 			Audience:  []string{"solarengineer.dev"},
 		},
 		Name:    user.Name,
 		Issuer:  "solarengineer.dev",
-		Subject: strconv.Itoa(int(user.ID)),
+		Subject: strconv.FormatInt(user.ID, 10),
+		//Subject: strconv.Itoa(int(user.ID)),
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)

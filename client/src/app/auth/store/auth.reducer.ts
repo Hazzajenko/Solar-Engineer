@@ -1,16 +1,16 @@
-import { createReducer, on } from '@ngrx/store';
-import * as AuthActions from './auth.actions';
-import { UserModel } from '../user.model';
+import { createReducer, on } from '@ngrx/store'
+import * as AuthActions from './auth.actions'
+import { UserModel } from '../user.model'
 
 export interface AuthState {
-  user?: UserModel;
-  token?: string;
+  user?: UserModel
+  token?: string
 }
 
 export const initialAuthState: AuthState = {
   user: undefined,
   token: undefined,
-};
+}
 
 export const authReducer = createReducer(
   initialAuthState,
@@ -27,8 +27,13 @@ export const authReducer = createReducer(
     token: action.token,
   })),
 
+  on(AuthActions.addUserAndToken, (state, action) => ({
+    user: action.user,
+    token: action.token,
+  })),
+
   on(AuthActions.signOut, (state, action) => ({
     user: undefined,
     token: undefined,
-  }))
-);
+  })),
+)

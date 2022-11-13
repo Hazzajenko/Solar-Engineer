@@ -18,35 +18,34 @@ import (
 	"github.com/volatiletech/sqlboiler/v4/queries"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 	"github.com/volatiletech/sqlboiler/v4/queries/qmhelper"
-	"github.com/volatiletech/sqlboiler/v4/types"
 	"github.com/volatiletech/strmangle"
 )
 
 // Panel is an object representing the database table.
 type Panel struct {
-	ID                      int64         `boil:"id" json:"id" toml:"id" yaml:"id"`
-	ProjectID               int64         `boil:"project_id" json:"project_id" toml:"project_id" yaml:"project_id"`
-	InverterID              int64         `boil:"inverter_id" json:"inverter_id" toml:"inverter_id" yaml:"inverter_id"`
-	TrackerID               int64         `boil:"tracker_id" json:"tracker_id" toml:"tracker_id" yaml:"tracker_id"`
-	StringID                int64         `boil:"string_id" json:"string_id" toml:"string_id" yaml:"string_id"`
-	Name                    string        `boil:"name" json:"name" toml:"name" yaml:"name"`
-	CreatedAt               time.Time     `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
-	CreatedBy               int64         `boil:"created_by" json:"created_by" toml:"created_by" yaml:"created_by"`
-	CurrentAtMaximumPower   types.Decimal `boil:"current_at_maximum_power" json:"current_at_maximum_power" toml:"current_at_maximum_power" yaml:"current_at_maximum_power"`
-	ShortCircuitCurrent     types.Decimal `boil:"short_circuit_current" json:"short_circuit_current" toml:"short_circuit_current" yaml:"short_circuit_current"`
-	ShortCircuitCurrentTemp types.Decimal `boil:"short_circuit_current_temp" json:"short_circuit_current_temp" toml:"short_circuit_current_temp" yaml:"short_circuit_current_temp"`
-	MaximumPower            types.Decimal `boil:"maximum_power" json:"maximum_power" toml:"maximum_power" yaml:"maximum_power"`
-	MaximumPowerTemp        types.Decimal `boil:"maximum_power_temp" json:"maximum_power_temp" toml:"maximum_power_temp" yaml:"maximum_power_temp"`
-	VoltageAtMaximumPower   types.Decimal `boil:"voltage_at_maximum_power" json:"voltage_at_maximum_power" toml:"voltage_at_maximum_power" yaml:"voltage_at_maximum_power"`
-	OpenCircuitVoltage      types.Decimal `boil:"open_circuit_voltage" json:"open_circuit_voltage" toml:"open_circuit_voltage" yaml:"open_circuit_voltage"`
-	OpenCircuitVoltageTemp  types.Decimal `boil:"open_circuit_voltage_temp" json:"open_circuit_voltage_temp" toml:"open_circuit_voltage_temp" yaml:"open_circuit_voltage_temp"`
-	Length                  int64         `boil:"length" json:"length" toml:"length" yaml:"length"`
-	Weight                  types.Decimal `boil:"weight" json:"weight" toml:"weight" yaml:"weight"`
-	Width                   int64         `boil:"width" json:"width" toml:"width" yaml:"width"`
-	Version                 int           `boil:"version" json:"version" toml:"version" yaml:"version"`
-	Location                string        `boil:"location" json:"location" toml:"location" yaml:"location"`
-	Model                   int           `boil:"model" json:"model" toml:"model" yaml:"model"`
-	Color                   string        `boil:"color" json:"color" toml:"color" yaml:"color"`
+	ID                      int64     `boil:"id" json:"id" toml:"id" yaml:"id"`
+	ProjectID               int64     `boil:"project_id" json:"project_id" toml:"project_id" yaml:"project_id"`
+	InverterID              int64     `boil:"inverter_id" json:"inverter_id" toml:"inverter_id" yaml:"inverter_id"`
+	TrackerID               int64     `boil:"tracker_id" json:"tracker_id" toml:"tracker_id" yaml:"tracker_id"`
+	StringID                int64     `boil:"string_id" json:"string_id" toml:"string_id" yaml:"string_id"`
+	Name                    string    `boil:"name" json:"name" toml:"name" yaml:"name"`
+	CreatedAt               time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
+	CreatedBy               int64     `boil:"created_by" json:"created_by" toml:"created_by" yaml:"created_by"`
+	CurrentAtMaximumPower   float32   `boil:"current_at_maximum_power" json:"current_at_maximum_power" toml:"current_at_maximum_power" yaml:"current_at_maximum_power"`
+	ShortCircuitCurrent     float32   `boil:"short_circuit_current" json:"short_circuit_current" toml:"short_circuit_current" yaml:"short_circuit_current"`
+	ShortCircuitCurrentTemp float32   `boil:"short_circuit_current_temp" json:"short_circuit_current_temp" toml:"short_circuit_current_temp" yaml:"short_circuit_current_temp"`
+	MaximumPower            float32   `boil:"maximum_power" json:"maximum_power" toml:"maximum_power" yaml:"maximum_power"`
+	MaximumPowerTemp        float32   `boil:"maximum_power_temp" json:"maximum_power_temp" toml:"maximum_power_temp" yaml:"maximum_power_temp"`
+	VoltageAtMaximumPower   float32   `boil:"voltage_at_maximum_power" json:"voltage_at_maximum_power" toml:"voltage_at_maximum_power" yaml:"voltage_at_maximum_power"`
+	OpenCircuitVoltage      float32   `boil:"open_circuit_voltage" json:"open_circuit_voltage" toml:"open_circuit_voltage" yaml:"open_circuit_voltage"`
+	OpenCircuitVoltageTemp  float32   `boil:"open_circuit_voltage_temp" json:"open_circuit_voltage_temp" toml:"open_circuit_voltage_temp" yaml:"open_circuit_voltage_temp"`
+	Length                  int64     `boil:"length" json:"length" toml:"length" yaml:"length"`
+	Weight                  float32   `boil:"weight" json:"weight" toml:"weight" yaml:"weight"`
+	Width                   int64     `boil:"width" json:"width" toml:"width" yaml:"width"`
+	Version                 int       `boil:"version" json:"version" toml:"version" yaml:"version"`
+	Location                string    `boil:"location" json:"location" toml:"location" yaml:"location"`
+	Model                   int       `boil:"model" json:"model" toml:"model" yaml:"model"`
+	Color                   string    `boil:"color" json:"color" toml:"color" yaml:"color"`
 
 	R *panelR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L panelL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -154,25 +153,33 @@ var PanelTableColumns = struct {
 
 // Generated where
 
-type whereHelpertypes_Decimal struct{ field string }
+type whereHelperfloat32 struct{ field string }
 
-func (w whereHelpertypes_Decimal) EQ(x types.Decimal) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.EQ, x)
-}
-func (w whereHelpertypes_Decimal) NEQ(x types.Decimal) qm.QueryMod {
+func (w whereHelperfloat32) EQ(x float32) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.EQ, x) }
+func (w whereHelperfloat32) NEQ(x float32) qm.QueryMod {
 	return qmhelper.Where(w.field, qmhelper.NEQ, x)
 }
-func (w whereHelpertypes_Decimal) LT(x types.Decimal) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.LT, x)
-}
-func (w whereHelpertypes_Decimal) LTE(x types.Decimal) qm.QueryMod {
+func (w whereHelperfloat32) LT(x float32) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.LT, x) }
+func (w whereHelperfloat32) LTE(x float32) qm.QueryMod {
 	return qmhelper.Where(w.field, qmhelper.LTE, x)
 }
-func (w whereHelpertypes_Decimal) GT(x types.Decimal) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.GT, x)
-}
-func (w whereHelpertypes_Decimal) GTE(x types.Decimal) qm.QueryMod {
+func (w whereHelperfloat32) GT(x float32) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.GT, x) }
+func (w whereHelperfloat32) GTE(x float32) qm.QueryMod {
 	return qmhelper.Where(w.field, qmhelper.GTE, x)
+}
+func (w whereHelperfloat32) IN(slice []float32) qm.QueryMod {
+	values := make([]interface{}, 0, len(slice))
+	for _, value := range slice {
+		values = append(values, value)
+	}
+	return qm.WhereIn(fmt.Sprintf("%s IN ?", w.field), values...)
+}
+func (w whereHelperfloat32) NIN(slice []float32) qm.QueryMod {
+	values := make([]interface{}, 0, len(slice))
+	for _, value := range slice {
+		values = append(values, value)
+	}
+	return qm.WhereNotIn(fmt.Sprintf("%s NOT IN ?", w.field), values...)
 }
 
 var PanelWhere = struct {
@@ -184,16 +191,16 @@ var PanelWhere = struct {
 	Name                    whereHelperstring
 	CreatedAt               whereHelpertime_Time
 	CreatedBy               whereHelperint64
-	CurrentAtMaximumPower   whereHelpertypes_Decimal
-	ShortCircuitCurrent     whereHelpertypes_Decimal
-	ShortCircuitCurrentTemp whereHelpertypes_Decimal
-	MaximumPower            whereHelpertypes_Decimal
-	MaximumPowerTemp        whereHelpertypes_Decimal
-	VoltageAtMaximumPower   whereHelpertypes_Decimal
-	OpenCircuitVoltage      whereHelpertypes_Decimal
-	OpenCircuitVoltageTemp  whereHelpertypes_Decimal
+	CurrentAtMaximumPower   whereHelperfloat32
+	ShortCircuitCurrent     whereHelperfloat32
+	ShortCircuitCurrentTemp whereHelperfloat32
+	MaximumPower            whereHelperfloat32
+	MaximumPowerTemp        whereHelperfloat32
+	VoltageAtMaximumPower   whereHelperfloat32
+	OpenCircuitVoltage      whereHelperfloat32
+	OpenCircuitVoltageTemp  whereHelperfloat32
 	Length                  whereHelperint64
-	Weight                  whereHelpertypes_Decimal
+	Weight                  whereHelperfloat32
 	Width                   whereHelperint64
 	Version                 whereHelperint
 	Location                whereHelperstring
@@ -208,16 +215,16 @@ var PanelWhere = struct {
 	Name:                    whereHelperstring{field: "\"panels\".\"name\""},
 	CreatedAt:               whereHelpertime_Time{field: "\"panels\".\"created_at\""},
 	CreatedBy:               whereHelperint64{field: "\"panels\".\"created_by\""},
-	CurrentAtMaximumPower:   whereHelpertypes_Decimal{field: "\"panels\".\"current_at_maximum_power\""},
-	ShortCircuitCurrent:     whereHelpertypes_Decimal{field: "\"panels\".\"short_circuit_current\""},
-	ShortCircuitCurrentTemp: whereHelpertypes_Decimal{field: "\"panels\".\"short_circuit_current_temp\""},
-	MaximumPower:            whereHelpertypes_Decimal{field: "\"panels\".\"maximum_power\""},
-	MaximumPowerTemp:        whereHelpertypes_Decimal{field: "\"panels\".\"maximum_power_temp\""},
-	VoltageAtMaximumPower:   whereHelpertypes_Decimal{field: "\"panels\".\"voltage_at_maximum_power\""},
-	OpenCircuitVoltage:      whereHelpertypes_Decimal{field: "\"panels\".\"open_circuit_voltage\""},
-	OpenCircuitVoltageTemp:  whereHelpertypes_Decimal{field: "\"panels\".\"open_circuit_voltage_temp\""},
+	CurrentAtMaximumPower:   whereHelperfloat32{field: "\"panels\".\"current_at_maximum_power\""},
+	ShortCircuitCurrent:     whereHelperfloat32{field: "\"panels\".\"short_circuit_current\""},
+	ShortCircuitCurrentTemp: whereHelperfloat32{field: "\"panels\".\"short_circuit_current_temp\""},
+	MaximumPower:            whereHelperfloat32{field: "\"panels\".\"maximum_power\""},
+	MaximumPowerTemp:        whereHelperfloat32{field: "\"panels\".\"maximum_power_temp\""},
+	VoltageAtMaximumPower:   whereHelperfloat32{field: "\"panels\".\"voltage_at_maximum_power\""},
+	OpenCircuitVoltage:      whereHelperfloat32{field: "\"panels\".\"open_circuit_voltage\""},
+	OpenCircuitVoltageTemp:  whereHelperfloat32{field: "\"panels\".\"open_circuit_voltage_temp\""},
 	Length:                  whereHelperint64{field: "\"panels\".\"length\""},
-	Weight:                  whereHelpertypes_Decimal{field: "\"panels\".\"weight\""},
+	Weight:                  whereHelperfloat32{field: "\"panels\".\"weight\""},
 	Width:                   whereHelperint64{field: "\"panels\".\"width\""},
 	Version:                 whereHelperint{field: "\"panels\".\"version\""},
 	Location:                whereHelperstring{field: "\"panels\".\"location\""},

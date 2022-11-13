@@ -1,11 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-  ViewChild,
-} from '@angular/core'
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core'
 import { InverterModel } from '../../../models/inverter.model'
 import { TrackerModel } from '../../../models/tracker.model'
 import { StringModel } from '../../../models/string.model'
@@ -30,6 +23,7 @@ export class ProjectTreeComponent implements OnInit {
   @Input() strings?: StringModel[]
   @Input() panels?: PanelModel[]
   @Output() inverterView = new EventEmitter<InverterModel>()
+  @Output() reRenderRoot = new EventEmitter<boolean>()
 
   menuTopLeftPosition = { x: '0', y: '0' }
 
@@ -121,13 +115,9 @@ export class ProjectTreeComponent implements OnInit {
     })
   }
 
-  createString(
-    projectId: number,
-    inverter: InverterModel,
-    tracker: TrackerModel,
-  ) {
+  createString(projectId: number, inverter: InverterModel, tracker: TrackerModel) {
     this.stringsService
-      .createString(projectId, inverter.id, tracker, 'new string')
+      .createString(projectId, inverter.id, tracker.id, 'new string')
       .then((res) => {
         console.log(res)
       })
@@ -140,47 +130,47 @@ export class ProjectTreeComponent implements OnInit {
     stringModel: StringModel,
   ) {
     // stringModel.panelAmount = stringModel.panelAmount! + 1;
-    if (stringModel.panelAmount) {
+    if (stringModel.panel_amount) {
       // const updateString = stringModel;
       /*      if (stringModel.panelAmount === 0) {
 updateString.panelAmount = 1;
 } else {
 updateString.panelAmount!++;
 }*/
-      let panelAmount = stringModel.panelAmount + 1
+      let panel_amount = stringModel.panel_amount + 1
 
       const updateString: StringModel = {
         id: stringModel.id,
-        projectId: stringModel.projectId,
-        inverterId: stringModel.inverterId,
-        trackerId: stringModel.trackerId,
+        project_id: stringModel.project_id,
+        inverter_id: stringModel.inverter_id,
+        tracker_id: stringModel.tracker_id,
         model: 2,
-        panelAmount,
+        panel_amount,
         name: stringModel.name,
-        isInParallel: stringModel.isInParallel,
+        is_in_parallel: stringModel.is_in_parallel,
         version: stringModel.version,
-        createdAt: stringModel.createdAt,
+        created_at: stringModel.created_at,
       }
       this.panelsService
-        .createPanel(projectId, inverter.id, tracker.id, updateString)
+        .createPanel(projectId, inverter.id, tracker.id, updateString.id)
         .then((res) => {
           console.log(res)
         })
     } else {
       const updateString: StringModel = {
         id: stringModel.id,
-        projectId: stringModel.projectId,
-        inverterId: stringModel.inverterId,
-        trackerId: stringModel.trackerId,
+        project_id: stringModel.project_id,
+        inverter_id: stringModel.inverter_id,
+        tracker_id: stringModel.tracker_id,
         model: 2,
-        panelAmount: 1,
+        panel_amount: 1,
         name: stringModel.name,
-        isInParallel: stringModel.isInParallel,
+        is_in_parallel: stringModel.is_in_parallel,
         version: stringModel.version,
-        createdAt: stringModel.createdAt,
+        created_at: stringModel.created_at,
       }
       this.panelsService
-        .createPanel(projectId, inverter.id, tracker.id, updateString)
+        .createPanel(projectId, inverter.id, tracker.id, updateString.id)
         .then((res) => {
           console.log(res)
         })
@@ -199,19 +189,17 @@ updateString.panelAmount!++;
       const newTracker = Number(event.container.id)
       const update: StringModel = {
         id: string.id,
-        projectId: string.projectId,
-        inverterId: string.inverterId,
-        trackerId: newTracker,
+        project_id: string.project_id,
+        inverter_id: string.inverter_id,
+        tracker_id: newTracker,
         model: 2,
         name: string.name,
-        isInParallel: string.isInParallel,
-        panelAmount: string.panelAmount,
+        is_in_parallel: string.is_in_parallel,
+        panel_amount: string.panel_amount,
         version: string.version,
       }
 
-      this.stringsService
-        .updateString(3, update)
-        .then((res) => console.log(res))
+      this.stringsService.updateString(3, update).then((res) => console.log(res))
     } else {
       console.log('no')
       moveItemInArray(this.panels!, event.previousIndex, event.currentIndex)
@@ -223,14 +211,19 @@ updateString.panelAmount!++;
       const newString = Number(event.container.id)
       const update: PanelModel = {
         id: panel.id,
-        projectId: panel.projectId,
-        inverterId: panel.inverterId,
-        trackerId: panel.trackerId,
-        stringId: newString,
+        project_id: panel.project_id,
+        inverter_id: panel.inverter_id,
+        tracker_id: panel.tracker_id,
+        string_id: newString,
         location: panel.location,
         version: panel.version,
       }
       this.panelsService.updatePanel(3, update).then((res) => console.log(res))
     }
+  }
+
+  reRender($event: boolean) {
+    this.ngOnInit()
+    new this.reRenderRoot(true)
   }
 }

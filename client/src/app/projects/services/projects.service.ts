@@ -1,47 +1,54 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { ProjectModel } from '../models/project.model';
-import { environment } from '../../../environments/environment';
-import { Store } from '@ngrx/store';
-import { AppState } from '../../store/app.state';
+import { Injectable } from '@angular/core'
+import { HttpClient } from '@angular/common/http'
+import { ProjectModel } from '../models/project.model'
+import { environment } from '../../../environments/environment'
+import { Store } from '@ngrx/store'
+import { AppState } from '../../store/app.state'
 import {
   addUserProjects,
   selectProject,
-} from '../store/projects/projects.actions';
-import { InverterModel } from '../models/inverter.model';
-import { TrackerModel } from '../models/tracker.model';
-import { StringModel } from '../models/string.model';
-import { addInvertersByProjectId } from '../store/inverters/inverters.actions';
-import { addTrackers } from '../store/trackers/trackers.actions';
-import { addStringsByProjectId } from '../store/strings/strings.actions';
-import { addPanelsByProjectId } from '../store/panels/panels.actions';
-import { PanelModel } from '../models/panel.model';
+} from '../store/projects/projects.actions'
+import { InverterModel } from '../models/inverter.model'
+import { TrackerModel } from '../models/tracker.model'
+import { StringModel } from '../models/string.model'
+import { addInvertersByProjectId } from '../store/inverters/inverters.actions'
+import { addTrackers } from '../store/trackers/trackers.actions'
+import { addStringsByProjectId } from '../store/strings/strings.actions'
+import { addPanelsByProjectId } from '../store/panels/panels.actions'
+import { PanelModel } from '../models/panel.model'
+import { selectProjectByRouteParams } from '../store/projects/projects.selectors'
 
 export interface ProjectsEnvelope {
-  projects: ProjectModel[];
+  projects: ProjectModel[]
 }
 
 export interface ProjectEnvelope {
-  project: ProjectModel;
+  project: ProjectModel
 }
 
 export interface ProjectDataEnvelope {
-  project: ProjectModel;
-  inverters: InverterModel[];
-  trackers: TrackerModel[];
-  stringsByProjectId: StringModel[];
-  panels: PanelModel[];
+  project: ProjectModel
+  inverters: InverterModel[]
+  trackers: TrackerModel[]
+  stringsByProjectId: StringModel[]
+  panels: PanelModel[]
 }
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProjectsService {
+  getProject = this.store.select(
+    selectProjectByRouteParams,
+  )
+
   constructor(
     private http: HttpClient,
-    private store: Store<AppState>
-  ) /*    private store: Store<AppState>,
-        private inverters: InvertersService*/ {}
+    private store: Store<AppState>,
+  ) {
+  }
+  /*    private store: Store<AppState>,
+        private inverters: InvertersService*/
 
   /*  getUserProjects(): Observable<ProjectsEnvelope> {
       return this.http.get<ProjectsEnvelope>(environment.apiUrl + '/projects');
@@ -49,68 +56,69 @@ export class ProjectsService {
 
   getUserProjects(): Promise<ProjectsEnvelope> {
     return new Promise<ProjectsEnvelope>((resolve, reject) =>
-      this.http
-        .get<ProjectsEnvelope>(environment.apiUrl + '/projects')
-        .subscribe({
-          next: (envelope) => {
-            this.store.dispatch(
-              addUserProjects({ projects: envelope.projects })
-            );
-            resolve(envelope);
-          },
-          error: (err) => {
-            reject(err);
-          },
-          complete: () => {
-            console.log('getUserProjects');
-          },
-        })
-    );
+      this.http.get<ProjectsEnvelope>(environment.apiUrl + '/projects').subscribe({
+        next: (envelope) => {
+          this.store.dispatch(addUserProjects({ projects: envelope.projects }))
+          resolve(envelope)
+        },
+        error: (err) => {
+          reject(err)
+        },
+        complete: () => {
+          console.log('getUserProjects')
+        },
+      }),
+    )
   }
 
   getProjectById(projectId: number): Promise<ProjectEnvelope> {
     return new Promise<ProjectEnvelope>((resolve, reject) =>
-      this.http
-        .get<ProjectEnvelope>(environment.apiUrl + `/projects/${projectId}`)
-        .subscribe({
-          next: (envelope) => {
-            this.store.dispatch(selectProject({ project: envelope.project }));
-            resolve(envelope);
-          },
-          error: (err) => {
-            reject(err);
-          },
-          complete: () => {
-            console.log('getProjectById');
-          },
-        })
-    );
+      this.http.get<ProjectEnvelope>(environment.apiUrl + `/projects/${projectId}`).subscribe({
+        next: (envelope) => {
+          this.store.dispatch(selectProject({ project: envelope.project }))
+          resolve(envelope)
+        },
+        error: (err) => {
+          reject(err)
+        },
+        complete: () => {
+          console.log('getProjectById')
+        },
+      }),
+    )
   }
 
   getDataByProjectId(projectId: number): Promise<ProjectDataEnvelope> {
     return new Promise<ProjectDataEnvelope>((resolve, reject) =>
       this.http
-        .get<ProjectDataEnvelope>(
-          environment.apiUrl + `/projects/${projectId}/all`
-        )
+        .get<ProjectDataEnvelope>(environment.apiUrl + `/projects/${projectId}/all`)
         .subscribe({
           next: (envelope) => {
-            this.store.dispatch(selectProject({ project: envelope.project }));
-            resolve(envelope);
-            this.store.dispatch(
-              addInvertersByProjectId({ inverters: envelope.inverters })
-            );
-            this.store.dispatch(addTrackers({ trackers: envelope.trackers }));
+            this.store.dispatch(selectProject({ project: envelope.project }))
+            resolve(envelope)
+            this.store.dispatch(addInvertersByProjectId({ inverters: envelope.inverters }))
+            this.store.dispatch(addTrackers({ trackers: envelope.trackers }))
             this.store.dispatch(
               addStringsByProjectId({
                 stringModels: envelope.stringsByProjectId,
-              })
-            );
+              }),
+            )
+            envelope.panels.forEach((panel) => {
+              panel.open_circuit_voltage = Number(panel.open_circuit_voltage)
+              panel.current_at_maximum_power = Number(panel.current_at_maximum_power)
+              panel.short_circuit_current = Number(panel.short_circuit_current)
+              panel.short_circuit_current_temp = Number(panel.short_circuit_current_temp)
+              panel.maximum_power = Number(panel.maximum_power)
+              panel.maximum_power_temp = Number(panel.maximum_power_temp)
+              panel.voltage_at_maximum_power = Number(panel.voltage_at_maximum_power)
+              panel.open_circuit_voltage_temp = Number(panel.open_circuit_voltage_temp)
+              panel.weight = Number(panel.weight)
+            })
             this.store.dispatch(
               addPanelsByProjectId({
                 panels: envelope.panels,
-              })
-            );
+              }),
+            )
             /*            if (envelope.stringsByProjectId) {
                           if (envelope.stringsByProjectId.length > 1) {
                             this.store.dispatch(
@@ -124,16 +132,16 @@ export class ProjectsService {
                           });
                         }*/
 
-            resolve(envelope);
+            resolve(envelope)
           },
           error: (err) => {
-            reject(err);
+            reject(err)
           },
           complete: () => {
-            console.log('getDataByProjectId');
+            console.log('getDataByProjectId')
           },
-        })
-    );
+        }),
+    )
   }
 
   /*

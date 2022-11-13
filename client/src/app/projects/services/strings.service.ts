@@ -1,23 +1,32 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../environments/environment';
-import { Store } from '@ngrx/store';
-import { AppState } from '../../store/app.state';
-import { StringModel } from '../models/string.model';
-import { addString, updateString } from '../store/strings/strings.actions';
-import { TrackerModel } from '../models/tracker.model';
+import { Injectable } from '@angular/core'
+import { HttpClient } from '@angular/common/http'
+import { environment } from '../../../environments/environment'
+import { Store } from '@ngrx/store'
+import { AppState } from '../../store/app.state'
+import { StringModel } from '../models/string.model'
+import { addString, updateString } from '../store/strings/strings.actions'
+import { TrackerModel } from '../models/tracker.model'
+import { PanelModel } from '../models/panel.model'
+import { Update } from '@ngrx/entity'
+import { updateManyPanels } from '../store/panels/panels.actions'
 
 interface StringsEnvelope {
-  strings: StringModel[];
+  strings: StringModel[]
 }
 
 interface StringEnvelope {
-  string: StringModel;
+  string: StringModel
+}
+
+interface ChangeStringColorResponse {
+  string: StringModel
+  panelsChanged: number
+  panels: PanelModel[]
 }
 
 interface CreateStringResponse {
-  string: StringModel;
-  tracker: TrackerModel;
+  string: StringModel
+  tracker: TrackerModel
 }
 
 @Injectable({
@@ -48,68 +57,99 @@ export class StringsService {
     }*/
 
   createString(
-    projectId: number,
-    inverterId: number,
-    tracker: TrackerModel,
-    name: string
+    project_id: number,
+    inverter_id: number,
+    tracker_id: number,
+    name: string,
   ): Promise<CreateStringResponse> {
     return new Promise<CreateStringResponse>((resolve, reject) =>
       this.http
-        .post<CreateStringResponse>(
-          environment.apiUrl +
-            `/projects/${projectId}/${inverterId}/${tracker.id}`,
-          {
-            name,
-            isInParallel: false,
-            // tracker,
-          }
-        )
+        .post<CreateStringResponse>(environment.apiUrl + `/projects/${project_id}/trackers`, {
+          inverter_id,
+          tracker_id,
+          name,
+          isInParallel: false,
+          // tracker,
+        })
         .subscribe({
           next: (envelope) => {
-            this.store.dispatch(addString({ stringModel: envelope.string }));
+            this.store.dispatch(addString({ stringModel: envelope.string }))
             // this.store.dispatch(updateTracker({ tracker: envelope.tracker }));
-            resolve(envelope);
+            resolve(envelope)
           },
           error: (err) => {
-            reject(err);
+            reject(err)
           },
           complete: () => {
-            console.log('createString');
+            console.log('createString')
           },
-        })
-    );
+        }),
+    )
   }
 
-  updateString(
+  updateStringColor(
     projectId: number,
-    string: StringModel
-  ): Promise<StringEnvelope> {
-    return new Promise<StringEnvelope>((resolve, reject) =>
+    string: StringModel,
+    color: string,
+  ): Promise<ChangeStringColorResponse> {
+    return new Promise<ChangeStringColorResponse>((resolve, reject) =>
       this.http
-        .post<StringEnvelope>(
-          environment.apiUrl + `/projects/${projectId}/strings`,
+        .post<ChangeStringColorResponse>(
+          environment.apiUrl + `/projects/${projectId}/strings/color`,
           {
-            name: string.name,
-            isInParallel: string.isInParallel,
-            inverterId: string.inverterId,
-            trackerId: string.trackerId,
             id: string.id,
-            version: string.version,
-            panelAmount: string.panelAmount,
-          }
+            color,
+          },
         )
         .subscribe({
           next: (envelope) => {
-            this.store.dispatch(updateString({ string: envelope.string }));
-            resolve(envelope);
+            this.store.dispatch(updateString({ string: envelope.string }))
+            /*            envelope.panels.forEach((panel) => {
+                          this.store.dispatch(updatePanel({ panel }))
+                        })*/
+            const panels = envelope.panels.map((panel) => {
+              return {
+                id: panel.id,
+                changes: panel,
+              } as Update<PanelModel>
+            })
+            this.store.dispatch(updateManyPanels({ panels }))
+            resolve(envelope)
           },
           error: (err) => {
-            reject(err);
+            reject(err)
           },
           complete: () => {
-            console.log('updateString');
+            console.log('updateStringColor')
           },
+        }),
+    )
+  }
+
+  updateString(projectId: number, string: StringModel): Promise<StringEnvelope> {
+    return new Promise<StringEnvelope>((resolve, reject) =>
+      this.http
+        .post<StringEnvelope>(environment.apiUrl + `/projects/${projectId}/strings`, {
+          name: string.name,
+          is_in_parallel: string.is_in_parallel,
+          inverter_id: string.inverter_id,
+          tracker_id: string.tracker_id,
+          id: string.id,
+          version: string.version,
+          panel_amount: string.panel_amount,
         })
-    );
+        .subscribe({
+          next: (envelope) => {
+            this.store.dispatch(updateString({ string: envelope.string }))
+            resolve(envelope)
+          },
+          error: (err) => {
+            reject(err)
+          },
+          complete: () => {
+            console.log('updateString')
+          },
+        }),
+    )
   }
 }

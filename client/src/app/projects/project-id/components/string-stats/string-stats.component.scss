@@ -1,0 +1,14 @@
+.stats-container {
+  //display: flex;
+  //flex-direction: row;
+  height: 500px;
+
+  &__stats-box {
+    //flex: inherit;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    justify-content: start;
+
+  }
+}

@@ -1,11 +1,13 @@
 <div class="project-tree">
-  <button (click)="createInverter(3)">Create inverter</button>
+  <button (click)="createInverter(3)">
+    Create inverter
+  </button>
   <ng-container *ngIf="inverters">
     <div *ngFor="let inverter of inverters; let i = index">
-      <div cdkDropListGroup class="project-tree__inverter-item">
-        <!--      <button mat-stroked-button color="primary" (click)="toggleInverter(inverter, i)">
-        {{inverter.name}}{{i}}
-      </button>-->
+      <div
+        cdkDropListGroup
+        class="project-tree__inverter-item"
+      >
         <div>
           <button
             (click)="toggleInverter(inverter, i)"
@@ -13,26 +15,27 @@
             mat-icon-button
           >
             <mat-icon class="mat-icon-rtl-mirror">
-              {{ inverterBool[i] ? "expand_more" : "chevron_right" }}
+              {{
+                inverterBool[i]
+                  ? "expand_more"
+                  : "chevron_right"
+              }}
             </mat-icon>
           </button>
-          <span>{{ inverter.name }} [{{ inverter.trackerAmount }}]</span>
-          <!--          <button mat-icon-button [matMenuTriggerFor]="menu" [matMenuTriggerData]="{item: inverter}">
-            <mat-icon>more_vert</mat-icon>
-          </button>-->
+          <span
+            >{{ inverter.name }} [{{
+              inverter.tracker_amount
+            }}]</span
+          >
         </div>
-        <!--      {{inverter.trackerAmount}} Trackers-->
 
         <ng-container *ngIf="trackers">
           <div *ngIf="inverterBool[i]">
-            <!--            <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">-->
-            <!--              <mat-icon>more_vert</mat-icon>-->
-            <!--            </button>-->
-            <!--            <button mat-icon-button (click)="openMenu($event, inverter)" aria-label="Example icon-button with a menu">
-              <mat-icon>more_vert</mat-icon>
-            </button>-->
-            <div class="project-tree__inverter-item__button-menu">
+            <div
+              class="project-tree__inverter-item__button-menu"
+            >
               <app-button-menu
+                (reRender)="reRender($event)"
                 [inverter]="inverter"
                 [model]="1"
                 [projectId]="3"
@@ -41,33 +44,45 @@
 
             <div
               (cdkDropListDropped)="taskDrop($event)"
-              *ngFor="let tracker of trackers; let a = index"
-              [cdkDropListData]="strings! | testPipe: tracker.id"
+              *ngFor="
+                let tracker of trackers;
+                let a = index
+              "
+              [cdkDropListData]="
+                strings! | filterStrings: tracker.id
+              "
               [id]="tracker.id.toString()"
               cdkDropList
               cdkDropListOrientation="vertical"
             >
               <div
-                *ngIf="tracker.inverterId === inverter.id"
+                *ngIf="tracker.inverter_id === inverter.id"
                 class="project-tree__tracker-item"
               >
-                <!--              <button mat-stroked-button color="secondary"
-                      (click)="toggleTracker(tracker, a)">{{tracker.name}}{{a}}</button>-->
-
                 <div>
                   <button
                     (click)="toggleTracker(tracker, a)"
-                    [attr.aria-label]="'Toggle ' + tracker.name"
+                    [attr.aria-label]="
+                      'Toggle ' + tracker.name
+                    "
                     mat-icon-button
                   >
                     <mat-icon class="mat-icon-rtl-mirror">
-                      {{ trackerBool[a] ? "expand_more" : "chevron_right" }}
+                      {{
+                        trackerBool[a]
+                          ? "expand_more"
+                          : "chevron_right"
+                      }}
                     </mat-icon>
                   </button>
-                  {{ tracker.name }} [{{ tracker.stringAmount }}]
+                  {{ tracker.name }} [{{
+                    tracker.string_amount
+                  }}]
                 </div>
                 <div *ngIf="trackerBool[a]">
-                  <div class="project-tree__tracker-item__button-menu">
+                  <div
+                    class="project-tree__tracker-item__button-menu"
+                  >
                     <app-button-menu
                       [inverter]="inverter"
                       [model]="2"
@@ -75,20 +90,20 @@
                       [tracker]="tracker"
                     ></app-button-menu>
                   </div>
-                  <!--     s             [cdkDropListData]="dstsrings!"-->
                   <div>
-                    <!--                 (cdkDropListDropped)="taskDrop($event)"
-                 [cdkDropListData]="panels! | filterPanels:stringModel.id"
-                 [id]="stringModel.id.toString()"
-                 cdkDropList-->
                     <div
-                      *ngFor="let stringModel of strings; let b = index"
+                      *ngFor="
+                        let stringModel of strings;
+                        let b = index
+                      "
                       [cdkDragData]="stringModel"
                       cdkDrag
                     >
-                      <!--                      cdkDropList [id]="stringModel.id.toString()"-->
                       <div
-                        *ngIf="stringModel.trackerId === tracker.id"
+                        *ngIf="
+                          stringModel.tracker_id ===
+                          tracker.id
+                        "
                         class="project-tree__string-item"
                       >
                         <mat-icon
@@ -97,19 +112,31 @@
                           >drag_indicator
                         </mat-icon>
                         <button
-                          (click)="toggleString(stringModel, b)"
-                          [attr.aria-label]="'Toggle ' + stringModel.name"
+                          (click)="
+                            toggleString(stringModel, b)
+                          "
+                          [attr.aria-label]="
+                            'Toggle ' + stringModel.name
+                          "
                           mat-icon-button
                         >
-                          <mat-icon class="mat-icon-rtl-mirror">
+                          <mat-icon
+                            class="mat-icon-rtl-mirror"
+                          >
                             {{
-                              stringBool[b] ? "expand_more" : "chevron_right"
+                              stringBool[b]
+                                ? "expand_more"
+                                : "chevron_right"
                             }}
                           </mat-icon>
                         </button>
-                        {{ stringModel.name }} [{{ stringModel.panelAmount }}]
+                        {{ stringModel.name }} [{{
+                          stringModel.panel_amount
+                        }}]
                         <div *ngIf="stringBool[b]">
-                          <div class="project-tree__string-item__button-menu">
+                          <div
+                            class="project-tree__string-item__button-menu"
+                          >
                             <app-button-menu
                               [inverter]="inverter"
                               [model]="3"
@@ -120,12 +147,22 @@
                           </div>
                           <div *ngIf="panels">
                             <div
-                              *ngFor="let panel of panels; let c = index"
+                              *ngFor="
+                                let panel of panels;
+                                let c = index
+                              "
                               [cdkDragData]="panel"
                               cdkDrag
                             >
-                              <div class="project-tree__panel-item">
-                                <div *ngIf="panel.stringId === stringModel.id">
+                              <div
+                                class="project-tree__panel-item"
+                              >
+                                <div
+                                  *ngIf="
+                                    panel.string_id ===
+                                    stringModel.id
+                                  "
+                                >
                                   <div>
                                     <mat-icon
                                       cdkDragHandle
@@ -146,7 +183,6 @@
                 </div>
               </div>
             </div>
-            <!--          </table>-->
           </div>
         </ng-container>
       </div>
@@ -165,7 +201,9 @@
 <mat-menu #menu="matMenu">
   <ng-template let-inverter="item" matMenuContent>
     <!--    <label>{{inverter.name}}</label>-->
-    <button (click)="click()" mat-menu-item>Add Tracker</button>
+    <button (click)="click()" mat-menu-item>
+      Add Tracker
+    </button>
     <button (click)="click()" mat-menu-item>Edit</button>
     <button (click)="click()" mat-menu-item>View</button>
     <button (click)="click()" mat-menu-item>Delete</button>

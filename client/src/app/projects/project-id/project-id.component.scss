@@ -16,22 +16,51 @@
 
 .project-container-v2 {
   display: flex;
-  //justify-content: space-between;
+  justify-content: space-between;
   //align-items: center;
 
   &__project-tree {
     background: lightblue;
-    flex: 0 0 25%;
+    flex: 0 0 15%;
   }
 
   &__project-display {
     background: #669966;
-    flex: 0 0 50%;
+    flex: 0 0 70%;
   }
 
   &__project-inventory {
-    background: #669966;
-    flex: 0 0 25%;
+    background: #758df5;
+    flex: 0 0 15%;
   }
 }
+
+.project-container-v3 {
+  display: grid;
+  grid-template-columns: 0.5fr 1.5fr 1.5fr 0.5fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  gap: 0 0;
+  grid-template-areas:
+    "toolbox designgrid designgrid stats"
+    "toolbox designgrid designgrid stats"
+    "toolbox designgrid designgrid stats";
+
+  &__project-tree {
+    background: lightblue;
+    grid-area: project-tree;
+  }
+
+  &__project-design {
+    background: #669966;
+    grid-area: project-design;
+  }
+
+  &__project-stats {
+    background: #0739ff;
+    grid-area: project-stats;
+  }
+}
+
+
+
 

@@ -1,18 +1,18 @@
-import { UnitModel } from './unit.model';
+import { UnitModel } from './unit.model'
 
 export interface TrackerModel {
-  id: number;
-  projectId: number;
-  inverterId: number;
-  model?: UnitModel;
-  name: string;
-  maxInputCurrent?: number;
-  maxShortCircuitCurrent?: number;
-  stringAmount?: number;
-  parallelAmount?: number;
-  panelAmount?: number;
+  id: number
+  project_id: number
+  inverter_id: number
+  model?: UnitModel
+  name: string
+  max_input_current?: number
+  max_short_circuit_current?: number
+  string_amount?: number
+  parallel_amount?: number
+  panel_amount?: number
   // parallelLinks?: ParallelModel[];
-  createdAt?: string;
-  createdBy: number;
-  version: number;
+  created_at?: string
+  created_by: number
+  version: number
 }

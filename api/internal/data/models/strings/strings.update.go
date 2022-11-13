@@ -4,8 +4,39 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
+	boiler "github.com/Hazzajenko/gosolarbackend/my_models"
+	"github.com/volatiletech/sqlboiler/v4/boil"
 	"time"
 )
+
+func (p *StringModel) UpdateBoilerStringColor(string *boiler.String) (*boiler.String, int64, error) {
+	// Find a pilot and update his name
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+	getString, err := boiler.FindString(ctx, p.DB, string.ID)
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return nil, 0, errors.New("edit conflict")
+		default:
+			return nil, 0, err
+		}
+	}
+	getString.Color = string.Color
+	rowsAff, err := getString.Update(ctx, p.DB, boil.Infer())
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return nil, 0, errors.New("edit conflict")
+		default:
+			return nil, 0, err
+		}
+	}
+	fmt.Println(rowsAff)
+
+	return getString, rowsAff, nil
+}
 
 func (p *StringModel) UpdateString(string *String) (*String, error) {
 	query := `

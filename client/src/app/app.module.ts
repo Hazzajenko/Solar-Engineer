@@ -5,12 +5,18 @@ import { AppRoutingModule } from './app-routing.module'
 import { AppComponent } from './app.component'
 import { ProjectsComponent } from './projects/projects.component'
 import { ProjectListItemComponent } from './projects/project-list-item/project-list-item.component'
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http'
+import {
+  HTTP_INTERCEPTORS,
+  HttpClientModule,
+} from '@angular/common/http'
 import { ProjectIdComponent } from './projects/project-id/project-id.component'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { MatListModule } from '@angular/material/list'
 import { StoreModule } from '@ngrx/store'
-import { RouterState, StoreRouterConnectingModule } from '@ngrx/router-store'
+import {
+  RouterState,
+  StoreRouterConnectingModule,
+} from '@ngrx/router-store'
 import { StoreDevtoolsModule } from '@ngrx/store-devtools'
 import { environment } from '../environments/environment'
 import { metaReducers, reducers } from './store/app.state'
@@ -31,18 +37,18 @@ import { MatSortModule } from '@angular/material/sort'
 import { JwtInterceptor } from './interceptors/jwt.interceptor'
 import { InverterViewComponent } from './projects/project-id/views/inverter-view/inverter-view.component'
 import { DragDropModule } from '@angular/cdk/drag-drop'
-import {
-  GridLayoutComponent,
-  Pane,
-} from './projects/project-id/views/grid-layout/grid-layout.component'
+import { GridLayoutComponent } from './projects/project-id/views/grid-layout/grid-layout.component'
 import { ProjectViewComponent } from './projects/project-id/views/project-view/project-view.component'
 import { TrackerViewComponent } from './projects/project-id/views/tracker-view/tracker-view.component'
 import { StringViewComponent } from './projects/project-id/views/string-view/string-view.component'
 import { ButtonMenuComponent } from './projects/project-id/components/project-tree/button-menu/button-menu.component'
-import { TestPipePipe } from './pipes/test-pipe.pipe'
+import { FilterStringsPipe } from './pipes/filter-strings.pipe'
 import { FilterPanelsPipe } from './pipes/filter-panels.pipe'
 import { GridInventoryComponent } from './projects/project-id/views/grid-inventory/grid-inventory.component'
 import { TrackerTreeComponent } from './projects/project-id/views/tracker-tree/tracker-tree.component'
+import { StringStatsComponent } from './projects/project-id/components/string-stats/string-stats.component'
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { TrackerStatsComponent } from './projects/project-id/components/tracker-stats/tracker-stats.component'
 
 export function tokenGetter() {
   console.log(localStorage.getItem('token'))
@@ -63,11 +69,12 @@ export function tokenGetter() {
     TrackerViewComponent,
     StringViewComponent,
     ButtonMenuComponent,
-    TestPipePipe,
+    FilterStringsPipe,
     FilterPanelsPipe,
     GridInventoryComponent,
     TrackerTreeComponent,
-    Pane,
+    StringStatsComponent,
+    TrackerStatsComponent,
   ],
   imports: [
     BrowserModule,
@@ -107,6 +114,7 @@ export function tokenGetter() {
     MatGridListModule,
     MatSortModule,
     DragDropModule,
+    MatTooltipModule,
   ],
   providers: [
     {

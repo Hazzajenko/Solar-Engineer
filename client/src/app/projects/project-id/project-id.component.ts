@@ -192,4 +192,8 @@ export class ProjectIdComponent implements OnInit {
     console.log(event)
     this.view = event
   }
+
+  /*  reRenderRoot($event: boolean) {
+      this.ngOnInit()
+    }*/
 }

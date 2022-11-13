@@ -1,50 +1,81 @@
-<!--<canvas #canvas id="canvas" style="border: solid 1px">
-  Fallback content
-</canvas>-->
-<canvas
-  #canvas
-  id="canvas"
-  style="
-    border: solid 1px;
-    position: absolute;
-    left: 20%;
-    top: 30%;
-    z-index: 100;
-    pointer-events: none;
-  "
->
-</canvas>
-
-<div cdkDropListGroup>
-  <div *ngFor="let n of numSequence(10); let i = index" class="row">
-    <!--  {{i}}-->
-    <div *ngFor="let n of numSequence(10); let a = index" class="col">
+<ng-container *ngIf="trackerTree$ | async; let store">
+  <ng-container *ngIf="store.project">
+    <div cdkDropListGroup class="project-design-container">
       <div
-        #thing
-        (cdkDropListDropped)="taskDrop($event)"
-        (click)="divClick(i.toString() + a, $event, thing)"
-        [cdkDropListConnectedTo]="['panels']"
-        [id]="i.toString() + a"
-        cdkDropList
-        class="drop-zone"
-        id="hello"
+        *ngFor="let n of numSequence(20); let i = index"
+        class="row"
       >
-        <!--    |{{ i }}{{ a }}|-->
-
-        <div *ngFor="let panel of panels">
+        <!--  {{i}}-->
+        <div
+          *ngFor="let n of numSequence(20); let a = index"
+          class="col"
+        >
           <div
-            (cdkDragEnded)="(onDragEnded)"
-            *ngIf="panel.location === i.toString() + a"
-            [cdkDragData]="panel"
-            [ngStyle]="{ border: '1px solid' + panel.color }"
-            cdkDrag
-            class="panel"
+            #thing
+            (cdkDropListDropped)="taskDrop($event)"
+            (click)="
+              divClick(i.toString() + a, $event, thing)
+            "
+            [cdkDropListConnectedTo]="['panels']"
+            [id]="i.toString() + a"
+            cdkDropList
+            class="drop-zone"
+            id="hello"
           >
-            {{ panel.location }}
-            <pane [id]="panel.location"></pane>
+            <!--    |{{ i }}{{ a }}|-->
+            <!--        [ngStyle]="{ border: '1px solid red' }"-->
+            <div *ngFor="let panel of store.panels">
+              <div
+                (contextmenu)="onRightClick($event, panel)"
+                *ngIf="panel.location === i.toString() + a"
+                [cdkDragData]="panel"
+                [matTooltip]="
+                  'StringId = ' +
+                  panel.string_id +
+                  ' PanelId = ' +
+                  panel.id
+                "
+                [style.border]="'2px solid ' + panel.color"
+                cdkDrag
+                class="panel"
+                matTooltipPosition="right"
+              >
+                <div
+                  *ngIf="
+                    panel.string_id === selectedStringId
+                  "
+                  class="panel__location"
+                >
+                  {{ panel.location }}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-</div>
+  </ng-container>
+</ng-container>
+<div
+  [matMenuTriggerFor]="rightMenu"
+  [style.left]="menuTopLeftPosition.x"
+  [style.top]="menuTopLeftPosition.y"
+  style="visibility: hidden; position: fixed"
+></div>
+
+<mat-menu #rightMenu="matMenu" class="custom-menu">
+  <ng-template let-panel="panel" matMenuContent>
+    <label>{{ panel.name }}</label>
+    <ul style="list-style: none">
+      <li>Panel Id: {{ panel.id }}</li>
+      <li>Inverter Id: {{ panel["inverter_id"] }}</li>
+      <li>Tracker Id: {{ panel["tracker_id"] }}</li>
+      <li>String Id: {{ panel["string_id"] }}</li>
+    </ul>
+    <button (click)="click()" mat-menu-item>Add</button>
+    <button mat-menu-item>Edit</button>
+    <button (click)="deletePanel(panel)" mat-menu-item>
+      Delete
+    </button>
+  </ng-template>
+</mat-menu>

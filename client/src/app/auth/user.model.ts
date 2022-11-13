@@ -1,7 +1,8 @@
 export interface UserModel {
-  id: string;
-  createdAt: string;
-  name: string;
-  email: string;
-  activated: boolean;
+  id: number
+  created_at: string
+  name: string
+  email: string
+  activated: boolean
+  version: number
 }

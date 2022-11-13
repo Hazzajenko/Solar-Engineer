@@ -4,21 +4,18 @@ import (
 	"fmt"
 	stringModels "github.com/Hazzajenko/gosolarbackend/internal/data/models/strings"
 	"github.com/Hazzajenko/gosolarbackend/internal/json"
+	boiler "github.com/Hazzajenko/gosolarbackend/my_models"
 	"github.com/go-chi/chi/v5"
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func (h *Handlers) CreateString(w http.ResponseWriter, r *http.Request) {
 	bearerHeader := r.Header.Get("Authorization")
 	bearer := strings.Replace(bearerHeader, "Bearer ", "", 1)
 
-	/*	idString, err := h.Tokens.GetUserIdFromToken(bearer)
-		if err != nil {
-			h.Logger.PrintError(err, nil)
-		}
-		userId, err := strconv.Atoi(idString)*/
 	userId, err := h.Tokens.GetUserIdInt64FromToken(bearer)
 	if err != nil {
 		h.Logger.PrintError(err, nil)
@@ -51,7 +48,7 @@ func (h *Handlers) CreateString(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	stringModel := &stringModels.String{
+	/*	stringModel := &stringModels.String{
 		ProjectId:    projectId,
 		InverterId:   inverterId,
 		TrackerId:    trackerId,
@@ -59,9 +56,23 @@ func (h *Handlers) CreateString(w http.ResponseWriter, r *http.Request) {
 		CreatedBy:    userId,
 		IsInParallel: input.IsInParallel,
 		PanelAmount:  0,
+	}*/
+
+	boilerString := &boiler.String{
+		ProjectID:    projectId,
+		InverterID:   inverterId,
+		TrackerID:    trackerId,
+		Name:         input.Name,
+		CreatedAt:    time.Time{},
+		CreatedBy:    userId,
+		IsInParallel: input.IsInParallel,
+		PanelAmount:  0,
+		Version:      0,
+		Model:        2,
+		Color:        "black",
 	}
 
-	result, err := h.Models.Strings.Insert(stringModel)
+	result, err := h.Models.Strings.Insert(boilerString)
 	if err != nil {
 		switch {
 		default:
@@ -69,21 +80,23 @@ func (h *Handlers) CreateString(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
+
+	h.Logger.PrintInfo("new string id:", map[string]string{"id": strconv.FormatInt(result.ID, 10)})
 	//result = append(result, itemResult)
-
-	trackerString := &stringModels.TrackerString{
-		TrackerId: int64(trackerId),
-		StringId:  result.ID,
-	}
-
-	err = h.Models.Strings.InsertTrackerString(trackerString)
-	if err != nil {
-		switch {
-		default:
-			h.Errors.ServerErrorResponse(w, r, err)
+	/*
+		trackerString := &stringModels.TrackerString{
+			TrackerId: int64(trackerId),
+			StringId:  result.ID,
 		}
-		return
-	}
+
+		err = h.Models.Strings.InsertTrackerString(trackerString)
+		if err != nil {
+			switch {
+			default:
+				h.Errors.ServerErrorResponse(w, r, err)
+			}
+			return
+		}*/
 
 	/*	tracker := &trackers.Tracker{
 			ID:           input.Tracker.ID,
@@ -198,6 +211,67 @@ func (h *Handlers) UpdateString(w http.ResponseWriter, r *http.Request) {
 
 	err = h.Json.ResponseJSON(w, http.StatusAccepted,
 		json.Envelope{"string": result},
+		nil)
+	if err != nil {
+		h.Errors.ServerErrorResponse(w, r, err)
+	}
+}
+
+func (h *Handlers) UpdateStringColor(w http.ResponseWriter, r *http.Request) {
+	bearerHeader := r.Header.Get("Authorization")
+	bearer := strings.Replace(bearerHeader, "Bearer ", "", 1)
+
+	projectIdString := chi.URLParam(r, "projectId")
+	projectId, err := strconv.Atoi(projectIdString)
+	if err != nil {
+		h.Logger.PrintError(err, nil)
+	}
+	fmt.Println(projectId)
+
+	idString, err := h.Tokens.GetUserIdFromToken(bearer)
+	if err != nil {
+		h.Logger.PrintError(err, nil)
+	}
+	userId, err := strconv.Atoi(idString)
+	fmt.Println(userId)
+
+	var input struct {
+		ID    int64  `json:"id"`
+		Color string `json:"color"`
+	}
+
+	err = h.Json.DecodeJSON(w, r, &input)
+	if err != nil {
+		h.Errors.ServerErrorResponse(w, r, err)
+		return
+	}
+
+	updateString := &boiler.String{
+		ID:    input.ID,
+		Color: input.Color,
+	}
+
+	result, rowsAff, err := h.Models.Strings.UpdateBoilerStringColor(updateString)
+	fmt.Println(rowsAff)
+	if err != nil {
+		switch {
+		default:
+			h.Errors.ServerErrorResponse(w, r, err)
+		}
+		return
+	}
+
+	panels, panelsAff, err := h.Models.Panels.UpdatePanelsColor(updateString.ID, updateString.Color)
+	if err != nil {
+		switch {
+		default:
+			h.Errors.ServerErrorResponse(w, r, err)
+		}
+		return
+	}
+
+	err = h.Json.ResponseJSON(w, http.StatusAccepted,
+		json.Envelope{"string": result, "panelsChanged": panelsAff, "panels": panels},
 		nil)
 	if err != nil {
 		h.Errors.ServerErrorResponse(w, r, err)

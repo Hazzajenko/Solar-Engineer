@@ -4,6 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
+	boiler "github.com/Hazzajenko/gosolarbackend/my_models"
 	"time"
 )
 
@@ -81,4 +83,31 @@ func (p *PanelModel) UpdatePanelLocation(panel *Panel) (*Panel, error) {
 	}
 
 	return panel, nil
+}
+
+func (p *PanelModel) UpdatePanelsColor(stringId int64, stringColor string) (boiler.PanelSlice, int64, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+	panels, err := boiler.Panels(boiler.PanelWhere.StringID.EQ(stringId)).All(ctx, p.DB)
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return nil, 0, errors.New("edit conflict")
+		default:
+			return nil, 0, err
+		}
+	}
+	panelRowsAff, err := panels.UpdateAll(ctx, p.DB, boiler.M{"color": stringColor})
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return nil, 0, errors.New("edit conflict")
+		default:
+			return nil, 0, err
+		}
+	}
+	fmt.Println(panelRowsAff)
+
+	result, err := boiler.Panels(boiler.PanelWhere.StringID.EQ(stringId)).All(ctx, p.DB)
+	return result, panelRowsAff, nil
 }

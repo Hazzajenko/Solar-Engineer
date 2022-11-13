@@ -9,14 +9,20 @@
     flex-direction: column;*/
 }
 
+.project-design-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .drop-zone {
   display: flex;
   justify-content: center;
   align-items: center;
   border: #24292e;
-  background-color: #1976d2;
-  width: 50px;
-  height: 50px;
+  background-color: #ffffff;
+  width: 30px;
+  height: 30px;
 
   //color: #1976d2;
 }
@@ -24,9 +30,16 @@
 .panel {
   //align-items: center;
   //justify-content: center;
-  border: 1px solid orangered;
-  width: 25px;
-  height: 25px;
+  //border: 1px solid orangered;
+  background-color: #95c2fa;
+  width: 20px;
+  height: 20px;
+
+  &__location {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 
 .content {
@@ -34,6 +47,29 @@
   z-index: 2;
   margin: 50px;
 }
+
+.custom-menu {
+  display: flex;
+  align-items: flex-end;
+}
+
+mat-menu {
+  margin-top: 15px;
+  background-color: #95c2fa;
+  color: #1976d2;
+}
+
+.mat-menu-panel {
+  margin-top: 15px;
+  background-color: #95c2fa;
+  color: #1976d2;
+}
+
+/*.mat-menu-item {
+  margin-top: 15px;
+  background-color: #95c2fa;
+  color: #1976d2;
+}*/
 
 canvas {
   width: 80%;

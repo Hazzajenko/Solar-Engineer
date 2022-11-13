@@ -3,18 +3,11 @@ import * as State from './trackers.reducer'
 import { selectRouteParams } from '../../../store/router.selectors'
 import { TrackerModel } from '../../models/tracker.model'
 
-export const selectTrackersState =
-  createFeatureSelector<State.TrackerState>('trackers')
+export const selectTrackersState = createFeatureSelector<State.TrackerState>('trackers')
 
-export const selectTrackerEntities = createSelector(
-  selectTrackersState,
-  State.selectEntities,
-)
+export const selectTrackerEntities = createSelector(selectTrackersState, State.selectEntities)
 
-export const selectAllTrackers = createSelector(
-  selectTrackersState,
-  State.selectAll,
-)
+export const selectAllTrackers = createSelector(selectTrackersState, State.selectAll)
 
 export const selectTrackerByRouteParams = createSelector(
   selectTrackerEntities,
@@ -26,7 +19,7 @@ export const selectTrackersByInverterIdRouteParams = createSelector(
   selectAllTrackers,
   selectRouteParams,
   (trackers, { inverterId }) =>
-    trackers.filter((tracker) => tracker.inverterId === Number(inverterId)),
+    trackers.filter((tracker) => tracker.inverter_id === Number(inverterId)),
 )
 
 export const selectTrackerById = (props: { id: number }) =>
@@ -36,5 +29,5 @@ export const selectTrackerById = (props: { id: number }) =>
 
 export const selectTrackersByProjectId = (props: { projectId: number }) =>
   createSelector(selectAllTrackers, (trackers: TrackerModel[]) =>
-    trackers.filter((tracker) => tracker.projectId === Number(props.projectId)),
+    trackers.filter((tracker) => tracker.project_id === Number(props.projectId)),
   )

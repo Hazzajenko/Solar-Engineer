@@ -3,6 +3,8 @@ package inverters
 import (
 	"context"
 	"database/sql"
+	"errors"
+	boiler "github.com/Hazzajenko/gosolarbackend/my_models"
 	"time"
 )
 
@@ -106,73 +108,90 @@ func (p *InverterModel) Insert(inverter *Inverter) (*Inverter, error) {
 	return &result, nil
 }
 
-func (p *InverterModel) GetInvertersByProjectId(projectId int64) ([]*Inverter, error) {
-	query := `
-		SELECT
-			id, 
-		    project_id, 
-		    name, 
-		    model,
-		    created_at, 
-		    created_by, 
-			tracker_amount,
-			ac_nominal_output, 
-			ac_output_current, 
-			european_efficiency, 
-			max_input_current, 
-			max_output_power, 
-			mpp_voltage_range_low, 
-			mpp_voltage_range_high, 
-			start_up_voltage,
-		    version
-		FROM inverters
-		WHERE project_id = $1
-		`
+func (p *InverterModel) GetInvertersByProjectId(projectId int64) (*boiler.InverterSlice, error) {
+	if projectId < 1 {
+		return nil, errors.New("record not found")
+	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
-
-	rows, err := p.DB.QueryContext(ctx, query, projectId)
+	inverters, err := boiler.Inverters(boiler.InverterWhere.ProjectID.EQ(projectId)).All(ctx, p.DB)
 	if err != nil {
 		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return nil, errors.New("record not found")
 		default:
 			return nil, err
 		}
 	}
 
-	defer rows.Close()
-	var inverters []*Inverter
-	for rows.Next() {
-		var inverter Inverter
+	return &inverters, nil
+	/*	query := `
+			SELECT
+				id,
+			    project_id,
+			    name,
+			    model,
+			    created_at,
+			    created_by,
+				tracker_amount,
+				ac_nominal_output,
+				ac_output_current,
+				european_efficiency,
+				max_input_current,
+				max_output_power,
+				mpp_voltage_range_low,
+				mpp_voltage_range_high,
+				start_up_voltage,
+			    version
+			FROM inverters
+			WHERE project_id = $1
+			`
 
-		err := rows.Scan(
-			&inverter.ID,
-			&inverter.ProjectId,
-			&inverter.Name,
-			&inverter.Model,
-			&inverter.CreatedAt,
-			&inverter.CreatedBy,
-			&inverter.TrackerAmount,
-			&inverter.AcNominalOutput,
-			&inverter.AcOutputCurrent,
-			&inverter.EuropeanEfficiency,
-			&inverter.MaxInputCurrent,
-			&inverter.MaxOutputPower,
-			&inverter.MppVoltageRangeLow,
-			&inverter.MppVoltageRangeHigh,
-			&inverter.StartUpVoltage,
-			&inverter.Version,
-		)
+		ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+		defer cancel()
+
+		rows, err := p.DB.QueryContext(ctx, query, projectId)
 		if err != nil {
+			switch {
+			default:
+				return nil, err
+			}
+		}
+
+		defer rows.Close()
+		var inverters []*Inverter
+		for rows.Next() {
+			var inverter Inverter
+
+			err := rows.Scan(
+				&inverter.ID,
+				&inverter.ProjectId,
+				&inverter.Name,
+				&inverter.Model,
+				&inverter.CreatedAt,
+				&inverter.CreatedBy,
+				&inverter.TrackerAmount,
+				&inverter.AcNominalOutput,
+				&inverter.AcOutputCurrent,
+				&inverter.EuropeanEfficiency,
+				&inverter.MaxInputCurrent,
+				&inverter.MaxOutputPower,
+				&inverter.MppVoltageRangeLow,
+				&inverter.MppVoltageRangeHigh,
+				&inverter.StartUpVoltage,
+				&inverter.Version,
+			)
+			if err != nil {
+				return nil, err
+			}
+
+			inverters = append(inverters, &inverter)
+		}
+
+		if err = rows.Err(); err != nil {
 			return nil, err
 		}
 
-		inverters = append(inverters, &inverter)
-	}
-
-	if err = rows.Err(); err != nil {
-		return nil, err
-	}
-
-	return inverters, nil
+		return inverters, nil*/
 }

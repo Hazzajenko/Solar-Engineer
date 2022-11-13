@@ -1,7 +1,10 @@
 <button (click)="create()" mat-icon-button>
   <mat-icon>add_circle</mat-icon>
 </button>
-<button mat-icon-button>
+<!--<button (click)="settings()" mat-icon-button>
+  <mat-icon>settings</mat-icon>
+</button>-->
+<button [matMenuTriggerFor]="menu" mat-icon-button>
   <mat-icon>settings</mat-icon>
 </button>
 <button mat-icon-button>
@@ -13,3 +16,13 @@
 <button (click)="select()" mat-icon-button>
   <mat-icon>chevron_right</mat-icon>
 </button>
+
+<mat-menu #menu="matMenu">
+  <ng-container *ngIf="model === 3">
+    <button (click)="changeStringColor('red')" mat-menu-item>Red</button>
+    <button (click)="changeStringColor('green')" mat-menu-item>Green</button>
+    <button (click)="changeStringColor('purple')" mat-menu-item>Purple</button>
+  </ng-container>
+  <button mat-menu-item>Item 1</button>
+  <button mat-menu-item>Item 2</button>
+</mat-menu>

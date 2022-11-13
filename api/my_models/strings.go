@@ -34,6 +34,7 @@ type String struct {
 	PanelAmount  int64     `boil:"panel_amount" json:"panel_amount" toml:"panel_amount" yaml:"panel_amount"`
 	Version      int       `boil:"version" json:"version" toml:"version" yaml:"version"`
 	Model        int       `boil:"model" json:"model" toml:"model" yaml:"model"`
+	Color        string    `boil:"color" json:"color" toml:"color" yaml:"color"`
 
 	R *stringR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L stringL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -51,6 +52,7 @@ var StringColumns = struct {
 	PanelAmount  string
 	Version      string
 	Model        string
+	Color        string
 }{
 	ID:           "id",
 	ProjectID:    "project_id",
@@ -63,6 +65,7 @@ var StringColumns = struct {
 	PanelAmount:  "panel_amount",
 	Version:      "version",
 	Model:        "model",
+	Color:        "color",
 }
 
 var StringTableColumns = struct {
@@ -77,6 +80,7 @@ var StringTableColumns = struct {
 	PanelAmount  string
 	Version      string
 	Model        string
+	Color        string
 }{
 	ID:           "strings.id",
 	ProjectID:    "strings.project_id",
@@ -89,6 +93,7 @@ var StringTableColumns = struct {
 	PanelAmount:  "strings.panel_amount",
 	Version:      "strings.version",
 	Model:        "strings.model",
+	Color:        "strings.color",
 }
 
 // Generated where
@@ -114,6 +119,7 @@ var StringWhere = struct {
 	PanelAmount  whereHelperint64
 	Version      whereHelperint
 	Model        whereHelperint
+	Color        whereHelperstring
 }{
 	ID:           whereHelperint64{field: "\"strings\".\"id\""},
 	ProjectID:    whereHelperint64{field: "\"strings\".\"project_id\""},
@@ -126,6 +132,7 @@ var StringWhere = struct {
 	PanelAmount:  whereHelperint64{field: "\"strings\".\"panel_amount\""},
 	Version:      whereHelperint{field: "\"strings\".\"version\""},
 	Model:        whereHelperint{field: "\"strings\".\"model\""},
+	Color:        whereHelperstring{field: "\"strings\".\"color\""},
 }
 
 // StringRels is where relationship names are stored.
@@ -196,9 +203,9 @@ func (r *stringR) GetPanels() PanelSlice {
 type stringL struct{}
 
 var (
-	stringAllColumns            = []string{"id", "project_id", "inverter_id", "tracker_id", "name", "created_at", "created_by", "is_in_parallel", "panel_amount", "version", "model"}
+	stringAllColumns            = []string{"id", "project_id", "inverter_id", "tracker_id", "name", "created_at", "created_by", "is_in_parallel", "panel_amount", "version", "model", "color"}
 	stringColumnsWithoutDefault = []string{"project_id", "inverter_id", "tracker_id", "name"}
-	stringColumnsWithDefault    = []string{"id", "created_at", "created_by", "is_in_parallel", "panel_amount", "version", "model"}
+	stringColumnsWithDefault    = []string{"id", "created_at", "created_by", "is_in_parallel", "panel_amount", "version", "model", "color"}
 	stringPrimaryKeyColumns     = []string{"id"}
 	stringGeneratedColumns      = []string{}
 )

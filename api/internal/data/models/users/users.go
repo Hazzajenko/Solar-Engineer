@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	boiler "github.com/Hazzajenko/gosolarbackend/my_models"
 	"time"
 )
 
@@ -51,32 +52,50 @@ func (m *UserModel) Insert(user *User) error {
 	return nil
 }
 
-func (m *UserModel) GetByEmail(email string) (*User, error) {
-	query := `
-		SELECT id, created_at, name, email, password_hash, activated, version
-		FROM users
-		WHERE email = $1`
-	var user User
+func (m *UserModel) GetByEmail(email string) (*boiler.User, error) {
+	if email == "" {
+		return nil, errors.New("record not found")
+	}
+
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
-	err := m.DB.QueryRowContext(ctx, query, email).Scan(
-		&user.ID,
-		&user.CreatedAt,
-		&user.Name,
-		&user.Email,
-		&user.Password.hash,
-		&user.Activated,
-		&user.Version,
-	)
+	//getUser, err := boiler.FindUser(ctx, m.DB, )
+	getUser, err := boiler.Users(boiler.UserWhere.Email.EQ(email)).One(ctx, m.DB)
 	if err != nil {
 		switch {
 		case errors.Is(err, sql.ErrNoRows):
-			return nil, errors.New("record not found")
+			return nil, errors.New("edit conflict")
 		default:
 			return nil, err
 		}
 	}
-	return &user, nil
+
+	return getUser, nil
+	/*	query := `
+			SELECT id, created_at, name, email, password_hash, activated, version
+			FROM users
+			WHERE email = $1`
+		var user User
+		ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+		defer cancel()
+		err := m.DB.QueryRowContext(ctx, query, email).Scan(
+			&user.ID,
+			&user.CreatedAt,
+			&user.Name,
+			&user.Email,
+			&user.Password.hash,
+			&user.Activated,
+			&user.Version,
+		)
+		if err != nil {
+			switch {
+			case errors.Is(err, sql.ErrNoRows):
+				return nil, errors.New("record not found")
+			default:
+				return nil, err
+			}
+		}
+		return &user, nil*/
 }
 
 func (m *UserModel) Update(user *User) error {
@@ -109,30 +128,49 @@ func (m *UserModel) Update(user *User) error {
 	return nil
 }
 
-func (m *UserModel) Get(id int64) (*User, error) {
-	query := `
-		SELECT id, created_at, name, email, password_hash, activated, version
-		FROM users
-		WHERE id = $1`
-	var user User
+func (m *UserModel) Get(userId int64) (*boiler.User, error) {
+	if userId < 1 {
+		return nil, errors.New("record not found")
+	}
+
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
-	err := m.DB.QueryRowContext(ctx, query, id).Scan(
-		&user.ID,
-		&user.CreatedAt,
-		&user.Name,
-		&user.Email,
-		&user.Password.hash,
-		&user.Activated,
-		&user.Version,
-	)
+	getUser, err := boiler.FindUser(ctx, m.DB, userId)
 	if err != nil {
 		switch {
 		case errors.Is(err, sql.ErrNoRows):
-			return nil, errors.New("record not found")
+			return nil, errors.New("edit conflict")
 		default:
 			return nil, err
 		}
 	}
-	return &user, nil
+
+	return getUser, nil
+
+	/*	query := `
+			SELECT id, created_at, name, email, password_hash, activated, version
+			FROM users
+			WHERE id = $1`
+		var user User
+		ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+		defer cancel()
+		err := m.DB.QueryRowContext(ctx, query, id).Scan(
+			&user.ID,
+			&user.CreatedAt,
+			&user.Name,
+			&user.Email,
+			&user.Password.hash,
+			&user.Activated,
+			&user.Version,
+		)
+		if err != nil {
+			switch {
+			case errors.Is(err, sql.ErrNoRows):
+				return nil, errors.New("record not found")
+			default:
+				return nil, err
+			}
+		}
+		return &user, nil*/
+
 }

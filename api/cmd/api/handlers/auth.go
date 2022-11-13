@@ -65,7 +65,7 @@ func (h *Handlers) RegisterUserHandler(w http.ResponseWriter, r *http.Request) {
 			app.serverErrorResponse(w, r, err)
 			return
 		}*/
-	token, err := h.Tokens.CreateToken(user)
+	//token, err := h.Tokens.CreateToken(user)
 	if err != nil {
 		return
 	}
@@ -75,7 +75,7 @@ func (h *Handlers) RegisterUserHandler(w http.ResponseWriter, r *http.Request) {
 	//app.logger.PrintInfo(token, nil)
 	//app.logger.PrintInfo(token.Plaintext, nil)
 
-	err = h.Json.ResponseJSON(w, http.StatusAccepted, json.Envelope{"user": user, "token": token}, nil)
+	err = h.Json.ResponseJSON(w, http.StatusAccepted, json.Envelope{"user": user}, nil)
 	if err != nil {
 		h.Errors.ServerErrorResponse(w, r, err)
 	}
@@ -105,7 +105,8 @@ func (h *Handlers) LoginUserHandler(w http.ResponseWriter, r *http.Request) {
 	input.Validator.CheckField(input.Email != "", "Email", "Email is required")
 	input.Validator.CheckField(user != nil, "Email", "Email address could not be found")
 
-	if user != nil {
+	//fix this
+	/*	if user != nil {
 		match, err := user.Password.Matches(input.Password)
 		if err != nil {
 			h.Errors.ServerErrorResponse(w, r, err)
@@ -117,7 +118,7 @@ func (h *Handlers) LoginUserHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		input.Validator.CheckField(input.Password != "", "Password", "Password is required")
-	}
+	}*/
 	if input.Validator.HasErrors() {
 		h.Errors.FailedValidationResponse(w, r, input.Validator.FieldErrors)
 		return

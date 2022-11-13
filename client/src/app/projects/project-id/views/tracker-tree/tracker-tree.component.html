@@ -1,71 +1,82 @@
 <div class="project-tree">
-  <ng-container *ngIf="strings">
-    <div cdkDropListGroup class="project-tree__tracker-item">
-      <div
-        (cdkDropListDropped)="taskDrop($event)"
-        *ngFor="let string of strings; let a = index"
-        [cdkDropListConnectedTo]="gridNumbers"
-        [cdkDropListData]="panels! | filterPanels: string.id"
-        [id]="'string' + string.id.toString()"
-        cdkDropList
-        cdkDropListOrientation="vertical"
-      >
-        <div
-          *ngIf="string.trackerId === tracker?.id"
-          class="project-tree__string-item"
-        >
-          <div>
-            <button
-              (click)="toggleString(string, a)"
-              [attr.aria-label]="'Toggle ' + string.name"
-              mat-icon-button
-            >
-              <mat-icon class="mat-icon-rtl-mirror">
-                {{ stringBool[a] ? "expand_more" : "chevron_right" }}
-              </mat-icon>
-            </button>
-            {{ string.name }} [{{ string.panelAmount }}]
-          </div>
-          <div *ngIf="strings[a]">
-            <div class="project-tree__string-item__button-menu">
-              <app-button-menu
-                [inverter]="inverter"
-                [model]="3"
-                [projectId]="3"
-                [string]="string"
-                [tracker]="tracker"
-              ></app-button-menu>
-            </div>
-
-            <div>
+  <ng-container *ngIf="trackerTree$ | async; let trackerTree">
+    <ng-container *ngIf="trackerTree.project">
+      <ng-container *ngIf="trackerTree.inverter">
+        <ng-container *ngIf="trackerTree.tracker">
+          <!--  <ng-container *ngIf="strings">-->
+          <button
+            (click)="createString(trackerTree.project, trackerTree.inverter, trackerTree.tracker)"
+            mat-stroked-button
+          >
+            Create String
+          </button>
+          <ng-container *ngIf="trackerTree.strings">
+            <div cdkDropListGroup class="project-tree__tracker-item">
               <div
-                *ngFor="let panel of panels; let b = index"
-                [cdkDragData]="panel"
-                cdkDrag
+                (cdkDropListDropped)="taskDrop($event)"
+                *ngFor="let string of trackerTree.strings; let a = index"
+                [cdkDropListConnectedTo]="gridNumbers"
+                [cdkDropListData]="panels! | filterPanels: string.id"
+                [id]="'string' + string.id.toString()"
+                cdkDropList
+                cdkDropListOrientation="vertical"
               >
-                <!--                      cdkDropList [id]="stringModel.id.toString()"-->
-                <div
-                  *ngIf="panel.stringId === string.id"
-                  [ngStyle]="{
-                    border: '1px solid' + panel.color,
+                <div *ngIf="string.tracker_id === tracker?.id" class="project-tree__string-item">
+                  <div>
+                    <button
+                      (click)="toggleString(string, a)"
+                      [attr.aria-label]="'Toggle ' + string.name"
+                      mat-icon-button
+                    >
+                      <mat-icon class="mat-icon-rtl-mirror">
+                        {{ stringBool[a] ? "expand_more" : "chevron_right" }}
+                      </mat-icon>
+                    </button>
+                    {{ string.name }} [{{ string.panel_amount }}]
+                  </div>
+                  <div *ngIf="stringBool[a]">
+                    <div class="project-tree__string-item__button-menu">
+                      <app-button-menu
+                        (reRender)="reRender($event)"
+                        [inverter]="inverter"
+                        [model]="3"
+                        [projectId]="3"
+                        [string]="string"
+                        [tracker]="tracker"
+                      ></app-button-menu>
+                    </div>
 
-                    background: panel.color
-                  }"
-                  class="project-tree__panel-item"
-                >
-                  <mat-icon
-                    cdkDragHandle
-                    class="project-tree__panel-item__handle"
-                    >drag_indicator
-                  </mat-icon>
+                    <div>
+                      <div
+                        *ngFor="let panel of trackerTree.panels; let b = index"
+                        [cdkDragData]="panel"
+                        cdkDrag
+                      >
+                        <!--                      cdkDropList [id]="stringModel.id.toString()"-->
+                        <div
+                          *ngIf="panel.string_id === string.id"
+                          [ngStyle]="{
+                            border: '1px solid' + panel.color,
 
-                  {{ panel.name }} [{{ panel.color }}] [{{ panel.location }}]
+                            background: panel.color
+                          }"
+                          class="project-tree__panel-item"
+                        >
+                          <mat-icon cdkDragHandle class="project-tree__panel-item__handle"
+                            >drag_indicator
+                          </mat-icon>
+
+                          {{ panel.name }} [{{ panel.color }}] [{{ panel.location }}]
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
+          </ng-container>
+        </ng-container>
+      </ng-container>
+    </ng-container>
   </ng-container>
 </div>
