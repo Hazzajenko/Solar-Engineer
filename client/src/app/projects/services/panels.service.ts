@@ -28,10 +28,7 @@ interface CreatePanelResponse {
   providedIn: 'root',
 })
 export class PanelsService {
-  constructor(
-    private http: HttpClient,
-    private store: Store<AppState>,
-  ) {}
+  constructor(private http: HttpClient, private store: Store<AppState>) {}
 
   /*  getTrackersByProjectId(projectId: number): Promise<TrackersEnvelope> {
       return new Promise<TrackersEnvelope>((resolve, reject) =>
@@ -60,34 +57,31 @@ export class PanelsService {
     trackerId: number,
     stringId: number,
   ): Promise<CreatePanelResponse> {
-    return new Promise<CreatePanelResponse>(
-      (resolve, reject) =>
-        this.http
-          .post<CreatePanelResponse>(
-            environment.apiUrl +
-              `/projects/${projectId}/${inverterId}/${trackerId}/${stringId}`,
-            {
-              // string,
-              inverterId,
-              trackerId,
-              stringId,
-            },
-          )
-          .subscribe({
-            next: (envelope) => {
-              this.store.dispatch(
-                addPanel({ panel: envelope.panel }),
-              )
-              // this.store.dispatch(updateString({ string: envelope.string }));
-              resolve(envelope)
-            },
-            error: (err) => {
-              reject(err)
-            },
-            complete: () => {
-              console.log('createPanel')
-            },
-          }),
+    return new Promise<CreatePanelResponse>((resolve, reject) =>
+      this.http
+        .post<CreatePanelResponse>(
+          environment.apiUrl +
+            `/projects/${projectId}/${inverterId}/${trackerId}/${stringId}`,
+          {
+            // string,
+            inverterId,
+            trackerId,
+            stringId,
+          },
+        )
+        .subscribe({
+          next: (envelope) => {
+            this.store.dispatch(addPanel({ panel: envelope.panel }))
+            // this.store.dispatch(updateString({ string: envelope.string }));
+            resolve(envelope)
+          },
+          error: (err) => {
+            reject(err)
+          },
+          complete: () => {
+            console.log('createPanel')
+          },
+        }),
     )
   }
 
@@ -98,48 +92,40 @@ export class PanelsService {
     string_id: number,
     location: string,
   ): Promise<CreatePanelResponse> {
-    return new Promise<CreatePanelResponse>(
-      (resolve, reject) =>
-        this.http
-          .post<CreatePanelResponse>(
-            environment.apiUrl +
-              `/projects/${projectId}/panels`,
-            // `/projects/${projectId}/${inverterId}/${trackerId}/${string.id}`,
-            {
-              // string,
-              inverter_id,
-              tracker_id,
-              string_id,
-              location,
-            },
-          )
-          .subscribe({
-            next: (envelope) => {
-              this.store.dispatch(
-                addPanel({ panel: envelope.panel }),
-              )
-              // this.store.dispatch(updateString({ string: envelope.string }));
-              resolve(envelope)
-            },
-            error: (err) => {
-              reject(err)
-            },
-            complete: () => {
-              console.log('createPanel')
-            },
-          }),
+    return new Promise<CreatePanelResponse>((resolve, reject) =>
+      this.http
+        .post<CreatePanelResponse>(
+          `${environment.apiUrl}/projects/${projectId}/panels`,
+          // `/projects/${projectId}/${inverterId}/${trackerId}/${string.id}`,
+          {
+            // string,
+            inverter_id,
+            tracker_id,
+            string_id,
+            location,
+          },
+        )
+        .subscribe({
+          next: (envelope) => {
+            this.store.dispatch(addPanel({ panel: envelope.panel }))
+            // this.store.dispatch(updateString({ string: envelope.string }));
+            resolve(envelope)
+          },
+          error: (err) => {
+            reject(err)
+          },
+          complete: () => {
+            console.log('createPanel')
+          },
+        }),
     )
   }
 
-  updatePanel(
-    projectId: number,
-    panel: PanelModel,
-  ): Promise<PanelEnvelope> {
+  updatePanel(projectId: number, panel: PanelModel): Promise<PanelEnvelope> {
     return new Promise<PanelEnvelope>((resolve, reject) =>
       this.http
         .patch<PanelEnvelope>(
-          environment.apiUrl +
-            `/projects/${projectId}/panels`,
+          `${environment.apiUrl}/projects/${projectId}/panels`,
           {
             id: panel.id,
             inverter_id: panel.inverter_id,
@@ -151,9 +137,7 @@ export class PanelsService {
         )
         .subscribe({
           next: (envelope) => {
-            this.store.dispatch(
-              updatePanel({ panel: envelope.panel }),
-            )
+            this.store.dispatch(updatePanel({ panel: envelope.panel }))
             resolve(envelope)
           },
           error: (err) => {
@@ -166,34 +150,27 @@ export class PanelsService {
     )
   }
 
-  deletePanel(
-    projectId: number,
-    panel: PanelModel,
-  ): Promise<PanelEnvelope> {
+  deletePanel(projectId: number, panelId: number): Promise<PanelEnvelope> {
     return new Promise<PanelEnvelope>((resolve, reject) =>
       this.http
         .delete<PanelEnvelope>(
-          environment.apiUrl +
-            `/projects/${projectId}/panels`,
+          `${environment.apiUrl}/projects/${projectId}/panels`,
           {
             body: {
-              id: panel.id,
-              inverter_id: panel.inverter_id,
-              tracker_id: panel.tracker_id,
-              string_id: panel.string_id,
+              id: panelId,
             },
           },
         )
         .subscribe({
           next: (envelope) => {
-            this.store.dispatch(deletePanel({ panel }))
+            this.store.dispatch(deletePanel({ panelId }))
             resolve(envelope)
           },
           error: (err) => {
             reject(err)
           },
           complete: () => {
-            console.log('updatePanel')
+            console.log('deletePanel')
           },
         }),
     )

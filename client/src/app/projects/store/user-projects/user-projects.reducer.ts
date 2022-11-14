@@ -1,30 +1,30 @@
-import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity';
-import { createReducer, on } from '@ngrx/store';
-import * as UserProjectsActions from './user-projects.actions';
-import { UserProjectModel } from '../../models/user-project.model';
+import { createEntityAdapter, EntityAdapter, EntityState } from "@ngrx/entity";
+import { createReducer, on } from "@ngrx/store";
+import * as UserProjectsActions from "./user-projects.actions";
+import { UserProjectModel } from "../../models/user-project.model";
 
 export const selectUserProjectId = (b: UserProjectModel): number => b.userId;
 
 export const userProjectAdapter: EntityAdapter<UserProjectModel> =
-  createEntityAdapter<UserProjectModel>({
-    selectId: selectUserProjectId,
-  });
+	createEntityAdapter<UserProjectModel>({
+		selectId: selectUserProjectId,
+	});
 
 export const initialUserProjectsState = userProjectAdapter.getInitialState({});
 
 export const userProjectsReducer = createReducer(
-  initialUserProjectsState,
+	initialUserProjectsState,
 
-  on(UserProjectsActions.addUserProject, (state, { userProject }) =>
-    userProjectAdapter.addOne(userProject, state)
-  ),
+	on(UserProjectsActions.addUserProject, (state, { userProject }) =>
+		userProjectAdapter.addOne(userProject, state),
+	),
 
-  on(UserProjectsActions.addUserProjects, (state, { userProjects }) =>
-    userProjectAdapter.addMany(userProjects, state)
-  )
+	on(UserProjectsActions.addUserProjects, (state, { userProjects }) =>
+		userProjectAdapter.addMany(userProjects, state),
+	),
 );
 
 export const { selectIds, selectEntities, selectAll } =
-  userProjectAdapter.getSelectors();
+	userProjectAdapter.getSelectors();
 
 export type UserProjectState = EntityState<UserProjectModel>;

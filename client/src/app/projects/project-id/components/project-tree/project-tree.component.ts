@@ -1,4 +1,10 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core'
+import {
+  Component,
+  EventEmitter,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core'
 import { InverterModel } from '../../../models/inverter.model'
 import { TrackerModel } from '../../../models/tracker.model'
 import { StringModel } from '../../../models/string.model'
@@ -9,7 +15,16 @@ import { InvertersService } from '../../../services/inverters.service'
 import { TrackersService } from '../../../services/trackers.service'
 import { StringsService } from '../../../services/strings.service'
 import { PanelsService } from '../../../services/panels.service'
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop'
+import { Observable } from 'rxjs'
+import { ProjectModel } from '../../../models/project.model'
+import { selectProjectByRouteParams } from '../../../store/projects/projects.selectors'
+import { selectInvertersByProjectIdRouteParams } from '../../../store/inverters/inverters.selectors'
+import { selectTrackersByProjectIdRouteParams } from '../../../store/trackers/trackers.selectors'
+import { selectStringsByProjectIdRouteParams } from '../../../store/strings/strings.selectors'
+import { selectPanelsByProjectIdRouteParams } from '../../../store/panels/panels.selectors'
+import { Store } from '@ngrx/store'
+import { AppState } from '../../../../store/app.state'
+import { StatsService } from '../../../services/stats.service'
 
 @Component({
   selector: 'app-project-tree',
@@ -18,80 +33,106 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop'
 })
 export class ProjectTreeComponent implements OnInit {
   @ViewChild(MatMenuTrigger, { static: true }) matMenuTrigger!: MatMenuTrigger
-  @Input() inverters?: InverterModel[]
-  @Input() trackers?: TrackerModel[]
-  @Input() strings?: StringModel[]
-  @Input() panels?: PanelModel[]
+  /*  @Input() inverters?: InverterModel[]
+    @Input() trackers?: TrackerModel[]
+    @Input() strings?: StringModel[]
+    @Input() panels?: PanelModel[]*/
+  // project?: ProjectModel
+  project$!: Observable<ProjectModel | undefined>
+  inverters$!: Observable<InverterModel[]>
+  trackers$!: Observable<TrackerModel[]>
+  strings$!: Observable<StringModel[]>
+  panels$!: Observable<PanelModel[]>
   @Output() inverterView = new EventEmitter<InverterModel>()
   @Output() reRenderRoot = new EventEmitter<boolean>()
 
   menuTopLeftPosition = { x: '0', y: '0' }
 
-  inverterBool: boolean[] = [false, false, false]
-  trackerBool: boolean[] = [false, false, false]
-  stringBool: boolean[] = [false, false, false]
+  inverterBool: boolean[] = []
+  trackerBool: boolean[] = []
+  stringBool: boolean[] = []
 
   constructor(
     private invertersService: InvertersService,
     private trackersService: TrackersService,
     private stringsService: StringsService,
     private panelsService: PanelsService,
+    private store: Store<AppState>,
+    public stats: StatsService,
   ) {}
 
   ngOnInit(): void {
-    console.log(this.panels)
+    this.project$ = this.store.select(selectProjectByRouteParams)
+    this.inverters$ = this.store.select(selectInvertersByProjectIdRouteParams)
+    this.trackers$ = this.store.select(selectTrackersByProjectIdRouteParams)
+    this.strings$ = this.store.select(selectStringsByProjectIdRouteParams)
+    this.panels$ = this.store.select(selectPanelsByProjectIdRouteParams)
+
+    /*    this.store.select(selectProjectByRouteParams).subscribe((project) => {
+          if (project) {
+            this.project = project
+            this.inverters$ = this.store.select(
+              selectInvertersByProjectId({
+                projectId: project.id,
+              }),
+            )
+            this.trackers$ = this.store.select(
+              selectTrackersByProjectId({
+                projectId: project.id,
+              }),
+            )
+            this.strings$ = this.store.select(
+              selectStringsByProjectId({
+                projectId: project.id,
+              }),
+            )
+            this.panels$ = this.store.select(
+              selectPanelsByProjectId({
+                projectId: project.id,
+              }),
+            )
+          }
+        })*/
   }
 
-  drop(event: CdkDragDrop<StringModel[]>) {
-    moveItemInArray(this.strings!, event.previousIndex, event.currentIndex)
-    // this.boardService.sortBoards(this.boards);
+  toggleInverter(inverter: InverterModel) {
+    this.inverterBool[inverter.id] = !this.inverterBool[inverter.id]
+    console.log(this.inverterBool[inverter.id])
   }
 
-  toggleInverter(inverter: InverterModel, index: number) {
-    this.inverterBool[index] = !this.inverterBool[index]
-    console.log(this.inverterBool[index])
+  toggleTracker(tracker: TrackerModel) {
+    this.trackerBool[tracker.id] = !this.trackerBool[tracker.id]
+    console.log(this.trackerBool[tracker.id])
   }
 
-  toggleTracker(tracker: TrackerModel, index: number) {
-    this.trackerBool[index] = !this.trackerBool[index]
-    console.log(this.trackerBool[index])
-  }
-
-  toggleString(stringModel: StringModel, index: number) {
-    this.stringBool[index] = !this.stringBool[index]
-    console.log(this.stringBool[index])
+  toggleString(stringModel: StringModel) {
+    this.stringBool[stringModel.id] = !this.stringBool[stringModel.id]
+    console.log(this.stringBool[stringModel.id])
   }
 
   sortData($event: Sort) {}
 
   onRightClick(event: MouseEvent, inverter: InverterModel) {
-    // preventDefault avoids to show the visualization of the right-click menu of the browser
     event.preventDefault()
 
-    // we record the mouse position in our object
     this.menuTopLeftPosition.x = event.clientX + 'px'
     console.log(this.menuTopLeftPosition.x)
     this.menuTopLeftPosition.y = event.clientY + 'px'
     console.log(this.menuTopLeftPosition.y)
-    // we open the menu
-    // we pass to the menu the information about our object
     this.matMenuTrigger.menuData = { item: inverter }
 
-    // we open the menu
     this.matMenuTrigger.openMenu()
   }
 
   openMenu(event: MouseEvent, inverter: InverterModel) {
     event.preventDefault()
 
-    // we record the mouse position in our object
     this.menuTopLeftPosition.x = event.clientX + 'px'
     console.log(this.menuTopLeftPosition.x)
     this.menuTopLeftPosition.y = event.clientY + 'px'
     console.log(this.menuTopLeftPosition.y)
     this.matMenuTrigger.menuData = { item: inverter }
 
-    // we open the menu
     this.matMenuTrigger.openMenu()
   }
 
@@ -115,7 +156,11 @@ export class ProjectTreeComponent implements OnInit {
     })
   }
 
-  createString(projectId: number, inverter: InverterModel, tracker: TrackerModel) {
+  createString(
+    projectId: number,
+    inverter: InverterModel,
+    tracker: TrackerModel,
+  ) {
     this.stringsService
       .createString(projectId, inverter.id, tracker.id, 'new string')
       .then((res) => {
@@ -129,14 +174,7 @@ export class ProjectTreeComponent implements OnInit {
     tracker: TrackerModel,
     stringModel: StringModel,
   ) {
-    // stringModel.panelAmount = stringModel.panelAmount! + 1;
     if (stringModel.panel_amount) {
-      // const updateString = stringModel;
-      /*      if (stringModel.panelAmount === 0) {
-updateString.panelAmount = 1;
-} else {
-updateString.panelAmount!++;
-}*/
       let panel_amount = stringModel.panel_amount + 1
 
       const updateString: StringModel = {
@@ -175,55 +213,5 @@ updateString.panelAmount!++;
           console.log(res)
         })
     }
-  }
-
-  taskDrop(event: CdkDragDrop<StringModel[] | PanelModel[], any>) {
-    if (event.item.data.model === 2) {
-      moveItemInArray(this.strings!, event.previousIndex, event.currentIndex)
-      console.log('previousIndex', event.previousIndex)
-      console.log('currentIndex', event.currentIndex)
-      console.log(event)
-      console.log(event.item.data)
-      const string = event.item.data
-      console.log(event.item.data.trackerId)
-      const newTracker = Number(event.container.id)
-      const update: StringModel = {
-        id: string.id,
-        project_id: string.project_id,
-        inverter_id: string.inverter_id,
-        tracker_id: newTracker,
-        model: 2,
-        name: string.name,
-        is_in_parallel: string.is_in_parallel,
-        panel_amount: string.panel_amount,
-        version: string.version,
-      }
-
-      this.stringsService.updateString(3, update).then((res) => console.log(res))
-    } else {
-      console.log('no')
-      moveItemInArray(this.panels!, event.previousIndex, event.currentIndex)
-      console.log('previousIndex', event.previousIndex)
-      console.log('currentIndex', event.currentIndex)
-      console.log(event)
-      console.log(event.item.data)
-      const panel = event.item.data
-      const newString = Number(event.container.id)
-      const update: PanelModel = {
-        id: panel.id,
-        project_id: panel.project_id,
-        inverter_id: panel.inverter_id,
-        tracker_id: panel.tracker_id,
-        string_id: newString,
-        location: panel.location,
-        version: panel.version,
-      }
-      this.panelsService.updatePanel(3, update).then((res) => console.log(res))
-    }
-  }
-
-  reRender($event: boolean) {
-    this.ngOnInit()
-    new this.reRenderRoot(true)
   }
 }

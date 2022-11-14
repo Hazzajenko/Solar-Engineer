@@ -122,12 +122,11 @@ export class TrackerTreeComponent implements OnInit {
     console.log(event)
   }
 
-  reRender($event: boolean) {
-    // this.ngOnInit()
-    // new this.reRenderRoot($event)
-  }
-
-  createString(project: ProjectModel, inverter: InverterModel, tracker: TrackerModel) {
+  createString(
+    project: ProjectModel,
+    inverter: InverterModel,
+    tracker: TrackerModel,
+  ) {
     this.stringsService
       .createString(project.id, inverter.id, tracker.id, 'newString!!')
       .then((res) => res)

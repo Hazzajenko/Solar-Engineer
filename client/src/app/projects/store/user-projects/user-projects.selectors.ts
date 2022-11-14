@@ -1,31 +1,31 @@
-import { createFeatureSelector, createSelector } from '@ngrx/store';
-import * as State from './user-projects.reducer';
-import { selectRouteParams } from '../../../store/router.selectors';
+import { createFeatureSelector, createSelector } from "@ngrx/store";
+import * as State from "./user-projects.reducer";
+import { selectRouteParams } from "../../../store/router.selectors";
 
 export const selectUserProjectsState =
-  createFeatureSelector<State.UserProjectState>('projectMembers');
+	createFeatureSelector<State.UserProjectState>("projectMembers");
 
 export const selectProjectMemberEntities = createSelector(
-  selectUserProjectsState,
-  State.selectEntities
+	selectUserProjectsState,
+	State.selectEntities,
 );
 
 export const selectAllProjectMembers = createSelector(
-  selectUserProjectsState,
-  State.selectAll
+	selectUserProjectsState,
+	State.selectAll,
 );
 
 export const selectProjectMemberByRouteParams = createSelector(
-  selectProjectMemberEntities,
-  selectRouteParams,
-  (projectMembers, { projectMemberId }) => projectMembers[projectMemberId]
+	selectProjectMemberEntities,
+	selectRouteParams,
+	(projectMembers, { projectMemberId }) => projectMembers[projectMemberId],
 );
 
 export const selectProjectMembersByProjectIdRouteParams = createSelector(
-  selectAllProjectMembers,
-  selectRouteParams,
-  (projectMembers, { projectId }) =>
-    projectMembers.filter(
-      (projectMember) => projectMember.projectId === Number(projectId)
-    )
+	selectAllProjectMembers,
+	selectRouteParams,
+	(projectMembers, { projectId }) =>
+		projectMembers.filter(
+			(projectMember) => projectMember.projectId === Number(projectId),
+		),
 );

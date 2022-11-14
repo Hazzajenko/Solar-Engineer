@@ -1,9 +1,89 @@
-<button (click)="create()" mat-icon-button>
+<ng-container [ngSwitch]="model">
+  <div *ngSwitchCase="1">
+    <ng-container *ngIf="projectId && inverter">
+      <ng-container *ngIf="strings$! | async as trackerStrings">
+        <button (click)="createTracker(projectId, inverter)" mat-icon-button>
+          <mat-icon>add_circle</mat-icon>
+        </button>
+        <button [matMenuTriggerFor]="menu" mat-icon-button>
+          <mat-icon>settings</mat-icon>
+        </button>
+        <button (click)="deleteInverter(inverter)" mat-icon-button>
+          <mat-icon>delete</mat-icon>
+        </button>
+        <button mat-icon-button>
+          <mat-icon>open_in_new</mat-icon>
+        </button>
+        <button
+          (click)="selectInverterStrings(trackerStringsFiltered)"
+          *ngIf="
+            trackerStrings
+              | filterStringsBy: inverter.id:1 as trackerStringsFiltered
+          "
+          mat-icon-button
+        >
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+      </ng-container>
+    </ng-container>
+  </div>
+  <div *ngSwitchCase="2">
+    <ng-container *ngIf="projectId && inverter && tracker">
+      <ng-container *ngIf="strings$! | async as trackerStrings">
+        <button
+          (click)="createString(projectId, inverter, tracker)"
+          mat-icon-button
+        >
+          <mat-icon>add_circle</mat-icon>
+        </button>
+        <button [matMenuTriggerFor]="menu" mat-icon-button>
+          <mat-icon>settings</mat-icon>
+        </button>
+        <button (click)="deleteTracker(tracker)" mat-icon-button>
+          <mat-icon>delete</mat-icon>
+        </button>
+        <button mat-icon-button>
+          <mat-icon>open_in_new</mat-icon>
+        </button>
+        <button
+          (click)="selectTrackerStrings(trackerStringsFiltered)"
+          *ngIf="
+            trackerStrings
+              | filterStringsBy: tracker.id:2 as trackerStringsFiltered
+          "
+          mat-icon-button
+        >
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+      </ng-container>
+    </ng-container>
+  </div>
+  <div *ngSwitchCase="3">
+    <ng-container *ngIf="projectId && inverter && tracker && string">
+      <button mat-icon-button>
+        <mat-icon>add_circle</mat-icon>
+      </button>
+      <button [matMenuTriggerFor]="menu" mat-icon-button>
+        <mat-icon>settings</mat-icon>
+      </button>
+      <button (click)="deleteString(string)" mat-icon-button>
+        <mat-icon>delete</mat-icon>
+      </button>
+      <button mat-icon-button>
+        <mat-icon>open_in_new</mat-icon>
+      </button>
+      <button (click)="selectString(string)" mat-icon-button>
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </ng-container>
+  </div>
+</ng-container>
+<!--<button (click)="create()" mat-icon-button>
   <mat-icon>add_circle</mat-icon>
 </button>
-<!--<button (click)="settings()" mat-icon-button>
+&lt;!&ndash;<button (click)="settings()" mat-icon-button>
   <mat-icon>settings</mat-icon>
-</button>-->
+</button>&ndash;&gt;
 <button [matMenuTriggerFor]="menu" mat-icon-button>
   <mat-icon>settings</mat-icon>
 </button>
@@ -15,7 +95,7 @@
 </button>
 <button (click)="select()" mat-icon-button>
   <mat-icon>chevron_right</mat-icon>
-</button>
+</button>-->
 
 <mat-menu #menu="matMenu">
   <ng-container *ngIf="model === 3">

@@ -114,3 +114,46 @@ func (h *Handlers) GetInvertersByProjectId(w http.ResponseWriter, r *http.Reques
 		h.Errors.ServerErrorResponse(w, r, err)
 	}
 }
+
+func (h *Handlers) DeleteInverter(w http.ResponseWriter, r *http.Request) {
+	bearerHeader := r.Header.Get("Authorization")
+	bearer := strings.Replace(bearerHeader, "Bearer ", "", 1)
+
+	userId, err := h.Tokens.GetUserIdInt64FromToken(bearer)
+	if err != nil {
+		h.Logger.PrintError(err, nil)
+	}
+	fmt.Println(userId)
+
+	projectId, err := h.Helpers.GetInt64FromURLParam(chi.URLParam(r, "projectId"))
+	if err != nil {
+		h.Logger.PrintError(err, nil)
+	}
+	fmt.Println(projectId)
+
+	var input struct {
+		ID int64 `json:"id"`
+	}
+
+	err = h.Json.DecodeJSON(w, r, &input)
+	if err != nil {
+		h.Errors.ServerErrorResponse(w, r, err)
+		return
+	}
+
+	err = h.Models.Inverters.Delete(input.ID)
+	if err != nil {
+		switch {
+		default:
+			h.Errors.ServerErrorResponse(w, r, err)
+		}
+		return
+	}
+
+	err = h.Json.ResponseJSON(w, http.StatusAccepted,
+		json.Envelope{"inverter": input.ID, "deleted": true},
+		nil)
+	if err != nil {
+		h.Errors.ServerErrorResponse(w, r, err)
+	}
+}

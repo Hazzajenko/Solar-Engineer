@@ -12,6 +12,7 @@ import { TrackerModel } from '../../../models/tracker.model'
 import { StringModel } from '../../../models/string.model'
 import { PanelModel } from '../../../models/panel.model'
 import { StoreService } from '../../../services/store.service'
+import { StatsService } from '../../../services/stats.service'
 
 @Component({
   selector: 'app-string-stats',
@@ -27,9 +28,7 @@ export class StringStatsComponent implements OnInit {
     panels?: PanelModel[]
   }>
 
-  project$?: Observable<ProjectModel | undefined> =
-    this.storeService.getProject
-  // project$?: Observable<ProjectModel | undefined>
+  project$?: Observable<ProjectModel | undefined> = this.storeService.getProject
   inverter$?: Observable<InverterModel | undefined>
   tracker$?: Observable<TrackerModel | undefined>
   strings$?: Observable<StringModel[]>
@@ -45,13 +44,10 @@ export class StringStatsComponent implements OnInit {
   constructor(
     private store: Store<AppState>,
     private storeService: StoreService,
+    private statsService: StatsService,
   ) {}
 
   ngOnInit(): void {
-    /*    this.project$ = this.store.select(
-          selectProjectByRouteParams,
-        )*/
-
     this.inverter$ = this.store.select(
       selectInverterById({
         id: 11,
@@ -88,9 +84,7 @@ export class StringStatsComponent implements OnInit {
               this.totalVoc[string.id] +
               Number(
                 (
-                  Math.round(
-                    stringPanel.open_circuit_voltage! * 100,
-                  ) / 100
+                  Math.round(stringPanel.open_circuit_voltage! * 100) / 100
                 ).toFixed(2),
               )
 
@@ -98,111 +92,75 @@ export class StringStatsComponent implements OnInit {
               this.totalVmp[string.id] +
               Number(
                 (
-                  Math.round(
-                    stringPanel.voltage_at_maximum_power! *
-                      100,
-                  ) / 100
+                  Math.round(stringPanel.voltage_at_maximum_power! * 100) / 100
                 ).toFixed(2),
               )
 
             this.totalPmax[string.id] =
               this.totalPmax[string.id] +
               Number(
-                (
-                  Math.round(
-                    stringPanel.maximum_power! * 100,
-                  ) / 100
-                ).toFixed(2),
+                (Math.round(stringPanel.maximum_power! * 100) / 100).toFixed(2),
               )
 
             if (this.totalIsc[string.id] == 0) {
               this.totalIsc[string.id] = Number(
                 (
-                  Math.round(
-                    stringPanel.short_circuit_current! *
-                      100,
-                  ) / 100
+                  Math.round(stringPanel.short_circuit_current! * 100) / 100
                 ).toFixed(2),
               )
             } else {
-              this.totalIsc[string.id] =
-                this.getLowerNumber(
-                  this.totalIsc[string.id],
-                  Number(
-                    (
-                      Math.round(
-                        stringPanel.short_circuit_current! *
-                          100,
-                      ) / 100
-                    ).toFixed(2),
-                  ),
-                )
+              this.totalIsc[string.id] = this.getLowerNumber(
+                this.totalIsc[string.id],
+                Number(
+                  (
+                    Math.round(stringPanel.short_circuit_current! * 100) / 100
+                  ).toFixed(2),
+                ),
+              )
             }
 
             if (this.totalImp[string.id] == 0) {
               this.totalImp[string.id] = Number(
                 (
-                  Math.round(
-                    stringPanel.current_at_maximum_power! *
-                      100,
-                  ) / 100
+                  Math.round(stringPanel.current_at_maximum_power! * 100) / 100
                 ).toFixed(2),
               )
             } else {
-              this.totalImp[string.id] =
-                this.getLowerNumber(
-                  this.totalImp[string.id],
-                  Number(
-                    (
-                      Math.round(
-                        stringPanel.current_at_maximum_power! *
-                          100,
-                      ) / 100
-                    ).toFixed(2),
-                  ),
-                )
+              this.totalImp[string.id] = this.getLowerNumber(
+                this.totalImp[string.id],
+                Number(
+                  (
+                    Math.round(stringPanel.current_at_maximum_power! * 100) /
+                    100
+                  ).toFixed(2),
+                ),
+              )
             }
           })
 
           this.totalVoc[string.id] = Number(
-            (
-              Math.round(this.totalVoc[string.id] * 100) /
-              100
-            ).toFixed(2),
+            (Math.round(this.totalVoc[string.id] * 100) / 100).toFixed(2),
           )
           this.totalVmp[string.id] = Number(
-            (
-              Math.round(this.totalVmp[string.id] * 100) /
-              100
-            ).toFixed(2),
+            (Math.round(this.totalVmp[string.id] * 100) / 100).toFixed(2),
           )
           this.totalPmax[string.id] = Number(
-            (
-              Math.round(this.totalPmax[string.id] * 100) /
-              100
-            ).toFixed(2),
+            (Math.round(this.totalPmax[string.id] * 100) / 100).toFixed(2),
           )
           this.totalIsc[string.id] = Number(
-            (
-              Math.round(this.totalIsc[string.id] * 100) /
-              100
-            ).toFixed(2),
+            (Math.round(this.totalIsc[string.id] * 100) / 100).toFixed(2),
           )
           this.totalImp[string.id] = Number(
-            (
-              Math.round(this.totalImp[string.id] * 100) /
-              100
-            ).toFixed(2),
-          )
-          console.log(
-            `${string.id}`,
-            this.totalImp[string.id],
-          )
-          console.log(
-            `${string.id}`,
-            this.totalIsc[string.id],
+            (Math.round(this.totalImp[string.id] * 100) / 100).toFixed(2),
           )
         })
+        this.statsService.updateStringTotals(
+          this.totalVoc,
+          this.totalVmp,
+          this.totalPmax,
+          this.totalIsc,
+          this.totalImp,
+        )
       },
     )
   }

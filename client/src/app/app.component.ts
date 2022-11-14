@@ -1,19 +1,25 @@
-import { Component } from '@angular/core';
-import { AuthService } from './auth/auth.service';
+import { Component, OnInit } from "@angular/core";
+import { AuthService } from "./auth/auth.service";
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent {
-  title = 'solarengineer';
+export class AppComponent implements OnInit {
+	title = "solarengineer";
 
-  constructor(private auth: AuthService) {}
+	constructor(private auth: AuthService) {}
 
-  signIn() {
-    this.auth
-      .signIn({ email: 'test@email.com', password: 'password' })
-      .then((res) => console.log(res));
-  }
+	signIn() {
+		this.auth
+			.signIn({ email: "test@email.com", password: "password" })
+			.then((res) => console.log(res));
+	}
+
+	ngOnInit(): void {
+		this.auth
+			.signIn({ email: "test@email.com", password: "password" })
+			.then((res) => console.log(res));
+	}
 }

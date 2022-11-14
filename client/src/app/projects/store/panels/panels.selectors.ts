@@ -3,11 +3,18 @@ import * as State from './panels.reducer'
 import { selectRouteParams } from '../../../store/router.selectors'
 import { PanelModel } from '../../models/panel.model'
 
-export const selectPanelsState = createFeatureSelector<State.PanelState>('panels')
+export const selectPanelsState =
+  createFeatureSelector<State.PanelState>('panels')
 
-export const selectPanelEntities = createSelector(selectPanelsState, State.selectEntities)
+export const selectPanelEntities = createSelector(
+  selectPanelsState,
+  State.selectEntities,
+)
 
-export const selectAllPanels = createSelector(selectPanelsState, State.selectAll)
+export const selectAllPanels = createSelector(
+  selectPanelsState,
+  State.selectAll,
+)
 
 export const selectPanelByRouteParams = createSelector(
   selectPanelEntities,
@@ -18,7 +25,15 @@ export const selectPanelByRouteParams = createSelector(
 export const selectPanelsByStringIdRouteParams = createSelector(
   selectAllPanels,
   selectRouteParams,
-  (panels, { stringId }) => panels.filter((panel) => panel.string_id === Number(stringId)),
+  (panels, { stringId }) =>
+    panels.filter((panel) => panel.string_id === Number(stringId)),
+)
+
+export const selectPanelsByProjectIdRouteParams = createSelector(
+  selectAllPanels,
+  selectRouteParams,
+  (panels, { projectId }) =>
+    panels.filter((panel) => panel.project_id === Number(projectId)),
 )
 
 export const selectPanelsByProjectId = (props: { projectId: number }) =>

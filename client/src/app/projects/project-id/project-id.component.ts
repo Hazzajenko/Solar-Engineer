@@ -28,6 +28,7 @@ import { PanelModel } from '../models/panel.model'
 import { ProjectsService } from '../services/projects.service'
 import { selectProjectByRouteParams } from '../store/projects/projects.selectors'
 import { ProjectModel } from '../models/project.model'
+import { StatsService } from '../services/stats.service'
 
 export interface ProjectStore {
   project?: ProjectModel
@@ -43,13 +44,11 @@ export interface ProjectStore {
   styleUrls: ['./project-id.component.scss'],
 })
 export class ProjectIdComponent implements OnInit {
-  // we create an object that contains coordinates
   menuTopLeftPosition = { x: '0', y: '0' }
   inverterBool: boolean[] = [false, false, false]
   trackerBool: boolean[] = [false, false, false]
   stringBool: boolean[] = [false, false, false]
 
-  // reference to the MatMenuTrigger in the DOM
   @ViewChild(MatMenuTrigger, { static: true }) matMenuTrigger!: MatMenuTrigger
 
   store$?: Observable<ProjectStore>
@@ -66,9 +65,12 @@ export class ProjectIdComponent implements OnInit {
   constructor(
     private store: Store<AppState>,
     private projects: ProjectsService,
+    private statsService: StatsService,
   ) {}
 
   ngOnInit(): void {
+    // this.statsService.calculateStringTotals()
+    console.log(this.statsService.stringsTotalVoc)
     this.trackerTree$ = combineLatest([
       this.store.select(selectProjectByRouteParams),
       this.store.select(
@@ -101,15 +103,7 @@ export class ProjectIdComponent implements OnInit {
       })),
     )
 
-    this.store
-      .select(selectProjectByRouteParams)
-      .subscribe((project) => console.log(project))
-    this.projects.getDataByProjectId(3).then(async () => {
-      // this.inverters.getInvertersByProjectId(project.id).then(async () => {
-      // await this.router.navigateByUrl(`/projects/${project.id}`);
-      // this.treenodes.initTreeNode(project.id);
-      // await this.router.navigate([`${project.id}`], { relativeTo: this.route });
-    })
+    this.projects.getDataByProjectId(3).then(async () => {})
     this.store$ = combineLatest([
       this.store.select(selectProjectByRouteParams),
       this.store.select(
@@ -151,19 +145,13 @@ export class ProjectIdComponent implements OnInit {
   }
 
   onRightClick(event: MouseEvent) {
-    // preventDefault avoids to show the visualization of the right-click menu of the browser
     event.preventDefault()
 
-    // we record the mouse position in our object
     this.menuTopLeftPosition.x = event.clientX + 'px'
     console.log(this.menuTopLeftPosition.x)
     this.menuTopLeftPosition.y = event.clientY + 'px'
     console.log(this.menuTopLeftPosition.y)
-    // we open the menu
-    // we pass to the menu the information about our object
-    // this.matMenuTrigger.menuData = { item: item };
 
-    // we open the menu
     this.matMenuTrigger.openMenu()
   }
 
@@ -192,8 +180,4 @@ export class ProjectIdComponent implements OnInit {
     console.log(event)
     this.view = event
   }
-
-  /*  reRenderRoot($event: boolean) {
-      this.ngOnInit()
-    }*/
 }

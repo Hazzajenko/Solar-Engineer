@@ -125,13 +125,14 @@
     <ng-container *ngIf="gridState$ | async; let grid">
       <ng-container *ngIf="trackerTree$ | async; let tree">
         <div class="project-container-v2__project-tree">
-          <app-tracker-tree
-            [inverter]="tree.inverter"
-            [panels]="tree.panels"
-            [project]="tree.project"
-            [strings]="tree.strings"
-            [tracker]="tree.tracker"
-          ></app-tracker-tree>
+          <app-project-tree></app-project-tree>
+          <!--          <app-tracker-tree
+                      [inverter]="tree.inverter"
+                      [panels]="tree.panels"
+                      [project]="tree.project"
+                      [strings]="tree.strings"
+                      [tracker]="tree.tracker"
+                    ></app-tracker-tree>-->
         </div>
         <div class="project-container-v2__project-display">
           <app-grid-layout
@@ -143,7 +144,8 @@
           ></app-grid-layout>
         </div>
         <div class="project-container-v2__project-inventory">
-          <app-string-stats></app-string-stats>
+          <!--          <app-string-stats></app-string-stats>-->
+          <app-tracker-stats></app-tracker-stats>
         </div>
       </ng-container>
     </ng-container>

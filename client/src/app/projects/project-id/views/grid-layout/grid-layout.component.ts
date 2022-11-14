@@ -180,19 +180,13 @@ export class GridLayoutComponent implements OnInit {
   }
 
   onRightClick(event: MouseEvent, panel: PanelModel) {
-    // preventDefault avoids to show the visualization of the right-click menu of the browser
     event.preventDefault()
 
-    // we record the mouse position in our object
     this.menuTopLeftPosition.x = event.clientX + 10 + 'px'
     console.log(this.menuTopLeftPosition.x)
     this.menuTopLeftPosition.y = event.clientY + 10 + 'px'
-    console.log(this.menuTopLeftPosition.y)
-    // we open the menu
-    // we pass to the menu the information about our object
     this.matMenuTrigger.menuData = { panel }
 
-    // we open the menu
     this.matMenuTrigger.openMenu()
   }
 
@@ -200,7 +194,6 @@ export class GridLayoutComponent implements OnInit {
 
   async deletePanel(panel: PanelModel) {
     console.log('delete')
-    await this.panelsService.deletePanel(3, panel)
-    // this.panelsService.deletePanel(3, panel).then()
+    await this.panelsService.deletePanel(3, panel.id)
   }
 }

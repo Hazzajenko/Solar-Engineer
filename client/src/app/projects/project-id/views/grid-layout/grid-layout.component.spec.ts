@@ -1,23 +1,22 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { GridLayoutComponent } from './grid-layout.component';
+import { GridLayoutComponent } from "./grid-layout.component";
 
-describe('GridLayoutComponent', () => {
-  let component: GridLayoutComponent;
-  let fixture: ComponentFixture<GridLayoutComponent>;
+describe("GridLayoutComponent", () => {
+	let component: GridLayoutComponent;
+	let fixture: ComponentFixture<GridLayoutComponent>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ GridLayoutComponent ]
-    })
-    .compileComponents();
+	beforeEach(async () => {
+		await TestBed.configureTestingModule({
+			declarations: [GridLayoutComponent],
+		}).compileComponents();
 
-    fixture = TestBed.createComponent(GridLayoutComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+		fixture = TestBed.createComponent(GridLayoutComponent);
+		component = fixture.componentInstance;
+		fixture.detectChanges();
+	});
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+	it("should create", () => {
+		expect(component).toBeTruthy();
+	});
 });

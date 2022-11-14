@@ -12,8 +12,11 @@ func (s *Server) Routes() *chi.Mux {
 	})
 
 	s.Router.Route("/auth", func(r chi.Router) {
-		r.Post("/register", s.Handlers.RegisterUserHandler)
-		r.Post("/login", s.Handlers.LoginUserHandler)
+		r.Group(func(r chi.Router) {
+			r.Post("/register", s.Handlers.RegisterUserHandler)
+			r.Post("/login", s.Handlers.LoginUserHandler)
+		})
+
 		//r.Get("/{AssetUrl}", GetAsset)
 		//r.Get("/manage/url/{path}", FetchAssetDetailsByURL)
 		//r.Get("/manage/id/{path}", FetchAssetDetailsByID)
@@ -26,30 +29,48 @@ func (s *Server) Routes() *chi.Mux {
 	})*/
 
 	s.Router.Route("/projects", func(r chi.Router) {
-		r.Get("/", s.Handlers.GetUserProjects)
-		r.Post("/", s.Handlers.CreateProject)
-		r.Put("/", s.Handlers.AddUserToProject)
+
+		r.Group(func(r chi.Router) {
+			r.Get("/", s.Handlers.GetUserProjects)
+			r.Post("/", s.Handlers.CreateProject)
+			r.Put("/", s.Handlers.AddUserToProject)
+		})
 
 		r.Route("/{projectId}", func(r chi.Router) {
 			r.Get("/", s.Handlers.GetProjectById)
 			r.Get("/all", s.Handlers.GetDataForProject)
-			r.Get("/inverters", s.Handlers.GetInvertersByProjectId)
-			r.Get("/trackers", s.Handlers.GetTrackersByProjectId)
-			r.Get("/strings", s.Handlers.GetStringsByProjectId)
-			r.Get("/panels", s.Handlers.GetPanelsByProjectId)
-			r.Post("/", s.Handlers.CreateInverter)
-			r.Post("/strings", s.Handlers.UpdateString)
-			r.Post("/strings/color", s.Handlers.UpdateStringColor)
-			r.Post("/panels", s.Handlers.CreatePanel)
-			r.Patch("/panels", s.Handlers.UpdatePanelLocation)
-			r.Delete("/panels", s.Handlers.DeletePanel)
+
+			r.Group(func(r chi.Router) {
+				r.Get("/inverters", s.Handlers.GetInvertersByProjectId)
+				r.Post("/inverters", s.Handlers.CreateInverter)
+				r.Delete("/inverters", s.Handlers.DeleteInverter)
+			})
+
+			r.Group(func(r chi.Router) {
+				r.Get("/trackers", s.Handlers.GetTrackersByProjectId)
+				r.Delete("/trackers", s.Handlers.DeleteTracker)
+			})
+
+			r.Group(func(r chi.Router) {
+				r.Get("/strings", s.Handlers.GetStringsByProjectId)
+				r.Post("/strings", s.Handlers.CreateString)
+				r.Patch("/strings", s.Handlers.UpdateString)
+				r.Post("/strings/color", s.Handlers.UpdateStringColor)
+				r.Delete("/strings", s.Handlers.DeleteString)
+			})
+
+			r.Group(func(r chi.Router) {
+				r.Get("/panels", s.Handlers.GetPanelsByProjectId)
+				r.Post("/panels", s.Handlers.CreatePanel)
+				r.Patch("/panels", s.Handlers.UpdatePanelLocation)
+				r.Delete("/panels", s.Handlers.DeletePanel)
+			})
 
 			r.Route("/{inverterId}", func(r chi.Router) {
 				r.Get("/", s.Handlers.GetTrackersByInverterId)
 				r.Post("/", s.Handlers.CreateTracker)
 
 				r.Route("/{trackerId}", func(r chi.Router) {
-					r.Post("/", s.Handlers.CreateString)
 
 					r.Route("/{stringId}", func(r chi.Router) {
 						r.Post("/", s.Handlers.CreatePanel)

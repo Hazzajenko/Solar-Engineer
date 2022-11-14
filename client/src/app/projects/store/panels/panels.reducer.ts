@@ -1,8 +1,4 @@
-import {
-  createEntityAdapter,
-  EntityAdapter,
-  EntityState,
-} from '@ngrx/entity'
+import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity'
 import { createReducer, on } from '@ngrx/store'
 import * as PanelsActions from './panels.actions'
 import { PanelModel } from '../../models/panel.model'
@@ -14,8 +10,7 @@ export const panelAdapter: EntityAdapter<PanelModel> =
     selectId: selectPanelId,
   })
 
-export const initialPanelsState =
-  panelAdapter.getInitialState({})
+export const initialPanelsState = panelAdapter.getInitialState({})
 
 export const panelsReducer = createReducer(
   initialPanelsState,
@@ -24,10 +19,8 @@ export const panelsReducer = createReducer(
     panelAdapter.addOne(panel, state),
   ),
 
-  on(
-    PanelsActions.addPanelsByProjectId,
-    (state, { panels }) =>
-      panelAdapter.addMany(panels, state),
+  on(PanelsActions.addPanelsByProjectId, (state, { panels }) =>
+    panelAdapter.addMany(panels, state),
   ),
 
   on(PanelsActions.updatePanel, (state, { panel }) =>
@@ -44,8 +37,8 @@ export const panelsReducer = createReducer(
     panelAdapter.updateMany(panels, state),
   ),
 
-  on(PanelsActions.deletePanel, (state, { panel }) =>
-    panelAdapter.removeOne(panel.id, state),
+  on(PanelsActions.deletePanel, (state, { panelId }) =>
+    panelAdapter.removeOne(panelId, state),
   ),
 )
 

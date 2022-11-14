@@ -5,13 +5,11 @@ import { PanelModel } from '../projects/models/panel.model'
   name: 'filterPanels',
 })
 export class FilterPanelsPipe implements PipeTransform {
-  transform(panels: PanelModel[], stringId: number): any {
+  transform(panels: PanelModel[], stringId: number): PanelModel[] {
     if (!panels || !stringId) {
       return panels
     }
 
-    return panels.filter(
-      (panel) => panel.string_id === stringId,
-    )
+    return panels.filter((panel) => panel.string_id === stringId)
   }
 }

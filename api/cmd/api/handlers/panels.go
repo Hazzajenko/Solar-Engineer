@@ -219,10 +219,7 @@ func (h *Handlers) DeletePanel(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(projectId)
 
 	var input struct {
-		ID         int64 `json:"id"`
-		InverterId int64 `json:"inverter_id"`
-		TrackerId  int64 `json:"tracker_id"`
-		StringId   int64 `json:"string_id"`
+		ID int64 `json:"id"`
 	}
 
 	err = h.Json.DecodeJSON(w, r, &input)

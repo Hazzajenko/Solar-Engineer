@@ -5,7 +5,13 @@
         <ng-container *ngIf="trackerTree.tracker">
           <!--  <ng-container *ngIf="strings">-->
           <button
-            (click)="createString(trackerTree.project, trackerTree.inverter, trackerTree.tracker)"
+            (click)="
+              createString(
+                trackerTree.project,
+                trackerTree.inverter,
+                trackerTree.tracker
+              )
+            "
             mat-stroked-button
           >
             Create String
@@ -21,7 +27,10 @@
                 cdkDropList
                 cdkDropListOrientation="vertical"
               >
-                <div *ngIf="string.tracker_id === tracker?.id" class="project-tree__string-item">
+                <div
+                  *ngIf="string.tracker_id === tracker?.id"
+                  class="project-tree__string-item"
+                >
                   <div>
                     <button
                       (click)="toggleString(string, a)"
@@ -37,7 +46,6 @@
                   <div *ngIf="stringBool[a]">
                     <div class="project-tree__string-item__button-menu">
                       <app-button-menu
-                        (reRender)="reRender($event)"
                         [inverter]="inverter"
                         [model]="3"
                         [projectId]="3"
@@ -62,11 +70,15 @@
                           }"
                           class="project-tree__panel-item"
                         >
-                          <mat-icon cdkDragHandle class="project-tree__panel-item__handle"
+                          <mat-icon
+                            cdkDragHandle
+                            class="project-tree__panel-item__handle"
                             >drag_indicator
                           </mat-icon>
 
-                          {{ panel.name }} [{{ panel.color }}] [{{ panel.location }}]
+                          {{ panel.name }} [{{ panel.color }}] [{{
+                            panel.location
+                          }}]
                         </div>
                       </div>
                     </div>

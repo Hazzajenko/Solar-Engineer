@@ -5,16 +5,11 @@ import { StringModel } from '../projects/models/string.model'
   name: 'filterStrings',
 })
 export class FilterStringsPipe implements PipeTransform {
-  transform(
-    strings: StringModel[],
-    trackerId: number,
-  ): any {
+  transform(strings: StringModel[], trackerId: number): StringModel[] {
     if (!strings || !trackerId) {
       return strings
     }
 
-    return strings.filter(
-      (stringModel) => stringModel.tracker_id === trackerId,
-    )
+    return strings.filter((stringModel) => stringModel.tracker_id === trackerId)
   }
 }

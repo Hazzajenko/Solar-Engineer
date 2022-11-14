@@ -1,5 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { InverterModel } from '../../../models/inverter.model';
+import { Component, Input, OnInit } from "@angular/core";
+import { InverterModel } from "../../../models/inverter.model";
 
 @Component({
   selector: 'app-inverter-view',
@@ -7,9 +7,9 @@ import { InverterModel } from '../../../models/inverter.model';
   styleUrls: ['./inverter-view.component.scss'],
 })
 export class InverterViewComponent implements OnInit {
-  @Input() inverter?: InverterModel;
+	@Input() inverter?: InverterModel;
 
-  constructor() {}
+	constructor() {}
 
-  ngOnInit(): void {}
+	ngOnInit(): void {}
 }

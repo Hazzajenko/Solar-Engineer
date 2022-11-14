@@ -1,10 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-} from '@angular/core'
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
 import { InverterModel } from '../../../../models/inverter.model'
 import { TrackerModel } from '../../../../models/tracker.model'
 import { StringModel } from '../../../../models/string.model'
@@ -16,6 +10,12 @@ import { UnitModel } from '../../../../models/unit.model'
 import { AppState } from '../../../../../store/app.state'
 import { Store } from '@ngrx/store'
 import { selectString } from '../../../../store/strings/strings.actions'
+import {
+  clearGridState,
+  selectTrackerStringsForGrid,
+} from '../../../../store/grid/grid.actions'
+import { Observable } from 'rxjs'
+import { selectStringsByProjectIdRouteParams } from '../../../../store/strings/strings.selectors'
 
 @Component({
   selector: 'app-button-menu',
@@ -30,6 +30,8 @@ export class ButtonMenuComponent implements OnInit {
   @Input() string?: StringModel
   @Output() reRender = new EventEmitter<boolean>()
 
+  strings$!: Observable<StringModel[]>
+
   constructor(
     private invertersService: InvertersService,
     private trackersService: TrackersService,
@@ -38,60 +40,21 @@ export class ButtonMenuComponent implements OnInit {
     private store: Store<AppState>,
   ) {}
 
-  ngOnInit(): void {}
-
-  async create() {
-    switch (this.model) {
-      case 0:
-        break
-      case 1:
-        await this.createTracker(
-          this.projectId!,
-          this.inverter!,
-        )
-        break
-      case 2:
-        await this.createString(
-          this.projectId!,
-          this.inverter!,
-          this.tracker!,
-        )
-        break
-      case 3:
-        break
-      default:
-        break
-    }
+  ngOnInit(): void {
+    this.strings$ = this.store.select(selectStringsByProjectIdRouteParams)
   }
 
-  select() {
-    switch (this.model) {
-      case 0:
-        break
-      case 1:
-        break
-      case 2:
-        break
-      case 3:
-        this.selectString(this.projectId!, this.string!)
-        break
-      default:
-        break
-    }
+  selectTrackerStrings(strings: StringModel[]) {
+    this.store.dispatch(clearGridState())
+    this.store.dispatch(selectTrackerStringsForGrid({ strings }))
   }
 
-  selectString(projectId: number, string: StringModel) {
+  selectString(string: StringModel) {
     this.store.dispatch(selectString({ string }))
   }
 
-  async createTracker(
-    projectId: number,
-    inverter: InverterModel,
-  ) {
-    await this.trackersService.createTrackers(
-      projectId,
-      inverter.id,
-    )
+  async createTracker(projectId: number, inverter: InverterModel) {
+    await this.trackersService.createTrackers(projectId, inverter.id)
   }
 
   async createString(
@@ -113,5 +76,28 @@ export class ButtonMenuComponent implements OnInit {
       this.string!,
       color,
     )
+  }
+
+  async deleteTracker(tracker: TrackerModel) {
+    if (this.projectId) {
+      await this.trackersService.deleteTracker(this.projectId, tracker.id)
+    }
+  }
+
+  selectInverterStrings(strings: StringModel[]) {
+    this.store.dispatch(clearGridState())
+    this.store.dispatch(selectTrackerStringsForGrid({ strings }))
+  }
+
+  async deleteInverter(inverter: InverterModel) {
+    if (this.projectId) {
+      await this.invertersService.deleteInverter(this.projectId, inverter.id)
+    }
+  }
+
+  async deleteString(string: StringModel) {
+    if (this.projectId) {
+      await this.stringsService.deleteString(this.projectId, string.id)
+    }
   }
 }

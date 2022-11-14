@@ -7,9 +7,14 @@ export interface StringModel {
   tracker_id: number
   model?: UnitModel
   name: string
-  is_in_parallel: boolean
+  is_in_parallel?: boolean
   panel_amount?: number
   created_at?: string
-  version: number
+  version?: number
   color?: string
+  totalVoc?: number
+  totalVmp?: number
+  totalPmax?: number
+  totalIsc?: number
+  totalImp?: number
 }

@@ -41,6 +41,14 @@ export const stringsReducer = createReducer(
   on(StringsActions.selectString, (state, { string }) => {
     return { ...state, selectedStringId: string.id }
   }),
+
+  on(StringsActions.updateStringTotals, (state, { strings }) =>
+    stringAdapter.updateMany(strings, state),
+  ),
+
+  on(StringsActions.deleteString, (state, { stringId }) =>
+    stringAdapter.removeOne(stringId, state),
+  ),
 )
 
 export const { selectIds, selectEntities, selectAll } =

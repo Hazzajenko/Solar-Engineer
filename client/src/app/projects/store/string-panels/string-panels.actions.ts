@@ -1,12 +1,12 @@
-import { createAction, props } from '@ngrx/store';
-import { StringPanelModel } from '../../models/string-panel.model';
+import { createAction, props } from "@ngrx/store";
+import { StringPanelModel } from "../../models/string-panel.model";
 
 export const addStringPanel = createAction(
-  '[StringPanels Service] Add StringPanel',
-  props<{ stringPanel: StringPanelModel }>()
+	"[StringPanels Service] Add StringPanel",
+	props<{ stringPanel: StringPanelModel }>(),
 );
 
 export const addStringPanels = createAction(
-  '[StringPanels Service] Add StringPanels',
-  props<{ stringPanels: StringPanelModel[] }>()
+	"[StringPanels Service] Add StringPanels",
+	props<{ stringPanels: StringPanelModel[] }>(),
 );

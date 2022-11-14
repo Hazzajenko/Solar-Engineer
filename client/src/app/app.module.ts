@@ -5,18 +5,12 @@ import { AppRoutingModule } from './app-routing.module'
 import { AppComponent } from './app.component'
 import { ProjectsComponent } from './projects/projects.component'
 import { ProjectListItemComponent } from './projects/project-list-item/project-list-item.component'
-import {
-  HTTP_INTERCEPTORS,
-  HttpClientModule,
-} from '@angular/common/http'
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http'
 import { ProjectIdComponent } from './projects/project-id/project-id.component'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { MatListModule } from '@angular/material/list'
 import { StoreModule } from '@ngrx/store'
-import {
-  RouterState,
-  StoreRouterConnectingModule,
-} from '@ngrx/router-store'
+import { RouterState, StoreRouterConnectingModule } from '@ngrx/router-store'
 import { StoreDevtoolsModule } from '@ngrx/store-devtools'
 import { environment } from '../environments/environment'
 import { metaReducers, reducers } from './store/app.state'
@@ -47,8 +41,12 @@ import { FilterPanelsPipe } from './pipes/filter-panels.pipe'
 import { GridInventoryComponent } from './projects/project-id/views/grid-inventory/grid-inventory.component'
 import { TrackerTreeComponent } from './projects/project-id/views/tracker-tree/tracker-tree.component'
 import { StringStatsComponent } from './projects/project-id/components/string-stats/string-stats.component'
-import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatTooltipModule } from '@angular/material/tooltip'
 import { TrackerStatsComponent } from './projects/project-id/components/tracker-stats/tracker-stats.component'
+import { FilterTrackersPipe } from './pipes/filter-trackers.pipe'
+import { StatsSectionComponent } from './projects/project-id/components/project-tree/stats-section/stats-section.component'
+import { FilterPanelsByPipe } from './pipes/filter-panels-by.pipe'
+import { FilterStringsByPipe } from './pipes/filter-strings-by.pipe'
 
 export function tokenGetter() {
   console.log(localStorage.getItem('token'))
@@ -75,6 +73,9 @@ export function tokenGetter() {
     TrackerTreeComponent,
     StringStatsComponent,
     TrackerStatsComponent,
+    FilterTrackersPipe,
+    StatsSectionComponent,
+    FilterPanelsByPipe,
   ],
   imports: [
     BrowserModule,
@@ -115,6 +116,7 @@ export function tokenGetter() {
     MatSortModule,
     DragDropModule,
     MatTooltipModule,
+    FilterStringsByPipe,
   ],
   providers: [
     {

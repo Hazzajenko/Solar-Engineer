@@ -1,6 +1,6 @@
 export enum UnitModel {
-  INVERTER,
-  TRACKER,
-  STRING,
-  PANEL,
+	INVERTER,
+	TRACKER,
+	STRING,
+	PANEL,
 }
