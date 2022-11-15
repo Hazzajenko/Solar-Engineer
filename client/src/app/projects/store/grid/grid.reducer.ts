@@ -1,9 +1,52 @@
-import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity'
 import { createReducer, on } from '@ngrx/store'
-import * as GridActions from './grid.actions'
+import { CreateMode, GridStateActions } from './grid.actions'
 import { StringModel } from '../../models/string.model'
 
-export const gridAdapter: EntityAdapter<StringModel> =
+export interface GridState {
+  strings?: StringModel[]
+  createMode?: CreateMode
+}
+
+export const initialGridState: GridState = {
+  strings: undefined,
+  createMode: undefined,
+}
+
+export const gridReducer = createReducer(
+  initialGridState,
+
+  on(GridStateActions.selectStringForGrid, (state, action) => ({
+    strings: [action.string],
+    createMode: state.createMode,
+  })),
+
+  on(GridStateActions.selectTrackerStringsForGrid, (state, action) => ({
+    strings: action.strings,
+    createMode: state.createMode,
+  })),
+
+  on(GridStateActions.selectInverterStringsForGrid, (state, action) => ({
+    strings: action.strings,
+    createMode: state.createMode,
+  })),
+
+  on(GridStateActions.selectPanelCreateMode, (state, action) => ({
+    createMode: action.mode,
+    strings: state.strings,
+  })),
+
+  on(GridStateActions.selectCableCreateMode, (state, action) => ({
+    createMode: action.mode,
+    strings: state.strings,
+  })),
+
+  on(GridStateActions.clearGridState, (state, action) => ({
+    strings: undefined,
+    createMode: state.createMode,
+  })),
+)
+
+/*export const gridAdapter: EntityAdapter<StringModel> =
   createEntityAdapter<StringModel>()
 
 export const initialGridState: GridState = gridAdapter.getInitialState({})
@@ -29,4 +72,4 @@ export const gridReducer = createReducer(
 export const { selectIds, selectEntities, selectAll } =
   gridAdapter.getSelectors()
 
-export interface GridState extends EntityState<StringModel> {}
+export interface GridState extends EntityState<StringModel> {}*/

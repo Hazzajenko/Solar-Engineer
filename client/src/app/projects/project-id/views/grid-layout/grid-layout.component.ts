@@ -23,6 +23,11 @@ import { selectInverterById } from '../../../store/inverters/inverters.selectors
 import { selectTrackerById } from '../../../store/trackers/trackers.selectors'
 import { ProjectModel } from '../../../models/project.model'
 import { MatMenuTrigger } from '@angular/material/menu'
+import { CreateMode } from '../../../store/grid/grid.actions'
+import {
+  selectCreateMode,
+  selectSelectedStrings,
+} from '../../../store/grid/grid.selectors'
 
 @Component({
   selector: 'app-grid-layout',
@@ -39,6 +44,9 @@ export class GridLayoutComponent implements OnInit {
   @ViewChild(MatMenuTrigger, { static: true })
   matMenuTrigger!: MatMenuTrigger
   public context!: CanvasRenderingContext2D
+  createMode$?: Observable<CreateMode | undefined>
+  createMode?: CreateMode | undefined
+  selectedStrings$?: Observable<StringModel[] | undefined>
   occupiedSpots: string[] = []
   trackerTree$!: Observable<{
     project?: ProjectModel
@@ -54,13 +62,16 @@ export class GridLayoutComponent implements OnInit {
     public grid: GridService,
   ) {
     this.panels?.forEach((panel) => {
-      console.log(panel?.location)
+      // console.log(panel?.location)
     })
   }
 
   ngOnInit(): void {
+    this.createMode$ = this.store.select(selectCreateMode)
+    this.selectedStrings$ = this.store.select(selectSelectedStrings)
+
     this.panels?.forEach((panel) => {
-      console.log(panel?.location)
+      // console.log(panel?.location)
     })
 
     this.store
@@ -70,12 +81,12 @@ export class GridLayoutComponent implements OnInit {
         }),
       )
       .subscribe((panels) => {
-        console.log(panels)
+        // console.log(panels)
         panels.forEach((panel) => {
-          console.log(panel?.location)
+          // console.log(panel?.location)
           this.occupiedSpots.push(panel?.location)
         })
-        console.log(this.occupiedSpots)
+        // console.log(this.occupiedSpots)
       })
     this.trackerTree$ = combineLatest([
       this.store.select(selectProjectByRouteParams),
@@ -114,10 +125,10 @@ export class GridLayoutComponent implements OnInit {
     return Array(n)
   }
 
-  taskDrop(event: CdkDragDrop<PanelModel, any>) {
+  async taskDrop(event: CdkDragDrop<PanelModel, any>) {
     moveItemInArray(this.panels!, event.previousIndex, event.currentIndex)
-    console.log('previousIndex', event.previousIndex)
-    console.log('currentIndex', event.currentIndex)
+    // console.log('previousIndex', event.previousIndex)
+    // console.log('currentIndex', event.currentIndex)
 
     const panel = event.item.data
     const update: PanelModel = {
@@ -135,14 +146,13 @@ export class GridLayoutComponent implements OnInit {
       console.log('location taken')
       return
     }
-    this.panelsService.updatePanel(3, update).then((res) => console.log(res))
+    await this.panelsService.updatePanel(3, update)
   }
 
   divClick(location: string, event: MouseEvent, thing: HTMLDivElement) {
     if (!this.selectedStringId) console.log('select string')
 
     if (this.selectedStringId) {
-      console.log('panels', this.panels)
       const doesExist = this.panels?.find(
         (panel) => panel.location === location,
       )
@@ -160,20 +170,15 @@ export class GridLayoutComponent implements OnInit {
       selectedString.pipe(take(1))
       this.store
         .select(selectStringById({ id: this.selectedStringId }))
-        .subscribe((string) => {
+        .subscribe(async (string) => {
           if (string) {
-            this.panelsService
-              .createPanelFromGrid(
-                3,
-                string.inverter_id,
-                string.tracker_id,
-                string.id,
-                location,
-              )
-              .then((res) => {
-                this.ngOnInit()
-                console.log(res)
-              })
+            await this.panelsService.createPanelFromGrid(
+              3,
+              string.inverter_id,
+              string.tracker_id,
+              string.id,
+              location,
+            )
           }
         })
     }
@@ -183,7 +188,7 @@ export class GridLayoutComponent implements OnInit {
     event.preventDefault()
 
     this.menuTopLeftPosition.x = event.clientX + 10 + 'px'
-    console.log(this.menuTopLeftPosition.x)
+    // console.log(this.menuTopLeftPosition.x)
     this.menuTopLeftPosition.y = event.clientY + 10 + 'px'
     this.matMenuTrigger.menuData = { panel }
 

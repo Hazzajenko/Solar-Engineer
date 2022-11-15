@@ -78,48 +78,15 @@ export class TrackerTreeComponent implements OnInit {
         panels,
       })),
     )
-    combineLatest([
-      this.store.select(selectProjectByRouteParams),
-      this.store.select(
-        selectInverterById({
-          id: 11,
-        }),
-      ),
-      this.store.select(
-        selectTrackerById({
-          id: 6,
-        }),
-      ),
-      this.store.select(
-        selectStringsByTrackerId({
-          trackerId: 6,
-        }),
-      ),
-      this.store.select(
-        selectPanelsByTrackerId({
-          trackerId: 6,
-        }),
-      ),
-    ])
-      .pipe(
-        map(([project, inverter, tracker, strings, panels]) => ({
-          project,
-          inverter,
-          tracker,
-          strings,
-          panels,
-        })),
-      )
-      .subscribe((bom) => console.log('BOMMM', bom))
   }
 
   toggleString(stringModel: StringModel, index: number) {
     this.stringBool[index] = !this.stringBool[index]
-    console.log(this.stringBool[index])
+    // console.log(this.stringBool[index])
   }
 
   taskDrop(event: CdkDragDrop<any, any>) {
-    console.log(event)
+    // console.log(event)
   }
 
   createString(

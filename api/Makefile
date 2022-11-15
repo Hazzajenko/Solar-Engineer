@@ -26,6 +26,14 @@ build/api:
 	@echo 'Building cmd/api...'
 	go build -o=./bin/api.exe ./cmd/api
 
+proto:
+	@echo Generating go code for ${name}.proto...
+	protoc --proto_path=${name} --go_out=./${name}  --go-grpc_out=./${name} --go_opt=paths=source_relative --go-grpc_opt=paths=source_relative ${name}.proto
+	@echo ${name}.pb.go, ${name}_grpc.pb.go created!
+
+protoc:
+	protoc --proto_path=${dir} --go_out=./${dir}  --go-grpc_out=./${dir}--go_opt=paths=source_relative --go-grpc_opt=paths=source_relative ${name}.proto
+
 
 .PHONY: audit
 audit:

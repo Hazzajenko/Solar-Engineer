@@ -11,6 +11,7 @@ import (
 	tokens2 "github.com/Hazzajenko/gosolarbackend/internal/tokens"
 	"github.com/go-chi/chi/v5"
 	"github.com/joho/godotenv"
+	"log"
 	"net/http"
 	"os"
 )
@@ -89,10 +90,17 @@ func main() {
 		return
 	}
 
+	// Websockets
+	log.Println("Starting channel listener")
+	go handlers2.ListenToWsChannel()
+
 	err = http.ListenAndServe("localhost:3000", server.Router)
 	if err != nil {
 		app.logger.PrintFatal(err, map[string]string{"db": "error starting server"})
 	}
+
+	// GRPC
+	// lis, err := net.Listen("tcp", "localhost:50051")
 	app.logger.PrintInfo("Server stopped", nil)
 
 }

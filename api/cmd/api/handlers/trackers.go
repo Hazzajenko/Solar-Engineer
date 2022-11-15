@@ -27,14 +27,14 @@ func (h *Handlers) CreateTracker(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		h.Logger.PrintError(err, nil)
 	}
-	fmt.Println(projectId)
+	//fmt.Println(projectId)
 
 	inverterIdString := chi.URLParam(r, "inverterId")
 	inverterId, err := strconv.Atoi(inverterIdString)
 	if err != nil {
 		h.Logger.PrintError(err, nil)
 	}
-	fmt.Println(inverterId)
+	//fmt.Println(inverterId)
 
 	file, err := os.ReadFile("assets/json/trackers/tauroeco100-3-d.json")
 	var data []trackers.Tracker
@@ -86,22 +86,22 @@ func (h *Handlers) CreateTracker(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handlers) GetTrackersByProjectId(w http.ResponseWriter, r *http.Request) {
-	bearerHeader := r.Header.Get("Authorization")
-	bearer := strings.Replace(bearerHeader, "Bearer ", "", 1)
-
+	/*	bearerHeader := r.Header.Get("Authorization")
+		bearer := strings.Replace(bearerHeader, "Bearer ", "", 1)
+	*/
 	projectIdString := chi.URLParam(r, "projectId")
 	projectId, err := strconv.Atoi(projectIdString)
 	if err != nil {
 		h.Logger.PrintError(err, nil)
 	}
-	fmt.Println(projectId)
+	//fmt.Println(projectId)
 
-	idString, err := h.Tokens.GetUserIdFromToken(bearer)
-	if err != nil {
-		h.Logger.PrintError(err, nil)
-	}
-	userId, err := strconv.Atoi(idString)
-	fmt.Println(userId)
+	/*	idString, err := h.Tokens.GetUserIdFromToken(bearer)
+		if err != nil {
+			h.Logger.PrintError(err, nil)
+		}
+		userId, err := strconv.Atoi(idString)*/
+	//fmt.Println(userId)
 
 	result, err := h.Models.Trackers.GetTrackersByInverterId(int64(projectId))
 	if err != nil {
@@ -121,22 +121,22 @@ func (h *Handlers) GetTrackersByProjectId(w http.ResponseWriter, r *http.Request
 }
 
 func (h *Handlers) GetTrackersByInverterId(w http.ResponseWriter, r *http.Request) {
-	bearerHeader := r.Header.Get("Authorization")
-	bearer := strings.Replace(bearerHeader, "Bearer ", "", 1)
-
+	/*	bearerHeader := r.Header.Get("Authorization")
+		bearer := strings.Replace(bearerHeader, "Bearer ", "", 1)
+	*/
 	inverterIdString := chi.URLParam(r, "inverterId")
 	inverterId, err := strconv.Atoi(inverterIdString)
 	if err != nil {
 		h.Logger.PrintError(err, nil)
 	}
-	fmt.Println(inverterId)
+	//fmt.Println(inverterId)
 
-	idString, err := h.Tokens.GetUserIdFromToken(bearer)
-	if err != nil {
-		h.Logger.PrintError(err, nil)
-	}
-	userId, err := strconv.Atoi(idString)
-	fmt.Println(userId)
+	/*	idString, err := h.Tokens.GetUserIdFromToken(bearer)
+		if err != nil {
+			h.Logger.PrintError(err, nil)
+		}
+		userId, err := strconv.Atoi(idString)*/
+	//fmt.Println(userId)
 
 	result, err := h.Models.Trackers.GetTrackersByInverterId(int64(inverterId))
 	if err != nil {
@@ -156,26 +156,26 @@ func (h *Handlers) GetTrackersByInverterId(w http.ResponseWriter, r *http.Reques
 }
 
 func (h *Handlers) DeleteTracker(w http.ResponseWriter, r *http.Request) {
-	bearerHeader := r.Header.Get("Authorization")
-	bearer := strings.Replace(bearerHeader, "Bearer ", "", 1)
+	/*	bearerHeader := r.Header.Get("Authorization")
+		bearer := strings.Replace(bearerHeader, "Bearer ", "", 1)
 
-	userId, err := h.Tokens.GetUserIdInt64FromToken(bearer)
-	if err != nil {
-		h.Logger.PrintError(err, nil)
-	}
-	fmt.Println(userId)
+		userId, err := h.Tokens.GetUserIdInt64FromToken(bearer)
+		if err != nil {
+			h.Logger.PrintError(err, nil)
+		}*/
+	//fmt.Println(userId)
 
-	projectId, err := h.Helpers.GetInt64FromURLParam(chi.URLParam(r, "projectId"))
-	if err != nil {
-		h.Logger.PrintError(err, nil)
-	}
-	fmt.Println(projectId)
+	/*	projectId, err := h.Helpers.GetInt64FromURLParam(chi.URLParam(r, "projectId"))
+		if err != nil {
+			h.Logger.PrintError(err, nil)
+		}*/
+	//fmt.Println(projectId)
 
 	var input struct {
 		ID int64 `json:"id"`
 	}
 
-	err = h.Json.DecodeJSON(w, r, &input)
+	err := h.Json.DecodeJSON(w, r, &input)
 	if err != nil {
 		h.Errors.ServerErrorResponse(w, r, err)
 		return

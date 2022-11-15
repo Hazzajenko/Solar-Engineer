@@ -70,7 +70,7 @@ export class ProjectIdComponent implements OnInit {
 
   ngOnInit(): void {
     // this.statsService.calculateStringTotals()
-    console.log(this.statsService.stringsTotalVoc)
+    // console.log(this.statsService.stringsTotalVoc)
     this.trackerTree$ = combineLatest([
       this.store.select(selectProjectByRouteParams),
       this.store.select(
@@ -148,9 +148,9 @@ export class ProjectIdComponent implements OnInit {
     event.preventDefault()
 
     this.menuTopLeftPosition.x = event.clientX + 'px'
-    console.log(this.menuTopLeftPosition.x)
+    // console.log(this.menuTopLeftPosition.x)
     this.menuTopLeftPosition.y = event.clientY + 'px'
-    console.log(this.menuTopLeftPosition.y)
+    // console.log(this.menuTopLeftPosition.y)
 
     this.matMenuTrigger.openMenu()
   }
@@ -158,26 +158,26 @@ export class ProjectIdComponent implements OnInit {
   onRouteToInverter(inverter: InverterModel) {}
 
   click() {
-    console.log('click')
+    // console.log('click')
   }
 
   toggleInverter(inverter: InverterModel, index: number) {
     this.inverterBool[index] = !this.inverterBool[index]
-    console.log(this.inverterBool[index])
+    // console.log(this.inverterBool[index])
   }
 
   toggleTracker(tracker: TrackerModel, index: number) {
     this.trackerBool[index] = !this.trackerBool[index]
-    console.log(this.trackerBool[index])
+    // console.log(this.trackerBool[index])
   }
 
   toggleString(stringModel: StringModel, index: number) {
     this.stringBool[index] = !this.stringBool[index]
-    console.log(this.stringBool[index])
+    // console.log(this.stringBool[index])
   }
 
   updateView(event: InverterModel) {
-    console.log(event)
+    // console.log(event)
     this.view = event
   }
 }

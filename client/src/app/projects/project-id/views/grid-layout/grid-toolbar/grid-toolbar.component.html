@@ -1,0 +1,16 @@
+<mat-toolbar class="grid-toolbar-container">
+  <button
+    [matMenuTriggerFor]="menu"
+    aria-label="Example icon-button with menu icon"
+    class="example-icon"
+    mat-button
+    mat-icon-button
+  >
+    <mat-icon>brush</mat-icon>
+  </button>
+</mat-toolbar>
+
+<mat-menu #menu="matMenu">
+  <button (click)="selectCreatePanelMode()" mat-menu-item>Panels</button>
+  <button (click)="selectCreateCableMode()" mat-menu-item>Cable</button>
+</mat-menu>

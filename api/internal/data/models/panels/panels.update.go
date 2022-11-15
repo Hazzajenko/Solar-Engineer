@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 	boiler "github.com/Hazzajenko/gosolarbackend/my_models"
 	"time"
 )
@@ -106,7 +105,7 @@ func (p *PanelModel) UpdatePanelsColor(stringId int64, stringColor string) (boil
 			return nil, 0, err
 		}
 	}
-	fmt.Println(panelRowsAff)
+	//fmt.Println(panelRowsAff)
 
 	result, err := boiler.Panels(boiler.PanelWhere.StringID.EQ(stringId)).All(ctx, p.DB)
 	return result, panelRowsAff, nil

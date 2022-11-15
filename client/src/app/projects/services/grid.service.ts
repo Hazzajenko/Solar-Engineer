@@ -32,31 +32,12 @@ export class GridService {
         array.push(`${i}`)
       }
     }
-    // let counter = 0
-    /*    array.forEach((numb) => {
-          if (counter < 10) {
-            array.push(`0${counter}`)
-          } else {
-            array.push(`${counter}`)
-          }
-          counter++
-        })*/
-    /*    for (let entry of array) {
-          if (counter < 10) {
-            array.push(`0${counter}`)
-          } else {
-            array.push(`${counter}`)
-          }
-          counter++
-        }*/
-    console.log(array)
     return array
-    // array.forEach((number) => {})
   }
 
   isSpotFreePredicate(item: CdkDrag<PanelModel>): boolean {
     if (item) {
-      console.log(item.dropContainer.id)
+      // console.log(item.dropContainer.id)
       this.store
         .select(
           selectPanelsByProjectId({

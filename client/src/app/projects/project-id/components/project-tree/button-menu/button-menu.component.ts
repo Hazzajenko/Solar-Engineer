@@ -10,10 +10,7 @@ import { UnitModel } from '../../../../models/unit.model'
 import { AppState } from '../../../../../store/app.state'
 import { Store } from '@ngrx/store'
 import { selectString } from '../../../../store/strings/strings.actions'
-import {
-  clearGridState,
-  selectTrackerStringsForGrid,
-} from '../../../../store/grid/grid.actions'
+import { GridStateActions } from '../../../../store/grid/grid.actions'
 import { Observable } from 'rxjs'
 import { selectStringsByProjectIdRouteParams } from '../../../../store/strings/strings.selectors'
 
@@ -45,8 +42,10 @@ export class ButtonMenuComponent implements OnInit {
   }
 
   selectTrackerStrings(strings: StringModel[]) {
-    this.store.dispatch(clearGridState())
-    this.store.dispatch(selectTrackerStringsForGrid({ strings }))
+    this.store.dispatch(GridStateActions.clearGridState())
+    this.store.dispatch(
+      GridStateActions.selectTrackerStringsForGrid({ strings }),
+    )
   }
 
   selectString(string: StringModel) {
@@ -85,8 +84,10 @@ export class ButtonMenuComponent implements OnInit {
   }
 
   selectInverterStrings(strings: StringModel[]) {
-    this.store.dispatch(clearGridState())
-    this.store.dispatch(selectTrackerStringsForGrid({ strings }))
+    this.store.dispatch(GridStateActions.clearGridState())
+    this.store.dispatch(
+      GridStateActions.selectTrackerStringsForGrid({ strings }),
+    )
   }
 
   async deleteInverter(inverter: InverterModel) {

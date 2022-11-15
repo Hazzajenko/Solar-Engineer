@@ -97,17 +97,17 @@ export class ProjectTreeComponent implements OnInit {
 
   toggleInverter(inverter: InverterModel) {
     this.inverterBool[inverter.id] = !this.inverterBool[inverter.id]
-    console.log(this.inverterBool[inverter.id])
+    // console.log(this.inverterBool[inverter.id])
   }
 
   toggleTracker(tracker: TrackerModel) {
     this.trackerBool[tracker.id] = !this.trackerBool[tracker.id]
-    console.log(this.trackerBool[tracker.id])
+    // console.log(this.trackerBool[tracker.id])
   }
 
   toggleString(stringModel: StringModel) {
     this.stringBool[stringModel.id] = !this.stringBool[stringModel.id]
-    console.log(this.stringBool[stringModel.id])
+    // console.log(this.stringBool[stringModel.id])
   }
 
   sortData($event: Sort) {}
@@ -116,9 +116,9 @@ export class ProjectTreeComponent implements OnInit {
     event.preventDefault()
 
     this.menuTopLeftPosition.x = event.clientX + 'px'
-    console.log(this.menuTopLeftPosition.x)
+    // console.log(this.menuTopLeftPosition.x)
     this.menuTopLeftPosition.y = event.clientY + 'px'
-    console.log(this.menuTopLeftPosition.y)
+    // console.log(this.menuTopLeftPosition.y)
     this.matMenuTrigger.menuData = { item: inverter }
 
     this.matMenuTrigger.openMenu()
@@ -128,47 +128,44 @@ export class ProjectTreeComponent implements OnInit {
     event.preventDefault()
 
     this.menuTopLeftPosition.x = event.clientX + 'px'
-    console.log(this.menuTopLeftPosition.x)
+    // console.log(this.menuTopLeftPosition.x)
     this.menuTopLeftPosition.y = event.clientY + 'px'
-    console.log(this.menuTopLeftPosition.y)
+    // console.log(this.menuTopLeftPosition.y)
     this.matMenuTrigger.menuData = { item: inverter }
 
     this.matMenuTrigger.openMenu()
   }
 
   click() {
-    console.log('click')
+    // console.log('click')
   }
 
   selectNewView(inverter: InverterModel) {
     this.inverterView.emit(inverter)
   }
 
-  createInverter(projectId: number) {
-    this.invertersService.createInverterByProjectId(projectId).then((res) => {
-      console.log(res)
-    })
+  async createInverter(projectId: number) {
+    await this.invertersService.createInverterByProjectId(projectId)
   }
 
-  createTracker(projectId: number, inverter: InverterModel) {
-    this.trackersService.createTrackers(projectId, inverter.id).then((res) => {
-      console.log(res)
-    })
+  async createTracker(projectId: number, inverter: InverterModel) {
+    await this.trackersService.createTrackers(projectId, inverter.id)
   }
 
-  createString(
+  async createString(
     projectId: number,
     inverter: InverterModel,
     tracker: TrackerModel,
   ) {
-    this.stringsService
-      .createString(projectId, inverter.id, tracker.id, 'new string')
-      .then((res) => {
-        console.log(res)
-      })
+    await this.stringsService.createString(
+      projectId,
+      inverter.id,
+      tracker.id,
+      'new string',
+    )
   }
 
-  createPanel(
+  async createPanel(
     projectId: number,
     inverter: InverterModel,
     tracker: TrackerModel,
@@ -189,11 +186,12 @@ export class ProjectTreeComponent implements OnInit {
         version: stringModel.version,
         created_at: stringModel.created_at,
       }
-      this.panelsService
-        .createPanel(projectId, inverter.id, tracker.id, updateString.id)
-        .then((res) => {
-          console.log(res)
-        })
+      await this.panelsService.createPanel(
+        projectId,
+        inverter.id,
+        tracker.id,
+        updateString.id,
+      )
     } else {
       const updateString: StringModel = {
         id: stringModel.id,
@@ -207,11 +205,12 @@ export class ProjectTreeComponent implements OnInit {
         version: stringModel.version,
         created_at: stringModel.created_at,
       }
-      this.panelsService
-        .createPanel(projectId, inverter.id, tracker.id, updateString.id)
-        .then((res) => {
-          console.log(res)
-        })
+      await this.panelsService.createPanel(
+        projectId,
+        inverter.id,
+        tracker.id,
+        updateString.id,
+      )
     }
   }
 }

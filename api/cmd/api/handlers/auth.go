@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"errors"
-	"fmt"
 	"github.com/Hazzajenko/gosolarbackend/internal/data/models/users"
 	"github.com/Hazzajenko/gosolarbackend/internal/json"
 	"github.com/Hazzajenko/gosolarbackend/internal/validators"
@@ -132,7 +131,7 @@ func (h *Handlers) LoginUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println(token)
+	//fmt.Println(token)
 
 	err = h.Json.ResponseJSON(w, http.StatusOK, json.Envelope{"user": user, "token": token /*, "claims": claims*/}, map[string][]string{"db": {"error starting server"}})
 	if err != nil {

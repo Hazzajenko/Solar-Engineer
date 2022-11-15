@@ -50,8 +50,8 @@ export class TrackerStatsComponent implements OnInit {
   ngOnInit(): void {
     this.statsService.calculateStringTotals()
     // this.statsService.calculateTrackerTotals()
-    console.log('trackerVOC', this.trackerTotalVoc)
-    console.log('stringsTotalVoc', this.statsService.stringsTotalVoc)
+    // console.log('trackerVOC', this.trackerTotalVoc)
+    // console.log('stringsTotalVoc', this.statsService.stringsTotalVoc)
     this.totalVoc = this.statsService.stringsTotalVoc
     this.totalVmp = this.statsService.stringsTotalVmp
     this.totalPmax = this.statsService.stringsTotalPmax

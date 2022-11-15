@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"github.com/Hazzajenko/gosolarbackend/internal/data/models/projects"
 	"github.com/Hazzajenko/gosolarbackend/internal/json"
 	"github.com/go-chi/chi/v5"
@@ -125,22 +124,22 @@ func (h *Handlers) GetUserProjects(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handlers) GetProjectById(w http.ResponseWriter, r *http.Request) {
-	bearerHeader := r.Header.Get("Authorization")
-	bearer := strings.Replace(bearerHeader, "Bearer ", "", 1)
+	/*	bearerHeader := r.Header.Get("Authorization")
+		bearer := strings.Replace(bearerHeader, "Bearer ", "", 1)
 
-	idString, err := h.Tokens.GetUserIdFromToken(bearer)
-	if err != nil {
-		h.Logger.PrintError(err, nil)
-	}
-	userId, err := strconv.Atoi(idString)
-	fmt.Println(userId)
+		idString, err := h.Tokens.GetUserIdFromToken(bearer)
+		if err != nil {
+			h.Logger.PrintError(err, nil)
+		}
+		userId, err := strconv.Atoi(idString)*/
+	//fmt.Println(userId)
 
 	projectIdString := chi.URLParam(r, "projectId")
 	projectId, err := strconv.Atoi(projectIdString)
 	if err != nil {
 		h.Logger.PrintError(err, nil)
 	}
-	fmt.Println(projectId)
+	//fmt.Println(projectId)
 
 	project, err := h.Models.Projects.Get(int64(projectId))
 	if err != nil {
@@ -178,7 +177,7 @@ func (h *Handlers) GetDataForProject(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		h.Logger.PrintError(err, nil)
 	}
-	fmt.Println(projectId)
+	//fmt.Println(projectId)
 
 	project, err := h.Models.Projects.Get(int64(projectId))
 	if err != nil {

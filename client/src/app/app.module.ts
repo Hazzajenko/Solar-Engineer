@@ -47,9 +47,11 @@ import { FilterTrackersPipe } from './pipes/filter-trackers.pipe'
 import { StatsSectionComponent } from './projects/project-id/components/project-tree/stats-section/stats-section.component'
 import { FilterPanelsByPipe } from './pipes/filter-panels-by.pipe'
 import { FilterStringsByPipe } from './pipes/filter-strings-by.pipe'
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { GridToolbarComponent } from './projects/project-id/views/grid-layout/grid-toolbar/grid-toolbar.component'
 
 export function tokenGetter() {
-  console.log(localStorage.getItem('token'))
+  // console.log(localStorage.getItem('token'))
   return localStorage.getItem('token')
 }
 
@@ -76,6 +78,7 @@ export function tokenGetter() {
     FilterTrackersPipe,
     StatsSectionComponent,
     FilterPanelsByPipe,
+    GridToolbarComponent,
   ],
   imports: [
     BrowserModule,
@@ -117,6 +120,7 @@ export function tokenGetter() {
     DragDropModule,
     MatTooltipModule,
     FilterStringsByPipe,
+    MatToolbarModule,
   ],
   providers: [
     {

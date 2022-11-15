@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 	boiler "github.com/Hazzajenko/gosolarbackend/my_models"
 	"github.com/volatiletech/sqlboiler/v4/boil"
 	"time"
@@ -33,7 +32,6 @@ func (p *StringModel) UpdateBoilerStringColor(string *boiler.String) (*boiler.St
 			return nil, 0, err
 		}
 	}
-	fmt.Println(rowsAff)
 
 	return getString, rowsAff, nil
 }

@@ -2,7 +2,6 @@ package handlers
 
 import (
 	json2 "encoding/json"
-	"fmt"
 	"github.com/Hazzajenko/gosolarbackend/internal/data/models/inverters"
 	"github.com/Hazzajenko/gosolarbackend/internal/json"
 	"github.com/go-chi/chi/v5"
@@ -27,7 +26,7 @@ func (h *Handlers) CreateInverter(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		h.Logger.PrintError(err, nil)
 	}
-	fmt.Println(projectId)
+	//fmt.Println(projectId)
 
 	file, err := os.ReadFile("assets/json/inverters/tauroeco100-3-d.json")
 	data := inverters.Inverter{}
@@ -81,22 +80,22 @@ func (h *Handlers) CreateInverter(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handlers) GetInvertersByProjectId(w http.ResponseWriter, r *http.Request) {
-	bearerHeader := r.Header.Get("Authorization")
-	bearer := strings.Replace(bearerHeader, "Bearer ", "", 1)
+	/*	bearerHeader := r.Header.Get("Authorization")
+		bearer := strings.Replace(bearerHeader, "Bearer ", "", 1)*/
 
 	projectIdString := chi.URLParam(r, "projectId")
 	projectId, err := strconv.Atoi(projectIdString)
 	if err != nil {
 		h.Logger.PrintError(err, nil)
 	}
-	fmt.Println(projectId)
+	//fmt.Println(projectId)
 
-	idString, err := h.Tokens.GetUserIdFromToken(bearer)
-	if err != nil {
-		h.Logger.PrintError(err, nil)
-	}
-	userId, err := strconv.Atoi(idString)
-	fmt.Println(userId)
+	//idString, err := h.Tokens.GetUserIdFromToken(bearer)
+	//if err != nil {
+	//	h.Logger.PrintError(err, nil)
+	//}
+	//userId, err := strconv.Atoi(idString)
+	//fmt.Println(userId)
 
 	result, err := h.Models.Inverters.GetInvertersByProjectId(int64(projectId))
 	if err != nil {
@@ -116,26 +115,26 @@ func (h *Handlers) GetInvertersByProjectId(w http.ResponseWriter, r *http.Reques
 }
 
 func (h *Handlers) DeleteInverter(w http.ResponseWriter, r *http.Request) {
-	bearerHeader := r.Header.Get("Authorization")
-	bearer := strings.Replace(bearerHeader, "Bearer ", "", 1)
+	//bearerHeader := r.Header.Get("Authorization")
+	//bearer := strings.Replace(bearerHeader, "Bearer ", "", 1)
 
-	userId, err := h.Tokens.GetUserIdInt64FromToken(bearer)
-	if err != nil {
-		h.Logger.PrintError(err, nil)
-	}
-	fmt.Println(userId)
+	//userId, err := h.Tokens.GetUserIdInt64FromToken(bearer)
+	//if err != nil {
+	//	h.Logger.PrintError(err, nil)
+	//}
+	//fmt.Println(userId)
 
-	projectId, err := h.Helpers.GetInt64FromURLParam(chi.URLParam(r, "projectId"))
-	if err != nil {
-		h.Logger.PrintError(err, nil)
-	}
-	fmt.Println(projectId)
+	//projectId, err := h.Helpers.GetInt64FromURLParam(chi.URLParam(r, "projectId"))
+	//if err != nil {
+	//	h.Logger.PrintError(err, nil)
+	//}
+	//fmt.Println(projectId)
 
 	var input struct {
 		ID int64 `json:"id"`
 	}
 
-	err = h.Json.DecodeJSON(w, r, &input)
+	err := h.Json.DecodeJSON(w, r, &input)
 	if err != nil {
 		h.Errors.ServerErrorResponse(w, r, err)
 		return

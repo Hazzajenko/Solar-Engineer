@@ -1,21 +1,15 @@
+<!--<ng-container *ngIf="createMode$ | async; let createMode">-->
+<!--  <ng-container *ngIf="selectedStrings$ | async; let selectedStrings">-->
 <ng-container *ngIf="trackerTree$ | async; let store">
   <ng-container *ngIf="store.project">
     <div cdkDropListGroup class="project-design-container">
-      <div
-        *ngFor="let n of numSequence(20); let i = index"
-        class="row"
-      >
+      <div *ngFor="let n of numSequence(20); let i = index" class="row">
         <!--  {{i}}-->
-        <div
-          *ngFor="let n of numSequence(20); let a = index"
-          class="col"
-        >
+        <div *ngFor="let n of numSequence(20); let a = index" class="col">
           <div
             #thing
             (cdkDropListDropped)="taskDrop($event)"
-            (click)="
-              divClick(i.toString() + a, $event, thing)
-            "
+            (click)="divClick(i.toString() + a, $event, thing)"
             [cdkDropListConnectedTo]="['panels']"
             [id]="i.toString() + a"
             cdkDropList
@@ -30,10 +24,7 @@
                 *ngIf="panel.location === i.toString() + a"
                 [cdkDragData]="panel"
                 [matTooltip]="
-                  'StringId = ' +
-                  panel.string_id +
-                  ' PanelId = ' +
-                  panel.id
+                  'StringId = ' + panel.string_id + ' PanelId = ' + panel.id
                 "
                 [style.border]="'2px solid ' + panel.color"
                 cdkDrag
@@ -41,9 +32,7 @@
                 matTooltipPosition="right"
               >
                 <div
-                  *ngIf="
-                    panel.string_id === selectedStringId
-                  "
+                  *ngIf="panel.string_id === selectedStringId"
                   class="panel__location"
                 >
                   {{ panel.location }}
@@ -56,6 +45,8 @@
     </div>
   </ng-container>
 </ng-container>
+<!--  </ng-container>-->
+<!--</ng-container>-->
 <div
   [matMenuTriggerFor]="rightMenu"
   [style.left]="menuTopLeftPosition.x"
@@ -74,8 +65,6 @@
     </ul>
     <button (click)="click()" mat-menu-item>Add</button>
     <button mat-menu-item>Edit</button>
-    <button (click)="deletePanel(panel)" mat-menu-item>
-      Delete
-    </button>
+    <button (click)="deletePanel(panel)" mat-menu-item>Delete</button>
   </ng-template>
 </mat-menu>

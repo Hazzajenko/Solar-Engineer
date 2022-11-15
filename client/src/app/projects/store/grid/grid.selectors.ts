@@ -3,9 +3,17 @@ import * as State from './grid.reducer'
 
 export const selectGridState = createFeatureSelector<State.GridState>('grid')
 
-export const selectGridEntities = createSelector(
+export const selectGridStringsAndMode = (state: State.GridState) => state
+
+// export const selectSelectedStrings = (state: State.GridState) => state.strings
+// export const selectCreateMode = (state: State.GridState) => state.createMode
+
+export const selectSelectedStrings = createSelector(
   selectGridState,
-  State.selectEntities,
+  (state: State.GridState) => state.strings,
 )
 
-export const selectAllGrid = createSelector(selectGridState, State.selectAll)
+export const selectCreateMode = createSelector(
+  selectGridState,
+  (state: State.GridState) => state.createMode,
+)

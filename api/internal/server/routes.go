@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+	"github.com/Hazzajenko/gosolarbackend/internal/websockets"
 	"github.com/go-chi/chi/v5"
 	"net/http"
 )
@@ -27,6 +28,9 @@ func (s *Server) Routes() *chi.Mux {
 		//r.Get("/manage/url/{path}", FetchAssetDetailsByURL)
 		//r.Get("/manage/id/{path}", FetchAssetDetailsByID)
 	})*/
+
+	s.Router.Get("/ws", s.Handlers.WsEndpoint)
+	s.Router.Get("/echo", websockets.Echo)
 
 	s.Router.Route("/projects", func(r chi.Router) {
 

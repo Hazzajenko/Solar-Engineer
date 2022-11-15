@@ -2,7 +2,6 @@ package handlers
 
 import (
 	json2 "encoding/json"
-	"fmt"
 	"github.com/Hazzajenko/gosolarbackend/internal/data/models/panels"
 	"github.com/Hazzajenko/gosolarbackend/internal/json"
 	boiler "github.com/Hazzajenko/gosolarbackend/my_models"
@@ -111,22 +110,22 @@ func (h *Handlers) CreatePanel(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handlers) GetPanelsByProjectId(w http.ResponseWriter, r *http.Request) {
-	bearerHeader := r.Header.Get("Authorization")
-	bearer := strings.Replace(bearerHeader, "Bearer ", "", 1)
+	/*	bearerHeader := r.Header.Get("Authorization")
+		bearer := strings.Replace(bearerHeader, "Bearer ", "", 1)*/
 
 	projectIdString := chi.URLParam(r, "projectId")
 	projectId, err := strconv.Atoi(projectIdString)
 	if err != nil {
 		h.Logger.PrintError(err, nil)
 	}
-	fmt.Println(projectId)
+	//fmt.Println(projectId)
 
-	idString, err := h.Tokens.GetUserIdFromToken(bearer)
-	if err != nil {
-		h.Logger.PrintError(err, nil)
-	}
-	userId, err := strconv.Atoi(idString)
-	fmt.Println(userId)
+	//idString, err := h.Tokens.GetUserIdFromToken(bearer)
+	//if err != nil {
+	//	h.Logger.PrintError(err, nil)
+	//}
+	//userId, err := strconv.Atoi(idString)
+	//fmt.Println(userId)
 
 	result, err := h.Models.Panels.GetPanelsByProjectId(int64(projectId))
 	if err != nil {
@@ -146,20 +145,20 @@ func (h *Handlers) GetPanelsByProjectId(w http.ResponseWriter, r *http.Request) 
 }
 
 func (h *Handlers) UpdatePanelLocation(w http.ResponseWriter, r *http.Request) {
-	bearerHeader := r.Header.Get("Authorization")
-	bearer := strings.Replace(bearerHeader, "Bearer ", "", 1)
+	//bearerHeader := r.Header.Get("Authorization")
+	//bearer := strings.Replace(bearerHeader, "Bearer ", "", 1)
+	//
+	//userId, err := h.Tokens.GetUserIdInt64FromToken(bearer)
+	//if err != nil {
+	//	h.Logger.PrintError(err, nil)
+	//}
+	//fmt.Println(userId)
 
-	userId, err := h.Tokens.GetUserIdInt64FromToken(bearer)
-	if err != nil {
-		h.Logger.PrintError(err, nil)
-	}
-	fmt.Println(userId)
-
-	projectId, err := h.Helpers.GetInt64FromURLParam(chi.URLParam(r, "projectId"))
-	if err != nil {
-		h.Logger.PrintError(err, nil)
-	}
-	fmt.Println(projectId)
+	//projectId, err := h.Helpers.GetInt64FromURLParam(chi.URLParam(r, "projectId"))
+	//if err != nil {
+	//	h.Logger.PrintError(err, nil)
+	//}
+	//fmt.Println(projectId)
 
 	var input struct {
 		ID         int64  `json:"id"`
@@ -170,7 +169,7 @@ func (h *Handlers) UpdatePanelLocation(w http.ResponseWriter, r *http.Request) {
 		Version    int32  `json:"version"`
 	}
 
-	err = h.Json.DecodeJSON(w, r, &input)
+	err := h.Json.DecodeJSON(w, r, &input)
 	if err != nil {
 		h.Errors.ServerErrorResponse(w, r, err)
 		return
@@ -203,26 +202,26 @@ func (h *Handlers) UpdatePanelLocation(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handlers) DeletePanel(w http.ResponseWriter, r *http.Request) {
-	bearerHeader := r.Header.Get("Authorization")
-	bearer := strings.Replace(bearerHeader, "Bearer ", "", 1)
+	/*	bearerHeader := r.Header.Get("Authorization")
+		bearer := strings.Replace(bearerHeader, "Bearer ", "", 1)
 
-	userId, err := h.Tokens.GetUserIdInt64FromToken(bearer)
-	if err != nil {
-		h.Logger.PrintError(err, nil)
-	}
-	fmt.Println(userId)
+		userId, err := h.Tokens.GetUserIdInt64FromToken(bearer)
+		if err != nil {
+			h.Logger.PrintError(err, nil)
+		}
+		fmt.Println(userId)*/
 
-	projectId, err := h.Helpers.GetInt64FromURLParam(chi.URLParam(r, "projectId"))
-	if err != nil {
-		h.Logger.PrintError(err, nil)
-	}
-	fmt.Println(projectId)
+	/*	projectId, err := h.Helpers.GetInt64FromURLParam(chi.URLParam(r, "projectId"))
+		if err != nil {
+			h.Logger.PrintError(err, nil)
+		}*/
+	//fmt.Println(projectId)
 
 	var input struct {
 		ID int64 `json:"id"`
 	}
 
-	err = h.Json.DecodeJSON(w, r, &input)
+	err := h.Json.DecodeJSON(w, r, &input)
 	if err != nil {
 		h.Errors.ServerErrorResponse(w, r, err)
 		return

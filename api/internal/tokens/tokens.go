@@ -60,10 +60,10 @@ func (t *Tokens) VerifyToken(tokenString string) (*UserClaims, error) {
 	})
 
 	myClaims := token.Claims.(*UserClaims)
-	fmt.Print(myClaims)
-	fmt.Println("iss ", myClaims.Issuer)
-	fmt.Println("name ", myClaims.Name)
-	fmt.Println("sub ", myClaims.Subject)
+	//fmt.Print(myClaims)
+	/*	fmt.Println("iss ", myClaims.Issuer)
+		fmt.Println("name ", myClaims.Name)
+		fmt.Println("sub ", myClaims.Subject)*/
 
 	if err != nil {
 		// handle err
