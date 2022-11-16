@@ -35,6 +35,7 @@ type String struct {
 	Version      int       `boil:"version" json:"version" toml:"version" yaml:"version"`
 	Model        int       `boil:"model" json:"model" toml:"model" yaml:"model"`
 	Color        string    `boil:"color" json:"color" toml:"color" yaml:"color"`
+	Type         string    `boil:"type" json:"type" toml:"type" yaml:"type"`
 
 	R *stringR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L stringL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -53,6 +54,7 @@ var StringColumns = struct {
 	Version      string
 	Model        string
 	Color        string
+	Type         string
 }{
 	ID:           "id",
 	ProjectID:    "project_id",
@@ -66,6 +68,7 @@ var StringColumns = struct {
 	Version:      "version",
 	Model:        "model",
 	Color:        "color",
+	Type:         "type",
 }
 
 var StringTableColumns = struct {
@@ -81,6 +84,7 @@ var StringTableColumns = struct {
 	Version      string
 	Model        string
 	Color        string
+	Type         string
 }{
 	ID:           "strings.id",
 	ProjectID:    "strings.project_id",
@@ -94,6 +98,7 @@ var StringTableColumns = struct {
 	Version:      "strings.version",
 	Model:        "strings.model",
 	Color:        "strings.color",
+	Type:         "strings.type",
 }
 
 // Generated where
@@ -120,6 +125,7 @@ var StringWhere = struct {
 	Version      whereHelperint
 	Model        whereHelperint
 	Color        whereHelperstring
+	Type         whereHelperstring
 }{
 	ID:           whereHelperint64{field: "\"strings\".\"id\""},
 	ProjectID:    whereHelperint64{field: "\"strings\".\"project_id\""},
@@ -133,6 +139,7 @@ var StringWhere = struct {
 	Version:      whereHelperint{field: "\"strings\".\"version\""},
 	Model:        whereHelperint{field: "\"strings\".\"model\""},
 	Color:        whereHelperstring{field: "\"strings\".\"color\""},
+	Type:         whereHelperstring{field: "\"strings\".\"type\""},
 }
 
 // StringRels is where relationship names are stored.
@@ -203,9 +210,9 @@ func (r *stringR) GetPanels() PanelSlice {
 type stringL struct{}
 
 var (
-	stringAllColumns            = []string{"id", "project_id", "inverter_id", "tracker_id", "name", "created_at", "created_by", "is_in_parallel", "panel_amount", "version", "model", "color"}
+	stringAllColumns            = []string{"id", "project_id", "inverter_id", "tracker_id", "name", "created_at", "created_by", "is_in_parallel", "panel_amount", "version", "model", "color", "type"}
 	stringColumnsWithoutDefault = []string{"project_id", "inverter_id", "tracker_id", "name"}
-	stringColumnsWithDefault    = []string{"id", "created_at", "created_by", "is_in_parallel", "panel_amount", "version", "model", "color"}
+	stringColumnsWithDefault    = []string{"id", "created_at", "created_by", "is_in_parallel", "panel_amount", "version", "model", "color", "type"}
 	stringPrimaryKeyColumns     = []string{"id"}
 	stringGeneratedColumns      = []string{}
 )

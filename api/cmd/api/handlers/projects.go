@@ -223,6 +223,15 @@ func (h *Handlers) GetDataForProject(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	cables, err := h.Models.Cables.GetCablesByProjectId(int64(projectId))
+	if err != nil {
+		switch {
+		default:
+			h.Errors.ServerErrorResponse(w, r, err)
+		}
+		return
+	}
+
 	err = h.Json.ResponseJSON(w, http.StatusAccepted,
 		json.Envelope{
 			"project":            project,
@@ -230,6 +239,7 @@ func (h *Handlers) GetDataForProject(w http.ResponseWriter, r *http.Request) {
 			"trackers":           trackers,
 			"stringsByProjectId": stringsByProjectId,
 			"panels":             panels,
+			"cables":             cables,
 		},
 		nil)
 	/*	err = h.Json.ResponseJSON(w, http.StatusAccepted,

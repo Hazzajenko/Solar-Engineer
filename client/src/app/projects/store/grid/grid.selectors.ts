@@ -13,6 +13,11 @@ export const selectSelectedStrings = createSelector(
   (state: State.GridState) => state.strings,
 )
 
+export const selectSelectedString = createSelector(
+  selectGridState,
+  (state: State.GridState) => state.selected,
+)
+
 export const selectCreateMode = createSelector(
   selectGridState,
   (state: State.GridState) => state.createMode,

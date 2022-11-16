@@ -2,7 +2,6 @@ package server
 
 import (
 	"fmt"
-	"github.com/Hazzajenko/gosolarbackend/internal/websockets"
 	"github.com/go-chi/chi/v5"
 	"net/http"
 )
@@ -30,7 +29,7 @@ func (s *Server) Routes() *chi.Mux {
 	})*/
 
 	s.Router.Get("/ws", s.Handlers.WsEndpoint)
-	s.Router.Get("/echo", websockets.Echo)
+	//s.Router.Get("/echo", websockets.Echo)
 
 	s.Router.Route("/projects", func(r chi.Router) {
 
@@ -68,6 +67,12 @@ func (s *Server) Routes() *chi.Mux {
 				r.Post("/panels", s.Handlers.CreatePanel)
 				r.Patch("/panels", s.Handlers.UpdatePanelLocation)
 				r.Delete("/panels", s.Handlers.DeletePanel)
+			})
+
+			r.Group(func(r chi.Router) {
+				r.Post("/cables", s.Handlers.CreateCable)
+				r.Patch("/cables", s.Handlers.UpdateCable)
+				r.Delete("/cables", s.Handlers.DeleteCable)
 			})
 
 			r.Route("/{inverterId}", func(r chi.Router) {

@@ -36,6 +36,7 @@ type Tracker struct {
 	PanelAmount            int64     `boil:"panel_amount" json:"panel_amount" toml:"panel_amount" yaml:"panel_amount"`
 	Version                int       `boil:"version" json:"version" toml:"version" yaml:"version"`
 	Model                  int       `boil:"model" json:"model" toml:"model" yaml:"model"`
+	Type                   string    `boil:"type" json:"type" toml:"type" yaml:"type"`
 
 	R *trackerR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L trackerL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -55,6 +56,7 @@ var TrackerColumns = struct {
 	PanelAmount            string
 	Version                string
 	Model                  string
+	Type                   string
 }{
 	ID:                     "id",
 	ProjectID:              "project_id",
@@ -69,6 +71,7 @@ var TrackerColumns = struct {
 	PanelAmount:            "panel_amount",
 	Version:                "version",
 	Model:                  "model",
+	Type:                   "type",
 }
 
 var TrackerTableColumns = struct {
@@ -85,6 +88,7 @@ var TrackerTableColumns = struct {
 	PanelAmount            string
 	Version                string
 	Model                  string
+	Type                   string
 }{
 	ID:                     "trackers.id",
 	ProjectID:              "trackers.project_id",
@@ -99,6 +103,7 @@ var TrackerTableColumns = struct {
 	PanelAmount:            "trackers.panel_amount",
 	Version:                "trackers.version",
 	Model:                  "trackers.model",
+	Type:                   "trackers.type",
 }
 
 // Generated where
@@ -117,6 +122,7 @@ var TrackerWhere = struct {
 	PanelAmount            whereHelperint64
 	Version                whereHelperint
 	Model                  whereHelperint
+	Type                   whereHelperstring
 }{
 	ID:                     whereHelperint64{field: "\"trackers\".\"id\""},
 	ProjectID:              whereHelperint64{field: "\"trackers\".\"project_id\""},
@@ -131,6 +137,7 @@ var TrackerWhere = struct {
 	PanelAmount:            whereHelperint64{field: "\"trackers\".\"panel_amount\""},
 	Version:                whereHelperint{field: "\"trackers\".\"version\""},
 	Model:                  whereHelperint{field: "\"trackers\".\"model\""},
+	Type:                   whereHelperstring{field: "\"trackers\".\"type\""},
 }
 
 // TrackerRels is where relationship names are stored.
@@ -201,9 +208,9 @@ func (r *trackerR) GetStrings() StringSlice {
 type trackerL struct{}
 
 var (
-	trackerAllColumns            = []string{"id", "project_id", "inverter_id", "name", "created_at", "created_by", "max_input_current", "max_short_circuit_current", "string_amount", "parallel_amount", "panel_amount", "version", "model"}
+	trackerAllColumns            = []string{"id", "project_id", "inverter_id", "name", "created_at", "created_by", "max_input_current", "max_short_circuit_current", "string_amount", "parallel_amount", "panel_amount", "version", "model", "type"}
 	trackerColumnsWithoutDefault = []string{"project_id", "inverter_id", "name"}
-	trackerColumnsWithDefault    = []string{"id", "created_at", "created_by", "max_input_current", "max_short_circuit_current", "string_amount", "parallel_amount", "panel_amount", "version", "model"}
+	trackerColumnsWithDefault    = []string{"id", "created_at", "created_by", "max_input_current", "max_short_circuit_current", "string_amount", "parallel_amount", "panel_amount", "version", "model", "type"}
 	trackerPrimaryKeyColumns     = []string{"id"}
 	trackerGeneratedColumns      = []string{}
 )

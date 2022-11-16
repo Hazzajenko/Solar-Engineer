@@ -31,15 +31,15 @@
               <div class="project-tree__inverter-item__button-menu">
                 <app-button-menu
                   [inverter]="inverter"
-                  [model]="1"
                   [projectId]="3"
+                  [type]="inverter.type"
                 ></app-button-menu>
               </div>
               <ng-container *ngIf="trackers$ | async; let trackers">
                 <div class="project-tree__tracker-item">
                   <app-stats-section
                     [inverter]="inverter"
-                    [model]="1"
+                    [type]="inverter.type"
                   ></app-stats-section>
                   {{ (panels | filterPanelsBy: inverter.id:1).length }}
                   Panels
@@ -67,17 +67,17 @@
                       <div class="project-tree__tracker-item__button-menu">
                         <app-button-menu
                           [inverter]="inverter"
-                          [model]="2"
                           [projectId]="3"
                           [tracker]="tracker"
+                          [type]="tracker.type"
                         ></app-button-menu>
                       </div>
 
                       <ng-container *ngIf="strings$ | async; let strings">
                         <div class="project-tree__string-item">
                           <app-stats-section
-                            [model]="2"
                             [tracker]="tracker"
+                            [type]="tracker.type"
                           ></app-stats-section>
                           {{ (panels | filterPanelsBy: tracker.id:2).length }}
                           Panels
@@ -109,17 +109,17 @@
                               >
                                 <app-button-menu
                                   [inverter]="inverter"
-                                  [model]="3"
                                   [projectId]="3"
                                   [string]="stringModel"
                                   [tracker]="tracker"
+                                  [type]="stringModel.type"
                                 ></app-button-menu>
                               </div>
 
                               <div class="project-tree__panel-item">
                                 <app-stats-section
-                                  [model]="3"
                                   [string]="stringModel"
+                                  [type]="stringModel.type"
                                 ></app-stats-section>
                                 {{
                                   (panels | filterPanelsBy: stringModel.id:3)

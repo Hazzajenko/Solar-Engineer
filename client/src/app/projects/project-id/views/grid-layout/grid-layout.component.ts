@@ -5,27 +5,35 @@ import { TrackerModel } from '../../../models/tracker.model'
 import { StringModel } from '../../../models/string.model'
 import { PanelModel } from '../../../models/panel.model'
 import { PanelsService } from '../../../services/panels.service'
-import { select, Store } from '@ngrx/store'
+import { Store } from '@ngrx/store'
 import { AppState } from '../../../../store/app.state'
 import {
-  selectStringById,
+  selectStringsByProjectIdRouteParams,
   selectStringsByTrackerId,
 } from '../../../store/strings/strings.selectors'
-import { map, take } from 'rxjs/operators'
+import { map } from 'rxjs/operators'
 import { GridService } from '../../../services/grid.service'
 import {
   selectPanelsByProjectId,
+  selectPanelsByProjectIdRouteParams,
   selectPanelsByTrackerId,
 } from '../../../store/panels/panels.selectors'
 import { combineLatest, Observable } from 'rxjs'
 import { selectProjectByRouteParams } from '../../../store/projects/projects.selectors'
-import { selectInverterById } from '../../../store/inverters/inverters.selectors'
-import { selectTrackerById } from '../../../store/trackers/trackers.selectors'
+import {
+  selectInverterById,
+  selectInvertersByProjectIdRouteParams,
+} from '../../../store/inverters/inverters.selectors'
+import {
+  selectTrackerById,
+  selectTrackersByProjectIdRouteParams,
+} from '../../../store/trackers/trackers.selectors'
 import { ProjectModel } from '../../../models/project.model'
 import { MatMenuTrigger } from '@angular/material/menu'
 import { CreateMode } from '../../../store/grid/grid.actions'
 import {
   selectCreateMode,
+  selectSelectedString,
   selectSelectedStrings,
 } from '../../../store/grid/grid.selectors'
 
@@ -47,6 +55,7 @@ export class GridLayoutComponent implements OnInit {
   createMode$?: Observable<CreateMode | undefined>
   createMode?: CreateMode | undefined
   selectedStrings$?: Observable<StringModel[] | undefined>
+  selectedString$!: Observable<number>
   occupiedSpots: string[] = []
   trackerTree$!: Observable<{
     project?: ProjectModel
@@ -55,6 +64,16 @@ export class GridLayoutComponent implements OnInit {
     strings?: StringModel[]
     panels?: PanelModel[]
   }>
+  gridState$!: Observable<{
+    createMode?: CreateMode
+    selectedStrings?: StringModel[]
+    selectedString?: StringModel
+  }>
+  project$!: Observable<ProjectModel | undefined>
+  inverters$!: Observable<InverterModel[]>
+  trackers$!: Observable<TrackerModel[]>
+  strings$!: Observable<StringModel[]>
+  panels$!: Observable<PanelModel[]>
 
   constructor(
     private panelsService: PanelsService,
@@ -69,10 +88,24 @@ export class GridLayoutComponent implements OnInit {
   ngOnInit(): void {
     this.createMode$ = this.store.select(selectCreateMode)
     this.selectedStrings$ = this.store.select(selectSelectedStrings)
+    // this.selectedString$ = this.store.select(selectSelectedString)
+    this.project$ = this.store.select(selectProjectByRouteParams)
+    this.inverters$ = this.store.select(selectInvertersByProjectIdRouteParams)
+    this.trackers$ = this.store.select(selectTrackersByProjectIdRouteParams)
+    this.strings$ = this.store.select(selectStringsByProjectIdRouteParams)
+    this.panels$ = this.store.select(selectPanelsByProjectIdRouteParams)
 
-    this.panels?.forEach((panel) => {
-      // console.log(panel?.location)
-    })
+    this.gridState$ = combineLatest([
+      this.store.select(selectCreateMode),
+      this.store.select(selectSelectedStrings),
+      this.store.select(selectSelectedString),
+    ]).pipe(
+      map(([createMode, selectedStrings, selectedString]) => ({
+        createMode,
+        selectedStrings,
+        selectedString,
+      })),
+    )
 
     this.store
       .select(
@@ -127,8 +160,6 @@ export class GridLayoutComponent implements OnInit {
 
   async taskDrop(event: CdkDragDrop<PanelModel, any>) {
     moveItemInArray(this.panels!, event.previousIndex, event.currentIndex)
-    // console.log('previousIndex', event.previousIndex)
-    // console.log('currentIndex', event.currentIndex)
 
     const panel = event.item.data
     const update: PanelModel = {
@@ -149,10 +180,29 @@ export class GridLayoutComponent implements OnInit {
     await this.panelsService.updatePanel(3, update)
   }
 
-  divClick(location: string, event: MouseEvent, thing: HTMLDivElement) {
-    if (!this.selectedStringId) console.log('select string')
+  async divClick(
+    location: string,
+    gridState: {
+      createMode?: CreateMode
+      selectedStrings?: StringModel[]
+      selectedString?: StringModel
+    },
+    project: ProjectModel,
+  ) {
+    switch (gridState.createMode) {
+      case CreateMode.PANEL:
+        await this.createPanelForGrid(location, gridState.selectedString)
+        break
+      case CreateMode.CABLE:
+        await this.createCableForGrid(location, project)
+        break
+      default:
+        break
+    }
+  }
 
-    if (this.selectedStringId) {
+  async createCableForGrid(location: string, project: ProjectModel) {
+    if (location) {
       const doesExist = this.panels?.find(
         (panel) => panel.location === location,
       )
@@ -160,27 +210,32 @@ export class GridLayoutComponent implements OnInit {
         console.log('location taken')
         return
       }
-      const selectedString = this.store.pipe(
-        select(selectStringById({ id: this.selectedStringId })),
+      const inSpot = this.occupiedSpots.find((spot) => spot === location)
+      if (inSpot) return console.log('location taken')
+      await this.grid.createCableForGrid(project.id, location, 4)
+    }
+  }
+
+  async createPanelForGrid(location: string, selectedString?: StringModel) {
+    if (!selectedString) return console.log('select string')
+    if (selectedString.id < 1) console.log('select string')
+
+    if (selectedString) {
+      const doesExist = this.panels?.find(
+        (panel) => panel.location === location,
       )
-      if (!selectedString) {
-        console.log('select string')
+      if (doesExist) {
+        console.log('location taken')
         return
       }
-      selectedString.pipe(take(1))
-      this.store
-        .select(selectStringById({ id: this.selectedStringId }))
-        .subscribe(async (string) => {
-          if (string) {
-            await this.panelsService.createPanelFromGrid(
-              3,
-              string.inverter_id,
-              string.tracker_id,
-              string.id,
-              location,
-            )
-          }
-        })
+      await this.panelsService.createPanelForGrid(
+        3,
+        selectedString.inverter_id,
+        selectedString.tracker_id,
+        selectedString.id,
+        location,
+        selectedString.color!,
+      )
     }
   }
 

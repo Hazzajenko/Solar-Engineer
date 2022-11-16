@@ -6,17 +6,23 @@ import { UnitModel } from '../projects/models/unit.model'
   name: 'filterPanelsBy',
 })
 export class FilterPanelsByPipe implements PipeTransform {
-  transform(panels: PanelModel[], id: number, model: UnitModel): PanelModel[] {
-    if (!panels || !id || !model) {
+  transform(
+    panels: PanelModel[],
+    id: number,
+    unitModel: UnitModel,
+  ): PanelModel[] {
+    if (!panels || !id || !unitModel) {
       return panels
     }
 
-    switch (model) {
-      case 1:
+    switch (unitModel) {
+      case UnitModel.PROJECT:
+        return panels.filter((panel) => panel.project_id === id)
+      case UnitModel.INVERTER:
         return panels.filter((panel) => panel.inverter_id === id)
-      case 2:
+      case UnitModel.TRACKER:
         return panels.filter((panel) => panel.tracker_id === id)
-      case 3:
+      case UnitModel.STRING:
         return panels.filter((panel) => panel.string_id === id)
       default:
         return panels

@@ -6,13 +6,13 @@ import { InvertersService } from '../../../../services/inverters.service'
 import { TrackersService } from '../../../../services/trackers.service'
 import { StringsService } from '../../../../services/strings.service'
 import { PanelsService } from '../../../../services/panels.service'
-import { UnitModel } from '../../../../models/unit.model'
 import { AppState } from '../../../../../store/app.state'
 import { Store } from '@ngrx/store'
 import { selectString } from '../../../../store/strings/strings.actions'
 import { GridStateActions } from '../../../../store/grid/grid.actions'
 import { Observable } from 'rxjs'
 import { selectStringsByProjectIdRouteParams } from '../../../../store/strings/strings.selectors'
+import { TypeModel } from '../../../../models/type.model'
 
 @Component({
   selector: 'app-button-menu',
@@ -20,7 +20,7 @@ import { selectStringsByProjectIdRouteParams } from '../../../../store/strings/s
   styleUrls: ['./button-menu.component.scss'],
 })
 export class ButtonMenuComponent implements OnInit {
-  @Input() model?: UnitModel
+  @Input() type?: TypeModel
   @Input() projectId?: number
   @Input() inverter?: InverterModel
   @Input() tracker?: TrackerModel

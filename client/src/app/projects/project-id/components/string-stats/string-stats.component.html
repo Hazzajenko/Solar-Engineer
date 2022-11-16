@@ -12,29 +12,19 @@
                     class="stats-container__stats-box"
                   >
                     <h4>{{ string.name }}</h4>
-                    <p>
-                      {{
-                        (panels | filterPanels: string.id)
-                          .length
-                      }}
-                      Panels
-                    </p>
+                    <!--         <p>
+                               {{
+                                 (panels | filterPanels: string.id)
+                                   .length
+                               }}
+                               Panels
+                             </p>-->
                     <ul>
-                      <li>
-                        VOC: {{ totalVoc[string.id] }}
-                      </li>
-                      <li>
-                        VMP: {{ totalVmp[string.id] }}
-                      </li>
-                      <li>
-                        PMAX: {{ totalPmax[string.id] }}
-                      </li>
-                      <li>
-                        ISC: {{ totalIsc[string.id] }}
-                      </li>
-                      <li>
-                        IMP: {{ totalImp[string.id] }}
-                      </li>
+                      <li>VOC: {{ totalVoc[string.id] }}</li>
+                      <li>VMP: {{ totalVmp[string.id] }}</li>
+                      <li>PMAX: {{ totalPmax[string.id] }}</li>
+                      <li>ISC: {{ totalIsc[string.id] }}</li>
+                      <li>IMP: {{ totalImp[string.id] }}</li>
                     </ul>
                   </div>
                 </div>

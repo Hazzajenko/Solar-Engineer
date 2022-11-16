@@ -46,6 +46,7 @@ type Panel struct {
 	Location                string    `boil:"location" json:"location" toml:"location" yaml:"location"`
 	Model                   int       `boil:"model" json:"model" toml:"model" yaml:"model"`
 	Color                   string    `boil:"color" json:"color" toml:"color" yaml:"color"`
+	Type                    string    `boil:"type" json:"type" toml:"type" yaml:"type"`
 
 	R *panelR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L panelL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -75,6 +76,7 @@ var PanelColumns = struct {
 	Location                string
 	Model                   string
 	Color                   string
+	Type                    string
 }{
 	ID:                      "id",
 	ProjectID:               "project_id",
@@ -99,6 +101,7 @@ var PanelColumns = struct {
 	Location:                "location",
 	Model:                   "model",
 	Color:                   "color",
+	Type:                    "type",
 }
 
 var PanelTableColumns = struct {
@@ -125,6 +128,7 @@ var PanelTableColumns = struct {
 	Location                string
 	Model                   string
 	Color                   string
+	Type                    string
 }{
 	ID:                      "panels.id",
 	ProjectID:               "panels.project_id",
@@ -149,38 +153,10 @@ var PanelTableColumns = struct {
 	Location:                "panels.location",
 	Model:                   "panels.model",
 	Color:                   "panels.color",
+	Type:                    "panels.type",
 }
 
 // Generated where
-
-type whereHelperfloat32 struct{ field string }
-
-func (w whereHelperfloat32) EQ(x float32) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.EQ, x) }
-func (w whereHelperfloat32) NEQ(x float32) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.NEQ, x)
-}
-func (w whereHelperfloat32) LT(x float32) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.LT, x) }
-func (w whereHelperfloat32) LTE(x float32) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.LTE, x)
-}
-func (w whereHelperfloat32) GT(x float32) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.GT, x) }
-func (w whereHelperfloat32) GTE(x float32) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.GTE, x)
-}
-func (w whereHelperfloat32) IN(slice []float32) qm.QueryMod {
-	values := make([]interface{}, 0, len(slice))
-	for _, value := range slice {
-		values = append(values, value)
-	}
-	return qm.WhereIn(fmt.Sprintf("%s IN ?", w.field), values...)
-}
-func (w whereHelperfloat32) NIN(slice []float32) qm.QueryMod {
-	values := make([]interface{}, 0, len(slice))
-	for _, value := range slice {
-		values = append(values, value)
-	}
-	return qm.WhereNotIn(fmt.Sprintf("%s NOT IN ?", w.field), values...)
-}
 
 var PanelWhere = struct {
 	ID                      whereHelperint64
@@ -206,6 +182,7 @@ var PanelWhere = struct {
 	Location                whereHelperstring
 	Model                   whereHelperint
 	Color                   whereHelperstring
+	Type                    whereHelperstring
 }{
 	ID:                      whereHelperint64{field: "\"panels\".\"id\""},
 	ProjectID:               whereHelperint64{field: "\"panels\".\"project_id\""},
@@ -230,6 +207,7 @@ var PanelWhere = struct {
 	Location:                whereHelperstring{field: "\"panels\".\"location\""},
 	Model:                   whereHelperint{field: "\"panels\".\"model\""},
 	Color:                   whereHelperstring{field: "\"panels\".\"color\""},
+	Type:                    whereHelperstring{field: "\"panels\".\"type\""},
 }
 
 // PanelRels is where relationship names are stored.
@@ -300,9 +278,9 @@ func (r *panelR) GetTracker() *Tracker {
 type panelL struct{}
 
 var (
-	panelAllColumns            = []string{"id", "project_id", "inverter_id", "tracker_id", "string_id", "name", "created_at", "created_by", "current_at_maximum_power", "short_circuit_current", "short_circuit_current_temp", "maximum_power", "maximum_power_temp", "voltage_at_maximum_power", "open_circuit_voltage", "open_circuit_voltage_temp", "length", "weight", "width", "version", "location", "model", "color"}
+	panelAllColumns            = []string{"id", "project_id", "inverter_id", "tracker_id", "string_id", "name", "created_at", "created_by", "current_at_maximum_power", "short_circuit_current", "short_circuit_current_temp", "maximum_power", "maximum_power_temp", "voltage_at_maximum_power", "open_circuit_voltage", "open_circuit_voltage_temp", "length", "weight", "width", "version", "location", "model", "color", "type"}
 	panelColumnsWithoutDefault = []string{"project_id", "inverter_id", "tracker_id", "string_id", "name"}
-	panelColumnsWithDefault    = []string{"id", "created_at", "created_by", "current_at_maximum_power", "short_circuit_current", "short_circuit_current_temp", "maximum_power", "maximum_power_temp", "voltage_at_maximum_power", "open_circuit_voltage", "open_circuit_voltage_temp", "length", "weight", "width", "version", "location", "model", "color"}
+	panelColumnsWithDefault    = []string{"id", "created_at", "created_by", "current_at_maximum_power", "short_circuit_current", "short_circuit_current_temp", "maximum_power", "maximum_power_temp", "voltage_at_maximum_power", "open_circuit_voltage", "open_circuit_voltage_temp", "length", "weight", "width", "version", "location", "model", "color", "type"}
 	panelPrimaryKeyColumns     = []string{"id"}
 	panelGeneratedColumns      = []string{}
 )

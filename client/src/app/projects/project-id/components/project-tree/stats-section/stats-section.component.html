@@ -1,5 +1,5 @@
-<ng-container [ngSwitch]="model">
-  <div *ngSwitchCase="1">
+<ng-container [ngSwitch]="type">
+  <div *ngSwitchCase="'INVERTER'">
     <ul *ngIf="inverter" style="list-style: none">
       <li>
         VOC:
@@ -23,7 +23,7 @@
       </li>
     </ul>
   </div>
-  <div *ngSwitchCase="2">
+  <div *ngSwitchCase="'TRACKER'">
     <ul *ngIf="tracker" style="list-style: none">
       <li>
         VOC:
@@ -47,7 +47,7 @@
       </li>
     </ul>
   </div>
-  <div *ngSwitchCase="3">
+  <div *ngSwitchCase="'STRING'">
     <ul *ngIf="string" style="list-style: none">
       <li>
         VOC:

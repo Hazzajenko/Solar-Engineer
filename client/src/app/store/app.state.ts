@@ -5,6 +5,7 @@ import * as fromAuth from '../auth/store/auth.reducer'
 import * as fromProjects from '../projects/store/projects/projects.reducer'
 import * as fromUserProjects from '../projects/store/user-projects/user-projects.reducer'
 import * as fromGrid from '../projects/store/grid/grid.reducer'
+import * as fromCables from '../projects/store/cable/cable.reducer'
 import * as fromInverters from '../projects/store/inverters/inverters.reducer'
 import * as fromTrackers from '../projects/store/trackers/trackers.reducer'
 import * as fromStrings from '../projects/store/strings/strings.reducer'
@@ -16,6 +17,7 @@ export interface AppState {
   projects: fromProjects.ProjectState
   userProjects: fromUserProjects.UserProjectState
   grid: fromGrid.GridState
+  cables: fromCables.CableState
   inverters: fromInverters.InverterState
   trackers: fromTrackers.TrackerState
   strings: fromStrings.StringState
@@ -29,6 +31,7 @@ export const reducers: ActionReducerMap<AppState> = {
   projects: fromProjects.projectsReducer,
   userProjects: fromUserProjects.userProjectsReducer,
   grid: fromGrid.gridReducer,
+  cables: fromCables.cableReducer,
   inverters: fromInverters.invertersReducer,
   trackers: fromTrackers.trackersReducer,
   strings: fromStrings.stringsReducer,

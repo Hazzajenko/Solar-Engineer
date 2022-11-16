@@ -39,6 +39,7 @@ type Inverter struct {
 	MPPVoltageRangeHigh int64     `boil:"mpp_voltage_range_high" json:"mpp_voltage_range_high" toml:"mpp_voltage_range_high" yaml:"mpp_voltage_range_high"`
 	StartUpVoltage      int64     `boil:"start_up_voltage" json:"start_up_voltage" toml:"start_up_voltage" yaml:"start_up_voltage"`
 	Model               int       `boil:"model" json:"model" toml:"model" yaml:"model"`
+	Type                string    `boil:"type" json:"type" toml:"type" yaml:"type"`
 
 	R *inverterR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L inverterL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -61,6 +62,7 @@ var InverterColumns = struct {
 	MPPVoltageRangeHigh string
 	StartUpVoltage      string
 	Model               string
+	Type                string
 }{
 	ID:                  "id",
 	Name:                "name",
@@ -78,6 +80,7 @@ var InverterColumns = struct {
 	MPPVoltageRangeHigh: "mpp_voltage_range_high",
 	StartUpVoltage:      "start_up_voltage",
 	Model:               "model",
+	Type:                "type",
 }
 
 var InverterTableColumns = struct {
@@ -97,6 +100,7 @@ var InverterTableColumns = struct {
 	MPPVoltageRangeHigh string
 	StartUpVoltage      string
 	Model               string
+	Type                string
 }{
 	ID:                  "inverters.id",
 	Name:                "inverters.name",
@@ -114,99 +118,10 @@ var InverterTableColumns = struct {
 	MPPVoltageRangeHigh: "inverters.mpp_voltage_range_high",
 	StartUpVoltage:      "inverters.start_up_voltage",
 	Model:               "inverters.model",
+	Type:                "inverters.type",
 }
 
 // Generated where
-
-type whereHelperint64 struct{ field string }
-
-func (w whereHelperint64) EQ(x int64) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.EQ, x) }
-func (w whereHelperint64) NEQ(x int64) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.NEQ, x) }
-func (w whereHelperint64) LT(x int64) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.LT, x) }
-func (w whereHelperint64) LTE(x int64) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.LTE, x) }
-func (w whereHelperint64) GT(x int64) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.GT, x) }
-func (w whereHelperint64) GTE(x int64) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.GTE, x) }
-func (w whereHelperint64) IN(slice []int64) qm.QueryMod {
-	values := make([]interface{}, 0, len(slice))
-	for _, value := range slice {
-		values = append(values, value)
-	}
-	return qm.WhereIn(fmt.Sprintf("%s IN ?", w.field), values...)
-}
-func (w whereHelperint64) NIN(slice []int64) qm.QueryMod {
-	values := make([]interface{}, 0, len(slice))
-	for _, value := range slice {
-		values = append(values, value)
-	}
-	return qm.WhereNotIn(fmt.Sprintf("%s NOT IN ?", w.field), values...)
-}
-
-type whereHelperstring struct{ field string }
-
-func (w whereHelperstring) EQ(x string) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.EQ, x) }
-func (w whereHelperstring) NEQ(x string) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.NEQ, x) }
-func (w whereHelperstring) LT(x string) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.LT, x) }
-func (w whereHelperstring) LTE(x string) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.LTE, x) }
-func (w whereHelperstring) GT(x string) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.GT, x) }
-func (w whereHelperstring) GTE(x string) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.GTE, x) }
-func (w whereHelperstring) IN(slice []string) qm.QueryMod {
-	values := make([]interface{}, 0, len(slice))
-	for _, value := range slice {
-		values = append(values, value)
-	}
-	return qm.WhereIn(fmt.Sprintf("%s IN ?", w.field), values...)
-}
-func (w whereHelperstring) NIN(slice []string) qm.QueryMod {
-	values := make([]interface{}, 0, len(slice))
-	for _, value := range slice {
-		values = append(values, value)
-	}
-	return qm.WhereNotIn(fmt.Sprintf("%s NOT IN ?", w.field), values...)
-}
-
-type whereHelpertime_Time struct{ field string }
-
-func (w whereHelpertime_Time) EQ(x time.Time) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.EQ, x)
-}
-func (w whereHelpertime_Time) NEQ(x time.Time) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.NEQ, x)
-}
-func (w whereHelpertime_Time) LT(x time.Time) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.LT, x)
-}
-func (w whereHelpertime_Time) LTE(x time.Time) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.LTE, x)
-}
-func (w whereHelpertime_Time) GT(x time.Time) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.GT, x)
-}
-func (w whereHelpertime_Time) GTE(x time.Time) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.GTE, x)
-}
-
-type whereHelperint struct{ field string }
-
-func (w whereHelperint) EQ(x int) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.EQ, x) }
-func (w whereHelperint) NEQ(x int) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.NEQ, x) }
-func (w whereHelperint) LT(x int) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.LT, x) }
-func (w whereHelperint) LTE(x int) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.LTE, x) }
-func (w whereHelperint) GT(x int) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.GT, x) }
-func (w whereHelperint) GTE(x int) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.GTE, x) }
-func (w whereHelperint) IN(slice []int) qm.QueryMod {
-	values := make([]interface{}, 0, len(slice))
-	for _, value := range slice {
-		values = append(values, value)
-	}
-	return qm.WhereIn(fmt.Sprintf("%s IN ?", w.field), values...)
-}
-func (w whereHelperint) NIN(slice []int) qm.QueryMod {
-	values := make([]interface{}, 0, len(slice))
-	for _, value := range slice {
-		values = append(values, value)
-	}
-	return qm.WhereNotIn(fmt.Sprintf("%s NOT IN ?", w.field), values...)
-}
 
 var InverterWhere = struct {
 	ID                  whereHelperint64
@@ -225,6 +140,7 @@ var InverterWhere = struct {
 	MPPVoltageRangeHigh whereHelperint64
 	StartUpVoltage      whereHelperint64
 	Model               whereHelperint
+	Type                whereHelperstring
 }{
 	ID:                  whereHelperint64{field: "\"inverters\".\"id\""},
 	Name:                whereHelperstring{field: "\"inverters\".\"name\""},
@@ -242,6 +158,7 @@ var InverterWhere = struct {
 	MPPVoltageRangeHigh: whereHelperint64{field: "\"inverters\".\"mpp_voltage_range_high\""},
 	StartUpVoltage:      whereHelperint64{field: "\"inverters\".\"start_up_voltage\""},
 	Model:               whereHelperint{field: "\"inverters\".\"model\""},
+	Type:                whereHelperstring{field: "\"inverters\".\"type\""},
 }
 
 // InverterRels is where relationship names are stored.
@@ -312,9 +229,9 @@ func (r *inverterR) GetTrackers() TrackerSlice {
 type inverterL struct{}
 
 var (
-	inverterAllColumns            = []string{"id", "name", "created_at", "created_by", "version", "project_id", "tracker_amount", "ac_nominal_output", "ac_output_current", "european_efficiency", "max_input_current", "max_output_power", "mpp_voltage_range_low", "mpp_voltage_range_high", "start_up_voltage", "model"}
+	inverterAllColumns            = []string{"id", "name", "created_at", "created_by", "version", "project_id", "tracker_amount", "ac_nominal_output", "ac_output_current", "european_efficiency", "max_input_current", "max_output_power", "mpp_voltage_range_low", "mpp_voltage_range_high", "start_up_voltage", "model", "type"}
 	inverterColumnsWithoutDefault = []string{"name", "project_id", "tracker_amount", "ac_nominal_output", "ac_output_current", "european_efficiency", "max_input_current", "max_output_power", "mpp_voltage_range_low", "mpp_voltage_range_high", "start_up_voltage"}
-	inverterColumnsWithDefault    = []string{"id", "created_at", "created_by", "version", "model"}
+	inverterColumnsWithDefault    = []string{"id", "created_at", "created_by", "version", "model", "type"}
 	inverterPrimaryKeyColumns     = []string{"id"}
 	inverterGeneratedColumns      = []string{}
 )

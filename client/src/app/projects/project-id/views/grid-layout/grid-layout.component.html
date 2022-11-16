@@ -1,7 +1,8 @@
 <!--<ng-container *ngIf="createMode$ | async; let createMode">-->
 <!--  <ng-container *ngIf="selectedStrings$ | async; let selectedStrings">-->
-<ng-container *ngIf="trackerTree$ | async; let store">
-  <ng-container *ngIf="store.project">
+<ng-container *ngIf="project$ | async; let project">
+  <ng-container *ngIf="gridState$ | async; let gridState">
+    <!--  <ng-container *ngIf="project">-->
     <div cdkDropListGroup class="project-design-container">
       <div *ngFor="let n of numSequence(20); let i = index" class="row">
         <!--  {{i}}-->
@@ -9,7 +10,7 @@
           <div
             #thing
             (cdkDropListDropped)="taskDrop($event)"
-            (click)="divClick(i.toString() + a, $event, thing)"
+            (click)="divClick(i.toString() + a, gridState, project)"
             [cdkDropListConnectedTo]="['panels']"
             [id]="i.toString() + a"
             cdkDropList
@@ -18,31 +19,38 @@
           >
             <!--    |{{ i }}{{ a }}|-->
             <!--        [ngStyle]="{ border: '1px solid red' }"-->
-            <div *ngFor="let panel of store.panels">
+            <ng-container *ngIf="panels$ | async; let panels">
               <div
-                (contextmenu)="onRightClick($event, panel)"
-                *ngIf="panel.location === i.toString() + a"
-                [cdkDragData]="panel"
-                [matTooltip]="
-                  'StringId = ' + panel.string_id + ' PanelId = ' + panel.id
+                *ngFor="
+                  let panel of panels | filterPanels: project.id:project.type!
                 "
-                [style.border]="'2px solid ' + panel.color"
-                cdkDrag
-                class="panel"
-                matTooltipPosition="right"
               >
                 <div
-                  *ngIf="panel.string_id === selectedStringId"
-                  class="panel__location"
+                  (contextmenu)="onRightClick($event, panel)"
+                  *ngIf="panel.location === i.toString() + a"
+                  [cdkDragData]="panel"
+                  [matTooltip]="
+                    'StringId = ' + panel.string_id + ' PanelId = ' + panel.id
+                  "
+                  [style.border]="'2px solid ' + panel.color"
+                  cdkDrag
+                  class="panel"
+                  matTooltipPosition="right"
                 >
-                  {{ panel.location }}
+                  <div
+                    *ngIf="panel.string_id === selectedStringId"
+                    class="panel__location"
+                  >
+                    {{ panel.location }}
+                  </div>
                 </div>
               </div>
-            </div>
+            </ng-container>
           </div>
         </div>
       </div>
     </div>
+    <!--  </ng-container>-->
   </ng-container>
 </ng-container>
 <!--  </ng-container>-->

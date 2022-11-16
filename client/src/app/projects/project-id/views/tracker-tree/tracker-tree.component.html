@@ -1,9 +1,10 @@
+<!--
 <div class="project-tree">
   <ng-container *ngIf="trackerTree$ | async; let trackerTree">
     <ng-container *ngIf="trackerTree.project">
       <ng-container *ngIf="trackerTree.inverter">
         <ng-container *ngIf="trackerTree.tracker">
-          <!--  <ng-container *ngIf="strings">-->
+          &lt;!&ndash;  <ng-container *ngIf="strings">&ndash;&gt;
           <button
             (click)="
               createString(
@@ -47,10 +48,10 @@
                     <div class="project-tree__string-item__button-menu">
                       <app-button-menu
                         [inverter]="inverter"
-                        [model]="3"
                         [projectId]="3"
                         [string]="string"
                         [tracker]="tracker"
+                        [type]="string.type"
                       ></app-button-menu>
                     </div>
 
@@ -60,7 +61,7 @@
                         [cdkDragData]="panel"
                         cdkDrag
                       >
-                        <!--                      cdkDropList [id]="stringModel.id.toString()"-->
+                        &lt;!&ndash;                      cdkDropList [id]="stringModel.id.toString()"&ndash;&gt;
                         <div
                           *ngIf="panel.string_id === string.id"
                           [ngStyle]="{
@@ -92,3 +93,4 @@
     </ng-container>
   </ng-container>
 </div>
+-->

@@ -1,4 +1,5 @@
 import { UnitModel } from './unit.model'
+import { TypeModel } from './type.model'
 
 export interface StringModel {
   id: number
@@ -6,6 +7,7 @@ export interface StringModel {
   inverter_id: number
   tracker_id: number
   model?: UnitModel
+  type?: TypeModel
   name: string
   is_in_parallel?: boolean
   panel_amount?: number

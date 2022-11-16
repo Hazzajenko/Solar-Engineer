@@ -85,12 +85,13 @@ export class PanelsService {
     )
   }
 
-  createPanelFromGrid(
+  createPanelForGrid(
     projectId: number,
     inverter_id: number,
     tracker_id: number,
     string_id: number,
     location: string,
+    color: string,
   ): Promise<CreatePanelResponse> {
     return new Promise<CreatePanelResponse>((resolve, reject) =>
       this.http
@@ -103,6 +104,7 @@ export class PanelsService {
             tracker_id,
             string_id,
             location,
+            color,
           },
         )
         .subscribe({

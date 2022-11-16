@@ -33,6 +33,7 @@ func (h *Handlers) CreatePanel(w http.ResponseWriter, r *http.Request) {
 		TrackerId  int64  `json:"tracker_id"`
 		StringId   int64  `json:"string_id"`
 		Location   string `json:"location"`
+		Color      string `json:"color"`
 	}
 
 	err = h.Json.DecodeJSON(w, r, &input)

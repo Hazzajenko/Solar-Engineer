@@ -1,5 +1,7 @@
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
 import { StringModel } from '../../models/string.model'
+import { BlockModel } from '../../models/block.model'
+import { Update } from '@ngrx/entity'
 
 /*export const selectStringForGrid = createAction(
   '[Grid Service] Select String For Grid',
@@ -20,9 +22,11 @@ export const selectInverterStringsForGrid = createAction(
 export const clearGridState = createAction('[Grid Service] Clear Grid State')*/
 
 export enum CreateMode {
-  PANEL,
-  CABLE,
+  PANEL = 'PANEL',
+  CABLE = 'CABLE',
 }
+
+export type CreateString = 'Panel' | 'Cable'
 
 export const GridStateActions = createActionGroup({
   source: 'Grid Service',
@@ -32,6 +36,11 @@ export const GridStateActions = createActionGroup({
     'Select Inverter Strings For Grid': props<{ strings: StringModel[] }>(),
     'Select Panel Create Mode': props<{ mode: CreateMode }>(),
     'Select Cable Create Mode': props<{ mode: CreateMode }>(),
+    'Add Block For Grid': props<{ block: BlockModel }>(),
+    'Add Many Blocks For Grid': props<{ blocks: BlockModel[] }>(),
+    'Update Block For Grid': props<{ block: BlockModel }>(),
+    'Update Many Blocks For Grid': props<{ blocks: Update<BlockModel>[] }>(),
+    'Delete Block For Grid': props<{ block: BlockModel }>(),
     'Clear Grid State': emptyProps(),
   },
 })
