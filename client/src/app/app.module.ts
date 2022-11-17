@@ -47,8 +47,15 @@ import { FilterTrackersPipe } from './pipes/filter-trackers.pipe'
 import { StatsSectionComponent } from './projects/project-id/components/project-tree/stats-section/stats-section.component'
 import { FilterPanelsByPipe } from './pipes/filter-panels-by.pipe'
 import { FilterStringsByPipe } from './pipes/filter-strings-by.pipe'
-import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatToolbarModule } from '@angular/material/toolbar'
 import { GridToolbarComponent } from './projects/project-id/views/grid-layout/grid-toolbar/grid-toolbar.component'
+import { FilterBlocksByPipe } from './pipes/filter-blocks-by.pipe'
+import { FindBlockPipe } from './pipes/find-block.pipe'
+import { FindPanelPipe } from './pipes/find-panel.pipe'
+import { EffectsModule } from '@ngrx/effects'
+import { FindCablePipe } from './pipes/find-cable.pipe'
+import { CablesEffects } from './projects/store/cable/cables.effects'
+import { PanelsEffects } from './projects/store/panels/panels.effects'
 
 export function tokenGetter() {
   // console.log(localStorage.getItem('token'))
@@ -121,6 +128,11 @@ export function tokenGetter() {
     MatTooltipModule,
     FilterStringsByPipe,
     MatToolbarModule,
+    FilterBlocksByPipe,
+    FindBlockPipe,
+    FindPanelPipe,
+    EffectsModule.forRoot([CablesEffects, PanelsEffects]),
+    FindCablePipe,
   ],
   providers: [
     {

@@ -15,7 +15,7 @@ export const initialCableState = cableAdapter.getInitialState({})
 export const cableReducer = createReducer(
   initialCableState,
 
-  on(CableStateActions.addCable, (state, { cable }) =>
+  on(CableStateActions.addCableToState, (state, { cable }) =>
     cableAdapter.addOne(cable, state),
   ),
 

@@ -22,6 +22,7 @@
     "@angular/platform-browser-dynamic": "^14.2.0",
     "@angular/router": "^14.2.0",
     "@auth0/angular-jwt": "^5.1.0",
+    "@ngrx/effects": "^14.3.2",
     "@ngrx/entity": "^14.3.2",
     "@ngrx/router-store": "^14.3.2",
     "@ngrx/store": "^14.3.2",

@@ -2,7 +2,6 @@ package handlers
 
 import (
 	json2 "encoding/json"
-	"github.com/Hazzajenko/gosolarbackend/internal/data/models/panels"
 	"github.com/Hazzajenko/gosolarbackend/internal/json"
 	boiler "github.com/Hazzajenko/gosolarbackend/my_models"
 	"github.com/go-chi/chi/v5"
@@ -167,7 +166,7 @@ func (h *Handlers) UpdatePanelLocation(w http.ResponseWriter, r *http.Request) {
 		TrackerId  int64  `json:"tracker_id"`
 		StringId   int64  `json:"string_id"`
 		Location   string `json:"location"`
-		Version    int32  `json:"version"`
+		//Version    int32  `json:"version"`
 	}
 
 	err := h.Json.DecodeJSON(w, r, &input)
@@ -175,17 +174,27 @@ func (h *Handlers) UpdatePanelLocation(w http.ResponseWriter, r *http.Request) {
 		h.Errors.ServerErrorResponse(w, r, err)
 		return
 	}
+	/*
+		updatePanel := &panels.Panel{
+			ID:         input.ID,
+			InverterId: input.InverterId,
+			TrackerId:  input.TrackerId,
+			StringId:   input.StringId,
+			Location:   input.Location,
+			//Version:    input.Version,
+		}*/
 
-	updatePanel := &panels.Panel{
+	update := &boiler.Panel{
 		ID:         input.ID,
-		InverterId: input.InverterId,
-		TrackerId:  input.TrackerId,
-		StringId:   input.StringId,
+		InverterID: input.InverterId,
+		TrackerID:  input.TrackerId,
+		StringID:   input.StringId,
 		Location:   input.Location,
-		Version:    input.Version,
+		//Version:    input.Version,
 	}
 
-	result, err := h.Models.Panels.UpdatePanelLocation(updatePanel)
+	result, err := h.Models.Panels.UpdatePanel(update)
+	//result, err := h.Models.Panels.UpdatePanelLocation(updatePanel)
 	if err != nil {
 		switch {
 		default:

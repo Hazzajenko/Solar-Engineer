@@ -12,7 +12,7 @@ import {
 import { TrackerModel } from '../models/tracker.model'
 import { PanelModel } from '../models/panel.model'
 import { Update } from '@ngrx/entity'
-import { updateManyPanels } from '../store/panels/panels.actions'
+import { PanelStateActions } from '../store/panels/panels.actions'
 
 interface StringsEnvelope {
   strings: StringModel[]
@@ -99,7 +99,7 @@ export class StringsService {
                 changes: panel,
               } as Update<PanelModel>
             })
-            this.store.dispatch(updateManyPanels({ panels }))
+            this.store.dispatch(PanelStateActions.updateManyPanels({ panels }))
             resolve(envelope)
           },
           error: (err) => {

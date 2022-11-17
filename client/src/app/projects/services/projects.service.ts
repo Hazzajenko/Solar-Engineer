@@ -14,11 +14,14 @@ import { StringModel } from '../models/string.model'
 import { addInvertersByProjectId } from '../store/inverters/inverters.actions'
 import { addTrackers } from '../store/trackers/trackers.actions'
 import { addStringsByProjectId } from '../store/strings/strings.actions'
-import { addPanelsByProjectId } from '../store/panels/panels.actions'
 import { PanelModel } from '../models/panel.model'
 import { selectProjectByRouteParams } from '../store/projects/projects.selectors'
 import { CableModel } from '../models/cable.model'
 import { CableStateActions } from '../store/cable/cable.actions'
+import { BlockModel } from '../models/block.model'
+import { UnitModel } from '../models/unit.model'
+import { BlocksStateActions } from '../store/blocks/blocks.actions'
+import { PanelStateActions } from '../store/panels/panels.actions'
 
 export interface ProjectsEnvelope {
   projects: ProjectModel[]
@@ -131,7 +134,7 @@ export class ProjectsService {
               panel.weight = Number(panel.weight)
             })
             this.store.dispatch(
-              addPanelsByProjectId({
+              PanelStateActions.addManyPanels({
                 panels: envelope.panels,
               }),
             )
@@ -140,6 +143,39 @@ export class ProjectsService {
                 cables: envelope.cables,
               }),
             )
+            // const blocks: BlockModel[] = []
+            const panelsToBlocks = envelope.panels.map((panel) => {
+              const block: BlockModel = {
+                id: panel.location,
+                project_id: panel.project_id!,
+                model: UnitModel.PANEL,
+              }
+              return block
+            })
+            const cablesToBlocks = envelope.cables.map((cable) => {
+              const block: BlockModel = {
+                id: cable.location,
+                project_id: cable.project_id!,
+                model: UnitModel.CABLE,
+              }
+              return block
+            })
+            /*            console.log(panelsToBlocks)
+                        console.log(cablesToBlocks)
+                        blocks.concat(panelsToBlocks)
+                        blocks.concat(cablesToBlocks)*/
+            panelsToBlocks.concat(cablesToBlocks)
+            this.store.dispatch(
+              BlocksStateActions.addManyBlocksForGrid({
+                blocks: panelsToBlocks,
+              }),
+            )
+            this.store.dispatch(
+              BlocksStateActions.addManyBlocksForGrid({
+                blocks: cablesToBlocks,
+              }),
+            )
+
             /*            if (envelope.stringsByProjectId) {
                           if (envelope.stringsByProjectId.length > 1) {
                             this.store.dispatch(

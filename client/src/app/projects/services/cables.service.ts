@@ -7,7 +7,10 @@ import { PanelModel } from '../models/panel.model'
 import { selectPanelsByProjectId } from '../store/panels/panels.selectors'
 import { environment } from '../../../environments/environment'
 import { CableModel } from '../models/cable.model'
-import { CableStateActions } from '../store/cable/cable.actions'
+import {
+  CableStateActions,
+  CreateCableRequest,
+} from '../store/cable/cable.actions'
 
 interface CreateCableResponse {
   cable: CableModel
@@ -16,7 +19,7 @@ interface CreateCableResponse {
 @Injectable({
   providedIn: 'root',
 })
-export class GridService {
+export class CablesService {
   gridNumbers: number[] = []
 
   constructor(private http: HttpClient, private store: Store<AppState>) {}
@@ -58,6 +61,16 @@ export class GridService {
             console.log('createCableForGrid')
           },
         }),
+    )
+  }
+
+  addCable(request: CreateCableRequest) {
+    return this.http.post<CreateCableResponse>(
+      `${environment.apiUrl}/projects/${request.project_id}/cables`,
+      {
+        location: request.location,
+        size: request.size,
+      },
     )
   }
 

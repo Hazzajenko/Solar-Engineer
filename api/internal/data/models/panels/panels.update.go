@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	boiler "github.com/Hazzajenko/gosolarbackend/my_models"
+	"github.com/volatiletech/sqlboiler/v4/boil"
 	"time"
 )
 
@@ -81,6 +82,37 @@ func (p *PanelModel) UpdatePanelLocation(panel *Panel) (*Panel, error) {
 		}
 	}
 
+	return panel, nil
+}
+
+func (p *PanelModel) UpdatePanel(update *boiler.Panel) (*boiler.Panel, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+	panel, err := boiler.Panels(boiler.PanelWhere.ID.EQ(update.ID)).One(ctx, p.DB)
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return nil, errors.New("edit conflict")
+		default:
+			return nil, err
+		}
+	}
+	panel.Color = update.Color
+	panel.Location = update.Location
+	panel.StringID = update.StringID
+	panel.TrackerID = update.TrackerID
+	_, err = panel.Update(ctx, p.DB, boil.Infer())
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return nil, errors.New("edit conflict")
+		default:
+			return nil, err
+		}
+	}
+	//fmt.Println(panelRowsAff)
+
+	//result, err := boiler.Panels(boiler.PanelWhere.StringID.EQ(stringId)).All(ctx, p.DB)
 	return panel, nil
 }
 
