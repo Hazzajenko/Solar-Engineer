@@ -10,9 +10,14 @@ import { CableModel } from '../models/cable.model'
 import {
   CableStateActions,
   CreateCableRequest,
+  UpdateCableRequest,
 } from '../store/cable/cable.actions'
 
 interface CreateCableResponse {
+  cable: CableModel
+}
+
+interface UpdateCableResponse {
   cable: CableModel
 }
 
@@ -64,6 +69,19 @@ export class CablesService {
     )
   }
 
+  updateCable(request: UpdateCableRequest) {
+    // console.log('update', request)
+    return this.http.patch<UpdateCableResponse>(
+      `${environment.apiUrl}/projects/${request.project_id}/cables`,
+      {
+        id: request.cable.id,
+        location: request.newLocation,
+        size: request.cable.size,
+        color: request.cable.color,
+      },
+    )
+  }
+
   addCable(request: CreateCableRequest) {
     return this.http.post<CreateCableResponse>(
       `${environment.apiUrl}/projects/${request.project_id}/cables`,
@@ -98,7 +116,7 @@ export class CablesService {
         )
         .subscribe((panels) => {
           const spotTaken = panels.find(
-            (panel) => panel.location === item.dropContainer.id,
+            (panel) => panel.location.toString() === item.dropContainer.id,
           )
           return !spotTaken
         })

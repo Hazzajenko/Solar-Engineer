@@ -51,7 +51,9 @@ export const selectPanelsByTrackerId = (props: { trackerId: number }) =>
     panels.filter((panel) => panel.tracker_id === props.trackerId),
   )
 
-export const selectPanelByLocation = (props: { location: string }) =>
+/*
+export const selectPanelByLocation = (props: { location: number }) =>
   createSelector(selectAllPanels, (panels: PanelModel[]) =>
     panels.find((panel) => panel.location === props.location),
   )
+*/

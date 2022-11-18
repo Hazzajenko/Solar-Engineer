@@ -24,9 +24,12 @@ func (h *Handlers) CreateCable(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var input struct {
+		ID       string `json:"id"`
 		Location string `json:"location"`
 		Color    string `json:"color"`
 		Size     int64  `json:"size"`
+		Model    int    `json:"model"`
+		Type     string `json:"type"`
 	}
 
 	err = h.Json.DecodeJSON(w, r, &input)
@@ -53,6 +56,7 @@ func (h *Handlers) CreateCable(w http.ResponseWriter, r *http.Request) {
 	}
 
 	cable := &boiler.Cable{
+		ID:        input.ID,
 		ProjectID: projectId,
 		Location:  input.Location,
 		CreatedAt: time.Time{},
@@ -78,6 +82,47 @@ func (h *Handlers) CreateCable(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (h *Handlers) GetCablesByProjectId(w http.ResponseWriter, r *http.Request) {
+	/*	bearerHeader := r.Header.Get("Authorization")
+		bearer := strings.Replace(bearerHeader, "Bearer ", "", 1)*/
+
+	/*	projectIdString := chi.URLParam(r, "projectId")
+		projectId, err := strconv.Atoi(projectIdString)
+		if err != nil {
+			h.Logger.PrintError(err, nil)
+		}*/
+
+	projectId, err := h.Helpers.GetInt64FromURLParam(chi.URLParam(r, "projectId"))
+	if err != nil {
+		h.Logger.PrintError(err, nil)
+	}
+
+	//fmt.Println(projectId)
+
+	//idString, err := h.Tokens.GetUserIdFromToken(bearer)
+	//if err != nil {
+	//	h.Logger.PrintError(err, nil)
+	//}
+	//userId, err := strconv.Atoi(idString)
+	//fmt.Println(userId)
+
+	result, err := h.Models.Cables.GetCablesByProjectId(projectId)
+	if err != nil {
+		switch {
+		default:
+			h.Errors.ServerErrorResponse(w, r, err)
+		}
+		return
+	}
+
+	err = h.Json.ResponseJSON(w, http.StatusAccepted,
+		json.Envelope{"cables": result},
+		nil)
+	if err != nil {
+		h.Errors.ServerErrorResponse(w, r, err)
+	}
+}
+
 func (h *Handlers) UpdateCable(w http.ResponseWriter, r *http.Request) {
 	//bearerHeader := r.Header.Get("Authorization")
 	//bearer := strings.Replace(bearerHeader, "Bearer ", "", 1)
@@ -88,17 +133,14 @@ func (h *Handlers) UpdateCable(w http.ResponseWriter, r *http.Request) {
 	//}
 	//fmt.Println(userId)
 
-	//projectId, err := h.Helpers.GetInt64FromURLParam(chi.URLParam(r, "projectId"))
-	//if err != nil {
-	//	h.Logger.PrintError(err, nil)
-	//}
-	//fmt.Println(projectId)
+	//cableId := chi.URLParam(r, "cableId")
 
 	var input struct {
-		ID       int64  `json:"id"`
-		Location string `json:"location"`
-		Size     int64  `json:"size"`
-		Color    string `json:"color"`
+		ID      string       `json:"id"`
+		Changes boiler.Cable `json:"changes"`
+		/*		Location int64  `json:"location"`
+				Size     int64  `json:"size"`
+				Color    string `json:"color"`*/
 	}
 
 	err := h.Json.DecodeJSON(w, r, &input)
@@ -109,9 +151,9 @@ func (h *Handlers) UpdateCable(w http.ResponseWriter, r *http.Request) {
 
 	updateCable := &boiler.Cable{
 		ID:       input.ID,
-		Location: input.Location,
-		Size:     input.Size,
-		Color:    input.Color,
+		Location: input.Changes.Location,
+		Size:     input.Changes.Size,
+		Color:    input.Changes.Color,
 	}
 
 	result, err := h.Models.Cables.Update(updateCable)
@@ -147,17 +189,25 @@ func (h *Handlers) DeleteCable(w http.ResponseWriter, r *http.Request) {
 		}*/
 	//fmt.Println(projectId)
 
-	var input struct {
-		ID int64 `json:"id"`
-	}
+	cableId := chi.URLParam(r, "cableId")
 
-	err := h.Json.DecodeJSON(w, r, &input)
-	if err != nil {
-		h.Errors.ServerErrorResponse(w, r, err)
-		return
-	}
+	/*	cableId, err := h.Helpers.GetInt64FromURLParam(chi.URLParam(r, "cableId"))
+		if err != nil {
+			h.Logger.PrintError(err, nil)
+		}
+		fmt.Println(cableId)*/
 
-	err = h.Models.Panels.Delete(input.ID)
+	/*	var input struct {
+			ID string `json:"id"`
+		}
+
+		err = h.Json.DecodeJSON(w, r, &input)
+		if err != nil {
+			h.Errors.ServerErrorResponse(w, r, err)
+			return
+		}*/
+
+	err := h.Models.Cables.Delete(cableId)
 	if err != nil {
 		switch {
 		default:
@@ -167,7 +217,7 @@ func (h *Handlers) DeleteCable(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = h.Json.ResponseJSON(w, http.StatusAccepted,
-		json.Envelope{"panel": input.ID, "deleted": true},
+		json.Envelope{"panel": cableId, "deleted": true},
 		nil)
 	if err != nil {
 		h.Errors.ServerErrorResponse(w, r, err)

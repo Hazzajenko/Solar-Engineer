@@ -3,9 +3,16 @@ import { Update } from '@ngrx/entity'
 import { CableModel } from '../../models/cable.model'
 
 export interface CreateCableRequest {
-  location: string
+  location: number
+  // location: string
   size: number
   project_id: number
+}
+
+export interface UpdateCableRequest {
+  project_id: number
+  cable: CableModel
+  newLocation: number
 }
 
 export const CableStateActions = createActionGroup({
@@ -14,9 +21,11 @@ export const CableStateActions = createActionGroup({
     'Add Cable Http': props<{ request: CreateCableRequest }>(),
     'Add Cable To State': props<{ cable: CableModel }>(),
     'Add Many Cables': props<{ cables: CableModel[] }>(),
-    'Update Cable': props<{ cable: CableModel }>(),
+    'Update Cable Http': props<{ request: UpdateCableRequest }>(),
+    'Update Cable To State': props<{ cable: CableModel }>(),
     'Update Many Cable': props<{ cables: Update<CableModel>[] }>(),
-    'Delete Cable': props<{ cable: CableModel }>(),
+    'Delete Cable Http': props<{ cableId: number }>(),
+    'Delete Cable To State': props<{ cableId: number }>(),
     'Clear Cable State': emptyProps(),
   },
 })

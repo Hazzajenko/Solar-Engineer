@@ -23,7 +23,7 @@ import (
 
 // Cable is an object representing the database table.
 type Cable struct {
-	ID        int64     `boil:"id" json:"id" toml:"id" yaml:"id"`
+	ID        string    `boil:"id" json:"id" toml:"id" yaml:"id"`
 	ProjectID int64     `boil:"project_id" json:"project_id" toml:"project_id" yaml:"project_id"`
 	Model     int       `boil:"model" json:"model" toml:"model" yaml:"model"`
 	Location  string    `boil:"location" json:"location" toml:"location" yaml:"location"`
@@ -98,6 +98,29 @@ var CableTableColumns = struct {
 
 // Generated where
 
+type whereHelperstring struct{ field string }
+
+func (w whereHelperstring) EQ(x string) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.EQ, x) }
+func (w whereHelperstring) NEQ(x string) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.NEQ, x) }
+func (w whereHelperstring) LT(x string) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.LT, x) }
+func (w whereHelperstring) LTE(x string) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.LTE, x) }
+func (w whereHelperstring) GT(x string) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.GT, x) }
+func (w whereHelperstring) GTE(x string) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.GTE, x) }
+func (w whereHelperstring) IN(slice []string) qm.QueryMod {
+	values := make([]interface{}, 0, len(slice))
+	for _, value := range slice {
+		values = append(values, value)
+	}
+	return qm.WhereIn(fmt.Sprintf("%s IN ?", w.field), values...)
+}
+func (w whereHelperstring) NIN(slice []string) qm.QueryMod {
+	values := make([]interface{}, 0, len(slice))
+	for _, value := range slice {
+		values = append(values, value)
+	}
+	return qm.WhereNotIn(fmt.Sprintf("%s NOT IN ?", w.field), values...)
+}
+
 type whereHelperint64 struct{ field string }
 
 func (w whereHelperint64) EQ(x int64) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.EQ, x) }
@@ -137,29 +160,6 @@ func (w whereHelperint) IN(slice []int) qm.QueryMod {
 	return qm.WhereIn(fmt.Sprintf("%s IN ?", w.field), values...)
 }
 func (w whereHelperint) NIN(slice []int) qm.QueryMod {
-	values := make([]interface{}, 0, len(slice))
-	for _, value := range slice {
-		values = append(values, value)
-	}
-	return qm.WhereNotIn(fmt.Sprintf("%s NOT IN ?", w.field), values...)
-}
-
-type whereHelperstring struct{ field string }
-
-func (w whereHelperstring) EQ(x string) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.EQ, x) }
-func (w whereHelperstring) NEQ(x string) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.NEQ, x) }
-func (w whereHelperstring) LT(x string) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.LT, x) }
-func (w whereHelperstring) LTE(x string) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.LTE, x) }
-func (w whereHelperstring) GT(x string) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.GT, x) }
-func (w whereHelperstring) GTE(x string) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.GTE, x) }
-func (w whereHelperstring) IN(slice []string) qm.QueryMod {
-	values := make([]interface{}, 0, len(slice))
-	for _, value := range slice {
-		values = append(values, value)
-	}
-	return qm.WhereIn(fmt.Sprintf("%s IN ?", w.field), values...)
-}
-func (w whereHelperstring) NIN(slice []string) qm.QueryMod {
 	values := make([]interface{}, 0, len(slice))
 	for _, value := range slice {
 		values = append(values, value)
@@ -218,7 +218,7 @@ func (w whereHelperfloat32) NIN(slice []float32) qm.QueryMod {
 }
 
 var CableWhere = struct {
-	ID        whereHelperint64
+	ID        whereHelperstring
 	ProjectID whereHelperint64
 	Model     whereHelperint
 	Location  whereHelperstring
@@ -231,7 +231,7 @@ var CableWhere = struct {
 	Color     whereHelperstring
 	Type      whereHelperstring
 }{
-	ID:        whereHelperint64{field: "\"cables\".\"id\""},
+	ID:        whereHelperstring{field: "\"cables\".\"id\""},
 	ProjectID: whereHelperint64{field: "\"cables\".\"project_id\""},
 	Model:     whereHelperint{field: "\"cables\".\"model\""},
 	Location:  whereHelperstring{field: "\"cables\".\"location\""},
@@ -284,8 +284,8 @@ type cableL struct{}
 
 var (
 	cableAllColumns            = []string{"id", "project_id", "model", "location", "created_at", "created_by", "length", "weight", "version", "size", "color", "type"}
-	cableColumnsWithoutDefault = []string{"project_id", "location"}
-	cableColumnsWithDefault    = []string{"id", "model", "created_at", "created_by", "length", "weight", "version", "size", "color", "type"}
+	cableColumnsWithoutDefault = []string{"project_id"}
+	cableColumnsWithDefault    = []string{"id", "model", "location", "created_at", "created_by", "length", "weight", "version", "size", "color", "type"}
 	cablePrimaryKeyColumns     = []string{"id"}
 	cableGeneratedColumns      = []string{}
 )
@@ -937,7 +937,7 @@ func Cables(mods ...qm.QueryMod) cableQuery {
 
 // FindCable retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
-func FindCable(ctx context.Context, exec boil.ContextExecutor, iD int64, selectCols ...string) (*Cable, error) {
+func FindCable(ctx context.Context, exec boil.ContextExecutor, iD string, selectCols ...string) (*Cable, error) {
 	cableObj := &Cable{}
 
 	sel := "*"
@@ -1450,7 +1450,7 @@ func (o *CableSlice) ReloadAll(ctx context.Context, exec boil.ContextExecutor) e
 }
 
 // CableExists checks if the Cable row exists.
-func CableExists(ctx context.Context, exec boil.ContextExecutor, iD int64) (bool, error) {
+func CableExists(ctx context.Context, exec boil.ContextExecutor, iD string) (bool, error) {
 	var exists bool
 	sql := "select exists(select 1 from \"cables\" where \"id\"=$1 limit 1)"
 

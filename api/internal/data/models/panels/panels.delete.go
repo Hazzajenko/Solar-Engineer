@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func (p *PanelModel) Delete(panelId int64) error {
+func (p *PanelModel) Delete(panelId string) error {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()

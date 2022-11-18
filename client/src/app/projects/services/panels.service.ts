@@ -115,7 +115,7 @@ export class PanelsService {
   }
 
   updatePanel(request: UpdatePanelRequest) {
-    console.log('update', request)
+    // console.log('update', request)
     return this.http.patch<PanelEnvelope>(
       `${environment.apiUrl}/projects/${request.project_id}/panels`,
       {
@@ -153,9 +153,10 @@ export class PanelsService {
             )
             this.store.dispatch(
               BlocksStateActions.updateBlockForGrid({
-                oldLocation: panel.location,
+                // oldLocation: panel.location,
                 block: {
-                  id: envelope.panel.location,
+                  id: envelope.panel.id,
+                  location: envelope.panel.location,
                   project_id: projectId!,
                   model: UnitModel.PANEL,
                 },
@@ -186,7 +187,9 @@ export class PanelsService {
         )
         .subscribe({
           next: (envelope) => {
-            this.store.dispatch(PanelStateActions.deletePanel({ panelId }))
+            this.store.dispatch(
+              PanelStateActions.deletePanelToState({ panelId }),
+            )
             resolve(envelope)
           },
           error: (err) => {

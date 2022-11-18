@@ -3,9 +3,9 @@ import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { Store } from '@ngrx/store'
 import { AppState } from '../../../store/app.state'
 import { CableStateActions } from './cable.actions'
-import { switchMap } from 'rxjs'
+import { exhaustMap, switchMap } from 'rxjs'
 import { CablesService } from '../../services/cables.service'
-import { map } from 'rxjs/operators'
+import { catchError, map } from 'rxjs/operators'
 import { BlocksStateActions } from '../blocks/blocks.actions'
 import { UnitModel } from '../../models/unit.model'
 
@@ -27,7 +27,8 @@ export class CablesEffects {
                 this.store.dispatch(
                   BlocksStateActions.addBlockForGrid({
                     block: {
-                      id: res.cable.location,
+                      id: res.cable.id,
+                      location: res.cable.location,
                       model: UnitModel.CABLE,
                       type: 'CABLE',
                       project_id: res.cable.project_id!,
@@ -37,6 +38,37 @@ export class CablesEffects {
               },
               // catchError(async (err) => console.log(err)),
             ),
+          ),
+        ),
+      ),
+    { dispatch: false },
+  )
+  updateCable$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(CableStateActions.updateCableHttp),
+        exhaustMap((action) =>
+          this.cablesService.updateCable(action.request).pipe(
+            map((res) => {
+              this.store.dispatch(
+                CableStateActions.updateCableToState({
+                  cable: res.cable,
+                }),
+              )
+              this.store.dispatch(
+                BlocksStateActions.updateBlockForGrid({
+                  // oldLocation: action.request.cable.location,
+                  block: {
+                    id: res.cable.id,
+                    location: res.cable.location,
+                    model: UnitModel.CABLE,
+                    type: 'CABLE',
+                    project_id: res.cable.project_id!,
+                  },
+                }),
+              )
+            }),
+            catchError(async (error) => console.log(error)),
           ),
         ),
       ),

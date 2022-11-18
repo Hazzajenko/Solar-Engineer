@@ -97,7 +97,7 @@ func (p *PanelModel) UpdatePanel(update *boiler.Panel) (*boiler.Panel, error) {
 			return nil, err
 		}
 	}
-	panel.Color = update.Color
+	//panel.Color = update.Color
 	panel.Location = update.Location
 	panel.StringID = update.StringID
 	panel.TrackerID = update.TrackerID

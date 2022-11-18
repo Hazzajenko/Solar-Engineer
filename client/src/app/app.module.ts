@@ -36,30 +36,56 @@ import { ProjectViewComponent } from './projects/project-id/views/project-view/p
 import { TrackerViewComponent } from './projects/project-id/views/tracker-view/tracker-view.component'
 import { StringViewComponent } from './projects/project-id/views/string-view/string-view.component'
 import { ButtonMenuComponent } from './projects/project-id/components/project-tree/button-menu/button-menu.component'
-import { FilterStringsPipe } from './pipes/filter-strings.pipe'
-import { FilterPanelsPipe } from './pipes/filter-panels.pipe'
+import { FilterStringsPipe } from './pipes/v1/filter-strings.pipe'
+import { FilterPanelsPipe } from './pipes/v1/filter-panels.pipe'
 import { GridInventoryComponent } from './projects/project-id/views/grid-inventory/grid-inventory.component'
 import { TrackerTreeComponent } from './projects/project-id/views/tracker-tree/tracker-tree.component'
 import { StringStatsComponent } from './projects/project-id/components/string-stats/string-stats.component'
 import { MatTooltipModule } from '@angular/material/tooltip'
 import { TrackerStatsComponent } from './projects/project-id/components/tracker-stats/tracker-stats.component'
-import { FilterTrackersPipe } from './pipes/filter-trackers.pipe'
+import { FilterTrackersPipe } from './pipes/v1/filter-trackers.pipe'
 import { StatsSectionComponent } from './projects/project-id/components/project-tree/stats-section/stats-section.component'
-import { FilterPanelsByPipe } from './pipes/filter-panels-by.pipe'
-import { FilterStringsByPipe } from './pipes/filter-strings-by.pipe'
+import { FilterPanelsByPipe } from './pipes/v2/filter-panels-by.pipe'
+import { FilterStringsByPipe } from './pipes/v2/filter-strings-by.pipe'
 import { MatToolbarModule } from '@angular/material/toolbar'
 import { GridToolbarComponent } from './projects/project-id/views/grid-layout/grid-toolbar/grid-toolbar.component'
-import { FilterBlocksByPipe } from './pipes/filter-blocks-by.pipe'
-import { FindBlockPipe } from './pipes/find-block.pipe'
-import { FindPanelPipe } from './pipes/find-panel.pipe'
+import { FilterBlocksByPipe } from './pipes/v2/filter-blocks-by.pipe'
+import { FindBlockPipe } from './pipes/v2/find-block.pipe'
+import { FindPanelPipe } from './pipes/v2/find-panel.pipe'
 import { EffectsModule } from '@ngrx/effects'
-import { FindCablePipe } from './pipes/find-cable.pipe'
+import { FindCablePipe } from './pipes/v2/find-cable.pipe'
 import { CablesEffects } from './projects/store/cable/cables.effects'
 import { PanelsEffects } from './projects/store/panels/panels.effects'
+import { GetGridNumberPipe } from './pipes/get-grid-number.pipe'
+import { LetModule } from '@ngrx/component'
+import { FindPanelLocationPipe } from './pipes/find-panel-location.pipe'
+import { FindCableLocationPipe } from './pipes/find-cable-location.pipe'
+import { FindBlockNumberPipe } from './pipes/find-block-number.pipe'
+import {
+  DefaultDataServiceConfig,
+  EntityDataModule,
+  EntityDataService,
+  EntityDefinitionService,
+} from '@ngrx/data'
+import { entityConfig } from './entity-metadata'
+import { PanelsEntityService } from './projects/project-id/services/panels-entity/panels-entity.service'
+import { PanelsResolver } from './projects/project-id/services/panels-entity/panels.resolver'
+import { PanelsDataService } from './projects/project-id/services/panels-entity/panels-data.service'
+import { PanelsEntityEffects } from './projects/project-id/services/panels-entity/panels-entity.effects'
+import { CablesEntityEffects } from './projects/project-id/services/cables-entity/cables-entity.effects'
+import { CablesDataService } from './projects/project-id/services/cables-entity/cables-data.service'
+import { CablesEntityService } from './projects/project-id/services/cables-entity/cables-entity.service'
+import { CablesResolver } from './projects/project-id/services/cables-entity/cables.resolver'
+import { GetGridStringPipe } from './pipes/get-grid-string.pipe'
 
 export function tokenGetter() {
   // console.log(localStorage.getItem('token'))
   return localStorage.getItem('token')
+}
+
+const defaultDataServiceConfig: DefaultDataServiceConfig = {
+  root: environment.apiUrl,
+  timeout: 3000, // request timeout
 }
 
 @NgModule({
@@ -131,8 +157,20 @@ export function tokenGetter() {
     FilterBlocksByPipe,
     FindBlockPipe,
     FindPanelPipe,
-    EffectsModule.forRoot([CablesEffects, PanelsEffects]),
+    EffectsModule.forRoot([
+      CablesEffects,
+      PanelsEffects,
+      PanelsEntityEffects,
+      CablesEntityEffects,
+    ]),
     FindCablePipe,
+    GetGridNumberPipe,
+    LetModule,
+    FindPanelLocationPipe,
+    FindCableLocationPipe,
+    FindBlockNumberPipe,
+    EntityDataModule.forRoot(entityConfig),
+    GetGridStringPipe,
   ],
   providers: [
     {
@@ -140,7 +178,26 @@ export function tokenGetter() {
       useClass: JwtInterceptor,
       multi: true,
     },
+    PanelsEntityService,
+    PanelsResolver,
+    PanelsDataService,
+    CablesEntityService,
+    CablesResolver,
+    CablesDataService,
+    { provide: DefaultDataServiceConfig, useValue: defaultDataServiceConfig },
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule {
+  constructor(
+    private eds: EntityDefinitionService,
+    private entityDataService: EntityDataService,
+    private panelsDataService: PanelsDataService,
+    private cablesDataService: CablesDataService,
+  ) {
+    eds.registerMetadataMap(entityConfig.entityMetadata)
+
+    entityDataService.registerService('Panel', panelsDataService)
+    entityDataService.registerService('Cable', cablesDataService)
+  }
+}

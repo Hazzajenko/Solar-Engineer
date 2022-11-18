@@ -22,3 +22,8 @@ export const selectCreateMode = createSelector(
   selectGridState,
   (state: State.GridState) => state.createMode,
 )
+
+export const selectGridMode = createSelector(
+  selectGridState,
+  (state: State.GridState) => state.gridMode,
+)

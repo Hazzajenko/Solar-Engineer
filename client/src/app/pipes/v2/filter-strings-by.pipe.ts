@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core'
-import { StringModel } from '../projects/models/string.model'
-import { UnitModel } from '../projects/models/unit.model'
+import { StringModel } from '../../projects/models/string.model'
+import { UnitModel } from '../../projects/models/unit.model'
 
 @Pipe({
   name: 'filterStringsBy',

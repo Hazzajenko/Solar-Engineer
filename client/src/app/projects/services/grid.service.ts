@@ -85,7 +85,7 @@ export class GridService {
         )
         .subscribe((panels) => {
           const spotTaken = panels.find(
-            (panel) => panel.location === item.dropContainer.id,
+            (panel) => panel.location.toString() === item.dropContainer.id,
           )
           return !spotTaken
         })

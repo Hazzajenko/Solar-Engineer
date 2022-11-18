@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core'
-import { CableModel } from '../projects/models/cable.model'
+import { CableModel } from '../../projects/models/cable.model'
 
 @Pipe({
   name: 'findCable',
@@ -12,6 +12,7 @@ export class FindCablePipe implements PipeTransform {
       // return panels
     }
 
-    return cables.find((cable) => cable.location === blockId)
+    // return cables.find((cable) => cable.location === blockId)
+    return undefined
   }
 }

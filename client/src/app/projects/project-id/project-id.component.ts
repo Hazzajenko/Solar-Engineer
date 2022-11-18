@@ -29,6 +29,9 @@ import { ProjectsService } from '../services/projects.service'
 import { selectProjectByRouteParams } from '../store/projects/projects.selectors'
 import { ProjectModel } from '../models/project.model'
 import { StatsService } from '../services/stats.service'
+import { PanelsEntityService } from './services/panels-entity/panels-entity.service'
+import { v4 as uuid } from 'uuid'
+import { Guid } from 'guid-typescript'
 
 export interface ProjectStore {
   project?: ProjectModel
@@ -59,6 +62,7 @@ export class ProjectIdComponent implements OnInit {
     strings?: StringModel[]
     panels?: PanelModel[]
   }>
+  panels$: Observable<PanelModel[]> | undefined
   gridState$!: Observable<{ selectedStringId?: number }>
   view?: InverterModel
 
@@ -66,9 +70,15 @@ export class ProjectIdComponent implements OnInit {
     private store: Store<AppState>,
     private projects: ProjectsService,
     private statsService: StatsService,
+    private panelsEntity: PanelsEntityService,
   ) {}
 
   ngOnInit(): void {
+    this.panels$ = this.panelsEntity.entities$
+    const id: string = uuid()
+    console.log('Your UUID is: ', id)
+    const guid = Guid.create()
+    console.log('Your GUID is: ', guid)
     // this.statsService.calculateStringTotals()
     // console.log(this.statsService.stringsTotalVoc)
     this.trackerTree$ = combineLatest([

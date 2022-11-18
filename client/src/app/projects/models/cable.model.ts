@@ -2,11 +2,12 @@ import { UnitModel } from './unit.model'
 import { TypeModel } from './type.model'
 
 export interface CableModel {
-  id: number
+  id: string
   project_id?: number
   model?: UnitModel
   type?: TypeModel
   location: string
+  // numberLocation?: number
   size?: number
   length?: number
   weight?: number

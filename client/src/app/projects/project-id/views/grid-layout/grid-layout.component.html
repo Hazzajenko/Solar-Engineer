@@ -1,139 +1,124 @@
-<!--<ng-container *ngIf="createMode$ | async; let createMode">-->
-<!--  <ng-container *ngIf="selectedStrings$ | async; let selectedStrings">-->
-<ng-container *ngIf='project$ | async; let project'>
-  <ng-container *ngIf='gridState$ | async; let gridState'>
-    <ng-container *ngIf='blocks$ | async; let blocks'>
-      <!--  <ng-container *ngIf="project">-->
-      <div cdkDropListGroup class='project-design-container'>
-        <div *ngFor='let n of numSequence(20); let i = index' class='row'>
-          <!--  {{i}}-->
-          <div *ngFor='let n of numSequence(20); let a = index' class='col'>
-            <div
-              #thing
-              (cdkDropListDropped)='blockDrop($event, project, blocks)'
-              (click)='divClick(i.toString() + a, gridState, project)'
-              [cdkDropListConnectedTo]="['panels']"
-              [id]='i.toString() + a'
-              cdkDropList
-              class='drop-zone'
-              id='hello'
+<ng-container *ngIf="project$ | async; let project">
+  <ng-container *ngIf="gridState$ | async; let gridState">
+    <ng-container *ngIf="blocks$ | async; let blocks">
+      <div cdkDropListGroup class="project-design-container">
+        <div *ngFor="let n of numSequence(20); let row = index" class="row">
+          <div *ngFor="let n of numSequence(20); let col = index" class="col">
+            <!--            <ng-container
+                          *ngrxLet="row | getGridNumber: col; let locationNumber"
+                        >-->
+            <ng-container
+              *ngrxLet="row | getGridString: col; let locationString"
             >
-              <!--    |{{ i }}{{ a }}|-->
-              <!--        [ngStyle]="{ border: '1px solid red' }"-->
-              <!--            <ng-container *ngIf="panels$ | async; let panels">-->
-
-
-              <ng-container
-                *ngIf='blocks | findBlock: i.toString() + a; let block'
+              <!--              {{ row }}|{{ col }}-->
+              <!--              {{ locationString }}-->
+              <div
+                (cdkDropListDropped)="
+                  gridDrag.gridDrop($event, project, blocks)
+                "
+                (click)="
+                  gridCell.cellAction(
+                    locationString,
+                    gridState,
+                    project,
+                    blocks
+                  )
+                "
+                [id]="locationString"
+                cdkDropList
+                class="drop-zone"
+                id="hello"
               >
-                <!--              <div
-                                *ngFor="
-                                  let panel of panels | filterPanels: project.id:project.type!
-                                "
-                              >-->
-                <ng-container [ngSwitch]='block.model'>
-                  <ng-container *ngSwitchCase='5'>
-                    <ng-container *ngIf='panels$ | async; let panels'>
-                      <ng-container
-                        *ngIf='panels | findPanel: block.id!; let panel'
-                      >
-                        <div
-                          (contextmenu)='onRightClick($event, panel)'
-                          *ngIf='panel.location === i.toString() + a'
-                          [cdkDragData]='panel'
-                          [matTooltip]="
-                            'StringId = ' +
-                            panel.string_id +
-                            ' PanelId = ' +
-                            panel.id
+                <!--                {{ locationString }}-->
+                <ng-container
+                  *ngIf="blocks | findBlockNumber: locationString; let block"
+                >
+                  <ng-container [ngSwitch]="block.model">
+                    <ng-container *ngSwitchCase="5">
+                      <ng-container *ngIf="panels$ | async; let panels">
+                        <ng-container
+                          *ngIf="
+                            panels | findPanelLocation: block.location!;
+                            let panel
                           "
-                          [style.border]="'2px solid ' + panel.color"
-                          cdkDrag
-                          class='panel'
-                          matTooltipPosition='right'
                         >
                           <div
-                            *ngIf='panel.string_id === selectedStringId'
-                            class='panel__location'
+                            (contextmenu)="onRightClick($event, panel)"
+                            *ngIf="panel.location === locationString"
+                            [cdkDragData]="panel"
+                            [matTooltip]="'Location = ' + panel.location"
+                            [style.border]="'2px solid ' + panel.color"
+                            cdkDrag
+                            class="panel"
+                            matTooltipPosition="right"
                           >
                             {{ panel.location }}
                           </div>
-                        </div>
+                        </ng-container>
                       </ng-container>
                     </ng-container>
-                  </ng-container>
-                  <ng-container *ngSwitchCase='6'>
-                    <ng-container *ngIf='cables$ | async; let cables'>
-                      <ng-container
-                        *ngIf='cables | findCable: block.id!; let cable'
-                      >
-                        <div
-                          (contextmenu)='onRightClick($event, cable)'
-                          *ngIf='cable.location === i.toString() + a'
-                          [cdkDragData]='cable'
-                          [matTooltip]="
-                            'Size = ' +
-                            cable.size +
-                            ' Location = ' +
-                            cable.location
+                    <ng-container *ngSwitchCase="6">
+                      <ng-container *ngIf="cables$ | async; let cables">
+                        <ng-container
+                          *ngIf="
+                            cables | findCableLocation: block.location!;
+                            let cable
                           "
-                          [style.border]="'2px solid ' + cable.color"
-                          cdkDrag
-                          class='panel'
-                          matTooltipPosition='right'
                         >
-                          <!--                          <div
-                                                      *ngIf="panel.string_id === selectedStringId"
-                                                      class="panel__location"
-                                                    >
-                                                      {{ panel.location }}
-                                                    </div>-->
-                        </div>
+                          <div
+                            (contextmenu)="onRightClick($event, cable)"
+                            *ngIf="cable.location === locationString"
+                            [cdkDragData]="cable"
+                            [matTooltip]="'Location = ' + cable.location"
+                            [style.border]="'2px solid ' + cable.color"
+                            cdkDrag
+                            class="panel"
+                            matTooltipPosition="right"
+                          >
+                            {{ cable.location }}
+                          </div>
+                        </ng-container>
                       </ng-container>
                     </ng-container>
                   </ng-container>
                 </ng-container>
-
-              </ng-container>
-            </div>
+              </div>
+            </ng-container>
           </div>
         </div>
       </div>
-      <!--  </ng-container>-->
     </ng-container>
   </ng-container>
 </ng-container>
-<!--  </ng-container>-->
-<!--</ng-container>-->
 <div
-  [matMenuTriggerFor]='rightMenu'
-  [style.left]='menuTopLeftPosition.x'
-  [style.top]='menuTopLeftPosition.y'
-  style='visibility: hidden; position: fixed'
+  [matMenuTriggerFor]="rightMenu"
+  [style.left]="menuTopLeftPosition.x"
+  [style.top]="menuTopLeftPosition.y"
+  style="visibility: hidden; position: fixed"
 ></div>
 
-<mat-menu #rightMenu='matMenu' class='custom-menu'>
-  <ng-template let-item='item' matMenuContent>
-    <ng-container [ngSwitch]='item.model'>
-      <ng-container *ngSwitchCase='5'>
+<mat-menu #rightMenu="matMenu" class="custom-menu">
+  <ng-template let-item="item" matMenuContent>
+    <ng-container [ngSwitch]="item.model">
+      <ng-container *ngSwitchCase="5">
         <label>{{ item.name }}</label>
-        <ul style='list-style: none'>
+        <ul style="list-style: none">
           <li>Panel Id: {{ item.id }}</li>
           <li>Inverter Id: {{ item["inverter_id"] }}</li>
           <li>Tracker Id: {{ item["tracker_id"] }}</li>
           <li>String Id: {{ item["string_id"] }}</li>
         </ul>
-        <button (click)='click()' mat-menu-item>Add</button>
+        <button (click)="click()" mat-menu-item>Add</button>
         <button mat-menu-item>Edit</button>
-        <button (click)='deletePanel(item)' mat-menu-item>Delete</button>
+        <button (click)="deletePanel(item)" mat-menu-item>Delete</button>
       </ng-container>
-      <ng-container *ngSwitchCase='6'>
-        <ul style='list-style: none'>
+      <ng-container *ngSwitchCase="6">
+        <ul style="list-style: none">
           <li>Cable Id: {{ item.id }}</li>
           <li>Size: {{ item["size"] }}</li>
           <li>Location: {{ item["location"] }}</li>
         </ul>
-        <button (click)='click()' mat-menu-item>Add</button>
+        <button (click)="click()" mat-menu-item>Add</button>
         <button mat-menu-item>Edit</button>
         <button mat-menu-item>Delete</button>
       </ng-container>

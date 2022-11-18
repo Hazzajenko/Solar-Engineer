@@ -3,7 +3,7 @@ import { createReducer, on } from '@ngrx/store'
 import { CableStateActions } from './cable.actions'
 import { CableModel } from '../../models/cable.model'
 
-export const selectCableId = (b: CableModel): number => b.id
+export const selectCableId = (b: CableModel): string => b.id
 
 export const cableAdapter: EntityAdapter<CableModel> =
   createEntityAdapter<CableModel>({
@@ -23,7 +23,7 @@ export const cableReducer = createReducer(
     cableAdapter.addMany(cables, state),
   ),
 
-  on(CableStateActions.updateCable, (state, { cable }) =>
+  on(CableStateActions.updateCableToState, (state, { cable }) =>
     cableAdapter.updateOne(
       {
         id: cable.id,
@@ -37,8 +37,8 @@ export const cableReducer = createReducer(
     cableAdapter.updateMany(cables, state),
   ),
 
-  on(CableStateActions.deleteCable, (state, { cable }) =>
-    cableAdapter.removeOne(cable.id, state),
+  on(CableStateActions.deleteCableToState, (state, { cableId }) =>
+    cableAdapter.removeOne(cableId, state),
   ),
 )
 

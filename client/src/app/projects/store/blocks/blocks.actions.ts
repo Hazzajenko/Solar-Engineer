@@ -8,7 +8,7 @@ export const BlocksStateActions = createActionGroup({
     'Add Block For Grid': props<{ block: BlockModel }>(),
     'Add Many Blocks For Grid': props<{ blocks: BlockModel[] }>(),
     'Update Block For Grid': props<{
-      oldLocation: string
+      // oldLocation: number
       block: BlockModel
     }>(),
     'Update Many Blocks For Grid': props<{ blocks: Update<BlockModel>[] }>(),

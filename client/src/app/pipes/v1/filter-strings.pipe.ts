@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core'
-import { StringModel } from '../projects/models/string.model'
+import { StringModel } from '../../projects/models/string.model'
 
 @Pipe({
   name: 'filterStrings',

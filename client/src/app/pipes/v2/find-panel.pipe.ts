@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core'
-import { PanelModel } from '../projects/models/panel.model'
+import { PanelModel } from '../../projects/models/panel.model'
 
 @Pipe({
   name: 'findPanel',
@@ -12,6 +12,7 @@ export class FindPanelPipe implements PipeTransform {
       // return panels
     }
 
-    return panels.find((panel) => panel.location === blockId)
+    // return panels.find((panel) => panel.location === blockId)
+    return undefined
   }
 }

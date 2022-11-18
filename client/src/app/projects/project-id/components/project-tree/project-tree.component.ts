@@ -21,10 +21,10 @@ import { selectProjectByRouteParams } from '../../../store/projects/projects.sel
 import { selectInvertersByProjectIdRouteParams } from '../../../store/inverters/inverters.selectors'
 import { selectTrackersByProjectIdRouteParams } from '../../../store/trackers/trackers.selectors'
 import { selectStringsByProjectIdRouteParams } from '../../../store/strings/strings.selectors'
-import { selectPanelsByProjectIdRouteParams } from '../../../store/panels/panels.selectors'
 import { Store } from '@ngrx/store'
 import { AppState } from '../../../../store/app.state'
 import { StatsService } from '../../../services/stats.service'
+import { PanelsEntityService } from '../../services/panels-entity/panels-entity.service'
 
 @Component({
   selector: 'app-project-tree',
@@ -59,6 +59,7 @@ export class ProjectTreeComponent implements OnInit {
     private panelsService: PanelsService,
     private store: Store<AppState>,
     public stats: StatsService,
+    private panelsEntity: PanelsEntityService,
   ) {}
 
   ngOnInit(): void {
@@ -66,8 +67,8 @@ export class ProjectTreeComponent implements OnInit {
     this.inverters$ = this.store.select(selectInvertersByProjectIdRouteParams)
     this.trackers$ = this.store.select(selectTrackersByProjectIdRouteParams)
     this.strings$ = this.store.select(selectStringsByProjectIdRouteParams)
-    this.panels$ = this.store.select(selectPanelsByProjectIdRouteParams)
-
+    // this.panels$ = this.store.select(selectPanelsByProjectIdRouteParams)
+    this.panels$ = this.panelsEntity.entities$
     /*    this.store.select(selectProjectByRouteParams).subscribe((project) => {
           if (project) {
             this.project = project

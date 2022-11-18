@@ -49,10 +49,10 @@ func (p *CableModel) GetCablesByProjectId(projectId int64) (*boiler.CableSlice, 
 	return &cables, nil
 }
 
-func (p *CableModel) Update(cable *boiler.Cable) (*boiler.Cable, error) {
+func (p *CableModel) Update(update *boiler.Cable) (*boiler.Cable, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
-	existing, err := boiler.FindCable(ctx, p.DB, cable.ID)
+	cable, err := boiler.FindCable(ctx, p.DB, update.ID)
 	if err != nil {
 		switch {
 		case errors.Is(err, sql.ErrNoRows):
@@ -63,11 +63,11 @@ func (p *CableModel) Update(cable *boiler.Cable) (*boiler.Cable, error) {
 	}
 
 	// Update code here
-	existing.Location = cable.Location
-	existing.Color = cable.Color
-	existing.Size = cable.Size
+	cable.Location = update.Location
+	cable.Color = update.Color
+	cable.Size = update.Size
 
-	_, err = existing.Update(ctx, p.DB, boil.Infer())
+	_, err = cable.Update(ctx, p.DB, boil.Infer())
 	if err != nil {
 		switch {
 		case errors.Is(err, sql.ErrNoRows):
@@ -80,7 +80,7 @@ func (p *CableModel) Update(cable *boiler.Cable) (*boiler.Cable, error) {
 	return cable, nil
 }
 
-func (p *CableModel) Delete(cableId int64) error {
+func (p *CableModel) Delete(cableId string) error {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()

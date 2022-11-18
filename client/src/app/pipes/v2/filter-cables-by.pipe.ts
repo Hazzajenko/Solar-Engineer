@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core'
-import { UnitModel } from '../projects/models/unit.model'
-import { CableModel } from '../projects/models/cable.model'
+import { UnitModel } from '../../projects/models/unit.model'
+import { CableModel } from '../../projects/models/cable.model'
 
 @Pipe({
   name: 'filterCablesBy',

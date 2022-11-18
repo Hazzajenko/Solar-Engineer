@@ -2,7 +2,7 @@ import { UnitModel } from './unit.model'
 import { TypeModel } from './type.model'
 
 export interface PanelModel {
-  id: number
+  id: string
   project_id?: number
   inverter_id?: number
   tracker_id?: number
@@ -11,6 +11,7 @@ export interface PanelModel {
   type?: TypeModel
   name?: string
   location: string
+  // location: string
   current_at_maximum_power?: number
   short_circuit_current?: number
   short_circuit_current_temp?: number
@@ -24,5 +25,5 @@ export interface PanelModel {
   width?: number
   created_at?: string
   color?: string
-  version: number
+  version?: number
 }

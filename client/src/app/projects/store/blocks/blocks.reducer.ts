@@ -23,10 +23,10 @@ export const blocksReducer = createReducer(
     blockAdapter.addMany(blocks, state),
   ),
 
-  on(BlocksStateActions.updateBlockForGrid, (state, { oldLocation, block }) =>
+  on(BlocksStateActions.updateBlockForGrid, (state, { block }) =>
     blockAdapter.updateOne(
       {
-        id: oldLocation,
+        id: block.id,
         changes: block,
       },
       state,

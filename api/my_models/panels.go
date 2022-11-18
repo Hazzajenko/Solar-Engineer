@@ -23,7 +23,7 @@ import (
 
 // Panel is an object representing the database table.
 type Panel struct {
-	ID                      int64     `boil:"id" json:"id" toml:"id" yaml:"id"`
+	ID                      string    `boil:"id" json:"id" toml:"id" yaml:"id"`
 	ProjectID               int64     `boil:"project_id" json:"project_id" toml:"project_id" yaml:"project_id"`
 	InverterID              int64     `boil:"inverter_id" json:"inverter_id" toml:"inverter_id" yaml:"inverter_id"`
 	TrackerID               int64     `boil:"tracker_id" json:"tracker_id" toml:"tracker_id" yaml:"tracker_id"`
@@ -159,7 +159,7 @@ var PanelTableColumns = struct {
 // Generated where
 
 var PanelWhere = struct {
-	ID                      whereHelperint64
+	ID                      whereHelperstring
 	ProjectID               whereHelperint64
 	InverterID              whereHelperint64
 	TrackerID               whereHelperint64
@@ -184,7 +184,7 @@ var PanelWhere = struct {
 	Color                   whereHelperstring
 	Type                    whereHelperstring
 }{
-	ID:                      whereHelperint64{field: "\"panels\".\"id\""},
+	ID:                      whereHelperstring{field: "\"panels\".\"id\""},
 	ProjectID:               whereHelperint64{field: "\"panels\".\"project_id\""},
 	InverterID:              whereHelperint64{field: "\"panels\".\"inverter_id\""},
 	TrackerID:               whereHelperint64{field: "\"panels\".\"tracker_id\""},
@@ -1466,7 +1466,7 @@ func Panels(mods ...qm.QueryMod) panelQuery {
 
 // FindPanel retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
-func FindPanel(ctx context.Context, exec boil.ContextExecutor, iD int64, selectCols ...string) (*Panel, error) {
+func FindPanel(ctx context.Context, exec boil.ContextExecutor, iD string, selectCols ...string) (*Panel, error) {
 	panelObj := &Panel{}
 
 	sel := "*"
@@ -1979,7 +1979,7 @@ func (o *PanelSlice) ReloadAll(ctx context.Context, exec boil.ContextExecutor) e
 }
 
 // PanelExists checks if the Panel row exists.
-func PanelExists(ctx context.Context, exec boil.ContextExecutor, iD int64) (bool, error) {
+func PanelExists(ctx context.Context, exec boil.ContextExecutor, iD string) (bool, error) {
 	var exists bool
 	sql := "select exists(select 1 from \"panels\" where \"id\"=$1 limit 1)"
 

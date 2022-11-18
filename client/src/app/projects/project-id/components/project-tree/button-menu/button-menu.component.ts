@@ -8,7 +8,6 @@ import { StringsService } from '../../../../services/strings.service'
 import { PanelsService } from '../../../../services/panels.service'
 import { AppState } from '../../../../../store/app.state'
 import { Store } from '@ngrx/store'
-import { selectString } from '../../../../store/strings/strings.actions'
 import { GridStateActions } from '../../../../store/grid/grid.actions'
 import { Observable } from 'rxjs'
 import { selectStringsByProjectIdRouteParams } from '../../../../store/strings/strings.selectors'
@@ -49,7 +48,7 @@ export class ButtonMenuComponent implements OnInit {
   }
 
   selectString(string: StringModel) {
-    this.store.dispatch(selectString({ string }))
+    this.store.dispatch(GridStateActions.selectStringForGrid({ string }))
   }
 
   async createTracker(projectId: number, inverter: InverterModel) {

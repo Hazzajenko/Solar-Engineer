@@ -1,28 +1,28 @@
 import { Pipe, PipeTransform } from '@angular/core'
-import { PanelModel } from '../projects/models/panel.model'
-import { TypeModel } from '../projects/models/type.model'
+import { PanelModel } from '../../projects/models/panel.model'
+import { UnitModel } from '../../projects/models/unit.model'
 
 @Pipe({
-  name: 'filterPanels',
+  name: 'filterPanelsBy',
 })
-export class FilterPanelsPipe implements PipeTransform {
+export class FilterPanelsByPipe implements PipeTransform {
   transform(
     panels: PanelModel[],
     id: number,
-    unitModel: TypeModel,
+    unitModel: UnitModel,
   ): PanelModel[] {
     if (!panels || !id || !unitModel) {
       return panels
     }
 
     switch (unitModel) {
-      case 'PROJECT':
+      case UnitModel.PROJECT:
         return panels.filter((panel) => panel.project_id === id)
-      case 'INVERTER':
+      case UnitModel.INVERTER:
         return panels.filter((panel) => panel.inverter_id === id)
-      case 'TRACKER':
+      case UnitModel.TRACKER:
         return panels.filter((panel) => panel.tracker_id === id)
-      case 'STRING':
+      case UnitModel.STRING:
         return panels.filter((panel) => panel.string_id === id)
       default:
         return panels

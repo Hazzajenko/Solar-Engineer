@@ -13,11 +13,7 @@ import {
 } from '../../../store/strings/strings.selectors'
 import { map } from 'rxjs/operators'
 import { GridService } from '../../../services/grid.service'
-import {
-  selectPanelsByProjectId,
-  selectPanelsByProjectIdRouteParams,
-  selectPanelsByTrackerId,
-} from '../../../store/panels/panels.selectors'
+import { selectPanelsByTrackerId } from '../../../store/panels/panels.selectors'
 import { combineLatest, Observable } from 'rxjs'
 import { selectProjectByRouteParams } from '../../../store/projects/projects.selectors'
 import {
@@ -33,22 +29,28 @@ import { MatMenuTrigger } from '@angular/material/menu'
 import { CreateMode } from '../../../store/grid/grid.actions'
 import {
   selectCreateMode,
+  selectGridMode,
   selectSelectedString,
   selectSelectedStrings,
 } from '../../../store/grid/grid.selectors'
 import { BlockModel } from '../../../models/block.model'
 import { selectBlocksByProjectIdRouteParams } from '../../../store/blocks/blocks.selectors'
 import { CableModel } from '../../../models/cable.model'
-import { selectCablesByProjectIdRouteParams } from '../../../store/cable/cable.selectors'
 import {
   CableStateActions,
   CreateCableRequest,
+  UpdateCableRequest,
 } from '../../../store/cable/cable.actions'
 import { UnitModel } from '../../../models/unit.model'
 import {
+  CreatePanelRequest,
   PanelStateActions,
-  UpdatePanelRequest,
 } from '../../../store/panels/panels.actions'
+import { GridMode } from '../../../store/grid/grid-mode.model'
+import { GridModeService } from '../../../services/grid/grid-mode.service'
+import { PanelsEntityService } from '../../services/panels-entity/panels-entity.service'
+import { CablesEntityService } from '../../services/cables-entity/cables-entity.service'
+import { GridUpdateService } from '../../../services/grid/grid-update.service'
 
 @Component({
   selector: 'app-grid-layout',
@@ -70,6 +72,7 @@ export class GridLayoutComponent implements OnInit {
   selectedStrings$?: Observable<StringModel[] | undefined>
   selectedString$!: Observable<number>
   occupiedSpots: string[] = []
+  takenBlocks: number[] = []
   trackerTree$!: Observable<{
     project?: ProjectModel
     inverter?: InverterModel
@@ -81,6 +84,7 @@ export class GridLayoutComponent implements OnInit {
     createMode?: CreateMode
     selectedStrings?: StringModel[]
     selectedString?: StringModel
+    gridMode?: GridMode
   }>
   project$!: Observable<ProjectModel | undefined>
   inverters$!: Observable<InverterModel[]>
@@ -94,10 +98,14 @@ export class GridLayoutComponent implements OnInit {
     private panelsService: PanelsService,
     private store: Store<AppState>,
     public grid: GridService,
+    public gridCell: GridModeService,
+    public gridDrag: GridUpdateService,
+    private panelsEntity: PanelsEntityService,
+    private cablesEntity: CablesEntityService,
   ) {
-    this.panels?.forEach((panel) => {
-      // console.log(panel?.location)
-    })
+    /*    this.panels?.forEach((panel) => {
+          // console.log(panel?.location)
+        })*/
   }
 
   ngOnInit(): void {
@@ -108,36 +116,40 @@ export class GridLayoutComponent implements OnInit {
     this.inverters$ = this.store.select(selectInvertersByProjectIdRouteParams)
     this.trackers$ = this.store.select(selectTrackersByProjectIdRouteParams)
     this.strings$ = this.store.select(selectStringsByProjectIdRouteParams)
-    this.panels$ = this.store.select(selectPanelsByProjectIdRouteParams)
-    this.cables$ = this.store.select(selectCablesByProjectIdRouteParams)
+    this.panels$ = this.panelsEntity.entities$
+    // this.panels$ = this.store.select(selectPanelsByProjectIdRouteParams)
+    this.cables$ = this.cablesEntity.entities$
+    // this.cables$ = this.store.select(selectCablesByProjectIdRouteParams)
     this.blocks$ = this.store.select(selectBlocksByProjectIdRouteParams)
 
     this.gridState$ = combineLatest([
       this.store.select(selectCreateMode),
       this.store.select(selectSelectedStrings),
       this.store.select(selectSelectedString),
+      this.store.select(selectGridMode),
     ]).pipe(
-      map(([createMode, selectedStrings, selectedString]) => ({
+      map(([createMode, selectedStrings, selectedString, gridMode]) => ({
         createMode,
         selectedStrings,
         selectedString,
+        gridMode,
       })),
     )
 
-    this.store
-      .select(
-        selectPanelsByProjectId({
-          projectId: 3,
-        }),
-      )
-      .subscribe((panels) => {
-        // console.log(panels)
-        panels.forEach((panel) => {
-          // console.log(panel?.location)
-          this.occupiedSpots.push(panel?.location)
-        })
-        // console.log(this.occupiedSpots)
-      })
+    /*    this.store
+          .select(
+            selectPanelsByProjectId({
+              projectId: 3,
+            }),
+          )
+          .subscribe((panels) => {
+            // console.log(panels)
+            panels.forEach((panel) => {
+              // console.log(panel?.location)
+              this.takenBlocks.push(panel?.location)
+            })
+            // console.log(this.occupiedSpots)
+          })*/
     this.trackerTree$ = combineLatest([
       this.store.select(selectProjectByRouteParams),
       this.store.select(
@@ -180,20 +192,25 @@ export class GridLayoutComponent implements OnInit {
     project: ProjectModel,
     blocks: BlockModel[],
   ) {
-    const doesExist = blocks.find((block) => block.id === event.container.id)
+    const doesExist = blocks.find(
+      (block) => block.location.toString() === event.container.id,
+    )
 
     if (doesExist) {
       console.log('location taken')
       return
     }
 
+    const newLocation = Number(event.container.id)
+
     const block = event.item.data
     switch (block.model) {
       case UnitModel.PANEL:
-        return this.updatePanelLocation(project.id, block, event.container.id)
-        // break
+        return this.updatePanelLocationV2(project.id, block, event.container.id)
+      // break
       case UnitModel.CABLE:
-        break
+        return this.updateCableLocationV2(project.id, block, newLocation)
+      // break
       default:
         break
     }
@@ -213,14 +230,48 @@ export class GridLayoutComponent implements OnInit {
       version: panel.version,
     }
 
-    const request: UpdatePanelRequest = {
-      panel,
+    /* const request: UpdatePanelRequest = {
+       panel,
+       newLocation,
+       project_id: projectId,
+     }
+
+     this.store.dispatch(PanelStateActions.updatePanelHttp({ request }))*/
+    // await this.panelsService.updatePanel(3, update, newLocation)
+  }
+
+  updatePanelLocationV2(
+    projectId: number,
+    panel: PanelModel,
+    newLocation: string,
+  ) {
+    /*    const request: UpdatePanelRequest = {
+          panel,
+          newLocation,
+          project_id: projectId,
+        }*/
+
+    const update: PanelModel = {
+      ...panel,
+      location: newLocation,
+    }
+
+    return this.panelsEntity.update(update)
+    // return this.store.dispatch(PanelStateActions.updatePanelHttp({ request }))
+  }
+
+  updateCableLocationV2(
+    projectId: number,
+    cable: CableModel,
+    newLocation: number,
+  ) {
+    const request: UpdateCableRequest = {
+      cable,
       newLocation,
       project_id: projectId,
     }
 
-    this.store.dispatch(PanelStateActions.updatePanelHttp({ request }))
-    // await this.panelsService.updatePanel(3, update, newLocation)
+    return this.store.dispatch(CableStateActions.updateCableHttp({ request }))
   }
 
   async updateCableLocation(
@@ -251,34 +302,60 @@ export class GridLayoutComponent implements OnInit {
   ) {
     switch (gridState.createMode) {
       case CreateMode.PANEL:
-        await this.createPanelForGrid(location, gridState.selectedString)
+        // await this.createPanelForGrid(location, gridState.selectedString)
         break
       case CreateMode.CABLE:
-        await this.createCableForGrid(location, project)
+        // await this.createCableForGrid(location, project)
+
         break
       default:
         break
     }
   }
 
-  async createCableForGrid(location: string, project: ProjectModel) {
+  async divClickV2(
+    location: number,
+    gridState: {
+      createMode?: CreateMode
+      selectedStrings?: StringModel[]
+      selectedString?: StringModel
+      gridMode?: GridMode
+    },
+    project: ProjectModel,
+    blocks: BlockModel[],
+  ) {
+    // console.log(location)
+    switch (gridState.createMode) {
+      case CreateMode.PANEL:
+        await this.createPanelForGrid(location, gridState.selectedString)
+        break
+      case CreateMode.CABLE:
+        // await this.createCableForGrid(location, project)
+        break
+      default:
+        break
+    }
+  }
+
+  async createCableForGrid(location: number, project: ProjectModel) {
     if (location) {
-      const doesExist = this.panels?.find(
-        (panel) => panel.location === location,
-      )
-      if (doesExist) {
-        console.log('location taken')
-        return
-      }
-      const inSpot = this.occupiedSpots.find((spot) => spot === location)
+      /*      const doesExist = this.panels?.find(
+              (panel) => panel.location === location,
+            )*/
+      /*      if (doesExist) {
+              console.log('location taken')
+              return
+            }*/
+      const inSpot = this.takenBlocks.find((block) => block === location)
+      // const inSpot = this.occupiedSpots.find((spot) => spot === location)
       if (inSpot) return console.log('location taken')
       // await this.grid.createCableForGrid(project.id, location, 4)
-      const cable: CableModel = {
-        id: 0,
-        location,
-        size: 4,
-        project_id: project.id,
-      }
+      /*      const cable: CableModel = {
+              id: 0,
+              location,
+              size: 4,
+              project_id: project.id,
+            }*/
       const request: CreateCableRequest = {
         location,
         size: 4,
@@ -288,26 +365,36 @@ export class GridLayoutComponent implements OnInit {
     }
   }
 
-  async createPanelForGrid(location: string, selectedString?: StringModel) {
+  async createPanelForGrid(location: number, selectedString?: StringModel) {
+    console.log(selectedString)
     if (!selectedString) return console.log('select string')
     if (selectedString.id < 1) console.log('select string')
 
     if (selectedString) {
-      const doesExist = this.panels?.find(
-        (panel) => panel.location === location,
-      )
-      if (doesExist) {
-        console.log('location taken')
-        return
-      }
-      await this.panelsService.createPanelForGrid(
-        3,
-        selectedString.inverter_id,
-        selectedString.tracker_id,
-        selectedString.id,
+      /*      const doesExist = this.panels?.find(
+              (panel) => panel.location === location,
+            )
+            if (doesExist) {
+              console.log('location taken')
+              return
+            }*/
+
+      const request: CreatePanelRequest = {
+        project_id: selectedString.project_id,
+        inverter_id: selectedString.inverter_id,
+        tracker_id: selectedString.tracker_id,
+        string_id: selectedString.id,
         location,
-        selectedString.color!,
-      )
+      }
+      this.store.dispatch(PanelStateActions.addPanelHttp({ request }))
+      /*      await this.panelsService.createPanelForGrid(
+              3,
+              selectedString.inverter_id,
+              selectedString.tracker_id,
+              selectedString.id,
+              location,
+              selectedString.color!,
+            )*/
     }
   }
 
@@ -326,6 +413,6 @@ export class GridLayoutComponent implements OnInit {
 
   async deletePanel(panel: PanelModel) {
     console.log('delete')
-    await this.panelsService.deletePanel(3, panel.id)
+    // await this.panelsService.deletePanel(3, panel.id)
   }
 }

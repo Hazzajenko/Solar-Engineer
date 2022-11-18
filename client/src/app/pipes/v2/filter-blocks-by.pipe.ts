@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core'
-import { UnitModel } from '../projects/models/unit.model'
-import { BlockModel } from '../projects/models/block.model'
+import { UnitModel } from '../../projects/models/unit.model'
+import { BlockModel } from '../../projects/models/block.model'
 
 @Pipe({
   name: 'filterBlocksBy',

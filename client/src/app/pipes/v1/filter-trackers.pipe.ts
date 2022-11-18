@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core'
-import { TrackerModel } from '../projects/models/tracker.model'
+import { TrackerModel } from '../../projects/models/tracker.model'
 
 @Pipe({
   name: 'filterTrackers',

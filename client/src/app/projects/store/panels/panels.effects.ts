@@ -27,7 +27,8 @@ export class PanelsEffects {
                 this.store.dispatch(
                   BlocksStateActions.addBlockForGrid({
                     block: {
-                      id: res.panel.location,
+                      id: res.panel.id,
+                      location: res.panel.location,
                       model: UnitModel.PANEL,
                       type: 'PANEL',
                       project_id: res.panel.project_id!,
@@ -58,9 +59,10 @@ export class PanelsEffects {
                 )
                 this.store.dispatch(
                   BlocksStateActions.updateBlockForGrid({
-                    oldLocation: action.request.newLocation,
+                    // oldLocation: action.request.panel.location,
                     block: {
-                      id: res.panel.location,
+                      id: res.panel.id,
+                      location: res.panel.location,
                       model: UnitModel.PANEL,
                       type: 'PANEL',
                       project_id: res.panel.project_id!,

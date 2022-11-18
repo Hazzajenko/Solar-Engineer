@@ -1,5 +1,6 @@
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
 import { StringModel } from '../../models/string.model'
+import { GridMode } from './grid-mode.model'
 
 /*export const selectStringForGrid = createAction(
   '[Grid Service] Select String For Grid',
@@ -24,8 +25,6 @@ export enum CreateMode {
   CABLE = 'CABLE',
 }
 
-export type CreateString = 'Panel' | 'Cable'
-
 export const GridStateActions = createActionGroup({
   source: 'Grid Service',
   events: {
@@ -34,6 +33,8 @@ export const GridStateActions = createActionGroup({
     'Select Inverter Strings For Grid': props<{ strings: StringModel[] }>(),
     'Select Panel Create Mode': props<{ mode: CreateMode }>(),
     'Select Cable Create Mode': props<{ mode: CreateMode }>(),
+    'Select GridMode Create': props<{ mode: GridMode.CREATE }>(),
+    'Select GridMode Delete': props<{ mode: GridMode.DELETE }>(),
     'Clear Grid State': emptyProps(),
   },
 })

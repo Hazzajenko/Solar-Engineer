@@ -64,15 +64,19 @@ func (s *Server) Routes() *chi.Mux {
 
 			r.Group(func(r chi.Router) {
 				r.Get("/panels", s.Handlers.GetPanelsByProjectId)
-				r.Post("/panels", s.Handlers.CreatePanel)
+				r.Post("/panel", s.Handlers.CreatePanel)
+				//r.Post("/panels", s.Handlers.CreatePanel)
 				r.Patch("/panels", s.Handlers.UpdatePanelLocation)
-				r.Delete("/panels", s.Handlers.DeletePanel)
+				r.Put("/panel/{panelId}", s.Handlers.PutPanel)
+				r.Delete("/panel/{panelId}", s.Handlers.DeletePanel)
 			})
 
 			r.Group(func(r chi.Router) {
-				r.Post("/cables", s.Handlers.CreateCable)
-				r.Patch("/cables", s.Handlers.UpdateCable)
-				r.Delete("/cables", s.Handlers.DeleteCable)
+				r.Get("/cables", s.Handlers.GetCablesByProjectId)
+				r.Post("/cable", s.Handlers.CreateCable)
+				r.Put("/cable/{cableId}", s.Handlers.UpdateCable)
+				//r.Put("/cables", s.Handlers.UpdateCable)
+				r.Delete("/cable/{cableId}", s.Handlers.DeleteCable)
 			})
 
 			r.Route("/{inverterId}", func(r chi.Router) {

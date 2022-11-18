@@ -32,13 +32,13 @@ export interface CreatePanelRequest {
   inverter_id: number
   tracker_id: number
   string_id: number
-  location: string
+  location: number
 }
 
 export interface UpdatePanelRequest {
   project_id: number
   panel: PanelModel
-  newLocation: string
+  newLocation: number
 }
 
 export const PanelStateActions = createActionGroup({
@@ -50,7 +50,8 @@ export const PanelStateActions = createActionGroup({
     'Update Panel Http': props<{ request: UpdatePanelRequest }>(),
     'Update Panel To State': props<{ panel: PanelModel }>(),
     'Update Many Panels': props<{ panels: Update<PanelModel>[] }>(),
-    'Delete Panel': props<{ panelId: number }>(),
+    'Delete Panel Http': props<{ panelId: number }>(),
+    'Delete Panel To State': props<{ panelId: number }>(),
     'Clear Panels State': emptyProps(),
   },
 })

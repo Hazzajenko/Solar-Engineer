@@ -3,7 +3,7 @@ import { createReducer, on } from '@ngrx/store'
 import { PanelStateActions } from './panels.actions'
 import { PanelModel } from '../../models/panel.model'
 
-export const selectPanelId = (b: PanelModel): number => b.id
+export const selectPanelId = (b: PanelModel): string => b.id
 
 export const panelAdapter: EntityAdapter<PanelModel> =
   createEntityAdapter<PanelModel>({
@@ -37,7 +37,7 @@ export const panelsReducer = createReducer(
     panelAdapter.updateMany(panels, state),
   ),
 
-  on(PanelStateActions.deletePanel, (state, { panelId }) =>
+  on(PanelStateActions.deletePanelToState, (state, { panelId }) =>
     panelAdapter.removeOne(panelId, state),
   ),
 )
