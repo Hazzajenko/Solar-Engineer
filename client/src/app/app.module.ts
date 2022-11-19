@@ -4,7 +4,6 @@ import { BrowserModule } from '@angular/platform-browser'
 import { AppRoutingModule } from './app-routing.module'
 import { AppComponent } from './app.component'
 import { ProjectsComponent } from './projects/projects.component'
-import { ProjectListItemComponent } from './projects/project-list-item/project-list-item.component'
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http'
 import { ProjectIdComponent } from './projects/project-id/project-id.component'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
@@ -29,26 +28,22 @@ import { MatGridListModule } from '@angular/material/grid-list'
 import { ProjectTreeComponent } from './projects/project-id/components/project-tree/project-tree.component'
 import { MatSortModule } from '@angular/material/sort'
 import { JwtInterceptor } from './interceptors/jwt.interceptor'
-import { InverterViewComponent } from './projects/project-id/views/inverter-view/inverter-view.component'
 import { DragDropModule } from '@angular/cdk/drag-drop'
-import { GridLayoutComponent } from './projects/project-id/views/grid-layout/grid-layout.component'
-import { ProjectViewComponent } from './projects/project-id/views/project-view/project-view.component'
-import { TrackerViewComponent } from './projects/project-id/views/tracker-view/tracker-view.component'
-import { StringViewComponent } from './projects/project-id/views/string-view/string-view.component'
+import { GridLayoutComponent } from './projects/project-id/components/grid-layout/grid-layout.component'
 import { ButtonMenuComponent } from './projects/project-id/components/project-tree/button-menu/button-menu.component'
 import { FilterStringsPipe } from './pipes/v1/filter-strings.pipe'
 import { FilterPanelsPipe } from './pipes/v1/filter-panels.pipe'
-import { GridInventoryComponent } from './projects/project-id/views/grid-inventory/grid-inventory.component'
-import { TrackerTreeComponent } from './projects/project-id/views/tracker-tree/tracker-tree.component'
-import { StringStatsComponent } from './projects/project-id/components/string-stats/string-stats.component'
+import { GridInventoryComponent } from './projects/project-id/components/deprecated/grid-inventory/grid-inventory.component'
+import { TrackerTreeComponent } from './projects/project-id/components/deprecated/tracker-tree/tracker-tree.component'
+import { StringStatsComponent } from './projects/project-id/components/deprecated/string-stats/string-stats.component'
 import { MatTooltipModule } from '@angular/material/tooltip'
-import { TrackerStatsComponent } from './projects/project-id/components/tracker-stats/tracker-stats.component'
+import { TrackerStatsComponent } from './projects/project-id/components/deprecated/tracker-stats/tracker-stats.component'
 import { FilterTrackersPipe } from './pipes/v1/filter-trackers.pipe'
 import { StatsSectionComponent } from './projects/project-id/components/project-tree/stats-section/stats-section.component'
 import { FilterPanelsByPipe } from './pipes/v2/filter-panels-by.pipe'
 import { FilterStringsByPipe } from './pipes/v2/filter-strings-by.pipe'
 import { MatToolbarModule } from '@angular/material/toolbar'
-import { GridToolbarComponent } from './projects/project-id/views/grid-layout/grid-toolbar/grid-toolbar.component'
+import { GridToolbarComponent } from './projects/project-id/components/grid-layout/grid-toolbar/grid-toolbar.component'
 import { FilterBlocksByPipe } from './pipes/v2/filter-blocks-by.pipe'
 import { FindBlockPipe } from './pipes/v2/find-block.pipe'
 import { FindPanelPipe } from './pipes/v2/find-panel.pipe'
@@ -66,6 +61,7 @@ import {
   EntityDataModule,
   EntityDataService,
   EntityDefinitionService,
+  HttpUrlGenerator,
 } from '@ngrx/data'
 import { entityConfig } from './entity-metadata'
 import { PanelsEntityService } from './projects/project-id/services/panels-entity/panels-entity.service'
@@ -77,30 +73,41 @@ import { CablesDataService } from './projects/project-id/services/cables-entity/
 import { CablesEntityService } from './projects/project-id/services/cables-entity/cables-entity.service'
 import { CablesResolver } from './projects/project-id/services/cables-entity/cables.resolver'
 import { GetGridStringPipe } from './pipes/get-grid-string.pipe'
+import { defaultDataServiceConfig } from './data-service'
+import { StringsDataService } from './projects/project-id/services/strings-entity/strings-data.service'
+import { StringsEntityService } from './projects/project-id/services/strings-entity/strings-entity.service'
+import { StringsResolver } from './projects/project-id/services/strings-entity/strings.resolver'
+import { CustomHttpUrlGenerator } from './http-url-generator'
+import { MatSelectModule } from '@angular/material/select'
+import { SelectStringComponent } from './projects/project-id/components/grid-layout/grid-toolbar/select-string/select-string.component'
+import { MatDialogModule } from '@angular/material/dialog'
+import { StringsEntityEffects } from './projects/project-id/services/strings-entity/strings-entity.effects'
+import { TrackersEntityService } from './projects/project-id/services/trackers-entity/trackers-entity.service'
+import { TrackersResolver } from './projects/project-id/services/trackers-entity/trackers.resolver'
+import { TrackersDataService } from './projects/project-id/services/trackers-entity/trackers-data.service'
+import { InvertersEntityService } from './projects/project-id/services/inverters-entity/inverters-entity.service'
+import { InvertersResolver } from './projects/project-id/services/inverters-entity/inverters.resolver'
+import { InvertersDataService } from './projects/project-id/services/inverters-entity/inverters-data.service'
+import { FindInverterLocationPipe } from './pipes/find-inverter-location.pipe'
+import { InvertersEntityEffects } from './projects/project-id/services/inverters-entity/inverters-entity.effects'
+import { JoinsEntityService } from './projects/project-id/services/joins-entity/joins-entity.service'
+import { JoinsResolver } from './projects/project-id/services/joins-entity/joins.resolver'
+import { JoinsDataService } from './projects/project-id/services/joins-entity/joins-data.service'
+import { GetCableSurroundingsPipe } from './pipes/get-cable-surroundings.pipe'
 
 export function tokenGetter() {
   // console.log(localStorage.getItem('token'))
   return localStorage.getItem('token')
 }
 
-const defaultDataServiceConfig: DefaultDataServiceConfig = {
-  root: environment.apiUrl,
-  timeout: 3000, // request timeout
-}
-
 @NgModule({
   declarations: [
     AppComponent,
     ProjectsComponent,
-    ProjectListItemComponent,
     ProjectIdComponent,
     LoginComponent,
     ProjectTreeComponent,
-    InverterViewComponent,
     GridLayoutComponent,
-    ProjectViewComponent,
-    TrackerViewComponent,
-    StringViewComponent,
     ButtonMenuComponent,
     FilterStringsPipe,
     FilterPanelsPipe,
@@ -112,6 +119,7 @@ const defaultDataServiceConfig: DefaultDataServiceConfig = {
     StatsSectionComponent,
     FilterPanelsByPipe,
     GridToolbarComponent,
+    SelectStringComponent,
   ],
   imports: [
     BrowserModule,
@@ -162,6 +170,8 @@ const defaultDataServiceConfig: DefaultDataServiceConfig = {
       PanelsEffects,
       PanelsEntityEffects,
       CablesEntityEffects,
+      StringsEntityEffects,
+      InvertersEntityEffects,
     ]),
     FindCablePipe,
     GetGridNumberPipe,
@@ -171,6 +181,10 @@ const defaultDataServiceConfig: DefaultDataServiceConfig = {
     FindBlockNumberPipe,
     EntityDataModule.forRoot(entityConfig),
     GetGridStringPipe,
+    MatSelectModule,
+    MatDialogModule,
+    FindInverterLocationPipe,
+    GetCableSurroundingsPipe,
   ],
   providers: [
     {
@@ -184,7 +198,21 @@ const defaultDataServiceConfig: DefaultDataServiceConfig = {
     CablesEntityService,
     CablesResolver,
     CablesDataService,
+    StringsEntityService,
+    StringsResolver,
+    StringsDataService,
+    TrackersEntityService,
+    TrackersResolver,
+    TrackersDataService,
+    InvertersEntityService,
+    InvertersResolver,
+    InvertersDataService,
+    JoinsEntityService,
+    JoinsResolver,
+    JoinsDataService,
+    CustomHttpUrlGenerator,
     { provide: DefaultDataServiceConfig, useValue: defaultDataServiceConfig },
+    { provide: HttpUrlGenerator, useClass: CustomHttpUrlGenerator },
   ],
   bootstrap: [AppComponent],
 })
@@ -194,10 +222,18 @@ export class AppModule {
     private entityDataService: EntityDataService,
     private panelsDataService: PanelsDataService,
     private cablesDataService: CablesDataService,
+    private stringsDataService: StringsDataService,
+    private trackersDataService: TrackersDataService,
+    private invertersDataService: InvertersDataService,
+    private joinsDataService: JoinsDataService,
   ) {
     eds.registerMetadataMap(entityConfig.entityMetadata)
 
     entityDataService.registerService('Panel', panelsDataService)
     entityDataService.registerService('Cable', cablesDataService)
+    entityDataService.registerService('String', stringsDataService)
+    entityDataService.registerService('Tracker', trackersDataService)
+    entityDataService.registerService('Inverter', invertersDataService)
+    entityDataService.registerService('Join', joinsDataService)
   }
 }

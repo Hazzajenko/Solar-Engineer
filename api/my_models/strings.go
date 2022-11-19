@@ -23,10 +23,10 @@ import (
 
 // String is an object representing the database table.
 type String struct {
-	ID           int64     `boil:"id" json:"id" toml:"id" yaml:"id"`
+	ID           string    `boil:"id" json:"id" toml:"id" yaml:"id"`
 	ProjectID    int64     `boil:"project_id" json:"project_id" toml:"project_id" yaml:"project_id"`
-	InverterID   int64     `boil:"inverter_id" json:"inverter_id" toml:"inverter_id" yaml:"inverter_id"`
-	TrackerID    int64     `boil:"tracker_id" json:"tracker_id" toml:"tracker_id" yaml:"tracker_id"`
+	InverterID   string    `boil:"inverter_id" json:"inverter_id" toml:"inverter_id" yaml:"inverter_id"`
+	TrackerID    string    `boil:"tracker_id" json:"tracker_id" toml:"tracker_id" yaml:"tracker_id"`
 	Name         string    `boil:"name" json:"name" toml:"name" yaml:"name"`
 	CreatedAt    time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
 	CreatedBy    int64     `boil:"created_by" json:"created_by" toml:"created_by" yaml:"created_by"`
@@ -113,10 +113,10 @@ func (w whereHelperbool) GT(x bool) qm.QueryMod  { return qmhelper.Where(w.field
 func (w whereHelperbool) GTE(x bool) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.GTE, x) }
 
 var StringWhere = struct {
-	ID           whereHelperint64
+	ID           whereHelperstring
 	ProjectID    whereHelperint64
-	InverterID   whereHelperint64
-	TrackerID    whereHelperint64
+	InverterID   whereHelperstring
+	TrackerID    whereHelperstring
 	Name         whereHelperstring
 	CreatedAt    whereHelpertime_Time
 	CreatedBy    whereHelperint64
@@ -127,10 +127,10 @@ var StringWhere = struct {
 	Color        whereHelperstring
 	Type         whereHelperstring
 }{
-	ID:           whereHelperint64{field: "\"strings\".\"id\""},
+	ID:           whereHelperstring{field: "\"strings\".\"id\""},
 	ProjectID:    whereHelperint64{field: "\"strings\".\"project_id\""},
-	InverterID:   whereHelperint64{field: "\"strings\".\"inverter_id\""},
-	TrackerID:    whereHelperint64{field: "\"strings\".\"tracker_id\""},
+	InverterID:   whereHelperstring{field: "\"strings\".\"inverter_id\""},
+	TrackerID:    whereHelperstring{field: "\"strings\".\"tracker_id\""},
 	Name:         whereHelperstring{field: "\"strings\".\"name\""},
 	CreatedAt:    whereHelpertime_Time{field: "\"strings\".\"created_at\""},
 	CreatedBy:    whereHelperint64{field: "\"strings\".\"created_by\""},
@@ -211,8 +211,8 @@ type stringL struct{}
 
 var (
 	stringAllColumns            = []string{"id", "project_id", "inverter_id", "tracker_id", "name", "created_at", "created_by", "is_in_parallel", "panel_amount", "version", "model", "color", "type"}
-	stringColumnsWithoutDefault = []string{"project_id", "inverter_id", "tracker_id", "name"}
-	stringColumnsWithDefault    = []string{"id", "created_at", "created_by", "is_in_parallel", "panel_amount", "version", "model", "color", "type"}
+	stringColumnsWithoutDefault = []string{"project_id", "name"}
+	stringColumnsWithDefault    = []string{"id", "inverter_id", "tracker_id", "created_at", "created_by", "is_in_parallel", "panel_amount", "version", "model", "color", "type"}
 	stringPrimaryKeyColumns     = []string{"id"}
 	stringGeneratedColumns      = []string{}
 )
@@ -1401,7 +1401,7 @@ func Strings(mods ...qm.QueryMod) stringQuery {
 
 // FindString retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
-func FindString(ctx context.Context, exec boil.ContextExecutor, iD int64, selectCols ...string) (*String, error) {
+func FindString(ctx context.Context, exec boil.ContextExecutor, iD string, selectCols ...string) (*String, error) {
 	stringObj := &String{}
 
 	sel := "*"
@@ -1914,7 +1914,7 @@ func (o *StringSlice) ReloadAll(ctx context.Context, exec boil.ContextExecutor) 
 }
 
 // StringExists checks if the String row exists.
-func StringExists(ctx context.Context, exec boil.ContextExecutor, iD int64) (bool, error) {
+func StringExists(ctx context.Context, exec boil.ContextExecutor, iD string) (bool, error) {
 	var exists bool
 	sql := "select exists(select 1 from \"strings\" where \"id\"=$1 limit 1)"
 

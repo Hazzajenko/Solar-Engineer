@@ -27,14 +27,14 @@ export const selectStringByRouteParams = createSelector(
   (stringModels, { stringModelId }) => stringModels[stringModelId],
 )
 
-export const selectStringsByTrackerIdRouteParams = createSelector(
+/*export const selectStringsByTrackerIdRouteParams = createSelector(
   selectAllStrings,
   selectRouteParams,
   (stringModels, { trackerId }) =>
     stringModels.filter(
       (stringModel) => stringModel.tracker_id === Number(trackerId),
     ),
-)
+)*/
 
 export const selectStringsByProjectIdRouteParams = createSelector(
   selectAllStrings,
@@ -50,14 +50,16 @@ export const selectStringsByProjectId = (props: { projectId: number }) =>
     ),
   )
 
-export const selectStringsByTrackerId = (props: { trackerId: number }) =>
+/*export const selectStringsByTrackerId = (props: { trackerId: number }) =>
   createSelector(selectAllStrings, (stringModels: StringModel[]) =>
     stringModels.filter(
       (stringModel) => stringModel.tracker_id === props.trackerId,
     ),
-  )
+  )*/
 
+/*
 export const selectStringById = (props: { id: number }) =>
   createSelector(selectAllStrings, (strings: StringModel[]) =>
     strings.find((string) => string.id === props.id),
   )
+*/

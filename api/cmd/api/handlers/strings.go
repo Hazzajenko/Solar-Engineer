@@ -25,19 +25,26 @@ func (h *Handlers) CreateString(w http.ResponseWriter, r *http.Request) {
 		h.Logger.PrintError(err, nil)
 	}
 
-	inverterId, err := h.Helpers.GetInt64FromURLParam(chi.URLParam(r, "inverterId"))
-	if err != nil {
-		h.Logger.PrintError(err, nil)
-	}
+	/*	inverterId, err := h.Helpers.GetInt64FromURLParam(chi.URLParam(r, "inverterId"))
+		if err != nil {
+			h.Logger.PrintError(err, nil)
+		}
 
-	trackerId, err := h.Helpers.GetInt64FromURLParam(chi.URLParam(r, "trackerId"))
-	if err != nil {
-		h.Logger.PrintError(err, nil)
-	}
+		trackerId, err := h.Helpers.GetInt64FromURLParam(chi.URLParam(r, "trackerId"))
+		if err != nil {
+			h.Logger.PrintError(err, nil)
+		}*/
 
 	var input struct {
+		ID           string `json:"id"`
 		Name         string `json:"name"`
-		IsInParallel bool   `json:"isInParallel"`
+		IsInParallel bool   `json:"is_in_parallel"`
+		ProjectID    int64  `json:"project_id"`
+		InverterID   string `json:"inverter_id"`
+		TrackerID    string `json:"tracker_id"`
+		Color        string `json:"color"`
+		Model        int    `json:"model"`
+
 		//Tracker      trackers.Tracker `json:"tracker"`
 	}
 
@@ -58,17 +65,16 @@ func (h *Handlers) CreateString(w http.ResponseWriter, r *http.Request) {
 	}*/
 
 	boilerString := &boiler.String{
+		ID:           input.ID,
 		ProjectID:    projectId,
-		InverterID:   inverterId,
-		TrackerID:    trackerId,
+		InverterID:   input.InverterID,
+		TrackerID:    input.TrackerID,
 		Name:         input.Name,
 		CreatedAt:    time.Time{},
 		CreatedBy:    userId,
 		IsInParallel: input.IsInParallel,
-		PanelAmount:  0,
-		Version:      0,
-		Model:        2,
-		Color:        "black",
+		Model:        input.Model,
+		Color:        input.Color,
 	}
 
 	result, err := h.Models.Strings.Insert(boilerString)
@@ -80,37 +86,7 @@ func (h *Handlers) CreateString(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	h.Logger.PrintInfo("new string id:", map[string]string{"id": strconv.FormatInt(result.ID, 10)})
-	//result = append(result, itemResult)
-	/*
-		trackerString := &stringModels.TrackerString{
-			TrackerId: int64(trackerId),
-			StringId:  result.ID,
-		}
-
-		err = h.Models.Strings.InsertTrackerString(trackerString)
-		if err != nil {
-			switch {
-			default:
-				h.Errors.ServerErrorResponse(w, r, err)
-			}
-			return
-		}*/
-
-	/*	tracker := &trackers.Tracker{
-			ID:           input.Tracker.ID,
-			StringAmount: input.Tracker.StringAmount,
-			Version:      input.Tracker.Version,
-		}
-
-		trackerResult, err := h.Models.Trackers.UpdateStringAmount(tracker)
-		if err != nil {
-			switch {
-			default:
-				h.Errors.ServerErrorResponse(w, r, err)
-			}
-			return
-		}*/
+	h.Logger.PrintInfo("new string id:", map[string]string{"id": result.ID})
 
 	err = h.Json.ResponseJSON(w, http.StatusAccepted,
 		json.Envelope{"string": result},
@@ -234,9 +210,16 @@ func (h *Handlers) UpdateStringColor(w http.ResponseWriter, r *http.Request) {
 		userId, err := strconv.Atoi(idString)*/
 	//fmt.Println(userId)
 
-	var input struct {
-		ID    int64  `json:"id"`
+	stringId := chi.URLParam(r, "stringId")
+
+	/*	var input struct {
+		ID    string `json:"id"`
 		Color string `json:"color"`
+	}*/
+
+	var input struct {
+		ID      string        `json:"id"`
+		Changes boiler.String `json:"changes"`
 	}
 
 	err := h.Json.DecodeJSON(w, r, &input)
@@ -246,8 +229,10 @@ func (h *Handlers) UpdateStringColor(w http.ResponseWriter, r *http.Request) {
 	}
 
 	updateString := &boiler.String{
-		ID:    input.ID,
-		Color: input.Color,
+		ID:           stringId,
+		Name:         input.Changes.Name,
+		IsInParallel: input.Changes.IsInParallel,
+		Color:        input.Changes.Color,
 	}
 
 	result, _, err := h.Models.Strings.UpdateBoilerStringColor(updateString)
@@ -292,18 +277,19 @@ func (h *Handlers) DeleteString(w http.ResponseWriter, r *http.Request) {
 			h.Logger.PrintError(err, nil)
 		}*/
 	//fmt.Println(projectId)
+	stringId := chi.URLParam(r, "stringId")
+	/*
+		var input struct {
+			ID string `json:"id"`
+		}
 
-	var input struct {
-		ID int64 `json:"id"`
-	}
+		err := h.Json.DecodeJSON(w, r, &input)
+		if err != nil {
+			h.Errors.ServerErrorResponse(w, r, err)
+			return
+		}*/
 
-	err := h.Json.DecodeJSON(w, r, &input)
-	if err != nil {
-		h.Errors.ServerErrorResponse(w, r, err)
-		return
-	}
-
-	err = h.Models.Strings.Delete(input.ID)
+	err := h.Models.Strings.Delete(stringId)
 	if err != nil {
 		switch {
 		default:
@@ -313,7 +299,7 @@ func (h *Handlers) DeleteString(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = h.Json.ResponseJSON(w, http.StatusAccepted,
-		json.Envelope{"string": input.ID, "deleted": true},
+		json.Envelope{"string": stringId, "deleted": true},
 		nil)
 	if err != nil {
 		h.Errors.ServerErrorResponse(w, r, err)

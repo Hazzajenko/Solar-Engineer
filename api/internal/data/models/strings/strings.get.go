@@ -8,8 +8,8 @@ import (
 	"time"
 )
 
-func (p *StringModel) GetById(stringId int64) (*boiler.String, error) {
-	if stringId < 1 {
+func (p *StringModel) GetById(stringId string) (*boiler.String, error) {
+	if stringId == "" {
 		return nil, errors.New("record not found")
 	}
 

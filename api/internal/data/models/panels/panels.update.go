@@ -116,7 +116,7 @@ func (p *PanelModel) UpdatePanel(update *boiler.Panel) (*boiler.Panel, error) {
 	return panel, nil
 }
 
-func (p *PanelModel) UpdatePanelsColor(stringId int64, stringColor string) (boiler.PanelSlice, int64, error) {
+func (p *PanelModel) UpdatePanelsColor(stringId string, stringColor string) (boiler.PanelSlice, int64, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 	panels, err := boiler.Panels(boiler.PanelWhere.StringID.EQ(stringId)).All(ctx, p.DB)

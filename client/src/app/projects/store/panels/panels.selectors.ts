@@ -21,13 +21,13 @@ export const selectPanelByRouteParams = createSelector(
   selectRouteParams,
   (panels, { panelId }) => panels[panelId],
 )
-
+/*
 export const selectPanelsByStringIdRouteParams = createSelector(
   selectAllPanels,
   selectRouteParams,
   (panels, { stringId }) =>
     panels.filter((panel) => panel.string_id === Number(stringId)),
-)
+)*/
 
 export const selectPanelsByProjectIdRouteParams = createSelector(
   selectAllPanels,
@@ -41,15 +41,15 @@ export const selectPanelsByProjectId = (props: { projectId: number }) =>
     panels.filter((panel) => panel.project_id === Number(props.projectId)),
   )
 
-export const selectPanelsByStringId = (props: { stringId: number }) =>
+/*export const selectPanelsByStringId = (props: { stringId: number }) =>
   createSelector(selectAllPanels, (panels: PanelModel[]) =>
     panels.filter((panel) => panel.string_id === props.stringId),
-  )
+  )*/
 
-export const selectPanelsByTrackerId = (props: { trackerId: number }) =>
+/*export const selectPanelsByTrackerId = (props: { trackerId: number }) =>
   createSelector(selectAllPanels, (panels: PanelModel[]) =>
     panels.filter((panel) => panel.tracker_id === props.trackerId),
-  )
+  )*/
 
 /*
 export const selectPanelByLocation = (props: { location: number }) =>

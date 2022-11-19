@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"github.com/Hazzajenko/gosolarbackend/internal/data/models/cables"
 	"github.com/Hazzajenko/gosolarbackend/internal/data/models/inverters"
+	"github.com/Hazzajenko/gosolarbackend/internal/data/models/joins"
 	"github.com/Hazzajenko/gosolarbackend/internal/data/models/panels"
 	"github.com/Hazzajenko/gosolarbackend/internal/data/models/projects"
 	"github.com/Hazzajenko/gosolarbackend/internal/data/models/strings"
@@ -19,6 +20,7 @@ type Models struct {
 	Strings   strings.StringModel
 	Panels    panels.PanelModel
 	Cables    cables.CableModel
+	Joins     joins.JoinModel
 }
 
 func InitModels(db *sql.DB) Models {
@@ -30,5 +32,6 @@ func InitModels(db *sql.DB) Models {
 		Strings:   strings.StringModel{DB: db},
 		Panels:    panels.PanelModel{DB: db},
 		Cables:    cables.CableModel{DB: db},
+		Joins:     joins.JoinModel{DB: db},
 	}
 }

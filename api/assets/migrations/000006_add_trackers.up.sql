@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS trackers (
+/*CREATE TABLE IF NOT EXISTS trackers (
     id bigserial PRIMARY KEY,
     project_id bigint NOT NULL REFERENCES projects ON DELETE CASCADE,
     inverter_id bigint NOT NULL REFERENCES inverters ON DELETE CASCADE,
@@ -14,6 +14,37 @@ CREATE TABLE IF NOT EXISTS trackers (
     version integer NOT NULL DEFAULT 1,
     type text NOT NULL DEFAULT 'TRACKER'
 );
+*/
+create table if not exists trackers
+(
+    id                        text                        default 'err'::text     not null,
+    project_id                bigint                                              not null,
+    inverter_id               text                        default 'err'::text     not null,
+    name                      text                                                not null,
+    created_at                timestamp(0) with time zone default now()           not null,
+    created_by                bigserial,
+    max_input_current         bigint                      default 0               not null,
+    max_short_circuit_current bigint                      default 0               not null,
+    string_amount             bigint                      default 0               not null,
+    parallel_amount           bigint                      default 0               not null,
+    panel_amount              bigint                      default 0               not null,
+    version                   integer                     default 1               not null,
+    model                     integer                     default 3               not null,
+    type                      text                        default 'TRACKER'::text not null,
+    location                  text                        default 'inv'::text     not null,
+    color               text                        default 'orange'::text      not null,
+    primary key (id),
+    foreign key (project_id) references projects
+        on delete cascade,
+    foreign key (created_by) references users
+        on delete cascade,
+    foreign key (inverter_id) references inverters
+        on update cascade on delete cascade
+);
+
+
+
+
 
 /*CREATE TABLE IF NOT EXISTS inverters_trackers (
     inverter_id bigint NOT NULL REFERENCES inverters ON DELETE CASCADE,

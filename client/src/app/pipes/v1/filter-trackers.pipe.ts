@@ -5,7 +5,7 @@ import { TrackerModel } from '../../projects/models/tracker.model'
   name: 'filterTrackers',
 })
 export class FilterTrackersPipe implements PipeTransform {
-  transform(trackers: TrackerModel[], inverterId: number): TrackerModel[] {
+  transform(trackers: TrackerModel[], inverterId: string): TrackerModel[] {
     if (!trackers || !inverterId) {
       return trackers
     }

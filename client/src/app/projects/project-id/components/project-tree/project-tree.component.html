@@ -16,18 +16,16 @@
               >
                 <mat-icon class="mat-icon-rtl-mirror">
                   {{
-                    inverterBool[inverter.id] ? "expand_more" : "chevron_right"
+                    inverterOpenArray.includes(inverter.id)
+                      ? "expand_more"
+                      : "chevron_right"
                   }}
                 </mat-icon>
               </button>
-              <span
-                >{{ inverter.name }} [{{ inverter.tracker_amount }}] [{{
-                  inverter.id
-                }}]</span
-              >
+              <span>{{ inverter.name }} [{{ inverter.id }}]</span>
             </div>
 
-            <div *ngIf="inverterBool[inverter.id]">
+            <div *ngIf="inverterOpenArray.includes(inverter.id)">
               <div class="project-tree__inverter-item__button-menu">
                 <app-button-menu
                   [inverter]="inverter"
@@ -41,8 +39,8 @@
                     [inverter]="inverter"
                     [type]="inverter.type"
                   ></app-stats-section>
-                  {{ (panels | filterPanelsBy: inverter.id:1).length }}
-                  Panels
+                  <!--                  {{ (panels | filterPanelsBy: inverter.id:1).length }}-->
+                  <!--                  Panels-->
                   <div
                     *ngFor="
                       let tracker of trackers | filterTrackers: inverter.id
@@ -55,7 +53,7 @@
                     >
                       <mat-icon class="mat-icon-rtl-mirror">
                         {{
-                          trackerBool[tracker.id]
+                          trackerOpenArray.includes(tracker.id)
                             ? "expand_more"
                             : "chevron_right"
                         }}
@@ -63,7 +61,7 @@
                     </button>
                     {{ tracker.name }}
 
-                    <div *ngIf="trackerBool[tracker.id]">
+                    <div *ngIf="trackerOpenArray.includes(tracker.id)">
                       <div class="project-tree__tracker-item__button-menu">
                         <app-button-menu
                           [inverter]="inverter"
@@ -79,8 +77,8 @@
                             [tracker]="tracker"
                             [type]="tracker.type"
                           ></app-stats-section>
-                          {{ (panels | filterPanelsBy: tracker.id:2).length }}
-                          Panels
+                          <!--                          {{ (panels | filterPanelsBy: tracker.id:2).length }}-->
+                          <!--                          Panels-->
                           <div
                             *ngFor="
                               let stringModel of strings
@@ -92,9 +90,16 @@
                               [attr.aria-label]="'Toggle ' + stringModel.name"
                               mat-icon-button
                             >
+                              <!--                              <mat-icon class="mat-icon-rtl-mirror">
+                                                              {{
+                                                                stringBool[stringModel.id]
+                                                                  ? "expand_more"
+                                                                  : "chevron_right"
+                                                              }}
+                                                            </mat-icon>-->
                               <mat-icon class="mat-icon-rtl-mirror">
                                 {{
-                                  stringBool[stringModel.id]
+                                  stringOpenArray.includes(stringModel.id)
                                     ? "expand_more"
                                     : "chevron_right"
                                 }}
@@ -103,7 +108,10 @@
                             {{ stringModel.name }} [{{
                               stringModel.panel_amount
                             }}]
-                            <div *ngIf="stringBool[stringModel.id]">
+                            <div
+                              *ngIf="stringOpenArray.includes(stringModel.id)"
+                            >
+                              <!--                            <div *ngIf="stringBool[stringModel.id]">-->
                               <div
                                 class="project-tree__string-item__button-menu"
                               >

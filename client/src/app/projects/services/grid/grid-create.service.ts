@@ -1,34 +1,36 @@
 import { Injectable } from '@angular/core'
-import { HttpClient } from '@angular/common/http'
-import { Store } from '@ngrx/store'
-import { AppState } from '../../../store/app.state'
-import { CreateMode } from '../../store/grid/grid.actions'
 import { StringModel } from '../../models/string.model'
 import { GridMode } from '../../store/grid/grid-mode.model'
 import { ProjectModel } from '../../models/project.model'
 import { BlockModel } from '../../models/block.model'
 import { UnitModel } from '../../models/unit.model'
-import { PanelsEntityService } from '../../project-id/services/panels-entity/panels-entity.service'
 import { PanelModel } from '../../models/panel.model'
 import { Guid } from 'guid-typescript'
-import { CablesEntityService } from '../../project-id/services/cables-entity/cables-entity.service'
 import { CableModel } from '../../models/cable.model'
+import { InverterModel } from '../../models/inverter.model'
+import { GridService } from './grid.service'
+import { PanelsEntityService } from '../../project-id/services/panels-entity/panels-entity.service'
+import { CablesEntityService } from '../../project-id/services/cables-entity/cables-entity.service'
+import { InvertersEntityService } from '../../project-id/services/inverters-entity/inverters-entity.service'
+import { JoinsEntityService } from '../../project-id/services/joins-entity/joins-entity.service'
 
 @Injectable({
   providedIn: 'root',
 })
-export class GridCreateService {
+export class GridCreateService extends GridService {
   constructor(
-    private http: HttpClient,
-    private store: Store<AppState>,
-    private panelEntity: PanelsEntityService,
-    private cableEntity: CablesEntityService,
-  ) {}
+    panelsEntity: PanelsEntityService,
+    cablesEntity: CablesEntityService,
+    invertersEntity: InvertersEntityService,
+    joinsEntity: JoinsEntityService,
+  ) {
+    super(panelsEntity, cablesEntity, invertersEntity, joinsEntity)
+  }
 
   createSwitch(
     location: string,
     gridState: {
-      createMode?: CreateMode
+      createMode?: UnitModel
       selectedStrings?: StringModel[]
       selectedString?: StringModel
       gridMode?: GridMode
@@ -36,8 +38,13 @@ export class GridCreateService {
     project: ProjectModel,
     blocks: BlockModel[],
   ) {
+    const doesExist = blocks.find((block) => block.location === location)
+    if (doesExist) {
+      return console.log('cell location taken')
+    }
+
     switch (gridState.createMode) {
-      case CreateMode.PANEL:
+      case UnitModel.PANEL:
         return this.createPanelForGrid(
           project,
           location,
@@ -46,8 +53,16 @@ export class GridCreateService {
           blocks,
         )
 
-      case CreateMode.CABLE:
+      case UnitModel.CABLE:
         return this.createCableForGrid(
+          project,
+          location,
+          gridState.gridMode!,
+          blocks,
+        )
+
+      case UnitModel.INVERTER:
+        return this.createInverterForGrid(
           project,
           location,
           gridState.gridMode!,
@@ -66,33 +81,18 @@ export class GridCreateService {
     blocks: BlockModel[],
   ) {
     if (!selectedString) return console.log('please select a string')
-    if (selectedString.id < 1) console.log('error with selected string')
+    if (selectedString.id === 'err') console.log('error with selected string')
 
     if (selectedString) {
-      const doesExist = blocks.find((block) => block.location === location)
-      if (doesExist) {
-        return console.log('cell location taken')
-      }
-
-      /*      const request: CreatePanelRequest = {
-              project_id: selectedString.project_id,
-              inverter_id: selectedString.inverter_id,
-              tracker_id: selectedString.tracker_id,
-              string_id: selectedString.id,
-              location,
-            }*/
-
       const panelRequest: PanelModel = {
         id: Guid.create().toString(),
-        // project_id: selectedString.project_id,
         inverter_id: selectedString.inverter_id,
         tracker_id: selectedString.tracker_id,
         string_id: selectedString.id,
         location,
       }
 
-      this.panelEntity.add(panelRequest)
-      // this.store.dispatch(PanelStateActions.addPanelHttp({ request }))
+      this.panelsEntity.add(panelRequest)
     }
   }
 
@@ -102,20 +102,8 @@ export class GridCreateService {
     gridMode: GridMode,
     blocks: BlockModel[],
   ) {
-    const doesExist = blocks.find((block) => block.location === location)
-    if (doesExist) {
-      return console.log('cell location taken')
-    }
-
-    /*    const request: CreateCableRequest = {
-      location,
-      size: 4,
-      project_id: project.id,
-    }*/
-
     const cableRequest: CableModel = {
       id: Guid.create().toString(),
-      // project_id: project.id,
       location,
       size: 4,
       model: UnitModel.CABLE,
@@ -123,7 +111,23 @@ export class GridCreateService {
       color: 'black',
     }
 
-    this.cableEntity.add(cableRequest)
-    // this.store.dispatch(CableStateActions.addCableHttp({ request }))
+    this.cablesEntity.add(cableRequest)
+  }
+
+  private createInverterForGrid(
+    project: ProjectModel,
+    location: string,
+    gridMode: GridMode,
+    blocks: BlockModel[],
+  ) {
+    const inverterRequest: InverterModel = {
+      id: Guid.create().toString(),
+      location,
+      model: UnitModel.INVERTER,
+      color: 'blue',
+      name: 'New Inverter',
+    }
+
+    this.invertersEntity.add(inverterRequest)
   }
 }

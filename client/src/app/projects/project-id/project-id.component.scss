@@ -35,7 +35,33 @@
   }
 }
 
+
 .project-container-v3 {
+  display: flex;
+  justify-content: space-between;
+
+  &__project-tree {
+    background: lightblue;
+    flex: 0 0 30%;
+  }
+
+  &__project-display {
+    background: #669966;
+    flex: 0 0 70%;
+  }
+}
+
+.project-container-v4 {
+  display: flex;
+  justify-content: space-between;
+
+  &__project-display {
+    background: #669966;
+    flex: 0 0 100%;
+  }
+}
+
+.project-container-grid-test {
   display: grid;
   grid-template-columns: 0.5fr 1.5fr 1.5fr 0.5fr;
   grid-template-rows: 1fr 1fr 1fr;

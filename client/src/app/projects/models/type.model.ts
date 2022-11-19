@@ -5,6 +5,7 @@ export type TypeModel =
   | 'STRING'
   | 'PANEL'
   | 'CABLE'
+  | 'JOIN'
 
 /*
 export enum TypeModel {

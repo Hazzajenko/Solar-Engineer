@@ -12,6 +12,7 @@ import { GridStateActions } from '../../../../store/grid/grid.actions'
 import { Observable } from 'rxjs'
 import { selectStringsByProjectIdRouteParams } from '../../../../store/strings/strings.selectors'
 import { TypeModel } from '../../../../models/type.model'
+import { StringsEntityService } from '../../../services/strings-entity/strings-entity.service'
 
 @Component({
   selector: 'app-button-menu',
@@ -34,6 +35,7 @@ export class ButtonMenuComponent implements OnInit {
     private stringsService: StringsService,
     private panelsService: PanelsService,
     private store: Store<AppState>,
+    private stringsEntity: StringsEntityService,
   ) {}
 
   ngOnInit(): void {
@@ -52,7 +54,7 @@ export class ButtonMenuComponent implements OnInit {
   }
 
   async createTracker(projectId: number, inverter: InverterModel) {
-    await this.trackersService.createTrackers(projectId, inverter.id)
+    // await this.trackersService.createTrackers(projectId, inverter.id)
   }
 
   async createString(
@@ -60,25 +62,31 @@ export class ButtonMenuComponent implements OnInit {
     inverter: InverterModel,
     tracker: TrackerModel,
   ) {
-    await this.stringsService.createString(
-      projectId,
-      inverter.id,
-      tracker.id,
-      'new string',
-    )
+    /*    await this.stringsService.createString(
+          projectId,
+          inverter.id,
+          tracker.id,
+          'new string',
+        )*/
   }
 
-  async changeStringColor(color: string) {
-    await this.stringsService.updateStringColor(
-      this.projectId!,
-      this.string!,
+  changeStringColor(color: string) {
+    const string: StringModel = {
+      ...this.string!,
       color,
-    )
+    }
+
+    this.stringsEntity.update(string)
+    /*    await this.stringsService.updateStringColor(
+          this.projectId!,
+          this.string!,
+          color,
+        )*/
   }
 
   async deleteTracker(tracker: TrackerModel) {
     if (this.projectId) {
-      await this.trackersService.deleteTracker(this.projectId, tracker.id)
+      // await this.trackersService.deleteTracker(this.projectId, tracker.id)
     }
   }
 
@@ -91,13 +99,14 @@ export class ButtonMenuComponent implements OnInit {
 
   async deleteInverter(inverter: InverterModel) {
     if (this.projectId) {
-      await this.invertersService.deleteInverter(this.projectId, inverter.id)
+      // await this.invertersService.deleteInverter(this.projectId, inverter.id)
     }
   }
 
-  async deleteString(string: StringModel) {
-    if (this.projectId) {
-      await this.stringsService.deleteString(this.projectId, string.id)
-    }
+  deleteString(string: StringModel) {
+    this.stringsEntity.delete(string)
+    /*    if (this.projectId) {
+          await this.stringsService.deleteString(this.projectId, string.id)
+        }*/
   }
 }

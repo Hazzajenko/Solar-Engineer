@@ -1,3 +1,4 @@
+<!--
 <ng-container [ngSwitch]="type">
   <div *ngSwitchCase="'INVERTER'">
     <ul *ngIf="inverter" style="list-style: none">
@@ -47,28 +48,29 @@
       </li>
     </ul>
   </div>
-  <div *ngSwitchCase="'STRING'">
-    <ul *ngIf="string" style="list-style: none">
-      <li>
-        VOC:
-        {{ stats.stringsTotalVoc[string.id] }}V
-      </li>
-      <li>
-        VMP:
-        {{ stats.stringsTotalVmp[string.id] }}V
-      </li>
-      <li>
-        PMAX:
-        {{ stats.stringsTotalPmax[string.id] }}W
-      </li>
-      <li>
-        ISC:
-        {{ stats.stringsTotalIsc[string.id] }}A
-      </li>
-      <li>
-        IMP:
-        {{ stats.stringsTotalImp[string.id] }}A
-      </li>
-    </ul>
-  </div>
+  &lt;!&ndash;  <div *ngSwitchCase="'STRING'">
+      <ul *ngIf="string" style="list-style: none">
+        <li>
+          VOC:
+          {{ stats.stringsTotalVoc[string.id] }}V
+        </li>
+        <li>
+          VMP:
+          {{ stats.stringsTotalVmp[string.id] }}V
+        </li>
+        <li>
+          PMAX:
+          {{ stats.stringsTotalPmax[string.id] }}W
+        </li>
+        <li>
+          ISC:
+          {{ stats.stringsTotalIsc[string.id] }}A
+        </li>
+        <li>
+          IMP:
+          {{ stats.stringsTotalImp[string.id] }}A
+        </li>
+      </ul>
+    </div>&ndash;&gt;
 </ng-container>
+-->

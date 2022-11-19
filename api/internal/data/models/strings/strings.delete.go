@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func (p *StringModel) Delete(stringId int64) error {
+func (p *StringModel) Delete(stringId string) error {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()

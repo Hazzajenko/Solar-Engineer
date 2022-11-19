@@ -8,7 +8,7 @@ import { TypeModel } from '../../projects/models/type.model'
 export class FilterPanelsPipe implements PipeTransform {
   transform(
     panels: PanelModel[],
-    id: number,
+    id: string,
     unitModel: TypeModel,
   ): PanelModel[] {
     if (!panels || !id || !unitModel) {
@@ -16,14 +16,14 @@ export class FilterPanelsPipe implements PipeTransform {
     }
 
     switch (unitModel) {
-      case 'PROJECT':
-        return panels.filter((panel) => panel.project_id === id)
+      /*      case 'PROJECT':
+              return panels.filter((panel) => panel.project_id === id)*/
       case 'INVERTER':
         return panels.filter((panel) => panel.inverter_id === id)
       case 'TRACKER':
         return panels.filter((panel) => panel.tracker_id === id)
-      case 'STRING':
-        return panels.filter((panel) => panel.string_id === id)
+      /*      case 'STRING':
+              return panels.filter((panel) => panel.string_id === id)*/
       default:
         return panels
     }

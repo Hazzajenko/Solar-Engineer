@@ -4,9 +4,9 @@ import { TypeModel } from './type.model'
 export interface PanelModel {
   id: string
   project_id?: number
-  inverter_id?: number
-  tracker_id?: number
-  string_id: number
+  inverter_id?: string
+  tracker_id?: string
+  string_id: string
   model?: UnitModel
   type?: TypeModel
   name?: string

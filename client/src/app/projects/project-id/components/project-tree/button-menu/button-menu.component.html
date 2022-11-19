@@ -14,16 +14,16 @@
         <button mat-icon-button>
           <mat-icon>open_in_new</mat-icon>
         </button>
-        <button
-          (click)="selectInverterStrings(trackerStringsFiltered)"
-          *ngIf="
-            trackerStrings
-              | filterStringsBy: inverter.id:1 as trackerStringsFiltered
-          "
-          mat-icon-button
-        >
-          <mat-icon>chevron_right</mat-icon>
-        </button>
+        <!--        <button
+                  (click)="selectInverterStrings(trackerStringsFiltered)"
+                  *ngIf="
+                    trackerStrings
+                      | filterStringsBy: inverter.id:1 as trackerStringsFiltered
+                  "
+                  mat-icon-button
+                >
+                  <mat-icon>chevron_right</mat-icon>
+                </button>-->
       </ng-container>
     </ng-container>
   </div>
@@ -45,16 +45,16 @@
         <button mat-icon-button>
           <mat-icon>open_in_new</mat-icon>
         </button>
-        <button
-          (click)="selectTrackerStrings(trackerStringsFiltered)"
-          *ngIf="
-            trackerStrings
-              | filterStringsBy: tracker.id:2 as trackerStringsFiltered
-          "
-          mat-icon-button
-        >
-          <mat-icon>chevron_right</mat-icon>
-        </button>
+        <!--        <button
+                  (click)="selectTrackerStrings(trackerStringsFiltered)"
+                  *ngIf="
+                    trackerStrings
+                      | filterStringsBy: tracker.id:2 as trackerStringsFiltered
+                  "
+                  mat-icon-button
+                >
+                  <mat-icon>chevron_right</mat-icon>
+                </button>-->
       </ng-container>
     </ng-container>
   </div>

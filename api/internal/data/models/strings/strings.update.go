@@ -23,6 +23,9 @@ func (p *StringModel) UpdateBoilerStringColor(string *boiler.String) (*boiler.St
 		}
 	}
 	getString.Color = string.Color
+	getString.Name = string.Name
+	getString.IsInParallel = string.IsInParallel
+
 	rowsAff, err := getString.Update(ctx, p.DB, boil.Infer())
 	if err != nil {
 		switch {

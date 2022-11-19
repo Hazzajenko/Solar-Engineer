@@ -1,31 +1,32 @@
 import { Injectable } from '@angular/core'
-import { HttpClient } from '@angular/common/http'
-import { Store } from '@ngrx/store'
-import { AppState } from '../../../store/app.state'
-import { CreateMode } from '../../store/grid/grid.actions'
 import { StringModel } from '../../models/string.model'
 import { GridMode } from '../../store/grid/grid-mode.model'
 import { ProjectModel } from '../../models/project.model'
 import { BlockModel } from '../../models/block.model'
 import { UnitModel } from '../../models/unit.model'
+import { GridService } from './grid.service'
 import { PanelsEntityService } from '../../project-id/services/panels-entity/panels-entity.service'
 import { CablesEntityService } from '../../project-id/services/cables-entity/cables-entity.service'
+import { InvertersEntityService } from '../../project-id/services/inverters-entity/inverters-entity.service'
+import { JoinsEntityService } from '../../project-id/services/joins-entity/joins-entity.service'
 
 @Injectable({
   providedIn: 'root',
 })
-export class GridDeleteService {
+export class GridDeleteService extends GridService {
   constructor(
-    private http: HttpClient,
-    private store: Store<AppState>,
-    private panelEntity: PanelsEntityService,
-    private cableEntity: CablesEntityService,
-  ) {}
+    panelsEntity: PanelsEntityService,
+    cablesEntity: CablesEntityService,
+    invertersEntity: InvertersEntityService,
+    joinsEntity: JoinsEntityService,
+  ) {
+    super(panelsEntity, cablesEntity, invertersEntity, joinsEntity)
+  }
 
   deleteSwitch(
     location: string,
     gridState: {
-      createMode?: CreateMode
+      createMode?: UnitModel
       selectedStrings?: StringModel[]
       selectedString?: StringModel
       gridMode?: GridMode
@@ -38,9 +39,11 @@ export class GridDeleteService {
 
     switch (toDelete.model) {
       case UnitModel.PANEL:
-        return this.panelEntity.delete(toDelete.id!)
+        return this.panelsEntity.delete(toDelete.id!)
       case UnitModel.CABLE:
-        return this.cableEntity.delete(toDelete.id!)
+        return this.cablesEntity.delete(toDelete.id!)
+      case UnitModel.INVERTER:
+        return this.invertersEntity.delete(toDelete.id!)
       default:
         break
     }

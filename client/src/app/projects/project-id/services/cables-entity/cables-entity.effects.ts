@@ -19,14 +19,16 @@ export class CablesEntityEffects {
       this.actions$.pipe(
         ofType(`${DataEntities.Cable} ${EntityOp.SAVE_ADD_ONE_SUCCESS}`),
         tap((action: any) => {
+          const cable = action.payload.data
           this.store.dispatch(
             BlocksStateActions.addBlockForGrid({
               block: {
-                id: action.payload.data.id,
-                location: action.payload.data.location,
+                id: cable.id,
+                location: cable.location,
                 model: UnitModel.CABLE,
                 type: 'CABLE',
-                project_id: action.payload.data.project_id!,
+                project_id: cable.project_id!,
+                color: cable.color,
               },
             }),
           )
@@ -47,6 +49,7 @@ export class CablesEntityEffects {
                 model: UnitModel.CABLE,
                 type: 'CABLE',
                 project_id: cable.project_id!,
+                color: cable.color,
               }
               return block
             },
@@ -76,6 +79,21 @@ export class CablesEntityEffects {
                 type: 'CABLE',
                 project_id: data.changes.project_id!,
               },
+            }),
+          )
+        }),
+      ),
+    { dispatch: false },
+  )
+  deleteCable$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(`${DataEntities.Cable} ${EntityOp.SAVE_DELETE_ONE}`),
+        tap((action: any) => {
+          const data = action.payload.data
+          this.store.dispatch(
+            BlocksStateActions.deleteBlockForGrid({
+              block_id: data,
             }),
           )
         }),

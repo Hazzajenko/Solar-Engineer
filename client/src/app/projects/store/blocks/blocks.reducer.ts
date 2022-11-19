@@ -37,8 +37,8 @@ export const blocksReducer = createReducer(
     blockAdapter.updateMany(blocks, state),
   ),
 
-  on(BlocksStateActions.deleteBlockForGrid, (state, { block }) =>
-    blockAdapter.removeOne(block.id, state),
+  on(BlocksStateActions.deleteBlockForGrid, (state, { block_id }) =>
+    blockAdapter.removeOne(block_id, state),
   ),
 
   on(BlocksStateActions.clearBlocksState, (state) =>

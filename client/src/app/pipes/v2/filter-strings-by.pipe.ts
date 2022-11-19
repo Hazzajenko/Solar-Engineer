@@ -9,7 +9,7 @@ import { UnitModel } from '../../projects/models/unit.model'
 export class FilterStringsByPipe implements PipeTransform {
   transform(
     strings: StringModel[],
-    id: number,
+    id: string,
     model: UnitModel,
   ): StringModel[] {
     if (!strings || !id || !model) {

@@ -1,0 +1,342 @@
+@mixin drawParent() {
+  display: flex;
+  align-items: center;
+  position: relative;
+  justify-content: center;
+  height: 33px;
+  width: 3px;
+  //background-color: #e114f1;
+  z-index: 1;
+  //clip-path: inset(0 0 50% 0);
+
+}
+
+@mixin drawAfter() {
+  content: "";
+  position: absolute;
+  width: 34px;
+  height: 3px;
+  //background-color: #e114f1;
+  top: 14px;
+  left: -15px;
+}
+
+
+.row {
+  display: flex;
+
+  //display: flex;
+}
+
+.col {
+  border: 0.01px solid rgba(0, 0, 0, 0.9);
+}
+
+.project-design-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+.drop-zone {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: #24292e;
+  background-color: #f6eded;
+  width: 30px;
+  height: 30px;
+
+
+  &__panel {
+    background-color: #95c2fa;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      //background-color: red;
+      color: red;
+      width: 23px;
+      height: 23px;
+    }
+  }
+
+  &__cable {
+    background-color: #486079;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      //background-color: red;
+      color: red;
+      width: 23px;
+      height: 23px;
+    }
+
+    &__draw__top {
+      @include drawParent();
+      background-color: #e114f1;
+      clip-path: inset(0 0 50% 0);
+      //overflow: hidden;
+
+      &:after {
+        @include drawAfter();
+        background-color: #e114f1;
+        //overflow: hidden;
+        //float: left;
+      }
+    }
+
+    &__draw__bottom {
+      @include drawParent();
+      background-color: #e114f1;
+
+      //overflow: hidden;
+
+      clip-path: inset(50% 0 0 0);
+
+      &:after {
+        //float: left;
+        @include drawAfter();
+        background-color: #e114f1;
+        //overflow: hidden;
+      }
+    }
+
+    &__draw__top-bottom {
+      @include drawParent();
+      background-color: #e114f1;
+
+      //overflow: hidden;
+
+      clip-path: inset(0 2% 0 2%);
+
+      &:after {
+        //float: left;
+        @include drawAfter();
+        background-color: #e114f1;
+        //overflow: hidden;
+      }
+    }
+
+    &__draw__left {
+      @include drawParent();
+      background-color: #e114f1;
+
+      //overflow: hidden;
+
+      clip-path: inset(0 30% 0 0);
+
+      &:after {
+        //float: left;
+        @include drawAfter();
+        background-color: #e114f1;
+        //overflow: hidden;
+      }
+    }
+
+    &__draw__left-top {
+      @include drawParent();
+      background-color: #e114f1;
+
+      //overflow: hidden;
+
+      //clip-path: polygon(0 31%, 0 0, 35% 0%, 65% 0%, 65% 25%, 65% 22%, 65% 50%, 65% 50%, 67% 65%, 34% 65%, 35% 65%, 0 65%);
+      //clip-path: inset(10% 0 0 0);
+      clip-path: polygon(0 31%, 0 0, 35% 0%, 65% 0%, 65% 25%, 65% 22%, 65% 50%, 65% 50%, 67% 65%, 34% 65%, 35% 65%, 0 65%);
+
+      &:after {
+        //clip-path: polygon(0 31%, 0 0, 35% 0%, 65% 0%, 65% 25%, 65% 22%, 65% 50%, 65% 50%, 67% 65%, 34% 65%, 35% 65%, 0 65%);
+        //float: left;
+        //clip-path: inset(-50% 50% -50% -50%);
+        //clip-path: circle()(-50% 50% -50% -50%);
+        //clip-path: inset(10px 20px 30px 40px);
+        @include drawAfter();
+        background-color: #e114f1;
+        //overflow: hidden;
+      }
+    }
+
+
+    &__draw__right {
+      @include drawParent();
+      background-color: #e114f1;
+
+      //overflow: hidden;
+
+      clip-path: inset(0 0 0 30%);
+
+      &:after {
+        //float: left;
+        @include drawAfter();
+        background-color: #e114f1;
+        //overflow: hidden;
+      }
+    }
+  }
+
+  &__inverter {
+    //align-items: center;
+    //justify-content: center;
+    //border: 1px solid orangered;
+    background-color: #95c2fa;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      //background-color: red;
+      color: red;
+      width: 23px;
+      height: 23px;
+    }
+
+
+    &__line {
+      display: flex;
+      //flex-direction: row-reverse;
+      align-items: center;
+      position: relative;
+      justify-content: center;
+      height: 33px;
+      left: -1px;
+      //left: 50%;
+      //margin-left: -3px;
+      //top: 10%;
+      width: 5px;
+      //bottom: -10px;
+      background-color: red;
+      z-index: 1;
+
+
+      &:after {
+
+        content: "";
+        position: absolute;
+        width: 34px;
+        height: 5px;
+        background-color: red;
+        top: 14px;
+        left: -15px;
+
+      }
+    }
+  }
+}
+
+
+.panel {
+  //align-items: center;
+  //justify-content: center;
+  //border: 1px solid orangered;
+  background-color: #95c2fa;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+
+  &__location {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.cable {
+  //align-items: center;
+  //justify-content: center;
+  //border: 1px solid orangered;
+  background-color: #486079;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+
+}
+
+.inverter {
+  //align-items: center;
+  //justify-content: center;
+  //border: 1px solid orangered;
+  background-color: #95c2fa;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &__line {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    //border-left: 6px solid red;
+    height: 40px;
+    //position: absolute;
+    left: 50%;
+    margin-left: -3px;
+    top: 0;
+    //position: absolute;
+    //top: 50%;
+    width: 5px;
+    //height: 100%;
+    background-color: red;
+
+    /* draw behind child elements */
+    //z-index: 0;
+    //margin-left: -3px;
+    //top: 0
+  }
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  margin: 50px;
+}
+
+.custom-menu {
+  display: flex;
+  align-items: flex-end;
+}
+
+mat-menu {
+  margin-top: 15px;
+  background-color: #95c2fa;
+  color: #1976d2;
+}
+
+.mat-menu-panel {
+  margin-top: 15px;
+  background-color: #95c2fa;
+  color: #1976d2;
+}
+
+/*.mat-menu-item {
+  margin-top: 15px;
+  background-color: #95c2fa;
+  color: #1976d2;
+}*/
+
+canvas {
+  width: 80%;
+  //width: 1000px;
+  height: 80%;
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 25%;
+  margin: -250px 0 0 -250px;
+}

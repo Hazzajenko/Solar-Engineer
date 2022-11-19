@@ -45,21 +45,23 @@ func (s *Server) Routes() *chi.Mux {
 
 			r.Group(func(r chi.Router) {
 				r.Get("/inverters", s.Handlers.GetInvertersByProjectId)
-				r.Post("/inverters", s.Handlers.CreateInverter)
-				r.Delete("/inverters", s.Handlers.DeleteInverter)
+				r.Post("/inverter", s.Handlers.CreateInverter)
+				r.Put("/inverter/{inverterId}", s.Handlers.UpdateInverter)
+				r.Delete("/inverter/{inverterId}", s.Handlers.DeleteInverter)
 			})
 
 			r.Group(func(r chi.Router) {
 				r.Get("/trackers", s.Handlers.GetTrackersByProjectId)
-				r.Delete("/trackers", s.Handlers.DeleteTracker)
+				r.Post("/tracker", s.Handlers.CreateTracker)
+				r.Put("/tracker/{trackerId}", s.Handlers.UpdateTracker)
+				r.Delete("/tracker/{trackerId}", s.Handlers.DeleteTracker)
 			})
 
 			r.Group(func(r chi.Router) {
 				r.Get("/strings", s.Handlers.GetStringsByProjectId)
-				r.Post("/strings", s.Handlers.CreateString)
-				r.Patch("/strings", s.Handlers.UpdateString)
-				r.Post("/strings/color", s.Handlers.UpdateStringColor)
-				r.Delete("/strings", s.Handlers.DeleteString)
+				r.Post("/string", s.Handlers.CreateString)
+				r.Put("/string/{stringId}", s.Handlers.UpdateStringColor)
+				r.Delete("/string/{stringId}", s.Handlers.DeleteString)
 			})
 
 			r.Group(func(r chi.Router) {
@@ -77,6 +79,14 @@ func (s *Server) Routes() *chi.Mux {
 				r.Put("/cable/{cableId}", s.Handlers.UpdateCable)
 				//r.Put("/cables", s.Handlers.UpdateCable)
 				r.Delete("/cable/{cableId}", s.Handlers.DeleteCable)
+			})
+
+			r.Group(func(r chi.Router) {
+				r.Get("/joins", s.Handlers.GetJoinsByProjectId)
+				r.Post("/join", s.Handlers.CreateJoin)
+				r.Put("/join/{joinId}", s.Handlers.UpdateJoin)
+				//r.Put("/cables", s.Handlers.UpdateCable)
+				r.Delete("/join/{joinId}", s.Handlers.DeleteJoin)
 			})
 
 			r.Route("/{inverterId}", func(r chi.Router) {

@@ -4,23 +4,10 @@ import { AppState } from '../../store/app.state'
 import { combineLatest, Observable } from 'rxjs'
 import { InverterModel } from '../models/inverter.model'
 import { MatMenuTrigger } from '@angular/material/menu'
-import {
-  selectInverterById,
-  selectInvertersByProjectId,
-} from '../store/inverters/inverters.selectors'
-import {
-  selectTrackerById,
-  selectTrackersByProjectId,
-} from '../store/trackers/trackers.selectors'
-import {
-  selectSelectedStringId,
-  selectStringsByProjectId,
-  selectStringsByTrackerId,
-} from '../store/strings/strings.selectors'
-import {
-  selectPanelsByProjectId,
-  selectPanelsByTrackerId,
-} from '../store/panels/panels.selectors'
+import { selectInvertersByProjectId } from '../store/inverters/inverters.selectors'
+import { selectTrackersByProjectId } from '../store/trackers/trackers.selectors'
+import { selectStringsByProjectId } from '../store/strings/strings.selectors'
+import { selectPanelsByProjectId } from '../store/panels/panels.selectors'
 import { map } from 'rxjs/operators'
 import { TrackerModel } from '../models/tracker.model'
 import { StringModel } from '../models/string.model'
@@ -81,37 +68,37 @@ export class ProjectIdComponent implements OnInit {
     console.log('Your GUID is: ', guid)
     // this.statsService.calculateStringTotals()
     // console.log(this.statsService.stringsTotalVoc)
-    this.trackerTree$ = combineLatest([
-      this.store.select(selectProjectByRouteParams),
-      this.store.select(
-        selectInverterById({
-          id: 11,
-        }),
-      ),
-      this.store.select(
-        selectTrackerById({
-          id: 6,
-        }),
-      ),
-      this.store.select(
-        selectStringsByTrackerId({
-          trackerId: 6,
-        }),
-      ),
-      this.store.select(
-        selectPanelsByTrackerId({
-          trackerId: 6,
-        }),
-      ),
-    ]).pipe(
-      map(([project, inverter, tracker, strings, panels]) => ({
-        project,
-        inverter,
-        tracker,
-        strings,
-        panels,
-      })),
-    )
+    /*    this.trackerTree$ = combineLatest([
+          this.store.select(selectProjectByRouteParams),
+          this.store.select(
+            selectInverterById({
+              id: 11,
+            }),
+          ),
+          this.store.select(
+            selectTrackerById({
+              id: 6,
+            }),
+          ),
+          this.store.select(
+            selectStringsByTrackerId({
+              trackerId: 6,
+            }),
+          ),
+          this.store.select(
+            selectPanelsByTrackerId({
+              trackerId: 6,
+            }),
+          ),
+        ]).pipe(
+          map(([project, inverter, tracker, strings, panels]) => ({
+            project,
+            inverter,
+            tracker,
+            strings,
+            panels,
+          })),
+        )*/
 
     this.projects.getDataByProjectId(3).then(async () => {})
     this.store$ = combineLatest([
@@ -145,13 +132,13 @@ export class ProjectIdComponent implements OnInit {
         panels,
       })),
     )
-    this.gridState$ = combineLatest([
-      this.store.select(selectSelectedStringId),
-    ]).pipe(
-      map(([selectedStringId]) => ({
-        selectedStringId,
-      })),
-    )
+    /*    this.gridState$ = combineLatest([
+          this.store.select(selectSelectedStringId),
+        ]).pipe(
+          map(([selectedStringId]) => ({
+            selectedStringId,
+          })),
+        )*/
   }
 
   onRightClick(event: MouseEvent) {

@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func (p *TrackerModel) Delete(trackerId int64) error {
+func (p *TrackerModel) Delete(trackerId string) error {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()

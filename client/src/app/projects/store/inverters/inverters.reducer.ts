@@ -3,7 +3,7 @@ import { createReducer, on } from '@ngrx/store'
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity'
 import { InverterModel } from '../../models/inverter.model'
 
-export const selectInverterId = (b: InverterModel): number => b.id
+export const selectInverterId = (b: InverterModel): string => b.id
 export const sortByInverterName = (
   a: InverterModel,
   b: InverterModel,

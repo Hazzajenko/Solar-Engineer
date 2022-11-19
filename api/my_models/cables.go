@@ -35,6 +35,7 @@ type Cable struct {
 	Size      int64     `boil:"size" json:"size" toml:"size" yaml:"size"`
 	Color     string    `boil:"color" json:"color" toml:"color" yaml:"color"`
 	Type      string    `boil:"type" json:"type" toml:"type" yaml:"type"`
+	JoinID    string    `boil:"join_id" json:"join_id" toml:"join_id" yaml:"join_id"`
 
 	R *cableR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L cableL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -53,6 +54,7 @@ var CableColumns = struct {
 	Size      string
 	Color     string
 	Type      string
+	JoinID    string
 }{
 	ID:        "id",
 	ProjectID: "project_id",
@@ -66,6 +68,7 @@ var CableColumns = struct {
 	Size:      "size",
 	Color:     "color",
 	Type:      "type",
+	JoinID:    "join_id",
 }
 
 var CableTableColumns = struct {
@@ -81,6 +84,7 @@ var CableTableColumns = struct {
 	Size      string
 	Color     string
 	Type      string
+	JoinID    string
 }{
 	ID:        "cables.id",
 	ProjectID: "cables.project_id",
@@ -94,6 +98,7 @@ var CableTableColumns = struct {
 	Size:      "cables.size",
 	Color:     "cables.color",
 	Type:      "cables.type",
+	JoinID:    "cables.join_id",
 }
 
 // Generated where
@@ -230,6 +235,7 @@ var CableWhere = struct {
 	Size      whereHelperint64
 	Color     whereHelperstring
 	Type      whereHelperstring
+	JoinID    whereHelperstring
 }{
 	ID:        whereHelperstring{field: "\"cables\".\"id\""},
 	ProjectID: whereHelperint64{field: "\"cables\".\"project_id\""},
@@ -243,20 +249,24 @@ var CableWhere = struct {
 	Size:      whereHelperint64{field: "\"cables\".\"size\""},
 	Color:     whereHelperstring{field: "\"cables\".\"color\""},
 	Type:      whereHelperstring{field: "\"cables\".\"type\""},
+	JoinID:    whereHelperstring{field: "\"cables\".\"join_id\""},
 }
 
 // CableRels is where relationship names are stored.
 var CableRels = struct {
 	CreatedByUser string
+	Join          string
 	Project       string
 }{
 	CreatedByUser: "CreatedByUser",
+	Join:          "Join",
 	Project:       "Project",
 }
 
 // cableR is where relationships are stored.
 type cableR struct {
 	CreatedByUser *User    `boil:"CreatedByUser" json:"CreatedByUser" toml:"CreatedByUser" yaml:"CreatedByUser"`
+	Join          *Join    `boil:"Join" json:"Join" toml:"Join" yaml:"Join"`
 	Project       *Project `boil:"Project" json:"Project" toml:"Project" yaml:"Project"`
 }
 
@@ -272,6 +282,13 @@ func (r *cableR) GetCreatedByUser() *User {
 	return r.CreatedByUser
 }
 
+func (r *cableR) GetJoin() *Join {
+	if r == nil {
+		return nil
+	}
+	return r.Join
+}
+
 func (r *cableR) GetProject() *Project {
 	if r == nil {
 		return nil
@@ -283,9 +300,9 @@ func (r *cableR) GetProject() *Project {
 type cableL struct{}
 
 var (
-	cableAllColumns            = []string{"id", "project_id", "model", "location", "created_at", "created_by", "length", "weight", "version", "size", "color", "type"}
-	cableColumnsWithoutDefault = []string{"project_id"}
-	cableColumnsWithDefault    = []string{"id", "model", "location", "created_at", "created_by", "length", "weight", "version", "size", "color", "type"}
+	cableAllColumns            = []string{"id", "project_id", "model", "location", "created_at", "created_by", "length", "weight", "version", "size", "color", "type", "join_id"}
+	cableColumnsWithoutDefault = []string{"id", "project_id"}
+	cableColumnsWithDefault    = []string{"model", "location", "created_at", "created_by", "length", "weight", "version", "size", "color", "type", "join_id"}
 	cablePrimaryKeyColumns     = []string{"id"}
 	cableGeneratedColumns      = []string{}
 )
@@ -579,6 +596,17 @@ func (o *Cable) CreatedByUser(mods ...qm.QueryMod) userQuery {
 	return Users(queryMods...)
 }
 
+// Join pointed to by the foreign key.
+func (o *Cable) Join(mods ...qm.QueryMod) joinQuery {
+	queryMods := []qm.QueryMod{
+		qm.Where("\"id\" = ?", o.JoinID),
+	}
+
+	queryMods = append(queryMods, mods...)
+
+	return Joins(queryMods...)
+}
+
 // Project pointed to by the foreign key.
 func (o *Cable) Project(mods ...qm.QueryMod) projectQuery {
 	queryMods := []qm.QueryMod{
@@ -702,6 +730,126 @@ func (cableL) LoadCreatedByUser(ctx context.Context, e boil.ContextExecutor, sin
 					foreign.R = &userR{}
 				}
 				foreign.R.CreatedByCables = append(foreign.R.CreatedByCables, local)
+				break
+			}
+		}
+	}
+
+	return nil
+}
+
+// LoadJoin allows an eager lookup of values, cached into the
+// loaded structs of the objects. This is for an N-1 relationship.
+func (cableL) LoadJoin(ctx context.Context, e boil.ContextExecutor, singular bool, maybeCable interface{}, mods queries.Applicator) error {
+	var slice []*Cable
+	var object *Cable
+
+	if singular {
+		var ok bool
+		object, ok = maybeCable.(*Cable)
+		if !ok {
+			object = new(Cable)
+			ok = queries.SetFromEmbeddedStruct(&object, &maybeCable)
+			if !ok {
+				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", object, maybeCable))
+			}
+		}
+	} else {
+		s, ok := maybeCable.(*[]*Cable)
+		if ok {
+			slice = *s
+		} else {
+			ok = queries.SetFromEmbeddedStruct(&slice, maybeCable)
+			if !ok {
+				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", slice, maybeCable))
+			}
+		}
+	}
+
+	args := make([]interface{}, 0, 1)
+	if singular {
+		if object.R == nil {
+			object.R = &cableR{}
+		}
+		args = append(args, object.JoinID)
+
+	} else {
+	Outer:
+		for _, obj := range slice {
+			if obj.R == nil {
+				obj.R = &cableR{}
+			}
+
+			for _, a := range args {
+				if a == obj.JoinID {
+					continue Outer
+				}
+			}
+
+			args = append(args, obj.JoinID)
+
+		}
+	}
+
+	if len(args) == 0 {
+		return nil
+	}
+
+	query := NewQuery(
+		qm.From(`joins`),
+		qm.WhereIn(`joins.id in ?`, args...),
+	)
+	if mods != nil {
+		mods.Apply(query)
+	}
+
+	results, err := query.QueryContext(ctx, e)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load Join")
+	}
+
+	var resultSlice []*Join
+	if err = queries.Bind(results, &resultSlice); err != nil {
+		return errors.Wrap(err, "failed to bind eager loaded slice Join")
+	}
+
+	if err = results.Close(); err != nil {
+		return errors.Wrap(err, "failed to close results of eager load for joins")
+	}
+	if err = results.Err(); err != nil {
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for joins")
+	}
+
+	if len(cableAfterSelectHooks) != 0 {
+		for _, obj := range resultSlice {
+			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
+				return err
+			}
+		}
+	}
+
+	if len(resultSlice) == 0 {
+		return nil
+	}
+
+	if singular {
+		foreign := resultSlice[0]
+		object.R.Join = foreign
+		if foreign.R == nil {
+			foreign.R = &joinR{}
+		}
+		foreign.R.Cables = append(foreign.R.Cables, object)
+		return nil
+	}
+
+	for _, local := range slice {
+		for _, foreign := range resultSlice {
+			if local.JoinID == foreign.ID {
+				local.R.Join = foreign
+				if foreign.R == nil {
+					foreign.R = &joinR{}
+				}
+				foreign.R.Cables = append(foreign.R.Cables, local)
 				break
 			}
 		}
@@ -872,6 +1020,53 @@ func (o *Cable) SetCreatedByUser(ctx context.Context, exec boil.ContextExecutor,
 		}
 	} else {
 		related.R.CreatedByCables = append(related.R.CreatedByCables, o)
+	}
+
+	return nil
+}
+
+// SetJoin of the cable to the related item.
+// Sets o.R.Join to related.
+// Adds o to related.R.Cables.
+func (o *Cable) SetJoin(ctx context.Context, exec boil.ContextExecutor, insert bool, related *Join) error {
+	var err error
+	if insert {
+		if err = related.Insert(ctx, exec, boil.Infer()); err != nil {
+			return errors.Wrap(err, "failed to insert into foreign table")
+		}
+	}
+
+	updateQuery := fmt.Sprintf(
+		"UPDATE \"cables\" SET %s WHERE %s",
+		strmangle.SetParamNames("\"", "\"", 1, []string{"join_id"}),
+		strmangle.WhereClause("\"", "\"", 2, cablePrimaryKeyColumns),
+	)
+	values := []interface{}{related.ID, o.ID}
+
+	if boil.IsDebug(ctx) {
+		writer := boil.DebugWriterFrom(ctx)
+		fmt.Fprintln(writer, updateQuery)
+		fmt.Fprintln(writer, values)
+	}
+	if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
+		return errors.Wrap(err, "failed to update local table")
+	}
+
+	o.JoinID = related.ID
+	if o.R == nil {
+		o.R = &cableR{
+			Join: related,
+		}
+	} else {
+		o.R.Join = related
+	}
+
+	if related.R == nil {
+		related.R = &joinR{
+			Cables: CableSlice{o},
+		}
+	} else {
+		related.R.Cables = append(related.R.Cables, o)
 	}
 
 	return nil

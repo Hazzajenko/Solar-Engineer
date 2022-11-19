@@ -23,9 +23,9 @@ import (
 
 // Tracker is an object representing the database table.
 type Tracker struct {
-	ID                     int64     `boil:"id" json:"id" toml:"id" yaml:"id"`
+	ID                     string    `boil:"id" json:"id" toml:"id" yaml:"id"`
 	ProjectID              int64     `boil:"project_id" json:"project_id" toml:"project_id" yaml:"project_id"`
-	InverterID             int64     `boil:"inverter_id" json:"inverter_id" toml:"inverter_id" yaml:"inverter_id"`
+	InverterID             string    `boil:"inverter_id" json:"inverter_id" toml:"inverter_id" yaml:"inverter_id"`
 	Name                   string    `boil:"name" json:"name" toml:"name" yaml:"name"`
 	CreatedAt              time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
 	CreatedBy              int64     `boil:"created_by" json:"created_by" toml:"created_by" yaml:"created_by"`
@@ -37,6 +37,8 @@ type Tracker struct {
 	Version                int       `boil:"version" json:"version" toml:"version" yaml:"version"`
 	Model                  int       `boil:"model" json:"model" toml:"model" yaml:"model"`
 	Type                   string    `boil:"type" json:"type" toml:"type" yaml:"type"`
+	Location               string    `boil:"location" json:"location" toml:"location" yaml:"location"`
+	Color                  string    `boil:"color" json:"color" toml:"color" yaml:"color"`
 
 	R *trackerR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L trackerL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -57,6 +59,8 @@ var TrackerColumns = struct {
 	Version                string
 	Model                  string
 	Type                   string
+	Location               string
+	Color                  string
 }{
 	ID:                     "id",
 	ProjectID:              "project_id",
@@ -72,6 +76,8 @@ var TrackerColumns = struct {
 	Version:                "version",
 	Model:                  "model",
 	Type:                   "type",
+	Location:               "location",
+	Color:                  "color",
 }
 
 var TrackerTableColumns = struct {
@@ -89,6 +95,8 @@ var TrackerTableColumns = struct {
 	Version                string
 	Model                  string
 	Type                   string
+	Location               string
+	Color                  string
 }{
 	ID:                     "trackers.id",
 	ProjectID:              "trackers.project_id",
@@ -104,14 +112,16 @@ var TrackerTableColumns = struct {
 	Version:                "trackers.version",
 	Model:                  "trackers.model",
 	Type:                   "trackers.type",
+	Location:               "trackers.location",
+	Color:                  "trackers.color",
 }
 
 // Generated where
 
 var TrackerWhere = struct {
-	ID                     whereHelperint64
+	ID                     whereHelperstring
 	ProjectID              whereHelperint64
-	InverterID             whereHelperint64
+	InverterID             whereHelperstring
 	Name                   whereHelperstring
 	CreatedAt              whereHelpertime_Time
 	CreatedBy              whereHelperint64
@@ -123,10 +133,12 @@ var TrackerWhere = struct {
 	Version                whereHelperint
 	Model                  whereHelperint
 	Type                   whereHelperstring
+	Location               whereHelperstring
+	Color                  whereHelperstring
 }{
-	ID:                     whereHelperint64{field: "\"trackers\".\"id\""},
+	ID:                     whereHelperstring{field: "\"trackers\".\"id\""},
 	ProjectID:              whereHelperint64{field: "\"trackers\".\"project_id\""},
-	InverterID:             whereHelperint64{field: "\"trackers\".\"inverter_id\""},
+	InverterID:             whereHelperstring{field: "\"trackers\".\"inverter_id\""},
 	Name:                   whereHelperstring{field: "\"trackers\".\"name\""},
 	CreatedAt:              whereHelpertime_Time{field: "\"trackers\".\"created_at\""},
 	CreatedBy:              whereHelperint64{field: "\"trackers\".\"created_by\""},
@@ -138,6 +150,8 @@ var TrackerWhere = struct {
 	Version:                whereHelperint{field: "\"trackers\".\"version\""},
 	Model:                  whereHelperint{field: "\"trackers\".\"model\""},
 	Type:                   whereHelperstring{field: "\"trackers\".\"type\""},
+	Location:               whereHelperstring{field: "\"trackers\".\"location\""},
+	Color:                  whereHelperstring{field: "\"trackers\".\"color\""},
 }
 
 // TrackerRels is where relationship names are stored.
@@ -208,9 +222,9 @@ func (r *trackerR) GetStrings() StringSlice {
 type trackerL struct{}
 
 var (
-	trackerAllColumns            = []string{"id", "project_id", "inverter_id", "name", "created_at", "created_by", "max_input_current", "max_short_circuit_current", "string_amount", "parallel_amount", "panel_amount", "version", "model", "type"}
-	trackerColumnsWithoutDefault = []string{"project_id", "inverter_id", "name"}
-	trackerColumnsWithDefault    = []string{"id", "created_at", "created_by", "max_input_current", "max_short_circuit_current", "string_amount", "parallel_amount", "panel_amount", "version", "model", "type"}
+	trackerAllColumns            = []string{"id", "project_id", "inverter_id", "name", "created_at", "created_by", "max_input_current", "max_short_circuit_current", "string_amount", "parallel_amount", "panel_amount", "version", "model", "type", "location", "color"}
+	trackerColumnsWithoutDefault = []string{"project_id", "name"}
+	trackerColumnsWithDefault    = []string{"id", "inverter_id", "created_at", "created_by", "max_input_current", "max_short_circuit_current", "string_amount", "parallel_amount", "panel_amount", "version", "model", "type", "location", "color"}
 	trackerPrimaryKeyColumns     = []string{"id"}
 	trackerGeneratedColumns      = []string{}
 )
@@ -1402,7 +1416,7 @@ func Trackers(mods ...qm.QueryMod) trackerQuery {
 
 // FindTracker retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
-func FindTracker(ctx context.Context, exec boil.ContextExecutor, iD int64, selectCols ...string) (*Tracker, error) {
+func FindTracker(ctx context.Context, exec boil.ContextExecutor, iD string, selectCols ...string) (*Tracker, error) {
 	trackerObj := &Tracker{}
 
 	sel := "*"
@@ -1915,7 +1929,7 @@ func (o *TrackerSlice) ReloadAll(ctx context.Context, exec boil.ContextExecutor)
 }
 
 // TrackerExists checks if the Tracker row exists.
-func TrackerExists(ctx context.Context, exec boil.ContextExecutor, iD int64) (bool, error) {
+func TrackerExists(ctx context.Context, exec boil.ContextExecutor, iD string) (bool, error) {
 	var exists bool
 	sql := "select exists(select 1 from \"trackers\" where \"id\"=$1 limit 1)"
 

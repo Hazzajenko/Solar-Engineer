@@ -1,20 +1,23 @@
 import { createReducer, on } from '@ngrx/store'
-import { CreateMode, GridStateActions } from './grid.actions'
+import { GridStateActions } from './grid.actions'
 import { StringModel } from '../../models/string.model'
 import { GridMode } from './grid-mode.model'
+import { UnitModel } from '../../models/unit.model'
 
 export interface GridState {
   strings: StringModel[]
   selected?: StringModel
-  createMode: CreateMode
+  createMode: UnitModel
   gridMode: GridMode
+  toJoin: string[]
 }
 
 export const initialGridState: GridState = {
   strings: [],
   selected: undefined,
-  createMode: CreateMode.PANEL,
+  createMode: UnitModel.PANEL,
   gridMode: GridMode.CREATE,
+  toJoin: [],
 }
 
 export const gridReducer = createReducer(
@@ -25,6 +28,7 @@ export const gridReducer = createReducer(
     selected: action.string,
     createMode: state.createMode,
     gridMode: state.gridMode,
+    toJoin: state.toJoin,
   })),
 
   on(GridStateActions.selectTrackerStringsForGrid, (state, action) => ({
@@ -32,6 +36,7 @@ export const gridReducer = createReducer(
     selected: undefined,
     createMode: state.createMode,
     gridMode: state.gridMode,
+    toJoin: state.toJoin,
   })),
 
   on(GridStateActions.selectInverterStringsForGrid, (state, action) => ({
@@ -39,27 +44,30 @@ export const gridReducer = createReducer(
     selected: undefined,
     createMode: state.createMode,
     gridMode: state.gridMode,
+    toJoin: state.toJoin,
   })),
 
-  on(GridStateActions.selectPanelCreateMode, (state, action) => ({
-    createMode: action.mode,
+  on(GridStateActions.selectCreateMode, (state, action) => ({
+    createMode: action.create,
     selected: state.selected,
     strings: state.strings,
     gridMode: state.gridMode,
+    toJoin: state.toJoin,
   })),
-
-  on(GridStateActions.selectCableCreateMode, (state, action) => ({
-    createMode: action.mode,
-    selected: state.selected,
-    strings: state.strings,
-    gridMode: state.gridMode,
-  })),
+  /*
+    on(GridStateActions.selectCableCreateMode, (state, action) => ({
+      createMode: action.mode,
+      selected: state.selected,
+      strings: state.strings,
+      gridMode: state.gridMode,
+    })),*/
 
   on(GridStateActions.clearGridState, (state) => ({
     strings: [],
     selected: undefined,
     createMode: state.createMode,
     gridMode: GridMode.CREATE,
+    toJoin: state.toJoin,
   })),
 
   on(GridStateActions.selectGridmodeCreate, (state, action) => ({
@@ -67,6 +75,7 @@ export const gridReducer = createReducer(
     selected: state.selected,
     createMode: state.createMode,
     gridMode: action.mode,
+    toJoin: state.toJoin,
   })),
 
   on(GridStateActions.selectGridmodeDelete, (state, action) => ({
@@ -74,6 +83,39 @@ export const gridReducer = createReducer(
     selected: state.selected,
     createMode: state.createMode,
     gridMode: action.mode,
+    toJoin: state.toJoin,
+  })),
+
+  on(GridStateActions.selectGridmodeJoin, (state, action) => ({
+    strings: state.strings,
+    selected: state.selected,
+    createMode: state.createMode,
+    gridMode: action.mode,
+    toJoin: state.toJoin,
+  })),
+
+  on(GridStateActions.changeGridmode, (state, action) => ({
+    strings: state.strings,
+    selected: state.selected,
+    createMode: state.createMode,
+    gridMode: action.mode,
+    toJoin: state.toJoin,
+  })),
+
+  on(GridStateActions.addToJoinArray, (state, action) => ({
+    strings: state.strings,
+    selected: state.selected,
+    createMode: state.createMode,
+    gridMode: state.gridMode,
+    toJoin: [...state.toJoin, action.toJoin],
+  })),
+
+  on(GridStateActions.clearJoinArray, (state) => ({
+    strings: state.strings,
+    selected: state.selected,
+    createMode: state.createMode,
+    gridMode: state.gridMode,
+    toJoin: [],
   })),
 )
 

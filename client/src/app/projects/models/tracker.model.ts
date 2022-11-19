@@ -2,9 +2,10 @@ import { UnitModel } from './unit.model'
 import { TypeModel } from './type.model'
 
 export interface TrackerModel {
-  id: number
+  id: string
+  location?: string
   project_id: number
-  inverter_id: number
+  inverter_id: string
   model?: UnitModel
   type?: TypeModel
   name: string

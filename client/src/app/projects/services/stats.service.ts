@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
 import { Store } from '@ngrx/store'
 import { AppState } from '../../store/app.state'
-import { combineLatest, Observable } from 'rxjs'
+import { Observable } from 'rxjs'
 import { StringModel } from '../models/string.model'
 import { selectAllStrings } from '../store/strings/strings.selectors'
 import { PanelModel } from '../models/panel.model'
@@ -57,160 +57,160 @@ export class StatsService {
   }
 
   calculateInverterTotals() {
-    combineLatest([this.inverters$, this.trackers$]).subscribe(
-      ([inverters, trackers]) => {
-        inverters.map((inverter) => {
-          this.invertersTotalVoc[inverter.id] = 0
-          this.invertersTotalVmp[inverter.id] = 0
-          this.invertersTotalPmax[inverter.id] = 0
-          this.invertersTotalIsc[inverter.id] = 0
-          this.invertersTotalImp[inverter.id] = 0
-          const inverterTrackers = trackers.filter(
-            (tracker) => tracker.inverter_id === inverter.id,
-          )
-          inverterTrackers.forEach((inverterTracker) => {
-            this.invertersTotalVoc[inverter.id] =
-              this.invertersTotalVoc[inverter.id] +
-              this.trackersTotalVoc[inverterTracker.id]
-
-            this.invertersTotalVmp[inverter.id] =
-              this.invertersTotalVmp[inverter.id] +
-              this.trackersTotalVmp[inverterTracker.id]
-
-            this.invertersTotalPmax[inverter.id] =
-              this.invertersTotalPmax[inverter.id] +
-              this.trackersTotalPmax[inverterTracker.id]
-
-            if (this.invertersTotalIsc[inverter.id] == 0) {
-              this.invertersTotalIsc[inverter.id] =
-                this.trackersTotalIsc[inverterTracker.id]
-            } else {
-              this.invertersTotalIsc[inverter.id] = this.getLowerNumber(
-                this.invertersTotalIsc[inverter.id],
-                this.trackersTotalIsc[inverterTracker.id],
+    /*    combineLatest([this.inverters$, this.trackers$]).subscribe(
+          ([inverters, trackers]) => {
+            inverters.map((inverter) => {
+              this.invertersTotalVoc[inverter.id] = 0
+              this.invertersTotalVmp[inverter.id] = 0
+              this.invertersTotalPmax[inverter.id] = 0
+              this.invertersTotalIsc[inverter.id] = 0
+              this.invertersTotalImp[inverter.id] = 0
+              const inverterTrackers = trackers.filter(
+                (tracker) => tracker.inverter_id === inverter.id,
               )
-            }
+              inverterTrackers.forEach((inverterTracker) => {
+                this.invertersTotalVoc[inverter.id] =
+                  this.invertersTotalVoc[inverter.id] +
+                  this.trackersTotalVoc[inverterTracker.id]
 
-            if (this.invertersTotalImp[inverter.id] == 0) {
-              this.invertersTotalImp[inverter.id] =
-                this.trackersTotalImp[inverterTracker.id]
-            } else {
-              this.invertersTotalImp[inverter.id] = this.getLowerNumber(
-                this.invertersTotalImp[inverter.id],
-                this.trackersTotalImp[inverterTracker.id],
+                this.invertersTotalVmp[inverter.id] =
+                  this.invertersTotalVmp[inverter.id] +
+                  this.trackersTotalVmp[inverterTracker.id]
+
+                this.invertersTotalPmax[inverter.id] =
+                  this.invertersTotalPmax[inverter.id] +
+                  this.trackersTotalPmax[inverterTracker.id]
+
+                if (this.invertersTotalIsc[inverter.id] == 0) {
+                  this.invertersTotalIsc[inverter.id] =
+                    this.trackersTotalIsc[inverterTracker.id]
+                } else {
+                  this.invertersTotalIsc[inverter.id] = this.getLowerNumber(
+                    this.invertersTotalIsc[inverter.id],
+                    this.trackersTotalIsc[inverterTracker.id],
+                  )
+                }
+
+                if (this.invertersTotalImp[inverter.id] == 0) {
+                  this.invertersTotalImp[inverter.id] =
+                    this.trackersTotalImp[inverterTracker.id]
+                } else {
+                  this.invertersTotalImp[inverter.id] = this.getLowerNumber(
+                    this.invertersTotalImp[inverter.id],
+                    this.trackersTotalImp[inverterTracker.id],
+                  )
+                }
+              })
+
+              this.invertersTotalVoc[inverter.id] = Number(
+                (
+                  Math.round(this.invertersTotalVoc[inverter.id] * 100) / 100
+                ).toFixed(2),
               )
-            }
-          })
-
-          this.invertersTotalVoc[inverter.id] = Number(
-            (
-              Math.round(this.invertersTotalVoc[inverter.id] * 100) / 100
-            ).toFixed(2),
-          )
-          this.invertersTotalVmp[inverter.id] = Number(
-            (
-              Math.round(this.invertersTotalVmp[inverter.id] * 100) / 100
-            ).toFixed(2),
-          )
-          this.invertersTotalPmax[inverter.id] = Number(
-            (
-              Math.round(this.invertersTotalPmax[inverter.id] * 100) / 100
-            ).toFixed(2),
-          )
-          this.invertersTotalIsc[inverter.id] = Number(
-            (
-              Math.round(this.invertersTotalIsc[inverter.id] * 100) / 100
-            ).toFixed(2),
-          )
-          this.invertersTotalImp[inverter.id] = Number(
-            (
-              Math.round(this.invertersTotalImp[inverter.id] * 100) / 100
-            ).toFixed(2),
-          )
-        })
-      },
-    )
+              this.invertersTotalVmp[inverter.id] = Number(
+                (
+                  Math.round(this.invertersTotalVmp[inverter.id] * 100) / 100
+                ).toFixed(2),
+              )
+              this.invertersTotalPmax[inverter.id] = Number(
+                (
+                  Math.round(this.invertersTotalPmax[inverter.id] * 100) / 100
+                ).toFixed(2),
+              )
+              this.invertersTotalIsc[inverter.id] = Number(
+                (
+                  Math.round(this.invertersTotalIsc[inverter.id] * 100) / 100
+                ).toFixed(2),
+              )
+              this.invertersTotalImp[inverter.id] = Number(
+                (
+                  Math.round(this.invertersTotalImp[inverter.id] * 100) / 100
+                ).toFixed(2),
+              )
+            })
+          },
+        )*/
   }
 
   calculateTrackerTotals() {
-    combineLatest([this.trackers$, this.strings$]).subscribe(
-      ([trackers, strings]) => {
-        trackers.map((tracker) => {
-          this.trackersTotalVoc[tracker.id] = 0
-          this.trackersTotalVmp[tracker.id] = 0
-          this.trackersTotalPmax[tracker.id] = 0
-          this.trackersTotalIsc[tracker.id] = 0
-          this.trackersTotalImp[tracker.id] = 0
-          const trackerStrings = strings.filter(
-            (string) => string.tracker_id === tracker.id,
-          )
-          trackerStrings.forEach((trackerString) => {
-            this.trackersTotalVoc[tracker.id] =
-              this.trackersTotalVoc[tracker.id] +
-              this.stringsTotalVoc[trackerString.id]
-
-            this.trackersTotalVmp[tracker.id] =
-              this.trackersTotalVmp[tracker.id] +
-              this.stringsTotalVmp[trackerString.id]
-
-            this.trackersTotalPmax[tracker.id] =
-              this.trackersTotalPmax[tracker.id] +
-              this.stringsTotalPmax[trackerString.id]
-
-            if (this.trackersTotalIsc[tracker.id] == 0) {
-              this.trackersTotalIsc[tracker.id] =
-                this.stringsTotalIsc[trackerString.id]
-            } else {
-              this.trackersTotalIsc[tracker.id] = this.getLowerNumber(
-                this.trackersTotalIsc[tracker.id],
-                this.stringsTotalIsc[trackerString.id],
+    /*    combineLatest([this.trackers$, this.strings$]).subscribe(
+          ([trackers, strings]) => {
+            trackers.map((tracker) => {
+              this.trackersTotalVoc[tracker.id] = 0
+              this.trackersTotalVmp[tracker.id] = 0
+              this.trackersTotalPmax[tracker.id] = 0
+              this.trackersTotalIsc[tracker.id] = 0
+              this.trackersTotalImp[tracker.id] = 0
+              const trackerStrings = strings.filter(
+                (string) => string.tracker_id === tracker.id,
               )
-            }
+              /!*          trackerStrings.forEach((trackerString) => {
+                          this.trackersTotalVoc[tracker.id] =
+                            this.trackersTotalVoc[tracker.id] +
+                            this.stringsTotalVoc[trackerString.id]
 
-            if (this.trackersTotalImp[tracker.id] == 0) {
-              this.trackersTotalImp[tracker.id] =
-                this.stringsTotalImp[trackerString.id]
-            } else {
-              this.trackersTotalImp[tracker.id] = this.getLowerNumber(
-                this.trackersTotalImp[tracker.id],
-                this.stringsTotalImp[trackerString.id],
+                          this.trackersTotalVmp[tracker.id] =
+                            this.trackersTotalVmp[tracker.id] +
+                            this.stringsTotalVmp[trackerString.id]
+
+                          this.trackersTotalPmax[tracker.id] =
+                            this.trackersTotalPmax[tracker.id] +
+                            this.stringsTotalPmax[trackerString.id]
+
+                          if (this.trackersTotalIsc[tracker.id] == 0) {
+                            this.trackersTotalIsc[tracker.id] =
+                              this.stringsTotalIsc[trackerString.id]
+                          } else {
+                            this.trackersTotalIsc[tracker.id] = this.getLowerNumber(
+                              this.trackersTotalIsc[tracker.id],
+                              this.stringsTotalIsc[trackerString.id],
+                            )
+                          }
+
+                          if (this.trackersTotalImp[tracker.id] == 0) {
+                            this.trackersTotalImp[tracker.id] =
+                              this.stringsTotalImp[trackerString.id]
+                          } else {
+                            this.trackersTotalImp[tracker.id] = this.getLowerNumber(
+                              this.trackersTotalImp[tracker.id],
+                              this.stringsTotalImp[trackerString.id],
+                            )
+                          }
+                        })*!/
+
+              this.trackersTotalVoc[tracker.id] = Number(
+                (Math.round(this.trackersTotalVoc[tracker.id] * 100) / 100).toFixed(
+                  2,
+                ),
               )
-            }
-          })
-
-          this.trackersTotalVoc[tracker.id] = Number(
-            (Math.round(this.trackersTotalVoc[tracker.id] * 100) / 100).toFixed(
-              2,
-            ),
-          )
-          this.trackersTotalVmp[tracker.id] = Number(
-            (Math.round(this.trackersTotalVmp[tracker.id] * 100) / 100).toFixed(
-              2,
-            ),
-          )
-          this.trackersTotalPmax[tracker.id] = Number(
-            (
-              Math.round(this.trackersTotalPmax[tracker.id] * 100) / 100
-            ).toFixed(2),
-          )
-          this.trackersTotalIsc[tracker.id] = Number(
-            (Math.round(this.trackersTotalIsc[tracker.id] * 100) / 100).toFixed(
-              2,
-            ),
-          )
-          this.trackersTotalImp[tracker.id] = Number(
-            (Math.round(this.trackersTotalImp[tracker.id] * 100) / 100).toFixed(
-              2,
-            ),
-          )
-        })
-        this.calculateInverterTotals()
-      },
-    )
+              this.trackersTotalVmp[tracker.id] = Number(
+                (Math.round(this.trackersTotalVmp[tracker.id] * 100) / 100).toFixed(
+                  2,
+                ),
+              )
+              this.trackersTotalPmax[tracker.id] = Number(
+                (
+                  Math.round(this.trackersTotalPmax[tracker.id] * 100) / 100
+                ).toFixed(2),
+              )
+              this.trackersTotalIsc[tracker.id] = Number(
+                (Math.round(this.trackersTotalIsc[tracker.id] * 100) / 100).toFixed(
+                  2,
+                ),
+              )
+              this.trackersTotalImp[tracker.id] = Number(
+                (Math.round(this.trackersTotalImp[tracker.id] * 100) / 100).toFixed(
+                  2,
+                ),
+              )
+            })
+            this.calculateInverterTotals()
+          },
+        )*/
   }
 
   calculateStringTotals() {
-    combineLatest([this.strings$, this.panels$]).subscribe(
+    /*combineLatest([this.strings$, this.panels$]).subscribe(
       ([strings, panels]) => {
         strings.map((string) => {
           this.stringsTotalVoc[string.id] = 0
@@ -308,7 +308,7 @@ export class StatsService {
         })
         this.calculateTrackerTotals()
       },
-    )
+    )*/
   }
 
   getLowerNumber(a: number, b: number) {

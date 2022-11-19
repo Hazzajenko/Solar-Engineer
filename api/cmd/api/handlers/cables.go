@@ -154,6 +154,7 @@ func (h *Handlers) UpdateCable(w http.ResponseWriter, r *http.Request) {
 		Location: input.Changes.Location,
 		Size:     input.Changes.Size,
 		Color:    input.Changes.Color,
+		JoinID:   input.Changes.JoinID,
 	}
 
 	result, err := h.Models.Cables.Update(updateCable)

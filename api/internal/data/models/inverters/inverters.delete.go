@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func (p *InverterModel) Delete(inverterId int64) error {
+func (p *InverterModel) Delete(inverterId string) error {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()

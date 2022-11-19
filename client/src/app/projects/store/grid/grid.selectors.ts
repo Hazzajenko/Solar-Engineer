@@ -27,3 +27,8 @@ export const selectGridMode = createSelector(
   selectGridState,
   (state: State.GridState) => state.gridMode,
 )
+
+export const selectToJoinArray = createSelector(
+  selectGridState,
+  (state: State.GridState) => state.toJoin,
+)

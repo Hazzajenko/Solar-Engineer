@@ -104,6 +104,7 @@ var UserWhere = struct {
 var UserRels = struct {
 	CreatedByCables    string
 	CreatedByInverters string
+	CreatedByJoins     string
 	CreatedByPanels    string
 	CreatedByProjects  string
 	CreatedByStrings   string
@@ -112,6 +113,7 @@ var UserRels = struct {
 }{
 	CreatedByCables:    "CreatedByCables",
 	CreatedByInverters: "CreatedByInverters",
+	CreatedByJoins:     "CreatedByJoins",
 	CreatedByPanels:    "CreatedByPanels",
 	CreatedByProjects:  "CreatedByProjects",
 	CreatedByStrings:   "CreatedByStrings",
@@ -123,6 +125,7 @@ var UserRels = struct {
 type userR struct {
 	CreatedByCables    CableSlice        `boil:"CreatedByCables" json:"CreatedByCables" toml:"CreatedByCables" yaml:"CreatedByCables"`
 	CreatedByInverters InverterSlice     `boil:"CreatedByInverters" json:"CreatedByInverters" toml:"CreatedByInverters" yaml:"CreatedByInverters"`
+	CreatedByJoins     JoinSlice         `boil:"CreatedByJoins" json:"CreatedByJoins" toml:"CreatedByJoins" yaml:"CreatedByJoins"`
 	CreatedByPanels    PanelSlice        `boil:"CreatedByPanels" json:"CreatedByPanels" toml:"CreatedByPanels" yaml:"CreatedByPanels"`
 	CreatedByProjects  ProjectSlice      `boil:"CreatedByProjects" json:"CreatedByProjects" toml:"CreatedByProjects" yaml:"CreatedByProjects"`
 	CreatedByStrings   StringSlice       `boil:"CreatedByStrings" json:"CreatedByStrings" toml:"CreatedByStrings" yaml:"CreatedByStrings"`
@@ -147,6 +150,13 @@ func (r *userR) GetCreatedByInverters() InverterSlice {
 		return nil
 	}
 	return r.CreatedByInverters
+}
+
+func (r *userR) GetCreatedByJoins() JoinSlice {
+	if r == nil {
+		return nil
+	}
+	return r.CreatedByJoins
 }
 
 func (r *userR) GetCreatedByPanels() PanelSlice {
@@ -501,6 +511,20 @@ func (o *User) CreatedByInverters(mods ...qm.QueryMod) inverterQuery {
 	return Inverters(queryMods...)
 }
 
+// CreatedByJoins retrieves all the join's Joins with an executor via created_by column.
+func (o *User) CreatedByJoins(mods ...qm.QueryMod) joinQuery {
+	var queryMods []qm.QueryMod
+	if len(mods) != 0 {
+		queryMods = append(queryMods, mods...)
+	}
+
+	queryMods = append(queryMods,
+		qm.Where("\"joins\".\"created_by\"=?", o.ID),
+	)
+
+	return Joins(queryMods...)
+}
+
 // CreatedByPanels retrieves all the panel's Panels with an executor via created_by column.
 func (o *User) CreatedByPanels(mods ...qm.QueryMod) panelQuery {
 	var queryMods []qm.QueryMod
@@ -789,6 +813,120 @@ func (userL) LoadCreatedByInverters(ctx context.Context, e boil.ContextExecutor,
 				local.R.CreatedByInverters = append(local.R.CreatedByInverters, foreign)
 				if foreign.R == nil {
 					foreign.R = &inverterR{}
+				}
+				foreign.R.CreatedByUser = local
+				break
+			}
+		}
+	}
+
+	return nil
+}
+
+// LoadCreatedByJoins allows an eager lookup of values, cached into the
+// loaded structs of the objects. This is for a 1-M or N-M relationship.
+func (userL) LoadCreatedByJoins(ctx context.Context, e boil.ContextExecutor, singular bool, maybeUser interface{}, mods queries.Applicator) error {
+	var slice []*User
+	var object *User
+
+	if singular {
+		var ok bool
+		object, ok = maybeUser.(*User)
+		if !ok {
+			object = new(User)
+			ok = queries.SetFromEmbeddedStruct(&object, &maybeUser)
+			if !ok {
+				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", object, maybeUser))
+			}
+		}
+	} else {
+		s, ok := maybeUser.(*[]*User)
+		if ok {
+			slice = *s
+		} else {
+			ok = queries.SetFromEmbeddedStruct(&slice, maybeUser)
+			if !ok {
+				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", slice, maybeUser))
+			}
+		}
+	}
+
+	args := make([]interface{}, 0, 1)
+	if singular {
+		if object.R == nil {
+			object.R = &userR{}
+		}
+		args = append(args, object.ID)
+	} else {
+	Outer:
+		for _, obj := range slice {
+			if obj.R == nil {
+				obj.R = &userR{}
+			}
+
+			for _, a := range args {
+				if a == obj.ID {
+					continue Outer
+				}
+			}
+
+			args = append(args, obj.ID)
+		}
+	}
+
+	if len(args) == 0 {
+		return nil
+	}
+
+	query := NewQuery(
+		qm.From(`joins`),
+		qm.WhereIn(`joins.created_by in ?`, args...),
+	)
+	if mods != nil {
+		mods.Apply(query)
+	}
+
+	results, err := query.QueryContext(ctx, e)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load joins")
+	}
+
+	var resultSlice []*Join
+	if err = queries.Bind(results, &resultSlice); err != nil {
+		return errors.Wrap(err, "failed to bind eager loaded slice joins")
+	}
+
+	if err = results.Close(); err != nil {
+		return errors.Wrap(err, "failed to close results in eager load on joins")
+	}
+	if err = results.Err(); err != nil {
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for joins")
+	}
+
+	if len(joinAfterSelectHooks) != 0 {
+		for _, obj := range resultSlice {
+			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
+				return err
+			}
+		}
+	}
+	if singular {
+		object.R.CreatedByJoins = resultSlice
+		for _, foreign := range resultSlice {
+			if foreign.R == nil {
+				foreign.R = &joinR{}
+			}
+			foreign.R.CreatedByUser = object
+		}
+		return nil
+	}
+
+	for _, foreign := range resultSlice {
+		for _, local := range slice {
+			if local.ID == foreign.CreatedBy {
+				local.R.CreatedByJoins = append(local.R.CreatedByJoins, foreign)
+				if foreign.R == nil {
+					foreign.R = &joinR{}
 				}
 				foreign.R.CreatedByUser = local
 				break
@@ -1466,6 +1604,59 @@ func (o *User) AddCreatedByInverters(ctx context.Context, exec boil.ContextExecu
 	for _, rel := range related {
 		if rel.R == nil {
 			rel.R = &inverterR{
+				CreatedByUser: o,
+			}
+		} else {
+			rel.R.CreatedByUser = o
+		}
+	}
+	return nil
+}
+
+// AddCreatedByJoins adds the given related objects to the existing relationships
+// of the user, optionally inserting them as new records.
+// Appends related to o.R.CreatedByJoins.
+// Sets related.R.CreatedByUser appropriately.
+func (o *User) AddCreatedByJoins(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*Join) error {
+	var err error
+	for _, rel := range related {
+		if insert {
+			rel.CreatedBy = o.ID
+			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
+				return errors.Wrap(err, "failed to insert into foreign table")
+			}
+		} else {
+			updateQuery := fmt.Sprintf(
+				"UPDATE \"joins\" SET %s WHERE %s",
+				strmangle.SetParamNames("\"", "\"", 1, []string{"created_by"}),
+				strmangle.WhereClause("\"", "\"", 2, joinPrimaryKeyColumns),
+			)
+			values := []interface{}{o.ID, rel.ID}
+
+			if boil.IsDebug(ctx) {
+				writer := boil.DebugWriterFrom(ctx)
+				fmt.Fprintln(writer, updateQuery)
+				fmt.Fprintln(writer, values)
+			}
+			if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
+				return errors.Wrap(err, "failed to update foreign table")
+			}
+
+			rel.CreatedBy = o.ID
+		}
+	}
+
+	if o.R == nil {
+		o.R = &userR{
+			CreatedByJoins: related,
+		}
+	} else {
+		o.R.CreatedByJoins = append(o.R.CreatedByJoins, related...)
+	}
+
+	for _, rel := range related {
+		if rel.R == nil {
+			rel.R = &joinR{
 				CreatedByUser: o,
 			}
 		} else {

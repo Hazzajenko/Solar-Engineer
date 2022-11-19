@@ -6,4 +6,5 @@ export enum UnitModel {
   STRING,
   PANEL,
   CABLE,
+  JOIN,
 }

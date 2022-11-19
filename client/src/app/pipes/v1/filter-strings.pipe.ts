@@ -5,7 +5,7 @@ import { StringModel } from '../../projects/models/string.model'
   name: 'filterStrings',
 })
 export class FilterStringsPipe implements PipeTransform {
-  transform(strings: StringModel[], trackerId: number): StringModel[] {
+  transform(strings: StringModel[], trackerId: string): StringModel[] {
     if (!strings || !trackerId) {
       return strings
     }

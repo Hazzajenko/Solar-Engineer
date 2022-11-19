@@ -29,9 +29,9 @@ func (h *Handlers) CreatePanel(w http.ResponseWriter, r *http.Request) {
 	var input struct {
 		ID string `json:"id"`
 		//ProjectId  int64  `json:"project_id"`
-		InverterId int64  `json:"inverter_id"`
-		TrackerId  int64  `json:"tracker_id"`
-		StringId   int64  `json:"string_id"`
+		InverterId string `json:"inverter_id"`
+		TrackerId  string `json:"tracker_id"`
+		StringId   string `json:"string_id"`
 		Location   string `json:"location"`
 		Color      string `json:"color"`
 	}
@@ -170,9 +170,9 @@ func (h *Handlers) UpdatePanelLocation(w http.ResponseWriter, r *http.Request) {
 
 	var input struct {
 		ID         string `json:"id"`
-		InverterId int64  `json:"inverter_id"`
-		TrackerId  int64  `json:"tracker_id"`
-		StringId   int64  `json:"string_id"`
+		InverterId string `json:"inverter_id"`
+		TrackerId  string `json:"tracker_id"`
+		StringId   string `json:"string_id"`
 		Location   string `json:"location"`
 		//Version    int32  `json:"version"`
 	}
@@ -319,18 +319,19 @@ func (h *Handlers) DeletePanel(w http.ResponseWriter, r *http.Request) {
 			h.Logger.PrintError(err, nil)
 		}*/
 	//fmt.Println(projectId)
+	panelID := chi.URLParam(r, "panelId")
 
-	var input struct {
-		ID string `json:"id"`
-	}
+	/*	var input struct {
+			ID string `json:"id"`
+		}
 
-	err := h.Json.DecodeJSON(w, r, &input)
-	if err != nil {
-		h.Errors.ServerErrorResponse(w, r, err)
-		return
-	}
-
-	err = h.Models.Panels.Delete(input.ID)
+		err := h.Json.DecodeJSON(w, r, &input)
+		if err != nil {
+			h.Errors.ServerErrorResponse(w, r, err)
+			return
+		}
+	*/
+	err := h.Models.Panels.Delete(panelID)
 	if err != nil {
 		switch {
 		default:
@@ -340,7 +341,7 @@ func (h *Handlers) DeletePanel(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = h.Json.ResponseJSON(w, http.StatusAccepted,
-		json.Envelope{"panel": input.ID, "deleted": true},
+		json.Envelope{"id": panelID, "deleted": true},
 		nil)
 	if err != nil {
 		h.Errors.ServerErrorResponse(w, r, err)

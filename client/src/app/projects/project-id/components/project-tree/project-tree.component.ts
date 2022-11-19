@@ -20,11 +20,11 @@ import { ProjectModel } from '../../../models/project.model'
 import { selectProjectByRouteParams } from '../../../store/projects/projects.selectors'
 import { selectInvertersByProjectIdRouteParams } from '../../../store/inverters/inverters.selectors'
 import { selectTrackersByProjectIdRouteParams } from '../../../store/trackers/trackers.selectors'
-import { selectStringsByProjectIdRouteParams } from '../../../store/strings/strings.selectors'
 import { Store } from '@ngrx/store'
 import { AppState } from '../../../../store/app.state'
 import { StatsService } from '../../../services/stats.service'
 import { PanelsEntityService } from '../../services/panels-entity/panels-entity.service'
+import { StringsEntityService } from '../../services/strings-entity/strings-entity.service'
 
 @Component({
   selector: 'app-project-tree',
@@ -51,6 +51,9 @@ export class ProjectTreeComponent implements OnInit {
   inverterBool: boolean[] = []
   trackerBool: boolean[] = []
   stringBool: boolean[] = []
+  stringOpenArray: string[] = []
+  inverterOpenArray: string[] = []
+  trackerOpenArray: string[] = []
 
   constructor(
     private invertersService: InvertersService,
@@ -60,13 +63,15 @@ export class ProjectTreeComponent implements OnInit {
     private store: Store<AppState>,
     public stats: StatsService,
     private panelsEntity: PanelsEntityService,
+    private stringsEntity: StringsEntityService,
   ) {}
 
   ngOnInit(): void {
     this.project$ = this.store.select(selectProjectByRouteParams)
     this.inverters$ = this.store.select(selectInvertersByProjectIdRouteParams)
     this.trackers$ = this.store.select(selectTrackersByProjectIdRouteParams)
-    this.strings$ = this.store.select(selectStringsByProjectIdRouteParams)
+    this.strings$ = this.stringsEntity.entities$
+    // this.strings$ = this.store.select(selectStringsByProjectIdRouteParams)
     // this.panels$ = this.store.select(selectPanelsByProjectIdRouteParams)
     this.panels$ = this.panelsEntity.entities$
     /*    this.store.select(selectProjectByRouteParams).subscribe((project) => {
@@ -97,17 +102,44 @@ export class ProjectTreeComponent implements OnInit {
   }
 
   toggleInverter(inverter: InverterModel) {
-    this.inverterBool[inverter.id] = !this.inverterBool[inverter.id]
+    // this.inverterBool[inverter.id] = !this.inverterBool[inverter.id]
     // console.log(this.inverterBool[inverter.id])
+    const includes = this.inverterOpenArray.includes(inverter.id)
+    if (includes) {
+      const index = this.inverterOpenArray.indexOf(inverter.id, 0)
+      if (index > -1) {
+        this.inverterOpenArray.splice(index, 1)
+      }
+    }
+
+    this.inverterOpenArray.push(inverter.id)
   }
 
   toggleTracker(tracker: TrackerModel) {
-    this.trackerBool[tracker.id] = !this.trackerBool[tracker.id]
+    // this.trackerBool[tracker.id] = !this.trackerBool[tracker.id]
     // console.log(this.trackerBool[tracker.id])
+    const includes = this.trackerOpenArray.includes(tracker.id)
+    if (includes) {
+      const index = this.trackerOpenArray.indexOf(tracker.id, 0)
+      if (index > -1) {
+        this.trackerOpenArray.splice(index, 1)
+      }
+    }
+
+    this.trackerOpenArray.push(tracker.id)
   }
 
   toggleString(stringModel: StringModel) {
-    this.stringBool[stringModel.id] = !this.stringBool[stringModel.id]
+    const includes = this.stringOpenArray.includes(stringModel.id)
+    if (includes) {
+      const index = this.stringOpenArray.indexOf(stringModel.id, 0)
+      if (index > -1) {
+        this.stringOpenArray.splice(index, 1)
+      }
+    }
+
+    this.stringOpenArray.push(stringModel.id)
+    // this.stringBool[stringModel.id] = !this.stringBool[stringModel.id]
     // console.log(this.stringBool[stringModel.id])
   }
 
@@ -150,7 +182,7 @@ export class ProjectTreeComponent implements OnInit {
   }
 
   async createTracker(projectId: number, inverter: InverterModel) {
-    await this.trackersService.createTrackers(projectId, inverter.id)
+    // await this.trackersService.createTrackers(projectId, inverter.id)
   }
 
   async createString(
@@ -158,12 +190,12 @@ export class ProjectTreeComponent implements OnInit {
     inverter: InverterModel,
     tracker: TrackerModel,
   ) {
-    await this.stringsService.createString(
-      projectId,
-      inverter.id,
-      tracker.id,
-      'new string',
-    )
+    /*    await this.stringsService.createString(
+          projectId,
+          inverter.id,
+          tracker.id,
+          'new string',
+        )*/
   }
 
   async createPanel(
@@ -187,12 +219,12 @@ export class ProjectTreeComponent implements OnInit {
         version: stringModel.version,
         created_at: stringModel.created_at,
       }
-      await this.panelsService.createPanel(
-        projectId,
-        inverter.id,
-        tracker.id,
-        updateString.id,
-      )
+      /*      await this.panelsService.createPanel(
+              projectId,
+              inverter.id,
+              tracker.id,
+              updateString.id,
+            )*/
     } else {
       const updateString: StringModel = {
         id: stringModel.id,
@@ -206,12 +238,12 @@ export class ProjectTreeComponent implements OnInit {
         version: stringModel.version,
         created_at: stringModel.created_at,
       }
-      await this.panelsService.createPanel(
-        projectId,
-        inverter.id,
-        tracker.id,
-        updateString.id,
-      )
+      /*      await this.panelsService.createPanel(
+              projectId,
+              inverter.id,
+              tracker.id,
+              updateString.id,
+            )*/
     }
   }
 }

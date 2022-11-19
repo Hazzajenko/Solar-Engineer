@@ -19,14 +19,16 @@ export class PanelsEntityEffects {
       this.actions$.pipe(
         ofType(`${DataEntities.Panel} ${EntityOp.SAVE_ADD_ONE_SUCCESS}`),
         tap((action: any) => {
+          const panel = action.payload.data
           this.store.dispatch(
             BlocksStateActions.addBlockForGrid({
               block: {
-                id: action.payload.data.id,
-                location: action.payload.data.location,
+                id: panel.id,
+                location: panel.location,
                 model: UnitModel.PANEL,
                 type: 'PANEL',
-                project_id: action.payload.data.project_id!,
+                project_id: panel.project_id!,
+                color: panel.color,
               },
             }),
           )
@@ -47,6 +49,7 @@ export class PanelsEntityEffects {
                 model: UnitModel.PANEL,
                 type: 'PANEL',
                 project_id: panel.project_id!,
+                color: panel.color,
               }
               return block
             },
@@ -75,6 +78,21 @@ export class PanelsEntityEffects {
                 type: 'PANEL',
                 project_id: data.changes.project_id!,
               },
+            }),
+          )
+        }),
+      ),
+    { dispatch: false },
+  )
+  deletePanel$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(`${DataEntities.Panel} ${EntityOp.SAVE_DELETE_ONE}`),
+        tap((action: any) => {
+          const data = action.payload.data
+          this.store.dispatch(
+            BlocksStateActions.deleteBlockForGrid({
+              block_id: data,
             }),
           )
         }),

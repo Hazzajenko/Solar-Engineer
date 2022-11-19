@@ -3,7 +3,7 @@ import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity'
 import { createReducer, on } from '@ngrx/store'
 import * as TrackerActions from './trackers.actions'
 
-export const selectTrackerId = (b: TrackerModel): number => b.id
+export const selectTrackerId = (b: TrackerModel): string => b.id
 export const sortByTrackerName = (a: TrackerModel, b: TrackerModel): number =>
   a.name.localeCompare(b.name)
 

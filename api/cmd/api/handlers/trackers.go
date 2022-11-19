@@ -3,8 +3,8 @@ package handlers
 import (
 	json2 "encoding/json"
 	"fmt"
-	"github.com/Hazzajenko/gosolarbackend/internal/data/models/trackers"
 	"github.com/Hazzajenko/gosolarbackend/internal/json"
+	boiler "github.com/Hazzajenko/gosolarbackend/my_models"
 	"github.com/go-chi/chi/v5"
 	"net/http"
 	"os"
@@ -22,30 +22,30 @@ func (h *Handlers) CreateTracker(w http.ResponseWriter, r *http.Request) {
 	}
 	userId, err := strconv.Atoi(idString)
 
-	projectIdString := chi.URLParam(r, "projectId")
-	projectId, err := strconv.Atoi(projectIdString)
+	projectId, err := h.Helpers.GetInt64FromURLParam(chi.URLParam(r, "projectId"))
 	if err != nil {
 		h.Logger.PrintError(err, nil)
 	}
+
 	//fmt.Println(projectId)
 
-	inverterIdString := chi.URLParam(r, "inverterId")
-	inverterId, err := strconv.Atoi(inverterIdString)
-	if err != nil {
-		h.Logger.PrintError(err, nil)
-	}
+	inverterId := chi.URLParam(r, "inverterId")
+	/*	inverterId, err := strconv.Atoi(inverterIdString)
+		if err != nil {
+			h.Logger.PrintError(err, nil)
+		}*/
 	//fmt.Println(inverterId)
 
 	file, err := os.ReadFile("assets/json/trackers/tauroeco100-3-d.json")
-	var data []trackers.Tracker
-	var result []*trackers.Tracker
+	var data []boiler.Tracker
+	var result []*boiler.Tracker
 
 	//data := inverters.Inverter{}
 	_ = json2.Unmarshal([]byte(file), &data)
 	for index, item := range data {
-		tracker := &trackers.Tracker{
-			ProjectId:              int64(projectId),
-			InverterId:             int64(inverterId),
+		tracker := &boiler.Tracker{
+			ProjectID:              projectId,
+			InverterID:             inverterId,
 			Name:                   fmt.Sprintf("Tracker %d", index),
 			CreatedBy:              int64(userId),
 			MaxInputCurrent:        item.MaxInputCurrent,
@@ -62,19 +62,19 @@ func (h *Handlers) CreateTracker(w http.ResponseWriter, r *http.Request) {
 		}
 		result = append(result, itemResult)
 
-		inverterTracker := &trackers.InverterTracker{
-			InverterId: int64(inverterId),
-			TrackerId:  itemResult.ID,
-		}
-
-		err = h.Models.Trackers.InsertInverterTracker(inverterTracker)
-		if err != nil {
-			switch {
-			default:
-				h.Errors.ServerErrorResponse(w, r, err)
-			}
-			return
-		}
+		/*		inverterTracker := &trackers.InverterTracker{
+				InverterId: int64(inverterId),
+				TrackerId:  itemResult.ID,
+			}*/
+		/*
+			err = h.Models.Trackers.InsertInverterTracker(inverterTracker)
+			if err != nil {
+				switch {
+				default:
+					h.Errors.ServerErrorResponse(w, r, err)
+				}
+				return
+			}*/
 	}
 
 	err = h.Json.ResponseJSON(w, http.StatusAccepted,
@@ -89,8 +89,7 @@ func (h *Handlers) GetTrackersByProjectId(w http.ResponseWriter, r *http.Request
 	/*	bearerHeader := r.Header.Get("Authorization")
 		bearer := strings.Replace(bearerHeader, "Bearer ", "", 1)
 	*/
-	projectIdString := chi.URLParam(r, "projectId")
-	projectId, err := strconv.Atoi(projectIdString)
+	projectId, err := h.Helpers.GetInt64FromURLParam(chi.URLParam(r, "projectId"))
 	if err != nil {
 		h.Logger.PrintError(err, nil)
 	}
@@ -103,7 +102,7 @@ func (h *Handlers) GetTrackersByProjectId(w http.ResponseWriter, r *http.Request
 		userId, err := strconv.Atoi(idString)*/
 	//fmt.Println(userId)
 
-	result, err := h.Models.Trackers.GetTrackersByInverterId(int64(projectId))
+	result, err := h.Models.Trackers.GetTrackersByProjectId(projectId)
 	if err != nil {
 		switch {
 		default:
@@ -114,6 +113,45 @@ func (h *Handlers) GetTrackersByProjectId(w http.ResponseWriter, r *http.Request
 
 	err = h.Json.ResponseJSON(w, http.StatusAccepted,
 		json.Envelope{"trackers": result},
+		nil)
+	if err != nil {
+		h.Errors.ServerErrorResponse(w, r, err)
+	}
+}
+
+func (h *Handlers) UpdateTracker(w http.ResponseWriter, r *http.Request) {
+
+	trackerId := chi.URLParam(r, "trackerId")
+
+	var input struct {
+		ID      string         `json:"id"`
+		Changes boiler.Tracker `json:"changes"`
+	}
+
+	err := h.Json.DecodeJSON(w, r, &input)
+	if err != nil {
+		h.Errors.ServerErrorResponse(w, r, err)
+		return
+	}
+
+	updateTracker := &boiler.Tracker{
+		ID:       trackerId,
+		Name:     input.Changes.Name,
+		Location: input.Changes.Location,
+		Color:    input.Changes.Color,
+	}
+
+	result, err := h.Models.Trackers.UpdateTracker(updateTracker)
+	if err != nil {
+		switch {
+		default:
+			h.Errors.ServerErrorResponse(w, r, err)
+		}
+		return
+	}
+
+	err = h.Json.ResponseJSON(w, http.StatusAccepted,
+		json.Envelope{"tracker": result},
 		nil)
 	if err != nil {
 		h.Errors.ServerErrorResponse(w, r, err)
@@ -171,17 +209,19 @@ func (h *Handlers) DeleteTracker(w http.ResponseWriter, r *http.Request) {
 		}*/
 	//fmt.Println(projectId)
 
-	var input struct {
-		ID int64 `json:"id"`
-	}
+	trackerId := chi.URLParam(r, "trackerId")
 
-	err := h.Json.DecodeJSON(w, r, &input)
-	if err != nil {
-		h.Errors.ServerErrorResponse(w, r, err)
-		return
-	}
+	/*	var input struct {
+			ID int64 `json:"id"`
+		}
 
-	err = h.Models.Trackers.Delete(input.ID)
+		err := h.Json.DecodeJSON(w, r, &input)
+		if err != nil {
+			h.Errors.ServerErrorResponse(w, r, err)
+			return
+		}*/
+
+	err := h.Models.Trackers.Delete(trackerId)
 	if err != nil {
 		switch {
 		default:
@@ -191,7 +231,7 @@ func (h *Handlers) DeleteTracker(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = h.Json.ResponseJSON(w, http.StatusAccepted,
-		json.Envelope{"tracker": input.ID, "deleted": true},
+		json.Envelope{"trackerId": trackerId, "deleted": true},
 		nil)
 	if err != nil {
 		h.Errors.ServerErrorResponse(w, r, err)

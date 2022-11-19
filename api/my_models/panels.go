@@ -25,9 +25,9 @@ import (
 type Panel struct {
 	ID                      string    `boil:"id" json:"id" toml:"id" yaml:"id"`
 	ProjectID               int64     `boil:"project_id" json:"project_id" toml:"project_id" yaml:"project_id"`
-	InverterID              int64     `boil:"inverter_id" json:"inverter_id" toml:"inverter_id" yaml:"inverter_id"`
-	TrackerID               int64     `boil:"tracker_id" json:"tracker_id" toml:"tracker_id" yaml:"tracker_id"`
-	StringID                int64     `boil:"string_id" json:"string_id" toml:"string_id" yaml:"string_id"`
+	InverterID              string    `boil:"inverter_id" json:"inverter_id" toml:"inverter_id" yaml:"inverter_id"`
+	TrackerID               string    `boil:"tracker_id" json:"tracker_id" toml:"tracker_id" yaml:"tracker_id"`
+	StringID                string    `boil:"string_id" json:"string_id" toml:"string_id" yaml:"string_id"`
 	Name                    string    `boil:"name" json:"name" toml:"name" yaml:"name"`
 	CreatedAt               time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
 	CreatedBy               int64     `boil:"created_by" json:"created_by" toml:"created_by" yaml:"created_by"`
@@ -161,9 +161,9 @@ var PanelTableColumns = struct {
 var PanelWhere = struct {
 	ID                      whereHelperstring
 	ProjectID               whereHelperint64
-	InverterID              whereHelperint64
-	TrackerID               whereHelperint64
-	StringID                whereHelperint64
+	InverterID              whereHelperstring
+	TrackerID               whereHelperstring
+	StringID                whereHelperstring
 	Name                    whereHelperstring
 	CreatedAt               whereHelpertime_Time
 	CreatedBy               whereHelperint64
@@ -186,9 +186,9 @@ var PanelWhere = struct {
 }{
 	ID:                      whereHelperstring{field: "\"panels\".\"id\""},
 	ProjectID:               whereHelperint64{field: "\"panels\".\"project_id\""},
-	InverterID:              whereHelperint64{field: "\"panels\".\"inverter_id\""},
-	TrackerID:               whereHelperint64{field: "\"panels\".\"tracker_id\""},
-	StringID:                whereHelperint64{field: "\"panels\".\"string_id\""},
+	InverterID:              whereHelperstring{field: "\"panels\".\"inverter_id\""},
+	TrackerID:               whereHelperstring{field: "\"panels\".\"tracker_id\""},
+	StringID:                whereHelperstring{field: "\"panels\".\"string_id\""},
 	Name:                    whereHelperstring{field: "\"panels\".\"name\""},
 	CreatedAt:               whereHelpertime_Time{field: "\"panels\".\"created_at\""},
 	CreatedBy:               whereHelperint64{field: "\"panels\".\"created_by\""},
@@ -279,8 +279,8 @@ type panelL struct{}
 
 var (
 	panelAllColumns            = []string{"id", "project_id", "inverter_id", "tracker_id", "string_id", "name", "created_at", "created_by", "current_at_maximum_power", "short_circuit_current", "short_circuit_current_temp", "maximum_power", "maximum_power_temp", "voltage_at_maximum_power", "open_circuit_voltage", "open_circuit_voltage_temp", "length", "weight", "width", "version", "location", "model", "color", "type"}
-	panelColumnsWithoutDefault = []string{"project_id", "inverter_id", "tracker_id", "string_id", "name"}
-	panelColumnsWithDefault    = []string{"id", "created_at", "created_by", "current_at_maximum_power", "short_circuit_current", "short_circuit_current_temp", "maximum_power", "maximum_power_temp", "voltage_at_maximum_power", "open_circuit_voltage", "open_circuit_voltage_temp", "length", "weight", "width", "version", "location", "model", "color", "type"}
+	panelColumnsWithoutDefault = []string{"project_id", "name"}
+	panelColumnsWithDefault    = []string{"id", "inverter_id", "tracker_id", "string_id", "created_at", "created_by", "current_at_maximum_power", "short_circuit_current", "short_circuit_current_temp", "maximum_power", "maximum_power_temp", "voltage_at_maximum_power", "open_circuit_voltage", "open_circuit_voltage_temp", "length", "weight", "width", "version", "location", "model", "color", "type"}
 	panelPrimaryKeyColumns     = []string{"id"}
 	panelGeneratedColumns      = []string{}
 )

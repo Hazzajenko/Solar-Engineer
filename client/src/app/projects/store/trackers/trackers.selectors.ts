@@ -21,13 +21,13 @@ export const selectTrackerByRouteParams = createSelector(
   selectRouteParams,
   (trackers, { trackerId }) => trackers[trackerId],
 )
-
+/*
 export const selectTrackersByInverterIdRouteParams = createSelector(
   selectAllTrackers,
   selectRouteParams,
   (trackers, { inverterId }) =>
     trackers.filter((tracker) => tracker.inverter_id === Number(inverterId)),
-)
+)*/
 
 export const selectTrackersByProjectIdRouteParams = createSelector(
   selectAllTrackers,
@@ -35,11 +35,11 @@ export const selectTrackersByProjectIdRouteParams = createSelector(
   (trackers, { projectId }) =>
     trackers.filter((tracker) => tracker.project_id === Number(projectId)),
 )
-
+/*
 export const selectTrackerById = (props: { id: number }) =>
   createSelector(selectAllTrackers, (trackers: TrackerModel[]) =>
     trackers.find((tracker) => tracker.id === props.id),
-  )
+  )*/
 
 export const selectTrackersByProjectId = (props: { projectId: number }) =>
   createSelector(selectAllTrackers, (trackers: TrackerModel[]) =>

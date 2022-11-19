@@ -23,7 +23,7 @@ import (
 
 // Inverter is an object representing the database table.
 type Inverter struct {
-	ID                  int64     `boil:"id" json:"id" toml:"id" yaml:"id"`
+	ID                  string    `boil:"id" json:"id" toml:"id" yaml:"id"`
 	Name                string    `boil:"name" json:"name" toml:"name" yaml:"name"`
 	CreatedAt           time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
 	CreatedBy           int64     `boil:"created_by" json:"created_by" toml:"created_by" yaml:"created_by"`
@@ -40,6 +40,8 @@ type Inverter struct {
 	StartUpVoltage      int64     `boil:"start_up_voltage" json:"start_up_voltage" toml:"start_up_voltage" yaml:"start_up_voltage"`
 	Model               int       `boil:"model" json:"model" toml:"model" yaml:"model"`
 	Type                string    `boil:"type" json:"type" toml:"type" yaml:"type"`
+	Location            string    `boil:"location" json:"location" toml:"location" yaml:"location"`
+	Color               string    `boil:"color" json:"color" toml:"color" yaml:"color"`
 
 	R *inverterR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L inverterL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -63,6 +65,8 @@ var InverterColumns = struct {
 	StartUpVoltage      string
 	Model               string
 	Type                string
+	Location            string
+	Color               string
 }{
 	ID:                  "id",
 	Name:                "name",
@@ -81,6 +85,8 @@ var InverterColumns = struct {
 	StartUpVoltage:      "start_up_voltage",
 	Model:               "model",
 	Type:                "type",
+	Location:            "location",
+	Color:               "color",
 }
 
 var InverterTableColumns = struct {
@@ -101,6 +107,8 @@ var InverterTableColumns = struct {
 	StartUpVoltage      string
 	Model               string
 	Type                string
+	Location            string
+	Color               string
 }{
 	ID:                  "inverters.id",
 	Name:                "inverters.name",
@@ -119,12 +127,14 @@ var InverterTableColumns = struct {
 	StartUpVoltage:      "inverters.start_up_voltage",
 	Model:               "inverters.model",
 	Type:                "inverters.type",
+	Location:            "inverters.location",
+	Color:               "inverters.color",
 }
 
 // Generated where
 
 var InverterWhere = struct {
-	ID                  whereHelperint64
+	ID                  whereHelperstring
 	Name                whereHelperstring
 	CreatedAt           whereHelpertime_Time
 	CreatedBy           whereHelperint64
@@ -141,8 +151,10 @@ var InverterWhere = struct {
 	StartUpVoltage      whereHelperint64
 	Model               whereHelperint
 	Type                whereHelperstring
+	Location            whereHelperstring
+	Color               whereHelperstring
 }{
-	ID:                  whereHelperint64{field: "\"inverters\".\"id\""},
+	ID:                  whereHelperstring{field: "\"inverters\".\"id\""},
 	Name:                whereHelperstring{field: "\"inverters\".\"name\""},
 	CreatedAt:           whereHelpertime_Time{field: "\"inverters\".\"created_at\""},
 	CreatedBy:           whereHelperint64{field: "\"inverters\".\"created_by\""},
@@ -159,6 +171,8 @@ var InverterWhere = struct {
 	StartUpVoltage:      whereHelperint64{field: "\"inverters\".\"start_up_voltage\""},
 	Model:               whereHelperint{field: "\"inverters\".\"model\""},
 	Type:                whereHelperstring{field: "\"inverters\".\"type\""},
+	Location:            whereHelperstring{field: "\"inverters\".\"location\""},
+	Color:               whereHelperstring{field: "\"inverters\".\"color\""},
 }
 
 // InverterRels is where relationship names are stored.
@@ -229,9 +243,9 @@ func (r *inverterR) GetTrackers() TrackerSlice {
 type inverterL struct{}
 
 var (
-	inverterAllColumns            = []string{"id", "name", "created_at", "created_by", "version", "project_id", "tracker_amount", "ac_nominal_output", "ac_output_current", "european_efficiency", "max_input_current", "max_output_power", "mpp_voltage_range_low", "mpp_voltage_range_high", "start_up_voltage", "model", "type"}
+	inverterAllColumns            = []string{"id", "name", "created_at", "created_by", "version", "project_id", "tracker_amount", "ac_nominal_output", "ac_output_current", "european_efficiency", "max_input_current", "max_output_power", "mpp_voltage_range_low", "mpp_voltage_range_high", "start_up_voltage", "model", "type", "location", "color"}
 	inverterColumnsWithoutDefault = []string{"name", "project_id", "tracker_amount", "ac_nominal_output", "ac_output_current", "european_efficiency", "max_input_current", "max_output_power", "mpp_voltage_range_low", "mpp_voltage_range_high", "start_up_voltage"}
-	inverterColumnsWithDefault    = []string{"id", "created_at", "created_by", "version", "model", "type"}
+	inverterColumnsWithDefault    = []string{"id", "created_at", "created_by", "version", "model", "type", "location", "color"}
 	inverterPrimaryKeyColumns     = []string{"id"}
 	inverterGeneratedColumns      = []string{}
 )
@@ -1426,7 +1440,7 @@ func Inverters(mods ...qm.QueryMod) inverterQuery {
 
 // FindInverter retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
-func FindInverter(ctx context.Context, exec boil.ContextExecutor, iD int64, selectCols ...string) (*Inverter, error) {
+func FindInverter(ctx context.Context, exec boil.ContextExecutor, iD string, selectCols ...string) (*Inverter, error) {
 	inverterObj := &Inverter{}
 
 	sel := "*"
@@ -1939,7 +1953,7 @@ func (o *InverterSlice) ReloadAll(ctx context.Context, exec boil.ContextExecutor
 }
 
 // InverterExists checks if the Inverter row exists.
-func InverterExists(ctx context.Context, exec boil.ContextExecutor, iD int64) (bool, error) {
+func InverterExists(ctx context.Context, exec boil.ContextExecutor, iD string) (bool, error) {
 	var exists bool
 	sql := "select exists(select 1 from \"inverters\" where \"id\"=$1 limit 1)"
 

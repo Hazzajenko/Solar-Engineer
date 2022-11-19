@@ -4,6 +4,7 @@ import { TypeModel } from './type.model'
 export interface CableModel {
   id: string
   project_id?: number
+  join_id?: string
   model?: UnitModel
   type?: TypeModel
   location: string

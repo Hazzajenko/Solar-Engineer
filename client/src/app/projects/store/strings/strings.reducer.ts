@@ -3,7 +3,7 @@ import { createReducer, on } from '@ngrx/store'
 import * as StringsActions from './strings.actions'
 import { StringModel } from '../../models/string.model'
 
-export const selectStringId = (b: StringModel): number => b.id
+export const selectStringId = (b: StringModel): string => b.id
 export const sortByStringName = (a: StringModel, b: StringModel): number =>
   a.name.localeCompare(b.name)
 
@@ -58,5 +58,5 @@ export const { selectIds, selectEntities, selectAll } =
 
 export interface StringState extends EntityState<StringModel> {
   // additional entities state properties
-  selectedStringId: number | undefined
+  selectedStringId: string | undefined
 }

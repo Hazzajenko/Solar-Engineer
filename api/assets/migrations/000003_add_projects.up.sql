@@ -17,3 +17,4 @@ CREATE TABLE IF NOT EXISTS users_projects (
 /*    CONSTRAINT fk_users FOREIGN KEY(user_id) REFERENCES users(id),
     CONSTRAINT fk_projects FOREIGN KEY(project_id) REFERENCES projects(id)*/
 );
+

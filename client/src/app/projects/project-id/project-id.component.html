@@ -120,36 +120,57 @@
     </ng-container>
   </ng-container>
 </div>-->
+<!--
 <div class="project-container-v2">
   <ng-container *ngIf="store$ | async; let store">
-    <ng-container *ngIf="gridState$ | async; let grid">
-      <ng-container *ngIf="trackerTree$ | async; let tree">
-        <div class="project-container-v2__project-tree">
-          <app-project-tree></app-project-tree>
-          <!--          <app-tracker-tree
-                      [inverter]="tree.inverter"
-                      [panels]="tree.panels"
-                      [project]="tree.project"
-                      [strings]="tree.strings"
-                      [tracker]="tree.tracker"
-                    ></app-tracker-tree>-->
-        </div>
-        <div class="project-container-v2__project-display">
-          <app-grid-toolbar></app-grid-toolbar>
-          <app-grid-layout
-            [inverters]="store.inverters"
-            [panels]="store.panels"
-            [selectedStringId]="grid.selectedStringId"
-            [strings]="store.strings"
-            [trackers]="store.trackers"
-          ></app-grid-layout>
-        </div>
-        <div class="project-container-v2__project-inventory">
-          <!--          <app-string-stats></app-string-stats>-->
-          <app-tracker-stats></app-tracker-stats>
-        </div>
-      </ng-container>
-    </ng-container>
+    &lt;!&ndash;    <ng-container *ngIf="gridState$ | async; let grid">&ndash;&gt;
+    &lt;!&ndash;      <ng-container *ngIf="trackerTree$ | async; let tree">&ndash;&gt;
+    <div class="project-container-v2__project-tree">
+      <app-project-tree></app-project-tree>
+      &lt;!&ndash;          <app-tracker-tree
+                  [inverter]="tree.inverter"
+                  [panels]="tree.panels"
+                  [project]="tree.project"
+                  [strings]="tree.strings"
+                  [tracker]="tree.tracker"
+                ></app-tracker-tree>&ndash;&gt;
+    </div>
+    <div class="project-container-v2__project-display">
+      <app-grid-toolbar></app-grid-toolbar>
+      <app-grid-layout></app-grid-layout>
+    </div>
+    <div class="project-container-v2__project-inventory">
+      &lt;!&ndash;          <app-string-stats></app-string-stats>&ndash;&gt;
+      <app-tracker-stats></app-tracker-stats>
+    </div>
+  </ng-container>
+  &lt;!&ndash;    </ng-container>&ndash;&gt;
+  &lt;!&ndash;  </ng-container>&ndash;&gt;
+</div>
+-->
+
+<!--<div class="project-container-v3">
+  <ng-container *ngIf="store$ | async; let store">
+    <div class="project-container-v3__project-tree">
+      <app-project-tree></app-project-tree>
+    </div>
+    <div class="project-container-v3__project-display">
+      &lt;!&ndash;      <app-grid-toolbar></app-grid-toolbar>&ndash;&gt;
+      &lt;!&ndash;      <app-grid-layout></app-grid-layout>&ndash;&gt;
+      <app-grid-toolbar></app-grid-toolbar>
+      <app-grid-layout></app-grid-layout>
+    </div>
+  </ng-container>
+</div>-->
+
+<div class="project-container-v4">
+  <ng-container *ngIf="store$ | async; let store">
+    <div class="project-container-v4__project-display">
+      <!--      <app-grid-toolbar></app-grid-toolbar>-->
+      <!--      <app-grid-layout></app-grid-layout>-->
+      <app-grid-toolbar></app-grid-toolbar>
+      <app-grid-layout></app-grid-layout>
+    </div>
   </ng-container>
 </div>
 

@@ -6,6 +6,7 @@ export interface BlockModel {
   location: string
   // id: string
   project_id: number
+  color?: string
   // location: string
   model: UnitModel
   type?: TypeModel

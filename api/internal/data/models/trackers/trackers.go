@@ -6,6 +6,7 @@ import (
 	"errors"
 	boiler "github.com/Hazzajenko/gosolarbackend/my_models"
 	"github.com/shopspring/decimal"
+	"github.com/volatiletech/sqlboiler/v4/boil"
 	"time"
 )
 
@@ -29,56 +30,12 @@ type TrackerModel struct {
 	DB *sql.DB
 }
 
-func (p *TrackerModel) Insert(tracker *Tracker) (*Tracker, error) {
-	query := `
-		INSERT INTO trackers(
-							project_id,
-							inverter_id,
-							name, 
-							created_by, 
-							max_input_current,
-							max_short_circuit_current)
-		VALUES ($1, $2, $3, $4, $5, $6)
-		RETURNING  id, 
-		    project_id, 
-		    inverter_id,
-		    name, 
-		    model,
-		    created_at, 
-		    created_by, 
-			max_input_current,
-			max_short_circuit_current, 
-			string_amount, 
-			parallel_amount, 
-			panel_amount, 
-			version`
-	var result Tracker
-	args := []any{
-		tracker.ProjectId,
-		tracker.InverterId,
-		tracker.Name,
-		tracker.CreatedBy,
-		tracker.MaxInputCurrent,
-		tracker.MaxShortCircuitCurrent,
-	}
+func (p *TrackerModel) Insert(tracker *boiler.Tracker) (*boiler.Tracker, error) {
+
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err := p.DB.QueryRowContext(ctx, query, args...).Scan(
-		&result.ID,
-		&result.ProjectId,
-		&result.InverterId,
-		&result.Name,
-		&result.Model,
-		&result.CreatedAt,
-		&result.CreatedBy,
-		&result.MaxInputCurrent,
-		&result.MaxShortCircuitCurrent,
-		&result.StringAmount,
-		&result.ParallelAmount,
-		&result.PanelAmount,
-		&result.Version,
-	)
+	err := tracker.Insert(ctx, p.DB, boil.Infer())
 	if err != nil {
 		switch {
 		default:
@@ -86,7 +43,94 @@ func (p *TrackerModel) Insert(tracker *Tracker) (*Tracker, error) {
 		}
 	}
 
-	return &result, nil
+	return tracker, nil
+	/*	query := `
+			INSERT INTO trackers(
+								project_id,
+								inverter_id,
+								name,
+								created_by,
+								max_input_current,
+								max_short_circuit_current)
+			VALUES ($1, $2, $3, $4, $5, $6)
+			RETURNING  id,
+			    project_id,
+			    inverter_id,
+			    name,
+			    model,
+			    created_at,
+			    created_by,
+				max_input_current,
+				max_short_circuit_current,
+				string_amount,
+				parallel_amount,
+				panel_amount,
+				version`
+		var result Tracker
+		args := []any{
+			tracker.ProjectId,
+			tracker.InverterId,
+			tracker.Name,
+			tracker.CreatedBy,
+			tracker.MaxInputCurrent,
+			tracker.MaxShortCircuitCurrent,
+		}
+		ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+		defer cancel()
+
+		err := p.DB.QueryRowContext(ctx, query, args...).Scan(
+			&result.ID,
+			&result.ProjectId,
+			&result.InverterId,
+			&result.Name,
+			&result.Model,
+			&result.CreatedAt,
+			&result.CreatedBy,
+			&result.MaxInputCurrent,
+			&result.MaxShortCircuitCurrent,
+			&result.StringAmount,
+			&result.ParallelAmount,
+			&result.PanelAmount,
+			&result.Version,
+		)
+		if err != nil {
+			switch {
+			default:
+				return nil, err
+			}
+		}
+
+		return &result, nil*/
+}
+
+func (p *TrackerModel) UpdateTracker(request *boiler.Tracker) (*boiler.Tracker, error) {
+	// Find a pilot and update his name
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+	tracker, err := boiler.FindTracker(ctx, p.DB, request.ID)
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return nil, errors.New("edit conflict")
+		default:
+			return nil, err
+		}
+	}
+	tracker.Location = request.Location
+	tracker.Name = request.Name
+	tracker.Color = request.Color
+
+	_, err = tracker.Update(ctx, p.DB, boil.Infer())
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return nil, errors.New("edit conflict")
+		default:
+			return nil, err
+		}
+	}
+
+	return tracker, nil
 }
 
 func (p *TrackerModel) GetTrackersByProjectId(projectId int64) (*boiler.TrackerSlice, error) {
