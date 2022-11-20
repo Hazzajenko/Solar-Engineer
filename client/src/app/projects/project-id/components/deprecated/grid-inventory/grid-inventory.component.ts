@@ -10,6 +10,7 @@ import { OldGridService } from '../../../../services/old-grid.service'
   selector: 'app-grid-inventory',
   templateUrl: './grid-inventory.component.html',
   styleUrls: ['./grid-inventory.component.scss'],
+  standalone: true,
 })
 export class GridInventoryComponent implements OnInit {
   @Input() inverters?: InverterModel[]

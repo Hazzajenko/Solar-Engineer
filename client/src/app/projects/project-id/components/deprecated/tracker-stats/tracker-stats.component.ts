@@ -14,6 +14,7 @@ import { StatsService } from '../../../../services/stats.service'
   selector: 'app-tracker-stats',
   templateUrl: './tracker-stats.component.html',
   styleUrls: ['./tracker-stats.component.scss'],
+  standalone: true,
 })
 export class TrackerStatsComponent implements OnInit {
   project$?: Observable<ProjectModel | undefined>

@@ -11,6 +11,7 @@
 
 }
 
+
 @mixin drawAfter() {
   content: "";
   position: absolute;
@@ -21,6 +22,9 @@
   left: -15px;
 }
 
+.svg-cable {
+  z-index: 2;
+}
 
 .row {
   display: flex;
@@ -38,6 +42,19 @@
   align-items: center;
 }
 
+/*svg {
+  !* border: 5px solid red; *!
+  height: 500px;
+  width: 100%;
+}
+
+path {
+  stroke: black;
+  fill: none;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}*/
+
 
 .drop-zone {
   display: flex;
@@ -47,6 +64,28 @@
   background-color: #f6eded;
   width: 30px;
   height: 30px;
+
+  &__svg {
+    pointer-events: none;
+    z-index: 1;
+    position: relative;
+    //left: -1px;
+    top: 1.8px;
+  }
+
+  &__svg-top-bottom {
+    z-index: 1;
+    position: relative;
+    left: -1px;
+    top: 2px;
+  }
+
+  &__svg-left-top {
+    z-index: 1;
+    position: relative;
+    left: -1px;
+    top: 2px;
+  }
 
 
   &__panel {
@@ -66,18 +105,46 @@
   }
 
   &__cable {
+    position: absolute;
+
     background-color: #486079;
     width: 20px;
     height: 20px;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    /*    align-items: center;
+        align-content: center;
+        justify-content: center;*/
+
 
     &:hover {
       //background-color: red;
       color: red;
       width: 23px;
       height: 23px;
+    }
+
+    &__svg-cable-top-bottom {
+      z-index: 1;
+      position: relative;
+      left: -5px;
+      top: -5px;
+      //width: 100px/**/;
+
+      //left: -5px;
+      //top: -5px;
+      //top: 30px;
+      //left: 30px;
+      //position: relative;
+    }
+
+    &__svg-cable {
+      z-index: 1;
+      position: relative;
+      left: -5px;
+      top: -5px;
+      //top: 30px;
+      //left: 30px;
+      //position: relative;
     }
 
     &__draw__top {

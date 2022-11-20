@@ -9,6 +9,7 @@ import { TypeModel } from '../../../../models/type.model'
   selector: 'app-stats-section',
   templateUrl: './stats-section.component.html',
   styleUrls: ['./stats-section.component.scss'],
+  standalone: true,
 })
 export class StatsSectionComponent implements OnInit {
   @Input() type?: TypeModel

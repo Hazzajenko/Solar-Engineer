@@ -1,23 +1,24 @@
-<div class='containerOuter'>
-  <div class='containerInner'>
-    <h1 class='title'>
-      Solar <span class='titlePink'>Engineer</span>
-    </h1>
+<div class="containerOuter">
+  <div class="containerInner">
+    <h1 class="title">Solar <span class="titlePink">Engineer</span></h1>
 
-    <div *ngIf='projects$ | async as projects'>
+    <div *ngIf="projects$ | async as projects">
       <div>
-        <mat-selection-list #userProjects *ngFor='let project of projects' [multiple]='false'>
-          <mat-list-option (click)='onRouteToProject(project)' [value]='project'>
-            {{project.name}}
-            <!--            <app-project-list-item [project]="project"></app-project-list-item>-->
-          </mat-list-option>
-        </mat-selection-list>
+        <!--        <mat-selection-list
+                  #userProjects
+                  *ngFor="let project of projects"
+                  [multiple]="false"
+                >
+                  <mat-list-option (click)="onRouteToProject(project)">
+                    {{ project.name }}
+                    &lt;!&ndash;            <app-project-list-item [project]="project"></app-project-list-item>&ndash;&gt;
+                  </mat-list-option>
+                </mat-selection-list>-->
         <!--        <h1>{{bing.name}}</h1>-->
         <p>
           <!--          Option selected: {{userProjects.selectedOptions.selected[0]?.value.name}}-->
         </p>
       </div>
-
     </div>
 
     <!--    <ul #myUL id="myUL">

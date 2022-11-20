@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core'
-import { CdkDragDrop } from '@angular/cdk/drag-drop'
+import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop'
 import { InverterModel } from '../../../models/inverter.model'
 import { TrackerModel } from '../../../models/tracker.model'
 import { StringModel } from '../../../models/string.model'
@@ -12,7 +12,6 @@ import { OldGridService } from '../../../services/old-grid.service'
 import { combineLatest, Observable } from 'rxjs'
 import { selectProjectByRouteParams } from '../../../store/projects/projects.selectors'
 import { ProjectModel } from '../../../models/project.model'
-import { MatMenuTrigger } from '@angular/material/menu'
 import { CreateMode } from '../../../store/grid/grid.actions'
 import {
   selectCreateMode,
@@ -41,11 +40,47 @@ import { GridActionService } from '../../../services/grid/grid-action.service'
 import { JoinsEntityService } from '../../services/joins-entity/joins-entity.service'
 import { JoinModel } from '../../../models/join.model'
 import { GridJoinService } from '../../../services/grid/grid-join.service'
+import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
+import { CommonModule } from '@angular/common'
+import { LetModule } from '@ngrx/component'
+import { GetGridStringPipe } from '../../../../pipes/get-grid-string.pipe'
+import { FindBlockNumberPipe } from '../../../../pipes/find-block-number.pipe'
+import { FindInverterLocationPipe } from '../../../../pipes/find-inverter-location.pipe'
+import { MatTooltipModule } from '@angular/material/tooltip'
+import { FindPanelLocationPipe } from '../../../../pipes/find-panel-location.pipe'
+import { FindCableLocationPipe } from '../../../../pipes/find-cable-location.pipe'
+import { GetCableSurroundingsPipe } from '../../../../pipes/get-cable-surroundings.pipe'
+import { TopBottomSvgComponent } from '../../../../svgs/grid/top-bottom-svg.component'
+import { LeftTopSvgComponent } from '../../../../svgs/grid/left-top-svg.component'
+import { BottomSvgComponent } from '../../../../svgs/grid/bottom-svg.component'
+import { LeftRightSvgComponent } from '../../../../svgs/grid/left-right-svg.component'
+import { RightSvgComponent } from '../../../../svgs/grid/right-svg.component'
+import { CableJoinComponent } from '../../../../components/cable-join/cable-join.component'
 
 @Component({
   selector: 'app-grid-layout',
   templateUrl: './grid-layout.component.html',
   styleUrls: ['./grid-layout.component.scss'],
+  standalone: true,
+  imports: [
+    DragDropModule,
+    LetModule,
+    GetGridStringPipe,
+    FindBlockNumberPipe,
+    FindInverterLocationPipe,
+    MatTooltipModule,
+    FindPanelLocationPipe,
+    FindCableLocationPipe,
+    GetCableSurroundingsPipe,
+    TopBottomSvgComponent,
+    LeftTopSvgComponent,
+    MatMenuModule,
+    CommonModule,
+    BottomSvgComponent,
+    LeftRightSvgComponent,
+    RightSvgComponent,
+    CableJoinComponent,
+  ],
 })
 export class GridLayoutComponent implements OnInit {
   /*  @Input() inverters?: InverterModel[]
@@ -56,20 +91,7 @@ export class GridLayoutComponent implements OnInit {
   menuTopLeftPosition = { x: '0', y: '0' }
   @ViewChild(MatMenuTrigger, { static: true })
   matMenuTrigger!: MatMenuTrigger
-  public context!: CanvasRenderingContext2D
-  createMode$?: Observable<CreateMode | undefined>
-  createMode?: CreateMode | undefined
-  selectedStrings$?: Observable<StringModel[] | undefined>
-  selectedString$!: Observable<number>
-  occupiedSpots: string[] = []
   takenBlocks: number[] = []
-  trackerTree$!: Observable<{
-    project?: ProjectModel
-    inverter?: InverterModel
-    tracker?: TrackerModel
-    strings?: StringModel[]
-    panels?: PanelModel[]
-  }>
   grid$!: Observable<{
     createMode?: UnitModel
     selectedStrings?: StringModel[]
@@ -107,8 +129,6 @@ export class GridLayoutComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // this.createMode$ = this.store.select(selectCreateMode)
-    this.selectedStrings$ = this.store.select(selectSelectedStrings)
     // this.selectedString$ = this.store.select(selectSelectedString)
     this.project$ = this.store.select(selectProjectByRouteParams)
     this.inverters$ = this.invertersEntity.entities$
@@ -138,52 +158,6 @@ export class GridLayoutComponent implements OnInit {
         gridMode,
       })),
     )
-
-    /*    this.store
-          .select(
-            selectPanelsByProjectId({
-              projectId: 3,
-            }),
-          )
-          .subscribe((panels) => {
-            // console.log(panels)
-            panels.forEach((panel) => {
-              // console.log(panel?.location)
-              this.takenBlocks.push(panel?.location)
-            })
-            // console.log(this.occupiedSpots)
-          })*/
-    /*    this.trackerTree$ = combineLatest([
-          this.store.select(selectProjectByRouteParams),
-          this.store.select(
-            selectInverterById({
-              id: 11,
-            }),
-          ),
-          this.store.select(
-            selectTrackerById({
-              id: 6,
-            }),
-          ),
-          this.store.select(
-            selectStringsByTrackerId({
-              trackerId: 6,
-            }),
-          ),
-          this.store.select(
-            selectPanelsByTrackerId({
-              trackerId: 6,
-            }),
-          ),
-        ]).pipe(
-          map(([project, inverter, tracker, strings, panels]) => ({
-            project,
-            inverter,
-            tracker,
-            strings,
-            panels,
-          })),
-        )*/
   }
 
   numSequence(n: number): Array<number> {

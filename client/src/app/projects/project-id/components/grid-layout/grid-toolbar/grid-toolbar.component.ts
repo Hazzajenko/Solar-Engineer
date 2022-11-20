@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core'
+import { Component, EventEmitter, OnInit, Output } from '@angular/core'
 import { Store } from '@ngrx/store'
 import { AppState } from '../../../../../store/app.state'
 import { GridStateActions } from '../../../../store/grid/grid.actions'
@@ -10,17 +10,35 @@ import { StringsEntityService } from '../../../services/strings-entity/strings-e
 import { StringModel } from '../../../../models/string.model'
 import { Guid } from 'guid-typescript'
 import { UnitModel } from '../../../../models/unit.model'
-import { MatDialog } from '@angular/material/dialog'
 import { SelectStringComponent } from './select-string/select-string.component'
 import { CreateStringComponent } from './create-string/create-string.component'
+import { MatDialog } from '@angular/material/dialog'
+import { MatToolbarModule } from '@angular/material/toolbar'
+import { LetModule } from '@ngrx/component'
+import { CommonModule } from '@angular/common'
+import { MatMenuModule } from '@angular/material/menu'
+import { MatButtonModule } from '@angular/material/button'
+import { MatIconModule } from '@angular/material/icon'
+import { MatSliderModule } from '@angular/material/slider'
 
 @Component({
   selector: 'app-grid-toolbar',
   templateUrl: './grid-toolbar.component.html',
   styleUrls: ['./grid-toolbar.component.scss'],
+  standalone: true,
+  imports: [
+    MatToolbarModule,
+    LetModule,
+    MatMenuModule,
+    MatButtonModule,
+    MatIconModule,
+    CommonModule,
+    MatSliderModule,
+  ],
 })
 export class GridToolbarComponent implements OnInit {
   project$: Observable<ProjectModel | undefined>
+  @Output() zoom = new EventEmitter<number>()
 
   constructor(
     private store: Store<AppState>,
@@ -28,6 +46,15 @@ export class GridToolbarComponent implements OnInit {
     public dialog: MatDialog,
   ) {
     this.project$ = this.store.select(selectProjectByRouteParams)
+  }
+
+  formatLabel(value: number): string {
+    return `${value}%`
+    /*    if (value >= 1000) {
+          return Math.round(value / 1000) + 'k';
+        }
+
+        return `${value}`;*/
   }
 
   ngOnInit(): void {}

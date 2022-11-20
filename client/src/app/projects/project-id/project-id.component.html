@@ -168,11 +168,33 @@
     <div class="project-container-v4__project-display">
       <!--      <app-grid-toolbar></app-grid-toolbar>-->
       <!--      <app-grid-layout></app-grid-layout>-->
+      <!--      <mat-slider
+              [displayWith]="formatLabel"
+              discrete
+              max="100"
+              min="0"
+              showTickMarks
+              step="0.1"
+            >
+              <input [(ngModel)]="zoom" matSliderThumb />
+            </mat-slider>-->
+      <!--      <button (click)="changePosition()" mat-stroked-button>Change</button>-->
+
       <app-grid-toolbar></app-grid-toolbar>
+
       <app-grid-layout></app-grid-layout>
+
+      <div></div>
     </div>
   </ng-container>
 </div>
+<!--(mouseup)="onZoomChange($event)"
+[cdkDragFreeDragPosition]="dragPosition"
+[ngStyle]="{
+zoom
+}"
+cdkDrag
+cdkDragBoundary=".project-container-v4"-->
 
 <!--
 <div class="project-container-v3">
@@ -205,6 +227,7 @@
   </ng-container>
 </div>
 -->
+<!--
 
 <div
   [matMenuTriggerFor]="rightMenu"
@@ -221,3 +244,4 @@
     <button mat-menu-item>Delete</button>
   </ng-template>
 </mat-menu>
+-->

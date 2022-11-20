@@ -4,6 +4,7 @@ import { TypeModel } from '../../projects/models/type.model'
 
 @Pipe({
   name: 'filterPanels',
+  standalone: true,
 })
 export class FilterPanelsPipe implements PipeTransform {
   transform(

@@ -3,6 +3,7 @@ import { StringModel } from '../../projects/models/string.model'
 
 @Pipe({
   name: 'filterStrings',
+  standalone: true,
 })
 export class FilterStringsPipe implements PipeTransform {
   transform(strings: StringModel[], trackerId: string): StringModel[] {

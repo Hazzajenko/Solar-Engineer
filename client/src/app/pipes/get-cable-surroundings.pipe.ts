@@ -1,6 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core'
 import { CableModel } from '../projects/models/cable.model'
-import { JoinModel } from '../projects/models/join.model'
 
 export interface SurroundingModel {
   left: boolean
@@ -17,9 +16,9 @@ export class GetCableSurroundingsPipe implements PipeTransform {
   transform(
     cable: CableModel,
     allCables: CableModel[],
-    joins: JoinModel[],
+    // joins: JoinModel[],
   ): SurroundingModel {
-    if (!cable || !allCables || !joins) {
+    if (!cable || !allCables) {
       return {
         left: false,
         right: false,
@@ -34,20 +33,30 @@ export class GetCableSurroundingsPipe implements PipeTransform {
     const location = cable.location
     const split = location.split('')
     split.forEach((p, index) => {
-      if (p === 'b') {
-        const row = location.slice(1, index)
-        const col = location.slice(index + 1, location.length)
-        // console.log(row)
-        // console.log(col)
+      if (p === 'c') {
+        // const row = location.slice(1, index)
+        // const col = location.slice(index + 3, location.length)
+        const row = location.slice(3, index)
+        const col = location.slice(index + 3, location.length)
+        console.log(row)
+        console.log(col)
         numberRow = Number(row)
         numberCol = Number(col)
+        console.log(numberRow)
+        console.log(numberCol)
       }
     })
 
-    const topString: string = `a${numberRow - 1}b${numberCol}`
-    const bottomString: string = `a${numberRow + 1}b${numberCol}`
-    const leftString: string = `a${numberRow}b${numberCol - 1}`
-    const rightString: string = `a${numberRow}b${numberCol + 1}`
+    const mySubString = location.substring(
+      location.indexOf('w') + 1,
+      location.lastIndexOf('c'),
+    )
+    console.log(mySubString)
+
+    const topString: string = `row${numberRow - 1}col${numberCol}`
+    const bottomString: string = `row${numberRow + 1}col${numberCol}`
+    const leftString: string = `row${numberRow}col${numberCol - 1}`
+    const rightString: string = `row${numberRow}col${numberCol + 1}`
 
     const findTop = allCables.find((cable) => cable.location === topString)
     const findBottom = allCables.find(

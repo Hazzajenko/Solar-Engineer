@@ -15,6 +15,7 @@ import { StringsService } from '../../../../services/strings.service'
   selector: 'app-tracker-tree',
   templateUrl: './tracker-tree.component.html',
   styleUrls: ['./tracker-tree.component.scss'],
+  standalone: true,
 })
 export class TrackerTreeComponent implements OnInit {
   @Input() project?: ProjectModel

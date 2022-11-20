@@ -4,6 +4,7 @@ import { UnitModel } from '../../projects/models/unit.model'
 
 @Pipe({
   name: 'filterPanelsBy',
+  standalone: true,
 })
 export class FilterPanelsByPipe implements PipeTransform {
   transform(

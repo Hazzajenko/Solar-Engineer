@@ -13,11 +13,25 @@ import { Observable } from 'rxjs'
 import { selectStringsByProjectIdRouteParams } from '../../../../store/strings/strings.selectors'
 import { TypeModel } from '../../../../models/type.model'
 import { StringsEntityService } from '../../../services/strings-entity/strings-entity.service'
+import { AsyncPipe, NgIf, NgSwitch, NgSwitchCase } from '@angular/common'
+import { MatButtonModule } from '@angular/material/button'
+import { MatIconModule } from '@angular/material/icon'
+import { MatMenuModule } from '@angular/material/menu'
 
 @Component({
   selector: 'app-button-menu',
   templateUrl: './button-menu.component.html',
   styleUrls: ['./button-menu.component.scss'],
+  standalone: true,
+  imports: [
+    NgSwitch,
+    NgSwitchCase,
+    NgIf,
+    AsyncPipe,
+    MatButtonModule,
+    MatIconModule,
+    MatMenuModule,
+  ],
 })
 export class ButtonMenuComponent implements OnInit {
   @Input() type?: TypeModel

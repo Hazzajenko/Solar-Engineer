@@ -3,6 +3,7 @@ import { TrackerModel } from '../../projects/models/tracker.model'
 
 @Pipe({
   name: 'filterTrackers',
+  standalone: true,
 })
 export class FilterTrackersPipe implements PipeTransform {
   transform(trackers: TrackerModel[], inverterId: string): TrackerModel[] {

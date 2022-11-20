@@ -10,7 +10,6 @@ import { TrackerModel } from '../../../models/tracker.model'
 import { StringModel } from '../../../models/string.model'
 import { PanelModel } from '../../../models/panel.model'
 import { Sort } from '@angular/material/sort'
-import { MatMenuTrigger } from '@angular/material/menu'
 import { InvertersService } from '../../../services/inverters.service'
 import { TrackersService } from '../../../services/trackers.service'
 import { StringsService } from '../../../services/strings.service'
@@ -25,11 +24,34 @@ import { AppState } from '../../../../store/app.state'
 import { StatsService } from '../../../services/stats.service'
 import { PanelsEntityService } from '../../services/panels-entity/panels-entity.service'
 import { StringsEntityService } from '../../services/strings-entity/strings-entity.service'
+import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
+import { AsyncPipe, NgForOf, NgIf } from '@angular/common'
+import { MatButtonModule } from '@angular/material/button'
+import { MatIconModule } from '@angular/material/icon'
+import { ButtonMenuComponent } from './button-menu/button-menu.component'
+import { StatsSectionComponent } from './stats-section/stats-section.component'
+import { FilterTrackersPipe } from '../../../../pipes/v1/filter-trackers.pipe'
+import { FilterStringsPipe } from '../../../../pipes/v1/filter-strings.pipe'
+import { FilterPanelsByPipe } from '../../../../pipes/v2/filter-panels-by.pipe'
 
 @Component({
   selector: 'app-project-tree',
   templateUrl: './project-tree.component.html',
   styleUrls: ['./project-tree.component.scss'],
+  standalone: true,
+  imports: [
+    AsyncPipe,
+    NgIf,
+    MatButtonModule,
+    MatIconModule,
+    NgForOf,
+    ButtonMenuComponent,
+    StatsSectionComponent,
+    FilterTrackersPipe,
+    FilterStringsPipe,
+    FilterPanelsByPipe,
+    MatMenuModule,
+  ],
 })
 export class ProjectTreeComponent implements OnInit {
   @ViewChild(MatMenuTrigger, { static: true }) matMenuTrigger!: MatMenuTrigger

@@ -14,6 +14,7 @@ import { StatsService } from '../../../../services/stats.service'
   selector: 'app-string-stats',
   templateUrl: './string-stats.component.html',
   styleUrls: ['./string-stats.component.scss'],
+  standalone: true,
 })
 export class StringStatsComponent implements OnInit {
   stats$!: Observable<{
