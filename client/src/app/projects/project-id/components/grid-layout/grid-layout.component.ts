@@ -56,6 +56,10 @@ import { BottomSvgComponent } from '../../../../svgs/grid/bottom-svg.component'
 import { LeftRightSvgComponent } from '../../../../svgs/grid/left-right-svg.component'
 import { RightSvgComponent } from '../../../../svgs/grid/right-svg.component'
 import { CableJoinComponent } from '../../../../components/cable-join/cable-join.component'
+import { GetNearbyJoins } from '../../../../pipes/get-nearby-joins.pipe'
+import { BlockPanelComponent } from './block-panel/block-panel.component'
+import { BlockCableComponent } from './block-cable/block-cable.component'
+import { BlockInverterComponent } from './block-inverter/block-inverter.component'
 
 @Component({
   selector: 'app-grid-layout',
@@ -80,6 +84,10 @@ import { CableJoinComponent } from '../../../../components/cable-join/cable-join
     LeftRightSvgComponent,
     RightSvgComponent,
     CableJoinComponent,
+    GetNearbyJoins,
+    BlockPanelComponent,
+    BlockCableComponent,
+    BlockInverterComponent,
   ],
 })
 export class GridLayoutComponent implements OnInit {
@@ -412,4 +420,19 @@ export class GridLayoutComponent implements OnInit {
   }
 
   joinCables(toJoinArray: string[]) {}
+
+  startJoin(block: any) {
+    if (!block) return
+    switch (block.model) {
+      case UnitModel.INVERTER:
+        return
+      case UnitModel.PANEL:
+        return
+      case UnitModel.CABLE:
+        return this.cablesEntity.delete(block.id)
+      default:
+        break
+    }
+    return
+  }
 }

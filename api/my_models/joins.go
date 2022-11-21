@@ -18,19 +18,21 @@ import (
 	"github.com/volatiletech/sqlboiler/v4/queries"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 	"github.com/volatiletech/sqlboiler/v4/queries/qmhelper"
+	"github.com/volatiletech/sqlboiler/v4/types"
 	"github.com/volatiletech/strmangle"
 )
 
 // Join is an object representing the database table.
 type Join struct {
-	ID        string    `boil:"id" json:"id" toml:"id" yaml:"id"`
-	ProjectID int64     `boil:"project_id" json:"project_id" toml:"project_id" yaml:"project_id"`
-	Model     int       `boil:"model" json:"model" toml:"model" yaml:"model"`
-	CreatedAt time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
-	CreatedBy int64     `boil:"created_by" json:"created_by" toml:"created_by" yaml:"created_by"`
-	Size      int64     `boil:"size" json:"size" toml:"size" yaml:"size"`
-	Color     string    `boil:"color" json:"color" toml:"color" yaml:"color"`
-	Type      string    `boil:"type" json:"type" toml:"type" yaml:"type"`
+	ID        string            `boil:"id" json:"id" toml:"id" yaml:"id"`
+	ProjectID int64             `boil:"project_id" json:"project_id" toml:"project_id" yaml:"project_id"`
+	Model     int               `boil:"model" json:"model" toml:"model" yaml:"model"`
+	CreatedAt time.Time         `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
+	CreatedBy int64             `boil:"created_by" json:"created_by" toml:"created_by" yaml:"created_by"`
+	Size      int64             `boil:"size" json:"size" toml:"size" yaml:"size"`
+	Color     string            `boil:"color" json:"color" toml:"color" yaml:"color"`
+	Type      string            `boil:"type" json:"type" toml:"type" yaml:"type"`
+	Blocks    types.StringArray `boil:"blocks" json:"blocks,omitempty" toml:"blocks" yaml:"blocks,omitempty"`
 
 	R *joinR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L joinL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -45,6 +47,7 @@ var JoinColumns = struct {
 	Size      string
 	Color     string
 	Type      string
+	Blocks    string
 }{
 	ID:        "id",
 	ProjectID: "project_id",
@@ -54,6 +57,7 @@ var JoinColumns = struct {
 	Size:      "size",
 	Color:     "color",
 	Type:      "type",
+	Blocks:    "blocks",
 }
 
 var JoinTableColumns = struct {
@@ -65,6 +69,7 @@ var JoinTableColumns = struct {
 	Size      string
 	Color     string
 	Type      string
+	Blocks    string
 }{
 	ID:        "joins.id",
 	ProjectID: "joins.project_id",
@@ -74,9 +79,36 @@ var JoinTableColumns = struct {
 	Size:      "joins.size",
 	Color:     "joins.color",
 	Type:      "joins.type",
+	Blocks:    "joins.blocks",
 }
 
 // Generated where
+
+type whereHelpertypes_StringArray struct{ field string }
+
+func (w whereHelpertypes_StringArray) EQ(x types.StringArray) qm.QueryMod {
+	return qmhelper.WhereNullEQ(w.field, false, x)
+}
+func (w whereHelpertypes_StringArray) NEQ(x types.StringArray) qm.QueryMod {
+	return qmhelper.WhereNullEQ(w.field, true, x)
+}
+func (w whereHelpertypes_StringArray) LT(x types.StringArray) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.LT, x)
+}
+func (w whereHelpertypes_StringArray) LTE(x types.StringArray) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.LTE, x)
+}
+func (w whereHelpertypes_StringArray) GT(x types.StringArray) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.GT, x)
+}
+func (w whereHelpertypes_StringArray) GTE(x types.StringArray) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.GTE, x)
+}
+
+func (w whereHelpertypes_StringArray) IsNull() qm.QueryMod { return qmhelper.WhereIsNull(w.field) }
+func (w whereHelpertypes_StringArray) IsNotNull() qm.QueryMod {
+	return qmhelper.WhereIsNotNull(w.field)
+}
 
 var JoinWhere = struct {
 	ID        whereHelperstring
@@ -87,6 +119,7 @@ var JoinWhere = struct {
 	Size      whereHelperint64
 	Color     whereHelperstring
 	Type      whereHelperstring
+	Blocks    whereHelpertypes_StringArray
 }{
 	ID:        whereHelperstring{field: "\"joins\".\"id\""},
 	ProjectID: whereHelperint64{field: "\"joins\".\"project_id\""},
@@ -96,6 +129,7 @@ var JoinWhere = struct {
 	Size:      whereHelperint64{field: "\"joins\".\"size\""},
 	Color:     whereHelperstring{field: "\"joins\".\"color\""},
 	Type:      whereHelperstring{field: "\"joins\".\"type\""},
+	Blocks:    whereHelpertypes_StringArray{field: "\"joins\".\"blocks\""},
 }
 
 // JoinRels is where relationship names are stored.
@@ -103,10 +137,12 @@ var JoinRels = struct {
 	CreatedByUser string
 	Project       string
 	Cables        string
+	Panels        string
 }{
 	CreatedByUser: "CreatedByUser",
 	Project:       "Project",
 	Cables:        "Cables",
+	Panels:        "Panels",
 }
 
 // joinR is where relationships are stored.
@@ -114,6 +150,7 @@ type joinR struct {
 	CreatedByUser *User      `boil:"CreatedByUser" json:"CreatedByUser" toml:"CreatedByUser" yaml:"CreatedByUser"`
 	Project       *Project   `boil:"Project" json:"Project" toml:"Project" yaml:"Project"`
 	Cables        CableSlice `boil:"Cables" json:"Cables" toml:"Cables" yaml:"Cables"`
+	Panels        PanelSlice `boil:"Panels" json:"Panels" toml:"Panels" yaml:"Panels"`
 }
 
 // NewStruct creates a new relationship struct
@@ -142,13 +179,20 @@ func (r *joinR) GetCables() CableSlice {
 	return r.Cables
 }
 
+func (r *joinR) GetPanels() PanelSlice {
+	if r == nil {
+		return nil
+	}
+	return r.Panels
+}
+
 // joinL is where Load methods for each relationship are stored.
 type joinL struct{}
 
 var (
-	joinAllColumns            = []string{"id", "project_id", "model", "created_at", "created_by", "size", "color", "type"}
+	joinAllColumns            = []string{"id", "project_id", "model", "created_at", "created_by", "size", "color", "type", "blocks"}
 	joinColumnsWithoutDefault = []string{"project_id"}
-	joinColumnsWithDefault    = []string{"id", "model", "created_at", "created_by", "size", "color", "type"}
+	joinColumnsWithDefault    = []string{"id", "model", "created_at", "created_by", "size", "color", "type", "blocks"}
 	joinPrimaryKeyColumns     = []string{"id"}
 	joinGeneratedColumns      = []string{}
 )
@@ -465,6 +509,20 @@ func (o *Join) Cables(mods ...qm.QueryMod) cableQuery {
 	)
 
 	return Cables(queryMods...)
+}
+
+// Panels retrieves all the panel's Panels with an executor.
+func (o *Join) Panels(mods ...qm.QueryMod) panelQuery {
+	var queryMods []qm.QueryMod
+	if len(mods) != 0 {
+		queryMods = append(queryMods, mods...)
+	}
+
+	queryMods = append(queryMods,
+		qm.Where("\"panels\".\"join_id\"=?", o.ID),
+	)
+
+	return Panels(queryMods...)
 }
 
 // LoadCreatedByUser allows an eager lookup of values, cached into the
@@ -821,6 +879,120 @@ func (joinL) LoadCables(ctx context.Context, e boil.ContextExecutor, singular bo
 	return nil
 }
 
+// LoadPanels allows an eager lookup of values, cached into the
+// loaded structs of the objects. This is for a 1-M or N-M relationship.
+func (joinL) LoadPanels(ctx context.Context, e boil.ContextExecutor, singular bool, maybeJoin interface{}, mods queries.Applicator) error {
+	var slice []*Join
+	var object *Join
+
+	if singular {
+		var ok bool
+		object, ok = maybeJoin.(*Join)
+		if !ok {
+			object = new(Join)
+			ok = queries.SetFromEmbeddedStruct(&object, &maybeJoin)
+			if !ok {
+				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", object, maybeJoin))
+			}
+		}
+	} else {
+		s, ok := maybeJoin.(*[]*Join)
+		if ok {
+			slice = *s
+		} else {
+			ok = queries.SetFromEmbeddedStruct(&slice, maybeJoin)
+			if !ok {
+				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", slice, maybeJoin))
+			}
+		}
+	}
+
+	args := make([]interface{}, 0, 1)
+	if singular {
+		if object.R == nil {
+			object.R = &joinR{}
+		}
+		args = append(args, object.ID)
+	} else {
+	Outer:
+		for _, obj := range slice {
+			if obj.R == nil {
+				obj.R = &joinR{}
+			}
+
+			for _, a := range args {
+				if a == obj.ID {
+					continue Outer
+				}
+			}
+
+			args = append(args, obj.ID)
+		}
+	}
+
+	if len(args) == 0 {
+		return nil
+	}
+
+	query := NewQuery(
+		qm.From(`panels`),
+		qm.WhereIn(`panels.join_id in ?`, args...),
+	)
+	if mods != nil {
+		mods.Apply(query)
+	}
+
+	results, err := query.QueryContext(ctx, e)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load panels")
+	}
+
+	var resultSlice []*Panel
+	if err = queries.Bind(results, &resultSlice); err != nil {
+		return errors.Wrap(err, "failed to bind eager loaded slice panels")
+	}
+
+	if err = results.Close(); err != nil {
+		return errors.Wrap(err, "failed to close results in eager load on panels")
+	}
+	if err = results.Err(); err != nil {
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for panels")
+	}
+
+	if len(panelAfterSelectHooks) != 0 {
+		for _, obj := range resultSlice {
+			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
+				return err
+			}
+		}
+	}
+	if singular {
+		object.R.Panels = resultSlice
+		for _, foreign := range resultSlice {
+			if foreign.R == nil {
+				foreign.R = &panelR{}
+			}
+			foreign.R.Join = object
+		}
+		return nil
+	}
+
+	for _, foreign := range resultSlice {
+		for _, local := range slice {
+			if local.ID == foreign.JoinID {
+				local.R.Panels = append(local.R.Panels, foreign)
+				if foreign.R == nil {
+					foreign.R = &panelR{}
+				}
+				foreign.R.Join = local
+				break
+			}
+		}
+	}
+
+	return nil
+}
+
 // SetCreatedByUser of the join to the related item.
 // Sets o.R.CreatedByUser to related.
 // Adds o to related.R.CreatedByJoins.
@@ -959,6 +1131,59 @@ func (o *Join) AddCables(ctx context.Context, exec boil.ContextExecutor, insert 
 	for _, rel := range related {
 		if rel.R == nil {
 			rel.R = &cableR{
+				Join: o,
+			}
+		} else {
+			rel.R.Join = o
+		}
+	}
+	return nil
+}
+
+// AddPanels adds the given related objects to the existing relationships
+// of the join, optionally inserting them as new records.
+// Appends related to o.R.Panels.
+// Sets related.R.Join appropriately.
+func (o *Join) AddPanels(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*Panel) error {
+	var err error
+	for _, rel := range related {
+		if insert {
+			rel.JoinID = o.ID
+			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
+				return errors.Wrap(err, "failed to insert into foreign table")
+			}
+		} else {
+			updateQuery := fmt.Sprintf(
+				"UPDATE \"panels\" SET %s WHERE %s",
+				strmangle.SetParamNames("\"", "\"", 1, []string{"join_id"}),
+				strmangle.WhereClause("\"", "\"", 2, panelPrimaryKeyColumns),
+			)
+			values := []interface{}{o.ID, rel.ID}
+
+			if boil.IsDebug(ctx) {
+				writer := boil.DebugWriterFrom(ctx)
+				fmt.Fprintln(writer, updateQuery)
+				fmt.Fprintln(writer, values)
+			}
+			if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
+				return errors.Wrap(err, "failed to update foreign table")
+			}
+
+			rel.JoinID = o.ID
+		}
+	}
+
+	if o.R == nil {
+		o.R = &joinR{
+			Panels: related,
+		}
+	} else {
+		o.R.Panels = append(o.R.Panels, related...)
+	}
+
+	for _, rel := range related {
+		if rel.R == nil {
+			rel.R = &panelR{
 				Join: o,
 			}
 		} else {

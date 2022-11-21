@@ -42,6 +42,7 @@ import { FormsModule } from '@angular/forms'
 import { GridLayoutDirective } from '../../directives/grid-layout.directive'
 import { DragDropModule } from '@angular/cdk/drag-drop'
 import { MatButtonModule } from '@angular/material/button'
+import { HorizontalScrollDirective } from '../../directives/horizontal-scroll.directive'
 
 export interface ProjectStore {
   project?: ProjectModel
@@ -67,6 +68,7 @@ export interface ProjectStore {
     GridLayoutDirective,
     DragDropModule,
     MatButtonModule,
+    HorizontalScrollDirective,
   ],
   animations: [
     trigger('keyframes', [
@@ -98,7 +100,7 @@ export interface ProjectStore {
   ],
 })
 export class ProjectIdComponent implements OnInit {
-  zoom: number = 1
+  // zoom: number = 1
   menuTopLeftPosition = { x: '0', y: '0' }
   inverterBool: boolean[] = [false, false, false]
   trackerBool: boolean[] = [false, false, false]
@@ -162,58 +164,61 @@ export class ProjectIdComponent implements OnInit {
     }
   }
 
-  @HostListener('wheel', ['$event'])
-  onWheel(event: WheelEvent) {
-    // this.gridLayoutRef.last.nativeElement
-    /*    console.log(this.gridLayoutRef)
-        if (this.gridLayoutRef.first) {
-          this.gridLayoutRef.first.nativeElement.style.top =
-            this.gridLayoutRef.first.nativeElement.style.top + 1
-        }*/
-    /*    this.gridLayoutRef.forEach((lay) => {
-          console.log(lay)
-          lay.nativeElement.style.top = lay.nativeElement.style.top + 1
-        })*/
-    // console.log(this.el.nativeElement)
-    /*    console.log(this.gridLayoutRef.last.nativeElement)
-        console.log(this.gridLayoutRef.get(1)?.nativeElement)
-        this.gridLayoutRef.forEach((lay) => {
-          console.log(lay)
-        })
-        console.log(this.gridLayoutRef.first.nativeElement.)*/
-    // console.log(this.gridLayoutComp.first)
-    // console.log(this.gridLayoutComp.sty)
-    // this.gridLayoutComp.first
+  /*
 
-    if (!event.ctrlKey) return
-    event.preventDefault()
-    console.log(event.deltaY)
-    if (event.ctrlKey) {
-      if (event.deltaY < 0) {
-        // this.zoom = this.zoom + 1
-        // this.zoom = event.deltaY
-        if (this.zoom < 100) {
-          this.zoom = this.zoom + 0.1
-          console.log('ZOOM', this.zoom)
-          console.log('up')
-          this.zoom = Math.round((this.zoom + Number.EPSILON) * 100) / 100
+    @HostListener('wheel', ['$event'])
+    onWheel(event: WheelEvent) {
+      // this.gridLayoutRef.last.nativeElement
+      /!*    console.log(this.gridLayoutRef)
+          if (this.gridLayoutRef.first) {
+            this.gridLayoutRef.first.nativeElement.style.top =
+              this.gridLayoutRef.first.nativeElement.style.top + 1
+          }*!/
+      /!*    this.gridLayoutRef.forEach((lay) => {
+            console.log(lay)
+            lay.nativeElement.style.top = lay.nativeElement.style.top + 1
+          })*!/
+      // console.log(this.el.nativeElement)
+      /!*    console.log(this.gridLayoutRef.last.nativeElement)
+          console.log(this.gridLayoutRef.get(1)?.nativeElement)
+          this.gridLayoutRef.forEach((lay) => {
+            console.log(lay)
+          })
+          console.log(this.gridLayoutRef.first.nativeElement.)*!/
+      // console.log(this.gridLayoutComp.first)
+      // console.log(this.gridLayoutComp.sty)
+      // this.gridLayoutComp.first
+
+      if (!event.ctrlKey) return
+      event.preventDefault()
+      console.log(event.deltaY)
+      if (event.ctrlKey) {
+        if (event.deltaY < 0) {
+          // this.zoom = this.zoom + 1
+          // this.zoom = event.deltaY
+          if (this.zoom < 100) {
+            this.zoom = this.zoom + 0.1
+            console.log('ZOOM', this.zoom)
+            console.log('up')
+            this.zoom = Math.round((this.zoom + Number.EPSILON) * 100) / 100
+          }
+        }
+        if (event.deltaY > 0) {
+          if (this.zoom > 1) {
+            this.zoom = this.zoom - 0.1
+            console.log('ZOOM', this.zoom)
+            console.log('down')
+            this.zoom = Math.round((this.zoom + Number.EPSILON) * 100) / 100
+          }
         }
       }
-      if (event.deltaY > 0) {
-        if (this.zoom > 1) {
-          this.zoom = this.zoom - 0.1
-          console.log('ZOOM', this.zoom)
-          console.log('down')
-          this.zoom = Math.round((this.zoom + Number.EPSILON) * 100) / 100
-        }
-      }
+
+      console.log('WHEEL', event)
+      /!*    let scale = this.scale - $event.deltaY * this.scaleFactor;
+          scale = clamp(scale, 1, this.zoomThreshold);
+          this.calculatePinch(scale);*!/
     }
-
-    console.log('WHEEL', event)
-    /*    let scale = this.scale - $event.deltaY * this.scaleFactor;
-        scale = clamp(scale, 1, this.zoomThreshold);
-        this.calculatePinch(scale);*/
-  }
+  */
 
   ngOnInit(): void {
     this.panels$ = this.panelsEntity.entities$
@@ -300,17 +305,17 @@ export class ProjectIdComponent implements OnInit {
     this.view = event
   }
 
-  onZoomChange(event: any) {
-    console.log('HELLO', event)
-    // const mouse: WheelEvent = event
-    if (event.ctrlKey) {
-      if (event.wheelDelta > 0) {
-        console.log(event.wheelDelta)
+  /*  onZoomChange(event: any) {
+      console.log('HELLO', event)
+      // const mouse: WheelEvent = event
+      if (event.ctrlKey) {
+        if (event.wheelDelta > 0) {
+          console.log(event.wheelDelta)
+        }
+        if (event.wheelDelta < 0) {
+          console.log(event.wheelDelta)
+        }
       }
-      if (event.wheelDelta < 0) {
-        console.log(event.wheelDelta)
-      }
-    }
-    this.zoom = event.zoom
-  }
+      this.zoom = event.zoom
+    }*/
 }

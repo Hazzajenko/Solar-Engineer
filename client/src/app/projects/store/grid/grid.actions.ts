@@ -40,6 +40,7 @@ export const GridStateActions = createActionGroup({
     'Select GridMode Join': props<{ mode: GridMode.JOIN }>(),
     'Change GridMode': props<{ mode: GridMode }>(),
     'Add To Join Array': props<{ toJoin: string }>(),
+    'Start Join': props<{ toJoin: string }>(),
     'Clear Join Array': emptyProps(),
     'Clear Grid State': emptyProps(),
   },

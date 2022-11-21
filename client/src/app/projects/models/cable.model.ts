@@ -5,6 +5,7 @@ export interface CableModel {
   id: string
   project_id?: number
   join_id?: string
+  in_join?: boolean
   model?: UnitModel
   type?: TypeModel
   location: string

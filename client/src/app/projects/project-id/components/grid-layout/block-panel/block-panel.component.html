@@ -1,0 +1,19 @@
+<ng-container *ngIf="panels && block && grid">
+  <ng-container *ngIf="panels | findPanelLocation: block.location!; let panel">
+    <div
+      *ngIf="panel.location === block?.location"
+      [cdkDragData]="panel"
+      [matTooltip]="'Location = ' + panel.location + 'String: ' + panel.name"
+      [ngStyle]="{
+        'background-color':
+          grid.selectedString?.id === panel.string_id ? '#07ffd4' : '#9ec7f9'
+      }"
+      [style.border]="'2px solid ' + block?.color"
+      cdkDrag
+      class="drop-zone__panel"
+      matTooltipPosition="right"
+    >
+      P
+    </div>
+  </ng-container>
+</ng-container>

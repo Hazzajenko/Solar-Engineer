@@ -6,8 +6,9 @@ create table if not exists joins
     created_at timestamp(0) with time zone default now()         not null,
     created_by bigserial,
     size       bigint                      default 4             not null,
-    color      text                        default 'black'::text not null,
-    type       text                        default 'CABLE'::text not null,
+    color      text                        default 'purple'::text not null,
+    type       text                        default 'JOIN'::text not null,
+    blocks text[],
     primary key (id),
     foreign key (project_id) references projects
         on delete cascade,

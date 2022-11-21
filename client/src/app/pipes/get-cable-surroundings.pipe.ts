@@ -13,11 +13,7 @@ export interface SurroundingModel {
   standalone: true,
 })
 export class GetCableSurroundingsPipe implements PipeTransform {
-  transform(
-    cable: CableModel,
-    allCables: CableModel[],
-    // joins: JoinModel[],
-  ): SurroundingModel {
+  transform(cable: CableModel, allCables: CableModel[]): SurroundingModel {
     if (!cable || !allCables) {
       return {
         left: false,
@@ -34,25 +30,12 @@ export class GetCableSurroundingsPipe implements PipeTransform {
     const split = location.split('')
     split.forEach((p, index) => {
       if (p === 'c') {
-        // const row = location.slice(1, index)
-        // const col = location.slice(index + 3, location.length)
         const row = location.slice(3, index)
         const col = location.slice(index + 3, location.length)
-        console.log(row)
-        console.log(col)
         numberRow = Number(row)
         numberCol = Number(col)
-        console.log(numberRow)
-        console.log(numberCol)
       }
     })
-
-    const mySubString = location.substring(
-      location.indexOf('w') + 1,
-      location.lastIndexOf('c'),
-    )
-    console.log(mySubString)
-
     const topString: string = `row${numberRow - 1}col${numberCol}`
     const bottomString: string = `row${numberRow + 1}col${numberCol}`
     const leftString: string = `row${numberRow}col${numberCol - 1}`
@@ -65,11 +48,6 @@ export class GetCableSurroundingsPipe implements PipeTransform {
     const findLeft = allCables.find((cable) => cable.location === leftString)
     const findRight = allCables.find((cable) => cable.location === rightString)
 
-    /*    console.log(!!findTop)
-        console.log(!!findBottom)
-        console.log(!!findLeft)
-        console.log(!!findRight)*/
-
     if (findTop) console.log('FIND TOP', findTop.location)
     if (findBottom) console.log('FIND BOTTOM', findBottom.location)
     if (findLeft) console.log('FIND LEFT', findLeft.location)
@@ -81,6 +59,5 @@ export class GetCableSurroundingsPipe implements PipeTransform {
       top: !!findTop,
       bottom: !!findBottom,
     } as SurroundingModel
-    // const top = allCables.find()
   }
 }

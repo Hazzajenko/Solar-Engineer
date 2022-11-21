@@ -37,10 +37,51 @@
 }
 
 .project-design-container {
+  //width: 200%;
+  //height: 200%;
   display: flex;
   flex-direction: column;
   align-items: center;
+  /*  -webkit-transition: -webkit-transform 0.2s;
+    transition: -webkit-transform 0.2s;
+    //transition: transform 0.2s;
+    //transition: transform 0.2s, -webkit-transform 0.2s; !* Animation *!
+
+
+    &:hover {
+      -webkit-transform: scale(1.5);
+      transform: scale(1.5);
+    }*/
+
+  /*  transform-origin: top left;
+    transform: scale(50%);*/
+  /*  transform: scale(0.1);
+    transform-origin: 25% 25%;*/
+
 }
+
+/*
+app-block-panel {
+  background-color: #95c2fa;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  //transition: transform .1s;
+  !*
+
+      &:hover {
+        transform: scale(1.1);
+      }*!
+
+  &:hover {
+    //background-color: red;
+    color: red;
+    width: 23px;
+    height: 23px;
+  }
+}*/
 
 /*svg {
   !* border: 5px solid red; *!
@@ -54,7 +95,9 @@ path {
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
 }*/
-
+/** {
+  zoom: 100;
+}*/
 
 .drop-zone {
   display: flex;
@@ -65,11 +108,11 @@ path {
   width: 30px;
   height: 30px;
 
+
   &__svg {
     pointer-events: none;
     z-index: 1;
     position: relative;
-    //left: -1px;
     top: 1.8px;
   }
 
@@ -95,6 +138,12 @@ path {
     display: flex;
     align-items: center;
     justify-content: center;
+    //transition: transform .1s;
+    /*
+
+        &:hover {
+          transform: scale(1.1);
+        }*/
 
     &:hover {
       //background-color: red;

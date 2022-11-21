@@ -24,12 +24,13 @@ func (h *Handlers) CreateJoin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var input struct {
-		ID        string `json:"id"`
-		ProjectID int64  `json:"project_id"`
-		Color     string `json:"color"`
-		Size      int64  `json:"size"`
-		Model     int    `json:"model"`
-		Type      string `json:"type"`
+		ID        string   `json:"id"`
+		ProjectID int64    `json:"project_id"`
+		Color     string   `json:"color"`
+		Size      int64    `json:"size"`
+		Model     int      `json:"model"`
+		Type      string   `json:"type"`
+		Blocks    []string `json:"blocks"`
 	}
 
 	err = h.Json.DecodeJSON(w, r, &input)
@@ -45,6 +46,7 @@ func (h *Handlers) CreateJoin(w http.ResponseWriter, r *http.Request) {
 		CreatedBy: userId,
 		Color:     input.Color,
 		Size:      input.Size,
+		Blocks:    input.Blocks,
 	}
 
 	result, err := h.Models.Joins.Create(join)
@@ -56,6 +58,12 @@ func (h *Handlers) CreateJoin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	/*		for _, block := range input.Blocks {
+
+			}*/
+
+	//input.Blocks
+
 	err = h.Json.ResponseJSON(w, http.StatusAccepted,
 		json.Envelope{"join": result},
 		nil)
@@ -65,28 +73,10 @@ func (h *Handlers) CreateJoin(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handlers) GetJoinsByProjectId(w http.ResponseWriter, r *http.Request) {
-	/*	bearerHeader := r.Header.Get("Authorization")
-		bearer := strings.Replace(bearerHeader, "Bearer ", "", 1)*/
-
-	/*	projectIdString := chi.URLParam(r, "projectId")
-		projectId, err := strconv.Atoi(projectIdString)
-		if err != nil {
-			h.Logger.PrintError(err, nil)
-		}*/
-
 	projectId, err := h.Helpers.GetInt64FromURLParam(chi.URLParam(r, "projectId"))
 	if err != nil {
 		h.Logger.PrintError(err, nil)
 	}
-
-	//fmt.Println(projectId)
-
-	//idString, err := h.Tokens.GetUserIdFromToken(bearer)
-	//if err != nil {
-	//	h.Logger.PrintError(err, nil)
-	//}
-	//userId, err := strconv.Atoi(idString)
-	//fmt.Println(userId)
 
 	result, err := h.Models.Joins.GetJoinsByProjectId(projectId)
 	if err != nil {
@@ -106,16 +96,6 @@ func (h *Handlers) GetJoinsByProjectId(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handlers) UpdateJoin(w http.ResponseWriter, r *http.Request) {
-	//bearerHeader := r.Header.Get("Authorization")
-	//bearer := strings.Replace(bearerHeader, "Bearer ", "", 1)
-	//
-	//userId, err := h.Tokens.GetUserIdInt64FromToken(bearer)
-	//if err != nil {
-	//	h.Logger.PrintError(err, nil)
-	//}
-	//fmt.Println(userId)
-
-	//cableId := chi.URLParam(r, "cableId")
 
 	var input struct {
 		ID      string      `json:"id"`
@@ -155,38 +135,8 @@ func (h *Handlers) UpdateJoin(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handlers) DeleteJoin(w http.ResponseWriter, r *http.Request) {
-	/*	bearerHeader := r.Header.Get("Authorization")
-		bearer := strings.Replace(bearerHeader, "Bearer ", "", 1)
-
-		userId, err := h.Tokens.GetUserIdInt64FromToken(bearer)
-		if err != nil {
-			h.Logger.PrintError(err, nil)
-		}
-		fmt.Println(userId)*/
-
-	/*	projectId, err := h.Helpers.GetInt64FromURLParam(chi.URLParam(r, "projectId"))
-		if err != nil {
-			h.Logger.PrintError(err, nil)
-		}*/
-	//fmt.Println(projectId)
 
 	joinId := chi.URLParam(r, "cableId")
-
-	/*	cableId, err := h.Helpers.GetInt64FromURLParam(chi.URLParam(r, "cableId"))
-		if err != nil {
-			h.Logger.PrintError(err, nil)
-		}
-		fmt.Println(cableId)*/
-
-	/*	var input struct {
-			ID string `json:"id"`
-		}
-
-		err = h.Json.DecodeJSON(w, r, &input)
-		if err != nil {
-			h.Errors.ServerErrorResponse(w, r, err)
-			return
-		}*/
 
 	err := h.Models.Joins.Delete(joinId)
 	if err != nil {

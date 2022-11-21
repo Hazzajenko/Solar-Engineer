@@ -1,0 +1,21 @@
+.drop-zone__panel {
+  background-color: #95c2fa;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  //transition: transform .1s;
+  /*
+
+      &:hover {
+        transform: scale(1.1);
+      }*/
+
+  &:hover {
+    //background-color: red;
+    color: red;
+    width: 23px;
+    height: 23px;
+  }
+}

@@ -6,6 +6,7 @@ export interface PanelModel {
   project_id?: number
   inverter_id?: string
   tracker_id?: string
+  join_id?: string
   string_id: string
   model?: UnitModel
   type?: TypeModel

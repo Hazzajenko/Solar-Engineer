@@ -34,6 +34,7 @@ export class GridActionService extends GridService {
 
   cellAction(
     location: string,
+    joinArray: string[],
     gridState: {
       createMode?: UnitModel
       selectedStrings?: StringModel[]
@@ -51,7 +52,7 @@ export class GridActionService extends GridService {
         return this.remove.deleteSwitch(location, gridState, project, blocks)
 
       case GridMode.JOIN:
-        return this.join.addToJoinArray(location, project, blocks)
+        return this.join.addToJoinArray(location, joinArray, project, blocks)
 
       default:
         break

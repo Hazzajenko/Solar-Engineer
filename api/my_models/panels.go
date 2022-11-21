@@ -47,6 +47,7 @@ type Panel struct {
 	Model                   int       `boil:"model" json:"model" toml:"model" yaml:"model"`
 	Color                   string    `boil:"color" json:"color" toml:"color" yaml:"color"`
 	Type                    string    `boil:"type" json:"type" toml:"type" yaml:"type"`
+	JoinID                  string    `boil:"join_id" json:"join_id" toml:"join_id" yaml:"join_id"`
 
 	R *panelR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L panelL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -77,6 +78,7 @@ var PanelColumns = struct {
 	Model                   string
 	Color                   string
 	Type                    string
+	JoinID                  string
 }{
 	ID:                      "id",
 	ProjectID:               "project_id",
@@ -102,6 +104,7 @@ var PanelColumns = struct {
 	Model:                   "model",
 	Color:                   "color",
 	Type:                    "type",
+	JoinID:                  "join_id",
 }
 
 var PanelTableColumns = struct {
@@ -129,6 +132,7 @@ var PanelTableColumns = struct {
 	Model                   string
 	Color                   string
 	Type                    string
+	JoinID                  string
 }{
 	ID:                      "panels.id",
 	ProjectID:               "panels.project_id",
@@ -154,6 +158,7 @@ var PanelTableColumns = struct {
 	Model:                   "panels.model",
 	Color:                   "panels.color",
 	Type:                    "panels.type",
+	JoinID:                  "panels.join_id",
 }
 
 // Generated where
@@ -183,6 +188,7 @@ var PanelWhere = struct {
 	Model                   whereHelperint
 	Color                   whereHelperstring
 	Type                    whereHelperstring
+	JoinID                  whereHelperstring
 }{
 	ID:                      whereHelperstring{field: "\"panels\".\"id\""},
 	ProjectID:               whereHelperint64{field: "\"panels\".\"project_id\""},
@@ -208,18 +214,21 @@ var PanelWhere = struct {
 	Model:                   whereHelperint{field: "\"panels\".\"model\""},
 	Color:                   whereHelperstring{field: "\"panels\".\"color\""},
 	Type:                    whereHelperstring{field: "\"panels\".\"type\""},
+	JoinID:                  whereHelperstring{field: "\"panels\".\"join_id\""},
 }
 
 // PanelRels is where relationship names are stored.
 var PanelRels = struct {
 	CreatedByUser string
 	Inverter      string
+	Join          string
 	Project       string
 	String        string
 	Tracker       string
 }{
 	CreatedByUser: "CreatedByUser",
 	Inverter:      "Inverter",
+	Join:          "Join",
 	Project:       "Project",
 	String:        "String",
 	Tracker:       "Tracker",
@@ -229,6 +238,7 @@ var PanelRels = struct {
 type panelR struct {
 	CreatedByUser *User     `boil:"CreatedByUser" json:"CreatedByUser" toml:"CreatedByUser" yaml:"CreatedByUser"`
 	Inverter      *Inverter `boil:"Inverter" json:"Inverter" toml:"Inverter" yaml:"Inverter"`
+	Join          *Join     `boil:"Join" json:"Join" toml:"Join" yaml:"Join"`
 	Project       *Project  `boil:"Project" json:"Project" toml:"Project" yaml:"Project"`
 	String        *String   `boil:"String" json:"String" toml:"String" yaml:"String"`
 	Tracker       *Tracker  `boil:"Tracker" json:"Tracker" toml:"Tracker" yaml:"Tracker"`
@@ -251,6 +261,13 @@ func (r *panelR) GetInverter() *Inverter {
 		return nil
 	}
 	return r.Inverter
+}
+
+func (r *panelR) GetJoin() *Join {
+	if r == nil {
+		return nil
+	}
+	return r.Join
 }
 
 func (r *panelR) GetProject() *Project {
@@ -278,9 +295,9 @@ func (r *panelR) GetTracker() *Tracker {
 type panelL struct{}
 
 var (
-	panelAllColumns            = []string{"id", "project_id", "inverter_id", "tracker_id", "string_id", "name", "created_at", "created_by", "current_at_maximum_power", "short_circuit_current", "short_circuit_current_temp", "maximum_power", "maximum_power_temp", "voltage_at_maximum_power", "open_circuit_voltage", "open_circuit_voltage_temp", "length", "weight", "width", "version", "location", "model", "color", "type"}
+	panelAllColumns            = []string{"id", "project_id", "inverter_id", "tracker_id", "string_id", "name", "created_at", "created_by", "current_at_maximum_power", "short_circuit_current", "short_circuit_current_temp", "maximum_power", "maximum_power_temp", "voltage_at_maximum_power", "open_circuit_voltage", "open_circuit_voltage_temp", "length", "weight", "width", "version", "location", "model", "color", "type", "join_id"}
 	panelColumnsWithoutDefault = []string{"project_id", "name"}
-	panelColumnsWithDefault    = []string{"id", "inverter_id", "tracker_id", "string_id", "created_at", "created_by", "current_at_maximum_power", "short_circuit_current", "short_circuit_current_temp", "maximum_power", "maximum_power_temp", "voltage_at_maximum_power", "open_circuit_voltage", "open_circuit_voltage_temp", "length", "weight", "width", "version", "location", "model", "color", "type"}
+	panelColumnsWithDefault    = []string{"id", "inverter_id", "tracker_id", "string_id", "created_at", "created_by", "current_at_maximum_power", "short_circuit_current", "short_circuit_current_temp", "maximum_power", "maximum_power_temp", "voltage_at_maximum_power", "open_circuit_voltage", "open_circuit_voltage_temp", "length", "weight", "width", "version", "location", "model", "color", "type", "join_id"}
 	panelPrimaryKeyColumns     = []string{"id"}
 	panelGeneratedColumns      = []string{}
 )
@@ -585,6 +602,17 @@ func (o *Panel) Inverter(mods ...qm.QueryMod) inverterQuery {
 	return Inverters(queryMods...)
 }
 
+// Join pointed to by the foreign key.
+func (o *Panel) Join(mods ...qm.QueryMod) joinQuery {
+	queryMods := []qm.QueryMod{
+		qm.Where("\"id\" = ?", o.JoinID),
+	}
+
+	queryMods = append(queryMods, mods...)
+
+	return Joins(queryMods...)
+}
+
 // Project pointed to by the foreign key.
 func (o *Panel) Project(mods ...qm.QueryMod) projectQuery {
 	queryMods := []qm.QueryMod{
@@ -848,6 +876,126 @@ func (panelL) LoadInverter(ctx context.Context, e boil.ContextExecutor, singular
 				local.R.Inverter = foreign
 				if foreign.R == nil {
 					foreign.R = &inverterR{}
+				}
+				foreign.R.Panels = append(foreign.R.Panels, local)
+				break
+			}
+		}
+	}
+
+	return nil
+}
+
+// LoadJoin allows an eager lookup of values, cached into the
+// loaded structs of the objects. This is for an N-1 relationship.
+func (panelL) LoadJoin(ctx context.Context, e boil.ContextExecutor, singular bool, maybePanel interface{}, mods queries.Applicator) error {
+	var slice []*Panel
+	var object *Panel
+
+	if singular {
+		var ok bool
+		object, ok = maybePanel.(*Panel)
+		if !ok {
+			object = new(Panel)
+			ok = queries.SetFromEmbeddedStruct(&object, &maybePanel)
+			if !ok {
+				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", object, maybePanel))
+			}
+		}
+	} else {
+		s, ok := maybePanel.(*[]*Panel)
+		if ok {
+			slice = *s
+		} else {
+			ok = queries.SetFromEmbeddedStruct(&slice, maybePanel)
+			if !ok {
+				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", slice, maybePanel))
+			}
+		}
+	}
+
+	args := make([]interface{}, 0, 1)
+	if singular {
+		if object.R == nil {
+			object.R = &panelR{}
+		}
+		args = append(args, object.JoinID)
+
+	} else {
+	Outer:
+		for _, obj := range slice {
+			if obj.R == nil {
+				obj.R = &panelR{}
+			}
+
+			for _, a := range args {
+				if a == obj.JoinID {
+					continue Outer
+				}
+			}
+
+			args = append(args, obj.JoinID)
+
+		}
+	}
+
+	if len(args) == 0 {
+		return nil
+	}
+
+	query := NewQuery(
+		qm.From(`joins`),
+		qm.WhereIn(`joins.id in ?`, args...),
+	)
+	if mods != nil {
+		mods.Apply(query)
+	}
+
+	results, err := query.QueryContext(ctx, e)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load Join")
+	}
+
+	var resultSlice []*Join
+	if err = queries.Bind(results, &resultSlice); err != nil {
+		return errors.Wrap(err, "failed to bind eager loaded slice Join")
+	}
+
+	if err = results.Close(); err != nil {
+		return errors.Wrap(err, "failed to close results of eager load for joins")
+	}
+	if err = results.Err(); err != nil {
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for joins")
+	}
+
+	if len(panelAfterSelectHooks) != 0 {
+		for _, obj := range resultSlice {
+			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
+				return err
+			}
+		}
+	}
+
+	if len(resultSlice) == 0 {
+		return nil
+	}
+
+	if singular {
+		foreign := resultSlice[0]
+		object.R.Join = foreign
+		if foreign.R == nil {
+			foreign.R = &joinR{}
+		}
+		foreign.R.Panels = append(foreign.R.Panels, object)
+		return nil
+	}
+
+	for _, local := range slice {
+		for _, foreign := range resultSlice {
+			if local.JoinID == foreign.ID {
+				local.R.Join = foreign
+				if foreign.R == nil {
+					foreign.R = &joinR{}
 				}
 				foreign.R.Panels = append(foreign.R.Panels, local)
 				break
@@ -1303,6 +1451,53 @@ func (o *Panel) SetInverter(ctx context.Context, exec boil.ContextExecutor, inse
 
 	if related.R == nil {
 		related.R = &inverterR{
+			Panels: PanelSlice{o},
+		}
+	} else {
+		related.R.Panels = append(related.R.Panels, o)
+	}
+
+	return nil
+}
+
+// SetJoin of the panel to the related item.
+// Sets o.R.Join to related.
+// Adds o to related.R.Panels.
+func (o *Panel) SetJoin(ctx context.Context, exec boil.ContextExecutor, insert bool, related *Join) error {
+	var err error
+	if insert {
+		if err = related.Insert(ctx, exec, boil.Infer()); err != nil {
+			return errors.Wrap(err, "failed to insert into foreign table")
+		}
+	}
+
+	updateQuery := fmt.Sprintf(
+		"UPDATE \"panels\" SET %s WHERE %s",
+		strmangle.SetParamNames("\"", "\"", 1, []string{"join_id"}),
+		strmangle.WhereClause("\"", "\"", 2, panelPrimaryKeyColumns),
+	)
+	values := []interface{}{related.ID, o.ID}
+
+	if boil.IsDebug(ctx) {
+		writer := boil.DebugWriterFrom(ctx)
+		fmt.Fprintln(writer, updateQuery)
+		fmt.Fprintln(writer, values)
+	}
+	if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
+		return errors.Wrap(err, "failed to update local table")
+	}
+
+	o.JoinID = related.ID
+	if o.R == nil {
+		o.R = &panelR{
+			Join: related,
+		}
+	} else {
+		o.R.Join = related
+	}
+
+	if related.R == nil {
+		related.R = &joinR{
 			Panels: PanelSlice{o},
 		}
 	} else {

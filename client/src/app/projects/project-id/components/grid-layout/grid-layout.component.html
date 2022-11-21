@@ -7,269 +7,81 @@
             <ng-container
               *ngrxLet="row | getGridString: col; let locationString"
             >
-              <div
-                (cdkDropListDropped)="
-                  gridDrag.gridDrop($event, project, blocks)
-                "
-                (click)="
-                  gridAction.cellAction(locationString, grid, project, blocks)
-                "
-                [id]="locationString"
-                cdkDropList
-                class="drop-zone"
-                id="hello"
-              >
-                <!--                {{ locationString }}-->
-                <ng-container
-                  *ngIf="blocks | findBlockNumber: locationString; let block"
+              <ng-container *ngrxLet="toJoinArray$ | async; let toJoinArray">
+                <div
+                  (cdkDropListDropped)="
+                    gridDrag.gridDrop($event, project, blocks)
+                  "
+                  (click)="
+                    gridAction.cellAction(
+                      locationString,
+                      toJoinArray!,
+                      grid,
+                      project,
+                      blocks
+                    )
+                  "
+                  [id]="locationString"
+                  cdkDropList
+                  class="drop-zone"
+                  id="hello"
                 >
                   <ng-container
-                    *ngrxLet="toJoinArray$ | async; let toJoinArray"
+                    *ngIf="blocks | findBlockNumber: locationString; let block"
                   >
-                    <ng-container [ngSwitch]="block.model">
-                      <ng-container *ngSwitchCase="2">
-                        <ng-container *ngIf="inverters$ | async; let inverters">
+                    <ng-container *ngrxLet="joins$ | async; let joins">
+                      <ng-container [ngSwitch]="block.model">
+                        <ng-container *ngSwitchCase="2">
                           <ng-container
-                            *ngIf="
-                              inverters | findInverterLocation: block.location!;
-                              let inverter
-                            "
+                            *ngIf="inverters$ | async; let inverters"
                           >
-                            <div
+                            <app-block-inverter
                               (contextmenu)="onRightClick($event, inverter)"
-                              *ngIf="inverter.location === locationString"
-                              [cdkDragData]="inverter"
-                              [matTooltip]="
-                                'Location = ' +
-                                inverter.location +
-                                'Inverter: ' +
-                                inverter.name
+                              *ngIf="
+                                inverters
+                                  | findInverterLocation: block.location!;
+                                let inverter
                               "
-                              [style.border]="'2px solid ' + block.color"
-                              cdkDrag
-                              class="drop-zone__inverter"
-                              matTooltipPosition="right"
-                            >
-                              I
-
-                              <div class="drop-zone__inverter__line">
-                                <hr />
-                              </div>
-                            </div>
+                              [block]="block"
+                              [grid]="grid"
+                              [inverter]="inverter"
+                            ></app-block-inverter>
                           </ng-container>
                         </ng-container>
-                      </ng-container>
-                      <ng-container *ngSwitchCase="5">
-                        <ng-container *ngIf="panels$ | async; let panels">
-                          <ng-container
-                            *ngIf="
-                              panels | findPanelLocation: block.location!;
-                              let panel
-                            "
-                          >
-                            <div
+                        <ng-container *ngSwitchCase="5">
+                          <ng-container *ngIf="panels$ | async; let panels">
+                            <app-block-panel
                               (contextmenu)="onRightClick($event, panel)"
-                              *ngIf="panel.location === locationString"
-                              [cdkDragData]="panel"
-                              [matTooltip]="
-                                'Location = ' +
-                                panel.location +
-                                'String: ' +
-                                panel.name
+                              *ngIf="
+                                panels | findPanelLocation: block.location!;
+                                let panel
                               "
-                              [ngStyle]="{
-                                'background-color':
-                                  grid.selectedString?.id === panel.string_id
-                                    ? '#07ffd4'
-                                    : '#9ec7f9'
-                              }"
-                              [style.border]="'2px solid ' + block.color"
-                              cdkDrag
-                              class="drop-zone__panel"
-                              matTooltipPosition="right"
-                            >
-                              P
-                              <!--                            {{ panel.location }}-->
-                            </div>
+                              [block]="block"
+                              [grid]="grid"
+                              [panels]="panels"
+                            ></app-block-panel>
                           </ng-container>
                         </ng-container>
-                      </ng-container>
-                      <ng-container *ngSwitchCase="6">
-                        <ng-container *ngIf="joins$ | async; let joins">
+                        <ng-container *ngSwitchCase="6">
                           <ng-container *ngIf="cables$ | async; let cables">
-                            <ng-container
+                            <app-block-cable
+                              (contextmenu)="onRightClick($event, cable)"
                               *ngIf="
                                 cables | findCableLocation: block.location!;
                                 let cable
                               "
-                            >
-                              <ng-container
-                                *ngrxLet="
-                                  cable | getCableSurroundings: cables;
-                                  let surroundingModel
-                                "
-                              >
-                                <app-cable-join
-                                  [surroundings]="surroundingModel!"
-                                  class="drop-zone__svg"
-                                ></app-cable-join>
-                                <!--                                <app-right-svg
-                                                                  *ngIf="
-                                                                    !surroundingModel.top &&
-                                                                    !surroundingModel.bottom &&
-                                                                    !surroundingModel.left &&
-                                                                    surroundingModel.right
-                                                                  "
-                                                                  class="drop-zone__svg"
-                                                                >
-                                                                </app-right-svg>
-                                                                <app-left-right-svg
-                                                                  *ngIf="
-                                                                    !surroundingModel.top &&
-                                                                    !surroundingModel.bottom &&
-                                                                    surroundingModel.left &&
-                                                                    surroundingModel.right
-                                                                  "
-                                                                  class="drop-zone__svg"
-                                                                >
-                                                                </app-left-right-svg>
-                                                                <app-bottom-svg
-                                                                  *ngIf="
-                                                                    !surroundingModel.top &&
-                                                                    surroundingModel.bottom &&
-                                                                    !surroundingModel.left &&
-                                                                    !surroundingModel.right
-                                                                  "
-                                                                  class="drop-zone__svg"
-                                                                >
-                                                                </app-bottom-svg>
-                                                                <app-top-bottom-svg
-                                                                  *ngIf="
-                                                                    surroundingModel.top &&
-                                                                    surroundingModel.bottom &&
-                                                                    !surroundingModel.left &&
-                                                                    !surroundingModel.right
-                                                                  "
-                                                                  class="drop-zone__svg-top-bottom"
-                                                                >
-                                                                </app-top-bottom-svg>
-                                                                <app-left-top-svg
-                                                                  *ngIf="
-                                                                    surroundingModel.top &&
-                                                                    !surroundingModel.bottom &&
-                                                                    surroundingModel.left &&
-                                                                    !surroundingModel.right
-                                                                  "
-                                                                  class="drop-zone__svg-left-top"
-                                                                ></app-left-top-svg>-->
-                                <div
-                                  (contextmenu)="onRightClick($event, cable)"
-                                  *ngIf="cable.location === locationString"
-                                  [cdkDragData]="cable"
-                                  [matTooltip]="'Location = ' + cable.location"
-                                  [ngStyle]="{
-                                    'background-color': toJoinArray?.includes(
-                                      cable.location
-                                    )
-                                      ? '#07ffd4'
-                                      : '#fb7344'
-                                  }"
-                                  [style.border]="'2px solid ' + cable.color"
-                                  cdkDrag
-                                  class="drop-zone__cable"
-                                  matTooltipPosition="right"
-                                >
-                                  <!--                                  <ng-template [ngSwitch]="surroundingModel">
-                                                                      <ng-template
-                                                                        [ngSwitchCase]="
-                                                                          surroundingModel.top &&
-                                                                          !surroundingModel.bottom &&
-                                                                          surroundingModel.left &&
-                                                                          !surroundingModel.right
-                                                                        "
-                                                                      >
-                                                                        <app-left-top-svg
-                                                                          class="drop-zone__cable__svg-cable"
-                                                                        ></app-left-top-svg>
-                                                                      </ng-template>
-                                                                    </ng-template>-->
-                                  <!--                                <div
-                                                                    *ngIf="
-                                                                      surroundingModel.top &&
-                                                                      !surroundingModel.bottom &&
-                                                                      surroundingModel.left &&
-                                                                      !surroundingModel.right
-                                                                    "
-                                                                  >-->
-
-                                  <!-- <svg>
-                                     <use
-                                       xlink:href="assets/svg/left-top.svg"
-                                     ></use>
-                                   </svg>-->
-                                  <!--                                    <svg viewBox="-1 -1 100 100">
-                                                                        <path
-                                                                          d="
-                                                                          M 0, 0
-                                                                          L 25, 0
-                                                                          Q 30, 0
-                                                                            30, 5
-                                                                          L 30, 25
-                                                                          Q 30, 30
-                                                                            40, 30
-                                                                          H 50
-                                                                          "
-                                                                        />
-                                                                      </svg>-->
-                                  <!--                                  </div>-->
-                                  <!--                                  <div
-                                                                      [ngClass]="{
-                                                                        'drop-zone__cable__draw__top':
-                                                                          surroundingModel.top &&
-                                                                          !surroundingModel.bottom &&
-                                                                          !surroundingModel.left &&
-                                                                          !surroundingModel.right,
-                                                                        'drop-zone__cable__draw__bottom':
-                                                                          !surroundingModel.top &&
-                                                                          surroundingModel.bottom &&
-                                                                          !surroundingModel.left &&
-                                                                          !surroundingModel.right,
-                                                                        'drop-zone__cable__draw__top-bottom':
-                                                                          surroundingModel.top &&
-                                                                          surroundingModel.bottom &&
-                                                                          !surroundingModel.left &&
-                                                                          !surroundingModel.right,
-                                                                        'drop-zone__cable__draw__left-top':
-                                                                          surroundingModel.top &&
-                                                                          !surroundingModel.bottom &&
-                                                                          surroundingModel.left &&
-                                                                          !surroundingModel.right
-                                                                      }"
-                                                                    ></div>-->
-                                  <!--      <div
-                                          [ngClass]="{
-
-                                            'drop-zone__cable__draw__bottom':
-                                              surroundingModel.bottom
-                                          }"
-                                        >-->
-                                  <!--                              C-->
-                                  <!--   <div class="drop-zone__cable__draw">
-                                       <hr />
-                                     </div>-->
-                                  <!--                            {{ cable.location }}-->
-
-                                  <!--                                  </div>-->
-                                </div>
-                              </ng-container>
-                            </ng-container>
+                              [block]="block"
+                              [cable]="cable"
+                              [grid]="grid"
+                              [toJoinArray]="toJoinArray!"
+                            ></app-block-cable>
                           </ng-container>
                         </ng-container>
                       </ng-container>
                     </ng-container>
                   </ng-container>
-                </ng-container>
-              </div>
+                </div>
+              </ng-container>
             </ng-container>
           </div>
         </div>
@@ -336,6 +148,7 @@
             </button>
           </ng-container>
         </ng-container>
+        <button (click)="startJoin(item)" mat-menu-item>Start Join</button>
         <button mat-menu-item>Edit</button>
         <button (click)="deleteBlock(item)" mat-menu-item>Delete</button>
       </ng-container>
