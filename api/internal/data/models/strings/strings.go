@@ -100,6 +100,8 @@ func (p *StringModel) GetStringsByProjectId(projectId int64) (*boiler.StringSlic
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 	strings, err := boiler.Strings(boiler.StringWhere.ProjectID.EQ(projectId)).All(ctx, p.DB)
+	//project, err := boiler.Projects().One(ctx, p.DB)
+	//strings, err := project.Strings().All(ctx, p.DB)
 	if err != nil {
 		switch {
 		case errors.Is(err, sql.ErrNoRows):

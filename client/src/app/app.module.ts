@@ -79,6 +79,7 @@ import { MatListModule } from '@angular/material/list'
 import { TopBottomSvgComponent } from './svgs/grid/top-bottom-svg.component'
 import { LeftTopSvgComponent } from './svgs/grid/left-top-svg.component'
 import { CableJoinComponent } from './components/cable-join/cable-join.component'
+import { CurrentProjectInterceptor } from './interceptors/current-project.interceptor'
 
 export function tokenGetter() {
   // console.log(localStorage.getItem('token'))
@@ -158,6 +159,11 @@ export function tokenGetter() {
     {
       provide: HTTP_INTERCEPTORS,
       useClass: JwtInterceptor,
+      multi: true,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: CurrentProjectInterceptor,
       multi: true,
     },
     PanelsEntityService,

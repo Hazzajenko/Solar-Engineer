@@ -36,6 +36,7 @@ type Cable struct {
 	Color     string    `boil:"color" json:"color" toml:"color" yaml:"color"`
 	Type      string    `boil:"type" json:"type" toml:"type" yaml:"type"`
 	JoinID    string    `boil:"join_id" json:"join_id" toml:"join_id" yaml:"join_id"`
+	InJoin    bool      `boil:"in_join" json:"in_join" toml:"in_join" yaml:"in_join"`
 
 	R *cableR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L cableL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -55,6 +56,7 @@ var CableColumns = struct {
 	Color     string
 	Type      string
 	JoinID    string
+	InJoin    string
 }{
 	ID:        "id",
 	ProjectID: "project_id",
@@ -69,6 +71,7 @@ var CableColumns = struct {
 	Color:     "color",
 	Type:      "type",
 	JoinID:    "join_id",
+	InJoin:    "in_join",
 }
 
 var CableTableColumns = struct {
@@ -85,6 +88,7 @@ var CableTableColumns = struct {
 	Color     string
 	Type      string
 	JoinID    string
+	InJoin    string
 }{
 	ID:        "cables.id",
 	ProjectID: "cables.project_id",
@@ -99,6 +103,7 @@ var CableTableColumns = struct {
 	Color:     "cables.color",
 	Type:      "cables.type",
 	JoinID:    "cables.join_id",
+	InJoin:    "cables.in_join",
 }
 
 // Generated where
@@ -222,6 +227,15 @@ func (w whereHelperfloat32) NIN(slice []float32) qm.QueryMod {
 	return qm.WhereNotIn(fmt.Sprintf("%s NOT IN ?", w.field), values...)
 }
 
+type whereHelperbool struct{ field string }
+
+func (w whereHelperbool) EQ(x bool) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.EQ, x) }
+func (w whereHelperbool) NEQ(x bool) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.NEQ, x) }
+func (w whereHelperbool) LT(x bool) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.LT, x) }
+func (w whereHelperbool) LTE(x bool) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.LTE, x) }
+func (w whereHelperbool) GT(x bool) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.GT, x) }
+func (w whereHelperbool) GTE(x bool) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.GTE, x) }
+
 var CableWhere = struct {
 	ID        whereHelperstring
 	ProjectID whereHelperint64
@@ -236,6 +250,7 @@ var CableWhere = struct {
 	Color     whereHelperstring
 	Type      whereHelperstring
 	JoinID    whereHelperstring
+	InJoin    whereHelperbool
 }{
 	ID:        whereHelperstring{field: "\"cables\".\"id\""},
 	ProjectID: whereHelperint64{field: "\"cables\".\"project_id\""},
@@ -250,6 +265,7 @@ var CableWhere = struct {
 	Color:     whereHelperstring{field: "\"cables\".\"color\""},
 	Type:      whereHelperstring{field: "\"cables\".\"type\""},
 	JoinID:    whereHelperstring{field: "\"cables\".\"join_id\""},
+	InJoin:    whereHelperbool{field: "\"cables\".\"in_join\""},
 }
 
 // CableRels is where relationship names are stored.
@@ -300,9 +316,9 @@ func (r *cableR) GetProject() *Project {
 type cableL struct{}
 
 var (
-	cableAllColumns            = []string{"id", "project_id", "model", "location", "created_at", "created_by", "length", "weight", "version", "size", "color", "type", "join_id"}
+	cableAllColumns            = []string{"id", "project_id", "model", "location", "created_at", "created_by", "length", "weight", "version", "size", "color", "type", "join_id", "in_join"}
 	cableColumnsWithoutDefault = []string{"id", "project_id"}
-	cableColumnsWithDefault    = []string{"model", "location", "created_at", "created_by", "length", "weight", "version", "size", "color", "type", "join_id"}
+	cableColumnsWithDefault    = []string{"model", "location", "created_at", "created_by", "length", "weight", "version", "size", "color", "type", "join_id", "in_join"}
 	cablePrimaryKeyColumns     = []string{"id"}
 	cableGeneratedColumns      = []string{}
 )

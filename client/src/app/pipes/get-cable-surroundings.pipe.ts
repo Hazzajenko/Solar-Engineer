@@ -1,5 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core'
 import { CableModel } from '../projects/models/cable.model'
+import { CablesEntityService } from '../projects/project-id/services/cables-entity/cables-entity.service'
 
 export interface SurroundingModel {
   left: boolean
@@ -13,8 +14,11 @@ export interface SurroundingModel {
   standalone: true,
 })
 export class GetCableSurroundingsPipe implements PipeTransform {
-  transform(cable: CableModel, allCables: CableModel[]): SurroundingModel {
-    if (!cable || !allCables) {
+  constructor(private cablesEntity: CablesEntityService) {
+  }
+
+  transform(cable: CableModel): SurroundingModel {
+    if (!cable) {
       return {
         left: false,
         right: false,
@@ -40,6 +44,11 @@ export class GetCableSurroundingsPipe implements PipeTransform {
     const bottomString: string = `row${numberRow + 1}col${numberCol}`
     const leftString: string = `row${numberRow}col${numberCol - 1}`
     const rightString: string = `row${numberRow}col${numberCol + 1}`
+
+    let allCables: CableModel[] = []
+    this.cablesEntity.entities$.subscribe(cables => {
+      allCables = cables
+    })
 
     const findTop = allCables.find((cable) => cable.location === topString)
     const findBottom = allCables.find(

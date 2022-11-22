@@ -131,6 +131,54 @@ export class GridJoinService extends GridService {
     return subscription.unsubscribe()
   }
 
+  async createJoinWithBlocks(vm: {
+    toJoinArray: string[] | null
+    blocks: BlockModel[] | null
+    project: ProjectModel | undefined | null
+    cables: CableModel[] | null
+  }) {
+    if (!vm.toJoinArray) return
+    if (!vm.blocks) return
+    if (!vm.project) return
+    if (!vm.cables) return
+
+    const joinId = Guid.create().toString()
+
+    const joinRequest: JoinModel = {
+      id: joinId,
+      project_id: vm.project.id,
+      color: 'purple',
+      blocks: vm.toJoinArray,
+      model: UnitModel.JOIN,
+      size: 4,
+      type: 'JOIN',
+    }
+
+    await this.joinsEntity.add(joinRequest)
+
+    let getCables: CableModel[] = []
+    const subscription = this.cablesEntity.entities$.subscribe((cables) => {
+      console.log(cables)
+      return (getCables = cables)
+    })
+    console.log(getCables)
+    const cablesToJoin = getCables.filter(
+      (cable) =>
+        vm.toJoinArray!.includes(cable.location) &&
+        cable.model === UnitModel.CABLE,
+    )
+    cablesToJoin.forEach((join) => {
+      const update: CableModel = {
+        ...join,
+        join_id: joinId,
+      }
+      console.log(update)
+      return this.cablesEntity.update(update)
+    })
+    console.log(cablesToJoin)
+    return subscription.unsubscribe()
+  }
+
   private isBlockInSurrounding(
     location: string,
     existing: string,

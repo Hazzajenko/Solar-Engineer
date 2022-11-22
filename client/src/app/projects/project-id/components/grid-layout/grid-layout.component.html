@@ -140,7 +140,7 @@
             *ngIf="vm && vm.toJoinArray && vm.project && vm.blocks && vm.cables"
           >
             <button
-              (click)="gridJoins.createJoin(vm)"
+              (click)="gridJoins.createJoinWithBlocks(vm)"
               *ngIf="vm.toJoinArray.length > 1"
               mat-menu-item
             >

@@ -1,7 +1,8 @@
 <ng-container *ngIf="panels && block && grid">
+  <!--  <ng-container *ngIf="panelsEntity.entities$ | async as panels">-->
   <ng-container *ngIf="panels | findPanelLocation: block.location!; let panel">
     <div
-      *ngIf="panel.location === block?.location"
+      *ngIf="panel.location === block.location!"
       [cdkDragData]="panel"
       [matTooltip]="'Location = ' + panel.location + 'String: ' + panel.name"
       [ngStyle]="{
@@ -16,4 +17,5 @@
       P
     </div>
   </ng-container>
+  <!--  </ng-container>-->
 </ng-container>

@@ -6,8 +6,9 @@ import { StringModel } from '../../../../models/string.model'
 import { GridMode } from '../../../../store/grid/grid-mode.model'
 import { DragDropModule } from '@angular/cdk/drag-drop'
 import { MatTooltipModule } from '@angular/material/tooltip'
-import { NgIf, NgStyle } from '@angular/common'
+import { AsyncPipe, NgIf, NgStyle } from '@angular/common'
 import { FindPanelLocationPipe } from '../../../../../pipes/find-panel-location.pipe'
+import { PanelsEntityService } from '../../../services/panels-entity/panels-entity.service'
 
 @Component({
   selector: 'app-block-panel',
@@ -19,6 +20,7 @@ import { FindPanelLocationPipe } from '../../../../../pipes/find-panel-location.
     NgStyle,
     NgIf,
     FindPanelLocationPipe,
+    AsyncPipe,
   ],
   standalone: true,
 })
@@ -32,5 +34,5 @@ export class BlockPanelComponent {
     gridMode?: GridMode
   }
 
-  constructor() {}
+  constructor(public panelsEntity: PanelsEntityService) {}
 }

@@ -11,12 +11,13 @@ import { FindCableLocationPipe } from '../../../../../pipes/find-cable-location.
 import { GetNearbyJoins } from '../../../../../pipes/get-nearby-joins.pipe'
 import { LetModule } from '@ngrx/component'
 import { CableJoinComponent } from '../../../../../components/cable-join/cable-join.component'
+import { GetCableSurroundingsPipe } from '../../../../../pipes/get-cable-surroundings.pipe'
 
 @Component({
   selector: 'app-block-cable',
   template: `
     <ng-container *ngIf="cable && block && grid">
-      <ng-container *ngIf="cable | getNearbyJoins; let surroundingModel">
+      <ng-container *ngIf="cable | getCableSurroundings; let surroundingModel">
         <div class="drop-zone">
           <app-cable-join
             *ngIf="surroundingModel"
@@ -88,6 +89,7 @@ import { CableJoinComponent } from '../../../../../components/cable-join/cable-j
     GetNearbyJoins,
     LetModule,
     CableJoinComponent,
+    GetCableSurroundingsPipe,
   ],
   standalone: true,
 })

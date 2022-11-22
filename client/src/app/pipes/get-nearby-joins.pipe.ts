@@ -79,25 +79,25 @@ export class GetNearbyJoins implements PipeTransform {
       const findRight = cables.find((cable) => cable.location === rightString)
 
       if (findTop) {
-        if (join.blocks.find((block) => block === findTop.location)) {
+        if (join.blocks?.find((block) => block === findTop.location)) {
           console.log('FIND TOP', findTop.location)
           top = true
         }
       }
       if (findBottom) {
-        if (join.blocks.find((block) => block === findBottom.location)) {
+        if (join.blocks?.find((block) => block === findBottom.location)) {
           console.log('FIND BOTTOM', findBottom.location)
           bottom = true
         }
       }
       if (findLeft) {
-        if (join.blocks.find((block) => block === findLeft.location)) {
+        if (join.blocks?.find((block) => block === findLeft.location)) {
           console.log('FIND LEFT', findLeft.location)
           left = true
         }
       }
       if (findRight) {
-        if (join.blocks.find((block) => block === findRight.location)) {
+        if (join.blocks?.find((block) => block === findRight.location)) {
           console.log('FIND RIGHT', findRight.location)
           right = true
         }

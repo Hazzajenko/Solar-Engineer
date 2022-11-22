@@ -6,6 +6,8 @@ import { environment } from '../../../../../environments/environment'
 import { map } from 'rxjs/operators'
 import { Update } from '@ngrx/entity'
 import { CableModel } from '../../../models/cable.model'
+import { Store } from '@ngrx/store'
+import { AppState } from '../../../../store/app.state'
 
 interface GetCablesResponse {
   cables: CableModel[]
@@ -25,7 +27,11 @@ interface DeleteCableResponse {
 
 @Injectable()
 export class CablesDataService extends DefaultDataService<CableModel> {
-  constructor(http: HttpClient, httpUrlGenerator: HttpUrlGenerator) {
+  constructor(
+    http: HttpClient,
+    httpUrlGenerator: HttpUrlGenerator,
+    private store: Store<AppState>,
+  ) {
     super('Cable', http, httpUrlGenerator)
   }
 

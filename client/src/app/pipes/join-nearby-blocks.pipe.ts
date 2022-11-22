@@ -101,12 +101,6 @@ export class JoinNearbyBlocksPipe implements PipeTransform {
             top = true
           }
         }
-        /*        const block = join.blocks.find((block) => block === findTop.location)
-                if (block) {
-                  console.log('FIND TOP', findTop.location)
-                  top = true
-                  block.
-                }*/
       }
       if (findBottom) {
         const cable = cables.find(
@@ -114,8 +108,18 @@ export class JoinNearbyBlocksPipe implements PipeTransform {
         )
         if (cable) {
           if (cable.in_join) {
+            const cablesInJoin = cables.filter(getCable => getCable.join_id === cable.join_id)
+            cablesInJoin.forEach(cableInJoin => {
+              const update: CableModel = {
+                ...cableInJoin,
+                join_id: newJoinId
+              }
+
+              this.cablesEntity.update(update)
+            })
             console.log('JOIN BOTTOM', findBottom.location)
             bottom = true
+
           }
         }
       }
@@ -125,6 +129,15 @@ export class JoinNearbyBlocksPipe implements PipeTransform {
         )
         if (cable) {
           if (cable.in_join) {
+            const cablesInJoin = cables.filter(getCable => getCable.join_id === cable.join_id)
+            cablesInJoin.forEach(cableInJoin => {
+              const update: CableModel = {
+                ...cableInJoin,
+                join_id: newJoinId
+              }
+
+              this.cablesEntity.update(update)
+            })
             console.log('JOIN LEFT', findLeft.location)
             left = true
           }
@@ -136,16 +149,28 @@ export class JoinNearbyBlocksPipe implements PipeTransform {
         )
         if (cable) {
           if (cable.in_join) {
+            const cablesInJoin = cables.filter(getCable => getCable.join_id === cable.join_id)
+            cablesInJoin.forEach(cableInJoin => {
+              const update: CableModel = {
+                ...cableInJoin,
+                join_id: newJoinId
+              }
+
+              this.cablesEntity.update(update)
+            })
             console.log('JOIN RIGHT', findRight.location)
             right = true
           }
         }
-        /*        if (join.blocks.find((block) => block === findRight.location)) {
-                  console.log('FIND RIGHT', findRight.location)
-                  right = true
-                }*/
       }
+      const update: CableModel = {
+        ...cable,
+        join_id: newJoinId
+      }
+
+      this.cablesEntity.update(update)
     })
+
 
     data.unsubscribe()
 

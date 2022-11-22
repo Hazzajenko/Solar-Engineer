@@ -155,6 +155,7 @@ func (h *Handlers) UpdateCable(w http.ResponseWriter, r *http.Request) {
 		Size:     input.Changes.Size,
 		Color:    input.Changes.Color,
 		JoinID:   input.Changes.JoinID,
+		InJoin:   input.Changes.InJoin,
 	}
 
 	result, err := h.Models.Cables.Update(updateCable)

@@ -67,6 +67,7 @@ func (p *CableModel) Update(update *boiler.Cable) (*boiler.Cable, error) {
 	cable.Color = update.Color
 	cable.Size = update.Size
 	cable.JoinID = update.JoinID
+	cable.InJoin = update.InJoin
 
 	_, err = cable.Update(ctx, p.DB, boil.Infer())
 	if err != nil {

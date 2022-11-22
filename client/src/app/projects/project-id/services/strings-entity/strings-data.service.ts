@@ -34,6 +34,7 @@ export class StringsDataService extends DefaultDataService<StringModel> {
     // logger.log('Created custom Strings EntityDataService')
   }
 
+
   override getAll(): Observable<StringModel[]> {
     return this.http
       .get<GetStringsResponse>(environment.apiUrl + `/projects/3/strings`)
