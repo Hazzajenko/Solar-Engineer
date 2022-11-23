@@ -82,6 +82,41 @@ func (p *CableModel) Update(update *boiler.Cable) (*boiler.Cable, error) {
 	return cable, nil
 }
 
+func (p *CableModel) UpdateMany(newJoinId string, oldJoinId string) (*boiler.CableSlice, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+	//cable, err := boiler.FindCable(ctx, p.DB, update.ID)
+	cables, err := boiler.Cables(boiler.CableWhere.JoinID.EQ(oldJoinId)).All(ctx, p.DB)
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return nil, errors.New("edit conflict")
+		default:
+			return nil, err
+		}
+	}
+
+	/*	// Update code here
+		cable.Location = update.Location
+		cable.Color = update.Color
+		cable.Size = update.Size
+		cable.JoinID = update.JoinID
+		cable.InJoin = update.InJoin*/
+	_, err = cables.UpdateAll(ctx, p.DB, boiler.M{"join_id": newJoinId})
+
+	//_, err = cable.Update(ctx, p.DB, boil.Infer())
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return nil, errors.New("edit conflict")
+		default:
+			return nil, err
+		}
+	}
+
+	return &cables, nil
+}
+
 func (p *CableModel) Delete(cableId string) error {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)

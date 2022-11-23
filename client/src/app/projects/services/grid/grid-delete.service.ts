@@ -9,6 +9,7 @@ import { PanelsEntityService } from '../../project-id/services/panels-entity/pan
 import { CablesEntityService } from '../../project-id/services/cables-entity/cables-entity.service'
 import { InvertersEntityService } from '../../project-id/services/inverters-entity/inverters-entity.service'
 import { JoinsEntityService } from '../../project-id/services/joins-entity/joins-entity.service'
+import { JoinsService } from '../joins.service'
 
 @Injectable({
   providedIn: 'root',
@@ -19,8 +20,15 @@ export class GridDeleteService extends GridService {
     cablesEntity: CablesEntityService,
     invertersEntity: InvertersEntityService,
     joinsEntity: JoinsEntityService,
+    joinsService: JoinsService,
   ) {
-    super(panelsEntity, cablesEntity, invertersEntity, joinsEntity)
+    super(
+      panelsEntity,
+      cablesEntity,
+      invertersEntity,
+      joinsEntity,
+      joinsService,
+    )
   }
 
   deleteSwitch(

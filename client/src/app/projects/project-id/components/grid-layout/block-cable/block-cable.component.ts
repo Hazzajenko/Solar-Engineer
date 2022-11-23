@@ -5,44 +5,61 @@ import { StringModel } from '../../../../models/string.model'
 import { GridMode } from '../../../../store/grid/grid-mode.model'
 import { DragDropModule } from '@angular/cdk/drag-drop'
 import { MatTooltipModule } from '@angular/material/tooltip'
-import { NgIf, NgStyle } from '@angular/common'
+import { AsyncPipe, NgIf, NgStyle } from '@angular/common'
 import { CableModel } from '../../../../models/cable.model'
 import { FindCableLocationPipe } from '../../../../../pipes/find-cable-location.pipe'
 import { GetNearbyJoins } from '../../../../../pipes/get-nearby-joins.pipe'
 import { LetModule } from '@ngrx/component'
 import { CableJoinComponent } from '../../../../../components/cable-join/cable-join.component'
 import { GetCableSurroundingsPipe } from '../../../../../pipes/get-cable-surroundings.pipe'
+import { GetCableJoin } from '../../../../../pipes/get-cable-join.pipe'
+import { GetCablesInJoinPipe } from '../../../../../pipes/get-cables-in-join.pipe'
+import { CablesEntityService } from '../../../services/cables-entity/cables-entity.service'
 
 @Component({
   selector: 'app-block-cable',
   template: `
     <ng-container *ngIf="cable && block && grid">
-      <ng-container *ngIf="cable | getCableSurroundings; let surroundingModel">
-        <div class="drop-zone">
-          <app-cable-join
-            *ngIf="surroundingModel"
-            [surroundings]="surroundingModel!"
-            class="drop-zone__svg"
-          ></app-cable-join>
-          <div
-            *ngIf="cable.location === block?.location"
-            [cdkDragData]="cable"
-            [matTooltip]="
-              'Location = ' + cable.location + ' JoinId: ' + cable.join_id
-            "
-            [ngStyle]="{
-              'background-color': toJoinArray?.includes(cable.location)
-                ? '#07ffd4'
-                : '#fb7344'
-            }"
-            [style.border]="'2px solid ' + block?.color"
-            cdkDrag
-            class="drop-zone__cable"
-            matTooltipPosition="right"
-          >
-            <!--            P-->
+      <ng-container
+        *ngrxLet="
+          cable | getCablesInJoin: (cablesEntity.entities$ | async)!;
+          let cablesInJoin
+        "
+      >
+        <ng-container
+          *ngIf="cable | getCableSurroundings; let surroundingModel"
+        >
+          <div class="drop-zone">
+            <app-cable-join
+              *ngIf="surroundingModel"
+              [surroundings]="surroundingModel!"
+              class="drop-zone__svg"
+            ></app-cable-join>
+            <div
+              *ngIf="cable.location === block?.location"
+              [cdkDragData]="cable"
+              [matTooltip]="
+                'Location = ' +
+                cable.location +
+                ' JoinId: ' +
+                cable.join_id +
+                'CablesInJoin: ' +
+                cablesInJoin?.length
+              "
+              [ngStyle]="{
+                'background-color': toJoinArray?.includes(cable.location)
+                  ? '#07ffd4'
+                  : '#fb7344'
+              }"
+              [style.border]="'2px solid ' + block?.color"
+              cdkDrag
+              class="drop-zone__cable"
+              matTooltipPosition="right"
+            >
+              <!--            P-->
+            </div>
           </div>
-        </div>
+        </ng-container>
       </ng-container>
     </ng-container>
   `,
@@ -90,6 +107,9 @@ import { GetCableSurroundingsPipe } from '../../../../../pipes/get-cable-surroun
     LetModule,
     CableJoinComponent,
     GetCableSurroundingsPipe,
+    GetCableJoin,
+    AsyncPipe,
+    GetCablesInJoinPipe,
   ],
   standalone: true,
 })
@@ -104,5 +124,5 @@ export class BlockCableComponent {
   }
   @Input() toJoinArray?: string[]
 
-  constructor() {}
+  constructor(public cablesEntity: CablesEntityService) {}
 }

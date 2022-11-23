@@ -2,8 +2,8 @@
   <ng-container *ngIf="grid$ | async; let grid">
     <ng-container *ngIf="blocks$ | async; let blocks">
       <div cdkDropListGroup class="project-design-container">
-        <div *ngFor="let n of numSequence(20); let row = index" class="row">
-          <div *ngFor="let n of numSequence(40); let col = index" class="col">
+        <div *ngFor="let n of numSequence(rows); let row = index" class="row">
+          <div *ngFor="let n of numSequence(cols); let col = index" class="col">
             <ng-container
               *ngrxLet="row | getGridString: col; let locationString"
             >

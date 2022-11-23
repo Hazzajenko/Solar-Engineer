@@ -115,6 +115,8 @@ export class GridLayoutComponent implements OnInit {
   blocks$!: Observable<BlockModel[]>
   joins$!: Observable<JoinModel[]>
   toJoinArray$!: Observable<string[]>
+  rows = 20
+  cols = 40
 
   constructor(
     private panelsService: PanelsService,

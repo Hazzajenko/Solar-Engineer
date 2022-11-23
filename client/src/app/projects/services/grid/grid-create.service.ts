@@ -13,6 +13,9 @@ import { PanelsEntityService } from '../../project-id/services/panels-entity/pan
 import { CablesEntityService } from '../../project-id/services/cables-entity/cables-entity.service'
 import { InvertersEntityService } from '../../project-id/services/inverters-entity/inverters-entity.service'
 import { JoinsEntityService } from '../../project-id/services/joins-entity/joins-entity.service'
+import { JoinsService } from '../joins.service'
+import { GridHelpers } from './grid.helpers'
+import { GridUpdateService } from './grid-update.service'
 
 @Injectable({
   providedIn: 'root',
@@ -23,8 +26,17 @@ export class GridCreateService extends GridService {
     cablesEntity: CablesEntityService,
     invertersEntity: InvertersEntityService,
     joinsEntity: JoinsEntityService,
+    joinsService: JoinsService,
+    private gridHelpers: GridHelpers,
+    private gridUpdate: GridUpdateService,
   ) {
-    super(panelsEntity, cablesEntity, invertersEntity, joinsEntity)
+    super(
+      panelsEntity,
+      cablesEntity,
+      invertersEntity,
+      joinsEntity,
+      joinsService,
+    )
   }
 
   createSwitch(
@@ -102,16 +114,62 @@ export class GridCreateService extends GridService {
     gridMode: GridMode,
     blocks: BlockModel[],
   ) {
-    const cableRequest: CableModel = {
-      id: Guid.create().toString(),
-      location,
-      size: 4,
-      model: UnitModel.CABLE,
-      type: 'CABLE',
-      color: 'black',
-    }
+    let cables: CableModel[] = []
 
-    this.cablesEntity.add(cableRequest)
+    this.cablesEntity.entities$.subscribe((cables$) => (cables = cables$))
+
+    const surroundingCables = this.gridHelpers.getSurroundings(location, cables)
+
+    if (!surroundingCables)
+      return console.log('joinNearbyCables surroundingCables err')
+
+    const newJoinId = Guid.create().toString()
+
+    this.joinsService.createJoin(project.id!, newJoinId).then(() => {
+      if (surroundingCables.topCable) {
+        this.gridUpdate.updateCableForJoin(
+          surroundingCables.topCable,
+          newJoinId,
+          cables,
+        )
+      }
+
+      if (surroundingCables.bottomCable) {
+        this.gridUpdate.updateCableForJoin(
+          surroundingCables.bottomCable,
+          newJoinId,
+          cables,
+        )
+      }
+
+      if (surroundingCables.leftCable) {
+        this.gridUpdate.updateCableForJoin(
+          surroundingCables.leftCable,
+          newJoinId,
+          cables,
+        )
+      }
+
+      if (surroundingCables.rightCable) {
+        this.gridUpdate.updateCableForJoin(
+          surroundingCables.rightCable,
+          newJoinId,
+          cables,
+        )
+      }
+
+      const cableRequest: CableModel = {
+        id: Guid.create().toString(),
+        location,
+        size: 4,
+        join_id: newJoinId,
+        model: UnitModel.CABLE,
+        type: 'CABLE',
+        color: 'black',
+      }
+
+      this.cablesEntity.add(cableRequest)
+    })
   }
 
   private createInverterForGrid(

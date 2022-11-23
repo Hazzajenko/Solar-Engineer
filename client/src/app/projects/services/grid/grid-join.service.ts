@@ -14,6 +14,7 @@ import { Store } from '@ngrx/store'
 import { AppState } from '../../../store/app.state'
 import { GridStateActions } from '../../store/grid/grid.actions'
 import { GridMode } from '../../store/grid/grid-mode.model'
+import { JoinsService } from '../joins.service'
 
 @Injectable({
   providedIn: 'root',
@@ -26,9 +27,16 @@ export class GridJoinService extends GridService {
     cablesEntity: CablesEntityService,
     invertersEntity: InvertersEntityService,
     joinsEntity: JoinsEntityService,
+    joinsService: JoinsService,
     private store: Store<AppState>,
   ) {
-    super(panelsEntity, cablesEntity, invertersEntity, joinsEntity)
+    super(
+      panelsEntity,
+      cablesEntity,
+      invertersEntity,
+      joinsEntity,
+      joinsService,
+    )
   }
 
   startJoin(location: string, project: ProjectModel, blocks: BlockModel[]) {

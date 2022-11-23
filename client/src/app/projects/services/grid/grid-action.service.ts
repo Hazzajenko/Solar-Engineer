@@ -12,6 +12,7 @@ import { CablesEntityService } from '../../project-id/services/cables-entity/cab
 import { InvertersEntityService } from '../../project-id/services/inverters-entity/inverters-entity.service'
 import { JoinsEntityService } from '../../project-id/services/joins-entity/joins-entity.service'
 import { GridJoinService } from './grid-join.service'
+import { JoinsService } from '../joins.service'
 
 @Injectable({
   providedIn: 'root',
@@ -25,11 +26,18 @@ export class GridActionService extends GridService {
     cablesEntity: CablesEntityService,
     invertersEntity: InvertersEntityService,
     joinsEntity: JoinsEntityService,
+    joinsService: JoinsService,
     private create: GridCreateService,
     private join: GridJoinService,
     private remove: GridDeleteService,
   ) {
-    super(panelsEntity, cablesEntity, invertersEntity, joinsEntity)
+    super(
+      panelsEntity,
+      cablesEntity,
+      invertersEntity,
+      joinsEntity,
+      joinsService,
+    )
   }
 
   cellAction(

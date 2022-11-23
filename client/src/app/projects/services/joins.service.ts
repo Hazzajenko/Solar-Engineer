@@ -4,9 +4,16 @@ import { Store } from '@ngrx/store'
 import { AppState } from '../../store/app.state'
 import { CableModel } from '../models/cable.model'
 import { CablesEntityService } from '../project-id/services/cables-entity/cables-entity.service'
+import { JoinModel } from '../models/join.model'
+import { UnitModel } from '../models/unit.model'
+import { JoinsEntityService } from '../project-id/services/joins-entity/joins-entity.service'
 
 interface UpdateCablesResponse {
   cables: CableModel[]
+}
+
+interface CreateJoinResponse {
+  join: JoinModel
 }
 
 @Injectable({
@@ -17,19 +24,43 @@ export class JoinsService {
     private http: HttpClient,
     private store: Store<AppState>,
     private cablesEntity: CablesEntityService,
+    private joinsEntity: JoinsEntityService,
   ) {}
 
-  update(joinId: string, update: string) {
-    return this.http
-      .put<UpdateCablesResponse>(`api/projects/3/join/${joinId}/cables`, update)
-      .subscribe((res) => {
-        const entities = res.cables.map((cable) => {
-          const partial: Partial<CableModel> = {
-            ...cable,
-          }
-          return partial
-        })
-        this.cablesEntity.updateManyInCache(entities)
-      })
+  createJoin(projectId: number, joinId: string): Promise<JoinModel> {
+    const joinRequest: JoinModel = {
+      id: joinId,
+      project_id: projectId,
+      color: 'purple',
+      model: UnitModel.JOIN,
+      size: 4,
+      type: 'JOIN',
+    }
+    return new Promise<JoinModel>((resolve, reject) =>
+      this.joinsEntity.add(joinRequest).subscribe({
+        next: (joinModel) => {
+          resolve(joinModel)
+        },
+        error: (err) => {
+          reject(err)
+        },
+        complete: () => {
+          console.log('createJoin')
+        },
+      }),
+    )
+  }
+
+  updateCablesInJoin(projectId: number, joinId: string, updatedJoinId: string) {
+    return this.http.put<UpdateCablesResponse>(
+      `api/projects/${projectId}/join/${joinId}/cables`,
+      {
+        project_id: projectId,
+        changes: {
+          new_join_id: updatedJoinId,
+          old_join_id: joinId,
+        },
+      },
+    )
   }
 }
