@@ -8,6 +8,7 @@ import { StringsResolver } from './projects/project-id/services/strings-entity/s
 import { TrackersResolver } from './projects/project-id/services/trackers-entity/trackers.resolver'
 import { InvertersResolver } from './projects/project-id/services/inverters-entity/inverters.resolver'
 import { JoinsResolver } from './projects/project-id/services/joins-entity/joins.resolver'
+import { PanelJoinsResolver } from './projects/project-id/services/panel-joins-entity/panel-joins.resolver'
 
 const routes: Routes = [
   {
@@ -30,6 +31,7 @@ const routes: Routes = [
       trackers: TrackersResolver,
       inverters: InvertersResolver,
       joins: JoinsResolver,
+      panel_joins: PanelJoinsResolver,
     },
   },
   { path: '', redirectTo: '/projects', pathMatch: 'full' },

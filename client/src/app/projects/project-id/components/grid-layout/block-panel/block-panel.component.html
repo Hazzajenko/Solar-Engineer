@@ -1,21 +1,46 @@
 <ng-container *ngIf="panels && block && grid">
-  <!--  <ng-container *ngIf="panelsEntity.entities$ | async as panels">-->
-  <ng-container *ngIf="panels | findPanelLocation: block.location!; let panel">
-    <div
-      *ngIf="panel.location === block.location!"
-      [cdkDragData]="panel"
-      [matTooltip]="'Location = ' + panel.location + 'String: ' + panel.name"
-      [ngStyle]="{
-        'background-color':
-          grid.selectedString?.id === panel.string_id ? '#07ffd4' : '#9ec7f9'
-      }"
-      [style.border]="'2px solid ' + block?.color"
-      cdkDrag
-      class="drop-zone__panel"
-      matTooltipPosition="right"
+  <ng-container *ngrxLet="panelJoinsEntity.entities$ | async as panelJoins">
+    <!--  <ng-container *ngIf="panelsEntity.entities$ | async as panels">-->
+    <ng-container
+      *ngIf="panels | findPanelLocation: block.location!; let panel"
     >
-      P
-    </div>
+      <ng-container *ngrxLet="panel | getPanelJoin; let links">
+        <div
+          (mouseover)="panelHover(panel)"
+          *ngIf="panel.location === block.location!"
+          [cdkDragData]="panel"
+          [matTooltip]="
+            'Location = ' +
+            panel.location +
+            '\r\n' +
+            'String: ' +
+            panel.string_id +
+            '\r\n' +
+            ' PositiveTo: ' +
+            links?.positive +
+            '\r\n' +
+            ' NegativeTo: ' +
+            links?.negative
+          "
+          [style.border]="'2px solid ' + block?.color"
+          cdkDrag
+          class="drop-zone__panel"
+          matTooltipPosition="right"
+          panelDirective
+        >
+          P
+        </div>
+      </ng-container>
+      <!--  </ng-container>-->
+    </ng-container>
   </ng-container>
-  <!--  </ng-container>-->
 </ng-container>
+<!--
+'background-color':
+grid.selectedString?.id === panel.string_id ? '#07ffd4' : '#9ec7f9',-->
+<!--
+[ngStyle]="{
+'background-color': panelToJoin?.includes(panel)
+? '#07ffd4'
+: '#9ec7f9'
+}"-->

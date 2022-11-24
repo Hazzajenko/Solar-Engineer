@@ -80,6 +80,9 @@ import { TopBottomSvgComponent } from './svgs/grid/top-bottom-svg.component'
 import { LeftTopSvgComponent } from './svgs/grid/left-top-svg.component'
 import { CableJoinComponent } from './components/cable-join/cable-join.component'
 import { CurrentProjectInterceptor } from './interceptors/current-project.interceptor'
+import { PanelJoinsDataService } from './projects/project-id/services/panel-joins-entity/panel-joins-data.service'
+import { PanelJoinsEntityService } from './projects/project-id/services/panel-joins-entity/panel-joins-entity.service'
+import { PanelJoinsResolver } from './projects/project-id/services/panel-joins-entity/panel-joins.resolver'
 
 export function tokenGetter() {
   // console.log(localStorage.getItem('token'))
@@ -184,6 +187,9 @@ export function tokenGetter() {
     JoinsEntityService,
     JoinsResolver,
     JoinsDataService,
+    PanelJoinsEntityService,
+    PanelJoinsResolver,
+    PanelJoinsDataService,
     CustomHttpUrlGenerator,
     { provide: DefaultDataServiceConfig, useValue: defaultDataServiceConfig },
     { provide: HttpUrlGenerator, useClass: CustomHttpUrlGenerator },
@@ -200,6 +206,7 @@ export class AppModule {
     private trackersDataService: TrackersDataService,
     private invertersDataService: InvertersDataService,
     private joinsDataService: JoinsDataService,
+    private panelJoinsDataService: PanelJoinsDataService,
   ) {
     eds.registerMetadataMap(entityConfig.entityMetadata)
 
@@ -209,5 +216,6 @@ export class AppModule {
     entityDataService.registerService('Tracker', trackersDataService)
     entityDataService.registerService('Inverter', invertersDataService)
     entityDataService.registerService('Join', joinsDataService)
+    entityDataService.registerService('PanelJoin', panelJoinsDataService)
   }
 }

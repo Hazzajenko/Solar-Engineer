@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/friendsofgo/errors"
+	"github.com/volatiletech/null/v8"
 	"github.com/volatiletech/sqlboiler/v4/boil"
 	"github.com/volatiletech/sqlboiler/v4/queries"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
@@ -23,31 +24,33 @@ import (
 
 // Panel is an object representing the database table.
 type Panel struct {
-	ID                      string    `boil:"id" json:"id" toml:"id" yaml:"id"`
-	ProjectID               int64     `boil:"project_id" json:"project_id" toml:"project_id" yaml:"project_id"`
-	InverterID              string    `boil:"inverter_id" json:"inverter_id" toml:"inverter_id" yaml:"inverter_id"`
-	TrackerID               string    `boil:"tracker_id" json:"tracker_id" toml:"tracker_id" yaml:"tracker_id"`
-	StringID                string    `boil:"string_id" json:"string_id" toml:"string_id" yaml:"string_id"`
-	Name                    string    `boil:"name" json:"name" toml:"name" yaml:"name"`
-	CreatedAt               time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
-	CreatedBy               int64     `boil:"created_by" json:"created_by" toml:"created_by" yaml:"created_by"`
-	CurrentAtMaximumPower   float32   `boil:"current_at_maximum_power" json:"current_at_maximum_power" toml:"current_at_maximum_power" yaml:"current_at_maximum_power"`
-	ShortCircuitCurrent     float32   `boil:"short_circuit_current" json:"short_circuit_current" toml:"short_circuit_current" yaml:"short_circuit_current"`
-	ShortCircuitCurrentTemp float32   `boil:"short_circuit_current_temp" json:"short_circuit_current_temp" toml:"short_circuit_current_temp" yaml:"short_circuit_current_temp"`
-	MaximumPower            float32   `boil:"maximum_power" json:"maximum_power" toml:"maximum_power" yaml:"maximum_power"`
-	MaximumPowerTemp        float32   `boil:"maximum_power_temp" json:"maximum_power_temp" toml:"maximum_power_temp" yaml:"maximum_power_temp"`
-	VoltageAtMaximumPower   float32   `boil:"voltage_at_maximum_power" json:"voltage_at_maximum_power" toml:"voltage_at_maximum_power" yaml:"voltage_at_maximum_power"`
-	OpenCircuitVoltage      float32   `boil:"open_circuit_voltage" json:"open_circuit_voltage" toml:"open_circuit_voltage" yaml:"open_circuit_voltage"`
-	OpenCircuitVoltageTemp  float32   `boil:"open_circuit_voltage_temp" json:"open_circuit_voltage_temp" toml:"open_circuit_voltage_temp" yaml:"open_circuit_voltage_temp"`
-	Length                  int64     `boil:"length" json:"length" toml:"length" yaml:"length"`
-	Weight                  float32   `boil:"weight" json:"weight" toml:"weight" yaml:"weight"`
-	Width                   int64     `boil:"width" json:"width" toml:"width" yaml:"width"`
-	Version                 int       `boil:"version" json:"version" toml:"version" yaml:"version"`
-	Location                string    `boil:"location" json:"location" toml:"location" yaml:"location"`
-	Model                   int       `boil:"model" json:"model" toml:"model" yaml:"model"`
-	Color                   string    `boil:"color" json:"color" toml:"color" yaml:"color"`
-	Type                    string    `boil:"type" json:"type" toml:"type" yaml:"type"`
-	JoinID                  string    `boil:"join_id" json:"join_id" toml:"join_id" yaml:"join_id"`
+	ID                      string      `boil:"id" json:"id" toml:"id" yaml:"id"`
+	ProjectID               int64       `boil:"project_id" json:"project_id" toml:"project_id" yaml:"project_id"`
+	InverterID              string      `boil:"inverter_id" json:"inverter_id" toml:"inverter_id" yaml:"inverter_id"`
+	TrackerID               string      `boil:"tracker_id" json:"tracker_id" toml:"tracker_id" yaml:"tracker_id"`
+	StringID                string      `boil:"string_id" json:"string_id" toml:"string_id" yaml:"string_id"`
+	Name                    string      `boil:"name" json:"name" toml:"name" yaml:"name"`
+	CreatedAt               time.Time   `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
+	CreatedBy               int64       `boil:"created_by" json:"created_by" toml:"created_by" yaml:"created_by"`
+	CurrentAtMaximumPower   float32     `boil:"current_at_maximum_power" json:"current_at_maximum_power" toml:"current_at_maximum_power" yaml:"current_at_maximum_power"`
+	ShortCircuitCurrent     float32     `boil:"short_circuit_current" json:"short_circuit_current" toml:"short_circuit_current" yaml:"short_circuit_current"`
+	ShortCircuitCurrentTemp float32     `boil:"short_circuit_current_temp" json:"short_circuit_current_temp" toml:"short_circuit_current_temp" yaml:"short_circuit_current_temp"`
+	MaximumPower            float32     `boil:"maximum_power" json:"maximum_power" toml:"maximum_power" yaml:"maximum_power"`
+	MaximumPowerTemp        float32     `boil:"maximum_power_temp" json:"maximum_power_temp" toml:"maximum_power_temp" yaml:"maximum_power_temp"`
+	VoltageAtMaximumPower   float32     `boil:"voltage_at_maximum_power" json:"voltage_at_maximum_power" toml:"voltage_at_maximum_power" yaml:"voltage_at_maximum_power"`
+	OpenCircuitVoltage      float32     `boil:"open_circuit_voltage" json:"open_circuit_voltage" toml:"open_circuit_voltage" yaml:"open_circuit_voltage"`
+	OpenCircuitVoltageTemp  float32     `boil:"open_circuit_voltage_temp" json:"open_circuit_voltage_temp" toml:"open_circuit_voltage_temp" yaml:"open_circuit_voltage_temp"`
+	Length                  int64       `boil:"length" json:"length" toml:"length" yaml:"length"`
+	Weight                  float32     `boil:"weight" json:"weight" toml:"weight" yaml:"weight"`
+	Width                   int64       `boil:"width" json:"width" toml:"width" yaml:"width"`
+	Version                 int         `boil:"version" json:"version" toml:"version" yaml:"version"`
+	Location                string      `boil:"location" json:"location" toml:"location" yaml:"location"`
+	Model                   int         `boil:"model" json:"model" toml:"model" yaml:"model"`
+	Color                   string      `boil:"color" json:"color" toml:"color" yaml:"color"`
+	Type                    string      `boil:"type" json:"type" toml:"type" yaml:"type"`
+	JoinID                  string      `boil:"join_id" json:"join_id" toml:"join_id" yaml:"join_id"`
+	PositiveToID            null.String `boil:"positive_to_id" json:"positive_to_id,omitempty" toml:"positive_to_id" yaml:"positive_to_id,omitempty"`
+	NegativeToID            string      `boil:"negative_to_id" json:"negative_to_id" toml:"negative_to_id" yaml:"negative_to_id"`
 
 	R *panelR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L panelL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -79,6 +82,8 @@ var PanelColumns = struct {
 	Color                   string
 	Type                    string
 	JoinID                  string
+	PositiveToID            string
+	NegativeToID            string
 }{
 	ID:                      "id",
 	ProjectID:               "project_id",
@@ -105,6 +110,8 @@ var PanelColumns = struct {
 	Color:                   "color",
 	Type:                    "type",
 	JoinID:                  "join_id",
+	PositiveToID:            "positive_to_id",
+	NegativeToID:            "negative_to_id",
 }
 
 var PanelTableColumns = struct {
@@ -133,6 +140,8 @@ var PanelTableColumns = struct {
 	Color                   string
 	Type                    string
 	JoinID                  string
+	PositiveToID            string
+	NegativeToID            string
 }{
 	ID:                      "panels.id",
 	ProjectID:               "panels.project_id",
@@ -159,9 +168,49 @@ var PanelTableColumns = struct {
 	Color:                   "panels.color",
 	Type:                    "panels.type",
 	JoinID:                  "panels.join_id",
+	PositiveToID:            "panels.positive_to_id",
+	NegativeToID:            "panels.negative_to_id",
 }
 
 // Generated where
+
+type whereHelpernull_String struct{ field string }
+
+func (w whereHelpernull_String) EQ(x null.String) qm.QueryMod {
+	return qmhelper.WhereNullEQ(w.field, false, x)
+}
+func (w whereHelpernull_String) NEQ(x null.String) qm.QueryMod {
+	return qmhelper.WhereNullEQ(w.field, true, x)
+}
+func (w whereHelpernull_String) LT(x null.String) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.LT, x)
+}
+func (w whereHelpernull_String) LTE(x null.String) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.LTE, x)
+}
+func (w whereHelpernull_String) GT(x null.String) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.GT, x)
+}
+func (w whereHelpernull_String) GTE(x null.String) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.GTE, x)
+}
+func (w whereHelpernull_String) IN(slice []string) qm.QueryMod {
+	values := make([]interface{}, 0, len(slice))
+	for _, value := range slice {
+		values = append(values, value)
+	}
+	return qm.WhereIn(fmt.Sprintf("%s IN ?", w.field), values...)
+}
+func (w whereHelpernull_String) NIN(slice []string) qm.QueryMod {
+	values := make([]interface{}, 0, len(slice))
+	for _, value := range slice {
+		values = append(values, value)
+	}
+	return qm.WhereNotIn(fmt.Sprintf("%s NOT IN ?", w.field), values...)
+}
+
+func (w whereHelpernull_String) IsNull() qm.QueryMod    { return qmhelper.WhereIsNull(w.field) }
+func (w whereHelpernull_String) IsNotNull() qm.QueryMod { return qmhelper.WhereIsNotNull(w.field) }
 
 var PanelWhere = struct {
 	ID                      whereHelperstring
@@ -189,6 +238,8 @@ var PanelWhere = struct {
 	Color                   whereHelperstring
 	Type                    whereHelperstring
 	JoinID                  whereHelperstring
+	PositiveToID            whereHelpernull_String
+	NegativeToID            whereHelperstring
 }{
 	ID:                      whereHelperstring{field: "\"panels\".\"id\""},
 	ProjectID:               whereHelperint64{field: "\"panels\".\"project_id\""},
@@ -215,33 +266,41 @@ var PanelWhere = struct {
 	Color:                   whereHelperstring{field: "\"panels\".\"color\""},
 	Type:                    whereHelperstring{field: "\"panels\".\"type\""},
 	JoinID:                  whereHelperstring{field: "\"panels\".\"join_id\""},
+	PositiveToID:            whereHelpernull_String{field: "\"panels\".\"positive_to_id\""},
+	NegativeToID:            whereHelperstring{field: "\"panels\".\"negative_to_id\""},
 }
 
 // PanelRels is where relationship names are stored.
 var PanelRels = struct {
-	CreatedByUser string
-	Inverter      string
-	Join          string
-	Project       string
-	String        string
-	Tracker       string
+	CreatedByUser      string
+	Inverter           string
+	Join               string
+	Project            string
+	String             string
+	Tracker            string
+	NegativePanelJoins string
+	PositivePanelJoins string
 }{
-	CreatedByUser: "CreatedByUser",
-	Inverter:      "Inverter",
-	Join:          "Join",
-	Project:       "Project",
-	String:        "String",
-	Tracker:       "Tracker",
+	CreatedByUser:      "CreatedByUser",
+	Inverter:           "Inverter",
+	Join:               "Join",
+	Project:            "Project",
+	String:             "String",
+	Tracker:            "Tracker",
+	NegativePanelJoins: "NegativePanelJoins",
+	PositivePanelJoins: "PositivePanelJoins",
 }
 
 // panelR is where relationships are stored.
 type panelR struct {
-	CreatedByUser *User     `boil:"CreatedByUser" json:"CreatedByUser" toml:"CreatedByUser" yaml:"CreatedByUser"`
-	Inverter      *Inverter `boil:"Inverter" json:"Inverter" toml:"Inverter" yaml:"Inverter"`
-	Join          *Join     `boil:"Join" json:"Join" toml:"Join" yaml:"Join"`
-	Project       *Project  `boil:"Project" json:"Project" toml:"Project" yaml:"Project"`
-	String        *String   `boil:"String" json:"String" toml:"String" yaml:"String"`
-	Tracker       *Tracker  `boil:"Tracker" json:"Tracker" toml:"Tracker" yaml:"Tracker"`
+	CreatedByUser      *User          `boil:"CreatedByUser" json:"CreatedByUser" toml:"CreatedByUser" yaml:"CreatedByUser"`
+	Inverter           *Inverter      `boil:"Inverter" json:"Inverter" toml:"Inverter" yaml:"Inverter"`
+	Join               *Join          `boil:"Join" json:"Join" toml:"Join" yaml:"Join"`
+	Project            *Project       `boil:"Project" json:"Project" toml:"Project" yaml:"Project"`
+	String             *String        `boil:"String" json:"String" toml:"String" yaml:"String"`
+	Tracker            *Tracker       `boil:"Tracker" json:"Tracker" toml:"Tracker" yaml:"Tracker"`
+	NegativePanelJoins PanelJoinSlice `boil:"NegativePanelJoins" json:"NegativePanelJoins" toml:"NegativePanelJoins" yaml:"NegativePanelJoins"`
+	PositivePanelJoins PanelJoinSlice `boil:"PositivePanelJoins" json:"PositivePanelJoins" toml:"PositivePanelJoins" yaml:"PositivePanelJoins"`
 }
 
 // NewStruct creates a new relationship struct
@@ -291,13 +350,27 @@ func (r *panelR) GetTracker() *Tracker {
 	return r.Tracker
 }
 
+func (r *panelR) GetNegativePanelJoins() PanelJoinSlice {
+	if r == nil {
+		return nil
+	}
+	return r.NegativePanelJoins
+}
+
+func (r *panelR) GetPositivePanelJoins() PanelJoinSlice {
+	if r == nil {
+		return nil
+	}
+	return r.PositivePanelJoins
+}
+
 // panelL is where Load methods for each relationship are stored.
 type panelL struct{}
 
 var (
-	panelAllColumns            = []string{"id", "project_id", "inverter_id", "tracker_id", "string_id", "name", "created_at", "created_by", "current_at_maximum_power", "short_circuit_current", "short_circuit_current_temp", "maximum_power", "maximum_power_temp", "voltage_at_maximum_power", "open_circuit_voltage", "open_circuit_voltage_temp", "length", "weight", "width", "version", "location", "model", "color", "type", "join_id"}
-	panelColumnsWithoutDefault = []string{"project_id", "name"}
-	panelColumnsWithDefault    = []string{"id", "inverter_id", "tracker_id", "string_id", "created_at", "created_by", "current_at_maximum_power", "short_circuit_current", "short_circuit_current_temp", "maximum_power", "maximum_power_temp", "voltage_at_maximum_power", "open_circuit_voltage", "open_circuit_voltage_temp", "length", "weight", "width", "version", "location", "model", "color", "type", "join_id"}
+	panelAllColumns            = []string{"id", "project_id", "inverter_id", "tracker_id", "string_id", "name", "created_at", "created_by", "current_at_maximum_power", "short_circuit_current", "short_circuit_current_temp", "maximum_power", "maximum_power_temp", "voltage_at_maximum_power", "open_circuit_voltage", "open_circuit_voltage_temp", "length", "weight", "width", "version", "location", "model", "color", "type", "join_id", "positive_to_id", "negative_to_id"}
+	panelColumnsWithoutDefault = []string{"id", "project_id", "name"}
+	panelColumnsWithDefault    = []string{"inverter_id", "tracker_id", "string_id", "created_at", "created_by", "current_at_maximum_power", "short_circuit_current", "short_circuit_current_temp", "maximum_power", "maximum_power_temp", "voltage_at_maximum_power", "open_circuit_voltage", "open_circuit_voltage_temp", "length", "weight", "width", "version", "location", "model", "color", "type", "join_id", "positive_to_id", "negative_to_id"}
 	panelPrimaryKeyColumns     = []string{"id"}
 	panelGeneratedColumns      = []string{}
 )
@@ -644,6 +717,34 @@ func (o *Panel) Tracker(mods ...qm.QueryMod) trackerQuery {
 	queryMods = append(queryMods, mods...)
 
 	return Trackers(queryMods...)
+}
+
+// NegativePanelJoins retrieves all the panel_join's PanelJoins with an executor via negative_id column.
+func (o *Panel) NegativePanelJoins(mods ...qm.QueryMod) panelJoinQuery {
+	var queryMods []qm.QueryMod
+	if len(mods) != 0 {
+		queryMods = append(queryMods, mods...)
+	}
+
+	queryMods = append(queryMods,
+		qm.Where("\"panel_joins\".\"negative_id\"=?", o.ID),
+	)
+
+	return PanelJoins(queryMods...)
+}
+
+// PositivePanelJoins retrieves all the panel_join's PanelJoins with an executor via positive_id column.
+func (o *Panel) PositivePanelJoins(mods ...qm.QueryMod) panelJoinQuery {
+	var queryMods []qm.QueryMod
+	if len(mods) != 0 {
+		queryMods = append(queryMods, mods...)
+	}
+
+	queryMods = append(queryMods,
+		qm.Where("\"panel_joins\".\"positive_id\"=?", o.ID),
+	)
+
+	return PanelJoins(queryMods...)
 }
 
 // LoadCreatedByUser allows an eager lookup of values, cached into the
@@ -1366,6 +1467,234 @@ func (panelL) LoadTracker(ctx context.Context, e boil.ContextExecutor, singular 
 	return nil
 }
 
+// LoadNegativePanelJoins allows an eager lookup of values, cached into the
+// loaded structs of the objects. This is for a 1-M or N-M relationship.
+func (panelL) LoadNegativePanelJoins(ctx context.Context, e boil.ContextExecutor, singular bool, maybePanel interface{}, mods queries.Applicator) error {
+	var slice []*Panel
+	var object *Panel
+
+	if singular {
+		var ok bool
+		object, ok = maybePanel.(*Panel)
+		if !ok {
+			object = new(Panel)
+			ok = queries.SetFromEmbeddedStruct(&object, &maybePanel)
+			if !ok {
+				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", object, maybePanel))
+			}
+		}
+	} else {
+		s, ok := maybePanel.(*[]*Panel)
+		if ok {
+			slice = *s
+		} else {
+			ok = queries.SetFromEmbeddedStruct(&slice, maybePanel)
+			if !ok {
+				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", slice, maybePanel))
+			}
+		}
+	}
+
+	args := make([]interface{}, 0, 1)
+	if singular {
+		if object.R == nil {
+			object.R = &panelR{}
+		}
+		args = append(args, object.ID)
+	} else {
+	Outer:
+		for _, obj := range slice {
+			if obj.R == nil {
+				obj.R = &panelR{}
+			}
+
+			for _, a := range args {
+				if a == obj.ID {
+					continue Outer
+				}
+			}
+
+			args = append(args, obj.ID)
+		}
+	}
+
+	if len(args) == 0 {
+		return nil
+	}
+
+	query := NewQuery(
+		qm.From(`panel_joins`),
+		qm.WhereIn(`panel_joins.negative_id in ?`, args...),
+	)
+	if mods != nil {
+		mods.Apply(query)
+	}
+
+	results, err := query.QueryContext(ctx, e)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load panel_joins")
+	}
+
+	var resultSlice []*PanelJoin
+	if err = queries.Bind(results, &resultSlice); err != nil {
+		return errors.Wrap(err, "failed to bind eager loaded slice panel_joins")
+	}
+
+	if err = results.Close(); err != nil {
+		return errors.Wrap(err, "failed to close results in eager load on panel_joins")
+	}
+	if err = results.Err(); err != nil {
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for panel_joins")
+	}
+
+	if len(panelJoinAfterSelectHooks) != 0 {
+		for _, obj := range resultSlice {
+			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
+				return err
+			}
+		}
+	}
+	if singular {
+		object.R.NegativePanelJoins = resultSlice
+		for _, foreign := range resultSlice {
+			if foreign.R == nil {
+				foreign.R = &panelJoinR{}
+			}
+			foreign.R.Negative = object
+		}
+		return nil
+	}
+
+	for _, foreign := range resultSlice {
+		for _, local := range slice {
+			if local.ID == foreign.NegativeID {
+				local.R.NegativePanelJoins = append(local.R.NegativePanelJoins, foreign)
+				if foreign.R == nil {
+					foreign.R = &panelJoinR{}
+				}
+				foreign.R.Negative = local
+				break
+			}
+		}
+	}
+
+	return nil
+}
+
+// LoadPositivePanelJoins allows an eager lookup of values, cached into the
+// loaded structs of the objects. This is for a 1-M or N-M relationship.
+func (panelL) LoadPositivePanelJoins(ctx context.Context, e boil.ContextExecutor, singular bool, maybePanel interface{}, mods queries.Applicator) error {
+	var slice []*Panel
+	var object *Panel
+
+	if singular {
+		var ok bool
+		object, ok = maybePanel.(*Panel)
+		if !ok {
+			object = new(Panel)
+			ok = queries.SetFromEmbeddedStruct(&object, &maybePanel)
+			if !ok {
+				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", object, maybePanel))
+			}
+		}
+	} else {
+		s, ok := maybePanel.(*[]*Panel)
+		if ok {
+			slice = *s
+		} else {
+			ok = queries.SetFromEmbeddedStruct(&slice, maybePanel)
+			if !ok {
+				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", slice, maybePanel))
+			}
+		}
+	}
+
+	args := make([]interface{}, 0, 1)
+	if singular {
+		if object.R == nil {
+			object.R = &panelR{}
+		}
+		args = append(args, object.ID)
+	} else {
+	Outer:
+		for _, obj := range slice {
+			if obj.R == nil {
+				obj.R = &panelR{}
+			}
+
+			for _, a := range args {
+				if a == obj.ID {
+					continue Outer
+				}
+			}
+
+			args = append(args, obj.ID)
+		}
+	}
+
+	if len(args) == 0 {
+		return nil
+	}
+
+	query := NewQuery(
+		qm.From(`panel_joins`),
+		qm.WhereIn(`panel_joins.positive_id in ?`, args...),
+	)
+	if mods != nil {
+		mods.Apply(query)
+	}
+
+	results, err := query.QueryContext(ctx, e)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load panel_joins")
+	}
+
+	var resultSlice []*PanelJoin
+	if err = queries.Bind(results, &resultSlice); err != nil {
+		return errors.Wrap(err, "failed to bind eager loaded slice panel_joins")
+	}
+
+	if err = results.Close(); err != nil {
+		return errors.Wrap(err, "failed to close results in eager load on panel_joins")
+	}
+	if err = results.Err(); err != nil {
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for panel_joins")
+	}
+
+	if len(panelJoinAfterSelectHooks) != 0 {
+		for _, obj := range resultSlice {
+			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
+				return err
+			}
+		}
+	}
+	if singular {
+		object.R.PositivePanelJoins = resultSlice
+		for _, foreign := range resultSlice {
+			if foreign.R == nil {
+				foreign.R = &panelJoinR{}
+			}
+			foreign.R.Positive = object
+		}
+		return nil
+	}
+
+	for _, foreign := range resultSlice {
+		for _, local := range slice {
+			if local.ID == foreign.PositiveID {
+				local.R.PositivePanelJoins = append(local.R.PositivePanelJoins, foreign)
+				if foreign.R == nil {
+					foreign.R = &panelJoinR{}
+				}
+				foreign.R.Positive = local
+				break
+			}
+		}
+	}
+
+	return nil
+}
+
 // SetCreatedByUser of the panel to the related item.
 // Sets o.R.CreatedByUser to related.
 // Adds o to related.R.CreatedByPanels.
@@ -1645,6 +1974,112 @@ func (o *Panel) SetTracker(ctx context.Context, exec boil.ContextExecutor, inser
 		related.R.Panels = append(related.R.Panels, o)
 	}
 
+	return nil
+}
+
+// AddNegativePanelJoins adds the given related objects to the existing relationships
+// of the panel, optionally inserting them as new records.
+// Appends related to o.R.NegativePanelJoins.
+// Sets related.R.Negative appropriately.
+func (o *Panel) AddNegativePanelJoins(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*PanelJoin) error {
+	var err error
+	for _, rel := range related {
+		if insert {
+			rel.NegativeID = o.ID
+			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
+				return errors.Wrap(err, "failed to insert into foreign table")
+			}
+		} else {
+			updateQuery := fmt.Sprintf(
+				"UPDATE \"panel_joins\" SET %s WHERE %s",
+				strmangle.SetParamNames("\"", "\"", 1, []string{"negative_id"}),
+				strmangle.WhereClause("\"", "\"", 2, panelJoinPrimaryKeyColumns),
+			)
+			values := []interface{}{o.ID, rel.PositiveID, rel.NegativeID}
+
+			if boil.IsDebug(ctx) {
+				writer := boil.DebugWriterFrom(ctx)
+				fmt.Fprintln(writer, updateQuery)
+				fmt.Fprintln(writer, values)
+			}
+			if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
+				return errors.Wrap(err, "failed to update foreign table")
+			}
+
+			rel.NegativeID = o.ID
+		}
+	}
+
+	if o.R == nil {
+		o.R = &panelR{
+			NegativePanelJoins: related,
+		}
+	} else {
+		o.R.NegativePanelJoins = append(o.R.NegativePanelJoins, related...)
+	}
+
+	for _, rel := range related {
+		if rel.R == nil {
+			rel.R = &panelJoinR{
+				Negative: o,
+			}
+		} else {
+			rel.R.Negative = o
+		}
+	}
+	return nil
+}
+
+// AddPositivePanelJoins adds the given related objects to the existing relationships
+// of the panel, optionally inserting them as new records.
+// Appends related to o.R.PositivePanelJoins.
+// Sets related.R.Positive appropriately.
+func (o *Panel) AddPositivePanelJoins(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*PanelJoin) error {
+	var err error
+	for _, rel := range related {
+		if insert {
+			rel.PositiveID = o.ID
+			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
+				return errors.Wrap(err, "failed to insert into foreign table")
+			}
+		} else {
+			updateQuery := fmt.Sprintf(
+				"UPDATE \"panel_joins\" SET %s WHERE %s",
+				strmangle.SetParamNames("\"", "\"", 1, []string{"positive_id"}),
+				strmangle.WhereClause("\"", "\"", 2, panelJoinPrimaryKeyColumns),
+			)
+			values := []interface{}{o.ID, rel.PositiveID, rel.NegativeID}
+
+			if boil.IsDebug(ctx) {
+				writer := boil.DebugWriterFrom(ctx)
+				fmt.Fprintln(writer, updateQuery)
+				fmt.Fprintln(writer, values)
+			}
+			if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
+				return errors.Wrap(err, "failed to update foreign table")
+			}
+
+			rel.PositiveID = o.ID
+		}
+	}
+
+	if o.R == nil {
+		o.R = &panelR{
+			PositivePanelJoins: related,
+		}
+	} else {
+		o.R.PositivePanelJoins = append(o.R.PositivePanelJoins, related...)
+	}
+
+	for _, rel := range related {
+		if rel.R == nil {
+			rel.R = &panelJoinR{
+				Positive: o,
+			}
+		} else {
+			rel.R.Positive = o
+		}
+	}
 	return nil
 }
 

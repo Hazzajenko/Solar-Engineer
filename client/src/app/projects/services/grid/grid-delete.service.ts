@@ -10,6 +10,7 @@ import { CablesEntityService } from '../../project-id/services/cables-entity/cab
 import { InvertersEntityService } from '../../project-id/services/inverters-entity/inverters-entity.service'
 import { JoinsEntityService } from '../../project-id/services/joins-entity/joins-entity.service'
 import { JoinsService } from '../joins.service'
+import { LoggerService } from '../../../services/logger.service'
 
 @Injectable({
   providedIn: 'root',
@@ -21,6 +22,7 @@ export class GridDeleteService extends GridService {
     invertersEntity: InvertersEntityService,
     joinsEntity: JoinsEntityService,
     joinsService: JoinsService,
+    logger: LoggerService,
   ) {
     super(
       panelsEntity,
@@ -28,6 +30,7 @@ export class GridDeleteService extends GridService {
       invertersEntity,
       joinsEntity,
       joinsService,
+      logger,
     )
   }
 

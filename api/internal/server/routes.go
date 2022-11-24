@@ -91,6 +91,13 @@ func (s *Server) Routes() *chi.Mux {
 				r.Delete("/join/{joinId}", s.Handlers.DeleteJoin)
 			})
 
+			r.Group(func(r chi.Router) {
+				r.Get("/panel-joins", s.Handlers.GetPanelJoinsByProjectId)
+				r.Post("/panel-join", s.Handlers.CreatePanelJoin)
+				r.Put("/panel-join/{panelJoinId}", s.Handlers.UpdatePanelJoin)
+				r.Delete("/panel-join/{joinId}", s.Handlers.DeletePanelJoin)
+			})
+
 			r.Route("/{inverterId}", func(r chi.Router) {
 				r.Get("/", s.Handlers.GetTrackersByInverterId)
 				r.Post("/", s.Handlers.CreateTracker)

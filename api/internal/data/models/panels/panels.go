@@ -39,6 +39,26 @@ type PanelModel struct {
 	DB *sql.DB
 }
 
+func (p *PanelModel) GetById(panelId string) (*boiler.Panel, error) {
+	if panelId == "" {
+		return nil, errors.New("record not found")
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+	panel, err := boiler.FindPanel(ctx, p.DB, panelId)
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return nil, errors.New("edit conflict")
+		default:
+			return nil, err
+		}
+	}
+
+	return panel, nil
+}
+
 func (p *PanelModel) CheckIfLocationIsFree(location string) (*Panel, error) {
 	query := `
 			SELECT id, name, location, version

@@ -13,6 +13,8 @@ import { InvertersEntityService } from '../../project-id/services/inverters-enti
 import { JoinsEntityService } from '../../project-id/services/joins-entity/joins-entity.service'
 import { GridJoinService } from './grid-join.service'
 import { JoinsService } from '../joins.service'
+import { LoggerService } from '../../../services/logger.service'
+import { PanelModel } from '../../models/panel.model'
 
 @Injectable({
   providedIn: 'root',
@@ -27,6 +29,7 @@ export class GridActionService extends GridService {
     invertersEntity: InvertersEntityService,
     joinsEntity: JoinsEntityService,
     joinsService: JoinsService,
+    logger: LoggerService,
     private create: GridCreateService,
     private join: GridJoinService,
     private remove: GridDeleteService,
@@ -37,12 +40,14 @@ export class GridActionService extends GridService {
       invertersEntity,
       joinsEntity,
       joinsService,
+      logger,
     )
   }
 
   cellAction(
     location: string,
     joinArray: string[],
+    panelsToJoin: PanelModel[],
     gridState: {
       createMode?: UnitModel
       selectedStrings?: StringModel[]
@@ -60,7 +65,8 @@ export class GridActionService extends GridService {
         return this.remove.deleteSwitch(location, gridState, project, blocks)
 
       case GridMode.JOIN:
-        return this.join.addToJoinArray(location, joinArray, project, blocks)
+        return this.join.addPanelToJoin(location, panelsToJoin, project, blocks)
+      // return this.join.addToJoinArray(location, joinArray, project, blocks)
 
       default:
         break

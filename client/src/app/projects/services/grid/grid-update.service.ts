@@ -15,6 +15,10 @@ import { Guid } from 'guid-typescript'
 import { JoinsService } from '../joins.service'
 import { HttpClient } from '@angular/common/http'
 import { GridHelpers } from './grid.helpers'
+import {
+  LoggerService,
+  LoggerService as Logger,
+} from '../../../services/logger.service'
 
 @Injectable({
   providedIn: 'root',
@@ -26,6 +30,7 @@ export class GridUpdateService extends GridService {
     invertersEntity: InvertersEntityService,
     joinsEntity: JoinsEntityService,
     joinsService: JoinsService,
+    logger: LoggerService,
     private http: HttpClient,
     private gridHelpers: GridHelpers,
   ) {
@@ -35,6 +40,7 @@ export class GridUpdateService extends GridService {
       invertersEntity,
       joinsEntity,
       joinsService,
+      logger,
     )
   }
 
@@ -130,11 +136,13 @@ export class GridUpdateService extends GridService {
 
   updateCableForJoin(cable: CableModel, join_id: string, cables: CableModel[]) {
     if (!cable) return console.log('updateCableForJoin err')
+    Logger.log('logger INFO', { message: 'message' })
     const otherBlock: CableModel = {
       ...cable!,
       join_id,
     }
     this.cablesEntity.update(otherBlock)
+    Logger.log('logger INFO', { message: 'message' })
 
     const cablesInJoin = cables.filter(
       (cableInJoin) => cableInJoin.join_id === cable.join_id,
@@ -146,12 +154,40 @@ export class GridUpdateService extends GridService {
       }
       return partial
     })
+    Logger.log('logger INFO', { message: 'message' })
     this.cablesEntity.updateManyInCache(updates)
+    return this.http
+      .put(`/api/projects/${cable.project_id!}/join/${cable.join_id!}/cables`, {
+        project_id: cable.project_id!,
+        changes: {
+          new_join_id: join_id,
+          old_join_id: cable.join_id!,
+        },
+      })
+      .subscribe((res) => {
+        Logger.log('logger INFO', { message: res })
+      })
+    /*    return this.http
+          .put(
+            `${
+              environment.apiUrl
+            }/projects/${cable.project_id!}/join/${cable.join_id!}/cables`,
+            {
+              project_id: cable.project_id!,
+              changes: {
+                new_join_id: join_id,
+                old_join_id: cable.join_id!,
+              },
+            },
+          )
+          .subscribe((res) => {
+            Logger.log('logger INFO', { message: res })
+          })*/
 
-    this.joinsService.updateCablesInJoin(
-      cable.project_id!,
-      cable.join_id!,
-      join_id,
-    )
+    /*    this.joinsService.updateCablesInJoin(
+          cable.project_id!,
+          cable.join_id!,
+          join_id,
+        )*/
   }
 }

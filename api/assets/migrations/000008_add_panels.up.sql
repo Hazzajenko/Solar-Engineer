@@ -33,6 +33,8 @@ create table if not exists panels
     tracker_id                 text                        default 'err'::text   not null,
     string_id                  text                        default 'err'::text   not null,
     name                       text                                              not null,
+    positive_to_id                       text                    default 'null'::text                          not null,
+    negative_to_id                        text                    default 'null'::text                          not null,
     created_at                 timestamp(0) with time zone default now()         not null,
     created_by                 bigserial,
     current_at_maximum_power   real                        default 0             not null,
@@ -61,9 +63,22 @@ create table if not exists panels
     foreign key (inverter_id) references inverters
         on update cascade on delete cascade,
     foreign key (tracker_id) references trackers
+        on update cascade on delete cascade,
+    foreign key (positive_to_id) references panels
+        on update cascade on delete cascade,
+    foreign key (negative_to_id) references panels
         on update cascade on delete cascade
 );
 
+CREATE TABLE IF NOT EXISTS panel_joins (
+    id text default 'err'::text NOT NULL,
+    positive_id text NOT NULL REFERENCES panels ON DELETE CASCADE,
+    negative_id text NOT NULL REFERENCES panels ON DELETE CASCADE,
+    PRIMARY KEY (positive_id, negative_id)
+--     PRIMARY KEY (id),
+--     CONSTRAINT fk_positive_id FOREIGN KEY(positive_id) REFERENCES panels(id),
+--     CONSTRAINT fk_negative_id FOREIGN KEY(negative_id) REFERENCES panels(id)
+);
 
 
 

@@ -108,6 +108,10 @@ path {
   width: 30px;
   height: 30px;
 
+  &__app-block-panel {
+    background-color: #cc1313;
+  }
+
 
   &__svg {
     pointer-events: none;

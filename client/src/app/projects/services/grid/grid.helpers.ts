@@ -7,6 +7,7 @@ import { InvertersEntityService } from '../../project-id/services/inverters-enti
 import { JoinsEntityService } from '../../project-id/services/joins-entity/joins-entity.service'
 import { JoinsService } from '../joins.service'
 import { HttpClient } from '@angular/common/http'
+import { LoggerService } from '../../../services/logger.service'
 
 export interface SurroundingCablesModel {
   topCable?: CableModel
@@ -25,6 +26,7 @@ export class GridHelpers extends GridService {
     invertersEntity: InvertersEntityService,
     joinsEntity: JoinsEntityService,
     joinsService: JoinsService,
+    logger: LoggerService,
     private http: HttpClient,
   ) {
     super(
@@ -33,6 +35,7 @@ export class GridHelpers extends GridService {
       invertersEntity,
       joinsEntity,
       joinsService,
+      logger,
     )
   }
 

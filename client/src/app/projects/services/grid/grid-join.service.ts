@@ -15,6 +15,10 @@ import { AppState } from '../../../store/app.state'
 import { GridStateActions } from '../../store/grid/grid.actions'
 import { GridMode } from '../../store/grid/grid-mode.model'
 import { JoinsService } from '../joins.service'
+import { LoggerService } from '../../../services/logger.service'
+import { PanelJoinsEntityService } from '../../project-id/services/panel-joins-entity/panel-joins-entity.service'
+import { PanelJoinModel } from '../../models/panel-join.model'
+import { PanelModel } from '../../models/panel.model'
 
 @Injectable({
   providedIn: 'root',
@@ -28,7 +32,9 @@ export class GridJoinService extends GridService {
     invertersEntity: InvertersEntityService,
     joinsEntity: JoinsEntityService,
     joinsService: JoinsService,
+    logger: LoggerService,
     private store: Store<AppState>,
+    private panelJoinsEntity: PanelJoinsEntityService,
   ) {
     super(
       panelsEntity,
@@ -36,6 +42,7 @@ export class GridJoinService extends GridService {
       invertersEntity,
       joinsEntity,
       joinsService,
+      logger,
     )
   }
 
@@ -86,6 +93,48 @@ export class GridJoinService extends GridService {
           return this.store.dispatch(
             GridStateActions.addToJoinArray({ toJoin: location }),
           )
+        }
+      })
+    }
+  }
+
+  addPanelToJoin(
+    panelLocation: string,
+    panelToJoins: PanelModel[],
+    project: ProjectModel,
+    blocks: BlockModel[],
+  ) {
+    let panel: PanelModel | undefined
+    this.panelsEntity.entities$.subscribe((panels) => {
+      panel = panels.find((p) => p.location === panelLocation)
+    })
+    if (!panel) return console.log('no panel exists')
+
+    const existing = blocks.find((block) => block.location === panel!.location)
+    if (!existing) return console.log('no block to add toJoinArray')
+    if (panelToJoins.length === 0) {
+      return this.store.dispatch(GridStateActions.addPanelToJoin({ panel }))
+    }
+    if (panelToJoins) {
+      panelToJoins.forEach((panelToJoin) => {
+        if (
+          this.isBlockInSurrounding(
+            panel!.location,
+            panelToJoin.location,
+            blocks,
+          )
+        ) {
+          if (panelToJoins.length === 1) {
+            const panelJoinRequest: PanelJoinModel = {
+              id: Guid.create().toString(),
+              project_id: project.id,
+              positive_id: panelToJoin.id,
+              negative_id: panel!.id,
+            }
+
+            this.panelJoinsEntity.add(panelJoinRequest)
+            return this.store.dispatch(GridStateActions.clearJoinArray())
+          }
         }
       })
     }

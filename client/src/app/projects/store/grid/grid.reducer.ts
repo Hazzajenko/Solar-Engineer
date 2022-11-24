@@ -3,6 +3,7 @@ import { GridStateActions } from './grid.actions'
 import { StringModel } from '../../models/string.model'
 import { GridMode } from './grid-mode.model'
 import { UnitModel } from '../../models/unit.model'
+import { PanelModel } from '../../models/panel.model'
 
 export interface GridState {
   strings: StringModel[]
@@ -10,6 +11,7 @@ export interface GridState {
   createMode: UnitModel
   gridMode: GridMode
   toJoin: string[]
+  panelToJoin: PanelModel[]
 }
 
 export const initialGridState: GridState = {
@@ -18,6 +20,7 @@ export const initialGridState: GridState = {
   createMode: UnitModel.PANEL,
   gridMode: GridMode.CREATE,
   toJoin: [],
+  panelToJoin: [],
 }
 
 export const gridReducer = createReducer(
@@ -29,6 +32,7 @@ export const gridReducer = createReducer(
     createMode: state.createMode,
     gridMode: state.gridMode,
     toJoin: state.toJoin,
+    panelToJoin: state.panelToJoin,
   })),
 
   on(GridStateActions.selectTrackerStringsForGrid, (state, action) => ({
@@ -37,6 +41,7 @@ export const gridReducer = createReducer(
     createMode: state.createMode,
     gridMode: state.gridMode,
     toJoin: state.toJoin,
+    panelToJoin: state.panelToJoin,
   })),
 
   on(GridStateActions.selectInverterStringsForGrid, (state, action) => ({
@@ -45,6 +50,7 @@ export const gridReducer = createReducer(
     createMode: state.createMode,
     gridMode: state.gridMode,
     toJoin: state.toJoin,
+    panelToJoin: state.panelToJoin,
   })),
 
   on(GridStateActions.selectCreateMode, (state, action) => ({
@@ -53,6 +59,7 @@ export const gridReducer = createReducer(
     strings: state.strings,
     gridMode: state.gridMode,
     toJoin: state.toJoin,
+    panelToJoin: state.panelToJoin,
   })),
   /*
     on(GridStateActions.selectCableCreateMode, (state, action) => ({
@@ -68,6 +75,7 @@ export const gridReducer = createReducer(
     createMode: state.createMode,
     gridMode: GridMode.CREATE,
     toJoin: state.toJoin,
+    panelToJoin: state.panelToJoin,
   })),
 
   on(GridStateActions.selectGridmodeCreate, (state, action) => ({
@@ -76,6 +84,7 @@ export const gridReducer = createReducer(
     createMode: state.createMode,
     gridMode: action.mode,
     toJoin: state.toJoin,
+    panelToJoin: state.panelToJoin,
   })),
 
   on(GridStateActions.selectGridmodeDelete, (state, action) => ({
@@ -84,6 +93,7 @@ export const gridReducer = createReducer(
     createMode: state.createMode,
     gridMode: action.mode,
     toJoin: state.toJoin,
+    panelToJoin: state.panelToJoin,
   })),
 
   on(GridStateActions.selectGridmodeJoin, (state, action) => ({
@@ -92,6 +102,7 @@ export const gridReducer = createReducer(
     createMode: state.createMode,
     gridMode: action.mode,
     toJoin: state.toJoin,
+    panelToJoin: state.panelToJoin,
   })),
 
   on(GridStateActions.changeGridmode, (state, action) => ({
@@ -100,6 +111,7 @@ export const gridReducer = createReducer(
     createMode: state.createMode,
     gridMode: action.mode,
     toJoin: state.toJoin,
+    panelToJoin: state.panelToJoin,
   })),
 
   on(GridStateActions.addToJoinArray, (state, action) => ({
@@ -108,6 +120,7 @@ export const gridReducer = createReducer(
     createMode: state.createMode,
     gridMode: state.gridMode,
     toJoin: [...state.toJoin, action.toJoin],
+    panelToJoin: state.panelToJoin,
   })),
 
   on(GridStateActions.clearJoinArray, (state) => ({
@@ -116,6 +129,16 @@ export const gridReducer = createReducer(
     createMode: state.createMode,
     gridMode: state.gridMode,
     toJoin: [],
+    panelToJoin: [],
+  })),
+
+  on(GridStateActions.addPanelToJoin, (state, action) => ({
+    strings: state.strings,
+    selected: state.selected,
+    createMode: state.createMode,
+    gridMode: state.gridMode,
+    toJoin: state.toJoin,
+    panelToJoin: [...state.panelToJoin, action.panel],
   })),
 )
 
@@ -124,7 +147,7 @@ export const gridReducer = createReducer(
 
 export const initialGridState: GridState = gridAdapter.getInitialState({})
 
-export const gridReducer = createReducer(
+export const selectedReducer = createReducer(
   initialGridState,
 
   on(GridActions.selectStringForGrid, (state, { string }) =>

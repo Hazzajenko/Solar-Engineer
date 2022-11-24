@@ -90,6 +90,7 @@ var ProjectRels = struct {
 	Cables        string
 	Inverters     string
 	Joins         string
+	PanelJoins    string
 	Panels        string
 	Strings       string
 	Trackers      string
@@ -99,6 +100,7 @@ var ProjectRels = struct {
 	Cables:        "Cables",
 	Inverters:     "Inverters",
 	Joins:         "Joins",
+	PanelJoins:    "PanelJoins",
 	Panels:        "Panels",
 	Strings:       "Strings",
 	Trackers:      "Trackers",
@@ -111,6 +113,7 @@ type projectR struct {
 	Cables        CableSlice        `boil:"Cables" json:"Cables" toml:"Cables" yaml:"Cables"`
 	Inverters     InverterSlice     `boil:"Inverters" json:"Inverters" toml:"Inverters" yaml:"Inverters"`
 	Joins         JoinSlice         `boil:"Joins" json:"Joins" toml:"Joins" yaml:"Joins"`
+	PanelJoins    PanelJoinSlice    `boil:"PanelJoins" json:"PanelJoins" toml:"PanelJoins" yaml:"PanelJoins"`
 	Panels        PanelSlice        `boil:"Panels" json:"Panels" toml:"Panels" yaml:"Panels"`
 	Strings       StringSlice       `boil:"Strings" json:"Strings" toml:"Strings" yaml:"Strings"`
 	Trackers      TrackerSlice      `boil:"Trackers" json:"Trackers" toml:"Trackers" yaml:"Trackers"`
@@ -148,6 +151,13 @@ func (r *projectR) GetJoins() JoinSlice {
 		return nil
 	}
 	return r.Joins
+}
+
+func (r *projectR) GetPanelJoins() PanelJoinSlice {
+	if r == nil {
+		return nil
+	}
+	return r.PanelJoins
 }
 
 func (r *projectR) GetPanels() PanelSlice {
@@ -518,6 +528,20 @@ func (o *Project) Joins(mods ...qm.QueryMod) joinQuery {
 	)
 
 	return Joins(queryMods...)
+}
+
+// PanelJoins retrieves all the panel_join's PanelJoins with an executor.
+func (o *Project) PanelJoins(mods ...qm.QueryMod) panelJoinQuery {
+	var queryMods []qm.QueryMod
+	if len(mods) != 0 {
+		queryMods = append(queryMods, mods...)
+	}
+
+	queryMods = append(queryMods,
+		qm.Where("\"panel_joins\".\"project_id\"=?", o.ID),
+	)
+
+	return PanelJoins(queryMods...)
 }
 
 // Panels retrieves all the panel's Panels with an executor.
@@ -1028,6 +1052,120 @@ func (projectL) LoadJoins(ctx context.Context, e boil.ContextExecutor, singular 
 				local.R.Joins = append(local.R.Joins, foreign)
 				if foreign.R == nil {
 					foreign.R = &joinR{}
+				}
+				foreign.R.Project = local
+				break
+			}
+		}
+	}
+
+	return nil
+}
+
+// LoadPanelJoins allows an eager lookup of values, cached into the
+// loaded structs of the objects. This is for a 1-M or N-M relationship.
+func (projectL) LoadPanelJoins(ctx context.Context, e boil.ContextExecutor, singular bool, maybeProject interface{}, mods queries.Applicator) error {
+	var slice []*Project
+	var object *Project
+
+	if singular {
+		var ok bool
+		object, ok = maybeProject.(*Project)
+		if !ok {
+			object = new(Project)
+			ok = queries.SetFromEmbeddedStruct(&object, &maybeProject)
+			if !ok {
+				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", object, maybeProject))
+			}
+		}
+	} else {
+		s, ok := maybeProject.(*[]*Project)
+		if ok {
+			slice = *s
+		} else {
+			ok = queries.SetFromEmbeddedStruct(&slice, maybeProject)
+			if !ok {
+				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", slice, maybeProject))
+			}
+		}
+	}
+
+	args := make([]interface{}, 0, 1)
+	if singular {
+		if object.R == nil {
+			object.R = &projectR{}
+		}
+		args = append(args, object.ID)
+	} else {
+	Outer:
+		for _, obj := range slice {
+			if obj.R == nil {
+				obj.R = &projectR{}
+			}
+
+			for _, a := range args {
+				if a == obj.ID {
+					continue Outer
+				}
+			}
+
+			args = append(args, obj.ID)
+		}
+	}
+
+	if len(args) == 0 {
+		return nil
+	}
+
+	query := NewQuery(
+		qm.From(`panel_joins`),
+		qm.WhereIn(`panel_joins.project_id in ?`, args...),
+	)
+	if mods != nil {
+		mods.Apply(query)
+	}
+
+	results, err := query.QueryContext(ctx, e)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load panel_joins")
+	}
+
+	var resultSlice []*PanelJoin
+	if err = queries.Bind(results, &resultSlice); err != nil {
+		return errors.Wrap(err, "failed to bind eager loaded slice panel_joins")
+	}
+
+	if err = results.Close(); err != nil {
+		return errors.Wrap(err, "failed to close results in eager load on panel_joins")
+	}
+	if err = results.Err(); err != nil {
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for panel_joins")
+	}
+
+	if len(panelJoinAfterSelectHooks) != 0 {
+		for _, obj := range resultSlice {
+			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
+				return err
+			}
+		}
+	}
+	if singular {
+		object.R.PanelJoins = resultSlice
+		for _, foreign := range resultSlice {
+			if foreign.R == nil {
+				foreign.R = &panelJoinR{}
+			}
+			foreign.R.Project = object
+		}
+		return nil
+	}
+
+	for _, foreign := range resultSlice {
+		for _, local := range slice {
+			if local.ID == foreign.ProjectID {
+				local.R.PanelJoins = append(local.R.PanelJoins, foreign)
+				if foreign.R == nil {
+					foreign.R = &panelJoinR{}
 				}
 				foreign.R.Project = local
 				break
@@ -1691,6 +1829,59 @@ func (o *Project) AddJoins(ctx context.Context, exec boil.ContextExecutor, inser
 	for _, rel := range related {
 		if rel.R == nil {
 			rel.R = &joinR{
+				Project: o,
+			}
+		} else {
+			rel.R.Project = o
+		}
+	}
+	return nil
+}
+
+// AddPanelJoins adds the given related objects to the existing relationships
+// of the project, optionally inserting them as new records.
+// Appends related to o.R.PanelJoins.
+// Sets related.R.Project appropriately.
+func (o *Project) AddPanelJoins(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*PanelJoin) error {
+	var err error
+	for _, rel := range related {
+		if insert {
+			rel.ProjectID = o.ID
+			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
+				return errors.Wrap(err, "failed to insert into foreign table")
+			}
+		} else {
+			updateQuery := fmt.Sprintf(
+				"UPDATE \"panel_joins\" SET %s WHERE %s",
+				strmangle.SetParamNames("\"", "\"", 1, []string{"project_id"}),
+				strmangle.WhereClause("\"", "\"", 2, panelJoinPrimaryKeyColumns),
+			)
+			values := []interface{}{o.ID, rel.PositiveID, rel.NegativeID}
+
+			if boil.IsDebug(ctx) {
+				writer := boil.DebugWriterFrom(ctx)
+				fmt.Fprintln(writer, updateQuery)
+				fmt.Fprintln(writer, values)
+			}
+			if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
+				return errors.Wrap(err, "failed to update foreign table")
+			}
+
+			rel.ProjectID = o.ID
+		}
+	}
+
+	if o.R == nil {
+		o.R = &projectR{
+			PanelJoins: related,
+		}
+	} else {
+		o.R.PanelJoins = append(o.R.PanelJoins, related...)
+	}
+
+	for _, rel := range related {
+		if rel.R == nil {
+			rel.R = &panelJoinR{
 				Project: o,
 			}
 		} else {

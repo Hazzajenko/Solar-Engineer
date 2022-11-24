@@ -32,3 +32,8 @@ export const selectToJoinArray = createSelector(
   selectGridState,
   (state: State.GridState) => state.toJoin,
 )
+
+export const selectPanelToJoin = createSelector(
+  selectGridState,
+  (state: State.GridState) => state.panelToJoin,
+)

@@ -2,6 +2,7 @@ import { createActionGroup, emptyProps, props } from '@ngrx/store'
 import { StringModel } from '../../models/string.model'
 import { GridMode } from './grid-mode.model'
 import { UnitModel } from '../../models/unit.model'
+import { PanelModel } from '../../models/panel.model'
 
 /*export const selectStringForGrid = createAction(
   '[Grid Service] Select String For Grid',
@@ -40,6 +41,7 @@ export const GridStateActions = createActionGroup({
     'Select GridMode Join': props<{ mode: GridMode.JOIN }>(),
     'Change GridMode': props<{ mode: GridMode }>(),
     'Add To Join Array': props<{ toJoin: string }>(),
+    'Add Panel To Join': props<{ panel: PanelModel }>(),
     'Start Join': props<{ toJoin: string }>(),
     'Clear Join Array': emptyProps(),
     'Clear Grid State': emptyProps(),

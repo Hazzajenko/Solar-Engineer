@@ -5,6 +5,7 @@ import * as fromAuth from '../auth/store/auth.reducer'
 import * as fromProjects from '../projects/store/projects/projects.reducer'
 import * as fromUserProjects from '../projects/store/user-projects/user-projects.reducer'
 import * as fromGrid from '../projects/store/grid/grid.reducer'
+import * as fromSelected from '../projects/store/selected/selected.reducer'
 import * as fromCables from '../projects/store/cable/cable.reducer'
 import * as fromBlocks from '../projects/store/blocks/blocks.reducer'
 import * as fromInverters from '../projects/store/inverters/inverters.reducer'
@@ -18,6 +19,7 @@ export interface AppState {
   projects: fromProjects.ProjectState
   userProjects: fromUserProjects.UserProjectState
   grid: fromGrid.GridState
+  selected: fromSelected.SelectedState
   cables: fromCables.CableState
   blocks: fromBlocks.BlocksState
   inverters: fromInverters.InverterState
@@ -33,6 +35,7 @@ export const reducers: ActionReducerMap<AppState> = {
   projects: fromProjects.projectsReducer,
   userProjects: fromUserProjects.userProjectsReducer,
   grid: fromGrid.gridReducer,
+  selected: fromSelected.selectedReducer,
   cables: fromCables.cableReducer,
   blocks: fromBlocks.blocksReducer,
   inverters: fromInverters.invertersReducer,

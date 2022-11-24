@@ -5,6 +5,7 @@ import { StringModel } from './projects/models/string.model'
 import { TrackerModel } from './projects/models/tracker.model'
 import { InverterModel } from './projects/models/inverter.model'
 import { JoinModel } from './projects/models/join.model'
+import { PanelJoinModel } from './projects/models/panel-join.model'
 
 const entityMetadata: EntityMetadataMap = {
   Inverter: {
@@ -49,6 +50,14 @@ const entityMetadata: EntityMetadataMap = {
   },
   Join: {
     selectId: (b: JoinModel): string => b.id,
+    entityDispatcherOptions: {
+      optimisticUpdate: true,
+      optimisticAdd: true,
+      optimisticDelete: true,
+    },
+  },
+  PanelJoin: {
+    selectId: (b: PanelJoinModel): string => b.id,
     entityDispatcherOptions: {
       optimisticUpdate: true,
       optimisticAdd: true,

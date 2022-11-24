@@ -7,6 +7,7 @@ import { CablesEntityService } from '../project-id/services/cables-entity/cables
 import { JoinModel } from '../models/join.model'
 import { UnitModel } from '../models/unit.model'
 import { JoinsEntityService } from '../project-id/services/joins-entity/joins-entity.service'
+import { environment } from '../../../environments/environment'
 
 interface UpdateCablesResponse {
   cables: CableModel[]
@@ -53,7 +54,7 @@ export class JoinsService {
 
   updateCablesInJoin(projectId: number, joinId: string, updatedJoinId: string) {
     return this.http.put<UpdateCablesResponse>(
-      `api/projects/${projectId}/join/${joinId}/cables`,
+      `${environment.apiUrl}/projects/${projectId}/join/${joinId}/cables`,
       {
         project_id: projectId,
         changes: {

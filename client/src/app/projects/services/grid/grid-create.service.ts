@@ -16,6 +16,7 @@ import { JoinsEntityService } from '../../project-id/services/joins-entity/joins
 import { JoinsService } from '../joins.service'
 import { GridHelpers } from './grid.helpers'
 import { GridUpdateService } from './grid-update.service'
+import { LoggerService } from '../../../services/logger.service'
 
 @Injectable({
   providedIn: 'root',
@@ -27,6 +28,7 @@ export class GridCreateService extends GridService {
     invertersEntity: InvertersEntityService,
     joinsEntity: JoinsEntityService,
     joinsService: JoinsService,
+    logger: LoggerService,
     private gridHelpers: GridHelpers,
     private gridUpdate: GridUpdateService,
   ) {
@@ -36,6 +38,7 @@ export class GridCreateService extends GridService {
       invertersEntity,
       joinsEntity,
       joinsService,
+      logger,
     )
   }
 

@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core'
-import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop'
+import { DragDropModule } from '@angular/cdk/drag-drop'
 import { InverterModel } from '../../../models/inverter.model'
 import { TrackerModel } from '../../../models/tracker.model'
 import { StringModel } from '../../../models/string.model'
@@ -12,10 +12,10 @@ import { OldGridService } from '../../../services/old-grid.service'
 import { combineLatest, Observable } from 'rxjs'
 import { selectProjectByRouteParams } from '../../../store/projects/projects.selectors'
 import { ProjectModel } from '../../../models/project.model'
-import { CreateMode } from '../../../store/grid/grid.actions'
 import {
   selectCreateMode,
   selectGridMode,
+  selectPanelToJoin,
   selectSelectedString,
   selectSelectedStrings,
   selectToJoinArray,
@@ -23,11 +23,6 @@ import {
 import { BlockModel } from '../../../models/block.model'
 import { selectBlocksByProjectIdRouteParams } from '../../../store/blocks/blocks.selectors'
 import { CableModel } from '../../../models/cable.model'
-import {
-  CableStateActions,
-  CreateCableRequest,
-  UpdateCableRequest,
-} from '../../../store/cable/cable.actions'
 import { UnitModel } from '../../../models/unit.model'
 import { GridMode } from '../../../store/grid/grid-mode.model'
 import { PanelsEntityService } from '../../services/panels-entity/panels-entity.service'
@@ -60,6 +55,12 @@ import { GetNearbyJoins } from '../../../../pipes/get-nearby-joins.pipe'
 import { BlockPanelComponent } from './block-panel/block-panel.component'
 import { BlockCableComponent } from './block-cable/block-cable.component'
 import { BlockInverterComponent } from './block-inverter/block-inverter.component'
+import { SelectedStateActions } from '../../../store/selected/selected.actions'
+import {
+  selectSelectedPanel,
+  selectSelectedPanels,
+  selectUnitSelected,
+} from '../../../store/selected/selected.selectors'
 
 @Component({
   selector: 'app-grid-layout',
@@ -106,6 +107,11 @@ export class GridLayoutComponent implements OnInit {
     selectedString?: StringModel
     gridMode?: GridMode
   }>
+  selected$!: Observable<{
+    unit?: UnitModel
+    panels?: PanelModel[]
+    panel?: PanelModel
+  }>
   project$!: Observable<ProjectModel | undefined>
   inverters$!: Observable<InverterModel[]>
   trackers$!: Observable<TrackerModel[]>
@@ -115,6 +121,7 @@ export class GridLayoutComponent implements OnInit {
   blocks$!: Observable<BlockModel[]>
   joins$!: Observable<JoinModel[]>
   toJoinArray$!: Observable<string[]>
+  panelToJoin$!: Observable<PanelModel[]>
   rows = 20
   cols = 40
 
@@ -154,6 +161,7 @@ export class GridLayoutComponent implements OnInit {
     // this.cables$ = this.store.select(selectCablesByProjectIdRouteParams)
     this.blocks$ = this.store.select(selectBlocksByProjectIdRouteParams)
     this.toJoinArray$ = this.store.select(selectToJoinArray)
+    this.panelToJoin$ = this.store.select(selectPanelToJoin)
 
     this.grid$ = combineLatest([
       this.store.select(selectCreateMode),
@@ -168,220 +176,21 @@ export class GridLayoutComponent implements OnInit {
         gridMode,
       })),
     )
+    this.selected$ = combineLatest([
+      this.store.select(selectUnitSelected),
+      this.store.select(selectSelectedPanels),
+      this.store.select(selectSelectedPanel),
+    ]).pipe(
+      map(([unit, panels, panel]) => ({
+        unit,
+        panels,
+        panel,
+      })),
+    )
   }
 
   numSequence(n: number): Array<number> {
     return Array(n)
-  }
-
-  async blockDrop(
-    event: CdkDragDrop<any, any>,
-    project: ProjectModel,
-    blocks: BlockModel[],
-  ) {
-    const doesExist = blocks.find(
-      (block) => block.location.toString() === event.container.id,
-    )
-
-    if (doesExist) {
-      console.log('location taken')
-      return
-    }
-
-    const newLocation = Number(event.container.id)
-
-    const block = event.item.data
-    switch (block.model) {
-      case UnitModel.PANEL:
-        return this.updatePanelLocationV2(project.id, block, event.container.id)
-      // break
-      case UnitModel.CABLE:
-        return this.updateCableLocationV2(project.id, block, newLocation)
-      // break
-      default:
-        break
-    }
-  }
-
-  updatePanelLocation(
-    projectId: number,
-    panel: PanelModel,
-    newLocation: string,
-  ) {
-    const update: PanelModel = {
-      id: panel.id,
-      inverter_id: panel.inverter_id,
-      tracker_id: panel.tracker_id,
-      string_id: panel.string_id,
-      location: panel.location,
-      version: panel.version,
-    }
-
-    /* const request: UpdatePanelRequest = {
-       panel,
-       newLocation,
-       project_id: projectId,
-     }
-
-     this.store.dispatch(PanelStateActions.updatePanelHttp({ request }))*/
-    // await this.panelsService.updatePanel(3, update, newLocation)
-  }
-
-  updatePanelLocationV2(
-    projectId: number,
-    panel: PanelModel,
-    newLocation: string,
-  ) {
-    /*    const request: UpdatePanelRequest = {
-          panel,
-          newLocation,
-          project_id: projectId,
-        }*/
-
-    const update: PanelModel = {
-      ...panel,
-      location: newLocation,
-    }
-
-    return this.panelsEntity.update(update)
-    // return this.store.dispatch(PanelStateActions.updatePanelHttp({ request }))
-  }
-
-  updateCableLocationV2(
-    projectId: number,
-    cable: CableModel,
-    newLocation: number,
-  ) {
-    const request: UpdateCableRequest = {
-      cable,
-      newLocation,
-      project_id: projectId,
-    }
-
-    return this.store.dispatch(CableStateActions.updateCableHttp({ request }))
-  }
-
-  async updateCableLocation(
-    projectId: number,
-    panel: PanelModel,
-    newLocation: string,
-  ) {
-    const update: PanelModel = {
-      id: panel.id,
-      inverter_id: panel.inverter_id,
-      tracker_id: panel.tracker_id,
-      string_id: panel.string_id,
-      location: panel.location,
-      version: panel.version,
-    }
-
-    await this.panelsService.updatePanelOld(3, update, newLocation)
-  }
-
-  async divClick(
-    location: string,
-    gridState: {
-      createMode?: CreateMode
-      selectedStrings?: StringModel[]
-      selectedString?: StringModel
-    },
-    project: ProjectModel,
-  ) {
-    switch (gridState.createMode) {
-      case CreateMode.PANEL:
-        // await this.createPanelForGrid(location, gridState.selectedString)
-        break
-      case CreateMode.CABLE:
-        // await this.createCableForGrid(location, project)
-
-        break
-      default:
-        break
-    }
-  }
-
-  async divClickV2(
-    location: number,
-    gridState: {
-      createMode?: CreateMode
-      selectedStrings?: StringModel[]
-      selectedString?: StringModel
-      gridMode?: GridMode
-    },
-    project: ProjectModel,
-    blocks: BlockModel[],
-  ) {
-    // console.log(location)
-    switch (gridState.createMode) {
-      case CreateMode.PANEL:
-        await this.createPanelForGrid(location, gridState.selectedString)
-        break
-      case CreateMode.CABLE:
-        // await this.createCableForGrid(location, project)
-        break
-      default:
-        break
-    }
-  }
-
-  async createCableForGrid(location: number, project: ProjectModel) {
-    if (location) {
-      /*      const doesExist = this.panels?.find(
-              (panel) => panel.location === location,
-            )*/
-      /*      if (doesExist) {
-              console.log('location taken')
-              return
-            }*/
-      const inSpot = this.takenBlocks.find((block) => block === location)
-      // const inSpot = this.occupiedSpots.find((spot) => spot === location)
-      if (inSpot) return console.log('location taken')
-      // await this.grid.createCableForGrid(project.id, location, 4)
-      /*      const cable: CableModel = {
-              id: 0,
-              location,
-              size: 4,
-              project_id: project.id,
-            }*/
-      const request: CreateCableRequest = {
-        location,
-        size: 4,
-        project_id: project.id,
-      }
-      this.store.dispatch(CableStateActions.addCableHttp({ request }))
-    }
-  }
-
-  async createPanelForGrid(location: number, selectedString?: StringModel) {
-    console.log(selectedString)
-    if (!selectedString) return console.log('select string')
-    if (selectedString.id === '') console.log('select string')
-
-    if (selectedString) {
-      /*      const doesExist = this.panels?.find(
-              (panel) => panel.location === location,
-            )
-            if (doesExist) {
-              console.log('location taken')
-              return
-            }*/
-      /*      const request: CreatePanelRequest = {
-              project_id: selectedString.project_id,
-              inverter_id: selectedString.inverter_id,
-              tracker_id: selectedString.tracker_id,
-              string_id: selectedString.id,
-              location,
-            }
-            this.store.dispatch(PanelStateActions.addPanelHttp({ request }))*/
-      /*      await this.panelsService.createPanelForGrid(
-              3,
-              selectedString.inverter_id,
-              selectedString.tracker_id,
-              selectedString.id,
-              location,
-              selectedString.color!,
-            )*/
-    }
   }
 
   onRightClick(event: MouseEvent, item: any) {
@@ -436,5 +245,9 @@ export class GridLayoutComponent implements OnInit {
         break
     }
     return
+  }
+
+  selectBlock(panel: PanelModel) {
+    this.store.dispatch(SelectedStateActions.selectPanel({ panel }))
   }
 }

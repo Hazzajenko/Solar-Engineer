@@ -11,6 +11,8 @@ export interface PanelModel {
   model?: UnitModel
   type?: TypeModel
   name?: string
+  positive_to?: string
+  negative_to?: string
   location: string
   // location: string
   current_at_maximum_power?: number
