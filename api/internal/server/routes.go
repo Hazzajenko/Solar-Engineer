@@ -68,7 +68,7 @@ func (s *Server) Routes() *chi.Mux {
 				r.Get("/panels", s.Handlers.GetPanelsByProjectId)
 				r.Post("/panel", s.Handlers.CreatePanel)
 				//r.Post("/panels", s.Handlers.CreatePanel)
-				r.Patch("/panels", s.Handlers.UpdatePanelLocation)
+				//r.Patch("/panels", s.Handlers.UpdatePanelLocation)
 				r.Put("/panel/{panelId}", s.Handlers.PutPanel)
 				r.Delete("/panel/{panelId}", s.Handlers.DeletePanel)
 			})
@@ -95,7 +95,7 @@ func (s *Server) Routes() *chi.Mux {
 				r.Get("/panel-joins", s.Handlers.GetPanelJoinsByProjectId)
 				r.Post("/panel-join", s.Handlers.CreatePanelJoin)
 				r.Put("/panel-join/{panelJoinId}", s.Handlers.UpdatePanelJoin)
-				r.Delete("/panel-join/{joinId}", s.Handlers.DeletePanelJoin)
+				r.Delete("/panel-join/{panelJoinId}", s.Handlers.DeletePanelJoin)
 			})
 
 			r.Route("/{inverterId}", func(r chi.Router) {

@@ -100,9 +100,10 @@ func (p *PanelModel) UpdatePanel(update *boiler.Panel) (*boiler.Panel, error) {
 	//panel.Color = update.Color
 	panel.Location = update.Location
 	panel.StringID = update.StringID
-	panel.TrackerID = update.TrackerID
+	//panel.TrackerID = update.TrackerID
 	panel.PositiveToID = update.PositiveToID
 	panel.NegativeToID = update.NegativeToID
+	panel.Color = update.Color
 	/*	panel.AddPositivePanelJoins()*/
 	_, err = panel.Update(ctx, p.DB, boil.Infer())
 	if err != nil {

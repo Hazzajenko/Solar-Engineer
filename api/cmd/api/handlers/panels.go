@@ -29,20 +29,14 @@ func (h *Handlers) CreatePanel(w http.ResponseWriter, r *http.Request) {
 	var input struct {
 		ID string `json:"id"`
 		//ProjectId  int64  `json:"project_id"`
-		InverterId string `json:"inverter_id"`
-		TrackerId  string `json:"tracker_id"`
-		StringId   string `json:"string_id"`
-		Location   string `json:"location"`
-		Color      string `json:"color"`
+		/*		InverterId string `json:"inverter_id"`
+				TrackerId  string `json:"tracker_id"`*/
+		StringId string `json:"string_id"`
+		Location string `json:"location"`
+		Color    string `json:"color"`
 	}
 
 	err = h.Json.DecodeJSON(w, r, &input)
-	if err != nil {
-		h.Errors.ServerErrorResponse(w, r, err)
-		return
-	}
-
-	panelString, err := h.Models.Strings.GetById(input.StringId)
 	if err != nil {
 		h.Errors.ServerErrorResponse(w, r, err)
 		return
@@ -71,10 +65,10 @@ func (h *Handlers) CreatePanel(w http.ResponseWriter, r *http.Request) {
 	_ = json2.Unmarshal([]byte(file), &boilerData)
 
 	boilerPanel := &boiler.Panel{
-		ID:                      input.ID,
-		ProjectID:               projectId,
-		InverterID:              input.InverterId,
-		TrackerID:               input.TrackerId,
+		ID:        input.ID,
+		ProjectID: projectId,
+		/*		InverterID:              input.InverterId,
+				TrackerID:               input.TrackerId,*/
 		StringID:                input.StringId,
 		Name:                    boilerData.Name,
 		Location:                input.Location,
@@ -91,7 +85,7 @@ func (h *Handlers) CreatePanel(w http.ResponseWriter, r *http.Request) {
 		Length:                  boilerData.Length,
 		Weight:                  boilerData.Weight,
 		Width:                   boilerData.Width,
-		Color:                   panelString.Color,
+		Color:                   input.Color,
 	}
 
 	result, err := h.Models.Panels.Create(boilerPanel)
@@ -235,11 +229,13 @@ func (h *Handlers) PutPanel(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Println(projectId)
 
-	panelId, err := h.Helpers.GetInt64FromURLParam(chi.URLParam(r, "panelId"))
-	if err != nil {
-		h.Logger.PrintError(err, nil)
-	}
-	fmt.Println(panelId)
+	//panelId := chi.URLParam(r, "panelId")
+	/*
+		, err := h.Helpers.GetInt64FromURLParam(chi.URLParam(r, "panelId"))
+		if err != nil {
+			h.Logger.PrintError(err, nil)
+		}
+		fmt.Println(panelId)*/
 
 	/*	type Changes struct {
 		ID         string `json:"id"`
@@ -278,11 +274,10 @@ func (h *Handlers) PutPanel(w http.ResponseWriter, r *http.Request) {
 		}*/
 
 	update := &boiler.Panel{
-		ID:         input.ID,
-		InverterID: input.Changes.InverterID,
-		TrackerID:  input.Changes.TrackerID,
-		StringID:   input.Changes.StringID,
-		Location:   input.Changes.Location,
+		ID:       input.ID,
+		StringID: input.Changes.StringID,
+		Location: input.Changes.Location,
+		Color:    input.Changes.Color,
 		//Version:    input.Version,
 	}
 

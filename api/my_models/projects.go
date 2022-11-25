@@ -1856,7 +1856,7 @@ func (o *Project) AddPanelJoins(ctx context.Context, exec boil.ContextExecutor, 
 				strmangle.SetParamNames("\"", "\"", 1, []string{"project_id"}),
 				strmangle.WhereClause("\"", "\"", 2, panelJoinPrimaryKeyColumns),
 			)
-			values := []interface{}{o.ID, rel.PositiveID, rel.NegativeID}
+			values := []interface{}{o.ID, rel.ID}
 
 			if boil.IsDebug(ctx) {
 				writer := boil.DebugWriterFrom(ctx)

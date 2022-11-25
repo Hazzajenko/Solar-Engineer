@@ -1,5 +1,5 @@
 .drop-zone__panel {
-  //background-color: #95c2fa;
+  background-color: #95c2fa;
   width: 20px;
   height: 20px;
   display: flex;
@@ -17,5 +17,36 @@
     color: red;
     width: 23px;
     height: 23px;
+  }
+}
+
+.drop-zone {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: #24292e;
+  background-color: #f6eded;
+  width: 30px;
+  height: 30px;
+
+  &__svg {
+    pointer-events: none;
+    z-index: 1;
+    position: relative;
+    top: 1.8px;
+  }
+
+  &__panel {
+    position: absolute;
+    //background-color: #95c2fa;
+    width: 20px;
+    height: 20px;
+    display: flex;
+
+    &:hover {
+      color: red;
+      width: 23px;
+      height: 23px;
+    }
   }
 }

@@ -52,7 +52,7 @@ export class PanelJoinsDataService extends DefaultDataService<PanelJoinModel> {
 
   override delete(key: number | string): Observable<number | string> {
     return this.http
-      .delete<DeletePanelJoinResponse>(`/api/projects/3/join/${key}`)
+      .delete<DeletePanelJoinResponse>(`/api/projects/3/panel-join/${key}`)
       .pipe(map((res) => res.panel_join_id))
   }
 }

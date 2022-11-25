@@ -273,20 +273,16 @@ var PanelWhere = struct {
 // PanelRels is where relationship names are stored.
 var PanelRels = struct {
 	CreatedByUser      string
-	Inverter           string
 	Join               string
 	Project            string
 	String             string
-	Tracker            string
 	NegativePanelJoins string
 	PositivePanelJoins string
 }{
 	CreatedByUser:      "CreatedByUser",
-	Inverter:           "Inverter",
 	Join:               "Join",
 	Project:            "Project",
 	String:             "String",
-	Tracker:            "Tracker",
 	NegativePanelJoins: "NegativePanelJoins",
 	PositivePanelJoins: "PositivePanelJoins",
 }
@@ -294,11 +290,9 @@ var PanelRels = struct {
 // panelR is where relationships are stored.
 type panelR struct {
 	CreatedByUser      *User          `boil:"CreatedByUser" json:"CreatedByUser" toml:"CreatedByUser" yaml:"CreatedByUser"`
-	Inverter           *Inverter      `boil:"Inverter" json:"Inverter" toml:"Inverter" yaml:"Inverter"`
 	Join               *Join          `boil:"Join" json:"Join" toml:"Join" yaml:"Join"`
 	Project            *Project       `boil:"Project" json:"Project" toml:"Project" yaml:"Project"`
 	String             *String        `boil:"String" json:"String" toml:"String" yaml:"String"`
-	Tracker            *Tracker       `boil:"Tracker" json:"Tracker" toml:"Tracker" yaml:"Tracker"`
 	NegativePanelJoins PanelJoinSlice `boil:"NegativePanelJoins" json:"NegativePanelJoins" toml:"NegativePanelJoins" yaml:"NegativePanelJoins"`
 	PositivePanelJoins PanelJoinSlice `boil:"PositivePanelJoins" json:"PositivePanelJoins" toml:"PositivePanelJoins" yaml:"PositivePanelJoins"`
 }
@@ -313,13 +307,6 @@ func (r *panelR) GetCreatedByUser() *User {
 		return nil
 	}
 	return r.CreatedByUser
-}
-
-func (r *panelR) GetInverter() *Inverter {
-	if r == nil {
-		return nil
-	}
-	return r.Inverter
 }
 
 func (r *panelR) GetJoin() *Join {
@@ -341,13 +328,6 @@ func (r *panelR) GetString() *String {
 		return nil
 	}
 	return r.String
-}
-
-func (r *panelR) GetTracker() *Tracker {
-	if r == nil {
-		return nil
-	}
-	return r.Tracker
 }
 
 func (r *panelR) GetNegativePanelJoins() PanelJoinSlice {
@@ -664,17 +644,6 @@ func (o *Panel) CreatedByUser(mods ...qm.QueryMod) userQuery {
 	return Users(queryMods...)
 }
 
-// Inverter pointed to by the foreign key.
-func (o *Panel) Inverter(mods ...qm.QueryMod) inverterQuery {
-	queryMods := []qm.QueryMod{
-		qm.Where("\"id\" = ?", o.InverterID),
-	}
-
-	queryMods = append(queryMods, mods...)
-
-	return Inverters(queryMods...)
-}
-
 // Join pointed to by the foreign key.
 func (o *Panel) Join(mods ...qm.QueryMod) joinQuery {
 	queryMods := []qm.QueryMod{
@@ -706,17 +675,6 @@ func (o *Panel) String(mods ...qm.QueryMod) stringQuery {
 	queryMods = append(queryMods, mods...)
 
 	return Strings(queryMods...)
-}
-
-// Tracker pointed to by the foreign key.
-func (o *Panel) Tracker(mods ...qm.QueryMod) trackerQuery {
-	queryMods := []qm.QueryMod{
-		qm.Where("\"id\" = ?", o.TrackerID),
-	}
-
-	queryMods = append(queryMods, mods...)
-
-	return Trackers(queryMods...)
 }
 
 // NegativePanelJoins retrieves all the panel_join's PanelJoins with an executor via negative_id column.
@@ -859,126 +817,6 @@ func (panelL) LoadCreatedByUser(ctx context.Context, e boil.ContextExecutor, sin
 					foreign.R = &userR{}
 				}
 				foreign.R.CreatedByPanels = append(foreign.R.CreatedByPanels, local)
-				break
-			}
-		}
-	}
-
-	return nil
-}
-
-// LoadInverter allows an eager lookup of values, cached into the
-// loaded structs of the objects. This is for an N-1 relationship.
-func (panelL) LoadInverter(ctx context.Context, e boil.ContextExecutor, singular bool, maybePanel interface{}, mods queries.Applicator) error {
-	var slice []*Panel
-	var object *Panel
-
-	if singular {
-		var ok bool
-		object, ok = maybePanel.(*Panel)
-		if !ok {
-			object = new(Panel)
-			ok = queries.SetFromEmbeddedStruct(&object, &maybePanel)
-			if !ok {
-				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", object, maybePanel))
-			}
-		}
-	} else {
-		s, ok := maybePanel.(*[]*Panel)
-		if ok {
-			slice = *s
-		} else {
-			ok = queries.SetFromEmbeddedStruct(&slice, maybePanel)
-			if !ok {
-				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", slice, maybePanel))
-			}
-		}
-	}
-
-	args := make([]interface{}, 0, 1)
-	if singular {
-		if object.R == nil {
-			object.R = &panelR{}
-		}
-		args = append(args, object.InverterID)
-
-	} else {
-	Outer:
-		for _, obj := range slice {
-			if obj.R == nil {
-				obj.R = &panelR{}
-			}
-
-			for _, a := range args {
-				if a == obj.InverterID {
-					continue Outer
-				}
-			}
-
-			args = append(args, obj.InverterID)
-
-		}
-	}
-
-	if len(args) == 0 {
-		return nil
-	}
-
-	query := NewQuery(
-		qm.From(`inverters`),
-		qm.WhereIn(`inverters.id in ?`, args...),
-	)
-	if mods != nil {
-		mods.Apply(query)
-	}
-
-	results, err := query.QueryContext(ctx, e)
-	if err != nil {
-		return errors.Wrap(err, "failed to eager load Inverter")
-	}
-
-	var resultSlice []*Inverter
-	if err = queries.Bind(results, &resultSlice); err != nil {
-		return errors.Wrap(err, "failed to bind eager loaded slice Inverter")
-	}
-
-	if err = results.Close(); err != nil {
-		return errors.Wrap(err, "failed to close results of eager load for inverters")
-	}
-	if err = results.Err(); err != nil {
-		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for inverters")
-	}
-
-	if len(panelAfterSelectHooks) != 0 {
-		for _, obj := range resultSlice {
-			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
-				return err
-			}
-		}
-	}
-
-	if len(resultSlice) == 0 {
-		return nil
-	}
-
-	if singular {
-		foreign := resultSlice[0]
-		object.R.Inverter = foreign
-		if foreign.R == nil {
-			foreign.R = &inverterR{}
-		}
-		foreign.R.Panels = append(foreign.R.Panels, object)
-		return nil
-	}
-
-	for _, local := range slice {
-		for _, foreign := range resultSlice {
-			if local.InverterID == foreign.ID {
-				local.R.Inverter = foreign
-				if foreign.R == nil {
-					foreign.R = &inverterR{}
-				}
-				foreign.R.Panels = append(foreign.R.Panels, local)
 				break
 			}
 		}
@@ -1347,126 +1185,6 @@ func (panelL) LoadString(ctx context.Context, e boil.ContextExecutor, singular b
 	return nil
 }
 
-// LoadTracker allows an eager lookup of values, cached into the
-// loaded structs of the objects. This is for an N-1 relationship.
-func (panelL) LoadTracker(ctx context.Context, e boil.ContextExecutor, singular bool, maybePanel interface{}, mods queries.Applicator) error {
-	var slice []*Panel
-	var object *Panel
-
-	if singular {
-		var ok bool
-		object, ok = maybePanel.(*Panel)
-		if !ok {
-			object = new(Panel)
-			ok = queries.SetFromEmbeddedStruct(&object, &maybePanel)
-			if !ok {
-				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", object, maybePanel))
-			}
-		}
-	} else {
-		s, ok := maybePanel.(*[]*Panel)
-		if ok {
-			slice = *s
-		} else {
-			ok = queries.SetFromEmbeddedStruct(&slice, maybePanel)
-			if !ok {
-				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", slice, maybePanel))
-			}
-		}
-	}
-
-	args := make([]interface{}, 0, 1)
-	if singular {
-		if object.R == nil {
-			object.R = &panelR{}
-		}
-		args = append(args, object.TrackerID)
-
-	} else {
-	Outer:
-		for _, obj := range slice {
-			if obj.R == nil {
-				obj.R = &panelR{}
-			}
-
-			for _, a := range args {
-				if a == obj.TrackerID {
-					continue Outer
-				}
-			}
-
-			args = append(args, obj.TrackerID)
-
-		}
-	}
-
-	if len(args) == 0 {
-		return nil
-	}
-
-	query := NewQuery(
-		qm.From(`trackers`),
-		qm.WhereIn(`trackers.id in ?`, args...),
-	)
-	if mods != nil {
-		mods.Apply(query)
-	}
-
-	results, err := query.QueryContext(ctx, e)
-	if err != nil {
-		return errors.Wrap(err, "failed to eager load Tracker")
-	}
-
-	var resultSlice []*Tracker
-	if err = queries.Bind(results, &resultSlice); err != nil {
-		return errors.Wrap(err, "failed to bind eager loaded slice Tracker")
-	}
-
-	if err = results.Close(); err != nil {
-		return errors.Wrap(err, "failed to close results of eager load for trackers")
-	}
-	if err = results.Err(); err != nil {
-		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for trackers")
-	}
-
-	if len(panelAfterSelectHooks) != 0 {
-		for _, obj := range resultSlice {
-			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
-				return err
-			}
-		}
-	}
-
-	if len(resultSlice) == 0 {
-		return nil
-	}
-
-	if singular {
-		foreign := resultSlice[0]
-		object.R.Tracker = foreign
-		if foreign.R == nil {
-			foreign.R = &trackerR{}
-		}
-		foreign.R.Panels = append(foreign.R.Panels, object)
-		return nil
-	}
-
-	for _, local := range slice {
-		for _, foreign := range resultSlice {
-			if local.TrackerID == foreign.ID {
-				local.R.Tracker = foreign
-				if foreign.R == nil {
-					foreign.R = &trackerR{}
-				}
-				foreign.R.Panels = append(foreign.R.Panels, local)
-				break
-			}
-		}
-	}
-
-	return nil
-}
-
 // LoadNegativePanelJoins allows an eager lookup of values, cached into the
 // loaded structs of the objects. This is for a 1-M or N-M relationship.
 func (panelL) LoadNegativePanelJoins(ctx context.Context, e boil.ContextExecutor, singular bool, maybePanel interface{}, mods queries.Applicator) error {
@@ -1742,53 +1460,6 @@ func (o *Panel) SetCreatedByUser(ctx context.Context, exec boil.ContextExecutor,
 	return nil
 }
 
-// SetInverter of the panel to the related item.
-// Sets o.R.Inverter to related.
-// Adds o to related.R.Panels.
-func (o *Panel) SetInverter(ctx context.Context, exec boil.ContextExecutor, insert bool, related *Inverter) error {
-	var err error
-	if insert {
-		if err = related.Insert(ctx, exec, boil.Infer()); err != nil {
-			return errors.Wrap(err, "failed to insert into foreign table")
-		}
-	}
-
-	updateQuery := fmt.Sprintf(
-		"UPDATE \"panels\" SET %s WHERE %s",
-		strmangle.SetParamNames("\"", "\"", 1, []string{"inverter_id"}),
-		strmangle.WhereClause("\"", "\"", 2, panelPrimaryKeyColumns),
-	)
-	values := []interface{}{related.ID, o.ID}
-
-	if boil.IsDebug(ctx) {
-		writer := boil.DebugWriterFrom(ctx)
-		fmt.Fprintln(writer, updateQuery)
-		fmt.Fprintln(writer, values)
-	}
-	if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
-		return errors.Wrap(err, "failed to update local table")
-	}
-
-	o.InverterID = related.ID
-	if o.R == nil {
-		o.R = &panelR{
-			Inverter: related,
-		}
-	} else {
-		o.R.Inverter = related
-	}
-
-	if related.R == nil {
-		related.R = &inverterR{
-			Panels: PanelSlice{o},
-		}
-	} else {
-		related.R.Panels = append(related.R.Panels, o)
-	}
-
-	return nil
-}
-
 // SetJoin of the panel to the related item.
 // Sets o.R.Join to related.
 // Adds o to related.R.Panels.
@@ -1930,53 +1601,6 @@ func (o *Panel) SetString(ctx context.Context, exec boil.ContextExecutor, insert
 	return nil
 }
 
-// SetTracker of the panel to the related item.
-// Sets o.R.Tracker to related.
-// Adds o to related.R.Panels.
-func (o *Panel) SetTracker(ctx context.Context, exec boil.ContextExecutor, insert bool, related *Tracker) error {
-	var err error
-	if insert {
-		if err = related.Insert(ctx, exec, boil.Infer()); err != nil {
-			return errors.Wrap(err, "failed to insert into foreign table")
-		}
-	}
-
-	updateQuery := fmt.Sprintf(
-		"UPDATE \"panels\" SET %s WHERE %s",
-		strmangle.SetParamNames("\"", "\"", 1, []string{"tracker_id"}),
-		strmangle.WhereClause("\"", "\"", 2, panelPrimaryKeyColumns),
-	)
-	values := []interface{}{related.ID, o.ID}
-
-	if boil.IsDebug(ctx) {
-		writer := boil.DebugWriterFrom(ctx)
-		fmt.Fprintln(writer, updateQuery)
-		fmt.Fprintln(writer, values)
-	}
-	if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
-		return errors.Wrap(err, "failed to update local table")
-	}
-
-	o.TrackerID = related.ID
-	if o.R == nil {
-		o.R = &panelR{
-			Tracker: related,
-		}
-	} else {
-		o.R.Tracker = related
-	}
-
-	if related.R == nil {
-		related.R = &trackerR{
-			Panels: PanelSlice{o},
-		}
-	} else {
-		related.R.Panels = append(related.R.Panels, o)
-	}
-
-	return nil
-}
-
 // AddNegativePanelJoins adds the given related objects to the existing relationships
 // of the panel, optionally inserting them as new records.
 // Appends related to o.R.NegativePanelJoins.
@@ -1995,7 +1619,7 @@ func (o *Panel) AddNegativePanelJoins(ctx context.Context, exec boil.ContextExec
 				strmangle.SetParamNames("\"", "\"", 1, []string{"negative_id"}),
 				strmangle.WhereClause("\"", "\"", 2, panelJoinPrimaryKeyColumns),
 			)
-			values := []interface{}{o.ID, rel.PositiveID, rel.NegativeID}
+			values := []interface{}{o.ID, rel.ID}
 
 			if boil.IsDebug(ctx) {
 				writer := boil.DebugWriterFrom(ctx)
@@ -2048,7 +1672,7 @@ func (o *Panel) AddPositivePanelJoins(ctx context.Context, exec boil.ContextExec
 				strmangle.SetParamNames("\"", "\"", 1, []string{"positive_id"}),
 				strmangle.WhereClause("\"", "\"", 2, panelJoinPrimaryKeyColumns),
 			)
-			values := []interface{}{o.ID, rel.PositiveID, rel.NegativeID}
+			values := []interface{}{o.ID, rel.ID}
 
 			if boil.IsDebug(ctx) {
 				writer := boil.DebugWriterFrom(ctx)

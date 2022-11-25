@@ -26,6 +26,7 @@ func (h *Handlers) CreatePanelJoin(w http.ResponseWriter, r *http.Request) {
 	var input struct {
 		ProjectID  int64  `json:"project_id"`
 		ID         string `json:"id"`
+		StringID   string `json:"string_id"`
 		PositiveID string `json:"positive_id"`
 		NegativeID string `json:"negative_id"`
 	}
@@ -51,6 +52,7 @@ func (h *Handlers) CreatePanelJoin(w http.ResponseWriter, r *http.Request) {
 	boilerPanel := &boiler.PanelJoin{
 		PositiveID: positivePanel.ID,
 		NegativeID: negativePanel.ID,
+		StringID:   input.StringID,
 		ProjectID:  input.ProjectID,
 		ID:         input.ID,
 	}
@@ -213,7 +215,7 @@ func (h *Handlers) DeletePanelJoin(w http.ResponseWriter, r *http.Request) {
 			h.Logger.PrintError(err, nil)
 		}*/
 	//fmt.Println(projectId)
-	panelID := chi.URLParam(r, "panelId")
+	panelJoinId := chi.URLParam(r, "panelJoinId")
 
 	/*	var input struct {
 			ID string `json:"id"`
@@ -225,7 +227,7 @@ func (h *Handlers) DeletePanelJoin(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	*/
-	err := h.Models.Panels.Delete(panelID)
+	err := h.Models.PanelJoins.Delete(panelJoinId)
 	if err != nil {
 		switch {
 		default:
@@ -235,7 +237,7 @@ func (h *Handlers) DeletePanelJoin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = h.Json.ResponseJSON(w, http.StatusAccepted,
-		json.Envelope{"id": panelID, "deleted": true},
+		json.Envelope{"id": panelJoinId, "deleted": true},
 		nil)
 	if err != nil {
 		h.Errors.ServerErrorResponse(w, r, err)

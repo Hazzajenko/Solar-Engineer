@@ -17,6 +17,12 @@ import { JoinsService } from '../joins.service'
 import { GridHelpers } from './grid.helpers'
 import { GridUpdateService } from './grid-update.service'
 import { LoggerService } from '../../../services/logger.service'
+import { Store } from '@ngrx/store'
+import { AppState } from '../../../store/app.state'
+import { selectBlocksByProjectId } from '../../store/blocks/blocks.selectors'
+import { combineLatest, lastValueFrom } from 'rxjs'
+import { selectSelectedString } from '../../store/grid/grid.selectors'
+import { StringsEntityService } from '../../project-id/services/strings-entity/strings-entity.service'
 
 @Injectable({
   providedIn: 'root',
@@ -31,6 +37,8 @@ export class GridCreateService extends GridService {
     logger: LoggerService,
     private gridHelpers: GridHelpers,
     private gridUpdate: GridUpdateService,
+    private store: Store<AppState>,
+    private stringsEntity: StringsEntityService,
   ) {
     super(
       panelsEntity,
@@ -60,13 +68,14 @@ export class GridCreateService extends GridService {
 
     switch (gridState.createMode) {
       case UnitModel.PANEL:
-        return this.createPanelForGrid(
-          project,
-          location,
-          gridState.selectedString!,
-          gridState.gridMode!,
-          blocks,
-        )
+        return this.createPanelForGridV2(project, location)
+      /*        return this.createPanelForGrid(
+                project,
+                location,
+                gridState.selectedString!,
+                gridState.gridMode!,
+                blocks,
+              )*/
 
       case UnitModel.CABLE:
         return this.createCableForGrid(
@@ -108,6 +117,53 @@ export class GridCreateService extends GridService {
       }
 
       this.panelsEntity.add(panelRequest)
+    }
+  }
+
+  createPanelForGridV2(project: ProjectModel, location: string) {
+    let blocks: BlockModel[] | undefined
+    let selectedString: StringModel | undefined
+
+    combineLatest([
+      this.store.select(selectBlocksByProjectId({ projectId: project.id })),
+      this.store.select(selectSelectedString),
+    ]).subscribe(([blocks$, selectedString$]) => {
+      blocks = blocks$
+      selectedString = selectedString$
+    })
+
+    const existing = blocks?.find((block) => block.location === location)
+    if (existing) return console.log('spot taken')
+
+    if (selectedString) {
+      const panelRequest: PanelModel = {
+        id: Guid.create().toString(),
+        inverter_id: selectedString.inverter_id,
+        tracker_id: selectedString.tracker_id,
+        string_id: selectedString.id,
+        location,
+      }
+
+      this.panelsEntity.add(panelRequest)
+    } else {
+      const stringRequest: StringModel = {
+        id: Guid.create().toString(),
+        name: 'string',
+        is_in_parallel: false,
+        project_id: project.id,
+        color: 'black',
+        model: UnitModel.STRING,
+      }
+
+      lastValueFrom(this.stringsEntity.add(stringRequest)).then((res) => {
+        const panelRequest: PanelModel = {
+          id: Guid.create().toString(),
+          string_id: res.id,
+          location,
+        }
+
+        this.panelsEntity.add(panelRequest)
+      })
     }
   }
 

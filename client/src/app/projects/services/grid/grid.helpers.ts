@@ -39,8 +39,8 @@ export class GridHelpers extends GridService {
     )
   }
 
-  getSurroundings(location: string, cables: CableModel[]) {
-    if (!location || !cables) return console.log('getSurroundings err')
+  getSurroundings(location: string, blocks: any) {
+    if (!location || !blocks) return console.log('getSurroundings err')
     let numberRow: number = 0
     let numberCol: number = 0
 
@@ -58,10 +58,18 @@ export class GridHelpers extends GridService {
     const leftString: string = `row${numberRow}col${numberCol - 1}`
     const rightString: string = `row${numberRow}col${numberCol + 1}`
 
-    const findTop = cables.find((cable) => cable.location === topString)
-    const findBottom = cables.find((cable) => cable.location === bottomString)
-    const findLeft = cables.find((cable) => cable.location === leftString)
-    const findRight = cables.find((cable) => cable.location === rightString)
+    const findTop = blocks.find(
+      (block: { location: string }) => block.location === topString,
+    )
+    const findBottom = blocks.find(
+      (block: { location: string }) => block.location === bottomString,
+    )
+    const findLeft = blocks.find(
+      (block: { location: string }) => block.location === leftString,
+    )
+    const findRight = blocks.find(
+      (block: { location: string }) => block.location === rightString,
+    )
 
     const surroundingCables: SurroundingCablesModel = {
       topCable: findTop,

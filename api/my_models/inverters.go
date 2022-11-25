@@ -179,14 +179,10 @@ var InverterWhere = struct {
 var InverterRels = struct {
 	CreatedByUser string
 	Project       string
-	Panels        string
-	Strings       string
 	Trackers      string
 }{
 	CreatedByUser: "CreatedByUser",
 	Project:       "Project",
-	Panels:        "Panels",
-	Strings:       "Strings",
 	Trackers:      "Trackers",
 }
 
@@ -194,8 +190,6 @@ var InverterRels = struct {
 type inverterR struct {
 	CreatedByUser *User        `boil:"CreatedByUser" json:"CreatedByUser" toml:"CreatedByUser" yaml:"CreatedByUser"`
 	Project       *Project     `boil:"Project" json:"Project" toml:"Project" yaml:"Project"`
-	Panels        PanelSlice   `boil:"Panels" json:"Panels" toml:"Panels" yaml:"Panels"`
-	Strings       StringSlice  `boil:"Strings" json:"Strings" toml:"Strings" yaml:"Strings"`
 	Trackers      TrackerSlice `boil:"Trackers" json:"Trackers" toml:"Trackers" yaml:"Trackers"`
 }
 
@@ -216,20 +210,6 @@ func (r *inverterR) GetProject() *Project {
 		return nil
 	}
 	return r.Project
-}
-
-func (r *inverterR) GetPanels() PanelSlice {
-	if r == nil {
-		return nil
-	}
-	return r.Panels
-}
-
-func (r *inverterR) GetStrings() StringSlice {
-	if r == nil {
-		return nil
-	}
-	return r.Strings
 }
 
 func (r *inverterR) GetTrackers() TrackerSlice {
@@ -550,34 +530,6 @@ func (o *Inverter) Project(mods ...qm.QueryMod) projectQuery {
 	return Projects(queryMods...)
 }
 
-// Panels retrieves all the panel's Panels with an executor.
-func (o *Inverter) Panels(mods ...qm.QueryMod) panelQuery {
-	var queryMods []qm.QueryMod
-	if len(mods) != 0 {
-		queryMods = append(queryMods, mods...)
-	}
-
-	queryMods = append(queryMods,
-		qm.Where("\"panels\".\"inverter_id\"=?", o.ID),
-	)
-
-	return Panels(queryMods...)
-}
-
-// Strings retrieves all the string's Strings with an executor.
-func (o *Inverter) Strings(mods ...qm.QueryMod) stringQuery {
-	var queryMods []qm.QueryMod
-	if len(mods) != 0 {
-		queryMods = append(queryMods, mods...)
-	}
-
-	queryMods = append(queryMods,
-		qm.Where("\"strings\".\"inverter_id\"=?", o.ID),
-	)
-
-	return Strings(queryMods...)
-}
-
 // Trackers retrieves all the tracker's Trackers with an executor.
 func (o *Inverter) Trackers(mods ...qm.QueryMod) trackerQuery {
 	var queryMods []qm.QueryMod
@@ -832,234 +784,6 @@ func (inverterL) LoadProject(ctx context.Context, e boil.ContextExecutor, singul
 	return nil
 }
 
-// LoadPanels allows an eager lookup of values, cached into the
-// loaded structs of the objects. This is for a 1-M or N-M relationship.
-func (inverterL) LoadPanels(ctx context.Context, e boil.ContextExecutor, singular bool, maybeInverter interface{}, mods queries.Applicator) error {
-	var slice []*Inverter
-	var object *Inverter
-
-	if singular {
-		var ok bool
-		object, ok = maybeInverter.(*Inverter)
-		if !ok {
-			object = new(Inverter)
-			ok = queries.SetFromEmbeddedStruct(&object, &maybeInverter)
-			if !ok {
-				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", object, maybeInverter))
-			}
-		}
-	} else {
-		s, ok := maybeInverter.(*[]*Inverter)
-		if ok {
-			slice = *s
-		} else {
-			ok = queries.SetFromEmbeddedStruct(&slice, maybeInverter)
-			if !ok {
-				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", slice, maybeInverter))
-			}
-		}
-	}
-
-	args := make([]interface{}, 0, 1)
-	if singular {
-		if object.R == nil {
-			object.R = &inverterR{}
-		}
-		args = append(args, object.ID)
-	} else {
-	Outer:
-		for _, obj := range slice {
-			if obj.R == nil {
-				obj.R = &inverterR{}
-			}
-
-			for _, a := range args {
-				if a == obj.ID {
-					continue Outer
-				}
-			}
-
-			args = append(args, obj.ID)
-		}
-	}
-
-	if len(args) == 0 {
-		return nil
-	}
-
-	query := NewQuery(
-		qm.From(`panels`),
-		qm.WhereIn(`panels.inverter_id in ?`, args...),
-	)
-	if mods != nil {
-		mods.Apply(query)
-	}
-
-	results, err := query.QueryContext(ctx, e)
-	if err != nil {
-		return errors.Wrap(err, "failed to eager load panels")
-	}
-
-	var resultSlice []*Panel
-	if err = queries.Bind(results, &resultSlice); err != nil {
-		return errors.Wrap(err, "failed to bind eager loaded slice panels")
-	}
-
-	if err = results.Close(); err != nil {
-		return errors.Wrap(err, "failed to close results in eager load on panels")
-	}
-	if err = results.Err(); err != nil {
-		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for panels")
-	}
-
-	if len(panelAfterSelectHooks) != 0 {
-		for _, obj := range resultSlice {
-			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
-				return err
-			}
-		}
-	}
-	if singular {
-		object.R.Panels = resultSlice
-		for _, foreign := range resultSlice {
-			if foreign.R == nil {
-				foreign.R = &panelR{}
-			}
-			foreign.R.Inverter = object
-		}
-		return nil
-	}
-
-	for _, foreign := range resultSlice {
-		for _, local := range slice {
-			if local.ID == foreign.InverterID {
-				local.R.Panels = append(local.R.Panels, foreign)
-				if foreign.R == nil {
-					foreign.R = &panelR{}
-				}
-				foreign.R.Inverter = local
-				break
-			}
-		}
-	}
-
-	return nil
-}
-
-// LoadStrings allows an eager lookup of values, cached into the
-// loaded structs of the objects. This is for a 1-M or N-M relationship.
-func (inverterL) LoadStrings(ctx context.Context, e boil.ContextExecutor, singular bool, maybeInverter interface{}, mods queries.Applicator) error {
-	var slice []*Inverter
-	var object *Inverter
-
-	if singular {
-		var ok bool
-		object, ok = maybeInverter.(*Inverter)
-		if !ok {
-			object = new(Inverter)
-			ok = queries.SetFromEmbeddedStruct(&object, &maybeInverter)
-			if !ok {
-				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", object, maybeInverter))
-			}
-		}
-	} else {
-		s, ok := maybeInverter.(*[]*Inverter)
-		if ok {
-			slice = *s
-		} else {
-			ok = queries.SetFromEmbeddedStruct(&slice, maybeInverter)
-			if !ok {
-				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", slice, maybeInverter))
-			}
-		}
-	}
-
-	args := make([]interface{}, 0, 1)
-	if singular {
-		if object.R == nil {
-			object.R = &inverterR{}
-		}
-		args = append(args, object.ID)
-	} else {
-	Outer:
-		for _, obj := range slice {
-			if obj.R == nil {
-				obj.R = &inverterR{}
-			}
-
-			for _, a := range args {
-				if a == obj.ID {
-					continue Outer
-				}
-			}
-
-			args = append(args, obj.ID)
-		}
-	}
-
-	if len(args) == 0 {
-		return nil
-	}
-
-	query := NewQuery(
-		qm.From(`strings`),
-		qm.WhereIn(`strings.inverter_id in ?`, args...),
-	)
-	if mods != nil {
-		mods.Apply(query)
-	}
-
-	results, err := query.QueryContext(ctx, e)
-	if err != nil {
-		return errors.Wrap(err, "failed to eager load strings")
-	}
-
-	var resultSlice []*String
-	if err = queries.Bind(results, &resultSlice); err != nil {
-		return errors.Wrap(err, "failed to bind eager loaded slice strings")
-	}
-
-	if err = results.Close(); err != nil {
-		return errors.Wrap(err, "failed to close results in eager load on strings")
-	}
-	if err = results.Err(); err != nil {
-		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for strings")
-	}
-
-	if len(stringAfterSelectHooks) != 0 {
-		for _, obj := range resultSlice {
-			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
-				return err
-			}
-		}
-	}
-	if singular {
-		object.R.Strings = resultSlice
-		for _, foreign := range resultSlice {
-			if foreign.R == nil {
-				foreign.R = &stringR{}
-			}
-			foreign.R.Inverter = object
-		}
-		return nil
-	}
-
-	for _, foreign := range resultSlice {
-		for _, local := range slice {
-			if local.ID == foreign.InverterID {
-				local.R.Strings = append(local.R.Strings, foreign)
-				if foreign.R == nil {
-					foreign.R = &stringR{}
-				}
-				foreign.R.Inverter = local
-				break
-			}
-		}
-	}
-
-	return nil
-}
-
 // LoadTrackers allows an eager lookup of values, cached into the
 // loaded structs of the objects. This is for a 1-M or N-M relationship.
 func (inverterL) LoadTrackers(ctx context.Context, e boil.ContextExecutor, singular bool, maybeInverter interface{}, mods queries.Applicator) error {
@@ -1265,112 +989,6 @@ func (o *Inverter) SetProject(ctx context.Context, exec boil.ContextExecutor, in
 		related.R.Inverters = append(related.R.Inverters, o)
 	}
 
-	return nil
-}
-
-// AddPanels adds the given related objects to the existing relationships
-// of the inverter, optionally inserting them as new records.
-// Appends related to o.R.Panels.
-// Sets related.R.Inverter appropriately.
-func (o *Inverter) AddPanels(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*Panel) error {
-	var err error
-	for _, rel := range related {
-		if insert {
-			rel.InverterID = o.ID
-			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
-				return errors.Wrap(err, "failed to insert into foreign table")
-			}
-		} else {
-			updateQuery := fmt.Sprintf(
-				"UPDATE \"panels\" SET %s WHERE %s",
-				strmangle.SetParamNames("\"", "\"", 1, []string{"inverter_id"}),
-				strmangle.WhereClause("\"", "\"", 2, panelPrimaryKeyColumns),
-			)
-			values := []interface{}{o.ID, rel.ID}
-
-			if boil.IsDebug(ctx) {
-				writer := boil.DebugWriterFrom(ctx)
-				fmt.Fprintln(writer, updateQuery)
-				fmt.Fprintln(writer, values)
-			}
-			if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
-				return errors.Wrap(err, "failed to update foreign table")
-			}
-
-			rel.InverterID = o.ID
-		}
-	}
-
-	if o.R == nil {
-		o.R = &inverterR{
-			Panels: related,
-		}
-	} else {
-		o.R.Panels = append(o.R.Panels, related...)
-	}
-
-	for _, rel := range related {
-		if rel.R == nil {
-			rel.R = &panelR{
-				Inverter: o,
-			}
-		} else {
-			rel.R.Inverter = o
-		}
-	}
-	return nil
-}
-
-// AddStrings adds the given related objects to the existing relationships
-// of the inverter, optionally inserting them as new records.
-// Appends related to o.R.Strings.
-// Sets related.R.Inverter appropriately.
-func (o *Inverter) AddStrings(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*String) error {
-	var err error
-	for _, rel := range related {
-		if insert {
-			rel.InverterID = o.ID
-			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
-				return errors.Wrap(err, "failed to insert into foreign table")
-			}
-		} else {
-			updateQuery := fmt.Sprintf(
-				"UPDATE \"strings\" SET %s WHERE %s",
-				strmangle.SetParamNames("\"", "\"", 1, []string{"inverter_id"}),
-				strmangle.WhereClause("\"", "\"", 2, stringPrimaryKeyColumns),
-			)
-			values := []interface{}{o.ID, rel.ID}
-
-			if boil.IsDebug(ctx) {
-				writer := boil.DebugWriterFrom(ctx)
-				fmt.Fprintln(writer, updateQuery)
-				fmt.Fprintln(writer, values)
-			}
-			if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
-				return errors.Wrap(err, "failed to update foreign table")
-			}
-
-			rel.InverterID = o.ID
-		}
-	}
-
-	if o.R == nil {
-		o.R = &inverterR{
-			Strings: related,
-		}
-	} else {
-		o.R.Strings = append(o.R.Strings, related...)
-	}
-
-	for _, rel := range related {
-		if rel.R == nil {
-			rel.R = &stringR{
-				Inverter: o,
-			}
-		} else {
-			rel.R.Inverter = o
-		}
-	}
 	return nil
 }
 

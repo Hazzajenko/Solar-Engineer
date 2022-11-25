@@ -57,16 +57,19 @@ import { BlockCableComponent } from './block-cable/block-cable.component'
 import { BlockInverterComponent } from './block-inverter/block-inverter.component'
 import { SelectedStateActions } from '../../../store/selected/selected.actions'
 import {
-  selectSelectedPanel,
   selectSelectedPanels,
   selectUnitSelected,
 } from '../../../store/selected/selected.selectors'
+import { GridLayoutDirective } from '../../../../directives/grid-layout.directive'
+import { GridStateActions } from '../../../store/grid/grid.actions'
+import { GridDeleteService } from '../../../services/grid/grid-delete.service'
 
 @Component({
   selector: 'app-grid-layout',
   templateUrl: './grid-layout.component.html',
   styleUrls: ['./grid-layout.component.scss'],
   standalone: true,
+  hostDirectives: [GridLayoutDirective],
   imports: [
     DragDropModule,
     LetModule,
@@ -139,6 +142,7 @@ export class GridLayoutComponent implements OnInit {
     private trackersEntity: TrackersEntityService,
     private joinsEntity: JoinsEntityService,
     public gridJoins: GridJoinService,
+    public gridDelete: GridDeleteService,
   ) {
     /*    this.panels?.forEach((panel) => {
           // console.log(panel?.location)
@@ -179,12 +183,10 @@ export class GridLayoutComponent implements OnInit {
     this.selected$ = combineLatest([
       this.store.select(selectUnitSelected),
       this.store.select(selectSelectedPanels),
-      this.store.select(selectSelectedPanel),
     ]).pipe(
-      map(([unit, panels, panel]) => ({
+      map(([unit, panels]) => ({
         unit,
         panels,
-        panel,
       })),
     )
   }
@@ -247,7 +249,36 @@ export class GridLayoutComponent implements OnInit {
     return
   }
 
-  selectBlock(panel: PanelModel) {
-    this.store.dispatch(SelectedStateActions.selectPanel({ panel }))
+  selectBlock(block: any) {
+    if (!block) return
+    this.store.select(selectGridMode).subscribe((gridMode) => {
+      if (gridMode === GridMode.JOIN) {
+        return
+      } else {
+        this.store.dispatch(
+          GridStateActions.changeGridmode({ mode: GridMode.SELECT }),
+        )
+        switch (block.model) {
+          case UnitModel.INVERTER:
+            return
+          case UnitModel.PANEL:
+            return this.store.dispatch(
+              SelectedStateActions.selectPanel({ panel: block }),
+            )
+          case UnitModel.CABLE:
+            return
+          default:
+            break
+        }
+        return
+      }
+    })
+  }
+
+  selectString(stringId: string) {
+    this.store.dispatch(
+      GridStateActions.changeGridmode({ mode: GridMode.SELECT }),
+    )
+    this.store.dispatch(SelectedStateActions.selectString({ stringId }))
   }
 }

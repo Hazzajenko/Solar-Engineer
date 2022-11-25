@@ -7,7 +7,7 @@ export const SelectedStateActions = createActionGroup({
   source: 'Selected State',
   events: {
     'Select Unit For Selected State': props<{ unit: UnitModel }>(),
-    'Select String': props<{ string: StringModel }>(),
+    'Select String': props<{ stringId: string }>(),
     'Select Tracker Strings': props<{ strings: StringModel[] }>(),
     'Select Inverter Strings': props<{ strings: StringModel[] }>(),
     'Select Panel': props<{ panel: PanelModel }>(),

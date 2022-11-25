@@ -27,6 +27,7 @@ type PanelJoin struct {
 	NegativeID string `boil:"negative_id" json:"negative_id" toml:"negative_id" yaml:"negative_id"`
 	ID         string `boil:"id" json:"id" toml:"id" yaml:"id"`
 	ProjectID  int64  `boil:"project_id" json:"project_id" toml:"project_id" yaml:"project_id"`
+	StringID   string `boil:"string_id" json:"string_id" toml:"string_id" yaml:"string_id"`
 
 	R *panelJoinR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L panelJoinL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -37,11 +38,13 @@ var PanelJoinColumns = struct {
 	NegativeID string
 	ID         string
 	ProjectID  string
+	StringID   string
 }{
 	PositiveID: "positive_id",
 	NegativeID: "negative_id",
 	ID:         "id",
 	ProjectID:  "project_id",
+	StringID:   "string_id",
 }
 
 var PanelJoinTableColumns = struct {
@@ -49,11 +52,13 @@ var PanelJoinTableColumns = struct {
 	NegativeID string
 	ID         string
 	ProjectID  string
+	StringID   string
 }{
 	PositiveID: "panel_joins.positive_id",
 	NegativeID: "panel_joins.negative_id",
 	ID:         "panel_joins.id",
 	ProjectID:  "panel_joins.project_id",
+	StringID:   "panel_joins.string_id",
 }
 
 // Generated where
@@ -63,20 +68,24 @@ var PanelJoinWhere = struct {
 	NegativeID whereHelperstring
 	ID         whereHelperstring
 	ProjectID  whereHelperint64
+	StringID   whereHelperstring
 }{
 	PositiveID: whereHelperstring{field: "\"panel_joins\".\"positive_id\""},
 	NegativeID: whereHelperstring{field: "\"panel_joins\".\"negative_id\""},
 	ID:         whereHelperstring{field: "\"panel_joins\".\"id\""},
 	ProjectID:  whereHelperint64{field: "\"panel_joins\".\"project_id\""},
+	StringID:   whereHelperstring{field: "\"panel_joins\".\"string_id\""},
 }
 
 // PanelJoinRels is where relationship names are stored.
 var PanelJoinRels = struct {
 	Project  string
+	String   string
 	Negative string
 	Positive string
 }{
 	Project:  "Project",
+	String:   "String",
 	Negative: "Negative",
 	Positive: "Positive",
 }
@@ -84,6 +93,7 @@ var PanelJoinRels = struct {
 // panelJoinR is where relationships are stored.
 type panelJoinR struct {
 	Project  *Project `boil:"Project" json:"Project" toml:"Project" yaml:"Project"`
+	String   *String  `boil:"String" json:"String" toml:"String" yaml:"String"`
 	Negative *Panel   `boil:"Negative" json:"Negative" toml:"Negative" yaml:"Negative"`
 	Positive *Panel   `boil:"Positive" json:"Positive" toml:"Positive" yaml:"Positive"`
 }
@@ -98,6 +108,13 @@ func (r *panelJoinR) GetProject() *Project {
 		return nil
 	}
 	return r.Project
+}
+
+func (r *panelJoinR) GetString() *String {
+	if r == nil {
+		return nil
+	}
+	return r.String
 }
 
 func (r *panelJoinR) GetNegative() *Panel {
@@ -118,10 +135,10 @@ func (r *panelJoinR) GetPositive() *Panel {
 type panelJoinL struct{}
 
 var (
-	panelJoinAllColumns            = []string{"positive_id", "negative_id", "id", "project_id"}
+	panelJoinAllColumns            = []string{"positive_id", "negative_id", "id", "project_id", "string_id"}
 	panelJoinColumnsWithoutDefault = []string{"positive_id", "negative_id", "project_id"}
-	panelJoinColumnsWithDefault    = []string{"id"}
-	panelJoinPrimaryKeyColumns     = []string{"positive_id", "negative_id"}
+	panelJoinColumnsWithDefault    = []string{"id", "string_id"}
+	panelJoinPrimaryKeyColumns     = []string{"id"}
 	panelJoinGeneratedColumns      = []string{}
 )
 
@@ -414,6 +431,17 @@ func (o *PanelJoin) Project(mods ...qm.QueryMod) projectQuery {
 	return Projects(queryMods...)
 }
 
+// String pointed to by the foreign key.
+func (o *PanelJoin) String(mods ...qm.QueryMod) stringQuery {
+	queryMods := []qm.QueryMod{
+		qm.Where("\"id\" = ?", o.StringID),
+	}
+
+	queryMods = append(queryMods, mods...)
+
+	return Strings(queryMods...)
+}
+
 // Negative pointed to by the foreign key.
 func (o *PanelJoin) Negative(mods ...qm.QueryMod) panelQuery {
 	queryMods := []qm.QueryMod{
@@ -546,6 +574,126 @@ func (panelJoinL) LoadProject(ctx context.Context, e boil.ContextExecutor, singu
 				local.R.Project = foreign
 				if foreign.R == nil {
 					foreign.R = &projectR{}
+				}
+				foreign.R.PanelJoins = append(foreign.R.PanelJoins, local)
+				break
+			}
+		}
+	}
+
+	return nil
+}
+
+// LoadString allows an eager lookup of values, cached into the
+// loaded structs of the objects. This is for an N-1 relationship.
+func (panelJoinL) LoadString(ctx context.Context, e boil.ContextExecutor, singular bool, maybePanelJoin interface{}, mods queries.Applicator) error {
+	var slice []*PanelJoin
+	var object *PanelJoin
+
+	if singular {
+		var ok bool
+		object, ok = maybePanelJoin.(*PanelJoin)
+		if !ok {
+			object = new(PanelJoin)
+			ok = queries.SetFromEmbeddedStruct(&object, &maybePanelJoin)
+			if !ok {
+				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", object, maybePanelJoin))
+			}
+		}
+	} else {
+		s, ok := maybePanelJoin.(*[]*PanelJoin)
+		if ok {
+			slice = *s
+		} else {
+			ok = queries.SetFromEmbeddedStruct(&slice, maybePanelJoin)
+			if !ok {
+				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", slice, maybePanelJoin))
+			}
+		}
+	}
+
+	args := make([]interface{}, 0, 1)
+	if singular {
+		if object.R == nil {
+			object.R = &panelJoinR{}
+		}
+		args = append(args, object.StringID)
+
+	} else {
+	Outer:
+		for _, obj := range slice {
+			if obj.R == nil {
+				obj.R = &panelJoinR{}
+			}
+
+			for _, a := range args {
+				if a == obj.StringID {
+					continue Outer
+				}
+			}
+
+			args = append(args, obj.StringID)
+
+		}
+	}
+
+	if len(args) == 0 {
+		return nil
+	}
+
+	query := NewQuery(
+		qm.From(`strings`),
+		qm.WhereIn(`strings.id in ?`, args...),
+	)
+	if mods != nil {
+		mods.Apply(query)
+	}
+
+	results, err := query.QueryContext(ctx, e)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load String")
+	}
+
+	var resultSlice []*String
+	if err = queries.Bind(results, &resultSlice); err != nil {
+		return errors.Wrap(err, "failed to bind eager loaded slice String")
+	}
+
+	if err = results.Close(); err != nil {
+		return errors.Wrap(err, "failed to close results of eager load for strings")
+	}
+	if err = results.Err(); err != nil {
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for strings")
+	}
+
+	if len(panelJoinAfterSelectHooks) != 0 {
+		for _, obj := range resultSlice {
+			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
+				return err
+			}
+		}
+	}
+
+	if len(resultSlice) == 0 {
+		return nil
+	}
+
+	if singular {
+		foreign := resultSlice[0]
+		object.R.String = foreign
+		if foreign.R == nil {
+			foreign.R = &stringR{}
+		}
+		foreign.R.PanelJoins = append(foreign.R.PanelJoins, object)
+		return nil
+	}
+
+	for _, local := range slice {
+		for _, foreign := range resultSlice {
+			if local.StringID == foreign.ID {
+				local.R.String = foreign
+				if foreign.R == nil {
+					foreign.R = &stringR{}
 				}
 				foreign.R.PanelJoins = append(foreign.R.PanelJoins, local)
 				break
@@ -812,7 +960,7 @@ func (o *PanelJoin) SetProject(ctx context.Context, exec boil.ContextExecutor, i
 		strmangle.SetParamNames("\"", "\"", 1, []string{"project_id"}),
 		strmangle.WhereClause("\"", "\"", 2, panelJoinPrimaryKeyColumns),
 	)
-	values := []interface{}{related.ID, o.PositiveID, o.NegativeID}
+	values := []interface{}{related.ID, o.ID}
 
 	if boil.IsDebug(ctx) {
 		writer := boil.DebugWriterFrom(ctx)
@@ -843,6 +991,53 @@ func (o *PanelJoin) SetProject(ctx context.Context, exec boil.ContextExecutor, i
 	return nil
 }
 
+// SetString of the panelJoin to the related item.
+// Sets o.R.String to related.
+// Adds o to related.R.PanelJoins.
+func (o *PanelJoin) SetString(ctx context.Context, exec boil.ContextExecutor, insert bool, related *String) error {
+	var err error
+	if insert {
+		if err = related.Insert(ctx, exec, boil.Infer()); err != nil {
+			return errors.Wrap(err, "failed to insert into foreign table")
+		}
+	}
+
+	updateQuery := fmt.Sprintf(
+		"UPDATE \"panel_joins\" SET %s WHERE %s",
+		strmangle.SetParamNames("\"", "\"", 1, []string{"string_id"}),
+		strmangle.WhereClause("\"", "\"", 2, panelJoinPrimaryKeyColumns),
+	)
+	values := []interface{}{related.ID, o.ID}
+
+	if boil.IsDebug(ctx) {
+		writer := boil.DebugWriterFrom(ctx)
+		fmt.Fprintln(writer, updateQuery)
+		fmt.Fprintln(writer, values)
+	}
+	if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
+		return errors.Wrap(err, "failed to update local table")
+	}
+
+	o.StringID = related.ID
+	if o.R == nil {
+		o.R = &panelJoinR{
+			String: related,
+		}
+	} else {
+		o.R.String = related
+	}
+
+	if related.R == nil {
+		related.R = &stringR{
+			PanelJoins: PanelJoinSlice{o},
+		}
+	} else {
+		related.R.PanelJoins = append(related.R.PanelJoins, o)
+	}
+
+	return nil
+}
+
 // SetNegative of the panelJoin to the related item.
 // Sets o.R.Negative to related.
 // Adds o to related.R.NegativePanelJoins.
@@ -859,7 +1054,7 @@ func (o *PanelJoin) SetNegative(ctx context.Context, exec boil.ContextExecutor, 
 		strmangle.SetParamNames("\"", "\"", 1, []string{"negative_id"}),
 		strmangle.WhereClause("\"", "\"", 2, panelJoinPrimaryKeyColumns),
 	)
-	values := []interface{}{related.ID, o.PositiveID, o.NegativeID}
+	values := []interface{}{related.ID, o.ID}
 
 	if boil.IsDebug(ctx) {
 		writer := boil.DebugWriterFrom(ctx)
@@ -906,7 +1101,7 @@ func (o *PanelJoin) SetPositive(ctx context.Context, exec boil.ContextExecutor, 
 		strmangle.SetParamNames("\"", "\"", 1, []string{"positive_id"}),
 		strmangle.WhereClause("\"", "\"", 2, panelJoinPrimaryKeyColumns),
 	)
-	values := []interface{}{related.ID, o.PositiveID, o.NegativeID}
+	values := []interface{}{related.ID, o.ID}
 
 	if boil.IsDebug(ctx) {
 		writer := boil.DebugWriterFrom(ctx)
@@ -950,7 +1145,7 @@ func PanelJoins(mods ...qm.QueryMod) panelJoinQuery {
 
 // FindPanelJoin retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
-func FindPanelJoin(ctx context.Context, exec boil.ContextExecutor, positiveID string, negativeID string, selectCols ...string) (*PanelJoin, error) {
+func FindPanelJoin(ctx context.Context, exec boil.ContextExecutor, iD string, selectCols ...string) (*PanelJoin, error) {
 	panelJoinObj := &PanelJoin{}
 
 	sel := "*"
@@ -958,10 +1153,10 @@ func FindPanelJoin(ctx context.Context, exec boil.ContextExecutor, positiveID st
 		sel = strings.Join(strmangle.IdentQuoteSlice(dialect.LQ, dialect.RQ, selectCols), ",")
 	}
 	query := fmt.Sprintf(
-		"select %s from \"panel_joins\" where \"positive_id\"=$1 AND \"negative_id\"=$2", sel,
+		"select %s from \"panel_joins\" where \"id\"=$1", sel,
 	)
 
-	q := queries.Raw(query, positiveID, negativeID)
+	q := queries.Raw(query, iD)
 
 	err := q.Bind(ctx, exec, panelJoinObj)
 	if err != nil {
@@ -1313,7 +1508,7 @@ func (o *PanelJoin) Delete(ctx context.Context, exec boil.ContextExecutor) (int6
 	}
 
 	args := queries.ValuesFromMapping(reflect.Indirect(reflect.ValueOf(o)), panelJoinPrimaryKeyMapping)
-	sql := "DELETE FROM \"panel_joins\" WHERE \"positive_id\"=$1 AND \"negative_id\"=$2"
+	sql := "DELETE FROM \"panel_joins\" WHERE \"id\"=$1"
 
 	if boil.IsDebug(ctx) {
 		writer := boil.DebugWriterFrom(ctx)
@@ -1410,7 +1605,7 @@ func (o PanelJoinSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *PanelJoin) Reload(ctx context.Context, exec boil.ContextExecutor) error {
-	ret, err := FindPanelJoin(ctx, exec, o.PositiveID, o.NegativeID)
+	ret, err := FindPanelJoin(ctx, exec, o.ID)
 	if err != nil {
 		return err
 	}
@@ -1449,16 +1644,16 @@ func (o *PanelJoinSlice) ReloadAll(ctx context.Context, exec boil.ContextExecuto
 }
 
 // PanelJoinExists checks if the PanelJoin row exists.
-func PanelJoinExists(ctx context.Context, exec boil.ContextExecutor, positiveID string, negativeID string) (bool, error) {
+func PanelJoinExists(ctx context.Context, exec boil.ContextExecutor, iD string) (bool, error) {
 	var exists bool
-	sql := "select exists(select 1 from \"panel_joins\" where \"positive_id\"=$1 AND \"negative_id\"=$2 limit 1)"
+	sql := "select exists(select 1 from \"panel_joins\" where \"id\"=$1 limit 1)"
 
 	if boil.IsDebug(ctx) {
 		writer := boil.DebugWriterFrom(ctx)
 		fmt.Fprintln(writer, sql)
-		fmt.Fprintln(writer, positiveID, negativeID)
+		fmt.Fprintln(writer, iD)
 	}
-	row := exec.QueryRowContext(ctx, sql, positiveID, negativeID)
+	row := exec.QueryRowContext(ctx, sql, iD)
 
 	err := row.Scan(&exists)
 	if err != nil {

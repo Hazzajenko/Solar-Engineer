@@ -13,18 +13,14 @@ type PanelJoinModel struct {
 	DB *sql.DB
 }
 
-func (p *PanelJoinModel) GetById(positiveID string, negativeID string) (*boiler.PanelJoin, error) {
-	if positiveID == "" {
-		return nil, errors.New("record not found")
-	}
-
-	if negativeID == "" {
+func (p *PanelJoinModel) GetById(panelJoinId string) (*boiler.PanelJoin, error) {
+	if panelJoinId == "" {
 		return nil, errors.New("record not found")
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
-	panelJoin, err := boiler.FindPanelJoin(ctx, p.DB, positiveID, negativeID)
+	panelJoin, err := boiler.FindPanelJoin(ctx, p.DB, panelJoinId)
 	if err != nil {
 		switch {
 		case errors.Is(err, sql.ErrNoRows):
@@ -71,4 +67,28 @@ func (p *PanelJoinModel) GetPanelJoinsByProjectId(projectId int64) (*boiler.Pane
 	}
 
 	return &panelJoins, nil
+}
+
+func (p *PanelJoinModel) Delete(panelJoinId string) error {
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	panelJoin, err := boiler.FindPanelJoin(ctx, p.DB, panelJoinId)
+	if err != nil {
+		switch {
+		default:
+			return err
+		}
+	}
+
+	_, err = panelJoin.Delete(ctx, p.DB)
+	if err != nil {
+		switch {
+		default:
+			return err
+		}
+	}
+
+	return nil
 }

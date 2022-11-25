@@ -3,4 +3,5 @@ export enum GridMode {
   CREATE,
   DELETE,
   JOIN,
+  SELECT,
 }

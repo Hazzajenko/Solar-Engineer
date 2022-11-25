@@ -159,23 +159,17 @@ var TrackerRels = struct {
 	CreatedByUser string
 	Inverter      string
 	Project       string
-	Panels        string
-	Strings       string
 }{
 	CreatedByUser: "CreatedByUser",
 	Inverter:      "Inverter",
 	Project:       "Project",
-	Panels:        "Panels",
-	Strings:       "Strings",
 }
 
 // trackerR is where relationships are stored.
 type trackerR struct {
-	CreatedByUser *User       `boil:"CreatedByUser" json:"CreatedByUser" toml:"CreatedByUser" yaml:"CreatedByUser"`
-	Inverter      *Inverter   `boil:"Inverter" json:"Inverter" toml:"Inverter" yaml:"Inverter"`
-	Project       *Project    `boil:"Project" json:"Project" toml:"Project" yaml:"Project"`
-	Panels        PanelSlice  `boil:"Panels" json:"Panels" toml:"Panels" yaml:"Panels"`
-	Strings       StringSlice `boil:"Strings" json:"Strings" toml:"Strings" yaml:"Strings"`
+	CreatedByUser *User     `boil:"CreatedByUser" json:"CreatedByUser" toml:"CreatedByUser" yaml:"CreatedByUser"`
+	Inverter      *Inverter `boil:"Inverter" json:"Inverter" toml:"Inverter" yaml:"Inverter"`
+	Project       *Project  `boil:"Project" json:"Project" toml:"Project" yaml:"Project"`
 }
 
 // NewStruct creates a new relationship struct
@@ -202,20 +196,6 @@ func (r *trackerR) GetProject() *Project {
 		return nil
 	}
 	return r.Project
-}
-
-func (r *trackerR) GetPanels() PanelSlice {
-	if r == nil {
-		return nil
-	}
-	return r.Panels
-}
-
-func (r *trackerR) GetStrings() StringSlice {
-	if r == nil {
-		return nil
-	}
-	return r.Strings
 }
 
 // trackerL is where Load methods for each relationship are stored.
@@ -538,34 +518,6 @@ func (o *Tracker) Project(mods ...qm.QueryMod) projectQuery {
 	queryMods = append(queryMods, mods...)
 
 	return Projects(queryMods...)
-}
-
-// Panels retrieves all the panel's Panels with an executor.
-func (o *Tracker) Panels(mods ...qm.QueryMod) panelQuery {
-	var queryMods []qm.QueryMod
-	if len(mods) != 0 {
-		queryMods = append(queryMods, mods...)
-	}
-
-	queryMods = append(queryMods,
-		qm.Where("\"panels\".\"tracker_id\"=?", o.ID),
-	)
-
-	return Panels(queryMods...)
-}
-
-// Strings retrieves all the string's Strings with an executor.
-func (o *Tracker) Strings(mods ...qm.QueryMod) stringQuery {
-	var queryMods []qm.QueryMod
-	if len(mods) != 0 {
-		queryMods = append(queryMods, mods...)
-	}
-
-	queryMods = append(queryMods,
-		qm.Where("\"strings\".\"tracker_id\"=?", o.ID),
-	)
-
-	return Strings(queryMods...)
 }
 
 // LoadCreatedByUser allows an eager lookup of values, cached into the
@@ -928,234 +880,6 @@ func (trackerL) LoadProject(ctx context.Context, e boil.ContextExecutor, singula
 	return nil
 }
 
-// LoadPanels allows an eager lookup of values, cached into the
-// loaded structs of the objects. This is for a 1-M or N-M relationship.
-func (trackerL) LoadPanels(ctx context.Context, e boil.ContextExecutor, singular bool, maybeTracker interface{}, mods queries.Applicator) error {
-	var slice []*Tracker
-	var object *Tracker
-
-	if singular {
-		var ok bool
-		object, ok = maybeTracker.(*Tracker)
-		if !ok {
-			object = new(Tracker)
-			ok = queries.SetFromEmbeddedStruct(&object, &maybeTracker)
-			if !ok {
-				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", object, maybeTracker))
-			}
-		}
-	} else {
-		s, ok := maybeTracker.(*[]*Tracker)
-		if ok {
-			slice = *s
-		} else {
-			ok = queries.SetFromEmbeddedStruct(&slice, maybeTracker)
-			if !ok {
-				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", slice, maybeTracker))
-			}
-		}
-	}
-
-	args := make([]interface{}, 0, 1)
-	if singular {
-		if object.R == nil {
-			object.R = &trackerR{}
-		}
-		args = append(args, object.ID)
-	} else {
-	Outer:
-		for _, obj := range slice {
-			if obj.R == nil {
-				obj.R = &trackerR{}
-			}
-
-			for _, a := range args {
-				if a == obj.ID {
-					continue Outer
-				}
-			}
-
-			args = append(args, obj.ID)
-		}
-	}
-
-	if len(args) == 0 {
-		return nil
-	}
-
-	query := NewQuery(
-		qm.From(`panels`),
-		qm.WhereIn(`panels.tracker_id in ?`, args...),
-	)
-	if mods != nil {
-		mods.Apply(query)
-	}
-
-	results, err := query.QueryContext(ctx, e)
-	if err != nil {
-		return errors.Wrap(err, "failed to eager load panels")
-	}
-
-	var resultSlice []*Panel
-	if err = queries.Bind(results, &resultSlice); err != nil {
-		return errors.Wrap(err, "failed to bind eager loaded slice panels")
-	}
-
-	if err = results.Close(); err != nil {
-		return errors.Wrap(err, "failed to close results in eager load on panels")
-	}
-	if err = results.Err(); err != nil {
-		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for panels")
-	}
-
-	if len(panelAfterSelectHooks) != 0 {
-		for _, obj := range resultSlice {
-			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
-				return err
-			}
-		}
-	}
-	if singular {
-		object.R.Panels = resultSlice
-		for _, foreign := range resultSlice {
-			if foreign.R == nil {
-				foreign.R = &panelR{}
-			}
-			foreign.R.Tracker = object
-		}
-		return nil
-	}
-
-	for _, foreign := range resultSlice {
-		for _, local := range slice {
-			if local.ID == foreign.TrackerID {
-				local.R.Panels = append(local.R.Panels, foreign)
-				if foreign.R == nil {
-					foreign.R = &panelR{}
-				}
-				foreign.R.Tracker = local
-				break
-			}
-		}
-	}
-
-	return nil
-}
-
-// LoadStrings allows an eager lookup of values, cached into the
-// loaded structs of the objects. This is for a 1-M or N-M relationship.
-func (trackerL) LoadStrings(ctx context.Context, e boil.ContextExecutor, singular bool, maybeTracker interface{}, mods queries.Applicator) error {
-	var slice []*Tracker
-	var object *Tracker
-
-	if singular {
-		var ok bool
-		object, ok = maybeTracker.(*Tracker)
-		if !ok {
-			object = new(Tracker)
-			ok = queries.SetFromEmbeddedStruct(&object, &maybeTracker)
-			if !ok {
-				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", object, maybeTracker))
-			}
-		}
-	} else {
-		s, ok := maybeTracker.(*[]*Tracker)
-		if ok {
-			slice = *s
-		} else {
-			ok = queries.SetFromEmbeddedStruct(&slice, maybeTracker)
-			if !ok {
-				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", slice, maybeTracker))
-			}
-		}
-	}
-
-	args := make([]interface{}, 0, 1)
-	if singular {
-		if object.R == nil {
-			object.R = &trackerR{}
-		}
-		args = append(args, object.ID)
-	} else {
-	Outer:
-		for _, obj := range slice {
-			if obj.R == nil {
-				obj.R = &trackerR{}
-			}
-
-			for _, a := range args {
-				if a == obj.ID {
-					continue Outer
-				}
-			}
-
-			args = append(args, obj.ID)
-		}
-	}
-
-	if len(args) == 0 {
-		return nil
-	}
-
-	query := NewQuery(
-		qm.From(`strings`),
-		qm.WhereIn(`strings.tracker_id in ?`, args...),
-	)
-	if mods != nil {
-		mods.Apply(query)
-	}
-
-	results, err := query.QueryContext(ctx, e)
-	if err != nil {
-		return errors.Wrap(err, "failed to eager load strings")
-	}
-
-	var resultSlice []*String
-	if err = queries.Bind(results, &resultSlice); err != nil {
-		return errors.Wrap(err, "failed to bind eager loaded slice strings")
-	}
-
-	if err = results.Close(); err != nil {
-		return errors.Wrap(err, "failed to close results in eager load on strings")
-	}
-	if err = results.Err(); err != nil {
-		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for strings")
-	}
-
-	if len(stringAfterSelectHooks) != 0 {
-		for _, obj := range resultSlice {
-			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
-				return err
-			}
-		}
-	}
-	if singular {
-		object.R.Strings = resultSlice
-		for _, foreign := range resultSlice {
-			if foreign.R == nil {
-				foreign.R = &stringR{}
-			}
-			foreign.R.Tracker = object
-		}
-		return nil
-	}
-
-	for _, foreign := range resultSlice {
-		for _, local := range slice {
-			if local.ID == foreign.TrackerID {
-				local.R.Strings = append(local.R.Strings, foreign)
-				if foreign.R == nil {
-					foreign.R = &stringR{}
-				}
-				foreign.R.Tracker = local
-				break
-			}
-		}
-	}
-
-	return nil
-}
-
 // SetCreatedByUser of the tracker to the related item.
 // Sets o.R.CreatedByUser to related.
 // Adds o to related.R.CreatedByTrackers.
@@ -1294,112 +1018,6 @@ func (o *Tracker) SetProject(ctx context.Context, exec boil.ContextExecutor, ins
 		related.R.Trackers = append(related.R.Trackers, o)
 	}
 
-	return nil
-}
-
-// AddPanels adds the given related objects to the existing relationships
-// of the tracker, optionally inserting them as new records.
-// Appends related to o.R.Panels.
-// Sets related.R.Tracker appropriately.
-func (o *Tracker) AddPanels(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*Panel) error {
-	var err error
-	for _, rel := range related {
-		if insert {
-			rel.TrackerID = o.ID
-			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
-				return errors.Wrap(err, "failed to insert into foreign table")
-			}
-		} else {
-			updateQuery := fmt.Sprintf(
-				"UPDATE \"panels\" SET %s WHERE %s",
-				strmangle.SetParamNames("\"", "\"", 1, []string{"tracker_id"}),
-				strmangle.WhereClause("\"", "\"", 2, panelPrimaryKeyColumns),
-			)
-			values := []interface{}{o.ID, rel.ID}
-
-			if boil.IsDebug(ctx) {
-				writer := boil.DebugWriterFrom(ctx)
-				fmt.Fprintln(writer, updateQuery)
-				fmt.Fprintln(writer, values)
-			}
-			if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
-				return errors.Wrap(err, "failed to update foreign table")
-			}
-
-			rel.TrackerID = o.ID
-		}
-	}
-
-	if o.R == nil {
-		o.R = &trackerR{
-			Panels: related,
-		}
-	} else {
-		o.R.Panels = append(o.R.Panels, related...)
-	}
-
-	for _, rel := range related {
-		if rel.R == nil {
-			rel.R = &panelR{
-				Tracker: o,
-			}
-		} else {
-			rel.R.Tracker = o
-		}
-	}
-	return nil
-}
-
-// AddStrings adds the given related objects to the existing relationships
-// of the tracker, optionally inserting them as new records.
-// Appends related to o.R.Strings.
-// Sets related.R.Tracker appropriately.
-func (o *Tracker) AddStrings(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*String) error {
-	var err error
-	for _, rel := range related {
-		if insert {
-			rel.TrackerID = o.ID
-			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
-				return errors.Wrap(err, "failed to insert into foreign table")
-			}
-		} else {
-			updateQuery := fmt.Sprintf(
-				"UPDATE \"strings\" SET %s WHERE %s",
-				strmangle.SetParamNames("\"", "\"", 1, []string{"tracker_id"}),
-				strmangle.WhereClause("\"", "\"", 2, stringPrimaryKeyColumns),
-			)
-			values := []interface{}{o.ID, rel.ID}
-
-			if boil.IsDebug(ctx) {
-				writer := boil.DebugWriterFrom(ctx)
-				fmt.Fprintln(writer, updateQuery)
-				fmt.Fprintln(writer, values)
-			}
-			if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
-				return errors.Wrap(err, "failed to update foreign table")
-			}
-
-			rel.TrackerID = o.ID
-		}
-	}
-
-	if o.R == nil {
-		o.R = &trackerR{
-			Strings: related,
-		}
-	} else {
-		o.R.Strings = append(o.R.Strings, related...)
-	}
-
-	for _, rel := range related {
-		if rel.R == nil {
-			rel.R = &stringR{
-				Tracker: o,
-			}
-		} else {
-			rel.R.Tracker = o
-		}
-	}
 	return nil
 }
 

@@ -40,10 +40,10 @@ func (h *Handlers) CreateString(w http.ResponseWriter, r *http.Request) {
 		Name         string `json:"name"`
 		IsInParallel bool   `json:"is_in_parallel"`
 		ProjectID    int64  `json:"project_id"`
-		InverterID   string `json:"inverter_id"`
-		TrackerID    string `json:"tracker_id"`
-		Color        string `json:"color"`
-		Model        int    `json:"model"`
+		/*		InverterID   string `json:"inverter_id"`
+				TrackerID    string `json:"tracker_id"`*/
+		Color string `json:"color"`
+		Model int    `json:"model"`
 
 		//Tracker      trackers.Tracker `json:"tracker"`
 	}
@@ -65,10 +65,10 @@ func (h *Handlers) CreateString(w http.ResponseWriter, r *http.Request) {
 	}*/
 
 	boilerString := &boiler.String{
-		ID:           input.ID,
-		ProjectID:    projectId,
-		InverterID:   input.InverterID,
-		TrackerID:    input.TrackerID,
+		ID:        input.ID,
+		ProjectID: projectId,
+		/*		InverterID:   input.InverterID,
+				TrackerID:    input.TrackerID,*/
 		Name:         input.Name,
 		CreatedAt:    time.Time{},
 		CreatedBy:    userId,

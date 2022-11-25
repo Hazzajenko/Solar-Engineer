@@ -11,6 +11,7 @@ import { InvertersEntityService } from '../../project-id/services/inverters-enti
 import { JoinsEntityService } from '../../project-id/services/joins-entity/joins-entity.service'
 import { JoinsService } from '../joins.service'
 import { LoggerService } from '../../../services/logger.service'
+import { PanelJoinsEntityService } from '../../project-id/services/panel-joins-entity/panel-joins-entity.service'
 
 @Injectable({
   providedIn: 'root',
@@ -23,6 +24,7 @@ export class GridDeleteService extends GridService {
     joinsEntity: JoinsEntityService,
     joinsService: JoinsService,
     logger: LoggerService,
+    private panelJoinsEntity: PanelJoinsEntityService,
   ) {
     super(
       panelsEntity,
@@ -50,7 +52,27 @@ export class GridDeleteService extends GridService {
 
     switch (toDelete.model) {
       case UnitModel.PANEL:
-        return this.panelsEntity.delete(toDelete.id!)
+        /*        const poo = this.panelJoinsEntity.entities$.subscribe(panelJoins => {
+                  const positiveLink = panelJoins.find(panelJoin => panelJoin.positive_id === toDelete.id)
+                  const negativeLink = panelJoins.find(panelJoin => panelJoin.negative_id === toDelete.id)
+                })*/
+        this.panelJoinsEntity.entities$.subscribe((panelJoins) => {
+          const positiveLink = panelJoins.find(
+            (panelJoin) => panelJoin.positive_id === toDelete.id,
+          )
+          const negativeLink = panelJoins.find(
+            (panelJoin) => panelJoin.negative_id === toDelete.id,
+          )
+          console.log('positiveLink', positiveLink)
+          console.log('negativeLink', negativeLink)
+          if (positiveLink) this.panelJoinsEntity.delete(positiveLink.id)
+          if (negativeLink) this.panelJoinsEntity.delete(negativeLink.id)
+          return
+        })
+
+        this.panelsEntity.delete(toDelete.id!)
+
+        break
       case UnitModel.CABLE:
         return this.cablesEntity.delete(toDelete.id!)
       case UnitModel.INVERTER:
@@ -58,5 +80,21 @@ export class GridDeleteService extends GridService {
       default:
         break
     }
+  }
+
+  deletePanel(panelId: string) {
+    this.panelJoinsEntity.entities$.subscribe((panelJoins) => {
+      const positiveLink = panelJoins.find(
+        (panelJoin) => panelJoin.positive_id === panelId,
+      )
+      const negativeLink = panelJoins.find(
+        (panelJoin) => panelJoin.negative_id === panelId,
+      )
+      if (positiveLink) this.panelJoinsEntity.delete(positiveLink.id)
+      if (negativeLink) this.panelJoinsEntity.delete(negativeLink.id)
+      return
+    })
+
+    this.panelsEntity.delete(panelId)
   }
 }

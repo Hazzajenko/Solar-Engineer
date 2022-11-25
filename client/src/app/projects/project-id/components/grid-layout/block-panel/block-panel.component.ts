@@ -1,4 +1,11 @@
-import { Component, ElementRef, Input, OnInit } from '@angular/core'
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  Input,
+  OnInit,
+  ViewChild,
+} from '@angular/core'
 import { PanelModel } from '../../../../models/panel.model'
 import { BlockModel } from '../../../../models/block.model'
 import { UnitModel } from '../../../../models/unit.model'
@@ -15,8 +22,17 @@ import { GetPanelJoinPipe } from '../../../../../pipes/get-panel-join.pipe'
 import { PanelDirective } from '../../../../../directives/panel.directive'
 import { Store } from '@ngrx/store'
 import { AppState } from '../../../../../store/app.state'
-import { selectSelectedPanels } from '../../../../store/selected/selected.selectors'
-import { combineLatest } from 'rxjs'
+import {
+  selectSelectedPanels,
+  selectSelectedStrings,
+  selectUnitSelected,
+} from '../../../../store/selected/selected.selectors'
+import { combineLatest, Observable } from 'rxjs'
+import { PanelLinkComponent } from '../../../../../components/panel-link/panel-link.component'
+import { selectPanelToJoin } from '../../../../store/joins/joins.selectors'
+import { selectGridMode } from '../../../../store/grid/grid.selectors'
+import { map } from 'rxjs/operators'
+import { StringsEntityService } from '../../../services/strings-entity/strings-entity.service'
 
 @Component({
   selector: 'app-block-panel',
@@ -32,10 +48,12 @@ import { combineLatest } from 'rxjs'
     LetModule,
     GetPanelJoinPipe,
     PanelDirective,
+    PanelLinkComponent,
   ],
   standalone: true,
 })
-export class BlockPanelComponent implements OnInit {
+export class BlockPanelComponent implements OnInit, AfterViewInit {
+  @ViewChild('panelDiv') panelDiv!: ElementRef
   @Input() panels?: PanelModel[]
   @Input() block?: BlockModel
   @Input() panel?: PanelModel
@@ -52,39 +70,174 @@ export class BlockPanelComponent implements OnInit {
     panel?: PanelModel
     panels?: PanelModel[]
   }
+  selectedPositiveLinkTo?: string
+  selectedPositiveLinkTo$?: Observable<string | undefined>
+  selectedNegativeLinkTo?: string
+
+  selectedLinks$!: Observable<
+    | {
+        selectedPositiveLinkTo?: string
+        selectedNegativeLinkTo?: string
+      }
+    | undefined
+  >
+
+  selected$!: Observable<
+    | {
+        selectedUnit?: UnitModel
+        selectedStrings?: string[]
+        selectedPanels?: PanelModel[]
+        panels?: PanelModel[]
+      }
+    | undefined
+  >
+
+  gridMode?: GridMode
+  tooltip?: string
 
   constructor(
     public panelsEntity: PanelsEntityService,
     public panelJoinsEntity: PanelJoinsEntityService,
-    private elRef: ElementRef,
+    public stringsEntity: StringsEntityService,
+    // private elRef: ElementRef,
     public store: Store<AppState>,
   ) {}
 
   panelHover(panel: PanelModel) {
-    // this.elRef.nativeElement.style.backgroundColor = '#e014ce'
+    // this.panelDiv.nativeElement.style.backgroundColor = '#e014ce'
   }
 
-  ngOnInit(): void {
-    this.store.select(selectSelectedPanels).subscribe((panels) => {
-      if (panels?.includes(<PanelModel>this.panel)) {
-        this.elRef.nativeElement.style.backgroundColor = '#07ffd4'
-      } else {
-        this.elRef.nativeElement.style.backgroundColor = '#9ec7f9'
+  displayTooltip(panel: PanelModel): string {
+    let tooltip: string = `
+       Location = ${panel.location} \r\n
+       String: ${panel.string_id} \r\n
+    `
+    combineLatest([
+      this.store.select(selectUnitSelected),
+      this.stringsEntity.entities$,
+      this.panelsEntity.entities$,
+    ]).subscribe(([unit, strings, panels]) => {
+      switch (unit) {
+        case UnitModel.PANEL:
+          tooltip = `
+       Location = ${panel.location} \r\n
+       String: ${panel.string_id} \r\n
+    `
+          break
+        case UnitModel.STRING:
+          const panelsInString = panels.filter(
+            (s) => s.string_id === panel.string_id,
+          )
+          const panelString = strings.find((s) => s.id === panel.string_id)
+          tooltip = `
+       String = ${panelString?.name} \r\n
+       Color: ${panelString?.color} \r\n
+       Parallel: ${panelString?.is_in_parallel} \r\n
+       Panels: ${panelsInString?.length} \r\n
+    `
+          break
       }
-      this.panelJoinsEntity.entities$
     })
 
-    combineLatest([
+    return tooltip
+  }
+
+  ngOnInit() {
+    this.selectedLinks$ = combineLatest([
       this.store.select(selectSelectedPanels),
       this.panelJoinsEntity.entities$,
-    ]).subscribe(([panels, panelJoins]) => {
-      if (panels?.includes(<PanelModel>this.panel)) {
-        this.elRef.nativeElement.style.backgroundColor = '#07ffd4'
+    ]).pipe(
+      map(([panels, panelJoins]) => {
+        if (!panels) return
+        const panel = panels[0]
+        const positive = panelJoins.find(
+          (pJoin) => pJoin.negative_id === panel.id,
+        )?.positive_id
+        const negative = panelJoins.find(
+          (pJoin) => pJoin.positive_id === panel.id,
+        )?.negative_id
+        return {
+          selectedPositiveLinkTo: positive,
+          selectedNegativeLinkTo: negative,
+        }
+      }),
+    )
+    this.selected$ = combineLatest([
+      this.store.select(selectUnitSelected),
+      this.store.select(selectSelectedStrings),
+      this.store.select(selectSelectedPanels),
+      this.panelsEntity.entities$,
+    ]).pipe(
+      map(([selectedUnit, selectedStrings, selectedPanels, panels]) => ({
+        selectedUnit,
+        selectedStrings,
+        selectedPanels,
+        panels,
+      })),
+    )
+  }
+
+  ngAfterViewInit(): void {
+    combineLatest([
+      this.selected$,
+      this.store.select(selectPanelToJoin),
+      this.panelsEntity.entities$,
+      this.store.select(selectGridMode),
+      this.selectedLinks$,
+    ]).subscribe(([selected, panelToJoin, panels, gridMode, selectedLinks]) => {
+      this.gridMode = gridMode
+
+      if (selected?.selectedPanels?.includes(<PanelModel>this.panel)) {
+        this.panelDiv.nativeElement.style.backgroundColor = '#07ffd4'
       } else {
-        this.elRef.nativeElement.style.backgroundColor = '#9ec7f9'
+        this.panelDiv.nativeElement.style.backgroundColor = '#9ec7f9'
       }
 
-      const link = panelJoins.find(pJoin => pJoin.positive_id === )
+      if (selected?.selectedPanels?.length === 0) {
+        this.selectedPositiveLinkTo = undefined
+        this.selectedNegativeLinkTo = undefined
+      }
+
+      if (gridMode === GridMode.SELECT) {
+        if (
+          selectedLinks?.selectedPositiveLinkTo &&
+          selectedLinks?.selectedPositiveLinkTo === this.panel?.id
+        ) {
+          this.panelDiv.nativeElement.style.backgroundColor = '#b595f9'
+        }
+
+        if (
+          selectedLinks?.selectedNegativeLinkTo &&
+          selectedLinks?.selectedNegativeLinkTo === this.panel?.id
+        ) {
+          this.panelDiv.nativeElement.style.backgroundColor = '#38c1ff'
+        }
+
+        if (
+          selected?.selectedStrings &&
+          selected.selectedStrings?.length === 1 &&
+          selected.selectedStrings[0] != undefined
+        ) {
+          const stringPanels = panels?.filter(
+            (p) => p.string_id === selected!.selectedStrings![0],
+          )
+          console.log(
+            'selected!.selectedStrings![0]',
+            selected!.selectedStrings![0],
+          )
+          console.log('stringPanels', stringPanels)
+          if (stringPanels?.includes(<PanelModel>this.panel)) {
+            this.panelDiv.nativeElement.style.backgroundColor = '#07ffd4'
+          } else {
+            this.panelDiv.nativeElement.style.backgroundColor = '#9ec7f9'
+          }
+        }
+      }
+      if (gridMode === GridMode.JOIN) {
+        if (panelToJoin?.id === this.panel?.id) {
+          this.panelDiv.nativeElement.style.backgroundColor = '#ff00d6'
+        }
+      }
     })
   }
 }

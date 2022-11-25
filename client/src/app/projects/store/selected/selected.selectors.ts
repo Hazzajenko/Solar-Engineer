@@ -9,12 +9,12 @@ export const selectUnitSelected = createSelector(
   (state: State.SelectedState) => state.unit,
 )
 
-export const selectSelectedPanel = createSelector(
-  selectSelectedState,
-  (state: State.SelectedState) => state.panel,
-)
-
 export const selectSelectedPanels = createSelector(
   selectSelectedState,
   (state: State.SelectedState) => state.panels,
+)
+
+export const selectSelectedStrings = createSelector(
+  selectSelectedState,
+  (state: State.SelectedState) => state.strings,
 )

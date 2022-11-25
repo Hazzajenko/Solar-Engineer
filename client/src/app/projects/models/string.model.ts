@@ -4,8 +4,8 @@ import { TypeModel } from './type.model'
 export interface StringModel {
   id: string
   project_id: number
-  inverter_id: string
-  tracker_id: string
+  inverter_id?: string
+  tracker_id?: string
   model?: UnitModel
   type?: TypeModel
   name: string

@@ -134,7 +134,12 @@
         </ul>
         <button (click)="click()" mat-menu-item>Add</button>
         <button mat-menu-item>Edit</button>
-        <button (click)="deleteBlock(item)" mat-menu-item>Delete</button>
+        <button (click)="selectString(item['string_id'])" mat-menu-item>
+          Select String
+        </button>
+        <button (click)="gridDelete.deletePanel(item.id)" mat-menu-item>
+          Delete
+        </button>
       </ng-container>
       <ng-container *ngSwitchCase="6">
         <ul style="list-style: none">
@@ -166,7 +171,7 @@
         </ng-container>
         <button (click)="startJoin(item)" mat-menu-item>Start Join</button>
         <button mat-menu-item>Edit</button>
-        <button (click)="deleteBlock(item)" mat-menu-item>Delete</button>
+        <button (click)="deleteCable(item)" mat-menu-item>Delete</button>
       </ng-container>
     </ng-container>
   </ng-template>
