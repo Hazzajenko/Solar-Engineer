@@ -42,6 +42,15 @@ func (h *Handlers) CreatePanel(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	_, err = h.Models.Strings.Get(input.StringId)
+	if err != nil {
+		switch {
+		default:
+			h.Errors.ServerErrorResponse(w, r, err)
+		}
+		return
+	}
+
 	isLocationFree, err := h.Models.Panels.CheckIfLocationIsFree(input.Location)
 	if err != nil {
 		switch {

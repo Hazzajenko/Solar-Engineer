@@ -6,6 +6,7 @@ export type TypeModel =
   | 'PANEL'
   | 'CABLE'
   | 'JOIN'
+  | 'DISCONNECTIONPOINT'
 
 /*
 export enum TypeModel {

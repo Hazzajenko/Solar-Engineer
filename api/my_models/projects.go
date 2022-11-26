@@ -86,38 +86,41 @@ var ProjectWhere = struct {
 
 // ProjectRels is where relationship names are stored.
 var ProjectRels = struct {
-	CreatedByUser string
-	Cables        string
-	Inverters     string
-	Joins         string
-	PanelJoins    string
-	Panels        string
-	Strings       string
-	Trackers      string
-	UsersProjects string
+	CreatedByUser       string
+	Cables              string
+	DisconnectionPoints string
+	Inverters           string
+	Joins               string
+	PanelJoins          string
+	Panels              string
+	Strings             string
+	Trackers            string
+	UsersProjects       string
 }{
-	CreatedByUser: "CreatedByUser",
-	Cables:        "Cables",
-	Inverters:     "Inverters",
-	Joins:         "Joins",
-	PanelJoins:    "PanelJoins",
-	Panels:        "Panels",
-	Strings:       "Strings",
-	Trackers:      "Trackers",
-	UsersProjects: "UsersProjects",
+	CreatedByUser:       "CreatedByUser",
+	Cables:              "Cables",
+	DisconnectionPoints: "DisconnectionPoints",
+	Inverters:           "Inverters",
+	Joins:               "Joins",
+	PanelJoins:          "PanelJoins",
+	Panels:              "Panels",
+	Strings:             "Strings",
+	Trackers:            "Trackers",
+	UsersProjects:       "UsersProjects",
 }
 
 // projectR is where relationships are stored.
 type projectR struct {
-	CreatedByUser *User             `boil:"CreatedByUser" json:"CreatedByUser" toml:"CreatedByUser" yaml:"CreatedByUser"`
-	Cables        CableSlice        `boil:"Cables" json:"Cables" toml:"Cables" yaml:"Cables"`
-	Inverters     InverterSlice     `boil:"Inverters" json:"Inverters" toml:"Inverters" yaml:"Inverters"`
-	Joins         JoinSlice         `boil:"Joins" json:"Joins" toml:"Joins" yaml:"Joins"`
-	PanelJoins    PanelJoinSlice    `boil:"PanelJoins" json:"PanelJoins" toml:"PanelJoins" yaml:"PanelJoins"`
-	Panels        PanelSlice        `boil:"Panels" json:"Panels" toml:"Panels" yaml:"Panels"`
-	Strings       StringSlice       `boil:"Strings" json:"Strings" toml:"Strings" yaml:"Strings"`
-	Trackers      TrackerSlice      `boil:"Trackers" json:"Trackers" toml:"Trackers" yaml:"Trackers"`
-	UsersProjects UsersProjectSlice `boil:"UsersProjects" json:"UsersProjects" toml:"UsersProjects" yaml:"UsersProjects"`
+	CreatedByUser       *User                   `boil:"CreatedByUser" json:"CreatedByUser" toml:"CreatedByUser" yaml:"CreatedByUser"`
+	Cables              CableSlice              `boil:"Cables" json:"Cables" toml:"Cables" yaml:"Cables"`
+	DisconnectionPoints DisconnectionPointSlice `boil:"DisconnectionPoints" json:"DisconnectionPoints" toml:"DisconnectionPoints" yaml:"DisconnectionPoints"`
+	Inverters           InverterSlice           `boil:"Inverters" json:"Inverters" toml:"Inverters" yaml:"Inverters"`
+	Joins               JoinSlice               `boil:"Joins" json:"Joins" toml:"Joins" yaml:"Joins"`
+	PanelJoins          PanelJoinSlice          `boil:"PanelJoins" json:"PanelJoins" toml:"PanelJoins" yaml:"PanelJoins"`
+	Panels              PanelSlice              `boil:"Panels" json:"Panels" toml:"Panels" yaml:"Panels"`
+	Strings             StringSlice             `boil:"Strings" json:"Strings" toml:"Strings" yaml:"Strings"`
+	Trackers            TrackerSlice            `boil:"Trackers" json:"Trackers" toml:"Trackers" yaml:"Trackers"`
+	UsersProjects       UsersProjectSlice       `boil:"UsersProjects" json:"UsersProjects" toml:"UsersProjects" yaml:"UsersProjects"`
 }
 
 // NewStruct creates a new relationship struct
@@ -137,6 +140,13 @@ func (r *projectR) GetCables() CableSlice {
 		return nil
 	}
 	return r.Cables
+}
+
+func (r *projectR) GetDisconnectionPoints() DisconnectionPointSlice {
+	if r == nil {
+		return nil
+	}
+	return r.DisconnectionPoints
 }
 
 func (r *projectR) GetInverters() InverterSlice {
@@ -502,6 +512,20 @@ func (o *Project) Cables(mods ...qm.QueryMod) cableQuery {
 	return Cables(queryMods...)
 }
 
+// DisconnectionPoints retrieves all the disconnection_point's DisconnectionPoints with an executor.
+func (o *Project) DisconnectionPoints(mods ...qm.QueryMod) disconnectionPointQuery {
+	var queryMods []qm.QueryMod
+	if len(mods) != 0 {
+		queryMods = append(queryMods, mods...)
+	}
+
+	queryMods = append(queryMods,
+		qm.Where("\"disconnection_points\".\"project_id\"=?", o.ID),
+	)
+
+	return DisconnectionPoints(queryMods...)
+}
+
 // Inverters retrieves all the inverter's Inverters with an executor.
 func (o *Project) Inverters(mods ...qm.QueryMod) inverterQuery {
 	var queryMods []qm.QueryMod
@@ -824,6 +848,120 @@ func (projectL) LoadCables(ctx context.Context, e boil.ContextExecutor, singular
 				local.R.Cables = append(local.R.Cables, foreign)
 				if foreign.R == nil {
 					foreign.R = &cableR{}
+				}
+				foreign.R.Project = local
+				break
+			}
+		}
+	}
+
+	return nil
+}
+
+// LoadDisconnectionPoints allows an eager lookup of values, cached into the
+// loaded structs of the objects. This is for a 1-M or N-M relationship.
+func (projectL) LoadDisconnectionPoints(ctx context.Context, e boil.ContextExecutor, singular bool, maybeProject interface{}, mods queries.Applicator) error {
+	var slice []*Project
+	var object *Project
+
+	if singular {
+		var ok bool
+		object, ok = maybeProject.(*Project)
+		if !ok {
+			object = new(Project)
+			ok = queries.SetFromEmbeddedStruct(&object, &maybeProject)
+			if !ok {
+				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", object, maybeProject))
+			}
+		}
+	} else {
+		s, ok := maybeProject.(*[]*Project)
+		if ok {
+			slice = *s
+		} else {
+			ok = queries.SetFromEmbeddedStruct(&slice, maybeProject)
+			if !ok {
+				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", slice, maybeProject))
+			}
+		}
+	}
+
+	args := make([]interface{}, 0, 1)
+	if singular {
+		if object.R == nil {
+			object.R = &projectR{}
+		}
+		args = append(args, object.ID)
+	} else {
+	Outer:
+		for _, obj := range slice {
+			if obj.R == nil {
+				obj.R = &projectR{}
+			}
+
+			for _, a := range args {
+				if a == obj.ID {
+					continue Outer
+				}
+			}
+
+			args = append(args, obj.ID)
+		}
+	}
+
+	if len(args) == 0 {
+		return nil
+	}
+
+	query := NewQuery(
+		qm.From(`disconnection_points`),
+		qm.WhereIn(`disconnection_points.project_id in ?`, args...),
+	)
+	if mods != nil {
+		mods.Apply(query)
+	}
+
+	results, err := query.QueryContext(ctx, e)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load disconnection_points")
+	}
+
+	var resultSlice []*DisconnectionPoint
+	if err = queries.Bind(results, &resultSlice); err != nil {
+		return errors.Wrap(err, "failed to bind eager loaded slice disconnection_points")
+	}
+
+	if err = results.Close(); err != nil {
+		return errors.Wrap(err, "failed to close results in eager load on disconnection_points")
+	}
+	if err = results.Err(); err != nil {
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for disconnection_points")
+	}
+
+	if len(disconnectionPointAfterSelectHooks) != 0 {
+		for _, obj := range resultSlice {
+			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
+				return err
+			}
+		}
+	}
+	if singular {
+		object.R.DisconnectionPoints = resultSlice
+		for _, foreign := range resultSlice {
+			if foreign.R == nil {
+				foreign.R = &disconnectionPointR{}
+			}
+			foreign.R.Project = object
+		}
+		return nil
+	}
+
+	for _, foreign := range resultSlice {
+		for _, local := range slice {
+			if local.ID == foreign.ProjectID {
+				local.R.DisconnectionPoints = append(local.R.DisconnectionPoints, foreign)
+				if foreign.R == nil {
+					foreign.R = &disconnectionPointR{}
 				}
 				foreign.R.Project = local
 				break
@@ -1723,6 +1861,59 @@ func (o *Project) AddCables(ctx context.Context, exec boil.ContextExecutor, inse
 	for _, rel := range related {
 		if rel.R == nil {
 			rel.R = &cableR{
+				Project: o,
+			}
+		} else {
+			rel.R.Project = o
+		}
+	}
+	return nil
+}
+
+// AddDisconnectionPoints adds the given related objects to the existing relationships
+// of the project, optionally inserting them as new records.
+// Appends related to o.R.DisconnectionPoints.
+// Sets related.R.Project appropriately.
+func (o *Project) AddDisconnectionPoints(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*DisconnectionPoint) error {
+	var err error
+	for _, rel := range related {
+		if insert {
+			rel.ProjectID = o.ID
+			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
+				return errors.Wrap(err, "failed to insert into foreign table")
+			}
+		} else {
+			updateQuery := fmt.Sprintf(
+				"UPDATE \"disconnection_points\" SET %s WHERE %s",
+				strmangle.SetParamNames("\"", "\"", 1, []string{"project_id"}),
+				strmangle.WhereClause("\"", "\"", 2, disconnectionPointPrimaryKeyColumns),
+			)
+			values := []interface{}{o.ID, rel.ID}
+
+			if boil.IsDebug(ctx) {
+				writer := boil.DebugWriterFrom(ctx)
+				fmt.Fprintln(writer, updateQuery)
+				fmt.Fprintln(writer, values)
+			}
+			if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
+				return errors.Wrap(err, "failed to update foreign table")
+			}
+
+			rel.ProjectID = o.ID
+		}
+	}
+
+	if o.R == nil {
+		o.R = &projectR{
+			DisconnectionPoints: related,
+		}
+	} else {
+		o.R.DisconnectionPoints = append(o.R.DisconnectionPoints, related...)
+	}
+
+	for _, rel := range related {
+		if rel.R == nil {
+			rel.R = &disconnectionPointR{
 				Project: o,
 			}
 		} else {

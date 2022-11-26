@@ -63,6 +63,10 @@ import {
 import { GridLayoutDirective } from '../../../../directives/grid-layout.directive'
 import { GridStateActions } from '../../../store/grid/grid.actions'
 import { GridDeleteService } from '../../../services/grid/grid-delete.service'
+import { DisconnectionPointModel } from '../../../models/disconnection-point.model'
+import { DisconnectionPointsEntityService } from '../../services/disconnection-points-entity/disconnection-points-entity.service'
+import { BlockDisconnectionPointComponent } from '../block-disconnection-point/block-disconnection-point.component'
+import { FindDisconnectionPointLocationPipe } from '../../../../pipes/find-disconnection-point-location.pipe'
 
 @Component({
   selector: 'app-grid-layout',
@@ -92,6 +96,8 @@ import { GridDeleteService } from '../../../services/grid/grid-delete.service'
     BlockPanelComponent,
     BlockCableComponent,
     BlockInverterComponent,
+    BlockDisconnectionPointComponent,
+    FindDisconnectionPointLocationPipe,
   ],
 })
 export class GridLayoutComponent implements OnInit {
@@ -115,6 +121,10 @@ export class GridLayoutComponent implements OnInit {
     panels?: PanelModel[]
     panel?: PanelModel
   }>
+  modes$!: Observable<{
+    createMode: UnitModel
+    gridMode: GridMode
+  }>
   project$!: Observable<ProjectModel | undefined>
   inverters$!: Observable<InverterModel[]>
   trackers$!: Observable<TrackerModel[]>
@@ -123,6 +133,7 @@ export class GridLayoutComponent implements OnInit {
   cables$!: Observable<CableModel[]>
   blocks$!: Observable<BlockModel[]>
   joins$!: Observable<JoinModel[]>
+  disconnectionPoints$!: Observable<DisconnectionPointModel[]>
   toJoinArray$!: Observable<string[]>
   panelToJoin$!: Observable<PanelModel[]>
   rows = 20
@@ -141,6 +152,7 @@ export class GridLayoutComponent implements OnInit {
     private invertersEntity: InvertersEntityService,
     private trackersEntity: TrackersEntityService,
     private joinsEntity: JoinsEntityService,
+    private disconnectionPointsEntity: DisconnectionPointsEntityService,
     public gridJoins: GridJoinService,
     public gridDelete: GridDeleteService,
   ) {
@@ -162,6 +174,7 @@ export class GridLayoutComponent implements OnInit {
     // this.panels$ = this.store.select(selectPanelsByProjectIdRouteParams)
     this.cables$ = this.cablesEntity.entities$
     this.joins$ = this.joinsEntity.entities$
+    this.disconnectionPoints$ = this.disconnectionPointsEntity.entities$
     // this.cables$ = this.store.select(selectCablesByProjectIdRouteParams)
     this.blocks$ = this.store.select(selectBlocksByProjectIdRouteParams)
     this.toJoinArray$ = this.store.select(selectToJoinArray)
@@ -177,6 +190,15 @@ export class GridLayoutComponent implements OnInit {
         createMode,
         selectedStrings,
         selectedString,
+        gridMode,
+      })),
+    )
+    this.modes$ = combineLatest([
+      this.store.select(selectCreateMode),
+      this.store.select(selectGridMode),
+    ]).pipe(
+      map(([createMode, gridMode]) => ({
+        createMode,
         gridMode,
       })),
     )
@@ -249,30 +271,63 @@ export class GridLayoutComponent implements OnInit {
     return
   }
 
-  selectBlock(block: any) {
-    if (!block) return
-    this.store.select(selectGridMode).subscribe((gridMode) => {
-      if (gridMode === GridMode.JOIN) {
-        return
-      } else {
+  selectBlock(block: any, gridMode: GridMode) {
+    if (!block || !gridMode) return
+    if (gridMode === GridMode.JOIN || gridMode == GridMode.DELETE) {
+      return
+    } else {
+      if (gridMode !== GridMode.SELECT) {
         this.store.dispatch(
           GridStateActions.changeGridmode({ mode: GridMode.SELECT }),
         )
-        switch (block.model) {
-          case UnitModel.INVERTER:
-            return
-          case UnitModel.PANEL:
-            return this.store.dispatch(
-              SelectedStateActions.selectPanel({ panel: block }),
-            )
-          case UnitModel.CABLE:
-            return
-          default:
-            break
-        }
-        return
       }
-    })
+
+      switch (block.model) {
+        case UnitModel.INVERTER:
+          return
+        case UnitModel.PANEL:
+          return this.store.dispatch(
+            SelectedStateActions.selectPanel({ panel: block }),
+          )
+        case UnitModel.CABLE:
+          return
+        case UnitModel.DISCONNECTIONPOINT:
+          console.log(block)
+          return this.store.dispatch(
+            SelectedStateActions.selectDisconnectionPoint({
+              disconnectionPointId: block?.id,
+            }),
+          )
+        default:
+          break
+      }
+      return
+    }
+    /*    this.store.select(selectGridMode).subscribe((gridMode) => {
+          if (gridMode === GridMode.JOIN || gridMode == GridMode.DELETE) {
+            return
+          } else {
+            if (gridMode !== GridMode.SELECT) {
+              this.store.dispatch(
+                GridStateActions.changeGridmode({ mode: GridMode.SELECT }),
+              )
+            }
+
+            switch (block.model) {
+              case UnitModel.INVERTER:
+                return
+              case UnitModel.PANEL:
+                return this.store.dispatch(
+                  SelectedStateActions.selectPanel({ panel: block }),
+                )
+              case UnitModel.CABLE:
+                return
+              default:
+                break
+            }
+            return
+          }
+        })*/
   }
 
   selectString(stringId: string) {

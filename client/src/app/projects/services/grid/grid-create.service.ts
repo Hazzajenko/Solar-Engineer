@@ -23,6 +23,11 @@ import { selectBlocksByProjectId } from '../../store/blocks/blocks.selectors'
 import { combineLatest, lastValueFrom } from 'rxjs'
 import { selectSelectedString } from '../../store/grid/grid.selectors'
 import { StringsEntityService } from '../../project-id/services/strings-entity/strings-entity.service'
+import {
+  DisconnectionPointModel,
+  DisconnectionPointType,
+} from '../../models/disconnection-point.model'
+import { DisconnectionPointsEntityService } from '../../project-id/services/disconnection-points-entity/disconnection-points-entity.service'
 
 @Injectable({
   providedIn: 'root',
@@ -39,6 +44,7 @@ export class GridCreateService extends GridService {
     private gridUpdate: GridUpdateService,
     private store: Store<AppState>,
     private stringsEntity: StringsEntityService,
+    private disconnectionPointsEntity: DisconnectionPointsEntityService,
   ) {
     super(
       panelsEntity,
@@ -85,6 +91,9 @@ export class GridCreateService extends GridService {
           blocks,
         )
 
+      case UnitModel.DISCONNECTIONPOINT:
+        return this.createDisconnectionPointForGrid(project, location)
+
       case UnitModel.INVERTER:
         return this.createInverterForGrid(
           project,
@@ -117,6 +126,63 @@ export class GridCreateService extends GridService {
       }
 
       this.panelsEntity.add(panelRequest)
+    }
+  }
+
+  createDisconnectionPointForGrid(project: ProjectModel, location: string) {
+    let blocks: BlockModel[] | undefined
+    let selectedString: StringModel | undefined
+
+    combineLatest([
+      this.store.select(selectBlocksByProjectId({ projectId: project.id })),
+      this.store.select(selectSelectedString),
+    ]).subscribe(([blocks$, selectedString$]) => {
+      blocks = blocks$
+      selectedString = selectedString$
+    })
+
+    const existing = blocks?.find((block) => block.location === location)
+    if (existing) return console.log('spot taken')
+
+    if (selectedString) {
+      const disconnectionPointModel: DisconnectionPointModel = {
+        id: Guid.create().toString(),
+        project_id: project.id,
+        string_id: selectedString.id,
+        disconnection_type: DisconnectionPointType.MC4,
+        positive_id: 'undefined',
+        negative_id: 'undefined',
+        location,
+        model: UnitModel.DISCONNECTIONPOINT,
+        color: 'black',
+      }
+
+      this.disconnectionPointsEntity.add(disconnectionPointModel)
+    } else {
+      const stringRequest: StringModel = {
+        id: Guid.create().toString(),
+        name: 'string',
+        is_in_parallel: false,
+        project_id: project.id,
+        color: 'black',
+        model: UnitModel.STRING,
+      }
+
+      lastValueFrom(this.stringsEntity.add(stringRequest)).then((res) => {
+        const disconnectionPointModel: DisconnectionPointModel = {
+          id: Guid.create().toString(),
+          project_id: project.id,
+          string_id: res.id,
+          disconnection_type: DisconnectionPointType.MC4,
+          positive_id: 'undefined',
+          negative_id: 'undefined',
+          location,
+          color: 'black',
+          model: UnitModel.DISCONNECTIONPOINT,
+        }
+
+        this.disconnectionPointsEntity.add(disconnectionPointModel)
+      })
     }
   }
 

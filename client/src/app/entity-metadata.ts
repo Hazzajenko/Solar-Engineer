@@ -6,6 +6,7 @@ import { TrackerModel } from './projects/models/tracker.model'
 import { InverterModel } from './projects/models/inverter.model'
 import { JoinModel } from './projects/models/join.model'
 import { PanelJoinModel } from './projects/models/panel-join.model'
+import { DisconnectionPointModel } from './projects/models/disconnection-point.model'
 
 const entityMetadata: EntityMetadataMap = {
   Inverter: {
@@ -58,6 +59,14 @@ const entityMetadata: EntityMetadataMap = {
   },
   PanelJoin: {
     selectId: (b: PanelJoinModel): string => b.id,
+    entityDispatcherOptions: {
+      optimisticUpdate: true,
+      optimisticAdd: true,
+      optimisticDelete: true,
+    },
+  },
+  DisconnectionPoint: {
+    selectId: (b: DisconnectionPointModel): string => b.id,
     entityDispatcherOptions: {
       optimisticUpdate: true,
       optimisticAdd: true,

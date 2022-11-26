@@ -3,6 +3,8 @@ import { Store } from '@ngrx/store'
 import { AppState } from '../store/app.state'
 import { JoinsStateActions } from '../projects/store/joins/joins.actions'
 import { SelectedStateActions } from '../projects/store/selected/selected.actions'
+import { GridStateActions } from '../projects/store/grid/grid.actions'
+import { GridMode } from '../projects/store/grid/grid-mode.model'
 
 @Directive({
   selector: 'gridLayout',
@@ -17,6 +19,9 @@ export class GridLayoutDirective {
     if (event.key === 'Escape') {
       this.store.dispatch(JoinsStateActions.clearPanelJoinState())
       this.store.dispatch(SelectedStateActions.clearSelectedState())
+      this.store.dispatch(
+        GridStateActions.changeGridmode({ mode: GridMode.CREATE }),
+      )
       /*      this.store.dispatch(
               GridStateActions.changeGridmode({ mode: GridMode.UNDEFINED }),
             )*/

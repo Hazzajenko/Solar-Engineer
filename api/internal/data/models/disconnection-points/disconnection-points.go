@@ -1,4 +1,4 @@
-package panel_joins
+package disconnection_points
 
 import (
 	"context"
@@ -9,18 +9,18 @@ import (
 	"time"
 )
 
-type PanelJoinModel struct {
+type DisconnectionPointModel struct {
 	DB *sql.DB
 }
 
-func (p *PanelJoinModel) GetById(panelJoinId string) (*boiler.PanelJoin, error) {
-	if panelJoinId == "" {
+func (p *DisconnectionPointModel) GetById(disconnectionPointId string) (*boiler.DisconnectionPoint, error) {
+	if disconnectionPointId == "" {
 		return nil, errors.New("record not found")
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
-	panelJoin, err := boiler.FindPanelJoin(ctx, p.DB, panelJoinId)
+	disconnectionPoint, err := boiler.FindDisconnectionPoint(ctx, p.DB, disconnectionPointId)
 	if err != nil {
 		switch {
 		case errors.Is(err, sql.ErrNoRows):
@@ -30,15 +30,15 @@ func (p *PanelJoinModel) GetById(panelJoinId string) (*boiler.PanelJoin, error) 
 		}
 	}
 
-	return panelJoin, nil
+	return disconnectionPoint, nil
 }
 
-func (p *PanelJoinModel) Create(panelJoin *boiler.PanelJoin) (*boiler.PanelJoin, error) {
+func (p *DisconnectionPointModel) Create(disconnectionPoint *boiler.DisconnectionPoint) (*boiler.DisconnectionPoint, error) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err := panelJoin.Insert(ctx, p.DB, boil.Infer())
+	err := disconnectionPoint.Insert(ctx, p.DB, boil.Infer())
 	if err != nil {
 		switch {
 		default:
@@ -46,17 +46,17 @@ func (p *PanelJoinModel) Create(panelJoin *boiler.PanelJoin) (*boiler.PanelJoin,
 		}
 	}
 
-	return panelJoin, nil
+	return disconnectionPoint, nil
 }
 
-func (p *PanelJoinModel) GetPanelJoinsByProjectId(projectId int64) (*boiler.PanelJoinSlice, error) {
+func (p *DisconnectionPointModel) GetByProjectID(projectId int64) (*boiler.DisconnectionPointSlice, error) {
 	if projectId < 1 {
 		return nil, errors.New("record not found")
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
-	panelJoins, err := boiler.PanelJoins(boiler.PanelJoinWhere.ProjectID.EQ(projectId)).All(ctx, p.DB)
+	disconnectionPoints, err := boiler.DisconnectionPoints(boiler.DisconnectionPointWhere.ProjectID.EQ(projectId)).All(ctx, p.DB)
 	if err != nil {
 		switch {
 		case errors.Is(err, sql.ErrNoRows):
@@ -66,13 +66,13 @@ func (p *PanelJoinModel) GetPanelJoinsByProjectId(projectId int64) (*boiler.Pane
 		}
 	}
 
-	return &panelJoins, nil
+	return &disconnectionPoints, nil
 }
 
-func (p *PanelJoinModel) Update(update *boiler.PanelJoin) (*boiler.PanelJoin, error) {
+func (p *DisconnectionPointModel) Update(update *boiler.DisconnectionPoint) (*boiler.DisconnectionPoint, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
-	panelJoin, err := boiler.PanelJoins(boiler.PanelJoinWhere.ID.EQ(update.ID)).One(ctx, p.DB)
+	disconnectionPoint, err := boiler.DisconnectionPoints(boiler.DisconnectionPointWhere.ID.EQ(update.ID)).One(ctx, p.DB)
 	if err != nil {
 		switch {
 		case errors.Is(err, sql.ErrNoRows):
@@ -81,15 +81,15 @@ func (p *PanelJoinModel) Update(update *boiler.PanelJoin) (*boiler.PanelJoin, er
 			return nil, err
 		}
 	}
-
-	panelJoin.StringID = update.StringID
+	//panel.Color = update.Color
+	disconnectionPoint.Location = update.Location
+	disconnectionPoint.StringID = update.StringID
 	//panel.TrackerID = update.TrackerID
-	panelJoin.PositiveID = update.PositiveID
-	panelJoin.NegativeID = update.NegativeID
-	panelJoin.PositiveModel = update.PositiveModel
-	panelJoin.NegativeModel = update.NegativeModel
+	disconnectionPoint.PositiveID = update.PositiveID
+	disconnectionPoint.NegativeID = update.NegativeID
+	disconnectionPoint.Color = update.Color
 	/*	panel.AddPositivePanelJoins()*/
-	_, err = panelJoin.Update(ctx, p.DB, boil.Infer())
+	_, err = disconnectionPoint.Update(ctx, p.DB, boil.Infer())
 	if err != nil {
 		switch {
 		case errors.Is(err, sql.ErrNoRows):
@@ -101,15 +101,15 @@ func (p *PanelJoinModel) Update(update *boiler.PanelJoin) (*boiler.PanelJoin, er
 	//fmt.Println(panelRowsAff)
 
 	//result, err := boiler.Panels(boiler.PanelWhere.StringID.EQ(stringId)).All(ctx, p.DB)
-	return panelJoin, nil
+	return disconnectionPoint, nil
 }
 
-func (p *PanelJoinModel) Delete(panelJoinId string) error {
+func (p *DisconnectionPointModel) Delete(disconnectionPointID string) error {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	panelJoin, err := boiler.FindPanelJoin(ctx, p.DB, panelJoinId)
+	disconnectionPoint, err := boiler.FindDisconnectionPoint(ctx, p.DB, disconnectionPointID)
 	if err != nil {
 		switch {
 		default:
@@ -117,7 +117,7 @@ func (p *PanelJoinModel) Delete(panelJoinId string) error {
 		}
 	}
 
-	_, err = panelJoin.Delete(ctx, p.DB)
+	_, err = disconnectionPoint.Delete(ctx, p.DB)
 	if err != nil {
 		switch {
 		default:

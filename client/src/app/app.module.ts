@@ -83,6 +83,10 @@ import { CurrentProjectInterceptor } from './interceptors/current-project.interc
 import { PanelJoinsDataService } from './projects/project-id/services/panel-joins-entity/panel-joins-data.service'
 import { PanelJoinsEntityService } from './projects/project-id/services/panel-joins-entity/panel-joins-entity.service'
 import { PanelJoinsResolver } from './projects/project-id/services/panel-joins-entity/panel-joins.resolver'
+import { DisconnectionPointsDataService } from './projects/project-id/services/disconnection-points-entity/disconnection-points-data.service'
+import { DisconnectionPointsEntityService } from './projects/project-id/services/disconnection-points-entity/disconnection-points-entity.service'
+import { DisconnectionPointsResolver } from './projects/project-id/services/disconnection-points-entity/disconnection-points.resolver'
+import { DisconnectionPointsEntityEffects } from './projects/project-id/services/disconnection-points-entity/disconnection-points-entity.effects'
 
 export function tokenGetter() {
   // console.log(localStorage.getItem('token'))
@@ -134,6 +138,7 @@ export function tokenGetter() {
       CablesEntityEffects,
       StringsEntityEffects,
       InvertersEntityEffects,
+      DisconnectionPointsEntityEffects,
     ]),
     FindCablePipe,
     GetGridNumberPipe,
@@ -190,6 +195,9 @@ export function tokenGetter() {
     PanelJoinsEntityService,
     PanelJoinsResolver,
     PanelJoinsDataService,
+    DisconnectionPointsEntityService,
+    DisconnectionPointsResolver,
+    DisconnectionPointsDataService,
     CustomHttpUrlGenerator,
     { provide: DefaultDataServiceConfig, useValue: defaultDataServiceConfig },
     { provide: HttpUrlGenerator, useClass: CustomHttpUrlGenerator },
@@ -207,6 +215,7 @@ export class AppModule {
     private invertersDataService: InvertersDataService,
     private joinsDataService: JoinsDataService,
     private panelJoinsDataService: PanelJoinsDataService,
+    private disconnectionPointsDataService: DisconnectionPointsDataService,
   ) {
     eds.registerMetadataMap(entityConfig.entityMetadata)
 
@@ -217,5 +226,9 @@ export class AppModule {
     entityDataService.registerService('Inverter', invertersDataService)
     entityDataService.registerService('Join', joinsDataService)
     entityDataService.registerService('PanelJoin', panelJoinsDataService)
+    entityDataService.registerService(
+      'DisconnectionPoint',
+      disconnectionPointsDataService,
+    )
   }
 }

@@ -71,13 +71,22 @@ create table if not exists panels
 );
 
 CREATE TABLE IF NOT EXISTS panel_joins (
-    id text default 'err'::text NOT NULL,
-    positive_id text NOT NULL REFERENCES panels ON DELETE CASCADE,
-    negative_id text NOT NULL REFERENCES panels ON DELETE CASCADE,
-    PRIMARY KEY (positive_id, negative_id)
---     PRIMARY KEY (id),
---     CONSTRAINT fk_positive_id FOREIGN KEY(positive_id) REFERENCES panels(id),
---     CONSTRAINT fk_negative_id FOREIGN KEY(negative_id) REFERENCES panels(id)
+    positive_id text                     not null,
+    negative_id text                     not null,
+    id          text default 'err'::text not null,
+    project_id  bigint                   not null,
+    string_id   text default '00'::text  not null,
+    constraint panel_joins_id_pk
+    primary key (id),
+    constraint panel_joins_project_id_fk
+    foreign key (project_id) references projects,
+    foreign key (string_id) references strings,
+    constraint panels_panels_positive_id_fkey
+    foreign key (positive_id) references panels
+    on delete cascade,
+    constraint panels_panels_negative_id_fkey
+    foreign key (negative_id) references panels
+    on delete cascade
 );
 
 

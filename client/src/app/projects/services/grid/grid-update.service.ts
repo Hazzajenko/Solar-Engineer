@@ -19,6 +19,8 @@ import {
   LoggerService,
   LoggerService as Logger,
 } from '../../../services/logger.service'
+import { DisconnectionPointModel } from '../../models/disconnection-point.model'
+import { DisconnectionPointsEntityService } from '../../project-id/services/disconnection-points-entity/disconnection-points-entity.service'
 
 @Injectable({
   providedIn: 'root',
@@ -33,6 +35,7 @@ export class GridUpdateService extends GridService {
     logger: LoggerService,
     private http: HttpClient,
     private gridHelpers: GridHelpers,
+    private disconnectionPointsEntity: DisconnectionPointsEntityService,
   ) {
     super(
       panelsEntity,
@@ -67,6 +70,13 @@ export class GridUpdateService extends GridService {
           location,
         }
         return this.panelsEntity.update(panel)
+
+      case UnitModel.DISCONNECTIONPOINT:
+        const disconnectionPoint: DisconnectionPointModel = {
+          ...block,
+          location,
+        }
+        return this.disconnectionPointsEntity.update(disconnectionPoint)
 
       case UnitModel.CABLE:
         /*        const cable: CableModel = {

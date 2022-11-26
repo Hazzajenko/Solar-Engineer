@@ -83,18 +83,31 @@ export class GridDeleteService extends GridService {
   }
 
   deletePanel(panelId: string) {
-    this.panelJoinsEntity.entities$.subscribe((panelJoins) => {
-      const positiveLink = panelJoins.find(
-        (panelJoin) => panelJoin.positive_id === panelId,
-      )
-      const negativeLink = panelJoins.find(
-        (panelJoin) => panelJoin.negative_id === panelId,
-      )
-      if (positiveLink) this.panelJoinsEntity.delete(positiveLink.id)
-      if (negativeLink) this.panelJoinsEntity.delete(negativeLink.id)
-      return
-    })
+    /*    this.panelJoinsEntity.entities$.subscribe((panelJoins) => {
+          const positiveLink = panelJoins.find(
+            (panelJoin) => panelJoin.positive_id === panelId,
+          )
+          const negativeLink = panelJoins.find(
+            (panelJoin) => panelJoin.negative_id === panelId,
+          )
 
-    this.panelsEntity.delete(panelId)
+          if (positiveLink) {
+            console.log('deleted positive link', positiveLink)
+            this.panelJoinsEntity.delete(positiveLink.id)
+          } else {
+            console.log('no positive')
+          }
+
+          if (negativeLink) {
+            console.log('deleted negative link', negativeLink)
+            this.panelJoinsEntity.delete(negativeLink.id)
+            this.panelJoinsEntity.updateOneInCache()
+          } else {
+            console.log('no negative')
+          }
+
+
+        })*/
+    return this.panelsEntity.delete(panelId)
   }
 }

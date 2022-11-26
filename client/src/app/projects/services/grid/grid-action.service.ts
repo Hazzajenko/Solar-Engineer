@@ -65,7 +65,8 @@ export class GridActionService extends GridService {
         return this.remove.deleteSwitch(location, gridState, project, blocks)
 
       case GridMode.JOIN:
-        return this.join.addPanelToJoin(location, panelsToJoin, project, blocks)
+        return this.join.joinSwitch(location, project, blocks)
+      // return this.join.addPanelToJoin(location, panelsToJoin, project, blocks)
       // return this.join.addToJoinArray(location, joinArray, project, blocks)
 
       default:

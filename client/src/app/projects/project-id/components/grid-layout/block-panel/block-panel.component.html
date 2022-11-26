@@ -1,41 +1,25 @@
-<ng-container *ngIf="panels && block && grid">
-  <ng-container *ngrxLet="panelJoinsEntity.entities$ | async as panelJoins">
-    <!--  <ng-container *ngIf="panelsEntity.entities$ | async as panels">-->
-    <ng-container
-      *ngIf="panels | findPanelLocation: block.location!; let panel"
+<ng-container *ngIf="panel">
+  <div class="drop-zone">
+    <app-panel-link
+      *ngIf="selectedLinks$ | async; let selectedLinks"
+      [isNegativeLink]="selectedLinks?.selectedNegativeLinkTo === panel.id"
+      [isPositiveLink]="selectedLinks?.selectedPositiveLinkTo === panel.id"
+      class="drop-zone__svg"
+    ></app-panel-link>
+    <div
+      #panelDiv
+      (mouseover)="panelHover(panel)"
+      [cdkDragData]="panel"
+      [matTooltip]="displayTooltip(panel)"
+      [style.border]="'2px solid ' + panel.color"
+      cdkDrag
+      class="drop-zone__panel"
+      matTooltipPosition="right"
+      panelDirective
     >
-      <ng-container *ngrxLet="panel | getPanelJoin; let links">
-        <ng-container *ngrxLet="selectedLinks$ | async; let selectedLinks">
-          <div class="drop-zone">
-            <app-panel-link
-              [isNegativeLink]="
-                selectedLinks?.selectedNegativeLinkTo === panel.id
-              "
-              [isPositiveLink]="
-                selectedLinks?.selectedPositiveLinkTo === panel.id
-              "
-              class="drop-zone__svg"
-            ></app-panel-link>
-            <div
-              #panelDiv
-              (mouseover)="panelHover(panel)"
-              *ngIf="panel.location === block.location!"
-              [cdkDragData]="panel"
-              [matTooltip]="displayTooltip(panel)"
-              [style.border]="'2px solid ' + panel.color"
-              cdkDrag
-              class="drop-zone__panel"
-              matTooltipPosition="right"
-              panelDirective
-            >
-              <!--            P-->
-            </div>
-          </div>
-        </ng-container>
-      </ng-container>
-      <!--  </ng-container>-->
-    </ng-container>
-  </ng-container>
+      <!--            P-->
+    </div>
+  </div>
 </ng-container>
 <!--
 'background-color':

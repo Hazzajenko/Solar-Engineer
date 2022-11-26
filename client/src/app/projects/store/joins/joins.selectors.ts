@@ -7,3 +7,8 @@ export const selectPanelToJoin = createSelector(
   selectJoinsState,
   (state: State.JoinsState) => state.panelToJoin,
 )
+
+export const selectBlockToJoin = createSelector(
+  selectJoinsState,
+  (state: State.JoinsState) => state.blockToJoin,
+)

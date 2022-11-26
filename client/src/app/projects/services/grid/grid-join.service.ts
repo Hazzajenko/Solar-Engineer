@@ -13,17 +13,18 @@ import { CableModel } from '../../models/cable.model'
 import { Store } from '@ngrx/store'
 import { AppState } from '../../../store/app.state'
 import { GridStateActions } from '../../store/grid/grid.actions'
-import { GridMode } from '../../store/grid/grid-mode.model'
 import { JoinsService } from '../joins.service'
 import { LoggerService } from '../../../services/logger.service'
 import { PanelJoinsEntityService } from '../../project-id/services/panel-joins-entity/panel-joins-entity.service'
 import { PanelJoinModel } from '../../models/panel-join.model'
 import { PanelModel } from '../../models/panel.model'
 import { combineLatest } from 'rxjs'
-import { selectPanelToJoin } from '../../store/joins/joins.selectors'
+import { selectBlockToJoin } from '../../store/joins/joins.selectors'
 import { JoinsStateActions } from '../../store/joins/joins.actions'
 import { StringsEntityService } from '../../project-id/services/strings-entity/strings-entity.service'
 import { StringModel } from '../../models/string.model'
+import { DisconnectionPointModel } from '../../models/disconnection-point.model'
+import { DisconnectionPointsEntityService } from '../../project-id/services/disconnection-points-entity/disconnection-points-entity.service'
 
 @Injectable({
   providedIn: 'root',
@@ -41,6 +42,7 @@ export class GridJoinService extends GridService {
     private store: Store<AppState>,
     private panelJoinsEntity: PanelJoinsEntityService,
     private stringsEntity: StringsEntityService,
+    private disconnectionPointsEntity: DisconnectionPointsEntityService,
   ) {
     super(
       panelsEntity,
@@ -52,32 +54,34 @@ export class GridJoinService extends GridService {
     )
   }
 
-  startJoin(location: string, project: ProjectModel, blocks: BlockModel[]) {
-    const existing = blocks.find((block) => block.location === location)
-    if (!existing) return console.log('no block to add toJoinArray')
+  joinSwitch(location: string, project: ProjectModel, blocks: BlockModel[]) {
+    let existingBlockToJoin: BlockModel | undefined
+    const blockToJoin = blocks.find((block) => block.location === location)
+    if (!blockToJoin) {
+      return console.log('no block here')
+    }
+    this.store.select(selectBlockToJoin).subscribe((block$) => {
+      existingBlockToJoin = block$
+    })
+    console.log('blockToJoin', blockToJoin)
 
-    this.joinArray.push(location)
+    switch (blockToJoin.model) {
+      case UnitModel.PANEL:
+        console.log('addPanelToJoin')
+        return this.addPanelToJoin(location, project, blocks)
 
-    this.store.dispatch(
-      GridStateActions.changeGridmode({ mode: GridMode.JOIN }),
-    )
+      case UnitModel.CABLE:
+        break
 
-    return this.store.dispatch(
-      GridStateActions.addToJoinArray({ toJoin: location }),
-    )
-  }
+      case UnitModel.DISCONNECTIONPOINT:
+        this.addDpToJoin(location, project)
+        break
 
-  finishJoin(location: string, project: ProjectModel, blocks: BlockModel[]) {
-    const existing = blocks.find((block) => block.location === location)
-    if (!existing) return console.log('no block to add toJoinArray')
-
-    // const inSurroundings = this.isBlockInSurrounding(location, blocks)
-
-    // if (!inSurroundings) return console.log('second block not in surroundings')
-
-    return this.store.dispatch(
-      GridStateActions.addToJoinArray({ toJoin: location }),
-    )
+      case UnitModel.INVERTER:
+        break
+      default:
+        break
+    }
   }
 
   addToJoinArray(
@@ -106,37 +110,82 @@ export class GridJoinService extends GridService {
 
   addPanelToJoin(
     panelLocation: string,
-    panelToJoins: PanelModel[],
     project: ProjectModel,
     blocks: BlockModel[],
   ) {
     let panel: PanelModel | undefined
+    let panels: PanelModel[] | undefined
+    let blockToJoin: BlockModel | undefined
     let panelToJoin: PanelModel | undefined
+    let dpToJoin: DisconnectionPointModel | undefined
     let panelString: StringModel | undefined
     combineLatest([
       this.panelsEntity.entities$,
-      this.store.select(selectPanelToJoin),
+      this.store.select(selectBlockToJoin),
       this.stringsEntity.entities$,
-    ]).subscribe(([panels, panelToJoin$, strings$]) => {
-      panel = panels.find((p) => p.location === panelLocation)
-      panelToJoin = panelToJoin$
+      this.disconnectionPointsEntity.entities$,
+    ]).subscribe(([panels$, blockToJoin$, strings$, disconnectionPoints]) => {
+      panel = panels$.find((p) => p.location === panelLocation)
+      panels = panels$
       panelString = strings$.find((s) => s.id === panel?.string_id)
+
+      if (blockToJoin$) {
+        blockToJoin = blockToJoin$
+        switch (blockToJoin$?.model) {
+          case UnitModel.PANEL:
+            panelToJoin = panels$.find(
+              (p) => p.location === blockToJoin$.location,
+            )
+            break
+          case UnitModel.DISCONNECTIONPOINT:
+            dpToJoin = disconnectionPoints.find(
+              (dp) => dp.location === blockToJoin$.location,
+            )
+            break
+        }
+      }
     })
-    /*    this.panelsEntity.entities$.subscribe((panels) => {
-          panel = panels.find((p) => p.location === panelLocation)
-        })*/
-    if (!panel) return console.log('no panel exists')
+    console.log('blockToJoin', blockToJoin)
 
-    const existing = blocks.find((block) => block.location === panel!.location)
-    if (!existing) return console.log('no block to add toJoinArray')
+    if (blockToJoin) {
+      switch (blockToJoin?.model) {
+        case UnitModel.PANEL:
+          this.joinPanelToPanel(project, panel!, panelString!, panelToJoin!)
+          break
+        case UnitModel.DISCONNECTIONPOINT:
+          this.joinPanelToDp(project, panel!, panelString!, dpToJoin!)
+          break
+      }
+    } else {
+      if (panel) {
+        const block: BlockModel = {
+          id: panel.id,
+          model: UnitModel.PANEL,
+          location: panel.location,
+          project_id: project.id,
+        }
+        this.store.dispatch(JoinsStateActions.addToBlockJoin({ block }))
+      }
+    }
+  }
 
-    if (panelToJoin) {
+  joinPanelToPanel(
+    project: ProjectModel,
+    panel?: PanelModel,
+    panelString?: StringModel,
+    panelToJoin?: PanelModel,
+  ) {
+    if (!panel) return
+
+    if (panelToJoin && panelString) {
       const panelJoinRequest: PanelJoinModel = {
         id: Guid.create().toString(),
         project_id: project.id,
         string_id: panelToJoin.string_id,
         positive_id: panelToJoin.id,
+        positive_model: UnitModel.PANEL,
         negative_id: panel!.id,
+        negative_model: UnitModel.PANEL,
       }
 
       this.panelJoinsEntity.add(panelJoinRequest)
@@ -146,38 +195,151 @@ export class GridJoinService extends GridService {
       const updatePanel: PanelModel = {
         ...panel,
         string_id: panelToJoin.string_id,
-        color: panelString?.color,
+        color: panelString.color,
       }
       this.panelsEntity.update(updatePanel)
     }
-    this.store.dispatch(JoinsStateActions.addToPanelJoin({ panel }))
-    /*    this.store.dispatch(JoinsStateActions.addToPanelJoin({ panel }))
-        if (panelToJoins.length === 0) {
-          return this.store.dispatch(GridStateActions.addPanelToJoin({ panel }))
-        }
-        if (panelToJoins) {
-          panelToJoins.forEach((panelToJoin) => {
-            if (
-              this.isBlockInSurrounding(
-                panel!.location,
-                panelToJoin.location,
-                blocks,
-              )
-            ) {
-              if (panelToJoins.length === 1) {
-                const panelJoinRequest: PanelJoinModel = {
-                  id: Guid.create().toString(),
-                  project_id: project.id,
-                  positive_id: panelToJoin.id,
-                  negative_id: panel!.id,
-                }
 
-                this.panelJoinsEntity.add(panelJoinRequest)
-                return this.store.dispatch(GridStateActions.clearJoinArray())
-              }
-            }
-          })
-        }*/
+    const block: BlockModel = {
+      id: panel.id,
+      model: UnitModel.PANEL,
+      location: panel.location,
+      project_id: project.id,
+    }
+
+    this.store.dispatch(JoinsStateActions.addToBlockJoin({ block }))
+  }
+
+  joinPanelToDp(
+    project: ProjectModel,
+    panel?: PanelModel,
+    panelString?: StringModel,
+    dpToJoin?: DisconnectionPointModel,
+  ) {
+    if (!panel) return
+
+    if (dpToJoin && panelString) {
+      const update: Partial<DisconnectionPointModel> = {
+        ...dpToJoin,
+        string_id: panelString.id,
+        negative_id: panel.id,
+      }
+
+      this.disconnectionPointsEntity.update(update)
+
+      const panelJoinRequest: PanelJoinModel = {
+        id: Guid.create().toString(),
+        project_id: project.id,
+        string_id: panel.string_id,
+        negative_id: panel.id,
+        negative_model: UnitModel.PANEL,
+        positive_id: dpToJoin.id,
+        positive_model: UnitModel.DISCONNECTIONPOINT,
+      }
+
+      this.panelJoinsEntity.add(panelJoinRequest)
+    }
+
+    const block: BlockModel = {
+      id: panel.id,
+      model: UnitModel.PANEL,
+      location: panel.location,
+      project_id: project.id,
+    }
+
+    this.store.dispatch(JoinsStateActions.addToBlockJoin({ block }))
+  }
+
+  joinDpToPanel(
+    project: ProjectModel,
+    panelToJoin?: PanelModel,
+    dpString?: StringModel,
+    dp?: DisconnectionPointModel,
+  ) {
+    if (!dp) return
+
+    if (panelToJoin && dpString) {
+      const update: Partial<DisconnectionPointModel> = {
+        ...dp,
+        string_id: panelToJoin.string_id,
+        positive_id: panelToJoin.id,
+      }
+
+      this.disconnectionPointsEntity.update(update)
+
+      const panelJoinRequest: PanelJoinModel = {
+        id: Guid.create().toString(),
+        project_id: project.id,
+        string_id: panelToJoin.string_id,
+        positive_id: panelToJoin.id,
+        positive_model: UnitModel.PANEL,
+        negative_id: dp.id,
+        negative_model: UnitModel.DISCONNECTIONPOINT,
+      }
+
+      this.panelJoinsEntity.add(panelJoinRequest)
+    }
+
+    const block: BlockModel = {
+      id: dp.id,
+      model: UnitModel.DISCONNECTIONPOINT,
+      location: dp.location!,
+      project_id: project.id,
+    }
+
+    this.store.dispatch(JoinsStateActions.addToBlockJoin({ block }))
+  }
+
+  addDpToJoin(dpLocation: string, project: ProjectModel) {
+    let dp: DisconnectionPointModel | undefined
+    let blockToJoin: BlockModel | undefined
+    let panelToJoin: PanelModel | undefined
+    let dpToJoin: DisconnectionPointModel | undefined
+    let dpString: StringModel | undefined
+    combineLatest([
+      this.panelsEntity.entities$,
+      this.store.select(selectBlockToJoin),
+      this.stringsEntity.entities$,
+      this.disconnectionPointsEntity.entities$,
+    ]).subscribe(([panels$, blockToJoin$, strings$, dps$]) => {
+      dp = dps$.find((dp) => dp.location === dpLocation)
+      dpString = strings$.find((s) => s.id === dp?.string_id)
+
+      if (blockToJoin$) {
+        blockToJoin = blockToJoin$
+        switch (blockToJoin$?.model) {
+          case UnitModel.PANEL:
+            panelToJoin = panels$.find(
+              (p) => p.location === blockToJoin$.location,
+            )
+            break
+          case UnitModel.DISCONNECTIONPOINT:
+            dpToJoin = dps$.find((dp) => dp.location === blockToJoin$.location)
+            break
+        }
+      }
+    })
+
+    if (blockToJoin) {
+      switch (blockToJoin?.model) {
+        case UnitModel.PANEL:
+          this.joinDpToPanel(project, panelToJoin!, dpString!, dp!)
+          break
+        case UnitModel.DISCONNECTIONPOINT:
+          console.log('err cannot join dp to dp')
+          break
+      }
+    } else {
+      if (dp) {
+        const block: BlockModel = {
+          id: dp.id,
+          model: UnitModel.DISCONNECTIONPOINT,
+          location: dp.location!,
+          project_id: project.id,
+        }
+        this.store.dispatch(JoinsStateActions.addToBlockJoin({ block }))
+      }
+    }
   }
 
   async createJoin(vm: {

@@ -7,4 +7,5 @@ export enum UnitModel {
   PANEL,
   CABLE,
   JOIN,
+  DISCONNECTIONPOINT,
 }

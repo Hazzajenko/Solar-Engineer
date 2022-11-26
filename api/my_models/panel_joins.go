@@ -23,79 +23,87 @@ import (
 
 // PanelJoin is an object representing the database table.
 type PanelJoin struct {
-	PositiveID string `boil:"positive_id" json:"positive_id" toml:"positive_id" yaml:"positive_id"`
-	NegativeID string `boil:"negative_id" json:"negative_id" toml:"negative_id" yaml:"negative_id"`
-	ID         string `boil:"id" json:"id" toml:"id" yaml:"id"`
-	ProjectID  int64  `boil:"project_id" json:"project_id" toml:"project_id" yaml:"project_id"`
-	StringID   string `boil:"string_id" json:"string_id" toml:"string_id" yaml:"string_id"`
+	PositiveID    string `boil:"positive_id" json:"positive_id" toml:"positive_id" yaml:"positive_id"`
+	NegativeID    string `boil:"negative_id" json:"negative_id" toml:"negative_id" yaml:"negative_id"`
+	ID            string `boil:"id" json:"id" toml:"id" yaml:"id"`
+	ProjectID     int64  `boil:"project_id" json:"project_id" toml:"project_id" yaml:"project_id"`
+	StringID      string `boil:"string_id" json:"string_id" toml:"string_id" yaml:"string_id"`
+	PositiveModel int    `boil:"positive_model" json:"positive_model" toml:"positive_model" yaml:"positive_model"`
+	NegativeModel int    `boil:"negative_model" json:"negative_model" toml:"negative_model" yaml:"negative_model"`
 
 	R *panelJoinR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L panelJoinL  `boil:"-" json:"-" toml:"-" yaml:"-"`
 }
 
 var PanelJoinColumns = struct {
-	PositiveID string
-	NegativeID string
-	ID         string
-	ProjectID  string
-	StringID   string
+	PositiveID    string
+	NegativeID    string
+	ID            string
+	ProjectID     string
+	StringID      string
+	PositiveModel string
+	NegativeModel string
 }{
-	PositiveID: "positive_id",
-	NegativeID: "negative_id",
-	ID:         "id",
-	ProjectID:  "project_id",
-	StringID:   "string_id",
+	PositiveID:    "positive_id",
+	NegativeID:    "negative_id",
+	ID:            "id",
+	ProjectID:     "project_id",
+	StringID:      "string_id",
+	PositiveModel: "positive_model",
+	NegativeModel: "negative_model",
 }
 
 var PanelJoinTableColumns = struct {
-	PositiveID string
-	NegativeID string
-	ID         string
-	ProjectID  string
-	StringID   string
+	PositiveID    string
+	NegativeID    string
+	ID            string
+	ProjectID     string
+	StringID      string
+	PositiveModel string
+	NegativeModel string
 }{
-	PositiveID: "panel_joins.positive_id",
-	NegativeID: "panel_joins.negative_id",
-	ID:         "panel_joins.id",
-	ProjectID:  "panel_joins.project_id",
-	StringID:   "panel_joins.string_id",
+	PositiveID:    "panel_joins.positive_id",
+	NegativeID:    "panel_joins.negative_id",
+	ID:            "panel_joins.id",
+	ProjectID:     "panel_joins.project_id",
+	StringID:      "panel_joins.string_id",
+	PositiveModel: "panel_joins.positive_model",
+	NegativeModel: "panel_joins.negative_model",
 }
 
 // Generated where
 
 var PanelJoinWhere = struct {
-	PositiveID whereHelperstring
-	NegativeID whereHelperstring
-	ID         whereHelperstring
-	ProjectID  whereHelperint64
-	StringID   whereHelperstring
+	PositiveID    whereHelperstring
+	NegativeID    whereHelperstring
+	ID            whereHelperstring
+	ProjectID     whereHelperint64
+	StringID      whereHelperstring
+	PositiveModel whereHelperint
+	NegativeModel whereHelperint
 }{
-	PositiveID: whereHelperstring{field: "\"panel_joins\".\"positive_id\""},
-	NegativeID: whereHelperstring{field: "\"panel_joins\".\"negative_id\""},
-	ID:         whereHelperstring{field: "\"panel_joins\".\"id\""},
-	ProjectID:  whereHelperint64{field: "\"panel_joins\".\"project_id\""},
-	StringID:   whereHelperstring{field: "\"panel_joins\".\"string_id\""},
+	PositiveID:    whereHelperstring{field: "\"panel_joins\".\"positive_id\""},
+	NegativeID:    whereHelperstring{field: "\"panel_joins\".\"negative_id\""},
+	ID:            whereHelperstring{field: "\"panel_joins\".\"id\""},
+	ProjectID:     whereHelperint64{field: "\"panel_joins\".\"project_id\""},
+	StringID:      whereHelperstring{field: "\"panel_joins\".\"string_id\""},
+	PositiveModel: whereHelperint{field: "\"panel_joins\".\"positive_model\""},
+	NegativeModel: whereHelperint{field: "\"panel_joins\".\"negative_model\""},
 }
 
 // PanelJoinRels is where relationship names are stored.
 var PanelJoinRels = struct {
-	Project  string
-	String   string
-	Negative string
-	Positive string
+	Project string
+	String  string
 }{
-	Project:  "Project",
-	String:   "String",
-	Negative: "Negative",
-	Positive: "Positive",
+	Project: "Project",
+	String:  "String",
 }
 
 // panelJoinR is where relationships are stored.
 type panelJoinR struct {
-	Project  *Project `boil:"Project" json:"Project" toml:"Project" yaml:"Project"`
-	String   *String  `boil:"String" json:"String" toml:"String" yaml:"String"`
-	Negative *Panel   `boil:"Negative" json:"Negative" toml:"Negative" yaml:"Negative"`
-	Positive *Panel   `boil:"Positive" json:"Positive" toml:"Positive" yaml:"Positive"`
+	Project *Project `boil:"Project" json:"Project" toml:"Project" yaml:"Project"`
+	String  *String  `boil:"String" json:"String" toml:"String" yaml:"String"`
 }
 
 // NewStruct creates a new relationship struct
@@ -117,27 +125,13 @@ func (r *panelJoinR) GetString() *String {
 	return r.String
 }
 
-func (r *panelJoinR) GetNegative() *Panel {
-	if r == nil {
-		return nil
-	}
-	return r.Negative
-}
-
-func (r *panelJoinR) GetPositive() *Panel {
-	if r == nil {
-		return nil
-	}
-	return r.Positive
-}
-
 // panelJoinL is where Load methods for each relationship are stored.
 type panelJoinL struct{}
 
 var (
-	panelJoinAllColumns            = []string{"positive_id", "negative_id", "id", "project_id", "string_id"}
-	panelJoinColumnsWithoutDefault = []string{"positive_id", "negative_id", "project_id"}
-	panelJoinColumnsWithDefault    = []string{"id", "string_id"}
+	panelJoinAllColumns            = []string{"positive_id", "negative_id", "id", "project_id", "string_id", "positive_model", "negative_model"}
+	panelJoinColumnsWithoutDefault = []string{"project_id"}
+	panelJoinColumnsWithDefault    = []string{"positive_id", "negative_id", "id", "string_id", "positive_model", "negative_model"}
 	panelJoinPrimaryKeyColumns     = []string{"id"}
 	panelJoinGeneratedColumns      = []string{}
 )
@@ -442,28 +436,6 @@ func (o *PanelJoin) String(mods ...qm.QueryMod) stringQuery {
 	return Strings(queryMods...)
 }
 
-// Negative pointed to by the foreign key.
-func (o *PanelJoin) Negative(mods ...qm.QueryMod) panelQuery {
-	queryMods := []qm.QueryMod{
-		qm.Where("\"id\" = ?", o.NegativeID),
-	}
-
-	queryMods = append(queryMods, mods...)
-
-	return Panels(queryMods...)
-}
-
-// Positive pointed to by the foreign key.
-func (o *PanelJoin) Positive(mods ...qm.QueryMod) panelQuery {
-	queryMods := []qm.QueryMod{
-		qm.Where("\"id\" = ?", o.PositiveID),
-	}
-
-	queryMods = append(queryMods, mods...)
-
-	return Panels(queryMods...)
-}
-
 // LoadProject allows an eager lookup of values, cached into the
 // loaded structs of the objects. This is for an N-1 relationship.
 func (panelJoinL) LoadProject(ctx context.Context, e boil.ContextExecutor, singular bool, maybePanelJoin interface{}, mods queries.Applicator) error {
@@ -704,246 +676,6 @@ func (panelJoinL) LoadString(ctx context.Context, e boil.ContextExecutor, singul
 	return nil
 }
 
-// LoadNegative allows an eager lookup of values, cached into the
-// loaded structs of the objects. This is for an N-1 relationship.
-func (panelJoinL) LoadNegative(ctx context.Context, e boil.ContextExecutor, singular bool, maybePanelJoin interface{}, mods queries.Applicator) error {
-	var slice []*PanelJoin
-	var object *PanelJoin
-
-	if singular {
-		var ok bool
-		object, ok = maybePanelJoin.(*PanelJoin)
-		if !ok {
-			object = new(PanelJoin)
-			ok = queries.SetFromEmbeddedStruct(&object, &maybePanelJoin)
-			if !ok {
-				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", object, maybePanelJoin))
-			}
-		}
-	} else {
-		s, ok := maybePanelJoin.(*[]*PanelJoin)
-		if ok {
-			slice = *s
-		} else {
-			ok = queries.SetFromEmbeddedStruct(&slice, maybePanelJoin)
-			if !ok {
-				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", slice, maybePanelJoin))
-			}
-		}
-	}
-
-	args := make([]interface{}, 0, 1)
-	if singular {
-		if object.R == nil {
-			object.R = &panelJoinR{}
-		}
-		args = append(args, object.NegativeID)
-
-	} else {
-	Outer:
-		for _, obj := range slice {
-			if obj.R == nil {
-				obj.R = &panelJoinR{}
-			}
-
-			for _, a := range args {
-				if a == obj.NegativeID {
-					continue Outer
-				}
-			}
-
-			args = append(args, obj.NegativeID)
-
-		}
-	}
-
-	if len(args) == 0 {
-		return nil
-	}
-
-	query := NewQuery(
-		qm.From(`panels`),
-		qm.WhereIn(`panels.id in ?`, args...),
-	)
-	if mods != nil {
-		mods.Apply(query)
-	}
-
-	results, err := query.QueryContext(ctx, e)
-	if err != nil {
-		return errors.Wrap(err, "failed to eager load Panel")
-	}
-
-	var resultSlice []*Panel
-	if err = queries.Bind(results, &resultSlice); err != nil {
-		return errors.Wrap(err, "failed to bind eager loaded slice Panel")
-	}
-
-	if err = results.Close(); err != nil {
-		return errors.Wrap(err, "failed to close results of eager load for panels")
-	}
-	if err = results.Err(); err != nil {
-		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for panels")
-	}
-
-	if len(panelJoinAfterSelectHooks) != 0 {
-		for _, obj := range resultSlice {
-			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
-				return err
-			}
-		}
-	}
-
-	if len(resultSlice) == 0 {
-		return nil
-	}
-
-	if singular {
-		foreign := resultSlice[0]
-		object.R.Negative = foreign
-		if foreign.R == nil {
-			foreign.R = &panelR{}
-		}
-		foreign.R.NegativePanelJoins = append(foreign.R.NegativePanelJoins, object)
-		return nil
-	}
-
-	for _, local := range slice {
-		for _, foreign := range resultSlice {
-			if local.NegativeID == foreign.ID {
-				local.R.Negative = foreign
-				if foreign.R == nil {
-					foreign.R = &panelR{}
-				}
-				foreign.R.NegativePanelJoins = append(foreign.R.NegativePanelJoins, local)
-				break
-			}
-		}
-	}
-
-	return nil
-}
-
-// LoadPositive allows an eager lookup of values, cached into the
-// loaded structs of the objects. This is for an N-1 relationship.
-func (panelJoinL) LoadPositive(ctx context.Context, e boil.ContextExecutor, singular bool, maybePanelJoin interface{}, mods queries.Applicator) error {
-	var slice []*PanelJoin
-	var object *PanelJoin
-
-	if singular {
-		var ok bool
-		object, ok = maybePanelJoin.(*PanelJoin)
-		if !ok {
-			object = new(PanelJoin)
-			ok = queries.SetFromEmbeddedStruct(&object, &maybePanelJoin)
-			if !ok {
-				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", object, maybePanelJoin))
-			}
-		}
-	} else {
-		s, ok := maybePanelJoin.(*[]*PanelJoin)
-		if ok {
-			slice = *s
-		} else {
-			ok = queries.SetFromEmbeddedStruct(&slice, maybePanelJoin)
-			if !ok {
-				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", slice, maybePanelJoin))
-			}
-		}
-	}
-
-	args := make([]interface{}, 0, 1)
-	if singular {
-		if object.R == nil {
-			object.R = &panelJoinR{}
-		}
-		args = append(args, object.PositiveID)
-
-	} else {
-	Outer:
-		for _, obj := range slice {
-			if obj.R == nil {
-				obj.R = &panelJoinR{}
-			}
-
-			for _, a := range args {
-				if a == obj.PositiveID {
-					continue Outer
-				}
-			}
-
-			args = append(args, obj.PositiveID)
-
-		}
-	}
-
-	if len(args) == 0 {
-		return nil
-	}
-
-	query := NewQuery(
-		qm.From(`panels`),
-		qm.WhereIn(`panels.id in ?`, args...),
-	)
-	if mods != nil {
-		mods.Apply(query)
-	}
-
-	results, err := query.QueryContext(ctx, e)
-	if err != nil {
-		return errors.Wrap(err, "failed to eager load Panel")
-	}
-
-	var resultSlice []*Panel
-	if err = queries.Bind(results, &resultSlice); err != nil {
-		return errors.Wrap(err, "failed to bind eager loaded slice Panel")
-	}
-
-	if err = results.Close(); err != nil {
-		return errors.Wrap(err, "failed to close results of eager load for panels")
-	}
-	if err = results.Err(); err != nil {
-		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for panels")
-	}
-
-	if len(panelJoinAfterSelectHooks) != 0 {
-		for _, obj := range resultSlice {
-			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
-				return err
-			}
-		}
-	}
-
-	if len(resultSlice) == 0 {
-		return nil
-	}
-
-	if singular {
-		foreign := resultSlice[0]
-		object.R.Positive = foreign
-		if foreign.R == nil {
-			foreign.R = &panelR{}
-		}
-		foreign.R.PositivePanelJoins = append(foreign.R.PositivePanelJoins, object)
-		return nil
-	}
-
-	for _, local := range slice {
-		for _, foreign := range resultSlice {
-			if local.PositiveID == foreign.ID {
-				local.R.Positive = foreign
-				if foreign.R == nil {
-					foreign.R = &panelR{}
-				}
-				foreign.R.PositivePanelJoins = append(foreign.R.PositivePanelJoins, local)
-				break
-			}
-		}
-	}
-
-	return nil
-}
-
 // SetProject of the panelJoin to the related item.
 // Sets o.R.Project to related.
 // Adds o to related.R.PanelJoins.
@@ -1033,100 +765,6 @@ func (o *PanelJoin) SetString(ctx context.Context, exec boil.ContextExecutor, in
 		}
 	} else {
 		related.R.PanelJoins = append(related.R.PanelJoins, o)
-	}
-
-	return nil
-}
-
-// SetNegative of the panelJoin to the related item.
-// Sets o.R.Negative to related.
-// Adds o to related.R.NegativePanelJoins.
-func (o *PanelJoin) SetNegative(ctx context.Context, exec boil.ContextExecutor, insert bool, related *Panel) error {
-	var err error
-	if insert {
-		if err = related.Insert(ctx, exec, boil.Infer()); err != nil {
-			return errors.Wrap(err, "failed to insert into foreign table")
-		}
-	}
-
-	updateQuery := fmt.Sprintf(
-		"UPDATE \"panel_joins\" SET %s WHERE %s",
-		strmangle.SetParamNames("\"", "\"", 1, []string{"negative_id"}),
-		strmangle.WhereClause("\"", "\"", 2, panelJoinPrimaryKeyColumns),
-	)
-	values := []interface{}{related.ID, o.ID}
-
-	if boil.IsDebug(ctx) {
-		writer := boil.DebugWriterFrom(ctx)
-		fmt.Fprintln(writer, updateQuery)
-		fmt.Fprintln(writer, values)
-	}
-	if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
-		return errors.Wrap(err, "failed to update local table")
-	}
-
-	o.NegativeID = related.ID
-	if o.R == nil {
-		o.R = &panelJoinR{
-			Negative: related,
-		}
-	} else {
-		o.R.Negative = related
-	}
-
-	if related.R == nil {
-		related.R = &panelR{
-			NegativePanelJoins: PanelJoinSlice{o},
-		}
-	} else {
-		related.R.NegativePanelJoins = append(related.R.NegativePanelJoins, o)
-	}
-
-	return nil
-}
-
-// SetPositive of the panelJoin to the related item.
-// Sets o.R.Positive to related.
-// Adds o to related.R.PositivePanelJoins.
-func (o *PanelJoin) SetPositive(ctx context.Context, exec boil.ContextExecutor, insert bool, related *Panel) error {
-	var err error
-	if insert {
-		if err = related.Insert(ctx, exec, boil.Infer()); err != nil {
-			return errors.Wrap(err, "failed to insert into foreign table")
-		}
-	}
-
-	updateQuery := fmt.Sprintf(
-		"UPDATE \"panel_joins\" SET %s WHERE %s",
-		strmangle.SetParamNames("\"", "\"", 1, []string{"positive_id"}),
-		strmangle.WhereClause("\"", "\"", 2, panelJoinPrimaryKeyColumns),
-	)
-	values := []interface{}{related.ID, o.ID}
-
-	if boil.IsDebug(ctx) {
-		writer := boil.DebugWriterFrom(ctx)
-		fmt.Fprintln(writer, updateQuery)
-		fmt.Fprintln(writer, values)
-	}
-	if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
-		return errors.Wrap(err, "failed to update local table")
-	}
-
-	o.PositiveID = related.ID
-	if o.R == nil {
-		o.R = &panelJoinR{
-			Positive: related,
-		}
-	} else {
-		o.R.Positive = related
-	}
-
-	if related.R == nil {
-		related.R = &panelR{
-			PositivePanelJoins: PanelJoinSlice{o},
-		}
-	} else {
-		related.R.PositivePanelJoins = append(related.R.PositivePanelJoins, o)
 	}
 
 	return nil

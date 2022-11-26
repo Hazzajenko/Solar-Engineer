@@ -11,6 +11,9 @@ export const SelectedStateActions = createActionGroup({
     'Select Tracker Strings': props<{ strings: StringModel[] }>(),
     'Select Inverter Strings': props<{ strings: StringModel[] }>(),
     'Select Panel': props<{ panel: PanelModel }>(),
+    'Select Disconnection Point': props<{
+      disconnectionPointId: string
+    }>(),
     'Clear Selected State': emptyProps(),
   },
 })

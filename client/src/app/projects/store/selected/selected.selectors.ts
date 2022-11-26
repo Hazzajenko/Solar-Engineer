@@ -18,3 +18,8 @@ export const selectSelectedStrings = createSelector(
   selectSelectedState,
   (state: State.SelectedState) => state.strings,
 )
+
+export const selectSelectedDisconnectionPoint = createSelector(
+  selectSelectedState,
+  (state: State.SelectedState) => state.disconnectionPoint,
+)

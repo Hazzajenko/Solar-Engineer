@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-func (h *Handlers) CreatePanelJoin(w http.ResponseWriter, r *http.Request) {
+func (h *Handlers) CreateDisconnectionPoint(w http.ResponseWriter, r *http.Request) {
 	bearerHeader := r.Header.Get("Authorization")
 	bearer := strings.Replace(bearerHeader, "Bearer ", "", 1)
 
@@ -24,13 +24,15 @@ func (h *Handlers) CreatePanelJoin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var input struct {
-		ProjectID     int64  `json:"project_id"`
-		ID            string `json:"id"`
-		StringID      string `json:"string_id"`
-		PositiveID    string `json:"positive_id"`
-		NegativeID    string `json:"negative_id"`
-		PositiveModel int    `json:"positive_model"`
-		NegativeModel int    `json:"negative_model"`
+		ID                string `json:"id"`
+		ProjectID         int64  `json:"project_id"`
+		StringID          string `json:"string_id"`
+		PositiveID        string `json:"positive_id"`
+		NegativeID        string `json:"negative_id"`
+		DisconnectionType int    `json:"disconnection_type"`
+		Model             int    `json:"model"`
+		Location          string `json:"location"`
+		Color             string `json:"color"`
 	}
 
 	err = h.Json.DecodeJSON(w, r, &input)
@@ -38,8 +40,8 @@ func (h *Handlers) CreatePanelJoin(w http.ResponseWriter, r *http.Request) {
 		h.Errors.ServerErrorResponse(w, r, err)
 		return
 	}
-	/*
-		positivePanel, err := h.Models.Panels.GetById(input.PositiveID)
+
+	/*	positivePanel, err := h.Models.Panels.GetById(input.PositiveID)
 		if err != nil {
 			h.Errors.ServerErrorResponse(w, r, err)
 			return
@@ -51,17 +53,19 @@ func (h *Handlers) CreatePanelJoin(w http.ResponseWriter, r *http.Request) {
 			return
 		}*/
 
-	boilerPanel := &boiler.PanelJoin{
-		PositiveID:    input.PositiveID,
-		NegativeID:    input.NegativeID,
-		PositiveModel: input.PositiveModel,
-		NegativeModel: input.NegativeModel,
-		StringID:      input.StringID,
-		ProjectID:     input.ProjectID,
-		ID:            input.ID,
+	disconnectionPoint := &boiler.DisconnectionPoint{
+		ID:                input.ID,
+		ProjectID:         input.ProjectID,
+		StringID:          input.StringID,
+		PositiveID:        input.ID,
+		NegativeID:        input.ID,
+		DisconnectionType: input.DisconnectionType,
+		Location:          input.Location,
+		Model:             input.Model,
+		Color:             input.Color,
 	}
 
-	result, err := h.Models.PanelJoins.Create(boilerPanel)
+	result, err := h.Models.DisconnectionPoints.Create(disconnectionPoint)
 	if err != nil {
 		switch {
 		default:
@@ -71,14 +75,14 @@ func (h *Handlers) CreatePanelJoin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = h.Json.ResponseJSON(w, http.StatusAccepted,
-		json.Envelope{"panel_join": result},
+		json.Envelope{"disconnection_point": result},
 		nil)
 	if err != nil {
 		h.Errors.ServerErrorResponse(w, r, err)
 	}
 }
 
-func (h *Handlers) GetPanelJoinsByProjectId(w http.ResponseWriter, r *http.Request) {
+func (h *Handlers) GetDisconnectionPointsByProjectId(w http.ResponseWriter, r *http.Request) {
 	/*	bearerHeader := r.Header.Get("Authorization")
 		bearer := strings.Replace(bearerHeader, "Bearer ", "", 1)*/
 
@@ -102,7 +106,7 @@ func (h *Handlers) GetPanelJoinsByProjectId(w http.ResponseWriter, r *http.Reque
 	//userId, err := strconv.Atoi(idString)
 	//fmt.Println(userId)
 
-	result, err := h.Models.PanelJoins.GetPanelJoinsByProjectId(projectId)
+	result, err := h.Models.DisconnectionPoints.GetByProjectID(projectId)
 	if err != nil {
 		switch {
 		default:
@@ -112,14 +116,14 @@ func (h *Handlers) GetPanelJoinsByProjectId(w http.ResponseWriter, r *http.Reque
 	}
 
 	err = h.Json.ResponseJSON(w, http.StatusAccepted,
-		json.Envelope{"panel_joins": result},
+		json.Envelope{"disconnection_points": result},
 		nil)
 	if err != nil {
 		h.Errors.ServerErrorResponse(w, r, err)
 	}
 }
 
-func (h *Handlers) UpdatePanelJoin(w http.ResponseWriter, r *http.Request) {
+func (h *Handlers) UpdateDisconnectionPoint(w http.ResponseWriter, r *http.Request) {
 	//bearerHeader := r.Header.Get("Authorization")
 	//bearer := strings.Replace(bearerHeader, "Bearer ", "", 1)
 	//
@@ -135,11 +139,11 @@ func (h *Handlers) UpdatePanelJoin(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Println(projectId)
 
-	panelId, err := h.Helpers.GetInt64FromURLParam(chi.URLParam(r, "panelId"))
-	if err != nil {
-		h.Logger.PrintError(err, nil)
-	}
-	fmt.Println(panelId)
+	/*	_, err = h.Helpers.GetInt64FromURLParam(chi.URLParam(r, "disconnectionPointId"))
+		if err != nil {
+			h.Logger.PrintError(err, nil)
+		}*/
+	//fmt.Println(panelId)
 
 	/*	type Changes struct {
 		ID         string `json:"id"`
@@ -151,8 +155,8 @@ func (h *Handlers) UpdatePanelJoin(w http.ResponseWriter, r *http.Request) {
 	}*/
 
 	var input struct {
-		ID      string           `json:"id"`
-		Changes boiler.PanelJoin `json:"changes"`
+		ID      string                    `json:"id"`
+		Changes boiler.DisconnectionPoint `json:"changes"`
 		/*		InverterId int64 `json:"inverter_id"`
 				TrackerId  int64 `json:"tracker_id"`
 				StringId   int64 `json:"string_id"`
@@ -177,17 +181,17 @@ func (h *Handlers) UpdatePanelJoin(w http.ResponseWriter, r *http.Request) {
 			//Version:    input.Version,
 		}*/
 
-	update := &boiler.PanelJoin{
-		ID:            input.ID,
-		StringID:      input.Changes.StringID,
-		PositiveID:    input.Changes.PositiveID,
-		NegativeID:    input.Changes.NegativeID,
-		PositiveModel: input.Changes.PositiveModel,
-		NegativeModel: input.Changes.NegativeModel,
+	update := &boiler.DisconnectionPoint{
+		ID:         input.ID,
+		StringID:   input.Changes.StringID,
+		Location:   input.Changes.Location,
+		PositiveID: input.Changes.PositiveID,
+		NegativeID: input.Changes.NegativeID,
+		Color:      input.Changes.Color,
 		//Version:    input.Version,
 	}
 
-	result, err := h.Models.PanelJoins.Update(update)
+	result, err := h.Models.DisconnectionPoints.Update(update)
 	//result, err := h.Models.Panels.UpdatePanelLocation(updatePanel)
 	if err != nil {
 		switch {
@@ -198,14 +202,14 @@ func (h *Handlers) UpdatePanelJoin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = h.Json.ResponseJSON(w, http.StatusAccepted,
-		json.Envelope{"panel_join": result},
+		json.Envelope{"disconnection_point": result},
 		nil)
 	if err != nil {
 		h.Errors.ServerErrorResponse(w, r, err)
 	}
 }
 
-func (h *Handlers) DeletePanelJoin(w http.ResponseWriter, r *http.Request) {
+func (h *Handlers) DeleteDisconnectionPoint(w http.ResponseWriter, r *http.Request) {
 	/*	bearerHeader := r.Header.Get("Authorization")
 		bearer := strings.Replace(bearerHeader, "Bearer ", "", 1)
 
@@ -220,7 +224,7 @@ func (h *Handlers) DeletePanelJoin(w http.ResponseWriter, r *http.Request) {
 			h.Logger.PrintError(err, nil)
 		}*/
 	//fmt.Println(projectId)
-	panelJoinId := chi.URLParam(r, "panelJoinId")
+	disconnectionPointId := chi.URLParam(r, "disconnectionPointId")
 
 	/*	var input struct {
 			ID string `json:"id"`
@@ -232,7 +236,7 @@ func (h *Handlers) DeletePanelJoin(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	*/
-	err := h.Models.PanelJoins.Delete(panelJoinId)
+	err := h.Models.DisconnectionPoints.Delete(disconnectionPointId)
 	if err != nil {
 		switch {
 		default:
@@ -242,7 +246,7 @@ func (h *Handlers) DeletePanelJoin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = h.Json.ResponseJSON(w, http.StatusAccepted,
-		json.Envelope{"id": panelJoinId, "deleted": true},
+		json.Envelope{"id": disconnectionPointId, "deleted": true},
 		nil)
 	if err != nil {
 		h.Errors.ServerErrorResponse(w, r, err)

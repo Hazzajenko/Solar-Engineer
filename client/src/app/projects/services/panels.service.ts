@@ -12,6 +12,8 @@ import {
 } from '../store/panels/panels.actions'
 import { BlocksStateActions } from '../store/blocks/blocks.actions'
 import { UnitModel } from '../models/unit.model'
+import { Observable, shareReplay } from 'rxjs'
+import { PanelsEntityService } from '../project-id/services/panels-entity/panels-entity.service'
 
 interface PanelsEnvelope {
   panels: PanelModel[]
@@ -30,7 +32,26 @@ interface CreatePanelResponse {
   providedIn: 'root',
 })
 export class PanelsService {
-  constructor(private http: HttpClient, private store: Store<AppState>) {}
+  private panels$?: Observable<PanelModel[]>
+
+  constructor(
+    private http: HttpClient,
+    private store: Store<AppState>,
+    private panelsEntity: PanelsEntityService,
+  ) {}
+
+  public getPanels() {
+    if (!this.panels$) {
+      this.panels$ = this.panelsEntity.entities$.pipe(
+        shareReplay({
+          bufferSize: 1,
+          refCount: true,
+        }),
+      ) as Observable<PanelModel[]>
+    }
+
+    return this.panels$
+  }
 
   createPanel(
     projectId: number,

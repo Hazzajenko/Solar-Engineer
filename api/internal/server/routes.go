@@ -98,6 +98,13 @@ func (s *Server) Routes() *chi.Mux {
 				r.Delete("/panel-join/{panelJoinId}", s.Handlers.DeletePanelJoin)
 			})
 
+			r.Group(func(r chi.Router) {
+				r.Get("/disconnection-points", s.Handlers.GetDisconnectionPointsByProjectId)
+				r.Post("/disconnection-point", s.Handlers.CreateDisconnectionPoint)
+				r.Put("/disconnection-point/{disconnectionPointId}", s.Handlers.UpdateDisconnectionPoint)
+				r.Delete("/disconnection-point/{disconnectionPointId}", s.Handlers.DeleteDisconnectionPoint)
+			})
+
 			r.Route("/{inverterId}", func(r chi.Router) {
 				r.Get("/", s.Handlers.GetTrackersByInverterId)
 				r.Post("/", s.Handlers.CreateTracker)

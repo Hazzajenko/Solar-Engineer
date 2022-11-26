@@ -43,53 +43,24 @@ func (p *StringModel) Insert(string *boiler.String) (*boiler.String, error) {
 	return string, nil
 }
 
-func (p *StringModel) Get(stringId int64) (*String, error) {
-	if stringId < 1 {
+func (p *StringModel) Get(stringId string) (*boiler.String, error) {
+	if stringId == "" {
 		return nil, errors.New("record not found")
 	}
 
-	query := `
-		SELECT id, 
-		       project_id, 
-		       inverter_id, 
-		       tracker_id, 
-		       name, 
-		       model,
-		       created_at, 
-		       created_by,
-		       is_in_parallel,
-		       panel_amount, 
-		       version FROM strings
-		WHERE id = $1
-		`
-	var stringModel String
-	//args := []any{project.Name, project.CreatedBy}
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
-
-	err := p.DB.QueryRowContext(ctx, query, stringId).Scan(
-		&stringModel.ID,
-		&stringModel.ProjectId,
-		&stringModel.InverterId,
-		&stringModel.TrackerId,
-		&stringModel.Name,
-		&stringModel.Model,
-		&stringModel.CreatedAt,
-		&stringModel.CreatedBy,
-		&stringModel.IsInParallel,
-		&stringModel.PanelAmount,
-		&stringModel.Version,
-	)
+	stringModel, err := boiler.FindString(ctx, p.DB, stringId)
 	if err != nil {
 		switch {
 		case errors.Is(err, sql.ErrNoRows):
-			return nil, errors.New("record not found")
+			return nil, errors.New("edit conflict")
 		default:
 			return nil, err
 		}
 	}
 
-	return &stringModel, nil
+	return stringModel, nil
 }
 
 func (p *StringModel) GetStringsByProjectId(projectId int64) (*boiler.StringSlice, error) {
