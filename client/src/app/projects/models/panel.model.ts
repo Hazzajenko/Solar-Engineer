@@ -7,6 +7,7 @@ export interface PanelModel {
   inverter_id?: string
   tracker_id?: string
   join_id?: string
+  selected?: boolean
   string_id: string
   model?: UnitModel
   type?: TypeModel

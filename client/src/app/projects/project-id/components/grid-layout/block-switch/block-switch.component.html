@@ -1,0 +1,66 @@
+<ng-container *ngIf="block">
+  <ng-container [ngSwitch]="block.model">
+    <ng-container *ngSwitchCase="2">
+      <ng-container *ngIf="getInverterByLocation(block.location) as inverter">
+        <app-block-inverter
+          (rightClickInverter)="onRightClickEvent($event)"
+          [inverter]="inverter"
+        ></app-block-inverter>
+      </ng-container>
+    </ng-container>
+    <ng-container *ngSwitchCase="5">
+      <ng-container *ngIf="getPanelByLocation(block.location) as panel">
+        <ng-container *ngIf="getStringForPanel(panel) as string">
+          <app-block-panel
+            (click)="selectBlock(panel)"
+            (rightClickPanel)="onRightClickEvent($event)"
+            *ngIf="_reload"
+            [gridMode]="gridMode"
+            [id]="panel.id"
+            [panelLink]="getSelectedPanelLinks()"
+            [panelString]="string"
+            [panel]="panel"
+            [panelsForString]="getPanelsForString(string)"
+            [selected]="selected"
+            class="drop-zone__app-block-panel"
+          ></app-block-panel>
+        </ng-container>
+      </ng-container>
+    </ng-container>
+    <ng-container *ngSwitchCase="6">
+      <ng-container *ngIf="getCableByLocation(block.location) as cable">
+        <app-block-cable
+          (rightClickCable)="onRightClickEvent($event)"
+          [allCables]="(cablesEntity.entities$ | async)!"
+          [cable]="cable"
+        ></app-block-cable>
+      </ng-container>
+    </ng-container>
+    <ng-container *ngSwitchCase="8">
+      <ng-container
+        *ngIf="
+          getDisconnectionPointByLocation(block.location) as disconnectionPoint
+        "
+      >
+        <app-block-disconnection-point
+          (click)="selectBlock(disconnectionPoint)"
+          (rightClickDp)="onRightClickEvent($event)"
+          [disconnectionPoint]="disconnectionPoint"
+        ></app-block-disconnection-point>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+</ng-container>
+
+<div
+  [matMenuTriggerFor]="rightMenu"
+  [style.left]="menuTopLeftPosition.x"
+  [style.top]="menuTopLeftPosition.y"
+  style="visibility: hidden; position: fixed"
+></div>
+
+<mat-menu #rightMenu="matMenu" class="custom-menu">
+  <ng-template let-item="item" matMenuContent>
+    <app-block-menu [item]="item"></app-block-menu>
+  </ng-template>
+</mat-menu>

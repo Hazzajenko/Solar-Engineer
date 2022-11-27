@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core'
-import { StringModel } from '../../models/string.model'
 import { GridMode } from '../../store/grid/grid-mode.model'
 import { ProjectModel } from '../../models/project.model'
 import { BlockModel } from '../../models/block.model'
@@ -14,7 +13,6 @@ import { JoinsEntityService } from '../../project-id/services/joins-entity/joins
 import { GridJoinService } from './grid-join.service'
 import { JoinsService } from '../joins.service'
 import { LoggerService } from '../../../services/logger.service'
-import { PanelModel } from '../../models/panel.model'
 
 @Injectable({
   providedIn: 'root',
@@ -46,26 +44,25 @@ export class GridActionService extends GridService {
 
   cellAction(
     location: string,
-    joinArray: string[],
-    panelsToJoin: PanelModel[],
-    gridState: {
-      createMode?: UnitModel
-      selectedStrings?: StringModel[]
-      selectedString?: StringModel
-      gridMode?: GridMode
+    modes: {
+      createMode: UnitModel
+      gridMode: GridMode
     },
     project: ProjectModel,
-    blocks: BlockModel[],
-  ) {
-    switch (gridState.gridMode) {
+    blocks?: BlockModel[],
+  ): void {
+    switch (modes.gridMode) {
       case GridMode.CREATE:
-        return this.create.createSwitch(location, gridState, project, blocks)
+        this.create.createSwitch(location, modes.createMode, project, blocks!)
+        break
 
       case GridMode.DELETE:
-        return this.remove.deleteSwitch(location, gridState, project, blocks)
+        this.remove.deleteSwitch(location, project, blocks!)
+        break
 
       case GridMode.JOIN:
-        return this.join.joinSwitch(location, project, blocks)
+        this.join.joinSwitch(location, project, blocks!)
+        break
       // return this.join.addPanelToJoin(location, panelsToJoin, project, blocks)
       // return this.join.addToJoinArray(location, joinArray, project, blocks)
 

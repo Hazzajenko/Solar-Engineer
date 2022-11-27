@@ -19,8 +19,12 @@ export const selectAllBlocks = createSelector(
 export const selectBlocksByProjectIdRouteParams = createSelector(
   selectAllBlocks,
   selectRouteParams,
-  (panels, { projectId }) =>
-    panels.filter((panel) => panel.project_id === Number(projectId)),
+  (blocks, { projectId }) => {
+    if (blocks) {
+      return blocks.filter((block) => block.project_id === Number(projectId))
+    }
+    return []
+  },
 )
 
 export const selectBlocksByProjectId = (props: { projectId: number }) =>

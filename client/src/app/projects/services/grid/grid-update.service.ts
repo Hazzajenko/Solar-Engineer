@@ -15,10 +15,7 @@ import { Guid } from 'guid-typescript'
 import { JoinsService } from '../joins.service'
 import { HttpClient } from '@angular/common/http'
 import { GridHelpers } from './grid.helpers'
-import {
-  LoggerService,
-  LoggerService as Logger,
-} from '../../../services/logger.service'
+import { LoggerService } from '../../../services/logger.service'
 import { DisconnectionPointModel } from '../../models/disconnection-point.model'
 import { DisconnectionPointsEntityService } from '../../project-id/services/disconnection-points-entity/disconnection-points-entity.service'
 
@@ -50,14 +47,16 @@ export class GridUpdateService extends GridService {
   gridDrop(
     event: CdkDragDrop<any, any>,
     project: ProjectModel,
-    blocks: BlockModel[],
+    blocks?: BlockModel[],
   ) {
-    const doesExist = blocks.find(
-      (block) => block.location.toString() === event.container.id,
-    )
+    if (blocks) {
+      const doesExist = blocks.find(
+        (block) => block.location.toString() === event.container.id,
+      )
 
-    if (doesExist) {
-      return console.log('location taken')
+      if (doesExist) {
+        return console.log('location taken')
+      }
     }
 
     const block = event.item.data
@@ -146,13 +145,11 @@ export class GridUpdateService extends GridService {
 
   updateCableForJoin(cable: CableModel, join_id: string, cables: CableModel[]) {
     if (!cable) return console.log('updateCableForJoin err')
-    Logger.log('logger INFO', { message: 'message' })
     const otherBlock: CableModel = {
       ...cable!,
       join_id,
     }
     this.cablesEntity.update(otherBlock)
-    Logger.log('logger INFO', { message: 'message' })
 
     const cablesInJoin = cables.filter(
       (cableInJoin) => cableInJoin.join_id === cable.join_id,
@@ -164,7 +161,6 @@ export class GridUpdateService extends GridService {
       }
       return partial
     })
-    Logger.log('logger INFO', { message: 'message' })
     this.cablesEntity.updateManyInCache(updates)
     return this.http
       .put(`/api/projects/${cable.project_id!}/join/${cable.join_id!}/cables`, {
@@ -174,9 +170,7 @@ export class GridUpdateService extends GridService {
           old_join_id: cable.join_id!,
         },
       })
-      .subscribe((res) => {
-        Logger.log('logger INFO', { message: res })
-      })
+      .subscribe((res) => {})
     /*    return this.http
           .put(
             `${

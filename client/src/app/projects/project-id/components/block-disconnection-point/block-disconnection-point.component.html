@@ -1,7 +1,18 @@
 <ng-container *ngIf="disconnectionPoint">
   <div class="drop-zone">
+    <!--    <app-panel-link
+          *ngIf="selectedLinks$ | async; let selectedLinks"
+          [isNegativeLink]="
+            selectedLinks?.selectedNegativeLinkTo === disconnectionPoint.id
+          "
+          [isPositiveLink]="
+            selectedLinks?.selectedPositiveLinkTo === disconnectionPoint.id
+          "
+          class="drop-zone__svg"
+        ></app-panel-link>-->
     <div
       #disconnectionPointDiv
+      (contextmenu)="onRightClick($event, disconnectionPoint)"
       [cdkDragData]="disconnectionPoint"
       [matTooltip]="displayTooltip(disconnectionPoint)"
       [style.border]="'2px solid ' + disconnectionPoint.color"
@@ -9,7 +20,7 @@
       class="drop-zone__disconnection-point"
       matTooltipPosition="right"
     >
-      <!--            P-->
+      DP
     </div>
   </div>
 </ng-container>

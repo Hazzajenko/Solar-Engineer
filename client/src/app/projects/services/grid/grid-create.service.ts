@@ -58,49 +58,29 @@ export class GridCreateService extends GridService {
 
   createSwitch(
     location: string,
-    gridState: {
-      createMode?: UnitModel
-      selectedStrings?: StringModel[]
-      selectedString?: StringModel
-      gridMode?: GridMode
-    },
+    createMode: UnitModel,
     project: ProjectModel,
-    blocks: BlockModel[],
+    blocks?: BlockModel[],
   ) {
-    const doesExist = blocks.find((block) => block.location === location)
-    if (doesExist) {
-      return console.log('cell location taken')
+    if (blocks) {
+      const doesExist = blocks.find((block) => block.location === location)
+      if (doesExist) {
+        return console.log('cell location taken')
+      }
     }
 
-    switch (gridState.createMode) {
+    switch (createMode) {
       case UnitModel.PANEL:
         return this.createPanelForGridV2(project, location)
-      /*        return this.createPanelForGrid(
-                project,
-                location,
-                gridState.selectedString!,
-                gridState.gridMode!,
-                blocks,
-              )*/
 
       case UnitModel.CABLE:
-        return this.createCableForGrid(
-          project,
-          location,
-          gridState.gridMode!,
-          blocks,
-        )
+        return this.createCableForGrid(project, location)
 
       case UnitModel.DISCONNECTIONPOINT:
         return this.createDisconnectionPointForGrid(project, location)
 
       case UnitModel.INVERTER:
-        return this.createInverterForGrid(
-          project,
-          location,
-          gridState.gridMode!,
-          blocks,
-        )
+        return this.createInverterForGrid(project, location)
       default:
         break
     }
@@ -233,12 +213,7 @@ export class GridCreateService extends GridService {
     }
   }
 
-  createCableForGrid(
-    project: ProjectModel,
-    location: string,
-    gridMode: GridMode,
-    blocks: BlockModel[],
-  ) {
+  createCableForGrid(project: ProjectModel, location: string) {
     let cables: CableModel[] = []
 
     this.cablesEntity.entities$.subscribe((cables$) => (cables = cables$))
@@ -297,14 +272,10 @@ export class GridCreateService extends GridService {
     })
   }
 
-  private createInverterForGrid(
-    project: ProjectModel,
-    location: string,
-    gridMode: GridMode,
-    blocks: BlockModel[],
-  ) {
+  private createInverterForGrid(project: ProjectModel, location: string) {
     const inverterRequest: InverterModel = {
       id: Guid.create().toString(),
+      project_id: project.id,
       location,
       model: UnitModel.INVERTER,
       color: 'blue',

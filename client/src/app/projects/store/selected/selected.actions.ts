@@ -1,19 +1,13 @@
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
-import { StringModel } from '../../models/string.model'
 import { UnitModel } from '../../models/unit.model'
-import { PanelModel } from '../../models/panel.model'
 
 export const SelectedStateActions = createActionGroup({
   source: 'Selected State',
   events: {
-    'Select Unit For Selected State': props<{ unit: UnitModel }>(),
-    'Select String': props<{ stringId: string }>(),
-    'Select Tracker Strings': props<{ strings: StringModel[] }>(),
-    'Select Inverter Strings': props<{ strings: StringModel[] }>(),
-    'Select Panel': props<{ panel: PanelModel }>(),
-    'Select Disconnection Point': props<{
-      disconnectionPointId: string
-    }>(),
+    'Select Unit': props<{ unit: UnitModel }>(),
+    'Toggle Multi Select': props<{ multiSelect: boolean }>(),
+    'Select Id': props<{ id: string }>(),
+    'Select Multi Ids': props<{ ids: string[] }>(),
     'Clear Selected State': emptyProps(),
   },
 })

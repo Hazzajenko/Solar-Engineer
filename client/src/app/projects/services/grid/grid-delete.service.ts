@@ -1,6 +1,4 @@
 import { Injectable } from '@angular/core'
-import { StringModel } from '../../models/string.model'
-import { GridMode } from '../../store/grid/grid-mode.model'
 import { ProjectModel } from '../../models/project.model'
 import { BlockModel } from '../../models/block.model'
 import { UnitModel } from '../../models/unit.model'
@@ -38,15 +36,10 @@ export class GridDeleteService extends GridService {
 
   deleteSwitch(
     location: string,
-    gridState: {
-      createMode?: UnitModel
-      selectedStrings?: StringModel[]
-      selectedString?: StringModel
-      gridMode?: GridMode
-    },
     project: ProjectModel,
-    blocks: BlockModel[],
-  ) {
+    blocks?: BlockModel[],
+  ): void {
+    if (!blocks) return console.log('nothing to delete')
     const toDelete = blocks.find((block) => block.location === location)
     if (!toDelete) return console.log('nothing to delete')
 
@@ -56,27 +49,29 @@ export class GridDeleteService extends GridService {
                   const positiveLink = panelJoins.find(panelJoin => panelJoin.positive_id === toDelete.id)
                   const negativeLink = panelJoins.find(panelJoin => panelJoin.negative_id === toDelete.id)
                 })*/
-        this.panelJoinsEntity.entities$.subscribe((panelJoins) => {
-          const positiveLink = panelJoins.find(
-            (panelJoin) => panelJoin.positive_id === toDelete.id,
-          )
-          const negativeLink = panelJoins.find(
-            (panelJoin) => panelJoin.negative_id === toDelete.id,
-          )
-          console.log('positiveLink', positiveLink)
-          console.log('negativeLink', negativeLink)
-          if (positiveLink) this.panelJoinsEntity.delete(positiveLink.id)
-          if (negativeLink) this.panelJoinsEntity.delete(negativeLink.id)
-          return
-        })
+        /*        this.panelJoinsEntity.entities$.subscribe((panelJoins) => {
+                  const positiveLink = panelJoins.find(
+                    (panelJoin) => panelJoin.positive_id === toDelete.id,
+                  )
+                  const negativeLink = panelJoins.find(
+                    (panelJoin) => panelJoin.negative_id === toDelete.id,
+                  )
+                  console.log('positiveLink', positiveLink)
+                  console.log('negativeLink', negativeLink)
+                  if (positiveLink) this.panelJoinsEntity.delete(positiveLink.id)
+                  if (negativeLink) this.panelJoinsEntity.delete(negativeLink.id)
+                  return
+                })*/
 
         this.panelsEntity.delete(toDelete.id!)
 
         break
       case UnitModel.CABLE:
-        return this.cablesEntity.delete(toDelete.id!)
+        this.cablesEntity.delete(toDelete.id!)
+        break
       case UnitModel.INVERTER:
-        return this.invertersEntity.delete(toDelete.id!)
+        this.invertersEntity.delete(toDelete.id!)
+        break
       default:
         break
     }

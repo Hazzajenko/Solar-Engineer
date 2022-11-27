@@ -1,15 +1,24 @@
 <ng-container *ngIf="panel">
   <div class="drop-zone">
     <app-panel-link
-      *ngIf="selectedLinks$ | async; let selectedLinks"
-      [isNegativeLink]="selectedLinks?.selectedNegativeLinkTo === panel.id"
-      [isPositiveLink]="selectedLinks?.selectedPositiveLinkTo === panel.id"
+      *ngIf="panelLink"
+      [isNegativeLink]="panelLink.selectedNegativeLinkTo === panel.id"
+      [isPositiveLink]="panelLink.selectedPositiveLinkTo === panel.id"
       class="drop-zone__svg"
     ></app-panel-link>
     <div
       #panelDiv
-      (mouseover)="panelHover(panel)"
+      (click)="selectPanel(panel)"
+      (contextmenu)="onRightClick($event, panel)"
       [cdkDragData]="panel"
+      [class.drop-zone__bg-default]="selected?.singleSelectId !== panel.id"
+      [class.drop-zone__bg-negative]="
+        panelLink?.selectedNegativeLinkTo === panel.id
+      "
+      [class.drop-zone__bg-positive]="
+        panelLink?.selectedPositiveLinkTo === panel.id
+      "
+      [class.drop-zone__bg-selected]="selected?.singleSelectId === panel.id"
       [matTooltip]="displayTooltip(panel)"
       [style.border]="'2px solid ' + panel.color"
       cdkDrag
@@ -21,12 +30,23 @@
     </div>
   </div>
 </ng-container>
-<!--
-'background-color':
-grid.selectedString?.id === panel.string_id ? '#07ffd4' : '#9ec7f9',-->
+
+<mat-menu #rightMenu="matMenu" class="custom-menu">
+  <ng-template let-item="item" matMenuContent>
+    <app-block-menu [item]="item"></app-block-menu>
+  </ng-template>
+</mat-menu>
 <!--
 [ngStyle]="{
-'background-color': panelToJoin?.includes(panel)
+'background-color':
+this.selected?.singleSelectId === this.panel.id
 ? '#07ffd4'
 : '#9ec7f9'
 }"-->
+<!--
+[ngClass]="{
+'drop-zone__bg-default':selected?.singleSelectId !== panel.id,
+'drop-zone__bg-selected':selected?.singleSelectId === panel.id,
+'drop-zone__bg-positive':panelLink?.selectedPositiveLinkTo === panel.id,
+'drop-zone__bg-negative':panelLink?.selectedNegativeLinkTo === panel.id,
+  }"-->

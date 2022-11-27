@@ -51,6 +51,7 @@ type Panel struct {
 	JoinID                  string      `boil:"join_id" json:"join_id" toml:"join_id" yaml:"join_id"`
 	PositiveToID            null.String `boil:"positive_to_id" json:"positive_to_id,omitempty" toml:"positive_to_id" yaml:"positive_to_id,omitempty"`
 	NegativeToID            string      `boil:"negative_to_id" json:"negative_to_id" toml:"negative_to_id" yaml:"negative_to_id"`
+	Selected                bool        `boil:"selected" json:"selected" toml:"selected" yaml:"selected"`
 
 	R *panelR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L panelL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -84,6 +85,7 @@ var PanelColumns = struct {
 	JoinID                  string
 	PositiveToID            string
 	NegativeToID            string
+	Selected                string
 }{
 	ID:                      "id",
 	ProjectID:               "project_id",
@@ -112,6 +114,7 @@ var PanelColumns = struct {
 	JoinID:                  "join_id",
 	PositiveToID:            "positive_to_id",
 	NegativeToID:            "negative_to_id",
+	Selected:                "selected",
 }
 
 var PanelTableColumns = struct {
@@ -142,6 +145,7 @@ var PanelTableColumns = struct {
 	JoinID                  string
 	PositiveToID            string
 	NegativeToID            string
+	Selected                string
 }{
 	ID:                      "panels.id",
 	ProjectID:               "panels.project_id",
@@ -170,6 +174,7 @@ var PanelTableColumns = struct {
 	JoinID:                  "panels.join_id",
 	PositiveToID:            "panels.positive_to_id",
 	NegativeToID:            "panels.negative_to_id",
+	Selected:                "panels.selected",
 }
 
 // Generated where
@@ -240,6 +245,7 @@ var PanelWhere = struct {
 	JoinID                  whereHelperstring
 	PositiveToID            whereHelpernull_String
 	NegativeToID            whereHelperstring
+	Selected                whereHelperbool
 }{
 	ID:                      whereHelperstring{field: "\"panels\".\"id\""},
 	ProjectID:               whereHelperint64{field: "\"panels\".\"project_id\""},
@@ -268,6 +274,7 @@ var PanelWhere = struct {
 	JoinID:                  whereHelperstring{field: "\"panels\".\"join_id\""},
 	PositiveToID:            whereHelpernull_String{field: "\"panels\".\"positive_to_id\""},
 	NegativeToID:            whereHelperstring{field: "\"panels\".\"negative_to_id\""},
+	Selected:                whereHelperbool{field: "\"panels\".\"selected\""},
 }
 
 // PanelRels is where relationship names are stored.
@@ -328,9 +335,9 @@ func (r *panelR) GetString() *String {
 type panelL struct{}
 
 var (
-	panelAllColumns            = []string{"id", "project_id", "inverter_id", "tracker_id", "string_id", "name", "created_at", "created_by", "current_at_maximum_power", "short_circuit_current", "short_circuit_current_temp", "maximum_power", "maximum_power_temp", "voltage_at_maximum_power", "open_circuit_voltage", "open_circuit_voltage_temp", "length", "weight", "width", "version", "location", "model", "color", "type", "join_id", "positive_to_id", "negative_to_id"}
+	panelAllColumns            = []string{"id", "project_id", "inverter_id", "tracker_id", "string_id", "name", "created_at", "created_by", "current_at_maximum_power", "short_circuit_current", "short_circuit_current_temp", "maximum_power", "maximum_power_temp", "voltage_at_maximum_power", "open_circuit_voltage", "open_circuit_voltage_temp", "length", "weight", "width", "version", "location", "model", "color", "type", "join_id", "positive_to_id", "negative_to_id", "selected"}
 	panelColumnsWithoutDefault = []string{"id", "project_id", "name"}
-	panelColumnsWithDefault    = []string{"inverter_id", "tracker_id", "string_id", "created_at", "created_by", "current_at_maximum_power", "short_circuit_current", "short_circuit_current_temp", "maximum_power", "maximum_power_temp", "voltage_at_maximum_power", "open_circuit_voltage", "open_circuit_voltage_temp", "length", "weight", "width", "version", "location", "model", "color", "type", "join_id", "positive_to_id", "negative_to_id"}
+	panelColumnsWithDefault    = []string{"inverter_id", "tracker_id", "string_id", "created_at", "created_by", "current_at_maximum_power", "short_circuit_current", "short_circuit_current_temp", "maximum_power", "maximum_power_temp", "voltage_at_maximum_power", "open_circuit_voltage", "open_circuit_voltage_temp", "length", "weight", "width", "version", "location", "model", "color", "type", "join_id", "positive_to_id", "negative_to_id", "selected"}
 	panelPrimaryKeyColumns     = []string{"id"}
 	panelGeneratedColumns      = []string{}
 )

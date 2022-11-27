@@ -1,78 +1,47 @@
 import { Injectable } from '@angular/core'
-import { environment } from '../../environments/environment'
 
-export enum LogLevel {
-  DEBUG = 0,
-  INFO = 1,
-  WARN = 2,
-  ERROR = 3,
+export class LogLevel {
+  None = 0
+  Info = 1
+  Verbose = 2
+  Warn = 3
+  Error = 4
 }
 
 @Injectable({
   providedIn: 'root',
 })
 export class LoggerService {
-  private static level: LogLevel = LogLevel.DEBUG
+  logLevel: LogLevel = new LogLevel()
 
-  public static debug(...message: any): void {
-    LoggerService.writeToLog(LogLevel.DEBUG, ...message)
+  constructor() {}
+
+  info(msg: string): void {
+    this.logWith(this.logLevel.Info, msg)
   }
 
-  public static log(...message: any) {
-    LoggerService.writeToLog(LogLevel.INFO, ...message)
+  warn(msg: string): void {
+    this.logWith(this.logLevel.Warn, msg)
   }
 
-  public static warn(...message: any) {
-    LoggerService.writeToLog(LogLevel.WARN, ...message)
+  error(msg: string): void {
+    this.logWith(this.logLevel.Error, msg)
   }
 
-  public static error(...message: any) {
-    LoggerService.writeToLog(LogLevel.ERROR, ...message)
-  }
-
-  /**
-   * Should write the log?
-   */
-  private static shouldLog(level: LogLevel): boolean {
-    return level >= environment.LOG_LEVEL
-  }
-
-  /**
-   * Write logs.
-   */
-  private static writeToLog(level: LogLevel, ...message: any) {
-    if (this.shouldLog(level)) {
-      if (level <= LogLevel.INFO) {
-        console.log(LoggerService.getLogDate(), ...message)
-      } else if (level === LogLevel.ERROR) {
-        console.error(LoggerService.getLogDate(), ...message)
-      } else if (level === LogLevel.WARN) {
-        console.warn(LoggerService.getLogDate(), ...message)
+  private logWith(level: any, msg: string): void {
+    if (level <= this.logLevel.Error) {
+      switch (level) {
+        case this.logLevel.None:
+          return console.log(msg)
+        case this.logLevel.Info:
+          return console.info('%c' + msg, 'color: #6495ED')
+        case this.logLevel.Warn:
+          return console.warn('%c' + msg, 'color: #FF8C00')
+        case this.logLevel.Error:
+          return console.error('%c' + msg, 'color: #DC143C')
+        default:
+          console.debug(msg)
       }
     }
-  }
-
-  /**
-   * To add the date on logs.
-   */
-  private static getLogDate(): string {
-    const date = new Date()
-    return (
-      '[' +
-      date.getUTCFullYear() +
-      '/' +
-      (date.getUTCMonth() + 1) +
-      '/' +
-      date.getUTCDate() +
-      ' ' +
-      date.getUTCHours() +
-      ':' +
-      date.getUTCMinutes() +
-      ':' +
-      date.getUTCSeconds() +
-      '.' +
-      date.getMilliseconds() +
-      ']'
-    )
   }
 }

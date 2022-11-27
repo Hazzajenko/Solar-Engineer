@@ -54,7 +54,8 @@ export class GridJoinService extends GridService {
     )
   }
 
-  joinSwitch(location: string, project: ProjectModel, blocks: BlockModel[]) {
+  joinSwitch(location: string, project: ProjectModel, blocks?: BlockModel[]) {
+    if (!blocks) return console.log('no blocks to join')
     let existingBlockToJoin: BlockModel | undefined
     const blockToJoin = blocks.find((block) => block.location === location)
     if (!blockToJoin) {

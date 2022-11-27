@@ -1,59 +1,56 @@
 import { createReducer, on } from '@ngrx/store'
 import { SelectedStateActions } from './selected.actions'
 import { UnitModel } from '../../models/unit.model'
-import { PanelModel } from '../../models/panel.model'
 
 export interface SelectedState {
   unit?: UnitModel
-  strings?: string[]
-  // strings?: StringModel[]
-  // string?: StringModel
-  disconnectionPoint?: string
-  panels?: PanelModel[]
-  // panel?: PanelModel
+  multiSelect: boolean
+  singleSelectId?: string
+  multiSelectIds?: string[]
 }
 
 export const initialSelectedState: SelectedState = {
   unit: UnitModel.UNDEFINED,
-  strings: undefined,
-  disconnectionPoint: undefined,
-  // string: undefined,
-  panels: undefined,
-  // panel: undefined,
+  multiSelect: false,
+  singleSelectId: undefined,
+  multiSelectIds: undefined,
 }
 
 export const selectedReducer = createReducer(
   initialSelectedState,
 
-  on(SelectedStateActions.selectPanel, (state, action) => ({
-    unit: UnitModel.PANEL,
-    panel: action.panel,
-    strings: undefined,
-    disconnectionPoint: undefined,
-    panels: [action.panel],
+  on(SelectedStateActions.selectUnit, (state, { unit }) => ({
+    unit,
+    multiSelect: state.multiSelect,
+    singleSelectId: undefined,
+    multiSelectIds: undefined,
   })),
 
-  on(SelectedStateActions.selectString, (state, { stringId }) => ({
-    unit: UnitModel.STRING,
-    strings: [stringId],
-    disconnectionPoint: undefined,
-    panels: undefined,
+  on(SelectedStateActions.toggleMultiSelect, (state, { multiSelect }) => ({
+    unit: state.unit,
+    multiSelect,
+    singleSelectId: state.singleSelectId,
+    multiSelectIds: state.multiSelectIds,
   })),
 
-  on(
-    SelectedStateActions.selectDisconnectionPoint,
-    (state, { disconnectionPointId }) => ({
-      unit: UnitModel.DISCONNECTIONPOINT,
-      strings: undefined,
-      disconnectionPoint: disconnectionPointId,
-      panels: undefined,
-    }),
-  ),
+  on(SelectedStateActions.selectId, (state, { id }) => ({
+    unit: state.unit,
+    multiSelect: false,
+    singleSelectId: id,
+    multiSelectIds: undefined,
+  })),
+
+  on(SelectedStateActions.selectMultiIds, (state, { ids }) => ({
+    unit: state.unit,
+    multiSelect: true,
+    singleSelectId: undefined,
+    multiSelectIds: ids,
+  })),
 
   on(SelectedStateActions.clearSelectedState, (state) => ({
     unit: UnitModel.UNDEFINED,
-    strings: undefined,
-    disconnectionPoints: undefined,
-    panels: undefined,
+    multiSelect: false,
+    singleSelectId: undefined,
+    multiSelectIds: undefined,
   })),
 )

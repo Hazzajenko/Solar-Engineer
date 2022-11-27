@@ -1,223 +1,40 @@
 <ng-container *ngIf="project$ | async; let project">
-  <ng-container *ngrxLet="modes$ | async; let mode">
-    <ng-container *ngIf="grid$ | async; let grid">
-      <ng-container *ngIf="blocks$ | async; let blocks">
-        <div cdkDropListGroup class="project-design-container">
-          <div *ngFor="let n of numSequence(rows); let row = index" class="row">
+  <ng-container *ngIf="modes$ | async; let modes">
+    <div cdkDropListGroup class="project-design-container">
+      <div *ngFor="let n of numSequence(rows); let row = index" class="row">
+        <div *ngFor="let n of numSequence(cols); let col = index" class="col">
+          <ng-container *ngrxLet="row | getGridString: col; let locationString">
             <div
-              *ngFor="let n of numSequence(cols); let col = index"
-              class="col"
+              (cdkDropListDropped)="gridDrag.gridDrop($event, project, blocks!)"
+              (click)="
+                gridAction.cellAction(locationString, modes, project, blocks!)
+              "
+              *ngrxLet="blocks$ | async as blocks"
+              [id]="locationString"
+              cdkDropList
+              class="drop-zone"
             >
               <ng-container
-                *ngrxLet="row | getGridString: col; let locationString"
+                *ngIf="blocks! | blockByLocation: locationString as block"
               >
-                <ng-container *ngrxLet="selected$ | async; let selected">
-                  <ng-container
-                    *ngrxLet="toJoinArray$ | async; let toJoinArray"
-                  >
-                    <ng-container
-                      *ngrxLet="panelToJoin$ | async; let panelToJoin"
-                    >
-                      <div
-                        (cdkDropListDropped)="
-                          gridDrag.gridDrop($event, project, blocks)
-                        "
-                        (click)="
-                          gridAction.cellAction(
-                            locationString,
-                            toJoinArray!,
-                            panelToJoin!,
-                            grid,
-                            project,
-                            blocks
-                          )
-                        "
-                        [id]="locationString"
-                        cdkDropList
-                        class="drop-zone"
-                        id="hello"
-                      >
-                        <ng-container
-                          *ngIf="
-                            blocks | findBlockNumber: locationString;
-                            let block
-                          "
-                        >
-                          <ng-container *ngrxLet="joins$ | async; let joins">
-                            <ng-container [ngSwitch]="block.model">
-                              <ng-container *ngSwitchCase="2">
-                                <ng-container
-                                  *ngIf="inverters$ | async; let inverters"
-                                >
-                                  <app-block-inverter
-                                    (contextmenu)="
-                                      onRightClick($event, inverter)
-                                    "
-                                    *ngIf="
-                                      inverters
-                                        | findInverterLocation: block.location!;
-                                      let inverter
-                                    "
-                                    [block]="block"
-                                    [grid]="grid"
-                                    [inverter]="inverter"
-                                  ></app-block-inverter>
-                                </ng-container>
-                              </ng-container>
-                              <ng-container *ngSwitchCase="5">
-                                <ng-container *ngIf="mode">
-                                  <ng-container
-                                    *ngIf="panels$ | async; let panels"
-                                  >
-                                    <app-block-panel
-                                      (click)="
-                                        selectBlock(panel, mode.gridMode!)
-                                      "
-                                      (contextmenu)="
-                                        onRightClick($event, panel)
-                                      "
-                                      *ngIf="
-                                        panels
-                                          | findPanelLocation: block.location!;
-                                        let panel
-                                      "
-                                      [panel]="panel"
-                                      class="drop-zone__app-block-panel"
-                                    ></app-block-panel>
-                                    <!--                                    </ng-container>-->
-                                  </ng-container>
-                                </ng-container>
-                              </ng-container>
-                              <ng-container *ngSwitchCase="6">
-                                <ng-container
-                                  *ngIf="cables$ | async; let cables"
-                                >
-                                  <app-block-cable
-                                    (contextmenu)="onRightClick($event, cable)"
-                                    *ngIf="
-                                      cables
-                                        | findCableLocation: block.location!;
-                                      let cable
-                                    "
-                                    [block]="block"
-                                    [cable]="cable"
-                                    [grid]="grid"
-                                    [toJoinArray]="toJoinArray!"
-                                  ></app-block-cable>
-                                </ng-container>
-                              </ng-container>
-                              <ng-container *ngSwitchCase="8">
-                                <ng-container *ngIf="mode">
-                                  <ng-container
-                                    *ngIf="
-                                      disconnectionPoints$ | async;
-                                      let disconnectionPoints
-                                    "
-                                  >
-                                    <app-block-disconnection-point
-                                      (click)="
-                                        selectBlock(
-                                          disconnectionPoint,
-                                          mode.gridMode!
-                                        )
-                                      "
-                                      (contextmenu)="
-                                        onRightClick($event, disconnectionPoint)
-                                      "
-                                      *ngIf="
-                                        disconnectionPoints
-                                          | findDisconnectionPointLocation
-                                            : block.location!;
-                                        let disconnectionPoint
-                                      "
-                                      [disconnectionPoint]="disconnectionPoint"
-                                    ></app-block-disconnection-point>
-                                  </ng-container>
-                                </ng-container>
-                              </ng-container>
-                            </ng-container>
-                          </ng-container>
-                        </ng-container>
-                      </div>
-                    </ng-container>
-                  </ng-container>
-                </ng-container>
+                <blockDirective [id]="block.location">
+                  <app-block-switch
+                    [block]="block"
+                    [cables]="(cables$ | async)!"
+                    [disconnectionPoints]="(disconnectionPoints$ | async)!"
+                    [gridMode]="modes.gridMode"
+                    [inverters]="(inverters$ | async)!"
+                    [panelJoins]="(panelJoins$ | async)!"
+                    [panels]="(panels$ | async)!"
+                    [selected]="(selected$ | async)!"
+                    [strings]="(strings$ | async)!"
+                  ></app-block-switch>
+                </blockDirective>
               </ng-container>
             </div>
-          </div>
+          </ng-container>
         </div>
-      </ng-container>
-    </ng-container>
+      </div>
+    </div>
   </ng-container>
 </ng-container>
-<div
-  [matMenuTriggerFor]="rightMenu"
-  [style.left]="menuTopLeftPosition.x"
-  [style.top]="menuTopLeftPosition.y"
-  style="visibility: hidden; position: fixed"
-></div>
-
-<mat-menu #rightMenu="matMenu" class="custom-menu">
-  <ng-template let-item="item" matMenuContent>
-    <ng-container [ngSwitch]="item.model">
-      <ng-container *ngSwitchCase="2">
-        <label>{{ item.name }}</label>
-        <ul style="list-style: none">
-          <li>Inverter Id: {{ item.id }}</li>
-          <li>Location: {{ item["location"] }}</li>
-        </ul>
-        <button (click)="click()" mat-menu-item>Add</button>
-        <button mat-menu-item>Edit</button>
-        <button (click)="deleteBlock(item)" mat-menu-item>Delete</button>
-      </ng-container>
-      <ng-container *ngSwitchCase="5">
-        <label>{{ item.name }}</label>
-        <ul style="list-style: none">
-          <li>Panel Id: {{ item.id }}</li>
-          <li>Location: {{ item["location"] }}</li>
-          <li>String Id: {{ item["string_id"] }}</li>
-        </ul>
-        <button (click)="click()" mat-menu-item>Add</button>
-        <button mat-menu-item>Edit</button>
-        <button (click)="selectString(item['string_id'])" mat-menu-item>
-          Select String
-        </button>
-        <button (click)="gridDelete.deletePanel(item.id)" mat-menu-item>
-          Delete
-        </button>
-      </ng-container>
-      <ng-container *ngSwitchCase="6">
-        <ul style="list-style: none">
-          <li>Cable Id: {{ item.id }}</li>
-          <li>Size: {{ item["size"] }}</li>
-          <li>Location: {{ item["location"] }}</li>
-        </ul>
-        <button (click)="click()" mat-menu-item>Add</button>
-        <ng-container
-          *ngrxLet="{
-            toJoinArray: toJoinArray$ | async,
-            project: project$ | async,
-            blocks: blocks$ | async,
-            cables: cables$ | async
-          } as vm"
-        >
-          <!--        <ng-container *ngrxLet='toJoinArray$ | async as toJoinArray'>-->
-          <ng-container
-            *ngIf="vm && vm.toJoinArray && vm.project && vm.blocks && vm.cables"
-          >
-            <button
-              (click)="gridJoins.createJoinWithBlocks(vm)"
-              *ngIf="vm.toJoinArray.length > 1"
-              mat-menu-item
-            >
-              Join Cables
-            </button>
-          </ng-container>
-        </ng-container>
-        <button (click)="startJoin(item)" mat-menu-item>Start Join</button>
-        <button mat-menu-item>Edit</button>
-        <button (click)="deleteCable(item)" mat-menu-item>Delete</button>
-      </ng-container>
-    </ng-container>
-  </ng-template>
-</mat-menu>
