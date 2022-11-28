@@ -16,16 +16,15 @@ import { FindCableLocationPipe } from '../../../../../pipes/find-cable-location.
 import { GetNearbyJoins } from '../../../../../pipes/get-nearby-joins.pipe'
 import { LetModule } from '@ngrx/component'
 import { CableJoinComponent } from '../../../../../components/cable-join/cable-join.component'
-import {
-  GetCableSurroundingsPipe,
-  SurroundingModel,
-} from '../../../../../pipes/get-cable-surroundings.pipe'
+import { SurroundingModel } from '../../../../../pipes/get-cable-surroundings.pipe'
 import { GetCableJoin } from '../../../../../pipes/get-cable-join.pipe'
 import { GetCablesInJoinPipe } from '../../../../../pipes/get-cables-in-join.pipe'
 import { CablesEntityService } from '../../../services/cables-entity/cables-entity.service'
 import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
 import { RightClick } from '../block-switch/right-click'
+import { GetCablesInJoinLengthPipe } from './get-cables-in-join.pipe'
+import { GetCableSurroundingsPipe } from './get-surroundings.pipe'
 
 @Component({
   selector: 'app-block-cable',
@@ -40,8 +39,8 @@ import { RightClick } from '../block-switch/right-click'
       <!--      <ng-container *ngIf="getSurroundings(cable); let surroundingModel">-->
       <div class="drop-zone">
         <app-cable-join
-          *ngIf="surroundings"
-          [surroundings]="surroundings!"
+          *ngIf="cable | getSurroundings: cables as surroundings"
+          [surroundings]="surroundings"
           class="drop-zone__svg"
         ></app-cable-join>
         <div
@@ -53,7 +52,7 @@ import { RightClick } from '../block-switch/right-click'
             ' JoinId: ' +
             cable.join_id +
             'CablesInJoin: ' +
-            (getCablesInJoin(cable.join_id!) | async)
+            (cable | getCablesInJoinLength: cables).toString()
           "
           [style.border]="'2px solid ' + cable.color"
           cdkDrag
@@ -114,30 +113,25 @@ import { RightClick } from '../block-switch/right-click'
     GetCableJoin,
     AsyncPipe,
     GetCablesInJoinPipe,
+    GetCablesInJoinLengthPipe,
   ],
   standalone: true,
 })
 export class BlockCableComponent
-  implements OnInit, AfterViewInit, AfterContentInit
+  implements OnInit
 {
   @Output() rightClickCable = new EventEmitter<RightClick>()
   @Input() cable?: CableModel
-  @Input() allCables?: CableModel[]
-  surroundings?: SurroundingModel
-  allCables$!: Observable<CableModel[]>
+  @Input() cables?: CableModel[]
+  // surroundings?: SurroundingModel
+  // allCables$!: Observable<CableModel[]>
 
-  constructor(public cablesEntity: CablesEntityService) {}
-
-  ngAfterContentInit(): void {
-    this.getSurroundingsV2()
-  }
+  constructor() {}
 
   onRightClick(event: MouseEvent, cable: CableModel) {
     event.preventDefault()
     this.rightClickCable.emit({ event, item: cable })
   }
-
-  ngAfterViewInit(): void {}
 
   ngOnInit(): void {
     // this.allCables$ = this.cablesEntity.entities$
@@ -156,86 +150,86 @@ export class BlockCableComponent
         }*/
   }
 
-  getSurroundingsV2() {
-    if (typeof Worker !== 'undefined') {
-      const worker = new Worker(
-        new URL('./block-cable.worker', import.meta.url),
-      )
-      worker.onmessage = ({ data }) => {
-        this.surroundings = {
-          left: data.left,
-          right: data.right,
-          top: data.top,
-          bottom: data.bottom,
-        }
-      }
-      const message = {
-        cable: this.cable,
-        allCables: this.allCables,
-      }
-      worker.postMessage(message)
-    } else {
-    }
-  }
+  // getSurroundingsV2() {
+  //   if (typeof Worker !== 'undefined') {
+  //     const worker = new Worker(
+  //       new URL('./block-cable.worker', import.meta.url),
+  //     )
+  //     worker.onmessage = ({ data }) => {
+  //       this.surroundings = {
+  //         left: data.left,
+  //         right: data.right,
+  //         top: data.top,
+  //         bottom: data.bottom,
+  //       }
+  //     }
+  //     const message = {
+  //       cable: this.cable,
+  //       allCables: this.cables,
+  //     }
+  //     worker.postMessage(message)
+  //   } else {
+  //   }
+  // }
 
-  getCablesInJoin(joinId: string): Observable<number | undefined> {
-    return this.cablesEntity.entities$.pipe(
-      map((cables) => {
-        return cables.filter((cable) => cable.join_id === joinId).length
-      }),
-    )
-  }
+  // getCablesInJoin(joinId: string): Observable<number | undefined> {
+  //   return this.cablesEntity.entities$.pipe(
+  //     map((cables) => {
+  //       return cables.filter((cable) => cable.join_id === joinId).length
+  //     }),
+  //   )
+  // }
 
-  getSurroundings(cable: CableModel): SurroundingModel {
-    if (!cable) {
-      return {
-        left: false,
-        right: false,
-        top: false,
-        bottom: false,
-      } as SurroundingModel
-    }
+  // getSurroundings(cable: CableModel): SurroundingModel {
+  //   if (!cable) {
+  //     return {
+  //       left: false,
+  //       right: false,
+  //       top: false,
+  //       bottom: false,
+  //     } as SurroundingModel
+  //   }
 
-    let numberRow: number = 0
-    let numberCol: number = 0
+  //   let numberRow: number = 0
+  //   let numberCol: number = 0
 
-    const location = cable.location
-    const split = location.split('')
-    split.forEach((p, index) => {
-      if (p === 'c') {
-        const row = location.slice(3, index)
-        const col = location.slice(index + 3, location.length)
-        numberRow = Number(row)
-        numberCol = Number(col)
-      }
-    })
-    const topString: string = `row${numberRow - 1}col${numberCol}`
-    const bottomString: string = `row${numberRow + 1}col${numberCol}`
-    const leftString: string = `row${numberRow}col${numberCol - 1}`
-    const rightString: string = `row${numberRow}col${numberCol + 1}`
+  //   const location = cable.location
+  //   const split = location.split('')
+  //   split.forEach((p, index) => {
+  //     if (p === 'c') {
+  //       const row = location.slice(3, index)
+  //       const col = location.slice(index + 3, location.length)
+  //       numberRow = Number(row)
+  //       numberCol = Number(col)
+  //     }
+  //   })
+  //   const topString: string = `row${numberRow - 1}col${numberCol}`
+  //   const bottomString: string = `row${numberRow + 1}col${numberCol}`
+  //   const leftString: string = `row${numberRow}col${numberCol - 1}`
+  //   const rightString: string = `row${numberRow}col${numberCol + 1}`
 
-    let allCables: CableModel[] = []
-    this.cablesEntity.entities$.subscribe((cables) => {
-      allCables = cables
-    })
+  //   let allCables: CableModel[] = []
+  //   this.cablesEntity.entities$.subscribe((cables) => {
+  //     allCables = cables
+  //   })
 
-    const findTop = allCables.find((cable) => cable.location === topString)
-    const findBottom = allCables.find(
-      (cable) => cable.location === bottomString,
-    )
-    const findLeft = allCables.find((cable) => cable.location === leftString)
-    const findRight = allCables.find((cable) => cable.location === rightString)
+  //   const findTop = allCables.find((cable) => cable.location === topString)
+  //   const findBottom = allCables.find(
+  //     (cable) => cable.location === bottomString,
+  //   )
+  //   const findLeft = allCables.find((cable) => cable.location === leftString)
+  //   const findRight = allCables.find((cable) => cable.location === rightString)
 
-    if (findTop) console.log('FIND TOP', findTop.location)
-    if (findBottom) console.log('FIND BOTTOM', findBottom.location)
-    if (findLeft) console.log('FIND LEFT', findLeft.location)
-    if (findRight) console.log('FIND RIGHT', findRight.location)
+  //   if (findTop) console.log('FIND TOP', findTop.location)
+  //   if (findBottom) console.log('FIND BOTTOM', findBottom.location)
+  //   if (findLeft) console.log('FIND LEFT', findLeft.location)
+  //   if (findRight) console.log('FIND RIGHT', findRight.location)
 
-    return {
-      left: !!findLeft,
-      right: !!findRight,
-      top: !!findTop,
-      bottom: !!findBottom,
-    } as SurroundingModel
-  }
+  //   return {
+  //     left: !!findLeft,
+  //     right: !!findRight,
+  //     top: !!findTop,
+  //     bottom: !!findBottom,
+  //   } as SurroundingModel
+  // }
 }

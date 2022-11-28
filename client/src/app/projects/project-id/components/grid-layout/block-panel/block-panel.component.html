@@ -1,30 +1,30 @@
 <ng-container *ngIf="panel">
   <div class="drop-zone">
     <app-panel-link
-      *ngIf="panelLink"
-      [isNegativeLink]="panelLink.selectedNegativeLinkTo === panel.id"
-      [isPositiveLink]="panelLink.selectedPositiveLinkTo === panel.id"
+      *ngIf="selected"
+      [isNegativeLink]="selected.selectedNegativeLinkTo === panel.id"
+      [isPositiveLink]="selected.selectedPositiveLinkTo === panel.id"
       class="drop-zone__svg"
     ></app-panel-link>
     <div
       #panelDiv
-      (click)="selectPanel(panel)"
+      (click)="clickPanel(panel)"
       (contextmenu)="onRightClick($event, panel)"
       [cdkDragData]="panel"
       [class.drop-zone__bg-default]="selected?.singleSelectId !== panel.id"
       [class.drop-zone__bg-negative]="
-        panelLink?.selectedNegativeLinkTo === panel.id
+      selected?.selectedNegativeLinkTo === panel.id
       "
       [class.drop-zone__bg-positive]="
-        panelLink?.selectedPositiveLinkTo === panel.id
+      selected?.selectedPositiveLinkTo === panel.id
       "
       [class.drop-zone__bg-selected]="selected?.singleSelectId === panel.id"
+      [class.drop-zone__bg-to-join]="joinsState?.panelToJoin?.id === panel.id"
       [matTooltip]="displayTooltip(panel)"
       [style.border]="'2px solid ' + panel.color"
       cdkDrag
       class="drop-zone__panel"
       matTooltipPosition="right"
-      panelDirective
     >
       <!--            P-->
     </div>

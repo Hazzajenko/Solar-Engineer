@@ -1,3 +1,6 @@
+import { SelectedState } from './../../../../store/selected/selected.reducer';
+import { JoinsState } from './../../../../store/joins/joins.reducer'
+import { ProjectModel } from './../../../../models/project.model'
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -44,6 +47,9 @@ import { LoggerService } from '../../../../../services/logger.service'
 import { PanelLinkModel } from '../../../../models/panel-link.model'
 import { GridStateActions } from '../../../../store/grid/grid.actions'
 import { SelectedStateActions } from '../../../../store/selected/selected.actions'
+import { ThisReceiver } from '@angular/compiler'
+import { GridJoinService } from 'src/app/projects/services/grid/grid-join.service'
+import { JoinsService } from 'src/app/projects/services/joins.service'
 
 @Component({
   selector: 'app-block-panel',
@@ -69,15 +75,17 @@ import { SelectedStateActions } from '../../../../store/selected/selected.action
   standalone: true,
 })
 export class BlockPanelComponent implements OnInit, AfterViewInit {
-  @ViewChild('outlet', { read: ViewContainerRef }) outletRef!: ViewContainerRef
-  @ViewChild('content', { read: TemplateRef }) contentRef!: TemplateRef<any>
+  // @ViewChild('outlet', { read: ViewContainerRef }) outletRef!: ViewContainerRef
+  // @ViewChild('content', { read: TemplateRef }) contentRef!: TemplateRef<any>
   @ViewChild('panelDiv') panelDiv!: ElementRef
+  @Input() project?: ProjectModel
   @Input() panel?: PanelModel
-  @Input() selected?: SelectedModel
+  @Input() selected?: SelectedState
   @Input() gridMode?: GridMode
   @Input() panelString?: StringModel
-  @Input() panelsForString?: PanelModel[]
-  @Input() panelLink?: PanelLinkModel
+  @Input() joinsState?: JoinsState
+  // @Input() panelsForString?: PanelModel[]
+  // @Input() panelLink?: PanelLinkModel
   menuTopLeftPosition = { x: '0', y: '0' }
   @ViewChild(MatMenuTrigger, { static: true })
   matMenuTrigger!: MatMenuTrigger
@@ -88,6 +96,7 @@ export class BlockPanelComponent implements OnInit, AfterViewInit {
     public panelsEntity: PanelsEntityService,
     public panelJoinsEntity: PanelJoinsEntityService,
     public stringsEntity: StringsEntityService,
+    private joinsService: JoinsService,
     // private elRef: ElementRef,
     public store: Store<AppState>,
     private statsService: StatsService,
@@ -108,26 +117,27 @@ export class BlockPanelComponent implements OnInit, AfterViewInit {
             this.logger.error('err displayTooltip panelString')
             return 'err displayTooltip panelString'
           }
-          if (!this.panelsForString) {
-            this.logger.error('err displayTooltip panelString')
-            return 'err displayTooltip panelString'
-          }
+          // if (!this.panelsForString) {
+          //   this.logger.error('err displayTooltip panelString')
+          //   return 'err displayTooltip panelString'
+          // }
 
           if (this.panelString.id === this.selected.singleSelectId) {
-            const stringStats = this.statsService.calculateStringTotals(
-              this.panelString,
-              this.panelsForString,
-            )
+            // const stringStats = this.statsService.calculateStringTotals(
+            //   this.panelString,
+            //   this.panelsForString,
+            // )
+
+            //  Panels: ${this.panelsForString.length} \r\n
+            //  TotalVoc: ${stringStats.totalVoc}V \r\n
+            //  TotalVmp: ${stringStats.totalVmp}V \r\n
+            //  TotalPmax: ${stringStats.totalPmax}W \r\n
+            //  TotalIsc: ${stringStats.totalIsc}A \r\n
 
             return `
            String = ${this.panelString.name} \r\n
            Color: ${this.panelString.color} \r\n
            Parallel: ${this.panelString.is_in_parallel} \r\n
-           Panels: ${this.panelsForString.length} \r\n
-           TotalVoc: ${stringStats.totalVoc}V \r\n
-           TotalVmp: ${stringStats.totalVmp}V \r\n
-           TotalPmax: ${stringStats.totalPmax}W \r\n
-           TotalIsc: ${stringStats.totalIsc}A \r\n
         `
           }
       }
@@ -138,50 +148,64 @@ export class BlockPanelComponent implements OnInit, AfterViewInit {
     `
   }
 
-  ngOnInit() {
-    /*    if (this.selected && this.panel) {
-          if (this.selected.unit === UnitModel.PANEL) {
-            if (!this.selected.multiSelect) {
-              if (this.selected.singleSelectId === this.panel.id) {
-                this.panelClass = 'drop-zone__bg-selected'
-                // this.panelDiv.nativeElement.style.backgroundColor = '#07ffd4'
-              } else {
-                this.panelClass = 'drop-zone__bg-default'
-                // this.panelDiv.nativeElement.style.backgroundColor = '#9ec7f9'
-              }
-            }
-          }
-        }*/
-  }
+  ngOnInit() {}
 
   onRightClick(event: MouseEvent, panel: PanelModel) {
     event.preventDefault()
     this.rightClickPanel.emit({ event, item: panel })
   }
 
-  selectPanel(panel: PanelModel) {
-    if (!panel || !this.gridMode) return
-    if (this.gridMode === GridMode.JOIN || this.gridMode == GridMode.DELETE) {
-      return
-    } else {
-      if (this.gridMode !== GridMode.SELECT) {
+  clickPanel(panel: PanelModel) {
+    if (!panel || !this.gridMode || !this.project) return
+
+    switch (this.gridMode) {
+      case GridMode.JOIN:
+        if (this.joinsState) {
+          console.log('click joins true')
+          this.joinsService.addPanelToJoin(this.project, panel, this.joinsState)
+        }
+        console.log('click joins')
+        break
+      case GridMode.DELETE:
+        break
+      case GridMode.SELECT:
+        this.store.dispatch(
+          SelectedStateActions.selectPanel({ panelId: panel.id }),
+        )
+        break
+      default:
         this.store.dispatch(
           GridStateActions.changeGridmode({ mode: GridMode.SELECT }),
         )
-      }
-      if (this.selected?.multiSelect) {
         this.store.dispatch(
-          SelectedStateActions.toggleMultiSelect({ multiSelect: false }),
+          SelectedStateActions.selectPanel({ panelId: panel.id }),
         )
-      }
-
-      this.store.dispatch(
-        SelectedStateActions.selectUnit({ unit: UnitModel.PANEL }),
-      )
-      this.store.dispatch(SelectedStateActions.selectId({ id: panel.id }))
-
-      // this.panelClass = 'drop-zone__bg-selected'
     }
+
+    // if (this.gridMode === GridMode.JOIN || this.gridMode == GridMode.DELETE) {
+    //   return
+    // } else {
+    //   if (this.gridMode !== GridMode.SELECT) {
+    //     this.store.dispatch(
+    //       GridStateActions.changeGridmode({ mode: GridMode.SELECT }),
+    //     )
+    //   }
+    //   this.store.dispatch(
+    //     SelectedStateActions.selectPanel({ panelId: panel.id }),
+    //   )
+    // if (this.selected?.multiSelect) {
+    //   this.store.dispatch(
+    //     SelectedStateActions.toggleMultiSelect({ multiSelect: false }),
+    //   )
+    // }
+
+    // this.store.dispatch(
+    //   SelectedStateActions.selectUnit({ unit: UnitModel.PANEL }),
+    // )
+    // this.store.dispatch(SelectedStateActions.selectId({ id: panel.id }))
+
+    // this.panelClass = 'drop-zone__bg-selected'
+    // }
   }
 
   ngAfterViewInit(): void {
@@ -260,8 +284,8 @@ export class BlockPanelComponent implements OnInit, AfterViewInit {
         })*/
   }
 
-  private rerender() {
-    this.outletRef.clear()
-    this.outletRef.createEmbeddedView(this.contentRef)
-  }
+  // private rerender() {
+  //   this.outletRef.clear()
+  //   this.outletRef.createEmbeddedView(this.contentRef)
+  // }
 }

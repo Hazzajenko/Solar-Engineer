@@ -1,7 +1,7 @@
 <ng-container *ngIf="block">
   <ng-container [ngSwitch]="block.model">
     <ng-container *ngSwitchCase="2">
-      <ng-container *ngIf="getInverterByLocation(block.location) as inverter">
+      <ng-container *ngIf="inverters|getInverter:block.location as inverter">
         <app-block-inverter
           (rightClickInverter)="onRightClickEvent($event)"
           [inverter]="inverter"
@@ -9,29 +9,26 @@
       </ng-container>
     </ng-container>
     <ng-container *ngSwitchCase="5">
-      <ng-container *ngIf="getPanelByLocation(block.location) as panel">
-        <ng-container *ngIf="getStringForPanel(panel) as string">
+      <ng-container *ngIf="panels|getPanel:block.location as panel">
           <app-block-panel
-            (click)="selectBlock(panel)"
             (rightClickPanel)="onRightClickEvent($event)"
-            *ngIf="_reload"
+            [project]="project"
             [gridMode]="gridMode"
             [id]="panel.id"
-            [panelLink]="getSelectedPanelLinks()"
-            [panelString]="string"
+            [panelString]="panel|getPanelString:panels:strings"
             [panel]="panel"
-            [panelsForString]="getPanelsForString(string)"
             [selected]="selected"
+            [joinsState]="joins!"
             class="drop-zone__app-block-panel"
           ></app-block-panel>
-        </ng-container>
+
       </ng-container>
     </ng-container>
     <ng-container *ngSwitchCase="6">
-      <ng-container *ngIf="getCableByLocation(block.location) as cable">
+      <ng-container *ngIf="cables|getCable:block.location as cable">
         <app-block-cable
           (rightClickCable)="onRightClickEvent($event)"
-          [allCables]="(cablesEntity.entities$ | async)!"
+          [cables]="cables"
           [cable]="cable"
         ></app-block-cable>
       </ng-container>
@@ -39,11 +36,10 @@
     <ng-container *ngSwitchCase="8">
       <ng-container
         *ngIf="
-          getDisconnectionPointByLocation(block.location) as disconnectionPoint
+          disconnectionPoints|getDisconnectionPoint:block.location as disconnectionPoint
         "
       >
         <app-block-disconnection-point
-          (click)="selectBlock(disconnectionPoint)"
           (rightClickDp)="onRightClickEvent($event)"
           [disconnectionPoint]="disconnectionPoint"
         ></app-block-disconnection-point>

@@ -5,4 +5,6 @@ export class SelectedModel {
   multiSelect?: boolean
   singleSelectId?: string
   multiSelectIds?: string[]
+  selectedPositiveLinkTo?: string
+  selectedNegativeLinkTo?: string
 }

@@ -1,3 +1,5 @@
+import { JoinsState } from './../../../store/joins/joins.reducer';
+import { SelectedState } from './../../../store/selected/selected.reducer'
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -72,6 +74,7 @@ import { SelectedModel } from '../../../models/selected.model'
 import { PanelJoinsEntityService } from '../../services/panel-joins-entity/panel-joins-entity.service'
 import { PanelJoinModel } from '../../../models/panel-join.model'
 import { BlockDirective } from './block.directive'
+import { selectJoinsState } from 'src/app/projects/store/joins/joins.selectors';
 
 @Component({
   selector: 'app-grid-layout',
@@ -112,29 +115,36 @@ import { BlockDirective } from './block.directive'
   ],
 })
 export class GridLayoutComponent implements OnInit, OnDestroy, AfterViewInit {
-  selectedBlock: string = ''
-  @ViewChildren(BlockSwitchComponent)
-  blockSwitchComponents!: QueryList<BlockSwitchComponent>
+  // selectedBlock: string = ''
+  // @ViewChildren(BlockSwitchComponent)
+  // blockSwitchComponents!: QueryList<BlockSwitchComponent>
   modes$!: Observable<{
     createMode: UnitModel
     gridMode: GridMode
   }>
+
+  units$!: Observable<{
+    inverters?: InverterModel[]
+    strings?: StringModel[]
+    panels?: PanelModel[]
+    cables?: CableModel[]
+    joins?: JoinModel[]
+    panelJoins?: PanelJoinModel[]
+    disconnectionPoints?: DisconnectionPointModel[]
+  }>
   project$!: Observable<ProjectModel | undefined>
   inverters$!: Observable<InverterModel[]>
-  trackers$!: Observable<TrackerModel[]>
+  // trackers$!: Observable<TrackerModel[]>
+
   strings$!: Observable<StringModel[]>
   panels$!: Observable<PanelModel[]>
   cables$!: Observable<CableModel[]>
   blocks$!: Observable<BlockModel[]>
-  joins$!: Observable<JoinModel[]>
+  // joins$!: Observable<JoinModel[]>
+  joins$!: Observable<JoinsState>
   panelJoins$!: Observable<PanelJoinModel[]>
   disconnectionPoints$!: Observable<DisconnectionPointModel[]>
-  selected$!: Observable<{
-    unit?: UnitModel
-    multiSelect?: boolean
-    singleSelectId?: string
-    multiSelectIds?: string[]
-  }>
+  selected$!: Observable<SelectedState>
   rows = 20
   cols = 40
   /*  selected$!: Observable<{
@@ -173,15 +183,45 @@ export class GridLayoutComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit(): void {
     this.project$ = this.store.select(selectProjectByRouteParams)
-    this.inverters$ = this.invertersEntity.entities$
-    this.strings$ = this.stringsEntity.entities$
-    this.panels$ = this.panelsEntity.entities$
-    this.cables$ = this.cablesEntity.entities$
-    this.joins$ = this.joinsEntity.entities$
-    this.disconnectionPoints$ = this.disconnectionPointsEntity.entities$
+    // this.inverters$ = this.invertersEntity.entities$
+    // this.strings$ = this.stringsEntity.entities$
+    // this.panels$ = this.panelsEntity.entities$
+    // this.cables$ = this.cablesEntity.entities$
+    // this.joins$ = this.joinsEntity.entities$
+    // this.disconnectionPoints$ = this.disconnectionPointsEntity.entities$
     this.blocks$ = this.store.select(selectBlocksByProjectIdRouteParams)
     this.selected$ = this.store.select(selectSelectedUnitAndIds)
-    this.panelJoins$ = this.panelJoinsEntity.entities$
+    // this.panelJoins$ = this.panelJoinsEntity.entities$
+    this.joins$ = this.store.select(selectJoinsState)
+    this.units$ = combineLatest([
+      this.invertersEntity.entities$,
+      this.stringsEntity.entities$,
+      this.panelsEntity.entities$,
+      this.cablesEntity.entities$,
+      this.joinsEntity.entities$,
+      this.panelJoinsEntity.entities$,
+      this.disconnectionPointsEntity.entities$,
+    ]).pipe(
+      map(
+        ([
+          inverters,
+          strings,
+          panels,
+          cables,
+          joins,
+          panelJoins,
+          disconnectionPoints,
+        ]) => ({
+          inverters,
+          strings,
+          panels,
+          cables,
+          joins,
+          panelJoins,
+          disconnectionPoints,
+        }),
+      ),
+    )
     this.modes$ = combineLatest([
       this.store.select(selectCreateMode),
       this.store.select(selectGridMode),
@@ -194,7 +234,7 @@ export class GridLayoutComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    console.log(this.blockDirectives.toArray())
+    // console.log(this.blockDirectives.toArray())
     /*    console.log(
           this.blockSwitchComponents.find(
             (comp) => comp.block?.location === 'row9col13',
@@ -229,4 +269,10 @@ export class GridLayoutComponent implements OnInit, OnDestroy, AfterViewInit {
       multiSelectIds,
     } as SelectedModel
   }
+}
+function shareReplay(): import('rxjs').OperatorFunction<
+  InverterModel[],
+  unknown
+> {
+  throw new Error('Function not implemented.')
 }

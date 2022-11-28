@@ -87,6 +87,7 @@ import { DisconnectionPointsDataService } from './projects/project-id/services/d
 import { DisconnectionPointsEntityService } from './projects/project-id/services/disconnection-points-entity/disconnection-points-entity.service'
 import { DisconnectionPointsResolver } from './projects/project-id/services/disconnection-points-entity/disconnection-points.resolver'
 import { DisconnectionPointsEntityEffects } from './projects/project-id/services/disconnection-points-entity/disconnection-points-entity.effects'
+import { SelectedEffects } from './projects/store/selected/selected.effects'
 
 export function tokenGetter() {
   // console.log(localStorage.getItem('token'))
@@ -139,6 +140,7 @@ export function tokenGetter() {
       StringsEntityEffects,
       InvertersEntityEffects,
       DisconnectionPointsEntityEffects,
+      SelectedEffects,
     ]),
     FindCablePipe,
     GetGridNumberPipe,

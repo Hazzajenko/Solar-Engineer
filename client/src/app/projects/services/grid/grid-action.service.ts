@@ -61,7 +61,7 @@ export class GridActionService extends GridService {
         break
 
       case GridMode.JOIN:
-        this.join.joinSwitch(location, project, blocks!)
+        // this.join.joinSwitch(location, project, blocks!)
         break
       // return this.join.addPanelToJoin(location, panelsToJoin, project, blocks)
       // return this.join.addToJoinArray(location, joinArray, project, blocks)
