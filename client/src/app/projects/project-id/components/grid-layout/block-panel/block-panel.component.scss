@@ -1,24 +1,18 @@
-/*.drop-zone__panel {
-  background-color: #95c2fa;
-  width: 20px;
-  height: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  //transition: transform .1s;
-  !*
 
-      &:hover {
-        transform: scale(1.1);
-      }*!
+.right-click-menu {
+  background-color: #f6eded;
 
-  &:hover {
-    //background-color: red;
-    color: red;
-    width: 23px;
-    height: 23px;
+  &__button {
+    padding: 4px 6px;
+    font-size: 12px;
+    cursor: pointer;
+    border-radius: inherit;
+
+    &:hover {
+      background: #545bff;
+    }
   }
-}*/
+}
 
 .drop-zone {
   display: flex;

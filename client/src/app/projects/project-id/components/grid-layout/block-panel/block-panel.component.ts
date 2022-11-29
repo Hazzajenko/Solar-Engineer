@@ -1,19 +1,13 @@
-import { SelectedState } from './../../../../store/selected/selected.reducer';
-import { JoinsState } from './../../../../store/joins/joins.reducer'
 import { ProjectModel } from './../../../../models/project.model'
 import {
-  AfterViewInit,
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   ElementRef,
   EventEmitter,
   Input,
   OnInit,
   Output,
-  TemplateRef,
   ViewChild,
-  ViewContainerRef,
 } from '@angular/core'
 import { PanelModel } from '../../../../models/panel.model'
 import { GridMode } from '../../../../store/grid/grid-mode.model'
@@ -40,16 +34,26 @@ import { StatsService } from '../../../../services/stats.service'
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
 import { BlockMenuComponent } from '../block-switch/block-menu/block-menu.component'
 import { RightClick } from '../block-switch/right-click'
-import { SelectedModel } from '../../../../models/selected.model'
 import { UnitModel } from '../../../../models/unit.model'
-import { StringModel } from '../../../../models/string.model'
 import { LoggerService } from '../../../../../services/logger.service'
-import { PanelLinkModel } from '../../../../models/panel-link.model'
 import { GridStateActions } from '../../../../store/grid/grid.actions'
 import { SelectedStateActions } from '../../../../store/selected/selected.actions'
-import { ThisReceiver } from '@angular/compiler'
-import { GridJoinService } from 'src/app/projects/services/grid/grid-join.service'
 import { JoinsService } from 'src/app/projects/services/joins.service'
+import { distinctUntilChanged, Observable } from 'rxjs'
+import { map } from 'rxjs/operators'
+import {
+  selectJoinsState,
+  selectPanelToJoin,
+} from '../../../../store/joins/joins.selectors'
+import {
+  selectSelectedId,
+  selectSelectedNegativeTo,
+  selectSelectedPositiveTo,
+  selectSelectedStringTooltip,
+  selectUnitSelected,
+} from '../../../../store/selected/selected.selectors'
+import { selectGridMode } from '../../../../store/grid/grid.selectors'
+import { JoinsState } from '../../../../store/joins/joins.reducer'
 
 @Component({
   selector: 'app-block-panel',
@@ -74,71 +78,72 @@ import { JoinsService } from 'src/app/projects/services/joins.service'
   ],
   standalone: true,
 })
-export class BlockPanelComponent implements OnInit, AfterViewInit {
-  // @ViewChild('outlet', { read: ViewContainerRef }) outletRef!: ViewContainerRef
-  // @ViewChild('content', { read: TemplateRef }) contentRef!: TemplateRef<any>
+export class BlockPanelComponent implements OnInit {
   @ViewChild('panelDiv') panelDiv!: ElementRef
   @Input() project?: ProjectModel
-  @Input() panel?: PanelModel
-  @Input() selected?: SelectedState
-  @Input() gridMode?: GridMode
-  @Input() panelString?: StringModel
-  @Input() joinsState?: JoinsState
-  // @Input() panelsForString?: PanelModel[]
-  // @Input() panelLink?: PanelLinkModel
+  @Input() location!: string
+
+  @Output() rightClickPanel = new EventEmitter<RightClick>()
+  gridMode$!: Observable<GridMode | undefined>
+  panel$!: Observable<PanelModel | undefined>
+  panelToJoin$!: Observable<PanelModel | undefined>
+
+  joinState$!: Observable<JoinsState>
+  selectedId$!: Observable<string | undefined>
+  selectedPositiveTo$!: Observable<string | undefined>
+  selectedNegativeTo$!: Observable<string | undefined>
+  selectedUnit$!: Observable<UnitModel | undefined>
+  selectedStringTooltip$!: Observable<string | undefined>
   menuTopLeftPosition = { x: '0', y: '0' }
   @ViewChild(MatMenuTrigger, { static: true })
   matMenuTrigger!: MatMenuTrigger
-  @Output() rightClickPanel = new EventEmitter<RightClick>()
-  panelClass: string = 'drop-zone__bg-default'
+
+  rightClickMenuClass: string = 'hidden'
 
   constructor(
     public panelsEntity: PanelsEntityService,
     public panelJoinsEntity: PanelJoinsEntityService,
     public stringsEntity: StringsEntityService,
     private joinsService: JoinsService,
-    // private elRef: ElementRef,
     public store: Store<AppState>,
     private statsService: StatsService,
     private logger: LoggerService,
-    private cdr: ChangeDetectorRef,
   ) {}
 
-  displayTooltip(panel: PanelModel): string {
-    if (this.selected) {
-      switch (this.selected.unit) {
+  ngOnInit() {
+    this.gridMode$ = this.store.select(selectGridMode)
+    this.panel$ = this.panelsEntity.entities$.pipe(
+      map((panels) => panels.find((panel) => panel.location === this.location)),
+    )
+    this.panelToJoin$ = this.store.select(selectPanelToJoin)
+    this.selectedId$ = this.store
+      .select(selectSelectedId)
+      .pipe(distinctUntilChanged())
+    this.selectedPositiveTo$ = this.store.select(selectSelectedPositiveTo)
+    this.selectedNegativeTo$ = this.store.select(selectSelectedNegativeTo)
+    this.selectedUnit$ = this.store.select(selectUnitSelected)
+    this.selectedStringTooltip$ = this.store.select(selectSelectedStringTooltip)
+    this.joinState$ = this.store.select(selectJoinsState)
+  }
+
+  displayTooltip(
+    panel: PanelModel,
+    selectedUnit?: UnitModel,
+    selectedId?: string,
+    selectedStringTooltip?: string,
+  ): string {
+    if (selectedUnit) {
+      switch (selectedUnit) {
         case UnitModel.PANEL:
           return `
            Location = ${panel.location} \r\n
            String: ${panel.string_id} \r\n
           `
         case UnitModel.STRING:
-          if (!this.panelString) {
-            this.logger.error('err displayTooltip panelString')
-            return 'err displayTooltip panelString'
-          }
-          // if (!this.panelsForString) {
-          //   this.logger.error('err displayTooltip panelString')
-          //   return 'err displayTooltip panelString'
-          // }
-
-          if (this.panelString.id === this.selected.singleSelectId) {
-            // const stringStats = this.statsService.calculateStringTotals(
-            //   this.panelString,
-            //   this.panelsForString,
-            // )
-
-            //  Panels: ${this.panelsForString.length} \r\n
-            //  TotalVoc: ${stringStats.totalVoc}V \r\n
-            //  TotalVmp: ${stringStats.totalVmp}V \r\n
-            //  TotalPmax: ${stringStats.totalPmax}W \r\n
-            //  TotalIsc: ${stringStats.totalIsc}A \r\n
-
-            return `
-           String = ${this.panelString.name} \r\n
-           Color: ${this.panelString.color} \r\n
-           Parallel: ${this.panelString.is_in_parallel} \r\n
-        `
+          if (panel.string_id === selectedId) {
+            if (selectedStringTooltip) {
+              return selectedStringTooltip
+            }
           }
       }
     }
@@ -148,25 +153,46 @@ export class BlockPanelComponent implements OnInit, AfterViewInit {
     `
   }
 
-  ngOnInit() {}
-
   onRightClick(event: MouseEvent, panel: PanelModel) {
     event.preventDefault()
-    this.rightClickPanel.emit({ event, item: panel })
+
+    this.menuTopLeftPosition.x = event.clientX + 10 + 'px'
+    this.menuTopLeftPosition.y = event.clientY + 10 + 'px'
+    this.matMenuTrigger.menuData = { panel }
+    this.matMenuTrigger.openMenu()
   }
 
-  clickPanel(panel: PanelModel) {
-    if (!panel || !this.gridMode || !this.project) return
+  selectString(panel: PanelModel) {
+    this.store.dispatch(
+      GridStateActions.changeGridmode({ mode: GridMode.SELECT }),
+    )
+    this.store.dispatch(
+      SelectedStateActions.selectUnit({ unit: UnitModel.STRING }),
+    )
+    this.store.dispatch(
+      SelectedStateActions.selectString({ stringId: panel.string_id }),
+    )
+  }
 
-    switch (this.gridMode) {
+  deletePanel(panel: PanelModel) {
+    this.panelsEntity.delete(panel)
+  }
+
+  panelAction(
+    panel: PanelModel,
+    gridMode?: GridMode | null,
+    joinsState?: JoinsState | null,
+  ) {
+    if (!panel || !gridMode) return
+
+    switch (gridMode) {
       case GridMode.JOIN:
-        if (this.joinsState) {
-          console.log('click joins true')
-          this.joinsService.addPanelToJoin(this.project, panel, this.joinsState)
+        if (joinsState) {
+          this.joinsService.addPanelToJoin(panel, gridMode, joinsState)
         }
-        console.log('click joins')
         break
       case GridMode.DELETE:
+        this.panelsEntity.delete(panel)
         break
       case GridMode.SELECT:
         this.store.dispatch(
@@ -180,112 +206,7 @@ export class BlockPanelComponent implements OnInit, AfterViewInit {
         this.store.dispatch(
           SelectedStateActions.selectPanel({ panelId: panel.id }),
         )
+        break
     }
-
-    // if (this.gridMode === GridMode.JOIN || this.gridMode == GridMode.DELETE) {
-    //   return
-    // } else {
-    //   if (this.gridMode !== GridMode.SELECT) {
-    //     this.store.dispatch(
-    //       GridStateActions.changeGridmode({ mode: GridMode.SELECT }),
-    //     )
-    //   }
-    //   this.store.dispatch(
-    //     SelectedStateActions.selectPanel({ panelId: panel.id }),
-    //   )
-    // if (this.selected?.multiSelect) {
-    //   this.store.dispatch(
-    //     SelectedStateActions.toggleMultiSelect({ multiSelect: false }),
-    //   )
-    // }
-
-    // this.store.dispatch(
-    //   SelectedStateActions.selectUnit({ unit: UnitModel.PANEL }),
-    // )
-    // this.store.dispatch(SelectedStateActions.selectId({ id: panel.id }))
-
-    // this.panelClass = 'drop-zone__bg-selected'
-    // }
   }
-
-  ngAfterViewInit(): void {
-    if (this.selected && this.panel) {
-      if (this.selected.unit === UnitModel.PANEL) {
-        if (!this.selected.multiSelect) {
-          if (this.selected.singleSelectId === this.panel.id) {
-            this.panelDiv.nativeElement.style.backgroundColor = '#07ffd4'
-          } else {
-            this.panelDiv.nativeElement.style.backgroundColor = '#9ec7f9'
-          }
-        }
-      }
-    }
-
-    /*    this.sub = combineLatest([
-          this.selected$,
-          this.store.select(selectBlockToJoin),
-          this.panelsEntity.entities$,
-          this.store.select(selectGridMode),
-          this.selectedLinks$,
-        ]).subscribe(([selected, blockToJoin, panels, gridMode, selectedLinks]) => {
-          this.gridMode = gridMode
-
-          if (selected?.selectedPanels?.includes(<PanelModel>this.panel)) {
-            this.panelDiv.nativeElement.style.backgroundColor = '#07ffd4'
-          } else {
-            this.panelDiv.nativeElement.style.backgroundColor = '#9ec7f9'
-          }
-
-          /!*      if (selected?.selectedPanels?.length === 0) {
-                  this.selectedPositiveLinkTo = undefined
-                  this.selectedNegativeLinkTo = undefined
-                }*!/
-
-          if (gridMode === GridMode.SELECT) {
-            if (
-              selectedLinks?.selectedPositiveLinkTo &&
-              selectedLinks?.selectedPositiveLinkTo === this.panel?.id
-            ) {
-              this.panelDiv.nativeElement.style.backgroundColor = '#b595f9'
-            }
-
-            if (
-              selectedLinks?.selectedNegativeLinkTo &&
-              selectedLinks?.selectedNegativeLinkTo === this.panel?.id
-            ) {
-              this.panelDiv.nativeElement.style.backgroundColor = '#38c1ff'
-            }
-
-            if (
-              selected?.selectedStrings &&
-              selected.selectedStrings?.length === 1 &&
-              selected.selectedStrings[0] != undefined
-            ) {
-              const stringPanels = panels?.filter(
-                (p) => p.string_id === selected!.selectedStrings![0],
-              )
-              console.log(
-                'selected!.selectedStrings![0]',
-                selected!.selectedStrings![0],
-              )
-              console.log('stringPanels', stringPanels)
-              if (stringPanels?.includes(<PanelModel>this.panel)) {
-                this.panelDiv.nativeElement.style.backgroundColor = '#07ffd4'
-              } else {
-                this.panelDiv.nativeElement.style.backgroundColor = '#9ec7f9'
-              }
-            }
-          }
-          if (gridMode === GridMode.JOIN) {
-            if (blockToJoin?.id === this.panel?.id) {
-              this.panelDiv.nativeElement.style.backgroundColor = '#ff00d6'
-            }
-          }
-        })*/
-  }
-
-  // private rerender() {
-  //   this.outletRef.clear()
-  //   this.outletRef.createEmbeddedView(this.contentRef)
-  // }
 }

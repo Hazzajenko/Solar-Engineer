@@ -1,20 +1,15 @@
-import { DisconnectionPointModel } from './../../models/disconnection-point.model'
-import { BlockModel } from './../../models/block.model'
 import { createReducer, on } from '@ngrx/store'
 import { SelectedStateActions } from './selected.actions'
 import { UnitModel } from '../../models/unit.model'
-import { PanelModel } from '../../models/panel.model'
 
 export interface SelectedState {
   unit?: UnitModel
-  multiSelect: boolean
+  multiSelect?: boolean
   singleSelectId?: string
   multiSelectIds?: string[]
   selectedPositiveLinkTo?: string
   selectedNegativeLinkTo?: string
-  typeToJoin?: UnitModel
-  panelToJoin?: PanelModel
-  dpToJoin?: DisconnectionPointModel
+  selectedStringTooltip?: string
 }
 
 export const initialSelectedState: SelectedState = {
@@ -24,9 +19,7 @@ export const initialSelectedState: SelectedState = {
   multiSelectIds: undefined,
   selectedPositiveLinkTo: undefined,
   selectedNegativeLinkTo: undefined,
-  typeToJoin: undefined,
-  panelToJoin: undefined,
-  dpToJoin: undefined,
+  selectedStringTooltip: undefined,
 }
 
 export const selectedReducer = createReducer(
@@ -86,38 +79,27 @@ export const selectedReducer = createReducer(
 
   on(SelectedStateActions.selectString, (state, { stringId }) => ({
     unit: UnitModel.STRING,
-    multiSelect: true,
     singleSelectId: stringId,
     multiSelectIds: undefined,
     selectedPositiveLinkTo: undefined,
     selectedNegativeLinkTo: undefined,
-    typeToJoin: UnitModel.UNDEFINED,
-    panelToJoin: undefined,
-    dpToJoin: undefined,
   })),
 
-  on(SelectedStateActions.addToJoinPanel, (state, { panel }) => ({
-    unit: UnitModel.PANEL,
-    multiSelect: false,
-    singleSelectId: undefined,
-    multiSelectIds: undefined,
+  on(SelectedStateActions.setSelectedStringPanels, (state, { panelIds }) => ({
+    unit: UnitModel.STRING,
+    singleSelectId: state.singleSelectId,
+    multiSelectIds: panelIds,
     selectedPositiveLinkTo: undefined,
     selectedNegativeLinkTo: undefined,
-    typeToJoin: UnitModel.PANEL,
-    panelToJoin: panel,
-    dpToJoin: undefined,
   })),
 
-  on(SelectedStateActions.addToJoinDp, (state, { disconnectionPoint }) => ({
-    unit: UnitModel.PANEL,
-    multiSelect: false,
-    singleSelectId: undefined,
-    multiSelectIds: undefined,
+  on(SelectedStateActions.setSelectedStringTooltip, (state, { tooltip }) => ({
+    unit: UnitModel.STRING,
+    singleSelectId: state.singleSelectId,
+    multiSelectIds: state.multiSelectIds,
+    selectedStringTooltip: tooltip,
     selectedPositiveLinkTo: undefined,
     selectedNegativeLinkTo: undefined,
-    typeToJoin: UnitModel.DISCONNECTIONPOINT,
-    panelToJoin: undefined,
-    dpToJoin: disconnectionPoint,
   })),
 
   on(SelectedStateActions.clearSelectedState, (state) => ({

@@ -8,10 +8,14 @@ export const selectJoinsState = createFeatureSelector<State.JoinsState>('joins')
 //   (state: State.JoinsState) => state.blockToJoin,
 // )
 
-
 export const selectPanelToJoin = createSelector(
   selectJoinsState,
   (state: State.JoinsState) => state.panelToJoin,
+)
+
+export const selectDpToJoin = createSelector(
+  selectJoinsState,
+  (state: State.JoinsState) => state.dpToJoin,
 )
 
 // export const selectBlockToJoin = createSelector(

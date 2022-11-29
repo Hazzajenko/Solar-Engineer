@@ -1,5 +1,4 @@
 import {
-  AfterViewInit,
   Component,
   ElementRef,
   EventEmitter,
@@ -14,13 +13,28 @@ import { AsyncPipe, NgIf, NgStyle } from '@angular/common'
 import { LetModule } from '@ngrx/component'
 import { DisconnectionPointModel } from '../../../models/disconnection-point.model'
 import { DisconnectionPointsEntityService } from '../../services/disconnection-points-entity/disconnection-points-entity.service'
-import { Observable } from 'rxjs'
+import { distinctUntilChanged, Observable } from 'rxjs'
 import { UnitModel } from '../../../models/unit.model'
 import { Store } from '@ngrx/store'
 import { AppState } from '../../../../store/app.state'
 import { PanelJoinsEntityService } from '../../services/panel-joins-entity/panel-joins-entity.service'
 import { PanelLinkComponent } from '../../../../components/panel-link/panel-link.component'
 import { RightClick } from '../grid-layout/block-switch/right-click'
+import { GridMode } from '../../../store/grid/grid-mode.model'
+import { JoinsState } from '../../../store/joins/joins.reducer'
+import { selectGridMode } from '../../../store/grid/grid.selectors'
+import { map } from 'rxjs/operators'
+import { selectJoinsState } from '../../../store/joins/joins.selectors'
+import {
+  selectSelectedId,
+  selectSelectedNegativeTo,
+  selectSelectedPositiveTo,
+  selectUnitSelected,
+} from '../../../store/selected/selected.selectors'
+import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
+import { SelectedStateActions } from '../../../store/selected/selected.actions'
+import { GridStateActions } from '../../../store/grid/grid.actions'
+import { JoinsService } from '../../../services/joins.service'
 
 @Component({
   selector: 'app-block-disconnection-point',
@@ -34,34 +48,30 @@ import { RightClick } from '../grid-layout/block-switch/right-click'
     AsyncPipe,
     LetModule,
     PanelLinkComponent,
+    MatMenuModule,
   ],
   standalone: true,
 })
-export class BlockDisconnectionPointComponent implements OnInit, AfterViewInit {
+export class BlockDisconnectionPointComponent implements OnInit {
   @ViewChild('disconnectionPointDiv') disconnectionPointDiv!: ElementRef
-  @Input() disconnectionPoint?: DisconnectionPointModel
+  @Input() location!: string
   @Output() rightClickDp = new EventEmitter<RightClick>()
-  selected$!: Observable<
-    | {
-        selectedUnit?: UnitModel
-        selectedDisconnectionPoint?: string
-      }
-    | undefined
-  >
-  selectedLinks$!: Observable<
-    | {
-        selectedPositiveLinkTo?: string
-        selectedNegativeLinkTo?: string
-      }
-    | undefined
-  >
-
-  tooltip?: string
+  gridMode$!: Observable<GridMode | undefined>
+  disconnectionPoint$!: Observable<DisconnectionPointModel | undefined>
+  joinState$!: Observable<JoinsState>
+  selectedId$!: Observable<string | undefined>
+  selectedPositiveTo$!: Observable<string | undefined>
+  selectedNegativeTo$!: Observable<string | undefined>
+  selectedUnit$!: Observable<UnitModel | undefined>
+  menuTopLeftPosition = { x: '0', y: '0' }
+  @ViewChild(MatMenuTrigger, { static: true })
+  matMenuTrigger!: MatMenuTrigger
 
   constructor(
     public disconnectionPointsEntity: DisconnectionPointsEntityService,
     private store: Store<AppState>,
     private panelJoinsEntity: PanelJoinsEntityService,
+    private joinsService: JoinsService,
   ) {}
 
   displayTooltip(disconnectionPoint: DisconnectionPointModel): string {
@@ -73,96 +83,61 @@ export class BlockDisconnectionPointComponent implements OnInit, AfterViewInit {
 
   onRightClick(event: MouseEvent, dp: DisconnectionPointModel) {
     event.preventDefault()
-    this.rightClickDp.emit({ event, item: dp })
+    // this.rightClickDp.emit({ event, item: dp })
+
+    this.menuTopLeftPosition.x = event.clientX + 10 + 'px'
+    this.menuTopLeftPosition.y = event.clientY + 10 + 'px'
+    this.matMenuTrigger.menuData = { dp }
+    this.matMenuTrigger.openMenu()
   }
 
   ngOnInit() {
-    /*    this.selectedLinks$ = combineLatest([
-          this.store.select(selectUnitSelected),
-          this.store.select(selectSelectedPanels),
-          this.store.select(selectSelectedDisconnectionPoint),
-          this.panelJoinsEntity.entities$,
-        ]).pipe(
-          map(([unit, panels, dps, panelJoins]) => {
-            if (unit === UnitModel.PANEL) {
-              if (!panels) return
-              console.log('unit == PANEL')
-              const panel = panels[0]
-              const positive = panelJoins.find(
-                (pJoin) => pJoin.negative_id === panel.id,
-              )?.positive_id
-              const negative = panelJoins.find(
-                (pJoin) => pJoin.positive_id === panel.id,
-              )?.negative_id
-              return {
-                selectedPositiveLinkTo: positive,
-                selectedNegativeLinkTo: negative,
-              }
-            }
-
-            if (unit === UnitModel.DISCONNECTIONPOINT) {
-              console.log('unit == dp')
-
-              const dp = dps
-              const positive = panelJoins.find(
-                (pJoin) => pJoin.negative_id === dp,
-              )?.positive_id
-              const negative = panelJoins.find(
-                (pJoin) => pJoin.positive_id === dp,
-              )?.negative_id
-              console.log('positive', positive)
-              console.log('negative', negative)
-              return {
-                selectedPositiveLinkTo: positive,
-                selectedNegativeLinkTo: negative,
-              }
-            }
-            return
-          }),
-        )*/
-    /*    this.selected$ = combineLatest([
-          this.store.select(selectUnitSelected),
-          this.store.select(selectSelectedDisconnectionPoint),
-        ]).pipe(
-          map(([selectedUnit, selectedDisconnectionPoint]) => ({
-            selectedUnit,
-            selectedDisconnectionPoint,
-          })),
-        )*/
-    /*    this.selectedLinks$ = combineLatest([
-          this.store.select(selectSelectedPanels),
-          this.panelJoinsEntity.entities$,
-        ]).pipe(
-          map(([panels, panelJoins]) => {
-            if (!panels) return
-            const panel = panels[0]
-            const positive = panelJoins.find(
-              (pJoin) => pJoin.negative_id === panel.id,
-            )?.positive_id
-            const negative = panelJoins.find(
-              (pJoin) => pJoin.positive_id === panel.id,
-            )?.negative_id
-            return {
-              selectedPositiveLinkTo: positive,
-              selectedNegativeLinkTo: negative,
-            }
-          }),
-        )*/
+    this.gridMode$ = this.store.select(selectGridMode)
+    this.disconnectionPoint$ = this.disconnectionPointsEntity.entities$.pipe(
+      map((dps) => dps.find((dp) => dp.location === this.location)),
+    )
+    // this.dpToJoin$ = this.store.select(selectDpToJoin)
+    this.selectedId$ = this.store
+      .select(selectSelectedId)
+      .pipe(distinctUntilChanged())
+    this.selectedPositiveTo$ = this.store.select(selectSelectedPositiveTo)
+    this.selectedNegativeTo$ = this.store.select(selectSelectedNegativeTo)
+    this.selectedUnit$ = this.store.select(selectUnitSelected)
+    // this.selectedStringTooltip$ = this.store.select(selectSelectedStringTooltip)
+    this.joinState$ = this.store.select(selectJoinsState)
   }
 
-  ngAfterViewInit(): void {
-    /*    combineLatest([this.selected$]).subscribe(([selected]) => {
-          if (selected?.selectedUnit === UnitModel.DISCONNECTIONPOINT) {
-            console.log(selected?.selectedDisconnectionPoint)
-            if (selected?.selectedDisconnectionPoint === this.disconnectionPoint) {
-              console.log('yes color')
-              this.disconnectionPointDiv.nativeElement.style.backgroundColor =
-                '#07ffd4'
-            }
-          } else {
-            this.disconnectionPointDiv.nativeElement.style.backgroundColor =
-              '#f9190f'
-          }
-        })*/
+  dpAction(
+    disconnectionPoint: DisconnectionPointModel,
+    gridMode?: GridMode | null,
+    joinsState?: JoinsState | null,
+  ) {
+    if (!disconnectionPoint || !gridMode) return
+
+    switch (gridMode) {
+      case GridMode.JOIN:
+        if (joinsState) {
+          this.joinsService.addPanelToJoin(panel, gridMode, joinsState)
+        }
+        break
+      case GridMode.DELETE:
+        this.panelsEntity.delete(panel)
+        break
+      case GridMode.SELECT:
+        this.store.dispatch(
+          SelectedStateActions.selectPanel({ panelId: panel.id }),
+        )
+        break
+      default:
+        this.store.dispatch(
+          GridStateActions.changeGridmode({ mode: GridMode.SELECT }),
+        )
+        this.store.dispatch(
+          SelectedStateActions.selectPanel({ panelId: panel.id }),
+        )
+        break
+    }
   }
+
+  deleteDisconnectionPoint(disconnectionPoint: DisconnectionPointModel) {}
 }

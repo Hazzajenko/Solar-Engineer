@@ -11,20 +11,22 @@
     <!--        <button (click)="deleteBlock(item)" mat-menu-item>Delete</button>-->
   </ng-container>
   <ng-container *ngSwitchCase="5">
-    <label>{{ item.name }}</label>
-    <ul style="list-style: none">
-      <li>Panel Id: {{ item.id }}</li>
-      <li>Location: {{ item["location"] }}</li>
-      <li>String Id: {{ item["string_id"] }}</li>
-    </ul>
-    <button mat-menu-item>Add</button>
-    <button mat-menu-item>Edit</button>
-    <button (click)="selectString(item['string_id'])" mat-menu-item>
-      Select String
-    </button>
-    <button (click)="gridDelete.deletePanel(item.id)" mat-menu-item>
-      Delete
-    </button>
+    <div>
+      <label>{{ item.name }}</label>
+      <ul style="list-style: none">
+        <li>Panel Id: {{ item.id }}</li>
+        <li>Location: {{ item["location"] }}</li>
+        <li>String Id: {{ item["string_id"] }}</li>
+      </ul>
+      <button mat-menu-item>Add</button>
+      <button mat-menu-item>Edit</button>
+      <button (click)="selectString(item['string_id'])" mat-menu-item>
+        Select String
+      </button>
+      <button (click)="gridDelete.deletePanel(item.id)" mat-menu-item>
+        Delete
+      </button>
+    </div>
   </ng-container>
   <ng-container *ngSwitchCase="6">
     <ul style="list-style: none">

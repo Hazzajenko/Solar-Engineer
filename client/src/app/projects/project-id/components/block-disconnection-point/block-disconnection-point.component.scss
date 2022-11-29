@@ -29,3 +29,19 @@
     }
   }
 }
+
+
+.right-click-menu {
+  background-color: #f6eded;
+
+  &__button {
+    padding: 4px 6px;
+    font-size: 12px;
+    cursor: pointer;
+    border-radius: inherit;
+
+    &:hover {
+      background: #545bff;
+    }
+  }
+}

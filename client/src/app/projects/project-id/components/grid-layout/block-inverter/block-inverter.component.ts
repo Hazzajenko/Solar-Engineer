@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core'
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
 import { DragDropModule } from '@angular/cdk/drag-drop'
 import { MatTooltipModule } from '@angular/material/tooltip'
 import { AsyncPipe, NgIf, NgStyle } from '@angular/common'
@@ -9,11 +9,18 @@ import { CableJoinComponent } from '../../../../../components/cable-join/cable-j
 import { InverterModel } from '../../../../models/inverter.model'
 import { InvertersEntityService } from '../../../services/inverters-entity/inverters-entity.service'
 import { RightClick } from '../block-switch/right-click'
+import { selectGridMode } from '../../../../store/grid/grid.selectors'
+import { map } from 'rxjs/operators'
+import { selectSelectedId } from '../../../../store/selected/selected.selectors'
+import { distinctUntilChanged, Observable } from 'rxjs'
+import { GridMode } from '../../../../store/grid/grid-mode.model'
+import { Store } from '@ngrx/store'
+import { AppState } from '../../../../../store/app.state'
 
 @Component({
   selector: 'app-block-inverter',
   template: `
-    <ng-container *ngIf="inverter">
+    <ng-container *ngIf="inverter$ | async as inverter">
       <div
         (contextmenu)="onRightClick($event, inverter)"
         *ngIf="inverter.location"
@@ -30,6 +37,21 @@ import { RightClick } from '../block-switch/right-click'
   `,
   styles: [
     `
+      .right-click-menu {
+        background-color: #f6eded;
+
+        &__button {
+          padding: 4px 6px;
+          font-size: 12px;
+          cursor: pointer;
+          border-radius: inherit;
+
+          &:hover {
+            background: #545bff;
+          }
+        }
+      }
+
       .drop-zone__inverter {
         background-color: #95c2fa;
         width: 20px;
@@ -59,9 +81,12 @@ import { RightClick } from '../block-switch/right-click'
   ],
   standalone: true,
 })
-export class BlockInverterComponent {
-  @Input() inverter?: InverterModel
+export class BlockInverterComponent implements OnInit {
+  @Input() location!: string
   @Output() rightClickInverter = new EventEmitter<RightClick>()
+  gridMode$!: Observable<GridMode | undefined>
+  inverter$!: Observable<InverterModel | undefined>
+  selectedId$!: Observable<string | undefined>
 
   /*  @Input() inverter?: InverterModel
     @Input() block?: BlockModel
@@ -72,7 +97,28 @@ export class BlockInverterComponent {
       gridMode?: GridMode
     }*/
 
-  constructor(private invertersEntity: InvertersEntityService) {}
+  constructor(
+    private invertersEntity: InvertersEntityService,
+    private store: Store<AppState>,
+  ) {}
+
+  ngOnInit(): void {
+    this.gridMode$ = this.store.select(selectGridMode)
+    this.inverter$ = this.invertersEntity.entities$.pipe(
+      map((inverters) =>
+        inverters.find((inverter) => inverter.location === this.location),
+      ),
+    )
+    // this.panelToJoin$ = this.store.select(selectPanelToJoin)
+    this.selectedId$ = this.store
+      .select(selectSelectedId)
+      .pipe(distinctUntilChanged())
+    // this.selectedPositiveTo$ = this.store.select(selectSelectedPositiveTo)
+    // this.selectedNegativeTo$ = this.store.select(selectSelectedNegativeTo)
+    // this.selectedUnit$ = this.store.select(selectUnitSelected)
+    // this.selectedStringTooltip$ = this.store.select(selectSelectedStringTooltip)
+    // this.joinState$ = this.store.select(selectJoinsState)
+  }
 
   onRightClick(event: MouseEvent, inverter: InverterModel) {
     event.preventDefault()

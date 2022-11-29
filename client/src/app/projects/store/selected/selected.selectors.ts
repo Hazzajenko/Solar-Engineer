@@ -14,6 +14,26 @@ export const selectUnitSelected = createSelector(
   (state: State.SelectedState) => state.unit,
 )
 
+export const selectSelectedId = createSelector(
+  selectSelectedState,
+  (state: State.SelectedState) => state.singleSelectId,
+)
+
+export const selectSelectedPositiveTo = createSelector(
+  selectSelectedState,
+  (state: State.SelectedState) => state.selectedPositiveLinkTo,
+)
+
+export const selectSelectedNegativeTo = createSelector(
+  selectSelectedState,
+  (state: State.SelectedState) => state.selectedNegativeLinkTo,
+)
+
+export const selectSelectedStringTooltip = createSelector(
+  selectSelectedState,
+  (state: State.SelectedState) => state.selectedStringTooltip,
+)
+
 /*
 export const selectSelectedPanels = createSelector(
   selectSelectedState,

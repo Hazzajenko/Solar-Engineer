@@ -32,6 +32,6 @@ export class BlockMenuComponent {
     this.store.dispatch(
       SelectedStateActions.selectUnit({ unit: UnitModel.STRING }),
     )
-    this.store.dispatch(SelectedStateActions.selectId({ id: stringId }))
+    this.store.dispatch(SelectedStateActions.selectString({ stringId }))
   }
 }
