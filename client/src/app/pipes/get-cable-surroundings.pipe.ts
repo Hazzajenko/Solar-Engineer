@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core'
 import { CableModel } from '../projects/models/cable.model'
-import { CablesEntityService } from '../projects/project-id/services/cables-entity/cables-entity.service'
+import { CablesEntityService } from '../projects/project-id/services/ngrx-data/cables-entity/cables-entity.service'
 
 export interface SurroundingModel {
   left: boolean
@@ -14,8 +14,7 @@ export interface SurroundingModel {
   standalone: true,
 })
 export class GetCableSurroundingsPipe implements PipeTransform {
-  constructor(private cablesEntity: CablesEntityService) {
-  }
+  constructor(private cablesEntity: CablesEntityService) {}
 
   transform(cable: CableModel): SurroundingModel {
     if (!cable) {
@@ -46,7 +45,7 @@ export class GetCableSurroundingsPipe implements PipeTransform {
     const rightString: string = `row${numberRow}col${numberCol + 1}`
 
     let allCables: CableModel[] = []
-    this.cablesEntity.entities$.subscribe(cables => {
+    this.cablesEntity.entities$.subscribe((cables) => {
       allCables = cables
     })
 

@@ -6,7 +6,7 @@ import (
 	disconnection_points "github.com/Hazzajenko/gosolarbackend/internal/data/models/disconnection-points"
 	"github.com/Hazzajenko/gosolarbackend/internal/data/models/inverters"
 	"github.com/Hazzajenko/gosolarbackend/internal/data/models/joins"
-	"github.com/Hazzajenko/gosolarbackend/internal/data/models/panel-joins"
+	"github.com/Hazzajenko/gosolarbackend/internal/data/models/links"
 	"github.com/Hazzajenko/gosolarbackend/internal/data/models/panels"
 	"github.com/Hazzajenko/gosolarbackend/internal/data/models/projects"
 	"github.com/Hazzajenko/gosolarbackend/internal/data/models/strings"
@@ -21,7 +21,7 @@ type Models struct {
 	Trackers            trackers.TrackerModel
 	Strings             strings.StringModel
 	Panels              panels.PanelModel
-	PanelJoins          panel_joins.PanelJoinModel
+	PanelJoins          links.LinkModel
 	Cables              cables.CableModel
 	Joins               joins.JoinModel
 	DisconnectionPoints disconnection_points.DisconnectionPointModel
@@ -35,7 +35,7 @@ func InitModels(db *sql.DB) Models {
 		Trackers:            trackers.TrackerModel{DB: db},
 		Strings:             strings.StringModel{DB: db},
 		Panels:              panels.PanelModel{DB: db},
-		PanelJoins:          panel_joins.PanelJoinModel{DB: db},
+		PanelJoins:          links.LinkModel{DB: db},
 		Cables:              cables.CableModel{DB: db},
 		Joins:               joins.JoinModel{DB: db},
 		DisconnectionPoints: disconnection_points.DisconnectionPointModel{DB: db},

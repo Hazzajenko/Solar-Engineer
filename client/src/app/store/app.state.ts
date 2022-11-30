@@ -2,13 +2,13 @@ import { routerReducer, RouterReducerState } from '@ngrx/router-store'
 import { ActionReducer, ActionReducerMap, MetaReducer } from '@ngrx/store'
 import { environment } from '../../environments/environment'
 import * as fromAuth from '../auth/store/auth.reducer'
-import * as fromProjects from '../projects/store/projects/projects.reducer'
+import * as fromProjects from '../projects/project-id/services/store/projects/projects.reducer'
 import * as fromUserProjects from '../projects/store/user-projects/user-projects.reducer'
-import * as fromGrid from '../projects/store/grid/grid.reducer'
-import * as fromSelected from '../projects/store/selected/selected.reducer'
-import * as fromJoins from '../projects/store/joins/joins.reducer'
+import * as fromGrid from '../projects/project-id/services/store/grid/grid.reducer'
+import * as fromSelected from '../projects/project-id/services/store/selected/selected.reducer'
+import * as fromLinks from '../projects/project-id/services/store/links/links.reducer'
 import * as fromCables from '../projects/store/cable/cable.reducer'
-import * as fromBlocks from '../projects/store/blocks/blocks.reducer'
+import * as fromBlocks from '../projects/project-id/services/store/blocks/blocks.reducer'
 import * as fromInverters from '../projects/store/inverters/inverters.reducer'
 import * as fromTrackers from '../projects/store/trackers/trackers.reducer'
 import * as fromStrings from '../projects/store/strings/strings.reducer'
@@ -21,7 +21,7 @@ export interface AppState {
   userProjects: fromUserProjects.UserProjectState
   grid: fromGrid.GridState
   selected: fromSelected.SelectedState
-  joins: fromJoins.JoinsState
+  links: fromLinks.LinksState
   cables: fromCables.CableState
   blocks: fromBlocks.BlocksState
   inverters: fromInverters.InverterState
@@ -38,7 +38,7 @@ export const reducers: ActionReducerMap<AppState> = {
   userProjects: fromUserProjects.userProjectsReducer,
   grid: fromGrid.gridReducer,
   selected: fromSelected.selectedReducer,
-  joins: fromJoins.joinsReducer,
+  links: fromLinks.linksReducer,
   cables: fromCables.cableReducer,
   blocks: fromBlocks.blocksReducer,
   inverters: fromInverters.invertersReducer,

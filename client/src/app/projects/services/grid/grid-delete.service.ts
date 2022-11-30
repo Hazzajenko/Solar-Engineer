@@ -3,13 +3,13 @@ import { ProjectModel } from '../../models/project.model'
 import { BlockModel } from '../../models/block.model'
 import { UnitModel } from '../../models/unit.model'
 import { GridService } from './grid.service'
-import { PanelsEntityService } from '../../project-id/services/panels-entity/panels-entity.service'
-import { CablesEntityService } from '../../project-id/services/cables-entity/cables-entity.service'
-import { InvertersEntityService } from '../../project-id/services/inverters-entity/inverters-entity.service'
-import { JoinsEntityService } from '../../project-id/services/joins-entity/joins-entity.service'
-import { JoinsService } from '../joins.service'
+import { PanelsEntityService } from '../../project-id/services/ngrx-data/panels-entity/panels-entity.service'
+import { CablesEntityService } from '../../project-id/services/ngrx-data/cables-entity/cables-entity.service'
+import { InvertersEntityService } from '../../project-id/services/ngrx-data/inverters-entity/inverters-entity.service'
+import { JoinsEntityService } from '../../project-id/services/ngrx-data/joins-entity/joins-entity.service'
+import { LinksService } from '../../project-id/services/links.service'
 import { LoggerService } from '../../../services/logger.service'
-import { PanelJoinsEntityService } from '../../project-id/services/panel-joins-entity/panel-joins-entity.service'
+import { LinksEntityService } from '../../project-id/services/ngrx-data/links-entity/links-entity.service'
 
 @Injectable({
   providedIn: 'root',
@@ -20,9 +20,9 @@ export class GridDeleteService extends GridService {
     cablesEntity: CablesEntityService,
     invertersEntity: InvertersEntityService,
     joinsEntity: JoinsEntityService,
-    joinsService: JoinsService,
+    joinsService: LinksService,
     logger: LoggerService,
-    private panelJoinsEntity: PanelJoinsEntityService,
+    private panelJoinsEntity: LinksEntityService,
   ) {
     super(
       panelsEntity,

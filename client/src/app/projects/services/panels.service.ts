@@ -10,10 +10,10 @@ import {
   PanelStateActions,
   UpdatePanelRequest,
 } from '../store/panels/panels.actions'
-import { BlocksStateActions } from '../store/blocks/blocks.actions'
+import { BlocksStateActions } from '../project-id/services/store/blocks/blocks.actions'
 import { UnitModel } from '../models/unit.model'
 import { Observable, shareReplay } from 'rxjs'
-import { PanelsEntityService } from '../project-id/services/panels-entity/panels-entity.service'
+import { PanelsEntityService } from '../project-id/services/ngrx-data/panels-entity/panels-entity.service'
 
 interface PanelsEnvelope {
   panels: PanelModel[]

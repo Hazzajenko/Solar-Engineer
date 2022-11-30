@@ -138,13 +138,13 @@ var StringRels = struct {
 	CreatedByUser       string
 	Project             string
 	DisconnectionPoints string
-	PanelJoins          string
+	Links               string
 	Panels              string
 }{
 	CreatedByUser:       "CreatedByUser",
 	Project:             "Project",
 	DisconnectionPoints: "DisconnectionPoints",
-	PanelJoins:          "PanelJoins",
+	Links:               "Links",
 	Panels:              "Panels",
 }
 
@@ -153,7 +153,7 @@ type stringR struct {
 	CreatedByUser       *User                   `boil:"CreatedByUser" json:"CreatedByUser" toml:"CreatedByUser" yaml:"CreatedByUser"`
 	Project             *Project                `boil:"Project" json:"Project" toml:"Project" yaml:"Project"`
 	DisconnectionPoints DisconnectionPointSlice `boil:"DisconnectionPoints" json:"DisconnectionPoints" toml:"DisconnectionPoints" yaml:"DisconnectionPoints"`
-	PanelJoins          PanelJoinSlice          `boil:"PanelJoins" json:"PanelJoins" toml:"PanelJoins" yaml:"PanelJoins"`
+	Links               LinkSlice               `boil:"Links" json:"Links" toml:"Links" yaml:"Links"`
 	Panels              PanelSlice              `boil:"Panels" json:"Panels" toml:"Panels" yaml:"Panels"`
 }
 
@@ -183,11 +183,11 @@ func (r *stringR) GetDisconnectionPoints() DisconnectionPointSlice {
 	return r.DisconnectionPoints
 }
 
-func (r *stringR) GetPanelJoins() PanelJoinSlice {
+func (r *stringR) GetLinks() LinkSlice {
 	if r == nil {
 		return nil
 	}
-	return r.PanelJoins
+	return r.Links
 }
 
 func (r *stringR) GetPanels() PanelSlice {
@@ -522,18 +522,18 @@ func (o *String) DisconnectionPoints(mods ...qm.QueryMod) disconnectionPointQuer
 	return DisconnectionPoints(queryMods...)
 }
 
-// PanelJoins retrieves all the panel_join's PanelJoins with an executor.
-func (o *String) PanelJoins(mods ...qm.QueryMod) panelJoinQuery {
+// Links retrieves all the link's Links with an executor.
+func (o *String) Links(mods ...qm.QueryMod) linkQuery {
 	var queryMods []qm.QueryMod
 	if len(mods) != 0 {
 		queryMods = append(queryMods, mods...)
 	}
 
 	queryMods = append(queryMods,
-		qm.Where("\"panel_joins\".\"string_id\"=?", o.ID),
+		qm.Where("\"links\".\"string_id\"=?", o.ID),
 	)
 
-	return PanelJoins(queryMods...)
+	return Links(queryMods...)
 }
 
 // Panels retrieves all the panel's Panels with an executor.
@@ -904,9 +904,9 @@ func (stringL) LoadDisconnectionPoints(ctx context.Context, e boil.ContextExecut
 	return nil
 }
 
-// LoadPanelJoins allows an eager lookup of values, cached into the
+// LoadLinks allows an eager lookup of values, cached into the
 // loaded structs of the objects. This is for a 1-M or N-M relationship.
-func (stringL) LoadPanelJoins(ctx context.Context, e boil.ContextExecutor, singular bool, maybeString interface{}, mods queries.Applicator) error {
+func (stringL) LoadLinks(ctx context.Context, e boil.ContextExecutor, singular bool, maybeString interface{}, mods queries.Applicator) error {
 	var slice []*String
 	var object *String
 
@@ -960,8 +960,8 @@ func (stringL) LoadPanelJoins(ctx context.Context, e boil.ContextExecutor, singu
 	}
 
 	query := NewQuery(
-		qm.From(`panel_joins`),
-		qm.WhereIn(`panel_joins.string_id in ?`, args...),
+		qm.From(`links`),
+		qm.WhereIn(`links.string_id in ?`, args...),
 	)
 	if mods != nil {
 		mods.Apply(query)
@@ -969,22 +969,22 @@ func (stringL) LoadPanelJoins(ctx context.Context, e boil.ContextExecutor, singu
 
 	results, err := query.QueryContext(ctx, e)
 	if err != nil {
-		return errors.Wrap(err, "failed to eager load panel_joins")
+		return errors.Wrap(err, "failed to eager load links")
 	}
 
-	var resultSlice []*PanelJoin
+	var resultSlice []*Link
 	if err = queries.Bind(results, &resultSlice); err != nil {
-		return errors.Wrap(err, "failed to bind eager loaded slice panel_joins")
+		return errors.Wrap(err, "failed to bind eager loaded slice links")
 	}
 
 	if err = results.Close(); err != nil {
-		return errors.Wrap(err, "failed to close results in eager load on panel_joins")
+		return errors.Wrap(err, "failed to close results in eager load on links")
 	}
 	if err = results.Err(); err != nil {
-		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for panel_joins")
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for links")
 	}
 
-	if len(panelJoinAfterSelectHooks) != 0 {
+	if len(linkAfterSelectHooks) != 0 {
 		for _, obj := range resultSlice {
 			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
 				return err
@@ -992,10 +992,10 @@ func (stringL) LoadPanelJoins(ctx context.Context, e boil.ContextExecutor, singu
 		}
 	}
 	if singular {
-		object.R.PanelJoins = resultSlice
+		object.R.Links = resultSlice
 		for _, foreign := range resultSlice {
 			if foreign.R == nil {
-				foreign.R = &panelJoinR{}
+				foreign.R = &linkR{}
 			}
 			foreign.R.String = object
 		}
@@ -1005,9 +1005,9 @@ func (stringL) LoadPanelJoins(ctx context.Context, e boil.ContextExecutor, singu
 	for _, foreign := range resultSlice {
 		for _, local := range slice {
 			if local.ID == foreign.StringID {
-				local.R.PanelJoins = append(local.R.PanelJoins, foreign)
+				local.R.Links = append(local.R.Links, foreign)
 				if foreign.R == nil {
-					foreign.R = &panelJoinR{}
+					foreign.R = &linkR{}
 				}
 				foreign.R.String = local
 				break
@@ -1279,11 +1279,11 @@ func (o *String) AddDisconnectionPoints(ctx context.Context, exec boil.ContextEx
 	return nil
 }
 
-// AddPanelJoins adds the given related objects to the existing relationships
+// AddLinks adds the given related objects to the existing relationships
 // of the string, optionally inserting them as new records.
-// Appends related to o.R.PanelJoins.
+// Appends related to o.R.Links.
 // Sets related.R.String appropriately.
-func (o *String) AddPanelJoins(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*PanelJoin) error {
+func (o *String) AddLinks(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*Link) error {
 	var err error
 	for _, rel := range related {
 		if insert {
@@ -1293,9 +1293,9 @@ func (o *String) AddPanelJoins(ctx context.Context, exec boil.ContextExecutor, i
 			}
 		} else {
 			updateQuery := fmt.Sprintf(
-				"UPDATE \"panel_joins\" SET %s WHERE %s",
+				"UPDATE \"links\" SET %s WHERE %s",
 				strmangle.SetParamNames("\"", "\"", 1, []string{"string_id"}),
-				strmangle.WhereClause("\"", "\"", 2, panelJoinPrimaryKeyColumns),
+				strmangle.WhereClause("\"", "\"", 2, linkPrimaryKeyColumns),
 			)
 			values := []interface{}{o.ID, rel.ID}
 
@@ -1314,15 +1314,15 @@ func (o *String) AddPanelJoins(ctx context.Context, exec boil.ContextExecutor, i
 
 	if o.R == nil {
 		o.R = &stringR{
-			PanelJoins: related,
+			Links: related,
 		}
 	} else {
-		o.R.PanelJoins = append(o.R.PanelJoins, related...)
+		o.R.Links = append(o.R.Links, related...)
 	}
 
 	for _, rel := range related {
 		if rel.R == nil {
-			rel.R = &panelJoinR{
+			rel.R = &linkR{
 				String: o,
 			}
 		} else {

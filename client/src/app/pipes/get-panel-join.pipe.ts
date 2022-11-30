@@ -1,7 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core'
 import { PanelModel } from '../projects/models/panel.model'
-import { PanelJoinModel } from '../projects/models/panel-join.model'
-import { PanelJoinsEntityService } from '../projects/project-id/services/panel-joins-entity/panel-joins-entity.service'
+import { LinkModel } from '../projects/models/link.model'
+import { LinksEntityService } from '../projects/project-id/services/ngrx-data/links-entity/links-entity.service'
 
 export interface PanelLinks {
   positive?: string
@@ -13,11 +13,11 @@ export interface PanelLinks {
   standalone: true,
 })
 export class GetPanelJoinPipe implements PipeTransform {
-  constructor(private panelJoinsEntity: PanelJoinsEntityService) {}
+  constructor(private panelJoinsEntity: LinksEntityService) {}
 
   transform(panel: PanelModel) {
-    let positiveJoin: PanelJoinModel | undefined
-    let negativeJoin: PanelJoinModel | undefined
+    let positiveJoin: LinkModel | undefined
+    let negativeJoin: LinkModel | undefined
 
     this.panelJoinsEntity.entities$.subscribe((pJoins) => {
       positiveJoin = pJoins.find(

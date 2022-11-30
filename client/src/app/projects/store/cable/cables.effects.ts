@@ -6,7 +6,7 @@ import { CableStateActions } from './cable.actions'
 import { exhaustMap, switchMap } from 'rxjs'
 import { CablesService } from '../../services/cables.service'
 import { catchError, map } from 'rxjs/operators'
-import { BlocksStateActions } from '../blocks/blocks.actions'
+import { BlocksStateActions } from '../../project-id/services/store/blocks/blocks.actions'
 import { UnitModel } from '../../models/unit.model'
 
 @Injectable()

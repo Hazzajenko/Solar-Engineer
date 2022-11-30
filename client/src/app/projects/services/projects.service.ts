@@ -7,7 +7,7 @@ import { AppState } from '../../store/app.state'
 import {
   addUserProjects,
   selectProject,
-} from '../store/projects/projects.actions'
+} from '../project-id/services/store/projects/projects.actions'
 import { InverterModel } from '../models/inverter.model'
 import { TrackerModel } from '../models/tracker.model'
 import { StringModel } from '../models/string.model'
@@ -15,7 +15,7 @@ import { addInvertersByProjectId } from '../store/inverters/inverters.actions'
 import { addTrackers } from '../store/trackers/trackers.actions'
 import { addStringsByProjectId } from '../store/strings/strings.actions'
 import { PanelModel } from '../models/panel.model'
-import { selectProjectByRouteParams } from '../store/projects/projects.selectors'
+import { selectProjectByRouteParams } from '../project-id/services/store/projects/projects.selectors'
 import { CableModel } from '../models/cable.model'
 
 export interface ProjectsEnvelope {

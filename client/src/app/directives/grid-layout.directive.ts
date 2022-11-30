@@ -1,10 +1,10 @@
 import { Directive, HostListener } from '@angular/core'
 import { Store } from '@ngrx/store'
 import { AppState } from '../store/app.state'
-import { JoinsStateActions } from '../projects/store/joins/joins.actions'
-import { SelectedStateActions } from '../projects/store/selected/selected.actions'
-import { GridStateActions } from '../projects/store/grid/grid.actions'
-import { GridMode } from '../projects/store/grid/grid-mode.model'
+import { LinksStateActions } from '../projects/project-id/services/store/links/links.actions'
+import { SelectedStateActions } from '../projects/project-id/services/store/selected/selected.actions'
+import { GridStateActions } from '../projects/project-id/services/store/grid/grid.actions'
+import { GridMode } from '../projects/project-id/services/store/grid/grid-mode.model'
 
 @Directive({
   selector: 'gridLayout',
@@ -17,7 +17,7 @@ export class GridLayoutDirective {
   keyEvent(event: KeyboardEvent) {
     console.log(event)
     if (event.key === 'Escape') {
-      this.store.dispatch(JoinsStateActions.clearPanelJoinState())
+      this.store.dispatch(LinksStateActions.clearLinkState())
       this.store.dispatch(SelectedStateActions.clearSelectedState())
       this.store.dispatch(
         GridStateActions.changeGridmode({ mode: GridMode.CREATE }),

@@ -2,9 +2,9 @@ import { Pipe, PipeTransform } from '@angular/core'
 import { CableModel } from '../projects/models/cable.model'
 import { Store } from '@ngrx/store'
 import { AppState } from '../store/app.state'
-import { JoinsEntityService } from '../projects/project-id/services/joins-entity/joins-entity.service'
+import { JoinsEntityService } from '../projects/project-id/services/ngrx-data/joins-entity/joins-entity.service'
 import { combineLatest } from 'rxjs'
-import { CablesEntityService } from '../projects/project-id/services/cables-entity/cables-entity.service'
+import { CablesEntityService } from '../projects/project-id/services/ngrx-data/cables-entity/cables-entity.service'
 import { Guid } from 'guid-typescript'
 
 export interface SurroundingModel {
@@ -23,8 +23,7 @@ export class JoinNearbyBlocksPipe implements PipeTransform {
     private store: Store<AppState>,
     private joinsEntity: JoinsEntityService,
     private cablesEntity: CablesEntityService,
-  ) {
-  }
+  ) {}
 
   transform(cable: CableModel): SurroundingModel {
     if (!cable) {
@@ -89,11 +88,13 @@ export class JoinNearbyBlocksPipe implements PipeTransform {
         if (cable) {
           if (cable.in_join) {
             console.log('JOIN TOP', findTop.location)
-            const cablesInJoin = cables.filter(getCable => getCable.join_id === cable.join_id)
-            cablesInJoin.forEach(cableInJoin => {
+            const cablesInJoin = cables.filter(
+              (getCable) => getCable.join_id === cable.join_id,
+            )
+            cablesInJoin.forEach((cableInJoin) => {
               const update: CableModel = {
                 ...cableInJoin,
-                join_id: newJoinId
+                join_id: newJoinId,
               }
 
               this.cablesEntity.update(update)
@@ -108,18 +109,19 @@ export class JoinNearbyBlocksPipe implements PipeTransform {
         )
         if (cable) {
           if (cable.in_join) {
-            const cablesInJoin = cables.filter(getCable => getCable.join_id === cable.join_id)
-            cablesInJoin.forEach(cableInJoin => {
+            const cablesInJoin = cables.filter(
+              (getCable) => getCable.join_id === cable.join_id,
+            )
+            cablesInJoin.forEach((cableInJoin) => {
               const update: CableModel = {
                 ...cableInJoin,
-                join_id: newJoinId
+                join_id: newJoinId,
               }
 
               this.cablesEntity.update(update)
             })
             console.log('JOIN BOTTOM', findBottom.location)
             bottom = true
-
           }
         }
       }
@@ -129,11 +131,13 @@ export class JoinNearbyBlocksPipe implements PipeTransform {
         )
         if (cable) {
           if (cable.in_join) {
-            const cablesInJoin = cables.filter(getCable => getCable.join_id === cable.join_id)
-            cablesInJoin.forEach(cableInJoin => {
+            const cablesInJoin = cables.filter(
+              (getCable) => getCable.join_id === cable.join_id,
+            )
+            cablesInJoin.forEach((cableInJoin) => {
               const update: CableModel = {
                 ...cableInJoin,
-                join_id: newJoinId
+                join_id: newJoinId,
               }
 
               this.cablesEntity.update(update)
@@ -149,11 +153,13 @@ export class JoinNearbyBlocksPipe implements PipeTransform {
         )
         if (cable) {
           if (cable.in_join) {
-            const cablesInJoin = cables.filter(getCable => getCable.join_id === cable.join_id)
-            cablesInJoin.forEach(cableInJoin => {
+            const cablesInJoin = cables.filter(
+              (getCable) => getCable.join_id === cable.join_id,
+            )
+            cablesInJoin.forEach((cableInJoin) => {
               const update: CableModel = {
                 ...cableInJoin,
-                join_id: newJoinId
+                join_id: newJoinId,
               }
 
               this.cablesEntity.update(update)
@@ -165,12 +171,11 @@ export class JoinNearbyBlocksPipe implements PipeTransform {
       }
       const update: CableModel = {
         ...cable,
-        join_id: newJoinId
+        join_id: newJoinId,
       }
 
       this.cablesEntity.update(update)
     })
-
 
     data.unsubscribe()
 

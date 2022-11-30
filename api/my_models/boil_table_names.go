@@ -8,7 +8,7 @@ var TableNames = struct {
 	DisconnectionPoints string
 	Inverters           string
 	Joins               string
-	PanelJoins          string
+	Links               string
 	Panels              string
 	Projects            string
 	Strings             string
@@ -20,7 +20,7 @@ var TableNames = struct {
 	DisconnectionPoints: "disconnection_points",
 	Inverters:           "inverters",
 	Joins:               "joins",
-	PanelJoins:          "panel_joins",
+	Links:               "links",
 	Panels:              "panels",
 	Projects:            "projects",
 	Strings:             "strings",

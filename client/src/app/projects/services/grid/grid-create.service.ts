@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core'
 import { StringModel } from '../../models/string.model'
-import { GridMode } from '../../store/grid/grid-mode.model'
+import { GridMode } from '../../project-id/services/store/grid/grid-mode.model'
 import { ProjectModel } from '../../models/project.model'
 import { BlockModel } from '../../models/block.model'
 import { UnitModel } from '../../models/unit.model'
@@ -9,25 +9,25 @@ import { Guid } from 'guid-typescript'
 import { CableModel } from '../../models/cable.model'
 import { InverterModel } from '../../models/inverter.model'
 import { GridService } from './grid.service'
-import { PanelsEntityService } from '../../project-id/services/panels-entity/panels-entity.service'
-import { CablesEntityService } from '../../project-id/services/cables-entity/cables-entity.service'
-import { InvertersEntityService } from '../../project-id/services/inverters-entity/inverters-entity.service'
-import { JoinsEntityService } from '../../project-id/services/joins-entity/joins-entity.service'
-import { JoinsService } from '../joins.service'
+import { PanelsEntityService } from '../../project-id/services/ngrx-data/panels-entity/panels-entity.service'
+import { CablesEntityService } from '../../project-id/services/ngrx-data/cables-entity/cables-entity.service'
+import { InvertersEntityService } from '../../project-id/services/ngrx-data/inverters-entity/inverters-entity.service'
+import { JoinsEntityService } from '../../project-id/services/ngrx-data/joins-entity/joins-entity.service'
+import { LinksService } from '../../project-id/services/links.service'
 import { GridHelpers } from './grid.helpers'
 import { GridUpdateService } from './grid-update.service'
 import { LoggerService } from '../../../services/logger.service'
 import { Store } from '@ngrx/store'
 import { AppState } from '../../../store/app.state'
-import { selectBlocksByProjectId } from '../../store/blocks/blocks.selectors'
+import { selectBlocksByProjectId } from '../../project-id/services/store/blocks/blocks.selectors'
 import { combineLatest, lastValueFrom } from 'rxjs'
-import { selectSelectedString } from '../../store/grid/grid.selectors'
-import { StringsEntityService } from '../../project-id/services/strings-entity/strings-entity.service'
+import { selectSelectedString } from '../../project-id/services/store/grid/grid.selectors'
+import { StringsEntityService } from '../../project-id/services/ngrx-data/strings-entity/strings-entity.service'
 import {
   DisconnectionPointModel,
   DisconnectionPointType,
 } from '../../models/disconnection-point.model'
-import { DisconnectionPointsEntityService } from '../../project-id/services/disconnection-points-entity/disconnection-points-entity.service'
+import { DisconnectionPointsEntityService } from '../../project-id/services/ngrx-data/disconnection-points-entity/disconnection-points-entity.service'
 
 @Injectable({
   providedIn: 'root',
@@ -38,7 +38,7 @@ export class GridCreateService extends GridService {
     cablesEntity: CablesEntityService,
     invertersEntity: InvertersEntityService,
     joinsEntity: JoinsEntityService,
-    joinsService: JoinsService,
+    joinsService: LinksService,
     logger: LoggerService,
     private gridHelpers: GridHelpers,
     private gridUpdate: GridUpdateService,
@@ -225,7 +225,7 @@ export class GridCreateService extends GridService {
 
     const newJoinId = Guid.create().toString()
 
-    this.joinsService.createJoin(project.id!, newJoinId).then(() => {
+    /*this.joinsService.createJoin(project.id!, newJoinId).then(() => {
       if (surroundingCables.topCable) {
         this.gridUpdate.updateCableForJoin(
           surroundingCables.topCable,
@@ -269,7 +269,7 @@ export class GridCreateService extends GridService {
       }
 
       this.cablesEntity.add(cableRequest)
-    })
+    })*/
   }
 
   private createInverterForGrid(project: ProjectModel, location: string) {

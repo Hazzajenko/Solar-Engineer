@@ -40,32 +40,32 @@ import {
   HttpUrlGenerator,
 } from '@ngrx/data'
 import { entityConfig } from './entity-metadata'
-import { PanelsEntityService } from './projects/project-id/services/panels-entity/panels-entity.service'
-import { PanelsResolver } from './projects/project-id/services/panels-entity/panels.resolver'
-import { PanelsDataService } from './projects/project-id/services/panels-entity/panels-data.service'
-import { PanelsEntityEffects } from './projects/project-id/services/panels-entity/panels-entity.effects'
-import { CablesEntityEffects } from './projects/project-id/services/cables-entity/cables-entity.effects'
-import { CablesDataService } from './projects/project-id/services/cables-entity/cables-data.service'
-import { CablesEntityService } from './projects/project-id/services/cables-entity/cables-entity.service'
-import { CablesResolver } from './projects/project-id/services/cables-entity/cables.resolver'
+import { PanelsEntityService } from './projects/project-id/services/ngrx-data/panels-entity/panels-entity.service'
+import { PanelsResolver } from './projects/project-id/services/ngrx-data/panels-entity/panels.resolver'
+import { PanelsDataService } from './projects/project-id/services/ngrx-data/panels-entity/panels-data.service'
+import { PanelsEntityEffects } from './projects/project-id/services/ngrx-data/panels-entity/panels-entity.effects'
+import { CablesEntityEffects } from './projects/project-id/services/ngrx-data/cables-entity/cables-entity.effects'
+import { CablesDataService } from './projects/project-id/services/ngrx-data/cables-entity/cables-data.service'
+import { CablesEntityService } from './projects/project-id/services/ngrx-data/cables-entity/cables-entity.service'
+import { CablesResolver } from './projects/project-id/services/ngrx-data/cables-entity/cables.resolver'
 import { GetGridStringPipe } from './pipes/get-grid-string.pipe'
 import { defaultDataServiceConfig } from './data-service'
-import { StringsDataService } from './projects/project-id/services/strings-entity/strings-data.service'
-import { StringsEntityService } from './projects/project-id/services/strings-entity/strings-entity.service'
-import { StringsResolver } from './projects/project-id/services/strings-entity/strings.resolver'
+import { StringsDataService } from './projects/project-id/services/ngrx-data/strings-entity/strings-data.service'
+import { StringsEntityService } from './projects/project-id/services/ngrx-data/strings-entity/strings-entity.service'
+import { StringsResolver } from './projects/project-id/services/ngrx-data/strings-entity/strings.resolver'
 import { CustomHttpUrlGenerator } from './http-url-generator'
-import { StringsEntityEffects } from './projects/project-id/services/strings-entity/strings-entity.effects'
-import { TrackersEntityService } from './projects/project-id/services/trackers-entity/trackers-entity.service'
-import { TrackersResolver } from './projects/project-id/services/trackers-entity/trackers.resolver'
-import { TrackersDataService } from './projects/project-id/services/trackers-entity/trackers-data.service'
-import { InvertersEntityService } from './projects/project-id/services/inverters-entity/inverters-entity.service'
-import { InvertersResolver } from './projects/project-id/services/inverters-entity/inverters.resolver'
-import { InvertersDataService } from './projects/project-id/services/inverters-entity/inverters-data.service'
+import { StringsEntityEffects } from './projects/project-id/services/ngrx-data/strings-entity/strings-entity.effects'
+import { TrackersEntityService } from './projects/project-id/services/ngrx-data/trackers-entity/trackers-entity.service'
+import { TrackersResolver } from './projects/project-id/services/ngrx-data/trackers-entity/trackers.resolver'
+import { TrackersDataService } from './projects/project-id/services/ngrx-data/trackers-entity/trackers-data.service'
+import { InvertersEntityService } from './projects/project-id/services/ngrx-data/inverters-entity/inverters-entity.service'
+import { InvertersResolver } from './projects/project-id/services/ngrx-data/inverters-entity/inverters.resolver'
+import { InvertersDataService } from './projects/project-id/services/ngrx-data/inverters-entity/inverters-data.service'
 import { FindInverterLocationPipe } from './pipes/find-inverter-location.pipe'
-import { InvertersEntityEffects } from './projects/project-id/services/inverters-entity/inverters-entity.effects'
-import { JoinsEntityService } from './projects/project-id/services/joins-entity/joins-entity.service'
-import { JoinsResolver } from './projects/project-id/services/joins-entity/joins.resolver'
-import { JoinsDataService } from './projects/project-id/services/joins-entity/joins-data.service'
+import { InvertersEntityEffects } from './projects/project-id/services/ngrx-data/inverters-entity/inverters-entity.effects'
+import { JoinsEntityService } from './projects/project-id/services/ngrx-data/joins-entity/joins-entity.service'
+import { JoinsResolver } from './projects/project-id/services/ngrx-data/joins-entity/joins.resolver'
+import { JoinsDataService } from './projects/project-id/services/ngrx-data/joins-entity/joins-data.service'
 import { GetCableSurroundingsPipe } from './pipes/get-cable-surroundings.pipe'
 import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatCardModule } from '@angular/material/card'
@@ -80,14 +80,14 @@ import { TopBottomSvgComponent } from './svgs/grid/top-bottom-svg.component'
 import { LeftTopSvgComponent } from './svgs/grid/left-top-svg.component'
 import { CableJoinComponent } from './components/cable-join/cable-join.component'
 import { CurrentProjectInterceptor } from './interceptors/current-project.interceptor'
-import { PanelJoinsDataService } from './projects/project-id/services/panel-joins-entity/panel-joins-data.service'
-import { PanelJoinsEntityService } from './projects/project-id/services/panel-joins-entity/panel-joins-entity.service'
-import { PanelJoinsResolver } from './projects/project-id/services/panel-joins-entity/panel-joins.resolver'
-import { DisconnectionPointsDataService } from './projects/project-id/services/disconnection-points-entity/disconnection-points-data.service'
-import { DisconnectionPointsEntityService } from './projects/project-id/services/disconnection-points-entity/disconnection-points-entity.service'
-import { DisconnectionPointsResolver } from './projects/project-id/services/disconnection-points-entity/disconnection-points.resolver'
-import { DisconnectionPointsEntityEffects } from './projects/project-id/services/disconnection-points-entity/disconnection-points-entity.effects'
-import { SelectedEffects } from './projects/store/selected/selected.effects'
+import { LinksDataService } from './projects/project-id/services/ngrx-data/links-entity/links-data.service'
+import { LinksEntityService } from './projects/project-id/services/ngrx-data/links-entity/links-entity.service'
+import { LinksResolver } from './projects/project-id/services/ngrx-data/links-entity/links.resolver'
+import { DisconnectionPointsDataService } from './projects/project-id/services/ngrx-data/disconnection-points-entity/disconnection-points-data.service'
+import { DisconnectionPointsEntityService } from './projects/project-id/services/ngrx-data/disconnection-points-entity/disconnection-points-entity.service'
+import { DisconnectionPointsResolver } from './projects/project-id/services/ngrx-data/disconnection-points-entity/disconnection-points.resolver'
+import { DisconnectionPointsEntityEffects } from './projects/project-id/services/ngrx-data/disconnection-points-entity/disconnection-points-entity.effects'
+import { SelectedEffects } from './projects/project-id/services/store/selected/selected.effects'
 
 export function tokenGetter() {
   // console.log(localStorage.getItem('token'))
@@ -194,9 +194,9 @@ export function tokenGetter() {
     JoinsEntityService,
     JoinsResolver,
     JoinsDataService,
-    PanelJoinsEntityService,
-    PanelJoinsResolver,
-    PanelJoinsDataService,
+    LinksEntityService,
+    LinksResolver,
+    LinksDataService,
     DisconnectionPointsEntityService,
     DisconnectionPointsResolver,
     DisconnectionPointsDataService,
@@ -216,7 +216,7 @@ export class AppModule {
     private trackersDataService: TrackersDataService,
     private invertersDataService: InvertersDataService,
     private joinsDataService: JoinsDataService,
-    private panelJoinsDataService: PanelJoinsDataService,
+    private linksDataService: LinksDataService,
     private disconnectionPointsDataService: DisconnectionPointsDataService,
   ) {
     eds.registerMetadataMap(entityConfig.entityMetadata)
@@ -227,7 +227,7 @@ export class AppModule {
     entityDataService.registerService('Tracker', trackersDataService)
     entityDataService.registerService('Inverter', invertersDataService)
     entityDataService.registerService('Join', joinsDataService)
-    entityDataService.registerService('PanelJoin', panelJoinsDataService)
+    entityDataService.registerService('Link', linksDataService)
     entityDataService.registerService(
       'DisconnectionPoint',
       disconnectionPointsDataService,

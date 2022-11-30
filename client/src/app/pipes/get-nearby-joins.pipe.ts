@@ -2,9 +2,9 @@ import { Pipe, PipeTransform } from '@angular/core'
 import { CableModel } from '../projects/models/cable.model'
 import { Store } from '@ngrx/store'
 import { AppState } from '../store/app.state'
-import { JoinsEntityService } from '../projects/project-id/services/joins-entity/joins-entity.service'
+import { JoinsEntityService } from '../projects/project-id/services/ngrx-data/joins-entity/joins-entity.service'
 import { combineLatest } from 'rxjs'
-import { CablesEntityService } from '../projects/project-id/services/cables-entity/cables-entity.service'
+import { CablesEntityService } from '../projects/project-id/services/ngrx-data/cables-entity/cables-entity.service'
 
 export interface SurroundingModel {
   left: boolean

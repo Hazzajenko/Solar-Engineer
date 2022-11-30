@@ -5,7 +5,7 @@ import { AppState } from '../../../store/app.state'
 import { PanelsService } from '../../services/panels.service'
 import { exhaustMap, switchMap } from 'rxjs'
 import { catchError, map } from 'rxjs/operators'
-import { BlocksStateActions } from '../blocks/blocks.actions'
+import { BlocksStateActions } from '../../project-id/services/store/blocks/blocks.actions'
 import { UnitModel } from '../../models/unit.model'
 import { PanelStateActions } from './panels.actions'
 

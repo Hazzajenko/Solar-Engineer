@@ -7,17 +7,17 @@ import { CableModel } from '../../models/cable.model'
 import { InverterModel } from '../../models/inverter.model'
 import { GridService } from './grid.service'
 import { Injectable } from '@angular/core'
-import { PanelsEntityService } from '../../project-id/services/panels-entity/panels-entity.service'
-import { CablesEntityService } from '../../project-id/services/cables-entity/cables-entity.service'
-import { InvertersEntityService } from '../../project-id/services/inverters-entity/inverters-entity.service'
-import { JoinsEntityService } from '../../project-id/services/joins-entity/joins-entity.service'
+import { PanelsEntityService } from '../../project-id/services/ngrx-data/panels-entity/panels-entity.service'
+import { CablesEntityService } from '../../project-id/services/ngrx-data/cables-entity/cables-entity.service'
+import { InvertersEntityService } from '../../project-id/services/ngrx-data/inverters-entity/inverters-entity.service'
+import { JoinsEntityService } from '../../project-id/services/ngrx-data/joins-entity/joins-entity.service'
 import { Guid } from 'guid-typescript'
-import { JoinsService } from '../joins.service'
+import { LinksService } from '../../project-id/services/links.service'
 import { HttpClient } from '@angular/common/http'
 import { GridHelpers } from './grid.helpers'
 import { LoggerService } from '../../../services/logger.service'
 import { DisconnectionPointModel } from '../../models/disconnection-point.model'
-import { DisconnectionPointsEntityService } from '../../project-id/services/disconnection-points-entity/disconnection-points-entity.service'
+import { DisconnectionPointsEntityService } from '../../project-id/services/ngrx-data/disconnection-points-entity/disconnection-points-entity.service'
 
 @Injectable({
   providedIn: 'root',
@@ -28,7 +28,7 @@ export class GridUpdateService extends GridService {
     cablesEntity: CablesEntityService,
     invertersEntity: InvertersEntityService,
     joinsEntity: JoinsEntityService,
-    joinsService: JoinsService,
+    joinsService: LinksService,
     logger: LoggerService,
     private http: HttpClient,
     private gridHelpers: GridHelpers,
@@ -113,7 +113,7 @@ export class GridUpdateService extends GridService {
 
     const newJoinId = Guid.create().toString()
 
-    this.joinsService.createJoin(cable.project_id!, newJoinId).then(() => {
+    /*this.joinsService.createJoin(cable.project_id!, newJoinId).then(() => {
       if (surroundingCables.topCable) {
         this.updateCableForJoin(surroundingCables.topCable, newJoinId, cables)
       }
@@ -140,7 +140,7 @@ export class GridUpdateService extends GridService {
         join_id: newJoinId,
       }
       this.cablesEntity.update(update)
-    })
+    })*/
   }
 
   updateCableForJoin(cable: CableModel, join_id: string, cables: CableModel[]) {
@@ -171,27 +171,5 @@ export class GridUpdateService extends GridService {
         },
       })
       .subscribe((res) => {})
-    /*    return this.http
-          .put(
-            `${
-              environment.apiUrl
-            }/projects/${cable.project_id!}/join/${cable.join_id!}/cables`,
-            {
-              project_id: cable.project_id!,
-              changes: {
-                new_join_id: join_id,
-                old_join_id: cable.join_id!,
-              },
-            },
-          )
-          .subscribe((res) => {
-            Logger.log('logger INFO', { message: res })
-          })*/
-
-    /*    this.joinsService.updateCablesInJoin(
-          cable.project_id!,
-          cable.join_id!,
-          join_id,
-        )*/
   }
 }

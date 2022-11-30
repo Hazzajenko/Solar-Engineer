@@ -5,7 +5,7 @@ import { ProjectModel } from './models/project.model'
 import { ActivatedRoute, Router } from '@angular/router'
 import { Store } from '@ngrx/store'
 import { AppState } from '../store/app.state'
-import { selectAllProjects } from './store/projects/projects.selectors'
+import { selectAllProjects } from './project-id/services/store/projects/projects.selectors'
 import { InvertersService } from './services/inverters.service'
 import { AsyncPipe, NgIf } from '@angular/common'
 

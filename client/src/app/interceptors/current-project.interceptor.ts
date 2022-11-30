@@ -8,7 +8,7 @@ import {
 import { Observable } from 'rxjs'
 import { Store } from '@ngrx/store'
 import { AppState } from '../store/app.state'
-import { selectCurrentId } from '../projects/store/projects/projects.selectors'
+import { selectCurrentProjectId } from '../projects/project-id/services/store/projects/projects.selectors'
 
 @Injectable()
 export class CurrentProjectInterceptor implements HttpInterceptor {
@@ -18,7 +18,7 @@ export class CurrentProjectInterceptor implements HttpInterceptor {
     request: HttpRequest<unknown>,
     next: HttpHandler,
   ): Observable<HttpEvent<unknown>> {
-    this.store.select(selectCurrentId).subscribe((project) => {
+    this.store.select(selectCurrentProjectId).subscribe((project) => {
       console.log(project)
       if (project) {
         console.log(project)

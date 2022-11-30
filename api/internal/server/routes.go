@@ -92,10 +92,10 @@ func (s *Server) Routes() *chi.Mux {
 			})
 
 			r.Group(func(r chi.Router) {
-				r.Get("/panel-joins", s.Handlers.GetPanelJoinsByProjectId)
-				r.Post("/panel-join", s.Handlers.CreatePanelJoin)
-				r.Put("/panel-join/{panelJoinId}", s.Handlers.UpdatePanelJoin)
-				r.Delete("/panel-join/{panelJoinId}", s.Handlers.DeletePanelJoin)
+				r.Get("/links", s.Handlers.GetLinksByProjectId)
+				r.Post("/link", s.Handlers.CreateLink)
+				r.Put("/link/{linkId}", s.Handlers.UpdateLink)
+				r.Delete("/link/{linkId}", s.Handlers.DeleteLink)
 			})
 
 			r.Group(func(r chi.Router) {

@@ -1,31 +1,27 @@
-import { JoinsState } from './../../store/joins/joins.reducer'
-import { SelectedStateActions } from './../../store/selected/selected.actions'
+import { LinksState } from '../../project-id/services/store/links/links.reducer'
 import { Injectable } from '@angular/core'
 import { ProjectModel } from '../../models/project.model'
 import { BlockModel } from '../../models/block.model'
-import { PanelsEntityService } from '../../project-id/services/panels-entity/panels-entity.service'
+import { PanelsEntityService } from '../../project-id/services/ngrx-data/panels-entity/panels-entity.service'
 import { Guid } from 'guid-typescript'
-import { CablesEntityService } from '../../project-id/services/cables-entity/cables-entity.service'
-import { InvertersEntityService } from '../../project-id/services/inverters-entity/inverters-entity.service'
+import { CablesEntityService } from '../../project-id/services/ngrx-data/cables-entity/cables-entity.service'
+import { InvertersEntityService } from '../../project-id/services/ngrx-data/inverters-entity/inverters-entity.service'
 import { GridService } from './grid.service'
-import { JoinsEntityService } from '../../project-id/services/joins-entity/joins-entity.service'
-import { JoinModel } from '../../models/join.model'
+import { JoinsEntityService } from '../../project-id/services/ngrx-data/joins-entity/joins-entity.service'
 import { UnitModel } from '../../models/unit.model'
-import { CableModel } from '../../models/cable.model'
 import { Store } from '@ngrx/store'
 import { AppState } from '../../../store/app.state'
-import { GridStateActions } from '../../store/grid/grid.actions'
-import { JoinsService } from '../joins.service'
+import { LinksService } from '../../project-id/services/links.service'
 import { LoggerService } from '../../../services/logger.service'
-import { PanelJoinsEntityService } from '../../project-id/services/panel-joins-entity/panel-joins-entity.service'
-import { PanelJoinModel } from '../../models/panel-join.model'
+import { LinksEntityService } from '../../project-id/services/ngrx-data/links-entity/links-entity.service'
+import { LinkModel } from '../../models/link.model'
 import { PanelModel } from '../../models/panel.model'
 import { combineLatest } from 'rxjs'
-import { JoinsStateActions } from '../../store/joins/joins.actions'
-import { StringsEntityService } from '../../project-id/services/strings-entity/strings-entity.service'
+import { LinksStateActions } from '../../project-id/services/store/links/links.actions'
+import { StringsEntityService } from '../../project-id/services/ngrx-data/strings-entity/strings-entity.service'
 import { StringModel } from '../../models/string.model'
 import { DisconnectionPointModel } from '../../models/disconnection-point.model'
-import { DisconnectionPointsEntityService } from '../../project-id/services/disconnection-points-entity/disconnection-points-entity.service'
+import { DisconnectionPointsEntityService } from '../../project-id/services/ngrx-data/disconnection-points-entity/disconnection-points-entity.service'
 
 @Injectable({
   providedIn: 'root',
@@ -38,10 +34,10 @@ export class GridJoinService extends GridService {
     cablesEntity: CablesEntityService,
     invertersEntity: InvertersEntityService,
     joinsEntity: JoinsEntityService,
-    joinsService: JoinsService,
+    joinsService: LinksService,
     logger: LoggerService,
     private store: Store<AppState>,
-    private panelJoinsEntity: PanelJoinsEntityService,
+    private panelJoinsEntity: LinksEntityService,
     private stringsEntity: StringsEntityService,
     private disconnectionPointsEntity: DisconnectionPointsEntityService,
   ) {
@@ -181,24 +177,24 @@ export class GridJoinService extends GridService {
   addPanelToJoinV2(
     project: ProjectModel,
     panel: PanelModel,
-    joinsState?: JoinsState,
+    joinsState?: LinksState,
   ) {
-    if (joinsState?.typeToJoin) {
-      switch (joinsState.typeToJoin) {
+    if (joinsState?.typeToLink) {
+      switch (joinsState.typeToLink) {
         case UnitModel.PANEL:
-          if (joinsState.panelToJoin) {
-            this.joinPanelToPanelV2(project, panel, joinsState.panelToJoin)
+          if (joinsState.panelToLink) {
+            this.joinPanelToPanelV2(project, panel, joinsState.panelToLink)
           }
           break
         case UnitModel.DISCONNECTIONPOINT:
-          if (joinsState.dpToJoin) {
-            this.joinPanelToDpV2(project, panel, joinsState.dpToJoin)
+          if (joinsState.dpToLink) {
+            this.joinPanelToDpV2(project, panel, joinsState.dpToLink)
           }
           break
       }
     } else {
       if (panel) {
-        this.store.dispatch(JoinsStateActions.addToJoinPanel({ panel }))
+        this.store.dispatch(LinksStateActions.addToLinkPanel({ panel }))
       }
     }
   }
@@ -211,7 +207,7 @@ export class GridJoinService extends GridService {
     if (!panel) return
 
     if (panelToJoin && panel) {
-      const panelJoinRequest: PanelJoinModel = {
+      const panelJoinRequest: LinkModel = {
         id: Guid.create().toString(),
         project_id: project.id,
         string_id: panelToJoin.string_id,
@@ -231,7 +227,7 @@ export class GridJoinService extends GridService {
       this.panelsEntity.update(updatePanel)
     }
 
-    this.store.dispatch(JoinsStateActions.addToJoinPanel({ panel }))
+    this.store.dispatch(LinksStateActions.addToLinkPanel({ panel }))
   }
 
   joinPanelToPanel(
@@ -243,7 +239,7 @@ export class GridJoinService extends GridService {
     if (!panel) return
 
     if (panelToJoin && panelString) {
-      const panelJoinRequest: PanelJoinModel = {
+      const panelJoinRequest: LinkModel = {
         id: Guid.create().toString(),
         project_id: project.id,
         string_id: panelToJoin.string_id,
@@ -292,7 +288,7 @@ export class GridJoinService extends GridService {
 
       this.disconnectionPointsEntity.update(update)
 
-      const panelJoinRequest: PanelJoinModel = {
+      const panelJoinRequest: LinkModel = {
         id: Guid.create().toString(),
         project_id: project.id,
         string_id: panel.string_id,
@@ -331,7 +327,7 @@ export class GridJoinService extends GridService {
 
       this.disconnectionPointsEntity.update(update)
 
-      const panelJoinRequest: PanelJoinModel = {
+      const panelJoinRequest: LinkModel = {
         id: Guid.create().toString(),
         project_id: project.id,
         string_id: panel.string_id,
@@ -344,7 +340,7 @@ export class GridJoinService extends GridService {
       this.panelJoinsEntity.add(panelJoinRequest)
     }
 
-    this.store.dispatch(JoinsStateActions.addToJoinPanel({ panel }))
+    this.store.dispatch(LinksStateActions.addToLinkPanel({ panel }))
   }
 
   joinDpToPanelV2(
@@ -363,7 +359,7 @@ export class GridJoinService extends GridService {
 
       this.disconnectionPointsEntity.update(update)
 
-      const panelJoinRequest: PanelJoinModel = {
+      const panelJoinRequest: LinkModel = {
         id: Guid.create().toString(),
         project_id: project.id,
         string_id: panelToJoin.string_id,
@@ -377,7 +373,7 @@ export class GridJoinService extends GridService {
     }
 
     this.store.dispatch(
-      JoinsStateActions.addToJoinDp({ disconnectionPoint: dp }),
+      LinksStateActions.addToLinkDp({ disconnectionPoint: dp }),
     )
   }
 
@@ -398,7 +394,7 @@ export class GridJoinService extends GridService {
 
       this.disconnectionPointsEntity.update(update)
 
-      const panelJoinRequest: PanelJoinModel = {
+      const panelJoinRequest: LinkModel = {
         id: Guid.create().toString(),
         project_id: project.id,
         string_id: panelToJoin.string_id,

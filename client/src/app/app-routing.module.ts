@@ -2,14 +2,14 @@ import { NgModule } from '@angular/core'
 import { RouterModule, Routes } from '@angular/router'
 import { ProjectsComponent } from './projects/projects.component'
 import { ProjectIdComponent } from './projects/project-id/project-id.component'
-import { PanelsResolver } from './projects/project-id/services/panels-entity/panels.resolver'
-import { CablesResolver } from './projects/project-id/services/cables-entity/cables.resolver'
-import { StringsResolver } from './projects/project-id/services/strings-entity/strings.resolver'
-import { TrackersResolver } from './projects/project-id/services/trackers-entity/trackers.resolver'
-import { InvertersResolver } from './projects/project-id/services/inverters-entity/inverters.resolver'
-import { JoinsResolver } from './projects/project-id/services/joins-entity/joins.resolver'
-import { PanelJoinsResolver } from './projects/project-id/services/panel-joins-entity/panel-joins.resolver'
-import { DisconnectionPointsResolver } from './projects/project-id/services/disconnection-points-entity/disconnection-points.resolver'
+import { PanelsResolver } from './projects/project-id/services/ngrx-data/panels-entity/panels.resolver'
+import { CablesResolver } from './projects/project-id/services/ngrx-data/cables-entity/cables.resolver'
+import { StringsResolver } from './projects/project-id/services/ngrx-data/strings-entity/strings.resolver'
+import { TrackersResolver } from './projects/project-id/services/ngrx-data/trackers-entity/trackers.resolver'
+import { InvertersResolver } from './projects/project-id/services/ngrx-data/inverters-entity/inverters.resolver'
+import { JoinsResolver } from './projects/project-id/services/ngrx-data/joins-entity/joins.resolver'
+import { LinksResolver } from './projects/project-id/services/ngrx-data/links-entity/links.resolver'
+import { DisconnectionPointsResolver } from './projects/project-id/services/ngrx-data/disconnection-points-entity/disconnection-points.resolver'
 
 const routes: Routes = [
   {
@@ -32,7 +32,7 @@ const routes: Routes = [
       trackers: TrackersResolver,
       inverters: InvertersResolver,
       joins: JoinsResolver,
-      panel_joins: PanelJoinsResolver,
+      panel_joins: LinksResolver,
       disconnection_points: DisconnectionPointsResolver,
     },
   },

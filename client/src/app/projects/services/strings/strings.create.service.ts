@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
 import { Store } from '@ngrx/store'
 import { AppState } from '../../../store/app.state'
-import { StringsEntityService } from '../../project-id/services/strings-entity/strings-entity.service'
+import { StringsEntityService } from '../../project-id/services/ngrx-data/strings-entity/strings-entity.service'
 
 @Injectable({
   providedIn: 'root',
