@@ -39,13 +39,15 @@ import { LoggerService } from '../../../../../services/logger.service'
 import { GridStateActions } from '../../../services/store/grid/grid.actions'
 import { SelectedStateActions } from '../../../services/store/selected/selected.actions'
 import { LinksService } from 'src/app/projects/project-id/services/links.service'
-import { distinctUntilChanged, Observable } from 'rxjs'
+import { distinctUntilChanged, firstValueFrom, Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
 import {
   selectLinksState,
   selectPanelToLink,
 } from '../../../services/store/links/links.selectors'
 import {
+  selectIfMultiSelect,
+  selectMultiSelectIds,
   selectSelectedId,
   selectSelectedNegativeTo,
   selectSelectedPositiveTo,
@@ -94,6 +96,8 @@ export class BlockPanelComponent implements OnInit {
   selectedNegativeTo$!: Observable<string | undefined>
   selectedUnit$!: Observable<UnitModel | undefined>
   selectedStringTooltip$!: Observable<string | undefined>
+  multiSelectIds$!: Observable<string[] | undefined>
+  multiSelect$!: Observable<boolean | undefined>
   menuTopLeftPosition = { x: '0', y: '0' }
   @ViewChild(MatMenuTrigger, { static: true })
   matMenuTrigger!: MatMenuTrigger
@@ -124,6 +128,8 @@ export class BlockPanelComponent implements OnInit {
     this.selectedUnit$ = this.store.select(selectUnitSelected)
     this.selectedStringTooltip$ = this.store.select(selectSelectedStringTooltip)
     this.joinState$ = this.store.select(selectLinksState)
+    this.multiSelectIds$ = this.store.select(selectMultiSelectIds)
+    this.multiSelect$ = this.store.select(selectIfMultiSelect)
   }
 
   displayTooltip(
@@ -178,35 +184,59 @@ export class BlockPanelComponent implements OnInit {
     this.panelsEntity.delete(panel)
   }
 
-  panelAction(
-    panel: PanelModel,
-    gridMode?: GridMode | null,
-    joinsState?: LinksState | null,
-  ) {
-    if (!panel || !gridMode) return
-
-    switch (gridMode) {
-      case GridMode.JOIN:
-        if (joinsState) {
-          this.joinsService.addPanelToLink(panel, joinsState)
-        }
-        break
-      case GridMode.DELETE:
-        this.panelsEntity.delete(panel)
-        break
-      case GridMode.SELECT:
-        this.store.dispatch(
-          SelectedStateActions.selectPanel({ panelId: panel.id }),
-        )
-        break
-      default:
-        this.store.dispatch(
-          GridStateActions.changeGridmode({ mode: GridMode.SELECT }),
-        )
-        this.store.dispatch(
-          SelectedStateActions.selectPanel({ panelId: panel.id }),
-        )
-        break
+  panelAction(panel: PanelModel, shiftKey: boolean) {
+    if (!panel) {
+      return console.error('err panelAction !panel')
     }
+
+    firstValueFrom(this.store.select(selectGridMode))
+      .then((gridMode) => {
+        switch (gridMode) {
+          case GridMode.JOIN:
+            firstValueFrom(this.store.select(selectLinksState)).then(
+              (joinsState) => {
+                this.joinsService.addPanelToLink(panel, joinsState)
+              },
+            )
+            break
+          case GridMode.DELETE:
+            this.panelsEntity.delete(panel)
+            break
+          case GridMode.SELECT:
+            if (shiftKey) {
+              this.store.dispatch(
+                SelectedStateActions.addPanelToMultiselect({
+                  panelId: panel.id,
+                }),
+              )
+            } else {
+              this.store.dispatch(
+                SelectedStateActions.selectPanel({ panelId: panel.id }),
+              )
+            }
+            break
+          default:
+            this.store.dispatch(
+              GridStateActions.changeGridmode({ mode: GridMode.SELECT }),
+            )
+            if (shiftKey) {
+              this.store.dispatch(
+                SelectedStateActions.addPanelToMultiselect({
+                  panelId: panel.id,
+                }),
+              )
+            } else {
+              this.store.dispatch(
+                SelectedStateActions.selectPanel({ panelId: panel.id }),
+              )
+            }
+            break
+        }
+      })
+      .catch((err) => {
+        return console.error(
+          'err panelAction this.store.select(selectGridMode)' + err,
+        )
+      })
   }
 }

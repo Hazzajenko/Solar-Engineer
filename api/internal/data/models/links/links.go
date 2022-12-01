@@ -88,6 +88,7 @@ func (p *LinkModel) Update(update *boiler.Link) (*boiler.Link, error) {
 	panelJoin.NegativeID = update.NegativeID
 	panelJoin.PositiveModel = update.PositiveModel
 	panelJoin.NegativeModel = update.NegativeModel
+	panelJoin.CableID = update.CableID
 	/*	panel.AddPositivePanelJoins()*/
 	_, err = panelJoin.Update(ctx, p.DB, boil.Infer())
 	if err != nil {

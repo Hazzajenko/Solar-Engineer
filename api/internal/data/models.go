@@ -11,6 +11,7 @@ import (
 	"github.com/Hazzajenko/gosolarbackend/internal/data/models/projects"
 	"github.com/Hazzajenko/gosolarbackend/internal/data/models/strings"
 	"github.com/Hazzajenko/gosolarbackend/internal/data/models/trackers"
+	trays "github.com/Hazzajenko/gosolarbackend/internal/data/models/tray"
 	"github.com/Hazzajenko/gosolarbackend/internal/data/models/users"
 )
 
@@ -21,10 +22,11 @@ type Models struct {
 	Trackers            trackers.TrackerModel
 	Strings             strings.StringModel
 	Panels              panels.PanelModel
-	PanelJoins          links.LinkModel
+	Links               links.LinkModel
 	Cables              cables.CableModel
 	Joins               joins.JoinModel
 	DisconnectionPoints disconnection_points.DisconnectionPointModel
+	Trays               trays.TrayModel
 }
 
 func InitModels(db *sql.DB) Models {
@@ -35,9 +37,10 @@ func InitModels(db *sql.DB) Models {
 		Trackers:            trackers.TrackerModel{DB: db},
 		Strings:             strings.StringModel{DB: db},
 		Panels:              panels.PanelModel{DB: db},
-		PanelJoins:          links.LinkModel{DB: db},
+		Links:               links.LinkModel{DB: db},
 		Cables:              cables.CableModel{DB: db},
 		Joins:               joins.JoinModel{DB: db},
 		DisconnectionPoints: disconnection_points.DisconnectionPointModel{DB: db},
+		Trays:               trays.TrayModel{DB: db},
 	}
 }

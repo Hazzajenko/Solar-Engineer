@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-func (h *Handlers) CreateLink(w http.ResponseWriter, r *http.Request) {
+func (h *Handlers) CreateTray(w http.ResponseWriter, r *http.Request) {
 	bearerHeader := r.Header.Get("Authorization")
 	bearer := strings.Replace(bearerHeader, "Bearer ", "", 1)
 
@@ -24,14 +24,13 @@ func (h *Handlers) CreateLink(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var input struct {
-		ProjectID     int64  `json:"project_id"`
-		ID            string `json:"id"`
-		StringID      string `json:"string_id"`
-		PositiveID    string `json:"positive_id"`
-		NegativeID    string `json:"negative_id"`
-		PositiveModel int    `json:"positive_model"`
-		NegativeModel int    `json:"negative_model"`
-		CableID       string `json:"cable_id"`
+		ID        string `json:"id"`
+		ProjectID int64  `json:"project_id"`
+		Model     int    `json:"model"`
+		Type      string `json:"type"`
+		Location  string `json:"location"`
+		Size      int64  `json:"size"`
+		Color     string `json:"color"`
 	}
 
 	err = h.Json.DecodeJSON(w, r, &input)
@@ -52,18 +51,17 @@ func (h *Handlers) CreateLink(w http.ResponseWriter, r *http.Request) {
 			return
 		}*/
 
-	boilerPanel := &boiler.Link{
-		PositiveID:    input.PositiveID,
-		CableID:       input.CableID,
-		NegativeID:    input.NegativeID,
-		PositiveModel: input.PositiveModel,
-		NegativeModel: input.NegativeModel,
-		StringID:      input.StringID,
-		ProjectID:     input.ProjectID,
-		ID:            input.ID,
+	boilerTray := &boiler.Tray{
+		ID:        input.ID,
+		ProjectID: input.ProjectID,
+		Model:     input.Model,
+		Type:      input.Type,
+		Location:  input.Location,
+		Size:      input.Size,
+		Color:     input.Color,
 	}
 
-	result, err := h.Models.Links.Create(boilerPanel)
+	result, err := h.Models.Trays.Create(boilerTray)
 	if err != nil {
 		switch {
 		default:
@@ -73,14 +71,14 @@ func (h *Handlers) CreateLink(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = h.Json.ResponseJSON(w, http.StatusAccepted,
-		json.Envelope{"link": result},
+		json.Envelope{"tray": result},
 		nil)
 	if err != nil {
 		h.Errors.ServerErrorResponse(w, r, err)
 	}
 }
 
-func (h *Handlers) GetLinksByProjectId(w http.ResponseWriter, r *http.Request) {
+func (h *Handlers) GetTraysByProjectId(w http.ResponseWriter, r *http.Request) {
 	/*	bearerHeader := r.Header.Get("Authorization")
 		bearer := strings.Replace(bearerHeader, "Bearer ", "", 1)*/
 
@@ -104,7 +102,7 @@ func (h *Handlers) GetLinksByProjectId(w http.ResponseWriter, r *http.Request) {
 	//userId, err := strconv.Atoi(idString)
 	//fmt.Println(userId)
 
-	result, err := h.Models.Links.GetLinksByProjectId(projectId)
+	result, err := h.Models.Trays.GetTrayByProjectId(projectId)
 	if err != nil {
 		switch {
 		default:
@@ -114,14 +112,14 @@ func (h *Handlers) GetLinksByProjectId(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = h.Json.ResponseJSON(w, http.StatusAccepted,
-		json.Envelope{"links": result},
+		json.Envelope{"trays": result},
 		nil)
 	if err != nil {
 		h.Errors.ServerErrorResponse(w, r, err)
 	}
 }
 
-func (h *Handlers) UpdateLink(w http.ResponseWriter, r *http.Request) {
+func (h *Handlers) UpdateTray(w http.ResponseWriter, r *http.Request) {
 	//bearerHeader := r.Header.Get("Authorization")
 	//bearer := strings.Replace(bearerHeader, "Bearer ", "", 1)
 	//
@@ -137,11 +135,11 @@ func (h *Handlers) UpdateLink(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Println(projectId)
 
-	panelId, err := h.Helpers.GetInt64FromURLParam(chi.URLParam(r, "panelId"))
+	trayId, err := h.Helpers.GetInt64FromURLParam(chi.URLParam(r, "trayId"))
 	if err != nil {
 		h.Logger.PrintError(err, nil)
 	}
-	fmt.Println(panelId)
+	fmt.Println(trayId)
 
 	/*	type Changes struct {
 		ID         string `json:"id"`
@@ -154,7 +152,7 @@ func (h *Handlers) UpdateLink(w http.ResponseWriter, r *http.Request) {
 
 	var input struct {
 		ID      string      `json:"id"`
-		Changes boiler.Link `json:"changes"`
+		Changes boiler.Tray `json:"changes"`
 		/*		InverterId int64 `json:"inverter_id"`
 				TrackerId  int64 `json:"tracker_id"`
 				StringId   int64 `json:"string_id"`
@@ -179,18 +177,14 @@ func (h *Handlers) UpdateLink(w http.ResponseWriter, r *http.Request) {
 			//Version:    input.Version,
 		}*/
 
-	update := &boiler.Link{
-		ID:            input.ID,
-		StringID:      input.Changes.StringID,
-		PositiveID:    input.Changes.PositiveID,
-		NegativeID:    input.Changes.NegativeID,
-		PositiveModel: input.Changes.PositiveModel,
-		NegativeModel: input.Changes.NegativeModel,
-		CableID:       input.Changes.CableID,
-		//Version:    input.Version,
+	update := &boiler.Tray{
+		ID:       input.ID,
+		Location: input.Changes.Location,
+		Size:     input.Changes.Size,
+		Color:    input.Changes.Color,
 	}
 
-	result, err := h.Models.Links.Update(update)
+	result, err := h.Models.Trays.Update(update)
 	//result, err := h.Models.Panels.UpdatePanelLocation(updatePanel)
 	if err != nil {
 		switch {
@@ -201,14 +195,14 @@ func (h *Handlers) UpdateLink(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = h.Json.ResponseJSON(w, http.StatusAccepted,
-		json.Envelope{"link": result},
+		json.Envelope{"tray": result},
 		nil)
 	if err != nil {
 		h.Errors.ServerErrorResponse(w, r, err)
 	}
 }
 
-func (h *Handlers) DeleteLink(w http.ResponseWriter, r *http.Request) {
+func (h *Handlers) DeleteTray(w http.ResponseWriter, r *http.Request) {
 	/*	bearerHeader := r.Header.Get("Authorization")
 		bearer := strings.Replace(bearerHeader, "Bearer ", "", 1)
 
@@ -223,7 +217,7 @@ func (h *Handlers) DeleteLink(w http.ResponseWriter, r *http.Request) {
 			h.Logger.PrintError(err, nil)
 		}*/
 	//fmt.Println(projectId)
-	linkId := chi.URLParam(r, "linkId")
+	trayId := chi.URLParam(r, "trayId")
 
 	/*	var input struct {
 			ID string `json:"id"`
@@ -235,7 +229,7 @@ func (h *Handlers) DeleteLink(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	*/
-	err := h.Models.Links.Delete(linkId)
+	err := h.Models.Trays.Delete(trayId)
 	if err != nil {
 		switch {
 		default:
@@ -245,7 +239,7 @@ func (h *Handlers) DeleteLink(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = h.Json.ResponseJSON(w, http.StatusAccepted,
-		json.Envelope{"id": linkId, "deleted": true},
+		json.Envelope{"id": trayId, "deleted": true},
 		nil)
 	if err != nil {
 		h.Errors.ServerErrorResponse(w, r, err)

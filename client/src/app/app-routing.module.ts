@@ -10,6 +10,7 @@ import { InvertersResolver } from './projects/project-id/services/ngrx-data/inve
 import { JoinsResolver } from './projects/project-id/services/ngrx-data/joins-entity/joins.resolver'
 import { LinksResolver } from './projects/project-id/services/ngrx-data/links-entity/links.resolver'
 import { DisconnectionPointsResolver } from './projects/project-id/services/ngrx-data/disconnection-points-entity/disconnection-points.resolver'
+import { TraysResolver } from './projects/project-id/services/ngrx-data/trays-entity/trays.resolver'
 
 const routes: Routes = [
   {
@@ -34,9 +35,10 @@ const routes: Routes = [
       joins: JoinsResolver,
       panel_joins: LinksResolver,
       disconnection_points: DisconnectionPointsResolver,
+      trays: TraysResolver,
     },
   },
-  { path: '', redirectTo: '/projects', pathMatch: 'full' },
+  { path: '', redirectTo: '/projects/3', pathMatch: 'full' },
 ]
 
 @NgModule({

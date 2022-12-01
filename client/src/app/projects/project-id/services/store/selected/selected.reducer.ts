@@ -1,9 +1,14 @@
 import { createReducer, on } from '@ngrx/store'
 import { SelectedStateActions } from './selected.actions'
 import { UnitModel } from '../../../../models/unit.model'
+import {
+  addPanelToMultiselect,
+  addToMultiSelectArray,
+} from './selected.helpers'
 
 export interface SelectedState {
   unit?: UnitModel
+  multiSelectUnit?: UnitModel
   multiSelect?: boolean
   singleSelectId?: string
   multiSelectIds?: string[]
@@ -12,11 +17,17 @@ export interface SelectedState {
   selectedStringTooltip?: string
 }
 
+function bringBackArray(hello?: string[]): string[] {
+  if (hello) return hello
+  return []
+}
+
 export const initialSelectedState: SelectedState = {
   unit: UnitModel.UNDEFINED,
+  multiSelectUnit: UnitModel.UNDEFINED,
   multiSelect: false,
   singleSelectId: undefined,
-  multiSelectIds: undefined,
+  multiSelectIds: [],
   selectedPositiveLinkTo: undefined,
   selectedNegativeLinkTo: undefined,
   selectedStringTooltip: undefined,
@@ -56,25 +67,43 @@ export const selectedReducer = createReducer(
   on(SelectedStateActions.selectPanel, (state, { panelId }) => ({
     unit: UnitModel.PANEL,
     multiSelect: false,
+    multiSelectIds: [],
     singleSelectId: panelId,
-    multiSelectIds: undefined,
-    selectedPositiveLinkTo: undefined,
-    selectedNegativeLinkTo: undefined,
-    typeToJoin: UnitModel.UNDEFINED,
-    panelToJoin: undefined,
-    dpToJoin: undefined,
   })),
+
+  on(SelectedStateActions.startMultiselectPanel, (state, { panelId }) => ({
+    multiSelectUnit: UnitModel.PANEL,
+    multiSelect: true,
+    multiSelectIds: addToMultiSelectArray(panelId, state.multiSelectIds),
+  })),
+
+  on(SelectedStateActions.addPanelToMultiselect, (state, { panelId }) => {
+    return addPanelToMultiselect(panelId, state)
+  }),
+
+  /*  on(SelectedStateActions.addPanelToMultiselect, (state, { panelId }) => ({
+      multiSelectUnit: UnitModel.PANEL,
+      multiSelect: true,
+      multiSelectIds: addToMultiSelectArray(panelId, state.multiSelectIds),
+    })),*/
 
   on(SelectedStateActions.selectCable, (state, { cableId }) => ({
     unit: UnitModel.CABLE,
+    multiSelect: false,
     singleSelectId: cableId,
+  })),
+
+  on(SelectedStateActions.selectTray, (state, { trayId }) => ({
+    unit: UnitModel.TRAY,
+    multiSelect: false,
+    singleSelectId: trayId,
   })),
 
   on(SelectedStateActions.setSelectedPanelLinks, (state, { panelLink }) => ({
     unit: state.unit,
     multiSelect: false,
     singleSelectId: state.singleSelectId,
-    multiSelectIds: undefined,
+    multiSelectIds: [],
     selectedPositiveLinkTo: panelLink.selectedPositiveLinkTo,
     selectedNegativeLinkTo: panelLink.selectedNegativeLinkTo,
     typeToJoin: UnitModel.UNDEFINED,
@@ -116,7 +145,7 @@ export const selectedReducer = createReducer(
     unit: UnitModel.UNDEFINED,
     multiSelect: false,
     singleSelectId: undefined,
-    multiSelectIds: undefined,
+    multiSelectIds: [],
     selectedPositiveLinkTo: undefined,
     selectedNegativeLinkTo: undefined,
     typeToJoin: UnitModel.UNDEFINED,

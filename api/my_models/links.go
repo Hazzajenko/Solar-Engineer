@@ -30,6 +30,7 @@ type Link struct {
 	StringID      string `boil:"string_id" json:"string_id" toml:"string_id" yaml:"string_id"`
 	PositiveModel int    `boil:"positive_model" json:"positive_model" toml:"positive_model" yaml:"positive_model"`
 	NegativeModel int    `boil:"negative_model" json:"negative_model" toml:"negative_model" yaml:"negative_model"`
+	CableID       string `boil:"cable_id" json:"cable_id" toml:"cable_id" yaml:"cable_id"`
 
 	R *linkR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L linkL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -43,6 +44,7 @@ var LinkColumns = struct {
 	StringID      string
 	PositiveModel string
 	NegativeModel string
+	CableID       string
 }{
 	PositiveID:    "positive_id",
 	NegativeID:    "negative_id",
@@ -51,6 +53,7 @@ var LinkColumns = struct {
 	StringID:      "string_id",
 	PositiveModel: "positive_model",
 	NegativeModel: "negative_model",
+	CableID:       "cable_id",
 }
 
 var LinkTableColumns = struct {
@@ -61,6 +64,7 @@ var LinkTableColumns = struct {
 	StringID      string
 	PositiveModel string
 	NegativeModel string
+	CableID       string
 }{
 	PositiveID:    "links.positive_id",
 	NegativeID:    "links.negative_id",
@@ -69,6 +73,7 @@ var LinkTableColumns = struct {
 	StringID:      "links.string_id",
 	PositiveModel: "links.positive_model",
 	NegativeModel: "links.negative_model",
+	CableID:       "links.cable_id",
 }
 
 // Generated where
@@ -81,6 +86,7 @@ var LinkWhere = struct {
 	StringID      whereHelperstring
 	PositiveModel whereHelperint
 	NegativeModel whereHelperint
+	CableID       whereHelperstring
 }{
 	PositiveID:    whereHelperstring{field: "\"links\".\"positive_id\""},
 	NegativeID:    whereHelperstring{field: "\"links\".\"negative_id\""},
@@ -89,6 +95,7 @@ var LinkWhere = struct {
 	StringID:      whereHelperstring{field: "\"links\".\"string_id\""},
 	PositiveModel: whereHelperint{field: "\"links\".\"positive_model\""},
 	NegativeModel: whereHelperint{field: "\"links\".\"negative_model\""},
+	CableID:       whereHelperstring{field: "\"links\".\"cable_id\""},
 }
 
 // LinkRels is where relationship names are stored.
@@ -129,9 +136,9 @@ func (r *linkR) GetString() *String {
 type linkL struct{}
 
 var (
-	linkAllColumns            = []string{"positive_id", "negative_id", "id", "project_id", "string_id", "positive_model", "negative_model"}
+	linkAllColumns            = []string{"positive_id", "negative_id", "id", "project_id", "string_id", "positive_model", "negative_model", "cable_id"}
 	linkColumnsWithoutDefault = []string{"project_id"}
-	linkColumnsWithDefault    = []string{"positive_id", "negative_id", "id", "string_id", "positive_model", "negative_model"}
+	linkColumnsWithDefault    = []string{"positive_id", "negative_id", "id", "string_id", "positive_model", "negative_model", "cable_id"}
 	linkPrimaryKeyColumns     = []string{"id"}
 	linkGeneratedColumns      = []string{}
 )

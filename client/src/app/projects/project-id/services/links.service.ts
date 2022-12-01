@@ -174,6 +174,14 @@ export class LinksService {
     if (!cable || !dpToJoin) {
       return console.error(`joinCableToDp !cable || !dpToJoin`)
     }
+
+    const update: Partial<DisconnectionPointModel> = {
+      ...dpToJoin,
+      cable_id: cable.id,
+    }
+
+    this.disconnectionPointsEntity.update(update)
+
     const linkRequest: LinkModel = {
       id: Guid.create().toString(),
       project_id: dpToJoin.project_id,

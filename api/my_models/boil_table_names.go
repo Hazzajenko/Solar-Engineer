@@ -13,6 +13,7 @@ var TableNames = struct {
 	Projects            string
 	Strings             string
 	Trackers            string
+	Tray                string
 	Users               string
 	UsersProjects       string
 }{
@@ -25,6 +26,7 @@ var TableNames = struct {
 	Projects:            "projects",
 	Strings:             "strings",
 	Trackers:            "trackers",
+	Tray:                "tray",
 	Users:               "users",
 	UsersProjects:       "users_projects",
 }

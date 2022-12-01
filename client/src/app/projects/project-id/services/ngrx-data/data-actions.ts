@@ -6,4 +6,5 @@ export enum DataEntities {
   Inverter = '[Inverter]',
   Join = '[Join]',
   DisconnectionPoint = '[DisconnectionPoint]',
+  Tray = '[Tray]',
 }

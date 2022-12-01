@@ -26,6 +26,9 @@
         [location]="block.location"
       ></app-block-disconnection-point>
     </ng-container>
+    <ng-container *ngSwitchCase="9">
+      <app-block-tray [location]="block.location"></app-block-tray>
+    </ng-container>
   </ng-container>
 </ng-container>
 

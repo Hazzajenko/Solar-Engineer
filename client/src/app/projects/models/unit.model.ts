@@ -8,4 +8,5 @@ export enum UnitModel {
   CABLE,
   JOIN,
   DISCONNECTIONPOINT,
+  TRAY,
 }

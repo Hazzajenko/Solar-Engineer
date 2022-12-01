@@ -33,7 +33,11 @@ import { LoggerService } from '../../../../../services/logger.service'
 import { Store } from '@ngrx/store'
 import { AppState } from '../../../../../store/app.state'
 import { selectCableToLink } from '../../../services/store/links/links.selectors'
-import { selectSelectedId } from '../../../services/store/selected/selected.selectors'
+import {
+  selectSelectedId,
+  selectSelectedNegativeTo,
+  selectSelectedPositiveTo,
+} from '../../../services/store/selected/selected.selectors'
 
 @Component({
   selector: 'app-block-cable',
@@ -72,6 +76,8 @@ export class BlockCableComponent implements OnInit {
 
   selectedId$!: Observable<string | undefined>
   cableToLink$!: Observable<CableModel | undefined>
+  selectedPositiveTo$!: Observable<string | undefined>
+  selectedNegativeTo$!: Observable<string | undefined>
 
   constructor(
     private cablesEntity: CablesEntityService,
@@ -95,6 +101,8 @@ export class BlockCableComponent implements OnInit {
     this.selectedId$ = this.store
       .select(selectSelectedId)
       .pipe(distinctUntilChanged())
+    this.selectedPositiveTo$ = this.store.select(selectSelectedPositiveTo)
+    this.selectedNegativeTo$ = this.store.select(selectSelectedNegativeTo)
   }
 
   cableAction(cable: CableModel) {

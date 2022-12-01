@@ -1,0 +1,15 @@
+svg {
+  pointer-events: none;
+  //border: 1px solid red;
+  height: 100%;
+  width: 100%;
+  z-index: 1;
+}
+
+path {
+  stroke: #425265;
+  fill: none;
+  stroke-width: 10;
+  vector-effect: non-scaling-stroke;
+  z-index: 1;
+}

@@ -14,9 +14,23 @@ export const selectUnitSelected = createSelector(
   (state: State.SelectedState) => state.unit,
 )
 
+export const selectMultiSelectUnit = createSelector(
+  selectSelectedState,
+  (state: State.SelectedState) => state.multiSelectUnit,
+)
+export const selectIfMultiSelect = createSelector(
+  selectSelectedState,
+  (state: State.SelectedState) => state.multiSelect,
+)
+
 export const selectSelectedId = createSelector(
   selectSelectedState,
   (state: State.SelectedState) => state.singleSelectId,
+)
+
+export const selectMultiSelectIds = createSelector(
+  selectSelectedState,
+  (state: State.SelectedState) => state.multiSelectIds,
 )
 
 export const selectSelectedPositiveTo = createSelector(

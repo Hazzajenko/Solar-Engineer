@@ -26,6 +26,8 @@ import { getSurroundings } from './helper-functions'
 import { UpdateService } from './update.service'
 import { DisconnectionPointsEntityService } from './ngrx-data/disconnection-points-entity/disconnection-points-entity.service'
 import { InvertersEntityService } from './ngrx-data/inverters-entity/inverters-entity.service'
+import { TrayModel } from '../../models/tray.model'
+import { TraysEntityService } from './ngrx-data/trays-entity/trays-entity.service'
 
 @Injectable({
   providedIn: 'root',
@@ -41,6 +43,7 @@ export class CreateService {
     private joinsEntity: JoinsEntityService,
     private dp: DisconnectionPointsEntityService,
     private inverters: InvertersEntityService,
+    private traysEntity: TraysEntityService,
   ) {}
 
   createSwitch(location: string) {
@@ -66,6 +69,9 @@ export class CreateService {
 
         case UnitModel.INVERTER:
           return this.createInverterForGrid(location)
+
+        case UnitModel.TRAY:
+          return this.createTrayForGrid(location)
         default:
           break
       }
@@ -212,6 +218,24 @@ export class CreateService {
         }
 
         this.inverters.add(inverterRequest)
+      },
+    )
+  }
+
+  createTrayForGrid(location: string) {
+    firstValueFrom(this.store.select(selectCurrentProjectId)).then(
+      (projectId) => {
+        /*        const trayRequest: Tra = {
+                  id: Guid.create().toString(),
+                  project_id: projectId,
+                  location,
+                  model: UnitModel.INVERTER,
+                  color: 'blue',
+                  name: 'New Inverter',
+                }*/
+        const trayRequest = new TrayModel(projectId, location, 150)
+
+        this.traysEntity.add(trayRequest)
       },
     )
   }

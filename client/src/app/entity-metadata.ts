@@ -7,6 +7,7 @@ import { InverterModel } from './projects/models/inverter.model'
 import { JoinModel } from './projects/models/join.model'
 import { LinkModel } from './projects/models/link.model'
 import { DisconnectionPointModel } from './projects/models/disconnection-point.model'
+import { TrayModel } from './projects/models/tray.model'
 
 const entityMetadata: EntityMetadataMap = {
   Inverter: {
@@ -67,6 +68,14 @@ const entityMetadata: EntityMetadataMap = {
   },
   DisconnectionPoint: {
     selectId: (b: DisconnectionPointModel): string => b.id,
+    entityDispatcherOptions: {
+      optimisticUpdate: true,
+      optimisticAdd: true,
+      optimisticDelete: true,
+    },
+  },
+  Tray: {
+    selectId: (b: TrayModel): string => b.id,
     entityDispatcherOptions: {
       optimisticUpdate: true,
       optimisticAdd: true,

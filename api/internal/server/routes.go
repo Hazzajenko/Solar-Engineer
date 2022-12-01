@@ -99,6 +99,13 @@ func (s *Server) Routes() *chi.Mux {
 			})
 
 			r.Group(func(r chi.Router) {
+				r.Get("/trays", s.Handlers.GetTraysByProjectId)
+				r.Post("/tray", s.Handlers.CreateTray)
+				r.Put("/tray/{trayId}", s.Handlers.UpdateTray)
+				r.Delete("/tray/{trayId}", s.Handlers.DeleteTray)
+			})
+
+			r.Group(func(r chi.Router) {
 				r.Get("/disconnection-points", s.Handlers.GetDisconnectionPointsByProjectId)
 				r.Post("/disconnection-point", s.Handlers.CreateDisconnectionPoint)
 				r.Put("/disconnection-point/{disconnectionPointId}", s.Handlers.UpdateDisconnectionPoint)

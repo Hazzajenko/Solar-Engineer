@@ -11,6 +11,7 @@ export class DisconnectionPointModel {
   string_id?: string
   positive_id?: string
   negative_id?: string
+  cable_id?: string
   location?: string
   disconnection_type?: DisconnectionPointType
   model: UnitModel = UnitModel.DISCONNECTIONPOINT

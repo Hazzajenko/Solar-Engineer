@@ -10,6 +10,12 @@
       (contextmenu)="onRightClick($event, cable)"
       [cdkDragData]="cable"
       [class.drop-zone__bg-default]="(selectedId$ | async) !== cable.id"
+      [class.drop-zone__bg-negative]="
+        (selectedNegativeTo$ | async) === cable.id
+      "
+      [class.drop-zone__bg-positive]="
+        (selectedPositiveTo$ | async) === cable.id
+      "
       [class.drop-zone__bg-selected]="(selectedId$ | async) === cable.id"
       [matTooltip]="
         'Location = ' +

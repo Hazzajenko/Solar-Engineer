@@ -88,6 +88,10 @@ import { DisconnectionPointsEntityService } from './projects/project-id/services
 import { DisconnectionPointsResolver } from './projects/project-id/services/ngrx-data/disconnection-points-entity/disconnection-points.resolver'
 import { DisconnectionPointsEntityEffects } from './projects/project-id/services/ngrx-data/disconnection-points-entity/disconnection-points-entity.effects'
 import { SelectedEffects } from './projects/project-id/services/store/selected/selected.effects'
+import { TraysDataService } from './projects/project-id/services/ngrx-data/trays-entity/trays-data.service'
+import { TraysEntityService } from './projects/project-id/services/ngrx-data/trays-entity/trays-entity.service'
+import { TraysResolver } from './projects/project-id/services/ngrx-data/trays-entity/trays.resolver'
+import { TraysEntityEffects } from './projects/project-id/services/ngrx-data/trays-entity/trays-entity.effects'
 
 export function tokenGetter() {
   // console.log(localStorage.getItem('token'))
@@ -141,6 +145,7 @@ export function tokenGetter() {
       InvertersEntityEffects,
       DisconnectionPointsEntityEffects,
       SelectedEffects,
+      TraysEntityEffects,
     ]),
     FindCablePipe,
     GetGridNumberPipe,
@@ -200,6 +205,9 @@ export function tokenGetter() {
     DisconnectionPointsEntityService,
     DisconnectionPointsResolver,
     DisconnectionPointsDataService,
+    TraysEntityService,
+    TraysResolver,
+    TraysDataService,
     CustomHttpUrlGenerator,
     { provide: DefaultDataServiceConfig, useValue: defaultDataServiceConfig },
     { provide: HttpUrlGenerator, useClass: CustomHttpUrlGenerator },
@@ -218,6 +226,7 @@ export class AppModule {
     private joinsDataService: JoinsDataService,
     private linksDataService: LinksDataService,
     private disconnectionPointsDataService: DisconnectionPointsDataService,
+    private traysDataService: TraysDataService,
   ) {
     eds.registerMetadataMap(entityConfig.entityMetadata)
 
@@ -228,6 +237,7 @@ export class AppModule {
     entityDataService.registerService('Inverter', invertersDataService)
     entityDataService.registerService('Join', joinsDataService)
     entityDataService.registerService('Link', linksDataService)
+    entityDataService.registerService('Tray', traysDataService)
     entityDataService.registerService(
       'DisconnectionPoint',
       disconnectionPointsDataService,
