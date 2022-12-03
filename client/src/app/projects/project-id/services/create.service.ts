@@ -19,7 +19,6 @@ import {
 import { StringsEntityService } from './ngrx-data/strings-entity/strings-entity.service'
 import { selectCurrentProjectId } from './store/projects/projects.selectors'
 import { CablesEntityService } from './ngrx-data/cables-entity/cables-entity.service'
-import { SurroundingCablesModel } from '../../services/grid/grid.helpers'
 import { JoinModel } from '../../models/join.model'
 import { JoinsEntityService } from './ngrx-data/joins-entity/joins-entity.service'
 import { getSurroundings } from './helper-functions'
@@ -28,6 +27,11 @@ import { DisconnectionPointsEntityService } from './ngrx-data/disconnection-poin
 import { InvertersEntityService } from './ngrx-data/inverters-entity/inverters-entity.service'
 import { TrayModel } from '../../models/tray.model'
 import { TraysEntityService } from './ngrx-data/trays-entity/trays-entity.service'
+import { selectSelectedId } from './store/selected/selected.selectors'
+import { RailModel } from '../../models/rail.model'
+import { RailsEntityService } from './ngrx-data/rails-entity/rails-entity.service'
+import { BlocksEntityService } from './ngrx-data/blocks-entity/blocks-entity.service'
+import { BlockModel } from '../../models/block.model'
 
 @Injectable({
   providedIn: 'root',
@@ -44,6 +48,8 @@ export class CreateService {
     private dp: DisconnectionPointsEntityService,
     private inverters: InvertersEntityService,
     private traysEntity: TraysEntityService,
+    private railsEntity: RailsEntityService,
+    private blocksEntity: BlocksEntityService,
   ) {}
 
   createSwitch(location: string) {
@@ -53,7 +59,7 @@ export class CreateService {
         .pipe(combineLatestWith(this.store.select(selectCreateMode))),
     ).then(([blocks, createMode]) => {
       const doesExist = blocks.find((block) => block.location === location)
-      if (doesExist) {
+      if (doesExist && createMode !== UnitModel.RAIL) {
         return console.log('cell location taken')
       }
 
@@ -72,6 +78,8 @@ export class CreateService {
 
         case UnitModel.TRAY:
           return this.createTrayForGrid(location)
+        case UnitModel.RAIL:
+          return this.createRailForGrid(location, doesExist)
         default:
           break
       }
@@ -79,26 +87,25 @@ export class CreateService {
   }
 
   createPanelForGrid(location: string) {
-    firstValueFrom(this.store.select(selectCurrentProjectId)).then(
-      (projectId) => {
-        const stringRequest: StringModel = {
-          id: Guid.create().toString(),
-          name: 'string',
-          is_in_parallel: false,
-          project_id: projectId,
-          color: 'black',
-          model: UnitModel.STRING,
-        }
-
-        lastValueFrom(this.stringsEntity.add(stringRequest)).then((res) => {
+    firstValueFrom(this.store.select(selectSelectedId)).then(
+      (selectedStringId) => {
+        if (!selectedStringId) {
           const panelRequest: PanelModel = {
             id: Guid.create().toString(),
-            string_id: res.id,
+            string_id: 'undefined',
             location,
           }
 
           this.panelsEntity.add(panelRequest)
-        })
+        } else {
+          const panelRequest: PanelModel = {
+            id: Guid.create().toString(),
+            string_id: selectedStringId,
+            location,
+          }
+
+          this.panelsEntity.add(panelRequest)
+        }
       },
     )
   }
@@ -225,14 +232,6 @@ export class CreateService {
   createTrayForGrid(location: string) {
     firstValueFrom(this.store.select(selectCurrentProjectId)).then(
       (projectId) => {
-        /*        const trayRequest: Tra = {
-                  id: Guid.create().toString(),
-                  project_id: projectId,
-                  location,
-                  model: UnitModel.INVERTER,
-                  color: 'blue',
-                  name: 'New Inverter',
-                }*/
         const trayRequest = new TrayModel(projectId, location, 150)
 
         this.traysEntity.add(trayRequest)
@@ -240,54 +239,15 @@ export class CreateService {
     )
   }
 
-  private getSurroundings(location: string, blocks: any) {
-    if (!location || !blocks) {
-      const surroundingCables: SurroundingCablesModel = {
-        topCable: undefined,
-        bottomCable: undefined,
-        leftCable: undefined,
-        rightCable: undefined,
-      }
+  createRailForGrid(location: string, doesExist?: BlockModel) {
+    if (doesExist) {
+      const railRequest = new RailModel(location, true, doesExist.id)
 
-      return surroundingCables
+      this.railsEntity.add(railRequest)
+    } else {
+      const railRequest = new RailModel(location, false)
+
+      this.railsEntity.add(railRequest)
     }
-    let numberRow: number = 0
-    let numberCol: number = 0
-
-    const split = location.split('')
-    split.forEach((p, index) => {
-      if (p === 'c') {
-        const row = location.slice(3, index)
-        const col = location.slice(index + 3, location.length)
-        numberRow = Number(row)
-        numberCol = Number(col)
-      }
-    })
-    const topString: string = `row${numberRow - 1}col${numberCol}`
-    const bottomString: string = `row${numberRow + 1}col${numberCol}`
-    const leftString: string = `row${numberRow}col${numberCol - 1}`
-    const rightString: string = `row${numberRow}col${numberCol + 1}`
-
-    const findTop = blocks.find(
-      (block: { location: string }) => block.location === topString,
-    )
-    const findBottom = blocks.find(
-      (block: { location: string }) => block.location === bottomString,
-    )
-    const findLeft = blocks.find(
-      (block: { location: string }) => block.location === leftString,
-    )
-    const findRight = blocks.find(
-      (block: { location: string }) => block.location === rightString,
-    )
-
-    const surroundingCables: SurroundingCablesModel = {
-      topCable: findTop,
-      bottomCable: findBottom,
-      leftCable: findLeft,
-      rightCable: findRight,
-    }
-
-    return surroundingCables
   }
 }

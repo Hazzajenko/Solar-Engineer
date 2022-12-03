@@ -14,6 +14,7 @@ export interface SelectedState {
   multiSelectIds?: string[]
   selectedPositiveLinkTo?: string
   selectedNegativeLinkTo?: string
+  selectedStringId?: string
   selectedStringTooltip?: string
 }
 
@@ -30,6 +31,7 @@ export const initialSelectedState: SelectedState = {
   multiSelectIds: [],
   selectedPositiveLinkTo: undefined,
   selectedNegativeLinkTo: undefined,
+  selectedStringId: undefined,
   selectedStringTooltip: undefined,
 }
 
@@ -99,6 +101,12 @@ export const selectedReducer = createReducer(
     singleSelectId: trayId,
   })),
 
+  on(SelectedStateActions.selectRail, (state, { railId }) => ({
+    unit: UnitModel.RAIL,
+    multiSelect: false,
+    singleSelectId: railId,
+  })),
+
   on(SelectedStateActions.setSelectedPanelLinks, (state, { panelLink }) => ({
     unit: state.unit,
     multiSelect: false,
@@ -114,6 +122,7 @@ export const selectedReducer = createReducer(
   on(SelectedStateActions.selectString, (state, { stringId }) => ({
     unit: UnitModel.STRING,
     singleSelectId: stringId,
+    selectedStringId: stringId,
     multiSelectIds: undefined,
     selectedPositiveLinkTo: undefined,
     selectedNegativeLinkTo: undefined,

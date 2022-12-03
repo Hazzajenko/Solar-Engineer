@@ -156,20 +156,6 @@ func (h *Handlers) GetPanelsByProjectId(w http.ResponseWriter, r *http.Request) 
 }
 
 func (h *Handlers) UpdatePanelLocation(w http.ResponseWriter, r *http.Request) {
-	//bearerHeader := r.Header.Get("Authorization")
-	//bearer := strings.Replace(bearerHeader, "Bearer ", "", 1)
-	//
-	//userId, err := h.Tokens.GetUserIdInt64FromToken(bearer)
-	//if err != nil {
-	//	h.Logger.PrintError(err, nil)
-	//}
-	//fmt.Println(userId)
-
-	//projectId, err := h.Helpers.GetInt64FromURLParam(chi.URLParam(r, "projectId"))
-	//if err != nil {
-	//	h.Logger.PrintError(err, nil)
-	//}
-	//fmt.Println(projectId)
 
 	var input struct {
 		ID         string `json:"id"`
@@ -185,15 +171,6 @@ func (h *Handlers) UpdatePanelLocation(w http.ResponseWriter, r *http.Request) {
 		h.Errors.ServerErrorResponse(w, r, err)
 		return
 	}
-	/*
-		updatePanel := &panels.Panel{
-			ID:         input.ID,
-			InverterId: input.InverterId,
-			TrackerId:  input.TrackerId,
-			StringId:   input.StringId,
-			Location:   input.Location,
-			//Version:    input.Version,
-		}*/
 
 	update := &boiler.Panel{
 		ID:         input.ID,
@@ -223,14 +200,6 @@ func (h *Handlers) UpdatePanelLocation(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handlers) PutPanel(w http.ResponseWriter, r *http.Request) {
-	//bearerHeader := r.Header.Get("Authorization")
-	//bearer := strings.Replace(bearerHeader, "Bearer ", "", 1)
-	//
-	//userId, err := h.Tokens.GetUserIdInt64FromToken(bearer)
-	//if err != nil {
-	//	h.Logger.PrintError(err, nil)
-	//}
-	//fmt.Println(userId)
 
 	projectId, err := h.Helpers.GetInt64FromURLParam(chi.URLParam(r, "projectId"))
 	if err != nil {
@@ -238,31 +207,9 @@ func (h *Handlers) PutPanel(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Println(projectId)
 
-	//panelId := chi.URLParam(r, "panelId")
-	/*
-		, err := h.Helpers.GetInt64FromURLParam(chi.URLParam(r, "panelId"))
-		if err != nil {
-			h.Logger.PrintError(err, nil)
-		}
-		fmt.Println(panelId)*/
-
-	/*	type Changes struct {
-		ID         string `json:"id"`
-		ProjectId  int64  `json:"project_id"`
-		InverterId int64  `json:"inverter_id"`
-		TrackerId  int64  `json:"tracker_id"`
-		StringId   int64  `json:"string_id"`
-		Location   int64  `json:"location"`
-	}*/
-
 	var input struct {
 		ID      string       `json:"id"`
 		Changes boiler.Panel `json:"changes"`
-		/*		InverterId int64 `json:"inverter_id"`
-				TrackerId  int64 `json:"tracker_id"`
-				StringId   int64 `json:"string_id"`
-				Location   int64 `json:"location"`*/
-		//Version    int32  `json:"version"`
 	}
 
 	err = h.Json.DecodeJSON(w, r, &input)
@@ -272,15 +219,6 @@ func (h *Handlers) PutPanel(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Print(input)
-	/*
-		updatePanel := &panels.Panel{
-			ID:         input.ID,
-			InverterId: input.InverterId,
-			TrackerId:  input.TrackerId,
-			StringId:   input.StringId,
-			Location:   input.Location,
-			//Version:    input.Version,
-		}*/
 
 	update := &boiler.Panel{
 		ID:       input.ID,
@@ -308,33 +246,52 @@ func (h *Handlers) PutPanel(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h *Handlers) DeletePanel(w http.ResponseWriter, r *http.Request) {
-	/*	bearerHeader := r.Header.Get("Authorization")
-		bearer := strings.Replace(bearerHeader, "Bearer ", "", 1)
+func (h *Handlers) UpdateManyPanels(w http.ResponseWriter, r *http.Request) {
+	projectId, err := h.Helpers.GetInt64FromURLParam(chi.URLParam(r, "projectId"))
+	if err != nil {
+		h.Logger.PrintError(err, nil)
+	}
+	fmt.Println(projectId)
 
-		userId, err := h.Tokens.GetUserIdInt64FromToken(bearer)
-		if err != nil {
-			h.Logger.PrintError(err, nil)
+	var input struct {
+		Panels      boiler.PanelSlice `json:"panels"`
+		NewStringID string            `json:"new_string_id"`
+		/*		InverterId int64 `json:"inverter_id"`
+				TrackerId  int64 `json:"tracker_id"`
+				StringId   int64 `json:"string_id"`
+				Location   int64 `json:"location"`*/
+		//Version    int32  `json:"version"`
+	}
+
+	err = h.Json.DecodeJSON(w, r, &input)
+	if err != nil {
+		h.Errors.ServerErrorResponse(w, r, err)
+		return
+	}
+
+	fmt.Print(input)
+
+	result, err := h.Models.Panels.MovePanelsToNewString(input.Panels, input.NewStringID)
+	if err != nil {
+		switch {
+		default:
+			h.Errors.ServerErrorResponse(w, r, err)
 		}
-		fmt.Println(userId)*/
+		return
+	}
 
-	/*	projectId, err := h.Helpers.GetInt64FromURLParam(chi.URLParam(r, "projectId"))
-		if err != nil {
-			h.Logger.PrintError(err, nil)
-		}*/
-	//fmt.Println(projectId)
+	err = h.Json.ResponseJSON(w, http.StatusAccepted,
+		json.Envelope{"panel": result},
+		nil)
+	if err != nil {
+		h.Errors.ServerErrorResponse(w, r, err)
+	}
+}
+
+func (h *Handlers) DeletePanel(w http.ResponseWriter, r *http.Request) {
+
 	panelID := chi.URLParam(r, "panelId")
 
-	/*	var input struct {
-			ID string `json:"id"`
-		}
-
-		err := h.Json.DecodeJSON(w, r, &input)
-		if err != nil {
-			h.Errors.ServerErrorResponse(w, r, err)
-			return
-		}
-	*/
 	err := h.Models.Panels.Delete(panelID)
 	if err != nil {
 		switch {

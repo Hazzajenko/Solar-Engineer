@@ -146,3 +146,33 @@ func (p *PanelModel) UpdatePanelsColor(stringId string, stringColor string) (boi
 	result, err := boiler.Panels(boiler.PanelWhere.StringID.EQ(stringId)).All(ctx, p.DB)
 	return result, panelRowsAff, nil
 }
+
+func (p *PanelModel) MovePanelsToNewString(panels boiler.PanelSlice, newStringId string) (boiler.PanelSlice, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+	newString, err := boiler.Strings(boiler.StringWhere.ID.EQ(newStringId)).One(ctx, p.DB)
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return nil, errors.New("edit conflict")
+		default:
+			return nil, err
+		}
+	}
+	_, err = panels.UpdateAll(ctx, p.DB, boiler.M{
+		"string_id": newStringId,
+		"color":     newString.Color,
+	})
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return nil, errors.New("edit conflict")
+		default:
+			return nil, err
+		}
+	}
+	//fmt.Println(panelRowsAff)
+
+	result, err := boiler.Panels(boiler.PanelWhere.StringID.EQ(newStringId)).All(ctx, p.DB)
+	return result, nil
+}

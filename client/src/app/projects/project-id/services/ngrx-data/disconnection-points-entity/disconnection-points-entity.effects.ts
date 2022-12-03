@@ -26,9 +26,7 @@ export class DisconnectionPointsEntityEffects {
                 id: disconnectionPoint.id,
                 location: disconnectionPoint.location,
                 model: UnitModel.DISCONNECTIONPOINT,
-                type: 'DISCONNECTIONPOINT',
                 project_id: disconnectionPoint.project_id!,
-                color: disconnectionPoint.color,
               },
             }),
           )
@@ -49,9 +47,7 @@ export class DisconnectionPointsEntityEffects {
                 id: disconnectionPoint.id,
                 location: disconnectionPoint.location!,
                 model: UnitModel.DISCONNECTIONPOINT,
-                type: 'DISCONNECTIONPOINT',
                 project_id: disconnectionPoint.project_id!,
-                color: disconnectionPoint.color,
               }
               return block
             },
@@ -80,7 +76,6 @@ export class DisconnectionPointsEntityEffects {
                 id: data.id,
                 location: data.changes.location,
                 model: UnitModel.DISCONNECTIONPOINT,
-                type: 'DISCONNECTIONPOINT',
                 project_id: data.changes.project_id!,
               },
             }),

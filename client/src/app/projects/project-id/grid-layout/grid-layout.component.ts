@@ -171,6 +171,7 @@ export class GridLayoutComponent implements OnInit {
           this.joinsService.linkSwitch(location)
           break
         default:
+          this.create.createSwitch(location)
           break
       }
     })
@@ -230,8 +231,11 @@ export class GridLayoutComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    const count = this.invertersEntity.filteredEntities$
+    console.log('SELECT ENTITIES', count)
     this.project$ = this.store.select(selectProjectByRouteParams)
     this.blocks$ = this.store.select(selectBlocksByProjectIdRouteParams)
+    // this.blocks$ = this.store.select(selectBlocksByProjectIdRouteParams)
     this.selected$ = this.store.select(selectSelectedUnitAndIds)
     this.joins$ = this.store.select(selectLinksState)
     this.units$ = combineLatest([

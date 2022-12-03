@@ -7,4 +7,6 @@ export enum DataEntities {
   Join = '[Join]',
   DisconnectionPoint = '[DisconnectionPoint]',
   Tray = '[Tray]',
+  Rail = '[Rail]',
+  Block = '[Block]',
 }

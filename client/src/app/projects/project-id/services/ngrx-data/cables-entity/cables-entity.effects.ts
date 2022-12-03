@@ -26,9 +26,7 @@ export class CablesEntityEffects {
                 id: cable.id,
                 location: cable.location,
                 model: UnitModel.CABLE,
-                type: 'CABLE',
                 project_id: cable.project_id!,
-                color: cable.color,
               },
             }),
           )
@@ -47,9 +45,7 @@ export class CablesEntityEffects {
                 id: cable.id,
                 location: cable.location,
                 model: UnitModel.CABLE,
-                type: 'CABLE',
                 project_id: cable.project_id!,
-                color: cable.color,
               }
               return block
             },
@@ -76,7 +72,6 @@ export class CablesEntityEffects {
                 id: data.id,
                 location: data.changes.location,
                 model: UnitModel.CABLE,
-                type: 'CABLE',
                 project_id: data.changes.project_id!,
               },
             }),

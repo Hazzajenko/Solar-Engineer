@@ -1,47 +1,13 @@
 <!--<ng-template *ngrxLet="project$ | async as project">-->
 <mat-toolbar class="grid-toolbar-container">
-  <mat-slider
-    [displayWith]="formatLabel"
-    discrete
-    max="100"
-    min="0"
-    showTickMarks
-    step="1"
+  <button
+    (click)="viewStrings()"
+    aria-label="Example icon-button with menu icon"
+    class="example-icon"
+    mat-stroked-button
   >
-    <input matSliderThumb />
-  </mat-slider>
-  <ng-container *ngrxLet="stringsEntity.entities$ | async; let strings">
-    <!--    <button
-          (click)="openDialog(strings)"
-          *ngIf="strings"
-          aria-label="Example icon-button with menu icon"
-          class="example-icon"
-          mat-stroked-button
-        >
-          Select a String
-        </button>-->
-    <button
-      *ngIf="strings"
-      [matMenuTriggerFor]="selectStringMenu"
-      aria-label="Example icon-button with menu icon"
-      class="example-icon"
-      mat-stroked-button
-    >
-      Select a String
-    </button>
-  </ng-container>
-
-  <!--  <mat-form-field>
-      <mat-label>Favorite food</mat-label>
-      <mat-select>
-        <mat-option
-          *ngFor="let string of stringsEntity.entities$ | async"
-          [value]="string.id"
-        >
-          {{ string.name }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>-->
+    Strings
+  </button>
   <button
     (click)="openNewStringDialog()"
     aria-label="Example icon-button with menu icon"
@@ -93,6 +59,7 @@
   </button>
   <button (click)="selectCreateMode(2)" mat-menu-item>Inverter</button>
   <button (click)="selectCreateMode(9)" mat-menu-item>Tray</button>
+  <button (click)="selectCreateMode(10)" mat-menu-item>Rail</button>
 </mat-menu>
 
 <mat-menu #selectStringMenu="matMenu">

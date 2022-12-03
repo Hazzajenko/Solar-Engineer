@@ -39,7 +39,13 @@ import { LoggerService } from '../../../../../services/logger.service'
 import { GridStateActions } from '../../../services/store/grid/grid.actions'
 import { SelectedStateActions } from '../../../services/store/selected/selected.actions'
 import { LinksService } from 'src/app/projects/project-id/services/links.service'
-import { distinctUntilChanged, firstValueFrom, Observable } from 'rxjs'
+import {
+  combineLatestWith,
+  distinctUntilChanged,
+  firstValueFrom,
+  lastValueFrom,
+  Observable,
+} from 'rxjs'
 import { map } from 'rxjs/operators'
 import {
   selectLinksState,
@@ -51,11 +57,18 @@ import {
   selectSelectedId,
   selectSelectedNegativeTo,
   selectSelectedPositiveTo,
+  selectSelectedState,
   selectSelectedStringTooltip,
   selectUnitSelected,
 } from '../../../services/store/selected/selected.selectors'
 import { selectGridMode } from '../../../services/store/grid/grid.selectors'
 import { LinksState } from '../../../services/store/links/links.reducer'
+import { StringModel } from '../../../../models/string.model'
+import { Guid } from 'guid-typescript'
+import { HttpClient } from '@angular/common/http'
+import { MatDialog } from '@angular/material/dialog'
+import { ExistingStringsDialog } from './existing-strings-dialog/existing-strings.dialog'
+import { PanelTooltipAsyncPipe } from './panel-tooltip-async.pipe'
 
 @Component({
   selector: 'app-block-panel',
@@ -77,6 +90,7 @@ import { LinksState } from '../../../services/store/links/links.reducer'
     BlockMenuComponent,
     NgTemplateOutlet,
     NgClass,
+    PanelTooltipAsyncPipe,
   ],
   standalone: true,
 })
@@ -112,6 +126,8 @@ export class BlockPanelComponent implements OnInit {
     public store: Store<AppState>,
     private statsService: StatsService,
     private logger: LoggerService,
+    private http: HttpClient,
+    private dialog: MatDialog,
   ) {}
 
   ngOnInit() {
@@ -137,13 +153,14 @@ export class BlockPanelComponent implements OnInit {
     selectedUnit?: UnitModel,
     selectedId?: string,
     selectedStringTooltip?: string,
+    stringName?: string,
   ): string {
     if (selectedUnit) {
       switch (selectedUnit) {
         case UnitModel.PANEL:
           return `
            Location = ${panel.location} \r\n
-           String: ${panel.string_id} \r\n
+           String: ${stringName} \r\n
           `
         case UnitModel.STRING:
           if (panel.string_id === selectedId) {
@@ -155,7 +172,7 @@ export class BlockPanelComponent implements OnInit {
     }
     return `
        Location = ${panel.location} \r\n
-       String: ${panel.string_id} \r\n
+       String: ${stringName} \r\n
     `
   }
 
@@ -238,5 +255,73 @@ export class BlockPanelComponent implements OnInit {
           'err panelAction this.store.select(selectGridMode)' + err,
         )
       })
+  }
+
+  createNewStringWithSelected() {
+    firstValueFrom(
+      this.store
+        .select(selectMultiSelectIds)
+        .pipe(combineLatestWith(this.panelsEntity.entities$))
+        .pipe(
+          map(([multiSelectIds, panels]) => {
+            return panels.filter((p) => multiSelectIds?.includes(p.id))
+          }),
+        ),
+    ).then(async (selectedPanels) => {
+      const newStringId = Guid.create().toString()
+
+      const newString: StringModel = {
+        id: newStringId,
+        name: 'multiSelectString',
+        color: 'blue',
+        model: UnitModel.STRING,
+      }
+
+      this.stringsEntity.add(newString)
+
+      const selectedPanelUpdates: Partial<PanelModel>[] = selectedPanels.map(
+        (panel) => {
+          const partial: Partial<PanelModel> = {
+            ...panel,
+            string_id: newStringId,
+            color: newString.color,
+          }
+          return partial
+        },
+      )
+
+      this.panelsEntity.updateManyInCache(selectedPanelUpdates)
+
+      return lastValueFrom(
+        this.http.put(`/api/projects/3/panels`, {
+          panels: selectedPanelUpdates,
+          new_string_id: newStringId,
+        }),
+      )
+    })
+  }
+
+  addSelectedToExistingString() {
+    this.dialog.open(ExistingStringsDialog)
+  }
+
+  deleteSelectedString(stringId: string) {
+    firstValueFrom(
+      this.store
+        .select(selectSelectedState)
+        .pipe(
+          combineLatestWith(
+            this.stringsEntity.entities$.pipe(
+              map((strings) => strings.find((s) => s.id === stringId)),
+            ),
+          ),
+        ),
+    ).then(([selected, selectedString]) => {
+      if (selected.unit === UnitModel.STRING) {
+        if (selected.singleSelectId === selectedString?.id) {
+          this.stringsEntity.delete(selectedString!)
+        }
+      }
+    })
   }
 }

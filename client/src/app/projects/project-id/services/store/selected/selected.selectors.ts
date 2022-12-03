@@ -28,6 +28,10 @@ export const selectSelectedId = createSelector(
   (state: State.SelectedState) => state.singleSelectId,
 )
 
+export const selectSelectedStringId = createSelector(
+  selectSelectedState,
+  (state: State.SelectedState) => state.selectedStringId,
+)
 export const selectMultiSelectIds = createSelector(
   selectSelectedState,
   (state: State.SelectedState) => state.multiSelectIds,

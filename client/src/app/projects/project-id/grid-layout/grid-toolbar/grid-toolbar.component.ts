@@ -20,6 +20,7 @@ import { MatMenuModule } from '@angular/material/menu'
 import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
 import { MatSliderModule } from '@angular/material/slider'
+import { ViewStringsDialog } from './view-strings-dialog/view-strings.dialog'
 
 @Component({
   selector: 'app-grid-toolbar',
@@ -118,5 +119,9 @@ export class GridToolbarComponent implements OnInit {
 
   changeGridMode(mode: GridMode) {
     this.store.dispatch(GridStateActions.changeGridmode({ mode }))
+  }
+
+  viewStrings() {
+    this.dialog.open(ViewStringsDialog)
   }
 }

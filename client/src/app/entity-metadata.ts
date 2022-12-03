@@ -8,6 +8,8 @@ import { JoinModel } from './projects/models/join.model'
 import { LinkModel } from './projects/models/link.model'
 import { DisconnectionPointModel } from './projects/models/disconnection-point.model'
 import { TrayModel } from './projects/models/tray.model'
+import { RailModel } from './projects/models/rail.model'
+import { BlockModel } from './projects/models/block.model'
 
 const entityMetadata: EntityMetadataMap = {
   Inverter: {
@@ -76,6 +78,22 @@ const entityMetadata: EntityMetadataMap = {
   },
   Tray: {
     selectId: (b: TrayModel): string => b.id,
+    entityDispatcherOptions: {
+      optimisticUpdate: true,
+      optimisticAdd: true,
+      optimisticDelete: true,
+    },
+  },
+  Rail: {
+    selectId: (b: RailModel): string => b.id,
+    entityDispatcherOptions: {
+      optimisticUpdate: true,
+      optimisticAdd: true,
+      optimisticDelete: true,
+    },
+  },
+  Block: {
+    selectId: (b: BlockModel): string => b.id,
     entityDispatcherOptions: {
       optimisticUpdate: true,
       optimisticAdd: true,

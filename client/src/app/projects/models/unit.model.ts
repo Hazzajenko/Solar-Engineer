@@ -9,4 +9,5 @@ export enum UnitModel {
   JOIN,
   DISCONNECTIONPOINT,
   TRAY,
+  RAIL,
 }

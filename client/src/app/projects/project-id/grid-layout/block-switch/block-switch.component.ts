@@ -33,6 +33,7 @@ import { LoggerService } from '../../../../services/logger.service'
 import { LetModule } from '@ngrx/component'
 import { PanelLinksToModel } from '../../../models/panel-links-to.model'
 import { BlockTrayComponent } from './block-tray/block-tray.component'
+import { BlockRailComponent } from './block-rail/block-rail.component'
 
 @Component({
   selector: 'app-block-switch',
@@ -47,6 +48,7 @@ import { BlockTrayComponent } from './block-tray/block-tray.component'
     BlockMenuComponent,
     LetModule,
     BlockTrayComponent,
+    BlockRailComponent,
   ],
   templateUrl: './block-switch.component.html',
   styleUrls: ['./block-switch.component.scss'],
@@ -65,11 +67,11 @@ export class BlockSwitchComponent {
   @Input() joins?: LinksState
 
   // @Input() panelJoins?: PanelJoinModel[]
-  // @ContentChild(BlockTrayComponent) blockPanel!: BlockTrayComponent
-  /*  @ViewChild(BlockTrayComponent, { static: false })
-    blockPanel!: BlockTrayComponent*/
-  // @ViewChildren(BlockTrayComponent)
-  // blockPanels!: QueryList<BlockTrayComponent>
+  // @ContentChild(BlockRailComponent) blockPanel!: BlockRailComponent
+  /*  @ViewChild(BlockRailComponent, { static: false })
+    blockPanel!: BlockRailComponent*/
+  // @ViewChildren(BlockRailComponent)
+  // blockPanels!: QueryList<BlockRailComponent>
   menuTopLeftPosition = { x: '0', y: '0' }
   @ViewChild(MatMenuTrigger, { static: true })
   matMenuTrigger!: MatMenuTrigger

@@ -92,6 +92,14 @@ import { TraysDataService } from './projects/project-id/services/ngrx-data/trays
 import { TraysEntityService } from './projects/project-id/services/ngrx-data/trays-entity/trays-entity.service'
 import { TraysResolver } from './projects/project-id/services/ngrx-data/trays-entity/trays.resolver'
 import { TraysEntityEffects } from './projects/project-id/services/ngrx-data/trays-entity/trays-entity.effects'
+import { RailsEntityEffects } from './projects/project-id/services/ngrx-data/rails-entity/rails-entity.effects'
+import { RailsEntityService } from './projects/project-id/services/ngrx-data/rails-entity/rails-entity.service'
+import { RailsResolver } from './projects/project-id/services/ngrx-data/rails-entity/rails.resolver'
+import { RailsDataService } from './projects/project-id/services/ngrx-data/rails-entity/rails-data.service'
+import { BlocksEntityEffects } from './projects/project-id/services/ngrx-data/blocks-entity/blocks-entity.effects'
+import { BlocksEntityService } from './projects/project-id/services/ngrx-data/blocks-entity/blocks-entity.service'
+import { BlocksResolver } from './projects/project-id/services/ngrx-data/blocks-entity/blocks.resolver'
+import { BlocksDataService } from './projects/project-id/services/ngrx-data/blocks-entity/blocks-data.service'
 
 export function tokenGetter() {
   // console.log(localStorage.getItem('token'))
@@ -146,6 +154,8 @@ export function tokenGetter() {
       DisconnectionPointsEntityEffects,
       SelectedEffects,
       TraysEntityEffects,
+      RailsEntityEffects,
+      BlocksEntityEffects,
     ]),
     FindCablePipe,
     GetGridNumberPipe,
@@ -208,6 +218,12 @@ export function tokenGetter() {
     TraysEntityService,
     TraysResolver,
     TraysDataService,
+    RailsEntityService,
+    RailsResolver,
+    RailsDataService,
+    BlocksEntityService,
+    BlocksResolver,
+    BlocksDataService,
     CustomHttpUrlGenerator,
     { provide: DefaultDataServiceConfig, useValue: defaultDataServiceConfig },
     { provide: HttpUrlGenerator, useClass: CustomHttpUrlGenerator },
@@ -227,6 +243,8 @@ export class AppModule {
     private linksDataService: LinksDataService,
     private disconnectionPointsDataService: DisconnectionPointsDataService,
     private traysDataService: TraysDataService,
+    private railsDataService: RailsDataService,
+    private blocksDataService: BlocksDataService,
   ) {
     eds.registerMetadataMap(entityConfig.entityMetadata)
 
@@ -242,5 +260,7 @@ export class AppModule {
       'DisconnectionPoint',
       disconnectionPointsDataService,
     )
+    entityDataService.registerService('Rail', railsDataService)
+    entityDataService.registerService('Block', blocksDataService)
   }
 }

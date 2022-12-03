@@ -3,10 +3,12 @@ package server
 import (
 	"fmt"
 	"github.com/go-chi/chi/v5"
+	"golang.org/x/net/websocket"
 	"net/http"
 )
 
 func (s *Server) Routes() *chi.Mux {
+	s.Router.Handle("/socket", websocket.Handler(s.SocketServer.HandleWs))
 	s.Router.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("hello")
 	})
@@ -29,6 +31,9 @@ func (s *Server) Routes() *chi.Mux {
 	})*/
 
 	s.Router.Get("/ws", s.Handlers.WsEndpoint)
+	//s.Router.Get("/socket", websocket.Handler(s.SocketServer.HandleWs))
+
+	//s.Router.Get("/wss", s.SocketServer.HandleWs)
 	//s.Router.Get("/echo", websockets.Echo)
 
 	s.Router.Route("/projects", func(r chi.Router) {
@@ -42,6 +47,13 @@ func (s *Server) Routes() *chi.Mux {
 		r.Route("/{projectId}", func(r chi.Router) {
 			r.Get("/", s.Handlers.GetProjectById)
 			r.Get("/all", s.Handlers.GetDataForProject)
+
+			r.Group(func(r chi.Router) {
+				r.Get("/blocks", s.Handlers.GetBlocksByProjectId)
+				r.Post("/block", s.Handlers.CreateBlock)
+				r.Put("/block/{blockId}", s.Handlers.UpdateBlock)
+				r.Delete("/block/{blockId}", s.Handlers.DeleteBlock)
+			})
 
 			r.Group(func(r chi.Router) {
 				r.Get("/inverters", s.Handlers.GetInvertersByProjectId)
@@ -70,6 +82,7 @@ func (s *Server) Routes() *chi.Mux {
 				//r.Post("/panels", s.Handlers.CreatePanel)
 				//r.Patch("/panels", s.Handlers.UpdatePanelLocation)
 				r.Put("/panel/{panelId}", s.Handlers.PutPanel)
+				r.Put("/panels", s.Handlers.UpdateManyPanels)
 				r.Delete("/panel/{panelId}", s.Handlers.DeletePanel)
 			})
 
@@ -103,6 +116,13 @@ func (s *Server) Routes() *chi.Mux {
 				r.Post("/tray", s.Handlers.CreateTray)
 				r.Put("/tray/{trayId}", s.Handlers.UpdateTray)
 				r.Delete("/tray/{trayId}", s.Handlers.DeleteTray)
+			})
+
+			r.Group(func(r chi.Router) {
+				r.Get("/rails", s.Handlers.GetRailsByProjectId)
+				r.Post("/rail", s.Handlers.CreateRail)
+				r.Put("/rail/{railId}", s.Handlers.UpdateRail)
+				r.Delete("/rail/{railId}", s.Handlers.DeleteRail)
 			})
 
 			r.Group(func(r chi.Router) {

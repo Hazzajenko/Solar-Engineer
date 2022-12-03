@@ -24,9 +24,7 @@ export class TraysEntityEffects {
                 id: tray.id,
                 location: tray.location,
                 model: UnitModel.TRAY,
-                type: 'TRAY',
                 project_id: tray.project_id!,
-                color: tray.color,
               },
             }),
           )
@@ -45,9 +43,7 @@ export class TraysEntityEffects {
                 id: tray.id,
                 location: tray.location,
                 model: UnitModel.TRAY,
-                type: 'TRAY',
                 project_id: tray.project_id!,
-                color: tray.color,
               }
               return block
             },
@@ -73,7 +69,6 @@ export class TraysEntityEffects {
                 id: data.id,
                 location: data.changes.location,
                 model: UnitModel.TRAY,
-                type: 'TRAY',
                 project_id: data.changes.project_id!,
               },
             }),

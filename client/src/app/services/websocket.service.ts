@@ -72,7 +72,7 @@ export class WebsocketService {
       return webSocket('ws://localhost:3000')
     }*/
 
-  private create(url: string): AnonymousSubject<MessageEvent> {
+  create(url: string): AnonymousSubject<MessageEvent> {
     let ws = new WebSocket(url)
     let observable = new Observable((obs: Observer<MessageEvent>) => {
       ws.onmessage = obs.next.bind(obs)

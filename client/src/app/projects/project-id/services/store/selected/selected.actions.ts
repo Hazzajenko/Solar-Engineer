@@ -15,6 +15,7 @@ export const SelectedStateActions = createActionGroup({
     'Select Cable': props<{ cableId: string }>(),
     'Select Dp': props<{ dpId: string }>(),
     'Select Tray': props<{ trayId: string }>(),
+    'Select Rail': props<{ railId: string }>(),
     'Select String': props<{ stringId: string }>(),
     'Set Selected String Panels': props<{ panelIds: string[] }>(),
     'Set Selected String Tooltip': props<{ tooltip: string }>(),

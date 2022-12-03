@@ -71,8 +71,8 @@ func main() {
 	tokens := tokens2.InitTokens(key)
 	helpers := helpers2.InitHelpers()
 	handlers := handlers2.InitHandlers(models, customLogger, &tokens, &json, &errors, &helpers)
-
-	server := server2.InitServer(r, &handlers)
+	socketServer := handlers2.NewServer()
+	server := server2.InitServer(r, &handlers, socketServer)
 	server.Middleware()
 	server.Routes()
 

@@ -26,8 +26,10 @@
         "
         [class.drop-zone__bg-selected]="
           (selectedId$ | async)! === panel.id ||
-          (selectedId$ | async)! === panel.string_id ||
           (multiSelectIds$ | async)?.includes(panel.id)
+        "
+        [class.drop-zone__bg-string-selected]="
+          (selectedId$ | async)! === panel.string_id
         "
         [class.drop-zone__bg-to-join]="(panelToJoin$ | async)?.id === panel.id"
         [matTooltip]="
@@ -35,16 +37,23 @@
             panel,
             (selectedUnit$ | async)!,
             (selectedId$ | async)!,
-            (selectedStringTooltip$ | async)!
+            (selectedStringTooltip$ | async)!,
+            (panel | panelTooltipAsync | async)!
           )
         "
-        [style.border]="'2px solid ' + panel.color"
         cdkDrag
         class="drop-zone__panel"
         matTooltipClass="drop-zone__tooltip"
         matTooltipPosition="right"
       >
+        <!--        [ngStyle]="{
+                border:
+                  panel.string_id !== 'undefined'
+                    ? '2px solid ' + panel.color
+                    : '2px solid black'
+                }"-->
         <!--            P-->
+        <!--        [style.border]="'2px solid ' + panel.color"-->
       </div>
     </div>
   </ng-container>
@@ -61,21 +70,56 @@
   <ng-container *ngIf="panel$ | async as panel">
     <ng-template matMenuContent>
       <div class="right-click-menu">
-        <button class="right-click-menu__button" mat-menu-item>Edit</button>
-        <button
-          (click)="selectString(panel)"
-          class="right-click-menu__button"
-          mat-menu-item
+        <ng-container
+          *ngIf="
+            (selectedId$ | async) === panel.string_id;
+            else stringNotSelected
+          "
         >
-          Select String
-        </button>
-        <button
-          (click)="deletePanel(panel)"
-          class="right-click-menu__button"
-          mat-menu-item
-        >
-          Delete
-        </button>
+          <button class="right-click-menu__button" mat-menu-item>
+            Edit String
+          </button>
+          <button
+            (click)="deleteSelectedString(panel.string_id)"
+            class="right-click-menu__button"
+            mat-menu-item
+          >
+            Delete String
+          </button>
+        </ng-container>
+        <ng-template #stringNotSelected>
+          <button class="right-click-menu__button" mat-menu-item>Edit</button>
+          <button
+            (click)="selectString(panel)"
+            class="right-click-menu__button"
+            mat-menu-item
+          >
+            Select String
+          </button>
+          <ng-container *ngIf="(multiSelectIds$ | async)?.includes(panel.id)">
+            <button
+              (click)="createNewStringWithSelected()"
+              class="right-click-menu__button"
+              mat-menu-item
+            >
+              Create new string with selected
+            </button>
+            <button
+              (click)="addSelectedToExistingString()"
+              class="right-click-menu__button"
+              mat-menu-item
+            >
+              Add selected to existing string
+            </button>
+          </ng-container>
+          <button
+            (click)="deletePanel(panel)"
+            class="right-click-menu__button"
+            mat-menu-item
+          >
+            Delete Panel
+          </button>
+        </ng-template>
       </div>
     </ng-template>
   </ng-container>

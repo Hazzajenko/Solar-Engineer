@@ -26,9 +26,7 @@ export class PanelsEntityEffects {
                 id: panel.id,
                 location: panel.location,
                 model: UnitModel.PANEL,
-                type: 'PANEL',
                 project_id: panel.project_id!,
-                color: panel.color,
               },
             }),
           )
@@ -47,9 +45,7 @@ export class PanelsEntityEffects {
                 id: panel.id,
                 location: panel.location,
                 model: UnitModel.PANEL,
-                type: 'PANEL',
                 project_id: panel.project_id!,
-                color: panel.color,
               }
               return block
             },
@@ -75,7 +71,6 @@ export class PanelsEntityEffects {
                 id: data.id,
                 location: data.changes.location,
                 model: UnitModel.PANEL,
-                type: 'PANEL',
                 project_id: data.changes.project_id!,
               },
             }),
@@ -99,42 +94,6 @@ export class PanelsEntityEffects {
       ),
     { dispatch: false },
   )
-
-  /*  updatePanel$ = createEffect(
-      () =>
-        this.actions$.pipe(
-          ofType(PanelStateActions.updatePanelHttp),
-          exhaustMap((action) =>
-            this.panelsService.updatePanel(action.request).pipe(
-              map(
-                (res) => {
-                  console.log(res)
-                  this.store.dispatch(
-                    PanelStateActions.updatePanelToState({
-                      panel: res.panel,
-                    }),
-                  )
-                  this.store.dispatch(
-                    BlocksStateActions.updateBlockForGrid({
-                      oldLocation: action.request.panel.location,
-                      block: {
-                        id: res.panel.location,
-                        model: UnitModel.PANEL,
-                        type: 'PANEL',
-                        project_id: res.panel.project_id!,
-                      },
-                    }),
-                  )
-                  console.log(res)
-                },
-                // catchError(async (err) => console.log(err)),
-              ),
-              catchError(async (error) => console.log(error)),
-            ),
-          ),
-        ),
-      { dispatch: false },
-    )*/
 
   constructor(
     private actions$: Actions,

@@ -11,6 +11,7 @@ import { JoinsResolver } from './projects/project-id/services/ngrx-data/joins-en
 import { LinksResolver } from './projects/project-id/services/ngrx-data/links-entity/links.resolver'
 import { DisconnectionPointsResolver } from './projects/project-id/services/ngrx-data/disconnection-points-entity/disconnection-points.resolver'
 import { TraysResolver } from './projects/project-id/services/ngrx-data/trays-entity/trays.resolver'
+import { RailsResolver } from './projects/project-id/services/ngrx-data/rails-entity/rails.resolver'
 
 const routes: Routes = [
   {
@@ -36,6 +37,7 @@ const routes: Routes = [
       panel_joins: LinksResolver,
       disconnection_points: DisconnectionPointsResolver,
       trays: TraysResolver,
+      rails: RailsResolver,
     },
   },
   { path: '', redirectTo: '/projects/3', pathMatch: 'full' },

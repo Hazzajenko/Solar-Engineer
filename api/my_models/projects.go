@@ -87,24 +87,28 @@ var ProjectWhere = struct {
 // ProjectRels is where relationship names are stored.
 var ProjectRels = struct {
 	CreatedByUser       string
+	Blocks              string
 	Cables              string
 	DisconnectionPoints string
 	Inverters           string
 	Joins               string
 	Links               string
 	Panels              string
+	Rails               string
 	Strings             string
 	Trackers            string
 	Trays               string
 	UsersProjects       string
 }{
 	CreatedByUser:       "CreatedByUser",
+	Blocks:              "Blocks",
 	Cables:              "Cables",
 	DisconnectionPoints: "DisconnectionPoints",
 	Inverters:           "Inverters",
 	Joins:               "Joins",
 	Links:               "Links",
 	Panels:              "Panels",
+	Rails:               "Rails",
 	Strings:             "Strings",
 	Trackers:            "Trackers",
 	Trays:               "Trays",
@@ -114,12 +118,14 @@ var ProjectRels = struct {
 // projectR is where relationships are stored.
 type projectR struct {
 	CreatedByUser       *User                   `boil:"CreatedByUser" json:"CreatedByUser" toml:"CreatedByUser" yaml:"CreatedByUser"`
+	Blocks              BlockSlice              `boil:"Blocks" json:"Blocks" toml:"Blocks" yaml:"Blocks"`
 	Cables              CableSlice              `boil:"Cables" json:"Cables" toml:"Cables" yaml:"Cables"`
 	DisconnectionPoints DisconnectionPointSlice `boil:"DisconnectionPoints" json:"DisconnectionPoints" toml:"DisconnectionPoints" yaml:"DisconnectionPoints"`
 	Inverters           InverterSlice           `boil:"Inverters" json:"Inverters" toml:"Inverters" yaml:"Inverters"`
 	Joins               JoinSlice               `boil:"Joins" json:"Joins" toml:"Joins" yaml:"Joins"`
 	Links               LinkSlice               `boil:"Links" json:"Links" toml:"Links" yaml:"Links"`
 	Panels              PanelSlice              `boil:"Panels" json:"Panels" toml:"Panels" yaml:"Panels"`
+	Rails               RailSlice               `boil:"Rails" json:"Rails" toml:"Rails" yaml:"Rails"`
 	Strings             StringSlice             `boil:"Strings" json:"Strings" toml:"Strings" yaml:"Strings"`
 	Trackers            TrackerSlice            `boil:"Trackers" json:"Trackers" toml:"Trackers" yaml:"Trackers"`
 	Trays               TraySlice               `boil:"Trays" json:"Trays" toml:"Trays" yaml:"Trays"`
@@ -136,6 +142,13 @@ func (r *projectR) GetCreatedByUser() *User {
 		return nil
 	}
 	return r.CreatedByUser
+}
+
+func (r *projectR) GetBlocks() BlockSlice {
+	if r == nil {
+		return nil
+	}
+	return r.Blocks
 }
 
 func (r *projectR) GetCables() CableSlice {
@@ -178,6 +191,13 @@ func (r *projectR) GetPanels() PanelSlice {
 		return nil
 	}
 	return r.Panels
+}
+
+func (r *projectR) GetRails() RailSlice {
+	if r == nil {
+		return nil
+	}
+	return r.Rails
 }
 
 func (r *projectR) GetStrings() StringSlice {
@@ -508,6 +528,20 @@ func (o *Project) CreatedByUser(mods ...qm.QueryMod) userQuery {
 	return Users(queryMods...)
 }
 
+// Blocks retrieves all the block's Blocks with an executor.
+func (o *Project) Blocks(mods ...qm.QueryMod) blockQuery {
+	var queryMods []qm.QueryMod
+	if len(mods) != 0 {
+		queryMods = append(queryMods, mods...)
+	}
+
+	queryMods = append(queryMods,
+		qm.Where("\"blocks\".\"project_id\"=?", o.ID),
+	)
+
+	return Blocks(queryMods...)
+}
+
 // Cables retrieves all the cable's Cables with an executor.
 func (o *Project) Cables(mods ...qm.QueryMod) cableQuery {
 	var queryMods []qm.QueryMod
@@ -590,6 +624,20 @@ func (o *Project) Panels(mods ...qm.QueryMod) panelQuery {
 	)
 
 	return Panels(queryMods...)
+}
+
+// Rails retrieves all the rail's Rails with an executor.
+func (o *Project) Rails(mods ...qm.QueryMod) railQuery {
+	var queryMods []qm.QueryMod
+	if len(mods) != 0 {
+		queryMods = append(queryMods, mods...)
+	}
+
+	queryMods = append(queryMods,
+		qm.Where("\"rails\".\"project_id\"=?", o.ID),
+	)
+
+	return Rails(queryMods...)
 }
 
 // Strings retrieves all the string's Strings with an executor.
@@ -760,6 +808,120 @@ func (projectL) LoadCreatedByUser(ctx context.Context, e boil.ContextExecutor, s
 					foreign.R = &userR{}
 				}
 				foreign.R.CreatedByProjects = append(foreign.R.CreatedByProjects, local)
+				break
+			}
+		}
+	}
+
+	return nil
+}
+
+// LoadBlocks allows an eager lookup of values, cached into the
+// loaded structs of the objects. This is for a 1-M or N-M relationship.
+func (projectL) LoadBlocks(ctx context.Context, e boil.ContextExecutor, singular bool, maybeProject interface{}, mods queries.Applicator) error {
+	var slice []*Project
+	var object *Project
+
+	if singular {
+		var ok bool
+		object, ok = maybeProject.(*Project)
+		if !ok {
+			object = new(Project)
+			ok = queries.SetFromEmbeddedStruct(&object, &maybeProject)
+			if !ok {
+				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", object, maybeProject))
+			}
+		}
+	} else {
+		s, ok := maybeProject.(*[]*Project)
+		if ok {
+			slice = *s
+		} else {
+			ok = queries.SetFromEmbeddedStruct(&slice, maybeProject)
+			if !ok {
+				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", slice, maybeProject))
+			}
+		}
+	}
+
+	args := make([]interface{}, 0, 1)
+	if singular {
+		if object.R == nil {
+			object.R = &projectR{}
+		}
+		args = append(args, object.ID)
+	} else {
+	Outer:
+		for _, obj := range slice {
+			if obj.R == nil {
+				obj.R = &projectR{}
+			}
+
+			for _, a := range args {
+				if a == obj.ID {
+					continue Outer
+				}
+			}
+
+			args = append(args, obj.ID)
+		}
+	}
+
+	if len(args) == 0 {
+		return nil
+	}
+
+	query := NewQuery(
+		qm.From(`blocks`),
+		qm.WhereIn(`blocks.project_id in ?`, args...),
+	)
+	if mods != nil {
+		mods.Apply(query)
+	}
+
+	results, err := query.QueryContext(ctx, e)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load blocks")
+	}
+
+	var resultSlice []*Block
+	if err = queries.Bind(results, &resultSlice); err != nil {
+		return errors.Wrap(err, "failed to bind eager loaded slice blocks")
+	}
+
+	if err = results.Close(); err != nil {
+		return errors.Wrap(err, "failed to close results in eager load on blocks")
+	}
+	if err = results.Err(); err != nil {
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for blocks")
+	}
+
+	if len(blockAfterSelectHooks) != 0 {
+		for _, obj := range resultSlice {
+			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
+				return err
+			}
+		}
+	}
+	if singular {
+		object.R.Blocks = resultSlice
+		for _, foreign := range resultSlice {
+			if foreign.R == nil {
+				foreign.R = &blockR{}
+			}
+			foreign.R.Project = object
+		}
+		return nil
+	}
+
+	for _, foreign := range resultSlice {
+		for _, local := range slice {
+			if local.ID == foreign.ProjectID {
+				local.R.Blocks = append(local.R.Blocks, foreign)
+				if foreign.R == nil {
+					foreign.R = &blockR{}
+				}
+				foreign.R.Project = local
 				break
 			}
 		}
@@ -1452,6 +1614,120 @@ func (projectL) LoadPanels(ctx context.Context, e boil.ContextExecutor, singular
 	return nil
 }
 
+// LoadRails allows an eager lookup of values, cached into the
+// loaded structs of the objects. This is for a 1-M or N-M relationship.
+func (projectL) LoadRails(ctx context.Context, e boil.ContextExecutor, singular bool, maybeProject interface{}, mods queries.Applicator) error {
+	var slice []*Project
+	var object *Project
+
+	if singular {
+		var ok bool
+		object, ok = maybeProject.(*Project)
+		if !ok {
+			object = new(Project)
+			ok = queries.SetFromEmbeddedStruct(&object, &maybeProject)
+			if !ok {
+				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", object, maybeProject))
+			}
+		}
+	} else {
+		s, ok := maybeProject.(*[]*Project)
+		if ok {
+			slice = *s
+		} else {
+			ok = queries.SetFromEmbeddedStruct(&slice, maybeProject)
+			if !ok {
+				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", slice, maybeProject))
+			}
+		}
+	}
+
+	args := make([]interface{}, 0, 1)
+	if singular {
+		if object.R == nil {
+			object.R = &projectR{}
+		}
+		args = append(args, object.ID)
+	} else {
+	Outer:
+		for _, obj := range slice {
+			if obj.R == nil {
+				obj.R = &projectR{}
+			}
+
+			for _, a := range args {
+				if a == obj.ID {
+					continue Outer
+				}
+			}
+
+			args = append(args, obj.ID)
+		}
+	}
+
+	if len(args) == 0 {
+		return nil
+	}
+
+	query := NewQuery(
+		qm.From(`rails`),
+		qm.WhereIn(`rails.project_id in ?`, args...),
+	)
+	if mods != nil {
+		mods.Apply(query)
+	}
+
+	results, err := query.QueryContext(ctx, e)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load rails")
+	}
+
+	var resultSlice []*Rail
+	if err = queries.Bind(results, &resultSlice); err != nil {
+		return errors.Wrap(err, "failed to bind eager loaded slice rails")
+	}
+
+	if err = results.Close(); err != nil {
+		return errors.Wrap(err, "failed to close results in eager load on rails")
+	}
+	if err = results.Err(); err != nil {
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for rails")
+	}
+
+	if len(railAfterSelectHooks) != 0 {
+		for _, obj := range resultSlice {
+			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
+				return err
+			}
+		}
+	}
+	if singular {
+		object.R.Rails = resultSlice
+		for _, foreign := range resultSlice {
+			if foreign.R == nil {
+				foreign.R = &railR{}
+			}
+			foreign.R.Project = object
+		}
+		return nil
+	}
+
+	for _, foreign := range resultSlice {
+		for _, local := range slice {
+			if local.ID == foreign.ProjectID {
+				local.R.Rails = append(local.R.Rails, foreign)
+				if foreign.R == nil {
+					foreign.R = &railR{}
+				}
+				foreign.R.Project = local
+				break
+			}
+		}
+	}
+
+	return nil
+}
+
 // LoadStrings allows an eager lookup of values, cached into the
 // loaded structs of the objects. This is for a 1-M or N-M relationship.
 func (projectL) LoadStrings(ctx context.Context, e boil.ContextExecutor, singular bool, maybeProject interface{}, mods queries.Applicator) error {
@@ -1955,6 +2231,59 @@ func (o *Project) SetCreatedByUser(ctx context.Context, exec boil.ContextExecuto
 	return nil
 }
 
+// AddBlocks adds the given related objects to the existing relationships
+// of the project, optionally inserting them as new records.
+// Appends related to o.R.Blocks.
+// Sets related.R.Project appropriately.
+func (o *Project) AddBlocks(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*Block) error {
+	var err error
+	for _, rel := range related {
+		if insert {
+			rel.ProjectID = o.ID
+			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
+				return errors.Wrap(err, "failed to insert into foreign table")
+			}
+		} else {
+			updateQuery := fmt.Sprintf(
+				"UPDATE \"blocks\" SET %s WHERE %s",
+				strmangle.SetParamNames("\"", "\"", 1, []string{"project_id"}),
+				strmangle.WhereClause("\"", "\"", 2, blockPrimaryKeyColumns),
+			)
+			values := []interface{}{o.ID, rel.ID}
+
+			if boil.IsDebug(ctx) {
+				writer := boil.DebugWriterFrom(ctx)
+				fmt.Fprintln(writer, updateQuery)
+				fmt.Fprintln(writer, values)
+			}
+			if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
+				return errors.Wrap(err, "failed to update foreign table")
+			}
+
+			rel.ProjectID = o.ID
+		}
+	}
+
+	if o.R == nil {
+		o.R = &projectR{
+			Blocks: related,
+		}
+	} else {
+		o.R.Blocks = append(o.R.Blocks, related...)
+	}
+
+	for _, rel := range related {
+		if rel.R == nil {
+			rel.R = &blockR{
+				Project: o,
+			}
+		} else {
+			rel.R.Project = o
+		}
+	}
+	return nil
+}
+
 // AddCables adds the given related objects to the existing relationships
 // of the project, optionally inserting them as new records.
 // Appends related to o.R.Cables.
@@ -2264,6 +2593,59 @@ func (o *Project) AddPanels(ctx context.Context, exec boil.ContextExecutor, inse
 	for _, rel := range related {
 		if rel.R == nil {
 			rel.R = &panelR{
+				Project: o,
+			}
+		} else {
+			rel.R.Project = o
+		}
+	}
+	return nil
+}
+
+// AddRails adds the given related objects to the existing relationships
+// of the project, optionally inserting them as new records.
+// Appends related to o.R.Rails.
+// Sets related.R.Project appropriately.
+func (o *Project) AddRails(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*Rail) error {
+	var err error
+	for _, rel := range related {
+		if insert {
+			rel.ProjectID = o.ID
+			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
+				return errors.Wrap(err, "failed to insert into foreign table")
+			}
+		} else {
+			updateQuery := fmt.Sprintf(
+				"UPDATE \"rails\" SET %s WHERE %s",
+				strmangle.SetParamNames("\"", "\"", 1, []string{"project_id"}),
+				strmangle.WhereClause("\"", "\"", 2, railPrimaryKeyColumns),
+			)
+			values := []interface{}{o.ID, rel.ID}
+
+			if boil.IsDebug(ctx) {
+				writer := boil.DebugWriterFrom(ctx)
+				fmt.Fprintln(writer, updateQuery)
+				fmt.Fprintln(writer, values)
+			}
+			if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
+				return errors.Wrap(err, "failed to update foreign table")
+			}
+
+			rel.ProjectID = o.ID
+		}
+	}
+
+	if o.R == nil {
+		o.R = &projectR{
+			Rails: related,
+		}
+	} else {
+		o.R.Rails = append(o.R.Rails, related...)
+	}
+
+	for _, rel := range related {
+		if rel.R == nil {
+			rel.R = &railR{
 				Project: o,
 			}
 		} else {
