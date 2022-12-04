@@ -11,10 +11,7 @@ import { map } from 'rxjs/operators'
 import { combineLatest, firstValueFrom, Observable } from 'rxjs'
 import { selectProjectByRouteParams } from '../services/store/projects/projects.selectors'
 import { ProjectModel } from '../../models/project.model'
-import {
-  selectCreateMode,
-  selectGridMode,
-} from '../services/store/grid/grid.selectors'
+import { selectCreateMode, selectGridMode } from '../services/store/grid/grid.selectors'
 import { BlockModel } from '../../models/block.model'
 import { selectBlocksByProjectIdRouteParams } from '../services/store/blocks/blocks.selectors'
 import { CableModel } from '../../models/cable.model'
@@ -66,6 +63,7 @@ import { CreateService } from '../services/create.service'
 import { DeleteService } from '../services/delete.service'
 import { LinksService } from '../services/links.service'
 import { UpdateService } from '../services/update.service'
+import { MultiCreateService } from '../services/multi-create.service'
 
 @Component({
   selector: 'app-grid-layout',
@@ -130,7 +128,6 @@ export class GridLayoutComponent implements OnInit {
   panels$!: Observable<PanelModel[]>
   cables$!: Observable<CableModel[]>
   blocks$!: Observable<BlockModel[]>
-  // links$!: Observable<JoinModel[]>
   joins$!: Observable<LinksState>
   panelJoins$!: Observable<LinkModel[]>
   disconnectionPoints$!: Observable<DisconnectionPointModel[]>
@@ -150,17 +147,18 @@ export class GridLayoutComponent implements OnInit {
     private joinsEntity: JoinsEntityService,
     private panelJoinsEntity: LinksEntityService,
     private disconnectionPointsEntity: DisconnectionPointsEntityService,
-    private create: CreateService,
+    private createService: CreateService,
     private deleteService: DeleteService,
     private joinsService: LinksService,
     private updateService: UpdateService,
+    private multiCreateService: MultiCreateService,
   ) {}
 
   cellAction(location: string): void {
     firstValueFrom(this.store.select(selectGridMode)).then((gridMode) => {
       switch (gridMode) {
         case GridMode.CREATE:
-          this.create.createSwitch(location)
+          this.createService.createSwitch(location)
           break
 
         case GridMode.DELETE:
@@ -170,60 +168,18 @@ export class GridLayoutComponent implements OnInit {
         case GridMode.JOIN:
           this.joinsService.linkSwitch(location)
           break
+        case GridMode.MULTICREATE:
+          this.multiCreateService.multiCreate(location)
+          break
         default:
-          this.create.createSwitch(location)
+          this.createService.createSwitch(location)
           break
       }
     })
   }
 
   gridDrop(event: CdkDragDrop<any, any>) {
-    firstValueFrom(this.store.select(selectBlocksByProjectIdRouteParams)).then(
-      (blocks) => {
-        if (blocks) {
-          const doesExist = blocks.find(
-            (block) => block.location.toString() === event.container.id,
-          )
-
-          if (doesExist) {
-            return console.warn(`block already exists as ${event.container.id}`)
-          }
-        }
-
-        const block = event.item.data
-        const location = event.container.id
-
-        switch (block.model) {
-          case UnitModel.PANEL:
-            const panel: PanelModel = {
-              ...block,
-              location,
-            }
-            return this.panelsEntity.update(panel)
-
-          case UnitModel.DISCONNECTIONPOINT:
-            const disconnectionPoint: DisconnectionPointModel = {
-              ...block,
-              location,
-            }
-            return this.disconnectionPointsEntity.update(disconnectionPoint)
-
-          case UnitModel.CABLE:
-            this.updateService.joinNearbyCables(block, location)
-            break
-
-          case UnitModel.INVERTER:
-            const inverter: InverterModel = {
-              ...block,
-              location,
-            }
-            return this.invertersEntity.update(inverter)
-
-          default:
-            break
-        }
-      },
-    )
+    this.updateService.gridDrop(event)
   }
 
   ngOnDestroy(): void {
@@ -247,25 +203,15 @@ export class GridLayoutComponent implements OnInit {
       this.panelJoinsEntity.entities$,
       this.disconnectionPointsEntity.entities$,
     ]).pipe(
-      map(
-        ([
-          inverters,
-          strings,
-          panels,
-          cables,
-          joins,
-          panelJoins,
-          disconnectionPoints,
-        ]) => ({
-          inverters,
-          strings,
-          panels,
-          cables,
-          joins,
-          panelJoins,
-          disconnectionPoints,
-        }),
-      ),
+      map(([inverters, strings, panels, cables, joins, panelJoins, disconnectionPoints]) => ({
+        inverters,
+        strings,
+        panels,
+        cables,
+        joins,
+        panelJoins,
+        disconnectionPoints,
+      })),
     )
     this.modes$ = combineLatest([
       this.store.select(selectCreateMode),

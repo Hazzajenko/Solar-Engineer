@@ -52,6 +52,9 @@ type Panel struct {
 	PositiveToID            null.String `boil:"positive_to_id" json:"positive_to_id,omitempty" toml:"positive_to_id" yaml:"positive_to_id,omitempty"`
 	NegativeToID            string      `boil:"negative_to_id" json:"negative_to_id" toml:"negative_to_id" yaml:"negative_to_id"`
 	Selected                bool        `boil:"selected" json:"selected" toml:"selected" yaml:"selected"`
+	HasChildBlock           bool        `boil:"has_child_block" json:"has_child_block" toml:"has_child_block" yaml:"has_child_block"`
+	ChildBlockID            string      `boil:"child_block_id" json:"child_block_id" toml:"child_block_id" yaml:"child_block_id"`
+	ChildBlockModel         int         `boil:"child_block_model" json:"child_block_model" toml:"child_block_model" yaml:"child_block_model"`
 
 	R *panelR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L panelL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -86,6 +89,9 @@ var PanelColumns = struct {
 	PositiveToID            string
 	NegativeToID            string
 	Selected                string
+	HasChildBlock           string
+	ChildBlockID            string
+	ChildBlockModel         string
 }{
 	ID:                      "id",
 	ProjectID:               "project_id",
@@ -115,6 +121,9 @@ var PanelColumns = struct {
 	PositiveToID:            "positive_to_id",
 	NegativeToID:            "negative_to_id",
 	Selected:                "selected",
+	HasChildBlock:           "has_child_block",
+	ChildBlockID:            "child_block_id",
+	ChildBlockModel:         "child_block_model",
 }
 
 var PanelTableColumns = struct {
@@ -146,6 +155,9 @@ var PanelTableColumns = struct {
 	PositiveToID            string
 	NegativeToID            string
 	Selected                string
+	HasChildBlock           string
+	ChildBlockID            string
+	ChildBlockModel         string
 }{
 	ID:                      "panels.id",
 	ProjectID:               "panels.project_id",
@@ -175,6 +187,9 @@ var PanelTableColumns = struct {
 	PositiveToID:            "panels.positive_to_id",
 	NegativeToID:            "panels.negative_to_id",
 	Selected:                "panels.selected",
+	HasChildBlock:           "panels.has_child_block",
+	ChildBlockID:            "panels.child_block_id",
+	ChildBlockModel:         "panels.child_block_model",
 }
 
 // Generated where
@@ -246,6 +261,9 @@ var PanelWhere = struct {
 	PositiveToID            whereHelpernull_String
 	NegativeToID            whereHelperstring
 	Selected                whereHelperbool
+	HasChildBlock           whereHelperbool
+	ChildBlockID            whereHelperstring
+	ChildBlockModel         whereHelperint
 }{
 	ID:                      whereHelperstring{field: "\"panels\".\"id\""},
 	ProjectID:               whereHelperint64{field: "\"panels\".\"project_id\""},
@@ -275,6 +293,9 @@ var PanelWhere = struct {
 	PositiveToID:            whereHelpernull_String{field: "\"panels\".\"positive_to_id\""},
 	NegativeToID:            whereHelperstring{field: "\"panels\".\"negative_to_id\""},
 	Selected:                whereHelperbool{field: "\"panels\".\"selected\""},
+	HasChildBlock:           whereHelperbool{field: "\"panels\".\"has_child_block\""},
+	ChildBlockID:            whereHelperstring{field: "\"panels\".\"child_block_id\""},
+	ChildBlockModel:         whereHelperint{field: "\"panels\".\"child_block_model\""},
 }
 
 // PanelRels is where relationship names are stored.
@@ -335,9 +356,9 @@ func (r *panelR) GetString() *String {
 type panelL struct{}
 
 var (
-	panelAllColumns            = []string{"id", "project_id", "inverter_id", "tracker_id", "string_id", "name", "created_at", "created_by", "current_at_maximum_power", "short_circuit_current", "short_circuit_current_temp", "maximum_power", "maximum_power_temp", "voltage_at_maximum_power", "open_circuit_voltage", "open_circuit_voltage_temp", "length", "weight", "width", "version", "location", "model", "color", "type", "join_id", "positive_to_id", "negative_to_id", "selected"}
+	panelAllColumns            = []string{"id", "project_id", "inverter_id", "tracker_id", "string_id", "name", "created_at", "created_by", "current_at_maximum_power", "short_circuit_current", "short_circuit_current_temp", "maximum_power", "maximum_power_temp", "voltage_at_maximum_power", "open_circuit_voltage", "open_circuit_voltage_temp", "length", "weight", "width", "version", "location", "model", "color", "type", "join_id", "positive_to_id", "negative_to_id", "selected", "has_child_block", "child_block_id", "child_block_model"}
 	panelColumnsWithoutDefault = []string{"id", "project_id", "name"}
-	panelColumnsWithDefault    = []string{"inverter_id", "tracker_id", "string_id", "created_at", "created_by", "current_at_maximum_power", "short_circuit_current", "short_circuit_current_temp", "maximum_power", "maximum_power_temp", "voltage_at_maximum_power", "open_circuit_voltage", "open_circuit_voltage_temp", "length", "weight", "width", "version", "location", "model", "color", "type", "join_id", "positive_to_id", "negative_to_id", "selected"}
+	panelColumnsWithDefault    = []string{"inverter_id", "tracker_id", "string_id", "created_at", "created_by", "current_at_maximum_power", "short_circuit_current", "short_circuit_current_temp", "maximum_power", "maximum_power_temp", "voltage_at_maximum_power", "open_circuit_voltage", "open_circuit_voltage_temp", "length", "weight", "width", "version", "location", "model", "color", "type", "join_id", "positive_to_id", "negative_to_id", "selected", "has_child_block", "child_block_id", "child_block_model"}
 	panelPrimaryKeyColumns     = []string{"id"}
 	panelGeneratedColumns      = []string{}
 )

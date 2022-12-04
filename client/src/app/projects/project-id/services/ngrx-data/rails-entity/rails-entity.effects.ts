@@ -10,6 +10,9 @@ import { EntityOp } from '@ngrx/data'
 import { BlockModel } from '../../../../models/block.model'
 import { RailModel } from '../../../../models/rail.model'
 import { selectBlocksByProjectIdRouteParams } from '../../store/blocks/blocks.selectors'
+import { HttpClient } from '@angular/common/http'
+import { lastValueFrom } from 'rxjs'
+import { selectCurrentProjectId } from '../../store/projects/projects.selectors'
 
 @Injectable()
 export class RailsEntityEffects {
@@ -17,9 +20,7 @@ export class RailsEntityEffects {
     () =>
       this.actions$.pipe(
         ofType(`${DataEntities.Rail} ${EntityOp.SAVE_ADD_ONE_SUCCESS}`),
-        concatLatestFrom((action) =>
-          this.store.select(selectBlocksByProjectIdRouteParams),
-        ),
+        concatLatestFrom((action) => this.store.select(selectBlocksByProjectIdRouteParams)),
         tap(([action, blocks]: [any, BlockModel[]]) => {
           const rail = action.payload.data
           const existing = blocks.find((b) => b.location === rail.location)
@@ -44,8 +45,8 @@ export class RailsEntityEffects {
                   project_id: existing.project_id!,
                   inside_blocks: [
                     {
-                      inside_id: rail.id,
-                      inside_model: UnitModel.RAIL,
+                      child_block_id: rail.id,
+                      child_block_model: UnitModel.RAIL,
                     },
                   ],
                 },
@@ -56,22 +57,52 @@ export class RailsEntityEffects {
       ),
     { dispatch: false },
   )
+
+  addManyRail$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(`${DataEntities.Rail} ${EntityOp.ADD_MANY}`),
+        concatLatestFrom(() => this.store.select(selectCurrentProjectId)),
+        tap(async ([action, projectId]: [any, number]) => {
+          const manyRail: RailModel[] = action.payload.data
+          const blocks = manyRail.map((rail) => {
+            const block: BlockModel = {
+              id: rail.id,
+              location: rail.location,
+              model: UnitModel.RAIL,
+              project_id: rail.project_id,
+            }
+
+            return block
+          })
+          this.store.dispatch(
+            BlocksStateActions.addManyBlocksForGrid({
+              blocks,
+            }),
+          )
+          await lastValueFrom(
+            this.http.post(`/api/projects/${projectId}/rails`, {
+              rails: manyRail,
+            }),
+          )
+        }),
+      ),
+    { dispatch: false },
+  )
   getAllRails$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType(`${DataEntities.Rail} ${EntityOp.QUERY_ALL_SUCCESS}`),
         tap((action: any) => {
-          const blocks: BlockModel[] = action.payload.data.map(
-            (rail: RailModel) => {
-              const block: BlockModel = {
-                id: rail.id,
-                location: rail.location,
-                model: UnitModel.RAIL,
-                project_id: rail.project_id!,
-              }
-              return block
-            },
-          )
+          const blocks: BlockModel[] = action.payload.data.map((rail: RailModel) => {
+            const block: BlockModel = {
+              id: rail.id,
+              location: rail.location,
+              model: UnitModel.RAIL,
+              project_id: rail.project_id!,
+            }
+            return block
+          })
           this.store.dispatch(
             BlocksStateActions.addManyBlocksForGrid({
               blocks,
@@ -117,5 +148,9 @@ export class RailsEntityEffects {
     { dispatch: false },
   )
 
-  constructor(private actions$: Actions, private store: Store<AppState>) {}
+  constructor(
+    private actions$: Actions,
+    private store: Store<AppState>,
+    private http: HttpClient,
+  ) {}
 }

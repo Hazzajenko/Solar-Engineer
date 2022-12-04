@@ -1,62 +1,66 @@
 <ng-container *ngIf="panel$ | async as panel">
-  <ng-container
-    *ngrxLet="{
-      positiveTo: selectedPositiveTo$ | async,
-      negativeTo: selectedNegativeTo$ | async
-    } as selectedLinks"
-  >
-    <div class="drop-zone">
-      <app-panel-link
-        [isNegativeLink]="selectedLinks?.negativeTo === panel.id"
-        [isPositiveLink]="selectedLinks?.positiveTo === panel.id"
-        class="drop-zone__svg"
-      ></app-panel-link>
-      <div
-        #panelDiv
-        (click)="panelAction(panel, $event.shiftKey)"
-        (contextmenu)="onRightClick($event, panel)"
-        *ngrxLet="selectedId$ | async as selectedId"
-        [cdkDragData]="panel"
-        [class.drop-zone__bg-default]="selectedId !== panel.id"
-        [class.drop-zone__bg-negative]="
-          (selectedNegativeTo$ | async)! === panel.id
-        "
-        [class.drop-zone__bg-positive]="
-          (selectedPositiveTo$ | async)! === panel.id
-        "
-        [class.drop-zone__bg-selected]="
-          (selectedId$ | async)! === panel.id ||
-          (multiSelectIds$ | async)?.includes(panel.id)
-        "
-        [class.drop-zone__bg-string-selected]="
-          (selectedId$ | async)! === panel.string_id
-        "
-        [class.drop-zone__bg-to-join]="(panelToJoin$ | async)?.id === panel.id"
-        [matTooltip]="
-          displayTooltip(
-            panel,
-            (selectedUnit$ | async)!,
-            (selectedId$ | async)!,
-            (selectedStringTooltip$ | async)!,
-            (panel | panelTooltipAsync | async)!
-          )
-        "
-        cdkDrag
-        class="drop-zone__panel"
-        matTooltipClass="drop-zone__tooltip"
-        matTooltipPosition="right"
-      >
-        <!--        [ngStyle]="{
-                border:
-                  panel.string_id !== 'undefined'
-                    ? '2px solid ' + panel.color
-                    : '2px solid black'
-                }"-->
-        <!--            P-->
-        <!--        [style.border]="'2px solid ' + panel.color"-->
-      </div>
+  <div class="drop-zone">
+    <app-panel-link
+      [isNegativeLink]="(selectedNegativeTo$ | async)! === panel.id"
+      [isPositiveLink]="(selectedPositiveTo$ | async)! === panel.id"
+      class="drop-zone__svg"
+    ></app-panel-link>
+    <ng-container *ngIf="panel.has_child_block">
+      <ng-container *ngIf="panel.child_block_model === 10">
+        <svg viewBox="0 0 100 100">
+          <path
+            d="
+          M 25, 0
+          V 100
+          "
+          />
+          <path
+            d="
+          M 75, 0
+          V 100
+          "
+          />
+        </svg>
+      </ng-container>
+    </ng-container>
+    <div
+      #panelDiv
+      (click)="panelAction(panel, $event.shiftKey)"
+      (contextmenu)="onRightClick($event, panel)"
+      *ngrxLet="selectedId$ | async as selectedId"
+      [cdkDragData]="panel"
+      [class.drop-zone__bg-default]="selectedId !== panel.id"
+      [class.drop-zone__bg-negative]="(selectedNegativeTo$ | async)! === panel.id"
+      [class.drop-zone__bg-positive]="(selectedPositiveTo$ | async)! === panel.id"
+      [class.drop-zone__bg-selected]="
+        (selectedId$ | async)! === panel.id || (multiSelectIds$ | async)?.includes(panel.id)
+      "
+      [class.drop-zone__bg-string-selected]="(selectedId$ | async)! === panel.string_id"
+      [class.drop-zone__bg-to-join]="(panelToJoin$ | async)?.id === panel.id"
+      [matTooltip]="
+        displayTooltip(
+          panel,
+          (selectedUnit$ | async)!,
+          (selectedId$ | async)!,
+          (selectedStringTooltip$ | async)!,
+          (panel | panelTooltipAsync | async)!
+        )
+      "
+      cdkDrag
+      class="drop-zone__panel"
+      matTooltipClass="drop-zone__tooltip"
+      matTooltipPosition="right"
+    >
+      <!--        [ngStyle]="{
+              border:
+                panel.string_id !== 'undefined'
+                  ? '2px solid ' + panel.color
+                  : '2px solid black'
+              }"-->
+      <!--            P-->
+      <!--        [style.border]="'2px solid ' + panel.color"-->
     </div>
-  </ng-container>
+  </div>
 </ng-container>
 
 <div
@@ -70,15 +74,8 @@
   <ng-container *ngIf="panel$ | async as panel">
     <ng-template matMenuContent>
       <div class="right-click-menu">
-        <ng-container
-          *ngIf="
-            (selectedId$ | async) === panel.string_id;
-            else stringNotSelected
-          "
-        >
-          <button class="right-click-menu__button" mat-menu-item>
-            Edit String
-          </button>
+        <ng-container *ngIf="(selectedId$ | async) === panel.string_id; else stringNotSelected">
+          <button class="right-click-menu__button" mat-menu-item>Edit String</button>
           <button
             (click)="deleteSelectedString(panel.string_id)"
             class="right-click-menu__button"
@@ -89,11 +86,7 @@
         </ng-container>
         <ng-template #stringNotSelected>
           <button class="right-click-menu__button" mat-menu-item>Edit</button>
-          <button
-            (click)="selectString(panel)"
-            class="right-click-menu__button"
-            mat-menu-item
-          >
+          <button (click)="selectString(panel)" class="right-click-menu__button" mat-menu-item>
             Select String
           </button>
           <ng-container *ngIf="(multiSelectIds$ | async)?.includes(panel.id)">
@@ -112,11 +105,7 @@
               Add selected to existing string
             </button>
           </ng-container>
-          <button
-            (click)="deletePanel(panel)"
-            class="right-click-menu__button"
-            mat-menu-item
-          >
+          <button (click)="deletePanel(panel)" class="right-click-menu__button" mat-menu-item>
             Delete Panel
           </button>
         </ng-template>

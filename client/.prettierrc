@@ -4,6 +4,7 @@
   "semi": false,
   "singleQuote": true,
   "htmlSingleQuote": false,
+  "printWidth": 100,
   "overrides": [
     {
       "files": [

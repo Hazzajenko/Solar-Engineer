@@ -24,12 +24,13 @@ func (h *Handlers) CreateRail(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var input struct {
-		ID           string `json:"id"`
-		Model        int    `json:"model"`
-		Type         int    `json:"type"`
-		Location     string `json:"location"`
-		IsChildBlock bool   `json:"is_child_block"`
-		//ParentBlockId string `json:"parent_block_id"`
+		ID            string `json:"id"`
+		ProjectID     int64  `json:"project_id"`
+		Model         int    `json:"model"`
+		Type          int    `json:"type"`
+		Location      string `json:"location"`
+		IsChildBlock  bool   `json:"is_child_block"`
+		ParentBlockId string `json:"parent_block_id"`
 	}
 
 	err = h.Json.DecodeJSON(w, r, &input)
@@ -39,13 +40,13 @@ func (h *Handlers) CreateRail(w http.ResponseWriter, r *http.Request) {
 	}
 
 	boilerRail := &boiler.Rail{
-		ID:           input.ID,
-		ProjectID:    projectId,
-		Model:        input.Model,
-		Type:         input.Type,
-		Location:     input.Location,
-		IsChildBlock: input.IsChildBlock,
-		//ParentBlockID: input.ParentBlockId,
+		ID:            input.ID,
+		ProjectID:     projectId,
+		Model:         input.Model,
+		Type:          input.Type,
+		Location:      input.Location,
+		IsChildBlock:  input.IsChildBlock,
+		ParentBlockID: input.ParentBlockId,
 	}
 
 	result, err := h.Models.Rails.Create(boilerRail)
@@ -59,6 +60,47 @@ func (h *Handlers) CreateRail(w http.ResponseWriter, r *http.Request) {
 
 	err = h.Json.ResponseJSON(w, http.StatusAccepted,
 		json.Envelope{"rail": result},
+		nil)
+	if err != nil {
+		h.Errors.ServerErrorResponse(w, r, err)
+	}
+}
+
+func (h *Handlers) CreateManyRail(w http.ResponseWriter, r *http.Request) {
+	bearerHeader := r.Header.Get("Authorization")
+	bearer := strings.Replace(bearerHeader, "Bearer ", "", 1)
+
+	_, err := h.Tokens.GetUserIdInt64FromToken(bearer)
+	if err != nil {
+		h.Logger.PrintError(err, nil)
+	}
+
+	_, err = h.Helpers.GetInt64FromURLParam(chi.URLParam(r, "projectId"))
+	if err != nil {
+		h.Logger.PrintError(err, nil)
+	}
+
+	var input struct {
+		Rails []boiler.Rail `json:"rails"`
+	}
+
+	err = h.Json.DecodeJSON(w, r, &input)
+	if err != nil {
+		h.Errors.ServerErrorResponse(w, r, err)
+		return
+	}
+
+	err = h.Models.Rails.CreateMany(input.Rails)
+	if err != nil {
+		switch {
+		default:
+			h.Errors.ServerErrorResponse(w, r, err)
+		}
+		return
+	}
+
+	err = h.Json.ResponseJSON(w, http.StatusAccepted,
+		json.Envelope{"rails": true},
 		nil)
 	if err != nil {
 		h.Errors.ServerErrorResponse(w, r, err)

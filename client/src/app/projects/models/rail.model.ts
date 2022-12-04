@@ -16,8 +16,9 @@ export class RailModel {
   is_child_block: boolean
   parent_block_id?: string
 
-  constructor(location: string, isChildBlock: boolean, parentBlockId?: string) {
+  constructor(projectId: number, location: string, isChildBlock: boolean, parentBlockId?: string) {
     this.id = Guid.create().toString()
+    this.project_id = projectId
     this.model = UnitModel.TRAY
     this.type = RailType.SUNLOCK
     this.location = location

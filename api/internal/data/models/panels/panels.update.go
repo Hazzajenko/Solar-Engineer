@@ -104,6 +104,9 @@ func (p *PanelModel) UpdatePanel(update *boiler.Panel) (*boiler.Panel, error) {
 	panel.PositiveToID = update.PositiveToID
 	panel.NegativeToID = update.NegativeToID
 	panel.Color = update.Color
+	panel.HasChildBlock = update.HasChildBlock
+	panel.ChildBlockID = update.ChildBlockID
+	panel.ChildBlockModel = update.ChildBlockModel
 	/*	panel.AddPositivePanelJoins()*/
 	_, err = panel.Update(ctx, p.DB, boil.Infer())
 	if err != nil {
@@ -175,4 +178,27 @@ func (p *PanelModel) MovePanelsToNewString(panels boiler.PanelSlice, newStringId
 
 	result, err := boiler.Panels(boiler.PanelWhere.StringID.EQ(newStringId)).All(ctx, p.DB)
 	return result, nil
+}
+
+func (p *PanelModel) UpdatePanelsWithRail(panels []boiler.Panel) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	for _, update := range panels {
+		panel, err := boiler.Panels(boiler.PanelWhere.ID.EQ(update.ID)).One(ctx, p.DB)
+		if err != nil {
+			switch {
+			case errors.Is(err, sql.ErrNoRows):
+				return errors.New("edit conflict")
+			default:
+				return err
+			}
+		}
+
+		panel.HasChildBlock = update.HasChildBlock
+		panel.ChildBlockID = update.ChildBlockID
+		panel.ChildBlockModel = update.ChildBlockModel
+		_, err = panel.Update(ctx, p.DB, boil.Infer())
+	}
+	return nil
 }

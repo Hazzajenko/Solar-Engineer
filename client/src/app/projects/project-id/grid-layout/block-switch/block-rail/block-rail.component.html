@@ -1,17 +1,25 @@
 <ng-container *ngIf="rail$ | async as rail">
   <div class="drop-zone">
-    <!--    <app-tray-join
-          *ngIf="tray | RailSurroundingsAsyncPipe as surroundings$"
-          [surroundings]="(surroundings$ | async)!"
-          class="drop-zone__svg"
-        ></app-tray-join>-->
+    <app-rail-join class="drop-zone__svg"></app-rail-join>
+    <svg viewBox="0 0 100 100">
+      <path
+        d="
+          M 25, 0
+          V 100
+          "
+      />
+      <path
+        d="
+          M 75, 0
+          V 100
+          "
+      />
+    </svg>
     <div
       (click)="railAction(rail)"
       (contextmenu)="onRightClick($event, rail)"
       *ngrxLet="selectedId$ | async as selectedId"
       [cdkDragData]="rail"
-      [class.drop-zone__bg-default]="selectedId !== rail.id"
-      [class.drop-zone__bg-selected]="selectedId === rail.id"
       [matTooltip]="displayTooltip(rail)"
       cdkDrag
       class="drop-zone__rail"
@@ -22,6 +30,8 @@
     </div>
   </div>
 </ng-container>
+<!--[class.drop-zone__bg-default]="selectedId !== rail.id"
+[class.drop-zone__bg-selected]="selectedId === rail.id"-->
 
 <div
   [matMenuTriggerFor]="rightMenu"
@@ -35,11 +45,7 @@
     <ng-template matMenuContent>
       <div class="right-click-menu">
         <button class="right-click-menu__button" mat-menu-item>Edit</button>
-        <button
-          (click)="deleteRail(rail)"
-          class="right-click-menu__button"
-          mat-menu-item
-        >
+        <button (click)="deleteRail(rail)" class="right-click-menu__button" mat-menu-item>
           Delete
         </button>
       </div>

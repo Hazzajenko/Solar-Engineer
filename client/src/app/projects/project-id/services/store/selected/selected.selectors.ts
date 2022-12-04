@@ -1,8 +1,7 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store'
 import * as State from './selected.reducer'
 
-export const selectSelectedState =
-  createFeatureSelector<State.SelectedState>('selected')
+export const selectSelectedState = createFeatureSelector<State.SelectedState>('selected')
 
 export const selectSelectedUnitAndIds = createSelector(
   selectSelectedState,
@@ -28,6 +27,12 @@ export const selectSelectedId = createSelector(
   (state: State.SelectedState) => state.singleSelectId,
 )
 
+export const selectSelectedIdWithUnit = createSelector(
+  selectSelectedState,
+  (state: State.SelectedState) => {
+    return [state.singleSelectId, state.unit]
+  },
+)
 export const selectSelectedStringId = createSelector(
   selectSelectedState,
   (state: State.SelectedState) => state.selectedStringId,

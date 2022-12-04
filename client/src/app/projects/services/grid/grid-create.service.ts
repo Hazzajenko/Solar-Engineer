@@ -103,6 +103,7 @@ export class GridCreateService extends GridService {
         tracker_id: selectedString.tracker_id,
         string_id: selectedString.id,
         location,
+        has_child_block: false,
       }
 
       this.panelsEntity.add(panelRequest)
@@ -188,6 +189,7 @@ export class GridCreateService extends GridService {
         tracker_id: selectedString.tracker_id,
         string_id: selectedString.id,
         location,
+        has_child_block: false,
       }
 
       this.panelsEntity.add(panelRequest)
@@ -206,6 +208,7 @@ export class GridCreateService extends GridService {
           id: Guid.create().toString(),
           string_id: res.id,
           location,
+          has_child_block: false,
         }
 
         this.panelsEntity.add(panelRequest)

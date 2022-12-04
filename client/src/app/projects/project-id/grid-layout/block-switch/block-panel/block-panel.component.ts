@@ -13,13 +13,7 @@ import { PanelModel } from '../../../../models/panel.model'
 import { GridMode } from '../../../services/store/grid/grid-mode.model'
 import { DragDropModule } from '@angular/cdk/drag-drop'
 import { MatTooltipModule } from '@angular/material/tooltip'
-import {
-  AsyncPipe,
-  NgClass,
-  NgIf,
-  NgStyle,
-  NgTemplateOutlet,
-} from '@angular/common'
+import { AsyncPipe, NgClass, NgIf, NgStyle, NgTemplateOutlet } from '@angular/common'
 import { FindPanelLocationPipe } from '../../../../../pipes/find-panel-location.pipe'
 import { PanelsEntityService } from '../../../services/ngrx-data/panels-entity/panels-entity.service'
 import { LinksEntityService } from '../../../services/ngrx-data/links-entity/links-entity.service'
@@ -47,10 +41,7 @@ import {
   Observable,
 } from 'rxjs'
 import { map } from 'rxjs/operators'
-import {
-  selectLinksState,
-  selectPanelToLink,
-} from '../../../services/store/links/links.selectors'
+import { selectLinksState, selectPanelToLink } from '../../../services/store/links/links.selectors'
 import {
   selectIfMultiSelect,
   selectMultiSelectIds,
@@ -136,9 +127,7 @@ export class BlockPanelComponent implements OnInit {
       map((panels) => panels.find((panel) => panel.location === this.location)),
     )
     this.panelToJoin$ = this.store.select(selectPanelToLink)
-    this.selectedId$ = this.store
-      .select(selectSelectedId)
-      .pipe(distinctUntilChanged())
+    this.selectedId$ = this.store.select(selectSelectedId).pipe(distinctUntilChanged())
     this.selectedPositiveTo$ = this.store.select(selectSelectedPositiveTo)
     this.selectedNegativeTo$ = this.store.select(selectSelectedNegativeTo)
     this.selectedUnit$ = this.store.select(selectUnitSelected)
@@ -161,6 +150,7 @@ export class BlockPanelComponent implements OnInit {
           return `
            Location = ${panel.location} \r\n
            String: ${stringName} \r\n
+           HasTray: ${panel.has_child_block} \r\n
           `
         case UnitModel.STRING:
           if (panel.string_id === selectedId) {
@@ -171,8 +161,9 @@ export class BlockPanelComponent implements OnInit {
       }
     }
     return `
-       Location = ${panel.location} \r\n
-       String: ${stringName} \r\n
+      Location = ${panel.location} \r\n
+      String: ${stringName} \r\n
+      HasTray: ${panel.has_child_block} \r\n
     `
   }
 
@@ -186,15 +177,9 @@ export class BlockPanelComponent implements OnInit {
   }
 
   selectString(panel: PanelModel) {
-    this.store.dispatch(
-      GridStateActions.changeGridmode({ mode: GridMode.SELECT }),
-    )
-    this.store.dispatch(
-      SelectedStateActions.selectUnit({ unit: UnitModel.STRING }),
-    )
-    this.store.dispatch(
-      SelectedStateActions.selectString({ stringId: panel.string_id }),
-    )
+    this.store.dispatch(GridStateActions.changeGridmode({ mode: GridMode.SELECT }))
+    this.store.dispatch(SelectedStateActions.selectUnit({ unit: UnitModel.STRING }))
+    this.store.dispatch(SelectedStateActions.selectString({ stringId: panel.string_id }))
   }
 
   deletePanel(panel: PanelModel) {
@@ -210,11 +195,9 @@ export class BlockPanelComponent implements OnInit {
       .then((gridMode) => {
         switch (gridMode) {
           case GridMode.JOIN:
-            firstValueFrom(this.store.select(selectLinksState)).then(
-              (joinsState) => {
-                this.joinsService.addPanelToLink(panel, joinsState)
-              },
-            )
+            firstValueFrom(this.store.select(selectLinksState)).then((joinsState) => {
+              this.joinsService.addPanelToLink(panel, joinsState)
+            })
             break
           case GridMode.DELETE:
             this.panelsEntity.delete(panel)
@@ -227,15 +210,11 @@ export class BlockPanelComponent implements OnInit {
                 }),
               )
             } else {
-              this.store.dispatch(
-                SelectedStateActions.selectPanel({ panelId: panel.id }),
-              )
+              this.store.dispatch(SelectedStateActions.selectPanel({ panelId: panel.id }))
             }
             break
           default:
-            this.store.dispatch(
-              GridStateActions.changeGridmode({ mode: GridMode.SELECT }),
-            )
+            this.store.dispatch(GridStateActions.changeGridmode({ mode: GridMode.SELECT }))
             if (shiftKey) {
               this.store.dispatch(
                 SelectedStateActions.addPanelToMultiselect({
@@ -243,17 +222,13 @@ export class BlockPanelComponent implements OnInit {
                 }),
               )
             } else {
-              this.store.dispatch(
-                SelectedStateActions.selectPanel({ panelId: panel.id }),
-              )
+              this.store.dispatch(SelectedStateActions.selectPanel({ panelId: panel.id }))
             }
             break
         }
       })
       .catch((err) => {
-        return console.error(
-          'err panelAction this.store.select(selectGridMode)' + err,
-        )
+        return console.error('err panelAction this.store.select(selectGridMode)' + err)
       })
   }
 
@@ -279,16 +254,14 @@ export class BlockPanelComponent implements OnInit {
 
       this.stringsEntity.add(newString)
 
-      const selectedPanelUpdates: Partial<PanelModel>[] = selectedPanels.map(
-        (panel) => {
-          const partial: Partial<PanelModel> = {
-            ...panel,
-            string_id: newStringId,
-            color: newString.color,
-          }
-          return partial
-        },
-      )
+      const selectedPanelUpdates: Partial<PanelModel>[] = selectedPanels.map((panel) => {
+        const partial: Partial<PanelModel> = {
+          ...panel,
+          string_id: newStringId,
+          color: newString.color,
+        }
+        return partial
+      })
 
       this.panelsEntity.updateManyInCache(selectedPanelUpdates)
 

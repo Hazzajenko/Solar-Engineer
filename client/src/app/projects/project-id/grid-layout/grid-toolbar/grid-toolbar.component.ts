@@ -21,6 +21,7 @@ import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
 import { MatSliderModule } from '@angular/material/slider'
 import { ViewStringsDialog } from './view-strings-dialog/view-strings.dialog'
+import { SelectedStateActions } from '../../services/store/selected/selected.actions'
 
 @Component({
   selector: 'app-grid-toolbar',
@@ -51,11 +52,6 @@ export class GridToolbarComponent implements OnInit {
 
   formatLabel(value: number): string {
     return `${value}%`
-    /*    if (value >= 1000) {
-          return Math.round(value / 1000) + 'k';
-        }
-
-        return `${value}`;*/
   }
 
   ngOnInit(): void {}
@@ -87,7 +83,7 @@ export class GridToolbarComponent implements OnInit {
   }
 
   selectString(string: StringModel) {
-    this.store.dispatch(GridStateActions.selectStringForGrid({ string }))
+    this.store.dispatch(SelectedStateActions.selectString({ stringId: string.id }))
   }
 
   openNewStringDialog() {

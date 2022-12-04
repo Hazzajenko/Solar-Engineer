@@ -29,6 +29,24 @@ func (p *RailModel) Create(rail *boiler.Rail) (*boiler.Rail, error) {
 	return rail, nil
 }
 
+func (p *RailModel) CreateMany(rails []boiler.Rail) error {
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	for _, rail := range rails {
+		err := rail.Insert(ctx, p.DB, boil.Infer())
+		if err != nil {
+			switch {
+			default:
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
 func (p *RailModel) GetRailByProjectId(projectId int64) (*boiler.RailSlice, error) {
 	if projectId < 1 {
 		return nil, errors.New("record not found")

@@ -1,10 +1,7 @@
 import { createReducer, on } from '@ngrx/store'
 import { SelectedStateActions } from './selected.actions'
 import { UnitModel } from '../../../../models/unit.model'
-import {
-  addPanelToMultiselect,
-  addToMultiSelectArray,
-} from './selected.helpers'
+import { addPanelToMultiselect, addToMultiSelectArray } from './selected.helpers'
 
 export interface SelectedState {
   unit?: UnitModel
@@ -111,21 +108,14 @@ export const selectedReducer = createReducer(
     unit: state.unit,
     multiSelect: false,
     singleSelectId: state.singleSelectId,
-    multiSelectIds: [],
     selectedPositiveLinkTo: panelLink.selectedPositiveLinkTo,
     selectedNegativeLinkTo: panelLink.selectedNegativeLinkTo,
-    typeToJoin: UnitModel.UNDEFINED,
-    panelToJoin: undefined,
-    dpToJoin: undefined,
   })),
 
   on(SelectedStateActions.selectString, (state, { stringId }) => ({
     unit: UnitModel.STRING,
     singleSelectId: stringId,
     selectedStringId: stringId,
-    multiSelectIds: undefined,
-    selectedPositiveLinkTo: undefined,
-    selectedNegativeLinkTo: undefined,
   })),
 
   on(SelectedStateActions.selectDp, (state, { dpId }) => ({
@@ -137,8 +127,6 @@ export const selectedReducer = createReducer(
     unit: UnitModel.STRING,
     singleSelectId: state.singleSelectId,
     multiSelectIds: panelIds,
-    selectedPositiveLinkTo: undefined,
-    selectedNegativeLinkTo: undefined,
   })),
 
   on(SelectedStateActions.setSelectedStringTooltip, (state, { tooltip }) => ({
@@ -146,8 +134,6 @@ export const selectedReducer = createReducer(
     singleSelectId: state.singleSelectId,
     multiSelectIds: state.multiSelectIds,
     selectedStringTooltip: tooltip,
-    selectedPositiveLinkTo: undefined,
-    selectedNegativeLinkTo: undefined,
   })),
 
   on(SelectedStateActions.clearSelectedState, (state) => ({

@@ -1,28 +1,24 @@
-<ng-template [ngIf]="surroundings">
+<ng-template>
   <svg viewBox="0 0 100 100">
     <path
-      *ngIf="surroundings.top"
       d="
           M 50, 55
           V -10
           "
     />
     <path
-      *ngIf="surroundings.bottom"
       d="
           M 50, 45
           V 110
           "
     />
     <path
-      *ngIf="surroundings.right"
       d="
           M 45, 50
           H 110
           "
     />
     <path
-      *ngIf="surroundings.left"
       d="
           M 55, 50
           H -10

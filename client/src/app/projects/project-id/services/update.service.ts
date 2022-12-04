@@ -19,6 +19,7 @@ import { Store } from '@ngrx/store'
 import { AppState } from '../../../store/app.state'
 import { selectBlocksByProjectIdRouteParams } from './store/blocks/blocks.selectors'
 import { LoggerService } from '../../../services/logger.service'
+import { map } from 'rxjs/operators'
 
 @Injectable({
   providedIn: 'root',
@@ -36,18 +37,13 @@ export class UpdateService {
   ) {}
 
   gridDrop(event: CdkDragDrop<any, any>) {
-    firstValueFrom(this.store.select(selectBlocksByProjectIdRouteParams)).then(
-      (blocks) => {
-        if (blocks) {
-          const doesExist = blocks.find(
-            (block) => block.location.toString() === event.container.id,
-          )
+    firstValueFrom(this.store.select(selectBlocksByProjectIdRouteParams)).then((blocks) => {
+      if (blocks) {
+        const doesExist = blocks.find((block) => block.location.toString() === event.container.id)
 
-          if (doesExist) {
-            return this.logger.warn(
-              `block already exists as ${event.container.id}`,
-            )
-          }
+        console.error(doesExist)
+        if (doesExist && doesExist.model !== UnitModel.RAIL) {
+          return this.logger.warn(`block already exists as ${event.container.id}`)
         }
 
         const block = event.item.data
@@ -55,12 +51,51 @@ export class UpdateService {
 
         switch (block.model) {
           case UnitModel.PANEL:
-            const panel: PanelModel = {
-              ...block,
-              location,
-            }
-            return this.panelsEntity.update(panel)
-
+            firstValueFrom(
+              this.panelsEntity.entities$.pipe(
+                map((panels) => panels.find((p) => p.id === block.id)),
+              ),
+            ).then((existingPanel) => {
+              if (doesExist && doesExist.model === UnitModel.RAIL) {
+                const panel: PanelModel = {
+                  ...block,
+                  location,
+                  has_child_block: true,
+                  child_block_id: doesExist.id,
+                  child_block_model: UnitModel.RAIL,
+                }
+                return this.panelsEntity.update(panel)
+              } else {
+                if (existingPanel?.has_child_block) {
+                  if (doesExist && doesExist.model === UnitModel.RAIL) {
+                    const panel: Partial<PanelModel> = {
+                      ...existingPanel,
+                      location,
+                      has_child_block: true,
+                      child_block_id: doesExist.id,
+                      child_block_model: UnitModel.RAIL,
+                    }
+                    return this.panelsEntity.update(panel)
+                  } else {
+                    const panel: Partial<PanelModel> = {
+                      ...existingPanel,
+                      location,
+                      has_child_block: false,
+                      child_block_id: undefined,
+                      child_block_model: undefined,
+                    }
+                    return this.panelsEntity.update(panel)
+                  }
+                } else {
+                  const panel: Partial<PanelModel> = {
+                    ...block,
+                    location,
+                  }
+                  return this.panelsEntity.update(panel)
+                }
+              }
+            })
+            break
           case UnitModel.DISCONNECTIONPOINT:
             const disconnectionPoint: DisconnectionPointModel = {
               ...block,
@@ -82,8 +117,8 @@ export class UpdateService {
           default:
             break
         }
-      },
-    )
+      }
+    })
   }
 
   joinNearbyCables(cable: CableModel, location: string) {
@@ -96,8 +131,7 @@ export class UpdateService {
 
     const surroundingCables = getSurroundings(location, cables)
 
-    if (!surroundingCables)
-      return console.log('joinNearbyCables surroundingCables err')
+    if (!surroundingCables) return console.log('joinNearbyCables surroundingCables err')
 
     const newJoinId = Guid.create().toString()
 
@@ -115,11 +149,7 @@ export class UpdateService {
       }
 
       if (surroundingCables.bottomCable) {
-        this.updateCableForJoin(
-          surroundingCables.bottomCable,
-          newJoinId,
-          cables,
-        )
+        this.updateCableForJoin(surroundingCables.bottomCable, newJoinId, cables)
       }
 
       if (surroundingCables.leftCable) {
@@ -147,9 +177,7 @@ export class UpdateService {
     }
     this.cables.update(otherBlock)
 
-    const cablesInJoin = cables.filter(
-      (cableInJoin) => cableInJoin.join_id === cable.join_id,
-    )
+    const cablesInJoin = cables.filter((cableInJoin) => cableInJoin.join_id === cable.join_id)
     const updates = cablesInJoin.map((cableInJoin) => {
       const partial: Partial<CableModel> = {
         ...cableInJoin,
@@ -158,15 +186,12 @@ export class UpdateService {
       return partial
     })
     this.cables.updateManyInCache(updates)
-    return this.http.put(
-      `/api/projects/${cable.project_id!}/join/${cable.join_id!}/cables`,
-      {
-        project_id: cable.project_id!,
-        changes: {
-          new_join_id: join_id,
-          old_join_id: cable.join_id!,
-        },
+    return this.http.put(`/api/projects/${cable.project_id!}/join/${cable.join_id!}/cables`, {
+      project_id: cable.project_id!,
+      changes: {
+        new_join_id: join_id,
+        old_join_id: cable.join_id!,
       },
-    )
+    })
   }
 }

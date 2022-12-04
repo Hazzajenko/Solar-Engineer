@@ -27,11 +27,12 @@ import { DisconnectionPointsEntityService } from './ngrx-data/disconnection-poin
 import { InvertersEntityService } from './ngrx-data/inverters-entity/inverters-entity.service'
 import { TrayModel } from '../../models/tray.model'
 import { TraysEntityService } from './ngrx-data/trays-entity/trays-entity.service'
-import { selectSelectedId } from './store/selected/selected.selectors'
+import { selectSelectedUnitAndIds } from './store/selected/selected.selectors'
 import { RailModel } from '../../models/rail.model'
 import { RailsEntityService } from './ngrx-data/rails-entity/rails-entity.service'
 import { BlocksEntityService } from './ngrx-data/blocks-entity/blocks-entity.service'
 import { BlockModel } from '../../models/block.model'
+import { map } from 'rxjs/operators'
 
 @Injectable({
   providedIn: 'root',
@@ -59,13 +60,17 @@ export class CreateService {
         .pipe(combineLatestWith(this.store.select(selectCreateMode))),
     ).then(([blocks, createMode]) => {
       const doesExist = blocks.find((block) => block.location === location)
-      if (doesExist && createMode !== UnitModel.RAIL) {
+      if (doesExist && createMode !== UnitModel.RAIL && doesExist.model !== UnitModel.RAIL) {
         return console.log('cell location taken')
       }
 
       switch (createMode) {
         case UnitModel.PANEL:
-          return this.createPanelForGrid(location)
+          if (doesExist && doesExist.model === UnitModel.RAIL) {
+            return this.createPanelForGrid(location, doesExist)
+          } else {
+            return this.createPanelForGrid(location)
+          }
 
         case UnitModel.CABLE:
           return this.createCableForGrid(location)
@@ -86,28 +91,56 @@ export class CreateService {
     })
   }
 
-  createPanelForGrid(location: string) {
-    firstValueFrom(this.store.select(selectSelectedId)).then(
-      (selectedStringId) => {
-        if (!selectedStringId) {
+  createPanelForGrid(location: string, childBlock?: BlockModel) {
+    firstValueFrom(this.store.select(selectSelectedUnitAndIds)).then((state) => {
+      if (childBlock) {
+        if (!state.singleSelectId && state.unit !== UnitModel.STRING) {
+          console.log('        if (!selectedStringId) {')
           const panelRequest: PanelModel = {
             id: Guid.create().toString(),
             string_id: 'undefined',
             location,
+            has_child_block: true,
+            child_block_id: childBlock.id,
+            child_block_model: childBlock.model,
           }
 
           this.panelsEntity.add(panelRequest)
-        } else {
+        } else if (state.singleSelectId && state.unit === UnitModel.STRING) {
+          console.log('        } else if (selectedStringId.length > 0) {')
           const panelRequest: PanelModel = {
             id: Guid.create().toString(),
-            string_id: selectedStringId,
+            string_id: state.selectedStringId!,
             location,
+            has_child_block: false,
+            child_block_id: childBlock.id,
+            child_block_model: childBlock.model,
           }
 
           this.panelsEntity.add(panelRequest)
         }
-      },
-    )
+      } else {
+        if (!state.singleSelectId && state.unit !== UnitModel.STRING) {
+          const panelRequest: PanelModel = {
+            id: Guid.create().toString(),
+            string_id: 'undefined',
+            location,
+            has_child_block: false,
+          }
+
+          this.panelsEntity.add(panelRequest)
+        } else if (state.singleSelectId && state.unit === UnitModel.STRING) {
+          const panelRequest: PanelModel = {
+            id: Guid.create().toString(),
+            string_id: state.selectedStringId!,
+            location,
+            has_child_block: false,
+          }
+
+          this.panelsEntity.add(panelRequest)
+        }
+      }
+    })
   }
 
   createCableForGrid(location: string) {
@@ -118,8 +151,7 @@ export class CreateService {
     ).then(([cables, projectId]) => {
       const surroundingCables = getSurroundings(location, cables)
 
-      if (!surroundingCables)
-        return console.log('joinNearbyCables surroundingCables err')
+      if (!surroundingCables) return console.log('joinNearbyCables surroundingCables err')
 
       const newJoinId = Guid.create().toString()
 
@@ -135,35 +167,19 @@ export class CreateService {
               this.joinsEntity.add(joinRequest)*/
       lastValueFrom(this.joinsEntity.add(joinRequest)).then(() => {
         if (surroundingCables.topCable) {
-          this.update.updateCableForJoin(
-            surroundingCables.topCable,
-            newJoinId,
-            cables,
-          )
+          this.update.updateCableForJoin(surroundingCables.topCable, newJoinId, cables)
         }
 
         if (surroundingCables.bottomCable) {
-          this.update.updateCableForJoin(
-            surroundingCables.bottomCable,
-            newJoinId,
-            cables,
-          )
+          this.update.updateCableForJoin(surroundingCables.bottomCable, newJoinId, cables)
         }
 
         if (surroundingCables.leftCable) {
-          this.update.updateCableForJoin(
-            surroundingCables.leftCable,
-            newJoinId,
-            cables,
-          )
+          this.update.updateCableForJoin(surroundingCables.leftCable, newJoinId, cables)
         }
 
         if (surroundingCables.rightCable) {
-          this.update.updateCableForJoin(
-            surroundingCables.rightCable,
-            newJoinId,
-            cables,
-          )
+          this.update.updateCableForJoin(surroundingCables.rightCable, newJoinId, cables)
         }
 
         const cableRequest: CableModel = {
@@ -182,72 +198,85 @@ export class CreateService {
   }
 
   createDisconnectionPointForGrid(location: string) {
-    firstValueFrom(this.store.select(selectCurrentProjectId)).then(
-      (projectId) => {
-        const stringRequest: StringModel = {
+    firstValueFrom(this.store.select(selectCurrentProjectId)).then((projectId) => {
+      const stringRequest: StringModel = {
+        id: Guid.create().toString(),
+        name: 'string',
+        is_in_parallel: false,
+        project_id: projectId,
+        color: 'black',
+        model: UnitModel.STRING,
+      }
+
+      lastValueFrom(this.stringsEntity.add(stringRequest)).then((res) => {
+        const disconnectionPointModel: DisconnectionPointModel = {
           id: Guid.create().toString(),
-          name: 'string',
-          is_in_parallel: false,
           project_id: projectId,
+          string_id: res.id,
+          disconnection_type: DisconnectionPointType.MC4,
+          positive_id: 'undefined',
+          negative_id: 'undefined',
+          location,
           color: 'black',
-          model: UnitModel.STRING,
+          model: UnitModel.DISCONNECTIONPOINT,
         }
 
-        lastValueFrom(this.stringsEntity.add(stringRequest)).then((res) => {
-          const disconnectionPointModel: DisconnectionPointModel = {
-            id: Guid.create().toString(),
-            project_id: projectId,
-            string_id: res.id,
-            disconnection_type: DisconnectionPointType.MC4,
-            positive_id: 'undefined',
-            negative_id: 'undefined',
-            location,
-            color: 'black',
-            model: UnitModel.DISCONNECTIONPOINT,
-          }
-
-          this.dp.add(disconnectionPointModel)
-        })
-      },
-    )
+        this.dp.add(disconnectionPointModel)
+      })
+    })
   }
 
   createInverterForGrid(location: string) {
-    firstValueFrom(this.store.select(selectCurrentProjectId)).then(
-      (projectId) => {
-        const inverterRequest: InverterModel = {
-          id: Guid.create().toString(),
-          project_id: projectId,
-          location,
-          model: UnitModel.INVERTER,
-          color: 'blue',
-          name: 'New Inverter',
-        }
+    firstValueFrom(this.store.select(selectCurrentProjectId)).then((projectId) => {
+      const inverterRequest: InverterModel = {
+        id: Guid.create().toString(),
+        project_id: projectId,
+        location,
+        model: UnitModel.INVERTER,
+        color: 'blue',
+        name: 'New Inverter',
+      }
 
-        this.inverters.add(inverterRequest)
-      },
-    )
+      this.inverters.add(inverterRequest)
+    })
   }
 
   createTrayForGrid(location: string) {
-    firstValueFrom(this.store.select(selectCurrentProjectId)).then(
-      (projectId) => {
-        const trayRequest = new TrayModel(projectId, location, 150)
+    firstValueFrom(this.store.select(selectCurrentProjectId)).then((projectId) => {
+      const trayRequest = new TrayModel(projectId, location, 150)
 
-        this.traysEntity.add(trayRequest)
-      },
-    )
+      this.traysEntity.add(trayRequest)
+    })
   }
 
   createRailForGrid(location: string, doesExist?: BlockModel) {
-    if (doesExist) {
-      const railRequest = new RailModel(location, true, doesExist.id)
+    firstValueFrom(this.store.select(selectCurrentProjectId)).then((projectId) => {
+      if (doesExist) {
+        firstValueFrom(
+          this.panelsEntity.entities$.pipe(
+            map((panels) => panels.find((p) => p.id === doesExist.id)),
+          ),
+        ).then((parentPanel) => {
+          if (!parentPanel) {
+            return console.error('createRailForGrid !parentPanel')
+          }
+          const railRequest = new RailModel(projectId, location, true, doesExist.id)
 
-      this.railsEntity.add(railRequest)
-    } else {
-      const railRequest = new RailModel(location, false)
+          this.railsEntity.add(railRequest)
+          const update: PanelModel = {
+            ...parentPanel,
+            location,
+            has_child_block: true,
+            child_block_id: railRequest.id,
+            child_block_model: UnitModel.RAIL,
+          }
+          this.panelsEntity.update(update)
+        })
+      } else {
+        const railRequest = new RailModel(projectId, location, false)
 
-      this.railsEntity.add(railRequest)
-    }
+        this.railsEntity.add(railRequest)
+      }
+    })
   }
 }

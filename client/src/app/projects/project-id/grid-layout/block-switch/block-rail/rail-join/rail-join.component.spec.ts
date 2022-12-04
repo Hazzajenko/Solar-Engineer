@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 
-import { TrayJoinComponent } from './tray-join.component'
+import { RailJoinComponent } from './rail-join.component'
 
 describe('CableJoinComponent', () => {
-  let component: TrayJoinComponent
-  let fixture: ComponentFixture<TrayJoinComponent>
+  let component: RailJoinComponent
+  let fixture: ComponentFixture<RailJoinComponent>
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [TrayJoinComponent],
+      declarations: [RailJoinComponent],
     }).compileComponents()
 
-    fixture = TestBed.createComponent(TrayJoinComponent)
+    fixture = TestBed.createComponent(RailJoinComponent)
     component = fixture.componentInstance
     fixture.detectChanges()
   })
