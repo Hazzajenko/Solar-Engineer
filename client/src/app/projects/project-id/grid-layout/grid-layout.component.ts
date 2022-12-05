@@ -1,6 +1,14 @@
 import { LinksState } from '../services/store/links/links.reducer'
 import { SelectedState } from '../services/store/selected/selected.reducer'
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core'
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  EventEmitter,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core'
 import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop'
 import { InverterModel } from '../../models/inverter.model'
 import { StringModel } from '../../models/string.model'
@@ -8,7 +16,7 @@ import { PanelModel } from '../../models/panel.model'
 import { Store } from '@ngrx/store'
 import { AppState } from '../../../store/app.state'
 import { map } from 'rxjs/operators'
-import { combineLatest, firstValueFrom, Observable } from 'rxjs'
+import { combineLatest, combineLatestWith, firstValueFrom, Observable } from 'rxjs'
 import { selectProjectByRouteParams } from '../services/store/projects/projects.selectors'
 import { ProjectModel } from '../../models/project.model'
 import { selectCreateMode, selectGridMode } from '../services/store/grid/grid.selectors'
@@ -63,7 +71,9 @@ import { CreateService } from '../services/create.service'
 import { DeleteService } from '../services/delete.service'
 import { LinksService } from '../services/links.service'
 import { UpdateService } from '../services/update.service'
-import { MultiCreateService } from '../services/multi-create.service'
+import { MultiCreateService } from '../services/multi/multi-create.service'
+import { selectMultiMode } from '../services/store/multi-create/multi.selectors'
+import { MultiDeleteService } from '../services/multi/multi-delete.service'
 
 @Component({
   selector: 'app-grid-layout',
@@ -106,11 +116,16 @@ export class GridLayoutComponent implements OnInit {
   // selectedBlock: string = ''
   // @ViewChildren(BlockSwitchComponent)
   // blockSwitchComponents!: QueryList<BlockSwitchComponent>
+  @ViewChild('gridDiv') gridDiv!: ElementRef
+  @ViewChild('canvas', { static: true })
+  canvas!: ElementRef<HTMLCanvasElement>
+  canvasHeight?: string
+  canvasWidth?: string
+  @Output() clickEvent = new EventEmitter<MouseEvent>()
   modes$!: Observable<{
     createMode: UnitModel
     gridMode: GridMode
   }>
-
   units$!: Observable<{
     inverters?: InverterModel[]
     strings?: StringModel[]
@@ -122,9 +137,8 @@ export class GridLayoutComponent implements OnInit {
   }>
   project$!: Observable<ProjectModel | undefined>
   inverters$!: Observable<InverterModel[]>
-  // trackers$!: Observable<TrackerModel[]>
-
   strings$!: Observable<StringModel[]>
+  // trackers$!: Observable<TrackerModel[]>
   panels$!: Observable<PanelModel[]>
   cables$!: Observable<CableModel[]>
   blocks$!: Observable<BlockModel[]>
@@ -134,6 +148,7 @@ export class GridLayoutComponent implements OnInit {
   selected$!: Observable<SelectedState>
   rows = 20
   cols = 40
+  private ctx!: CanvasRenderingContext2D
 
   constructor(
     private store: Store<AppState>,
@@ -152,28 +167,44 @@ export class GridLayoutComponent implements OnInit {
     private joinsService: LinksService,
     private updateService: UpdateService,
     private multiCreateService: MultiCreateService,
+    private multiDeleteService: MultiDeleteService,
   ) {}
 
-  cellAction(location: string): void {
-    firstValueFrom(this.store.select(selectGridMode)).then((gridMode) => {
-      switch (gridMode) {
-        case GridMode.CREATE:
-          this.createService.createSwitch(location)
-          break
+  cellAction(location: string, event: MouseEvent): void {
+    this.clickEvent.emit(event)
+    firstValueFrom(
+      this.store.select(selectGridMode).pipe(combineLatestWith(this.store.select(selectMultiMode))),
+    ).then(([gridMode, multiMode]) => {
+      if (multiMode) {
+        switch (gridMode) {
+          case GridMode.CREATE:
+            this.multiCreateService.multiCreate(location)
+            break
 
-        case GridMode.DELETE:
-          this.deleteService.deleteSwitch(location)
-          break
+          case GridMode.DELETE:
+            this.multiDeleteService.multiDelete(location)
+            break
+        }
+      } else {
+        switch (gridMode) {
+          case GridMode.CREATE:
+            this.createService.createSwitch(location)
+            break
 
-        case GridMode.JOIN:
-          this.joinsService.linkSwitch(location)
-          break
-        case GridMode.MULTICREATE:
-          this.multiCreateService.multiCreate(location)
-          break
-        default:
-          this.createService.createSwitch(location)
-          break
+          case GridMode.DELETE:
+            this.deleteService.deleteSwitch(location)
+            break
+
+          case GridMode.JOIN:
+            this.joinsService.linkSwitch(location)
+            break
+          /*          case GridMode.MULTICREATE:
+                      this.multiCreateService.multiCreate(location)
+                      break*/
+          default:
+            this.createService.createSwitch(location)
+            break
+        }
       }
     })
   }

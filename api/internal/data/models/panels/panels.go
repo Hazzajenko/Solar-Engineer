@@ -214,6 +214,7 @@ func (p *PanelModel) GetPanelsByProjectId(projectId int64) (*boiler.PanelSlice, 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 	panels, err := boiler.Panels(boiler.PanelWhere.ProjectID.EQ(projectId)).All(ctx, p.DB)
+
 	if err != nil {
 		switch {
 		case errors.Is(err, sql.ErrNoRows):

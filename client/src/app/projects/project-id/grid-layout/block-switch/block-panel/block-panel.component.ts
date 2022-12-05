@@ -52,7 +52,7 @@ import {
   selectSelectedStringTooltip,
   selectUnitSelected,
 } from '../../../services/store/selected/selected.selectors'
-import { selectGridMode } from '../../../services/store/grid/grid.selectors'
+import { selectCreateMode, selectGridMode } from '../../../services/store/grid/grid.selectors'
 import { LinksState } from '../../../services/store/links/links.reducer'
 import { StringModel } from '../../../../models/string.model'
 import { Guid } from 'guid-typescript'
@@ -213,6 +213,26 @@ export class BlockPanelComponent implements OnInit {
               this.store.dispatch(SelectedStateActions.selectPanel({ panelId: panel.id }))
             }
             break
+          case GridMode.CREATE:
+            firstValueFrom(this.store.select(selectCreateMode)).then((createMode) => {
+              if (createMode === UnitModel.RAIL) {
+                return
+              } else {
+                this.store.dispatch(GridStateActions.changeGridmode({ mode: GridMode.SELECT }))
+                if (shiftKey) {
+                  this.store.dispatch(
+                    SelectedStateActions.addPanelToMultiselect({
+                      panelId: panel.id,
+                    }),
+                  )
+                } else {
+                  this.store.dispatch(SelectedStateActions.selectPanel({ panelId: panel.id }))
+                }
+              }
+            })
+            break
+          case GridMode.MULTICREATE:
+            break
           default:
             this.store.dispatch(GridStateActions.changeGridmode({ mode: GridMode.SELECT }))
             if (shiftKey) {
@@ -224,6 +244,7 @@ export class BlockPanelComponent implements OnInit {
             } else {
               this.store.dispatch(SelectedStateActions.selectPanel({ panelId: panel.id }))
             }
+
             break
         }
       })

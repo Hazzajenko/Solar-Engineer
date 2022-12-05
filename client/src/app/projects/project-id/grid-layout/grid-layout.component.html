@@ -1,47 +1,49 @@
-<ng-container *ngrxLet="project$ | async; let project">
-  <!--  <ng-container *ngIf="modes$ | async; let modes">
-      <ng-container *ngrxLet="blocks$ | async as blocks">
-        <ng-container *ngrxLet="units$ | async as units">
-          <ng-container *ngrxLet="selected$ | async as selected">
-            <ng-container *ngrxLet="links$ | async as links">-->
-  <div cdkDropListGroup class="project-design-container">
-    <div *ngFor="let n of numSequence(rows); let row = index" class="row">
-      <div *ngFor="let n of numSequence(cols); let col = index" class="col">
-        <ng-container *ngrxLet="row | getGridString: col; let locationString">
-          <div
-            (cdkDropListDropped)="gridDrop($event)"
-            (click)="cellAction(locationString)"
-            [id]="locationString"
-            cdkDropList
-            class="drop-zone"
-          >
-            <ng-container
-              *ngIf="
-                (blocks$ | async)! | blockByLocation: locationString as block
-              "
+<!--<canvas
+  #canvas
+  *ngIf="canvasHeight && canvasWidth"
+  [height]="canvasHeight"
+  [width]="canvasWidth"
+  class="canvas"
+></canvas>-->
+<!--<canvas #canvas height="300" width="600"></canvas>-->
+<!--[height]="gridDiv.offsetHeight"
+[width]="gridDiv.offsetWidth"-->
+<div>
+  <!--  <canvas
+      #canvas
+      *ngIf="gridDiv"
+      [height]="canvas.offsetHeight"
+      [width]="canvas.offsetWidth"
+      class="canvas"
+      style="width: 100%; height: 100%"
+    ></canvas>-->
+  <ng-container *ngrxLet="project$ | async; let project">
+    <div #gridDiv cdkDropListGroup class="project-design-container">
+      <!--      <canvas
+              #canvas
+              *ngIf="gridDiv"
+              [height]="canvas.offsetHeight"
+              [width]="canvas.offsetWidth"
+              class="canvas"
+              style="width: 100%; height: 100%"
+            ></canvas>-->
+      <div *ngFor="let n of numSequence(rows); let row = index" class="row">
+        <div *ngFor="let n of numSequence(cols); let col = index" class="col">
+          <ng-container *ngrxLet="row | getGridString: col; let locationString">
+            <div
+              (cdkDropListDropped)="gridDrop($event)"
+              (click)="cellAction(locationString, $event)"
+              [id]="locationString"
+              cdkDropList
+              class="drop-zone"
             >
-              <app-block-switch [block]="block"></app-block-switch>
-              <!--                        <app-block-switch
-                                        [block]="block"
-                                        [cables]="units?.cables"
-                                        [disconnectionPoints]="units?.disconnectionPoints"
-                                        [gridMode]="modes.gridMode"
-                                        [inverters]="units?.inverters"
-                                        [links]="links!"
-                                        [panels]="units?.panels"
-                                        [project]="project"
-                                        [selected]="selected!"
-                                        [strings]="units?.strings"
-                                      ></app-block-switch>-->
-            </ng-container>
-          </div>
-        </ng-container>
+              <ng-container *ngIf="(blocks$ | async)! | blockByLocation: locationString as block">
+                <app-block-switch [block]="block"></app-block-switch>
+              </ng-container>
+            </div>
+          </ng-container>
+        </div>
       </div>
     </div>
-  </div>
-  <!--          </ng-container>
-          </ng-container>
-        </ng-container>
-      </ng-container>
-    </ng-container>-->
-</ng-container>
+  </ng-container>
+</div>

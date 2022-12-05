@@ -23,6 +23,14 @@ app-grid-layout {
 
 }
 
+canvas {
+  border-style: solid;
+  //top: -5px;
+  pointer-events: none;
+  position: absolute;
+  //z-index: 9999;
+}
+
 .project-container-v2 {
   display: flex;
   justify-content: space-between;

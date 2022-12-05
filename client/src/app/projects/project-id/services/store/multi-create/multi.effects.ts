@@ -8,11 +8,11 @@ import { StringsEntityService } from '../../ngrx-data/strings-entity/strings-ent
 import { StatsService } from '../../stats.service'
 
 @Injectable()
-export class MultiCreateEffects {
+export class MultiEffects {
   /*  finishMultiCreateRail$ = createEffect(
       () =>
         this.actions$.pipe(
-          ofType(MultiCreateActions.finishMultiCreateRail),
+          ofType(MultiActions.finishMultiCreateRail),
           switchMap((action) =>
             this.panelJoinsEntity.entities$.pipe(
               map((res) => {
@@ -28,7 +28,7 @@ export class MultiCreateEffects {
   /*  finishMultiCreatePanel$ = createEffect(
       () =>
         this.actions$.pipe(
-          ofType(MultiCreateActions.finishMultiCreatePanel),
+          ofType(MultiActions.finishMultiCreatePanel),
           switchMap((action) =>
             this.panelJoinsEntity.entities$.pipe(
               map((res) => {

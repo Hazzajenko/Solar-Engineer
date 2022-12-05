@@ -1,6 +1,18 @@
 <div class="project-container-v4">
+  <canvas
+    #canvas
+    [height]="canvas.offsetHeight"
+    [width]="canvas.offsetWidth"
+    class="canvas"
+    style="width: 100%; height: 100%"
+  ></canvas>
   <div class="project-container-v4__project-display">
     <app-grid-toolbar></app-grid-toolbar>
-    <app-grid-layout></app-grid-layout>
+    <app-grid-layout
+      (clickEvent)="canvasAction($event)"
+      (mousemove)="onMouseMove($event, isDragging)"
+      *ngrxLet="isDragging$ | async as isDragging"
+    ></app-grid-layout>
   </div>
 </div>
+<!--(mousemove)="onMouseMove($event, isDragging)"-->

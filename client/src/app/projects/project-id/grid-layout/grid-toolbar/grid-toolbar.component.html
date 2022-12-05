@@ -8,53 +8,57 @@
   >
     Strings
   </button>
-  <button
-    (click)="openNewStringDialog()"
-    aria-label="Example icon-button with menu icon"
-    class="example-icon"
-    mat-stroked-button
-  >
-    Create String
-  </button>
+  <!--  <button
+      (click)="openNewStringDialog()"
+      aria-label="Example icon-button with menu icon"
+      class="example-icon"
+      mat-stroked-button
+    >
+      Create String
+    </button>-->
   <button
     [matMenuTriggerFor]="menu"
     aria-label="Example icon-button with menu icon"
-    class="example-icon"
-    mat-icon-button
+    mat-stroked-button
   >
-    <mat-icon>brush</mat-icon>
+    <!--    <mat-icon>brush</mat-icon>-->
+    CreateUnit
   </button>
   <button
     (click)="changeGridMode(1)"
+    [ngStyle]="{ 'background-color': (gridMode$ | async)! === 1 ? '#ff6d69' : '' }"
     aria-label="Example icon-button with menu icon"
-    class="example-icon"
-    mat-icon-button
+    mat-stroked-button
   >
-    <mat-icon>add_circle</mat-icon>
+    <!--    <mat-icon>add_circle</mat-icon>-->
+    CreateMode
   </button>
   <button
     (click)="changeGridMode(3)"
+    [ngStyle]="{ 'background-color': (gridMode$ | async)! === 3 ? '#ff6d69' : '' }"
     aria-label="Example icon-button with menu icon"
-    class="example-icon"
-    mat-icon-button
+    mat-stroked-button
   >
-    <mat-icon>polyline</mat-icon>
+    <!--    <mat-icon>polyline</mat-icon>-->
+    LinkMode
   </button>
   <button
-    (click)="changeGridMode(5)"
+    (click)="toggleMultiMode()"
+    [ngStyle]="{ 'background-color': (multiMode$ | async)! ? '#989bf9' : '' }"
     aria-label="Example icon-button with menu icon"
-    class="example-icon"
-    mat-icon-button
+    mat-stroked-button
   >
-    <mat-icon>library_add</mat-icon>
+    <!--    <mat-icon>library_add</mat-icon>-->
+    MultiMode
   </button>
   <button
     (click)="changeGridMode(2)"
+    [ngStyle]="{ 'background-color': (gridMode$ | async)! === 2 ? '#ff6d69' : '' }"
     aria-label="Example icon-button with menu icon"
-    class="example-icon"
-    mat-icon-button
+    mat-stroked-button
   >
-    <mat-icon>delete</mat-icon>
+    <!--    <mat-icon>delete</mat-icon>-->
+    DeleteMode
   </button>
 </mat-toolbar>
 <!--</ng-template>-->
@@ -62,9 +66,7 @@
 <mat-menu #menu="matMenu">
   <button (click)="selectCreateMode(5)" mat-menu-item>Panels</button>
   <button (click)="selectCreateMode(6)" mat-menu-item>Cable</button>
-  <button (click)="selectCreateMode(8)" mat-menu-item>
-    Disconnection Points
-  </button>
+  <button (click)="selectCreateMode(8)" mat-menu-item>Disconnection Points</button>
   <button (click)="selectCreateMode(2)" mat-menu-item>Inverter</button>
   <button (click)="selectCreateMode(9)" mat-menu-item>Tray</button>
   <button (click)="selectCreateMode(10)" mat-menu-item>Rail</button>

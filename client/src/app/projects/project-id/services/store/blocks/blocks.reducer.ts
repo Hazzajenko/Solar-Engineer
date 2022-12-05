@@ -5,19 +5,16 @@ import { BlockModel } from '../../../../models/block.model'
 
 export const selectBlockId = (b: BlockModel): string => b.id
 
-export const blockAdapter: EntityAdapter<BlockModel> =
-  createEntityAdapter<BlockModel>({
-    selectId: selectBlockId,
-  })
+export const blockAdapter: EntityAdapter<BlockModel> = createEntityAdapter<BlockModel>({
+  selectId: selectBlockId,
+})
 
 export const initialBlocksState = blockAdapter.getInitialState({})
 
 export const blocksReducer = createReducer(
   initialBlocksState,
 
-  on(BlocksStateActions.addBlockForGrid, (state, { block }) =>
-    blockAdapter.addOne(block, state),
-  ),
+  on(BlocksStateActions.addBlockForGrid, (state, { block }) => blockAdapter.addOne(block, state)),
 
   on(BlocksStateActions.addManyBlocksForGrid, (state, { blocks }) =>
     blockAdapter.addMany(blocks, state),
@@ -41,12 +38,13 @@ export const blocksReducer = createReducer(
     blockAdapter.removeOne(block_id, state),
   ),
 
-  on(BlocksStateActions.clearBlocksState, (state) =>
-    blockAdapter.removeAll(state),
+  on(BlocksStateActions.deleteManyBlocksForGrid, (state, { blocks }) =>
+    blockAdapter.removeMany(blocks, state),
   ),
+
+  on(BlocksStateActions.clearBlocksState, (state) => blockAdapter.removeAll(state)),
 )
 
-export const { selectIds, selectEntities, selectAll } =
-  blockAdapter.getSelectors()
+export const { selectIds, selectEntities, selectAll } = blockAdapter.getSelectors()
 
 export type BlocksState = EntityState<BlockModel>

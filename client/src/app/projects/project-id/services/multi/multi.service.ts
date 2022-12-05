@@ -1,29 +1,29 @@
 import { Injectable } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
 import { Store } from '@ngrx/store'
-import { AppState } from '../../../store/app.state'
+import { AppState } from '../../../../store/app.state'
 import { combineLatestWith, firstValueFrom } from 'rxjs'
-import { PanelsEntityService } from './ngrx-data/panels-entity/panels-entity.service'
-import { MultiCreateActions } from './store/multi-create/multi-create.actions'
-import { selectMultiCreateState } from './store/multi-create/multi-create.selectors'
-import { selectBlocksByProjectIdRouteParams } from './store/blocks/blocks.selectors'
-import { BlockModel } from '../../models/block.model'
-import { PanelModel } from '../../models/panel.model'
-import { selectSelectedStringId } from './store/selected/selected.selectors'
-import { selectCreateMode } from './store/grid/grid.selectors'
-import { UnitModel } from '../../models/unit.model'
-import { MultiCreateState } from './store/multi-create/multi-create.reducer'
+import { PanelsEntityService } from '../ngrx-data/panels-entity/panels-entity.service'
+import { MultiActions } from '../store/multi-create/multi.actions'
+import { selectMultiState } from '../store/multi-create/multi.selectors'
+import { selectBlocksByProjectIdRouteParams } from '../store/blocks/blocks.selectors'
+import { BlockModel } from '../../../models/block.model'
+import { PanelModel } from '../../../models/panel.model'
+import { selectSelectedStringId } from '../store/selected/selected.selectors'
+import { selectCreateMode } from '../store/grid/grid.selectors'
+import { UnitModel } from '../../../models/unit.model'
+import { MultiState } from '../store/multi-create/multi.reducer'
 import { checkIfAnyBlocksInRoute } from './multi-create.helpers'
-import { RailsEntityService } from './ngrx-data/rails-entity/rails-entity.service'
-import { NumberLocation } from './strings.deconstruct'
-import { RailModel } from '../../models/rail.model'
-import { selectCurrentProjectId } from './store/projects/projects.selectors'
+import { RailsEntityService } from '../ngrx-data/rails-entity/rails-entity.service'
+import { RailModel } from '../../../models/rail.model'
+import { selectCurrentProjectId } from '../store/projects/projects.selectors'
 import { map } from 'rxjs/operators'
+import { getBlocksInBox } from '../get-blocks-in-box'
 
 @Injectable({
   providedIn: 'root',
 })
-export class MultiCreateService {
+export class MultiService {
   constructor(
     private http: HttpClient,
     private store: Store<AppState>,
@@ -31,11 +31,11 @@ export class MultiCreateService {
     private railsEntity: RailsEntityService,
   ) {}
 
-  multiCreate(location: string) {
+  multiSwitch(location: string) {
     firstValueFrom(
       this.store
         .select(selectCreateMode)
-        .pipe(combineLatestWith(this.store.select(selectMultiCreateState))),
+        .pipe(combineLatestWith(this.store.select(selectMultiState))),
     ).then(([createMode, multiCreateState]) => {
       switch (createMode) {
         case UnitModel.PANEL:
@@ -51,41 +51,65 @@ export class MultiCreateService {
     })
   }
 
-  multiCreatePanel(location: string, multiCreateState: MultiCreateState) {
+  multiCreatePanel(location: string, multiCreateState: MultiState) {
     if (!multiCreateState.locationStart) {
       this.store.dispatch(
-        MultiCreateActions.startMultiCreatePanel({
+        MultiActions.startMultiCreateRail({
           location,
         }),
       )
     } else {
-      this.checkIfAnyBlocksInRoute(multiCreateState.locationStart, location)
-      this.store.dispatch(
-        MultiCreateActions.finishMultiCreatePanel({
-          location,
-        }),
-      )
-    }
-  }
-
-  multiCreateRail(location: string, multiCreateState: MultiCreateState) {
-    if (!multiCreateState.locationStart) {
-      this.store.dispatch(
-        MultiCreateActions.startMultiCreateRail({
-          location,
-        }),
-      )
-    } else {
-      // this.checkIfAnyBlocksInRoute(multiCreateState.locationStart, location)
       firstValueFrom(
         this.store
           .select(selectBlocksByProjectIdRouteParams)
           .pipe(combineLatestWith(this.store.select(selectCurrentProjectId))),
       ).then(([blocks, projectId]) => {
-        const numberOneLocation = new NumberLocation(multiCreateState.locationStart!)
-        const numberTwoLocation = new NumberLocation(location)
-        // const blocksInPath = checkIfAnyBlocksInPath(numberOneLocation, numberTwoLocation, blocks)
+        const blocksInBox = getBlocksInBox(multiCreateState.locationStart!, location)
+        console.log('blocksInBox', blocksInBox)
+        const blocksInRoute = checkIfAnyBlocksInRoute(
+          multiCreateState.locationStart!,
+          location,
+          blocks,
+        )
+        console.log(blocksInRoute)
+        if (blocksInRoute.existingBlocks) {
+          console.info('these blocks are free, ', blocksInRoute.locationStrings)
+          return console.error('there are blocks in path, ', blocksInRoute.existingBlocks)
+        } else {
+          firstValueFrom(this.store.select(selectSelectedStringId)).then((stringId) => {
+            blocksInRoute.locationStrings?.forEach((location) => {
+              const panel = new PanelModel(
+                projectId,
+                location,
+                stringId ? stringId : 'undefined',
+                false,
+              )
+              this.panelsEntity.add(panel)
+            })
+          })
+        }
+        this.store.dispatch(
+          MultiActions.finishMultiCreateRail({
+            location,
+          }),
+        )
+      })
+    }
+  }
 
+  multiCreateRail(location: string, multiCreateState: MultiState) {
+    if (!multiCreateState.locationStart) {
+      this.store.dispatch(
+        MultiActions.startMultiCreateRail({
+          location,
+        }),
+      )
+    } else {
+      firstValueFrom(
+        this.store
+          .select(selectBlocksByProjectIdRouteParams)
+          .pipe(combineLatestWith(this.store.select(selectCurrentProjectId))),
+      ).then(([blocks, projectId]) => {
         const blocksInRoute = checkIfAnyBlocksInRoute(
           multiCreateState.locationStart!,
           location,
@@ -131,7 +155,7 @@ export class MultiCreateService {
           }
         }
         this.store.dispatch(
-          MultiCreateActions.finishMultiCreateRail({
+          MultiActions.finishMultiCreateRail({
             location,
           }),
         )
@@ -188,17 +212,19 @@ export class MultiCreateService {
               }
               return
             } else {
-              firstValueFrom(this.store.select(selectSelectedStringId)).then((selectedStringId) => {
-                if (selectedStringId) {
-                  for (let i = 0; i < upBlocks; i++) {
-                    const panel = new PanelModel(blockLocations[i], selectedStringId, false)
-                    this.panelsEntity.add(panel)
-                  }
-                } else {
-                  for (let i = 0; i < upBlocks; i++) {
-                    const panel = new PanelModel(blockLocations[i], 'undefined', false)
-                    this.panelsEntity.add(panel)
-                  }
+              firstValueFrom(
+                this.store
+                  .select(selectSelectedStringId)
+                  .pipe(combineLatestWith(this.store.select(selectCurrentProjectId))),
+              ).then(([selectedStringId, projectId]) => {
+                for (let i = 0; i < upBlocks; i++) {
+                  const panel = new PanelModel(
+                    projectId,
+                    blockLocations[i],
+                    selectedStringId ? selectedStringId : 'undefined',
+                    false,
+                  )
+                  this.panelsEntity.add(panel)
                 }
               })
             }

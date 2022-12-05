@@ -36,6 +36,7 @@ export class PanelModel {
   version?: number
 
   constructor(
+    projectId: number,
     location: string,
     stringId: string,
     hasChildBlock: boolean,
@@ -43,6 +44,7 @@ export class PanelModel {
     childBlockModel?: UnitModel,
   ) {
     this.id = getGuid().toString()
+    this.project_id = projectId
     this.location = location
     this.string_id = stringId
     this.has_child_block = hasChildBlock

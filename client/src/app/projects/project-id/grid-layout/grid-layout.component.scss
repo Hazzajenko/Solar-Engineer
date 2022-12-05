@@ -22,6 +22,12 @@
   left: -15px;
 }
 
+/*canvas {
+  border-style: solid;
+  //position: absolute;
+  //z-index: 10;
+}*/
+
 .svg-cable {
   z-index: 2;
 }
@@ -98,6 +104,13 @@ path {
 /** {
   zoom: 100;
 }*/
+
+.canvas {
+  border-style: solid;
+  //top: -5px;
+  position: absolute;
+  //z-index: 9999;
+}
 
 .drop-zone {
   display: flex;

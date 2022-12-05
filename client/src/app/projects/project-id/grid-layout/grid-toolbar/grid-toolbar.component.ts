@@ -22,6 +22,9 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatSliderModule } from '@angular/material/slider'
 import { ViewStringsDialog } from './view-strings-dialog/view-strings.dialog'
 import { SelectedStateActions } from '../../services/store/selected/selected.actions'
+import { MultiActions } from '../../services/store/multi-create/multi.actions'
+import { selectCreateMode, selectGridMode } from '../../services/store/grid/grid.selectors'
+import { selectMultiMode } from '../../services/store/multi-create/multi.selectors'
 
 @Component({
   selector: 'app-grid-toolbar',
@@ -41,6 +44,9 @@ import { SelectedStateActions } from '../../services/store/selected/selected.act
 export class GridToolbarComponent implements OnInit {
   project$: Observable<ProjectModel | undefined>
   @Output() zoom = new EventEmitter<number>()
+  createMode$!: Observable<UnitModel>
+  gridMode$!: Observable<GridMode>
+  multiMode$!: Observable<boolean>
 
   constructor(
     private store: Store<AppState>,
@@ -50,11 +56,11 @@ export class GridToolbarComponent implements OnInit {
     this.project$ = this.store.select(selectProjectByRouteParams)
   }
 
-  formatLabel(value: number): string {
-    return `${value}%`
+  ngOnInit(): void {
+    this.createMode$ = this.store.select(selectCreateMode)
+    this.gridMode$ = this.store.select(selectGridMode)
+    this.multiMode$ = this.store.select(selectMultiMode)
   }
-
-  ngOnInit(): void {}
 
   openDialog(strings: StringModel[]): void {
     const dialogRef = this.dialog.open(SelectStringComponent, {
@@ -119,5 +125,9 @@ export class GridToolbarComponent implements OnInit {
 
   viewStrings() {
     this.dialog.open(ViewStringsDialog)
+  }
+
+  toggleMultiMode() {
+    this.store.dispatch(MultiActions.toggleMultiMode())
   }
 }

@@ -27,8 +27,8 @@ func (h *Handlers) CreatePanel(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var input struct {
-		ID string `json:"id"`
-		//ProjectId  int64  `json:"project_id"`
+		ID        string `json:"id"`
+		ProjectId int64  `json:"project_id"`
 		/*		InverterId string `json:"inverter_id"`
 				TrackerId  string `json:"tracker_id"`*/
 		StringId        string `json:"string_id"`
