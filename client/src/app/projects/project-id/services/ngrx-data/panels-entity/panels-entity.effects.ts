@@ -24,7 +24,17 @@ export class PanelsEntityEffects {
         ofType(`${DataEntities.Panel} ${EntityOp.SAVE_ADD_ONE_SUCCESS}`),
         tap((action: any) => {
           const panel: PanelModel = action.payload.data
-          if (panel.has_child_block) {
+          this.store.dispatch(
+            BlocksStateActions.addBlockForGrid({
+              block: {
+                id: panel.id,
+                location: panel.location,
+                model: UnitModel.PANEL,
+                project_id: panel.project_id!,
+              },
+            }),
+          )
+          /*if (panel.has_child_block) {
             this.store.dispatch(
               BlocksStateActions.updateBlockForGrid({
                 block: {
@@ -46,7 +56,40 @@ export class PanelsEntityEffects {
                 },
               }),
             )
-          }
+          }*/
+        }),
+      ),
+    { dispatch: false },
+  )
+
+  addManyPanels$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(`${DataEntities.Panel} ${EntityOp.ADD_MANY}`),
+        concatLatestFrom(() => this.store.select(selectCurrentProjectId)),
+        tap(([action, projectId]: [any, number]) => {
+          const manyPanels: PanelModel[] = action.payload.data
+
+          const blocks: BlockModel[] = manyPanels.map((panel: PanelModel) => {
+            const block: BlockModel = {
+              id: panel.id,
+              location: panel.location,
+              model: UnitModel.PANEL,
+              project_id: panel.project_id!,
+            }
+            return block
+          })
+          this.store.dispatch(
+            BlocksStateActions.addManyBlocksForGrid({
+              blocks,
+            }),
+          )
+
+          lastValueFrom(
+            this.http.post(`/api/projects/${projectId}/panels`, {
+              panels: manyPanels,
+            }),
+          ).then((r) => console.log(r))
         }),
       ),
     { dispatch: false },

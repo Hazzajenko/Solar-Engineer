@@ -34,16 +34,25 @@ path {
   white-space: pre-wrap;
   justify-content: center;
   align-items: center;
+  align-content: center;
+  //left: 10px;
   border: #24292e;
   background-color: #f6eded;
   width: 30px;
   height: 30px;
 
   &__svg {
+    //display: flex;
     pointer-events: none;
-    z-index: 1;
+    z-index: 4;
     position: relative;
-    top: 1.8px;
+    //justify-content: center;
+    //align-items: center;
+    //align-content: center;
+
+
+    left: 7px;
+    //left: 1.8px;
   }
 
   &__tooltip {
@@ -53,11 +62,12 @@ path {
   &__panel {
     border: 2px solid black;
     position: absolute;
-    width: 20px;
-    height: 20px;
+    /*    width: 20px;
+        height: 20px;*/
     display: flex;
     align-items: center;
     justify-content: center;
+    align-content: center;
 
     &:hover {
       color: red;

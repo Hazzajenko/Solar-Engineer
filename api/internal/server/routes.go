@@ -79,11 +79,13 @@ func (s *Server) Routes() *chi.Mux {
 			r.Group(func(r chi.Router) {
 				r.Get("/panels", s.Handlers.GetPanelsByProjectId)
 				r.Post("/panel", s.Handlers.CreatePanel)
+				r.Post("/panels", s.Handlers.CreateManyPanels)
 				//r.Post("/panels", s.Handlers.CreatePanel)
 				//r.Patch("/panels", s.Handlers.UpdatePanelLocation)
 				r.Put("/panel/{panelId}", s.Handlers.PutPanel)
 				//r.Put("/panels", s.Handlers.UpdateManyPanels)
 				r.Put("/panels", s.Handlers.UpdateManyPanelsWithRail)
+				r.Delete("/panels", s.Handlers.DeleteManyPanels)
 				r.Delete("/panel/{panelId}", s.Handlers.DeletePanel)
 			})
 
@@ -125,6 +127,7 @@ func (s *Server) Routes() *chi.Mux {
 				r.Post("/rails", s.Handlers.CreateManyRail)
 				r.Put("/rail/{railId}", s.Handlers.UpdateRail)
 				r.Delete("/rail/{railId}", s.Handlers.DeleteRail)
+				r.Delete("/rails", s.Handlers.DeleteManyRails)
 			})
 
 			r.Group(func(r chi.Router) {

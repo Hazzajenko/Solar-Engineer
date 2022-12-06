@@ -66,33 +66,46 @@ export class UpdateService {
                 }
                 return this.panelsEntity.update(panel)
               } else {
-                if (existingPanel?.has_child_block) {
-                  if (doesExist && doesExist.model === UnitModel.RAIL) {
-                    const panel: Partial<PanelModel> = {
-                      ...existingPanel,
-                      location,
-                      has_child_block: true,
-                      child_block_id: doesExist.id,
-                      child_block_model: UnitModel.RAIL,
-                    }
-                    return this.panelsEntity.update(panel)
-                  } else {
-                    const panel: Partial<PanelModel> = {
-                      ...existingPanel,
-                      location,
-                      has_child_block: false,
-                      child_block_id: undefined,
-                      child_block_model: undefined,
-                    }
-                    return this.panelsEntity.update(panel)
-                  }
-                } else {
-                  const panel: Partial<PanelModel> = {
-                    ...block,
-                    location,
-                  }
-                  return this.panelsEntity.update(panel)
+                const panel: Partial<PanelModel> = {
+                  ...existingPanel,
+                  location,
+                  rotation: 0,
+                  child_block_id: undefined,
+                  child_block_model: undefined,
                 }
+                return this.panelsEntity.update(panel)
+                /*                const panel: Partial<PanelModel> = {
+                                  ...block,
+                                  location,
+                                }
+                                return this.panelsEntity.update(panel)*/
+                /*                if (existingPanel?.has_child_block) {
+                                  if (doesExist && doesExist.model === UnitModel.RAIL) {
+                                    const panel: Partial<PanelModel> = {
+                                      ...existingPanel,
+                                      location,
+                                      rotation: 0,
+                                      child_block_id: doesExist.id,
+                                      child_block_model: UnitModel.RAIL,
+                                    }
+                                    return this.panelsEntity.update(panel)
+                                  } else {
+                                    const panel: Partial<PanelModel> = {
+                                      ...existingPanel,
+                                      location,
+                                      rotation: 0,
+                                      child_block_id: undefined,
+                                      child_block_model: undefined,
+                                    }
+                                    return this.panelsEntity.update(panel)
+                                  }
+                                } else {
+                                  const panel: Partial<PanelModel> = {
+                                    ...block,
+                                    location,
+                                  }
+                                  return this.panelsEntity.update(panel)
+                                }*/
               }
             })
             break

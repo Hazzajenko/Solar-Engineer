@@ -74,6 +74,7 @@ import { UpdateService } from '../services/update.service'
 import { MultiCreateService } from '../services/multi/multi-create.service'
 import { selectMultiMode } from '../services/store/multi-create/multi.selectors'
 import { MultiDeleteService } from '../services/multi/multi-delete.service'
+import { MultiSelectService } from '../services/multi/multi-select.service'
 
 @Component({
   selector: 'app-grid-layout',
@@ -168,6 +169,7 @@ export class GridLayoutComponent implements OnInit {
     private updateService: UpdateService,
     private multiCreateService: MultiCreateService,
     private multiDeleteService: MultiDeleteService,
+    private multiSelectService: MultiSelectService,
   ) {}
 
   cellAction(location: string, event: MouseEvent): void {
@@ -181,6 +183,9 @@ export class GridLayoutComponent implements OnInit {
             this.multiCreateService.multiCreate(location)
             break
 
+          case GridMode.SELECT:
+            this.multiSelectService.multiSelect(location)
+            break
           case GridMode.DELETE:
             this.multiDeleteService.multiDelete(location)
             break

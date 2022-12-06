@@ -10,20 +10,14 @@ import {
 import { GridMode } from '../../../services/store/grid/grid-mode.model'
 import { DragDropModule } from '@angular/cdk/drag-drop'
 import { MatTooltipModule } from '@angular/material/tooltip'
-import {
-  AsyncPipe,
-  NgClass,
-  NgIf,
-  NgStyle,
-  NgTemplateOutlet,
-} from '@angular/common'
+import { AsyncPipe, NgClass, NgIf, NgStyle, NgTemplateOutlet } from '@angular/common'
 import { FindPanelLocationPipe } from '../../../../../pipes/find-panel-location.pipe'
 import { LetModule } from '@ngrx/component'
 import { GetPanelJoinPipe } from '../../../../../pipes/get-panel-join.pipe'
 import { PanelDirective } from '../../../../../directives/panel.directive'
 import { Store } from '@ngrx/store'
 import { AppState } from '../../../../../store/app.state'
-import { PanelLinkComponent } from '../../../../../components/panel-link/panel-link.component'
+import { PanelLinkComponent } from '../block-panel/panel-link/panel-link.component'
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
 import { BlockMenuComponent } from '../block-menu/block-menu.component'
 import { RightClick } from '../right-click'
@@ -74,18 +68,13 @@ export class BlockTrayComponent implements OnInit {
   @ViewChild(MatMenuTrigger, { static: true })
   matMenuTrigger!: MatMenuTrigger
 
-  constructor(
-    private traysEntity: TraysEntityService,
-    public store: Store<AppState>,
-  ) {}
+  constructor(private traysEntity: TraysEntityService, public store: Store<AppState>) {}
 
   ngOnInit() {
     this.tray$ = this.traysEntity.entities$.pipe(
       map((trays) => trays.find((tray) => tray.location === this.location)),
     )
-    this.selectedId$ = this.store
-      .select(selectSelectedId)
-      .pipe(distinctUntilChanged())
+    this.selectedId$ = this.store.select(selectSelectedId).pipe(distinctUntilChanged())
   }
 
   displayTooltip(tray: TrayModel): string {
@@ -119,24 +108,16 @@ export class BlockTrayComponent implements OnInit {
             this.traysEntity.delete(tray)
             break
           case GridMode.SELECT:
-            this.store.dispatch(
-              SelectedStateActions.selectTray({ trayId: tray.id }),
-            )
+            this.store.dispatch(SelectedStateActions.selectTray({ trayId: tray.id }))
             break
           default:
-            this.store.dispatch(
-              GridStateActions.changeGridmode({ mode: GridMode.SELECT }),
-            )
-            this.store.dispatch(
-              SelectedStateActions.selectTray({ trayId: tray.id }),
-            )
+            this.store.dispatch(GridStateActions.changeGridmode({ mode: GridMode.SELECT }))
+            this.store.dispatch(SelectedStateActions.selectTray({ trayId: tray.id }))
             break
         }
       })
       .catch((err) => {
-        return console.error(
-          'err trayAction this.store.select(selectGridMode)' + err,
-        )
+        return console.error('err trayAction this.store.select(selectGridMode)' + err)
       })
   }
 }

@@ -104,9 +104,10 @@ func (p *PanelModel) UpdatePanel(update *boiler.Panel) (*boiler.Panel, error) {
 	panel.PositiveToID = update.PositiveToID
 	panel.NegativeToID = update.NegativeToID
 	panel.Color = update.Color
-	panel.HasChildBlock = update.HasChildBlock
-	panel.ChildBlockID = update.ChildBlockID
-	panel.ChildBlockModel = update.ChildBlockModel
+	panel.Rotation = update.Rotation
+	/*	panel.HasChildBlock = update.HasChildBlock
+		panel.ChildBlockID = update.ChildBlockID
+		panel.ChildBlockModel = update.ChildBlockModel*/
 	/*	panel.AddPositivePanelJoins()*/
 	_, err = panel.Update(ctx, p.DB, boil.Infer())
 	if err != nil {
@@ -195,9 +196,10 @@ func (p *PanelModel) UpdatePanelsWithRail(panels []boiler.Panel) error {
 			}
 		}
 
-		panel.HasChildBlock = update.HasChildBlock
-		panel.ChildBlockID = update.ChildBlockID
-		panel.ChildBlockModel = update.ChildBlockModel
+		panel.Rotation = update.Rotation
+		/*		panel.HasChildBlock = update.HasChildBlock
+				panel.ChildBlockID = update.ChildBlockID
+				panel.ChildBlockModel = update.ChildBlockModel*/
 		_, err = panel.Update(ctx, p.DB, boil.Infer())
 	}
 	return nil

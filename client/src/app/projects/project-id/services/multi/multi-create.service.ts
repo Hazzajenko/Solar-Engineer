@@ -18,7 +18,9 @@ import { RailsEntityService } from '../ngrx-data/rails-entity/rails-entity.servi
 import { RailModel } from '../../../models/rail.model'
 import { selectCurrentProjectId } from '../store/projects/projects.selectors'
 import { map } from 'rxjs/operators'
-import { getBlocksInBox } from '../get-blocks-in-box'
+import { getLocationsInBox } from '../get-locations-in-box'
+import { BlocksService } from '../store/blocks/blocks.service'
+import { ItemsService } from '../items.service'
 
 @Injectable({
   providedIn: 'root',
@@ -29,6 +31,8 @@ export class MultiCreateService {
     private store: Store<AppState>,
     private panelsEntity: PanelsEntityService,
     private railsEntity: RailsEntityService,
+    private blocksService: BlocksService,
+    private itemsService: ItemsService,
   ) {}
 
   multiCreate(location: string) {
@@ -39,7 +43,7 @@ export class MultiCreateService {
     ).then(([createMode, multiCreateState]) => {
       switch (createMode) {
         case UnitModel.PANEL:
-          this.multiCreatePanel(location, multiCreateState)
+          this.multiCreatePanelV2(location, multiCreateState)
           break
         case UnitModel.RAIL:
           this.multiCreateRail(location, multiCreateState)
@@ -49,6 +53,31 @@ export class MultiCreateService {
           break
       }
     })
+  }
+
+  multiCreatePanelV2(location: string, multiCreateState: MultiState) {
+    if (!multiCreateState.locationStart) {
+      this.store.dispatch(
+        MultiActions.startMultiCreateRail({
+          location,
+        }),
+      )
+    } else {
+      const locationsInBox = getLocationsInBox(multiCreateState.locationStart!, location)
+      this.blocksService.getBlocksFromIncludedArray(locationsInBox).then((blocksInBox) => {
+        if (blocksInBox.length > 0) {
+          return console.error('there are blocks in path, ', blocksInBox)
+        }
+
+        this.itemsService.addManyItems(UnitModel.PANEL, locationsInBox)
+
+        this.store.dispatch(
+          MultiActions.finishMultiCreatePanel({
+            location,
+          }),
+        )
+      })
+    }
   }
 
   multiCreatePanel(location: string, multiCreateState: MultiState) {
@@ -64,8 +93,10 @@ export class MultiCreateService {
           .select(selectBlocksByProjectIdRouteParams)
           .pipe(combineLatestWith(this.store.select(selectCurrentProjectId))),
       ).then(([blocks, projectId]) => {
-        const blocksInBox = getBlocksInBox(multiCreateState.locationStart!, location)
-        console.log('blocksInBox', blocksInBox)
+        // this.blocksService.getBlocksFromIncludedArray()
+        const locationsInBox = getLocationsInBox(multiCreateState.locationStart!, location)
+        const blocksInBox = this.blocksService.getBlocksFromIncludedArray(locationsInBox)
+        console.log('locationsInBox', locationsInBox)
         const blocksInRoute = checkIfAnyBlocksInRoute(
           multiCreateState.locationStart!,
           location,
@@ -82,7 +113,7 @@ export class MultiCreateService {
                 projectId,
                 location,
                 stringId ? stringId : 'undefined',
-                false,
+                0,
               )
               this.panelsEntity.add(panel)
             })
@@ -129,7 +160,7 @@ export class MultiCreateService {
                   const newRail = new RailModel(projectId, location, true)
                   const update: PanelModel = {
                     ...panel,
-                    has_child_block: true,
+                    rotation: 0,
                     child_block_model: UnitModel.RAIL,
                     child_block_id: newRail.id,
                   }
@@ -222,7 +253,7 @@ export class MultiCreateService {
                     projectId,
                     blockLocations[i],
                     selectedStringId ? selectedStringId : 'undefined',
-                    false,
+                    0,
                   )
                   this.panelsEntity.add(panel)
                 }

@@ -18,16 +18,13 @@ import { UnitModel } from '../../../../models/unit.model'
 import { Store } from '@ngrx/store'
 import { AppState } from '../../../../../store/app.state'
 import { LinksEntityService } from '../../../services/ngrx-data/links-entity/links-entity.service'
-import { PanelLinkComponent } from '../../../../../components/panel-link/panel-link.component'
+import { PanelLinkComponent } from '../block-panel/panel-link/panel-link.component'
 import { RightClick } from '../right-click'
 import { GridMode } from '../../../services/store/grid/grid-mode.model'
 import { LinksState } from '../../../services/store/links/links.reducer'
 import { selectGridMode } from '../../../services/store/grid/grid.selectors'
 import { map } from 'rxjs/operators'
-import {
-  selectDpToLink,
-  selectLinksState,
-} from '../../../services/store/links/links.selectors'
+import { selectDpToLink, selectLinksState } from '../../../services/store/links/links.selectors'
 import {
   selectSelectedId,
   selectSelectedNegativeTo,
@@ -103,9 +100,7 @@ export class BlockDisconnectionPointComponent implements OnInit {
       map((dps) => dps.find((dp) => dp.location === this.location)),
     )
     this.dpToJoin$ = this.store.select(selectDpToLink)
-    this.selectedId$ = this.store
-      .select(selectSelectedId)
-      .pipe(distinctUntilChanged())
+    this.selectedId$ = this.store.select(selectSelectedId).pipe(distinctUntilChanged())
     this.selectedPositiveTo$ = this.store.select(selectSelectedPositiveTo)
     this.selectedNegativeTo$ = this.store.select(selectSelectedNegativeTo)
     this.selectedUnit$ = this.store.select(selectUnitSelected)
@@ -121,35 +116,25 @@ export class BlockDisconnectionPointComponent implements OnInit {
       .then((gridMode) => {
         switch (gridMode) {
           case GridMode.JOIN:
-            firstValueFrom(this.store.select(selectLinksState)).then(
-              (joinsState) => {
-                this.joinsService.addDpToLink(disconnectionPoint, joinsState)
-              },
-            )
+            firstValueFrom(this.store.select(selectLinksState)).then((joinsState) => {
+              this.joinsService.addDpToLink(disconnectionPoint, joinsState)
+            })
             break
 
           case GridMode.DELETE:
             this.disconnectionPointsEntity.delete(disconnectionPoint)
             break
           case GridMode.SELECT:
-            this.store.dispatch(
-              SelectedStateActions.selectDp({ dpId: disconnectionPoint.id }),
-            )
+            this.store.dispatch(SelectedStateActions.selectDp({ dpId: disconnectionPoint.id }))
             break
           default:
-            this.store.dispatch(
-              GridStateActions.changeGridmode({ mode: GridMode.SELECT }),
-            )
-            this.store.dispatch(
-              SelectedStateActions.selectDp({ dpId: disconnectionPoint.id }),
-            )
+            this.store.dispatch(GridStateActions.changeGridmode({ mode: GridMode.SELECT }))
+            this.store.dispatch(SelectedStateActions.selectDp({ dpId: disconnectionPoint.id }))
             break
         }
       })
       .catch((err) => {
-        return this.logger.error(
-          'err dpAction this.store.select(selectGridMode)' + err,
-        )
+        return this.logger.error('err dpAction this.store.select(selectGridMode)' + err)
       })
   }
 

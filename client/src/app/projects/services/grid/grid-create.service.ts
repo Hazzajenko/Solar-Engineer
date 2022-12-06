@@ -46,14 +46,7 @@ export class GridCreateService extends GridService {
     private stringsEntity: StringsEntityService,
     private disconnectionPointsEntity: DisconnectionPointsEntityService,
   ) {
-    super(
-      panelsEntity,
-      cablesEntity,
-      invertersEntity,
-      joinsEntity,
-      joinsService,
-      logger,
-    )
+    super(panelsEntity, cablesEntity, invertersEntity, joinsEntity, joinsService, logger)
   }
 
   createSwitch(
@@ -103,7 +96,7 @@ export class GridCreateService extends GridService {
         tracker_id: selectedString.tracker_id,
         string_id: selectedString.id,
         location,
-        has_child_block: false,
+        rotation: 0,
       }
 
       this.panelsEntity.add(panelRequest)
@@ -189,7 +182,7 @@ export class GridCreateService extends GridService {
         tracker_id: selectedString.tracker_id,
         string_id: selectedString.id,
         location,
-        has_child_block: false,
+        rotation: 0,
       }
 
       this.panelsEntity.add(panelRequest)
@@ -208,7 +201,7 @@ export class GridCreateService extends GridService {
           id: Guid.create().toString(),
           string_id: res.id,
           location,
-          has_child_block: false,
+          rotation: 0,
         }
 
         this.panelsEntity.add(panelRequest)
@@ -223,8 +216,7 @@ export class GridCreateService extends GridService {
 
     const surroundingCables = this.gridHelpers.getSurroundings(location, cables)
 
-    if (!surroundingCables)
-      return console.log('joinNearbyCables surroundingCables err')
+    if (!surroundingCables) return console.log('joinNearbyCables surroundingCables err')
 
     const newJoinId = Guid.create().toString()
 
@@ -250,7 +242,7 @@ export class GridCreateService extends GridService {
           surroundingCables.leftCable,
           newJoinId,
           cables,
-        )
+
       }
 
       if (surroundingCables.rightCable) {

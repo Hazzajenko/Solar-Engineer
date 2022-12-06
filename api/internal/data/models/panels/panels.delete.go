@@ -30,26 +30,19 @@ func (p *PanelModel) Delete(panelId string) error {
 	return nil
 }
 
-func (p *PanelModel) DeleteMany(panels boiler.PanelSlice) error {
+func (p *PanelModel) DeleteMany(panels *boiler.PanelSlice) (int64, error) {
 
-	/*	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-		defer cancel()
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
 
-		panel, err := boiler.FindPanel(ctx, p.DB, panelId)
-		if err != nil {
-			switch {
-			default:
-				return err
-			}
+	amount, err := panels.DeleteAll(ctx, p.DB)
+
+	if err != nil {
+		switch {
+		default:
+			return 0, err
 		}
+	}
 
-		_, err = panel.Delete(ctx, p.DB)
-		if err != nil {
-			switch {
-			default:
-				return err
-			}
-		}
-
-		return nil*/
+	return amount, nil
 }

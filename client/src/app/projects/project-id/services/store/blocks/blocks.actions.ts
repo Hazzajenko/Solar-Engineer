@@ -13,7 +13,7 @@ export const BlocksStateActions = createActionGroup({
     }>(),
     'Update Many Blocks For Grid': props<{ blocks: Update<BlockModel>[] }>(),
     'Delete Block For Grid': props<{ block_id: string }>(),
-    'Delete Many Blocks For Grid': props<{ blocks: string[] }>(),
+    'Delete Many Blocks For Grid': props<{ blocks: BlockModel[] }>(),
     'Clear Blocks State': emptyProps(),
   },
 })

@@ -6,7 +6,8 @@ export class PanelModel {
   id: string
   location: string
   string_id: string
-  has_child_block: boolean
+  // has_child_block: boolean
+  rotation: number
   model?: UnitModel
   child_block_id?: string
   child_block_model?: UnitModel
@@ -39,15 +40,17 @@ export class PanelModel {
     projectId: number,
     location: string,
     stringId: string,
-    hasChildBlock: boolean,
+    rotation: number,
+    hasChildBlock?: boolean,
     childBlockId?: string,
     childBlockModel?: UnitModel,
   ) {
     this.id = getGuid().toString()
+    this.rotation = rotation
     this.project_id = projectId
     this.location = location
     this.string_id = stringId
-    this.has_child_block = hasChildBlock
+    // this.has_child_block = hasChildBlock
     this.child_block_id = childBlockId
     this.child_block_model = childBlockModel
   }

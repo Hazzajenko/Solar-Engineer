@@ -24,6 +24,17 @@ export const multiReducer = createReducer(
     multiMode: !state.multiMode,
   })),
 
+  on(MultiActions.startMultiSelect, (state, { location }) => ({
+    multiMode: true,
+    locationStart: location,
+  })),
+
+  on(MultiActions.finishMultiSelect, (state, { location }) => ({
+    multiMode: true,
+    locationStart: undefined,
+    locationFinish: location,
+  })),
+
   on(MultiActions.startMultiDelete, (state, { location }) => ({
     multiMode: true,
     locationStart: location,

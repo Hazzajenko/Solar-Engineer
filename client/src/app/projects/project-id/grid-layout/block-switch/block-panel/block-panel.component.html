@@ -5,20 +5,36 @@
       [isPositiveLink]="(selectedPositiveTo$ | async)! === panel.id"
       class="drop-zone__svg"
     ></app-panel-link>
-    <ng-container *ngIf="panel.has_child_block">
-      <ng-container *ngIf="panel.child_block_model === 10">
+    <ng-container [ngSwitch]="panel.rotation">
+      <ng-container *ngSwitchCase="0">
         <svg viewBox="0 0 100 100">
           <path
             d="
-          M 25, 0
-          V 100
-          "
+              M 30, 0
+              V 100
+              "
           />
           <path
             d="
-          M 75, 0
-          V 100
-          "
+              M 70, 0
+              V 100
+              "
+          />
+        </svg>
+      </ng-container>
+      <ng-container *ngSwitchCase="1">
+        <svg viewBox="0 0 100 100">
+          <path
+            d="
+              M 0, 30
+              H 100
+              "
+          />
+          <path
+            d="
+              M 0, 70
+              H 100
+              "
           />
         </svg>
       </ng-container>
@@ -46,20 +62,15 @@
           (panel | panelTooltipAsync | async)!
         )
       "
+      [ngStyle]="{
+        height: panel.rotation === 0 ? '18px' : '23px',
+        width: panel.rotation === 0 ? '23px' : '18px'
+      }"
       cdkDrag
       class="drop-zone__panel"
       matTooltipClass="drop-zone__tooltip"
       matTooltipPosition="right"
-    >
-      <!--        [ngStyle]="{
-              border:
-                panel.string_id !== 'undefined'
-                  ? '2px solid ' + panel.color
-                  : '2px solid black'
-              }"-->
-      <!--            P-->
-      <!--        [style.border]="'2px solid ' + panel.color"-->
-    </div>
+    ></div>
   </div>
 </ng-container>
 
@@ -86,7 +97,23 @@
         </ng-container>
         <ng-template #stringNotSelected>
           <button class="right-click-menu__button" mat-menu-item>Edit</button>
-          <button (click)="selectString(panel)" class="right-click-menu__button" mat-menu-item>
+          <button (click)="rotatePanel(panel)" class="right-click-menu__button" mat-menu-item>
+            Rotate
+          </button>
+          <button
+            (click)="addSelectedToExistingString()"
+            *ngIf="(selectedId$ | async)! === panel.id"
+            class="right-click-menu__button"
+            mat-menu-item
+          >
+            Add to existing String
+          </button>
+          <button
+            (click)="selectString(panel)"
+            *ngIf="panel.string_id !== 'undefined'"
+            class="right-click-menu__button"
+            mat-menu-item
+          >
             Select String
           </button>
           <ng-container *ngIf="(multiSelectIds$ | async)?.includes(panel.id)">

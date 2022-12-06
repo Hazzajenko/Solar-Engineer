@@ -13,7 +13,15 @@ import { PanelModel } from '../../../../models/panel.model'
 import { GridMode } from '../../../services/store/grid/grid-mode.model'
 import { DragDropModule } from '@angular/cdk/drag-drop'
 import { MatTooltipModule } from '@angular/material/tooltip'
-import { AsyncPipe, NgClass, NgIf, NgStyle, NgTemplateOutlet } from '@angular/common'
+import {
+  AsyncPipe,
+  NgClass,
+  NgIf,
+  NgStyle,
+  NgSwitch,
+  NgSwitchCase,
+  NgTemplateOutlet,
+} from '@angular/common'
 import { FindPanelLocationPipe } from '../../../../../pipes/find-panel-location.pipe'
 import { PanelsEntityService } from '../../../services/ngrx-data/panels-entity/panels-entity.service'
 import { LinksEntityService } from '../../../services/ngrx-data/links-entity/links-entity.service'
@@ -22,7 +30,7 @@ import { GetPanelJoinPipe } from '../../../../../pipes/get-panel-join.pipe'
 import { PanelDirective } from '../../../../../directives/panel.directive'
 import { Store } from '@ngrx/store'
 import { AppState } from '../../../../../store/app.state'
-import { PanelLinkComponent } from '../../../../../components/panel-link/panel-link.component'
+import { PanelLinkComponent } from './panel-link/panel-link.component'
 import { StringsEntityService } from '../../../services/ngrx-data/strings-entity/strings-entity.service'
 import { StatsService } from '../../../services/stats.service'
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
@@ -82,6 +90,8 @@ import { PanelTooltipAsyncPipe } from './panel-tooltip-async.pipe'
     NgTemplateOutlet,
     NgClass,
     PanelTooltipAsyncPipe,
+    NgSwitch,
+    NgSwitchCase,
   ],
   standalone: true,
 })
@@ -150,7 +160,6 @@ export class BlockPanelComponent implements OnInit {
           return `
            Location = ${panel.location} \r\n
            String: ${stringName} \r\n
-           HasTray: ${panel.has_child_block} \r\n
           `
         case UnitModel.STRING:
           if (panel.string_id === selectedId) {
@@ -163,7 +172,6 @@ export class BlockPanelComponent implements OnInit {
     return `
       Location = ${panel.location} \r\n
       String: ${stringName} \r\n
-      HasTray: ${panel.has_child_block} \r\n
     `
   }
 
@@ -317,5 +325,13 @@ export class BlockPanelComponent implements OnInit {
         }
       }
     })
+  }
+
+  rotatePanel(panel: PanelModel) {
+    const update: Partial<PanelModel> = {
+      ...panel,
+      rotation: panel.rotation === 0 ? 1 : 0,
+    }
+    this.panelsEntity.update(update)
   }
 }

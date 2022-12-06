@@ -19,7 +19,7 @@ function getDifference<T>(a: T[], b: T[]): T[] {
 @Injectable({
   providedIn: 'root',
 })
-export class MultiDeleteService {
+export class MultiSelectService {
   constructor(
     private http: HttpClient,
     private store: Store<AppState>,
@@ -28,11 +28,11 @@ export class MultiDeleteService {
     private blocksService: BlocksService,
   ) {}
 
-  multiDelete(location: string) {
+  multiSelect(location: string) {
     firstValueFrom(this.store.select(selectMultiState)).then((multiState) => {
       if (!multiState.locationStart) {
         this.store.dispatch(
-          MultiActions.startMultiDelete({
+          MultiActions.startMultiSelect({
             location,
           }),
         )
@@ -40,10 +40,10 @@ export class MultiDeleteService {
         const blocksInBox = getLocationsInBox(multiState.locationStart!, location)
         console.log('blocksInBox', blocksInBox)
         if (blocksInBox) {
-          this.blocksService.deleteBlocksFromBox(blocksInBox)
+          this.blocksService.selectBlocksFromBox(blocksInBox)
         }
         this.store.dispatch(
-          MultiActions.finishMultiDelete({
+          MultiActions.finishMultiSelect({
             location,
           }),
         )

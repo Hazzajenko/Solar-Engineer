@@ -118,3 +118,20 @@ func (p *RailModel) Delete(railId string) error {
 
 	return nil
 }
+
+func (p *RailModel) DeleteMany(rails *boiler.RailSlice) (int64, error) {
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	amount, err := rails.DeleteAll(ctx, p.DB)
+
+	if err != nil {
+		switch {
+		default:
+			return 0, err
+		}
+	}
+
+	return amount, nil
+}

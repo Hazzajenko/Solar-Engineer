@@ -31,12 +31,13 @@ func (h *Handlers) CreatePanel(w http.ResponseWriter, r *http.Request) {
 		ProjectId int64  `json:"project_id"`
 		/*		InverterId string `json:"inverter_id"`
 				TrackerId  string `json:"tracker_id"`*/
-		StringId        string `json:"string_id"`
-		Location        string `json:"location"`
-		Color           string `json:"color"`
-		HasChildBlock   bool   `json:"has_child_block"`
-		ChildBlockId    string `json:"child_block_id"`
-		ChildBlockModel int    `json:"child_block_model"`
+		StringId string `json:"string_id"`
+		Location string `json:"location"`
+		Color    string `json:"color"`
+		Rotation int    `json:"rotation"`
+		/*		HasChildBlock   bool   `json:"has_child_block"`
+				ChildBlockId    string `json:"child_block_id"`
+				ChildBlockModel int    `json:"child_block_model"`*/
 	}
 
 	err = h.Json.DecodeJSON(w, r, &input)
@@ -77,11 +78,12 @@ func (h *Handlers) CreatePanel(w http.ResponseWriter, r *http.Request) {
 	_ = json2.Unmarshal([]byte(file), &boilerData)
 
 	boilerPanel := &boiler.Panel{
-		ID:              input.ID,
-		ProjectID:       projectId,
-		HasChildBlock:   input.HasChildBlock,
-		ChildBlockID:    input.ChildBlockId,
-		ChildBlockModel: input.ChildBlockModel,
+		ID:        input.ID,
+		ProjectID: projectId,
+		Rotation:  input.Rotation,
+		/*		HasChildBlock:   input.HasChildBlock,
+				ChildBlockID:    input.ChildBlockId,
+				ChildBlockModel: input.ChildBlockModel,*/
 		/*		InverterID:              input.InverterId,
 				TrackerID:               input.TrackerId,*/
 		StringID:                input.StringId,
@@ -114,6 +116,86 @@ func (h *Handlers) CreatePanel(w http.ResponseWriter, r *http.Request) {
 
 	err = h.Json.ResponseJSON(w, http.StatusAccepted,
 		json.Envelope{"panel": result},
+		nil)
+	if err != nil {
+		h.Errors.ServerErrorResponse(w, r, err)
+	}
+}
+
+func (h *Handlers) CreateManyPanels(w http.ResponseWriter, r *http.Request) {
+	bearerHeader := r.Header.Get("Authorization")
+	bearer := strings.Replace(bearerHeader, "Bearer ", "", 1)
+
+	userId, err := h.Tokens.GetUserIdInt64FromToken(bearer)
+	if err != nil {
+		h.Logger.PrintError(err, nil)
+	}
+
+	projectId, err := h.Helpers.GetInt64FromURLParam(chi.URLParam(r, "projectId"))
+	if err != nil {
+		h.Logger.PrintError(err, nil)
+	}
+
+	var input struct {
+		Panels boiler.PanelSlice `json:"panels"`
+	}
+
+	err = h.Json.DecodeJSON(w, r, &input)
+	if err != nil {
+		h.Errors.ServerErrorResponse(w, r, err)
+		return
+	}
+
+	file, err := os.ReadFile("assets/json/panels/longi555m.json")
+	var boilerData boiler.Panel
+
+	_ = json2.Unmarshal([]byte(file), &boilerData)
+
+	var results []boiler.Panel
+
+	for i, _ := range input.Panels {
+		boilerPanel := &boiler.Panel{
+			ID:        input.Panels[i].ID,
+			ProjectID: projectId,
+			Rotation:  input.Panels[i].Rotation,
+			/*			HasChildBlock:   input.Panels[i].HasChildBlock,
+						ChildBlockID:    input.Panels[i].ChildBlockID,
+						ChildBlockModel: input.Panels[i].ChildBlockModel,*/
+			/*		InverterID:              input.InverterId,
+					TrackerID:               input.TrackerId,*/
+			StringID:                input.Panels[i].StringID,
+			Name:                    boilerData.Name,
+			Location:                input.Panels[i].Location,
+			CreatedAt:               time.Time{},
+			CreatedBy:               userId,
+			CurrentAtMaximumPower:   boilerData.CurrentAtMaximumPower,
+			ShortCircuitCurrent:     boilerData.ShortCircuitCurrent,
+			ShortCircuitCurrentTemp: boilerData.ShortCircuitCurrentTemp,
+			MaximumPower:            boilerData.MaximumPower,
+			MaximumPowerTemp:        boilerData.MaximumPowerTemp,
+			VoltageAtMaximumPower:   boilerData.VoltageAtMaximumPower,
+			OpenCircuitVoltage:      boilerData.OpenCircuitVoltage,
+			OpenCircuitVoltageTemp:  boilerData.OpenCircuitVoltageTemp,
+			Length:                  boilerData.Length,
+			Weight:                  boilerData.Weight,
+			Width:                   boilerData.Width,
+			Color:                   input.Panels[i].Color,
+		}
+
+		result, err := h.Models.Panels.Create(boilerPanel)
+		if err != nil {
+			switch {
+			default:
+				h.Errors.ServerErrorResponse(w, r, err)
+			}
+			return
+		}
+
+		results = append(results, *result)
+	}
+
+	err = h.Json.ResponseJSON(w, http.StatusAccepted,
+		json.Envelope{"panels": results},
 		nil)
 	if err != nil {
 		h.Errors.ServerErrorResponse(w, r, err)
@@ -164,14 +246,15 @@ func (h *Handlers) GetPanelsByProjectId(w http.ResponseWriter, r *http.Request) 
 func (h *Handlers) UpdatePanelLocation(w http.ResponseWriter, r *http.Request) {
 
 	var input struct {
-		ID              string `json:"id"`
-		InverterId      string `json:"inverter_id"`
-		TrackerId       string `json:"tracker_id"`
-		StringId        string `json:"string_id"`
-		Location        string `json:"location"`
-		HasChildBlock   bool   `json:"has_child_block"`
-		ChildBlockId    string `json:"child_block_id"`
-		ChildBlockModel int    `json:"child_block_model"`
+		ID         string `json:"id"`
+		InverterId string `json:"inverter_id"`
+		TrackerId  string `json:"tracker_id"`
+		StringId   string `json:"string_id"`
+		Location   string `json:"location"`
+		Rotation   int    `json:"rotation"`
+		/*		HasChildBlock   bool   `json:"has_child_block"`
+				ChildBlockId    string `json:"child_block_id"`
+				ChildBlockModel int    `json:"child_block_model"`*/
 		//Version    int32  `json:"version"`
 	}
 
@@ -182,14 +265,15 @@ func (h *Handlers) UpdatePanelLocation(w http.ResponseWriter, r *http.Request) {
 	}
 
 	update := &boiler.Panel{
-		ID:              input.ID,
-		InverterID:      input.InverterId,
-		TrackerID:       input.TrackerId,
-		StringID:        input.StringId,
-		Location:        input.Location,
-		HasChildBlock:   input.HasChildBlock,
-		ChildBlockID:    input.ChildBlockId,
-		ChildBlockModel: input.ChildBlockModel,
+		ID:         input.ID,
+		InverterID: input.InverterId,
+		TrackerID:  input.TrackerId,
+		StringID:   input.StringId,
+		Location:   input.Location,
+		Rotation:   input.Rotation,
+		/*		HasChildBlock:   input.HasChildBlock,
+				ChildBlockID:    input.ChildBlockId,
+				ChildBlockModel: input.ChildBlockModel,*/
 		//Version:    input.Version,
 	}
 
@@ -238,9 +322,10 @@ func (h *Handlers) PutPanel(w http.ResponseWriter, r *http.Request) {
 		Location: input.Changes.Location,
 		Color:    input.Changes.Color,
 
-		HasChildBlock:   input.Changes.HasChildBlock,
-		ChildBlockID:    input.Changes.ChildBlockID,
-		ChildBlockModel: input.Changes.ChildBlockModel,
+		Rotation: input.Changes.Rotation,
+		/*		HasChildBlock:   input.Changes.HasChildBlock,
+				ChildBlockID:    input.Changes.ChildBlockID,
+				ChildBlockModel: input.Changes.ChildBlockModel,*/
 		//Version:    input.Version,
 	}
 
@@ -355,6 +440,34 @@ func (h *Handlers) DeletePanel(w http.ResponseWriter, r *http.Request) {
 
 	err = h.Json.ResponseJSON(w, http.StatusAccepted,
 		json.Envelope{"id": panelID, "deleted": true},
+		nil)
+	if err != nil {
+		h.Errors.ServerErrorResponse(w, r, err)
+	}
+}
+
+func (h *Handlers) DeleteManyPanels(w http.ResponseWriter, r *http.Request) {
+
+	var input struct {
+		Panels boiler.PanelSlice `json:"panels"`
+	}
+	err := h.Json.DecodeJSON(w, r, &input)
+	if err != nil {
+		h.Errors.ServerErrorResponse(w, r, err)
+		return
+	}
+
+	panelsDeleted, err := h.Models.Panels.DeleteMany(&input.Panels)
+	if err != nil {
+		switch {
+		default:
+			h.Errors.ServerErrorResponse(w, r, err)
+		}
+		return
+	}
+
+	err = h.Json.ResponseJSON(w, http.StatusAccepted,
+		json.Envelope{"panels_deleted": panelsDeleted, "deleted": true},
 		nil)
 	if err != nil {
 		h.Errors.ServerErrorResponse(w, r, err)

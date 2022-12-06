@@ -43,6 +43,15 @@
     LinkMode
   </button>
   <button
+    (click)="changeGridMode(4)"
+    [ngStyle]="{ 'background-color': (gridMode$ | async)! === 4 ? '#ff6d69' : '' }"
+    aria-label="Example icon-button with menu icon"
+    mat-stroked-button
+  >
+    <!--    <mat-icon>library_add</mat-icon>-->
+    SelectMode
+  </button>
+  <button
     (click)="toggleMultiMode()"
     [ngStyle]="{ 'background-color': (multiMode$ | async)! ? '#989bf9' : '' }"
     aria-label="Example icon-button with menu icon"

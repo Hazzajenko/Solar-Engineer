@@ -222,3 +222,31 @@ func (h *Handlers) DeleteRail(w http.ResponseWriter, r *http.Request) {
 		h.Errors.ServerErrorResponse(w, r, err)
 	}
 }
+
+func (h *Handlers) DeleteManyRails(w http.ResponseWriter, r *http.Request) {
+
+	var input struct {
+		Rails boiler.RailSlice `json:"rails"`
+	}
+	err := h.Json.DecodeJSON(w, r, &input)
+	if err != nil {
+		h.Errors.ServerErrorResponse(w, r, err)
+		return
+	}
+
+	railsDeleted, err := h.Models.Rails.DeleteMany(&input.Rails)
+	if err != nil {
+		switch {
+		default:
+			h.Errors.ServerErrorResponse(w, r, err)
+		}
+		return
+	}
+
+	err = h.Json.ResponseJSON(w, http.StatusAccepted,
+		json.Envelope{"rails_deleted": railsDeleted, "deleted": true},
+		nil)
+	if err != nil {
+		h.Errors.ServerErrorResponse(w, r, err)
+	}
+}

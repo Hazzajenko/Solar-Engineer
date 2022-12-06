@@ -100,7 +100,8 @@ export class CreateService {
             id: Guid.create().toString(),
             string_id: 'undefined',
             location,
-            has_child_block: true,
+            rotation: 0,
+            // has_child_block: true,
             child_block_id: childBlock.id,
             child_block_model: childBlock.model,
           }
@@ -112,7 +113,8 @@ export class CreateService {
             id: Guid.create().toString(),
             string_id: state.selectedStringId!,
             location,
-            has_child_block: false,
+            rotation: 0,
+            // has_child_block: false,
             child_block_id: childBlock.id,
             child_block_model: childBlock.model,
           }
@@ -125,7 +127,7 @@ export class CreateService {
             id: Guid.create().toString(),
             string_id: 'undefined',
             location,
-            has_child_block: false,
+            rotation: 0,
           }
 
           this.panelsEntity.add(panelRequest)
@@ -134,7 +136,7 @@ export class CreateService {
             id: Guid.create().toString(),
             string_id: state.selectedStringId!,
             location,
-            has_child_block: false,
+            rotation: 0,
           }
 
           this.panelsEntity.add(panelRequest)
@@ -266,7 +268,7 @@ export class CreateService {
           const update: PanelModel = {
             ...parentPanel,
             location,
-            has_child_block: true,
+            rotation: 0,
             child_block_id: railRequest.id,
             child_block_model: UnitModel.RAIL,
           }

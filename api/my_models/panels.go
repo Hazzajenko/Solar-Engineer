@@ -55,6 +55,7 @@ type Panel struct {
 	HasChildBlock           bool        `boil:"has_child_block" json:"has_child_block" toml:"has_child_block" yaml:"has_child_block"`
 	ChildBlockID            string      `boil:"child_block_id" json:"child_block_id" toml:"child_block_id" yaml:"child_block_id"`
 	ChildBlockModel         int         `boil:"child_block_model" json:"child_block_model" toml:"child_block_model" yaml:"child_block_model"`
+	Rotation                int         `boil:"rotation" json:"rotation" toml:"rotation" yaml:"rotation"`
 
 	R *panelR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L panelL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -92,6 +93,7 @@ var PanelColumns = struct {
 	HasChildBlock           string
 	ChildBlockID            string
 	ChildBlockModel         string
+	Rotation                string
 }{
 	ID:                      "id",
 	ProjectID:               "project_id",
@@ -124,6 +126,7 @@ var PanelColumns = struct {
 	HasChildBlock:           "has_child_block",
 	ChildBlockID:            "child_block_id",
 	ChildBlockModel:         "child_block_model",
+	Rotation:                "rotation",
 }
 
 var PanelTableColumns = struct {
@@ -158,6 +161,7 @@ var PanelTableColumns = struct {
 	HasChildBlock           string
 	ChildBlockID            string
 	ChildBlockModel         string
+	Rotation                string
 }{
 	ID:                      "panels.id",
 	ProjectID:               "panels.project_id",
@@ -190,6 +194,7 @@ var PanelTableColumns = struct {
 	HasChildBlock:           "panels.has_child_block",
 	ChildBlockID:            "panels.child_block_id",
 	ChildBlockModel:         "panels.child_block_model",
+	Rotation:                "panels.rotation",
 }
 
 // Generated where
@@ -264,6 +269,7 @@ var PanelWhere = struct {
 	HasChildBlock           whereHelperbool
 	ChildBlockID            whereHelperstring
 	ChildBlockModel         whereHelperint
+	Rotation                whereHelperint
 }{
 	ID:                      whereHelperstring{field: "\"panels\".\"id\""},
 	ProjectID:               whereHelperint64{field: "\"panels\".\"project_id\""},
@@ -296,6 +302,7 @@ var PanelWhere = struct {
 	HasChildBlock:           whereHelperbool{field: "\"panels\".\"has_child_block\""},
 	ChildBlockID:            whereHelperstring{field: "\"panels\".\"child_block_id\""},
 	ChildBlockModel:         whereHelperint{field: "\"panels\".\"child_block_model\""},
+	Rotation:                whereHelperint{field: "\"panels\".\"rotation\""},
 }
 
 // PanelRels is where relationship names are stored.
@@ -303,12 +310,10 @@ var PanelRels = struct {
 	CreatedByUser string
 	Join          string
 	Project       string
-	String        string
 }{
 	CreatedByUser: "CreatedByUser",
 	Join:          "Join",
 	Project:       "Project",
-	String:        "String",
 }
 
 // panelR is where relationships are stored.
@@ -316,7 +321,6 @@ type panelR struct {
 	CreatedByUser *User    `boil:"CreatedByUser" json:"CreatedByUser" toml:"CreatedByUser" yaml:"CreatedByUser"`
 	Join          *Join    `boil:"Join" json:"Join" toml:"Join" yaml:"Join"`
 	Project       *Project `boil:"Project" json:"Project" toml:"Project" yaml:"Project"`
-	String        *String  `boil:"String" json:"String" toml:"String" yaml:"String"`
 }
 
 // NewStruct creates a new relationship struct
@@ -345,20 +349,13 @@ func (r *panelR) GetProject() *Project {
 	return r.Project
 }
 
-func (r *panelR) GetString() *String {
-	if r == nil {
-		return nil
-	}
-	return r.String
-}
-
 // panelL is where Load methods for each relationship are stored.
 type panelL struct{}
 
 var (
-	panelAllColumns            = []string{"id", "project_id", "inverter_id", "tracker_id", "string_id", "name", "created_at", "created_by", "current_at_maximum_power", "short_circuit_current", "short_circuit_current_temp", "maximum_power", "maximum_power_temp", "voltage_at_maximum_power", "open_circuit_voltage", "open_circuit_voltage_temp", "length", "weight", "width", "version", "location", "model", "color", "type", "join_id", "positive_to_id", "negative_to_id", "selected", "has_child_block", "child_block_id", "child_block_model"}
+	panelAllColumns            = []string{"id", "project_id", "inverter_id", "tracker_id", "string_id", "name", "created_at", "created_by", "current_at_maximum_power", "short_circuit_current", "short_circuit_current_temp", "maximum_power", "maximum_power_temp", "voltage_at_maximum_power", "open_circuit_voltage", "open_circuit_voltage_temp", "length", "weight", "width", "version", "location", "model", "color", "type", "join_id", "positive_to_id", "negative_to_id", "selected", "has_child_block", "child_block_id", "child_block_model", "rotation"}
 	panelColumnsWithoutDefault = []string{"id", "project_id", "name"}
-	panelColumnsWithDefault    = []string{"inverter_id", "tracker_id", "string_id", "created_at", "created_by", "current_at_maximum_power", "short_circuit_current", "short_circuit_current_temp", "maximum_power", "maximum_power_temp", "voltage_at_maximum_power", "open_circuit_voltage", "open_circuit_voltage_temp", "length", "weight", "width", "version", "location", "model", "color", "type", "join_id", "positive_to_id", "negative_to_id", "selected", "has_child_block", "child_block_id", "child_block_model"}
+	panelColumnsWithDefault    = []string{"inverter_id", "tracker_id", "string_id", "created_at", "created_by", "current_at_maximum_power", "short_circuit_current", "short_circuit_current_temp", "maximum_power", "maximum_power_temp", "voltage_at_maximum_power", "open_circuit_voltage", "open_circuit_voltage_temp", "length", "weight", "width", "version", "location", "model", "color", "type", "join_id", "positive_to_id", "negative_to_id", "selected", "has_child_block", "child_block_id", "child_block_model", "rotation"}
 	panelPrimaryKeyColumns     = []string{"id"}
 	panelGeneratedColumns      = []string{}
 )
@@ -672,17 +669,6 @@ func (o *Panel) Project(mods ...qm.QueryMod) projectQuery {
 	queryMods = append(queryMods, mods...)
 
 	return Projects(queryMods...)
-}
-
-// String pointed to by the foreign key.
-func (o *Panel) String(mods ...qm.QueryMod) stringQuery {
-	queryMods := []qm.QueryMod{
-		qm.Where("\"id\" = ?", o.StringID),
-	}
-
-	queryMods = append(queryMods, mods...)
-
-	return Strings(queryMods...)
 }
 
 // LoadCreatedByUser allows an eager lookup of values, cached into the
@@ -1045,126 +1031,6 @@ func (panelL) LoadProject(ctx context.Context, e boil.ContextExecutor, singular 
 	return nil
 }
 
-// LoadString allows an eager lookup of values, cached into the
-// loaded structs of the objects. This is for an N-1 relationship.
-func (panelL) LoadString(ctx context.Context, e boil.ContextExecutor, singular bool, maybePanel interface{}, mods queries.Applicator) error {
-	var slice []*Panel
-	var object *Panel
-
-	if singular {
-		var ok bool
-		object, ok = maybePanel.(*Panel)
-		if !ok {
-			object = new(Panel)
-			ok = queries.SetFromEmbeddedStruct(&object, &maybePanel)
-			if !ok {
-				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", object, maybePanel))
-			}
-		}
-	} else {
-		s, ok := maybePanel.(*[]*Panel)
-		if ok {
-			slice = *s
-		} else {
-			ok = queries.SetFromEmbeddedStruct(&slice, maybePanel)
-			if !ok {
-				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", slice, maybePanel))
-			}
-		}
-	}
-
-	args := make([]interface{}, 0, 1)
-	if singular {
-		if object.R == nil {
-			object.R = &panelR{}
-		}
-		args = append(args, object.StringID)
-
-	} else {
-	Outer:
-		for _, obj := range slice {
-			if obj.R == nil {
-				obj.R = &panelR{}
-			}
-
-			for _, a := range args {
-				if a == obj.StringID {
-					continue Outer
-				}
-			}
-
-			args = append(args, obj.StringID)
-
-		}
-	}
-
-	if len(args) == 0 {
-		return nil
-	}
-
-	query := NewQuery(
-		qm.From(`strings`),
-		qm.WhereIn(`strings.id in ?`, args...),
-	)
-	if mods != nil {
-		mods.Apply(query)
-	}
-
-	results, err := query.QueryContext(ctx, e)
-	if err != nil {
-		return errors.Wrap(err, "failed to eager load String")
-	}
-
-	var resultSlice []*String
-	if err = queries.Bind(results, &resultSlice); err != nil {
-		return errors.Wrap(err, "failed to bind eager loaded slice String")
-	}
-
-	if err = results.Close(); err != nil {
-		return errors.Wrap(err, "failed to close results of eager load for strings")
-	}
-	if err = results.Err(); err != nil {
-		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for strings")
-	}
-
-	if len(panelAfterSelectHooks) != 0 {
-		for _, obj := range resultSlice {
-			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
-				return err
-			}
-		}
-	}
-
-	if len(resultSlice) == 0 {
-		return nil
-	}
-
-	if singular {
-		foreign := resultSlice[0]
-		object.R.String = foreign
-		if foreign.R == nil {
-			foreign.R = &stringR{}
-		}
-		foreign.R.Panels = append(foreign.R.Panels, object)
-		return nil
-	}
-
-	for _, local := range slice {
-		for _, foreign := range resultSlice {
-			if local.StringID == foreign.ID {
-				local.R.String = foreign
-				if foreign.R == nil {
-					foreign.R = &stringR{}
-				}
-				foreign.R.Panels = append(foreign.R.Panels, local)
-				break
-			}
-		}
-	}
-
-	return nil
-}
-
 // SetCreatedByUser of the panel to the related item.
 // Sets o.R.CreatedByUser to related.
 // Adds o to related.R.CreatedByPanels.
@@ -1297,53 +1163,6 @@ func (o *Panel) SetProject(ctx context.Context, exec boil.ContextExecutor, inser
 
 	if related.R == nil {
 		related.R = &projectR{
-			Panels: PanelSlice{o},
-		}
-	} else {
-		related.R.Panels = append(related.R.Panels, o)
-	}
-
-	return nil
-}
-
-// SetString of the panel to the related item.
-// Sets o.R.String to related.
-// Adds o to related.R.Panels.
-func (o *Panel) SetString(ctx context.Context, exec boil.ContextExecutor, insert bool, related *String) error {
-	var err error
-	if insert {
-		if err = related.Insert(ctx, exec, boil.Infer()); err != nil {
-			return errors.Wrap(err, "failed to insert into foreign table")
-		}
-	}
-
-	updateQuery := fmt.Sprintf(
-		"UPDATE \"panels\" SET %s WHERE %s",
-		strmangle.SetParamNames("\"", "\"", 1, []string{"string_id"}),
-		strmangle.WhereClause("\"", "\"", 2, panelPrimaryKeyColumns),
-	)
-	values := []interface{}{related.ID, o.ID}
-
-	if boil.IsDebug(ctx) {
-		writer := boil.DebugWriterFrom(ctx)
-		fmt.Fprintln(writer, updateQuery)
-		fmt.Fprintln(writer, values)
-	}
-	if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
-		return errors.Wrap(err, "failed to update local table")
-	}
-
-	o.StringID = related.ID
-	if o.R == nil {
-		o.R = &panelR{
-			String: related,
-		}
-	} else {
-		o.R.String = related
-	}
-
-	if related.R == nil {
-		related.R = &stringR{
 			Panels: PanelSlice{o},
 		}
 	} else {

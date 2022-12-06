@@ -96,10 +96,10 @@ import { RailsEntityEffects } from './projects/project-id/services/ngrx-data/rai
 import { RailsEntityService } from './projects/project-id/services/ngrx-data/rails-entity/rails-entity.service'
 import { RailsResolver } from './projects/project-id/services/ngrx-data/rails-entity/rails.resolver'
 import { RailsDataService } from './projects/project-id/services/ngrx-data/rails-entity/rails-data.service'
-import { BlocksEntityEffects } from './projects/project-id/services/ngrx-data/blocks-entity/blocks-entity.effects'
 import { BlocksEntityService } from './projects/project-id/services/ngrx-data/blocks-entity/blocks-entity.service'
 import { BlocksResolver } from './projects/project-id/services/ngrx-data/blocks-entity/blocks.resolver'
 import { BlocksDataService } from './projects/project-id/services/ngrx-data/blocks-entity/blocks-data.service'
+import { BlocksEffects } from './projects/project-id/services/store/blocks/blocks.effects'
 
 export function tokenGetter() {
   // console.log(localStorage.getItem('token'))
@@ -155,7 +155,7 @@ export function tokenGetter() {
       SelectedEffects,
       TraysEntityEffects,
       RailsEntityEffects,
-      BlocksEntityEffects,
+      BlocksEffects,
     ]),
     FindCablePipe,
     GetGridNumberPipe,
@@ -256,10 +256,7 @@ export class AppModule {
     entityDataService.registerService('Join', joinsDataService)
     entityDataService.registerService('Link', linksDataService)
     entityDataService.registerService('Tray', traysDataService)
-    entityDataService.registerService(
-      'DisconnectionPoint',
-      disconnectionPointsDataService,
-    )
+    entityDataService.registerService('DisconnectionPoint', disconnectionPointsDataService)
     entityDataService.registerService('Rail', railsDataService)
     entityDataService.registerService('Block', blocksDataService)
   }

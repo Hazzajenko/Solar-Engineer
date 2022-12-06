@@ -18,7 +18,7 @@ import { RailsEntityService } from '../ngrx-data/rails-entity/rails-entity.servi
 import { RailModel } from '../../../models/rail.model'
 import { selectCurrentProjectId } from '../store/projects/projects.selectors'
 import { map } from 'rxjs/operators'
-import { getBlocksInBox } from '../get-blocks-in-box'
+import { getLocationsInBox } from '../get-locations-in-box'
 
 @Injectable({
   providedIn: 'root',
@@ -64,7 +64,7 @@ export class MultiService {
           .select(selectBlocksByProjectIdRouteParams)
           .pipe(combineLatestWith(this.store.select(selectCurrentProjectId))),
       ).then(([blocks, projectId]) => {
-        const blocksInBox = getBlocksInBox(multiCreateState.locationStart!, location)
+        const blocksInBox = getLocationsInBox(multiCreateState.locationStart!, location)
         console.log('blocksInBox', blocksInBox)
         const blocksInRoute = checkIfAnyBlocksInRoute(
           multiCreateState.locationStart!,
@@ -82,7 +82,7 @@ export class MultiService {
                 projectId,
                 location,
                 stringId ? stringId : 'undefined',
-                false,
+                0,
               )
               this.panelsEntity.add(panel)
             })
@@ -129,9 +129,7 @@ export class MultiService {
                   const newRail = new RailModel(projectId, location, true)
                   const update: PanelModel = {
                     ...panel,
-                    has_child_block: true,
-                    child_block_model: UnitModel.RAIL,
-                    child_block_id: newRail.id,
+                    rotation: 0,
                   }
                   this.railsEntity.add(newRail)
                   this.panelsEntity.update(update)
@@ -222,7 +220,7 @@ export class MultiService {
                     projectId,
                     blockLocations[i],
                     selectedStringId ? selectedStringId : 'undefined',
-                    false,
+                    0,
                   )
                   this.panelsEntity.add(panel)
                 }

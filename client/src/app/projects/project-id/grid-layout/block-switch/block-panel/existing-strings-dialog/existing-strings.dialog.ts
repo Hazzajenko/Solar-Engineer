@@ -2,12 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core'
 import { MatDialogModule } from '@angular/material/dialog'
 import { MatButtonModule } from '@angular/material/button'
 
-import {
-  combineLatestWith,
-  firstValueFrom,
-  lastValueFrom,
-  Observable,
-} from 'rxjs'
+import { combineLatestWith, firstValueFrom, Observable } from 'rxjs'
 
 import { AsyncPipe, NgForOf, NgIf, NgStyle } from '@angular/common'
 import { MatListModule } from '@angular/material/list'
@@ -20,8 +15,8 @@ import { Store } from '@ngrx/store'
 import { StringPanelsAsyncPipe } from './string-panels-async.pipe'
 import { StringTotalsAsyncPipe } from '../../../grid-toolbar/string-totals-async.pipe'
 import {
-  selectMultiSelectIds,
   selectSelectedId,
+  selectSelectedState,
 } from '../../../../services/store/selected/selected.selectors'
 import { SelectedStateActions } from '../../../../services/store/selected/selected.actions'
 import { StringsEntityService } from '../../../../services/ngrx-data/strings-entity/strings-entity.service'
@@ -125,41 +120,54 @@ export class ExistingStringsDialog implements OnInit {
   }
 
   selectString(string: StringModel) {
-    this.store.dispatch(
-      SelectedStateActions.selectString({ stringId: string.id }),
-    )
+    this.store.dispatch(SelectedStateActions.selectString({ stringId: string.id }))
   }
 
   addSelectedToExistingString(string: StringModel) {
     firstValueFrom(
       this.store
-        .select(selectMultiSelectIds)
+        .select(selectSelectedState)
         .pipe(combineLatestWith(this.panelsEntity.entities$))
         .pipe(
-          map(([multiSelectIds, panels]) => {
-            return panels.filter((p) => multiSelectIds?.includes(p.id))
+          map(([selectedState, panels]) => {
+            if (selectedState.multiSelect) {
+              return panels.filter((p) => selectedState.multiSelectIds?.includes(p.id))
+            } else {
+              return panels.find((p) => p.id === selectedState.singleSelectId)
+            }
           }),
         ),
     ).then(async (selectedPanels) => {
-      const selectedPanelUpdates: Partial<PanelModel>[] = selectedPanels.map(
-        (panel) => {
+      if (!selectedPanels) {
+        return console.error('addSelectedToExistingString !selectedPanels')
+      }
+      if (Array.isArray(selectedPanels)) {
+        const selectedPanelUpdates: Partial<PanelModel>[] = selectedPanels.map((panel) => {
           const partial: Partial<PanelModel> = {
             ...panel,
             string_id: string.id,
             color: string.color,
           }
           return partial
-        },
-      )
+        })
 
-      this.panelsEntity.updateManyInCache(selectedPanelUpdates)
+        this.panelsEntity.updateManyInCache(selectedPanelUpdates)
 
-      return lastValueFrom(
-        this.http.put(`/api/projects/3/panels`, {
-          panels: selectedPanelUpdates,
-          new_string_id: string.id,
-        }),
-      )
+        /*        return lastValueFrom(
+                  this.http.put(`/api/projects/3/panels`, {
+                    panels: selectedPanelUpdates,
+                    new_string_id: string.id,
+                  }),
+                )*/
+      } else {
+        const partial: Partial<PanelModel> = {
+          ...selectedPanels,
+          string_id: string.id,
+          color: string.color,
+        }
+
+        this.panelsEntity.update(partial)
+      }
     })
   }
 }
