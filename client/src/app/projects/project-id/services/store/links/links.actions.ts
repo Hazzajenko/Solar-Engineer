@@ -8,6 +8,8 @@ export const LinksStateActions = createActionGroup({
   source: 'Links State',
   events: {
     'Add To Link Type': props<{ unit: UnitModel }>(),
+    'Start Link Panel': props<{ panelId: string }>(),
+    'Finish Link Panel': props<{ panelId: string }>(),
     'Add To Link Panel': props<{ panel: PanelModel }>(),
     'Add To Link Dp': props<{ disconnectionPoint: DisconnectionPointModel }>(),
     'Add To Link Cable': props<{ cable: CableModel }>(),

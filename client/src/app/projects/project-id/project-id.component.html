@@ -10,8 +10,8 @@
     <app-grid-toolbar></app-grid-toolbar>
     <app-grid-layout
       (clickEvent)="canvasAction($event)"
-      (mousemove)="onMouseMove($event, isDragging)"
-      *ngrxLet="isDragging$ | async as isDragging"
+      (mousemove)="onMouseMove($event, mouseEvents.isDragging, mouseEvents.isLinking)"
+      *ngrxLet="{isDragging: isDragging$ | async, isLinking: isLinking$ | async} as mouseEvents"
     ></app-grid-layout>
   </div>
 </div>

@@ -3,6 +3,7 @@ package handlers
 import (
 	json2 "encoding/json"
 	"fmt"
+	"github.com/Hazzajenko/gosolarbackend/internal/data/models/panels"
 	"github.com/Hazzajenko/gosolarbackend/internal/json"
 	boiler "github.com/Hazzajenko/gosolarbackend/my_models"
 	"github.com/go-chi/chi/v5"
@@ -419,6 +420,42 @@ func (h *Handlers) UpdateManyPanelsWithRail(w http.ResponseWriter, r *http.Reque
 
 	err = h.Json.ResponseJSON(w, http.StatusAccepted,
 		json.Envelope{"panels": true},
+		nil)
+	if err != nil {
+		h.Errors.ServerErrorResponse(w, r, err)
+	}
+}
+
+func (h *Handlers) UpdateManyPanelsV2(w http.ResponseWriter, r *http.Request) {
+	projectId, err := h.Helpers.GetInt64FromURLParam(chi.URLParam(r, "projectId"))
+	if err != nil {
+		h.Logger.PrintError(err, nil)
+	}
+	fmt.Println(projectId)
+
+	var input struct {
+		Panels []panels.PanelUpdate `json:"panels"`
+	}
+
+	err = h.Json.DecodeJSON(w, r, &input)
+	if err != nil {
+		h.Errors.ServerErrorResponse(w, r, err)
+		return
+	}
+
+	fmt.Print(input)
+
+	amountUpdated, err := h.Models.Panels.UpdatePanelsV2(input.Panels)
+	if err != nil {
+		switch {
+		default:
+			h.Errors.ServerErrorResponse(w, r, err)
+		}
+		return
+	}
+
+	err = h.Json.ResponseJSON(w, http.StatusAccepted,
+		json.Envelope{"panels_updated": amountUpdated},
 		nil)
 	if err != nil {
 		h.Errors.ServerErrorResponse(w, r, err)

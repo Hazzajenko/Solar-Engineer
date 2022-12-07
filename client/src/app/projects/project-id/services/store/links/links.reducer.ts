@@ -9,6 +9,7 @@ export interface LinksState {
   // panelToJoin?: PanelModel
   // blockToJoin?: BlockModel
   typeToLink?: UnitModel
+  toLinkId?: string
   panelToLink?: PanelModel
   dpToLink?: DisconnectionPointModel
   cableToLink?: CableModel
@@ -18,6 +19,7 @@ export const initialLinksState: LinksState = {
   // panelToJoin: undefined,
   // blockToJoin: undefined,
   typeToLink: undefined,
+  toLinkId: undefined,
   panelToLink: undefined,
   dpToLink: undefined,
   cableToLink: undefined,
@@ -25,6 +27,17 @@ export const initialLinksState: LinksState = {
 
 export const linksReducer = createReducer(
   initialLinksState,
+
+  on(LinksStateActions.startLinkPanel, (state, { panelId }) => ({
+    typeToLink: UnitModel.PANEL,
+    toLinkId: panelId
+  })),
+
+
+  on(LinksStateActions.finishLinkPanel, (state, { panelId }) => ({
+    typeToLink: undefined,
+    toLinkId: undefined
+  })),
 
   on(LinksStateActions.addToLinkPanel, (state, { panel }) => ({
     typeToLink: UnitModel.PANEL,

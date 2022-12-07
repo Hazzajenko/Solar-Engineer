@@ -25,6 +25,7 @@ import { SelectedStateActions } from '../../services/store/selected/selected.act
 import { MultiActions } from '../../services/store/multi-create/multi.actions'
 import { selectCreateMode, selectGridMode } from '../../services/store/grid/grid.selectors'
 import { selectMultiMode } from '../../services/store/multi-create/multi.selectors'
+import { selectSelectedStringId } from '../../services/store/selected/selected.selectors'
 
 @Component({
   selector: 'app-grid-toolbar',
@@ -47,6 +48,7 @@ export class GridToolbarComponent implements OnInit {
   createMode$!: Observable<UnitModel>
   gridMode$!: Observable<GridMode>
   multiMode$!: Observable<boolean>
+  selectedStringId$!: Observable<string | undefined>
 
   constructor(
     private store: Store<AppState>,
@@ -60,6 +62,7 @@ export class GridToolbarComponent implements OnInit {
     this.createMode$ = this.store.select(selectCreateMode)
     this.gridMode$ = this.store.select(selectGridMode)
     this.multiMode$ = this.store.select(selectMultiMode)
+    this.selectedStringId$ = this.store.select(selectSelectedStringId)
   }
 
   openDialog(strings: StringModel[]): void {

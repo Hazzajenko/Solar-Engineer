@@ -20,6 +20,7 @@ import { selectBlocksByProjectIdRouteParams } from './store/blocks/blocks.select
 import { map } from 'rxjs/operators'
 import { CablesEntityService } from './ngrx-data/cables-entity/cables-entity.service'
 import { CableModel } from '../../models/cable.model'
+import { panelAdapter } from '../../store/panels/panels.reducer'
 
 @Injectable({
   providedIn: 'root',
@@ -106,11 +107,17 @@ export class LinksService {
       return console.error('addPanelToJoin !panel')
     }
     if (linksState?.typeToLink) {
+      console.log(linksState)
+      console.log(linksState?.typeToLink)
       switch (linksState.typeToLink) {
         case UnitModel.PANEL:
           if (linksState.panelToLink) {
+
             this.joinPanelToPanel(panel, linksState.panelToLink)
           }
+/*          if (linksState.toLinkId) {
+            this.joinPanelToPanelV2(panel, linksState.toLinkId)
+          }*/
           break
         case UnitModel.DISCONNECTIONPOINT:
           if (linksState.dpToLink) {
@@ -119,7 +126,11 @@ export class LinksService {
           break
       }
     } else {
+/*      if (panel) {
+        this.store.dispatch(LinksStateActions.startLinkPanel({ panelId: panel.id }))
+      }*/
       if (panel) {
+        console.log('if (panel) {')
         this.store.dispatch(LinksStateActions.addToLinkPanel({ panel }))
       }
     }
@@ -247,6 +258,39 @@ export class LinksService {
     )
   }
 
+  joinPanelToPanelV2(panel?: PanelModel, panelToLink?: string) {
+    if (!panel) {
+      return console.error(
+        `joinPanelToPanel panel doesnt exist on location ${location}`,
+      )
+    }
+    if (panelToLink) {
+      const panelJoinRequest: LinkModel = {
+        id: Guid.create().toString(),
+        project_id: panel.project_id,
+        string_id: panel.string_id,
+        positive_id: panelToLink,
+        positive_model: UnitModel.PANEL,
+        negative_id: panel.id,
+        negative_model: UnitModel.PANEL,
+      }
+
+      this.linksEntity.add(panelJoinRequest)
+
+      const updatePanel: PanelModel = {
+        ...panel,
+        string_id: panel.string_id,
+      }
+      this.panelsEntity.update(updatePanel)
+      this.store.dispatch(LinksStateActions.finishLinkPanel({ panelId: panel.id }))
+    } else {
+      this.store.dispatch(LinksStateActions.startLinkPanel({ panelId: panel.id }))
+    }
+
+
+    // this.store.dispatch(LinksStateActions.addToLinkPanel({ panel }))
+  }
+
   joinPanelToPanel(panel?: PanelModel, panelToJoin?: PanelModel) {
     if (!panel) {
       return console.error(
@@ -254,6 +298,7 @@ export class LinksService {
       )
     }
     if (panelToJoin) {
+      console.log('panelToJoin', panelToJoin)
       const panelJoinRequest: LinkModel = {
         id: Guid.create().toString(),
         project_id: panelToJoin.project_id,
@@ -269,7 +314,6 @@ export class LinksService {
       const updatePanel: PanelModel = {
         ...panel,
         string_id: panelToJoin.string_id,
-        color: panel.color,
       }
       this.panelsEntity.update(updatePanel)
     }

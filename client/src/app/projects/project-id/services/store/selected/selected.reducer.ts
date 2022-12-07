@@ -126,12 +126,14 @@ export const selectedReducer = createReducer(
   on(SelectedStateActions.setSelectedStringPanels, (state, { panelIds }) => ({
     unit: UnitModel.STRING,
     singleSelectId: state.singleSelectId,
+    selectedStringId: state.selectedStringId,
     multiSelectIds: panelIds,
   })),
 
   on(SelectedStateActions.setSelectedStringTooltip, (state, { tooltip }) => ({
     unit: UnitModel.STRING,
     singleSelectId: state.singleSelectId,
+    selectedStringId: state.selectedStringId,
     multiSelectIds: state.multiSelectIds,
     selectedStringTooltip: tooltip,
   })),

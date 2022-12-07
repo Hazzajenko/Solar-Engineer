@@ -79,7 +79,31 @@ export class MultiCreateService {
       })
     }
   }
+/*
+  multiCreateCable(location: string, multiCreateState: MultiState) {
+    if (!multiCreateState.locationStart) {
+      this.store.dispatch(
+        MultiActions.start({
+          location,
+        }),
+      )
+    } else {
+      const locationsInBox = getLocationsInBox(multiCreateState.locationStart!, location)
+      this.blocksService.getBlocksFromIncludedArray(locationsInBox).then((blocksInBox) => {
+        if (blocksInBox.length > 0) {
+          return console.error('there are blocks in path, ', blocksInBox)
+        }
 
+        this.itemsService.addManyItems(UnitModel.PANEL, locationsInBox)
+
+        this.store.dispatch(
+          MultiActions.finishMultiCreatePanel({
+            location,
+          }),
+        )
+      })
+    }
+  }*/
   multiCreatePanel(location: string, multiCreateState: MultiState) {
     if (!multiCreateState.locationStart) {
       this.store.dispatch(
@@ -157,14 +181,12 @@ export class MultiCreateService {
                   ),
                 ).then((panel) => {
                   if (!panel) return console.error(`multiCreateRail !panel`)
-                  const newRail = new RailModel(projectId, location, true)
+                  // const newRail = new RailModel(projectId, location, true)
                   const update: PanelModel = {
                     ...panel,
                     rotation: 0,
-                    child_block_model: UnitModel.RAIL,
-                    child_block_id: newRail.id,
                   }
-                  this.railsEntity.add(newRail)
+                  // this.railsEntity.add(newRail)
                   this.panelsEntity.update(update)
                 })
 
@@ -192,76 +214,5 @@ export class MultiCreateService {
         )
       })
     }
-  }
-
-  checkIfAnyBlocksInRoute(locationOne: string, locationTwo: string) {
-    firstValueFrom(this.store.select(selectBlocksByProjectIdRouteParams)).then((blocks) => {
-      let numberOneRow: number | undefined = undefined
-      let numberOneCol: number | undefined = undefined
-
-      const splitOne = locationOne.split('')
-      splitOne.forEach((p, index) => {
-        if (p === 'c') {
-          const row = locationOne.slice(3, index)
-          const col = locationOne.slice(index + 3, locationOne.length)
-          numberOneRow = Number(row)
-          numberOneCol = Number(col)
-        }
-      })
-      let numberTwoRow: number | undefined = undefined
-      let numberTwoCol: number | undefined = undefined
-      const splitTwo = locationTwo.split('')
-      splitTwo.forEach((p, index) => {
-        if (p === 'c') {
-          const row = locationTwo.slice(3, index)
-          const col = locationTwo.slice(index + 3, locationTwo.length)
-          numberTwoRow = Number(row)
-          numberTwoCol = Number(col)
-        }
-      })
-      if (numberOneCol && numberTwoCol && numberOneRow && numberTwoRow) {
-        // console.log()
-        if (numberOneCol === numberTwoCol) {
-          if (numberOneRow < numberTwoRow) {
-            // going up
-            const upBlocks = numberTwoRow - numberOneRow
-            // let blockStrings: string[] = []
-            let blocksInRoute: BlockModel[] = []
-            let blockLocations: string[] = []
-            for (let i = 0; i < upBlocks; i++) {
-              // blockStrings[i] = `row${numberOneRow +i+1}col${numberOneCol}`
-              blockLocations[i] = `row${numberOneRow! + i + 1}col${numberOneCol}`
-              if (blocks.find((b) => b.location === blockLocations[i])) {
-                blocksInRoute[i] = blocks.find(
-                  (b) => b.location === `row${numberOneRow! + i + 1}col${numberOneCol}`,
-                )!
-              }
-            }
-            if (blocksInRoute.length > 0) {
-              for (let i = 0; i < blocksInRoute.length; i++) {
-                console.error(`block exists in path at ${blocksInRoute[i]?.location}`)
-              }
-              return
-            } else {
-              firstValueFrom(
-                this.store
-                  .select(selectSelectedStringId)
-                  .pipe(combineLatestWith(this.store.select(selectCurrentProjectId))),
-              ).then(([selectedStringId, projectId]) => {
-                for (let i = 0; i < upBlocks; i++) {
-                  const panel = new PanelModel(
-                    projectId,
-                    blockLocations[i],
-                    selectedStringId ? selectedStringId : 'undefined',
-                    0,
-                  )
-                  this.panelsEntity.add(panel)
-                }
-              })
-            }
-          }
-        }
-      }
-    })
   }
 }

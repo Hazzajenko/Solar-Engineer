@@ -204,3 +204,33 @@ func (p *PanelModel) UpdatePanelsWithRail(panels []boiler.Panel) error {
 	}
 	return nil
 }
+
+type PanelUpdate struct {
+	ID      string       `json:"id"`
+	Changes boiler.Panel `json:"changes"`
+}
+
+func (p *PanelModel) UpdatePanelsV2(panels []PanelUpdate) (int, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+	var amountUpdated int
+	for _, update := range panels {
+		panel, err := boiler.Panels(boiler.PanelWhere.ID.EQ(update.Changes.ID)).One(ctx, p.DB)
+		if err != nil {
+			switch {
+			case errors.Is(err, sql.ErrNoRows):
+				return 0, errors.New("edit conflict")
+			default:
+				return 0, err
+			}
+		}
+
+		panel.Rotation = update.Changes.Rotation
+		panel.StringID = update.Changes.StringID
+		panel.Location = update.Changes.Location
+
+		_, err = panel.Update(ctx, p.DB, boil.Infer())
+		amountUpdated++
+	}
+	return amountUpdated, nil
+}

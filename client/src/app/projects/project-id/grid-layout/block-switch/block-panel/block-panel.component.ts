@@ -1,5 +1,6 @@
 import { ProjectModel } from '../../../../models/project.model'
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   ElementRef,
@@ -68,6 +69,7 @@ import { HttpClient } from '@angular/common/http'
 import { MatDialog } from '@angular/material/dialog'
 import { ExistingStringsDialog } from './existing-strings-dialog/existing-strings.dialog'
 import { PanelTooltipAsyncPipe } from './panel-tooltip-async.pipe'
+import { NewStringDialog } from './new-string-dialog/new-string.dialog'
 
 @Component({
   selector: 'app-block-panel',
@@ -95,7 +97,7 @@ import { PanelTooltipAsyncPipe } from './panel-tooltip-async.pipe'
   ],
   standalone: true,
 })
-export class BlockPanelComponent implements OnInit {
+export class BlockPanelComponent implements OnInit, AfterViewInit {
   @ViewChild('panelDiv') panelDiv!: ElementRef
   @Input() project?: ProjectModel
   @Input() location!: string
@@ -129,7 +131,23 @@ export class BlockPanelComponent implements OnInit {
     private logger: LoggerService,
     private http: HttpClient,
     private dialog: MatDialog,
+    private elRef: ElementRef,
   ) {}
+
+  ngAfterViewInit() {
+    console.log(this.elRef.nativeElement.offsetLeft, this.elRef.nativeElement.offsetTop)
+    let offsetLeft = 0;
+    let offsetTop = 0;
+
+    let el = this.elRef.nativeElement;
+
+    while(el){
+      offsetLeft += el.offsetLeft;
+      offsetTop += el.offsetTop;
+      el = el.parentElement;
+    }
+    console.log(offsetTop , offsetLeft)
+  }
 
   ngOnInit() {
     this.gridMode$ = this.store.select(selectGridMode)
@@ -203,9 +221,9 @@ export class BlockPanelComponent implements OnInit {
       .then((gridMode) => {
         switch (gridMode) {
           case GridMode.JOIN:
-            firstValueFrom(this.store.select(selectLinksState)).then((joinsState) => {
+            /*            firstValueFrom(this.store.select(selectLinksState)).then((joinsState) => {
               this.joinsService.addPanelToLink(panel, joinsState)
-            })
+            })*/
             break
           case GridMode.DELETE:
             this.panelsEntity.delete(panel)
@@ -262,45 +280,7 @@ export class BlockPanelComponent implements OnInit {
   }
 
   createNewStringWithSelected() {
-    firstValueFrom(
-      this.store
-        .select(selectMultiSelectIds)
-        .pipe(combineLatestWith(this.panelsEntity.entities$))
-        .pipe(
-          map(([multiSelectIds, panels]) => {
-            return panels.filter((p) => multiSelectIds?.includes(p.id))
-          }),
-        ),
-    ).then(async (selectedPanels) => {
-      const newStringId = Guid.create().toString()
-
-      const newString: StringModel = {
-        id: newStringId,
-        name: 'multiSelectString',
-        color: 'blue',
-        model: UnitModel.STRING,
-      }
-
-      this.stringsEntity.add(newString)
-
-      const selectedPanelUpdates: Partial<PanelModel>[] = selectedPanels.map((panel) => {
-        const partial: Partial<PanelModel> = {
-          ...panel,
-          string_id: newStringId,
-          color: newString.color,
-        }
-        return partial
-      })
-
-      this.panelsEntity.updateManyInCache(selectedPanelUpdates)
-
-      return lastValueFrom(
-        this.http.put(`/api/projects/3/panels`, {
-          panels: selectedPanelUpdates,
-          new_string_id: newStringId,
-        }),
-      )
-    })
+    this.dialog.open(NewStringDialog)
   }
 
   addSelectedToExistingString() {

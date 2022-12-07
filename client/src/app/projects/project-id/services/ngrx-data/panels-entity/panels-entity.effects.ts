@@ -143,29 +143,33 @@ export class PanelsEntityEffects {
       this.actions$.pipe(
         ofType(`${DataEntities.Panel} ${EntityOp.UPDATE_MANY}`),
         concatLatestFrom(() => this.store.select(selectCurrentProjectId)),
-        tap(async ([action, projectId]: [any, number]) => {
-          const manyPanels: PanelModel[] = action.payload.data
-          const blocks = manyPanels.map((panel) => {
+        tap( ([action, projectId]: [any, number]) => {
+          const manyPanels: any = action.payload.data
+          console.log(manyPanels)
+          const blocks = manyPanels.map((arr: any) => {
+            let panel: PanelModel = arr.changes
             const block: Update<BlockModel> = {
-              id: panel.id,
+              id: arr.id,
               changes: {
-                id: panel.id,
+                id: arr.id,
                 location: panel.location,
               },
             }
             return block
           })
+
           this.store.dispatch(
             BlocksStateActions.updateManyBlocksForGrid({
               blocks,
             }),
           )
 
-          await lastValueFrom(
-            this.http.post(`/api/projects/${projectId}/panels`, {
+
+          lastValueFrom(
+            this.http.put(`/api/projects/${projectId}/panels`, {
               panels: manyPanels,
             }),
-          )
+          ).then(res => console.log(res))
         }),
       ),
     { dispatch: false },

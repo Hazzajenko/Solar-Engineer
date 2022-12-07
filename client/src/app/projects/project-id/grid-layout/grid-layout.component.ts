@@ -201,6 +201,7 @@ export class GridLayoutComponent implements OnInit {
             break
 
           case GridMode.JOIN:
+            console.log('linkSwitch')
             this.joinsService.linkSwitch(location)
             break
           /*          case GridMode.MULTICREATE:
@@ -216,10 +217,6 @@ export class GridLayoutComponent implements OnInit {
 
   gridDrop(event: CdkDragDrop<any, any>) {
     this.updateService.gridDrop(event)
-  }
-
-  ngOnDestroy(): void {
-    throw new Error('Method not implemented.')
   }
 
   ngOnInit(): void {

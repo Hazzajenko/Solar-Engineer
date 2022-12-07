@@ -1,5 +1,9 @@
 <!--<ng-template *ngrxLet="project$ | async as project">-->
 <mat-toolbar class="grid-toolbar-container">
+  <div>
+  Selected String:
+    {{(selectedStringId$ | async) ? (selectedStringId$ | async) : 'undefined'}}
+  </div>
   <button
     (click)="viewStrings()"
     aria-label="Example icon-button with menu icon"

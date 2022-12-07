@@ -66,8 +66,9 @@ export class GridJoinService extends GridService {
     switch (blockToJoin.model) {
       case UnitModel.PANEL:
         console.log('addPanelToJoin')
-        return this.addPanelToJoin(location, project, blocks)
+        // return this.addPanelToJoin(location, project, blocks)
       // return this.addPanelToJoinV2(location, project, blocks)
+        break
 
       case UnitModel.CABLE:
         break
@@ -119,7 +120,7 @@ export class GridJoinService extends GridService {
     project: ProjectModel,
     blocks: BlockModel[],
   ) {
-    let panel: PanelModel | undefined
+/*    let panel: PanelModel | undefined
     let panels: PanelModel[] | undefined
     let blockToJoin: BlockModel | undefined
     let panelToJoin: PanelModel | undefined
@@ -149,9 +150,9 @@ export class GridJoinService extends GridService {
       //       break
       //   }
       // }
-    })
-    console.log('blockToJoin', blockToJoin)
-
+    })*/
+    // console.log('blockToJoin', blockToJoin)
+/*
     if (blockToJoin) {
       switch (blockToJoin?.model) {
         case UnitModel.PANEL:
@@ -171,7 +172,7 @@ export class GridJoinService extends GridService {
         }
         // this.store.dispatch(JoinsStateActions.addToBlockJoin({ block }))
       }
-    }
+    }*/
   }
 
   addPanelToJoinV2(
@@ -179,7 +180,7 @@ export class GridJoinService extends GridService {
     panel: PanelModel,
     joinsState?: LinksState,
   ) {
-    if (joinsState?.typeToLink) {
+    /*if (joinsState?.typeToLink) {
       switch (joinsState.typeToLink) {
         case UnitModel.PANEL:
           if (joinsState.panelToLink) {
@@ -196,7 +197,7 @@ export class GridJoinService extends GridService {
       if (panel) {
         this.store.dispatch(LinksStateActions.addToLinkPanel({ panel }))
       }
-    }
+    }*/
   }
 
   joinPanelToPanelV2(
@@ -204,7 +205,7 @@ export class GridJoinService extends GridService {
     panel?: PanelModel,
     panelToJoin?: PanelModel,
   ) {
-    if (!panel) return
+/*    if (!panel) return
 
     if (panelToJoin && panel) {
       const panelJoinRequest: LinkModel = {
@@ -227,7 +228,7 @@ export class GridJoinService extends GridService {
       this.panelsEntity.update(updatePanel)
     }
 
-    this.store.dispatch(LinksStateActions.addToLinkPanel({ panel }))
+    this.store.dispatch(LinksStateActions.addToLinkPanel({ panel }))*/
   }
 
   joinPanelToPanel(
@@ -316,7 +317,7 @@ export class GridJoinService extends GridService {
     panel?: PanelModel,
     dpToJoin?: DisconnectionPointModel,
   ) {
-    if (!panel) return
+/*    if (!panel) return
 
     if (dpToJoin && panel) {
       const update: Partial<DisconnectionPointModel> = {
@@ -340,7 +341,7 @@ export class GridJoinService extends GridService {
       this.panelJoinsEntity.add(panelJoinRequest)
     }
 
-    this.store.dispatch(LinksStateActions.addToLinkPanel({ panel }))
+    this.store.dispatch(LinksStateActions.addToLinkPanel({ panel }))*/
   }
 
   joinDpToPanelV2(
