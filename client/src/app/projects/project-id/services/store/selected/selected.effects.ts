@@ -42,6 +42,21 @@ export class SelectedEffects {
       this.actions$.pipe(
         ofType(SelectedStateActions.selectPanel),
         switchMap((action) =>
+/*            this.panelsEntity.entities$.pipe(
+              map((panels) => {
+                const panel = panels.find(p => p.id === action.panelId)
+                if (panel) {
+                  const panelLink: PanelLinksToModel = {
+                    selectedPositiveLinkTo: panel.positive_to_id,
+                    selectedNegativeLinkTo: panel.negative_to_id,
+                  }
+                  this.store.dispatch(
+                    SelectedStateActions.setSelectedPanelLinks({ panelLink }),
+                  )
+                }
+
+              }),
+            ),*/
           this.panelJoinsEntity.entities$.pipe(
             map((res) => {
               const panelLink: PanelLinksToModel = getSelectedLinks(

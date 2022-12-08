@@ -34,7 +34,7 @@ import {
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
 import { SelectedStateActions } from '../../../services/store/selected/selected.actions'
 import { GridStateActions } from '../../../services/store/grid/grid.actions'
-import { LinksService } from '../../../services/links.service'
+import { LinksService } from '../../../services/links/links.service'
 import { LoggerService } from '../../../../../services/logger.service'
 
 @Component({
@@ -115,7 +115,7 @@ export class BlockDisconnectionPointComponent implements OnInit {
     firstValueFrom(this.store.select(selectGridMode))
       .then((gridMode) => {
         switch (gridMode) {
-          case GridMode.JOIN:
+          case GridMode.LINK:
             firstValueFrom(this.store.select(selectLinksState)).then((joinsState) => {
               this.joinsService.addDpToLink(disconnectionPoint, joinsState)
             })

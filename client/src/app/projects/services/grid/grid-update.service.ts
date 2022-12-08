@@ -12,7 +12,7 @@ import { CablesEntityService } from '../../project-id/services/ngrx-data/cables-
 import { InvertersEntityService } from '../../project-id/services/ngrx-data/inverters-entity/inverters-entity.service'
 import { JoinsEntityService } from '../../project-id/services/ngrx-data/joins-entity/joins-entity.service'
 import { Guid } from 'guid-typescript'
-import { LinksService } from '../../project-id/services/links.service'
+import { LinksService } from '../../project-id/services/links/links.service'
 import { HttpClient } from '@angular/common/http'
 import { GridHelpers } from './grid.helpers'
 import { LoggerService } from '../../../services/logger.service'

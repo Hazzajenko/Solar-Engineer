@@ -2,7 +2,7 @@ export enum GridMode {
   UNDEFINED,
   CREATE,
   DELETE,
-  JOIN,
+  LINK,
   SELECT,
   MULTICREATE,
 }

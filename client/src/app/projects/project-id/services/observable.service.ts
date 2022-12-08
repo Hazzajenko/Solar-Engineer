@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core'
 import { map } from 'rxjs/operators'
-import { Observable } from 'rxjs'
+import { firstValueFrom, Observable } from 'rxjs'
 import { UnitModel } from '../../models/unit.model'
 import { PanelsEntityService } from './ngrx-data/panels-entity/panels-entity.service'
 import { Store } from '@ngrx/store'
@@ -26,6 +26,18 @@ export class ObservableService {
       default:
         return this.panelsEntity.entities$
     }
+  }
+
+
+
+  getItemByLocation(model: UnitModel, location: string) {
+    return firstValueFrom(
+      this.modelSwitch(model).pipe(
+        map((items) =>
+          items.find((item) => item.location === location),
+        ),
+      ),
+    )
   }
 
   getItemFromIncludedIdArray(model: UnitModel, array: string[]) {

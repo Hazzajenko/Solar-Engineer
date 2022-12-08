@@ -27,7 +27,7 @@ import { DisconnectionPointsEntityService } from './ngrx-data/disconnection-poin
 import { InvertersEntityService } from './ngrx-data/inverters-entity/inverters-entity.service'
 import { TrayModel } from '../../models/tray.model'
 import { TraysEntityService } from './ngrx-data/trays-entity/trays-entity.service'
-import { selectSelectedUnitAndIds } from './store/selected/selected.selectors'
+import { selectSelectedStringId, selectSelectedUnitAndIds } from './store/selected/selected.selectors'
 import { RailModel } from '../../models/rail.model'
 import { RailsEntityService } from './ngrx-data/rails-entity/rails-entity.service'
 import { BlocksEntityService } from './ngrx-data/blocks-entity/blocks-entity.service'
@@ -200,21 +200,12 @@ export class CreateService {
   }
 
   createDisconnectionPointForGrid(location: string) {
-    firstValueFrom(this.store.select(selectCurrentProjectId)).then((projectId) => {
-      const stringRequest: StringModel = {
-        id: Guid.create().toString(),
-        name: 'string',
-        is_in_parallel: false,
-        project_id: projectId,
-        color: 'black',
-        model: UnitModel.STRING,
-      }
-
-      lastValueFrom(this.stringsEntity.add(stringRequest)).then((res) => {
+    firstValueFrom(this.store.select(selectSelectedStringId)).then((stringId) => {
+      if (stringId) {
         const disconnectionPointModel: DisconnectionPointModel = {
           id: Guid.create().toString(),
-          project_id: projectId,
-          string_id: res.id,
+          project_id: 3,
+          string_id: stringId,
           disconnection_type: DisconnectionPointType.MC4,
           positive_id: 'undefined',
           negative_id: 'undefined',
@@ -224,7 +215,9 @@ export class CreateService {
         }
 
         this.dp.add(disconnectionPointModel)
-      })
+      } else {
+        console.error("a string needs to be selected to create a disconnection point")
+      }
     })
   }
 

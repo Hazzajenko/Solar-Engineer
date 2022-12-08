@@ -11,6 +11,8 @@ export class BlockModel {
   project_id?: number
   model: UnitModel
   inside_blocks?: ChildBlockModel[]
+  x?: number
+  y?: number
 
   constructor(
     id: string,

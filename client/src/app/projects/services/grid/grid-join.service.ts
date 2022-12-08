@@ -11,7 +11,7 @@ import { JoinsEntityService } from '../../project-id/services/ngrx-data/joins-en
 import { UnitModel } from '../../models/unit.model'
 import { Store } from '@ngrx/store'
 import { AppState } from '../../../store/app.state'
-import { LinksService } from '../../project-id/services/links.service'
+import { LinksService } from '../../project-id/services/links/links.service'
 import { LoggerService } from '../../../services/logger.service'
 import { LinksEntityService } from '../../project-id/services/ngrx-data/links-entity/links-entity.service'
 import { LinkModel } from '../../models/link.model'

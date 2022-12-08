@@ -2,8 +2,10 @@ import { SelectedState } from '../../services/store/selected/selected.reducer'
 import { ProjectModel } from '../../../models/project.model'
 import { LinksState } from '../../services/store/links/links.reducer'
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   Input,
   ViewChild,
 } from '@angular/core'
@@ -34,6 +36,7 @@ import { LetModule } from '@ngrx/component'
 import { PanelLinksToModel } from '../../../models/panel-links-to.model'
 import { BlockTrayComponent } from './block-tray/block-tray.component'
 import { BlockRailComponent } from './block-rail/block-rail.component'
+import { BlocksStateActions } from '../../services/store/blocks/blocks.actions'
 
 @Component({
   selector: 'app-block-switch',
@@ -54,7 +57,7 @@ import { BlockRailComponent } from './block-rail/block-rail.component'
   styleUrls: ['./block-switch.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BlockSwitchComponent {
+export class BlockSwitchComponent implements AfterViewInit {
   @Input() project!: ProjectModel
   @Input() gridMode!: GridMode
   @Input() block?: BlockModel
@@ -86,7 +89,31 @@ export class BlockSwitchComponent {
     private store: Store<AppState>,
     public gridDelete: GridDeleteService,
     private logger: LoggerService,
+    private elRef: ElementRef,
   ) {}
+
+  ngAfterViewInit() {
+/*    console.log(this.elRef.nativeElement.offsetLeft, this.elRef.nativeElement.offsetTop)
+    let offsetLeft = 0
+    let offsetTop = 0
+
+    let el = this.elRef.nativeElement
+
+    while (el) {
+      offsetLeft += el.offsetLeft
+      offsetTop += el.offsetTop
+      el = el.parentElement
+    }
+    console.log(offsetTop, offsetLeft)
+    const block: BlockModel = {
+      id: this.block?.id!,
+      location: this.block?.location!,
+      model: this.block?.model!,
+      x: el!.offsetLeft,
+      y: el!.offsetTop,
+    }
+    this.store.dispatch(BlocksStateActions.updateBlockForGrid({ block }))*/
+  }
 
   // getPanelByLocation(location: string): PanelModel | undefined {
   //   if (!this.panels) {

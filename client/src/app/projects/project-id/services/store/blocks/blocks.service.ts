@@ -20,14 +20,14 @@ export class BlocksService {
     this.blocks$ = this.store.select(selectBlocksByProjectIdRouteParams)
   }
 
-  public getBlocks() {
-    /*    if (!this.blocks$) {
-          this.blocks$ = this.store
-            .select(selectBlocksByProjectIdRouteParams)
-            .pipe(shareReplay({ bufferSize: 1, refCount: true })) as Observable<BlockModel[]>
-        }
+  getBlockByLocation(location: string) {
+    return firstValueFrom(
+      this.blocks$.pipe(map((blocks) => blocks.find((block) => block.location === location))),
+    )
+  }
 
-        return this.blocks$*/
+  getBlockByLocationAsync(location: string) {
+    return this.blocks$.pipe(map((blocks) => blocks.find((block) => block.location === location)))
   }
 
   getBlocksFromIncludedArray(blocksInBox: string[]) {

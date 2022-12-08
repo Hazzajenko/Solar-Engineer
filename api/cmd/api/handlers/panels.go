@@ -318,10 +318,12 @@ func (h *Handlers) PutPanel(w http.ResponseWriter, r *http.Request) {
 	fmt.Print(input)
 
 	update := &boiler.Panel{
-		ID:       input.ID,
-		StringID: input.Changes.StringID,
-		Location: input.Changes.Location,
-		Color:    input.Changes.Color,
+		ID:           input.ID,
+		StringID:     input.Changes.StringID,
+		Location:     input.Changes.Location,
+		Color:        input.Changes.Color,
+		PositiveToID: input.Changes.PositiveToID,
+		NegativeToID: input.Changes.NegativeToID,
 
 		Rotation: input.Changes.Rotation,
 		/*		HasChildBlock:   input.Changes.HasChildBlock,

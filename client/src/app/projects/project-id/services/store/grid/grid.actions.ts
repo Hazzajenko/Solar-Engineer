@@ -14,7 +14,7 @@ export const GridStateActions = createActionGroup({
     'Select Create Mode': props<{ create: UnitModel }>(),
     'Select GridMode Create': props<{ mode: GridMode.CREATE }>(),
     'Select GridMode Delete': props<{ mode: GridMode.DELETE }>(),
-    'Select GridMode Join': props<{ mode: GridMode.JOIN }>(),
+    'Select GridMode Join': props<{ mode: GridMode.LINK }>(),
     'Change GridMode': props<{ mode: GridMode }>(),
     'Clear Grid State': emptyProps(),
   },

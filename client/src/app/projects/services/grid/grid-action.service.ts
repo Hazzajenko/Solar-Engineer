@@ -11,7 +11,7 @@ import { CablesEntityService } from '../../project-id/services/ngrx-data/cables-
 import { InvertersEntityService } from '../../project-id/services/ngrx-data/inverters-entity/inverters-entity.service'
 import { JoinsEntityService } from '../../project-id/services/ngrx-data/joins-entity/joins-entity.service'
 import { GridJoinService } from './grid-join.service'
-import { LinksService } from '../../project-id/services/links.service'
+import { LinksService } from '../../project-id/services/links/links.service'
 import { LoggerService } from '../../../services/logger.service'
 
 @Injectable({
@@ -60,7 +60,7 @@ export class GridActionService extends GridService {
         this.remove.deleteSwitch(location, project, blocks!)
         break
 
-      case GridMode.JOIN:
+      case GridMode.LINK:
         // this.join.joinSwitch(location, project, blocks!)
         break
       // return this.join.addPanelToJoin(location, panelsToJoin, project, blocks)

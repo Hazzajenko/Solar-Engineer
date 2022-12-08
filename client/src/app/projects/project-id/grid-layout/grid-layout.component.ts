@@ -69,7 +69,7 @@ import { LinkModel } from '../../models/link.model'
 import { selectLinksState } from 'src/app/projects/project-id/services/store/links/links.selectors'
 import { CreateService } from '../services/create.service'
 import { DeleteService } from '../services/delete.service'
-import { LinksService } from '../services/links.service'
+import { LinksService } from '../services/links/links.service'
 import { UpdateService } from '../services/update.service'
 import { MultiCreateService } from '../services/multi/multi-create.service'
 import { selectMultiMode } from '../services/store/multi-create/multi.selectors'
@@ -200,7 +200,7 @@ export class GridLayoutComponent implements OnInit {
             this.deleteService.deleteSwitch(location)
             break
 
-          case GridMode.JOIN:
+          case GridMode.LINK:
             console.log('linkSwitch')
             this.joinsService.linkSwitch(location)
             break

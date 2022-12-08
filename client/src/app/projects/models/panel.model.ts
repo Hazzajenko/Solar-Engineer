@@ -18,8 +18,8 @@ export class PanelModel {
   selected?: boolean
   type?: TypeModel
   name?: string
-  positive_to?: string
-  negative_to?: string
+  positive_to_id?: string
+  negative_to_id?: string
   // location: string
   current_at_maximum_power?: number
   short_circuit_current?: number

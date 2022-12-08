@@ -41,7 +41,7 @@ import { UnitModel } from '../../../../models/unit.model'
 import { LoggerService } from '../../../../../services/logger.service'
 import { GridStateActions } from '../../../services/store/grid/grid.actions'
 import { SelectedStateActions } from '../../../services/store/selected/selected.actions'
-import { LinksService } from 'src/app/projects/project-id/services/links.service'
+import { LinksService } from 'src/app/projects/project-id/services/links/links.service'
 import {
   combineLatestWith,
   distinctUntilChanged,
@@ -135,18 +135,7 @@ export class BlockPanelComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngAfterViewInit() {
-    console.log(this.elRef.nativeElement.offsetLeft, this.elRef.nativeElement.offsetTop)
-    let offsetLeft = 0;
-    let offsetTop = 0;
 
-    let el = this.elRef.nativeElement;
-
-    while(el){
-      offsetLeft += el.offsetLeft;
-      offsetTop += el.offsetTop;
-      el = el.parentElement;
-    }
-    console.log(offsetTop , offsetLeft)
   }
 
   ngOnInit() {
@@ -220,7 +209,7 @@ export class BlockPanelComponent implements OnInit, AfterViewInit {
     firstValueFrom(this.store.select(selectGridMode))
       .then((gridMode) => {
         switch (gridMode) {
-          case GridMode.JOIN:
+          case GridMode.LINK:
             /*            firstValueFrom(this.store.select(selectLinksState)).then((joinsState) => {
               this.joinsService.addPanelToLink(panel, joinsState)
             })*/

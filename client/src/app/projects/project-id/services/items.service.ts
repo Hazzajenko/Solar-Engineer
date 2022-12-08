@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core'
-import { combineLatestWith, first, firstValueFrom } from 'rxjs'
+import { combineLatestWith, first, firstValueFrom, Observable } from 'rxjs'
 import { UnitModel } from '../../models/unit.model'
 import { PanelsEntityService } from './ngrx-data/panels-entity/panels-entity.service'
 import { Store } from '@ngrx/store'
@@ -9,6 +9,7 @@ import { PanelModel } from '../../models/panel.model'
 import { selectCurrentProjectId } from './store/projects/projects.selectors'
 import { selectSelectedStringId } from './store/selected/selected.selectors'
 import { RailModel } from '../../models/rail.model'
+import { map } from 'rxjs/operators'
 
 @Injectable({
   providedIn: 'root',
@@ -19,6 +20,26 @@ export class ItemsService {
     private railsEntity: RailsEntityService,
     private store: Store<AppState>,
   ) {}
+
+  modelSwitch(model: UnitModel): Observable<any[]> {
+    switch (model) {
+      case UnitModel.PANEL:
+        return this.panelsEntity.entities$
+      case UnitModel.RAIL:
+        return this.railsEntity.entities$
+      default:
+        return this.panelsEntity.entities$
+    }
+  }
+  getItemByLocation(model: UnitModel, location: string) {
+    return firstValueFrom(
+      this.modelSwitch(model).pipe(
+        map((items) =>
+          items.find((item) => item.location === location),
+        ),
+      ),
+    )
+  }
 
   addManyItems(model: UnitModel, locations: string[]) {
     firstValueFrom(

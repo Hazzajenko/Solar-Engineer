@@ -13,7 +13,7 @@ import { PanelsEntityService } from '../../project-id/services/ngrx-data/panels-
 import { CablesEntityService } from '../../project-id/services/ngrx-data/cables-entity/cables-entity.service'
 import { InvertersEntityService } from '../../project-id/services/ngrx-data/inverters-entity/inverters-entity.service'
 import { JoinsEntityService } from '../../project-id/services/ngrx-data/joins-entity/joins-entity.service'
-import { LinksService } from '../../project-id/services/links.service'
+import { LinksService } from '../../project-id/services/links/links.service'
 import { GridHelpers } from './grid.helpers'
 import { GridUpdateService } from './grid-update.service'
 import { LoggerService } from '../../../services/logger.service'

@@ -113,7 +113,7 @@ export class BlockCableComponent implements OnInit {
     firstValueFrom(this.store.select(selectGridMode))
       .then((gridMode) => {
         switch (gridMode) {
-          case GridMode.JOIN:
+          case GridMode.LINK:
             // return this.joinsService.addDpToJoin(disconnectionPoint)
             break
 

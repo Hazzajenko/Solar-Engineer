@@ -2,7 +2,7 @@ import { AppState } from '../../../../../store/app.state'
 import { Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
 import { LoggerService } from '../../../../../services/logger.service'
-import { LinksService } from '../../links.service'
+import { LinksService } from '../../links/links.service'
 import { DisconnectionPointModel } from '../../../../models/disconnection-point.model'
 import { GridMode } from '../../store/grid/grid-mode.model'
 import { SelectedStateActions } from '../../store/selected/selected.actions'
@@ -30,7 +30,7 @@ export class DisconnectionPointsActionService {
     lastValueFrom(this.store.select(selectGridMode))
       .then((gridMode) => {
         switch (gridMode) {
-          case GridMode.JOIN:
+          case GridMode.LINK:
             this.joinsService.addDpToLink(disconnectionPoint)
 
             break

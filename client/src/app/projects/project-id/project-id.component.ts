@@ -23,6 +23,8 @@ import { LetModule } from '@ngrx/component'
 import { selectLinksState } from './services/store/links/links.selectors'
 import { UnitModel } from '../models/unit.model'
 import { ActivatedRoute, Router } from '@angular/router'
+import { GridOverlayComponent } from './grid-layout/grid-overlay/grid-overlay.component'
+import { selectBlocksByProjectIdRouteParams } from './services/store/blocks/blocks.selectors'
 
 @Component({
   selector: 'app-project-id',
@@ -40,6 +42,7 @@ import { ActivatedRoute, Router } from '@angular/router'
     DragDropModule,
     MatButtonModule,
     LetModule,
+    GridOverlayComponent,
   ],
 })
 export class ProjectIdComponent implements OnInit, AfterViewInit {
@@ -59,12 +62,14 @@ export class ProjectIdComponent implements OnInit, AfterViewInit {
 
   private ctx!: CanvasRenderingContext2D
 
-  constructor(private store: Store<AppState>, private projects: ProjectsService,
-              private router: Router,
-              private route: ActivatedRoute) {
-  }
+  constructor(
+    private store: Store<AppState>,
+    private projects: ProjectsService,
+    private router: Router,
+    private route: ActivatedRoute,
+  ) {}
 
-/*
+  /*
   resetPage() {
     this.router.routeReuseStrategy.shouldReuseRoute = () => false
     this.router.navigate(['./'], {
@@ -84,7 +89,7 @@ export class ProjectIdComponent implements OnInit, AfterViewInit {
     } else {
       this.ctx.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height)
     }
-/*    if (isLinking) {
+    /*    if (isLinking) {
       this.onLinking(event)
     } else {
       this.ctx.closePath()
@@ -162,10 +167,14 @@ export class ProjectIdComponent implements OnInit, AfterViewInit {
 
     this.ctx = this.canvas.nativeElement.getContext('2d')!
 
-    this.ctx.beginPath()
-    this.ctx.moveTo(this.startX, this.startY)
-    this.ctx.lineTo(922, 215)
-    this.ctx.stroke()
+    firstValueFrom(this.store.select(selectBlocksByProjectIdRouteParams).pipe(
+      map(blocks => blocks.find(b => b.id === '1f1cdc069343b93b5ec0db0ef44d'))
+    )).then(res => {
+      this.ctx.beginPath()
+      this.ctx.moveTo(this.startX, this.startY)
+      this.ctx.lineTo(res!.x!, res!.y!)
+      this.ctx.stroke()
+    })
 
   }
 
