@@ -1,4 +1,5 @@
-﻿using dotnetapi.Data;
+﻿using dotnetapi.Contracts.Requests;
+using dotnetapi.Data;
 using Microsoft.EntityFrameworkCore;
 using String = dotnetapi.Models.Entities.String;
 
@@ -17,6 +18,7 @@ public class StringsRepository : IStringsRepository
     {
         return await _context.Strings
             .Where(x => x.Project.Id == projectId)
+            .Include(x => x.Project)
             .ToListAsync();
     }
 
@@ -32,20 +34,20 @@ public class StringsRepository : IStringsRepository
         return await _context.Strings.FindAsync(stringId);
     }
 
-    public async Task<bool> UpdateStringAsync(String request)
+    public async Task<bool> UpdateStringAsync(UpdateStringRequest request)
     {
         var stringToUpdate = await _context.Strings
             .Where(x => x.Id == request.Id)
             .SingleOrDefaultAsync();
 
         if (stringToUpdate is null) return false;
+        if (request.Name is not null) stringToUpdate.Name = request.Name;
 
-        stringToUpdate.Name = request.Name;
         var save = await _context.SaveChangesAsync();
         return save > 0;
     }
 
-    public async Task<bool> DeleteAsync(String request)
+    public async Task<bool> DeleteStringAsync(String request)
     {
         var stringToDelete = await _context.Strings
             .Where(x => x.Id == request.Id)

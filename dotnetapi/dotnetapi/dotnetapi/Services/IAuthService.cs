@@ -2,7 +2,7 @@
 
 namespace dotnetapi.Services;
 
-public interface IUsersService
+public interface IAuthService
 {
     // Task<string> CreateToken(AppUser user);
     Task<LoginResponse> HandleSignIn(AppUser request);

@@ -3,7 +3,7 @@ using dotnetapi.Models.Entities;
 
 namespace dotnetapi.Services;
 
-public interface ILinksService
+public interface IPanelLinksService
 {
     Task<PanelLinkDto> CreatePanelLinkAsync(PanelLink request);
     Task<PanelLinkDto?> GetPanelLinkByIdAsync(string panelLinkId);

@@ -11,9 +11,9 @@ namespace dotnetapi.Controllers;
 
 [Route("projects/{projectId:int}")]
 [ApiController]
-public class LinksController : ControllerBase
+public class PanelLinksController : ControllerBase
 {
-    private readonly ILogger<LinksController> _logger;
+    private readonly ILogger<PanelLinksController> _logger;
     private readonly IPanelLinksService _panelLinksService;
 
     private readonly IProjectsService _projectsService;
@@ -21,8 +21,8 @@ public class LinksController : ControllerBase
     private readonly UserManager<AppUser> _userManager;
 
 
-    public LinksController(
-        ILogger<LinksController> logger,
+    public PanelLinksController(
+        ILogger<PanelLinksController> logger,
         UserManager<AppUser> userManager,
         IPanelLinksService panelLinksService,
         IProjectsService projectsService
@@ -47,14 +47,16 @@ public class LinksController : ControllerBase
             return Unauthorized("User is invalid");
         }
 
+        /*
         var project = _projectsService.GetProjectByIdAsync(projectId);
         if (project.Result == null)
         {
             _logger.LogError("Bad request, Project from route is invalid");
             return BadRequest("Bad request, Project from route is invalid");
-        }
+        }*/
 
         var panelLinkEntity = request.ToEntity();
+        panelLinkEntity.ProjectId = projectId;
 
         var panelLinkDto = await _panelLinksService.CreatePanelLinkAsync(panelLinkEntity);
 

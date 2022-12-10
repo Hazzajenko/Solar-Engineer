@@ -9,13 +9,15 @@ public static class ApplicationServiceExtensions
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
     {
-        services.AddScoped<IUsersService, UsersService>();
+        services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IProjectsService, ProjectsService>();
         services.AddScoped<IProjectsRepository, ProjectsRepository>();
         services.AddScoped<IStringsService, StringsService>();
         services.AddScoped<IStringsRepository, StringsRepository>();
         services.AddScoped<IPanelsService, PanelsService>();
         services.AddScoped<IPanelsRepository, PanelsRepository>();
+        services.AddScoped<IPanelLinksService, PanelLinksService>();
+        services.AddScoped<IPanelLinksRepository, PanelLinksRepository>();
 
         services.AddDbContext<DataContext>(options =>
         {

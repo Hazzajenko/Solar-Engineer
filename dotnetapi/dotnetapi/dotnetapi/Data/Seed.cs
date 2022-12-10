@@ -5,29 +5,34 @@ using Microsoft.EntityFrameworkCore;
 
 namespace dotnetapi.Data;
 
-public abstract class Seed {
+public abstract class Seed
+{
     public static async Task SeedUsers(UserManager<AppUser> userManager,
-        RoleManager<AppRole> roleManager) {
+        RoleManager<AppRole> roleManager)
+    {
         if (await userManager.Users.AnyAsync()) return;
 
         var userData = await File.ReadAllTextAsync("Data/user-data.json");
         var users = JsonSerializer.Deserialize<List<AppUser>>(userData);
         if (users == null) return;
 
-        var roles = new List<AppRole> {
+        var roles = new List<AppRole>
+        {
             new() { Name = "User" },
-            new() { Name = "Admin" },
+            new() { Name = "Admin" }
         };
 
         foreach (var role in roles) await roleManager.CreateAsync(role);
 
-        foreach (var user in users) {
-            user.UserName = user.UserName!.ToLower();
+        foreach (var user in users)
+        {
+            user.UserName = user.UserName?.ToLower();
             await userManager.CreateAsync(user, "Pa$$w0rd");
-            await userManager.AddToRoleAsync(user, "Member");
+            await userManager.AddToRoleAsync(user, "User");
         }
 
-        var admin = new AppUser {
+        var admin = new AppUser
+        {
             UserName = "admin"
         };
 

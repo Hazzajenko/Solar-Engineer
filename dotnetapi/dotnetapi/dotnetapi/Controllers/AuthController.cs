@@ -41,29 +41,29 @@ namespace dotnetapi.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public class AuthController : ControllerBase
     {
-        private readonly ILogger<UsersController> _logger;
+        private readonly IAuthService _authService;
+        private readonly ILogger<AuthController> _logger;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly UserManager<AppUser> _userManager;
-        private readonly IUsersService _usersService;
 
 
-        public UsersController(
-            ILogger<UsersController> logger,
+        public AuthController(
+            ILogger<AuthController> logger,
             UserManager<AppUser> userManager,
             SignInManager<AppUser> signInManager,
-            IUsersService usersService
+            IAuthService authService
         )
         {
             _logger = logger;
             _userManager = userManager;
             _signInManager = signInManager;
-            _usersService = usersService;
+            _authService = authService;
         }
 
 
-        [HttpPost("signin")]
+        [HttpPost("login")]
         [Authorize]
         [AllowAnonymous]
         public async Task<IActionResult> Login(SigninRequest request)
@@ -86,7 +86,7 @@ namespace dotnetapi.Controllers
                 return Unauthorized();
             }
 
-            var signInResult = await _usersService.HandleSignIn(user);
+            var signInResult = await _authService.HandleSignIn(user);
             if (signInResult.Token.IsNullOrEmpty())
             {
                 _logger.LogError("Token Error");
@@ -128,7 +128,7 @@ namespace dotnetapi.Controllers
             }
 
             _logger.LogInformation("{Username} has signed up", appUser.UserName);
-            var signUpResult = await _usersService.HandleSignIn(appUser);
+            var signUpResult = await _authService.HandleSignIn(appUser);
             if (signUpResult.Token.IsNullOrEmpty())
             {
                 _logger.LogError("Token Error");

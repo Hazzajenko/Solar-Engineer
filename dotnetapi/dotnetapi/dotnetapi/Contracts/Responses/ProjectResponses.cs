@@ -2,12 +2,12 @@
 
 namespace dotnetapi.Contracts.Responses;
 
-public class OneStringResponse
+public class OneProjectResponse
 {
-    public StringDto String { get; set; } = default!;
+    public ProjectDto Project { get; set; } = default!;
 }
 
-public class ManyStringsResponse
+public class ManyProjectsResponse
 {
-    public IEnumerable<StringDto> Strings { get; init; } = Enumerable.Empty<StringDto>();
+    public IEnumerable<ProjectDto> Projects { get; init; } = Enumerable.Empty<ProjectDto>();
 }

@@ -313,7 +313,6 @@ namespace dotnetapi.Data.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("NegativeToId")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<double>("OpenCircuitVoltage")
@@ -323,7 +322,6 @@ namespace dotnetapi.Data.Migrations
                         .HasColumnType("double precision");
 
                     b.Property<string>("PositiveToId")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("ProjectId")
@@ -632,11 +630,9 @@ namespace dotnetapi.Data.Migrations
 
             modelBuilder.Entity("dotnetapi.Models.Entities.Panel", b =>
                 {
-                    b.Navigation("NegativeTo")
-                        .IsRequired();
+                    b.Navigation("NegativeTo");
 
-                    b.Navigation("PositiveTo")
-                        .IsRequired();
+                    b.Navigation("PositiveTo");
                 });
 
             modelBuilder.Entity("dotnetapi.Models.Entities.Project", b =>

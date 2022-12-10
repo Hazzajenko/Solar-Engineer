@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "fS4XpdNbK7g8W5gDpIHYMEBO8ZUcN4bLXbG9Ub168qpiFCtYuUhNt+Lp0oAEfipaCaEa/GJOmUUreqcJiqLMzw==",
+  "dgSpecHash": "fYTRz7sqSwoCj4YPSCVSq4JJK4fb3JJ3HmALPuf+a1IEGekP2ss9uOEwN8H4RXbiTknnn8F/ZSuIPCsxYxSsRg==",
   "success": true,
   "projectFilePath": "C:\\Users\\jenki\\source\\app\\solar-engineer\\dotnetapi\\dotnetapi\\dotnetapi\\dotnetapi.csproj",
   "expectedPackageFiles": [
@@ -50,6 +50,7 @@
     "C:\\Users\\jenki\\.nuget\\packages\\microsoft.identitymodel.protocols\\6.15.1\\microsoft.identitymodel.protocols.6.15.1.nupkg.sha512",
     "C:\\Users\\jenki\\.nuget\\packages\\microsoft.identitymodel.protocols.openidconnect\\6.15.1\\microsoft.identitymodel.protocols.openidconnect.6.15.1.nupkg.sha512",
     "C:\\Users\\jenki\\.nuget\\packages\\microsoft.identitymodel.tokens\\6.25.1\\microsoft.identitymodel.tokens.6.25.1.nupkg.sha512",
+    "C:\\Users\\jenki\\.nuget\\packages\\microsoft.net.build.containers\\0.2.7\\microsoft.net.build.containers.0.2.7.nupkg.sha512",
     "C:\\Users\\jenki\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",
     "C:\\Users\\jenki\\.nuget\\packages\\microsoft.netcore.targets\\1.1.0\\microsoft.netcore.targets.1.1.0.nupkg.sha512",
     "C:\\Users\\jenki\\.nuget\\packages\\microsoft.openapi\\1.4.3\\microsoft.openapi.1.4.3.nupkg.sha512",

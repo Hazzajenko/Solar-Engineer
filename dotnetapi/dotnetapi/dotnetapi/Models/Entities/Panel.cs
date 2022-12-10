@@ -1,14 +1,15 @@
 ﻿namespace dotnetapi.Models.Entities;
 
-public class Panel : ProjectBaseEntity {
+public class Panel : ProjectBaseEntity
+{
     public DateTime CreatedAt { get; set; }
     public AppUser CreatedBy { get; set; } = default!;
     public String String { get; set; } = default!;
     public string StringId { get; set; } = default!;
-    public PanelLink PositiveTo { get; set; } = default!;
-    public PanelLink NegativeTo { get; set; } = default!;
-    public string PositiveToId { get; set; } = default!;
-    public string NegativeToId { get; set; } = default!;
+    public PanelLink? PositiveTo { get; set; }
+    public PanelLink? NegativeTo { get; set; }
+    public string? PositiveToId { get; set; }
+    public string? NegativeToId { get; set; }
     public string Name { get; set; } = default!;
     public string Location { get; set; } = default!;
     public int Rotation { get; set; }

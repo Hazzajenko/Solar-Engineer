@@ -75,6 +75,10 @@
               "target": "Package",
               "version": "[6.25.1, )"
             },
+            "Microsoft.NET.Build.Containers": {
+              "target": "Package",
+              "version": "[0.2.7, )"
+            },
             "Npgsql": {
               "target": "Package",
               "version": "[7.0.0, )"

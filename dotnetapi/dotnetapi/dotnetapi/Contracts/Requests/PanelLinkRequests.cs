@@ -10,7 +10,7 @@ public class CreatePanelLinkRequest
     [Required] public string NegativeToId { get; init; } = default!;
 }
 
-public class DeleteLinkRequest
+public class DeletePanelLinkRequest
 {
     [Required] public string Id { get; set; } = default!;
 }

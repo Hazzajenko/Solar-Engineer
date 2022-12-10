@@ -5,5 +5,11 @@ namespace dotnetapi.Services;
 
 public interface IProjectsService
 {
-    Task<ProjectDto> CreateProject(AppUserProject appUserProject, CancellationToken cancellationToken);
+    Task<ProjectDto> CreateProjectAsync(AppUserProject appUserProject);
+    Task<ProjectDto?> GetProjectByIdAsync(int projectId);
+
+    Task<IEnumerable<ProjectDto>> GetAllProjectsByUserIdAsync(int userId);
+
+    Task<bool> UpdateProjectAsync(Project request);
+    Task<bool> DeleteProjectAsync(int projectId);
 }

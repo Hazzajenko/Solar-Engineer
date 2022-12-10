@@ -1,17 +1,15 @@
-﻿
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using dotnetapi.Contracts.Responses;
 using dotnetapi.Mapping;
 using dotnetapi.Models.Dtos;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using dotnetapi.Models.Entities;
 using dotnetapi.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Mvc;
 
-
-public class CreateProjectRequest {
+public class CreateProjectRequest
+{
     [Required] public string Name { get; init; } = default!;
 }
 
@@ -20,11 +18,12 @@ namespace dotnetapi.Controllers
 {
     [Route("[controller]")]
     [ApiController]
+    [Authorize]
     public class ProjectsController : ControllerBase
     {
         private readonly ILogger<ProjectsController> _logger;
-        private readonly UserManager<AppUser> _userManager;
         private readonly IProjectsService _projectsService;
+        private readonly UserManager<AppUser> _userManager;
 
 
         public ProjectsController(
@@ -37,32 +36,110 @@ namespace dotnetapi.Controllers
             _userManager = userManager;
             _projectsService = projectsService;
         }
-        
+
 
         [HttpPost]
-        [Authorize]
-
-        public async Task<IActionResult> CreateProject(CreateProjectRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> CreateProject(CreateProjectRequest request)
         {
-            
-            var user = await _userManager.GetUserAsync(User);        
-            if (user == null) {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
                 _logger.LogError("Bad request, User is invalid");
                 return Unauthorized("User is invalid");
             }
-            
-            var appUserProject = user.ToAppUserProject();
 
+            var appUserProject = request.ToAppUserProject(user);
 
-            var project = request.ToEntity();
-            project.CreatedBy = user;
-            project.AppUserProjects = new List<AppUserProject> {
-                appUserProject
+            var projectDto = await _projectsService.CreateProjectAsync(appUserProject);
+            var result = new OneProjectResponse
+            {
+                Project = projectDto
             };
-            appUserProject.Project = project;
 
-           return Ok(await _projectsService.CreateProject(appUserProject, cancellationToken));
+            return Ok(result);
         }
-        
+
+        [HttpGet("{projectId:int}")]
+        public async Task<IActionResult> Get([FromRoute] int projectId)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                _logger.LogError("Bad request, User is invalid");
+                return Unauthorized("User is invalid");
+            }
+
+            var projectDto = await _projectsService.GetProjectByIdAsync(projectId);
+
+            if (projectDto is null) return NotFound();
+            var result = new OneProjectResponse
+            {
+                Project = projectDto
+            };
+
+            return Ok(result);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAll([FromRoute] int projectId)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                _logger.LogError("Bad request, User is invalid");
+                return Unauthorized("User is invalid");
+            }
+
+            var projectDtos = await _projectsService.GetAllProjectsByUserIdAsync(user.Id);
+
+            var result = new ManyProjectsResponse
+            {
+                Projects = projectDtos
+            };
+
+            return Ok(result);
+        }
+
+        [HttpPut("{projectId:int}")]
+        public async Task<IActionResult> Update([FromRoute] int projectId, [FromBody] ProjectDto request)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                _logger.LogError("Bad request, User is invalid");
+                return Unauthorized("User is invalid");
+            }
+
+            var existingProject = await _projectsService.GetProjectByIdAsync(request.Id);
+
+            if (existingProject is null) return NotFound();
+
+            var projectEntity = request.ToEntity();
+            var result = await _projectsService.UpdateProjectAsync(projectEntity);
+
+            if (!result) return BadRequest();
+
+            return Ok(request);
+        }
+
+        [HttpDelete("{projectId:int}")]
+        public async Task<IActionResult> Delete([FromRoute] int projectId)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                _logger.LogError("Bad request, User is invalid");
+                return Unauthorized("User is invalid");
+            }
+
+            var existingProject = await _projectsService.GetProjectByIdAsync(projectId);
+
+            if (existingProject is null) return NotFound();
+
+            var deleted = await _projectsService.DeleteProjectAsync(existingProject.Id);
+            if (!deleted) return NotFound();
+
+            return Ok();
+        }
     }
 }

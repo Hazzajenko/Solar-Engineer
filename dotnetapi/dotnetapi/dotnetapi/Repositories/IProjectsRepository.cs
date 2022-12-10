@@ -1,10 +1,14 @@
-﻿using dotnetapi.Models.Dtos;
-using dotnetapi.Models.Entities;
+﻿using dotnetapi.Models.Entities;
 
 namespace dotnetapi.Repositories;
 
 public interface IProjectsRepository
 {
-    Task<Project?> GetById(int projectId, CancellationToken cancellationToken);
-    Task<ProjectDto> CreateProject(AppUserProject request, CancellationToken cancellationToken);
+    Task<Project> CreateProjectAsync(AppUserProject request);
+    Task<Project?> GetProjectByIdAsync(int projectId);
+
+    Task<IEnumerable<Project>> GetAllProjectsByUserIdAsync(int userId);
+
+    Task<bool> UpdateProjectAsync(Project request);
+    Task<bool> DeleteProjectAsync(Project request);
 }

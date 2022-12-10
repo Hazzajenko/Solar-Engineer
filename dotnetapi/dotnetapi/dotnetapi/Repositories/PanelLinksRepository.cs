@@ -38,6 +38,8 @@ public class PanelLinksRepository : IPanelLinksRepository
             .Where(x => x.Id == panelLinkId)
             .Include(x => x.Project)
             .Include(x => x.String)
+            .Include(x => x.PositiveTo)
+            .Include(x => x.NegativeTo)
             .SingleOrDefaultAsync();
     }
 
@@ -47,6 +49,8 @@ public class PanelLinksRepository : IPanelLinksRepository
             .Where(x => x.Project.Id == projectId)
             .Include(x => x.Project)
             .Include(x => x.String)
+            .Include(x => x.PositiveTo)
+            .Include(x => x.NegativeTo)
             .ToListAsync();
     }
 }

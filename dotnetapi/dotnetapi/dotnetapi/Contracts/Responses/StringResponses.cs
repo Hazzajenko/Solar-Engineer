@@ -2,12 +2,12 @@
 
 namespace dotnetapi.Contracts.Responses;
 
-public class OnePanelResponse
+public class OneStringResponse
 {
-    public PanelDto Panel { get; set; } = default!;
+    public StringDto String { get; set; } = default!;
 }
 
-public class ManyPanelsResponse
+public class ManyStringsResponse
 {
-    public IEnumerable<PanelDto> Panels { get; init; } = Enumerable.Empty<PanelDto>();
+    public IEnumerable<StringDto> Strings { get; init; } = Enumerable.Empty<StringDto>();
 }

@@ -1,11 +1,10 @@
-﻿
-
-using dotnetapi.Models.Dtos;
+﻿using dotnetapi.Models.Dtos;
 using dotnetapi.Models.Entities;
 
 namespace dotnetapi.Mapping;
 
-public static class AppUserProjectMapper {
+public static class AppUserProjectMapper
+{
     /*public static AppUserProject ToAppUserProject(this CreateProjectRequest request) {
         return new AppUserProject {
             AppUser = request.AppUser,
@@ -19,12 +18,15 @@ public static class AppUserProjectMapper {
         };
     }*/
 
-    public static AppUserProjectDto ToDto(this AppUserProject request) {
-        return new AppUserProjectDto {
-            AppUser = new AppUserDto {
+    public static AppUserProjectDto ToDto(this AppUserProject request)
+    {
+        return new AppUserProjectDto
+        {
+            AppUser = new AppUserDto
+            {
                 Username = request.AppUser.UserName!,
                 FirstName = request.AppUser.FirstName,
-                LastName = request.AppUser.LastName
+                LastActive = request.AppUser.LastActive
             },
             Project = request.Project.ToDto(),
             JoinedAt = DateTime.Now,

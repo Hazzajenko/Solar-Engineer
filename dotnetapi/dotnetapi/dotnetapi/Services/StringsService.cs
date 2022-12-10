@@ -1,4 +1,5 @@
-﻿using dotnetapi.Mapping;
+﻿using dotnetapi.Contracts.Requests;
+using dotnetapi.Mapping;
 using dotnetapi.Models.Dtos;
 using dotnetapi.Models.Entities;
 using dotnetapi.Repositories;
@@ -10,49 +11,61 @@ namespace dotnetapi.Services;
 
 public class StringsService : IStringsService
 {
+    private readonly IProjectsRepository _projectsRepository;
     private readonly IStringsRepository _stringsRepository;
 
 
-    public StringsService(IStringsRepository stringsRepository)
+    public StringsService(IStringsRepository stringsRepository,
+        IProjectsRepository projectsRepository
+    )
     {
         _stringsRepository = stringsRepository;
+        _projectsRepository = projectsRepository;
     }
 
-    public async Task<StringDto> CreateStringAsync(String request, CancellationToken cancellationToken)
+    public async Task<StringDto> CreateStringAsync(String request, int projectId)
     {
-        var existingString = await _stringsRepository.GetStringByIdAsync(request.Id, cancellationToken);
+        var existingString = await _stringsRepository.GetStringByIdAsync(request.Id);
         if (existingString is not null)
         {
             var message = $"A project with id {request.Id} already exists";
             throw new ValidationException(message, GenerateValidationError(message));
         }
 
-        return await _stringsRepository.CreateStringAsync(request, cancellationToken);
+        var project = _projectsRepository.GetProjectByIdAsync(projectId);
+        if (project.Result == null)
+        {
+            var message = $"A project with id {request.Id} does not exist";
+            throw new ValidationException(message, GenerateValidationError(message));
+        }
+
+        request.Project = project.Result;
+
+        var result = await _stringsRepository.CreateStringAsync(request);
+        return result.ToDto();
     }
 
-    public async Task<StringDto?> GetStringByIdAsync(string id, CancellationToken cancellationToken)
+    public async Task<StringDto?> GetStringByIdAsync(string id)
     {
-        var stringEntity = await _stringsRepository.GetStringByIdAsync(id, cancellationToken);
+        var stringEntity = await _stringsRepository.GetStringByIdAsync(id);
         if (stringEntity is null)
         {
             var message = $"A string with id {id} does not exist";
             throw new ValidationException(message, GenerateValidationError(message));
         }
 
-        return stringEntity?.ToDto();
+        return stringEntity.ToDto();
     }
 
-    public async Task<IEnumerable<StringDto>> GetAllStringsByProjectIdAsync(int projectId,
-        CancellationToken cancellationToken)
+    public async Task<IEnumerable<StringDto>> GetAllStringsByProjectIdAsync(int projectId)
     {
-        var stringDtos = await _stringsRepository.GetAllStringsByProjectIdAsync(projectId, cancellationToken);
-        return stringDtos;
-        // return stringDtos.Select(x => x.T());
+        var stringDtos = await _stringsRepository.GetAllStringsByProjectIdAsync(projectId);
+        return stringDtos.Select(x => x.ToDto());
     }
 
-    public async Task<bool> UpdateStringAsync(String request, String changes, CancellationToken cancellationToken)
+    public async Task<bool> UpdateStringAsync(UpdateStringRequest request)
     {
-        var updateString = await _stringsRepository.UpdateStringAsync(request, changes, cancellationToken);
+        var updateString = await _stringsRepository.UpdateStringAsync(request);
         if (!updateString)
         {
             var message = $"Error updating string {request.Id}";
@@ -62,9 +75,16 @@ public class StringsService : IStringsService
         return updateString;
     }
 
-    public async Task<bool> DeleteAsync(String request, CancellationToken cancellationToken)
+    public async Task<bool> DeleteAsync(string stringId)
     {
-        return await _stringsRepository.DeleteAsync(request, cancellationToken);
+        var stringToDelete = await _stringsRepository.GetStringByIdAsync(stringId);
+        if (stringToDelete is null)
+        {
+            var message = $"Cannot find String {stringId}";
+            throw new ValidationException(message, GenerateValidationError(message));
+        }
+
+        return await _stringsRepository.DeleteStringAsync(stringToDelete);
     }
 
     private static ValidationFailure[] GenerateValidationError(string message)

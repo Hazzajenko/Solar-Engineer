@@ -7,12 +7,12 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace dotnetapi.Services;
 
-public class UsersService : IUsersService
+public class AuthService : IAuthService
 {
     private readonly SymmetricSecurityKey _key;
     private readonly UserManager<AppUser> _userManager;
 
-    public UsersService(IConfiguration config, UserManager<AppUser> userManager)
+    public AuthService(IConfiguration config, UserManager<AppUser> userManager)
     {
         _userManager = userManager;
         _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenKey"]!));

@@ -1,15 +1,15 @@
+using System.Text.Json;
 using dotnetapi.Data;
 using dotnetapi.Extensions;
 using dotnetapi.Models.Entities;
 using dotnetapi.Validation;
-using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Serilog.Sinks.SystemConsole.Themes;
 using Serilog;
-using Serilog.Filters;
+using Serilog.Sinks.SystemConsole.Themes;
 
-var builder = WebApplication.CreateBuilder(new WebApplicationOptions {
+var builder = WebApplication.CreateBuilder(new WebApplicationOptions
+{
     Args = args,
     ContentRootPath = Directory.GetCurrentDirectory()
 });
@@ -26,14 +26,17 @@ var config = builder.Configuration;
 config.AddEnvironmentVariables("dotnetapi_");
 
 
-
 /*builder.Services.AddDbContext<DataContext>
 // builder.Services.AddDbContextFactory<DataContext>
     (options=> options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));*/
 
 builder.Services.AddApplicationServices(config);
-builder.Services.AddControllers();
-builder.Services.AddCors(options => {
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+});
+builder.Services.AddCors(options =>
+{
     options.AddPolicy(
         "CorsPolicy",
         policy => policy
@@ -57,9 +60,8 @@ builder.Services.AddSwaggerGen();
 // builder.Services.AddSignalR().AddMessagePackProtocol();
 
 
-
 var app = builder.Build();
-
+app.UseSerilogRequestLogging();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -85,13 +87,16 @@ app.MapControllers();
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
-try {
+try
+{
     var context = services.GetRequiredService<DataContext>();
     var userManager = services.GetRequiredService<UserManager<AppUser>>();
     var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
     await context.Database.MigrateAsync();
     await Seed.SeedUsers(userManager, roleManager);
-} catch (Exception ex) {
+}
+catch (Exception ex)
+{
     var logger = services.GetRequiredService<ILogger<Program>>();
     logger.LogError(ex, "An error occurred during migration");
 }

@@ -1,113 +1,150 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using dotnetapi.Contracts.Requests;
+using dotnetapi.Contracts.Responses;
 using dotnetapi.Mapping;
 using dotnetapi.Models.Entities;
-using dotnetapi.Repositories;
 using dotnetapi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-public class CreateStringRequest
+namespace dotnetapi.Controllers;
+
+[Route("projects/{projectId:int}")]
+[ApiController]
+[Authorize]
+public class StringsController : ControllerBase
 {
-    [Required] public string Name { get; init; } = default!;
-}
+    private readonly ILogger<StringsController> _logger;
+    private readonly IProjectsService _projectsService;
+    private readonly IStringsService _stringsService;
+    private readonly UserManager<AppUser> _userManager;
 
 
-namespace dotnetapi.Controllers
-{
-    [Route("projects/{projectId:int}/[controller]")]
-    [ApiController]
-    [Authorize]
-    public class StringsController : ControllerBase
+    public StringsController(
+        ILogger<StringsController> logger,
+        UserManager<AppUser> userManager,
+        IStringsService stringsService,
+        IProjectsService projectsService
+    )
     {
-        private readonly ILogger<StringsController> _logger;
-        private readonly IProjectsRepository _projectsRepository;
-        private readonly IStringsService _stringsService;
-        private readonly UserManager<AppUser> _userManager;
+        _logger = logger;
+        _userManager = userManager;
+        _stringsService = stringsService;
+        _projectsService = projectsService;
+    }
 
 
-        public StringsController(
-            ILogger<StringsController> logger,
-            UserManager<AppUser> userManager,
-            IStringsService stringsService,
-            IProjectsRepository projectsRepository
-        )
+    [HttpPost("string")]
+    public async Task<IActionResult> CreateString([FromBody] CreateStringRequest request, [FromRoute] int projectId)
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
         {
-            _logger = logger;
-            _userManager = userManager;
-            _stringsService = stringsService;
-            _projectsRepository = projectsRepository;
+            _logger.LogError("Bad request, User is invalid");
+            return Unauthorized("User is invalid");
+        }
+
+        var project = _projectsService.GetProjectByIdAsync(projectId);
+        if (project.Result == null)
+        {
+            _logger.LogError("Bad request, Project from route is invalid");
+            return BadRequest("Bad request, Project from route is invalid");
         }
 
 
-        [HttpPost]
-        public async Task<IActionResult> CreateString([FromBody] CreateStringRequest request, [FromRoute] int projectId,
-            CancellationToken cancellationToken)
+        var stringEntity = request.ToEntity(user);
+
+        var stringDto = await _stringsService.CreateStringAsync(stringEntity, projectId);
+
+        var result = new OneStringResponse
         {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
-                _logger.LogError("Bad request, User is invalid");
-                return Unauthorized("User is invalid");
-            }
+            String = stringDto
+        };
 
-            var project = _projectsRepository.GetById(projectId, cancellationToken);
-            if (project.Result == null)
-            {
-                _logger.LogError("Bad request, Project from route is invalid");
-                return BadRequest("Bad request, Project from route is invalid");
-            }
+        return Ok(result);
+        // return CreatedAtAction("Get", new { stringId = result.Id }, result);
+    }
 
-
-            var stringEntity = request.ToEntity();
-            stringEntity.CreatedBy = user;
-            stringEntity.Project = project.Result;
-
-
-            return Ok(await _stringsService.CreateStringAsync(stringEntity, cancellationToken));
+    [HttpGet("string/{stringId}")]
+    public async Task<IActionResult> Get([FromRoute] int projectId, [FromRoute] string stringId)
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
+        {
+            _logger.LogError("Bad request, User is invalid");
+            return Unauthorized("User is invalid");
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Get([FromRoute] int projectId, [FromRoute] string id)
+        var stringDto = await _stringsService.GetStringByIdAsync(stringId);
+
+        if (stringDto is null) return NotFound();
+        var result = new OneStringResponse
         {
-            var z = await _stringsService.G(id);
+            String = stringDto
+        };
 
-            if (z is null) return NotFound();
+        return Ok(result);
+    }
 
-            var v = z.x();
-            return Ok(v);
+    [HttpGet("strings")]
+    public async Task<IActionResult> GetAllStringsByProjectId([FromRoute] int projectId)
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
+        {
+            _logger.LogError("Bad request, User is invalid");
+            return Unauthorized("User is invalid");
         }
 
-        [HttpGet("s")]
-        public async Task<IActionResult> GetAll()
+        var stringDtos = await _stringsService.GetAllStringsByProjectIdAsync(projectId);
+
+        var result = new ManyStringsResponse
         {
-            var x = await _stringsService.GetAllAsync();
-            var z = x.v();
-            return Ok(v);
+            Strings = stringDtos
+        };
+
+        return Ok(result);
+    }
+
+    [HttpPut("string/{stringId}")]
+    public async Task<IActionResult> Update([FromRoute] int projectId, [FromBody] UpdateStringRequest request)
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
+        {
+            _logger.LogError("Bad request, User is invalid");
+            return Unauthorized("User is invalid");
         }
 
-        [HttpPut("s/{id:guid}")]
-        public async Task<IActionResult> Update(
-            [FromMultiSource] x request)
+        var existingString = await _stringsService.GetStringByIdAsync(request.Id);
+
+        if (existingString is null) return NotFound();
+
+        // var stringEntity = request.ToEntity();
+        var result = await _stringsService.UpdateStringAsync(request);
+
+        if (!result) return BadRequest();
+
+        return Ok(request);
+    }
+
+    [HttpDelete("string/{stringId}")]
+    public async Task<IActionResult> Delete([FromRoute] int projectId, [FromRoute] string stringId)
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
         {
-            var x = await _stringsService.GetAsync(request.Id);
-
-            if (x is null) return NotFound();
-
-            var z = request.ToCustomer();
-            await _stringsService.UpdateAsync(z);
-
-            var customerResponse = customer.ToCustomerResponse();
-            return Ok(customerResponse);
+            _logger.LogError("Bad request, User is invalid");
+            return Unauthorized("User is invalid");
         }
 
-        [HttpDelete("s/{id:guid}")]
-        public async Task<IActionResult> Delete([FromRoute] Guid id)
-        {
-            var deleted = await _stringsService.DeleteAsync(id);
-            if (!deleted) return NotFound();
+        var existingString = await _stringsService.GetStringByIdAsync(stringId);
 
-            return Ok();
-        }
+        if (existingString is null) return NotFound();
+
+        var deleted = await _stringsService.DeleteAsync(stringId);
+        if (!deleted) return NotFound();
+
+        return Ok();
     }
 }

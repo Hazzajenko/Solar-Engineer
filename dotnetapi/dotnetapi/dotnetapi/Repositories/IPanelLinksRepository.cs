@@ -2,7 +2,7 @@
 
 namespace dotnetapi.Repositories;
 
-public interface ILinksRepository
+public interface IPanelLinksRepository
 {
     Task<PanelLink> CreatePanelLinkAsync(PanelLink request);
     Task<PanelLink?> GetPanelLinkByIdAsync(string panelLinkId);
