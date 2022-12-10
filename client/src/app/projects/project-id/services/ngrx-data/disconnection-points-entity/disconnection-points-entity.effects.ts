@@ -15,9 +15,7 @@ export class DisconnectionPointsEntityEffects {
   addDisconnectionPoint$ = createEffect(
     () =>
       this.actions$.pipe(
-        ofType(
-          `${DataEntities.DisconnectionPoint} ${EntityOp.SAVE_ADD_ONE_SUCCESS}`,
-        ),
+        ofType(`${DataEntities.DisconnectionPoint} ${EntityOp.SAVE_ADD_ONE_SUCCESS}`),
         tap((action: any) => {
           const disconnectionPoint = action.payload.data
           this.store.dispatch(
@@ -26,7 +24,7 @@ export class DisconnectionPointsEntityEffects {
                 id: disconnectionPoint.id,
                 location: disconnectionPoint.location,
                 model: UnitModel.DISCONNECTIONPOINT,
-                project_id: disconnectionPoint.project_id!,
+                projectId: disconnectionPoint.project_id!,
               },
             }),
           )
@@ -37,9 +35,7 @@ export class DisconnectionPointsEntityEffects {
   getAllDisconnectionPoints$ = createEffect(
     () =>
       this.actions$.pipe(
-        ofType(
-          `${DataEntities.DisconnectionPoint} ${EntityOp.QUERY_ALL_SUCCESS}`,
-        ),
+        ofType(`${DataEntities.DisconnectionPoint} ${EntityOp.QUERY_ALL_SUCCESS}`),
         tap((action: any) => {
           const blocks: BlockModel[] = action.payload.data.map(
             (disconnectionPoint: DisconnectionPointModel) => {
@@ -47,7 +43,7 @@ export class DisconnectionPointsEntityEffects {
                 id: disconnectionPoint.id,
                 location: disconnectionPoint.location!,
                 model: UnitModel.DISCONNECTIONPOINT,
-                project_id: disconnectionPoint.project_id!,
+                projectId: disconnectionPoint.projectId!,
               }
               return block
             },
@@ -64,9 +60,7 @@ export class DisconnectionPointsEntityEffects {
   updateOneDisconnectionPoint$ = createEffect(
     () =>
       this.actions$.pipe(
-        ofType(
-          `${DataEntities.DisconnectionPoint} ${EntityOp.SAVE_UPDATE_ONE_SUCCESS}`,
-        ),
+        ofType(`${DataEntities.DisconnectionPoint} ${EntityOp.SAVE_UPDATE_ONE_SUCCESS}`),
         tap((action: any) => {
           console.log(action)
           const data = action.payload.data
@@ -76,7 +70,7 @@ export class DisconnectionPointsEntityEffects {
                 id: data.id,
                 location: data.changes.location,
                 model: UnitModel.DISCONNECTIONPOINT,
-                project_id: data.changes.project_id!,
+                projectId: data.changes.project_id!,
               },
             }),
           )
@@ -87,9 +81,7 @@ export class DisconnectionPointsEntityEffects {
   deleteDisconnectionPoint$ = createEffect(
     () =>
       this.actions$.pipe(
-        ofType(
-          `${DataEntities.DisconnectionPoint} ${EntityOp.SAVE_DELETE_ONE}`,
-        ),
+        ofType(`${DataEntities.DisconnectionPoint} ${EntityOp.SAVE_DELETE_ONE}`),
         tap((action: any) => {
           const data = action.payload.data
           this.store.dispatch(

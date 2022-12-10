@@ -1,4 +1,4 @@
-import { LinksEntityService } from '../../ngrx-data/links-entity/links-entity.service'
+import { PanelLinksEntityService } from '../../ngrx-data/panel-links-entity/panel-links-entity.service'
 import { Injectable } from '@angular/core'
 import { Actions } from '@ngrx/effects'
 import { Store } from '@ngrx/store'
@@ -48,7 +48,7 @@ export class MultiEffects {
 
   constructor(
     private actions$: Actions,
-    private panelJoinsEntity: LinksEntityService,
+    private panelJoinsEntity: PanelLinksEntityService,
     private panelsEntity: PanelsEntityService,
     private stringsEntity: StringsEntityService,
     private statsService: StatsService,

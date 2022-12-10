@@ -45,17 +45,19 @@ export class UpdateService {
         if (doesExist && doesExist.model !== UnitModel.RAIL) {
           return this.logger.warn(`block already exists as ${event.container.id}`)
         }
-
         const block = event.item.data
+        console.log(block)
         const location = event.container.id
 
         switch (block.model) {
           case UnitModel.PANEL:
+            console.log('existingPanel')
             firstValueFrom(
               this.panelsEntity.entities$.pipe(
                 map((panels) => panels.find((p) => p.id === block.id)),
               ),
             ).then((existingPanel) => {
+              console.log(existingPanel)
               if (doesExist && doesExist.model === UnitModel.RAIL) {
                 const panel: PanelModel = {
                   ...block,

@@ -1,5 +1,5 @@
 import { DisconnectionPointsEntityService } from '../ngrx-data/disconnection-points-entity/disconnection-points-entity.service'
-import { LinksEntityService } from '../ngrx-data/links-entity/links-entity.service'
+import { PanelLinksEntityService } from '../ngrx-data/panel-links-entity/panel-links-entity.service'
 import { PanelsEntityService } from '../ngrx-data/panels-entity/panels-entity.service'
 import { Injectable } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
@@ -8,7 +8,7 @@ import { AppState } from '../../../../store/app.state'
 import { UnitModel } from '../../../models/unit.model'
 import { JoinsEntityService } from '../ngrx-data/joins-entity/joins-entity.service'
 import { Guid } from 'guid-typescript'
-import { LinkModel } from '../../../models/link.model'
+import { PanelLinkModel } from '../../../models/panelLinkModel'
 import { PanelModel } from '../../../models/panel.model'
 import { LinksStateActions } from '../store/links/links.actions'
 import { LinksState } from '../store/links/links.reducer'
@@ -16,7 +16,6 @@ import { DisconnectionPointModel } from '../../../models/disconnection-point.mod
 import { combineLatestWith, firstValueFrom } from 'rxjs'
 import { selectLinksState } from '../store/links/links.selectors'
 import { LoggerService } from '../../../../services/logger.service'
-import { selectBlocksByProjectIdRouteParams } from '../store/blocks/blocks.selectors'
 import { CablesEntityService } from '../ngrx-data/cables-entity/cables-entity.service'
 import { CableModel } from '../../../models/cable.model'
 import { ItemsService } from '../items.service'
@@ -31,20 +30,20 @@ export class LinksService {
     private http: HttpClient,
     private store: Store<AppState>,
     private panelsEntity: PanelsEntityService,
-    private linksEntity: LinksEntityService,
+    private linksEntity: PanelLinksEntityService,
     private joinsEntity: JoinsEntityService,
     private disconnectionPointsEntity: DisconnectionPointsEntityService,
     private cablesEntity: CablesEntityService,
     private logger: LoggerService,
     private itemsService: ItemsService,
     private linksPanelsService: LinksPanelsService,
-    private blocksService: BlocksService
-
+    private blocksService: BlocksService,
   ) {}
 
   linkSwitch(location: string) {
     firstValueFrom(
-      this.blocksService.getBlockByLocationAsync(location)
+      this.blocksService
+        .getBlockByLocationAsync(location)
         .pipe(combineLatestWith(this.store.select(selectLinksState))),
     ).then(([block, joinsState]) => {
       if (!block) {
@@ -159,14 +158,14 @@ export class LinksService {
 
     this.disconnectionPointsEntity.update(update)
 
-    const linkRequest: LinkModel = {
+    const linkRequest: PanelLinkModel = {
       id: Guid.create().toString(),
-      project_id: dpToJoin.project_id,
-      string_id: dpToJoin.string_id,
-      positive_id: dpToJoin.id,
-      positive_model: UnitModel.DISCONNECTIONPOINT,
-      negative_id: cable.id,
-      negative_model: UnitModel.CABLE,
+      projectId: dpToJoin.projectId,
+      stringId: dpToJoin.stringId,
+      positiveToId: dpToJoin.id,
+      positiveModel: UnitModel.DISCONNECTIONPOINT,
+      negativeToId: cable.id,
+      negativeModel: UnitModel.CABLE,
     }
 
     this.linksEntity.add(linkRequest)
@@ -178,14 +177,14 @@ export class LinksService {
     if (!dp || !cableToJoin) {
       return console.error(`joinDpToCable !dp || !cableToJoin`)
     }
-    const linkRequest: LinkModel = {
+    const linkRequest: PanelLinkModel = {
       id: Guid.create().toString(),
-      project_id: cableToJoin.project_id,
-      string_id: dp.string_id,
-      positive_id: cableToJoin.id,
-      positive_model: UnitModel.CABLE,
-      negative_id: dp.id,
-      negative_model: UnitModel.DISCONNECTIONPOINT,
+      projectId: cableToJoin.project_id,
+      stringId: dp.stringId,
+      positiveToId: cableToJoin.id,
+      positiveModel: UnitModel.CABLE,
+      negativeToId: dp.id,
+      negativeModel: UnitModel.DISCONNECTIONPOINT,
     }
 
     this.linksEntity.add(linkRequest)
@@ -199,20 +198,20 @@ export class LinksService {
     }
     const update: Partial<DisconnectionPointModel> = {
       ...dp,
-      string_id: panelToJoin.string_id,
-      positive_id: panelToJoin.id,
+      stringId: panelToJoin.stringId,
+      positiveId: panelToJoin.id,
     }
 
     this.disconnectionPointsEntity.update(update)
 
-    const panelJoinRequest: LinkModel = {
+    const panelJoinRequest: PanelLinkModel = {
       id: Guid.create().toString(),
-      project_id: panelToJoin.project_id,
-      string_id: panelToJoin.string_id,
-      positive_id: panelToJoin.id,
-      positive_model: UnitModel.PANEL,
-      negative_id: dp.id,
-      negative_model: UnitModel.DISCONNECTIONPOINT,
+      projectId: panelToJoin.projectId,
+      stringId: panelToJoin.stringId,
+      positiveToId: panelToJoin.id,
+      positiveModel: UnitModel.PANEL,
+      negativeToId: dp.id,
+      negativeModel: UnitModel.DISCONNECTIONPOINT,
     }
 
     this.linksEntity.add(panelJoinRequest)
@@ -225,21 +224,21 @@ export class LinksService {
       return console.error(`joinPanelToPanel panel doesnt exist on location ${location}`)
     }
     if (panelToLink) {
-      const panelJoinRequest: LinkModel = {
+      const panelJoinRequest: PanelLinkModel = {
         id: Guid.create().toString(),
-        project_id: panel.project_id,
-        string_id: panel.string_id,
-        positive_id: panelToLink,
-        positive_model: UnitModel.PANEL,
-        negative_id: panel.id,
-        negative_model: UnitModel.PANEL,
+        projectId: panel.projectId,
+        stringId: panel.stringId,
+        positiveToId: panelToLink,
+        positiveModel: UnitModel.PANEL,
+        negativeToId: panel.id,
+        negativeModel: UnitModel.PANEL,
       }
 
       this.linksEntity.add(panelJoinRequest)
 
       const updatePanel: PanelModel = {
         ...panel,
-        string_id: panel.string_id,
+        stringId: panel.stringId,
       }
       this.panelsEntity.update(updatePanel)
       this.store.dispatch(LinksStateActions.finishLinkPanel({ panelId: panel.id }))
@@ -256,21 +255,21 @@ export class LinksService {
     }
     if (panelToJoin) {
       console.log('panelToJoin', panelToJoin)
-      const panelJoinRequest: LinkModel = {
+      const panelJoinRequest: PanelLinkModel = {
         id: Guid.create().toString(),
-        project_id: panelToJoin.project_id,
-        string_id: panelToJoin.string_id,
-        positive_id: panelToJoin.id,
-        positive_model: UnitModel.PANEL,
-        negative_id: panel.id,
-        negative_model: UnitModel.PANEL,
+        projectId: panelToJoin.projectId,
+        stringId: panelToJoin.stringId,
+        positiveToId: panelToJoin.id,
+        positiveModel: UnitModel.PANEL,
+        negativeToId: panel.id,
+        negativeModel: UnitModel.PANEL,
       }
 
       this.linksEntity.add(panelJoinRequest)
 
       const updatePanel: PanelModel = {
         ...panel,
-        string_id: panelToJoin.string_id,
+        stringId: panelToJoin.stringId,
       }
       this.panelsEntity.update(updatePanel)
     }
@@ -286,20 +285,20 @@ export class LinksService {
     if (dpToJoin && panel) {
       const update: Partial<DisconnectionPointModel> = {
         ...dpToJoin,
-        string_id: panel.string_id,
-        negative_id: panel.id,
+        stringId: panel.stringId,
+        negativeId: panel.id,
       }
 
       this.disconnectionPointsEntity.update(update)
 
-      const panelJoinRequest: LinkModel = {
+      const panelJoinRequest: PanelLinkModel = {
         id: Guid.create().toString(),
-        project_id: panel.project_id,
-        string_id: panel.string_id,
-        negative_id: panel.id,
-        negative_model: UnitModel.PANEL,
-        positive_id: dpToJoin.id,
-        positive_model: UnitModel.DISCONNECTIONPOINT,
+        projectId: panel.projectId,
+        stringId: panel.stringId,
+        negativeToId: panel.id,
+        negativeModel: UnitModel.PANEL,
+        positiveToId: dpToJoin.id,
+        positiveModel: UnitModel.DISCONNECTIONPOINT,
       }
 
       this.linksEntity.add(panelJoinRequest)

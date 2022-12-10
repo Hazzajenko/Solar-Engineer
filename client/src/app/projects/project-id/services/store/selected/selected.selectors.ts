@@ -57,6 +57,11 @@ export const selectSelectedStringTooltip = createSelector(
   (state: State.SelectedState) => state.selectedStringTooltip,
 )
 
+export const selectSelectedStringPathMap = createSelector(
+  selectSelectedState,
+  (state: State.SelectedState) => state.selectedStringPathMap,
+)
+
 /*
 export const selectSelectedPanels = createSelector(
   selectSelectedState,

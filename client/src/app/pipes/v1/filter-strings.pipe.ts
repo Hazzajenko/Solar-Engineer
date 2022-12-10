@@ -11,6 +11,6 @@ export class FilterStringsPipe implements PipeTransform {
       return strings
     }
 
-    return strings.filter((stringModel) => stringModel.tracker_id === trackerId)
+    return strings.filter((stringModel) => stringModel.trackerId === trackerId)
   }
 }

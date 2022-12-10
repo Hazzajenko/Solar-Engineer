@@ -4,10 +4,8 @@ import { map } from 'rxjs/operators'
 import { StringModel } from '../../../models/string.model'
 import { StatsService, TotalModel } from '../../services/stats.service'
 import { PanelsEntityService } from '../../services/ngrx-data/panels-entity/panels-entity.service'
-import { LinksEntityService } from '../../services/ngrx-data/links-entity/links-entity.service'
-import {
-  DisconnectionPointsEntityService
-} from '../../services/ngrx-data/disconnection-points-entity/disconnection-points-entity.service'
+import { PanelLinksEntityService } from '../../services/ngrx-data/panel-links-entity/panel-links-entity.service'
+import { DisconnectionPointsEntityService } from '../../services/ngrx-data/disconnection-points-entity/disconnection-points-entity.service'
 import { LinksPathService } from '../../services/links/links-path.service'
 
 export interface StringStatsModel {
@@ -25,10 +23,10 @@ export interface StringStatsModel {
 export class StringStatsAsyncPipe implements PipeTransform {
   constructor(
     private panelsEntity: PanelsEntityService,
-    private linksEntity: LinksEntityService,
+    private linksEntity: PanelLinksEntityService,
     private statsService: StatsService,
     private disconnectionPointsEntity: DisconnectionPointsEntityService,
-    private linksPathService: LinksPathService
+    private linksPathService: LinksPathService,
   ) {}
 
   transform(string: StringModel): Observable<StringStatsModel> {
@@ -52,7 +50,7 @@ export class StringStatsAsyncPipe implements PipeTransform {
     return this.panelsEntity.entities$
       .pipe(
         map((panels) => {
-          return panels.filter((p) => p.string_id === string.id)
+          return panels.filter((p) => p.stringId === string.id)
         }),
       )
       .pipe(
@@ -60,7 +58,7 @@ export class StringStatsAsyncPipe implements PipeTransform {
           this.linksEntity.entities$
             .pipe(
               map((links) =>
-                links.filter((l) => stringPanels.map((sps) => sps.id).includes(l.positive_id!)),
+                links.filter((l) => stringPanels.map((sps) => sps.id).includes(l.positiveToId!)),
               ),
             )
             .pipe(map((stringLinks) => ({ stringPanels, stringLinks })))
@@ -70,7 +68,7 @@ export class StringStatsAsyncPipe implements PipeTransform {
                   map((dps) => ({
                     stringPanels: res.stringPanels,
                     stringLinks: res.stringLinks,
-                    hasDisconnectionPoint: !!dps.find((d) => d.string_id === string.id),
+                    hasDisconnectionPoint: !!dps.find((d) => d.stringId === string.id),
                   })),
                 ),
               ),

@@ -11,6 +11,6 @@ export class FilterTrackersPipe implements PipeTransform {
       return trackers
     }
 
-    return trackers.filter((tracker) => tracker.inverter_id === inverterId)
+    return trackers.filter((tracker) => tracker.inverterId === inverterId)
   }
 }

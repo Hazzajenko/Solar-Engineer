@@ -18,7 +18,7 @@ export class StringPanelsAsyncPipe implements PipeTransform {
 
     return this.panelsEntity.entities$.pipe(
       map((panels) => {
-        const stringPanels = panels.filter((p) => p.string_id === string.id)
+        const stringPanels = panels.filter((p) => p.stringId === string.id)
 
         return stringPanels.length
       }),

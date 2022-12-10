@@ -8,8 +8,8 @@ import { LinksService } from '../../project-id/services/links/links.service'
 import { HttpClient } from '@angular/common/http'
 import { LoggerService } from '../../../services/logger.service'
 import { Guid } from 'guid-typescript'
-import { LinksEntityService } from '../../project-id/services/ngrx-data/links-entity/links-entity.service'
-import { LinkModel } from '../../models/link.model'
+import { PanelLinksEntityService } from '../../project-id/services/ngrx-data/panel-links-entity/panel-links-entity.service'
+import { PanelLinkModel } from '../../models/panelLinkModel'
 
 @Injectable({
   providedIn: 'root',
@@ -22,24 +22,17 @@ export class PanelJoinsService extends GridService {
     joinsEntity: JoinsEntityService,
     joinsService: LinksService,
     logger: LoggerService,
-    private panelJoinsEntity: LinksEntityService,
+    private panelJoinsEntity: PanelLinksEntityService,
     private http: HttpClient,
   ) {
-    super(
-      panelsEntity,
-      cablesEntity,
-      invertersEntity,
-      joinsEntity,
-      joinsService,
-      logger,
-    )
+    super(panelsEntity, cablesEntity, invertersEntity, joinsEntity, joinsService, logger)
   }
 
   createPanelJoin(projectId: number, positiveId: string, negativeId: string) {
-    const panelJoinRequest: LinkModel = {
+    const panelJoinRequest: PanelLinkModel = {
       id: Guid.create().toString(),
-      positive_id: positiveId,
-      negative_id: negativeId,
+      positiveToId: positiveId,
+      negativeToId: negativeId,
     }
 
     this.panelJoinsEntity.add(panelJoinRequest)

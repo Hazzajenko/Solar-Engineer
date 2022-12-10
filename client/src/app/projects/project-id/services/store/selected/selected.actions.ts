@@ -19,6 +19,7 @@ export const SelectedStateActions = createActionGroup({
     'Select String': props<{ stringId: string }>(),
     'Set Selected String Panels': props<{ panelIds: string[] }>(),
     'Set Selected String Tooltip': props<{ tooltip: string }>(),
+    'Set Selected String Link Paths': props<{ pathMap: Map<string, number> }>(),
     'Set Selected Panel Links': props<{ panelLink: PanelLinksToModel }>(),
     'Clear Selected State': emptyProps(),
   },

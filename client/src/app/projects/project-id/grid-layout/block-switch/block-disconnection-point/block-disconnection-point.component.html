@@ -17,22 +17,13 @@
         (contextmenu)="onRightClick($event, disconnectionPoint)"
         *ngrxLet="selectedId$ | async as selectedId"
         [cdkDragData]="disconnectionPoint"
-        [class.drop-zone__bg-default]="
-          (selectedId$ | async) !== disconnectionPoint.id
-        "
-        [class.drop-zone__bg-negative]="
-          selectedLinks?.negativeTo === disconnectionPoint.id
-        "
-        [class.drop-zone__bg-positive]="
-          (selectedPositiveTo$ | async) === disconnectionPoint.id
-        "
+        [class.drop-zone__bg-default]="(selectedId$ | async) !== disconnectionPoint.id"
+        [class.drop-zone__bg-negative]="selectedLinks?.negativeTo === disconnectionPoint.id"
+        [class.drop-zone__bg-positive]="(selectedPositiveTo$ | async) === disconnectionPoint.id"
         [class.drop-zone__bg-selected]="
-          selectedId === disconnectionPoint.id ||
-          selectedId === disconnectionPoint.string_id
+          selectedId === disconnectionPoint.id || selectedId === disconnectionPoint.stringId
         "
-        [class.drop-zone__bg-to-join]="
-          (dpToJoin$ | async)?.id === disconnectionPoint.id
-        "
+        [class.drop-zone__bg-to-join]="(dpToJoin$ | async)?.id === disconnectionPoint.id"
         [matTooltip]="displayTooltip(disconnectionPoint)"
         [style.border]="'2px solid ' + disconnectionPoint.color"
         cdkDrag

@@ -113,6 +113,7 @@ import { UnitModel } from '../../../../../models/unit.model'
 export class NewStringDialog implements OnInit {
   stringName: string = ''
   name = new FormControl('')
+
   constructor(
     private stringsEntity: StringsEntityService,
     private store: Store<AppState>,
@@ -142,7 +143,6 @@ export class NewStringDialog implements OnInit {
 
       const newStringId = Guid.create().toString()
 
-
       const newString: StringModel = {
         id: newStringId,
         name: this.name.value,
@@ -155,7 +155,7 @@ export class NewStringDialog implements OnInit {
       const selectedPanelUpdates: Partial<PanelModel>[] = selectedPanels.map((panel) => {
         const partial: Partial<PanelModel> = {
           ...panel,
-          string_id: newStringId,
+          stringId: newStringId,
           color: newString.color,
         }
         return partial

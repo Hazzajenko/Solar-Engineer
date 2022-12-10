@@ -4,7 +4,7 @@ import { Store } from '@ngrx/store'
 import { AppState } from '../../store/app.state'
 import { CdkDrag } from '@angular/cdk/drag-drop'
 import { PanelModel } from '../models/panel.model'
-import { selectPanelsByProjectId } from '../store/panels/panels.selectors'
+import { selectPanelsByProjectId } from '../project-id/services/store/panels/panels.selectors'
 import { environment } from '../../../environments/environment'
 import { CableModel } from '../models/cable.model'
 import {
@@ -44,18 +44,13 @@ export class CablesService {
   ): Promise<CreateCableResponse> {
     return new Promise<CreateCableResponse>((resolve, reject) =>
       this.http
-        .post<CreateCableResponse>(
-          `${environment.apiUrl}/projects/${projectId}/cables`,
-          {
-            location,
-            size,
-          },
-        )
+        .post<CreateCableResponse>(`${environment.apiUrl}/projects/${projectId}/cables`, {
+          location,
+          size,
+        })
         .subscribe({
           next: (envelope) => {
-            this.store.dispatch(
-              CableStateActions.addCableToState({ cable: envelope.cable }),
-            )
+            this.store.dispatch(CableStateActions.addCableToState({ cable: envelope.cable }))
             // this.store.dispatch(updateString({ string: envelope.string }));
             resolve(envelope)
           },

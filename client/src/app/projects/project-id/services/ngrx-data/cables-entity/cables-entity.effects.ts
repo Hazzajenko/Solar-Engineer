@@ -26,7 +26,7 @@ export class CablesEntityEffects {
                 id: cable.id,
                 location: cable.location,
                 model: UnitModel.CABLE,
-                project_id: cable.project_id!,
+                projectId: cable.project_id!,
               },
             }),
           )
@@ -39,17 +39,15 @@ export class CablesEntityEffects {
       this.actions$.pipe(
         ofType(`${DataEntities.Cable} ${EntityOp.QUERY_ALL_SUCCESS}`),
         tap((action: any) => {
-          const blocks: BlockModel[] = action.payload.data.map(
-            (cable: CableModel) => {
-              const block: BlockModel = {
-                id: cable.id,
-                location: cable.location,
-                model: UnitModel.CABLE,
-                project_id: cable.project_id!,
-              }
-              return block
-            },
-          )
+          const blocks: BlockModel[] = action.payload.data.map((cable: CableModel) => {
+            const block: BlockModel = {
+              id: cable.id,
+              location: cable.location,
+              model: UnitModel.CABLE,
+              projectId: cable.project_id!,
+            }
+            return block
+          })
           this.store.dispatch(
             BlocksStateActions.addManyBlocksForGrid({
               blocks,
@@ -72,7 +70,7 @@ export class CablesEntityEffects {
                 id: data.id,
                 location: data.changes.location,
                 model: UnitModel.CABLE,
-                project_id: data.changes.project_id!,
+                projectId: data.changes.project_id!,
               },
             }),
           )

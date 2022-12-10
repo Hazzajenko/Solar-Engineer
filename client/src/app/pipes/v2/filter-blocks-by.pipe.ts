@@ -7,18 +7,14 @@ import { BlockModel } from '../../projects/models/block.model'
   standalone: true,
 })
 export class FilterBlocksByPipe implements PipeTransform {
-  transform(
-    blocks: BlockModel[],
-    id: number,
-    unitModel: UnitModel,
-  ): BlockModel[] {
+  transform(blocks: BlockModel[], id: number, unitModel: UnitModel): BlockModel[] {
     if (!blocks || !id || !unitModel) {
       return blocks
     }
 
     switch (unitModel) {
       case UnitModel.PROJECT:
-        return blocks.filter((block) => block.project_id === id)
+        return blocks.filter((block) => block.projectId === id)
       default:
         return blocks
     }

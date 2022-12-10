@@ -7,7 +7,6 @@ import { PanelsEntityService } from '../ngrx-data/panels-entity/panels-entity.se
 import { MultiActions } from '../store/multi-create/multi.actions'
 import { selectMultiState } from '../store/multi-create/multi.selectors'
 import { selectBlocksByProjectIdRouteParams } from '../store/blocks/blocks.selectors'
-import { BlockModel } from '../../../models/block.model'
 import { PanelModel } from '../../../models/panel.model'
 import { selectSelectedStringId } from '../store/selected/selected.selectors'
 import { selectCreateMode } from '../store/grid/grid.selectors'
@@ -79,31 +78,32 @@ export class MultiCreateService {
       })
     }
   }
-/*
-  multiCreateCable(location: string, multiCreateState: MultiState) {
-    if (!multiCreateState.locationStart) {
-      this.store.dispatch(
-        MultiActions.start({
-          location,
-        }),
-      )
-    } else {
-      const locationsInBox = getLocationsInBox(multiCreateState.locationStart!, location)
-      this.blocksService.getBlocksFromIncludedArray(locationsInBox).then((blocksInBox) => {
-        if (blocksInBox.length > 0) {
-          return console.error('there are blocks in path, ', blocksInBox)
-        }
 
-        this.itemsService.addManyItems(UnitModel.PANEL, locationsInBox)
-
+  /*
+    multiCreateCable(location: string, multiCreateState: MultiState) {
+      if (!multiCreateState.locationStart) {
         this.store.dispatch(
-          MultiActions.finishMultiCreatePanel({
+          MultiActions.start({
             location,
           }),
         )
-      })
-    }
-  }*/
+      } else {
+        const locationsInBox = getLocationsInBox(multiCreateState.locationStart!, location)
+        this.blocksService.getBlocksFromIncludedArray(locationsInBox).then((blocksInBox) => {
+          if (blocksInBox.length > 0) {
+            return console.error('there are blocks in path, ', blocksInBox)
+          }
+
+          this.itemsService.addManyItems(UnitModel.PANEL, locationsInBox)
+
+          this.store.dispatch(
+            MultiActions.finishMultiCreatePanel({
+              location,
+            }),
+          )
+        })
+      }
+    }*/
   multiCreatePanel(location: string, multiCreateState: MultiState) {
     if (!multiCreateState.locationStart) {
       this.store.dispatch(
@@ -133,12 +133,7 @@ export class MultiCreateService {
         } else {
           firstValueFrom(this.store.select(selectSelectedStringId)).then((stringId) => {
             blocksInRoute.locationStrings?.forEach((location) => {
-              const panel = new PanelModel(
-                projectId,
-                location,
-                stringId ? stringId : 'undefined',
-                0,
-              )
+              const panel = new PanelModel(location, stringId ? stringId : 'undefined', 0)
               this.panelsEntity.add(panel)
             })
           })

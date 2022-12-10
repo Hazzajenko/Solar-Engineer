@@ -13,8 +13,8 @@ import { Store } from '@ngrx/store'
 import { AppState } from '../../../store/app.state'
 import { LinksService } from '../../project-id/services/links/links.service'
 import { LoggerService } from '../../../services/logger.service'
-import { LinksEntityService } from '../../project-id/services/ngrx-data/links-entity/links-entity.service'
-import { LinkModel } from '../../models/link.model'
+import { PanelLinksEntityService } from '../../project-id/services/ngrx-data/panel-links-entity/panel-links-entity.service'
+import { PanelLinkModel } from '../../models/panelLinkModel'
 import { PanelModel } from '../../models/panel.model'
 import { combineLatest } from 'rxjs'
 import { LinksStateActions } from '../../project-id/services/store/links/links.actions'
@@ -37,18 +37,11 @@ export class GridJoinService extends GridService {
     joinsService: LinksService,
     logger: LoggerService,
     private store: Store<AppState>,
-    private panelJoinsEntity: LinksEntityService,
+    private panelJoinsEntity: PanelLinksEntityService,
     private stringsEntity: StringsEntityService,
     private disconnectionPointsEntity: DisconnectionPointsEntityService,
   ) {
-    super(
-      panelsEntity,
-      cablesEntity,
-      invertersEntity,
-      joinsEntity,
-      joinsService,
-      logger,
-    )
+    super(panelsEntity, cablesEntity, invertersEntity, joinsEntity, joinsService, logger)
   }
 
   joinSwitch(location: string, project: ProjectModel, blocks?: BlockModel[]) {
@@ -67,7 +60,7 @@ export class GridJoinService extends GridService {
       case UnitModel.PANEL:
         console.log('addPanelToJoin')
         // return this.addPanelToJoin(location, project, blocks)
-      // return this.addPanelToJoinV2(location, project, blocks)
+        // return this.addPanelToJoinV2(location, project, blocks)
         break
 
       case UnitModel.CABLE:
@@ -115,71 +108,63 @@ export class GridJoinService extends GridService {
     // }
   }
 
-  addPanelToJoin(
-    panelLocation: string,
-    project: ProjectModel,
-    blocks: BlockModel[],
-  ) {
-/*    let panel: PanelModel | undefined
-    let panels: PanelModel[] | undefined
-    let blockToJoin: BlockModel | undefined
-    let panelToJoin: PanelModel | undefined
-    let dpToJoin: DisconnectionPointModel | undefined
-    let panelString: StringModel | undefined
-    combineLatest([
-      this.panelsEntity.entities$,
-      this.stringsEntity.entities$,
-      this.disconnectionPointsEntity.entities$,
-    ]).subscribe(([panels$, strings$, disconnectionPoints]) => {
-      panel = panels$.find((p) => p.location === panelLocation)
-      panels = panels$
-      panelString = strings$.find((s) => s.id === panel?.string_id)
+  addPanelToJoin(panelLocation: string, project: ProjectModel, blocks: BlockModel[]) {
+    /*    let panel: PanelModel | undefined
+        let panels: PanelModel[] | undefined
+        let blockToJoin: BlockModel | undefined
+        let panelToJoin: PanelModel | undefined
+        let dpToJoin: DisconnectionPointModel | undefined
+        let panelString: StringModel | undefined
+        combineLatest([
+          this.panelsEntity.entities$,
+          this.stringsEntity.entities$,
+          this.disconnectionPointsEntity.entities$,
+        ]).subscribe(([panels$, strings$, disconnectionPoints]) => {
+          panel = panels$.find((p) => p.location === panelLocation)
+          panels = panels$
+          panelString = strings$.find((s) => s.id === panel?.string_id)
 
-      // if (blockToJoin$) {
-      //   blockToJoin = blockToJoin$
-      //   switch (blockToJoin$?.model) {
-      //     case UnitModel.PANEL:
-      //       panelToJoin = panels$.find(
-      //         (p) => p.location === blockToJoin$.location,
-      //       )
-      //       break
-      //     case UnitModel.DISCONNECTIONPOINT:
-      //       dpToJoin = disconnectionPoints.find(
-      //         (dp) => dp.location === blockToJoin$.location,
-      //       )
-      //       break
-      //   }
-      // }
-    })*/
+          // if (blockToJoin$) {
+          //   blockToJoin = blockToJoin$
+          //   switch (blockToJoin$?.model) {
+          //     case UnitModel.PANEL:
+          //       panelToJoin = panels$.find(
+          //         (p) => p.location === blockToJoin$.location,
+          //       )
+          //       break
+          //     case UnitModel.DISCONNECTIONPOINT:
+          //       dpToJoin = disconnectionPoints.find(
+          //         (dp) => dp.location === blockToJoin$.location,
+          //       )
+          //       break
+          //   }
+          // }
+        })*/
     // console.log('blockToJoin', blockToJoin)
-/*
-    if (blockToJoin) {
-      switch (blockToJoin?.model) {
-        case UnitModel.PANEL:
-          this.joinPanelToPanel(project, panel!, panelString!, panelToJoin!)
-          break
-        case UnitModel.DISCONNECTIONPOINT:
-          this.joinPanelToDp(project, panel!, panelString!, dpToJoin!)
-          break
-      }
-    } else {
-      if (panel) {
-        const block: BlockModel = {
-          id: panel.id,
-          model: UnitModel.PANEL,
-          location: panel.location,
-          project_id: project.id,
-        }
-        // this.store.dispatch(JoinsStateActions.addToBlockJoin({ block }))
-      }
-    }*/
+    /*
+        if (blockToJoin) {
+          switch (blockToJoin?.model) {
+            case UnitModel.PANEL:
+              this.joinPanelToPanel(project, panel!, panelString!, panelToJoin!)
+              break
+            case UnitModel.DISCONNECTIONPOINT:
+              this.joinPanelToDp(project, panel!, panelString!, dpToJoin!)
+              break
+          }
+        } else {
+          if (panel) {
+            const block: BlockModel = {
+              id: panel.id,
+              model: UnitModel.PANEL,
+              location: panel.location,
+              project_id: project.id,
+            }
+            // this.store.dispatch(JoinsStateActions.addToBlockJoin({ block }))
+          }
+        }*/
   }
 
-  addPanelToJoinV2(
-    project: ProjectModel,
-    panel: PanelModel,
-    joinsState?: LinksState,
-  ) {
+  addPanelToJoinV2(project: ProjectModel, panel: PanelModel, joinsState?: LinksState) {
     /*if (joinsState?.typeToLink) {
       switch (joinsState.typeToLink) {
         case UnitModel.PANEL:
@@ -200,35 +185,31 @@ export class GridJoinService extends GridService {
     }*/
   }
 
-  joinPanelToPanelV2(
-    project: ProjectModel,
-    panel?: PanelModel,
-    panelToJoin?: PanelModel,
-  ) {
-/*    if (!panel) return
+  joinPanelToPanelV2(project: ProjectModel, panel?: PanelModel, panelToJoin?: PanelModel) {
+    /*    if (!panel) return
 
-    if (panelToJoin && panel) {
-      const panelJoinRequest: LinkModel = {
-        id: Guid.create().toString(),
-        project_id: project.id,
-        string_id: panelToJoin.string_id,
-        positive_id: panelToJoin.id,
-        positive_model: UnitModel.PANEL,
-        negative_id: panel.id,
-        negative_model: UnitModel.PANEL,
-      }
+        if (panelToJoin && panel) {
+          const panelJoinRequest: LinkModel = {
+            id: Guid.create().toString(),
+            project_id: project.id,
+            string_id: panelToJoin.string_id,
+            positive_id: panelToJoin.id,
+            positive_model: UnitModel.PANEL,
+            negative_id: panel.id,
+            negative_model: UnitModel.PANEL,
+          }
 
-      this.panelJoinsEntity.add(panelJoinRequest)
+          this.panelJoinsEntity.add(panelJoinRequest)
 
-      const updatePanel: PanelModel = {
-        ...panel,
-        string_id: panelToJoin.string_id,
-        color: panel.color,
-      }
-      this.panelsEntity.update(updatePanel)
-    }
+          const updatePanel: PanelModel = {
+            ...panel,
+            string_id: panelToJoin.string_id,
+            color: panel.color,
+          }
+          this.panelsEntity.update(updatePanel)
+        }
 
-    this.store.dispatch(LinksStateActions.addToLinkPanel({ panel }))*/
+        this.store.dispatch(LinksStateActions.addToLinkPanel({ panel }))*/
   }
 
   joinPanelToPanel(
@@ -240,14 +221,14 @@ export class GridJoinService extends GridService {
     if (!panel) return
 
     if (panelToJoin && panelString) {
-      const panelJoinRequest: LinkModel = {
+      const panelJoinRequest: PanelLinkModel = {
         id: Guid.create().toString(),
-        project_id: project.id,
-        string_id: panelToJoin.string_id,
-        positive_id: panelToJoin.id,
-        positive_model: UnitModel.PANEL,
-        negative_id: panel!.id,
-        negative_model: UnitModel.PANEL,
+        projectId: project.id,
+        stringId: panelToJoin.stringId,
+        positiveToId: panelToJoin.id,
+        positiveModel: UnitModel.PANEL,
+        negativeToId: panel!.id,
+        negativeModel: UnitModel.PANEL,
       }
 
       this.panelJoinsEntity.add(panelJoinRequest)
@@ -256,7 +237,7 @@ export class GridJoinService extends GridService {
 
       const updatePanel: PanelModel = {
         ...panel,
-        string_id: panelToJoin.string_id,
+        stringId: panelToJoin.stringId,
         color: panelString.color,
       }
       this.panelsEntity.update(updatePanel)
@@ -266,7 +247,7 @@ export class GridJoinService extends GridService {
       id: panel.id,
       model: UnitModel.PANEL,
       location: panel.location,
-      project_id: project.id,
+      projectId: project.id,
     }
 
     // this.store.dispatch(JoinsStateActions.addToBlockJoin({ block }))
@@ -283,20 +264,20 @@ export class GridJoinService extends GridService {
     if (dpToJoin && panelString) {
       const update: Partial<DisconnectionPointModel> = {
         ...dpToJoin,
-        string_id: panelString.id,
-        negative_id: panel.id,
+        stringId: panelString.id,
+        negativeId: panel.id,
       }
 
       this.disconnectionPointsEntity.update(update)
 
-      const panelJoinRequest: LinkModel = {
+      const panelJoinRequest: PanelLinkModel = {
         id: Guid.create().toString(),
-        project_id: project.id,
-        string_id: panel.string_id,
-        negative_id: panel.id,
-        negative_model: UnitModel.PANEL,
-        positive_id: dpToJoin.id,
-        positive_model: UnitModel.DISCONNECTIONPOINT,
+        projectId: project.id,
+        stringId: panel.stringId,
+        negativeToId: panel.id,
+        negativeModel: UnitModel.PANEL,
+        positiveToId: dpToJoin.id,
+        positiveModel: UnitModel.DISCONNECTIONPOINT,
       }
 
       this.panelJoinsEntity.add(panelJoinRequest)
@@ -306,76 +287,66 @@ export class GridJoinService extends GridService {
       id: panel.id,
       model: UnitModel.PANEL,
       location: panel.location,
-      project_id: project.id,
+      projectId: project.id,
     }
 
     // this.store.dispatch(JoinsStateActions.addToBlockJoin({ block }))
   }
 
-  joinPanelToDpV2(
-    project: ProjectModel,
-    panel?: PanelModel,
-    dpToJoin?: DisconnectionPointModel,
-  ) {
-/*    if (!panel) return
+  joinPanelToDpV2(project: ProjectModel, panel?: PanelModel, dpToJoin?: DisconnectionPointModel) {
+    /*    if (!panel) return
 
-    if (dpToJoin && panel) {
-      const update: Partial<DisconnectionPointModel> = {
-        ...dpToJoin,
-        string_id: panel.string_id,
-        negative_id: panel.id,
-      }
+        if (dpToJoin && panel) {
+          const update: Partial<DisconnectionPointModel> = {
+            ...dpToJoin,
+            string_id: panel.string_id,
+            negative_id: panel.id,
+          }
 
-      this.disconnectionPointsEntity.update(update)
+          this.disconnectionPointsEntity.update(update)
 
-      const panelJoinRequest: LinkModel = {
-        id: Guid.create().toString(),
-        project_id: project.id,
-        string_id: panel.string_id,
-        negative_id: panel.id,
-        negative_model: UnitModel.PANEL,
-        positive_id: dpToJoin.id,
-        positive_model: UnitModel.DISCONNECTIONPOINT,
-      }
+          const panelJoinRequest: LinkModel = {
+            id: Guid.create().toString(),
+            project_id: project.id,
+            string_id: panel.string_id,
+            negative_id: panel.id,
+            negative_model: UnitModel.PANEL,
+            positive_id: dpToJoin.id,
+            positive_model: UnitModel.DISCONNECTIONPOINT,
+          }
 
-      this.panelJoinsEntity.add(panelJoinRequest)
-    }
+          this.panelJoinsEntity.add(panelJoinRequest)
+        }
 
-    this.store.dispatch(LinksStateActions.addToLinkPanel({ panel }))*/
+        this.store.dispatch(LinksStateActions.addToLinkPanel({ panel }))*/
   }
 
-  joinDpToPanelV2(
-    project: ProjectModel,
-    dp?: DisconnectionPointModel,
-    panelToJoin?: PanelModel,
-  ) {
+  joinDpToPanelV2(project: ProjectModel, dp?: DisconnectionPointModel, panelToJoin?: PanelModel) {
     if (!dp) return
 
     if (panelToJoin && panelToJoin) {
       const update: Partial<DisconnectionPointModel> = {
         ...dp,
-        string_id: panelToJoin.string_id,
-        positive_id: panelToJoin.id,
+        stringId: panelToJoin.stringId,
+        positiveId: panelToJoin.id,
       }
 
       this.disconnectionPointsEntity.update(update)
 
-      const panelJoinRequest: LinkModel = {
+      const panelJoinRequest: PanelLinkModel = {
         id: Guid.create().toString(),
-        project_id: project.id,
-        string_id: panelToJoin.string_id,
-        positive_id: panelToJoin.id,
-        positive_model: UnitModel.PANEL,
-        negative_id: dp.id,
-        negative_model: UnitModel.DISCONNECTIONPOINT,
+        projectId: project.id,
+        stringId: panelToJoin.stringId,
+        positiveToId: panelToJoin.id,
+        positiveModel: UnitModel.PANEL,
+        negativeToId: dp.id,
+        negativeModel: UnitModel.DISCONNECTIONPOINT,
       }
 
       this.panelJoinsEntity.add(panelJoinRequest)
     }
 
-    this.store.dispatch(
-      LinksStateActions.addToLinkDp({ disconnectionPoint: dp }),
-    )
+    this.store.dispatch(LinksStateActions.addToLinkDp({ disconnectionPoint: dp }))
   }
 
   joinDpToPanel(
@@ -389,20 +360,20 @@ export class GridJoinService extends GridService {
     if (panelToJoin && dpString) {
       const update: Partial<DisconnectionPointModel> = {
         ...dp,
-        string_id: panelToJoin.string_id,
-        positive_id: panelToJoin.id,
+        stringId: panelToJoin.stringId,
+        positiveId: panelToJoin.id,
       }
 
       this.disconnectionPointsEntity.update(update)
 
-      const panelJoinRequest: LinkModel = {
+      const panelJoinRequest: PanelLinkModel = {
         id: Guid.create().toString(),
-        project_id: project.id,
-        string_id: panelToJoin.string_id,
-        positive_id: panelToJoin.id,
-        positive_model: UnitModel.PANEL,
-        negative_id: dp.id,
-        negative_model: UnitModel.DISCONNECTIONPOINT,
+        projectId: project.id,
+        stringId: panelToJoin.stringId,
+        positiveToId: panelToJoin.id,
+        positiveModel: UnitModel.PANEL,
+        negativeToId: dp.id,
+        negativeModel: UnitModel.DISCONNECTIONPOINT,
       }
 
       this.panelJoinsEntity.add(panelJoinRequest)
@@ -412,7 +383,7 @@ export class GridJoinService extends GridService {
       id: dp.id,
       model: UnitModel.DISCONNECTIONPOINT,
       location: dp.location!,
-      project_id: project.id,
+      projectId: project.id,
     }
 
     // this.store.dispatch(JoinsStateActions.addToBlockJoin({ block }))
@@ -430,7 +401,7 @@ export class GridJoinService extends GridService {
       this.disconnectionPointsEntity.entities$,
     ]).subscribe(([panels$, strings$, dps$]) => {
       dp = dps$.find((dp) => dp.location === dpLocation)
-      dpString = strings$.find((s) => s.id === dp?.string_id)
+      dpString = strings$.find((s) => s.id === dp?.stringId)
 
       //   if (blockToJoin$) {
       //     blockToJoin = blockToJoin$
@@ -462,7 +433,7 @@ export class GridJoinService extends GridService {
             id: dp.id,
             model: UnitModel.DISCONNECTIONPOINT,
             location: dp.location!,
-            project_id: project.id,
+            projectId: project.id,
           }
           // this.store.dispatch(JoinsStateActions.addToBlockJoin({ block }))
         }

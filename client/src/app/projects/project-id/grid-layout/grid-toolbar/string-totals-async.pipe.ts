@@ -10,10 +10,7 @@ import { PanelsEntityService } from '../../services/ngrx-data/panels-entity/pane
   standalone: true,
 })
 export class StringTotalsAsyncPipe implements PipeTransform {
-  constructor(
-    private panelsEntity: PanelsEntityService,
-    private statsService: StatsService,
-  ) {}
+  constructor(private panelsEntity: PanelsEntityService, private statsService: StatsService) {}
 
   transform(string: StringModel): Observable<TotalModel> {
     if (!string) {
@@ -29,7 +26,7 @@ export class StringTotalsAsyncPipe implements PipeTransform {
 
     return this.panelsEntity.entities$.pipe(
       map((panels) => {
-        const stringPanels = panels.filter((p) => p.string_id === string.id)
+        const stringPanels = panels.filter((p) => p.stringId === string.id)
 
         return this.statsService.calculateStringTotals(string, stringPanels)
       }),

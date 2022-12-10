@@ -13,6 +13,7 @@ export interface SelectedState {
   selectedNegativeLinkTo?: string
   selectedStringId?: string
   selectedStringTooltip?: string
+  selectedStringPathMap?: Map<string, number>
 }
 
 function bringBackArray(hello?: string[]): string[] {
@@ -30,6 +31,8 @@ export const initialSelectedState: SelectedState = {
   selectedNegativeLinkTo: undefined,
   selectedStringId: undefined,
   selectedStringTooltip: undefined,
+  selectedStringPathMap: undefined,
+
 }
 
 export const selectedReducer = createReducer(
@@ -136,6 +139,15 @@ export const selectedReducer = createReducer(
     selectedStringId: state.selectedStringId,
     multiSelectIds: state.multiSelectIds,
     selectedStringTooltip: tooltip,
+  })),
+
+  on(SelectedStateActions.setSelectedStringLinkPaths, (state, { pathMap }) => ({
+    unit: UnitModel.STRING,
+    singleSelectId: state.singleSelectId,
+    selectedStringId: state.selectedStringId,
+    multiSelectIds: state.multiSelectIds,
+    selectedStringTooltip: state.selectedStringTooltip,
+    selectedStringPathMap: pathMap,
   })),
 
   on(SelectedStateActions.clearSelectedState, (state) => ({

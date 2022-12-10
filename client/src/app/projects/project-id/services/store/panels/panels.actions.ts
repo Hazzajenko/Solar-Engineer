@@ -1,5 +1,5 @@
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
-import { PanelModel } from '../../models/panel.model'
+import { PanelModel } from '../../../../models/panel.model'
 import { Update } from '@ngrx/entity'
 
 /*export const addPanel = createAction(
@@ -42,16 +42,20 @@ export interface UpdatePanelRequest {
 }
 
 export const PanelStateActions = createActionGroup({
-  source: 'Panels Service',
+  source: 'Panels State',
   events: {
-    'Add Panel Http': props<{ request: CreatePanelRequest }>(),
-    'Add Panel To State': props<{ panel: PanelModel }>(),
+    'Add Panel': props<{ panel: PanelModel }>(),
+    'Add Panel Http': emptyProps(),
     'Add Many Panels': props<{ panels: PanelModel[] }>(),
-    'Update Panel Http': props<{ request: UpdatePanelRequest }>(),
-    'Update Panel To State': props<{ panel: PanelModel }>(),
+    'Add Many Panels Http': emptyProps(),
+    'Update Panel': props<{ panel: Partial<PanelModel> }>(),
+    'Update Panel Http': emptyProps(),
     'Update Many Panels': props<{ panels: Update<PanelModel>[] }>(),
-    'Delete Panel Http': props<{ panelId: number }>(),
-    'Delete Panel To State': props<{ panelId: number }>(),
+    'Update Many Panels Http': emptyProps(),
+    'Delete Panel': props<{ panelId: string }>(),
+    'Delete Panel Http': emptyProps(),
+    'Delete Many Panels': props<{ panelIds: string[] }>(),
+    'Delete Many Panels Http': emptyProps(),
     'Clear Panels State': emptyProps(),
   },
 })

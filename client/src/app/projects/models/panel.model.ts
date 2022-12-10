@@ -5,53 +5,56 @@ import { getGuid } from '@ngrx/data'
 export class PanelModel {
   id: string
   location: string
-  string_id: string
+  name?: string
+  projectId?: number
+  inverterId?: string
+  trackerId?: string
+  stringId: string
   // has_child_block: boolean
   rotation: number
   model?: UnitModel
   child_block_id?: string
   child_block_model?: UnitModel
-  project_id?: number
-  inverter_id?: string
-  tracker_id?: string
+
   join_id?: string
   selected?: boolean
   type?: TypeModel
-  name?: string
-  positive_to_id?: string
-  negative_to_id?: string
+  positiveToId?: string
+  negativeToId?: string
   // location: string
-  current_at_maximum_power?: number
-  short_circuit_current?: number
-  short_circuit_current_temp?: number
-  maximum_power?: number
-  maximum_power_temp?: number
-  voltage_at_maximum_power?: number
-  open_circuit_voltage?: number
-  open_circuit_voltage_temp?: number
+  currentAtMaximumPower?: number
+  shortCircuitCurrent?: number
+  shortCircuitCurrentTemp?: number
+  maximumPower?: number
+  maximumPowerTemp?: number
+  voltageAtMaximumPower?: number
+  openCircuitVoltage?: number
+  openCircuitVoltageTemp?: number
   length?: number
   weight?: number
   width?: number
-  created_at?: string
+  createdAt?: string
   color?: string
   version?: number
 
-  constructor(
-    projectId: number,
-    location: string,
-    stringId: string,
-    rotation: number,
-    hasChildBlock?: boolean,
-    childBlockId?: string,
-    childBlockModel?: UnitModel,
-  ) {
+  constructor(location: string, stringId: string, rotation: number) {
     this.id = getGuid().toString()
     this.rotation = rotation
-    this.project_id = projectId
+    // this.projectId = projectId
+
     this.location = location
-    this.string_id = stringId
-    // this.has_child_block = hasChildBlock
-    this.child_block_id = childBlockId
-    this.child_block_model = childBlockModel
+    this.stringId = stringId
+    this.name = 'Longi Himo555m'
+    this.currentAtMaximumPower = 13.19
+    this.shortCircuitCurrent = 14.01
+    this.shortCircuitCurrentTemp = 0.05
+    this.maximumPower = 555
+    this.maximumPowerTemp = -0.34
+    this.voltageAtMaximumPower = 42.1
+    this.openCircuitVoltage = 49.95
+    this.openCircuitVoltageTemp = -0.265
+    this.length = 2256
+    this.weight = 1133
+    this.width = 27.2
   }
 }

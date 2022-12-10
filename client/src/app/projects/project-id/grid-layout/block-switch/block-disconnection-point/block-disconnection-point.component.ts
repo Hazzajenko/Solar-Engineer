@@ -17,7 +17,7 @@ import { distinctUntilChanged, firstValueFrom, Observable } from 'rxjs'
 import { UnitModel } from '../../../../models/unit.model'
 import { Store } from '@ngrx/store'
 import { AppState } from '../../../../../store/app.state'
-import { LinksEntityService } from '../../../services/ngrx-data/links-entity/links-entity.service'
+import { PanelLinksEntityService } from '../../../services/ngrx-data/panel-links-entity/panel-links-entity.service'
 import { PanelLinkComponent } from '../block-panel/panel-link/panel-link.component'
 import { RightClick } from '../right-click'
 import { GridMode } from '../../../services/store/grid/grid-mode.model'
@@ -72,7 +72,7 @@ export class BlockDisconnectionPointComponent implements OnInit {
   constructor(
     public disconnectionPointsEntity: DisconnectionPointsEntityService,
     private store: Store<AppState>,
-    private panelJoinsEntity: LinksEntityService,
+    private panelJoinsEntity: PanelLinksEntityService,
     private joinsService: LinksService,
     private logger: LoggerService,
   ) {}
@@ -80,7 +80,7 @@ export class BlockDisconnectionPointComponent implements OnInit {
   displayTooltip(disconnectionPoint: DisconnectionPointModel): string {
     return `
        Location = ${disconnectionPoint.location} \r\n
-       String: ${disconnectionPoint.string_id} \r\n
+       String: ${disconnectionPoint.stringId} \r\n
     `
   }
 

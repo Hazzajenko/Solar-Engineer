@@ -1,13 +1,13 @@
 <div class="toolbar" role="banner">
   <button (click)="signIn()">Sign IN</button>
-  <button (click)="sendSocket()">SOCKET</button>
-  <div *ngIf="websocketService.messages | async; let messages">
-    <div *ngIf="messages">
-      {{ messages.action }}
-      {{ messages.username }}
-      {{ messages.message }}
-    </div>
-  </div>
+  <!--  <button (click)="sendSocket()">SOCKET</button>-->
+  <!--  <div *ngIf="websocketService.messages | async; let messages">
+      <div *ngIf="messages">
+        {{ messages.action }}
+        {{ messages.username }}
+        {{ messages.message }}
+      </div>
+    </div>-->
 </div>
 
 <div class="content" role="main"></div>

@@ -7,20 +7,16 @@ import { UnitModel } from '../../projects/models/unit.model'
   standalone: true,
 })
 export class FilterStringsByPipe implements PipeTransform {
-  transform(
-    strings: StringModel[],
-    id: string,
-    model: UnitModel,
-  ): StringModel[] {
+  transform(strings: StringModel[], id: string, model: UnitModel): StringModel[] {
     if (!strings || !id || !model) {
       return strings
     }
 
     switch (model) {
       case 1:
-        return strings.filter((string) => string.inverter_id === id)
+        return strings.filter((string) => string.inverterId === id)
       case 2:
-        return strings.filter((string) => string.tracker_id === id)
+        return strings.filter((string) => string.trackerId === id)
       default:
         return strings
     }

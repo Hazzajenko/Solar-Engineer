@@ -145,7 +145,7 @@ export class ExistingStringsDialog implements OnInit {
         const selectedPanelUpdates: Partial<PanelModel>[] = selectedPanels.map((panel) => {
           const partial: Partial<PanelModel> = {
             ...panel,
-            string_id: string.id,
+            stringId: string.id,
             color: string.color,
           }
           return partial
@@ -162,7 +162,7 @@ export class ExistingStringsDialog implements OnInit {
       } else {
         const partial: Partial<PanelModel> = {
           ...selectedPanels,
-          string_id: string.id,
+          stringId: string.id,
           color: string.color,
         }
 

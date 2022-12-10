@@ -24,7 +24,7 @@ export class TraysEntityEffects {
                 id: tray.id,
                 location: tray.location,
                 model: UnitModel.TRAY,
-                project_id: tray.project_id!,
+                projectId: tray.project_id!,
               },
             }),
           )
@@ -37,17 +37,15 @@ export class TraysEntityEffects {
       this.actions$.pipe(
         ofType(`${DataEntities.Tray} ${EntityOp.QUERY_ALL_SUCCESS}`),
         tap((action: any) => {
-          const blocks: BlockModel[] = action.payload.data.map(
-            (tray: TrayModel) => {
-              const block: BlockModel = {
-                id: tray.id,
-                location: tray.location,
-                model: UnitModel.TRAY,
-                project_id: tray.project_id!,
-              }
-              return block
-            },
-          )
+          const blocks: BlockModel[] = action.payload.data.map((tray: TrayModel) => {
+            const block: BlockModel = {
+              id: tray.id,
+              location: tray.location,
+              model: UnitModel.TRAY,
+              projectId: tray.projectId!,
+            }
+            return block
+          })
           this.store.dispatch(
             BlocksStateActions.addManyBlocksForGrid({
               blocks,
@@ -69,7 +67,7 @@ export class TraysEntityEffects {
                 id: data.id,
                 location: data.changes.location,
                 model: UnitModel.TRAY,
-                project_id: data.changes.project_id!,
+                projectId: data.changes.project_id!,
               },
             }),
           )

@@ -80,11 +80,11 @@ export class GridToolbarComponent implements OnInit {
   createNewString() {
     const string: StringModel = {
       id: Guid.create().toString(),
-      project_id: 3,
-      tracker_id: '6',
-      inverter_id: '11',
+      projectId: 3,
+      trackerId: '6',
+      inverterId: '11',
       name: 'customString',
-      is_in_parallel: false,
+      isInParallel: false,
       model: UnitModel.STRING,
       color: 'red',
     }
@@ -106,11 +106,11 @@ export class GridToolbarComponent implements OnInit {
 
       const string: StringModel = {
         id: Guid.create().toString(),
-        project_id: 3,
-        tracker_id: '6',
-        inverter_id: '11',
+        projectId: 3,
+        trackerId: '6',
+        inverterId: '11',
         name: result,
-        is_in_parallel: false,
+        isInParallel: false,
         model: UnitModel.STRING,
         color: 'red',
       }

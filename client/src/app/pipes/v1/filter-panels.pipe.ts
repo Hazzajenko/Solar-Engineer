@@ -7,11 +7,7 @@ import { TypeModel } from '../../projects/models/type.model'
   standalone: true,
 })
 export class FilterPanelsPipe implements PipeTransform {
-  transform(
-    panels: PanelModel[],
-    id: string,
-    unitModel: TypeModel,
-  ): PanelModel[] {
+  transform(panels: PanelModel[], id: string, unitModel: TypeModel): PanelModel[] {
     if (!panels || !id || !unitModel) {
       return panels
     }
@@ -20,9 +16,9 @@ export class FilterPanelsPipe implements PipeTransform {
       /*      case 'PROJECT':
               return panels.filter((panel) => panel.project_id === id)*/
       case 'INVERTER':
-        return panels.filter((panel) => panel.inverter_id === id)
+        return panels.filter((panel) => panel.inverterId === id)
       case 'TRACKER':
-        return panels.filter((panel) => panel.tracker_id === id)
+        return panels.filter((panel) => panel.trackerId === id)
       /*      case 'STRING':
               return panels.filter((panel) => panel.string_id === id)*/
       default:

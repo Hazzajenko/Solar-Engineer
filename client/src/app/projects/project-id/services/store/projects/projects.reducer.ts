@@ -7,14 +7,13 @@ export const selectProjectId = (b: ProjectModel): number => b.id
 export const sortByProjectName = (a: ProjectModel, b: ProjectModel): number =>
   a.name.localeCompare(b.name)
 
-export const projectAdapter: EntityAdapter<ProjectModel> =
-  createEntityAdapter<ProjectModel>({
-    selectId: selectProjectId,
-    sortComparer: sortByProjectName,
-  })
+export const projectAdapter: EntityAdapter<ProjectModel> = createEntityAdapter<ProjectModel>({
+  selectId: selectProjectId,
+  sortComparer: sortByProjectName,
+})
 
 export const initialProjectsState = projectAdapter.getInitialState({
-  currentProjectId: 3,
+  currentProjectId: 1,
 })
 
 export const projectsReducer = createReducer(
@@ -45,13 +44,10 @@ export const projectsReducer = createReducer(
     projectAdapter.removeOne(action.project.id, state),
   ),
 
-  on(ProjectsActions.clearProjectsState, (state, action) =>
-    projectAdapter.removeAll(state),
-  ),
+  on(ProjectsActions.clearProjectsState, (state, action) => projectAdapter.removeAll(state)),
 )
 
-export const { selectIds, selectEntities, selectAll } =
-  projectAdapter.getSelectors()
+export const { selectIds, selectEntities, selectAll } = projectAdapter.getSelectors()
 
 // export type ProjectState = EntityState<ProjectModel>
 

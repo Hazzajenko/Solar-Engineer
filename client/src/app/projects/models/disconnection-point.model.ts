@@ -7,13 +7,13 @@ export enum DisconnectionPointType {
 
 export class DisconnectionPointModel {
   id: string = ''
-  project_id?: number
-  string_id?: string
-  positive_id?: string
-  negative_id?: string
+  projectId?: number
+  stringId?: string
+  positiveId?: string
+  negativeId?: string
   cable_id?: string
   location?: string
-  disconnection_type?: DisconnectionPointType
+  disconnectionPointType?: DisconnectionPointType
   model: UnitModel = UnitModel.DISCONNECTIONPOINT
   color?: string
 }

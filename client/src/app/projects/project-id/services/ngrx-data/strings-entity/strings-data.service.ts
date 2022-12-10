@@ -1,11 +1,13 @@
 import { DefaultDataService, HttpUrlGenerator } from '@ngrx/data'
 import { Injectable } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
-import { Observable } from 'rxjs'
-import { environment } from '../../../../../../environments/environment'
-import { map } from 'rxjs/operators'
+import { Observable, switchMap } from 'rxjs'
+import { map, take } from 'rxjs/operators'
 import { Update } from '@ngrx/entity'
 import { StringModel } from '../../../../models/string.model'
+import { Store } from '@ngrx/store'
+import { AppState } from '../../../../../store/app.state'
+import { selectCurrentProjectId } from '../../store/projects/projects.selectors'
 
 interface GetStringsResponse {
   strings: StringModel[]
@@ -28,41 +30,43 @@ export class StringsDataService extends DefaultDataService<StringModel> {
   constructor(
     http: HttpClient,
     httpUrlGenerator: HttpUrlGenerator,
-    // logger: Logger,
+    private store: Store<AppState>, // logger: Logger,
   ) {
     super('String', http, httpUrlGenerator)
     // logger.log('Created custom Strings EntityDataService')
   }
 
   override getAll(): Observable<StringModel[]> {
-    return this.http
-      .get<GetStringsResponse>(environment.apiUrl + `/projects/3/strings`)
-      .pipe(map((res) => res.strings))
+    return this.store.select(selectCurrentProjectId).pipe(
+      take(1),
+      switchMap((projectId) =>
+        this.http
+          .get<GetStringsResponse>(`/api/projects/${projectId}/strings`)
+          .pipe(map((res) => res.strings)),
+      ),
+      /*        switchMap((project) =>
+                  this.http
+                    .get<GetStringsResponse>(`/api/projects/${project?.id}/strings`)
+                    .pipe(map((res) => res.strings)),
+                ),*/
+    )
   }
 
   override add(entity: StringModel): Observable<StringModel> {
     return this.http
-      .post<CreateStringResponse>(
-        environment.apiUrl + `/projects/3/string`,
-        entity,
-      )
+      .post<CreateStringResponse>(`/api/projects/1/string`, entity)
       .pipe(map((res) => res.string))
   }
 
   override update(update: Update<StringModel>): Observable<StringModel> {
     return this.http
-      .put<UpdateStringResponse>(
-        environment.apiUrl + `/projects/3/string/${update.id}`,
-        update,
-      )
+      .put<UpdateStringResponse>(`/api/projects/1/string/${update.id}`, update)
       .pipe(map((res) => res.string))
   }
 
   override delete(key: number | string): Observable<number | string> {
     return this.http
-      .delete<DeleteStringResponse>(
-        environment.apiUrl + `/projects/3/string/${key}`,
-      )
+      .delete<DeleteStringResponse>(`/api/projects/1/string/${key}`)
       .pipe(map((res) => res.string_id))
   }
 }

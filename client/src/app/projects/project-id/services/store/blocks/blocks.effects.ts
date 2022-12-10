@@ -1,4 +1,4 @@
-import { LinksEntityService } from '../../ngrx-data/links-entity/links-entity.service'
+import { PanelLinksEntityService } from '../../ngrx-data/panel-links-entity/panel-links-entity.service'
 import { Injectable } from '@angular/core'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { Store } from '@ngrx/store'
@@ -6,18 +6,17 @@ import { AppState } from '../../../../../store/app.state'
 import { PanelsEntityService } from '../../ngrx-data/panels-entity/panels-entity.service'
 import { StringsEntityService } from '../../ngrx-data/strings-entity/strings-entity.service'
 import { StatsService } from '../../stats.service'
-import { firstValueFrom, switchMap } from 'rxjs'
+import { firstValueFrom, lastValueFrom, switchMap } from 'rxjs'
 import { BlocksStateActions } from './blocks.actions'
 import { UnitModel } from '../../../../models/unit.model'
 import { BlockModel } from '../../../../models/block.model'
 import { HttpClient } from '@angular/common/http'
 import { selectCurrentProjectId } from '../projects/projects.selectors'
 import { map } from 'rxjs/operators'
-import { PanelsService } from '../../ngrx-data/panels-entity/panels.service'
 import { ObservableService } from '../../observable.service'
 import { RailsEntityService } from '../../ngrx-data/rails-entity/rails-entity.service'
 import { RailModel } from '../../../../models/rail.model'
-import { PanelModel } from '../../../../models/panel.model'
+import { PanelsHelperService } from '../../ngrx-data/panels-entity/panels.service'
 
 @Injectable()
 export class BlocksEffects {
@@ -35,16 +34,12 @@ export class BlocksEffects {
                 .map((block) => block.id)
 
               if (panelBlocks) {
-                firstValueFrom(
-                  this.panelsService.getBlocksFromIncludedArray(panelBlocks).pipe(
-                    switchMap((panels: PanelModel[]) =>
-                      this.http.delete(`/api/projects/${projectId}/panels`, {
-                        body: {
-                          panels,
-                        },
-                      }),
-                    ),
-                  ),
+                lastValueFrom(
+                  this.http.delete(`/api/projects/${projectId}/panels`, {
+                    body: {
+                      panelIds: panelBlocks,
+                    },
+                  }),
                 ).then((res) => {
                   console.log(res)
                 })
@@ -54,7 +49,7 @@ export class BlocksEffects {
                 .filter((b) => b.model === UnitModel.RAIL)
                 .map((block) => block.id)
 
-              if (panelRails) {
+              if (panelRails.length > 0) {
                 firstValueFrom(
                   this.observablesService
                     .getItemFromIncludedIdArray(UnitModel.RAIL, panelRails)
@@ -109,9 +104,9 @@ export class BlocksEffects {
 
   constructor(
     private actions$: Actions,
-    private panelJoinsEntity: LinksEntityService,
+    private panelJoinsEntity: PanelLinksEntityService,
     private panelsEntity: PanelsEntityService,
-    private panelsService: PanelsService,
+    private panelsService: PanelsHelperService,
     private stringsEntity: StringsEntityService,
     private railsEntity: RailsEntityService,
     private statsService: StatsService,

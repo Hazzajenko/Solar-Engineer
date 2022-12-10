@@ -52,57 +52,47 @@ export class ProjectsService {
 
   getUserProjects(): Promise<ProjectsEnvelope> {
     return new Promise<ProjectsEnvelope>((resolve, reject) =>
-      this.http
-        .get<ProjectsEnvelope>(environment.apiUrl + '/projects')
-        .subscribe({
-          next: (envelope) => {
-            this.store.dispatch(
-              addUserProjects({ projects: envelope.projects }),
-            )
-            resolve(envelope)
-          },
-          error: (err) => {
-            reject(err)
-          },
-          complete: () => {
-            console.log('getUserProjects')
-          },
-        }),
+      this.http.get<ProjectsEnvelope>(environment.apiUrl + '/projects').subscribe({
+        next: (envelope) => {
+          this.store.dispatch(addUserProjects({ projects: envelope.projects }))
+          resolve(envelope)
+        },
+        error: (err) => {
+          reject(err)
+        },
+        complete: () => {
+          console.log('getUserProjects')
+        },
+      }),
     )
   }
 
   getProjectById(projectId: number): Promise<ProjectEnvelope> {
     return new Promise<ProjectEnvelope>((resolve, reject) =>
-      this.http
-        .get<ProjectEnvelope>(environment.apiUrl + `/projects/${projectId}`)
-        .subscribe({
-          next: (envelope) => {
-            this.store.dispatch(selectProject({ project: envelope.project }))
-            resolve(envelope)
-          },
-          error: (err) => {
-            reject(err)
-          },
-          complete: () => {
-            console.log('getProjectById')
-          },
-        }),
+      this.http.get<ProjectEnvelope>(environment.apiUrl + `/projects/${projectId}`).subscribe({
+        next: (envelope) => {
+          this.store.dispatch(selectProject({ project: envelope.project }))
+          resolve(envelope)
+        },
+        error: (err) => {
+          reject(err)
+        },
+        complete: () => {
+          console.log('getProjectById')
+        },
+      }),
     )
   }
 
   getDataByProjectId(projectId: number): Promise<ProjectDataEnvelope> {
     return new Promise<ProjectDataEnvelope>((resolve, reject) =>
       this.http
-        .get<ProjectDataEnvelope>(
-          environment.apiUrl + `/projects/${projectId}/all`,
-        )
+        .get<ProjectDataEnvelope>(environment.apiUrl + `/projects/${projectId}/all`)
         .subscribe({
           next: (envelope) => {
             this.store.dispatch(selectProject({ project: envelope.project }))
             resolve(envelope)
-            this.store.dispatch(
-              addInvertersByProjectId({ inverters: envelope.inverters }),
-            )
+            this.store.dispatch(addInvertersByProjectId({ inverters: envelope.inverters }))
             this.store.dispatch(addTrackers({ trackers: envelope.trackers }))
             this.store.dispatch(
               addStringsByProjectId({
@@ -110,22 +100,14 @@ export class ProjectsService {
               }),
             )
             envelope.panels.forEach((panel) => {
-              panel.open_circuit_voltage = Number(panel.open_circuit_voltage)
-              panel.current_at_maximum_power = Number(
-                panel.current_at_maximum_power,
-              )
-              panel.short_circuit_current = Number(panel.short_circuit_current)
-              panel.short_circuit_current_temp = Number(
-                panel.short_circuit_current_temp,
-              )
-              panel.maximum_power = Number(panel.maximum_power)
-              panel.maximum_power_temp = Number(panel.maximum_power_temp)
-              panel.voltage_at_maximum_power = Number(
-                panel.voltage_at_maximum_power,
-              )
-              panel.open_circuit_voltage_temp = Number(
-                panel.open_circuit_voltage_temp,
-              )
+              panel.openCircuitVoltage = Number(panel.openCircuitVoltage)
+              panel.currentAtMaximumPower = Number(panel.currentAtMaximumPower)
+              panel.shortCircuitCurrent = Number(panel.shortCircuitCurrent)
+              panel.shortCircuitCurrentTemp = Number(panel.shortCircuitCurrentTemp)
+              panel.maximumPower = Number(panel.maximumPower)
+              panel.maximumPowerTemp = Number(panel.maximumPowerTemp)
+              panel.voltageAtMaximumPower = Number(panel.voltageAtMaximumPower)
+              panel.openCircuitVoltageTemp = Number(panel.openCircuitVoltageTemp)
               panel.weight = Number(panel.weight)
             }) /*
             this.store.dispatch(

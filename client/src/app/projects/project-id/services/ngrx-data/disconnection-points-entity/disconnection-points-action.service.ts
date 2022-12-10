@@ -3,13 +3,7 @@ import { Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
 import { LoggerService } from '../../../../../services/logger.service'
 import { LinksService } from '../../links/links.service'
-import { DisconnectionPointModel } from '../../../../models/disconnection-point.model'
-import { GridMode } from '../../store/grid/grid-mode.model'
-import { SelectedStateActions } from '../../store/selected/selected.actions'
-import { GridStateActions } from '../../store/grid/grid.actions'
 import { DisconnectionPointsEntityService } from './disconnection-points-entity.service'
-import { lastValueFrom } from 'rxjs'
-import { selectGridMode } from '../../store/grid/grid.selectors'
 
 @Injectable({
   providedIn: 'root',
@@ -22,7 +16,7 @@ export class DisconnectionPointsActionService {
     private joinsService: LinksService,
   ) {}
 
-  dpAction(disconnectionPoint: DisconnectionPointModel) {
+  /*dpAction(disconnectionPoint: DisconnectionPointModel) {
     if (!disconnectionPoint) {
       return this.logger.error('err dpAction !disconnectionPoint')
     }
@@ -57,5 +51,5 @@ export class DisconnectionPointsActionService {
           'err dpAction this.store.select(selectGridMode)' + err,
         )
       })
-  }
+  }*/
 }

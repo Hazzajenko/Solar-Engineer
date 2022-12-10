@@ -3,7 +3,6 @@ import { HttpClient } from '@angular/common/http'
 import { Store } from '@ngrx/store'
 import { AppState } from '../../../store/app.state'
 import { combineLatestWith, firstValueFrom, lastValueFrom } from 'rxjs'
-import { StringModel } from '../../models/string.model'
 import { PanelModel } from '../../models/panel.model'
 import { InverterModel } from '../../models/inverter.model'
 import { UnitModel } from '../../models/unit.model'
@@ -27,12 +26,16 @@ import { DisconnectionPointsEntityService } from './ngrx-data/disconnection-poin
 import { InvertersEntityService } from './ngrx-data/inverters-entity/inverters-entity.service'
 import { TrayModel } from '../../models/tray.model'
 import { TraysEntityService } from './ngrx-data/trays-entity/trays-entity.service'
-import { selectSelectedStringId, selectSelectedUnitAndIds } from './store/selected/selected.selectors'
+import {
+  selectSelectedStringId,
+  selectSelectedUnitAndIds,
+} from './store/selected/selected.selectors'
 import { RailModel } from '../../models/rail.model'
 import { RailsEntityService } from './ngrx-data/rails-entity/rails-entity.service'
 import { BlocksEntityService } from './ngrx-data/blocks-entity/blocks-entity.service'
 import { BlockModel } from '../../models/block.model'
 import { map } from 'rxjs/operators'
+import { PanelsHelperService } from './ngrx-data/panels-entity/panels.service'
 
 @Injectable({
   providedIn: 'root',
@@ -51,6 +54,7 @@ export class CreateService {
     private traysEntity: TraysEntityService,
     private railsEntity: RailsEntityService,
     private blocksEntity: BlocksEntityService,
+    private panelsService: PanelsHelperService,
   ) {}
 
   createSwitch(location: string) {
@@ -96,48 +100,59 @@ export class CreateService {
       if (childBlock) {
         if (!state.singleSelectId && state.unit !== UnitModel.STRING) {
           console.log('        if (!selectedStringId) {')
-          const panelRequest: PanelModel = {
-            id: Guid.create().toString(),
-            string_id: 'undefined',
+          // const panelRequest = new PanelModel(location, 'undefined', 0)
+          const panelRequest = this.panelsService.createPanelWithDefaultValues(
             location,
-            rotation: 0,
-            // has_child_block: true,
-            child_block_id: childBlock.id,
-            child_block_model: childBlock.model,
-          }
+            'undefined',
+            0,
+          )
+
+          /*          const panelRequest: PanelModel = {
+                      id: Guid.create().toString(),
+                      stringId: 'undefined',
+                      location,
+                      rotation: 0,
+                      // has_child_block: true,
+                      child_block_id: childBlock.id,
+                      child_block_model: childBlock.model,
+                    }*/
 
           this.panelsEntity.add(panelRequest)
         } else if (state.singleSelectId && state.unit === UnitModel.STRING) {
           console.log('        } else if (selectedStringId.length > 0) {')
-          const panelRequest: PanelModel = {
-            id: Guid.create().toString(),
-            string_id: state.selectedStringId!,
-            location,
-            rotation: 0,
-            // has_child_block: false,
-            child_block_id: childBlock.id,
-            child_block_model: childBlock.model,
-          }
+          /*          const panelRequest: PanelModel = {
+                      id: Guid.create().toString(),
+                      stringId: state.selectedStringId!,
+                      location,
+                      rotation: 0,
+                      // has_child_block: false,
+                      child_block_id: childBlock.id,
+                      child_block_model: childBlock.model,
+                    }*/
+          const panelRequest = new PanelModel(location, state.selectedStringId!, 0)
 
           this.panelsEntity.add(panelRequest)
         }
       } else {
         if (!state.singleSelectId && state.unit !== UnitModel.STRING) {
-          const panelRequest: PanelModel = {
-            id: Guid.create().toString(),
-            string_id: 'undefined',
-            location,
-            rotation: 0,
-          }
+          /*          const panelRequest: PanelModel = {
+                      id: Guid.create().toString(),
+                      stringId: 'undefined',
+                      location,
+                      rotation: 0,
+                    }*/
+          const panelRequest = new PanelModel(location, 'undefined', 0)
 
           this.panelsEntity.add(panelRequest)
+          // this.store.dispatch(PanelStateActions.addPanel({ panel: panelRequest }))
         } else if (state.singleSelectId && state.unit === UnitModel.STRING) {
-          const panelRequest: PanelModel = {
-            id: Guid.create().toString(),
-            string_id: state.selectedStringId!,
-            location,
-            rotation: 0,
-          }
+          /*          const panelRequest: PanelModel = {
+                      id: Guid.create().toString(),
+                      stringId: state.selectedStringId!,
+                      location,
+                      rotation: 0,
+                    }*/
+          const panelRequest = new PanelModel(location, state.selectedStringId!, 0)
 
           this.panelsEntity.add(panelRequest)
         }
@@ -204,11 +219,11 @@ export class CreateService {
       if (stringId) {
         const disconnectionPointModel: DisconnectionPointModel = {
           id: Guid.create().toString(),
-          project_id: 3,
-          string_id: stringId,
-          disconnection_type: DisconnectionPointType.MC4,
-          positive_id: 'undefined',
-          negative_id: 'undefined',
+          projectId: 3,
+          stringId: stringId,
+          disconnectionPointType: DisconnectionPointType.MC4,
+          positiveId: 'undefined',
+          negativeId: 'undefined',
           location,
           color: 'black',
           model: UnitModel.DISCONNECTIONPOINT,
@@ -216,7 +231,7 @@ export class CreateService {
 
         this.dp.add(disconnectionPointModel)
       } else {
-        console.error("a string needs to be selected to create a disconnection point")
+        console.error('a string needs to be selected to create a disconnection point')
       }
     })
   }
@@ -225,7 +240,7 @@ export class CreateService {
     firstValueFrom(this.store.select(selectCurrentProjectId)).then((projectId) => {
       const inverterRequest: InverterModel = {
         id: Guid.create().toString(),
-        project_id: projectId,
+        projectId: projectId,
         location,
         model: UnitModel.INVERTER,
         color: 'blue',

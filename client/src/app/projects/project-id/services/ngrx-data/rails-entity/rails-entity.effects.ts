@@ -31,7 +31,7 @@ export class RailsEntityEffects {
                   id: rail.id,
                   location: rail.location,
                   model: UnitModel.RAIL,
-                  project_id: rail.project_id!,
+                  projectId: rail.project_id!,
                 },
               }),
             )
@@ -42,7 +42,7 @@ export class RailsEntityEffects {
                   id: existing.id,
                   location: existing.location,
                   model: existing.model,
-                  project_id: existing.project_id!,
+                  projectId: existing.projectId!,
                   inside_blocks: [
                     {
                       child_block_id: rail.id,
@@ -70,7 +70,7 @@ export class RailsEntityEffects {
               id: rail.id,
               location: rail.location,
               model: UnitModel.RAIL,
-              project_id: rail.project_id,
+              projectId: rail.project_id,
             }
 
             return block
@@ -99,7 +99,7 @@ export class RailsEntityEffects {
               id: rail.id,
               location: rail.location,
               model: UnitModel.RAIL,
-              project_id: rail.project_id!,
+              projectId: rail.project_id!,
             }
             return block
           })
@@ -124,7 +124,7 @@ export class RailsEntityEffects {
                 id: data.id,
                 location: data.changes.location,
                 model: UnitModel.RAIL,
-                project_id: data.changes.project_id!,
+                projectId: data.changes.project_id!,
               },
             }),
           )

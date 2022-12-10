@@ -64,8 +64,8 @@ import { GetCablePipe } from '../../../pipes/get-cable.pipe'
 import { BlockSwitchComponent } from './block-switch/block-switch.component'
 import { BlockByLocationPipe } from './block-by-location.pipe'
 import { selectSelectedUnitAndIds } from '../services/store/selected/selected.selectors'
-import { LinksEntityService } from '../services/ngrx-data/links-entity/links-entity.service'
-import { LinkModel } from '../../models/link.model'
+import { PanelLinksEntityService } from '../services/ngrx-data/panel-links-entity/panel-links-entity.service'
+import { PanelLinkModel } from '../../models/panelLinkModel'
 import { selectLinksState } from 'src/app/projects/project-id/services/store/links/links.selectors'
 import { CreateService } from '../services/create.service'
 import { DeleteService } from '../services/delete.service'
@@ -133,7 +133,7 @@ export class GridLayoutComponent implements OnInit {
     panels?: PanelModel[]
     cables?: CableModel[]
     joins?: JoinModel[]
-    panelJoins?: LinkModel[]
+    panelJoins?: PanelLinkModel[]
     disconnectionPoints?: DisconnectionPointModel[]
   }>
   project$!: Observable<ProjectModel | undefined>
@@ -144,7 +144,7 @@ export class GridLayoutComponent implements OnInit {
   cables$!: Observable<CableModel[]>
   blocks$!: Observable<BlockModel[]>
   joins$!: Observable<LinksState>
-  panelJoins$!: Observable<LinkModel[]>
+  panelJoins$!: Observable<PanelLinkModel[]>
   disconnectionPoints$!: Observable<DisconnectionPointModel[]>
   selected$!: Observable<SelectedState>
   rows = 20
@@ -161,7 +161,7 @@ export class GridLayoutComponent implements OnInit {
     private invertersEntity: InvertersEntityService,
     private trackersEntity: TrackersEntityService,
     private joinsEntity: JoinsEntityService,
-    private panelJoinsEntity: LinksEntityService,
+    private panelJoinsEntity: PanelLinksEntityService,
     private disconnectionPointsEntity: DisconnectionPointsEntityService,
     private createService: CreateService,
     private deleteService: DeleteService,

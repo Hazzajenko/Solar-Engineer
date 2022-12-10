@@ -4,15 +4,11 @@ import { environment } from '../../../environments/environment'
 import { Store } from '@ngrx/store'
 import { AppState } from '../../store/app.state'
 import { StringModel } from '../models/string.model'
-import {
-  addString,
-  deleteString,
-  updateString,
-} from '../store/strings/strings.actions'
+import { addString, deleteString, updateString } from '../store/strings/strings.actions'
 import { TrackerModel } from '../models/tracker.model'
 import { PanelModel } from '../models/panel.model'
 import { Update } from '@ngrx/entity'
-import { PanelStateActions } from '../store/panels/panels.actions'
+import { PanelStateActions } from '../project-id/services/store/panels/panels.actions'
 
 interface StringsEnvelope {
   strings: StringModel[]
@@ -47,16 +43,13 @@ export class StringsService {
   ): Promise<CreateStringResponse> {
     return new Promise<CreateStringResponse>((resolve, reject) =>
       this.http
-        .post<CreateStringResponse>(
-          environment.apiUrl + `/projects/${project_id}/trackers`,
-          {
-            inverter_id,
-            tracker_id,
-            name,
-            isInParallel: false,
-            // tracker,
-          },
-        )
+        .post<CreateStringResponse>(environment.apiUrl + `/projects/${project_id}/trackers`, {
+          inverter_id,
+          tracker_id,
+          name,
+          isInParallel: false,
+          // tracker,
+        })
         .subscribe({
           next: (envelope) => {
             this.store.dispatch(addString({ stringModel: envelope.string }))
@@ -112,24 +105,18 @@ export class StringsService {
     )
   }
 
-  updateString(
-    projectId: number,
-    string: StringModel,
-  ): Promise<StringEnvelope> {
+  updateString(projectId: number, string: StringModel): Promise<StringEnvelope> {
     return new Promise<StringEnvelope>((resolve, reject) =>
       this.http
-        .post<StringEnvelope>(
-          environment.apiUrl + `/projects/${projectId}/strings`,
-          {
-            name: string.name,
-            is_in_parallel: string.is_in_parallel,
-            inverter_id: string.inverter_id,
-            tracker_id: string.tracker_id,
-            id: string.id,
-            version: string.version,
-            panel_amount: string.panel_amount,
-          },
-        )
+        .post<StringEnvelope>(environment.apiUrl + `/projects/${projectId}/strings`, {
+          name: string.name,
+          is_in_parallel: string.isInParallel,
+          inverter_id: string.inverterId,
+          tracker_id: string.trackerId,
+          id: string.id,
+          version: string.version,
+          panel_amount: string.panelAmount,
+        })
         .subscribe({
           next: (envelope) => {
             this.store.dispatch(updateString({ string: envelope.string }))
@@ -148,14 +135,11 @@ export class StringsService {
   deleteString(projectId: number, stringId: number): Promise<StringEnvelope> {
     return new Promise<StringEnvelope>((resolve, reject) =>
       this.http
-        .delete<StringEnvelope>(
-          `${environment.apiUrl}/projects/${projectId}/strings`,
-          {
-            body: {
-              id: stringId,
-            },
+        .delete<StringEnvelope>(`${environment.apiUrl}/projects/${projectId}/strings`, {
+          body: {
+            id: stringId,
           },
-        )
+        })
         .subscribe({
           next: (envelope) => {
             this.store.dispatch(deleteString({ stringId }))

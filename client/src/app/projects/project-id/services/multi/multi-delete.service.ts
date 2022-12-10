@@ -9,6 +9,7 @@ import { selectMultiState } from '../store/multi-create/multi.selectors'
 import { RailsEntityService } from '../ngrx-data/rails-entity/rails-entity.service'
 import { getLocationsInBox } from '../get-locations-in-box'
 import { BlocksService } from '../store/blocks/blocks.service'
+import { EntityCacheDispatcher } from '@ngrx/data'
 
 function getDifference<T>(a: T[], b: T[]): T[] {
   return a.filter((element) => {
@@ -26,6 +27,7 @@ export class MultiDeleteService {
     private panelsEntity: PanelsEntityService,
     private railsEntity: RailsEntityService,
     private blocksService: BlocksService,
+    private cache: EntityCacheDispatcher,
   ) {}
 
   multiDelete(location: string) {
@@ -41,6 +43,23 @@ export class MultiDeleteService {
         console.log('blocksInBox', blocksInBox)
         if (blocksInBox) {
           this.blocksService.deleteBlocksFromBox(blocksInBox)
+          /*          this.blocksService.getBlocksFromIncludedArray(blocksInBox).then((blocks) => {
+                      const ids = blocks.map((b) => b.id)
+                      // this.panelsEntity.removeManyFromCache(ids)
+                      blocks.forEach((block) => {
+                        switch (block.model) {
+                          case UnitModel.PANEL:
+                            this.panelsEntity.delete(block.id)
+                            break
+                          case UnitModel.TRAY:
+                            // this.t.delete(block.id)
+                            break
+                        }
+                      })
+                    })*/
+
+          // const changes: ChangeSetItem[] = [cif.delete('Panel', blocksInBox)]
+          // this.blocksService.deleteBlocksFromBox(blocksInBox)
         }
         this.store.dispatch(
           MultiActions.finishMultiDelete({

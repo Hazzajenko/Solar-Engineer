@@ -4,7 +4,7 @@ import { Store } from '@ngrx/store'
 import { AppState } from '../../../../../store/app.state'
 import { PanelsService } from '../../../../services/panels.service'
 import { PanelsEntityService } from './panels-entity.service'
-import { tap } from 'rxjs/operators'
+import { switchMap, tap } from 'rxjs/operators'
 import { BlocksStateActions } from '../../store/blocks/blocks.actions'
 import { UnitModel } from '../../../../models/unit.model'
 import { DataEntities } from '../data-actions'
@@ -12,9 +12,10 @@ import { EntityOp } from '@ngrx/data'
 import { BlockModel } from '../../../../models/block.model'
 import { PanelModel } from '../../../../models/panel.model'
 import { selectCurrentProjectId } from '../../store/projects/projects.selectors'
-import { lastValueFrom } from 'rxjs'
+import { firstValueFrom, lastValueFrom } from 'rxjs'
 import { HttpClient } from '@angular/common/http'
 import { Update } from '@ngrx/entity'
+import { selectSelectedStringId } from '../../store/selected/selected.selectors'
 
 @Injectable()
 export class PanelsEntityEffects {
@@ -30,33 +31,10 @@ export class PanelsEntityEffects {
                 id: panel.id,
                 location: panel.location,
                 model: UnitModel.PANEL,
-                project_id: panel.project_id!,
+                projectId: panel.projectId!,
               },
             }),
           )
-          /*if (panel.has_child_block) {
-            this.store.dispatch(
-              BlocksStateActions.updateBlockForGrid({
-                block: {
-                  id: panel.child_block_id!,
-                  location: panel.location,
-                  model: UnitModel.PANEL,
-                  project_id: panel.project_id!,
-                },
-              }),
-            )
-          } else {
-            this.store.dispatch(
-              BlocksStateActions.addBlockForGrid({
-                block: {
-                  id: panel.id,
-                  location: panel.location,
-                  model: UnitModel.PANEL,
-                  project_id: panel.project_id!,
-                },
-              }),
-            )
-          }*/
         }),
       ),
     { dispatch: false },
@@ -75,7 +53,7 @@ export class PanelsEntityEffects {
               id: panel.id,
               location: panel.location,
               model: UnitModel.PANEL,
-              project_id: panel.project_id!,
+              projectId: projectId,
             }
             return block
           })
@@ -84,11 +62,15 @@ export class PanelsEntityEffects {
               blocks,
             }),
           )
-
-          lastValueFrom(
-            this.http.post(`/api/projects/${projectId}/panels`, {
-              panels: manyPanels,
-            }),
+          firstValueFrom(
+            this.store.select(selectSelectedStringId).pipe(
+              switchMap((stringId) =>
+                this.http.post(`/api/projects/${projectId}/panels`, {
+                  stringId: stringId ? stringId : 'undefined',
+                  panels: manyPanels,
+                }),
+              ),
+            ),
           ).then((r) => console.log(r))
         }),
       ),
@@ -104,7 +86,7 @@ export class PanelsEntityEffects {
               id: panel.id,
               location: panel.location,
               model: UnitModel.PANEL,
-              project_id: panel.project_id!,
+              projectId: panel.projectId!,
             }
             return block
           })
@@ -122,14 +104,14 @@ export class PanelsEntityEffects {
       this.actions$.pipe(
         ofType(`${DataEntities.Panel} ${EntityOp.SAVE_UPDATE_ONE_SUCCESS}`),
         tap((action: any) => {
-          const data = action.payload.data
+          const data = action.payload.data.changes
           this.store.dispatch(
             BlocksStateActions.updateBlockForGrid({
               block: {
                 id: data.id,
-                location: data.changes.location,
+                location: data.location,
                 model: UnitModel.PANEL,
-                project_id: data.changes.project_id!,
+                projectId: data.projectId!,
               },
             }),
           )
@@ -143,7 +125,7 @@ export class PanelsEntityEffects {
       this.actions$.pipe(
         ofType(`${DataEntities.Panel} ${EntityOp.UPDATE_MANY}`),
         concatLatestFrom(() => this.store.select(selectCurrentProjectId)),
-        tap( ([action, projectId]: [any, number]) => {
+        tap(([action, projectId]: [any, number]) => {
           const manyPanels: any = action.payload.data
           console.log(manyPanels)
           const blocks = manyPanels.map((arr: any) => {
@@ -163,13 +145,13 @@ export class PanelsEntityEffects {
               blocks,
             }),
           )
-
+          const panelChanges = manyPanels.map((mps: { changes: any }) => mps.changes)
 
           lastValueFrom(
             this.http.put(`/api/projects/${projectId}/panels`, {
-              panels: manyPanels,
+              panels: panelChanges,
             }),
-          ).then(res => console.log(res))
+          ).then((res) => console.log(res))
         }),
       ),
     { dispatch: false },
@@ -185,6 +167,43 @@ export class PanelsEntityEffects {
               block_id: data,
             }),
           )
+        }),
+      ),
+    { dispatch: false },
+  )
+
+  deleteManyPanels$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(`${DataEntities.Panel} ${EntityOp.SAVE_DELETE_MANY}`),
+        concatLatestFrom(() => this.store.select(selectCurrentProjectId)),
+        tap(([action, projectId]: [any, number]) => {
+          const manyPanels: any = action.payload.data
+          console.log(manyPanels)
+          const blocks = manyPanels.map((arr: any) => {
+            let panel: PanelModel = arr.changes
+            const block: Update<BlockModel> = {
+              id: arr.id,
+              changes: {
+                id: arr.id,
+                location: panel.location,
+              },
+            }
+            return block
+          })
+
+          this.store.dispatch(
+            BlocksStateActions.updateManyBlocksForGrid({
+              blocks,
+            }),
+          )
+          const panelChanges = manyPanels.map((mps: { changes: any }) => mps.changes)
+
+          lastValueFrom(
+            this.http.put(`/api/projects/${projectId}/panels`, {
+              panels: panelChanges,
+            }),
+          ).then((res) => console.log(res))
         }),
       ),
     { dispatch: false },

@@ -26,7 +26,7 @@ export class InvertersEntityEffects {
                 id: inverter.id,
                 location: inverter.location,
                 model: UnitModel.INVERTER,
-                project_id: inverter.project_id!,
+                projectId: inverter.project_id!,
               },
             }),
           )
@@ -39,17 +39,15 @@ export class InvertersEntityEffects {
       this.actions$.pipe(
         ofType(`${DataEntities.Inverter} ${EntityOp.QUERY_ALL_SUCCESS}`),
         tap((action: any) => {
-          const blocks: BlockModel[] = action.payload.data.map(
-            (inverter: InverterModel) => {
-              const block: BlockModel = {
-                id: inverter.id,
-                location: inverter.location!,
-                model: UnitModel.INVERTER,
-                project_id: inverter.project_id!,
-              }
-              return block
-            },
-          )
+          const blocks: BlockModel[] = action.payload.data.map((inverter: InverterModel) => {
+            const block: BlockModel = {
+              id: inverter.id,
+              location: inverter.location!,
+              model: UnitModel.INVERTER,
+              projectId: inverter.projectId!,
+            }
+            return block
+          })
           this.store.dispatch(
             BlocksStateActions.addManyBlocksForGrid({
               blocks,
@@ -71,7 +69,7 @@ export class InvertersEntityEffects {
                 id: update.id,
                 location: update.changes.location,
                 model: UnitModel.INVERTER,
-                project_id: update.changes.project_id!,
+                projectId: update.changes.project_id!,
               },
             }),
           )

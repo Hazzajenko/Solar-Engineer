@@ -9,7 +9,7 @@ import { InvertersEntityService } from '../../project-id/services/ngrx-data/inve
 import { JoinsEntityService } from '../../project-id/services/ngrx-data/joins-entity/joins-entity.service'
 import { LinksService } from '../../project-id/services/links/links.service'
 import { LoggerService } from '../../../services/logger.service'
-import { LinksEntityService } from '../../project-id/services/ngrx-data/links-entity/links-entity.service'
+import { PanelLinksEntityService } from '../../project-id/services/ngrx-data/panel-links-entity/panel-links-entity.service'
 
 @Injectable({
   providedIn: 'root',
@@ -22,23 +22,12 @@ export class GridDeleteService extends GridService {
     joinsEntity: JoinsEntityService,
     joinsService: LinksService,
     logger: LoggerService,
-    private panelJoinsEntity: LinksEntityService,
+    private panelJoinsEntity: PanelLinksEntityService,
   ) {
-    super(
-      panelsEntity,
-      cablesEntity,
-      invertersEntity,
-      joinsEntity,
-      joinsService,
-      logger,
-    )
+    super(panelsEntity, cablesEntity, invertersEntity, joinsEntity, joinsService, logger)
   }
 
-  deleteSwitch(
-    location: string,
-    project: ProjectModel,
-    blocks?: BlockModel[],
-  ): void {
+  deleteSwitch(location: string, project: ProjectModel, blocks?: BlockModel[]): void {
     if (!blocks) return console.log('nothing to delete')
     const toDelete = blocks.find((block) => block.location === location)
     if (!toDelete) return console.log('nothing to delete')

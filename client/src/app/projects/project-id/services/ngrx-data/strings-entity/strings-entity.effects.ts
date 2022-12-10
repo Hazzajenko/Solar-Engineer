@@ -26,24 +26,22 @@ export class StringsEntityEffects {
           console.log(panels)
 
           const stringPanels: PanelModel[] = panels.filter(
-            (panel: PanelModel) => panel.string_id === data.id,
+            (panel: PanelModel) => panel.stringId === data.id,
           )
           console.log(stringPanels)
-          const blocks: Update<BlockModel>[] = stringPanels.map(
-            (panel: PanelModel) => {
-              const block: BlockModel = {
-                id: panel.id,
-                location: panel.location,
-                model: UnitModel.PANEL,
-                project_id: panel.project_id!,
-              }
-              const update: Update<BlockModel> = {
-                id: panel.id,
-                changes: block,
-              }
-              return update
-            },
-          )
+          const blocks: Update<BlockModel>[] = stringPanels.map((panel: PanelModel) => {
+            const block: BlockModel = {
+              id: panel.id,
+              location: panel.location,
+              model: UnitModel.PANEL,
+              projectId: panel.projectId!,
+            }
+            const update: Update<BlockModel> = {
+              id: panel.id,
+              changes: block,
+            }
+            return update
+          })
           console.log(blocks)
           this.store.dispatch(
             BlocksStateActions.updateManyBlocksForGrid({

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core'
 import { AuthService } from './auth/auth.service'
-import { Message, WebsocketService } from './services/websocket.service'
+import { Message } from './services/websocket.service'
 
 interface message {
   action: string
@@ -15,23 +15,19 @@ interface message {
 })
 export class AppComponent implements OnInit {
   title = 'solarengineer'
-  messages: string[] = []
   content = ''
   received: Message[] = []
   sent: Message[] = []
 
-  constructor(
-    private auth: AuthService,
-    public websocketService: WebsocketService,
-  ) {
-    this.websocketService.messages.subscribe((msg) => {
-      this.received.push(msg)
-      console.log('Response from websocket: ' + msg)
-    })
+  constructor(private auth: AuthService) {
+    /*    this.websocketService.messages.subscribe((msg) => {
+          this.received.push(msg)
+          console.log('Response from websocket: ' + msg)
+        })*/
   }
 
   async signIn() {
-    await this.auth.signIn({ email: 'test@email.com', password: 'password' })
+    await this.auth.signIn({ username: 'string', password: 'Password1' })
     // .then((res) => console.log(res))
   }
 
@@ -58,35 +54,35 @@ export class AppComponent implements OnInit {
         })*/
   }
 
-  sendMsg(message: message) {
-    /*    let message = {
-          source: '',
-          content: ''
-        };
-        message.source = 'localhost';
-        message.content = this.content;*/
+  /*  sendMsg(message: message) {
+      /!*    let message = {
+            source: '',
+            content: ''
+          };
+          message.source = 'localhost';
+          message.content = this.content;*!/
 
-    this.sent.push(message)
-    // this.websocketService.sendMessage(message)
-    // this.websocketService.messages.next(message)
+      this.sent.push(message)
+      // this.websocketService.sendMessage(message)
+      // this.websocketService.messages.next(message)
 
-    // .next(message)
-    /*    const socket$ = this.websocketService.create('ws://localhost:3000/socket')
-        /!*    let socket = new WebSocket('ws://localhost:3000/socket')
-            socket.onmessage = (event) => {
-              console.log('received from server', event.data)
-            }*!/
+      // .next(message)
+      /!*    const socket$ = this.websocketService.create('ws://localhost:3000/socket')
+          /!*    let socket = new WebSocket('ws://localhost:3000/socket')
+              socket.onmessage = (event) => {
+                console.log('received from server', event.data)
+              }*!/
 
-        this.websocketService.messages.next(message)*/
-  }
+          this.websocketService.messages.next(message)*!/
+    }*/
 
-  sendSocket() {
-    this.sendMsg({
-      action: 'broadcast',
-      username: 'hazzajenko',
-      message: 'hello',
-    })
-  }
+  /*  sendSocket() {
+      this.sendMsg({
+        action: 'broadcast',
+        username: 'hazzajenko',
+        message: 'hello',
+      })
+    }*/
 }
 
 /*

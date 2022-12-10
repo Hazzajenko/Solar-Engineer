@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core'
-import { combineLatestWith, first, firstValueFrom, Observable } from 'rxjs'
+import { firstValueFrom, Observable } from 'rxjs'
 import { UnitModel } from '../../models/unit.model'
 import { PanelsEntityService } from './ngrx-data/panels-entity/panels-entity.service'
 import { Store } from '@ngrx/store'
@@ -31,32 +31,22 @@ export class ItemsService {
         return this.panelsEntity.entities$
     }
   }
+
   getItemByLocation(model: UnitModel, location: string) {
     return firstValueFrom(
       this.modelSwitch(model).pipe(
-        map((items) =>
-          items.find((item) => item.location === location),
-        ),
+        map((items) => items.find((item) => item.location === location)),
       ),
     )
   }
 
   addManyItems(model: UnitModel, locations: string[]) {
-    firstValueFrom(
-      this.store
-        .select(selectCurrentProjectId)
-        .pipe(),
-    ).then((projectId) => {
+    firstValueFrom(this.store.select(selectCurrentProjectId).pipe()).then((projectId) => {
       switch (model) {
         case UnitModel.PANEL:
-          firstValueFrom(this.store.select(selectSelectedStringId)).then(selectedStringId => {
+          firstValueFrom(this.store.select(selectSelectedStringId)).then((selectedStringId) => {
             const panels = locations.map((location) => {
-              return new PanelModel(
-                projectId,
-                location,
-                selectedStringId ? selectedStringId : 'undefined',
-                0,
-              )
+              return new PanelModel(location, selectedStringId ? selectedStringId : 'undefined', 0)
             })
             this.panelsEntity.addManyToCache(panels)
           })

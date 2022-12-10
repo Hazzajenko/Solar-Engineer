@@ -1,10 +1,5 @@
 import { Component, OnInit } from '@angular/core'
-import {
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms'
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms'
 import { AuthService } from '../auth.service'
 import { MatCardModule } from '@angular/material/card'
 import { MatFormFieldModule } from '@angular/material/form-field'
@@ -71,20 +66,20 @@ export class LoginComponent implements OnInit {
     const email = this.email?.value
     const password = this.password?.value
 
-    try {
-      if (this.isLogin) {
-        await this.auth.signIn({ email, password })
-      }
-      /*      if (this.isSignup) {
-              await this.afAuth.createUserWithEmailAndPassword(email, password);
-            }
-            if (this.isPasswordReset) {
-              await this.afAuth.sendPasswordResetEmail(email);
-              this.serverMessage = 'Check your email';
-            }*/
-    } catch (err) {
-      this.serverMessage = `${err}`
-    }
+    /*    try {
+          if (this.isLogin) {
+            await this.auth.signIn({ username, password })
+          }
+          /!*      if (this.isSignup) {
+                  await this.afAuth.createUserWithEmailAndPassword(email, password);
+                }
+                if (this.isPasswordReset) {
+                  await this.afAuth.sendPasswordResetEmail(email);
+                  this.serverMessage = 'Check your email';
+                }*!/
+        } catch (err) {
+          this.serverMessage = `${err}`
+        }*/
 
     this.loading = false
   }

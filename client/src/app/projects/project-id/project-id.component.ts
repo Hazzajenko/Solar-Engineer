@@ -24,7 +24,6 @@ import { selectLinksState } from './services/store/links/links.selectors'
 import { UnitModel } from '../models/unit.model'
 import { ActivatedRoute, Router } from '@angular/router'
 import { GridOverlayComponent } from './grid-layout/grid-overlay/grid-overlay.component'
-import { selectBlocksByProjectIdRouteParams } from './services/store/blocks/blocks.selectors'
 
 @Component({
   selector: 'app-project-id',
@@ -166,16 +165,15 @@ export class ProjectIdComponent implements OnInit, AfterViewInit {
     this.scrollY = this.canvas.nativeElement.scrollTop
 
     this.ctx = this.canvas.nativeElement.getContext('2d')!
-
-    firstValueFrom(this.store.select(selectBlocksByProjectIdRouteParams).pipe(
-      map(blocks => blocks.find(b => b.id === '1f1cdc069343b93b5ec0db0ef44d'))
-    )).then(res => {
-      this.ctx.beginPath()
-      this.ctx.moveTo(this.startX, this.startY)
-      this.ctx.lineTo(res!.x!, res!.y!)
-      this.ctx.stroke()
-    })
-
+    /*
+        firstValueFrom(this.store.select(selectBlocksByProjectIdRouteParams).pipe(
+          map(blocks => blocks.find(b => b.id === '1f1cdc069343b93b5ec0db0ef44d'))
+        )).then(res => {
+          this.ctx.beginPath()
+          this.ctx.moveTo(this.startX, this.startY)
+          this.ctx.lineTo(res!.x!, res!.y!)
+          this.ctx.stroke()
+        })*/
   }
 
   canvasAction(event: MouseEvent) {

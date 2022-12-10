@@ -17,7 +17,7 @@ export class PanelTooltipAsyncPipe implements PipeTransform {
     }
 
     return this.stringsEntity.entities$.pipe(
-      map((strings) => strings.find((s) => s.id === panel.string_id)),
+      map((strings) => strings.find((s) => s.id === panel.stringId)),
       map((string) => string!.name),
     )
 

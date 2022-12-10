@@ -28,14 +28,14 @@ export class ProjectsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.projects
-      .getUserProjects()
-      .then((res) => {
-        if (res) this.initState()
-      })
-      .catch((err) => {
-        console.log(err)
-      })
+    /*    this.projects
+          .getUserProjects()
+          .then((res) => {
+            if (res) this.initState()
+          })
+          .catch((err) => {
+            console.log(err)
+          })*/
   }
 
   initState() {

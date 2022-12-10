@@ -8,18 +8,13 @@ export class ChildBlockModel {
 export class BlockModel {
   id: string
   location: string
-  project_id?: number
+  projectId?: number
   model: UnitModel
   inside_blocks?: ChildBlockModel[]
   x?: number
   y?: number
 
-  constructor(
-    id: string,
-    location: string,
-    model: UnitModel,
-    inside_blocks?: ChildBlockModel[],
-  ) {
+  constructor(id: string, location: string, model: UnitModel, inside_blocks?: ChildBlockModel[]) {
     this.id = id
     this.location = location
     this.model = model

@@ -7,11 +7,7 @@ import { UnitModel } from '../../projects/models/unit.model'
   standalone: true,
 })
 export class FilterPanelsByPipe implements PipeTransform {
-  transform(
-    panels: PanelModel[],
-    id: string,
-    unitModel: UnitModel,
-  ): PanelModel[] {
+  transform(panels: PanelModel[], id: string, unitModel: UnitModel): PanelModel[] {
     if (!panels || !id || !unitModel) {
       return panels
     }
@@ -24,7 +20,7 @@ export class FilterPanelsByPipe implements PipeTransform {
             case UnitModel.TRACKER:
               return panels.filter((panel) => panel.tracker_id === id)*/
       case UnitModel.STRING:
-        return panels.filter((panel) => panel.string_id === id)
+        return panels.filter((panel) => panel.stringId === id)
       default:
         return panels
     }

@@ -25,7 +25,7 @@ import {
 } from '@angular/common'
 import { FindPanelLocationPipe } from '../../../../../pipes/find-panel-location.pipe'
 import { PanelsEntityService } from '../../../services/ngrx-data/panels-entity/panels-entity.service'
-import { LinksEntityService } from '../../../services/ngrx-data/links-entity/links-entity.service'
+import { PanelLinksEntityService } from '../../../services/ngrx-data/panel-links-entity/panel-links-entity.service'
 import { LetModule } from '@ngrx/component'
 import { GetPanelJoinPipe } from '../../../../../pipes/get-panel-join.pipe'
 import { PanelDirective } from '../../../../../directives/panel.directive'
@@ -42,13 +42,7 @@ import { LoggerService } from '../../../../../services/logger.service'
 import { GridStateActions } from '../../../services/store/grid/grid.actions'
 import { SelectedStateActions } from '../../../services/store/selected/selected.actions'
 import { LinksService } from 'src/app/projects/project-id/services/links/links.service'
-import {
-  combineLatestWith,
-  distinctUntilChanged,
-  firstValueFrom,
-  lastValueFrom,
-  Observable,
-} from 'rxjs'
+import { combineLatestWith, distinctUntilChanged, firstValueFrom, Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
 import { selectLinksState, selectPanelToLink } from '../../../services/store/links/links.selectors'
 import {
@@ -58,13 +52,12 @@ import {
   selectSelectedNegativeTo,
   selectSelectedPositiveTo,
   selectSelectedState,
+  selectSelectedStringPathMap,
   selectSelectedStringTooltip,
   selectUnitSelected,
 } from '../../../services/store/selected/selected.selectors'
 import { selectCreateMode, selectGridMode } from '../../../services/store/grid/grid.selectors'
 import { LinksState } from '../../../services/store/links/links.reducer'
-import { StringModel } from '../../../../models/string.model'
-import { Guid } from 'guid-typescript'
 import { HttpClient } from '@angular/common/http'
 import { MatDialog } from '@angular/material/dialog'
 import { ExistingStringsDialog } from './existing-strings-dialog/existing-strings.dialog'
@@ -115,6 +108,7 @@ export class BlockPanelComponent implements OnInit, AfterViewInit {
   selectedStringTooltip$!: Observable<string | undefined>
   multiSelectIds$!: Observable<string[] | undefined>
   multiSelect$!: Observable<boolean | undefined>
+  selectedStringPathMap$!: Observable<Map<string, number> | undefined>
   menuTopLeftPosition = { x: '0', y: '0' }
   @ViewChild(MatMenuTrigger, { static: true })
   matMenuTrigger!: MatMenuTrigger
@@ -123,7 +117,7 @@ export class BlockPanelComponent implements OnInit, AfterViewInit {
 
   constructor(
     public panelsEntity: PanelsEntityService,
-    public panelJoinsEntity: LinksEntityService,
+    public panelJoinsEntity: PanelLinksEntityService,
     public stringsEntity: StringsEntityService,
     private joinsService: LinksService,
     public store: Store<AppState>,
@@ -134,9 +128,7 @@ export class BlockPanelComponent implements OnInit, AfterViewInit {
     private elRef: ElementRef,
   ) {}
 
-  ngAfterViewInit() {
-
-  }
+  ngAfterViewInit() {}
 
   ngOnInit() {
     this.gridMode$ = this.store.select(selectGridMode)
@@ -152,6 +144,7 @@ export class BlockPanelComponent implements OnInit, AfterViewInit {
     this.joinState$ = this.store.select(selectLinksState)
     this.multiSelectIds$ = this.store.select(selectMultiSelectIds)
     this.multiSelect$ = this.store.select(selectIfMultiSelect)
+    this.selectedStringPathMap$ = this.store.select(selectSelectedStringPathMap)
   }
 
   displayTooltip(
@@ -169,7 +162,7 @@ export class BlockPanelComponent implements OnInit, AfterViewInit {
            String: ${stringName} \r\n
           `
         case UnitModel.STRING:
-          if (panel.string_id === selectedId) {
+          if (panel.stringId === selectedId) {
             if (selectedStringTooltip) {
               return selectedStringTooltip
             }
@@ -194,7 +187,7 @@ export class BlockPanelComponent implements OnInit, AfterViewInit {
   selectString(panel: PanelModel) {
     this.store.dispatch(GridStateActions.changeGridmode({ mode: GridMode.SELECT }))
     this.store.dispatch(SelectedStateActions.selectUnit({ unit: UnitModel.STRING }))
-    this.store.dispatch(SelectedStateActions.selectString({ stringId: panel.string_id }))
+    this.store.dispatch(SelectedStateActions.selectString({ stringId: panel.stringId }))
   }
 
   deletePanel(panel: PanelModel) {

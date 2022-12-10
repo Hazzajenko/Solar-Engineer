@@ -26,7 +26,7 @@ import { FindPanelPipe } from './pipes/v2/find-panel.pipe'
 import { EffectsModule } from '@ngrx/effects'
 import { FindCablePipe } from './pipes/v2/find-cable.pipe'
 import { CablesEffects } from './projects/store/cable/cables.effects'
-import { PanelsEffects } from './projects/store/panels/panels.effects'
+import { PanelsEffects } from './projects/project-id/services/store/panels/panels.effects'
 import { GetGridNumberPipe } from './pipes/get-grid-number.pipe'
 import { LetModule } from '@ngrx/component'
 import { FindPanelLocationPipe } from './pipes/find-panel-location.pipe'
@@ -80,9 +80,9 @@ import { TopBottomSvgComponent } from './svgs/grid/top-bottom-svg.component'
 import { LeftTopSvgComponent } from './svgs/grid/left-top-svg.component'
 import { CableJoinComponent } from './components/cable-join/cable-join.component'
 import { CurrentProjectInterceptor } from './interceptors/current-project.interceptor'
-import { LinksDataService } from './projects/project-id/services/ngrx-data/links-entity/links-data.service'
-import { LinksEntityService } from './projects/project-id/services/ngrx-data/links-entity/links-entity.service'
-import { LinksResolver } from './projects/project-id/services/ngrx-data/links-entity/links.resolver'
+import { PanelLinksDataService } from './projects/project-id/services/ngrx-data/panel-links-entity/panel-links-data.service'
+import { PanelLinksEntityService } from './projects/project-id/services/ngrx-data/panel-links-entity/panel-links-entity.service'
+import { PanelLinksResolver } from './projects/project-id/services/ngrx-data/panel-links-entity/panel-links.resolver'
 import { DisconnectionPointsDataService } from './projects/project-id/services/ngrx-data/disconnection-points-entity/disconnection-points-data.service'
 import { DisconnectionPointsEntityService } from './projects/project-id/services/ngrx-data/disconnection-points-entity/disconnection-points-entity.service'
 import { DisconnectionPointsResolver } from './projects/project-id/services/ngrx-data/disconnection-points-entity/disconnection-points.resolver'
@@ -209,9 +209,9 @@ export function tokenGetter() {
     JoinsEntityService,
     JoinsResolver,
     JoinsDataService,
-    LinksEntityService,
-    LinksResolver,
-    LinksDataService,
+    PanelLinksEntityService,
+    PanelLinksResolver,
+    PanelLinksDataService,
     DisconnectionPointsEntityService,
     DisconnectionPointsResolver,
     DisconnectionPointsDataService,
@@ -240,7 +240,7 @@ export class AppModule {
     private trackersDataService: TrackersDataService,
     private invertersDataService: InvertersDataService,
     private joinsDataService: JoinsDataService,
-    private linksDataService: LinksDataService,
+    private panelLinksDataService: PanelLinksDataService,
     private disconnectionPointsDataService: DisconnectionPointsDataService,
     private traysDataService: TraysDataService,
     private railsDataService: RailsDataService,
@@ -254,7 +254,7 @@ export class AppModule {
     entityDataService.registerService('Tracker', trackersDataService)
     entityDataService.registerService('Inverter', invertersDataService)
     entityDataService.registerService('Join', joinsDataService)
-    entityDataService.registerService('Link', linksDataService)
+    entityDataService.registerService('PanelLink', panelLinksDataService)
     entityDataService.registerService('Tray', traysDataService)
     entityDataService.registerService('DisconnectionPoint', disconnectionPointsDataService)
     entityDataService.registerService('Rail', railsDataService)

@@ -51,7 +51,7 @@
       [class.drop-zone__bg-selected]="
         (selectedId$ | async)! === panel.id || (multiSelectIds$ | async)?.includes(panel.id)
       "
-      [class.drop-zone__bg-string-selected]="(selectedId$ | async)! === panel.string_id"
+      [class.drop-zone__bg-string-selected]="(selectedId$ | async)! === panel.stringId"
       [class.drop-zone__bg-to-join]="(panelToJoin$ | async)?.id === panel.id"
       [matTooltip]="
         displayTooltip(
@@ -70,7 +70,13 @@
       class="drop-zone__panel"
       matTooltipClass="drop-zone__tooltip"
       matTooltipPosition="right"
-    ></div>
+    >
+      <ng-container *ngIf="(selectedId$ | async)! === panel.stringId">
+        <ng-container *ngIf="(selectedStringPathMap$ | async)!.get(panel.id) as pathNumber">
+          {{ pathNumber }}
+        </ng-container>
+      </ng-container>
+    </div>
   </div>
 </ng-container>
 
@@ -85,10 +91,10 @@
   <ng-container *ngIf="panel$ | async as panel">
     <ng-template matMenuContent>
       <div class="right-click-menu">
-        <ng-container *ngIf="(selectedId$ | async) === panel.string_id; else stringNotSelected">
+        <ng-container *ngIf="(selectedId$ | async) === panel.stringId; else stringNotSelected">
           <button class="right-click-menu__button" mat-menu-item>Edit String</button>
           <button
-            (click)="deleteSelectedString(panel.string_id)"
+            (click)="deleteSelectedString(panel.stringId)"
             class="right-click-menu__button"
             mat-menu-item
           >
@@ -110,7 +116,7 @@
           </button>
           <button
             (click)="selectString(panel)"
-            *ngIf="panel.string_id !== 'undefined'"
+            *ngIf="panel.stringId !== 'undefined'"
             class="right-click-menu__button"
             mat-menu-item
           >

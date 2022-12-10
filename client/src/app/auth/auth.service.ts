@@ -17,9 +17,20 @@ export interface SignInRequest {
   password: string
 }
 
+interface SignInRequestV2 {
+  username: string
+  password: string
+}
+
 interface SignInResponse {
-  user: UserModel
+  // appUser: UserModel
+  email: string
+  firstName: string
+  lastName: string
+  username: string
   token: string
+
+
 }
 
 @Injectable({
@@ -56,22 +67,36 @@ export class AuthService {
     }
   }
 
-  public signIn(request: SignInRequest) {
+  public signIn(request: SignInRequestV2) {
     return new Promise<SignInResponse>((resolve, reject) =>
       this.http
         .post<SignInResponse>(environment.apiUrl + '/auth/login', {
-          email: request.email,
+          username: request.username,
           password: request.password,
+          /*          email: request.email,
+                    password: request.password,*/
         })
         .subscribe({
           next: (res) => {
-            this.currentUser = res.user
+            this.currentUser = {
+              email: res.email,
+              firstName: res.firstName,
+              lastName: res.lastName,
+              username: res.username
+
+            }
             const tokenPayload = decode(res.token)
             // console.log(tokenPayload);
             localStorage.setItem('token', res.token)
             this.store.dispatch(
               addUserAndToken({
-                user: res.user,
+                user: {
+                  email: res.email,
+                  firstName: res.firstName,
+                  lastName: res.lastName,
+                  username: res.username
+
+                },
                 token: res.token,
               }),
             )

@@ -92,9 +92,9 @@ export class GridCreateService extends GridService {
     if (selectedString) {
       const panelRequest: PanelModel = {
         id: Guid.create().toString(),
-        inverter_id: selectedString.inverter_id,
-        tracker_id: selectedString.tracker_id,
-        string_id: selectedString.id,
+        inverterId: selectedString.inverterId,
+        trackerId: selectedString.trackerId,
+        stringId: selectedString.id,
         location,
         rotation: 0,
       }
@@ -121,11 +121,11 @@ export class GridCreateService extends GridService {
     if (selectedString) {
       const disconnectionPointModel: DisconnectionPointModel = {
         id: Guid.create().toString(),
-        project_id: project.id,
-        string_id: selectedString.id,
-        disconnection_type: DisconnectionPointType.MC4,
-        positive_id: 'undefined',
-        negative_id: 'undefined',
+        projectId: project.id,
+        stringId: selectedString.id,
+        disconnectionPointType: DisconnectionPointType.MC4,
+        positiveId: 'undefined',
+        negativeId: 'undefined',
         location,
         model: UnitModel.DISCONNECTIONPOINT,
         color: 'black',
@@ -136,8 +136,8 @@ export class GridCreateService extends GridService {
       const stringRequest: StringModel = {
         id: Guid.create().toString(),
         name: 'string',
-        is_in_parallel: false,
-        project_id: project.id,
+        isInParallel: false,
+        projectId: project.id,
         color: 'black',
         model: UnitModel.STRING,
       }
@@ -145,11 +145,11 @@ export class GridCreateService extends GridService {
       lastValueFrom(this.stringsEntity.add(stringRequest)).then((res) => {
         const disconnectionPointModel: DisconnectionPointModel = {
           id: Guid.create().toString(),
-          project_id: project.id,
-          string_id: res.id,
-          disconnection_type: DisconnectionPointType.MC4,
-          positive_id: 'undefined',
-          negative_id: 'undefined',
+          projectId: project.id,
+          stringId: res.id,
+          disconnectionPointType: DisconnectionPointType.MC4,
+          positiveId: 'undefined',
+          negativeId: 'undefined',
           location,
           color: 'black',
           model: UnitModel.DISCONNECTIONPOINT,
@@ -178,9 +178,9 @@ export class GridCreateService extends GridService {
     if (selectedString) {
       const panelRequest: PanelModel = {
         id: Guid.create().toString(),
-        inverter_id: selectedString.inverter_id,
-        tracker_id: selectedString.tracker_id,
-        string_id: selectedString.id,
+        inverterId: selectedString.inverterId,
+        trackerId: selectedString.trackerId,
+        stringId: selectedString.id,
         location,
         rotation: 0,
       }
@@ -190,8 +190,8 @@ export class GridCreateService extends GridService {
       const stringRequest: StringModel = {
         id: Guid.create().toString(),
         name: 'string',
-        is_in_parallel: false,
-        project_id: project.id,
+        isInParallel: false,
+        projectId: project.id,
         color: 'black',
         model: UnitModel.STRING,
       }
@@ -199,7 +199,7 @@ export class GridCreateService extends GridService {
       lastValueFrom(this.stringsEntity.add(stringRequest)).then((res) => {
         const panelRequest: PanelModel = {
           id: Guid.create().toString(),
-          string_id: res.id,
+          stringId: res.id,
           location,
           rotation: 0,
         }
@@ -270,7 +270,7 @@ export class GridCreateService extends GridService {
   private createInverterForGrid(project: ProjectModel, location: string) {
     const inverterRequest: InverterModel = {
       id: Guid.create().toString(),
-      project_id: project.id,
+      projectId: project.id,
       location,
       model: UnitModel.INVERTER,
       color: 'blue',

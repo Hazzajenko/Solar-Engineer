@@ -5,7 +5,7 @@ import { StringModel } from './projects/models/string.model'
 import { TrackerModel } from './projects/models/tracker.model'
 import { InverterModel } from './projects/models/inverter.model'
 import { JoinModel } from './projects/models/join.model'
-import { LinkModel } from './projects/models/link.model'
+import { PanelLinkModel } from './projects/models/panelLinkModel'
 import { DisconnectionPointModel } from './projects/models/disconnection-point.model'
 import { TrayModel } from './projects/models/tray.model'
 import { RailModel } from './projects/models/rail.model'
@@ -42,6 +42,7 @@ const entityMetadata: EntityMetadataMap = {
       optimisticUpdate: true,
       optimisticAdd: true,
       optimisticDelete: true,
+      optimisticSaveEntities: true,
     },
   },
   Cable: {
@@ -60,12 +61,13 @@ const entityMetadata: EntityMetadataMap = {
       optimisticDelete: true,
     },
   },
-  Link: {
-    selectId: (b: LinkModel): string => b.id,
+  PanelLink: {
+    selectId: (b: PanelLinkModel): string => b.id,
     entityDispatcherOptions: {
       optimisticUpdate: true,
       optimisticAdd: true,
       optimisticDelete: true,
+      optimisticSaveEntities: true,
     },
   },
   DisconnectionPoint: {

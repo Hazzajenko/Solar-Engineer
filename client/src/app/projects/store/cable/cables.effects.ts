@@ -30,7 +30,7 @@ export class CablesEffects {
                       id: res.cable.id,
                       location: res.cable.location,
                       model: UnitModel.CABLE,
-                      project_id: res.cable.project_id!,
+                      projectId: res.cable.project_id!,
                     },
                   }),
                 )
@@ -61,7 +61,7 @@ export class CablesEffects {
                     id: res.cable.id,
                     location: res.cable.location,
                     model: UnitModel.CABLE,
-                    project_id: res.cable.project_id!,
+                    projectId: res.cable.project_id!,
                   },
                 }),
               )

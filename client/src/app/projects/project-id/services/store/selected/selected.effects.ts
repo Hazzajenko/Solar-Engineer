@@ -1,4 +1,4 @@
-import { LinksEntityService } from '../../ngrx-data/links-entity/links-entity.service'
+import { PanelLinksEntityService } from '../../ngrx-data/panel-links-entity/panel-links-entity.service'
 import { Injectable } from '@angular/core'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { Store } from '@ngrx/store'
@@ -11,10 +11,11 @@ import { PanelsEntityService } from '../../ngrx-data/panels-entity/panels-entity
 import { StringsEntityService } from '../../ngrx-data/strings-entity/strings-entity.service'
 import { StatsService } from '../../stats.service'
 import { PanelModel } from '../../../../models/panel.model'
-import { LinkModel } from '../../../../models/link.model'
+import { PanelLinkModel } from '../../../../models/panelLinkModel'
+import { LinksPathService } from '../../links/links-path.service'
 
 function getSelectedLinks(
-  panelJoins?: LinkModel[],
+  panelJoins?: PanelLinkModel[],
   selectedPanelId?: string,
 ): PanelLinksToModel {
   if (!panelJoins || !selectedPanelId) {
@@ -23,12 +24,8 @@ function getSelectedLinks(
       selectedNegativeLinkTo: undefined,
     } as PanelLinksToModel
   }
-  const positive = panelJoins.find(
-    (pJoin) => pJoin.negative_id === selectedPanelId,
-  )?.positive_id
-  const negative = panelJoins.find(
-    (pJoin) => pJoin.positive_id === selectedPanelId,
-  )?.negative_id
+  const positive = panelJoins.find((pJoin) => pJoin.negativeToId === selectedPanelId)?.positiveToId
+  const negative = panelJoins.find((pJoin) => pJoin.positiveToId === selectedPanelId)?.negativeToId
   return {
     selectedPositiveLinkTo: positive,
     selectedNegativeLinkTo: negative,
@@ -42,30 +39,25 @@ export class SelectedEffects {
       this.actions$.pipe(
         ofType(SelectedStateActions.selectPanel),
         switchMap((action) =>
-/*            this.panelsEntity.entities$.pipe(
-              map((panels) => {
-                const panel = panels.find(p => p.id === action.panelId)
-                if (panel) {
-                  const panelLink: PanelLinksToModel = {
-                    selectedPositiveLinkTo: panel.positive_to_id,
-                    selectedNegativeLinkTo: panel.negative_to_id,
-                  }
-                  this.store.dispatch(
-                    SelectedStateActions.setSelectedPanelLinks({ panelLink }),
-                  )
-                }
+          /*            this.panelsEntity.entities$.pipe(
+                        map((panels) => {
+                          const panel = panels.find(p => p.id === action.panelId)
+                          if (panel) {
+                            const panelLink: PanelLinksToModel = {
+                              selectedPositiveLinkTo: panel.positive_to_id,
+                              selectedNegativeLinkTo: panel.negative_to_id,
+                            }
+                            this.store.dispatch(
+                              SelectedStateActions.setSelectedPanelLinks({ panelLink }),
+                            )
+                          }
 
-              }),
-            ),*/
+                        }),
+                      ),*/
           this.panelJoinsEntity.entities$.pipe(
             map((res) => {
-              const panelLink: PanelLinksToModel = getSelectedLinks(
-                res,
-                action.panelId,
-              )
-              this.store.dispatch(
-                SelectedStateActions.setSelectedPanelLinks({ panelLink }),
-              )
+              const panelLink: PanelLinksToModel = getSelectedLinks(res, action.panelId)
+              this.store.dispatch(SelectedStateActions.setSelectedPanelLinks({ panelLink }))
             }),
           ),
         ),
@@ -80,13 +72,8 @@ export class SelectedEffects {
         switchMap((action) =>
           this.panelJoinsEntity.entities$.pipe(
             map((res) => {
-              const panelLink: PanelLinksToModel = getSelectedLinks(
-                res,
-                action.dpId,
-              )
-              this.store.dispatch(
-                SelectedStateActions.setSelectedPanelLinks({ panelLink }),
-              )
+              const panelLink: PanelLinksToModel = getSelectedLinks(res, action.dpId)
+              this.store.dispatch(SelectedStateActions.setSelectedPanelLinks({ panelLink }))
             }),
           ),
         ),
@@ -101,13 +88,8 @@ export class SelectedEffects {
         switchMap((action) =>
           this.panelJoinsEntity.entities$.pipe(
             map((res) => {
-              const panelLink: PanelLinksToModel = getSelectedLinks(
-                res,
-                action.cableId,
-              )
-              this.store.dispatch(
-                SelectedStateActions.setSelectedPanelLinks({ panelLink }),
-              )
+              const panelLink: PanelLinksToModel = getSelectedLinks(res, action.cableId)
+              this.store.dispatch(SelectedStateActions.setSelectedPanelLinks({ panelLink }))
             }),
           ),
         ),
@@ -123,16 +105,12 @@ export class SelectedEffects {
           this.stringsEntity.entities$.pipe(
             combineLatestWith(this.panelsEntity.entities$),
             map(([strings, panels]) => {
-              const selectedString = strings.find(
-                (s) => s.id === action.stringId,
-              )
+              const selectedString = strings.find((s) => s.id === action.stringId)
               const stringPanels: PanelModel[] = panels.filter(
-                (panel) => panel.string_id === action.stringId,
+                (panel) => panel.stringId === action.stringId,
               )
               const panelIds: string[] = stringPanels.map((p) => p.id)
-              this.store.dispatch(
-                SelectedStateActions.setSelectedStringPanels({ panelIds }),
-              )
+              this.store.dispatch(SelectedStateActions.setSelectedStringPanels({ panelIds }))
 
               const stringStats = this.statsService.calculateStringTotals(
                 selectedString!,
@@ -142,7 +120,7 @@ export class SelectedEffects {
               const tooltip: string = `
                 String = ${selectedString?.name} \n
                 Color: ${selectedString?.color} \n
-                Parallel: ${selectedString?.is_in_parallel} \n
+                Parallel: ${selectedString?.isInParallel} \n
                 Panels: ${stringPanels.length} \n
                 Voc: ${stringStats.totalVoc}V \n
                 Vmp: ${stringStats.totalVmp}V \n
@@ -150,9 +128,11 @@ export class SelectedEffects {
                 Isc: ${stringStats.totalIsc}A \n
 
               `
-              this.store.dispatch(
-                SelectedStateActions.setSelectedStringTooltip({ tooltip }),
-              )
+              this.store.dispatch(SelectedStateActions.setSelectedStringTooltip({ tooltip }))
+
+              this.panelLinksPath.orderPanelsInLinkOrder(action.stringId).then((res) => {
+                console.log(res)
+              })
             }),
           ),
         ),
@@ -162,10 +142,11 @@ export class SelectedEffects {
 
   constructor(
     private actions$: Actions,
-    private panelJoinsEntity: LinksEntityService,
+    private panelJoinsEntity: PanelLinksEntityService,
     private panelsEntity: PanelsEntityService,
     private stringsEntity: StringsEntityService,
     private statsService: StatsService,
     private store: Store<AppState>,
+    private panelLinksPath: LinksPathService,
   ) {}
 }

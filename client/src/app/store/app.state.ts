@@ -14,7 +14,7 @@ import * as fromInverters from '../projects/store/inverters/inverters.reducer'
 import * as fromTrackers from '../projects/store/trackers/trackers.reducer'
 import * as fromStrings from '../projects/store/strings/strings.reducer'
 import * as fromStringPanels from '../projects/store/string-panels/string-panels.reducer'
-import * as fromPanels from '../projects/store/panels/panels.reducer'
+import * as fromPanels from '../projects/project-id/services/store/panels/panels.reducer'
 
 export interface AppState {
   auth: fromAuth.AuthState

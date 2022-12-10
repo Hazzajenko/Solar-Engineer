@@ -6,7 +6,7 @@ import { firstValueFrom, Observable } from 'rxjs'
 import { StringModel } from '../../models/string.model'
 import { selectAllStrings } from '../../store/strings/strings.selectors'
 import { PanelModel } from '../../models/panel.model'
-import { selectAllPanels } from '../../store/panels/panels.selectors'
+import { selectAllPanels } from './store/panels/panels.selectors'
 import { TrackerModel } from '../../models/tracker.model'
 import { selectAllTrackers } from '../../store/trackers/trackers.selectors'
 import { InverterModel } from '../../models/inverter.model'
@@ -26,8 +26,7 @@ export interface TotalModel {
   providedIn: 'root',
 })
 export class StatsService {
-  inverters$: Observable<InverterModel[]> =
-    this.store.select(selectAllInverters)
+  inverters$: Observable<InverterModel[]> = this.store.select(selectAllInverters)
   trackers$: Observable<TrackerModel[]> = this.store.select(selectAllTrackers)
   strings$: Observable<StringModel[]> = this.store.select(selectAllStrings)
   panels$: Observable<PanelModel[]> = this.store.select(selectAllPanels)
@@ -50,8 +49,11 @@ export class StatsService {
   invertersTotalIsc: number[] = []
   invertersTotalImp: number[] = []
 
-  constructor(private http: HttpClient, private store: Store<AppState>,
-              private panelsEntity: PanelsEntityService) {}
+  constructor(
+    private http: HttpClient,
+    private store: Store<AppState>,
+    private panelsEntity: PanelsEntityService,
+  ) {}
 
   calculateStringTotalsV2(stringModel: StringModel) {
     let totalVoc: number = 0
@@ -59,66 +61,39 @@ export class StatsService {
     let totalPmax: number = 0
     let totalIsc: number = 0
     let totalImp: number = 0
-    firstValueFrom(this.panelsEntity.entities$.pipe(
-      map(panels => panels.filter(p => p.string_id === stringModel.id))
-    )).then(stringPanels => {
+    firstValueFrom(
+      this.panelsEntity.entities$.pipe(
+        map((panels) => panels.filter((p) => p.stringId === stringModel.id)),
+      ),
+    ).then((stringPanels) => {
+      stringPanels.forEach((stringPanel) => {
+        totalVoc =
+          totalVoc + Number((Math.round(stringPanel.openCircuitVoltage! * 100) / 100).toFixed(2))
 
+        totalVmp =
+          totalVmp + Number((Math.round(stringPanel.voltageAtMaximumPower! * 100) / 100).toFixed(2))
 
-    stringPanels.forEach((stringPanel) => {
-      totalVoc =
-        totalVoc +
-        Number(
-          (Math.round(stringPanel.open_circuit_voltage! * 100) / 100).toFixed(
-            2,
-          ),
-        )
+        totalPmax =
+          totalPmax + Number((Math.round(stringPanel.maximumPower! * 100) / 100).toFixed(2))
 
-      totalVmp =
-        totalVmp +
-        Number(
-          (
-            Math.round(stringPanel.voltage_at_maximum_power! * 100) / 100
-          ).toFixed(2),
-        )
+        if (totalIsc == 0) {
+          totalIsc = Number((Math.round(stringPanel.shortCircuitCurrent! * 100) / 100).toFixed(2))
+        } else {
+          totalIsc = this.getLowerNumber(
+            totalIsc,
+            Number((Math.round(stringPanel.shortCircuitCurrent! * 100) / 100).toFixed(2)),
+          )
+        }
 
-      totalPmax =
-        totalPmax +
-        Number((Math.round(stringPanel.maximum_power! * 100) / 100).toFixed(2))
-
-      if (totalIsc == 0) {
-        totalIsc = Number(
-          (Math.round(stringPanel.short_circuit_current! * 100) / 100).toFixed(
-            2,
-          ),
-        )
-      } else {
-        totalIsc = this.getLowerNumber(
-          totalIsc,
-          Number(
-            (
-              Math.round(stringPanel.short_circuit_current! * 100) / 100
-            ).toFixed(2),
-          ),
-        )
-      }
-
-      if (totalImp == 0) {
-        totalImp = Number(
-          (
-            Math.round(stringPanel.current_at_maximum_power! * 100) / 100
-          ).toFixed(2),
-        )
-      } else {
-        totalImp = this.getLowerNumber(
-          totalImp,
-          Number(
-            (
-              Math.round(stringPanel.current_at_maximum_power! * 100) / 100
-            ).toFixed(2),
-          ),
-        )
-      }
-    })
+        if (totalImp == 0) {
+          totalImp = Number((Math.round(stringPanel.currentAtMaximumPower! * 100) / 100).toFixed(2))
+        } else {
+          totalImp = this.getLowerNumber(
+            totalImp,
+            Number((Math.round(stringPanel.currentAtMaximumPower! * 100) / 100).toFixed(2)),
+          )
+        }
+      })
     })
 
     totalVoc = Number((Math.round(totalVoc * 100) / 100).toFixed(2))
@@ -137,6 +112,7 @@ export class StatsService {
 
     return totals
   }
+
   calculateStringTotals(stringModel: StringModel, stringPanels: PanelModel[]) {
     let totalVoc: number = 0
     let totalVmp: number = 0
@@ -145,56 +121,28 @@ export class StatsService {
     let totalImp: number = 0
     stringPanels.forEach((stringPanel) => {
       totalVoc =
-        totalVoc +
-        Number(
-          (Math.round(stringPanel.open_circuit_voltage! * 100) / 100).toFixed(
-            2,
-          ),
-        )
+        totalVoc + Number((Math.round(stringPanel.openCircuitVoltage! * 100) / 100).toFixed(2))
 
       totalVmp =
-        totalVmp +
-        Number(
-          (
-            Math.round(stringPanel.voltage_at_maximum_power! * 100) / 100
-          ).toFixed(2),
-        )
+        totalVmp + Number((Math.round(stringPanel.voltageAtMaximumPower! * 100) / 100).toFixed(2))
 
-      totalPmax =
-        totalPmax +
-        Number((Math.round(stringPanel.maximum_power! * 100) / 100).toFixed(2))
+      totalPmax = totalPmax + Number((Math.round(stringPanel.maximumPower! * 100) / 100).toFixed(2))
 
       if (totalIsc == 0) {
-        totalIsc = Number(
-          (Math.round(stringPanel.short_circuit_current! * 100) / 100).toFixed(
-            2,
-          ),
-        )
+        totalIsc = Number((Math.round(stringPanel.shortCircuitCurrent! * 100) / 100).toFixed(2))
       } else {
         totalIsc = this.getLowerNumber(
           totalIsc,
-          Number(
-            (
-              Math.round(stringPanel.short_circuit_current! * 100) / 100
-            ).toFixed(2),
-          ),
+          Number((Math.round(stringPanel.shortCircuitCurrent! * 100) / 100).toFixed(2)),
         )
       }
 
       if (totalImp == 0) {
-        totalImp = Number(
-          (
-            Math.round(stringPanel.current_at_maximum_power! * 100) / 100
-          ).toFixed(2),
-        )
+        totalImp = Number((Math.round(stringPanel.currentAtMaximumPower! * 100) / 100).toFixed(2))
       } else {
         totalImp = this.getLowerNumber(
           totalImp,
-          Number(
-            (
-              Math.round(stringPanel.current_at_maximum_power! * 100) / 100
-            ).toFixed(2),
-          ),
+          Number((Math.round(stringPanel.currentAtMaximumPower! * 100) / 100).toFixed(2)),
         )
       }
     })
@@ -215,6 +163,7 @@ export class StatsService {
 
     return totals
   }
+
   getLowerNumber(a: number, b: number) {
     if (a < b) return a
     return b

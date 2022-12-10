@@ -1,17 +1,9 @@
 import { Injectable } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
-import { environment } from '../../../environments/environment'
 import { Store } from '@ngrx/store'
 import { AppState } from '../../store/app.state'
 import { PanelModel } from '../models/panel.model'
 import { StringModel } from '../models/string.model'
-import {
-  CreatePanelRequest,
-  PanelStateActions,
-  UpdatePanelRequest,
-} from '../store/panels/panels.actions'
-import { BlocksStateActions } from '../project-id/services/store/blocks/blocks.actions'
-import { UnitModel } from '../models/unit.model'
 import { Observable, shareReplay } from 'rxjs'
 import { PanelsEntityService } from '../project-id/services/ngrx-data/panels-entity/panels-entity.service'
 
@@ -53,7 +45,7 @@ export class PanelsService {
     return this.panels$
   }
 
-  createPanel(
+  /*createPanel(
     projectId: number,
     inverterId: number,
     trackerId: number,
@@ -62,8 +54,7 @@ export class PanelsService {
     return new Promise<CreatePanelResponse>((resolve, reject) =>
       this.http
         .post<CreatePanelResponse>(
-          environment.apiUrl +
-            `/projects/${projectId}/${inverterId}/${trackerId}/${stringId}`,
+          environment.apiUrl + `/projects/${projectId}/${inverterId}/${trackerId}/${stringId}`,
           {
             inverterId,
             trackerId,
@@ -72,9 +63,7 @@ export class PanelsService {
         )
         .subscribe({
           next: (envelope) => {
-            this.store.dispatch(
-              PanelStateActions.addPanelToState({ panel: envelope.panel }),
-            )
+            this.store.dispatch(PanelStateActions.addPanelToState({ panel: envelope.panel }))
             resolve(envelope)
           },
           error: (err) => {
@@ -97,20 +86,15 @@ export class PanelsService {
   ): Promise<CreatePanelResponse> {
     return new Promise<CreatePanelResponse>((resolve, reject) =>
       this.http
-        .post<CreatePanelResponse>(
-          `${environment.apiUrl}/projects/${projectId}/panels`,
-          {
-            inverter_id,
-            tracker_id,
-            string_id,
-            location,
-          },
-        )
+        .post<CreatePanelResponse>(`${environment.apiUrl}/projects/${projectId}/panels`, {
+          inverter_id,
+          tracker_id,
+          string_id,
+          location,
+        })
         .subscribe({
           next: (envelope) => {
-            this.store.dispatch(
-              PanelStateActions.addPanelToState({ panel: envelope.panel }),
-            )
+            this.store.dispatch(PanelStateActions.addPanelToState({ panel: envelope.panel }))
             resolve(envelope)
           },
           error: (err) => {
@@ -141,9 +125,9 @@ export class PanelsService {
       `${environment.apiUrl}/projects/${request.project_id}/panels`,
       {
         id: request.panel.id,
-        inverter_id: request.panel.inverter_id,
-        tracker_id: request.panel.tracker_id,
-        string_id: request.panel.string_id,
+        inverter_id: request.panel.inverterId,
+        tracker_id: request.panel.trackerId,
+        string_id: request.panel.stringId,
         location: request.newLocation,
       },
     )
@@ -156,29 +140,24 @@ export class PanelsService {
   ): Promise<PanelEnvelope> {
     return new Promise<PanelEnvelope>((resolve, reject) =>
       this.http
-        .patch<PanelEnvelope>(
-          `${environment.apiUrl}/projects/${projectId}/panels`,
-          {
-            id: panel.id,
-            inverter_id: panel.inverter_id,
-            tracker_id: panel.tracker_id,
-            string_id: panel.string_id,
-            location: newLocation,
-            version: panel.version,
-          },
-        )
+        .patch<PanelEnvelope>(`${environment.apiUrl}/projects/${projectId}/panels`, {
+          id: panel.id,
+          inverter_id: panel.inverterId,
+          tracker_id: panel.trackerId,
+          string_id: panel.stringId,
+          location: newLocation,
+          version: panel.version,
+        })
         .subscribe({
           next: (envelope) => {
-            this.store.dispatch(
-              PanelStateActions.updatePanelToState({ panel: envelope.panel }),
-            )
+            this.store.dispatch(PanelStateActions.updatePanelToState({ panel: envelope.panel }))
             this.store.dispatch(
               BlocksStateActions.updateBlockForGrid({
                 // oldLocation: panel.location,
                 block: {
                   id: envelope.panel.id,
                   location: envelope.panel.location,
-                  project_id: projectId!,
+                  projectId: projectId!,
                   model: UnitModel.PANEL,
                 },
               }),
@@ -198,19 +177,14 @@ export class PanelsService {
   deletePanel(projectId: number, panelId: number): Promise<PanelEnvelope> {
     return new Promise<PanelEnvelope>((resolve, reject) =>
       this.http
-        .delete<PanelEnvelope>(
-          `${environment.apiUrl}/projects/${projectId}/panels`,
-          {
-            body: {
-              id: panelId,
-            },
+        .delete<PanelEnvelope>(`${environment.apiUrl}/projects/${projectId}/panels`, {
+          body: {
+            id: panelId,
           },
-        )
+        })
         .subscribe({
           next: (envelope) => {
-            this.store.dispatch(
-              PanelStateActions.deletePanelToState({ panelId }),
-            )
+            this.store.dispatch(PanelStateActions.deletePanelToState({ panelId }))
             resolve(envelope)
           },
           error: (err) => {
@@ -221,5 +195,5 @@ export class PanelsService {
           },
         }),
     )
-  }
+  }*/
 }

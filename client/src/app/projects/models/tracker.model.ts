@@ -4,18 +4,18 @@ import { TypeModel } from './type.model'
 export interface TrackerModel {
   id: string
   location?: string
-  project_id: number
-  inverter_id: string
+  projectId: number
+  inverterId: string
   model?: UnitModel
   type?: TypeModel
   name: string
-  max_input_current?: number
-  max_short_circuit_current?: number
-  string_amount?: number
-  parallel_amount?: number
-  panel_amount?: number
+  maxInputCurrent?: number
+  maxShortCircuitCurrent?: number
+  stringAmount?: number
+  parallelAmount?: number
+  panelAmount?: number
   // parallelLinks?: ParallelModel[];
-  created_at?: string
-  created_by: number
+  createdAt?: string
+  createdBy: number
   version: number
 }
