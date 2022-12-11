@@ -1,5 +1,5 @@
 <ng-container *ngIf="block">
-  <ng-container [ngSwitch]="block.model">
+  <ng-container [ngSwitch]="block.type">
     <ng-container *ngSwitchCase="2">
       <app-block-inverter
         (rightClickInverter)="onRightClickEvent($event)"
@@ -9,7 +9,7 @@
     <ng-container *ngSwitchCase="5">
       <app-block-panel
         (rightClickPanel)="onRightClickEvent($event)"
-        [location]="block.location"
+        [id]="block.id"
         [project]="project"
         class="drop-zone__app-block-panel"
       ></app-block-panel>

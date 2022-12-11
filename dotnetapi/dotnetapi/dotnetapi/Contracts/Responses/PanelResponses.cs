@@ -25,7 +25,7 @@ public class ManyPanelsUpdatesResponse
 
 public class OnePanelDeleteResponse
 {
-    public string PanelId { get; set; }
+    public string PanelId { get; set; } = default!;
 }
 
 public class ManyPanelsDeletesResponse

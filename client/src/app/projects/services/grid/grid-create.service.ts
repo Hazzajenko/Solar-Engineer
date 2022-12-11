@@ -3,11 +3,11 @@ import { StringModel } from '../../models/string.model'
 import { GridMode } from '../../project-id/services/store/grid/grid-mode.model'
 import { ProjectModel } from '../../models/project.model'
 import { BlockModel } from '../../models/block.model'
-import { UnitModel } from '../../models/unit.model'
+import { TypeModel } from '../../models/type.model'
 import { PanelModel } from '../../models/panel.model'
 import { Guid } from 'guid-typescript'
-import { CableModel } from '../../models/cable.model'
-import { InverterModel } from '../../models/inverter.model'
+import { CableModel } from '../../models/deprecated-for-now/cable.model'
+import { InverterModel } from '../../models/deprecated-for-now/inverter.model'
 import { GridService } from './grid.service'
 import { PanelsEntityService } from '../../project-id/services/ngrx-data/panels-entity/panels-entity.service'
 import { CablesEntityService } from '../../project-id/services/ngrx-data/cables-entity/cables-entity.service'
@@ -51,7 +51,7 @@ export class GridCreateService extends GridService {
 
   createSwitch(
     location: string,
-    createMode: UnitModel,
+    createMode: TypeModel,
     project: ProjectModel,
     blocks?: BlockModel[],
   ) {
@@ -63,16 +63,16 @@ export class GridCreateService extends GridService {
     }
 
     switch (createMode) {
-      case UnitModel.PANEL:
+      case TypeModel.PANEL:
         return this.createPanelForGridV2(project, location)
 
-      case UnitModel.CABLE:
+      case TypeModel.CABLE:
         return this.createCableForGrid(project, location)
 
-      case UnitModel.DISCONNECTIONPOINT:
+      case TypeModel.DISCONNECTIONPOINT:
         return this.createDisconnectionPointForGrid(project, location)
 
-      case UnitModel.INVERTER:
+      case TypeModel.INVERTER:
         return this.createInverterForGrid(project, location)
       default:
         break
@@ -127,7 +127,7 @@ export class GridCreateService extends GridService {
         positiveId: 'undefined',
         negativeId: 'undefined',
         location,
-        model: UnitModel.DISCONNECTIONPOINT,
+        type: TypeModel.DISCONNECTIONPOINT,
         color: 'black',
       }
 
@@ -139,7 +139,7 @@ export class GridCreateService extends GridService {
         isInParallel: false,
         projectId: project.id,
         color: 'black',
-        model: UnitModel.STRING,
+        type: TypeModel.STRING,
       }
 
       lastValueFrom(this.stringsEntity.add(stringRequest)).then((res) => {
@@ -152,7 +152,7 @@ export class GridCreateService extends GridService {
           negativeId: 'undefined',
           location,
           color: 'black',
-          model: UnitModel.DISCONNECTIONPOINT,
+          type: TypeModel.DISCONNECTIONPOINT,
         }
 
         this.disconnectionPointsEntity.add(disconnectionPointModel)
@@ -193,7 +193,7 @@ export class GridCreateService extends GridService {
         isInParallel: false,
         projectId: project.id,
         color: 'black',
-        model: UnitModel.STRING,
+        type: TypeModel.STRING,
       }
 
       lastValueFrom(this.stringsEntity.add(stringRequest)).then((res) => {
@@ -272,7 +272,7 @@ export class GridCreateService extends GridService {
       id: Guid.create().toString(),
       projectId: project.id,
       location,
-      model: UnitModel.INVERTER,
+      model: TypeModel.INVERTER,
       color: 'blue',
       name: 'New Inverter',
     }

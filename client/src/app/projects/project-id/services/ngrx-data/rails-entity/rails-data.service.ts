@@ -5,7 +5,7 @@ import { Observable } from 'rxjs'
 import { environment } from '../../../../../../environments/environment'
 import { map } from 'rxjs/operators'
 import { Update } from '@ngrx/entity'
-import { RailModel } from '../../../../models/rail.model'
+import { RailModel } from '../../../../models/deprecated-for-now/rail.model'
 
 interface GetRailsResponse {
   rails: RailModel[]

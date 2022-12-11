@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core'
-import { CableModel } from 'src/app/projects/models/cable.model'
+import { CableModel } from 'src/app/projects/models/deprecated-for-now/cable.model'
 import { CablesEntityService } from '../../../services/ngrx-data/cables-entity/cables-entity.service'
 import { Observable, of } from 'rxjs'
 import { map } from 'rxjs/operators'

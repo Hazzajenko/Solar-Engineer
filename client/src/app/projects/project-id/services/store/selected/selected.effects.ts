@@ -6,13 +6,14 @@ import { AppState } from '../../../../../store/app.state'
 import { combineLatestWith, switchMap } from 'rxjs'
 import { map } from 'rxjs/operators'
 import { SelectedStateActions } from './selected.actions'
-import { PanelLinksToModel } from '../../../../models/panel-links-to.model'
+import { PanelLinksToModel } from '../../../../models/deprecated-for-now/panel-links-to.model'
 import { PanelsEntityService } from '../../ngrx-data/panels-entity/panels-entity.service'
 import { StringsEntityService } from '../../ngrx-data/strings-entity/strings-entity.service'
 import { StatsService } from '../../stats.service'
 import { PanelModel } from '../../../../models/panel.model'
-import { PanelLinkModel } from '../../../../models/panelLinkModel'
+import { PanelLinkModel } from '../../../../models/panel-link.model'
 import { LinksPathService } from '../../links/links-path.service'
+import { selectSelectedStringId } from './selected.selectors'
 
 function getSelectedLinks(
   panelJoins?: PanelLinkModel[],
@@ -130,9 +131,26 @@ export class SelectedEffects {
               `
               this.store.dispatch(SelectedStateActions.setSelectedStringTooltip({ tooltip }))
 
-              this.panelLinksPath.orderPanelsInLinkOrder(action.stringId).then((res) => {
+              this.linksPathService.orderPanelsInLinkOrder(action.stringId).then((res) => {
                 console.log(res)
               })
+            }),
+          ),
+        ),
+      ),
+    { dispatch: false },
+  )
+
+  clearSelectedLinks$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(SelectedStateActions.clearSelectedPanelLinks),
+        map(async (action) =>
+          this.store.select(selectSelectedStringId).pipe(
+            map((selectedStringId) => {
+              if (selectedStringId) {
+                this.linksPathService.orderPanelsInLinkOrder(selectedStringId)
+              }
             }),
           ),
         ),
@@ -147,6 +165,6 @@ export class SelectedEffects {
     private stringsEntity: StringsEntityService,
     private statsService: StatsService,
     private store: Store<AppState>,
-    private panelLinksPath: LinksPathService,
+    private linksPathService: LinksPathService,
   ) {}
 }

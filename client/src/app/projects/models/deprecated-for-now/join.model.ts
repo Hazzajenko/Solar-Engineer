@@ -1,5 +1,4 @@
-import { UnitModel } from './unit.model'
-import { TypeModel } from './type.model'
+import { TypeModel } from '../type.model'
 
 export class JoinModel {
   id: string = 'err'
@@ -7,6 +6,6 @@ export class JoinModel {
   color: string = 'purple'
   blocks?: string[] = []
   size: number = 4
-  model: UnitModel = UnitModel.JOIN
-  type: TypeModel = 'JOIN'
+  model: TypeModel = TypeModel.JOIN
+  // type: TypeModel = 'JOIN'
 }

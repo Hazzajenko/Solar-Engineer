@@ -5,7 +5,7 @@ import { Observable } from 'rxjs'
 import { environment } from '../../../../../../environments/environment'
 import { map } from 'rxjs/operators'
 import { Update } from '@ngrx/entity'
-import { JoinModel } from '../../../../models/join.model'
+import { JoinModel } from '../../../../models/deprecated-for-now/join.model'
 
 interface GetJoinsResponse {
   joins: JoinModel[]

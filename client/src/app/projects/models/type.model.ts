@@ -1,21 +1,13 @@
-export type TypeModel =
-  | 'PROJECT'
-  | 'INVERTER'
-  | 'TRACKER'
-  | 'STRING'
-  | 'PANEL'
-  | 'CABLE'
-  | 'JOIN'
-  | 'DISCONNECTIONPOINT'
-  | 'TRAY'
-
-/*
 export enum TypeModel {
-  PROJECT = 'PROJECT',
-  INVERTER = 'INVERTER',
-  TRACKER = 'TRACKER',
-  STRING = 'STRING',
-  PANEL = 'PANEL',
-  CABLE = 'CABLE',
+  UNDEFINED,
+  PROJECT,
+  INVERTER,
+  TRACKER,
+  STRING,
+  PANEL,
+  CABLE,
+  JOIN,
+  DISCONNECTIONPOINT,
+  TRAY,
+  RAIL,
 }
-*/

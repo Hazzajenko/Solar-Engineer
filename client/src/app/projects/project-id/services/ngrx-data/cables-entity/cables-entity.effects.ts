@@ -6,11 +6,11 @@ import { PanelsService } from '../../../../services/panels.service'
 import { CablesEntityService } from './cables-entity.service'
 import { tap } from 'rxjs/operators'
 import { BlocksStateActions } from '../../store/blocks/blocks.actions'
-import { UnitModel } from '../../../../models/unit.model'
+import { TypeModel } from '../../../../models/type.model'
 import { DataEntities } from '../data-actions'
 import { EntityOp } from '@ngrx/data'
 import { BlockModel } from '../../../../models/block.model'
-import { CableModel } from '../../../../models/cable.model'
+import { CableModel } from '../../../../models/deprecated-for-now/cable.model'
 
 @Injectable()
 export class CablesEntityEffects {
@@ -25,7 +25,7 @@ export class CablesEntityEffects {
               block: {
                 id: cable.id,
                 location: cable.location,
-                model: UnitModel.CABLE,
+                type: TypeModel.CABLE,
                 projectId: cable.project_id!,
               },
             }),
@@ -43,7 +43,7 @@ export class CablesEntityEffects {
             const block: BlockModel = {
               id: cable.id,
               location: cable.location,
-              model: UnitModel.CABLE,
+              type: TypeModel.CABLE,
               projectId: cable.project_id!,
             }
             return block
@@ -69,7 +69,7 @@ export class CablesEntityEffects {
               block: {
                 id: data.id,
                 location: data.changes.location,
-                model: UnitModel.CABLE,
+                type: TypeModel.CABLE,
                 projectId: data.changes.project_id!,
               },
             }),

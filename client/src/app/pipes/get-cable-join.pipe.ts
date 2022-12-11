@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core'
-import { CableModel } from '../projects/models/cable.model'
-import { JoinModel } from '../projects/models/join.model'
+import { CableModel } from '../projects/models/deprecated-for-now/cable.model'
+import { JoinModel } from '../projects/models/deprecated-for-now/join.model'
 
 @Pipe({
   name: 'getCableJoin',

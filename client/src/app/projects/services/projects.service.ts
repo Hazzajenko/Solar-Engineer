@@ -8,15 +8,15 @@ import {
   addUserProjects,
   selectProject,
 } from '../project-id/services/store/projects/projects.actions'
-import { InverterModel } from '../models/inverter.model'
-import { TrackerModel } from '../models/tracker.model'
+import { InverterModel } from '../models/deprecated-for-now/inverter.model'
+import { TrackerModel } from '../models/deprecated-for-now/tracker.model'
 import { StringModel } from '../models/string.model'
 import { addInvertersByProjectId } from '../store/inverters/inverters.actions'
 import { addTrackers } from '../store/trackers/trackers.actions'
 import { addStringsByProjectId } from '../store/strings/strings.actions'
 import { PanelModel } from '../models/panel.model'
 import { selectProjectByRouteParams } from '../project-id/services/store/projects/projects.selectors'
-import { CableModel } from '../models/cable.model'
+import { CableModel } from '../models/deprecated-for-now/cable.model'
 
 export interface ProjectsEnvelope {
   projects: ProjectModel[]

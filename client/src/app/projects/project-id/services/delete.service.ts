@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core'
-import { UnitModel } from '../../models/unit.model'
+import { TypeModel } from '../../models/type.model'
 import { PanelsEntityService } from './ngrx-data/panels-entity/panels-entity.service'
 import { CablesEntityService } from './ngrx-data/cables-entity/cables-entity.service'
 import { InvertersEntityService } from './ngrx-data/inverters-entity/inverters-entity.service'
@@ -30,17 +30,17 @@ export class DeleteService {
       const toDelete = blocks.find((block) => block.location === location)
       if (!toDelete) return console.warn('nothing to delete')
 
-      switch (toDelete.model) {
-        case UnitModel.PANEL:
+      switch (toDelete.type) {
+        case TypeModel.PANEL:
           this.panelJoins.delete(toDelete.id!)
           break
-        case UnitModel.CABLE:
+        case TypeModel.CABLE:
           this.cables.delete(toDelete.id!)
           break
-        case UnitModel.INVERTER:
+        case TypeModel.INVERTER:
           this.inverters.delete(toDelete.id!)
           break
-        case UnitModel.DISCONNECTIONPOINT:
+        case TypeModel.DISCONNECTIONPOINT:
           this.disconnectionPoints.delete(toDelete.id!)
           break
         default:

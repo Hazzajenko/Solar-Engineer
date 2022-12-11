@@ -5,10 +5,10 @@ import { Injectable } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
 import { Store } from '@ngrx/store'
 import { AppState } from '../../../../store/app.state'
-import { UnitModel } from '../../../models/unit.model'
+import { TypeModel } from '../../../models/type.model'
 import { JoinsEntityService } from '../ngrx-data/joins-entity/joins-entity.service'
 import { Guid } from 'guid-typescript'
-import { PanelLinkModel } from '../../../models/panelLinkModel'
+import { PanelLinkModel } from '../../../models/panel-link.model'
 import { PanelModel } from '../../../models/panel.model'
 import { LinksStateActions } from '../store/links/links.actions'
 import { LinksState } from '../store/links/links.reducer'
@@ -16,6 +16,10 @@ import { DisconnectionPointModel } from '../../../models/disconnection-point.mod
 import { LoggerService } from '../../../../services/logger.service'
 import { CablesEntityService } from '../ngrx-data/cables-entity/cables-entity.service'
 import { ItemsService } from '../items.service'
+import { LinksPathService } from './links-path.service'
+import { SelectedStateActions } from '../store/selected/selected.actions'
+import { firstValueFrom } from 'rxjs'
+import { map } from 'rxjs/operators'
 
 @Injectable({
   providedIn: 'root',
@@ -31,75 +35,104 @@ export class LinksPanelsService {
     private cablesEntity: CablesEntityService,
     private logger: LoggerService,
     private itemsService: ItemsService,
+    private linksPathService: LinksPathService,
   ) {}
 
-  addPanelToLink(panel: PanelModel, linksState: LinksState) {
+  addPanelToLink(
+    panel: PanelModel,
+    linksState: LinksState,
+    selectedStringId: string,
+    shiftKey: boolean,
+  ) {
     if (!panel) {
-      return console.error('addPanelToJoin !panel')
+      console.error('addPanelToJoin !panel')
+      return false
     }
     if (panel.stringId === 'undefined') {
-      return console.error('panel needs to be apart of a string')
+      console.error('panel needs to be apart of a string')
+      return false
     }
+
     if (linksState?.typeToLink) {
       switch (linksState.typeToLink) {
-        case UnitModel.PANEL:
-          if (linksState.panelToLink) {
-            this.joinPanelToPanel(panel, linksState.panelToLink)
-          }
-          break
-        case UnitModel.DISCONNECTIONPOINT:
-          if (linksState.dpToLink) {
-            this.joinPanelToDp(panel, linksState.dpToLink)
-          }
-          break
+        case TypeModel.PANEL:
+          firstValueFrom(
+            this.linksEntity.entities$.pipe(
+              map((links) => links.find((link) => link.negativeToId === panel.id)),
+            ),
+          ).then((existingPanelNegativeLink) => {
+            if (existingPanelNegativeLink) {
+              return console.error('the panel already has a negative link')
+            } else {
+              if (linksState.panelToLink) {
+                const addPanelLink = this.joinPanelToPanel(
+                  panel,
+                  linksState.panelToLink!,
+                  selectedStringId,
+                )
+                if (addPanelLink) {
+                  if (shiftKey) {
+                    return console.log('continue linking')
+                  } else {
+                    return this.store.dispatch(LinksStateActions.clearLinkState())
+                  }
+                } else {
+                  return console.error('could not create panelLink')
+                }
+              } else {
+                return console.error('could not find linksState.panelToLink')
+              }
+            }
+          })
+          return
+        default:
+          return
       }
     } else {
-      this.store.dispatch(LinksStateActions.addToLinkPanel({ panel }))
+      firstValueFrom(
+        this.linksEntity.entities$.pipe(
+          map((links) => links.find((link) => link.positiveToId === panel.id)),
+        ),
+      ).then((existingPanelPositiveLink) => {
+        if (existingPanelPositiveLink) {
+          return console.error('this panel already has a positive link')
+        } else {
+          return this.store.dispatch(LinksStateActions.addToLinkPanel({ panel }))
+        }
+      })
     }
+    return
   }
 
-  joinPanelToPanel(panel?: PanelModel, panelToJoin?: PanelModel) {
+  joinPanelToPanel(panel: PanelModel, panelToJoin: PanelModel, selectedStringId: string): boolean {
     if (!panel) {
-      return console.error(`joinPanelToPanel panel doesnt exist on location ${location}`)
+      console.error(`joinPanelToPanel panel doesnt exist on location ${location}`)
+      return false
     }
 
     if (panelToJoin) {
       if (panel.stringId !== panelToJoin.stringId) {
-        return console.error(`both panels need to be on the same string to link`)
+        console.error(`both panels need to be on the same string to link`)
+        return false
       }
       const panelJoinRequest: PanelLinkModel = {
         id: Guid.create().toString(),
-        stringId: panelToJoin.stringId,
+        stringId: selectedStringId,
         positiveToId: panelToJoin.id,
-        positiveModel: UnitModel.PANEL,
+        positiveModel: TypeModel.PANEL,
         negativeToId: panel.id,
-        negativeModel: UnitModel.PANEL,
+        negativeModel: TypeModel.PANEL,
       }
 
       this.linksEntity.add(panelJoinRequest)
-      /*
-            const updatePanel: PanelModel = {
-              ...panel,
-              stringId: panelToJoin.stringId,
-            }
-            this.panelsEntity.update(updatePanel)*/
-      /*      const updatePanelToJoin: PanelModel = {
-              ...panelToJoin,
-              // string_id: panelToJoin.string_id,
-              // negative_to_id: panelToJoin.negative_to_id,
-              positive_to_id: panel.id
-            }
-            this.panelsEntity.update(updatePanelToJoin)
-            const updatePanel: PanelModel = {
-              ...panel,
-              // string_id: panelToJoin.string_id,
-              // positive_to_id: panel.positive_to_id,
-              negative_to_id: panelToJoin.id
-            }
-            this.panelsEntity.update(updatePanel)*/
+      this.store.dispatch(SelectedStateActions.clearSelectedPanelLinks())
+      this.linksPathService.orderPanelsInLinkOrder(selectedStringId).then((res) => {
+        console.log(res)
+      })
     }
 
     this.store.dispatch(LinksStateActions.addToLinkPanel({ panel }))
+    return true
   }
 
   joinPanelToDp(panel?: PanelModel, dpToJoin?: DisconnectionPointModel) {
@@ -121,9 +154,9 @@ export class LinksPanelsService {
         projectId: panel.projectId,
         stringId: panel.stringId,
         negativeToId: panel.id,
-        negativeModel: UnitModel.PANEL,
+        negativeModel: TypeModel.PANEL,
         positiveToId: dpToJoin.id,
-        positiveModel: UnitModel.DISCONNECTIONPOINT,
+        positiveModel: TypeModel.DISCONNECTIONPOINT,
       }
 
       this.linksEntity.add(panelJoinRequest)

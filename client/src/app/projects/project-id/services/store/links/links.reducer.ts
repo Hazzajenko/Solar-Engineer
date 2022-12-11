@@ -2,13 +2,13 @@ import { createReducer, on } from '@ngrx/store'
 import { LinksStateActions } from './links.actions'
 import { PanelModel } from '../../../../models/panel.model'
 import { DisconnectionPointModel } from '../../../../models/disconnection-point.model'
-import { UnitModel } from '../../../../models/unit.model'
-import { CableModel } from '../../../../models/cable.model'
+import { TypeModel } from '../../../../models/type.model'
+import { CableModel } from '../../../../models/deprecated-for-now/cable.model'
 
 export interface LinksState {
   // panelToJoin?: PanelModel
   // blockToJoin?: BlockModel
-  typeToLink?: UnitModel
+  typeToLink?: TypeModel
   toLinkId?: string
   panelToLink?: PanelModel
   dpToLink?: DisconnectionPointModel
@@ -29,31 +29,35 @@ export const linksReducer = createReducer(
   initialLinksState,
 
   on(LinksStateActions.startLinkPanel, (state, { panelId }) => ({
-    typeToLink: UnitModel.PANEL,
-    toLinkId: panelId
+    typeToLink: TypeModel.PANEL,
+    toLinkId: panelId,
   })),
-
 
   on(LinksStateActions.finishLinkPanel, (state, { panelId }) => ({
     typeToLink: undefined,
-    toLinkId: undefined
+    toLinkId: undefined,
   })),
 
   on(LinksStateActions.addToLinkPanel, (state, { panel }) => ({
-    typeToLink: UnitModel.PANEL,
+    typeToLink: TypeModel.PANEL,
     panelToLink: panel,
     dpToLink: undefined,
   })),
 
   on(LinksStateActions.addToLinkDp, (state, { disconnectionPoint }) => ({
-    typeToLink: UnitModel.DISCONNECTIONPOINT,
+    typeToLink: TypeModel.DISCONNECTIONPOINT,
     panelToLink: undefined,
     dpToLink: disconnectionPoint,
   })),
 
   on(LinksStateActions.addToLinkCable, (state, { cable }) => ({
-    typeToLink: UnitModel.CABLE,
+    typeToLink: TypeModel.CABLE,
     cableToLink: cable,
+  })),
+
+  on(LinksStateActions.clearPanelLinks, () => ({
+    typeToLink: TypeModel.PANEL,
+    panelToLink: undefined,
   })),
 
   on(LinksStateActions.clearLinkState, (state) => ({

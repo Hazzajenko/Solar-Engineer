@@ -3,7 +3,7 @@ import { SurroundingModel } from 'src/app/projects/models/surrounding.model'
 import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
 import { TraysEntityService } from '../../../services/ngrx-data/trays-entity/trays-entity.service'
-import { TrayModel } from '../../../../models/tray.model'
+import { TrayModel } from '../../../../models/deprecated-for-now/tray.model'
 
 @Pipe({
   name: 'railSurroundingsAsync',

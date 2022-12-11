@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using dotnetapi.Contracts.Requests;
 using dotnetapi.Contracts.Responses;
 using dotnetapi.Mapping;
 using dotnetapi.Models.Dtos;
@@ -8,138 +8,131 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-public class CreateProjectRequest
+namespace dotnetapi.Controllers;
+
+[Route("[controller]")]
+[ApiController]
+[Authorize]
+public class ProjectsController : ControllerBase
 {
-    [Required] public string Name { get; init; } = default!;
-}
+    private readonly ILogger<ProjectsController> _logger;
+    private readonly IProjectsService _projectsService;
+    private readonly UserManager<AppUser> _userManager;
 
 
-namespace dotnetapi.Controllers
-{
-    [Route("[controller]")]
-    [ApiController]
-    [Authorize]
-    public class ProjectsController : ControllerBase
+    public ProjectsController(
+        ILogger<ProjectsController> logger,
+        UserManager<AppUser> userManager,
+        IProjectsService projectsService
+    )
     {
-        private readonly ILogger<ProjectsController> _logger;
-        private readonly IProjectsService _projectsService;
-        private readonly UserManager<AppUser> _userManager;
+        _logger = logger;
+        _userManager = userManager;
+        _projectsService = projectsService;
+    }
 
 
-        public ProjectsController(
-            ILogger<ProjectsController> logger,
-            UserManager<AppUser> userManager,
-            IProjectsService projectsService
-        )
+    [HttpPost]
+    public async Task<IActionResult> CreateProject(CreateProjectRequest request)
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
         {
-            _logger = logger;
-            _userManager = userManager;
-            _projectsService = projectsService;
+            _logger.LogError("Bad request, User is invalid");
+            return Unauthorized("User is invalid");
         }
 
+        var appUserProject = request.ToAppUserProject(user);
 
-        [HttpPost]
-        public async Task<IActionResult> CreateProject(CreateProjectRequest request)
+        var projectDto = await _projectsService.CreateProjectAsync(appUserProject);
+        var result = new OneProjectResponse
         {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
-                _logger.LogError("Bad request, User is invalid");
-                return Unauthorized("User is invalid");
-            }
+            Project = projectDto
+        };
 
-            var appUserProject = request.ToAppUserProject(user);
+        return Ok(result);
+    }
 
-            var projectDto = await _projectsService.CreateProjectAsync(appUserProject);
-            var result = new OneProjectResponse
-            {
-                Project = projectDto
-            };
-
-            return Ok(result);
+    [HttpGet("{projectId:int}")]
+    public async Task<IActionResult> Get([FromRoute] int projectId)
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
+        {
+            _logger.LogError("Bad request, User is invalid");
+            return Unauthorized("User is invalid");
         }
 
-        [HttpGet("{projectId:int}")]
-        public async Task<IActionResult> Get([FromRoute] int projectId)
+        var projectDto = await _projectsService.GetProjectByIdAsync(projectId);
+
+        if (projectDto is null) return NotFound();
+        var result = new OneProjectResponse
         {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
-                _logger.LogError("Bad request, User is invalid");
-                return Unauthorized("User is invalid");
-            }
+            Project = projectDto
+        };
 
-            var projectDto = await _projectsService.GetProjectByIdAsync(projectId);
+        return Ok(result);
+    }
 
-            if (projectDto is null) return NotFound();
-            var result = new OneProjectResponse
-            {
-                Project = projectDto
-            };
-
-            return Ok(result);
+    [HttpGet]
+    public async Task<IActionResult> GetAll([FromRoute] int projectId)
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
+        {
+            _logger.LogError("Bad request, User is invalid");
+            return Unauthorized("User is invalid");
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAll([FromRoute] int projectId)
+        var projectDtos = await _projectsService.GetAllProjectsByUserIdAsync(user.Id);
+
+        var result = new ManyProjectsResponse
         {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
-                _logger.LogError("Bad request, User is invalid");
-                return Unauthorized("User is invalid");
-            }
+            Projects = projectDtos
+        };
 
-            var projectDtos = await _projectsService.GetAllProjectsByUserIdAsync(user.Id);
+        return Ok(result);
+    }
 
-            var result = new ManyProjectsResponse
-            {
-                Projects = projectDtos
-            };
-
-            return Ok(result);
+    [HttpPut("{projectId:int}")]
+    public async Task<IActionResult> Update([FromRoute] int projectId, [FromBody] ProjectDto request)
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
+        {
+            _logger.LogError("Bad request, User is invalid");
+            return Unauthorized("User is invalid");
         }
 
-        [HttpPut("{projectId:int}")]
-        public async Task<IActionResult> Update([FromRoute] int projectId, [FromBody] ProjectDto request)
+        var existingProject = await _projectsService.GetProjectByIdAsync(request.Id);
+
+        if (existingProject is null) return NotFound();
+
+        var projectEntity = request.ToEntity();
+        var result = await _projectsService.UpdateProjectAsync(projectEntity);
+
+        if (!result) return BadRequest();
+
+        return Ok(request);
+    }
+
+    [HttpDelete("{projectId:int}")]
+    public async Task<IActionResult> Delete([FromRoute] int projectId)
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
         {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
-                _logger.LogError("Bad request, User is invalid");
-                return Unauthorized("User is invalid");
-            }
-
-            var existingProject = await _projectsService.GetProjectByIdAsync(request.Id);
-
-            if (existingProject is null) return NotFound();
-
-            var projectEntity = request.ToEntity();
-            var result = await _projectsService.UpdateProjectAsync(projectEntity);
-
-            if (!result) return BadRequest();
-
-            return Ok(request);
+            _logger.LogError("Bad request, User is invalid");
+            return Unauthorized("User is invalid");
         }
 
-        [HttpDelete("{projectId:int}")]
-        public async Task<IActionResult> Delete([FromRoute] int projectId)
-        {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
-                _logger.LogError("Bad request, User is invalid");
-                return Unauthorized("User is invalid");
-            }
+        var existingProject = await _projectsService.GetProjectByIdAsync(projectId);
 
-            var existingProject = await _projectsService.GetProjectByIdAsync(projectId);
+        if (existingProject is null) return NotFound();
 
-            if (existingProject is null) return NotFound();
+        var deleted = await _projectsService.DeleteProjectAsync(existingProject.Id);
+        if (!deleted) return NotFound();
 
-            var deleted = await _projectsService.DeleteProjectAsync(existingProject.Id);
-            if (!deleted) return NotFound();
-
-            return Ok();
-        }
+        return Ok();
     }
 }

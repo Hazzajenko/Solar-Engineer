@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http'
 import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
 import { Update } from '@ngrx/entity'
-import { PanelLinkModel } from '../../../../models/panelLinkModel'
+import { PanelLinkModel } from '../../../../models/panel-link.model'
 
 interface GetPanelLinksResponse {
   panelLinks: PanelLinkModel[]

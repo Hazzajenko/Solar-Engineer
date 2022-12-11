@@ -1,6 +1,6 @@
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
 import { Update } from '@ngrx/entity'
-import { CableModel } from '../../models/cable.model'
+import { CableModel } from '../../models/deprecated-for-now/cable.model'
 
 export interface CreateCableRequest {
   location: number

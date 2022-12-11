@@ -5,15 +5,20 @@
     [width]="canvas.offsetWidth"
     class="canvas"
     style="width: 100%; height: 100%"
-  ></canvas>
+  >
+    <!--    <ng-container *ngIf="pathMapCoords$ | async as pathMapCoords">
+          {{ drawPaths(pathMapCoords) }}
+        </ng-container>-->
+  </canvas>
   <div class="project-container-v4__project-display">
     <app-grid-overlay></app-grid-overlay>
     <app-grid-toolbar></app-grid-toolbar>
     <app-grid-layout
-      (clickEvent)="canvasAction($event)"
-      (mousemove)="onMouseMove($event, mouseEvents.isDragging, mouseEvents.isLinking)"
-      *ngrxLet="{isDragging: isDragging$ | async, isLinking: isLinking$ | async} as mouseEvents"
+      (keyup)="altKeyup($event)"
+      (mouseup)="onMouseUp($event)"
+      *ngrxLet="isDragging$ | async as isDragging"
     ></app-grid-layout>
   </div>
 </div>
 <!--(mousemove)="onMouseMove($event, isDragging)"-->
+<!--(mousedown)="onMouseDown($event, isDragging)"-->

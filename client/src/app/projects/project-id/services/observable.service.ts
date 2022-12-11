@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core'
 import { map } from 'rxjs/operators'
 import { firstValueFrom, Observable } from 'rxjs'
-import { UnitModel } from '../../models/unit.model'
+import { TypeModel } from '../../models/type.model'
 import { PanelsEntityService } from './ngrx-data/panels-entity/panels-entity.service'
 import { Store } from '@ngrx/store'
 import { AppState } from '../../../store/app.state'
@@ -17,30 +17,26 @@ export class ObservableService {
     private store: Store<AppState>,
   ) {}
 
-  modelSwitch(model: UnitModel): Observable<any[]> {
+  modelSwitch(model: TypeModel): Observable<any[]> {
     switch (model) {
-      case UnitModel.PANEL:
+      case TypeModel.PANEL:
         return this.panelsEntity.entities$
-      case UnitModel.RAIL:
+      case TypeModel.RAIL:
         return this.railsEntity.entities$
       default:
         return this.panelsEntity.entities$
     }
   }
 
-
-
-  getItemByLocation(model: UnitModel, location: string) {
+  getItemByLocation(model: TypeModel, location: string) {
     return firstValueFrom(
       this.modelSwitch(model).pipe(
-        map((items) =>
-          items.find((item) => item.location === location),
-        ),
+        map((items) => items.find((item) => item.location === location)),
       ),
     )
   }
 
-  getItemFromIncludedIdArray(model: UnitModel, array: string[]) {
+  getItemFromIncludedIdArray(model: TypeModel, array: string[]) {
     return this.modelSwitch(model).pipe(
       map((items: any[]) => items.filter((item: any) => array.includes(item.id!))),
     )

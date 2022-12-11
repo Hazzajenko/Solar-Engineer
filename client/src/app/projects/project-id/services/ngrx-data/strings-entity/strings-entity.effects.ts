@@ -6,7 +6,7 @@ import { PanelsService } from '../../../../services/panels.service'
 import { DataEntities } from '../data-actions'
 import { tap } from 'rxjs/operators'
 import { EntityOp } from '@ngrx/data'
-import { UnitModel } from '../../../../models/unit.model'
+import { TypeModel } from '../../../../models/type.model'
 import { BlocksStateActions } from '../../store/blocks/blocks.actions'
 import { PanelModel } from '../../../../models/panel.model'
 import { BlockModel } from '../../../../models/block.model'
@@ -33,7 +33,7 @@ export class StringsEntityEffects {
             const block: BlockModel = {
               id: panel.id,
               location: panel.location,
-              model: UnitModel.PANEL,
+              type: TypeModel.PANEL,
               projectId: panel.projectId!,
             }
             const update: Update<BlockModel> = {

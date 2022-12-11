@@ -1,11 +1,11 @@
-import { PanelLinksToModel } from '../../../../models/panel-links-to.model'
+import { PanelLinksToModel } from '../../../../models/deprecated-for-now/panel-links-to.model'
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
-import { UnitModel } from '../../../../models/unit.model'
+import { TypeModel } from '../../../../models/type.model'
 
 export const SelectedStateActions = createActionGroup({
   source: 'Selected State',
   events: {
-    'Select Unit': props<{ unit: UnitModel }>(),
+    'Select Type': props<{ objectType: TypeModel }>(),
     'Toggle Multi Select': props<{ multiSelect: boolean }>(),
     'Select Id': props<{ id: string }>(),
     'Select Multi Ids': props<{ ids: string[] }>(),
@@ -19,8 +19,12 @@ export const SelectedStateActions = createActionGroup({
     'Select String': props<{ stringId: string }>(),
     'Set Selected String Panels': props<{ panelIds: string[] }>(),
     'Set Selected String Tooltip': props<{ tooltip: string }>(),
-    'Set Selected String Link Paths': props<{ pathMap: Map<string, number> }>(),
+    'Set Selected String Link Paths': props<{
+      pathMap: Map<string, { link: number; count: number; color: string }>
+    }>(),
+    'Set Selected String Link Path Coords': props<{ panelId: string; x: number; y: number }>(),
     'Set Selected Panel Links': props<{ panelLink: PanelLinksToModel }>(),
+    'Clear Selected Panel Links': emptyProps(),
     'Clear Selected State': emptyProps(),
   },
 })

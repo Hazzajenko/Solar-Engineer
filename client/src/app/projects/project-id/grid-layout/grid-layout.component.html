@@ -33,6 +33,8 @@
             <div
               (cdkDropListDropped)="gridDrop($event)"
               (click)="cellAction(locationString, $event)"
+              (mousedown)="mouseDown($event, locationString)"
+              (mouseup)="mouseUp($event, locationString)"
               [id]="locationString"
               cdkDropList
               class="drop-zone"

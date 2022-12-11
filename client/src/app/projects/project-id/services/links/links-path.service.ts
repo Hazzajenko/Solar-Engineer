@@ -9,10 +9,37 @@ import { firstValueFrom, switchMap } from 'rxjs'
 import { LoggerService } from '../../../../services/logger.service'
 import { CablesEntityService } from '../ngrx-data/cables-entity/cables-entity.service'
 import { ItemsService } from '../items.service'
-import { LinksPanelsService } from './links-panels.service'
 import { BlocksService } from '../store/blocks/blocks.service'
 import { map } from 'rxjs/operators'
+import { PanelModel } from '../../../models/panel.model'
 import { SelectedStateActions } from '../store/selected/selected.actions'
+
+export enum LinkColor {
+  SoftBrown = '#E26D60',
+  SoftOrange = '#E8A87C',
+  SoftPink = '#FF77A9',
+  SoftYellow = '#ffe78a',
+  SoftRed = '#dd536a',
+  SoftCyan = '#20dacb',
+  SoftGreen = '#3bf5b1',
+
+  VibrantPurple = '#D500F9',
+  VibrantGreen = '#00E676',
+  VibrantYellow = '#FFEA00',
+  VibrantRed = '#FF1744',
+  VibrantOrange = '#FF9100',
+  LightPink = '#ff7ee8',
+  LightBlue = '#00d1ff',
+  LightGreen = '#3bf5b1',
+  LightYellow = '#fffa82',
+  LightRed = '#FF6659',
+  WarmYellow = '#facf5a',
+  WarmRed = '#ff5959',
+  GreenYellow = '#cdeda7',
+  DarkGreen = '#085f63',
+  DarkPurple = '#87096e',
+  Test = '#hsl(0deg, 100%, 80%)',
+}
 
 @Injectable({
   providedIn: 'root',
@@ -27,7 +54,6 @@ export class LinksPathService {
     private cablesEntity: CablesEntityService,
     private logger: LoggerService,
     private itemsService: ItemsService,
-    private linksPanelsService: LinksPanelsService,
     private blocksService: BlocksService,
   ) {}
 
@@ -58,41 +84,106 @@ export class LinksPathService {
           ),
         ),
     ).then((res) => {
-      /*      console.log(res)
-            const panelIds = res.stringPanels.map((sp) => sp.id)
-            console.log(panelIds)
-            const firstPanelLink = res.stringLinks.find(
-              (sl) => sl.negativeToId === res.disconnectionPoint?.id,
-            )
-            const panelsWithoutNeg = res.stringLinks.filter((sl) => !panelIds.includes(sl.negativeToId!))
-            console.log(panelsWithoutNeg)
-            panelsWithoutNeg.forEach((pwn) => {
-              console.log('pwn', pwn)
-            })*/
-      let myMap = new Map<string, number>()
-      const firstPanelLink = res.stringLinks[0]
-      const firstPanel = res.stringPanels.find((x) => x.id === firstPanelLink.negativeToId)
-      if (!firstPanel) {
-        return console.error('!firstPanel')
+      const starterLinks = res.stringLinks.filter((link) => {
+        const firstPanel = res.stringPanels.find((x) => x.id === link.positiveToId)
+
+        const doesFirstHavePreviousLink = res.stringLinks.find(
+          (x) => x.negativeToId === firstPanel?.id,
+        )
+
+        if (doesFirstHavePreviousLink) {
+          return undefined
+        } else {
+          return link
+        }
+      })
+      let linkPathMap = new Map<string, { link: number; count: number; color: string }>()
+      // let linkPathMap = new Map<string, number>()
+      let linkCounter: number = 0
+      let linkColor: LinkColor = LinkColor.SoftGreen
+      // let linkColor: LinkColor = LinkColor.VibrantPurple
+      for (let starterLink of starterLinks) {
+        let panelCounter: number = 1
+        let job = true
+
+        let nextPanel: PanelModel | undefined = res.stringPanels.find(
+          (x) => x.id === starterLink.positiveToId,
+        )
+
+        while (job) {
+          if (nextPanel) {
+            linkPathMap.set(nextPanel.id, {
+              link: linkCounter,
+              count: panelCounter,
+              color: linkColor,
+            })
+            if (panelCounter === 1) {
+              const secondPanel = res.stringPanels.find((x) => x.id === starterLink.negativeToId)
+              if (secondPanel) {
+                nextPanel = secondPanel
+              } else {
+                linkCounter++
+                job = false
+              }
+            } else {
+              const upcomingLink = res.stringLinks.find((x) => x.positiveToId === nextPanel?.id)
+              const upcomingPanel = res.stringPanels.find(
+                (x) => x.id === upcomingLink?.negativeToId,
+              )
+              if (upcomingLink && upcomingPanel) {
+                nextPanel = upcomingPanel
+              } else {
+                linkCounter++
+                job = false
+              }
+            }
+
+            panelCounter++
+          } else {
+            linkCounter++
+            job = false
+          }
+        }
+
+        console.log(linkColor)
+        switch (linkColor) {
+          case LinkColor.SoftGreen:
+            linkColor = LinkColor.SoftOrange
+            break
+          case LinkColor.SoftOrange:
+            linkColor = LinkColor.SoftPink
+            break
+
+          case LinkColor.SoftPink:
+            linkColor = LinkColor.SoftYellow
+            break
+          case LinkColor.SoftYellow:
+            linkColor = LinkColor.SoftRed
+            break
+          case LinkColor.SoftRed:
+            linkColor = LinkColor.SoftGreen
+            break
+        }
+        /*        switch (linkColor) {
+                  case LinkColor.VibrantPurple:
+                    linkColor = LinkColor.VibrantGreen
+                    break
+                  case LinkColor.VibrantGreen:
+                    linkColor = LinkColor.VibrantYellow
+                    break
+
+                  case LinkColor.VibrantYellow:
+                    linkColor = LinkColor.VibrantRed
+                    break
+                  case LinkColor.VibrantRed:
+                    linkColor = LinkColor.VibrantOrange
+                    break
+                  case LinkColor.VibrantOrange:
+                    linkColor = LinkColor.VibrantPurple
+                    break
+                }*/
       }
-      myMap.set(firstPanel.id, 1)
-      const secondPanel = res.stringPanels.find((x) => x.id === firstPanelLink.positiveToId)
-      if (!secondPanel) {
-        return console.error('!secondPanel')
-      }
-      myMap.set(secondPanel.id, 2)
-      const secondPanelLink = res.stringLinks.find((x) => x.negativeToId === secondPanel.id)
-      if (!secondPanelLink) {
-        return console.error('!secondPanelLink')
-      }
-      const thirdPanel = res.stringPanels.find((x) => x.id === secondPanelLink.positiveToId)
-      if (!thirdPanel) {
-        return console.error('!thirdPanel')
-      }
-      myMap.set(thirdPanel.id, 3)
-      this.store.dispatch(SelectedStateActions.setSelectedStringLinkPaths({ pathMap: myMap }))
-      console.log(myMap)
-      // const panelsWithoutNeg = res.stringPanels.filter(sp => !sp.negative_to)
+      this.store.dispatch(SelectedStateActions.setSelectedStringLinkPaths({ pathMap: linkPathMap }))
     })
   }
 }

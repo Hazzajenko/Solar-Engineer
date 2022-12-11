@@ -1,7 +1,7 @@
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity'
 import { createReducer, on } from '@ngrx/store'
 import { CableStateActions } from './cable.actions'
-import { CableModel } from '../../models/cable.model'
+import { CableModel } from '../../models/deprecated-for-now/cable.model'
 
 export const selectCableId = (b: CableModel): string => b.id
 

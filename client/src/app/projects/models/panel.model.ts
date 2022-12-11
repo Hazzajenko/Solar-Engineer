@@ -1,5 +1,5 @@
-import { UnitModel } from './unit.model'
 import { TypeModel } from './type.model'
+
 import { getGuid } from '@ngrx/data'
 
 export class PanelModel {
@@ -12,13 +12,13 @@ export class PanelModel {
   stringId: string
   // has_child_block: boolean
   rotation: number
-  model?: UnitModel
+  type?: TypeModel
   child_block_id?: string
-  child_block_model?: UnitModel
+  child_block_model?: TypeModel
 
   join_id?: string
   selected?: boolean
-  type?: TypeModel
+  // type?: TypeModel
   positiveToId?: string
   negativeToId?: string
   // location: string

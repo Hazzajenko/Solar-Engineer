@@ -5,7 +5,7 @@ import { Observable } from 'rxjs'
 import { environment } from '../../../../../../environments/environment'
 import { map } from 'rxjs/operators'
 import { Update } from '@ngrx/entity'
-import { TrayModel } from '../../../../models/tray.model'
+import { TrayModel } from '../../../../models/deprecated-for-now/tray.model'
 
 interface GetTraysResponse {
   trays: TrayModel[]

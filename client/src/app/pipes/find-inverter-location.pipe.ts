@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core'
-import { InverterModel } from '../projects/models/inverter.model'
+import { InverterModel } from '../projects/models/deprecated-for-now/inverter.model'
 
 @Pipe({
   name: 'findInverterLocation',

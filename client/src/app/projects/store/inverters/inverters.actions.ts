@@ -1,5 +1,5 @@
 import { createAction, props } from '@ngrx/store'
-import { InverterModel } from '../../models/inverter.model'
+import { InverterModel } from '../../models/deprecated-for-now/inverter.model'
 
 export const addInverter = createAction(
   '[Inverters Service] Add Inverter',

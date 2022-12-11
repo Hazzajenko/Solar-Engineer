@@ -1,7 +1,7 @@
 import * as InverterActions from './inverters.actions'
 import { createReducer, on } from '@ngrx/store'
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity'
-import { InverterModel } from '../../models/inverter.model'
+import { InverterModel } from '../../models/deprecated-for-now/inverter.model'
 
 export const selectInverterId = (b: InverterModel): string => b.id
 export const sortByInverterName = (

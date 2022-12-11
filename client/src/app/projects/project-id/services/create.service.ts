@@ -4,13 +4,13 @@ import { Store } from '@ngrx/store'
 import { AppState } from '../../../store/app.state'
 import { combineLatestWith, firstValueFrom, lastValueFrom } from 'rxjs'
 import { PanelModel } from '../../models/panel.model'
-import { InverterModel } from '../../models/inverter.model'
-import { UnitModel } from '../../models/unit.model'
+import { InverterModel } from '../../models/deprecated-for-now/inverter.model'
+import { TypeModel } from '../../models/type.model'
 import { selectBlocksByProjectIdRouteParams } from './store/blocks/blocks.selectors'
 import { selectCreateMode } from './store/grid/grid.selectors'
 import { Guid } from 'guid-typescript'
 import { PanelsEntityService } from './ngrx-data/panels-entity/panels-entity.service'
-import { CableModel } from '../../models/cable.model'
+import { CableModel } from '../../models/deprecated-for-now/cable.model'
 import {
   DisconnectionPointModel,
   DisconnectionPointType,
@@ -18,19 +18,19 @@ import {
 import { StringsEntityService } from './ngrx-data/strings-entity/strings-entity.service'
 import { selectCurrentProjectId } from './store/projects/projects.selectors'
 import { CablesEntityService } from './ngrx-data/cables-entity/cables-entity.service'
-import { JoinModel } from '../../models/join.model'
+import { JoinModel } from '../../models/deprecated-for-now/join.model'
 import { JoinsEntityService } from './ngrx-data/joins-entity/joins-entity.service'
 import { getSurroundings } from './helper-functions'
 import { UpdateService } from './update.service'
 import { DisconnectionPointsEntityService } from './ngrx-data/disconnection-points-entity/disconnection-points-entity.service'
 import { InvertersEntityService } from './ngrx-data/inverters-entity/inverters-entity.service'
-import { TrayModel } from '../../models/tray.model'
+import { TrayModel } from '../../models/deprecated-for-now/tray.model'
 import { TraysEntityService } from './ngrx-data/trays-entity/trays-entity.service'
 import {
   selectSelectedStringId,
   selectSelectedUnitAndIds,
 } from './store/selected/selected.selectors'
-import { RailModel } from '../../models/rail.model'
+import { RailModel } from '../../models/deprecated-for-now/rail.model'
 import { RailsEntityService } from './ngrx-data/rails-entity/rails-entity.service'
 import { BlocksEntityService } from './ngrx-data/blocks-entity/blocks-entity.service'
 import { BlockModel } from '../../models/block.model'
@@ -64,30 +64,26 @@ export class CreateService {
         .pipe(combineLatestWith(this.store.select(selectCreateMode))),
     ).then(([blocks, createMode]) => {
       const doesExist = blocks.find((block) => block.location === location)
-      if (doesExist && createMode !== UnitModel.RAIL && doesExist.model !== UnitModel.RAIL) {
+      if (doesExist) {
         return console.log('cell location taken')
       }
 
       switch (createMode) {
-        case UnitModel.PANEL:
-          if (doesExist && doesExist.model === UnitModel.RAIL) {
-            return this.createPanelForGrid(location, doesExist)
-          } else {
-            return this.createPanelForGrid(location)
-          }
+        case TypeModel.PANEL:
+          return this.createPanelForGrid(location)
 
-        case UnitModel.CABLE:
+        case TypeModel.CABLE:
           return this.createCableForGrid(location)
 
-        case UnitModel.DISCONNECTIONPOINT:
+        case TypeModel.DISCONNECTIONPOINT:
           return this.createDisconnectionPointForGrid(location)
 
-        case UnitModel.INVERTER:
+        case TypeModel.INVERTER:
           return this.createInverterForGrid(location)
 
-        case UnitModel.TRAY:
+        case TypeModel.TRAY:
           return this.createTrayForGrid(location)
-        case UnitModel.RAIL:
+        case TypeModel.RAIL:
           return this.createRailForGrid(location, doesExist)
         default:
           break
@@ -98,7 +94,7 @@ export class CreateService {
   createPanelForGrid(location: string, childBlock?: BlockModel) {
     firstValueFrom(this.store.select(selectSelectedUnitAndIds)).then((state) => {
       if (childBlock) {
-        if (!state.singleSelectId && state.unit !== UnitModel.STRING) {
+        if (!state.singleSelectId && state.type !== TypeModel.STRING) {
           console.log('        if (!selectedStringId) {')
           // const panelRequest = new PanelModel(location, 'undefined', 0)
           const panelRequest = this.panelsService.createPanelWithDefaultValues(
@@ -118,7 +114,7 @@ export class CreateService {
                     }*/
 
           this.panelsEntity.add(panelRequest)
-        } else if (state.singleSelectId && state.unit === UnitModel.STRING) {
+        } else if (state.singleSelectId && state.type === TypeModel.STRING) {
           console.log('        } else if (selectedStringId.length > 0) {')
           /*          const panelRequest: PanelModel = {
                       id: Guid.create().toString(),
@@ -134,7 +130,7 @@ export class CreateService {
           this.panelsEntity.add(panelRequest)
         }
       } else {
-        if (!state.singleSelectId && state.unit !== UnitModel.STRING) {
+        if (!state.singleSelectId && state.type !== TypeModel.STRING) {
           /*          const panelRequest: PanelModel = {
                       id: Guid.create().toString(),
                       stringId: 'undefined',
@@ -145,7 +141,7 @@ export class CreateService {
 
           this.panelsEntity.add(panelRequest)
           // this.store.dispatch(PanelStateActions.addPanel({ panel: panelRequest }))
-        } else if (state.singleSelectId && state.unit === UnitModel.STRING) {
+        } else if (state.singleSelectId && state.type === TypeModel.STRING) {
           /*          const panelRequest: PanelModel = {
                       id: Guid.create().toString(),
                       stringId: state.selectedStringId!,
@@ -176,9 +172,8 @@ export class CreateService {
         id: newJoinId,
         project_id: projectId,
         color: 'purple',
-        model: UnitModel.JOIN,
+        model: TypeModel.JOIN,
         size: 4,
-        type: 'JOIN',
       }
       /*      return new Promise<JoinModel>((resolve, reject) =>
               this.joinsEntity.add(joinRequest)*/
@@ -204,8 +199,7 @@ export class CreateService {
           location,
           size: 4,
           join_id: newJoinId,
-          model: UnitModel.CABLE,
-          type: 'CABLE',
+          model: TypeModel.CABLE,
           color: 'black',
         }
 
@@ -226,7 +220,7 @@ export class CreateService {
           negativeId: 'undefined',
           location,
           color: 'black',
-          model: UnitModel.DISCONNECTIONPOINT,
+          type: TypeModel.DISCONNECTIONPOINT,
         }
 
         this.dp.add(disconnectionPointModel)
@@ -242,7 +236,7 @@ export class CreateService {
         id: Guid.create().toString(),
         projectId: projectId,
         location,
-        model: UnitModel.INVERTER,
+        model: TypeModel.INVERTER,
         color: 'blue',
         name: 'New Inverter',
       }
@@ -278,7 +272,7 @@ export class CreateService {
             location,
             rotation: 0,
             child_block_id: railRequest.id,
-            child_block_model: UnitModel.RAIL,
+            child_block_model: TypeModel.RAIL,
           }
           this.panelsEntity.update(update)
         })

@@ -3,7 +3,7 @@ import {
   EntityCollectionServiceBase,
   EntityCollectionServiceElementsFactory,
 } from '@ngrx/data'
-import { TrackerModel } from '../../../../models/tracker.model'
+import { TrackerModel } from '../../../../models/deprecated-for-now/tracker.model'
 
 @Injectable()
 export class TrackersEntityService extends EntityCollectionServiceBase<TrackerModel> {

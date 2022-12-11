@@ -14,7 +14,7 @@ import { LetModule } from '@ngrx/component'
 import { DisconnectionPointModel } from '../../../../models/disconnection-point.model'
 import { DisconnectionPointsEntityService } from '../../../services/ngrx-data/disconnection-points-entity/disconnection-points-entity.service'
 import { distinctUntilChanged, firstValueFrom, Observable } from 'rxjs'
-import { UnitModel } from '../../../../models/unit.model'
+import { TypeModel } from '../../../../models/type.model'
 import { Store } from '@ngrx/store'
 import { AppState } from '../../../../../store/app.state'
 import { PanelLinksEntityService } from '../../../services/ngrx-data/panel-links-entity/panel-links-entity.service'
@@ -64,7 +64,7 @@ export class BlockDisconnectionPointComponent implements OnInit {
   selectedId$!: Observable<string | undefined>
   selectedPositiveTo$!: Observable<string | undefined>
   selectedNegativeTo$!: Observable<string | undefined>
-  selectedUnit$!: Observable<UnitModel | undefined>
+  selectedUnit$!: Observable<TypeModel | undefined>
   menuTopLeftPosition = { x: '0', y: '0' }
   @ViewChild(MatMenuTrigger, { static: true })
   matMenuTrigger!: MatMenuTrigger

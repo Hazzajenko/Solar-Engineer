@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core'
-import { CableModel } from '../../projects/models/cable.model'
+import { CableModel } from '../../projects/models/deprecated-for-now/cable.model'
 
 @Pipe({
   name: 'findCable',

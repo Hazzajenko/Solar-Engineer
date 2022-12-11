@@ -10,7 +10,7 @@ import {
 import { DragDropModule } from '@angular/cdk/drag-drop'
 import { MatTooltipModule } from '@angular/material/tooltip'
 import { AsyncPipe, NgIf, NgStyle } from '@angular/common'
-import { CableModel } from '../../../../models/cable.model'
+import { CableModel } from '../../../../models/deprecated-for-now/cable.model'
 import { FindCableLocationPipe } from '../../../../../pipes/find-cable-location.pipe'
 import { GetNearbyJoins } from '../../../../../pipes/get-nearby-joins.pipe'
 import { LetModule } from '@ngrx/component'

@@ -1,7 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core'
 import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
-import { CableModel } from '../projects/models/cable.model'
+import { CableModel } from '../projects/models/deprecated-for-now/cable.model'
 
 @Pipe({
   name: 'getCable',

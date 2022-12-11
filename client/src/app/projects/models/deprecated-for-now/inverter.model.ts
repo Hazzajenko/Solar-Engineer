@@ -1,13 +1,12 @@
-import { UnitModel } from './unit.model'
-import { TypeModel } from './type.model'
+import { TypeModel } from '../type.model'
 
 export interface InverterModel {
   id: string
   location?: string
   color?: string
   projectId?: number
-  model?: UnitModel
-  type?: TypeModel
+  model?: TypeModel
+  // type?: TypeModel
   name: string
   createdBy?: number
   createdAt?: string

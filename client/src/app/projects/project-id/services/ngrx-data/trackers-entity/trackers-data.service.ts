@@ -5,7 +5,7 @@ import { Observable } from 'rxjs'
 import { environment } from '../../../../../../environments/environment'
 import { map } from 'rxjs/operators'
 import { Update } from '@ngrx/entity'
-import { TrackerModel } from '../../../../models/tracker.model'
+import { TrackerModel } from '../../../../models/deprecated-for-now/tracker.model'
 
 interface GetTrackersResponse {
   trackers: TrackerModel[]

@@ -4,11 +4,11 @@ import { Store } from '@ngrx/store'
 import { AppState } from '../../../../../store/app.state'
 import { tap } from 'rxjs/operators'
 import { BlocksStateActions } from '../../store/blocks/blocks.actions'
-import { UnitModel } from '../../../../models/unit.model'
+import { TypeModel } from '../../../../models/type.model'
 import { DataEntities } from '../data-actions'
 import { EntityOp } from '@ngrx/data'
 import { BlockModel } from '../../../../models/block.model'
-import { RailModel } from '../../../../models/rail.model'
+import { RailModel } from '../../../../models/deprecated-for-now/rail.model'
 import { selectBlocksByProjectIdRouteParams } from '../../store/blocks/blocks.selectors'
 import { HttpClient } from '@angular/common/http'
 import { lastValueFrom } from 'rxjs'
@@ -30,7 +30,7 @@ export class RailsEntityEffects {
                 block: {
                   id: rail.id,
                   location: rail.location,
-                  model: UnitModel.RAIL,
+                  type: TypeModel.RAIL,
                   projectId: rail.project_id!,
                 },
               }),
@@ -41,14 +41,8 @@ export class RailsEntityEffects {
                 block: {
                   id: existing.id,
                   location: existing.location,
-                  model: existing.model,
+                  type: existing.type,
                   projectId: existing.projectId!,
-                  inside_blocks: [
-                    {
-                      child_block_id: rail.id,
-                      child_block_model: UnitModel.RAIL,
-                    },
-                  ],
                 },
               }),
             )
@@ -69,7 +63,7 @@ export class RailsEntityEffects {
             const block: BlockModel = {
               id: rail.id,
               location: rail.location,
-              model: UnitModel.RAIL,
+              type: TypeModel.RAIL,
               projectId: rail.project_id,
             }
 
@@ -98,7 +92,7 @@ export class RailsEntityEffects {
             const block: BlockModel = {
               id: rail.id,
               location: rail.location,
-              model: UnitModel.RAIL,
+              type: TypeModel.RAIL,
               projectId: rail.project_id!,
             }
             return block
@@ -123,7 +117,7 @@ export class RailsEntityEffects {
               block: {
                 id: data.id,
                 location: data.changes.location,
-                model: UnitModel.RAIL,
+                type: TypeModel.RAIL,
                 projectId: data.changes.project_id!,
               },
             }),

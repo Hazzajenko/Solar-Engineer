@@ -1,23 +1,14 @@
-import { UnitModel } from './unit.model'
-
-export class ChildBlockModel {
-  child_block_id?: string
-  child_block_model?: UnitModel
-}
+import { TypeModel } from './type.model'
 
 export class BlockModel {
   id: string
   location: string
   projectId?: number
-  model: UnitModel
-  inside_blocks?: ChildBlockModel[]
-  x?: number
-  y?: number
+  type: TypeModel
 
-  constructor(id: string, location: string, model: UnitModel, inside_blocks?: ChildBlockModel[]) {
+  constructor(id: string, location: string, type: TypeModel) {
     this.id = id
     this.location = location
-    this.model = model
-    this.inside_blocks = inside_blocks
+    this.type = type
   }
 }

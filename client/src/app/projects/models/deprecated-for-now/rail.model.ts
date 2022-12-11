@@ -1,4 +1,4 @@
-import { UnitModel } from './unit.model'
+import { TypeModel } from '../type.model'
 import { Guid } from 'guid-typescript'
 
 export enum RailType {
@@ -10,7 +10,7 @@ export enum RailType {
 export class RailModel {
   id: string
   project_id?: number
-  model: UnitModel
+  model: TypeModel
   type: RailType
   location: string
   is_child_block: boolean
@@ -19,7 +19,7 @@ export class RailModel {
   constructor(projectId: number, location: string, isChildBlock: boolean, parentBlockId?: string) {
     this.id = Guid.create().toString()
     this.project_id = projectId
-    this.model = UnitModel.TRAY
+    this.model = TypeModel.TRAY
     this.type = RailType.SUNLOCK
     this.location = location
     this.is_child_block = isChildBlock

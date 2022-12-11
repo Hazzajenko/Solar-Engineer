@@ -5,7 +5,7 @@ import { Observable } from 'rxjs'
 import { environment } from '../../../../../../environments/environment'
 import { map } from 'rxjs/operators'
 import { Update } from '@ngrx/entity'
-import { CableModel } from '../../../../models/cable.model'
+import { CableModel } from '../../../../models/deprecated-for-now/cable.model'
 import { Store } from '@ngrx/store'
 import { AppState } from '../../../../../store/app.state'
 

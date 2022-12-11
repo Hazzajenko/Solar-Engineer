@@ -1,4 +1,4 @@
-import { CableModel } from '../../models/cable.model'
+import { CableModel } from '../../models/deprecated-for-now/cable.model'
 import { GridService } from './grid.service'
 import { Injectable } from '@angular/core'
 import { PanelsEntityService } from '../../project-id/services/ngrx-data/panels-entity/panels-entity.service'

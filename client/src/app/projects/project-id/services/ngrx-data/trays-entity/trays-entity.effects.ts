@@ -4,11 +4,11 @@ import { Store } from '@ngrx/store'
 import { AppState } from '../../../../../store/app.state'
 import { tap } from 'rxjs/operators'
 import { BlocksStateActions } from '../../store/blocks/blocks.actions'
-import { UnitModel } from '../../../../models/unit.model'
+import { TypeModel } from '../../../../models/type.model'
 import { DataEntities } from '../data-actions'
 import { EntityOp } from '@ngrx/data'
 import { BlockModel } from '../../../../models/block.model'
-import { TrayModel } from '../../../../models/tray.model'
+import { TrayModel } from '../../../../models/deprecated-for-now/tray.model'
 
 @Injectable()
 export class TraysEntityEffects {
@@ -23,7 +23,7 @@ export class TraysEntityEffects {
               block: {
                 id: tray.id,
                 location: tray.location,
-                model: UnitModel.TRAY,
+                type: TypeModel.TRAY,
                 projectId: tray.project_id!,
               },
             }),
@@ -41,7 +41,7 @@ export class TraysEntityEffects {
             const block: BlockModel = {
               id: tray.id,
               location: tray.location,
-              model: UnitModel.TRAY,
+              type: TypeModel.TRAY,
               projectId: tray.projectId!,
             }
             return block
@@ -66,7 +66,7 @@ export class TraysEntityEffects {
               block: {
                 id: data.id,
                 location: data.changes.location,
-                model: UnitModel.TRAY,
+                type: TypeModel.TRAY,
                 projectId: data.changes.project_id!,
               },
             }),

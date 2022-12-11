@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core'
-import { CableModel } from '../projects/models/cable.model'
+import { CableModel } from '../projects/models/deprecated-for-now/cable.model'
 import { Store } from '@ngrx/store'
 import { AppState } from '../store/app.state'
 import { JoinsEntityService } from '../projects/project-id/services/ngrx-data/joins-entity/joins-entity.service'

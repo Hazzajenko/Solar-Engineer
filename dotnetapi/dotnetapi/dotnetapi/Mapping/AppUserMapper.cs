@@ -1,4 +1,5 @@
-﻿using dotnetapi.Models.Dtos;
+﻿using dotnetapi.Contracts.Requests;
+using dotnetapi.Models.Dtos;
 using dotnetapi.Models.Entities;
 
 namespace dotnetapi.Mapping;

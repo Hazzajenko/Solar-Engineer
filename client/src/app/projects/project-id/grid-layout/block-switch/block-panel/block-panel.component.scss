@@ -1,4 +1,4 @@
-
+$borderColor: black;
 .right-click-menu {
   background-color: #f6eded;
 
@@ -22,7 +22,9 @@ svg {
 }
 
 path {
-  stroke: #ff5a5a;
+  //stroke: #37474F;
+  stroke: rgb(152, 152, 152);
+  //stroke: #78909C;
   fill: none;
   stroke-width: 5;
   vector-effect: non-scaling-stroke;
@@ -37,7 +39,11 @@ path {
   align-content: center;
   //left: 10px;
   border: #24292e;
-  background-color: #f6eded;
+
+  //background-color: hsl(0deg, 100%, 80%);
+  // background-color: hwb(red, 0deg, 100%, 80%);
+  background-color: lab(150% -400 400);;
+  //background-color: #f6eded;
   width: 30px;
   height: 30px;
 
@@ -60,7 +66,7 @@ path {
   }
 
   &__panel {
-    border: 2px solid black;
+    border: 2px solid $borderColor;
     position: absolute;
     /*    width: 20px;
         height: 20px;*/
@@ -76,6 +82,10 @@ path {
     }
   }
 
+  &__pathMapText {
+    font-size: 10px;
+  }
+
   &__bg-default {
     background-color: #95c2fa;
   }
@@ -86,7 +96,8 @@ path {
 
   &__bg-string-selected {
     background-color: #07d2ff;
-    border: 2px solid #001fff;
+    border: 2px solid lighten($borderColor, 20%);
+    //border: 2px solid #001fff;
   }
 
   &__bg-positive {
@@ -101,3 +112,5 @@ path {
     background-color: #ff00d6;
   }
 }
+
+

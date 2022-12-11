@@ -8,9 +8,9 @@ import { DataEntities } from '../data-actions'
 import { EntityOp } from '@ngrx/data'
 import { tap } from 'rxjs/operators'
 import { BlocksStateActions } from '../../store/blocks/blocks.actions'
-import { UnitModel } from '../../../../models/unit.model'
+import { TypeModel } from '../../../../models/type.model'
 import { BlockModel } from '../../../../models/block.model'
-import { InverterModel } from '../../../../models/inverter.model'
+import { InverterModel } from '../../../../models/deprecated-for-now/inverter.model'
 
 @Injectable()
 export class InvertersEntityEffects {
@@ -25,7 +25,7 @@ export class InvertersEntityEffects {
               block: {
                 id: inverter.id,
                 location: inverter.location,
-                model: UnitModel.INVERTER,
+                type: TypeModel.INVERTER,
                 projectId: inverter.project_id!,
               },
             }),
@@ -43,7 +43,7 @@ export class InvertersEntityEffects {
             const block: BlockModel = {
               id: inverter.id,
               location: inverter.location!,
-              model: UnitModel.INVERTER,
+              type: TypeModel.INVERTER,
               projectId: inverter.projectId!,
             }
             return block
@@ -68,7 +68,7 @@ export class InvertersEntityEffects {
               block: {
                 id: update.id,
                 location: update.changes.location,
-                model: UnitModel.INVERTER,
+                type: TypeModel.INVERTER,
                 projectId: update.changes.project_id!,
               },
             }),

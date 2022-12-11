@@ -1,13 +1,13 @@
 import { Pipe, PipeTransform } from '@angular/core'
 import { StringModel } from '../../projects/models/string.model'
-import { UnitModel } from '../../projects/models/unit.model'
+import { TypeModel } from '../../projects/models/type.model'
 
 @Pipe({
   name: 'filterStringsBy',
   standalone: true,
 })
 export class FilterStringsByPipe implements PipeTransform {
-  transform(strings: StringModel[], id: string, model: UnitModel): StringModel[] {
+  transform(strings: StringModel[], id: string, model: TypeModel): StringModel[] {
     if (!strings || !id || !model) {
       return strings
     }

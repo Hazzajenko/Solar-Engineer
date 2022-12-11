@@ -8,13 +8,13 @@ import { CablesEntityService } from '../../project-id/services/ngrx-data/cables-
 import { InvertersEntityService } from '../../project-id/services/ngrx-data/inverters-entity/inverters-entity.service'
 import { GridService } from './grid.service'
 import { JoinsEntityService } from '../../project-id/services/ngrx-data/joins-entity/joins-entity.service'
-import { UnitModel } from '../../models/unit.model'
+import { TypeModel } from '../../models/type.model'
 import { Store } from '@ngrx/store'
 import { AppState } from '../../../store/app.state'
 import { LinksService } from '../../project-id/services/links/links.service'
 import { LoggerService } from '../../../services/logger.service'
 import { PanelLinksEntityService } from '../../project-id/services/ngrx-data/panel-links-entity/panel-links-entity.service'
-import { PanelLinkModel } from '../../models/panelLinkModel'
+import { PanelLinkModel } from '../../models/panel-link.model'
 import { PanelModel } from '../../models/panel.model'
 import { combineLatest } from 'rxjs'
 import { LinksStateActions } from '../../project-id/services/store/links/links.actions'
@@ -56,21 +56,21 @@ export class GridJoinService extends GridService {
     // })
     console.log('blockToJoin', blockToJoin)
 
-    switch (blockToJoin.model) {
-      case UnitModel.PANEL:
+    switch (blockToJoin.type) {
+      case TypeModel.PANEL:
         console.log('addPanelToJoin')
         // return this.addPanelToJoin(location, project, blocks)
         // return this.addPanelToJoinV2(location, project, blocks)
         break
 
-      case UnitModel.CABLE:
+      case TypeModel.CABLE:
         break
 
-      case UnitModel.DISCONNECTIONPOINT:
+      case TypeModel.DISCONNECTIONPOINT:
         this.addDpToJoin(location, project)
         break
 
-      case UnitModel.INVERTER:
+      case TypeModel.INVERTER:
         break
       default:
         break
@@ -226,9 +226,9 @@ export class GridJoinService extends GridService {
         projectId: project.id,
         stringId: panelToJoin.stringId,
         positiveToId: panelToJoin.id,
-        positiveModel: UnitModel.PANEL,
+        positiveModel: TypeModel.PANEL,
         negativeToId: panel!.id,
-        negativeModel: UnitModel.PANEL,
+        negativeModel: TypeModel.PANEL,
       }
 
       this.panelJoinsEntity.add(panelJoinRequest)
@@ -245,7 +245,7 @@ export class GridJoinService extends GridService {
 
     const block: BlockModel = {
       id: panel.id,
-      model: UnitModel.PANEL,
+      type: TypeModel.PANEL,
       location: panel.location,
       projectId: project.id,
     }
@@ -275,9 +275,9 @@ export class GridJoinService extends GridService {
         projectId: project.id,
         stringId: panel.stringId,
         negativeToId: panel.id,
-        negativeModel: UnitModel.PANEL,
+        negativeModel: TypeModel.PANEL,
         positiveToId: dpToJoin.id,
-        positiveModel: UnitModel.DISCONNECTIONPOINT,
+        positiveModel: TypeModel.DISCONNECTIONPOINT,
       }
 
       this.panelJoinsEntity.add(panelJoinRequest)
@@ -285,7 +285,7 @@ export class GridJoinService extends GridService {
 
     const block: BlockModel = {
       id: panel.id,
-      model: UnitModel.PANEL,
+      type: TypeModel.PANEL,
       location: panel.location,
       projectId: project.id,
     }
@@ -338,9 +338,9 @@ export class GridJoinService extends GridService {
         projectId: project.id,
         stringId: panelToJoin.stringId,
         positiveToId: panelToJoin.id,
-        positiveModel: UnitModel.PANEL,
+        positiveModel: TypeModel.PANEL,
         negativeToId: dp.id,
-        negativeModel: UnitModel.DISCONNECTIONPOINT,
+        negativeModel: TypeModel.DISCONNECTIONPOINT,
       }
 
       this.panelJoinsEntity.add(panelJoinRequest)
@@ -371,9 +371,9 @@ export class GridJoinService extends GridService {
         projectId: project.id,
         stringId: panelToJoin.stringId,
         positiveToId: panelToJoin.id,
-        positiveModel: UnitModel.PANEL,
+        positiveModel: TypeModel.PANEL,
         negativeToId: dp.id,
-        negativeModel: UnitModel.DISCONNECTIONPOINT,
+        negativeModel: TypeModel.DISCONNECTIONPOINT,
       }
 
       this.panelJoinsEntity.add(panelJoinRequest)
@@ -381,7 +381,7 @@ export class GridJoinService extends GridService {
 
     const block: BlockModel = {
       id: dp.id,
-      model: UnitModel.DISCONNECTIONPOINT,
+      type: TypeModel.DISCONNECTIONPOINT,
       location: dp.location!,
       projectId: project.id,
     }
@@ -419,11 +419,11 @@ export class GridJoinService extends GridService {
       // })
 
       if (blockToJoin) {
-        switch (blockToJoin?.model) {
-          case UnitModel.PANEL:
+        switch (blockToJoin?.type) {
+          case TypeModel.PANEL:
             this.joinDpToPanel(project, panelToJoin!, dpString!, dp!)
             break
-          case UnitModel.DISCONNECTIONPOINT:
+          case TypeModel.DISCONNECTIONPOINT:
             console.log('err cannot join dp to dp')
             break
         }
@@ -431,7 +431,7 @@ export class GridJoinService extends GridService {
         if (dp) {
           const block: BlockModel = {
             id: dp.id,
-            model: UnitModel.DISCONNECTIONPOINT,
+            type: TypeModel.DISCONNECTIONPOINT,
             location: dp.location!,
             projectId: project.id,
           }

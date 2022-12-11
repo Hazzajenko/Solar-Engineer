@@ -3,7 +3,7 @@ import {
   EntityCollectionServiceBase,
   EntityCollectionServiceElementsFactory,
 } from '@ngrx/data'
-import { InverterModel } from '../../../../models/inverter.model'
+import { InverterModel } from '../../../../models/deprecated-for-now/inverter.model'
 
 @Injectable()
 export class InvertersEntityService extends EntityCollectionServiceBase<InverterModel> {

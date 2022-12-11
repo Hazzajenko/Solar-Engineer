@@ -19,6 +19,15 @@ h6 {
   margin: 8px 0;
 }
 
+
+canvas {
+  border-style: solid;
+  //top: -5px;
+  pointer-events: none;
+  position: absolute;
+  z-index: 1;
+}
+
 p {
   margin: 0;
 }

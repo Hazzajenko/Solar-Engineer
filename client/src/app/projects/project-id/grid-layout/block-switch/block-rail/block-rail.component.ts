@@ -19,7 +19,7 @@ import { selectSelectedId } from '../../../services/store/selected/selected.sele
 import { selectGridMode } from '../../../services/store/grid/grid.selectors'
 import { RailJoinComponent } from './rail-join/rail-join.component'
 import { RailSurroundingsAsyncPipe } from './rail-surroundings-async.pipe'
-import { RailModel } from '../../../../models/rail.model'
+import { RailModel } from '../../../../models/deprecated-for-now/rail.model'
 import { RailsEntityService } from '../../../services/ngrx-data/rails-entity/rails-entity.service'
 
 @Component({

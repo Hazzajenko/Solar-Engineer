@@ -5,7 +5,7 @@ import { AppState } from '../../../../../store/app.state'
 import { PanelsService } from '../../../../services/panels.service'
 import { firstValueFrom, lastValueFrom, tap } from 'rxjs'
 import { BlocksStateActions } from '../blocks/blocks.actions'
-import { UnitModel } from '../../../../models/unit.model'
+import { TypeModel } from '../../../../models/type.model'
 import { PanelStateActions } from './panels.actions'
 import { PanelsHelperService } from '../../ngrx-data/panels-entity/panels.service'
 import { selectCurrentProjectId } from '../projects/projects.selectors'
@@ -27,7 +27,7 @@ export class PanelsEffects {
                   block: {
                     id: action.panel.id,
                     location: action.panel.location,
-                    model: UnitModel.PANEL,
+                    type: TypeModel.PANEL,
                     projectId,
                   },
                 }),

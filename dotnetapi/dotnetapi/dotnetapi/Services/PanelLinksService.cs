@@ -47,7 +47,7 @@ public class PanelLinksService : IPanelLinksService
 
     public async Task<bool> DeletePanelLinkAsync(string panelLinkId)
     {
-        var linkToDelete = await _panelsRepository.GetPanelByIdAsync(panelLinkId);
+        var linkToDelete = await _panelLinksRepository.GetPanelLinkByIdAsync(panelLinkId);
         if (linkToDelete is null)
         {
             var message = $"Cannot find Panel Link {panelLinkId}";

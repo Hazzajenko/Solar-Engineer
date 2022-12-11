@@ -6,7 +6,7 @@ import { CdkDrag } from '@angular/cdk/drag-drop'
 import { PanelModel } from '../models/panel.model'
 import { selectPanelsByProjectId } from '../project-id/services/store/panels/panels.selectors'
 import { environment } from '../../../environments/environment'
-import { CableModel } from '../models/cable.model'
+import { CableModel } from '../models/deprecated-for-now/cable.model'
 import {
   CableStateActions,
   CreateCableRequest,

@@ -8,14 +8,14 @@ import { StringsEntityService } from '../../ngrx-data/strings-entity/strings-ent
 import { StatsService } from '../../stats.service'
 import { firstValueFrom, lastValueFrom, switchMap } from 'rxjs'
 import { BlocksStateActions } from './blocks.actions'
-import { UnitModel } from '../../../../models/unit.model'
+import { TypeModel } from '../../../../models/type.model'
 import { BlockModel } from '../../../../models/block.model'
 import { HttpClient } from '@angular/common/http'
 import { selectCurrentProjectId } from '../projects/projects.selectors'
 import { map } from 'rxjs/operators'
 import { ObservableService } from '../../observable.service'
 import { RailsEntityService } from '../../ngrx-data/rails-entity/rails-entity.service'
-import { RailModel } from '../../../../models/rail.model'
+import { RailModel } from '../../../../models/deprecated-for-now/rail.model'
 import { PanelsHelperService } from '../../ngrx-data/panels-entity/panels.service'
 
 @Injectable()
@@ -30,7 +30,7 @@ export class BlocksEffects {
               let blocks: BlockModel[] = action.blocks
 
               const panelBlocks = blocks
-                .filter((b) => b.model === UnitModel.PANEL)
+                .filter((b) => b.type === TypeModel.PANEL)
                 .map((block) => block.id)
 
               if (panelBlocks) {
@@ -46,13 +46,13 @@ export class BlocksEffects {
               }
 
               const panelRails = blocks
-                .filter((b) => b.model === UnitModel.RAIL)
+                .filter((b) => b.type === TypeModel.RAIL)
                 .map((block) => block.id)
 
               if (panelRails.length > 0) {
                 firstValueFrom(
                   this.observablesService
-                    .getItemFromIncludedIdArray(UnitModel.RAIL, panelRails)
+                    .getItemFromIncludedIdArray(TypeModel.RAIL, panelRails)
                     .pipe(
                       switchMap((rails: RailModel[]) =>
                         this.http.delete(`/api/projects/${projectId}/rails`, {

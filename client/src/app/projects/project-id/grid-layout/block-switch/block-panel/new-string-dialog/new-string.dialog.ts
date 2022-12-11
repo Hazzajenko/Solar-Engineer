@@ -24,7 +24,7 @@ import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatInputModule } from '@angular/material/input'
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { Guid } from 'guid-typescript'
-import { UnitModel } from '../../../../../models/unit.model'
+import { TypeModel } from '../../../../../models/type.model'
 
 @Component({
   selector: 'new-string-dialog',
@@ -147,7 +147,7 @@ export class NewStringDialog implements OnInit {
         id: newStringId,
         name: this.name.value,
         color: 'blue',
-        model: UnitModel.STRING,
+        type: TypeModel.STRING,
       }
 
       this.stringsEntity.add(newString)

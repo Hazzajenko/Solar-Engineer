@@ -2,13 +2,13 @@ import { createReducer, on } from '@ngrx/store'
 import { GridStateActions } from './grid.actions'
 import { StringModel } from '../../../../models/string.model'
 import { GridMode } from './grid-mode.model'
-import { UnitModel } from '../../../../models/unit.model'
+import { TypeModel } from '../../../../models/type.model'
 import { PanelModel } from '../../../../models/panel.model'
 
 export interface GridState {
   strings: StringModel[]
   selected?: StringModel
-  createMode: UnitModel
+  createMode: TypeModel
   gridMode: GridMode
   toJoin: string[]
   panelToJoin: PanelModel[]
@@ -17,7 +17,7 @@ export interface GridState {
 export const initialGridState: GridState = {
   strings: [],
   selected: undefined,
-  createMode: UnitModel.PANEL,
+  createMode: TypeModel.PANEL,
   gridMode: GridMode.CREATE,
   toJoin: [],
   panelToJoin: [],

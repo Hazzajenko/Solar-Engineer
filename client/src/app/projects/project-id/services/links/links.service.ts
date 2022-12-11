@@ -5,10 +5,10 @@ import { Injectable } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
 import { Store } from '@ngrx/store'
 import { AppState } from '../../../../store/app.state'
-import { UnitModel } from '../../../models/unit.model'
+import { TypeModel } from '../../../models/type.model'
 import { JoinsEntityService } from '../ngrx-data/joins-entity/joins-entity.service'
 import { Guid } from 'guid-typescript'
-import { PanelLinkModel } from '../../../models/panelLinkModel'
+import { PanelLinkModel } from '../../../models/panel-link.model'
 import { PanelModel } from '../../../models/panel.model'
 import { LinksStateActions } from '../store/links/links.actions'
 import { LinksState } from '../store/links/links.reducer'
@@ -17,10 +17,11 @@ import { combineLatestWith, firstValueFrom } from 'rxjs'
 import { selectLinksState } from '../store/links/links.selectors'
 import { LoggerService } from '../../../../services/logger.service'
 import { CablesEntityService } from '../ngrx-data/cables-entity/cables-entity.service'
-import { CableModel } from '../../../models/cable.model'
+import { CableModel } from '../../../models/deprecated-for-now/cable.model'
 import { ItemsService } from '../items.service'
 import { LinksPanelsService } from './links-panels.service'
 import { BlocksService } from '../store/blocks/blocks.service'
+import { selectSelectedStringModel } from '../store/selected/selected.selectors'
 
 @Injectable({
   providedIn: 'root',
@@ -40,45 +41,45 @@ export class LinksService {
     private blocksService: BlocksService,
   ) {}
 
-  linkSwitch(location: string) {
-    firstValueFrom(
-      this.blocksService
-        .getBlockByLocationAsync(location)
-        .pipe(combineLatestWith(this.store.select(selectLinksState))),
-    ).then(([block, joinsState]) => {
-      if (!block) {
-        return console.error('joinSwitch, block doesnt exist')
+  linkSwitch(location: string, shiftKey: boolean) {
+    firstValueFrom(this.store.select(selectSelectedStringModel)).then((selectedState) => {
+      if (selectedState.type !== TypeModel.STRING) {
+        return console.error('no string selected')
       }
-      switch (block.model) {
-        case UnitModel.PANEL:
-          this.itemsService.getItemByLocation(UnitModel.PANEL, location).then((panel) => {
-            // this.addPanelToLink(panel, joinsState)
-            this.linksPanelsService.addPanelToLink(panel, joinsState)
-          })
-          break
-        case UnitModel.DISCONNECTIONPOINT:
-          this.itemsService
-            .getItemByLocation(UnitModel.DISCONNECTIONPOINT, location)
-            .then((disconnectionPoint) => {
-              this.addDpToLink(disconnectionPoint, joinsState)
+      if (!selectedState.selectedStringId) {
+        return console.error('no string selected')
+      }
+      firstValueFrom(
+        this.blocksService
+          .getBlockByLocationAsync(location)
+          .pipe(combineLatestWith(this.store.select(selectLinksState))),
+      ).then(([block, joinsState]) => {
+        if (!block) {
+          return console.error('joinSwitch, block doesnt exist')
+        }
+        switch (block.type) {
+          case TypeModel.PANEL:
+            this.itemsService.getItemByLocation(TypeModel.PANEL, location).then((panel) => {
+              this.linksPanelsService.addPanelToLink(
+                panel,
+                joinsState,
+                selectedState.selectedStringId,
+                shiftKey,
+              )
             })
-          break
-        /*        case UnitModel.CABLE:
-          firstValueFrom(
-            this.cablesEntity.entities$.pipe(
-              map((cables) => cables.find((cable) => cable.location === location)),
-            ),
-          ).then((cable) => {
-            if (!cable) {
-              return console.error('joinSwitch cable doesnt exist on that location')
-            }
-            this.addCableToLink(cable, joinsState)
-          })
-          break*/
-        default:
-          console.warn('cannot link on this object')
-          break
-      }
+            break
+          case TypeModel.DISCONNECTIONPOINT:
+            this.itemsService
+              .getItemByLocation(TypeModel.DISCONNECTIONPOINT, location)
+              .then((disconnectionPoint) => {
+                this.addDpToLink(disconnectionPoint, joinsState)
+              })
+            break
+          default:
+            console.warn('cannot link on this object')
+            break
+        }
+      })
     })
   }
 
@@ -88,12 +89,12 @@ export class LinksService {
     }
     if (linksState?.typeToLink) {
       switch (linksState.typeToLink) {
-        case UnitModel.PANEL:
+        case TypeModel.PANEL:
           if (linksState.panelToLink) {
             this.joinPanelToPanel(panel, linksState.panelToLink)
           }
           break
-        case UnitModel.DISCONNECTIONPOINT:
+        case TypeModel.DISCONNECTIONPOINT:
           if (linksState.dpToLink) {
             this.joinPanelToDp(panel, linksState.dpToLink)
           }
@@ -107,18 +108,18 @@ export class LinksService {
   addDpToLink(disconnectionPoint: DisconnectionPointModel, linksState: LinksState) {
     if (linksState.typeToLink) {
       switch (linksState.typeToLink) {
-        case UnitModel.PANEL:
+        case TypeModel.PANEL:
           if (linksState.panelToLink) {
             this.joinDpToPanel(disconnectionPoint, linksState.panelToLink)
           }
           break
-        case UnitModel.CABLE:
+        case TypeModel.CABLE:
           if (linksState.cableToLink) {
             console.info('linksState.cableToLink')
             this.joinDpToCable(disconnectionPoint, linksState.cableToLink)
           }
           break
-        case UnitModel.DISCONNECTIONPOINT:
+        case TypeModel.DISCONNECTIONPOINT:
           // this.logger.error('err cannot join dp to dp')
           console.error('err cannot join dp to dp')
           console.error('err cannot join dp to dp2')
@@ -133,7 +134,7 @@ export class LinksService {
   addCableToLink(cable: CableModel, linksState: LinksState) {
     if (linksState.typeToLink) {
       switch (linksState.typeToLink) {
-        case UnitModel.DISCONNECTIONPOINT:
+        case TypeModel.DISCONNECTIONPOINT:
           if (linksState.dpToLink) {
             this.joinCableToDp(cable, linksState.dpToLink)
           }
@@ -153,7 +154,7 @@ export class LinksService {
 
     const update: Partial<DisconnectionPointModel> = {
       ...dpToJoin,
-      cable_id: cable.id,
+      cableId: cable.id,
     }
 
     this.disconnectionPointsEntity.update(update)
@@ -163,9 +164,9 @@ export class LinksService {
       projectId: dpToJoin.projectId,
       stringId: dpToJoin.stringId,
       positiveToId: dpToJoin.id,
-      positiveModel: UnitModel.DISCONNECTIONPOINT,
+      positiveModel: TypeModel.DISCONNECTIONPOINT,
       negativeToId: cable.id,
-      negativeModel: UnitModel.CABLE,
+      negativeModel: TypeModel.CABLE,
     }
 
     this.linksEntity.add(linkRequest)
@@ -182,9 +183,9 @@ export class LinksService {
       projectId: cableToJoin.project_id,
       stringId: dp.stringId,
       positiveToId: cableToJoin.id,
-      positiveModel: UnitModel.CABLE,
+      positiveModel: TypeModel.CABLE,
       negativeToId: dp.id,
-      negativeModel: UnitModel.DISCONNECTIONPOINT,
+      negativeModel: TypeModel.DISCONNECTIONPOINT,
     }
 
     this.linksEntity.add(linkRequest)
@@ -209,9 +210,9 @@ export class LinksService {
       projectId: panelToJoin.projectId,
       stringId: panelToJoin.stringId,
       positiveToId: panelToJoin.id,
-      positiveModel: UnitModel.PANEL,
+      positiveModel: TypeModel.PANEL,
       negativeToId: dp.id,
-      negativeModel: UnitModel.DISCONNECTIONPOINT,
+      negativeModel: TypeModel.DISCONNECTIONPOINT,
     }
 
     this.linksEntity.add(panelJoinRequest)
@@ -229,9 +230,9 @@ export class LinksService {
         projectId: panel.projectId,
         stringId: panel.stringId,
         positiveToId: panelToLink,
-        positiveModel: UnitModel.PANEL,
+        positiveModel: TypeModel.PANEL,
         negativeToId: panel.id,
-        negativeModel: UnitModel.PANEL,
+        negativeModel: TypeModel.PANEL,
       }
 
       this.linksEntity.add(panelJoinRequest)
@@ -260,9 +261,9 @@ export class LinksService {
         projectId: panelToJoin.projectId,
         stringId: panelToJoin.stringId,
         positiveToId: panelToJoin.id,
-        positiveModel: UnitModel.PANEL,
+        positiveModel: TypeModel.PANEL,
         negativeToId: panel.id,
-        negativeModel: UnitModel.PANEL,
+        negativeModel: TypeModel.PANEL,
       }
 
       this.linksEntity.add(panelJoinRequest)
@@ -296,9 +297,9 @@ export class LinksService {
         projectId: panel.projectId,
         stringId: panel.stringId,
         negativeToId: panel.id,
-        negativeModel: UnitModel.PANEL,
+        negativeModel: TypeModel.PANEL,
         positiveToId: dpToJoin.id,
-        positiveModel: UnitModel.DISCONNECTIONPOINT,
+        positiveModel: TypeModel.DISCONNECTIONPOINT,
       }
 
       this.linksEntity.add(panelJoinRequest)

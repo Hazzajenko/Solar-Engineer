@@ -3,7 +3,7 @@ import {
   EntityCollectionServiceBase,
   EntityCollectionServiceElementsFactory,
 } from '@ngrx/data'
-import { JoinModel } from '../../../../models/join.model'
+import { JoinModel } from '../../../../models/deprecated-for-now/join.model'
 
 @Injectable()
 export class JoinsEntityService extends EntityCollectionServiceBase<JoinModel> {

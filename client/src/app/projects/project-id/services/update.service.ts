@@ -1,8 +1,8 @@
 import { CdkDragDrop } from '@angular/cdk/drag-drop'
-import { UnitModel } from '../../models/unit.model'
+import { TypeModel } from '../../models/type.model'
 import { PanelModel } from '../../models/panel.model'
-import { CableModel } from '../../models/cable.model'
-import { InverterModel } from '../../models/inverter.model'
+import { CableModel } from '../../models/deprecated-for-now/cable.model'
+import { InverterModel } from '../../models/deprecated-for-now/inverter.model'
 import { Injectable } from '@angular/core'
 import { PanelsEntityService } from '../../project-id/services/ngrx-data/panels-entity/panels-entity.service'
 import { CablesEntityService } from '../../project-id/services/ngrx-data/cables-entity/cables-entity.service'
@@ -13,13 +13,13 @@ import { HttpClient } from '@angular/common/http'
 import { DisconnectionPointModel } from '../../models/disconnection-point.model'
 import { DisconnectionPointsEntityService } from '../../project-id/services/ngrx-data/disconnection-points-entity/disconnection-points-entity.service'
 import { getSurroundings } from './helper-functions'
-import { JoinModel } from '../../models/join.model'
+import { JoinModel } from '../../models/deprecated-for-now/join.model'
 import { firstValueFrom, lastValueFrom } from 'rxjs'
 import { Store } from '@ngrx/store'
 import { AppState } from '../../../store/app.state'
 import { selectBlocksByProjectIdRouteParams } from './store/blocks/blocks.selectors'
 import { LoggerService } from '../../../services/logger.service'
-import { map } from 'rxjs/operators'
+import { BlockModel } from '../../models/block.model'
 
 @Injectable({
   providedIn: 'root',
@@ -42,89 +42,37 @@ export class UpdateService {
         const doesExist = blocks.find((block) => block.location.toString() === event.container.id)
 
         console.error(doesExist)
-        if (doesExist && doesExist.model !== UnitModel.RAIL) {
+        if (doesExist) {
           return this.logger.warn(`block already exists as ${event.container.id}`)
         }
-        const block = event.item.data
+        const block: BlockModel = event.item.data
         console.log(block)
         const location = event.container.id
 
-        switch (block.model) {
-          case UnitModel.PANEL:
-            console.log('existingPanel')
-            firstValueFrom(
-              this.panelsEntity.entities$.pipe(
-                map((panels) => panels.find((p) => p.id === block.id)),
-              ),
-            ).then((existingPanel) => {
-              console.log(existingPanel)
-              if (doesExist && doesExist.model === UnitModel.RAIL) {
-                const panel: PanelModel = {
-                  ...block,
-                  location,
-                  has_child_block: true,
-                  child_block_id: doesExist.id,
-                  child_block_model: UnitModel.RAIL,
-                }
-                return this.panelsEntity.update(panel)
-              } else {
-                const panel: Partial<PanelModel> = {
-                  ...existingPanel,
-                  location,
-                  rotation: 0,
-                  child_block_id: undefined,
-                  child_block_model: undefined,
-                }
-                return this.panelsEntity.update(panel)
-                /*                const panel: Partial<PanelModel> = {
-                                  ...block,
-                                  location,
-                                }
-                                return this.panelsEntity.update(panel)*/
-                /*                if (existingPanel?.has_child_block) {
-                                  if (doesExist && doesExist.model === UnitModel.RAIL) {
-                                    const panel: Partial<PanelModel> = {
-                                      ...existingPanel,
-                                      location,
-                                      rotation: 0,
-                                      child_block_id: doesExist.id,
-                                      child_block_model: UnitModel.RAIL,
-                                    }
-                                    return this.panelsEntity.update(panel)
-                                  } else {
-                                    const panel: Partial<PanelModel> = {
-                                      ...existingPanel,
-                                      location,
-                                      rotation: 0,
-                                      child_block_id: undefined,
-                                      child_block_model: undefined,
-                                    }
-                                    return this.panelsEntity.update(panel)
-                                  }
-                                } else {
-                                  const panel: Partial<PanelModel> = {
-                                    ...block,
-                                    location,
-                                  }
-                                  return this.panelsEntity.update(panel)
-                                }*/
-              }
-            })
-            break
-          case UnitModel.DISCONNECTIONPOINT:
+        switch (block.type) {
+          case TypeModel.PANEL:
+            const panel: Partial<PanelModel> = {
+              id: block.id,
+              projectId: block.projectId,
+              location,
+              rotation: 0,
+            }
+            return this.panelsEntity.update(panel)
+          case TypeModel.DISCONNECTIONPOINT:
             const disconnectionPoint: DisconnectionPointModel = {
               ...block,
               location,
             }
             return this.disconnectionPointsEntity.update(disconnectionPoint)
 
-          case UnitModel.CABLE:
+          case TypeModel.CABLE:
             this.joinNearbyCables(block, location)
             break
 
-          case UnitModel.INVERTER:
+          case TypeModel.INVERTER:
             const inverter: InverterModel = {
               ...block,
+              name: 'inv',
               location,
             }
             return this.invertersEntity.update(inverter)
@@ -154,9 +102,8 @@ export class UpdateService {
       id: newJoinId,
       project_id: 3,
       color: 'purple',
-      model: UnitModel.JOIN,
+      model: TypeModel.JOIN,
       size: 4,
-      type: 'JOIN',
     }
     lastValueFrom(this.joins.add(joinRequest)).then(() => {
       if (surroundingCables.topCable) {

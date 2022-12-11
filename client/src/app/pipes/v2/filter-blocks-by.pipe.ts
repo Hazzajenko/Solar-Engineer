@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core'
-import { UnitModel } from '../../projects/models/unit.model'
+import { TypeModel } from '../../projects/models/type.model'
 import { BlockModel } from '../../projects/models/block.model'
 
 @Pipe({
@@ -7,13 +7,13 @@ import { BlockModel } from '../../projects/models/block.model'
   standalone: true,
 })
 export class FilterBlocksByPipe implements PipeTransform {
-  transform(blocks: BlockModel[], id: number, unitModel: UnitModel): BlockModel[] {
+  transform(blocks: BlockModel[], id: number, unitModel: TypeModel): BlockModel[] {
     if (!blocks || !id || !unitModel) {
       return blocks
     }
 
     switch (unitModel) {
-      case UnitModel.PROJECT:
+      case TypeModel.PROJECT:
         return blocks.filter((block) => block.projectId === id)
       default:
         return blocks

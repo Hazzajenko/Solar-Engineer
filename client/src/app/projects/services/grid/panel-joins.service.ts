@@ -9,7 +9,7 @@ import { HttpClient } from '@angular/common/http'
 import { LoggerService } from '../../../services/logger.service'
 import { Guid } from 'guid-typescript'
 import { PanelLinksEntityService } from '../../project-id/services/ngrx-data/panel-links-entity/panel-links-entity.service'
-import { PanelLinkModel } from '../../models/panelLinkModel'
+import { PanelLinkModel } from '../../models/panel-link.model'
 
 @Injectable({
   providedIn: 'root',

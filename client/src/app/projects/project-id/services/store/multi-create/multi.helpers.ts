@@ -1,12 +1,12 @@
-import { UnitModel } from '../../../../models/unit.model'
+import { TypeModel } from '../../../../models/type.model'
 import { SelectedState } from '../selected/selected.reducer'
 
 export function addPanelToMultiselect(panelId: string, state: SelectedState) {
   if (!state.multiSelect) {
-    if (state.unit === UnitModel.PANEL) {
+    if (state.type === TypeModel.PANEL) {
       if (state.singleSelectId) {
         return {
-          multiSelectUnit: UnitModel.PANEL,
+          multiSelectUnit: TypeModel.PANEL,
           multiSelect: true,
           multiSelectIds: [state.singleSelectId, panelId],
         }
@@ -16,20 +16,20 @@ export function addPanelToMultiselect(panelId: string, state: SelectedState) {
   if (state.multiSelectIds) {
     if (state.multiSelectIds.length > 0) {
       return {
-        multiSelectUnit: UnitModel.PANEL,
+        multiSelectUnit: TypeModel.PANEL,
         multiSelect: true,
         multiSelectIds: [...state.multiSelectIds, panelId],
       }
     } else {
       return {
-        multiSelectUnit: UnitModel.PANEL,
+        multiSelectUnit: TypeModel.PANEL,
         multiSelect: true,
         multiSelectIds: [panelId],
       }
     }
   } else {
     return {
-      multiSelectUnit: UnitModel.PANEL,
+      multiSelectUnit: TypeModel.PANEL,
       multiSelect: true,
       multiSelectIds: [panelId],
     }

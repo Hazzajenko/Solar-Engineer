@@ -6,7 +6,7 @@ import { DataEntities } from '../data-actions'
 import { tap } from 'rxjs/operators'
 import { EntityOp } from '@ngrx/data'
 import { BlockModel } from '../../../../models/block.model'
-import { UnitModel } from '../../../../models/unit.model'
+import { TypeModel } from '../../../../models/type.model'
 import { BlocksStateActions } from '../../store/blocks/blocks.actions'
 import { DisconnectionPointModel } from '../../../../models/disconnection-point.model'
 
@@ -23,7 +23,7 @@ export class DisconnectionPointsEntityEffects {
               block: {
                 id: disconnectionPoint.id,
                 location: disconnectionPoint.location,
-                model: UnitModel.DISCONNECTIONPOINT,
+                type: TypeModel.DISCONNECTIONPOINT,
                 projectId: disconnectionPoint.project_id!,
               },
             }),
@@ -42,7 +42,7 @@ export class DisconnectionPointsEntityEffects {
               const block: BlockModel = {
                 id: disconnectionPoint.id,
                 location: disconnectionPoint.location!,
-                model: UnitModel.DISCONNECTIONPOINT,
+                type: TypeModel.DISCONNECTIONPOINT,
                 projectId: disconnectionPoint.projectId!,
               }
               return block
@@ -69,7 +69,7 @@ export class DisconnectionPointsEntityEffects {
               block: {
                 id: data.id,
                 location: data.changes.location,
-                model: UnitModel.DISCONNECTIONPOINT,
+                type: TypeModel.DISCONNECTIONPOINT,
                 projectId: data.changes.project_id!,
               },
             }),

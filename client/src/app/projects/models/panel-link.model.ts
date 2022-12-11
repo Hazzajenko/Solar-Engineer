@@ -1,11 +1,11 @@
-import { UnitModel } from './unit.model'
+import { TypeModel } from './type.model'
 
 export class PanelLinkModel {
   id: string = ''
   projectId?: number
   stringId?: string
   positiveToId?: string
-  positiveModel?: UnitModel
+  positiveModel?: TypeModel
   negativeToId?: string
-  negativeModel?: UnitModel
+  negativeModel?: TypeModel
 }

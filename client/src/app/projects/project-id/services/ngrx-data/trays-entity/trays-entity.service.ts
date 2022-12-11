@@ -3,7 +3,7 @@ import {
   EntityCollectionServiceBase,
   EntityCollectionServiceElementsFactory,
 } from '@ngrx/data'
-import { TrayModel } from '../../../../models/tray.model'
+import { TrayModel } from '../../../../models/deprecated-for-now/tray.model'
 
 @Injectable()
 export class TraysEntityService extends EntityCollectionServiceBase<TrayModel> {

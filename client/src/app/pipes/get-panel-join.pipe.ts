@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core'
 import { PanelModel } from '../projects/models/panel.model'
-import { PanelLinkModel } from '../projects/models/panelLinkModel'
+import { PanelLinkModel } from '../projects/models/panel-link.model'
 import { PanelLinksEntityService } from '../projects/project-id/services/ngrx-data/panel-links-entity/panel-links-entity.service'
 
 export interface PanelLinks {

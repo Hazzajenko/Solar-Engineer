@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core'
 import { GridMode } from '../../project-id/services/store/grid/grid-mode.model'
 import { ProjectModel } from '../../models/project.model'
 import { BlockModel } from '../../models/block.model'
-import { UnitModel } from '../../models/unit.model'
+import { TypeModel } from '../../models/type.model'
 import { GridService } from './grid.service'
 import { GridCreateService } from './grid-create.service'
 import { GridDeleteService } from './grid-delete.service'
@@ -32,20 +32,13 @@ export class GridActionService extends GridService {
     private join: GridJoinService,
     private remove: GridDeleteService,
   ) {
-    super(
-      panelsEntity,
-      cablesEntity,
-      invertersEntity,
-      joinsEntity,
-      joinsService,
-      logger,
-    )
+    super(panelsEntity, cablesEntity, invertersEntity, joinsEntity, joinsService, logger)
   }
 
   cellAction(
     location: string,
     modes: {
-      createMode: UnitModel
+      createMode: TypeModel
       gridMode: GridMode
     },
     project: ProjectModel,

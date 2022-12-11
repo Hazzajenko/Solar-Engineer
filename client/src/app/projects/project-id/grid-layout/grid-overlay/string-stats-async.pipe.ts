@@ -77,7 +77,7 @@ export class StringStatsAsyncPipe implements PipeTransform {
       )
       .pipe(
         map((r) => {
-          this.linksPathService.orderPanelsInLinkOrder(string.id)
+          // this.linksPathService.orderPanelsInLinkOrder(string.id)
           const stringStats: StringStatsModel = {
             amountOfPanels: r.stringPanels.length,
             amountOfLinks: r.stringLinks.length,

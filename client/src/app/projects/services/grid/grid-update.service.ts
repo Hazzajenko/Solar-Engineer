@@ -1,10 +1,10 @@
 import { CdkDragDrop } from '@angular/cdk/drag-drop'
 import { ProjectModel } from '../../models/project.model'
 import { BlockModel } from '../../models/block.model'
-import { UnitModel } from '../../models/unit.model'
+import { TypeModel } from '../../models/type.model'
 import { PanelModel } from '../../models/panel.model'
-import { CableModel } from '../../models/cable.model'
-import { InverterModel } from '../../models/inverter.model'
+import { CableModel } from '../../models/deprecated-for-now/cable.model'
+import { InverterModel } from '../../models/deprecated-for-now/inverter.model'
 import { GridService } from './grid.service'
 import { Injectable } from '@angular/core'
 import { PanelsEntityService } from '../../project-id/services/ngrx-data/panels-entity/panels-entity.service'
@@ -34,25 +34,12 @@ export class GridUpdateService extends GridService {
     private gridHelpers: GridHelpers,
     private disconnectionPointsEntity: DisconnectionPointsEntityService,
   ) {
-    super(
-      panelsEntity,
-      cablesEntity,
-      invertersEntity,
-      joinsEntity,
-      joinsService,
-      logger,
-    )
+    super(panelsEntity, cablesEntity, invertersEntity, joinsEntity, joinsService, logger)
   }
 
-  gridDrop(
-    event: CdkDragDrop<any, any>,
-    project: ProjectModel,
-    blocks?: BlockModel[],
-  ) {
+  gridDrop(event: CdkDragDrop<any, any>, project: ProjectModel, blocks?: BlockModel[]) {
     if (blocks) {
-      const doesExist = blocks.find(
-        (block) => block.location.toString() === event.container.id,
-      )
+      const doesExist = blocks.find((block) => block.location.toString() === event.container.id)
 
       if (doesExist) {
         return console.log('location taken')
@@ -63,21 +50,21 @@ export class GridUpdateService extends GridService {
     const location = event.container.id
 
     switch (block.model) {
-      case UnitModel.PANEL:
+      case TypeModel.PANEL:
         const panel: PanelModel = {
           ...block,
           location,
         }
         return this.panelsEntity.update(panel)
 
-      case UnitModel.DISCONNECTIONPOINT:
+      case TypeModel.DISCONNECTIONPOINT:
         const disconnectionPoint: DisconnectionPointModel = {
           ...block,
           location,
         }
         return this.disconnectionPointsEntity.update(disconnectionPoint)
 
-      case UnitModel.CABLE:
+      case TypeModel.CABLE:
         /*        const cable: CableModel = {
                   ...block,
                   location,
@@ -86,7 +73,7 @@ export class GridUpdateService extends GridService {
         this.joinNearbyCables(block, location)
         break
 
-      case UnitModel.INVERTER:
+      case TypeModel.INVERTER:
         const inverter: InverterModel = {
           ...block,
           location,
@@ -108,8 +95,7 @@ export class GridUpdateService extends GridService {
 
     const surroundingCables = this.gridHelpers.getSurroundings(location, cables)
 
-    if (!surroundingCables)
-      return console.log('joinNearbyCables surroundingCables err')
+    if (!surroundingCables) return console.log('joinNearbyCables surroundingCables err')
 
     const newJoinId = Guid.create().toString()
 
@@ -151,9 +137,7 @@ export class GridUpdateService extends GridService {
     }
     this.cablesEntity.update(otherBlock)
 
-    const cablesInJoin = cables.filter(
-      (cableInJoin) => cableInJoin.join_id === cable.join_id,
-    )
+    const cablesInJoin = cables.filter((cableInJoin) => cableInJoin.join_id === cable.join_id)
     const updates = cablesInJoin.map((cableInJoin) => {
       const partial: Partial<CableModel> = {
         ...cableInJoin,

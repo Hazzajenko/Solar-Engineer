@@ -1,4 +1,4 @@
-import { UnitModel } from './unit.model'
+import { TypeModel } from './type.model'
 
 export enum DisconnectionPointType {
   UNDEFINED,
@@ -11,9 +11,9 @@ export class DisconnectionPointModel {
   stringId?: string
   positiveId?: string
   negativeId?: string
-  cable_id?: string
+  cableId?: string
   location?: string
   disconnectionPointType?: DisconnectionPointType
-  model: UnitModel = UnitModel.DISCONNECTIONPOINT
+  type: TypeModel = TypeModel.DISCONNECTIONPOINT
   color?: string
 }

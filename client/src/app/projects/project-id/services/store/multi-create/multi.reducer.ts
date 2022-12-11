@@ -1,10 +1,10 @@
 import { createReducer, on } from '@ngrx/store'
-import { UnitModel } from '../../../../models/unit.model'
+import { TypeModel } from '../../../../models/type.model'
 import { MultiActions } from './multi.actions'
 
 export interface MultiState {
   multiMode: boolean
-  typeToMultiCreate?: UnitModel
+  typeToMultiCreate?: TypeModel
 
   locationStart?: string
   locationFinish?: string
@@ -48,7 +48,7 @@ export const multiReducer = createReducer(
 
   on(MultiActions.startMultiCreatePanel, (state, { location }) => ({
     multiMode: true,
-    typeToMultiCreate: UnitModel.PANEL,
+    typeToMultiCreate: TypeModel.PANEL,
     locationStart: location,
   })),
 
@@ -59,7 +59,7 @@ export const multiReducer = createReducer(
 
   on(MultiActions.startMultiCreateRail, (state, { location }) => ({
     multiMode: true,
-    typeToMultiCreate: UnitModel.RAIL,
+    typeToMultiCreate: TypeModel.RAIL,
     locationStart: location,
   })),
 

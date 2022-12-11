@@ -1,8 +1,24 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store'
 import * as State from './selected.reducer'
+import { TypeModel } from '../../../../models/type.model'
+
+export interface SelectedStringModel {
+  type: TypeModel
+  selectedStringId: string
+}
 
 export const selectSelectedState = createFeatureSelector<State.SelectedState>('selected')
 
+export const selectSelectedStringModel = createSelector(
+  selectSelectedState,
+  (state: State.SelectedState) => {
+    const selectedString: SelectedStringModel = {
+      type: state.type!,
+      selectedStringId: state.selectedStringId!,
+    }
+    return selectedString
+  },
+)
 export const selectSelectedUnitAndIds = createSelector(
   selectSelectedState,
   (state: State.SelectedState) => state,
@@ -10,12 +26,12 @@ export const selectSelectedUnitAndIds = createSelector(
 
 export const selectUnitSelected = createSelector(
   selectSelectedState,
-  (state: State.SelectedState) => state.unit,
+  (state: State.SelectedState) => state.type,
 )
 
 export const selectMultiSelectUnit = createSelector(
   selectSelectedState,
-  (state: State.SelectedState) => state.multiSelectUnit,
+  (state: State.SelectedState) => state.multiSelectType,
 )
 export const selectIfMultiSelect = createSelector(
   selectSelectedState,
@@ -27,10 +43,15 @@ export const selectSelectedId = createSelector(
   (state: State.SelectedState) => state.singleSelectId,
 )
 
+export const selectSelectedPanelId = createSelector(
+  selectSelectedState,
+  (state: State.SelectedState) => state.selectedPanelId,
+)
+
 export const selectSelectedIdWithUnit = createSelector(
   selectSelectedState,
   (state: State.SelectedState) => {
-    return [state.singleSelectId, state.unit]
+    return [state.singleSelectId, state.type]
   },
 )
 export const selectSelectedStringId = createSelector(
@@ -60,6 +81,11 @@ export const selectSelectedStringTooltip = createSelector(
 export const selectSelectedStringPathMap = createSelector(
   selectSelectedState,
   (state: State.SelectedState) => state.selectedStringPathMap,
+)
+
+export const selectSelectedStringPathMapCoords = createSelector(
+  selectSelectedState,
+  (state: State.SelectedState) => state.selectedStringPathMapCoords,
 )
 
 /*

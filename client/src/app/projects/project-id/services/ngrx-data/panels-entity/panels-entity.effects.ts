@@ -6,7 +6,7 @@ import { PanelsService } from '../../../../services/panels.service'
 import { PanelsEntityService } from './panels-entity.service'
 import { switchMap, tap } from 'rxjs/operators'
 import { BlocksStateActions } from '../../store/blocks/blocks.actions'
-import { UnitModel } from '../../../../models/unit.model'
+import { TypeModel } from '../../../../models/type.model'
 import { DataEntities } from '../data-actions'
 import { EntityOp } from '@ngrx/data'
 import { BlockModel } from '../../../../models/block.model'
@@ -30,7 +30,7 @@ export class PanelsEntityEffects {
               block: {
                 id: panel.id,
                 location: panel.location,
-                model: UnitModel.PANEL,
+                type: TypeModel.PANEL,
                 projectId: panel.projectId!,
               },
             }),
@@ -52,7 +52,7 @@ export class PanelsEntityEffects {
             const block: BlockModel = {
               id: panel.id,
               location: panel.location,
-              model: UnitModel.PANEL,
+              type: TypeModel.PANEL,
               projectId: projectId,
             }
             return block
@@ -85,7 +85,7 @@ export class PanelsEntityEffects {
             const block: BlockModel = {
               id: panel.id,
               location: panel.location,
-              model: UnitModel.PANEL,
+              type: TypeModel.PANEL,
               projectId: panel.projectId!,
             }
             return block
@@ -110,7 +110,7 @@ export class PanelsEntityEffects {
               block: {
                 id: data.id,
                 location: data.location,
-                model: UnitModel.PANEL,
+                type: TypeModel.PANEL,
                 projectId: data.projectId!,
               },
             }),

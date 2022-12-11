@@ -5,7 +5,7 @@ import { Observable } from 'rxjs'
 import { environment } from '../../../../../../environments/environment'
 import { map } from 'rxjs/operators'
 import { Update } from '@ngrx/entity'
-import { InverterModel } from '../../../../models/inverter.model'
+import { InverterModel } from '../../../../models/deprecated-for-now/inverter.model'
 
 interface GetInvertersResponse {
   inverters: InverterModel[]

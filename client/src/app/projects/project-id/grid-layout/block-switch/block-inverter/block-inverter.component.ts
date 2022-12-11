@@ -6,7 +6,7 @@ import { FindCableLocationPipe } from '../../../../../pipes/find-cable-location.
 import { GetNearbyJoins } from '../../../../../pipes/get-nearby-joins.pipe'
 import { LetModule } from '@ngrx/component'
 import { CableJoinComponent } from '../../../../../components/cable-join/cable-join.component'
-import { InverterModel } from '../../../../models/inverter.model'
+import { InverterModel } from '../../../../models/deprecated-for-now/inverter.model'
 import { InvertersEntityService } from '../../../services/ngrx-data/inverters-entity/inverters-entity.service'
 import { RightClick } from '../right-click'
 import { selectGridMode } from '../../../services/store/grid/grid.selectors'

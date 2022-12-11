@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http'
 import { environment } from '../../../environments/environment'
 import { Store } from '@ngrx/store'
 import { AppState } from '../../store/app.state'
-import { TrackerModel } from '../models/tracker.model'
+import { TrackerModel } from '../models/deprecated-for-now/tracker.model'
 import { addTrackers, deleteTracker } from '../store/trackers/trackers.actions'
 
 interface TrackersEnvelope {

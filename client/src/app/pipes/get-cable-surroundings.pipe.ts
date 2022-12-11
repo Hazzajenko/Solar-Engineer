@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core'
-import { CableModel } from '../projects/models/cable.model'
+import { CableModel } from '../projects/models/deprecated-for-now/cable.model'
 import { CablesEntityService } from '../projects/project-id/services/ngrx-data/cables-entity/cables-entity.service'
 
 export interface SurroundingModel {

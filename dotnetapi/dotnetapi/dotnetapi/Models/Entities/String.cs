@@ -6,7 +6,6 @@ public class String : ProjectBaseEntity
     public DateTime CreatedAt { get; set; }
     public ICollection<Panel> Panels { get; set; } = default!;
     public ICollection<PanelLink> PanelLinks { get; set; } = default!;
-    public int ProjectId { get; set; }
     public string Name { get; set; } = default!;
     public bool IsInParallel { get; set; }
 }

@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http'
 import { environment } from '../../../environments/environment'
 import { Store } from '@ngrx/store'
 import { AppState } from '../../store/app.state'
-import { InverterModel } from '../models/inverter.model'
+import { InverterModel } from '../models/deprecated-for-now/inverter.model'
 import {
   addInverter,
   addInvertersByProjectId,

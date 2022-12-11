@@ -10,11 +10,11 @@ import { selectBlocksByProjectIdRouteParams } from '../store/blocks/blocks.selec
 import { PanelModel } from '../../../models/panel.model'
 import { selectSelectedStringId } from '../store/selected/selected.selectors'
 import { selectCreateMode } from '../store/grid/grid.selectors'
-import { UnitModel } from '../../../models/unit.model'
+import { TypeModel } from '../../../models/type.model'
 import { MultiState } from '../store/multi-create/multi.reducer'
 import { checkIfAnyBlocksInRoute } from './multi-create.helpers'
 import { RailsEntityService } from '../ngrx-data/rails-entity/rails-entity.service'
-import { RailModel } from '../../../models/rail.model'
+import { RailModel } from '../../../models/deprecated-for-now/rail.model'
 import { selectCurrentProjectId } from '../store/projects/projects.selectors'
 import { map } from 'rxjs/operators'
 import { getLocationsInBox } from '../get-locations-in-box'
@@ -41,10 +41,10 @@ export class MultiCreateService {
         .pipe(combineLatestWith(this.store.select(selectMultiState))),
     ).then(([createMode, multiCreateState]) => {
       switch (createMode) {
-        case UnitModel.PANEL:
+        case TypeModel.PANEL:
           this.multiCreatePanelV2(location, multiCreateState)
           break
-        case UnitModel.RAIL:
+        case TypeModel.RAIL:
           this.multiCreateRail(location, multiCreateState)
           break
         default:
@@ -68,7 +68,7 @@ export class MultiCreateService {
           return console.error('there are blocks in path, ', blocksInBox)
         }
 
-        this.itemsService.addManyItems(UnitModel.PANEL, locationsInBox)
+        this.itemsService.addManyItems(TypeModel.PANEL, locationsInBox)
 
         this.store.dispatch(
           MultiActions.finishMultiCreatePanel({
@@ -168,8 +168,8 @@ export class MultiCreateService {
         console.log(blocksInRoute)
         if (blocksInRoute.existingBlocks) {
           blocksInRoute.existingBlocks.forEach((block) => {
-            switch (block.model) {
-              case UnitModel.PANEL:
+            switch (block.type) {
+              case TypeModel.PANEL:
                 firstValueFrom(
                   this.panelsEntity.entities$.pipe(
                     map((panels) => panels.find((p) => p.id === block.id)),

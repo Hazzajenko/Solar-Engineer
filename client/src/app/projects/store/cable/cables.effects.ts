@@ -7,7 +7,7 @@ import { exhaustMap, switchMap } from 'rxjs'
 import { CablesService } from '../../services/cables.service'
 import { catchError, map } from 'rxjs/operators'
 import { BlocksStateActions } from '../../project-id/services/store/blocks/blocks.actions'
-import { UnitModel } from '../../models/unit.model'
+import { TypeModel } from '../../models/type.model'
 
 @Injectable()
 export class CablesEffects {
@@ -29,7 +29,7 @@ export class CablesEffects {
                     block: {
                       id: res.cable.id,
                       location: res.cable.location,
-                      model: UnitModel.CABLE,
+                      type: TypeModel.CABLE,
                       projectId: res.cable.project_id!,
                     },
                   }),
@@ -60,7 +60,7 @@ export class CablesEffects {
                   block: {
                     id: res.cable.id,
                     location: res.cable.location,
-                    model: UnitModel.CABLE,
+                    type: TypeModel.CABLE,
                     projectId: res.cable.project_id!,
                   },
                 }),

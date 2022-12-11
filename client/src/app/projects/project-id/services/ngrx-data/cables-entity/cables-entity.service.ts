@@ -3,7 +3,7 @@ import {
   EntityCollectionServiceBase,
   EntityCollectionServiceElementsFactory,
 } from '@ngrx/data'
-import { CableModel } from '../../../../models/cable.model'
+import { CableModel } from '../../../../models/deprecated-for-now/cable.model'
 
 @Injectable()
 export class CablesEntityService extends EntityCollectionServiceBase<CableModel> {

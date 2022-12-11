@@ -3,7 +3,7 @@ import {
   EntityCollectionServiceBase,
   EntityCollectionServiceElementsFactory,
 } from '@ngrx/data'
-import { RailModel } from '../../../../models/rail.model'
+import { RailModel } from '../../../../models/deprecated-for-now/rail.model'
 
 @Injectable()
 export class RailsEntityService extends EntityCollectionServiceBase<RailModel> {

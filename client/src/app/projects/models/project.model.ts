@@ -1,11 +1,10 @@
-import { UnitModel } from './unit.model'
 import { TypeModel } from './type.model'
 
 export interface ProjectModel {
   id: number
   name: string
-  model?: UnitModel
-  type?: TypeModel
+  model?: TypeModel
+  // type?: TypeModel
   createdBy: number
   createdAt: string
   inverterAmount: number
