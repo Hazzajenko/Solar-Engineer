@@ -63,6 +63,7 @@ path {
 
   &__tooltip {
     white-space: pre-wrap;
+    pointer-events: none;
   }
 
   &__panel {

@@ -9,7 +9,7 @@ import {
 import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop'
 import { Store } from '@ngrx/store'
 import { AppState } from '../../../store/app.state'
-import { combineLatestWith, firstValueFrom, Observable } from 'rxjs'
+import { firstValueFrom, Observable } from 'rxjs'
 import { selectProjectByRouteParams } from '../services/store/projects/projects.selectors'
 import { ProjectModel } from '../../models/project.model'
 import { selectGridMode } from '../services/store/grid/grid.selectors'
@@ -131,64 +131,30 @@ export class GridLayoutComponent implements OnInit {
     private multiSelectService: MultiSelectService,
   ) {}
 
-  cellAction(location: string, event: MouseEvent): void {
+  async cellAction(location: string, event: MouseEvent) {
+    if (event.altKey) {
+      return
+    }
     this.clickEvent.emit(event)
-    firstValueFrom(
-      this.store.select(selectGridMode).pipe(combineLatestWith(this.store.select(selectMultiMode))),
-    ).then(([gridMode, multiMode]) => {
-      if (event.altKey) {
-        /*      console.log(event)
-              if (this.mouseIsDown) {
-                if (!this.mouseDownStartLocation) {
-                  switch (gridMode) {
-                    case GridMode.CREATE:
-                      this.multiCreateService.multiCreate(location)
-                      break
-                    case GridMode.SELECT:
-                      this.multiSelectService.multiSelect(location)
-                      break
-                    case GridMode.DELETE:
-                      this.multiDeleteService.multiDelete(location)
-                      break
-                  }
-                } else {
-                }
-                /!*
-                switch (gridMode) {
-                  case GridMode.CREATE:
-                    this.multiCreateService.multiCreate(location)
-                    break
-                  case GridMode.SELECT:
-                    this.multiSelectService.multiSelect(location)
-                    break
-                  case GridMode.DELETE:
-                    this.multiDeleteService.multiDelete(location)
-                    break
-                }
-      *!/
-              } else {
-                this.store.dispatch(MultiActions.clearMultiState())
-              }*/
-      } else {
-        switch (gridMode) {
-          case GridMode.CREATE:
-            this.createService.createSwitch(location)
-            break
 
-          case GridMode.DELETE:
-            this.deleteService.deleteSwitch(location)
-            break
+    const gridMode = await firstValueFrom(this.store.select(selectGridMode))
+    switch (gridMode) {
+      case GridMode.CREATE:
+        this.createService.createSwitch(location)
+        break
 
-          case GridMode.LINK:
-            console.log('linkSwitch')
-            this.joinsService.linkSwitch(location, event.shiftKey)
-            break
-          default:
-            this.createService.createSwitch(location)
-            break
-        }
-      }
-    })
+      case GridMode.DELETE:
+        this.deleteService.deleteSwitch(location)
+        break
+
+      case GridMode.LINK:
+        console.log('linkSwitch')
+        this.joinsService.linkSwitch(location, event.shiftKey)
+        break
+      default:
+        this.createService.createSwitch(location)
+        break
+    }
   }
 
   gridDrop(event: CdkDragDrop<any, any>) {
@@ -204,40 +170,24 @@ export class GridLayoutComponent implements OnInit {
     return Array(n)
   }
 
-  /*
-    @HostListener('window:keyup.alt', ['$event'])
-    altKeyUp(event: KeyboardEvent) {
-      event.preventDefault()
-      event.stopPropagation()
-      console.log(event)
-      if (event.type === 'keyup' && event.key === 'Alt') {
-        console.log('yes')
-      }
-    }
-  */
-
   async mouseDown(event: MouseEvent, location: string) {
     event.preventDefault()
     event.stopPropagation()
     if (event.altKey) {
       this.mouseDownEvent.emit(event)
-      firstValueFrom(this.store.select(selectGridMode)).then((gridMode) => {
-        switch (gridMode) {
-          case GridMode.CREATE:
-            this.multiCreateService.multiCreate(location)
-            break
-          case GridMode.SELECT:
-            this.multiSelectService.multiSelect(location)
-            break
-          case GridMode.DELETE:
-            this.multiDeleteService.multiDelete(location)
-            break
-        }
-      })
+      const gridMode = await firstValueFrom(this.store.select(selectGridMode))
+      switch (gridMode) {
+        case GridMode.CREATE:
+          this.multiCreateService.multiCreate(location)
+          break
+        case GridMode.SELECT:
+          this.multiSelectService.multiSelect(location)
+          break
+        case GridMode.DELETE:
+          this.multiDeleteService.multiDelete(location)
+          break
+      }
     }
-
-    console.log(event, location)
-    this.mouseIsDown = true
   }
 
   async mouseUp(event: MouseEvent, location: string) {
@@ -254,23 +204,10 @@ export class GridLayoutComponent implements OnInit {
       case GridMode.SELECT:
         this.multiSelectService.multiSelect(location)
         break
+      case GridMode.DELETE:
+        this.multiDeleteService.multiDelete(location)
+        break
     }
-    /*    firstValueFrom(this.store.select(selectGridMode)).then((gridMode) => {
-          switch (gridMode) {
-            case GridMode.CREATE:
-              this.multiCreateService.multiCreate(location)
-              break
-            case GridMode.SELECT:
-              this.multiSelectService.multiSelect(location)
-              break
-            /!*        case GridMode.DELETE:
-                      this.multiDeleteService.multiDelete(location)
-                      break*!/
-          }
-        })*/
-
-    console.log(event, location)
-    this.mouseIsDown = false
   }
 
   @HostListener('window:keyup', ['$event'])

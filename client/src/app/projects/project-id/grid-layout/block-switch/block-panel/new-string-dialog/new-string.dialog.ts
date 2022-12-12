@@ -156,7 +156,6 @@ export class NewStringDialog implements OnInit {
         const partial: Partial<PanelModel> = {
           ...panel,
           stringId: newStringId,
-          color: newString.color,
         }
         return partial
       })

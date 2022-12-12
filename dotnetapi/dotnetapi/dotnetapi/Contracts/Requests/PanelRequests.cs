@@ -49,6 +49,8 @@ public class UpdatePanelRequest
     public string? PositiveToId { get; set; } = default!;
     public string? NegativeToId { get; set; } = default!;
     public int? Rotation { get; set; } = default!;
+    public bool? IsDisconnectionPoint { get; set; }
+    public string? DisconnectionPointPanelLinkId { get; set; }
 }
 
 public class UpdateManyPanelsRequest

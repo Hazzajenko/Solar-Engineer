@@ -91,8 +91,35 @@ export class CreateService {
     })
   }
 
-  createPanelForGrid(location: string, childBlock?: BlockModel) {
-    firstValueFrom(this.store.select(selectSelectedUnitAndIds)).then((state) => {
+  async createPanelForGrid(location: string, childBlock?: BlockModel) {
+    const [selected, projectID] = await firstValueFrom(
+      this.store
+        .select(selectSelectedUnitAndIds)
+        .pipe(combineLatestWith(this.store.select(selectCurrentProjectId))),
+    )
+    if (childBlock) {
+      if (!selected.singleSelectId && selected.type !== TypeModel.STRING) {
+        const panelRequest = new PanelModel(projectID, location, 'undefined', 0)
+
+        this.panelsEntity.add(panelRequest)
+      } else if (selected.singleSelectId && selected.type === TypeModel.STRING) {
+        const panelRequest = new PanelModel(projectID, location, selected.selectedStringId!, 0)
+
+        this.panelsEntity.add(panelRequest)
+      }
+    } else {
+      if (!selected.singleSelectId && selected.type !== TypeModel.STRING) {
+        const panelRequest = new PanelModel(projectID, location, 'undefined', 0)
+
+        this.panelsEntity.add(panelRequest)
+      } else if (selected.singleSelectId && selected.type === TypeModel.STRING) {
+        const panelRequest = new PanelModel(projectID, location, selected.selectedStringId!, 0)
+
+        this.panelsEntity.add(panelRequest)
+      }
+    }
+
+    /*firstValueFrom(this.store.select(selectSelectedUnitAndIds)).then((state) => {
       if (childBlock) {
         if (!state.singleSelectId && state.type !== TypeModel.STRING) {
           console.log('        if (!selectedStringId) {')
@@ -103,7 +130,7 @@ export class CreateService {
             0,
           )
 
-          /*          const panelRequest: PanelModel = {
+          /!*          const panelRequest: PanelModel = {
                       id: Guid.create().toString(),
                       stringId: 'undefined',
                       location,
@@ -111,12 +138,12 @@ export class CreateService {
                       // has_child_block: true,
                       child_block_id: childBlock.id,
                       child_block_model: childBlock.model,
-                    }*/
+                    }*!/
 
           this.panelsEntity.add(panelRequest)
         } else if (state.singleSelectId && state.type === TypeModel.STRING) {
           console.log('        } else if (selectedStringId.length > 0) {')
-          /*          const panelRequest: PanelModel = {
+          /!*          const panelRequest: PanelModel = {
                       id: Guid.create().toString(),
                       stringId: state.selectedStringId!,
                       location,
@@ -124,36 +151,36 @@ export class CreateService {
                       // has_child_block: false,
                       child_block_id: childBlock.id,
                       child_block_model: childBlock.model,
-                    }*/
+                    }*!/
           const panelRequest = new PanelModel(location, state.selectedStringId!, 0)
 
           this.panelsEntity.add(panelRequest)
         }
       } else {
         if (!state.singleSelectId && state.type !== TypeModel.STRING) {
-          /*          const panelRequest: PanelModel = {
+          /!*          const panelRequest: PanelModel = {
                       id: Guid.create().toString(),
                       stringId: 'undefined',
                       location,
                       rotation: 0,
-                    }*/
+                    }*!/
           const panelRequest = new PanelModel(location, 'undefined', 0)
 
           this.panelsEntity.add(panelRequest)
           // this.store.dispatch(PanelStateActions.addPanel({ panel: panelRequest }))
         } else if (state.singleSelectId && state.type === TypeModel.STRING) {
-          /*          const panelRequest: PanelModel = {
+          /!*          const panelRequest: PanelModel = {
                       id: Guid.create().toString(),
                       stringId: state.selectedStringId!,
                       location,
                       rotation: 0,
-                    }*/
+                    }*!/
           const panelRequest = new PanelModel(location, state.selectedStringId!, 0)
 
           this.panelsEntity.add(panelRequest)
         }
       }
-    })
+    })*/
   }
 
   createCableForGrid(location: string) {
@@ -271,9 +298,8 @@ export class CreateService {
             ...parentPanel,
             location,
             rotation: 0,
-            child_block_id: railRequest.id,
-            child_block_model: TypeModel.RAIL,
           }
+
           this.panelsEntity.update(update)
         })
       } else {

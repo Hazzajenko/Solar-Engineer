@@ -8,7 +8,6 @@ import { MultiActions } from '../store/multi-create/multi.actions'
 import { selectMultiState } from '../store/multi-create/multi.selectors'
 import { selectBlocksByProjectIdRouteParams } from '../store/blocks/blocks.selectors'
 import { PanelModel } from '../../../models/panel.model'
-import { selectSelectedStringId } from '../store/selected/selected.selectors'
 import { selectCreateMode } from '../store/grid/grid.selectors'
 import { TypeModel } from '../../../models/type.model'
 import { MultiState } from '../store/multi-create/multi.reducer'
@@ -104,7 +103,8 @@ export class MultiCreateService {
         })
       }
     }*/
-  multiCreatePanel(location: string, multiCreateState: MultiState) {
+
+  /*multiCreatePanel(location: string, multiCreateState: MultiState) {
     if (!multiCreateState.locationStart) {
       this.store.dispatch(
         MultiActions.startMultiCreateRail({
@@ -145,7 +145,7 @@ export class MultiCreateService {
         )
       })
     }
-  }
+  }*/
 
   multiCreateRail(location: string, multiCreateState: MultiState) {
     if (!multiCreateState.locationStart) {

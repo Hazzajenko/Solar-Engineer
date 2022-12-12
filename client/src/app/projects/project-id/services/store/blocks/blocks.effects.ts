@@ -6,17 +6,16 @@ import { AppState } from '../../../../../store/app.state'
 import { PanelsEntityService } from '../../ngrx-data/panels-entity/panels-entity.service'
 import { StringsEntityService } from '../../ngrx-data/strings-entity/strings-entity.service'
 import { StatsService } from '../../stats.service'
-import { firstValueFrom, lastValueFrom, switchMap } from 'rxjs'
+import { firstValueFrom, lastValueFrom } from 'rxjs'
 import { BlocksStateActions } from './blocks.actions'
-import { TypeModel } from '../../../../models/type.model'
-import { BlockModel } from '../../../../models/block.model'
 import { HttpClient } from '@angular/common/http'
-import { selectCurrentProjectId } from '../projects/projects.selectors'
 import { map } from 'rxjs/operators'
 import { ObservableService } from '../../observable.service'
 import { RailsEntityService } from '../../ngrx-data/rails-entity/rails-entity.service'
-import { RailModel } from '../../../../models/deprecated-for-now/rail.model'
 import { PanelsHelperService } from '../../ngrx-data/panels-entity/panels.service'
+import { selectBlocksByProjectIdRouteParams } from './blocks.selectors'
+import { selectCurrentProjectId } from '../projects/projects.selectors'
+import { TypeModel } from '../../../../models/type.model'
 
 @Injectable()
 export class BlocksEffects {
@@ -24,51 +23,104 @@ export class BlocksEffects {
     () =>
       this.actions$.pipe(
         ofType(BlocksStateActions.deleteManyBlocksForGrid),
-        switchMap((action) =>
-          this.store.select(selectCurrentProjectId).pipe(
-            map((projectId) => {
-              let blocks: BlockModel[] = action.blocks
+        map(async (action: any) => {
+          // let blocks: string[] = action.blockIds
+          const blockIds: string[] = action.blockIds
+          // const blocks: BlockModel[] = data?.filter((d) => blockIds?.includes(d.id))
+          const projectId = await firstValueFrom(this.store.select(selectCurrentProjectId))
+          const isTherePanels = await firstValueFrom(
+            this.store
+              .select(selectBlocksByProjectIdRouteParams)
+              .pipe(map((blocks) => blocks.filter((block) => block.type === TypeModel.PANEL))),
+          )
+          if (isTherePanels) {
+            const panelIds = await firstValueFrom(
+              this.panelsEntity.entities$.pipe(
+                map((panels) =>
+                  panels.filter((panel) => blockIds.includes(panel.id)).map((panel) => panel.id),
+                ),
+              ),
+            )
+            await lastValueFrom(
+              this.http.delete(`/api/projects/${projectId}/panels`, {
+                body: {
+                  panelIds,
+                },
+              }),
+            )
+          }
+          /*          const blocks: BlockModel[] = await firstValueFrom(
+                      this.store
+                        .select(selectBlocksByProjectIdRouteParams)
+                        .pipe(map((blocks) => blocks.filter((block) => !blockIds.includes(block.id)))),
+                    )*/
+          /*const panelBlocks: string[] = blocks
+            .filter((b) => b.type === TypeModel.PANEL)
+            .map((block) => block.id)
+          if (panelBlocks) {
+            await lastValueFrom(
+              this.http.delete(`/api/projects/${projectId}/panels`, {
+                body: {
+                  panelIds: panelBlocks,
+                },
+              }),
+            )
+          }*/
+          // .pipe(map((blocks) => blocks.filter((block) => blockIds.includes(block.id)))),
 
-              const panelBlocks = blocks
-                .filter((b) => b.type === TypeModel.PANEL)
-                .map((block) => block.id)
+          /*            const filteredArray = blocks.filter(function (array_el) {
+                          return (
+                            blockIds.filter(function (anotherOne_el) {
+                              return anotherOne_el == array_el.id
+                            }).length == 0
+                          )
+                        })*/
+          // },
+          /*this.store.select(selectAllBlocks).pipe(
+              map((data: BlockModel[]) => {
+                // let blocks: string[] = action.blockIds
+                const blockIds: string[] = action?.blockIds
+                const blocks: BlockModel[] = data?.filter((d) => blockIds?.includes(d.id))
+                // const projectId = await firstValueFrom(this.store.select(selectCurrentProjectId))
 
-              if (panelBlocks) {
-                lastValueFrom(
-                  this.http.delete(`/api/projects/${projectId}/panels`, {
-                    body: {
-                      panelIds: panelBlocks,
-                    },
-                  }),
-                ).then((res) => {
-                  console.log(res)
-                })
-              }
+                const panelBlocks: string[] = blocks
+                  .filter((b) => b.type === TypeModel.PANEL)
+                  .map((block) => block.id)
 
-              const panelRails = blocks
-                .filter((b) => b.type === TypeModel.RAIL)
-                .map((block) => block.id)
+                /!*              if (panelBlocks) {
+                                await lastValueFrom(
+                                  this.http.delete(`/api/projects/${projectId}/panels`, {
+                                    body: {
+                                      panelIds: panelBlocks,
+                                    },
+                                  }),
+                                )
+                              }*!/
 
-              if (panelRails.length > 0) {
-                firstValueFrom(
-                  this.observablesService
-                    .getItemFromIncludedIdArray(TypeModel.RAIL, panelRails)
-                    .pipe(
-                      switchMap((rails: RailModel[]) =>
-                        this.http.delete(`/api/projects/${projectId}/rails`, {
-                          body: {
-                            rails,
-                          },
-                        }),
-                      ),
-                    ),
-                ).then((res) => {
-                  console.log(res)
-                })
-              }
-            }),
-          ),
-        ),
+                /!*  const panelRails = blocks
+                   .filter((b) => b.type === TypeModel.RAIL)
+                   .map((block) => block.id)
+
+              /!*if (panelRails.length > 0) {
+                   firstValueFrom(
+                     this.observablesService
+                       .getItemFromIncludedIdArray(TypeModel.RAIL, panelRails)
+                       .pipe(
+                         switchMap((rails: RailModel[]) =>
+                           this.http.delete(`/api/projects/${projectId}/rails`, {
+                             body: {
+                               rails,
+                             },
+                           }),
+                         ),
+                       ),
+                   ).then((res) => {
+                     console.log(res)
+                   })
+                 }*!/
+              }),
+            ),*/
+        }),
       ),
     { dispatch: false },
   )

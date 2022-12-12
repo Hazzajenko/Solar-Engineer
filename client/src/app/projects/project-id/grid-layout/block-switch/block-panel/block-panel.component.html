@@ -53,13 +53,7 @@
       [class.drop-zone__bg-string-selected]="(isSelectedString$ | async)!"
       [class.drop-zone__bg-to-join]="(panelToJoin$ | async)?.id === panel.id"
       [matTooltip]="
-        displayTooltip(
-          panel,
-          (selectedUnit$ | async)!,
-          (isSelectedPanel$ | async)!,
-          (selectedStringTooltip$ | async)!,
-          (panel | panelTooltipAsync | async)!
-        )
+        displayTooltip(panel, (isSelectedString$ | async)!, (selectedStringTooltip$ | async)!)
       "
       [ngStyle]="{
         height: panel.rotation === 0 ? '18px' : '23px',
@@ -69,6 +63,7 @@
       cdkDrag
       class="drop-zone__panel"
       matTooltipClass="drop-zone__tooltip"
+      matTooltipDisabled="true"
       matTooltipPosition="right"
     >
       <ng-container *ngIf="(isSelectedString$ | async)!">
@@ -100,6 +95,16 @@
         </button>
         <ng-container *ngIf="isSelectedString$ | async; else stringNotSelected">
           <button class="right-click-menu__button" mat-menu-item>Edit String</button>
+          <button
+            (click)="markPanelAsDisconnectionPoint(panel)"
+            class="right-click-menu__button"
+            mat-menu-item
+          >
+            Mark Panel as Disconnection Point
+          </button>
+          <button (click)="removeFromString(panel)" class="right-click-menu__button" mat-menu-item>
+            Remove from String
+          </button>
           <button
             (click)="deleteSelectedString(panel.stringId)"
             class="right-click-menu__button"
@@ -139,6 +144,20 @@
               mat-menu-item
             >
               Add selected [{{ (multiSelectIds$ | async)?.length }}] to existing string
+            </button>
+            <button
+              (click)="rotateSelectedLandscape()"
+              class="right-click-menu__button"
+              mat-menu-item
+            >
+              Rotate selected [{{ (multiSelectIds$ | async)?.length }}] Portrait
+            </button>
+            <button
+              (click)="rotateSelectedPortrait()"
+              class="right-click-menu__button"
+              mat-menu-item
+            >
+              Rotate selected [{{ (multiSelectIds$ | async)?.length }}] Landscape
             </button>
           </ng-container>
         </ng-template>

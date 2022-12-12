@@ -64,7 +64,7 @@ export class RailsEntityEffects {
               id: rail.id,
               location: rail.location,
               type: TypeModel.RAIL,
-              projectId: rail.project_id,
+              projectId: rail.project_id!,
             }
 
             return block

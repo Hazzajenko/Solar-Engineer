@@ -7,4 +7,6 @@ public class PanelLinkDto
     public string StringId { get; set; } = default!;
     public string PositiveToId { get; set; } = default!;
     public string NegativeToId { get; set; } = default!;
+    public bool IsDisconnectionPoint { get; set; }
+    public string? DisconnectionPointPanelId { get; set; }
 }

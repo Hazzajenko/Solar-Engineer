@@ -45,9 +45,9 @@ export class BlocksService {
     })
   }
 
-  deleteBlocksFromBox(blocksInBox: string[]) {
-    this.getBlocksFromIncludedArray(blocksInBox).then((blocksToDelete) => {
-      this.store.dispatch(BlocksStateActions.deleteManyBlocksForGrid({ blocks: blocksToDelete }))
-    })
+  async deleteBlocksFromBox(blocksInBox: string[]) {
+    const blocksToDelete = await this.getBlocksFromIncludedArray(blocksInBox)
+    const blockIds = blocksToDelete.map((x) => x.id)
+    this.store.dispatch(BlocksStateActions.deleteManyBlocksForGrid({ blockIds }))
   }
 }

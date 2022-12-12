@@ -40,28 +40,31 @@ export class ItemsService {
     )
   }
 
-  addManyItems(model: TypeModel, locations: string[]) {
-    firstValueFrom(this.store.select(selectCurrentProjectId).pipe()).then((projectId) => {
-      switch (model) {
-        case TypeModel.PANEL:
-          firstValueFrom(this.store.select(selectSelectedStringId)).then((selectedStringId) => {
-            const panels = locations.map((location) => {
-              return new PanelModel(location, selectedStringId ? selectedStringId : 'undefined', 0)
-            })
-            this.panelsEntity.addManyToCache(panels)
-          })
+  async addManyItems(model: TypeModel, locations: string[]) {
+    const projectId = await firstValueFrom(this.store.select(selectCurrentProjectId))
+    switch (model) {
+      case TypeModel.PANEL:
+        const selectedStringId = await firstValueFrom(this.store.select(selectSelectedStringId))
+        const panels = locations.map((location) => {
+          return new PanelModel(
+            projectId,
+            location,
+            selectedStringId ? selectedStringId : 'undefined',
+            0,
+          )
+        })
+        this.panelsEntity.addManyToCache(panels)
 
-          break
+        break
 
-        case TypeModel.RAIL:
-          const rails = locations.map((location) => {
-            return new RailModel(projectId, location, false)
-          })
-          this.railsEntity.addManyToCache(rails)
-          break
-        default:
-          break
-      }
-    })
+      case TypeModel.RAIL:
+        const rails = locations.map((location) => {
+          return new RailModel(projectId, location, false)
+        })
+        this.railsEntity.addManyToCache(rails)
+        break
+      default:
+        break
+    }
   }
 }

@@ -1,27 +1,22 @@
 import { TypeModel } from './type.model'
 
 import { getGuid } from '@ngrx/data'
+import { BlockModel } from './block.model'
 
-export class PanelModel {
+export class PanelModel implements BlockModel {
   id: string
-  location: string
-  name?: string
-  projectId?: number
-  inverterId?: string
-  trackerId?: string
+  projectId: number
   stringId: string
-  // has_child_block: boolean
+  location: string
+  type: TypeModel
   rotation: number
-  type?: TypeModel
-  child_block_id?: string
-  child_block_model?: TypeModel
-
-  join_id?: string
-  selected?: boolean
-  // type?: TypeModel
+  isDisconnectionPoint: boolean
+  disconnectionPointPanelLinkId?: string
   positiveToId?: string
   negativeToId?: string
-  // location: string
+  name?: string
+  inverterId?: string
+  trackerId?: string
   currentAtMaximumPower?: number
   shortCircuitCurrent?: number
   shortCircuitCurrentTemp?: number
@@ -33,17 +28,15 @@ export class PanelModel {
   length?: number
   weight?: number
   width?: number
-  createdAt?: string
-  color?: string
-  version?: number
 
-  constructor(location: string, stringId: string, rotation: number) {
+  constructor(projectId: number, location: string, stringId: string, rotation: number) {
     this.id = getGuid().toString()
     this.rotation = rotation
-    // this.projectId = projectId
-
+    this.projectId = projectId
+    this.type = TypeModel.PANEL
     this.location = location
     this.stringId = stringId
+    this.isDisconnectionPoint = false
     this.name = 'Longi Himo555m'
     this.currentAtMaximumPower = 13.19
     this.shortCircuitCurrent = 14.01
@@ -56,5 +49,10 @@ export class PanelModel {
     this.length = 2256
     this.weight = 1133
     this.width = 27.2
+  }
+
+  markAsDisconnectionPoint?() {
+    this.isDisconnectionPoint = true
+    return this
   }
 }

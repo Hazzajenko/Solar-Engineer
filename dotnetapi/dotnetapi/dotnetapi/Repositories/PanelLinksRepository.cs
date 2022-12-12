@@ -40,6 +40,7 @@ public class PanelLinksRepository : IPanelLinksRepository
             .Include(x => x.String)
             .Include(x => x.PositiveTo)
             .Include(x => x.NegativeTo)
+            .Include(x => x.DisconnectionPointPanel)
             .SingleOrDefaultAsync();
     }
 
@@ -51,6 +52,7 @@ public class PanelLinksRepository : IPanelLinksRepository
             .Include(x => x.String)
             .Include(x => x.PositiveTo)
             .Include(x => x.NegativeTo)
+            .Include(x => x.DisconnectionPointPanel)
             .ToListAsync();
     }
 }

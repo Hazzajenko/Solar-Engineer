@@ -30,43 +30,43 @@ export class MultiDeleteService {
     private cache: EntityCacheDispatcher,
   ) {}
 
-  multiDelete(location: string) {
-    firstValueFrom(this.store.select(selectMultiState)).then((multiState) => {
-      if (!multiState.locationStart) {
-        this.store.dispatch(
-          MultiActions.startMultiDelete({
-            location,
-          }),
-        )
-      } else {
-        const blocksInBox = getLocationsInBox(multiState.locationStart!, location)
-        console.log('blocksInBox', blocksInBox)
-        if (blocksInBox) {
-          this.blocksService.deleteBlocksFromBox(blocksInBox)
-          /*          this.blocksService.getBlocksFromIncludedArray(blocksInBox).then((blocks) => {
-                      const ids = blocks.map((b) => b.id)
-                      // this.panelsEntity.removeManyFromCache(ids)
-                      blocks.forEach((block) => {
-                        switch (block.model) {
-                          case UnitModel.PANEL:
-                            this.panelsEntity.delete(block.id)
-                            break
-                          case UnitModel.TRAY:
-                            // this.t.delete(block.id)
-                            break
-                        }
-                      })
-                    })*/
+  async multiDelete(location: string) {
+    const multiState = await firstValueFrom(this.store.select(selectMultiState))
 
-          // const changes: ChangeSetItem[] = [cif.delete('Panel', blocksInBox)]
-          // this.blocksService.deleteBlocksFromBox(blocksInBox)
-        }
-        this.store.dispatch(
-          MultiActions.finishMultiDelete({
-            location,
-          }),
-        )
+    if (!multiState.locationStart) {
+      this.store.dispatch(
+        MultiActions.startMultiDelete({
+          location,
+        }),
+      )
+    } else {
+      const blocksInBox = getLocationsInBox(multiState.locationStart!, location)
+      console.log('blocksInBox', blocksInBox)
+      if (blocksInBox) {
+        await this.blocksService.deleteBlocksFromBox(blocksInBox)
+        /*          this.blocksService.getBlocksFromIncludedArray(blocksInBox).then((blocks) => {
+                    const ids = blocks.map((b) => b.id)
+                    // this.panelsEntity.removeManyFromCache(ids)
+                    blocks.forEach((block) => {
+                      switch (block.model) {
+                        case UnitModel.PANEL:
+                          this.panelsEntity.delete(block.id)
+                          break
+                        case UnitModel.TRAY:
+                          // this.t.delete(block.id)
+                          break
+                      }
+                    })
+                  })*/
+
+        // const changes: ChangeSetItem[] = [cif.delete('Panel', blocksInBox)]
+        // this.blocksService.deleteBlocksFromBox(blocksInBox)
       }
-    })
+      this.store.dispatch(
+        MultiActions.finishMultiDelete({
+          location,
+        }),
+      )
+    }
   }
 }

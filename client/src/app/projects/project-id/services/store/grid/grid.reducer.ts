@@ -18,7 +18,7 @@ export const initialGridState: GridState = {
   strings: [],
   selected: undefined,
   createMode: TypeModel.PANEL,
-  gridMode: GridMode.CREATE,
+  gridMode: GridMode.SELECT,
   toJoin: [],
   panelToJoin: [],
 }

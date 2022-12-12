@@ -85,6 +85,12 @@ public class PanelsRepository : IPanelsRepository
 
             panelToUpdate.NegativeTo = newNegativeLink;
         }
+
+        if (request.IsDisconnectionPoint is not null)
+            panelToUpdate.IsDisconnectionPoint = (bool)request.IsDisconnectionPoint;
+
+        if (request.DisconnectionPointPanelLinkId is not null)
+            panelToUpdate.DisconnectionPointPanelLinkId = request.DisconnectionPointPanelLinkId;
         /*if (request.Rotation is not null)
         {
             panelToUpdate.Rotation = request.Rotation;

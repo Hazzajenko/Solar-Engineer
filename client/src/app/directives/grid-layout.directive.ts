@@ -5,6 +5,12 @@ import { LinksStateActions } from '../projects/project-id/services/store/links/l
 import { SelectedStateActions } from '../projects/project-id/services/store/selected/selected.actions'
 import { GridStateActions } from '../projects/project-id/services/store/grid/grid.actions'
 import { GridMode } from '../projects/project-id/services/store/grid/grid-mode.model'
+import { firstValueFrom } from 'rxjs'
+import {
+  selectIfMultiSelect,
+  selectMultiSelectIds,
+} from '../projects/project-id/services/store/selected/selected.selectors'
+import { BlocksStateActions } from '../projects/project-id/services/store/blocks/blocks.actions'
 
 @Directive({
   selector: 'gridLayout',
@@ -14,32 +20,32 @@ export class GridLayoutDirective {
   constructor(private store: Store<AppState>) {}
 
   @HostListener('window:keyup', ['$event'])
-  keyEvent(event: KeyboardEvent) {
+  async keyEvent(event: KeyboardEvent) {
     console.log(event)
-    if (event.key === 'Escape') {
-      this.store.dispatch(LinksStateActions.clearLinkState())
-      this.store.dispatch(SelectedStateActions.clearSelectedState())
-      this.store.dispatch(
-        GridStateActions.changeGridmode({ mode: GridMode.CREATE }),
-      )
-      /*      this.store.dispatch(
-              GridStateActions.changeGridmode({ mode: GridMode.UNDEFINED }),
-            )*/
-      /*      this.store.select(selectGridMode).subscribe((gridMode) => {
-              this.store.dispatch(JoinsStateActions.clearPanelJoinState())
-              this.store.dispatch(SelectedStateActions.clearSelectedState())
-              this.store.dispatch(
-                GridStateActions.changeGridmode({ mode: GridMode.CREATE }),
-              )
-              /!*        switch (gridMode) {
-                        case GridMode.JOIN:
-                          return this.store.dispatch(JoinsStateActions.clearPanelJoinState())
-                        case GridMode.SELECT:
-                          return this.store.dispatch(
-                            SelectedStateActions.clearSelectedState(),
-                          )
-                      }*!/
-            })*/
+    switch (event.key) {
+      case 'Delete':
+        const multiSelect = await firstValueFrom(this.store.select(selectIfMultiSelect))
+        if (multiSelect) {
+          const multiSelectIds = await firstValueFrom(this.store.select(selectMultiSelectIds))
+          if (multiSelectIds) {
+            this.store.dispatch(
+              BlocksStateActions.deleteManyBlocksForGrid({ blockIds: multiSelectIds }),
+            )
+          }
+        }
+        break
+      case 'Escape':
+        this.store.dispatch(LinksStateActions.clearLinkState())
+        this.store.dispatch(SelectedStateActions.clearSelectedState())
+        this.store.dispatch(GridStateActions.changeGridmode({ mode: GridMode.CREATE }))
+        break
     }
+    /*    if (event.key === 'Escape') {
+          this.store.dispatch(LinksStateActions.clearLinkState())
+          this.store.dispatch(SelectedStateActions.clearSelectedState())
+          this.store.dispatch(
+            GridStateActions.changeGridmode({ mode: GridMode.CREATE }),
+          )
+        }*/
   }
 }

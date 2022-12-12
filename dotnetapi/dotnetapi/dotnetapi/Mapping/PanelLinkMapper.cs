@@ -13,7 +13,9 @@ public static class PanelLinkMapper
             Id = request.Id,
             StringId = request.StringId,
             PositiveToId = request.PositiveToId,
-            NegativeToId = request.NegativeToId
+            NegativeToId = request.NegativeToId,
+            IsDisconnectionPoint = request.IsDisconnectionPoint,
+            DisconnectionPointPanelId = request.DisconnectionPointPanelId
         };
     }
 
@@ -25,7 +27,9 @@ public static class PanelLinkMapper
             ProjectId = request.Project.Id,
             StringId = request.String.Id,
             PositiveToId = request.PositiveTo.Id,
-            NegativeToId = request.NegativeTo.Id
+            NegativeToId = request.NegativeTo.Id,
+            IsDisconnectionPoint = request.IsDisconnectionPoint,
+            DisconnectionPointPanelId = request.DisconnectionPointPanelId
         };
     }
 }

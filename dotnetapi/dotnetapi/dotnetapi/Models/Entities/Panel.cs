@@ -6,6 +6,9 @@ public class Panel : ProjectBaseEntity
     public AppUser CreatedBy { get; set; } = default!;
     public String String { get; set; } = default!;
     public string StringId { get; set; } = default!;
+    public bool IsDisconnectionPoint { get; set; } = false;
+    public PanelLink? DisconnectionPointPanelLink { get; set; }
+    public string? DisconnectionPointPanelLinkId { get; set; }
     public PanelLink? PositiveTo { get; set; }
     public PanelLink? NegativeTo { get; set; }
     public string? PositiveToId { get; set; }

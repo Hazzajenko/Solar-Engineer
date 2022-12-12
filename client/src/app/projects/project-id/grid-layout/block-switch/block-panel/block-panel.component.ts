@@ -175,7 +175,9 @@ export class BlockPanelComponent implements OnInit, AfterViewInit {
     this.isSelectedString$ = this.store
       .select(selectSelectedStringId)
       .pipe(combineLatestWith(this.panel$))
-      .pipe(map(([selectedStringId, panel]) => selectedStringId === panel?.stringId))
+      .pipe(
+        map(([selectedStringId, panel]) => (selectedStringId === panel?.stringId ? true : false)),
+      )
     this.isSelectedPositiveTo$ = this.store
       .select(selectSelectedPositiveTo)
       .pipe(map((positiveTo) => positiveTo === this.id))
@@ -200,15 +202,23 @@ export class BlockPanelComponent implements OnInit, AfterViewInit {
 
   displayTooltip(
     panel: PanelModel,
+    isSelectedString: boolean,
+    selectedStringTooltip?: string,
     selectedUnit?: TypeModel,
     selectedId?: boolean,
-    selectedStringTooltip?: string,
     stringName?: string,
   ): string {
-    return `
+    if (isSelectedString) {
+      return <string>selectedStringTooltip
+    }
+    return ''
+    /* else {
+      return `
     ${panel.id}
       Location = ${panel.location} \r\n
     `
+    }*/
+
     /*    if (selectedUnit) {
           switch (selectedUnit) {
             case UnitModel.PANEL:
@@ -363,5 +373,60 @@ export class BlockPanelComponent implements OnInit, AfterViewInit {
         this.store.dispatch(SelectedStateActions.clearSelectedPanelLinks())
       }
     })
+  }
+
+  async rotateSelectedLandscape() {
+    const multiSelectIds = await firstValueFrom(this.store.select(selectMultiSelectIds))
+    if (multiSelectIds) {
+      const panelsToUpdate = await firstValueFrom(
+        this.panelsEntity.entities$.pipe(
+          map((panels) => panels.filter((panel) => multiSelectIds.includes(panel.id))),
+          map((selectedPanels) =>
+            selectedPanels.map((panel) => {
+              return {
+                ...panel,
+                rotation: 0,
+              } as Partial<PanelModel>
+            }),
+          ),
+        ),
+      )
+
+      this.panelsEntity.updateManyInCache(panelsToUpdate)
+    }
+  }
+
+  async rotateSelectedPortrait() {
+    const multiSelectIds = await firstValueFrom(this.store.select(selectMultiSelectIds))
+    if (multiSelectIds) {
+      const panelsToUpdate = await firstValueFrom(
+        this.panelsEntity.entities$.pipe(
+          map((panels) => panels.filter((panel) => multiSelectIds.includes(panel.id))),
+          map((selectedPanels) =>
+            selectedPanels.map((panel) => {
+              return {
+                ...panel,
+                rotation: 0,
+              } as Partial<PanelModel>
+            }),
+          ),
+        ),
+      )
+
+      this.panelsEntity.updateManyInCache(panelsToUpdate)
+    }
+  }
+
+  removeFromString(panel: PanelModel) {
+    const update: Partial<PanelModel> = {
+      ...panel,
+      stringId: 'undefined',
+    }
+
+    this.panelsEntity.update(update)
+  }
+
+  markPanelAsDisconnectionPoint(panel: PanelModel) {
+    // const update = panel.markAsDisconnectionPoint()
   }
 }

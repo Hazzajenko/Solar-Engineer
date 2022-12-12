@@ -146,7 +146,6 @@ export class ExistingStringsDialog implements OnInit {
           const partial: Partial<PanelModel> = {
             ...panel,
             stringId: string.id,
-            color: string.color,
           }
           return partial
         })
@@ -163,7 +162,6 @@ export class ExistingStringsDialog implements OnInit {
         const partial: Partial<PanelModel> = {
           ...selectedPanels,
           stringId: string.id,
-          color: string.color,
         }
 
         this.panelsEntity.update(partial)

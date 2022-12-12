@@ -9,6 +9,11 @@ export interface SelectedStringModel {
 
 export const selectSelectedState = createFeatureSelector<State.SelectedState>('selected')
 
+export const selectSelectedMultiIds = createSelector(
+  selectSelectedState,
+  (state: State.SelectedState) => state.multiSelectIds,
+)
+
 export const selectSelectedStringModel = createSelector(
   selectSelectedState,
   (state: State.SelectedState) => {
