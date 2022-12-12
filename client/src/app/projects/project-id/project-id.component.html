@@ -10,15 +10,21 @@
           {{ drawPaths(pathMapCoords) }}
         </ng-container>-->
   </canvas>
-  <div class="project-container-v4__project-display">
+  <div
+    (keyup)="altKeyup($event)"
+    (mouseup)="onMouseUp($event)"
+    class="project-container-v4__project-display"
+  >
     <app-grid-overlay></app-grid-overlay>
     <app-grid-toolbar></app-grid-toolbar>
     <app-grid-layout
-      (keyup)="altKeyup($event)"
-      (mouseup)="onMouseUp($event)"
+      (altKeyUpEvent)="altKeyup($event)"
+      (mouseDownEvent)="onMouseDown($event)"
+      (mouseUpEvent)="stopDragging($event)"
       *ngrxLet="isDragging$ | async as isDragging"
     ></app-grid-layout>
   </div>
 </div>
 <!--(mousemove)="onMouseMove($event, isDragging)"-->
 <!--(mousedown)="onMouseDown($event, isDragging)"-->
+<!--(mousemove)="onMultiDrag($event)"-->

@@ -16,7 +16,7 @@ import { MatSliderModule } from '@angular/material/slider'
 import { FormsModule } from '@angular/forms'
 import { DragDropModule } from '@angular/cdk/drag-drop'
 import { MatButtonModule } from '@angular/material/button'
-import { firstValueFrom, Observable } from 'rxjs'
+import { Observable } from 'rxjs'
 import { selectMultiState } from './services/store/multi-create/multi.selectors'
 import { map } from 'rxjs/operators'
 import { LetModule } from '@ngrx/component'
@@ -49,10 +49,10 @@ export class ProjectIdComponent implements OnInit, AfterViewInit {
   @ViewChild('canvas', { static: true })
   canvas!: ElementRef<HTMLCanvasElement>
   pathMapCoords$!: Observable<Map<string, { x: number; y: number }> | undefined>
-  startX?: number = undefined
-  startY?: number = undefined
-  // startX: number = 0
-  // startY: number = 0
+  // startX?: number = undefined
+  // startY?: number = undefined
+  startX: number = 0
+  startY: number = 0
   endX: number = 0
   endY: number = 0
   // canvasOffset = this.canvas.nativeElement.offsetTop
@@ -83,12 +83,26 @@ export class ProjectIdComponent implements OnInit, AfterViewInit {
 */
 
   /*  @HostListener('document:mousemove', ['$event'])
-    onMouseMove(event: MouseEvent, isDragging: boolean | null, isLinking: boolean | null) {
+    onMouseMove(event: MouseEvent) {
       event.preventDefault()
       event.stopPropagation()
 
-      if (isDragging) {
-        this.onMultiDrag(event)
+      if (event.altKey) {
+        // this.onMultiDrag(event)
+        const mouseX = event.clientX - this.offsetX
+        const mouseY = event.clientY - this.offsetY
+
+        this.ctx.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height)
+
+        const width = mouseX - this.startX!
+        const height = mouseY - this.startY!
+
+        this.ctx.globalAlpha = 0.4
+
+        this.ctx.fillStyle = '#7585d8'
+        this.ctx.fillRect(this.startX!, this.startY!, width, height)
+
+        this.ctx.globalAlpha = 1.0
       } else {
         this.ctx.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height)
       }
@@ -101,7 +115,7 @@ export class ProjectIdComponent implements OnInit, AfterViewInit {
       }*!/
     }*/
 
-  /*  onMultiDrag(event: MouseEvent) {
+  /*  onMouseMove(event: MouseEvent) {
       event.preventDefault()
       event.stopPropagation()
       if (event.altKey) {
@@ -110,13 +124,13 @@ export class ProjectIdComponent implements OnInit, AfterViewInit {
 
         this.ctx.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height)
 
-        const width = mouseX - this.startX
-        const height = mouseY - this.startY
+        const width = mouseX - this.startX!
+        const height = mouseY - this.startY!
 
         this.ctx.globalAlpha = 0.4
 
         this.ctx.fillStyle = '#7585d8'
-        this.ctx.fillRect(this.startX, this.startY, width, height)
+        this.ctx.fillRect(this.startX!, this.startY!, width, height)
 
         this.ctx.globalAlpha = 1.0
       } else {
@@ -132,7 +146,7 @@ export class ProjectIdComponent implements OnInit, AfterViewInit {
     // console.log(this.startX)
     // console.log(this.startY)
     // console.log(event.altKey)
-    if (this.isDraggingBool && this.startX && this.startY && event.altKey) {
+    if (this.startX && this.startY && event.altKey && this.isDraggingBool) {
       console.log(
         '\n' + '    if (this.isDraggingBool && this.startX && this.startY && event.altKey) {',
       )
@@ -152,8 +166,8 @@ export class ProjectIdComponent implements OnInit, AfterViewInit {
       this.ctx.globalAlpha = 1.0
     } else {
       this.ctx.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height)
-      this.startX = undefined
-      this.startY = undefined
+      // this.startX = undefined
+      // this.startY = undefined
     }
   }
 
@@ -259,79 +273,96 @@ export class ProjectIdComponent implements OnInit, AfterViewInit {
       })
       // this.items.forEach((it) => console.log(it.panelDiv))
     }*/
-  @HostListener('document:mousedown', ['$event'])
-  onMouseDown(event: MouseEvent, isDragging: boolean | null) {
+
+  onMouseDown(event: MouseEvent) {
     event.preventDefault()
     event.stopPropagation()
-    // console.log(event)
+    console.log('onMouseDown', event)
     const rect = this.canvas.nativeElement.getBoundingClientRect()
-    this.startX = event.clientX - rect.left
-    this.startY = event.clientY - rect.top
 
-    console.log(event.type === 'mousedown')
-    console.log(isDragging)
-    console.log(event.altKey)
-    if (event.altKey && event.type === 'mousedown') {
+    if (event.altKey) {
       console.log('    if (event.altKey && isDragging) {')
-      firstValueFrom(this.store.select(selectMultiState)).then((multiState) => {
-        const rect = this.canvas.nativeElement.getBoundingClientRect()
-        if (multiState) {
-          if (!multiState.locationStart) {
-            this.startX = event.clientX - rect.left
-            this.startY = event.clientY - rect.top
-          } else {
-            let height: number
-            this.endX = event.clientX - rect.left
-            this.endY = event.clientY - rect.top
+      this.startX = event.clientX - rect.left
+      this.startY = event.clientY - rect.top
+      let height: number
+      this.endX = event.clientX - rect.left
+      this.endY = event.clientY - rect.top
+      height = this.startY - this.endY
+      if (height > 0) {
+        height = height * -1
+      } else {
+        height = Math.abs(height)
+      }
+      /*      const multiState = await firstValueFrom(this.store.select(selectMultiState))
+            const rect = this.canvas.nativeElement.getBoundingClientRect()
+            if (multiState) {
+              if (!multiState.locationStart) {
+                this.startX = event.clientX - rect.left
+                this.startY = event.clientY - rect.top
+              } else {
+                let height: number
+                this.endX = event.clientX - rect.left
+                this.endY = event.clientY - rect.top
+              }
+            }*/
+      this.isDraggingBool = true
+      /*      firstValueFrom(this.store.select(selectMultiState)).then((multiState) => {
+              const rect = this.canvas.nativeElement.getBoundingClientRect()
+              if (multiState) {
+                if (!multiState.locationStart) {
+                  this.startX = event.clientX - rect.left
+                  this.startY = event.clientY - rect.top
+                } else {
+                  let height: number
+                  this.endX = event.clientX - rect.left
+                  this.endY = event.clientY - rect.top
+                }
+              }
+              this.isDraggingBool = true
+              /!*        console.log('    if (event.altKey && isDragging) {')
+                      const mouseX = event.clientX - this.offsetX
+                      const mouseY = event.clientY - this.offsetY
 
-            /*            height = this.startY - this.endY
-                        if (height > 0) {
-                          height = height * -1
-                        } else {
-                          height = Math.abs(height)
-                        }*/
-          }
-        }
-        this.isDraggingBool = true
-        /*        console.log('    if (event.altKey && isDragging) {')
-                const mouseX = event.clientX - this.offsetX
-                const mouseY = event.clientY - this.offsetY
+                      this.ctx.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height)
 
-                this.ctx.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height)
+                      const width = mouseX - this.startX!
+                      const height = mouseY - this.startY!
 
-                const width = mouseX - this.startX!
-                const height = mouseY - this.startY!
+                      this.ctx.globalAlpha = 0.4
 
-                this.ctx.globalAlpha = 0.4
+                      this.ctx.fillStyle = '#7585d8'
+                      this.ctx.fillRect(this.startX!, this.startY!, width, height)
 
-                this.ctx.fillStyle = '#7585d8'
-                this.ctx.fillRect(this.startX!, this.startY!, width, height)
-
-                this.ctx.globalAlpha = 1.0*/
-      })
+                      this.ctx.globalAlpha = 1.0*!/
+            })*/
     } else {
       this.isDraggingBool = false
       this.ctx.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height)
-      this.startX = undefined
-      this.startY = undefined
+      // this.startX = undefined
+      // this.startY = undefined
     }
   }
 
   onMouseUp(event: MouseEvent) {
     event.preventDefault()
     event.stopPropagation()
+    console.log('onMouseUp', event)
     this.isDraggingBool = false
     this.ctx.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height)
-    this.startX = undefined
-    this.startY = undefined
   }
 
   altKeyup(event: KeyboardEvent) {
     event.preventDefault()
     event.stopPropagation()
+    console.log('ALT-KEYUP', event)
     this.isDraggingBool = false
     this.ctx.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height)
-    this.startX = undefined
-    this.startY = undefined
+  }
+
+  stopDragging(event: MouseEvent) {
+    event.preventDefault()
+    event.stopPropagation()
+    this.isDraggingBool = false
+    this.ctx.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height)
   }
 }

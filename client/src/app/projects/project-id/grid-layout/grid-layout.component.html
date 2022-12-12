@@ -33,6 +33,7 @@
             <div
               (cdkDropListDropped)="gridDrop($event)"
               (click)="cellAction(locationString, $event)"
+              (keyup)="altKeyup($event)"
               (mousedown)="mouseDown($event, locationString)"
               (mouseup)="mouseUp($event, locationString)"
               [id]="locationString"

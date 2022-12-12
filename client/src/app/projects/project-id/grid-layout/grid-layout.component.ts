@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output } from '@angular/core'
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  HostListener,
+  OnInit,
+  Output,
+} from '@angular/core'
 import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop'
 import { Store } from '@ngrx/store'
 import { AppState } from '../../../store/app.state'
@@ -52,6 +59,7 @@ import { MultiCreateService } from '../services/multi/multi-create.service'
 import { selectMultiMode } from '../services/store/multi-create/multi.selectors'
 import { MultiDeleteService } from '../services/multi/multi-delete.service'
 import { MultiSelectService } from '../services/multi/multi-select.service'
+import { MultiActions } from '../services/store/multi-create/multi.actions'
 
 @Component({
   selector: 'app-grid-layout',
@@ -92,13 +100,17 @@ import { MultiSelectService } from '../services/multi/multi-select.service'
 })
 export class GridLayoutComponent implements OnInit {
   @Output() clickEvent = new EventEmitter<MouseEvent>()
+  @Output() altKeyUpEvent = new EventEmitter<KeyboardEvent>()
+  @Output() mouseUpEvent = new EventEmitter<MouseEvent>()
+  @Output() mouseDownEvent = new EventEmitter<MouseEvent>()
+  @Output() mouseMoveEvent = new EventEmitter<MouseEvent>()
+
   project$!: Observable<ProjectModel | undefined>
   blocks$!: Observable<BlockModel[]>
   rows = 20
   cols = 40
   mouseIsDown: boolean = false
   mouseDownStartLocation?: string
-  private ctx!: CanvasRenderingContext2D
 
   constructor(
     private store: Store<AppState>,
@@ -204,10 +216,11 @@ export class GridLayoutComponent implements OnInit {
     }
   */
 
-  mouseDown(event: MouseEvent, location: string) {
+  async mouseDown(event: MouseEvent, location: string) {
     event.preventDefault()
     event.stopPropagation()
     if (event.altKey) {
+      this.mouseDownEvent.emit(event)
       firstValueFrom(this.store.select(selectGridMode)).then((gridMode) => {
         switch (gridMode) {
           case GridMode.CREATE:
@@ -227,22 +240,50 @@ export class GridLayoutComponent implements OnInit {
     this.mouseIsDown = true
   }
 
-  mouseUp(event: MouseEvent, location: string) {
-    firstValueFrom(this.store.select(selectGridMode)).then((gridMode) => {
-      switch (gridMode) {
-        /*       case GridMode.CREATE:
-                 this.multiCreateService.multiCreate(location)
-                 break*/
-        case GridMode.SELECT:
-          this.multiSelectService.multiSelect(location)
-          break
-        /*        case GridMode.DELETE:
-                  this.multiDeleteService.multiDelete(location)
-                  break*/
-      }
-    })
+  async mouseUp(event: MouseEvent, location: string) {
+    const multiMode = await firstValueFrom(this.store.select(selectMultiMode))
+    if (!multiMode) {
+      return
+    }
+    this.mouseUpEvent.emit(event)
+    const gridMode = await firstValueFrom(this.store.select(selectGridMode))
+    switch (gridMode) {
+      case GridMode.CREATE:
+        this.multiCreateService.multiCreate(location)
+        break
+      case GridMode.SELECT:
+        this.multiSelectService.multiSelect(location)
+        break
+    }
+    /*    firstValueFrom(this.store.select(selectGridMode)).then((gridMode) => {
+          switch (gridMode) {
+            case GridMode.CREATE:
+              this.multiCreateService.multiCreate(location)
+              break
+            case GridMode.SELECT:
+              this.multiSelectService.multiSelect(location)
+              break
+            /!*        case GridMode.DELETE:
+                      this.multiDeleteService.multiDelete(location)
+                      break*!/
+          }
+        })*/
 
     console.log(event, location)
     this.mouseIsDown = false
+  }
+
+  @HostListener('window:keyup', ['$event'])
+  async altKeyup(event: KeyboardEvent) {
+    event.preventDefault()
+    event.stopPropagation()
+    console.log(event)
+    if (event.key === 'Alt') {
+      this.altKeyUpEvent.emit(event)
+      const multiMode = await firstValueFrom(this.store.select(selectMultiMode))
+      if (multiMode) {
+        this.store.dispatch(MultiActions.clearMultiState())
+      }
+    }
   }
 }
