@@ -116,9 +116,9 @@ public class StringsController : ControllerBase
             return Unauthorized("User is invalid");
         }
 
-        var existingString = await _stringsService.GetStringByIdAsync(request.Id);
+        // var existingString = await _stringsService.GetStringByIdAsync(request.Id);
 
-        if (existingString is null) return NotFound();
+        // if (existingString is null) return NotFound();
 
         // var stringEntity = request.ToEntity();
         var result = await _stringsService.UpdateStringAsync(request);

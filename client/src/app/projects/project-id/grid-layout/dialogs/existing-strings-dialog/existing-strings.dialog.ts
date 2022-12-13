@@ -13,18 +13,18 @@ import { MatIconModule } from '@angular/material/icon'
 import { Store } from '@ngrx/store'
 
 import { StringPanelsAsyncPipe } from './string-panels-async.pipe'
-import { StringTotalsAsyncPipe } from '../../../grid-toolbar/string-totals-async.pipe'
+import { StringTotalsAsyncPipe } from '../../grid-toolbar/string-totals-async.pipe'
 import {
   selectSelectedId,
   selectSelectedState,
-} from '../../../../services/store/selected/selected.selectors'
-import { SelectedStateActions } from '../../../../services/store/selected/selected.actions'
-import { StringsEntityService } from '../../../../services/ngrx-data/strings-entity/strings-entity.service'
-import { StringModel } from '../../../../../models/string.model'
-import { AppState } from '../../../../../../store/app.state'
+} from '../../../services/store/selected/selected.selectors'
+import { SelectedStateActions } from '../../../services/store/selected/selected.actions'
+import { StringsEntityService } from '../../../services/ngrx-data/strings-entity/strings-entity.service'
+import { StringModel } from '../../../../models/string.model'
+import { AppState } from '../../../../../store/app.state'
 import { map } from 'rxjs/operators'
-import { PanelModel } from '../../../../../models/panel.model'
-import { PanelsEntityService } from '../../../../services/ngrx-data/panels-entity/panels-entity.service'
+import { PanelModel } from '../../../../models/panel.model'
+import { PanelsEntityService } from '../../../services/ngrx-data/panels-entity/panels-entity.service'
 import { HttpClient } from '@angular/common/http'
 
 @Component({

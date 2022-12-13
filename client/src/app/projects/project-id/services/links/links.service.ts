@@ -160,6 +160,7 @@ export class LinksService {
     this.disconnectionPointsEntity.update(update)
 
     const linkRequest: PanelLinkModel = {
+      isDisconnectionPoint: false,
       id: Guid.create().toString(),
       projectId: dpToJoin.projectId,
       stringId: dpToJoin.stringId,
@@ -179,6 +180,7 @@ export class LinksService {
       return console.error(`joinDpToCable !dp || !cableToJoin`)
     }
     const linkRequest: PanelLinkModel = {
+      isDisconnectionPoint: false,
       id: Guid.create().toString(),
       projectId: cableToJoin.project_id,
       stringId: dp.stringId,
@@ -206,6 +208,7 @@ export class LinksService {
     this.disconnectionPointsEntity.update(update)
 
     const panelJoinRequest: PanelLinkModel = {
+      isDisconnectionPoint: false,
       id: Guid.create().toString(),
       projectId: panelToJoin.projectId,
       stringId: panelToJoin.stringId,
@@ -226,6 +229,7 @@ export class LinksService {
     }
     if (panelToLink) {
       const panelJoinRequest: PanelLinkModel = {
+        isDisconnectionPoint: false,
         id: Guid.create().toString(),
         projectId: panel.projectId,
         stringId: panel.stringId,
@@ -257,6 +261,7 @@ export class LinksService {
     if (panelToJoin) {
       console.log('panelToJoin', panelToJoin)
       const panelJoinRequest: PanelLinkModel = {
+        isDisconnectionPoint: false,
         id: Guid.create().toString(),
         projectId: panelToJoin.projectId,
         stringId: panelToJoin.stringId,
@@ -293,6 +298,7 @@ export class LinksService {
       this.disconnectionPointsEntity.update(update)
 
       const panelJoinRequest: PanelLinkModel = {
+        isDisconnectionPoint: false,
         id: Guid.create().toString(),
         projectId: panel.projectId,
         stringId: panel.stringId,

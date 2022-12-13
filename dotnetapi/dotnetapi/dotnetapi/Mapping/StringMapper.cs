@@ -26,7 +26,8 @@ public static class StringMapper
             Name = request.Name,
             CreatedAt = DateTime.Now,
             IsInParallel = false,
-            CreatedBy = user
+            CreatedBy = user,
+            Color = request.Color
         };
     }
 
@@ -36,7 +37,8 @@ public static class StringMapper
         {
             Name = request.Name,
             CreatedAt = DateTime.Now,
-            IsInParallel = false
+            IsInParallel = false,
+            Color = request.Color
         };
     }
 
@@ -47,7 +49,8 @@ public static class StringMapper
             Id = request.Id,
             ProjectId = request.Project.Id,
             Name = request.Name,
-            IsInParallel = request.IsInParallel
+            IsInParallel = request.IsInParallel,
+            Color = request.Color
             // CreatedAt = DateTime.Now
         };
     }

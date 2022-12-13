@@ -8,4 +8,10 @@ export class PanelLinkModel {
   positiveModel?: TypeModel
   negativeToId?: string
   negativeModel?: TypeModel
+  isDisconnectionPoint: boolean
+  disconnectionPointPanelId?: string
+  
+  constructor() {
+    this.isDisconnectionPoint = false
+  }
 }

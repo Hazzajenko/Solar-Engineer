@@ -47,9 +47,6 @@
       [class.drop-zone__bg-default]="!(isSelectedPanel$ | async)!"
       [class.drop-zone__bg-negative]="(isSelectedNegativeTo$ | async)!"
       [class.drop-zone__bg-positive]="(isSelectedPositiveTo$ | async)!"
-      [class.drop-zone__bg-selected]="
-        (isSelectedPanel$ | async)! || (multiSelectIds$ | async)?.includes(panel.id)
-      "
       [class.drop-zone__bg-string-selected]="(isSelectedString$ | async)!"
       [class.drop-zone__bg-to-join]="(panelToJoin$ | async)?.id === panel.id"
       [matTooltip]="
@@ -57,9 +54,22 @@
       "
       [ngStyle]="{
         height: panel.rotation === 0 ? '18px' : '23px',
-        width: panel.rotation === 0 ? '23px' : '18px',
-        'background-color': (selectedStringPathMap$ | async)?.get(panel.id)?.color
+        width: panel.rotation === 0 ? '23px' : '18px'
       }"
+      [style.background-color]="
+        getBackgroundColor(
+          (stringColor$ | async)!,
+          (selectedStringPathMap$ | async)!,
+          (isInSelection$ | async)!
+        )
+      "
+      [style.box-shadow]="
+        getBoxShadow(
+          (stringColor$ | async)!,
+          (selectedStringPathMap$ | async)!,
+          (isInSelection$ | async)!
+        )
+      "
       cdkDrag
       class="drop-zone__panel"
       matTooltipClass="drop-zone__tooltip"
@@ -77,7 +87,13 @@
     </div>
   </div>
 </ng-container>
-
+<!--  [class.drop-zone__bg-selected]="
+        (isSelectedPanel$ | async)! || (multiSelectIds$ | async)?.includes(panel.id)
+      "-->
+<!--
+'background-color': (selectedStringPathMap$ | async)?.get(panel.id)?.color,
+border:
+(stringColor$ | async) ? '2px solid ' + (stringColor$ | async)! : '2px solid ' + '#95c2fa'-->
 <div
   [matMenuTriggerFor]="rightMenu"
   [style.left]="menuTopLeftPosition.x"
@@ -94,7 +110,9 @@
           Rotate
         </button>
         <ng-container *ngIf="isSelectedString$ | async; else stringNotSelected">
-          <button class="right-click-menu__button" mat-menu-item>Edit String</button>
+          <button (click)="editString(panel)" class="right-click-menu__button" mat-menu-item>
+            Edit String
+          </button>
           <button
             (click)="markPanelAsDisconnectionPoint(panel)"
             class="right-click-menu__button"

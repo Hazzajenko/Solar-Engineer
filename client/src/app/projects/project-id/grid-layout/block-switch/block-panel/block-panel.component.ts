@@ -60,10 +60,11 @@ import {
 import { selectCreateMode, selectGridMode } from '../../../services/store/grid/grid.selectors'
 import { LinksState } from '../../../services/store/links/links.reducer'
 import { HttpClient } from '@angular/common/http'
-import { MatDialog } from '@angular/material/dialog'
-import { ExistingStringsDialog } from './existing-strings-dialog/existing-strings.dialog'
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog'
+import { ExistingStringsDialog } from '../../dialogs/existing-strings-dialog/existing-strings.dialog'
 import { PanelTooltipAsyncPipe } from './panel-tooltip-async.pipe'
-import { NewStringDialog } from './new-string-dialog/new-string.dialog'
+import { NewStringDialog } from '../../dialogs/new-string-dialog/new-string.dialog'
+import { EditStringDialog } from '../../dialogs/edit-string-dialog/edit-string.dialog'
 
 @Component({
   selector: 'app-block-panel',
@@ -105,6 +106,7 @@ export class BlockPanelComponent implements OnInit, AfterViewInit {
   panelToJoin$!: Observable<PanelModel | undefined>
 
   joinState$!: Observable<LinksState>
+  isInSelection$!: Observable<boolean>
   isSelectedPanel$!: Observable<boolean>
   isSelectedString$!: Observable<boolean>
   isSelectedPositiveTo$!: Observable<boolean>
@@ -114,6 +116,7 @@ export class BlockPanelComponent implements OnInit, AfterViewInit {
   negativePanelLink$!: Observable<string | undefined>
   selectedUnit$!: Observable<TypeModel | undefined>
   selectedStringTooltip$!: Observable<string | undefined>
+  stringColor$!: Observable<string | undefined>
   multiSelectIds$!: Observable<string[] | undefined>
   multiSelect$!: Observable<boolean | undefined>
   selectedStringPathMap$!: Observable<
@@ -172,12 +175,20 @@ export class BlockPanelComponent implements OnInit, AfterViewInit {
     this.isSelectedPanel$ = this.store
       .select(selectSelectedPanelId)
       .pipe(map((selectedPanelId) => selectedPanelId === this.id))
+
+    this.isInSelection$ = this.store
+      .select(selectSelectedPanelId)
+      .pipe(combineLatestWith(this.store.select(selectMultiSelectIds)))
+      .pipe(
+        map(([selected, multiSelected]) => {
+          return !!(selected === this.id || multiSelected?.includes(this.id))
+        }),
+      )
+    // (isSelectedPanel$ | async)! || (multiSelectIds$ | async)?.includes(panel.id)
     this.isSelectedString$ = this.store
       .select(selectSelectedStringId)
       .pipe(combineLatestWith(this.panel$))
-      .pipe(
-        map(([selectedStringId, panel]) => (selectedStringId === panel?.stringId ? true : false)),
-      )
+      .pipe(map(([selectedStringId, panel]) => selectedStringId === panel?.stringId))
     this.isSelectedPositiveTo$ = this.store
       .select(selectSelectedPositiveTo)
       .pipe(map((positiveTo) => positiveTo === this.id))
@@ -191,6 +202,10 @@ export class BlockPanelComponent implements OnInit, AfterViewInit {
     this.negativePanelLink$ = this.linksEntity.entities$.pipe(
       map((links) => links.find((link) => link.positiveToId === this.id)),
       map((link) => link?.id),
+    )
+    this.stringColor$ = this.stringsEntity.entities$.pipe(combineLatestWith(this.panel$)).pipe(
+      map(([strings, panel]) => strings.find((string) => string.id === panel?.stringId)),
+      map((string) => string?.color),
     )
     this.selectedUnit$ = this.store.select(selectUnitSelected)
     this.selectedStringTooltip$ = this.store.select(selectSelectedStringTooltip)
@@ -253,6 +268,19 @@ export class BlockPanelComponent implements OnInit, AfterViewInit {
     this.store.dispatch(GridStateActions.changeGridmode({ mode: GridMode.SELECT }))
     this.store.dispatch(SelectedStateActions.selectType({ objectType: TypeModel.STRING }))
     this.store.dispatch(SelectedStateActions.selectString({ stringId: panel.stringId }))
+  }
+
+  editString(panel: PanelModel) {
+    const dialogConfig = new MatDialogConfig()
+
+    dialogConfig.disableClose = true
+    dialogConfig.autoFocus = true
+
+    dialogConfig.data = {
+      stringId: panel.stringId,
+    }
+
+    this.dialog.open(EditStringDialog, dialogConfig)
   }
 
   deletePanel(panel: PanelModel) {
@@ -428,5 +456,58 @@ export class BlockPanelComponent implements OnInit, AfterViewInit {
 
   markPanelAsDisconnectionPoint(panel: PanelModel) {
     // const update = panel.markAsDisconnectionPoint()
+  }
+
+  getBackgroundColor(
+    stringColor: string,
+    pathMap: Map<string, { link: number; count: number; color: string }>,
+    isInSelection: boolean,
+  ) {
+    if (pathMap) {
+      const thisPanelPath = pathMap.get(this.id)
+      if (thisPanelPath) {
+        return thisPanelPath.color
+      }
+    }
+    if (isInSelection) {
+      // return '#ff1c24'
+      // return '#00E6DF'
+      // return VibrantColors.VibrantGreen
+      // return `hwb(0 20% 0%)`
+    }
+    if (stringColor.length > 0) {
+      // return `hwb(0 0% 20%)`
+      // return DarkColors.SoftCyan
+      // return DarkColors.Purple
+      return stringColor
+    } else {
+    }
+    return ''
+  }
+
+  getBoxShadow(
+    stringColor: string,
+    pathMap: Map<string, { link: number; count: number; color: string }>,
+    isInSelection: boolean,
+  ) {
+    if (isInSelection) {
+      // return `0 0 0 2px ${VibrantColors.VibrantOrange}`
+      // return `0 0 0 2px ${DarkColors.SoftCyan}`
+      // return `0 0 0 2px ${LightColors.LightBlue}`
+      return `0 0 0 1px red`
+      // return `0 0 0 1px red`
+      // return `0 0 0 1px ${VibrantColors.VibrantGreen}`
+      // border: 2px solid $borderColor;
+      // return '#00E6DF'
+      // return VibrantColors.VibrantGreen
+      // return `hwb(0 20% 0%)`
+    }
+    if (stringColor) {
+      // return `0 0 0 1px ${stringColor}`
+      // return `hwb(0 0% 20%)`
+      // return stringColor
+      // return
+    }
+    return ''
   }
 }

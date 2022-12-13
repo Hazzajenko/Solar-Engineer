@@ -9,7 +9,7 @@ public class CreatePanelLinkRequest
     [Required] public string PositiveToId { get; init; } = default!;
     [Required] public string NegativeToId { get; init; } = default!;
     public bool IsDisconnectionPoint { get; set; }
-    public string DisconnectionPointPanelId { get; set; } = default!;
+    public string? DisconnectionPointPanelId { get; set; } = default!;
 }
 
 public class DeletePanelLinkRequest

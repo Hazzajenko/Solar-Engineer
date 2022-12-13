@@ -11,20 +11,19 @@ import { ScrollingModule } from '@angular/cdk/scrolling'
 import { MatIconModule } from '@angular/material/icon'
 
 import { Store } from '@ngrx/store'
-import { StringTotalsAsyncPipe } from '../../../grid-toolbar/string-totals-async.pipe'
-import { selectSelectedState } from '../../../../services/store/selected/selected.selectors'
-import { StringsEntityService } from '../../../../services/ngrx-data/strings-entity/strings-entity.service'
-import { StringModel } from '../../../../../models/string.model'
-import { AppState } from '../../../../../../store/app.state'
+import { StringTotalsAsyncPipe } from '../../grid-toolbar/string-totals-async.pipe'
+import { selectSelectedState } from '../../../services/store/selected/selected.selectors'
+import { StringsEntityService } from '../../../services/ngrx-data/strings-entity/strings-entity.service'
+import { StringModel } from '../../../../models/string.model'
+import { AppState } from '../../../../../store/app.state'
 import { map } from 'rxjs/operators'
-import { PanelModel } from '../../../../../models/panel.model'
-import { PanelsEntityService } from '../../../../services/ngrx-data/panels-entity/panels-entity.service'
+import { PanelModel } from '../../../../models/panel.model'
+import { PanelsEntityService } from '../../../services/ngrx-data/panels-entity/panels-entity.service'
 import { HttpClient } from '@angular/common/http'
 import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatInputModule } from '@angular/material/input'
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms'
-import { Guid } from 'guid-typescript'
-import { TypeModel } from '../../../../../models/type.model'
+import { selectCurrentProjectId } from '../../../services/store/projects/projects.selectors'
 
 @Component({
   selector: 'new-string-dialog',
@@ -123,8 +122,9 @@ export class NewStringDialog implements OnInit {
 
   ngOnInit() {}
 
-  addSelectedToNewString() {
-    firstValueFrom(
+  async addSelectedToNewString() {
+    const projectId = await firstValueFrom(this.store.select(selectCurrentProjectId))
+    const selectedPanels = await firstValueFrom(
       this.store
         .select(selectSelectedState)
         .pipe(combineLatestWith(this.panelsEntity.entities$))
@@ -133,34 +133,36 @@ export class NewStringDialog implements OnInit {
             return panels.filter((p) => selectedState.multiSelectIds?.includes(p.id))
           }),
         ),
-    ).then(async (selectedPanels) => {
-      if (!selectedPanels) {
-        return console.error('addSelectedToNewString, !selectedPanels')
+    )
+
+    if (!selectedPanels) {
+      return console.error('addSelectedToNewString, !selectedPanels')
+    }
+    if (!this.name.value) {
+      return console.error('addSelectedToNewString, !this.name.value')
+    }
+
+    // const newStringId = Guid.create().toString()
+
+    const newString = new StringModel(projectId, this.name.value, '#95c2fa')
+    /*
+          const newString: StringModel = {
+            id: newStringId,
+            name: this.name.value,
+            color: 'blue',
+            type: TypeModel.STRING,
+          }*/
+
+    this.stringsEntity.add(newString)
+
+    const selectedPanelUpdates: Partial<PanelModel>[] = selectedPanels.map((panel) => {
+      const partial: Partial<PanelModel> = {
+        ...panel,
+        stringId: newString.id,
       }
-      if (!this.name.value) {
-        return console.error('addSelectedToNewString, !this.name.value')
-      }
-
-      const newStringId = Guid.create().toString()
-
-      const newString: StringModel = {
-        id: newStringId,
-        name: this.name.value,
-        color: 'blue',
-        type: TypeModel.STRING,
-      }
-
-      this.stringsEntity.add(newString)
-
-      const selectedPanelUpdates: Partial<PanelModel>[] = selectedPanels.map((panel) => {
-        const partial: Partial<PanelModel> = {
-          ...panel,
-          stringId: newStringId,
-        }
-        return partial
-      })
-
-      this.panelsEntity.updateManyInCache(selectedPanelUpdates)
+      return partial
     })
+
+    this.panelsEntity.updateManyInCache(selectedPanelUpdates)
   }
 }

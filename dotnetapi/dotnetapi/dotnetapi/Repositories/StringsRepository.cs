@@ -42,6 +42,7 @@ public class StringsRepository : IStringsRepository
 
         if (stringToUpdate is null) return false;
         if (request.Name is not null) stringToUpdate.Name = request.Name;
+        if (request.Color is not null) stringToUpdate.Color = request.Color;
 
         var save = await _context.SaveChangesAsync();
         return save > 0;

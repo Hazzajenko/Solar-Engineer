@@ -1,8 +1,8 @@
 import { Pipe, PipeTransform } from '@angular/core'
 import { Observable, of } from 'rxjs'
 import { map } from 'rxjs/operators'
-import { PanelsEntityService } from '../../../../services/ngrx-data/panels-entity/panels-entity.service'
-import { StringModel } from '../../../../../models/string.model'
+import { PanelsEntityService } from '../../../services/ngrx-data/panels-entity/panels-entity.service'
+import { StringModel } from '../../../../models/string.model'
 
 @Pipe({
   name: 'stringPanelsAsync',

@@ -1,4 +1,7 @@
 $borderColor: black;
+$defaultPanelColor: #95c2fa;
+
+
 .right-click-menu {
   background-color: #f6eded;
 
@@ -63,7 +66,7 @@ path {
 
   &__tooltip {
     white-space: pre-wrap;
-    pointer-events: none;
+    //pointer-events: none;
   }
 
   &__panel {
@@ -74,9 +77,27 @@ path {
     display: flex;
     align-items: center;
     justify-content: center;
+    //box-shadow: inset 60px 0 120px #f0f, /* left magenta */
+    //inset -60px 0 120px #0ff; /* right cyan */
+    //border-radius: 50%;
+    /*    box-shadow: inset 0 0 10px #fff, !* inner white *!
+        inset 10px 0 10px #f0f, !* inner left magenta short *!
+        inset -10px 0 10px #0ff, !* inner right cyan short *!
+        inset 10px 0 10px #f0f, !* inner left magenta broad *!
+        inset -10px 0 10px #0ff, !* inner right cyan broad *!
+        0 0 10px #fff, !* outer white *!
+        -10px 0 10px #f0f, !* outer left magenta *!
+        10px 0 10px #0ff; !* outer right cyan *!*/
     align-content: center;
+    //transition: all .1s ease-in-out;
 
     &:hover {
+      //transform: scale(1.1);
+      //background-color: lighten($defaultPanelColor, 5%);
+      //background-color: #95c2fa;
+      //border: red;
+      filter: brightness(0.85);
+      zoom: 1;
       color: red;
       width: 23px;
       height: 23px;
@@ -92,12 +113,15 @@ path {
   }
 
   &__bg-selected {
+    filter: brightness(0.85);
     background-color: #07ffd4;
+    /*    box-shadow: 0 0 0 8px brown,
+        0 0 0 12px blue;*/
   }
 
   &__bg-string-selected {
     background-color: #07d2ff;
-    border: 2px solid lighten($borderColor, 20%);
+    //border: 2px solid lighten($borderColor, 20%);
     //border: 2px solid #001fff;
   }
 

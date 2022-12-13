@@ -8,4 +8,5 @@ public class StringDto
     public DateTime CreatedAt { get; set; }
     public bool IsInParallel { get; set; }
     public string Name { get; set; } = default!;
+    public string Color { get; set; } = default!;
 }

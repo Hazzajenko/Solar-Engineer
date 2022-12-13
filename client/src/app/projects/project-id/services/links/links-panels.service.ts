@@ -116,6 +116,7 @@ export class LinksPanelsService {
         return false
       }
       const panelJoinRequest: PanelLinkModel = {
+        isDisconnectionPoint: false,
         id: Guid.create().toString(),
         stringId: selectedStringId,
         positiveToId: panelToJoin.id,
@@ -150,6 +151,7 @@ export class LinksPanelsService {
       this.disconnectionPointsEntity.update(update)
 
       const panelJoinRequest: PanelLinkModel = {
+        isDisconnectionPoint: false,
         id: Guid.create().toString(),
         projectId: panel.projectId,
         stringId: panel.stringId,
