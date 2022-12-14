@@ -109,13 +109,15 @@ public class PanelsRepository : IPanelsRepository
 
     public async Task<bool> DeletePanelAsync(string panelId)
     {
-        var panelToDelete = await _context.Panels
+        /*var panelToDelete = await _context.Panels
             .Where(x => x.Id == panelId)
             .SingleOrDefaultAsync();
         if (panelToDelete is null) return false;
         _context.Panels.Remove(panelToDelete);
-        await _context.SaveChangesAsync();
-
-        return true;
+        await _context.SaveChangesAsync();*/
+        var panelToDelete = await _context.Panels
+            .Where(x => x.Id == panelId)
+            .ExecuteDeleteAsync();
+        return panelToDelete > 0;
     }
 }

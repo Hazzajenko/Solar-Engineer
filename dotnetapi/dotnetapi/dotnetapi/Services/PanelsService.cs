@@ -136,8 +136,9 @@ public class PanelsService : IPanelsService
             var updatePanel = await _panelsRepository.UpdatePanelAsync(panel);
             if (!updatePanel)
             {
-                var message = $"Error updating panel {panel.Id}";
-                throw new ValidationException(message, GenerateValidationError(message));
+                var message = $"No changes made {panel.Id}";
+                // throw new ValidationException(message, GenerateValidationError(message));
+                continue;
             }
 
             panelUpdates[index] = updatePanel;

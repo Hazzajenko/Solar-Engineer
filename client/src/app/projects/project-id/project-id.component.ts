@@ -21,8 +21,9 @@ import { map } from 'rxjs/operators'
 import { LetModule } from '@ngrx/component'
 import { selectLinksState } from './services/store/links/links.selectors'
 import { TypeModel } from '../models/type.model'
-import { GridOverlayComponent } from './grid-layout/grid-overlay/grid-overlay.component'
+import { StringTotalsOverlayComponent } from './grid-layout/overlays/string-totals-overlay/string-totals-overlay.component'
 import { selectSelectedStringPathMapCoords } from './services/store/selected/selected.selectors'
+import { KeymapOverlayComponent } from './grid-layout/overlays/keymap-overlay/keymap-overlay.component'
 
 @Component({
   selector: 'app-project-id',
@@ -40,7 +41,8 @@ import { selectSelectedStringPathMapCoords } from './services/store/selected/sel
     DragDropModule,
     MatButtonModule,
     LetModule,
-    GridOverlayComponent,
+    StringTotalsOverlayComponent,
+    KeymapOverlayComponent,
   ],
 })
 export class ProjectIdComponent implements OnInit, AfterViewInit {
@@ -147,6 +149,7 @@ export class ProjectIdComponent implements OnInit, AfterViewInit {
   altKeyup(event: KeyboardEvent) {
     event.preventDefault()
     event.stopPropagation()
+    // if (event.altKey)
     console.log('ALT-KEYUP', event)
     this.isDraggingBool = false
     this.ctx.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height)

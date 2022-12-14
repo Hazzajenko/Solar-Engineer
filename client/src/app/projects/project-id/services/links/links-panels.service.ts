@@ -20,6 +20,9 @@ import { LinksPathService } from './links-path.service'
 import { SelectedStateActions } from '../store/selected/selected.actions'
 import { firstValueFrom } from 'rxjs'
 import { map } from 'rxjs/operators'
+import { MultiActions } from '../store/multi-create/multi.actions'
+import { GridStateActions } from '../store/grid/grid.actions'
+import { GridMode } from '../store/grid/grid-mode.model'
 
 @Injectable({
   providedIn: 'root',
@@ -45,10 +48,18 @@ export class LinksPanelsService {
     shiftKey: boolean,
   ) {
     if (!panel) {
+      this.store.dispatch(LinksStateActions.clearLinkState())
+      this.store.dispatch(SelectedStateActions.clearSelectedState())
+      this.store.dispatch(MultiActions.clearMultiState())
+      this.store.dispatch(GridStateActions.changeGridmode({ mode: GridMode.SELECT }))
       console.error('addPanelToJoin !panel')
       return false
     }
     if (panel.stringId === 'undefined') {
+      this.store.dispatch(LinksStateActions.clearLinkState())
+      this.store.dispatch(SelectedStateActions.clearSelectedState())
+      this.store.dispatch(MultiActions.clearMultiState())
+      this.store.dispatch(GridStateActions.changeGridmode({ mode: GridMode.SELECT }))
       console.error('panel needs to be apart of a string')
       return false
     }

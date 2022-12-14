@@ -14,7 +14,11 @@ import { selectProjectByRouteParams } from '../services/store/projects/projects.
 import { ProjectModel } from '../../models/project.model'
 import { selectGridMode } from '../services/store/grid/grid.selectors'
 import { BlockModel } from '../../models/block.model'
-import { selectBlocksByProjectIdRouteParams } from '../services/store/blocks/blocks.selectors'
+import {
+  selectBlockByLocation,
+  selectBlocksByProjectId,
+  selectBlocksByProjectIdRouteParams,
+} from '../services/store/blocks/blocks.selectors'
 import { GridMode } from '../services/store/grid/grid-mode.model'
 import { PanelsEntityService } from '../services/ngrx-data/panels-entity/panels-entity.service'
 import { CablesEntityService } from '../services/ngrx-data/cables-entity/cables-entity.service'
@@ -60,6 +64,7 @@ import { selectMultiMode } from '../services/store/multi-create/multi.selectors'
 import { MultiDeleteService } from '../services/multi/multi-delete.service'
 import { MultiSelectService } from '../services/multi/multi-select.service'
 import { MultiActions } from '../services/store/multi-create/multi.actions'
+import { SelectedStateActions } from '../services/store/selected/selected.actions'
 
 @Component({
   selector: 'app-grid-layout',
@@ -139,6 +144,14 @@ export class GridLayoutComponent implements OnInit {
 
     const gridMode = await firstValueFrom(this.store.select(selectGridMode))
     switch (gridMode) {
+      case GridMode.SELECT:
+        const block = await firstValueFrom(this.store.select(selectBlockByLocation({location})))
+        if (!block) {
+          console.log('dele')
+          this.store.dispatch(SelectedStateActions.clearSelectedState())
+        }
+        break
+
       case GridMode.CREATE:
         this.createService.createSwitch(location)
         break
@@ -148,11 +161,9 @@ export class GridLayoutComponent implements OnInit {
         break
 
       case GridMode.LINK:
-        console.log('linkSwitch')
         this.joinsService.linkSwitch(location, event.shiftKey)
         break
       default:
-        this.createService.createSwitch(location)
         break
     }
   }

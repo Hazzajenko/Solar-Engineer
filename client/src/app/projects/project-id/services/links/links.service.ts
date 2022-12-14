@@ -22,6 +22,11 @@ import { ItemsService } from '../items.service'
 import { LinksPanelsService } from './links-panels.service'
 import { BlocksService } from '../store/blocks/blocks.service'
 import { selectSelectedStringModel } from '../store/selected/selected.selectors'
+import { selectBlockByLocation } from '../store/blocks/blocks.selectors'
+import { SelectedStateActions } from '../store/selected/selected.actions'
+import { MultiActions } from '../store/multi-create/multi.actions'
+import { GridStateActions } from '../store/grid/grid.actions'
+import { GridMode } from '../store/grid/grid-mode.model'
 
 @Injectable({
   providedIn: 'root',
@@ -41,28 +46,29 @@ export class LinksService {
     private blocksService: BlocksService,
   ) {}
 
-  linkSwitch(location: string, shiftKey: boolean) {
-    firstValueFrom(this.store.select(selectSelectedStringModel)).then((selectedState) => {
-      if (selectedState.type !== TypeModel.STRING) {
+  async linkSwitch(location: string, shiftKey: boolean) {
+    const selectedState = await firstValueFrom(this.store.select(selectSelectedStringModel))
+    if (selectedState.type !== TypeModel.STRING) {
         return console.error('no string selected')
       }
       if (!selectedState.selectedStringId) {
         return console.error('no string selected')
       }
-      firstValueFrom(
-        this.blocksService
-          .getBlockByLocationAsync(location)
-          .pipe(combineLatestWith(this.store.select(selectLinksState))),
-      ).then(([block, joinsState]) => {
+      const block = await firstValueFrom(this.store.select(selectBlockByLocation({location})))
+      const linksState = await firstValueFrom(this.store.select(selectLinksState))
         if (!block) {
-          return console.error('joinSwitch, block doesnt exist')
+          this.store.dispatch(LinksStateActions.clearLinkState())
+          this.store.dispatch(SelectedStateActions.clearSelectedState())
+          this.store.dispatch(MultiActions.clearMultiState())
+          this.store.dispatch(GridStateActions.changeGridmode({ mode: GridMode.SELECT }))
+          return console.error('linkswitch, block doesnt exist')
         }
         switch (block.type) {
           case TypeModel.PANEL:
             this.itemsService.getItemByLocation(TypeModel.PANEL, location).then((panel) => {
               this.linksPanelsService.addPanelToLink(
                 panel,
-                joinsState,
+                linksState,
                 selectedState.selectedStringId,
                 shiftKey,
               )
@@ -72,15 +78,15 @@ export class LinksService {
             this.itemsService
               .getItemByLocation(TypeModel.DISCONNECTIONPOINT, location)
               .then((disconnectionPoint) => {
-                this.addDpToLink(disconnectionPoint, joinsState)
+                this.addDpToLink(disconnectionPoint, linksState)
               })
             break
           default:
             console.warn('cannot link on this object')
             break
         }
-      })
-    })
+
+
   }
 
   addPanelToLink(panel: PanelModel, linksState: LinksState) {

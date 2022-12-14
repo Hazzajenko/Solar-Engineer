@@ -65,6 +65,7 @@ import { ExistingStringsDialog } from '../../dialogs/existing-strings-dialog/exi
 import { PanelTooltipAsyncPipe } from './panel-tooltip-async.pipe'
 import { NewStringDialog } from '../../dialogs/new-string-dialog/new-string.dialog'
 import { EditStringDialog } from '../../dialogs/edit-string-dialog/edit-string.dialog'
+import { DarkColor, SoftColor, VibrantColor } from '../../../../models/color.model'
 
 @Component({
   selector: 'app-block-panel',
@@ -104,11 +105,13 @@ export class BlockPanelComponent implements OnInit, AfterViewInit {
   gridMode$!: Observable<GridMode | undefined>
   panel$!: Observable<PanelModel | undefined>
   panelToJoin$!: Observable<PanelModel | undefined>
+  isPanelToJoin$!: Observable<boolean>
 
   joinState$!: Observable<LinksState>
   isInSelection$!: Observable<boolean>
   isSelectedPanel$!: Observable<boolean>
   isSelectedString$!: Observable<boolean>
+  isOtherStringSelected$!: Observable<boolean>
   isSelectedPositiveTo$!: Observable<boolean>
   isSelectedNegativeTo$!: Observable<boolean>
 
@@ -172,6 +175,9 @@ export class BlockPanelComponent implements OnInit, AfterViewInit {
     )
 
     this.panelToJoin$ = this.store.select(selectPanelToLink)
+    this.isPanelToJoin$ = this.store
+      .select(selectPanelToLink)
+      .pipe(map((panelToLink) => panelToLink?.id === this.id))
     this.isSelectedPanel$ = this.store
       .select(selectSelectedPanelId)
       .pipe(map((selectedPanelId) => selectedPanelId === this.id))
@@ -189,6 +195,18 @@ export class BlockPanelComponent implements OnInit, AfterViewInit {
       .select(selectSelectedStringId)
       .pipe(combineLatestWith(this.panel$))
       .pipe(map(([selectedStringId, panel]) => selectedStringId === panel?.stringId))
+    this.isOtherStringSelected$ = this.store
+      .select(selectSelectedStringId)
+      .pipe(combineLatestWith(this.panel$))
+      .pipe(
+        map(([selectedStringId, panel]) => {
+          if (selectedStringId) {
+            return selectedStringId !== panel?.stringId
+          } else {
+            return false
+          }
+        }),
+      )
     this.isSelectedPositiveTo$ = this.store
       .select(selectSelectedPositiveTo)
       .pipe(map((positiveTo) => positiveTo === this.id))
@@ -287,71 +305,74 @@ export class BlockPanelComponent implements OnInit, AfterViewInit {
     this.panelsEntity.delete(panel)
   }
 
-  panelAction(panel: PanelModel, shiftKey: boolean) {
+  async panelAction(panel: PanelModel, shiftKey: boolean) {
     if (!panel) {
       return console.error('err panelAction !panel')
     }
 
-    firstValueFrom(this.store.select(selectGridMode))
-      .then((gridMode) => {
-        switch (gridMode) {
-          case GridMode.LINK:
-            /*            firstValueFrom(this.store.select(selectLinksState)).then((joinsState) => {
-              this.joinsService.addPanelToLink(panel, joinsState)
-            })*/
-            break
-          case GridMode.DELETE:
-            this.panelsEntity.delete(panel)
-            break
-          case GridMode.SELECT:
-            if (shiftKey) {
-              this.store.dispatch(
-                SelectedStateActions.addPanelToMultiselect({
-                  panelId: panel.id,
-                }),
-              )
-            } else {
-              this.store.dispatch(SelectedStateActions.selectPanel({ panelId: panel.id }))
-            }
-            break
-          case GridMode.CREATE:
-            firstValueFrom(this.store.select(selectCreateMode)).then((createMode) => {
-              if (createMode === TypeModel.RAIL) {
-                return
-              } else {
-                this.store.dispatch(GridStateActions.changeGridmode({ mode: GridMode.SELECT }))
-                if (shiftKey) {
-                  this.store.dispatch(
-                    SelectedStateActions.addPanelToMultiselect({
-                      panelId: panel.id,
-                    }),
-                  )
-                } else {
-                  this.store.dispatch(SelectedStateActions.selectPanel({ panelId: panel.id }))
-                }
-              }
-            })
-            break
-          case GridMode.MULTICREATE:
-            break
-          default:
-            this.store.dispatch(GridStateActions.changeGridmode({ mode: GridMode.SELECT }))
-            if (shiftKey) {
-              this.store.dispatch(
-                SelectedStateActions.addPanelToMultiselect({
-                  panelId: panel.id,
-                }),
-              )
-            } else {
-              this.store.dispatch(SelectedStateActions.selectPanel({ panelId: panel.id }))
-            }
+    const gridMode = await firstValueFrom(this.store.select(selectGridMode))
 
-            break
+    switch (gridMode) {
+      case GridMode.LINK:
+        break
+      case GridMode.DELETE:
+        this.panelsEntity.delete(panel)
+        break
+      case GridMode.SELECT:
+        const isStringSelected = await firstValueFrom(this.isSelectedString$)
+        if (isStringSelected) {
+          console.log('s')
+          this.store.dispatch(
+            SelectedStateActions.selectPanelWhenStringSelected({ panelId: panel.id }),
+          )
+        } else {
+          if (shiftKey) {
+            this.store.dispatch(
+              SelectedStateActions.addPanelToMultiselect({
+                panelId: panel.id,
+              }),
+            )
+          } else {
+            this.store.dispatch(SelectedStateActions.selectPanel({ panelId: panel.id }))
+          }
         }
-      })
-      .catch((err) => {
-        return console.error('err panelAction this.store.select(selectGridMode)' + err)
-      })
+
+        break
+      case GridMode.CREATE:
+        const createMode = await firstValueFrom(this.store.select(selectCreateMode))
+
+        if (createMode === TypeModel.RAIL) {
+          return
+        } else {
+          this.store.dispatch(GridStateActions.changeGridmode({ mode: GridMode.SELECT }))
+          if (shiftKey) {
+            this.store.dispatch(
+              SelectedStateActions.addPanelToMultiselect({
+                panelId: panel.id,
+              }),
+            )
+          } else {
+            this.store.dispatch(SelectedStateActions.selectPanel({ panelId: panel.id }))
+          }
+        }
+
+        break
+      case GridMode.MULTICREATE:
+        break
+      default:
+        this.store.dispatch(GridStateActions.changeGridmode({ mode: GridMode.SELECT }))
+        if (shiftKey) {
+          this.store.dispatch(
+            SelectedStateActions.addPanelToMultiselect({
+              panelId: panel.id,
+            }),
+          )
+        } else {
+          this.store.dispatch(SelectedStateActions.selectPanel({ panelId: panel.id }))
+        }
+
+        break
+    }
   }
 
   createNewStringWithSelected() {
@@ -403,7 +424,7 @@ export class BlockPanelComponent implements OnInit, AfterViewInit {
     })
   }
 
-  async rotateSelectedLandscape() {
+  async rotateSelected(rotation: number) {
     const multiSelectIds = await firstValueFrom(this.store.select(selectMultiSelectIds))
     if (multiSelectIds) {
       const panelsToUpdate = await firstValueFrom(
@@ -413,28 +434,7 @@ export class BlockPanelComponent implements OnInit, AfterViewInit {
             selectedPanels.map((panel) => {
               return {
                 ...panel,
-                rotation: 0,
-              } as Partial<PanelModel>
-            }),
-          ),
-        ),
-      )
-
-      this.panelsEntity.updateManyInCache(panelsToUpdate)
-    }
-  }
-
-  async rotateSelectedPortrait() {
-    const multiSelectIds = await firstValueFrom(this.store.select(selectMultiSelectIds))
-    if (multiSelectIds) {
-      const panelsToUpdate = await firstValueFrom(
-        this.panelsEntity.entities$.pipe(
-          map((panels) => panels.filter((panel) => multiSelectIds.includes(panel.id))),
-          map((selectedPanels) =>
-            selectedPanels.map((panel) => {
-              return {
-                ...panel,
-                rotation: 0,
+                rotation,
               } as Partial<PanelModel>
             }),
           ),
@@ -462,13 +462,30 @@ export class BlockPanelComponent implements OnInit, AfterViewInit {
     stringColor: string,
     pathMap: Map<string, { link: number; count: number; color: string }>,
     isInSelection: boolean,
+    positiveTo: boolean,
+    negativeTo: boolean,
+    isPanelToJoin: boolean,
+    isOtherStringSelected: boolean,
   ) {
+    if (isOtherStringSelected) {
+      return '#819CA9'
+    }
+    if (positiveTo) {
+      return SoftColor.SoftRed
+    }
+    if (negativeTo) {
+      return SoftColor.SoftCyan
+    }
+    if (isPanelToJoin) {
+      return VibrantColor.VibrantPurple
+    }
     if (pathMap) {
       const thisPanelPath = pathMap.get(this.id)
       if (thisPanelPath) {
         return thisPanelPath.color
       }
     }
+
     if (isInSelection) {
       // return '#ff1c24'
       // return '#00E6DF'
@@ -489,7 +506,11 @@ export class BlockPanelComponent implements OnInit, AfterViewInit {
     stringColor: string,
     pathMap: Map<string, { link: number; count: number; color: string }>,
     isInSelection: boolean,
+    isSelectedString: boolean,
   ) {
+/*    if (isInSelection && isSelectedString) {
+      return `0 0 0 1px red, 0 0 0 0.5px ${DarkColor.SoftCyan}`
+    }*/
     if (isInSelection) {
       // return `0 0 0 2px ${VibrantColors.VibrantOrange}`
       // return `0 0 0 2px ${DarkColors.SoftCyan}`
@@ -499,8 +520,14 @@ export class BlockPanelComponent implements OnInit, AfterViewInit {
       // return `0 0 0 1px ${VibrantColors.VibrantGreen}`
       // border: 2px solid $borderColor;
       // return '#00E6DF'
+
       // return VibrantColors.VibrantGreen
       // return `hwb(0 20% 0%)`
+    }
+    if (isSelectedString) {
+      // return `rgb(85, 91, 255) 0px 0px 0px 3px, rgb(31, 193, 27) 0px 0px 0px 6px, rgb(255, 217, 19) 0px 0px 0px 9px, rgb(255, 156, 85) 0px 0px 0px 12px, rgb(255, 85, 85) 0px 0px 0px 15px`
+      // return `rgba(6, 24, 44, 0.4) 0px 0px 0px 2px, rgba(6, 24, 44, 0.65) 0px 4px 6px -1px, rgba(255, 255, 255, 0.08) 0px 1px 0px inset`
+      // return `0 0 0 0.5px ${DarkColor.SoftOrange}`
     }
     if (stringColor) {
       // return `0 0 0 1px ${stringColor}`

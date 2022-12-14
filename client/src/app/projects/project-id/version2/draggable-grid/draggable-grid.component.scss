@@ -1,0 +1,32 @@
+.container {
+/*  display: flex;
+  flex-direction: column;
+  align-items: center;*/
+}
+
+.handle {
+  position: absolute;
+  //top: -50px;
+  //right: 500px;
+  left: 100px;
+  color: #ccc;
+  cursor: move;
+  width: 24px;
+  height: 24px;
+}
+
+.row {
+  display: flex;
+}
+
+.col {
+  border: 0.01px solid rgb(72, 64, 56);
+}
+
+.drop-zone {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 30px;
+  height: 30px;
+}

@@ -60,8 +60,17 @@ export class StringsDataService extends DefaultDataService<StringModel> {
 
   override update(update: Update<StringModel>): Observable<StringModel> {
     return this.http
-      .put<UpdateStringResponse>(`/api/projects/1/string/${update.id}`, update)
-      .pipe(map((res) => res.string))
+      .put<UpdateStringResponse>(`/api/projects/1/string/${update.id}`, {
+        ...update.changes,
+      })
+      .pipe(
+        map((res) => {
+          return res.string
+        }),
+      )
+    /*    return this.http
+          .put<UpdateStringResponse>(`/api/projects/1/string/${update.id}`, update)
+          .pipe(map((res) => res.string))*/
   }
 
   override delete(key: number | string): Observable<number | string> {

@@ -10,7 +10,7 @@ export enum WarmColor {
   Pink = '#EC87C0',
 }
 
-export enum VibrantColors {
+export enum VibrantColor {
   VibrantPurple = '#D500F9',
   VibrantGreen = '#00E676',
   VibrantYellow = '#FFEA00',
@@ -26,7 +26,7 @@ export enum LightColors {
   LightRed = '#FF6659',
 }
 
-export enum SoftColors {
+export enum SoftColor {
   SoftBrown = '#E26D60',
   SoftOrange = '#E8A87C',
   SoftPink = '#FF77A9',
@@ -36,7 +36,7 @@ export enum SoftColors {
   SoftGreen = '#3bf5b1',
 }
 
-export enum DarkColors {
+export enum DarkColor {
   SoftBrown = '#C62828',
   Purple = '#6A1B9A',
   SoftOrange = '#EF6C00',

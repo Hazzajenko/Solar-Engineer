@@ -60,14 +60,19 @@
         getBackgroundColor(
           (stringColor$ | async)!,
           (selectedStringPathMap$ | async)!,
-          (isInSelection$ | async)!
+          (isInSelection$ | async)!,
+          (isSelectedPositiveTo$ | async)!,
+          (isSelectedNegativeTo$ | async)!,
+          (isPanelToJoin$ | async)!,
+          (isOtherStringSelected$ | async)!
         )
       "
       [style.box-shadow]="
         getBoxShadow(
           (stringColor$ | async)!,
           (selectedStringPathMap$ | async)!,
-          (isInSelection$ | async)!
+          (isInSelection$ | async)!,
+          (isSelectedString$ | async)!
         )
       "
       cdkDrag
@@ -164,14 +169,14 @@ border:
               Add selected [{{ (multiSelectIds$ | async)?.length }}] to existing string
             </button>
             <button
-              (click)="rotateSelectedLandscape()"
+              (click)="rotateSelected(1)"
               class="right-click-menu__button"
               mat-menu-item
             >
               Rotate selected [{{ (multiSelectIds$ | async)?.length }}] Portrait
             </button>
             <button
-              (click)="rotateSelectedPortrait()"
+              (click)="rotateSelected(0)"
               class="right-click-menu__button"
               mat-menu-item
             >

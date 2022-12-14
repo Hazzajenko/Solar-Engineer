@@ -71,6 +71,18 @@ export const selectedReducer = createReducer(
     selectedPanelId: panelId,
   })),
 
+  on(SelectedStateActions.selectPanelWhenStringSelected, (state, { panelId }) => ({
+    type: state.type,
+    multiSelect: state.multiSelect,
+    multiSelectIds: state.multiSelectIds,
+    singleSelectId: state.singleSelectId,
+    selectedStringId: state.selectedStringId,
+    selectedStringTooltip: state.selectedStringTooltip,
+    selectedStringPathMap: state.selectedStringPathMap,
+    selectedPanelId: panelId,
+  })),
+
+
   on(SelectedStateActions.startMultiselectPanel, (state, { panelId }) => ({
     multiSelectUnit: TypeModel.PANEL,
     multiSelect: true,
@@ -108,6 +120,19 @@ export const selectedReducer = createReducer(
     selectedNegativeLinkTo: panelLink.selectedNegativeLinkTo,
   })),
 
+  on(SelectedStateActions.setSelectedPanelLinksWhenStringSelected, (state, { panelLink }) => ({
+    type: state.type,
+    singleSelectId: state.singleSelectId,
+    selectedPanelId: state.selectedPanelId,
+    selectedPositiveLinkTo: panelLink.selectedPositiveLinkTo,
+    selectedNegativeLinkTo: panelLink.selectedNegativeLinkTo,
+    multiSelect: state.multiSelect,
+    multiSelectIds: state.multiSelectIds,
+    selectedStringId: state.selectedStringId,
+    selectedStringTooltip: state.selectedStringTooltip,
+    selectedStringPathMap: state.selectedStringPathMap,
+  })),
+
   on(SelectedStateActions.selectString, (state, { stringId }) => ({
     type: TypeModel.STRING,
     singleSelectId: stringId,
@@ -123,21 +148,20 @@ export const selectedReducer = createReducer(
     type: TypeModel.STRING,
     singleSelectId: state.singleSelectId,
     selectedStringId: state.selectedStringId,
-    multiSelectIds: panelIds,
+    // multiSelectIds: panelIds,
   })),
 
   on(SelectedStateActions.setSelectedStringTooltip, (state, { tooltip }) => ({
     type: TypeModel.STRING,
     singleSelectId: state.singleSelectId,
     selectedStringId: state.selectedStringId,
-    multiSelectIds: state.multiSelectIds,
     selectedStringTooltip: tooltip,
   })),
 
   on(SelectedStateActions.setSelectedStringLinkPaths, (state, { pathMap }) => ({
     type: TypeModel.STRING,
+    singleSelectId: state.singleSelectId,
     selectedStringId: state.selectedStringId,
-    multiSelectIds: state.multiSelectIds,
     selectedStringTooltip: state.selectedStringTooltip,
     selectedStringPathMap: pathMap,
   })),
@@ -153,7 +177,7 @@ export const selectedReducer = createReducer(
     })),*/
 
   on(SelectedStateActions.clearSelectedPanelLinks, (state) => ({
-    type: TypeModel.STRING,
+    type: state.type,
     singleSelectId: state.singleSelectId,
     selectedStringId: state.selectedStringId,
     multiSelectIds: state.multiSelectIds,

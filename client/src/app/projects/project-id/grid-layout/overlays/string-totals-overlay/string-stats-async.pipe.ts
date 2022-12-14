@@ -1,12 +1,12 @@
 import { Pipe, PipeTransform } from '@angular/core'
 import { Observable, of, switchMap } from 'rxjs'
 import { map } from 'rxjs/operators'
-import { StringModel } from '../../../models/string.model'
-import { StatsService, TotalModel } from '../../services/stats.service'
-import { PanelsEntityService } from '../../services/ngrx-data/panels-entity/panels-entity.service'
-import { PanelLinksEntityService } from '../../services/ngrx-data/panel-links-entity/panel-links-entity.service'
-import { DisconnectionPointsEntityService } from '../../services/ngrx-data/disconnection-points-entity/disconnection-points-entity.service'
-import { LinksPathService } from '../../services/links/links-path.service'
+import { StringModel } from '../../../../models/string.model'
+import { StatsService, TotalModel } from '../../../services/stats.service'
+import { PanelsEntityService } from '../../../services/ngrx-data/panels-entity/panels-entity.service'
+import { PanelLinksEntityService } from '../../../services/ngrx-data/panel-links-entity/panel-links-entity.service'
+import { DisconnectionPointsEntityService } from '../../../services/ngrx-data/disconnection-points-entity/disconnection-points-entity.service'
+import { LinksPathService } from '../../../services/links/links-path.service'
 
 export interface StringStatsModel {
   totals: TotalModel

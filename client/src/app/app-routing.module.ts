@@ -5,6 +5,7 @@ import { ProjectIdComponent } from './projects/project-id/project-id.component'
 import { PanelsResolver } from './projects/project-id/services/ngrx-data/panels-entity/panels.resolver'
 import { StringsResolver } from './projects/project-id/services/ngrx-data/strings-entity/strings.resolver'
 import { PanelLinksResolver } from './projects/project-id/services/ngrx-data/panel-links-entity/panel-links.resolver'
+import { SceneComponent } from './projects/project-id/version2/scene.component'
 
 const routes: Routes = [
   {
@@ -33,6 +34,10 @@ const routes: Routes = [
             trays: TraysResolver,
             rails: RailsResolver,*/
     },
+  },
+  {
+    path: 'scene',
+    component: SceneComponent
   },
   { path: '', redirectTo: '/projects/3', pathMatch: 'full' },
 ]

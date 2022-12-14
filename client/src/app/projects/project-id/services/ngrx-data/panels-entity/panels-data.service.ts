@@ -44,20 +44,15 @@ export class PanelsDataService extends DefaultDataService<PanelModel> {
   }
 
   override update(update: Update<PanelModel>): Observable<PanelModel> {
-    // update.
-    // const id = Number(update.id
-    console.log(update)
     return this.http
       .put<UpdatePanelResponse>(`/api/projects/1/panel/${update.id}`, {
         ...update.changes,
       })
       .pipe(
         map((res) => {
-          console.log(res)
           return res.panel
         }),
       )
-    // return super.update(update)
   }
 
   override delete(key: number | string): Observable<number | string> {

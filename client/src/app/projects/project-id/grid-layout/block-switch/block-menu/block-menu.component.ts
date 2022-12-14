@@ -23,8 +23,8 @@ export class BlockMenuComponent {
   constructor(public gridDelete: GridDeleteService, private store: Store<AppState>) {}
 
   selectString(stringId: string) {
-    this.store.dispatch(GridStateActions.changeGridmode({ mode: GridMode.SELECT }))
-    this.store.dispatch(SelectedStateActions.selectType({ objectType: TypeModel.STRING }))
-    this.store.dispatch(SelectedStateActions.selectString({ stringId }))
+    // this.store.dispatch(GridStateActions.changeGridmode({ mode: GridMode.SELECT }))
+    // this.store.dispatch(SelectedStateActions.selectType({ objectType: TypeModel.STRING }))
+    // this.store.dispatch(SelectedStateActions.selectString({ stringId }))
   }
 }

@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { Store } from '@ngrx/store'
 import { AppState } from '../../../../../store/app.state'
-import { combineLatestWith, switchMap } from 'rxjs'
+import { async, combineLatestWith, firstValueFrom, switchMap, tap } from 'rxjs'
 import { map } from 'rxjs/operators'
 import { SelectedStateActions } from './selected.actions'
 import { PanelLinksToModel } from '../../../../models/deprecated-for-now/panel-links-to.model'
@@ -39,28 +39,25 @@ export class SelectedEffects {
     () =>
       this.actions$.pipe(
         ofType(SelectedStateActions.selectPanel),
-        switchMap((action) =>
-          /*            this.panelsEntity.entities$.pipe(
-                        map((panels) => {
-                          const panel = panels.find(p => p.id === action.panelId)
-                          if (panel) {
-                            const panelLink: PanelLinksToModel = {
-                              selectedPositiveLinkTo: panel.positive_to_id,
-                              selectedNegativeLinkTo: panel.negative_to_id,
-                            }
-                            this.store.dispatch(
-                              SelectedStateActions.setSelectedPanelLinks({ panelLink }),
-                            )
-                          }
+        tap(async (action) => {
+          const panelLinks = await firstValueFrom(this.panelLinksEntity.entities$)
+          const panelLink: PanelLinksToModel = getSelectedLinks(panelLinks, action.panelId)
+          this.store.dispatch(SelectedStateActions.setSelectedPanelLinks({ panelLink }))
+          }
+        ),
+      ),
+    { dispatch: false },
+  )
 
-                        }),
-                      ),*/
-          this.panelJoinsEntity.entities$.pipe(
-            map((res) => {
-              const panelLink: PanelLinksToModel = getSelectedLinks(res, action.panelId)
-              this.store.dispatch(SelectedStateActions.setSelectedPanelLinks({ panelLink }))
-            }),
-          ),
+  selectPanelWhenStringSelected$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(SelectedStateActions.selectPanelWhenStringSelected),
+        tap(async (action) => {
+            const panelLinks = await firstValueFrom(this.panelLinksEntity.entities$)
+            const panelLink: PanelLinksToModel = getSelectedLinks(panelLinks, action.panelId)
+            this.store.dispatch(SelectedStateActions.setSelectedPanelLinksWhenStringSelected({ panelLink }))
+          }
         ),
       ),
     { dispatch: false },
@@ -71,7 +68,7 @@ export class SelectedEffects {
       this.actions$.pipe(
         ofType(SelectedStateActions.selectDp),
         switchMap((action) =>
-          this.panelJoinsEntity.entities$.pipe(
+          this.panelLinksEntity.entities$.pipe(
             map((res) => {
               const panelLink: PanelLinksToModel = getSelectedLinks(res, action.dpId)
               this.store.dispatch(SelectedStateActions.setSelectedPanelLinks({ panelLink }))
@@ -87,7 +84,7 @@ export class SelectedEffects {
       this.actions$.pipe(
         ofType(SelectedStateActions.selectCable),
         switchMap((action) =>
-          this.panelJoinsEntity.entities$.pipe(
+          this.panelLinksEntity.entities$.pipe(
             map((res) => {
               const panelLink: PanelLinksToModel = getSelectedLinks(res, action.cableId)
               this.store.dispatch(SelectedStateActions.setSelectedPanelLinks({ panelLink }))
@@ -102,23 +99,36 @@ export class SelectedEffects {
     () =>
       this.actions$.pipe(
         ofType(SelectedStateActions.selectString),
-        switchMap((action) =>
-          this.stringsEntity.entities$.pipe(
-            combineLatestWith(this.panelsEntity.entities$),
-            map(([strings, panels]) => {
-              const selectedString = strings.find((s) => s.id === action.stringId)
-              const stringPanels: PanelModel[] = panels.filter(
+        tap(async (action) => {
+/*          this.stringsEntity.entities$.pipe(
+/!*            combineLatestWith(this.panelsEntity.entities$.pipe(
+              map(panels => panels.filter(panel => panel.stringId === action.stringId))
+            )),*!/
+            map((strings) => {*/
+            // map(([strings, panels]) => {
+          const stringPanels = await firstValueFrom(this.panelsEntity.entities$.pipe(
+            map(panels => panels.filter(
+              (panel) => panel.stringId === action.stringId,
+            ))
+          ))
+
+          // const selectedString = strings.find((s) => s.id === action.stringId)
+          const selectedString = await firstValueFrom(this.stringsEntity.entities$.pipe(
+            map(strings => strings.find(
+              (string) => string.id === action.stringId,
+            ))))
+          /*    const stringPanels: PanelModel[] = panels.filter(
                 (panel) => panel.stringId === action.stringId,
-              )
-              const panelIds: string[] = stringPanels.map((p) => p.id)
-              this.store.dispatch(SelectedStateActions.setSelectedStringPanels({ panelIds }))
+              )*/
+          const panelIds: string[] = stringPanels.map((p) => p.id)
+          this.store.dispatch(SelectedStateActions.setSelectedStringPanels({ panelIds }))
 
-              const stringStats = this.statsService.calculateStringTotals(
-                selectedString!,
-                stringPanels,
-              )
+          const stringStats = this.statsService.calculateStringTotals(
+            selectedString!,
+            stringPanels,
+          )
 
-              const tooltip: string = `
+          const tooltip: string = `
                 String = ${selectedString?.name} \n
                 Color: ${selectedString?.color} \n
                 Parallel: ${selectedString?.isInParallel} \n
@@ -129,14 +139,49 @@ export class SelectedEffects {
                 Isc: ${stringStats.totalIsc}A \n
 
               `
-              this.store.dispatch(SelectedStateActions.setSelectedStringTooltip({ tooltip }))
+          this.store.dispatch(SelectedStateActions.setSelectedStringTooltip({ tooltip }))
 
-              this.linksPathService.orderPanelsInLinkOrder(action.stringId).then((res) => {
-                console.log(res)
-              })
+          this.linksPathService.orderPanelsInLinkOrder(action.stringId).then((res) => {
+            console.log(res)
+          })
+              /*firstValueFrom(this.panelsEntity.entities$.pipe(
+                map(panels => panels.filter(
+                  (panel) => panel.stringId === action.stringId,
+                ))
+              )).then(stringPanels => {
+                const selectedString = strings.find((s) => s.id === action.stringId)
+            /!*    const stringPanels: PanelModel[] = panels.filter(
+                  (panel) => panel.stringId === action.stringId,
+                )*!/
+                const panelIds: string[] = stringPanels.map((p) => p.id)
+                this.store.dispatch(SelectedStateActions.setSelectedStringPanels({ panelIds }))
+
+                const stringStats = this.statsService.calculateStringTotals(
+                  selectedString!,
+                  stringPanels,
+                )
+
+                const tooltip: string = `
+                String = ${selectedString?.name} \n
+                Color: ${selectedString?.color} \n
+                Parallel: ${selectedString?.isInParallel} \n
+                Panels: ${stringPanels.length} \n
+                Voc: ${stringStats.totalVoc}V \n
+                Vmp: ${stringStats.totalVmp}V \n
+                Pmax: ${stringStats.totalPmax}W \n
+                Isc: ${stringStats.totalIsc}A \n
+
+              `
+                this.store.dispatch(SelectedStateActions.setSelectedStringTooltip({ tooltip }))
+
+                this.linksPathService.orderPanelsInLinkOrder(action.stringId).then((res) => {
+                  console.log(res)
+                })
+              })*/
+
             }),
-          ),
-        ),
+
+
       ),
     { dispatch: false },
   )
@@ -145,14 +190,19 @@ export class SelectedEffects {
     () =>
       this.actions$.pipe(
         ofType(SelectedStateActions.clearSelectedPanelLinks),
-        map(async (action) =>
-          this.store.select(selectSelectedStringId).pipe(
-            map((selectedStringId) => {
-              if (selectedStringId) {
-                this.linksPathService.orderPanelsInLinkOrder(selectedStringId)
-              }
-            }),
-          ),
+        tap(async (action) => {
+          const selectedStringId = await firstValueFrom(this.store.select(selectSelectedStringId))
+          if (selectedStringId) {
+            await this.linksPathService.orderPanelsInLinkOrder(selectedStringId)
+          }
+            /*this.store.select(selectSelectedStringId).pipe(
+              map((selectedStringId) => {
+                if (selectedStringId) {
+                  this.linksPathService.orderPanelsInLinkOrder(selectedStringId)
+                }
+              }),
+            ),*/
+          }
         ),
       ),
     { dispatch: false },
@@ -160,7 +210,7 @@ export class SelectedEffects {
 
   constructor(
     private actions$: Actions,
-    private panelJoinsEntity: PanelLinksEntityService,
+    private panelLinksEntity: PanelLinksEntityService,
     private panelsEntity: PanelsEntityService,
     private stringsEntity: StringsEntityService,
     private statsService: StatsService,
