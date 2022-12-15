@@ -6,6 +6,7 @@ import { PanelsResolver } from './projects/project-id/services/ngrx-data/panels-
 import { StringsResolver } from './projects/project-id/services/ngrx-data/strings-entity/strings.resolver'
 import { PanelLinksResolver } from './projects/project-id/services/ngrx-data/panel-links-entity/panel-links.resolver'
 import { SceneComponent } from './projects/project-id/version2/scene.component'
+import { MapsComponent } from './projects/project-id/version2/maps/maps.component'
 
 const routes: Routes = [
   {
@@ -37,7 +38,11 @@ const routes: Routes = [
   },
   {
     path: 'scene',
-    component: SceneComponent
+    component: SceneComponent,
+  },
+  {
+    path: 'maps',
+    component: MapsComponent,
   },
   { path: '', redirectTo: '/projects/3', pathMatch: 'full' },
 ]

@@ -1,0 +1,18 @@
+<!--<ng-container *ngIf="done">-->
+<input [formControl]="address" id="autocomplete" placeholder="enter" type="text" />
+<button (click)="enterAddress()" mat-stroked-button>Strings</button>
+<div #screen>
+  <google-map
+    (mapClick)="click($event)"
+    [center]="center"
+    [options]="options"
+    [zoom]="zoom"
+    height="800px"
+    width="100%"
+  >
+    >
+  </google-map>
+</div>
+<button (click)="capture()">Take</button>
+
+<!--</ng-container>-->

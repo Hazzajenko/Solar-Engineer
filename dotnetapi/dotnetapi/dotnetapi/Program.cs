@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Amazon.S3;
 using dotnetapi.Data;
 using dotnetapi.Extensions;
 using dotnetapi.Models.Entities;
@@ -47,6 +48,7 @@ builder.Services.AddCors(options =>
 });
 builder.Services.AddSwaggerServices(config);
 
+
 builder.Services.AddIdentityServices(config);
 /*.AddFluentValidation(x =>
 {
@@ -56,6 +58,8 @@ builder.Services.AddIdentityServices(config);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
+builder.Services.AddAWSService<IAmazonS3>();
 
 // builder.Services.AddSignalR().AddMessagePackProtocol();
 

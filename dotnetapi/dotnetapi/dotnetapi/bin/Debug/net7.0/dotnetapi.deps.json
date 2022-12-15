@@ -8,6 +8,8 @@
     ".NETCoreApp,Version=v7.0": {
       "dotnetapi/1.0.0": {
         "dependencies": {
+          "AWSSDK.Extensions.NETCore.Setup": "3.7.2",
+          "AWSSDK.S3": "3.7.101.36",
           "FluentValidation.AspNetCore": "11.2.2",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "7.0.0",
           "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "7.0.0",
@@ -28,6 +30,39 @@
         },
         "runtime": {
           "dotnetapi.dll": {}
+        }
+      },
+      "AWSSDK.Core/3.7.102.4": {
+        "runtime": {
+          "lib/netcoreapp3.1/AWSSDK.Core.dll": {
+            "assemblyVersion": "3.3.0.0",
+            "fileVersion": "3.7.102.4"
+          }
+        }
+      },
+      "AWSSDK.Extensions.NETCore.Setup/3.7.2": {
+        "dependencies": {
+          "AWSSDK.Core": "3.7.102.4",
+          "Microsoft.Extensions.Configuration.Abstractions": "7.0.0",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "7.0.0",
+          "Microsoft.Extensions.Logging.Abstractions": "7.0.0"
+        },
+        "runtime": {
+          "lib/netstandard2.0/AWSSDK.Extensions.NETCore.Setup.dll": {
+            "assemblyVersion": "3.3.0.0",
+            "fileVersion": "3.7.1.0"
+          }
+        }
+      },
+      "AWSSDK.S3/3.7.101.36": {
+        "dependencies": {
+          "AWSSDK.Core": "3.7.102.4"
+        },
+        "runtime": {
+          "lib/netcoreapp3.1/AWSSDK.S3.dll": {
+            "assemblyVersion": "3.3.0.0",
+            "fileVersion": "3.7.101.36"
+          }
         }
       },
       "FluentValidation/11.2.1": {
@@ -670,6 +705,27 @@
       "type": "project",
       "serviceable": false,
       "sha512": ""
+    },
+    "AWSSDK.Core/3.7.102.4": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-xVAnTQZ/hYM+CtNNAlruGvuDhtV3br5UEdEzGrx/Vy60yuqBPKvpJJknMrnM7FjuVk2YkFS3zDWnJ/fjFHvpag==",
+      "path": "awssdk.core/3.7.102.4",
+      "hashPath": "awssdk.core.3.7.102.4.nupkg.sha512"
+    },
+    "AWSSDK.Extensions.NETCore.Setup/3.7.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-iFjbEnVB0f6Hr8L3EfdelHG7zxVQrOmeP9UIrX3IODR1eTsrqVrmq0mazdIr0GZK1YG2/DZiVt6tNyV1bayndw==",
+      "path": "awssdk.extensions.netcore.setup/3.7.2",
+      "hashPath": "awssdk.extensions.netcore.setup.3.7.2.nupkg.sha512"
+    },
+    "AWSSDK.S3/3.7.101.36": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-l5v4U5nKT+J1gm9D6aky0e1l0g1dmjSuMc9OzqCthP7ClrU16VNCG236rk7c3/2d6ChwyL2OibcfLmq2tlN/ZQ==",
+      "path": "awssdk.s3/3.7.101.36",
+      "hashPath": "awssdk.s3.3.7.101.36.nupkg.sha512"
     },
     "FluentValidation/11.2.1": {
       "type": "package",

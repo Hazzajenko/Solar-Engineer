@@ -1,15 +1,20 @@
 .container {
-/*  display: flex;
-  flex-direction: column;
-  align-items: center;*/
+  //display: flex;
+  /*  display: flex;
+    flex-direction: column;
+    align-items: center;*/
+  background-color: #38c1ff;
+  max-width: 320px;
+  z-index: 1;
+  position: absolute;
 }
 
 .handle {
   position: absolute;
   //top: -50px;
   //right: 500px;
-  left: 100px;
-  color: #ccc;
+  //left: 100px;
+  color: #0e0303;
   cursor: move;
   width: 24px;
   height: 24px;

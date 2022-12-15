@@ -1,9 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "fYTRz7sqSwoCj4YPSCVSq4JJK4fb3JJ3HmALPuf+a1IEGekP2ss9uOEwN8H4RXbiTknnn8F/ZSuIPCsxYxSsRg==",
+  "dgSpecHash": "4il4wSPqaiwkxsVfprHG6drLGJVJ5aQ9Bkri3NjWI45y2SJqm3tGaTKe0kaAb/D/+WIg5imCVFTi8EzoRRglvA==",
   "success": true,
   "projectFilePath": "C:\\Users\\jenki\\source\\app\\solar-engineer\\dotnetapi\\dotnetapi\\dotnetapi\\dotnetapi.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\jenki\\.nuget\\packages\\awssdk.core\\3.7.102.4\\awssdk.core.3.7.102.4.nupkg.sha512",
+    "C:\\Users\\jenki\\.nuget\\packages\\awssdk.extensions.netcore.setup\\3.7.2\\awssdk.extensions.netcore.setup.3.7.2.nupkg.sha512",
+    "C:\\Users\\jenki\\.nuget\\packages\\awssdk.s3\\3.7.101.36\\awssdk.s3.3.7.101.36.nupkg.sha512",
     "C:\\Users\\jenki\\.nuget\\packages\\fluentvalidation\\11.2.1\\fluentvalidation.11.2.1.nupkg.sha512",
     "C:\\Users\\jenki\\.nuget\\packages\\fluentvalidation.aspnetcore\\11.2.2\\fluentvalidation.aspnetcore.11.2.2.nupkg.sha512",
     "C:\\Users\\jenki\\.nuget\\packages\\fluentvalidation.dependencyinjectionextensions\\11.2.1\\fluentvalidation.dependencyinjectionextensions.11.2.1.nupkg.sha512",

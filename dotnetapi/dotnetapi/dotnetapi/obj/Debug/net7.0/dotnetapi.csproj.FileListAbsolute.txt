@@ -71,3 +71,6 @@ C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\obj\Debug
 C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\obj\Debug\net7.0\dotnetapi.genruntimeconfig.cache
 C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\obj\Debug\net7.0\ref\dotnetapi.dll
 C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\bin\Debug\net7.0\Data\Json\Panels\longi555m.json
+C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\bin\Debug\net7.0\AWSSDK.Core.dll
+C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\bin\Debug\net7.0\AWSSDK.Extensions.NETCore.Setup.dll
+C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\bin\Debug\net7.0\AWSSDK.S3.dll
