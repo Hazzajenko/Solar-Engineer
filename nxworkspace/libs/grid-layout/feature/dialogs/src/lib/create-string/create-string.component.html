@@ -1,0 +1,8 @@
+<mat-form-field>
+  <mat-label>String Name</mat-label>
+  <input [(ngModel)]="name" matInput placeholder="Ex. String" />
+</mat-form-field>
+<div mat-dialog-actions>
+  <button (click)="onNoClick()" mat-button>Cancel</button>
+  <button [mat-dialog-close]="name" cdkFocusInitial mat-button>Ok</button>
+</div>

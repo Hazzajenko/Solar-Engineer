@@ -1,0 +1,59 @@
+<ng-container [ngSwitch]="item.model">
+  <ng-container *ngSwitchCase="2">
+    <label>{{ item.name }}</label>
+    <ul style="list-style: none">
+      <li>Inverter Id: {{ item.id }}</li>
+      <li>Location: {{ item["location"] }}</li>
+    </ul>
+    <button mat-menu-item>Add</button>
+    <button mat-menu-item>Edit</button>
+    <!--        <button (click)="gridDelete.(item)" mat-menu-item>Delete</button>-->
+    <!--        <button (click)="deleteBlock(item)" mat-menu-item>Delete</button>-->
+  </ng-container>
+  <ng-container *ngSwitchCase="5">
+    <div>
+      <label>{{ item.name }}</label>
+      <ul style="list-style: none">
+        <li>Panel Id: {{ item.id }}</li>
+        <li>Location: {{ item["location"] }}</li>
+        <li>String Id: {{ item["string_id"] }}</li>
+      </ul>
+      <button mat-menu-item>Add</button>
+      <button mat-menu-item>Edit</button>
+      <button (click)="selectString(item['string_id'])" mat-menu-item>Select String</button>
+      <button (click)="gridDelete.deletePanel(item.id)" mat-menu-item>Delete</button>
+    </div>
+  </ng-container>
+  <ng-container *ngSwitchCase="6">
+    <ul style="list-style: none">
+      <li>Cable Id: {{ item.id }}</li>
+      <li>Size: {{ item["size"] }}</li>
+      <li>Location: {{ item["location"] }}</li>
+    </ul>
+    <!--        <button (click)="click()" mat-menu-item>Add</button>
+            <ng-container
+              *ngrxLet="{
+                toJoinArray: toJoinArray$ | async,
+                project: project$ | async,
+                blocks: blocks$ | async,
+                cables: cables$ | async
+              } as vm"
+            >
+              &lt;!&ndash;        <ng-container *ngrxLet='toJoinArray$ | async as toJoinArray'>&ndash;&gt;
+              <ng-container
+                *ngIf="vm && vm.toJoinArray && vm.project && vm.blocks && vm.cables"
+              >
+                <button
+                  (click)="gridJoins.createJoinWithBlocks(vm)"
+                  *ngIf="vm.toJoinArray.length > 1"
+                  mat-menu-item
+                >
+                  Join Cables
+                </button>
+              </ng-container>
+            </ng-container>
+            <button (click)="startJoin(item)" mat-menu-item>Start Join</button>
+            <button mat-menu-item>Edit</button>
+            <button (click)="deleteCable(item)" mat-menu-item>Delete</button>-->
+  </ng-container>
+</ng-container>

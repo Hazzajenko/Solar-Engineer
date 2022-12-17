@@ -1,0 +1,24 @@
+import { Pipe, PipeTransform } from '@angular/core'
+
+import { CablesEntityService } from '../../../services/ngrx-data/cables-entity/cables-entity.service'
+import { Observable, of } from 'rxjs'
+import { map } from 'rxjs/operators'
+import { CableModel } from '../../../../models/deprecated-for-now/cable.model'
+
+@Pipe({
+  name: 'getCablesInJoinLengthAsync',
+  standalone: true,
+})
+export class GetCablesInJoinLengthPipe implements PipeTransform {
+  constructor(private cablesEntity: CablesEntityService) {}
+
+  transform(cable: CableModel): Observable<number> {
+    if (!cable) {
+      return of(0)
+    }
+    return this.cablesEntity.entities$.pipe(
+      map((cables) => cables.filter((c) => cable.join_id === c.join_id)),
+      map((cables) => cables.length),
+    )
+  }
+}

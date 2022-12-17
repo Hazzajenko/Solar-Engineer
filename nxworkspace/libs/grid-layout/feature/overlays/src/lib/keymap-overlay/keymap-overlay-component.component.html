@@ -1,0 +1,17 @@
+<div class="overlay">
+  <div class="keymap">
+    <h3>Keymap</h3>
+
+    <div class="keymap__list">
+      <ul style="list-style: none">
+        <li>S: Select String for Selected Panel</li>
+        <ng-container *ngIf="stringSelected$ | async">
+          <li>L: Select Link Mode</li>
+        </ng-container>
+        <li>C: Select Create Mode</li>
+        <li>Delete: Delete selected</li>
+        <li>Escape: Reset State</li>
+      </ul>
+    </div>
+  </div>
+</div>

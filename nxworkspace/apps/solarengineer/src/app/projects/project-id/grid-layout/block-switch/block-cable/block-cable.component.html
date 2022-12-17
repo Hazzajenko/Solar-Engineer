@@ -1,0 +1,89 @@
+<ng-container *ngIf="cable$ | async as cable">
+  <div class="drop-zone">
+    <app-cable-join
+      *ngIf="cable | getSurroundingsAsync as surroundings$"
+      [surroundings]="(surroundings$ | async)!"
+      class="drop-zone__svg"
+    ></app-cable-join>
+    <div
+      (click)="cableAction(cable)"
+      (contextmenu)="onRightClick($event, cable)"
+      [cdkDragData]="cable"
+      [class.drop-zone__bg-default]="(selectedId$ | async) !== cable.id"
+      [class.drop-zone__bg-negative]="(selectedNegativeTo$ | async) === cable.id"
+      [class.drop-zone__bg-positive]="(selectedPositiveTo$ | async) === cable.id"
+      [class.drop-zone__bg-selected]="(selectedId$ | async) === cable.id"
+      [matTooltip]="
+        'Location = ' +
+        cable.location +
+        ' JoinId: ' +
+        cable.join_id +
+        'CablesInJoin: ' +
+        (cable | getCablesInJoinLengthAsync | async)!
+      "
+      [style.border]="'2px solid ' + cable.color"
+      cdkDrag
+      class="drop-zone__cable"
+      matTooltipPosition="right"
+    >
+      <!--            P-->
+    </div>
+  </div>
+  <!--      </ng-container>-->
+</ng-container>
+
+<div
+  [matMenuTriggerFor]="rightMenu"
+  [style.left]="menuTopLeftPosition.x"
+  [style.top]="menuTopLeftPosition.y"
+  style="visibility: hidden; position: fixed"
+></div>
+
+<mat-menu #rightMenu="matMenu">
+  <ng-container *ngIf="cable$ | async as cable">
+    <ng-template matMenuContent>
+      <div class="right-click-menu">
+        <button class="right-click-menu__button" mat-menu-item>Edit</button>
+        <button (click)="deleteCable(cable)" class="right-click-menu__button" mat-menu-item>
+          Delete
+        </button>
+      </div>
+    </ng-template>
+  </ng-container>
+</mat-menu>
+
+<!--<ng-container *ngIf="cable">
+  &lt;!&ndash;      <ng-container
+          *ngIf="
+            getSurroundingsV2(cable, (allCables$ | async)!);
+            let surroundingModel
+          "
+        >&ndash;&gt;
+  &lt;!&ndash;      <ng-container *ngIf="getSurroundings(cable); let surroundingModel">&ndash;&gt;
+  <div class="drop-zone">
+    <app-cable-join
+      *ngIf="cable | getSurroundings: cables as surroundings"
+      [surroundings]="surroundings"
+      class="drop-zone__svg"
+    ></app-cable-join>
+    <div
+      (contextmenu)="onRightClick($event, cable)"
+      [cdkDragData]="cable"
+      [matTooltip]="
+        'Location = ' +
+        cable.location +
+        ' JoinId: ' +
+        cable.join_id +
+        'CablesInJoin: ' +
+        (cable | getCablesInJoinLength: cables).toString()
+      "
+      [style.border]="'2px solid ' + cable.color"
+      cdkDrag
+      class="drop-zone__cable"
+      matTooltipPosition="right"
+    >
+      &lt;!&ndash;            P&ndash;&gt;
+    </div>
+  </div>
+  &lt;!&ndash;      </ng-container>&ndash;&gt;
+</ng-container>-->

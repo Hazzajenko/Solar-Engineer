@@ -1,0 +1,50 @@
+<ng-container *ngIf="block">
+  <ng-container [ngSwitch]="block.type">
+    <ng-container *ngSwitchCase="2">
+      <app-block-inverter
+        (rightClickInverter)="onRightClickEvent($event)"
+        [location]="block.location"
+      ></app-block-inverter>
+    </ng-container>
+    <ng-container *ngSwitchCase="5">
+      <app-block-panel
+        (rightClickPanel)="onRightClickEvent($event)"
+        [id]="block.id"
+        [project]="project"
+        class="drop-zone__app-block-panel"
+      ></app-block-panel>
+    </ng-container>
+    <ng-container *ngSwitchCase="6">
+      <app-block-cable
+        (rightClickCable)="onRightClickEvent($event)"
+        [location]="block.location"
+      ></app-block-cable>
+    </ng-container>
+    <ng-container *ngSwitchCase="8">
+      <app-block-disconnection-point
+        (rightClickDp)="onRightClickEvent($event)"
+        [location]="block.location"
+      ></app-block-disconnection-point>
+    </ng-container>
+    <ng-container *ngSwitchCase="9">
+      <app-block-tray [location]="block.location"></app-block-tray>
+    </ng-container>
+    <!--    <ng-container *ngSwitchCase="10">
+          <app-block-rail [location]="block.location"></app-block-rail>
+        </ng-container>-->
+  </ng-container>
+</ng-container>
+
+<div
+  [matMenuTriggerFor]="rightMenu"
+  [style.left]="menuTopLeftPosition.x"
+  [style.top]="menuTopLeftPosition.y"
+  class="block-switch-menu"
+  style="visibility: hidden; position: fixed"
+></div>
+
+<mat-menu #rightMenu="matMenu" class="custom-menu">
+  <ng-template let-item="item" matMenuContent>
+    <app-block-menu [item]="item"></app-block-menu>
+  </ng-template>
+</mat-menu>

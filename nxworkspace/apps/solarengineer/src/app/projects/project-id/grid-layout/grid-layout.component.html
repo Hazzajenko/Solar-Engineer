@@ -1,0 +1,52 @@
+<!--<canvas
+  #canvas
+  *ngIf="canvasHeight && canvasWidth"
+  [height]="canvasHeight"
+  [width]="canvasWidth"
+  class="canvas"
+></canvas>-->
+<!--<canvas #canvas height="300" width="600"></canvas>-->
+<!--[height]="gridDiv.offsetHeight"
+[width]="gridDiv.offsetWidth"-->
+<div>
+  <!--  <canvas
+      #canvas
+      *ngIf="gridDiv"
+      [height]="canvas.offsetHeight"
+      [width]="canvas.offsetWidth"
+      class="canvas"
+      style="width: 100%; height: 100%"
+    ></canvas>-->
+  <ng-container *ngrxLet="project$ | async; let project">
+    <div #gridDiv cdkDropListGroup class="project-design-container">
+      <!--      <canvas
+              #canvas
+              *ngIf="gridDiv"
+              [height]="canvas.offsetHeight"
+              [width]="canvas.offsetWidth"
+              class="canvas"
+              style="width: 100%; height: 100%"
+            ></canvas>-->
+      <div *ngFor="let n of numSequence(rows); let row = index" class="row">
+        <div *ngFor="let n of numSequence(cols); let col = index" class="col">
+          <ng-container *ngrxLet="row | getGridString: col; let locationString">
+            <div
+              (cdkDropListDropped)="gridDrop($event)"
+              (click)="cellAction(locationString, $event)"
+              (keyup)="altKeyup($event)"
+              (mousedown)="mouseDown($event, locationString)"
+              (mouseup)="mouseUp($event, locationString)"
+              [id]="locationString"
+              cdkDropList
+              class="drop-zone"
+            >
+              <ng-container *ngIf="(blocks$ | async)! | blockByLocation: locationString as block">
+                <app-block-switch [block]="block"></app-block-switch>
+              </ng-container>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>

@@ -1,0 +1,22 @@
+<ng-container *ngIf="scene">
+  <div
+    [cdkDragFreeDragPosition]="{ x: scene.xPosition, y: scene.yPosition }"
+    [ngStyle]="{ 'max-width': 32 * scene.rows + 'px' }"
+    cdkDrag
+    class="container"
+  >
+    <div cdkDragHandle class="handle">
+      <svg fill="currentColor" viewBox="0 0 24 24" width="24px">
+        <path
+          d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"
+        ></path>
+        <path d="M0 0h24v24H0z" fill="none"></path>
+      </svg>
+    </div>
+    <div *ngFor="let n of numSequence(scene.rows); let row = index" class="row">
+      <div *ngFor="let n of numSequence(scene.cols); let col = index" class="col">
+        <div class="drop-zone">row{{ row }}col{{ col }}</div>
+      </div>
+    </div>
+  </div>
+</ng-container>

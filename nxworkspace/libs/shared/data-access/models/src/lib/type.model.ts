@@ -1,0 +1,13 @@
+export enum TypeModel {
+  UNDEFINED,
+  PROJECT,
+  INVERTER,
+  TRACKER,
+  STRING,
+  PANEL,
+  CABLE,
+  JOIN,
+  DISCONNECTIONPOINT,
+  TRAY,
+  RAIL,
+}

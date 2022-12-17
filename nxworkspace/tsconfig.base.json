@@ -1,0 +1,46 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "baseUrl": ".",
+    "outDir": "./dist/out-tsc",
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "sourceMap": true,
+    "declaration": false,
+    "downlevelIteration": true,
+    "experimentalDecorators": true,
+    "moduleResolution": "node",
+    "importHelpers": true,
+    "target": "ES2022",
+    "module": "es2020",
+    "lib": ["es2020", "dom"],
+    "useDefineForClassFields": false,
+    "paths": {
+      "@data-access": ["libs/data-access/src/index.ts"],
+      "@grid-layout": ["libs/grid-layout/src/index.ts"],
+      "@grid-layout/data-access": ["libs/grid-layout/data-access/src/index.ts"],
+      "@grid-layout/feature/block-switch": ["libs/grid-layout/feature/block-switch/src/index.ts"],
+      "@grid-layout/feature/block-switch/src/lib/block-types": [
+        "libs/grid-layout/feature/block-switch/src/lib/block-types/src/index.ts"
+      ],
+      "@grid-layout/feature/dialogs": ["libs/grid-layout/feature/dialogs/src/index.ts"],
+      "@grid-layout/feature/overlays": ["libs/grid-layout/feature/overlays/src/index.ts"],
+      "@grid-layout/feature/toolbar": ["libs/grid-layout/feature/toolbar/src/index.ts"],
+      "@shared/data-access/models": ["libs/shared/data-access/models/src/index.ts"],
+      "@shared/ui": ["libs/shared/ui/src/index.ts"],
+      "@shared/data-access/store": ["libs/shared/data-access/store/src/index.ts"]
+    },
+    "rootDir": "."
+  },
+  "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "strictTemplates": true
+  },
+  "exclude": ["node_modules", "tmp"]
+}

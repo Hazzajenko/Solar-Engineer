@@ -64,7 +64,8 @@ public class FilesController : ControllerBase
     public async Task<IActionResult> GetBackground()
     {
         var bucketName = "solarengineer-bucket";
-        var key = "rooftop-1.png";
+        var key = "image2.png";
+        // var key = "rooftop-1.png";
         var bucketExists = await _s3Client.DoesS3BucketExistAsync(bucketName);
         if (!bucketExists) return NotFound($"Bucket {bucketName} does not exist.");
         var s3Object = await _s3Client.GetObjectAsync(bucketName, key);
@@ -87,6 +88,13 @@ public class FilesController : ControllerBase
         request.Metadata.Add("Content-Type", file.ContentType);
         await _s3Client.PutObjectAsync(request);
         return Ok($"{file.FileName} uploaded to S3 successfully!");
+    }
+    
+    [HttpGet("map")]
+    public async Task<IActionResult> GetMap()
+    {            
+        Byte[] b = System.IO.File.ReadAllBytes(@"E:\\Test.jpg");   // You can use your own method over here.         
+        return File(b, "image/jpeg");
     }
 
     [HttpGet("get-by-key")]

@@ -1,0 +1,28 @@
+<!--<div class="example-box" cdkDrag [cdkDragFreeDragPosition]="dragPosition">
+  Drag me around
+</div>-->
+<app-scene-toolbar (addSceneEvent)="addScene($event)"></app-scene-toolbar>
+<div class="container text-center mt-5">
+  <p>
+    Window width: <strong>{{ getScreenWidth }}</strong>
+  </p>
+  <p>
+    Window height: <strong>{{ getScreenHeight }}</strong>
+  </p>
+</div>
+<div class="container">
+  <div class="image-container">
+    <ng-container *ngIf="background">
+      <!--      <img [ngSrc]="background" alt="" fill priority />-->
+      <img [src]="background" alt="" />
+    </ng-container>
+    <!--    <img alt="" fill ngSrc="/assets/rooftops/rooftop-1.png" priority src="" />-->
+  </div>
+</div>
+
+<div class="scene-container">
+  <app-draggable-grid-component
+    *ngFor="let scene of scenes"
+    [scene]="scene"
+  ></app-draggable-grid-component>
+</div>

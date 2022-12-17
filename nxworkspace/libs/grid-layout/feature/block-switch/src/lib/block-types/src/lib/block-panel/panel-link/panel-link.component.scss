@@ -1,0 +1,11 @@
+.panel-links {
+  //left: 20px;
+  display: flex;
+  position: relative;
+
+  &__svg {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
