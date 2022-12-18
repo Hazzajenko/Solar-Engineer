@@ -1,0 +1,28 @@
+
+<div>
+
+  <ng-container *ngrxLet="project$ | async; let project">
+    <div cdkDropListGroup class="project-design-container">
+      <div *ngFor="let n of numSequence(rows); let row = index" class="row">
+        <div *ngFor="let n of numSequence(cols); let col = index" class="col">
+          <ng-container *ngrxLet="row | getLocation: col; let blockLocation">
+            <div
+              (cdkDropListDropped)="gridDrop($event)"
+              (click)="cellAction(blockLocation, $event)"
+              (keyup)="altKeyup($event)"
+              (mousedown)="mouseDown($event, blockLocation)"
+              (mouseup)="mouseUp($event, blockLocation)"
+              [id]="blockLocation"
+              cdkDropList
+              class="drop-zone"
+            >
+              <ng-container *ngIf="(blocks$ | getBlock: blockLocation) | async as block">
+                <app-block-switch [block]="block"></app-block-switch>
+              </ng-container>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>

@@ -1,0 +1,44 @@
+<ng-container *ngIf="tray$ | async as tray">
+  <div class="drop-zone">
+    <grid-tray-join
+      *ngIf="tray | getTrayJoins as surroundings$"
+      [surroundings]="(surroundings$ | async)!"
+      class="drop-zone__svg"
+    ></grid-tray-join>
+    <div
+      (click)="trayAction(tray)"
+      (contextmenu)="onRightClick($event, tray)"
+      *ngrxLet="selectedId$ | async as selectedId"
+      [cdkDragData]="tray"
+      [class.drop-zone__bg-default]="selectedId !== tray.id"
+      [class.drop-zone__bg-selected]="selectedId === tray.id"
+      [matTooltip]="displayTooltip(tray)"
+      cdkDrag
+      class="drop-zone__tray"
+      matTooltipClass="drop-zone__tooltip"
+      matTooltipPosition="right"
+    >
+      <!--            P-->
+    </div>
+  </div>
+</ng-container>
+
+<div
+  [matMenuTriggerFor]="rightMenu"
+  [style.left]="menuTopLeftPosition.x"
+  [style.top]="menuTopLeftPosition.y"
+  style="visibility: hidden; position: fixed"
+></div>
+
+<mat-menu #rightMenu="matMenu">
+  <ng-container *ngIf="tray$ | async as tray">
+    <ng-template matMenuContent>
+      <div class="right-click-menu">
+        <button class="right-click-menu__button" mat-menu-item>Edit</button>
+        <button (click)="deleteTray(tray)" class="right-click-menu__button" mat-menu-item>
+          Delete
+        </button>
+      </div>
+    </ng-template>
+  </ng-container>
+</mat-menu>

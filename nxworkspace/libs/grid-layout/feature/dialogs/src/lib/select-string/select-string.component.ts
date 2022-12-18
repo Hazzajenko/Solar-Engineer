@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core'
-import { StringModel } from '../../../../../../../../../libs/shared/data-access/models/src/lib/string.model'
+import { StringModel } from '@shared/data-access/models'
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog'
 import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatSelectModule } from '@angular/material/select'

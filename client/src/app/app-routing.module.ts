@@ -6,8 +6,8 @@ import { PanelsResolver } from './projects/project-id/services/ngrx-data/panels-
 import { StringsResolver } from './projects/project-id/services/ngrx-data/strings-entity/strings.resolver'
 import { PanelLinksResolver } from './projects/project-id/services/ngrx-data/panel-links-entity/panel-links.resolver'
 import { SceneComponent } from './projects/project-id/version2/scene.component'
-import { MapsComponent } from './projects/project-id/version2/maps/maps.component'
-import { ImageEditComponent } from './projects/project-id/version2/image-edit/image-edit.component'
+import { MapsComponent } from './pages/maps/maps.component'
+import { ImageEditComponent } from './pages/image-edit/image-edit.component'
 
 const routes: Routes = [
   {
@@ -49,7 +49,8 @@ const routes: Routes = [
     path: 'image-edit',
     component: ImageEditComponent,
   },
-  { path: '', redirectTo: '/projects/3', pathMatch: 'full' },
+  { path: '', redirectTo: 'image-edit', pathMatch: 'full' },
+  // { path: '', redirectTo: '/projects/3', pathMatch: 'full' },
 ]
 
 @NgModule({

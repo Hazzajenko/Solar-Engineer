@@ -18,7 +18,7 @@
     <cdk-virtual-scroll-viewport appendOnly class="viewport" itemSize="5">
       <ng-container *cdkVirtualFor="let string of strings$ | async">
         <mat-list-option (click)="view(string)" [value]="string" class="viewport__mat-list-string">
-          {{ string.name }} [{{(string | stringPanelsAsync) | async}} Panels]
+          {{ string.name }} [{{(string | getStringPanels) | async}} Panels]
         </mat-list-option>
         <ng-container *ngIf="showString === string.id">
           <div class="container__button-menu">
@@ -33,14 +33,14 @@
             </button>
           </div>
           <div class="container__string-info">
-            <ng-container *ngIf="string | stringTotalsAsync | async as totals">
+            <ng-container *ngIf="string | getStringStats | async as total">
               <div class="mat-typography">
                 <ul style="list-style: none">
-                  <li>VOC: {{ totals.totalVoc }}</li>
-                  <li>VMP: {{ totals.totalVmp }}</li>
-                  <li>PMAX: {{ totals.totalPmax }}</li>
-                  <li>ISC: {{ totals.totalIsc }}</li>
-                  <li>IMP: {{ totals.totalImp }}</li>
+                  <li>VOC: {{ total.totalVoc }}</li>
+                  <li>VMP: {{ total.totalVmp }}</li>
+                  <li>PMAX: {{ total.totalPmax }}</li>
+                  <li>ISC: {{ total.totalIsc }}</li>
+                  <li>IMP: {{ total.totalImp }}</li>
                 </ul>
               </div>
             </ng-container>

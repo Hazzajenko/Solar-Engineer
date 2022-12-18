@@ -130,10 +130,6 @@ export function tokenGetter() {
       stateKey: 'router',
       routerState: RouterState.Minimal,
     }),
-    StoreDevtoolsModule.instrument({
-      maxAge: 25,
-      logOnly: environment.production,
-    }),
     ReactiveFormsModule,
     MatTreeModule,
     MatIconModule,

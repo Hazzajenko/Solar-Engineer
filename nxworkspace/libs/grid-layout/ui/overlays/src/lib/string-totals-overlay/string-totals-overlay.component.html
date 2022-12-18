@@ -1,0 +1,26 @@
+<div class="overlay2">
+  <!--      <div class="text">Text</div>-->
+  <ng-container *ngIf="selectedString$ | async as string">
+    <div draggable="true" class="mat-typography string-table">
+      <div class="string-table__string">
+        <h3>Selected String Stats</h3>
+        <h4>{{ string.name }}</h4>
+        <ng-container *ngIf="string | getStringStats | async as stats">
+          <div class="string-table__stats">
+            <ul style="list-style: none">
+<!--              <li>VOC: {{ stats.totals.totalVoc }}</li>
+              <li>VMP: {{ stats.totals.totalVmp }}</li>
+              <li>PMAX: {{ stats.totals.totalPmax }}</li>
+              <li>ISC: {{ stats.totals.totalIsc }}</li>
+              <li>IMP: {{ stats.totals.totalImp }}</li>
+              <li>PANELS: {{ stats.amountOfPanels }}</li>
+              <li>LINKS: {{ stats.amountOfLinks }}</li>
+              <li>PANELS NOT IN LINK: {{ stats.panelsNotInLink }}</li>
+              <li>DISCONNECTION POINT?: {{ stats.hasDisconnectionPoint }}</li>-->
+            </ul>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </ng-container>
+</div>

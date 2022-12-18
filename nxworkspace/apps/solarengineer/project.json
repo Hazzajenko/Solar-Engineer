@@ -24,7 +24,12 @@
           "apps/solarengineer/src/styles.scss"
         ],
         "scripts": [],
-        "webWorkerTsConfig": "tsconfig.worker.json"
+        "vendorChunk": true,
+        "extractLicenses": false,
+        "buildOptimizer": false,
+        "sourceMap": true,
+        "optimization": false,
+        "namedChunks": true
       },
       "configurations": {
         "production": {
@@ -95,7 +100,7 @@
           "apps/solarengineer/src/styles.scss"
         ],
         "scripts": [],
-        "webWorkerTsConfig": "tsconfig.worker.json"
+        "webWorkerTsConfig": "apps/solarengineer/tsconfig.worker.json"
       }
     }
   }

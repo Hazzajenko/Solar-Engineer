@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core'
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core'
 import { MatDialogModule } from '@angular/material/dialog'
 import { MatButtonModule } from '@angular/material/button'
 
@@ -11,19 +11,22 @@ import { ScrollingModule } from '@angular/cdk/scrolling'
 import { MatIconModule } from '@angular/material/icon'
 
 import { Store } from '@ngrx/store'
-import { StringTotalsAsyncPipe } from '../../../../../../shared/pipes/string-totals-async.pipe'
-import { selectSelectedState } from '../../../services/store/selected/selected.selectors'
-import { StringsEntityService } from '../../../services/ngrx-data/strings-entity/strings-entity.service'
-import { StringModel } from '../../../../../../../../../libs/shared/data-access/models/src/lib/string.model'
-import { AppState } from '../../../../../store/app.state'
+
 import { map } from 'rxjs/operators'
-import { PanelModel } from '../../../../../../../../../libs/shared/data-access/models/src/lib/panel.model'
-import { PanelsEntityService } from '../../../services/ngrx-data/panels-entity/panels-entity.service'
+
 import { HttpClient } from '@angular/common/http'
 import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatInputModule } from '@angular/material/input'
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms'
-import { selectCurrentProjectId } from '../../../services/store/projects/projects.selectors'
+import { AppState } from '@shared/data-access/store'
+import { PanelModel, StringModel } from '@shared/data-access/models'
+import {
+  PanelsEntityService,
+  selectCurrentProjectId,
+  selectSelectedState,
+  StringsEntityService,
+} from '@grid-layout/data-access/store'
+
 
 @Component({
   selector: 'new-string-dialog',
@@ -51,51 +54,7 @@ import { selectCurrentProjectId } from '../../../services/store/projects/project
       </button>
     </mat-dialog-actions>
   `,
-  styles: [
-    `
-      .container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-
-      &
-      __button-menu {
-        display: flex;
-        align-items: flex-end;
-        justify-content: flex-end;
-      }
-
-      &
-      __string-info {
-        padding-left: 15px;
-      }
-
-      }
-
-      .typo-test {
-        font-family: unquote('Roboto'), serif;
-        font-size: 16px;
-      }
-
-      .viewport {
-        height: 400px;
-        width: 400px;
-
-      &
-      __mat-list-string {
-        background-color: white;
-
-      &
-      :hover {
-        background-color: #7bd5ff;
-      / / color: #38c1ff;
-      }
-
-      }
-      }
-    `,
-  ],
+  styleUrls: ['./new-string.dialog.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatDialogModule,
@@ -107,7 +66,6 @@ import { selectCurrentProjectId } from '../../../services/store/projects/project
     ScrollingModule,
     NgIf,
     MatIconModule,
-    StringTotalsAsyncPipe,
     MatFormFieldModule,
     MatInputModule,
     FormsModule,
@@ -118,13 +76,11 @@ import { selectCurrentProjectId } from '../../../services/store/projects/project
 export class NewStringDialog implements OnInit {
   stringName: string = ''
   name = new FormControl('')
+  private store = inject(Store<AppState>)
+  private stringsEntity = inject(StringsEntityService)
+  private panelsEntity = inject(PanelsEntityService)
 
-  constructor(
-    private stringsEntity: StringsEntityService,
-    private store: Store<AppState>,
-    private panelsEntity: PanelsEntityService,
-    private http: HttpClient,
-  ) {}
+
 
   ngOnInit() {}
 

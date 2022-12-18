@@ -1,0 +1,25 @@
+<div class="project-container-v4">
+  <canvas
+    #canvas
+    [height]="canvas.offsetHeight"
+    [width]="canvas.offsetWidth"
+    class="canvas"
+    style="width: 100%; height: 100%"
+  >
+  </canvas>
+  <div
+    (keyup)="altKeyup($event)"
+    (mouseup)="onMouseUp($event)"
+    class="project-container-v4__project-display"
+  >
+    <!--    <app-string-totals-overlay></app-string-totals-overlay>-->
+    <app-keymap-overlay-component></app-keymap-overlay-component>
+    <app-grid-toolbar></app-grid-toolbar>
+    <app-grid-layout
+      (altKeyUpEvent)="altKeyup($event)"
+      (mouseDownEvent)="onMouseDown($event)"
+      (mouseUpEvent)="stopDragging($event)"
+      *ngrxLet="isDragging$ | async as isDragging"
+    ></app-grid-layout>
+  </div>
+</div>

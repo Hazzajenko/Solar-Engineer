@@ -7,58 +7,21 @@ import { Observable } from 'rxjs'
 import { AsyncPipe, NgForOf, NgIf, NgStyle } from '@angular/common'
 import { MatListModule } from '@angular/material/list'
 import { ScrollingModule } from '@angular/cdk/scrolling'
-import { StringsEntityService } from '../../../services/ngrx-data/strings-entity/strings-entity.service'
-import { StringModel } from '../../../../../../../../../libs/shared/data-access/models/src/lib/string.model'
+
 import { MatIconModule } from '@angular/material/icon'
-import { StringTotalsAsyncPipe } from '../../../../../../shared/pipes/string-totals-async.pipe'
+
 import { Store } from '@ngrx/store'
-import { AppState } from '../../../../../store/app.state'
-import { SelectedStateActions } from '../../../services/store/selected/selected.actions'
-import { selectSelectedId } from '../../../services/store/selected/selected.selectors'
-import { StringPanelsAsyncPipe } from './string-panels-async.pipe'
+
+import { GetStringPanelsPipe } from '@grid-layout/pipes'
+import { SelectedStateActions, selectSelectedId, StringsEntityService } from '@grid-layout/data-access/store'
+import { StringModel } from '@shared/data-access/models'
+import { AppState } from '@shared/data-access/store'
+import { GetStringStatsPipe } from '../../../../../pipes/src/lib/get-string-stats.pipe'
 
 @Component({
   selector: 'view-strings-dialog',
   templateUrl: 'view-strings.dialog.html',
-  styles: [
-    `
-      .container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-
-        &__button-menu {
-          display: flex;
-          align-items: flex-end;
-          justify-content: flex-end;
-        }
-
-        &__string-info {
-          padding-left: 15px;
-        }
-      }
-
-      .typo-test {
-        font-family: unquote('Roboto'), serif;
-        font-size: 16px;
-      }
-
-      .viewport {
-        height: 400px;
-        width: 400px;
-
-        &__mat-list-string {
-          background-color: white;
-
-          &:hover {
-            background-color: #7bd5ff;
-            //color: #38c1ff;
-          }
-        }
-      }
-    `,
-  ],
+  styleUrls: ['./view-strings.dialog.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatDialogModule,
@@ -70,8 +33,8 @@ import { StringPanelsAsyncPipe } from './string-panels-async.pipe'
     ScrollingModule,
     NgIf,
     MatIconModule,
-    StringTotalsAsyncPipe,
-    StringPanelsAsyncPipe,
+    GetStringPanelsPipe,
+    GetStringStatsPipe,
   ],
   standalone: true,
 })

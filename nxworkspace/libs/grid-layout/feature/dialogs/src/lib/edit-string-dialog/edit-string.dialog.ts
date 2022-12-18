@@ -11,16 +11,16 @@ import { ScrollingModule } from '@angular/cdk/scrolling'
 import { MatIconModule } from '@angular/material/icon'
 
 import { Store } from '@ngrx/store'
-import { StringTotalsAsyncPipe } from '../../grid-toolbar/string-totals-async.pipe'
-import { StringsEntityService } from '../../../services/ngrx-data/strings-entity/strings-entity.service'
-import { StringModel } from '../../../../../../../../../libs/shared/data-access/models/src/lib/string.model'
-import { AppState } from '../../../../../store/app.state'
+
 import { map } from 'rxjs/operators'
-import { PanelsEntityService } from '../../../services/ngrx-data/panels-entity/panels-entity.service'
+
 import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatInputModule } from '@angular/material/input'
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms'
-import { WarmColor } from '../../../../../../../../../libs/shared/data-access/models/src/lib/color.model'
+import { StringModel, WarmColor } from '@shared/data-access/models'
+import { PanelsEntityService, StringsEntityService } from '@grid-layout/data-access/store'
+import { AppState } from '@shared/data-access/store'
+
 
 @Component({
   selector: 'edit-string-dialog',
@@ -63,45 +63,7 @@ import { WarmColor } from '../../../../../../../../../libs/shared/data-access/mo
       </mat-dialog-actions>
     </ng-container>
   `,
-  styles: [
-    `
-      .container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-
-        &__button-menu {
-          display: flex;
-          align-items: flex-end;
-          justify-content: flex-end;
-        }
-
-        &__string-info {
-          padding-left: 15px;
-        }
-      }
-
-      .typo-test {
-        font-family: unquote('Roboto'), serif;
-        font-size: 16px;
-      }
-
-      .viewport {
-        height: 400px;
-        width: 400px;
-
-        &__mat-list-string {
-          background-color: white;
-
-          &:hover {
-            background-color: #7bd5ff;
-            //color: #38c1ff;
-          }
-        }
-      }
-    `,
-  ],
+  styleUrls: ['./edit-string.dialog.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatDialogModule,
@@ -113,7 +75,6 @@ import { WarmColor } from '../../../../../../../../../libs/shared/data-access/mo
     ScrollingModule,
     NgIf,
     MatIconModule,
-    StringTotalsAsyncPipe,
     MatFormFieldModule,
     MatInputModule,
     FormsModule,

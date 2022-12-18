@@ -1,55 +1,40 @@
-import { NgModule } from '@angular/core'
+import { importProvidersFrom, NgModule } from '@angular/core'
 import { RouterModule, Routes } from '@angular/router'
-import { ProjectsComponent } from './projects/projects.component'
-import { ProjectIdComponent } from './projects/project-id/project-id.component'
-import { PanelsResolver } from './projects/project-id/services/ngrx-data/panels-entity/panels.resolver'
-import { StringsResolver } from './projects/project-id/services/ngrx-data/strings-entity/strings.resolver'
-import { PanelLinksResolver } from './projects/project-id/services/ngrx-data/panel-links-entity/panel-links.resolver'
-import { SceneComponent } from './projects/project-id/version2/scene.component'
-import { MapsComponent } from './projects/project-id/version2/maps/maps.component'
-import { ImageEditComponent } from './projects/project-id/version2/image-edit/image-edit.component'
+import { JwtInterceptor } from '@auth/interceptors'
+import { CurrentProjectInterceptor } from '@shared/interceptors'
+import {
+  DisconnectionPointsDataService,
+  DisconnectionPointsEntityService, DisconnectionPointsResolver,
+  PanelLinksDataService,
+  PanelLinksEntityService, PanelLinksResolver,
+  PanelsDataService,
+  PanelsEntityService,
+  PanelsResolver, projectsReducer, StringsDataService,
+  StringsEntityService, StringsResolver, TraysDataService, TraysEntityService, TraysResolver,
+} from '@grid-layout/data-access/store'
+import { HTTP_INTERCEPTORS } from '@angular/common/http'
+import { StoreModule } from '@ngrx/store'
 
 const routes: Routes = [
   {
-    path: 'projects',
-    component: ProjectsComponent,
-    /*    children: [
-          {
-            path: ':projectId',
-            component: ProjectIdComponent,
-          },
-        ],*/
+    path: 'project-grid/:projectId',
+    // path: '',
+    loadComponent: () =>
+      import('./pages/project-grid/project-grid.page').then(mod => mod.ProjectGridPage),
+    providers: [
+      importProvidersFrom(
+        // register feature reducer
+        StoreModule.forFeature('projects', projectsReducer),
+        // run feature effects
+      ),
+    ]
   },
-  {
-    path: 'projects/:projectId',
-    component: ProjectIdComponent,
-    resolve: {
-      panels: PanelsResolver,
-      strings: StringsResolver,
-      panelLinks: PanelLinksResolver,
-      /*      cables: CablesResolver,
-            trackers: TrackersResolver,
-            inverters: InvertersResolver,
-            joins: JoinsResolver,
-            panel_joins: PanelLinksResolver,
-            disconnection_points: DisconnectionPointsResolver,
-            trays: TraysResolver,
-            rails: RailsResolver,*/
-    },
-  },
-  {
-    path: 'scene',
-    component: SceneComponent,
-  },
-  {
-    path: 'maps',
-    component: MapsComponent,
-  },
-  {
-    path: 'image-edit',
-    component: ImageEditComponent,
-  },
-  { path: '', redirectTo: '/projects/3', pathMatch: 'full' },
+/*  {
+    path: 'project-grid/:projectId',
+    loadChildren: async () =>
+     (await import('@grid-layout/shell')).GridLayoutModule
+  },*/
+  { path: '', redirectTo: '/project-grid/1', pathMatch: 'full' },
 ]
 
 @NgModule({

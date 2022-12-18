@@ -1,4 +1,4 @@
-import { TypeModel } from '../../../../../../../libs/shared/data-access/models/src/lib/type.model'
+import { TypeModel } from '@shared/data-access/models'
 
 import { Guid } from 'guid-typescript'
 

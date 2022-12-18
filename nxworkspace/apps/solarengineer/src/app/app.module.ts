@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core'
 import { BrowserModule } from '@angular/platform-browser'
-
 import { AppRoutingModule } from './app-routing.module'
 import { AppComponent } from './app.component'
 import { HTTP_INTERCEPTORS, HttpClientJsonpModule, HttpClientModule } from '@angular/common/http'
@@ -9,111 +8,23 @@ import { StoreModule } from '@ngrx/store'
 import { RouterState, StoreRouterConnectingModule } from '@ngrx/router-store'
 import { StoreDevtoolsModule } from '@ngrx/store-devtools'
 import { environment } from '../environments/environment'
-import { metaReducers, reducers } from './store/app.state'
-import { ReactiveFormsModule } from '@angular/forms'
+import { JwtInterceptor } from '@auth/interceptors'
+import { metaReducers, reducers } from '@shared/data-access/store'
 import { JwtModule } from '@auth0/angular-jwt'
-import { MatTreeModule } from '@angular/material/tree'
-import { MatIconModule } from '@angular/material/icon'
-import { MatGridListModule } from '@angular/material/grid-list'
-import { MatSortModule } from '@angular/material/sort'
-import { JwtInterceptor } from './interceptors/jwt.interceptor'
-import { DragDropModule } from '@angular/cdk/drag-drop'
-import { FilterStringsByPipe } from './pipes/v2/filter-strings-by.pipe'
-import { MatToolbarModule } from '@angular/material/toolbar'
-import { FilterBlocksByPipe } from './pipes/v2/filter-blocks-by.pipe'
-import { FindBlockPipe } from './pipes/v2/find-block.pipe'
-import { FindPanelPipe } from './pipes/v2/find-panel.pipe'
-import { EffectsModule } from '@ngrx/effects'
-import { FindCablePipe } from './pipes/v2/find-cable.pipe'
-import { CablesEffects } from './projects/store/cable/cables.effects'
-import { PanelsEffects } from './projects/project-id/services/store/panels/panels.effects'
-import { GetGridNumberPipe } from './pipes/get-grid-number.pipe'
-import { LetModule } from '@ngrx/component'
-import { FindPanelLocationPipe } from './pipes/find-panel-location.pipe'
-import { FindCableLocationPipe } from './pipes/find-cable-location.pipe'
-import { FindBlockNumberPipe } from './pipes/find-block-number.pipe'
-import {
-  DefaultDataServiceConfig,
-  EntityDataModule,
-  EntityDataService,
-  EntityDefinitionService,
-  HttpUrlGenerator,
-} from '@ngrx/data'
-import { entityConfig } from './entity-metadata'
-import { PanelsEntityService } from './projects/project-id/services/ngrx-data/panels-entity/panels-entity.service'
-import { PanelsResolver } from './projects/project-id/services/ngrx-data/panels-entity/panels.resolver'
-import { PanelsDataService } from './projects/project-id/services/ngrx-data/panels-entity/panels-data.service'
-import { PanelsEntityEffects } from './projects/project-id/services/ngrx-data/panels-entity/panels-entity.effects'
-import { CablesEntityEffects } from './projects/project-id/services/ngrx-data/cables-entity/cables-entity.effects'
-import { CablesDataService } from './projects/project-id/services/ngrx-data/cables-entity/cables-data.service'
-import { CablesEntityService } from './projects/project-id/services/ngrx-data/cables-entity/cables-entity.service'
-import { CablesResolver } from './projects/project-id/services/ngrx-data/cables-entity/cables.resolver'
-import { GetGridStringPipe } from './pipes/get-grid-string.pipe'
-import { defaultDataServiceConfig } from './data-service'
-import { StringsDataService } from './projects/project-id/services/ngrx-data/strings-entity/strings-data.service'
-import { StringsEntityService } from './projects/project-id/services/ngrx-data/strings-entity/strings-entity.service'
-import { StringsResolver } from './projects/project-id/services/ngrx-data/strings-entity/strings.resolver'
-import { CustomHttpUrlGenerator } from './http-url-generator'
-import { StringsEntityEffects } from './projects/project-id/services/ngrx-data/strings-entity/strings-entity.effects'
-import { TrackersEntityService } from './projects/project-id/services/ngrx-data/trackers-entity/trackers-entity.service'
-import { TrackersResolver } from './projects/project-id/services/ngrx-data/trackers-entity/trackers.resolver'
-import { TrackersDataService } from './projects/project-id/services/ngrx-data/trackers-entity/trackers-data.service'
-import { InvertersEntityService } from './projects/project-id/services/ngrx-data/inverters-entity/inverters-entity.service'
-import { InvertersResolver } from './projects/project-id/services/ngrx-data/inverters-entity/inverters.resolver'
-import { InvertersDataService } from './projects/project-id/services/ngrx-data/inverters-entity/inverters-data.service'
-import { FindInverterLocationPipe } from './pipes/find-inverter-location.pipe'
-import { InvertersEntityEffects } from './projects/project-id/services/ngrx-data/inverters-entity/inverters-entity.effects'
-import { JoinsEntityService } from './projects/project-id/services/ngrx-data/joins-entity/joins-entity.service'
-import { JoinsResolver } from './projects/project-id/services/ngrx-data/joins-entity/joins.resolver'
-import { JoinsDataService } from './projects/project-id/services/ngrx-data/joins-entity/joins-data.service'
-import { GetCableSurroundingsPipe } from './pipes/get-cable-surroundings.pipe'
-import { MatFormFieldModule } from '@angular/material/form-field'
-import { MatCardModule } from '@angular/material/card'
-import { MatButtonModule } from '@angular/material/button'
-import { MatInputModule } from '@angular/material/input'
-import { MatTooltipModule } from '@angular/material/tooltip'
-import { MatMenuModule } from '@angular/material/menu'
-import { MatSelectModule } from '@angular/material/select'
-import { MatDialogModule } from '@angular/material/dialog'
-import { MatListModule } from '@angular/material/list'
-import { TopBottomSvgComponent } from './svgs/grid/top-bottom-svg.component'
-import { LeftTopSvgComponent } from './svgs/grid/left-top-svg.component'
-import { CableJoinComponent } from './components/cable-join/cable-join.component'
-import { CurrentProjectInterceptor } from './interceptors/current-project.interceptor'
-import { PanelLinksDataService } from './projects/project-id/services/ngrx-data/panel-links-entity/panel-links-data.service'
-import { PanelLinksEntityService } from './projects/project-id/services/ngrx-data/panel-links-entity/panel-links-entity.service'
-import { PanelLinksResolver } from './projects/project-id/services/ngrx-data/panel-links-entity/panel-links.resolver'
-import { DisconnectionPointsDataService } from './projects/project-id/services/ngrx-data/disconnection-points-entity/disconnection-points-data.service'
-import { DisconnectionPointsEntityService } from './projects/project-id/services/ngrx-data/disconnection-points-entity/disconnection-points-entity.service'
-import { DisconnectionPointsResolver } from './projects/project-id/services/ngrx-data/disconnection-points-entity/disconnection-points.resolver'
-import { DisconnectionPointsEntityEffects } from './projects/project-id/services/ngrx-data/disconnection-points-entity/disconnection-points-entity.effects'
-import { SelectedEffects } from './projects/project-id/services/store/selected/selected.effects'
-import { TraysDataService } from './projects/project-id/services/ngrx-data/trays-entity/trays-data.service'
-import { TraysEntityService } from './projects/project-id/services/ngrx-data/trays-entity/trays-entity.service'
-import { TraysResolver } from './projects/project-id/services/ngrx-data/trays-entity/trays.resolver'
-import { TraysEntityEffects } from './projects/project-id/services/ngrx-data/trays-entity/trays-entity.effects'
-import { RailsEntityEffects } from './projects/project-id/services/ngrx-data/rails-entity/rails-entity.effects'
-import { RailsEntityService } from './projects/project-id/services/ngrx-data/rails-entity/rails-entity.service'
-import { RailsResolver } from './projects/project-id/services/ngrx-data/rails-entity/rails.resolver'
-import { RailsDataService } from './projects/project-id/services/ngrx-data/rails-entity/rails-data.service'
-import { BlocksEntityService } from './projects/project-id/services/ngrx-data/blocks-entity/blocks-entity.service'
-import { BlocksResolver } from './projects/project-id/services/ngrx-data/blocks-entity/blocks.resolver'
-import { BlocksDataService } from './projects/project-id/services/ngrx-data/blocks-entity/blocks-data.service'
-import { BlocksEffects } from './projects/project-id/services/store/blocks/blocks.effects'
+import { GridLayoutModule } from '@grid-layout/shell'
+import { projectsReducer } from '@grid-layout/data-access/store'
 
+/*const rootReducers = {
+  ['projects']: projectsReducer
+  // [playlistTrackFeatureKey]: playlistTracksReducer
+};*/
 export function tokenGetter() {
   // console.log(localStorage.getItem('token'))
   return localStorage.getItem('token')
 }
-
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [],
   imports: [
-    BrowserModule,
-    AppRoutingModule,
-    HttpClientModule,
-    HttpClientJsonpModule,
-    BrowserAnimationsModule,
     JwtModule.forRoot({
       config: {
         tokenGetter: tokenGetter,
@@ -121,6 +32,14 @@ export function tokenGetter() {
         // disallowedRoutes: ["http://example.com/examplebadroute/"],
       },
     }),
+    BrowserModule,
+    AppRoutingModule,
+    HttpClientModule,
+    HttpClientJsonpModule,
+    BrowserAnimationsModule,
+    // StoreModule.forFeature('app', reducers, { metaReducers }),
+    // StoreModule.forFeature('app', reducers, { metaReducers }),
+    // StoreModule.forRoot(rootReducers),
     StoreModule.forRoot(reducers, { metaReducers }),
     StoreDevtoolsModule.instrument({
       maxAge: 25,
@@ -130,56 +49,7 @@ export function tokenGetter() {
       stateKey: 'router',
       routerState: RouterState.Minimal,
     }),
-    StoreDevtoolsModule.instrument({
-      maxAge: 25,
-      logOnly: environment.production,
-    }),
-    ReactiveFormsModule,
-    MatTreeModule,
-    MatIconModule,
-    MatGridListModule,
-    MatSortModule,
-    DragDropModule,
-    FilterStringsByPipe,
-    MatToolbarModule,
-    FilterBlocksByPipe,
-    FindBlockPipe,
-    FindPanelPipe,
-    EffectsModule.forRoot([
-      CablesEffects,
-      PanelsEffects,
-      PanelsEntityEffects,
-      CablesEntityEffects,
-      StringsEntityEffects,
-      InvertersEntityEffects,
-      DisconnectionPointsEntityEffects,
-      SelectedEffects,
-      TraysEntityEffects,
-      RailsEntityEffects,
-      BlocksEffects,
-    ]),
-    FindCablePipe,
-    GetGridNumberPipe,
-    LetModule,
-    FindPanelLocationPipe,
-    FindCableLocationPipe,
-    FindBlockNumberPipe,
-    EntityDataModule.forRoot(entityConfig),
-    GetGridStringPipe,
-    FindInverterLocationPipe,
-    GetCableSurroundingsPipe,
-    MatFormFieldModule,
-    MatCardModule,
-    MatButtonModule,
-    MatInputModule,
-    MatTooltipModule,
-    LeftTopSvgComponent,
-    MatMenuModule,
-    MatSelectModule,
-    MatDialogModule,
-    MatListModule,
-    TopBottomSvgComponent,
-    CableJoinComponent,
+    // GridLayoutModule
   ],
   providers: [
     {
@@ -187,79 +57,8 @@ export function tokenGetter() {
       useClass: JwtInterceptor,
       multi: true,
     },
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: CurrentProjectInterceptor,
-      multi: true,
-    },
-    PanelsEntityService,
-    PanelsResolver,
-    PanelsDataService,
-    CablesEntityService,
-    CablesResolver,
-    CablesDataService,
-    StringsEntityService,
-    StringsResolver,
-    StringsDataService,
-    TrackersEntityService,
-    TrackersResolver,
-    TrackersDataService,
-    InvertersEntityService,
-    InvertersResolver,
-    InvertersDataService,
-    JoinsEntityService,
-    JoinsResolver,
-    JoinsDataService,
-    PanelLinksEntityService,
-    PanelLinksResolver,
-    PanelLinksDataService,
-    DisconnectionPointsEntityService,
-    DisconnectionPointsResolver,
-    DisconnectionPointsDataService,
-    TraysEntityService,
-    TraysResolver,
-    TraysDataService,
-    RailsEntityService,
-    RailsResolver,
-    RailsDataService,
-    BlocksEntityService,
-    BlocksResolver,
-    BlocksDataService,
-    CustomHttpUrlGenerator,
-
-    { provide: DefaultDataServiceConfig, useValue: defaultDataServiceConfig },
-    { provide: HttpUrlGenerator, useClass: CustomHttpUrlGenerator },
   ],
-  bootstrap: [AppComponent],
+  bootstrap: [],
 })
 export class AppModule {
-  constructor(
-    private eds: EntityDefinitionService,
-    private entityDataService: EntityDataService,
-    private panelsDataService: PanelsDataService,
-    private cablesDataService: CablesDataService,
-    private stringsDataService: StringsDataService,
-    private trackersDataService: TrackersDataService,
-    private invertersDataService: InvertersDataService,
-    private joinsDataService: JoinsDataService,
-    private panelLinksDataService: PanelLinksDataService,
-    private disconnectionPointsDataService: DisconnectionPointsDataService,
-    private traysDataService: TraysDataService,
-    private railsDataService: RailsDataService,
-    private blocksDataService: BlocksDataService,
-  ) {
-    eds.registerMetadataMap(entityConfig.entityMetadata)
-
-    entityDataService.registerService('Panel', panelsDataService)
-    entityDataService.registerService('Cable', cablesDataService)
-    entityDataService.registerService('String', stringsDataService)
-    entityDataService.registerService('Tracker', trackersDataService)
-    entityDataService.registerService('Inverter', invertersDataService)
-    entityDataService.registerService('Join', joinsDataService)
-    entityDataService.registerService('PanelLink', panelLinksDataService)
-    entityDataService.registerService('Tray', traysDataService)
-    entityDataService.registerService('DisconnectionPoint', disconnectionPointsDataService)
-    entityDataService.registerService('Rail', railsDataService)
-    entityDataService.registerService('Block', blocksDataService)
-  }
 }

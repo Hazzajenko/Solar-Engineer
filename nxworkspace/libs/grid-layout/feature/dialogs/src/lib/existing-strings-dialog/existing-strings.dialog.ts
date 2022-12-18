@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core'
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core'
 import { MatDialogModule } from '@angular/material/dialog'
 import { MatButtonModule } from '@angular/material/button'
 
@@ -11,70 +11,24 @@ import { ScrollingModule } from '@angular/cdk/scrolling'
 import { MatIconModule } from '@angular/material/icon'
 
 import { Store } from '@ngrx/store'
-
-import { StringPanelsAsyncPipe } from './string-panels-async.pipe'
-import { StringTotalsAsyncPipe } from '../../../../../../shared/pipes/string-totals-async.pipe'
-import {
-  selectSelectedId,
-  selectSelectedState,
-} from '../../../services/store/selected/selected.selectors'
-import { SelectedStateActions } from '../../../services/store/selected/selected.actions'
-import { StringsEntityService } from '../../../services/ngrx-data/strings-entity/strings-entity.service'
-import { StringModel } from '../../../../../../../../../libs/shared/data-access/models/src/lib/string.model'
-import { AppState } from '../../../../../store/app.state'
 import { map } from 'rxjs/operators'
-import { PanelModel } from '../../../../../../../../../libs/shared/data-access/models/src/lib/panel.model'
-import { PanelsEntityService } from '../../../services/ngrx-data/panels-entity/panels-entity.service'
+
 import { HttpClient } from '@angular/common/http'
+import { AppState } from '@shared/data-access/store'
+import {
+  PanelsEntityService,
+  SelectedStateActions,
+  selectSelectedId,
+  selectSelectedState, StringsEntityService,
+} from '@grid-layout/data-access/store'
+import { PanelModel, StringModel } from '@shared/data-access/models'
+import { GetStringPanelsPipe } from '@grid-layout/pipes'
+import { GetStringStatsPipe } from '../../../../../pipes/src/lib/get-string-stats.pipe'
 
 @Component({
   selector: 'view-strings-dialog',
   templateUrl: 'existing-strings.dialog.html',
-  styles: [
-    `
-      .container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-
-      &
-      __button-menu {
-        display: flex;
-        align-items: flex-end;
-        justify-content: flex-end;
-      }
-
-      &
-      __string-info {
-        padding-left: 15px;
-      }
-
-      }
-
-      .typo-test {
-        font-family: unquote('Roboto'), serif;
-        font-size: 16px;
-      }
-
-      .viewport {
-        height: 400px;
-        width: 400px;
-
-      &
-      __mat-list-string {
-        background-color: white;
-
-      &
-      :hover {
-        background-color: #7bd5ff;
-      / / color: #38c1ff;
-      }
-
-      }
-      }
-    `,
-  ],
+  styleUrls: ['./existing-strings.dialog.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatDialogModule,
@@ -86,8 +40,8 @@ import { HttpClient } from '@angular/common/http'
     ScrollingModule,
     NgIf,
     MatIconModule,
-    StringTotalsAsyncPipe,
-    StringPanelsAsyncPipe,
+    GetStringPanelsPipe,
+    GetStringStatsPipe,
   ],
   standalone: true,
 })
@@ -96,13 +50,9 @@ export class ExistingStringsDialog implements OnInit {
   selectedStringId$!: Observable<string | undefined>
   show: string[] = []
   showString: string = ''
-
-  constructor(
-    private stringsEntity: StringsEntityService,
-    private store: Store<AppState>,
-    private panelsEntity: PanelsEntityService,
-    private http: HttpClient,
-  ) {}
+  private store = inject(Store<AppState>)
+  private stringsEntity = inject(StringsEntityService)
+  private panelsEntity = inject(PanelsEntityService)
 
   ngOnInit() {
     this.strings$ = this.stringsEntity.entities$
