@@ -27,6 +27,7 @@
     "@auth0/angular-jwt": "^5.1.0",
     "@googlemaps/js-api-loader": "^1.15.1",
     "@ngrx/component": "^15.0.0",
+    "@ngrx/component-store": "^15.0.0",
     "@ngrx/data": "^15.0.0",
     "@ngrx/effects": "^15.0.0",
     "@ngrx/entity": "^15.0.0",

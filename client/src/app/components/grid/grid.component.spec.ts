@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CableJoinComponent } from './cable-join.component';
+import { GridComponent } from './grid.component';
 
-describe('CableJoinComponent', () => {
-  let component: CableJoinComponent;
-  let fixture: ComponentFixture<CableJoinComponent>;
+describe('GridComponent', () => {
+  let component: GridComponent;
+  let fixture: ComponentFixture<GridComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ CableJoinComponent ]
+      imports: [ GridComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(CableJoinComponent);
+    fixture = TestBed.createComponent(GridComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

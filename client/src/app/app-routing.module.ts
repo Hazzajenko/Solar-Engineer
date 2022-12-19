@@ -6,8 +6,9 @@ import { PanelsResolver } from './projects/project-id/services/ngrx-data/panels-
 import { StringsResolver } from './projects/project-id/services/ngrx-data/strings-entity/strings.resolver'
 import { PanelLinksResolver } from './projects/project-id/services/ngrx-data/panel-links-entity/panel-links.resolver'
 import { SceneComponent } from './projects/project-id/version2/scene.component'
-import { MapsComponent } from './pages/maps/maps.component'
-import { ImageEditComponent } from './pages/image-edit/image-edit.component'
+import { MapsComponent } from './components/maps/maps.component'
+import { ImageEditComponent } from './components/image-edit/image-edit.component'
+import { ImageComponent } from './components/image/image.component'
 
 const routes: Routes = [
   {
@@ -49,7 +50,11 @@ const routes: Routes = [
     path: 'image-edit',
     component: ImageEditComponent,
   },
-  { path: '', redirectTo: 'image-edit', pathMatch: 'full' },
+  {
+    path: 'image',
+    component: ImageComponent,
+  },
+  { path: '', redirectTo: 'image', pathMatch: 'full' },
   // { path: '', redirectTo: '/projects/3', pathMatch: 'full' },
 ]
 

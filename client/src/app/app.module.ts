@@ -78,7 +78,6 @@ import { MatDialogModule } from '@angular/material/dialog'
 import { MatListModule } from '@angular/material/list'
 import { TopBottomSvgComponent } from './svgs/grid/top-bottom-svg.component'
 import { LeftTopSvgComponent } from './svgs/grid/left-top-svg.component'
-import { CableJoinComponent } from './components/cable-join/cable-join.component'
 import { CurrentProjectInterceptor } from './interceptors/current-project.interceptor'
 import { PanelLinksDataService } from './projects/project-id/services/ngrx-data/panel-links-entity/panel-links-data.service'
 import { PanelLinksEntityService } from './projects/project-id/services/ngrx-data/panel-links-entity/panel-links-entity.service'
@@ -175,7 +174,6 @@ export function tokenGetter() {
     MatDialogModule,
     MatListModule,
     TopBottomSvgComponent,
-    CableJoinComponent,
   ],
   providers: [
     {

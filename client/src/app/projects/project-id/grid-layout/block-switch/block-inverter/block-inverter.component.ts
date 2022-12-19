@@ -5,7 +5,6 @@ import { AsyncPipe, NgIf, NgStyle } from '@angular/common'
 import { FindCableLocationPipe } from '../../../../../pipes/find-cable-location.pipe'
 import { GetNearbyJoins } from '../../../../../pipes/get-nearby-joins.pipe'
 import { LetModule } from '@ngrx/component'
-import { CableJoinComponent } from '../../../../../components/cable-join/cable-join.component'
 import { InverterModel } from '../../../../models/deprecated-for-now/inverter.model'
 import { InvertersEntityService } from '../../../services/ngrx-data/inverters-entity/inverters-entity.service'
 import { RightClick } from '../right-click'
@@ -25,9 +24,7 @@ import { AppState } from '../../../../../store/app.state'
         (contextmenu)="onRightClick($event, inverter)"
         *ngIf="inverter.location"
         [cdkDragData]="inverter"
-        [matTooltip]="
-          'Location = ' + inverter.location + 'Inverter: ' + inverter.name
-        "
+        [matTooltip]="'Location = ' + inverter.location + 'Inverter: ' + inverter.name"
         [style.border]="'2px solid ' + inverter.color"
         cdkDrag
         class="drop-zone__inverter"
@@ -76,7 +73,6 @@ import { AppState } from '../../../../../store/app.state'
     FindCableLocationPipe,
     GetNearbyJoins,
     LetModule,
-    CableJoinComponent,
     AsyncPipe,
   ],
   standalone: true,
@@ -97,22 +93,15 @@ export class BlockInverterComponent implements OnInit {
       gridMode?: GridMode
     }*/
 
-  constructor(
-    private invertersEntity: InvertersEntityService,
-    private store: Store<AppState>,
-  ) {}
+  constructor(private invertersEntity: InvertersEntityService, private store: Store<AppState>) {}
 
   ngOnInit(): void {
     this.gridMode$ = this.store.select(selectGridMode)
     this.inverter$ = this.invertersEntity.entities$.pipe(
-      map((inverters) =>
-        inverters.find((inverter) => inverter.location === this.location),
-      ),
+      map((inverters) => inverters.find((inverter) => inverter.location === this.location)),
     )
     // this.panelToJoin$ = this.store.select(selectPanelToJoin)
-    this.selectedId$ = this.store
-      .select(selectSelectedId)
-      .pipe(distinctUntilChanged())
+    this.selectedId$ = this.store.select(selectSelectedId).pipe(distinctUntilChanged())
     // this.selectedPositiveTo$ = this.store.select(selectSelectedPositiveTo)
     // this.selectedNegativeTo$ = this.store.select(selectSelectedNegativeTo)
     // this.selectedUnit$ = this.store.select(selectUnitSelected)

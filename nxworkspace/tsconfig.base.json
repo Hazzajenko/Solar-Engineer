@@ -38,6 +38,7 @@
       "@grid-layout/shell": ["libs/grid-layout/shell/src/index.ts"],
       "@grid-layout/ui/overlays": ["libs/grid-layout/ui/overlays/src/index.ts"],
       "@grid-layout/ui/toolbar": ["libs/grid-layout/ui/toolbar/src/index.ts"],
+      "@grid/data-access/store": ["libs/grid/data-access/store/src/index.ts"],
       "@shared/config": ["libs/shared/config/src/index.ts"],
       "@shared/data-access/models": ["libs/shared/data-access/models/src/index.ts"],
       "@shared/data-access/store": ["libs/shared/data-access/store/src/index.ts"],

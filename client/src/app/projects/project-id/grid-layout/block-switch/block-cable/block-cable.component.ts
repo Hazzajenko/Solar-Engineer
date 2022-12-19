@@ -14,7 +14,6 @@ import { CableModel } from '../../../../models/deprecated-for-now/cable.model'
 import { FindCableLocationPipe } from '../../../../../pipes/find-cable-location.pipe'
 import { GetNearbyJoins } from '../../../../../pipes/get-nearby-joins.pipe'
 import { LetModule } from '@ngrx/component'
-import { CableJoinComponent } from '../../../../../components/cable-join/cable-join.component'
 import { GetCableJoin } from '../../../../../pipes/get-cable-join.pipe'
 import { GetCablesInJoinPipe } from '../../../../../pipes/get-cables-in-join.pipe'
 import { distinctUntilChanged, firstValueFrom, Observable } from 'rxjs'
@@ -52,7 +51,6 @@ import {
     FindCableLocationPipe,
     GetNearbyJoins,
     LetModule,
-    CableJoinComponent,
     GetCableSurroundingsPipe,
     GetCableJoin,
     AsyncPipe,
@@ -98,9 +96,7 @@ export class BlockCableComponent implements OnInit {
       map((cables) => cables.find((cable) => cable.location === this.location)),
     )
     this.cableToLink$ = this.store.select(selectCableToLink)
-    this.selectedId$ = this.store
-      .select(selectSelectedId)
-      .pipe(distinctUntilChanged())
+    this.selectedId$ = this.store.select(selectSelectedId).pipe(distinctUntilChanged())
     this.selectedPositiveTo$ = this.store.select(selectSelectedPositiveTo)
     this.selectedNegativeTo$ = this.store.select(selectSelectedNegativeTo)
   }
@@ -121,24 +117,16 @@ export class BlockCableComponent implements OnInit {
             this.cablesEntity.delete(cable)
             break
           case GridMode.SELECT:
-            this.store.dispatch(
-              SelectedStateActions.selectCable({ cableId: cable.id }),
-            )
+            this.store.dispatch(SelectedStateActions.selectCable({ cableId: cable.id }))
             break
           default:
-            this.store.dispatch(
-              GridStateActions.changeGridmode({ mode: GridMode.SELECT }),
-            )
-            this.store.dispatch(
-              SelectedStateActions.selectCable({ cableId: cable.id }),
-            )
+            this.store.dispatch(GridStateActions.changeGridmode({ mode: GridMode.SELECT }))
+            this.store.dispatch(SelectedStateActions.selectCable({ cableId: cable.id }))
             break
         }
       })
       .catch((err) => {
-        return this.logger.error(
-          'err cableAction this.store.select(selectGridMode)' + err,
-        )
+        return this.logger.error('err cableAction this.store.select(selectGridMode)' + err)
       })
   }
 

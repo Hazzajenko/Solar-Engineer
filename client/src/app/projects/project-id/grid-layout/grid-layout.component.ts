@@ -16,7 +16,6 @@ import { selectGridMode } from '../services/store/grid/grid.selectors'
 import { BlockModel } from '../../models/block.model'
 import {
   selectBlockByLocation,
-  selectBlocksByProjectId,
   selectBlocksByProjectIdRouteParams,
 } from '../services/store/blocks/blocks.selectors'
 import { GridMode } from '../services/store/grid/grid-mode.model'
@@ -41,7 +40,6 @@ import { LeftTopSvgComponent } from '../../../svgs/grid/left-top-svg.component'
 import { BottomSvgComponent } from '../../../svgs/grid/bottom-svg.component'
 import { LeftRightSvgComponent } from '../../../svgs/grid/left-right-svg.component'
 import { RightSvgComponent } from '../../../svgs/grid/right-svg.component'
-import { CableJoinComponent } from '../../../components/cable-join/cable-join.component'
 import { GetNearbyJoins } from '../../../pipes/get-nearby-joins.pipe'
 import { BlockPanelComponent } from './block-switch/block-panel/block-panel.component'
 import { BlockCableComponent } from './block-switch/block-cable/block-cable.component'
@@ -90,7 +88,6 @@ import { SelectedStateActions } from '../services/store/selected/selected.action
     BottomSvgComponent,
     LeftRightSvgComponent,
     RightSvgComponent,
-    CableJoinComponent,
     GetNearbyJoins,
     BlockPanelComponent,
     BlockCableComponent,
@@ -145,7 +142,7 @@ export class GridLayoutComponent implements OnInit {
     const gridMode = await firstValueFrom(this.store.select(selectGridMode))
     switch (gridMode) {
       case GridMode.SELECT:
-        const block = await firstValueFrom(this.store.select(selectBlockByLocation({location})))
+        const block = await firstValueFrom(this.store.select(selectBlockByLocation({ location })))
         if (!block) {
           console.log('dele')
           this.store.dispatch(SelectedStateActions.clearSelectedState())

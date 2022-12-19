@@ -1,21 +1,12 @@
 <ng-container *ngIf="cable$ | async as cable">
   <div class="drop-zone">
-    <app-cable-join
-      *ngIf="cable | getSurroundingsAsync as surroundings$"
-      [surroundings]="(surroundings$ | async)!"
-      class="drop-zone__svg"
-    ></app-cable-join>
     <div
       (click)="cableAction(cable)"
       (contextmenu)="onRightClick($event, cable)"
       [cdkDragData]="cable"
       [class.drop-zone__bg-default]="(selectedId$ | async) !== cable.id"
-      [class.drop-zone__bg-negative]="
-        (selectedNegativeTo$ | async) === cable.id
-      "
-      [class.drop-zone__bg-positive]="
-        (selectedPositiveTo$ | async) === cable.id
-      "
+      [class.drop-zone__bg-negative]="(selectedNegativeTo$ | async) === cable.id"
+      [class.drop-zone__bg-positive]="(selectedPositiveTo$ | async) === cable.id"
       [class.drop-zone__bg-selected]="(selectedId$ | async) === cable.id"
       [matTooltip]="
         'Location = ' +
@@ -48,11 +39,7 @@
     <ng-template matMenuContent>
       <div class="right-click-menu">
         <button class="right-click-menu__button" mat-menu-item>Edit</button>
-        <button
-          (click)="deleteCable(cable)"
-          class="right-click-menu__button"
-          mat-menu-item
-        >
+        <button (click)="deleteCable(cable)" class="right-click-menu__button" mat-menu-item>
           Delete
         </button>
       </div>
