@@ -6,11 +6,22 @@ import { Observable } from 'rxjs'
 import { LetModule } from '@ngrx/component'
 import { CanvasDirective } from './directives/canvas.directive'
 import { CanvasComponent } from './ui/canvas.component'
+import { Canvas2Component } from './ui/canvas2.component'
+import { ImageFile } from '../../shared/models/images/image-list-response'
+import { MatButtonModule } from '@angular/material/button'
 
 @Component({
   selector: 'app-image',
   standalone: true,
-  imports: [CommonModule, ImageDirective, LetModule, CanvasDirective, CanvasComponent],
+  imports: [
+    CommonModule,
+    ImageDirective,
+    LetModule,
+    CanvasDirective,
+    CanvasComponent,
+    Canvas2Component,
+    MatButtonModule,
+  ],
   providers: [ImageStore],
   templateUrl: './image.component.html',
   styleUrls: ['./image.component.scss'],
@@ -18,57 +29,20 @@ import { CanvasComponent } from './ui/canvas.component'
 export class ImageComponent implements AfterViewInit {
   @ViewChild('canvas', { static: true })
   canvas!: ElementRef<HTMLCanvasElement>
-  top!: number
-  bottom!: number
-  left!: number
-  right!: number
-  centerX!: number
-  centerY!: number
-  zoomLevel: number = 0
-  maxZoom: number = 5
-  canvasWidth!: number
-  canvasHeight!: number
+  image$!: Observable<HTMLImageElement>
   private store = inject(ImageStore)
-  image$: Observable<HTMLImageElement> = this.store.image$
+  // image$: Observable<HTMLImageElement> = this.store.image$
+  imageList$: Observable<ImageFile[]> = this.store.imageList$
   private ctx!: CanvasRenderingContext2D
 
   ngAfterViewInit() {
+    this.store.imageList$.subscribe((res) => console.log(res))
     // this.canvas.nativeElement = initCanvas(this.canvas.nativeElement)
     // this.ctx = this.canvas.nativeElement.getContext('2d')!
   }
 
-  /* async ngAfterViewInit() {
-     let canvas = this.canvas.nativeElement
-     canvas.style.width = '100%'
-     canvas.style.height = '100%'
-     canvas.width = this.canvas.nativeElement.offsetWidth
-     canvas.height = this.canvas.nativeElement.offsetHeight
-     // this.offsetX = this.canvas.nativeElement.offsetLeft
-     // this.offsetY = this.canvas.nativeElement.offsetTop
-
-     this.ctx = this.canvas.nativeElement.getContext('2d')!
-
-     let image = new Image()
-
-     image.onload = () => {
-       let w = canvas.width
-       let nw = image.naturalWidth
-       let nh = image.naturalHeight
-       let aspect = nw / nh
-       let h = w / aspect
-       this.ctx.drawImage(image, 0, 0, w, h)
-       // this.ctx.drawImage(image, 0, 650, 400, 200/aspect, 0, 0, w, h)
-     }
-     /!*    this.backgroundBlob = await lastValueFrom(
-       this.http.get('/api/files/background', { responseType: 'blob' }),
-     )
-
-     this.createImage(this.backgroundBlob ).then((src) => {
-       image.src = `${src}`
-     })*!/
-   }*/
-
-  mouseDown(event: MouseEvent) {}
-
-  mouseUp(event: MouseEvent) {}
+  selectImage(img: ImageFile) {
+    this.store.patchState({ selectedFile: img })
+    this.image$ = this.store.selectedImage$
+  }
 }

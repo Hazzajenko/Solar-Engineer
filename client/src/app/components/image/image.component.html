@@ -1,32 +1,8 @@
-<!--<canvas
-  #canvas
-  (mousedown)="mouseDown($event)"
-  (mouseup)="mouseUp($event)"
-  [canvasImage]="(image$ | async)!"
-  [canvasRef]="canvas"
-  canvasDirective
-  class="canvas"
-  imageDirective
-  style="width: 1000px; height: 1000px"
->
-</canvas>-->
-<app-canvas
-  (bottomChange)="bottom = $event"
-  (canvasHeightChange)="canvasHeight = $event"
-  (canvasWidthChange)="canvasWidth = $event"
-  (leftChange)="left = $event"
-  (rightChange)="right = $event"
-  (topChange)="top = $event"
-  [(centerX)]="centerX"
-  [(centerY)]="centerY"
-  [(zoomLevel)]="zoomLevel"
-  [image]="(image$ | async)!"
-  [maxZoom]="maxZoom"
-  [minZoom]="0"
-></app-canvas>
-<!--<ng-container *ngIf='image$ | async as image'>
-  <img [src]='image.src' alt=''>
-</ng-container>-->
-<!--
-[height]="canvas.offsetHeight"
-[width]="canvas.offsetWidth"-->
+<ng-container *ngIf="image$ | async as image">
+  <app-canvas2 [image]="image"></app-canvas2>
+</ng-container>
+<ng-container *ngIf="imageList$ | async as images">
+  <div *ngFor="let img of images">
+    <button (click)="selectImage(img)" mat-raised-button>{{ img.name }}</button>
+  </div>
+</ng-container>
