@@ -12,26 +12,12 @@ import { MatInputModule } from '@angular/material/input'
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { MapsStore } from '../../data-access/maps.store'
 import { ImageRequest } from '../../../../shared/models/images/image-request'
-import { of } from 'rxjs'
+import { Observable, tap } from 'rxjs'
+import { MatSliderModule } from '@angular/material/slider'
 
 @Component({
   selector: 'new-string-dialog',
-  template: `
-    <div class="container">
-      <h1 mat-dialog-title>Save Location</h1>
-    </div>
-    <img width="400px" [src]="imgSrc" alt="" />
-    <form ngForm class="example-form">
-      <label for="name">Name: </label>
-      <input id="name" type="text" [formControl]="name" />
-    </form>
-    <mat-dialog-actions align="end">
-      <button mat-button mat-dialog-close="true">Cancel</button>
-      <button (click)="saveImage()" [mat-dialog-close]="true" cdkFocusInitial mat-button>
-        Create {{ name.value }}
-      </button>
-    </mat-dialog-actions>
-  `,
+  templateUrl: 'save-location.dialog.html',
   styles: [
     `
       .container {
@@ -86,6 +72,7 @@ import { of } from 'rxjs'
     MatInputModule,
     FormsModule,
     ReactiveFormsModule,
+    MatSliderModule,
   ],
   standalone: true,
   providers: [MapsStore],
@@ -93,7 +80,14 @@ import { of } from 'rxjs'
 export class SaveLocationDialog {
   imgSrc: string = ''
   name = new FormControl('')
+  uploadProgress?: number
   private store = inject(MapsStore)
+  uploadingImage$: Observable<boolean> = this.store.uploadingImage$
+  uploadProgress$: Observable<number | undefined> = this.store.uploadProgress$.pipe(
+    tap((progress) => {
+      this.uploadProgress = progress
+    }),
+  )
 
   constructor(
     private dialogRef: MatDialogRef<SaveLocationDialog>,
@@ -108,6 +102,6 @@ export class SaveLocationDialog {
     }
     const imageReq = new ImageRequest(this.imgSrc, this.name.value)
 
-    this.store.uploadImage(of(imageReq))
+    this.store.uploadImageWithProgress(imageReq)
   }
 }

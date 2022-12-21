@@ -75,7 +75,7 @@ public class ProjectsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll([FromRoute] int projectId)
+    public async Task<IActionResult> GetUserProjects([FromRoute] int projectId)
     {
         var user = await _userManager.GetUserAsync(User);
         if (user == null)

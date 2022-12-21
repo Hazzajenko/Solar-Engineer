@@ -1,3 +1,4 @@
 export interface ImageResponse {
-  blob: Blob
+  name: string
+  image: Blob
 }

@@ -15,6 +15,7 @@ import { AutoCompleteDirective } from './directives/auto-complete.directive'
 import { mapsOptions } from './utils/maps.settings'
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog'
 import { SaveLocationDialog } from './ui/save-location-dialog/save-location.dialog'
+import { ImagesService } from '../../shared/data-access/images/images.service'
 
 @Component({
   selector: 'app-maps',
@@ -49,6 +50,7 @@ export class MapsComponent implements AfterViewInit {
   private store = inject(MapsStore)
   private mapsService = inject(MapsService)
   private dialog = inject(MatDialog)
+  private imagesService = inject(ImagesService)
 
   ngAfterViewInit(): void {
     this.mapsService.initMaps().then((google) => {
@@ -91,6 +93,10 @@ export class MapsComponent implements AfterViewInit {
       `https://maps.googleapis.com/maps/api/staticmap?center=` +
       `${center}&zoom=${zoom}&scale=2&size=${width}x${height}` +
       `&maptype=satellite&format=png&key=${environment.mapsApiKey}`
+    /*    this.imagesService
+          .saveImageAsync(new ImageRequest(img, 'testtest'))
+          .then((res) => res.subscribe((sub) => console.log(sub)))*/
+    console.log(img)
 
     const dialogConfig = new MatDialogConfig()
 

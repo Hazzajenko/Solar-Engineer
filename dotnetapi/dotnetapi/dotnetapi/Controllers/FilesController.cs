@@ -1,5 +1,6 @@
 ﻿using Amazon.S3;
 using Amazon.S3.Model;
+using dotnetapi.Contracts.Responses;
 using dotnetapi.Models.Dtos;
 using Microsoft.AspNetCore.Mvc;
 
@@ -82,7 +83,7 @@ public class FilesController : ControllerBase
             };
             return new S3ObjectDto
             {
-                Name = s.Key.ToString(),
+                Name = s.Key.ToString()
                 // PresignedUrl = _s3Client.GetPreSignedURL(urlRequest)
             };
         });
@@ -130,15 +131,22 @@ public class FilesController : ControllerBase
         };
         request.Metadata.Add("Content-Type", file.ContentType);
         await _s3Client.PutObjectAsync(request);
-        return Ok($"{file.FileName} uploaded to S3 successfully!");
+        // return Ok(file);
+        var result = new GetImageResponse
+        {
+            Name = file.FileName,
+            File = file
+        };
+        return Ok(result);
+        // return Ok($"{file.FileName} uploaded to S3 successfully!");
     }
 
-    [HttpGet("map")]
+    /*[HttpGet("map")]
     public async Task<IActionResult> GetMap()
     {
         var b = System.IO.File.ReadAllBytes(@"E:\\Test.jpg"); // You can use your own method over here.         
         return File(b, "image/jpeg");
-    }
+    }*/
 
     [HttpGet("get-by-key")]
     public async Task<IActionResult> GetFileByKeyAsync(string bucketName, string key)

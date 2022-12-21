@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core'
 import { RouterModule, Routes } from '@angular/router'
-import { ProjectsComponent } from './projects/projects.component'
-import { ProjectIdComponent } from './projects/project-id/project-id.component'
-import { PanelsResolver } from './projects/project-id/services/ngrx-data/panels-entity/panels.resolver'
-import { StringsResolver } from './projects/project-id/services/ngrx-data/strings-entity/strings.resolver'
-import { PanelLinksResolver } from './projects/project-id/services/ngrx-data/panel-links-entity/panel-links.resolver'
-import { SceneComponent } from './projects/project-id/version2/scene.component'
+import { ProjectsComponent } from './projects(deprecated)/projects.component'
+import { ProjectIdComponent } from './projects(deprecated)/project-id/project-id.component'
+import { PanelsResolver } from './projects(deprecated)/project-id/services/ngrx-data/panels-entity/panels.resolver'
+import { StringsResolver } from './projects(deprecated)/project-id/services/ngrx-data/strings-entity/strings.resolver'
+import { PanelLinksResolver } from './projects(deprecated)/project-id/services/ngrx-data/panel-links-entity/panel-links.resolver'
+import { SceneComponent } from './projects(deprecated)/project-id/version2/scene.component'
 import { MapsComponent } from './components/maps/maps.component'
 import { ImageEditComponent } from './components/image-edit/image-edit.component'
 import { ImageComponent } from './components/image/image.component'
@@ -22,7 +22,7 @@ const routes: Routes = [
         ],*/
   },
   {
-    path: 'projects/:projectId',
+    path: 'projects(deprecated)/:projectId',
     component: ProjectIdComponent,
     resolve: {
       panels: PanelsResolver,
@@ -55,7 +55,7 @@ const routes: Routes = [
     component: ImageComponent,
   },
   { path: '', redirectTo: 'image', pathMatch: 'full' },
-  // { path: '', redirectTo: '/projects/3', pathMatch: 'full' },
+  // { path: '', redirectTo: '/projects(deprecated)/3', pathMatch: 'full' },
 ]
 
 @NgModule({

@@ -1,0 +1,5 @@
+<ng-container *ngIf="imageList$ | async as images">
+  <div *ngFor="let img of images">
+    <button (click)="selectImage(img)" mat-raised-button>{{ img.name }}</button>
+  </div>
+</ng-container>

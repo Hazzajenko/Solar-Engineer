@@ -23,7 +23,7 @@ export const addUserAndToken = createAction(
 
 /*export const addUserProjects = createAction(
   '[Auth Service] Add User Projects',
-  props<{ projects: ProjectModel[] }>()
+  props<{ projects(deprecated): ProjectModel[] }>()
 );*/
 
 export const signOut = createAction("[Auth Service] User SignOut");

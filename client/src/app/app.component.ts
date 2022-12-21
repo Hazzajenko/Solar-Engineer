@@ -1,6 +1,5 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core'
 import { AuthService } from './auth/auth.service'
-import { Message } from './services/websocket.service'
 import { Store } from '@ngrx/store'
 import { AppState } from './store/app.state'
 
@@ -30,8 +29,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     scrollY: number = 0*/
   title = 'solarengineer'
   content = ''
-  received: Message[] = []
-  sent: Message[] = []
+
   private ctx!: CanvasRenderingContext2D
 
   constructor(private auth: AuthService, private store: Store<AppState>) {
@@ -53,7 +51,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
         this.ctx = this.canvas.nativeElement.getContext('2d')!*/
     /*
-        firstValueFrom(this.store.select(selectBlocksByProjectIdRouteParams).pipe(
+        firstValueFrom(this.store(deprecated).select(selectBlocksByProjectIdRouteParams).pipe(
           map(blocks => blocks.find(b => b.id === '1f1cdc069343b93b5ec0db0ef44d'))
         )).then(res => {
           this.ctx.beginPath()
@@ -84,7 +82,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     }*/
 
   async ngOnInit(): Promise<void> {
-    // this.pathMapCoords$ = this.store.select(selectSelectedStringPathMapCoords)
+    // this.pathMapCoords$ = this.store(deprecated).select(selectSelectedStringPathMapCoords)
     // console.log('GUID NGRXDATA', getGuid().toString())
     // console.log('GUID NGRXDATA', Guid.create().toString())
     await this.signIn()

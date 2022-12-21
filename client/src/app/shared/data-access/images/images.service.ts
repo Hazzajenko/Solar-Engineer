@@ -1,9 +1,10 @@
 import { inject, Injectable } from '@angular/core'
-import { HttpClient } from '@angular/common/http'
-import { catchError, map } from 'rxjs/operators'
-import { EMPTY, Observable } from 'rxjs'
+import { HttpClient, HttpEvent } from '@angular/common/http'
+import { catchError, map, switchMap, take } from 'rxjs/operators'
+import { defer, EMPTY, from, Observable } from 'rxjs'
 import { ImageRequest } from '../../models/images/image-request'
 import { ImageFile } from '../../models/images/image-list-response'
+import { ImageResponse } from '../../models/images/image-response'
 
 @Injectable({
   providedIn: 'root',
@@ -41,36 +42,51 @@ export class ImagesService {
     )
   }
 
-  async saveImageAsync(request: ImageRequest): Promise<Observable<HTMLImageElement>> {
-    const dataUrl = await this.getBase64DataFromUrl(request.imageUrl)
-    const blob: Blob = this.convertDataToBlob(`${dataUrl}`)
+  saveImageWithObs(request: ImageRequest): Observable<HttpEvent<any>> {
+    const dataUrl$ = defer(() => this.getBase64DataFromUrl(request.imageUrl))
+    return from(dataUrl$).pipe(
+      map((dataUrl) => this.convertDataToBlob(dataUrl)),
+      map((blob) => {
+        const formData = new FormData()
+        formData.append('file', blob, `${request.imageName}.png`)
+        return formData
+      }),
+      switchMap((formData) =>
+        this.http.post('/api/files/map', formData, { reportProgress: true, observe: 'events' }),
+      ),
+    )
+  }
 
+  saveImage(request: ImageRequest): Observable<ImageResponse> {
+    let blob = new Blob()
+    this.getBase64DataFromUrl(request.imageUrl).then((dataUrl) => {
+      console.log('dataUrl', dataUrl)
+      blob = this.convertDataToBlob(`${dataUrl}`)
+    })
+    console.log('blob', blob)
     const formData = new FormData()
     formData.append('file', blob, `${request.imageName}.png`)
-    return this.http.post('/api/files/map', formData, { responseType: 'blob' }).pipe(
+    return this.http.post<ImageResponse>('/api/files/map', formData).pipe(
+      take(5),
       catchError((err) => {
         console.log(err)
         return EMPTY
       }),
-      map((res: Blob) => this.createImageFromBlob(res)),
+      map((res: ImageResponse) => {
+        console.log(res)
+        return res
+      }),
     )
   }
 
-  saveImage(request: ImageRequest): Observable<HTMLImageElement> {
+  saveImageWithProgress(request: ImageRequest): Observable<HttpEvent<any>> {
     let blob = new Blob()
     this.getBase64DataFromUrl(request.imageUrl).then((dataUrl) => {
       blob = this.convertDataToBlob(`${dataUrl}`)
     })
-
     const formData = new FormData()
     formData.append('file', blob, `${request.imageName}.png`)
-    return this.http.post('/api/files/map', formData, { responseType: 'blob' }).pipe(
-      catchError((err) => {
-        console.log(err)
-        return EMPTY
-      }),
-      map((res: Blob) => this.createImageFromBlob(res)),
-    )
+    return this.http.post('/api/files/map', formData, { reportProgress: true, observe: 'events' })
   }
 
   private createImageFromBlob(blob: Blob): HTMLImageElement {
@@ -94,7 +110,7 @@ export class ImagesService {
     return new Blob([ia], { type: mimeString })
   }
 
-  private async getBase64DataFromUrl(url: string) {
+  private async getBase64DataFromUrl(url: string): Promise<string> {
     const data = await fetch(url)
     const blob = await data.blob()
     return new Promise((resolve) => {
@@ -102,7 +118,7 @@ export class ImagesService {
       reader.readAsDataURL(blob)
       reader.onloadend = () => {
         const base64data = reader.result
-        resolve(base64data)
+        resolve(base64data!.toString())
       }
     })
   }

@@ -8,7 +8,7 @@ import {
 import { Observable } from 'rxjs'
 import { Store } from '@ngrx/store'
 import { AppState } from '../store/app.state'
-import { selectCurrentProjectId } from '../projects/project-id/services/store/projects/projects.selectors'
+import { selectCurrentProjectId } from '../projects(deprecated)/project-id/services/store/projects/projects.selectors'
 
 @Injectable()
 export class CurrentProjectInterceptor implements HttpInterceptor {
