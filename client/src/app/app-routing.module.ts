@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core'
 import { RouterModule, Routes } from '@angular/router'
-import { ProjectsComponent } from './projects(deprecated)/projects.component'
+
 import { ProjectIdComponent } from './projects(deprecated)/project-id/project-id.component'
 import { PanelsResolver } from './projects(deprecated)/project-id/services/ngrx-data/panels-entity/panels.resolver'
 import { StringsResolver } from './projects(deprecated)/project-id/services/ngrx-data/strings-entity/strings.resolver'
@@ -9,6 +9,8 @@ import { SceneComponent } from './projects(deprecated)/project-id/version2/scene
 import { MapsComponent } from './components/maps/maps.component'
 import { ImageEditComponent } from './components/image-edit/image-edit.component'
 import { ImageComponent } from './components/image/image.component'
+import { VoltageDropComponent } from './components/voltage-drop/voltage-drop.component'
+import { ProjectsComponent } from './projects/projects.component'
 
 const routes: Routes = [
   {
@@ -54,7 +56,12 @@ const routes: Routes = [
     path: 'image',
     component: ImageComponent,
   },
-  { path: '', redirectTo: 'image', pathMatch: 'full' },
+  {
+    path: 'voltage-drop',
+    component: VoltageDropComponent,
+  },
+  { path: '', redirectTo: 'voltage-drop', pathMatch: 'full' },
+  // { path: '', redirectTo: 'image', pathMatch: 'full' },
   // { path: '', redirectTo: '/projects(deprecated)/3', pathMatch: 'full' },
 ]
 

@@ -46,11 +46,11 @@ export function tokenGetter() {
       useClass: JwtInterceptor,
       multi: true,
     },
-    {
+/*    {
       provide: HTTP_INTERCEPTORS,
       useClass: CurrentProjectInterceptor,
       multi: true,
-    },
+    },*/
   ],
   bootstrap: [AppComponent],
 })

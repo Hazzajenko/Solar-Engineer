@@ -6,7 +6,7 @@ import { ProjectModel } from '../../shared/models/projects/project.model'
 import { ProjectsService } from './projects.service'
 
 interface ProjectState {
-  userProjects: ProjectModel[]
+  userProjects?: ProjectModel[]
   selectedProject?: ProjectModel
 }
 
@@ -23,7 +23,7 @@ export class ProjectsStore extends ComponentStore<ProjectState> {
       }
       return this.projectsService.getUserProjects().pipe(
         tap((res) => {
-          this.patchState({ userProjects: res })
+          // this.patchState({ userProjects: res })
         }),
       )
     }),
@@ -32,14 +32,14 @@ export class ProjectsStore extends ComponentStore<ProjectState> {
     projectId$.pipe(
       map((params) => params),
       switchMap((req) => this.projectsService.getProjectById(req).pipe(
-        tap(res => this.patchState({selectedProject: res}))
+        // tap(res => this.patchState({selectedProject: res}))
       )),
     ),
   )
 
   constructor() {
     super({
-      userProjects: [],
+      userProjects: undefined,
       selectedProject: undefined,
     })
   }

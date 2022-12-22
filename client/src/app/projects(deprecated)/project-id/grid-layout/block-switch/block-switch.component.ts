@@ -27,16 +27,13 @@ import { Store } from '@ngrx/store'
 import { AppState } from '../../../../store/app.state'
 import { DisconnectionPointModel } from '../../../models/disconnection-point.model'
 import { DisconnectionPointsEntityService } from '../../services/ngrx-data/disconnection-points-entity/disconnection-points-entity.service'
-import { GridDeleteService } from '../../../services/grid/grid-delete.service'
 import { BlockMenuComponent } from './block-menu/block-menu.component'
 import { RightClick } from './right-click'
 import { StringModel } from '../../../models/string.model'
-import { LoggerService } from '../../../../services/logger.service'
 import { LetModule } from '@ngrx/component'
 import { PanelLinksToModel } from '../../../models/deprecated-for-now/panel-links-to.model'
 import { BlockTrayComponent } from './block-tray/block-tray.component'
 import { BlockRailComponent } from './block-rail/block-rail.component'
-import { BlocksStateActions } from '../../services/store/blocks/blocks.actions'
 
 @Component({
   selector: 'app-block-switch',
@@ -87,8 +84,6 @@ export class BlockSwitchComponent implements AfterViewInit {
     public cablesEntity: CablesEntityService,
     private disconnectionPointsEntity: DisconnectionPointsEntityService,
     private store: Store<AppState>,
-    public gridDelete: GridDeleteService,
-    private logger: LoggerService,
     private elRef: ElementRef,
   ) {}
 

@@ -38,7 +38,6 @@ import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
 import { BlockMenuComponent } from '../block-menu/block-menu.component'
 import { RightClick } from '../right-click'
 import { TypeModel } from '../../../../models/type.model'
-import { LoggerService } from '../../../../../services/logger.service'
 import { GridStateActions } from '../../../services/store/grid/grid.actions'
 import { SelectedStateActions } from '../../../services/store/selected/selected.actions'
 import { LinksService } from 'src/app/projects(deprecated)/project-id/services/links/links.service'
@@ -141,7 +140,6 @@ export class BlockPanelComponent implements OnInit, AfterViewInit {
     private joinsService: LinksService,
     public store: Store<AppState>,
     private statsService: StatsService,
-    private logger: LoggerService,
     private http: HttpClient,
     private dialog: MatDialog,
     private elRef: ElementRef,

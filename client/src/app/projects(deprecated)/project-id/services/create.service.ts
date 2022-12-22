@@ -184,7 +184,7 @@ export class CreateService {
   }
 
   createCableForGrid(location: string) {
-    firstValueFrom(
+   /* firstValueFrom(
       this.cablesEntity.entities$.pipe(
         combineLatestWith(this.store.select(selectCurrentProjectId)),
       ),
@@ -202,8 +202,8 @@ export class CreateService {
         model: TypeModel.JOIN,
         size: 4,
       }
-      /*      return new Promise<JoinModel>((resolve, reject) =>
-              this.joinsEntity.add(joinRequest)*/
+      /!*      return new Promise<JoinModel>((resolve, reject) =>
+              this.joinsEntity.add(joinRequest)*!/
       lastValueFrom(this.joinsEntity.add(joinRequest)).then(() => {
         if (surroundingCables.topCable) {
           this.update.updateCableForJoin(surroundingCables.topCable, newJoinId, cables)
@@ -232,7 +232,7 @@ export class CreateService {
 
         this.cablesEntity.add(cableRequest)
       })
-    })
+    })*/
   }
 
   createDisconnectionPointForGrid(location: string) {

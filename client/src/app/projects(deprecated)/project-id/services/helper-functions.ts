@@ -1,7 +1,7 @@
-import { SurroundingCablesModel } from '../../services/grid/grid.helpers'
+
 
 export function getSurroundings(location: string, blocks: any) {
-  if (!location || !blocks) {
+  /*if (!location || !blocks) {
     const surroundingCables: SurroundingCablesModel = {
       topCable: undefined,
       bottomCable: undefined,
@@ -48,5 +48,5 @@ export function getSurroundings(location: string, blocks: any) {
     rightCable: findRight,
   }
 
-  return surroundingCables
+  return surroundingCables*/
 }

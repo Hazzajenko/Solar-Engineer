@@ -15,7 +15,6 @@ import { LinksState } from '../store/links/links.reducer'
 import { DisconnectionPointModel } from '../../../models/disconnection-point.model'
 import { combineLatestWith, firstValueFrom } from 'rxjs'
 import { selectLinksState } from '../store/links/links.selectors'
-import { LoggerService } from '../../../../services/logger.service'
 import { CablesEntityService } from '../ngrx-data/cables-entity/cables-entity.service'
 import { CableModel } from '../../../models/deprecated-for-now/cable.model'
 import { ItemsService } from '../items.service'
@@ -40,7 +39,6 @@ export class LinksService {
     private joinsEntity: JoinsEntityService,
     private disconnectionPointsEntity: DisconnectionPointsEntityService,
     private cablesEntity: CablesEntityService,
-    private logger: LoggerService,
     private itemsService: ItemsService,
     private linksPanelsService: LinksPanelsService,
     private blocksService: BlocksService,

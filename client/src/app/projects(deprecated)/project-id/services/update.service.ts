@@ -18,7 +18,7 @@ import { firstValueFrom, lastValueFrom } from 'rxjs'
 import { Store } from '@ngrx/store'
 import { AppState } from '../../../store/app.state'
 import { selectBlocksByProjectIdRouteParams } from './store/blocks/blocks.selectors'
-import { LoggerService } from '../../../services/logger.service'
+
 import { BlockModel } from '../../models/block.model'
 
 @Injectable({
@@ -33,7 +33,6 @@ export class UpdateService {
     private cables: CablesEntityService,
     private joins: JoinsEntityService,
     private store: Store<AppState>,
-    private logger: LoggerService,
   ) {}
 
   gridDrop(event: CdkDragDrop<any, any>) {
@@ -43,7 +42,7 @@ export class UpdateService {
 
         console.error(doesExist)
         if (doesExist) {
-          return this.logger.warn(`block already exists as ${event.container.id}`)
+          return console.warn(`block already exists as ${event.container.id}`)
         }
         const block: BlockModel = event.item.data
         console.log(block)
@@ -85,7 +84,7 @@ export class UpdateService {
   }
 
   joinNearbyCables(cable: CableModel, location: string) {
-    if (!cable) {
+   /* if (!cable) {
       return console.log('err')
     }
     let cables: CableModel[] = []
@@ -128,7 +127,7 @@ export class UpdateService {
         join_id: newJoinId,
       }
       this.cables.update(update)
-    })
+    })*/
   }
 
   updateCableForJoin(cable: CableModel, join_id: string, cables: CableModel[]) {

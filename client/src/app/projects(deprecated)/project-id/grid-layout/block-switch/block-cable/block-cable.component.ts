@@ -28,7 +28,6 @@ import { selectGridMode } from '../../../services/store/grid/grid.selectors'
 import { GridMode } from '../../../services/store/grid/grid-mode.model'
 import { SelectedStateActions } from '../../../services/store/selected/selected.actions'
 import { GridStateActions } from '../../../services/store/grid/grid.actions'
-import { LoggerService } from '../../../../../services/logger.service'
 import { Store } from '@ngrx/store'
 import { AppState } from '../../../../../store/app.state'
 import { selectCableToLink } from '../../../services/store/links/links.selectors'
@@ -79,7 +78,6 @@ export class BlockCableComponent implements OnInit {
 
   constructor(
     private cablesEntity: CablesEntityService,
-    private logger: LoggerService,
     private store: Store<AppState>,
   ) {}
 
@@ -103,7 +101,7 @@ export class BlockCableComponent implements OnInit {
 
   cableAction(cable: CableModel) {
     if (!cable) {
-      return this.logger.error('err cableAction !cable')
+      return console.error('err cableAction !cable')
     }
 
     firstValueFrom(this.store.select(selectGridMode))
@@ -126,7 +124,7 @@ export class BlockCableComponent implements OnInit {
         }
       })
       .catch((err) => {
-        return this.logger.error('err cableAction this.store(deprecated).select(selectGridMode)' + err)
+        return console.error('err cableAction this.store(deprecated).select(selectGridMode)' + err)
       })
   }
 

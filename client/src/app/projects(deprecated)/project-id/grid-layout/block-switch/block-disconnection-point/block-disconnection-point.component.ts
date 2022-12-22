@@ -35,7 +35,6 @@ import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
 import { SelectedStateActions } from '../../../services/store/selected/selected.actions'
 import { GridStateActions } from '../../../services/store/grid/grid.actions'
 import { LinksService } from '../../../services/links/links.service'
-import { LoggerService } from '../../../../../services/logger.service'
 
 @Component({
   selector: 'app-block-disconnection-point',
@@ -74,7 +73,6 @@ export class BlockDisconnectionPointComponent implements OnInit {
     private store: Store<AppState>,
     private panelJoinsEntity: PanelLinksEntityService,
     private joinsService: LinksService,
-    private logger: LoggerService,
   ) {}
 
   displayTooltip(disconnectionPoint: DisconnectionPointModel): string {
@@ -109,7 +107,7 @@ export class BlockDisconnectionPointComponent implements OnInit {
 
   dpAction(disconnectionPoint: DisconnectionPointModel) {
     if (!disconnectionPoint) {
-      return this.logger.error('err dpAction !disconnectionPoint')
+      return console.error('err dpAction !disconnectionPoint')
     }
 
     firstValueFrom(this.store.select(selectGridMode))
@@ -134,7 +132,7 @@ export class BlockDisconnectionPointComponent implements OnInit {
         }
       })
       .catch((err) => {
-        return this.logger.error('err dpAction this.store(deprecated).select(selectGridMode)' + err)
+        return console.error('err dpAction this.store(deprecated).select(selectGridMode)' + err)
       })
   }
 

@@ -6,7 +6,6 @@ import { Store } from '@ngrx/store'
 import { AppState } from '../../../../store/app.state'
 import { JoinsEntityService } from '../ngrx-data/joins-entity/joins-entity.service'
 import { firstValueFrom, switchMap } from 'rxjs'
-import { LoggerService } from '../../../../services/logger.service'
 import { CablesEntityService } from '../ngrx-data/cables-entity/cables-entity.service'
 import { ItemsService } from '../items.service'
 import { BlocksService } from '../store/blocks/blocks.service'
@@ -52,7 +51,6 @@ export class LinksPathService {
     private joinsEntity: JoinsEntityService,
     private disconnectionPointsEntity: DisconnectionPointsEntityService,
     private cablesEntity: CablesEntityService,
-    private logger: LoggerService,
     private itemsService: ItemsService,
     private blocksService: BlocksService,
   ) {}

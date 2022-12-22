@@ -13,7 +13,6 @@ import { PanelModel } from '../../../models/panel.model'
 import { LinksStateActions } from '../store/links/links.actions'
 import { LinksState } from '../store/links/links.reducer'
 import { DisconnectionPointModel } from '../../../models/disconnection-point.model'
-import { LoggerService } from '../../../../services/logger.service'
 import { CablesEntityService } from '../ngrx-data/cables-entity/cables-entity.service'
 import { ItemsService } from '../items.service'
 import { LinksPathService } from './links-path.service'
@@ -36,7 +35,6 @@ export class LinksPanelsService {
     private joinsEntity: JoinsEntityService,
     private disconnectionPointsEntity: DisconnectionPointsEntityService,
     private cablesEntity: CablesEntityService,
-    private logger: LoggerService,
     private itemsService: ItemsService,
     private linksPathService: LinksPathService,
   ) {}

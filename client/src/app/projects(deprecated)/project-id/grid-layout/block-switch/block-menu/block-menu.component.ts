@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { MatMenuModule } from '@angular/material/menu'
-import { GridDeleteService } from '../../../../services/grid/grid-delete.service'
 import { GridStateActions } from '../../../services/store/grid/grid.actions'
 import { GridMode } from '../../../services/store/grid/grid-mode.model'
 import { SelectedStateActions } from '../../../services/store/selected/selected.actions'
@@ -20,7 +19,7 @@ import { TypeModel } from '../../../../models/type.model'
 export class BlockMenuComponent {
   @Input() item: any
 
-  constructor(public gridDelete: GridDeleteService, private store: Store<AppState>) {}
+  constructor(private store: Store<AppState>) {}
 
   selectString(stringId: string) {
     // this.store(deprecated).dispatch(GridStateActions.changeGridmode({ mode: GridMode.SELECT }))

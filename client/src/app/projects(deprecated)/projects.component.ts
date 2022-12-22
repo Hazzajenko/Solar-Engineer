@@ -1,12 +1,10 @@
 import { Component, OnInit } from '@angular/core'
-import { ProjectsService } from './services/projects.service'
 import { Observable } from 'rxjs'
 import { ProjectModel } from '../shared/models/projects/project.model'
 import { ActivatedRoute, Router } from '@angular/router'
 import { Store } from '@ngrx/store'
 import { AppState } from '../store/app.state'
 import { selectAllProjects } from './project-id/services/store/projects/projects.selectors'
-import { InvertersService } from './services/inverters.service'
 import { AsyncPipe, NgIf } from '@angular/common'
 
 @Component({
@@ -22,8 +20,6 @@ export class ProjectsComponent implements OnInit {
   constructor(
     private router: Router,
     private store: Store<AppState>,
-    private projects: ProjectsService,
-    private inverters: InvertersService,
     private route: ActivatedRoute,
   ) {}
 
@@ -42,7 +38,7 @@ export class ProjectsComponent implements OnInit {
     this.projects$ = this.store.select(selectAllProjects)
   }
 
-  onRouteToProject(project: ProjectModel) {
+/*  onRouteToProject(project: ProjectModel) {
     this.projects.getDataByProjectId(project.id).then(async () => {
       // this.inverters.getInvertersByProjectId(project.id).then(async () => {
       // await this.router.navigateByUrl(`/projects(deprecated)/${project.id}`);
@@ -52,5 +48,5 @@ export class ProjectsComponent implements OnInit {
         relativeTo: this.route,
       })
     })
-  }
+  }*/
 }
