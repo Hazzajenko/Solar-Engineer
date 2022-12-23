@@ -1,0 +1,56 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot='start'>
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Projects</ion-title>
+
+    <ion-avatar class='profile-avatar' slot='end'>
+      <img alt='avatar'
+           class='profile-img'
+           src='https://inthecloud.withgoogle.com/workspace-vs-office-365-impact-on-business-report/static/img/JP-Speaker-Placeholder.png'/>
+    </ion-avatar>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class='ion-padding'>
+  <ng-container *ngIf='user$ | async; let user'>
+    <ion-row>
+      <ion-col offset-sm='2' size='12' size-sm='8'>
+        <ng-container *ngIf='projects$ | async; let projects'>
+          <ion-list>
+            <ion-list-header lines='inset'>
+              <ion-label *ngIf='projects'>{{projects.length}} Projects</ion-label>
+            </ion-list-header>
+            <div *ngIf='projects && projects.length <= 0' class='ion-text-center'>
+              <p>No Projects found! Please create one first!</p>
+              <ion-button color='primary'
+              >Create ProjectModel
+              </ion-button
+              >
+            </div>
+            <ion-item-sliding
+              #slidingItem
+              (click)='routeToProject(project)'
+              *ngFor='let project of projects | slice:0:10; let i=index'>
+              <ion-item>
+                <ion-label>
+                  <h1>{{project.name}}</h1>
+                  <h4>Created At {{project.createdAt | date : 'short'}}</h4>
+                </ion-label>
+              </ion-item>
+              <ion-item-options side='end'>
+                <ion-item-option
+                  color='secondary'
+                >
+                  <ion-icon name='create' slot='icon-only'></ion-icon>
+                </ion-item-option>
+              </ion-item-options>
+            </ion-item-sliding>
+          </ion-list>
+        </ng-container>
+      </ion-col>
+    </ion-row>
+  </ng-container>
+</ion-content>

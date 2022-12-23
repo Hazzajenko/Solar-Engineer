@@ -1,42 +1,17 @@
-<!--<div *ngIf='(projects$ | async)! | oneProjectPipe as project'>
-  {{ project.name }}
-
-</div>-->
-<button mat-button (click)='createProject()'>create</button>
+<button (click)="createProject()" mat-button>create</button>
 <div class="containerOuter">
   <div class="containerInner">
     <h1 class="title">Solar <span class="titlePink">Engineer</span></h1>
 
     <div *ngIf="projects$ | async as projects">
-      <div *ngIf="projects.length>1 else oneProject">
-                <mat-selection-list
-
-                  *ngFor="let project of projects"
-                  [multiple]="false"
-                >
-                  <mat-list-option>
-                    {{ project.name }}
-                  </mat-list-option>
-                </mat-selection-list>
-        <p>
-        </p>
-      </div>
-      <ng-template #oneProject>
-<!--        {{projects | json}}-->
-        {{projects[0]?.name}}
-        <div *ngIf='projects | oneProjectPipe as project'>
-        {{ project.name }}
-
-        </div>
-      </ng-template>
-<!--        <mat-selection-list
-          [multiple]="false"
-        >
-          <mat-list-option *ngIf='projects | oneProjectPipe as project'>
+      <div>
+        <mat-selection-list *ngFor="let project of projects" [multiple]="false">
+          <mat-list-option>
             {{ project.name }}
           </mat-list-option>
         </mat-selection-list>
-      </ng-template>-->
+        <p></p>
+      </div>
     </div>
   </div>
 </div>

@@ -29,9 +29,6 @@
       "@grid-layout/data-access/store": ["libs/grid-layout/data-access/store/src/index.ts"],
       "@grid-layout/directives": ["libs/grid-layout/directives/src/index.ts"],
       "@grid-layout/feature/block-switch": ["libs/grid-layout/feature/block-switch/src/index.ts"],
-      "@grid-layout/feature/block-switch/src/lib/block-types": [
-        "libs/grid-layout/feature/block-switch/src/lib/block-types/src/index.ts"
-      ],
       "@grid-layout/feature/dialogs": ["libs/grid-layout/feature/dialogs/src/index.ts"],
       "@grid-layout/feature/grid": ["libs/grid-layout/feature/grid/src/index.ts"],
       "@grid-layout/pipes": ["libs/grid-layout/pipes/src/index.ts"],

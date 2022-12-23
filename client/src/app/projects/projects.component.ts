@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core'
+import { Component, inject, OnInit } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { ProjectsStore } from './data-access/projects.store'
 import { Observable } from 'rxjs'
@@ -16,9 +16,13 @@ import { MatButtonModule } from '@angular/material/button'
   templateUrl: './projects.component.html',
   styleUrls: ['./projects.component.scss'],
 })
-export class ProjectsComponent {
+export class ProjectsComponent implements OnInit {
   private store = inject(ProjectsStore)
   projects$: Observable<ProjectModel[]> = this.store.userProjects$
+
+  ngOnInit(): void {
+    this.store.userProjects$.subscribe((res) => console.log(res))
+  }
 
   createProject() {}
 }

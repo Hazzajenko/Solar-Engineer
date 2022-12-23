@@ -1,17 +1,17 @@
-import { Injectable } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
+import { Injectable } from '@angular/core'
+import { addUserAndToken } from '@auth/data-access/store'
+import { JwtHelperService } from '@auth0/angular-jwt'
 
 import { Store } from '@ngrx/store'
 import { UserModel } from '@shared/data-access/models'
-import { JwtHelperService } from '@auth0/angular-jwt'
+
+// import { addUserAndToken } from '@auth/data-access/store'
+import { AppState } from '@shared/data-access/store'
 import decode from 'jwt-decode'
 import { Observable } from 'rxjs'
 // import { selectUser } from '@auth/data-access/store'
 import { map, take } from 'rxjs/operators'
-
-// import { addUserAndToken } from '@auth/data-access/store'
-import { AppState } from '@shared/data-access/store'
-import { addUserAndToken } from '@auth/data-access/store'
 
 export interface SignInRequest {
   email: string
@@ -38,6 +38,7 @@ interface SignInResponse {
 export class AuthService {
   currentUser?: UserModel
   user$!: Observable<any>
+
 
   constructor(
     private http: HttpClient,

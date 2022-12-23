@@ -1,0 +1,11 @@
+{
+  "projects": {
+    "mobile": {
+      "name": "mobile",
+      "integrations": {},
+      "type": "angular",
+      "root": "apps\\mobile"
+    }
+  },
+  "defaultProject": "mobile"
+}

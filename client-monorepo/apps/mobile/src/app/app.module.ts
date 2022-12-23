@@ -1,0 +1,41 @@
+import {isDevMode, NgModule} from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
+import {IonicModule, IonicRouteStrategy} from '@ionic/angular';
+import {RouteReuseStrategy} from "@angular/router";
+import {AppComponentStore} from "@app-component/store";
+import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
+import {StoreModule} from "@ngrx/store";
+import {reducers} from "@shared/store";
+import {EffectsModule} from "@ngrx/effects";
+import {StoreRouterConnectingModule} from "@ngrx/router-store";
+import {StoreDevtoolsModule} from "@ngrx/store-devtools";
+import {JwtInterceptor} from "@auth/interceptors";
+
+@NgModule({
+  declarations: [
+    AppComponent
+  ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    HttpClientModule,
+    StoreModule.forRoot(reducers, {}),
+    EffectsModule.forRoot([]),
+    StoreRouterConnectingModule.forRoot(),
+    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: !isDevMode() }),
+    IonicModule.forRoot()
+  ],
+  providers: [
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: JwtInterceptor,
+      multi: true,
+    },
+    AppComponentStore
+  ],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
