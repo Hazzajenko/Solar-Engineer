@@ -84,7 +84,7 @@ public static class PanelMapper
             PositiveToId = request.PositiveToId,
             NegativeToId = request.NegativeToId,
             Name = request.Name,
-            Model = UnitModelDto.Panel,
+            Type = BlockTypeDto.Panel,
             CreatedAt = request.CreatedAt,
             Length = request.Length,
             Weight = request.Weight,

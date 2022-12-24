@@ -1,7 +1,7 @@
-import { TypeModel } from './type.model'
+import { TypeModel } from 'libs/shared/data-access/models/src/lib/projects/type.model'
 
 export class PanelLinkModel {
-  id: string = ''
+  id = ''
   projectId?: number
   stringId?: string
   positiveToId?: string

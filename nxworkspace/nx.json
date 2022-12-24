@@ -6,14 +6,20 @@
     "default": {
       "runner": "nx/tasks-runners/default",
       "options": {
-        "cacheableOperations": ["build", "test"],
+        "cacheableOperations": [
+          "build",
+          "test"
+        ],
         "useDaemonProcess": false
       }
     }
   },
   "namedInputs": {
     "sharedGlobals": [],
-    "default": ["{projectRoot}/**/*", "sharedGlobals"],
+    "default": [
+      "{projectRoot}/**/*",
+      "sharedGlobals"
+    ],
     "production": [
       "default",
       "!{projectRoot}/tsconfig.spec.json",
@@ -26,8 +32,13 @@
   },
   "targetDefaults": {
     "build": {
-      "dependsOn": ["^build"],
-      "inputs": ["production", "^production"]
+      "dependsOn": [
+        "^build"
+      ],
+      "inputs": [
+        "production",
+        "^production"
+      ]
     },
     "test": {
       "inputs": [
@@ -38,7 +49,10 @@
       ]
     },
     "lint": {
-      "inputs": ["default", "{workspaceRoot}/.eslintrc.json"]
+      "inputs": [
+        "default",
+        "{workspaceRoot}/.eslintrc.json"
+      ]
     }
   },
   "cli": {
@@ -53,12 +67,13 @@
     },
     "@nrwl/angular:library": {
       "linter": "eslint",
-      "unitTestRunner": "jest"
+      "unitTestRunner": "jest",
+      "strict": false
     },
     "@nrwl/angular:component": {
       "style": "scss",
       "standalone": true
     }
   },
-  "defaultProject": "solarengineerv2"
+  "defaultProject": "design"
 }

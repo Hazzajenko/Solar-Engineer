@@ -1,0 +1,28 @@
+{
+  "name": "auth-data-access-facade",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "sourceRoot": "libs/auth/data-access/facade/src",
+  "prefix": "app",
+  "targets": {
+    "test": {
+      "executor": "@angular-devkit/build-angular:karma",
+      "options": {
+        "tsConfig": "libs/auth/data-access/facade/tsconfig.spec.json",
+        "karmaConfig": "libs/auth/data-access/facade/karma.conf.js",
+        "polyfills": ["zone.js", "zone.js/testing"]
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/auth/data-access/facade/**/*.ts",
+          "libs/auth/data-access/facade/**/*.html"
+        ]
+      }
+    }
+  },
+  "tags": []
+}

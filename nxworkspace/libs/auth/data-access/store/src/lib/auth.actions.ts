@@ -1,23 +1,16 @@
+import { SignInRequest } from '@auth/data-access/api'
+import { createActionGroup, emptyProps, props } from '@ngrx/store'
 import { UserModel } from '@shared/data-access/models'
-import { createAction, props } from '@ngrx/store'
 
-export const signIn = createAction('[Auth Service] User SignIn', props<{ user: UserModel }>())
-
-export const modifiedUser = createAction(
-  '[Auth Service] Modified User',
-  props<{ user: UserModel }>(),
-)
-
-export const addToken = createAction('[Auth Service] Add Token', props<{ token: string }>())
-
-export const addUserAndToken = createAction(
-  '[Auth Service] Add User And Token',
-  props<{ user: UserModel; token: string }>(),
-)
-
-/*export const addUserProjects = createAction(
-  '[Auth Service] Add User Projects',
-  props<{ projects: ProjectModel[] }>()
-);*/
-
-export const signOut = createAction('[Auth Service] User SignOut')
+export const AuthActions = createActionGroup({
+  source: 'Auth Service',
+  events: {
+    'Sign In': props<{ req: SignInRequest }>(),
+    'Sign In Success': props<{ user: UserModel; token: string }>(),
+    'Sign In Error': props<{ error: string | null }>(),
+    'Modified User': props<{ user: UserModel }>(),
+    'Add Token': props<{ token: string }>(),
+    'Add User And Token': props<{ user: UserModel; token: string }>(),
+    'Sign Out': emptyProps(),
+  },
+})

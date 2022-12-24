@@ -1,30 +1,37 @@
+import { CommonModule } from '@angular/common'
 import { Component, EventEmitter, inject, OnInit, Output } from '@angular/core'
-import { Store } from '@ngrx/store'
-
-import { firstValueFrom, Observable } from 'rxjs'
-
-import { Guid } from 'guid-typescript'
+import { MatButtonModule } from '@angular/material/button'
 
 import { MatDialog } from '@angular/material/dialog'
-import { MatToolbarModule } from '@angular/material/toolbar'
-import { LetModule } from '@ngrx/component'
-import { CommonModule } from '@angular/common'
-import { MatMenuModule } from '@angular/material/menu'
-import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
+import { MatMenuModule } from '@angular/material/menu'
 import { MatSliderModule } from '@angular/material/slider'
-import { AppState } from '@shared/data-access/store'
+import { MatToolbarModule } from '@angular/material/toolbar'
 import {
   GridStateActions,
   MultiActions,
   selectCreateMode,
-  SelectedStateActions, selectGridMode,
-  selectMultiMode, selectProjectByRouteParams, selectSelectedStringId, selectSelectedStringModel,
+  SelectedStateActions,
+  selectGridMode,
+  selectMultiMode,
+  selectProjectByRouteParams,
+  selectSelectedStringId,
+  selectSelectedStringModel,
   StringsEntityService,
 } from '@grid-layout/data-access/store'
+import {
+  CreateStringComponent,
+  SelectStringComponent,
+  ViewStringsDialog,
+} from '@grid-layout/feature/dialogs'
+import { LetModule } from '@ngrx/component'
+import { Store } from '@ngrx/store'
 import { GridMode, ProjectModel, StringModel, TypeModel } from '@shared/data-access/models'
-import { CreateStringComponent, SelectStringComponent, ViewStringsDialog } from '@grid-layout/feature/dialogs'
+import { AppState } from '@shared/data-access/store'
 
+import { Guid } from 'guid-typescript'
+
+import { firstValueFrom, Observable } from 'rxjs'
 
 @Component({
   selector: 'app-grid-toolbar',
@@ -54,7 +61,6 @@ export class GridToolbarComponent implements OnInit {
   private stringsEntity = inject(StringsEntityService)
   private dialog = inject(MatDialog)
 
-
   ngOnInit(): void {
     this.project$ = this.store.select(selectProjectByRouteParams)
     this.createMode$ = this.store.select(selectCreateMode)
@@ -83,7 +89,7 @@ export class GridToolbarComponent implements OnInit {
       trackerId: '6',
       inverterId: '11',
       name: 'customString',
-      isInParallel: false,
+      parallel: false,
       type: TypeModel.STRING,
       color: 'red',
     }
@@ -109,7 +115,7 @@ export class GridToolbarComponent implements OnInit {
         trackerId: '6',
         inverterId: '11',
         name: result,
-        isInParallel: false,
+        parallel: false,
         type: TypeModel.STRING,
         color: 'red',
       }

@@ -1,2 +1,1 @@
-export * from './lib/role-guard.service'
-export * from './lib/auth.guard'
+export * from './lib/logged-in.guard'

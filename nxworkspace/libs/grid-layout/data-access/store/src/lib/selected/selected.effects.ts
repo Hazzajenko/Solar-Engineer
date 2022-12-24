@@ -1,18 +1,21 @@
-
 import { Injectable } from '@angular/core'
+import { LinksPathService, StatsService } from '@grid-layout/data-access/api'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { Store } from '@ngrx/store'
+import {
+  PanelLinkModel,
+  PanelLinksToModel,
+  PanelModel,
+  StringModel,
+} from '@shared/data-access/models'
 import { AppState } from '@shared/data-access/store'
 import { firstValueFrom, switchMap, tap } from 'rxjs'
 import { map } from 'rxjs/operators'
-import { SelectedStateActions } from './selected.actions'
-import { PanelLinksToModel, PanelModel, StringModel } from '@shared/data-access/models'
-import { PanelLinkModel } from '@shared/data-access/models'
-import { selectSelectedStringId } from './selected.selectors'
-import { LinksPathService, StatsService } from '@grid-layout/data-access/api'
+import { PanelLinksEntityService } from '../panel-links-entity'
 import { PanelsEntityService } from '../panels-entity'
 import { StringsEntityService } from '../strings-entity'
-import { PanelLinksEntityService } from '../panel-links-entity'
+import { SelectedStateActions } from './selected.actions'
+import { selectSelectedStringId } from './selected.selectors'
 
 function getSelectedLinks(
   panelJoins?: PanelLinkModel[],
@@ -78,7 +81,6 @@ export class SelectedEffects {
     { dispatch: false },
   )
 
-
   selectString$ = createEffect(
     () =>
       this.actions$.pipe(
@@ -92,14 +94,18 @@ export class SelectedEffects {
           // map(([strings, panels]) => {
           const stringPanels: PanelModel[] = await firstValueFrom(
             this.panelsEntity.entities$.pipe(
-              map((panels: PanelModel[]) => panels.filter((panel) => panel.stringId === action.stringId)),
+              map((panels: PanelModel[]) =>
+                panels.filter((panel) => panel.stringId === action.stringId),
+              ),
             ),
           )
 
           // const selectedString = strings.find((s) => s.id === action.stringId)
-          const selectedString: StringModel| undefined = await firstValueFrom(
+          const selectedString: StringModel | undefined = await firstValueFrom(
             this.stringsEntity.entities$.pipe(
-              map((strings: StringModel[]) => strings.find((string) => string.id === action.stringId)),
+              map((strings: StringModel[]) =>
+                strings.find((string) => string.id === action.stringId),
+              ),
             ),
           )
           /*    const stringPanels: PanelModel[] = panels.filter(
@@ -110,10 +116,10 @@ export class SelectedEffects {
 
           const stringStats = this.statsService.calculateStringTotals(selectedString!, stringPanels)
 
-          const tooltip: string = `
+          const tooltip = `
                 String = ${selectedString?.name} \n
                 Color: ${selectedString?.color} \n
-                Parallel: ${selectedString?.isInParallel} \n
+                Parallel: ${selectedString?.parallel} \n
                 Panels: ${stringPanels.length} \n
                 Voc: ${stringStats.totalVoc}V \n
                 Vmp: ${stringStats.totalVmp}V \n

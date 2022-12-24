@@ -21,8 +21,8 @@
     "useDefineForClassFields": false,
     "paths": {
       "@auth/data-access/api": ["libs/auth/data-access/api/src/index.ts"],
+      "@auth/data-access/facade": ["libs/auth/data-access/facade/src/index.ts"],
       "@auth/data-access/store": ["libs/auth/data-access/store/src/index.ts"],
-      "@auth/feature/login": ["libs/auth/feature/login/src/index.ts"],
       "@auth/guards": ["libs/auth/guards/src/index.ts"],
       "@auth/interceptors": ["libs/auth/interceptors/src/index.ts"],
       "@grid-layout/data-access/api": ["libs/grid-layout/data-access/api/src/index.ts"],
@@ -36,11 +36,19 @@
       "@grid-layout/ui/overlays": ["libs/grid-layout/ui/overlays/src/index.ts"],
       "@grid-layout/ui/toolbar": ["libs/grid-layout/ui/toolbar/src/index.ts"],
       "@grid/data-access/store": ["libs/grid/data-access/store/src/index.ts"],
+      "@projects/data-access/api": ["libs/projects/data-access/api/src/index.ts"],
+      "@projects/data-access/store": ["libs/projects/data-access/store/src/index.ts"],
       "@shared/config": ["libs/shared/config/src/index.ts"],
+      "@shared/data-access/app-component-store": [
+        "libs/shared/data-access/app-component-store/src/index.ts"
+      ],
       "@shared/data-access/models": ["libs/shared/data-access/models/src/index.ts"],
       "@shared/data-access/store": ["libs/shared/data-access/store/src/index.ts"],
+      "@shared/directives/on-destory": ["libs/shared/directives/on-destroy/src/index.ts"],
       "@shared/interceptors": ["libs/shared/interceptors/src/index.ts"],
-      "@shared/ui": ["libs/shared/ui/src/index.ts"]
+      "@shared/ui": ["libs/shared/ui/src/index.ts"],
+      "projects/feature/project-id": ["libs/projects/feature/project-id/src/index.ts"],
+      "shared/utils": ["libs/shared/utils/src/index.ts"]
     },
     "rootDir": ".",
     "emitDecoratorMetadata": true

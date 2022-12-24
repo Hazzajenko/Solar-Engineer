@@ -1,5 +1,5 @@
-import { TypeModel } from './type.model'
 import { Guid } from 'guid-typescript'
+import { TypeModel } from './projects/index'
 
 export enum DisconnectionPointType {
   UNDEFINED,
@@ -7,7 +7,7 @@ export enum DisconnectionPointType {
 }
 
 export class DisconnectionPointModel {
-  id: string = ''
+  id = ''
   projectId: number
   stringId: string
   positiveId: string
@@ -17,7 +17,13 @@ export class DisconnectionPointModel {
   type: TypeModel
   color?: string
 
-  constructor(projectId: number, stringId: string, location: string, positiveId: string, negativeId: string) {
+  constructor(
+    projectId: number,
+    stringId: string,
+    location: string,
+    positiveId: string,
+    negativeId: string,
+  ) {
     this.id = Guid.create().toString()
     this.projectId = projectId
     this.stringId = stringId

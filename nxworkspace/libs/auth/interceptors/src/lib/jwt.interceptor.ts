@@ -1,29 +1,37 @@
-import { Injectable } from '@angular/core'
-import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http'
-import { Observable } from 'rxjs'
-import { AuthService } from '@auth/data-access/api'
-import { Store } from '@ngrx/store'
-
-import { selectToken } from '@auth/data-access/store'
-import { AppState } from '@shared/data-access/store'
+import {
+  HTTP_INTERCEPTORS,
+  HttpEvent,
+  HttpHandler,
+  HttpInterceptor,
+  HttpRequest,
+} from '@angular/common/http'
+import { inject, Injectable, Provider } from '@angular/core'
+import { AuthFacade } from '@auth/data-access/store'
+import { Observable, switchMap, take } from 'rxjs'
 
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
-  constructor(private auth: AuthService, private store: Store<AppState>) {}
+  private authStore = inject(AuthFacade)
 
-  intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    this.store.select(selectToken).subscribe((token) => {
-      if (token) {
-        // console.log(token);
-        request = request.clone({
-          setHeaders: {
-            Authorization: `Bearer ${token}`,
-          },
+  intercept(req: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
+    return this.authStore.token$.pipe(
+      take(1),
+      switchMap((token) => {
+        if (!token) {
+          return next.handle(req)
+        }
+        const headers = req.headers.set('Authorization', `Bearer ${token}`)
+        const authReq = req.clone({
+          headers,
         })
-        // console.log(token);
-      }
-    })
-
-    return next.handle(request)
+        return next.handle(authReq)
+      }),
+    )
   }
+}
+
+export const jwtInterceptorProvider: Provider = {
+  provide: HTTP_INTERCEPTORS,
+  useClass: JwtInterceptor,
+  multi: true,
 }
