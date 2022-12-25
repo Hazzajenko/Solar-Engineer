@@ -6,9 +6,9 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 import { Router, RouterLink } from '@angular/router'
 import { AuthFacade } from '@auth/data-access/facade'
 import { ProjectsFacade } from '@projects/data-access/store'
+import { ProjectsListComponent } from '@projects/feature/projects-list'
 import { UserModel } from '@shared/data-access/models'
 import { Observable } from 'rxjs'
-import { ProjectsComponent } from '../projects/projects.component'
 
 const enterTransition = transition(':enter', [
   style({
@@ -67,7 +67,13 @@ const fadeInOut = trigger('fadeInOut', [
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterLink, MatButtonModule, MatProgressSpinnerModule, ProjectsComponent],
+  imports: [
+    CommonModule,
+    RouterLink,
+    MatButtonModule,
+    MatProgressSpinnerModule,
+    ProjectsListComponent,
+  ],
   templateUrl: './home.component.html',
   styles: [],
   changeDetection: ChangeDetectionStrategy.OnPush,

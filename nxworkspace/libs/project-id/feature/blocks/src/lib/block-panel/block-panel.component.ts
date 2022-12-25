@@ -1,18 +1,6 @@
-
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  Component,
-  ElementRef,
-  EventEmitter, inject,
-  Input,
-  OnInit,
-  Output,
-  ViewChild,
-} from '@angular/core'
+import { ChangeDetectionStrategy, Component, inject, Input, OnInit, ViewChild } from '@angular/core'
 
 import { DragDropModule } from '@angular/cdk/drag-drop'
-import { MatTooltipModule } from '@angular/material/tooltip'
 import {
   AsyncPipe,
   NgClass,
@@ -22,42 +10,28 @@ import {
   NgSwitchCase,
   NgTemplateOutlet,
 } from '@angular/common'
+import { MatTooltipModule } from '@angular/material/tooltip'
 
 import { LetModule } from '@ngrx/component'
 
 import { Store } from '@ngrx/store'
 
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
+import { PanelsSelectors } from '@project-id/data-access/store'
 
-import { combineLatestWith, firstValueFrom, Observable } from 'rxjs'
+import { firstValueFrom, Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
 
-import { HttpClient } from '@angular/common/http'
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog'
-import {
-  GridStateActions,
-  LinksState, PanelLinksEntityService,
-  PanelsEntityService,
-  selectCreateMode,
-  SelectedStateActions,
-  selectGridMode, selectIfMultiSelect, selectLinksState, selectMultiSelectIds,
-  selectPanelToLink,
-  selectSelectedNegativeTo,
-  selectSelectedPanelId,
-  selectSelectedPositiveTo, selectSelectedState, selectSelectedStringId,
-  selectSelectedStringPathMap, selectSelectedStringTooltip,
-  selectUnitSelected, StringsEntityService,
-} from '@grid-layout/data-access/store'
-import { GridMode, PanelModel, SoftColor, TypeModel, VibrantColor } from '@shared/data-access/models'
-import { EditStringDialog, ExistingStringsDialog, NewStringDialog } from '@grid-layout/feature/dialogs'
+import { GridMode, PanelModel, TypeModel } from '@shared/data-access/models'
 import { AppState } from '@shared/data-access/store'
 import { PanelLinkComponent } from '../ui'
-
+import { PanelDirective } from './directives/panel.directive'
 
 @Component({
   selector: 'app-block-panel',
   templateUrl: './block-panel.component.html',
-  styleUrls: ['./block-panel.component.scss'],
+  styles: [],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     DragDropModule,
@@ -72,152 +46,28 @@ import { PanelLinkComponent } from '../ui'
     NgSwitch,
     NgSwitchCase,
     PanelLinkComponent,
+    PanelDirective
   ],
   standalone: true,
 })
-export class BlockPanelComponent implements OnInit {
-  @Input() id!: string
-
-  gridMode$!: Observable<GridMode | undefined>
+export class BlockPanelComponent {
   panel$!: Observable<PanelModel | undefined>
-  panelToJoin$!: Observable<PanelModel | undefined>
-  isPanelToJoin$!: Observable<boolean>
+  @Input() set id(id: string) {
+    this.panel$ = this.store.select(PanelsSelectors.selectPanelById({ id }))
+  }
 
-  joinState$!: Observable<LinksState>
-  isInSelection$!: Observable<boolean>
-  isSelectedPanel$!: Observable<boolean>
-  isSelectedString$!: Observable<boolean>
-  isOtherStringSelected$!: Observable<boolean>
-  isSelectedPositiveTo$!: Observable<boolean>
-  isSelectedNegativeTo$!: Observable<boolean>
-
-  positivePanelLink$!: Observable<string | undefined>
-  negativePanelLink$!: Observable<string | undefined>
-  selectedUnit$!: Observable<TypeModel | undefined>
-  selectedStringTooltip$!: Observable<string | undefined>
-  stringColor$!: Observable<string | undefined>
-  multiSelectIds$!: Observable<string[] | undefined>
-  multiSelect$!: Observable<boolean | undefined>
-  selectedStringPathMap$!: Observable<
-    Map<string, { link: number; count: number; color: string }> | undefined
-  >
   menuTopLeftPosition = { x: '0', y: '0' }
   @ViewChild(MatMenuTrigger, { static: true })
   matMenuTrigger!: MatMenuTrigger
 
-  rightClickMenuClass: string = 'hidden'
-
-  divX!: number
-  divY!: number
   private store = inject(Store<AppState>)
-  private panelsEntity = inject(PanelsEntityService)
-  private stringsEntity = inject(StringsEntityService)
-  private linksEntity = inject(PanelLinksEntityService)
   private dialog = inject(MatDialog)
 
-  ngOnInit() {
-    this.gridMode$ = this.store.select(selectGridMode)
-    this.panel$ = this.panelsEntity.entities$.pipe(
-      map((panels) => panels.find((panel) => panel.id === this.id)),
-    )
-
-    this.panelToJoin$ = this.store.select(selectPanelToLink)
-    this.isPanelToJoin$ = this.store
-      .select(selectPanelToLink)
-      .pipe(map((panelToLink) => panelToLink?.id === this.id))
-    this.isSelectedPanel$ = this.store
-      .select(selectSelectedPanelId)
-      .pipe(map((selectedPanelId) => selectedPanelId === this.id))
-
-    this.isInSelection$ = this.store
-      .select(selectSelectedPanelId)
-      .pipe(combineLatestWith(this.store.select(selectMultiSelectIds)))
-      .pipe(
-        map(([selected, multiSelected]) => {
-          return !!(selected === this.id || multiSelected?.includes(this.id))
-        }),
-      )
-    // (isSelectedPanel$ | async)! || (multiSelectIds$ | async)?.includes(panel.id)
-    this.isSelectedString$ = this.store
-      .select(selectSelectedStringId)
-      .pipe(combineLatestWith(this.panel$))
-      .pipe(map(([selectedStringId, panel]) => selectedStringId === panel?.stringId))
-    this.isOtherStringSelected$ = this.store
-      .select(selectSelectedStringId)
-      .pipe(combineLatestWith(this.panel$))
-      .pipe(
-        map(([selectedStringId, panel]) => {
-          if (selectedStringId) {
-            return selectedStringId !== panel?.stringId
-          } else {
-            return false
-          }
-        }),
-      )
-    this.isSelectedPositiveTo$ = this.store
-      .select(selectSelectedPositiveTo)
-      .pipe(map((positiveTo) => positiveTo === this.id))
-    this.isSelectedNegativeTo$ = this.store
-      .select(selectSelectedNegativeTo)
-      .pipe(map((negativeTo) => negativeTo === this.id))
-    this.positivePanelLink$ = this.linksEntity.entities$.pipe(
-      map((links) => links.find((link) => link.negativeToId === this.id)),
-      map((link) => link?.id),
-    )
-    this.negativePanelLink$ = this.linksEntity.entities$.pipe(
-      map((links) => links.find((link) => link.positiveToId === this.id)),
-      map((link) => link?.id),
-    )
-    this.stringColor$ = this.stringsEntity.entities$.pipe(combineLatestWith(this.panel$)).pipe(
-      map(([strings, panel]) => strings.find((string) => string.id === panel?.stringId)),
-      map((string) => string?.color),
-    )
-    this.selectedUnit$ = this.store.select(selectUnitSelected)
-    this.selectedStringTooltip$ = this.store.select(selectSelectedStringTooltip)
-    this.joinState$ = this.store.select(selectLinksState)
-    this.multiSelectIds$ = this.store.select(selectMultiSelectIds)
-    this.multiSelect$ = this.store.select(selectIfMultiSelect)
-    this.selectedStringPathMap$ = this.store.select(selectSelectedStringPathMap)
-  }
-
-  displayTooltip(
-    panel: PanelModel,
-    isSelectedString: boolean,
-    selectedStringTooltip?: string,
-    selectedUnit?: TypeModel,
-    selectedId?: boolean,
-    stringName?: string,
-  ): string {
+  displayTooltip(isSelectedString: boolean, selectedStringTooltip?: string): string {
     if (isSelectedString) {
       return <string>selectedStringTooltip
     }
     return ''
-    /* else {
-      return `
-    ${panel.id}
-      Location = ${panel.location} \r\n
-    `
-    }*/
-
-    /*    if (selectedUnit) {
-          switch (selectedUnit) {
-            case UnitModel.PANEL:
-              return `
-               Location = ${panel.location} \r\n
-               String: ${stringName} \r\n
-              `
-            case UnitModel.STRING:
-              if (panel.stringId === selectedId) {
-                if (selectedStringTooltip) {
-                  return selectedStringTooltip
-                }
-              }
-          }
-        }
-        return `
-          Location = ${panel.location} \r\n
-          String: ${stringName} \r\n
-        `*/
   }
 
   onRightClick(event: MouseEvent, panel: PanelModel) {
@@ -230,9 +80,9 @@ export class BlockPanelComponent implements OnInit {
   }
 
   selectString(panel: PanelModel) {
-    this.store.dispatch(GridStateActions.changeGridmode({ mode: GridMode.SELECT }))
+    /*     this.store.dispatch(GridStateActions.changeGridmode({ mode: GridMode.SELECT }))
     this.store.dispatch(SelectedStateActions.selectType({ objectType: TypeModel.STRING }))
-    this.store.dispatch(SelectedStateActions.selectString({ stringId: panel.stringId }))
+    this.store.dispatch(SelectedStateActions.selectString({ stringId: panel.stringId })) */
   }
 
   editString(panel: PanelModel) {
@@ -245,11 +95,11 @@ export class BlockPanelComponent implements OnInit {
       stringId: panel.stringId,
     }
 
-    this.dialog.open(EditStringDialog, dialogConfig)
+    // this.dialog.open(EditStringDialog, dialogConfig)
   }
 
   deletePanel(panel: PanelModel) {
-    this.panelsEntity.delete(panel)
+    // this.panelsEntity.delete(panel)
   }
 
   async panelAction(panel: PanelModel, shiftKey: boolean) {
@@ -257,81 +107,81 @@ export class BlockPanelComponent implements OnInit {
       return console.error('err panelAction !panel')
     }
 
-    const gridMode = await firstValueFrom(this.store.select(selectGridMode))
+    // const gridMode = await firstValueFrom(this.store.select(selectGridMode))
 
-    switch (gridMode) {
-      case GridMode.LINK:
-        break
-      case GridMode.DELETE:
-        this.panelsEntity.delete(panel)
-        break
-      case GridMode.SELECT:
-        const isStringSelected = await firstValueFrom(this.isSelectedString$)
-        if (isStringSelected) {
-          console.log('s')
-          this.store.dispatch(
-            SelectedStateActions.selectPanelWhenStringSelected({ panelId: panel.id }),
-          )
-        } else {
-          if (shiftKey) {
-            this.store.dispatch(
-              SelectedStateActions.addPanelToMultiselect({
-                panelId: panel.id,
-              }),
-            )
-          } else {
-            this.store.dispatch(SelectedStateActions.selectPanel({ panelId: panel.id }))
-          }
-        }
+    //     switch (gridMode) {
+    //       case GridMode.LINK:
+    //         break
+    //       case GridMode.DELETE:
+    //         this.panelsEntity.delete(panel)
+    //         break
+    //       case GridMode.SELECT:
+    //  /*        const isStringSelected = await firstValueFrom(this.isSelectedString$)
+    //         if (isStringSelected) {
+    //           console.log('s')
+    //           this.store.dispatch(
+    //             SelectedStateActions.selectPanelWhenStringSelected({ panelId: panel.id }),
+    //           )
+    //         } else {
+    //           if (shiftKey) {
+    //             this.store.dispatch(
+    //               SelectedStateActions.addPanelToMultiselect({
+    //                 panelId: panel.id,
+    //               }),
+    //             )
+    //           } else {
+    //             this.store.dispatch(SelectedStateActions.selectPanel({ panelId: panel.id }))
+    //           }
+    //         } */
 
-        break
-      case GridMode.CREATE:
-        const createMode = await firstValueFrom(this.store.select(selectCreateMode))
+    //         break
+    //       case GridMode.CREATE:
+    //         /* const createMode = await firstValueFrom(this.store.select(selectCreateMode))
 
-        if (createMode === TypeModel.RAIL) {
-          return
-        } else {
-          this.store.dispatch(GridStateActions.changeGridmode({ mode: GridMode.SELECT }))
-          if (shiftKey) {
-            this.store.dispatch(
-              SelectedStateActions.addPanelToMultiselect({
-                panelId: panel.id,
-              }),
-            )
-          } else {
-            this.store.dispatch(SelectedStateActions.selectPanel({ panelId: panel.id }))
-          }
-        }
+    //         if (createMode === TypeModel.RAIL) {
+    //           return
+    //         } else {
+    //           this.store.dispatch(GridStateActions.changeGridmode({ mode: GridMode.SELECT }))
+    //           if (shiftKey) {
+    //             this.store.dispatch(
+    //               SelectedStateActions.addPanelToMultiselect({
+    //                 panelId: panel.id,
+    //               }),
+    //             )
+    //           } else {
+    //             this.store.dispatch(SelectedStateActions.selectPanel({ panelId: panel.id }))
+    //           }
+    //         }
+    //  */
+    //         break
+    //       case GridMode.MULTICREATE:
+    //         break
+    //       default:
+    //         this.store.dispatch(GridStateActions.changeGridmode({ mode: GridMode.SELECT }))
+    //         if (shiftKey) {
+    //           this.store.dispatch(
+    //             SelectedStateActions.addPanelToMultiselect({
+    //               panelId: panel.id,
+    //             }),
+    //           )
+    //         } else {
+    //           this.store.dispatch(SelectedStateActions.selectPanel({ panelId: panel.id }))
+    //         }
 
-        break
-      case GridMode.MULTICREATE:
-        break
-      default:
-        this.store.dispatch(GridStateActions.changeGridmode({ mode: GridMode.SELECT }))
-        if (shiftKey) {
-          this.store.dispatch(
-            SelectedStateActions.addPanelToMultiselect({
-              panelId: panel.id,
-            }),
-          )
-        } else {
-          this.store.dispatch(SelectedStateActions.selectPanel({ panelId: panel.id }))
-        }
-
-        break
-    }
+    //         break
+    //     }
   }
 
   createNewStringWithSelected() {
-    this.dialog.open(NewStringDialog)
+    // this.dialog.open(NewStringDialog)
   }
 
   addSelectedToExistingString() {
-    this.dialog.open(ExistingStringsDialog)
+    // this.dialog.open(ExistingStringsDialog)
   }
 
   deleteSelectedString(stringId: string) {
-    firstValueFrom(
+    /* firstValueFrom(
       this.store
         .select(selectSelectedState)
         .pipe(
@@ -347,7 +197,7 @@ export class BlockPanelComponent implements OnInit {
           this.stringsEntity.delete(selectedString!)
         }
       }
-    })
+    }) */
   }
 
   rotatePanel(panel: PanelModel) {
@@ -355,11 +205,11 @@ export class BlockPanelComponent implements OnInit {
       ...panel,
       rotation: panel.rotation === 0 ? 1 : 0,
     }
-    this.panelsEntity.update(update)
+    // this.panelsEntity.update(update)
   }
 
   deletePanelLink(panel: PanelModel, linkId: string) {
-    this.linksEntity.delete(linkId)
+    /*     this.linksEntity.delete(linkId)
     firstValueFrom(
       this.store
         .select(selectSelectedStringId)
@@ -368,11 +218,11 @@ export class BlockPanelComponent implements OnInit {
       if (isInSelectedString) {
         this.store.dispatch(SelectedStateActions.clearSelectedPanelLinks())
       }
-    })
+    }) */
   }
 
   async rotateSelected(rotation: number) {
-    const multiSelectIds = await firstValueFrom(this.store.select(selectMultiSelectIds))
+    /* const multiSelectIds = await firstValueFrom(this.store.select(selectMultiSelectIds))
     if (multiSelectIds) {
       const panelsToUpdate = await firstValueFrom(
         this.panelsEntity.entities$.pipe(
@@ -389,16 +239,16 @@ export class BlockPanelComponent implements OnInit {
       )
 
       this.panelsEntity.updateManyInCache(panelsToUpdate)
-    }
+    } */
   }
 
   removeFromString(panel: PanelModel) {
-    const update: Partial<PanelModel> = {
+    /*     const update: Partial<PanelModel> = {
       ...panel,
       stringId: 'undefined',
     }
 
-    this.panelsEntity.update(update)
+    this.panelsEntity.update(update) */
   }
 
   markPanelAsDisconnectionPoint(panel: PanelModel) {
@@ -414,7 +264,7 @@ export class BlockPanelComponent implements OnInit {
     isPanelToJoin: boolean,
     isOtherStringSelected: boolean,
   ) {
-    if (isOtherStringSelected) {
+    /*     if (isOtherStringSelected) {
       return '#819CA9'
     }
     if (positiveTo) {
@@ -446,7 +296,7 @@ export class BlockPanelComponent implements OnInit {
       return stringColor
     } else {
     }
-    return ''
+    return '' */
   }
 
   getBoxShadow(

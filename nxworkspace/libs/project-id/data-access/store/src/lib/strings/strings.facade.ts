@@ -7,9 +7,14 @@ import * as StringsSelectors from './strings.selectors'
 export class StringsFacade {
   private readonly store = inject(Store)
   loaded$ = this.store.pipe(select(StringsSelectors.selectStringsLoaded))
-  allProjects$ = this.store.pipe(select(StringsSelectors.selectAllStrings))
+  allStrings$ = this.store.pipe(select(StringsSelectors.selectAllStrings))
+  stringsFromRoute$ = this.store.pipe(select(StringsSelectors.selectStringsByRouteParams))
 
   initSelectProject(projectId: number) {
     this.store.dispatch(StringsActions.initStrings({ projectId }))
+  }
+
+  stringById(id: string) {
+    return this.store.pipe(select(StringsSelectors.selectStringById({id})))
   }
 }

@@ -36,7 +36,7 @@ public class PanelLinksController : ControllerBase
     }
 
 
-    [HttpPost("panelLink")]
+    [HttpPost("link")]
     [Authorize]
     public async Task<IActionResult> CreateLink([FromBody] CreatePanelLinkRequest request, [FromRoute] int projectId)
     {
@@ -62,14 +62,14 @@ public class PanelLinksController : ControllerBase
 
         var result = new OnePanelLinkResponse
         {
-            PanelLink = panelLinkDto
+            Link = panelLinkDto
         };
 
         return Ok(result);
     }
 
 
-    [HttpGet("panelLink/{panelLinkId}")]
+    [HttpGet("link/{panelLinkId}")]
     public async Task<IActionResult> GetPanel([FromRoute] int projectId, [FromRoute] string panelLinkId)
     {
         var user = await _userManager.GetUserAsync(User);
@@ -85,13 +85,13 @@ public class PanelLinksController : ControllerBase
 
         var result = new OnePanelLinkResponse
         {
-            PanelLink = panelLinkDto
+            Link = panelLinkDto
         };
 
         return Ok(result);
     }
 
-    [HttpGet("panelLinks")]
+    [HttpGet("links")]
     public async Task<IActionResult> GetPanelLinksByProjectId([FromRoute] int projectId)
     {
         var user = await _userManager.GetUserAsync(User);
@@ -105,14 +105,14 @@ public class PanelLinksController : ControllerBase
 
         var result = new ManyPanelLinksResponse
         {
-            PanelLinks = panelLinksList
+            Links = panelLinksList
         };
 
         return Ok(result);
     }
 
 
-    [HttpDelete("panelLink/{panelLinkId}")]
+    [HttpDelete("link/{panelLinkId}")]
     public async Task<IActionResult> Delete([FromRoute] int projectId, [FromRoute] string panelLinkId)
     {
         var user = await _userManager.GetUserAsync(User);
@@ -127,7 +127,7 @@ public class PanelLinksController : ControllerBase
 
         var result = new OnePanelLinkDeleteResponse
         {
-            PanelLinkId = panelLinkId
+            LinkId = panelLinkId
         };
 
         return Ok(result);

@@ -1,4 +1,7 @@
+
+import { PanelModel, PanelLinkModel } from '@shared/data-access/models'
 import { createFeatureSelector, createSelector } from '@ngrx/store'
+import { selectRouteParams } from '@shared/data-access/router'
 import { LINKS_FEATURE_KEY, linksAdapter, LinksState } from './links.reducer'
 
 export const selectLinksState = createFeatureSelector<LinksState>(LINKS_FEATURE_KEY)
@@ -19,3 +22,14 @@ export const selectAllLinks = createSelector(selectLinksState, (state: LinksStat
 export const selectLinksEntities = createSelector(selectLinksState, (state: LinksState) =>
   selectEntities(state),
 )
+
+export const selectLinksByRouteParams = createSelector(
+  selectAllLinks,
+  selectRouteParams,
+  (links, { projectId }) => links.filter((link) => link.projectId === Number(projectId)),
+)
+
+export const selectLinksByPanels = (props: { panels: PanelModel[] }) =>
+  createSelector(selectAllLinks, (links: PanelLinkModel[]) =>
+    links.filter((link) => props.panels.map((panel) => panel.id).includes(link.positiveToId)),
+  )

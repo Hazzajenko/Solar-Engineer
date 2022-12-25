@@ -1,34 +1,18 @@
 
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  Component,
-  ElementRef,
-  Input,
-  ViewChild,
-} from '@angular/core'
 import { CommonModule } from '@angular/common'
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core'
+import { BlockPanelComponent } from '@project-id/feature/blocks'
 import { BlockModel } from '@shared/data-access/models'
-import { BlockPanelComponent } from './block-panel'
-import { BlockDisconnectionPointComponent } from './block-disconnection-point'
-import { BlockTrayComponent } from './block-tray'
-
-
-
 
 @Component({
   selector: 'app-block-switch',
   standalone: true,
-  imports: [
-    CommonModule,
-    BlockPanelComponent,
-    BlockDisconnectionPointComponent,
-    BlockTrayComponent,
-  ],
+  imports: [CommonModule, BlockPanelComponent],
   templateUrl: './block-switch.component.html',
-  styleUrls: ['./block-switch.component.scss'],
+  styles: [],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BlockSwitchComponent {
   @Input() block!: BlockModel
+  // @Input() block$!: Observable<BlockModel | undefined>
 }

@@ -1,16 +1,16 @@
 import { Update } from '@ngrx/entity'
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
-import { BlockModel } from '@shared/data-access/models'
+import { EntityModel } from '@shared/data-access/models'
 
-export const BlocksActions = createActionGroup({
-  source: 'Blocks Store',
+export const EntitiesActions = createActionGroup({
+  source: 'Entities Store',
   events: {
-    'Add Block For Grid': props<{ block: BlockModel }>(),
-    'Add Many Blocks For Grid': props<{ blocks: BlockModel[] }>(),
-    'Update Block For Grid': props<{ update: Update<BlockModel> }>(),
-    'Update Many Blocks For Grid': props<{ updates: Update<BlockModel>[] }>(),
-    'Delete Block For Grid': props<{ blockId: string }>(),
-    'Delete Many Blocks For Grid': props<{ blockIds: string[] }>(),
-    'Clear Blocks State': emptyProps(),
+    'Add Entity For Grid': props<{ entity: EntityModel }>(),
+    'Add Many Entities For Grid': props<{ entities: EntityModel[] }>(),
+    'Update Entity For Grid': props<{ update: Update<EntityModel> }>(),
+    'Update Many Entities For Grid': props<{ updates: Update<EntityModel>[] }>(),
+    'Delete Entity For Grid': props<{ entityId: string }>(),
+    'Delete Many Entities For Grid': props<{ entityIds: string[] }>(),
+    'Clear Entities State': emptyProps(),
   },
 })

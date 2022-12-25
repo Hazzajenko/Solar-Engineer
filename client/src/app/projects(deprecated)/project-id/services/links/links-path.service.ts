@@ -162,24 +162,6 @@ export class LinksPathService {
             linkColor = LinkColor.SoftGreen
             break
         }
-        /*        switch (linkColor) {
-                  case LinkColor.VibrantPurple:
-                    linkColor = LinkColor.VibrantGreen
-                    break
-                  case LinkColor.VibrantGreen:
-                    linkColor = LinkColor.VibrantYellow
-                    break
-
-                  case LinkColor.VibrantYellow:
-                    linkColor = LinkColor.VibrantRed
-                    break
-                  case LinkColor.VibrantRed:
-                    linkColor = LinkColor.VibrantOrange
-                    break
-                  case LinkColor.VibrantOrange:
-                    linkColor = LinkColor.VibrantPurple
-                    break
-                }*/
       }
       this.store.dispatch(SelectedStateActions.setSelectedStringLinkPaths({ pathMap: linkPathMap }))
     })

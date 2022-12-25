@@ -1,18 +1,18 @@
-﻿using dotnetapi.Models.Dtos;
+﻿using dotnetapi.Models.Dtos.Projects;
 
 namespace dotnetapi.Contracts.Responses;
 
 public class OnePanelLinkResponse
 {
-    public PanelLinkDto PanelLink { get; set; } = default!;
+    public PanelLinkDto Link { get; set; } = default!;
 }
 
 public class ManyPanelLinksResponse
 {
-    public IEnumerable<PanelLinkDto> PanelLinks { get; init; } = Enumerable.Empty<PanelLinkDto>();
+    public IEnumerable<PanelLinkDto> Links { get; init; } = Enumerable.Empty<PanelLinkDto>();
 }
 
 public class OnePanelLinkDeleteResponse
 {
-    public string PanelLinkId { get; set; } = default!;
+    public string LinkId { get; set; } = default!;
 }

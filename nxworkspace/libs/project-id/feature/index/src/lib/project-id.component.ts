@@ -1,11 +1,22 @@
 import { CommonModule } from '@angular/common'
-import { Component } from '@angular/core'
+import { Component, ElementRef, inject, ViewChild } from '@angular/core'
+import { GridLayoutComponent } from '@project-id/feature/grid-layout'
+import { ProjectsFacade } from '@projects/data-access/store'
+import { ProjectModel } from '@shared/data-access/models'
+import { Observable } from 'rxjs'
 
 @Component({
   selector: 'app-project-id',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, GridLayoutComponent],
   templateUrl: './project-id.component.html',
   styles: [],
 })
-export class ProjectIdComponent {}
+export class ProjectIdComponent {
+  @ViewChild('canvas', { static: true })
+  canvas!: ElementRef<HTMLCanvasElement>
+  private ctx!: CanvasRenderingContext2D
+  private store = inject(ProjectsFacade)
+
+  project$: Observable<ProjectModel | undefined> = this.store.projectFromRoute$
+}

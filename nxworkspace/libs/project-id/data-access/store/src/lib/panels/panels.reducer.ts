@@ -27,6 +27,7 @@ const reducer = createReducer(
     panelsAdapter.setAll(panels, { ...state, loaded: true }),
   ),
   on(PanelsActions.loadPanelsFailure, (state, { error }) => ({ ...state, error })),
+  on(PanelsActions.updatePanel, (state, { update }) => panelsAdapter.updateOne(update, state)),
 )
 
 export function panelsReducer(state: PanelsState | undefined, action: Action) {

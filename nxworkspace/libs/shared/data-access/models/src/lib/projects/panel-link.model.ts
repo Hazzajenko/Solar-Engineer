@@ -1,17 +1,24 @@
-import { TypeModel } from 'libs/shared/data-access/models/src/lib/projects/type.model'
+import { getGuid } from '@shared/utils'
+import { EntityModel, EntityOptions, EntityType } from './entity.model'
 
-export class PanelLinkModel {
-  id = ''
-  projectId?: number
-  stringId?: string
-  positiveToId?: string
-  positiveModel?: TypeModel
-  negativeToId?: string
-  negativeModel?: TypeModel
-  isDisconnectionPoint: boolean
-  disconnectionPointPanelId?: string
+export interface LinkOptions extends EntityOptions {
+  stringId: string
+  positiveToId: string
+  negativeToId: string
+}
 
-  constructor() {
-    this.isDisconnectionPoint = false
+export class PanelLinkModel extends EntityModel {
+  stringId: string
+  positiveToId: string
+  negativeToId: string
+
+  constructor(options: LinkOptions) {
+    super(options)
+    this.id = getGuid().toString()
+    this.projectId = options.projectId
+    this.type = EntityType.LINK
+    this.stringId = options.stringId
+    this.positiveToId = options.positiveToId
+    this.negativeToId = options.negativeToId
   }
 }

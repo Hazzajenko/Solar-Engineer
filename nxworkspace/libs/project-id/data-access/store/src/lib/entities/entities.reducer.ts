@@ -1,53 +1,55 @@
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity'
 import { Action, createReducer, on } from '@ngrx/store'
-import { BlockModel } from '@shared/data-access/models'
+import { EntityModel } from '@shared/data-access/models'
 
-import { BlocksActions } from './blocks.actions'
+import { EntitiesActions } from './entities.actions'
 
-export const BLOCKS_FEATURE_KEY = 'blocks'
+export const ENTITIES_FEATURE_KEY = 'entities'
 
-export interface BlocksState extends EntityState<BlockModel> {
+export interface EntitiesState extends EntityState<EntityModel> {
   loaded: boolean
   error?: string | null
 }
 
-export interface BlocksPartialState {
-  readonly [BLOCKS_FEATURE_KEY]: BlocksState
+export interface EntitiesPartialState {
+  readonly [ENTITIES_FEATURE_KEY]: EntitiesState
 }
 
-export const blocksAdapter: EntityAdapter<BlockModel> = createEntityAdapter<BlockModel>()
+export const entitiesAdapter: EntityAdapter<EntityModel> = createEntityAdapter<EntityModel>()
 
-export const initialBlocksState: BlocksState = blocksAdapter.getInitialState({
+export const initialEntitiesState: EntitiesState = entitiesAdapter.getInitialState({
   loaded: false,
 })
 
 const reducer = createReducer(
-  initialBlocksState,
-  on(BlocksActions.addBlockForGrid, (state, { block }) => blocksAdapter.addOne(block, state)),
-
-  on(BlocksActions.addManyBlocksForGrid, (state, { blocks }) =>
-    blocksAdapter.addMany(blocks, state),
+  initialEntitiesState,
+  on(EntitiesActions.addEntityForGrid, (state, { entity }) =>
+    entitiesAdapter.addOne(entity, state),
   ),
 
-  on(BlocksActions.updateBlockForGrid, (state, { update }) =>
-    blocksAdapter.updateOne(update, state),
+  on(EntitiesActions.addManyEntitiesForGrid, (state, { entities }) =>
+    entitiesAdapter.addMany(entities, state),
   ),
 
-  on(BlocksActions.updateManyBlocksForGrid, (state, { updates }) =>
-    blocksAdapter.updateMany(updates, state),
+  on(EntitiesActions.updateEntityForGrid, (state, { update }) =>
+    entitiesAdapter.updateOne(update, state),
   ),
 
-  on(BlocksActions.deleteBlockForGrid, (state, { blockId }) =>
-    blocksAdapter.removeOne(blockId, state),
+  on(EntitiesActions.updateManyEntitiesForGrid, (state, { updates }) =>
+    entitiesAdapter.updateMany(updates, state),
   ),
 
-  on(BlocksActions.deleteManyBlocksForGrid, (state, { blockIds }) =>
-    blocksAdapter.removeMany(blockIds, state),
+  on(EntitiesActions.deleteEntityForGrid, (state, { entityId }) =>
+    entitiesAdapter.removeOne(entityId, state),
   ),
 
-  on(BlocksActions.clearBlocksState, (state) => blocksAdapter.removeAll(state)),
+  on(EntitiesActions.deleteManyEntitiesForGrid, (state, { entityIds }) =>
+    entitiesAdapter.removeMany(entityIds, state),
+  ),
+
+  on(EntitiesActions.clearEntitiesState, (state) => entitiesAdapter.removeAll(state)),
 )
 
-export function blocksReducer(state: BlocksState | undefined, action: Action) {
+export function entitiesReducer(state: EntitiesState | undefined, action: Action) {
   return reducer(state, action)
 }

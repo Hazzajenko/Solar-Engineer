@@ -1,14 +1,14 @@
 import { inject, Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
-
-import * as BlocksSelectors from './blocks.selectors'
+import * as EntitiesSelectors from './entities.selectors'
 
 @Injectable({
   providedIn: 'root',
 })
-export class BlocksFacade {
+export class EntitiesFacade {
   private readonly store = inject(Store)
 
-  loaded$ = this.store.select(BlocksSelectors.selectBlocksLoaded)
-  allBlocks$ = this.store.select(BlocksSelectors.selectAllBlocks)
+  loaded$ = this.store.select(EntitiesSelectors.selectEntitiesLoaded)
+  allEntities$ = this.store.select(EntitiesSelectors.selectAllEntities)
+  entitiesFromRoute$ = this.store.select(EntitiesSelectors.selectEntitiesByProjectIdRouteParams)
 }

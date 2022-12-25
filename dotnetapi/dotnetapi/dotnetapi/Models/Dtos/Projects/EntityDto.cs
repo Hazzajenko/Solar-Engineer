@@ -1,4 +1,4 @@
-﻿namespace dotnetapi.Models.Dtos;
+﻿namespace dotnetapi.Models.Dtos.Projects;
 
 public class EntityDto
 {

@@ -8,5 +8,5 @@ public class String : ProjectBaseEntity
     public ICollection<PanelLink> PanelLinks { get; set; } = default!;
     public string Name { get; set; } = default!;
     public string Color { get; set; } = default!;
-    public bool IsInParallel { get; set; }
+    public bool Parallel { get; set; }
 }

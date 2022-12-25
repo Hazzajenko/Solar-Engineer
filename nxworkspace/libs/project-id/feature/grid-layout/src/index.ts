@@ -1,1 +1,1 @@
-export * from './lib/project-id-feature-grid-layout.module'
+export * from './lib/grid-layout.component'

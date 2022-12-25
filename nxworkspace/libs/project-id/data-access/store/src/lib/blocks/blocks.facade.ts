@@ -1,27 +1,18 @@
-import { Injectable, inject } from '@angular/core'
-import { select, Store, Action } from '@ngrx/store'
-
-import * as BlocksActions from './blocks.actions'
-import * as BlocksFeature from './blocks.reducer'
+import { inject, Injectable } from '@angular/core'
+import { Store } from '@ngrx/store'
 import * as BlocksSelectors from './blocks.selectors'
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class BlocksFacade {
   private readonly store = inject(Store)
 
-  /**
-   * Combine pieces of state using createSelector,
-   * and expose them as observables through the facade.
-   */
-  loaded$ = this.store.pipe(select(BlocksSelectors.selectBlocksLoaded))
-  allBlocks$ = this.store.pipe(select(BlocksSelectors.selectAllBlocks))
-  selectedBlocks$ = this.store.pipe(select(BlocksSelectors.selectEntity))
+  loaded$ = this.store.select(BlocksSelectors.selectBlocksLoaded)
+  allBlocks$ = this.store.select(BlocksSelectors.selectAllBlocks)
+  blocksFromRoute$ = this.store.select(BlocksSelectors.selectBlocksByProjectIdRouteParams)
 
-  /**
-   * Use the initialization action to perform one
-   * or more tasks in your Effects.
-   */
-  init() {
-    this.store.dispatch(BlocksActions.initBlocks())
+  blockByLocation(location: string) {
+    return this.store.select(BlocksSelectors.selectBlockByLocation({location}))
   }
 }

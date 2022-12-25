@@ -26,7 +26,10 @@ comp:
 	nx generate @nrwl/angular:library --name=${name} --style=none --directory=${dir} --skipModule
 
 lib:
-	nx generate @nrwl/angular:library --name=facade --style=none --directory=auth/data-access --importPath=@auth/data-access/facade --skipModule --no-strict --unitTestRunner=karma
+	nx generate @nrwl/angular:library --name=blocks --style=none --directory=project-id/feature --importPath=@project-id/feature/blocks --skipModule
 
 newlib:
-  npx nx generate @nrwl/angular:library api --style=none --directory=projects/data-access --importPath=@projects/data-access/api --skipModule --strict --no-interactive
+	npx nx generate @nrwl/angular:library api --style=none --directory=projects/data-access --importPath=@projects/data-access/api --skipModule --strict --no-interactive
+
+ngrx:
+	nx generate @nrwl/angular:ngrx --name=blocks --directory=libs/project-id/data-access/store/src/lib/blocks --barrels --facade --skipImport

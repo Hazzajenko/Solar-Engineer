@@ -1,4 +1,4 @@
-<ng-container *ngIf="disconnectionPoint$ | async as disconnectionPoint">
+<!-- <ng-container *ngIf="disconnectionPoint$ | async as disconnectionPoint">
   <ng-container
     *ngrxLet="{
       positiveTo: selectedPositiveTo$ | async,
@@ -6,11 +6,11 @@
     } as selectedLinks"
   >
     <div class="drop-zone">
-      <grid-panel-link
+      <app-panel-link
         [isNegativeLink]="selectedLinks?.negativeTo === disconnectionPoint.id"
         [isPositiveLink]="selectedLinks?.positiveTo === disconnectionPoint.id"
         class="drop-zone__svg"
-      ></grid-panel-link>
+      ></app-panel-link>
       <div
         #disconnectionPointDiv
         (click)="dpAction(disconnectionPoint)"
@@ -59,3 +59,4 @@
     </ng-template>
   </ng-container>
 </mat-menu>
+ -->

@@ -1,7 +1,8 @@
-import { BlockModel, EntityModel, ProjectModel } from '@shared/data-access/models'
+import { PanelLinkModel, PanelModel, ProjectModel, StringModel } from '@shared/data-access/models'
 
 export interface GetProjectByIdResponse {
   project: ProjectModel
-  entities: EntityModel[]
-  blocks: BlockModel[]
+  strings: StringModel[]
+  panels: PanelModel[]
+  links: PanelLinkModel[]
 }

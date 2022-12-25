@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 
-import { ProjectIdComponent } from './project-id.component'
+import { GridLayoutComponent } from './grid-layout.component'
 
 describe('ProjectsFeatureProjectIdComponent', () => {
-  let component: ProjectIdComponent
-  let fixture: ComponentFixture<ProjectIdComponent>
+  let component: GridLayoutComponent
+  let fixture: ComponentFixture<GridLayoutComponent>
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ProjectIdComponent],
+      imports: [GridLayoutComponent],
     }).compileComponents()
 
-    fixture = TestBed.createComponent(ProjectIdComponent)
+    fixture = TestBed.createComponent(GridLayoutComponent)
     component = fixture.componentInstance
     fixture.detectChanges()
   })

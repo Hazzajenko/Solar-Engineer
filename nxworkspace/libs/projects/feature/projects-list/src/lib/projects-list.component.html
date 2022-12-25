@@ -1,11 +1,11 @@
 <ng-container *ngIf="projects$ | async as projects">
   <div
-    class="relative container flex flex-col px-4 mx-auto mt-10 space-y-12 md:space-y-0 md:flex-row"
+    class="flex flex-col px-4 mx-auto mt-10 space-y-12 items-center justify-center md:space-y-0 md:flex-row"
   >
     <div
       (click)="routeToProject(project)"
       *ngFor="let project of projects"
-      class="relative flex flex-col space-y-3 bg-clip-padding p-6 bg-[#08297c] border-1 border-[#08297c] border-dashed md:space-y-0 md:space-x-6 md:flex-row rounded-lg hover:bg-blue-500"
+      class="flex flex-col space-y-3 bg-clip-padding p-6 bg-[#08297c] border-1 border-[#08297c] border-dashed md:space-y-0 md:space-x-6 md:flex-row rounded-lg hover:bg-blue-500"
     >
       <!--       Heading -->
       <div class="rounded-l-full">

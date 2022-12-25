@@ -450,12 +450,12 @@ namespace dotnetapi.Data.Migrations
                     b.Property<int>("CreatedById")
                         .HasColumnType("integer");
 
-                    b.Property<bool>("IsInParallel")
-                        .HasColumnType("boolean");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<bool>("Parallel")
+                        .HasColumnType("boolean");
 
                     b.Property<int>("ProjectId")
                         .HasColumnType("integer");

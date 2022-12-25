@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 
-import { ProjectIdComponent } from 'libs/projects/feature/project-id/src/lib/project-id.component'
+import { ProjectIdComponent } from './project-id.component'
 
 describe('ProjectsFeatureProjectIdComponent', () => {
   let component: ProjectIdComponent

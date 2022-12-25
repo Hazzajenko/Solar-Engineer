@@ -6,7 +6,6 @@ import { ProjectsService } from '@projects/data-access/api'
 import { ProjectModel } from '@shared/data-access/models'
 import { switchMap } from 'rxjs'
 import { ProjectsActions } from './projects.actions'
-import { ProjectsState } from './projects.reducer'
 
 @Injectable({
   providedIn: 'root',
@@ -14,7 +13,7 @@ import { ProjectsState } from './projects.reducer'
 export class ProjectsEffects {
   private actions$ = inject(Actions)
   private projectsService = inject(ProjectsService)
-  private store = inject(Store<ProjectsState>)
+  private store = inject(Store)
   init$ = createEffect(
     () =>
       this.actions$.pipe(
@@ -33,21 +32,16 @@ export class ProjectsEffects {
     { dispatch: false },
   )
 
-  initSelectProject$ = createEffect(
+/*   initSelectProject$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType(ProjectsActions.initSelectProject),
-        switchMap(({ projectId }) =>
-          this.projectsService.getProjectById(projectId).pipe(
-            tapResponse(
-              (projects: ProjectModel[]) =>
-                this.store.dispatch(ProjectsActions.loadProjectsSuccess({ projects })),
-              (error: Error) =>
-                this.store.dispatch(ProjectsActions.loadProjectsFailure({ error: error.message })),
-            ),
-          ),
-        ),
+        tap(({ projectId }) => {
+          this.store.dispatch(StringsActions.initStrings({ projectId }))
+          this.store.dispatch(PanelsActions.initPanels({ projectId }))
+          this.store.dispatch(LinksActions.initLinks({ projectId }))
+        }),
       ),
     { dispatch: false },
-  )
+  ) */
 }

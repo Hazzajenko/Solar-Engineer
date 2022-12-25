@@ -29,6 +29,10 @@ const reducer = createReducer(
     projectsAdapter.setAll(projects, { ...state, loaded: true }),
   ),
   on(ProjectsActions.loadProjectsFailure, (state, { error }) => ({ ...state, error })),
+  on(ProjectsActions.initSelectProject, (state, { projectId }) => ({
+    ...state,
+    selectedId: projectId,
+  })),
 )
 
 export function projectsReducer(state: ProjectsState | undefined, action: Action) {

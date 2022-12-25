@@ -1,4 +1,4 @@
-﻿using dotnetapi.Models.Dtos;
+﻿using dotnetapi.Models.Dtos.Projects;
 
 namespace dotnetapi.Contracts.Responses;
 

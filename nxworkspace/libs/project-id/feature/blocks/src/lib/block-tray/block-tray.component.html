@@ -1,10 +1,10 @@
 <ng-container *ngIf="tray$ | async as tray">
   <div class="drop-zone">
-    <grid-tray-join
+<!--     <app-tray-join
       *ngIf="tray | getTrayJoins as surroundings$"
       [surroundings]="(surroundings$ | async)!"
       class="drop-zone__svg"
-    ></grid-tray-join>
+    ></app-tray-join> -->
     <div
       (click)="trayAction(tray)"
       (contextmenu)="onRightClick($event, tray)"

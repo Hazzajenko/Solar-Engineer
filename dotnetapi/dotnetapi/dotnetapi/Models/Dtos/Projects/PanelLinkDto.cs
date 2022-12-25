@@ -1,9 +1,8 @@
-﻿namespace dotnetapi.Models.Dtos;
+﻿namespace dotnetapi.Models.Dtos.Projects;
 
-public class PanelLinkDto
+public class PanelLinkDto : EntityDto
 {
-    public string Id { get; set; } = default!;
-    public int ProjectId { get; set; } = default!;
+    public new EntityTypeDto Type { get; set; } = EntityTypeDto.Link;
     public string StringId { get; set; } = default!;
     public string PositiveToId { get; set; } = default!;
     public string NegativeToId { get; set; } = default!;

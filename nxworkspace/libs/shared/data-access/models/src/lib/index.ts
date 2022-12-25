@@ -1,6 +1,5 @@
 export * from './color.model'
 export * from './disconnection-point.model'
-export * from './panel-link.model'
 export * from './projects/index'
 export * from './scene.model'
 export * from './surrounding.model'

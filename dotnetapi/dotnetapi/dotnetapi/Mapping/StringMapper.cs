@@ -1,5 +1,5 @@
 ﻿using dotnetapi.Contracts.Requests;
-using dotnetapi.Models.Dtos;
+using dotnetapi.Models.Dtos.Projects;
 using dotnetapi.Models.Entities;
 using String = dotnetapi.Models.Entities.String;
 
@@ -25,7 +25,7 @@ public static class StringMapper
             Id = request.Id,
             Name = request.Name,
             CreatedAt = DateTime.Now,
-            IsInParallel = false,
+            Parallel = false,
             CreatedBy = user,
             Color = request.Color
         };
@@ -37,7 +37,7 @@ public static class StringMapper
         {
             Name = request.Name,
             CreatedAt = DateTime.Now,
-            IsInParallel = false,
+            Parallel = false,
             Color = request.Color
         };
     }
@@ -49,8 +49,9 @@ public static class StringMapper
             Id = request.Id,
             ProjectId = request.Project.Id,
             Name = request.Name,
-            IsInParallel = request.IsInParallel,
-            Color = request.Color
+            Parallel = request.Parallel,
+            Color = request.Color,
+            Type = EntityTypeDto.String
             // CreatedAt = DateTime.Now
         };
     }

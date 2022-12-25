@@ -1,5 +1,0 @@
-export * from './multi-select.service'
-export * from './multi-create.service'
-export * from './multi-delete.service'
-export * from './multi-select.service'
-export * from './multi-create.helpers'

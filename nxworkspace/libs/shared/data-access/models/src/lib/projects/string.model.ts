@@ -1,4 +1,4 @@
-import { getGuid } from 'shared/utils'
+import { getGuid } from '@shared/utils'
 import { EntityModel, EntityOptions, EntityType } from './entity.model'
 
 export interface StringOptions extends EntityOptions {

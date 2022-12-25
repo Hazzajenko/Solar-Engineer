@@ -1,5 +1,5 @@
 ﻿using dotnetapi.Contracts.Requests;
-using dotnetapi.Models.Dtos;
+using dotnetapi.Models.Dtos.Projects;
 using dotnetapi.Models.Entities;
 
 namespace dotnetapi.Mapping;
@@ -29,7 +29,8 @@ public static class PanelLinkMapper
             PositiveToId = request.PositiveTo.Id,
             NegativeToId = request.NegativeTo.Id,
             IsDisconnectionPoint = request.IsDisconnectionPoint,
-            DisconnectionPointPanelId = request.DisconnectionPointPanelId
+            DisconnectionPointPanelId = request.DisconnectionPointPanelId,
+            Type = EntityTypeDto.Link
         };
     }
 }

@@ -1,4 +1,4 @@
-export const getGuid = () => {
+export function getGuid() {
   return 'xxxxxxxxxx4xxyxxxxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
     // tslint:disable-next-line:no-bitwise
     const r = (Math.random() * 16) | 0,

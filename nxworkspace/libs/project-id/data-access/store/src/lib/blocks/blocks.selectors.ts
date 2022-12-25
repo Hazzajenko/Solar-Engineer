@@ -1,7 +1,8 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store'
-import { BLOCKS_FEATURE_KEY, BlocksState, blocksAdapter } from './blocks.reducer'
+import { BlockModel } from '@shared/data-access/models'
+import { selectRouteParams } from '@shared/data-access/router'
+import { BLOCKS_FEATURE_KEY, blocksAdapter, BlocksState } from './blocks.reducer'
 
-// Lookup the 'Blocks' feature state managed by NgRx
 export const selectBlocksState = createFeatureSelector<BlocksState>(BLOCKS_FEATURE_KEY)
 
 const { selectAll, selectEntities } = blocksAdapter.getSelectors()
@@ -24,13 +25,18 @@ export const selectBlocksEntities = createSelector(selectBlocksState, (state: Bl
   selectEntities(state),
 )
 
-export const selectSelectedId = createSelector(
-  selectBlocksState,
-  (state: BlocksState) => state.selectedId,
-)
-
-export const selectEntity = createSelector(
-  selectBlocksEntities,
-  selectSelectedId,
-  (entities, selectedId) => (selectedId ? entities[selectedId] : undefined),
+export const selectBlockByLocation = (props: { location: string }) =>
+  createSelector(selectAllBlocks, (blocks: BlockModel[]) =>
+    blocks.find((block) => block.location === props.location),
+  )
+  
+export const selectBlocksByProjectIdRouteParams = createSelector(
+  selectAllBlocks,
+  selectRouteParams,
+  (blocks, { projectId }) => {
+    if (blocks) {
+      return blocks.filter((block) => block.projectId === Number(projectId))
+    }
+    return []
+  },
 )

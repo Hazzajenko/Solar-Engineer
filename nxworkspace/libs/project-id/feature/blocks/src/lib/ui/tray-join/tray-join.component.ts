@@ -1,10 +1,9 @@
-import { Component, Input } from '@angular/core'
-
 import { NgIf } from '@angular/common'
+import { Component, Input } from '@angular/core'
 import { SurroundingModel } from '@shared/data-access/models'
 
 @Component({
-  selector: 'grid-tray-join',
+  selector: 'app-tray-join',
   templateUrl: './tray-join.component.html',
   styleUrls: ['./tray-join.component.scss'],
   standalone: true,

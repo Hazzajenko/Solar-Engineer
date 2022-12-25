@@ -1,4 +1,4 @@
-import { getGuid } from 'shared/utils'
+import { getGuid } from '@shared/utils'
 import { BlockModel, BlockOptions, BlockType } from './block.model'
 
 export interface TrayOptions extends BlockOptions {

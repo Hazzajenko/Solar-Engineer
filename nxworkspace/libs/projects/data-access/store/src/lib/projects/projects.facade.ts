@@ -9,6 +9,7 @@ export class ProjectsFacade {
   loaded$ = this.store.pipe(select(ProjectsSelectors.selectProjectsLoaded))
   allProjects$ = this.store.pipe(select(ProjectsSelectors.selectAllProjects))
   selectedProjects$ = this.store.pipe(select(ProjectsSelectors.selectEntity))
+  projectFromRoute$ = this.store.select(ProjectsSelectors.selectProjectByRouteParams)
 
   init() {
     this.store.dispatch(ProjectsActions.initProjects())

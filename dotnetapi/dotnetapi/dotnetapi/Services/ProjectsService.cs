@@ -1,5 +1,5 @@
 ﻿using dotnetapi.Mapping;
-using dotnetapi.Models.Dtos;
+using dotnetapi.Models.Dtos.Projects;
 using dotnetapi.Models.Entities;
 using dotnetapi.Repositories;
 using FluentValidation;

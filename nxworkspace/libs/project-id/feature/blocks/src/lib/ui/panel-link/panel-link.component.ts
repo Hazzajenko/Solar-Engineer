@@ -1,8 +1,8 @@
-import { Component, Input } from '@angular/core'
 import { NgIf } from '@angular/common'
+import { Component, Input } from '@angular/core'
 
 @Component({
-  selector: 'grid-panel-link',
+  selector: 'app-panel-link',
   templateUrl: './panel-link.component.html',
   styleUrls: ['./panel-link.component.scss'],
   standalone: true,
