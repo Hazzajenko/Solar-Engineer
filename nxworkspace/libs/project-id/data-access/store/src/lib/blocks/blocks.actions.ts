@@ -11,6 +11,7 @@ export const BlocksActions = createActionGroup({
     'Update Many Blocks For Grid': props<{ updates: Update<BlockModel>[] }>(),
     'Delete Block For Grid': props<{ blockId: string }>(),
     'Delete Many Blocks For Grid': props<{ blockIds: string[] }>(),
+    'Noop': emptyProps(),
     'Clear Blocks State': emptyProps(),
   },
 })

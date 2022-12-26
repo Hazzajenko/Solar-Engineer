@@ -4,5 +4,4 @@ export enum GridMode {
   DELETE,
   LINK,
   SELECT,
-  MULTICREATE,
 }

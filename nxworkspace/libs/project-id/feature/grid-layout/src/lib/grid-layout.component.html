@@ -3,7 +3,7 @@
     <div *ngFor="let n of numSequence(cols); let col = index" class="border border-black">
       <ng-container *ngrxLet="row | getLocation: col; let location">
         <div
-          (cdkDropListDropped)="gridStore.gridDrop($event)"
+          (cdkDropListDropped)="gridStore.gridDropV2($event)"
           (click)="cellAction(location, $event)"
           (keyup)="altKeyup($event)"
           (mousedown)="mouseDown($event, location)"

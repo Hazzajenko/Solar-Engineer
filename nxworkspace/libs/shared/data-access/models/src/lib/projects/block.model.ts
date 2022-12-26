@@ -1,5 +1,6 @@
+import { getGuid } from '@shared/utils'
+
 export interface BlockOptions {
-  id: string
   projectId: number
   location: string
   type: BlockType
@@ -21,8 +22,8 @@ export class BlockModel {
   location: string
   type: BlockType
 
-  constructor(options: BlockOptions) {
-    this.id = options.id
+  constructor(options: BlockOptions, id?: string) {
+    this.id = id ? id : getGuid.toString()
     this.projectId = options.projectId
     this.location = options.location
     this.type = options.type

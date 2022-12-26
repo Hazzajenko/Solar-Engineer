@@ -1,5 +1,5 @@
-import { GridStore } from './data-access/grid.store';
-import { BlockSwitchComponent } from '@project-id/ui/block-switch';
+import { GridStore } from './data-access/grid.store'
+import { BlockSwitchComponent } from '@project-id/ui/block-switch'
 import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop'
 import { CommonModule } from '@angular/common'
 import { Component, HostListener, inject } from '@angular/core'
@@ -9,15 +9,24 @@ import { BlockModel } from '@shared/data-access/models'
 import { Observable } from 'rxjs'
 import { GetBlockAsyncPipe } from './pipes/get-block-async.pipe'
 import { GetLocationPipe } from './pipes/get-location.pipe'
+import { GridService } from 'libs/project-id/feature/grid-layout/src/lib/data-access/grid.service'
 
 @Component({
   selector: 'app-grid-layout',
   standalone: true,
-  imports: [CommonModule, DragDropModule, LetModule, GetLocationPipe, GetBlockAsyncPipe, BlockSwitchComponent],
+  imports: [
+    CommonModule,
+    DragDropModule,
+    LetModule,
+    GetLocationPipe,
+    GetBlockAsyncPipe,
+    BlockSwitchComponent,
+  ],
   templateUrl: './grid-layout.component.html',
   styles: [],
 })
 export class GridLayoutComponent {
+  private gridService = inject(GridService)
   public gridStore = inject(GridStore)
   blocks$: Observable<BlockModel[]> = inject(BlocksFacade).blocksFromRoute$
   rows = 20
@@ -53,10 +62,6 @@ export class GridLayoutComponent {
           default:
             break
         }*/
-  }
-
-  gridDrop(event: CdkDragDrop<any, any>) {
-    // this.updateService.gridDrop(event)
   }
 
   async mouseDown(event: MouseEvent, location: string) {

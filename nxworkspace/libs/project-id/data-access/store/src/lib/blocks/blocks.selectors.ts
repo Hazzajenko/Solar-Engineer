@@ -25,11 +25,16 @@ export const selectBlocksEntities = createSelector(selectBlocksState, (state: Bl
   selectEntities(state),
 )
 
+export const selectBlockById = (props: { id: string }) =>
+  createSelector(selectAllBlocks, (blocks: BlockModel[]) =>
+    blocks.find((block) => block.id === props.id),
+  )
+
 export const selectBlockByLocation = (props: { location: string }) =>
   createSelector(selectAllBlocks, (blocks: BlockModel[]) =>
     blocks.find((block) => block.location === props.location),
   )
-  
+
 export const selectBlocksByProjectIdRouteParams = createSelector(
   selectAllBlocks,
   selectRouteParams,
