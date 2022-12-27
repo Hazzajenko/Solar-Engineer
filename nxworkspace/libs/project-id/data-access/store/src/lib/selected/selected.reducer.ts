@@ -32,7 +32,7 @@ export const initialSelectedState: SelectedState = {
   selectedStringPathMap: undefined,
 }
 
-export const reducer = createReducer(
+const reducer = createReducer(
   initialSelectedState,
 
   on(SelectedActions.selectType, (state, { objectType }) => ({
@@ -135,7 +135,7 @@ export const reducer = createReducer(
     type: TypeModel.STRING,
     singleSelectId: state.singleSelectId,
     selectedStringId: state.selectedStringId,
-    // multiSelectIds: panelIds,
+    multiSelectIds: panelIds,
   })),
 
   on(SelectedActions.setSelectedStringTooltip, (state, { tooltip }) => ({

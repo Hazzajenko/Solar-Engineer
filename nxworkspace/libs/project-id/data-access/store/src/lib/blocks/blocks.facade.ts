@@ -23,6 +23,14 @@ export class BlocksFacade {
     return this.store.select(BlocksSelectors.selectBlockByLocation({location}))
   }
 
+  selectBlocksFromArray(locationArray: string[]) {
+    return this.store.select(BlocksSelectors.selectBlockIdsFromArray({locationArray}))
+  }
+
+  selectBlockIdsFromArray(locationArray: string[]) {
+    return this.store.select(BlocksSelectors.selectBlockIdsFromArray({locationArray}))
+  }
+
   updateBlock(update: Update<BlockModel>) {
     this.store.dispatch(BlocksActions.updateBlockForGrid({update}))
   }

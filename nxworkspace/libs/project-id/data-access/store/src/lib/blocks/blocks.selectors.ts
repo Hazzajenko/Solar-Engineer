@@ -35,6 +35,16 @@ export const selectBlockByLocation = (props: { location: string }) =>
     blocks.find((block) => block.location === props.location),
   )
 
+  export const selectBlocksFromArray = (props: { locationArray: string[] }) =>
+  createSelector(selectAllBlocks, (blocks: BlockModel[]) =>
+    blocks.filter((block) => props.locationArray.includes(block.location)),
+  )
+
+export const selectBlockIdsFromArray = (props: { locationArray: string[] }) =>
+  createSelector(selectAllBlocks, (blocks: BlockModel[]) =>
+    blocks.filter((block) => props.locationArray.includes(block.location)).map((block) => block.id),
+  )
+
 export const selectBlocksByProjectIdRouteParams = createSelector(
   selectAllBlocks,
   selectRouteParams,

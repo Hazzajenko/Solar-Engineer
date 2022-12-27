@@ -27,7 +27,12 @@ const reducer = createReducer(
     panelsAdapter.setAll(panels, { ...state, loaded: true }),
   ),
   on(PanelsActions.loadPanelsFailure, (state, { error }) => ({ ...state, error })),
+  on(PanelsActions.addPanel, (state, { panel }) => panelsAdapter.addOne(panel, state)),
+  on(PanelsActions.addManyPanels, (state, { panels }) => panelsAdapter.addMany(panels, state)),
   on(PanelsActions.updatePanel, (state, { update }) => panelsAdapter.updateOne(update, state)),
+  on(PanelsActions.updateManyPanels, (state, { updates }) => panelsAdapter.updateMany(updates, state)),
+  on(PanelsActions.deletePanel, (state, { id }) => panelsAdapter.removeOne(id, state)),
+  on(PanelsActions.deleteManyPanels, (state, { ids }) => panelsAdapter.removeMany(ids, state)),
 )
 
 export function panelsReducer(state: PanelsState | undefined, action: Action) {

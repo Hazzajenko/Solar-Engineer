@@ -1,6 +1,9 @@
 import { inject, Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
-import { TypeModel } from '@shared/data-access/models'
+import { BlockType } from '@shared/data-access/models'
+import { LinksActions } from '../links'
+import { MultiActions } from '../multi'
+import { SelectedActions } from '../selected'
 import { GridActions } from './grid.actions'
 import * as GridSelectors from './grid.selectors'
 
@@ -14,7 +17,7 @@ export class GridFacade {
   gridMode$ = this.store.select(GridSelectors.selectGridMode)
   createMode$ = this.store.select(GridSelectors.selectCreateMode)
 
-  changeCreateType(createType: TypeModel) {
+  changeCreateType(createType: BlockType) {
     this.store.dispatch(GridActions.changeCreateType({ createType }))
   }
 
@@ -32,5 +35,12 @@ export class GridFacade {
 
   selectDeleteMode() {
     this.store.dispatch(GridActions.selectGridmodeDelete())
+  }
+
+  clearEntireGridState() {
+    this.store.dispatch(LinksActions.clearLinksState())
+    this.store.dispatch(SelectedActions.clearSelectedState())
+    this.store.dispatch(MultiActions.clearMultiState())
+    this.store.dispatch(GridActions.selectGridmodeSelect())
   }
 }

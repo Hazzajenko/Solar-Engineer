@@ -1,4 +1,5 @@
-import { of } from 'rxjs';
+import { map } from 'rxjs/operators'
+import { of, Observable, shareReplay } from 'rxjs'
 import { Update } from '@ngrx/entity'
 import { inject, Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
@@ -12,6 +13,7 @@ import { PanelModel } from '@shared/data-access/models'
 })
 export class PanelsFacade {
   private readonly store = inject(Store)
+  private panels$!: Observable<PanelModel[]>
 
   loaded$ = this.store.select(PanelsSelectors.selectPanelsLoaded)
   allPanels$ = this.store.select(PanelsSelectors.selectAllPanels)
@@ -19,14 +21,25 @@ export class PanelsFacade {
 
   init(projectId: number) {
     this.store.dispatch(PanelsActions.initPanels({ projectId }))
+    this.panels$ = this.store
+      .select(PanelsSelectors.selectAllPanels)
+      .pipe(shareReplay({ bufferSize: 1, refCount: true }))
   }
 
   panelById(id: string) {
     return this.store.select(PanelsSelectors.selectPanelById({ id }))
+    // return this.panels$.pipe(map((panels) => panels.find((panel) => panel.id === id)))
+    /*     return this.store
+      .select(PanelsSelectors.selectAllPanels)
+      .pipe(map((panels) => panels.find((panel) => panel.id === id))) */
   }
 
   panelsByStringId(stringId: string) {
     return this.store.select(PanelsSelectors.selectPanelsByStringId({ stringId }))
+  }
+
+  createPanel(panel: PanelModel) {
+    this.store.dispatch(PanelsActions.addPanel({ panel }))
   }
 
   updatePanel(update: Update<PanelModel>) {
