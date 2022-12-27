@@ -7,7 +7,7 @@
       [isPositiveLink]="(isSelectedPositiveTo$ | async)!"
       class="drop-zone__svg"
     ></app-panel-link> -->
-    <ng-container [ngSwitch]="panel.rotation">
+    <ng-container [ngSwitch]="panel?.rotation">
       <ng-container *ngSwitchCase="0">
         <svg viewBox="0 0 100 100" class="pointer-events-none z-10 relative">
           <path
@@ -53,8 +53,8 @@
       (contextmenu)="onRightClick($event, panel)"
       [cdkDragData]="panel"
       [ngStyle]="{
-        height: panel.rotation === 0 ? '18px' : '23px',
-        width: panel.rotation === 0 ? '23px' : '18px'
+        height: panel?.rotation === 0 ? '18px' : '23px',
+        width: panel?.rotation === 0 ? '23px' : '18px'
       }"
       cdkDrag
       class="absolute border border-black flex items-center justify-center content-center hover:bg-red-500"

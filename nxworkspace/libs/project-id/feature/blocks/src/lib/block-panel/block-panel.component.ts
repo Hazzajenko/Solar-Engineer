@@ -17,16 +17,16 @@ import { LetModule } from '@ngrx/component'
 import { Store } from '@ngrx/store'
 
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
-import { PanelsSelectors } from '@project-id/data-access/store'
+import { PanelsFacade } from '@project-id/data-access/store'
 
-import { firstValueFrom, Observable } from 'rxjs'
-import { map } from 'rxjs/operators'
+import { Observable } from 'rxjs'
 
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog'
-import { GridMode, PanelModel, TypeModel } from '@shared/data-access/models'
+import { PanelModel } from '@shared/data-access/models'
 import { AppState } from '@shared/data-access/store'
 import { PanelLinkComponent } from '../ui'
 import { PanelDirective } from './directives/panel.directive'
+import { GetPanelAsyncPipe } from './get-panel-async.pipe'
 
 @Component({
   selector: 'app-block-panel',
@@ -46,15 +46,20 @@ import { PanelDirective } from './directives/panel.directive'
     NgSwitch,
     NgSwitchCase,
     PanelLinkComponent,
-    PanelDirective
+    PanelDirective,
+    GetPanelAsyncPipe,
   ],
   standalone: true,
 })
 export class BlockPanelComponent {
+  private panelsFacade = inject(PanelsFacade)
   panel$!: Observable<PanelModel | undefined>
-  @Input() set id(id: string) {
-    this.panel$ = this.store.select(PanelsSelectors.selectPanelById({ id }))
+    @Input() set id(id: string) {
+    this.panel$ = this.panelsFacade.panelById(id)
   }
+  // @Input() id!: string
+
+  // @Input() panel$!: Observable<PanelModel | undefined>
 
   menuTopLeftPosition = { x: '0', y: '0' }
   @ViewChild(MatMenuTrigger, { static: true })
@@ -63,6 +68,7 @@ export class BlockPanelComponent {
   private store = inject(Store<AppState>)
   private dialog = inject(MatDialog)
 
+
   displayTooltip(isSelectedString: boolean, selectedStringTooltip?: string): string {
     if (isSelectedString) {
       return <string>selectedStringTooltip
@@ -70,7 +76,7 @@ export class BlockPanelComponent {
     return ''
   }
 
-  onRightClick(event: MouseEvent, panel: PanelModel) {
+  onRightClick(event: MouseEvent, panel?: PanelModel | null) {
     event.preventDefault()
 
     this.menuTopLeftPosition.x = event.clientX + 10 + 'px'
@@ -102,7 +108,7 @@ export class BlockPanelComponent {
     // this.panelsEntity.delete(panel)
   }
 
-  async panelAction(panel: PanelModel, shiftKey: boolean) {
+  async panelAction(panel?: PanelModel | null, shiftKey?: boolean) {
     if (!panel) {
       return console.error('err panelAction !panel')
     }

@@ -1,3 +1,4 @@
+import { SelectProjectResolver } from '@project-id/data-access/resolvers'
 import { MatDialogModule } from '@angular/material/dialog'
 import {
   PanelsEffects,
@@ -18,6 +19,10 @@ import {
   SELECTED_FEATURE_KEY,
   selectedReducer,
   SelectedEffects,
+  GRID_FEATURE_KEY,
+  gridReducer,
+  multiReducer,
+  MULTI_FEATURE_KEY,
 } from '@project-id/data-access/store'
 import { Route } from '@angular/router'
 import { loggedInGuard } from '@auth/guards'
@@ -42,15 +47,6 @@ export const appRoutes: Route[] = [
       ]),
     ],
   },
-  /*  {
-      path: 'projects',
-      loadComponent: () => import('./projects/projects.component').then((m) => m.ProjectsComponent),
-      canActivate: [loggedInGuard],
-      providers: [
-        provideState(PROJECTS_FEATURE_KEY, projectsReducer),
-        provideEffects([ProjectsEffects]),
-      ],
-    },*/
   {
     path: 'projects/:projectId',
     loadComponent: () => import('@project-id/feature/index').then((m) => m.ProjectIdComponent),
@@ -64,6 +60,8 @@ export const appRoutes: Route[] = [
       provideState(BLOCKS_FEATURE_KEY, blocksReducer),
       provideState(ENTITIES_FEATURE_KEY, entitiesReducer),
       provideState(SELECTED_FEATURE_KEY, selectedReducer),
+      provideState(GRID_FEATURE_KEY, gridReducer),
+      provideState(MULTI_FEATURE_KEY, multiReducer),
       provideEffects([
         ProjectsEffects,
         PanelsEffects,
@@ -74,6 +72,7 @@ export const appRoutes: Route[] = [
         SelectedEffects,
       ]),
     ],
+    resolve: { project: SelectProjectResolver },
   },
   /*  {
   BrowserAnimationsModule

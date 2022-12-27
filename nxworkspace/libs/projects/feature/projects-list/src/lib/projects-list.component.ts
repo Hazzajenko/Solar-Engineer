@@ -19,7 +19,7 @@ export class ProjectsListComponent {
   projects$: Observable<ProjectModel[] | undefined> = this.store.allProjects$
 
   routeToProject(project: ProjectModel) {
-    this.store.initSelectProject(project.id)
+    // this.store.initSelectProject(project.id)
     this.router.navigate([`projects/${project.id}`]).then((r) => r)
   }
 }

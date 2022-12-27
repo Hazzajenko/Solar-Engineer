@@ -33,3 +33,12 @@ newlib:
 
 ngrx:
 	nx generate @nrwl/angular:ngrx --name=blocks --directory=libs/project-id/data-access/store/src/lib/blocks --barrels --facade --skipImport
+
+graph:
+  nx graph
+
+docker:
+  docker build . -t dockerngstart .
+
+docker-run:
+  docker run --name dockerngstart-container -it -p 8000:80 dockerngstart
