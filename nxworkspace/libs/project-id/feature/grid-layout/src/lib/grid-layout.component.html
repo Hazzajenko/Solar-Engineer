@@ -1,22 +1,25 @@
-<div cdkDropListGroup class="flex flex-col items-center">
-  <div *ngFor="let n of numSequence(rows); let row = index" class="flex">
-    <div *ngFor="let n of numSequence(cols); let col = index" class="border border-black">
-      <ng-container *ngrxLet="row | getLocation: col; let location">
-        <div
-          (cdkDropListDropped)="gridStore.gridDropV2($event)"
-          (click)="cellAction(location, $event)"
-          (keyup)="altKeyup($event)"
-          (mousedown)="mouseDown($event, location)"
-          (mouseup)="mouseUp($event, location)"
-          [id]="location"
-          cdkDropList
-          class="flex justify-center items-center border-gray-400 bg-gray-200 w-8 h-8"
-        >
-          <ng-container *ngIf="blocks$ | getBlockAsync: location | async as block">
-            <app-block-switch [block]="block"></app-block-switch>
-          </ng-container>
-        </div>
-      </ng-container>
+<ng-container *ngIf="blocks$ | async as blocks">
+  <div cdkDropListGroup class="flex flex-col items-center">
+    <div *ngFor="let n of numSequence(rows); let row = index" class="flex">
+      <div *ngFor="let n of numSequence(cols); let col = index" class="border border-black">
+        <ng-container *ngrxLet="row | getLocation: col; let location">
+          <div
+            (cdkDropListDropped)="gridStore.gridDrop($event)"
+            (click)="gridStore.cellAction({location, event: $event})"
+            (keyup)="altKeyup($event)"
+            (mousedown)="mouseDown($event, location)"
+            (mouseup)="mouseUp($event, location)"
+            [id]="location"
+            cdkDropList
+            class="flex justify-center items-center border-gray-400 bg-gray-200 w-8 h-8"
+          >
+            <ng-container *ngIf="blocks | getBlock: location as block">
+              <ng-template appDynamic [block]="block"></ng-template>
+              <!-- <app-block-switch [block]="block"></app-block-switch> -->
+            </ng-container>
+          </div>
+        </ng-container>
+      </div>
     </div>
   </div>
-</div>
+</ng-container>
