@@ -14,6 +14,8 @@ export const LinksActions = createActionGroup({
     'Update Many Links': props<{ updates: Update<PanelLinkModel>[] }>(),
     'Delete Link': props<{ id: string }>(),
     'Delete Many Links': props<{ ids: string[] }>(),
+    'Start Link Panel': props<{ panelId: string }>(),
+    'Finish Link Panel': props<{ panelId: string }>(),
     'Clear Links State': emptyProps(),
   },
 })

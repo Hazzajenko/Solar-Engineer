@@ -1,6 +1,8 @@
+import { ToolbarComponent } from '@project-id/feature/toolbar'
 import { CommonModule } from '@angular/common'
 import { Component, ElementRef, inject, ViewChild } from '@angular/core'
 import { GridLayoutComponent } from '@project-id/feature/grid-layout'
+
 import { ProjectsFacade } from '@projects/data-access/store'
 import { ProjectModel } from '@shared/data-access/models'
 import { Observable } from 'rxjs'
@@ -8,7 +10,7 @@ import { Observable } from 'rxjs'
 @Component({
   selector: 'app-project-id',
   standalone: true,
-  imports: [CommonModule, GridLayoutComponent],
+  imports: [CommonModule, GridLayoutComponent, ToolbarComponent],
   templateUrl: './project-id.component.html',
   styles: [],
 })

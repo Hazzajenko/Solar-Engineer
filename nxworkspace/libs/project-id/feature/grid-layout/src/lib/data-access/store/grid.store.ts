@@ -1,43 +1,41 @@
+import { ClientXY } from './../models/client-x-y.model'
+
+import { MultiFacade } from '@project-id/data-access/store'
 import {
   catchError,
   combineLatestWith,
   distinctUntilChanged,
   exhaustMap,
   map,
+  switchMap,
 } from 'rxjs/operators'
-import { MultiFacade } from '@project-id/data-access/store'
 
 import { CdkDragDrop } from '@angular/cdk/drag-drop'
 import { inject, Injectable } from '@angular/core'
 import { ComponentStore } from '@ngrx/component-store'
 import { BlocksFacade, GridFacade, PanelsFacade } from '@project-id/data-access/store'
 import { BlockModel, BlockType } from '@shared/data-access/models'
-import { combineLatest, Observable, of, tap } from 'rxjs'
+import { Observable, of, tap } from 'rxjs'
 import { CellAction } from '../models/cell-action.model'
 import { MultiEventType } from '../multi/multi.event'
 import { GridService } from '../services/grid.service'
-import { ClientXY } from '../models/client-x-y.model'
+
 interface GridState {
-  isDragging: boolean
-  startX?: number
-  startY?: number
+  clientXY: ClientXY
+}
+
+const initialGridState = {
+  clientXY: {
+    clientX: undefined,
+    clientY: undefined,
+  },
 }
 
 @Injectable({
   providedIn: 'root',
 })
 export class GridStore extends ComponentStore<GridState> {
-  isDragging$ = this.select((state) => state.isDragging)
-  startX$ = this.select((state) => state.startX)
-  startY$ = this.select((state) => state.startY)
-  coords$: Observable<ClientXY> = combineLatest([this.startX$, this.startY$]).pipe(
-    map(([startX, startY]) => {
-      return {
-        startX,
-        startY
-      } as ClientXY
-    })
-  )
+  clientXY$: Observable<ClientXY> = this.select((state) => state.clientXY)
 
   private blocksFacade = inject(BlocksFacade)
   private panelsFacade = inject(PanelsFacade)
@@ -51,7 +49,7 @@ export class GridStore extends ComponentStore<GridState> {
         action.event.preventDefault()
         action.event.stopPropagation()
       }),
-      exhaustMap((action) =>
+      switchMap((action) =>
         this.gridService.cellAction(action).pipe(
           tap((res) => {
             if (res) {
@@ -70,7 +68,7 @@ export class GridStore extends ComponentStore<GridState> {
         drop.event.preventDefault()
         drop.event.stopPropagation()
       }),
-      exhaustMap((drop) =>
+      switchMap((drop) =>
         this.gridService.gridDrop(drop).pipe(
           tap((update) => {
             if (!update) return
@@ -90,9 +88,7 @@ export class GridStore extends ComponentStore<GridState> {
       distinctUntilChanged(),
       combineLatestWith(this.multiFacade.state$),
       tap(([event, multiState]) => {
-        console.log('hii')
         if (multiState.locationStart && event.key === 'Alt') {
-          console.log('hii')
           this.multiFacade.clearMultiState()
         }
       }),
@@ -117,19 +113,23 @@ export class GridStore extends ComponentStore<GridState> {
         if (action) {
           if (action.event.type === 'mousedown') {
             this.patchState({
-              startX: action.event.clientX,
-              startY: action.event.clientY,
+              clientXY: {
+                clientX: action.event.clientX,
+                clientY: action.event.clientY,
+              },
             })
           }
           if (action.event.type === 'mouseup') {
             this.patchState({
-              startX: undefined,
-              startY: undefined,
+              clientXY: {
+                clientX: undefined,
+                clientY: undefined,
+              },
             })
           }
         }
       }),
-      exhaustMap((action) => {
+      switchMap((action) => {
         if (!action) return of(undefined)
         return this.gridService.mouseEvent(action).pipe(
           tap((res) => {
@@ -163,8 +163,6 @@ export class GridStore extends ComponentStore<GridState> {
     ),
   )
   constructor() {
-    super({
-      isDragging: false,
-    })
+    super(initialGridState)
   }
 }

@@ -1,68 +1,70 @@
 <ng-container *ngIf="panel$ | async as panel">
-  <div
-    class="flex whitespace-pre-wrap content-center items-center justify-center border-blue-500 bg-white w-8 h-8"
-  >
-    <!--     <app-panel-link
+  <ng-container *ngIf="panelNgClass$ | async as panelNgClass">
+    <div
+      class="flex whitespace-pre-wrap content-center items-center justify-center border-blue-500 bg-white w-8 h-8"
+    >
+      <!--     <app-panel-link
       [isNegativeLink]="(isSelectedNegativeTo$ | async)!"
       [isPositiveLink]="(isSelectedPositiveTo$ | async)!"
       class="drop-zone__svg"
     ></app-panel-link> -->
-    <ng-container [ngSwitch]="panel?.rotation">
-      <ng-container *ngSwitchCase="0">
-        <svg viewBox="0 0 100 100" class="pointer-events-none z-10 relative">
-          <path
-            class="stroke-slate-800 fill-none stroke-[5px] z-10"
-            d="
+      <ng-container [ngSwitch]="panel?.rotation">
+        <ng-container *ngSwitchCase="0">
+          <svg viewBox="0 0 100 100" class="pointer-events-none z-10 relative">
+            <path
+              class="stroke-slate-800 fill-none stroke-[5px] z-10"
+              d="
               M 30, 0
               V 100
               "
-          />
-          <path
-            class="stroke-slate-800 fill-none stroke-[5px] z-10"
-            d="
+            />
+            <path
+              class="stroke-slate-800 fill-none stroke-[5px] z-10"
+              d="
               M 70, 0
               V 100
               "
-          />
-        </svg>
-      </ng-container>
-      <ng-container *ngSwitchCase="1">
-        <svg viewBox="0 0 100 100" class="pointer-events-none z-10 relative">
-          <path
-            class="stroke-slate-800 fill-none stroke-5 z-10"
-            d="
+            />
+          </svg>
+        </ng-container>
+        <ng-container *ngSwitchCase="1">
+          <svg viewBox="0 0 100 100" class="pointer-events-none z-10 relative">
+            <path
+              class="stroke-slate-800 fill-none stroke-5 z-10"
+              d="
               M 0, 30
               H 100
               "
-          />
-          <path
-            class="stroke-slate-800 fill-none stroke-5 z-10"
-            d="
+            />
+            <path
+              class="stroke-slate-800 fill-none stroke-5 z-10"
+              d="
               M 0, 70
               H 100
               "
-          />
-        </svg>
+            />
+          </svg>
+        </ng-container>
       </ng-container>
-    </ng-container>
-    <div
-      #panelDiv
-      appPanelDirective
-      [id]="panel.id"
-      (click)="panelAction(panel, $event.shiftKey)"
-      (contextmenu)="onRightClick($event, panel)"
-      [cdkDragData]="panel"
-      [ngStyle]="{
-        height: panel?.rotation === 0 ? '18px' : '23px',
-        width: panel?.rotation === 0 ? '23px' : '18px'
-      }"
-      cdkDrag
-      class="absolute border border-black flex items-center justify-center content-center hover:bg-red-500"
-      matTooltipClass="drop-zone__tooltip"
-      matTooltipDisabled="true"
-      matTooltipPosition="right"
-    >
-      <!--       <ng-container *ngIf="(isSelectedString$ | async)!">
+      <div
+        #panelDiv
+        appPanelDirective
+        [id]="panel.id"
+        (click)="panelAction(panel, $event.shiftKey)"
+        (contextmenu)="onRightClick($event, panel)"
+        [cdkDragData]="panel"
+        [ngStyle]="{
+          height: panel?.rotation === 0 ? '18px' : '23px',
+          width: panel?.rotation === 0 ? '23px' : '18px'
+        }"
+        [ngClass]="{ 'bg-blue-300': panelNgClass.isSelectedPanel }"
+        cdkDrag
+        class="absolute border border-black flex items-center justify-center content-center hover:bg-red-500"
+        matTooltipClass="drop-zone__tooltip"
+        matTooltipDisabled="true"
+        matTooltipPosition="right"
+      >
+        <!--       <ng-container *ngIf="(isSelectedString$ | async)!">
         <ng-container *ngIf="(selectedStringPathMap$ | async)?.get(panel.id) as pathNumber">
           <div class="drop-zone__pathMapText">
             {{ pathNumber.link + ":" + pathNumber.count }}
@@ -70,8 +72,9 @@
           <!--              {{ test(panel.id) }}
         </ng-container>
       </ng-container> -->
+      </div>
     </div>
-  </div>
+  </ng-container>
 </ng-container>
 <!--  [class.drop-zone__bg-selected]="
         (isSelectedPanel$ | async)! || (multiSelectIds$ | async)?.includes(panel.id)

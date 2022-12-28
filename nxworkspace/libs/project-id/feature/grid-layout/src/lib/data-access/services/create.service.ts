@@ -44,7 +44,7 @@ export class CreateService {
           projectId: project.id,
           stringId: selectedStringId ? selectedStringId : 'undefined',
           location,
-          rotation: 1,
+          rotation: 0,
           type: BlockType.PANEL,
         })
         return panelRequest

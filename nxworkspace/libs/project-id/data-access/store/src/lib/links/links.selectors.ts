@@ -1,4 +1,3 @@
-
 import { PanelModel, PanelLinkModel } from '@shared/data-access/models'
 import { createFeatureSelector, createSelector } from '@ngrx/store'
 import { selectRouteParams } from '@shared/data-access/router'
@@ -33,3 +32,10 @@ export const selectLinksByPanels = (props: { panels: PanelModel[] }) =>
   createSelector(selectAllLinks, (links: PanelLinkModel[]) =>
     links.filter((link) => props.panels.map((panel) => panel.id).includes(link.positiveToId)),
   )
+
+export const selectTypeAndToLinkId = createSelector(selectLinksState, (state: LinksState) => {
+  return {
+    type: state.typeToLink,
+    toLinkId: state.toLinkId,
+  }
+})

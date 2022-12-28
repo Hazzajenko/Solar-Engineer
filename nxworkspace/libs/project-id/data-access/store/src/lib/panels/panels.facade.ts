@@ -1,4 +1,4 @@
-import { map } from 'rxjs/operators'
+import { combineLatestWith, map } from 'rxjs/operators'
 import { of, Observable, shareReplay } from 'rxjs'
 import { Update } from '@ngrx/entity'
 import { inject, Injectable } from '@angular/core'
@@ -6,7 +6,9 @@ import { Store } from '@ngrx/store'
 
 import { PanelsActions } from './panels.actions'
 import * as PanelsSelectors from './panels.selectors'
-import { PanelModel } from '@shared/data-access/models'
+import { BlockType, PanelModel } from '@shared/data-access/models'
+import { SelectedSelectors } from '../selected'
+import { LinksSelectors } from '../links'
 
 @Injectable({
   providedIn: 'root',
@@ -28,10 +30,6 @@ export class PanelsFacade {
 
   panelById(id: string) {
     return this.store.select(PanelsSelectors.selectPanelById({ id }))
-    // return this.panels$.pipe(map((panels) => panels.find((panel) => panel.id === id)))
-    /*     return this.store
-      .select(PanelsSelectors.selectAllPanels)
-      .pipe(map((panels) => panels.find((panel) => panel.id === id))) */
   }
 
   panelsByStringId(stringId: string) {
@@ -52,5 +50,68 @@ export class PanelsFacade {
 
   updatePanel2$(update: Update<PanelModel>) {
     return of(this.store.dispatch(PanelsActions.updatePanel({ update })))
+  }
+
+  isSelectedPanel$(id: string) {
+    return this.store.select(SelectedSelectors.selectSelectedIdWithUnit).pipe(
+      map(({ singleSelectId, type }) => {
+        if (type !== BlockType.PANEL) {
+          return false
+        }
+        if (singleSelectId === id) {
+          return true
+        }
+        return false
+      }),
+    )
+  }
+
+  isSelectedNegativeTo$(id: string) {
+    return this.store.select(SelectedSelectors.selectSelectedNegativeTo).pipe(
+      map((selectedNegativeTo) => {
+        if (selectedNegativeTo === id) {
+          return true
+        }
+        return false
+      }),
+    )
+  }
+
+  isSelectedPositiveTo$(id: string) {
+    return this.store.select(SelectedSelectors.selectSelectedPositiveTo).pipe(
+      map((selectedPositiveTo) => {
+        if (selectedPositiveTo === id) {
+          return true
+        }
+        return false
+      }),
+    )
+  }
+
+  isSelectedString$(id: string) {
+    return this.panelById(id).pipe(
+      map((panel) => panel?.stringId),
+      combineLatestWith(this.store.select(SelectedSelectors.selectSelectedStringId)),
+      map(([panelStringId, selectedStringId]) => {
+        if (selectedStringId === panelStringId) {
+          return true
+        }
+        return false
+      }),
+    )
+  }
+
+  isPanelToJoin$(id: string) {
+    return this.store.select(LinksSelectors.selectTypeAndToLinkId).pipe(
+      map(({ type, toLinkId }) => {
+        if (type !== BlockType.PANEL) {
+          return false
+        }
+        if (toLinkId === id) {
+          return true
+        }
+        return false
+      }),
+    )
   }
 }

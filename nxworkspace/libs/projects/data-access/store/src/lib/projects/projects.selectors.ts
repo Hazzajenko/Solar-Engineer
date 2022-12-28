@@ -35,8 +35,43 @@ export const selectEntity = createSelector(
   (entities, selectedId) => (selectedId ? entities[selectedId] : undefined),
 )
 
-export const selectProjectByRouteParams = createSelector(
+/* export const selectProjectByRouteParams = createSelector(
   selectProjectsEntities,
   selectRouteParams,
   (projects, { projectId }) => projects[projectId],
+) */
+
+/* export const selectProjectByRouteParams = createSelector(
+  selectProjectsEntities,
+  selectRouteParams,
+  (projects, { projectId }) => {
+    if (projectId === 'local') {
+      return selectLocalProject
+    }
+    return projects[projectId]
+  },
+) */
+
+export const selectProjectByRouteParams = createSelector(
+  selectProjectsState,
+  selectProjectsEntities,
+  selectRouteParams,
+  (state, projects, { projectId }) => {
+    console.log('selectProjectByRouteParams', projectId)
+    if (!projectId) {
+      return state.localProject
+    }
+    return projects[projectId]
+  },
+)
+
+export const selectLocalProjectId = createSelector(
+  selectProjectsState,
+  (state: ProjectsState) => state.localProjectId,
+)
+
+export const selectLocalProject = createSelector(
+  selectAllProjects,
+  selectLocalProjectId,
+  (projects, localProjectId) => projects.find((project) => project.id === localProjectId),
 )

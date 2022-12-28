@@ -18,7 +18,7 @@ export const selectSelectedStringModel = createSelector(
   selectSelectedState,
   (state: State.SelectedState) => {
     const selectedString: SelectedStringModel = {
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       type: state.type!,
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       selectedStringId: state.selectedStringId!,
@@ -58,7 +58,10 @@ export const selectSelectedPanelId = createSelector(
 export const selectSelectedIdWithUnit = createSelector(
   selectSelectedState,
   (state: State.SelectedState) => {
-    return [state.singleSelectId, state.type]
+    return {
+      singleSelectId: state.singleSelectId,
+      type: state.type,
+    }
   },
 )
 export const selectSelectedStringId = createSelector(
@@ -90,6 +93,22 @@ export const selectSelectedStringPathMap = createSelector(
   (state: State.SelectedState) => state.selectedStringPathMap,
 )
 
+/*   this.isSelectedPanel$ = this.store
+  .select(selectSelectedPanelId)
+    .pipe(map((selectedPanelId) => selectedPanelId === this.id))
+    this.isSelectedPositiveTo$ = this.store
+    .select(selectSelectedPositiveTo)
+    .pipe(map((positiveTo) => positiveTo === this.id))
+  this.isSelectedNegativeTo$ = this.store
+    .select(selectSelectedNegativeTo)
+    .pipe(map((negativeTo) => negativeTo === this.id))
+    this.isSelectedString$ = this.store
+    .select(selectSelectedStringId)
+    .pipe(combineLatestWith(this.panel$))
+      .pipe(map(([selectedStringId, panel]) => selectedStringId === panel?.stringId))
+      this.isPanelToJoin$ = this.store
+      .select(selectPanelToLink)
+      .pipe(map((panelToLink) => panelToLink?.id === this.id)) */
 
 /*
 export const selectSelectedPanels = createSelector(

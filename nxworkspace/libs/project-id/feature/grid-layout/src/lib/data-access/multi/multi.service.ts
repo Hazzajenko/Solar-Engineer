@@ -69,7 +69,7 @@ export class MultiService {
                 projectId: project?.id,
                 location,
                 stringId: selectedStringId ? selectedStringId : 'undefined',
-                rotation: 1,
+                rotation: 0,
                 type: BlockType.PANEL,
               })
             })

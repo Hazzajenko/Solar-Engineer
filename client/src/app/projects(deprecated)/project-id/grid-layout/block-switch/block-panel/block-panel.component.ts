@@ -171,6 +171,7 @@ export class BlockPanelComponent implements OnInit, AfterViewInit {
     this.panel$ = this.panelsEntity.entities$.pipe(
       map((panels) => panels.find((panel) => panel.id === this.id)),
     )
+    
 
     this.panelToJoin$ = this.store.select(selectPanelToLink)
     this.isPanelToJoin$ = this.store

@@ -14,6 +14,12 @@ public class SigninRequest
     public string Password { get; set; } = default!;
 }
 
+public class ValidateUserRequest
+{
+    public string Email { get; set; } = default!;
+    public string Username { get; set; } = default!;
+}
+
 public class SignupRequest
 {
     [Required] public string Username { get; init; } = default!;
@@ -60,6 +66,28 @@ namespace dotnetapi.Controllers
             _userManager = userManager;
             _signInManager = signInManager;
             _authService = authService;
+        }
+
+        [HttpPost("validate")]
+        [Authorize]
+        public async Task<IActionResult> ValidateUser(ValidateUserRequest request)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                _logger.LogError("Bad request, User is invalid");
+                return Unauthorized("User is invalid");
+            }
+
+            var signInResult = await _authService.HandleSignIn(user);
+            if (signInResult.Token.IsNullOrEmpty())
+            {
+                _logger.LogError("Token Error");
+                return BadRequest();
+            }
+
+            _logger.LogInformation("{Username} has logged in", user.UserName);
+            return Ok(signInResult);
         }
 
 

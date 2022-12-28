@@ -40,3 +40,23 @@ export const selectPanelsByStringId = (props: { stringId: string }) =>
   createSelector(selectAllPanels, (panels: PanelModel[]) =>
     panels.filter((panel) => panel.stringId === props.stringId),
   )
+
+
+
+
+/*   this.isSelectedPanel$ = this.store
+  .select(selectSelectedPanelId)
+    .pipe(map((selectedPanelId) => selectedPanelId === this.id))
+    this.isSelectedPositiveTo$ = this.store
+    .select(selectSelectedPositiveTo)
+    .pipe(map((positiveTo) => positiveTo === this.id))
+  this.isSelectedNegativeTo$ = this.store
+    .select(selectSelectedNegativeTo)
+    .pipe(map((negativeTo) => negativeTo === this.id))
+    this.isSelectedString$ = this.store
+    .select(selectSelectedStringId)
+    .pipe(combineLatestWith(this.panel$))
+      .pipe(map(([selectedStringId, panel]) => selectedStringId === panel?.stringId))
+      this.isPanelToJoin$ = this.store
+      .select(selectPanelToLink)
+      .pipe(map((panelToLink) => panelToLink?.id === this.id)) */

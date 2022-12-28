@@ -5,9 +5,9 @@ import { tapResponse } from '@ngrx/component-store'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { Store } from '@ngrx/store'
 import { ProjectsFacade } from '@projects/data-access/store'
-import { AppState } from '@shared/data-access/store'
 import { switchMap, tap } from 'rxjs'
 import { AuthActions } from './auth.actions'
+import { StorageModel } from './storage.model'
 
 @Injectable()
 export class AuthEffects {
@@ -18,11 +18,20 @@ export class AuthEffects {
     () =>
       this.actions$.pipe(
         ofType(AuthActions.signInSuccess),
-        tap(() => this.projectsService.init()),
+        tap((action) => {
+          action.user.email
+          const storage: StorageModel = {
+            eml: action.user.email,
+            usr: action.user.username,
+            tkn: action.token,
+          }
+          localStorage.setItem('slreng-tk', JSON.stringify(storage))
+          this.projectsService.init()
+        }),
       ),
     { dispatch: false },
   )
-  private store = inject(Store<AppState>)
+  private store = inject(Store)
   init$ = createEffect(
     () =>
       this.actions$.pipe(

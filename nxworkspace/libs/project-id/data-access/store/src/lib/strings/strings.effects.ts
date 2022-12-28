@@ -5,7 +5,7 @@ import { Store } from '@ngrx/store'
 import { StringsService } from '@project-id/data-access/api'
 import { ProjectsActions } from '@projects/data-access/store'
 import { EntityModel, EntityType, StringModel } from '@shared/data-access/models'
-import { switchMap, tap } from 'rxjs'
+import { of, switchMap, tap } from 'rxjs'
 import { EntitiesActions } from '../entities/entities.actions'
 import { StringsActions } from './strings.actions'
 
@@ -50,5 +50,14 @@ export class StringsEffects {
         ),
       ),
     { dispatch: false },
+  )
+
+  initLocalStrings$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ProjectsActions.initLocalProject),
+      switchMap(({ localProject }) =>
+        of(StringsActions.loadStringsSuccess({ strings: localProject.strings })),
+      ),
+    ),
   )
 }

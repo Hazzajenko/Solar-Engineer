@@ -4,7 +4,7 @@ import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { Store } from '@ngrx/store'
 import { ProjectsService } from '@projects/data-access/api'
 import { ProjectModel } from '@shared/data-access/models'
-import { switchMap } from 'rxjs'
+import { of, switchMap } from 'rxjs'
 import { ProjectsActions } from './projects.actions'
 
 @Injectable({
@@ -32,7 +32,16 @@ export class ProjectsEffects {
     { dispatch: false },
   )
 
-/*   initSelectProject$ = createEffect(
+  initLocalProject$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ProjectsActions.initLocalProject),
+      switchMap(({ localProject }) =>
+        of(ProjectsActions.loadLocalProjectSuccess({ project: localProject.project })),
+      ),
+    ),
+  )
+
+  /*   initSelectProject$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType(ProjectsActions.initSelectProject),

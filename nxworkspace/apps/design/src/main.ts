@@ -9,15 +9,21 @@ import { provideRouterStore } from '@ngrx/router-store'
 import { provideStore } from '@ngrx/store'
 import { provideStoreDevtools } from '@ngrx/store-devtools'
 import { metaReducers, reducers } from '@shared/data-access/store'
-import { AuthEffects } from 'libs/auth/data-access/store/src/lib/auth.effects'
+import { AuthEffects } from '@auth/data-access/store'
 
 import { AppComponent } from './app/app.component'
-import { appRoutes } from './app/app.routes'
+import { appRoutes } from '@app/routes'
 
 bootstrapApplication(AppComponent, {
   providers: [
     provideRouter(appRoutes, withEnabledBlockingInitialNavigation()),
-    importProvidersFrom(HttpClientModule, BrowserAnimationsModule, BrowserModule),
+    importProvidersFrom(
+      HttpClientModule,
+      BrowserAnimationsModule,
+      BrowserModule,
+      BrowserAnimationsModule,
+      BrowserAnimationsModule,
+    ),
     provideStore(reducers, { metaReducers }),
     provideRouterStore(),
     provideEffects([AuthEffects]),

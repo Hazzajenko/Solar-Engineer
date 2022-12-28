@@ -1,3 +1,5 @@
+import { LogoNameBackgroundV2Component } from './../../../../shared/ui/logo/src/lib/logo-name-background-v2.component'
+import { LogoNameBackgroundComponent } from './../../../../shared/ui/logo/src/lib/logo-name-background.component'
 import { animate, AnimationEvent, state, style, transition, trigger } from '@angular/animations'
 import { CommonModule } from '@angular/common'
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
@@ -9,60 +11,7 @@ import { ProjectsFacade } from '@projects/data-access/store'
 import { ProjectsListComponent } from '@projects/feature/projects-list'
 import { UserModel } from '@shared/data-access/models'
 import { Observable } from 'rxjs'
-
-const enterTransition = transition(':enter', [
-  style({
-    opacity: 0,
-  }),
-  animate(
-    '1s ease-in',
-    style({
-      opacity: 1,
-    }),
-  ),
-])
-
-const enterTransitionV2 = transition(':enter', [
-  style({
-    opacity: 0,
-  }),
-  animate(
-    '0.5s ease-in',
-    style({
-      opacity: 1,
-    }),
-  ),
-])
-const exitTransition = transition(':leave', [
-  style({
-    opacity: 1,
-  }),
-  animate(
-    '1s ease-out',
-    style({
-      opacity: 0,
-    }),
-  ),
-])
-const fadeIn = trigger('fadeIn', [enterTransition])
-const fadeInV2 = trigger('fadeInV2', [enterTransitionV2])
-const fadeOut = trigger('fadeOut', [exitTransition])
-const fadeInOut = trigger('fadeInOut', [
-  state(
-    'open',
-    style({
-      opacity: 1,
-    }),
-  ),
-  state(
-    'close',
-    style({
-      opacity: 0,
-    }),
-  ),
-  transition('open => close', [animate('1s ease-out')]),
-  transition('close => open', [animate('1s ease-in')]),
-])
+import { fadeIn, fadeInV2 } from './animations/animations'
 
 @Component({
   selector: 'app-home',
@@ -73,13 +22,15 @@ const fadeInOut = trigger('fadeInOut', [
     MatButtonModule,
     MatProgressSpinnerModule,
     ProjectsListComponent,
+    LogoNameBackgroundComponent,
+    LogoNameBackgroundV2Component,
   ],
   templateUrl: './home.component.html',
   styles: [],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [ProjectsFacade],
   // viewProviders: [BrowserAnimationsModule],
-  animations: [fadeInOut, fadeIn, fadeInV2],
+  animations: [fadeIn, fadeInV2],
 })
 export class HomeComponent {
   user$: Observable<UserModel | undefined> = inject(AuthFacade).user$
@@ -91,6 +42,11 @@ export class HomeComponent {
   routeToProjects() {
     // this.router.navigate(['projects']).then(() => this.projectsStore.init())
     this.showProjects = !this.showProjects
+  }
+
+  routeToLocalProject() {
+    this.router.navigate(['projects/local']).then((res) => console.log(res))
+    // this.showProjects = !this.showProjects
   }
 
   fadeInOut() {

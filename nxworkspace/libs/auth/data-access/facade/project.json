@@ -10,12 +10,17 @@
       "options": {
         "tsConfig": "libs/auth/data-access/facade/tsconfig.spec.json",
         "karmaConfig": "libs/auth/data-access/facade/karma.conf.js",
-        "polyfills": ["zone.js", "zone.js/testing"]
+        "polyfills": [
+          "zone.js",
+          "zone.js/testing"
+        ]
       }
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",
-      "outputs": ["{options.outputFile}"],
+      "outputs": [
+        "{options.outputFile}"
+      ],
       "options": {
         "lintFilePatterns": [
           "libs/auth/data-access/facade/**/*.ts",

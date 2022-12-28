@@ -1,5 +1,7 @@
-import { Directive, ElementRef, HostListener, inject, Input } from '@angular/core'
+import { Directive, ElementRef, HostListener, inject, Input, OnInit } from '@angular/core'
+import { fromEvent } from 'rxjs'
 import { ClientXY } from '../data-access/models/client-x-y.model'
+import { ElementOffsets } from '../data-access/models/element-offsets.model'
 
 @Directive({
   selector: '[appCanvas]',
@@ -8,45 +10,65 @@ import { ClientXY } from '../data-access/models/client-x-y.model'
 export class CanvasDirective {
   private canvas = inject(ElementRef<HTMLCanvasElement>)
   private ctx: CanvasRenderingContext2D = this.canvas.nativeElement.getContext('2d')
+  startX?: number
+  startY?: number
+  offsetX?: number
+  offsetY?: number
+  mouseUp$ = fromEvent(document, 'mouseup').subscribe((event) => console.log(event))
 
-  @Input() set canvasRef(ref: HTMLCanvasElement) {
-    this.canvas.nativeElement.style.width = '100%'
-    this.canvas.nativeElement.style.height = '100%'
-    this.canvas.nativeElement.width = this.canvas.nativeElement.offsetWidth
-    this.canvas.nativeElement.height = this.canvas.nativeElement.offsetHeight
-    console.log(ref)
-    /*     this.offsetX = this.canvas.nativeElement.offsetLeft
-    this.offsetY = this.canvas.nativeElement.offsetTop
-    this.scrollX = this.canvas.nativeElement.scrollLeft
-    this.scrollY = this.canvas.nativeElement.scrollTop */
-    // ref.
-
-    // this.ctx = this.canvas.nativeElement.getContext('2d')!
+  @Input() set canvasOffsets(offsets: ElementOffsets) {
+    if (!offsets.offsetHeight || !offsets.offsetWidth) return
+    this.canvas.nativeElement.width = offsets.offsetWidth
+    this.canvas.nativeElement.height = offsets.offsetHeight
+    this.offsetX = offsets.offsetLeft
+    this.offsetY = offsets.offsetTop
   }
 
-  @Input() startDragging(clientXY: ClientXY) {}
+  @Input() set startDragging(clientXY: ClientXY) {
+    if (!clientXY.clientX || !clientXY.clientY) {
+      this.ctx.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height)
+      this.startX = undefined
+      this.startY = undefined
+      return
+    }
+    console.log(clientXY)
+    const rect = this.canvas.nativeElement.getBoundingClientRect()
+
+    this.startX = clientXY.clientX - rect.left
+    this.startY = clientXY.clientY - rect.top
+  }
+
+  @HostListener('document:mouseup', ['$event'])
+  mouseUp(event: MouseEvent) {
+    console.log(event.clientX, event.clientY)
+    this.ctx.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height)
+    this.startX = undefined
+    this.startY = undefined
+    return
+  }
 
   @HostListener('document:mousemove', ['$event'])
   onDragging(event: MouseEvent) {
     event.preventDefault()
     event.stopPropagation()
-    /*     if (this.startX && this.startY && event.altKey && this.isDraggingBool) {
-      const mouseX = event.clientX - this.offsetX
-      const mouseY = event.clientY - this.offsetY
-
+    if (!this.startX || !this.startY || !this.offsetX || !this.offsetY || !event.altKey) {
       this.ctx.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height)
+      return
+    }
 
-      const width = mouseX - this.startX
-      const height = mouseY - this.startY
+    const mouseX = event.pageX - this.canvas.nativeElement.parentNode.offsetLeft
+    const mouseY = event.pageY - this.canvas.nativeElement.parentNode.offsetTop
 
-      this.ctx.globalAlpha = 0.4
+    this.ctx.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height)
 
-      this.ctx.fillStyle = '#7585d8'
-      this.ctx.fillRect(this.startX, this.startY, width, height)
+    const width = mouseX - this.startX
+    const height = mouseY - this.startY
 
-      this.ctx.globalAlpha = 1.0
-    } else {
-      this.ctx.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height)
-    } */
+    this.ctx.globalAlpha = 0.4
+
+    this.ctx.fillStyle = '#7585d8'
+    this.ctx.fillRect(this.startX, this.startY, width, height)
+
+    this.ctx.globalAlpha = 1.0
   }
 }

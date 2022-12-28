@@ -1,13 +1,13 @@
 import { Action, createReducer, on } from '@ngrx/store'
 import { SelectedActions } from './selected.actions'
-import { TypeModel } from '@shared/data-access/models'
+import { BlockType, TypeModel } from '@shared/data-access/models'
 import { addPanelToMultiselect, addToMultiSelectArray } from './selected.helpers'
 
 export const SELECTED_FEATURE_KEY = 'selected'
 
 export interface SelectedState {
-  type?: TypeModel
-  multiSelectType?: TypeModel
+  type?: BlockType
+  multiSelectType?: BlockType
   multiSelect?: boolean
   singleSelectId?: string
   multiSelectIds?: string[]
@@ -20,8 +20,8 @@ export interface SelectedState {
 }
 
 export const initialSelectedState: SelectedState = {
-  type: TypeModel.UNDEFINED,
-  multiSelectType: TypeModel.UNDEFINED,
+  type: BlockType.UNDEFINED,
+  multiSelectType: BlockType.UNDEFINED,
   multiSelect: false,
   singleSelectId: undefined,
   multiSelectIds: [],
@@ -34,13 +34,6 @@ export const initialSelectedState: SelectedState = {
 
 const reducer = createReducer(
   initialSelectedState,
-
-  on(SelectedActions.selectType, (state, { objectType }) => ({
-    type: objectType,
-    multiSelect: state.multiSelect,
-    singleSelectId: undefined,
-    multiSelectIds: undefined,
-  })),
 
   on(SelectedActions.toggleMultiSelect, (state, { multiSelect }) => ({
     type: state.type,
@@ -64,7 +57,7 @@ const reducer = createReducer(
   })),
 
   on(SelectedActions.selectPanel, (state, { panelId }) => ({
-    type: TypeModel.PANEL,
+    type: BlockType.PANEL,
     multiSelect: false,
     multiSelectIds: [],
     singleSelectId: panelId,
@@ -121,7 +114,7 @@ const reducer = createReducer(
   })),
 
   on(SelectedActions.selectString, (state, { stringId }) => ({
-    type: TypeModel.STRING,
+    type: state.type,
     singleSelectId: stringId,
     selectedStringId: stringId,
   })),
@@ -132,21 +125,21 @@ const reducer = createReducer(
   // })),
 
   on(SelectedActions.setSelectedStringPanels, (state, { panelIds }) => ({
-    type: TypeModel.STRING,
+    type: state.type,
     singleSelectId: state.singleSelectId,
     selectedStringId: state.selectedStringId,
     multiSelectIds: panelIds,
   })),
 
   on(SelectedActions.setSelectedStringTooltip, (state, { tooltip }) => ({
-    type: TypeModel.STRING,
+    type: state.type,
     singleSelectId: state.singleSelectId,
     selectedStringId: state.selectedStringId,
     selectedStringTooltip: tooltip,
   })),
 
   on(SelectedActions.setSelectedStringLinkPaths, (state, { pathMap }) => ({
-    type: TypeModel.STRING,
+    type: state.type,
     singleSelectId: state.singleSelectId,
     selectedStringId: state.selectedStringId,
     selectedStringTooltip: state.selectedStringTooltip,
@@ -163,7 +156,7 @@ const reducer = createReducer(
   })),
 
   on(SelectedActions.clearSelectedState, () => ({
-    type: TypeModel.UNDEFINED,
+    type: BlockType.UNDEFINED,
     multiSelect: false,
     singleSelectId: undefined,
     multiSelectIds: [],

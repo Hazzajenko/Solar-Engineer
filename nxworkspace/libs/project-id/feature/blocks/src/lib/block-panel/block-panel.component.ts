@@ -1,3 +1,4 @@
+import { map } from 'rxjs/operators'
 import { ChangeDetectionStrategy, Component, inject, Input, OnInit, ViewChild } from '@angular/core'
 
 import { DragDropModule } from '@angular/cdk/drag-drop'
@@ -19,7 +20,7 @@ import { Store } from '@ngrx/store'
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
 import { PanelsFacade } from '@project-id/data-access/store'
 
-import { Observable } from 'rxjs'
+import { combineLatest, Observable } from 'rxjs'
 
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog'
 import { PanelModel } from '@shared/data-access/models'
@@ -54,9 +55,55 @@ import { GetPanelAsyncPipe } from './get-panel-async.pipe'
 export class BlockPanelComponent {
   private panelsFacade = inject(PanelsFacade)
   panel$!: Observable<PanelModel | undefined>
-    @Input() set id(id: string) {
+  @Input() set id(id: string) {
     this.panel$ = this.panelsFacade.panelById(id)
   }
+  panelNgClass$ = combineLatest([
+    this.panelsFacade.isSelectedPanel$(this.id),
+    this.panelsFacade.isSelectedPositiveTo$(this.id),
+    this.panelsFacade.isSelectedNegativeTo$(this.id),
+    this.panelsFacade.isSelectedString$(this.id),
+    this.panelsFacade.isPanelToJoin$(this.id),
+  ]).pipe(
+    map(
+      ([
+        isSelectedPanel,
+        isSelectedPositiveTo,
+        isSelectedNegativeTo,
+        isSelectedString,
+        isPanelToJoin,
+      ]) => {
+        return {
+          isSelectedPanel,
+          isSelectedPositiveTo,
+          isSelectedNegativeTo,
+          isSelectedString,
+          isPanelToJoin,
+        }
+      },
+    ),
+  )
+  /*     [class.drop-zone__bg-default]="!(isSelectedPanel$ | async)!"
+    [class.drop-zone__bg-negative]="(isSelectedNegativeTo$ | async)!"
+    [class.drop-zone__bg-positive]="(isSelectedPositiveTo$ | async)!"
+    [class.drop-zone__bg-string-selected]="(isSelectedString$ | async)!"
+    [class.drop - zone__bg - to - join] = "(panelToJoin$ | async)?.id === panel.id"
+    this.isSelectedPanel$ = this.store
+    .select(selectSelectedPanelId)
+      .pipe(map((selectedPanelId) => selectedPanelId === this.id))
+      this.isSelectedPositiveTo$ = this.store
+      .select(selectSelectedPositiveTo)
+      .pipe(map((positiveTo) => positiveTo === this.id))
+    this.isSelectedNegativeTo$ = this.store
+      .select(selectSelectedNegativeTo)
+      .pipe(map((negativeTo) => negativeTo === this.id))
+      this.isSelectedString$ = this.store
+      .select(selectSelectedStringId)
+      .pipe(combineLatestWith(this.panel$))
+        .pipe(map(([selectedStringId, panel]) => selectedStringId === panel?.stringId))
+        this.isPanelToJoin$ = this.store
+        .select(selectPanelToLink)
+        .pipe(map((panelToLink) => panelToLink?.id === this.id)) */
   // @Input() id!: string
 
   // @Input() panel$!: Observable<PanelModel | undefined>
@@ -67,7 +114,6 @@ export class BlockPanelComponent {
 
   private store = inject(Store<AppState>)
   private dialog = inject(MatDialog)
-
 
   displayTooltip(isSelectedString: boolean, selectedStringTooltip?: string): string {
     if (isSelectedString) {

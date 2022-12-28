@@ -1,12 +1,11 @@
-import { createReducer, on } from '@ngrx/store'
+import { reducers } from './../../../../../../shared/data-access/store/src/lib/app.state'
+import { Action, createReducer, on } from '@ngrx/store'
 import { BlockType, GridMode } from '@shared/data-access/models'
 import { GridActions } from './grid.actions'
-
 
 export const GRID_FEATURE_KEY = 'grid'
 
 export interface GridState {
-
   createMode: BlockType
   gridMode: GridMode
 }
@@ -16,10 +15,10 @@ export const initialGridState: GridState = {
   gridMode: GridMode.SELECT,
 }
 
-export const gridReducer = createReducer(
+export const reducer = createReducer(
   initialGridState,
 
-  on(GridActions.changeCreateType, (state, {createType}) => ({
+  on(GridActions.changeCreateType, (state, { createType }) => ({
     createMode: createType,
     gridMode: state.gridMode,
   })),
@@ -49,3 +48,7 @@ export const gridReducer = createReducer(
     gridMode: GridMode.SELECT,
   })),
 )
+
+export function gridReducer(state: GridState | undefined, action: Action) {
+  return reducer(state, action)
+}

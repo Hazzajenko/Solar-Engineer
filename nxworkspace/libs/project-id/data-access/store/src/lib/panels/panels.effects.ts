@@ -23,11 +23,14 @@ export class PanelsEffects {
         ofType(PanelsActions.loadPanelsSuccess),
         tap(({ panels }) => {
           const blocks = panels.map((panel) => {
-            return new BlockModel({
-              projectId: panel.projectId,
-              location: panel.location,
-              type: BlockType.PANEL,
-            }, panel.id)
+            return new BlockModel(
+              {
+                projectId: panel.projectId,
+                location: panel.location,
+                type: BlockType.PANEL,
+              },
+              panel.id,
+            )
           })
           this.store.dispatch(BlocksActions.addManyBlocksForGrid({ blocks }))
         }),
@@ -36,7 +39,7 @@ export class PanelsEffects {
   )
   private panelsService = inject(PanelsService)
   private projectsFacade = inject(ProjectsFacade)
-  initStrings$ = createEffect(
+  initPanels$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType(ProjectsActions.initSelectProject),
@@ -52,6 +55,14 @@ export class PanelsEffects {
         ),
       ),
     { dispatch: false },
+  )
+  initLocalPanels$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ProjectsActions.initLocalProject),
+      switchMap(({ localProject }) =>
+        of(PanelsActions.loadPanelsSuccess({ panels: localProject.panels })),
+      ),
+    ),
   )
   addPanel$ = createEffect(
     () =>

@@ -22,7 +22,8 @@ export class GridFacade {
   }
 
   selectCreateMode() {
-    this.store.dispatch(GridActions.selectGridmodeCreate())
+    console.log('this.selectCreateMode')
+    return this.store.dispatch(GridActions.selectGridmodeCreate())
   }
 
   selectSelectMode() {

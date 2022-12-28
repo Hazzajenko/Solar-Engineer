@@ -8,7 +8,10 @@ export const PROJECTS_FEATURE_KEY = 'projects'
 
 export interface ProjectsState extends EntityState<ProjectModel> {
   selectedId?: number
+  localProjectId?: number
+  localProject?: ProjectModel
   loaded: boolean
+  local: boolean
   error?: string | null
 }
 
@@ -20,10 +23,26 @@ export const projectsAdapter: EntityAdapter<ProjectModel> = createEntityAdapter<
 
 export const initialProjectsState: ProjectsState = projectsAdapter.getInitialState({
   loaded: false,
+  local: true,
 })
 
 const reducer = createReducer(
   initialProjectsState,
+  on(ProjectsActions.initLocalProject, (state) => ({
+    ...state,
+    loaded: false,
+    error: null,
+    local: true,
+  })),
+  on(ProjectsActions.loadLocalProjectSuccess, (state, { project }) =>
+    projectsAdapter.setOne(project, {
+      ...state,
+      loaded: true,
+      local: true,
+      localProjectId: project.id,
+      localProject: project,
+    }),
+  ),
   on(ProjectsActions.initProjects, (state) => ({ ...state, loaded: false, error: null })),
   on(ProjectsActions.loadProjectsSuccess, (state, { projects }) =>
     projectsAdapter.setAll(projects, { ...state, loaded: true }),

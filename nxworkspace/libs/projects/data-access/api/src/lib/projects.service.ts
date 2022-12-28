@@ -31,4 +31,14 @@ export class ProjectsService {
       map((res: GetProjectsResponse) => res.projects),
     )
   }
+
+  getLocalProject(): Observable<ProjectModel[]> {
+    return this.http.get<GetProjectsResponse>('/api/projects').pipe(
+      catchError((err) => {
+        console.log(err)
+        return EMPTY
+      }),
+      map((res: GetProjectsResponse) => res.projects),
+    )
+  }
 }
