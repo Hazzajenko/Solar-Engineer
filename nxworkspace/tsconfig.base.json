@@ -36,7 +36,6 @@
       "@project-id/feature/index": ["libs/project-id/feature/index/src/index.ts"],
       "@project-id/feature/local": ["libs/project-id/feature/local/src/index.ts"],
       "@project-id/feature/toolbar": ["libs/project-id/feature/toolbar/src/index.ts"],
-      "@project-id/feature/toolbar-v2": ["libs/project-id/feature/toolbar-v2/src/index.ts"],
       "@project-id/feature/web": ["libs/project-id/feature/web/src/index.ts"],
       "@project-id/utils": ["libs/project-id/utils/src/index.ts"],
       "@projects/data-access/api": ["libs/projects/data-access/api/src/index.ts"],

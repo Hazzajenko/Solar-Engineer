@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core'
+/* import { inject, Injectable } from '@angular/core'
 import {
   BlocksFacade,
   GridFacade,
@@ -10,8 +10,12 @@ import { ProjectsFacade } from '@projects/data-access/store'
 import { BlockType, PanelModel } from '@shared/data-access/models'
 import { combineLatest, of } from 'rxjs'
 import { map, switchMap } from 'rxjs/operators'
-import { createMultiCreateEvent, MultiEventType, sendMultiEvent } from './multi.event'
-import { getLocationsInBox } from './multi.utils'
+import {
+  createMultiCreateEvent,
+  MouseEventAction,
+  sendMultiEvent,
+} from '../mouse/utils/mouse.event'
+import { getLocationsInBox } from '../mouse/utils/get-locations-in-box'
 
 @Injectable({
   providedIn: 'root',
@@ -27,13 +31,13 @@ export class MultiService {
     return combineLatest([of(location), of(multiState)]).pipe(
       switchMap(([location, multiState]) => {
         if (!multiState.locationStart) {
-          const event = sendMultiEvent(MultiEventType.SelectStart, { location })
+          const event = sendMultiEvent(MouseEventAction.SelectStart, { location })
           return of(event)
         }
         const locationArray = getLocationsInBox(multiState.locationStart, location)
         const res = this.blocksFacade
           .selectBlockIdsFromArray(locationArray)
-          .pipe(map((ids) => sendMultiEvent(MultiEventType.SelectFinish, { location, ids })))
+          .pipe(map((ids) => sendMultiEvent(MouseEventAction.SelectFinish, { location, ids })))
         return res
       }),
     )
@@ -73,7 +77,7 @@ export class MultiService {
                 type: BlockType.PANEL,
               })
             })
-            const event = sendMultiEvent(MultiEventType.CreateFinishPanel, { location, panels })
+            const event = sendMultiEvent(MouseEventAction.CreateFinishPanel, { location, panels })
             return event
           }
           default:
@@ -83,3 +87,4 @@ export class MultiService {
     )
   }
 }
+ */

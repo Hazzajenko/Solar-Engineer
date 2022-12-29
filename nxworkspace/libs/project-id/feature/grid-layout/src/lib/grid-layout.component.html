@@ -3,21 +3,27 @@
     <canvas
       #canvas
       appCanvas
-      [startDragging]="(clientXY$ | async)!"
+      [startDragging]="clientXY"
       [canvasOffsets]="offsets"
       class="border border-gray-400 pointer-events-none absolute z-10 h-fit w-fit max-w-fit max-h-fit"
       style="width: 100%; height: 100%"
     >
     </canvas>
-    <div appGrid #myIdentifier (elementOffsets)="offsets = $event" cdkDropListGroup class="flex flex-col items-center">
+    <div
+      appGrid
+      #myIdentifier
+      (elementOffsets)="offsets = $event"
+      cdkDropListGroup
+      class="flex flex-col items-center"
+    >
       <div *ngFor="let n of numSequence(rows); let row = index" class="flex">
         <div *ngFor="let n of numSequence(cols); let col = index" class="border border-black">
           <ng-container *ngrxLet="row | getLocation: col; let location">
             <div
-              (cdkDropListDropped)="gridStore.gridDrop($event)"
-              (click)="gridStore.cellAction({location, event: $event})"
-              (mousedown)="gridStore.mouseEvent({location, event: $event})"
-              (mouseup)="gridStore.mouseEvent({location, event: $event})"
+              (cdkDropListDropped)="drop($event)"
+              (click)="click({ event: $event, location })"
+              (mousedown)="mouse({ event: $event, location })"
+              (mouseup)="mouse({ event: $event, location })"
               [id]="location"
               cdkDropList
               class="flex justify-center items-center border-gray-400 bg-gray-200 w-8 h-8"

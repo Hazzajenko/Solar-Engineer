@@ -1,24 +1,16 @@
 import { ClientXY } from './../models/client-x-y.model'
 
-import { MultiFacade } from '@project-id/data-access/store'
-import {
-  catchError,
-  combineLatestWith,
-  distinctUntilChanged,
-  exhaustMap,
-  map,
-  switchMap,
-} from 'rxjs/operators'
+import { MultiFacade, SelectedFacade } from '@project-id/data-access/store'
 
-import { CdkDragDrop } from '@angular/cdk/drag-drop'
 import { inject, Injectable } from '@angular/core'
 import { ComponentStore } from '@ngrx/component-store'
-import { BlocksFacade, GridFacade, PanelsFacade } from '@project-id/data-access/store'
-import { BlockModel, BlockType } from '@shared/data-access/models'
-import { Observable, of, tap } from 'rxjs'
-import { CellAction } from '../models/cell-action.model'
-import { MultiEventType } from '../multi/multi.event'
-import { GridService } from '../services/grid.service'
+import { BlocksFacade, PanelsFacade } from '@project-id/data-access/store'
+import { Observable } from 'rxjs'
+
+import { ClickService } from '../services/click/click.service'
+import { DropService } from '../services/drop/drop.service'
+
+import { MouseService } from '../services/mouse/mouse.service'
 
 interface GridState {
   clientXY: ClientXY
@@ -39,19 +31,30 @@ export class GridStore extends ComponentStore<GridState> {
 
   private blocksFacade = inject(BlocksFacade)
   private panelsFacade = inject(PanelsFacade)
-  private gridService = inject(GridService)
-  private gridFacade = inject(GridFacade)
-  private multiFacade = inject(MultiFacade)
 
-  readonly cellAction = this.effect((action$: Observable<CellAction>) =>
-    action$.pipe(
-      tap((action) => {
-        action.event.preventDefault()
-        action.event.stopPropagation()
+  private selectedFacade = inject(SelectedFacade)
+  private mouseService = inject(MouseService)
+  private clickService = inject(ClickService)
+  private dropService = inject(DropService)
+  private multiFacade = inject(MultiFacade)
+  /*
+  readonly click = this.effect((click$: Observable<GridMouseEvent>) =>
+    click$.pipe(
+      tap((click) => {
+        click.event.preventDefault()
+        click.event.stopPropagation()
       }),
-      switchMap((action) =>
-        this.gridService.cellAction(action).pipe(
+      switchMap((click) =>
+        this.clickService.click(click).pipe(
           tap((res) => {
+            if (!res) return
+            const ans = isEVVType(res)
+            if (ans === 'other') return
+            switch (res[0]) {
+              case 'CREATE_PANEL':
+
+                // res[1]
+            }
             if (res) {
               console.log(res)
               this.panelsFacade.createPanel(res)
@@ -62,64 +65,81 @@ export class GridStore extends ComponentStore<GridState> {
     ),
   )
 
-  readonly gridDrop = this.effect((drop$: Observable<CdkDragDrop<BlockModel[]>>) =>
+  readonly click2 = this.effect((click$: Observable<GridMouseEvent>) =>
+  click$.pipe(
+    tap((click) => {
+      click.event.preventDefault()
+      click.event.stopPropagation()
+    }),
+    map((click) =>
+      this.clickService.click2(click)),
+        tap((res) => {
+          if (!res) return
+          res.then(hi => {
+            switch (hi.type) {
+              case 'CREATE_PANEL': {
+                hi.payload
+
+              }
+            }
+          })
+          const ans = isEVVType(res)
+          if (ans === 'other') return
+          switch (res[0]) {
+            case 'CREATE_PANEL':
+
+              // res[1]
+          }
+          if (res) {
+            console.log(res)
+            this.panelsFacade.createPanel(res)
+          }
+        }),
+
+    ),
+
+) */
+
+  /*  readonly drop = this.effect((drop$: Observable<CdkDragDrop<BlockModel[]>>) =>
     drop$.pipe(
       tap((drop) => {
         drop.event.preventDefault()
         drop.event.stopPropagation()
       }),
       switchMap((drop) =>
-        this.gridService.gridDrop(drop).pipe(
-          tap((update) => {
-            if (!update) return
-            return this.panelsFacade.updatePanel(update)
-          }),
-        ),
+        combineLatest([of(drop), this.blocksFacade.blockByLocation(drop.container.id)]),
       ),
-    ),
-  )
-
-  readonly keyUp = this.effect((event$: Observable<KeyboardEvent>) =>
-    event$.pipe(
-      tap((event) => {
-        event.preventDefault()
-        event.stopPropagation()
-      }),
-      distinctUntilChanged(),
-      combineLatestWith(this.multiFacade.state$),
-      tap(([event, multiState]) => {
-        if (multiState.locationStart && event.key === 'Alt') {
-          this.multiFacade.clearMultiState()
+      map(([drop, existingBlock]) => this.dropService.drop(drop, existingBlock)),
+      tap((res) => {
+        switch (res[0]) {
+          case DropEventAction.UpdatePanel:
+            this.panelsFacade.updatePanel(res[1].update)
+            break
+          case DropEventAction.BlockTaken:
+            this.selectedFacade.selectPanel(res[1].id)
+            break
+          case DropEventAction.Error:
+            break
         }
       }),
     ),
   )
 
-  readonly mouseEvent = this.effect((action$: Observable<CellAction>) =>
-    action$.pipe(
+  readonly mouse = this.effect((mouse$: Observable<MouseEventModel>) =>
+    mouse$.pipe(
       distinctUntilChanged(),
       combineLatestWith(this.multiFacade.state$),
-      map(([action, multiState]) => {
-        if (!action.event.altKey) return undefined
-        if (action.event.type === 'mousedown' && multiState.locationStart) {
-          return undefined
-        }
-        if (action.event.type === 'mouseup' && !multiState.locationStart) {
-          return undefined
-        }
-        return action
-      }),
-      tap((action) => {
-        if (action) {
-          if (action.event.type === 'mousedown') {
+      tap(([mouse, multiState]) => {
+        if (mouse) {
+          if (mouse.event.type === 'mousedown' && !multiState.locationStart) {
             this.patchState({
               clientXY: {
-                clientX: action.event.clientX,
-                clientY: action.event.clientY,
+                clientX: mouse.event.clientX,
+                clientY: mouse.event.clientY,
               },
             })
           }
-          if (action.event.type === 'mouseup') {
+          if (mouse.event.type === 'mouseup' && multiState.locationStart) {
             this.patchState({
               clientXY: {
                 clientX: undefined,
@@ -129,22 +149,22 @@ export class GridStore extends ComponentStore<GridState> {
           }
         }
       }),
-      switchMap((action) => {
-        if (!action) return of(undefined)
-        return this.gridService.mouseEvent(action).pipe(
+      switchMap(([mouse, multiState]) => {
+        if (!mouse) return of(undefined)
+        return this.mouseService.mouse(mouse, multiState).pipe(
           tap((res) => {
             if (res) {
               switch (res[0]) {
-                case MultiEventType.SelectStart:
+                case MouseEventAction.SelectStart:
                   this.multiFacade.startMultiSelect(res[1].location)
                   break
-                case MultiEventType.SelectFinish:
+                case MouseEventAction.SelectFinish:
                   this.multiFacade.finishMultiSelect(res[1].location, res[1].ids)
                   break
-                case MultiEventType.CreateStartPanel:
+                case MouseEventAction.CreateStartPanel:
                   this.multiFacade.startMultiCreate(res[1].location, BlockType.PANEL)
                   break
-                case MultiEventType.CreateFinishPanel:
+                case MouseEventAction.CreateFinishPanel:
                   this.multiFacade.finishMultiCreatePanels(
                     res[1].location,
                     BlockType.PANEL,
@@ -161,7 +181,7 @@ export class GridStore extends ComponentStore<GridState> {
         return of(undefined)
       }),
     ),
-  )
+  ) */
   constructor() {
     super(initialGridState)
   }

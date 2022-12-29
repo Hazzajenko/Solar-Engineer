@@ -55,9 +55,6 @@
       ]
     }
   },
-  "cli": {
-    "analytics": false
-  },
   "generators": {
     "@nrwl/angular:application": {
       "style": "css",

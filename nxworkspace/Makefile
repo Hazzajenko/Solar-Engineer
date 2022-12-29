@@ -37,8 +37,9 @@ ngrx:
 graph:
   nx graph
 
-docker:
-  docker build . -t dockerngstart .
+docker-build:
+  docker build -f ./apps/design/Dockerfile . -t design
+
 
 docker-run:
-  docker run --name dockerngstart-container -it -p 8000:80 dockerngstart
+  docker run --name design-container -it -p 8000:80 design

@@ -14,18 +14,18 @@ export const selectSelectedMultiIds = createSelector(
   (state: State.SelectedState) => state.multiSelectIds,
 )
 
-export const selectSelectedStringModel = createSelector(
+/* export const selectSelectedStringModel = createSelector(
   selectSelectedState,
   (state: State.SelectedState) => {
     const selectedString: SelectedStringModel = {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      type: state.type!,
+      // type: state.type!,
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       selectedStringId: state.selectedStringId!,
     }
     return selectedString
   },
-)
+) */
 export const selectSelectedUnitAndIds = createSelector(
   selectSelectedState,
   (state: State.SelectedState) => state,

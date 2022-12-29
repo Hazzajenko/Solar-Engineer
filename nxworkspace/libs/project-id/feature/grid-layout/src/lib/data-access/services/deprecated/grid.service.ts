@@ -1,13 +1,19 @@
-import { CdkDragDrop } from '@angular/cdk/drag-drop'
+/* import { CdkDragDrop } from '@angular/cdk/drag-drop'
 import { inject, Injectable } from '@angular/core'
 import { Update } from '@ngrx/entity'
-import { BlocksFacade, GridFacade, MultiFacade } from '@project-id/data-access/store'
+import {
+  BlocksFacade,
+  GridFacade,
+  MultiFacade,
+  SelectedFacade,
+} from '@project-id/data-access/store'
 import { BlockModel, BlockType, GridMode, PanelModel } from '@shared/data-access/models'
-import { combineLatest, of } from 'rxjs'
+import { combineLatest, firstValueFrom, of } from 'rxjs'
 import { catchError, combineLatestWith, map, switchMap } from 'rxjs/operators'
-import { CellAction } from '../models/cell-action.model'
-import { CreateService } from './create.service'
-import { MultiService } from '../multi/multi.service'
+import { CellAction } from '../../models/cell-action.model'
+import { CreateService } from './create/create.service'
+import { MultiService } from './multi/multi.service'
+import { SelectedService } from './select/select.service'
 
 @Injectable({
   providedIn: 'root',
@@ -18,19 +24,19 @@ export class GridService {
   private createService = inject(CreateService)
   private gridFacade = inject(GridFacade)
   private blocksFacade = inject(BlocksFacade)
+  private selectedFacade = inject(SelectedFacade)
+  private selectedService = inject(SelectedService)
 
   gridDrop(dropEvent: CdkDragDrop<BlockModel[]>) {
     dropEvent.event.preventDefault()
     dropEvent.event.stopPropagation()
-
-    return of(dropEvent).pipe(
-      combineLatestWith(this.blocksFacade.blockByLocation(dropEvent.container.id)),
-      map(([event, existingBlock]) => {
+    return of(this.blocksFacade.blockByLocation(dropEvent.container.id)).pipe(
+      map((existingBlock) => {
         if (existingBlock) {
           return undefined
         }
-        const block: BlockModel = event.item.data
-        const location: string = event.container.id
+        const block: BlockModel = dropEvent.item.data
+        const location: string = dropEvent.container.id
         return this.getUpdateModel(block, location)
       }),
     )
@@ -40,12 +46,17 @@ export class GridService {
     if (action.event.altKey) {
       return of(undefined)
     }
-    return combineLatest([of(action), this.gridFacade.gridState$]).pipe(
-      switchMap(([action, gridState]) => {
-        if (!action) return of(undefined)
+    return combineLatest([
+      this.gridFacade.gridState$,
+      this.blocksFacade.blockByLocation(action.location),
+    ]).pipe(
+      switchMap(([gridState, existingBlock]) => {
+        if (existingBlock) {
+          return this.selectedService.existingBlock(existingBlock)
+        }
         switch (gridState.gridMode) {
           case GridMode.SELECT:
-            return this.createService.createSwitch(action.location, gridState)
+            return this.selectedService.selectEvent()
           case GridMode.CREATE:
             return this.createService.createSwitch(action.location, gridState)
           default:
@@ -55,33 +66,27 @@ export class GridService {
     )
   }
 
-
   mouseEvent(action: CellAction) {
-    return of(action).pipe(
-      map((action) => {
-        if (!action.event.altKey) {
-          return undefined
-        }
-        return action
-      }),
-      switchMap((action) =>
-        combineLatest([of(action), this.gridFacade.gridState$, this.multiFacade.state$]),
-      ),
-      switchMap(([action, gridState, multiState]) => {
-        if (!action) return of(undefined)
+    if (!action.event.altKey) {
+      return of(undefined)
+    }
+    return combineLatest([this.gridFacade.gridState$, this.multiFacade.state$]).pipe(
+      switchMap(([gridState, multiState]) => {
         switch (gridState.gridMode) {
           case GridMode.SELECT:
-            return this.multiService.multiSelect(action.location, multiState)
+            return of(undefined)
+          // return this.multiService.multiSelect(action.location, multiState)
           case GridMode.CREATE:
-            return this.multiService.multiCreate(action.location, multiState)
+            return of(undefined)
+          // return this.multiService.multiCreate(action.location, multiState)
           default:
             return of(undefined)
         }
       }),
-      catchError(err => {
+      catchError((err) => {
         console.error(err)
         return of(undefined)
-      })
+      }),
     )
   }
 
@@ -101,3 +106,4 @@ export class GridService {
     }
   }
 }
+ */
