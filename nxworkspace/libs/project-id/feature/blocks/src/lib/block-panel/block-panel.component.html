@@ -1,13 +1,13 @@
 <ng-container *ngIf="panel$ | async as panel">
-  <ng-container *ngIf="panelNgClass$ | async as panelNgClass">
+  <ng-container *ngIf="panelNg$ | async as panelNg">
     <div
       class="flex whitespace-pre-wrap content-center items-center justify-center border-blue-500 bg-white w-8 h-8"
     >
-      <!--     <app-panel-link
-      [isNegativeLink]="(isSelectedNegativeTo$ | async)!"
-      [isPositiveLink]="(isSelectedPositiveTo$ | async)!"
-      class="drop-zone__svg"
-    ></app-panel-link> -->
+      <app-panel-link
+        [isNegativeLink]="panelNg.isSelectedNegativeTo"
+        [isPositiveLink]="panelNg.isSelectedPositiveTo"
+        class="drop-zone__svg"
+      ></app-panel-link>
       <ng-container [ngSwitch]="panel?.rotation">
         <ng-container *ngSwitchCase="0">
           <svg viewBox="0 0 100 100" class="pointer-events-none z-10 relative">
@@ -50,6 +50,7 @@
         #panelDiv
         appPanelDirective
         [id]="panel.id"
+        [panelNg]="panelNg"
         (click)="panelAction(panel, $event.shiftKey)"
         (contextmenu)="onRightClick($event, panel)"
         [cdkDragData]="panel"
@@ -57,14 +58,14 @@
           height: panel?.rotation === 0 ? '18px' : '23px',
           width: panel?.rotation === 0 ? '23px' : '18px'
         }"
-        [ngClass]="{ 'bg-blue-300': panelNgClass.isSelectedPanel }"
         cdkDrag
         class="absolute border border-black flex items-center justify-center content-center hover:bg-red-500"
-        matTooltipClass="drop-zone__tooltip"
         matTooltipDisabled="true"
         matTooltipPosition="right"
       >
         <!--       <ng-container *ngIf="(isSelectedString$ | async)!">
+                  [ngClass]="{ 'bg-blue-300': panelNg.isSelectedPanel }"
+                  [class.bg-selected]="(isSelectedPanel$ | async)!"
         <ng-container *ngIf="(selectedStringPathMap$ | async)?.get(panel.id) as pathNumber">
           <div class="drop-zone__pathMapText">
             {{ pathNumber.link + ":" + pathNumber.count }}

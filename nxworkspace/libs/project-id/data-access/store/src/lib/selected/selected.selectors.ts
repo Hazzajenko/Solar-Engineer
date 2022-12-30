@@ -55,7 +55,7 @@ export const selectSelectedPanelId = createSelector(
   (state: State.SelectedState) => state.selectedPanelId,
 )
 
-export const selectSelectedIdWithUnit = createSelector(
+export const selectSelectedIdWithType = createSelector(
   selectSelectedState,
   (state: State.SelectedState) => {
     return {

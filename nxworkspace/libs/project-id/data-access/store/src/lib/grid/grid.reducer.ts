@@ -1,4 +1,3 @@
-import { reducers } from './../../../../../../shared/data-access/store/src/lib/app.state'
 import { Action, createReducer, on } from '@ngrx/store'
 import { BlockType, GridMode } from '@shared/data-access/models'
 import { GridActions } from './grid.actions'

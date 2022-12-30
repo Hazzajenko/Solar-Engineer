@@ -139,3 +139,10 @@ path {
     background-color: #ff00d6;
   }
 }
+
+.bg-selected {
+  filter: brightness(0.85);
+  background-color: #07ffd4;
+  /*    box-shadow: 0 0 0 8px brown,
+      0 0 0 12px blue;*/
+}

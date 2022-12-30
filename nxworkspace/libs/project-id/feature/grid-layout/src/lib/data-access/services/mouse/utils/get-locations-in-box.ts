@@ -25,7 +25,6 @@ export function getLocationsInBox(locationOne: string, locationTwo: string): str
   const locationStrings: string[] = []
   const goingUp = numberOneRow > numberTwoRow
 
-
   const yDirectionBlocks = goingUp
     ? numberOneRow - numberTwoRow + 1
     : numberTwoRow - numberOneRow + 1

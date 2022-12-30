@@ -1,5 +1,5 @@
-import { combineLatestWith, map } from 'rxjs/operators'
-import { of, Observable, shareReplay } from 'rxjs'
+import { combineLatestWith, map, share } from 'rxjs/operators'
+import { of, Observable, shareReplay, firstValueFrom } from 'rxjs'
 import { Update } from '@ngrx/entity'
 import { inject, Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
@@ -28,8 +28,12 @@ export class PanelsFacade {
       .pipe(shareReplay({ bufferSize: 1, refCount: true }))
   }
 
-  panelById(id: string) {
+  panelById$(id: string) {
     return this.store.select(PanelsSelectors.selectPanelById({ id }))
+  }
+
+  panelById(id: string) {
+    return firstValueFrom(this.store.select(PanelsSelectors.selectPanelById({ id })))
   }
 
   panelsByStringId(stringId: string) {
@@ -52,18 +56,16 @@ export class PanelsFacade {
     return of(this.store.dispatch(PanelsActions.updatePanel({ update })))
   }
 
-  isSelectedPanel$(id: string) {
-    return this.store.select(SelectedSelectors.selectSelectedIdWithUnit).pipe(
-      map(({ singleSelectId, type }) => {
-        if (type !== BlockType.PANEL) {
-          return false
-        }
-        if (singleSelectId === id) {
-          return true
-        }
-        return false
-      }),
-    )
+  deletePanel(panelId: string) {
+    this.store.dispatch(PanelsActions.deletePanel({ id: panelId }))
+  }
+
+  selectStringIdByPanelId$(panelId: string) {
+    return this.store.select(PanelsSelectors.selectStringIdByPanelId({ panelId }))
+  }
+
+  selectedPanelId$() {
+    return this.store.select(SelectedSelectors.selectSelectedIdWithType)
   }
 
   isSelectedNegativeTo$(id: string) {
@@ -89,7 +91,7 @@ export class PanelsFacade {
   }
 
   isSelectedString$(id: string) {
-    return this.panelById(id).pipe(
+    return this.panelById$(id).pipe(
       map((panel) => panel?.stringId),
       combineLatestWith(this.store.select(SelectedSelectors.selectSelectedStringId)),
       map(([panelStringId, selectedStringId]) => {
@@ -102,7 +104,7 @@ export class PanelsFacade {
   }
 
   isPanelToJoin$(id: string) {
-    return this.store.select(LinksSelectors.selectTypeAndToLinkId).pipe(
+    return this.store.select(LinksSelectors.selectToLinkIdWithType).pipe(
       map(({ type, toLinkId }) => {
         if (type !== BlockType.PANEL) {
           return false

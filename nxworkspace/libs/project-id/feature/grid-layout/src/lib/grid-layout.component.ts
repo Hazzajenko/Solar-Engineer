@@ -1,9 +1,6 @@
 import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop'
 import { CommonModule } from '@angular/common'
-import {
-  Component, inject,
-  Input
-} from '@angular/core'
+import { Component, inject, Input } from '@angular/core'
 import { LetModule } from '@ngrx/component'
 import { MultiFacade } from '@project-id/data-access/store'
 import { BlockModel } from '@shared/data-access/models'
@@ -11,10 +8,9 @@ import { firstValueFrom, Observable } from 'rxjs'
 import { ClientXY } from './data-access/models/client-x-y.model'
 import { ElementOffsets } from './data-access/models/element-offsets.model'
 import { ClickService } from './data-access/services/click/click.service'
-import { ClickEventModel } from './data-access/services/click/utils/click.event'
 import { DropService } from './data-access/services/drop/drop.service'
 import { MouseService } from './data-access/services/mouse/mouse.service'
-import { MouseEventModel } from './data-access/services/mouse/utils/mouse.event'
+import { MouseEventRequest } from './data-access/services/utils/events/mouse.event'
 import { GridStore } from './data-access/store/grid.store'
 import { CanvasDirective } from './directives/canvas.directive'
 import { DynamicComponentDirective } from './directives/dynamic-component.directive'
@@ -48,14 +44,11 @@ export class GridLayoutComponent {
   public dropService = inject(DropService)
   public mouseService = inject(MouseService)
   public multiFacade = inject(MultiFacade)
-  // public gridService = inject(GridService)
+
   @Input() rows!: number
   @Input() cols!: number
   @Input() blocks$!: Observable<BlockModel[]>
-  // blocks$: Observable<BlockModel[]> = inject(BlocksFacade).blocksFromRoute$
-  mouseEvent$?: Observable<unknown>
 
-  // clientXY$: Observable<ClientXY> = this.gridStore.clientXY$
   clientXY: ClientXY = {
     clientX: undefined,
     clientY: undefined,
@@ -69,7 +62,7 @@ export class GridLayoutComponent {
     return Array(n)
   }
 
-  async click(event: ClickEventModel) {
+  async click(event: MouseEventRequest) {
     this.clickService.click(event)
   }
 
@@ -77,7 +70,15 @@ export class GridLayoutComponent {
     this.dropService.drop(event)
   }
 
-  async mouse(event: MouseEventModel) {
+  async mouse(event: MouseEventRequest) {
+    if (!event.event.altKey) {
+      this.clientXY = {
+        clientX: undefined,
+        clientY: undefined,
+      }
+      return
+    }
+
     const multiState = await firstValueFrom(this.multiFacade.state$)
     if (event.event.type === 'mousedown' && !multiState.locationStart) {
       this.clientXY = {
@@ -93,6 +94,6 @@ export class GridLayoutComponent {
         clientY: undefined,
       }
     }
-    this.mouseService.mouse(event)
+    this.mouseService.mouse(event, multiState)
   }
 }

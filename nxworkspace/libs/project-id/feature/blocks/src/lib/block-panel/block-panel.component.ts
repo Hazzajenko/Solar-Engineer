@@ -1,4 +1,5 @@
-import { map } from 'rxjs/operators'
+import { isSelectedPanel2$ } from './data-access/observables'
+import { combineLatestWith, map } from 'rxjs/operators'
 import { ChangeDetectionStrategy, Component, inject, Input, OnInit, ViewChild } from '@angular/core'
 
 import { DragDropModule } from '@angular/cdk/drag-drop'
@@ -18,16 +19,17 @@ import { LetModule } from '@ngrx/component'
 import { Store } from '@ngrx/store'
 
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
-import { PanelsFacade } from '@project-id/data-access/store'
+import { LinksFacade, PanelsFacade, SelectedFacade } from '@project-id/data-access/store'
 
 import { combineLatest, Observable } from 'rxjs'
 
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog'
-import { PanelModel } from '@shared/data-access/models'
+import { BlockType, PanelModel } from '@shared/data-access/models'
 import { AppState } from '@shared/data-access/store'
 import { PanelLinkComponent } from '../ui'
 import { PanelDirective } from './directives/panel.directive'
 import { GetPanelAsyncPipe } from './get-panel-async.pipe'
+import { PanelNgModel } from './models/panel-ng.model'
 
 @Component({
   selector: 'app-block-panel',
@@ -54,16 +56,72 @@ import { GetPanelAsyncPipe } from './get-panel-async.pipe'
 })
 export class BlockPanelComponent {
   private panelsFacade = inject(PanelsFacade)
+  private linksFacade = inject(LinksFacade)
+  private selectedFacade = inject(SelectedFacade)
   panel$!: Observable<PanelModel | undefined>
+  private _id!: string
   @Input() set id(id: string) {
-    this.panel$ = this.panelsFacade.panelById(id)
+    this._id = id
+    this.panel$ = this.panelsFacade.panelById$(id)
+    // this.isSelectedPanel$ = isSelectedPanel2$(this.selectedFacade, id)
   }
-  panelNgClass$ = combineLatest([
-    this.panelsFacade.isSelectedPanel$(this.id),
-    this.panelsFacade.isSelectedPositiveTo$(this.id),
-    this.panelsFacade.isSelectedNegativeTo$(this.id),
-    this.panelsFacade.isSelectedString$(this.id),
-    this.panelsFacade.isPanelToJoin$(this.id),
+
+  private isSelectedPanel$: Observable<boolean> = this.selectedFacade.selectedIdWithType$.pipe(
+    map(({ singleSelectId, type }) => {
+      if (type !== BlockType.PANEL) {
+        return false
+      }
+      if (singleSelectId === this._id) {
+        return true
+      }
+      return false
+    }),
+  )
+
+  private isSelectedPositiveTo$: Observable<boolean> =
+    this.selectedFacade.selectSelectedPositiveTo$.pipe(
+      map((positiveToId) => {
+        if (positiveToId === this._id) {
+          return true
+        }
+        return false
+      }),
+    )
+
+  private isSelectedNegativeTo$: Observable<boolean> =
+    this.selectedFacade.selectSelectedNegativeTo$.pipe(
+      map((negativeToId) => {
+        if (negativeToId === this._id) {
+          return true
+        }
+        return false
+      }),
+    )
+
+  private isSelectedString$: Observable<boolean> = this.selectedFacade.selectedStringId$.pipe(
+    combineLatestWith(this.panelsFacade.selectStringIdByPanelId$(this._id)),
+    map(([selectedStringId, stringId]) => {
+      if (selectedStringId === stringId) {
+        return true
+      }
+      return false
+    }),
+  )
+
+  private isToLinkId$: Observable<boolean> = this.linksFacade.toLinkId$.pipe(
+    map((toLinkId) => {
+      if (toLinkId === this._id) {
+        return true
+      }
+      return false
+    }),
+  )
+  public panelNg$: Observable<PanelNgModel> = combineLatest([
+    this.isSelectedPanel$,
+    this.isSelectedPositiveTo$,
+    this.isSelectedNegativeTo$,
+    this.isSelectedString$,
+    this.isToLinkId$,
   ]).pipe(
     map(
       ([
@@ -79,10 +137,16 @@ export class BlockPanelComponent {
           isSelectedNegativeTo,
           isSelectedString,
           isPanelToJoin,
-        }
+        } as PanelNgModel
       },
     ),
   )
+
+  constructor() {
+    // this.panelsFacade.selectedPanelId$().subscribe((res) => console.log(res))
+    // this.panelsFacade.isSelectedPanel$(this.id).subscribe((res) => console.log(res))
+  }
+
   /*     [class.drop-zone__bg-default]="!(isSelectedPanel$ | async)!"
     [class.drop-zone__bg-negative]="(isSelectedNegativeTo$ | async)!"
     [class.drop-zone__bg-positive]="(isSelectedPositiveTo$ | async)!"
@@ -114,6 +178,13 @@ export class BlockPanelComponent {
 
   private store = inject(Store<AppState>)
   private dialog = inject(MatDialog)
+
+  getBackgroundColor(panelNg: PanelNgModel) {
+    if (panelNg.isSelectedPanel) {
+      return 'bg-blue-300'
+    }
+    return 'bg-blue-300'
+  }
 
   displayTooltip(isSelectedString: boolean, selectedStringTooltip?: string): string {
     if (isSelectedString) {
@@ -307,7 +378,7 @@ export class BlockPanelComponent {
     // const update = panel.markAsDisconnectionPoint()
   }
 
-  getBackgroundColor(
+  /*   getBackgroundColor(
     stringColor: string,
     pathMap: Map<string, { link: number; count: number; color: string }>,
     isInSelection: boolean,
@@ -348,8 +419,8 @@ export class BlockPanelComponent {
       return stringColor
     } else {
     }
-    return '' */
-  }
+    return ''
+  } */
 
   getBoxShadow(
     stringColor: string,

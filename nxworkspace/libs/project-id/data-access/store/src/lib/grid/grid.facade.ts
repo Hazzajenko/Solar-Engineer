@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
 import { BlockType } from '@shared/data-access/models'
+import { firstValueFrom } from 'rxjs'
 import { LinksActions } from '../links'
 import { MultiActions } from '../multi'
 import { SelectedActions } from '../selected'
@@ -14,8 +15,19 @@ export class GridFacade {
   private readonly store = inject(Store)
 
   gridState$ = this.store.select(GridSelectors.selectGridState)
+  gridState = firstValueFrom(this.store.select(GridSelectors.selectGridState))
   gridMode$ = this.store.select(GridSelectors.selectGridMode)
+  // gridMode = firstValueFrom(this.store.select(GridSelectors.selectGridMode))
   createMode$ = this.store.select(GridSelectors.selectCreateMode)
+  // createMode = firstValueFrom(this.store.select(GridSelectors.selectCreateMode))
+
+  get createMode() {
+    return firstValueFrom(this.createMode$)
+  }
+
+  get gridMode() {
+    return firstValueFrom(this.gridMode$)
+  }
 
   changeCreateType(createType: BlockType) {
     this.store.dispatch(GridActions.changeCreateType({ createType }))

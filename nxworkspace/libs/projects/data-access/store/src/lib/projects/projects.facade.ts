@@ -1,3 +1,4 @@
+import { firstValueFrom } from 'rxjs'
 import { ProjectModel } from '@shared/data-access/models'
 import { inject, Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
@@ -12,10 +13,16 @@ export class ProjectsFacade {
   allProjects$ = this.store.select(ProjectsSelectors.selectAllProjects)
   selectedProjects$ = this.store.select(ProjectsSelectors.selectEntity)
   projectFromRoute$ = this.store.select(ProjectsSelectors.selectProjectByRouteParams)
+  private _projectFromRoute$ = this.store.select(ProjectsSelectors.selectProjectByRouteParams)
+  // projectFromRoute = firstValueFrom(this.store.select(ProjectsSelectors.selectProjectByRouteParams))
   localProject$ = this.store.select(ProjectsSelectors.selectLocalProject)
 
   init() {
     this.store.dispatch(ProjectsActions.initProjects())
+  }
+
+  get projectFromRoute() {
+    return firstValueFrom(this._projectFromRoute$)
   }
 
   initSelectProject(projectId: number) {

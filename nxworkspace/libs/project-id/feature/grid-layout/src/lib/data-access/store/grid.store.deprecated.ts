@@ -10,7 +10,7 @@ import { BlocksFacade, GridFacade, PanelsFacade } from '@project-id/data-access/
 import { BlockModel, BlockType } from '@shared/data-access/models'
 import { Observable, of, tap } from 'rxjs'
 import { CellAction } from '../models/cell-action.model'
-import { MouseEventAction } from '../services/mouse/utils/mouse.event'
+import { MouseEventAction } from '../services/mouse/utils/events/mouse.event'
 import { GridService } from '../services/deprecated/grid.service'
 
 interface GridState {

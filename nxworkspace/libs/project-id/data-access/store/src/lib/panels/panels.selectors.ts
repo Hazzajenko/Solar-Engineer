@@ -36,13 +36,16 @@ export const selectPanelById = (props: { id: string }) =>
     panels.find((panel) => panel.id === props.id),
   )
 
+export const selectStringIdByPanelId = (props: { panelId: string }) =>
+  createSelector(
+    selectAllPanels,
+    (panels: PanelModel[]) => panels.find((panel) => panel.id === props.panelId)?.stringId,
+  )
+
 export const selectPanelsByStringId = (props: { stringId: string }) =>
   createSelector(selectAllPanels, (panels: PanelModel[]) =>
     panels.filter((panel) => panel.stringId === props.stringId),
   )
-
-
-
 
 /*   this.isSelectedPanel$ = this.store
   .select(selectSelectedPanelId)

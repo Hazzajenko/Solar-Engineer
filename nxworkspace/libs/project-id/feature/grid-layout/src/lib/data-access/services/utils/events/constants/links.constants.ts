@@ -1,0 +1,6 @@
+export const CREATE_SWITCH = 'CREATE_SWITCH'
+export const CREATE_PANEL = 'CREATE_PANEL'
+export const SELECT_PANEL = 'SELECT_PANEL'
+export const CLEAR_SELECTED = 'CLEAR_SELECTED'
+export const UNDEFINED = 'UNDEFINED'
+export const ERROR = 'ERROR'

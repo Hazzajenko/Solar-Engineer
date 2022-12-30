@@ -33,9 +33,24 @@ export const selectLinksByPanels = (props: { panels: PanelModel[] }) =>
     links.filter((link) => props.panels.map((panel) => panel.id).includes(link.positiveToId)),
   )
 
-export const selectTypeAndToLinkId = createSelector(selectLinksState, (state: LinksState) => {
+export const selectToLinkIdWithType = createSelector(selectLinksState, (state: LinksState) => {
   return {
     type: state.typeToLink,
     toLinkId: state.toLinkId,
   }
 })
+
+export const selectToLinkId = createSelector(
+  selectLinksState,
+  (state: LinksState) => state.toLinkId,
+)
+
+export const isPanelExistingNegativeLink = (props: { panelId: string }) =>
+  createSelector(selectAllLinks, (links: PanelLinkModel[]) =>
+    links.find((link) => link.negativeToId === props.panelId),
+  )
+
+export const isPanelExistingPositiveLink = (props: { panelId: string }) =>
+  createSelector(selectAllLinks, (links: PanelLinkModel[]) =>
+    links.find((link) => link.positiveToId === props.panelId),
+  )

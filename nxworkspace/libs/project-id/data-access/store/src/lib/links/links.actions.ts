@@ -1,6 +1,8 @@
+
 import { Update } from '@ngrx/entity'
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
 import { PanelLinkModel } from '@shared/data-access/models'
+
 
 export const LinksActions = createActionGroup({
   source: 'Links Store',
@@ -19,3 +21,10 @@ export const LinksActions = createActionGroup({
     'Clear Links State': emptyProps(),
   },
 })
+
+
+
+export type LinksActionsTypeObject = Pick<typeof LinksActions[keyof typeof LinksActions], 'type'>
+
+export type LinksActionsType = LinksActionsTypeObject['type']
+
