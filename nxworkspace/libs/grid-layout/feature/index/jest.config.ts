@@ -1,7 +1,7 @@
 /* eslint-disable */
 export default {
-  displayName: 'grid-layout-feature',
-  preset: '../../../jest.preset.js',
+  displayName: 'grid-layout-feature-index',
+  preset: '../../../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   globals: {
     'ts-jest': {
@@ -9,7 +9,7 @@ export default {
       stringifyContentPathRegex: '\\.(html|svg)$',
     },
   },
-  coverageDirectory: '../../../coverage/libs/grid-layout/feature',
+  coverageDirectory: '../../../../coverage/libs/grid-layout/feature/index',
   transform: {
     '^.+\\.(ts|mjs|js|html)$': 'jest-preset-angular',
   },
