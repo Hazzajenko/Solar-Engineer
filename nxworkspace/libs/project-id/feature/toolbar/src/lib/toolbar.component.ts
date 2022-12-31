@@ -2,11 +2,11 @@ import { Observable } from 'rxjs'
 import { MatButtonModule } from '@angular/material/button'
 import { CommonModule } from '@angular/common'
 import { Component, inject } from '@angular/core'
-import { GridLayoutComponent } from '@project-id/feature/grid-layout'
+
 import { LogoNameV3Component } from '@shared/ui/logo'
 import { MatMenuModule } from '@angular/material/menu'
 import { MatIconModule } from '@angular/material/icon'
-import { GridActions, GridFacade } from '@project-id/data-access/store'
+import { GridFacade } from '@project-id/data-access/store'
 import { GridMode } from '@shared/data-access/models'
 import { Store } from '@ngrx/store'
 
@@ -15,7 +15,6 @@ import { Store } from '@ngrx/store'
   standalone: true,
   imports: [
     CommonModule,
-    GridLayoutComponent,
     LogoNameV3Component,
     MatButtonModule,
     MatMenuModule,
