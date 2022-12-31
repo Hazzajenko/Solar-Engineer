@@ -1,26 +1,25 @@
-import { inject, Injectable } from '@angular/core';
-import { GridEventFactory } from '@grid-layout/data-access/utils';
+import { inject, Injectable } from '@angular/core'
+import { GridEventFactory } from '@grid-layout/data-access/utils'
 import {
   BlocksFacade,
   GridFacade,
-  LinksFacade,
   MultiFacade,
+  SelectedFacade,
   PanelsFacade,
-  SelectedFacade
-} from '@project-id/data-access/store';
-import { ProjectsFacade } from '@projects/data-access/store';
+  LinksFacade,
+} from '@project-id/data-access/facades'
+import { ProjectsFacade } from '@projects/data-access/facades'
 import {
   BlockModel,
   BlockType,
   EntityType,
   PanelLinkModel,
-  PanelModel
-} from '@shared/data-access/models';
-import { match } from 'ts-pattern';
+  PanelModel,
+} from '@shared/data-access/models'
+import { match } from 'ts-pattern'
 
-import { GridEventResult } from '@grid-layout/data-access/actions';
-import { MouseEventRequest } from '@grid-layout/shared/models';
-import { LinksRepository } from './links.repository';
+import { GridEventResult } from '@grid-layout/data-access/actions'
+import { MouseEventRequest } from '@grid-layout/shared/models'
 
 @Injectable({
   providedIn: 'root',
@@ -34,36 +33,50 @@ export class LinksService {
   private panelsFacade = inject(PanelsFacade)
   private projectsFacade = inject(ProjectsFacade)
   private linksFacade = inject(LinksFacade)
-  private linksRepository = inject(LinksRepository)
 
   async addPanelToLink(click: MouseEventRequest, block: BlockModel): Promise<GridEventResult> {
     const linksState = await this.linksFacade.state
     const panel = await this.panelsFacade.panelById(block.id)
     if (!panel) {
-      return this.linksRepository.updateState(
+      return this.result.action({
+        action: 'CLEAR_GRID_STATE',
+        data: { log: 'addPanelToJoin !panel' },
+      })
+
+      /*       return this.linksRepository.updateState(
         this.result.action({ action: 'CLEAR_GRID_STATE', data: { log: 'addPanelToJoin !panel' } }),
-      )
+      ) */
     }
     if (panel.stringId === 'undefined') {
-      return this.linksRepository.updateState(
+      return this.result.action({
+        action: 'CLEAR_GRID_STATE',
+        data: { log: 'panel needs to be apart of a string' },
+      })
+
+      /*       return this.linksRepository.updateState(
         this.result.action({
           action: 'CLEAR_GRID_STATE',
           data: { log: 'panel needs to be apart of a string' },
         }),
-      )
+      ) */
     }
 
     if (linksState?.typeToLink === undefined || linksState?.toLinkId === undefined) {
       const existingPanelPositiveLink = await this.linksFacade.isPanelExistingPositiveLink(panel.id)
 
       if (existingPanelPositiveLink) {
-        return this.linksRepository.updateState(
+        return this.result.error('this panel already has a positive link')
+
+        /*         return this.linksRepository.updateState(
           this.result.error('this panel already has a positive link'),
-        )
+        ) */
       }
-      return this.linksRepository.updateState(
+
+      return this.result.action({ action: 'START_LINK_PANEL', data: { panelId: panel.id } })
+
+      /*       return this.linksRepository.updateState(
         this.result.action({ action: 'START_LINK_PANEL', data: { panelId: panel.id } }),
-      )
+      ) */
     }
 
     const result = await match(linksState.typeToLink)
@@ -72,7 +85,8 @@ export class LinksService {
         async () => await this.linkPanel(linksState.toLinkId, click.event.shiftKey, panel),
       )
       .otherwise(async () => this.result.fatal('unknown type to link'))
-    return this.linksRepository.updateState(result)
+    return result
+    // return this.linksRepository.updateState(result)
   }
 
   private async linkPanel(

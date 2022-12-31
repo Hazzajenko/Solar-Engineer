@@ -1,5 +1,3 @@
 export * from './entities.actions'
-export * from './entities.facade'
 export * from './entities.reducer'
-export * from './entities.effects'
 export * as EntitiesSelectors from './entities.selectors'

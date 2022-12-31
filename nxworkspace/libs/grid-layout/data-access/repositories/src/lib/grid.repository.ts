@@ -6,7 +6,7 @@ import {
   MultiFacade,
   PanelsFacade,
   SelectedFacade,
-} from '@project-id/data-access/store'
+} from '@project-id/data-access/facades'
 import { match } from 'ts-pattern'
 import { GridEventFactory } from '@grid-layout/data-access/utils'
 import { GridEventResult } from '@grid-layout/data-access/actions'

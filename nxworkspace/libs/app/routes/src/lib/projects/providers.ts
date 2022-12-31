@@ -19,14 +19,17 @@ import {
   gridReducer,
   MULTI_FEATURE_KEY,
   multiReducer,
+} from '@project-id/data-access/store'
+import {
   PanelsEffects,
   StringsEffects,
   LinksEffects,
   BlocksEffects,
   EntitiesEffects,
   SelectedEffects,
-} from '@project-id/data-access/store'
-import { PROJECTS_FEATURE_KEY, projectsReducer, ProjectsEffects } from '@projects/data-access/store'
+} from '@project-id/data-access/effects'
+import { PROJECTS_FEATURE_KEY, projectsReducer } from '@projects/data-access/store'
+import { ProjectsEffects } from '@projects/data-access/effects'
 
 export const projectsProviders = [
   importProvidersFrom(MatDialogModule),

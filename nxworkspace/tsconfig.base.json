@@ -22,23 +22,47 @@
     "paths": {
       "@app/routes": ["libs/app/routes/src/index.ts"],
       "@auth/data-access/api": ["libs/auth/data-access/api/src/index.ts"],
-      "@auth/data-access/facade": ["libs/auth/data-access/facade/src/index.ts"],
+      "@auth/data-access/effects": ["libs/auth/data-access/effects/src/index.ts"],
+      "@auth/data-access/facades": ["libs/auth/data-access/facades/src/index.ts"],
       "@auth/data-access/store": ["libs/auth/data-access/store/src/index.ts"],
       "@auth/guards": ["libs/auth/guards/src/index.ts"],
       "@auth/interceptors": ["libs/auth/interceptors/src/index.ts"],
+      "@auth/shared/models": ["libs/auth/shared/models/src/index.ts"],
+      "@grid-layout/data-access/actions": ["libs/grid-layout/data-access/actions/src/index.ts"],
+      "@grid-layout/data-access/repositories": [
+        "libs/grid-layout/data-access/repositories/src/index.ts"
+      ],
+      "@grid-layout/data-access/services": ["libs/grid-layout/data-access/services/src/index.ts"],
+      "@grid-layout/data-access/utils": ["libs/grid-layout/data-access/utils/src/index.ts"],
+      "@grid-layout/feature/blocks/block-disconnection-point": [
+        "libs/grid-layout/feature/blocks/block-disconnection-point/src/index.ts"
+      ],
+      "@grid-layout/feature/blocks/block-panel": [
+        "libs/grid-layout/feature/blocks/block-panel/src/index.ts"
+      ],
+      "@grid-layout/feature/blocks/block-tray": [
+        "libs/grid-layout/feature/blocks/block-tray/src/index.ts"
+      ],
+      "@grid-layout/feature/blocks/shared-ui": [
+        "libs/grid-layout/feature/blocks/shared-ui/src/index.ts"
+      ],
+      "@grid-layout/feature/index": ["libs/grid-layout/feature/index/src/index.ts"],
+      "@grid-layout/shared/models": ["libs/grid-layout/shared/models/src/index.ts"],
       "@home/ui": ["libs/home/ui/src/index.ts"],
       "@project-id/data-access/api": ["libs/project-id/data-access/api/src/index.ts"],
+      "@project-id/data-access/effects": ["libs/project-id/data-access/effects/src/index.ts"],
+      "@project-id/data-access/facades": ["libs/project-id/data-access/facades/src/index.ts"],
       "@project-id/data-access/resolvers": ["libs/project-id/data-access/resolvers/src/index.ts"],
       "@project-id/data-access/services": ["libs/project-id/data-access/services/src/index.ts"],
       "@project-id/data-access/store": ["libs/project-id/data-access/store/src/index.ts"],
-      "@project-id/feature/blocks": ["libs/project-id/feature/blocks/src/index.ts"],
-      "@project-id/feature/grid-layout": ["libs/project-id/feature/grid-layout/src/index.ts"],
-      "@project-id/feature/index": ["libs/project-id/feature/index/src/index.ts"],
       "@project-id/feature/local": ["libs/project-id/feature/local/src/index.ts"],
       "@project-id/feature/toolbar": ["libs/project-id/feature/toolbar/src/index.ts"],
       "@project-id/feature/web": ["libs/project-id/feature/web/src/index.ts"],
+      "@project-id/shared/models": ["libs/project-id/shared/models/src/index.ts"],
       "@project-id/utils": ["libs/project-id/utils/src/index.ts"],
       "@projects/data-access/api": ["libs/projects/data-access/api/src/index.ts"],
+      "@projects/data-access/effects": ["libs/projects/data-access/effects/src/index.ts"],
+      "@projects/data-access/facades": ["libs/projects/data-access/facades/src/index.ts"],
       "@projects/data-access/store": ["libs/projects/data-access/store/src/index.ts"],
       "@projects/feature/projects-list": ["libs/projects/feature/projects-list/src/index.ts"],
       "@shared/config": ["libs/shared/config/src/index.ts"],
@@ -48,6 +72,7 @@
       "@shared/data-access/models": ["libs/shared/data-access/models/src/index.ts"],
       "@shared/data-access/router": ["libs/shared/data-access/router/src/index.ts"],
       "@shared/data-access/store": ["libs/shared/data-access/store/src/index.ts"],
+      "@shared/data-access/types": ["libs/shared/data-access/types/src/index.ts"],
       "@shared/directives/on-destroy": ["libs/shared/directives/on-destroy/src/index.ts"],
       "@shared/interceptors": ["libs/shared/interceptors/src/index.ts"],
       "@shared/ui/logo": ["libs/shared/ui/logo/src/index.ts"],

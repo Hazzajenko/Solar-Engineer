@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common'
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
 import { Router } from '@angular/router'
-import { ProjectsFacade } from '@projects/data-access/store'
+import { ProjectsFacade } from '@projects/data-access/facades'
 import { ProjectModel } from '@shared/data-access/models'
 import { Observable } from 'rxjs'
 

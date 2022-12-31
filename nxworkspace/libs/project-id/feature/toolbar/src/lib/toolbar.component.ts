@@ -6,7 +6,7 @@ import { Component, inject } from '@angular/core'
 import { LogoNameV3Component } from '@shared/ui/logo'
 import { MatMenuModule } from '@angular/material/menu'
 import { MatIconModule } from '@angular/material/icon'
-import { GridFacade } from '@project-id/data-access/store'
+import { GridFacade } from '@project-id/data-access/facades'
 import { GridMode } from '@shared/data-access/models'
 import { Store } from '@ngrx/store'
 

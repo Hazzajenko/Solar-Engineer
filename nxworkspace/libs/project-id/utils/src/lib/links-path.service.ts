@@ -1,10 +1,8 @@
-import { LinkPathModel } from './../../../../shared/data-access/models/src/lib/projects/link-path.model'
-import { PanelModel } from './../../../../shared/data-access/models/src/lib/projects/panel.model'
-import { LinksFacade } from './../../../data-access/store/src/lib/links/links.facade'
-import { PanelsFacade } from './../../../data-access/store/src/lib/panels/panels.facade'
+import { PanelModel, LinkPathModel } from '@shared/data-access/models'
+
+import { PanelsFacade, LinksFacade } from '@project-id/data-access/facades'
 
 import { inject, Injectable } from '@angular/core'
-
 
 import { map } from 'rxjs/operators'
 

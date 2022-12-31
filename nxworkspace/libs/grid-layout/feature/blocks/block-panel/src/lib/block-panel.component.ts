@@ -18,7 +18,7 @@ import { LetModule } from '@ngrx/component'
 import { Store } from '@ngrx/store'
 
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
-import { LinksFacade, PanelsFacade, SelectedFacade } from '@project-id/data-access/store'
+import { LinksFacade, PanelsFacade, SelectedFacade } from '@project-id/data-access/facades'
 
 import { combineLatest, Observable } from 'rxjs'
 
@@ -27,7 +27,6 @@ import { BlockType, PanelModel } from '@shared/data-access/models'
 import { AppState } from '@shared/data-access/store'
 import { PanelLinkComponent } from '@grid-layout/feature/blocks/shared-ui'
 import { PanelDirective } from './directives/panel.directive'
-import { GetPanelAsyncPipe } from './get-panel-async.pipe'
 import { PanelNgModel } from './models/panel-ng.model'
 
 @Component({
@@ -49,7 +48,6 @@ import { PanelNgModel } from './models/panel-ng.model'
     NgSwitchCase,
     PanelLinkComponent,
     PanelDirective,
-    GetPanelAsyncPipe,
   ],
   standalone: true,
 })

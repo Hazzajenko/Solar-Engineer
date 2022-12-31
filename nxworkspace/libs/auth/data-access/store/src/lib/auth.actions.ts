@@ -1,4 +1,4 @@
-import { SignInRequest } from '@auth/data-access/api'
+import { SignInRequest } from '@auth/shared/models'
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
 import { UserModel } from '@shared/data-access/models'
 

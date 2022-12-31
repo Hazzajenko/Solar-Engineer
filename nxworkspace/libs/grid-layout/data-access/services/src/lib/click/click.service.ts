@@ -7,14 +7,14 @@ import {
   PanelsFacade,
   SelectedFacade,
   StringsFacade,
-} from '@project-id/data-access/store'
-import { ProjectsFacade } from '@projects/data-access/store'
+} from '@project-id/data-access/facades'
+import { ProjectsFacade } from '@projects/data-access/facades'
 import { BlockModel, BlockType, GridMode, PanelModel } from '@shared/data-access/models'
 
 import { match } from 'ts-pattern'
-import { LinksRepository } from '../links/links.repository'
+
 import { LinksService } from '../links/links.service'
-import { ClickRepository } from './click.repository'
+
 import { MouseEventRequest } from '@grid-layout/shared/models'
 import { GridEventResult } from '@grid-layout/data-access/actions'
 
@@ -26,9 +26,7 @@ export class ClickService {
   private result = new GridEventFactory()
   private gridFacade = inject(GridFacade)
   private blocksFacade = inject(BlocksFacade)
-  private clickRepository = inject(ClickRepository)
   private projectsFacade = inject(ProjectsFacade)
-  private linksRepository = inject(LinksRepository)
   private stringsFacade = inject(StringsFacade)
   private panelsFacade = inject(PanelsFacade)
   private selectedFacade = inject(SelectedFacade)
@@ -48,10 +46,12 @@ export class ClickService {
 
     if (existingBlock) {
       const existingBlockResult = await this.existingBlockSwitch(click, existingBlock)
-      return this.clickRepository.updateState(existingBlockResult)
+      return existingBlockResult
+      // return this.clickRepository.updateState(existingBlockResult)
     }
     const result = await this.gridModeSwitch(click.location)
-    return this.clickRepository.updateState(result)
+    return result
+    // return this.clickRepository.updateState(result)
   }
 
   private async existingBlockSwitch(

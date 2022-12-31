@@ -3,12 +3,10 @@ import { inject, Injectable } from '@angular/core'
 import { GridEventResult } from '@grid-layout/data-access/actions'
 import { GridEventFactory } from '@grid-layout/data-access/utils'
 import { Update } from '@ngrx/entity'
-import { BlocksFacade } from '@project-id/data-access/store'
+import { BlocksFacade } from '@project-id/data-access/facades'
 import { BlockModel, BlockType, PanelModel } from '@shared/data-access/models'
 import { match } from 'ts-pattern'
 
-
-import { DropRepository } from './drop.repository'
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +14,6 @@ import { DropRepository } from './drop.repository'
 export class DropService {
   private result = new GridEventFactory()
   private blocksFacade = inject(BlocksFacade)
-  private dropRepository = inject(DropRepository)
 
   async drop(drop: CdkDragDrop<BlockModel[]>): Promise<GridEventResult> {
     drop.event.preventDefault()
@@ -24,12 +21,14 @@ export class DropService {
     const existingBlock = await this.blocksFacade.blockByLocation(drop.container.id)
 
     if (existingBlock) {
-      return this.dropRepository.updateState(this.result.error('drop, existingblock'))
+      return this.result.error('drop, existingblock')
+      // return this.dropRepository.updateState(this.result.error('drop, existingblock'))
     }
     const block: BlockModel = drop.item.data
     const location: string = drop.container.id
     const result = await this.blockTypeSwitch(block, location)
-    return this.dropRepository.updateState(result)
+    return result
+    // return this.dropRepository.updateState(result)
   }
 
   private async blockTypeSwitch(block: BlockModel, location: string): Promise<GridEventResult> {

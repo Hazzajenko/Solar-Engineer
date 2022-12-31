@@ -1,5 +1,5 @@
 import { inject } from '@angular/core'
-import { SelectedFacade } from '@project-id/data-access/store'
+import { SelectedFacade } from '@project-id/data-access/facades'
 import { BlockType } from '@shared/data-access/models'
 import { map, Observable } from 'rxjs'
 /*

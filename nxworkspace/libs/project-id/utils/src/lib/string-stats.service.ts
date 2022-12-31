@@ -1,5 +1,5 @@
-import { PanelModel } from './../../../../shared/data-access/models/src/lib/projects/panel.model'
-import { PanelsFacade } from './../../../data-access/store/src/lib/panels/panels.facade'
+import { PanelModel } from '@shared/data-access/models'
+import { PanelsFacade } from '@project-id/data-access/facades'
 import { inject, Injectable } from '@angular/core'
 import { map } from 'rxjs/operators'
 import { StringModel } from '@shared/data-access/models'

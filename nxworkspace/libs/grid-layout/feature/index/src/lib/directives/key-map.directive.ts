@@ -1,5 +1,5 @@
 import { Directive, HostListener, inject } from '@angular/core'
-import { GridFacade, MultiFacade } from '@project-id/data-access/store'
+import { GridFacade, MultiFacade } from '@project-id/data-access/facades'
 import { firstValueFrom } from 'rxjs'
 
 @Directive({

@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http'
 import { inject, Injectable } from '@angular/core'
-import { SignInRequest, SignInResponse } from './models'
+import { SignInRequest, SignInResponse } from '@auth/shared/models'
 
 @Injectable({
   providedIn: 'root',

@@ -1,14 +1,14 @@
-import * as fromAuthStore from '@auth/data-access/store'
+
 import { routerReducer, RouterReducerState } from '@ngrx/router-store'
 import { ActionReducer, ActionReducerMap, MetaReducer } from '@ngrx/store'
 
 export interface AppState {
-  auth: fromAuthStore.AuthState
+  // auth: fromAuthStore.AuthState
   router: RouterReducerState<any>
 }
 
 export const reducers: ActionReducerMap<AppState> = {
-  auth: fromAuthStore.authReducer,
+  // auth: fromAuthStore.authReducer,
   router: routerReducer,
 }
 

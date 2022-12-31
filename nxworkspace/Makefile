@@ -43,3 +43,6 @@ docker-build:
 
 docker-run:
   docker run --name design-container -it -p 8000:80 design
+
+cmon:
+  nx generate @nrwl/angular:library models --style=none --directory=project-id/shared --importPath=@project-id/shared/models --skipModule --tags=project-id:shared --no-interactive

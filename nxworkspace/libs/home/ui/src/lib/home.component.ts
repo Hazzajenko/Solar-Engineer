@@ -1,15 +1,14 @@
-import { LogoNameBackgroundV2Component } from './../../../../shared/ui/logo/src/lib/logo-name-background-v2.component'
-import { LogoNameBackgroundComponent } from './../../../../shared/ui/logo/src/lib/logo-name-background.component'
-import { animate, AnimationEvent, state, style, transition, trigger } from '@angular/animations'
+import { AnimationEvent } from '@angular/animations'
 import { CommonModule } from '@angular/common'
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 import { Router, RouterLink } from '@angular/router'
-import { AuthFacade } from '@auth/data-access/facade'
-import { ProjectsFacade } from '@projects/data-access/store'
+import { AuthFacade } from '@auth/data-access/facades'
+import { ProjectsFacade } from '@projects/data-access/facades'
 import { ProjectsListComponent } from '@projects/feature/projects-list'
 import { UserModel } from '@shared/data-access/models'
+import { LogoNameBackgroundV2Component } from '@shared/ui/logo'
 import { Observable } from 'rxjs'
 import { fadeIn, fadeInV2 } from './animations/animations'
 
@@ -22,7 +21,6 @@ import { fadeIn, fadeInV2 } from './animations/animations'
     MatButtonModule,
     MatProgressSpinnerModule,
     ProjectsListComponent,
-    LogoNameBackgroundComponent,
     LogoNameBackgroundV2Component,
   ],
   templateUrl: './home.component.html',

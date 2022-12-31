@@ -6,7 +6,7 @@ import {
   HttpRequest,
 } from '@angular/common/http'
 import { inject, Injectable, Provider } from '@angular/core'
-import { AuthFacade } from '@auth/data-access/store'
+import { AuthFacade } from '@auth/data-access/facades'
 import { Observable, switchMap, take } from 'rxjs'
 
 @Injectable()

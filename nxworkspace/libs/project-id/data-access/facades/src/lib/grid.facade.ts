@@ -1,0 +1,61 @@
+import { inject, Injectable } from '@angular/core'
+import { Store } from '@ngrx/store'
+import { BlockType } from '@shared/data-access/models'
+import { firstValueFrom } from 'rxjs'
+import {
+  GridSelectors,
+  GridActions,
+  SelectedActions,
+  MultiActions,
+  LinksActions,
+} from '@project-id/data-access/store'
+
+@Injectable({
+  providedIn: 'root',
+})
+export class GridFacade {
+  private readonly store = inject(Store)
+
+  gridState$ = this.store.select(GridSelectors.selectGridState)
+  gridState = firstValueFrom(this.store.select(GridSelectors.selectGridState))
+  gridMode$ = this.store.select(GridSelectors.selectGridMode)
+  // gridMode = firstValueFrom(this.store.select(GridSelectors.selectGridMode))
+  createMode$ = this.store.select(GridSelectors.selectCreateMode)
+  // createMode = firstValueFrom(this.store.select(GridSelectors.selectCreateMode))
+
+  get createMode() {
+    return firstValueFrom(this.createMode$)
+  }
+
+  get gridMode() {
+    return firstValueFrom(this.gridMode$)
+  }
+
+  changeCreateType(createType: BlockType) {
+    this.store.dispatch(GridActions.changeCreateType({ createType }))
+  }
+
+  selectCreateMode() {
+    console.log('this.selectCreateMode')
+    return this.store.dispatch(GridActions.selectGridmodeCreate())
+  }
+
+  selectSelectMode() {
+    this.store.dispatch(GridActions.selectGridmodeSelect())
+  }
+
+  selectLinkMode() {
+    this.store.dispatch(GridActions.selectGridmodeLink())
+  }
+
+  selectDeleteMode() {
+    this.store.dispatch(GridActions.selectGridmodeDelete())
+  }
+
+  clearEntireGridState() {
+    this.store.dispatch(LinksActions.clearLinksState())
+    this.store.dispatch(SelectedActions.clearSelectedState())
+    this.store.dispatch(MultiActions.clearMultiState())
+    this.store.dispatch(GridActions.selectGridmodeSelect())
+  }
+}

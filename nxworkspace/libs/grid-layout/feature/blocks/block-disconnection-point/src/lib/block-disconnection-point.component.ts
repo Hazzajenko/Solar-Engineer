@@ -5,7 +5,7 @@ import { Component, inject, Input, ViewChild } from '@angular/core'
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
 import { MatTooltipModule } from '@angular/material/tooltip'
 import { LetModule } from '@ngrx/component'
-import { LinksService } from '@project-id/data-access/api'
+import { LinksService } from '@grid-layout/data-access/services'
 
 import { Store } from '@ngrx/store'
 import { DisconnectionPointModel } from '@shared/data-access/models'
