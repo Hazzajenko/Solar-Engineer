@@ -8,6 +8,7 @@ export interface StringOptions extends EntityOptions {
 }
 
 export class StringModel extends EntityModel {
+  override type: EntityType = EntityType.STRING
   name: string
   parallel: boolean
   color: string
@@ -30,7 +31,7 @@ export class StringModel extends EntityModel {
     this.name = options.name
     this.color = options.color
     this.parallel = options.parallel
-    this.type = EntityType.STRING
+    // this.type = EntityType.STRING
   }
 
   makeParallel?() {

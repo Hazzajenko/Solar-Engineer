@@ -7,6 +7,7 @@ export interface PanelOptions extends BlockOptions {
 }
 
 export class PanelModel extends BlockModel {
+  override type = BlockType.PANEL
   stringId: string
   rotation: number
   isDisconnectionPoint: boolean
@@ -30,7 +31,7 @@ export class PanelModel extends BlockModel {
     this.id = getGuid().toString()
     this.rotation = options.rotation
     this.projectId = options.projectId
-    this.type = BlockType.PANEL
+    // this.type = BlockType.PANEL
     this.location = options.location
     this.stringId = options.stringId
     this.isDisconnectionPoint = false
