@@ -1,3 +1,4 @@
+import { GridMode } from '@shared/data-access/models'
 import { inject, Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
 import { BlockType } from '@shared/data-access/models'
@@ -35,9 +36,23 @@ export class GridFacade {
     this.store.dispatch(GridActions.changeCreateType({ createType }))
   }
 
+  selectGridMode(gridMode: GridMode) {
+    switch (gridMode) {
+      case GridMode.CREATE:
+        return this.store.dispatch(GridActions.selectGridmodeCreate())
+      case GridMode.LINK:
+        return this.store.dispatch(GridActions.selectGridmodeLink())
+      case GridMode.SELECT:
+        return this.store.dispatch(GridActions.selectGridmodeSelect())
+      case GridMode.DELETE:
+        return this.store.dispatch(GridActions.selectGridmodeDelete())
+      default:
+        return undefined
+    }
+  }
+
   selectCreateMode() {
-    console.log('this.selectCreateMode')
-    return this.store.dispatch(GridActions.selectGridmodeCreate())
+    this.store.dispatch(GridActions.selectGridmodeCreate())
   }
 
   selectSelectMode() {

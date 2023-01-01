@@ -12,8 +12,8 @@ export const PanelsActions = createActionGroup({
     'Add Many Panels': props<{ panels: PanelModel[] }>(),
     'Update Panel': props<{ update: Update<PanelModel> }>(),
     'Update Many Panels': props<{ updates: Update<PanelModel>[] }>(),
-    'Delete Panel': props<{ id: string }>(),
-    'Delete Many Panels': props<{ ids: string[] }>(),
+    'Delete Panel': props<{ panelId: string }>(),
+    'Delete Many Panels': props<{ panelIds: string[] }>(),
     'Clear Panels State': emptyProps(),
   },
 })

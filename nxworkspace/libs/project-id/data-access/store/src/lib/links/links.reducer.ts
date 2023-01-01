@@ -42,6 +42,13 @@ const reducer = createReducer(
     typeToLink: undefined,
     toLinkId: undefined,
   })),
+  on(LinksActions.addLink, (state, { link }) => linksAdapter.addOne(link, state)),
+  on(LinksActions.deleteLink, (state, { linkId }) => linksAdapter.removeOne(linkId, state)),
+  on(LinksActions.clearLinksState, (state) => ({
+    ...state,
+    typeToLink: undefined,
+    toLinkId: undefined,
+  })),
 )
 
 export function linksReducer(state: LinksState | undefined, action: Action) {

@@ -34,7 +34,9 @@ export const selectPanelsByRouteParams = createSelector(
 export const selectPanelById = (props: { id: string }) =>
   createSelector(selectAllPanels, (panels: PanelModel[]) =>
     panels.find((panel) => panel.id === props.id),
+    // panels.find((panel) => panel.id === props.id),
   )
+
 
 export const selectStringIdByPanelId = (props: { panelId: string }) =>
   createSelector(

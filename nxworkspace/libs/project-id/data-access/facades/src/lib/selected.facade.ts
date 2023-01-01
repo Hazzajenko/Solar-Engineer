@@ -21,6 +21,8 @@ export class SelectedFacade {
     return firstValueFrom(this.selectedStringId$)
   }
 
+  
+
   selectPanel(panelId: string) {
     this.store.dispatch(SelectedActions.selectPanel({ panelId }))
   }

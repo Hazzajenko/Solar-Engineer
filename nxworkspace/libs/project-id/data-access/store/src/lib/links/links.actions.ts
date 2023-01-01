@@ -1,8 +1,6 @@
-
 import { Update } from '@ngrx/entity'
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
 import { PanelLinkModel } from '@shared/data-access/models'
-
 
 export const LinksActions = createActionGroup({
   source: 'Links Store',
@@ -14,17 +12,14 @@ export const LinksActions = createActionGroup({
     'Add Many Links': props<{ links: PanelLinkModel[] }>(),
     'Update Link': props<{ update: Update<PanelLinkModel> }>(),
     'Update Many Links': props<{ updates: Update<PanelLinkModel>[] }>(),
-    'Delete Link': props<{ id: string }>(),
-    'Delete Many Links': props<{ ids: string[] }>(),
+    'Delete Link': props<{ linkId: string }>(),
+    'Delete Many Links': props<{ linkIds: string[] }>(),
     'Start Link Panel': props<{ panelId: string }>(),
     'Finish Link Panel': props<{ panelId: string }>(),
     'Clear Links State': emptyProps(),
   },
 })
 
-
-
 export type LinksActionsTypeObject = Pick<typeof LinksActions[keyof typeof LinksActions], 'type'>
 
 export type LinksActionsType = LinksActionsTypeObject['type']
-

@@ -33,6 +33,10 @@ export class PanelsFacade {
     return this.store.select(PanelsSelectors.selectPanelById({ id }))
   }
 
+  newPanelById(id: string) {
+    return this.allPanels$.pipe(map((panels) => panels.find((panel) => panel.id === id)))
+  }
+
   panelById(id: string) {
     return firstValueFrom(this.store.select(PanelsSelectors.selectPanelById({ id })))
   }
@@ -49,6 +53,10 @@ export class PanelsFacade {
     this.store.dispatch(PanelsActions.updatePanel({ update }))
   }
 
+  updateManyPanels(updates: Update<PanelModel>[]) {
+    this.store.dispatch(PanelsActions.updateManyPanels({ updates }))
+  }
+
   updatePanel$(update: Update<PanelModel>) {
     return of(PanelsActions.updatePanel({ update }))
   }
@@ -58,7 +66,7 @@ export class PanelsFacade {
   }
 
   deletePanel(panelId: string) {
-    this.store.dispatch(PanelsActions.deletePanel({ id: panelId }))
+    this.store.dispatch(PanelsActions.deletePanel({ panelId }))
   }
 
   selectStringIdByPanelId$(panelId: string) {

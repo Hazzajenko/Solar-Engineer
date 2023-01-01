@@ -12,7 +12,7 @@ export const StringsActions = createActionGroup({
     'Add Many Strings': props<{ strings: StringModel[] }>(),
     'Update String': props<{ update: Update<StringModel> }>(),
     'Update Many Strings': props<{ updates: Update<StringModel>[] }>(),
-    'Delete String': props<{ id: string }>(),
+    'Delete String': props<{ stringId: string }>(),
     'Delete Many Strings': props<{ ids: string[] }>(),
     'Clear Strings State': emptyProps(),
   },

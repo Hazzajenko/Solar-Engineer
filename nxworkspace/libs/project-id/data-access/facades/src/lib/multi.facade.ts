@@ -40,7 +40,7 @@ export class MultiFacade {
     }
   }
 
-  finishMultiCreatePanels(location: string, type: BlockType, panels: PanelModel[]) {
+  finishMultiCreate(location: string, type: BlockType, panels: PanelModel[]) {
     switch (type) {
       case BlockType.PANEL:
         this.store.dispatch(MultiActions.finishMultiCreatePanel({ location }))

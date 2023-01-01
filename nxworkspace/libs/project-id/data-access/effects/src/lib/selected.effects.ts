@@ -78,7 +78,7 @@ export class SelectedEffects {
       this.actions$.pipe(
         ofType(SelectedActions.selectString),
         switchMap((action) =>
-          this.stringsFacade.stringById(action.stringId).pipe(
+          this.stringsFacade.stringById$(action.stringId).pipe(
             combineLatestWith(this.panelsFacade.panelsByStringId(action.stringId)),
             map(([string, panels]) => {
               if (!string) return

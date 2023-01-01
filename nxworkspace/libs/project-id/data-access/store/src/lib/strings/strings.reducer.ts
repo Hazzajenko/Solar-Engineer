@@ -28,6 +28,12 @@ const reducer = createReducer(
     stringsAdapter.setAll(strings, { ...state, loaded: true }),
   ),
   on(StringsActions.loadStringsFailure, (state, { error }) => ({ ...state, error })),
+  on(StringsActions.addString, (state, { string }) => stringsAdapter.addOne(string, state)),
+
+  on(StringsActions.updateString, (state, { update }) => stringsAdapter.updateOne(update, state)),
+  on(StringsActions.deleteString, (state, { stringId }) =>
+    stringsAdapter.removeOne(stringId, state),
+  ),
 )
 
 export function stringsReducer(state: StringsState | undefined, action: Action) {
