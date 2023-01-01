@@ -1,5 +1,5 @@
 import { ComponentRef, Directive, Input, OnDestroy, ViewContainerRef } from '@angular/core'
-import { BlockPanelComponent } from '@project-id/feature/blocks'
+import { BlockPanelComponent } from '@grid-layout/feature/blocks/block-panel'
 import { BlockModel, BlockType } from '@shared/data-access/models'
 
 @Directive({

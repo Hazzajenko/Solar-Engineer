@@ -1,5 +1,4 @@
 import { PanelModel } from '@shared/data-access/models'
-import { SelectedSource } from '../action-source'
 
 export type CreatePanel = {
   action: 'CREATE_PANEL'
@@ -60,12 +59,6 @@ export type DeletePanel = {
   }
 }
 
-export type SelectSelectMode = {
-  action: 'SELECT_SELECT_MODE'
-  data: {
-    log: string
-  }
-}
 
 export type ClickActionData =
   | CreatePanel
@@ -74,4 +67,3 @@ export type ClickActionData =
   | SelectPanelWhenStringSelected
   | AddPanelToMultiselect
   | DeletePanel
-  | SelectSelectMode

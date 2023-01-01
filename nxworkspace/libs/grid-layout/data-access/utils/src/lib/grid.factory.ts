@@ -1,39 +1,6 @@
-/* interface GridEventFactoryModel {
-  mouseEvents(): MouseEventFactory
-  dropEvents(): DropEventFactory
-  clickEvents(): ClickEventFactory
-  linksEvents(): LinksEventFactory
-}
 
-export class GridEventFactory implements GridEventFactoryModel {
-  public mouseEvents() {
-    return new MouseEventFactory()
-  }
 
-  public dropEvents() {
-    return new DropEventFactory()
-  }
-
-  public clickEvents() {
-    return new ClickEventFactory()
-  }
-
-  public linksEvents() {
-    return new LinksEventFactory()
-  }
-}
- */
-/* type GridEventAction =
-  | LinkActionData
-  | ClickActionData
-  | MouseActionData
-  | DropActionData
-  | SharedActionData
-
-export type GridEventResult = {
-  payload: GridEventAction
-} */
-
+import { Injectable } from '@angular/core'
 import { GridEventAction, GridEventResult } from '@grid-layout/data-access/actions'
 
 export interface BaseEventFactoryModel {
@@ -42,6 +9,9 @@ export interface BaseEventFactoryModel {
   fatal(fatal: string): GridEventResult
 }
 
+@Injectable({
+  providedIn: 'root',
+})
 export class GridEventFactory implements BaseEventFactoryModel {
   action(payload: GridEventAction): GridEventResult {
     return {

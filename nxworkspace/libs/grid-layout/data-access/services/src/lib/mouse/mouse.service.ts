@@ -10,7 +10,7 @@ import { ProjectsFacade } from '@projects/data-access/facades'
 import { BlockType, GridMode, PanelModel } from '@shared/data-access/models'
 import { match } from 'ts-pattern'
 import { MouseEventRequest } from '@grid-layout/shared/models'
-import { GridEventFactory } from '@grid-layout/data-access/utils'
+import { GridEventFactory, MultiFactory } from '@grid-layout/data-access/utils'
 import { GridEventResult } from '@grid-layout/data-access/actions'
 import { getLocationsInBox } from './utils/get-locations-in-box'
 
@@ -19,11 +19,11 @@ import { getLocationsInBox } from './utils/get-locations-in-box'
 })
 export class MouseService {
   private projectsFacade = inject(ProjectsFacade)
-  private result = new GridEventFactory()
+  private eventFactory = new GridEventFactory()
   private blocksFacade = inject(BlocksFacade)
-  private selectedFacade = inject(SelectedFacade)
+  private multiFactory = inject(MultiFactory)
   private gridFacade = inject(GridFacade)
-  private multiFacade = inject(MultiFacade)
+
 
   async mouse(mouse: MouseEventRequest, multiState: MultiStateModel): Promise<GridEventResult> {
     mouse.event.preventDefault()
@@ -32,14 +32,15 @@ export class MouseService {
       (mouse.event.type === 'mousedown' && multiState.locationStart) ||
       (mouse.event.type === 'mouseup' && !multiState.locationStart)
     ) {
-      return this.result.error('already in mouse movement')
+      return this.eventFactory.error('already in mouse movement')
     }
     if (!mouse.event.altKey) {
-      return this.result.error('mouse, !mouse.event.altKey')
+      return this.eventFactory.error('mouse, !mouse.event.altKey')
     }
 
-    const result = await this.gridModeSwitch(multiState, mouse.location)
-    return result
+    return this.gridModeSwitch(multiState, mouse.location)
+    // const result = await this.gridModeSwitch(multiState, mouse.location)
+    // return result
     // return this.mouseRepository.updateState(result)
   }
 
@@ -47,75 +48,35 @@ export class MouseService {
     multiState: MultiStateModel,
     location: string,
   ): Promise<GridEventResult> {
-    const gridState = await this.gridFacade.gridState
-    return match(gridState.gridMode)
-      .with(GridMode.SELECT, async () => this.multiSelect(multiState, location))
-      .with(GridMode.CREATE, async () => this.multiCreate(multiState, location))
-      .otherwise(async () => this.result.error('switch (gridState.gridMode) default'))
-  }
-
-  private async multiSelect(
-    multiState: MultiStateModel,
-    location: string,
-  ): Promise<GridEventResult> {
-    if (!multiState.locationStart) {
-      return this.result.action({ action: 'SELECT_START', data: { location } })
+    const gridMode = await this.gridFacade.gridMode
+    switch (gridMode) {
+      case GridMode.SELECT:
+        return this.multiFactory.select(multiState.locationStart, location)
+      case GridMode.CREATE:
+        return this.create(multiState, location)
+      // return this.linkPanel(click.event.shiftKey, panel, linksState.toLinkId)
+      default:
+        return this.eventFactory.error('switch (gridState.gridMode) default')
     }
-    const locationArray = getLocationsInBox(multiState.locationStart, location)
-    const ids = await this.blocksFacade.selectBlockIdsFromArray(locationArray)
-
-    return this.result.action({ action: 'SELECT_FINISH', data: { location, ids } })
+    /*     return match(gridState.gridMode)
+      .with(GridMode.SELECT, async () => this.multiSelect(multiState, location))
+      .with(GridMode.CREATE, async () => this.multiCreate.multiCreate(multiState, location))
+      .otherwise(async () => this.result.error('switch (gridState.gridMode) default')) */
   }
 
-  private async multiCreate(
-    multiState: MultiStateModel,
-    location: string,
-  ): Promise<GridEventResult> {
+  private async create(multiState: MultiStateModel, location: string): Promise<GridEventResult> {
     const createMode = await this.gridFacade.createMode
 
     if (!multiState.locationStart) {
-      return this.result.action({
-        action: 'CREATE_START_PANEL',
-        data: { location, type: createMode },
-      })
+      return this.multiFactory.createStart(location, createMode)
     }
 
     const locationArray = getLocationsInBox(multiState.locationStart, location)
-    return this.createModeSwitch(createMode, locationArray, location)
-  }
-
-  private async createModeSwitch(
-    createMode: BlockType,
-    locationArray: string[],
-    location: string,
-  ): Promise<GridEventResult> {
-    return await match(createMode)
-      .with(BlockType.PANEL, async () => this.multiCreatePanel(locationArray, location))
-      .otherwise(async () => this.result.error('createModeSwitch default'))
-  }
-
-  private async multiCreatePanel(
-    locationArray: string[],
-    location: string,
-  ): Promise<GridEventResult> {
-    const project = await this.projectsFacade.projectFromRoute
-    if (!project) {
-      return this.result.fatal('project is not defined')
+    switch (createMode) {
+      case BlockType.PANEL:
+        return this.multiFactory.createBlocks(createMode, locationArray, location)
+      default:
+        return this.eventFactory.error('createModeSwitch default')
     }
-    const selectedStringId = await this.selectedFacade.selectedStringId
-    const panels = locationArray.map((location) => {
-      return new PanelModel({
-        projectId: project?.id,
-        location,
-        stringId: selectedStringId ? selectedStringId : 'undefined',
-        rotation: 0,
-        type: BlockType.PANEL,
-      })
-    })
-
-    return this.result.action({
-      action: 'CREATE_FINISH_PANEL',
-      data: { location, type: BlockType.PANEL, panels },
-    })
   }
 }

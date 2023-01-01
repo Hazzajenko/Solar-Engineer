@@ -23,10 +23,10 @@ export class GridRepository {
   private panelsFacade = inject(PanelsFacade)
   private linksFacade = inject(LinksFacade)
 
-  async updateState(result: GridEventResult) {
+  /* async updateState(result: GridEventResult) {
     console.log('updateState', result)
     await match(result)
-      // #region
+      // #regionP
       // Start Click Actions
       .with({ payload: { action: 'SELECT_PANEL' } }, async ({ payload }) =>
         this.selectedFacade.selectPanel(payload.data.panelId),
@@ -103,5 +103,5 @@ export class GridRepository {
       // .exhaustive();
       .otherwise(async () => console.error('unknown object to update state'))
     return result
-  }
+  } */
 }

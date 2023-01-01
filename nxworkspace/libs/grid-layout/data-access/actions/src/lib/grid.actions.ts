@@ -1,14 +1,17 @@
 import { ClickActionData } from './actions/click.actions'
 import { DropActionData } from './actions/drop.actions'
+import { GridModeActionData } from './actions/grid-mode.actions'
 import { LinkActionData } from './actions/links.actions'
-import { MouseActionData } from './actions/mouse.actions'
+import { MultiActionData } from './actions/multi.actions'
 import { SharedActionData } from './actions/shared.actions'
 
 export type GridEventAction =
   | LinkActionData
   | ClickActionData
-  | MouseActionData
+  // | MouseActionData
   | DropActionData
+  | GridModeActionData
+  | MultiActionData
   | SharedActionData
 
 export type GridEventResult = {
@@ -19,4 +22,3 @@ export type Selected<T> = {
   source: 'SELECTED'
   payload: T
 }
-

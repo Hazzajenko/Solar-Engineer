@@ -1,3 +1,4 @@
+import { GridClick } from '@grid-layout/data-access/utils'
 import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop'
 import { CommonModule } from '@angular/common'
 import { Component, inject, Input } from '@angular/core'
@@ -7,7 +8,7 @@ import { ClientXY, ElementOffsets, MouseEventRequest } from '@grid-layout/shared
 import { LetModule } from '@ngrx/component'
 import { MultiFacade } from '@project-id/data-access/facades'
 import { BlockModel } from '@shared/data-access/models'
-import { Observable } from 'rxjs'
+import { firstValueFrom, map, Observable } from 'rxjs'
 import { CanvasDirective } from './directives/canvas.directive'
 import { DynamicComponentDirective } from './directives/dynamic-component.directive'
 import { GridDirective } from './directives/grid.directive'
@@ -57,8 +58,15 @@ export class GridLayoutComponent {
   }
 
   async click(event: MouseEventRequest) {
+    /*     const piped = await firstValueFrom(
+      this.blocks$.pipe(map((blocks) => blocks.find((block) => block.location === event.location))),
+    ) */
+
+    // const res2 = new GridClick(piped, event.event, event.location)
     const res = await this.clickService.click(event)
-    this.gridRepository.updateState(res)
+    // const res = await this.clickService.click(res2)
+
+    // this.gridRepository.updateState(res)
   }
 
   async drop(event: CdkDragDrop<BlockModel[]>) {
@@ -89,6 +97,7 @@ export class GridLayoutComponent {
         clientY: undefined,
       }
     }
+
     this.mouseService.mouse(event, multiState)
   }
 }

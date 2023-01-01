@@ -1,3 +1,4 @@
+import { PanelFactory } from '@grid-layout/data-access/utils';
 import { CdkDragDrop } from '@angular/cdk/drag-drop'
 import { inject, Injectable } from '@angular/core'
 import { GridEventResult } from '@grid-layout/data-access/actions'
@@ -14,6 +15,7 @@ import { match } from 'ts-pattern'
 export class DropService {
   private result = new GridEventFactory()
   private blocksFacade = inject(BlocksFacade)
+  private panelFactory = inject(PanelFactory)
 
   async drop(drop: CdkDragDrop<BlockModel[]>): Promise<GridEventResult> {
     drop.event.preventDefault()
@@ -33,11 +35,12 @@ export class DropService {
 
   private async blockTypeSwitch(block: BlockModel, location: string): Promise<GridEventResult> {
     return match(block.type)
-      .with(BlockType.PANEL, async () => this.updatePanel(block, location))
+      .with(BlockType.PANEL, async () => this.panelFactory.update(block.id, {location}))
+      // .with(BlockType.PANEL, async () => this.updatePanel(block, location))
       .otherwise(async () => this.result.error('blockTypeSwitch, default'))
   }
 
-  private async updatePanel(block: BlockModel, location: string): Promise<GridEventResult> {
+/*   private async updatePanel(block: BlockModel, location: string): Promise<GridEventResult> {
     const update: Update<PanelModel> = {
       id: block.id,
       changes: {
@@ -46,5 +49,5 @@ export class DropService {
     }
 
     return this.result.action({ action: 'UPDATE_PANEL', data: { update } })
-  }
+  } */
 }
