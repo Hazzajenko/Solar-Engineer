@@ -31,29 +31,6 @@ export class LinkFactory {
       return errorChecks
     }
     const { project, panelToLink, selectedStringId } = errorChecks
-    /*     const project = await this.projectsFacade.projectFromRoute
-    if (!project) {
-      return this.eventFactory.fatal('project is undefined')
-    } */
-    /*
-    const panelToLink = await this.panelsFacade.panelById(panelToLinkId)
-    if (!panelToLink) {
-      return this.startLinkPanel(panel.id)
-    } */
-
-    /*     const existingNegLink = await this.linksFacade.isPanelExistingNegativeLink(panel.id)
-    if (existingNegLink) {
-      return this.eventFactory.error('the panel already has a negative link')
-    }
-
-    if (panel.stringId !== panelToLink.stringId) {
-      return this.eventFactory.error('both panels need to be on the same string to link')
-    } */
-
-    /*     const selectedStringId = await this.selectedFacade.selectedStringId
-    if (!selectedStringId) {
-      return this.eventFactory.error('need to select a string to link')
-    } */
 
     const link = new PanelLinkModel({
       projectId: project.id,
@@ -63,8 +40,12 @@ export class LinkFactory {
     })
 
     this.linksFacade.createLink(link)
-    this.selectedFacade.clearSelectedPanelLinks()
-    shiftKey ? this.linksFacade.clearLinkState() : null
+    // this.selectedFacade.clearSelectedPanelLinks()
+    if (!shiftKey) {
+      this.linksFacade.clearLinkState()
+    }
+
+    // shiftKey ? this.linksFacade.clearLinkState() : null
 
     return this.eventFactory.action({
       action: 'ADD_LINK',

@@ -39,9 +39,6 @@ export class MouseService {
     }
 
     return this.gridModeSwitch(multiState, mouse.location)
-    // const result = await this.gridModeSwitch(multiState, mouse.location)
-    // return result
-    // return this.mouseRepository.updateState(result)
   }
 
   private async gridModeSwitch(
@@ -54,14 +51,9 @@ export class MouseService {
         return this.multiFactory.select(multiState.locationStart, location)
       case GridMode.CREATE:
         return this.create(multiState, location)
-      // return this.linkPanel(click.event.shiftKey, panel, linksState.toLinkId)
       default:
         return this.eventFactory.error('switch (gridState.gridMode) default')
     }
-    /*     return match(gridState.gridMode)
-      .with(GridMode.SELECT, async () => this.multiSelect(multiState, location))
-      .with(GridMode.CREATE, async () => this.multiCreate.multiCreate(multiState, location))
-      .otherwise(async () => this.result.error('switch (gridState.gridMode) default')) */
   }
 
   private async create(multiState: MultiStateModel, location: string): Promise<GridEventResult> {

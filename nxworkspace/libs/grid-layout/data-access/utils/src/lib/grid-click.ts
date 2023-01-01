@@ -1,5 +1,4 @@
-import { firstValueFrom, Observable } from 'rxjs';
-import { BlockModel } from '@shared/data-access/models'
+import { BlockModel } from '@shared/data-access/models';
 
 
 export type MouseEventRequest = {

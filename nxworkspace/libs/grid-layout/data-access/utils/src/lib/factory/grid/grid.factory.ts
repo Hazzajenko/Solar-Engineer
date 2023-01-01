@@ -1,10 +1,7 @@
 import { inject, Injectable } from '@angular/core'
 import { GridEventResult } from '@grid-layout/data-access/actions'
-import { Store } from '@ngrx/store'
 import { GridFacade, SelectedFacade } from '@project-id/data-access/facades'
-import { SelectedSelectors } from '@project-id/data-access/store'
 import { ProjectsFacade } from '@projects/data-access/facades'
-import { ProjectsSelectors } from '@projects/data-access/store'
 import { GridMode } from '@shared/data-access/models'
 import { GridEventFactory } from '../../grid.factory'
 
@@ -13,12 +10,10 @@ import { GridEventFactory } from '../../grid.factory'
 })
 export class GridFactory {
   private readonly eventFactory = inject(GridEventFactory)
-  private readonly store = inject(Store)
   private readonly projectsFacade = inject(ProjectsFacade)
   private readonly selectedFacade = inject(SelectedFacade)
   private readonly gridFacade = inject(GridFacade)
-  private readonly project$ = this.store.select(ProjectsSelectors.selectProjectByRouteParams)
-  private readonly selectedStringId$ = this.store.select(SelectedSelectors.selectSelectedStringId)
+
 
   async select(gridMode: GridMode): Promise<GridEventResult> {
     switch (gridMode) {

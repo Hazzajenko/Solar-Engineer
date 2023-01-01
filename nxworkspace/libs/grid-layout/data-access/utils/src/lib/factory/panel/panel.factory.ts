@@ -1,14 +1,13 @@
 import { inject, Injectable } from '@angular/core'
-import { Store } from '@ngrx/store'
-import { PanelsFacade, SelectedFacade } from '@project-id/data-access/facades'
-import { SelectedSelectors } from '@project-id/data-access/store'
-import { ProjectsFacade } from '@projects/data-access/facades'
-import { ProjectsSelectors } from '@projects/data-access/store'
-import { PanelModel } from '@shared/data-access/models'
-import { firstValueFrom } from 'rxjs'
-import { GridEventFactory } from '../../grid.factory'
 import { GridEventResult } from '@grid-layout/data-access/actions'
 import { Update } from '@ngrx/entity'
+import { Store } from '@ngrx/store'
+import { PanelsFacade, SelectedFacade } from '@project-id/data-access/facades'
+import { ProjectsFacade } from '@projects/data-access/facades'
+import { PanelModel } from '@shared/data-access/models'
+import { combineLatest, firstValueFrom, map } from 'rxjs'
+import { GridEventFactory } from '../../grid.factory'
+import { toUpdatePanelArray } from '../utils/update-panel-map'
 
 @Injectable({
   providedIn: 'root',
@@ -19,12 +18,10 @@ export class PanelFactory {
   private readonly projectsFacade = inject(ProjectsFacade)
   private readonly selectedFacade = inject(SelectedFacade)
   private readonly panelsFacade = inject(PanelsFacade)
-  private readonly project$ = this.store.select(ProjectsSelectors.selectProjectByRouteParams)
-  private readonly selectedStringId$ = this.store.select(SelectedSelectors.selectSelectedStringId)
 
   async create(location: string, rotation: number): Promise<GridEventResult> {
-    const project = await firstValueFrom(this.project$)
-    const selectedStringId = await firstValueFrom(this.selectedStringId$)
+    const project = await this.projectsFacade.projectFromRoute
+    const selectedStringId = await this.selectedFacade.selectedStringId
 
     if (!project) {
       return this.eventFactory.error('project undefined')
@@ -70,6 +67,21 @@ export class PanelFactory {
     this.panelsFacade.updatePanel(update)
 
     return this.eventFactory.action({ action: 'UPDATE_PANEL', data: { update } })
+  }
+
+  async rotateSelected(rotation: number) {
+    const selectedPanelIds = await firstValueFrom(
+      combineLatest([this.selectedFacade.selectMultiSelectIds$, this.panelsFacade.allPanels$]).pipe(
+        map(([multiSelectIds, panels]) =>
+          panels.filter((p) => multiSelectIds?.includes(p.id)).map((panels) => panels.id),
+        ),
+      ),
+    )
+    const updates = toUpdatePanelArray(selectedPanelIds, { rotation })
+
+    this.panelsFacade.updateManyPanels(updates)
+
+    // return this.eventFactory.action({ action: 'UPDATE_PANEL', data: { update } })
   }
 
   async delete(panelId: string) {

@@ -5,13 +5,11 @@ import {
   BlocksFacade,
   GridFacade,
   MultiFacade,
-  SelectedFacade,
+  SelectedFacade
 } from '@project-id/data-access/facades'
-import { SelectedSelectors } from '@project-id/data-access/store'
-import { MultiStateModel } from '@project-id/shared/models'
 import { ProjectsFacade } from '@projects/data-access/facades'
-import { ProjectsSelectors } from '@projects/data-access/store'
-import { BlockType, PanelModel } from '@shared/data-access/models'
+
+import { BlockType } from '@shared/data-access/models'
 import { GridEventFactory } from '../../grid.factory'
 import { getLocationsInBox } from './get-locations-in-box'
 import { locationArrayMap } from './location-array-map'
@@ -27,8 +25,6 @@ export class MultiFactory {
   private readonly multiFacade = inject(MultiFacade)
   private readonly blocksFacade = inject(BlocksFacade)
   private readonly gridFacade = inject(GridFacade)
-  private readonly project$ = this.store.select(ProjectsSelectors.selectProjectByRouteParams)
-  private readonly selectedStringId$ = this.store.select(SelectedSelectors.selectSelectedStringId)
 
   async createStart(location: string, type: BlockType) {
     this.multiFacade.startMultiCreate(location, type)
@@ -52,14 +48,6 @@ export class MultiFactory {
     if (!blocks) {
       return this.eventFactory.fatal('createBlocks unknown type')
     }
-    /*     const panels = locationArray.map((location) => {
-      return new PanelModel({
-        projectId: project?.id,
-        location,
-        stringId: selectedStringId ? selectedStringId : 'undefined',
-        rotation: 0,
-      })
-    }) */
 
     this.multiFacade.finishMultiCreate(location, type, blocks)
 
