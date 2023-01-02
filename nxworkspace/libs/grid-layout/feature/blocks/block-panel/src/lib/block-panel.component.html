@@ -1,182 +1,101 @@
-<ng-container *ngIf="panel$ | async as panel">
-  <ng-container *ngIf="panelNg$ | async as panelNg">
+<!--<ng-container *ngIf='panel'>-->
+<ng-container *ngIf='panel$ | async as panel'>
+  <ng-container *ngIf='panelNg$ | async as panelNg'>
     <div
-      class="flex whitespace-pre-wrap content-center items-center justify-center border-blue-500 bg-white w-8 h-8"
+      class='flex whitespace-pre-wrap content-center items-center justify-center border-blue-500 bg-white w-8 h-8'
     >
       <app-panel-link
-        [isNegativeLink]="panelNg.isSelectedNegativeTo"
-        [isPositiveLink]="panelNg.isSelectedPositiveTo"
-        class="drop-zone__svg"
+        [isNegativeLink]='panelNg.isSelectedNegativeTo'
+        [isPositiveLink]='panelNg.isSelectedPositiveTo'
+        class='pointer-events-none z-20 relative left-2'
       ></app-panel-link>
-      <ng-container [ngSwitch]="panel?.rotation">
-        <ng-container *ngSwitchCase="0">
-          <svg viewBox="0 0 100 100" class="pointer-events-none z-10 relative">
+      <ng-container [ngSwitch]='panel?.rotation'>
+        <ng-container *ngSwitchCase='0'>
+          <svg viewBox='0 0 100 100' class='pointer-events-none relative'>
             <path
-              class="stroke-slate-800 fill-none stroke-[5px] z-10"
-              d="
+              class='stroke-slate-800 fill-none stroke-[8px] z-10'
+              d='
               M 30, 0
               V 100
-              "
+              '
             />
             <path
-              class="stroke-slate-800 fill-none stroke-[5px] z-10"
-              d="
+              class='stroke-slate-800 fill-none stroke-[8px] z-10'
+              d='
               M 70, 0
               V 100
-              "
+              '
             />
           </svg>
         </ng-container>
-        <ng-container *ngSwitchCase="1">
-          <svg viewBox="0 0 100 100" class="pointer-events-none z-10 relative">
+        <ng-container *ngSwitchCase='1'>
+          <svg viewBox='0 0 100 100' class='pointer-events-none z-10 relative'>
             <path
-              class="stroke-slate-800 fill-none stroke-5 z-10"
-              d="
+              class='stroke-slate-800 fill-none stroke-5 z-10'
+              d='
               M 0, 30
               H 100
-              "
+              '
             />
             <path
-              class="stroke-slate-800 fill-none stroke-5 z-10"
-              d="
+              class='stroke-slate-800 fill-none stroke-5 z-10'
+              d='
               M 0, 70
               H 100
-              "
+              '
             />
           </svg>
         </ng-container>
       </ng-container>
-      <div
-        #panelDiv
-        appPanelDirective
-        [id]="panel.id"
-        [panelNg]="panelNg"
-        (contextmenu)="onRightClick($event, panel)"
-        [cdkDragData]="panel"
-        [ngStyle]="{
-          height: panel?.rotation === 0 ? '18px' : '23px',
-          width: panel?.rotation === 0 ? '23px' : '18px'
-        }"
-        cdkDrag
-        class="absolute border border-black flex items-center justify-center content-center hover:bg-red-500"
-        matTooltipDisabled="true"
-        matTooltipPosition="right"
-      >
-        <!--       <ng-container *ngIf="(isSelectedString$ | async)!">
-                  [ngClass]="{ 'bg-blue-300': panelNg.isSelectedPanel }"
-                  [class.bg-selected]="(isSelectedPanel$ | async)!"
-        <ng-container *ngIf="(selectedStringPathMap$ | async)?.get(panel.id) as pathNumber">
-          <div class="drop-zone__pathMapText">
-            {{ pathNumber.link + ":" + pathNumber.count }}
-          </div>
-          <!--              {{ test(panel.id) }}
-        </ng-container>
-      </ng-container> -->
-      </div>
-    </div>
+      <ng-container *ngrxLet='(panelLinkPath$ | async) as panelLinkPath'>
+        <div
+          appPanelDirective
+          [id]='panel.id'
+          [panelNg]='panelNg'
+          [panelLinkPath]='panelLinkPath'
+          (contextmenu)='onRightClick($event, panel)'
+          [cdkDragData]='panel'
+          [ngStyle]="{
+            height: panel?.rotation === 0 ? '18px' : '23px',
+            width: panel?.rotation === 0 ? '23px' : '18px'
+          }"
+          cdkDrag
+          class='absolute border border-black flex items-center justify-center content-center hover:bg-red-500'
 
-    <!--  [class.drop-zone__bg-selected]="
-        (isSelectedPanel$ | async)! || (multiSelectIds$ | async)?.includes(panel.id)
-      "-->
-    <!--
-'background-color': (selectedStringPathMap$ | async)?.get(panel.id)?.color,
-border:
-(stringColor$ | async) ? '2px solid ' + (stringColor$ | async)! : '2px solid ' + '#95c2fa'-->
+        >
+          <!--         [matTooltip]='displayTooltip((panelNg.stringSelected === 1), (selectedStringTooltip$ | async)!)'
+                   [matTooltipDisabled]='panelNg.stringSelected !== 1'
+                   matTooltipPosition='right'-->
+          <ng-container *ngIf='panelNg.stringSelected === 1 else stringNotSelected'>
+
+            <div class='relative bottom-2.5' *ngIf='panelLinkPath'>
+              {{ panelLinkPath.link + ":" + panelLinkPath.count }}
+            </div>
+
+          </ng-container>
+          <ng-template #stringNotSelected>
+            <div class='relative  text-xs' *ngIf='panelStringName$ | async as stringName'>
+              {{ stringName }}
+            </div>
+          </ng-template>
+
+        </div>
+      </ng-container>
+    </div>
   </ng-container>
 </ng-container>
 
 <div
-  [matMenuTriggerFor]="rightMenu"
-  [style.left]="menuTopLeftPosition.x"
-  [style.top]="menuTopLeftPosition.y"
-  style="visibility: hidden; position: fixed"
+  [matMenuTriggerFor]='rightMenu'
+  [style.left]='menuTopLeftPosition.x'
+  [style.top]='menuTopLeftPosition.y'
+  style='visibility: hidden; position: fixed'
 ></div>
 
-<mat-menu #rightMenu="matMenu">
-  <ng-container *ngIf="panel$ | async as panel">
-    <ng-container *ngIf="panelNg$ | async as panelNg">
-      <ng-template matMenuContent>
-        <div class="right-click-menu bg-white">
-          <button class="right-click-menu__button" mat-menu-item>Edit Panel</button>
-          <button (click)="rotatePanel(panel)" class="right-click-menu__button" mat-menu-item>
-            Rotate
-          </button>
-          <ng-container *ngIf="panelNg.isSelectedString; else stringNotSelected">
-            <button (click)="editString(panel)" class="right-click-menu__button" mat-menu-item>
-              Edit String
-            </button>
-            <button
-              (click)="deleteSelectedString(panel.stringId)"
-              class="right-click-menu__button"
-              mat-menu-item
-            >
-              Delete String
-            </button>
-          </ng-container>
-          <ng-template #stringNotSelected>
-            <button
-              (click)="addSelectedToExistingString()"
-              *ngIf="panelNg.isSelectedPanel"
-              class="right-click-menu__button"
-              mat-menu-item
-            >
-              Add to existing String
-            </button>
-            <button
-              (click)="stringFactory.select(panel.stringId)"
-              *ngIf="panel.stringId !== 'undefined'"
-              class="right-click-menu__button"
-              mat-menu-item
-            >
-              Select String
-            </button>
-            <ng-container *ngIf="panelNg.isSelectedPanel === 2">
-              <button
-                (click)="createNewStringWithSelected()"
-                class="right-click-menu__button"
-                mat-menu-item
-              >
-                Create new string with selected
-              </button>
-              <button
-                (click)="addSelectedToExistingString()"
-                class="right-click-menu__button"
-                mat-menu-item
-              >
-                Add selected to existing string
-                <!-- Add selected [{{ (multiSelectIds$ | async)?.length }}] to existing string -->
-              </button>
-              <button (click)="rotateSelected(1)" class="right-click-menu__button" mat-menu-item>
-                Rotate selected Portrait
-                <!-- Rotate selected [{{ (multiSelectIds$ | async)?.length }}] Portrait -->
-              </button>
-              <button (click)="rotateSelected(0)" class="right-click-menu__button" mat-menu-item>
-                Rotate selected Landscape
-                <!-- Rotate selected [{{ (multiSelectIds$ | async)?.length }}] Landscape -->
-              </button>
-            </ng-container>
-          </ng-template>
-          <!--         <button
-          (click)="deletePanelLink(panel, positiveLink)"
-          *ngIf="positivePanelLink$ | async as positiveLink"
-          class="right-click-menu__button"
-          mat-menu-item
-        >
-          Delete Positive Link
-        </button>
-        <button
-          (click)="deletePanelLink(panel, negativeLink)"
-          *ngIf="negativePanelLink$ | async as negativeLink"
-          class="right-click-menu__button"
-          mat-menu-item
-        >
-          Delete Negative Link
-        </button> -->
-          <button (click)="deletePanel(panel.id)" class="right-click-menu__button" mat-menu-item>
-            Delete Panel
-          </button>
-        </div>
-      </ng-template>
-    </ng-container>
-  </ng-container>
+<mat-menu #rightMenu='matMenu'>
+  <ng-template matMenuContent>
+    <app-panel-menu
+      class='right-click-menu bg-white'
+      [panel]='(panel$ | async)!' [panelNg]='(panelNg$ | async)!'></app-panel-menu>
+  </ng-template>
 </mat-menu>

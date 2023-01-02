@@ -2,7 +2,7 @@
 import { inject } from '@angular/core'
 import { ChangeDetectionStrategy, Component } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
-import { MatDialogModule } from '@angular/material/dialog'
+import { MatDialogModule, MatDialogRef } from '@angular/material/dialog'
 
 import { ScrollingModule } from '@angular/cdk/scrolling'
 import { AsyncPipe, NgForOf, NgIf, NgStyle } from '@angular/common'
@@ -14,67 +14,26 @@ import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatInputModule } from '@angular/material/input'
 import { StringFactory } from '@grid-layout/data-access/utils'
+import { StringModel } from '@shared/data-access/models'
 
 @Component({
   selector: 'app-new-string-dialog',
   template: `
-    <div class="container">
+    <div class='flex flex-col items-center content-center'>
       <h1 mat-dialog-title>Create String</h1>
     </div>
-    <form ngForm class="example-form">
-      <label for="name">Name: </label>
-      <input id="name" type="text" [formControl]="name" />
-      <!--      <mat-form-field class='example-full-width'>
-        <mat-label>String Name</mat-label>
-        <input matInput [(ngModel)]='stringName'/>
-      </mat-form-field>-->
+    <form ngForm class='example-form'>
+      <label for='name'>Name: </label>
+      <input id='name' type='text' [formControl]='name' />
     </form>
-    <mat-dialog-actions align="end">
-      <button mat-button mat-dialog-close="true">Cancel</button>
-      <button (click)="addSelectedToNew()" [mat-dialog-close]="true" cdkFocusInitial mat-button>
+    <mat-dialog-actions align='end'>
+      <button mat-button mat-dialog-close='true'>Cancel</button>
+      <button (click)='addSelectedToNew()' cdkFocusInitial mat-button>
         Create {{ name.value }}
       </button>
     </mat-dialog-actions>
   `,
-  styles: [
-    `
-      .container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-
-        &__button-menu {
-          display: flex;
-          align-items: flex-end;
-          justify-content: flex-end;
-        }
-
-        &__string-info {
-          padding-left: 15px;
-        }
-      }
-
-      .typo-test {
-        font-family: unquote('Roboto'), serif;
-        font-size: 16px;
-      }
-
-      .viewport {
-        height: 400px;
-        width: 400px;
-
-        &__mat-list-string {
-          background-color: white;
-
-          &:hover {
-            background-color: #7bd5ff;
-            //color: #38c1ff;
-          }
-        }
-      }
-    `,
-  ],
+  styles: [],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatDialogModule,
@@ -96,9 +55,15 @@ import { StringFactory } from '@grid-layout/data-access/utils'
 export class NewStringDialog {
   name = new FormControl('')
   private stringFactory = inject(StringFactory)
+  private dialogRef = inject(MatDialogRef<NewStringDialog>)
 
   async addSelectedToNew() {
     if (!this.name.value) return console.error('!this.name.value')
-    this.stringFactory.addSelectedToNew(this.name.value)
+    const result = await this.stringFactory.addSelectedToNew(this.name.value)
+    if (result instanceof StringModel) {
+      this.dialogRef.close(result)
+      return
+    }
+    this.dialogRef.close(undefined)
   }
 }

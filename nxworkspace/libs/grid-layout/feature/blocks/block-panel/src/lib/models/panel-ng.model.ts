@@ -1,13 +1,24 @@
+import { PanelLinkPath } from '@grid-layout/shared/models'
+import { Observable } from 'rxjs'
+
 export interface PanelNgModel {
-  isSelectedPanel: SelectedPanelType
+  isSelectedPanel: SelectedPanelVal
   isSelectedPositiveTo: boolean
   isSelectedNegativeTo: boolean
-  isSelectedString: boolean
+  stringColor: string | undefined
   isPanelToLink: boolean
+  stringSelected: StringSelectedVal
+  panelLinkPath: PanelLinkPath | undefined
 }
 
-export enum SelectedPanelType {
+export enum SelectedPanelVal {
   NOT_SELECTED,
   SINGLE_SELECTED,
-  MULTI_SELECETED
+  MULTI_SELECTED
+}
+
+export enum StringSelectedVal {
+  NOT_SELECTED,
+  SELECTED,
+  OTHER_SELECTED
 }

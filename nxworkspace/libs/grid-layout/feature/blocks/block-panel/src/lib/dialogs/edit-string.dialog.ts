@@ -24,18 +24,18 @@ import { StringTotalsAsyncPipe } from '../pipes/string-totals-async.pipe'
 @Component({
   selector: 'app-edit-string-dialog',
   template: `
-    <ng-container *ngIf="string$ | async as string">
-      <div class="container">
+    <ng-container *ngIf='string$ | async as string'>
+      <div class='container'>
         <h1 mat-dialog-title>Edit String {{ string.name }}</h1>
       </div>
-      <form ngForm class="example-form">
-        <label for="name">Name: </label>
-        <input id="name" type="text" [placeholder]="string.name" [formControl]="name" />
-        <mat-selection-list [multiple]="false" #colorSelection [formControl]="color">
+      <form ngForm class='example-form'>
+        <label for='name'>Name: </label>
+        <input id='name' type='text' [placeholder]='string.name' [formControl]='name' />
+        <mat-selection-list [multiple]='false' #colorSelection [formControl]='color'>
           <mat-list-option
             [ngStyle]="{ 'background-color': color }"
-            [value]="color"
-            *ngFor="let color of colors"
+            [value]='color'
+            *ngFor='let color of colors'
           >
             {{ color }}
           </mat-list-option>
@@ -45,58 +45,20 @@ import { StringTotalsAsyncPipe } from '../pipes/string-totals-async.pipe'
       <p>
         Name: {{ name.value }} Color selected:
         {{
-          colorSelection.selectedOptions.hasValue()
-            ? colorSelection.selectedOptions.selected[0].value.toString()
-            : 'None'
+        colorSelection.selectedOptions.hasValue()
+          ? colorSelection.selectedOptions.selected[0].value.toString()
+          : 'None'
         }}
       </p>
-      <mat-dialog-actions align="end">
-        <button mat-button mat-dialog-close="true">Cancel</button>
-        <button (click)="updateString(string.id)" [mat-dialog-close]="true" cdkFocusInitial mat-button>
+      <mat-dialog-actions align='end'>
+        <button mat-button mat-dialog-close='true'>Cancel</button>
+        <button (click)='updateString(string.id)' [mat-dialog-close]='true' cdkFocusInitial mat-button>
           Edit {{ name.value }}
         </button>
       </mat-dialog-actions>
     </ng-container>
   `,
-  styles: [
-    `
-      .container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-
-        &__button-menu {
-          display: flex;
-          align-items: flex-end;
-          justify-content: flex-end;
-        }
-
-        &__string-info {
-          padding-left: 15px;
-        }
-      }
-
-      .typo-test {
-        font-family: unquote('Roboto'), serif;
-        font-size: 16px;
-      }
-
-      .viewport {
-        height: 400px;
-        width: 400px;
-
-        &__mat-list-string {
-          background-color: white;
-
-          &:hover {
-            background-color: #7bd5ff;
-            //color: #38c1ff;
-          }
-        }
-      }
-    `,
-  ],
+  styles: [],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatDialogModule,
@@ -133,9 +95,7 @@ export class EditStringDialog {
   form!: FormGroup
   private stringsFacade = inject(StringsFacade)
   private stringFactory = inject(StringFactory)
-  string$ = this.stringsFacade.stringsFromRoute$.pipe(
-    map((strings) => strings.find((string) => string.id === this.stringId)),
-  )
+
 
   constructor(
     private dialogRef: MatDialogRef<EditStringDialog>,
@@ -143,6 +103,10 @@ export class EditStringDialog {
   ) {
     this.stringId = data.stringId
   }
+
+  string$ = this.stringsFacade.allStrings$.pipe(
+    map((strings) => strings.find((string) => string.id === this.stringId)),
+  )
 
   save() {
     this.dialogRef.close(this.form.value)

@@ -1,0 +1,93 @@
+<ng-container *ngIf='panel'>
+  <ng-container *ngIf='panelNg'>
+    <div class='bg-white'>
+      <button class='p-1 text-xs cursor-pointer hover:bg-[#545bff]' style='border-radius: inherit' mat-menu-item>Edit
+        Panel
+      </button>
+      <button (click)='rotatePanel(panel)' class='p-1 text-xs cursor-pointer hover:bg-[#545bff]' mat-menu-item>
+        Rotate
+      </button>
+      <ng-container *ngIf='panelNg.stringSelected === 1; else stringNotSelected'>
+        <button (click)='editString(panel)' class='p-1 text-xs cursor-pointer hover:bg-[#545bff]' mat-menu-item>
+          Edit String
+        </button>
+        <button
+          (click)='deleteSelectedString(panel.stringId)'
+          class='p-1 text-xs cursor-pointer hover:bg-[#545bff]'
+          mat-menu-item
+        >
+          Delete String
+        </button>
+      </ng-container>
+      <ng-template #stringNotSelected>
+        <button
+          (click)='addSelectedToExistingString()'
+          *ngIf='panelNg.isSelectedPanel'
+          class='p-1 text-xs cursor-pointer hover:bg-[#545bff]'
+          mat-menu-item
+        >
+          Add to existing String
+        </button>
+        <button
+          (click)='stringFactory.select(panel.stringId)'
+          *ngIf="panel.stringId !== 'undefined'"
+          class='p-1 text-xs cursor-pointer hover:bg-[#545bff]'
+          mat-menu-item
+        >
+          Select String
+        </button>
+        <ng-container *ngIf='panelNg.isSelectedPanel === 2'>
+          <button
+            (click)='createNewStringWithSelected()'
+            class='p-1 text-xs cursor-pointer hover:bg-[#545bff]'
+            mat-menu-item
+          >
+            Create new string with selected
+          </button>
+          <button
+            (click)='addSelectedToExistingString()'
+            class='p-1 text-xs cursor-pointer hover:bg-[#545bff]'
+            mat-menu-item
+          >
+            Add selected to existing string
+            <!-- Add selected [{{ (multiSelectIds$ | async)?.length }}] to existing string -->
+          </button>
+          <button (click)='rotateSelected(1)' class='p-1 text-xs cursor-pointer hover:bg-[#545bff]' mat-menu-item>
+            Rotate selected Portrait
+            <!-- Rotate selected [{{ (multiSelectIds$ | async)?.length }}] Portrait -->
+          </button>
+          <button (click)='rotateSelected(0)' class='p-1 text-xs cursor-pointer hover:bg-[#545bff]' mat-menu-item>
+            Rotate selected Landscape
+            <!-- Rotate selected [{{ (multiSelectIds$ | async)?.length }}] Landscape -->
+          </button>
+        </ng-container>
+      </ng-template>
+      <!--         <button
+      (click)="deletePanelLink(panel, positiveLink)"
+      *ngIf="positivePanelLink$ | async as positiveLink"
+      class="right-click-menu__button"
+      mat-menu-item
+    >
+      Delete Positive Link
+    </button>
+    <button
+      (click)="deletePanelLink(panel, negativeLink)"
+      *ngIf="negativePanelLink$ | async as negativeLink"
+      class="right-click-menu__button"
+      mat-menu-item
+    >
+      Delete Negative Link
+    </button> -->
+      <button (click)='deletePanel(panel.id)' class='p-1 text-xs cursor-pointer hover:bg-[#545bff]' mat-menu-item>
+        Delete Panel
+      </button>
+    </div>
+
+  </ng-container>
+</ng-container>
+
+<!-- </div> -->
+<!-- </div> -->
+<!--   </ng-container>
+</ng-container>
+ -->

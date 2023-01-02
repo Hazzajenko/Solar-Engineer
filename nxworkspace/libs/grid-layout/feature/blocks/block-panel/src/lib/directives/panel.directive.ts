@@ -1,6 +1,7 @@
 import { Directive, ElementRef, inject, Input } from '@angular/core'
+import { PanelLinkPath } from '@grid-layout/shared/models'
 import { SoftColor, VibrantColor } from '@shared/data-access/models'
-import { PanelNgModel, SelectedPanelType } from '../models/panel-ng.model'
+import { PanelNgModel, SelectedPanelVal, StringSelectedVal } from '../models/panel-ng.model'
 
 @Directive({
   selector: '[appPanelDirective]',
@@ -8,30 +9,58 @@ import { PanelNgModel, SelectedPanelType } from '../models/panel-ng.model'
 })
 export class PanelDirective {
   private elRef = inject(ElementRef)
+
   @Input() set id(id: string) {
     this.elRef.nativeElement.style.backgroundColor = '#95c2fa'
   }
 
+  @Input() set panelLinkPath(panelLinkPath: PanelLinkPath | undefined | null) {
+    if (!panelLinkPath) return
+
+    // this.elRef.nativeElement.style.backgroundColor = panelLinkPath.color
+    /*     const thisPanelPath = stringPathMap.get(this.id)
+        if (thisPanelPath) {
+          this.elRef.nativeElement.style.backgroundColor = thisPanelPath.color
+        } */
+  }
+
+
   @Input() set panelNg(panelNg: PanelNgModel) {
     switch (panelNg.isSelectedPanel) {
-      case SelectedPanelType.NOT_SELECTED: {
+      case SelectedPanelVal.NOT_SELECTED: {
         this.elRef.nativeElement.style.backgroundColor = '#95c2fa'
+        this.elRef.nativeElement.style.boxShadow = ``
         break
       }
 
-      case SelectedPanelType.SINGLE_SELECTED: {
-        this.elRef.nativeElement.style.backgroundColor = '#07ffd4'
+      case SelectedPanelVal.SINGLE_SELECTED: {
+        // this.elRef.nativeElement.style.backgroundColor = '#07ffd4'
+        this.elRef.nativeElement.style.boxShadow = `0 0 0 1px red`
         break
       }
 
-      case SelectedPanelType.MULTI_SELECETED: {
-        this.elRef.nativeElement.style.backgroundColor = '#07ffd4'
+      case SelectedPanelVal.MULTI_SELECTED: {
+        // this.elRef.nativeElement.style.backgroundColor = '#07ffd4'
+        this.elRef.nativeElement.style.boxShadow = `0 0 0 1px red`
         break
       }
     }
 
-    if (panelNg.isSelectedString) {
-      this.elRef.nativeElement.style.backgroundColor = '#4f562a'
+    switch (panelNg.stringSelected) {
+      case StringSelectedVal.SELECTED: {
+
+        break
+      }
+      case StringSelectedVal.OTHER_SELECTED: {
+        this.elRef.nativeElement.style.backgroundColor = '#636363'
+        break
+      }
+    }
+    if (panelNg.stringColor && panelNg.stringSelected !== 2) {
+      this.elRef.nativeElement.style.backgroundColor = panelNg.stringColor
+    }
+    if (panelNg.panelLinkPath) {
+      this.elRef.nativeElement.style.backgroundColor = panelNg.panelLinkPath.color
     }
 
     if (panelNg.isSelectedPositiveTo) {
@@ -43,33 +72,6 @@ export class PanelDirective {
     if (panelNg.isPanelToLink) {
       this.elRef.nativeElement.style.backgroundColor = VibrantColor.VibrantPurple
     }
-    if (!panelNg.isPanelToLink && panelNg.isSelectedString) {
-      this.elRef.nativeElement.style.backgroundColor = '#4f562a'
-    }
 
-    // this.elRef.nativeElement.style.backgroundColor = '#95c2fa'
-    /*     if (isOtherStringSelected) {
-      return '#819CA9'
-    } */
-
-    /*     if (pathMap) {
-      const thisPanelPath = pathMap.get(this.id)
-      if (thisPanelPath) {
-        return thisPanelPath.color
-      }
-    } */
-
-    /*     if (panelNg) {
-      // return '#ff1c24'
-      // return '#00E6DF'
-      // return VibrantColors.VibrantGreen
-      // return `hwb(0 20% 0%)`
-    }
-    if (stringColor.length > 0) {
-      // return `hwb(0 0% 20%)`
-      // return DarkColors.SoftCyan
-      // return DarkColors.Purple
-      return stringColor
-    } */
   }
 }

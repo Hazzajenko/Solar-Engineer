@@ -1,34 +1,29 @@
-import { ChangeDetectionStrategy, Component, inject, Input, ViewChild } from '@angular/core'
-import { PanelFactory, StringFactory } from '@grid-layout/data-access/utils'
-import { combineLatestWith, map } from 'rxjs/operators'
-import { NewStringDialog } from './dialogs/new-string.dialog'
-
 import { DragDropModule } from '@angular/cdk/drag-drop'
-import {
-  AsyncPipe,
-  NgClass,
-  NgIf,
-  NgStyle,
-  NgSwitch,
-  NgSwitchCase,
-  NgTemplateOutlet,
-} from '@angular/common'
-import { MatTooltipModule } from '@angular/material/tooltip'
-
-import { LetModule } from '@ngrx/component'
-
-import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
-import { LinksFacade, PanelsFacade, SelectedFacade } from '@project-id/data-access/facades'
-
-import { combineLatest, Observable } from 'rxjs'
+import { AsyncPipe, NgClass, NgIf, NgStyle, NgSwitch, NgSwitchCase, NgTemplateOutlet } from '@angular/common'
+import { ChangeDetectionStrategy, Component, inject, Input, ViewChild } from '@angular/core'
 
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog'
+
+import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
+import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatTooltipModule } from '@angular/material/tooltip'
+import { LinkFactory, PanelFactory, StringFactory } from '@grid-layout/data-access/utils'
 import { PanelLinkComponent } from '@grid-layout/feature/blocks/shared-ui'
-import { PanelModel } from '@shared/data-access/models'
+import { PanelLinkPath } from '@grid-layout/shared/models'
+
+import { LetModule } from '@ngrx/component'
+import { LinksFacade, PanelsFacade, SelectedFacade, StringsFacade } from '@project-id/data-access/facades'
+import { BlockModel, PanelModel, StringModel } from '@shared/data-access/models'
+import { PanelMenuComponent } from 'libs/grid-layout/feature/blocks/block-panel/src/lib/menu/panel-menu.component'
+
+import { combineLatest, firstValueFrom, Observable, of, switchMap } from 'rxjs'
+
+import { combineLatestWith, map } from 'rxjs/operators'
 import { EditStringDialog } from './dialogs/edit-string.dialog'
 import { ExistingStringsDialog } from './dialogs/existing-strings.dialog'
+import { NewStringDialog } from './dialogs/new-string.dialog'
 import { PanelDirective } from './directives/panel.directive'
-import { PanelNgModel, SelectedPanelType } from './models/panel-ng.model'
+import { PanelNgModel, SelectedPanelVal, StringSelectedVal } from './models/panel-ng.model'
 
 @Component({
   selector: 'app-block-panel',
@@ -49,62 +44,61 @@ import { PanelNgModel, SelectedPanelType } from './models/panel-ng.model'
     NgSwitchCase,
     PanelLinkComponent,
     PanelDirective,
+    PanelMenuComponent,
   ],
   standalone: true,
 })
 export class BlockPanelComponent {
-  private panelsFacade = inject(PanelsFacade)
-  private linksFacade = inject(LinksFacade)
-  private selectedFacade = inject(SelectedFacade)
+  //region Services
   public stringFactory = inject(StringFactory)
   public panelFactory = inject(PanelFactory)
   panel$!: Observable<PanelModel | undefined>
+  color$!: Observable<string | undefined>
+  menuTopLeftPosition = { x: '0', y: '0' }
+  @ViewChild(MatMenuTrigger, { static: true })
+  matMenuTrigger!: MatMenuTrigger
+  private panelsFacade = inject(PanelsFacade)
+  private stringsFacade = inject(StringsFacade)
+  private linksFacade = inject(LinksFacade)
+  private linkFactory = inject(LinkFactory)
+  private selectedFacade = inject(SelectedFacade)
+  private snackBar = inject(MatSnackBar)
+  private dialog = inject(MatDialog)
   private _id!: string
+
+
+  //endregion
   @Input() set id(id: string) {
     this._id = id
     this.panel$ = this.panelsFacade.panelById$(id)
   }
-  menuTopLeftPosition = { x: '0', y: '0' }
-  @ViewChild(MatMenuTrigger, { static: true })
-  matMenuTrigger!: MatMenuTrigger
 
-  constructor(private dialog: MatDialog) {}
 
-  // private dialog = inject(MatDialog)
-
-  private isSelectedPanel$: Observable<SelectedPanelType> = this.selectedFacade.selectedId$.pipe(
-    combineLatestWith(this.selectedFacade.selectMultiSelectIds$),
+  //region Observables
+  private isSelectedPanel$: Observable<SelectedPanelVal> = this.selectedFacade.selectedId$.pipe(
+    combineLatestWith(this.selectedFacade.multiSelectIds$),
     map(([singleSelectId, multiSelectIds]) => {
       if (multiSelectIds?.includes(this._id)) {
-        return SelectedPanelType.MULTI_SELECETED
+        return SelectedPanelVal.MULTI_SELECTED
       }
       if (singleSelectId === this._id) {
-        return SelectedPanelType.SINGLE_SELECTED
+        return SelectedPanelVal.SINGLE_SELECTED
       }
-      return SelectedPanelType.NOT_SELECTED
+      return SelectedPanelVal.NOT_SELECTED
     }),
   )
-
   private isSelectedPositiveTo$: Observable<boolean> =
     this.selectedFacade.selectSelectedPositiveTo$.pipe(
       map((positiveToId) => {
-        if (positiveToId === this._id) {
-          return true
-        }
-        return false
+        return positiveToId === this._id
       }),
     )
-
   private isSelectedNegativeTo$: Observable<boolean> =
     this.selectedFacade.selectSelectedNegativeTo$.pipe(
       map((negativeToId) => {
-        if (negativeToId === this._id) {
-          return true
-        }
-        return false
+        return negativeToId === this._id
       }),
     )
-
   private isSelectedString$: Observable<boolean> = this.selectedFacade.selectedStringId$.pipe(
     combineLatestWith(
       this.panelsFacade.allPanels$.pipe(
@@ -113,47 +107,109 @@ export class BlockPanelComponent {
       ),
     ),
     map(([selectedStringId, stringId]) => {
+      return selectedStringId === stringId
+
+    }),
+  )
+  private stringSelected$: Observable<StringSelectedVal> = this.selectedFacade.selectedStringId$.pipe(
+    combineLatestWith(
+      this.panelsFacade.allPanels$.pipe(
+        map((panels) => panels.find((panel) => panel.id === this._id)),
+        map((panel) => panel?.stringId),
+      ),
+    ),
+    map(([selectedStringId, stringId]) => {
       if (selectedStringId === stringId) {
-        return true
+        return StringSelectedVal.SELECTED
       }
-      return false
+      if (selectedStringId && selectedStringId !== stringId) {
+        return StringSelectedVal.OTHER_SELECTED
+      }
+      return StringSelectedVal.NOT_SELECTED
     }),
   )
 
-  private isToLinkId$: Observable<boolean> = this.linksFacade.toLinkId$.pipe(
-    map((toLinkId) => {
-      if (toLinkId === this._id) {
-        return true
-      }
-      return false
+  selectedStringTooltip$ = this.selectedFacade.selectedStringTooltip$.pipe(
+    combineLatestWith(this.isSelectedString$),
+    map(([stringTooltip, isSelectedString]) => {
+      if (!isSelectedString) return undefined
+      return stringTooltip
     }),
   )
+  panelStringColor$ = this.panelsFacade.allPanels$.pipe(
+    map((panels) => panels.find((panel) => panel.id === this._id)),
+    map((panel) => panel?.stringId),
+    switchMap(stringId => this.stringsFacade.stringById$(stringId)),
+    map((string) => {
+      if (!string) {
+        return undefined
+      }
+      return string.color
+    }),
+  )
+
+  panelStringName$: Observable<string | undefined> = this.panelsFacade.allPanels$.pipe(
+    map((panels) => panels.find((panel) => panel.id === this._id)),
+    map((panel) => panel?.stringId),
+    switchMap(stringId => this.stringsFacade.stringById$(stringId)),
+    map((string) => {
+      if (!string) {
+        return undefined
+      }
+      return string.name
+    }),
+  )
+
+  panelLinkPath$: Observable<PanelLinkPath | undefined> = this.selectedFacade.selectedStringPathMap$.pipe(
+    combineLatestWith(this.isSelectedString$),
+    map(([pathMap, isSelectedString]) => {
+      if (!isSelectedString) return undefined
+      if (!pathMap) return undefined
+      return pathMap.get(this._id)
+    }),
+  )
+  private isToLinkId$: Observable<boolean> = this.linksFacade.toLinkId$.pipe(
+    map((toLinkId) => {
+      return toLinkId === this._id
+    }),
+  )
+
   public panelNg$: Observable<PanelNgModel> = combineLatest([
     this.isSelectedPanel$,
     this.isSelectedPositiveTo$,
     this.isSelectedNegativeTo$,
-    this.isSelectedString$,
+    this.panelStringColor$,
     this.isToLinkId$,
+    this.stringSelected$,
+    this.panelLinkPath$,
   ]).pipe(
     map(
       ([
-        isSelectedPanel,
-        isSelectedPositiveTo,
-        isSelectedNegativeTo,
-        isSelectedString,
-        isPanelToJoin,
-      ]) => {
+         isSelectedPanel,
+         isSelectedPositiveTo,
+         isSelectedNegativeTo,
+         stringColor,
+         isPanelToLink,
+         stringSelected,
+         panelLinkPath,
+       ]) => {
         return {
           isSelectedPanel,
           isSelectedPositiveTo,
           isSelectedNegativeTo,
-          isSelectedString,
-          isPanelToLink: isPanelToJoin,
+          stringColor,
+          isPanelToLink,
+          stringSelected,
+          panelLinkPath,
         } as PanelNgModel
       },
     ),
   )
 
+  //endregion
+
+
+  //region Component Functions
   displayTooltip(isSelectedString: boolean, selectedStringTooltip?: string): string {
     if (isSelectedString) {
       return <string>selectedStringTooltip
@@ -169,53 +225,11 @@ export class BlockPanelComponent {
     this.matMenuTrigger.openMenu()
   }
 
-  selectString(panel: PanelModel) {
-    this.stringFactory.select(panel.stringId)
-  }
+  //endregion
 
-  editString(panel: PanelModel) {
-    const dialogConfig = new MatDialogConfig()
-
-    dialogConfig.disableClose = true
-    dialogConfig.autoFocus = true
-
-    dialogConfig.data = {
-      stringId: panel.stringId,
-    }
-
-    this.dialog.open(EditStringDialog, dialogConfig)
-  }
-
-  deletePanel(panelId: string) {
-    this.panelFactory.delete(panelId)
-  }
-
-  createNewStringWithSelected() {
-    this.dialog.open(NewStringDialog)
-  }
-
-  addSelectedToExistingString() {
-    this.dialog.open(ExistingStringsDialog)
-  }
-
-  deleteSelectedString(stringId: string) {
-    this.stringFactory.delete(stringId)
-  }
-
-  rotatePanel(panel: PanelModel) {
-    const rotation = panel.rotation === 0 ? 1 : 0
-    this.panelFactory.update(panel.id, { rotation })
-  }
-
-  deletePanelLink(panel: PanelModel, linkId: string) {
-    throw new Error()
-  }
-
-  async rotateSelected(rotation: number) {
-    this.panelFactory.rotateSelected(rotation)
-  }
-
-  removeFromString(panel: PanelModel) {
-    this.panelFactory.update(panel.id, { stringId: 'undefined' })
+  private snack(message: string) {
+    this.snackBar.open(message, 'OK', {
+      duration: 5000,
+    })
   }
 }
