@@ -1,7 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core'
 import { RouterModule } from '@angular/router'
-import { AuthFacade } from '@auth/data-access/store'
-import { AppComponentStore } from '@shared/data-access/app-component-store'
+import { AuthFacade } from '@auth/data-access/facades'
 
 @Component({
   standalone: true,
@@ -9,7 +8,7 @@ import { AppComponentStore } from '@shared/data-access/app-component-store'
   selector: 'app-root',
   templateUrl: './app.component.html',
   styles: [],
-  providers: [AppComponentStore, AuthFacade],
+  providers: [AuthFacade],
 })
 export class AppComponent implements OnInit {
   title = 'design'

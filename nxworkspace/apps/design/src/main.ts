@@ -9,10 +9,11 @@ import { provideRouterStore } from '@ngrx/router-store'
 import { provideStore } from '@ngrx/store'
 import { provideStoreDevtools } from '@ngrx/store-devtools'
 import { metaReducers, reducers } from '@shared/data-access/store'
-import { AuthEffects } from '@auth/data-access/store'
+import { AuthEffects } from '@auth/data-access/effects'
 
 import { AppComponent } from './app/app.component'
 import { appRoutes } from '@app/routes'
+import { MatSnackBarModule, MatSnackBarRef } from '@angular/material/snack-bar'
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -23,6 +24,8 @@ bootstrapApplication(AppComponent, {
       BrowserModule,
       BrowserAnimationsModule,
       BrowserAnimationsModule,
+      MatSnackBarModule,
+      MatSnackBarRef,
     ),
     provideStore(reducers, { metaReducers }),
     provideRouterStore(),

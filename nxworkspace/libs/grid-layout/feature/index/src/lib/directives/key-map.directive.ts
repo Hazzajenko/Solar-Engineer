@@ -1,5 +1,20 @@
 import { Directive, HostListener, inject } from '@angular/core'
-import { GridFacade, MultiFacade } from '@project-id/data-access/facades'
+import {
+  GlobalFactory,
+  GridFactory,
+  MultiFactory,
+  SelectedFactory,
+  StringFactory,
+} from '@grid-layout/data-access/utils'
+import {
+  GlobalFacade,
+  GridFacade,
+  MultiFacade,
+  PanelsFacade,
+  SelectedFacade,
+  StringsFacade,
+} from '@project-id/data-access/facades'
+import { GridMode } from '@shared/data-access/models'
 import { firstValueFrom } from 'rxjs'
 
 @Directive({
@@ -10,48 +25,79 @@ export class KeyMapDirective {
   private gridFacade = inject(GridFacade)
 
   private multiFacade = inject(MultiFacade)
+  private selectedFacade = inject(SelectedFacade)
+  private panelsFacade = inject(PanelsFacade)
+  private gridFactory = inject(GridFactory)
+  private selectedFactory = inject(SelectedFactory)
+  private multiFactory = inject(MultiFactory)
+  private stringsFacade = inject(StringsFacade)
+  private stringFactory = inject(StringFactory)
+  private factory = inject(GlobalFactory)
+  private facade = inject(GlobalFacade)
 
   @HostListener('window:keyup', ['$event'])
   async keyEvent(event: KeyboardEvent) {
     console.log(event)
     switch (event.key) {
-      case 'Alt':
-        {
-          const multiState = await firstValueFrom(this.multiFacade.state$)
-          if (multiState.locationStart && event.key === 'Alt') {
-            this.multiFacade.clearMultiState()
-          }
+      case 'Alt': {
+        const multiState = await firstValueFrom(this.multiFacade.state$)
+        if (multiState.locationStart && event.key === 'Alt') {
+          this.multiFacade.clearMultiState()
         }
+      }
         break
-      /*       case 's':
-        const isPanelSelected = await firstValueFrom(this.store.select(selectSelectedPanelId))
-        if (isPanelSelected) {
-          const panel = await firstValueFrom(this.panelsEntity.entities$.pipe(
-            map(panels => panels.find(panel => panel.id === isPanelSelected))
-          ))
-          if (panel) {
-            this.store.dispatch(GridStateActions.changeGridmode({ mode: GridMode.SELECT }))
-            this.store.dispatch(SelectedStateActions.selectString({ stringId: panel.stringId }))
-          }
+      case 's': {
+        const selectedId = await this.selectedFacade.selectedId
+        if (!selectedId) break
+
+        const panel = await this.panelsFacade.panelById(selectedId)
+        if (!panel) break
+
+        await this.gridFactory.select(GridMode.SELECT)
+        await this.selectedFactory.selectString(panel.stringId)
+
+        break
+      }
+      case 'l': {
+        const gridMode = await this.facade.grid.gridMode
+        if (gridMode === GridMode.LINK) {
+          this.facade.grid.selectGridMode(GridMode.SELECT)
+          this.facade.links.clearLinkState()
+          break
         }
-        break */
-      case 'l':
-        this.gridFacade.selectLinkMode()
+        const isStringSelected = await this.facade.selected.selectedStringId
+        if (!isStringSelected) break
+        this.facade.grid.selectGridMode(GridMode.LINK)
+        this.facade.selected.clearSingleSelected()
+
         break
+
+      }
       case 'c':
         this.gridFacade.selectCreateMode()
         break
-      /*       case 'Delete':
-        const multiSelect = await firstValueFrom(this.store.select(selectIfMultiSelect))
-        if (multiSelect) {
-          const multiSelectIds = await firstValueFrom(this.store.select(selectMultiSelectIds))
-          if (multiSelectIds) {
-            this.store.dispatch(
-              BlocksStateActions.deleteManyBlocksForGrid({ blockIds: multiSelectIds }),
-            )
-          }
+      case 'x': {
+        const multiSelectIds = await this.selectedFacade.multiSelectIds
+        if (!multiSelectIds) break
+        const amountOfStrings = await this.stringsFacade.totalStrings()
+        const newStringName = `S${amountOfStrings + 1}`
+        // const newStringName = `STRING_${amountOfStrings + 1}`
+        const result = await this.stringFactory.addSelectedToNew(newStringName)
+        console.log(result)
+        break
+      }
+      case 'Delete': {
+        const singleAndMultiIds = await this.selectedFacade.singleAndMultiIds
+        if (singleAndMultiIds.multiIds && singleAndMultiIds.multiIds.length > 0) {
+          await this.multiFactory.deleteMany(singleAndMultiIds.multiIds)
+          break
         }
-        break */
+        if (singleAndMultiIds.singleId) {
+          await this.panelsFacade.deletePanel(singleAndMultiIds.singleId)
+          break
+        }
+        break
+      }
       case 'Escape':
         this.gridFacade.clearEntireGridState()
         break

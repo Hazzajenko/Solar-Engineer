@@ -1,34 +1,36 @@
-<ng-container *ngIf="blocks$ | async as blocks">
-  <div class="h-fit w-fit">
+<ng-container *ngIf='blocks$ | async as blocks'>
+  <div class='h-fit w-fit'>
     <canvas
       #canvas
       appCanvas
-      [startDragging]="clientXY"
-      [canvasOffsets]="offsets"
-      class="border border-gray-400 pointer-events-none absolute z-10 h-fit w-fit max-w-fit max-h-fit"
-      style="width: 100%; height: 100%"
+      [gridMode]='(gridMode$ | async)!'
+      [startDragging]='(clientXY$ | async)!'
+      [canvasOffsets]='offsets'
+      class='border border-gray-400 pointer-events-none absolute z-10 h-fit w-fit max-w-fit max-h-fit'
+      style='width: 100%; height: 100%'
     >
     </canvas>
     <div
       appGrid
-      (elementOffsets)="offsets = $event"
+      (elementOffsets)='offsets = $event'
       cdkDropListGroup
-      class="flex flex-col items-center"
+      class='flex flex-col items-center'
     >
-      <div *ngFor="let n of numSequence(rows); let row = index" class="flex">
-        <div *ngFor="let n of numSequence(cols); let col = index" class="border border-black">
-          <ng-container *ngrxLet="row | getLocation: col; let location">
+      <div *ngFor='let n of numSequence(rows); let row = index' class='flex'>
+        <div *ngFor='let n of numSequence(cols); let col = index' class='border border-black'>
+          <ng-container *ngrxLet='row | getLocation: col; let location'>
             <div
-              (cdkDropListDropped)="drop($event)"
-              (click)="click({ event: $event, location })"
-              (mousedown)="mouse({ event: $event, location })"
-              (mouseup)="mouse({ event: $event, location })"
-              [id]="location"
+              (cdkDropListDropped)='dropService.drop($event)'
+              (click)='clickService.click({ event: $event, location })'
+              (mousedown)='mouseService.mouse({event: $event, location })'
+              (mouseup)='mouseService.mouse({event: $event, location })'
+              (dblclick)='doubleClickService.doubleCLick({event: $event, location })'
+              [id]='location'
               cdkDropList
-              class="flex justify-center items-center border-gray-400 bg-gray-200 w-8 h-8"
+              class='flex justify-center items-center bg-gray-200 w-8 h-8'
             >
-              <ng-container *ngIf="blocks | getBlock: location as block">
-                <ng-template appDynamic [block]="block"></ng-template>
+              <ng-container *ngIf='blocks | getBlock: location as block'>
+                <ng-template appDynamic [block]='block'></ng-template>
               </ng-container>
             </div>
           </ng-container>
@@ -37,3 +39,4 @@
     </div>
   </div>
 </ng-container>
+

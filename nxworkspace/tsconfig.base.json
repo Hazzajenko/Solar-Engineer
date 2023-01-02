@@ -29,9 +29,6 @@
       "@auth/interceptors": ["libs/auth/interceptors/src/index.ts"],
       "@auth/shared/models": ["libs/auth/shared/models/src/index.ts"],
       "@grid-layout/data-access/actions": ["libs/grid-layout/data-access/actions/src/index.ts"],
-      "@grid-layout/data-access/repositories": [
-        "libs/grid-layout/data-access/repositories/src/index.ts"
-      ],
       "@grid-layout/data-access/services": ["libs/grid-layout/data-access/services/src/index.ts"],
       "@grid-layout/data-access/utils": ["libs/grid-layout/data-access/utils/src/index.ts"],
       "@grid-layout/feature/blocks/block-disconnection-point": [
@@ -47,11 +44,15 @@
         "libs/grid-layout/feature/blocks/shared-ui/src/index.ts"
       ],
       "@grid-layout/feature/index": ["libs/grid-layout/feature/index/src/index.ts"],
+      "@grid-layout/feature/keymap": ["libs/grid-layout/feature/keymap/src/index.ts"],
+      "@grid-layout/feature/string-stats": ["libs/grid-layout/feature/string-stats/src/index.ts"],
       "@grid-layout/shared/models": ["libs/grid-layout/shared/models/src/index.ts"],
+      "@grid-layout/utils/factory": ["libs/grid-layout/utils/factory/src/index.ts"],
       "@home/ui": ["libs/home/ui/src/index.ts"],
       "@project-id/data-access/api": ["libs/project-id/data-access/api/src/index.ts"],
       "@project-id/data-access/effects": ["libs/project-id/data-access/effects/src/index.ts"],
       "@project-id/data-access/facades": ["libs/project-id/data-access/facades/src/index.ts"],
+      "@project-id/data-access/injections": ["libs/project-id/data-access/injections/src/index.ts"],
       "@project-id/data-access/resolvers": ["libs/project-id/data-access/resolvers/src/index.ts"],
       "@project-id/data-access/services": ["libs/project-id/data-access/services/src/index.ts"],
       "@project-id/data-access/store": ["libs/project-id/data-access/store/src/index.ts"],
@@ -66,9 +67,6 @@
       "@projects/data-access/store": ["libs/projects/data-access/store/src/index.ts"],
       "@projects/feature/projects-list": ["libs/projects/feature/projects-list/src/index.ts"],
       "@shared/config": ["libs/shared/config/src/index.ts"],
-      "@shared/data-access/app-component-store": [
-        "libs/shared/data-access/app-component-store/src/index.ts"
-      ],
       "@shared/data-access/models": ["libs/shared/data-access/models/src/index.ts"],
       "@shared/data-access/router": ["libs/shared/data-access/router/src/index.ts"],
       "@shared/data-access/store": ["libs/shared/data-access/store/src/index.ts"],

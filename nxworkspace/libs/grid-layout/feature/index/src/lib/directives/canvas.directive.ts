@@ -1,6 +1,7 @@
-import { Directive, ElementRef, HostListener, inject, Input, OnInit } from '@angular/core'
-import { fromEvent } from 'rxjs'
-import { ElementOffsets, ClientXY } from '@grid-layout/shared/models'
+import { VibrantColor } from '@shared/data-access/models'
+import { Directive, ElementRef, HostListener, inject, Input } from '@angular/core'
+import { ClientXY, ElementOffsets } from '@grid-layout/shared/models'
+import { GridMode } from '@shared/data-access/models'
 
 @Directive({
   selector: '[appCanvas]',
@@ -13,7 +14,29 @@ export class CanvasDirective {
   startY?: number
   offsetX?: number
   offsetY?: number
-  mouseUp$ = fromEvent(document, 'mouseup').subscribe((event) => console.log(event))
+  currentGridMode = GridMode.UNDEFINED
+  fillStyle = '#7585d8'
+
+  @Input() set gridMode(gridMode: GridMode) {
+    if (!gridMode) return
+    this.currentGridMode = gridMode
+    switch (gridMode) {
+      case GridMode.CREATE: {
+        this.fillStyle = VibrantColor.VibrantGreen
+        // this.fillStyle = 'red'
+        break
+      }
+      case GridMode.SELECT: {
+        this.fillStyle = VibrantColor.VibrantPurple
+        // this.fillStyle = 'purple'
+        break
+      }
+      default:
+        this.fillStyle = VibrantColor.VibrantYellow
+        // this.fillStyle = '#7585d8'
+        break
+    }
+  }
 
   @Input() set canvasOffsets(offsets: ElementOffsets) {
     if (!offsets.offsetHeight || !offsets.offsetWidth) return
@@ -65,7 +88,8 @@ export class CanvasDirective {
 
     this.ctx.globalAlpha = 0.4
 
-    this.ctx.fillStyle = '#7585d8'
+    this.ctx.fillStyle = this.fillStyle
+    // this.ctx.fillStyle = '#7585d8'
     this.ctx.fillRect(this.startX, this.startY, width, height)
 
     this.ctx.globalAlpha = 1.0

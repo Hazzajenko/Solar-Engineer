@@ -24,6 +24,7 @@
                   "auth:store",
                   "auth:facades",
                   "auth:api",
+                  "projects:store",
                   "projects:shared",
                   "projects:facades"
                 ]
@@ -89,7 +90,11 @@
                   "grid-layout:shared",
                   "grid-layout:actions",
                   "grid-layout:utils",
+                  "project-id:facades",
+                  "project-id:store",
                   "project-id:shared",
+                  "projects:facades",
+                  "projects:store",
                   "projects:shared"
                 ]
               },
@@ -97,6 +102,7 @@
                 "sourceTag": "grid-layout:feature",
                 "onlyDependOnLibsWithTags": [
                   "shared",
+                  "grid-layout:feature",
                   "grid-layout:shared",
                   "grid-layout:shared-ui",
                   "grid-layout:actions",
@@ -104,8 +110,10 @@
                   "grid-layout:services",
                   "grid-layout:repositories",
                   "project-id:facades",
+                  "project-id:utils",
                   "project-id:shared",
                   "projects:facades",
+                  "projects:utils",
                   "projects:shared"
                 ]
               },

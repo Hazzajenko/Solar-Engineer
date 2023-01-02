@@ -1,4 +1,5 @@
 import { getGuid } from '@shared/utils'
+import { StringModel } from './string.model'
 import { BlockModel, BlockOptions, BlockType } from './block.model'
 
 export interface PanelOptions extends BlockOptions {
@@ -9,6 +10,7 @@ export interface PanelOptions extends BlockOptions {
 export class PanelModel extends BlockModel {
   override type = BlockType.PANEL
   stringId: string
+  // string?: StringModel
   rotation: number
   isDisconnectionPoint: boolean
   name: string
@@ -29,6 +31,7 @@ export class PanelModel extends BlockModel {
   constructor(options: PanelOptions) {
     super(options)
     this.id = getGuid().toString()
+    // this.string = string
     this.rotation = options.rotation
     this.projectId = options.projectId
     // this.type = BlockType.PANEL

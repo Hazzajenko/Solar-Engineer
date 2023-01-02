@@ -1,4 +1,5 @@
-import { importProvidersFrom } from '@angular/core'
+import { BLOCKS_FACADE, COURSES_SERVICE_TOKEN, GET_BLOCK } from '@project-id/data-access/injections'
+import { importProvidersFrom, inject } from '@angular/core'
 import { MatDialogModule } from '@angular/material/dialog'
 import { provideEffects } from '@ngrx/effects'
 import { provideState } from '@ngrx/store'
@@ -30,9 +31,15 @@ import {
 } from '@project-id/data-access/effects'
 import { PROJECTS_FEATURE_KEY, projectsReducer } from '@projects/data-access/store'
 import { ProjectsEffects } from '@projects/data-access/effects'
+import { BlocksFacade } from '@project-id/data-access/facades'
+import { HttpClient } from '@angular/common/http'
+import { MatSnackBarModule, MatSnackBarRef } from '@angular/material/snack-bar'
+/* function coursesServiceProviderFactory(http:HttpClient): BlocksFacade {
+  return new BlocksFacade(http);
+} */
 
 export const projectsProviders = [
-  importProvidersFrom(MatDialogModule),
+  importProvidersFrom(MatDialogModule, MatSnackBarModule, MatSnackBarRef),
   provideState(PROJECTS_FEATURE_KEY, projectsReducer),
   provideState(PANELS_FEATURE_KEY, panelsReducer),
   provideState(STRINGS_FEATURE_KEY, stringsReducer),

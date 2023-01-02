@@ -11,12 +11,18 @@ export class ProjectsFacade {
   allProjects$ = this.store.select(ProjectsSelectors.selectAllProjects)
   selectedProjects$ = this.store.select(ProjectsSelectors.selectEntity)
   projectFromRoute$ = this.store.select(ProjectsSelectors.selectProjectByRouteParams)
+  currentProjectId$ = this.store.select(ProjectsSelectors.selectProjectIdByRouteParams)
+  projectFromRouteId$ = this.store.select(ProjectsSelectors.selectProjectIdByRouteParams)
   private _projectFromRoute$ = this.store.select(ProjectsSelectors.selectProjectByRouteParams)
   // projectFromRoute = firstValueFrom(this.store.select(ProjectsSelectors.selectProjectByRouteParams))
   localProject$ = this.store.select(ProjectsSelectors.selectLocalProject)
 
   init() {
     this.store.dispatch(ProjectsActions.initProjects())
+  }
+
+  get currentProjectId() {
+    return firstValueFrom(this.currentProjectId$)
   }
 
   get projectFromRoute() {

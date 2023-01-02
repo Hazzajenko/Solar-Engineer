@@ -65,6 +65,19 @@ export const selectProjectByRouteParams = createSelector(
   },
 )
 
+export const selectProjectIdByRouteParams = createSelector(
+  selectProjectsState,
+  selectProjectsEntities,
+  selectRouteParams,
+  (state, projects, { projectId }) => {
+    console.log('selectProjectByRouteParams', projectId)
+    if (!projectId) {
+      return state.localProject?.id
+    }
+    return projects[projectId]?.id
+  },
+)
+
 export const selectLocalProjectId = createSelector(
   selectProjectsState,
   (state: ProjectsState) => state.localProjectId,

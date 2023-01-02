@@ -35,14 +35,20 @@ ngrx:
 	nx generate @nrwl/angular:ngrx --name=blocks --directory=libs/project-id/data-access/store/src/lib/blocks --barrels --facade --skipImport
 
 graph:
-  nx graph
+	nx graph
 
 docker-build:
-  docker build -f ./apps/design/Dockerfile . -t design
+	docker build -f ./apps/design/Dockerfile . -t design
 
 
 docker-run:
-  docker run --name design-container -it -p 8000:80 design
+	docker run --name design-container -it -p 8000:80 design
 
 cmon:
-  nx generate @nrwl/angular:library models --style=none --directory=project-id/shared --importPath=@project-id/shared/models --skipModule --tags=project-id:shared --no-interactive
+	nx generate @nrwl/angular:library models --style=none --directory=project-id/shared --importPath=@project-id/shared/models --skipModule --tags=project-id:shared --no-interactive
+
+newww:
+	nx generate @nrwl/angular:library keymap --style=none --directory=grid-layout/feature --importPath=@grid-layout/feature/keymap --skipModule --tags=grid-layout:feature --no-interactive
+
+cache:
+	nx clear-cache
