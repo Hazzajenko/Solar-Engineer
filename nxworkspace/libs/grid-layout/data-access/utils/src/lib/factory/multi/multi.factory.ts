@@ -4,8 +4,8 @@ import { Store } from '@ngrx/store'
 import {
   BlocksFacade,
   GridFacade,
-  MultiFacade,
-  SelectedFacade
+  MultiFacade, PanelsFacade,
+  SelectedFacade,
 } from '@project-id/data-access/facades'
 import { ProjectsFacade } from '@projects/data-access/facades'
 
@@ -25,6 +25,7 @@ export class MultiFactory {
   private readonly multiFacade = inject(MultiFacade)
   private readonly blocksFacade = inject(BlocksFacade)
   private readonly gridFacade = inject(GridFacade)
+  private readonly panelsFacade = inject(PanelsFacade)
 
   async createStart(location: string, type: BlockType) {
     this.multiFacade.startMultiCreate(location, type)
@@ -67,5 +68,9 @@ export class MultiFactory {
 
     this.multiFacade.finishMultiSelect(location, ids)
     return this.eventFactory.action({ action: 'SELECT_FINISH', data: { location, ids } })
+  }
+
+  async deleteMany(ids: string[]) {
+    this.panelsFacade.deleteManyPanels(ids)
   }
 }

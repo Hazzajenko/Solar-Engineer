@@ -1,10 +1,7 @@
 import { inject, Injectable } from '@angular/core'
 import { GridEventResult } from '@grid-layout/data-access/actions'
-import { Store } from '@ngrx/store'
 import { LinksFacade, PanelsFacade, SelectedFacade } from '@project-id/data-access/facades'
-import { SelectedSelectors } from '@project-id/data-access/store'
 import { ProjectsFacade } from '@projects/data-access/facades'
-import { ProjectsSelectors } from '@projects/data-access/store'
 import { PanelLinkModel, PanelModel, ProjectModel } from '@shared/data-access/models'
 import { GridEventFactory } from '../../grid.factory'
 
@@ -13,13 +10,10 @@ import { GridEventFactory } from '../../grid.factory'
 })
 export class LinkFactory {
   private readonly eventFactory = inject(GridEventFactory)
-  private readonly store = inject(Store)
   private readonly projectsFacade = inject(ProjectsFacade)
   private readonly selectedFacade = inject(SelectedFacade)
   private readonly linksFacade = inject(LinksFacade)
   private readonly panelsFacade = inject(PanelsFacade)
-  private readonly project$ = this.store.select(ProjectsSelectors.selectProjectByRouteParams)
-  private readonly selectedStringId$ = this.store.select(SelectedSelectors.selectSelectedStringId)
 
   async create(
     panel: PanelModel,
@@ -40,12 +34,11 @@ export class LinkFactory {
     })
 
     this.linksFacade.createLink(link)
-    // this.selectedFacade.clearSelectedPanelLinks()
-    if (!shiftKey) {
+    if (shiftKey) {
+      this.linksFacade.startLinkPanel(panel.id)
+    } else {
       this.linksFacade.clearLinkState()
     }
-
-    // shiftKey ? this.linksFacade.clearLinkState() : null
 
     return this.eventFactory.action({
       action: 'ADD_LINK',
@@ -62,16 +55,29 @@ export class LinkFactory {
     return this.eventFactory.action({ action: 'START_LINK_PANEL', data: { panelId } })
   }
 
+  async deleteLink(panelId: string, link: 'POSITIVE' | 'NEGATIVE') {
+    if (link === 'POSITIVE') {
+      const positiveLink = await this.linksFacade.isPanelExistingPositiveLink(panelId)
+      if (!positiveLink) return
+      this.linksFacade.deleteLink(positiveLink.id)
+    }
+    if (link === 'NEGATIVE') {
+      const negativeLink = await this.linksFacade.isPanelExistingNegativeLink(panelId)
+      if (!negativeLink) return
+      this.linksFacade.deleteLink(negativeLink.id)
+    }
+  }
+
   private async errorChecks(
     panel: PanelModel,
     panelToLinkId: string | undefined,
   ): Promise<
     | GridEventResult
     | {
-        project: ProjectModel
-        panelToLink: PanelModel
-        selectedStringId: string
-      }
+    project: ProjectModel
+    panelToLink: PanelModel
+    selectedStringId: string
+  }
   > {
     const project = await this.projectsFacade.projectFromRoute
     if (!project) {

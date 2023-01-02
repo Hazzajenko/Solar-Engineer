@@ -1,3 +1,10 @@
+export type Undefined = {
+  action: 'UNDEFINED'
+  data: {
+    log: string
+  }
+}
+
 export type Error = {
   action: 'ERROR'
   data: {
@@ -12,4 +19,4 @@ export type Fatal = {
   }
 }
 
-export type SharedActionData = Error | Fatal
+export type SharedActionData = Undefined | Error | Fatal

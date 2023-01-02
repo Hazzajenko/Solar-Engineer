@@ -71,7 +71,7 @@ export class PanelFactory {
 
   async rotateSelected(rotation: number) {
     const selectedPanelIds = await firstValueFrom(
-      combineLatest([this.selectedFacade.selectMultiSelectIds$, this.panelsFacade.allPanels$]).pipe(
+      combineLatest([this.selectedFacade.multiSelectIds$, this.panelsFacade.allPanels$]).pipe(
         map(([multiSelectIds, panels]) =>
           panels.filter((p) => multiSelectIds?.includes(p.id)).map((panels) => panels.id),
         ),

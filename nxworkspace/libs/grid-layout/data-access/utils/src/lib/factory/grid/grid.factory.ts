@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core'
 import { GridEventResult } from '@grid-layout/data-access/actions'
-import { GridFacade, SelectedFacade } from '@project-id/data-access/facades'
+import { ClientXY } from '@grid-layout/shared/models'
+import { GridFacade, LinksFacade, SelectedFacade } from '@project-id/data-access/facades'
 import { ProjectsFacade } from '@projects/data-access/facades'
 import { GridMode } from '@shared/data-access/models'
 import { GridEventFactory } from '../../grid.factory'
@@ -9,11 +10,11 @@ import { GridEventFactory } from '../../grid.factory'
   providedIn: 'root',
 })
 export class GridFactory {
-  private readonly eventFactory = inject(GridEventFactory)
-  private readonly projectsFacade = inject(ProjectsFacade)
-  private readonly selectedFacade = inject(SelectedFacade)
-  private readonly gridFacade = inject(GridFacade)
-
+  private eventFactory = inject(GridEventFactory)
+  private projectsFacade = inject(ProjectsFacade)
+  private selectedFacade = inject(SelectedFacade)
+  private linksFacade = inject(LinksFacade)
+  private gridFacade = inject(GridFacade)
 
   async select(gridMode: GridMode): Promise<GridEventResult> {
     switch (gridMode) {
@@ -32,6 +33,8 @@ export class GridFactory {
         })
       }
       case GridMode.SELECT: {
+
+        this.linksFacade.clearLinkState()
         this.gridFacade.selectGridMode(GridMode.SELECT)
         return this.eventFactory.action({
           action: 'SELECT_SELECT_MODE',
@@ -48,6 +51,14 @@ export class GridFactory {
       default:
         return this.eventFactory.error('select gridModeSwitch, default')
     }
+  }
+
+  async updateXY(clientXY: ClientXY): Promise<GridEventResult> {
+    this.gridFacade.updateClientXY(clientXY)
+    return this.eventFactory.action({
+      action: 'SELECT_DELETE_MODE',
+      data: { log: 'GridFactory, gridModeDelete' },
+    })
   }
 
   async clearState(log: string) {

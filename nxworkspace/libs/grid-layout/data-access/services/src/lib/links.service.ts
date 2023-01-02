@@ -1,26 +1,19 @@
 import { inject, Injectable } from '@angular/core'
-import { GridEventFactory, GridFactory, LinkFactory } from '@grid-layout/data-access/utils'
+import { GridEventFactory, GridFactory, LinkFactory, MouseEventRequest } from '@grid-layout/data-access/utils'
 import {
-  BlocksFacade,
-  GridFacade,
-  LinksFacade,
-  MultiFacade, SelectedFacade
+  LinksFacade
 } from '@project-id/data-access/facades'
 import { BlockType, PanelModel } from '@shared/data-access/models'
 
 import { GridEventResult } from '@grid-layout/data-access/actions'
-import { MouseEventRequest } from '@grid-layout/shared/models'
+
 import { LinksState } from '@project-id/shared/models'
 
 @Injectable({
   providedIn: 'root',
 })
 export class LinksService {
-  private multiFacade = inject(MultiFacade)
   private result = new GridEventFactory()
-  private gridFacade = inject(GridFacade)
-  private blocksFacade = inject(BlocksFacade)
-  private selectedFacade = inject(SelectedFacade)
   private linkFactory = inject(LinkFactory)
   private gridFactory = inject(GridFactory)
   private linksFacade = inject(LinksFacade)

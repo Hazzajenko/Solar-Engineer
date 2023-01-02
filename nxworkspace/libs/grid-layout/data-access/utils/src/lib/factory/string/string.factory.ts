@@ -10,8 +10,9 @@ import {
 } from '@project-id/data-access/facades'
 import { ProjectsFacade } from '@projects/data-access/facades'
 import { BlockType, GridMode, PanelModel, StringModel } from '@shared/data-access/models'
-import { combineLatest, combineLatestWith, firstValueFrom, map, mapTo } from 'rxjs'
-import { P } from 'ts-pattern'
+import { getRandomColor } from 'libs/grid-layout/data-access/utils/src/lib/get-random-color'
+import { SelectedFactory } from '../selected/selected.factory'
+import { combineLatest, combineLatestWith, firstValueFrom, map } from 'rxjs'
 import { GridEventFactory } from '../../grid.factory'
 import { toUpdatePanelArray } from './update-panel-map'
 
@@ -37,7 +38,7 @@ export class StringFactory {
     const string = new StringModel({
       projectId: project.id,
       name: stringName,
-      color: 'blue',
+      color: getRandomColor(),
       parallel: false,
     })
     this.stringsFacade.createString(string)
@@ -46,12 +47,15 @@ export class StringFactory {
 
   async select(stringId: string) {
     this.gridFacade.selectGridMode(GridMode.SELECT)
-    this.selectedFacade.selectString(stringId)
+    const string = await this.stringsFacade.stringById(stringId)
+    if (!string) return
+    const panels = await this.panelsFacade.panelsByStringId(stringId)
+    this.selectedFacade.selectString(string, panels)
   }
 
   async addSelectedToNew(stringName: string) {
     const selectedPanelIds = await firstValueFrom(
-      this.selectedFacade.selectMultiSelectIds$
+      this.selectedFacade.multiSelectIds$
         .pipe(combineLatestWith(this.panelsFacade.allPanels$))
         .pipe(
           map(([multiSelectIds, panels]) => {
@@ -68,27 +72,20 @@ export class StringFactory {
     if (!(string instanceof StringModel)) {
       return
     }
-
-    const selectedPanelUpdates: Update<PanelModel>[] = selectedPanelIds.map((panelId) => {
-      const partial: Update<PanelModel> = {
-        id: panelId,
-        changes: {
-          stringId: string.id,
-        },
-      }
-      return partial
-    })
-    console.log(selectedPanelUpdates)
+    const selectedPanelUpdates = toUpdatePanelArray(selectedPanelIds, string.id)
 
     this.panelsFacade.updateManyPanels(selectedPanelUpdates)
-    return
+    this.selectedFacade.clearSelected()
+
+    // await this.select(string.id)
+    return string
   }
 
   async addSelectedToExisting(stringId: string) {
     const selectedPanelIds = await firstValueFrom(
       combineLatest([
         this.selectedFacade.selectedIdWithType$,
-        this.selectedFacade.selectMultiSelectIds$,
+        this.selectedFacade.multiSelectIds$,
         this.panelsFacade.allPanels$,
       ]).pipe(
         map(([selectedIdWithType, multiSelectIds, panels]) => {
@@ -124,5 +121,6 @@ export class StringFactory {
 
   async delete(stringId: string) {
     this.stringsFacade.delete(stringId)
+    return stringId
   }
 }
