@@ -1,3 +1,4 @@
+import { MatSnackBarModule, MatSnackBarRef } from '@angular/material/snack-bar'
 import { CommonModule } from '@angular/common'
 import { Component, inject } from '@angular/core'
 import { BlocksFacade } from '@project-id/data-access/facades'
@@ -11,18 +12,15 @@ import { Observable } from 'rxjs'
 @Component({
   selector: 'app-local-project',
   standalone: true,
-  imports: [CommonModule, GridLayoutComponent, ToolbarComponent],
+  imports: [CommonModule, GridLayoutComponent, ToolbarComponent, MatSnackBarModule],
+  providers: [MatSnackBarModule],
+  viewProviders: [MatSnackBarModule],
   templateUrl: './local-project.component.html',
   styles: [],
 })
 export class LocalProjectComponent {
-  private store = inject(ProjectsFacade)
-
-  project$: Observable<ProjectModel | undefined> = this.store.projectFromRoute$
+  project$: Observable<ProjectModel | undefined> = inject(ProjectsFacade).projectFromRoute$
   blocks$: Observable<BlockModel[]> = inject(BlocksFacade).blocksFromRoute$
   rows = 20
   cols = 40
-  constructor() {
-    this.store.projectFromRoute$.subscribe((res) => console.log(res))
-  }
 }

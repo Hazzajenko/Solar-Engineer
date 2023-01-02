@@ -10,6 +10,7 @@ import {
   MultiActions,
   LinksActions,
 } from '@project-id/data-access/store'
+import { ClientXY } from '@grid-layout/shared/models'
 
 @Injectable({
   providedIn: 'root',
@@ -20,6 +21,7 @@ export class GridFacade {
   gridState$ = this.store.select(GridSelectors.selectGridState)
   gridState = firstValueFrom(this.store.select(GridSelectors.selectGridState))
   gridMode$ = this.store.select(GridSelectors.selectGridMode)
+  clientXY$ = this.store.select(GridSelectors.selectClientXY)
   // gridMode = firstValueFrom(this.store.select(GridSelectors.selectGridMode))
   createMode$ = this.store.select(GridSelectors.selectCreateMode)
   // createMode = firstValueFrom(this.store.select(GridSelectors.selectCreateMode))
@@ -65,6 +67,10 @@ export class GridFacade {
 
   selectDeleteMode() {
     this.store.dispatch(GridActions.selectGridmodeDelete())
+  }
+
+  updateClientXY(clientXY: ClientXY) {
+    this.store.dispatch(GridActions.setClientxy({ clientXY }))
   }
 
   clearEntireGridState() {

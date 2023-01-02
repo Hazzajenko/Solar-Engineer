@@ -1,3 +1,4 @@
+import { SelectedPanelVal } from 'libs/grid-layout/feature/blocks/block-panel/src/lib/models/panel-ng.model'
 import { combineLatestWith, map, share } from 'rxjs/operators'
 import { of, Observable, shareReplay, firstValueFrom } from 'rxjs'
 import { Update } from '@ngrx/entity'
@@ -33,16 +34,26 @@ export class PanelsFacade {
     return this.store.select(PanelsSelectors.selectPanelById({ id }))
   }
 
+  panelById2$(id: string | undefined) {
+    if (!id) return of(undefined)
+    return this.store.select(PanelsSelectors.selectPanelById({ id }))
+  }
+
   newPanelById(id: string) {
     return this.allPanels$.pipe(map((panels) => panels.find((panel) => panel.id === id)))
   }
+
 
   panelById(id: string) {
     return firstValueFrom(this.store.select(PanelsSelectors.selectPanelById({ id })))
   }
 
-  panelsByStringId(stringId: string) {
+  panelsByStringId$(stringId: string) {
     return this.store.select(PanelsSelectors.selectPanelsByStringId({ stringId }))
+  }
+
+  panelsByStringId(stringId: string) {
+    return firstValueFrom(this.store.select(PanelsSelectors.selectPanelsByStringId({ stringId })))
   }
 
   createPanel(panel: PanelModel) {
@@ -67,6 +78,10 @@ export class PanelsFacade {
 
   deletePanel(panelId: string) {
     this.store.dispatch(PanelsActions.deletePanel({ panelId }))
+  }
+
+  deleteManyPanels(panelIds: string[]) {
+    this.store.dispatch(PanelsActions.deleteManyPanels({ panelIds }))
   }
 
   selectStringIdByPanelId$(panelId: string) {

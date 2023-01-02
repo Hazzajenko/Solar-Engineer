@@ -1,6 +1,7 @@
 import { PanelModel, PanelLinkModel } from '@shared/data-access/models'
 import { createFeatureSelector, createSelector } from '@ngrx/store'
 import { selectRouteParams } from '@shared/data-access/router'
+import { selectAllPanels } from 'libs/project-id/data-access/store/src/lib/panels/panels.selectors'
 import { LINKS_FEATURE_KEY, linksAdapter, LinksState } from './links.reducer'
 
 export const selectLinksState = createFeatureSelector<LinksState>(LINKS_FEATURE_KEY)
@@ -44,6 +45,12 @@ export const selectToLinkId = createSelector(
   selectLinksState,
   (state: LinksState) => state.toLinkId,
 )
+
+export const selectLinkById = (props: { linkId: string }) =>
+  createSelector(selectAllLinks, (links: PanelLinkModel[]) =>
+      links.find((link) => link.id === props.linkId),
+    // panels.find((panel) => panel.id === props.id),
+  )
 
 export const isPanelExistingNegativeLink = (props: { panelId: string }) =>
   createSelector(selectAllLinks, (links: PanelLinkModel[]) =>

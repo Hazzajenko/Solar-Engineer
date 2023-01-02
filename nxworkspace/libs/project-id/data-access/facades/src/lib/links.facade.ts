@@ -1,7 +1,8 @@
+import { getSelectedLinks } from '@project-id/utils'
 import { PanelLinkModel, PanelModel } from '@shared/data-access/models'
 import { inject, Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
-import {LinksSelectors, LinksActions} from '@project-id/data-access/store'
+import { LinksSelectors, LinksActions } from '@project-id/data-access/store'
 import { firstValueFrom } from 'rxjs'
 
 @Injectable({
@@ -21,6 +22,11 @@ export class LinksFacade {
     this.store.dispatch(LinksActions.initLinks({ projectId }))
   }
 
+  get allLinks() {
+    return firstValueFrom(this.allLinks$)
+  }
+
+  // getSelectedLinks(links, action.panelId)
   get state() {
     return firstValueFrom(this.state$)
   }
@@ -31,6 +37,14 @@ export class LinksFacade {
 
   get toLinkIdWithType() {
     return firstValueFrom(this.toLinkIdWithType$)
+  }
+
+  linkById(linkId: string) {
+    return firstValueFrom(this.store.select(LinksSelectors.selectLinkById({ linkId })))
+  }
+
+  linkById$(linkId: string) {
+    return this.store.select(LinksSelectors.selectLinkById({ linkId }))
   }
 
   linksByPanels(panels: PanelModel[]) {
@@ -71,6 +85,10 @@ export class LinksFacade {
   createLinkV2(link: PanelLinkModel) {
     this.store.dispatch(LinksActions.addLink({ link }))
     return LinksActions.addLink({ link }).type
+  }
+
+  deleteLink(linkId: string) {
+    this.store.dispatch(LinksActions.deleteLink({ linkId }))
   }
 
   clearLinkState() {

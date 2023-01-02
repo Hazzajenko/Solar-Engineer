@@ -1,3 +1,4 @@
+import { StringPathMap } from '@grid-layout/shared/models'
 import { Action, createReducer, on } from '@ngrx/store'
 import { SelectedActions } from './selected.actions'
 import { BlockType, TypeModel } from '@shared/data-access/models'
@@ -16,7 +17,7 @@ export interface SelectedState {
   selectedPanelId?: string
   selectedStringId?: string
   selectedStringTooltip?: string
-  selectedStringPathMap?: Map<string, { link: number; count: number; color: string }>
+  selectedStringPathMap?: StringPathMap
 }
 
 export const initialSelectedState: SelectedState = {
@@ -36,43 +37,39 @@ const reducer = createReducer(
   initialSelectedState,
 
   on(SelectedActions.toggleMultiSelect, (state, { multiSelect }) => ({
-    type: state.type,
+    ...state,
     multiSelect,
-    singleSelectId: state.singleSelectId,
-    multiSelectIds: state.multiSelectIds,
   })),
 
   on(SelectedActions.selectId, (state, { id }) => ({
-    type: state.type,
+    ...state,
     multiSelect: false,
     singleSelectId: id,
     multiSelectIds: undefined,
   })),
 
   on(SelectedActions.selectMultiIds, (state, { ids }) => ({
-    type: state.type,
+    ...state,
     multiSelect: true,
     singleSelectId: undefined,
     multiSelectIds: ids,
   })),
 
-  on(SelectedActions.selectPanel, (state, { panelId }) => ({
+  on(SelectedActions.selectPanel, (state, { panelId, panelLink }) => ({
     type: BlockType.PANEL,
-    multiSelect: false,
-    multiSelectIds: [],
+    ...state,
     singleSelectId: panelId,
     selectedPanelId: panelId,
+    selectedPositiveLinkTo: panelLink.selectedPositiveLinkTo,
+    selectedNegativeLinkTo: panelLink.selectedNegativeLinkTo,
   })),
 
-  on(SelectedActions.selectPanelWhenStringSelected, (state, { panelId }) => ({
-    type: state.type,
-    multiSelect: state.multiSelect,
-    multiSelectIds: state.multiSelectIds,
-    singleSelectId: state.singleSelectId,
-    selectedStringId: state.selectedStringId,
-    selectedStringTooltip: state.selectedStringTooltip,
-    selectedStringPathMap: state.selectedStringPathMap,
+  on(SelectedActions.selectPanelWhenStringSelected, (state, { panelId, panelLink }) => ({
+    ...state,
+    singleSelectId: panelId,
     selectedPanelId: panelId,
+    selectedPositiveLinkTo: panelLink.selectedPositiveLinkTo,
+    selectedNegativeLinkTo: panelLink.selectedNegativeLinkTo,
   })),
 
   on(SelectedActions.startMultiselectPanel, (state, { panelId }) => ({
@@ -92,31 +89,21 @@ const reducer = createReducer(
   // })),
 
   on(SelectedActions.setSelectedPanelLinks, (state, { panelLink }) => ({
-    type: state.type,
-    multiSelect: false,
-    singleSelectId: state.singleSelectId,
-    selectedPanelId: state.selectedPanelId,
+    ...state,
     selectedPositiveLinkTo: panelLink.selectedPositiveLinkTo,
     selectedNegativeLinkTo: panelLink.selectedNegativeLinkTo,
   })),
 
   on(SelectedActions.setSelectedPanelLinksWhenStringSelected, (state, { panelLink }) => ({
-    type: state.type,
-    singleSelectId: state.singleSelectId,
-    selectedPanelId: state.selectedPanelId,
+    ...state,
     selectedPositiveLinkTo: panelLink.selectedPositiveLinkTo,
     selectedNegativeLinkTo: panelLink.selectedNegativeLinkTo,
-    multiSelect: state.multiSelect,
-    multiSelectIds: state.multiSelectIds,
-    selectedStringId: state.selectedStringId,
-    selectedStringTooltip: state.selectedStringTooltip,
-    selectedStringPathMap: state.selectedStringPathMap,
   })),
 
-  on(SelectedActions.selectString, (state, { stringId }) => ({
-    type: state.type,
-    singleSelectId: stringId,
-    selectedStringId: stringId,
+  on(SelectedActions.selectString, (state, { string }) => ({
+    ...state,
+    selectedStringId: string.id,
+    // multiSelectIds: panels.map(panel => panel.id),
   })),
 
   // on(SelectedActions.selectDp, (state, { dpId }) => ({
@@ -125,34 +112,31 @@ const reducer = createReducer(
   // })),
 
   on(SelectedActions.setSelectedStringPanels, (state, { panelIds }) => ({
-    type: state.type,
-    singleSelectId: state.singleSelectId,
-    selectedStringId: state.selectedStringId,
+    ...state,
     multiSelectIds: panelIds,
   })),
 
   on(SelectedActions.setSelectedStringTooltip, (state, { tooltip }) => ({
-    type: state.type,
-    singleSelectId: state.singleSelectId,
-    selectedStringId: state.selectedStringId,
+    ...state,
     selectedStringTooltip: tooltip,
   })),
 
   on(SelectedActions.setSelectedStringLinkPaths, (state, { pathMap }) => ({
-    type: state.type,
-    singleSelectId: state.singleSelectId,
-    selectedStringId: state.selectedStringId,
-    selectedStringTooltip: state.selectedStringTooltip,
+    ...state,
     selectedStringPathMap: pathMap,
   })),
 
   on(SelectedActions.clearSelectedPanelLinks, (state) => ({
-    type: state.type,
-    singleSelectId: state.singleSelectId,
-    selectedStringId: state.selectedStringId,
-    multiSelectIds: state.multiSelectIds,
-    selectedStringTooltip: state.selectedStringTooltip,
+    ...state,
     selectedStringPathMap: undefined,
+  })),
+
+  on(SelectedActions.clearSelectedSingleId, (state) => ({
+    ...state,
+    singleSelectId: undefined,
+    selectedPanelId: undefined,
+    selectedPositiveLinkTo: undefined,
+    selectedNegativeLinkTo: undefined,
   })),
 
   on(SelectedActions.clearSelectedState, () => ({

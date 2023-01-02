@@ -1,9 +1,9 @@
 import { inject, Injectable } from '@angular/core'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { Store } from '@ngrx/store'
-import { LinksPathService, StatsService } from '@project-id/utils'
+import { getSelectedLinks, LinksPathService, StatsService } from '@project-id/utils'
 import { PanelLinkModel, PanelLinksToModel } from '@shared/data-access/models'
-import { tap } from 'rxjs'
+import { of, tap } from 'rxjs'
 import { combineLatestWith, map, switchMap } from 'rxjs/operators'
 
 import {
@@ -14,60 +14,52 @@ import {
 } from '@project-id/data-access/facades'
 import { SelectedActions } from '@project-id/data-access/store'
 
-function getSelectedLinks(
-  panelJoins?: PanelLinkModel[],
-  selectedPanelId?: string,
-): PanelLinksToModel {
-  if (!panelJoins || !selectedPanelId) {
-    return {
-      selectedPositiveLinkTo: undefined,
-      selectedNegativeLinkTo: undefined,
-    } as PanelLinksToModel
-  }
-  const positive = panelJoins.find((pJoin) => pJoin.negativeToId === selectedPanelId)?.positiveToId
-  const negative = panelJoins.find((pJoin) => pJoin.positiveToId === selectedPanelId)?.negativeToId
-  return {
-    selectedPositiveLinkTo: positive,
-    selectedNegativeLinkTo: negative,
-  } as PanelLinksToModel
-}
 
 @Injectable()
 export class SelectedEffects {
   private linksFacade = inject(LinksFacade)
-  selectPanel$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(SelectedActions.selectPanel),
-        switchMap((action) =>
-          this.linksFacade.allLinks$.pipe(
-            map((links) => getSelectedLinks(links, action.panelId)),
-            tap((link) =>
-              this.store.dispatch(SelectedActions.setSelectedPanelLinks({ panelLink: link })),
+  /*
+    selectPanel$ = createEffect(
+      () =>
+        this.actions$.pipe(
+          ofType(SelectedActions.selectPanel),
+          switchMap((action) =>
+            this.linksFacade.allLinks$.pipe(
+              map((links) =>
+                SelectedActions.setSelectedPanelLinks({ panelLink: getSelectedLinks(links, action.panelId) })),
+              /!*            map((links) => getSelectedLinks(links, action.panelId)),
+                          tap((link) =>
+                            this.store.dispatch(SelectedActions.setSelectedPanelLinks({ panelLink: link })),
+                          ),*!/
             ),
           ),
         ),
-      ),
-    { dispatch: false },
-  )
+      // { dispatch: false },
+    )
 
-  selectPanelWhenStringSelected$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(SelectedActions.selectPanelWhenStringSelected),
-        switchMap((action) =>
-          this.linksFacade.allLinks$.pipe(
-            map((links) => getSelectedLinks(links, action.panelId)),
-            tap((link) =>
-              this.store.dispatch(
-                SelectedActions.setSelectedPanelLinksWhenStringSelected({ panelLink: link }),
-              ),
+    selectPanelWhenStringSelected$ = createEffect(
+      () =>
+        this.actions$.pipe(
+          ofType(SelectedActions.selectPanelWhenStringSelected),
+          map(async (action) => {
+            const links = await this.linksFacade.allLinks
+          }),
+          switchMap((action) =>
+            this.linksFacade.allLinks$.pipe(
+              map((links) =>
+                SelectedActions.setSelectedPanelLinks({ panelLink: getSelectedLinks(links, action.panelId) })),
+              /!*            map((links) => getSelectedLinks(links, action.panelId)),
+                          tap((link) =>
+                            this.store.dispatch(
+                              SelectedActions.setSelectedPanelLinksWhenStringSelected({ panelLink: link }),
+                            ),
+                          ),*!/
             ),
           ),
         ),
-      ),
-    { dispatch: false },
-  )
+      // { dispatch: false },
+    )
+  */
 
   private panelsFacade = inject(PanelsFacade)
   private stringsFacade = inject(StringsFacade)
@@ -77,16 +69,10 @@ export class SelectedEffects {
     () =>
       this.actions$.pipe(
         ofType(SelectedActions.selectString),
-        switchMap((action) =>
-          this.stringsFacade.stringById$(action.stringId).pipe(
-            combineLatestWith(this.panelsFacade.panelsByStringId(action.stringId)),
-            map(([string, panels]) => {
-              if (!string) return
-              const panelIds: string[] = panels.map((panel) => panel.id)
-              this.store.dispatch(SelectedActions.setSelectedStringPanels({ panelIds }))
-              const stringStats = this.statsService.calculateStringTotals(panels)
+        map(({ string, panels }) => {
+          const stringStats = this.statsService.calculateStringTotals(panels)
 
-              const tooltip = `
+          const tooltip = `
                   String = ${string.name} \n
                   Color: ${string.color} \n
                   Parallel: ${string.parallel} \n
@@ -96,30 +82,23 @@ export class SelectedEffects {
                   Pmax: ${stringStats.totalPmax}W \n
                   Isc: ${stringStats.totalIsc}A \n
                 `
-              return { tooltip, panels }
-            }),
-            tap((res) => {
-              if (!res) return
-              this.store.dispatch(
-                SelectedActions.setSelectedStringTooltip({ tooltip: res.tooltip }),
-              )
-            }),
-            map((res) => {
-              if (!res) return
-              this.linksPathService
-                .orderPanelsInLinkOrder(res.panels)
-                .pipe(
-                  tap((linkPathMap) =>
-                    this.store.dispatch(
-                      SelectedActions.setSelectedStringLinkPaths({ pathMap: linkPathMap }),
-                    ),
-                  ),
-                )
-            }),
+          return SelectedActions.setSelectedStringTooltip({ tooltip })
+        }),
+      ),
+    // { dispatch: false },
+  )
+
+  stringLinkPath$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(SelectedActions.selectString),
+        switchMap(({ panels }) => this.linksPathService
+          .orderPanelsInLinkOrder(panels)
+          .pipe(
+            map(linkPathMap => SelectedActions.setSelectedStringLinkPaths({ pathMap: linkPathMap })),
           ),
         ),
       ),
-    { dispatch: false },
   )
 
   private selectedFacade = inject(SelectedFacade)
@@ -133,7 +112,7 @@ export class SelectedEffects {
             map((selectedStringId) => {
               if (!selectedStringId) return
               return this.panelsFacade
-                .panelsByStringId(selectedStringId)
+                .panelsByStringId$(selectedStringId)
                 .pipe(switchMap((panels) => this.linksPathService.orderPanelsInLinkOrder(panels)))
             }),
           ),
@@ -146,5 +125,6 @@ export class SelectedEffects {
     private actions$: Actions,
     private statsService: StatsService,
     private store: Store,
-  ) {}
+  ) {
+  }
 }

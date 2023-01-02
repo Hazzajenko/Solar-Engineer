@@ -46,7 +46,6 @@ const reducer = createReducer(
   on(LinksActions.deleteLink, (state, { linkId }) => linksAdapter.removeOne(linkId, state)),
   on(LinksActions.clearLinksState, (state) => ({
     ...state,
-    typeToLink: undefined,
     toLinkId: undefined,
   })),
 )

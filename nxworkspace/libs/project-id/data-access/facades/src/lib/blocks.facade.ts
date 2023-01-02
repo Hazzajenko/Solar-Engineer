@@ -3,7 +3,7 @@ import { Update } from '@ngrx/entity'
 import { Store } from '@ngrx/store'
 import { BlockModel } from '@shared/data-access/models'
 import { BlocksSelectors, BlocksActions } from '@project-id/data-access/store'
-import { firstValueFrom } from 'rxjs'
+import { firstValueFrom, map } from 'rxjs'
 
 @Injectable({
   providedIn: 'root',
@@ -25,6 +25,14 @@ export class BlocksFacade {
 
   blockByLocation(location: string) {
     return firstValueFrom(this.store.select(BlocksSelectors.selectBlockByLocation({ location })))
+  }
+
+  async anyBlocksInArray(locationArray: string[]) {
+    return firstValueFrom(
+      this.allBlocks$.pipe(
+        map((blocks) => blocks.filter((block) => locationArray.includes(block.location))),
+      ),
+    )
   }
 
   selectBlocksFromArray(locationArray: string[]) {

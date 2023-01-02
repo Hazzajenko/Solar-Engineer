@@ -73,6 +73,16 @@ export const selectMultiSelectIds = createSelector(
   (state: State.SelectedState) => state.multiSelectIds,
 )
 
+export const singleAndMultiSelectIds = createSelector(
+  selectSelectedState,
+  (state: State.SelectedState) => {
+    return {
+      singleId: state.singleSelectId,
+      multiIds: state.multiSelectIds,
+    }
+  },
+)
+
 export const selectSelectedPositiveTo = createSelector(
   selectSelectedState,
   (state: State.SelectedState) => state.selectedPositiveLinkTo,

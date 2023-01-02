@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs'
+import { map, Observable, switchMap } from 'rxjs'
 import { MatButtonModule } from '@angular/material/button'
 import { CommonModule } from '@angular/common'
 import { Component, inject } from '@angular/core'
@@ -6,7 +6,7 @@ import { Component, inject } from '@angular/core'
 import { LogoNameV3Component } from '@shared/ui/logo'
 import { MatMenuModule } from '@angular/material/menu'
 import { MatIconModule } from '@angular/material/icon'
-import { GridFacade } from '@project-id/data-access/facades'
+import { GridFacade, SelectedFacade, StringsFacade } from '@project-id/data-access/facades'
 import { GridMode } from '@shared/data-access/models'
 import { Store } from '@ngrx/store'
 
@@ -25,8 +25,19 @@ import { Store } from '@ngrx/store'
 })
 export class ToolbarComponent {
   private gridFacade = inject(GridFacade)
+  private selectedFacade = inject(SelectedFacade)
+  private stringsFacade = inject(StringsFacade)
   private store = inject(Store)
   gridMode$: Observable<GridMode> = this.gridFacade.gridMode$
+  selectedStringName$ = this.selectedFacade.selectedStringId$.pipe(
+    switchMap(stringId => this.stringsFacade.stringById$(stringId).pipe(
+      map(string => {
+        if (!string) return undefined
+        return string.name
+      }),
+    )),
+  )
+
   selectMode(gridMode: GridMode) {
     switch (gridMode) {
       case GridMode.CREATE:

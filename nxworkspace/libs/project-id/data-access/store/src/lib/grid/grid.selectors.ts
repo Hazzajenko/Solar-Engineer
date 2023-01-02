@@ -9,3 +9,5 @@ export const selectCreateMode = createSelector(
 )
 
 export const selectGridMode = createSelector(selectGridState, (state: GridState) => state.gridMode)
+
+export const selectClientXY = createSelector(selectGridState, (state: GridState) => state.clientXY)

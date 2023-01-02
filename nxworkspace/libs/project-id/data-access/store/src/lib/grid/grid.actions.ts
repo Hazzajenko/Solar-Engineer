@@ -1,3 +1,4 @@
+import { ClientXY } from '@grid-layout/shared/models'
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
 import { BlockType } from '@shared/data-access/models'
 
@@ -9,6 +10,8 @@ export const GridActions = createActionGroup({
     'Select GridMode Delete': emptyProps(),
     'Select GridMode Link': emptyProps(),
     'Select GridMode Select': emptyProps(),
+    'Set ClientXY': props<{ clientXY: ClientXY }>(),
+    'Clear ClientXY': emptyProps(),
     'Clear Grid State': emptyProps(),
   },
 })
