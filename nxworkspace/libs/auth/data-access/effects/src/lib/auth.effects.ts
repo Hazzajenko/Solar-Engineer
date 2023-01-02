@@ -1,14 +1,13 @@
 import { inject, Injectable } from '@angular/core'
 import { AuthService } from '@auth/data-access/api'
 
-
-import { tapResponse } from '@ngrx/component-store'
+import { AuthActions } from '@auth/data-access/store'
+import { StorageModel } from '@auth/shared/models'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { Store } from '@ngrx/store'
 import { ProjectsFacade } from '@projects/data-access/facades'
-import { switchMap, tap } from 'rxjs'
-import { AuthActions } from '@auth/data-access/store'
-import { SignInResponse, StorageModel } from '@auth/shared/models'
+import { ProjectsActions } from '@projects/data-access/store'
+import { catchError, map, of, switchMap, tap } from 'rxjs'
 
 @Injectable()
 export class AuthEffects {
@@ -20,44 +19,56 @@ export class AuthEffects {
       this.actions$.pipe(
         ofType(AuthActions.signInSuccess),
         tap((action) => {
-          action.user.email
           const storage: StorageModel = {
-            eml: action.user.email,
-            usr: action.user.username,
-            tkn: action.token,
+            email: action.user.email,
+            username: action.user.username,
+            token: action.token,
           }
-          localStorage.setItem('slreng-tk', JSON.stringify(storage))
-          this.projectsService.init()
+          localStorage.setItem('solarengineer-user', JSON.stringify(storage))
         }),
+        map(() => ProjectsActions.initProjects())
       ),
-    { dispatch: false },
   )
-  private store = inject(Store)
-  init$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(AuthActions.signIn),
-        switchMap(({ req }) =>
-          this.authService.signIn(req).pipe(
-            tapResponse(
-              (response: SignInResponse) =>
-                this.store.dispatch(
-                  AuthActions.signInSuccess({
-                    user: {
-                      username: response.username,
-                      lastName: response.lastName,
-                      firstName: response.firstName,
-                      email: response.email,
-                    },
-                    token: response.token,
-                  }),
-                ),
-              (error: Error) =>
-                this.store.dispatch(AuthActions.signInError({ error: error.message })),
-            ),
+  signInWithLocalStorage$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AuthActions.signInWithLocalstorage),
+      switchMap(({ userInStorage }) =>
+        this.authService.validateUser(userInStorage).pipe(
+          map((response) =>
+            AuthActions.signInSuccess({
+              user: {
+                username: response.username,
+                lastName: response.lastName,
+                firstName: response.firstName,
+                email: response.email,
+              },
+              token: response.token,
+            }),
           ),
+          catchError((error: Error) => of(AuthActions.signInError({ error: error.message }))),
         ),
       ),
-    { dispatch: false },
+    ),
+  )
+  init$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AuthActions.signIn),
+      switchMap(({ req }) =>
+        this.authService.signIn(req).pipe(
+          map((response) =>
+            AuthActions.signInSuccess({
+              user: {
+                username: response.username,
+                lastName: response.lastName,
+                firstName: response.firstName,
+                email: response.email,
+              },
+              token: response.token,
+            }),
+          ),
+          catchError((error: Error) => of(AuthActions.signInError({ error: error.message }))),
+        ),
+      ),
+    ),
   )
 }

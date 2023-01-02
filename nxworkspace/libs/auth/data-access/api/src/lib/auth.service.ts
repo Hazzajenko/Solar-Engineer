@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http'
 import { inject, Injectable } from '@angular/core'
-import { SignInRequest, SignInResponse } from '@auth/shared/models'
+import { SignInRequest, SignInResponse, StorageModel } from '@auth/shared/models'
 
 @Injectable({
   providedIn: 'root',
@@ -15,15 +15,15 @@ export class AuthService {
     })
   }
 
-  validateUser(usr: string, eml: string, tkn: string) {
+  validateUser(userInStorage: StorageModel) {
     return this.http.post<SignInResponse>(
       '/api/auth/validate',
       {
-        username: usr,
-        email: eml,
+        username: userInStorage.username,
+        email: userInStorage.email,
       },
       {
-        headers: new HttpHeaders({ Authorization: `Bearer ${tkn}` }),
+        headers: new HttpHeaders({ Authorization: `Bearer ${userInStorage.token}` }),
       },
     )
   }

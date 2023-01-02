@@ -1,10 +1,8 @@
-import { tapResponse } from '@ngrx/component-store'
-import { take } from 'rxjs'
 import { inject, Injectable } from '@angular/core'
 import { AuthService } from '@auth/data-access/api'
-import { Store } from '@ngrx/store'
 import { AuthActions, AuthSelectors } from '@auth/data-access/store'
-import { SignInRequest, SignInResponse, StorageModel } from '@auth/shared/models'
+import { SignInRequest, StorageModel } from '@auth/shared/models'
+import { Store } from '@ngrx/store'
 
 @Injectable({
   providedIn: 'root',
@@ -21,31 +19,10 @@ export class AuthFacade {
   }
 
   isReturningUser() {
-    const storage = localStorage.getItem('slreng-tk')
+    const storage = localStorage.getItem('solarengineer-user')
     if (storage) {
-      const data: StorageModel = JSON.parse(storage)
-      this.authService
-        .validateUser(data.usr, data.eml, data.tkn)
-        .pipe(
-          take(1),
-          tapResponse(
-            (response: SignInResponse) =>
-              this.store.dispatch(
-                AuthActions.signInSuccess({
-                  user: {
-                    username: response.username,
-                    lastName: response.lastName,
-                    firstName: response.firstName,
-                    email: response.email,
-                  },
-                  token: response.token,
-                }),
-              ),
-            (error: Error) =>
-              this.store.dispatch(AuthActions.signInError({ error: error.message })),
-          ),
-        )
-        .subscribe((res) => console.log(res))
+      const userInStorage: StorageModel = JSON.parse(storage)
+      this.store.dispatch(AuthActions.signInWithLocalstorage({ userInStorage }))
     }
   }
 }
