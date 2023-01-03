@@ -1,4 +1,4 @@
-import { PanelLinkPath } from '@grid-layout/shared/models'
+import { PanelPathModel } from '@shared/data-access/models'
 import { Observable } from 'rxjs'
 
 export interface PanelNgModel {
@@ -8,7 +8,8 @@ export interface PanelNgModel {
   stringColor: string | undefined
   isPanelToLink: boolean
   stringSelected: StringSelectedVal
-  panelLinkPath: PanelLinkPath | undefined
+  panelLinkPath: PanelPathModel | undefined
+  selectPanelLinkPath: PanelPathModel | undefined
 }
 
 export enum SelectedPanelVal {

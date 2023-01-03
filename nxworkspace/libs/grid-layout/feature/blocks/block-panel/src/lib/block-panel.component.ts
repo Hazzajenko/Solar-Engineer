@@ -9,12 +9,13 @@ import { MatSnackBar } from '@angular/material/snack-bar'
 import { MatTooltipModule } from '@angular/material/tooltip'
 import { LinkFactory, PanelFactory, StringFactory } from '@grid-layout/data-access/utils'
 import { PanelLinkComponent } from '@grid-layout/feature/blocks/shared-ui'
-import { PanelLinkPath } from '@grid-layout/shared/models'
+
 
 import { LetModule } from '@ngrx/component'
 import { LinksFacade, PanelsFacade, SelectedFacade, StringsFacade } from '@project-id/data-access/facades'
-import { BlockModel, PanelModel, StringModel } from '@shared/data-access/models'
+import { BlockModel, PanelPathModel, PanelModel, StringModel, PanelLinkPathModel } from '@shared/data-access/models'
 import { PanelMenuComponent } from 'libs/grid-layout/feature/blocks/block-panel/src/lib/menu/panel-menu.component'
+import { PathsFacade } from 'libs/project-id/data-access/facades/src/lib/paths.facade'
 
 import { combineLatest, firstValueFrom, Observable, of, switchMap } from 'rxjs'
 
@@ -60,6 +61,7 @@ export class BlockPanelComponent {
   private panelsFacade = inject(PanelsFacade)
   private stringsFacade = inject(StringsFacade)
   private linksFacade = inject(LinksFacade)
+  private pathsFacade = inject(PathsFacade)
   private linkFactory = inject(LinkFactory)
   private selectedFacade = inject(SelectedFacade)
   private snackBar = inject(MatSnackBar)
@@ -160,14 +162,30 @@ export class BlockPanelComponent {
     }),
   )
 
-  panelLinkPath$: Observable<PanelLinkPath | undefined> = this.selectedFacade.selectedStringPathMap$.pipe(
+  panelLinkPath$: Observable<PanelPathModel | undefined> = this.pathsFacade.pathByPanelId$(this._id).pipe(
     combineLatestWith(this.isSelectedString$),
-    map(([pathMap, isSelectedString]) => {
+    map(([path, isSelectedString]) => {
       if (!isSelectedString) return undefined
-      if (!pathMap) return undefined
-      return pathMap.get(this._id)
+      if (!path) return undefined
+      return path.path
     }),
   )
+
+  /*  panelLinkPath$: Observable<PanelPathModel | undefined> = this.selectedFacade.selectedStringPathMap$.pipe(
+      combineLatestWith(this.isSelectedString$),
+      map(([pathMap, isSelectedString]) => {
+        if (!isSelectedString) return undefined
+        if (!pathMap) return undefined
+        return pathMap.get(this._id)
+      }),
+    )*/
+
+  /*  selectedPanelLinkPath$: Observable<PanelPathModel | undefined> = this.selectedFacade.selectedPanelPathMap$.pipe(
+      map((pathMap) => {
+        if (!pathMap) return undefined
+        return pathMap.get(this._id)
+      }),
+    )*/
   private isToLinkId$: Observable<boolean> = this.linksFacade.toLinkId$.pipe(
     map((toLinkId) => {
       return toLinkId === this._id
@@ -182,6 +200,8 @@ export class BlockPanelComponent {
     this.isToLinkId$,
     this.stringSelected$,
     this.panelLinkPath$,
+    // this.panelLinkPath$,
+    // this.selectedPanelLinkPath$,
   ]).pipe(
     map(
       ([
@@ -192,6 +212,7 @@ export class BlockPanelComponent {
          isPanelToLink,
          stringSelected,
          panelLinkPath,
+         // selectPanelLinkPath,
        ]) => {
         return {
           isSelectedPanel,
@@ -201,6 +222,7 @@ export class BlockPanelComponent {
           isPanelToLink,
           stringSelected,
           panelLinkPath,
+          // selectPanelLinkPath,
         } as PanelNgModel
       },
     ),

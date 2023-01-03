@@ -1,9 +1,9 @@
-<ng-container *ngIf="project$ | async as project">
-  <app-toolbar class="flex border border-white mb-4 h-fit min-w-fit w-full"></app-toolbar>
+<ng-container *ngIf='project$ | async as project'>
+  <app-toolbar class='flex border border-white mb-4 h-fit min-w-fit w-full'></app-toolbar>
 
   <div
-    class="bg-green-300 flex-auto content-center items-center flex justify-between border border-black"
+    class='bg-green-300 flex-auto content-center items-center flex justify-between border border-black'
   >
-    <app-grid-layout [blocks$]="blocks$" [rows]="rows" [cols]="cols"></app-grid-layout>
+    <app-grid-layout [blocks$]='blocks$' [rows]='rows' [cols]='cols'></app-grid-layout>
   </div>
 </ng-container>

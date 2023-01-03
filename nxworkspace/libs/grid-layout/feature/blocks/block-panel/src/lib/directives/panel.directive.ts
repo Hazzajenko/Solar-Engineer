@@ -1,6 +1,6 @@
 import { Directive, ElementRef, inject, Input } from '@angular/core'
-import { PanelLinkPath } from '@grid-layout/shared/models'
-import { SoftColor, VibrantColor } from '@shared/data-access/models'
+
+import { PanelPathModel, SoftColor, VibrantColor } from '@shared/data-access/models'
 import { PanelNgModel, SelectedPanelVal, StringSelectedVal } from '../models/panel-ng.model'
 
 @Directive({
@@ -14,7 +14,7 @@ export class PanelDirective {
     this.elRef.nativeElement.style.backgroundColor = '#95c2fa'
   }
 
-  @Input() set panelLinkPath(panelLinkPath: PanelLinkPath | undefined | null) {
+  @Input() set panelLinkPath(panelLinkPath: PanelPathModel | undefined | null) {
     if (!panelLinkPath) return
 
     // this.elRef.nativeElement.style.backgroundColor = panelLinkPath.color
@@ -28,7 +28,8 @@ export class PanelDirective {
   @Input() set panelNg(panelNg: PanelNgModel) {
     switch (panelNg.isSelectedPanel) {
       case SelectedPanelVal.NOT_SELECTED: {
-        this.elRef.nativeElement.style.backgroundColor = '#95c2fa'
+        this.elRef.nativeElement.style.backgroundColor = SoftColor.SoftBrown
+        // this.elRef.nativeElement.style.backgroundColor = '#95c2fa'
         this.elRef.nativeElement.style.boxShadow = ``
         break
       }
@@ -57,18 +58,27 @@ export class PanelDirective {
       }
     }
     if (panelNg.stringColor && panelNg.stringSelected !== 2) {
-      this.elRef.nativeElement.style.backgroundColor = panelNg.stringColor
+      // this.elRef.nativeElement.style.backgroundColor = panelNg.stringColor
     }
     if (panelNg.panelLinkPath) {
       this.elRef.nativeElement.style.backgroundColor = panelNg.panelLinkPath.color
     }
 
-    if (panelNg.isSelectedPositiveTo) {
-      this.elRef.nativeElement.style.backgroundColor = SoftColor.SoftRed
+    if (panelNg.selectPanelLinkPath) {
+      if (panelNg.selectPanelLinkPath.count > 0) {
+        this.elRef.nativeElement.style.backgroundColor = SoftColor.SoftRed
+      }
+      if (panelNg.selectPanelLinkPath.count < 0) {
+        this.elRef.nativeElement.style.backgroundColor = SoftColor.SoftCyan
+      }
     }
-    if (panelNg.isSelectedNegativeTo) {
-      this.elRef.nativeElement.style.backgroundColor = SoftColor.SoftCyan
-    }
+
+    /*    if (panelNg.isSelectedPositiveTo) {
+          this.elRef.nativeElement.style.backgroundColor = SoftColor.SoftRed
+        }
+        if (panelNg.isSelectedNegativeTo) {
+          this.elRef.nativeElement.style.backgroundColor = SoftColor.SoftCyan
+        }*/
     if (panelNg.isPanelToLink) {
       this.elRef.nativeElement.style.backgroundColor = VibrantColor.VibrantPurple
     }

@@ -1,19 +1,30 @@
 import { inject, Injectable } from '@angular/core'
 import { GridEventResult } from '@grid-layout/data-access/actions'
+import { UpdateStr } from '@ngrx/entity/src/models'
+import { Store } from '@ngrx/store'
 import { LinksFacade, PanelsFacade, SelectedFacade } from '@project-id/data-access/facades'
+import { SelectedActions, StringsActions } from '@project-id/data-access/store'
+import { LinksPathService } from '@project-id/utils'
 import { ProjectsFacade } from '@projects/data-access/facades'
-import { PanelLinkModel, PanelModel, ProjectModel } from '@shared/data-access/models'
+import { PanelLinkModel, PanelModel, ProjectModel, StringModel } from '@shared/data-access/models'
+import { PathsFactory } from 'libs/grid-layout/data-access/utils/src/lib/factory/paths/paths.factory'
+import { StringFactory } from 'libs/grid-layout/data-access/utils/src/lib/factory/string'
+import { firstValueFrom } from 'rxjs'
 import { GridEventFactory } from '../../grid.factory'
 
 @Injectable({
   providedIn: 'root',
 })
 export class LinkFactory {
-  private readonly eventFactory = inject(GridEventFactory)
-  private readonly projectsFacade = inject(ProjectsFacade)
-  private readonly selectedFacade = inject(SelectedFacade)
-  private readonly linksFacade = inject(LinksFacade)
-  private readonly panelsFacade = inject(PanelsFacade)
+  private eventFactory = inject(GridEventFactory)
+  private linksPathService = inject(LinksPathService)
+  private store = inject(Store)
+  private projectsFacade = inject(ProjectsFacade)
+  private selectedFacade = inject(SelectedFacade)
+  private linksFacade = inject(LinksFacade)
+  private panelsFacade = inject(PanelsFacade)
+  private stringsFactory = inject(StringFactory)
+  private pathsFactory = inject(PathsFactory)
 
   async create(
     panel: PanelModel,
@@ -34,11 +45,25 @@ export class LinkFactory {
     })
 
     this.linksFacade.createLink(link)
+
     if (shiftKey) {
       this.linksFacade.startLinkPanel(panel.id)
     } else {
       this.linksFacade.clearLinkState()
     }
+
+    const panelPaths = await this.linksPathService.orderPanelsInLinkOrderWithLinkAsync(link)
+    if (panelPaths) {
+      // this.store.dispatch(SelectedActions.setSelectedStringLinkPaths({ pathMap: linkPathMap }))
+      // const name = 'sadsakodsa'
+      // const panelPathRecord: PanelPathRecord = Object.fromEntries(linkPathMap)
+      await this.stringsFactory.updateString(selectedStringId, { panelPaths })
+      await this.pathsFactory.createManyPaths(panelPaths)
+      // this.store.dispatch(StringsActions.updateStringPathmap({ linkPathMap: result }))
+
+    }
+
+    // const linkPathMap = await firstValueFrom(this.linksPathService.orderPanelsInLinkOrderWithLink(link))
 
     return this.eventFactory.action({
       action: 'ADD_LINK',

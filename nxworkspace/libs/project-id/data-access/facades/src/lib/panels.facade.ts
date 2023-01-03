@@ -9,14 +9,14 @@ import {
   LinksSelectors,
   SelectedSelectors,
   PanelsSelectors,
-  PanelsActions,
+  PanelsActions, SelectedActions,
 } from '@project-id/data-access/store'
 
 @Injectable({
   providedIn: 'root',
 })
 export class PanelsFacade {
-  private readonly store = inject(Store)
+  private store = inject(Store)
   private panels$!: Observable<PanelModel[]>
 
   loaded$ = this.store.select(PanelsSelectors.selectPanelsLoaded)
@@ -57,6 +57,7 @@ export class PanelsFacade {
   }
 
   createPanel(panel: PanelModel) {
+    this.store.dispatch(SelectedActions.clearSelectedPanelPathMap())
     this.store.dispatch(PanelsActions.addPanel({ panel }))
   }
 
@@ -66,14 +67,6 @@ export class PanelsFacade {
 
   updateManyPanels(updates: Update<PanelModel>[]) {
     this.store.dispatch(PanelsActions.updateManyPanels({ updates }))
-  }
-
-  updatePanel$(update: Update<PanelModel>) {
-    return of(PanelsActions.updatePanel({ update }))
-  }
-
-  updatePanel2$(update: Update<PanelModel>) {
-    return of(this.store.dispatch(PanelsActions.updatePanel({ update })))
   }
 
   deletePanel(panelId: string) {

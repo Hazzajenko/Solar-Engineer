@@ -46,7 +46,7 @@ export class StringStatsAsyncPipe implements PipeTransform {
     return this.facade.panels.panelsByStringId$(string.id)
       .pipe(
         switchMap((stringPanels) =>
-          this.facade.links.linksByPanels(stringPanels)
+          this.facade.links.linksByPanels$(stringPanels)
             .pipe(map((stringLinks) => ({ stringPanels, stringLinks }))),
         ),
       )

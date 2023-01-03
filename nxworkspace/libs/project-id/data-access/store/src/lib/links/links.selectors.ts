@@ -1,7 +1,7 @@
 import { PanelModel, PanelLinkModel } from '@shared/data-access/models'
 import { createFeatureSelector, createSelector } from '@ngrx/store'
 import { selectRouteParams } from '@shared/data-access/router'
-import { selectAllPanels } from 'libs/project-id/data-access/store/src/lib/panels/panels.selectors'
+
 import { LINKS_FEATURE_KEY, linksAdapter, LinksState } from './links.reducer'
 
 export const selectLinksState = createFeatureSelector<LinksState>(LINKS_FEATURE_KEY)
@@ -33,6 +33,23 @@ export const selectLinksByPanels = (props: { panels: PanelModel[] }) =>
   createSelector(selectAllLinks, (links: PanelLinkModel[]) =>
     links.filter((link) => props.panels.map((panel) => panel.id).includes(link.positiveToId)),
   )
+
+export const selectLinksByStringId = (props: { stringId: string }) =>
+  createSelector(selectAllLinks, (links: PanelLinkModel[]) =>
+    links.filter((link) => link.stringId === props.stringId,
+    ))
+
+export const selectLinksByPanelId = (props: { panelId: string }) =>
+  createSelector(selectAllLinks, (links: PanelLinkModel[]) => {
+      const panelPositiveLink = links.find(link => link.positiveToId === props.panelId)
+      const panelNegativeLink = links.find(link => link.negativeToId === props.panelId)
+      return {
+        panelPositiveLink,
+        panelNegativeLink,
+      }
+    },
+  )
+
 
 export const selectToLinkIdWithType = createSelector(selectLinksState, (state: LinksState) => {
   return {

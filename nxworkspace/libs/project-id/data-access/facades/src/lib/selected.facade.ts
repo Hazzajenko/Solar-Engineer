@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
-import { getSelectedLinks } from '@project-id/utils'
+import { getSelectedLinks, LinksPathService } from '@project-id/utils'
 import { PanelModel, StringModel } from '@shared/data-access/models'
 import { SelectedPanelVal } from 'libs/grid-layout/feature/blocks/block-panel/src/lib/models/panel-ng.model'
 import { LinksFacade } from 'libs/project-id/data-access/facades/src/lib/links.facade'
@@ -15,6 +15,7 @@ import { combineLatestWith, map } from 'rxjs/operators'
 export class SelectedFacade {
   private store = inject(Store)
   private linksFacade = inject(LinksFacade)
+  private linkPathService = inject(LinksPathService)
 
   selectedId$ = this.store.select(SelectedSelectors.selectSelectedId)
   selectedIdWithType$ = this.store.select(SelectedSelectors.selectSelectedIdWithType)
@@ -34,6 +35,7 @@ export class SelectedFacade {
   selectSelectedPositiveTo$ = this.store.select(SelectedSelectors.selectSelectedPositiveTo)
   selectSelectedNegativeTo$ = this.store.select(SelectedSelectors.selectSelectedNegativeTo)
   selectedStringPathMap$ = this.store.select(SelectedSelectors.selectSelectedStringPathMap)
+  selectedPanelPathMap$ = this.store.select(SelectedSelectors.selectSelectedPanelPathMap)
   selectedStringTooltip$ = this.store.select(SelectedSelectors.selectSelectedStringTooltip)
 
   get selectedStringId() {
@@ -48,6 +50,9 @@ export class SelectedFacade {
     const links = await this.linksFacade.allLinks
     const panelLink = getSelectedLinks(links, panelId)
     this.store.dispatch(SelectedActions.selectPanel({ panelId, panelLink }))
+    const res = await this.linkPathService.orderPanelsInLinkOrderForSelectedPanel(panelId)
+    if (!res) return
+    this.store.dispatch(SelectedActions.setSelectedPanelLinkPaths({ pathMap: res }))
   }
 
   selectMultiIds(ids: string[]) {
@@ -58,6 +63,9 @@ export class SelectedFacade {
     const links = await this.linksFacade.allLinks
     const panelLink = getSelectedLinks(links, panelId)
     this.store.dispatch(SelectedActions.selectPanelWhenStringSelected({ panelId, panelLink }))
+    const res = await this.linkPathService.orderPanelsInLinkOrderForSelectedPanel(panelId)
+    if (!res) return
+    this.store.dispatch(SelectedActions.setSelectedPanelLinkPaths({ pathMap: res }))
   }
 
   startMultiSelectPanel(panelId: string) {

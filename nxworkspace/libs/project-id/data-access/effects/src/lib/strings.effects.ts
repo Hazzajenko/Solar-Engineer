@@ -24,19 +24,19 @@ export class StringsEffects {
         switchMap(({ projectId }) =>
           this.stringsService.getStringsByProjectId(projectId).pipe(
             map((strings) => StringsActions.loadStringsSuccess({ strings })),
-            catchError(error => of(StringsActions.loadStringsFailure({ error: error.message })))
+            catchError(error => of(StringsActions.loadStringsFailure({ error: error.message }))),
           ),
         ),
       ),
   )
 
-  loadStringsSuccess$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(StringsActions.loadStringsSuccess),
-      map(({ strings }) => EntitiesActions.addManyEntitiesForGrid({ entities: strings })),
-    ),
-  )
-
+  /* loadStringsSuccess$ = createEffect(() =>
+     this.actions$.pipe(
+       ofType(StringsActions.loadStringsSuccess),
+       map(({ strings }) => EntitiesActions.addManyEntitiesForGrid({ entities: strings })),
+     ),
+   )
+ */
   initLocalStrings$ = createEffect(() =>
     this.actions$.pipe(
       ofType(ProjectsActions.initLocalProject),
@@ -45,24 +45,26 @@ export class StringsEffects {
       ),
     ),
   )
+  /*
 
-  addString$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(StringsActions.addString),
-      map(({ string }) => EntitiesActions.addEntityForGrid({ entity: string })),
-    ),
-  )
-
-  updateOneString$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(StringsActions.updateString),
-      map(({ update }) =>
-        EntitiesActions.updateEntityForGrid({
-          update,
-        }),
+    addString$ = createEffect(() =>
+      this.actions$.pipe(
+        ofType(StringsActions.addString),
+        map(({ string }) => EntitiesActions.addEntityForGrid({ entity: string })),
       ),
-    ),
-  )
+    )
+  */
+
+  /*  updateOneString$ = createEffect(() =>
+      this.actions$.pipe(
+        ofType(StringsActions.updateString),
+        map(({ update }) =>
+          EntitiesActions.updateEntityForGrid({
+            update,
+          }),
+        ),
+      ),
+    )*/
 
   deleteString$ = createEffect(() =>
     this.actions$.pipe(

@@ -103,6 +103,11 @@ export const selectSelectedStringPathMap = createSelector(
   (state: State.SelectedState) => state.selectedStringPathMap,
 )
 
+export const selectSelectedPanelPathMap = createSelector(
+  selectSelectedState,
+  (state: State.SelectedState) => state.selectedPanelPathMap,
+)
+
 /*   this.isSelectedPanel$ = this.store
   .select(selectSelectedPanelId)
     .pipe(map((selectedPanelId) => selectedPanelId === this.id))

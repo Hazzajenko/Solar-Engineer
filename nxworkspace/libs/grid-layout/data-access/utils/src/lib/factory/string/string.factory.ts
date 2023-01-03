@@ -109,11 +109,12 @@ export class StringFactory {
     return
   }
 
-  async update(stringId: string, changes: Partial<StringModel>) {
+  async updateString(stringId: string, changes: Partial<StringModel>) {
     const update: Update<StringModel> = {
       id: stringId,
       changes,
     }
+
     this.stringsFacade.update(update)
 
     // return this.eventFactory.action({ action: 'UPDATE_PANEL', data: { update } })

@@ -1,20 +1,20 @@
 import { AsyncPipe, NgIf } from '@angular/common'
 import { Component, inject } from '@angular/core'
-import { StringTotalsOverlayComponent } from '@grid-layout/feature/string-stats'
 import { SelectedFacade, StringsFacade } from '@project-id/data-access/facades'
-import { StringStatsAsyncPipe } from 'libs/grid-layout/feature/string-stats/src/lib/string-stats-async.pipe'
 
-import { Observable, switchMap } from 'rxjs'
+
+import { switchMap } from 'rxjs'
 
 import { map } from 'rxjs/operators'
 
 @Component({
   selector: 'app-keymap-overlay',
   template: `
-    <div class='pointer-events-none absolute z-50'>
-      <div class='absolute top-[90%] left-[50%] width-[20%] bg-grey-400'>
+    <div
+      class='pointer-events-none absolute z-50 w-[400px]  transform -translate-x-1/2 -translate-y-1/7 bottom-10'>
+      <div class='bg-gray-400 pl-4'>
         <h3> Keymap</h3>
-        <div class='keymap__list'>
+        <div>
           <ul style='list-style: none'>
             <li>S: Select String for Selected Panel</li>
             <ng-container *ngIf='isStringSelected$ | async'>
@@ -30,7 +30,7 @@ import { map } from 'rxjs/operators'
 
   `,
   styles: [],
-  imports: [AsyncPipe, NgIf, StringStatsAsyncPipe, StringStatsAsyncPipe],
+  imports: [AsyncPipe, NgIf],
   standalone: true,
 })
 export class KeymapOverlayComponent {

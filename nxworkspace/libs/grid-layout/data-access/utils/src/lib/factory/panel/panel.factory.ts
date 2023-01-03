@@ -33,6 +33,7 @@ export class PanelFactory {
       rotation,
     })
     this.panelsFacade.createPanel(panel)
+    this.selectedFacade.clearSingleSelected()
     return this.eventFactory.action({ action: 'CREATE_PANEL', data: { panel } })
   }
 
@@ -40,7 +41,7 @@ export class PanelFactory {
     const selectedStringId = await this.selectedFacade.selectedStringId
 
     if (selectedStringId && selectedStringId === panel.stringId) {
-      this.selectedFacade.selectPanelWhenStringSelected(panel.id)
+      await this.selectedFacade.selectPanelWhenStringSelected(panel.id)
       return this.eventFactory.action({
         action: 'SELECT_PANEL_WHEN_STRING_SELECTED',
         data: { panelId: panel.id },
@@ -55,7 +56,7 @@ export class PanelFactory {
       })
     }
 
-    this.selectedFacade.selectPanel(panel.id)
+    await this.selectedFacade.selectPanel(panel.id)
     return this.eventFactory.action({ action: 'SELECT_PANEL', data: { panelId: panel.id } })
   }
 

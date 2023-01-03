@@ -1,4 +1,4 @@
-import { PanelLinksToModel, PanelModel, StringModel } from '@shared/data-access/models'
+import { PanelPathModel, PanelLinksToModel, PanelModel, StringModel } from '@shared/data-access/models'
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
 import { TypeModel } from '@shared/data-access/models'
 
@@ -17,11 +17,15 @@ export const SelectedActions = createActionGroup({
     'Set Selected String Panels': props<{ panelIds: string[] }>(),
     'Set Selected String Tooltip': props<{ tooltip: string }>(),
     'Set Selected String Link Paths': props<{
-      pathMap: Map<string, { link: number; count: number; color: string }>
+      pathMap: Map<string, PanelPathModel>
+    }>(),
+    'Set Selected Panel Link Paths': props<{
+      pathMap: Map<string, PanelPathModel>
     }>(),
     'Set Selected Panel Links': props<{ panelLink: PanelLinksToModel }>(),
     'Set Selected Panel Links When String Selected': props<{ panelLink: PanelLinksToModel }>(),
     'Clear Selected Panel Links': emptyProps(),
+    'Clear Selected Panel Path Map': emptyProps(),
     'Clear Selected Single Id': emptyProps(),
     'Clear Selected State': emptyProps(),
   },

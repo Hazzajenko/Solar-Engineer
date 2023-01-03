@@ -1,4 +1,5 @@
 import { getGuid } from '@shared/utils'
+import { PanelPathModel, PanelIdPath } from './panel-path-map'
 import { EntityModel, EntityOptions, EntityType } from './entity.model'
 
 export interface StringOptions extends EntityOptions {
@@ -12,6 +13,10 @@ export class StringModel extends EntityModel {
   name: string
   parallel: boolean
   color: string
+  panelPaths: PanelIdPath[] = []
+  // panelPathRecord: PanelPathRecord = {}
+  // linkPathMap?: { [panelId: string]: StringPanelLinkPath }
+  // linkPathMap?: Map<PanelId, PanelLinkPath>
   inverterId?: string
   trackerId?: string
   // type?: TypeModel

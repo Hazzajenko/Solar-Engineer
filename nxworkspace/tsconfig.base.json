@@ -53,6 +53,9 @@
       "@project-id/data-access/effects": ["libs/project-id/data-access/effects/src/index.ts"],
       "@project-id/data-access/facades": ["libs/project-id/data-access/facades/src/index.ts"],
       "@project-id/data-access/injections": ["libs/project-id/data-access/injections/src/index.ts"],
+      "@project-id/data-access/repositories": [
+        "libs/project-id/data-access/repositories/src/index.ts"
+      ],
       "@project-id/data-access/resolvers": ["libs/project-id/data-access/resolvers/src/index.ts"],
       "@project-id/data-access/services": ["libs/project-id/data-access/services/src/index.ts"],
       "@project-id/data-access/store": ["libs/project-id/data-access/store/src/index.ts"],

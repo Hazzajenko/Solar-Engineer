@@ -48,7 +48,9 @@ cmon:
 	nx generate @nrwl/angular:library models --style=none --directory=project-id/shared --importPath=@project-id/shared/models --skipModule --tags=project-id:shared --no-interactive
 
 newww:
-	nx generate @nrwl/angular:library keymap --style=none --directory=grid-layout/feature --importPath=@grid-layout/feature/keymap --skipModule --tags=grid-layout:feature --no-interactive
+	nx generate @nrwl/angular:library repositories --style=none --directory=project-id/data-access --importPath=@project-id/data-access/repositories --skipModule --tags=project-id:repositories --no-interactive
 
+
+#libs/project-id/data-access
 cache:
 	nx clear-cache

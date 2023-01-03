@@ -1,4 +1,6 @@
 <ng-container *ngIf='blocks$ | async as blocks'>
+
+
   <div class='h-fit w-fit'>
     <canvas
       #canvas
@@ -10,12 +12,14 @@
       style='width: 100%; height: 100%'
     >
     </canvas>
+
     <div
       appGrid
       (elementOffsets)='offsets = $event'
       cdkDropListGroup
       class='flex flex-col items-center'
     >
+
       <div *ngFor='let n of numSequence(rows); let row = index' class='flex'>
         <div *ngFor='let n of numSequence(cols); let col = index' class='border border-black'>
           <ng-container *ngrxLet='row | getLocation: col; let location'>
@@ -36,7 +40,13 @@
           </ng-container>
         </div>
       </div>
+      <ng-container *ngIf='showKeymap$ | async as keymap'>
+        <app-keymap-overlay *ngIf='keymap'></app-keymap-overlay>
+        <app-string-totals-overlay *ngIf='selectedString$ | async as selectedString'
+                                   [selectedString]='selectedString'></app-string-totals-overlay>
+      </ng-container>
     </div>
   </div>
 </ng-container>
+
 

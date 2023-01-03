@@ -1,6 +1,7 @@
 import { MatSnackBarModule, MatSnackBarRef } from '@angular/material/snack-bar'
 import { CommonModule } from '@angular/common'
 import { Component, inject } from '@angular/core'
+import { KeymapOverlayComponent } from '@grid-layout/feature/keymap'
 import { BlocksFacade } from '@project-id/data-access/facades'
 import { GridLayoutComponent } from '@grid-layout/feature/index'
 import { ToolbarComponent } from '@project-id/feature/toolbar'
@@ -12,7 +13,7 @@ import { Observable } from 'rxjs'
 @Component({
   selector: 'app-local-project',
   standalone: true,
-  imports: [CommonModule, GridLayoutComponent, ToolbarComponent, MatSnackBarModule],
+  imports: [CommonModule, GridLayoutComponent, ToolbarComponent, MatSnackBarModule, KeymapOverlayComponent],
   providers: [MatSnackBarModule],
   viewProviders: [MatSnackBarModule],
   templateUrl: './local-project.component.html',

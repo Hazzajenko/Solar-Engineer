@@ -1,4 +1,3 @@
-import { StringPathMap } from '@grid-layout/shared/models'
 import { Action, createReducer, on } from '@ngrx/store'
 import { SelectedActions } from './selected.actions'
 import { BlockType, TypeModel } from '@shared/data-access/models'
@@ -17,7 +16,8 @@ export interface SelectedState {
   selectedPanelId?: string
   selectedStringId?: string
   selectedStringTooltip?: string
-  selectedStringPathMap?: StringPathMap
+  selectedStringPathMap?: undefined
+  selectedPanelPathMap?: undefined
 }
 
 export const initialSelectedState: SelectedState = {
@@ -31,6 +31,7 @@ export const initialSelectedState: SelectedState = {
   selectedStringId: undefined,
   selectedStringTooltip: undefined,
   selectedStringPathMap: undefined,
+  selectedPanelPathMap: undefined,
 }
 
 const reducer = createReducer(
@@ -123,7 +124,18 @@ const reducer = createReducer(
 
   on(SelectedActions.setSelectedStringLinkPaths, (state, { pathMap }) => ({
     ...state,
-    selectedStringPathMap: pathMap,
+    // selectedStringPathMap: pathMap,
+  })),
+
+  on(SelectedActions.setSelectedPanelLinkPaths, (state, { pathMap }) => ({
+    ...state,
+    // selectedPanelPathMap: pathMap,
+  })),
+
+
+  on(SelectedActions.clearSelectedPanelPathMap, (state) => ({
+    ...state,
+    selectedPanelPathMap: undefined,
   })),
 
   on(SelectedActions.clearSelectedPanelLinks, (state) => ({

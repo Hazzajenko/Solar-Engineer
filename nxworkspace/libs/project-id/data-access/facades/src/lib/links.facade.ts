@@ -1,15 +1,19 @@
-import { getSelectedLinks } from '@project-id/utils'
+import { getSelectedLinks, LinksPathService } from '@project-id/utils'
 import { PanelLinkModel, PanelModel } from '@shared/data-access/models'
 import { inject, Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
-import { LinksSelectors, LinksActions } from '@project-id/data-access/store'
+import { LinksSelectors, LinksActions, SelectedActions } from '@project-id/data-access/store'
+import {
+  selectLinksByPanelId,
+  selectLinksByStringId,
+} from 'libs/project-id/data-access/store/src/lib/links/links.selectors'
 import { firstValueFrom } from 'rxjs'
 
 @Injectable({
   providedIn: 'root',
 })
 export class LinksFacade {
-  private readonly store = inject(Store)
+  private store = inject(Store)
 
   loaded$ = this.store.select(LinksSelectors.selectLinksLoaded)
   allLinks$ = this.store.select(LinksSelectors.selectAllLinks)
@@ -47,8 +51,28 @@ export class LinksFacade {
     return this.store.select(LinksSelectors.selectLinkById({ linkId }))
   }
 
-  linksByPanels(panels: PanelModel[]) {
+  linksByPanels$(panels: PanelModel[]) {
     return this.store.select(LinksSelectors.selectLinksByPanels({ panels }))
+  }
+
+  linksByPanels(panels: PanelModel[]) {
+    return firstValueFrom(this.store.select(LinksSelectors.selectLinksByPanels({ panels })))
+  }
+
+  linksByPanelId$(panelId: string) {
+    return this.store.select(LinksSelectors.selectLinksByPanelId({ panelId }))
+  }
+
+  linksByPanelId(panelId: string) {
+    return firstValueFrom(this.store.select(LinksSelectors.selectLinksByPanelId({ panelId })))
+  }
+
+  linksByStringId$(stringId: string) {
+    return this.store.select(LinksSelectors.selectLinksByStringId({ stringId }))
+  }
+
+  linksByStringId(stringId: string) {
+    return firstValueFrom(this.store.select(LinksSelectors.selectLinksByStringId({ stringId })))
   }
 
   isPanelExistingNegativeLink$(panelId: string) {
@@ -80,7 +104,21 @@ export class LinksFacade {
 
   createLink(link: PanelLinkModel) {
     this.store.dispatch(LinksActions.addLink({ link }))
+
   }
+
+  /*  refreshStringLinkPaths$ = createEffect(
+      () =>
+        this.actions$.pipe(
+          ofType(LinksActions.addLink),
+          switchMap(({ link }) => this.linksPathService
+            .orderPanelsInLinkOrderWithLink(link)
+            .pipe(
+              map(linkPathMap => SelectedActions.setSelectedStringLinkPaths({ pathMap: linkPathMap })),
+            ),
+          ),
+        ),
+    )*/
 
   createLinkV2(link: PanelLinkModel) {
     this.store.dispatch(LinksActions.addLink({ link }))

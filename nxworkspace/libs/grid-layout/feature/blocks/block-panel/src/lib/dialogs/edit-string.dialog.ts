@@ -117,7 +117,7 @@ export class EditStringDialog {
   }
 
   async updateString(stringId: string) {
-    this.stringFactory.update(stringId, {
+    this.stringFactory.updateString(stringId, {
       name: this.name.value ? this.name.value : undefined,
       color: this.color.value ? this.color.value : undefined,
     })

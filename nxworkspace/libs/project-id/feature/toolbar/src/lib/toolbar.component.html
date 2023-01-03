@@ -15,42 +15,51 @@
       </svg>
     </button>
   </div>
-  <div class='w-full block flex-grow justify-items-end lg:flex lg:w-auto place-items-end'>
-    <div class='text-sm lg:flex-grow'>
+  <div class='space-x-4 w-full block flex-grow justify-items-end lg:flex lg:w-auto place-items-end'>
+    <div class='text-sm'>
       <button [matMenuTriggerFor]='gridModeMenu' mat-raised-button color='primary'>
         <!--    <mat-icon>brush</mat-icon>-->
         Mode
         <mat-icon>expand_more</mat-icon>
       </button>
     </div>
-  </div>
 
-  <ng-container *ngIf='gridMode$ | async as gridMode'>
-    <ng-container [ngSwitch]='gridMode'>
+
+    <ng-container *ngrxLet='keymap$ | async as keymap'>
+      <button (click)='toggleKeymap()' mat-raised-button
+              [color]='keymap ? "warn" : "primary"'>
+        Toggle
+        Keymap
+      </button>
+    </ng-container>
+
+    <ng-container *ngIf='gridMode$ | async as gridMode'>
+      <ng-container [ngSwitch]='gridMode'>
+        <div
+          class=' font-medium text-2xl  text-red-500 text-lg'>
+          <div *ngSwitchCase='4'>
+            SELECT
+          </div>
+          <div *ngSwitchCase='1'>
+            CREATE
+          </div>
+          <div *ngSwitchCase='3'>
+            LINK
+          </div>
+          <div *ngSwitchCase='2'>
+            DELETE
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
+
+    <ng-container *ngIf='selectedStringName$ | async as stringName'>
       <div
-        class=' font-medium text-2xl  text-red-500 text-lg block flex-grow justify-items-end lg:flex place-items-end'>
-        <div *ngSwitchCase='4'>
-          SELECT
-        </div>
-        <div *ngSwitchCase='1'>
-          CREATE
-        </div>
-        <div *ngSwitchCase='3'>
-          LINK
-        </div>
-        <div *ngSwitchCase='2'>
-          DELETE
-        </div>
+        class=' font-medium text-2xl  text-red-500 text-lg'>
+        Selected String: {{stringName}}
       </div>
     </ng-container>
-  </ng-container>
-
-  <ng-container *ngIf='selectedStringName$ | async as stringName'>
-    <div
-      class=' font-medium text-2xl  text-red-500 text-lg block flex-grow justify-items-end lg:flex place-items-end'>
-      Selected String: {{stringName}}
-    </div>
-  </ng-container>
+  </div>
 
   <mat-menu #gridModeMenu='matMenu'>
     <ng-container *ngIf='gridMode$ | async as gridMode'>

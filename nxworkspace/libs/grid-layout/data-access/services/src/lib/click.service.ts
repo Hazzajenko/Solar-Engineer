@@ -31,6 +31,7 @@ export class ClickService {
       return this.eventFactory.error('click, click.event.altKey')
     }
 
+
     const existingBlock = await this.blocksFacade.blockByLocation(click.location)
 
     if (existingBlock) {

@@ -2,7 +2,8 @@ import { inject, Injectable } from '@angular/core'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { Store } from '@ngrx/store'
 import { LinksService } from '@project-id/data-access/api'
-import { EntitiesActions, LinksActions } from '@project-id/data-access/store'
+import { EntitiesActions, LinksActions, SelectedActions } from '@project-id/data-access/store'
+import { LinksPathService } from '@project-id/utils'
 import { ProjectsActions } from '@projects/data-access/store'
 import { catchError, map, of, switchMap } from 'rxjs'
 
@@ -44,6 +45,22 @@ export class LinksEffects {
       map(({ link }) => EntitiesActions.addEntityForGrid({ entity: link })),
     ),
   )
+
+  private linksPathService = inject(LinksPathService)
+
+  /*  refreshStringLinkPaths$ = createEffect(
+      () =>
+        this.actions$.pipe(
+          ofType(LinksActions.addLink),
+          switchMap(({ link }) => this.linksPathService
+            .orderPanelsInLinkOrderWithLink(link)
+            .pipe(
+              map(linkPathMap => SelectedActions.setSelectedStringLinkPaths({ pathMap: linkPathMap })),
+            ),
+          ),
+        ),
+    )*/
+
 
   deleteLink$ = createEffect(() =>
     this.actions$.pipe(
