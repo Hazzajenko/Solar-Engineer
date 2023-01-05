@@ -2,14 +2,21 @@ import {
   PanelModel,
   LinkColor,
   PanelLinkModel,
-  PanelPathModel, PanelIdPath,
+  PanelPathModel, PanelIdPath, StringLinkPathModel,
 } from '@shared/data-access/models'
 
 import { PanelsFacade, LinksFacade, StringsFacade } from '@project-id/data-access/facades'
 
 import { inject, Injectable } from '@angular/core'
+import {
+  generateDifferentVibrantColorHex,
+  generateVibrantColorHex, generateWarmColorHex, generateWarmColorRgbString,
+  getRandomColorHex,
+  getRandomVibrantColorHex,
+} from '@shared/utils'
 import { getRandomColor } from 'libs/grid-layout/data-access/utils/src/lib/get-random-color'
-import { of } from 'rxjs'
+import { PathsFacade } from 'libs/project-id/data-access/facades/src/lib/paths.facade'
+import { firstValueFrom, of } from 'rxjs'
 
 import { combineLatestWith, map, switchMap } from 'rxjs/operators'
 
@@ -21,6 +28,7 @@ export class LinksPathService {
   private panelsFacade = inject(PanelsFacade)
   private linksFacade = inject(LinksFacade)
   private stringsFacade = inject(StringsFacade)
+  private pathsFacade = inject(PathsFacade)
 
   // private panelsFacade = inject(PanelsFacade)
 
@@ -207,18 +215,20 @@ export class LinksPathService {
   }
 
   async orderPanelsInLinkOrderWithLinkAsync(link: PanelLinkModel) {
-    const panels = await this.panelsFacade.panelsByStringId(link.stringId)
-    if (!panels) return
-    const links = await this.linksFacade.linksByPanels(panels)
-    if (!links) return
+    const stringPanels = await this.panelsFacade.panelsByStringId(link.stringId)
+    if (!stringPanels) return
+    const stringLinks = await this.linksFacade.linksByPanels(stringPanels)
+    if (!stringLinks) return
     const panelPathRecord = await this.stringsFacade.panelPathRecordByStringId(link.stringId)
     if (!panelPathRecord) return
+    const stringLinkPaths = await this.pathsFacade.pathsByStringId(link.stringId)
+    const existingColors = await firstValueFrom(this.pathsFacade.pathsByStringId$(link.stringId).pipe(
+      map(paths => paths.map(path => path.panelPath.color)),
+    ))
+    const starterLinks = stringLinks.filter((link) => {
+      const firstPanel = stringPanels.find((panel) => panel.id === link.positiveToId)
 
-
-    const starterLinks = links.filter((link) => {
-      const firstPanel = panels.find((panel) => panel.id === link.positiveToId)
-
-      const doesFirstHavePreviousLink = links.find(
+      const doesFirstHavePreviousLink = stringLinks.find(
         (link) => link.negativeToId === firstPanel?.id,
       )
 
@@ -230,70 +240,63 @@ export class LinksPathService {
     })
 
     // const linkPathMap: PanelPathMap = new Map<PanelId, PanelPathModel>()
-    const panelPaths: PanelIdPath[] = []
-    let linkCounter = 0
+    let panelPaths: PanelIdPath[] = []
+    // let linkCounter = 0
     // let linkColor: LinkColor = LinkColor.SoftGreen
-    let linkColor = getRandomColor()
-
-
+    // let linkColor = getRandomColor()
     for (const starterLink of starterLinks) {
-      let panelCounter = 1
-      let job = true
+      const starterLinkPanelPath = this.updateStringPanelPaths(stringLinkPaths, starterLink, stringPanels, stringLinks, existingColors)
+      // const starterLinkPanelPath = this.getPanelPaths(starterLink, stringPanels, stringLinks, true)
+      if (starterLinkPanelPath) {
+        panelPaths = panelPaths.concat(starterLinkPanelPath)
 
-      let nextPanel: PanelModel | undefined = panels.find(
-        (panel) => panel.id === starterLink.positiveToId,
-      )
+      }
+    }
+    /*    for (const starterLink of starterLinks) {
+          let panelCounter = 1
+          let job = true
 
-      const result = Object.entries(panelPathRecord)
-      type yes = typeof result
-      result.find(res => res[0] === 'dsad')
-      // const yo = yooo => panelPathRecord.some(({ count }) => count == yooo)
-      // const checkRoleExistence = roleParam => panelPathRecord.some( ({role}) => role == roleParam)
-      while (job) {
-        if (nextPanel) {
-          // const isNextPanelExisting = panelPathRecord[nextPanel.id]
-          // if (isNextPanelExisting)
-          /*          linkPathMap.set(nextPanel.id, {
-                      link: linkCounter,
-                      count: panelCounter,
-                      color: linkColor,
-                    })*/
-          panelPaths.push({
-            panelId: nextPanel.id,
-            path: {
-              link: linkCounter,
-              count: panelCounter,
-              color: linkColor,
-            },
-          })
-          if (panelCounter === 1) {
-            const secondPanel = panels.find((panel) => panel.id === starterLink.negativeToId)
-            if (secondPanel) {
-              nextPanel = secondPanel
-            } else {
-              linkCounter++
-              job = false
-            }
-          } else {
-            const upcomingLink = links.find((link) => link.positiveToId === nextPanel?.id)
-            const upcomingPanel = panels.find(
-              (panel) => panel.id === upcomingLink?.negativeToId,
-            )
-            if (upcomingLink && upcomingPanel) {
-              nextPanel = upcomingPanel
+          let nextPanel: PanelModel | undefined = stringPanels.find(
+            (panel) => panel.id === starterLink.positiveToId,
+          )
+          while (job) {
+            if (nextPanel) {
+              panelPaths.push({
+                panelId: nextPanel.id,
+                path: {
+                  link: linkCounter,
+                  count: panelCounter,
+                  color: linkColor,
+                },
+              })
+              if (panelCounter === 1) {
+                const secondPanel = stringPanels.find((panel) => panel.id === starterLink.negativeToId)
+                if (secondPanel) {
+                  nextPanel = secondPanel
+                } else {
+                  linkCounter++
+                  job = false
+                }
+              } else {
+                const upcomingLink = stringLinks.find((link) => link.positiveToId === nextPanel?.id)
+                const upcomingPanel = stringPanels.find(
+                  (panel) => panel.id === upcomingLink?.negativeToId,
+                )
+                if (upcomingLink && upcomingPanel) {
+                  nextPanel = upcomingPanel
+                } else {
+                  linkCounter++
+                  job = false
+                }
+              }
+              panelCounter++
             } else {
               linkCounter++
               job = false
             }
           }
-          panelCounter++
-        } else {
-          linkCounter++
-          job = false
-        }
-      }
-      linkColor = getRandomColor()
-    }
+          linkColor = getRandomColor()
+        }*/
     // const result = Object.fromEntries(linkPathMap)
     // const yes: PanelPathRecord = result
     // result['sadsa']
@@ -313,170 +316,186 @@ export class LinksPathService {
     const stringPanels = await this.panelsFacade.panelsByStringId(panel.stringId)
     if (!stringPanels) return
     const selectedPanelLinks = await this.linksFacade.linksByPanelId(panelId)
+    console.log(selectedPanelLinks)
     if (!selectedPanelLinks) return
-    // let positiveMap: PanelPathMap
+    const starterPosLink = stringLinks.find(link => link.positiveToId === panelId)
+    const starterNegLink = stringLinks.find(link => link.negativeToId === panelId)
+    const positive = this.getPanelPaths(starterPosLink, stringPanels, stringLinks, true)
+    const negative = this.getPanelPaths(starterNegLink, stringPanels, stringLinks, false)
+    // return positive && negative ? positive.concat(negative) : positive || negative
+    if (positive && negative) {
+      return positive.concat(negative)
+    } else if (positive) {
+      return positive
+    } else if (negative) {
+      return negative
+    }
 
-    /*    const starterPosLink = stringLinks.find(link => link.positiveToId === panel.id)
-        if (starterPosLink) {
-         positiveMap = this.helper(panel, starterPosLink, stringPanels, stringLinks, true)
-        }*/
-    // let negativeMap: PanelPathMap
-    // const starterNegLink = stringLinks.find(link => link.negativeToId === panel.id)
-    // const res = this.getValuesForPanel(panel, stringPanels, stringLinks)
-    // const negRes = this.getValuesForPanelNeg(panel, stringPanels, stringLinks)
-    /*    const result = Object.fromEntries(res)
-        console.log('RESSSULT', result)
-        console.log(res)*/
-    console.error('fixthis')
     return undefined
-    // console.log(negRes)
   }
 
-  /*
-    getValuesForPanel(panel: PanelModel, stringPanels: PanelModel[], stringLinks: PanelLinkModel[]) {
-      // let skipPositive = false
-      const starterPosLink = stringLinks.find(link => link.positiveToId === panel.id)
-      const runPositive = !!starterPosLink
+  updateStringPanelPaths(stringLinkPaths: StringLinkPathModel[], starterLink: PanelLinkModel, stringPanels: PanelModel[], stringLinks: PanelLinkModel[], existingColors: string[]) {
+    let panelCounter = 1
+    let job = true
+    let linkCounter = 0
+    // let linkColor = generateWarmColorHex()
+    let linkColor = generateDifferentVibrantColorHex(existingColors)
+    // let linkColor = generateVibrantColorHex()
 
-      // const linkPathMap: PanelPathMap = new Map<PanelId, PanelPathModel>()
-      // const linkssPathMap: PanelPathMap = new Map<PanelId, LinkPathModel>()
-      let linkCounter = 0
-      const linkColor: LinkColor = LinkColor.SoftGreen
-      let panelCounter = 0
-      let job = true
-
-      let nextPanel: PanelModel = panel
+    // let linkColor = getRandomColorHex()
+    // let linkColor = getRandomColor()
+    const panelPaths: PanelIdPath[] = []
+    let existingLinkHasBeenSet = false
 
 
-      if (runPositive) {
-        while (job) {
-          if (nextPanel) {
-            linkPathMap.set(nextPanel.id, {
-              link: linkCounter,
-              count: panelCounter,
-              color: linkColor,
-            })
-            if (panelCounter === 0) {
-              const secondPanel = stringPanels.find((panel) => panel.id === starterPosLink.negativeToId)
-              if (secondPanel) {
-                nextPanel = secondPanel
-              } else {
-                linkCounter++
-                job = false
-              }
-            } else {
-              const upcomingLink = stringLinks.find((link) => link.positiveToId === nextPanel?.id)
-              const upcomingPanel = stringPanels.find(
-                (panel) => panel.id === upcomingLink?.negativeToId,
-              )
-              if (upcomingLink && upcomingPanel) {
-                nextPanel = upcomingPanel
-              } else {
-                linkCounter++
-                job = false
-              }
-            }
-            panelCounter++
+    let spareLinkCountSpotJob = true
+
+    while (spareLinkCountSpotJob) {
+      const isThisCountFree = stringLinkPaths.find(linkPath => linkPath.panelPath.link === linkCounter)
+      if (isThisCountFree) {
+        linkCounter++
+      } else {
+        spareLinkCountSpotJob = false
+      }
+    }
+
+    let nextPanel: PanelModel | undefined = stringPanels.find(
+      (panel) => panel.id === starterLink.positiveToId,
+    )
+    while (job) {
+      if (nextPanel) {
+        if (!existingLinkHasBeenSet) {
+          const isExistingInPath = stringLinkPaths.find(linkPath => linkPath.panelId === nextPanel?.id)
+          if (isExistingInPath) {
+            linkColor = isExistingInPath.panelPath.color
+            linkCounter = isExistingInPath.panelPath.link
+            existingLinkHasBeenSet = true
+          }
+        }
+
+        // linkColor = isExistingInPath ? isExistingInPath.panelPath.color : linkColor
+        panelPaths.push({
+          panelId: nextPanel.id,
+          path: {
+            link: linkCounter,
+            count: panelCounter,
+            color: linkColor,
+          },
+        })
+        if (panelCounter === 1) {
+          const secondPanel = stringPanels.find((panel) => panel.id === starterLink.negativeToId)
+          if (secondPanel) {
+            nextPanel = secondPanel
+          } else {
+            linkCounter++
+            job = false
+          }
+        } else {
+          const upcomingLink = stringLinks.find((link) => link.positiveToId === nextPanel?.id)
+          const upcomingPanel = stringPanels.find(
+            (panel) => panel.id === upcomingLink?.negativeToId,
+          )
+          if (upcomingLink && upcomingPanel) {
+            nextPanel = upcomingPanel
           } else {
             linkCounter++
             job = false
           }
         }
+        panelCounter++
+      } else {
+        linkCounter++
+        job = false
       }
-      const starterNegLink = stringLinks.find(link => link.negativeToId === panel.id)
-      if (!starterNegLink) return linkPathMap
-      linkCounter = 0
-      job = true
-      panelCounter = 0
-
-      while (job) {
-        if (nextPanel) {
-          if (panelCounter !== 0) {
-            linkPathMap.set(nextPanel.id, {
-              link: linkCounter,
-              count: panelCounter,
-              color: linkColor,
-            })
-          }
-
-          if (panelCounter === 0) {
-            const secondPanel = stringPanels.find((panel) => panel.id === starterNegLink.positiveToId)
-            if (secondPanel) {
-              nextPanel = secondPanel
-            } else {
-              linkCounter++
-              job = false
-            }
-          } else {
-            const upcomingLink = stringLinks.find((link) => link.negativeToId === nextPanel?.id)
-            const upcomingPanel = stringPanels.find(
-              (panel) => panel.id === upcomingLink?.positiveToId,
-            )
-            if (upcomingLink && upcomingPanel) {
-              nextPanel = upcomingPanel
-            } else {
-              linkCounter++
-              job = false
-            }
-          }
-          panelCounter--
-        } else {
-          linkCounter++
-          job = false
-        }
-      }
-      const result = Object.fromEntries(linkPathMap)
-      console.log('RESSSULT', result)
-      return linkPathMap
     }
+    if (existingLinkHasBeenSet) {
+      return panelPaths.map(panelPath => {
+        return {
+          ...panelPath,
+          path: {
+            ...panelPath.path,
+            color: linkColor,
+          },
+        } as PanelIdPath
+      })
+    } else {
+      return panelPaths
+    }
+    /*
+        // linkColor = getRandomColor()
+        return panelPaths*/
+  }
 
-    helper(panel: PanelModel, starterLink: PanelLinkModel, stringPanels: PanelModel[], stringLinks: PanelLinkModel[], isPositiveStart: boolean) {
-      const linkPathMap: PanelPathMap = new Map<PanelId, PanelPathModel>()
-      // const starterLink = stringLinks.find(link => link.positiveToId === panel.id)
-      let job = true
-      let nextPanel = panel
-      let linkCounter = 0
-      const linkColor: LinkColor = LinkColor.SoftGreen
-      let panelCounter = 0
-      while (job) {
-        if (nextPanel) {
-          linkPathMap.set(nextPanel.id, {
+
+  getPanelPaths(starterLink: PanelLinkModel | undefined, stringPanels: PanelModel[], stringLinks: PanelLinkModel[], positive: boolean) {
+    // const starterPosLink = stringLinks.find(link => link.positiveToId === nextPanel.id)
+    // const starterNegLink = stringLinks.find(link => link.negativeToId === nextPanel.id)
+    // const starterLink = positive ? starterPosLink : starterNegLink
+    // const examplelink = stringLinks.find(link => link.positiveToId === nextPanel.id)
+    if (!starterLink) return undefined
+    const nextPosPanel = stringPanels.find(panel => panel.id === starterLink.positiveToId)
+    const nextNegPanel = stringPanels.find(panel => panel.id === starterLink.negativeToId)
+    let nextPanel = positive ? nextPosPanel : nextNegPanel
+    // if (!starterLink) return undefined
+    let job = true
+    let linkCounter = 0
+    const linkColor: LinkColor = LinkColor.SoftGreen
+    let panelCounter = 0
+    const panelPaths: PanelIdPath[] = []
+    // const panelPaths: PanelIdPath[] = []
+    while (job) {
+      if (nextPanel) {
+
+        panelPaths.push({
+          panelId: nextPanel.id,
+          path: {
             link: linkCounter,
             count: panelCounter,
             color: linkColor,
-          })
-          if (panelCounter === 0 && isPositiveStart) {
-            const secondPanel = stringPanels.find((panel) => panel.id === starterLink.negativeToId)
-            if (secondPanel) {
-              nextPanel = secondPanel
-            } else {
-              linkCounter++
-              job = false
-            }
+          },
+        })
+        if (panelCounter === 0) {
+          const secondPosPanel = stringPanels.find((panel) => panel.id === starterLink.negativeToId)
+          const secondNegPanel = stringPanels.find((panel) => panel.id === starterLink.positiveToId)
+          const secondPanel = positive ? secondPosPanel : secondNegPanel
+          if (secondPanel) {
+            nextPanel = secondPanel
           } else {
-            const upcomingLink = stringLinks.find((link) => link.positiveToId === nextPanel?.id)
-            const upcomingPanel = stringPanels.find(
-              (panel) => panel.id === upcomingLink?.negativeToId,
-            )
-            if (upcomingLink && upcomingPanel) {
-              nextPanel = upcomingPanel
-            } else {
-              linkCounter++
-              job = false
-            }
+            linkCounter++
+            job = false
           }
+        } else {
+          const upcomingPosLink = stringLinks.find((link) => link.positiveToId === nextPanel?.id)
+          const upcomingNegLink = stringLinks.find((link) => link.negativeToId === nextPanel?.id)
+          const upcomingLink = positive ? upcomingPosLink : upcomingNegLink
+          const upcomingPosPanel = stringPanels.find(
+            (panel) => panel.id === upcomingLink?.negativeToId,
+          )
+          const upcomingNegPanel = stringPanels.find(
+            (panel) => panel.id === upcomingLink?.positiveToId,
+          )
+          const upcomingPanel = positive ? upcomingPosPanel : upcomingNegPanel
+          if (upcomingLink && upcomingPanel) {
+            nextPanel = upcomingPanel
+          } else {
+            linkCounter++
+            job = false
+          }
+        }
+        // panelCounter++
+        // panelCounter = positive ? panelCounter++ : panelCounter--
+        if (positive) {
           panelCounter++
         } else {
-          linkCounter++
-          job = false
+          panelCounter--
         }
+      } else {
+        linkCounter++
+        job = false
       }
-      const result = Object.fromEntries(linkPathMap)
-      console.log('RESSSULT', result)
-      // type yo = typeof result
-      return linkPathMap
     }
-  */
+    return panelPaths
+  }
 
   getValuesForPanelNeg(panel: PanelModel, stringPanels: PanelModel[], stringLinks: PanelLinkModel[]) {
     const starterLink = stringLinks.find(link => link.negativeToId === panel.id)

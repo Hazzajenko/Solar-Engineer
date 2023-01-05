@@ -1,5 +1,5 @@
 import { VibrantColor } from '@shared/data-access/models'
-import { Directive, ElementRef, HostListener, inject, Input } from '@angular/core'
+import { Directive, ElementRef, HostListener, inject, Input, NgZone } from '@angular/core'
 import { ClientXY, ElementOffsets } from '@grid-layout/shared/models'
 import { GridMode } from '@shared/data-access/models'
 
@@ -10,6 +10,15 @@ import { GridMode } from '@shared/data-access/models'
 export class CanvasDirective {
   private canvas = inject(ElementRef<HTMLCanvasElement>)
   private ctx: CanvasRenderingContext2D = this.canvas.nativeElement.getContext('2d')
+
+  // private ngZone: inject(NgZone)
+
+  constructor(private ngZone: NgZone) {
+  }
+
+
+  pageX?: number
+  pageY?: number
   startX?: number
   startY?: number
   offsetX?: number
@@ -17,8 +26,10 @@ export class CanvasDirective {
   currentGridMode = GridMode.UNDEFINED
   fillStyle = '#7585d8'
 
+
   @Input() set gridMode(gridMode: GridMode) {
     if (!gridMode) return
+
     this.currentGridMode = gridMode
     switch (gridMode) {
       case GridMode.CREATE: {
@@ -55,7 +66,6 @@ export class CanvasDirective {
     }
     console.log(clientXY)
     const rect = this.canvas.nativeElement.getBoundingClientRect()
-
     this.startX = clientXY.clientX - rect.left
     this.startY = clientXY.clientY - rect.top
   }
@@ -71,15 +81,29 @@ export class CanvasDirective {
 
   @HostListener('document:mousemove', ['$event'])
   onDragging(event: MouseEvent) {
+    // console.log('onDRAGGING')
+    if (!this.startX || !this.startY || !event.altKey) {
+      return
+    } else {
+      this.pageX = event.pageX
+      this.pageY = event.pageY
+    }
+    this.ngZone.runOutsideAngular(() => {
+      this.animate()
+    })
     event.preventDefault()
     event.stopPropagation()
-    if (!this.startX || !this.startY || !this.offsetX || !this.offsetY || !event.altKey) {
+  }
+
+
+  animate() {
+    if (!this.startX || !this.startY || !this.pageX || !this.pageY) {
       this.ctx.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height)
       return
     }
 
-    const mouseX = event.pageX - this.canvas.nativeElement.parentNode.offsetLeft
-    const mouseY = event.pageY - this.canvas.nativeElement.parentNode.offsetTop
+    const mouseX = this.pageX - this.canvas.nativeElement.parentNode.offsetLeft
+    const mouseY = this.pageY - this.canvas.nativeElement.parentNode.offsetTop
 
     this.ctx.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height)
 
@@ -93,5 +117,10 @@ export class CanvasDirective {
     this.ctx.fillRect(this.startX, this.startY, width, height)
 
     this.ctx.globalAlpha = 1.0
+
+    // window.requestAnimationFrame(this.animate)
+    // requestAnimationFrame(this.animate.bind(this))
+    window.requestAnimationFrame(() => this.animate())
   }
+
 }

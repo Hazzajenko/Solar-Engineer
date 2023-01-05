@@ -1,17 +1,28 @@
 import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop'
 import { CommonModule } from '@angular/common'
-import { AfterViewInit, Component, ElementRef, HostListener, inject, Input, ViewChild } from '@angular/core'
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  inject,
+  Input,
+  OnInit, Renderer2,
+  ViewChild,
+} from '@angular/core'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { ClickService, DropService, MouseService } from '@grid-layout/data-access/services'
 import { MouseEventRequest } from '@grid-layout/data-access/utils'
 import { KeymapOverlayComponent } from '@grid-layout/feature/keymap'
 import { StringTotalsOverlayComponent } from '@grid-layout/feature/string-stats'
-import { ControllerEvent, ElementOffsets, GridLayoutXY, MouseXY } from '@grid-layout/shared/models'
+import { ElementOffsets, GridLayoutXY, MouseXY } from '@grid-layout/shared/models'
 import { LetModule } from '@ngrx/component'
 import { GridFacade, SelectedFacade, StringsFacade } from '@project-id/data-access/facades'
 import { BlockModel, StringModel } from '@shared/data-access/models'
 import { DoubleClickService } from 'libs/grid-layout/data-access/services/src/lib/double-click.service'
 import { MoveService } from 'libs/grid-layout/data-access/services/src/lib/move.service'
+import { WrapperDirective } from 'libs/grid-layout/feature/index/src/lib/directives/wrapper.directive'
+import { GridBackgroundComponent } from 'libs/grid-layout/feature/index/src/lib/ui/grid-background.component'
 import { UiFacade } from 'libs/project-id/data-access/facades/src/lib/ui.facade'
 import { Observable, switchMap } from 'rxjs'
 import { map } from 'rxjs/operators'
@@ -22,12 +33,6 @@ import { KeyMapDirective } from './directives/key-map.directive'
 import { GetBlockPipe } from './pipes/get-block.pipe'
 import { GetLocationPipe } from './pipes/get-location.pipe'
 
-
-const enum Status {
-  OFF = 0,
-  RESIZE = 1,
-  MOVE = 2
-}
 
 @Component({
   selector: 'app-grid-layout',
@@ -43,15 +48,18 @@ const enum Status {
     DynamicComponentDirective,
     KeymapOverlayComponent,
     StringTotalsOverlayComponent,
+    GridBackgroundComponent,
+    WrapperDirective,
   ],
   templateUrl: './grid-layout.component.html',
   hostDirectives: [KeyMapDirective],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styles: [`
     * {
       padding: 0;
       margin: 0;
       outline: 0;
-      overflow: hidden;
+      /*overflow: hidden;*/
     }
 
     html, body {
@@ -59,41 +67,21 @@ const enum Status {
       padding: 0;
       width: 100%;
       height: 100%;
-      overflow: hidden;
+      /*overflow: hidden;*/
     }
 
     /*
 
-    #zoom {
-      width: 100%;
-      height: 100%;
-      transform-origin: 0px 0px;
-      transform: scale(1) translate(0px, 0px);
-      !*cursor: grab;*!
-    }
-
-    div#zoom > #appGrid {
-      width: 100%;
-      height: auto;
-    }
-    */
-
-
-    .appGrid {
-      width: 100%;
-      height: 100%;
-      transition: transform .1s;
-      transform-origin: 0 0;
-    }
-
-    #appGrid {
-      width: auto;
-      height: auto;
-      max-width: 100%;
-    }
+        .appGrid {
+          -webkit-transform-origin: top center;
+          -moz-transform-origin: top center;
+          -webkit-backface-visibility: hidden;
+          -webkit-transform: translateZ(0) scale(1.0, 1.0);
+          transform-origin: top center;
+        }*/
   `],
 })
-export class GridLayoutComponent {
+export class GridLayoutComponent implements OnInit, AfterViewInit {
   public clickService = inject(ClickService)
   public dropService = inject(DropService)
   public mouseService = inject(MouseService)
@@ -104,17 +92,38 @@ export class GridLayoutComponent {
   private snackBar = inject(MatSnackBar)
   private selectedFacade = inject(SelectedFacade)
   private stringsFacade = inject(StringsFacade)
+  private renderer = inject(Renderer2)
+  @ViewChild('appGrid') appGrid!: ElementRef;
+
+
   public getScreenWidth: any
+
   public getScreenHeight: any
   // private uiFacade = inject(UiFacade)
   showKeymap$ = this.uiFacade.isKeyMapEnabled$
   zoomLevel = 2
   isGridMoving = false
+  scale = 1
+
+  isZoomed = false
+  blockHeight = 32
+  blockWidth = 32
+
+  blockHeightString = `${this.blockHeight}px`
+  blockWidthString = `${this.blockWidth}px`
+  backgroundHeight?: string
+  backgroundWidth?: string
 
   constructor() {
     this.getScreenWidth = window.innerWidth
     this.getScreenHeight = window.innerHeight
     console.log(`${this.getScreenWidth}x${this.getScreenHeight}`)
+  }
+
+
+  @Input() set gridSize(size: { rows: number, cols: number }) {
+    this.backgroundHeight = `${size.rows * this.blockHeight + 1}px`
+    this.backgroundWidth = `${size.cols * this.blockWidth + 1}px`
   }
 
 
@@ -140,6 +149,7 @@ export class GridLayoutComponent {
     offsetWidth: undefined,
   }
 
+
   selectedString$: Observable<StringModel | undefined> = this.selectedFacade.selectedStringId$.pipe(
     switchMap(stringId => this.stringsFacade.stringById$(stringId).pipe(
       map(string => {
@@ -149,12 +159,76 @@ export class GridLayoutComponent {
     )),
   )
 
-  listDragOver(e: any, blocks: BlockModel[]) {
-    if (e.dragItem && Array.isArray(e.dragItem)) {
-      const targetIndex = blocks.indexOf(e.targetItem)
-      if (targetIndex <= 2)
-        e.cancel = true
+
+  ngAfterViewInit(): void {
+    console.log(this.appGrid.nativeElement)
+
+  }
+
+  moveTheDiv() {
+
+
+    // if (event.ctrlKey && this.startX && this.startY && this.isDragging) {
+    console.log(event.ctrlKey && this.startX && this.startY && this.isDragging)
+    const mouseX = event.pageX - this.elementRef.nativeElement.parentNode.offsetLeft
+    const mouseY = event.pageY - this.elementRef.nativeElement.parentNode.offsetTop
+
+    const rect = this.elementRef.nativeElement.getBoundingClientRect()
+    /*        const newStartY = (this.startY - rect.top) / this.scale
+            const newStartX = (this.startX - rect.left) / this.scale*/
+    const newStartY = (this.startY) / this.scale
+    const newStartX = (this.startX) / this.scale
+    const top = mouseY - newStartY
+    const left = mouseX - newStartX
+    console.log(top)
+    if (top > this.height - (200 / this.scale) || top < this.negativeHeight + (200 / this.scale < 1.5 ? (this.scale * 2) : (this.scale))) {
+      return
     }
+    if (left > this.width - (200 / this.scale) || left < this.negativeWidth + (200 / this.scale < 1.5 ? (this.scale * 2) : (this.scale))) {
+      return
+    }
+
+    this.elementRef.nativeElement.style.top = top + 'px'
+    this.elementRef.nativeElement.style.left = left + 'px'
+
+    // this.elementRef.nativeElement.style.top = top + 'px'
+    // this.elementRef.nativeElement.style.left = left + 'px'
+    /*        if (this.scale > 1) {
+              if (top > this.height - (200 / this.scale) || top < this.negativeHeight + (200 / this.scale)) {
+                this.elementRef.nativeElement.style.top = '0px'
+                this.elementRef.nativeElement.style.left = '0px'
+              } else {
+                this.elementRef.nativeElement.style.top = top + 'px'
+                this.elementRef.nativeElement.style.left = left + 'px'
+              }
+            }
+            if (top > this.height - (200) || top < this.negativeHeight + (200)) {
+              this.elementRef.nativeElement.style.top = '0px'
+              this.elementRef.nativeElement.style.left = '0px'
+            } else {
+              this.elementRef.nativeElement.style.top = top + 'px'
+              this.elementRef.nativeElement.style.left = left + 'px'
+            }*/
+    /*
+            if (top > this.height - (200 / this.scale) || top < this.negativeHeight + (200 / this.scale)) {
+              console.log(this.height - (200 * this.scale))
+              console.log(this.negativeHeight + (200 * this.scale))
+              return
+            }
+    */
+
+
+    event.preventDefault()
+    event.stopPropagation()
+
+  }
+
+  ngOnInit(): void {
+    console.log('gridLayout')
+  }
+
+  trackBlock(index: number, block: BlockModel) {
+    return block.id
   }
 
   numSequence(n: number): Array<number> {
@@ -181,25 +255,31 @@ export class GridLayoutComponent {
       if (mouse.event.type === 'mousedown') {
         this.isGridMoving = true
         const posXY = await this.uiFacade.posXY
-        // start = { x: e.clientX - pointX, y: e.clientY - pointY };
-        if (posXY && posXY.posX && posXY.posY) {
-
-          const mouseX = mouse.event.clientX - posXY.posX
-          const mouseY = mouse.event.clientY - posXY.posY
-          // start = { x: e.clientX - pointX, y: e.clientY - pointY }
-          this.mouseXY = {
-            mouseX,
-            mouseY,
-          }
-        } else {
-          const mouseX = mouse.event.clientX
-          const mouseY = mouse.event.clientY
-          // start = { x: e.clientX - pointX, y: e.clientY - pointY }
-          this.mouseXY = {
-            mouseX,
-            mouseY,
-          }
+        const mouseX = mouse.event.clientX
+        const mouseY = mouse.event.clientY
+        this.mouseXY = {
+          mouseX,
+          mouseY,
         }
+        // start = { x: e.clientX - pointX, y: e.clientY - pointY };
+        /*        if (posXY && posXY.posX && posXY.posY) {
+
+                  const mouseX = mouse.event.clientX - posXY.posX
+                  const mouseY = mouse.event.clientY - posXY.posY
+                  // start = { x: e.clientX - pointX, y: e.clientY - pointY }
+                  this.mouseXY = {
+                    mouseX,
+                    mouseY,
+                  }
+                } else {
+                  const mouseX = mouse.event.clientX
+                  const mouseY = mouse.event.clientY
+                  // start = { x: e.clientX - pointX, y: e.clientY - pointY }
+                  this.mouseXY = {
+                    mouseX,
+                    mouseY,
+                  }
+                }*/
         /*        const mouseX = mouse.event.clientX
                 const mouseY = mouse.event.clientY*/
 
@@ -223,7 +303,7 @@ export class GridLayoutComponent {
   async move(move: MouseEventRequest) {
     move.event.preventDefault()
     if (this.isGridMoving && move.event.ctrlKey) {
-      console.log(move.event)
+
       if (!this.mouseXY || !this.mouseXY.mouseX || !this.mouseXY.mouseY) return undefined
       const componentX = move.event.clientX - this.mouseXY.mouseX
       const componentY = move.event.clientY - this.mouseXY.mouseY

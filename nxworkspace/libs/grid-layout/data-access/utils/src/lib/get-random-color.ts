@@ -4,21 +4,21 @@ export function getRandomColor() {
   const number = Math.floor(Math.random() * (7 - 1) + 1)
   switch (number) {
     case 1:
-      return SoftColor.SoftBrown
+      return SoftColor.SoftBrown.toString()
     case 2:
-      return SoftColor.SoftOrange
+      return SoftColor.SoftOrange.toString()
     case 3:
-      return SoftColor.SoftPink
+      return SoftColor.SoftPink.toString()
     case 4:
-      return SoftColor.SoftYellow
+      return SoftColor.SoftYellow.toString()
     case 5:
-      return SoftColor.SoftRed
+      return SoftColor.SoftRed.toString()
     case 6:
-      return SoftColor.SoftCyan
+      return SoftColor.SoftCyan.toString()
     case 7:
-      return SoftColor.SoftGreen
+      return SoftColor.SoftGreen.toString()
     default:
-      return SoftColor.SoftBrown
+      return SoftColor.SoftBrown.toString()
   }
 }
 

@@ -26,6 +26,8 @@ export class PanelDirective {
 
 
   @Input() set panelNg(panelNg: PanelNgModel) {
+    // console.error(panelNg.panelLinkPath)
+    // let bg = this.elRef.nativeElement.style.backgroundColor
     switch (panelNg.isSelectedPanel) {
       case SelectedPanelVal.NOT_SELECTED: {
         this.elRef.nativeElement.style.backgroundColor = SoftColor.SoftBrown
@@ -60,18 +62,23 @@ export class PanelDirective {
     if (panelNg.stringColor && panelNg.stringSelected !== 2) {
       // this.elRef.nativeElement.style.backgroundColor = panelNg.stringColor
     }
-    if (panelNg.panelLinkPath) {
+    if (panelNg.panelLinkPath && panelNg.isSelectedPanel !== 1) {
       this.elRef.nativeElement.style.backgroundColor = panelNg.panelLinkPath.color
     }
 
-    if (panelNg.selectPanelLinkPath) {
-      if (panelNg.selectPanelLinkPath.count > 0) {
+    if (panelNg.selectedPanelLinkPath) {
+      if (panelNg.selectedPanelLinkPath.count > 0) {
         this.elRef.nativeElement.style.backgroundColor = SoftColor.SoftRed
       }
-      if (panelNg.selectPanelLinkPath.count < 0) {
+      if (panelNg.selectedPanelLinkPath.count < 0) {
         this.elRef.nativeElement.style.backgroundColor = SoftColor.SoftCyan
       }
+      if (panelNg.selectedPanelLinkPath.count === 0) {
+        this.elRef.nativeElement.style.backgroundColor = SoftColor.SoftGreen
+        // this.elRef.nativeElement.style.backgroundColor = SoftColor.SoftYellow
+      }
     }
+
 
     /*    if (panelNg.isSelectedPositiveTo) {
           this.elRef.nativeElement.style.backgroundColor = SoftColor.SoftRed

@@ -1,6 +1,6 @@
 import { MatSnackBarModule, MatSnackBarRef } from '@angular/material/snack-bar'
 import { CommonModule } from '@angular/common'
-import { Component, inject } from '@angular/core'
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
 import { KeymapOverlayComponent } from '@grid-layout/feature/keymap'
 import { BlocksFacade } from '@project-id/data-access/facades'
 import { GridLayoutComponent } from '@grid-layout/feature/index'
@@ -15,6 +15,7 @@ import { Observable } from 'rxjs'
   standalone: true,
   imports: [CommonModule, GridLayoutComponent, ToolbarComponent, MatSnackBarModule, KeymapOverlayComponent],
   providers: [MatSnackBarModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   viewProviders: [MatSnackBarModule],
   templateUrl: './local-project.component.html',
   styles: [],
@@ -22,6 +23,14 @@ import { Observable } from 'rxjs'
 export class LocalProjectComponent {
   project$: Observable<ProjectModel | undefined> = inject(ProjectsFacade).projectFromRoute$
   blocks$: Observable<BlockModel[]> = inject(BlocksFacade).blocksFromRoute$
-  rows = 20
-  cols = 40
+  // rows = 40
+  // rows = 20
+  rows = 28
+  cols = 37
+  /* rows = 150
+   // cols = 40
+   cols = 150*/
+  /*  rows = 30
+    // cols = 40
+    cols = 60*/
 }

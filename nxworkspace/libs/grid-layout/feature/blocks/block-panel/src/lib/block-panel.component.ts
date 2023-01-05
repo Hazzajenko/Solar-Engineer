@@ -13,11 +13,18 @@ import { PanelLinkComponent } from '@grid-layout/feature/blocks/shared-ui'
 
 import { LetModule } from '@ngrx/component'
 import { LinksFacade, PanelsFacade, SelectedFacade, StringsFacade } from '@project-id/data-access/facades'
-import { BlockModel, PanelPathModel, PanelModel, StringModel, PanelLinkPathModel } from '@shared/data-access/models'
+import {
+  BlockModel,
+  PanelPathModel,
+  PanelModel,
+  StringModel,
+  StringLinkPathModel,
+  SelectedPathModel,
+} from '@shared/data-access/models'
 import { PanelMenuComponent } from 'libs/grid-layout/feature/blocks/block-panel/src/lib/menu/panel-menu.component'
 import { PathsFacade } from 'libs/project-id/data-access/facades/src/lib/paths.facade'
 
-import { combineLatest, firstValueFrom, Observable, of, switchMap } from 'rxjs'
+import { combineLatest, firstValueFrom, Observable, of, retry, switchMap } from 'rxjs'
 
 import { combineLatestWith, map } from 'rxjs/operators'
 import { EditStringDialog } from './dialogs/edit-string.dialog'
@@ -73,6 +80,10 @@ export class BlockPanelComponent {
   @Input() set id(id: string) {
     this._id = id
     this.panel$ = this.panelsFacade.panelById$(id)
+  }
+
+  constructor() {
+    console.log('render')
   }
 
 
@@ -162,13 +173,22 @@ export class BlockPanelComponent {
     }),
   )
 
-  panelLinkPath$: Observable<PanelPathModel | undefined> = this.pathsFacade.pathByPanelId$(this._id).pipe(
+  /*  panelLinkPath$: Observable<PanelPathModel | undefined> = this.pathsFacade.pathByPanelId$(this._id).pipe(
+      combineLatestWith(this.isSelectedString$),
+      map(([path, isSelectedString]) => {
+        if (!isSelectedString) throw new Error('!isSelectedString')
+        if (!path) throw new Error('!path')
+        return path.path
+      }),
+      retry(2),
+    )*/
+  panelLinkPath$: Observable<PanelPathModel | undefined> = this.pathsFacade.allPaths$.pipe(
     combineLatestWith(this.isSelectedString$),
-    map(([path, isSelectedString]) => {
+    map(([paths, isSelectedString]) => {
       if (!isSelectedString) return undefined
-      if (!path) return undefined
-      return path.path
+      return paths.find(path => path.panelId === this._id)
     }),
+    map(path => path?.panelPath),
   )
 
   /*  panelLinkPath$: Observable<PanelPathModel | undefined> = this.selectedFacade.selectedStringPathMap$.pipe(
@@ -180,12 +200,12 @@ export class BlockPanelComponent {
       }),
     )*/
 
-  /*  selectedPanelLinkPath$: Observable<PanelPathModel | undefined> = this.selectedFacade.selectedPanelPathMap$.pipe(
-      map((pathMap) => {
-        if (!pathMap) return undefined
-        return pathMap.get(this._id)
-      }),
-    )*/
+  selectedPanelLinkPath$: Observable<SelectedPathModel | undefined> = this.pathsFacade.selectedPanelLinkPath$.pipe(
+    map((selectedPath) => {
+      if (!selectedPath) return undefined
+      return selectedPath.panelPaths.find(panel => panel.panelId === this._id)
+    }),
+  )
   private isToLinkId$: Observable<boolean> = this.linksFacade.toLinkId$.pipe(
     map((toLinkId) => {
       return toLinkId === this._id
@@ -201,7 +221,7 @@ export class BlockPanelComponent {
     this.stringSelected$,
     this.panelLinkPath$,
     // this.panelLinkPath$,
-    // this.selectedPanelLinkPath$,
+    this.selectedPanelLinkPath$,
   ]).pipe(
     map(
       ([
@@ -212,7 +232,7 @@ export class BlockPanelComponent {
          isPanelToLink,
          stringSelected,
          panelLinkPath,
-         // selectPanelLinkPath,
+         selectedPanelLinkPath,
        ]) => {
         return {
           isSelectedPanel,
@@ -222,7 +242,7 @@ export class BlockPanelComponent {
           isPanelToLink,
           stringSelected,
           panelLinkPath,
-          // selectPanelLinkPath,
+          selectedPanelLinkPath,
         } as PanelNgModel
       },
     ),

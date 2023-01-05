@@ -8,6 +8,7 @@ import {
   SelectedFacade,
   StringsFacade,
 } from '@project-id/data-access/facades'
+import { LinksPathService } from '@project-id/utils'
 import { ProjectsFacade } from '@projects/data-access/facades'
 import { BlockType, GridMode, PanelModel, StringModel } from '@shared/data-access/models'
 import { getRandomColor } from 'libs/grid-layout/data-access/utils/src/lib/get-random-color'
@@ -28,6 +29,7 @@ export class StringFactory {
   private readonly selectedFacade = inject(SelectedFacade)
   private readonly panelsFacade = inject(PanelsFacade)
   private readonly stringsFacade = inject(StringsFacade)
+  private linksPathService = inject(LinksPathService)
 
   async create(stringName: string) {
     const project = await this.projectsFacade.projectFromRoute
@@ -51,6 +53,8 @@ export class StringFactory {
     if (!string) return
     const panels = await this.panelsFacade.panelsByStringId(stringId)
     this.selectedFacade.selectString(string, panels)
+    // this.linksPathService.orderPanelsInLinkOrderWithLinkAsync()
+    // orderPanelsInLinkOrderWithLinkAsync
   }
 
   async addSelectedToNew(stringName: string) {

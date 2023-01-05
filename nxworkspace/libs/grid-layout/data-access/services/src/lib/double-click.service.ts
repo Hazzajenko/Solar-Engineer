@@ -28,18 +28,18 @@ export class DoubleClickService {
   private panelFactory = inject(PanelFactory)
   private linksService = inject(LinksService)
 
-  async doubleCLick(click: MouseEventRequest) {
-    if (click.event.type !== 'dblclick') {
+  async doubleCLick(doubleClick: MouseEventRequest) {
+    if (doubleClick.event.type !== 'dblclick') {
       return this.eventFactory.undefined('not a double click')
     }
 
-    const existingBlock = await this.blocksFacade.blockByLocation(click.location)
+    const existingBlock = await this.blocksFacade.blockByLocation(doubleClick.location)
 
     if (!existingBlock) {
       return this.eventFactory.undefined('no double click events for no blocks')
     }
 
-    return this.existingBlockSwitch(click, existingBlock)
+    return this.existingBlockSwitch(doubleClick, existingBlock)
   }
 
   async existingBlockSwitch(

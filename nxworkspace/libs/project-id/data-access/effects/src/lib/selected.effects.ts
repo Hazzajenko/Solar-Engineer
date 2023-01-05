@@ -88,38 +88,38 @@ export class SelectedEffects {
     // { dispatch: false },
   )
 
-  stringLinkPath$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(SelectedActions.selectString),
-        switchMap(({ panels }) => this.linksPathService
-          .orderPanelsInLinkOrder(panels)
-          .pipe(
-            map(linkPathMap => SelectedActions.setSelectedStringLinkPaths({ pathMap: linkPathMap })),
+  /*  stringLinkPath$ = createEffect(
+      () =>
+        this.actions$.pipe(
+          ofType(SelectedActions.selectString),
+          switchMap(({ panels }) => this.linksPathService
+            .orderPanelsInLinkOrder(panels)
+            .pipe(
+              map(linkPathMap => SelectedActions.setSelectedStringLinkPaths({ pathMap: linkPathMap })),
+            ),
           ),
         ),
-      ),
-  )
+    )*/
 
   private selectedFacade = inject(SelectedFacade)
 
-  clearSelectedLinks$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(SelectedActions.clearSelectedPanelLinks),
-        switchMap(() =>
-          this.selectedFacade.selectedStringId$.pipe(
-            map((selectedStringId) => {
-              if (!selectedStringId) return
-              return this.panelsFacade
-                .panelsByStringId$(selectedStringId)
-                .pipe(switchMap((panels) => this.linksPathService.orderPanelsInLinkOrder(panels)))
-            }),
+  /*  clearSelectedLinks$ = createEffect(
+      () =>
+        this.actions$.pipe(
+          ofType(SelectedActions.clearSelectedPanelLinks),
+          switchMap(() =>
+            this.selectedFacade.selectedStringId$.pipe(
+              map((selectedStringId) => {
+                if (!selectedStringId) return
+                return this.panelsFacade
+                  .panelsByStringId$(selectedStringId)
+                  .pipe(switchMap((panels) => this.linksPathService.orderPanelsInLinkOrder(panels)))
+              }),
+            ),
           ),
         ),
-      ),
-    { dispatch: false },
-  )
+      { dispatch: false },
+    )*/
 
   constructor(
     private actions$: Actions,

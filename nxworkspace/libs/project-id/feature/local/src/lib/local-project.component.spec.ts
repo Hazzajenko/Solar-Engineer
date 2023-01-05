@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 
-import { ProjectIdComponent } from './local-project.component'
+import { LocalProjectComponent } from './local-project.component'
 
 describe('ProjectsFeatureProjectIdComponent', () => {
-  let component: ProjectIdComponent
-  let fixture: ComponentFixture<ProjectIdComponent>
+  let component: LocalProjectComponent
+  let fixture: ComponentFixture<LocalProjectComponent>
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ProjectIdComponent],
+      imports: [LocalProjectComponent],
     }).compileComponents()
 
-    fixture = TestBed.createComponent(ProjectIdComponent)
+    fixture = TestBed.createComponent(LocalProjectComponent)
     component = fixture.componentInstance
     fixture.detectChanges()
   })

@@ -33,7 +33,7 @@ export class ToolbarComponent {
   private uiFacade = inject(UiFacade)
   private store = inject(Store)
   gridMode$: Observable<GridMode> = this.gridFacade.gridMode$
-  keymap$ = this.uiFacade.keymap$
+  keymap$ = this.uiFacade.isKeyMapEnabled$
   selectedStringName$ = this.selectedFacade.selectedStringId$.pipe(
     switchMap(stringId => this.stringsFacade.stringById$(stringId).pipe(
       map(string => {
@@ -61,6 +61,6 @@ export class ToolbarComponent {
   }
 
   toggleKeymap() {
-    this.uiFacade.toggleKeymap()
+    this.uiFacade.toggleKeyMap()
   }
 }

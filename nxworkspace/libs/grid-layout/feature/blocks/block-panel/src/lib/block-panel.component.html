@@ -2,7 +2,8 @@
 <ng-container *ngIf='panel$ | async as panel'>
   <ng-container *ngIf='panelNg$ | async as panelNg'>
     <div
-      class='flex whitespace-pre-wrap content-center items-center justify-center border-blue-500 bg-white w-8 h-8'
+      style='width: 32px; height: 32px'
+      class='flex whitespace-pre-wrap content-center items-center justify-center'
     >
       <!--      <app-panel-link
               [isNegativeLink]='panelNg.isSelectedNegativeTo'
@@ -29,16 +30,16 @@
           </svg>
         </ng-container>
         <ng-container *ngSwitchCase='1'>
-          <svg viewBox='0 0 100 100' class='pointer-events-none z-10 relative'>
+          <svg viewBox='0 0 100 100' class='pointer-events-none relative'>
             <path
-              class='stroke-slate-800 fill-none stroke-5 z-10'
+              class='stroke-slate-800 fill-none stroke-[8px] z-10'
               d='
               M 0, 30
               H 100
               '
             />
             <path
-              class='stroke-slate-800 fill-none stroke-5 z-10'
+              class='stroke-slate-800 fill-none stroke-[8px] z-10'
               d='
               M 0, 70
               H 100
@@ -63,6 +64,37 @@
           class='absolute border border-black flex items-center justify-center content-center hover:bg-red-500'
 
         >
+          <ng-container *ngIf='panelNg.stringSelected === 1 else stringNotSelected'>
+            <ng-container *ngIf='panelNg.isSelectedPanel === 0 && !panelNg.selectedPanelLinkPath'>
+
+              <div class='relative bottom-2.5' *ngIf='panelNg.panelLinkPath'>
+                {{ panelNg.panelLinkPath.link + ":" + panelNg.panelLinkPath.count }}
+              </div>
+            </ng-container>
+            <ng-container *ngIf='panelNg.isSelectedPanel === 0  && panelNg.selectedPanelLinkPath'>
+              <div class='relative'>
+                {{ panelNg.selectedPanelLinkPath.count }}
+              </div>
+            </ng-container>
+            <!--
+                        <ng-template #panelSelected>
+                          <div *ngIf='panelNg.panelLinkPath' class='relative'>
+                            {{ panelNg.panelLinkPath.count }}
+                          </div>
+                        </ng-template>-->
+            <ng-container *ngIf='panelNg.isSelectedPanel === 1 && panelNg.selectedPanelLinkPath'>
+              <div class='relative'>
+                {{ panelNg.selectedPanelLinkPath.count }}
+              </div>
+            </ng-container>
+          </ng-container>
+          <ng-template #stringNotSelected>
+            <ng-container *ngIf='!panelNg.panelLinkPath'>
+              <div class='relative  text-xs' *ngIf='panelStringName$ | async as stringName'>
+                {{ stringName }}
+              </div>
+            </ng-container>
+          </ng-template>
           <!--         [matTooltip]='displayTooltip((panelNg.stringSelected === 1), (selectedStringTooltip$ | async)!)'
                    [matTooltipDisabled]='panelNg.stringSelected !== 1'
                    matTooltipPosition='right'-->

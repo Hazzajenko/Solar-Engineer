@@ -1,5 +1,5 @@
 import { getGuid } from '@shared/utils'
-import { PanelPathModel, PanelIdPath } from './panel-path-map'
+import { PanelPathModel, PanelIdPath } from 'libs/shared/data-access/models/src/lib/projects/path.model'
 import { EntityModel, EntityOptions, EntityType } from './entity.model'
 
 export interface StringOptions extends EntityOptions {

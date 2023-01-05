@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
 import { getSelectedLinks, LinksPathService } from '@project-id/utils'
 import { PanelModel, StringModel } from '@shared/data-access/models'
+import { PathsFactory } from 'libs/grid-layout/data-access/utils/src/lib/factory/paths/paths.factory'
 import { SelectedPanelVal } from 'libs/grid-layout/feature/blocks/block-panel/src/lib/models/panel-ng.model'
 import { LinksFacade } from 'libs/project-id/data-access/facades/src/lib/links.facade'
 import { singleAndMultiSelectIds } from 'libs/project-id/data-access/store/src/lib/selected/selected.selectors'
@@ -16,6 +17,7 @@ export class SelectedFacade {
   private store = inject(Store)
   private linksFacade = inject(LinksFacade)
   private linkPathService = inject(LinksPathService)
+  // private pathsFactory = inject(PathsFactory)
 
   selectedId$ = this.store.select(SelectedSelectors.selectSelectedId)
   selectedIdWithType$ = this.store.select(SelectedSelectors.selectSelectedIdWithType)
@@ -50,9 +52,11 @@ export class SelectedFacade {
     const links = await this.linksFacade.allLinks
     const panelLink = getSelectedLinks(links, panelId)
     this.store.dispatch(SelectedActions.selectPanel({ panelId, panelLink }))
-    const res = await this.linkPathService.orderPanelsInLinkOrderForSelectedPanel(panelId)
-    if (!res) return
-    this.store.dispatch(SelectedActions.setSelectedPanelLinkPaths({ pathMap: res }))
+    // const res = await this.linkPathService.orderPanelsInLinkOrderForSelectedPanel(panelId)
+    // if (!res) return
+    // await this.pathsFactory.createManyPaths(res)
+    // this.store.dispatch(SelectedActions.setSelectedPanelLinkPaths({ pathMap: res }))
+    // this.store.dispatch(SelectedActions.setSelectedPanelLinkPaths({ pathMap: res }))
   }
 
   selectMultiIds(ids: string[]) {
@@ -63,9 +67,10 @@ export class SelectedFacade {
     const links = await this.linksFacade.allLinks
     const panelLink = getSelectedLinks(links, panelId)
     this.store.dispatch(SelectedActions.selectPanelWhenStringSelected({ panelId, panelLink }))
-    const res = await this.linkPathService.orderPanelsInLinkOrderForSelectedPanel(panelId)
-    if (!res) return
-    this.store.dispatch(SelectedActions.setSelectedPanelLinkPaths({ pathMap: res }))
+    // const res = await this.linkPathService.orderPanelsInLinkOrderForSelectedPanel(panelId)
+    // if (!res) return
+    // await this.pathsFactory.createManyPaths(res)
+    // this.store.dispatch(SelectedActions.setSelectedPanelLinkPaths({ pathMap: res }))
   }
 
   startMultiSelectPanel(panelId: string) {

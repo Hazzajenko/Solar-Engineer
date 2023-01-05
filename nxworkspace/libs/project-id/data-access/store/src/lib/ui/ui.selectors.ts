@@ -8,3 +8,26 @@ export const selectIsKeymapEnabled = createSelector(
   (state: UiState) => state.keymap,
 )
 
+export const selectPosXY = createSelector(
+  selectUiState,
+  (state: UiState) => state.posXY,
+)
+
+export const selectMouseXY = createSelector(
+  selectUiState,
+  (state: UiState) => state.mouseXY,
+)
+
+export const selectGridLayoutXY = createSelector(
+  selectUiState,
+  (state: UiState) => state.gridLayoutXY,
+)
+
+export const selectGridLayoutMoving = createSelector(
+  selectUiState,
+  (state: UiState) => state.gridLayoutMoving,
+)
+
+export const selectGridLayoutZoom = createSelector(selectUiState, (state: UiState) => state.gridLayoutZoom)
+
+export const selectClientXY = createSelector(selectUiState, (state: UiState) => state.clientXY)

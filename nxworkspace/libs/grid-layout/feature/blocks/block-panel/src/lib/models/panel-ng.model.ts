@@ -1,4 +1,4 @@
-import { PanelPathModel } from '@shared/data-access/models'
+import { PanelPathModel, SelectedPathModel } from '@shared/data-access/models'
 import { Observable } from 'rxjs'
 
 export interface PanelNgModel {
@@ -9,7 +9,7 @@ export interface PanelNgModel {
   isPanelToLink: boolean
   stringSelected: StringSelectedVal
   panelLinkPath: PanelPathModel | undefined
-  selectPanelLinkPath: PanelPathModel | undefined
+  selectedPanelLinkPath: SelectedPathModel | undefined
 }
 
 export enum SelectedPanelVal {

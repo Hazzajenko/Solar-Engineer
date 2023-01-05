@@ -71,7 +71,8 @@ export class ClickService {
     if (selectedStringId === panel.stringId) {
 
     }*/
-    return this.panelFactory.select(panel, click.event.shiftKey)
+    await this.panelFactory.select(panel, click.event.shiftKey)
+    return this.eventFactory.error('!(panel instanceof PanelModel)')
     /*
 
 
