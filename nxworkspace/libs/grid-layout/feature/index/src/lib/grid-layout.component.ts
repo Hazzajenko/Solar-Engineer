@@ -56,68 +56,68 @@ import { GetLocationPipe } from './pipes/get-location.pipe'
   hostDirectives: [KeyMapDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: [`
-    * {
-      padding: 0;
-      margin: 0;
-      outline: 0;
-      /*overflow: hidden;*/
-    }
+    /*    * {
+          padding: 0;
+          margin: 0;
+          outline: 0;
+          !*overflow: hidden;*!
+        }
 
-    *::-webkit-scrollbar:horizontal {
-      height: 0;
-      width: 0;
-      display: none;
-    }
+        *::-webkit-scrollbar:horizontal {
+          height: 0;
+          width: 0;
+          display: none;
+        }
 
-    *::-webkit-scrollbar-thumb:horizontal {
-      display: none;
-    }
+        *::-webkit-scrollbar-thumb:horizontal {
+          display: none;
+        }
 
-    .containerDIV::-webkit-scrollbar-thumb:horizontal {
-      display: none;
-    }
+        .containerDIV::-webkit-scrollbar-thumb:horizontal {
+          display: none;
+        }
 
-    .containerDIV::-webkit-scrollbar:horizontal {
-      height: 0;
-      width: 0;
-      display: none;
-    }
+        .containerDIV::-webkit-scrollbar:horizontal {
+          height: 0;
+          width: 0;
+          display: none;
+        }
 
-    html, body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      /*overflow: hidden;*/
-    }
+        html, body {
+          margin: 0;
+          padding: 0;
+          width: 100%;
+          height: 100%;
+          !*overflow: hidden;*!
+        }
 
-    .appWrapper {
-      overflow: visible;
-      /*overflow: visible;*/
+        .appWrapper {
+          overflow: visible;
+          !*overflow: visible;*!
 
-    }
+        }
 
-    .appWrapper::-webkit-scrollbar:horizontal {
-      height: 0;
-      width: 0;
-      display: none;
-    }
+        .appWrapper::-webkit-scrollbar:horizontal {
+          height: 0;
+          width: 0;
+          display: none;
+        }
 
-    .appWrapper::-webkit-scrollbar-thumb:horizontal {
-      display: none;
-    }
+        .appWrapper::-webkit-scrollbar-thumb:horizontal {
+          display: none;
+        }
 
-    .appGrid {
-      /*overflow: visible;*/
-    }
+        .appGrid {
+          !*overflow: visible;*!
+        }
 
-    div::-webkit-scrollbar {
-      display: none;
-    }
+        div::-webkit-scrollbar {
+          display: none;
+        }
 
-    .appGrid::-webkit-scrollbar {
-      display: none;
-    }
+        .appGrid::-webkit-scrollbar {
+          display: none;
+        }*/
 
     /*
 
@@ -145,9 +145,13 @@ export class GridLayoutComponent implements OnInit, AfterViewInit {
   @ViewChild('appGrid') appGrid!: ElementRef
 
 
-  public getScreenWidth: any
-
-  public getScreenHeight: any
+  getScreenWidth!: number
+  getScreenHeight!: number
+  containerWidth!: number
+  containerHeight!: number
+  containerWidthString!: string
+  containerHeightString!: string
+  // getScreenWidth-200
   // private uiFacade = inject(UiFacade)
   showKeymap$ = this.uiFacade.isKeyMapEnabled$
   zoomLevel = 2
@@ -172,7 +176,13 @@ export class GridLayoutComponent implements OnInit, AfterViewInit {
   constructor() {
     this.getScreenWidth = window.innerWidth
     this.getScreenHeight = window.innerHeight
+    this.containerWidth = window.innerWidth - 200
+    this.containerHeight = window.innerHeight - 200
+    this.containerWidthString = `${window.innerWidth - 200}px`
+    this.containerHeightString = `${window.innerHeight - 200}px`
     console.log(`${this.getScreenWidth}x${this.getScreenHeight}`)
+    console.log(`${this.containerWidth}x${this.containerHeight}`)
+    // console.log(`${this.getScreenWidth}x${this.getScreenHeight}`)
   }
 
 

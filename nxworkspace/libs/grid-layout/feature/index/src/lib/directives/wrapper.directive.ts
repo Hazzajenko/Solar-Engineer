@@ -32,6 +32,7 @@ export class WrapperDirective implements OnInit {
   public getScreenWidth: any
   public getScreenHeight: any
   private mouseClick!: { x: number, y: number, left: number, top: number }
+  public mouse!: { x: number, y: number }
   private posX = 0
   private posY = 0
 
@@ -53,6 +54,25 @@ export class WrapperDirective implements OnInit {
 
   isDragging = false
 
+  offsetLeft = 0
+  offsetTop = 0
+  height!: number
+  negativeHeight!: number
+
+  width!: number
+  negativeWidth!: number
+  parentWidth!: number
+  parentHeight!: number
+
+
+  @Input() set parentContainerSize(size: { height: number, width: number }) {
+    this.parentWidth = size.width
+    this.parentHeight = size.height
+    // this.offsetLeft = (size.width - this.width) / 2
+    // this.offsetTop = (size.height - this.height) / 2
+    // console.log(this.offsetLeft)
+  }
+
   @Input() set dragging(dragging: boolean) {
     console.log(dragging)
     this.isDragging = dragging
@@ -66,11 +86,6 @@ export class WrapperDirective implements OnInit {
 
 
   isZoomed = false
-  height!: number
-  negativeHeight!: number
-
-  width!: number
-  negativeWidth!: number
 
   /*
     mouseUpSub$ = fromEvent<MouseEvent>(document, 'mouseup').pipe(
@@ -196,18 +211,18 @@ export class WrapperDirective implements OnInit {
     }
     if (event.ctrlKey) {
       console.log('MOUSEDOWN--WRAPPER', event)
-      const path = event.composedPath()
-      // event.composedPath().indexOf(1)
-      console.log(event.target)
-      if ((event.target as any).classList.contains('via-row')) {
-        console.log('Event came through div1')
-      }
-      // ('via-div1')
-      console.log('PATH', path)
-      console.log('PANEL', path[0])
-      path.forEach(p => {
-        console.log(p)
-      })
+      /*     const path = event.composedPath()
+           // event.composedPath().indexOf(1)
+           console.log(event.target)
+           if ((event.target as any).classList.contains('via-row')) {
+             console.log('Event came through div1')
+           }
+           // ('via-div1')
+           console.log('PATH', path)
+           console.log('PANEL', path[0])
+           path.forEach(p => {
+             console.log(p)
+           })*/
       // const pathArr = []
       /*      const node = event.target
             while (node !== document.body && node !== null) {
@@ -215,7 +230,13 @@ export class WrapperDirective implements OnInit {
               // node = node.parentNode;
             }*/
       // console.log(pathArr)
+      /*  const offsetLeft = this.mouseClick.x - this.boxPosition.left;
+        const offsetRight = this.width - offsetLeft;
+        const offsetTop = this.mouseClick.y - this.boxPosition.top;
+        const offsetBottom = this.height - offsetTop;*/
       const rect = this.elementRef.nativeElement.getBoundingClientRect()
+      // this.mouseClick = { x: event.clientX, y: event.clientY, left: rect.left, top: rect.top }
+      console.log(rect)
       this.startX = event.clientX - rect.left
       this.startY = event.clientY - rect.top
 
@@ -245,6 +266,7 @@ export class WrapperDirective implements OnInit {
       return
     }
     if (event.ctrlKey && this.startX && this.startY && this.isDragging) {
+      // this.mouse = { x: event.clientX, y: event.clientY }
       console.log('MOUSEMOVE--WRAPPER', event, this.scale)
       // console.log(event.ctrlKey && this.startX && this.startY && this.isDragging)
       // offsetX = e.target.offsetLeft + e.offsetX;
@@ -254,8 +276,20 @@ export class WrapperDirective implements OnInit {
             left: 256px;*/
       console.log('startY', this.startY)
       console.log('startX', this.startX)
-      const mouseX = event.pageX - this.elementRef.nativeElement.parentNode.offsetLeft
-      const mouseY = event.pageY - this.elementRef.nativeElement.parentNode.offsetTop
+
+      const parentRect = this.elementRef.nativeElement.parentNode.getBoundingClientRect()
+      // const mouseX = event.pageX - (Number(this.elementRef.nativeElement.parentNode.width) - this.width) / 2 - this.elementRef.nativeElement.parentNode.offsetLeft
+      const mouseX = event.pageX - (parentRect.width - this.width) / 2 - this.elementRef.nativeElement.parentNode.offsetLeft
+      console.log(mouseX)
+      console.log(this.elementRef.nativeElement.parentNode)
+      // const mouseX = event.pageX - 350
+      // const mouseX = event.pageX - this.elementRef.nativeElement.parentNode.offsetLeft
+      const mouseY = event.pageY - (parentRect.height - this.height) / 2 - this.elementRef.nativeElement.parentNode.offsetTop
+      console.log(mouseY)
+      // const mouseY = event.pageY - this.elementRef.nativeElement.parentNode.offsetTop
+
+      console.log(this.elementRef.nativeElement.parentNode.getBoundingClientRect())
+      // parentNode.getBoundingClientRect();
       console.log(event.pageX)
       console.log(event.pageY)
       console.log(this.elementRef.nativeElement.parentNode)
@@ -287,12 +321,12 @@ export class WrapperDirective implements OnInit {
             console.log('left', mouseX, '-', newStartX)*/
       console.log('top', top, 'mouseY - newStartY', `${mouseY}/${newStartY}`)
       console.log('left', left, 'mouseX - newStartX', `${mouseX}/${newStartX}`)
-      if (top > (this.scale > 1.5 ? this.height : this.height - 200) || top < (this.scale > 1.5 ? this.negativeHeight : this.negativeHeight + 200)) {
-        return
-      }
-      if (left > 255 || left < -255) {
-        return
-      }
+      /*      if (top > (this.scale > 1.5 ? this.height : this.height - 200) || top < (this.scale > 1.5 ? this.negativeHeight : this.negativeHeight + 200)) {
+              return
+            }
+            if (left > 255 || left < -255) {
+              return
+            }*/
       /*      if (left > (this.scale > 1.5 ? this.width - 600 : this.width - 200) || left < (this.scale > 1.5 ? this.negativeWidth + 900 : this.negativeWidth + 200)) {
               return
             }*/
@@ -331,6 +365,9 @@ export class WrapperDirective implements OnInit {
             if (left > this.width - (200 / this.scale) || left < this.negativeWidth + (200 / this.scale < 1.5 ? (this.scale * 2) : (this.scale))) {
               return
             }*/
+      /*
+            this.left = this.mouseClick.left + (this.mouse.x - this.mouseClk.x)/*
+            this.top = this.mouseClick.top + (this.mouse.y - this.mouseClick.y)*/
 
       this.elementRef.nativeElement.style.top = top + 'px'
       this.elementRef.nativeElement.style.left = left + 'px'
@@ -344,13 +381,14 @@ export class WrapperDirective implements OnInit {
     }*/
 
   ngOnInit(): void {
-    this.height = this.elementRef.nativeElement.style.height.split('p')[0]
+    this.height = Number(this.elementRef.nativeElement.style.height.split('p')[0])
     this.negativeHeight = Number(this.elementRef.nativeElement.style.height.split('p')[0]) * -1.
-    this.width = this.elementRef.nativeElement.style.width.split('p')[0]
+    this.width = Number(this.elementRef.nativeElement.style.width.split('p')[0])
     this.negativeWidth = Number(this.elementRef.nativeElement.style.width.split('p')[0]) * -1.
     const { top, left } = this.elementRef.nativeElement.getBoundingClientRect()
     this.top = top
     this.left = left
+
     console.log(this.height, this.width, top, left)
   }
 
