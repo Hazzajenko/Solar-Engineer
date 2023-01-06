@@ -1,5 +1,9 @@
 <ng-container *ngIf='blocks$ | async as blocks'>
-  <div class='h-fit w-fit'>
+  <!--  <div class='h-fit w-fit containerDIV border border-black  flex flex-col items-center relative left-0 top-0'
+         [style.min-width]='getScreenWidth-200 + "px"'
+         [style.min-height]='getScreenHeight-200 + "px"'>-->
+  <div class='h-fit w-fit containerDIV border border-black'
+  >
     <canvas
       #canvas
       appCanvas
@@ -19,7 +23,7 @@
          [mouseXY]='mouseXY'
 
          style='transition: transform .1s; transform-origin: 0 0;'
-         class='appGrid flex flex-col items-center relative'>
+         class='appWrapper flex flex-col items-center relative'>
       <!--      transition: transform .1s;
             transform-origin: 0 0;-->
       <!--      (zoomedIn)='isZoomed = $event'

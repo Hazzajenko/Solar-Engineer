@@ -63,12 +63,60 @@ import { GetLocationPipe } from './pipes/get-location.pipe'
       /*overflow: hidden;*/
     }
 
+    *::-webkit-scrollbar:horizontal {
+      height: 0;
+      width: 0;
+      display: none;
+    }
+
+    *::-webkit-scrollbar-thumb:horizontal {
+      display: none;
+    }
+
+    .containerDIV::-webkit-scrollbar-thumb:horizontal {
+      display: none;
+    }
+
+    .containerDIV::-webkit-scrollbar:horizontal {
+      height: 0;
+      width: 0;
+      display: none;
+    }
+
     html, body {
       margin: 0;
       padding: 0;
       width: 100%;
       height: 100%;
       /*overflow: hidden;*/
+    }
+
+    .appWrapper {
+      overflow: visible;
+      /*overflow: visible;*/
+
+    }
+
+    .appWrapper::-webkit-scrollbar:horizontal {
+      height: 0;
+      width: 0;
+      display: none;
+    }
+
+    .appWrapper::-webkit-scrollbar-thumb:horizontal {
+      display: none;
+    }
+
+    .appGrid {
+      /*overflow: visible;*/
+    }
+
+    div::-webkit-scrollbar {
+      display: none;
+    }
+
+    .appGrid::-webkit-scrollbar {
+      display: none;
     }
 
     /*

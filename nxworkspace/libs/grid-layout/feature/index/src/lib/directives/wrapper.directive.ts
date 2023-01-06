@@ -241,15 +241,26 @@ export class WrapperDirective implements OnInit {
     event.preventDefault()
     event.stopPropagation()
     if (!event.ctrlKey || !this.startX || !this.startY || !this.isDragging) {
+      this.isDragging = false
       return
     }
     if (event.ctrlKey && this.startX && this.startY && this.isDragging) {
       console.log('MOUSEMOVE--WRAPPER', event, this.scale)
       // console.log(event.ctrlKey && this.startX && this.startY && this.isDragging)
+      // offsetX = e.target.offsetLeft + e.offsetX;
+      // offsetY = e.target.offsetTop + e.offsetY;
+      /*      width: 1185px;
+            top: 0px;
+            left: 256px;*/
       console.log('startY', this.startY)
       console.log('startX', this.startX)
       const mouseX = event.pageX - this.elementRef.nativeElement.parentNode.offsetLeft
       const mouseY = event.pageY - this.elementRef.nativeElement.parentNode.offsetTop
+      console.log(event.pageX)
+      console.log(event.pageY)
+      console.log(this.elementRef.nativeElement.parentNode)
+      console.log(this.elementRef.nativeElement.parentNode.offsetLeft)
+      console.log(this.elementRef.nativeElement.parentNode.offsetTop)
       /*      console.log('mouseY', mouseY)
             console.log('mouseY', mouseY)*/
       console.log('mouseX', mouseX, 'event.pageX - this.elementRef.nativeElement.parentNode.offsetLeft', `${event.pageX}-${this.elementRef.nativeElement.parentNode.offsetLeft}`)
@@ -276,6 +287,34 @@ export class WrapperDirective implements OnInit {
             console.log('left', mouseX, '-', newStartX)*/
       console.log('top', top, 'mouseY - newStartY', `${mouseY}/${newStartY}`)
       console.log('left', left, 'mouseX - newStartX', `${mouseX}/${newStartX}`)
+      if (top > (this.scale > 1.5 ? this.height : this.height - 200) || top < (this.scale > 1.5 ? this.negativeHeight : this.negativeHeight + 200)) {
+        return
+      }
+      if (left > 255 || left < -255) {
+        return
+      }
+      /*      if (left > (this.scale > 1.5 ? this.width - 600 : this.width - 200) || left < (this.scale > 1.5 ? this.negativeWidth + 900 : this.negativeWidth + 200)) {
+              return
+            }*/
+      console.log((this.scale < 1.5 ? (this.width - 300) : this.width) - (200 / this.scale))
+
+      // this.scale > 1.5 ? this.height : this.height-100
+      // this.height - (200 / this.scale)
+      /*
+      (this.negativeHeight + 200) + (200 / this.scale * this.scale)
+      (this.negativeHeight
+      left > this.width - (200 / this.scale) || left < (this.negativeWidth + 200) + (200 / this.scale * this.scale)
+      this.scale > 1.5 ? this.negativeHeight : this.negativeHeight+100
+      this.height - (200 / this.scale)
+      * when not zoomed in its 100 less than height
+      * when its zoomed in it should be the height
+      *
+      * */
+      // this.scale < 1.5 ? (this.scale) : (this.scale * 2)
+
+      // this.scale < 1.5 ? (this.scale) : (this.scale * 2)
+      // this.scale < 1.5 ? (this.width+100) : this.width
+      // this.width
       /*      console.log('left', left, '-', newStartX)
             console.log('top', top)
             console.log('left', left)*/
