@@ -48,12 +48,14 @@
           </svg>
         </ng-container>
       </ng-container>
+      <!--      [attr.location]='panel.location'-->
       <ng-container>
         <div
           appPanelDirective
           [id]='panel.id'
           [panelNg]='panelNg'
-
+          bind-attr.id='panel.id'
+          bind-attr.location='panel.location'
           (contextmenu)='onRightClick($event, panel)'
           [cdkDragData]='panel'
           [ngStyle]="{

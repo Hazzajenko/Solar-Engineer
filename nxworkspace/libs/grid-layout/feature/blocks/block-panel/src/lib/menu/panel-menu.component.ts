@@ -7,7 +7,8 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog'
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { MatTooltipModule } from '@angular/material/tooltip'
-import { LinkFactory, PanelFactory, StringFactory } from '@grid-layout/data-access/utils'
+import { LinksFactory, PanelsFactory, StringsFactory } from '@grid-layout/data-access/services'
+
 import { PanelLinkComponent } from '@grid-layout/feature/blocks/shared-ui'
 
 import { LetModule } from '@ngrx/component'
@@ -45,8 +46,8 @@ import { firstValueFrom, Observable } from 'rxjs'
 })
 export class PanelMenuComponent {
   //region Services
-  public stringFactory = inject(StringFactory)
-  public panelFactory = inject(PanelFactory)
+  public stringsFactory = inject(StringsFactory)
+  public panelsFactory = inject(PanelsFactory)
   @Input() panel!: PanelModel
   @Input() panelNg!: PanelNgModel
   panel$!: Observable<PanelModel | undefined>
@@ -57,7 +58,7 @@ export class PanelMenuComponent {
   private panelsFacade = inject(PanelsFacade)
   private stringsFacade = inject(StringsFacade)
   private linksFacade = inject(LinksFacade)
-  private linkFactory = inject(LinkFactory)
+  private linksFactory = inject(LinksFactory)
   private selectedFacade = inject(SelectedFacade)
   private snackBar = inject(MatSnackBar)
   private dialog = inject(MatDialog)
@@ -66,7 +67,7 @@ export class PanelMenuComponent {
 
   //region Component Functions
   async selectString(panel: PanelModel) {
-    await this.stringFactory.select(panel.stringId)
+    await this.stringsFactory.select(panel.stringId)
   }
 
   async editString(panel: PanelModel) {
@@ -87,7 +88,7 @@ export class PanelMenuComponent {
   }
 
   async deletePanel(panelId: string) {
-    await this.panelFactory.delete(panelId)
+    await this.panelsFactory.deletePanel(panelId)
   }
 
   async createNewStringWithSelected() {
@@ -103,7 +104,7 @@ export class PanelMenuComponent {
     //TODO change this back to dialog
     const amountOfStrings = await this.stringsFacade.totalStrings()
     const newStringName = `STRING_${amountOfStrings + 1}`
-    const result = await this.stringFactory.addSelectedToNew(newStringName)
+    const result = await this.stringsFactory.addSelectedToNew(newStringName)
     if (result instanceof StringModel) {
       this.snack(`Created and selected new string ${result.name}`)
     }
@@ -120,25 +121,25 @@ export class PanelMenuComponent {
   }
 
   async deleteSelectedString(stringId: string) {
-    await this.stringFactory.delete(stringId)
+    await this.stringsFactory.delete(stringId)
     this.snack(`String ${stringId} deleted`)
   }
 
   async rotatePanel(panel: PanelModel) {
     const rotation = panel.rotation === 0 ? 1 : 0
-    await this.panelFactory.update(panel.id, { rotation })
+    await this.panelsFactory.updatePanel(panel.id, { rotation })
   }
 
   async deletePanelLink(panelId: string, link: 'POSITIVE' | 'NEGATIVE') {
-    await this.linkFactory.deleteLink(panelId, link)
+    await this.linksFactory.deleteLink(panelId, link)
   }
 
   async rotateSelected(rotation: number) {
-    await this.panelFactory.rotateSelected(rotation)
+    await this.panelsFactory.rotateSelectedPanels(rotation)
   }
 
   async removeFromString(panel: PanelModel) {
-    await this.panelFactory.update(panel.id, { stringId: 'undefined' })
+    await this.panelsFactory.updatePanel(panel.id, { stringId: 'undefined' })
   }
 
   //endregion

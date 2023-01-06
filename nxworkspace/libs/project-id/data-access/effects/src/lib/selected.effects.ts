@@ -1,18 +1,11 @@
 import { inject, Injectable } from '@angular/core'
+import { LinksPathService, StatsService } from '@grid-layout/data-access/services'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { Store } from '@ngrx/store'
-import { getSelectedLinks, LinksPathService, StatsService } from '@project-id/utils'
-import { PanelLinkModel, PanelLinksToModel } from '@shared/data-access/models'
-import { of, tap } from 'rxjs'
-import { combineLatestWith, map, switchMap } from 'rxjs/operators'
 
-import {
-  LinksFacade,
-  SelectedFacade,
-  StringsFacade,
-  PanelsFacade,
-} from '@project-id/data-access/facades'
+import { LinksFacade, PanelsFacade, SelectedFacade, StringsFacade } from '@project-id/data-access/facades'
 import { SelectedActions } from '@project-id/data-access/store'
+import { map } from 'rxjs/operators'
 
 
 @Injectable()

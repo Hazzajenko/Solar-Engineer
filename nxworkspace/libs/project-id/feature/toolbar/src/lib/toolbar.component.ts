@@ -1,5 +1,5 @@
 import { LetModule } from '@ngrx/component'
-import { UiFacade } from 'libs/project-id/data-access/facades/src/lib/ui.facade'
+import { GridStoreService, UiFacade } from '@project-id/data-access/facades'
 import { map, Observable, switchMap } from 'rxjs'
 import { MatButtonModule } from '@angular/material/button'
 import { CommonModule } from '@angular/common'
@@ -28,6 +28,7 @@ import { Store } from '@ngrx/store'
 })
 export class ToolbarComponent {
   private gridFacade = inject(GridFacade)
+  private gridStore = inject(GridStoreService)
   private selectedFacade = inject(SelectedFacade)
   private stringsFacade = inject(StringsFacade)
   private uiFacade = inject(UiFacade)
@@ -46,15 +47,15 @@ export class ToolbarComponent {
   selectMode(gridMode: GridMode) {
     switch (gridMode) {
       case GridMode.CREATE:
-        return this.gridFacade.selectCreateMode()
+        return this.gridStore.dispatch.selectCreateMode()
       case GridMode.SELECT:
-        return this.gridFacade.selectSelectMode()
+        return this.gridStore.dispatch.selectSelectMode()
 
       case GridMode.LINK:
-        return this.gridFacade.selectLinkMode()
+        return this.gridStore.dispatch.selectLinkMode()
 
       case GridMode.DELETE:
-        return this.gridFacade.selectDeleteMode()
+        return this.gridStore.dispatch.selectDeleteMode()
       default:
         return
     }

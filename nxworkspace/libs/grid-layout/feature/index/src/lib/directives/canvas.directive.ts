@@ -1,23 +1,27 @@
-import { VibrantColor } from '@shared/data-access/models'
-import { AfterViewInit, Directive, ElementRef, HostListener, inject, Input, NgZone, OnInit } from '@angular/core'
+import { Directive, ElementRef, HostListener, inject, Input, NgZone, OnInit } from '@angular/core'
 import { ClientXY, ElementOffsets } from '@grid-layout/shared/models'
-import { GridMode } from '@shared/data-access/models'
+import { GridMode, VibrantColor } from '@shared/data-access/models'
 
 @Directive({
   selector: '[appCanvas]',
   standalone: true,
 })
-export class CanvasDirective implements AfterViewInit {
+export class CanvasDirective implements OnInit {
   private canvas = inject(ElementRef<HTMLCanvasElement>)
   private ctx: CanvasRenderingContext2D = this.canvas.nativeElement.getContext('2d')
 
   // private ngZone: inject(NgZone)
 
   constructor(private ngZone: NgZone) {
-    this.draw()
+    // this.draw()
   }
 
 
+  height!: number
+  negativeHeight!: number
+
+  width!: number
+  negativeWidth!: number
   pageX?: number
   pageY?: number
   startX?: number
@@ -56,7 +60,7 @@ export class CanvasDirective implements AfterViewInit {
     this.canvas.nativeElement.height = offsets.offsetHeight
     this.offsetX = offsets.offsetLeft
     this.offsetY = offsets.offsetTop
-    this.draw()
+    // this.draw()
   }
 
   @Input() set startDragging(clientXY: ClientXY) {
@@ -70,7 +74,7 @@ export class CanvasDirective implements AfterViewInit {
     const rect = this.canvas.nativeElement.getBoundingClientRect()
     this.startX = clientXY.clientX - rect.left
     this.startY = clientXY.clientY - rect.top
-    this.draw()
+    // this.draw()
   }
 
   @HostListener('document:mouseup', ['$event'])
@@ -98,6 +102,13 @@ export class CanvasDirective implements AfterViewInit {
     event.stopPropagation()
   }
 
+  ngOnInit(): void {
+    this.height = Number(this.canvas.nativeElement.style.height.split('p')[0])
+    this.negativeHeight = Number(this.canvas.nativeElement.style.height.split('p')[0]) * -1.
+    this.width = Number(this.canvas.nativeElement.style.width.split('p')[0])
+    this.negativeWidth = Number(this.canvas.nativeElement.style.width.split('p')[0]) * -1.
+  }
+
 
   animate() {
     if (!this.startX || !this.startY || !this.pageX || !this.pageY) {
@@ -105,8 +116,13 @@ export class CanvasDirective implements AfterViewInit {
       return
     }
 
-    const mouseX = this.pageX - this.canvas.nativeElement.parentNode.offsetLeft
-    const mouseY = this.pageY - this.canvas.nativeElement.parentNode.offsetTop
+    const parentRect = this.canvas.nativeElement.parentNode.getBoundingClientRect()
+    const mouseX = this.pageX - (parentRect.width - this.width) / 2 - this.canvas.nativeElement.parentNode.offsetLeft
+
+    const mouseY = this.pageY - (parentRect.height - this.height) / 2 - this.canvas.nativeElement.parentNode.offsetTop
+
+    // const mouseX = this.pageX - this.canvas.nativeElement.parentNode.offsetLeft
+    // const mouseY = this.pageY - this.canvas.nativeElement.parentNode.offsetTop
 
     this.ctx.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height)
 
@@ -126,9 +142,6 @@ export class CanvasDirective implements AfterViewInit {
     window.requestAnimationFrame(() => this.animate())
   }
 
-  ngAfterViewInit(): void {
-    this.draw()
-  }
 
   draw() {
     /*
@@ -140,7 +153,7 @@ export class CanvasDirective implements AfterViewInit {
 */
 
 
-    const lineWidth = 2
+    // const lineWidth = 2
     const xNumber = 6
     const yNumber = 9
     const xCenter = this.canvas.nativeElement.width / 2

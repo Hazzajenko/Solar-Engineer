@@ -1,9 +1,9 @@
-import { StatsService } from '@project-id/utils';
+import { StatsService } from '@grid-layout/data-access/services'
 import { inject, Pipe, PipeTransform } from '@angular/core'
 import { Observable, of } from 'rxjs'
 import { map } from 'rxjs/operators'
-import { PanelsFacade } from '@project-id/data-access/facades';
-import { StringModel, TotalModel } from '@shared/data-access/models';
+import { PanelsFacade } from '@project-id/data-access/facades'
+import { StringModel, TotalModel } from '@shared/data-access/models'
 
 
 @Pipe({

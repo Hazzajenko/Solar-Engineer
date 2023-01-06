@@ -34,6 +34,9 @@ newlib:
 ngrx:
 	nx generate @nrwl/angular:ngrx --name=blocks --directory=libs/project-id/data-access/store/src/lib/blocks --barrels --facade --skipImport
 
+delete:
+	nx generate @nrwl/workspace:remove --project project-id-utils --forceRemove
+
 graph:
 	nx graph
 

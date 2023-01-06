@@ -1,6 +1,6 @@
 import { inject, Pipe, PipeTransform } from '@angular/core'
-import { GlobalFacade } from '@project-id/data-access/facades'
-import { LinksPathService, StatsService } from '@project-id/utils'
+import { StatsService } from '@grid-layout/data-access/services'
+import { LinksStoreService, PanelsStoreService } from '@project-id/data-access/facades'
 import { StringModel, TotalModel } from '@shared/data-access/models'
 import { Observable, of, switchMap } from 'rxjs'
 import { map } from 'rxjs/operators'
@@ -18,13 +18,10 @@ export interface StringStatsModel {
   standalone: true,
 })
 export class StringStatsAsyncPipe implements PipeTransform {
-  private facade = inject(GlobalFacade)
 
-  constructor(
-    private statsService: StatsService,
-    private linksPathService: LinksPathService,
-  ) {
-  }
+  private statsService = inject(StatsService)
+  private panelsStore = inject(PanelsStoreService)
+  private linksStore = inject(LinksStoreService)
 
   transform(string: StringModel): Observable<StringStatsModel> {
     if (!string) {
@@ -43,10 +40,10 @@ export class StringStatsAsyncPipe implements PipeTransform {
       return of(stringStats)
     }
 
-    return this.facade.panels.panelsByStringId$(string.id)
+    return this.panelsStore.select.panelsByStringId$(string.id)
       .pipe(
         switchMap((stringPanels) =>
-          this.facade.links.linksByPanels$(stringPanels)
+          this.linksStore.select.linksByPanels$(stringPanels)
             .pipe(map((stringLinks) => ({ stringPanels, stringLinks }))),
         ),
       )

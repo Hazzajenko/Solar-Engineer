@@ -9,6 +9,7 @@ import { AsyncPipe, NgForOf, NgIf, NgStyle } from '@angular/common'
 import { MatListModule } from '@angular/material/list'
 
 import { MatIconModule } from '@angular/material/icon'
+import { StringsFactory } from '@grid-layout/data-access/services'
 
 
 import { map } from 'rxjs/operators'
@@ -16,7 +17,7 @@ import { map } from 'rxjs/operators'
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatInputModule } from '@angular/material/input'
-import { StringFactory } from '@grid-layout/data-access/utils'
+
 import { StringsFacade } from '@project-id/data-access/facades'
 import { WarmColor } from '@shared/data-access/models'
 import { StringTotalsAsyncPipe } from '../pipes/string-totals-async.pipe'
@@ -94,7 +95,7 @@ export class EditStringDialog {
   color = new FormControl('')
   form!: FormGroup
   private stringsFacade = inject(StringsFacade)
-  private stringFactory = inject(StringFactory)
+  private stringsFactory = inject(StringsFactory)
 
 
   constructor(
@@ -117,7 +118,7 @@ export class EditStringDialog {
   }
 
   async updateString(stringId: string) {
-    this.stringFactory.updateString(stringId, {
+    this.stringsFactory.updateString(stringId, {
       name: this.name.value ? this.name.value : undefined,
       color: this.color.value ? this.color.value : undefined,
     })

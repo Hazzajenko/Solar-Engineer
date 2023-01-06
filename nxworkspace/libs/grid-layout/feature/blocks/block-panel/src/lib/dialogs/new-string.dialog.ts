@@ -13,7 +13,8 @@ import { MatIconModule } from '@angular/material/icon'
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatInputModule } from '@angular/material/input'
-import { StringFactory } from '@grid-layout/data-access/utils'
+import { StringsFactory } from '@grid-layout/data-access/services'
+
 import { StringModel } from '@shared/data-access/models'
 
 @Component({
@@ -54,12 +55,12 @@ import { StringModel } from '@shared/data-access/models'
 })
 export class NewStringDialog {
   name = new FormControl('')
-  private stringFactory = inject(StringFactory)
+  private stringsFactory = inject(StringsFactory)
   private dialogRef = inject(MatDialogRef<NewStringDialog>)
 
   async addSelectedToNew() {
     if (!this.name.value) return console.error('!this.name.value')
-    const result = await this.stringFactory.addSelectedToNew(this.name.value)
+    const result = await this.stringsFactory.addSelectedToNew(this.name.value)
     if (result instanceof StringModel) {
       this.dialogRef.close(result)
       return

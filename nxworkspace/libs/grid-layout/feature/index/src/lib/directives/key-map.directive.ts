@@ -1,17 +1,12 @@
 import { Directive, HostListener, inject } from '@angular/core'
-import {
-  GlobalFactory,
-  GridFactory,
-  MultiFactory,
-  SelectedFactory,
-  StringFactory,
-} from '@grid-layout/data-access/utils'
+import { GridFactory, MultiFactory, SelectedFactory, StringsFactory } from '@grid-layout/data-access/services'
+
 import {
   GlobalFacade,
-  GridFacade,
-  MultiFacade,
-  PanelsFacade,
-  SelectedFacade,
+  GridFacade, GridStoreService, LinksStoreService,
+  MultiFacade, MultiStoreService,
+  PanelsFacade, PanelsStoreService,
+  SelectedFacade, SelectedStoreService,
   StringsFacade,
 } from '@project-id/data-access/facades'
 import { GridMode } from '@shared/data-access/models'
@@ -30,10 +25,14 @@ export class KeyMapDirective {
   private gridFactory = inject(GridFactory)
   private selectedFactory = inject(SelectedFactory)
   private multiFactory = inject(MultiFactory)
+  private multiStore = inject(MultiStoreService)
+  private gridStore = inject(GridStoreService)
+  private linksStore = inject(LinksStoreService)
+  private selectedStore = inject(SelectedStoreService)
+  private panelsStore = inject(PanelsStoreService)
   private stringsFacade = inject(StringsFacade)
-  private stringFactory = inject(StringFactory)
-  private factory = inject(GlobalFactory)
-  private facade = inject(GlobalFacade)
+  private stringFactory = inject(StringsFactory)
+
 
   @HostListener('window:keyup', ['$event'])
   async keyEvent(event: KeyboardEvent) {
@@ -42,7 +41,7 @@ export class KeyMapDirective {
       case 'Alt': {
         const multiState = await firstValueFrom(this.multiFacade.state$)
         if (multiState.locationStart && event.key === 'Alt') {
-          this.multiFacade.clearMultiState()
+          this.multiStore.dispatch.clearMultiState()
         }
       }
         break
@@ -59,22 +58,22 @@ export class KeyMapDirective {
         break
       }
       case 'l': {
-        const gridMode = await this.facade.grid.gridMode
+        const gridMode = await this.gridStore.select.gridMode
         if (gridMode === GridMode.LINK) {
-          this.facade.grid.selectGridMode(GridMode.SELECT)
-          this.facade.links.clearLinkState()
+          this.gridStore.dispatch.selectGridMode(GridMode.SELECT)
+          this.linksStore.dispatch.clearLinkState()
           break
         }
-        const isStringSelected = await this.facade.selected.selectedStringId
+        const isStringSelected = await this.selectedStore.select.selectedStringId
         if (!isStringSelected) break
-        this.facade.grid.selectGridMode(GridMode.LINK)
-        this.facade.selected.clearSingleSelected()
+        this.gridStore.dispatch.selectGridMode(GridMode.LINK)
+        this.selectedStore.dispatch.clearSingleSelected()
 
         break
 
       }
       case 'c':
-        this.gridFacade.selectCreateMode()
+        this.gridStore.dispatch.selectCreateMode()
         break
       case 'x': {
         const multiSelectIds = await this.selectedFacade.multiSelectIds
@@ -93,13 +92,13 @@ export class KeyMapDirective {
           break
         }
         if (singleAndMultiIds.singleId) {
-          await this.panelsFacade.deletePanel(singleAndMultiIds.singleId)
+          await this.panelsStore.dispatch.deletePanel(singleAndMultiIds.singleId)
           break
         }
         break
       }
       case 'Escape':
-        this.gridFacade.clearEntireGridState()
+        this.gridStore.dispatch.clearEntireGridState()
         break
     }
   }

@@ -1,42 +1,41 @@
-import { BLOCKS_FACADE, COURSES_SERVICE_TOKEN, GET_BLOCK } from '@project-id/data-access/injections'
-import { importProvidersFrom, inject } from '@angular/core'
+import { importProvidersFrom } from '@angular/core'
 import { MatDialogModule } from '@angular/material/dialog'
+import { MatSnackBarModule, MatSnackBarRef } from '@angular/material/snack-bar'
 import { provideEffects } from '@ngrx/effects'
 import { provideState } from '@ngrx/store'
 import {
-  PANELS_FEATURE_KEY,
-  panelsReducer,
-  STRINGS_FEATURE_KEY,
-  stringsReducer,
-  LINKS_FEATURE_KEY,
-  linksReducer,
+  BlocksEffects,
+  EntitiesEffects,
+  LinksEffects,
+  PanelsEffects,
+  SelectedEffects,
+  StringsEffects,
+} from '@project-id/data-access/effects'
+import {
   BLOCKS_FEATURE_KEY,
   blocksReducer,
   ENTITIES_FEATURE_KEY,
   entitiesReducer,
-  SELECTED_FEATURE_KEY,
-  selectedReducer,
   GRID_FEATURE_KEY,
   gridReducer,
+  LINKS_FEATURE_KEY,
+  linksReducer,
   MULTI_FEATURE_KEY,
-  multiReducer, UI_FEATURE_KEY, uiReducer, PATHS_FEATURE_KEY, pathsReducer,
+  multiReducer,
+  PANELS_FEATURE_KEY,
+  panelsReducer,
+  PATHS_FEATURE_KEY,
+  pathsReducer,
+  SELECTED_FEATURE_KEY,
+  selectedReducer,
+  STRINGS_FEATURE_KEY,
+  stringsReducer,
+  UI_FEATURE_KEY,
+  uiReducer,
 } from '@project-id/data-access/store'
-import {
-  PanelsEffects,
-  StringsEffects,
-  LinksEffects,
-  BlocksEffects,
-  EntitiesEffects,
-  SelectedEffects,
-} from '@project-id/data-access/effects'
-import { PROJECTS_FEATURE_KEY, projectsReducer } from '@projects/data-access/store'
 import { ProjectsEffects } from '@projects/data-access/effects'
-import { BlocksFacade } from '@project-id/data-access/facades'
-import { HttpClient } from '@angular/common/http'
-import { MatSnackBarModule, MatSnackBarRef } from '@angular/material/snack-bar'
-/* function coursesServiceProviderFactory(http:HttpClient): BlocksFacade {
-  return new BlocksFacade(http);
-} */
+import { PROJECTS_FEATURE_KEY, projectsReducer } from '@projects/data-access/store'
+
 
 export const projectsProviders = [
   importProvidersFrom(MatDialogModule, MatSnackBarModule, MatSnackBarRef),

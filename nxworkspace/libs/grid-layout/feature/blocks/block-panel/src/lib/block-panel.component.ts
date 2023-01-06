@@ -7,7 +7,8 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog'
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { MatTooltipModule } from '@angular/material/tooltip'
-import { LinkFactory, PanelFactory, StringFactory } from '@grid-layout/data-access/utils'
+import { LinksFactory } from '@grid-layout/data-access/services'
+
 import { PanelLinkComponent } from '@grid-layout/feature/blocks/shared-ui'
 
 
@@ -22,7 +23,7 @@ import {
   SelectedPathModel,
 } from '@shared/data-access/models'
 import { PanelMenuComponent } from 'libs/grid-layout/feature/blocks/block-panel/src/lib/menu/panel-menu.component'
-import { PathsFacade } from 'libs/project-id/data-access/facades/src/lib/paths.facade'
+import { PathsFacade } from 'libs/project-id/data-access/facades/src/lib/paths/paths.facade'
 
 import { combineLatest, firstValueFrom, Observable, of, retry, switchMap } from 'rxjs'
 
@@ -58,8 +59,8 @@ import { PanelNgModel, SelectedPanelVal, StringSelectedVal } from './models/pane
 })
 export class BlockPanelComponent {
   //region Services
-  public stringFactory = inject(StringFactory)
-  public panelFactory = inject(PanelFactory)
+  /*  public stringFactory = inject(StringFactory)
+    public panelFactory = inject(PanelFactory)*/
   panel$!: Observable<PanelModel | undefined>
   color$!: Observable<string | undefined>
   menuTopLeftPosition = { x: '0', y: '0' }
@@ -69,7 +70,7 @@ export class BlockPanelComponent {
   private stringsFacade = inject(StringsFacade)
   private linksFacade = inject(LinksFacade)
   private pathsFacade = inject(PathsFacade)
-  private linkFactory = inject(LinkFactory)
+  private linksFactory = inject(LinksFactory)
   private selectedFacade = inject(SelectedFacade)
   private snackBar = inject(MatSnackBar)
   private dialog = inject(MatDialog)

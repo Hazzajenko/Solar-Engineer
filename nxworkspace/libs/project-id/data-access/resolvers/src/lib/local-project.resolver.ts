@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core'
 import { Resolve } from '@angular/router'
-import { ProjectsFacade } from '@projects/data-access/facades'
+import { ProjectsStoreService } from '@projects/data-access/facades'
 import { EMPTY, of } from 'rxjs'
 import { switchMap } from 'rxjs/operators'
 
@@ -8,11 +8,12 @@ import { switchMap } from 'rxjs/operators'
   providedIn: 'root',
 })
 export class LocalProjectResolver implements Resolve<void> {
-  private projectsFacade = inject(ProjectsFacade)
+  private projectsStore = inject(ProjectsStoreService)
+
   resolve() {
-    return this.projectsFacade.localProject$.pipe(
+    return this.projectsStore.select.localProject$.pipe(
       switchMap((localProject) => {
-        if (!localProject) return of(this.projectsFacade.initLocalProject())
+        if (!localProject) return of(this.projectsStore.dispatch.initLocalProject())
         else return EMPTY
       }),
     )
