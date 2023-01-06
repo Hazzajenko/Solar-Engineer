@@ -44,9 +44,8 @@
               <div
                 (cdkDropListDropped)='drop($event)'
                 (click)='click({ event: $event, location })'
-                (mousemove)='move({event: $event, location })'
-                (mousedown)='mouse({event: $event, location })'
-                (mouseup)='mouse({event: $event, location })'
+
+
                 (dblclick)='doubleCLick({event: $event, location })'
                 [id]='location'
                 cdkDropList
@@ -61,6 +60,9 @@
             </ng-container>
           </div>
         </div>
+        <!--        (mouseup)='mouseUp({event: $event, location })'-->
+        <!--        (mousedown)='mouseDown({event: $event, location })'-->
+        <!--        (mousemove)='move({event: $event, location })'-->
         <!--        <ng-container *ngIf='showKeymap$ | async as keymap'>
                   <app-keymap-overlay *ngIf='keymap'></app-keymap-overlay>
                   <app-string-totals-overlay *ngIf='selectedString$ | async as selectedString'

@@ -334,24 +334,6 @@ export class GridDirective implements AfterViewInit {
 
   }
 
-  private updateZoom() {
-    console.log(this._componentX, this._componentY)
-    if (!this._componentX || this._componentY) {
-      this.renderer.setStyle(
-        this.elementRef.nativeElement,
-        'transform',
-        `scale(${this._zoomLevel})`,
-      )
-    } else {
-      this.renderer.setStyle(
-        this.elementRef.nativeElement,
-        'transform',
-        `scale(${this._zoomLevel}) translate(${this._componentX}px, ${this._componentY}px)`,
-        // `scale(${this._zoomLevel}) translate3d(${this.left}px, ${this.top}px, 0px)`,
-      )
-    }
-
-  }
 
   /*
     @HostListener('document:mousedown', ['$event'])

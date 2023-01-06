@@ -26,6 +26,7 @@ import { GridBackgroundComponent } from 'libs/grid-layout/feature/index/src/lib/
 import { UiFacade } from 'libs/project-id/data-access/facades/src/lib/ui.facade'
 import { Observable, switchMap } from 'rxjs'
 import { map } from 'rxjs/operators'
+import { number } from 'ts-pattern/dist/patterns'
 import { CanvasDirective } from './directives/canvas.directive'
 import { DynamicComponentDirective } from './directives/dynamic-component.directive'
 import { GridDirective } from './directives/grid.directive'
@@ -93,7 +94,7 @@ export class GridLayoutComponent implements OnInit, AfterViewInit {
   private selectedFacade = inject(SelectedFacade)
   private stringsFacade = inject(StringsFacade)
   private renderer = inject(Renderer2)
-  @ViewChild('appGrid') appGrid!: ElementRef;
+  @ViewChild('appGrid') appGrid!: ElementRef
 
 
   public getScreenWidth: any
@@ -104,6 +105,12 @@ export class GridLayoutComponent implements OnInit, AfterViewInit {
   zoomLevel = 2
   isGridMoving = false
   scale = 1
+  height!: number
+  negativeHeight!: number
+
+  width!: number
+  negativeWidth!: number
+
 
   isZoomed = false
   blockHeight = 32
@@ -161,66 +168,45 @@ export class GridLayoutComponent implements OnInit, AfterViewInit {
 
 
   ngAfterViewInit(): void {
-    console.log(this.appGrid.nativeElement)
+    this.height = this.appGrid.nativeElement.style.height.split('p')[0]
+    this.negativeHeight = Number(this.appGrid.nativeElement.style.height.split('p')[0]) * -1.
+    this.width = this.appGrid.nativeElement.style.width.split('p')[0]
+    this.negativeWidth = Number(this.appGrid.nativeElement.style.width.split('p')[0]) * -1.
+    console.log(this.height, this.width)
 
   }
 
-  moveTheDiv() {
-
-
-    // if (event.ctrlKey && this.startX && this.startY && this.isDragging) {
-    console.log(event.ctrlKey && this.startX && this.startY && this.isDragging)
-    const mouseX = event.pageX - this.elementRef.nativeElement.parentNode.offsetLeft
-    const mouseY = event.pageY - this.elementRef.nativeElement.parentNode.offsetTop
-
-    const rect = this.elementRef.nativeElement.getBoundingClientRect()
-    /*        const newStartY = (this.startY - rect.top) / this.scale
-            const newStartX = (this.startX - rect.left) / this.scale*/
-    const newStartY = (this.startY) / this.scale
-    const newStartX = (this.startX) / this.scale
-    const top = mouseY - newStartY
-    const left = mouseX - newStartX
-    console.log(top)
-    if (top > this.height - (200 / this.scale) || top < this.negativeHeight + (200 / this.scale < 1.5 ? (this.scale * 2) : (this.scale))) {
-      return
-    }
-    if (left > this.width - (200 / this.scale) || left < this.negativeWidth + (200 / this.scale < 1.5 ? (this.scale * 2) : (this.scale))) {
-      return
-    }
-
-    this.elementRef.nativeElement.style.top = top + 'px'
-    this.elementRef.nativeElement.style.left = left + 'px'
-
-    // this.elementRef.nativeElement.style.top = top + 'px'
-    // this.elementRef.nativeElement.style.left = left + 'px'
-    /*        if (this.scale > 1) {
-              if (top > this.height - (200 / this.scale) || top < this.negativeHeight + (200 / this.scale)) {
-                this.elementRef.nativeElement.style.top = '0px'
-                this.elementRef.nativeElement.style.left = '0px'
-              } else {
-                this.elementRef.nativeElement.style.top = top + 'px'
-                this.elementRef.nativeElement.style.left = left + 'px'
-              }
-            }
-            if (top > this.height - (200) || top < this.negativeHeight + (200)) {
-              this.elementRef.nativeElement.style.top = '0px'
-              this.elementRef.nativeElement.style.left = '0px'
-            } else {
-              this.elementRef.nativeElement.style.top = top + 'px'
-              this.elementRef.nativeElement.style.left = left + 'px'
-            }*/
+  moveTheDiv(event: MouseEvent) {
     /*
-            if (top > this.height - (200 / this.scale) || top < this.negativeHeight + (200 / this.scale)) {
-              console.log(this.height - (200 * this.scale))
-              console.log(this.negativeHeight + (200 * this.scale))
-              return
-            }
-    */
+        if (!this.mouseXY.mouseX || !this.mouseXY.mouseY || !this.isGridMoving || !event.ctrlKey) return
+        console.log(this.mouseXY)
+        /!*   // if (event.ctrlKey && this.startX && this.startY && this.isDragging) {
+           console.log(event.ctrlKey && this.startX && this.startY && this.isDragging)
+           const mouseX = event.pageX - this.elementRef.nativeElement.parentNode.offsetLeft
+           const mouseY = event.pageY - this.elementRef.nativeElement.parentNode.offsetTop
 
+           const rect = this.appGrid.nativeElement.getBoundingClientRect()
+           /!*        const newStartY = (this.startY - rect.top) / this.scale
+                   const newStartX = (this.startX - rect.left) / this.scale*!/!*!/
+        /!*    const newStartY = (this.mouseXY.mouseY) / this.scale
+            const newStartX = (this.mouseXY.mouseX) / this.scale*!/
+        const newStartY = (this.mouseXY.mouseY)
+        const newStartX = (this.mouseXY.mouseX)
+        const top = event.clientY - newStartY
+        const left = event.clientX - newStartX
+        console.log(top)
+        if (top > this.height - (200 / this.scale) || top < this.negativeHeight + (200 / this.scale < 1.5 ? (this.scale * 2) : (this.scale))) {
+          return
+        }
+        if (left > this.width - (200 / this.scale) || left < this.negativeWidth + (200 / this.scale < 1.5 ? (this.scale * 2) : (this.scale))) {
+          return
+        }
 
-    event.preventDefault()
-    event.stopPropagation()
+        this.appGrid.nativeElement.style.top = top + 'px'
+        this.appGrid.nativeElement.style.left = left + 'px'
 
+        event.preventDefault()
+        event.stopPropagation()*/
   }
 
   ngOnInit(): void {
@@ -251,10 +237,16 @@ export class GridLayoutComponent implements OnInit, AfterViewInit {
     }
     console.log(mouse.event)
 
+
     if (mouse.event.button === 1 || mouse.event.ctrlKey) {
       if (mouse.event.type === 'mousedown') {
         this.isGridMoving = true
-        const posXY = await this.uiFacade.posXY
+        // const posXY = await this.uiFacade.posXY
+        // const rect = this.appGrid.nativeElement.getBoundingClientRect()
+        /*        this.startX = event.clientX - rect.left
+                this.startY = event.clientY - rect.top*/
+        /*        const mouseX = mouse.event.clientX - rect.left
+                const mouseY = mouse.event.clientY - rect.top*/
         const mouseX = mouse.event.clientX
         const mouseY = mouse.event.clientY
         this.mouseXY = {
@@ -292,6 +284,29 @@ export class GridLayoutComponent implements OnInit, AfterViewInit {
     await this.mouseService.mouse(mouse)
   }
 
+  async mouseDown(mouse: MouseEventRequest) {
+    if (mouse.event.ctrlKey && mouse.event.type === 'mousedown') {
+      console.log('MOUSEDOWN-COMPONENT', mouse.event)
+      this.isGridMoving = true
+      const mouseX = mouse.event.clientX
+      const mouseY = mouse.event.clientY
+      this.mouseXY = {
+        mouseX,
+        mouseY,
+      }
+      return
+    }
+    await this.mouseService.mouse(mouse)
+  }
+
+  async mouseUp(mouse: MouseEventRequest) {
+    if (mouse.event.type === 'mouseup') {
+      this.isGridMoving = false
+      console.log('MOUSEUP-COMPONENT', mouse.event)
+    }
+    await this.mouseService.mouse(mouse)
+  }
+
   async click(click: MouseEventRequest) {
     await this.clickService.click(click)
   }
@@ -302,7 +317,13 @@ export class GridLayoutComponent implements OnInit, AfterViewInit {
 
   async move(move: MouseEventRequest) {
     move.event.preventDefault()
+
+
     if (this.isGridMoving && move.event.ctrlKey) {
+      /*      if (move.event.type === 'mousemove' && this.mouseXY && this.mouseXY.mouseX && this.mouseXY.mouseY) {
+              // console.log(move.event)
+              // return this.moveTheDiv(move.event)
+            }*/
 
       if (!this.mouseXY || !this.mouseXY.mouseX || !this.mouseXY.mouseY) return undefined
       const componentX = move.event.clientX - this.mouseXY.mouseX
