@@ -1,5 +1,5 @@
 import { VibrantColor } from '@shared/data-access/models'
-import { Directive, ElementRef, HostListener, inject, Input, NgZone } from '@angular/core'
+import { AfterViewInit, Directive, ElementRef, HostListener, inject, Input, NgZone, OnInit } from '@angular/core'
 import { ClientXY, ElementOffsets } from '@grid-layout/shared/models'
 import { GridMode } from '@shared/data-access/models'
 
@@ -7,13 +7,14 @@ import { GridMode } from '@shared/data-access/models'
   selector: '[appCanvas]',
   standalone: true,
 })
-export class CanvasDirective {
+export class CanvasDirective implements AfterViewInit {
   private canvas = inject(ElementRef<HTMLCanvasElement>)
   private ctx: CanvasRenderingContext2D = this.canvas.nativeElement.getContext('2d')
 
   // private ngZone: inject(NgZone)
 
   constructor(private ngZone: NgZone) {
+    this.draw()
   }
 
 
@@ -55,6 +56,7 @@ export class CanvasDirective {
     this.canvas.nativeElement.height = offsets.offsetHeight
     this.offsetX = offsets.offsetLeft
     this.offsetY = offsets.offsetTop
+    this.draw()
   }
 
   @Input() set startDragging(clientXY: ClientXY) {
@@ -68,6 +70,7 @@ export class CanvasDirective {
     const rect = this.canvas.nativeElement.getBoundingClientRect()
     this.startX = clientXY.clientX - rect.left
     this.startY = clientXY.clientY - rect.top
+    this.draw()
   }
 
   @HostListener('document:mouseup', ['$event'])
@@ -121,6 +124,69 @@ export class CanvasDirective {
     // window.requestAnimationFrame(this.animate)
     // requestAnimationFrame(this.animate.bind(this))
     window.requestAnimationFrame(() => this.animate())
+  }
+
+  ngAfterViewInit(): void {
+    this.draw()
+  }
+
+  draw() {
+    /*
+    var c = document.getElementById("myCanvas"),
+      ctx = c.getContext("2d"),
+      lineWidth = 2,
+      xNumber = 6,
+      yNumber = 9,
+*/
+
+
+    const lineWidth = 2
+    const xNumber = 6
+    const yNumber = 9
+    const xCenter = this.canvas.nativeElement.width / 2
+    const yCenter = 44.5 * yNumber + 44.5
+
+    this.ctx.lineCap = 'round'
+// draw a scale with the numbers on it
+    this.ctx.lineWidth = 2
+    this.ctx.strokeStyle = '#FF9900'
+    this.ctx.fillStyle = 'blue'
+
+    this.ctx.beginPath()
+    this.ctx.moveTo(xCenter, yCenter)
+
+    for (let i = 0; i <= xNumber; ++i) {
+      //put a stroke mark
+      this.ctx.lineTo((xCenter + (100 * i)), yCenter)
+      this.ctx.lineTo((xCenter + (100 * i)), (yCenter + 5)) //markers
+      this.ctx.lineTo((xCenter + (100 * i)), yCenter)
+
+      // write the number 10px below
+      this.ctx.strokeStyle = '#000000'
+      // default size is 10px
+      this.ctx.strokeText(i.toString(), (xCenter + (100 * i)), (yCenter + 15))
+    }
+
+    this.ctx.strokeStyle = '#FF9900'
+    this.ctx.stroke()
+
+// draw a vertical scale with lines on it
+    this.ctx.beginPath()
+    this.ctx.moveTo(xCenter, yCenter)
+
+    for (let b = 0; b <= yNumber; ++b) {
+      //put a stroke mark
+      if (b === 0) continue
+
+      this.ctx.lineTo(xCenter, (yCenter - (44.5 * b)))
+      this.ctx.lineTo((xCenter - 5), (yCenter - (44.5 * b)))
+      this.ctx.lineTo(xCenter, (yCenter - (44.5 * b)))
+      this.ctx.strokeStyle = '#000000'
+      this.ctx.strokeText(b.toString(), (xCenter - 15), (yCenter - (44.5 * b)))
+    }
+
+    this.ctx.strokeStyle = '#FF9900'
+    this.ctx.stroke()
   }
 
 }

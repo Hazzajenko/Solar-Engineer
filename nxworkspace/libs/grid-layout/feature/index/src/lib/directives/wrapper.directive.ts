@@ -327,9 +327,34 @@ export class WrapperDirective implements OnInit {
             if (left > 255 || left < -255) {
               return
             }*/
-      /*      if (left > (this.scale > 1.5 ? this.width - 600 : this.width - 200) || left < (this.scale > 1.5 ? this.negativeWidth + 900 : this.negativeWidth + 200)) {
+      /*            if (left > (this.scale > 1.5 ? this.width - 600 : this.width - 200) || left < (this.scale > 1.5 ? this.negativeWidth + 900 : this.negativeWidth + 200)) {
+                    return
+                  }*/
+      //half of width
+      /*      if (top > ((this.height * this.scale) - (this.height * 20 / 100)) || top < (this.negativeHeight) * 80 / 100) {
               return
             }*/
+      console.log(this.height)
+      console.log(this.height / 4.485)
+      console.log(this.negativeHeight / (this.scale * 2))
+      // (this.height / 4.485) === 200
+      if (top > ((this.height * this.scale) / 2) || top < ((this.negativeHeight / 2) - (this.scale * 200) + (this.height / 4.485))) {
+        // if (top > ((this.height * this.scale) / 2) || top < ((this.negativeHeight / 2) - (this.scale * 200) + 200)) {
+        // if (top > ((this.height * this.scale) / 2) || top < ((this.negativeHeight / 2) - (this.scale * 50))) {
+        return
+      }
+
+      console.log(this.width)
+      console.log(this.width / 5.925)
+
+      console.log((this.width / 4.485) - 50 - 15)
+      console.log((this.width / 5.925))
+
+      // (this.width / 5.925) === 200
+      if (left > ((this.width * this.scale) / 2) || left < (this.negativeWidth / 2) - (this.scale * 200) + (this.width / 5.925)) {
+        // if (left > ((this.width * this.scale) / 2) || left < (this.negativeWidth / 2)) {
+        return
+      }
       console.log((this.scale < 1.5 ? (this.width - 300) : this.width) - (200 / this.scale))
 
       // this.scale > 1.5 ? this.height : this.height-100
