@@ -39,7 +39,9 @@ export class WrapperDirective implements OnInit {
   private speed = 0.1
   private max_scale = 4
   private min_scale = 1
-  @Input() scale = 1
+  private scale = 1
+
+
   top = 0
   left = 0
   isMoving = false // Flag to indicate
@@ -65,6 +67,15 @@ export class WrapperDirective implements OnInit {
   parentHeight!: number
 
 
+  @Input() set setScale(scale: number) {
+    if (scale < this.scale) {
+
+      this.elementRef.nativeElement.style.top = '0px'
+      this.elementRef.nativeElement.style.left = '0px'
+    }
+    this.scale = scale
+  }
+
   @Input() set parentContainerSize(size: { height: number, width: number }) {
     this.parentWidth = size.width
     this.parentHeight = size.height
@@ -85,7 +96,7 @@ export class WrapperDirective implements OnInit {
   }
 
 
-  isZoomed = false
+  // isZoomed = false
 
   /*
     mouseUpSub$ = fromEvent<MouseEvent>(document, 'mouseup').pipe(

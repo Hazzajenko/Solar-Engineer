@@ -169,6 +169,7 @@ export class GridDirective implements AfterViewInit {
   @Output() elementOffsets: EventEmitter<ElementOffsets> = new EventEmitter<ElementOffsets>()
   // @Output() zoomedIn: EventEmitter<boolean> = new EventEmitter<boolean>()
   @Output() outputScale: EventEmitter<number> = new EventEmitter<number>()
+  // @Output() zoomingOut: EventEmitter<boolean> = new EventEmitter<boolean>()
 
 
   /*
@@ -318,6 +319,15 @@ export class GridDirective implements AfterViewInit {
       this.isZoomed = false
       // this.zoomedIn.emit(false)
     }
+
+    if (event.deltaY < 0) {
+      //zooming in
+    }
+
+    if (event.deltaY > 0) {
+      // zooming out
+    }
+
 
     this.outputScale.emit(this.scale)
 
