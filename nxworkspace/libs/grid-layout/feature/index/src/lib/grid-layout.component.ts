@@ -23,8 +23,21 @@ import { KeymapOverlayComponent } from '@grid-layout/feature/keymap'
 import { StringTotalsOverlayComponent } from '@grid-layout/feature/string-stats'
 import { ClientXY, ElementOffsets, GridLayoutXY, MouseXY } from '@grid-layout/shared/models'
 import { LetModule } from '@ngrx/component'
-import { GridFacade, SelectedFacade, StringsFacade, UiStoreService } from '@project-id/data-access/facades'
-import { BlockModel, StringModel } from '@shared/data-access/models'
+import {
+  GridFacade,
+  PathsStoreService,
+  SelectedFacade, SelectedStoreService,
+  StringsFacade, StringsStoreService,
+  UiStoreService,
+} from '@project-id/data-access/facades'
+import {
+  BlockModel,
+  PanelPathModel,
+  SelectedPanelLinkPathModel,
+  StringLinkPathModel,
+  StringModel,
+} from '@shared/data-access/models'
+import { combineLatestWith } from 'rxjs/operators'
 
 import { WrapperDirective } from './directives/wrapper.directive'
 import { GridBackgroundComponent } from './ui/grid-background.component'
@@ -74,6 +87,9 @@ export class GridLayoutComponent {
   private selectedFacade = inject(SelectedFacade)
   private stringsFacade = inject(StringsFacade)
   private uiStore = inject(UiStoreService)
+  private pathsStore = inject(PathsStoreService)
+  private stringsStore = inject(StringsStoreService)
+  private selectedStore = inject(SelectedStoreService)
   getScreenWidth!: number
   getScreenHeight!: number
   containerWidth!: number
@@ -157,6 +173,14 @@ export class GridLayoutComponent {
         return string
       }),
     )),
+  )
+
+  panelLinkPath$: Observable<SelectedPanelLinkPathModel | undefined> = this.pathsStore.select.selectedPanelLinkPath$.pipe(
+    combineLatestWith(this.selectedStore.select.selectedId$),
+    map(([paths, isSelectedString]) => {
+      if (!isSelectedString) return undefined
+      return paths
+    }),
   )
 
 
