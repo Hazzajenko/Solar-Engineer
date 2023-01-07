@@ -16,6 +16,8 @@ export const UiActions = createActionGroup({
     'Reset Pos XY': emptyProps(),
     'Set Mouse XY': props<{ mouseXY: MouseXY }>(),
     'Reset Mouse XY': emptyProps(),
+    'Set Scale': props<{ scale: number }>(),
+    'Key Pressed': props<{ key: string }>(),
     'Set GridLayout Zoom': props<{ zoom: number }>(),
     'Reset GridLayout Zoom': emptyProps(),
   },

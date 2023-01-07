@@ -21,6 +21,14 @@ export class UiRepository {
     return this.store.dispatch(UiActions.setMouseXy({ mouseXY }))
   }
 
+  setScale(scale: number) {
+    return this.store.dispatch(UiActions.setScale({ scale }))
+  }
+
+  keyPressed(key: string) {
+    return this.store.dispatch(UiActions.keyPressed({ key }))
+  }
+
   setPosXY(posXY: PosXY) {
     return this.store.dispatch(UiActions.setPosXy({ posXY }))
   }

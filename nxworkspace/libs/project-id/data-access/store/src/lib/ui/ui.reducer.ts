@@ -15,6 +15,8 @@ export interface UiState {
   clientXY: ClientXY
   mouseXY: MouseXY
   posXY: PosXY
+  keyPressed: string
+  scale: number
 }
 
 export const initialUiState: UiState = {
@@ -37,6 +39,8 @@ export const initialUiState: UiState = {
     clientX: undefined,
     clientY: undefined,
   },
+  keyPressed: '',
+  scale: 1,
 }
 
 
@@ -88,6 +92,14 @@ const reducer = createReducer(
     },
 
     gridLayoutMoving: true,
+  })),
+  on(UiActions.keyPressed, (state, { key }) => ({
+    ...state,
+    keyPressed: key,
+  })),
+  on(UiActions.setScale, (state, { scale }) => ({
+    ...state,
+    scale,
   })),
   on(UiActions.setClientxy, (state, { clientXY }) => ({
     ...state,

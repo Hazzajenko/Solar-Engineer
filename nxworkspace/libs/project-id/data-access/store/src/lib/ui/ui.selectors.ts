@@ -30,4 +30,9 @@ export const selectGridLayoutMoving = createSelector(
 
 export const selectGridLayoutZoom = createSelector(selectUiState, (state: UiState) => state.gridLayoutZoom)
 
+export const selectKeyPressed = createSelector(selectUiState, (state: UiState) => state.keyPressed)
+
+export const selectScale = createSelector(selectUiState, (state: UiState) => state.scale)
+
+
 export const selectClientXY = createSelector(selectUiState, (state: UiState) => state.clientXY)

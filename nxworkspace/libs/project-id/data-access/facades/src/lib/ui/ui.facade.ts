@@ -16,9 +16,19 @@ export class UiFacade {
   posXY$ = this.store.select(UiSelectors.selectPosXY)
   gridLayoutZoom$ = this.store.select(UiSelectors.selectGridLayoutZoom)
   clientXY$ = this.store.select(UiSelectors.selectClientXY)
+  keyPressed$ = this.store.select(UiSelectors.selectKeyPressed)
+  scale$ = this.store.select(UiSelectors.selectScale)
 
   get isKeyMapEnabled() {
     return firstValueFrom(this.isKeyMapEnabled$)
+  }
+
+  get scale() {
+    return firstValueFrom(this.scale$)
+  }
+
+  get keyPressed() {
+    return firstValueFrom(this.keyPressed$)
   }
 
   get mouseXY() {
