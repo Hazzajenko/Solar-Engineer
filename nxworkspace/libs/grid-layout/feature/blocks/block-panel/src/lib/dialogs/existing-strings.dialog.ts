@@ -7,7 +7,7 @@ import { MatDialogModule } from '@angular/material/dialog'
 
 import { MatIconModule } from '@angular/material/icon'
 import { MatListModule } from '@angular/material/list'
-import { StringsFactory } from '@grid-layout/data-access/services'
+import { StringsService } from '@grid-layout/data-access/services'
 import { SelectedFacade, StringsFacade } from '@project-id/data-access/facades'
 
 import { StringPanelsAsyncPipe } from '../pipes/string-panels-async.pipe'
@@ -106,7 +106,7 @@ import { StringTotalsAsyncPipe } from '../pipes/string-totals-async.pipe'
 export class ExistingStringsDialog {
   private stringsFacade = inject(StringsFacade)
   private selectedFacade = inject(SelectedFacade)
-  private stringsFactory = inject(StringsFactory)
+  private stringsFactory = inject(StringsService)
   strings$ = this.stringsFacade.stringsFromRoute$
   selectedStringId$ = this.selectedFacade.selectedStringId$
   show: string[] = []

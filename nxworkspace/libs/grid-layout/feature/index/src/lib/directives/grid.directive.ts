@@ -4,11 +4,12 @@ import {
   ElementRef,
   EventEmitter,
   HostListener,
-  inject,
+  inject, Input,
   Output,
   Renderer2,
 } from '@angular/core'
 import { ElementOffsets } from '@grid-layout/shared/models'
+import { UiStoreService } from '@project-id/data-access/facades'
 
 
 @Directive({
@@ -18,6 +19,7 @@ import { ElementOffsets } from '@grid-layout/shared/models'
 export class GridDirective implements AfterViewInit {
   private elementRef = inject(ElementRef<HTMLDivElement>)
   private renderer = inject(Renderer2)
+  private uiStore = inject(UiStoreService)
 
   posX = 0
   posY = 0
@@ -29,6 +31,31 @@ export class GridDirective implements AfterViewInit {
 
   @Output() elementOffsets: EventEmitter<ElementOffsets> = new EventEmitter<ElementOffsets>()
   @Output() outputScale: EventEmitter<number> = new EventEmitter<number>()
+  @Output() resetKeyUp: EventEmitter<string> = new EventEmitter<string>()
+
+  @Input() set keyUp(keyUp: string | null) {
+    if (!keyUp) return
+    switch (keyUp) {
+      case 'r': {
+        console.log(keyUp)
+
+        this.posX = 0
+        this.posY = 0
+        this.scale = 1
+
+        this.outputScale.emit(this.scale)
+
+        this.renderer.setStyle(
+          this.elementRef.nativeElement,
+          'transform',
+          `translate(${this.posX}px,${this.posY}px) scale(${this.scale})`,
+        )
+        break
+      }
+    }
+    this.resetKeyUp.emit('')
+  }
+
 
   ngAfterViewInit() {
     const offsets: ElementOffsets = {
@@ -84,6 +111,7 @@ export class GridDirective implements AfterViewInit {
 
 
     this.outputScale.emit(this.scale)
+    this.uiStore.dispatch.setScale(this.scale)
 
     this.renderer.setStyle(
       this.elementRef.nativeElement,

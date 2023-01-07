@@ -21,7 +21,7 @@ import { toUpdatePanelArray } from './update-panel-map'
 @Injectable({
   providedIn: 'root',
 })
-export class StringsFactory {
+export class StringsService {
 
   private readonly projectsFacade = inject(ProjectsFacade)
   private readonly gridFacade = inject(GridFacade)

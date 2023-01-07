@@ -77,12 +77,84 @@ export class CanvasDirective implements OnInit {
     // this.draw()
   }
 
+  @Input() set setScale(scale: number | null) {
+    if (!scale) return
+    this.reDraw()
+
+  }
+
+  firstObjectX?: number
+  firstObjectY?: number
+  firstObjectLocation?: string
+
+  secondObjectX?: number
+  secondObjectY?: number
+  secondObjectLocation?: string
+
   @HostListener('document:mouseup', ['$event'])
   mouseUp(event: MouseEvent) {
     console.log(event.clientX, event.clientY)
     this.ctx.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height)
     this.startX = undefined
     this.startY = undefined
+    const pan = (event.composedPath()[0] as HTMLDivElement)
+    console.log(pan)
+    const rect = (event.composedPath()[0] as HTMLDivElement).getBoundingClientRect()
+    const id = (event.composedPath()[0] as HTMLDivElement).getAttribute('id')
+    const location = (event.composedPath()[0] as HTMLDivElement).getAttribute('location')
+    console.log(id)
+    if (id) {
+      // const doc = document.querySelector(`#${id}`) // Match the second div
+      // const doc = document.querySelector(`[id=${id}]`) // Match the second div
+      const doc2 = document.querySelector(`[blockLocation=${location}]`) // Match the second div
+      // const doc3 = document.querySelector(`[blockId=${id}]`) // Match the second div
+      const yes = document.querySelector('div.panel')
+      // console.log(doc)
+      console.log(doc2)
+      // console.log(doc3)
+      console.log(yes)
+
+    }
+    console.log(rect)
+    const parentRect = this.canvas.nativeElement.parentNode.getBoundingClientRect()
+    const mouseX = rect.left - (parentRect.width - this.width) / 2 - this.canvas.nativeElement.parentNode.offsetLeft
+
+    const mouseY = rect.top - (parentRect.height - this.height) / 2 - this.canvas.nativeElement.parentNode.offsetTop
+    if (this.firstObjectX && this.firstObjectY) {
+      if (location) {
+        this.secondObjectLocation = location
+
+      }
+      this.secondObjectX = mouseX
+      this.secondObjectY = mouseY
+      this.secondObjectX += (rect.width / 2)
+      this.secondObjectY += (rect.height / 2)
+
+      this.ctx.lineWidth = 15
+      this.ctx.fillStyle = this.fillStyle
+      this.ctx.globalAlpha = 0.4
+      this.ctx.beginPath()
+      this.ctx.moveTo(this.firstObjectX, this.firstObjectY)
+      this.ctx.lineTo(mouseX, mouseY)
+      this.ctx.stroke()
+    }
+    if (!this.firstObjectX || !this.firstObjectY) {
+      if (location) {
+        this.firstObjectLocation = location
+
+      }
+      this.firstObjectX = mouseX
+      this.firstObjectY = mouseY
+      this.firstObjectX += (rect.width / 2)
+      this.firstObjectY += (rect.height / 2)
+    }
+    /*    this.ctx.globalAlpha = 0.4
+
+        this.ctx.fillStyle = this.fillStyle
+        // this.ctx.fillStyle = '#7585d8'
+        this.ctx.fillRect(mouseX, mouseY, rect.width, rect.height)
+
+        this.ctx.globalAlpha = 1.0*/
     return
   }
 
@@ -142,6 +214,37 @@ export class CanvasDirective implements OnInit {
     window.requestAnimationFrame(() => this.animate())
   }
 
+  private async reDraw() {
+    if (!this.firstObjectX || !this.firstObjectY || !this.secondObjectX || !this.secondObjectY) {
+      return
+    }
+    this.ctx.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height)
+    await new Promise(resolve => setTimeout(resolve, 100))
+
+    const firstObject = document.querySelector(`[blockLocation=${this.firstObjectLocation}]`)
+    if (!firstObject) return
+    const firstRect = firstObject.getBoundingClientRect()
+    const parentRect = this.canvas.nativeElement.parentNode.getBoundingClientRect()
+    this.firstObjectX = firstRect.left - (parentRect.width - this.width) / 2 - this.canvas.nativeElement.parentNode.offsetLeft
+    this.firstObjectY = firstRect.top - (parentRect.height - this.height) / 2 - this.canvas.nativeElement.parentNode.offsetTop
+
+    const secondObject = document.querySelector(`[blockLocation=${this.secondObjectLocation}]`)
+    if (!secondObject) return
+    const secondRect = secondObject.getBoundingClientRect()
+    this.secondObjectX = secondRect.left - (parentRect.width - this.width) / 2 - this.canvas.nativeElement.parentNode.offsetLeft
+    this.secondObjectY = secondRect.top - (parentRect.height - this.height) / 2 - this.canvas.nativeElement.parentNode.offsetTop
+    this.secondObjectX += (secondRect.width / 2)
+    this.secondObjectY += (secondRect.height / 2)
+
+
+    this.ctx.lineWidth = 15
+    this.ctx.fillStyle = this.fillStyle
+    this.ctx.globalAlpha = 0.4
+    this.ctx.beginPath()
+    this.ctx.moveTo(this.firstObjectX, this.firstObjectY)
+    this.ctx.lineTo(this.secondObjectX, this.secondObjectY)
+    this.ctx.stroke()
+  }
 
   draw() {
     /*

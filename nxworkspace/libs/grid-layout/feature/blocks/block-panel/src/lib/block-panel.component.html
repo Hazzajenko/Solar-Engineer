@@ -5,6 +5,10 @@
       style='width: 32px; height: 32px'
       class='flex whitespace-pre-wrap content-center items-center justify-center'
     >
+
+
+      <!--      <app-panel-rotation *ngIf='panel.rotation' class='pointer-events-none'
+                                [setRotation]='panel.rotation'></app-panel-rotation>-->
       <!--      <app-panel-link
               [isNegativeLink]='panelNg.isSelectedNegativeTo'
               [isPositiveLink]='panelNg.isSelectedPositiveTo'
@@ -16,16 +20,16 @@
             <path
               class='stroke-slate-800 fill-none stroke-[8px] z-10'
               d='
-              M 30, 0
-              V 100
-              '
+                        M 30, 0
+                        V 100
+                        '
             />
             <path
               class='stroke-slate-800 fill-none stroke-[8px] z-10'
               d='
-              M 70, 0
-              V 100
-              '
+                        M 70, 0
+                        V 100
+                        '
             />
           </svg>
         </ng-container>
@@ -34,28 +38,29 @@
             <path
               class='stroke-slate-800 fill-none stroke-[8px] z-10'
               d='
-              M 0, 30
-              H 100
-              '
+                        M 0, 30
+                        H 100
+                        '
             />
             <path
               class='stroke-slate-800 fill-none stroke-[8px] z-10'
               d='
-              M 0, 70
-              H 100
-              '
+                        M 0, 70
+                        H 100
+                        '
             />
           </svg>
         </ng-container>
       </ng-container>
-      <!--      [attr.location]='panel.location'-->
       <ng-container>
         <div
           appPanelDirective
           [id]='panel.id'
           [panelNg]='panelNg'
           bind-attr.id='panel.id'
+          bind-attr.blockId='panel.id'
           bind-attr.location='panel.location'
+          bind-attr.blockLocation='panel.location'
           (contextmenu)='onRightClick($event, panel)'
           [cdkDragData]='panel'
           [ngStyle]="{
@@ -63,7 +68,7 @@
             width: panel?.rotation === 0 ? '23px' : '18px'
           }"
           cdkDrag
-          class='absolute border border-black flex items-center justify-center content-center hover:bg-red-500'
+          class='block panel absolute border border-black flex items-center justify-center content-center hover:bg-red-500'
 
         >
           <ng-container *ngIf='panelNg.stringSelected === 1 else stringNotSelected'>

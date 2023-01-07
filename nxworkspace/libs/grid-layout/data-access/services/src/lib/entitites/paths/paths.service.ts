@@ -14,7 +14,7 @@ import { LinksPathService } from '../links/links-path.service'
 @Injectable({
   providedIn: 'root',
 })
-export class PathsFactory {
+export class PathsService {
 
   private projectsFacade = inject(ProjectsFacade)
   private selectedFacade = inject(SelectedFacade)

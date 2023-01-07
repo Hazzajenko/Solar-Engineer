@@ -10,7 +10,7 @@ import { GridMode } from '@shared/data-access/models'
 @Injectable({
   providedIn: 'root',
 })
-export class SelectedFactory {
+export class SelectedService {
 
   private gridStore = inject(GridStoreService)
   private selectedStore = inject(SelectedStoreService)

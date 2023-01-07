@@ -15,7 +15,7 @@ import { locationArrayMap } from './location-array-map'
 @Injectable({
   providedIn: 'root',
 })
-export class MultiFactory {
+export class MultiService {
   private readonly projectsFacade = inject(ProjectsFacade)
   private selectedStore = inject(SelectedStoreService)
   private multiStore = inject(MultiStoreService)

@@ -10,6 +10,10 @@ import { PanelNgModel, SelectedPanelVal, StringSelectedVal } from '../models/pan
 export class PanelDirective {
   private elRef = inject(ElementRef)
 
+  constructor() {
+    console.log(this.elRef.nativeElement.getBoundingClientRect())
+  }
+
   @Input() set id(id: string) {
     this.elRef.nativeElement.style.backgroundColor = '#95c2fa'
   }

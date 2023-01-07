@@ -23,7 +23,7 @@ import { KeymapOverlayComponent } from '@grid-layout/feature/keymap'
 import { StringTotalsOverlayComponent } from '@grid-layout/feature/string-stats'
 import { ClientXY, ElementOffsets, GridLayoutXY, MouseXY } from '@grid-layout/shared/models'
 import { LetModule } from '@ngrx/component'
-import { GridFacade, SelectedFacade, StringsFacade } from '@project-id/data-access/facades'
+import { GridFacade, SelectedFacade, StringsFacade, UiStoreService } from '@project-id/data-access/facades'
 import { BlockModel, StringModel } from '@shared/data-access/models'
 
 import { WrapperDirective } from './directives/wrapper.directive'
@@ -56,9 +56,10 @@ import { GetLocationPipe } from './pipes/get-location.pipe'
     StringTotalsOverlayComponent,
     GridBackgroundComponent,
     WrapperDirective,
+    KeyMapDirective,
   ],
   templateUrl: './grid-layout.component.html',
-  hostDirectives: [KeyMapDirective],
+  /*  hostDirectives: [KeyMapDirective],*/
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: [],
 })
@@ -72,6 +73,7 @@ export class GridLayoutComponent {
   private snackBar = inject(MatSnackBar)
   private selectedFacade = inject(SelectedFacade)
   private stringsFacade = inject(StringsFacade)
+  private uiStore = inject(UiStoreService)
   getScreenWidth!: number
   getScreenHeight!: number
   containerWidth!: number
@@ -81,11 +83,14 @@ export class GridLayoutComponent {
   // getScreenWidth-200
   // private uiFacade = inject(UiFacade)
   showKeymap$ = this.uiFacade.isKeyMapEnabled$
+  keyPressed$ = this.uiStore.select.keyPressed$
+  scale$ = this.uiStore.select.scale$
   zoomLevel = 2
   isGridMoving = false
   scale = 1
   height!: number
   negativeHeight!: number
+  keyUp = ''
 
   width!: number
   negativeWidth!: number

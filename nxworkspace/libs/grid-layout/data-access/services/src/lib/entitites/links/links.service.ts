@@ -4,7 +4,7 @@ import { LinksFacade } from '@project-id/data-access/facades'
 
 import { LinksState } from '@project-id/shared/models'
 import { BlockType, PanelModel } from '@shared/data-access/models'
-import { GridFactory } from '../grid/grid.factory'
+import { GridService } from 'libs/grid-layout/data-access/services/src/lib/entitites/grid/grid.service'
 import { LinksFactory } from './links.factory'
 import { MouseEventRequest } from '../../mouse-event-request'
 
@@ -13,7 +13,7 @@ import { MouseEventRequest } from '../../mouse-event-request'
 })
 export class LinksService {
   private linksFactory = inject(LinksFactory)
-  private gridFactory = inject(GridFactory)
+  private gridFactory = inject(GridService)
   private linksFacade = inject(LinksFacade)
 
   async addPanelToLink(click: MouseEventRequest, panel: PanelModel) {

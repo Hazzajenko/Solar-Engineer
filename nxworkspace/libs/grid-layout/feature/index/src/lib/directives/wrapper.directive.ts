@@ -12,6 +12,7 @@ import {
 import { MouseService } from '@grid-layout/data-access/services'
 
 import { ClientXY } from '@grid-layout/shared/models'
+import { MultiStoreService } from '@project-id/data-access/facades'
 
 
 @Directive({
@@ -19,7 +20,7 @@ import { ClientXY } from '@grid-layout/shared/models'
   standalone: true,
 })
 export class WrapperDirective implements OnInit {
-
+  private multiStore = inject(MultiStoreService)
 
   private elementRef = inject(ElementRef<HTMLDivElement>)
   private renderer = inject(Renderer2)
@@ -36,11 +37,14 @@ export class WrapperDirective implements OnInit {
 
   width!: number
   negativeWidth!: number
+  middleClickDown = false
 
 
   @Output() clientXY: EventEmitter<ClientXY> = new EventEmitter<ClientXY>()
+  @Output() resetKeyUp: EventEmitter<string> = new EventEmitter<string>()
 
-  @Input() set setScale(scale: number) {
+  @Input() set setScale(scale: number | null) {
+    if (!scale) return
     if (scale < this.scale) {
       this.elementRef.nativeElement.style.top = '0px'
       this.elementRef.nativeElement.style.left = '0px'
@@ -48,11 +52,32 @@ export class WrapperDirective implements OnInit {
     this.scale = scale
   }
 
+  @Input() set keyUp(keyUp: string | null) {
+    if (!keyUp) return
+    switch (keyUp) {
+      case 'r': {
+        this.elementRef.nativeElement.style.top = '0px'
+        this.elementRef.nativeElement.style.left = '0px'
+        break
+      }
+      case 'Control': {
+        console.log('CONTROL')
+        this.isDragging = false
+        this.multiStore.dispatch.clearMultiState()
+        this.elementRef.nativeElement.style.cursor = ''
+        break
+      }
+    }
+    this.resetKeyUp.emit('')
+  }
+
   @HostListener('document:mouseup', ['$event'])
   async mouseUp(event: MouseEvent) {
     event.preventDefault()
     event.stopPropagation()
+    console.log('MOUSEUP--WRAPPER', event)
     this.isDragging = false
+    this.elementRef.nativeElement.style.cursor = ''
     const location = (event.composedPath()[0] as HTMLDivElement).getAttribute('location')
     if (!location) return
     return this.mouseService.mouse({ event, location })
@@ -63,12 +88,15 @@ export class WrapperDirective implements OnInit {
   async mouseDown(event: MouseEvent) {
     event.preventDefault()
     event.stopPropagation()
-    if (event.ctrlKey) {
+    if (event.ctrlKey/* || event.button === 1*/) {
       console.log('MOUSEDOWN--WRAPPER', event)
       const rect = this.elementRef.nativeElement.getBoundingClientRect()
       this.startX = event.clientX - rect.left
       this.startY = event.clientY - rect.top
       this.isDragging = true
+      /*      if (event.button === 1) {
+              this.middleClickDown = true
+            }*/
       return
     }
     if (!event.altKey) {
@@ -83,6 +111,7 @@ export class WrapperDirective implements OnInit {
       return
     }
     this.isDragging = false
+    this.middleClickDown = false
 
     const location = (event.composedPath()[0] as HTMLDivElement).getAttribute('location')
     if (!location) return
@@ -103,36 +132,69 @@ export class WrapperDirective implements OnInit {
   onDragging(event: MouseEvent) {
     event.preventDefault()
     event.stopPropagation()
-    if (!event.ctrlKey || !this.startX || !this.startY || !this.isDragging) {
+    if (!this.startX || !this.startY || !this.isDragging) {
       this.isDragging = false
+      this.middleClickDown = false
       return
     }
 
-    const parentRect = this.elementRef.nativeElement.parentNode.getBoundingClientRect()
-    const mouseX = event.pageX - (parentRect.width - this.width) / 2 - this.elementRef.nativeElement.parentNode.offsetLeft
+    /*    if (!event.ctrlKey && event.button !== 1) {
+          this.isDragging = false
+          return
+        }*/
 
-    const mouseY = event.pageY - (parentRect.height - this.height) / 2 - this.elementRef.nativeElement.parentNode.offsetTop
+    if (event.ctrlKey/* || this.middleClickDown*/) {
+      console.log('MOUSEMOVE --WRAPPER', event)
+      /*      if (event.button === 1) {
+              console.log('event.button ===1')
+            }*/
+      const parentRect = this.elementRef.nativeElement.parentNode.getBoundingClientRect()
+      const mouseX = event.pageX - (parentRect.width - this.width) / 2 - this.elementRef.nativeElement.parentNode.offsetLeft
+
+      const mouseY = event.pageY - (parentRect.height - this.height) / 2 - this.elementRef.nativeElement.parentNode.offsetTop
 
 
-    const newStartY = this.startY
-    const newStartX = this.startX
+      const newStartY = this.startY
+      const newStartX = this.startX
 
-    const top = mouseY - newStartY
-    const left = mouseX - newStartX
+      const top = mouseY - newStartY
+      const left = mouseX - newStartX
 
-    if (top > ((this.height * this.scale) / 2) || top < ((this.negativeHeight / 2) - (this.scale * 200) + (this.height / 4.485))) {
+      if (top > ((this.height * this.scale) / 2) || top < ((this.negativeHeight / 2) - (this.scale * 200) + (this.height / 4.485))) {
+        return
+      }
+
+
+      if (left > ((this.width * this.scale) / 2) || left < (this.negativeWidth / 2) - (this.scale * 200) + (this.width / 5.925)) {
+        return
+      }
+
+      this.elementRef.nativeElement.style.top = top + 'px'
+      this.elementRef.nativeElement.style.left = left + 'px'
+      this.elementRef.nativeElement.style.cursor = 'grab'
       return
     }
 
 
-    if (left > ((this.width * this.scale) / 2) || left < (this.negativeWidth / 2) - (this.scale * 200) + (this.width / 5.925)) {
-      return
-    }
-
-    this.elementRef.nativeElement.style.top = top + 'px'
-    this.elementRef.nativeElement.style.left = left + 'px'
-    return
   }
+
+  /*
+    @HostListener('window:keyup', ['$event'])
+    async keyEvent(event: KeyboardEvent) {
+      console.log(event)
+      if (event.key === 'Control') {
+        console.log(event)
+        this.isDragging = false
+        this.multiStore.dispatch.clearMultiState()
+        this.elementRef.nativeElement.style.cursor = ''
+      }
+
+      if (event.key === 'r') {
+        this.elementRef.nativeElement.style.top = '0px'
+        this.elementRef.nativeElement.style.left = '0px'
+      }
+    }
+  */
 
 
   ngOnInit(): void {

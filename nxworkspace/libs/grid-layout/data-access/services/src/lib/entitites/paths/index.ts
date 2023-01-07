@@ -1,1 +1,1 @@
-export * from './paths.factory'
+export * from 'libs/grid-layout/data-access/services/src/lib/entitites/paths/paths.service'

@@ -2,7 +2,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop'
 import { AsyncPipe, NgClass, NgIf, NgStyle, NgSwitch, NgSwitchCase, NgTemplateOutlet } from '@angular/common'
 import { ChangeDetectionStrategy, Component, inject, Input, ViewChild } from '@angular/core'
 
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog'
+import { MatDialog } from '@angular/material/dialog'
 
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
 import { MatSnackBar } from '@angular/material/snack-bar'
@@ -14,25 +14,16 @@ import { PanelLinkComponent } from '@grid-layout/feature/blocks/shared-ui'
 
 import { LetModule } from '@ngrx/component'
 import { LinksFacade, PanelsFacade, SelectedFacade, StringsFacade } from '@project-id/data-access/facades'
-import {
-  BlockModel,
-  PanelPathModel,
-  PanelModel,
-  StringModel,
-  StringLinkPathModel,
-  SelectedPathModel,
-} from '@shared/data-access/models'
-import { PanelMenuComponent } from 'libs/grid-layout/feature/blocks/block-panel/src/lib/menu/panel-menu.component'
-import { PathsFacade } from 'libs/project-id/data-access/facades/src/lib/paths/paths.facade'
+import { PanelModel, PanelPathModel, SelectedPathModel } from '@shared/data-access/models'
+import { PanelMenuComponent } from './menu/panel-menu.component'
+import { PathsFacade } from '@project-id/data-access/facades'
 
-import { combineLatest, firstValueFrom, Observable, of, retry, switchMap } from 'rxjs'
+import { combineLatest, Observable, switchMap } from 'rxjs'
 
 import { combineLatestWith, map } from 'rxjs/operators'
-import { EditStringDialog } from './dialogs/edit-string.dialog'
-import { ExistingStringsDialog } from './dialogs/existing-strings.dialog'
-import { NewStringDialog } from './dialogs/new-string.dialog'
 import { PanelDirective } from './directives/panel.directive'
 import { PanelNgModel, SelectedPanelVal, StringSelectedVal } from './models/panel-ng.model'
+import { PanelRotationComponent } from './ui/panel-rotation.component'
 
 @Component({
   selector: 'app-block-panel',
@@ -54,6 +45,7 @@ import { PanelNgModel, SelectedPanelVal, StringSelectedVal } from './models/pane
     PanelLinkComponent,
     PanelDirective,
     PanelMenuComponent,
+    PanelRotationComponent,
   ],
   standalone: true,
 })

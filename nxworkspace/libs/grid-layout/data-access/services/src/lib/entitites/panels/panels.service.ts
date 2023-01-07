@@ -11,16 +11,16 @@ import { ProjectsFacade } from '@projects/data-access/facades'
 import { PanelModel } from '@shared/data-access/models'
 import { combineLatest, firstValueFrom, map } from 'rxjs'
 import { getSelectedLinks } from '../links/get-selected-links'
-import { PathsFactory } from '../paths/paths.factory'
+import { PathsService } from 'libs/grid-layout/data-access/services/src/lib/entitites/paths/paths.service'
 import { toUpdatePanelArray } from './update-panel-map'
 
 
 @Injectable({
   providedIn: 'root',
 })
-export class PanelsFactory {
+export class PanelsService {
   private projectsFacade = inject(ProjectsFacade)
-  private pathsFactory = inject(PathsFactory)
+  private pathsFactory = inject(PathsService)
   private linksStore = inject(LinksStoreService)
   private panelsStore = inject(PanelsStoreService)
   private selectedStore = inject(SelectedStoreService)

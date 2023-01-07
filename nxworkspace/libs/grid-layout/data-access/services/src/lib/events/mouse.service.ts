@@ -4,7 +4,7 @@ import { BlocksFacade, GridFacade, MultiFacade, MultiStoreService } from '@proje
 import { MultiStateModel } from '@project-id/shared/models'
 import { ProjectsFacade } from '@projects/data-access/facades'
 import { BlockType, GridMode } from '@shared/data-access/models'
-import { MultiFactory } from 'libs/grid-layout/data-access/services/src/lib/entitites/multi'
+import { MultiService } from 'libs/grid-layout/data-access/services/src/lib/entitites/multi'
 import { MouseEventRequest } from 'libs/grid-layout/data-access/services/src/lib/mouse-event-request'
 import { getLocationsInBox } from './utils/get-locations-in-box'
 
@@ -17,7 +17,7 @@ export class MouseService {
   // private eventFactory = new GridEventFactory()
   private blocksFacade = inject(BlocksFacade)
   private multiFacade = inject(MultiFacade)
-  private multiFactory = inject(MultiFactory)
+  private multiFactory = inject(MultiService)
   private multiStore = inject(MultiStoreService)
 
   private gridFacade = inject(GridFacade)

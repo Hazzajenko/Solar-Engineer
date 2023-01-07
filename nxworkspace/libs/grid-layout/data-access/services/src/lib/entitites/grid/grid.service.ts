@@ -6,7 +6,7 @@ import { GridMode } from '@shared/data-access/models'
 @Injectable({
   providedIn: 'root',
 })
-export class GridFactory {
+export class GridService {
 
   private gridStore = inject(GridStoreService)
   private linksStore = inject(LinksStoreService)

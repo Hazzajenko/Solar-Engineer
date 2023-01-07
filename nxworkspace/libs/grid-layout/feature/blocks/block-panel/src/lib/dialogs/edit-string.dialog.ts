@@ -9,7 +9,7 @@ import { AsyncPipe, NgForOf, NgIf, NgStyle } from '@angular/common'
 import { MatListModule } from '@angular/material/list'
 
 import { MatIconModule } from '@angular/material/icon'
-import { StringsFactory } from '@grid-layout/data-access/services'
+import { StringsService } from '@grid-layout/data-access/services'
 
 
 import { map } from 'rxjs/operators'
@@ -95,7 +95,7 @@ export class EditStringDialog {
   color = new FormControl('')
   form!: FormGroup
   private stringsFacade = inject(StringsFacade)
-  private stringsFactory = inject(StringsFactory)
+  private stringsFactory = inject(StringsService)
 
 
   constructor(

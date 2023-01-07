@@ -7,7 +7,7 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog'
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { MatTooltipModule } from '@angular/material/tooltip'
-import { LinksFactory, PanelsFactory, StringsFactory } from '@grid-layout/data-access/services'
+import { LinksFactory, PanelsService, StringsService } from '@grid-layout/data-access/services'
 
 import { PanelLinkComponent } from '@grid-layout/feature/blocks/shared-ui'
 
@@ -46,8 +46,8 @@ import { firstValueFrom, Observable } from 'rxjs'
 })
 export class PanelMenuComponent {
   //region Services
-  public stringsFactory = inject(StringsFactory)
-  public panelsFactory = inject(PanelsFactory)
+  public stringsFactory = inject(StringsService)
+  public panelsFactory = inject(PanelsService)
   @Input() panel!: PanelModel
   @Input() panelNg!: PanelNgModel
   panel$!: Observable<PanelModel | undefined>

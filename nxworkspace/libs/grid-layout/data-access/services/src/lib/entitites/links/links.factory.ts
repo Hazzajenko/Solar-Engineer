@@ -4,8 +4,8 @@ import { LinksFacade, LinksStoreService, PanelsFacade, SelectedFacade } from '@p
 import { LinksPathService } from './links-path.service'
 import { ProjectsFacade } from '@projects/data-access/facades'
 import { PanelLinkModel, PanelModel, ProjectModel } from '@shared/data-access/models'
-import { PathsFactory } from '../paths/paths.factory'
-import { StringsFactory } from '../strings/strings.factory'
+import { PathsService } from 'libs/grid-layout/data-access/services/src/lib/entitites/paths/paths.service'
+import { StringsService } from 'libs/grid-layout/data-access/services/src/lib/entitites/strings/strings.service'
 
 
 @Injectable({
@@ -21,8 +21,8 @@ export class LinksFactory {
   // private linksFacade = inject(LinksFacade)
   private linksStore = inject(LinksStoreService)
   private panelsFacade = inject(PanelsFacade)
-  private stringsFactory = inject(StringsFactory)
-  private pathsFactory = inject(PathsFactory)
+  private stringsFactory = inject(StringsService)
+  private pathsFactory = inject(PathsService)
 
   async create(
     panel: PanelModel,
