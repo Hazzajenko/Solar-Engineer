@@ -1,5 +1,5 @@
 import { Directive, ElementRef, HostListener, inject, Input, NgZone, OnInit } from '@angular/core'
-import { ClientXY, ElementOffsets } from '@grid-layout/shared/models'
+import { BlockRectModel, ClientXY, ElementOffsets, PosXY, XYModel } from '@grid-layout/shared/models'
 import { PanelsStoreService } from '@project-id/data-access/facades'
 import {
   GridMode, PanelIdPath,
@@ -8,6 +8,16 @@ import {
   StringLinkPathModel,
   VibrantColor,
 } from '@shared/data-access/models'
+import { reducers } from '@shared/data-access/store'
+import {
+  downAndLeft,
+  downAndRight,
+  handleXAxisSame,
+  handleYAxisSame,
+  startDiagonal,
+  upAndLeft,
+  upAndRight,
+} from './utils/handle-axis'
 
 @Directive({
   selector: '[appCanvas]',
@@ -75,18 +85,67 @@ export class CanvasDirective implements OnInit {
     // this.draw()
   }
 
-  @Input() set startDragging(clientXY: ClientXY) {
-    if (!clientXY.clientX || !clientXY.clientY) {
+  @Input() set startDraggingWithPage(xy: XYModel) {
+    if (!xy.x || !xy.y) {
       this.ctx.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height)
       this.startX = undefined
       this.startY = undefined
       return
     }
-    console.log(clientXY)
+    console.log(xy)
     const rect = this.canvas.nativeElement.getBoundingClientRect()
-    this.startX = clientXY.clientX - rect.left
-    this.startY = clientXY.clientY - rect.top
+    /*    const appWrapper = document.getElementById('appWrapper')
+        if (!appWrapper) return
+        const appWrapperRect = appWrapper.getBoundingClientRect()
+        console.log(appWrapper)*/
+    // this.startX = clientXY.clientX
+    // this.startY = clientXY.clientY
+    /*    this.startX = xy.x - this.canvas.nativeElement.offsetLeft
+        this.startY = xy.y - this.canvas.nativeElement.offsetTop*/
+    // this.startX = xy.x - rect.left - this.canvas.nativeElement.offsetLeft
+    // this.startY = xy.y - rect.top - this.canvas.nativeElement.offsetTop
+    this.startX = xy.x - rect.left
+    this.startY = xy.y - rect.top
+    console.log(this.startX, this.startY)
+    console.log(rect.top, rect.left)
+    // console.log(this.canvas.nativeElement.offsetLeft, this.canvas.nativeElement.offsetTop)
+
+
+    // this.startX = xy.x - rect.left - this.canvas.nativeElement.offsetLeft
+    // this.startY = xy.y - rect.top - this.canvas.nativeElement.offsetTop
+
+    /*    this.startX = clientXY.clientX - rect.left - ((rect.width - appWrapperRect.width) / 2)
+        this.startY = clientXY.clientY - rect.top - ((rect.height - appWrapperRect.height) / 2)*/
+    // console.log(this.startX)
+    // this.startX = clientXY.clientX - rect.left - appWrapperRect.width / 2
+    // this.startY = clientXY.clientY - rect.top - appWrapperRect.height / 2
     // this.draw()
+  }
+
+  @Input() set startDragging(clientXY: ClientXY) {
+    /*
+        if (!clientXY.clientX || !clientXY.clientY) {
+          this.ctx.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height)
+          this.startX = undefined
+          this.startY = undefined
+          return
+        }
+        console.log(clientXY)
+        const rect = this.canvas.nativeElement.getBoundingClientRect()
+        /!*    const appWrapper = document.getElementById('appWrapper')
+            if (!appWrapper) return
+            const appWrapperRect = appWrapper.getBoundingClientRect()
+            console.log(appWrapper)*!/
+        // this.startX = clientXY.clientX
+        // this.startY = clientXY.clientY
+        this.startX = clientXY.clientX - rect.left
+        this.startY = clientXY.clientY - rect.top
+        /!*    this.startX = clientXY.clientX - rect.left - ((rect.width - appWrapperRect.width) / 2)
+            this.startY = clientXY.clientY - rect.top - ((rect.height - appWrapperRect.height) / 2)*!/
+        // console.log(this.startX)
+        // this.startX = clientXY.clientX - rect.left - appWrapperRect.width / 2
+        // this.startY = clientXY.clientY - rect.top - appWrapperRect.height / 2
+        // this.draw()*/
   }
 
   selectedPaths?: SelectedPanelLinkPathModel
@@ -111,10 +170,10 @@ export class CanvasDirective implements OnInit {
     console.log(selectedPaths)
     this.selectedPaths = selectedPaths
     this.pathMapAnimating = true
-    this.pathMapPromise = this.createLineMap(this.selectedPaths)
-    if (!this.pathMapPromise) {
-      return
-    }
+    /*    this.pathMapPromise = this.createLineMap(this.selectedPaths)
+        if (!this.pathMapPromise) {
+          return
+        }*/
     this.animateSelectedPathMap().then(r => console.log(r))
     /*    this.createLineMap(selectedPaths).then(async (map) => {
           if (!map) return
@@ -204,64 +263,6 @@ export class CanvasDirective implements OnInit {
     this.ctx.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height)
     this.startX = undefined
     this.startY = undefined
-    /*    const pan = (event.composedPath()[0] as HTMLDivElement)
-        console.log(pan)
-        const rect = (event.composedPath()[0] as HTMLDivElement).getBoundingClientRect()
-        const id = (event.composedPath()[0] as HTMLDivElement).getAttribute('id')
-        const location = (event.composedPath()[0] as HTMLDivElement).getAttribute('location')
-        console.log(id)
-        if (id) {
-          // const doc = document.querySelector(`#${id}`) // Match the second div
-          // const doc = document.querySelector(`[id=${id}]`) // Match the second div
-          const doc2 = document.querySelector(`[blockLocation=${location}]`) // Match the second div
-          // const doc3 = document.querySelector(`[blockId=${id}]`) // Match the second div
-          const yes = document.querySelector('div.panel')
-          // console.log(doc)
-          console.log(doc2)
-          // console.log(doc3)
-          console.log(yes)
-
-        }
-        console.log(rect)
-        const parentRect = this.canvas.nativeElement.parentNode.getBoundingClientRect()
-        const mouseX = rect.left - (parentRect.width - this.width) / 2 - this.canvas.nativeElement.parentNode.offsetLeft
-
-        const mouseY = rect.top - (parentRect.height - this.height) / 2 - this.canvas.nativeElement.parentNode.offsetTop
-        if (this.firstObjectX && this.firstObjectY) {
-          if (location) {
-            this.secondObjectLocation = location
-
-          }
-          this.secondObjectX = mouseX
-          this.secondObjectY = mouseY
-          this.secondObjectX += (rect.width / 2)
-          this.secondObjectY += (rect.height / 2)
-
-          this.ctx.lineWidth = 15
-          this.ctx.fillStyle = this.fillStyle
-          this.ctx.globalAlpha = 0.4
-          this.ctx.beginPath()
-          this.ctx.moveTo(this.firstObjectX, this.firstObjectY)
-          this.ctx.lineTo(mouseX, mouseY)
-          this.ctx.stroke()
-        }
-        if (!this.firstObjectX || !this.firstObjectY) {
-          if (location) {
-            this.firstObjectLocation = location
-
-          }
-          this.firstObjectX = mouseX
-          this.firstObjectY = mouseY
-          this.firstObjectX += (rect.width / 2)
-          this.firstObjectY += (rect.height / 2)
-        }*/
-    /*    this.ctx.globalAlpha = 0.4
-
-        this.ctx.fillStyle = this.fillStyle
-        // this.ctx.fillStyle = '#7585d8'
-        this.ctx.fillRect(mouseX, mouseY, rect.width, rect.height)
-
-        this.ctx.globalAlpha = 1.0*/
     return
   }
 
@@ -299,10 +300,30 @@ export class CanvasDirective implements OnInit {
     }
 
     const parentRect = this.canvas.nativeElement.parentNode.getBoundingClientRect()
+    const rect = this.canvas.nativeElement.getBoundingClientRect()
 
-    const mouseX = this.pageX - (parentRect.width - this.width) / 2 - this.canvas.nativeElement.parentNode.offsetLeft
+    /*    console.log(parentRect)
+        console.log(this.canvas.nativeElement.parentNode)
+        console.log(this.canvas.nativeElement.parentNode.offsetLeft)
+        console.log(this.canvas.nativeElement.parentNode.offsetTop)*/
 
-    const mouseY = this.pageY - (parentRect.height - this.height) / 2 - this.canvas.nativeElement.parentNode.offsetTop
+    const mouseX = this.pageX - rect.left
+
+    const mouseY = this.pageY - rect.top
+
+
+    /*    const mouseX = this.pageX - (parentRect.width - this.width) / 2 - this.canvas.nativeElement.parentNode.offsetLeft
+
+        const mouseY = this.pageY - (parentRect.height - this.height) / 2 - this.canvas.nativeElement.parentNode.offsetTop*/
+    /*    const rect = this.canvas.nativeElement.getBoundingClientRect()
+        const appWrapper = document.getElementById('appWrapper')
+        if (!appWrapper) return
+        const appWrapperRect = appWrapper.getBoundingClientRect()
+        console.log(appWrapper)/!**!/
+
+        const mouseX = this.pageX - this.canvas.nativeElement.parentNode.offsetLeft - appWrapper.offsetLeft
+
+        const mouseY = this.pageY - this.canvas.nativeElement.parentNode.offsetTop - appWrapper.offsetTop*/
 
     // const mouseX = this.pageX - this.canvas.nativeElement.parentNode.offsetLeft
     // const mouseY = this.pageY - this.canvas.nativeElement.parentNode.offsetTop
@@ -530,22 +551,23 @@ export class CanvasDirective implements OnInit {
     /*    let nextPanel: PanelModel | undefined = selectedPaths.panelPaths.find(
           (panel) => panel.count === 0
         )*/
-    let nextPath: SelectedPathModel | undefined = selectedPaths.panelPaths.find(
-      (panel) => panel.count === 0,
-    )
     let panelCounter = 0
-    const lineMap = new Map<number, { x: number, y: number }>()
+    let nextPath: SelectedPathModel | undefined = selectedPaths.panelPaths.find(
+      (panel) => panel.count === panelCounter,
+    )
+    const lineMap = new Map<number, BlockRectModel>()
     while (job) {
       if (nextPath) {
-        const xY = await this.getCentre(nextPath.panelId)
-        if (!xY) {
+        const blockRect = await this.getBlockRect(nextPath.panelId)
+        // const xY = await this.getCentre(nextPath.panelId)
+        if (!blockRect) {
           return console.error('!xY')
         }
 
-        lineMap.set(panelCounter, xY)
+        lineMap.set(panelCounter, blockRect)
 
         const secondPath = selectedPaths.panelPaths.find(
-          (panel) => panel.count === panelCounter,
+          (panel) => panel.count === panelCounter + 1,
         )
         if (secondPath) {
           nextPath = secondPath
@@ -558,6 +580,34 @@ export class CanvasDirective implements OnInit {
         job = false
       }
     }
+    let negJob = true
+    panelCounter = -1
+    nextPath = selectedPaths.panelPaths.find(
+      (panel) => panel.count === panelCounter,
+    )
+    while (negJob) {
+      if (nextPath) {
+        const blockRect = await this.getBlockRect(nextPath.panelId)
+        if (!blockRect) {
+          return console.error('!xY')
+        }
+
+        lineMap.set(panelCounter, blockRect)
+
+        const secondPath = selectedPaths.panelPaths.find(
+          (panel) => panel.count === panelCounter - 1,
+        )
+        if (secondPath) {
+          nextPath = secondPath
+        } else {
+          negJob = false
+        }
+
+        panelCounter--
+      } else {
+        negJob = false
+      }
+    }
     return lineMap
   }
 
@@ -568,7 +618,7 @@ export class CanvasDirective implements OnInit {
     if (elapsed > this.fpsInterval) {
       this.startTime = now - (elapsed % this.fpsInterval)
       if (this.selectedPaths && this.pathMapAnimating) {
-        this.pathMap = await this.createLineMap(this.selectedPaths)
+        // this.pathMap = await this.createLineMap(this.selectedPaths)
         const pathMap = await this.createLineMap(this.selectedPaths)
         await this.drawSelectedPathMap(pathMap)
       }
@@ -581,82 +631,229 @@ export class CanvasDirective implements OnInit {
     }
   }
 
-  private async drawSelectedPathMap(pathMap: void | Map<number, { x: number; y: number }>) {
-    // console.log('drawSelectedPathMap')
-    // console.log(selectedPaths)
-    /*    if (!this.pathMap) {
-          return
-        }
-        const pathMap = this.pathMap*/
+  private async drawSelectedPathMap(pathMap: void | Map<number, BlockRectModel>) {
     console.log('draw')
     this.ctx.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height)
     if (!this.selectedPaths) {
-      return console.error('!this.selectedPaths')
+      console.error('!this.selectedPaths')
+      return
     }
 
-    // const pathMap = await this.pathMapPromise
     if (!pathMap) {
-      return console.error('!pathMap')
+      console.error('!pathMap')
+      return
     }
-    /*    const pathMap = await this.createLineMap(this.selectedPaths)
-        if (!pathMap) {
-          return console.error('!pathMap')
-        }*/
-
 
     let job = true
 
-
     let pathCounter = 0
-    while (job) {
-      const start = pathMap.get(pathCounter)
-      if (!start) {
-        return console.error('!start')
+
+    const doesHavePositive = pathMap.get(pathCounter + 1)
+    if (doesHavePositive) {
+      while (job) {
+        const start = pathMap.get(pathCounter)
+        if (!start) {
+          console.error('!start')
+          return
+        }
+        const next = pathMap.get(pathCounter + 1)
+        if (!next) {
+          job = false
+          break
+        }
+        if (start.x === next.x && start.y === next.y) {
+          console.error('shit')
+        }
+
+        this.drawTwoPoints(start, next, '#ff0000')
+        pathCounter++
       }
-      const next = pathMap.get(pathCounter + 1)
-      if (!next) {
-        job = false
-        break
-        // return console.error('!next')
-      }
-      // const next = pathMap.get(pathCounter)
-      // job = !!next
-      /*      if (!next) {
-              job = false
-              break
-            }*/
-
-      this.drawTwoPoints(start, next)
-      pathCounter++
-
-      /*      if (!next) {
-              job = false
-            }*/
-
-
     }
 
 
-    /*    this.ctx.lineWidth = 15
-        this.ctx.fillStyle = this.fillStyle
-        this.ctx.globalAlpha = 0.4
-        this.ctx.beginPath()
-        this.ctx.moveTo(this.lines[0].x, this.lines[0].y)
-        this.ctx.lineTo(this.lines[1].x, this.lines[1].y)
-        this.ctx.stroke()*/
+    let letNegativeJob = true
+    const doesHaveNegative = pathMap.get(pathCounter - 1)
+    pathCounter = 0
+    if (doesHaveNegative) {
+      while (letNegativeJob) {
+        const start = pathMap.get(pathCounter)
+        if (!start) {
+          console.error('!start')
+          return
+        }
+        const next = pathMap.get(pathCounter - 1)
+        if (!next) {
+          letNegativeJob = false
+          return
+        }
+        if (start.x === next.x && start.y === next.y) {
+          console.error('shit2')
+        }
+
+        this.drawTwoPoints(start, next, 'blue')
+        pathCounter--
+      }
+    }
+
   }
 
-  private drawTwoPoints(first: { x: number, y: number }, second: { x: number, y: number }) {
+  private drawTwoPoints(first: BlockRectModel, second: BlockRectModel, color: string) {
+
+    const res = this.getValuesFromTwoBlocks({ first, second })
+    // const res = this.getValues(first, second)
+    if (!res) return
+
     this.ctx.lineWidth = 5
-
-
-    // this.ctx.globalAlpha = 0.4
     this.ctx.beginPath()
-    this.ctx.moveTo(first.x, first.y)
-    this.ctx.lineTo(second.x, second.y)
-    this.ctx.strokeStyle = '#ff0000'
-    // this.ctx.fillStyle = '#10ff12'
+    this.ctx.moveTo(res.firstResultX, res.firstResultY)
+    this.ctx.lineTo(res.secondResultX, res.secondResultY)
+    this.ctx.strokeStyle = color
     this.ctx.stroke()
+  }
+
+  // private getValues(twoBlocks: { first: BlockRectModel, second: BlockRectModel }) {
+
+  private getValuesFromTwoBlocks(twoBlocks: { first: BlockRectModel, second: BlockRectModel }) {
+    const first = twoBlocks.first
+    const second = twoBlocks.second
+    /*    const { x: firstX, y: firstY, width: firstWidth, height: firstHeight } = twoBlocks.first
+        const { x: secondX, y: secondY, width: secondWidth, height: secondHeight } = twoBlocks.second*/
+    const drawingLeft = first.x > second.x
+    const drawingUp = first.y > second.y
+    // firstResultY = drawingUp ? first.y - first.height / 2 : first.y + first.height / 2;
+    // secondResultY = drawingUp ? second.y + second.height / 2 : second.y - second.height / 2;
+    const xAxisSame = first.x === second.x
+    const yAxisSame = first.y === second.y
+    let xDifference = Math.floor(first.x - second.x)
+    xDifference = xDifference > 0 ? xDifference : xDifference * -1
+    let yDifference = Math.floor(first.y - second.y)
+    yDifference = yDifference > 0 ? yDifference : yDifference * -1
+
+    if (xAxisSame) {
+      const yRes = handleXAxisSame(drawingUp, first.y, first.height, second.y, second.height)
+      return {
+        firstResultX: first.x,
+        firstResultY: yRes.firstResultY,
+        secondResultX: second.x,
+        secondResultY: yRes.secondResultY,
+      }
+    }
+    if (yAxisSame) {
+      const xRes = handleYAxisSame(drawingLeft, first.x, first.width, second.x, second.width)
+      return {
+        firstResultX: xRes.firstResultX,
+        firstResultY: first.y,
+        secondResultX: xRes.secondResultX,
+        secondResultY: second.y,
+      }
+    }
+    if (drawingUp && drawingLeft) {
+      return upAndLeft(twoBlocks, xDifference, yDifference)
+    }
+    if (!drawingUp && !drawingLeft) {
+      return downAndRight(twoBlocks, xDifference, yDifference)
+    }
+    if (drawingUp && !drawingLeft) {
+      return upAndRight(twoBlocks, xDifference, yDifference)
+    }
+    if (!drawingUp && drawingLeft) {
+      return downAndLeft(twoBlocks, xDifference, yDifference)
+    }
+    return undefined
+  }
+
+
+  private handleXAxisSame(drawingUp: boolean, firstY: number, firstHeight: number, secondY: number, secondHeight: number) {
+    const firstResultY = drawingUp ? firstY - firstHeight / 2 : firstY + firstHeight / 2
+    const secondResultY = drawingUp ? secondY + secondHeight / 2 : secondY - secondHeight / 2
+    return { firstResultY, secondResultY }
+  }
+
+  private handleYAxisSame(drawingLeft: boolean, firstX: number, firstWidth: number, secondX: number, secondWidth: number) {
+    const firstResultX = drawingLeft ? firstX - firstWidth / 2 : firstX + firstWidth / 2
+    const secondResultX = drawingLeft ? secondX + secondWidth / 2 : secondX - secondWidth / 2
+    return { firstResultX, secondResultX }
+  }
+
+
+  private differenceBetweenYAndXIsEqual(twoBlocks: { first: BlockRectModel, second: BlockRectModel }) {
+    const xDifference = Math.floor(twoBlocks.first.x - twoBlocks.second.x)
+    const yDifference = Math.floor(twoBlocks.first.y - twoBlocks.second.y)
+    return xDifference === yDifference
+  }
+
+  private getValues(first: BlockRectModel, second: BlockRectModel) {
+    const drawingLeft = first.x > second.x
+    const drawingUp = first.y > second.y
+    const xAxisSame = first.x === second.x
+    const yAxisSame = first.y === second.y
+
+    let firstResultX: number | undefined
+    let firstResultY: number | undefined
+
+    let secondResultX: number | undefined
+    let secondResultY: number | undefined
+    if (xAxisSame) {
+      // console.log('xAxisSame')
+      if (drawingUp) {
+        console.log('xAxisSame drawingUp')
+        firstResultY = first.y - first.height / 2
+        secondResultY = second.y + second.height / 2
+        return { firstResultX: first.x, firstResultY, secondResultX: second.x, secondResultY }
+      } else {
+        console.log('xAxisSame !drawingUp')
+        firstResultY = first.y + first.height / 2
+        secondResultY = second.y - second.height / 2
+        return { firstResultX: first.x, firstResultY, secondResultX: second.x, secondResultY }
+      }
+      /*      if (drawingUp) {
+              firstResultY = first.y + first.height / 2
+              secondResultY = second.y - second.height / 2
+              return { firstResultX: first.x, firstResultY, secondResultX: second.x, secondResultY }
+            } else if (!drawingUp) {
+              firstResultY = first.y - first.height / 2
+              secondResultY = second.y + second.height / 2
+              return { firstResultX: first.x, firstResultY, secondResultX: second.x, secondResultY }
+            }*/
+    }
+    if (yAxisSame) {
+      console.log('yAxisSame')
+      if (drawingLeft) {
+        firstResultX = first.x - first.width / 2
+        secondResultX = second.x + second.width / 2
+        return { firstResultX, firstResultY: first.y, secondResultX, secondResultY: second.y }
+      } else {
+        firstResultX = first.x + first.width / 2
+        secondResultX = second.x - second.width / 2
+        return { firstResultX, firstResultY: first.y, secondResultX, secondResultY: second.y }
+      }
+      /*      if (drawingLeft) {
+              firstResultX = first.x + first.width / 2
+              secondResultX = second.x - second.width / 2
+              return { firstResultX, firstResultY: first.y, secondResultX, secondResultY: second.y }
+            } else if (!drawingLeft) {
+              firstResultX = first.x - first.width / 2
+              secondResultX = second.x + second.width / 2
+              return { firstResultX, firstResultY: first.y, secondResultX, secondResultY: second.y }
+            }*/
+    }
+    if (drawingUp && drawingLeft) {
+      console.log('drawingUp && drawingLeft')
+      firstResultY = first.y - first.height / 2
+      secondResultY = second.y + second.height / 2
+      firstResultX = first.x - first.width / 2
+      secondResultX = second.x + second.width / 2
+      return { firstResultX, firstResultY, secondResultX, secondResultY }
+    }
+    if (!drawingUp && !drawingLeft) {
+      console.log('!drawingUp && !drawingLeft')
+      firstResultY = first.y + first.height / 2
+      secondResultY = second.y - second.height / 2
+      firstResultX = first.x + first.width / 2
+      secondResultX = second.x - second.width / 2
+      return { firstResultX, firstResultY, secondResultX, secondResultY }
+    }
+    return undefined
   }
 
   private async getCentre(panelId: string) {
@@ -675,20 +872,38 @@ export class CanvasDirective implements OnInit {
     const parentRect = this.canvas.nativeElement.parentNode.getBoundingClientRect()
     const x = panelRect.left - (parentRect.width - this.width) / 2 - this.canvas.nativeElement.parentNode.offsetLeft + (panelRect.width / 2)
     const y = panelRect.top - (parentRect.height - this.height) / 2 - this.canvas.nativeElement.parentNode.offsetTop + (panelRect.height / 2)
-    /*    let x = panelRect.left - (this.parentWidth - this.width) / 2
-        let y = panelRect.top - (this.parentHeight - this.height) / 2
-        x -= this.canvas.nativeElement.parentNode.offsetLeft
-        y -= this.canvas.nativeElement.parentNode.offsetTop
-        x += (panelRect.width / 2)
-        y += (panelRect.height / 2)*/
+
     return { x, y }
-    /*    const secondObject = document.querySelector(`[blockLocation=${this.secondObjectLocation}]`)
-        if (!secondObject) return
-        const secondRect = secondObject.getBoundingClientRect()
-        this.secondObjectX = secondRect.left - (parentRect.width - this.width) / 2 - this.canvas.nativeElement.parentNode.offsetLeft
-        this.secondObjectY = secondRect.top - (parentRect.height - this.height) / 2 - this.canvas.nativeElement.parentNode.offsetTop
-        this.secondObjectX += (secondRect.width / 2)
-        this.secondObjectY += (secondRect.height / 2)*/
+  }
+
+  private async getBlockRect(panelId: string) {
+    if (!this.parentWidth || !this.parentHeight) {
+      console.error('(!this.parentHeight || !this.parentHeight)')
+      return undefined
+    }
+    const panel = await this.panelsStore.select.panelById(panelId)
+    if (!panel) {
+      console.error('panel')
+      return undefined
+    }
+    const panelDiv = document.querySelector(`[blockLocation=${panel.location}]`)
+    if (!panelDiv) {
+      console.error('!firstPanelDiv')
+      return undefined
+    }
+
+    // const mouseX = this.pageX - rect.left
+    //
+    // const mouseY = this.pageY - rect.top
+    const panelRect = panelDiv.getBoundingClientRect()
+    const parentRect = this.canvas.nativeElement.parentNode.getBoundingClientRect()
+    const canvasRect = this.canvas.nativeElement.getBoundingClientRect()
+    const x = panelRect.left - canvasRect.left + (panelRect.width / 2)
+    const y = panelRect.top - canvasRect.top + (panelRect.height / 2)
+    /*    const x = panelRect.left - (parentRect.width - this.width) / 2 - this.canvas.nativeElement.parentNode.offsetLeft + (panelRect.width / 2)
+        const y = panelRect.top - (parentRect.height - this.height) / 2 - this.canvas.nativeElement.parentNode.offsetTop + (panelRect.height / 2)*/
+
+    return { x, y, height: panelRect.height, width: panelRect.width }
   }
 
 }

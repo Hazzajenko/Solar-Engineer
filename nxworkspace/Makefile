@@ -53,6 +53,11 @@ cmon:
 newww:
 	nx generate @nrwl/angular:library repositories --style=none --directory=project-id/data-access --importPath=@project-id/data-access/repositories --skipModule --tags=project-id:repositories --no-interactive
 
+storybook:
+	nx g @nrwl/storybook/angular --project=design
+
+story:
+	npx nx generate @nrwl/angular:stories design --no-interactive
 
 #libs/project-id/data-access
 cache:

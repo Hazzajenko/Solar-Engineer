@@ -10,6 +10,8 @@ export class UiFacade {
   private store = inject(Store)
 
   isKeyMapEnabled$ = this.store.select(UiSelectors.selectIsKeymapEnabled)
+  isPathLinesEnabled$ = this.store.select(UiSelectors.selectIsPathLinesEnabled)
+  isStringStatsEnabled$ = this.store.select(UiSelectors.selectIsStringStatsEnabled)
   gridLayoutMoving$ = this.store.select(UiSelectors.selectGridLayoutMoving)
   gridLayoutXY$ = this.store.select(UiSelectors.selectGridLayoutXY)
   mouseXY$ = this.store.select(UiSelectors.selectMouseXY)
@@ -21,6 +23,14 @@ export class UiFacade {
 
   get isKeyMapEnabled() {
     return firstValueFrom(this.isKeyMapEnabled$)
+  }
+
+  get isPathLinesEnabled() {
+    return firstValueFrom(this.isPathLinesEnabled$)
+  }
+
+  get isStringStatsEnabled() {
+    return firstValueFrom(this.isStringStatsEnabled$)
   }
 
   get scale() {
@@ -55,15 +65,4 @@ export class UiFacade {
     return firstValueFrom(this.clientXY$)
   }
 
-  toggleKeyMap() {
-    this.store.dispatch(UiActions.toggleKeymap())
-  }
-
-  turnKeyMapOn() {
-    this.store.dispatch(UiActions.turnKeymapOn())
-  }
-
-  turnKeyMapOff() {
-    this.store.dispatch(UiActions.turnKeymapOff())
-  }
 }

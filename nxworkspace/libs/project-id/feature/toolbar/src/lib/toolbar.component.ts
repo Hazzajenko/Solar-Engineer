@@ -1,5 +1,5 @@
 import { LetModule } from '@ngrx/component'
-import { GridStoreService, UiFacade } from '@project-id/data-access/facades'
+import { GridStoreService, UiFacade, UiStoreService } from '@project-id/data-access/facades'
 import { map, Observable, switchMap } from 'rxjs'
 import { MatButtonModule } from '@angular/material/button'
 import { CommonModule } from '@angular/common'
@@ -32,9 +32,10 @@ export class ToolbarComponent {
   private selectedFacade = inject(SelectedFacade)
   private stringsFacade = inject(StringsFacade)
   private uiFacade = inject(UiFacade)
-  private store = inject(Store)
+  private uiStore = inject(UiStoreService)
+  // private store = inject(Store)
   gridMode$: Observable<GridMode> = this.gridFacade.gridMode$
-  keymap$ = this.uiFacade.isKeyMapEnabled$
+  keymap$ = this.uiStore.select.isKeyMapEnabled$
   selectedStringName$ = this.selectedFacade.selectedStringId$.pipe(
     switchMap(stringId => this.stringsFacade.stringById$(stringId).pipe(
       map(string => {
@@ -62,6 +63,6 @@ export class ToolbarComponent {
   }
 
   toggleKeymap() {
-    this.uiFacade.toggleKeyMap()
+    this.uiStore.dispatch.toggleKeyMap()
   }
 }

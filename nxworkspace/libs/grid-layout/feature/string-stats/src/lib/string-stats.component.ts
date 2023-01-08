@@ -15,7 +15,7 @@ import { map } from 'rxjs/operators'
     <ng-container *ngIf='selectedString'>
       <div
 
-        class='pointer-events-none absolute z-50 w-[200px]  transform translate-x-1/2 translate-y-6/7 left-10 bottom-1/2'>
+        class='pointer-events-none absolute z-50 w-[200px]  transform translate-x-1/2 translate-y-6/7 left-5 bottom-1/2'>
         <div class='bg-purple-300/50 pl-4'>
           <!--    <div class='pointer-events-none absolute z-50'>-->
           <!--      <div class="text">Text</div>-->

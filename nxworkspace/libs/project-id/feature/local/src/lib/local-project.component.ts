@@ -26,7 +26,10 @@ export class LocalProjectComponent {
   // rows = 40
   // rows = 20
   rows = 28
-  cols = 37
+  cols = 37 + 14
+
+  /*  rows = 28
+    cols = 37*/
   /* rows = 150
    // cols = 40
    cols = 150*/

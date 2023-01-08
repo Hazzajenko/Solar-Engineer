@@ -9,6 +9,19 @@ import { UiActions } from '@project-id/data-access/store'
 export class UiRepository {
   private store = inject(Store)
 
+
+  toggleKeyMap() {
+    return this.store.dispatch(UiActions.toggleKeymap())
+  }
+
+  togglePathLines() {
+    return this.store.dispatch(UiActions.togglePathLines())
+  }
+
+  toggleStringStats() {
+    return this.store.dispatch(UiActions.toggleStringStatistics())
+  }
+
   setClientXY(clientXY: ClientXY) {
     return this.store.dispatch(UiActions.setClientxy({ clientXY }))
   }
@@ -59,14 +72,6 @@ export class UiRepository {
 
   resetGridlayoutComponentXy() {
     return this.store.dispatch(UiActions.resetGridlayoutComponentXy())
-  }
-
-  turnKeyMapOn() {
-    return this.store.dispatch(UiActions.turnKeymapOn())
-  }
-
-  turnKeyMapOff() {
-    return this.store.dispatch(UiActions.turnKeymapOff())
   }
 
 

@@ -53,10 +53,17 @@
     "@angular/compiler-cli": "~15.0.0",
     "@angular/language-service": "~15.0.0",
     "@ngrx/schematics": "~15.0.0",
+    "@nrwl/cypress": "15.4.0",
     "@nrwl/eslint-plugin-nx": "15.4.0",
     "@nrwl/jest": "15.4.0",
     "@nrwl/linter": "15.4.0",
+    "@nrwl/storybook": "15.4.0",
     "@nrwl/workspace": "15.4.0",
+    "@storybook/addon-essentials": "~6.5.9",
+    "@storybook/angular": "~6.5.9",
+    "@storybook/builder-webpack5": "~6.5.9",
+    "@storybook/core-server": "~6.5.9",
+    "@storybook/manager-webpack5": "~6.5.9",
     "@types/jasmine": "~4.0.0",
     "@types/jest": "28.1.1",
     "@types/node": "16.11.7",
@@ -64,8 +71,11 @@
     "@typescript-eslint/eslint-plugin": "^5.36.1",
     "@typescript-eslint/parser": "^5.36.1",
     "autoprefixer": "^10.4.0",
+    "cypress": "^11.0.0",
     "eslint": "~8.15.0",
     "eslint-config-prettier": "8.1.0",
+    "eslint-plugin-cypress": "^2.10.3",
+    "html-webpack-plugin": "^5.5.0",
     "jasmine-core": "~4.3.0",
     "jasmine-marbles": "~0.9.1",
     "jest": "28.1.1",
@@ -87,6 +97,7 @@
     "tailwindcss": "^3.0.2",
     "ts-jest": "28.0.5",
     "ts-node": "10.9.1",
-    "typescript": "~4.8.4"
+    "typescript": "~4.8.4",
+    "webpack": "^5.64.0"
   }
 }

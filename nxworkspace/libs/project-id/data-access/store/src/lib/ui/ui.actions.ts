@@ -5,8 +5,8 @@ export const UiActions = createActionGroup({
   source: 'Ui Store',
   events: {
     'Toggle Keymap': emptyProps(),
-    'Turn Keymap On': emptyProps(),
-    'Turn Keymap Off': emptyProps(),
+    'Toggle Path Lines': emptyProps(),
+    'Toggle String Statistics': emptyProps(),
     'Set ClientXY': props<{ clientXY: ClientXY }>(),
     'Clear ClientXY': emptyProps(),
     'Set GridLayout Component XY': props<{ gridLayoutXY: GridLayoutXY }>(),

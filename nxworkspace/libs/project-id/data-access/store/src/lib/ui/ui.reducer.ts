@@ -9,6 +9,8 @@ export const UI_FEATURE_KEY = 'ui'
 
 export interface UiState {
   keymap: boolean
+  pathLines: boolean
+  stringStats: boolean
   gridLayoutXY: GridLayoutXY
   gridLayoutZoom: number
   gridLayoutMoving: boolean
@@ -21,6 +23,8 @@ export interface UiState {
 
 export const initialUiState: UiState = {
   keymap: true,
+  pathLines: true,
+  stringStats: true,
   gridLayoutXY: {
     componentX: undefined,
     componentY: undefined,
@@ -47,8 +51,8 @@ export const initialUiState: UiState = {
 const reducer = createReducer(
   initialUiState,
   on(UiActions.toggleKeymap, (state) => ({ ...state, keymap: !state.keymap })),
-  on(UiActions.turnKeymapOn, (state) => ({ ...state, keymap: true })),
-  on(UiActions.turnKeymapOff, (state) => ({ ...state, keymap: false })),
+  on(UiActions.togglePathLines, (state) => ({ ...state, pathLines: !state.pathLines })),
+  on(UiActions.toggleStringStatistics, (state) => ({ ...state, stringStats: !state.stringStats })),
   on(UiActions.setGridlayoutComponentXy, (state, { gridLayoutXY }) => ({
     ...state,
     gridLayoutXY,

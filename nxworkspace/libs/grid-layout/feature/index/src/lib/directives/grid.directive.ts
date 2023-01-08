@@ -8,7 +8,7 @@ import {
   Output,
   Renderer2,
 } from '@angular/core'
-import { ElementOffsets } from '@grid-layout/shared/models'
+import { BlockRectModel, ElementOffsets } from '@grid-layout/shared/models'
 import { UiStoreService } from '@project-id/data-access/facades'
 
 
@@ -119,4 +119,5 @@ export class GridDirective implements AfterViewInit {
       `translate(${this.posX}px,${this.posY}px) scale(${this.scale})`,
     )
   }
+
 }

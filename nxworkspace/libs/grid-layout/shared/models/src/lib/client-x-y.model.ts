@@ -17,3 +17,15 @@ export interface PosXY {
   posX?: number
   posY?: number
 }
+
+export interface XYModel {
+  x: number
+  y: number
+}
+
+export interface BlockRectModel {
+  x: number
+  y: number
+  width: number
+  height: number
+}

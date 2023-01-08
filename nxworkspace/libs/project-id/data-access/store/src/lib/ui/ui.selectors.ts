@@ -8,6 +8,15 @@ export const selectIsKeymapEnabled = createSelector(
   (state: UiState) => state.keymap,
 )
 
+export const selectIsPathLinesEnabled = createSelector(
+  selectUiState,
+  (state: UiState) => state.pathLines,
+)
+
+export const selectIsStringStatsEnabled = createSelector(
+  selectUiState,
+  (state: UiState) => state.stringStats,
+)
 export const selectPosXY = createSelector(
   selectUiState,
   (state: UiState) => state.posXY,

@@ -21,7 +21,7 @@ import {
 
 import { KeymapOverlayComponent } from '@grid-layout/feature/keymap'
 import { StringTotalsOverlayComponent } from '@grid-layout/feature/string-stats'
-import { ClientXY, ElementOffsets, GridLayoutXY, MouseXY } from '@grid-layout/shared/models'
+import { ClientXY, ElementOffsets, GridLayoutXY, MouseXY, XYModel } from '@grid-layout/shared/models'
 import { LetModule } from '@ngrx/component'
 import {
   GridFacade,
@@ -42,7 +42,7 @@ import { combineLatestWith } from 'rxjs/operators'
 import { WrapperDirective } from './directives/wrapper.directive'
 import { GridBackgroundComponent } from './ui/grid-background.component'
 import { UiFacade } from '@project-id/data-access/facades'
-import { Observable, switchMap } from 'rxjs'
+import { combineLatest, Observable, switchMap } from 'rxjs'
 import { map } from 'rxjs'
 
 import { CanvasDirective } from './directives/canvas.directive'
@@ -76,7 +76,7 @@ import { GetLocationPipe } from './pipes/get-location.pipe'
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: [],
 })
-export class GridLayoutComponent {
+export class GridLayoutComponent implements OnInit {
   public clickService = inject(ClickService)
   public dropService = inject(DropService)
   public mouseService = inject(MouseService)
@@ -92,6 +92,14 @@ export class GridLayoutComponent {
   private selectedStore = inject(SelectedStoreService)
   getScreenWidth!: number
   getScreenHeight!: number
+
+  gridContainerWidth!: string
+
+  gridContainerHeight!: string
+  layoutWidth!: number
+  layoutHeight!: number
+  layoutWidthString!: string
+  layoutHeightString!: string
   containerWidth!: number
   containerHeight!: number
   containerWidthString!: string
@@ -124,15 +132,30 @@ export class GridLayoutComponent {
   backgroundHeight?: string
   backgroundWidth?: string
 
+  pageXY: XYModel = {
+    x: 0,
+    y: 0,
+  }
+  isKeyMapEnabled$ = this.uiStore.select.isKeyMapEnabled$
+  isStringStatsEnabled$ = this.uiStore.select.isStringStatsEnabled$
+
+  uiState$: Observable<{
+    keyMap: boolean,
+    stringStats: boolean
+  }> = combineLatest([
+    this.isKeyMapEnabled$,
+    this.isStringStatsEnabled$,
+  ]).pipe(
+    map(([keyMap, stringStats]) => {
+      return {
+        keyMap,
+        stringStats,
+      }
+    }),
+  )
+
   constructor() {
-    this.getScreenWidth = window.innerWidth
-    this.getScreenHeight = window.innerHeight
-    this.containerWidth = window.innerWidth - 200
-    this.containerHeight = window.innerHeight - 200
-    this.containerWidthString = `${window.innerWidth - 200}px`
-    this.containerHeightString = `${window.innerHeight - 200}px`
-    console.log(`${this.getScreenWidth}x${this.getScreenHeight}`)
-    console.log(`${this.containerWidth}x${this.containerHeight}`)
+
     // console.log(`${this.getScreenWidth}x${this.getScreenHeight}`)
   }
 
@@ -142,9 +165,13 @@ export class GridLayoutComponent {
     this.backgroundWidth = `${size.cols * this.blockWidth + 1}px`
   }
 
-
-  @Input() rows!: number
-  @Input() cols!: number
+  // rows = 28
+  // cols = 37 + 14
+  rows!: number
+  cols!: number
+  //
+  // @Input() rows!: number
+  // @Input() cols!: number
   @Input() blocks$!: Observable<BlockModel[]>
 
   gridMode$ = this.gridFacade.gridMode$
@@ -165,6 +192,8 @@ export class GridLayoutComponent {
     offsetWidth: undefined,
   }
 
+  screenHasBeenSet = false
+
 
   selectedString$: Observable<StringModel | undefined> = this.selectedFacade.selectedStringId$.pipe(
     switchMap(stringId => this.stringsFacade.stringById$(stringId).pipe(
@@ -182,6 +211,40 @@ export class GridLayoutComponent {
       return paths
     }),
   )
+
+  ngOnInit() {
+    this.getScreenWidth = window.innerWidth
+    this.getScreenHeight = window.innerHeight
+    this.gridContainerWidth = `${window.innerWidth}px`
+    this.gridContainerHeight = `${window.innerHeight}px`
+    /*    this.layoutWidth = window.innerWidth - 100
+        this.layoutHeight = window.innerHeight - 100
+        this.layoutWidthString = `${window.innerWidth - 100}px`
+        this.layoutHeightString = `${window.innerHeight - 100}px`
+        this.containerWidth = window.innerWidth - 200
+        this.containerHeight = window.innerHeight - 200
+        this.containerWidthString = `${window.innerWidth - 200}px`
+        this.containerHeightString = `${window.innerHeight - 200}px`
+        console.log(`${this.getScreenWidth}x${this.getScreenHeight}`)
+        console.log(`${this.containerWidth}x${this.containerHeight}`)*/
+    this.initScreenSize()
+  }
+
+  initScreenSize() {
+    this.rows = Math.floor((this.getScreenHeight - 100) / this.blockHeight)
+    this.cols = Math.floor((this.getScreenWidth - 100) / this.blockWidth)
+    console.log(this.rows, this.cols)
+    this.layoutHeight = this.rows * this.blockHeight
+    this.layoutWidth = this.cols * this.blockWidth
+    this.layoutWidthString = `${this.layoutWidth}px`
+    this.layoutHeightString = `${this.layoutHeight}px`
+
+    // this.rows = 28
+    // this.cols = 37 + 14
+    this.backgroundHeight = `${this.layoutHeight + 1}px`
+    this.backgroundWidth = `${this.layoutWidth + 1}px`
+    this.screenHasBeenSet = true
+  }
 
 
   numSequence(n: number): Array<number> {

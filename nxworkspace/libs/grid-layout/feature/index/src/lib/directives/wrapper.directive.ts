@@ -1,3 +1,4 @@
+import { addWarning } from '@angular-devkit/build-angular/src/utils/webpack-diagnostics'
 import {
   Directive,
   ElementRef,
@@ -9,9 +10,9 @@ import {
   Output,
   Renderer2,
 } from '@angular/core'
-import { MouseService } from '@grid-layout/data-access/services'
+import { ClickService, DoubleClickService, MouseService } from '@grid-layout/data-access/services'
 
-import { ClientXY } from '@grid-layout/shared/models'
+import { ClientXY, XYModel } from '@grid-layout/shared/models'
 import { MultiStoreService } from '@project-id/data-access/facades'
 
 
@@ -26,6 +27,8 @@ export class WrapperDirective implements OnInit {
   private renderer = inject(Renderer2)
   // private uiRepository = inject(UiRepository)
   private mouseService = inject(MouseService)
+  private clickService = inject(ClickService)
+  private doubleClickService = inject(DoubleClickService)
 
   scale = 1
   startX?: number
@@ -41,6 +44,7 @@ export class WrapperDirective implements OnInit {
 
 
   @Output() clientXY: EventEmitter<ClientXY> = new EventEmitter<ClientXY>()
+  @Output() pageXY: EventEmitter<XYModel> = new EventEmitter<XYModel>()
   @Output() resetKeyUp: EventEmitter<string> = new EventEmitter<string>()
 
   @Input() set setScale(scale: number | null) {
@@ -76,9 +80,13 @@ export class WrapperDirective implements OnInit {
     event.preventDefault()
     event.stopPropagation()
     console.log('MOUSEUP--WRAPPER', event)
-    this.isDragging = false
-    this.elementRef.nativeElement.style.cursor = ''
+    if (this.isDragging || event.ctrlKey) {
+      this.isDragging = false
+      this.elementRef.nativeElement.style.cursor = ''
+      return
+    }
     const location = (event.composedPath()[0] as HTMLDivElement).getAttribute('location')
+    console.log(location)
     if (!location) return
     return this.mouseService.mouse({ event, location })
   }
@@ -88,6 +96,7 @@ export class WrapperDirective implements OnInit {
   async mouseDown(event: MouseEvent) {
     event.preventDefault()
     event.stopPropagation()
+    console.log('MOUSEDOWN--WRAPPER', event)
     if (event.ctrlKey/* || event.button === 1*/) {
       console.log('MOUSEDOWN--WRAPPER', event)
       const rect = this.elementRef.nativeElement.getBoundingClientRect()
@@ -118,6 +127,10 @@ export class WrapperDirective implements OnInit {
     console.log(location)
     const clientX = event.clientX
     const clientY = event.clientY
+    this.pageXY.emit({
+      x: event.pageX,
+      y: event.pageY,
+    })
     this.clientXY.emit({
       clientX,
       clientY,
@@ -126,6 +139,45 @@ export class WrapperDirective implements OnInit {
     return
 
 
+  }
+
+  @HostListener('document:click', ['$event'])
+  handleClick(event: MouseEvent) {
+    if (event.ctrlKey) return
+    console.log(event)
+    const div = (event.composedPath()[0] as HTMLDivElement)
+    console.log(div)
+
+    const location = (event.composedPath()[0] as HTMLDivElement).getAttribute('location')
+    if (location) {
+      return this.clickService.click({ event: (event as MouseEvent), location })
+    }
+    if (!location) {
+      const secondDiv = (event.composedPath()[1] as HTMLDivElement).getAttribute('location')
+      if (!secondDiv) return
+      return this.clickService.click({ event: (event as MouseEvent), location: secondDiv })
+    }
+    return
+  }
+
+
+  @HostListener('document:dblclick', ['$event'])
+  handleDoubleClick(event: MouseEvent) {
+    console.log(event)
+    const divs = (event.composedPath())
+    console.log(divs)
+    const div = (event.composedPath()[0] as HTMLDivElement)
+    console.log(div)
+    const location = (event.composedPath()[0] as HTMLDivElement).getAttribute('location')
+    if (location) {
+      return this.doubleClickService.doubleCLick({ event: (event as MouseEvent), location })
+    }
+    if (!location) {
+      const secondDiv = (event.composedPath()[1] as HTMLDivElement).getAttribute('location')
+      if (!secondDiv) return
+      return this.doubleClickService.doubleCLick({ event: (event as MouseEvent), location: secondDiv })
+    }
+    return
   }
 
   @HostListener('document:mousemove', ['$event'])
