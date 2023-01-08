@@ -25,18 +25,12 @@ export function bottomRightCorner(rect: BlockRectModel) {
 }
 
 export function leftSide(rect: BlockRectModel) {
-  // firstResultX = first.x - first.width / 2
-  // secondResultX = second.x + second.width / 2
   const x = rect.x - rect.width / 2
-  // const y = rect.y + rect.height / 2.5
   return { x }
 }
 
 export function rightSide(rect: BlockRectModel) {
-  // firstResultX = first.x - first.width / 2
-  // secondResultX = second.x + second.width / 2
   const x = rect.x + rect.width / 2
-  // const y = rect.y + rect.height / 2.5
   return { x }
 }
 
@@ -49,7 +43,3 @@ export function bottomSide(rect: BlockRectModel) {
   const y = rect.y + rect.height / 2
   return { y }
 }
-
-
-// secondResultY = second.y + second.height / 2.5
-// secondResultX = second.x + second.width / 2.5

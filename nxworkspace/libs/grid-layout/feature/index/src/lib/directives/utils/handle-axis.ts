@@ -4,7 +4,7 @@ import {
   bottomRightCorner, bottomSide,
   leftSide, rightSide,
   topLeftCorner, topRightCorner, topSide,
-} from 'libs/grid-layout/feature/index/src/lib/directives/utils/block-starts'
+} from './block-starts'
 
 export function handleXAxisSame(drawingUp: boolean, firstY: number, firstHeight: number, secondY: number, secondHeight: number) {
   const firstResultY = drawingUp ? firstY - firstHeight / 2 : firstY + firstHeight / 2
@@ -91,60 +91,6 @@ export function downAndRight(twoBlocks: { first: BlockRectModel, second: BlockRe
     const { y: firstResultY } = bottomSide(first)
     const { y: secondResultY } = topSide(second)
     return { firstResultX: first.x, firstResultY, secondResultX: second.x, secondResultY }
-  }
-}
-
-export function handleDiagonal(drawingUp: boolean, drawingLeft: boolean, xYDifferencesSame: boolean, twoBlocks: { first: BlockRectModel, second: BlockRectModel }) {
-  const { x: firstX, y: firstY, width: firstWidth, height: firstHeight } = twoBlocks.first
-  const { x: secondX, y: secondY, width: secondWidth, height: secondHeight } = twoBlocks.second
-
-  let firstResultX: number | undefined
-  let firstResultY: number | undefined
-  let secondResultX: number | undefined
-  let secondResultY: number | undefined
-
-
-  if (drawingUp) {
-    if (drawingLeft) {
-      firstResultY = firstY - firstHeight / (xYDifferencesSame ? 2.5 : 2)
-      secondResultY = secondY + secondHeight / (xYDifferencesSame ? 2.5 : 2)
-      firstResultX = firstX - firstWidth / (xYDifferencesSame ? 2.5 : 2)
-      secondResultX = secondX + secondWidth / (xYDifferencesSame ? 2.5 : 2)
-    } else {
-      firstResultY = firstY - firstHeight / (xYDifferencesSame ? 2.5 : 2)
-      secondResultY = secondY + secondHeight / (xYDifferencesSame ? 2.5 : 2)
-      firstResultX = firstX + firstWidth / (xYDifferencesSame ? 2.5 : 2)
-      secondResultX = secondX - secondWidth / (xYDifferencesSame ? 2.5 : 2)
-    }
-  } else {
-    if (drawingLeft) {
-      firstResultY = firstY + firstHeight / (xYDifferencesSame ? 2.5 : 2)
-      secondResultY = secondY - secondHeight / (xYDifferencesSame ? 2.5 : 2)
-      firstResultX = firstX - firstWidth / (xYDifferencesSame ? 2.5 : 2)
-      secondResultX = secondX + secondWidth / (xYDifferencesSame ? 2.5 : 2)
-    } else {
-      firstResultY = firstY + firstHeight / (xYDifferencesSame ? 2.5 : 2)
-      secondResultY = secondY - secondHeight / (xYDifferencesSame ? 2.5 : 2)
-      firstResultX = firstX + firstWidth / (xYDifferencesSame ? 2.5 : 2)
-      secondResultX = secondX - secondWidth / (xYDifferencesSame ? 2.5 : 2)
-    }
-  }
-  return { firstResultX, firstResultY, secondResultX, secondResultY }
-}
-
-export function startDiagonal(rect: BlockRectModel, first: boolean, x: boolean) {
-  if (first) {
-    if (x) {
-      return rect.x - rect.width / 2.5
-    } else {
-      return rect.y - rect.height / 2.5
-    }
-  } else {
-    if (x) {
-      return rect.x + rect.width / 2.5
-    } else {
-      return rect.y + rect.height / 2.5
-    }
   }
 }
 
