@@ -26,7 +26,7 @@ export class AuthEffects {
           }
           localStorage.setItem('solarengineer-user', JSON.stringify(storage))
         }),
-        map(() => ProjectsActions.initProjects())
+        map(() => ProjectsActions.initProjects()),
       ),
   )
   signInWithLocalStorage$ = createEffect(() =>
@@ -55,6 +55,28 @@ export class AuthEffects {
       ofType(AuthActions.signIn),
       switchMap(({ req }) =>
         this.authService.signIn(req).pipe(
+          map((response) =>
+            AuthActions.signInSuccess({
+              user: {
+                username: response.username,
+                lastName: response.lastName,
+                firstName: response.firstName,
+                email: response.email,
+              },
+              token: response.token,
+            }),
+          ),
+          catchError((error: Error) => of(AuthActions.signInError({ error: error.message }))),
+        ),
+      ),
+    ),
+  )
+
+  register$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AuthActions.register),
+      switchMap(({ req }) =>
+        this.authService.register(req).pipe(
           map((response) =>
             AuthActions.signInSuccess({
               user: {

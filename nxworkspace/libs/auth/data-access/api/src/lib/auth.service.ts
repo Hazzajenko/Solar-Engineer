@@ -15,6 +15,24 @@ export class AuthService {
     })
   }
 
+  login(request: SignInRequest) {
+    return this.http.post<SignInResponse>('/api/auth/login', {
+      username: request.username,
+      password: request.password,
+    })
+  }
+
+  register(request: SignInRequest) {
+    return this.http.post<SignInResponse>('/api/auth/register', {
+      username: request.username,
+      password: request.password,
+    })
+    /*    return this.http.post<SignInResponse>('https:localhost:5000/auth/register', {
+          username: request.username,
+          password: request.password,
+        })*/
+  }
+
   validateUser(userInStorage: StorageModel) {
     return this.http.post<SignInResponse>(
       '/api/auth/validate',

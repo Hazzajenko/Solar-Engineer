@@ -14,7 +14,6 @@ import {
   downAndRight,
   handleXAxisSame,
   handleYAxisSame,
-  startDiagonal,
   upAndLeft,
   upAndRight,
 } from './utils/handle-axis'

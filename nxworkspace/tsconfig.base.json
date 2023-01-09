@@ -70,8 +70,10 @@
       "@shared/data-access/store": ["libs/shared/data-access/store/src/index.ts"],
       "@shared/data-access/types": ["libs/shared/data-access/types/src/index.ts"],
       "@shared/directives/on-destroy": ["libs/shared/directives/on-destroy/src/index.ts"],
+      "@shared/environment": ["libs/shared/environment/src/index.ts"],
       "@shared/interceptors": ["libs/shared/interceptors/src/index.ts"],
       "@shared/ui/logo": ["libs/shared/ui/logo/src/index.ts"],
+      "@shared/ui/show-hide": ["libs/shared/ui/show-hide/src/index.ts"],
       "@shared/ui/spinner": ["libs/shared/ui/spinner/src/index.ts"],
       "@shared/utils": ["libs/shared/utils/src/index.ts"]
     },

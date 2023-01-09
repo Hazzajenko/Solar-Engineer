@@ -5,6 +5,7 @@ import { UserModel } from '@shared/data-access/models'
 export const AuthActions = createActionGroup({
   source: 'Auth Service',
   events: {
+    'Register': props<{ req: SignInRequest }>(),
     'Sign In': props<{ req: SignInRequest }>(),
     'Sign In Success': props<{ user: UserModel; token: string }>(),
     'Sign In Error': props<{ error: string | null }>(),

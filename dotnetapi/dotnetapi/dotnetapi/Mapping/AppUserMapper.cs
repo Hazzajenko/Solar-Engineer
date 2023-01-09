@@ -27,6 +27,18 @@ public static class AppUserMapper
             PhotoUrl = ""
         };
     }
+    
+    public static AppUser ToEntityV2(this SignupRequestV2 request)
+    {
+        return new AppUser
+        {
+            Email = "",
+            UserName = request.Username,
+            FirstName = "",
+            LastName = "",
+            PhotoUrl = ""
+        };
+    }
 
     public static AppUserProject ToAppUserProject(this CreateProjectRequest request, AppUser user)
     {

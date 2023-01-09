@@ -1,13 +1,15 @@
-import { createReducer, on } from '@ngrx/store'
+import { Action, createReducer, on } from '@ngrx/store'
 import { AuthActions } from './auth.actions'
 import { AuthState } from './auth.state'
 
+
+export const AUTH_FEATURE_KEY = 'auth'
 export const initialAuthState: AuthState = {
   user: undefined,
   token: undefined,
 }
 
-export const authReducer = createReducer(
+export const reducer = createReducer(
   initialAuthState,
 
   on(AuthActions.modifiedUser, (state, { user }) => ({
@@ -33,3 +35,8 @@ export const authReducer = createReducer(
     token: undefined,
   })),
 )
+
+
+export function authReducer(state: AuthState | undefined, action: Action) {
+  return reducer(state, action)
+}

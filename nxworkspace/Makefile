@@ -51,7 +51,7 @@ cmon:
 	nx generate @nrwl/angular:library models --style=none --directory=project-id/shared --importPath=@project-id/shared/models --skipModule --tags=project-id:shared --no-interactive
 
 newww:
-	nx generate @nrwl/angular:library repositories --style=none --directory=project-id/data-access --importPath=@project-id/data-access/repositories --skipModule --tags=project-id:repositories --no-interactive
+	nx generate @nrwl/angular:library show-hide --style=none --directory=shared/ui --importPath=@shared/ui/show-hide --skipModule --tags=shared:ui --no-interactive
 
 storybook:
 	nx g @nrwl/storybook/angular --project=design

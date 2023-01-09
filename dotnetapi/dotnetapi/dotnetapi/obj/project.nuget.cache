@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "4il4wSPqaiwkxsVfprHG6drLGJVJ5aQ9Bkri3NjWI45y2SJqm3tGaTKe0kaAb/D/+WIg5imCVFTi8EzoRRglvA==",
+  "dgSpecHash": "JYH63jLI6d4spT6IQNYHAn/Z+UoIRBrqO9OF4USnRLuSpmxP7BvzrokasFtRHgsz7srJxBJCK7HMU3SHNHy+BQ==",
   "success": true,
   "projectFilePath": "C:\\Users\\jenki\\source\\app\\solar-engineer\\dotnetapi\\dotnetapi\\dotnetapi\\dotnetapi.csproj",
   "expectedPackageFiles": [
@@ -13,6 +13,7 @@
     "C:\\Users\\jenki\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\jenki\\.nuget\\packages\\messagepack\\2.1.90\\messagepack.2.1.90.nupkg.sha512",
     "C:\\Users\\jenki\\.nuget\\packages\\messagepack.annotations\\2.1.90\\messagepack.annotations.2.1.90.nupkg.sha512",
+    "C:\\Users\\jenki\\.nuget\\packages\\microsoft.aspnetcore.authentication.google\\7.0.1\\microsoft.aspnetcore.authentication.google.7.0.1.nupkg.sha512",
     "C:\\Users\\jenki\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\7.0.0\\microsoft.aspnetcore.authentication.jwtbearer.7.0.0.nupkg.sha512",
     "C:\\Users\\jenki\\.nuget\\packages\\microsoft.aspnetcore.connections.abstractions\\7.0.0\\microsoft.aspnetcore.connections.abstractions.7.0.0.nupkg.sha512",
     "C:\\Users\\jenki\\.nuget\\packages\\microsoft.aspnetcore.cryptography.internal\\7.0.0\\microsoft.aspnetcore.cryptography.internal.7.0.0.nupkg.sha512",

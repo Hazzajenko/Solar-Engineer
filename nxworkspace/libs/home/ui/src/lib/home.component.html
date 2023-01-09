@@ -1,55 +1,68 @@
 <!--<div
   class="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#121828] to-[#002171]"
 >-->
-<div @fadeIn class="relative container flex flex-col items-center justify-center gap-12 px-4 py-10">
-  <!--   <h1 class="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
-    <span class="text-white">Solar</span>
-    <span class="text-transparent bg-clip-text text-[#6666ff]">Engineer</span>
-    <span class="text-3xl text-gray-300"></span><span class="text-4xl text-white">Dev</span>
-  </h1> -->
-  <!-- <app-logo-name-background></app-logo-name-background> -->
-  <app-logo-name-background-v2></app-logo-name-background-v2>
-</div>
-<div @fadeIn class="relative container flex flex-col items-center justify-center">
-  <ng-container *ngIf="user$ | async as user; else notLoggedIn">
-    <p class="font-medium tracking-tight font-mono text-xl text-gray-200 mb-5">
-      Welcome {{ user.username }}
-    </p>
-    <button
-      (click)="routeToProjects()"
-      class="relative inline-flex items-center justify-center p-0.5 mb-2 mr-2 overflow-hidden text-sm font-medium text-gray-800 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800"
-    >
-      <span
-        class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-800 rounded-md group-hover:bg-opacity-0"
-      >
-        Projects
-      </span>
-    </button>
-    <button
-      (click)="routeToLocalProject()"
-      class="relative inline-flex items-center justify-center p-0.5 mb-2 mr-2 overflow-hidden text-sm font-medium text-gray-800 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800"
-    >
-      <span
-        class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-800 rounded-md group-hover:bg-opacity-0"
-      >
-        Start Project
-      </span>
-    </button>
-    <ng-container *ngIf="showProjects">
-      <app-project-list @fadeInV2></app-project-list>
+<div class='flex min-h-screen flex-col items-center justify-center bg-gray-100'>
+
+
+  <div @fadeIn class='relative container flex flex-col items-center justify-center gap-12 px-4 py-10'>
+    <!--   <h1 class="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
+      <span class="text-white">Solar</span>
+      <span class="text-transparent bg-clip-text text-[#6666ff]">Engineer</span>
+      <span class="text-3xl text-gray-300"></span><span class="text-4xl text-white">Dev</span>
+    </h1> -->
+    <!-- <app-logo-name-background></app-logo-name-background> -->
+    <app-logo-name-background-v2></app-logo-name-background-v2>
+  </div>
+  <div @fadeIn class='relative container flex flex-col items-center justify-center'>
+    <ng-container *ngIf='user$ | async as user; else notLoggedIn'>
+      <p class='font-medium tracking-tight font-mono text-xl text-black-200 mb-5'>
+        Welcome {{ user.username }}
+      </p>
+      <!--      <button
+              (click)='routeToProjects()'
+              class='relative inline-flex items-center justify-center p-0.5 mb-2 mr-2 overflow-hidden text-sm font-medium text-gray-800 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800'
+            >
+            <span
+              class='relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-800 rounded-md group-hover:bg-opacity-0'
+            >
+              Projects
+            </span>
+            </button>-->
+      <button (click)='routeToWebProject()' mat-raised-button color='primary'>Start Web Project</button>
+      <button (click)='routeToProjects()' mat-raised-button color='primary'>View Projects</button>
+      <button (click)='routeToLocalProject()' mat-raised-button color='primary'>Start Local Project</button>
+      <!--      <button
+              (click)='routeToLocalProject()'
+              class='relative inline-flex items-center justify-center p-0.5 mb-2 mr-2 overflow-hidden text-sm font-medium text-gray-800 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800'
+            >
+            <span
+              class='relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-800 rounded-md group-hover:bg-opacity-0'
+            >
+              Start Local Project
+            </span>
+            </button>-->
+      <ng-container *ngIf='showProjects'>
+        <app-project-list @fadeInV2></app-project-list>
+      </ng-container>
     </ng-container>
-  </ng-container>
-  <ng-template #notLoggedIn>
-    <button
-      (click)="routeToLocalProject()"
-      class="relative inline-flex items-center justify-center p-0.5 mb-2 mr-2 overflow-hidden text-sm font-medium text-gray-800 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800"
-    >
-      <span
-        class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-800 rounded-md group-hover:bg-opacity-0"
-      >
-        Start Project
-      </span>
-    </button>
-  </ng-template>
+    <ng-template #notLoggedIn>
+      <div class='flex flex-col m-3 my-10 space-y-3 '>
+        <button (click)='routeToLocalProject()' mat-raised-button color='primary'>Start Local Project</button>
+        <button (click)='authenticate(true)' mat-raised-button color='primary'>Login</button>
+        <button (click)='authenticate(false)' mat-raised-button color='primary'>Register</button>
+      </div>
+      <!--      <button
+              (click)='routeToLocalProject()'
+              class='relative inline-flex items-center justify-center p-0.5 mb-2 mr-2 overflow-hidden text-sm font-medium text-gray-800 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800'
+            >
+            <span
+              class='relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-800 rounded-md group-hover:bg-opacity-0'
+            >
+              Start Project
+            </span>
+            </button>-->
+
+    </ng-template>
+  </div>
 </div>
 <!--</div>-->

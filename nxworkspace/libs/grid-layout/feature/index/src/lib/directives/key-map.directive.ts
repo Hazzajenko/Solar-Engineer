@@ -1,4 +1,5 @@
 import { Directive, EventEmitter, HostListener, inject, Output } from '@angular/core'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { GridService, MultiService, SelectedService, StringsService } from '@grid-layout/data-access/services'
 
 import {
@@ -32,6 +33,7 @@ export class KeyMapDirective {
   private stringsFacade = inject(StringsFacade)
   private stringFactory = inject(StringsService)
   private uiStore = inject(UiStoreService)
+  private snackBar = inject(MatSnackBar)
 
   @Output() keyUp: EventEmitter<string> = new EventEmitter<string>()
 
@@ -55,6 +57,11 @@ export class KeyMapDirective {
 
         await this.gridFactory.select(GridMode.SELECT)
         await this.selectedFactory.selectString(panel.stringId)
+        this.snackBar.open('String Selected', 'OK', {
+          duration: 5000,
+          horizontalPosition: 'start',
+          verticalPosition: 'bottom',
+        })
 
         break
       }
@@ -63,12 +70,22 @@ export class KeyMapDirective {
         if (gridMode === GridMode.LINK) {
           this.gridStore.dispatch.selectGridMode(GridMode.SELECT)
           this.linksStore.dispatch.clearLinkState()
+          this.snackBar.open('Link Mode Off', 'OK', {
+            duration: 5000,
+            horizontalPosition: 'start',
+            verticalPosition: 'bottom',
+          })
           break
         }
         const isStringSelected = await this.selectedStore.select.selectedStringId
         if (!isStringSelected) break
         this.gridStore.dispatch.selectGridMode(GridMode.LINK)
         this.selectedStore.dispatch.clearSingleSelected()
+        this.snackBar.open('Link Mode On', 'OK', {
+          duration: 5000,
+          horizontalPosition: 'start',
+          verticalPosition: 'bottom',
+        })
 
         break
 
@@ -83,7 +100,12 @@ export class KeyMapDirective {
         const newStringName = `S${amountOfStrings + 1}`
         // const newStringName = `STRING_${amountOfStrings + 1}`
         const result = await this.stringFactory.addSelectedToNew(newStringName)
-        console.log(result)
+        if (!result) break
+        this.snackBar.open(`Created String ${result?.name}`, 'OK', {
+          duration: 5000,
+          horizontalPosition: 'start',
+          verticalPosition: 'bottom',
+        })
         break
       }
       case 'r': {

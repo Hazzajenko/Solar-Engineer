@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 using dotnetapi.Mapping;
 using dotnetapi.Models.Entities;
 using dotnetapi.Services;
@@ -27,6 +28,14 @@ public class SignupRequest
     [Required] public string LastName { get; init; } = default!;
     [Required] public string Email { get; init; } = default!;
 
+    [Required]
+    [StringLength(14, MinimumLength = 4)]
+    public string Password { get; init; } = default!;
+}
+
+public class SignupRequestV2
+{
+    [Required] public string Username { get; init; } = default!;
     [Required]
     [StringLength(14, MinimumLength = 4)]
     public string Password { get; init; } = default!;
@@ -128,7 +137,7 @@ namespace dotnetapi.Controllers
         [HttpPost("register")]
         [Authorize]
         [AllowAnonymous]
-        public async Task<IActionResult> Register(SignupRequest request)
+        public async Task<IActionResult> Register(SignupRequestV2 request)
         {
             if (await UserExists(request.Username))
             {
@@ -136,7 +145,7 @@ namespace dotnetapi.Controllers
                 return Conflict("Username is taken");
             }
 
-            var appUser = request.ToEntity();
+            var appUser = request.ToEntityV2();
             appUser.UserName = request.Username.ToLower();
 
             var result = await _userManager.CreateAsync(appUser, request.Password);
@@ -166,6 +175,48 @@ namespace dotnetapi.Controllers
             _logger.LogInformation("{Username} has logged in", appUser.UserName);
             return Ok(signUpResult);
         }
+
+        /*
+        [AllowAnonymous]
+        public IActionResult GoogleLogin()
+        {
+            var redirectUrl = Url.Action("GoogleResponse", "Auth");
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties("Google", redirectUrl);
+            return new ChallengeResult("Google", properties);
+        }
+
+        [AllowAnonymous]
+        public async Task<IActionResult> GoogleResponse()
+        {
+            var info = await _signInManager.GetExternalLoginInfoAsync();
+            if (info == null)
+                return RedirectToAction(nameof(Login));
+
+            var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, false);
+            string[] userInfo =
+                { info.Principal.FindFirst(ClaimTypes.Name)!.Value, info.Principal.FindFirst(ClaimTypes.Email)!.Value };
+            if (result.Succeeded) return Ok(userInfo);
+
+            var user = new AppUser
+            {
+                Email = info.Principal.FindFirst(ClaimTypes.Email)!.Value,
+                UserName = info.Principal.FindFirst(ClaimTypes.Email)!.Value
+            };
+
+            var identResult = await _userManager.CreateAsync(user);
+            if (identResult.Succeeded)
+            {
+                identResult = await _userManager.AddLoginAsync(user, info);
+                if (identResult.Succeeded)
+                {
+                    await _signInManager.SignInAsync(user, false);
+                    return Ok(userInfo);
+                }
+            }
+
+            return BadRequest();
+        }
+        */
 
         private async Task<bool> UserExists(string username)
         {

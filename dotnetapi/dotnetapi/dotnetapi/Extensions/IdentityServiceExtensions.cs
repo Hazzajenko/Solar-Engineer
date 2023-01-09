@@ -3,16 +3,15 @@ using dotnetapi.Data;
 using dotnetapi.Models.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 namespace dotnetapi.Extensions;
 
-public static class IdentityServiceExtensions {
+public static class IdentityServiceExtensions
+{
     public static IServiceCollection AddIdentityServices(this IServiceCollection services,
-        IConfiguration config) {
-
-        
+        IConfiguration config)
+    {
         services.AddIdentityCore<AppUser>(opt => { opt.Password.RequireNonAlphanumeric = false; })
             .AddRoles<AppRole>()
             .AddRoleManager<RoleManager<AppRole>>()
@@ -20,11 +19,23 @@ public static class IdentityServiceExtensions {
             .AddRoleValidator<RoleValidator<AppRole>>()
             .AddEntityFrameworkStores<DataContext>();
 
+
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options => {
-                options.TokenValidationParameters = new TokenValidationParameters {
+            .AddGoogle(opts =>
+            {
+                opts.ClientId = config["Authentication:Google:ClientId"] ?? string.Empty;
+                opts.ClientSecret = config["Authentication:Google:ClientSecret"] ?? string.Empty;
+                // opts.ClientId = "717469225962-3vk00r8tglnbts1cgc4j1afqb358o8nj.apps.googleusercontent.com";
+                // opts.ClientSecret = "babQzWPLGwfOQVi0EYR-7Fbb";
+                opts.SignInScheme = IdentityConstants.ExternalScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenKey"] ?? string.Empty)),
+                    IssuerSigningKey =
+                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenKey"] ?? string.Empty)),
                     ValidateIssuer = false,
                     ValidateAudience = false
                 };
@@ -43,7 +54,9 @@ public static class IdentityServiceExtensions {
                 };*/
             });
 
-        services.AddAuthorization(opt => {
+
+        services.AddAuthorization(opt =>
+        {
             opt.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
             opt.AddPolicy("BeAuthenticated", policy => policy.RequireRole("Admin", "User"));
         });

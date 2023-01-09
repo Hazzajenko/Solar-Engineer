@@ -1,0 +1,86 @@
+<div class='flex flex-col items-center content-center'>
+  <h1 mat-dialog-title>{{login ? 'Login' : 'Register'}}</h1>
+</div>
+<form [formGroup]='loginForm' class='flex m-5 my-3 flex-col items-center content-center'>
+  <!-- <div class='form-floating mb-1'>
+
+     <mat-form-field [hideRequiredMarker]='true'>
+       <mat-label id='username32'>Username</mat-label>
+       <input [ngClass]="{ 'border border-red-500': loginForm.get('username')!.dirty }" matInput placeholder=''
+              formControlName='username' class='form-control' name='username' required>
+     </mat-form-field>
+     <div class='items-center text-red-500 text-sm'>
+       <ng-container *ngFor='let validation of validationMessages.username'>
+         <div class='error-message'
+              *ngIf="loginForm.get('username')!.hasError(validation.type) && (loginForm.get('username')!.dirty || loginForm.get('username')!.touched)">
+           <mat-icon name='information-circle-outline'></mat-icon>
+           <span>{{ validation.message }}</span>
+         </div>
+       </ng-container>
+     </div>
+
+   </div>
+   <div class='form-floating mb-1'>
+
+     <mat-form-field [hideRequiredMarker]='true'>
+       <mat-label id='password1'>Password</mat-label>
+       <input [ngClass]="{ 'border border-red-500': loginForm.get('password')!.dirty }" matInput placeholder=''
+              formControlName='password' class='form-control' name='password' required>
+     </mat-form-field>
+     <div class='items-center text-red-500 text-sm'>
+       <ng-container *ngFor='let validation of validationMessages.password'>
+         <div class='error-message'
+              *ngIf="loginForm.get('password')!.hasError(validation.type) && (loginForm.get('password')!.dirty || loginForm.get('password')!.touched)">
+           <mat-icon name='information-circle-outline'></mat-icon>
+           <span>{{ validation.message }}</span>
+         </div>
+       </ng-container>
+     </div>
+
+   </div>-->
+  <div class='form-floating mb-3'>
+
+    <!--      <mat-form-field>
+            <mat-label id='username2'>Username</mat-label>
+            <input [ngClass]="{ 'border border-red-500': loginForm.get('username')!.dirty }" matInput placeholder=''
+                   hideRequiredMarker='true' formControlName='username' class='form-control' name='username' required>
+          </mat-form-field>-->
+    <label id='username'>Username</label>
+    <input type='text' class='block h-12 w-full rounded-sm mt-2 text-sm font-light bg-gray-300' placeholder=''
+           formControlName='username'
+           [ngClass]="{ 'border border-red-500': loginForm.get('username')!.dirty }">
+    <div class='items-center text-red-500 text-sm'>
+      <ng-container *ngFor='let validation of validationMessages.username'>
+        <div class='error-message'
+             *ngIf="loginForm.get('username')!.hasError(validation.type) && (loginForm.get('username')!.dirty || loginForm.get('username')!.touched)">
+          <mat-icon name='information-circle-outline'></mat-icon>
+          <span>{{ validation.message }}</span>
+        </div>
+      </ng-container>
+    </div>
+
+
+  </div>
+  <div class='form-floating mb-3'>
+    <label id='password'>Password</label>
+    <input type='password' class='block h-12 w-full rounded-sm mt-2 text-sm font-light bg-gray-300' placeholder=''
+           formControlName='password'
+           [ngClass]="{ 'is-invalid': submitted && f.password.errors }">
+    <div class='items-center text-red-500 text-sm'>
+      <ng-container *ngFor='let validation of validationMessages.password'>
+        <div class='error-message'
+             *ngIf="loginForm.get('password')!.hasError(validation.type) && (loginForm.get('password')!.dirty || loginForm.get('password')!.touched)">
+          <mat-icon name='information-circle-outline'></mat-icon>
+          <span>{{ validation.message }}</span>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+
+</form>
+<mat-dialog-actions align='end'>
+  <button mat-button mat-dialog-close='true'>Cancel</button>
+  <button (click)='onSubmit()' cdkFocusInitial mat-button>
+    Create {{ name.value }}
+  </button>
+</mat-dialog-actions>

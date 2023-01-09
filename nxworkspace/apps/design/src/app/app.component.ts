@@ -1,5 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core'
 import { RouterModule } from '@angular/router'
+import { AuthService } from '@auth/data-access/api'
 import { AuthFacade } from '@auth/data-access/facades'
 
 @Component({
@@ -14,11 +15,13 @@ export class AppComponent implements OnInit {
   title = 'design'
   private authStore = inject(AuthFacade)
 
+  // private auth = inject(AuthService)
+  returningUser = false
+
   ngOnInit(): void {
-    console.log(new Date().getDate().toString())
-    // this.authStore.init({ username: 'string', password: 'Password1' })
-    this.authStore.isReturningUser()
-    // this.projectsStore.init()
-    // this.router.navigate(['projects']).then((res) => console.log(res))
+    // console.log(new Date().getDate().toString())
+    if (this.returningUser) {
+      this.authStore.isReturningUser()
+    }
   }
 }

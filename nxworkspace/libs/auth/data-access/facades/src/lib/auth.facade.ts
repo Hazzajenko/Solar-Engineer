@@ -18,6 +18,10 @@ export class AuthFacade {
     this.store.dispatch(AuthActions.signIn({ req }))
   }
 
+  register(req: SignInRequest) {
+    this.store.dispatch(AuthActions.register({ req }))
+  }
+
   isReturningUser() {
     const storage = localStorage.getItem('solarengineer-user')
     if (storage) {

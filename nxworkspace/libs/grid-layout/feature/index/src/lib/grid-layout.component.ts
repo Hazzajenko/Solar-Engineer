@@ -161,8 +161,8 @@ export class GridLayoutComponent implements OnInit {
 
 
   @Input() set gridSize(size: { rows: number, cols: number }) {
-    this.backgroundHeight = `${size.rows * this.blockHeight + 1}px`
-    this.backgroundWidth = `${size.cols * this.blockWidth + 1}px`
+    // this.backgroundHeight = `${size.rows * this.blockHeight + 1}px`
+    // this.backgroundWidth = `${size.cols * this.blockWidth + 1}px`
   }
 
   // rows = 28
