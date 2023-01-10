@@ -75,3 +75,5 @@ C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\bin\Debug
 C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\bin\Debug\net7.0\AWSSDK.Extensions.NETCore.Setup.dll
 C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\bin\Debug\net7.0\AWSSDK.S3.dll
 C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\bin\Debug\net7.0\Microsoft.AspNetCore.Authentication.Google.dll
+C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\bin\Debug\net7.0\Microsoft.AspNetCore.Mvc.Versioning.dll
+C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\bin\Debug\net7.0\Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer.dll

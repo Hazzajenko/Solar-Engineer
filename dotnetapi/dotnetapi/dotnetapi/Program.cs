@@ -32,10 +32,10 @@ config.AddEnvironmentVariables("dotnetapi_");
     (options=> options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));*/
 
 builder.Services.AddApplicationServices(config);
-builder.Services.AddControllers().AddJsonOptions(options =>
-{
-    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-});
+builder.Services.AddControllers()
+    .AddJsonOptions(options => { options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase; });
+/*builder.Services.AddControllers(options => { options.Conventions.Add(new GroupingByNamespaceConvention()); })
+    .AddJsonOptions(options => { options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase; });*/
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(
@@ -67,11 +67,42 @@ builder.Services.AddAWSService<IAmazonS3>();
 var app = builder.Build();
 app.UseSerilogRequestLogging();
 // Configure the HTTP request pipeline.
+// var apiVersionDescriptionProvider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwagger();
+    /*app.UseSwaggerUI(config =>
+    {
+        config.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+        config.SwaggerEndpoint("/swagger/v2/swagger.json", "v2");
+    });*/
+    // app.UseSwagger();
+    /*app.UseSwaggerUI(options =>
+    {
+        foreach (var description in apiVersionDescriptionProvider.ApiVersionDescriptions)
+            options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json",
+                description.GroupName.ToUpperInvariant());
+    });*/
+    /*app.UseSwaggerUI(options =>
+    {
+        foreach (var desc in apiVersionDescriptionProvider.ApiVersionDescriptions)
+        {
+            options.SwaggerEndpoint($"../swagger/{desc.GroupName}/swagger.json", desc.ApiVersion.ToString());
+            options.DefaultModelsExpandDepth(-1);
+            options.DocExpansion(DocExpansion.None);
+        }
+    });*/
+    /*app.UseSwaggerUI(options =>
+    {
+        foreach (var description in apiVersionDescriptionProvider.ApiVersionDescriptions.Reverse())
+            options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json",
+                description.GroupName.ToUpperInvariant());
+    });*/
 }
+
+app.UseStaticFiles();
 
 app.UseHttpsRedirection();
 

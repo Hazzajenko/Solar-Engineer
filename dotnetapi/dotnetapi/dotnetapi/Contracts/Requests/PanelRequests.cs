@@ -3,6 +3,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace dotnetapi.Contracts.Requests;
 
+public class DataWrapper<T>
+{
+    public T Data { get; set; } = default!;
+}
+
 public class CreatePanelRequest
 {
     [Required] public string Id { get; init; } = default!;
@@ -40,7 +45,7 @@ public class CreateManyPanelsRequest
     [Required] public IEnumerable<CreatePanelRequest> Panels { get; init; } = Enumerable.Empty<CreatePanelRequest>();
 }
 
-public class UpdatePanelRequest
+public class UpdatePanelRequestV1
 {
     [Required] public string Id { get; init; } = default!;
     public string? StringId { get; set; } = default!;
@@ -53,9 +58,10 @@ public class UpdatePanelRequest
     public string? DisconnectionPointPanelLinkId { get; set; }
 }
 
-public class UpdateManyPanelsRequest
+public class UpdateManyPanelsRequestV1
 {
-    [Required] public IEnumerable<UpdatePanelRequest> Panels { get; init; } = Enumerable.Empty<UpdatePanelRequest>();
+    [Required]
+    public IEnumerable<UpdatePanelRequestV1> Panels { get; init; } = Enumerable.Empty<UpdatePanelRequestV1>();
 }
 
 public class DeleteManyPanelsRequest

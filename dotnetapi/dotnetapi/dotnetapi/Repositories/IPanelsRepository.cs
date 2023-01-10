@@ -1,4 +1,4 @@
-﻿using dotnetapi.Contracts.Requests;
+﻿using dotnetapi.Contracts.Requests.Panels;
 using dotnetapi.Models.Entities;
 
 namespace dotnetapi.Repositories;

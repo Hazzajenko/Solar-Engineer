@@ -16,10 +16,10 @@ namespace dotnetapi.Controllers;
 public class ProjectsController : ControllerBase
 {
     private readonly ILogger<ProjectsController> _logger;
-    private readonly IProjectsService _projectsService;
-    private readonly IPanelsService _panelsService;
-    private readonly IStringsService _stringsService;
     private readonly IPanelLinksService _panelLinksService;
+    private readonly IPanelsService _panelsService;
+    private readonly IProjectsService _projectsService;
+    private readonly IStringsService _stringsService;
     private readonly UserManager<AppUser> _userManager;
 
 
@@ -59,7 +59,7 @@ public class ProjectsController : ControllerBase
             Project = projectDto
         };
 
-        return Ok(result);
+        return Ok(projectDto);
     }
 
     [HttpGet("{projectId:int}")]
@@ -82,7 +82,7 @@ public class ProjectsController : ControllerBase
 
         return Ok(result);
     }
-    
+
     [HttpGet("{projectId:int}/data")]
     public async Task<IActionResult> GetProjectData([FromRoute] int projectId)
     {

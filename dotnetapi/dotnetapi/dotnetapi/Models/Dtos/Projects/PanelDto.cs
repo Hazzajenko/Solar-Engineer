@@ -23,3 +23,12 @@ public class PanelDto : BlockDto
     public double Weight { get; set; }
     public double Width { get; set; }
 }
+
+public class UpdatePanel
+{
+    public string? Name { get; set; } = default!;
+    public string? StringId { get; set; } = default!;
+    public string? Location { get; set; } = default!;
+    public int? Rotation { get; set; }
+    public bool? IsDisconnectionPoint { get; set; }
+}

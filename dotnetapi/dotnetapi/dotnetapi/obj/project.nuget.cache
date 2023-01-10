@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "JYH63jLI6d4spT6IQNYHAn/Z+UoIRBrqO9OF4USnRLuSpmxP7BvzrokasFtRHgsz7srJxBJCK7HMU3SHNHy+BQ==",
+  "dgSpecHash": "eRc1bHItXRtX1I7ucuQM2ljisRBOLMlLSp13QaIi5/3x9ZUNIyiykQxKYHGOW40que+P5x4eKIxMiqpVPEFe4w==",
   "success": true,
   "projectFilePath": "C:\\Users\\jenki\\source\\app\\solar-engineer\\dotnetapi\\dotnetapi\\dotnetapi\\dotnetapi.csproj",
   "expectedPackageFiles": [
@@ -19,6 +19,8 @@
     "C:\\Users\\jenki\\.nuget\\packages\\microsoft.aspnetcore.cryptography.internal\\7.0.0\\microsoft.aspnetcore.cryptography.internal.7.0.0.nupkg.sha512",
     "C:\\Users\\jenki\\.nuget\\packages\\microsoft.aspnetcore.cryptography.keyderivation\\7.0.0\\microsoft.aspnetcore.cryptography.keyderivation.7.0.0.nupkg.sha512",
     "C:\\Users\\jenki\\.nuget\\packages\\microsoft.aspnetcore.identity.entityframeworkcore\\7.0.0\\microsoft.aspnetcore.identity.entityframeworkcore.7.0.0.nupkg.sha512",
+    "C:\\Users\\jenki\\.nuget\\packages\\microsoft.aspnetcore.mvc.versioning\\5.0.0\\microsoft.aspnetcore.mvc.versioning.5.0.0.nupkg.sha512",
+    "C:\\Users\\jenki\\.nuget\\packages\\microsoft.aspnetcore.mvc.versioning.apiexplorer\\5.0.0\\microsoft.aspnetcore.mvc.versioning.apiexplorer.5.0.0.nupkg.sha512",
     "C:\\Users\\jenki\\.nuget\\packages\\microsoft.aspnetcore.openapi\\7.0.0\\microsoft.aspnetcore.openapi.7.0.0.nupkg.sha512",
     "C:\\Users\\jenki\\.nuget\\packages\\microsoft.aspnetcore.signalr.common\\7.0.0\\microsoft.aspnetcore.signalr.common.7.0.0.nupkg.sha512",
     "C:\\Users\\jenki\\.nuget\\packages\\microsoft.aspnetcore.signalr.protocols.messagepack\\7.0.0\\microsoft.aspnetcore.signalr.protocols.messagepack.7.0.0.nupkg.sha512",

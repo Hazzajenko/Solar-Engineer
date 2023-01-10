@@ -1,4 +1,5 @@
 ﻿using dotnetapi.Contracts.Requests;
+using dotnetapi.Contracts.Requests.Panels;
 using dotnetapi.Mapping;
 using dotnetapi.Models.Dtos.Projects;
 using dotnetapi.Models.Entities;
@@ -129,9 +130,9 @@ public class PanelsService : IPanelsService
 
     public async Task<bool[]> UpdateManyPanelsAsync(UpdateManyPanelsRequest request)
     {
-        var panelUpdates = new bool[request.Panels.Count()];
+        var panelUpdates = new bool[request.Updates.Count()];
         var index = 0;
-        foreach (var panel in request.Panels)
+        foreach (var panel in request.Updates)
         {
             var updatePanel = await _panelsRepository.UpdatePanelAsync(panel);
             if (!updatePanel)

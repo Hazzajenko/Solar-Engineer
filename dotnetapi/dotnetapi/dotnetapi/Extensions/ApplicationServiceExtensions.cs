@@ -19,6 +19,7 @@ public static class ApplicationServiceExtensions
         services.AddScoped<IPanelLinksService, PanelLinksService>();
         services.AddScoped<IPanelLinksRepository, PanelLinksRepository>();
 
+
         services.AddDbContext<DataContext>(options =>
         {
             var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");

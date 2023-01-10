@@ -1,4 +1,5 @@
 ﻿using dotnetapi.Contracts.Requests;
+using dotnetapi.Contracts.Requests.Panels;
 using dotnetapi.Models.Dtos.Projects;
 using dotnetapi.Models.Entities;
 

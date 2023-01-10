@@ -1,4 +1,4 @@
-﻿using dotnetapi.Contracts.Requests;
+﻿using dotnetapi.Contracts.Requests.Panels;
 using dotnetapi.Data;
 using dotnetapi.Models.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -47,16 +47,16 @@ public class PanelsRepository : IPanelsRepository
 
         if (panelToUpdate is null) return false;
 
-        if (request.Location is not null)
-            panelToUpdate.Location = request.Location;
+        if (request.Changes.Location is not null)
+            panelToUpdate.Location = request.Changes.Location;
 
-        if (request.Rotation is not null)
-            panelToUpdate.Rotation = (int)request.Rotation;
+        if (request.Changes.Rotation is not null)
+            panelToUpdate.Rotation = (int)request.Changes.Rotation;
 
-        if (request.StringId is not null)
+        if (request.Changes.StringId is not null)
         {
             var newString = await _context.Strings
-                .Where(x => x.Id == request.StringId)
+                .Where(x => x.Id == request.Changes.StringId)
                 .SingleOrDefaultAsync();
             if (newString is null) return false;
 
@@ -64,45 +64,10 @@ public class PanelsRepository : IPanelsRepository
             panelToUpdate.String = newString;
         }
 
-        if (request.PositiveToId is not null)
-        {
-            var newPositiveLink = await _context.PanelLinks
-                .Where(x => x.Id == request.PositiveToId)
-                .SingleOrDefaultAsync();
-            if (newPositiveLink is null) return false;
 
+        if (request.Changes.IsDisconnectionPoint is not null)
+            panelToUpdate.IsDisconnectionPoint = (bool)request.Changes.IsDisconnectionPoint;
 
-            panelToUpdate.PositiveTo = newPositiveLink;
-        }
-
-        if (request.NegativeToId is not null)
-        {
-            var newNegativeLink = await _context.PanelLinks
-                .Where(x => x.Id == request.NegativeToId)
-                .SingleOrDefaultAsync();
-            if (newNegativeLink is null) return false;
-
-
-            panelToUpdate.NegativeTo = newNegativeLink;
-        }
-
-        if (request.IsDisconnectionPoint is not null)
-            panelToUpdate.IsDisconnectionPoint = (bool)request.IsDisconnectionPoint;
-
-        if (request.DisconnectionPointPanelLinkId is not null)
-            panelToUpdate.DisconnectionPointPanelLinkId = request.DisconnectionPointPanelLinkId;
-        /*if (request.Rotation is not null)
-        {
-            panelToUpdate.Rotation = request.Rotation;
-        }*/
-
-        // request.Rotation != null ? panelToUpdate.Rotation = (int)request.Rotation : 
-
-        /*panelToUpdate.String = request.StringId;
-        panelToUpdate.PositiveTo = request.PositiveToId;
-        panelToUpdate.NegativeTo = request.NegativeToId;
-        panelToUpdate.Rotation = request.Rotation;
-        panelToUpdate.NegativeTo = request.NegativeTo;*/
         var save = await _context.SaveChangesAsync();
         return save > 0;
     }

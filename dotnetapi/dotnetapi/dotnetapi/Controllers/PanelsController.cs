@@ -1,4 +1,5 @@
 ﻿using dotnetapi.Contracts.Requests;
+using dotnetapi.Contracts.Requests.Panels;
 using dotnetapi.Contracts.Responses;
 using dotnetapi.Mapping;
 using dotnetapi.Models.Entities;
@@ -105,6 +106,13 @@ public class PanelsController : ControllerBase
             _logger.LogError("Bad request, User is invalid");
             return Unauthorized("User is invalid");
         }
+        
+        var project = _projectsService.GetProjectByIdAsync(projectId);
+        if (project.Result == null)
+        {
+            _logger.LogError("Bad request, Project from route is invalid");
+            return BadRequest("Bad request, Project from route is invalid");
+        }
 
         var panelDto = await _panelsService.GetPanelByIdAsync(panelId);
 
@@ -127,6 +135,13 @@ public class PanelsController : ControllerBase
             _logger.LogError("Bad request, User is invalid");
             return Unauthorized("User is invalid");
         }
+        
+        var project = _projectsService.GetProjectByIdAsync(projectId);
+        if (project.Result == null)
+        {
+            _logger.LogError("Bad request, Project from route is invalid");
+            return BadRequest("Bad request, Project from route is invalid");
+        }
 
         var panelList = await _panelsService.GetAllPanelsByProjectIdAsync(projectId);
 
@@ -140,12 +155,20 @@ public class PanelsController : ControllerBase
 
     [HttpPut("panel/{panelId}")]
     public async Task<IActionResult> Update([FromRoute] int projectId, [FromBody] UpdatePanelRequest request)
+        // public async Task<IActionResult> Update([FromRoute] int projectId, [FromBody] UpdatePanelRequest request)
     {
         var user = await _userManager.GetUserAsync(User);
         if (user == null)
         {
             _logger.LogError("Bad request, User is invalid");
             return Unauthorized("User is invalid");
+        }
+        
+        var project = _projectsService.GetProjectByIdAsync(projectId);
+        if (project.Result == null)
+        {
+            _logger.LogError("Bad request, Project from route is invalid");
+            return BadRequest("Bad request, Project from route is invalid");
         }
 
         var existingPanel = await _panelsService.GetPanelByIdAsync(request.Id);
@@ -175,6 +198,13 @@ public class PanelsController : ControllerBase
             _logger.LogError("Bad request, User is invalid");
             return Unauthorized("User is invalid");
         }
+        
+        var project = _projectsService.GetProjectByIdAsync(projectId);
+        if (project.Result == null)
+        {
+            _logger.LogError("Bad request, Project from route is invalid");
+            return BadRequest("Bad request, Project from route is invalid");
+        }
 
         var updates = await _panelsService.UpdateManyPanelsAsync(request);
 
@@ -192,6 +222,13 @@ public class PanelsController : ControllerBase
             SuccessfulUpdates = successfulUpdates,
             Errors = errors
         };
+        
+        /*
+        var updatedResult =
+        {
+            new int() dsi = successfulUpdates
+        }
+        */
 
         return Ok(result);
     }
@@ -204,6 +241,13 @@ public class PanelsController : ControllerBase
         {
             _logger.LogError("Bad request, User is invalid");
             return Unauthorized("User is invalid");
+        }
+        
+        var project = _projectsService.GetProjectByIdAsync(projectId);
+        if (project.Result == null)
+        {
+            _logger.LogError("Bad request, Project from route is invalid");
+            return BadRequest("Bad request, Project from route is invalid");
         }
 
         var existingPanel = await _panelsService.GetPanelByIdAsync(panelId);
@@ -230,6 +274,13 @@ public class PanelsController : ControllerBase
         {
             _logger.LogError("Bad request, User is invalid");
             return Unauthorized("User is invalid");
+        }
+        
+        var project = _projectsService.GetProjectByIdAsync(projectId);
+        if (project.Result == null)
+        {
+            _logger.LogError("Bad request, Project from route is invalid");
+            return BadRequest("Bad request, Project from route is invalid");
         }
 
         var deletes = await _panelsService.DeleteManyPanelsAsync(request);
