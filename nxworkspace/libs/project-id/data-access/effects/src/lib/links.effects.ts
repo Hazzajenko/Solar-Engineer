@@ -2,8 +2,9 @@ import { inject, Injectable } from '@angular/core'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { Store } from '@ngrx/store'
 import { LinksService } from '@project-id/data-access/api'
-import { EntitiesActions, LinksActions } from '@project-id/data-access/store'
+import { EntitiesActions, LinksActions, PanelsActions } from '@project-id/data-access/store'
 import { LinksPathService } from '@grid-layout/data-access/services'
+import { ProjectsStoreService } from '@projects/data-access/facades'
 import { ProjectsActions } from '@projects/data-access/store'
 import { catchError, map, of, switchMap } from 'rxjs'
 
@@ -12,6 +13,7 @@ export class LinksEffects {
   private actions$ = inject(Actions)
   private store = inject(Store)
   private linksService = inject(LinksService)
+  private projectsStore = inject(ProjectsStoreService)
   loadLinksSuccess$ = createEffect(() =>
     this.actions$.pipe(
       ofType(LinksActions.loadLinksSuccess),
@@ -46,20 +48,25 @@ export class LinksEffects {
     ),
   )
 
-  private linksPathService = inject(LinksPathService)
-
-  /*  refreshStringLinkPaths$ = createEffect(
-      () =>
-        this.actions$.pipe(
-          ofType(LinksActions.addLink),
-          switchMap(({ link }) => this.linksPathService
-            .orderPanelsInLinkOrderWithLink(link)
-            .pipe(
-              map(linkPathMap => SelectedActions.setSelectedStringLinkPaths({ pathMap: linkPathMap })),
-            ),
+  addLinkHttp$ = createEffect(() =>
+      this.actions$.pipe(
+        ofType(LinksActions.addLink),
+        switchMap(({ link }) => this.projectsStore.select.selectIsWebProject$.pipe(
+          switchMap(
+            isWeb => {
+              if (isWeb) {
+                return this.linksService.addLink(link)
+              }
+              // update local state
+              return of(undefined)
+            },
           ),
-        ),
-    )*/
+        )),
+      ),
+    { dispatch: false },
+  )
+
+  private linksPathService = inject(LinksPathService)
 
 
   deleteLink$ = createEffect(() =>
@@ -71,5 +78,24 @@ export class LinksEffects {
         }),
       ),
     ),
+  )
+
+  deleteLinkHttp$ = createEffect(() =>
+      this.actions$.pipe(
+        ofType(LinksActions.deleteLink),
+        switchMap(({ linkId }) => this.projectsStore.select.isWebWithProject$.pipe(
+          switchMap(
+            ([isWeb, project]) => {
+              if (!project) return of(undefined)
+              if (isWeb) {
+                return this.linksService.deleteLink(linkId, project.id)
+              }
+              // update local state
+              return of(undefined)
+            },
+          ),
+        )),
+      ),
+    { dispatch: false },
   )
 }

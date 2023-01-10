@@ -23,4 +23,11 @@ export const appRoutes: Route[] = [
     providers: [projectsProviders],
     resolve: { project: SelectProjectResolver },
   },
+  {
+    path: ':username/:projectName',
+    loadComponent: () => import('@project-id/feature/web').then((m) => m.WebProjectV2Component),
+    canActivate: [loggedInGuard],
+    providers: [projectsProviders],
+    resolve: { project: SelectProjectResolver },
+  },
 ]

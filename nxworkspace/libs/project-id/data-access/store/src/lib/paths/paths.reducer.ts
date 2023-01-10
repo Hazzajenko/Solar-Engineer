@@ -1,19 +1,19 @@
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity'
 import { Action, createReducer, on } from '@ngrx/store'
-import { SelectedPanelLinkPathModel, StringLinkPathModel } from '@shared/data-access/models'
+import { SelectedPanelLinkPathModel, PathModel } from '@shared/data-access/models'
 import { PathsActions } from 'libs/project-id/data-access/store/src/lib/paths/paths.actions'
 
 
 export const PATHS_FEATURE_KEY = 'paths'
 
-export interface PathsState extends EntityState<StringLinkPathModel> {
+export interface PathsState extends EntityState<PathModel> {
 
   selectedPanelLinkPath?: SelectedPanelLinkPathModel
   loaded: boolean
   error?: string | null
 }
 
-export const pathsAdapter: EntityAdapter<StringLinkPathModel> = createEntityAdapter<StringLinkPathModel>()
+export const pathsAdapter: EntityAdapter<PathModel> = createEntityAdapter<PathModel>()
 
 export const initialPathsState: PathsState = pathsAdapter.getInitialState({
   loaded: false,

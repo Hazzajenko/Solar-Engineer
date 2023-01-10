@@ -1,15 +1,6 @@
 import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop'
 import { CommonModule } from '@angular/common'
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  Component,
-  ElementRef,
-  inject,
-  Input,
-  OnInit, Renderer2,
-  ViewChild,
-} from '@angular/core'
+import { ChangeDetectionStrategy, Component, inject, Input, OnInit } from '@angular/core'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import {
   ClickService,
@@ -26,31 +17,26 @@ import { LetModule } from '@ngrx/component'
 import {
   GridFacade,
   PathsStoreService,
-  SelectedFacade, SelectedStoreService,
-  StringsFacade, StringsStoreService,
+  SelectedFacade,
+  SelectedStoreService,
+  StringsFacade,
+  StringsStoreService,
+  UiFacade,
   UiStoreService,
 } from '@project-id/data-access/facades'
-import {
-  BlockModel,
-  PanelPathModel,
-  SelectedPanelLinkPathModel,
-  StringLinkPathModel,
-  StringModel,
-} from '@shared/data-access/models'
+import { BlockModel, SelectedPanelLinkPathModel, StringModel } from '@shared/data-access/models'
+import { combineLatest, map, Observable, switchMap } from 'rxjs'
 import { combineLatestWith } from 'rxjs/operators'
-
-import { WrapperDirective } from './directives/wrapper.directive'
-import { GridBackgroundComponent } from './ui/grid-background.component'
-import { UiFacade } from '@project-id/data-access/facades'
-import { combineLatest, Observable, switchMap } from 'rxjs'
-import { map } from 'rxjs'
 
 import { CanvasDirective } from './directives/canvas.directive'
 import { DynamicComponentDirective } from './directives/dynamic-component.directive'
 import { GridDirective } from './directives/grid.directive'
 import { KeyMapDirective } from './directives/key-map.directive'
+
+import { WrapperDirective } from './directives/wrapper.directive'
 import { GetBlockPipe } from './pipes/get-block.pipe'
 import { GetLocationPipe } from './pipes/get-location.pipe'
+import { GridBackgroundComponent } from './ui/grid-background.component'
 
 
 @Component({

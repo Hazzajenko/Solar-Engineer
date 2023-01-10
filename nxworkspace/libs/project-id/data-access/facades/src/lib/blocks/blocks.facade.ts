@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
 import { BlocksSelectors } from '@project-id/data-access/store'
+import { selectBlocksByProjectNameRouteParams } from 'libs/project-id/data-access/store/src/lib/blocks/blocks.selectors'
 import { firstValueFrom, map } from 'rxjs'
 
 @Injectable({
@@ -12,6 +13,7 @@ export class BlocksFacade {
   loaded$ = this.store.select(BlocksSelectors.selectBlocksLoaded)
   allBlocks$ = this.store.select(BlocksSelectors.selectAllBlocks)
   blocksFromRoute$ = this.store.select(BlocksSelectors.selectBlocksByProjectIdRouteParams)
+  blocksFromProject$ = this.store.select(BlocksSelectors.selectBlocksByProjectNameRouteParams)
 
   blockById(id: string) {
     return this.store.select(BlocksSelectors.selectBlockById({ id }))

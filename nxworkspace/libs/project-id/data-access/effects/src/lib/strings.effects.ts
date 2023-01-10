@@ -3,11 +3,12 @@ import { tapResponse } from '@ngrx/component-store'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { Store } from '@ngrx/store'
 import { StringsService } from '@project-id/data-access/api'
+import { ProjectsStoreService } from '@projects/data-access/facades'
 import { ProjectsActions } from '@projects/data-access/store'
 import { EntityModel, EntityType, StringModel } from '@shared/data-access/models'
 import { catchError, map, of, switchMap, tap } from 'rxjs'
 
-import { StringsActions, EntitiesActions } from '@project-id/data-access/store'
+import { StringsActions, EntitiesActions, PanelsActions } from '@project-id/data-access/store'
 
 @Injectable({
   providedIn: 'root',
@@ -17,6 +18,7 @@ export class StringsEffects {
   private store = inject(Store)
 
   private stringsService = inject(StringsService)
+  private projectsStore = inject(ProjectsStoreService)
   initStrings$ = createEffect(
     () =>
       this.actions$.pipe(
@@ -45,35 +47,42 @@ export class StringsEffects {
       ),
     ),
   )
-  /*
 
-    addString$ = createEffect(() =>
+  addStringHttp$ = createEffect(() =>
       this.actions$.pipe(
         ofType(StringsActions.addString),
-        map(({ string }) => EntitiesActions.addEntityForGrid({ entity: string })),
+        switchMap(({ string }) => this.projectsStore.select.selectIsWebProject$.pipe(
+          switchMap(
+            isWeb => {
+              if (isWeb) {
+                return this.stringsService.addString(string)
+              }
+              // update local state
+              return of(undefined)
+            },
+          ),
+        )),
       ),
-    )
-  */
+    { dispatch: false },
+  )
 
-  /*  updateOneString$ = createEffect(() =>
+
+  deleteStringHttp$ = createEffect(() =>
       this.actions$.pipe(
-        ofType(StringsActions.updateString),
-        map(({ update }) =>
-          EntitiesActions.updateEntityForGrid({
-            update,
-          }),
-        ),
+        ofType(StringsActions.deleteString),
+        switchMap(({ stringId }) => this.projectsStore.select.isWebWithProject$.pipe(
+          switchMap(
+            ([isWeb, project]) => {
+              if (!project) return of(undefined)
+              if (isWeb) {
+                return this.stringsService.deleteString(stringId, project.id)
+              }
+              // update local state
+              return of(undefined)
+            },
+          ),
+        )),
       ),
-    )*/
-
-  deleteString$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(StringsActions.deleteString),
-      map(({ stringId }) =>
-        EntitiesActions.deleteEntityForGrid({
-          entityId: stringId,
-        }),
-      ),
-    ),
+    { dispatch: false },
   )
 }

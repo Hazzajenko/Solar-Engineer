@@ -7,7 +7,7 @@ import {
   BlocksEffects,
   EntitiesEffects,
   LinksEffects,
-  PanelsEffects,
+  PanelsEffects, PathsEffects,
   SelectedEffects,
   StringsEffects,
 } from '@project-id/data-access/effects'
@@ -58,5 +58,6 @@ export const projectsProviders = [
     BlocksEffects,
     EntitiesEffects,
     SelectedEffects,
+    PathsEffects,
   ]),
 ]

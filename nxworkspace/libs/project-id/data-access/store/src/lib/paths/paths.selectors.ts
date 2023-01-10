@@ -1,5 +1,5 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store'
-import { StringLinkPathModel } from '@shared/data-access/models'
+import { PathModel } from '@shared/data-access/models'
 import { selectRouteParams } from '@shared/data-access/router'
 import { PATHS_FEATURE_KEY, pathsAdapter, PathsState } from './paths.reducer'
 
@@ -39,21 +39,21 @@ export const selectPathsByRouteParams = createSelector(
 
 
 export const selectPathsById = (props: { pathId: string }) =>
-  createSelector(selectAllPaths, (paths: StringLinkPathModel[]) =>
+  createSelector(selectAllPaths, (paths: PathModel[]) =>
     paths.find((path) => path.id === props.pathId),
   )
 
 export const selectPathByPanelId = (props: { panelId: string }) =>
-  createSelector(selectAllPaths, (paths: StringLinkPathModel[]) =>
+  createSelector(selectAllPaths, (paths: PathModel[]) =>
     paths.find((path) => path.panelId === props.panelId),
   )
 
 export const selectPathsByStringId = (props: { stringId: string }) =>
-  createSelector(selectAllPaths, (paths: StringLinkPathModel[]) =>
+  createSelector(selectAllPaths, (paths: PathModel[]) =>
     paths.filter((path) => path.stringId === props.stringId),
   )
 
 export const selectPathsByColor = (props: { color: string }) =>
-  createSelector(selectAllPaths, (paths: StringLinkPathModel[]) =>
-    paths.filter((path) => path.panelPath.color === props.color),
+  createSelector(selectAllPaths, (paths: PathModel[]) =>
+    paths.filter((path) => path.color === props.color),
   )

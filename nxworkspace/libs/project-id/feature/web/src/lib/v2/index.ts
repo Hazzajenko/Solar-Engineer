@@ -1,0 +1,1 @@
+export * from './web-project-v2.component'

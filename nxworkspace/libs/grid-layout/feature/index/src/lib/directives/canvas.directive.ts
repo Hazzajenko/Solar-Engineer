@@ -5,7 +5,7 @@ import {
   GridMode, PanelIdPath,
   PanelModel,
   SelectedPanelLinkPathModel, SelectedPathModel,
-  StringLinkPathModel,
+  PathModel,
   VibrantColor,
 } from '@shared/data-access/models'
 import { reducers } from '@shared/data-access/store'

@@ -11,6 +11,7 @@ import { GetProjectsResponse } from './get-projects.response'
 })
 export class ProjectsService {
   private http = inject(HttpClient)
+  private version = 2
 
   getProjectById(projectId: number): Observable<GetProjectByIdResponse> {
     return this.http.get<GetProjectByIdResponse>(`/api/projects/${projectId}`).pipe(
@@ -21,6 +22,15 @@ export class ProjectsService {
       map((res: GetProjectByIdResponse) => res),
     )
   }
+
+  createWebProject(projectName: string): Observable<ProjectModel> {
+    return this.http.post<ProjectModel>(`/api/projects`, {
+      name: projectName,
+    }).pipe(
+      map((res: ProjectModel) => res),
+    )
+  }
+
 
   getUserProjects(): Observable<ProjectModel[]> {
     return this.http.get<GetProjectsResponse>('/api/projects').pipe(

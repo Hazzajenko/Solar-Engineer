@@ -4,7 +4,7 @@ import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { Store } from '@ngrx/store'
 import { ProjectsService } from '@projects/data-access/api'
 import { ProjectModel } from '@shared/data-access/models'
-import { of, switchMap } from 'rxjs'
+import { catchError, map, of, switchMap } from 'rxjs'
 import { ProjectsActions } from '@projects/data-access/store'
 
 @Injectable({
@@ -40,6 +40,27 @@ export class ProjectsEffects {
       ),
     ),
   )
+
+  createWebProject$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ProjectsActions.createWebProject),
+      switchMap(({ projectName }) =>
+        this.projectsService.createWebProject(projectName).pipe(
+          map(project => ProjectsActions.createWebProjectSuccess({ project })),
+        ),
+      ),
+      catchError((error: Error) => of(ProjectsActions.createWebProjectError({ error: error.message }))),
+    ),
+  )
+
+  /*  createWebProjectSuccess$ = createEffect(() =>
+      this.actions$.pipe(
+        ofType(ProjectsActions.createWebProjectSuccess),
+        map(({ project }) =>
+          ProjectsActions.initSelectProject({ projectId: project.id }),
+        ),
+      ),
+    )*/
 
   /*   initSelectProject$ = createEffect(
     () =>

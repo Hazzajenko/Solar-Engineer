@@ -7,10 +7,20 @@ import { ProjectsActions, ProjectsSelectors } from '@projects/data-access/store'
 @Injectable({ providedIn: 'root' })
 export class ProjectsRepository {
   private store = inject(Store)
+
   init() {
     this.store.dispatch(ProjectsActions.initProjects())
   }
+
   initSelectProject(projectId: number) {
+    this.store.dispatch(ProjectsActions.initSelectProject({ projectId }))
+  }
+
+  createWebProject(projectName: string) {
+    this.store.dispatch(ProjectsActions.createWebProject({ projectName }))
+  }
+
+  selectWebProject(projectId: number) {
     this.store.dispatch(ProjectsActions.initSelectProject({ projectId }))
   }
 

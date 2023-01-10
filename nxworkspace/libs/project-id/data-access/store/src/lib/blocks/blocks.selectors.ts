@@ -1,6 +1,7 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store'
 import { BlockModel } from '@shared/data-access/models'
 import { selectRouteParams } from '@shared/data-access/router'
+import { selectProjectByRouteParams } from 'libs/projects/data-access/store/src/lib/projects/projects.selectors'
 import { BLOCKS_FEATURE_KEY, blocksAdapter, BlocksState } from './blocks.reducer'
 
 export const selectBlocksState = createFeatureSelector<BlocksState>(BLOCKS_FEATURE_KEY)
@@ -54,6 +55,20 @@ export const selectBlocksByProjectIdRouteParams = createSelector(
     }
     if (blocks) {
       return blocks.filter((block) => block.projectId === Number(projectId))
+    }
+    return []
+  },
+)
+
+export const selectBlocksByProjectNameRouteParams = createSelector(
+  selectProjectByRouteParams,
+  selectAllBlocks,
+  (project, blocks) => {
+    if (!project) {
+      return blocks.filter((block) => block.projectId === 0)
+    }
+    if (blocks) {
+      return blocks.filter((block) => block.projectId === project.id)
     }
     return []
   },

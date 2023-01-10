@@ -181,7 +181,7 @@ export class BlockPanelComponent {
       if (!isSelectedString) return undefined
       return paths.find(path => path.panelId === this._id)
     }),
-    map(path => path?.panelPath),
+    map(path => path),
   )
 
   /*  panelLinkPath$: Observable<PanelPathModel | undefined> = this.selectedFacade.selectedStringPathMap$.pipe(

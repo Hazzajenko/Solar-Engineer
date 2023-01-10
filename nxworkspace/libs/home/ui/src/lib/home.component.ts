@@ -11,6 +11,7 @@ import { ProjectsListComponent } from '@projects/feature/projects-list'
 import { UserModel } from '@shared/data-access/models'
 import { LogoNameBackgroundV2Component } from '@shared/ui/logo'
 import { AuthDialog } from 'libs/home/ui/src/lib/dialogs/auth/auth.dialog'
+import { CreateProjectDialog } from 'libs/home/ui/src/lib/dialogs/create-project/create-project.dialog'
 
 import { Observable } from 'rxjs'
 import { fadeIn, fadeInV2 } from './animations/animations'
@@ -82,6 +83,6 @@ export class HomeComponent {
   }
 
   routeToWebProject() {
-
+    this.dialog.open(CreateProjectDialog)
   }
 }

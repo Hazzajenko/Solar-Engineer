@@ -10,3 +10,4 @@ export class BlocksStoreService {
   public select = inject(BlocksFacade)
   public dispatch = inject(BlocksRepository)
 }
+

@@ -1,1 +1,2 @@
-export * from './web-project.component'
+export * from './v1/index'
+export * from './v2/index'

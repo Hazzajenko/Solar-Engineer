@@ -12,27 +12,36 @@ export interface PanelIdPath {
   path: PanelPathModel
 }
 
-export interface StringLinkPathOptions {
+export interface PathOptions {
   id?: string
   projectId: number
   stringId: string
   panelId: string
-  panelPath: PanelPathModel
+  link: number
+  count: number
+  color: string
+  // panelPath: PanelPathModel
 }
 
-export class StringLinkPathModel {
+export class PathModel {
   id: string
   projectId: number
   stringId: string
   panelId: string
-  panelPath: PanelPathModel
+  link: number
+  count: number
+  color: string
 
-  constructor(options: StringLinkPathOptions) {
+  // panelPath: PanelPathModel
+
+  constructor(options: PathOptions) {
     this.id = options.id ? options.id : getGuid().toString()
     this.projectId = options.projectId
     this.stringId = options.stringId
     this.panelId = options.panelId
-    this.panelPath = options.panelPath
+    this.link = options.link
+    this.count = options.count
+    this.color = options.color
   }
 }
 

@@ -15,15 +15,16 @@ import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, 
 import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatInputModule } from '@angular/material/input'
 import { AuthService } from '@auth/data-access/api'
-import { AuthFacade, AuthStoreService } from '@auth/data-access/facades'
+import { AuthFacade } from '@auth/data-access/facades'
 import { StringsService } from '@grid-layout/data-access/services'
+import { ProjectsStoreService } from '@projects/data-access/facades'
 
 import { StringModel } from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
 @Component({
-  selector: 'app-auth-dialog',
-  templateUrl: './auth.dialog.html',
+  selector: 'app-create-project-dialog',
+  templateUrl: './create-project.dialog.html',
   styles: [],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
@@ -46,72 +47,33 @@ import { ShowHideComponent } from '@shared/ui/show-hide'
   ],
   standalone: true,
 })
-export class AuthDialog {
+export class CreateProjectDialog {
 
-  loginForm: FormGroup = new FormGroup({
-    'username': new FormControl('', Validators.compose([
-      Validators.required,
-    ])),
-    'password': new FormControl('', Validators.compose([
-      Validators.minLength(5),
+  projectForm: FormGroup = new FormGroup({
+    'projectName': new FormControl('', Validators.compose([
       Validators.required,
     ])),
   })
-  loading = false
 
-  submitted = false
-  name = new FormControl('')
-  password = new FormControl('')
   private stringsFactory = inject(StringsService)
   private authService = inject(AuthService)
   private authFacade = inject(AuthFacade)
-  private authStore = inject(AuthStoreService)
   private formBuilder = inject(FormBuilder)
-  form = this.formBuilder.group({
-    username: ['', Validators.required],
-    password: ['', Validators.required],
-  })
+  private projectsStore = inject(ProjectsStoreService)
+  private dialogRef = inject(MatDialogRef<CreateProjectDialog>)
   validationMessages = {
-    'username': [
+    'projectName': [
       { type: 'required', message: 'Username is required.' },
     ],
-    'password': [
-      { type: 'required', message: 'Password is required.' },
-      { type: 'minlength', message: 'Password must be at least 5 characters long.' },
-    ],
-  }
-  login = true
-
-  constructor(
-    private dialogRef: MatDialogRef<AuthDialog>,
-    @Inject(MAT_DIALOG_DATA) data: any,
-  ) {
-    this.login = data.login
   }
 
-  get f() {
-    return this.form.controls
-  }
 
   async onSubmit() {
-    const username = this.loginForm.get('username')?.value
-    const password = this.loginForm.get('password')?.value
-    console.log(username, password)
-    if (!username) return console.error('!this.name.value')
-    if (!password) return console.error('!this.password.value')
-    // this.authFacade.register({ username, password })
-    if (this.login) {
-      // await this.authService.login({ username, password })
-      this.authStore.dispatch.init({ username, password })
-    } else {
-      // await this.authService.register({ username, password })
-      this.authStore.dispatch.register({ username, password })
-    }
-    // const result = await this.authService.addSelectedToNew(this.name.value)
-    // if (result instanceof StringModel) {
-    //   this.dialogRef.close(result)
-    //   return
-    // }
+    const projectName = this.projectForm.get('projectName')?.value
+    console.log(projectName)
+    if (!projectName) return console.error('!this.projectName.value')
+    this.projectsStore.dispatch.createWebProject(projectName)
+
     this.dialogRef.close(undefined)
   }
 }

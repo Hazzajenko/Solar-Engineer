@@ -7,7 +7,7 @@ import {
   PanelPathModel,
   SelectedPanelLinkPathModel,
   SelectedPathModel,
-  StringLinkPathModel,
+  PathModel,
 } from '@shared/data-access/models'
 import { LinksPathService } from '../links/links-path.service'
 
@@ -31,11 +31,14 @@ export class PathsService {
     if (!project) {
       return
     }
-    const path = new StringLinkPathModel({
+    const path = new PathModel({
       projectId: project.id,
       stringId: selectedStringId,
       panelId,
-      panelPath,
+      count: panelPath.count,
+      color: panelPath.color,
+      link: panelPath.link,
+      // panelPath,
     })
     // this.pathsFacade.
     this.pathsStore.dispatch.createPath(path)
@@ -51,11 +54,14 @@ export class PathsService {
       return
     }
     const paths = panelIdPaths.map(panelIdPath => {
-      return new StringLinkPathModel({
+      return new PathModel({
         projectId: project.id,
         stringId: selectedStringId,
         panelId: panelIdPath.panelId,
-        panelPath: panelIdPath.path,
+        count: panelIdPath.path.count,
+        color: panelIdPath.path.color,
+        link: panelIdPath.path.link,
+        // panelPath: panelIdPath.path,
       })
     })
     /*    const path = new PanelLinkPathModel({

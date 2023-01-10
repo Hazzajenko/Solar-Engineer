@@ -29,6 +29,16 @@ export const selectSelectedId = createSelector(
   (state: ProjectsState) => state.selectedId,
 )
 
+export const selectSelectedProjectId = createSelector(
+  selectProjectsState,
+  (state: ProjectsState) => state.selectedProjectId,
+)
+
+export const selectIsWebProject = createSelector(
+  selectProjectsState,
+  (state: ProjectsState) => state.web,
+)
+
 export const selectEntity = createSelector(
   selectProjectsEntities,
   selectSelectedId,
@@ -53,15 +63,38 @@ export const selectEntity = createSelector(
 ) */
 
 export const selectProjectByRouteParams = createSelector(
+  /*  selectProjectsState,
+    selectProjectsEntities,
+    selectRouteParams,
+    (state, projects, { projectId }) => {
+      console.log('selectProjectByRouteParams', projectId)
+      if (!projectId) {
+        return state.localProject
+      }
+      return projects[projectId]
+    },*/
   selectProjectsState,
-  selectProjectsEntities,
+  selectAllProjects,
   selectRouteParams,
-  (state, projects, { projectId }) => {
-    console.log('selectProjectByRouteParams', projectId)
-    if (!projectId) {
+  (state, projects, { projectName }) => {
+    console.log('selectProjectByRouteParams', projectName)
+    if (!projectName) {
       return state.localProject
     }
-    return projects[projectId]
+    return projects.find(project => project.name === projectName)
+  },
+)
+
+export const selectProjectByNameRouteParams = createSelector(
+  selectProjectsState,
+  selectAllProjects,
+  selectRouteParams,
+  (state, projects, { projectName }) => {
+    console.log('selectProjectByRouteParams', projectName)
+    if (!projectName) {
+      return state.localProject
+    }
+    return projects.find(project => project.name === projectName)
   },
 )
 

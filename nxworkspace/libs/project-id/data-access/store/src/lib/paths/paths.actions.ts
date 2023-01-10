@@ -1,17 +1,17 @@
 import { Update } from '@ngrx/entity'
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
-import { SelectedPanelLinkPathModel, StringLinkPathModel, StringModel, TypeModel } from '@shared/data-access/models'
+import { SelectedPanelLinkPathModel, PathModel, StringModel, TypeModel } from '@shared/data-access/models'
 
 export const PathsActions = createActionGroup({
   source: 'Paths Store',
   events: {
     'Init Paths': props<{ pathId: string }>(),
-    'Load Paths Success': props<{ paths: StringLinkPathModel[] }>(),
+    'Load Paths Success': props<{ paths: PathModel[] }>(),
     'Load Paths Failure': props<{ error: string | null }>(),
-    'Add Path': props<{ path: StringLinkPathModel }>(),
-    'Add Many Paths': props<{ paths: StringLinkPathModel[] }>(),
-    'Update Path': props<{ update: Update<StringLinkPathModel> }>(),
-    'Update Many Paths': props<{ updates: Update<StringLinkPathModel>[] }>(),
+    'Add Path': props<{ path: PathModel }>(),
+    'Add Many Paths': props<{ paths: PathModel[] }>(),
+    'Update Path': props<{ update: Update<PathModel> }>(),
+    'Update Many Paths': props<{ updates: Update<PathModel>[] }>(),
     'Delete Path': props<{ pathId: string }>(),
     'Delete Many Paths': props<{ pathIds: string[] }>(),
     'Set Selected Panel Link Paths': props<{ selectedPanelLinkPath: SelectedPanelLinkPathModel }>(),

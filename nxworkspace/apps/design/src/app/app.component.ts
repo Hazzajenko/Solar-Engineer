@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core'
 import { RouterModule } from '@angular/router'
 import { AuthService } from '@auth/data-access/api'
-import { AuthFacade } from '@auth/data-access/facades'
+import { AuthFacade, AuthStoreService } from '@auth/data-access/facades'
 
 @Component({
   standalone: true,
@@ -13,7 +13,7 @@ import { AuthFacade } from '@auth/data-access/facades'
 })
 export class AppComponent implements OnInit {
   title = 'design'
-  private authStore = inject(AuthFacade)
+  private authStore = inject(AuthStoreService)
 
   // private auth = inject(AuthService)
   returningUser = false
@@ -21,7 +21,7 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     // console.log(new Date().getDate().toString())
     if (this.returningUser) {
-      this.authStore.isReturningUser()
+      this.authStore.dispatch.isReturningUser()
     }
   }
 }

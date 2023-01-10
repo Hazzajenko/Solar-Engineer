@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core'
 import { Update } from '@ngrx/entity'
 import { Store } from '@ngrx/store'
 import { PathsActions } from '@project-id/data-access/store'
-import { SelectedPanelLinkPathModel, StringLinkPathModel } from '@shared/data-access/models'
+import { SelectedPanelLinkPathModel, PathModel } from '@shared/data-access/models'
 
 @Injectable({
   providedIn: 'root',
@@ -10,11 +10,11 @@ import { SelectedPanelLinkPathModel, StringLinkPathModel } from '@shared/data-ac
 export class PathsRepository {
   private store = inject(Store)
 
-  createPath(path: StringLinkPathModel) {
+  createPath(path: PathModel) {
     return this.store.dispatch(PathsActions.addPath({ path }))
   }
 
-  createManyPaths(paths: StringLinkPathModel[]) {
+  createManyPaths(paths: PathModel[]) {
     return this.store.dispatch(PathsActions.addManyPaths({ paths }))
   }
 
@@ -22,11 +22,11 @@ export class PathsRepository {
     return this.store.dispatch(PathsActions.setSelectedPanelLinkPaths({ selectedPanelLinkPath }))
   }
 
-  updatePath(update: Update<StringLinkPathModel>) {
+  updatePath(update: Update<PathModel>) {
     return this.store.dispatch(PathsActions.updatePath({ update }))
   }
 
-  updateManyPaths(updates: Update<StringLinkPathModel>[]) {
+  updateManyPaths(updates: Update<PathModel>[]) {
     return this.store.dispatch(PathsActions.updateManyPaths({ updates }))
   }
 
