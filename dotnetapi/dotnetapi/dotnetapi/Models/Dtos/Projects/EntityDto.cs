@@ -12,5 +12,6 @@ public enum EntityTypeDto
     Undefined,
     Tracker,
     String,
-    Link
+    Link,
+    Path
 }

@@ -1,11 +1,12 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using dotnetapi.Controllers;
 using dotnetapi.Models.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
-namespace dotnetapi.Services;
+namespace dotnetapi.Services.Auth;
 
 public class AuthService : IAuthService
 {

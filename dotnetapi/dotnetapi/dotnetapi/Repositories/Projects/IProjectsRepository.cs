@@ -1,6 +1,6 @@
 ﻿using dotnetapi.Models.Entities;
 
-namespace dotnetapi.Repositories;
+namespace dotnetapi.Repositories.Projects;
 
 public interface IProjectsRepository
 {

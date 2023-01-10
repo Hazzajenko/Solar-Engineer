@@ -3,7 +3,7 @@ using dotnetapi.Data;
 using dotnetapi.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace dotnetapi.Repositories;
+namespace dotnetapi.Repositories.Panels;
 
 public class PanelsRepository : IPanelsRepository
 {

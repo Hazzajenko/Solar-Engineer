@@ -1,7 +1,7 @@
 ﻿using dotnetapi.Models.Dtos.Projects;
 using dotnetapi.Models.Entities;
 
-namespace dotnetapi.Services;
+namespace dotnetapi.Services.Projects;
 
 public interface IProjectsService
 {

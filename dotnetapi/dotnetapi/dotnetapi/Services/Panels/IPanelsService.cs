@@ -3,7 +3,7 @@ using dotnetapi.Contracts.Requests.Panels;
 using dotnetapi.Models.Dtos.Projects;
 using dotnetapi.Models.Entities;
 
-namespace dotnetapi.Services;
+namespace dotnetapi.Services.Panels;
 
 public interface IPanelsService
 {

@@ -2,12 +2,13 @@
 using dotnetapi.Mapping;
 using dotnetapi.Models.Dtos.Projects;
 using dotnetapi.Models.Entities;
-using dotnetapi.Repositories;
+using dotnetapi.Repositories.Projects;
+using dotnetapi.Repositories.Strings;
 using FluentValidation;
 using FluentValidation.Results;
 using String = dotnetapi.Models.Entities.String;
 
-namespace dotnetapi.Services;
+namespace dotnetapi.Services.Strings;
 
 public class StringsService : IStringsService
 {

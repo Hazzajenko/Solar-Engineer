@@ -1,11 +1,11 @@
 ﻿using dotnetapi.Mapping;
 using dotnetapi.Models.Dtos.Projects;
 using dotnetapi.Models.Entities;
-using dotnetapi.Repositories;
+using dotnetapi.Repositories.Projects;
 using FluentValidation;
 using FluentValidation.Results;
 
-namespace dotnetapi.Services;
+namespace dotnetapi.Services.Projects;
 
 public class ProjectsService : IProjectsService
 {

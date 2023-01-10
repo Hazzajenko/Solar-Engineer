@@ -1,6 +1,7 @@
-﻿using dotnetapi.Models.Entities;
+﻿using dotnetapi.Controllers;
+using dotnetapi.Models.Entities;
 
-namespace dotnetapi.Services;
+namespace dotnetapi.Services.Auth;
 
 public interface IAuthService
 {

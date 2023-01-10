@@ -3,7 +3,8 @@ using dotnetapi.Contracts.Requests.Panels;
 using dotnetapi.Contracts.Responses;
 using dotnetapi.Mapping;
 using dotnetapi.Models.Entities;
-using dotnetapi.Services;
+using dotnetapi.Services.Panels;
+using dotnetapi.Services.Projects;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -106,7 +107,7 @@ public class PanelsController : ControllerBase
             _logger.LogError("Bad request, User is invalid");
             return Unauthorized("User is invalid");
         }
-        
+
         var project = _projectsService.GetProjectByIdAsync(projectId);
         if (project.Result == null)
         {
@@ -135,7 +136,7 @@ public class PanelsController : ControllerBase
             _logger.LogError("Bad request, User is invalid");
             return Unauthorized("User is invalid");
         }
-        
+
         var project = _projectsService.GetProjectByIdAsync(projectId);
         if (project.Result == null)
         {
@@ -163,7 +164,7 @@ public class PanelsController : ControllerBase
             _logger.LogError("Bad request, User is invalid");
             return Unauthorized("User is invalid");
         }
-        
+
         var project = _projectsService.GetProjectByIdAsync(projectId);
         if (project.Result == null)
         {
@@ -198,7 +199,7 @@ public class PanelsController : ControllerBase
             _logger.LogError("Bad request, User is invalid");
             return Unauthorized("User is invalid");
         }
-        
+
         var project = _projectsService.GetProjectByIdAsync(projectId);
         if (project.Result == null)
         {
@@ -222,7 +223,7 @@ public class PanelsController : ControllerBase
             SuccessfulUpdates = successfulUpdates,
             Errors = errors
         };
-        
+
         /*
         var updatedResult =
         {
@@ -242,7 +243,7 @@ public class PanelsController : ControllerBase
             _logger.LogError("Bad request, User is invalid");
             return Unauthorized("User is invalid");
         }
-        
+
         var project = _projectsService.GetProjectByIdAsync(projectId);
         if (project.Result == null)
         {
@@ -275,7 +276,7 @@ public class PanelsController : ControllerBase
             _logger.LogError("Bad request, User is invalid");
             return Unauthorized("User is invalid");
         }
-        
+
         var project = _projectsService.GetProjectByIdAsync(projectId);
         if (project.Result == null)
         {

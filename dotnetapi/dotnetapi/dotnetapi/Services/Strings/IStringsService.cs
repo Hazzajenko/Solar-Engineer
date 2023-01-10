@@ -2,7 +2,7 @@
 using dotnetapi.Models.Dtos.Projects;
 using String = dotnetapi.Models.Entities.String;
 
-namespace dotnetapi.Services;
+namespace dotnetapi.Services.Strings;
 
 public interface IStringsService
 {

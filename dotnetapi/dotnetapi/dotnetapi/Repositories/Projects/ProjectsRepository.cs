@@ -2,7 +2,7 @@
 using dotnetapi.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace dotnetapi.Repositories;
+namespace dotnetapi.Repositories.Projects;
 
 public class ProjectsRepository : IProjectsRepository
 {

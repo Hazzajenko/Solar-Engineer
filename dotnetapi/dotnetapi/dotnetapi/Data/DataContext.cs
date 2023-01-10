@@ -3,6 +3,7 @@ using dotnetapi.Models.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Path = dotnetapi.Models.Entities.Path;
 using String = dotnetapi.Models.Entities.String;
 
 namespace dotnetapi.Data;
@@ -19,6 +20,7 @@ public class DataContext : IdentityDbContext<AppUser, AppRole, int,
     public DbSet<String> Strings { get; set; } = default!;
     public DbSet<Panel> Panels { get; set; } = default!;
     public DbSet<PanelLink> PanelLinks { get; set; } = default!;
+    public DbSet<Path> Paths { get; set; } = default!;
     public DbSet<AppUserProject> AppUserProjects { get; set; } = default!;
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)

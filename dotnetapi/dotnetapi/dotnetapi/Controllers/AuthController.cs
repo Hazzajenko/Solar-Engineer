@@ -1,13 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Security.Claims;
 using dotnetapi.Mapping;
 using dotnetapi.Models.Entities;
-using dotnetapi.Services;
+using dotnetapi.Services.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+
+namespace dotnetapi.Controllers;
 
 public class SigninRequest
 {
@@ -36,6 +37,7 @@ public class SignupRequest
 public class SignupRequestV2
 {
     [Required] public string Username { get; init; } = default!;
+
     [Required]
     [StringLength(14, MinimumLength = 4)]
     public string Password { get; init; } = default!;
@@ -52,131 +54,129 @@ public class LoginResponse
     public string Token { get; set; } = default!;
 }
 
-namespace dotnetapi.Controllers
+[Route("[controller]")]
+[ApiController]
+public class AuthController : ControllerBase
 {
-    [Route("[controller]")]
-    [ApiController]
-    public class AuthController : ControllerBase
+    private readonly IAuthService _authService;
+    private readonly ILogger<AuthController> _logger;
+    private readonly SignInManager<AppUser> _signInManager;
+    private readonly UserManager<AppUser> _userManager;
+
+
+    public AuthController(
+        ILogger<AuthController> logger,
+        UserManager<AppUser> userManager,
+        SignInManager<AppUser> signInManager,
+        IAuthService authService
+    )
     {
-        private readonly IAuthService _authService;
-        private readonly ILogger<AuthController> _logger;
-        private readonly SignInManager<AppUser> _signInManager;
-        private readonly UserManager<AppUser> _userManager;
+        _logger = logger;
+        _userManager = userManager;
+        _signInManager = signInManager;
+        _authService = authService;
+    }
 
-
-        public AuthController(
-            ILogger<AuthController> logger,
-            UserManager<AppUser> userManager,
-            SignInManager<AppUser> signInManager,
-            IAuthService authService
-        )
+    [HttpPost("validate")]
+    [Authorize]
+    public async Task<IActionResult> ValidateUser(ValidateUserRequest request)
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
         {
-            _logger = logger;
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _authService = authService;
+            _logger.LogError("Bad request, User is invalid");
+            return Unauthorized("User is invalid");
         }
 
-        [HttpPost("validate")]
-        [Authorize]
-        public async Task<IActionResult> ValidateUser(ValidateUserRequest request)
+        var signInResult = await _authService.HandleSignIn(user);
+        if (signInResult.Token.IsNullOrEmpty())
         {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
-                _logger.LogError("Bad request, User is invalid");
-                return Unauthorized("User is invalid");
-            }
-
-            var signInResult = await _authService.HandleSignIn(user);
-            if (signInResult.Token.IsNullOrEmpty())
-            {
-                _logger.LogError("Token Error");
-                return BadRequest();
-            }
-
-            _logger.LogInformation("{Username} has logged in", user.UserName);
-            return Ok(signInResult);
+            _logger.LogError("Token Error");
+            return BadRequest();
         }
 
+        _logger.LogInformation("{Username} has logged in", user.UserName);
+        return Ok(signInResult);
+    }
 
-        [HttpPost("login")]
-        [Authorize]
-        [AllowAnonymous]
-        public async Task<IActionResult> Login(SigninRequest request)
+
+    [HttpPost("login")]
+    [Authorize]
+    [AllowAnonymous]
+    public async Task<IActionResult> Login(SigninRequest request)
+    {
+        var user = await _userManager.Users
+            .SingleOrDefaultAsync(x => x.UserName == request.Username.ToLower());
+
+        if (user == null)
         {
-            var user = await _userManager.Users
-                .SingleOrDefaultAsync(x => x.UserName == request.Username.ToLower());
-
-            if (user == null)
-            {
-                _logger.LogError("Unauthorized, {Username} is invalid", request.Username);
-                return NotFound();
-            }
-
-            var result = await _signInManager
-                .CheckPasswordSignInAsync(user, request.Password, false);
-
-            if (result.IsNotAllowed)
-            {
-                _logger.LogError("Unauthorized, Password is invalid");
-                return Unauthorized();
-            }
-
-            var signInResult = await _authService.HandleSignIn(user);
-            if (signInResult.Token.IsNullOrEmpty())
-            {
-                _logger.LogError("Token Error");
-                return BadRequest();
-            }
-
-            _logger.LogInformation("{Username} has logged in", user.UserName);
-            return Ok(signInResult);
+            _logger.LogError("Unauthorized, {Username} is invalid", request.Username);
+            return NotFound();
         }
 
-        [HttpPost("register")]
-        [Authorize]
-        [AllowAnonymous]
-        public async Task<IActionResult> Register(SignupRequestV2 request)
+        var result = await _signInManager
+            .CheckPasswordSignInAsync(user, request.Password, false);
+
+        if (result.IsNotAllowed)
         {
-            if (await UserExists(request.Username))
-            {
-                _logger.LogError("Bad request, {Username} is taken", request.Username);
-                return Conflict("Username is taken");
-            }
-
-            var appUser = request.ToEntityV2();
-            appUser.UserName = request.Username.ToLower();
-
-            var result = await _userManager.CreateAsync(appUser, request.Password);
-
-            if (!result.Succeeded)
-            {
-                _logger.LogError("Bad request, {@Errors}", result.Errors);
-                return BadRequest(result.Errors);
-            }
-
-            var roleResult = await _userManager.AddToRoleAsync(appUser, "User");
-
-            if (!roleResult.Succeeded)
-            {
-                _logger.LogError("Bad request, {@Errors}", result.Errors);
-                return BadRequest(result.Errors);
-            }
-
-            _logger.LogInformation("{Username} has signed up", appUser.UserName);
-            var signUpResult = await _authService.HandleSignIn(appUser);
-            if (signUpResult.Token.IsNullOrEmpty())
-            {
-                _logger.LogError("Token Error");
-                return BadRequest();
-            }
-
-            _logger.LogInformation("{Username} has logged in", appUser.UserName);
-            return Ok(signUpResult);
+            _logger.LogError("Unauthorized, Password is invalid");
+            return Unauthorized();
         }
 
-        /*
+        var signInResult = await _authService.HandleSignIn(user);
+        if (signInResult.Token.IsNullOrEmpty())
+        {
+            _logger.LogError("Token Error");
+            return BadRequest();
+        }
+
+        _logger.LogInformation("{Username} has logged in", user.UserName);
+        return Ok(signInResult);
+    }
+
+    [HttpPost("register")]
+    [Authorize]
+    [AllowAnonymous]
+    public async Task<IActionResult> Register(SignupRequestV2 request)
+    {
+        if (await UserExists(request.Username))
+        {
+            _logger.LogError("Bad request, {Username} is taken", request.Username);
+            return Conflict("Username is taken");
+        }
+
+        var appUser = request.ToEntityV2();
+        appUser.UserName = request.Username.ToLower();
+
+        var result = await _userManager.CreateAsync(appUser, request.Password);
+
+        if (!result.Succeeded)
+        {
+            _logger.LogError("Bad request, {@Errors}", result.Errors);
+            return BadRequest(result.Errors);
+        }
+
+        var roleResult = await _userManager.AddToRoleAsync(appUser, "User");
+
+        if (!roleResult.Succeeded)
+        {
+            _logger.LogError("Bad request, {@Errors}", result.Errors);
+            return BadRequest(result.Errors);
+        }
+
+        _logger.LogInformation("{Username} has signed up", appUser.UserName);
+        var signUpResult = await _authService.HandleSignIn(appUser);
+        if (signUpResult.Token.IsNullOrEmpty())
+        {
+            _logger.LogError("Token Error");
+            return BadRequest();
+        }
+
+        _logger.LogInformation("{Username} has logged in", appUser.UserName);
+        return Ok(signUpResult);
+    }
+
+    /*
         [AllowAnonymous]
         public IActionResult GoogleLogin()
         {
@@ -218,9 +218,8 @@ namespace dotnetapi.Controllers
         }
         */
 
-        private async Task<bool> UserExists(string username)
-        {
-            return await _userManager.Users.AnyAsync(x => x.UserName == username.ToLower());
-        }
+    private async Task<bool> UserExists(string username)
+    {
+        return await _userManager.Users.AnyAsync(x => x.UserName == username.ToLower());
     }
 }

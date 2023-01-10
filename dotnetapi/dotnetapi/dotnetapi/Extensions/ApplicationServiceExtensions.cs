@@ -1,6 +1,15 @@
 ﻿using dotnetapi.Data;
-using dotnetapi.Repositories;
-using dotnetapi.Services;
+using dotnetapi.Repositories.Links;
+using dotnetapi.Repositories.Panels;
+using dotnetapi.Repositories.Paths;
+using dotnetapi.Repositories.Projects;
+using dotnetapi.Repositories.Strings;
+using dotnetapi.Services.Auth;
+using dotnetapi.Services.Links;
+using dotnetapi.Services.Panels;
+using dotnetapi.Services.Paths;
+using dotnetapi.Services.Projects;
+using dotnetapi.Services.Strings;
 using Microsoft.EntityFrameworkCore;
 
 namespace dotnetapi.Extensions;
@@ -18,6 +27,8 @@ public static class ApplicationServiceExtensions
         services.AddScoped<IPanelsRepository, PanelsRepository>();
         services.AddScoped<IPanelLinksService, PanelLinksService>();
         services.AddScoped<IPanelLinksRepository, PanelLinksRepository>();
+        services.AddScoped<IPathsService, PathsService>();
+        services.AddScoped<IPathsRepository, PathsRepository>();
 
 
         services.AddDbContext<DataContext>(options =>

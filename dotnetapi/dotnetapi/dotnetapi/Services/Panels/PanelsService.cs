@@ -3,11 +3,13 @@ using dotnetapi.Contracts.Requests.Panels;
 using dotnetapi.Mapping;
 using dotnetapi.Models.Dtos.Projects;
 using dotnetapi.Models.Entities;
-using dotnetapi.Repositories;
+using dotnetapi.Repositories.Panels;
+using dotnetapi.Repositories.Projects;
+using dotnetapi.Repositories.Strings;
 using FluentValidation;
 using FluentValidation.Results;
 
-namespace dotnetapi.Services;
+namespace dotnetapi.Services.Panels;
 
 public class PanelsService : IPanelsService
 {
