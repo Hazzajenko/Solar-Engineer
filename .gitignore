@@ -1,10 +1,16 @@
 ### Angular ###
 ## Angular ##
+/ssl/
+**/ssl
+
 # compiled output
-client/dist/
-client/tmp/
-client/app/**/*.js
-client/app/**/*.js.map
+
+
+nxworkspace/ssl/**
+nxworkspace/dist/
+nxworkspace/tmp/
+nxworkspace/app/**/*.js
+nxworkspace/app/**/*.js.map
 
 # vscode
 *.vscode/launch.json
@@ -12,28 +18,28 @@ client/app/**/*.js.map
 *.vscode/tasks.json
 
 # dependencies
-client/node_modules/
-client/bower_components/
+nxworkspace/node_modules/
+nxworkspace/bower_components/
 
 # IDEs and editors
 *.idea/
 
 # misc
-client/.sass-cache/
-client/connect.lock/
-client/coverage/
-client/libpeerconnection.log/
-client/npm-debug.log
-client/testem.log
-client/typings/
-client/.angular/
+nxworkspace/.sass-cache/
+nxworkspace/connect.lock/
+nxworkspace/coverage/
+nxworkspace/libpeerconnection.log/
+nxworkspace/npm-debug.log
+nxworkspace/testem.log
+nxworkspace/typings/
+nxworkspace/.angular/
 
 # e2e
-client/e2e/*.js
-client/e2e/*.map
+nxworkspace/e2e/*.js
+nxworkspace/e2e/*.map
 
 # System Files
-client/.DS_Store/
+nxworkspace/.DS_Store/
 
 ### Go ###
 # If you prefer the allow list template instead of the deny list, see community template:

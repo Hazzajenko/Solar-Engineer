@@ -21,6 +21,12 @@ public static class PathMapper
     {
         return new Path
         {
+            Id = request.Id,
+            ProjectId = request.ProjectId,
+            StringId = request.StringId,
+            PanelId = request.PanelId,
+            Link = request.Link,
+            Count = request.Count,
             Color = request.Color
         };
     }

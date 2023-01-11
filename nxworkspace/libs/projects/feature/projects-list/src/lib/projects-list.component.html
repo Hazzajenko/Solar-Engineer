@@ -1,13 +1,13 @@
 <ng-container *ngIf='projects$ | async as projects'>
-  <div
-    class='flex flex-col px-4 mx-auto mt-10 space-y-12 items-center justify-center md:space-y-0 md:flex-row'
-  >
-    <div
+  <!--  <div
+      class='flex flex-col px-4 mx-auto mt-10 space-y-12 items-center justify-center md:space-y-0 md:flex-row'
+    >-->
+  <!--  <div
       (click)='routeToProjectV2(project)'
       *ngFor='let project of projects'
       class='flex flex-col space-y-3 bg-clip-padding p-6 bg-[#08297c] border-1 border-[#08297c] border-dashed md:space-y-0 md:space-x-6 md:flex-row rounded-lg hover:bg-blue-500'
     >
-      <!--       Heading -->
+      &lt;!&ndash;       Heading &ndash;&gt;
       <div class='rounded-l-full'>
         <div class='flex items-center space-x-2'>
           <div class='px-4 py-2 text-white rounded-full md:py-1 bg-purple-500'>
@@ -18,6 +18,50 @@
           </h3>
         </div>
       </div>
+    </div>-->
+  <mat-list class='space-y-3'>
+    <div class='space-y-3'>
+      <mat-list-item
+        class='mx-auto rounded-lg bg-sky-300 hover:bg-sky-500 space-y-3 ring-1 ring-slate-900/5  hover:ring-sky-500'
+        (click)='routeToProjectV2(project)'
+        *ngFor='let project of projects'>
+        <span matListItemTitle>{{project.name}}</span>
+        <span matListItemLine>Created At {{project.createdAt | date : 'short'}}</span>
+        <span matListItemLine>Last Edited Today</span>
+      </mat-list-item>
     </div>
-  </div>
+  </mat-list>
+  <!--  <ul class='max-w-md divide-y divide-gray-200 dark:divide-gray-700'>
+      <li class='pb-3 sm:pb-4'>
+        <div class='flex items-center space-x-4'>
+          <div class='flex-shrink-0'>
+            <img class='w-8 h-8 rounded-full' src='/docs/images/people/profile-picture-1.jpg' alt='Neil image'>
+          </div>
+          <div class='flex-1 min-w-0'>
+            <p class='text-sm font-medium text-gray-900 truncate dark:text-white'>
+              Neil Sims
+            </p>
+            <p class='text-sm text-gray-500 truncate dark:text-gray-400'>
+              email@flowbite.com
+            </p>
+          </div>
+          <div class='inline-flex items-center text-base font-semibold text-gray-900 dark:text-white'>
+            $320
+          </div>
+        </div>
+      </li>
+    </ul>-->
+  <!--  </div>&lt;!&ndash;&ndash;&gt;-->
 </ng-container>
+<!--<mat-spinner></mat-spinner>-->
+
+<ng-container *ngIf='loading'>
+  <mat-spinner class='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'></mat-spinner>
+</ng-container>
+<!--
+<ng-container *ngIf='routerEvents$ | async as routerEvents'>
+  <ng-container *ngIf='instanceOfNavigationStart(routerEvents)'>
+    <mat-spinner></mat-spinner>
+
+  </ng-container>
+</ng-container>-->

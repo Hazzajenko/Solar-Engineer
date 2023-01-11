@@ -4,7 +4,15 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
-import { Router, RouterLink } from '@angular/router'
+import {
+  NavigationCancel,
+  NavigationEnd,
+  NavigationError,
+  NavigationStart,
+  Router,
+  RouterEvent,
+  RouterLink,
+} from '@angular/router'
 import { AuthFacade } from '@auth/data-access/facades'
 import { ProjectsFacade } from '@projects/data-access/facades'
 import { ProjectsListComponent } from '@projects/feature/projects-list'
@@ -41,6 +49,7 @@ export class HomeComponent {
   private dialog = inject(MatDialog)
   private router = inject(Router)
   private projectsStore = inject(ProjectsFacade)
+  routerEvents$ = this.router.events
 
   async authenticate(login: boolean) {
     const dialogConfig = new MatDialogConfig()
@@ -84,5 +93,16 @@ export class HomeComponent {
 
   routeToWebProject() {
     this.dialog.open(CreateProjectDialog)
+  }
+
+  instanceOfNavigationStart(routerEvents: RouterEvent | any) {
+    console.log(routerEvents)
+    if (routerEvents instanceof NavigationStart) {
+      console.log(true)
+      return true
+
+    }
+    console.log(false)
+    return false
   }
 }

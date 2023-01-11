@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "KuCRNxhc92HYeYiepoePXV0Gzlk4xZMl5wY/48mEPiQ=",
+  "Source": "dotnetapi",
+  "BasePath": "_content/dotnetapi",
+  "Mode": "Default",
+  "ManifestType": "Publish",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

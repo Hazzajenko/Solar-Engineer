@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common'
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
-import { Router } from '@angular/router'
+import { MatListModule } from '@angular/material/list'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { NavigationStart, Router, RouterEvent } from '@angular/router'
 import { AuthService } from '@auth/data-access/api'
 import { AuthStoreService } from '@auth/data-access/facades'
 import { ProjectsFacade, ProjectsStoreService } from '@projects/data-access/facades'
@@ -10,7 +12,7 @@ import { Observable } from 'rxjs'
 @Component({
   selector: 'app-project-list',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MatListModule, MatProgressSpinnerModule],
   templateUrl: './projects-list.component.html',
   styles: [],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -21,17 +23,32 @@ export class ProjectsListComponent {
   private projectsStore = inject(ProjectsStoreService)
   private authStore = inject(AuthStoreService)
   projects$: Observable<ProjectModel[] | undefined> = this.projectsStore.select.allProjects$
+  routerEvents$ = this.router.events
+  loading = false
 
   routeToProject(project: ProjectModel) {
+    this.loading = true
     // this.store.initSelectProject(project.id)
     this.router.navigate([`projects/${project.id}`]).then((r) => r)
   }
 
   async routeToProjectV2(project: ProjectModel) {
+    this.loading = true
     const user = await this.authStore.select.user
     if (!user) return
     // this.store.initSelectProject(project.id)
 
     this.router.navigate([`${user.username}/${project.name}`]).then((r) => r)
+  }
+
+  instanceOfNavigationStart(routerEvents: RouterEvent | any) {
+    console.log(routerEvents)
+    if (routerEvents instanceof NavigationStart) {
+      console.log(true)
+      return true
+
+    }
+    console.log(false)
+    return false
   }
 }
