@@ -1,9 +1,11 @@
+using System.Net;
 using System.Text.Json;
 using Amazon.S3;
 using dotnetapi.Data;
 using dotnetapi.Extensions;
 using dotnetapi.Models.Entities;
 using dotnetapi.Validation;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -13,6 +15,11 @@ var builder = WebApplication.CreateBuilder(new WebApplicationOptions
 {
     Args = args,
     ContentRootPath = Directory.GetCurrentDirectory()
+});
+
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.KnownProxies.Add(IPAddress.Parse("10.0.0.100"));
 });
 // var builder = WebApplication.CreateBuilder(args);
 
@@ -107,6 +114,11 @@ app.UseStaticFiles();
 app.UseHttpsRedirection();
 
 app.UseCors("CorsPolicy");
+
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+});
 
 app.UseAuthentication();
 app.UseAuthorization();

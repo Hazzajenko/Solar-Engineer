@@ -1,0 +1,67 @@
+version: '3.9'
+
+services:
+
+  dotnetapi:
+    #    build: .
+    image: dotnetapi:1.0.0
+    ports:
+      - 5000:80
+      - 5001:443
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=password
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+    #    ports:
+    #      #      - "5001:443"
+    #      - "5000:80"
+    #    environment:
+    #      DATABASE_URL: "Server=localhost;Port=5432;Database=solardotnetbackend;User ID=postgres;Password=password;"
+    #      ASPNETCORE_ENVIRONMENT: Production
+    #      ASPNETCORE_URLS: https://+:443;http://+:80
+    #      ASPNETCORE_Kestrel__Certificates__Default__Password: Test1234!
+    #      ASPNETCORE_Kestrel__Certificates__Default__Path: ./cert.pfx
+    #          - ASPNETCORE_URLS=https://+:443;http://+:80
+    #      - ASPNETCORE_Kestrel__Certificates__Default__Password=mypass123
+    #      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/cert.pfx
+    #      - ASPNETCORE_Environment=Production
+    #      - CustomersApi_Database__ConnectionString=Server=db;Port=5432;Database=mydb;User ID=course;Password=changeme;
+    depends_on:
+      postgres:
+        condition: service_started
+  #      postgres:
+  #        condition: service_healthy
+  #      - postgres
+  #        condition: service_started
+  
+  
+  postgres:
+    image: 'postgres:14.0'
+    ports:
+      - "5432:5432"
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: solardotnetbackend
+    healthcheck:
+      test: "pg_isready --username=postgres && psql --username=postgres --list"
+      timeout: 10s
+      retries: 20
+    volumes:
+      - ./db-data/postgres/:/var/lib/postgresql/data/
+
+#  db:
+#    image: postgres
+#    restart: always
+#    environment:
+#      POSTGRES_USER: postgres
+#      POSTGRES_PASSWORD: password
+#      POSTGRES_DB: solardotnetbackend
+#    #    environment:
+#    #      - POSTGRES_USER=course
+#    #      - POSTGRES_PASSWORD=changeme
+#    #      - POSTGRES_DB=mydb
+#    ports:
+#      - '5432:5432'

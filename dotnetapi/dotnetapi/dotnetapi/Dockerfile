@@ -5,7 +5,7 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
-COPY ["dotnetapi/dotnetapi.csproj", "dotnetapi/"]
+COPY ["./dotnetapi.csproj", "dotnetapi/"]
 RUN dotnet restore "dotnetapi/dotnetapi.csproj"
 COPY . .
 WORKDIR "/src/dotnetapi"

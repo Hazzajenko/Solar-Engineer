@@ -11,6 +11,7 @@ using dotnetapi.Services.Paths;
 using dotnetapi.Services.Projects;
 using dotnetapi.Services.Strings;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace dotnetapi.Extensions;
 
@@ -33,7 +34,21 @@ public static class ApplicationServiceExtensions
 
         services.AddDbContext<DataContext>(options =>
         {
-            var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            string? connStr;
+            // connStr = config.GetConnectionString("PostgresConnection") ?? throw new InvalidOperationException();
+
+            /*options.UseNpgsql(
+                "Server=localhost;Port=5432;Database=solardotnetbackend;User ID=postgres;Password=password;");*/
+
+            var connectionString = config.GetConnectionString("PostgresConnection");
+            Console.WriteLine(connectionString);
+            var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+            Console.WriteLine(databaseUrl);
+            connStr = string.IsNullOrEmpty(databaseUrl) ? connectionString : BuildConnectionString(databaseUrl);
+            options.UseNpgsql(connStr);
+
+            /*var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            Console.WriteLine(env);
 
             string connStr;
             if (env == "Development")
@@ -58,8 +73,25 @@ public static class ApplicationServiceExtensions
                     $"Server={pgHost};Port={pgPort};User Id={pgUser};Password={pgPass};Database={pgDb}; SSL Mode=Require; Trust Server Certificate=true";
             }
 
-            options.UseNpgsql(connStr);
+            options.UseNpgsql(connStr);*/
         });
         return services;
+    }
+
+    private static string? BuildConnectionString(string databaseUrl)
+    {
+        var databaseUri = new Uri(databaseUrl);
+        var userInfo = databaseUri.UserInfo.Split(':');
+        var builder = new NpgsqlConnectionStringBuilder
+        {
+            Host = databaseUri.Host,
+            Port = databaseUri.Port,
+            Username = userInfo[0],
+            Password = userInfo[1],
+            Database = databaseUri.LocalPath.TrimStart('/'),
+            SslMode = SslMode.Require,
+            TrustServerCertificate = true
+        };
+        return builder.ToString();
     }
 }
