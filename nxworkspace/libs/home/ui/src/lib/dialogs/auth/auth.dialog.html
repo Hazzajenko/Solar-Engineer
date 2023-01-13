@@ -16,9 +16,11 @@
         </div>
       </ng-container>
     </div>
-
-
   </div>
+  <div class='text-sm text-red-500' *ngFor='let usernameErrors of usernameErrors$ | async'>
+    {{usernameErrors.errorMessage}}
+  </div>
+
   <div class='form-floating mb-3'>
     <label id='password'>Password</label>
     <input type='password' class='block h-12 w-full rounded-sm mt-2 text-sm font-light bg-gray-300' placeholder=''
@@ -33,7 +35,16 @@
         </div>
       </ng-container>
     </div>
+
   </div>
+  <div class='text-sm text-red-500' *ngFor='let passwordErrors of passwordErrors$ | async'>
+    {{passwordErrors.errorMessage}}
+  </div>
+  <!--
+    <div class='text-sm'>
+      Password needs at least one number and one capital letter
+    </div>
+  -->
 
 </form>
 <mat-dialog-actions align='end'>
@@ -42,3 +53,5 @@
     {{login ? 'Login' : 'Register'}}
   </button>
 </mat-dialog-actions>
+<ng-container *ngIf='(user$ | async)| checkUser'>
+</ng-container>

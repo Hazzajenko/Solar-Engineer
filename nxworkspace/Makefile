@@ -62,3 +62,19 @@ story:
 #libs/project-id/data-access
 cache:
 	nx clear-cache
+
+docker-build-client:
+	docker build . -t angularclient:1.0.0
+
+build-nocache:
+	docker build . -t angularclient:1.0.0  --no-cache --pull
+
+
+tag:
+	docker image tag angularclient:1.0.0 hazzajenko/angularclient:1.0.0
+
+push:
+	docker image push hazzajenko/angularclient:1.0.0
+
+ne11w:
+	nx generate @nrwl/angular:library signalr --style=none --directory=shared/data-access --importPath=@shared/data-access/signalr --skipModule --tags=shared:signalr --no-interactive

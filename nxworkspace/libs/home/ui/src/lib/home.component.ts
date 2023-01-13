@@ -13,7 +13,7 @@ import {
   RouterEvent,
   RouterLink,
 } from '@angular/router'
-import { AuthFacade } from '@auth/data-access/facades'
+import { AuthFacade, AuthStoreService } from '@auth/data-access/facades'
 import { ProjectsFacade } from '@projects/data-access/facades'
 import { ProjectsListComponent } from '@projects/feature/projects-list'
 import { UserModel } from '@shared/data-access/models'
@@ -49,6 +49,9 @@ export class HomeComponent {
   private dialog = inject(MatDialog)
   private router = inject(Router)
   private projectsStore = inject(ProjectsFacade)
+  private authStore = inject(AuthStoreService)
+
+  onlineUsers$: any
   routerEvents$ = this.router.events
 
   async authenticate(login: boolean) {
@@ -62,6 +65,13 @@ export class HomeComponent {
     }
 
     this.dialog.open(AuthDialog, dialogConfig)
+
+    const user = await this.authStore.select.user
+    if (user) {
+      this.dialog.closeAll()
+    }
+
+
     /*    // const dialog = this.dialog.open(AuthDialog)
         const result = await firstValueFrom(dialog.afterClosed())
         // if (result instanceof StringModel) {

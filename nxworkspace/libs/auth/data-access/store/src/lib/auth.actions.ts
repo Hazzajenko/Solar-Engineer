@@ -1,6 +1,6 @@
 import { SignInRequest, StorageModel } from '@auth/shared/models'
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
-import { UserModel } from '@shared/data-access/models'
+import { ErrorModel, UserModel } from '@shared/data-access/models'
 
 export const AuthActions = createActionGroup({
   source: 'Auth Service',
@@ -9,6 +9,7 @@ export const AuthActions = createActionGroup({
     'Sign In': props<{ req: SignInRequest }>(),
     'Sign In Success': props<{ user: UserModel; token: string }>(),
     'Sign In Error': props<{ error: string | null }>(),
+    'Sign In Errors': props<{ errors: ErrorModel[] }>(),
     'Sign In With LocalStorage': props<{ userInStorage: StorageModel }>(),
     'Sign In With LocalStorage Success': props<{ userInStorage: StorageModel }>(),
     'Sign In With LocalStorage Error': props<{ error: string | null }>(),

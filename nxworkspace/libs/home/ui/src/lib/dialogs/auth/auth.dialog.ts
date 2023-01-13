@@ -20,6 +20,8 @@ import { StringsService } from '@grid-layout/data-access/services'
 
 import { StringModel } from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
+import { CheckUserPipe } from 'libs/home/ui/src/lib/dialogs/auth/check-user.pipe'
+import { map } from 'rxjs'
 
 @Component({
   selector: 'app-auth-dialog',
@@ -43,6 +45,7 @@ import { ShowHideComponent } from '@shared/ui/show-hide'
     ShowHideComponent,
     NgClass,
     MatCardModule,
+    CheckUserPipe,
   ],
   standalone: true,
 })
@@ -51,9 +54,12 @@ export class AuthDialog {
   loginForm: FormGroup = new FormGroup({
     'username': new FormControl('', Validators.compose([
       Validators.required,
+
     ])),
     'password': new FormControl('', Validators.compose([
       Validators.minLength(5),
+      // Validators.pattern('(?=.*[A-Z])'),
+      // Validators.pattern('(?=.*\\d)'),
       Validators.required,
     ])),
   })
@@ -67,17 +73,32 @@ export class AuthDialog {
   private authFacade = inject(AuthFacade)
   private authStore = inject(AuthStoreService)
   private formBuilder = inject(FormBuilder)
+  authError$ = this.authStore.select.error$
+  authErrorMessages$ = this.authStore.select.errors$
+  usernameErrors$ = this.authStore.select.errors$.pipe(map(
+    errors => errors?.filter(error => error.property === 'Username'),
+  ))
+  passwordErrors$ = this.authStore.select.errors$.pipe(map(
+    errors => errors?.filter(error => error.property === 'Password'),
+  ))
+
+  user$ = this.authStore.select.user$
+  user = this.authStore.select.user
   form = this.formBuilder.group({
     username: ['', Validators.required],
     password: ['', Validators.required],
   })
+  // "Passwords must have at least one uppercase ('A'-'Z')."
+  // ion: "Passwords must have at least one digit ('0'-'9').
   validationMessages = {
     'username': [
       { type: 'required', message: 'Username is required.' },
+
     ],
     'password': [
       { type: 'required', message: 'Password is required.' },
       { type: 'minlength', message: 'Password must be at least 5 characters long.' },
+      // { type: '(?=.*[A-Z])', message: 'Needs uppercase and numbers' },
     ],
   }
   login = true
@@ -107,11 +128,16 @@ export class AuthDialog {
       // await this.authService.register({ username, password })
       this.authStore.dispatch.register({ username, password })
     }
+
+    /*    const isLoggedIn = await this.user
+        if (isLoggedIn) {
+          this.dialogRef.close(true)
+        }*/
     // const result = await this.authService.addSelectedToNew(this.name.value)
     // if (result instanceof StringModel) {
     //   this.dialogRef.close(result)
     //   return
     // }
-    this.dialogRef.close(undefined)
+    // this.dialogRef.close(undefined)
   }
 }

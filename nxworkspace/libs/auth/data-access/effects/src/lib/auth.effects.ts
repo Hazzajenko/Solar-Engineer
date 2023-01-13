@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http'
 import { inject, Injectable } from '@angular/core'
 import { AuthService } from '@auth/data-access/api'
 
@@ -7,6 +8,7 @@ import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { Store } from '@ngrx/store'
 import { ProjectsFacade } from '@projects/data-access/facades'
 import { ProjectsActions } from '@projects/data-access/store'
+import { ErrorModel, ValidationError } from '@shared/data-access/models'
 import { catchError, map, of, switchMap, tap } from 'rxjs'
 
 @Injectable()
@@ -66,7 +68,11 @@ export class AuthEffects {
               token: response.token,
             }),
           ),
-          catchError((error: Error) => of(AuthActions.signInError({ error: error.message }))),
+          catchError((error: Error) => {
+            console.log(error)
+
+            return of(AuthActions.signInError({ error: error.message }))
+          }),
         ),
       ),
     ),
@@ -88,7 +94,26 @@ export class AuthEffects {
               token: response.token,
             }),
           ),
-          catchError((error: Error) => of(AuthActions.signInError({ error: error.message }))),
+          catchError((error: HttpErrorResponse) => {
+            const errors = (error.error as ValidationError[])
+            const usernameErrors = errors.filter(error => error.propertyName === 'Username')
+            const passwordErrors = errors.filter(error => error.propertyName === 'Password')
+            console.log(usernameErrors)
+            console.log(passwordErrors)
+            errors.forEach(error => console.log(error.errorMessage))
+
+            const errorMessages = errors.map(error => {
+              const errorMessage: ErrorModel = {
+                property: error.propertyName,
+                errorMessage: error.errorMessage,
+              }
+              return errorMessage
+            })
+            // error.error.forEach((x: ErrorModel) => console.log(x.errorMessage))
+
+            // return of(AuthActions.signInError({ error: error.message }))
+            return of(AuthActions.signInErrors({ errors: errorMessages }))
+          }),
         ),
       ),
     ),
