@@ -11,7 +11,6 @@
           "AWSSDK.Extensions.NETCore.Setup": "3.7.2",
           "AWSSDK.S3": "3.7.101.36",
           "FluentValidation.AspNetCore": "11.2.2",
-          "Microsoft.AspNetCore.Authentication.Google": "7.0.1",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "7.0.0",
           "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "7.0.0",
           "Microsoft.AspNetCore.Mvc.Versioning": "5.0.0",
@@ -130,14 +129,6 @@
           "lib/netstandard2.0/MessagePack.Annotations.dll": {
             "assemblyVersion": "2.1.0.0",
             "fileVersion": "2.1.90.20873"
-          }
-        }
-      },
-      "Microsoft.AspNetCore.Authentication.Google/7.0.1": {
-        "runtime": {
-          "lib/net7.0/Microsoft.AspNetCore.Authentication.Google.dll": {
-            "assemblyVersion": "7.0.1.0",
-            "fileVersion": "7.0.122.56809"
           }
         }
       },
@@ -798,13 +789,6 @@
       "sha512": "sha512-YnS4qdOMFJuC8TDvXK8ECjWn+hI/B6apwMSgQsiynVXxsvFiiSyun7OXgVT7KxkR8qLinFuASzoG/5zv3kemwQ==",
       "path": "messagepack.annotations/2.1.90",
       "hashPath": "messagepack.annotations.2.1.90.nupkg.sha512"
-    },
-    "Microsoft.AspNetCore.Authentication.Google/7.0.1": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-uAQfuf9r15HVcFNNhmY6X9cvhKP19F7NPuoYaOWA1qRqDWsmv/vy7XPMM2WXhHL+uwOAbgsnYIsQKfY9GvDY+g==",
-      "path": "microsoft.aspnetcore.authentication.google/7.0.1",
-      "hashPath": "microsoft.aspnetcore.authentication.google.7.0.1.nupkg.sha512"
     },
     "Microsoft.AspNetCore.Authentication.JwtBearer/7.0.0": {
       "type": "package",

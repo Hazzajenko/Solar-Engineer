@@ -18,10 +18,18 @@ var builder = WebApplication.CreateBuilder(new WebApplicationOptions
     ContentRootPath = Directory.GetCurrentDirectory()
 });
 
-builder.Services.Configure<ForwardedHeadersOptions>(options =>
+/*{
+    configure.AddFilter("Microsoft.AspNetCore.SignalR", LogLevel.Debug);
+    configure.AddFilter("Microsoft.AspNetCore.Http.Connections", LogLevel.Debug);
+}*/
+
+/*builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
     options.KnownProxies.Add(IPAddress.Parse("10.0.0.100"));
-});
+    options.ForwardedHeaders =
+        ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    // options.
+});*/
 // var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseSerilog((ctx, lc) => lc
@@ -40,6 +48,7 @@ config.AddEnvironmentVariables("dotnetapi_");
     (options=> options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));*/
 
 builder.Services.AddApplicationServices(config);
+// builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddControllers()
     .AddJsonOptions(options => { options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase; });
 /*builder.Services.AddControllers(options => { options.Conventions.Add(new GroupingByNamespaceConvention()); })
@@ -49,11 +58,16 @@ builder.Services.AddCors(options =>
     options.AddPolicy(
         "CorsPolicy",
         policy => policy
+            // .WithOrigins(builder.Configuration.GetValue<string>("AllowedOrigins")!)
             .WithOrigins("http://localhost:8100", "http://localhost:4200", "http://127.0.0.1:5173")
+            // .AllowAnyOrigin()
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials());
 });
+builder.Services.AddSignalR();
+// builder.Services.AddSignalR().AddMessagePackProtocol();
+// builder.Services.AddWebSockets();
 builder.Services.AddSwaggerServices(config);
 
 
@@ -69,50 +83,39 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
 builder.Services.AddAWSService<IAmazonS3>();
 
-// builder.Services.AddSignalR().AddMessagePackProtocol();
+/*builder.Services.AddHsts(options =>
+{
+    options.Preload = true;
+    options.IncludeSubDomains = true;
+    options.MaxAge = TimeSpan.FromDays(60);
+    // options.ExcludedHosts.Add("example.com");
+    // options.ExcludedHosts.Add("www.example.com");
+});
 
+builder.Services.AddHttpsRedirection(options =>
+{
+    options.RedirectStatusCode = (int)HttpStatusCode.TemporaryRedirect;
+    options.HttpsPort = 5001;
+});*/
 
 var app = builder.Build();
 app.UseSerilogRequestLogging();
 // Configure the HTTP request pipeline.
 // var apiVersionDescriptionProvider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
-
+app.UseForwardedHeaders();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwagger();
-    /*app.UseSwaggerUI(config =>
-    {
-        config.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
-        config.SwaggerEndpoint("/swagger/v2/swagger.json", "v2");
-    });*/
-    // app.UseSwagger();
-    /*app.UseSwaggerUI(options =>
-    {
-        foreach (var description in apiVersionDescriptionProvider.ApiVersionDescriptions)
-            options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json",
-                description.GroupName.ToUpperInvariant());
-    });*/
-    /*app.UseSwaggerUI(options =>
-    {
-        foreach (var desc in apiVersionDescriptionProvider.ApiVersionDescriptions)
-        {
-            options.SwaggerEndpoint($"../swagger/{desc.GroupName}/swagger.json", desc.ApiVersion.ToString());
-            options.DefaultModelsExpandDepth(-1);
-            options.DocExpansion(DocExpansion.None);
-        }
-    });*/
-    /*app.UseSwaggerUI(options =>
-    {
-        foreach (var description in apiVersionDescriptionProvider.ApiVersionDescriptions.Reverse())
-            options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json",
-                description.GroupName.ToUpperInvariant());
-    });*/
+    app.UseSwaggerUI();
 }
 
-app.UseStaticFiles();
+app.UseRouting();
 
-app.UseHttpsRedirection();
+// app.UseHsts();
+// app.UseStaticFiles();
+
+// app.UseHttpsRedirection();
+
 
 app.UseCors("CorsPolicy");
 
@@ -131,7 +134,24 @@ app.UseMiddleware<ValidationExceptionMiddleware>();
 // app.UseStaticFiles();
 
 app.MapControllers();
+
+// app.UseWebSockets();
+app.UseWebSockets(new WebSocketOptions
+{
+    KeepAliveInterval = TimeSpan.FromSeconds(120)
+});
+// app.MapHub<UserHub>("/user");
 app.MapHub<ConnectionsHub>("hubs/connections");
+// app.MapHub<ViewsHub>("hubs/views");
+
+
+/*app.UseEndpoints(
+    configure =>
+    {
+        configure.MapHub<ConnectionsHub>("/hubs/connections");
+        configure.MapControllers();
+        
+    });*/
 
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 using var scope = app.Services.CreateScope();

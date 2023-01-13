@@ -117,7 +117,7 @@ export class AuthDialog {
   async onSubmit() {
     const username = this.loginForm.get('username')?.value
     const password = this.loginForm.get('password')?.value
-    console.log(username, password)
+    // console.log(username, password)
     if (!username) return console.error('!this.name.value')
     if (!password) return console.error('!this.password.value')
     // this.authFacade.register({ username, password })

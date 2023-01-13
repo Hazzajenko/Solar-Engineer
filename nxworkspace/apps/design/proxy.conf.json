@@ -7,5 +7,15 @@
     "pathRewrite": {
       "^/api": ""
     }
+  },
+  "/ws": {
+    "target": "http://localhost:5000",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "ws": true,
+    "pathRewrite": {
+      "^/ws": ""
+    }
   }
 }

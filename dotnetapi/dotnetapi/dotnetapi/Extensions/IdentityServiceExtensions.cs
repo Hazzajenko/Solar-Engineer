@@ -20,7 +20,14 @@ public static class IdentityServiceExtensions
             .AddEntityFrameworkStores<DataContext>();
 
 
-        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        // services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        services.AddAuthentication(options =>
+            {
+                // Identity made Cookie authentication the default.
+                // However, we want JWT Bearer Auth to be the default.
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
             /*.AddGoogle(opts =>
             {
                 opts.ClientId = config["Authentication:Google:ClientId"] ?? string.Empty;
@@ -40,8 +47,10 @@ public static class IdentityServiceExtensions
                     ValidateAudience = false
                 };
 
-                /*options.Events = new JwtBearerEvents {
-                    OnMessageReceived = context => {
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
                         var accessToken = context.Request.Query["access_token"];
 
                         var path = context.HttpContext.Request.Path;
@@ -51,7 +60,7 @@ public static class IdentityServiceExtensions
 
                         return Task.CompletedTask;
                     }
-                };*/
+                };
             });
 
 

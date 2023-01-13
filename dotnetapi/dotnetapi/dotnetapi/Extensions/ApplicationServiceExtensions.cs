@@ -9,7 +9,10 @@ using dotnetapi.Services.Links;
 using dotnetapi.Services.Panels;
 using dotnetapi.Services.Paths;
 using dotnetapi.Services.Projects;
+using dotnetapi.Services.SignalR;
 using dotnetapi.Services.Strings;
+using dotnetapi.SignalR;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 
@@ -19,6 +22,9 @@ public static class ApplicationServiceExtensions
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
     {
+        services.AddSingleton<ConnectionsTracker>();
+        services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
+
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IProjectsService, ProjectsService>();
         services.AddScoped<IProjectsRepository, ProjectsRepository>();

@@ -69,10 +69,14 @@
     </ng-template>
   </div>
 </div>
+<ng-container *ngIf='onlineUsers$ | async as onlineUsers'>
+  <div *ngFor='let user of onlineUsers'>
+    {{user.toString()}}
+  </div>
+</ng-container>
 <ng-container *ngIf='routerEvents$ | async as routerEvents'>
   <ng-container *ngIf='instanceOfNavigationStart(routerEvents)'>
     <mat-spinner></mat-spinner>
-
   </ng-container>
 </ng-container>
 <!--</div>-->
