@@ -21,14 +21,14 @@ public static class IdentityServiceExtensions
 
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddGoogle(opts =>
+            /*.AddGoogle(opts =>
             {
                 opts.ClientId = config["Authentication:Google:ClientId"] ?? string.Empty;
                 opts.ClientSecret = config["Authentication:Google:ClientSecret"] ?? string.Empty;
                 // opts.ClientId = "717469225962-3vk00r8tglnbts1cgc4j1afqb358o8nj.apps.googleusercontent.com";
                 // opts.ClientSecret = "babQzWPLGwfOQVi0EYR-7Fbb";
                 opts.SignInScheme = IdentityConstants.ExternalScheme;
-            })
+            })*/
             .AddJwtBearer(options =>
             {
                 options.TokenValidationParameters = new TokenValidationParameters

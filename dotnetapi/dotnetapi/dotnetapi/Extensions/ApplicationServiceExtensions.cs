@@ -42,9 +42,13 @@ public static class ApplicationServiceExtensions
 
             var connectionString = config.GetConnectionString("PostgresConnection");
             Console.WriteLine(connectionString);
-            var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
-            Console.WriteLine(databaseUrl);
-            connStr = string.IsNullOrEmpty(databaseUrl) ? connectionString : BuildConnectionString(databaseUrl);
+            /*var databaseUrl =
+                "Server=postgres-solarengineer-do-user-11630140-0.b.db.ondigitalocean.com;Port=25060;Database=defaultdb;User ID=doadmin;Password=AVNS_eIDAV_jplzcmCdgCWV6;";
+            // var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+            Console.WriteLine(databaseUrl);*/
+            var Host = Environment.GetEnvironmentVariable("DATABASE_HOST")!;
+            connStr = string.IsNullOrEmpty(Host) ? connectionString : BuildConnectionString(Host);
+            Console.WriteLine(connStr);
             options.UseNpgsql(connStr);
 
             /*var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
@@ -80,18 +84,32 @@ public static class ApplicationServiceExtensions
 
     private static string? BuildConnectionString(string databaseUrl)
     {
-        var databaseUri = new Uri(databaseUrl);
+        /*var databaseUri = new Uri(databaseUrl);
+        Console.WriteLine(databaseUri);
         var userInfo = databaseUri.UserInfo.Split(':');
+        Console.WriteLine(userInfo);*/
+        var Host = Environment.GetEnvironmentVariable("DATABASE_HOST")!;
+        Console.WriteLine(Host);
+        var Port = Environment.GetEnvironmentVariable("DATABASE_PORT")!;
+        Console.WriteLine(Port);
+        var Username = Environment.GetEnvironmentVariable("DATABASE_USERNAME")!;
+        Console.WriteLine(Username);
+        var Password = Environment.GetEnvironmentVariable("DATABASE_PASSWORD")!;
+        Console.WriteLine(Password);
+        var Database = Environment.GetEnvironmentVariable("DATABASE_DATABASE")!;
+        Console.WriteLine(Database);
+
         var builder = new NpgsqlConnectionStringBuilder
         {
-            Host = databaseUri.Host,
-            Port = databaseUri.Port,
-            Username = userInfo[0],
-            Password = userInfo[1],
-            Database = databaseUri.LocalPath.TrimStart('/'),
+            Host = Host,
+            Port = int.Parse(Port),
+            Username = Username,
+            Password = Password,
+            Database = Database,
             SslMode = SslMode.Require,
             TrustServerCertificate = true
         };
+        Console.WriteLine(builder);
         return builder.ToString();
     }
 }

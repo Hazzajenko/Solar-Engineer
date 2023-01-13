@@ -14,7 +14,11 @@ public abstract class Seed
 
         var userData = await File.ReadAllTextAsync("Data/user-data.json");
         var users = JsonSerializer.Deserialize<List<AppUser>>(userData);
-        if (users == null) return;
+        Console.WriteLine(users);
+        if (users != null)
+            foreach (var user in users)
+                Console.WriteLine(user);
+        // if (users == null) return;
 
         var roles = new List<AppRole>
         {
@@ -24,19 +28,19 @@ public abstract class Seed
 
         foreach (var role in roles) await roleManager.CreateAsync(role);
 
-        foreach (var user in users)
+        /*foreach (var user in users)
         {
             user.UserName = user.UserName?.ToLower();
             await userManager.CreateAsync(user, "Pa$$w0rd");
             await userManager.AddToRoleAsync(user, "User");
-        }
+        }*/
 
-        var admin = new AppUser
+        /*var admin = new AppUser
         {
             UserName = "admin"
-        };
+        };*/
 
-        await userManager.CreateAsync(admin, "Pa$$w0rd");
-        await userManager.AddToRolesAsync(admin, new[] { "Admin", "Moderator" });
+        // await userManager.CreateAsync(admin, "Pa$$w0rd");
+        // await userManager.AddToRolesAsync(admin, new[] { "Admin", "Moderator" });
     }
 }

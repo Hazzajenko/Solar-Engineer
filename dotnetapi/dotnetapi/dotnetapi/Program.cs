@@ -4,6 +4,7 @@ using Amazon.S3;
 using dotnetapi.Data;
 using dotnetapi.Extensions;
 using dotnetapi.Models.Entities;
+using dotnetapi.SignalR;
 using dotnetapi.Validation;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
@@ -130,6 +131,7 @@ app.UseMiddleware<ValidationExceptionMiddleware>();
 // app.UseStaticFiles();
 
 app.MapControllers();
+app.MapHub<ConnectionsHub>("hubs/connections");
 
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 using var scope = app.Services.CreateScope();

@@ -35,3 +35,33 @@ fullbuild:
 	
 up:
 	docker-compose -f docker-compose-full.yml up
+
+ba:
+	docker run -it --rm -d -env ASPNETCORE_ENVIRONMENT = 'Production' \
+    -env DATABASE_HOST = 'postgres-solarengineer-do-user-11630140-0.b.db.ondigitalocean.com' \
+    -env DATABASE_PORT = '25060' \
+    -env DATABASE_USERNAME = 'doadmin' \
+    -env DATABASE_PASSWORD = 'AVNS_eIDAV_jplzcmCdgCWV6' \
+    -env DATABASE_DATABASE = 'defaultdb' \
+    -p 5000:80 \
+    --name dotnetapips dotnetapi:1.0.0
+    
+    
+bammm:
+	docker run -it --rm -d -p 5000:80 --env-file=.env --name dotnetapienv dotnetapi:1.0.0
+
+envrun:
+	docker run -it --rm -d -p 5000:80 --env-file=.env --name dotnetapienv dotnetapi:1.0.1
+
+tag:
+	docker image tag dotnetapi:1.0.0 hazzajenko/dotnetapi:1.0.0
+
+tag1:
+	docker image tag dotnetapi:1.0.1 hazzajenko/dotnetapi:1.0.1
+
+push:
+	docker image push hazzajenko/dotnetapi:1.0.0
+
+push1:
+	docker image push hazzajenko/dotnetapi:1.0.1
+#    docker run -it --rm -d -p 700:80 --name dotty dotnetapi:1.0.0 

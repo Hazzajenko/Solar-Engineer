@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using dotnetapi.Contracts.Requests.Auth;
 using dotnetapi.Mapping;
 using dotnetapi.Models.Entities;
 using dotnetapi.Services.Auth;
+using dotnetapi.Validation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -103,7 +105,7 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     [Authorize]
     [AllowAnonymous]
-    public async Task<IActionResult> Login(SigninRequest request)
+    public async Task<IActionResult> Login(AuthRequest request)
     {
         var user = await _userManager.Users
             .SingleOrDefaultAsync(x => x.UserName == request.Username.ToLower());
@@ -117,7 +119,7 @@ public class AuthController : ControllerBase
         var result = await _signInManager
             .CheckPasswordSignInAsync(user, request.Password, false);
 
-        if (result.IsNotAllowed)
+        if (!result.Succeeded)
         {
             _logger.LogError("Unauthorized, Password is invalid");
             return Unauthorized();
@@ -137,15 +139,19 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     [Authorize]
     [AllowAnonymous]
-    public async Task<IActionResult> Register(SignupRequestV2 request)
+    public async Task<IActionResult> Register(AuthRequest request)
     {
+        var validator = new UserRequestValidator();
+        var validResult = await validator.ValidateAsync(request);
+        if (!validResult.IsValid) return BadRequest(validResult.Errors);
+
         if (await UserExists(request.Username))
         {
             _logger.LogError("Bad request, {Username} is taken", request.Username);
             return Conflict("Username is taken");
         }
 
-        var appUser = request.ToEntityV2();
+        var appUser = request.ToEntityV3();
         appUser.UserName = request.Username.ToLower();
 
         var result = await _userManager.CreateAsync(appUser, request.Password);

@@ -9,12 +9,27 @@
     }
   },
   "profiles": {
-    "http": {
+    "production": {
       "commandName": "Project",
       "dotnetRunMessages": true,
-      "launchBrowser": true,
+      "launchBrowser": false,
       "launchUrl": "swagger",
-      "applicationUrl": "http://localhost:5047",
+      "applicationUrl": "http://localhost:5000",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Production",
+        "DATABASE_HOST": "postgres-solarengineer-do-user-11630140-0.b.db.ondigitalocean.com",
+        "DATABASE_PORT": "25060",
+        "DATABASE_USERNAME": "doadmin",
+        "DATABASE_PASSWORD": "AVNS_eIDAV_jplzcmCdgCWV6",
+        "DATABASE_DATABASE": "defaultdb"
+      }
+    },
+    "development": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "launchUrl": "swagger",
+      "applicationUrl": "http://localhost:5000",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
