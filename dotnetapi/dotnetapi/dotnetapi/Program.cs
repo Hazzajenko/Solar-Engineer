@@ -1,5 +1,5 @@
-using System.Net;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Amazon.S3;
 using dotnetapi.Data;
 using dotnetapi.Extensions;
@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using Serilog.Events;
 using Serilog.Sinks.SystemConsole.Themes;
 
 var builder = WebApplication.CreateBuilder(new WebApplicationOptions
@@ -32,10 +33,27 @@ var builder = WebApplication.CreateBuilder(new WebApplicationOptions
 });*/
 // var builder = WebApplication.CreateBuilder(args);
 
+var configuration = new ConfigurationBuilder()
+    .AddJsonFile("appsettings.json")
+    .Build();
+
 builder.Host.UseSerilog((ctx, lc) => lc
-    .WriteTo.Console(theme: SystemConsoleTheme.Literate)
+    // .WriteTo.Console(theme: SystemConsoleTheme.Literate)
+    .WriteTo.File("log.txt")
+    .WriteTo.Console(
+        theme: SystemConsoleTheme.Literate
+        // outputTemplate: "{Timestamp:HH:mm} [{Level}] ({ThreadId}) {Message}{NewLine}{Exception}"
+    )
+    // .ReadFrom.Configuration(configuration));
     .ReadFrom.Configuration(ctx.Configuration));
 
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Debug()
+    .WriteTo.File("log.txt")
+    .WriteTo.Console(LogEventLevel.Information)
+    .CreateLogger();
+
+Log.Information("test");
 /*Log.Logger = new LoggerConfiguration()
     .CreateLogger();*/
 
@@ -50,7 +68,11 @@ config.AddEnvironmentVariables("dotnetapi_");
 builder.Services.AddApplicationServices(config);
 // builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddControllers()
-    .AddJsonOptions(options => { options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase; });
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    });
 /*builder.Services.AddControllers(options => { options.Conventions.Add(new GroupingByNamespaceConvention()); })
     .AddJsonOptions(options => { options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase; });*/
 builder.Services.AddCors(options =>
@@ -65,7 +87,8 @@ builder.Services.AddCors(options =>
             .AllowAnyHeader()
             .AllowCredentials());
 });
-builder.Services.AddSignalR();
+// builder.Services.AddSignalR();
+builder.Services.AddSignalR(options => { options.DisableImplicitFromServicesParameters = true; });
 // builder.Services.AddSignalR().AddMessagePackProtocol();
 // builder.Services.AddWebSockets();
 builder.Services.AddSwaggerServices(config);

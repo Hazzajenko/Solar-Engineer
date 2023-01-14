@@ -24,6 +24,7 @@ public static class ApplicationServiceExtensions
     {
         services.AddSingleton<ConnectionsTracker>();
         services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
+        services.AddSingleton<IConnectionsService, ConnectionsService>();
 
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IProjectsService, ProjectsService>();
@@ -85,6 +86,10 @@ public static class ApplicationServiceExtensions
 
             options.UseNpgsql(connStr);*/
         });
+
+        services.AddDbContext<InMemoryDatabase>
+            (o => o.UseInMemoryDatabase("InMemoryDatabase"));
+
         return services;
     }
 
