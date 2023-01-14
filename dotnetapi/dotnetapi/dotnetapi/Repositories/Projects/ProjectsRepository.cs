@@ -1,5 +1,6 @@
 ﻿using dotnetapi.Data;
 using dotnetapi.Models.Entities;
+using dotnetapi.Services.Cache;
 using Microsoft.EntityFrameworkCore;
 
 namespace dotnetapi.Repositories.Projects;
@@ -7,10 +8,12 @@ namespace dotnetapi.Repositories.Projects;
 public class ProjectsRepository : IProjectsRepository
 {
     private readonly DataContext _context;
+    private readonly ICacheService _cacheService;
 
-    public ProjectsRepository(DataContext context)
+    public ProjectsRepository(DataContext context, ICacheService cacheService)
     {
         _context = context;
+        _cacheService = cacheService;
     }
 
     public async Task<Project?> GetProjectByIdAsync(int projectId)
@@ -20,7 +23,11 @@ public class ProjectsRepository : IProjectsRepository
 
     public async Task<Project> CreateProjectAsync(AppUserProject request)
     {
-        await _context.AppUserProjects.AddAsync(request);
+        var addedProject = await _context.AppUserProjects.AddAsync(request);
+        
+        /*var expiryTime = DateTimeOffset.Now.AddSeconds(30);
+        _cacheService.SetData<AppUserProject>($"project{addedProject.Entity.Id}", addedProject.Entity, expiryTime);*/
+        
         await _context.SaveChangesAsync();
         return request.Project;
     }
@@ -53,6 +60,9 @@ public class ProjectsRepository : IProjectsRepository
             .SingleOrDefaultAsync();
         if (projectToDelete is null) return false;
         var delete = _context.Projects.Remove(projectToDelete);
+        _cacheService.RemoveData($"project{request.Id}");
+
+        await _context.SaveChangesAsync();
 
         return delete.State == EntityState.Deleted;
     }

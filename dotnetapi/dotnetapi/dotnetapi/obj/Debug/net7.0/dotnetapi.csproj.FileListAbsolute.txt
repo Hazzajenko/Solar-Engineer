@@ -77,3 +77,5 @@ C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\bin\Debug
 C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\bin\Debug\net7.0\Microsoft.AspNetCore.Mvc.Versioning.dll
 C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\bin\Debug\net7.0\Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer.dll
 C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.InMemory.dll
+C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\bin\Debug\net7.0\Pipelines.Sockets.Unofficial.dll
+C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\bin\Debug\net7.0\StackExchange.Redis.dll

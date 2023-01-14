@@ -4,8 +4,10 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace dotnetapi.Data.Config;
 
-public class AppUserConfig : IEntityTypeConfiguration<AppUser> {
-    public void Configure(EntityTypeBuilder<AppUser> builder) {
+public class AppUserConfig : IEntityTypeConfiguration<AppUser>
+{
+    public void Configure(EntityTypeBuilder<AppUser> builder)
+    {
         builder.HasMany(ur => ur.UserRoles)
             .WithOne(u => u.User)
             .HasForeignKey(ur => ur.UserId)
@@ -15,5 +17,10 @@ public class AppUserConfig : IEntityTypeConfiguration<AppUser> {
             .WithOne(u => u.AppUser)
             .HasForeignKey(ur => ur.AppUserId)
             .IsRequired();
+
+        /*builder.HasMany(ur => ur.Connections)
+            .WithOne(u => u.AppUser)
+            .HasForeignKey(ur => ur.AppUserId)
+            .IsRequired();*/
     }
 }

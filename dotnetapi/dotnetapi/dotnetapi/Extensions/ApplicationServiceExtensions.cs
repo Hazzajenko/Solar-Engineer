@@ -5,6 +5,7 @@ using dotnetapi.Repositories.Paths;
 using dotnetapi.Repositories.Projects;
 using dotnetapi.Repositories.Strings;
 using dotnetapi.Services.Auth;
+using dotnetapi.Services.Cache;
 using dotnetapi.Services.Links;
 using dotnetapi.Services.Panels;
 using dotnetapi.Services.Paths;
@@ -25,6 +26,8 @@ public static class ApplicationServiceExtensions
         services.AddSingleton<ConnectionsTracker>();
         services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
         services.AddSingleton<IConnectionsService, ConnectionsService>();
+
+        services.AddScoped<ICacheService, CacheService>();
 
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IProjectsService, ProjectsService>();

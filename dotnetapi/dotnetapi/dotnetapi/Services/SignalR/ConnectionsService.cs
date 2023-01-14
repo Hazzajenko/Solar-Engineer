@@ -22,7 +22,7 @@ public class ConnectionsService : IConnectionsService
         using var scope = _serviceScopeFactory.CreateScope();
         await using var context = scope.ServiceProvider.GetService<InMemoryDatabase>();
         if (context is null) return false;
-        
+
         var userConnection = await context.UserConnections
             .Where(x => x.UserId == userId)
             .SingleOrDefaultAsync();
@@ -34,50 +34,52 @@ public class ConnectionsService : IConnectionsService
                 UserId = userId,
                 ConnectionId = connectionId
             });
+            return isOnline;
         }
-        else
+
+        var list = new List<WebConnection>();
+        list.Add(new WebConnection
         {
-            var list = new List<WebConnection>();
-            list.Add(new WebConnection
-            {
-                UserId = userId,
-                ConnectionId = connectionId
-            });
-            var connection = new UserConnection
-            {
-                UserId = userId,
-                Username = username,
-                LoggedOn = DateTime.Now,
-                Connections = list
-            };
-            context.UserConnections.Add(connection);
-            // connection.ConnectionIds.Add(connectionId);
-            // OnlineConnections.Add(username, connection);
-            isOnline = true;
-        }
+            UserId = userId,
+            ConnectionId = connectionId
+        });
+        var connection = new UserConnection
+        {
+            UserId = userId,
+            Username = username,
+            LoggedOn = DateTime.Now,
+            Connections = list
+        };
+        context.UserConnections.Add(connection);
+
+        isOnline = true;
+
 
         await context.SaveChangesAsync();
 
         return isOnline;
     }
-    
-    /*public Task<bool> UserDisconnected(string username, string connectionId)
+
+    public async Task<bool> UserDisconnected(string username, string connectionId)
     {
         var isOffline = false;
-        lock (OnlineUsers)
-        {
-            if (!OnlineUsers.ContainsKey(username)) return Task.FromResult(isOffline);
+        using var scope = _serviceScopeFactory.CreateScope();
+        await using var context = scope.ServiceProvider.GetService<InMemoryDatabase>();
+        if (context is null) return false;
 
-            OnlineUsers[username].Remove(connectionId);
-            if (OnlineUsers[username].Count == 0)
-            {
-                OnlineUsers.Remove(username);
-                isOffline = true;
-            }
-        }
+        var userConnection = await context.UserConnections
+            .Where(x => x.Username == username)
+            .SingleOrDefaultAsync();
 
-        return Task.FromResult(isOffline);
-    }*/
+        if (userConnection is null) return isOffline;
+
+        context.UserConnections.Remove(userConnection);
+        await context.SaveChangesAsync();
+
+        isOffline = true;
+
+        return isOffline;
+    }
 
 
     private static ValidationFailure[] GenerateValidationError(string message)

@@ -26,17 +26,15 @@ public class ConnectionId
 public class UserConnection
 {
     [Key] public int UserId { get; set; }
-
     public string Username { get; set; } = default!;
     public DateTime LoggedOn { get; set; } = DateTime.Now;
-
     public List<WebConnection> Connections { get; set; } = new();
-    // public ConnectionId[] ConnectionIds { get; set; }
 }
 
 public class WebConnection
 {
-    [Key] public int UserId { get; set; }
-
+    [Key] public int Id { get; set; }
+    public int UserId { get; set; }
+    public UserConnection User { get; set; } = default!;
     public string ConnectionId { get; set; } = default!;
 }

@@ -77,25 +77,26 @@ public class ConnectionsHub : Hub
             await Clients.Others.SendAsync("UserIsOnline", connectedUser);
         }
 
-        var connecs = _context.UserConnections.Include(x => x.Connections).Select(x => x.ToUsernameDto()).ToListAsync();
-        // Console.Write(connecs.Result);
-        /*var connecs = _context.Connections.Include(x => x.)
-            .ToListAsync();*/
-        var json = JsonSerializer.Serialize(connecs.Result);
-        Console.Write(json);
-        // var currentUsers = await _tracker.GetOnlineUsersV2();
-        // var currentUsers = await _tracker.GetOnlineUsersV3();
+        var userConnections = _context.UserConnections.Include(x => x.Connections).Select(x => x.ToUsernameDto())
+            .ToListAsync();
 
-        // Console.WriteLine(currentUsers);
-        await Clients.Caller.SendAsync("GetOnlineUsers", connecs.Result);
+        var json = JsonSerializer.Serialize(userConnections.Result);
+        Console.Write(json);
+
+        await Clients.Caller.SendAsync("GetOnlineUsers", userConnections.Result);
     }
 
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
-        var isOffline = await _tracker.UserDisconnected(Context.User!.GetUsername(), Context.ConnectionId);
+        var isOffline = await _connectionsService.UserDisconnected(Context.User!.GetUsername(), Context.ConnectionId);
+
+        var disconnectedUser = new UserConnectionDto
+        {
+            Username = Context.User!.GetUsername()
+        };
 
         if (isOffline)
-            await Clients.Others.SendAsync("UserIsOffline", Context.User!.GetUsername());
+            await Clients.Others.SendAsync("UserIsOffline", disconnectedUser);
 
         await base.OnDisconnectedAsync(exception);
     }

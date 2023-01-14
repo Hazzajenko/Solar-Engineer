@@ -20,20 +20,23 @@ public class InMemoryDatabase : DbContext
             .HasKey(x => x.UserId);
 
         modelBuilder.Entity<WebConnection>()
-            .HasKey(x => x.UserId);
-        // .HasNoKey();
-        /*modelBuilder.Entity<UserConnection>()
-            .HasMany<ConnectionId>(x => x.ConnectionIds)
-            .WithOne(x => x.UserConnection)
-            .HasForeignKey(ur => ur.UserConnectionId)
-            .IsRequired();
-
-        modelBuilder.Entity<ConnectionId>()
-            .HasOne(x => x.UserConnection)
-            .WithMany(x => x.ConnectionIds)
-            .HasForeignKey(ur => ur.Id)
-            .IsRequired();*/
-        ;
+            .HasOne<UserConnection>(x => x.User)
+            .WithMany(x => x.Connections)
+            .HasForeignKey(x => x.UserId)
+            // .HasKey(x => x.Id);
+            // .HasNoKey();
+            /*modelBuilder.Entity<UserConnection>()
+                .HasMany<ConnectionId>(x => x.ConnectionIds)
+                .WithOne(x => x.UserConnection)
+                .HasForeignKey(ur => ur.UserConnectionId)
+                .IsRequired();
+    
+            modelBuilder.Entity<ConnectionId>()
+                .HasOne(x => x.UserConnection)
+                .WithMany(x => x.ConnectionIds)
+                .HasForeignKey(ur => ur.Id)
+                .IsRequired();*/
+            ;
 
         // modelBuilder.Entity<ConnectionId>()
         //     .HasOne(ur => ur.AppUser)

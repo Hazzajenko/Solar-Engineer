@@ -3,6 +3,7 @@ using dotnetapi.Contracts.Responses;
 using dotnetapi.Mapping;
 using dotnetapi.Models.Dtos.Projects;
 using dotnetapi.Models.Entities;
+using dotnetapi.Services.Cache;
 using dotnetapi.Services.Links;
 using dotnetapi.Services.Panels;
 using dotnetapi.Services.Projects;
@@ -24,11 +25,13 @@ public class ProjectsController : ControllerBase
     private readonly IProjectsService _projectsService;
     private readonly IStringsService _stringsService;
     private readonly UserManager<AppUser> _userManager;
+    private readonly ICacheService _cacheService;
 
 
     public ProjectsController(
         ILogger<ProjectsController> logger,
         UserManager<AppUser> userManager,
+        ICacheService cacheService,
         IProjectsService projectsService,
         IPanelsService panelsService,
         IStringsService stringsService,
@@ -37,6 +40,7 @@ public class ProjectsController : ControllerBase
     {
         _logger = logger;
         _userManager = userManager;
+        _cacheService = cacheService;
         _projectsService = projectsService;
         _panelsService = panelsService;
         _stringsService = stringsService;
@@ -57,6 +61,9 @@ public class ProjectsController : ControllerBase
         var appUserProject = request.ToAppUserProject(user);
 
         var projectDto = await _projectsService.CreateProjectAsync(appUserProject);
+        
+        // var expiry
+        
         var result = new OneProjectResponse
         {
             Project = projectDto
