@@ -1,0 +1,21 @@
+<ng-container *ngrxLet='user$ | async as user'>
+  <mat-toolbar class='absolute'>
+    <button (click)='toggleMenu()' mat-icon-button class='example-icon' aria-label='Example icon-button with menu icon'>
+      <mat-icon>menu</mat-icon>
+    </button>
+    <span *ngIf='user'>{{user.username}}</span>
+
+    <!--  <span> SolarEngineer v0.0.1 By Harry Jenkins</span>
+      <span class='example-spacer'></span>
+      <button mat-icon-button class='example-icon favorite-icon' aria-label='Example icon-button with heart icon'>
+        <mat-icon>favorite</mat-icon>
+      </button>
+      <button mat-icon-button class='example-icon' aria-label='Example icon-button with share icon'>
+        <mat-icon>share</mat-icon>
+      </button>-->
+  </mat-toolbar>
+</ng-container>
+<!--
+<div class='absolute left-1 top-1 z-10'>
+  SolarEngineer v0.0.1 By Harry Jenkins
+</div>-->

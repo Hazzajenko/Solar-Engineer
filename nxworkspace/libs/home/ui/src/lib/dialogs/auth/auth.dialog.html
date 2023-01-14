@@ -40,6 +40,27 @@
   <div class='text-sm text-red-500' *ngFor='let passwordErrors of passwordErrors$ | async'>
     {{passwordErrors.errorMessage}}
   </div>
+
+  <div class='flex flex-col items-center content-center'>
+    <ng-container *ngIf='login else register'>
+
+      <p>
+        Dont have an account?
+      </p>
+      <button (click)='toggleLogin()' mat-raised-button color='primary' class='w-full'>Register</button>
+
+    </ng-container>
+    <ng-template #register>
+
+      <p>
+        Already have an account?
+      </p>
+      <button (click)='toggleLogin()' mat-raised-button color='primary'>Login</button>
+
+    </ng-template>
+  </div>
+
+
   <!--
     <div class='text-sm'>
       Password needs at least one number and one capital letter
@@ -47,11 +68,17 @@
   -->
 
 </form>
-<mat-dialog-actions align='end'>
+<!--<div class='flex flex-row'>-->
+<!--  <mat-dialog-actions align='start'>
+
+  </mat-dialog-actions>-->
+<mat-dialog-actions align='center'>
   <button mat-button mat-dialog-close='true'>Cancel</button>
-  <button (click)='onSubmit()' cdkFocusInitial mat-button>
+  <button color='primary' (click)='onSubmit()' mat-raised-button>
     {{login ? 'Login' : 'Register'}}
   </button>
 </mat-dialog-actions>
+<!--</div>-->
+
 <ng-container *ngIf='(user$ | async)| checkUser'>
 </ng-container>

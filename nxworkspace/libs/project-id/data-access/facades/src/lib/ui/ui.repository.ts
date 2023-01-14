@@ -14,6 +14,10 @@ export class UiRepository {
     return this.store.dispatch(UiActions.toggleKeymap())
   }
 
+  toggleNavMenu() {
+    return this.store.dispatch(UiActions.toggleNavmenu())
+  }
+
   togglePathLines() {
     return this.store.dispatch(UiActions.togglePathLines())
   }

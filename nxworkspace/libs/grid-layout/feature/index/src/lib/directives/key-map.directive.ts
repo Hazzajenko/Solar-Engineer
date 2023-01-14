@@ -116,6 +116,15 @@ export class KeyMapDirective {
         // this.keyUp.emit('reset')
         break
       }
+      case 'Tab': {
+
+        this.uiStore.dispatch.toggleNavMenu()
+        // this.keyUp.emit('reset')
+        // this.isDragging = false
+        // this.multiStore.dispatch.clearMultiState()
+        // this.elementRef.nativeElement.style.cursor = ''
+        break
+      }
       case 'Control': {
         this.keyUp.emit('Control')
         this.uiStore.dispatch.keyPressed('Control')

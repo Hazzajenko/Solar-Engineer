@@ -6,12 +6,13 @@ import { ToolbarComponent } from '@project-id/feature/toolbar'
 
 import { ProjectsFacade, ProjectsStoreService } from '@projects/data-access/facades'
 import { BlockModel, ProjectModel } from '@shared/data-access/models'
+import { ProjectToolbarComponent } from 'libs/project-id/feature/web/src/lib/ui/project-toolbar.component'
 import { Observable } from 'rxjs'
 
 @Component({
   selector: 'app-web-project',
   standalone: true,
-  imports: [CommonModule, GridLayoutComponent, ToolbarComponent],
+  imports: [CommonModule, GridLayoutComponent, ToolbarComponent, ProjectToolbarComponent],
   templateUrl: './web-project-v2.component.html',
   styles: [],
 })

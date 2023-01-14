@@ -9,6 +9,7 @@ export const UI_FEATURE_KEY = 'ui'
 
 export interface UiState {
   keymap: boolean
+  navMenu: boolean
   pathLines: boolean
   stringStats: boolean
   gridLayoutXY: GridLayoutXY
@@ -23,6 +24,7 @@ export interface UiState {
 
 export const initialUiState: UiState = {
   keymap: true,
+  navMenu: false,
   pathLines: true,
   stringStats: true,
   gridLayoutXY: {
@@ -108,6 +110,10 @@ const reducer = createReducer(
   on(UiActions.setClientxy, (state, { clientXY }) => ({
     ...state,
     clientXY,
+  })),
+  on(UiActions.toggleNavmenu, (state) => ({
+    ...state,
+    navMenu: !state.navMenu,
   })),
   on(UiActions.clearClientxy, (state) => ({
     ...state,

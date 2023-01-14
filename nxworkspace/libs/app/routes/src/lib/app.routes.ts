@@ -16,13 +16,13 @@ export const appRoutes: Route[] = [
     providers: [projectsProviders],
     resolve: { localProject: LocalProjectResolver },
   },
-  {
-    path: 'projects/:projectId',
-    loadComponent: () => import('@project-id/feature/web').then((m) => m.WebProjectComponent),
-    canActivate: [loggedInGuard],
-    providers: [projectsProviders],
-    resolve: { project: SelectProjectResolver },
-  },
+  /*  {
+      path: 'projects/:projectId',
+      loadComponent: () => import('@project-id/feature/web').then((m) => m.WebProjectComponent),
+      canActivate: [loggedInGuard],
+      providers: [projectsProviders],
+      resolve: { project: SelectProjectResolver },
+    },*/
   {
     path: ':username/:projectName',
     loadComponent: () => import('@project-id/feature/web').then((m) => m.WebProjectV2Component),

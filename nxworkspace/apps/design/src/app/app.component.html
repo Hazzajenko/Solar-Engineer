@@ -7,8 +7,79 @@
 <!--<div-->
 <!--  class='flex min-h-screen flex-col items-center justify-center bg-gray-100'-->
 <!--&gt;-->
-<div class='absolute left-1 top-1'>
+<!--<div class='absolute left-1 top-1 z-10'>
+  SolarEngineer v0.0.1 By Harry Jenkins
+</div>-->
+<mat-sidenav-container class='example-container' [hasBackdrop]='true'>
+  <mat-sidenav #drawer mode='over'>
+    <ng-container *ngIf='navMenu$ | async as navMenu'>
+      {{drawer.toggle()}}
+    </ng-container>
+    <div class='w-[300px] mx-2'>
+      <ng-container *ngrxLet='user$ | async as user'>
+        <ng-container *ngIf='user else notLoggedIn'>
+          <p>{{user.username}}</p>
+          <!--          <p>{{user.firstName}}</p>-->
+          <mat-accordion class='shadow-none bg-inherit' multi>
+            <mat-expansion-panel class='shadow-none bg-inherit'
+            >
+              <mat-expansion-panel-header>
+                <a>Projects</a>
+                <!--           <mat-panel-title>
+                             Projects
+                           </mat-panel-title>-->
+                <!--      <mat-panel-description>
+                        Currently I am
+                      </mat-panel-description>-->
+              </mat-expansion-panel-header>
+              <mat-nav-list>
+                <a *ngFor='let project of projects$ | async' mat-list-item
+                   (click)='drawer.toggle()'
+                   [routerLink]='user.username + "/" + project.name'>{{project.name}}</a>
+                <!--                <a mat-list-item routerLink='.'>Projects</a>-->
+              </mat-nav-list>
+            </mat-expansion-panel>
+          </mat-accordion>
+        </ng-container>
+        <ng-template #notLoggedIn>
+
+        </ng-template>
+      </ng-container>
+
+      <mat-nav-list>
+        <a mat-list-item routerLink='.'>Home</a>
+        <a mat-list-item routerLink='.'>Projects</a>
+      </mat-nav-list>
+      <button (click)='closeDrawer()' mat-raised-button color='primary'>Close</button>
+
+    </div>
+
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <!--    <mat-form-field appearance="fill">
+          <mat-label>Sidenav mode</mat-label>
+          <mat-select #mode value="side">
+            <mat-option value="side">Side</mat-option>
+            <mat-option value="over">Over</mat-option>
+            <mat-option value="push">Push</mat-option>
+          </mat-select>-->
+    <!--    </mat-form-field>-->
+    <!--    <mat-form-field appearance="fill">
+          <mat-label>Has backdrop</mat-label>
+          <mat-select #hasBackdrop>
+            <mat-option>Unset</mat-option>
+            <mat-option [value]="true">True</mat-option>
+            <mat-option [value]="false">False</mat-option>
+          </mat-select>
+        </mat-form-field>-->
+    <!--    <button mat-raised-button (click)="drawer.toggle()">Toggle drawer</button>-->
+    <app-app-bar (toggle)='drawer.toggle()'></app-app-bar>
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>
+
+
+<div class='absolute left-1 bottom-1 z-10'>
   SolarEngineer v0.0.1 By Harry Jenkins
 </div>
-<router-outlet></router-outlet>
 <!--</div>-->

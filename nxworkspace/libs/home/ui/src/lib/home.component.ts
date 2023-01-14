@@ -16,13 +16,15 @@ import {
 import { AuthFacade, AuthStoreService } from '@auth/data-access/facades'
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr'
 import * as signalR from '@microsoft/signalr'
+import { LetModule } from '@ngrx/component'
 import { ProjectsFacade } from '@projects/data-access/facades'
 import { ProjectsListComponent } from '@projects/feature/projects-list'
 import { UserModel } from '@shared/data-access/models'
 import { LogoNameBackgroundV2Component } from '@shared/ui/logo'
 import { AuthDialog } from 'libs/home/ui/src/lib/dialogs/auth/auth.dialog'
 import { CreateProjectDialog } from 'libs/home/ui/src/lib/dialogs/create-project/create-project.dialog'
-import { ConnectionsService } from 'libs/shared/data-access/signalr/src/lib'
+import { ConnectionsService, ConnectionsStoreService } from '@shared/data-access/connections'
+import { OnlineUsersDialog } from 'libs/home/ui/src/lib/dialogs/online-users/online-users.dialog'
 
 import { Observable } from 'rxjs'
 import { fadeIn, fadeInV2 } from './animations/animations'
@@ -37,6 +39,7 @@ import { fadeIn, fadeInV2 } from './animations/animations'
     MatProgressSpinnerModule,
     ProjectsListComponent,
     LogoNameBackgroundV2Component,
+    LetModule,
   ],
   templateUrl: './home.component.html',
   styles: [],
@@ -47,7 +50,7 @@ import { fadeIn, fadeInV2 } from './animations/animations'
 })
 export class HomeComponent implements OnInit {
 
-  user$: Observable<UserModel | undefined> = inject(AuthFacade).user$
+  // user$: Observable<UserModel | undefined> = inject(AuthFacade).user$
   fade = false
   showProjects = false
   private dialog = inject(MatDialog)
@@ -55,73 +58,45 @@ export class HomeComponent implements OnInit {
   private projectsStore = inject(ProjectsFacade)
   private authStore = inject(AuthStoreService)
   private connectionsService = inject(ConnectionsService)
+  private connectionsStore = inject(ConnectionsStoreService)
   private hubConnection: any
 
+  usersOnline$ = this.connectionsStore.select.connections$
+
   onlineUsers$ = this.connectionsService.onlineUsers$
+  user$ = this.authStore.select.user$
 
   routerEvents$ = this.router.events
 
   ngOnInit(): void {
     this.connectionsService.onlineUsers$.subscribe(res => console.log(res))
-    // create connection
-    /*    const connection = new signalR.HubConnectionBuilder()
-          .withUrl('/api/hubs/views')
-          .build()
-
-    // on view update message from client
-        connection.on('viewCountUpdate', (value: number) => {
-          console.log(value)
-        })
-
-    // start the connection
-        function startSuccess() {
-          console.log('Connected.')
-        }
-
-        function startFail() {
-          console.log('Connection failed.')
-        }
-
-        connection.start().then(startSuccess, startFail)
-        this.startConnection().then(r => console.log(r))
-        this.sendVehicleNumberToTrack(1)*/
-  }
-
-  public startConnection() {
-    return new Promise((resolve, reject) => {
-      this.hubConnection = new HubConnectionBuilder().withUrl(`api/user`).build()
-      this.hubConnection.start()
-        .then(() => {
-          console.log('connection established')
-
-          return resolve(true)
-        })
-        .catch((err: any) => {
-          console.log('error occured' + err)
-          reject(err)
-        })
-    })
-  }
-
-  public sendVehicleNumberToTrack(userId: number) {
-    (<HubConnection>this.hubConnection).invoke('trackUser', userId)
-      .then(() => {
-        console.log('connection established for trackUser')
-      })
-      .catch((err: any) => {
-        console.log('error occured' + err)
-      })
   }
 
   async authenticate(login: boolean) {
-    const dialogConfig = new MatDialogConfig()
+    // const dialogConfig = new MatDialogConfig()
+    const dialogConfig = {
+      disableClose: true,
+      autoFocus: true,
+      data: {
+        login,
+      },
+      height: '400px',
+      width: '300px',
+    } as MatDialogConfig
+    /*
+        dialogConfig.disableClose = true
+        dialogConfig.autoFocus = true
 
-    dialogConfig.disableClose = true
-    dialogConfig.autoFocus = true
+        dialogConfig.data = {
+          login,
+        }
 
-    dialogConfig.data = {
-      login,
-    }
+        dialogConfig.height = {
+          login,
+        }
+
+        height: '400px',
+          width: '600px',*/
 
     this.dialog.open(AuthDialog, dialogConfig)
 
@@ -173,5 +148,9 @@ export class HomeComponent implements OnInit {
     }
     console.log(false)
     return false
+  }
+
+  viewOnlineUsers() {
+    this.dialog.open(OnlineUsersDialog)
   }
 }

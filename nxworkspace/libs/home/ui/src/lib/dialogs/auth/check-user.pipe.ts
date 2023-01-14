@@ -4,7 +4,7 @@ import { Router } from '@angular/router'
 import { AuthStoreService } from '@auth/data-access/facades'
 import { BlockModel, UserModel } from '@shared/data-access/models'
 import { AuthDialog } from 'libs/home/ui/src/lib/dialogs/auth/auth.dialog'
-import { ConnectionsService } from 'libs/shared/data-access/signalr/src/lib'
+import { ConnectionsService } from '@shared/data-access/connections'
 
 @Pipe({
   name: 'checkUser',

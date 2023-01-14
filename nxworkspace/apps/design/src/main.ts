@@ -9,11 +9,15 @@ import { provideEffects } from '@ngrx/effects'
 import { provideRouterStore } from '@ngrx/router-store'
 import { provideState, provideStore } from '@ngrx/store'
 import { provideStoreDevtools } from '@ngrx/store-devtools'
+import { UI_FEATURE_KEY, uiReducer } from '@project-id/data-access/store'
+import { ProjectsEffects } from '@projects/data-access/effects'
 import { PROJECTS_FEATURE_KEY, projectsReducer } from '@projects/data-access/store'
+import { CONNECTIONS_FEATURE_KEY, connectionsReducer } from '@shared/data-access/connections'
 import { metaReducers, reducers } from '@shared/data-access/store'
 import { AuthEffects } from '@auth/data-access/effects'
 import { storeDevtoolsModule } from '@shared/config'
 import { environment } from '@shared/environment'
+import { ConnectionsEffects } from 'libs/shared/data-access/connections/src/lib/effects/connections.effects'
 
 import { AppComponent } from './app/app.component'
 import { appRoutes } from '@app/routes'
@@ -33,8 +37,12 @@ bootstrapApplication(AppComponent, {
     ),
     provideStore(reducers, { metaReducers }),
     provideRouterStore(),
-    provideEffects([AuthEffects]),
+    provideEffects([AuthEffects, ConnectionsEffects, ProjectsEffects]),
     provideState(AUTH_FEATURE_KEY, authReducer),
+    provideState(CONNECTIONS_FEATURE_KEY, connectionsReducer),
+    provideState(PROJECTS_FEATURE_KEY, projectsReducer),
+    provideState(UI_FEATURE_KEY, uiReducer),
+
     // provideStoreDevtools({
     //   maxAge: 25,
     //   logOnly: environment.production,

@@ -48,7 +48,7 @@ export const projectsProviders = [
   provideState(SELECTED_FEATURE_KEY, selectedReducer),
   provideState(GRID_FEATURE_KEY, gridReducer),
   provideState(MULTI_FEATURE_KEY, multiReducer),
-  provideState(UI_FEATURE_KEY, uiReducer),
+  /*provideState(UI_FEATURE_KEY, uiReducer),*/
   provideState(PATHS_FEATURE_KEY, pathsReducer),
   provideEffects([
     ProjectsEffects,

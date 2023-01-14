@@ -8,6 +8,11 @@ export const selectIsKeymapEnabled = createSelector(
   (state: UiState) => state.keymap,
 )
 
+export const selectNavMenuState = createSelector(
+  selectUiState,
+  (state: UiState) => state.navMenu,
+)
+
 export const selectIsPathLinesEnabled = createSelector(
   selectUiState,
   (state: UiState) => state.pathLines,

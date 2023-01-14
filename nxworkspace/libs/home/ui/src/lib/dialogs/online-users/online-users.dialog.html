@@ -1,0 +1,27 @@
+<ng-container *ngIf='user$ | async as user'>
+  <div class='flex flex-col items-center content-center'>
+    <h1 mat-dialog-title>Online Users</h1>
+  </div>
+  <mat-selection-list #onlineUsers [multiple]='false'>
+    <mat-list-option *ngFor='let onlineUser of onlineUsers$ | async' [value]='onlineUser'>
+      <ng-container *ngIf='user.username !== onlineUser.username else you'>
+        {{onlineUser.username}}
+      </ng-container>
+      <ng-template #you>
+        {{onlineUser.username}} (YOU)
+      </ng-template>
+
+    </mat-list-option>
+  </mat-selection-list>
+
+  <p>
+    User
+    selected: {{onlineUsers.selectedOptions.hasValue() ? onlineUsers.selectedOptions.selected[0].value.username : 'None'}}
+  </p>
+  <!--<ng-container *ngIf="user.">
+
+  </ng-container>-->
+  <mat-dialog-actions align='end'>
+    <button mat-button mat-dialog-close='true'>Exit</button>
+  </mat-dialog-actions>
+</ng-container>

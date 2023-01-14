@@ -9,5 +9,6 @@
 </ng-container>-->
 <!--[rows]="rows" [cols]="cols"-->
 <ng-container *ngIf='project$ | async as project'>
+  <!--  <app-project-toolbar></app-project-toolbar>-->
   <app-grid-layout [blocks$]='blocks$'></app-grid-layout>
 </ng-container>

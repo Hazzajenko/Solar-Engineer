@@ -140,4 +140,8 @@ export class AuthDialog {
     // }
     // this.dialogRef.close(undefined)
   }
+
+  toggleLogin() {
+    this.login = !this.login
+  }
 }
