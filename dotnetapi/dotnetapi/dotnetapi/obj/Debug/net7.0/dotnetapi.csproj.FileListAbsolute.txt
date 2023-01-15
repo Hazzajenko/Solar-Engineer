@@ -79,3 +79,17 @@ C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\bin\Debug
 C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.InMemory.dll
 C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\bin\Debug\net7.0\Pipelines.Sockets.Unofficial.dll
 C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\bin\Debug\net7.0\StackExchange.Redis.dll
+C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\bin\Debug\net7.0\FastEndpoints.dll
+C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\bin\Debug\net7.0\FastEndpoints.Attributes.dll
+C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\bin\Debug\net7.0\FastEndpoints.Swagger.dll
+C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\bin\Debug\net7.0\Namotion.Reflection.dll
+C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\bin\Debug\net7.0\Newtonsoft.Json.dll
+C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\bin\Debug\net7.0\NJsonSchema.dll
+C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\bin\Debug\net7.0\NJsonSchema.Yaml.dll
+C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\bin\Debug\net7.0\NSwag.Annotations.dll
+C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\bin\Debug\net7.0\NSwag.AspNetCore.dll
+C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\bin\Debug\net7.0\NSwag.Core.dll
+C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\bin\Debug\net7.0\NSwag.Core.Yaml.dll
+C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\bin\Debug\net7.0\NSwag.Generation.dll
+C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\bin\Debug\net7.0\NSwag.Generation.AspNetCore.dll
+C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\bin\Debug\net7.0\YamlDotNet.dll

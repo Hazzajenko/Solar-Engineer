@@ -67,7 +67,7 @@ public static class IdentityServiceExtensions
         services.AddAuthorization(opt =>
         {
             opt.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
-            opt.AddPolicy("BeAuthenticated", policy => policy.RequireRole("Admin", "User"));
+            opt.AddPolicy("BeAuthenticated", policy => policy.RequireRole("User"));
         });
 
         return services;
