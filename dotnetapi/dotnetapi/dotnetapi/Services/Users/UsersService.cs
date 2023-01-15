@@ -34,42 +34,12 @@ public class UsersService : IUsersService
     public async Task<AppUserFriend> AddFriendAsync(AppUser user, string username)
     {
         var friendUser = await _userManager.FindByNameAsync(username);
-        // var friendUser = await _userManager.Users.SingleOrDefaultAsync(x => x.UserName == username.ToLower());
         if (friendUser is null)
         {
             var message = $"User ${username} does not exist";
             throw new ValidationException(message, GenerateValidationError(message));
         }
 
-        /*var currentUser = await _userManager.FindByNameAsync(user.UserName!);
-        if (currentUser is null)
-        {
-            var message = $"User ${username} does not exist";
-            throw new ValidationException(message, GenerateValidationError(message));
-        }*/
-
-        // var appUserFriend = new AppUserFriend();
-        /*var friendRequest = new AppUserFriend
-        {
-            RequestedBy = user,
-            RequestedTo = friendUser,
-            RequestTime = DateTime.Now,
-            FriendRequestFlag = FriendRequestFlag.None
-        };*/
-        // user.SentFriendRequests.Add(friendRequest);
-        // appUserFriend.AddFriendRequest(user, friendUser);
-        /*var friendRequest = new AppUserFriend
-        {
-            RequestedBy = user,
-            RequestedById = user.Id,
-            RequestedTo = friendUser,
-            RequestedToId = friendUser.Id,
-            RequestTime = DateTime.Now,
-            FriendRequestFlag = FriendRequestFlag.None
-        };*/
-        // user.SentFriendRequests.Add(friendRequest);
-        // user.SentFriendRequests = new List<AppUserFriend>();
-        // user.SentFriendRequests.Add(friendRequest);        
         var friendRequest = new AppUserFriend
         {
             RequestedBy = user,
@@ -79,10 +49,35 @@ public class UsersService : IUsersService
             RequestTime = DateTime.Now,
             FriendRequestFlag = FriendRequestFlag.None
         };
-        // user.SentFriendRequests.Add(friendRequest);
-        // user.SentFriendRequests = new List<AppUserFriend>();
-        // user.SentFriendRequests.Add(friendRequest);
+
         return await _usersRepository.AddFriendAsync(friendRequest);
+    }
+
+    public async Task<AppUserFriendDto> AcceptFriendAsync(AppUser user, string username)
+    {
+        var friendUser = await _userManager.FindByNameAsync(username);
+        if (friendUser is null)
+        {
+            var message = $"User ${username} does not exist";
+            throw new ValidationException(message, GenerateValidationError(message));
+        }
+
+        var friendRequest = await _usersRepository.GetAppUserFriendAsync(user, friendUser);
+        if (friendRequest is null)
+        {
+            var message = $"No pending friend request from user {username}";
+            throw new ValidationException(message, GenerateValidationError(message));
+        }
+
+        var updatedAppUserFriend = await _usersRepository.AcceptFriendRequestAsync(friendRequest);
+
+        return updatedAppUserFriend.ToDto();
+    }
+
+    public async Task<IEnumerable<FriendDto>> GetAllFriendsAsync(AppUser user)
+    {
+        var appUserFriends = await _usersRepository.GetAllFriendsAsync(user);
+        return appUserFriends;
     }
 
     private static ValidationFailure[] GenerateValidationError(string message)

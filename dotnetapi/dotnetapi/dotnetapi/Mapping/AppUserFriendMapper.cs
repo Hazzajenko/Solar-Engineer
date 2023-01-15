@@ -32,4 +32,22 @@ public static class AppUserFriendMapper
             BecameFriendsTime = request.BecameFriendsTime
         };
     }
+
+    public static FriendDto ToFriendDtoFromSent(this AppUserFriend request)
+    {
+        return new FriendDto
+        {
+            Username = request.RequestedTo.UserName!,
+            BecameFriendsTime = request.BecameFriendsTime
+        };
+    }
+
+    public static FriendDto ToFriendDtoFromReceived(this AppUserFriend request)
+    {
+        return new FriendDto
+        {
+            Username = request.RequestedBy.UserName!,
+            BecameFriendsTime = request.BecameFriendsTime
+        };
+    }
 }
