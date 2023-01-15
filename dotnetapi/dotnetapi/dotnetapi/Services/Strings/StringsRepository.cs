@@ -3,7 +3,7 @@ using dotnetapi.Data;
 using Microsoft.EntityFrameworkCore;
 using String = dotnetapi.Models.Entities.String;
 
-namespace dotnetapi.Repositories.Strings;
+namespace dotnetapi.Services.Strings;
 
 public class StringsRepository : IStringsRepository
 {

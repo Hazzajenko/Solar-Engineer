@@ -1,7 +1,7 @@
 ﻿using dotnetapi.Contracts.Requests.Panels;
 using dotnetapi.Models.Entities;
 
-namespace dotnetapi.Repositories.Panels;
+namespace dotnetapi.Services.Panels;
 
 public interface IPanelsRepository
 {

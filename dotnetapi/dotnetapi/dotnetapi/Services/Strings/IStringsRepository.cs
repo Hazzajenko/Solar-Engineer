@@ -1,7 +1,7 @@
 ﻿using dotnetapi.Contracts.Requests;
 using String = dotnetapi.Models.Entities.String;
 
-namespace dotnetapi.Repositories.Strings;
+namespace dotnetapi.Services.Strings;
 
 public interface IStringsRepository
 {

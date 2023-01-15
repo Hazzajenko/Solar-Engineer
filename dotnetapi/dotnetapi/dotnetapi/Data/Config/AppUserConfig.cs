@@ -18,6 +18,17 @@ public class AppUserConfig : IEntityTypeConfiguration<AppUser>
             .HasForeignKey(ur => ur.AppUserId)
             .IsRequired();
 
+        builder.HasMany(ur => ur.SentFriendRequests)
+            .WithOne(u => u.RequestedBy)
+            .HasForeignKey(ur => ur.RequestedById)
+            .IsRequired();
+
+        builder.HasMany(ur => ur.ReceivedFriendRequests)
+            .WithOne(u => u.RequestedTo)
+            .HasForeignKey(ur => ur.RequestedToId)
+            .IsRequired();
+
+
         /*builder.HasMany(ur => ur.Connections)
             .WithOne(u => u.AppUser)
             .HasForeignKey(ur => ur.AppUserId)

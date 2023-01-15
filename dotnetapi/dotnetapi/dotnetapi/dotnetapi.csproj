@@ -51,6 +51,11 @@
 
     <ItemGroup>
         <Folder Include="Data\Json" />
+        <Folder Include="Repositories\Links" />
+        <Folder Include="Repositories\Panels" />
+        <Folder Include="Repositories\Paths" />
+        <Folder Include="Repositories\Projects" />
+        <Folder Include="Repositories\Strings" />
     </ItemGroup>
 
 </Project>

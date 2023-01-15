@@ -3,9 +3,8 @@ using dotnetapi.Contracts.Requests.Panels;
 using dotnetapi.Mapping;
 using dotnetapi.Models.Dtos.Projects;
 using dotnetapi.Models.Entities;
-using dotnetapi.Repositories.Panels;
-using dotnetapi.Repositories.Projects;
-using dotnetapi.Repositories.Strings;
+using dotnetapi.Services.Projects;
+using dotnetapi.Services.Strings;
 using FluentValidation;
 using FluentValidation.Results;
 

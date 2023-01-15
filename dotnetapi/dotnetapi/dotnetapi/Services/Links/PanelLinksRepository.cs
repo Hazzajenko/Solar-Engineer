@@ -2,7 +2,7 @@
 using dotnetapi.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace dotnetapi.Repositories.Links;
+namespace dotnetapi.Services.Links;
 
 public class PanelLinksRepository : IPanelLinksRepository
 {

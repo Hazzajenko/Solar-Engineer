@@ -1,6 +1,6 @@
 ﻿using dotnetapi.Models.Entities;
 
-namespace dotnetapi.Repositories.Links;
+namespace dotnetapi.Services.Links;
 
 public interface IPanelLinksRepository
 {

@@ -1,7 +1,6 @@
 ﻿using dotnetapi.Mapping;
 using dotnetapi.Models.Dtos.Projects;
 using dotnetapi.Models.Entities;
-using dotnetapi.Repositories.Projects;
 using dotnetapi.Services.Cache;
 using FluentValidation;
 using FluentValidation.Results;
@@ -10,8 +9,8 @@ namespace dotnetapi.Services.Projects;
 
 public class ProjectsService : IProjectsService
 {
-    private readonly IProjectsRepository _projectsRepository;
     private readonly ICacheService _cacheService;
+    private readonly IProjectsRepository _projectsRepository;
 
     public ProjectsService(IProjectsRepository projectsRepository, ICacheService cacheService)
     {
@@ -27,16 +26,14 @@ public class ProjectsService : IProjectsService
             var message = $"A project with id {appUserProject.Project.Id} already exists";
             throw new ValidationException(message, GenerateValidationError(message));
         }
-        
-        
+
 
         var result = await _projectsRepository.CreateProjectAsync(appUserProject);
-        
+
         var expiryTime = DateTimeOffset.Now.AddSeconds(30);
-        _cacheService.SetData<Project>($"project{result.Id}", result, expiryTime);
+        _cacheService.SetData($"project{result.Id}", result, expiryTime);
 
 
-        
         return result.ToDto();
     }
 

@@ -1,10 +1,10 @@
 
 
 migrate:
-	dotnet ef migrations add ${name} -o Data/Migrations
+	dotnet ef migrations add ${name} -o Data/Migrations --context DataContext
 
 update:
-	dotnet ef database update
+	dotnet ef database update --context DataContext
 
 publish:
 	dotnet publish --os linux --arch x64 -c Release -p:PublishProfile=DefaultContainer

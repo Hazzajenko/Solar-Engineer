@@ -1,7 +1,7 @@
 ﻿using dotnetapi.Contracts.Requests.Paths;
 using Path = dotnetapi.Models.Entities.Path;
 
-namespace dotnetapi.Repositories.Paths;
+namespace dotnetapi.Services.Paths;
 
 public interface IPathsRepository
 {

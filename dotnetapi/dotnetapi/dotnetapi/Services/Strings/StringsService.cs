@@ -2,8 +2,7 @@
 using dotnetapi.Mapping;
 using dotnetapi.Models.Dtos.Projects;
 using dotnetapi.Models.Entities;
-using dotnetapi.Repositories.Projects;
-using dotnetapi.Repositories.Strings;
+using dotnetapi.Services.Projects;
 using FluentValidation;
 using FluentValidation.Results;
 using String = dotnetapi.Models.Entities.String;

@@ -1,11 +1,9 @@
 ﻿using dotnetapi.Contracts.Requests.Paths;
 using dotnetapi.Mapping;
 using dotnetapi.Models.Dtos.Projects;
-using dotnetapi.Models.Entities;
-using dotnetapi.Repositories.Panels;
-using dotnetapi.Repositories.Paths;
-using dotnetapi.Repositories.Projects;
-using dotnetapi.Repositories.Strings;
+using dotnetapi.Services.Panels;
+using dotnetapi.Services.Projects;
+using dotnetapi.Services.Strings;
 using FluentValidation;
 using FluentValidation.Results;
 using Path = dotnetapi.Models.Entities.Path;
@@ -120,7 +118,7 @@ public class PathsService : IPathsService
     {
         return new[]
         {
-            new ValidationFailure(nameof(Panel), message)
+            new ValidationFailure(nameof(Path), message)
         };
     }
 }

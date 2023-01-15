@@ -1,6 +1,5 @@
 ﻿using dotnetapi.Contracts.Requests;
 using dotnetapi.Contracts.Requests.Auth;
-using dotnetapi.Controllers;
 using dotnetapi.Models.Dtos;
 using dotnetapi.Models.Entities;
 
@@ -15,30 +14,6 @@ public static class AppUserMapper
             Username = request.UserName!,
             FirstName = request.FirstName,
             LastActive = request.LastActive
-        };
-    }
-
-    public static AppUser ToEntity(this SignupRequest request)
-    {
-        return new AppUser
-        {
-            Email = request.Email,
-            UserName = request.Username,
-            FirstName = request.FirstName,
-            LastName = request.LastName,
-            PhotoUrl = ""
-        };
-    }
-
-    public static AppUser ToEntityV2(this SignupRequestV2 request)
-    {
-        return new AppUser
-        {
-            Email = "",
-            UserName = request.Username,
-            FirstName = "",
-            LastName = "",
-            PhotoUrl = ""
         };
     }
 

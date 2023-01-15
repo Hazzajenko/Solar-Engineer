@@ -1,4 +1,4 @@
-﻿using dotnetapi.Controllers;
+﻿using dotnetapi.Contracts.Responses.Auth;
 using dotnetapi.Models.Entities;
 
 namespace dotnetapi.Services.Auth;

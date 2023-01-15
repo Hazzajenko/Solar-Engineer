@@ -1,9 +1,4 @@
 ﻿using dotnetapi.Data;
-using dotnetapi.Repositories.Links;
-using dotnetapi.Repositories.Panels;
-using dotnetapi.Repositories.Paths;
-using dotnetapi.Repositories.Projects;
-using dotnetapi.Repositories.Strings;
 using dotnetapi.Services.Auth;
 using dotnetapi.Services.Cache;
 using dotnetapi.Services.Links;
@@ -12,6 +7,7 @@ using dotnetapi.Services.Paths;
 using dotnetapi.Services.Projects;
 using dotnetapi.Services.SignalR;
 using dotnetapi.Services.Strings;
+using dotnetapi.Services.Users;
 using dotnetapi.SignalR;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
@@ -30,6 +26,8 @@ public static class ApplicationServiceExtensions
         services.AddScoped<ICacheService, CacheService>();
 
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IUsersService, UsersService>();
+        services.AddScoped<IUsersRepository, UsersRepository>();
         services.AddScoped<IProjectsService, ProjectsService>();
         services.AddScoped<IProjectsRepository, ProjectsRepository>();
         services.AddScoped<IStringsService, StringsService>();
@@ -102,24 +100,24 @@ public static class ApplicationServiceExtensions
         Console.WriteLine(databaseUri);
         var userInfo = databaseUri.UserInfo.Split(':');
         Console.WriteLine(userInfo);*/
-        var Host = Environment.GetEnvironmentVariable("DATABASE_HOST")!;
-        Console.WriteLine(Host);
-        var Port = Environment.GetEnvironmentVariable("DATABASE_PORT")!;
-        Console.WriteLine(Port);
-        var Username = Environment.GetEnvironmentVariable("DATABASE_USERNAME")!;
-        Console.WriteLine(Username);
-        var Password = Environment.GetEnvironmentVariable("DATABASE_PASSWORD")!;
-        Console.WriteLine(Password);
-        var Database = Environment.GetEnvironmentVariable("DATABASE_DATABASE")!;
-        Console.WriteLine(Database);
+        var host = Environment.GetEnvironmentVariable("DATABASE_HOST")!;
+        Console.WriteLine(host);
+        var port = Environment.GetEnvironmentVariable("DATABASE_PORT")!;
+        Console.WriteLine(port);
+        var username = Environment.GetEnvironmentVariable("DATABASE_USERNAME")!;
+        Console.WriteLine(username);
+        var password = Environment.GetEnvironmentVariable("DATABASE_PASSWORD")!;
+        Console.WriteLine(password);
+        var database = Environment.GetEnvironmentVariable("DATABASE_DATABASE")!;
+        Console.WriteLine(database);
 
         var builder = new NpgsqlConnectionStringBuilder
         {
-            Host = Host,
-            Port = int.Parse(Port),
-            Username = Username,
-            Password = Password,
-            Database = Database,
+            Host = host,
+            Port = int.Parse(port),
+            Username = username,
+            Password = password,
+            Database = database,
             SslMode = SslMode.Require,
             TrustServerCertificate = true
         };

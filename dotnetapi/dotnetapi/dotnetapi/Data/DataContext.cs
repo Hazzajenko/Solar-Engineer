@@ -22,6 +22,7 @@ public class DataContext : IdentityDbContext<AppUser, AppRole, int,
     public DbSet<PanelLink> PanelLinks { get; set; } = default!;
     public DbSet<Path> Paths { get; set; } = default!;
     public DbSet<AppUserProject> AppUserProjects { get; set; } = default!;
+    public DbSet<AppUserFriend> AppUserFriends { get; set; } = default!;
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
