@@ -8,12 +8,6 @@ public class CacheService : ICacheService
 {
     private readonly IDatabase _cacheDb;
 
-    public CacheService()
-    {
-        var redis = ConnectionMultiplexer.Connect("localhost:6379");
-        _cacheDb = redis.GetDatabase();
-    }
-
     public T? GetData<T>(string key)
     {
         var value = _cacheDb.StringGet(key);

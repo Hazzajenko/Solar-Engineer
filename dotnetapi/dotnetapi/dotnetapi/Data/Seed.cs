@@ -14,10 +14,10 @@ public abstract class Seed
 
         var userData = await File.ReadAllTextAsync("Data/user-data.json");
         var users = JsonSerializer.Deserialize<List<AppUser>>(userData);
-        Console.WriteLine(users);
+        /*Console.WriteLine(users);
         if (users != null)
             foreach (var user in users)
-                Console.WriteLine(user);
+                Console.WriteLine(user);*/
         // if (users == null) return;
 
         var roles = new List<AppRole>

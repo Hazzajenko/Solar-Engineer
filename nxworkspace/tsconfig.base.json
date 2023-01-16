@@ -67,6 +67,7 @@
       "@shared/config": ["libs/shared/config/src/index.ts"],
       "@shared/data-access/connections": ["libs/shared/data-access/connections/src/index.ts"],
       "@shared/data-access/models": ["libs/shared/data-access/models/src/index.ts"],
+      "@shared/data-access/notifications": ["libs/shared/data-access/notifications/src/index.ts"],
       "@shared/data-access/router": ["libs/shared/data-access/router/src/index.ts"],
       "@shared/data-access/signalr": ["libs/shared/data-access/signalr/src/index.ts"],
       "@shared/data-access/store": ["libs/shared/data-access/store/src/index.ts"],

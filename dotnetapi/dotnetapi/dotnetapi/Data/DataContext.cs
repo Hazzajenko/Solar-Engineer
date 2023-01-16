@@ -23,6 +23,8 @@ public class DataContext : IdentityDbContext<AppUser, AppRole, int,
     public DbSet<Path> Paths { get; set; } = default!;
     public DbSet<AppUserProject> AppUserProjects { get; set; } = default!;
     public DbSet<AppUserFriend> AppUserFriends { get; set; } = default!;
+    public DbSet<Notification> Notifications { get; set; } = default!;
+    // public DbSet<FriendRequest> FriendRequests { get; set; } = default!;
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {

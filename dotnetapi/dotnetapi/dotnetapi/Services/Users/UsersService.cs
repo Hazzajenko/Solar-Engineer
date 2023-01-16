@@ -18,13 +18,13 @@ public class UsersService : IUsersService
         _usersRepository = usersRepository;
     }
 
-    public async Task<IEnumerable<AppUserFriendDto>> GetSentRequestsAsync(AppUser user)
+    public async Task<IEnumerable<FriendRequestDto>> GetSentRequestsAsync(AppUser user)
     {
         var sentRequests = await _usersRepository.GetSentRequestsAsync(user);
         return sentRequests.Select(x => x.ToDto());
     }
 
-    public async Task<IEnumerable<AppUserFriendDto>> GetReceivedRequestsAsync(AppUser user)
+    public async Task<IEnumerable<FriendRequestDto>> GetReceivedRequestsAsync(AppUser user)
     {
         var receivedRequests = await _usersRepository.GetReceivedRequestsAsync(user);
         return receivedRequests.Select(x => x.ToDto());
@@ -53,7 +53,7 @@ public class UsersService : IUsersService
         return await _usersRepository.AddFriendAsync(friendRequest);
     }
 
-    public async Task<AppUserFriendDto> AcceptFriendAsync(AppUser user, string username)
+    public async Task<FriendRequestDto> AcceptFriendAsync(AppUser user, string username)
     {
         var friendUser = await _userManager.FindByNameAsync(username);
         if (friendUser is null)

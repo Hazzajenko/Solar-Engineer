@@ -19,6 +19,7 @@ public class AppUser : IdentityUser<int>
     public ICollection<AppUserRole> UserRoles { get; set; } = default!;
     public virtual ICollection<AppUserFriend> SentFriendRequests { get; set; } = default!;
     public virtual ICollection<AppUserFriend> ReceivedFriendRequests { get; set; } = default!;
+    public ICollection<Notification> Notifications { get; set; } = default!;
 
 
     /*

@@ -5,30 +5,30 @@ namespace dotnetapi.Mapping;
 
 public static class AppUserFriendMapper
 {
-    public static AppUserFriendDto ToDto(this AppUserFriend request)
+    public static FriendRequestDto ToDto(this AppUserFriend request)
     {
-        return new AppUserFriendDto
+        return new FriendRequestDto
         {
-            RequestedById = request.RequestedById,
-            RequestedToId = request.RequestedToId,
+            /*RequestedById = request.RequestedById,
+            RequestedToId = request.RequestedToId,*/
             RequestedByUsername = request.RequestedBy.UserName!,
             RequestedToUsername = request.RequestedTo.UserName!,
             FriendRequestFlag = request.FriendRequestFlag,
-            RequestTime = request.RequestTime,
+            // RequestTime = request.RequestTime,
             BecameFriendsTime = request.BecameFriendsTime
         };
     }
 
-    public static AppUserFriend ToEntity(this AppUserFriendDto request, AppUser requestedBy, AppUser requestedTo)
+    public static AppUserFriend ToEntity(this FriendRequestDto request, AppUser requestedBy, AppUser requestedTo)
     {
         return new AppUserFriend
         {
             RequestedBy = requestedBy,
             RequestedTo = requestedTo,
-            RequestedById = request.RequestedById,
-            RequestedToId = request.RequestedToId,
+            // RequestedById = request.RequestedById,
+            // RequestedToId = request.RequestedToId,
             FriendRequestFlag = request.FriendRequestFlag,
-            RequestTime = request.RequestTime,
+            // RequestTime = request.RequestTime,
             BecameFriendsTime = request.BecameFriendsTime
         };
     }

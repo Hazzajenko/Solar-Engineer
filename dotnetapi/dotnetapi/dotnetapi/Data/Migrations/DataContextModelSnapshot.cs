@@ -305,6 +305,33 @@ namespace dotnetapi.Data.Migrations
                     b.ToTable("AspNetUserRoles", (string)null);
                 });
 
+            modelBuilder.Entity("dotnetapi.Models.Entities.Notification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AppUserId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("TimeCreated")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
+
+                    b.ToTable("Notifications");
+                });
+
             modelBuilder.Entity("dotnetapi.Models.Entities.Panel", b =>
                 {
                     b.Property<string>("Id")
@@ -623,6 +650,17 @@ namespace dotnetapi.Data.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("dotnetapi.Models.Entities.Notification", b =>
+                {
+                    b.HasOne("dotnetapi.Models.Entities.AppUser", "AppUser")
+                        .WithMany("Notifications")
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
+                });
+
             modelBuilder.Entity("dotnetapi.Models.Entities.Panel", b =>
                 {
                     b.HasOne("dotnetapi.Models.Entities.AppUser", "CreatedBy")
@@ -757,6 +795,8 @@ namespace dotnetapi.Data.Migrations
             modelBuilder.Entity("dotnetapi.Models.Entities.AppUser", b =>
                 {
                     b.Navigation("AppUserProjects");
+
+                    b.Navigation("Notifications");
 
                     b.Navigation("ReceivedFriendRequests");
 

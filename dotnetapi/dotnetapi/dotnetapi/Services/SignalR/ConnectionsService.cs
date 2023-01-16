@@ -1,7 +1,7 @@
 ﻿using dotnetapi.Data;
-using dotnetapi.Models.Entities;
 using dotnetapi.Models.SignalR;
 using FluentValidation.Results;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace dotnetapi.Services.SignalR;
@@ -82,11 +82,42 @@ public class ConnectionsService : IConnectionsService
     }
 
 
+    public async Task<UserConnection> GetUserConnections(string username)
+    {
+        using var scope = _serviceScopeFactory.CreateScope();
+        await using var context = scope.ServiceProvider.GetService<InMemoryDatabase>();
+        if (context is null)
+        {
+            var message = "Unable to get connections";
+            throw new HubException(message);
+            // throw new ValidationException(message, GenerateValidationError(message));
+        }
+
+        var userConnection = await context.UserConnections
+            .Where(x => x.Username == username)
+            .Include(x => x.Connections)
+            .SingleOrDefaultAsync();
+
+        if (userConnection is null)
+        {
+            var message = "Unable to get user connections";
+            throw new HubException(message);
+        }
+
+        // context.UserConnections.Remove(userConnection);
+        // await context.SaveChangesAsync();
+
+        // isOffline = true;
+
+        return userConnection;
+    }
+
+
     private static ValidationFailure[] GenerateValidationError(string message)
     {
         return new[]
         {
-            new ValidationFailure(nameof(Project), message)
+            new ValidationFailure(nameof(UserConnection), message)
         };
     }
 }

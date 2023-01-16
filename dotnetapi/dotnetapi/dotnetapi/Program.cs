@@ -1,8 +1,8 @@
 using Amazon.S3;
 using dotnetapi.Data;
 using dotnetapi.Extensions;
+using dotnetapi.Hubs;
 using dotnetapi.Models.Entities;
-using dotnetapi.SignalR;
 using dotnetapi.Validation;
 using FastEndpoints;
 using FastEndpoints.Swagger;
@@ -41,7 +41,7 @@ var configuration = new ConfigurationBuilder()
 
 builder.Host.UseSerilog((ctx, lc) => lc
     // .WriteTo.Console(theme: SystemConsoleTheme.Literate)
-    .WriteTo.File("log.txt")
+    // .WriteTo.File("log.txt")
     .WriteTo.Console(
         theme: SystemConsoleTheme.Literate
         // outputTemplate: "{Timestamp:HH:mm} [{Level}] ({ThreadId}) {Message}{NewLine}{Exception}"
@@ -51,11 +51,11 @@ builder.Host.UseSerilog((ctx, lc) => lc
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Debug()
-    .WriteTo.File("log.txt")
+    // .WriteTo.File("log.txt")
     .WriteTo.Console(LogEventLevel.Information)
     .CreateLogger();
 
-Log.Information("test");
+// Log.Information("test");
 /*Log.Logger = new LoggerConfiguration()
     .CreateLogger();*/
 
@@ -128,6 +128,7 @@ builder.Services.AddHttpsRedirection(options =>
 
 var app = builder.Build();
 app.UseSerilogRequestLogging();
+
 // Configure the HTTP request pipeline.
 // var apiVersionDescriptionProvider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
 app.UseForwardedHeaders();
@@ -185,6 +186,7 @@ app.UseWebSockets(new WebSocketOptions
 });
 // app.MapHub<UserHub>("/user");
 app.MapHub<ConnectionsHub>("hubs/connections");
+app.MapHub<NotificationHub>("hubs/notifications");
 // app.MapHub<ViewsHub>("hubs/views");
 
 

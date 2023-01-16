@@ -11,8 +11,8 @@ public class InMemoryDatabase : DbContext
     }
 
     // public DbSet<UserConnection> Connections { get; set; }
-    public DbSet<UserConnection> UserConnections { get; set; }
-    public DbSet<WebConnection> WebConnections { get; set; }
+    public DbSet<UserConnection> UserConnections { get; set; } = default!;
+    public DbSet<WebConnection> WebConnections { get; set; } = default!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

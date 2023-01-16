@@ -2,14 +2,14 @@
 
 namespace dotnetapi.Models.Dtos;
 
-public class AppUserFriendDto
+public class FriendRequestDto
 {
-    public int RequestedById { get; set; }
-    public int RequestedToId { get; set; }
+    /*public int RequestedById { get; set; }
+    public int RequestedToId { get; set; }*/
     public string RequestedByUsername { get; set; } = default!;
     public string RequestedToUsername { get; set; } = default!;
 
-    public DateTime? RequestTime { get; set; }
+    // public DateTime? RequestTime { get; set; }
 
     public DateTime? BecameFriendsTime { get; set; }
 

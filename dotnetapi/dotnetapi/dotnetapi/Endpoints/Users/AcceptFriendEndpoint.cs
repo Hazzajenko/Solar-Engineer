@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Identity;
 namespace dotnetapi.Endpoints.Users;
 
 [Authorize]
-public class AcceptFriendEndpoint : EndpointWithoutRequest<AppUserFriendDto>
+public class AcceptFriendEndpoint : EndpointWithoutRequest<FriendRequestDto>
 {
     private readonly ILogger<AcceptFriendEndpoint> _logger;
     private readonly UserManager<AppUser> _userManager;

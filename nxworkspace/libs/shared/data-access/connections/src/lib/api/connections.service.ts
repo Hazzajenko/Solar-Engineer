@@ -16,6 +16,7 @@ export class ConnectionsService {
   private onlineUsersSource = new BehaviorSubject<string[]>([])
   private authStore = inject(AuthStoreService)
   private connectionsStore = inject(ConnectionsStoreService)
+  connectionId?: string
   onlineUsers$ = this.onlineUsersSource.asObservable()
 
   constructor(private router: Router) {
@@ -35,11 +36,6 @@ export class ConnectionsService {
 
   connectSignalR() {
     if (!this.hubConnection) return
-
-    this.hubConnection
-      .start()
-      .then(this.startSuccess, this.startFail)
-      .catch(error => console.log(error))
 
     this.hubConnection.on('UserIsOnline', username => {
       // this.onlineUsers$.pipe(take(1)).subscribe(usernames => {
@@ -66,6 +62,7 @@ export class ConnectionsService {
 
     // this.hubConnection.invoke('GetOnlineUsers').then(res => console.log(res))
   }
+
 
   startSuccess() {
     if (!this.hubConnection) return

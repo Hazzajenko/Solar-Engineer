@@ -77,4 +77,4 @@ push:
 	docker image push hazzajenko/angularclient:1.0.0
 
 ne11w:
-	nx generate @nrwl/angular:library app-bar --style=none --directory=shared/ui --importPath=@shared/ui/app-bar --skipModule --tags=shared --no-interactive
+	nx generate @nrwl/angular:library notifications --style=none --directory=shared/data-access --importPath=@shared/data-access/notifications --skipModule --tags=shared --no-interactive

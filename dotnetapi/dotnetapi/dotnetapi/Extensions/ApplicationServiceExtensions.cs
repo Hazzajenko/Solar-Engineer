@@ -1,6 +1,7 @@
 ﻿using dotnetapi.Data;
 using dotnetapi.Services.Auth;
 using dotnetapi.Services.Cache;
+using dotnetapi.Services.Friends;
 using dotnetapi.Services.Links;
 using dotnetapi.Services.Panels;
 using dotnetapi.Services.Paths;
@@ -8,7 +9,6 @@ using dotnetapi.Services.Projects;
 using dotnetapi.Services.SignalR;
 using dotnetapi.Services.Strings;
 using dotnetapi.Services.Users;
-using dotnetapi.SignalR;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
@@ -19,7 +19,6 @@ public static class ApplicationServiceExtensions
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
     {
-        services.AddSingleton<ConnectionsTracker>();
         services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
         services.AddSingleton<IConnectionsService, ConnectionsService>();
 
@@ -28,6 +27,8 @@ public static class ApplicationServiceExtensions
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IUsersService, UsersService>();
         services.AddScoped<IUsersRepository, UsersRepository>();
+        services.AddScoped<IFriendsService, FriendsService>();
+        services.AddScoped<IFriendsRepository, FriendsRepository>();
         services.AddScoped<IProjectsService, ProjectsService>();
         services.AddScoped<IProjectsRepository, ProjectsRepository>();
         services.AddScoped<IStringsService, StringsService>();
