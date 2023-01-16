@@ -11,8 +11,8 @@ import {
 
 export const homeProviders = [
   importProvidersFrom(MatDialogModule, MatSnackBarModule, MatSnackBarRef),
-  provideState(NOTIFICATIONS_FEATURE_KEY, notificationsReducer),
-  provideEffects([NotificationsEffects]),
+  /*  provideState(NOTIFICATIONS_FEATURE_KEY, notificationsReducer),
+    provideEffects([NotificationsEffects]),*/
   /*  provideState(PROJECTS_FEATURE_KEY, projectsReducer),
     provideEffects([ProjectsEffects]),*/
 ]

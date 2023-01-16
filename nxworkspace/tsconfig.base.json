@@ -20,6 +20,8 @@
     "lib": ["es2020", "dom"],
     "useDefineForClassFields": false,
     "paths": {
+      "@app/data-access/friends": ["libs/app/data-access/friends/src/index.ts"],
+      "@app/feature/notifications": ["libs/app/feature/notifications/src/index.ts"],
       "@app/routes": ["libs/app/routes/src/index.ts"],
       "@auth/data-access/api": ["libs/auth/data-access/api/src/index.ts"],
       "@auth/data-access/effects": ["libs/auth/data-access/effects/src/index.ts"],

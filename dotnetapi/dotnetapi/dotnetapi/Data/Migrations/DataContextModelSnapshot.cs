@@ -305,7 +305,7 @@ namespace dotnetapi.Data.Migrations
                     b.ToTable("AspNetUserRoles", (string)null);
                 });
 
-            modelBuilder.Entity("dotnetapi.Models.Entities.Notification", b =>
+            modelBuilder.Entity("dotnetapi.Models.Entities.FriendRequest", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -313,7 +313,39 @@ namespace dotnetapi.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime?>("BecameFriendsTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("FriendRequestFlag")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("NotificationId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("RequestedById")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("RequestedToId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RequestedById");
+
+                    b.HasIndex("RequestedToId");
+
+                    b.ToTable("FriendRequests");
+                });
+
+            modelBuilder.Entity("dotnetapi.Models.Entities.Notification", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("integer");
+
                     b.Property<int>("AppUserId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("FriendRequestId")
                         .HasColumnType("integer");
 
                     b.Property<int>("Status")
@@ -650,6 +682,25 @@ namespace dotnetapi.Data.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("dotnetapi.Models.Entities.FriendRequest", b =>
+                {
+                    b.HasOne("dotnetapi.Models.Entities.AppUser", "RequestedBy")
+                        .WithMany()
+                        .HasForeignKey("RequestedById")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("dotnetapi.Models.Entities.AppUser", "RequestedTo")
+                        .WithMany()
+                        .HasForeignKey("RequestedToId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("RequestedBy");
+
+                    b.Navigation("RequestedTo");
+                });
+
             modelBuilder.Entity("dotnetapi.Models.Entities.Notification", b =>
                 {
                     b.HasOne("dotnetapi.Models.Entities.AppUser", "AppUser")
@@ -658,7 +709,15 @@ namespace dotnetapi.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("dotnetapi.Models.Entities.FriendRequest", "FriendRequest")
+                        .WithOne("Notification")
+                        .HasForeignKey("dotnetapi.Models.Entities.Notification", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("AppUser");
+
+                    b.Navigation("FriendRequest");
                 });
 
             modelBuilder.Entity("dotnetapi.Models.Entities.Panel", b =>
@@ -803,6 +862,12 @@ namespace dotnetapi.Data.Migrations
                     b.Navigation("SentFriendRequests");
 
                     b.Navigation("UserRoles");
+                });
+
+            modelBuilder.Entity("dotnetapi.Models.Entities.FriendRequest", b =>
+                {
+                    b.Navigation("Notification")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("dotnetapi.Models.Entities.Panel", b =>

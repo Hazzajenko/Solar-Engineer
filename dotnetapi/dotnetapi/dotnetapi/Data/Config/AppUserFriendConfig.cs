@@ -8,9 +8,9 @@ public class AppUserFriendConfig : IEntityTypeConfiguration<AppUserFriend>
 {
     public void Configure(EntityTypeBuilder<AppUserFriend> builder)
     {
-        // builder.Has
-        
-        // builder.HasKey(f => new { f.RequestedById, f.RequestedToId });
+        // builder.HasKey(x => x.Id);
+
+        builder.HasKey(f => new { f.RequestedById, f.RequestedToId });
 
         builder.HasOne(a => a.RequestedBy)
             .WithMany(b => b.SentFriendRequests)

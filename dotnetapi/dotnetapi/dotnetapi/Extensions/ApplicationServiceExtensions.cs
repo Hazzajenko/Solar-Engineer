@@ -3,6 +3,7 @@ using dotnetapi.Services.Auth;
 using dotnetapi.Services.Cache;
 using dotnetapi.Services.Friends;
 using dotnetapi.Services.Links;
+using dotnetapi.Services.Notifications;
 using dotnetapi.Services.Panels;
 using dotnetapi.Services.Paths;
 using dotnetapi.Services.Projects;
@@ -23,6 +24,8 @@ public static class ApplicationServiceExtensions
         services.AddSingleton<IConnectionsService, ConnectionsService>();
 
         services.AddScoped<ICacheService, CacheService>();
+        services.AddScoped<INotificationsService, NotificationsService>();
+        services.AddScoped<INotificationsRepository, NotificationsRepository>();
 
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IUsersService, UsersService>();

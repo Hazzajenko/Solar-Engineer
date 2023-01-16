@@ -50,4 +50,15 @@ public static class AppUserFriendMapper
             BecameFriendsTime = request.BecameFriendsTime
         };
     }
+
+    public static FriendRequestDto ToFriendRequestDto(this FriendRequest request)
+    {
+        return new FriendRequestDto
+        {
+            RequestedByUsername = request.RequestedBy.UserName!,
+            FriendRequestFlag = request.FriendRequestFlag,
+            RequestedToUsername = request.RequestedTo.UserName!,
+            BecameFriendsTime = request.BecameFriendsTime
+        };
+    }
 }

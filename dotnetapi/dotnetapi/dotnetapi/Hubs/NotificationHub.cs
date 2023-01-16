@@ -22,8 +22,8 @@ public class NotificationHub : Hub /*<INotificationHub>*/
 
     public async Task GetNotifications(string connectionId)
     {
-        await Clients.Client(connectionId).SendAsync("GetNotifications", "data");
-        await Clients.User("hazza").SendAsync("GetNotifications", "datasdasa");
+        // await Clients.Client(connectionId).SendAsync("GetNotifications", "data");
+        // await Clients.User("hazza").SendAsync("GetNotifications", "datasdasa");
         // await Clients.Client(connectionId).("GetNotifications", "data");
     }
 

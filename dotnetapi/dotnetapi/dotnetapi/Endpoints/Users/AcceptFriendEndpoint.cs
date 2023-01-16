@@ -1,4 +1,4 @@
-﻿using dotnetapi.Models.Dtos;
+﻿using dotnetapi.Contracts.Responses.Friends;
 using dotnetapi.Models.Entities;
 using dotnetapi.Services.Users;
 using FastEndpoints;
@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Identity;
 namespace dotnetapi.Endpoints.Users;
 
 [Authorize]
-public class AcceptFriendEndpoint : EndpointWithoutRequest<FriendRequestDto>
+public class AcceptFriendEndpoint : EndpointWithoutRequest<AcceptFriendResponse>
 {
     private readonly ILogger<AcceptFriendEndpoint> _logger;
     private readonly UserManager<AppUser> _userManager;
@@ -26,7 +26,7 @@ public class AcceptFriendEndpoint : EndpointWithoutRequest<FriendRequestDto>
 
     public override void Configure()
     {
-        Post("/users/accept/{username}");
+        Post("/friend/accept/{username}");
     }
 
     public override async Task HandleAsync(CancellationToken cancellationToken)
@@ -47,6 +47,11 @@ public class AcceptFriendEndpoint : EndpointWithoutRequest<FriendRequestDto>
             friendUsername);
         // return Ok(acceptRequest);
 
-        await SendOkAsync(acceptRequest, cancellationToken);
+        var response = new AcceptFriendResponse
+        {
+            Accepted = true
+        };
+
+        await SendOkAsync(response, cancellationToken);
     }
 }

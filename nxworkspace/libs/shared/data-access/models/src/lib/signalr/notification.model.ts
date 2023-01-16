@@ -1,7 +1,7 @@
 import { FriendRequestModel } from './friendrequest.model'
 
 export interface NotificationModel {
-  id: string
+  id: number
   username: string;
   type: NotificationType;
   timeCreated: string;

@@ -26,8 +26,8 @@ export class CheckUserPipe implements PipeTransform {
 
     const token = await this.authStore.select.token
     if (!token) return
-    this.connectionsService.createHubConnection(token)
-    this.connectionsService.connectSignalR()
+    // this.connectionsService.createHubConnection(token)
+    // this.connectionsService.connectSignalR()
     return this.dialogRef.close()
     // return this.router.navigate(['projects/local']).then((res) => console.log(res))
     // this.router.navigate(['projects/local']).then((res) => console.log(res))

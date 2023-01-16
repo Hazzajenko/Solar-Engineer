@@ -4,6 +4,7 @@ namespace dotnetapi.Models.Dtos;
 
 public class NotificationDto<T>
 {
+    public int Id { get; set; }
     public string Username { get; set; } = default!;
     public NotificationType Type { get; set; }
     public DateTime TimeCreated { get; set; }

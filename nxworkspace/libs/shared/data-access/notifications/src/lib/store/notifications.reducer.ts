@@ -11,7 +11,7 @@ export interface NotificationsState extends EntityState<NotificationModel> {
   error?: string | null
 }
 
-export function selectId(a: NotificationModel): string {
+export function selectId(a: NotificationModel): number {
   return a.id
 }
 

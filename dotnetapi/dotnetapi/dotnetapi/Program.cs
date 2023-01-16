@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Amazon.S3;
 using dotnetapi.Data;
 using dotnetapi.Extensions;
@@ -154,17 +155,26 @@ app.UseAuthorization();
 
 app.UseMiddleware<ValidationExceptionMiddleware>();
 
-app.UseFastEndpoints();
-/*app.UseFastEndpoints( /*x =>
+app.UseFastEndpoints(x =>
 {
-    x.ErrorResponseBuilder = (failures, _) =>
-    {
-        return new ValidationFailureResponse
-        {
-            Errors = failures.Select(y => y.ErrorMessage).ToList()
-        };
-    };
-}#1#);*/
+    x.Serializer.Options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    // x.Serializer.Options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+});
+//     /*.AddJsonOptions(options =>
+// {
+//     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+//     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+// });#1#
+// /*app.*//*UseFastEndpoints*/( /*x =>
+// {
+//     x.ErrorResponseBuilder = (failures, _) =>
+//     {
+//         return new ValidationFailureResponse
+//         {
+//             Errors = failures.Select(y => y.ErrorMessage).ToList()
+//         };
+//     };
+// }#1#);*/
 
 if (app.Environment.IsDevelopment())
 {

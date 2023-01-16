@@ -2,7 +2,7 @@
 
 namespace dotnetapi.Models.Entities;
 
-public class AppUserFriend : BaseEntity
+public class AppUserFriend /* : BaseEntity*/
 {
     public int RequestedById { get; set; }
     public int RequestedToId { get; set; }

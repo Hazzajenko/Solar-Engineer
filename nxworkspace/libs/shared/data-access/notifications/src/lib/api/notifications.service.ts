@@ -1,9 +1,13 @@
+import { HttpClient } from '@angular/common/http'
 import { inject, Injectable } from '@angular/core'
 import { Router } from '@angular/router'
+import { SignInResponse } from '@auth/shared/models'
 import * as signalR from '@microsoft/signalr'
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr'
+import { NotificationModel } from '@shared/data-access/models'
 import { SignalrLogger } from '@shared/data-access/signalr'
 import { NotificationsStoreService } from 'libs/shared/data-access/notifications/src/lib/facades'
+import { ManyNotificationsResponse } from 'libs/shared/data-access/notifications/src/lib/models'
 
 @Injectable({
   providedIn: 'root',
@@ -12,9 +16,14 @@ export class NotificationsService {
 
   private notificationHub?: HubConnection
   private notificationsStore = inject(NotificationsStoreService)
+  private http = inject(HttpClient)
   connectionId?: string
 
   constructor(private router: Router) {
+  }
+
+  getAllUserNotifications() {
+    return this.http.get<ManyNotificationsResponse>('/api/user/notifications')
   }
 
   createNotificationsConnection(token: string) {
@@ -36,7 +45,10 @@ export class NotificationsService {
 
     this.notificationHub.on('getNotifications', notification => {
       console.log('getNotifications', notification)
-      this.notificationsStore.dispatch.addNotification(notification)
+      if ('notification' in notification) {
+        this.notificationsStore.dispatch.addNotification(notification)
+
+      }
     })
   }
 
