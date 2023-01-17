@@ -1,3 +1,6 @@
+import { FriendModel } from '@shared/data-access/models'
+
 export interface AcceptFriendResponse {
-  accepted: boolean
+  // accepted: boolean
+  friend: FriendModel
 }

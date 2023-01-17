@@ -1,9 +1,6 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store'
-import {
-  NOTIFICATIONS_FEATURE_KEY,
-  notificationsAdapter,
-  NotificationsState,
-} from './notifications.reducer'
+import { NotificationModel, NotificationStatus } from '@shared/data-access/models'
+import { NOTIFICATIONS_FEATURE_KEY, notificationsAdapter, NotificationsState } from './notifications.reducer'
 
 export const selectNotificationsState = createFeatureSelector<NotificationsState>(NOTIFICATIONS_FEATURE_KEY)
 
@@ -26,4 +23,9 @@ export const selectAllNotifications = createSelector(selectNotificationsState, (
 export const selectNotificationsEntities = createSelector(selectNotificationsState, (state: NotificationsState) =>
   selectEntities(state),
 )
+
+export const selectUnreadNotifications = () =>
+  createSelector(selectAllNotifications, (notifications: NotificationModel[]) =>
+    notifications.filter((notification) => notification.status === NotificationStatus.Unread),
+  )
 

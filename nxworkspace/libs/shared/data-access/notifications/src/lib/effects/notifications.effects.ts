@@ -2,10 +2,11 @@ import { inject, Injectable } from '@angular/core'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { AuthActions } from '@auth/data-access/store'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
-import { NotificationsService } from 'libs/shared/data-access/notifications/src/lib/api'
-import { NotificationsStoreService } from 'libs/shared/data-access/notifications/src/lib/facades'
-import { NotificationsActions } from 'libs/shared/data-access/notifications/src/lib/store'
+
 import { map, switchMap } from 'rxjs/operators'
+import { NotificationsService } from '../api'
+import { NotificationsStoreService } from '../facades'
+import { NotificationsActions } from '../store'
 
 @Injectable({
   providedIn: 'root',
@@ -53,6 +54,26 @@ export class NotificationsEffects {
               duration: 5000,
             })
           },
+        ),
+      ),
+    { dispatch: false },
+  )
+
+  updateNotification$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(NotificationsActions.updateOneNotification),
+        switchMap(({ update }) => this.notificationsService.updateNotification(update),
+        ),
+      ),
+    { dispatch: false },
+  )
+
+  updateManyNotifications$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(NotificationsActions.updateManyNotifications),
+        switchMap(({ updates }) => this.notificationsService.updateManyNotifications(updates),
         ),
       ),
     { dispatch: false },

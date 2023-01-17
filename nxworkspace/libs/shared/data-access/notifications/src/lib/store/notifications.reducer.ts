@@ -32,6 +32,12 @@ const reducer = createReducer(
   on(NotificationsActions.addManyNotifications, (state, { notifications }) =>
     notificationsAdapter.addMany(notifications, state),
   ),
+  on(NotificationsActions.updateOneNotification, (state, { update }) =>
+    notificationsAdapter.updateOne(update, state),
+  ),
+  on(NotificationsActions.updateManyNotifications, (state, { updates }) =>
+    notificationsAdapter.updateMany(updates, state),
+  ),
   on(NotificationsActions.removeNotification, (state, { notificationId }) =>
     notificationsAdapter.removeOne(notificationId, state)),
 

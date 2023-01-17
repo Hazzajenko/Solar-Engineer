@@ -1,6 +1,8 @@
 import { HttpClient } from '@angular/common/http'
 import { inject, Injectable } from '@angular/core'
-import { AcceptFriendResponse } from 'libs/app/data-access/friends/src/lib/models/accept-friend.response'
+import { AcceptFriendResponse } from '../models/accept-friend.response'
+import { AllFriendsResponse } from '../models/all-friends.response'
+
 
 @Injectable({
   providedIn: 'root',
@@ -13,6 +15,10 @@ export class FriendsService {
     return this.http.post<AcceptFriendResponse>(`/api/friend/accept/${username}`, {
       username,
     })
+  }
+
+  getAllFriends() {
+    return this.http.get<AllFriendsResponse>(`/api/friends`)
   }
 
 }

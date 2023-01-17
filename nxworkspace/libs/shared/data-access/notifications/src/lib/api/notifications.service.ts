@@ -4,10 +4,14 @@ import { Router } from '@angular/router'
 import { SignInResponse } from '@auth/shared/models'
 import * as signalR from '@microsoft/signalr'
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr'
+import { Update } from '@ngrx/entity'
 import { NotificationModel } from '@shared/data-access/models'
 import { SignalrLogger } from '@shared/data-access/signalr'
-import { NotificationsStoreService } from 'libs/shared/data-access/notifications/src/lib/facades'
-import { ManyNotificationsResponse } from 'libs/shared/data-access/notifications/src/lib/models'
+import { NotificationsStoreService } from '../facades'
+import { ManyNotificationsResponse } from '../models'
+import { UpdateManyNotificationsResponse } from '../models/update-many-notifications.response'
+import { UpdateNotificationResponse } from '../models/update-notification.response'
+
 
 @Injectable({
   providedIn: 'root',
@@ -22,8 +26,21 @@ export class NotificationsService {
   constructor(private router: Router) {
   }
 
+  updateNotification(update: Update<NotificationModel>) {
+    return this.http.put<UpdateNotificationResponse>(`/api/notification/${update.id}`, {
+      ...update,
+    })
+  }
+
+  updateManyNotifications(updates: Update<NotificationModel>[]) {
+    return this.http.put<UpdateManyNotificationsResponse>(`/api/notifications`, {
+      updates,
+    })
+  }
+
+
   getAllUserNotifications() {
-    return this.http.get<ManyNotificationsResponse>('/api/user/notifications')
+    return this.http.get<ManyNotificationsResponse>('/api/notifications')
   }
 
   createNotificationsConnection(token: string) {
