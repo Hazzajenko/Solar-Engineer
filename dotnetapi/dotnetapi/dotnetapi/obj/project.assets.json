@@ -163,6 +163,30 @@
           }
         }
       },
+      "Mediator.Abstractions/2.0.30": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "6.0.0",
+          "System.Threading.Tasks.Extensions": "4.5.4"
+        },
+        "compile": {
+          "lib/netstandard2.1/Mediator.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.1/Mediator.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "Mediator.SourceGenerator/2.0.30": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection": "6.0.0",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "6.0.0"
+        }
+      },
       "MessagePack/2.1.90": {
         "type": "package",
         "dependencies": {
@@ -2215,7 +2239,7 @@
           }
         }
       },
-      "System.Threading.Tasks.Extensions/4.5.3": {
+      "System.Threading.Tasks.Extensions/4.5.4": {
         "type": "package",
         "compile": {
           "ref/netcoreapp2.1/_._": {}
@@ -2513,6 +2537,33 @@
         "lib/netstandard2.0/Humanizer.dll",
         "lib/netstandard2.0/Humanizer.xml",
         "logo.png"
+      ]
+    },
+    "Mediator.Abstractions/2.0.30": {
+      "sha512": "btPWIaZ7XQvzScEF5ighidKbeCvV1tAv+42tUc/rLpSUoLirgLZELnerdBYeyIdskPu5JTm8YH934Tgiy+ZxJA==",
+      "type": "package",
+      "path": "mediator.abstractions/2.0.30",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/netstandard2.1/Mediator.dll",
+        "lib/netstandard2.1/Mediator.xml",
+        "mediator.abstractions.2.0.30.nupkg.sha512",
+        "mediator.abstractions.nuspec"
+      ]
+    },
+    "Mediator.SourceGenerator/2.0.30": {
+      "sha512": "lurx0iIj/IQ4Vs4Q9dZ4dtjqE9um7+NJV4pWReEfNDQPOpjCa0Lxt1eM3b+o4lbw7eROr+Q7YooouSjCsonb8Q==",
+      "type": "package",
+      "path": "mediator.sourcegenerator/2.0.30",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "analyzers/dotnet/cs/Mediator.SourceGenerator.Implementation.dll",
+        "analyzers/dotnet/roslyn3.8/cs/Mediator.SourceGenerator.Roslyn38.dll",
+        "analyzers/dotnet/roslyn4.0/cs/Mediator.SourceGenerator.Roslyn40.dll",
+        "mediator.sourcegenerator.2.0.30.nupkg.sha512",
+        "mediator.sourcegenerator.nuspec"
       ]
     },
     "MessagePack/2.1.90": {
@@ -6954,10 +7005,10 @@
         "system.threading.tasks.nuspec"
       ]
     },
-    "System.Threading.Tasks.Extensions/4.5.3": {
-      "sha512": "+MvhNtcvIbqmhANyKu91jQnvIRVSTiaOiFNfKWwXGHG48YAb4I/TyH8spsySiPYla7gKal5ZnF3teJqZAximyQ==",
+    "System.Threading.Tasks.Extensions/4.5.4": {
+      "sha512": "zteT+G8xuGu6mS+mzDzYXbzS7rd3K6Fjb9RiZlYlJPam2/hU7JCBZBVEcywNuR+oZ1ncTvc/cq0faRr3P01OVg==",
       "type": "package",
-      "path": "system.threading.tasks.extensions/4.5.3",
+      "path": "system.threading.tasks.extensions/4.5.4",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -6965,6 +7016,8 @@
         "THIRD-PARTY-NOTICES.TXT",
         "lib/MonoAndroid10/_._",
         "lib/MonoTouch10/_._",
+        "lib/net461/System.Threading.Tasks.Extensions.dll",
+        "lib/net461/System.Threading.Tasks.Extensions.xml",
         "lib/netcoreapp2.1/_._",
         "lib/netstandard1.0/System.Threading.Tasks.Extensions.dll",
         "lib/netstandard1.0/System.Threading.Tasks.Extensions.xml",
@@ -6983,7 +7036,7 @@
         "ref/xamarinmac20/_._",
         "ref/xamarintvos10/_._",
         "ref/xamarinwatchos10/_._",
-        "system.threading.tasks.extensions.4.5.3.nupkg.sha512",
+        "system.threading.tasks.extensions.4.5.4.nupkg.sha512",
         "system.threading.tasks.extensions.nuspec",
         "useSharedDesignerContext.txt",
         "version.txt"
@@ -7216,6 +7269,8 @@
       "FastEndpoints >= 5.6.0",
       "FastEndpoints.Swagger >= 5.6.0",
       "FluentValidation.AspNetCore >= 11.2.2",
+      "Mediator.Abstractions >= 2.0.30",
+      "Mediator.SourceGenerator >= 2.0.30",
       "Microsoft.AspNetCore.Authentication.JwtBearer >= 7.0.0",
       "Microsoft.AspNetCore.Identity.EntityFrameworkCore >= 7.0.0",
       "Microsoft.AspNetCore.Mvc.Versioning >= 5.0.0",
@@ -7304,6 +7359,16 @@
           "FluentValidation.AspNetCore": {
             "target": "Package",
             "version": "[11.2.2, )"
+          },
+          "Mediator.Abstractions": {
+            "target": "Package",
+            "version": "[2.0.30, )"
+          },
+          "Mediator.SourceGenerator": {
+            "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+            "suppressParent": "All",
+            "target": "Package",
+            "version": "[2.0.30, )"
           },
           "Microsoft.AspNetCore.Authentication.JwtBearer": {
             "target": "Package",

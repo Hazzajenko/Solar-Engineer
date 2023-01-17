@@ -1,9 +1,8 @@
-﻿using dotnetapi.Hubs;
-using dotnetapi.Hubs.Connections;
+﻿using dotnetapi.Features.Notifications.Services;
+using dotnetapi.Hubs;
 using dotnetapi.Mapping;
 using dotnetapi.Models.Dtos;
 using dotnetapi.Models.Entities;
-using dotnetapi.Services.Notifications;
 using dotnetapi.Services.SignalR;
 using dotnetapi.Services.Users;
 using FluentValidation;
@@ -24,18 +23,20 @@ public interface IFriendsService
 
 public class FriendsService : IFriendsService
 {
-    private static readonly ConnectionMapping<string> _connections = new();
+    // private static readonly ConnectionMapping<string> _connections = new();
 
     private readonly IConnectionsService _connectionsService;
     private readonly IFriendsRepository _friendsRepository;
     private readonly IHubContext<NotificationHub> _hubContext;
     private readonly INotificationsRepository _notificationsRepository;
+    private readonly INotificationsService _notificationsService;
     private readonly UserManager<AppUser> _userManager;
     private readonly IUsersRepository _usersRepository;
 
     public FriendsService(UserManager<AppUser> userManager, IFriendsRepository friendsRepository,
         IUsersRepository usersRepository, IHubContext<NotificationHub> hubContext,
-        IConnectionsService connectionsService, INotificationsRepository notificationsRepository)
+        IConnectionsService connectionsService, INotificationsRepository notificationsRepository,
+        INotificationsService notificationsService)
     {
         _userManager = userManager;
         _friendsRepository = friendsRepository;
@@ -43,6 +44,7 @@ public class FriendsService : IFriendsService
         _hubContext = hubContext;
         _connectionsService = connectionsService;
         _notificationsRepository = notificationsRepository;
+        _notificationsService = notificationsService;
     }
 
     public async Task<IEnumerable<FriendRequestDto>> GetSentRequestsAsync(AppUser user)
@@ -84,16 +86,8 @@ public class FriendsService : IFriendsService
             throw new ValidationException(message, GenerateValidationError(message));
         }
 
-        var notification = new NotificationDto<FriendRequestDto>
-        {
-            Username = friendUser.UserName!,
-            Status = NotificationStatus.Unread,
-            Type = NotificationType.FriendRequest,
-            TimeCreated = DateTime.Now,
-            Notification = result.ToDto()
-        };
 
-
+        /*
         var notificationEntity = new Notification
         {
             AppUser = friendUser,
@@ -128,7 +122,7 @@ public class FriendsService : IFriendsService
             Notification = friendRequestEntity.ToFriendRequestDto()
         };
 
-        await _hubContext.Clients.User(friendUser.UserName!).SendAsync("GetNotifications", signalRResponse);
+        await _hubContext.Clients.User(friendUser.UserName!).SendAsync("GetNotifications", signalRResponse);*/
 
         return result;
     }

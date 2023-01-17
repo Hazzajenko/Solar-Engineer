@@ -1,9 +1,9 @@
 ﻿using dotnetapi.Data;
+using dotnetapi.Features.Notifications.Services;
 using dotnetapi.Services.Auth;
 using dotnetapi.Services.Cache;
 using dotnetapi.Services.Friends;
 using dotnetapi.Services.Links;
-using dotnetapi.Services.Notifications;
 using dotnetapi.Services.Panels;
 using dotnetapi.Services.Paths;
 using dotnetapi.Services.Projects;
@@ -20,6 +20,8 @@ public static class ApplicationServiceExtensions
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
     {
+        services.AddMediator();
+
         services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
         services.AddSingleton<IConnectionsService, ConnectionsService>();
 

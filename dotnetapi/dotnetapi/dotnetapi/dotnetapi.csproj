@@ -17,6 +17,11 @@
         <PackageReference Include="FastEndpoints" Version="5.6.0" />
         <PackageReference Include="FastEndpoints.Swagger" Version="5.6.0" />
         <PackageReference Include="FluentValidation.AspNetCore" Version="11.2.2" />
+        <PackageReference Include="Mediator.Abstractions" Version="2.0.30" />
+        <PackageReference Include="Mediator.SourceGenerator" Version="2.0.30">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <!--        <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="7.0.1" />-->
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.0" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.0" />
@@ -53,6 +58,7 @@
 
     <ItemGroup>
         <Folder Include="Data\Json" />
+        <Folder Include="Features\Notifications\Contracts\Responses" />
         <Folder Include="Repositories\Links" />
         <Folder Include="Repositories\Panels" />
         <Folder Include="Repositories\Paths" />

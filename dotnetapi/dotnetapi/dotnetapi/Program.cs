@@ -155,9 +155,10 @@ app.UseAuthorization();
 
 app.UseMiddleware<ValidationExceptionMiddleware>();
 
-app.UseFastEndpoints(x =>
+app.UseFastEndpoints(options =>
 {
-    x.Serializer.Options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    // options.Errors.ResponseBuilder = (errors, _) => errors.ToResponse();
+    options.Serializer.Options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     // x.Serializer.Options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
 });
 //     /*.AddJsonOptions(options =>
