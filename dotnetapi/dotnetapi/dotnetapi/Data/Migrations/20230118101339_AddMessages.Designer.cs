@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using dotnetapi.Data;
@@ -11,9 +12,11 @@ using dotnetapi.Data;
 namespace dotnetapi.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230118101339_AddMessages")]
+    partial class AddMessages
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -386,16 +389,6 @@ namespace dotnetapi.Data.Migrations
                     b.ToTable("FriendRequestNotification");
                 });
 
-            modelBuilder.Entity("dotnetapi.Models.Entities.Group", b =>
-                {
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.HasKey("Name");
-
-                    b.ToTable("Groups");
-                });
-
             modelBuilder.Entity("dotnetapi.Models.Entities.Message", b =>
                 {
                     b.Property<int>("Id")
@@ -700,25 +693,6 @@ namespace dotnetapi.Data.Migrations
                     b.ToTable("Strings");
                 });
 
-            modelBuilder.Entity("dotnetapi.Models.SignalR.Connection", b =>
-                {
-                    b.Property<string>("ConnectionId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("GroupName")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("ConnectionId");
-
-                    b.HasIndex("GroupName");
-
-                    b.ToTable("Connection");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.HasOne("dotnetapi.Models.Entities.AppRole", null)
@@ -1012,14 +986,6 @@ namespace dotnetapi.Data.Migrations
                     b.Navigation("Project");
                 });
 
-            modelBuilder.Entity("dotnetapi.Models.SignalR.Connection", b =>
-                {
-                    b.HasOne("dotnetapi.Models.Entities.Group", null)
-                        .WithMany("Connections")
-                        .HasForeignKey("GroupName")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
             modelBuilder.Entity("dotnetapi.Models.Entities.AppRole", b =>
                 {
                     b.Navigation("UserRoles");
@@ -1040,11 +1006,6 @@ namespace dotnetapi.Data.Migrations
                     b.Navigation("SentFriendRequests");
 
                     b.Navigation("UserRoles");
-                });
-
-            modelBuilder.Entity("dotnetapi.Models.Entities.Group", b =>
-                {
-                    b.Navigation("Connections");
                 });
 
             modelBuilder.Entity("dotnetapi.Models.Entities.Panel", b =>

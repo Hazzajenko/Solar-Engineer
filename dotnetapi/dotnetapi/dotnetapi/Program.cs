@@ -197,7 +197,8 @@ app.UseWebSockets(new WebSocketOptions
 });
 // app.MapHub<UserHub>("/user");
 app.MapHub<ConnectionsHub>("hubs/connections");
-app.MapHub<NotificationHub>("hubs/notifications");
+app.MapHub<NotificationsHub>("hubs/notifications");
+app.MapHub<MessagesHub>("hubs/messages");
 // app.MapHub<ViewsHub>("hubs/views");
 
 

@@ -21,6 +21,9 @@ public class AppUser : IdentityUser<int>
     public virtual ICollection<AppUserFriend> ReceivedFriendRequests { get; set; } = default!;
 
     public ICollection<Notification> Notifications { get; set; } = default!;
+    public ICollection<Message> MessagesSent { get; set; } = default!;
+
+    public ICollection<Message> MessagesReceived { get; set; } = default!;
     // public ICollection<FriendRequestNotification> FriendRequestNotifications { get; set; } = default!;
 
 

@@ -1,15 +1,29 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using dotnetapi.Models.Dtos;
+using Microsoft.AspNetCore.SignalR;
 
 namespace dotnetapi.Hubs;
 
-public interface INotificationHub
+public interface INotificationsHub
 {
     // Task SendNotification(string[] connections, AppUserFriend appUserFriend);
-    Task GetNotifications(string connectionId);
+    Task GetNotifications(NotificationDto notification);
 }
 
-public class NotificationHub : Hub /*<INotificationHub>*/
+public class NotificationsHub : Hub<INotificationsHub>
 {
+    private readonly ILogger<NotificationsHub> _serilog;
+
+    public NotificationsHub(ILogger<NotificationsHub> serilog)
+    {
+        _serilog = serilog;
+    }
+    /*public override async Task OnConnectedAsync() {
+        ConnectedCount++;
+        _serilog.LogInformation("OnConnectedAsync {ConnectedCount}, Id {Id}", ConnectedCount, Context.ConnectionId);
+        await Clients.All.ConnectedUpdate(ConnectedCount);
+
+        await base.OnConnectedAsync();
+    }*/
     /*public override async Task OnConnectedAsync()
     {
         var userId = Context.User!.GetUserId();

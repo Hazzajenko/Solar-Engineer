@@ -4,7 +4,6 @@ using dotnetapi.Hubs;
 using dotnetapi.Mapping;
 using dotnetapi.Models.Dtos;
 using dotnetapi.Models.Entities;
-using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
@@ -13,11 +12,10 @@ namespace dotnetapi.Features.Notifications.Services;
 
 public interface INotificationsService
 {
-    Task<Notification> SendFriendRequestToUserAsync(string username, string friendUsername);
     Task<bool> MarkNotificationAsReadAsync(UpdateNotificationRequest request);
     Task<bool[]> MarkManyNotificationsAsReadAsync(UpdateManyNotificationsRequest request);
     Task<bool> UpdateNotificationAsync(UpdateNotificationRequest request);
-    Task<AppUserFriend> CreateFriendRequestToUserAsync(AppUserFriend request);
+    Task<AppUserFriend> SendFriendRequestToUserAsync(AppUserFriend request);
 
     Task<IEnumerable<NotificationDto>> GetAllUserNotifications(AppUser user);
     // Task<Notification> CreateNotificationAsync(Notification notification);
@@ -26,12 +24,12 @@ public interface INotificationsService
 public class NotificationsService : INotificationsService
 {
     private readonly IFriendsRepository _friendsRepository;
-    private readonly IHubContext<NotificationHub> _hubContext;
+    private readonly IHubContext<NotificationsHub> _hubContext;
     private readonly INotificationsRepository _notificationsRepository;
     private readonly UserManager<AppUser> _userManager;
 
     public NotificationsService(UserManager<AppUser> userManager, INotificationsRepository notificationsRepository,
-        IHubContext<NotificationHub> hubContext, IFriendsRepository friendsRepository)
+        IHubContext<NotificationsHub> hubContext, IFriendsRepository friendsRepository)
     {
         _userManager = userManager;
         _notificationsRepository = notificationsRepository;
@@ -100,68 +98,7 @@ public class NotificationsService : INotificationsService
     }*/
 
 
-    public async Task<Notification> SendFriendRequestToUserAsync(string username, string friendUsername)
-    {
-        var user = await _userManager.FindByNameAsync(username);
-        if (user is null)
-        {
-            var message = $"Username {username} is invalid";
-            throw new ValidationException(message, GenerateValidationError(message));
-        }
-
-        var friendUser = await _userManager.FindByNameAsync(friendUsername);
-        if (friendUser is null)
-        {
-            var message = $"friendUser {friendUsername} is invalid";
-            throw new ValidationException(message, GenerateValidationError(message));
-        }
-
-        var notificationEntity = new Notification
-        {
-            AppUser = friendUser,
-            AppUserId = friendUser.Id,
-            Status = NotificationStatus.Unread,
-            Type = NotificationType.FriendRequest,
-            TimeCreated = DateTime.Now
-        };
-
-        var friendRequestEntity = new FriendRequest
-        {
-            // Notification = notificationEntity,
-            RequestedBy = user,
-            RequestedById = user.Id,
-            RequestedTo = friendUser,
-            RequestedToId = friendUser.Id,
-            FriendRequestFlag = FriendRequestFlag.None,
-            BecameFriendsTime = null
-        };
-
-        var newNotification =
-            await _notificationsRepository.CreateFriendRequest(friendRequestEntity, notificationEntity);
-
-        /*
-        notificationEntity.FriendRequest = newFriendRequest;
-        notificationEntity.FriendRequestId = newFriendRequest.Id;
-
-        var newNotification = await _notificationsRepository.CreateNotificationAsync(notificationEntity);*/
-
-        var signalRResponse = new NotificationDto
-        {
-            Id = newNotification.Id,
-            Username = newNotification.AppUser.UserName!,
-            Status = newNotification.Status,
-            RequestTime = newNotification.TimeCreated,
-            Type = newNotification.Type,
-            FriendRequest = friendRequestEntity.ToFriendRequestDto()
-        };
-
-        await _hubContext.Clients.User(friendUser.UserName!).SendAsync("GetNotifications", signalRResponse);
-
-        // var result = await _notificationsRepository.SendNotificationToUserAsync(notification);
-        return newNotification;
-    }
-
-    public async Task<AppUserFriend> CreateFriendRequestToUserAsync(AppUserFriend request)
+    public async Task<AppUserFriend> SendFriendRequestToUserAsync(AppUserFriend request)
     {
         await _hubContext.Clients.User(request.RequestedTo.UserName!)
             .SendAsync("GetNotifications", request.ToNotificationDto());

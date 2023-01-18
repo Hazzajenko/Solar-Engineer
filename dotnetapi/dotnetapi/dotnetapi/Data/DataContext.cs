@@ -24,6 +24,10 @@ public class DataContext : IdentityDbContext<AppUser, AppRole, int,
     public DbSet<AppUserProject> AppUserProjects { get; set; } = default!;
 
     public DbSet<AppUserFriend> AppUserFriends { get; set; } = default!;
+
+    public DbSet<Group> Groups { get; set; } = default!;
+
+    public DbSet<Message> Messages { get; set; } = default!;
     // public DbSet<Notification> Notifications { get; set; } = default!;
 
     // public DbSet<FriendRequest> FriendRequests { get; set; } = default!;

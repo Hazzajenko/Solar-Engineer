@@ -1,6 +1,5 @@
 ﻿using dotnetapi.Data;
 using dotnetapi.Extensions;
-using dotnetapi.Hubs.Connections;
 using dotnetapi.Mapping;
 using dotnetapi.Models.SignalR;
 using dotnetapi.Services.SignalR;
@@ -11,16 +10,21 @@ namespace dotnetapi.Hubs;
 
 public class ConnectionsHub : Hub
 {
-    private static readonly ConnectionMapping<string> _connections = new();
+    // private static readonly ConnectionMapping<string> _connections = new();
 
     private readonly IConnectionsService _connectionsService;
     private readonly InMemoryDatabase _context;
+    private readonly ILogger<ConnectionsHub> _logger;
 
-    public ConnectionsHub(InMemoryDatabase context, IConnectionsService connectionsService)
+    public ConnectionsHub(InMemoryDatabase context, IConnectionsService connectionsService,
+        ILogger<ConnectionsHub> logger)
     {
         _context = context;
         _connectionsService = connectionsService;
+        _logger = logger;
     }
+
+    private static int ConnectedCount { get; set; }
 
     public override async Task OnConnectedAsync()
     {
@@ -49,7 +53,7 @@ public class ConnectionsHub : Hub
 
         // var json = JsonSerializer.Serialize(userConnections);
 
-        _connections.Add(username, Context.ConnectionId);
+        // _connections.Add(username, Context.ConnectionId);
 
         await Groups.AddToGroupAsync(Context.ConnectionId, username);
         // var userName = GetUserName(Context); // get the username of the connected user
@@ -57,6 +61,11 @@ public class ConnectionsHub : Hub
         await Groups.AddToGroupAsync(Context.ConnectionId, $"user_{username}");
 
         await Clients.Caller.SendAsync("GetOnlineUsers", userConnections);
+
+        ConnectedCount++;
+        _logger.LogInformation("OnConnectedAsync {ConnectedCount}, User {Username}", ConnectedCount,
+            Context.User!.GetUsername());
+
         await base.OnConnectedAsync();
     }
 
@@ -71,6 +80,10 @@ public class ConnectionsHub : Hub
 
         if (isOffline)
             await Clients.Others.SendAsync("UserIsOffline", disconnectedUser);
+
+        ConnectedCount--;
+        _logger.LogInformation("OnDisconnectedAsync {ConnectedCount}, User {Username}", ConnectedCount,
+            Context.User!.GetUsername());
 
         await base.OnDisconnectedAsync(exception);
     }

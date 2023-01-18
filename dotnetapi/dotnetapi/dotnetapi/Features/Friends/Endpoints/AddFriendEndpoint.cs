@@ -1,4 +1,4 @@
-﻿using dotnetapi.Contracts.Responses.Auth;
+﻿using dotnetapi.Features.Friends.Contracts.Responses;
 using dotnetapi.Features.Friends.Services;
 using dotnetapi.Features.Notifications.Services;
 using dotnetapi.Hubs;
@@ -17,7 +17,7 @@ public class AddFriendEndpoint : EndpointWithoutRequest<AddFriendResponse>
 {
     private readonly IConnectionsService _connectionsService;
     private readonly IFriendsService _friendsService;
-    private readonly IHubContext<NotificationHub> _hubContext;
+    private readonly IHubContext<NotificationsHub> _hubContext;
     private readonly ILogger<AddFriendEndpoint> _logger;
     private readonly IMediator _mediator;
     private readonly INotificationsService _notificationsService;
@@ -27,7 +27,7 @@ public class AddFriendEndpoint : EndpointWithoutRequest<AddFriendResponse>
         ILogger<AddFriendEndpoint> logger,
         IFriendsService friendsService,
         UserManager<AppUser> userManager,
-        IHubContext<NotificationHub> hubContext,
+        IHubContext<NotificationsHub> hubContext,
         IConnectionsService connectionsService,
         INotificationsService notificationsService,
         IMediator mediator)
@@ -56,7 +56,7 @@ public class AddFriendEndpoint : EndpointWithoutRequest<AddFriendResponse>
         var user = await _userManager.GetUserAsync(User);
         if (user is null)
         {
-            _logger.LogError("Bad request, {Username} is invalid", user.UserName);
+            _logger.LogError("Bad request, User is invalid");
             ThrowError("Username is invalid");
         }
 
@@ -65,13 +65,13 @@ public class AddFriendEndpoint : EndpointWithoutRequest<AddFriendResponse>
 
         var sendRequest = await _friendsService.AddFriendAsync(user, friendUsername);
 
-        var notification = await _notificationsService.CreateFriendRequestToUserAsync(sendRequest);
+        var notification = await _notificationsService.SendFriendRequestToUserAsync(sendRequest);
         // var notification = await _notificationsService.SendFriendRequestToUserAsync(user.UserName!, friendUsername);
-        if (notification is null)
+        /*if (notification is null)
         {
             _logger.LogError("Unable to create notification");
             ThrowError("Unable to create notification");
-        }
+        }*/
         /*var sendRequest = await _mediator.Send(new AddFriendHandlerRequest
         {
             AppUser = user,
@@ -80,7 +80,7 @@ public class AddFriendEndpoint : EndpointWithoutRequest<AddFriendResponse>
 
         var result = new AddFriendResponse
         {
-            Username = sendRequest.RequestedTo.UserName!
+            FriendRequestSentTo = sendRequest.RequestedTo.UserName!
         };
 
         _logger.LogInformation("{Username} sent a friend request to {FriendUsername}", user.UserName, friendUsername);

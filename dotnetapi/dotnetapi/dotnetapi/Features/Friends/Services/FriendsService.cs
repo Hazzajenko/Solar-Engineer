@@ -26,13 +26,13 @@ public class FriendsService : IFriendsService
 
     private readonly IConnectionsService _connectionsService;
     private readonly IFriendsRepository _friendsRepository;
-    private readonly IHubContext<NotificationHub> _hubContext;
+    private readonly IHubContext<NotificationsHub> _hubContext;
     private readonly INotificationsRepository _notificationsRepository;
     private readonly INotificationsService _notificationsService;
     private readonly UserManager<AppUser> _userManager;
 
     public FriendsService(UserManager<AppUser> userManager, IFriendsRepository friendsRepository,
-        IHubContext<NotificationHub> hubContext,
+        IHubContext<NotificationsHub> hubContext,
         IConnectionsService connectionsService, INotificationsRepository notificationsRepository,
         INotificationsService notificationsService)
     {
