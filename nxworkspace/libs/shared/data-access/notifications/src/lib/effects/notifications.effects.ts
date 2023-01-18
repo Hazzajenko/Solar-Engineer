@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { AuthActions } from '@auth/data-access/store'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
+import { NotificationType } from '@shared/data-access/models'
 
 import { map, switchMap } from 'rxjs/operators'
 import { NotificationsService } from '../api'
@@ -49,7 +50,7 @@ export class NotificationsEffects {
       this.actions$.pipe(
         ofType(NotificationsActions.addNotification),
         map(({ notification }) => {
-            const notificationFrom = notification.notification.requestedByUsername
+            const notificationFrom = notification.friendRequest.requestedByUsername
             this.snackBar.open(`New friend request from ${notificationFrom}!`, 'OK', {
               duration: 5000,
             })
@@ -63,7 +64,7 @@ export class NotificationsEffects {
     () =>
       this.actions$.pipe(
         ofType(NotificationsActions.updateOneNotification),
-        switchMap(({ update }) => this.notificationsService.updateNotification(update),
+        switchMap(({ update }) => this.notificationsService.updateNotification(update, NotificationType.FriendRequest),
         ),
       ),
     { dispatch: false },

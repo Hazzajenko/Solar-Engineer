@@ -5,7 +5,7 @@ import { SignInResponse } from '@auth/shared/models'
 import * as signalR from '@microsoft/signalr'
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr'
 import { Update } from '@ngrx/entity'
-import { NotificationModel } from '@shared/data-access/models'
+import { NotificationModel, NotificationType } from '@shared/data-access/models'
 import { SignalrLogger } from '@shared/data-access/signalr'
 import { NotificationsStoreService } from '../facades'
 import { ManyNotificationsResponse } from '../models'
@@ -26,9 +26,10 @@ export class NotificationsService {
   constructor(private router: Router) {
   }
 
-  updateNotification(update: Update<NotificationModel>) {
+  updateNotification(update: Update<NotificationModel>, type: NotificationType) {
     return this.http.put<UpdateNotificationResponse>(`/api/notification/${update.id}`, {
       ...update,
+      type,
     })
   }
 
@@ -62,7 +63,7 @@ export class NotificationsService {
 
     this.notificationHub.on('getNotifications', notification => {
       console.log('getNotifications', notification)
-      if ('notification' in notification) {
+      if ('friendRequest' in notification) {
         this.notificationsStore.dispatch.addNotification(notification)
 
       }

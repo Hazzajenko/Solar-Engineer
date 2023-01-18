@@ -4,9 +4,9 @@ export interface NotificationModel {
   id: number
   username: string;
   type: NotificationType;
-  timeCreated: string;
+  requestTime: string;
   status: NotificationStatus;
-  notification: FriendRequestModel;
+  friendRequest: FriendRequestModel;
 }
 
 export enum NotificationType {

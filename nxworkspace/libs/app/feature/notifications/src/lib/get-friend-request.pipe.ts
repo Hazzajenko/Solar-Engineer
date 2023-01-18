@@ -1,12 +1,8 @@
-import { Inject, inject, Pipe, PipeTransform } from '@angular/core'
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog'
-import { MatLegacyListOption } from '@angular/material/legacy-list'
-import { MatListOption } from '@angular/material/list'
+import { inject, Pipe, PipeTransform } from '@angular/core'
 import { Router } from '@angular/router'
 import { AuthStoreService } from '@auth/data-access/facades'
-import { BlockModel, FriendRequestModel, NotificationModel, UserModel } from '@shared/data-access/models'
-import { AuthDialog } from 'libs/home/ui/src/lib/dialogs/auth/auth.dialog'
 import { ConnectionsService } from '@shared/data-access/connections'
+import { NotificationModel } from '@shared/data-access/models'
 
 @Pipe({
   name: 'getRequested',
@@ -21,6 +17,6 @@ export class GetFriendRequestPipe implements PipeTransform {
     if (!request) return
 
 
-    return (request as NotificationModel).notification.requestedByUsername
+    return (request as NotificationModel).friendRequest.requestedByUsername
   }
 }

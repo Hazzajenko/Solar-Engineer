@@ -21,7 +21,10 @@
     "useDefineForClassFields": false,
     "paths": {
       "@app/data-access/friends": ["libs/app/data-access/friends/src/index.ts"],
+      "@app/feature/friends": ["libs/app/feature/friends/src/index.ts"],
       "@app/feature/notifications": ["libs/app/feature/notifications/src/index.ts"],
+      "@app/feature/profile": ["libs/app/feature/profile/src/index.ts"],
+      "@app/feature/sidenav": ["libs/app/feature/sidenav/src/index.ts"],
       "@app/routes": ["libs/app/routes/src/index.ts"],
       "@auth/data-access/api": ["libs/auth/data-access/api/src/index.ts"],
       "@auth/data-access/effects": ["libs/auth/data-access/effects/src/index.ts"],
@@ -77,6 +80,7 @@
       "@shared/directives/on-destroy": ["libs/shared/directives/on-destroy/src/index.ts"],
       "@shared/environment": ["libs/shared/environment/src/index.ts"],
       "@shared/interceptors": ["libs/shared/interceptors/src/index.ts"],
+      "@shared/pipes": ["libs/shared/pipes/src/index.ts"],
       "@shared/ui/app-bar": ["libs/shared/ui/app-bar/src/index.ts"],
       "@shared/ui/logo": ["libs/shared/ui/logo/src/index.ts"],
       "@shared/ui/show-hide": ["libs/shared/ui/show-hide/src/index.ts"],

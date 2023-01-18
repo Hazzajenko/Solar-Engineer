@@ -32,6 +32,12 @@ const reducer = createReducer(
   on(FriendsActions.addManyFriends, (state, { friends }) =>
     friendsAdapter.addMany(friends, state),
   ),
+  on(FriendsActions.updateFriend, (state, { update }) =>
+    friendsAdapter.updateOne(update, state),
+  ),
+  on(FriendsActions.updateManyFriends, (state, { updates }) =>
+    friendsAdapter.updateMany(updates, state),
+  ),
   on(FriendsActions.removeFriend, (state, { friendUsername }) =>
     friendsAdapter.removeOne(friendUsername, state),
   ),

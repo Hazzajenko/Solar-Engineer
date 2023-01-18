@@ -4,7 +4,7 @@ import { MatDialogModule } from '@angular/material/dialog'
 import { bootstrapApplication, BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { provideRouter, withEnabledBlockingInitialNavigation } from '@angular/router'
-import { FRIENDS_FEATURE_KEY, FriendsEffects } from '@app/data-access/friends'
+import { FRIENDS_FEATURE_KEY, FriendsEffects, friendsReducer } from '@app/data-access/friends'
 import { AUTH_FEATURE_KEY, authReducer } from '@auth/data-access/store'
 import { JwtInterceptor } from '@auth/interceptors'
 import { provideEffects } from '@ngrx/effects'
@@ -51,7 +51,7 @@ bootstrapApplication(AppComponent, {
     provideState(PROJECTS_FEATURE_KEY, projectsReducer),
     provideState(UI_FEATURE_KEY, uiReducer),
     provideState(NOTIFICATIONS_FEATURE_KEY, notificationsReducer),
-    provideState(FRIENDS_FEATURE_KEY, notificationsReducer),
+    provideState(FRIENDS_FEATURE_KEY, friendsReducer),
     /*    provideEffects([NotificationsEffects]),*/
 
     // provideStoreDevtools({

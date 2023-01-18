@@ -1,0 +1,45 @@
+<ng-container *ngIf='user$ | async as user'>
+  <ng-container *ngIf='notifications$ | async as notifications'>
+    <div class='flex flex-col items-center content-center'>
+      <h1 mat-dialog-title>Notifications</h1>
+
+      <button class='flex flex-col items-center content-center' mat-button
+              (click)='markAllNotificationsAsRead(notifications)'>
+        Mark All As Read
+      </button>
+      <mat-selection-list style='overflow: hidden' (selectionChange)='change($event)' #notificationSelect
+                          [multiple]='false'
+                          class='flex flex-col items-center content-center'>
+        <cdk-virtual-scroll-viewport style='height: 400px; width: 400px'
+                                     itemSize='50'
+                                     class='flex flex-col items-center content-center'>
+          <!--          [ngStyle]='{"background-color": notification.status === 0 ? "#60a1fa" : ""}'-->
+          <mat-list-option appNotificationDirective [notification]='notification'
+                           [selectedNotification]='selectedNotification'
+
+                           *cdkVirtualFor='let notification of notifications | sortNotifications'
+                           [value]='notification'>
+            <ng-container [ngSwitch]='notification.type'>
+              <ng-container *ngSwitchCase='1'>
+                <span matListItemTitle>Friend Request</span>
+                <span matListItemLine>{{notification.requestTime | date : 'short'}}</span>
+                <span matListItemLine>From {{notification.friendRequest.requestedByUsername}}</span>
+              </ng-container>
+            </ng-container>
+            <!--          [color]='notification.status === 0 ? "primary" : "accent"'-->
+          </mat-list-option>
+        </cdk-virtual-scroll-viewport>
+
+      </mat-selection-list>
+
+
+      <ng-container *ngIf='selectedNotification'>
+        <button *ngIf='selectedNotification.type === 1 && selectedNotification.friendRequest.friendRequestFlag === 0'
+                mat-button
+                (click)='acceptFriend(selectedNotification.friendRequest.requestedByUsername)'>
+          Accept {{selectedNotification.friendRequest.requestedByUsername}}</button>
+      </ng-container>
+    </div>
+    <!--    <button mat-button mat-dialog-close='true'>Exit</button>-->
+  </ng-container>
+</ng-container>

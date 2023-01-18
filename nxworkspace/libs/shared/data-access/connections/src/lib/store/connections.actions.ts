@@ -8,6 +8,7 @@ export const ConnectionsActions = createActionGroup({
     'Add Connection': props<{ connection: ConnectionModel }>(),
     'Add Many Connections': props<{ connections: ConnectionModel[] }>(),
     'Remove Connection': props<{ connection: ConnectionModel }>(),
+    'Connection Not Friend': emptyProps(),
     'Clear Connections State': emptyProps(),
   },
 })

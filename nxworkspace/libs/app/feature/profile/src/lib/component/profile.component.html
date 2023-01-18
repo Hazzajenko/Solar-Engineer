@@ -1,0 +1,78 @@
+<ng-container *ngIf='user$ | async as user'>
+  <div class='flex flex-col items-center content-center'>
+    <div class='flex flex-row items-center content-center'>
+      <button (click)='toggleEdit()' mat-raised-button color='primary'>Edit</button>
+    </div>
+    <ng-container *ngIf='!profileEdit else editMode'>
+      <div>
+        <!--        <img src='profile.png' alt='' />-->
+        <h4>{{ user.username }}</h4>
+        <p>{{ user.firstName }} {{ user.lastName }}</p>
+        <p>{{ user.email }}</p>
+        <!--      <a [routerLink]="['/settings']"
+                 [hidden]='!isUser'
+                 class='btn btn-sm btn-outline-secondary action-btn'>
+                <i class='ion-gear-a'></i> Edit Profile Settings
+              </a>-->
+      </div>
+    </ng-container>
+
+    <ng-template #editMode>
+
+
+      <form [formGroup]='loginForm' class='flex m-5 my-3 flex-col items-center content-center'>
+        <div class='form-floating mb-3'>
+          <label id='username'>Username</label>
+          <input type='text' class='block h-12 w-full rounded-sm mt-2 text-sm font-light bg-gray-300' placeholder=''
+                 formControlName='username'
+                 [ngClass]="{ 'border border-red-500': loginForm.get('username')!.dirty }">
+          <div class='items-center text-red-500 text-sm'>
+            <ng-container *ngFor='let validation of validationMessages.username'>
+              <div class='error-message'
+                   *ngIf="loginForm.get('username')!.hasError(validation.type) && (loginForm.get('username')!.dirty || loginForm.get('username')!.touched)">
+                <mat-icon name='information-circle-outline'></mat-icon>
+                <span>{{ validation.message }}</span>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+
+        <div class='text-sm text-red-500' *ngFor='let usernameErrors of usernameErrors$ | async'>
+          {{usernameErrors.errorMessage}}
+        </div>
+
+        <div class='form-floating mb-3'>
+          <label id='password'>Password</label>
+          <input type='password' class='block h-12 w-full rounded-sm mt-2 text-sm font-light bg-gray-300' placeholder=''
+                 formControlName='password'
+                 [ngClass]="{ 'is-invalid': submitted && f.password.errors }">
+          <div class='items-center text-red-500 text-sm'>
+            <ng-container *ngFor='let validation of validationMessages.password'>
+              <div class='error-message'
+                   *ngIf="loginForm.get('password')!.hasError(validation.type) && (loginForm.get('password')!.dirty || loginForm.get('password')!.touched)">
+                <mat-icon name='information-circle-outline'></mat-icon>
+                <span>{{ validation.message }}</span>
+              </div>
+            </ng-container>
+          </div>
+
+        </div>
+        <div class='text-sm text-red-500' *ngFor='let passwordErrors of passwordErrors$ | async'>
+          {{passwordErrors.errorMessage}}
+        </div>
+
+        <div class='flex flex-col items-center content-center'>
+          <button (click)='toggleLogin()' mat-raised-button color='primary' class='w-full'>Save</button>
+        </div>
+
+
+        <!--
+          <div class='text-sm'>
+            Password needs at least one number and one capital letter
+          </div>
+        -->
+
+      </form>
+    </ng-template>
+  </div>
+</ng-container>

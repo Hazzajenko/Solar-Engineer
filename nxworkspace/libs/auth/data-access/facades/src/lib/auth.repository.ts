@@ -1,6 +1,5 @@
 import { inject, Injectable } from '@angular/core'
-import { AuthService } from '@auth/data-access/api'
-import { AuthActions, AuthSelectors } from '@auth/data-access/store'
+import { AuthActions } from '@auth/data-access/store'
 import { SignInRequest, StorageModel } from '@auth/shared/models'
 import { Store } from '@ngrx/store'
 
@@ -20,6 +19,7 @@ export class AuthRepository {
 
   isReturningUser() {
     const storage = localStorage.getItem('solarengineer-user')
+    console.log(storage)
     if (storage) {
       const userInStorage: StorageModel = JSON.parse(storage)
       this.store.dispatch(AuthActions.signInWithLocalstorage({ userInStorage }))

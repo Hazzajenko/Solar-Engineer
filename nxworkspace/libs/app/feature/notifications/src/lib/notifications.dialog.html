@@ -3,7 +3,7 @@
     <div class='flex flex-col items-center content-center'>
       <h1 mat-dialog-title>Notifications</h1>
     </div>
-    <button mat-button
+    <button class='flex flex-col items-center content-center' mat-button
             (click)='markAllNotificationsAsRead(notifications)'>
       Mark All As Read
     </button>
@@ -19,20 +19,22 @@
 
         </mat-list-option>
       </cdk-virtual-scroll-viewport>-->
-    <mat-selection-list (selectionChange)='change($event)' #notificationSelect [multiple]='false'
+    <mat-selection-list style='overflow: hidden' (selectionChange)='change($event)' #notificationSelect
+                        [multiple]='false'
                         class='flex flex-col items-center content-center'>
       <cdk-virtual-scroll-viewport style='height: 200px; width: 200px'
                                    itemSize='50'
                                    class='flex flex-col items-center content-center'>
-        <mat-list-option *cdkVirtualFor='let notification of notifications | sortNotifications' [value]='notification'>
+        <mat-list-option [ngStyle]='{"background-color": notification.status === 0 ? "#60a1fa" : ""}'
+                         *cdkVirtualFor='let notification of notifications | sortNotifications' [value]='notification'>
           <ng-container [ngSwitch]='notification.type'>
             <ng-container *ngSwitchCase='1'>
               <span matListItemTitle>Friend Request</span>
-              <span matListItemLine>{{notification.timeCreated | date : 'short'}}</span>
-              <span matListItemLine>From {{notification.notification.requestedByUsername}}</span>
+              <span matListItemLine>{{notification.requestTime | date : 'short'}}</span>
+              <span matListItemLine>From {{notification.friendRequest.requestedByUsername}}</span>
             </ng-container>
           </ng-container>
-
+          <!--          [color]='notification.status === 0 ? "primary" : "accent"'-->
         </mat-list-option>
       </cdk-virtual-scroll-viewport>
       <!--    <mat-list-option *ngFor='let notification of notifications$ | async' [value]='notification'>
@@ -55,9 +57,10 @@
     <!--  </ng-container>-->
     <mat-dialog-actions align='center'>
       <ng-container *ngIf='selectedNotification'>
-        <button *ngIf='selectedNotification.type === 1' mat-button
-                (click)='acceptFriend(selectedNotification.notification.requestedByUsername)'>
-          Accept {{selectedNotification.notification.requestedByUsername}}</button>
+        <button *ngIf='selectedNotification.type === 1 && selectedNotification.friendRequest.friendRequestFlag === 0'
+                mat-button
+                (click)='acceptFriend(selectedNotification.friendRequest.requestedByUsername)'>
+          Accept {{selectedNotification.friendRequest.requestedByUsername}}</button>
       </ng-container>
       <button mat-button mat-dialog-close='true'>Exit</button>
     </mat-dialog-actions>

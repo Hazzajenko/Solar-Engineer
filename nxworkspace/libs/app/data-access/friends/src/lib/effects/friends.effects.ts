@@ -23,11 +23,13 @@ export class FriendsEffects {
     () =>
       this.actions$.pipe(
         ofType(AuthActions.signInSuccess),
-        map(() =>
-          this.friendsService.getAllFriends(),
+        switchMap(() =>
+          this.friendsService.getAllFriends().pipe(
+            map(response => FriendsActions.addManyFriends({ friends: response.friends })),
+          ),
         ),
       ),
-    { dispatch: false },
+    // { dispatch: false },
   )
 
   acceptFriend$ = createEffect(

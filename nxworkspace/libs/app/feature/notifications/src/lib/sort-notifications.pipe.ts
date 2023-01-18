@@ -18,8 +18,21 @@ export class SortNotificationsPipe implements PipeTransform {
   transform(notifications: NotificationModel[] | undefined | null) {
     if (!notifications) return
 
-    return notifications.sort((a: NotificationModel, b: NotificationModel) => {
-      return new Date(a.timeCreated).getTime() - new Date(b.timeCreated).getTime()
+    const sortByTimeCreated = notifications.sort((a: NotificationModel, b: NotificationModel) => {
+      return new Date(b.requestTime).getTime() - new Date(a.requestTime).getTime()
     })
+
+    return sortByTimeCreated.sort((a: NotificationModel, b: NotificationModel) => {
+      return a.status - b.status
+    })
+
+    // return unReadNotifications
   }
 }
+
+/*
+
+export enum NotificationStatus {
+  Unread,
+  Read
+}*/

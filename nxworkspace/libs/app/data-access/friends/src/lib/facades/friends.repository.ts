@@ -1,4 +1,5 @@
 import { inject, Injectable } from '@angular/core'
+import { Update } from '@ngrx/entity'
 import { Store } from '@ngrx/store'
 import { FriendModel } from '@shared/data-access/models'
 import { FriendsActions } from '../store'
@@ -11,6 +12,10 @@ export class FriendsRepository {
 
   addFriend(friend: FriendModel) {
     this.store.dispatch(FriendsActions.addFriend({ friend }))
+  }
+
+  updateFriend(update: Update<FriendModel>) {
+    this.store.dispatch(FriendsActions.updateFriend({ update }))
   }
 
   removeFriend(friendUsername: string) {

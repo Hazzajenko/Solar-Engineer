@@ -4,6 +4,13 @@
       <mat-icon>menu</mat-icon>
     </button>
     <span *ngIf='user'>{{user.username}}</span>
+    <button *ngIf='user' (click)='openProfile()' mat-icon-button class='example-icon'
+            aria-label='Example icon-button with menu icon'>
+      <mat-icon>
+        account_circle
+      </mat-icon>
+      <!--      Profile-->
+    </button>
 
     <!--  <span> SolarEngineer v0.0.1 By Harry Jenkins</span>
       <span class='example-spacer'></span>

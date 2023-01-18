@@ -78,3 +78,6 @@ push:
 
 ne11w:
 	nx generate @nrwl/angular:library friends --style=none --directory=app/data-access --importPath=@app/data-access/friends --skipModule --tags=app:data-access --no-interactive
+
+g:
+	nx generate @nrwl/angular:library ${name} --style=none --directory=${dir} --importPath=@${dir}/${name} --skipModule --tags=${tags} --no-interactive

@@ -106,7 +106,7 @@ export class HomeComponent implements OnInit {
     }
 
 
-    /*    // const dialog = this.dialog.open(AuthDialog)
+    /*    // const dialog = this.dialog.open(ProfileComponent)
         const result = await firstValueFrom(dialog.afterClosed())
         // if (result instanceof StringModel) {
         //   this.snack(`Created and selected new string ${result.name}`)
