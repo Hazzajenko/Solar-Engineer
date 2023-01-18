@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using dotnetapi.Data;
@@ -11,9 +12,11 @@ using dotnetapi.Data;
 namespace dotnetapi.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230117103458_EditAppUserFriend")]
+    partial class EditAppUserFriend
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -226,11 +229,11 @@ namespace dotnetapi.Data.Migrations
 
             modelBuilder.Entity("dotnetapi.Models.Entities.AppUserFriend", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("RequestedById")
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Property<int>("RequestedToId")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime?>("BecameFriendsTime")
                         .HasColumnType("timestamp with time zone");
@@ -238,14 +241,11 @@ namespace dotnetapi.Data.Migrations
                     b.Property<int>("FriendRequestFlag")
                         .HasColumnType("integer");
 
+                    b.Property<int>("Id")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("RequestTime")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("RequestedById")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("RequestedToId")
-                        .HasColumnType("integer");
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
@@ -253,9 +253,7 @@ namespace dotnetapi.Data.Migrations
                     b.Property<int>("Type")
                         .HasColumnType("integer");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("RequestedById");
+                    b.HasKey("RequestedById", "RequestedToId");
 
                     b.HasIndex("RequestedToId");
 

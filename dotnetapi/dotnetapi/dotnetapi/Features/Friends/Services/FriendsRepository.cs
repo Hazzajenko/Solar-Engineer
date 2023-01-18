@@ -4,7 +4,7 @@ using dotnetapi.Models.Dtos;
 using dotnetapi.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace dotnetapi.Services.Friends;
+namespace dotnetapi.Features.Friends.Services;
 
 public interface IFriendsRepository
 {

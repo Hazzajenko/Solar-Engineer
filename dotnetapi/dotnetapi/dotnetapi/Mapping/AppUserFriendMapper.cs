@@ -33,6 +33,45 @@ public static class AppUserFriendMapper
         };
     }
 
+    public static AppUserFriendDto ToAppUserFriendDto(this AppUserFriend request)
+    {
+        return new AppUserFriendDto
+        {
+            Id = request.Id,
+            RequestedByUsername = request.RequestedBy.UserName!,
+            RequestedToUsername = request.RequestedTo.UserName!,
+            Status = request.Status,
+            Type = request.Type,
+            RequestTime = request.RequestTime,
+            FriendRequestFlag = request.FriendRequestFlag,
+            BecameFriendsTime = request.BecameFriendsTime
+        };
+    }
+
+    public static NotificationDto ToNotificationDto(this AppUserFriend request)
+    {
+        return new NotificationDto
+        {
+            Id = request.Id,
+            // RequestedByUsername = request.RequestedBy.UserName!,
+            // RequestedToUsername = request.RequestedTo.UserName!,
+            Status = request.Status,
+            Type = request.Type,
+            Username = request.RequestedTo.UserName!,
+            RequestTime = request.RequestTime,
+            FriendRequest = new FriendRequestDto
+            {
+                BecameFriendsTime = request.BecameFriendsTime,
+                FriendRequestFlag = request.FriendRequestFlag,
+                RequestedByUsername = request.RequestedBy.UserName!,
+                RequestedToUsername = request.RequestedTo.UserName!
+            }
+            // RequestTime = request.RequestTime,
+            // FriendRequestFlag = request.FriendRequestFlag,
+            // BecameFriendsTime = request.BecameFriendsTime
+        };
+    }
+
     public static FriendDto ToFriendDtoFromSent(this AppUserFriend request)
     {
         return new FriendDto

@@ -8,10 +8,24 @@ public class NotificationConfig : IEntityTypeConfiguration<Notification>
 {
     public void Configure(EntityTypeBuilder<Notification> builder)
     {
-        builder
+        /*builder
             .HasOne(c => c.FriendRequest)
             .WithOne(x => x.Notification)
-            .HasForeignKey<Notification>(c => c.Id);
+            .HasForeignKey<Notification>(c => c.FriendRequestId);*/
+
+        /*builder
+            .HasOne(c => c.AppUserFriend)
+            .WithOne(x => x.Notification)
+            // .HasPrincipalKey(x => x.)
+            .HasForeignKey<Notification>(c => new { c.AppUserId, c.AppUserFriendId });*/
+
+        /*builder.OwnsOne(x => x.FriendRequest)
+            .WithOwner(x => x.Notification)
+            .HasForeignKey(c => c.NotificationId);*/
+
+        /*builder.OwnsOne(x => x.AppUserFriend)
+            .WithOwner(x => x.Notification)
+            .HasForeignKey(c => c.NotificationId);*/
 
         /*builder
             .HasOne(c => c.FriendRequest).WithOne(x => x.)

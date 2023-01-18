@@ -8,8 +8,9 @@ public class FriendRequestConfig : IEntityTypeConfiguration<FriendRequest>
 {
     public void Configure(EntityTypeBuilder<FriendRequest> builder)
     {
-        builder.HasOne(ur => ur.Notification)
-            .WithOne(x => x.FriendRequest);
+        /*builder.HasOne(ur => ur.Notification)
+            .WithOne(x => x.FriendRequest)
+            .HasForeignKey<Notification>(x => x.FriendRequestId);*/
         /*.WithMany(u => u.Notifications)
         .HasForeignKey(ur => ur.AppUserId)
         .IsRequired();*/

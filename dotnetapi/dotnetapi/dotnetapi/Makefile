@@ -6,6 +6,10 @@ migrate:
 update:
 	dotnet ef database update --context DataContext
 
+remove:
+	dotnet ef migrations remove --context DataContext
+
+
 publish:
 	dotnet publish --os linux --arch x64 -c Release -p:PublishProfile=DefaultContainer
 

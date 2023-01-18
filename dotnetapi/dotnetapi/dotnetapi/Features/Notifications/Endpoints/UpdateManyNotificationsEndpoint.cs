@@ -44,17 +44,7 @@ public class UpdateManyNotificationsEndpoint : Endpoint<UpdateManyNotificationsR
             ThrowError("Username is invalid");
         }
 
-        var projectId = Route<int>("projectId");
-        if (projectId < 0) ThrowError("Invalid project Id");
-
-        var project = await _projectsService.GetProjectByIdAsync(projectId);
-        if (project is null)
-        {
-            _logger.LogError("Bad request, ProjectId is invalid");
-            ThrowError("Bad request, ProjectId is invalid");
-        }
-
-        var updates = await _notificationsService.UpdateManyNotificationsAsync(request);
+        var updates = await _notificationsService.MarkManyNotificationsAsReadAsync(request);
 
         var successfulUpdates = 0;
         var errors = 0;

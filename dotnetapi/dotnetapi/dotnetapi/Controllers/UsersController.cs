@@ -1,4 +1,4 @@
-﻿using dotnetapi.Contracts.Responses.Auth;
+﻿/*using dotnetapi.Contracts.Responses.Auth;
 using dotnetapi.Models.Entities;
 using dotnetapi.Services.Auth;
 using dotnetapi.Services.Users;
@@ -149,4 +149,5 @@ public class UsersController : ControllerBase
     {
         return await _userManager.Users.AnyAsync(x => x.UserName == username.ToLower());
     }
-}
+}*/
+

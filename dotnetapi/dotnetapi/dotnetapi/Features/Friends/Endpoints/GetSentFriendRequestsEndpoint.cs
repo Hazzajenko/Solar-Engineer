@@ -1,32 +1,34 @@
 ﻿using dotnetapi.Contracts.Responses.Users;
+using dotnetapi.Features.Friends.Services;
 using dotnetapi.Models.Entities;
-using dotnetapi.Services.Users;
 using FastEndpoints;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 
-namespace dotnetapi.Features.Users;
+namespace dotnetapi.Features.Friends.Endpoints;
 
 [Authorize]
-public class GetReceivedFriendRequestsEndpoint : EndpointWithoutRequest<FriendRequestsResponse>
+public class GetSentFriendRequestsEndpoint : EndpointWithoutRequest<FriendRequestsResponse>
 {
-    private readonly ILogger<GetReceivedFriendRequestsEndpoint> _logger;
+    private readonly IFriendsService _friendsService;
+    private readonly ILogger<GetSentFriendRequestsEndpoint> _logger;
     private readonly UserManager<AppUser> _userManager;
-    private readonly IUsersService _usersService;
 
-    public GetReceivedFriendRequestsEndpoint(
-        ILogger<GetReceivedFriendRequestsEndpoint> logger,
-        IUsersService usersService,
+
+    public GetSentFriendRequestsEndpoint(
+        ILogger<GetSentFriendRequestsEndpoint> logger,
+        IFriendsService friendsService,
         UserManager<AppUser> userManager)
     {
         _logger = logger;
-        _usersService = usersService;
+        _friendsService = friendsService;
+
         _userManager = userManager;
     }
 
     public override void Configure()
     {
-        Get("/users/requests/received");
+        Get("/friends/sent");
         // Roles("Admin");
     }
 
@@ -39,7 +41,7 @@ public class GetReceivedFriendRequestsEndpoint : EndpointWithoutRequest<FriendRe
             ThrowError("Username is invalid");
         }
 
-        var sentRequests = await _usersService.GetReceivedRequestsAsync(user);
+        var sentRequests = await _friendsService.GetSentRequestsAsync(user);
 
         var response = new FriendRequestsResponse
         {

@@ -1,7 +1,6 @@
 ﻿using dotnetapi.Contracts.Responses.Users;
 using dotnetapi.Features.Notifications.Services;
 using dotnetapi.Models.Entities;
-using dotnetapi.Services.Users;
 using FastEndpoints;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -14,16 +13,13 @@ public class GetAllNotificationsEndpoint : EndpointWithoutRequest<AllNotificatio
     private readonly ILogger<GetAllNotificationsEndpoint> _logger;
     private readonly INotificationsService _notificationsService;
     private readonly UserManager<AppUser> _userManager;
-    private readonly IUsersService _usersService;
 
     public GetAllNotificationsEndpoint(
         ILogger<GetAllNotificationsEndpoint> logger,
-        IUsersService usersService,
         INotificationsService notificationsService,
         UserManager<AppUser> userManager)
     {
         _logger = logger;
-        _usersService = usersService;
         _notificationsService = notificationsService;
         _userManager = userManager;
     }
@@ -43,13 +39,15 @@ public class GetAllNotificationsEndpoint : EndpointWithoutRequest<AllNotificatio
             ThrowError("Username is invalid");
         }
 
-        var notifications = await _notificationsService.GetAllUserNotifications(user.UserName!);
+        var notifications = await _notificationsService.GetAllUserNotifications(user);
 
+        /*
         if (notifications is null)
         {
             _logger.LogError("Notifications is null");
             ThrowError("Notifications is null");
         }
+        */
 
 
         var response = new AllNotificationsResponse

@@ -2,12 +2,15 @@
 
 namespace dotnetapi.Models.Dtos;
 
-public class NotificationDto<T>
+public class NotificationDto
 {
     public int Id { get; set; }
     public string Username { get; set; } = default!;
     public NotificationType Type { get; set; }
-    public DateTime TimeCreated { get; set; }
+    public DateTime RequestTime { get; set; }
+
     public NotificationStatus Status { get; set; }
-    public T Notification { get; set; } = default!;
+
+    // public T Request { get; set; } = default!;
+    public FriendRequestDto? FriendRequest { get; set; }
 }

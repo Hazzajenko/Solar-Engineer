@@ -6,6 +6,7 @@ namespace dotnetapi.Features.Notifications.Contracts.Requests;
 public class UpdateNotificationRequest
 {
     [Required] public int Id { get; set; } = default!;
+    [Required] public NotificationType Type { get; set; } = default!;
 
     [Required] public UpdateNotification Changes { get; set; } = default!;
 }

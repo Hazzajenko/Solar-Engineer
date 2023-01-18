@@ -1,32 +1,32 @@
 ﻿using dotnetapi.Contracts.Responses.Users;
+using dotnetapi.Features.Friends.Services;
 using dotnetapi.Models.Entities;
-using dotnetapi.Services.Users;
 using FastEndpoints;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 
-namespace dotnetapi.Features.Users;
+namespace dotnetapi.Features.Friends.Endpoints;
 
 [Authorize]
 public class GetAllFriendsEndpoint : EndpointWithoutRequest<AllFriendsResponse>
 {
+    private readonly IFriendsService _friendsService;
     private readonly ILogger<GetAllFriendsEndpoint> _logger;
     private readonly UserManager<AppUser> _userManager;
-    private readonly IUsersService _usersService;
 
     public GetAllFriendsEndpoint(
         ILogger<GetAllFriendsEndpoint> logger,
-        IUsersService usersService,
+        IFriendsService friendsService,
         UserManager<AppUser> userManager)
     {
         _logger = logger;
-        _usersService = usersService;
+        _friendsService = friendsService;
         _userManager = userManager;
     }
 
     public override void Configure()
     {
-        Get("/users/friends");
+        Get("/friends");
         // Roles("Admin");
     }
 
@@ -39,7 +39,7 @@ public class GetAllFriendsEndpoint : EndpointWithoutRequest<AllFriendsResponse>
             ThrowError("Username is invalid");
         }
 
-        var allFriends = await _usersService.GetAllFriendsAsync(user);
+        var allFriends = await _friendsService.GetAllFriendsAsync(user);
 
         var response = new AllFriendsResponse
         {

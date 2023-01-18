@@ -2,7 +2,6 @@
 using dotnetapi.Features.Notifications.Contracts.Requests;
 using dotnetapi.Features.Notifications.Services;
 using dotnetapi.Models.Entities;
-using dotnetapi.Services.Users;
 using FastEndpoints;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -17,16 +16,13 @@ public class UpdateNotificationEndpoint : Endpoint<UpdateNotificationRequest, On
     private readonly ILogger<UpdateNotificationEndpoint> _logger;
     private readonly INotificationsService _notificationsService;
     private readonly UserManager<AppUser> _userManager;
-    private readonly IUsersService _usersService;
 
     public UpdateNotificationEndpoint(
         ILogger<UpdateNotificationEndpoint> logger,
-        IUsersService usersService,
         INotificationsService notificationsService,
         UserManager<AppUser> userManager)
     {
         _logger = logger;
-        _usersService = usersService;
         _notificationsService = notificationsService;
         _userManager = userManager;
     }

@@ -1,8 +1,8 @@
 ﻿using dotnetapi.Contracts.Responses.Auth;
+using dotnetapi.Features.Friends.Services;
 using dotnetapi.Features.Notifications.Services;
 using dotnetapi.Hubs;
 using dotnetapi.Models.Entities;
-using dotnetapi.Services.Friends;
 using dotnetapi.Services.SignalR;
 using FastEndpoints;
 using Mediator;
@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 
-namespace dotnetapi.Features.Friends;
+namespace dotnetapi.Features.Friends.Endpoints;
 
 [Authorize]
 public class AddFriendEndpoint : EndpointWithoutRequest<AddFriendResponse>
@@ -65,7 +65,8 @@ public class AddFriendEndpoint : EndpointWithoutRequest<AddFriendResponse>
 
         var sendRequest = await _friendsService.AddFriendAsync(user, friendUsername);
 
-        var notification = await _notificationsService.SendFriendRequestToUserAsync(user.UserName!, friendUsername);
+        var notification = await _notificationsService.CreateFriendRequestToUserAsync(sendRequest);
+        // var notification = await _notificationsService.SendFriendRequestToUserAsync(user.UserName!, friendUsername);
         if (notification is null)
         {
             _logger.LogError("Unable to create notification");

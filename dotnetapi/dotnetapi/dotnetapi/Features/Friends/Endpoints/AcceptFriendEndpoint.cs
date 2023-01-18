@@ -1,27 +1,27 @@
 ﻿using dotnetapi.Contracts.Responses.Friends;
+using dotnetapi.Features.Friends.Services;
 using dotnetapi.Models.Dtos;
 using dotnetapi.Models.Entities;
-using dotnetapi.Services.Users;
 using FastEndpoints;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 
-namespace dotnetapi.Features.Friends;
+namespace dotnetapi.Features.Friends.Endpoints;
 
 [Authorize]
 public class AcceptFriendEndpoint : EndpointWithoutRequest<AcceptFriendResponse>
 {
+    private readonly IFriendsService _friendsService;
     private readonly ILogger<AcceptFriendEndpoint> _logger;
     private readonly UserManager<AppUser> _userManager;
-    private readonly IUsersService _usersService;
 
     public AcceptFriendEndpoint(
         ILogger<AcceptFriendEndpoint> logger,
-        IUsersService usersService,
+        IFriendsService friendsService,
         UserManager<AppUser> userManager)
     {
         _logger = logger;
-        _usersService = usersService;
+        _friendsService = friendsService;
         _userManager = userManager;
     }
 
@@ -42,7 +42,7 @@ public class AcceptFriendEndpoint : EndpointWithoutRequest<AcceptFriendResponse>
         var friendUsername = Route<string>("username");
         if (string.IsNullOrEmpty(friendUsername)) ThrowError("No username given");
 
-        var acceptRequest = await _usersService.AcceptFriendAsync(user, friendUsername);
+        var acceptRequest = await _friendsService.AcceptFriendAsync(user, friendUsername);
 
         _logger.LogInformation("{Username} accepted a friend request from {FriendUsername}", user.UserName,
             friendUsername);

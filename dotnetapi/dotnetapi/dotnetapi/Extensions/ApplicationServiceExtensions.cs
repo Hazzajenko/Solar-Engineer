@@ -1,15 +1,14 @@
 ﻿using dotnetapi.Data;
+using dotnetapi.Features.Friends.Services;
 using dotnetapi.Features.Notifications.Services;
 using dotnetapi.Services.Auth;
 using dotnetapi.Services.Cache;
-using dotnetapi.Services.Friends;
 using dotnetapi.Services.Links;
 using dotnetapi.Services.Panels;
 using dotnetapi.Services.Paths;
 using dotnetapi.Services.Projects;
 using dotnetapi.Services.SignalR;
 using dotnetapi.Services.Strings;
-using dotnetapi.Services.Users;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
@@ -30,8 +29,6 @@ public static class ApplicationServiceExtensions
         services.AddScoped<INotificationsRepository, NotificationsRepository>();
 
         services.AddScoped<IAuthService, AuthService>();
-        services.AddScoped<IUsersService, UsersService>();
-        services.AddScoped<IUsersRepository, UsersRepository>();
         services.AddScoped<IFriendsService, FriendsService>();
         services.AddScoped<IFriendsRepository, FriendsRepository>();
         services.AddScoped<IProjectsService, ProjectsService>();

@@ -1,5 +1,4 @@
 ﻿using dotnetapi.Models.Entities;
-using dotnetapi.Services.Users;
 using FastEndpoints;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -11,15 +10,12 @@ public class GetCurrentUserEndpoint : EndpointWithoutRequest
 {
     private readonly ILogger<GetCurrentUserEndpoint> _logger;
     private readonly UserManager<AppUser> _userManager;
-    private readonly IUsersService _usersService;
 
     public GetCurrentUserEndpoint(
         ILogger<GetCurrentUserEndpoint> logger,
-        IUsersService usersService,
         UserManager<AppUser> userManager)
     {
         _logger = logger;
-        _usersService = usersService;
         _userManager = userManager;
     }
 

@@ -1,6 +1,4 @@
-﻿using dotnetapi.Models.Dtos;
-
-namespace dotnetapi.Models.Entities;
+﻿namespace dotnetapi.Models.Entities;
 
 public class Notification : BaseEntity
 {
@@ -10,6 +8,11 @@ public class Notification : BaseEntity
 
     public FriendRequest? FriendRequest { get; set; }
     public int? FriendRequestId { get; set; }
+
+    /*public AppUserFriend? AppUserFriend { get; set; }
+
+    public int? AppUserFriendId { get; set; }*/
+
     // public AppUserFriend? AppUserFriend { get; set; }
     /*public int NotificationTo { get; set; }
     public AppUser NotificationFrom { get; set; } = default!;*/

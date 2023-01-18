@@ -4,6 +4,6 @@ namespace dotnetapi.Contracts.Responses.Users;
 
 public class AllNotificationsResponse
 {
-    public IEnumerable<NotificationDto<FriendRequestDto>?> Notifications { get; set; } =
-        new List<NotificationDto<FriendRequestDto>>();
+    public IEnumerable<NotificationDto> Notifications { get; set; } =
+        new List<NotificationDto>();
 }
