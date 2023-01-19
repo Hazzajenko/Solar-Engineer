@@ -15,6 +15,7 @@ import { MatListModule, MatSelectionListChange } from '@angular/material/list'
 import { MatTabsModule } from '@angular/material/tabs'
 import { FriendsService, FriendsStoreService } from '@app/data-access/friends'
 import { FriendsComponent } from '@app/feature/friends'
+import { MessagesComponent } from '@app/messages'
 import { AuthStoreService } from '@auth/data-access/facades'
 import { Update } from '@ngrx/entity'
 
@@ -60,6 +61,7 @@ import { ProfileComponent } from './component'
     NotificationsComponent,
     FriendsComponent,
     ProfileComponent,
+    MessagesComponent,
   ],
   standalone: true,
 })

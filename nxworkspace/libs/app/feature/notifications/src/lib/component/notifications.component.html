@@ -7,6 +7,7 @@
               (click)='markAllNotificationsAsRead(notifications)'>
         Mark All As Read
       </button>
+      <mat-checkbox [(ngModel)]='unreadFilter'>Filter by Unread</mat-checkbox>
       <mat-selection-list style='overflow: hidden' (selectionChange)='change($event)' #notificationSelect
                           [multiple]='false'
                           class='flex flex-col items-center content-center'>
@@ -17,7 +18,7 @@
           <mat-list-option appNotificationDirective [notification]='notification'
                            [selectedNotification]='selectedNotification'
 
-                           *cdkVirtualFor='let notification of notifications | sortNotifications'
+                           *cdkVirtualFor='let notification of notifications | sortNotifications : unreadFilter'
                            [value]='notification'>
             <ng-container [ngSwitch]='notification.type'>
               <ng-container *ngSwitchCase='1'>

@@ -20,11 +20,13 @@
     "lib": ["es2020", "dom"],
     "useDefineForClassFields": false,
     "paths": {
+      "@app/config": ["libs/app/config/src/index.ts"],
       "@app/data-access/friends": ["libs/app/data-access/friends/src/index.ts"],
       "@app/feature/friends": ["libs/app/feature/friends/src/index.ts"],
       "@app/feature/notifications": ["libs/app/feature/notifications/src/index.ts"],
       "@app/feature/profile": ["libs/app/feature/profile/src/index.ts"],
       "@app/feature/sidenav": ["libs/app/feature/sidenav/src/index.ts"],
+      "@app/messages": ["libs/app/messages/src/index.ts"],
       "@app/routes": ["libs/app/routes/src/index.ts"],
       "@auth/data-access/api": ["libs/auth/data-access/api/src/index.ts"],
       "@auth/data-access/effects": ["libs/auth/data-access/effects/src/index.ts"],

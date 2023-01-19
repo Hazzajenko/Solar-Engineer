@@ -12,23 +12,19 @@ import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatIconModule } from '@angular/material/icon'
 import { MatInputModule } from '@angular/material/input'
 import { MatListModule, MatSelectionListChange } from '@angular/material/list'
-import { FriendsService, FriendsStoreService } from '@app/data-access/friends'
 import { AuthStoreService } from '@auth/data-access/facades'
 import { Update } from '@ngrx/entity'
 
-import { NotificationModel, NotificationStatus, UserModel } from '@shared/data-access/models'
-import { NotificationsStoreService } from '@shared/data-access/notifications'
+import { MessageModel, NotificationModel, NotificationStatus, UserModel } from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
 import { Observable } from 'rxjs'
-import { GetFriendRequestPipe } from '../get-friend-request.pipe'
-import { SortNotificationsPipe } from '../sort-notifications.pipe'
-import { NotificationDirective } from './notification.directive'
+import { MessagesStoreService } from '../../data-access'
 
 
 @Component({
-  selector: 'app-notifications-component',
-  templateUrl: './notifications.component.html',
+  selector: 'app-conversation-component',
+  templateUrl: './conversation.component.html',
   styles: [],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
@@ -51,57 +47,45 @@ import { NotificationDirective } from './notification.directive'
     NgSwitch,
     NgSwitchCase,
     DatePipe,
-    SortNotificationsPipe,
-    GetFriendRequestPipe,
-    NotificationDirective,
     MatCheckboxModule,
   ],
   standalone: true,
 })
-export class NotificationsComponent {
+export class ConversationComponent {
 
-  private notificationsStore = inject(NotificationsStoreService)
+  private messagesStore = inject(MessagesStoreService)
   private authStore = inject(AuthStoreService)
-  private friendsService = inject(FriendsService)
-  private friendsStore = inject(FriendsStoreService)
-
-  notifications$: Observable<NotificationModel[]> = this.notificationsStore.select.notifications$
+  messages$: Observable<MessageModel[]> = this.messagesStore.select.messages$
   user$: Observable<UserModel | undefined> = this.authStore.select.user$
-  selectedNotification?: NotificationModel
-
+  selectedMessage?: MessageModel
   unreadFilter = false
 
   change(event: MatSelectionListChange) {
     console.log(event)
-    this.selectedNotification = event.options[0].value
+    this.selectedMessage = event.options[0].value
     if ((event.options[0].value as NotificationModel).status === NotificationStatus.Unread) {
-      this.readNotification()
+      this.readMessage()
     }
   }
 
-  acceptFriend(requestedByUsername: string) {
-    console.log(requestedByUsername)
-    this.friendsStore.dispatch.acceptFriendRequest(requestedByUsername)
-  }
-
-  readNotification() {
-    if (!this.selectedNotification) return
+  readMessage() {
+    if (!this.selectedMessage) return
     const update: Update<NotificationModel> = {
-      id: this.selectedNotification.id,
+      id: this.selectedMessage.id,
       changes: {
         status: NotificationStatus.Read,
       },
     }
-    this.notificationsStore.dispatch.updateNotification(update)
+    this.messagesStore.dispatch.updateMessage(update)
   }
 
-  markAllNotificationsAsRead(notifications: NotificationModel[]) {
-    if (!notifications) return
-    const unReadNotifications = notifications.filter(notification => notification.status === NotificationStatus.Unread)
-    if (!unReadNotifications) return
+  markAllMessagesAsRead(messages: MessageModel[]) {
+    if (!messages) return
+    const unreadMessages = messages.filter(message => message.status === NotificationStatus.Unread)
+    if (!unreadMessages) return
 
-    const updates: Update<NotificationModel>[] = unReadNotifications.map(notification => {
-      const update: Update<NotificationModel> = {
+    const updates: Update<MessageModel>[] = unreadMessages.map(notification => {
+      const update: Update<MessageModel> = {
         id: notification.id,
         changes: {
           status: NotificationStatus.Read,
@@ -109,7 +93,11 @@ export class NotificationsComponent {
       }
       return update
     })
-    this.notificationsStore.dispatch.updateManyNotifications(updates)
+    this.messagesStore.dispatch.updateManyMessages(updates)
+  }
+
+  openConversation(selectedMessage: MessageModel) {
+    console.log(selectedMessage)
   }
 }
 

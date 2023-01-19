@@ -26,7 +26,8 @@
                                    itemSize='50'
                                    class='flex flex-col items-center content-center'>
         <mat-list-option [ngStyle]='{"background-color": notification.status === 0 ? "#60a1fa" : ""}'
-                         *cdkVirtualFor='let notification of notifications | sortNotifications' [value]='notification'>
+                         *cdkVirtualFor='let notification of notifications | sortNotifications : false'
+                         [value]='notification'>
           <ng-container [ngSwitch]='notification.type'>
             <ng-container *ngSwitchCase='1'>
               <span matListItemTitle>Friend Request</span>
