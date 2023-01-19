@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using dotnetapi.Features.Messages.Entities;
 using dotnetapi.Models.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;

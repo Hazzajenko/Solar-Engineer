@@ -1,4 +1,6 @@
-namespace dotnetapi.Models.Entities;
+using dotnetapi.Models.Entities;
+
+namespace dotnetapi.Features.Messages.Entities;
 
 public class Message
 {
@@ -10,8 +12,9 @@ public class Message
     public string RecipientUsername { get; set; } = default!;
     public AppUser Recipient { get; set; } = default!;
     public string Content { get; set; } = default!;
-    public DateTime? DateRead { get; set; }
-    public DateTime MessageSent { get; set; } = DateTime.UtcNow;
+    public DateTime? MessageReadTime { get; set; }
+    public DateTime MessageSentTime { get; set; } = DateTime.UtcNow;
     public bool SenderDeleted { get; set; }
     public bool RecipientDeleted { get; set; }
+    public NotificationStatus Status { get; set; }
 }

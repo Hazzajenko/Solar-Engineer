@@ -58,12 +58,8 @@
 
     <ItemGroup>
         <Folder Include="Data\Json" />
+        <Folder Include="Features\Conversations" />
         <Folder Include="Features\Notifications\Contracts\Responses" />
-        <Folder Include="Repositories\Links" />
-        <Folder Include="Repositories\Panels" />
-        <Folder Include="Repositories\Paths" />
-        <Folder Include="Repositories\Projects" />
-        <Folder Include="Repositories\Strings" />
         <Folder Include="Services\Friends" />
     </ItemGroup>
 

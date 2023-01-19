@@ -1,4 +1,5 @@
 using dotnetapi.Extensions;
+using dotnetapi.Features.Messages.Entities;
 using dotnetapi.Models.Dtos;
 using dotnetapi.Models.Entities;
 using Microsoft.AspNetCore.Identity;
@@ -6,6 +7,11 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace dotnetapi.Hubs;
+
+public interface IMessagesHub
+{
+    Task GetNewMessage(MessageDto message);
+}
 
 public class MessagesHub : Hub
 {
@@ -18,14 +24,14 @@ public class MessagesHub : Hub
 
     public override async Task OnConnectedAsync()
     {
-        var username = Context.User!.GetUsername();
+        /*var username = Context.User!.GetUsername();
         var connectionId = Context.ConnectionId;
         var httpContext = Context.GetHttpContext();
         var otherUser = httpContext!.Request.Query["user"].ToString();
         var groupName = GetGroupName(username, otherUser);
         await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
         var group = await AddToGroup(groupName);
-        await Clients.Group(groupName).SendAsync("UpdatedGroup", group);
+        await Clients.Group(groupName).SendAsync("UpdatedGroup", group);*/
 
         /*var messages = await _unitOfWork.MessageRepository.
             GetMessageThread(Context.User.GetUsername(), otherUser);*/
@@ -37,24 +43,43 @@ public class MessagesHub : Hub
 
     public override async Task OnDisconnectedAsync(Exception exception)
     {
-        var group = await RemoveFromMessageGroup();
+        /*var group = await RemoveFromMessageGroup();
         await Clients.Group(group.Name).SendAsync("UpdatedGroup", group);
-        await base.OnDisconnectedAsync(exception);
+        await base.OnDisconnectedAsync(exception);*/
     }
 
-    public async Task SendMessage(MessageDto messageDto)
+    public async Task GetMessages(MessageDto message)
+    {
+        // await Clients.Client(connectionId).SendAsync("GetNotifications", "data");
+        // await Clients.User("hazza").SendAsync("GetNotifications", "datasdasa");
+        // await Clients.Client(connectionId).("GetNotifications", "data");
+    }
+
+
+    public string GetConnectionId()
+    {
+        return Context.ConnectionId;
+    }
+
+    /*
+    public async Task SendMessageToUser(MessageDtoDeprecated messageDtoDeprecated)
+    {
+    }
+    */
+
+    public async Task SendMessage(MessageDtoDeprecated messageDtoDeprecated)
     {
         // var user = Context.User!;
         var username = Context.User!.GetUsername();
 
-        if (username == messageDto.RecipientUsername.ToLower())
+        if (username == messageDtoDeprecated.RecipientUsername.ToLower())
             throw new HubException("You cannot send messages to yourself");
 
         // var sender = await _unitOfWork.UserRepository.GetUserByUsernameAsync(username);
         var sender = await _userManager.Users.Where(x => x.UserName == username)
             .SingleOrDefaultAsync();
         if (sender is null) throw new HubException("Not found user");
-        var recipient = await _userManager.Users.Where(x => x.UserName == messageDto.RecipientUsername)
+        var recipient = await _userManager.Users.Where(x => x.UserName == messageDtoDeprecated.RecipientUsername)
             .SingleOrDefaultAsync();
         /*if (recipient is null)
         {
@@ -69,7 +94,7 @@ public class MessagesHub : Hub
             Recipient = recipient,
             SenderUsername = sender.UserName!,
             RecipientUsername = recipient.UserName!,
-            Content = messageDto.Content
+            Content = messageDtoDeprecated.Content
         };
 
         var groupName = GetGroupName(sender.UserName!, recipient.UserName!);

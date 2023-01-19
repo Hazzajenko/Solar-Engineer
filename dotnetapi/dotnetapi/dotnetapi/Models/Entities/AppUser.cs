@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using dotnetapi.Features.Messages.Entities;
+using Microsoft.AspNetCore.Identity;
 
 namespace dotnetapi.Models.Entities;
 
@@ -20,7 +21,7 @@ public class AppUser : IdentityUser<int>
     public virtual ICollection<AppUserFriend> SentFriendRequests { get; set; } = default!;
     public virtual ICollection<AppUserFriend> ReceivedFriendRequests { get; set; } = default!;
 
-    public ICollection<Notification> Notifications { get; set; } = default!;
+    // public ICollection<Notification> Notifications { get; set; } = default!;
     public ICollection<Message> MessagesSent { get; set; } = default!;
 
     public ICollection<Message> MessagesReceived { get; set; } = default!;

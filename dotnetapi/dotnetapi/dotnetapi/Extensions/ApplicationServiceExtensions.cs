@@ -28,10 +28,10 @@ public static class ApplicationServiceExtensions
         services.AddScoped<ICacheService, CacheService>();
         services.AddScoped<INotificationsService, NotificationsService>();
         services.AddScoped<INotificationsRepository, NotificationsRepository>();
-        // services.AddScoped<IMessagesService, MessagesService>();
+        services.AddScoped<IMessagesService, MessagesService>();
         services.AddScoped<IMessagesRepository, MessagesRepository>();
 
-        // services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IFriendsService, FriendsService>();
         services.AddScoped<IFriendsRepository, FriendsRepository>();
         services.AddScoped<IProjectsService, ProjectsService>();

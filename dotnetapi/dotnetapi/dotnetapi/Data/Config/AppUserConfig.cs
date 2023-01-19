@@ -28,10 +28,11 @@ public class AppUserConfig : IEntityTypeConfiguration<AppUser>
             .HasForeignKey(ur => ur.RequestedToId)
             .IsRequired();
 
+        /*
         builder.HasMany(ur => ur.Notifications)
             .WithOne(u => u.AppUser)
             .HasForeignKey(ur => ur.AppUserId)
-            .IsRequired();
+            .IsRequired();*/
 
 
         /*builder.HasMany(ur => ur.Connections)

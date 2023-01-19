@@ -1,4 +1,5 @@
-﻿using dotnetapi.Contracts.Responses;
+﻿using dotnetapi.Features.Messages.Contracts.Requests;
+using dotnetapi.Features.Messages.Contracts.Responses;
 using dotnetapi.Features.Messages.Services;
 using dotnetapi.Models.Entities;
 using dotnetapi.Services.Projects;
@@ -9,7 +10,7 @@ using Microsoft.AspNetCore.Identity;
 namespace dotnetapi.Features.Messages.Endpoints;
 
 [Authorize]
-public class GetMessagesEndpoint : EndpointWithoutRequest<ManyPanelsResponse>
+public class GetMessagesEndpoint : EndpointWithoutRequest<ManyMessagesResponse>
 {
     private readonly ILogger<GetMessagesEndpoint> _logger;
     private readonly IMessagesRepository _messagesRepository;
@@ -30,7 +31,7 @@ public class GetMessagesEndpoint : EndpointWithoutRequest<ManyPanelsResponse>
 
     public override void Configure()
     {
-        Get("projects/{projectId:int}/panels");
+        Get("messages");
         Policies("BeAuthenticated");
     }
 
@@ -43,23 +44,15 @@ public class GetMessagesEndpoint : EndpointWithoutRequest<ManyPanelsResponse>
             ThrowError("Username is invalid");
         }
 
-        var projectId = Route<int>("projectId");
-        if (projectId < 0) ThrowError("Invalid project Id");
+        MessageFilter? filter = Query<MessageFilter>("filter", false);
 
-        var project = await _projectsService.GetProjectByIdAsync(projectId);
-        if (project is null)
+        var messages = await _messagesRepository.GetMessageDtosWithFilterAsync(user, filter);
+
+        var response = new ManyMessagesResponse
         {
-            _logger.LogError("Bad request, ProjectId is invalid");
-            ThrowError("Bad request, ProjectId is invalid");
-        }
+            Messages = messages
+        };
 
-        // // var panelList = await _panelsService.GetAllPanelsByProjectIdAsync(projectId);
-        //
-        // var response = new ManyPanelsResponse
-        // {
-        //     Panels = panelList
-        // };
-
-        // await SendOkAsync(response, ct);
+        await SendOkAsync(response, ct);
     }
 }

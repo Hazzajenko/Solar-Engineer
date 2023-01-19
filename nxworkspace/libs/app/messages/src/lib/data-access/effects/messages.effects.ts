@@ -20,6 +20,7 @@ export class MessagesEffects {
     () =>
       this.actions$.pipe(
         ofType(AuthActions.signInSuccess),
+        map(({ token }) => this.messagesService.createMessagesConnection(token)),
         switchMap(() =>
           this.messagesService.getAllMessages().pipe(
             map(({ messages }) => MessagesActions.addManyMessages({ messages })),

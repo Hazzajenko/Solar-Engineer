@@ -1,4 +1,4 @@
-﻿using dotnetapi.Models.Entities;
+﻿using dotnetapi.Features.Messages.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
