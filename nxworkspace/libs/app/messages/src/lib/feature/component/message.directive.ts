@@ -16,8 +16,19 @@ export class MessageDirective {
 
     if (message.status === NotificationStatus.Unread) {
       this.elRef.nativeElement.style.backgroundColor = '#60a1fa'
+    } else {
+      this.elRef.nativeElement.style.backgroundColor = ''
     }
   }
+
+  @Input() set filter(filter: boolean) {
+    if (this._message.status === NotificationStatus.Unread) {
+      this.elRef.nativeElement.style.backgroundColor = '#60a1fa'
+    } else {
+      this.elRef.nativeElement.style.backgroundColor = ''
+    }
+  }
+
 
   @Input() set selectedMessage(message: MessageModel | undefined) {
     if (!message) return

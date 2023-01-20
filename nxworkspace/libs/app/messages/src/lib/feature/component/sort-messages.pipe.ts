@@ -17,8 +17,12 @@ export class SortMessagesPipe implements PipeTransform {
 
     if (!unreadFilter) return sortByMessageSent
 
-    return sortByMessageSent.sort((a: MessageModel, b: MessageModel) => {
+    const next = [...sortByMessageSent]
+
+    const result = next.sort((a: MessageModel, b: MessageModel) => {
       return a.status - b.status
     })
+    console.log(result)
+    return result
   }
 }

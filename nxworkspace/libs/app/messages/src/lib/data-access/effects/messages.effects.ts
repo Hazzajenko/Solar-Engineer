@@ -2,8 +2,6 @@ import { inject, Injectable } from '@angular/core'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { AuthActions } from '@auth/data-access/store'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
-import { NotificationType } from '@shared/data-access/models'
-import { NotificationsActions } from '@shared/data-access/notifications'
 
 import { map, switchMap } from 'rxjs/operators'
 import { MessagesService } from '../api'
@@ -29,12 +27,32 @@ export class MessagesEffects {
       ),
   )
 
+  initMessagesWithUser$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(MessagesActions.initMessagesWithUser),
+        switchMap(({ username }) => this.messagesService.getAllMessagesWithUser(username).pipe(
+          // switchMap(({ username }) => this.messagesService.getAllMessagesWithUser(username).pipe(
+          map(({ messages }) => MessagesActions.addManyMessages({ messages })),
+        )),
+      ),
+  )
+
+  initMessagesConnectionWithUser$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(MessagesActions.initMessagesWithUser),
+        map(({ username }) => this.messagesService.getMessagesWithUserSignalR(username)),
+      ),
+    { dispatch: false },
+  )
+
   sendMessageToUser$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType(MessagesActions.sendMessageToUser),
-        switchMap(({ message }) =>
-          this.messagesService.sendMessageToUser(message).pipe(
+        switchMap(({ request }) =>
+          this.messagesService.sendMessageToUser(request).pipe(
             map(({ message }) => MessagesActions.addMessage({ message })),
           ),
         ),

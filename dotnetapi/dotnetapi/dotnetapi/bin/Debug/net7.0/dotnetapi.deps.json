@@ -8,6 +8,8 @@
     ".NETCoreApp,Version=v7.0": {
       "dotnetapi/1.0.0": {
         "dependencies": {
+          "AWS.Logger.SeriLog": "3.2.0",
+          "AWSSDK.CloudWatchLogs": "3.7.104",
           "AWSSDK.Extensions.NETCore.Setup": "3.7.2",
           "AWSSDK.S3": "3.7.101.36",
           "FastEndpoints": "5.6.0",
@@ -30,6 +32,7 @@
           "Serilog": "2.12.0",
           "Serilog.AspNetCore": "6.1.0",
           "Serilog.Settings.Configuration": "3.4.0",
+          "Serilog.Sinks.AwsCloudWatch": "4.0.171",
           "Serilog.Sinks.Console": "4.1.0",
           "Serilog.Sinks.File": "5.0.0",
           "Serilog.Sinks.Seq": "5.2.2",
@@ -42,17 +45,52 @@
           "dotnetapi.dll": {}
         }
       },
-      "AWSSDK.Core/3.7.102.4": {
+      "AWS.Logger.Core/3.1.0": {
+        "dependencies": {
+          "AWSSDK.CloudWatchLogs": "3.7.104"
+        },
+        "runtime": {
+          "lib/netstandard2.0/AWS.Logger.Core.dll": {
+            "assemblyVersion": "3.1.0.0",
+            "fileVersion": "3.1.0.0"
+          }
+        }
+      },
+      "AWS.Logger.SeriLog/3.2.0": {
+        "dependencies": {
+          "AWS.Logger.Core": "3.1.0",
+          "Microsoft.Extensions.Configuration.Abstractions": "7.0.0",
+          "Serilog": "2.12.0"
+        },
+        "runtime": {
+          "lib/netstandard2.0/AWS.Logger.SeriLog.dll": {
+            "assemblyVersion": "3.2.0.0",
+            "fileVersion": "3.2.0.0"
+          }
+        }
+      },
+      "AWSSDK.CloudWatchLogs/3.7.104": {
+        "dependencies": {
+          "AWSSDK.Core": "3.7.103.19"
+        },
+        "runtime": {
+          "lib/netcoreapp3.1/AWSSDK.CloudWatchLogs.dll": {
+            "assemblyVersion": "3.3.0.0",
+            "fileVersion": "3.7.104.0"
+          }
+        }
+      },
+      "AWSSDK.Core/3.7.103.19": {
         "runtime": {
           "lib/netcoreapp3.1/AWSSDK.Core.dll": {
             "assemblyVersion": "3.3.0.0",
-            "fileVersion": "3.7.102.4"
+            "fileVersion": "3.7.103.19"
           }
         }
       },
       "AWSSDK.Extensions.NETCore.Setup/3.7.2": {
         "dependencies": {
-          "AWSSDK.Core": "3.7.102.4",
+          "AWSSDK.Core": "3.7.103.19",
           "Microsoft.Extensions.Configuration.Abstractions": "7.0.0",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "7.0.0",
           "Microsoft.Extensions.Logging.Abstractions": "7.0.0"
@@ -66,7 +104,7 @@
       },
       "AWSSDK.S3/3.7.101.36": {
         "dependencies": {
-          "AWSSDK.Core": "3.7.102.4"
+          "AWSSDK.Core": "3.7.103.19"
         },
         "runtime": {
           "lib/netcoreapp3.1/AWSSDK.S3.dll": {
@@ -794,6 +832,19 @@
           }
         }
       },
+      "Serilog.Sinks.AwsCloudWatch/4.0.171": {
+        "dependencies": {
+          "AWSSDK.CloudWatchLogs": "3.7.104",
+          "Serilog": "2.12.0",
+          "Serilog.Sinks.PeriodicBatching": "3.1.0"
+        },
+        "runtime": {
+          "lib/netstandard2.0/Serilog.Sinks.AwsCloudWatch.dll": {
+            "assemblyVersion": "4.0.171.0",
+            "fileVersion": "4.0.171.0"
+          }
+        }
+      },
       "Serilog.Sinks.Console/4.1.0": {
         "dependencies": {
           "Serilog": "2.12.0"
@@ -1312,12 +1363,33 @@
       "serviceable": false,
       "sha512": ""
     },
-    "AWSSDK.Core/3.7.102.4": {
+    "AWS.Logger.Core/3.1.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-xVAnTQZ/hYM+CtNNAlruGvuDhtV3br5UEdEzGrx/Vy60yuqBPKvpJJknMrnM7FjuVk2YkFS3zDWnJ/fjFHvpag==",
-      "path": "awssdk.core/3.7.102.4",
-      "hashPath": "awssdk.core.3.7.102.4.nupkg.sha512"
+      "sha512": "sha512-ruKBNASE/IBnVZhyeUy0ueuxq1CuMtDHNpU2cqGUg12SxvClkqqY/PVXyM6I4ltsMh/1tF8WdpTBj9k3Fw/PgA==",
+      "path": "aws.logger.core/3.1.0",
+      "hashPath": "aws.logger.core.3.1.0.nupkg.sha512"
+    },
+    "AWS.Logger.SeriLog/3.2.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-zslsNobQR3j2o+NrlcuVmrWLNyoyeZKIs5n0tO4+Hz6Z2Wcr9FqqgMxzXpKzkYBzQzfYCB/SlovOGvuWEqnnew==",
+      "path": "aws.logger.serilog/3.2.0",
+      "hashPath": "aws.logger.serilog.3.2.0.nupkg.sha512"
+    },
+    "AWSSDK.CloudWatchLogs/3.7.104": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-TJpjYEp7r/V0vnNO6gDgh6fdbGxYoG+VF1cz+vgfdJVJ6eYBLbNru+DMxN8Qd8s1jvha0lZQBwQs1R0wE0+NBA==",
+      "path": "awssdk.cloudwatchlogs/3.7.104",
+      "hashPath": "awssdk.cloudwatchlogs.3.7.104.nupkg.sha512"
+    },
+    "AWSSDK.Core/3.7.103.19": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-gUBTVCxraZVNzJlwQvl135ebf2JVEi853PiW+Z6vxzlvYA2rNA6LKVj7RSI5byU0KxVkxHzi6uCO1xNjwQJoOA==",
+      "path": "awssdk.core/3.7.103.19",
+      "hashPath": "awssdk.core.3.7.103.19.nupkg.sha512"
     },
     "AWSSDK.Extensions.NETCore.Setup/3.7.2": {
       "type": "package",
@@ -1878,6 +1950,13 @@
       "sha512": "sha512-ULloXSiapTb3zOWodC0G4WRDQzA5RjMEfZNZzOZpH8kC3t/lrISLblklIpKC44CX0sMDF40MnJwTIQ3pFQFs4g==",
       "path": "serilog.settings.configuration/3.4.0",
       "hashPath": "serilog.settings.configuration.3.4.0.nupkg.sha512"
+    },
+    "Serilog.Sinks.AwsCloudWatch/4.0.171": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-eJ0ZKLWbrOQ38u3/+vLZwTrBt6KtWthdvR6s0SmvbuupO3kr5x93UL3klzhp0Ewe/CwfYcYZ88hygJQ+Xe89Mg==",
+      "path": "serilog.sinks.awscloudwatch/4.0.171",
+      "hashPath": "serilog.sinks.awscloudwatch.4.0.171.nupkg.sha512"
     },
     "Serilog.Sinks.Console/4.1.0": {
       "type": "package",

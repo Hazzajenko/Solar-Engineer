@@ -23,8 +23,6 @@ export class NotificationsService {
   private http = inject(HttpClient)
   connectionId?: string
 
-  constructor(private router: Router) {
-  }
 
   updateNotification(update: Update<NotificationModel>, type: NotificationType) {
     return this.http.put<UpdateNotificationResponse>(`/api/notification/${update.id}`, {

@@ -1,5 +1,6 @@
 using dotnetapi.Extensions;
 using dotnetapi.Features.Messages.Entities;
+using dotnetapi.Features.Messages.Services;
 using dotnetapi.Models.Dtos;
 using dotnetapi.Models.Entities;
 using Microsoft.AspNetCore.Identity;
@@ -16,10 +17,14 @@ public interface IMessagesHub
 public class MessagesHub : Hub
 {
     private readonly UserManager<AppUser> _userManager;
+    private readonly IMessagesRepository _messagesRepository;
+    private readonly ILogger<MessagesHub> _logger;
 
-    public MessagesHub(UserManager<AppUser> userManager)
+    public MessagesHub(UserManager<AppUser> userManager, IMessagesRepository messagesRepository, ILogger<MessagesHub> logger)
     {
         _userManager = userManager;
+        _messagesRepository = messagesRepository;
+        _logger = logger;
     }
 
     public override async Task OnConnectedAsync()
@@ -48,11 +53,29 @@ public class MessagesHub : Hub
         await base.OnDisconnectedAsync(exception);*/
     }
 
-    public async Task GetMessages(MessageDto message)
+    /*public async Task GetMessages(MessageDto message)
     {
         // await Clients.Client(connectionId).SendAsync("GetNotifications", "data");
         // await Clients.User("hazza").SendAsync("GetNotifications", "datasdasa");
         // await Clients.Client(connectionId).("GetNotifications", "data");
+    }*/
+
+    public async Task GetMessages(string username)
+    {
+        var appUser = await _userManager.Users.Where(x => x.UserName == Context.User!.GetUsername()).SingleOrDefaultAsync();
+        if (appUser is null)
+        {
+            throw new HubException("appUser is null");
+        }
+        var recipient = await _userManager.Users.Where(x => x.UserName == username).SingleOrDefaultAsync();
+        if (recipient is null)
+        {
+            throw new HubException("recipient is null");
+        }
+
+        _logger.LogInformation("{User} GetMessages with {Recipient}", appUser.UserName!, recipient.UserName!);
+        var messages = await _messagesRepository.GetUserConversationAsync(appUser, recipient);
+        await Clients.Caller.SendAsync("GetMessages", messages);
     }
 
 

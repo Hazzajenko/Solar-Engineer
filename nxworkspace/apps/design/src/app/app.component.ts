@@ -8,17 +8,13 @@ import { MatListModule } from '@angular/material/list'
 import { MatSidenavModule } from '@angular/material/sidenav'
 import { RouterModule } from '@angular/router'
 import { FriendsStoreService } from '@app/data-access/friends'
-import { AuthService } from '@auth/data-access/api'
 import { AuthFacade, AuthStoreService } from '@auth/data-access/facades'
 import { LetModule } from '@ngrx/component'
 import { UiStoreService } from '@project-id/data-access/facades'
 import { ProjectsStoreService } from '@projects/data-access/facades'
-import { StringModel } from '@shared/data-access/models'
 import { NotificationsStoreService } from '@shared/data-access/notifications'
 import { AppBarComponent } from '@shared/ui/app-bar'
 import { NotificationsDialog } from 'libs/app/feature/notifications/src/lib/notifications.dialog'
-import { EditStringDialog } from 'libs/grid-layout/feature/blocks/block-panel/src/lib/dialogs/edit-string.dialog'
-import { firstValueFrom } from 'rxjs'
 import { SidenavComponent } from '../../../../libs/app/feature/sidenav/src/lib/sidenav.component'
 
 @Component({
@@ -66,7 +62,7 @@ export class AppComponent implements OnInit {
         dialogConfig.autoFocus = true*/
 
     const dialogConfig = {
-      disableClose: true,
+      // disableClose: true,
       autoFocus: true,
       height: '400px',
       width: '300px',

@@ -6,12 +6,13 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { MatButtonModule } from '@angular/material/button'
 import { MatCardModule } from '@angular/material/card'
 import { MatCheckboxModule } from '@angular/material/checkbox'
-import { MatDialogModule } from '@angular/material/dialog'
+import { MatDialog, MatDialogConfig, MatDialogModule } from '@angular/material/dialog'
 import { MatFormFieldModule } from '@angular/material/form-field'
 
 import { MatIconModule } from '@angular/material/icon'
 import { MatInputModule } from '@angular/material/input'
 import { MatListModule, MatSelectionListChange } from '@angular/material/list'
+import { NotificationsDialog } from '@app/feature/notifications'
 import { AuthStoreService } from '@auth/data-access/facades'
 import { Update } from '@ngrx/entity'
 
@@ -20,6 +21,7 @@ import { ShowHideComponent } from '@shared/ui/show-hide'
 
 import { Observable } from 'rxjs'
 import { MessagesStoreService } from '../../data-access'
+import { ConversationComponent } from '../conversation/conversation.component'
 import { MessageDirective } from './message.directive'
 import { SortMessagesPipe } from './sort-messages.pipe'
 
@@ -59,11 +61,16 @@ export class MessagesComponent {
 
   private messagesStore = inject(MessagesStoreService)
   private authStore = inject(AuthStoreService)
+  private dialog = inject(MatDialog)
 
-  messages$: Observable<MessageModel[]> = this.messagesStore.select.messages$
+  messages$: Observable<MessageModel[] | undefined> = this.messagesStore.select.firstMessageOfEveryConversation$()
   user$: Observable<UserModel | undefined> = this.authStore.select.user$
   selectedMessage?: MessageModel
   unreadFilter = false
+
+  constructor() {
+    this.messagesStore.select.firstMessageOfEveryConversation$().subscribe(res => console.log(res))
+  }
 
   change(event: MatSelectionListChange) {
     console.log(event)
@@ -103,6 +110,20 @@ export class MessagesComponent {
 
   openConversation(selectedMessage: MessageModel) {
     console.log(selectedMessage)
+
+    const dialogConfig = {
+      // disableClose: true,
+      autoFocus: true,
+      height: '800px',
+      width: '1000px',
+      data: {
+        recipient: selectedMessage.senderUsername,
+      },
+    } as MatDialogConfig
+    /*   dialogConfig.data = {
+         stringId: panel.stringId,
+       }*/
+    this.dialog.open(ConversationComponent, dialogConfig)
   }
 }
 

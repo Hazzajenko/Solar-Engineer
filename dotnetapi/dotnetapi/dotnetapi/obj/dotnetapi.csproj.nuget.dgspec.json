@@ -45,6 +45,14 @@
         "net7.0": {
           "targetAlias": "net7.0",
           "dependencies": {
+            "AWS.Logger.SeriLog": {
+              "target": "Package",
+              "version": "[3.2.0, )"
+            },
+            "AWSSDK.CloudWatchLogs": {
+              "target": "Package",
+              "version": "[3.7.104, )"
+            },
             "AWSSDK.Extensions.NETCore.Setup": {
               "target": "Package",
               "version": "[3.7.2, )"
@@ -136,6 +144,10 @@
             "Serilog.Settings.Configuration": {
               "target": "Package",
               "version": "[3.4.0, )"
+            },
+            "Serilog.Sinks.AwsCloudWatch": {
+              "target": "Package",
+              "version": "[4.0.171, )"
             },
             "Serilog.Sinks.Console": {
               "target": "Package",

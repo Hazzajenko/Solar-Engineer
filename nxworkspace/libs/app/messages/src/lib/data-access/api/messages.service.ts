@@ -10,6 +10,7 @@ import { AllMessagesResponse } from '../models/all-messages.response'
 
 import { MessageResponse } from '../models/message.response'
 import { MessagesFilter } from '../models/messages.filter'
+import { SendMessageRequest } from '../models/send-message.request'
 
 
 @Injectable({
@@ -33,9 +34,9 @@ export class MessagesService {
     })
   }
 
-  sendMessageToUser(message: MessageModel) {
-    return this.http.post<MessageResponse>(`/api/message/user/${message.recipientUsername}`, {
-      ...message,
+  sendMessageToUser(request: SendMessageRequest) {
+    return this.http.post<MessageResponse>(`/api/message/user/${request.recipientUsername}`, {
+      ...request,
     })
   }
 
@@ -44,6 +45,10 @@ export class MessagesService {
       return this.http.get<AllMessagesResponse>(`/api/messages?filter=${filter}`)
     }
     return this.http.get<AllMessagesResponse>(`/api/messages`)
+  }
+
+  getAllMessagesWithUser(username: string) {
+    return this.http.get<AllMessagesResponse>(`/api/messages/user/${username}`)
   }
 
   createMessagesConnection(token: string) {
@@ -62,10 +67,27 @@ export class MessagesService {
       .then(() => console.log('Connection started'))
       .catch(err => console.log('Error while starting connection: ' + err))
 
-    this.messagesHub.on('getMessages', message => {
-      console.log('getMessages', message)
-      this.messagesStore.dispatch.addMessage(message)
+    this.messagesHub.on('getMessages', (message: MessageModel) => {
+      if (Array.isArray(message)) {
+        console.log('Array.isArray(message)', message)
+        this.messagesStore.dispatch.addManyMessages(message)
+      } else {
+        console.log('getMessages', message)
+        this.messagesStore.dispatch.addMessage(message)
+      }
+
     })
+  }
+
+  getMessagesWithUserSignalR(username: string) {
+    if (!this.messagesHub) return
+    this.messagesHub.invoke('getMessages', username)
+      .then((data) => {
+        console.log(data)
+
+        // this.connectionId = data
+        // this.getNotifications()
+      })
   }
 
   private getConnectionId = () => {

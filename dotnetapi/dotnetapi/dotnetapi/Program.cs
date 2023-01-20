@@ -1,4 +1,7 @@
+using System.Net.Mime;
 using System.Text.Json.Serialization;
+using Amazon.CloudWatchLogs;
+using Amazon.CloudWatchLogs.Model;
 using Amazon.S3;
 using dotnetapi.Data;
 using dotnetapi.Extensions;
@@ -7,12 +10,13 @@ using dotnetapi.Models.Entities;
 using dotnetapi.Validation;
 using FastEndpoints;
 using FastEndpoints.Swagger;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Serilog;
-using Serilog.Events;
-using Serilog.Sinks.SystemConsole.Themes;
+using Serilog.Sinks.AwsCloudWatch;
 
 var builder = WebApplication.CreateBuilder(new WebApplicationOptions
 {
@@ -40,21 +44,12 @@ var configuration = new ConfigurationBuilder()
     .Build();
     */
 
-builder.Host.UseSerilog((ctx, lc) => lc
-    // .WriteTo.Console(theme: SystemConsoleTheme.Literate)
-    // .WriteTo.File("log.txt")
-    .WriteTo.Console(
-        theme: SystemConsoleTheme.Literate
-        // outputTemplate: "{Timestamp:HH:mm} [{Level}] ({ThreadId}) {Message}{NewLine}{Exception}"
-    )
-    // .ReadFrom.Configuration(configuration));
-    .ReadFrom.Configuration(ctx.Configuration));
 
-Log.Logger = new LoggerConfiguration()
+/*Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Debug()
     // .WriteTo.File("log.txt")
     .WriteTo.Console(LogEventLevel.Information)
-    .CreateLogger();
+    .CreateLogger();*/
 
 // Log.Information("test");
 /*Log.Logger = new LoggerConfiguration()
@@ -63,15 +58,62 @@ Log.Logger = new LoggerConfiguration()
 var config = builder.Configuration;
 config.AddEnvironmentVariables("dotnetapi_");
 
+builder.Host.UseSerilog((_, loggerConfig) =>
+{
+    loggerConfig.WriteTo.Console()
+        .WriteTo.AmazonCloudWatch(
+            // logGroup: $"{builder.Environment.EnvironmentName}/{builder.Environment.ApplicationName}",
+            "/dotnet/logging-demo/serilog",
+            createLogGroup: true,
+            logStreamPrefix: DateTime.UtcNow.ToString("yyyyMMddHHmmssfff"),
+            cloudWatchClient: new AmazonCloudWatchLogsClient()
+        )
+        .ReadFrom.Configuration(config) /*.CreateLogger()*/;
+});
 
 builder.Services.AddFastEndpoints();
 builder.Services.AddSwaggerDoc();
+
+/*
+var logClient = new AmazonCloudWatchLogsClient();
+var logGroupName = "/aws/weather-forecast-app";
+var logStreamName = DateTime.UtcNow.ToString("yyyyMMddHHmmssfff");
+var existing = await logClient
+    .DescribeLogGroupsAsync(new DescribeLogGroupsRequest { LogGroupNamePrefix = logGroupName });
+var logGroupExists = existing.LogGroups.Any(l => l.LogGroupName == logGroupName);
+if (!logGroupExists)
+    await logClient.CreateLogGroupAsync(new CreateLogGroupRequest(logGroupName));
+await logClient.CreateLogStreamAsync(new CreateLogStreamRequest(logGroupName, logStreamName));
+await logClient.PutLogEventsAsync(new PutLogEventsRequest
+{
+    LogGroupName = logGroupName,
+    LogStreamName = logStreamName,
+    LogEvents = new List<InputLogEvent>
+    {
+        new()
+        {
+            Message = "Get Weather Forecast called for city",
+            Timestamp = DateTime.UtcNow
+        }
+    }
+});*/
+
+/*builder.Host.UseSerilog((ctx, lc) => lc
+    // .WriteTo.Console(theme: SystemConsoleTheme.Literate)
+    // .WriteTo.File("log.txt")
+    .WriteTo.Console(
+        theme: SystemConsoleTheme.Literate
+        // outputTemplate: "{Timestamp:HH:mm} [{Level}] ({ThreadId}) {Message}{NewLine}{Exception}"
+    )
+    // .ReadFrom.Configuration(configuration));
+    .ReadFrom.Configuration(ctx.Configuration));*/
 
 /*builder.Services.AddDbContext<DataContext>
 // builder.Services.AddDbContextFactory<DataContext>
     (options=> options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));*/
 
 builder.Services.AddApplicationServices(config);
+builder.Services.AddHealthChecks();
 // builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 /*builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -161,6 +203,7 @@ app.UseFastEndpoints(options =>
     options.Serializer.Options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     // x.Serializer.Options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
 });
+// app.MapHealthChecks("api_health_check");
 //     /*.AddJsonOptions(options =>
 // {
 //     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
@@ -184,6 +227,25 @@ if (app.Environment.IsDevelopment())
     app.UseOpenApi();
     app.UseSwaggerUi3(s => s.ConfigureDefaults());
 }
+
+app.UseHealthChecks("/health",
+    new HealthCheckOptions
+    {
+        ResponseWriter = async (context, report) =>
+        {
+            var result = new
+            {
+                status = report.Status.ToString(),
+                errors = report.Entries.Select(e => new
+                {
+                    key = e.Key,
+                    value = Enum.GetName(typeof(HealthStatus), e.Value.Status)
+                })
+            }.ToJson();
+            context.Response.ContentType = MediaTypeNames.Application.Json;
+            await context.Response.WriteAsync(result);
+        }
+    });
 
 // app.UseDefaultFiles();
 // app.UseStaticFiles();

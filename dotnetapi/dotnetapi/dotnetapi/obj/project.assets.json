@@ -2,7 +2,57 @@
   "version": 3,
   "targets": {
     "net7.0": {
-      "AWSSDK.Core/3.7.102.4": {
+      "AWS.Logger.Core/3.1.0": {
+        "type": "package",
+        "dependencies": {
+          "AWSSDK.CloudWatchLogs": "3.7.0.5"
+        },
+        "compile": {
+          "lib/netstandard2.0/AWS.Logger.Core.dll": {
+            "related": ".pdb;.xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/AWS.Logger.Core.dll": {
+            "related": ".pdb;.xml"
+          }
+        }
+      },
+      "AWS.Logger.SeriLog/3.2.0": {
+        "type": "package",
+        "dependencies": {
+          "AWS.Logger.Core": "3.1.0",
+          "Microsoft.Extensions.Configuration.Abstractions": "1.0.0",
+          "Serilog": "2.6.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/AWS.Logger.SeriLog.dll": {
+            "related": ".pdb;.xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/AWS.Logger.SeriLog.dll": {
+            "related": ".pdb;.xml"
+          }
+        }
+      },
+      "AWSSDK.CloudWatchLogs/3.7.104": {
+        "type": "package",
+        "dependencies": {
+          "AWSSDK.Core": "[3.7.103.19, 4.0.0)"
+        },
+        "compile": {
+          "lib/netcoreapp3.1/AWSSDK.CloudWatchLogs.dll": {
+            "related": ".pdb;.xml"
+          }
+        },
+        "runtime": {
+          "lib/netcoreapp3.1/AWSSDK.CloudWatchLogs.dll": {
+            "related": ".pdb;.xml"
+          }
+        }
+      },
+      "AWSSDK.Core/3.7.103.19": {
         "type": "package",
         "compile": {
           "lib/netcoreapp3.1/AWSSDK.Core.dll": {
@@ -1362,6 +1412,24 @@
           }
         }
       },
+      "Serilog.Sinks.AwsCloudWatch/4.0.171": {
+        "type": "package",
+        "dependencies": {
+          "AWSSDK.CloudWatchLogs": "3.7.0.13",
+          "Serilog": "2.10.0",
+          "Serilog.Sinks.PeriodicBatching": "2.3.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/Serilog.Sinks.AwsCloudWatch.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/Serilog.Sinks.AwsCloudWatch.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "Serilog.Sinks.Console/4.1.0": {
         "type": "package",
         "dependencies": {
@@ -2349,15 +2417,83 @@
     }
   },
   "libraries": {
-    "AWSSDK.Core/3.7.102.4": {
-      "sha512": "xVAnTQZ/hYM+CtNNAlruGvuDhtV3br5UEdEzGrx/Vy60yuqBPKvpJJknMrnM7FjuVk2YkFS3zDWnJ/fjFHvpag==",
+    "AWS.Logger.Core/3.1.0": {
+      "sha512": "ruKBNASE/IBnVZhyeUy0ueuxq1CuMtDHNpU2cqGUg12SxvClkqqY/PVXyM6I4ltsMh/1tF8WdpTBj9k3Fw/PgA==",
       "type": "package",
-      "path": "awssdk.core/3.7.102.4",
+      "path": "aws.logger.core/3.1.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE",
+        "aws.logger.core.3.1.0.nupkg.sha512",
+        "aws.logger.core.nuspec",
+        "icon.png",
+        "lib/net45/AWS.Logger.Core.dll",
+        "lib/net45/AWS.Logger.Core.pdb",
+        "lib/net45/AWS.Logger.Core.xml",
+        "lib/netstandard2.0/AWS.Logger.Core.dll",
+        "lib/netstandard2.0/AWS.Logger.Core.pdb",
+        "lib/netstandard2.0/AWS.Logger.Core.xml"
+      ]
+    },
+    "AWS.Logger.SeriLog/3.2.0": {
+      "sha512": "zslsNobQR3j2o+NrlcuVmrWLNyoyeZKIs5n0tO4+Hz6Z2Wcr9FqqgMxzXpKzkYBzQzfYCB/SlovOGvuWEqnnew==",
+      "type": "package",
+      "path": "aws.logger.serilog/3.2.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE",
+        "aws.logger.serilog.3.2.0.nupkg.sha512",
+        "aws.logger.serilog.nuspec",
+        "icon.png",
+        "lib/net45/AWS.Logger.SeriLog.dll",
+        "lib/net45/AWS.Logger.SeriLog.pdb",
+        "lib/net45/AWS.Logger.SeriLog.xml",
+        "lib/net46/AWS.Logger.SeriLog.dll",
+        "lib/net46/AWS.Logger.SeriLog.pdb",
+        "lib/net46/AWS.Logger.SeriLog.xml",
+        "lib/netstandard2.0/AWS.Logger.SeriLog.dll",
+        "lib/netstandard2.0/AWS.Logger.SeriLog.pdb",
+        "lib/netstandard2.0/AWS.Logger.SeriLog.xml"
+      ]
+    },
+    "AWSSDK.CloudWatchLogs/3.7.104": {
+      "sha512": "TJpjYEp7r/V0vnNO6gDgh6fdbGxYoG+VF1cz+vgfdJVJ6eYBLbNru+DMxN8Qd8s1jvha0lZQBwQs1R0wE0+NBA==",
+      "type": "package",
+      "path": "awssdk.cloudwatchlogs/3.7.104",
       "hasTools": true,
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "awssdk.core.3.7.102.4.nupkg.sha512",
+        "analyzers/dotnet/cs/AWSSDK.CloudWatchLogs.CodeAnalysis.dll",
+        "awssdk.cloudwatchlogs.3.7.104.nupkg.sha512",
+        "awssdk.cloudwatchlogs.nuspec",
+        "lib/net35/AWSSDK.CloudWatchLogs.dll",
+        "lib/net35/AWSSDK.CloudWatchLogs.pdb",
+        "lib/net35/AWSSDK.CloudWatchLogs.xml",
+        "lib/net45/AWSSDK.CloudWatchLogs.dll",
+        "lib/net45/AWSSDK.CloudWatchLogs.pdb",
+        "lib/net45/AWSSDK.CloudWatchLogs.xml",
+        "lib/netcoreapp3.1/AWSSDK.CloudWatchLogs.dll",
+        "lib/netcoreapp3.1/AWSSDK.CloudWatchLogs.pdb",
+        "lib/netcoreapp3.1/AWSSDK.CloudWatchLogs.xml",
+        "lib/netstandard2.0/AWSSDK.CloudWatchLogs.dll",
+        "lib/netstandard2.0/AWSSDK.CloudWatchLogs.pdb",
+        "lib/netstandard2.0/AWSSDK.CloudWatchLogs.xml",
+        "tools/install.ps1",
+        "tools/uninstall.ps1"
+      ]
+    },
+    "AWSSDK.Core/3.7.103.19": {
+      "sha512": "gUBTVCxraZVNzJlwQvl135ebf2JVEi853PiW+Z6vxzlvYA2rNA6LKVj7RSI5byU0KxVkxHzi6uCO1xNjwQJoOA==",
+      "type": "package",
+      "path": "awssdk.core/3.7.103.19",
+      "hasTools": true,
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "awssdk.core.3.7.103.19.nupkg.sha512",
         "awssdk.core.nuspec",
         "lib/net35/AWSSDK.Core.dll",
         "lib/net35/AWSSDK.Core.pdb",
@@ -4243,6 +4379,19 @@
         "lib/netstandard2.0/Serilog.Settings.Configuration.xml",
         "serilog.settings.configuration.3.4.0.nupkg.sha512",
         "serilog.settings.configuration.nuspec"
+      ]
+    },
+    "Serilog.Sinks.AwsCloudWatch/4.0.171": {
+      "sha512": "eJ0ZKLWbrOQ38u3/+vLZwTrBt6KtWthdvR6s0SmvbuupO3kr5x93UL3klzhp0Ewe/CwfYcYZ88hygJQ+Xe89Mg==",
+      "type": "package",
+      "path": "serilog.sinks.awscloudwatch/4.0.171",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/netstandard2.0/Serilog.Sinks.AwsCloudWatch.dll",
+        "lib/netstandard2.0/Serilog.Sinks.AwsCloudWatch.xml",
+        "serilog.sinks.awscloudwatch.4.0.171.nupkg.sha512",
+        "serilog.sinks.awscloudwatch.nuspec"
       ]
     },
     "Serilog.Sinks.Console/4.1.0": {
@@ -7264,6 +7413,8 @@
   },
   "projectFileDependencyGroups": {
     "net7.0": [
+      "AWS.Logger.SeriLog >= 3.2.0",
+      "AWSSDK.CloudWatchLogs >= 3.7.104",
       "AWSSDK.Extensions.NETCore.Setup >= 3.7.2",
       "AWSSDK.S3 >= 3.7.101.36",
       "FastEndpoints >= 5.6.0",
@@ -7286,6 +7437,7 @@
       "Serilog >= 2.12.0",
       "Serilog.AspNetCore >= 6.1.0",
       "Serilog.Settings.Configuration >= 3.4.0",
+      "Serilog.Sinks.AwsCloudWatch >= 4.0.171",
       "Serilog.Sinks.Console >= 4.1.0",
       "Serilog.Sinks.File >= 5.0.0",
       "Serilog.Sinks.Seq >= 5.2.2",
@@ -7340,6 +7492,14 @@
       "net7.0": {
         "targetAlias": "net7.0",
         "dependencies": {
+          "AWS.Logger.SeriLog": {
+            "target": "Package",
+            "version": "[3.2.0, )"
+          },
+          "AWSSDK.CloudWatchLogs": {
+            "target": "Package",
+            "version": "[3.7.104, )"
+          },
           "AWSSDK.Extensions.NETCore.Setup": {
             "target": "Package",
             "version": "[3.7.2, )"
@@ -7431,6 +7591,10 @@
           "Serilog.Settings.Configuration": {
             "target": "Package",
             "version": "[3.4.0, )"
+          },
+          "Serilog.Sinks.AwsCloudWatch": {
+            "target": "Package",
+            "version": "[4.0.171, )"
           },
           "Serilog.Sinks.Console": {
             "target": "Package",

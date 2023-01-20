@@ -1,10 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "7T0XRl0FyMqSC/RPP/T92upB8e9QyL97xjTolD/takrhDmORA7OSqsOm66uOGX2+7j1LdWjC8UY979N3iOPYmw==",
+  "dgSpecHash": "w0OPIMrUsrLxeGMrpzEey5Ixx14ggHR4JVPIwo1YLPYGXfkwh8DN/Jk1uhQXI0e3AH95nJn+TeaARscLCMeGDg==",
   "success": true,
   "projectFilePath": "C:\\Users\\jenki\\source\\app\\solar-engineer\\dotnetapi\\dotnetapi\\dotnetapi\\dotnetapi.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\jenki\\.nuget\\packages\\awssdk.core\\3.7.102.4\\awssdk.core.3.7.102.4.nupkg.sha512",
+    "C:\\Users\\jenki\\.nuget\\packages\\aws.logger.core\\3.1.0\\aws.logger.core.3.1.0.nupkg.sha512",
+    "C:\\Users\\jenki\\.nuget\\packages\\aws.logger.serilog\\3.2.0\\aws.logger.serilog.3.2.0.nupkg.sha512",
+    "C:\\Users\\jenki\\.nuget\\packages\\awssdk.cloudwatchlogs\\3.7.104\\awssdk.cloudwatchlogs.3.7.104.nupkg.sha512",
+    "C:\\Users\\jenki\\.nuget\\packages\\awssdk.core\\3.7.103.19\\awssdk.core.3.7.103.19.nupkg.sha512",
     "C:\\Users\\jenki\\.nuget\\packages\\awssdk.extensions.netcore.setup\\3.7.2\\awssdk.extensions.netcore.setup.3.7.2.nupkg.sha512",
     "C:\\Users\\jenki\\.nuget\\packages\\awssdk.s3\\3.7.101.36\\awssdk.s3.3.7.101.36.nupkg.sha512",
     "C:\\Users\\jenki\\.nuget\\packages\\fastendpoints\\5.6.0\\fastendpoints.5.6.0.nupkg.sha512",
@@ -85,6 +88,7 @@
     "C:\\Users\\jenki\\.nuget\\packages\\serilog.extensions.logging\\3.1.0\\serilog.extensions.logging.3.1.0.nupkg.sha512",
     "C:\\Users\\jenki\\.nuget\\packages\\serilog.formatting.compact\\1.1.0\\serilog.formatting.compact.1.1.0.nupkg.sha512",
     "C:\\Users\\jenki\\.nuget\\packages\\serilog.settings.configuration\\3.4.0\\serilog.settings.configuration.3.4.0.nupkg.sha512",
+    "C:\\Users\\jenki\\.nuget\\packages\\serilog.sinks.awscloudwatch\\4.0.171\\serilog.sinks.awscloudwatch.4.0.171.nupkg.sha512",
     "C:\\Users\\jenki\\.nuget\\packages\\serilog.sinks.console\\4.1.0\\serilog.sinks.console.4.1.0.nupkg.sha512",
     "C:\\Users\\jenki\\.nuget\\packages\\serilog.sinks.debug\\2.0.0\\serilog.sinks.debug.2.0.0.nupkg.sha512",
     "C:\\Users\\jenki\\.nuget\\packages\\serilog.sinks.file\\5.0.0\\serilog.sinks.file.5.0.0.nupkg.sha512",
