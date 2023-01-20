@@ -46,7 +46,7 @@ export class AppBarComponent {
     const dialogConfig = {
       autoFocus: true,
       height: '800px',
-      width: '1000px',
+      width: '1200px',
     } as MatDialogConfig
 
     this.dialog.open(ProfileDialog, dialogConfig)

@@ -35,7 +35,8 @@ export class MessageDirective {
 
     if (message.id === this._message.id) {
       // this.elRef.nativeElement.style.backgroundColor = '#253fff'
-      this.elRef.nativeElement.style.backgroundColor = 'rgb(194, 222, 209)'
+      // this.elRef.nativeElement.style.backgroundColor = 'rgb(194, 222, 209)'
+      this.elRef.nativeElement.style.backgroundColor = '#a9deff'
       this.elRef.nativeElement.style.border = '1px solid rgb(84, 73, 116)'
       // this.elRef.nativeElement.style.fontSize = 'large'
     } else {
@@ -44,6 +45,7 @@ export class MessageDirective {
       // this.elRef.nativeElement.style.fontSize = ''
       if (this._message.status === NotificationStatus.Unread) {
         this.elRef.nativeElement.style.backgroundColor = '#60a1fa'
+        // this.elRef.nativeElement.style.backgroundColor = '#3f96ff'
       } else {
         this.elRef.nativeElement.style.backgroundColor = ''
       }

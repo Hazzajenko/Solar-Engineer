@@ -34,8 +34,6 @@ export const mainTsProviders = [
     HttpClientModule,
     BrowserAnimationsModule,
     BrowserModule,
-    BrowserAnimationsModule,
-    BrowserAnimationsModule,
     MatDialogModule,
     MatSnackBarModule,
     MatSnackBarRef,

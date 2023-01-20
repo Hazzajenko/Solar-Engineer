@@ -14,6 +14,7 @@ import { MatInputModule } from '@angular/material/input'
 import { MatListModule, MatSelectionListChange } from '@angular/material/list'
 import { MatTabsModule } from '@angular/material/tabs'
 import { FriendsService, FriendsStoreService } from '@app/data-access/friends'
+import { ChatroomsComponent } from '@app/feature/chatrooms'
 import { FriendsComponent } from '@app/feature/friends'
 import { MessagesComponent } from '@app/messages'
 import { AuthStoreService } from '@auth/data-access/facades'
@@ -62,6 +63,7 @@ import { ProfileComponent } from './component'
     FriendsComponent,
     ProfileComponent,
     MessagesComponent,
+    ChatroomsComponent,
   ],
   standalone: true,
 })

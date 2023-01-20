@@ -23,10 +23,10 @@
              [message]='message'
              class='flex'
              *cdkVirtualFor='let message of messages | sortConversationMessages'>
-          <div class='flex flex-col p-3 rounded-md hover:bg-gray-200'>
+          <div class='flex flex-col mx-3 p-2 rounded-md min-w-[250px] max-w-[250px] hover:bg-gray-200'>
             <span matListItemTitle>{{message.senderUsername}}</span>
             <span matListItemLine>{{message.messageSentTime | date : 'short'}}</span>
-            <p matListItemLine>{{message.content}}</p>
+            <p style='white-space: pre-line' matListItemLine>{{message.content}}</p>
           </div>
 
           <!--          class='flex min-w-max bg-gray-100 hover:bg-gray-300'-->
@@ -38,9 +38,9 @@
       <div class='flex flex-row'>
         <form>
           <mat-form-field>
-            <!--            <mat-label>Message</mat-label>-->
-            <input [formControl]='messageControl' matInput>
-            <!--          <textarea matInput></textarea>-->
+            <mat-label>Message</mat-label>
+            <!--            <input [formControl]='messageControl' matInput>-->
+            <textarea matInput [formControl]='messageControl' style='resize: none; white-space: pre-line'></textarea>
           </mat-form-field>
         </form>
         <!--        {{messageControl.value}}-->

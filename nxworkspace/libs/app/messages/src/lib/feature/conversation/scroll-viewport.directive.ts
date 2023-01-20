@@ -12,6 +12,7 @@ export class ScrollViewportDirective {
   private _viewport!: CdkVirtualScrollViewport
   private _messages: MessageModel[] = []
   private _scrollIndex = 0
+  loaded = false
 
 
   @Input() set viewport(viewport: CdkVirtualScrollViewport) {
@@ -26,6 +27,12 @@ export class ScrollViewportDirective {
   @Input() set messages(messages: MessageModel[] | undefined | null) {
     if (!messages) return
     this._messages = messages
+
+    if (!this.loaded) {
+      this.scrollToBottom()
+      this.loaded = true
+      return
+    }
 
     if (!this.isNearBottom()) return
 

@@ -48,10 +48,13 @@ import { SortConversationMessagesPipe } from './sort-conversation-messages.pipe'
     }
 
     ::-webkit-scrollbar-thumb {
-      background-color: #d6dee1;
+      /*      background-color: #9b9fd8;
+            border-radius: 20px;
+            border: 6px solid transparent;
+            background-clip: content-box;*/
+      background-color: #60a1fa;
       border-radius: 20px;
-      border: 6px solid transparent;
-      background-clip: content-box;
+      border: 1px solid #3e8bf5;
     }
 
     ::-webkit-scrollbar-thumb:hover {
@@ -149,6 +152,7 @@ export class ConversationComponent implements OnInit {
   sendMessage() {
     if (!this.recipient) return
     if (!this.messageControl.value) return
+    console.log(this.messageControl.value)
     const request: SendMessageRequest = {
       recipientUsername: this.recipient,
       content: this.messageControl.value,

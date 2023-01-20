@@ -42,6 +42,11 @@ export class MessagesFacade {
           }
           if (map.get(user.username)) map.delete(user.username)
 
+          /*
+                    const filtered = this.uniqBySetWithSpread<string>(usernames)
+                    console.log(filtered)
+                    filtered.*/
+
           const uniqueUsernames = Array.from(map.values())
 
           return uniqueUsernames.map(
@@ -55,5 +60,9 @@ export class MessagesFacade {
           )
         }),
       )))
+  }
+
+  uniqBySetWithSpread<T>(array: T[]): T[] {
+    return [...new Set(array)]
   }
 }
