@@ -10,6 +10,7 @@ export class UiFacade {
   private store = inject(Store)
 
   isKeyMapEnabled$ = this.store.select(UiSelectors.selectIsKeymapEnabled)
+  windowSize$ = this.store.select(UiSelectors.selectWindowSize)
   navMenuState$ = this.store.select(UiSelectors.selectNavMenuState)
   isPathLinesEnabled$ = this.store.select(UiSelectors.selectIsPathLinesEnabled)
   isStringStatsEnabled$ = this.store.select(UiSelectors.selectIsStringStatsEnabled)
@@ -24,6 +25,10 @@ export class UiFacade {
 
   get isKeyMapEnabled() {
     return firstValueFrom(this.isKeyMapEnabled$)
+  }
+
+  get windowSize() {
+    return firstValueFrom(this.windowSize$)
   }
 
   get navMenuState() {

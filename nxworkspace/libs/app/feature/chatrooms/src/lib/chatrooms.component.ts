@@ -1,26 +1,35 @@
 import { ScrollingModule } from '@angular/cdk/scrolling'
+import { CdkTextareaAutosize } from '@angular/cdk/text-field'
 import { AsyncPipe, DatePipe, NgClass, NgForOf, NgIf, NgStyle, NgSwitch, NgSwitchCase } from '@angular/common'
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
+import { ChangeDetectionStrategy, Component, inject, NgZone, OnInit, ViewChild } from '@angular/core'
 
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { MatButtonModule } from '@angular/material/button'
 import { MatCardModule } from '@angular/material/card'
 import { MatCheckboxModule } from '@angular/material/checkbox'
-import { MatDialog, MatDialogConfig, MatDialogModule } from '@angular/material/dialog'
+import { MatDialog, MatDialogConfig, MatDialogModule, MatDialogRef } from '@angular/material/dialog'
 import { MatFormFieldModule } from '@angular/material/form-field'
 
 import { MatIconModule } from '@angular/material/icon'
 import { MatInputModule } from '@angular/material/input'
 import { MatListModule, MatSelectionListChange } from '@angular/material/list'
+import { ActivatedRoute, Router } from '@angular/router'
 import { MessagesComponent, MessagesStoreService, SendMessageRequest } from '@app/messages'
 import { AuthStoreService } from '@auth/data-access/facades'
 import { LetModule } from '@ngrx/component'
 import { Update } from '@ngrx/entity'
 
-import { MessageModel, NotificationModel, NotificationStatus, UserModel } from '@shared/data-access/models'
+import {
+  MessageModel,
+  NotificationModel,
+  NotificationStatus,
+  UserModel,
+  WindowSizeModel,
+} from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
-import { Observable } from 'rxjs'
+import { map, Observable, take } from 'rxjs'
+
 import { MessageDirective } from '../../../../messages/src/lib/feature/component/message.directive'
 import { SortMessagesPipe } from '../../../../messages/src/lib/feature/component/sort-messages.pipe'
 import {
@@ -35,7 +44,15 @@ import {
 @Component({
   selector: 'app-chatrooms-component',
   templateUrl: './chatrooms.component.html',
-  styles: [],
+  styles: [`
+    html,
+    body {
+      height: 100%;
+      width: 100%;
+      margin: 0px;
+      padding: 0px
+    }
+  `],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatDialogModule,
@@ -69,27 +86,102 @@ import {
   ],
   standalone: true,
 })
-export class ChatroomsComponent {
+export class ChatroomsComponent implements OnInit {
 
   private messagesStore = inject(MessagesStoreService)
   private authStore = inject(AuthStoreService)
   private dialog = inject(MatDialog)
+  private router = inject(Router)
+  private route = inject(ActivatedRoute)
 
+  // public dialogRef!: MatDialogRef<ChatroomsComponent>
+  isDialog$ = this.route.url.pipe(
+    map((paths) => {
+      return paths[0].path !== 'messages'
+    }),
+  )
   messages$: Observable<MessageModel[] | undefined> = this.messagesStore.select.firstMessageOfEveryConversation$()
+  conversationMessages$?: Observable<MessageModel[] | undefined>
   user$: Observable<UserModel | undefined> = this.authStore.select.user$
   selectedMessage?: MessageModel
+  selectedConversationMessage?: MessageModel
   unreadFilter = false
   recipient?: string
   messageControl = new FormControl('', [])
   scrollIndex = 0
-
-  constructor() {
-    this.messagesStore.select.firstMessageOfEveryConversation$().subscribe(res => console.log(res))
+  containerHeight?: number
+  containerWidth?: number
+  windowSize: WindowSizeModel = (this.route.snapshot.data as { windowSize: WindowSizeModel }).windowSize
+  chatRoomListSize?: {
+    height: number
+    width: number
   }
 
-  change(event: MatSelectionListChange) {
+  conversationSize?: {
+    height: number
+    width: number
+  }
+
+  textAreaSize?: {
+    height: number
+    width: number
+  }
+
+  @ViewChild('autosize') autosize!: CdkTextareaAutosize
+
+
+  constructor(private _ngZone: NgZone/*, public dialogRef: MatDialogRef<ChatroomsComponent>*/) {
+    this.messagesStore.select.firstMessageOfEveryConversation$().subscribe(res => console.log(res))
+    this.route.url.subscribe(res => console.log(res))
+    console.log(this.route.snapshot.data)
+
+    this.isDialog$.subscribe(res => console.log(res))
+    // const state = this.dialogRef.getState()
+    // const state = this.dialogRef._containerInstance.()
+    // const state = this.dialogRef.getState()
+    // console.log('STATE', state)
+    /*    if (this.dialogRef) {
+          const state = this.dialogRef.getState()
+          // const state = this.dialogRef._containerInstance.()
+          // const state = this.dialogRef.getState()
+          console.log(state)
+        }*/
+  }
+
+  ngOnInit(): void {
+    this.containerHeight = ((this.route.snapshot.data as any).windowSize as WindowSizeModel).innerHeight
+    console.log(this.containerHeight)
+    console.log(this.windowSize)
+    if (!this.windowSize.innerHeight || !this.windowSize.innerWidth) return
+    const heightMinusAppBar = this.windowSize.innerHeight - 80
+    this.chatRoomListSize = {
+      height: heightMinusAppBar,
+      width: this.windowSize.innerWidth * 20 / 100,
+    }
+    this.conversationSize = {
+      height: heightMinusAppBar * 80 / 100,
+      width: this.windowSize.innerWidth * 80 / 100,
+    }
+    this.textAreaSize = {
+      height: heightMinusAppBar * 20 / 100,
+      width: this.windowSize.innerWidth * 80 / 100,
+    }
+  }
+
+  triggerResize() {
+    // Wait for changes to be applied, then trigger textarea resize.
+    this._ngZone.onStable.pipe(take(1)).subscribe(() => this.autosize.resizeToFitContent(true))
+  }
+
+  change(event: MatSelectionListChange, username: string) {
     console.log(event)
     this.selectedMessage = event.options[0].value
+    if (!this.selectedMessage) return
+    this.recipient = this.selectedMessage.senderUsername === username ? this.selectedMessage.recipientUsername : this.selectedMessage.senderUsername
+    if (this.recipient) {
+      this.messagesStore.dispatch.initMessagesWithUser(this.recipient)
+      this.conversationMessages$ = this.messagesStore.select.messagesWithUser$(this.recipient)
+    }
     if ((event.options[0].value as NotificationModel).status === NotificationStatus.Unread) {
       this.readMessage()
     }
@@ -114,6 +206,7 @@ export class ChatroomsComponent {
       recipientUsername: this.recipient,
       content: this.messageControl.value,
     }
+    this.messageControl.reset()
     this.messagesStore.dispatch.sendMessageToUser(request)
     /*    // console.log(this.viewport.nativeElement.scrollTop)
         console.log(this.viewport.nativeElement)
@@ -156,6 +249,15 @@ export class ChatroomsComponent {
          stringId: panel.stringId,
        }*/
     // this.dialog.open(ConversationComponent, dialogConfig)
+  }
+
+  selectMessage(message: MessageModel) {
+    this.selectedConversationMessage = message
+  }
+
+  async toggleFullScreen() {
+    this.dialog.closeAll()
+    await this.router.navigateByUrl('messages')
   }
 }
 

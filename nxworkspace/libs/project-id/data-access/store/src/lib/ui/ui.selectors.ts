@@ -13,6 +13,11 @@ export const selectNavMenuState = createSelector(
   (state: UiState) => state.navMenu,
 )
 
+export const selectWindowSize = createSelector(
+  selectUiState,
+  (state: UiState) => state.windowSize,
+)
+
 export const selectIsPathLinesEnabled = createSelector(
   selectUiState,
   (state: UiState) => state.pathLines,

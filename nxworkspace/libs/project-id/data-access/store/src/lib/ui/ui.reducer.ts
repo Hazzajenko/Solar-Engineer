@@ -1,5 +1,6 @@
 import { ClientXY, GridLayoutXY, MouseXY, PosXY } from '@grid-layout/shared/models'
 import { Action, createReducer, on } from '@ngrx/store'
+import { WindowSizeModel } from '@shared/data-access/models'
 import { GridActions } from 'libs/project-id/data-access/store/src/lib/grid'
 
 import { UiActions } from './ui.actions'
@@ -20,6 +21,7 @@ export interface UiState {
   posXY: PosXY
   keyPressed: string
   scale: number
+  windowSize: WindowSizeModel
 }
 
 export const initialUiState: UiState = {
@@ -47,6 +49,10 @@ export const initialUiState: UiState = {
   },
   keyPressed: '',
   scale: 1,
+  windowSize: {
+    innerHeight: undefined,
+    innerWidth: undefined,
+  },
 }
 
 
@@ -121,6 +127,10 @@ const reducer = createReducer(
       clientX: undefined,
       clientY: undefined,
     },
+  })),
+  on(UiActions.setWindowSize, (state, { windowSize }) => ({
+    ...state,
+    windowSize,
   })),
 )
 

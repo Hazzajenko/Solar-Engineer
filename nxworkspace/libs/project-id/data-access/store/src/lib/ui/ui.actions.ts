@@ -1,5 +1,6 @@
 import { ClientXY, GridLayoutXY, MouseXY, PosXY } from '@grid-layout/shared/models'
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
+import { WindowSizeModel } from '@shared/data-access/models'
 
 export const UiActions = createActionGroup({
   source: 'Ui Store',
@@ -21,5 +22,6 @@ export const UiActions = createActionGroup({
     'Toggle NavMenu': emptyProps(),
     'Set GridLayout Zoom': props<{ zoom: number }>(),
     'Reset GridLayout Zoom': emptyProps(),
+    'Set Window Size': props<{ windowSize: WindowSizeModel }>(),
   },
 })

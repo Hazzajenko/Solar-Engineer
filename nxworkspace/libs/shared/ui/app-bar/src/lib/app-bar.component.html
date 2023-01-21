@@ -4,10 +4,24 @@
       <mat-icon>menu</mat-icon>
     </button>
     <span *ngIf='user'>{{user.username}}</span>
+    <button *ngIf='user' (click)='routeHome()' mat-icon-button class='example-icon'
+            aria-label='Example icon-button with menu icon'>
+      <mat-icon>
+        home
+      </mat-icon>
+      <!--      Profile-->
+    </button>
     <button *ngIf='user' (click)='openProfile()' mat-icon-button class='example-icon'
             aria-label='Example icon-button with menu icon'>
       <mat-icon>
         account_circle
+      </mat-icon>
+      <!--      Profile-->
+    </button>
+    <button *ngIf='user' (click)='openChatrooms()' mat-icon-button class='example-icon'
+            aria-label='Example icon-button with menu icon'>
+      <mat-icon>
+        chat
       </mat-icon>
       <!--      Profile-->
     </button>

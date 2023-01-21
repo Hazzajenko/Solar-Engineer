@@ -22,7 +22,15 @@ import { SidenavComponent } from '../../../../libs/app/feature/sidenav/src/lib/s
   imports: [RouterModule, AppBarComponent, MatSidenavModule, MatButtonModule, NgIf, AsyncPipe, LetModule, MatListModule, MatExpansionModule, NgForOf, MatIconModule, NgSwitch, NgSwitchCase, DatePipe, SidenavComponent],
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styles: [],
+  styles: [`
+    html,
+    body {
+      height: 100%;
+      width: 100%;
+      margin: 0px;
+      padding: 0px
+    }
+  `],
   providers: [AuthFacade],
 })
 export class AppComponent implements OnInit {
@@ -49,7 +57,11 @@ export class AppComponent implements OnInit {
   returningUser = true
 
   ngOnInit(): void {
-    // console.log(new Date().getDate().toString())
+    this.uiStore.dispatch.setWindowSize({
+      innerHeight: window.innerHeight,
+      innerWidth: window.innerWidth,
+    })
+
     if (this.returningUser) {
       this.authStore.dispatch.isReturningUser()
     }

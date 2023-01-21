@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core'
 import { ClientXY, GridLayoutXY, MouseXY, PosXY } from '@grid-layout/shared/models'
 import { Store } from '@ngrx/store'
 import { UiActions } from '@project-id/data-access/store'
+import { WindowSizeModel } from '@shared/data-access/models'
 
 @Injectable({
   providedIn: 'root',
@@ -28,6 +29,10 @@ export class UiRepository {
 
   setClientXY(clientXY: ClientXY) {
     return this.store.dispatch(UiActions.setClientxy({ clientXY }))
+  }
+
+  setWindowSize(windowSize: WindowSizeModel) {
+    return this.store.dispatch(UiActions.setWindowSize({ windowSize }))
   }
 
   clearClientXY() {

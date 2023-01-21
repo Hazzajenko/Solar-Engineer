@@ -15,7 +15,8 @@
     <ng-container *ngIf='navMenu$ | async as navMenu'>
       {{drawer.toggle()}}
     </ng-container>
-    <app-sidenav-component (toggle)='drawer.toggle()'></app-sidenav-component>
+    <app-sidenav-component style='max-height: 1000px; min-height: max-content'
+                           (toggle)='drawer.toggle()'></app-sidenav-component>
     <!-- <div class='w-[300px] mx-2'>
        <ng-container *ngrxLet='user$ | async as user'>
          <ng-container *ngIf='user else notLoggedIn'>
@@ -124,7 +125,7 @@
      </div>-->
 
   </mat-sidenav>
-  <mat-sidenav-content>
+  <mat-sidenav-content style='height: 100%; min-height: max-content'>
     <!--    <mat-form-field appearance="fill">
           <mat-label>Sidenav mode</mat-label>
           <mat-select #mode value="side">
