@@ -51,16 +51,27 @@ export class MessagesEffects {
     { dispatch: false },
   )
 
-  sendMessageToUser$ = createEffect(
+  /* sendMessageToUser$ = createEffect(
+     () =>
+       this.actions$.pipe(
+         ofType(MessagesActions.sendMessageToUser),
+         switchMap(({ request }) =>
+           this.messagesService.sendMessageToUser(request).pipe(
+             map(({ message }) => MessagesActions.addMessage({ message })),
+           ),
+         ),
+       ),
+   )*/
+
+  sendMessageToUserSignalR$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType(MessagesActions.sendMessageToUser),
-        switchMap(({ request }) =>
-          this.messagesService.sendMessageToUser(request).pipe(
-            map(({ message }) => MessagesActions.addMessage({ message })),
-          ),
+        map(({ request }) =>
+          this.messagesService.sendMessageToUserSignalR(request),
         ),
       ),
+    { dispatch: false },
   )
 
   addMessage$ = createEffect(

@@ -1,4 +1,4 @@
-﻿using dotnetapi.Features.Conversations.Entities;
+﻿using dotnetapi.Features.GroupChats.Entities;
 using dotnetapi.Features.Messages.Entities;
 using Microsoft.AspNetCore.Identity;
 
@@ -17,16 +17,23 @@ public class AppUser : IdentityUser<int>
     public string PhotoUrl { get; set; } = default!;
     public DateTime Created { get; set; } = DateTime.Now;
     public DateTime LastActive { get; set; } = DateTime.Now;
+
     public ICollection<AppUserProject> AppUserProjects { get; set; } = default!;
-    public ICollection<AppUserConversation> AppUserConversations { get; set; } = default!;
     public ICollection<AppUserRole> UserRoles { get; set; } = default!;
+
     public ICollection<AppUserFriend> SentFriendRequests { get; set; } = default!;
     public ICollection<AppUserFriend> ReceivedFriendRequests { get; set; } = default!;
 
     // public ICollection<Notification> Notifications { get; set; } = default!;
     public ICollection<Message> MessagesSent { get; set; } = default!;
-
     public ICollection<Message> MessagesReceived { get; set; } = default!;
+
+    public ICollection<AppUserGroupChat> AppUserGroupChats { get; set; } = default!;
+
+    public ICollection<GroupChatMessage> GroupChatMessagesSent { get; set; } = default!;
+    // public ICollection<ConversationMessage> ConversationMessagesReceived { get; set; } = default!;
+
+
     // public ICollection<FriendRequestNotification> FriendRequestNotifications { get; set; } = default!;
 
 

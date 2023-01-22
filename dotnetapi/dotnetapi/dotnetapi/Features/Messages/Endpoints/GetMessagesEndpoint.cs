@@ -1,5 +1,4 @@
-﻿using dotnetapi.Features.Messages.Contracts.Requests;
-using dotnetapi.Features.Messages.Contracts.Responses;
+﻿using dotnetapi.Features.Messages.Contracts.Responses;
 using dotnetapi.Features.Messages.Services;
 using dotnetapi.Models.Entities;
 using dotnetapi.Services.Projects;
@@ -44,9 +43,8 @@ public class GetMessagesEndpoint : EndpointWithoutRequest<ManyMessagesResponse>
             ThrowError("Username is invalid");
         }
 
-        MessageFilter? filter = Query<MessageFilter>("filter", false);
 
-        var messages = await _messagesRepository.GetMessageDtosWithFilterAsync(user, filter);
+        var messages = await _messagesRepository.GetMessageDtosAsync(user);
 
         var response = new ManyMessagesResponse
         {

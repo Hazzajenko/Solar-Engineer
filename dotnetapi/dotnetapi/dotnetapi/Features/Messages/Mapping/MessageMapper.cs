@@ -32,4 +32,27 @@ public static class MessageMapper
             Status = request.Status
         };
     }
+
+    public static GroupChatMessageDto ToDto(this GroupChatMessage request)
+    {
+        return new GroupChatMessageDto
+        {
+            Id = request.Id,
+            Content = request.Content,
+            SenderUsername = request.Sender.UserName!,
+            MessageSentTime = request.MessageSentTime,
+            GroupChatId = request.GroupId,
+            MessageReadTimes = request.MessageReadTimes.Select(x => x.ToDto())
+        };
+    }
+
+    public static GroupChatReadTimeDto ToDto(this GroupChatReadTime request)
+    {
+        return new GroupChatReadTimeDto
+        {
+            Id = request.Id,
+            RecipientUsername = request.AppUser.UserName!,
+            MessageReadTime = request.MessageReadTime
+        };
+    }
 }

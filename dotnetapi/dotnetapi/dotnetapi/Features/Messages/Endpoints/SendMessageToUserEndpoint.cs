@@ -64,6 +64,7 @@ public class SendMessageToUserEndpoint : Endpoint<SendMessageRequest, MessageRes
 
         var result = await _messagesRepository.AddMessageAsync(message);
 
+
         var updateConnections = await _messagesService.SendMessageToUserAsync(recipient, result.ToDto());
 
         var response = new MessageResponse

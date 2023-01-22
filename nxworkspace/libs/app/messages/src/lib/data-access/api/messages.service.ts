@@ -79,6 +79,12 @@ export class MessagesService {
     })
   }
 
+  sendMessageToUserSignalR(request: SendMessageRequest) {
+    if (!this.messagesHub) return
+    return this.messagesHub.invoke('SendMessageToUser', request)
+      .catch(error => console.log(error))
+  }
+
   getMessagesWithUserSignalR(username: string) {
     if (!this.messagesHub) return
     this.messagesHub.invoke('getMessages', username)

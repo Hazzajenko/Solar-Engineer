@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using dotnetapi.Data;
@@ -11,9 +12,11 @@ using dotnetapi.Data;
 namespace dotnetapi.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230122031331_AddConversationMessages")]
+    partial class AddConversationMessages
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -110,7 +113,7 @@ namespace dotnetapi.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("dotnetapi.Features.Conversations.Entities.AppUserGroupChat", b =>
+            modelBuilder.Entity("dotnetapi.Features.Conversations.Entities.AppUserConversation", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -127,7 +130,7 @@ namespace dotnetapi.Data.Migrations
                     b.Property<bool>("CanKick")
                         .HasColumnType("boolean");
 
-                    b.Property<int>("GroupChatId")
+                    b.Property<int>("ConversationId")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("JoinedAt")
@@ -141,12 +144,12 @@ namespace dotnetapi.Data.Migrations
 
                     b.HasIndex("AppUserId");
 
-                    b.HasIndex("GroupChatId");
+                    b.HasIndex("ConversationId");
 
-                    b.ToTable("AppUserGroupChats");
+                    b.ToTable("AppUserConversations");
                 });
 
-            modelBuilder.Entity("dotnetapi.Features.Conversations.Entities.GroupChat", b =>
+            modelBuilder.Entity("dotnetapi.Features.Conversations.Entities.Conversation", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -160,10 +163,10 @@ namespace dotnetapi.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("GroupChats");
+                    b.ToTable("Conversations");
                 });
 
-            modelBuilder.Entity("dotnetapi.Features.Messages.Entities.GroupChatMessage", b =>
+            modelBuilder.Entity("dotnetapi.Features.Conversations.Entities.ConversationMessage", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -175,7 +178,7 @@ namespace dotnetapi.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("GroupId")
+                    b.Property<int>("ConversationId")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("MessageSentTime")
@@ -189,14 +192,14 @@ namespace dotnetapi.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("GroupId");
+                    b.HasIndex("ConversationId");
 
                     b.HasIndex("SenderId");
 
-                    b.ToTable("GroupChatMessages");
+                    b.ToTable("ConversationMessages");
                 });
 
-            modelBuilder.Entity("dotnetapi.Features.Messages.Entities.GroupChatReadTime", b =>
+            modelBuilder.Entity("dotnetapi.Features.Conversations.Entities.ConversationReadTime", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -207,7 +210,7 @@ namespace dotnetapi.Data.Migrations
                     b.Property<int>("AppUserId")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("GroupChatMessageId")
+                    b.Property<int?>("ConversationMessageId")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("MessageReadTime")
@@ -217,9 +220,9 @@ namespace dotnetapi.Data.Migrations
 
                     b.HasIndex("AppUserId");
 
-                    b.HasIndex("GroupChatMessageId");
+                    b.HasIndex("ConversationMessageId");
 
-                    b.ToTable("GroupChatReadTime");
+                    b.ToTable("ConversationReadTime");
                 });
 
             modelBuilder.Entity("dotnetapi.Features.Messages.Entities.Message", b =>
@@ -771,45 +774,45 @@ namespace dotnetapi.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("dotnetapi.Features.Conversations.Entities.AppUserGroupChat", b =>
+            modelBuilder.Entity("dotnetapi.Features.Conversations.Entities.AppUserConversation", b =>
                 {
                     b.HasOne("dotnetapi.Models.Entities.AppUser", "AppUser")
-                        .WithMany("AppUserGroupChats")
+                        .WithMany("AppUserConversations")
                         .HasForeignKey("AppUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("dotnetapi.Features.Conversations.Entities.GroupChat", "GroupChat")
-                        .WithMany("AppUserGroupChats")
-                        .HasForeignKey("GroupChatId")
+                    b.HasOne("dotnetapi.Features.Conversations.Entities.Conversation", "Conversation")
+                        .WithMany("AppUserConversations")
+                        .HasForeignKey("ConversationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("AppUser");
 
-                    b.Navigation("GroupChat");
+                    b.Navigation("Conversation");
                 });
 
-            modelBuilder.Entity("dotnetapi.Features.Messages.Entities.GroupChatMessage", b =>
+            modelBuilder.Entity("dotnetapi.Features.Conversations.Entities.ConversationMessage", b =>
                 {
-                    b.HasOne("dotnetapi.Features.Conversations.Entities.GroupChat", "GroupChat")
-                        .WithMany("GroupChatMessages")
-                        .HasForeignKey("GroupId")
+                    b.HasOne("dotnetapi.Features.Conversations.Entities.Conversation", "Conversation")
+                        .WithMany("ConversationMessages")
+                        .HasForeignKey("ConversationId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("dotnetapi.Models.Entities.AppUser", "Sender")
-                        .WithMany("GroupChatMessagesSent")
+                        .WithMany("ConversationMessagesSent")
                         .HasForeignKey("SenderId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.Navigation("GroupChat");
+                    b.Navigation("Conversation");
 
                     b.Navigation("Sender");
                 });
 
-            modelBuilder.Entity("dotnetapi.Features.Messages.Entities.GroupChatReadTime", b =>
+            modelBuilder.Entity("dotnetapi.Features.Conversations.Entities.ConversationReadTime", b =>
                 {
                     b.HasOne("dotnetapi.Models.Entities.AppUser", "AppUser")
                         .WithMany()
@@ -817,9 +820,9 @@ namespace dotnetapi.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("dotnetapi.Features.Messages.Entities.GroupChatMessage", null)
+                    b.HasOne("dotnetapi.Features.Conversations.Entities.ConversationMessage", null)
                         .WithMany("MessageReadTimes")
-                        .HasForeignKey("GroupChatMessageId");
+                        .HasForeignKey("ConversationMessageId");
 
                     b.Navigation("AppUser");
                 });
@@ -1034,14 +1037,14 @@ namespace dotnetapi.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("dotnetapi.Features.Conversations.Entities.GroupChat", b =>
+            modelBuilder.Entity("dotnetapi.Features.Conversations.Entities.Conversation", b =>
                 {
-                    b.Navigation("AppUserGroupChats");
+                    b.Navigation("AppUserConversations");
 
-                    b.Navigation("GroupChatMessages");
+                    b.Navigation("ConversationMessages");
                 });
 
-            modelBuilder.Entity("dotnetapi.Features.Messages.Entities.GroupChatMessage", b =>
+            modelBuilder.Entity("dotnetapi.Features.Conversations.Entities.ConversationMessage", b =>
                 {
                     b.Navigation("MessageReadTimes");
                 });
@@ -1053,11 +1056,11 @@ namespace dotnetapi.Data.Migrations
 
             modelBuilder.Entity("dotnetapi.Models.Entities.AppUser", b =>
                 {
-                    b.Navigation("AppUserGroupChats");
+                    b.Navigation("AppUserConversations");
 
                     b.Navigation("AppUserProjects");
 
-                    b.Navigation("GroupChatMessagesSent");
+                    b.Navigation("ConversationMessagesSent");
 
                     b.Navigation("MessagesReceived");
 

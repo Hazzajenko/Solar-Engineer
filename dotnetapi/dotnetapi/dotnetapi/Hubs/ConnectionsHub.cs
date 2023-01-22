@@ -10,8 +10,6 @@ namespace dotnetapi.Hubs;
 
 public class ConnectionsHub : Hub
 {
-    // private static readonly ConnectionMapping<string> _connections = new();
-
     private readonly IConnectionsService _connectionsService;
     private readonly InMemoryDatabase _context;
     private readonly ILogger<ConnectionsHub> _logger;
