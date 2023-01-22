@@ -6,6 +6,11 @@ import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { provideRouter, withEnabledBlockingInitialNavigation } from '@angular/router'
 import { FRIENDS_FEATURE_KEY, FriendsEffects, friendsReducer } from '@app/data-access/friends'
+import {
+  GROUP_CHAT_MEMBERS_FEATURE_KEY,
+  GROUP_CHAT_MESSAGES_FEATURE_KEY,
+  GROUP_CHATS_FEATURE_KEY, groupChatMembersReducer, groupChatMessagesReducer, GroupChatsEffects, groupChatsReducer,
+} from '@app/data-access/group-chats'
 import { MESSAGES_FEATURE_KEY, MessagesEffects, messagesReducer } from '@app/messages'
 import { appRoutes } from '@app/routes'
 import { AuthEffects } from '@auth/data-access/effects'
@@ -40,7 +45,7 @@ export const mainTsProviders = [
   ),
   provideStore(reducers, { metaReducers }),
   provideRouterStore(),
-  provideEffects([AuthEffects, ConnectionsEffects, ProjectsEffects, NotificationsEffects, FriendsEffects, MessagesEffects]),
+  provideEffects([AuthEffects, ConnectionsEffects, ProjectsEffects, NotificationsEffects, FriendsEffects, MessagesEffects, GroupChatsEffects]),
   provideState(AUTH_FEATURE_KEY, authReducer),
   provideState(CONNECTIONS_FEATURE_KEY, connectionsReducer),
   provideState(PROJECTS_FEATURE_KEY, projectsReducer),
@@ -48,6 +53,9 @@ export const mainTsProviders = [
   provideState(NOTIFICATIONS_FEATURE_KEY, notificationsReducer),
   provideState(FRIENDS_FEATURE_KEY, friendsReducer),
   provideState(MESSAGES_FEATURE_KEY, messagesReducer),
+  provideState(GROUP_CHATS_FEATURE_KEY, groupChatsReducer),
+  provideState(GROUP_CHAT_MEMBERS_FEATURE_KEY, groupChatMembersReducer),
+  provideState(GROUP_CHAT_MESSAGES_FEATURE_KEY, groupChatMessagesReducer),
   ...storeDevtoolsModule,
   {
     provide: HTTP_INTERCEPTORS,

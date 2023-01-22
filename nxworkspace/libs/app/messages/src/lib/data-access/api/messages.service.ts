@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http'
 import { inject, Injectable } from '@angular/core'
+import { MessagesSignalrService } from '@app/data-access/signalr'
 import * as signalR from '@microsoft/signalr'
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr'
 import { Update } from '@ngrx/entity'
@@ -20,7 +21,8 @@ export class MessagesService {
 
   private http = inject(HttpClient)
   private messagesStore = inject(MessagesStoreService)
-  private messagesHub?: HubConnection
+  private messagesSignalR = inject(MessagesSignalrService)
+  public messagesHub?: HubConnection
 
   updateMessage(update: Update<MessageModel>) {
     return this.http.put<UpdateResponse>(`/api/message/${update.id}`, {
@@ -51,23 +53,37 @@ export class MessagesService {
     return this.http.get<AllMessagesResponse>(`/api/messages/user/${username}`)
   }
 
-  createMessagesConnection(token: string) {
-    this.messagesHub = new HubConnectionBuilder()
-      .withUrl('/ws/hubs/messages', {
-        accessTokenFactory: () => token,
-        skipNegotiation: true,
-        transport: signalR.HttpTransportType.WebSockets,
+  /*  createMessagesConnection(token: string) {
+      this.messagesHub = new HubConnectionBuilder()
+        .withUrl('/ws/hubs/messages', {
+          accessTokenFactory: () => token,
+          skipNegotiation: true,
+          transport: signalR.HttpTransportType.WebSockets,
+        })
+        .configureLogging(new SignalrLogger())
+        .withAutomaticReconnect()
+        .build()
+
+      this.messagesHub
+        .start()
+        .then(() => console.log('Connection started'))
+        .catch(err => console.log('Error while starting connection: ' + err))
+
+      this.messagesHub.on('getMessages', (message: MessageModel) => {
+        if (Array.isArray(message)) {
+          console.log('Array.isArray(message)', message)
+          this.messagesStore.dispatch.addManyMessages(message)
+        } else {
+          console.log('getMessages', message)
+          this.messagesStore.dispatch.addMessage(message)
+        }
+
       })
-      .configureLogging(new SignalrLogger())
-      .withAutomaticReconnect()
-      .build()
+    }*/
 
-    this.messagesHub
-      .start()
-      .then(() => console.log('Connection started'))
-      .catch(err => console.log('Error while starting connection: ' + err))
-
-    this.messagesHub.on('getMessages', (message: MessageModel) => {
+  waitForGetMessages() {
+    if (!this.messagesSignalR.messagesHub) return
+    this.messagesSignalR.messagesHub.on('getMessages', (message: MessageModel) => {
       if (Array.isArray(message)) {
         console.log('Array.isArray(message)', message)
         this.messagesStore.dispatch.addManyMessages(message)
@@ -75,35 +91,20 @@ export class MessagesService {
         console.log('getMessages', message)
         this.messagesStore.dispatch.addMessage(message)
       }
-
     })
   }
 
   sendMessageToUserSignalR(request: SendMessageRequest) {
-    if (!this.messagesHub) return
-    return this.messagesHub.invoke('SendMessageToUser', request)
+    if (!this.messagesSignalR.messagesHub) return
+    return this.messagesSignalR.messagesHub.invoke('SendMessageToUser', request)
       .catch(error => console.log(error))
   }
 
   getMessagesWithUserSignalR(username: string) {
-    if (!this.messagesHub) return
-    this.messagesHub.invoke('getMessages', username)
+    if (!this.messagesSignalR.messagesHub) return
+    this.messagesSignalR.messagesHub.invoke('getMessages', username)
       .then((data) => {
         console.log(data)
-
-        // this.connectionId = data
-        // this.getNotifications()
       })
   }
-
-  private getConnectionId = () => {
-    if (!this.messagesHub) return
-    this.messagesHub.invoke('getConnectionId')
-      .then((data) => {
-        console.log(data)
-        // this.connectionId = data
-        // this.getNotifications()
-      })
-  }
-
 }

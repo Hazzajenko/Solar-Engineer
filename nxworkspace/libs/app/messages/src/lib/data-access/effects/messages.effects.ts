@@ -1,12 +1,14 @@
 import { inject, Injectable } from '@angular/core'
 import { MatSnackBar } from '@angular/material/snack-bar'
+import { MessagesSignalrService } from '@app/data-access/signalr'
 import { AuthActions } from '@auth/data-access/store'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { Update } from '@ngrx/entity'
 import { Store } from '@ngrx/store'
 import { MessageModel, NotificationStatus } from '@shared/data-access/models'
 
-import { map, switchMap } from 'rxjs/operators'
+import { map, switchMap, tap } from 'rxjs/operators'
+import { GroupChatsService } from '../../../../../data-access/group-chats/src/lib'
 import { MessagesService } from '../api'
 import { MessagesActions, MessagesSelectors } from '../store'
 
@@ -17,12 +19,16 @@ export class MessagesEffects {
   private actions$ = inject(Actions)
   private store = inject(Store)
   private messagesService = inject(MessagesService)
+  private groupChatsService = inject(GroupChatsService)
+  private messagesSignalR = inject(MessagesSignalrService)
   private snackBar = inject(MatSnackBar)
   initMessages$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType(AuthActions.signInSuccess),
-        map(({ token }) => this.messagesService.createMessagesConnection(token)),
+        tap(({ token }) => this.messagesSignalR.createMessagesConnection(token)),
+        tap(() => this.messagesService.waitForGetMessages()),
+        tap(() => this.groupChatsService.waitForGroupChatsMessages()),
         switchMap(() =>
           this.messagesService.getAllMessages().pipe(
             map(({ messages }) => MessagesActions.addManyMessages({ messages })),
@@ -34,10 +40,10 @@ export class MessagesEffects {
   /*  initMessagesWithUser$ = createEffect(
       () =>
         this.actions$.pipe(
-          ofType(MessagesActions.initMessagesWithUser),
+          ofType(GroupChatMessagesActions.initMessagesWithUser),
           switchMap(({ username }) => this.messagesService.getAllMessagesWithUser(username).pipe(
             // switchMap(({ username }) => this.messagesService.getAllMessagesWithUser(username).pipe(
-            map(({ messages }) => MessagesActions.addManyMessages({ messages })),
+            map(({ messages }) => GroupChatMessagesActions.addManyMessages({ messages })),
           )),
         ),
     )*/
@@ -54,10 +60,10 @@ export class MessagesEffects {
   /* sendMessageToUser$ = createEffect(
      () =>
        this.actions$.pipe(
-         ofType(MessagesActions.sendMessageToUser),
+         ofType(GroupChatMessagesActions.sendMessageToUser),
          switchMap(({ request }) =>
            this.messagesService.sendMessageToUser(request).pipe(
-             map(({ message }) => MessagesActions.addMessage({ message })),
+             map(({ message }) => GroupChatMessagesActions.addMessage({ message })),
            ),
          ),
        ),
