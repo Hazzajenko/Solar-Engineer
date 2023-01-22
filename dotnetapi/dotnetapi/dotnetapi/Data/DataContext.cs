@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using dotnetapi.Features.Conversations.Entities;
 using dotnetapi.Features.Messages.Entities;
 using dotnetapi.Models.Entities;
 using Microsoft.AspNetCore.Identity;
@@ -23,10 +24,12 @@ public class DataContext : IdentityDbContext<AppUser, AppRole, int,
     public DbSet<PanelLink> PanelLinks { get; set; } = default!;
     public DbSet<Path> Paths { get; set; } = default!;
     public DbSet<AppUserProject> AppUserProjects { get; set; } = default!;
+    public DbSet<AppUserConversation> AppUserConversations { get; set; } = default!;
 
     public DbSet<AppUserFriend> AppUserFriends { get; set; } = default!;
 
     public DbSet<Group> Groups { get; set; } = default!;
+    public DbSet<Conversation> Conversations { get; set; } = default!;
 
     public DbSet<Message> Messages { get; set; } = default!;
     // public DbSet<Notification> Notifications { get; set; } = default!;

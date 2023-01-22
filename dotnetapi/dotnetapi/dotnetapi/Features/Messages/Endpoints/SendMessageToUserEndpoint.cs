@@ -15,16 +15,21 @@ public class SendMessageToUserEndpoint : Endpoint<SendMessageRequest, MessageRes
 {
     private readonly ILogger<SendMessageToUserEndpoint> _logger;
     private readonly IMessagesRepository _messagesRepository;
+
     private readonly IMessagesService _messagesService;
+
+    // private readonly IPublishEndpoint _publishEndpoint;
     private readonly UserManager<AppUser> _userManager;
 
     public SendMessageToUserEndpoint(
         ILogger<SendMessageToUserEndpoint> logger,
+        // IPublishEndpoint publishEndpoint,
         IMessagesRepository messagesRepository,
         IMessagesService messagesService,
         UserManager<AppUser> userManager)
     {
         _logger = logger;
+        // _publishEndpoint = publishEndpoint;
         _messagesRepository = messagesRepository;
         _messagesService = messagesService;
         _userManager = userManager;
@@ -65,6 +70,27 @@ public class SendMessageToUserEndpoint : Endpoint<SendMessageRequest, MessageRes
         {
             Message = result.ToDto()
         };
+
+        /*
+        await  _consumer.Consume()
+         var thing = new SubmitOrderConsumer();
+         var hi = new ConsumeContext<AccountConsumer>
+         {
+             
+         }
+         thing.Consume()*/
+
+        /*
+        await _publishEndpoint.Publish<AccountConsumer>(new
+        {
+            Pong = "Ping"
+        }, ct);
+            
+
+        await _publishEndpoint.Publish<PingMessage>(new
+        {
+            Pong = "Ping"
+        }, ct);*/
 
         await SendOkAsync(response, ct);
     }

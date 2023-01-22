@@ -14,6 +14,7 @@ export const MessagesActions = createActionGroup({
     'Add Many Messages': props<{ messages: MessageModel[] }>(),
     'Update Message': props<{ update: Update<MessageModel> }>(),
     'Update Many Messages': props<{ updates: Update<MessageModel>[] }>(),
+    'Mark All Messages As Read With User': props<{ recipient: string }>(),
     'Delete Message': props<{ messageId: number }>(),
     'Delete Many Messages': props<{ messageIds: number[] }>(),
     'Clear Messages State': emptyProps(),

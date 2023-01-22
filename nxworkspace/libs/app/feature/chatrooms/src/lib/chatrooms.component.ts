@@ -39,6 +39,8 @@ import { ScrollViewportDirective } from '../../../../messages/src/lib/feature/co
 import {
   SortConversationMessagesPipe,
 } from '../../../../messages/src/lib/feature/conversation/sort-conversation-messages.pipe'
+import { ChatroomConversationComponent } from './chatroom-conversation.component'
+import { ChatroomListComponent } from './chatroom-list.component'
 
 
 @Component({
@@ -50,7 +52,8 @@ import {
       height: 100%;
       width: 100%;
       margin: 0px;
-      padding: 0px
+      padding: 0px;
+      overflow: hidden;
     }
   `],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -83,6 +86,8 @@ import {
     ScrollViewportDirective,
     ConversationMessageDirective,
     SortConversationMessagesPipe,
+    ChatroomListComponent,
+    ChatroomConversationComponent,
   ],
   standalone: true,
 })
@@ -131,9 +136,9 @@ export class ChatroomsComponent implements OnInit {
 
 
   constructor(private _ngZone: NgZone/*, public dialogRef: MatDialogRef<ChatroomsComponent>*/) {
-    this.messagesStore.select.firstMessageOfEveryConversation$().subscribe(res => console.log(res))
-    this.route.url.subscribe(res => console.log(res))
-    console.log(this.route.snapshot.data)
+    /*    this.messagesStore.select.firstMessageOfEveryConversation$().subscribe(res => console.log(res))
+        this.route.url.subscribe(res => console.log(res))
+        console.log(this.route.snapshot.data)*/
 
     this.isDialog$.subscribe(res => console.log(res))
     // const state = this.dialogRef.getState()
@@ -149,23 +154,28 @@ export class ChatroomsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.containerHeight = ((this.route.snapshot.data as any).windowSize as WindowSizeModel).innerHeight
-    console.log(this.containerHeight)
-    console.log(this.windowSize)
-    if (!this.windowSize.innerHeight || !this.windowSize.innerWidth) return
-    const heightMinusAppBar = this.windowSize.innerHeight - 80
-    this.chatRoomListSize = {
-      height: heightMinusAppBar,
-      width: this.windowSize.innerWidth * 20 / 100,
-    }
-    this.conversationSize = {
-      height: heightMinusAppBar * 80 / 100,
-      width: this.windowSize.innerWidth * 80 / 100,
-    }
-    this.textAreaSize = {
-      height: heightMinusAppBar * 20 / 100,
-      width: this.windowSize.innerWidth * 80 / 100,
-    }
+    console.log()
+    /*    if (!this.route.snapshot.data) return
+        this.containerHeight = ((this.route.snapshot.data as any).windowSize as WindowSizeModel).innerHeight
+        console.log(this.containerHeight)
+        console.log(this.windowSize)
+        if (!this.windowSize.innerHeight || !this.windowSize.innerWidth) return
+        const heightMinusAppBar = this.windowSize.innerHeight - 64
+        this.chatRoomListSize = {
+          height: Math.floor(heightMinusAppBar),
+          width: Math.floor(this.windowSize.innerWidth * 20 / 100),
+        }
+        this.conversationSize = {
+          height: Math.floor(heightMinusAppBar * 80 / 100),
+          width: Math.floor(this.windowSize.innerWidth * 80 / 100),
+        }
+        this.textAreaSize = {
+          height: Math.floor(heightMinusAppBar * 20 / 100),
+          width: Math.floor(this.windowSize.innerWidth * 80 / 100),
+        }
+        console.log(this.chatRoomListSize)
+        console.log(this.conversationSize)
+        console.log(this.textAreaSize)*/
   }
 
   triggerResize() {
@@ -182,7 +192,7 @@ export class ChatroomsComponent implements OnInit {
       this.messagesStore.dispatch.initMessagesWithUser(this.recipient)
       this.conversationMessages$ = this.messagesStore.select.messagesWithUser$(this.recipient)
     }
-    if ((event.options[0].value as NotificationModel).status === NotificationStatus.Unread) {
+    if (this.selectedMessage.status === NotificationStatus.Unread && this.selectedMessage.senderUsername !== username) {
       this.readMessage()
     }
   }
@@ -232,6 +242,10 @@ export class ChatroomsComponent implements OnInit {
     this.messagesStore.dispatch.updateManyMessages(updates)
   }
 
+  /*  markAllMessagesAsReadWithUser(recipient: string) {
+      this.messagesStore.dispatch.markAllMessagesAsReadWithUser(recipient)
+    }*/
+
   openConversation(selectedMessage: MessageModel, recipient: string | undefined) {
     if (!recipient) return
     console.log(selectedMessage)
@@ -258,6 +272,13 @@ export class ChatroomsComponent implements OnInit {
   async toggleFullScreen() {
     this.dialog.closeAll()
     await this.router.navigateByUrl('messages')
+  }
+
+  selectRecipient(event: string) {
+    this.recipient = event
+    console.log('EVENT', event)
+    this.messagesStore.dispatch.markAllMessagesAsReadWithUser(event)
+
   }
 }
 

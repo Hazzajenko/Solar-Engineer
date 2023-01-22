@@ -32,6 +32,10 @@ export class MessagesRepository {
     this.store.dispatch(MessagesActions.updateMessage({ update }))
   }
 
+  markAllMessagesAsReadWithUser(recipient: string) {
+    this.store.dispatch(MessagesActions.markAllMessagesAsReadWithUser({ recipient }))
+  }
+
   updateManyMessages(updates: Update<MessageModel>[]) {
     this.store.dispatch(MessagesActions.updateManyMessages({ updates }))
   }

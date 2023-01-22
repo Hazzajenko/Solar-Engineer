@@ -73,6 +73,10 @@
               "target": "Package",
               "version": "[11.2.2, )"
             },
+            "MassTransit.RabbitMQ": {
+              "target": "Package",
+              "version": "[8.0.11, )"
+            },
             "Mediator.Abstractions": {
               "target": "Package",
               "version": "[2.0.30, )"

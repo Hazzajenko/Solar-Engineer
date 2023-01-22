@@ -1,4 +1,5 @@
-﻿using dotnetapi.Features.Messages.Entities;
+﻿using dotnetapi.Features.Conversations.Entities;
+using dotnetapi.Features.Messages.Entities;
 using Microsoft.AspNetCore.Identity;
 
 namespace dotnetapi.Models.Entities;
@@ -17,9 +18,10 @@ public class AppUser : IdentityUser<int>
     public DateTime Created { get; set; } = DateTime.Now;
     public DateTime LastActive { get; set; } = DateTime.Now;
     public ICollection<AppUserProject> AppUserProjects { get; set; } = default!;
+    public ICollection<AppUserConversation> AppUserConversations { get; set; } = default!;
     public ICollection<AppUserRole> UserRoles { get; set; } = default!;
-    public virtual ICollection<AppUserFriend> SentFriendRequests { get; set; } = default!;
-    public virtual ICollection<AppUserFriend> ReceivedFriendRequests { get; set; } = default!;
+    public ICollection<AppUserFriend> SentFriendRequests { get; set; } = default!;
+    public ICollection<AppUserFriend> ReceivedFriendRequests { get; set; } = default!;
 
     // public ICollection<Notification> Notifications { get; set; } = default!;
     public ICollection<Message> MessagesSent { get; set; } = default!;

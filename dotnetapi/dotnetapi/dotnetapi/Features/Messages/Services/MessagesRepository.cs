@@ -109,7 +109,11 @@ public class MessagesRepository : IMessagesRepository
         // .SingleOrDefaultAsync();
         if (message is null) return false;
 
-        if (request.Changes.Status is not null) message.Status = request.Changes.Status.Value;
+        if (request.Changes.Status is not null)
+        {
+            message.Status = request.Changes.Status.Value;
+            message.MessageReadTime = DateTime.Now;
+        }
 
         await _context.SaveChangesAsync();
         return true;

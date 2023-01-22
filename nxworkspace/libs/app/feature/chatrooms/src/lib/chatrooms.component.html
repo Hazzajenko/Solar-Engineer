@@ -12,13 +12,13 @@
 
         <div
           class='flex flex-row w-[100%] min-w-[100%]'>
-          <div
+          <!--<div
             class='flex-auto w-[20%] min-w-[20%]'>
             <ng-container
               *ngrxLet='selectedMessage?.senderUsername === user.username ? selectedMessage?.recipientUsername : selectedMessage?.senderUsername as recipient'>
 
 
-              <!--            <mat-checkbox [(ngModel)]='unreadFilter'>Filter by Unread</mat-checkbox>-->
+              &lt;!&ndash;            <mat-checkbox [(ngModel)]='unreadFilter'>Filter by Unread</mat-checkbox>&ndash;&gt;
               <mat-selection-list
                 (selectionChange)='change($event, user.username)'
                 [multiple]='false'
@@ -31,7 +31,7 @@
                   itemSize='25'
 
                   class='flex flex-col items-center content-center w-[100%]'>
-                  <!--          [ngStyle]='{"background-color": notification.status === 0 ? "#60a1fa" : ""}'-->
+                  &lt;!&ndash;          [ngStyle]='{"background-color": notification.status === 0 ? "#60a1fa" : ""}'&ndash;&gt;
                   <mat-list-option appMessageDirective [message]='message'
                                    [selectedMessage]='selectedMessage'
                                    [filter]='unreadFilter'
@@ -45,21 +45,26 @@
                     <p
                       matListItemLine>{{message.senderUsername === user.username ? 'You:' : message.senderUsername + ':'}} {{message.content}}</p>
 
-                    <!--          [color]='notification.status === 0 ? "primary" : "accent"'-->
+                    &lt;!&ndash;          [color]='notification.status === 0 ? "primary" : "accent"'&ndash;&gt;
                   </mat-list-option>
                 </cdk-virtual-scroll-viewport>
               </mat-selection-list>
             </ng-container>
+          </div>-->
+          <div
+            class='flex-auto w-[20%] min-w-[20%] p-2'>
+            <app-chatroom-list-component (selectMessageEvent)='selectRecipient($event)'></app-chatroom-list-component>
           </div>
           <div
-            class='flex-auto w-[80%] min-w-[80%] h-[100%] min-h-max'>
-            <div *ngIf='conversationMessages$ | async as conversationMessages'
+            class='grow w-[80%] min-w-[80%] p-2'>
+            <app-chatroom-conversation-component [recipientImport]='recipient'></app-chatroom-conversation-component>
+            <!--<div *ngIf='conversationMessages$ | async as conversationMessages'
                  class='flex flex-col items-center content-center'>
-              <!--            <h1 mat-dialog-title>{{recipient}}</h1>-->
+              &lt;!&ndash;            <h1 mat-dialog-title>{{recipient}}</h1>&ndash;&gt;
               <cdk-virtual-scroll-viewport
                 [ngStyle]='{
       "height": isDialog ? "550px" : "100%",
-      "min-height": isDialog ? "max-content" : "100%"
+      "min-height": isDialog ? "max-content" : "max-content"
       }'
 
                 appScrollViewportDirective
@@ -71,9 +76,9 @@
                 style='overflow-y: scroll '
                 itemSize='25'
                 class='flex w-[100%] min-w-max'>
-                <!--        column-reverse;-->
-                <!--   (scroll)='scrolled($event)'-->
-                <!--          [ngStyle]='{"background-color": notification.status === 0 ? "#60a1fa" : ""}'-->
+                &lt;!&ndash;        column-reverse;&ndash;&gt;
+                &lt;!&ndash;   (scroll)='scrolled($event)'&ndash;&gt;
+                &lt;!&ndash;          [ngStyle]='{"background-color": notification.status === 0 ? "#60a1fa" : ""}'&ndash;&gt;
                 <div appConversationMessageDirective
                      [username]='user.username'
                      [message]='message'
@@ -90,7 +95,7 @@
                       "hover:bg-sky-400": selectedConversationMessage?.id !== message.id
                       }'
                         class='flex flex-col my-2 p-1 min-w-[250px] max-w-[250px] rounded-tl-lg rounded-tr-lg rounded-bl-lg bg-sky-400/75  mx-5'>
-                        <!--                      <span matListItemTitle>{{message.senderUsername}}</span>-->
+                        &lt;!&ndash;                      <span matListItemTitle>{{message.senderUsername}}</span>&ndash;&gt;
 
                         <span *ngIf='selectedConversationMessage && selectedConversationMessage.id === message.id'
                               matListItemLine>{{message.messageSentTime | date : 'short'}}</span>
@@ -108,7 +113,7 @@
                       </div>
                     </ng-container>
                   </ng-container>
-                  <!--                <div
+                  &lt;!&ndash;                <div
 
                                     [ngStyle]='{
                                     "border-radius": user.username === message.senderUsername ? "15px 15px 0px 15px" : "15px 15px 15px 15px"}'
@@ -118,14 +123,14 @@
                                     <span matListItemTitle>{{message.senderUsername}}</span>
                                     <span matListItemLine>{{message.messageSentTime | date : 'short'}}</span>
                                     <p style='white-space: pre-line' matListItemLine>{{message.content}}</p>
-                                  </div>-->
+                                  </div>&ndash;&gt;
 
-                  <!--          class='flex min-w-max bg-gray-100 hover:bg-gray-300'-->
-                  <!--          [color]='notification.status === 0 ? "primary" : "accent"'-->
+                  &lt;!&ndash;          class='flex min-w-max bg-gray-100 hover:bg-gray-300'&ndash;&gt;
+                  &lt;!&ndash;          [color]='notification.status === 0 ? "primary" : "accent"'&ndash;&gt;
                 </div>
               </cdk-virtual-scroll-viewport>
 
-              <form class='min-w-max w-[100%] h-[100%] min-h-max justify-end'>
+              <form class='min-w-max w-[100%] grow-0'>
                 <label for='chat' class='sr-only'>Your message</label>
                 <div class='flex items-center px-3 py-2 rounded-lg'>
                   <button type='button'
@@ -167,7 +172,7 @@
                   </button>
                 </div>
               </form>
-              <!--<div class='flex flex-row items-stretch min-h-[100px] max-h-[100px]'>
+              &lt;!&ndash;<div class='flex flex-row items-stretch min-h-[100px] max-h-[100px]'>
 
                 <form>
                   <mat-form-field>
@@ -194,10 +199,10 @@
                   Send
                 </button>
 
-              </div>-->
+              </div>&ndash;&gt;
 
 
-            </div>
+            </div>-->
           </div>
 
         </div>

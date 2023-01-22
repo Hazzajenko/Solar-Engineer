@@ -12,20 +12,41 @@ export class ScrollViewportDirective {
   private _viewport!: CdkVirtualScrollViewport
   private _messages: MessageModel[] = []
   private _scrollIndex = 0
+  private _recipient = ''
   loaded = false
+
+  messagesLoaded: boolean[] = []
 
 
   @Input() set viewport(viewport: CdkVirtualScrollViewport) {
+    // this.loaded = false
     this._viewport = viewport
     this.scrollToBottom()
   }
 
+  @Input() set recipient(recipient: string | undefined) {
+    if (!recipient) return
+    // this.loaded = false
+    // this._viewport = viewport
+    if (recipient !== this._recipient) {
+      this.scrollToBottom()
+      this._recipient = recipient
+    }
+  }
+
   @Input() set scrollIndex(scrollIndex: number) {
     this._scrollIndex = scrollIndex
+
+    if (!this.loaded) {
+      this.scrollToBottom()
+      return
+    }
   }
 
   @Input() set messages(messages: MessageModel[] | undefined | null) {
+
     if (!messages) return
+
     this._messages = messages
 
     if (!this.loaded) {
@@ -52,6 +73,12 @@ export class ScrollViewportDirective {
         behavior: 'auto',
       })
     }, 50)
+    setTimeout(() => {
+      this._viewport.scrollTo({
+        bottom: 0,
+        behavior: 'auto',
+      })
+    }, 100)
   }
 
   private isNearBottom() {

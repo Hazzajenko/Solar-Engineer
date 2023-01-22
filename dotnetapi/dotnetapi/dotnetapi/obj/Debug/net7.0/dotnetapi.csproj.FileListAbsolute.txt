@@ -98,3 +98,7 @@ C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\bin\Debug
 C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\bin\Debug\net7.0\AWS.Logger.SeriLog.dll
 C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\bin\Debug\net7.0\AWSSDK.CloudWatchLogs.dll
 C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\bin\Debug\net7.0\Serilog.Sinks.AwsCloudWatch.dll
+C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\bin\Debug\net7.0\MassTransit.dll
+C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\bin\Debug\net7.0\MassTransit.Abstractions.dll
+C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\bin\Debug\net7.0\MassTransit.RabbitMqTransport.dll
+C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\bin\Debug\net7.0\RabbitMQ.Client.dll

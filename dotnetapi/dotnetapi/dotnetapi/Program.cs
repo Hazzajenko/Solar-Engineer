@@ -1,7 +1,6 @@
 using System.Net.Mime;
 using System.Text.Json.Serialization;
 using Amazon.CloudWatchLogs;
-using Amazon.CloudWatchLogs.Model;
 using Amazon.S3;
 using dotnetapi.Data;
 using dotnetapi.Extensions;
@@ -70,6 +69,58 @@ builder.Host.UseSerilog((_, loggerConfig) =>
         )
         .ReadFrom.Configuration(config) /*.CreateLogger()*/;
 });
+
+/*builder.Services.AddMassTransit(x =>
+{
+    var entryAssembly = Assembly.GetEntryAssembly();
+
+    x.AddConsumers(entryAssembly);
+    x.AddSagaStateMachines(entryAssembly);
+    x.AddSagas(entryAssembly);
+    x.AddActivities(entryAssembly);
+
+    x.AddConsumer<SubmitOrderConsumer>(typeof(SubmitOrderConsumerDefinition))
+        .Endpoint(e =>
+        {
+            // override the default endpoint name
+            e.Name = "order-service-extreme";
+
+            // specify the endpoint as temporary (may be non-durable, auto-delete, etc.)
+            e.Temporary = false;
+
+            // specify an optional concurrent message limit for the consumer
+            e.ConcurrentMessageLimit = 8;
+
+            // only use if needed, a sensible default is provided, and a reasonable
+            // value is automatically calculated based upon ConcurrentMessageLimit if
+            // the transport supports it.
+            e.PrefetchCount = 16;
+
+            // set if each service instance should have its own endpoint for the consumer
+            // so that messages fan out to each instance.
+            e.InstanceId = "something-unique";
+        });
+
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        cfg.Host("localhost", "/", h =>
+        {
+            h.Username("guest");
+            h.Password("guest");
+        });
+
+        cfg.ReceiveEndpoint("account-service", e =>
+        {
+            e.Lazy = true;
+            e.PrefetchCount = 20;
+            e.Consumer<AccountConsumer>();
+        });
+
+        cfg.ConfigureEndpoints(context);
+    });
+});
+
+builder.Services.AddHostedService<Worker>();*/
 
 builder.Services.AddFastEndpoints();
 builder.Services.AddSwaggerDoc();

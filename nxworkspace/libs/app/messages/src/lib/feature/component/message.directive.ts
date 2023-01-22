@@ -9,12 +9,19 @@ import { MessageModel, NotificationStatus } from '@shared/data-access/models'
 export class MessageDirective {
   private elRef = inject(ElementRef)
   private _message!: MessageModel
+  private _username?: string
+
+  @Input() set username(username: string | undefined) {
+    if (!username) return
+    this._username = username
+  }
 
   @Input() set message(message: MessageModel) {
     if (!message) return
+    if (!this._username) return
     this._message = message
 
-    if (message.status === NotificationStatus.Unread) {
+    if (message.status === NotificationStatus.Unread && message.senderUsername !== this._username) {
       this.elRef.nativeElement.style.backgroundColor = '#60a1fa'
     } else {
       this.elRef.nativeElement.style.backgroundColor = ''

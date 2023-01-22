@@ -1,4 +1,5 @@
 ﻿using dotnetapi.Data;
+using dotnetapi.Features.Conversations.Services;
 using dotnetapi.Features.Friends.Services;
 using dotnetapi.Features.Messages.Services;
 using dotnetapi.Features.Notifications.Services;
@@ -30,6 +31,7 @@ public static class ApplicationServiceExtensions
         services.AddScoped<INotificationsRepository, NotificationsRepository>();
         services.AddScoped<IMessagesService, MessagesService>();
         services.AddScoped<IMessagesRepository, MessagesRepository>();
+        services.AddScoped<IConversationsRepository, ConversationsRepository>();
 
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IFriendsService, FriendsService>();

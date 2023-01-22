@@ -274,6 +274,42 @@ namespace dotnetapi.Data.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("dotnetapi.Models.Entities.AppUserConversation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AppUserId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("CanInvite")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("CanKick")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("ConversationId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("JoinedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
+
+                    b.HasIndex("ConversationId");
+
+                    b.ToTable("AppUserConversations");
+                });
+
             modelBuilder.Entity("dotnetapi.Models.Entities.AppUserFriend", b =>
                 {
                     b.Property<int>("Id")
@@ -367,6 +403,23 @@ namespace dotnetapi.Data.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
+                });
+
+            modelBuilder.Entity("dotnetapi.Models.Entities.Conversation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Conversations");
                 });
 
             modelBuilder.Entity("dotnetapi.Models.Entities.Group", b =>
@@ -678,6 +731,25 @@ namespace dotnetapi.Data.Migrations
                     b.Navigation("Sender");
                 });
 
+            modelBuilder.Entity("dotnetapi.Models.Entities.AppUserConversation", b =>
+                {
+                    b.HasOne("dotnetapi.Models.Entities.AppUser", "AppUser")
+                        .WithMany("AppUserConversations")
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("dotnetapi.Models.Entities.Conversation", "Conversation")
+                        .WithMany("AppUserConversations")
+                        .HasForeignKey("ConversationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
+
+                    b.Navigation("Conversation");
+                });
+
             modelBuilder.Entity("dotnetapi.Models.Entities.AppUserFriend", b =>
                 {
                     b.HasOne("dotnetapi.Models.Entities.AppUser", "RequestedBy")
@@ -876,6 +948,8 @@ namespace dotnetapi.Data.Migrations
 
             modelBuilder.Entity("dotnetapi.Models.Entities.AppUser", b =>
                 {
+                    b.Navigation("AppUserConversations");
+
                     b.Navigation("AppUserProjects");
 
                     b.Navigation("MessagesReceived");
@@ -887,6 +961,11 @@ namespace dotnetapi.Data.Migrations
                     b.Navigation("SentFriendRequests");
 
                     b.Navigation("UserRoles");
+                });
+
+            modelBuilder.Entity("dotnetapi.Models.Entities.Conversation", b =>
+                {
+                    b.Navigation("AppUserConversations");
                 });
 
             modelBuilder.Entity("dotnetapi.Models.Entities.Group", b =>
