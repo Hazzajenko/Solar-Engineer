@@ -4,30 +4,18 @@ import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/cor
 import { MatButtonModule } from '@angular/material/button'
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
-import {
-  NavigationCancel,
-  NavigationEnd,
-  NavigationError,
-  NavigationStart,
-  Router,
-  RouterEvent,
-  RouterLink,
-} from '@angular/router'
-import { AuthFacade, AuthStoreService } from '@auth/data-access/facades'
-import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr'
-import * as signalR from '@microsoft/signalr'
+import { NavigationStart, Router, RouterEvent, RouterLink } from '@angular/router'
+import { ConnectionsService, ConnectionsStoreService } from '@app/data-access/connections'
+import { AuthStoreService } from '@auth/data-access/facades'
 import { LetModule } from '@ngrx/component'
 import { ProjectsFacade } from '@projects/data-access/facades'
 import { ProjectsListComponent } from '@projects/feature/projects-list'
-import { UserModel } from '@shared/data-access/models'
 import { LogoNameBackgroundV2Component } from '@shared/ui/logo'
-import { AuthDialog } from 'libs/home/ui/src/lib/dialogs/auth/auth.dialog'
-import { CreateProjectDialog } from 'libs/home/ui/src/lib/dialogs/create-project/create-project.dialog'
-import { ConnectionsService, ConnectionsStoreService } from '@shared/data-access/connections'
-import { OnlineUsersDialog } from 'libs/home/ui/src/lib/dialogs/online-users/online-users.dialog'
 
-import { Observable } from 'rxjs'
 import { fadeIn, fadeInV2 } from './animations/animations'
+import { AuthDialog } from './dialogs/auth/auth.dialog'
+import { CreateProjectDialog } from './dialogs/create-project/create-project.dialog'
+import { OnlineUsersDialog } from './dialogs/online-users/online-users.dialog'
 
 @Component({
   selector: 'app-home',

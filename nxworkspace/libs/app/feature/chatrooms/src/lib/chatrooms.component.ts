@@ -7,14 +7,15 @@ import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { MatButtonModule } from '@angular/material/button'
 import { MatCardModule } from '@angular/material/card'
 import { MatCheckboxModule } from '@angular/material/checkbox'
-import { MatDialog, MatDialogConfig, MatDialogModule, MatDialogRef } from '@angular/material/dialog'
+import { MatDialog, MatDialogModule } from '@angular/material/dialog'
 import { MatFormFieldModule } from '@angular/material/form-field'
 
 import { MatIconModule } from '@angular/material/icon'
 import { MatInputModule } from '@angular/material/input'
 import { MatListModule, MatSelectionListChange } from '@angular/material/list'
 import { ActivatedRoute, Router } from '@angular/router'
-import { MessagesComponent, MessagesStoreService, SendMessageRequest } from '@app/messages'
+import { MessagesStoreService, SendMessageRequest } from '@app/data-access/messages'
+import { MessagesComponent } from '@app/messages'
 import { AuthStoreService } from '@auth/data-access/facades'
 import { LetModule } from '@ngrx/component'
 import { Update } from '@ngrx/entity'
@@ -26,19 +27,12 @@ import {
   UserModel,
   WindowSizeModel,
 } from '@shared/data-access/models'
+import { ConversationMessageDirective, MessageDirective, ScrollViewportDirective } from '@shared/directives'
+import { SortConversationMessagesPipe, SortMessagesPipe } from '@shared/pipes'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
 import { map, Observable, take } from 'rxjs'
 
-import { MessageDirective } from '../../../../messages/src/lib/feature/component/message.directive'
-import { SortMessagesPipe } from '../../../../messages/src/lib/feature/component/sort-messages.pipe'
-import {
-  ConversationMessageDirective,
-} from '../../../../messages/src/lib/feature/conversation/conversation-message.directive'
-import { ScrollViewportDirective } from '../../../../messages/src/lib/feature/conversation/scroll-viewport.directive'
-import {
-  SortConversationMessagesPipe,
-} from '../../../../messages/src/lib/feature/conversation/sort-conversation-messages.pipe'
 import { ChatroomConversationComponent } from './chatroom-conversation.component'
 import { ChatroomListComponent } from './chatroom-list.component'
 

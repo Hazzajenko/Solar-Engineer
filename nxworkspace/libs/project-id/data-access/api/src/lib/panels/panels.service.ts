@@ -1,9 +1,9 @@
-import { Update } from '@ngrx/entity'
 import { HttpClient } from '@angular/common/http'
 import { inject, Injectable } from '@angular/core'
+import { Update } from '@ngrx/entity'
 import { PanelModel } from '@shared/data-access/models'
-import { EMPTY, Observable } from 'rxjs'
-import { catchError, map } from 'rxjs/operators'
+import { Observable } from 'rxjs'
+import { map } from 'rxjs/operators'
 import {
   DeleteManyPanelsResponse,
   DeletePanelResponse,

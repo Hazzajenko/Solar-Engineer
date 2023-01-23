@@ -110,7 +110,7 @@ namespace dotnetapi.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("dotnetapi.Features.Conversations.Entities.AppUserGroupChat", b =>
+            modelBuilder.Entity("dotnetapi.Features.GroupChats.Entities.AppUserGroupChat", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -146,7 +146,7 @@ namespace dotnetapi.Data.Migrations
                     b.ToTable("AppUserGroupChats");
                 });
 
-            modelBuilder.Entity("dotnetapi.Features.Conversations.Entities.GroupChat", b =>
+            modelBuilder.Entity("dotnetapi.Features.GroupChats.Entities.GroupChat", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -175,7 +175,7 @@ namespace dotnetapi.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("GroupId")
+                    b.Property<int>("GroupChatId")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("MessageSentTime")
@@ -189,7 +189,7 @@ namespace dotnetapi.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("GroupId");
+                    b.HasIndex("GroupChatId");
 
                     b.HasIndex("SenderId");
 
@@ -771,7 +771,7 @@ namespace dotnetapi.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("dotnetapi.Features.Conversations.Entities.AppUserGroupChat", b =>
+            modelBuilder.Entity("dotnetapi.Features.GroupChats.Entities.AppUserGroupChat", b =>
                 {
                     b.HasOne("dotnetapi.Models.Entities.AppUser", "AppUser")
                         .WithMany("AppUserGroupChats")
@@ -779,7 +779,7 @@ namespace dotnetapi.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("dotnetapi.Features.Conversations.Entities.GroupChat", "GroupChat")
+                    b.HasOne("dotnetapi.Features.GroupChats.Entities.GroupChat", "GroupChat")
                         .WithMany("AppUserGroupChats")
                         .HasForeignKey("GroupChatId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -792,9 +792,9 @@ namespace dotnetapi.Data.Migrations
 
             modelBuilder.Entity("dotnetapi.Features.Messages.Entities.GroupChatMessage", b =>
                 {
-                    b.HasOne("dotnetapi.Features.Conversations.Entities.GroupChat", "GroupChat")
+                    b.HasOne("dotnetapi.Features.GroupChats.Entities.GroupChat", "GroupChat")
                         .WithMany("GroupChatMessages")
-                        .HasForeignKey("GroupId")
+                        .HasForeignKey("GroupChatId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
@@ -1034,7 +1034,7 @@ namespace dotnetapi.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("dotnetapi.Features.Conversations.Entities.GroupChat", b =>
+            modelBuilder.Entity("dotnetapi.Features.GroupChats.Entities.GroupChat", b =>
                 {
                     b.Navigation("AppUserGroupChats");
 

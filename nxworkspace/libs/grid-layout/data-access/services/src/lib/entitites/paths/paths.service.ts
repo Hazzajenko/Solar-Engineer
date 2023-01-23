@@ -9,7 +9,7 @@ import {
   SelectedPathModel,
   PathModel,
 } from '@shared/data-access/models'
-import { LinksPathService } from '../links/links-path.service'
+import { LinksPathService } from '../links'
 
 @Injectable({
   providedIn: 'root',

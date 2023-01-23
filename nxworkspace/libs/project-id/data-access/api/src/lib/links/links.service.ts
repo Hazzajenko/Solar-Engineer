@@ -5,7 +5,7 @@ import {
   DeleteLinkResponse,
   LinkResponse,
   ManyLinksResponse,
-} from 'libs/project-id/data-access/api/src/lib/links/links.response'
+} from './links.response'
 import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
 

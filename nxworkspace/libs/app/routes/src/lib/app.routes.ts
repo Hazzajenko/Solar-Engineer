@@ -1,7 +1,7 @@
 import { Route } from '@angular/router'
 import { loggedInGuard } from '@auth/guards'
 import { LocalProjectResolver, SelectProjectResolver } from '@project-id/data-access/resolvers'
-import { ChatroomResolver } from '../../../feature/chatrooms/src/lib/chatroom.resolver'
+
 import { homeProviders } from './home/providers'
 import { projectsProviders } from './projects/providers'
 
@@ -15,7 +15,7 @@ export const appRoutes: Route[] = [
     path: 'messages',
     loadComponent: () => import('@app/feature/chatrooms').then((m) => m.ChatroomsComponent),
     canActivate: [loggedInGuard],
-    resolve: { windowSize: ChatroomResolver },
+    // resolve: { windowSize: ChatroomResolver },
     // ChatroomResolver
     /*    providers: [projectsProviders],
         resolve: { localProject: LocalProjectResolver },*/

@@ -1,14 +1,12 @@
 import { inject, Injectable } from '@angular/core'
-import { tapResponse } from '@ngrx/component-store'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { Store } from '@ngrx/store'
 import { StringsService } from '@project-id/data-access/api'
+
+import { StringsActions } from '@project-id/data-access/store'
 import { ProjectsStoreService } from '@projects/data-access/facades'
 import { ProjectsActions } from '@projects/data-access/store'
-import { EntityModel, EntityType, StringModel } from '@shared/data-access/models'
-import { catchError, map, of, switchMap, tap } from 'rxjs'
-
-import { StringsActions, EntitiesActions, PanelsActions } from '@project-id/data-access/store'
+import { catchError, map, of, switchMap } from 'rxjs'
 
 @Injectable({
   providedIn: 'root',

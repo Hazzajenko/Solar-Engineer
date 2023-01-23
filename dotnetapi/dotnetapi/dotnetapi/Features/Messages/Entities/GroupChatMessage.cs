@@ -8,7 +8,7 @@ public class GroupChatMessage : BaseEntity
     // public int Id { get; set; }
     public int SenderId { get; set; } = default!;
     public AppUser Sender { get; set; } = default!;
-    public int GroupId { get; set; } = default!;
+    public int GroupChatId { get; set; } = default!;
     public GroupChat GroupChat { get; set; } = default!;
     public string Content { get; set; } = default!;
     public IEnumerable<GroupChatReadTime> MessageReadTimes { get; set; } = default!;

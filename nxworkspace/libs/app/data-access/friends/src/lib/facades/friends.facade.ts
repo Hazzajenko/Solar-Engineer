@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
-import { ConnectionsStoreService } from '@shared/data-access/connections'
+import { ConnectionsStoreService } from '@app/data-access/connections'
 import { combineLatestWith, firstValueFrom } from 'rxjs'
 import { map } from 'rxjs/operators'
 import { FriendsSelectors } from '../store'

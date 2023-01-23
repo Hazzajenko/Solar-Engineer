@@ -1,4 +1,5 @@
 ﻿using dotnetapi.Data;
+using dotnetapi.Features.GroupChats.Contracts.Responses;
 using dotnetapi.Features.GroupChats.Entities;
 using dotnetapi.Features.GroupChats.Mapping;
 using dotnetapi.Features.Messages.Entities;
@@ -15,7 +16,7 @@ public interface IGroupChatsRepository
     Task<AppUserGroupChat?> GetAppUserGroupChatAsync(AppUser appUser, int groupChatId);
     Task<IEnumerable<GroupChatMemberDto>> GetGroupChatMembersAsync(int groupChatId);
     Task<IEnumerable<GroupChatDto>?> GetGroupChatsAsync(AppUser appUser);
-    Task<ManyGroupChatsDto> GetManyGroupChatsDtoAsync(AppUser appUser);
+    Task<ManyGroupChatsDataResponse> GetManyGroupChatsDtoAsync(AppUser appUser);
 }
 
 public class GroupChatsRepository : IGroupChatsRepository
@@ -140,7 +141,7 @@ public class GroupChatsRepository : IGroupChatsRepository
             .SingleOrDefaultAsync();
     }
 
-    public async Task<ManyGroupChatsDto> GetManyGroupChatsDtoAsync(AppUser appUser)
+    public async Task<ManyGroupChatsDataResponse> GetManyGroupChatsDtoAsync(AppUser appUser)
     {
         var init = await _context.AppUserGroupChats
             .Where(x => x.AppUserId == appUser.Id)
@@ -149,7 +150,7 @@ public class GroupChatsRepository : IGroupChatsRepository
             .ToListAsync();
 
         var appUserGroupChatIds = init.Select(x => x.GroupChatId).ToList();
-        
+
         var appUserGroupChats = await _context.AppUserGroupChats
             .Where(x => x.AppUserId == appUser.Id)
             .Include(x => x.GroupChat)
@@ -163,30 +164,27 @@ public class GroupChatsRepository : IGroupChatsRepository
             // .Take(1)
             .ToListAsync();
 
-        var groupChatMembersResult = new List<GroupChatMemberDto>();
+        // var groupChatMembersResult = new List<GroupChatMemberDto>();
         var groupChatMessagesResult = new List<GroupChatMessageDto>();
         foreach (var appUserGroupChatId in appUserGroupChatIds)
         {
             var groupChatMessage = await _context.GroupChatMessages
-                .Where(x => x.GroupId == appUserGroupChatId)
+                .Where(x => x.GroupChatId == appUserGroupChatId)
                 .Include(x => x.Sender)
                 .Include(x => x.MessageReadTimes)
                 .OrderBy(x => x.MessageSentTime)
                 .Select(x => x.ToDto())
                 .Take(1)
                 .SingleOrDefaultAsync();
-            if (groupChatMessage is null)
-            {
-                continue;
-            }
+            if (groupChatMessage is null) continue;
             groupChatMessagesResult.Add(groupChatMessage);
         }
 
-        var result = new ManyGroupChatsDto
+        var result = new ManyGroupChatsDataResponse
         {
             GroupChats = appUserGroupChats,
             GroupChatMembers = groupChatMembers,
-            GroupChatMessages = groupChatMessagesResult
+            GroupChatMessages = new List<LastGroupChatMessageDto>()
         };
 
         return result;

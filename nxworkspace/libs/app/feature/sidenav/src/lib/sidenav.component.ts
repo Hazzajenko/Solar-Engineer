@@ -10,15 +10,15 @@ import { MatFormFieldModule } from '@angular/material/form-field'
 
 import { MatIconModule } from '@angular/material/icon'
 import { MatInputModule } from '@angular/material/input'
-import { MatListModule, MatSelectionListChange } from '@angular/material/list'
+import { MatListModule } from '@angular/material/list'
 import { RouterLink } from '@angular/router'
 import { FriendsService, FriendsStoreService } from '@app/data-access/friends'
+import { NotificationsStoreService } from '@app/data-access/notifications'
 import { AuthStoreService } from '@auth/data-access/facades'
 import { LetModule } from '@ngrx/component'
 import { ProjectsStoreService } from '@projects/data-access/facades'
 
-import { FriendModel, UserModel } from '@shared/data-access/models'
-import { NotificationsStoreService } from '@shared/data-access/notifications'
+import { UserModel } from '@shared/data-access/models'
 import { OnlineFriendsPipe } from '@shared/pipes'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 

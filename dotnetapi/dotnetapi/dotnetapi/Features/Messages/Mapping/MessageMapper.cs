@@ -41,7 +41,7 @@ public static class MessageMapper
             Content = request.Content,
             SenderUsername = request.Sender.UserName!,
             MessageSentTime = request.MessageSentTime,
-            GroupChatId = request.GroupId,
+            GroupChatId = request.GroupChatId,
             MessageReadTimes = request.MessageReadTimes.Select(x => x.ToDto())
         };
     }

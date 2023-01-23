@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http'
 import { inject, Injectable } from '@angular/core'
-import { MessagesService } from '@app/messages'
-import { GroupChatMessageModel, MessageModel } from '@shared/data-access/models'
+import { MessagesService } from '@app/data-access/messages'
+import { GroupChatMessageModel } from '@shared/data-access/models'
 import { GroupChatsStoreService } from '../facades'
 import { AllGroupChatsDataResponse } from '../models/all-group-chats.response'
 

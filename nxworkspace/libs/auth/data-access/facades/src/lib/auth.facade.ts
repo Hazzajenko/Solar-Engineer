@@ -1,7 +1,5 @@
 import { inject, Injectable } from '@angular/core'
-import { AuthService } from '@auth/data-access/api'
-import { AuthActions, AuthSelectors } from '@auth/data-access/store'
-import { SignInRequest, StorageModel } from '@auth/shared/models'
+import { AuthSelectors } from '@auth/data-access/store'
 import { Store } from '@ngrx/store'
 import { firstValueFrom } from 'rxjs'
 

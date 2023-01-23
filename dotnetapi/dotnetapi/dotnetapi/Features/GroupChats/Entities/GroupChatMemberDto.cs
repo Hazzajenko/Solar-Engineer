@@ -2,6 +2,7 @@ namespace dotnetapi.Features.GroupChats.Entities;
 
 public class GroupChatMemberDto
 {
+    public int Id { get; set; }
     public int GroupChatId { get; set; }
     public string Username { get; set; } = default!;
     public string FirstName { get; init; } = default!;

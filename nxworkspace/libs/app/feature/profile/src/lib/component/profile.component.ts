@@ -1,18 +1,16 @@
-import { Inject, inject } from '@angular/core'
-import { ChangeDetectionStrategy, Component } from '@angular/core'
-import { MatButtonModule } from '@angular/material/button'
-import { MatCardModule } from '@angular/material/card'
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog'
-
 import { ScrollingModule } from '@angular/cdk/scrolling'
 import { AsyncPipe, NgClass, NgForOf, NgIf, NgStyle } from '@angular/common'
-import { MatListModule } from '@angular/material/list'
-
-import { MatIconModule } from '@angular/material/icon'
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
 
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms'
+import { MatButtonModule } from '@angular/material/button'
+import { MatCardModule } from '@angular/material/card'
+import { MatDialogModule } from '@angular/material/dialog'
 import { MatFormFieldModule } from '@angular/material/form-field'
+
+import { MatIconModule } from '@angular/material/icon'
 import { MatInputModule } from '@angular/material/input'
+import { MatListModule } from '@angular/material/list'
 import { AuthService } from '@auth/data-access/api'
 import { AuthFacade, AuthStoreService } from '@auth/data-access/facades'
 import { StringsService } from '@grid-layout/data-access/services'

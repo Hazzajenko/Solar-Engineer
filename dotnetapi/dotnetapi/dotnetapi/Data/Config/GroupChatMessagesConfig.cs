@@ -11,7 +11,7 @@ public class GroupChatMessagesConfig : IEntityTypeConfiguration<GroupChatMessage
         builder
             .HasOne(u => u.GroupChat)
             .WithMany(m => m.GroupChatMessages)
-            .HasForeignKey(x => x.GroupId)
+            .HasForeignKey(x => x.GroupChatId)
             .OnDelete(DeleteBehavior.NoAction)
             .IsRequired();
 

@@ -24,7 +24,8 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatInputModule } from '@angular/material/input'
 import { MatListModule, MatSelectionListChange } from '@angular/material/list'
 import { ActivatedRoute, Router } from '@angular/router'
-import { MessagesComponent, MessagesStoreService, SendMessageRequest } from '@app/messages'
+import { SendMessageRequest, MessagesStoreService } from '@app/data-access/messages'
+import { MessagesComponent, SortMessagesPipe } from '@app/messages'
 import { AuthStoreService } from '@auth/data-access/facades'
 import { LetModule } from '@ngrx/component'
 import { Update } from '@ngrx/entity'
@@ -36,19 +37,12 @@ import {
   UserModel,
   WindowSizeModel,
 } from '@shared/data-access/models'
+import { ConversationMessageDirective, MessageDirective, ScrollViewportDirective } from '@shared/directives'
+
+import { SortConversationMessagesPipe } from '@shared/pipes'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
 import { filter, map, Observable, startWith, switchMap, take } from 'rxjs'
-
-import { MessageDirective } from '../../../../messages/src/lib/feature/component/message.directive'
-import { SortMessagesPipe } from '../../../../messages/src/lib/feature/component/sort-messages.pipe'
-import {
-  ConversationMessageDirective,
-} from '../../../../messages/src/lib/feature/conversation/conversation-message.directive'
-import { ScrollViewportDirective } from '../../../../messages/src/lib/feature/conversation/scroll-viewport.directive'
-import {
-  SortConversationMessagesPipe,
-} from '../../../../messages/src/lib/feature/conversation/sort-conversation-messages.pipe'
 
 
 @Component({

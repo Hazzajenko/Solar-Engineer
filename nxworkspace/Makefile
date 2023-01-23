@@ -86,3 +86,6 @@ remove:
 
 rm:
 	nx generate @nrwl/workspace:remove --project ${name} --forceRemove
+
+lint-all:
+	npx nx run-many --target=lint --all=true

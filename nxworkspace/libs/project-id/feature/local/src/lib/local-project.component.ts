@@ -1,9 +1,9 @@
-import { MatSnackBarModule, MatSnackBarRef } from '@angular/material/snack-bar'
 import { CommonModule } from '@angular/common'
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
+import { MatSnackBarModule } from '@angular/material/snack-bar'
+import { GridLayoutComponent } from '@grid-layout/feature/index'
 import { KeymapOverlayComponent } from '@grid-layout/feature/keymap'
 import { BlocksFacade } from '@project-id/data-access/facades'
-import { GridLayoutComponent } from '@grid-layout/feature/index'
 import { ToolbarComponent } from '@project-id/feature/toolbar'
 
 import { ProjectsFacade } from '@projects/data-access/facades'

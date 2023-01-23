@@ -23,6 +23,8 @@ public static class ApplicationServiceExtensions
     {
         services.AddMediator();
 
+        // services.AddMediator();
+
         services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
         services.AddSingleton<IConnectionsService, ConnectionsService>();
 

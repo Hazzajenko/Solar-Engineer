@@ -10,7 +10,7 @@ import {
   StringsFacade,
   StringsStoreService,
 } from '@project-id/data-access/facades'
-import { LinksPathService } from '../links/links-path.service'
+import { LinksPathService } from '../links'
 import { ProjectsFacade } from '@projects/data-access/facades'
 import { BlockType, GridMode, StringModel } from '@shared/data-access/models'
 // import { getRandomColor } from '../'
