@@ -1,7 +1,6 @@
 import { inject, Injectable } from '@angular/core'
-import { FriendsFacade } from './friends.facade'
-import { FriendsRepository } from './friends.repository'
-
+import { FriendsFacade } from 'libs/app/data-access/friends/src/lib/facades/friends.facade'
+import { FriendsRepository } from 'libs/app/data-access/friends/src/lib/facades/friends.repository'
 
 @Injectable({
   providedIn: 'root',

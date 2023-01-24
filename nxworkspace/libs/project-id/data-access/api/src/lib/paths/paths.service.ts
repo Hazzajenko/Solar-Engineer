@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http'
 import { inject, Injectable } from '@angular/core'
 import { Update } from '@ngrx/entity'
-
-import { PathModel } from '@shared/data-access/models'
+import { ManyPanelsResponse } from '@project-id/data-access/api'
+import { PanelModel, PathModel } from '@shared/data-access/models'
 import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
 import { DeletePathResponse, ManyPathsResponse, PathResponse } from './paths.response'

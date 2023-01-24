@@ -1,10 +1,12 @@
 using dotnetapi.Extensions;
+using dotnetapi.Features.GroupChats.Handlers;
 using dotnetapi.Features.GroupChats.Services;
 using dotnetapi.Features.Messages.Contracts.Requests;
 using dotnetapi.Features.Messages.Entities;
 using dotnetapi.Features.Messages.Mapping;
 using dotnetapi.Features.Messages.Services;
 using dotnetapi.Models.Entities;
+using Mediator;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
@@ -20,17 +22,20 @@ public class MessagesHub : Hub
 {
     private readonly IGroupChatsRepository _groupChatsRepository;
     private readonly ILogger<MessagesHub> _logger;
+    private readonly IMediator _mediator;
     private readonly IMessagesRepository _messagesRepository;
     private readonly UserManager<AppUser> _userManager;
 
     public MessagesHub(UserManager<AppUser> userManager,
         IMessagesRepository messagesRepository,
         IGroupChatsRepository groupChatsRepository,
+        IMediator mediator,
         ILogger<MessagesHub> logger)
     {
         _userManager = userManager;
         _messagesRepository = messagesRepository;
         _groupChatsRepository = groupChatsRepository;
+        _mediator = mediator;
         _logger = logger;
     }
 
@@ -54,7 +59,8 @@ public class MessagesHub : Hub
             .SingleOrDefaultAsync();
         if (appUser is null) throw new HubException("appUser is null");
 
-        var groupChatMessages = await _messagesRepository.GetGroupChatMessagesAsync(groupChatId);
+        var groupChatMessages = await _mediator.Send(new GetGroupChatMessagesByIdQuery(appUser, groupChatId));
+        // var groupChatMessages = await _messagesRepository.GetGroupChatMessagesAsync(groupChatId);
         if (groupChatMessages is null) throw new HubException("groupChatMessages is null");
 
         _logger.LogInformation("{User} GetMessages with Group {Group}", appUser.UserName!, groupChatId);
@@ -120,7 +126,7 @@ public class MessagesHub : Hub
             appUserGroupChat.GroupChat.Name!);
 
         await Clients.Users(groupChatUsers)
-            .SendAsync("GetMessages", groupChatMessageDto);
+            .SendAsync("GetGroupChatMessages", groupChatMessageDto);
     }
 
 

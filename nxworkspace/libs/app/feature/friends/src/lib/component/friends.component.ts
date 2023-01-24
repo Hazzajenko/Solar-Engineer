@@ -15,7 +15,7 @@ import { FriendsService, FriendsStoreService } from '@app/data-access/friends'
 import { AuthStoreService } from '@auth/data-access/facades'
 
 import { FriendModel, UserModel } from '@shared/data-access/models'
-import { NotificationsStoreService } from '@app/data-access/notifications'
+import { NotificationsStoreService } from '@shared/data-access/notifications'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
 import { Observable } from 'rxjs'

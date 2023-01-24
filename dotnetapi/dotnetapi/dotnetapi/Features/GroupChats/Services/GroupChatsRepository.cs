@@ -184,7 +184,7 @@ public class GroupChatsRepository : IGroupChatsRepository
         {
             GroupChats = appUserGroupChats,
             GroupChatMembers = groupChatMembers,
-            GroupChatMessages = new List<LastGroupChatMessageDto>()
+            GroupChatMessages = new List<GroupChatMessageDto>()
         };
 
         return result;

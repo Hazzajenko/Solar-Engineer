@@ -22,6 +22,7 @@ public static class GroupChatsMapping
     {
         return new GroupChatMemberDto
         {
+            Id = request.Id,
             GroupChatId = request.GroupChatId,
             Username = request.AppUser.UserName!,
             FirstName = request.AppUser.FirstName,
@@ -46,7 +47,7 @@ public static class GroupChatsMapping
     {
         return new GroupChatWithoutMembersDto
         {
-            Id = request.Id,
+            Id = request.GroupChatId,
             Name = request.GroupChat.Name
         };
     }

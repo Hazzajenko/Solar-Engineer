@@ -1,8 +1,13 @@
 import { inject, Injectable } from '@angular/core'
 import { Update } from '@ngrx/entity'
 import { Store } from '@ngrx/store'
-import { GroupChatMemberModel, GroupChatMessageModel, GroupChatModel } from '@shared/data-access/models'
+import {
+  GroupChatMemberModel,
+  GroupChatMessageModel,
+  GroupChatModel,
+} from '@shared/data-access/models'
 import { GroupChatMembersActions, GroupChatMessagesActions, GroupChatsActions } from '../store'
+import { SendGroupChatMessageRequest } from '../models'
 
 @Injectable({
   providedIn: 'root',
@@ -12,6 +17,10 @@ export class GroupChatsRepository {
 
   initGroupChat(groupChatId: number) {
     this.store.dispatch(GroupChatsActions.initGroupChat({ groupChatId }))
+  }
+
+  sendMessageToGroupChat(request: SendGroupChatMessageRequest) {
+    this.store.dispatch(GroupChatMessagesActions.sendMessageToGroupChat({ request }))
   }
 
   addGroupChat(groupChat: GroupChatModel) {
@@ -47,7 +56,7 @@ export class GroupChatsRepository {
   }
 
   addManyGroupChatMessages(groupChatMessages: GroupChatMessageModel[]) {
-    this.store.dispatch(GroupChatMessagesActions.addManyGroupChatMessage({ groupChatMessages }))
+    this.store.dispatch(GroupChatMessagesActions.addManyGroupChatMessages({ groupChatMessages }))
   }
 
   updateGroupChatMessage(update: Update<GroupChatMessageModel>) {

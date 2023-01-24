@@ -30,6 +30,8 @@ import {
   selectedReducer,
   STRINGS_FEATURE_KEY,
   stringsReducer,
+  UI_FEATURE_KEY,
+  uiReducer,
 } from '@project-id/data-access/store'
 import { ProjectsEffects } from '@projects/data-access/effects'
 import { PROJECTS_FEATURE_KEY, projectsReducer } from '@projects/data-access/store'
@@ -46,6 +48,7 @@ export const projectsProviders = [
   provideState(SELECTED_FEATURE_KEY, selectedReducer),
   provideState(GRID_FEATURE_KEY, gridReducer),
   provideState(MULTI_FEATURE_KEY, multiReducer),
+  /*provideState(UI_FEATURE_KEY, uiReducer),*/
   provideState(PATHS_FEATURE_KEY, pathsReducer),
   provideEffects([
     ProjectsEffects,

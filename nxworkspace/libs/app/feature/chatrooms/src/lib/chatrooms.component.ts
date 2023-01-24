@@ -1,55 +1,76 @@
 import { ScrollingModule } from '@angular/cdk/scrolling'
 import { CdkTextareaAutosize } from '@angular/cdk/text-field'
-import { AsyncPipe, DatePipe, NgClass, NgForOf, NgIf, NgStyle, NgSwitch, NgSwitchCase } from '@angular/common'
-import { ChangeDetectionStrategy, Component, inject, NgZone, OnInit, ViewChild } from '@angular/core'
+import {
+  AsyncPipe,
+  DatePipe,
+  NgClass,
+  NgForOf,
+  NgIf,
+  NgStyle,
+  NgSwitch,
+  NgSwitchCase,
+} from '@angular/common'
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  NgZone,
+  OnInit,
+  ViewChild,
+} from '@angular/core'
 
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { MatButtonModule } from '@angular/material/button'
 import { MatCardModule } from '@angular/material/card'
 import { MatCheckboxModule } from '@angular/material/checkbox'
-import { MatDialog, MatDialogModule } from '@angular/material/dialog'
+import { MatDialog, MatDialogConfig, MatDialogModule, MatDialogRef } from '@angular/material/dialog'
 import { MatFormFieldModule } from '@angular/material/form-field'
 
 import { MatIconModule } from '@angular/material/icon'
 import { MatInputModule } from '@angular/material/input'
 import { MatListModule, MatSelectionListChange } from '@angular/material/list'
 import { ActivatedRoute, Router } from '@angular/router'
-import { MessagesStoreService, SendMessageRequest } from '@app/data-access/messages'
-import { MessagesComponent } from '@app/messages'
+import { MessagesComponent, MessagesStoreService, SendMessageRequest } from '@app/messages'
 import { AuthStoreService } from '@auth/data-access/facades'
 import { LetModule } from '@ngrx/component'
 import { Update } from '@ngrx/entity'
 
 import {
   MessageModel,
+  MessageTimeSortModel,
   NotificationModel,
   NotificationStatus,
   UserModel,
   WindowSizeModel,
 } from '@shared/data-access/models'
-import { ConversationMessageDirective, MessageDirective, ScrollViewportDirective } from '@shared/directives'
-import { SortConversationMessagesPipe, SortMessagesPipe } from '@shared/pipes'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
 import { map, Observable, take } from 'rxjs'
 
-import { ChatroomConversationComponent } from './chatroom-conversation.component'
-import { ChatroomListComponent } from './chatroom-list.component'
-
+import { MessageDirective } from '../../../../messages/src/lib/feature/component/message.directive'
+import { SortMessagesPipe } from '../../../../messages/src/lib/feature/component/sort-messages.pipe'
+import { ConversationMessageDirective } from '../../../../messages/src/lib/feature/conversation/conversation-message.directive'
+import { ScrollViewportDirective } from '../../../../messages/src/lib/feature/conversation/scroll-viewport.directive'
+import { SortConversationMessagesPipe } from '../../../../messages/src/lib/feature/conversation/sort-conversation-messages.pipe'
+import { GroupChatConversationComponent } from './conversation/group-chat-conversation.component'
+import { ChatroomListComponent } from './list/chatroom-list.component'
+import { UserConversationComponent } from './conversation/user-conversation.component'
 
 @Component({
   selector: 'app-chatrooms-component',
   templateUrl: './chatrooms.component.html',
-  styles: [`
-    html,
-    body {
-      height: 100%;
-      width: 100%;
-      margin: 0px;
-      padding: 0px;
-      overflow: hidden;
-    }
-  `],
+  styles: [
+    `
+      html,
+      body {
+        height: 100%;
+        width: 100%;
+        margin: 0px;
+        padding: 0px;
+        overflow: hidden;
+      }
+    `,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatDialogModule,
@@ -81,12 +102,12 @@ import { ChatroomListComponent } from './chatroom-list.component'
     ConversationMessageDirective,
     SortConversationMessagesPipe,
     ChatroomListComponent,
-    ChatroomConversationComponent,
+    GroupChatConversationComponent,
+    UserConversationComponent,
   ],
   standalone: true,
 })
 export class ChatroomsComponent implements OnInit {
-
   private messagesStore = inject(MessagesStoreService)
   private authStore = inject(AuthStoreService)
   private dialog = inject(MatDialog)
@@ -99,18 +120,23 @@ export class ChatroomsComponent implements OnInit {
       return paths[0].path !== 'messages'
     }),
   )
-  messages$: Observable<MessageModel[] | undefined> = this.messagesStore.select.firstMessageOfEveryConversation$()
+  messages$: Observable<MessageModel[] | undefined> =
+    this.messagesStore.select.firstMessageOfEveryConversation$()
   conversationMessages$?: Observable<MessageModel[] | undefined>
   user$: Observable<UserModel | undefined> = this.authStore.select.user$
   selectedMessage?: MessageModel
   selectedConversationMessage?: MessageModel
   unreadFilter = false
+  chatRoomSelect?: MessageTimeSortModel
   recipient?: string
+  groupChatId?: number
+
   messageControl = new FormControl('', [])
   scrollIndex = 0
   containerHeight?: number
   containerWidth?: number
-  windowSize: WindowSizeModel = (this.route.snapshot.data as { windowSize: WindowSizeModel }).windowSize
+  windowSize: WindowSizeModel = (this.route.snapshot.data as { windowSize: WindowSizeModel })
+    .windowSize
   chatRoomListSize?: {
     height: number
     width: number
@@ -128,13 +154,12 @@ export class ChatroomsComponent implements OnInit {
 
   @ViewChild('autosize') autosize!: CdkTextareaAutosize
 
-
-  constructor(private _ngZone: NgZone/*, public dialogRef: MatDialogRef<ChatroomsComponent>*/) {
+  constructor(private _ngZone: NgZone /*, public dialogRef: MatDialogRef<ChatroomsComponent>*/) {
     /*    this.messagesStore.select.firstMessageOfEveryConversation$().subscribe(res => console.log(res))
         this.route.url.subscribe(res => console.log(res))
         console.log(this.route.snapshot.data)*/
 
-    this.isDialog$.subscribe(res => console.log(res))
+    this.isDialog$.subscribe((res) => console.log(res))
     // const state = this.dialogRef.getState()
     // const state = this.dialogRef._containerInstance.()
     // const state = this.dialogRef.getState()
@@ -181,12 +206,18 @@ export class ChatroomsComponent implements OnInit {
     console.log(event)
     this.selectedMessage = event.options[0].value
     if (!this.selectedMessage) return
-    this.recipient = this.selectedMessage.senderUsername === username ? this.selectedMessage.recipientUsername : this.selectedMessage.senderUsername
+    this.recipient =
+      this.selectedMessage.senderUsername === username
+        ? this.selectedMessage.recipientUsername
+        : this.selectedMessage.senderUsername
     if (this.recipient) {
       this.messagesStore.dispatch.initMessagesWithUser(this.recipient)
       this.conversationMessages$ = this.messagesStore.select.messagesWithUser$(this.recipient)
     }
-    if (this.selectedMessage.status === NotificationStatus.Unread && this.selectedMessage.senderUsername !== username) {
+    if (
+      this.selectedMessage.status === NotificationStatus.Unread &&
+      this.selectedMessage.senderUsername !== username
+    ) {
       this.readMessage()
     }
   }
@@ -221,10 +252,12 @@ export class ChatroomsComponent implements OnInit {
 
   markAllMessagesAsRead(messages: MessageModel[]) {
     if (!messages) return
-    const unreadMessages = messages.filter(message => message.status === NotificationStatus.Unread)
+    const unreadMessages = messages.filter(
+      (message) => message.status === NotificationStatus.Unread,
+    )
     if (!unreadMessages) return
 
-    const updates: Update<MessageModel>[] = unreadMessages.map(notification => {
+    const updates: Update<MessageModel>[] = unreadMessages.map((notification) => {
       const update: Update<MessageModel> = {
         id: notification.id,
         changes: {
@@ -272,7 +305,9 @@ export class ChatroomsComponent implements OnInit {
     this.recipient = event
     console.log('EVENT', event)
     this.messagesStore.dispatch.markAllMessagesAsReadWithUser(event)
+  }
 
+  selectGroupChat(event: number) {
+    this.groupChatId = event
   }
 }
-

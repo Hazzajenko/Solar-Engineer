@@ -1,7 +1,6 @@
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling'
 import { Directive, ElementRef, inject, Input } from '@angular/core'
-import { MessageModel } from '@shared/data-access/models'
-
+import { GroupChatMessageModel, MessageModel } from '@shared/data-access/models'
 
 @Directive({
   selector: '[appScrollViewportDirective]',
@@ -11,12 +10,14 @@ export class ScrollViewportDirective {
   private elRef = inject(ElementRef)
   private _viewport!: CdkVirtualScrollViewport
   private _messages: MessageModel[] = []
+  private _groupChatMessages: GroupChatMessageModel[] = []
   private _scrollIndex = 0
   private _recipient = ''
   loaded = false
 
   messagesLoaded: boolean[] = []
 
+  @Input() isGroup = false
 
   @Input() set viewport(viewport: CdkVirtualScrollViewport) {
     // this.loaded = false
@@ -43,8 +44,23 @@ export class ScrollViewportDirective {
     }
   }
 
-  @Input() set messages(messages: MessageModel[] | undefined | null) {
+  @Input() set groupChatMessages(messages: GroupChatMessageModel[] | undefined | null) {
+    if (!messages) return
 
+    this._groupChatMessages = messages
+
+    if (!this.loaded) {
+      this.scrollToBottom()
+      this.loaded = true
+      return
+    }
+
+    if (!this.isNearBottom()) return
+
+    this.scrollToBottom()
+  }
+
+  @Input() set messages(messages: MessageModel[] | undefined | null) {
     if (!messages) return
 
     this._messages = messages
@@ -82,6 +98,9 @@ export class ScrollViewportDirective {
   }
 
   private isNearBottom() {
-    return (this._scrollIndex > this._messages.length - 10)
+    if (this.isGroup) {
+      return this._scrollIndex > this._groupChatMessages.length - 10
+    }
+    return this._scrollIndex > this._messages.length - 10
   }
 }

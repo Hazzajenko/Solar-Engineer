@@ -8,15 +8,14 @@ import { MatListModule } from '@angular/material/list'
 import { MatSidenavModule } from '@angular/material/sidenav'
 import { RouterModule } from '@angular/router'
 import { FriendsStoreService } from '@app/data-access/friends'
-import { NotificationsDialog } from '@app/feature/notifications'
-import { SidenavComponent } from '@app/feature/sidenav'
 import { AuthFacade, AuthStoreService } from '@auth/data-access/facades'
 import { LetModule } from '@ngrx/component'
 import { UiStoreService } from '@project-id/data-access/facades'
 import { ProjectsStoreService } from '@projects/data-access/facades'
-import { NotificationsStoreService } from '@app/data-access/notifications'
+import { NotificationsStoreService } from '@shared/data-access/notifications'
 import { AppBarComponent } from '@shared/ui/app-bar'
-
+import { NotificationsDialog } from 'libs/app/feature/notifications/src/lib/notifications.dialog'
+import { SidenavComponent } from '../../../../libs/app/feature/sidenav/src/lib/sidenav.component'
 
 @Component({
   standalone: true,

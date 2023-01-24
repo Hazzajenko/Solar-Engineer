@@ -1,2 +1,2 @@
 export * from './strings.service'
-export * from './strings.response'
+export * from 'libs/project-id/data-access/api/src/lib/strings/strings.response'

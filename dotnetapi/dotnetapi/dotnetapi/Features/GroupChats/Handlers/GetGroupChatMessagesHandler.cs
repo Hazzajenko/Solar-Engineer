@@ -7,10 +7,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace dotnetapi.Features.GroupChats.Handlers;
 
-public sealed record GetGroupChatMessagesQuery(AppUser AppUser, IEnumerable<int> GroupChatIds) : IRequest<IEnumerable<LastGroupChatMessageDto>>;
+public sealed record GetGroupChatMessagesQuery
+    (AppUser AppUser, IEnumerable<int> GroupChatIds) : IRequest<IEnumerable<GroupChatMessageDto>>;
 
 public class
-    GetGroupChatMessagesHandler : IRequestHandler<GetGroupChatMessagesQuery, IEnumerable<LastGroupChatMessageDto>>
+    GetGroupChatMessagesHandler : IRequestHandler<GetGroupChatMessagesQuery, IEnumerable<GroupChatMessageDto?>>
 {
     private readonly IServiceScopeFactory _scopeFactory;
 
@@ -19,13 +20,23 @@ public class
         _scopeFactory = scopeFactory;
     }
 
-    public async ValueTask<IEnumerable<LastGroupChatMessageDto>>
+    public async ValueTask<IEnumerable<GroupChatMessageDto?>>
         Handle(GetGroupChatMessagesQuery request, CancellationToken cT)
     {
         using var scope = _scopeFactory.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<DataContext>();
 
-        var groupChatMessages = await db.GroupChatMessages
+        return await db.GroupChatMessages
+            .Where(x => request.GroupChatIds.Contains(x.GroupChatId))
+            .Include(x => x.Sender)
+            .Include(x => x.MessageReadTimes)
+            .GroupBy(x => x.GroupChatId)
+            .Select(x => x.OrderBy(o => o.MessageSentTime)
+                .Select(y => y.ToDto())
+                .SingleOrDefault())
+            .ToListAsync(cT);
+
+        /*var groupChatMessages = await db.GroupChatMessages
             .Where(x => request.GroupChatIds.Contains(x.GroupChatId))
             .Include(x => x.Sender)
             .Include(x => x.MessageReadTimes)
@@ -52,10 +63,9 @@ public class
                 .SingleOrDefaultAsync(cT);
             if (groupChatMessage is null) continue;
             groupChatMessagesResult.Add(groupChatMessage);
-        }*/
+        }#1#
 
 
-        return groupChatMessages;
-
+        return groupChatMessages;*/
     }
 }

@@ -1,4 +1,5 @@
 import { PanelPathModel, SelectedPathModel } from '@shared/data-access/models'
+import { Observable } from 'rxjs'
 
 export interface PanelNgModel {
   isSelectedPanel: SelectedPanelVal

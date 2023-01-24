@@ -1,10 +1,10 @@
 import { HttpClient } from '@angular/common/http'
 import { inject, Injectable } from '@angular/core'
 import { Update } from '@ngrx/entity'
-import { StringModel } from '@shared/data-access/models'
-
-import { Observable } from 'rxjs'
-import { map } from 'rxjs/operators'
+import { PanelModel, StringModel } from '@shared/data-access/models'
+import { DeletePanelResponse, PanelResponse } from 'libs/project-id/data-access/api/src/lib/panels'
+import { EMPTY, Observable } from 'rxjs'
+import { catchError, map } from 'rxjs/operators'
 import { DeleteStringResponse, ManyStringsResponse, StringResponse } from './strings.response'
 
 @Injectable({

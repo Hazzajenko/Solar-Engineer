@@ -1,1 +1,1 @@
-export * from './signalr.effects'
+export * from './messages-signalr.service'

@@ -1,11 +1,10 @@
 import { Inject, inject, Pipe, PipeTransform } from '@angular/core'
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog'
 import { Router } from '@angular/router'
-import { ConnectionsService } from '@app/data-access/connections'
 import { AuthStoreService } from '@auth/data-access/facades'
-import { UserModel } from '@shared/data-access/models'
-import { AuthDialog } from './auth.dialog'
-
+import { BlockModel, UserModel } from '@shared/data-access/models'
+import { AuthDialog } from 'libs/home/ui/src/lib/dialogs/auth/auth.dialog'
+import { ConnectionsService } from '@shared/data-access/connections'
 
 @Pipe({
   name: 'checkUser',

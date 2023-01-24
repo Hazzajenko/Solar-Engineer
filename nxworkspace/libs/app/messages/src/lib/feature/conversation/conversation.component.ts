@@ -1,18 +1,18 @@
-import { ScrollingModule } from '@angular/cdk/scrolling'
+import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrolling'
 import { AsyncPipe, DatePipe, NgClass, NgForOf, NgIf, NgStyle, NgSwitch, NgSwitchCase } from '@angular/common'
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   ElementRef,
   Inject,
   inject,
-  OnInit,
-  QueryList,
+  OnInit, QueryList,
   ViewChild,
   ViewChildren,
 } from '@angular/core'
 
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms'
+import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms'
 import { MatButtonModule } from '@angular/material/button'
 import { MatCardModule } from '@angular/material/card'
 import { MatCheckboxModule } from '@angular/material/checkbox'
@@ -21,15 +21,15 @@ import { MatFormFieldModule } from '@angular/material/form-field'
 
 import { MatIconModule } from '@angular/material/icon'
 import { MatInputModule } from '@angular/material/input'
-import { MatListModule } from '@angular/material/list'
-import { MessagesStoreService, SendMessageRequest } from '@app/data-access/messages'
+import { MatListModule, MatSelectionListChange } from '@angular/material/list'
 import { AuthStoreService } from '@auth/data-access/facades'
+import { Update } from '@ngrx/entity'
 
-import { MessageModel, UserModel } from '@shared/data-access/models'
+import { MessageModel, NotificationModel, NotificationStatus, UserModel } from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
 import { Observable } from 'rxjs'
-
+import { MessagesStoreService, SendMessageRequest } from '../../data-access'
 import { ConversationMessageDirective } from './conversation-message.directive'
 import { ScrollViewportDirective } from './scroll-viewport.directive'
 import { SortConversationMessagesPipe } from './sort-conversation-messages.pipe'

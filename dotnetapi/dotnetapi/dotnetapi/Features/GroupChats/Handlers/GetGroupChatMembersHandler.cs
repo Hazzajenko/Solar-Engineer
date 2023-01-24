@@ -20,7 +20,8 @@ public class GetGroupChatsDataQuery : IRequest<ManyGroupChatsDataResponse>
 */
 
 // public sealed record Ping(AppUser AppUser) : IRequest<ManyGroupChatsDataResponse>;
-public sealed record GetGroupChatMembersQuery(AppUser AppUser, IEnumerable<int> GroupChatIds) : IRequest<IEnumerable<GroupChatMemberDto>>;
+public sealed record GetGroupChatMembersQuery
+    (AppUser AppUser, IEnumerable<int> GroupChatIds) : IRequest<IEnumerable<GroupChatMemberDto>>;
 
 public class GetGroupChatMembersHandler : IRequestHandler<GetGroupChatMembersQuery, IEnumerable<GroupChatMemberDto>>
 {
@@ -38,6 +39,18 @@ public class GetGroupChatMembersHandler : IRequestHandler<GetGroupChatMembersQue
     {
         using var scope = _scopeFactory.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<DataContext>();
+
+        return await db.GroupChats
+            .Where(x => request.GroupChatIds.Contains(x.Id))
+            .Include(x => x.AppUserGroupChats)
+            .ThenInclude(x => x.AppUser)
+            // .Select(x => x.AppUserGroupChats.Select(x => x.ToMemberDto()))
+            .SelectMany(x => x.AppUserGroupChats)
+            .Select(x => x.ToMemberDto())
+            .ToListAsync(cT);
+
+        // return res;
+
 
         return await db.AppUserGroupChats
             .Where(x => request.GroupChatIds.Contains(x.GroupChatId))

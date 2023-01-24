@@ -1,7 +1,14 @@
 import { Directive, ElementRef, HostListener, inject, Input, NgZone, OnInit } from '@angular/core'
-import { BlockRectModel, ClientXY, ElementOffsets, XYModel } from '@grid-layout/shared/models'
+import { BlockRectModel, ClientXY, ElementOffsets, PosXY, XYModel } from '@grid-layout/shared/models'
 import { PanelsStoreService } from '@project-id/data-access/facades'
-import { GridMode, SelectedPanelLinkPathModel, SelectedPathModel, VibrantColor } from '@shared/data-access/models'
+import {
+  GridMode, PanelIdPath,
+  PanelModel,
+  SelectedPanelLinkPathModel, SelectedPathModel,
+  PathModel,
+  VibrantColor,
+} from '@shared/data-access/models'
+import { reducers } from '@shared/data-access/store'
 import {
   downAndLeft,
   downAndRight,
@@ -89,7 +96,7 @@ export class CanvasDirective implements OnInit {
   }
 
   @Input() set startDragging(clientXY: ClientXY) {
-    return
+
   }
 
   selectedPaths?: SelectedPanelLinkPathModel

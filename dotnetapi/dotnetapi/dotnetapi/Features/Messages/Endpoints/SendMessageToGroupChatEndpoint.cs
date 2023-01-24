@@ -1,10 +1,12 @@
 ﻿using dotnetapi.Features.GroupChats.Services;
 using dotnetapi.Features.Messages.Contracts.Requests;
 using dotnetapi.Features.Messages.Contracts.Responses;
+using dotnetapi.Features.Messages.Handlers;
 using dotnetapi.Features.Messages.Mapping;
 using dotnetapi.Features.Messages.Services;
 using dotnetapi.Models.Entities;
 using FastEndpoints;
+using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 
@@ -15,6 +17,7 @@ public class SendMessageToGroupChatEndpoint : Endpoint<SendGroupChatMessageReque
 {
     private readonly IGroupChatsRepository _groupChatsRepository;
     private readonly ILogger<SendMessageToGroupChatEndpoint> _logger;
+    private readonly IMediator _mediator;
     private readonly IMessagesRepository _messagesRepository;
     private readonly UserManager<AppUser> _userManager;
 
@@ -22,11 +25,13 @@ public class SendMessageToGroupChatEndpoint : Endpoint<SendGroupChatMessageReque
         ILogger<SendMessageToGroupChatEndpoint> logger,
         IGroupChatsRepository groupChatsRepository,
         IMessagesRepository messagesRepository,
+        IMediator mediator,
         UserManager<AppUser> userManager)
     {
         _logger = logger;
         _groupChatsRepository = groupChatsRepository;
         _messagesRepository = messagesRepository;
+        _mediator = mediator;
         _userManager = userManager;
     }
 
@@ -55,6 +60,7 @@ public class SendMessageToGroupChatEndpoint : Endpoint<SendGroupChatMessageReque
             ThrowError("appUserGroupChat is invalid");
         }
 
+        /*
         var groupChatMemberDtos = await _groupChatsRepository.GetGroupChatMembersAsync(groupChatId);
 
         var isUserInGroupChat = groupChatMemberDtos.FirstOrDefault(x => x.Username == user.UserName!);
@@ -62,11 +68,12 @@ public class SendMessageToGroupChatEndpoint : Endpoint<SendGroupChatMessageReque
         {
             _logger.LogError("Bad request, user is not in conversation");
             ThrowError("Bad request, user is not in conversation");
-        }
+        }*/
 
         var groupChatMessage = request.ToEntity(user, appUserGroupChat.GroupChat);
 
-        var addMessage = await _messagesRepository.SendMessageToGroupChatAsync(groupChatMessage);
+        var addMessage = await _mediator.Send(new SendMessageToGroupChatQuery(groupChatMessage), ct);
+        // var addMessage = await _messagesRepository.SendMessageToGroupChatAsync(groupChatMessage);
 
 
         var response = new GroupChatMessageResponse

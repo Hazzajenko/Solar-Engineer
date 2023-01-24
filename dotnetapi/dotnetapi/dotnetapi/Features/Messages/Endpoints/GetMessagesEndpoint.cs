@@ -3,6 +3,7 @@ using dotnetapi.Features.Messages.Services;
 using dotnetapi.Models.Entities;
 using dotnetapi.Services.Projects;
 using FastEndpoints;
+using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 
@@ -12,6 +13,7 @@ namespace dotnetapi.Features.Messages.Endpoints;
 public class GetMessagesEndpoint : EndpointWithoutRequest<ManyMessagesResponse>
 {
     private readonly ILogger<GetMessagesEndpoint> _logger;
+    private readonly IMediator _mediator;
     private readonly IMessagesRepository _messagesRepository;
     private readonly IProjectsService _projectsService;
     private readonly UserManager<AppUser> _userManager;
@@ -19,11 +21,13 @@ public class GetMessagesEndpoint : EndpointWithoutRequest<ManyMessagesResponse>
     public GetMessagesEndpoint(
         ILogger<GetMessagesEndpoint> logger,
         IMessagesRepository messagesRepository,
+        IMediator mediator,
         UserManager<AppUser> userManager,
         IProjectsService projectsService)
     {
         _logger = logger;
         _messagesRepository = messagesRepository;
+        _mediator = mediator;
         _userManager = userManager;
         _projectsService = projectsService;
     }

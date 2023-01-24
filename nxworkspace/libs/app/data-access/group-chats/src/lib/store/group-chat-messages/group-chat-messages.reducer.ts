@@ -29,7 +29,7 @@ const reducer = createReducer(
   on(GroupChatMessagesActions.addGroupChatMessage, (state, { groupChatMessage }) =>
     groupChatMessagesAdapter.addOne(groupChatMessage, state),
   ),
-  on(GroupChatMessagesActions.addManyGroupChatMessage, (state, { groupChatMessages }) =>
+  on(GroupChatMessagesActions.addManyGroupChatMessages, (state, { groupChatMessages }) =>
     groupChatMessagesAdapter.addMany(groupChatMessages, state),
   ),
   on(GroupChatMessagesActions.updateGroupChatMessage, (state, { update }) =>

@@ -16,19 +16,18 @@ import { MatTabsModule } from '@angular/material/tabs'
 import { FriendsService, FriendsStoreService } from '@app/data-access/friends'
 import { ChatroomsComponent } from '@app/feature/chatrooms'
 import { FriendsComponent } from '@app/feature/friends'
-import { GetFriendRequestPipe, NotificationsComponent, SortNotificationsPipe } from '@app/feature/notifications'
 import { MessagesComponent } from '@app/messages'
 import { AuthStoreService } from '@auth/data-access/facades'
 import { Update } from '@ngrx/entity'
 
 import { NotificationModel, NotificationStatus, UserModel } from '@shared/data-access/models'
-import { NotificationsStoreService } from '@app/data-access/notifications'
+import { NotificationsStoreService } from '@shared/data-access/notifications'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
-
+import { GetFriendRequestPipe } from 'libs/app/feature/notifications/src/lib/get-friend-request.pipe'
+import { SortNotificationsPipe } from 'libs/app/feature/notifications/src/lib/sort-notifications.pipe'
 import { Observable } from 'rxjs'
-
-
+import { NotificationsComponent } from '../../../notifications/src/lib/component/notifications.component'
 import { ProfileComponent } from './component'
 
 

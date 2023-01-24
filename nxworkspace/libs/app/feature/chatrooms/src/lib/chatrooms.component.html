@@ -53,11 +53,27 @@
           </div>-->
           <div
             class='flex-auto w-[20%] min-w-[20%] p-2'>
-            <app-chatroom-list-component (selectMessageEvent)='selectRecipient($event)'></app-chatroom-list-component>
+            <app-chatroom-list-component (selectMessageEvent)='selectRecipient($event)'
+                                         (selectChatRoomEvent)='chatRoomSelect = $event'
+                                         (selectGroupChatEvent)='selectGroupChat($event)'></app-chatroom-list-component>
           </div>
           <div
             class='grow w-[80%] min-w-[80%] p-2'>
-            <app-chatroom-conversation-component [recipientImport]='recipient'></app-chatroom-conversation-component>
+            <ng-container *ngIf='chatRoomSelect'>
+              <ng-container *ngIf='chatRoomSelect.isGroup else userMessage'>
+                <ng-container *ngIf='chatRoomSelect.groupChat'>
+                  <app-group-chat-conversation-component
+                    [selectChatroom]='chatRoomSelect'></app-group-chat-conversation-component>
+                </ng-container>
+              </ng-container>
+              <ng-template #userMessage>
+                <ng-container *ngIf='chatRoomSelect.message'>
+                  <app-user-conversation-component
+                    *ngrxLet='chatRoomSelect.message.senderUsername === user.username ? chatRoomSelect.message.recipientUsername : chatRoomSelect.message.senderUsername as recipient'
+                    [recipientImport]='recipient'></app-user-conversation-component>
+                </ng-container>
+              </ng-template>
+            </ng-container>
             <!--<div *ngIf='conversationMessages$ | async as conversationMessages'
                  class='flex flex-col items-center content-center'>
               &lt;!&ndash;            <h1 mat-dialog-title>{{recipient}}</h1>&ndash;&gt;
