@@ -47,7 +47,7 @@ public class GetGroupChatsDataEndpoint : EndpointWithoutRequest<ManyGroupChatsDa
 
         var groupChatIds = await _mediator.Send(new GetGroupChatIdsQuery(appUser), ct);
         var groupChats = await _mediator.Send(new GetGroupChatsQuery(appUser), ct);
-        var members = await _mediator.Send(new GetGroupChatMembersQuery(appUser, groupChatIds), ct);
+        var members = await _mediator.Send(new GetGroupChatMembersQuery(groupChatIds), ct);
         var messages = await _mediator.Send(new GetGroupChatMessagesQuery(appUser, groupChatIds), ct);
 
 

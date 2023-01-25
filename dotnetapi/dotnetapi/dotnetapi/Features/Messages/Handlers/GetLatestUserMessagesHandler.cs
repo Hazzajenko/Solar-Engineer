@@ -30,11 +30,14 @@ public class
                         x.RecipientUsername == request.AppUser.UserName!)
             .Include(x => x.Sender)
             .Include(x => x.Recipient)
+            // .OrderBy(x => x.MessageSentTime)
             .GroupBy(x => x.Sender.UserName == request.AppUser.UserName ? x.Recipient.UserName : x.Sender.UserName)
+
+            // .OrderBy(x => x.Select(x => x.MessageSentTime))
             .Select(x => new LatestUserMessageDto
             {
                 Username = x.Key!,
-                Message = x.OrderBy(o => o.MessageSentTime)
+                Message = x.OrderByDescending(o => o.MessageSentTime)
                     .Select(y => y.ToDto())
                     .SingleOrDefault()
             })

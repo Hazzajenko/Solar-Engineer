@@ -1,4 +1,5 @@
-﻿using dotnetapi.Features.GroupChats.Services;
+﻿using dotnetapi.Features.GroupChats.Handlers;
+using dotnetapi.Features.GroupChats.Services;
 using dotnetapi.Features.Messages.Contracts.Requests;
 using dotnetapi.Features.Messages.Contracts.Responses;
 using dotnetapi.Features.Messages.Handlers;
@@ -72,9 +73,16 @@ public class SendMessageToGroupChatEndpoint : Endpoint<SendGroupChatMessageReque
 
         var groupChatMessage = request.ToEntity(user, appUserGroupChat.GroupChat);
 
-        var addMessage = await _mediator.Send(new SendMessageToGroupChatQuery(groupChatMessage), ct);
-        // var addMessage = await _messagesRepository.SendMessageToGroupChatAsync(groupChatMessage);
 
+        var addMessage = await _messagesRepository.SendMessageToGroupChatAsync(groupChatMessage);
+
+        var groupChatMemberDtos = await _mediator.Send(new GetGroupChatMembersByIdQuery(request.GroupChatId), ct);
+        var groupChatUsers = groupChatMemberDtos.Select(x => x.Username).ToArray();
+        // var groupChatMemberDtos = await _groupChatsRepository.GetGroupChatMembersAsync(request.GroupChatId);
+        var res = await _mediator.Send(new SendMessageToGroupChatSignalRQuery(groupChatMessage.ToDto(), groupChatUsers),
+            ct);
+        // var chatMemberDtos = groupChatMemberDtos.ToList();
+        // var addMessage2 = _mediator.CreateStream(new SendMessageToGroupChatSignalRQuery(groupChatMessage), ct);
 
         var response = new GroupChatMessageResponse
         {

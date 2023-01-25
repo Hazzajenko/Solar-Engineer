@@ -22,6 +22,7 @@ import {
   GroupChatMessageModel,
   MessageModel,
 } from '@shared/data-access/models'
+import { orderBy, sortBy } from 'lodash'
 
 @Injectable({
   providedIn: 'root',
@@ -66,7 +67,6 @@ export class GroupChatsFacade {
               map((members) => members.filter((member) => member.groupChatId === groupChat.id)),
             )
             const groupMessages = this.messages$.pipe(
-              map((messages) => messages.filter((message) => message.groupChatId === groupChat.id)),
               map((messages) =>
                 messages.sort(
                   (a: GroupChatMessageModel, b: GroupChatMessageModel) =>
@@ -75,7 +75,28 @@ export class GroupChatsFacade {
               ),
               take(1),
             )
-            const latestSentMessage = groupMessages.pipe(map((messages) => messages[0]))
+            const latestSentMessage = groupMessages.pipe(
+              map((messages) => messages[0]),
+              /*                  messages.sort(
+                                  (a: GroupChatMessageModel, b: GroupChatMessageModel) =>
+                                    new Date(b.messageSentTime).getTime() - new Date(a.messageSentTime).getTime(),
+                                ),*/
+
+              // sort
+              take(1),
+            )
+            /*            const latestSentMessage = groupMessages.pipe(
+                          // map((messages) => messages.filter((message) => message.groupChatId === groupChat.id)),
+                          map(
+                            (messages) => messages[0],
+                            /!*                messages.sort(
+                                              (a: GroupChatMessageModel, b: GroupChatMessageModel) =>
+                                                new Date(b.messageSentTime).getTime() - new Date(a.messageSentTime).getTime(),
+                                            ),*!/
+                          ),
+                          // take(1),
+                        )*/
+            // const latestSentMessage = groupMessages.pipe(map((messages) => messages))
             const latestSentMessageTime = latestSentMessage.pipe(
               map((message) => message.messageSentTime),
             )
@@ -91,12 +112,12 @@ export class GroupChatsFacade {
             ]).pipe(
               map(
                 ([
-                  groupChat,
-                  groupMembers,
-                  groupMessages,
-                  latestSentMessage,
-                  latestSentMessageTime,
-                ]) => {
+                   groupChat,
+                   groupMembers,
+                   groupMessages,
+                   latestSentMessage,
+                   latestSentMessageTime,
+                 ]) => {
                   return {
                     ...groupChat,
                     latestSentMessage,
@@ -168,12 +189,12 @@ export class GroupChatsFacade {
         ]).pipe(
           map(
             ([
-              groupChat,
-              groupMembers,
-              groupMessages,
-              latestSentMessage,
-              latestSentMessageTime,
-            ]) => {
+               groupChat,
+               groupMembers,
+               groupMessages,
+               latestSentMessage,
+               latestSentMessageTime,
+             ]) => {
               return {
                 ...groupChat,
                 latestSentMessage,

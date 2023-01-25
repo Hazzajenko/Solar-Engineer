@@ -57,6 +57,9 @@ import { ScrollViewportDirective } from '../../../../../messages/src/lib/feature
 import { SortConversationMessagesPipe } from '../../../../../messages/src/lib/feature/conversation/sort-conversation-messages.pipe'
 import { GroupChatsStoreService } from '@app/data-access/group-chats'
 import { ChatroomsService } from '../chatrooms.service'
+import { combineLatest } from 'rxjs/internal/operators/combineLatest'
+import { ChatroomSearchModel } from '../chatroom-search.model'
+import { SortChatroomsPipe } from './sort-chatrooms.pipe'
 
 @Component({
   selector: 'app-chatroom-list-component',
@@ -104,6 +107,7 @@ import { ChatroomsService } from '../chatrooms.service'
     ConversationMessageDirective,
     SortConversationMessagesPipe,
     MatAutocompleteModule,
+    SortChatroomsPipe,
   ],
   standalone: true,
 })
@@ -148,6 +152,7 @@ export class ChatroomListComponent implements OnInit {
   private chatroomsService = inject(ChatroomsService)
   chatrooms$: Observable<MessageTimeSortModel[]> =
     this.chatroomsService.getCombinedUserMessagesAndGroupChats$()
+  chatRoomSearchData$: Observable<ChatroomSearchModel[]> = this.chatroomsService.chatRoomSearchData$
   private dialog = inject(MatDialog)
   private router = inject(Router)
   private route = inject(ActivatedRoute)
@@ -155,23 +160,32 @@ export class ChatroomListComponent implements OnInit {
 
   firstMessageSenders$ = this.user$.pipe(
     map((user) => user?.username),
-    switchMap(
-      (username) =>
-        this.messages$.pipe(
-          map((messages) =>
-            messages?.map((message) => {
-              if (message.senderUsername !== username) {
-                return message.senderUsername
-              }
-              return message.recipientUsername
-            }),
-          ),
-        ) /*.pipe(
-      map(firstSenders => {
-        const
-      }
-      )
-    )*/,
+    /*    switchMap(
+          (username) =>
+            combineLatest(
+              this.messages$.pipe(
+                map((messages) =>
+                  messages?.map((message) => {
+                    if (message.senderUsername !== username) {
+                      return message.senderUsername
+                    }
+                    return message.recipientUsername
+                  }),
+                ),
+              ),
+            )
+        ),*/
+    switchMap((username) =>
+      this.messages$.pipe(
+        map((messages) =>
+          messages?.map((message) => {
+            if (message.senderUsername !== username) {
+              return message.senderUsername
+            }
+            return message.recipientUsername
+          }),
+        ),
+      ),
     ),
   )
   isDialog$ = this.route.url.pipe(
@@ -196,6 +210,7 @@ export class ChatroomListComponent implements OnInit {
     this.groupChatsStore.select.groupChatsWithLatestMessage$.subscribe((res) =>
       console.log('RESRES', res),
     )
+    this.chatrooms$.subscribe((res) => console.log('chatrooms$', res))
 
     // const state = this.dialogRef.getState()
     // const state = this.dialogRef._containerInstance.()
@@ -209,15 +224,27 @@ export class ChatroomListComponent implements OnInit {
         }*/
   }
 
+  chatTrackBy(index: number, chatRoom: MessageTimeSortModel) {
+    if (chatRoom.isGroup && chatRoom.groupChat) {
+      return chatRoom.groupChat?.id
+    }
+    if (!chatRoom.isGroup && chatRoom.message) {
+      return chatRoom.message?.id
+    }
+    return chatRoom.groupChat?.id ? chatRoom.groupChat.id : chatRoom.message?.id
+  }
+
   ngOnInit(): void {
     console.log()
     this.filteredMessages$ = this.control.valueChanges.pipe(
       startWith(''),
-      switchMap((value) => this._filter2(value || '')),
+      switchMap((value) => this._filter3(value || '')),
+      // switchMap((value) => this._filter2(value || '')),
     )
     this.filteredMessages$.subscribe((res) => console.log(res))
     this.groupChats$.subscribe((res) => console.log('GROUPCHATS', res))
     this.chatrooms$.subscribe((res) => console.log('chatrooms$', res))
+    this.messagesStore.select.messagesData$.subscribe((res) => console.log('messagesData$', res))
     /*    if (!this.route.snapshot.data) return
         this.containerHeight = ((this.route.snapshot.data as any).windowSize as WindowSizeModel).innerHeight
         console.log(this.containerHeight)
@@ -433,6 +460,18 @@ export class ChatroomListComponent implements OnInit {
 
     return this.firstMessageSenders$.pipe(
       map((usernames) => usernames?.filter((option) => option.toLowerCase().includes(filterValue))),
+    )
+  }
+
+  private _filter3(query: string): Observable<string[] | undefined> {
+    const filterValue = query.toLowerCase()
+
+    return this.chatRoomSearchData$.pipe(
+      map((data) =>
+        data
+          .filter((search) => search.chatRoomName.toLowerCase().includes(filterValue))
+          .map((results) => results.chatRoomName),
+      ),
     )
   }
 

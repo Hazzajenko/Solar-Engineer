@@ -55,7 +55,7 @@
               <!--          [ngStyle]='{"background-color": notification.status === 0 ? "#60a1fa" : ""}'-->
               <!--            messages | sortMessages : false'-->
               <!--            [message]='message'-->
-              <mat-list-option *cdkVirtualFor='let chatroom of chatrooms'
+              <mat-list-option *cdkVirtualFor='let chatroom of chatrooms | sortChatrooms'
                                [selectedMessage]='selectedMessage'
                                [value]='chatroom'
                                appMessageDirective>
@@ -63,10 +63,11 @@
                 <ng-container *ngIf='chatroom.isGroup else userMessage'>
                   <span
                     matListItemTitle>{{chatroom.groupChat.name}}</span>
-                  <span matListItemLine>{{chatroom.groupChat.latestSentMessage.messageSentTime | date : 'short'}}</span>
+                  <span
+                    matListItemLine>{{chatroom.groupChat.latestSentMessage?.messageSentTime | date : 'short'}}</span>
                   <p
                     matListItemLine>
-                    {{chatroom.groupChat.latestSentMessage.senderUsername === user.username ? 'You:' : chatroom.groupChat.latestSentMessage.senderUsername + ':'}} {{chatroom.groupChat.latestSentMessage.content}}
+                    {{chatroom.groupChat.latestSentMessage?.senderUsername === user.username ? 'You:' : chatroom.groupChat.latestSentMessage?.senderUsername + ':'}} {{chatroom.groupChat.latestSentMessage?.content}}
                   </p>
                 </ng-container>
                 <ng-template #userMessage>

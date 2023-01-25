@@ -6,28 +6,27 @@ using Microsoft.EntityFrameworkCore;
 
 namespace dotnetapi.Features.GroupChats.Handlers;
 
-public sealed record GetGroupChatMembersQuery
-    (IEnumerable<int> GroupChatIds) : IRequest<IEnumerable<GroupChatMemberDto>>;
+public sealed record GetGroupChatMembersByIdQuery
+    (int GroupChatId) : IRequest<IEnumerable<GroupChatMemberDto>>;
 
-public class GetGroupChatMembersHandler : IRequestHandler<GetGroupChatMembersQuery, IEnumerable<GroupChatMemberDto>>
+public class
+    GetGroupChatMembersByIdHandler : IRequestHandler<GetGroupChatMembersByIdQuery, IEnumerable<GroupChatMemberDto>>
 {
-    private readonly ILogger<GetGroupChatMembersHandler> _logger;
     private readonly IServiceScopeFactory _scopeFactory;
 
-    public GetGroupChatMembersHandler(IServiceScopeFactory scopeFactory, ILogger<GetGroupChatMembersHandler> logger)
+    public GetGroupChatMembersByIdHandler(IServiceScopeFactory scopeFactory)
     {
         _scopeFactory = scopeFactory;
-        _logger = logger;
     }
 
     public async ValueTask<IEnumerable<GroupChatMemberDto>>
-        Handle(GetGroupChatMembersQuery request, CancellationToken cT)
+        Handle(GetGroupChatMembersByIdQuery request, CancellationToken cT)
     {
         using var scope = _scopeFactory.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<DataContext>();
 
         return await db.GroupChats
-            .Where(x => request.GroupChatIds.Contains(x.Id))
+            .Where(x => x.Id == request.GroupChatId)
             .Include(x => x.AppUserGroupChats)
             .ThenInclude(x => x.AppUser)
             .SelectMany(x => x.AppUserGroupChats)

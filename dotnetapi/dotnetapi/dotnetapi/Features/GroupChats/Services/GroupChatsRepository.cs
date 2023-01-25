@@ -45,8 +45,8 @@ public class GroupChatsRepository : IGroupChatsRepository
     public async Task<AppUserGroupChat?> GetAppUserGroupChatAsync(AppUser appUser, int groupChatId)
     {
         return await _context.AppUserGroupChats
-            .Where(x => x.AppUser.Id == appUser.Id)
-            .Where(x => x.GroupChatId == groupChatId)
+            .Where(x => x.AppUser.Id == appUser.Id && x.GroupChatId == groupChatId)
+            // .Where(x => x.GroupChatId == groupChatId)
             .Include(x => x.GroupChat)
             .SingleOrDefaultAsync();
     }

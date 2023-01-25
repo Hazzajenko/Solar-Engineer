@@ -98,6 +98,7 @@ public class MessagesHub : Hub
             .SingleOrDefaultAsync();
         if (appUser is null) throw new HubException("appUser is null");
 
+        // var appUserGroupChat = await _mediator.Send(new).GetAppUserGroupChatAsync(appUser, request.GroupChatId);
         var appUserGroupChat = await _groupChatsRepository.GetAppUserGroupChatAsync(appUser, request.GroupChatId);
         if (appUserGroupChat is null)
         {
@@ -105,7 +106,8 @@ public class MessagesHub : Hub
             throw new HubException("appUserGroupChat is invalid");
         }
 
-        var groupChatMemberDtos = await _groupChatsRepository.GetGroupChatMembersAsync(request.GroupChatId);
+        var groupChatMemberDtos = await _mediator.Send(new GetGroupChatMembersByIdQuery(request.GroupChatId));
+        // var groupChatMemberDtos = await _groupChatsRepository.GetGroupChatMembersAsync(request.GroupChatId);
 
         var chatMemberDtos = groupChatMemberDtos.ToList();
         var isUserInGroupChat = chatMemberDtos.FirstOrDefault(x => x.Username == appUser.UserName!);
@@ -117,6 +119,7 @@ public class MessagesHub : Hub
 
         var groupChatMessage = request.ToEntity(appUser, appUserGroupChat.GroupChat);
 
+        // var groupChatMessageDto = await _mediator.Send(new SendMessageToGroupChatQuery(groupChatMessage));
         var groupChatMessageDto = await _messagesRepository.SendMessageToGroupChatAsync(groupChatMessage);
 
         var groupChatUsers = chatMemberDtos.Select(x => x.Username).ToArray();
