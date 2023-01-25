@@ -33,7 +33,7 @@ export class ChatroomsService {
 
   getCombinedUserMessagesAndGroupChats$() {
     return combineLatest([
-      this.messagesStore.select.messagesData$,
+      this.messagesStore.select.messagesData2$,
       this.groupChatsStore.select.groupChatsWithLatestMessage$,
     ]).pipe(
       map(([messages, groupChats]) => {

@@ -13,7 +13,8 @@ export class LastMessageIdPipe implements PipeTransform {
       return new Date(b.messageSentTime).getTime() - new Date(a.messageSentTime).getTime()
     })
 
-    console.log(inOrder[0])
+    // console.log(inOrder[0])
+    
     return inOrder[0].id
   }
 }

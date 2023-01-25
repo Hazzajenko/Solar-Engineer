@@ -44,7 +44,7 @@ export class ConversationMessageDirective {
       // this.elRef.nativeElement.style.backgroundColor = '#60a1fa'
       this.elRef.nativeElement.style.flexDirection = 'row-reverse'
       this.elRef.nativeElement.style.boxRadius = '15px 15px 0px 15px'
-      console.log(this.elRef.nativeElement.style.boxRadius)
+      // console.log(this.elRef.nativeElement.style.boxRadius)
       // border-radius: 15px 50px 30px 5px;
       // this.elRef.nativeElement.style.justifyContent = 'flex-end'
       // this.elRef.nativeElement.style.textAlign = 'end'

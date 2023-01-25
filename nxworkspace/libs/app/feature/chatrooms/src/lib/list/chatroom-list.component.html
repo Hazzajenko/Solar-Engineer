@@ -2,6 +2,7 @@
   <ng-container *ngIf='messages$ | async as messages'>
     <ng-container *ngrxLet='isDialog$ | async as isDialog'>
       <ng-container *ngIf='chatrooms$ | async as chatrooms'>
+      <ng-container *ngIf='data$ | async'>
         <ng-container
           *ngrxLet='selectedMessage?.senderUsername === user.username ? selectedMessage?.recipientUsername : selectedMessage?.senderUsername as recipient'>
 

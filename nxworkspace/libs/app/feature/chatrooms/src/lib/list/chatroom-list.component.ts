@@ -52,9 +52,13 @@ import { filter, map, Observable, startWith, switchMap, take } from 'rxjs'
 
 import { MessageDirective } from '../../../../../messages/src/lib/feature/component/message.directive'
 import { SortMessagesPipe } from '../../../../../messages/src/lib/feature/component/sort-messages.pipe'
-import { ConversationMessageDirective } from '../../../../../messages/src/lib/feature/conversation/conversation-message.directive'
+import {
+  ConversationMessageDirective
+} from '../../../../../messages/src/lib/feature/conversation/conversation-message.directive'
 import { ScrollViewportDirective } from '../../../../../messages/src/lib/feature/conversation/scroll-viewport.directive'
-import { SortConversationMessagesPipe } from '../../../../../messages/src/lib/feature/conversation/sort-conversation-messages.pipe'
+import {
+  SortConversationMessagesPipe
+} from '../../../../../messages/src/lib/feature/conversation/sort-conversation-messages.pipe'
 import { GroupChatsStoreService } from '@app/data-access/group-chats'
 import { ChatroomsService } from '../chatrooms.service'
 import { combineLatest } from 'rxjs/internal/operators/combineLatest'
@@ -152,6 +156,10 @@ export class ChatroomListComponent implements OnInit {
   private chatroomsService = inject(ChatroomsService)
   chatrooms$: Observable<MessageTimeSortModel[]> =
     this.chatroomsService.getCombinedUserMessagesAndGroupChats$()
+  // messagesData2$
+
+  data$: Observable<any> =
+    this.messagesStore.select.messagesData2$
   chatRoomSearchData$: Observable<ChatroomSearchModel[]> = this.chatroomsService.chatRoomSearchData$
   private dialog = inject(MatDialog)
   private router = inject(Router)
