@@ -21,8 +21,7 @@ export class ConnectionsService {
   connectionId?: string
   onlineUsers$ = this.onlineUsersSource.asObservable()
 
-  constructor(private router: Router) {
-  }
+  constructor(private router: Router) {}
 
   createHubConnection(token: string) {
     this.hubConnection = new HubConnectionBuilder()
@@ -43,20 +42,20 @@ export class ConnectionsService {
                 duration: 5000,
               })
             })*/
-      .catch(err => console.log('Error while starting connection: ' + err))
+      .catch((err) => console.log('Error while starting connection: ' + err))
 
-    this.hubConnection.on('UserIsOnline', username => {
+    this.hubConnection.on('UserIsOnline', (connection: ConnectionModel) => {
       // this.onlineUsers$.pipe(take(1)).subscribe(usernames => {
       //   this.onlineUsersSource.next([...usernames, username])
       // })
-      this.connectionsStore.dispatch.addConnection(username)
+      this.connectionsStore.dispatch.addConnection(connection)
     })
 
-    this.hubConnection.on('UserIsOffline', username => {
+    this.hubConnection.on('UserIsOffline', (connection: ConnectionModel) => {
       // this.onlineUsers$.pipe(take(1)).subscribe(usernames => {
       //   this.onlineUsersSource.next([...usernames.filter(x => x !== username)])
       // })
-      this.connectionsStore.dispatch.removeConnection(username)
+      this.connectionsStore.dispatch.removeConnection(connection)
     })
 
     this.hubConnection.on('GetOnlineUsers', (connections: ConnectionModel[]) => {
@@ -93,7 +92,6 @@ export class ConnectionsService {
       // this.hubConnection.invoke('GetOnlineUsers').then(res => console.log(res))
     }*/
 
-
   startSuccess() {
     if (!this.hubConnection) return
     console.log('Connected.')
@@ -108,6 +106,6 @@ export class ConnectionsService {
 
   stopHubConnection() {
     if (!this.hubConnection) return
-    this.hubConnection.stop().catch(error => console.log(error))
+    this.hubConnection.stop().catch((error) => console.log(error))
   }
 }

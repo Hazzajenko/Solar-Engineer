@@ -34,6 +34,8 @@ public class DataContext : IdentityDbContext<AppUser, AppRole, int,
     public DbSet<Message> Messages { get; set; } = default!;
 
     public DbSet<GroupChatMessage> GroupChatMessages { get; set; } = default!;
+
+    public DbSet<GroupChatReadTime> GroupChatReadTimes { get; set; } = default!;
     // public DbSet<Notification> Notifications { get; set; } = default!;
 
     // public DbSet<FriendRequest> FriendRequests { get; set; } = default!;

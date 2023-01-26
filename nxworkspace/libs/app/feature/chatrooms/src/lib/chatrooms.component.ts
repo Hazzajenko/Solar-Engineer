@@ -55,6 +55,7 @@ import { SortConversationMessagesPipe } from '../../../../messages/src/lib/featu
 import { GroupChatConversationComponent } from './conversation/group-chat-conversation.component'
 import { ChatroomListComponent } from './list/chatroom-list.component'
 import { UserConversationComponent } from './conversation/user-conversation.component'
+import { ChangeChatRoomDirective } from './change-chatroom.directive'
 
 @Component({
   selector: 'app-chatrooms-component',
@@ -104,6 +105,7 @@ import { UserConversationComponent } from './conversation/user-conversation.comp
     ChatroomListComponent,
     GroupChatConversationComponent,
     UserConversationComponent,
+    ChangeChatRoomDirective,
   ],
   standalone: true,
 })

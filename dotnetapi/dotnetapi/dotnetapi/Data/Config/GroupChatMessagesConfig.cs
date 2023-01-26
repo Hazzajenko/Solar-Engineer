@@ -21,5 +21,12 @@ public class GroupChatMessagesConfig : IEntityTypeConfiguration<GroupChatMessage
             .HasForeignKey(x => x.SenderId)
             .OnDelete(DeleteBehavior.NoAction)
             .IsRequired();
+
+        builder
+            .HasMany(u => u.MessageReadTimes)
+            .WithOne(m => m.GroupChatMessage)
+            .HasForeignKey(x => x.GroupChatMessageId)
+            .OnDelete(DeleteBehavior.NoAction)
+            .IsRequired();
     }
 }

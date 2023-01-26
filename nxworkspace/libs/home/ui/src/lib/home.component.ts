@@ -49,7 +49,6 @@ import { fadeIn, fadeInV2 } from './animations/animations'
   animations: [fadeIn, fadeInV2],
 })
 export class HomeComponent implements OnInit {
-
   // user$: Observable<UserModel | undefined> = inject(AuthFacade).user$
   fade = false
   showProjects = false
@@ -69,7 +68,14 @@ export class HomeComponent implements OnInit {
   routerEvents$ = this.router.events
 
   ngOnInit(): void {
-    this.connectionsService.onlineUsers$.subscribe(res => console.log(res))
+    this.connectionsService.onlineUsers$.subscribe((res) => console.log(res))
+  }
+
+  loginDevBot() {
+    this.authStore.dispatch.init({
+      username: 'postmantest',
+      password: 'PostmanTest1',
+    })
   }
 
   async authenticate(login: boolean) {
@@ -104,7 +110,6 @@ export class HomeComponent implements OnInit {
     if (user) {
       this.dialog.closeAll()
     }
-
 
     /*    // const dialog = this.dialog.open(ProfileComponent)
         const result = await firstValueFrom(dialog.afterClosed())
@@ -144,7 +149,6 @@ export class HomeComponent implements OnInit {
     if (routerEvents instanceof NavigationStart) {
       console.log(true)
       return true
-
     }
     console.log(false)
     return false

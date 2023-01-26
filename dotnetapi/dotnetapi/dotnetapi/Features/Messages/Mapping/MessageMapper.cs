@@ -19,7 +19,7 @@ public static class MessageMapper
         };
     }
 
-    public static MessageDto ToDto(this Message request)
+    public static MessageDto ToDto(this Message request, AppUser appUser)
     {
         return new MessageDto
         {
@@ -29,11 +29,12 @@ public static class MessageMapper
             MessageSentTime = request.MessageSentTime,
             RecipientUsername = request.RecipientUsername,
             SenderUsername = request.SenderUsername,
-            Status = request.Status
+            Status = request.Status,
+            IsUserSender = appUser.UserName! == request.SenderUsername!
         };
     }
 
-    public static GroupChatMessageDto ToDto(this GroupChatMessage request)
+    public static GroupChatMessageDto ToDto(this GroupChatMessage request, AppUser appUser)
     {
         return new GroupChatMessageDto
         {
@@ -42,7 +43,8 @@ public static class MessageMapper
             SenderUsername = request.Sender.UserName!,
             MessageSentTime = request.MessageSentTime,
             GroupChatId = request.GroupChatId,
-            MessageReadTimes = request.MessageReadTimes.Select(x => x.ToDto())
+            MessageReadTimes = request.MessageReadTimes.Select(x => x.ToDto()),
+            IsUserSender = appUser.UserName! == request.Sender.UserName!
         };
     }
 

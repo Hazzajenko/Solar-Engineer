@@ -5,7 +5,6 @@ import { combineLatest, combineLatestWith, map, mergeAll, Observable, switchMap,
 import { GroupChatMessageModel, MessageTimeSortModel } from '@shared/data-access/models'
 import { AuthStoreService } from '@auth/data-access/facades'
 import { ChatroomSearchModel } from './chatroom-search.model'
-import * as _ from 'lodash'
 
 @Injectable({
   providedIn: 'root',
@@ -31,14 +30,12 @@ export class ChatroomsService {
     ),
   )
 
-  getCombinedUserMessagesAndGroupChats$() {
+  get combinedUserMessagesAndGroupChats$() {
     return combineLatest([
       this.messagesStore.select.messagesData2$,
       this.groupChatsStore.select.groupChatsWithLatestMessage$,
     ]).pipe(
       map(([messages, groupChats]) => {
-        console.log(messages)
-        // const latestGroupChatMessages = groupChats.map(groupChat => groupChat.latestSentMessage)
         const latestGroupChatMessages = [...groupChats].map((groupChat) => {
           return {
             isGroup: true,
@@ -58,18 +55,6 @@ export class ChatroomsService {
         const combined = latestGroupChatMessages.concat(
           latestUserMessages ? latestUserMessages : [],
         )
-        const yo = _.sortBy(combined, (x) => x.latestSentMessageTime)
-        const yo2 = _.orderBy(combined, [(x) => x.latestSentMessageTime], ['asc'])
-        // _.orderBy(
-        //
-        // )
-        // return _.orderBy(combined, [(x) => x.latestSentMessageTime], ['desc'])
-        console.log(yo)
-        console.log(yo2)
-        // console.log(yo3)
-
-        // _.sor
-        // sort(combined).asc([(dog) => dog.breed, (dog) => dog.name])
 
         return combined.sort(
           (a: MessageTimeSortModel, b: MessageTimeSortModel) =>
@@ -77,6 +62,35 @@ export class ChatroomsService {
             new Date(a.latestSentMessageTime).getTime(),
         )
       }),
+    )
+  }
+
+  get chatRoomSearchData$2(): Observable<ChatroomSearchModel[]> {
+    return this.combinedUserMessagesAndGroupChats$.pipe(
+      combineLatestWith(this.authStore.select.user$),
+      map(([chatRooms, user]) =>
+        chatRooms.map((chatroom) => {
+          if (chatroom.isGroup) {
+            return {
+              isGroup: true,
+              chatRoomName: chatroom.groupChat?.name,
+              lastMessageTime: chatroom.groupChat?.latestSentMessageTime,
+            } as ChatroomSearchModel
+          }
+          if (chatroom.message?.senderUsername !== user?.username) {
+            return {
+              isGroup: false,
+              chatRoomName: chatroom.message?.senderUsername,
+              lastMessageTime: chatroom.message?.messageSentTime,
+            } as ChatroomSearchModel
+          }
+          return {
+            isGroup: false,
+            chatRoomName: chatroom.message?.recipientUsername,
+            lastMessageTime: chatroom.message?.messageSentTime,
+          } as ChatroomSearchModel
+        }),
+      ),
     )
   }
 
@@ -108,24 +122,21 @@ export class ChatroomsService {
               groupChats.map((groupChat) =>
                 this.groupChatsStore.select.messages$.pipe(
                   map((messages) =>
-                    messages.filter((message) => message.groupChatId === groupChat.id),
-                  ),
-                  map((messages) =>
-                    messages.sort(
-                      (a: GroupChatMessageModel, b: GroupChatMessageModel) =>
-                        new Date(b.messageSentTime).getTime() -
-                        new Date(a.messageSentTime).getTime(),
-                    ),
-                  ),
-                  map((messages) =>
-                    messages.map(
-                      () =>
-                        ({
-                          isGroup: true,
-                          chatRoomName: groupChat.name,
-                          lastMessageTime: messages[0].messageSentTime,
-                        } as ChatroomSearchModel),
-                    ),
+                    messages
+                      .filter((message) => message.groupChatId === groupChat.id)
+                      .sort(
+                        (a: GroupChatMessageModel, b: GroupChatMessageModel) =>
+                          new Date(b.messageSentTime).getTime() -
+                          new Date(a.messageSentTime).getTime(),
+                      )
+                      .map(
+                        () =>
+                          ({
+                            isGroup: true,
+                            chatRoomName: groupChat.name,
+                            lastMessageTime: messages[0].messageSentTime,
+                          } as ChatroomSearchModel),
+                      ),
                   ),
                   take(1),
                 ),
@@ -138,7 +149,6 @@ export class ChatroomsService {
           combineLatestWith(groupChatMessages),
           map(([userMessages, groupChatMessages]) => userMessages.concat(groupChatMessages)),
         )
-        // return combineLatest([userMessages, groupChatMessages])
       }),
     )
   }

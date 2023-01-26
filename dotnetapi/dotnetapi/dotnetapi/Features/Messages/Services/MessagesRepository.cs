@@ -20,9 +20,12 @@ public interface IMessagesRepository
     Task<IEnumerable<MessageDto>> GetUserMessagesAsync(AppUser appUser,
         AppUser recipientUser);
 
-    Task<GroupChatMessageDto> SendMessageToGroupChatAsync(GroupChatMessage message);
-    Task<IEnumerable<GroupChatMessageDto>?> GetGroupChatMessagesAsync(int groupChatId);
+    Task<GroupChatMessageDto> SendMessageToGroupChatAsync(GroupChatMessage message, AppUser appUser);
+    Task<IEnumerable<GroupChatMessageDto>?> GetGroupChatMessagesAsync(int groupChatId, AppUser appUser);
     Task<bool> MarkAllGroupChatMessagesReadByUser(UpdateManyGroupChatMessagesRequest request, AppUser appUser);
+
+    Task<bool> MarkAllGroupChatMessagesReadByUserAsync(List<int> messageIds,
+        AppUser appUser);
 }
 
 public class MessagesRepository : IMessagesRepository
@@ -62,13 +65,13 @@ public class MessagesRepository : IMessagesRepository
         var messagesSent = await _context.Messages
             .Where(x => x.SenderUsername == appUser.UserName!)
             .Include(x => x.Recipient)
-            .Select(x => x.ToDto())
+            .Select(x => x.ToDto(appUser))
             .ToListAsync();
 
         var messagesReceived = await _context.Messages
             .Where(x => x.RecipientUsername == appUser.UserName!)
             .Include(x => x.Sender)
-            .Select(x => x.ToDto())
+            .Select(x => x.ToDto(appUser))
             .ToListAsync();
 
         messagesSent.AddRange(messagesReceived);
@@ -92,13 +95,13 @@ public class MessagesRepository : IMessagesRepository
                 return await _context.Messages
                     .Where(x => x.SenderUsername == appUser.UserName!)
                     .Include(x => x.Recipient)
-                    .Select(x => x.ToDto())
+                    .Select(x => x.ToDto(appUser))
                     .ToListAsync();
             case MessageFilter.Received:
                 return await _context.Messages
                     .Where(x => x.RecipientUsername == appUser.UserName!)
                     .Include(x => x.Sender)
-                    .Select(x => x.ToDto())
+                    .Select(x => x.ToDto(appUser))
                     .ToListAsync();
             default:
                 return await GetMessageDtosAsync(appUser);
@@ -132,11 +135,11 @@ public class MessagesRepository : IMessagesRepository
             )
             .MarkUnreadAsRead(appUser.UserName!)
             .OrderBy(m => m.MessageSentTime)
-            .Select(x => x.ToDto())
+            .Select(x => x.ToDto(appUser))
             .ToListAsync();
     }
 
-    public async Task<IEnumerable<GroupChatMessageDto>?> GetGroupChatMessagesAsync(int groupChatId)
+    public async Task<IEnumerable<GroupChatMessageDto>?> GetGroupChatMessagesAsync(int groupChatId, AppUser appUser)
     {
         return await _context.GroupChats
             .Where(m => m.Id == groupChatId)
@@ -146,7 +149,7 @@ public class MessagesRepository : IMessagesRepository
             .ThenInclude(x => x.MessageReadTimes)
             .Select(x => x.GroupChatMessages
                 .OrderBy(groupChatMessage => groupChatMessage.MessageSentTime)
-                .Select(groupChatMessage => groupChatMessage.ToDto())
+                .Select(groupChatMessage => groupChatMessage.ToDto(appUser))
             )
             .SingleOrDefaultAsync();
     }
@@ -166,6 +169,7 @@ public class MessagesRepository : IMessagesRepository
             readTimes.Add(new GroupChatReadTime
             {
                 AppUser = appUser,
+                GroupChatMessage = groupChatMessage,
                 MessageReadTime = DateTime.Now
             });
         }
@@ -174,10 +178,43 @@ public class MessagesRepository : IMessagesRepository
         return res > 0;
     }
 
-    public async Task<GroupChatMessageDto> SendMessageToGroupChatAsync(GroupChatMessage message)
+    public async Task<bool> MarkAllGroupChatMessagesReadByUserAsync(List<int> messageIds,
+        AppUser appUser)
+    {
+        var messages = await _context.GroupChatMessages
+            .Where(x => messageIds.Contains(x.Id))
+            .Include(x => x.MessageReadTimes)
+            .ToListAsync();
+
+        foreach (var groupChatMessage in messages)
+        {
+            var readTimes = groupChatMessage.MessageReadTimes.ToList();
+            var hasUserAlreadyRead = readTimes.SingleOrDefault(x => x.AppUserId == appUser.Id);
+            if (hasUserAlreadyRead is not null) continue;
+            var newReadTime = new GroupChatReadTime
+            {
+                AppUser = appUser,
+                GroupChatMessage = groupChatMessage,
+                MessageReadTime = DateTime.Now
+            };
+            /*readTimes.Add(new GroupChatReadTime
+            {
+                AppUser = appUser,
+                GroupChatMessage = groupChatMessage,
+                MessageReadTime = DateTime.Now
+            });*/
+            await _context.GroupChatReadTimes.AddAsync(newReadTime);
+        }
+
+        var res = await _context.SaveChangesAsync();
+        return res > 0;
+    }
+
+
+    public async Task<GroupChatMessageDto> SendMessageToGroupChatAsync(GroupChatMessage message, AppUser appUser)
     {
         await _context.GroupChatMessages.AddAsync(message);
         await _context.SaveChangesAsync();
-        return message.ToDto();
+        return message.ToDto(appUser);
     }
 }

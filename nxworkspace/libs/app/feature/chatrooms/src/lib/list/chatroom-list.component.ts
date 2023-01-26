@@ -48,22 +48,19 @@ import {
 } from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
-import { filter, map, Observable, startWith, switchMap, take } from 'rxjs'
+import { combineLatestWith, filter, map, Observable, startWith, switchMap, take } from 'rxjs'
 
 import { MessageDirective } from '../../../../../messages/src/lib/feature/component/message.directive'
 import { SortMessagesPipe } from '../../../../../messages/src/lib/feature/component/sort-messages.pipe'
-import {
-  ConversationMessageDirective
-} from '../../../../../messages/src/lib/feature/conversation/conversation-message.directive'
+import { ConversationMessageDirective } from '../../../../../messages/src/lib/feature/conversation/conversation-message.directive'
 import { ScrollViewportDirective } from '../../../../../messages/src/lib/feature/conversation/scroll-viewport.directive'
-import {
-  SortConversationMessagesPipe
-} from '../../../../../messages/src/lib/feature/conversation/sort-conversation-messages.pipe'
+import { SortConversationMessagesPipe } from '../../../../../messages/src/lib/feature/conversation/sort-conversation-messages.pipe'
 import { GroupChatsStoreService } from '@app/data-access/group-chats'
 import { ChatroomsService } from '../chatrooms.service'
 import { combineLatest } from 'rxjs/internal/operators/combineLatest'
 import { ChatroomSearchModel } from '../chatroom-search.model'
 import { SortChatroomsPipe } from './sort-chatrooms.pipe'
+import { RemovePrefixPipe } from './remove-prefix.pipe'
 
 @Component({
   selector: 'app-chatroom-list-component',
@@ -112,6 +109,7 @@ import { SortChatroomsPipe } from './sort-chatrooms.pipe'
     SortConversationMessagesPipe,
     MatAutocompleteModule,
     SortChatroomsPipe,
+    RemovePrefixPipe,
   ],
   standalone: true,
 })
@@ -155,12 +153,13 @@ export class ChatroomListComponent implements OnInit {
   user$: Observable<UserModel | undefined> = this.authStore.select.user$
   private chatroomsService = inject(ChatroomsService)
   chatrooms$: Observable<MessageTimeSortModel[]> =
-    this.chatroomsService.getCombinedUserMessagesAndGroupChats$()
+    this.chatroomsService.combinedUserMessagesAndGroupChats$
+
   // messagesData2$
 
-  data$: Observable<any> =
-    this.messagesStore.select.messagesData2$
-  chatRoomSearchData$: Observable<ChatroomSearchModel[]> = this.chatroomsService.chatRoomSearchData$
+  data$: Observable<any> = this.messagesStore.select.messagesData2$
+  chatRoomSearchData$: Observable<ChatroomSearchModel[]> =
+    this.chatroomsService.chatRoomSearchData$2
   private dialog = inject(MatDialog)
   private router = inject(Router)
   private route = inject(ActivatedRoute)
@@ -212,14 +211,14 @@ export class ChatroomListComponent implements OnInit {
     /*    this.messagesStore.select.firstMessageOfEveryConversation$().subscribe(res => console.log(res))
         this.route.url.subscribe(res => console.log(res))
         console.log(this.route.snapshot.data)*/
-
-    this.isDialog$.subscribe((res) => console.log(res))
-    this.firstMessageSenders$.subscribe((res) => console.log(res))
-    this.groupChatsStore.select.groupChatsWithLatestMessage$.subscribe((res) =>
-      console.log('RESRES', res),
-    )
-    this.chatrooms$.subscribe((res) => console.log('chatrooms$', res))
-
+    /*
+        this.isDialog$.subscribe((res) => console.log(res))
+        this.firstMessageSenders$.subscribe((res) => console.log(res))
+        this.groupChatsStore.select.groupChatsWithLatestMessage$.subscribe((res) =>
+          console.log('RESRES', res),
+        )
+        this.chatrooms$.subscribe((res) => console.log('chatrooms$', res))
+    */
     // const state = this.dialogRef.getState()
     // const state = this.dialogRef._containerInstance.()
     // const state = this.dialogRef.getState()
@@ -249,10 +248,10 @@ export class ChatroomListComponent implements OnInit {
       switchMap((value) => this._filter3(value || '')),
       // switchMap((value) => this._filter2(value || '')),
     )
-    this.filteredMessages$.subscribe((res) => console.log(res))
-    this.groupChats$.subscribe((res) => console.log('GROUPCHATS', res))
-    this.chatrooms$.subscribe((res) => console.log('chatrooms$', res))
-    this.messagesStore.select.messagesData$.subscribe((res) => console.log('messagesData$', res))
+    /*    this.filteredMessages$.subscribe((res) => console.log(res))
+        this.groupChats$.subscribe((res) => console.log('GROUPCHATS', res))
+        this.chatrooms$.subscribe((res) => console.log('chatrooms$', res))
+        this.messagesStore.select.messagesData$.subscribe((res) => console.log('messagesData$', res))*/
     /*    if (!this.route.snapshot.data) return
         this.containerHeight = ((this.route.snapshot.data as any).windowSize as WindowSizeModel).innerHeight
         console.log(this.containerHeight)
@@ -439,6 +438,63 @@ export class ChatroomListComponent implements OnInit {
   openConversationFromSearch(
     event: MatAutocompleteSelectedEvent,
     username: string,
+    searchData: ChatroomSearchModel[],
+    messages: MessageTimeSortModel[],
+  ) {
+    // console.log(event, username)
+    const chatroom = searchData.find((chatroom) => chatroom.chatRoomName === event.option.value)
+    if (!chatroom) return
+    if (chatroom.isGroup) {
+      const groupChat = messages.find(
+        (message) => message.groupChat?.name === chatroom.chatRoomName,
+      )
+      this.selectChatRoomEvent.emit(groupChat)
+      return
+    }
+    const userChat = messages.find(
+      (message) =>
+        message.message?.senderUsername ||
+        message.message?.recipientUsername === chatroom.chatRoomName,
+    )
+    this.selectChatRoomEvent.emit(userChat)
+    return
+    /*    const recipient =
+          chatroom?.message?.recipientUsername !== username
+            ? chatroom?.message?.recipientUsername
+            : chatroom?.message?.senderUsername
+
+        const chatroom = event.option.value as ChatroomSearchModel*/
+    // const isGroup = (event.option.value as string).slice(0, 5) === '[GRO]'
+    // if (isGroup) {
+    // }
+    /*    const msg = messages.find(
+          (msg) =>
+            (msg.message?.recipientUsername === chatroom.chatRoomName ||
+              msg.message?.senderUsername === chatroom.chatRoomName) &&
+            !msg.isGroup,
+        )
+        const recipient =
+          msg?.message?.recipientUsername !== username
+            ? msg?.message?.recipientUsername
+            : msg?.message?.senderUsername*/
+    // this.selectMessageEvent.emit((event.option.value as string).slice(5, event.option.value.length))
+    /*    this.recipient = event.option.value
+        if (!this.recipient) return
+        const message = messages.find(
+          (message) =>
+            message.recipientUsername === this.recipient || message.senderUsername === this.recipient,
+        )
+        if (!message) return
+        this.selectedMessage = message
+
+        this.selectMessageEvent.emit(this.recipient)
+        this.messagesStore.dispatch.initMessagesWithUser(this.recipient)
+        this.conversationMessages$ = this.messagesStore.select.messagesWithUser$(this.recipient)*/
+  }
+
+  openConversationFromSearch2(
+    event: MatAutocompleteSelectedEvent,
+    username: string,
     messages: MessageModel[],
   ) {
     console.log(event, username)
@@ -474,13 +530,47 @@ export class ChatroomListComponent implements OnInit {
   private _filter3(query: string): Observable<string[] | undefined> {
     const filterValue = query.toLowerCase()
 
-    return this.chatRoomSearchData$.pipe(
-      map((data) =>
-        data
-          .filter((search) => search.chatRoomName.toLowerCase().includes(filterValue))
-          .map((results) => results.chatRoomName),
+    /*   return this.chatrooms$.pipe(
+         combineLatestWith(this.user$),
+         map(([data, user]) =>
+           data
+
+             .filter((search) => {
+               if (search.isGroup) {
+                 return search.groupChat?.name.toLowerCase().includes(filterValue)
+               }
+               const messageName = search.message?.recipientUsername !== user?.username ? search.message?.recipientUsername : search.message?.senderUsername
+               return messageName?.toLowerCase().includes(filterValue)
+             })
+             // .filter((search) => search.chatRoomName.toLowerCase().includes(filterValue))
+
+
+             .map((results) => results.isGroup ? results.groupChat.name : results.message),
+         ),
+       )*/
+    // chatRoomSearchData$2
+
+    return this.chatroomsService.chatRoomSearchData$2.pipe(
+      map(
+        (data) =>
+          data
+            .filter((search) => search.chatRoomName.toLowerCase().includes(filterValue))
+            .map((results) => results.chatRoomName),
+        /*          .map((results) => {
+                    if (results.isGroup) {
+                      return `[GRO]${results.chatRoomName}`
+                    }
+                    return `[MES]${results.chatRoomName}`
+                  }),*/
       ),
     )
+    /*    return this.chatRoomSearchData$.pipe(
+          map((data) =>
+            data
+              .filter((search) => search.chatRoomName.toLowerCase().includes(filterValue))
+              .map((results) => results.chatRoomName),
+          ),
+        )*/
   }
 
   private _filter(value: string) {

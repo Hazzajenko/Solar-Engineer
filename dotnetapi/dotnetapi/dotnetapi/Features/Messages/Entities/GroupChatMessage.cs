@@ -20,5 +20,7 @@ public class GroupChatReadTime : BaseEntity
 {
     public int AppUserId { get; set; }
     public AppUser AppUser { get; set; } = default!;
+    public int GroupChatMessageId { get; set; }
+    public GroupChatMessage GroupChatMessage { get; set; } = default!;
     public DateTime MessageReadTime { get; set; }
 }

@@ -52,6 +52,7 @@ public static class ApplicationServiceExtensions
 
         services.AddDbContext<DataContext>(options =>
         {
+            options.EnableSensitiveDataLogging();
             string? connStr;
             // connStr = config.GetConnectionString("PostgresConnection") ?? throw new InvalidOperationException();
 

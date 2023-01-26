@@ -59,7 +59,7 @@ public class FriendsRepository : IFriendsRepository
         var app = await _context.AppUserFriends
             .Where(x => x.RequestedById == friend.Id)
             .Where(x => x.RequestedToId == user.Id)
-            .SingleOrDefaultAsync();
+            .FirstOrDefaultAsync();
 
         return app;
         /*await _context.AppUserFriends.AddAsync(request);

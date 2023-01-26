@@ -60,19 +60,20 @@
           <div
             class='grow w-[80%] min-w-[80%] p-2'>
             <ng-container *ngIf='chatRoomSelect'>
-              <ng-container *ngIf='chatRoomSelect.isGroup else userMessage'>
-                <ng-container *ngIf='chatRoomSelect.groupChat'>
-                  <app-group-chat-conversation-component
-                    [selectChatroom]='chatRoomSelect'></app-group-chat-conversation-component>
-                </ng-container>
-              </ng-container>
-              <ng-template #userMessage>
-                <ng-container *ngIf='chatRoomSelect.message'>
-                  <app-user-conversation-component
-                    *ngrxLet='chatRoomSelect.message.senderUsername === user.username ? chatRoomSelect.message.recipientUsername : chatRoomSelect.message.senderUsername as recipient'
-                    [recipientImport]='recipient'></app-user-conversation-component>
-                </ng-container>
-              </ng-template>
+              <ng-template appChangeChatRoom [chatRoom]='chatRoomSelect'></ng-template>
+              <!--         <ng-container *ngIf='chatRoomSelect.isGroup else userMessage'>
+                         <ng-container *ngIf='chatRoomSelect.groupChat'>
+                           <app-group-chat-conversation-component
+                             [selectChatroom]='chatRoomSelect'></app-group-chat-conversation-component>
+                         </ng-container>
+                       </ng-container>
+                       <ng-template #userMessage>
+                         <ng-container *ngIf='chatRoomSelect.message'>
+                           <app-user-conversation-component
+                             *ngrxLet='chatRoomSelect.message.senderUsername === user.username ? chatRoomSelect.message.recipientUsername : chatRoomSelect.message.senderUsername as recipient'
+                             [recipientImport]='recipient'></app-user-conversation-component>
+                         </ng-container>
+                       </ng-template>-->
             </ng-container>
             <!--<div *ngIf='conversationMessages$ | async as conversationMessages'
                  class='flex flex-col items-center content-center'>

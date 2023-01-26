@@ -38,6 +38,7 @@ import { Update } from '@ngrx/entity'
 
 import {
   GroupChatCombinedModel,
+  GroupChatMemberModel,
   GroupChatMessageModel,
   MessageModel,
   MessageTimeSortModel,
@@ -61,6 +62,8 @@ import { SelectChatroomModel } from '../select-chatroom.model'
 import { GroupChatsStoreService, SendGroupChatMessageRequest } from '@app/data-access/group-chats'
 import { SortGroupChatMessagesPipe } from './sort-group-chat-messages.pipe'
 import { LastGroupChatMessageIdPipe } from './last-group-chat-message-id.pipe'
+import { ExcludeUserFromSeenPipe } from './exclude-user-from-seen.pipe'
+import { IsMemberOnlinePipe } from './is-member-online.pipe'
 
 @Component({
   selector: 'app-group-chat-conversation-component',
@@ -133,6 +136,8 @@ import { LastGroupChatMessageIdPipe } from './last-group-chat-message-id.pipe'
     LastMessageIdPipe,
     SortGroupChatMessagesPipe,
     LastGroupChatMessageIdPipe,
+    ExcludeUserFromSeenPipe,
+    IsMemberOnlinePipe,
   ],
   standalone: true,
 })
@@ -150,6 +155,7 @@ export class GroupChatConversationComponent implements OnInit {
 
   groupChatCombined$!: Observable<GroupChatCombinedModel | undefined>
   groupChatMessages$!: Observable<GroupChatMessageModel[] | undefined>
+  groupChatMembers$!: Observable<GroupChatMemberModel[]>
   user$: Observable<UserModel | undefined> = this.authStore.select.user$
   selectedGroupChatMessage?: GroupChatMessageModel
   unreadFilter = false
@@ -171,6 +177,10 @@ export class GroupChatConversationComponent implements OnInit {
     this.groupChatMessages$ = this.groupChatsStore.select.groupChatMessagesById$(
       selectChatroom.groupChat.id,
     )
+    this.groupChatMembers$ = this.groupChatsStore.select.groupChatMembersById$(
+      selectChatroom.groupChat.id,
+    )
+
     // groupChatMessagesById$
     // this.groupChatCombined$.subscribe((res) => console.log(res))
     // this.isGroup = true

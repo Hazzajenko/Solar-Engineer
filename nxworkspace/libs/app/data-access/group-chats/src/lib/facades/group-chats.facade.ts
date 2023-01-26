@@ -4,6 +4,7 @@ import {
   catchError,
   combineLatest,
   EMPTY,
+  filter,
   firstValueFrom,
   forkJoin,
   of,
@@ -19,16 +20,19 @@ import {
 import { map } from 'rxjs/operators'
 import {
   GroupChatCombinedModel,
+  GroupChatMemberModel,
   GroupChatMessageModel,
   MessageModel,
 } from '@shared/data-access/models'
 import { orderBy, sortBy } from 'lodash'
+import { ConnectionsStoreService } from '@shared/data-access/connections'
 
 @Injectable({
   providedIn: 'root',
 })
 export class GroupChatsFacade {
   private store = inject(Store)
+  private connectionsStore = inject(ConnectionsStoreService)
 
   groupChats$ = this.store.select(GroupChatsSelectors.selectAllGroupChats)
   error$ = this.store.select(GroupChatsSelectors.selectGroupChatsError)
@@ -112,12 +116,12 @@ export class GroupChatsFacade {
             ]).pipe(
               map(
                 ([
-                   groupChat,
-                   groupMembers,
-                   groupMessages,
-                   latestSentMessage,
-                   latestSentMessageTime,
-                 ]) => {
+                  groupChat,
+                  groupMembers,
+                  groupMessages,
+                  latestSentMessage,
+                  latestSentMessageTime,
+                ]) => {
                   return {
                     ...groupChat,
                     latestSentMessage,
@@ -156,6 +160,37 @@ export class GroupChatsFacade {
     )
   }
 
+  groupChatMembersById$(groupChatId: number) {
+    return this.connectionsStore.select.connections$.pipe(
+      switchMap((connections) =>
+        this.members$.pipe(
+          map((members) =>
+            members
+              .filter((member) => member.groupChatId === groupChatId)
+              .map(
+                (member) =>
+                  ({
+                    ...member,
+                    isOnline: !!connections.find(
+                      (connection) => connection.username === member.username,
+                    ),
+                  } as GroupChatMemberModel),
+              ),
+          ),
+          tap((res) => console.log(res)),
+        ),
+      ),
+    ) /* this.messages$.pipe(
+      map((messages) => messages.filter((message) => message.groupChatId === groupChatId)),
+      /!*      map((messages) =>
+              messages.sort(
+                (a: GroupChatMessageModel, b: GroupChatMessageModel) =>
+                  new Date(a.messageSentTime).getTime() - new Date(b.messageSentTime).getTime(),
+              ),
+            ),*!/
+    )*/
+  }
+
   groupChatById$(groupChatId: number) {
     return this.groupChats$.pipe(
       map((groupChats) => groupChats.find((chat) => chat.id === groupChatId)),
@@ -189,12 +224,12 @@ export class GroupChatsFacade {
         ]).pipe(
           map(
             ([
-               groupChat,
-               groupMembers,
-               groupMessages,
-               latestSentMessage,
-               latestSentMessageTime,
-             ]) => {
+              groupChat,
+              groupMembers,
+              groupMessages,
+              latestSentMessage,
+              latestSentMessageTime,
+            ]) => {
               return {
                 ...groupChat,
                 latestSentMessage,

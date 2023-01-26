@@ -1,11 +1,13 @@
 ﻿using dotnetapi.Data;
 using dotnetapi.Features.Messages.Entities;
 using dotnetapi.Features.Messages.Mapping;
+using dotnetapi.Models.Entities;
 using Mediator;
 
 namespace dotnetapi.Features.Messages.Handlers;
 
-public sealed record SendMessageToGroupChatQuery(GroupChatMessage Message) : IRequest<GroupChatMessageDto>;
+public sealed record SendMessageToGroupChatQuery
+    (GroupChatMessage Message, AppUser AppUser) : IRequest<GroupChatMessageDto>;
 
 public class
     SendMessageToGroupChatHandler : IRequestHandler<SendMessageToGroupChatQuery, GroupChatMessageDto>
@@ -26,6 +28,6 @@ public class
         await db.GroupChatMessages.AddAsync(request.Message, cT);
         await db.SaveChangesAsync(cT);
 
-        return request.Message.ToDto();
+        return request.Message.ToDto(request.AppUser);
     }
 }

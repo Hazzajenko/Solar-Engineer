@@ -9,6 +9,8 @@ public class GroupChatMessageDto
     public IEnumerable<GroupChatReadTimeDto> MessageReadTimes { get; set; } = default!;
 
     public DateTime MessageSentTime { get; set; } = DateTime.UtcNow;
+
+    public bool IsUserSender { get; set; }
     // public NotificationStatus Status { get; set; }
 }
 

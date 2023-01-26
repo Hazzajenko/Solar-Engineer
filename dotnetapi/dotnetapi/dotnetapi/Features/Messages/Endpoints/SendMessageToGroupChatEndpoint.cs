@@ -44,8 +44,8 @@ public class SendMessageToGroupChatEndpoint : Endpoint<SendGroupChatMessageReque
 
     public override async Task HandleAsync(SendGroupChatMessageRequest request, CancellationToken ct)
     {
-        var user = await _userManager.GetUserAsync(User);
-        if (user is null)
+        var appUser = await _userManager.GetUserAsync(User);
+        if (appUser is null)
         {
             _logger.LogError("Bad request, User is invalid");
             ThrowError("Username is invalid");
@@ -54,7 +54,7 @@ public class SendMessageToGroupChatEndpoint : Endpoint<SendGroupChatMessageReque
         var groupChatId = Route<int>("groupChatId");
         if (groupChatId < 0) ThrowError("Invalid groupChatId");
 
-        var appUserGroupChat = await _groupChatsRepository.GetAppUserGroupChatAsync(user, groupChatId);
+        var appUserGroupChat = await _groupChatsRepository.GetAppUserGroupChatAsync(appUser, groupChatId);
         if (appUserGroupChat is null)
         {
             _logger.LogError("Bad request, appUserGroupChat is invalid");
@@ -71,15 +71,16 @@ public class SendMessageToGroupChatEndpoint : Endpoint<SendGroupChatMessageReque
             ThrowError("Bad request, user is not in conversation");
         }*/
 
-        var groupChatMessage = request.ToEntity(user, appUserGroupChat.GroupChat);
+        var groupChatMessage = request.ToEntity(appUser, appUserGroupChat.GroupChat);
 
 
-        var addMessage = await _messagesRepository.SendMessageToGroupChatAsync(groupChatMessage);
+        var addMessage = await _messagesRepository.SendMessageToGroupChatAsync(groupChatMessage, appUser);
 
         var groupChatMemberDtos = await _mediator.Send(new GetGroupChatMembersByIdQuery(request.GroupChatId), ct);
         var groupChatUsers = groupChatMemberDtos.Select(x => x.Username).ToArray();
         // var groupChatMemberDtos = await _groupChatsRepository.GetGroupChatMembersAsync(request.GroupChatId);
-        var res = await _mediator.Send(new SendMessageToGroupChatSignalRQuery(groupChatMessage.ToDto(), groupChatUsers),
+        var res = await _mediator.Send(
+            new SendMessageToGroupChatSignalRQuery(groupChatMessage.ToDto(appUser), groupChatUsers),
             ct);
         // var chatMemberDtos = groupChatMemberDtos.ToList();
         // var addMessage2 = _mediator.CreateStream(new SendMessageToGroupChatSignalRQuery(groupChatMessage), ct);

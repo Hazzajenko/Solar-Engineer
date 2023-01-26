@@ -173,7 +173,7 @@ public class GroupChatsRepository : IGroupChatsRepository
                 .Include(x => x.Sender)
                 .Include(x => x.MessageReadTimes)
                 .OrderBy(x => x.MessageSentTime)
-                .Select(x => x.ToDto())
+                .Select(x => x.ToDto(appUser))
                 .Take(1)
                 .SingleOrDefaultAsync();
             if (groupChatMessage is null) continue;

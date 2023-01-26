@@ -38,7 +38,7 @@ public class
             {
                 Username = x.Key!,
                 Message = x.OrderByDescending(o => o.MessageSentTime)
-                    .Select(y => y.ToDto())
+                    .Select(y => y.ToDto(request.AppUser))
                     .SingleOrDefault()
             })
             .ToListAsync(cT);

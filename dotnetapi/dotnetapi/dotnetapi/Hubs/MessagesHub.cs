@@ -62,6 +62,9 @@ public class MessagesHub : Hub
         var groupChatMessages = await _mediator.Send(new GetGroupChatMessagesByIdQuery(appUser, groupChatId));
         // var groupChatMessages = await _messagesRepository.GetGroupChatMessagesAsync(groupChatId);
         if (groupChatMessages is null) throw new HubException("groupChatMessages is null");
+        var chatMessageDtos = groupChatMessages.ToList();
+        var messageIds = chatMessageDtos.Select(x => x.Id).ToList();
+        var update = await _messagesRepository.MarkAllGroupChatMessagesReadByUserAsync(messageIds, appUser);
 
         _logger.LogInformation("{User} GetMessages with Group {Group}", appUser.UserName!, groupChatId);
 
@@ -89,7 +92,7 @@ public class MessagesHub : Hub
         _logger.LogInformation("{User} Sent a Message To User {Recipient}", appUser.UserName!, recipient.UserName!);
 
         await Clients.Users(appUser.UserName!, recipient.UserName!)
-            .SendAsync("GetMessages", result.ToDto());
+            .SendAsync("GetMessages", result.ToDto(appUser));
     }
 
     public async Task SendMessageToGroupChat(SendGroupChatMessageRequest request)
@@ -120,7 +123,7 @@ public class MessagesHub : Hub
         var groupChatMessage = request.ToEntity(appUser, appUserGroupChat.GroupChat);
 
         // var groupChatMessageDto = await _mediator.Send(new SendMessageToGroupChatQuery(groupChatMessage));
-        var groupChatMessageDto = await _messagesRepository.SendMessageToGroupChatAsync(groupChatMessage);
+        var groupChatMessageDto = await _messagesRepository.SendMessageToGroupChatAsync(groupChatMessage, appUser);
 
         var groupChatUsers = chatMemberDtos.Select(x => x.Username).ToArray();
         // var groupChatUsernames = await _groupChatsRepository.GetGroupChatMembersAsync()

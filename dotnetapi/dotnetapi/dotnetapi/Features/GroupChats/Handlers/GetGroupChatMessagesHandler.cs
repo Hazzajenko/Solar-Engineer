@@ -30,9 +30,10 @@ public class
             .Where(x => request.GroupChatIds.Contains(x.GroupChatId))
             .Include(x => x.Sender)
             .Include(x => x.MessageReadTimes)
+            .ThenInclude(x => x.AppUser)
             .GroupBy(x => x.GroupChatId)
             .Select(x => x.OrderBy(o => o.MessageSentTime)
-                .Select(y => y.ToDto())
+                .Select(y => y.ToDto(request.AppUser))
                 .SingleOrDefault())
             .ToListAsync(cT);
 

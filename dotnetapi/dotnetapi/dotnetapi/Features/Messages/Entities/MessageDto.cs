@@ -11,4 +11,5 @@ public class MessageDto
     public DateTime? MessageReadTime { get; set; }
     public DateTime MessageSentTime { get; set; } = DateTime.UtcNow;
     public NotificationStatus Status { get; set; }
+    public bool IsUserSender { get; set; }
 }

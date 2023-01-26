@@ -43,8 +43,8 @@ public class SendMessageToUserEndpoint : Endpoint<SendMessageRequest, MessageRes
 
     public override async Task HandleAsync(SendMessageRequest request, CancellationToken ct)
     {
-        var user = await _userManager.GetUserAsync(User);
-        if (user is null)
+        var appUser = await _userManager.GetUserAsync(User);
+        if (appUser is null)
         {
             _logger.LogError("Bad request, User is invalid");
             ThrowError("Username is invalid");
@@ -60,16 +60,16 @@ public class SendMessageToUserEndpoint : Endpoint<SendMessageRequest, MessageRes
             ThrowError("Recipient is invalid");
         }
 
-        var message = request.ToEntity(user, recipient);
+        var message = request.ToEntity(appUser, recipient);
 
         var result = await _messagesRepository.AddMessageAsync(message);
 
 
-        var updateConnections = await _messagesService.SendMessageToUserAsync(recipient, result.ToDto());
+        var updateConnections = await _messagesService.SendMessageToUserAsync(recipient, result.ToDto(appUser));
 
         var response = new MessageResponse
         {
-            Message = result.ToDto()
+            Message = result.ToDto(appUser)
         };
 
         /*

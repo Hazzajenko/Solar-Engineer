@@ -7,7 +7,7 @@ import { Store } from '@ngrx/store'
 import { ProjectsStoreService } from '@projects/data-access/facades'
 import { ConnectionsActions, ConnectionsService } from '@shared/data-access/connections'
 import { FriendModel } from '@shared/data-access/models'
-import { combineLatestWith } from 'rxjs'
+import { combineLatestWith, switchMap } from 'rxjs'
 import { map } from 'rxjs/operators'
 
 @Injectable({
@@ -26,87 +26,84 @@ export class ConnectionsEffects {
     () =>
       this.actions$.pipe(
         ofType(AuthActions.signInSuccess),
-        map(({ token }) =>
-          this.connectionsService.createHubConnection(token),
-        ),
+        map(({ token }) => this.connectionsService.createHubConnection(token)),
       ),
     { dispatch: false },
   )
-
-  addConnection$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(ConnectionsActions.addConnection),
-        combineLatestWith(this.friendsStore.select.friends$),
-        map(([{ connection }, friends]) => {
-            const friend = friends.find(friend => friend.username === connection.username)
-            if (!friend) {
-              return ConnectionsActions.connectionNotFriend
-            }
-
-            const update: Update<FriendModel> = {
-              id: friend.username,
-              changes: {
-                online: true,
-              },
-            }
-
-            return FriendsActions.updateFriend({ update })
-          },
-        ),
-      ),
-  )
-
-  addManyConnections$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(ConnectionsActions.addManyConnections),
-        combineLatestWith(this.friendsStore.select.friends$),
-        map(([{ connections }, friends]) => {
-            const connectionUsernames = connections.map(connection => connection.username)
-            const connectionFriends = friends.filter(friend => connectionUsernames.includes(friend.username))
-            if (connectionFriends.length < 1) {
-              return ConnectionsActions.connectionNotFriend()
-            }
-
-            const updates: Update<FriendModel>[] = connectionFriends.map(cF => {
+  /*
+    addConnection$ = createEffect(
+      () =>
+        this.actions$.pipe(
+          ofType(ConnectionsActions.addConnection),
+          switchMap(({ connection }) => this.friendsStore.select.friends$.pipe(
+            map(friends =>
+              friends.find(friend => friend.username === connection.username)
+            ),
+            map(friend => {
+              if (!friend) {
+                return ConnectionsActions.connectionNotFriend()
+              }
               const update: Update<FriendModel> = {
-                id: cF.username,
+                id: friend.username,
                 changes: {
                   online: true,
                 },
               }
-              return update
+
+              return FriendsActions.updateFriend({ update })
             })
-
-
-            return FriendsActions.updateManyFriends({ updates })
-          },
+          )),
         ),
-      ),
-  )
+    )
 
-  removeConnection$ = createEffect(
-    () =>
+    addManyConnections$ = createEffect(
+      () =>
+        this.actions$.pipe(
+          ofType(ConnectionsActions.addManyConnections),
+          switchMap(({ connections }) => this.friendsStore.select.friends$.pipe(
+            map(friends =>
+              friends.filter(friend =>
+                connections.map(connection => connection.username).includes(friend.username))),
+            map(friends => {
+              if (friends.length < 1) {
+                return ConnectionsActions.connectionNotFriend()
+              }
+              const updates: Update<FriendModel>[] = friends.map(cF => {
+                const update: Update<FriendModel> = {
+                  id: cF.username,
+                  changes: {
+                    online: true,
+                  },
+                }
+                return update
+              })
+
+
+              return FriendsActions.updateManyFriends({ updates })
+            })
+          )),
+        ),
+    )*/
+  /*
+    removeConnection$ = createEffect(() =>
       this.actions$.pipe(
         ofType(ConnectionsActions.removeConnection),
         combineLatestWith(this.friendsStore.select.friends$),
         map(([{ connection }, friends]) => {
-            const friend = friends.find(friend => friend.username === connection.username)
-            if (!friend) {
-              return ConnectionsActions.connectionNotFriend()
-            }
+          const friend = friends.find((friend) => friend.username === connection.username)
+          if (!friend) {
+            return ConnectionsActions.connectionNotFriend()
+          }
 
-            const update: Update<FriendModel> = {
-              id: friend.username,
-              changes: {
-                online: false,
-              },
-            }
+          const update: Update<FriendModel> = {
+            id: friend.username,
+            changes: {
+              online: false,
+            },
+          }
 
-            return FriendsActions.updateFriend({ update })
-          },
-        ),
+          return FriendsActions.updateFriend({ update })
+        }),
       ),
-  )
+    )*/
 }

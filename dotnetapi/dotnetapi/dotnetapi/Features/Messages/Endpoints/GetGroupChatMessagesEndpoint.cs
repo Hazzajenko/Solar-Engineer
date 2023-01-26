@@ -1,7 +1,9 @@
-﻿using dotnetapi.Features.Messages.Contracts.Responses;
+﻿using dotnetapi.Features.GroupChats.Handlers;
+using dotnetapi.Features.Messages.Contracts.Responses;
 using dotnetapi.Features.Messages.Services;
 using dotnetapi.Models.Entities;
 using FastEndpoints;
+using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 
@@ -11,16 +13,19 @@ namespace dotnetapi.Features.Messages.Endpoints;
 public class GetGroupChatMessagesEndpoint : EndpointWithoutRequest<GroupChatManyMessagesResponse>
 {
     private readonly ILogger<GetGroupChatMessagesEndpoint> _logger;
+    private readonly IMediator _mediator;
     private readonly IMessagesRepository _messagesRepository;
     private readonly UserManager<AppUser> _userManager;
 
     public GetGroupChatMessagesEndpoint(
         ILogger<GetGroupChatMessagesEndpoint> logger,
         IMessagesRepository messagesRepository,
+        IMediator mediator,
         UserManager<AppUser> userManager)
     {
         _logger = logger;
         _messagesRepository = messagesRepository;
+        _mediator = mediator;
         _userManager = userManager;
     }
 
@@ -32,8 +37,8 @@ public class GetGroupChatMessagesEndpoint : EndpointWithoutRequest<GroupChatMany
 
     public override async Task HandleAsync(CancellationToken ct)
     {
-        var user = await _userManager.GetUserAsync(User);
-        if (user is null)
+        var appUser = await _userManager.GetUserAsync(User);
+        if (appUser is null)
         {
             _logger.LogError("Bad request, User is invalid");
             ThrowError("Username is invalid");
@@ -49,7 +54,11 @@ public class GetGroupChatMessagesEndpoint : EndpointWithoutRequest<GroupChatMany
             ThrowError("Recipient is invalid");
         }*/
 
-        var groupChatMessageDtos = await _messagesRepository.GetGroupChatMessagesAsync(groupChatId);
+        var groupChatMessageDtos = await _mediator.Send(new GetGroupChatMessagesByIdQuery(appUser, groupChatId), ct);
+        var chatMessageDtos = groupChatMessageDtos.ToList();
+        var messageIds = chatMessageDtos.Select(x => x.Id).ToList();
+        var update = await _messagesRepository.MarkAllGroupChatMessagesReadByUserAsync(messageIds, appUser);
+
         if (groupChatMessageDtos is null)
         {
             _logger.LogError("Bad request, groupChatMessageDtos is invalid");
@@ -59,7 +68,7 @@ public class GetGroupChatMessagesEndpoint : EndpointWithoutRequest<GroupChatMany
         var response = new GroupChatManyMessagesResponse
         {
             GroupChatId = groupChatId,
-            Messages = groupChatMessageDtos
+            Messages = chatMessageDtos
         };
 
         await SendOkAsync(response, ct);
