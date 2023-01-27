@@ -2,7 +2,9 @@ export interface UserModel {
   email: string
   firstName: string
   lastName: string
-  username: string
-  // activated: boolean;
-  // version: number;
+  userName: string
+  photoUrl: string
+  created: string
+  lastActive: string
+  isOnline: boolean
 }

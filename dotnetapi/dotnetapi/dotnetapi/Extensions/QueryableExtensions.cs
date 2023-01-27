@@ -10,7 +10,7 @@ public static class QueryableExtensions
     public static IQueryable<Message> MarkUnreadAsRead(this IQueryable<Message> query, string currentUsername)
     {
         var unreadMessages = query.Where(m => m.MessageReadTime == null
-                                              && m.RecipientUsername == currentUsername);
+                                              && m.RecipientUserName == currentUsername);
 
         if (unreadMessages.Any())
             foreach (var message in unreadMessages)

@@ -48,7 +48,7 @@ public class SendMessageToGroupChatEndpoint : Endpoint<SendGroupChatMessageReque
         if (appUser is null)
         {
             _logger.LogError("Bad request, User is invalid");
-            ThrowError("Username is invalid");
+            ThrowError("UserName is invalid");
         }
 
         var groupChatId = Route<int>("groupChatId");
@@ -64,7 +64,7 @@ public class SendMessageToGroupChatEndpoint : Endpoint<SendGroupChatMessageReque
         /*
         var groupChatMemberDtos = await _groupChatsRepository.GetGroupChatMembersAsync(groupChatId);
 
-        var isUserInGroupChat = groupChatMemberDtos.FirstOrDefault(x => x.Username == user.UserName!);
+        var isUserInGroupChat = groupChatMemberDtos.FirstOrDefault(x => x.UserName == user.UserName!);
         if (isUserInGroupChat is null)
         {
             _logger.LogError("Bad request, user is not in conversation");
@@ -77,7 +77,7 @@ public class SendMessageToGroupChatEndpoint : Endpoint<SendGroupChatMessageReque
         var addMessage = await _messagesRepository.SendMessageToGroupChatAsync(groupChatMessage, appUser);
 
         var groupChatMemberDtos = await _mediator.Send(new GetGroupChatMembersByIdQuery(request.GroupChatId), ct);
-        var groupChatUsers = groupChatMemberDtos.Select(x => x.Username).ToArray();
+        var groupChatUsers = groupChatMemberDtos.Select(x => x.UserName).ToArray();
         // var groupChatMemberDtos = await _groupChatsRepository.GetGroupChatMembersAsync(request.GroupChatId);
         var res = await _mediator.Send(
             new SendMessageToGroupChatSignalRQuery(groupChatMessage.ToDto(appUser), groupChatUsers),

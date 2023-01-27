@@ -246,7 +246,7 @@ namespace dotnetapi.Data.Migrations
                     b.Property<int>("RecipientId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("RecipientUsername")
+                    b.Property<string>("RecipientUserName")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -256,7 +256,7 @@ namespace dotnetapi.Data.Migrations
                     b.Property<int>("SenderId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("SenderUsername")
+                    b.Property<string>("SenderUserName")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -724,7 +724,7 @@ namespace dotnetapi.Data.Migrations
                     b.Property<string>("GroupName")
                         .HasColumnType("text");
 
-                    b.Property<string>("Username")
+                    b.Property<string>("UserName")
                         .IsRequired()
                         .HasColumnType("text");
 

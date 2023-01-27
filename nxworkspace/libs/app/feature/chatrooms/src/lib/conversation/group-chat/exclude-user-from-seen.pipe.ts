@@ -6,13 +6,13 @@ import { GroupChatReadTime } from '@shared/data-access/models'
   standalone: true,
 })
 export class ExcludeUserFromSeenPipe implements PipeTransform {
-  transform(readTimes: GroupChatReadTime[] | undefined | null, username: string) {
+  transform(readTimes: GroupChatReadTime[] | undefined | null, userName: string) {
     if (!readTimes) return
-    if (!username) return
+    if (!userName) return
 
     const array = [...readTimes]
 
-    const index = array.map((time) => time.recipientUsername).indexOf(username)
+    const index = array.map((time) => time.recipientUserName).indexOf(userName)
     if (index > -1) {
       array.splice(index, 1)
     }

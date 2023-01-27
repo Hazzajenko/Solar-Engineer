@@ -12,16 +12,14 @@ import { AllMessagesResponse } from '../models/all-messages.response'
 import { MessageResponse } from '../models/message.response'
 import { MessagesFilter } from '../models/messages.filter'
 import { SendMessageRequest } from '../models/send-message.request'
-import {ManyLatestUserMessagesResponse} from "../models/many-latest-user-messages.response";
-import {map} from "rxjs/operators";
-import {Observable} from "rxjs";
-
+import { ManyLatestUserMessagesResponse } from '../models/many-latest-user-messages.response'
+import { map } from 'rxjs/operators'
+import { Observable } from 'rxjs'
 
 @Injectable({
   providedIn: 'root',
 })
 export class MessagesService {
-
   private http = inject(HttpClient)
   private messagesStore = inject(MessagesStoreService)
   private messagesSignalR = inject(MessagesSignalrService)
@@ -53,14 +51,15 @@ export class MessagesService {
   }
 
   getLatestUserMessages(): Observable<MessageModel[]> {
-    return this.http.get<ManyLatestUserMessagesResponse>(`/api/messages/latest`).pipe(
-      map(({messages}) => messages.map(message => message.message))
-    )
+    return this.http
+      .get<ManyLatestUserMessagesResponse>(`/api/messages/latest`)
+      .pipe(map(({ messages }) => messages.map((message) => message.message)))
   }
+
   // ManyLatestUserMessagesResponse
 
-  getAllMessagesWithUser(username: string) {
-    return this.http.get<AllMessagesResponse>(`/api/messages/user/${username}`)
+  getAllMessagesWithUser(userName: string) {
+    return this.http.get<AllMessagesResponse>(`/api/messages/user/${userName}`)
   }
 
   /*  createMessagesConnection(token: string) {
@@ -106,15 +105,15 @@ export class MessagesService {
 
   sendMessageToUserSignalR(request: SendMessageRequest) {
     if (!this.messagesSignalR.messagesHub) return
-    return this.messagesSignalR.messagesHub.invoke('SendMessageToUser', request)
-      .catch(error => console.log(error))
+    return this.messagesSignalR.messagesHub
+      .invoke('SendMessageToUser', request)
+      .catch((error) => console.log(error))
   }
 
-  getMessagesWithUserSignalR(username: string) {
+  getMessagesWithUserSignalR(userName: string) {
     if (!this.messagesSignalR.messagesHub) return
-    this.messagesSignalR.messagesHub.invoke('getMessages', username)
-      .then((data) => {
-        console.log(data)
-      })
+    this.messagesSignalR.messagesHub.invoke('getMessages', userName).then((data) => {
+      console.log(data)
+    })
   }
 }

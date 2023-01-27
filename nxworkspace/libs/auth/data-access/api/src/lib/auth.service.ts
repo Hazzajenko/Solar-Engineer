@@ -10,25 +10,25 @@ export class AuthService {
 
   public signIn(request: SignInRequest) {
     return this.http.post<SignInResponse>('/api/auth/login', {
-      username: request.username,
+      userName: request.userName,
       password: request.password,
     })
   }
 
   login(request: SignInRequest) {
     return this.http.post<SignInResponse>('/api/auth/login', {
-      username: request.username,
+      userName: request.userName,
       password: request.password,
     })
   }
 
   register(request: SignInRequest) {
     return this.http.post<SignInResponse>('/api/auth/register', {
-      username: request.username,
+      userName: request.userName,
       password: request.password,
     })
     /*    return this.http.post<SignInResponse>('https:localhost:5000/auth/register', {
-          username: request.username,
+          userName: request.userName,
           password: request.password,
         })*/
   }
@@ -37,7 +37,7 @@ export class AuthService {
     return this.http.post<SignInResponse>(
       '/api/auth/validate',
       {
-        username: userInStorage.username,
+        userName: userInStorage.userName,
         email: userInStorage.email,
       },
       {

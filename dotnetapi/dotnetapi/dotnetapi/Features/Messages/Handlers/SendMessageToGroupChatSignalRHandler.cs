@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.SignalR;
 namespace dotnetapi.Features.Messages.Handlers;
 
 public sealed record SendMessageToGroupChatSignalRQuery
-    (GroupChatMessageDto Message, string[] Usernames) : IRequest<GroupChatMessageDto>;
+    (GroupChatMessageDto Message, string[] UserNames) : IRequest<GroupChatMessageDto>;
 
 public class
     SendMessageToGroupChatSignalRHandler : IRequestHandler<SendMessageToGroupChatSignalRQuery, GroupChatMessageDto>
@@ -31,7 +31,7 @@ public class
         // await db.SaveChangesAsync(cT);
 
         /*
-        var groupChatUsernames = await db.GroupChats
+        var groupChatUserNames = await db.GroupChats
             .Where(x => x.Id == request.Message.GroupChatId)
             .Include(x => x.AppUserGroupChats)
             .ThenInclude(x => x.AppUser)
@@ -40,7 +40,7 @@ public class
             .ToArrayAsync(cT);
             #1#*/
 
-        await hub.Clients.Users(request.Usernames)
+        await hub.Clients.Users(request.UserNames)
             .SendAsync("GetGroupChatMessages", request.Message, cT);
 
 

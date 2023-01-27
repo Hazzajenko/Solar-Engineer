@@ -50,14 +50,14 @@ export class MessagesFacade {
     return firstValueFrom(this.messages$)
   }
 
-  messagesWithUser$(username: string) {
+  messagesWithUser$(userName: string) {
     return this.store
       .select(MessagesSelectors.selectAllMessages)
       .pipe(
         map((messages) =>
           messages.filter(
             (message) =>
-              message.senderUsername === username || message.recipientUsername === username,
+              message.senderUserName === userName || message.recipientUserName === userName,
           ),
         ),
       )
@@ -74,30 +74,30 @@ export class MessagesFacade {
 
               const map = new Map()
               for (const message of messages) {
-                const username =
-                  message.recipientUsername !== user.username
-                    ? message.recipientUsername
-                    : message.senderUsername
-                map.set(username, username)
+                const userName =
+                  message.recipientUserName !== user.userName
+                    ? message.recipientUserName
+                    : message.senderUserName
+                map.set(userName, userName)
               }
-              if (map.get(user.username)) map.delete(user.username)
+              if (map.get(user.userName)) map.delete(user.userName)
 
               /*
-                      const filtered = this.uniqBySetWithSpread<string>(usernames)
+                      const filtered = this.uniqBySetWithSpread<string>(userNames)
                       console.log(filtered)
                       filtered.
                       */
 
               const group = messages.reduce(function (r, a) {
-                r[a.recipientUsername] = r[a.recipientUsername] || []
-                r[a.recipientUsername].push(a)
+                r[a.recipientUserName] = r[a.recipientUserName] || []
+                r[a.recipientUserName].push(a)
                 return r
               }, Object.create(null))
 
               console.log(group)
               // const message: MessageModel
               const hii = this.groupItemByVal(messages, (m) =>
-                m.senderUsername !== user.username ? m.senderUsername : m.recipientUsername,
+                m.senderUserName !== user.userName ? m.senderUserName : m.recipientUserName,
               )
 
               console.log('hii', hii)
@@ -112,9 +112,9 @@ export class MessagesFacade {
               return Array.from(map.values())
               // const uniqueUsernames = Array.from(map.values())
 
-              /*        return uniqueUsernames.map((username) => {
+              /*        return uniqueUsernames.map((userName) => {
                         const messagesForUser = messages.filter(
-                          (msg) => msg.senderUsername === username || msg.recipientUsername == username,
+                          (msg) => msg.senderUsername === userName || msg.recipientUsername == userName,
                         )
                         const sortByMessageSent = messagesForUser.sort(
                           (a: MessageModel, b: MessageModel) => {
@@ -146,7 +146,7 @@ export class MessagesFacade {
           /*map(messages => {
               const orderByDesc =  orderBy(messages, (m) => new Date(m.messageSentTime).getTime(), 'desc')
               const group = lodash.groupBy(messages, (message) =>
-                message.senderUsername !== user?.username
+                message.senderUsername !== user?.userName
                   ? message.senderUsername
                   : message.recipientUsername,
               )
@@ -155,7 +155,7 @@ export class MessagesFacade {
 
               })*/
           /* const group = _.groupBy(messages, (message) =>
-                message.senderUsername !== user?.username
+                message.senderUsername !== user?.userName
                   ? message.senderUsername
                   : message.recipientUsername,
               )*/
@@ -163,7 +163,7 @@ export class MessagesFacade {
           // })
           /*          map((messages) =>
                         _.groupBy(messages, (message) =>
-                          message.senderUsername !== user?.username
+                          message.senderUsername !== user?.userName
                             ? message.senderUsername
                             : message.recipientUsername,
                         ),
@@ -171,7 +171,7 @@ export class MessagesFacade {
                       map(data => data.)*/
           /*          map((messages) => {
                         const uniqueMessages = messages.map((message) =>
-                          message.senderUsername !== user?.username
+                          message.senderUsername !== user?.userName
                             ? message.senderUsername
                             : message.recipientUsername,
                         )
@@ -181,9 +181,9 @@ export class MessagesFacade {
           groupBy(
             (message) =>
               message.map((message) =>
-                message.senderUsername !== user?.username
-                  ? message.senderUsername
-                  : message.recipientUsername,
+                message.senderUserName !== user?.userName
+                  ? message.senderUserName
+                  : message.recipientUserName,
               ),
             // .map((messages) => messages[messages.length - 1]),
           ),
@@ -271,9 +271,9 @@ export class MessagesFacade {
               'desc',
             )
             const groupedArr = this.groupItemByVal<MessageModel>(orderedMessages, (message) =>
-              message.senderUsername !== user?.username
-                ? message.senderUsername
-                : message.recipientUsername,
+              message.senderUserName !== user?.userName
+                ? message.senderUserName
+                : message.recipientUserName,
             )
             const map = new Map<string, MessageModel>()
             for (const key in groupedArr) {

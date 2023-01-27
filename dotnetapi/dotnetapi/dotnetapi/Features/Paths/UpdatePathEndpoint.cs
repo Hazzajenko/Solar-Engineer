@@ -41,7 +41,7 @@ public class UpdatePathEndpoint : Endpoint<UpdatePathRequest, OneUpdateResponse>
         if (user is null)
         {
             _logger.LogError("Bad request, User is invalid");
-            ThrowError("Username is invalid");
+            ThrowError("UserName is invalid");
         }
 
         var projectId = Route<int>("projectId");

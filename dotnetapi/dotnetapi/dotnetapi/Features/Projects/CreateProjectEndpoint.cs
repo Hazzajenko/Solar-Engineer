@@ -38,7 +38,7 @@ public class CreateProjectEndpoint : Endpoint<CreateProjectRequest, OneProjectRe
         if (user is null)
         {
             _logger.LogError("Bad request, User is invalid");
-            ThrowError("Username is invalid");
+            ThrowError("UserName is invalid");
         }
 
         var appUserProject = request.ToAppUserProject(user);
@@ -50,7 +50,7 @@ public class CreateProjectEndpoint : Endpoint<CreateProjectRequest, OneProjectRe
             Project = projectDto
         };
 
-        _logger.LogInformation("{Username} created a new project {Project}", user.UserName, projectDto.Name);
+        _logger.LogInformation("{UserName} created a new project {Project}", user.UserName, projectDto.Name);
 
         await SendOkAsync(response, cancellationToken);
     }

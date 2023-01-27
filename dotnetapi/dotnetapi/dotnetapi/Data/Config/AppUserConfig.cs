@@ -29,6 +29,13 @@ public class AppUserConfig : IEntityTypeConfiguration<AppUser>
             .IsRequired();
 
         /*
+        builder.HasMany(ur => ur.Images)
+            .WithOne(u => u.AppUser)
+            .HasForeignKey(ur => ur.AppUserId)
+            .IsRequired();
+            */
+
+        /*
         builder.HasMany(ur => ur.Notifications)
             .WithOne(u => u.AppUser)
             .HasForeignKey(ur => ur.AppUserId)

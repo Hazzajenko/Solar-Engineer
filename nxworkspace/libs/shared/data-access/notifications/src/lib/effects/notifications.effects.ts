@@ -22,10 +22,9 @@ export class NotificationsEffects {
       this.actions$.pipe(
         ofType(AuthActions.signInSuccess),
         map(({ token }) => {
-            // this.notificationsService.getAllUserNotifications()
-            this.notificationsService.createNotificationsConnection(token)
-          },
-        ),
+          // this.notificationsService.getAllUserNotifications()
+          this.notificationsService.createNotificationsConnection(token)
+        }),
       ),
     { dispatch: false },
   )
@@ -34,12 +33,18 @@ export class NotificationsEffects {
     () =>
       this.actions$.pipe(
         ofType(AuthActions.signInSuccess),
-        switchMap(() =>
-            this.notificationsService.getAllUserNotifications().pipe(
-              map(notifications => NotificationsActions.addManyNotifications({ notifications: notifications.notifications })),
-            )
+        switchMap(
+          () =>
+            this.notificationsService
+              .getAllUserNotifications()
+              .pipe(
+                map((notifications) =>
+                  NotificationsActions.addManyNotifications({
+                    notifications: notifications.notifications,
+                  }),
+                ),
+              ),
           // this.notificationsService.createNotificationsConnection(token)
-          ,
         ),
       ),
     // { dispatch: false },
@@ -50,12 +55,11 @@ export class NotificationsEffects {
       this.actions$.pipe(
         ofType(NotificationsActions.addNotification),
         map(({ notification }) => {
-            const notificationFrom = notification.friendRequest.requestedByUsername
-            this.snackBar.open(`New friend request from ${notificationFrom}!`, 'OK', {
-              duration: 5000,
-            })
-          },
-        ),
+          const notificationFrom = notification.friendRequest.requestedByUserName
+          this.snackBar.open(`New friend request from ${notificationFrom}!`, 'OK', {
+            duration: 5000,
+          })
+        }),
       ),
     { dispatch: false },
   )
@@ -64,7 +68,8 @@ export class NotificationsEffects {
     () =>
       this.actions$.pipe(
         ofType(NotificationsActions.updateOneNotification),
-        switchMap(({ update }) => this.notificationsService.updateNotification(update, NotificationType.FriendRequest),
+        switchMap(({ update }) =>
+          this.notificationsService.updateNotification(update, NotificationType.FriendRequest),
         ),
       ),
     { dispatch: false },
@@ -74,8 +79,7 @@ export class NotificationsEffects {
     () =>
       this.actions$.pipe(
         ofType(NotificationsActions.updateManyNotifications),
-        switchMap(({ updates }) => this.notificationsService.updateManyNotifications(updates),
-        ),
+        switchMap(({ updates }) => this.notificationsService.updateManyNotifications(updates)),
       ),
     { dispatch: false },
   )

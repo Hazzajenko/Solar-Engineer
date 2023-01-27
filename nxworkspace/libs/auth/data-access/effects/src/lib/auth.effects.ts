@@ -16,20 +16,19 @@ export class AuthEffects {
   private actions$ = inject(Actions)
   private authService = inject(AuthService)
   private projectsService = inject(ProjectsFacade)
-  success$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(AuthActions.signInSuccess),
-        tap((action) => {
-          const storage: StorageModel = {
-            email: action.user.email,
-            username: action.user.username,
-            token: action.token,
-          }
-          localStorage.setItem('solarengineer-user', JSON.stringify(storage))
-        }),
-        map(() => ProjectsActions.initProjects()),
-      ),
+  success$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AuthActions.signInSuccess),
+      tap((action) => {
+        const storage: StorageModel = {
+          email: action.user.email,
+          userName: action.user.userName,
+          token: action.token,
+        }
+        localStorage.setItem('solarengineer-user', JSON.stringify(storage))
+      }),
+      map(() => ProjectsActions.initProjects()),
+    ),
   )
   signInWithLocalStorage$ = createEffect(() =>
     this.actions$.pipe(
@@ -38,12 +37,16 @@ export class AuthEffects {
         this.authService.validateUser(userInStorage).pipe(
           map((response) =>
             AuthActions.signInSuccess({
-              user: {
-                username: response.username,
-                lastName: response.lastName,
-                firstName: response.firstName,
-                email: response.email,
-              },
+              user: response.user,
+              /*              user: {
+                              userName: response.userName,
+                              lastName: response.lastName,
+                              firstName: response.firstName,
+                              email: response.email,
+                              created: response.created,
+                              lastActive: response.lastActive,
+                              photoUrl: response.photoUrl,
+                            },*/
               token: response.token,
             }),
           ),
@@ -59,12 +62,16 @@ export class AuthEffects {
         this.authService.signIn(req).pipe(
           map((response) =>
             AuthActions.signInSuccess({
-              user: {
-                username: response.username,
-                lastName: response.lastName,
-                firstName: response.firstName,
-                email: response.email,
-              },
+              user: response.user,
+              /*              user: {
+                              userName: response.userName,
+                              lastName: response.lastName,
+                              firstName: response.firstName,
+                              email: response.email,
+                              created: response.created,
+                              lastActive: response.lastActive,
+                              photoUrl: response.photoUrl,
+                            },*/
               token: response.token,
             }),
           ),
@@ -85,24 +92,28 @@ export class AuthEffects {
         this.authService.register(req).pipe(
           map((response) =>
             AuthActions.signInSuccess({
-              user: {
-                username: response.username,
-                lastName: response.lastName,
-                firstName: response.firstName,
-                email: response.email,
-              },
+              user: response.user,
+              /*              user: {
+                              userName: response.userName,
+                              lastName: response.lastName,
+                              firstName: response.firstName,
+                              email: response.email,
+                              created: response.created,
+                              lastActive: response.lastActive,
+                              photoUrl: response.photoUrl,
+                            },*/
               token: response.token,
             }),
           ),
           catchError((error: HttpErrorResponse) => {
-            const errors = (error.error as ValidationError[])
-            const usernameErrors = errors.filter(error => error.propertyName === 'Username')
-            const passwordErrors = errors.filter(error => error.propertyName === 'Password')
-            console.log(usernameErrors)
-            console.log(passwordErrors)
-            errors.forEach(error => console.log(error.errorMessage))
+            const errors = error.error as ValidationError[]
+            /*            const userNameErrors = errors.filter((error) => error.propertyName === 'Username')
+                        const passwordErrors = errors.filter((error) => error.propertyName === 'Password')*/
+            /*            console.log(userNameErrors)
+                        console.log(passwordErrors)*/
+            errors.forEach((error) => console.log(error.errorMessage))
 
-            const errorMessages = errors.map(error => {
+            const errorMessages = errors.map((error) => {
               const errorMessage: ErrorModel = {
                 property: error.propertyName,
                 errorMessage: error.errorMessage,

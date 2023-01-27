@@ -2,89 +2,90 @@
   <ng-container *ngIf='messages$ | async as messages'>
     <ng-container *ngrxLet='isDialog$ | async as isDialog'>
       <ng-container *ngIf='chatrooms$ | async as chatrooms'>
-      <ng-container *ngIf='data$ | async'>
-        <ng-container
-          *ngrxLet='selectedMessage?.senderUsername === user.username ? selectedMessage?.recipientUsername : selectedMessage?.senderUsername as recipient'>
+        <ng-container *ngIf='data$ | async'>
+          <ng-container
+            *ngrxLet='selectedMessage?.senderUserName === user.userName ? selectedMessage?.recipientUserName : selectedMessage?.senderUserName as recipient'>
 
 
-          <form *ngIf="filteredMessages$ | async as filteredMessages">
-            <label class='mb-2 text-sm font-medium text-gray-900 sr-only'
-                   for='default-search'>Search</label>
-            <div *ngIf="chatRoomSearchData$ | async as chatRoomSearchData" class='relative'>
-              <div class='absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none'>
-                <svg aria-hidden='true' class='w-5 h-5 text-gray-500' fill='none' stroke='currentColor'
-                     viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'>
-                  <path d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z' stroke-linecap='round' stroke-linejoin='round'
-                        stroke-width='2'></path>
-                </svg>
+            <form *ngIf='filteredMessages$ | async as filteredMessages'>
+              <label class='mb-2 text-sm font-medium text-gray-900 sr-only'
+                     for='default-search'>Search</label>
+              <div *ngIf='chatRoomSearchData$ | async as chatRoomSearchData' class='relative'>
+                <div class='absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none'>
+                  <svg aria-hidden='true' class='w-5 h-5 text-gray-500' fill='none' stroke='currentColor'
+                       viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'>
+                    <path d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z' stroke-linecap='round' stroke-linejoin='round'
+                          stroke-width='2'></path>
+                  </svg>
+                </div>
+                <input [formControl]='control' [matAutocomplete]='auto'
+
+                       class='block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500'
+                       id='default-search'
+                       placeholder='Search Messages...'
+                       required type='search'>
+                <!--            <input type="text"
+                                   placeholder="Search for a street"
+
+                                   class="example-input">-->
+                <mat-autocomplete #auto='matAutocomplete'
+
+                                  (optionSelected)='openConversationFromSearch($event, user.userName, chatRoomSearchData, chatrooms)'>
+                  <mat-option *ngFor='let userMessage of filteredMessages' [value]='userMessage'>
+                    {{userMessage}}
+                  </mat-option>
+                </mat-autocomplete>
+                <!--           <button type='submit'
+                                   class='text-white absolute right-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'>
+                             Search
+                           </button>-->
               </div>
-              <input [formControl]='control' [matAutocomplete]='auto'
+            </form>
+            <!--            <mat-checkbox [(ngModel)]='unreadFilter'>Filter by Unread</mat-checkbox>-->
+            <mat-selection-list
+              (selectionChange)='change($event, user.userName)'
+              [multiple]='false'
 
-                     class='block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500'
-                     id='default-search'
-                     placeholder='Search Messages...'
-                     required type='search'>
-              <!--            <input type="text"
-                                 placeholder="Search for a street"
-
-                                 class="example-input">-->
-              <mat-autocomplete #auto='matAutocomplete'
-
-                                (optionSelected)='openConversationFromSearch($event, user.username, chatRoomSearchData, chatrooms)'>
-                <mat-option *ngFor='let userMessage of filteredMessages'  [value]='userMessage'>
-                  {{userMessage}}
-                </mat-option>
-              </mat-autocomplete>
-              <!--           <button type='submit'
-                                 class='text-white absolute right-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'>
-                           Search
-                         </button>-->
-            </div>
-          </form>
-          <!--            <mat-checkbox [(ngModel)]='unreadFilter'>Filter by Unread</mat-checkbox>-->
-          <mat-selection-list
-            (selectionChange)='change($event, user.username)'
-            [multiple]='false'
-
-            class='flex flex-col items-center content-center w-[100%]'>
-            <cdk-virtual-scroll-viewport
-              [ngStyle]='{
+              class='flex flex-col items-center content-center w-[100%]'>
+              <cdk-virtual-scroll-viewport
+                [ngStyle]='{
       "height": isDialog ? "550px" : "900px"
       }'
-              class='flex flex-col items-center content-center w-[100%]'
+                class='flex flex-col items-center content-center w-[100%]'
 
-              itemSize='25'>
-              <!--          [ngStyle]='{"background-color": notification.status === 0 ? "#60a1fa" : ""}'-->
-              <!--            messages | sortMessages : false'-->
-              <!--            [message]='message'-->
-              <mat-list-option *cdkVirtualFor='let chatroom of chatrooms | sortChatrooms'
-                               [selectedMessage]='selectedMessage'
-                               [value]='chatroom'
-                               appMessageDirective>
+                itemSize='25'>
+                <!--          [ngStyle]='{"background-color": notification.status === 0 ? "#60a1fa" : ""}'-->
+                <!--            messages | sortMessages : false'-->
+                <!--            [message]='message'-->
+                <mat-list-option *cdkVirtualFor='let chatroom of chatrooms | sortChatrooms'
+                                 [selectedMessage]='selectedMessage'
+                                 [value]='chatroom'
+                                 appMessageDirective>
 
-                <ng-container *ngIf='chatroom.isGroup else userMessage'>
+                  <ng-container *ngIf='chatroom.isGroup else userMessage'>
                   <span
                     matListItemTitle>{{chatroom.groupChat.name}}</span>
+                    <span
+                      matListItemLine>{{chatroom.groupChat.latestSentMessage?.messageSentTime | date : 'short'}}</span>
+                    <p
+                      matListItemLine>
+                      {{chatroom.groupChat.latestSentMessage?.senderUserName === user.userName ? 'You:' : chatroom.groupChat.latestSentMessage?.senderUserName + ':'}} {{chatroom.groupChat.latestSentMessage?.content}}
+                    </p>
+                  </ng-container>
+                  <ng-template #userMessage>
                   <span
-                    matListItemLine>{{chatroom.groupChat.latestSentMessage?.messageSentTime | date : 'short'}}</span>
-                  <p
-                    matListItemLine>
-                    {{chatroom.groupChat.latestSentMessage?.senderUsername === user.username ? 'You:' : chatroom.groupChat.latestSentMessage?.senderUsername + ':'}} {{chatroom.groupChat.latestSentMessage?.content}}
-                  </p>
-                </ng-container>
-                <ng-template #userMessage>
-                  <span
-                    matListItemTitle>{{chatroom.message.senderUsername === user.username ? chatroom.message.recipientUsername : chatroom.message.senderUsername}}</span>
-                  <span matListItemLine>{{chatroom.message.messageSentTime | date : 'short'}}</span>
-                  <p
-                    matListItemLine>
-                    {{chatroom.message.senderUsername === user.username ? 'You:' : chatroom.message.senderUsername + ':'}} {{chatroom.message.content}}
-                  </p>
-                </ng-template>
+                    matListItemTitle>{{chatroom.message.senderUserName === user.userName ? chatroom.message.recipientUserName : chatroom.message.senderUserName}}</span>
+                    <span matListItemLine>{{chatroom.message.messageSentTime | date : 'short'}}</span>
+                    <p
+                      matListItemLine>
+                      {{chatroom.message.senderUserName === user.userName ? 'You:' : chatroom.message.senderUserName + ':'}} {{chatroom.message.content}}
+                    </p>
+                  </ng-template>
 
-              </mat-list-option>
-            </cdk-virtual-scroll-viewport>
-          </mat-selection-list>
+                </mat-list-option>
+              </cdk-virtual-scroll-viewport>
+            </mat-selection-list>
+          </ng-container>
         </ng-container>
       </ng-container>
     </ng-container>

@@ -47,12 +47,12 @@ public class MessagesRepository : IMessagesRepository
     public async Task<IEnumerable<Message>> GetMessagesAsync(AppUser appUser)
     {
         var messagesSent = await _context.Messages
-            .Where(x => x.SenderUsername == appUser.UserName!)
+            .Where(x => x.SenderUserName == appUser.UserName!)
             .Include(x => x.Recipient)
             .ToListAsync();
 
         var messagesReceived = await _context.Messages
-            .Where(x => x.RecipientUsername == appUser.UserName!)
+            .Where(x => x.RecipientUserName == appUser.UserName!)
             .Include(x => x.Sender)
             .ToListAsync();
 
@@ -63,13 +63,13 @@ public class MessagesRepository : IMessagesRepository
     public async Task<IEnumerable<MessageDto>> GetMessageDtosAsync(AppUser appUser)
     {
         var messagesSent = await _context.Messages
-            .Where(x => x.SenderUsername == appUser.UserName!)
+            .Where(x => x.SenderUserName == appUser.UserName!)
             .Include(x => x.Recipient)
             .Select(x => x.ToDto(appUser))
             .ToListAsync();
 
         var messagesReceived = await _context.Messages
-            .Where(x => x.RecipientUsername == appUser.UserName!)
+            .Where(x => x.RecipientUserName == appUser.UserName!)
             .Include(x => x.Sender)
             .Select(x => x.ToDto(appUser))
             .ToListAsync();
@@ -93,13 +93,13 @@ public class MessagesRepository : IMessagesRepository
         {
             case MessageFilter.Sent:
                 return await _context.Messages
-                    .Where(x => x.SenderUsername == appUser.UserName!)
+                    .Where(x => x.SenderUserName == appUser.UserName!)
                     .Include(x => x.Recipient)
                     .Select(x => x.ToDto(appUser))
                     .ToListAsync();
             case MessageFilter.Received:
                 return await _context.Messages
-                    .Where(x => x.RecipientUsername == appUser.UserName!)
+                    .Where(x => x.RecipientUserName == appUser.UserName!)
                     .Include(x => x.Sender)
                     .Select(x => x.ToDto(appUser))
                     .ToListAsync();

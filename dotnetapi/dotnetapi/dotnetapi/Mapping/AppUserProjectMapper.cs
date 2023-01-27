@@ -24,7 +24,7 @@ public static class AppUserProjectMapper
         {
             AppUser = new AppUserDto
             {
-                Username = request.AppUser.UserName!,
+                UserName = request.AppUser.UserName!,
                 FirstName = request.AppUser.FirstName,
                 LastActive = request.AppUser.LastActive
             },

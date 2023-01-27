@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
 import { firstValueFrom } from 'rxjs'
 import { ConnectionsSelectors } from '../store'
+import { map } from 'rxjs/operators'
 
 @Injectable({
   providedIn: 'root',
@@ -17,4 +18,9 @@ export class ConnectionsFacade {
     return firstValueFrom(this.connections$)
   }
 
+  isUserOnline$(userName: string) {
+    return this.connections$.pipe(
+      map((connections) => !!connections.find((connection) => connection.userName === userName)),
+    )
+  }
 }

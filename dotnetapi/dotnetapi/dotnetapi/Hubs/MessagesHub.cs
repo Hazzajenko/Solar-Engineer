@@ -77,7 +77,7 @@ public class MessagesHub : Hub
             .SingleOrDefaultAsync();
         if (appUser is null) throw new HubException("appUser is null");
 
-        var recipient = await _userManager.Users.Where(x => x.UserName == request.RecipientUsername)
+        var recipient = await _userManager.Users.Where(x => x.UserName == request.RecipientUserName)
             .SingleOrDefaultAsync();
         if (recipient is null)
         {
@@ -113,7 +113,7 @@ public class MessagesHub : Hub
         // var groupChatMemberDtos = await _groupChatsRepository.GetGroupChatMembersAsync(request.GroupChatId);
 
         var chatMemberDtos = groupChatMemberDtos.ToList();
-        var isUserInGroupChat = chatMemberDtos.FirstOrDefault(x => x.Username == appUser.UserName!);
+        var isUserInGroupChat = chatMemberDtos.FirstOrDefault(x => x.UserName == appUser.UserName!);
         if (isUserInGroupChat is null)
         {
             _logger.LogError("Bad request, user is not in conversation");
@@ -125,7 +125,7 @@ public class MessagesHub : Hub
         // var groupChatMessageDto = await _mediator.Send(new SendMessageToGroupChatQuery(groupChatMessage));
         var groupChatMessageDto = await _messagesRepository.SendMessageToGroupChatAsync(groupChatMessage, appUser);
 
-        var groupChatUsers = chatMemberDtos.Select(x => x.Username).ToArray();
+        var groupChatUsers = chatMemberDtos.Select(x => x.UserName).ToArray();
         // var groupChatUsernames = await _groupChatsRepository.GetGroupChatMembersAsync()
 
         _logger.LogInformation("{User} Sent a Message To Group {Recipient}", appUser.UserName!,

@@ -2,7 +2,7 @@ import { MessageModel } from '../users'
 
 export interface UserChatCombinedModel {
   id: number
-  recipientUsername: string
+  recipientUserName: string
   latestSentMessageTime: string
   latestSentMessage: MessageModel
   messages: MessageModel[]

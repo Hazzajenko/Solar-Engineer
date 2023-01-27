@@ -102,3 +102,6 @@ C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\bin\Debug
 C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\bin\Debug\net7.0\MassTransit.Abstractions.dll
 C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\bin\Debug\net7.0\MassTransit.RabbitMqTransport.dll
 C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\bin\Debug\net7.0\RabbitMQ.Client.dll
+C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\obj\Debug\net7.0\dotnetapi.csproj.Fody.CopyLocal.cache
+C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\obj\Debug\net7.0\dotnetapi.csproj.Fody.RuntimeCopyLocal.cache
+C:\Users\jenki\source\app\solar-engineer\dotnetapi\dotnetapi\dotnetapi\bin\Debug\net7.0\CloudinaryDotNet.dll

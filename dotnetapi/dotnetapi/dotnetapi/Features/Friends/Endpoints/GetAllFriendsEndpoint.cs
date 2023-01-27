@@ -36,7 +36,7 @@ public class GetAllFriendsEndpoint : EndpointWithoutRequest<AllFriendsResponse>
         if (user is null)
         {
             _logger.LogError("Bad request, User is invalid");
-            ThrowError("Username is invalid");
+            ThrowError("UserName is invalid");
         }
 
         var allFriends = await _friendsService.GetAllFriendsAsync(user);

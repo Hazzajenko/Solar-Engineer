@@ -11,8 +11,8 @@ public static class MessageMapper
         return new Message
         {
             Content = request.Content,
-            RecipientUsername = recipient.UserName!,
-            SenderUsername = user.UserName!,
+            RecipientUserName = recipient.UserName!,
+            SenderUserName = user.UserName!,
             Sender = user,
             Recipient = recipient,
             Status = NotificationStatus.Unread
@@ -27,10 +27,10 @@ public static class MessageMapper
             Content = request.Content,
             MessageReadTime = request.MessageReadTime,
             MessageSentTime = request.MessageSentTime,
-            RecipientUsername = request.RecipientUsername,
-            SenderUsername = request.SenderUsername,
+            RecipientUserName = request.RecipientUserName,
+            SenderUserName = request.SenderUserName,
             Status = request.Status,
-            IsUserSender = appUser.UserName! == request.SenderUsername!
+            IsUserSender = appUser.UserName! == request.SenderUserName!
         };
     }
 
@@ -40,7 +40,7 @@ public static class MessageMapper
         {
             Id = request.Id,
             Content = request.Content,
-            SenderUsername = request.Sender.UserName!,
+            SenderUserName = request.Sender.UserName!,
             MessageSentTime = request.MessageSentTime,
             GroupChatId = request.GroupChatId,
             MessageReadTimes = request.MessageReadTimes.Select(x => x.ToDto()),
@@ -53,7 +53,7 @@ public static class MessageMapper
         return new GroupChatReadTimeDto
         {
             Id = request.Id,
-            RecipientUsername = request.AppUser.UserName!,
+            RecipientUserName = request.AppUser.UserName!,
             MessageReadTime = request.MessageReadTime
         };
     }

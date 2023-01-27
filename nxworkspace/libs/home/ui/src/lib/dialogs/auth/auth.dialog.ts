@@ -11,7 +11,14 @@ import { MatListModule } from '@angular/material/list'
 
 import { MatIconModule } from '@angular/material/icon'
 
-import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms'
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms'
 import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatInputModule } from '@angular/material/input'
 import { AuthService } from '@auth/data-access/api'
@@ -50,18 +57,17 @@ import { map } from 'rxjs'
   standalone: true,
 })
 export class AuthDialog {
-
   loginForm: FormGroup = new FormGroup({
-    'username': new FormControl('', Validators.compose([
-      Validators.required,
-
-    ])),
-    'password': new FormControl('', Validators.compose([
-      Validators.minLength(5),
-      // Validators.pattern('(?=.*[A-Z])'),
-      // Validators.pattern('(?=.*\\d)'),
-      Validators.required,
-    ])),
+    userName: new FormControl('', Validators.compose([Validators.required])),
+    password: new FormControl(
+      '',
+      Validators.compose([
+        Validators.minLength(5),
+        // Validators.pattern('(?=.*[A-Z])'),
+        // Validators.pattern('(?=.*\\d)'),
+        Validators.required,
+      ]),
+    ),
   })
   loading = false
 
@@ -75,27 +81,24 @@ export class AuthDialog {
   private formBuilder = inject(FormBuilder)
   authError$ = this.authStore.select.error$
   authErrorMessages$ = this.authStore.select.errors$
-  usernameErrors$ = this.authStore.select.errors$.pipe(map(
-    errors => errors?.filter(error => error.property === 'Username'),
-  ))
-  passwordErrors$ = this.authStore.select.errors$.pipe(map(
-    errors => errors?.filter(error => error.property === 'Password'),
-  ))
+  userNameErrors$ = this.authStore.select.errors$.pipe(
+    map((errors) => errors?.filter((error) => error.property === 'Username')),
+  )
+  passwordErrors$ = this.authStore.select.errors$.pipe(
+    map((errors) => errors?.filter((error) => error.property === 'Password')),
+  )
 
   user$ = this.authStore.select.user$
   user = this.authStore.select.user
   form = this.formBuilder.group({
-    username: ['', Validators.required],
+    userName: ['', Validators.required],
     password: ['', Validators.required],
   })
   // "Passwords must have at least one uppercase ('A'-'Z')."
   // ion: "Passwords must have at least one digit ('0'-'9').
   validationMessages = {
-    'username': [
-      { type: 'required', message: 'Username is required.' },
-
-    ],
-    'password': [
+    userName: [{ type: 'required', message: 'Username is required.' }],
+    password: [
       { type: 'required', message: 'Password is required.' },
       { type: 'minlength', message: 'Password must be at least 5 characters long.' },
       // { type: '(?=.*[A-Z])', message: 'Needs uppercase and numbers' },
@@ -103,10 +106,7 @@ export class AuthDialog {
   }
   login = true
 
-  constructor(
-    private dialogRef: MatDialogRef<AuthDialog>,
-    @Inject(MAT_DIALOG_DATA) data: any,
-  ) {
+  constructor(private dialogRef: MatDialogRef<AuthDialog>, @Inject(MAT_DIALOG_DATA) data: any) {
     this.login = data.login
   }
 
@@ -115,18 +115,18 @@ export class AuthDialog {
   }
 
   async onSubmit() {
-    const username = this.loginForm.get('username')?.value
+    const userName = this.loginForm.get('userName')?.value
     const password = this.loginForm.get('password')?.value
-    // console.log(username, password)
-    if (!username) return console.error('!this.name.value')
+    // console.log(userName, password)
+    if (!userName) return console.error('!this.name.value')
     if (!password) return console.error('!this.password.value')
-    // this.authFacade.register({ username, password })
+    // this.authFacade.register({ userName, password })
     if (this.login) {
-      // await this.authService.login({ username, password })
-      this.authStore.dispatch.init({ username, password })
+      // await this.authService.login({ userName, password })
+      this.authStore.dispatch.init({ userName, password })
     } else {
-      // await this.authService.register({ username, password })
-      this.authStore.dispatch.register({ username, password })
+      // await this.authService.register({ userName, password })
+      this.authStore.dispatch.register({ userName, password })
     }
 
     /*    const isLoggedIn = await this.user

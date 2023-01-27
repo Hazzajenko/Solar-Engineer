@@ -11,9 +11,8 @@ import { MessagesActions } from '../store'
 export class MessagesRepository {
   private store = inject(Store)
 
-
-  initMessagesWithUser(username: string) {
-    this.store.dispatch(MessagesActions.initMessagesWithUser({ username }))
+  initMessagesWithUser(userName: string) {
+    this.store.dispatch(MessagesActions.initMessagesWithUser({ userName }))
   }
 
   sendMessageToUser(request: SendMessageRequest) {

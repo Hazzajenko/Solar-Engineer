@@ -1,0 +1,8 @@
+<ng-container *ngIf='message'>
+  <div class='bg-white'>
+    <button (click)='routeToUserProfile(message.sender)' class='p-1 text-xs cursor-pointer hover:bg-[#545bff]'
+            style='border-radius: inherit' mat-menu-item>
+      View {{message.sender.userName}}'s profile
+    </button>
+  </div>
+</ng-container>

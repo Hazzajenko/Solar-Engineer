@@ -4,7 +4,7 @@ export interface ManyLatestUserMessagesResponse {
   messages: LatestUserMessage[]
 }
 
-export interface LatestUserMessage{
-  username: string
+export interface LatestUserMessage {
+  userName: string
   message: MessageModel
 }

@@ -1,8 +1,8 @@
 export interface FriendRequestModel {
-  requestedByUsername: string;
-  requestedToUsername: string;
-  becameFriendsTime: string | null;
-  friendRequestFlag: FriendRequestFlag;
+  requestedByUserName: string
+  requestedToUserName: string
+  becameFriendsTime: string | null
+  friendRequestFlag: FriendRequestFlag
 }
 
 export enum FriendRequestFlag {
@@ -10,5 +10,5 @@ export enum FriendRequestFlag {
   Approved,
   Rejected,
   Blocked,
-  Spam
+  Spam,
 }

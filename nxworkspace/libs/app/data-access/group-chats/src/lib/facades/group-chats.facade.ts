@@ -21,6 +21,7 @@ import { map } from 'rxjs/operators'
 import {
   GroupChatCombinedModel,
   GroupChatMemberModel,
+  GroupChatMessageMemberModel,
   GroupChatMessageModel,
   MessageModel,
 } from '@shared/data-access/models'
@@ -160,6 +161,35 @@ export class GroupChatsFacade {
     )
   }
 
+  groupChatMessagesWithMembersById$(groupChatId: number) {
+    return this.messages$.pipe(
+      map((messages) => messages.filter((message) => message.groupChatId === groupChatId)),
+      switchMap((messages) =>
+        combineLatest(
+          messages.map((message) => {
+            const sender = this.groupChatMembersById$(groupChatId).pipe(
+              map((members) =>
+                members.find((member) => member.userName === message.senderUserName),
+              ),
+            )
+            return combineLatest([of(message), sender]).pipe(
+              map(([message, sender]) => ({ message, sender })),
+            )
+          }),
+        ),
+      ),
+      map((combinedArr) =>
+        combinedArr.map(
+          (combined) =>
+            ({
+              ...combined.message,
+              sender: combined.sender,
+            } as GroupChatMessageMemberModel),
+        ),
+      ),
+    )
+  }
+
   groupChatMembersById$(groupChatId: number) {
     return this.connectionsStore.select.connections$.pipe(
       switchMap((connections) =>
@@ -172,7 +202,7 @@ export class GroupChatsFacade {
                   ({
                     ...member,
                     isOnline: !!connections.find(
-                      (connection) => connection.username === member.username,
+                      (connection) => connection.userName === member.userName,
                     ),
                   } as GroupChatMemberModel),
               ),
@@ -180,15 +210,7 @@ export class GroupChatsFacade {
           tap((res) => console.log(res)),
         ),
       ),
-    ) /* this.messages$.pipe(
-      map((messages) => messages.filter((message) => message.groupChatId === groupChatId)),
-      /!*      map((messages) =>
-              messages.sort(
-                (a: GroupChatMessageModel, b: GroupChatMessageModel) =>
-                  new Date(a.messageSentTime).getTime() - new Date(b.messageSentTime).getTime(),
-              ),
-            ),*!/
-    )*/
+    )
   }
 
   groupChatById$(groupChatId: number) {

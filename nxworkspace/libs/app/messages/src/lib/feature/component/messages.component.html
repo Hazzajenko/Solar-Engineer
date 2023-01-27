@@ -8,7 +8,7 @@
         Mark All As Read
       </button>
       <ng-container
-        *ngrxLet='selectedMessage?.senderUsername === user.username ? selectedMessage?.recipientUsername : selectedMessage?.senderUsername as recipient'>
+        *ngrxLet='selectedMessage?.senderUserName === user.userName ? selectedMessage?.recipientUserName : selectedMessage?.senderUserName as recipient'>
 
 
         <mat-checkbox [(ngModel)]='unreadFilter'>Filter by Unread</mat-checkbox>
@@ -29,10 +29,10 @@
                              [value]='message'>
 
             <span
-              matListItemTitle>{{message.senderUsername === user.username ? message.recipientUsername : message.senderUsername}}</span>
+              matListItemTitle>{{message.senderUserName === user.userName ? message.recipientUserName : message.senderUserName}}</span>
               <span matListItemLine>{{message.messageSentTime | date : 'short'}}</span>
               <p
-                matListItemLine>{{message.senderUsername === user.username ? 'You:' : message.senderUsername + ':'}} {{message.content}}</p>
+                matListItemLine>{{message.senderUserName === user.userName ? 'You:' : message.senderUserName + ':'}} {{message.content}}</p>
 
               <!--          [color]='notification.status === 0 ? "primary" : "accent"'-->
             </mat-list-option>

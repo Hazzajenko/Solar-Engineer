@@ -85,7 +85,7 @@ public class NotificationsService : INotificationsService
             var response = new NotificationDto<FriendRequestDto>
             {
                 Id = x.Id,
-                Username = x.AppUser.UserName!,
+                UserName = x.AppUser.UserName!,
                 Status = x.Status,
                 TimeCreated = x.TimeCreated,
                 Type = x.Type,

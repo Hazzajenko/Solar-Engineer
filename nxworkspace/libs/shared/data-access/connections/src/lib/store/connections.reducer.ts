@@ -12,12 +12,13 @@ export interface ConnectionsState extends EntityState<ConnectionModel> {
 }
 
 export function selectUsername(a: ConnectionModel): string {
-  return a.username
+  return a.userName
 }
 
-export const connectionsAdapter: EntityAdapter<ConnectionModel> = createEntityAdapter<ConnectionModel>({
-  selectId: selectUsername,
-})
+export const connectionsAdapter: EntityAdapter<ConnectionModel> =
+  createEntityAdapter<ConnectionModel>({
+    selectId: selectUsername,
+  })
 
 export const initialStringsState: ConnectionsState = connectionsAdapter.getInitialState({
   loaded: false,
@@ -33,11 +34,9 @@ const reducer = createReducer(
     connectionsAdapter.addMany(connections, state),
   ),
   on(ConnectionsActions.removeConnection, (state, { connection }) =>
-    connectionsAdapter.removeOne(connection.username, state),
+    connectionsAdapter.removeOne(connection.userName, state),
   ),
-  on(ConnectionsActions.clearConnectionsState, (state) =>
-    connectionsAdapter.removeAll(state),
-  ),
+  on(ConnectionsActions.clearConnectionsState, (state) => connectionsAdapter.removeAll(state)),
 )
 
 export function connectionsReducer(state: ConnectionsState | undefined, action: Action) {

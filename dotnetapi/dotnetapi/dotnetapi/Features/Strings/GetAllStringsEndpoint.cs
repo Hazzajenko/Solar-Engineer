@@ -36,7 +36,7 @@ public class GetAllStringsEndpoint : EndpointWithoutRequest<ManyStringsResponse>
         if (user is null)
         {
             _logger.LogError("Bad request, User is invalid");
-            ThrowError("Username is invalid");
+            ThrowError("UserName is invalid");
         }
 
         var projectId = Route<int>("projectId");

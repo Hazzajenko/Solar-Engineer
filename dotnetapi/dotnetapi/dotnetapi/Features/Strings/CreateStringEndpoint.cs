@@ -38,7 +38,7 @@ public class CreateStringEndpoint : Endpoint<CreateStringRequest, OneStringRespo
         if (user is null)
         {
             _logger.LogError("Bad request, User is invalid");
-            ThrowError("Username is invalid");
+            ThrowError("UserName is invalid");
         }
 
         var projectId = Route<int>("projectId");
@@ -53,7 +53,7 @@ public class CreateStringEndpoint : Endpoint<CreateStringRequest, OneStringRespo
             String = stringDto
         };
 
-        _logger.LogInformation("{Username} created a new string {String}, in project {Project}",
+        _logger.LogInformation("{UserName} created a new string {String}, in project {Project}",
             user.UserName,
             stringDto.Name,
             projectId.ToString());

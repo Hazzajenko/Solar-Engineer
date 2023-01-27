@@ -1,6 +1,6 @@
 import { PanelModel } from '@shared/data-access/models'
 import { createFeatureSelector, createSelector } from '@ngrx/store'
-import { selectRouteParams } from '@shared/data-access/router'
+import { RouterSelectors } from '@shared/data-access/router'
 import { PANELS_FEATURE_KEY, panelsAdapter, PanelsState } from './panels.reducer'
 
 export const selectPanelsState = createFeatureSelector<PanelsState>(PANELS_FEATURE_KEY)
@@ -27,16 +27,16 @@ export const selectPanelsEntities = createSelector(selectPanelsState, (state: Pa
 
 export const selectPanelsByRouteParams = createSelector(
   selectAllPanels,
-  selectRouteParams,
+  RouterSelectors.selectRouteParams,
   (panels, { projectId }) => panels.filter((p) => p.projectId === Number(projectId)),
 )
 
 export const selectPanelById = (props: { id: string }) =>
-  createSelector(selectAllPanels, (panels: PanelModel[]) =>
-    panels.find((panel) => panel.id === props.id),
+  createSelector(
+    selectAllPanels,
+    (panels: PanelModel[]) => panels.find((panel) => panel.id === props.id),
     // panels.find((panel) => panel.id === props.id),
   )
-
 
 export const selectStringIdByPanelId = (props: { panelId: string }) =>
   createSelector(

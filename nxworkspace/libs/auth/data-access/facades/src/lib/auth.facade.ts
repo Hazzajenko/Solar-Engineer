@@ -15,6 +15,7 @@ export class AuthFacade {
   error$ = this.store.select(AuthSelectors.selectError)
   errors$ = this.store.select(AuthSelectors.selectErrors)
   user$ = this.store.select(AuthSelectors.selectUser)
+  userNameFromRouteParams$ = this.store.select(AuthSelectors.selectUserNameFromRouteParams)
   token$ = this.store.select(AuthSelectors.selectToken)
 
   get token() {

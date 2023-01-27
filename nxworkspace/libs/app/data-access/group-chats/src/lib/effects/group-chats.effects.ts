@@ -80,7 +80,7 @@ export class GroupChatsEffects {
       this.actions$.pipe(
         ofType(GroupChatMessagesActions.addGroupChatMessage),
         map(({ groupChatMessage }) => {
-          const messageFrom = groupChatMessage.senderUsername
+          const messageFrom = groupChatMessage.senderUserName
           this.snackBar.open(`New message from ${messageFrom}!`, 'OK', {
             duration: 5000,
           })

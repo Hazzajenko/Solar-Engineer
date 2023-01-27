@@ -11,9 +11,12 @@ public static class AppUserMapper
     {
         return new AppUserDto
         {
-            Username = request.UserName!,
+            UserName = request.UserName!,
             FirstName = request.FirstName,
-            LastActive = request.LastActive
+            LastName = request.LastName,
+            LastActive = request.LastActive,
+            Created = request.Created,
+            PhotoUrl = request.PhotoUrl
         };
     }
 
@@ -22,7 +25,7 @@ public static class AppUserMapper
         return new AppUser
         {
             Email = "",
-            UserName = request.Username,
+            UserName = request.UserName,
             FirstName = "",
             LastName = "",
             PhotoUrl = ""

@@ -1,8 +1,10 @@
-﻿using dotnetapi.Data;
+﻿using CloudinaryDotNet;
+using dotnetapi.Data;
 using dotnetapi.Features.Friends.Services;
 using dotnetapi.Features.GroupChats.Services;
 using dotnetapi.Features.Messages.Services;
 using dotnetapi.Features.Notifications.Services;
+using dotnetapi.Helpers;
 using dotnetapi.Services.Auth;
 using dotnetapi.Services.Cache;
 using dotnetapi.Services.Links;
@@ -11,6 +13,7 @@ using dotnetapi.Services.Paths;
 using dotnetapi.Services.Projects;
 using dotnetapi.Services.SignalR;
 using dotnetapi.Services.Strings;
+using dotnetapi.Settings;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
@@ -24,9 +27,19 @@ public static class ApplicationServiceExtensions
         services.AddMediator();
 
         // services.AddMediator();
+        services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));
+        var cloudName = config.GetValue<string>("CloudinarySettings:CloudName");
+        var apiKey = config.GetValue<string>("CloudinarySettings:ApiKey");
+        var apiSecret = config.GetValue<string>("CloudinarySettings:ApiSecret");
+
+        if (new[] { cloudName, apiKey, apiSecret }.Any(string.IsNullOrWhiteSpace))
+            throw new ArgumentException("Please specify Cloudinary account details!");
+
+        services.AddSingleton(new Cloudinary(new Account(cloudName, apiKey, apiSecret)));
 
         services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
         services.AddSingleton<IConnectionsService, ConnectionsService>();
+
 
         services.AddScoped<ICacheService, CacheService>();
         services.AddScoped<INotificationsService, NotificationsService>();
@@ -52,7 +65,7 @@ public static class ApplicationServiceExtensions
 
         services.AddDbContext<DataContext>(options =>
         {
-            options.EnableSensitiveDataLogging();
+            // options.EnableSensitiveDataLogging();
             string? connStr;
             // connStr = config.GetConnectionString("PostgresConnection") ?? throw new InvalidOperationException();
 

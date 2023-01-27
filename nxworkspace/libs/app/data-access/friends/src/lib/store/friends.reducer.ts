@@ -12,7 +12,7 @@ export interface FriendsState extends EntityState<FriendModel> {
 }
 
 export function selectUsername(a: FriendModel): string {
-  return a.username
+  return a.userName
 }
 
 export const friendsAdapter: EntityAdapter<FriendModel> = createEntityAdapter<FriendModel>({
@@ -26,24 +26,16 @@ export const initialFriendsState: FriendsState = friendsAdapter.getInitialState(
 const reducer = createReducer(
   initialFriendsState,
   on(FriendsActions.initFriends, (state) => ({ ...state, loaded: false, error: null })),
-  on(FriendsActions.addFriend, (state, { friend }) =>
-    friendsAdapter.addOne(friend, state),
-  ),
-  on(FriendsActions.addManyFriends, (state, { friends }) =>
-    friendsAdapter.addMany(friends, state),
-  ),
-  on(FriendsActions.updateFriend, (state, { update }) =>
-    friendsAdapter.updateOne(update, state),
-  ),
+  on(FriendsActions.addFriend, (state, { friend }) => friendsAdapter.addOne(friend, state)),
+  on(FriendsActions.addManyFriends, (state, { friends }) => friendsAdapter.addMany(friends, state)),
+  on(FriendsActions.updateFriend, (state, { update }) => friendsAdapter.updateOne(update, state)),
   on(FriendsActions.updateManyFriends, (state, { updates }) =>
     friendsAdapter.updateMany(updates, state),
   ),
   on(FriendsActions.removeFriend, (state, { friendUsername }) =>
     friendsAdapter.removeOne(friendUsername, state),
   ),
-  on(FriendsActions.clearFriendsState, (state) =>
-    friendsAdapter.removeAll(state),
-  ),
+  on(FriendsActions.clearFriendsState, (state) => friendsAdapter.removeAll(state)),
 )
 
 export function friendsReducer(state: FriendsState | undefined, action: Action) {

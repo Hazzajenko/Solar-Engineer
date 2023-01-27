@@ -1,6 +1,6 @@
 import { StringModel } from '@shared/data-access/models'
 import { createFeatureSelector, createSelector } from '@ngrx/store'
-import { selectRouteParams } from '@shared/data-access/router'
+import { RouterSelectors } from '@shared/data-access/router'
 import { STRINGS_FEATURE_KEY, stringsAdapter, StringsState } from './strings.reducer'
 
 export const selectStringsState = createFeatureSelector<StringsState>(STRINGS_FEATURE_KEY)
@@ -27,7 +27,7 @@ export const selectStringsEntities = createSelector(selectStringsState, (state: 
 
 export const selectStringsByRouteParams = createSelector(
   selectAllStrings,
-  selectRouteParams,
+  RouterSelectors.selectRouteParams,
   (strings, { projectId }) => strings.filter((s) => s.projectId === Number(projectId)),
 )
 
@@ -37,6 +37,7 @@ export const selectStringById = (props: { id: string }) =>
   )
 
 export const selectPanelPathRecordByStringId = (props: { stringId: string }) =>
-  createSelector(selectAllStrings, (strings: StringModel[]) =>
-    strings.find((string) => string.id === props.stringId)?.panelPaths,
+  createSelector(
+    selectAllStrings,
+    (strings: StringModel[]) => strings.find((string) => string.id === props.stringId)?.panelPaths,
   )

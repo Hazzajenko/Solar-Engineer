@@ -10,6 +10,6 @@ export class IsMemberOnlinePipe implements PipeTransform {
     if (!memberUsername) return
     if (!onlineMembers) return
 
-    return onlineMembers.find((member) => member.username === memberUsername)?.isOnline
+    return onlineMembers.find((member) => member.userName === memberUsername)?.isOnline
   }
 }

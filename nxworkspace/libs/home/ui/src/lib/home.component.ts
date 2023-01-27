@@ -73,7 +73,7 @@ export class HomeComponent implements OnInit {
 
   loginDevBot() {
     this.authStore.dispatch.init({
-      username: 'postmantest',
+      userName: 'postmantest',
       password: 'PostmanTest1',
     })
   }

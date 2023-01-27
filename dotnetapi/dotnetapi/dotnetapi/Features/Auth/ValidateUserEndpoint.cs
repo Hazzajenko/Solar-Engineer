@@ -53,7 +53,7 @@ public class ValidateUserEndpoint : Endpoint<ValidateUserRequest, LoginResponse>
             await SendUnauthorizedAsync(cT);
         }
 
-        _logger.LogInformation("{Username} has logged in", user.UserName);
+        _logger.LogInformation("{UserName} has logged in", user.UserName);
         await SendOkAsync(signInResult, cT);
     }
 }

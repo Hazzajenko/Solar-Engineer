@@ -48,15 +48,15 @@ public class RegisterEndpoint : Endpoint<AuthRequest, LoginResponse>
                 AddError(error.ErrorMessage);
         ThrowIfAnyErrors();
 
-        var userExists = await _userManager.FindByNameAsync(request.Username);
+        var userExists = await _userManager.FindByNameAsync(request.UserName);
         if (userExists is not null)
         {
-            _logger.LogError("Bad request, {Username} is taken", request.Username);
-            ThrowError("Username is taken");
+            _logger.LogError("Bad request, {UserName} is taken", request.UserName);
+            ThrowError("UserName is taken");
         }
 
         var appUser = request.ToEntityV3();
-        appUser.UserName = request.Username.ToLower();
+        appUser.UserName = request.UserName.ToLower();
 
         var result = await _userManager.CreateAsync(appUser, request.Password);
 
@@ -84,7 +84,7 @@ public class RegisterEndpoint : Endpoint<AuthRequest, LoginResponse>
 
         // ThrowIfAnyErrors();
 
-        _logger.LogInformation("{Username} has signed up", appUser.UserName);
+        _logger.LogInformation("{UserName} has signed up", appUser.UserName);
         var signUpResult = await _authService.HandleSignIn(appUser);
         if (signUpResult.Token.IsNullOrEmpty())
         {
@@ -93,7 +93,7 @@ public class RegisterEndpoint : Endpoint<AuthRequest, LoginResponse>
             return;
         }
 
-        _logger.LogInformation("{Username} has logged in", appUser.UserName);
+        _logger.LogInformation("{UserName} has logged in", appUser.UserName);
         await SendOkAsync(signUpResult, cT);
     }
 }

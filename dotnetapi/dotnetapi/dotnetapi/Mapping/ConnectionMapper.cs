@@ -9,7 +9,7 @@ public static class ConnectionMapper
         return new ConnectionDto
         {
             UserId = request.UserId,
-            Username = request.Username
+            UserName = request.UserName
         };
     }
 
@@ -17,7 +17,7 @@ public static class ConnectionMapper
     {
         return new UserConnectionDto
         {
-            Username = request.Username
+            UserName = request.UserName
         };
     }
 }

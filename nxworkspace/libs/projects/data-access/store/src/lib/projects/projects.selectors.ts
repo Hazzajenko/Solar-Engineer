@@ -1,5 +1,5 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store'
-import { selectRouteParams } from '@shared/data-access/router'
+import { RouterSelectors } from '@shared/data-access/router'
 import { PROJECTS_FEATURE_KEY, projectsAdapter, ProjectsState } from './projects.reducer'
 
 export const selectProjectsState = createFeatureSelector<ProjectsState>(PROJECTS_FEATURE_KEY)
@@ -63,45 +63,35 @@ export const selectEntity = createSelector(
 ) */
 
 export const selectProjectByRouteParams = createSelector(
-  /*  selectProjectsState,
-    selectProjectsEntities,
-    selectRouteParams,
-    (state, projects, { projectId }) => {
-      console.log('selectProjectByRouteParams', projectId)
-      if (!projectId) {
-        return state.localProject
-      }
-      return projects[projectId]
-    },*/
   selectProjectsState,
   selectAllProjects,
-  selectRouteParams,
+  RouterSelectors.selectRouteParams,
   (state, projects, { projectName }) => {
     console.log('selectProjectByRouteParams', projectName)
     if (!projectName) {
       return state.localProject
     }
-    return projects.find(project => project.name === projectName)
+    return projects.find((project) => project.name === projectName)
   },
 )
 
 export const selectProjectByNameRouteParams = createSelector(
   selectProjectsState,
   selectAllProjects,
-  selectRouteParams,
+  RouterSelectors.selectRouteParams,
   (state, projects, { projectName }) => {
     console.log('selectProjectByRouteParams', projectName)
     if (!projectName) {
       return state.localProject
     }
-    return projects.find(project => project.name === projectName)
+    return projects.find((project) => project.name === projectName)
   },
 )
 
 export const selectProjectIdByRouteParams = createSelector(
   selectProjectsState,
   selectProjectsEntities,
-  selectRouteParams,
+  RouterSelectors.selectRouteParams,
   (state, projects, { projectId }) => {
     console.log('selectProjectByRouteParams', projectId)
     if (!projectId) {

@@ -52,9 +52,9 @@ import { SortMessagesPipe } from '../../../../messages/src/lib/feature/component
 import { ConversationMessageDirective } from '../../../../messages/src/lib/feature/conversation/conversation-message.directive'
 import { ScrollViewportDirective } from '../../../../messages/src/lib/feature/conversation/scroll-viewport.directive'
 import { SortConversationMessagesPipe } from '../../../../messages/src/lib/feature/conversation/sort-conversation-messages.pipe'
-import { GroupChatConversationComponent } from './conversation/group-chat-conversation.component'
+import { GroupChatConversationComponent } from './conversation/group-chat/group-chat-conversation.component'
 import { ChatroomListComponent } from './list/chatroom-list.component'
-import { UserConversationComponent } from './conversation/user-conversation.component'
+import { UserConversationComponent } from './conversation/user-conversation/user-conversation.component'
 import { ChangeChatRoomDirective } from './change-chatroom.directive'
 
 @Component({
@@ -204,21 +204,21 @@ export class ChatroomsComponent implements OnInit {
     this._ngZone.onStable.pipe(take(1)).subscribe(() => this.autosize.resizeToFitContent(true))
   }
 
-  change(event: MatSelectionListChange, username: string) {
+  change(event: MatSelectionListChange, userName: string) {
     console.log(event)
     this.selectedMessage = event.options[0].value
     if (!this.selectedMessage) return
     this.recipient =
-      this.selectedMessage.senderUsername === username
-        ? this.selectedMessage.recipientUsername
-        : this.selectedMessage.senderUsername
+      this.selectedMessage.senderUserName === userName
+        ? this.selectedMessage.recipientUserName
+        : this.selectedMessage.senderUserName
     if (this.recipient) {
       this.messagesStore.dispatch.initMessagesWithUser(this.recipient)
       this.conversationMessages$ = this.messagesStore.select.messagesWithUser$(this.recipient)
     }
     if (
       this.selectedMessage.status === NotificationStatus.Unread &&
-      this.selectedMessage.senderUsername !== username
+      this.selectedMessage.senderUserName !== userName
     ) {
       this.readMessage()
     }

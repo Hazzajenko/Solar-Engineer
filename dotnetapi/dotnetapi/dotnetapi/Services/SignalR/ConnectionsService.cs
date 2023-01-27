@@ -46,7 +46,7 @@ public class ConnectionsService : IConnectionsService
         var connection = new UserConnection
         {
             UserId = userId,
-            Username = username,
+            UserName = username,
             LoggedOn = DateTime.Now,
             Connections = list
         };
@@ -68,7 +68,7 @@ public class ConnectionsService : IConnectionsService
         if (context is null) return false;
 
         var userConnection = await context.UserConnections
-            .Where(x => x.Username == username)
+            .Where(x => x.UserName == username)
             .SingleOrDefaultAsync();
 
         if (userConnection is null) return isOffline;
@@ -94,7 +94,7 @@ public class ConnectionsService : IConnectionsService
         }
 
         var userConnection = await context.UserConnections
-            .Where(x => x.Username == username)
+            .Where(x => x.UserName == username)
             .Include(x => x.Connections)
             .SingleOrDefaultAsync();
 

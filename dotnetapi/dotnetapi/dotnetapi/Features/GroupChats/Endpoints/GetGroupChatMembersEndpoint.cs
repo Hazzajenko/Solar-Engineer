@@ -36,7 +36,7 @@ public class GetGroupChatMembersEndpoint : EndpointWithoutRequest<GroupChatMembe
         if (user is null)
         {
             _logger.LogError("Bad request, User is invalid");
-            ThrowError("Username is invalid");
+            ThrowError("UserName is invalid");
         }
 
         var groupChatId = Route<int>("groupChatId");
@@ -46,7 +46,7 @@ public class GetGroupChatMembersEndpoint : EndpointWithoutRequest<GroupChatMembe
         var result = await _groupChatsRepository.GetGroupChatMembersAsync(groupChatId);
 
         var groupChatMemberDtos = result.ToList();
-        var isUserInGroupChat = groupChatMemberDtos.SingleOrDefault(x => x.Username == user.UserName!);
+        var isUserInGroupChat = groupChatMemberDtos.SingleOrDefault(x => x.UserName == user.UserName!);
 
         if (isUserInGroupChat is null)
         {

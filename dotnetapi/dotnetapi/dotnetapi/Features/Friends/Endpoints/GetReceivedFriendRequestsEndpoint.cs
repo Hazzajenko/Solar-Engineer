@@ -36,7 +36,7 @@ public class GetReceivedFriendRequestsEndpoint : EndpointWithoutRequest<FriendRe
         if (user is null)
         {
             _logger.LogError("Bad request, User is invalid");
-            ThrowError("Username is invalid");
+            ThrowError("UserName is invalid");
         }
 
         var sentRequests = await _friendsService.GetReceivedRequestsAsync(user);

@@ -3,7 +3,7 @@ using FastEndpoints;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 
-namespace dotnetapi.Features.Users;
+namespace dotnetapi.Features.Users.Endpoints;
 
 [Authorize]
 public class GetCurrentUserEndpoint : EndpointWithoutRequest
@@ -22,7 +22,7 @@ public class GetCurrentUserEndpoint : EndpointWithoutRequest
     public override void Configure()
     {
         Get("/users/current");
-        Roles("Admin");
+        // Roles("Admin");
     }
 
     public override async Task HandleAsync(CancellationToken cancellationToken)
@@ -31,7 +31,7 @@ public class GetCurrentUserEndpoint : EndpointWithoutRequest
         if (user is null)
         {
             _logger.LogError("Bad request, User is invalid");
-            ThrowError("Username is invalid");
+            ThrowError("UserName is invalid");
         }
 
         await SendOkAsync(user, cancellationToken);

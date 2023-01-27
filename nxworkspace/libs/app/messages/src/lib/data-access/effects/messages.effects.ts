@@ -40,8 +40,8 @@ export class MessagesEffects {
       () =>
         this.actions$.pipe(
           ofType(GroupChatMessagesActions.initMessagesWithUser),
-          switchMap(({ username }) => this.messagesService.getAllMessagesWithUser(username).pipe(
-            // switchMap(({ username }) => this.messagesService.getAllMessagesWithUser(username).pipe(
+          switchMap(({ userName }) => this.messagesService.getAllMessagesWithUser(userName).pipe(
+            // switchMap(({ userName }) => this.messagesService.getAllMessagesWithUser(userName).pipe(
             map(({ messages }) => GroupChatMessagesActions.addManyMessages({ messages })),
           )),
         ),
@@ -51,7 +51,7 @@ export class MessagesEffects {
     () =>
       this.actions$.pipe(
         ofType(MessagesActions.initMessagesWithUser),
-        map(({ username }) => this.messagesService.getMessagesWithUserSignalR(username)),
+        map(({ userName }) => this.messagesService.getMessagesWithUserSignalR(userName)),
       ),
     { dispatch: false },
   )
@@ -82,7 +82,7 @@ export class MessagesEffects {
       this.actions$.pipe(
         ofType(MessagesActions.addReceivedMessage),
         map(({ message }) => {
-          const messageFrom = message.senderUsername
+          const messageFrom = message.senderUserName
           this.snackBar.open(`New message from ${messageFrom}!`, 'OK', {
             duration: 5000,
           })
@@ -120,7 +120,7 @@ export class MessagesEffects {
               map((messages) =>
                 messages.filter(
                   (message) =>
-                    message.senderUsername === recipient &&
+                    message.senderUserName === recipient &&
                     message.status === NotificationStatus.Unread,
                 ),
               ),

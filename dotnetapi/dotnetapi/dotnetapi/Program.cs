@@ -2,8 +2,10 @@ using System.Net.Mime;
 using System.Text.Json.Serialization;
 using Amazon.CloudWatchLogs;
 using Amazon.S3;
+using dotnetapi;
 using dotnetapi.Data;
 using dotnetapi.Extensions;
+using dotnetapi.Helpers;
 using dotnetapi.Hubs;
 using dotnetapi.Models.Entities;
 using dotnetapi.Validation;
@@ -221,6 +223,8 @@ builder.Services.AddHttpsRedirection(options =>
 });*/
 
 var app = builder.Build();
+MethodTimeLogger.Logger = app.Logger;
+
 app.UseSerilogRequestLogging();
 
 // Configure the HTTP request pipeline.
@@ -252,6 +256,7 @@ app.UseFastEndpoints(options =>
 {
     // options.Errors.ResponseBuilder = (errors, _) => errors.ToResponse();
     options.Serializer.Options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    options.Endpoints.Configurator = ep => { ep.PreProcessors(Order.Before, new UpdateLastActiveProcessor()); };
     // x.Serializer.Options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
 });
 // app.MapHealthChecks("api_health_check");

@@ -1,4 +1,4 @@
 export interface MessageSearchModel {
   letter: string
-  usernames: string[]
+  userNames: string[]
 }

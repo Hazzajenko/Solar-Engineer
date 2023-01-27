@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using System.Text;
 using dotnetapi.Contracts.Responses.Auth;
+using dotnetapi.Mapping;
 using dotnetapi.Models.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -46,12 +47,13 @@ public class AuthService : IAuthService
 
         return new LoginResponse
         {
-            Username = request.UserName!,
+            /*UserName = request.UserName!,
             FirstName = request.FirstName,
             LastName = request.LastName,
             PhotoUrl = request.PhotoUrl,
             Created = request.Created,
-            Email = request.Email!,
+            Email = request.Email!,*/
+            User = request.ToDto(),
             Token = tokenHandler.WriteToken(token)
         };
     }

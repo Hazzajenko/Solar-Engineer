@@ -24,8 +24,8 @@ public static class MessageRequestsMapper
         return new Message
         {
             Content = request.Content,
-            RecipientUsername = recipient.UserName!,
-            SenderUsername = user.UserName!,
+            RecipientUserName = recipient.UserName!,
+            SenderUserName = user.UserName!,
             Sender = user,
             Recipient = recipient,
             Status = NotificationStatus.Unread
@@ -40,8 +40,8 @@ public static class MessageRequestsMapper
             Content = request.Content,
             MessageReadTime = request.MessageReadTime,
             MessageSentTime = request.MessageSentTime,
-            RecipientUsername = request.RecipientUsername,
-            SenderUsername = request.SenderUsername,
+            RecipientUserName = request.RecipientUserName,
+            SenderUserName = request.SenderUserName,
             Status = request.Status
         };
     }*/

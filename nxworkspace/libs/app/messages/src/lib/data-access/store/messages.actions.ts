@@ -7,7 +7,7 @@ export const MessagesActions = createActionGroup({
   source: 'Messages Store',
   events: {
     'Init Messages': emptyProps(),
-    'Init Messages With User': props<{ username: string }>(),
+    'Init Messages With User': props<{ userName: string }>(),
     'Send Message To User': props<{ request: SendMessageRequest }>(),
     'Add Message': props<{ message: MessageModel }>(),
     'Add Received Message': props<{ message: MessageModel }>(),

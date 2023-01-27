@@ -166,14 +166,14 @@ export class ChatroomListComponent implements OnInit {
   // public dialogRef!: MatDialogRef<ChatroomsComponent>
 
   firstMessageSenders$ = this.user$.pipe(
-    map((user) => user?.username),
+    map((user) => user?.userName),
     /*    switchMap(
-          (username) =>
+          (userName) =>
             combineLatest(
               this.messages$.pipe(
                 map((messages) =>
                   messages?.map((message) => {
-                    if (message.senderUsername !== username) {
+                    if (message.senderUsername !== userName) {
                       return message.senderUsername
                     }
                     return message.recipientUsername
@@ -182,14 +182,14 @@ export class ChatroomListComponent implements OnInit {
               ),
             )
         ),*/
-    switchMap((username) =>
+    switchMap((userName) =>
       this.messages$.pipe(
         map((messages) =>
           messages?.map((message) => {
-            if (message.senderUsername !== username) {
-              return message.senderUsername
+            if (message.senderUserName !== userName) {
+              return message.senderUserName
             }
-            return message.recipientUsername
+            return message.recipientUserName
           }),
         ),
       ),
@@ -280,24 +280,24 @@ export class ChatroomListComponent implements OnInit {
     this._ngZone.onStable.pipe(take(1)).subscribe(() => this.autosize.resizeToFitContent(true))
   }
 
-  change(event: MatSelectionListChange, username: string) {
+  change(event: MatSelectionListChange, userName: string) {
     console.log(event)
     this.selectedChatroom = event.options[0].value
     // this.selectedMessage = event.options[0].value
     if (!this.selectedChatroom) return
     if (this.selectedChatroom.isGroup) {
       // if (!this.selectedChatroom.groupChat) return
-      this.selectGroupChat(this.selectedChatroom, username)
+      this.selectGroupChat(this.selectedChatroom, userName)
       // this.chatroom = this.selectedChatroom.groupChat.name
     } else {
       // if (!this.selectedChatroom.message) return console.error('!this.selectedChatroom.message')
-      this.selectUserMessage(this.selectedChatroom, username)
+      this.selectUserMessage(this.selectedChatroom, userName)
       // this.recipient =
-      //   this.selectedChatroom.message.senderUsername === username
+      //   this.selectedChatroom.message.senderUsername === userName
       //     ? this.selectedChatroom.message.recipientUsername
       //     : this.selectedChatroom.message.senderUsername
     }
-    // this.recipient = this.selectedMessage.senderUsername === username ? this.selectedMessage.recipientUsername : this.selectedMessage.senderUsername
+    // this.recipient = this.selectedMessage.senderUsername === userName ? this.selectedMessage.recipientUsername : this.selectedMessage.senderUsername
     /*    if (this.recipient) {
           this.selectMessageEvent.emit(this.recipient)
           this.messagesStore.dispatch.initMessagesWithUser(this.recipient)
@@ -305,34 +305,34 @@ export class ChatroomListComponent implements OnInit {
         }
         if (
           this.selectedMessage.status === NotificationStatus.Unread &&
-          this.selectedMessage.senderUsername !== username
+          this.selectedMessage.senderUsername !== userName
         ) {
           this.readMessage(selectedChatroom.message)
         }*/
   }
 
-  selectUserMessage(selectedChatroom: MessageTimeSortModel, username: string) {
+  selectUserMessage(selectedChatroom: MessageTimeSortModel, userName: string) {
     if (!selectedChatroom.message) return console.error('!this.selectedChatroom.message')
     this.recipient =
-      selectedChatroom.message.senderUsername === username
-        ? selectedChatroom.message.recipientUsername
-        : selectedChatroom.message.senderUsername
+      selectedChatroom.message.senderUserName === userName
+        ? selectedChatroom.message.recipientUserName
+        : selectedChatroom.message.senderUserName
     // this.selectMessageEvent.emit(this.recipient)
     this.selectChatRoomEvent.emit(selectedChatroom)
     this.messagesStore.dispatch.initMessagesWithUser(this.recipient)
     if (
       selectedChatroom.message.status === NotificationStatus.Unread &&
-      selectedChatroom.message.senderUsername !== username
+      selectedChatroom.message.senderUserName !== userName
     ) {
       this.readMessage(selectedChatroom.message)
     }
     // this.conversationMessages$ = this.messagesStore.select.messagesWithUser$(this.recipient)
   }
 
-  selectGroupChat(selectedChatroom: MessageTimeSortModel, username: string) {
+  selectGroupChat(selectedChatroom: MessageTimeSortModel, userName: string) {
     if (!selectedChatroom.groupChat) return console.error('!this.selectedChatroom.message')
     /*    this.recipient =
-          selectedChatroom.groupChat.senderUsername === username
+          selectedChatroom.groupChat.senderUsername === userName
             ? selectedChatroom.groupChat.recipientUsername
             : selectedChatroom.groupChat.senderUsername*/
     // this.selectGroupChatEvent.emit(selectedChatroom.groupChat.id)
@@ -340,7 +340,7 @@ export class ChatroomListComponent implements OnInit {
     this.groupChatsStore.dispatch.initGroupChat(selectedChatroom.groupChat.id)
     /*    if (
           selectedChatroom.message.status === NotificationStatus.Unread &&
-          selectedChatroom.message.senderUsername !== username
+          selectedChatroom.message.senderUsername !== userName
         ) {
           this.readMessage(selectedChatroom.message)
         }
@@ -421,8 +421,8 @@ export class ChatroomListComponent implements OnInit {
     await this.router.navigateByUrl('messages')
   }
 
-  displayFn(username: string | undefined): string {
-    return username ? username : ''
+  displayFn(userName: string | undefined): string {
+    return userName ? userName : ''
   }
 
   /*  private _filterGroup(value: string) {
@@ -437,11 +437,11 @@ export class ChatroomListComponent implements OnInit {
     }*/
   openConversationFromSearch(
     event: MatAutocompleteSelectedEvent,
-    username: string,
+    userName: string,
     searchData: ChatroomSearchModel[],
     messages: MessageTimeSortModel[],
   ) {
-    // console.log(event, username)
+    // console.log(event, userName)
     const chatroom = searchData.find((chatroom) => chatroom.chatRoomName === event.option.value)
     if (!chatroom) return
     if (chatroom.isGroup) {
@@ -453,13 +453,13 @@ export class ChatroomListComponent implements OnInit {
     }
     const userChat = messages.find(
       (message) =>
-        message.message?.senderUsername ||
-        message.message?.recipientUsername === chatroom.chatRoomName,
+        message.message?.senderUserName ||
+        message.message?.recipientUserName === chatroom.chatRoomName,
     )
     this.selectChatRoomEvent.emit(userChat)
     return
     /*    const recipient =
-          chatroom?.message?.recipientUsername !== username
+          chatroom?.message?.recipientUsername !== userName
             ? chatroom?.message?.recipientUsername
             : chatroom?.message?.senderUsername
 
@@ -474,7 +474,7 @@ export class ChatroomListComponent implements OnInit {
             !msg.isGroup,
         )
         const recipient =
-          msg?.message?.recipientUsername !== username
+          msg?.message?.recipientUsername !== userName
             ? msg?.message?.recipientUsername
             : msg?.message?.senderUsername*/
     // this.selectMessageEvent.emit((event.option.value as string).slice(5, event.option.value.length))
@@ -494,15 +494,15 @@ export class ChatroomListComponent implements OnInit {
 
   openConversationFromSearch2(
     event: MatAutocompleteSelectedEvent,
-    username: string,
+    userName: string,
     messages: MessageModel[],
   ) {
-    console.log(event, username)
+    console.log(event, userName)
     this.recipient = event.option.value
     if (!this.recipient) return
     const message = messages.find(
       (message) =>
-        message.recipientUsername === this.recipient || message.senderUsername === this.recipient,
+        message.recipientUserName === this.recipient || message.senderUserName === this.recipient,
     )
     if (!message) return
     this.selectedMessage = message
@@ -519,11 +519,11 @@ export class ChatroomListComponent implements OnInit {
       return this.options.filter(option => option.toLowerCase().includes(filterValue))
     }*/
 
-  private _filter2(username: string): Observable<string[] | undefined> {
-    const filterValue = username.toLowerCase()
+  private _filter2(userName: string): Observable<string[] | undefined> {
+    const filterValue = userName.toLowerCase()
 
     return this.firstMessageSenders$.pipe(
-      map((usernames) => usernames?.filter((option) => option.toLowerCase().includes(filterValue))),
+      map((userNames) => userNames?.filter((option) => option.toLowerCase().includes(filterValue))),
     )
   }
 
@@ -539,7 +539,7 @@ export class ChatroomListComponent implements OnInit {
                if (search.isGroup) {
                  return search.groupChat?.name.toLowerCase().includes(filterValue)
                }
-               const messageName = search.message?.recipientUsername !== user?.username ? search.message?.recipientUsername : search.message?.senderUsername
+               const messageName = search.message?.recipientUsername !== user?.userName ? search.message?.recipientUsername : search.message?.senderUsername
                return messageName?.toLowerCase().includes(filterValue)
              })
              // .filter((search) => search.chatRoomName.toLowerCase().includes(filterValue))

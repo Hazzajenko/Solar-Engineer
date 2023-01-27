@@ -15,15 +15,15 @@ export class ChatroomsService {
   private groupChatsStore = inject(GroupChatsStoreService)
 
   initialUserMessages$ = this.authStore.select.user$.pipe(
-    map((user) => user?.username),
-    switchMap((username) =>
+    map((user) => user?.userName),
+    switchMap((userName) =>
       this.messagesStore.select.messages$.pipe(
         map((messages) =>
           messages?.map((message) => {
-            if (message.senderUsername !== username) {
-              return message.senderUsername
+            if (message.senderUserName !== userName) {
+              return message.senderUserName
             }
-            return message.recipientUsername
+            return message.recipientUserName
           }),
         ),
       ),
@@ -77,16 +77,16 @@ export class ChatroomsService {
               lastMessageTime: chatroom.groupChat?.latestSentMessageTime,
             } as ChatroomSearchModel
           }
-          if (chatroom.message?.senderUsername !== user?.username) {
+          if (chatroom.message?.senderUserName !== user?.userName) {
             return {
               isGroup: false,
-              chatRoomName: chatroom.message?.senderUsername,
+              chatRoomName: chatroom.message?.senderUserName,
               lastMessageTime: chatroom.message?.messageSentTime,
             } as ChatroomSearchModel
           }
           return {
             isGroup: false,
-            chatRoomName: chatroom.message?.recipientUsername,
+            chatRoomName: chatroom.message?.recipientUserName,
             lastMessageTime: chatroom.message?.messageSentTime,
           } as ChatroomSearchModel
         }),
@@ -100,16 +100,16 @@ export class ChatroomsService {
         const userMessages = this.messagesStore.select.messagesData$.pipe(
           map((messages) =>
             messages?.map((message) => {
-              if (message.senderUsername !== user?.username) {
+              if (message.senderUserName !== user?.userName) {
                 return {
                   isGroup: false,
-                  chatRoomName: message.senderUsername,
+                  chatRoomName: message.senderUserName,
                   lastMessageTime: message.messageSentTime,
                 } as ChatroomSearchModel
               }
               return {
                 isGroup: false,
-                chatRoomName: message.recipientUsername,
+                chatRoomName: message.recipientUserName,
                 lastMessageTime: message.messageSentTime,
               } as ChatroomSearchModel
             }),

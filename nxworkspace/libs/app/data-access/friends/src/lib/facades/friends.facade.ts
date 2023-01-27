@@ -24,8 +24,8 @@ export class FriendsFacade {
     return this.connectionsStore.select.connections$.pipe(
       combineLatestWith(this.friends$),
       map(([connections, friends]) => {
-        const connectionUsernames = connections.map(connection => connection.username)
-        return friends.filter(friend => connectionUsernames.includes(friend.username))
+        const connectionUsernames = connections.map((connection) => connection.userName)
+        return friends.filter((friend) => connectionUsernames.includes(friend.userName))
       }),
     )
   }

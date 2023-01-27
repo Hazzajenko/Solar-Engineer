@@ -26,7 +26,7 @@ public class ConnectionId
 public class UserConnection
 {
     [Key] public int UserId { get; set; }
-    public string Username { get; set; } = default!;
+    public string UserName { get; set; } = default!;
     public DateTime LoggedOn { get; set; } = DateTime.Now;
     public List<WebConnection> Connections { get; set; } = new();
 }

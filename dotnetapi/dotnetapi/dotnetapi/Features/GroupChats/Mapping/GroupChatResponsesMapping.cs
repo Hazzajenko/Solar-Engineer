@@ -10,8 +10,8 @@ public static class GroupChatResponsesMapping
         return new Message
         {
             Content = request.Content,
-            RecipientUsername = recipient.UserName!,
-            SenderUsername = user.UserName!,
+            RecipientUserName = recipient.UserName!,
+            SenderUserName = user.UserName!,
             Sender = user,
             Recipient = recipient,
             Status = NotificationStatus.Unread
@@ -24,7 +24,7 @@ public static class GroupChatResponsesMapping
         {
             Member = new GroupChatMemberDto
             {
-                Username = request.AppUser.UserName!,
+                UserName = request.AppUser.UserName!,
                 FirstName = request.AppUser.FirstName,
                 LastName = request.AppUser.LastName,
                 JoinedAt = request.JoinedAt,
@@ -42,7 +42,7 @@ public static class GroupChatResponsesMapping
             GroupChat =
                 Member = new GroupChatMemberDto
                 {
-                    Username = request.AppUser.UserName!,
+                    UserName = request.AppUser.UserName!,
                     FirstName = request.AppUser.FirstName,
                     LastName = request.AppUser.LastName,
                     JoinedAt = request.JoinedAt,
@@ -64,7 +64,7 @@ public static class GroupChatResponsesMapping
             {
                 FirstName = user.FirstName,
                 Role = "Admin",
-                Username = user.UserName!,
+                UserName = user.UserName!,
                 LastName = user.LastName,
                 JoinedAt = DateTime.Now
             }
@@ -83,7 +83,7 @@ public static class GroupChatResponsesMapping
             {
                 FirstName = user.FirstName,
                 Role = "Admin",
-                Username = user.UserName!,
+                UserName = user.UserName!,
                 LastName = user.LastName,
                 JoinedConversationAt = DateTime.Now
             }

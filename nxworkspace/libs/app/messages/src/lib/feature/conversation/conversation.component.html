@@ -19,12 +19,12 @@
         <!--   (scroll)='scrolled($event)'-->
         <!--          [ngStyle]='{"background-color": notification.status === 0 ? "#60a1fa" : ""}'-->
         <div appConversationMessageDirective
-             [username]='user.username'
+             [userName]='user.userName'
              [message]='message'
              class='flex'
              *cdkVirtualFor='let message of messages | sortConversationMessages'>
           <div class='flex flex-col mx-3 p-2 rounded-md min-w-[250px] max-w-[250px] hover:bg-gray-200'>
-            <span matListItemTitle>{{message.senderUsername}}</span>
+            <span matListItemTitle>{{message.senderUserName}}</span>
             <span matListItemLine>{{message.messageSentTime | date : 'short'}}</span>
             <p style='white-space: pre-line' matListItemLine>{{message.content}}</p>
           </div>

@@ -36,7 +36,7 @@ public class DeleteProjectEndpoint : EndpointWithoutRequest<OneDeleteResponse>
         if (user is null)
         {
             _logger.LogError("Bad request, User is invalid");
-            ThrowError("Username is invalid");
+            ThrowError("UserName is invalid");
         }
 
         var projectId = Route<int>("projectId");
@@ -57,7 +57,7 @@ public class DeleteProjectEndpoint : EndpointWithoutRequest<OneDeleteResponse>
             Delete = true
         };
 
-        _logger.LogInformation("{Username} deleted project {Project}", user.UserName, projectId.ToString());
+        _logger.LogInformation("{UserName} deleted project {Project}", user.UserName, projectId.ToString());
 
         await SendOkAsync(response, cT);
     }

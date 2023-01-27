@@ -1,6 +1,6 @@
 import { PanelModel, PanelLinkModel } from '@shared/data-access/models'
 import { createFeatureSelector, createSelector } from '@ngrx/store'
-import { selectRouteParams } from '@shared/data-access/router'
+import { RouterSelectors } from '@shared/data-access/router'
 
 import { LINKS_FEATURE_KEY, linksAdapter, LinksState } from './links.reducer'
 
@@ -25,7 +25,7 @@ export const selectLinksEntities = createSelector(selectLinksState, (state: Link
 
 export const selectLinksByRouteParams = createSelector(
   selectAllLinks,
-  selectRouteParams,
+  RouterSelectors.selectRouteParams,
   (links, { projectId }) => links.filter((link) => link.projectId === Number(projectId)),
 )
 
@@ -36,20 +36,18 @@ export const selectLinksByPanels = (props: { panels: PanelModel[] }) =>
 
 export const selectLinksByStringId = (props: { stringId: string }) =>
   createSelector(selectAllLinks, (links: PanelLinkModel[]) =>
-    links.filter((link) => link.stringId === props.stringId,
-    ))
+    links.filter((link) => link.stringId === props.stringId),
+  )
 
 export const selectLinksByPanelId = (props: { panelId: string }) =>
   createSelector(selectAllLinks, (links: PanelLinkModel[]) => {
-      const panelPositiveLink = links.find(link => link.positiveToId === props.panelId)
-      const panelNegativeLink = links.find(link => link.negativeToId === props.panelId)
-      return {
-        panelPositiveLink,
-        panelNegativeLink,
-      }
-    },
-  )
-
+    const panelPositiveLink = links.find((link) => link.positiveToId === props.panelId)
+    const panelNegativeLink = links.find((link) => link.negativeToId === props.panelId)
+    return {
+      panelPositiveLink,
+      panelNegativeLink,
+    }
+  })
 
 export const selectToLinkIdWithType = createSelector(selectLinksState, (state: LinksState) => {
   return {
@@ -64,8 +62,9 @@ export const selectToLinkId = createSelector(
 )
 
 export const selectLinkById = (props: { linkId: string }) =>
-  createSelector(selectAllLinks, (links: PanelLinkModel[]) =>
-      links.find((link) => link.id === props.linkId),
+  createSelector(
+    selectAllLinks,
+    (links: PanelLinkModel[]) => links.find((link) => link.id === props.linkId),
     // panels.find((panel) => panel.id === props.id),
   )
 

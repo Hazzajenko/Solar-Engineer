@@ -38,7 +38,7 @@ export class ProjectsListComponent {
     if (!user) return
     // this.store.initSelectProject(project.id)
 
-    this.router.navigate([`${user.username}/${project.name}`]).then((r) => r)
+    this.router.navigate([`${user.userName}/${project.name}`]).then((r) => r)
   }
 
   instanceOfNavigationStart(routerEvents: RouterEvent | any) {
@@ -46,7 +46,6 @@ export class ProjectsListComponent {
     if (routerEvents instanceof NavigationStart) {
       console.log(true)
       return true
-
     }
     console.log(false)
     return false

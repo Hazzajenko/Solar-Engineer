@@ -40,7 +40,7 @@ public class ConnectionsHub : Hub
             var connectedUser = new ConnectionDto
             {
                 UserId = userId,
-                Username = Context.User!.GetUsername()
+                UserName = Context.User!.GetUsername()
             };
 
             await Clients.Others.SendAsync("UserIsOnline", connectedUser);
@@ -73,7 +73,7 @@ public class ConnectionsHub : Hub
 
         var disconnectedUser = new UserConnectionDto
         {
-            Username = Context.User!.GetUsername()
+            UserName = Context.User!.GetUsername()
         };
 
         if (isOffline)

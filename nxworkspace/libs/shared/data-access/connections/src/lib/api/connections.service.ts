@@ -45,15 +45,15 @@ export class ConnectionsService {
       .catch((err) => console.log('Error while starting connection: ' + err))
 
     this.hubConnection.on('UserIsOnline', (connection: ConnectionModel) => {
-      // this.onlineUsers$.pipe(take(1)).subscribe(usernames => {
-      //   this.onlineUsersSource.next([...usernames, username])
+      // this.onlineUsers$.pipe(take(1)).subscribe(userNames => {
+      //   this.onlineUsersSource.next([...userNames, userName])
       // })
       this.connectionsStore.dispatch.addConnection(connection)
     })
 
     this.hubConnection.on('UserIsOffline', (connection: ConnectionModel) => {
-      // this.onlineUsers$.pipe(take(1)).subscribe(usernames => {
-      //   this.onlineUsersSource.next([...usernames.filter(x => x !== username)])
+      // this.onlineUsers$.pipe(take(1)).subscribe(userNames => {
+      //   this.onlineUsersSource.next([...userNames.filter(x => x !== userName)])
       // })
       this.connectionsStore.dispatch.removeConnection(connection)
     })
@@ -66,27 +66,27 @@ export class ConnectionsService {
   /*  connectSignalR() {
       if (!this.hubConnection) return
 
-      this.hubConnection.on('UserIsOnline', username => {
-        // this.onlineUsers$.pipe(take(1)).subscribe(usernames => {
-        //   this.onlineUsersSource.next([...usernames, username])
+      this.hubConnection.on('UserIsOnline', userName => {
+        // this.onlineUsers$.pipe(take(1)).subscribe(userNames => {
+        //   this.onlineUsersSource.next([...userNames, userName])
         // })
-        this.connectionsStore.dispatch.addConnection(username)
+        this.connectionsStore.dispatch.addConnection(userName)
       })
 
-      this.hubConnection.on('UserIsOffline', username => {
-        // this.onlineUsers$.pipe(take(1)).subscribe(usernames => {
-        //   this.onlineUsersSource.next([...usernames.filter(x => x !== username)])
+      this.hubConnection.on('UserIsOffline', userName => {
+        // this.onlineUsers$.pipe(take(1)).subscribe(userNames => {
+        //   this.onlineUsersSource.next([...userNames.filter(x => x !== userName)])
         // })
-        this.connectionsStore.dispatch.removeConnection(username)
+        this.connectionsStore.dispatch.removeConnection(userName)
       })
 
       this.hubConnection.on('GetOnlineUsers', (connections: ConnectionModel[]) => {
         this.connectionsStore.dispatch.addManyConnections(connections)
       })
 
-      /!*    this.hubConnection.on('GetOnlineUsers', (usernames: string[]) => {
-            this.onlineUsersSource.next(usernames)
-            this.connectionsStore.dispatch.addManyConnections(usernames)
+      /!*    this.hubConnection.on('GetOnlineUsers', (userNames: string[]) => {
+            this.onlineUsersSource.next(userNames)
+            this.connectionsStore.dispatch.addManyConnections(userNames)
           })*!/
 
       // this.hubConnection.invoke('GetOnlineUsers').then(res => console.log(res))

@@ -3,7 +3,7 @@
     <button (click)='toggleMenu()' mat-icon-button class='example-icon' aria-label='Example icon-button with menu icon'>
       <mat-icon>menu</mat-icon>
     </button>
-    <span *ngIf='user'>{{user.username}}</span>
+    <span *ngIf='user'>{{user.userName}}</span>
     <button *ngIf='user' (click)='routeHome()' mat-icon-button class='example-icon'
             aria-label='Example icon-button with menu icon'>
       <mat-icon>
@@ -25,8 +25,7 @@
       </mat-icon>
       <!--      Profile-->
     </button>
-    <a
-      href='https://wakatime.com/badge/user/296a375f-5127-4c09-a524-368ebbdaaeab/project/242aff23-0829-4c0b-b5fd-604eccf8fe8d'><img
+    <a><img
       src='https://wakatime.com/badge/user/296a375f-5127-4c09-a524-368ebbdaaeab/project/242aff23-0829-4c0b-b5fd-604eccf8fe8d.svg'
       alt='wakatime'></a>
 

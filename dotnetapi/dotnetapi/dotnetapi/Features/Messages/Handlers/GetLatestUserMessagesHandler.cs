@@ -26,8 +26,8 @@ public class
         var db = scope.ServiceProvider.GetRequiredService<DataContext>();
 
         return await db.Messages
-            .Where(x => x.SenderUsername == request.AppUser.UserName! ||
-                        x.RecipientUsername == request.AppUser.UserName!)
+            .Where(x => x.SenderUserName == request.AppUser.UserName! ||
+                        x.RecipientUserName == request.AppUser.UserName!)
             .Include(x => x.Sender)
             .Include(x => x.Recipient)
             // .OrderBy(x => x.MessageSentTime)
@@ -36,7 +36,7 @@ public class
             // .OrderBy(x => x.Select(x => x.MessageSentTime))
             .Select(x => new LatestUserMessageDto
             {
-                Username = x.Key!,
+                UserName = x.Key!,
                 Message = x.OrderByDescending(o => o.MessageSentTime)
                     .Select(y => y.ToDto(request.AppUser))
                     .SingleOrDefault()

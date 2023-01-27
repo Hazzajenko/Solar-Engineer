@@ -36,7 +36,7 @@ public class DeleteStringEndpoint : EndpointWithoutRequest<OneDeleteResponse>
         if (user is null)
         {
             _logger.LogError("Bad request, User is invalid");
-            ThrowError("Username is invalid");
+            ThrowError("UserName is invalid");
         }
 
         var stringId = Route<string>("stringId");

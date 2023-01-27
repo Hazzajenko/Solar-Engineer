@@ -6,8 +6,8 @@ public class FriendRequestDto
 {
     /*public int RequestedById { get; set; }
     public int RequestedToId { get; set; }*/
-    public string RequestedByUsername { get; set; } = default!;
-    public string RequestedToUsername { get; set; } = default!;
+    public string RequestedByUserName { get; set; } = default!;
+    public string RequestedToUserName { get; set; } = default!;
 
     // public DateTime? RequestTime { get; set; }
 

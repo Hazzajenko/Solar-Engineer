@@ -1,5 +1,5 @@
 export interface StorageModel {
   email: string
-  username: string
+  userName: string
   token: string
 }

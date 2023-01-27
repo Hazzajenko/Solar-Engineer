@@ -1,7 +1,6 @@
 import { Directive, ElementRef, inject, Input } from '@angular/core'
 import { MessageModel, NotificationStatus } from '@shared/data-access/models'
 
-
 @Directive({
   selector: '[appMessageDirective]',
   standalone: true,
@@ -9,19 +8,19 @@ import { MessageModel, NotificationStatus } from '@shared/data-access/models'
 export class MessageDirective {
   private elRef = inject(ElementRef)
   private _message!: MessageModel
-  private _username?: string
+  private _userName?: string
 
-  @Input() set username(username: string | undefined) {
-    if (!username) return
-    this._username = username
+  @Input() set userName(userName: string | undefined) {
+    if (!userName) return
+    this._userName = userName
   }
 
   @Input() set message(message: MessageModel) {
     if (!message) return
-    if (!this._username) return
+    if (!this._userName) return
     this._message = message
 
-    if (message.status === NotificationStatus.Unread && message.senderUsername !== this._username) {
+    if (message.status === NotificationStatus.Unread && message.senderUserName !== this._userName) {
       this.elRef.nativeElement.style.backgroundColor = '#60a1fa'
     } else {
       this.elRef.nativeElement.style.backgroundColor = ''
@@ -35,7 +34,6 @@ export class MessageDirective {
       this.elRef.nativeElement.style.backgroundColor = ''
     }
   }
-
 
   @Input() set selectedMessage(message: MessageModel | undefined) {
     if (!message) return

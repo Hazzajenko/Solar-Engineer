@@ -32,7 +32,7 @@
             <ng-container *ngSwitchCase='1'>
               <span matListItemTitle>Friend Request</span>
               <span matListItemLine>{{notification.requestTime | date : 'short'}}</span>
-              <span matListItemLine>From {{notification.friendRequest.requestedByUsername}}</span>
+              <span matListItemLine>From {{notification.friendRequest.requestedByUserName}}</span>
             </ng-container>
           </ng-container>
           <!--          [color]='notification.status === 0 ? "primary" : "accent"'-->
@@ -60,8 +60,8 @@
       <ng-container *ngIf='selectedNotification'>
         <button *ngIf='selectedNotification.type === 1 && selectedNotification.friendRequest.friendRequestFlag === 0'
                 mat-button
-                (click)='acceptFriend(selectedNotification.friendRequest.requestedByUsername)'>
-          Accept {{selectedNotification.friendRequest.requestedByUsername}}</button>
+                (click)='acceptFriend(selectedNotification.friendRequest.requestedByUserName)'>
+          Accept {{selectedNotification.friendRequest.requestedByUserName}}</button>
       </ng-container>
       <button mat-button mat-dialog-close='true'>Exit</button>
     </mat-dialog-actions>

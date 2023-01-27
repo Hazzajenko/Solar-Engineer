@@ -9,18 +9,18 @@ export class ConversationMessageDirective {
   private elRef = inject(ElementRef)
   private _message!: MessageModel
   private _groupChatMessage!: GroupChatMessageModel
-  private _username!: string
+  private _userName!: string
 
-  @Input() set username(username: string) {
-    if (!username) return
-    this._username = username
+  @Input() set userName(userName: string) {
+    if (!userName) return
+    this._userName = userName
   }
 
   @Input() set groupChatMessage(message: GroupChatMessageModel) {
     if (!message) return
     this._groupChatMessage = message
 
-    if (this._username === message.senderUsername) {
+    if (this._userName === message.senderUserName) {
       // this.elRef.nativeElement.style.backgroundColor = '#60a1fa'
       this.elRef.nativeElement.style.flexDirection = 'row-reverse'
       this.elRef.nativeElement.style.boxRadius = '15px 15px 0px 15px'
@@ -40,7 +40,7 @@ export class ConversationMessageDirective {
     if (!message) return
     this._message = message
 
-    if (this._username === message.senderUsername) {
+    if (this._userName === message.senderUserName) {
       // this.elRef.nativeElement.style.backgroundColor = '#60a1fa'
       this.elRef.nativeElement.style.flexDirection = 'row-reverse'
       this.elRef.nativeElement.style.boxRadius = '15px 15px 0px 15px'

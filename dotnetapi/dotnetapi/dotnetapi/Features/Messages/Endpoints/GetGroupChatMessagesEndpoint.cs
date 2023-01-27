@@ -41,13 +41,13 @@ public class GetGroupChatMessagesEndpoint : EndpointWithoutRequest<GroupChatMany
         if (appUser is null)
         {
             _logger.LogError("Bad request, User is invalid");
-            ThrowError("Username is invalid");
+            ThrowError("UserName is invalid");
         }
 
         var groupChatId = Route<int>("groupChatId");
         if (groupChatId < 0) ThrowError("Invalid groupChatId");
 
-        /*var recipient = await _userManager.Users.Where(x => x.UserName == recipientUsername).SingleOrDefaultAsync(ct);
+        /*var recipient = await _userManager.Users.Where(x => x.UserName == recipientUserName).SingleOrDefaultAsync(ct);
         if (recipient is null)
         {
             _logger.LogError("Bad request, Recipient is invalid");

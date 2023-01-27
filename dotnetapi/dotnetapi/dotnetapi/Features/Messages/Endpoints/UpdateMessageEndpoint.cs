@@ -40,7 +40,7 @@ public class UpdateMessageEndpoint : Endpoint<UpdateMessageRequest, OneUpdateRes
         if (user is null)
         {
             _logger.LogError("Bad request, User is invalid");
-            ThrowError("Username is invalid");
+            ThrowError("UserName is invalid");
         }
 
         var messageId = Route<int>("messageId");

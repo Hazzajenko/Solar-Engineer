@@ -2,7 +2,7 @@
 
 public class SendMessageRequest
 {
-    // public string SenderUsername { get; set; } = default!;
-    public string RecipientUsername { get; set; } = default!;
+    // public string SenderUserName { get; set; } = default!;
+    public string RecipientUserName { get; set; } = default!;
     public string Content { get; set; } = default!;
 }

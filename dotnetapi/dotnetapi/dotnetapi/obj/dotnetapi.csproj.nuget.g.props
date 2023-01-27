@@ -19,12 +19,12 @@
     <Import Project="$(NuGetPackageRoot)microsoft.entityframeworkcore\7.0.2\buildTransitive\net6.0\Microsoft.EntityFrameworkCore.props" Condition="Exists('$(NuGetPackageRoot)microsoft.entityframeworkcore\7.0.2\buildTransitive\net6.0\Microsoft.EntityFrameworkCore.props')" />
     <Import Project="$(NuGetPackageRoot)microsoft.net.build.containers\0.2.7\build\Microsoft.NET.Build.Containers.props" Condition="Exists('$(NuGetPackageRoot)microsoft.net.build.containers\0.2.7\build\Microsoft.NET.Build.Containers.props')" />
     <Import Project="$(NuGetPackageRoot)microsoft.entityframeworkcore.design\7.0.0\build\net6.0\Microsoft.EntityFrameworkCore.Design.props" Condition="Exists('$(NuGetPackageRoot)microsoft.entityframeworkcore.design\7.0.0\build\net6.0\Microsoft.EntityFrameworkCore.Design.props')" />
+    <Import Project="$(NuGetPackageRoot)methodtimer.fody\3.2.1\build\MethodTimer.Fody.props" Condition="Exists('$(NuGetPackageRoot)methodtimer.fody\3.2.1\build\MethodTimer.Fody.props')" />
   </ImportGroup>
   <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
     <PkgMicrosoft_Extensions_ApiDescription_Server Condition=" '$(PkgMicrosoft_Extensions_ApiDescription_Server)' == '' ">C:\Users\jenki\.nuget\packages\microsoft.extensions.apidescription.server\6.0.5</PkgMicrosoft_Extensions_ApiDescription_Server>
     <PkgAWSSDK_Core Condition=" '$(PkgAWSSDK_Core)' == '' ">C:\Users\jenki\.nuget\packages\awssdk.core\3.7.103.19</PkgAWSSDK_Core>
     <PkgAWSSDK_CloudWatchLogs Condition=" '$(PkgAWSSDK_CloudWatchLogs)' == '' ">C:\Users\jenki\.nuget\packages\awssdk.cloudwatchlogs\3.7.104</PkgAWSSDK_CloudWatchLogs>
-    <PkgNewtonsoft_Json Condition=" '$(PkgNewtonsoft_Json)' == '' ">C:\Users\jenki\.nuget\packages\newtonsoft.json\10.0.1</PkgNewtonsoft_Json>
     <PkgAWSSDK_S3 Condition=" '$(PkgAWSSDK_S3)' == '' ">C:\Users\jenki\.nuget\packages\awssdk.s3\3.7.101.36</PkgAWSSDK_S3>
   </PropertyGroup>
 </Project>

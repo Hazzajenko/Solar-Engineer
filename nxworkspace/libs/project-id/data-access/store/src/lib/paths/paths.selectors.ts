@@ -1,6 +1,6 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store'
 import { PathModel } from '@shared/data-access/models'
-import { selectRouteParams } from '@shared/data-access/router'
+import { RouterSelectors } from '@shared/data-access/router'
 import { PATHS_FEATURE_KEY, pathsAdapter, PathsState } from './paths.reducer'
 
 export const selectPathMapsState = createFeatureSelector<PathsState>(PATHS_FEATURE_KEY)
@@ -22,7 +22,6 @@ export const selectSelectedPanelLinkPath = createSelector(
   (state: PathsState) => state.selectedPanelLinkPath,
 )
 
-
 export const selectAllPaths = createSelector(selectPathMapsState, (state: PathsState) =>
   selectAll(state),
 )
@@ -33,10 +32,9 @@ export const selectPathsEntities = createSelector(selectPathMapsState, (state: P
 
 export const selectPathsByRouteParams = createSelector(
   selectAllPaths,
-  selectRouteParams,
+  RouterSelectors.selectRouteParams,
   (paths, { projectId }) => paths.filter((path) => path.projectId === Number(projectId)),
 )
-
 
 export const selectPathsById = (props: { pathId: string }) =>
   createSelector(selectAllPaths, (paths: PathModel[]) =>

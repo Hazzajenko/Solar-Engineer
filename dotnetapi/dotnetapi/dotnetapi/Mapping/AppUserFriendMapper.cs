@@ -11,8 +11,8 @@ public static class AppUserFriendMapper
         {
             /*RequestedById = request.RequestedById,
             RequestedToId = request.RequestedToId,*/
-            RequestedByUsername = request.RequestedBy.UserName!,
-            RequestedToUsername = request.RequestedTo.UserName!,
+            RequestedByUserName = request.RequestedBy.UserName!,
+            RequestedToUserName = request.RequestedTo.UserName!,
             FriendRequestFlag = request.FriendRequestFlag,
             // RequestTime = request.RequestTime,
             BecameFriendsTime = request.BecameFriendsTime
@@ -38,8 +38,8 @@ public static class AppUserFriendMapper
         return new AppUserFriendDto
         {
             Id = request.Id,
-            RequestedByUsername = request.RequestedBy.UserName!,
-            RequestedToUsername = request.RequestedTo.UserName!,
+            RequestedByUserName = request.RequestedBy.UserName!,
+            RequestedToUserName = request.RequestedTo.UserName!,
             Status = request.Status,
             Type = request.Type,
             RequestTime = request.RequestTime,
@@ -63,8 +63,8 @@ public static class AppUserFriendMapper
             {
                 BecameFriendsTime = request.BecameFriendsTime,
                 FriendRequestFlag = request.FriendRequestFlag,
-                RequestedByUsername = request.RequestedBy.UserName!,
-                RequestedToUsername = request.RequestedTo.UserName!
+                RequestedByUserName = request.RequestedBy.UserName!,
+                RequestedToUserName = request.RequestedTo.UserName!
             }
             // RequestTime = request.RequestTime,
             // FriendRequestFlag = request.FriendRequestFlag,
@@ -76,7 +76,7 @@ public static class AppUserFriendMapper
     {
         return new FriendDto
         {
-            Username = request.RequestedTo.UserName!,
+            UserName = request.RequestedTo.UserName!,
             BecameFriendsTime = request.BecameFriendsTime
         };
     }
@@ -85,7 +85,7 @@ public static class AppUserFriendMapper
     {
         return new FriendDto
         {
-            Username = request.RequestedBy.UserName!,
+            UserName = request.RequestedBy.UserName!,
             BecameFriendsTime = request.BecameFriendsTime
         };
     }
@@ -94,9 +94,9 @@ public static class AppUserFriendMapper
     {
         return new FriendRequestDto
         {
-            RequestedByUsername = request.RequestedBy.UserName!,
+            RequestedByUserName = request.RequestedBy.UserName!,
             FriendRequestFlag = request.FriendRequestFlag,
-            RequestedToUsername = request.RequestedTo.UserName!,
+            RequestedToUserName = request.RequestedTo.UserName!,
             BecameFriendsTime = request.BecameFriendsTime
         };
     }

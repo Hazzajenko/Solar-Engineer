@@ -4,6 +4,7 @@ import { LocalProjectResolver, SelectProjectResolver } from '@project-id/data-ac
 import { ChatroomResolver } from '../../../feature/chatrooms/src/lib/chatroom.resolver'
 import { homeProviders } from './home/providers'
 import { projectsProviders } from './projects/providers'
+import { UserNameProfileResolver } from '../../../feature/userName-profile/src/lib/user-name-profile.resolver'
 
 export const appRoutes: Route[] = [
   {
@@ -26,6 +27,13 @@ export const appRoutes: Route[] = [
     providers: [projectsProviders],
     resolve: { localProject: LocalProjectResolver },
   },
+  {
+    path: 'user/:userName',
+    loadComponent: () =>
+      import('@app/feature/userName-profile').then((m) => m.UsernameProfileComponent),
+    canActivate: [loggedInGuard],
+    resolve: { userNameProfile: UserNameProfileResolver },
+  },
   /*  {
       path: 'projects/:projectId',
       loadComponent: () => import('@project-id/feature/web').then((m) => m.WebProjectComponent),
@@ -34,7 +42,7 @@ export const appRoutes: Route[] = [
       resolve: { project: SelectProjectResolver },
     },*/
   {
-    path: ':username/:projectName',
+    path: ':userName/:projectName',
     loadComponent: () => import('@project-id/feature/web').then((m) => m.WebProjectV2Component),
     canActivate: [loggedInGuard],
     providers: [projectsProviders],

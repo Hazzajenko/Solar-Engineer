@@ -24,7 +24,7 @@ export class MessagesSignalrService {
     this.messagesHub
       .start()
       .then(() => console.log('Connection started'))
-      .catch(err => console.log('Error while starting connection: ' + err))
+      .catch((err) => console.log('Error while starting connection: ' + err))
 
     /*    this.messagesHub.on('getMessages', (message: MessageModel) => {
           if (Array.isArray(message)) {
@@ -44,9 +44,9 @@ export class MessagesSignalrService {
         .catch(error => console.log(error))
     }
 
-    getMessagesWithUserSignalR(username: string) {
+    getMessagesWithUserSignalR(userName: string) {
       if (!this.messagesHub) return
-      this.messagesHub.invoke('getMessages', username)
+      this.messagesHub.invoke('getMessages', userName)
         .then((data) => {
           console.log(data)
       })

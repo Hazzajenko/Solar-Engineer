@@ -1,7 +1,6 @@
 import { Directive, ElementRef, inject, Input } from '@angular/core'
 import { FriendModel } from '@shared/data-access/models'
 
-
 @Directive({
   selector: '[appFriendDirective]',
   standalone: true,
@@ -22,7 +21,7 @@ export class FriendDirective {
   @Input() set selectedFriend(friend: FriendModel | undefined) {
     if (!friend) return
 
-    if (friend.username === this._friend.username) {
+    if (friend.userName === this._friend.userName) {
       // this.elRef.nativeElement.style.backgroundColor = '#253fff'
       this.elRef.nativeElement.style.backgroundColor = '#18FFFF'
       // this.elRef.nativeElement.style.backgroundColor = 'rgb(194, 222, 209)'

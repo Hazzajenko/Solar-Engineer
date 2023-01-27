@@ -39,11 +39,13 @@ import { Update } from '@ngrx/entity'
 import {
   GroupChatCombinedModel,
   GroupChatMemberModel,
+  GroupChatMessageMemberModel,
   GroupChatMessageModel,
   MessageModel,
   MessageTimeSortModel,
   NotificationModel,
   NotificationStatus,
+  PanelModel,
   UserModel,
   WindowSizeModel,
 } from '@shared/data-access/models'
@@ -51,19 +53,23 @@ import { ShowHideComponent } from '@shared/ui/show-hide'
 
 import { map, Observable, take } from 'rxjs'
 
-import { MessageDirective } from '../../../../../messages/src/lib/feature/component/message.directive'
-import { SortMessagesPipe } from '../../../../../messages/src/lib/feature/component/sort-messages.pipe'
-import { ConversationMessageDirective } from '../../../../../messages/src/lib/feature/conversation/conversation-message.directive'
-import { ScrollViewportDirective } from '../../../../../messages/src/lib/feature/conversation/scroll-viewport.directive'
-import { SortConversationMessagesPipe } from '../../../../../messages/src/lib/feature/conversation/sort-conversation-messages.pipe'
-import { IsLastMessagePipe } from '../is-last-message.pipe'
-import { LastMessageIdPipe } from '../last-message-id.pipe'
-import { SelectChatroomModel } from '../select-chatroom.model'
+import { MessageDirective } from '../../../../../../messages/src/lib/feature/component/message.directive'
+import { SortMessagesPipe } from '../../../../../../messages/src/lib/feature/component/sort-messages.pipe'
+import { ConversationMessageDirective } from '../../../../../../messages/src/lib/feature/conversation/conversation-message.directive'
+import { ScrollViewportDirective } from '../../../../../../messages/src/lib/feature/conversation/scroll-viewport.directive'
+import { SortConversationMessagesPipe } from '../../../../../../messages/src/lib/feature/conversation/sort-conversation-messages.pipe'
+import { IsLastMessagePipe } from '../../is-last-message.pipe'
+import { LastMessageIdPipe } from '../../last-message-id.pipe'
+import { SelectChatroomModel } from '../../select-chatroom.model'
 import { GroupChatsStoreService, SendGroupChatMessageRequest } from '@app/data-access/group-chats'
 import { SortGroupChatMessagesPipe } from './sort-group-chat-messages.pipe'
 import { LastGroupChatMessageIdPipe } from './last-group-chat-message-id.pipe'
 import { ExcludeUserFromSeenPipe } from './exclude-user-from-seen.pipe'
 import { IsMemberOnlinePipe } from './is-member-online.pipe'
+import { AnyGroupMessageSeenPipe } from './any-group-message-seen.pipe'
+import { MessageBarComponent } from '../message-bar/message-bar.component'
+import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
+import { GroupChatMessageMenuComponent } from './menu/group-chat-message-menu.component'
 
 @Component({
   selector: 'app-group-chat-conversation-component',
@@ -99,6 +105,10 @@ import { IsMemberOnlinePipe } from './is-member-online.pipe'
 
       ::-webkit-scrollbar-thumb:hover {
         background-color: #a8bbbf;
+      }
+
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 1, 'wght' 700, 'GRAD' 200, 'opsz' 20;
       }
     `,
   ],
@@ -138,11 +148,14 @@ import { IsMemberOnlinePipe } from './is-member-online.pipe'
     LastGroupChatMessageIdPipe,
     ExcludeUserFromSeenPipe,
     IsMemberOnlinePipe,
+    AnyGroupMessageSeenPipe,
+    MessageBarComponent,
+    MatMenuModule,
+    GroupChatMessageMenuComponent,
   ],
   standalone: true,
 })
-export class GroupChatConversationComponent implements OnInit {
-  private messagesStore = inject(MessagesStoreService)
+export class GroupChatConversationComponent {
   private authStore = inject(AuthStoreService)
   private route = inject(ActivatedRoute)
   private groupChatsStore = inject(GroupChatsStoreService)
@@ -153,18 +166,20 @@ export class GroupChatConversationComponent implements OnInit {
     }),
   )
 
+  menuTopLeftPosition = { x: '0', y: '0' }
+  @ViewChild(MatMenuTrigger, { static: true })
+  matMenuTrigger!: MatMenuTrigger
+
   groupChatCombined$!: Observable<GroupChatCombinedModel | undefined>
   groupChatMessages$!: Observable<GroupChatMessageModel[] | undefined>
   groupChatMembers$!: Observable<GroupChatMemberModel[]>
+  groupChatMessagesWithMembersById$!: Observable<GroupChatMessageMemberModel[]>
   user$: Observable<UserModel | undefined> = this.authStore.select.user$
-  selectedGroupChatMessage?: GroupChatMessageModel
+  selectedGroupChatMessage?: GroupChatMessageMemberModel
   unreadFilter = false
-  messageControl = new FormControl('', [])
   scrollIndex = 0
 
   groupChatId = 0
-
-  @ViewChild('autosize') autosize!: CdkTextareaAutosize
 
   @Input() set selectChatroom(selectChatroom: MessageTimeSortModel | undefined) {
     console.log(selectChatroom)
@@ -180,76 +195,33 @@ export class GroupChatConversationComponent implements OnInit {
     this.groupChatMembers$ = this.groupChatsStore.select.groupChatMembersById$(
       selectChatroom.groupChat.id,
     )
-
-    // groupChatMessagesById$
-    // this.groupChatCombined$.subscribe((res) => console.log(res))
-    // this.isGroup = true
+    this.groupChatMessagesWithMembersById$ =
+      this.groupChatsStore.select.groupChatMessagesWithMembersById$(selectChatroom.groupChat.id)
   }
 
-  // SelectChatroomModel
-
-  constructor(private _ngZone: NgZone /*, public dialogRef: MatDialogRef<ChatroomsComponent>*/) {
-    /*    this.messagesStore.select.firstMessageOfEveryConversation$().subscribe(res => console.log(res))
-        this.route.url.subscribe(res => console.log(res))
-        console.log(this.route.snapshot.data)*/
-
-    this.isDialog$.subscribe((res) => console.log(res))
-
-    // const state = this.dialogRef.getState()
-    // const state = this.dialogRef._containerInstance.()
-    // const state = this.dialogRef.getState()
-    // console.log('STATE', state)
-    /*    if (this.dialogRef) {
-          const state = this.dialogRef.getState()
-          // const state = this.dialogRef._containerInstance.()
-          // const state = this.dialogRef.getState()
-          console.log(state)
-        }*/
-  }
-
-  ngOnInit(): void {
-    console.log()
-    /*    if (!this.route.snapshot.data) return
-        this.containerHeight = ((this.route.snapshot.data as any).windowSize as WindowSizeModel).innerHeight
-        console.log(this.containerHeight)
-        console.log(this.windowSize)
-        if (!this.windowSize.innerHeight || !this.windowSize.innerWidth) return
-        const heightMinusAppBar = this.windowSize.innerHeight - 64
-        this.chatRoomListSize = {
-          height: Math.floor(heightMinusAppBar),
-          width: Math.floor(this.windowSize.innerWidth * 20 / 100),
-        }
-        this.conversationSize = {
-          height: Math.floor(heightMinusAppBar * 80 / 100),
-          width: Math.floor(this.windowSize.innerWidth * 80 / 100),
-        }
-        this.textAreaSize = {
-          height: Math.floor(heightMinusAppBar * 20 / 100),
-          width: Math.floor(this.windowSize.innerWidth * 80 / 100),
-        }
-        console.log(this.chatRoomListSize)
-        console.log(this.conversationSize)
-        console.log(this.textAreaSize)*/
-  }
-
-  sendGroupChatMessage() {
-    // if (!this.recipient) return
-    if (!this.messageControl.value) return
-    console.log(this.messageControl.value)
+  sendGroupChatMessage(message: string) {
     const request: SendGroupChatMessageRequest = {
       groupChatId: this.groupChatId,
-      content: this.messageControl.value,
+      content: message,
     }
-    this.messageControl.reset()
     this.groupChatsStore.dispatch.sendMessageToGroupChat(request)
   }
 
-  selectGroupChatMessage(message: GroupChatMessageModel) {
+  selectGroupChatMessage(message: GroupChatMessageMemberModel) {
     if (this.selectedGroupChatMessage && this.selectedGroupChatMessage.id === message.id) {
       this.selectedGroupChatMessage = undefined
       return
     }
     this.selectedGroupChatMessage = message
     return
+  }
+
+  onRightClick(event: MouseEvent, message: GroupChatMessageMemberModel) {
+    event.preventDefault()
+    this.selectedGroupChatMessage = message
+    this.menuTopLeftPosition.x = event.clientX + 10 + 'px'
+    this.menuTopLeftPosition.y = event.clientY + 10 + 'px'
+    this.matMenuTrigger.menuData = { message }
+    this.matMenuTrigger.openMenu()
   }
 }

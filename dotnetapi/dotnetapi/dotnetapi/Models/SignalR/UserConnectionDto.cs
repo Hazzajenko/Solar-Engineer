@@ -2,5 +2,5 @@
 
 public class UserConnectionDto
 {
-    public string Username { get; set; } = default!;
+    public string UserName { get; set; } = default!;
 }

@@ -1,7 +1,7 @@
 export interface GroupChatMemberModel {
   id: number
   groupChatId: number
-  username: string
+  userName: string
   firstName: string
   lastName: string
   lastActive: string

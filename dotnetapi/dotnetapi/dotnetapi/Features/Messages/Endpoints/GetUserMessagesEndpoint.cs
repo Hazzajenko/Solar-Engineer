@@ -27,7 +27,7 @@ public class GetUserMessagesEndpoint : EndpointWithoutRequest<UserManyMessagesRe
 
     public override void Configure()
     {
-        Get("messages/user/{recipientUsername}");
+        Get("messages/user/{recipientUserName}");
         Policies("BeAuthenticated");
     }
 
@@ -37,13 +37,13 @@ public class GetUserMessagesEndpoint : EndpointWithoutRequest<UserManyMessagesRe
         if (user is null)
         {
             _logger.LogError("Bad request, User is invalid");
-            ThrowError("Username is invalid");
+            ThrowError("UserName is invalid");
         }
 
-        var recipientUsername = Route<string>("recipientUsername");
-        if (string.IsNullOrEmpty(recipientUsername)) ThrowError("Invalid recipientUsername");
+        var recipientUserName = Route<string>("recipientUserName");
+        if (string.IsNullOrEmpty(recipientUserName)) ThrowError("Invalid recipientUserName");
 
-        var recipient = await _userManager.Users.Where(x => x.UserName == recipientUsername).SingleOrDefaultAsync(ct);
+        var recipient = await _userManager.Users.Where(x => x.UserName == recipientUserName).SingleOrDefaultAsync(ct);
         if (recipient is null)
         {
             _logger.LogError("Bad request, Recipient is invalid");
@@ -54,7 +54,7 @@ public class GetUserMessagesEndpoint : EndpointWithoutRequest<UserManyMessagesRe
 
         var response = new UserManyMessagesResponse
         {
-            MessagesWith = recipientUsername,
+            MessagesWith = recipientUserName,
             Messages = conversationMessages
         };
 

@@ -1,7 +1,7 @@
 <div class='w-[300px] mx-2'>
   <ng-container *ngrxLet='user$ | async as user'>
     <ng-container *ngIf='user else notLoggedIn'>
-      <p>{{user.username}}</p>
+      <p>{{user.userName}}</p>
       <!--          <p>{{user.firstName}}</p>-->
 
 
@@ -16,7 +16,7 @@
           <mat-nav-list>
             <a *ngFor='let project of projects' mat-list-item
                (click)='closeDrawer()'
-               [routerLink]='user.username + "/" + project.name'>{{project.name}}</a>
+               [routerLink]='user.userName + "/" + project.name'>{{project.name}}</a>
             <!--                <a mat-list-item routerLink='.'>Projects</a>-->
           </mat-nav-list>
         </ng-container>
@@ -33,7 +33,7 @@
           <mat-nav-list>
             <a *ngFor='let friend of friends' mat-list-item
                (click)='closeDrawer()'
-               routerLink=''>{{friend.username}} {{friend.online ? 'ONLINE' : ''}}</a>
+               routerLink=''>{{friend.userName}} {{friend.online ? 'ONLINE' : ''}}</a>
           </mat-nav-list>
         </ng-container>
       </div>
@@ -51,7 +51,7 @@
                 <a>
                   <span matListItemTitle>Friend Request</span>
                   <span matListItemLine>{{notification.requestTime | date : 'short'}}</span>
-                  <span matListItemLine>From {{notification.friendRequest.requestedByUsername}}</span>
+                  <span matListItemLine>From {{notification.friendRequest.requestedByUserName}}</span>
                 </a>
 
               </ng-container>
@@ -79,7 +79,7 @@
           <mat-nav-list>
             <a *ngFor='let project of projects$ | async' mat-list-item
                (click)='drawer.toggle()'
-               [routerLink]='user.username + "/" + project.name'>{{project.name}}</a>
+               [routerLink]='user.userName + "/" + project.name'>{{project.name}}</a>
             &lt;!&ndash;                <a mat-list-item routerLink='.'>Projects</a>&ndash;&gt;
           </mat-nav-list>
         </mat-expansion-panel>

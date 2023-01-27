@@ -1,5 +1,5 @@
 export interface FriendModel {
-  username: string
+  userName: string
   becameFriendsTime: string
   online: boolean
 }

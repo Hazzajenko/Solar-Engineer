@@ -41,7 +41,7 @@ public class UpdateManyNotificationsEndpoint : Endpoint<UpdateManyNotificationsR
         if (user is null)
         {
             _logger.LogError("Bad request, User is invalid");
-            ThrowError("Username is invalid");
+            ThrowError("UserName is invalid");
         }
 
         var updates = await _notificationsService.MarkManyNotificationsAsReadAsync(request);

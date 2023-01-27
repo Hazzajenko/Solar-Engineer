@@ -40,11 +40,11 @@ public class LoginEndpoint : Endpoint<AuthRequest, LoginResponse>
     public override async Task HandleAsync(AuthRequest request, CancellationToken cT)
     {
         var user = await _userManager.Users
-            .SingleOrDefaultAsync(x => x.UserName == request.Username.ToLower(), cT);
+            .SingleOrDefaultAsync(x => x.UserName == request.UserName.ToLower(), cT);
 
         if (user == null)
         {
-            _logger.LogError("Unauthorized, {Username} is invalid", request.Username);
+            _logger.LogError("Unauthorized, {UserName} is invalid", request.UserName);
             await SendNotFoundAsync(cT);
             return;
         }
@@ -67,7 +67,7 @@ public class LoginEndpoint : Endpoint<AuthRequest, LoginResponse>
             return;
         }
 
-        _logger.LogInformation("{Username} has logged in", user.UserName);
+        _logger.LogInformation("{UserName} has logged in", user.UserName);
         // return Ok(signInResult);
         await SendOkAsync(signInResult, cT);
     }

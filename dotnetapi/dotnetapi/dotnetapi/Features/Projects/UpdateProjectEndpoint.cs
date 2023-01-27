@@ -38,7 +38,7 @@ public class UpdateProjectEndpoint : Endpoint<UpdateProjectRequest, OneUpdateRes
         if (user is null)
         {
             _logger.LogError("Bad request, User is invalid");
-            ThrowError("Username is invalid");
+            ThrowError("UserName is invalid");
         }
 
         var existingProject = await _projectsService.GetProjectByIdAsync(request.Id);

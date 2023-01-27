@@ -2,8 +2,8 @@ import { ComponentRef, Directive, inject, Input, OnDestroy, ViewContainerRef } f
 import { BlockPanelComponent } from '@grid-layout/feature/blocks/block-panel'
 import { StringsFacade } from '@project-id/data-access/facades'
 import { BlockModel, BlockType, MessageTimeSortModel, PanelModel } from '@shared/data-access/models'
-import { UserConversationComponent } from './conversation/user-conversation.component'
-import { GroupChatConversationComponent } from './conversation/group-chat-conversation.component'
+import { UserConversationComponent } from './conversation/user-conversation/user-conversation.component'
+import { GroupChatConversationComponent } from './conversation/group-chat/group-chat-conversation.component'
 
 @Directive({
   selector: '[appChangeChatRoom]',
@@ -45,9 +45,9 @@ export class ChangeChatRoomDirective implements OnDestroy {
       _viewContainerRef.createComponent<UserConversationComponent>(UserConversationComponent)
 
     const recipient = chatRoom.message?.isUserSender
-      ? chatRoom.message.recipientUsername
-      : chatRoom.message?.senderUsername
-    // e === user.username ? chatRoomSelect.message.recipientUsername : chatRoomSelect.message.senderUsername
+      ? chatRoom.message.recipientUserName
+      : chatRoom.message?.senderUserName
+    // e === user.userName ? chatRoomSelect.message.recipientUsername : chatRoomSelect.message.senderUsername
 
     // panelComponentRef.instance.id = block.id
 

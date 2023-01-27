@@ -1,5 +1,5 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store'
-import { selectRouteParams } from '@shared/data-access/router'
+import { RouterSelectors } from '@shared/data-access/router'
 import { ENTITIES_FEATURE_KEY, entitiesAdapter, EntitiesState } from './entities.reducer'
 
 export const selectEntitiesState = createFeatureSelector<EntitiesState>(ENTITIES_FEATURE_KEY)
@@ -26,7 +26,7 @@ export const selectEntitiesEntities = createSelector(selectEntitiesState, (state
 
 export const selectEntitiesByProjectIdRouteParams = createSelector(
   selectAllEntities,
-  selectRouteParams,
+  RouterSelectors.selectRouteParams,
   (entities, { projectId }) => {
     if (entities) {
       return entities.filter((entity) => entity.projectId === Number(projectId))

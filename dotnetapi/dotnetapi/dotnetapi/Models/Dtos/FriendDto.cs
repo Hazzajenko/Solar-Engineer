@@ -2,6 +2,6 @@
 
 public class FriendDto
 {
-    public string Username { get; set; } = default!;
+    public string UserName { get; set; } = default!;
     public DateTime? BecameFriendsTime { get; set; }
 }

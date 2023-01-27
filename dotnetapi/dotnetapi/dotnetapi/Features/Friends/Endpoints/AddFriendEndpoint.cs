@@ -57,16 +57,16 @@ public class AddFriendEndpoint : EndpointWithoutRequest<AddFriendResponse>
         if (user is null)
         {
             _logger.LogError("Bad request, User is invalid");
-            ThrowError("Username is invalid");
+            ThrowError("UserName is invalid");
         }
 
-        var friendUsername = Route<string>("username");
-        if (string.IsNullOrEmpty(friendUsername)) ThrowError("No username given");
+        var friendUserName = Route<string>("username");
+        if (string.IsNullOrEmpty(friendUserName)) ThrowError("No username given");
 
-        var sendRequest = await _friendsService.AddFriendAsync(user, friendUsername);
+        var sendRequest = await _friendsService.AddFriendAsync(user, friendUserName);
 
         var notification = await _notificationsService.SendFriendRequestToUserAsync(sendRequest);
-        // var notification = await _notificationsService.SendFriendRequestToUserAsync(user.UserName!, friendUsername);
+        // var notification = await _notificationsService.SendFriendRequestToUserAsync(user.UserName!, friendUserName);
         /*if (notification is null)
         {
             _logger.LogError("Unable to create notification");
@@ -75,7 +75,7 @@ public class AddFriendEndpoint : EndpointWithoutRequest<AddFriendResponse>
         /*var sendRequest = await _mediator.Send(new AddFriendHandlerRequest
         {
             AppUser = user,
-            FriendUsername = friendUsername
+            FriendUserName = friendUserName
         });*/
 
         var result = new AddFriendResponse
@@ -83,9 +83,9 @@ public class AddFriendEndpoint : EndpointWithoutRequest<AddFriendResponse>
             FriendRequestSentTo = sendRequest.RequestedTo.UserName!
         };
 
-        _logger.LogInformation("{Username} sent a friend request to {FriendUsername}", user.UserName, friendUsername);
+        _logger.LogInformation("{UserName} sent a friend request to {FriendUserName}", user.UserName, friendUserName);
         // return Ok(result);
-        /*var connections = await _connectionsService.GetUserConnections(friendUsername);
+        /*var connections = await _connectionsService.GetUserConnections(friendUserName);
         var connectionIds = connections.Connections.Select(x => x.ConnectionId);
         var enumerable = connectionIds as string[] ?? connectionIds.ToArray();*/
         /*await HubContext.Clients.Clients(enumerable)

@@ -8,8 +8,8 @@ public class AppUserFriendDto
     public NotificationType Type { get; set; }
     public DateTime RequestTime { get; set; }
     public NotificationStatus Status { get; set; }
-    public string RequestedByUsername { get; set; } = default!;
-    public string RequestedToUsername { get; set; } = default!;
+    public string RequestedByUserName { get; set; } = default!;
+    public string RequestedToUserName { get; set; } = default!;
     public DateTime? BecameFriendsTime { get; set; }
     public FriendRequestFlag FriendRequestFlag { get; set; }
 }

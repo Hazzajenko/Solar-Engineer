@@ -36,23 +36,23 @@ public class AcceptFriendEndpoint : EndpointWithoutRequest<AcceptFriendResponse>
         if (user is null)
         {
             _logger.LogError("Bad request, User is invalid");
-            ThrowError("Username is invalid");
+            ThrowError("UserName is invalid");
         }
 
-        var friendUsername = Route<string>("username");
-        if (string.IsNullOrEmpty(friendUsername)) ThrowError("No username given");
+        var friendUserName = Route<string>("username");
+        if (string.IsNullOrEmpty(friendUserName)) ThrowError("No username given");
 
-        var acceptRequest = await _friendsService.AcceptFriendAsync(user, friendUsername);
+        var acceptRequest = await _friendsService.AcceptFriendAsync(user, friendUserName);
 
-        _logger.LogInformation("{Username} accepted a friend request from {FriendUsername}", user.UserName,
-            friendUsername);
+        _logger.LogInformation("{UserName} accepted a friend request from {FriendUserName}", user.UserName,
+            friendUserName);
         // return Ok(acceptRequest);
 
         var response = new AcceptFriendResponse
         {
             Friend = new FriendDto
             {
-                Username = friendUsername,
+                UserName = friendUserName,
                 BecameFriendsTime = acceptRequest.BecameFriendsTime
             }
         };

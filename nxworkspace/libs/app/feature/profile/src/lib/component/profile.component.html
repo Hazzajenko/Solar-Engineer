@@ -6,7 +6,7 @@
     <ng-container *ngIf='!profileEdit else editMode'>
       <div>
         <!--        <img src='profile.png' alt='' />-->
-        <h4>{{ user.username }}</h4>
+        <h4>{{ user.userName }}</h4>
         <p>{{ user.firstName }} {{ user.lastName }}</p>
         <p>{{ user.email }}</p>
         <!--      <a [routerLink]="['/settings']"
@@ -22,14 +22,14 @@
 
       <form [formGroup]='loginForm' class='flex m-5 my-3 flex-col items-center content-center'>
         <div class='form-floating mb-3'>
-          <label id='username'>Username</label>
+          <label id='userName'>Username</label>
           <input type='text' class='block h-12 w-full rounded-sm mt-2 text-sm font-light bg-gray-300' placeholder=''
-                 formControlName='username'
-                 [ngClass]="{ 'border border-red-500': loginForm.get('username')!.dirty }">
+                 formControlName='userName'
+                 [ngClass]="{ 'border border-red-500': loginForm.get('userName')!.dirty }">
           <div class='items-center text-red-500 text-sm'>
-            <ng-container *ngFor='let validation of validationMessages.username'>
+            <ng-container *ngFor='let validation of validationMessages.userName'>
               <div class='error-message'
-                   *ngIf="loginForm.get('username')!.hasError(validation.type) && (loginForm.get('username')!.dirty || loginForm.get('username')!.touched)">
+                   *ngIf="loginForm.get('userName')!.hasError(validation.type) && (loginForm.get('userName')!.dirty || loginForm.get('userName')!.touched)">
                 <mat-icon name='information-circle-outline'></mat-icon>
                 <span>{{ validation.message }}</span>
               </div>
@@ -37,8 +37,8 @@
           </div>
         </div>
 
-        <div class='text-sm text-red-500' *ngFor='let usernameErrors of usernameErrors$ | async'>
-          {{usernameErrors.errorMessage}}
+        <div class='text-sm text-red-500' *ngFor='let userNameErrors of userNameErrors$ | async'>
+          {{userNameErrors.errorMessage}}
         </div>
 
         <div class='form-floating mb-3'>

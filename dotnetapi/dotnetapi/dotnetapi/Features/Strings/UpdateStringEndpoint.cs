@@ -37,7 +37,7 @@ public class UpdateStringEndpoint : Endpoint<UpdateStringRequest, OneUpdateRespo
         if (user is null)
         {
             _logger.LogError("Bad request, User is invalid");
-            ThrowError("Username is invalid");
+            ThrowError("UserName is invalid");
         }
 
         var update = await _stringsService.UpdateStringAsync(request);

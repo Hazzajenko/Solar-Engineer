@@ -7,7 +7,7 @@ public class UserRequestValidator : AbstractValidator<AuthRequest>
 {
     public UserRequestValidator()
     {
-        RuleFor(x => x.Username)
+        RuleFor(x => x.UserName)
             .NotEmpty().WithMessage("Username is required")
             .MinimumLength(8).WithMessage("Your username length must be at least 8.")
             .MaximumLength(16).WithMessage("Your username length must not exceed 16.")

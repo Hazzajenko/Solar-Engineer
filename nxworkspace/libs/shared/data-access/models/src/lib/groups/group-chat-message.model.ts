@@ -1,17 +1,14 @@
-
-
-
 export interface GroupChatMessageModel {
-  id: number;
-  groupChatId: number;
-  senderUsername: string;
-  content: string;
-  messageReadTimes: GroupChatReadTime[];
-  messageSentTime: string;
+  id: number
+  groupChatId: number
+  senderUserName: string
+  content: string
+  messageReadTimes: GroupChatReadTime[]
+  messageSentTime: string
 }
 
 export interface GroupChatReadTime {
-  id: number;
-  recipientUsername: string;
-  messageReadTime: string;
+  id: number
+  recipientUserName: string
+  messageReadTime: string
 }
