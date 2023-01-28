@@ -1,5 +1,14 @@
 import { ScrollingModule } from '@angular/cdk/scrolling'
-import { AsyncPipe, DatePipe, NgClass, NgForOf, NgIf, NgStyle, NgSwitch, NgSwitchCase } from '@angular/common'
+import {
+  AsyncPipe,
+  DatePipe,
+  NgClass,
+  NgForOf,
+  NgIf,
+  NgStyle,
+  NgSwitch,
+  NgSwitchCase,
+} from '@angular/common'
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
 
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms'
@@ -17,7 +26,12 @@ import { AuthStoreService } from '@auth/data-access/facades'
 import { LetModule } from '@ngrx/component'
 import { Update } from '@ngrx/entity'
 
-import { MessageModel, NotificationModel, NotificationStatus, UserModel } from '@shared/data-access/models'
+import {
+  MessageModel,
+  NotificationModel,
+  NotificationStatus,
+  UserModel,
+} from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
 import { Observable } from 'rxjs'
@@ -25,7 +39,6 @@ import { MessagesStoreService } from '../../data-access'
 import { ConversationComponent } from '../conversation/conversation.component'
 import { MessageDirective } from './message.directive'
 import { SortMessagesPipe } from './sort-messages.pipe'
-
 
 @Component({
   selector: 'app-messages-component',
@@ -60,20 +73,14 @@ import { SortMessagesPipe } from './sort-messages.pipe'
   standalone: true,
 })
 export class MessagesComponent {
-
   private messagesStore = inject(MessagesStoreService)
   private authStore = inject(AuthStoreService)
   private dialog = inject(MatDialog)
 
-  messages$: Observable<MessageModel[] | undefined> = this.messagesStore.select.firstMessageOfEveryConversation$()
+  messages$!: Observable<MessageModel[] | undefined>
   user$: Observable<UserModel | undefined> = this.authStore.select.user$
   selectedMessage?: MessageModel
   unreadFilter = false
-
-
-  constructor() {
-    this.messagesStore.select.firstMessageOfEveryConversation$().subscribe(res => console.log(res))
-  }
 
   change(event: MatSelectionListChange) {
     console.log(event)
@@ -96,10 +103,12 @@ export class MessagesComponent {
 
   markAllMessagesAsRead(messages: MessageModel[]) {
     if (!messages) return
-    const unreadMessages = messages.filter(message => message.status === NotificationStatus.Unread)
+    const unreadMessages = messages.filter(
+      (message) => message.status === NotificationStatus.Unread,
+    )
     if (!unreadMessages) return
 
-    const updates: Update<MessageModel>[] = unreadMessages.map(notification => {
+    const updates: Update<MessageModel>[] = unreadMessages.map((notification) => {
       const update: Update<MessageModel> = {
         id: notification.id,
         changes: {
@@ -130,4 +139,3 @@ export class MessagesComponent {
     this.dialog.open(ConversationComponent, dialogConfig)
   }
 }
-

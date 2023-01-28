@@ -27,7 +27,8 @@ public class AcceptFriendEndpoint : EndpointWithoutRequest<AcceptFriendResponse>
 
     public override void Configure()
     {
-        Post("/friend/accept/{username}");
+        Put("/friend/{username}");
+        Policies("BeAuthenticated");
     }
 
     public override async Task HandleAsync(CancellationToken cancellationToken)

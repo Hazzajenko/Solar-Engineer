@@ -1,8 +1,9 @@
-import {GroupChatCombinedModel} from "../groups";
-import {MessageModel} from "../users";
+import { GroupChatCombinedModel } from '../groups'
+import { MessageModel } from '../users'
 
-export interface MessageTimeSortModel{
+export interface MessageTimeSortModel {
   isGroup: boolean
+  chatRoomName: string
   latestSentMessageTime: string
   groupChat?: GroupChatCombinedModel
   message?: MessageModel

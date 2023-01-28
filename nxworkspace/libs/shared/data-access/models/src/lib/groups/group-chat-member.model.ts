@@ -5,6 +5,7 @@ export interface GroupChatMemberModel {
   firstName: string
   lastName: string
   lastActive: string
+  photoUrl: string
   role: string
   joinedAt: string
   isOnline: boolean

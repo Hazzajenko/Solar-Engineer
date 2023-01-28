@@ -27,6 +27,7 @@ public class GetAllFriendsEndpoint : EndpointWithoutRequest<AllFriendsResponse>
     public override void Configure()
     {
         Get("/friends");
+        Policies("BeAuthenticated");
         // Roles("Admin");
     }
 

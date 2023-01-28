@@ -6,6 +6,7 @@ export const FriendsActions = createActionGroup({
   source: 'Friends Store',
   events: {
     'Init Friends': emptyProps(),
+    'Send Friend Request': props<{ friendUserName: string }>(),
     'Add Friend': props<{ friend: FriendModel }>(),
     'Add Many Friends': props<{ friends: FriendModel[] }>(),
     'Update Friend': props<{ update: Update<FriendModel> }>(),

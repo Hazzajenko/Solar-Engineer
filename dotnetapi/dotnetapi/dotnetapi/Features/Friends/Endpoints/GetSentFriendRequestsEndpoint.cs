@@ -29,6 +29,7 @@ public class GetSentFriendRequestsEndpoint : EndpointWithoutRequest<FriendReques
     public override void Configure()
     {
         Get("/friends/sent");
+        Policies("BeAuthenticated");
         // Roles("Admin");
     }
 

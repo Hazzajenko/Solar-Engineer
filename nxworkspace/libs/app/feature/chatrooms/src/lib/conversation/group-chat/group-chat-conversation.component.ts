@@ -1,5 +1,4 @@
-import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrolling'
-import { CdkTextareaAutosize } from '@angular/cdk/text-field'
+import { ScrollingModule } from '@angular/cdk/scrolling'
 import {
   AsyncPipe,
   DatePipe,
@@ -10,66 +9,43 @@ import {
   NgSwitch,
   NgSwitchCase,
 } from '@angular/common'
-import {
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-  Input,
-  NgZone,
-  OnInit,
-  ViewChild,
-} from '@angular/core'
+import { ChangeDetectionStrategy, Component, inject, Input, ViewChild } from '@angular/core'
 
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms'
+import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { MatButtonModule } from '@angular/material/button'
 import { MatCardModule } from '@angular/material/card'
 import { MatCheckboxModule } from '@angular/material/checkbox'
-import { MatDialog, MatDialogConfig, MatDialogModule, MatDialogRef } from '@angular/material/dialog'
+import { MatDialogModule } from '@angular/material/dialog'
 import { MatFormFieldModule } from '@angular/material/form-field'
 
 import { MatIconModule } from '@angular/material/icon'
 import { MatInputModule } from '@angular/material/input'
-import { MatListModule, MatSelectionListChange } from '@angular/material/list'
-import { ActivatedRoute, Router } from '@angular/router'
-import { MessagesComponent, MessagesStoreService, SendMessageRequest } from '@app/messages'
+import { MatListModule } from '@angular/material/list'
+import { ActivatedRoute } from '@angular/router'
+import { MessagesComponent } from '@app/messages'
 import { AuthStoreService } from '@auth/data-access/facades'
 import { LetModule } from '@ngrx/component'
-import { Update } from '@ngrx/entity'
 
 import {
   GroupChatCombinedModel,
   GroupChatMemberModel,
   GroupChatMessageMemberModel,
   GroupChatMessageModel,
-  MessageModel,
   MessageTimeSortModel,
-  NotificationModel,
-  NotificationStatus,
-  PanelModel,
   UserModel,
-  WindowSizeModel,
 } from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
-import { map, Observable, take } from 'rxjs'
-
-import { MessageDirective } from '../../../../../../messages/src/lib/feature/component/message.directive'
-import { SortMessagesPipe } from '../../../../../../messages/src/lib/feature/component/sort-messages.pipe'
-import { ConversationMessageDirective } from '../../../../../../messages/src/lib/feature/conversation/conversation-message.directive'
-import { ScrollViewportDirective } from '../../../../../../messages/src/lib/feature/conversation/scroll-viewport.directive'
-import { SortConversationMessagesPipe } from '../../../../../../messages/src/lib/feature/conversation/sort-conversation-messages.pipe'
-import { IsLastMessagePipe } from '../../is-last-message.pipe'
-import { LastMessageIdPipe } from '../../last-message-id.pipe'
-import { SelectChatroomModel } from '../../select-chatroom.model'
+import { map, Observable } from 'rxjs'
 import { GroupChatsStoreService, SendGroupChatMessageRequest } from '@app/data-access/group-chats'
-import { SortGroupChatMessagesPipe } from './sort-group-chat-messages.pipe'
-import { LastGroupChatMessageIdPipe } from './last-group-chat-message-id.pipe'
-import { ExcludeUserFromSeenPipe } from './exclude-user-from-seen.pipe'
-import { IsMemberOnlinePipe } from './is-member-online.pipe'
-import { AnyGroupMessageSeenPipe } from './any-group-message-seen.pipe'
+
+import { ExcludeUserFromSeenPipe } from './pipes/exclude-user-from-seen.pipe'
+
+import { AnyGroupMessageSeenPipe } from './pipes/any-group-message-seen.pipe'
 import { MessageBarComponent } from '../message-bar/message-bar.component'
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
 import { GroupChatMessageMenuComponent } from './menu/group-chat-message-menu.component'
+import { ConversationMessageDirective, ScrollViewportDirective } from '@shared/directives'
 
 @Component({
   selector: 'app-group-chat-conversation-component',
@@ -137,21 +113,13 @@ import { GroupChatMessageMenuComponent } from './menu/group-chat-message-menu.co
     MatCheckboxModule,
     LetModule,
     MessagesComponent,
-    MessageDirective,
-    SortMessagesPipe,
-    ScrollViewportDirective,
-    ConversationMessageDirective,
-    SortConversationMessagesPipe,
-    IsLastMessagePipe,
-    LastMessageIdPipe,
-    SortGroupChatMessagesPipe,
-    LastGroupChatMessageIdPipe,
     ExcludeUserFromSeenPipe,
-    IsMemberOnlinePipe,
     AnyGroupMessageSeenPipe,
     MessageBarComponent,
     MatMenuModule,
     GroupChatMessageMenuComponent,
+    ConversationMessageDirective,
+    ScrollViewportDirective,
   ],
   standalone: true,
 })

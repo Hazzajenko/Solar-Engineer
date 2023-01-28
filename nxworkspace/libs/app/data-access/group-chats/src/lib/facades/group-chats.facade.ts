@@ -207,7 +207,7 @@ export class GroupChatsFacade {
                   } as GroupChatMemberModel),
               ),
           ),
-          tap((res) => console.log(res)),
+          // tap((res) => console.log(res)),
         ),
       ),
     )

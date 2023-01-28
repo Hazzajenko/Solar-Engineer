@@ -24,24 +24,31 @@ export class FriendsEffects {
       this.actions$.pipe(
         ofType(AuthActions.signInSuccess),
         switchMap(() =>
-          this.friendsService.getAllFriends().pipe(
-            map(response => FriendsActions.addManyFriends({ friends: response.friends })),
-          ),
+          this.friendsService
+            .getAllFriends()
+            .pipe(map((response) => FriendsActions.addManyFriends({ friends: response.friends }))),
         ),
       ),
     // { dispatch: false },
   )
 
-  acceptFriend$ = createEffect(
+  sendFriendRequest$ = createEffect(
     () =>
       this.actions$.pipe(
-        ofType(FriendsActions.acceptFriendRequest),
-        switchMap(({ friendUsername }) =>
-          this.friendsService.acceptFriendRequest(friendUsername).pipe(
-            map((res) => FriendsActions.addFriend({ friend: res.friend })),
-          ),
-        ),
+        ofType(FriendsActions.sendFriendRequest),
+        switchMap(({ friendUserName }) => this.friendsService.sendFriendRequest(friendUserName)),
       ),
-    // { dispatch: false },
+    { dispatch: false },
+  )
+
+  acceptFriend$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(FriendsActions.acceptFriendRequest),
+      switchMap(({ friendUsername }) =>
+        this.friendsService
+          .acceptFriendRequest(friendUsername)
+          .pipe(map((res) => FriendsActions.addFriend({ friend: res.friend }))),
+      ),
+    ),
   )
 }

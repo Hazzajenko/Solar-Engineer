@@ -27,6 +27,7 @@ public class GetReceivedFriendRequestsEndpoint : EndpointWithoutRequest<FriendRe
     public override void Configure()
     {
         Get("/friends/received");
+        Policies("BeAuthenticated");
         // Roles("Admin");
     }
 

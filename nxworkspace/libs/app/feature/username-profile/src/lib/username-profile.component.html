@@ -3,12 +3,11 @@
     <!--    {{userProfile.userName}}
         {{userProfile.created | date : 'short'}}
         {{userProfile.lastActive | date : 'short'}}-->
-    <mat-card class='max-w-[100%]'>
+    <mat-card class='max-w-[100%] max-h-[100%]'>
       <mat-card-header>
         <div mat-card-avatar class='example-header-image'>
           <mat-icon
             color='primary'
-            style='transform: scale(0.75);'
             *ngIf='userProfile.isOnline'>wifi
           </mat-icon>
         </div>
@@ -16,9 +15,12 @@
              [src]='userProfile.photoUrl'
              alt=''>
         <mat-card-title>{{userProfile.userName}}</mat-card-title>
-        <span class='text-green-500' *ngIf='userProfile.isOnline'>
-Online
-        </span>
+        <mat-card-subtitle *ngIf='userProfile.isOnline else offline'>
+          Online
+        </mat-card-subtitle>
+        <mat-card-subtitle *ngIf='userProfile.isFriend'>
+          Friends {{userProfile.becameFriendsTime ? 'since' : ''}} {{userProfile.becameFriendsTime | timeDifferenceFromNow}}
+        </mat-card-subtitle>
         <!--        <span *ngIf='userProfile.isOnline else offline'>
                   <mat-icon
                     color='primary'
@@ -28,30 +30,35 @@ Online
                   &lt;!&ndash;        <mat-card-subtitle>{{userProfile.firstName}} {{userProfile.lastName}}</mat-card-subtitle>&ndash;&gt;
 
                 </span>-->
-        <mat-card-subtitle class='text-green-500' *ngIf='userProfile.isOnline'>Online
-        </mat-card-subtitle>
+        <!--        <mat-card-subtitle class='text-green-500' *ngIf='userProfile.isOnline'>Online
+                </mat-card-subtitle>-->
 
         <ng-template #offline>
+          <!--          <mat-card-subtitle *ngIf='!userProfile.isOnline'>Last
+                      Active {{userProfile.lastActive | date : 'short'}}</mat-card-subtitle>-->
           <mat-card-subtitle *ngIf='!userProfile.isOnline'>Last
-            Active {{userProfile.lastActive | date : 'short'}}</mat-card-subtitle>
+            Active {{userProfile.lastActive | timeDifferenceFromNow}}</mat-card-subtitle>
         </ng-template>
 
-        <mat-card-subtitle>User Since {{userProfile.created | date : 'short'}}</mat-card-subtitle>
+        <mat-card-subtitle>User Since {{userProfile.created | timeDifferenceFromNow}}</mat-card-subtitle>
       </mat-card-header>
       <!--      <img mat-card-image src='https://material.angular.io/assets/img/examples/shiba2.jpg' alt='Photo of a Shiba Inu'>-->
       <mat-card-content>
-        <p>
-          Online Now!
-        </p>
-        <mat-icon
-          color='primary'
-          style='transform: scale(0.75);'
-          *ngIf='userProfile.isOnline'>wifi
-        </mat-icon>
+        <!--        <p>
+                  Online Now!
+                </p>
+                <mat-icon
+                  color='primary'
+                  style='transform: scale(0.75);'
+                  *ngIf='userProfile.isOnline'>wifi
+                </mat-icon>-->
       </mat-card-content>
       <mat-card-actions>
-        <button mat-button>Send Friend Request</button>
-        <button mat-button>Message</button>
+        <button (click)='sendFriendRequest(userProfile.userName)' *ngIf='!userProfile.isFriend' mat-button>Send Friend
+          Request
+        </button>
+        <button (click)='sendMessage(userProfile.userName)' mat-button>Message</button>
+        <button *ngIf='userProfile.isFriend' mat-button>Remove Friend</button>
       </mat-card-actions>
     </mat-card>
   </ng-container>

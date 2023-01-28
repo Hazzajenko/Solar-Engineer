@@ -1,141 +1,225 @@
-<ng-container *ngIf='user$ | async as user'>
+<ng-container *ngIf="user$ | async as user">
   <!--  <ng-container *ngIf='messages$ | async as messages'>-->
-  <ng-container *ngIf='groupChatMessagesWithMembersById$ | async as groupChatMessagesWithMembers'>
-    <ng-container *ngIf='groupChatMembers$ | async as groupChatMembers'>
-      <ng-container *ngIf='groupChatMessages$ | async as groupChatMessages'>
-        <ng-container *ngrxLet='isDialog$ | async as isDialog'>
-          <div
-            class='flex flex-col items-center content-center'>
+  <ng-container *ngIf="groupChatMessagesWithMembersById$ | async as groupChatMessagesWithMembers">
+    <ng-container *ngIf="groupChatMembers$ | async as groupChatMembers">
+      <ng-container *ngIf="groupChatMessages$ | async as groupChatMessages">
+        <ng-container *ngrxLet="isDialog$ | async as isDialog">
+          <div class="flex flex-col items-center content-center">
             <!--            <h1 mat-dialog-title>{{recipient}}</h1>-->
             <!--        [ngStyle]='{
                     "height": isDialog ? "550px" : "550px"
                     }'-->
             <!--        [style.height]='calculateContainerHeight(conversationMessages, viewport)'-->
             <cdk-virtual-scroll-viewport
-              [ngStyle]='{
-                "height": isDialog ? "550px" : "550px"
-                }'
-
+              [ngStyle]="{
+                height: isDialog ? '550px' : '550px'
+              }"
               appScrollViewportDirective
               #viewport
-              (scrolledIndexChange)='scrollIndex = $event'
-              [scrollIndex]='scrollIndex'
-              [viewport]='viewport'
-              [isGroup]='true'
-              [groupChatMessages]='groupChatMessages'
-              style='overflow-y: scroll '
-              itemSize='25'
-              class='flex w-[100%] min-w-max'>
+              (scrolledIndexChange)="scrollIndex = $event"
+              [scrollIndex]="scrollIndex"
+              [viewport]="viewport"
+              [isGroup]="true"
+              [groupChatMessages]="groupChatMessages"
+              style="overflow-y: scroll"
+              itemSize="25"
+              class="flex w-[100%] min-w-max"
+            >
               <!--        column-reverse;-->
               <!--   (scroll)='scrolled($event)'-->
               <!--          [ngStyle]='{"background-color": notification.status === 0 ? "#60a1fa" : ""}'-->
-              <div appConversationMessageDirective
-                   [userName]='user.userName'
-                   [groupChatMessage]='message'
+              <div
+                appConversationMessageDirective
+                [userName]="user.userName"
+                [groupChatMessage]="message"
+                class="flex grow"
+                *cdkVirtualFor="let message of groupChatMessagesWithMembers"
+              >
+                <ng-container
+                  *ngrxLet="
+                    groupChatMessagesWithMembers[groupChatMessagesWithMembers.length - 1]
+                      .id as lastMessageId
+                  "
+                >
+                  <ng-container
+                    *ngIf="user.userName === message.senderUserName; else recipientMessage"
+                  >
+                    <div
+                      *ngrxLet="
+                        groupChatMessagesWithMembers[groupChatMessagesWithMembers.length - 1]
+                          .id as lastMessageId
+                      "
+                      (click)="selectGroupChatMessage(message)"
+                      [ngClass]="{
+                        'bg-blue-400/75': selectedGroupChatMessage?.id === message.id,
+                        'hover:bg-blue-400': selectedGroupChatMessage?.id === message.id,
+                        'hover:bg-sky-400': selectedGroupChatMessage?.id !== message.id
+                      }"
+                      class="flex flex-col my-2 p-1 min-w-[250px] max-w-[250px] rounded-tl-lg rounded-tr-lg rounded-bl-lg bg-sky-400/75 mx-5"
+                    >
+                      <!--                      <span matListItemTitle>{{message.senderUsername}}</span>-->
 
-                   class='flex grow'
-                   *cdkVirtualFor='let message of groupChatMessagesWithMembers'>
+                      <span
+                        *ngIf="
+                          selectedGroupChatMessage &&
+                          selectedGroupChatMessage.id === message.id &&
+                          message.id !== lastMessageId
+                        "
+                        >{{ message.messageSentTime | date: "short" }}</span
+                      >
+                      <p style="white-space: pre-line">{{ message.content }}</p>
+                      <span *ngIf="message.id === lastMessageId"
+                        >Sent {{ message.messageSentTime | date: "short" }}</span
+                      >
+                      <br />
+                      <span
+                        style="clear: left"
+                        *ngIf="
+                          (message.messageReadTimes | anyGroupMessageSeen: user.userName) &&
+                          message.id === lastMessageId
+                        "
+                      >
+                        Seen by
+                        <ng-container
+                          *ngIf="selectedGroupChatMessage?.id === message.id; else notSelected"
+                        >
+                          <div
+                            style="margin-left: 2px"
+                            *ngFor="
+                              let readTime of message.messageReadTimes
+                                | excludeUserFromSeen: user.userName
+                            "
+                          >
+                            {{ readTime.recipientUserName }}
+                            {{ readTime.messageReadTime | date: "short" }}
+                            {{
+                              readTime.id !==
+                              message.messageReadTimes[message.messageReadTimes.length - 1].id
+                                ? ","
+                                : ""
+                            }}
+                            <!-- {{readTime.messageReadTime | date : 'short'}}-->
+                          </div>
+                        </ng-container>
+                        <ng-template #notSelected>
+                          <span
+                            style="clear: left"
+                            *ngFor="
+                              let readTime of message.messageReadTimes
+                                | excludeUserFromSeen: user.userName
+                            "
+                          >
+                            {{ readTime.recipientUserName }}
+                            {{
+                              readTime.id !==
+                              message.messageReadTimes[message.messageReadTimes.length - 1].id
+                                ? ","
+                                : ""
+                            }}
+                            <!-- {{readTime.messageReadTime | date : 'short'}}-->
+                          </span>
+                        </ng-template>
+                      </span>
+                    </div>
+                  </ng-container>
+                  <!--                *ngrxLet='message.senderUsername | isMemberOnline : groupChatMembers as isOnline'-->
+                  <ng-template #recipientMessage>
+                    <div
+                      (click)="selectGroupChatMessage(message)"
+                      (contextmenu)="onRightClick($event, message)"
+                      class="flex flex-col my-2 p-1 min-w-[250px] max-w-[250px] rounded-lg bg-gray-400/75 hover:bg-gray-400 mx-5"
+                    >
+                      <span class="flex" matListItemTitle>
+                        <mat-icon
+                          color="primary"
+                          style="transform: scale(0.75)"
+                          *ngIf="message.sender.isOnline"
+                          >wifi</mat-icon
+                        >
+                        <img
+                          mat-card-avatar
+                          width="25px"
+                          height="25px"
+                          [src]="message.sender.photoUrl"
+                          alt=""
+                        />
+                        {{ message.senderUserName }}
+                        <!--{{message.sender.isOnline ? 'ONLINE' : ''}}-->
+                      </span>
+                      <span
+                        *ngIf="
+                          selectedGroupChatMessage &&
+                          selectedGroupChatMessage.id === message.id &&
+                          message.id !== lastMessageId
+                        "
+                        matListItemLine
+                        >{{ message.messageSentTime | date: "short" }}</span
+                      >
+                      <p style="white-space: pre-line" matListItemLine>{{ message.content }}</p>
+                      <span *ngIf="message.id === lastMessageId"
+                        >Sent {{ message.messageSentTime | date: "short" }}</span
+                      >
+                      <br />
+                      <span
+                        style="clear: left"
+                        *ngIf="
+                          (message.messageReadTimes | anyGroupMessageSeen: user.userName) &&
+                          message.id === lastMessageId
+                        "
+                      >
+                        Seen by
+                        <ng-container
+                          *ngIf="selectedGroupChatMessage?.id === message.id; else notSelected"
+                        >
+                          <div
+                            style="margin-left: 2px"
+                            *ngFor="
+                              let readTime of message.messageReadTimes
+                                | excludeUserFromSeen: user.userName
+                            "
+                          >
+                            {{ readTime.recipientUserName }}
+                            {{ readTime.messageReadTime | date: "short" }}
+                            {{
+                              readTime.id !==
+                              message.messageReadTimes[message.messageReadTimes.length - 1].id
+                                ? ","
+                                : ""
+                            }}
+                            <!-- {{readTime.messageReadTime | date : 'short'}}-->
+                          </div>
+                        </ng-container>
+                        <ng-template #notSelected>
+                          <span
+                            style="clear: left"
+                            *ngFor="
+                              let readTime of message.messageReadTimes
+                                | excludeUserFromSeen: user.userName
+                            "
+                          >
+                            {{ readTime.recipientUserName }}
+                            {{
+                              readTime.id !==
+                              message.messageReadTimes[message.messageReadTimes.length - 1].id
+                                ? ","
+                                : ""
+                            }}
+                            <!-- {{readTime.messageReadTime | date : 'short'}}-->
+                          </span>
+                        </ng-template>
+                      </span>
 
-
-                <ng-container *ngIf='user.userName === message.senderUserName else recipientMessage'>
-                  <div
-
-                    (click)='selectGroupChatMessage(message)'
-                    [ngClass]='{
-                      "bg-blue-400/75": selectedGroupChatMessage?.id === message.id,
-                      "hover:bg-blue-400": selectedGroupChatMessage?.id === message.id,
-                      "hover:bg-sky-400": selectedGroupChatMessage?.id !== message.id
-                      }'
-                    class='flex flex-col my-2 p-1 min-w-[250px] max-w-[250px] rounded-tl-lg rounded-tr-lg rounded-bl-lg bg-sky-400/75  mx-5'>
-                    <!--                      <span matListItemTitle>{{message.senderUsername}}</span>-->
-
-                    <span
-                      *ngIf='selectedGroupChatMessage && selectedGroupChatMessage.id === message.id && message.id !== groupChatMessages[groupChatMessages.length-1].id'
-                    >{{message.messageSentTime | date : 'short'}}</span>
-                    <p style='white-space: pre-line'>{{message.content}}</p>
-                    <span *ngIf='message.id === groupChatMessages[groupChatMessages.length-1].id'
-                    >Sent {{message.messageSentTime | date : 'short'}}</span>
-                    <br>
-                    <span
-                      style='clear: left'
-                      *ngIf='(message.messageReadTimes | anyGroupMessageSeen : user.userName) && message.id === groupChatMessages[groupChatMessages.length-1].id'
-                    > Seen by
-                    <ng-container *ngIf='selectedGroupChatMessage?.id === message.id else notSelected'>
-                                               <div
-                                                 style='margin-left: 2px'
-                                                 *ngFor='let readTime of message.messageReadTimes | excludeUserFromSeen : user.userName'>
-                     {{readTime.recipientUserName}} {{readTime.messageReadTime | date : 'short'}} {{readTime.id !== message.messageReadTimes[message.messageReadTimes.length - 1].id ? ',' : ''}}
-                                                 <!-- {{readTime.messageReadTime | date : 'short'}}-->
-                     </div>
-                    </ng-container>
-                    <ng-template #notSelected>
-                                         <span
-                                           style='clear: left'
-                                           *ngFor='let readTime of message.messageReadTimes | excludeUserFromSeen : user.userName'>
-                     {{readTime.recipientUserName}} {{readTime.id !== message.messageReadTimes[message.messageReadTimes.length - 1].id ? ',' : ''}}
-                                           <!-- {{readTime.messageReadTime | date : 'short'}}-->
-                     </span>
-
-                    </ng-template>
-                 </span>
-                  </div>
+                      <!--            <span *ngIf='message.id === lastMessageId && message.messageReadTime'
+                                        matListItemLine>Seen By You {{message.messageReadTime | date : 'short'}}</span>-->
+                    </div>
+                  </ng-template>
                 </ng-container>
-                <!--                *ngrxLet='message.senderUsername | isMemberOnline : groupChatMembers as isOnline'-->
-                <ng-template #recipientMessage>
-                  <div
-                    (click)='selectGroupChatMessage(message)'
-                    (contextmenu)='onRightClick($event, message)'
-                    class='flex flex-col my-2 p-1 min-w-[250px] max-w-[250px] rounded-lg bg-gray-400/75 hover:bg-gray-400 mx-5'>
-                    <span
-
-                      matListItemTitle>
-
-                      {{message.senderUserName}} <!--{{message.sender.isOnline ? 'ONLINE' : ''}}-->
-                      <mat-icon
-                        color='primary'
-                        style='transform: scale(0.75);'
-                        *ngIf='message.sender.isOnline'>wifi</mat-icon>
-                    </span>
-                    <span
-                      *ngIf='selectedGroupChatMessage && selectedGroupChatMessage.id === message.id && message.id !== groupChatMessages[groupChatMessages.length-1].id'
-                      matListItemLine>{{message.messageSentTime | date : 'short'}}</span>
-                    <p style='white-space: pre-line' matListItemLine>{{message.content}}</p>
-                    <span *ngIf='message.id === groupChatMessages[groupChatMessages.length-1].id'
-                    >Sent {{message.messageSentTime | date : 'short'}}</span>
-                    <br>
-                    <span
-                      style='clear: left'
-                      *ngIf='(message.messageReadTimes | anyGroupMessageSeen : user.userName) && message.id === groupChatMessages[groupChatMessages.length-1].id'
-                    > Seen by
-                    <ng-container *ngIf='selectedGroupChatMessage?.id === message.id else notSelected'>
-                                               <div
-                                                 style='margin-left: 2px'
-                                                 *ngFor='let readTime of message.messageReadTimes | excludeUserFromSeen : user.userName'>
-                     {{readTime.recipientUserName}} {{readTime.messageReadTime | date : 'short'}} {{readTime.id !== message.messageReadTimes[message.messageReadTimes.length - 1].id ? ',' : ''}}
-                                                 <!-- {{readTime.messageReadTime | date : 'short'}}-->
-                     </div>
-                    </ng-container>
-                    <ng-template #notSelected>
-                                         <span
-                                           style='clear: left'
-                                           *ngFor='let readTime of message.messageReadTimes | excludeUserFromSeen : user.userName'>
-                     {{readTime.recipientUserName}} {{readTime.id !== message.messageReadTimes[message.messageReadTimes.length - 1].id ? ',' : ''}}
-                                           <!-- {{readTime.messageReadTime | date : 'short'}}-->
-                     </span>
-
-                    </ng-template>
-                 </span>
-                    <!--            <span *ngIf='message.id === lastMessageId && message.messageReadTime'
-                                      matListItemLine>Seen By You {{message.messageReadTime | date : 'short'}}</span>-->
-                  </div>
-                </ng-template>
-
-
               </div>
             </cdk-virtual-scroll-viewport>
-            <app-message-bar-component class='min-w-max w-[100%] grow-0'
-                                       (sendMessageEvent)='sendGroupChatMessage($event)'></app-message-bar-component>
-
+            <app-message-bar-component
+              class="min-w-max w-[100%] grow-0"
+              (sendMessageEvent)="sendGroupChatMessage($event)"
+            ></app-message-bar-component>
           </div>
         </ng-container>
       </ng-container>
@@ -144,15 +228,17 @@
 </ng-container>
 
 <div
-  [matMenuTriggerFor]='rightMenu'
-  [style.left]='menuTopLeftPosition.x'
-  [style.top]='menuTopLeftPosition.y'
-  style='visibility: hidden; position: fixed'
+  [matMenuTriggerFor]="rightMenu"
+  [style.left]="menuTopLeftPosition.x"
+  [style.top]="menuTopLeftPosition.y"
+  style="visibility: hidden; position: fixed"
 ></div>
 
-<mat-menu #rightMenu='matMenu'>
+<mat-menu #rightMenu="matMenu">
   <ng-template matMenuContent>
-    <app-group-chat-message-menu-component *ngIf='selectedGroupChatMessage'
-                                           [message]='selectedGroupChatMessage'></app-group-chat-message-menu-component>
+    <app-group-chat-message-menu-component
+      *ngIf="selectedGroupChatMessage"
+      [message]="selectedGroupChatMessage"
+    ></app-group-chat-message-menu-component>
   </ng-template>
 </mat-menu>

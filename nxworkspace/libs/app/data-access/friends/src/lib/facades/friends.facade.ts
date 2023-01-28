@@ -29,4 +29,17 @@ export class FriendsFacade {
       }),
     )
   }
+
+  isUserFriend$(userName: string) {
+    return this.friends$.pipe(
+      map((friends) => !!friends.find((friend) => friend.userName === userName)),
+    )
+  }
+
+  getUserFriendStatus$(userName: string) {
+    return this.friends$.pipe(
+      map((friends) => friends.find((friend) => friend.userName === userName)),
+      map((friend) => ({ isFriend: !!friend, becameFriendsTime: friend?.becameFriendsTime })),
+    )
+  }
 }

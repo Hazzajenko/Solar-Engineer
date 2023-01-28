@@ -47,7 +47,7 @@ public class GetUserByUserNameEndpoint : EndpointWithoutRequest<GetUserResponse>
         if (string.IsNullOrEmpty(username)) ThrowError("Invalid username");
 
         // var getUser = await _userManager.Users.Where(x => x.UserName == username).Select(x => x.ToGetUserDto()).SingleOrDefaultAsync(cT);
-        var getUser = await _mediator.Send(new GetUserByUserNameQuery(username), cT);
+        var getUser = await _mediator.Send(new GetUserDtoByUserNameQuery(username), cT);
         if (getUser is null)
         {
             _logger.LogError("Bad request, GetUser UserName is invalid");

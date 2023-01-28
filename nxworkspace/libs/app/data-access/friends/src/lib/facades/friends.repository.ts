@@ -22,6 +22,10 @@ export class FriendsRepository {
     this.store.dispatch(FriendsActions.removeFriend({ friendUsername }))
   }
 
+  sendFriendRequest(friendUserName: string) {
+    this.store.dispatch(FriendsActions.sendFriendRequest({ friendUserName }))
+  }
+
   acceptFriendRequest(friendUsername: string) {
     this.store.dispatch(FriendsActions.acceptFriendRequest({ friendUsername }))
   }

@@ -18,8 +18,8 @@ import { PanelLinkComponent } from '@grid-layout/feature/blocks/shared-ui'
 import { LetModule } from '@ngrx/component'
 import { GroupChatMemberModel, GroupChatMessageMemberModel } from '@shared/data-access/models'
 import { Router } from '@angular/router'
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog'
-import { ProfileDialog } from '@app/feature/profile'
+import { MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog'
+
 import { UsernameProfileComponent } from '@app/feature/userName-profile'
 
 @Component({
@@ -46,19 +46,29 @@ import { UsernameProfileComponent } from '@app/feature/userName-profile'
 export class GroupChatMessageMenuComponent {
   private router = inject(Router)
   private dialog = inject(MatDialog)
+  private dialogRef = inject(MatDialogRef<UsernameProfileComponent>)
+  // private dialogRef: MatDialogRef<UsernameProfileComponent>
   @Input() message!: GroupChatMessageMemberModel
 
   async routeToUserProfile(user: GroupChatMemberModel) {
     // await this.router.navigateByUrl(`user/${sender.userName}`)
     const dialogConfig = {
       autoFocus: true,
-      height: '400px',
-      width: '600px',
+      /*      height: '400px',
+            width: '600px',*/
       data: {
         user,
       },
     } as MatDialogConfig
 
     this.dialog.open(UsernameProfileComponent, dialogConfig)
+
+    this.dialogRef
+      .afterClosed()
+      .pipe
+      /*        first(),
+                map((data) => data),*/
+      ()
+      .subscribe((res) => console.log(res))
   }
 }

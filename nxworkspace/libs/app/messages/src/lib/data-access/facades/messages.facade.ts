@@ -6,6 +6,7 @@ import {
   GroupChatCombinedModel,
   GroupChatMessageModel,
   MessageModel,
+  MessageTimeSortModel,
 } from '@shared/data-access/models'
 import {
   catchError,
@@ -20,6 +21,7 @@ import {
   last,
   mergeAll,
   mergeMap,
+  Observable,
   of,
   switchAll,
   take,
@@ -50,7 +52,7 @@ export class MessagesFacade {
     return firstValueFrom(this.messages$)
   }
 
-  messagesWithUser$(userName: string) {
+  messagesWithUser$(userName: string): Observable<MessageModel[]> {
     return this.store
       .select(MessagesSelectors.selectAllMessages)
       .pipe(
@@ -63,212 +65,19 @@ export class MessagesFacade {
       )
   }
 
-  firstMessageOfEveryConversation$() {
-    return this.store.select(AuthSelectors.selectUser).pipe(
-      switchMap(
-        (user) =>
-          this.messages$.pipe(
-            map((messages) => {
-              if (!user) return []
-              // console.log(user)
-
-              const map = new Map()
-              for (const message of messages) {
-                const userName =
-                  message.recipientUserName !== user.userName
-                    ? message.recipientUserName
-                    : message.senderUserName
-                map.set(userName, userName)
-              }
-              if (map.get(user.userName)) map.delete(user.userName)
-
-              /*
-                      const filtered = this.uniqBySetWithSpread<string>(userNames)
-                      console.log(filtered)
-                      filtered.
-                      */
-
-              const group = messages.reduce(function (r, a) {
-                r[a.recipientUserName] = r[a.recipientUserName] || []
-                r[a.recipientUserName].push(a)
-                return r
-              }, Object.create(null))
-
-              console.log(group)
-              // const message: MessageModel
-              const hii = this.groupItemByVal(messages, (m) =>
-                m.senderUserName !== user.userName ? m.senderUserName : m.recipientUserName,
-              )
-
-              console.log('hii', hii)
-
-              /*   messages.reduce<Record<string, MessageModel[]>>((prev, curr) => {
-                   const groupKey = MessageModel(curr)
-                   const group = prev[groupKey] || []
-                   group.push(curr)
-                   return { ...prev, [groupKey]: group }
-                 }, {})*/
-
-              return Array.from(map.values())
-              // const uniqueUsernames = Array.from(map.values())
-
-              /*        return uniqueUsernames.map((userName) => {
-                        const messagesForUser = messages.filter(
-                          (msg) => msg.senderUsername === userName || msg.recipientUsername == userName,
-                        )
-                        const sortByMessageSent = messagesForUser.sort(
-                          (a: MessageModel, b: MessageModel) => {
-                            return (
-                              new Date(b.messageSentTime).getTime() - new Date(a.messageSentTime).getTime()
-                            )
-                          },
-                        )
-                        return sortByMessageSent[0]
-                      })*/
-            }),
-            // groupBy(data => data.map(da => da.senderUsername
-            // ))
-          ),
-        // groupBy(data => data.)
-      ),
-      // groupBy(data => data.)
-    )
-  }
-
-  get messagesData$() {
-    return this.store.select(AuthSelectors.selectUser).pipe(
-      switchMap((user) =>
-        this.messages$.pipe(
-          map((messages) =>
-            orderBy(messages, (m) => new Date(m.messageSentTime).getTime(), 'desc'),
-          ),
-          tap((messages) => console.log(messages)),
-          /*map(messages => {
-              const orderByDesc =  orderBy(messages, (m) => new Date(m.messageSentTime).getTime(), 'desc')
-              const group = lodash.groupBy(messages, (message) =>
-                message.senderUsername !== user?.userName
-                  ? message.senderUsername
-                  : message.recipientUsername,
-              )
-              group.g
-              const fdsaf = messages.map(msg => {
-
-              })*/
-          /* const group = _.groupBy(messages, (message) =>
-                message.senderUsername !== user?.userName
-                  ? message.senderUsername
-                  : message.recipientUsername,
-              )*/
-
-          // })
-          /*          map((messages) =>
-                        _.groupBy(messages, (message) =>
-                          message.senderUsername !== user?.userName
-                            ? message.senderUsername
-                            : message.recipientUsername,
-                        ),
-                      ),
-                      map(data => data.)*/
-          /*          map((messages) => {
-                        const uniqueMessages = messages.map((message) =>
-                          message.senderUsername !== user?.userName
-                            ? message.senderUsername
-                            : message.recipientUsername,
-                        )
-                        return messages
-                      }),*/
-
-          groupBy(
-            (message) =>
-              message.map((message) =>
-                message.senderUserName !== user?.userName
-                  ? message.senderUserName
-                  : message.recipientUserName,
-              ),
-            // .map((messages) => messages[messages.length - 1]),
-          ),
-          tap((group) => console.log('group', group)),
-          /*       switchMap(
-                   (group) =>
-                     group.pipe(
-                       map((g) => g.filter((h) => h.messageSentTime === group.key.map((key) => key))),
-                     ),
-                   /!*           group.key.map(
-                                key => group.pipe(data => data.pipe(p => p.))
-                     /!*           map((g) => g[0]),
-                                toArray(),*!/
-                              ),*!/
-                 ),*/
-          // take(1),
-          switchAll(),
-
-          // switchMap((group) => group.pipe(toArray()))),
-          tap((data) => console.log('DATA', data)),
-          // map(data => data.map(d => d.map(e => e.))),
-
-          /*          switchMap((group) =>
-                      group.pipe(
-                        map((group) => orderBy(group, (m) => new Date(m.messageSentTime).getTime(), 'desc')),
-                        tap((data) => console.log('DATA', data)),
-                        map((data) => data[data.length - 1]),
-                        // map((data) => data.pop()),
-                        tap((data) => console.log('DATA', data)),
-
-                        // take(1),
-                        // take(1),
-
-                        // toArray(),
-                        // tap((data) => console.log('DATAArr', data)),
-                      ),
-                    ),*/
-          // map((data) => data.messageSentTime),
-          take(6),
-
-          // toArray(),
-
-          tap((data) => console.log('dasdsa', data)),
-
-          // mergeAll(),
-          // map((data) => data.map((messages) => messages[messages.length - 1])),
-
-          // takeLast(1),
-
-          /*        map(messages => messages.pipe(
-                      map(messages => messages[messages.length - 1])
-                    ))*/
-          // concatMap(array=>from(array)), // emit array elements
-          // last(),
-
-          /*
-                 map(messages => messages.pipe(
-                   map(messages => messages[0])
-                 ))*/
-          // find(message => message.)
-          // take(1),
-
-          // takeLast(1),
-        ),
-      ),
-      // take(1),
-      // toArray(),
-      // mergeAll(),
-
-      tap((res) => console.log('FUUUU', res)),
-    )
-    /*    return this.messages$.pipe(
-          groupBy(message => message.map(message => message.))
-        )*/
-  }
-
-  get messagesData2$() {
+  get latestUserMessages$(): Observable<MessageModel[]> {
     return this.store.select(AuthSelectors.selectUser).pipe(
       switchMap((user) =>
         this.messages$.pipe(
           map((messages) => {
-            const orderedMessages = orderBy(
-              messages,
-              (m) => new Date(m.messageSentTime).getTime(),
-              'desc',
+            /*         const orderedMessages = orderBy(
+                       messages,
+                       (m) => new Date(m.messageSentTime).getTime(),
+                       'desc',
+                     )*/
+            const orderedMessages = messages.sort(
+              (a: MessageModel, b: MessageModel) =>
+                new Date(b.messageSentTime).getTime() - new Date(a.messageSentTime).getTime(),
             )
             const groupedArr = this.groupItemByVal<MessageModel>(orderedMessages, (message) =>
               message.senderUserName !== user?.userName
@@ -282,7 +91,6 @@ export class MessagesFacade {
             // return map
             return [...map.values()]
           }),
-          tap((messages) => console.log('map', messages)),
         ),
       ),
     )

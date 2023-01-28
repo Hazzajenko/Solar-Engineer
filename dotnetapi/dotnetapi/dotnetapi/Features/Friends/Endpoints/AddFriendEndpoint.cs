@@ -45,7 +45,8 @@ public class AddFriendEndpoint : EndpointWithoutRequest<AddFriendResponse>
 
     public override void Configure()
     {
-        Post("/friends/add/{username}");
+        Post("/friend/{username}");
+        Policies("BeAuthenticated");
         // Description(b => b
         // .Accepts<string>("application/json"));
         // Authenticate

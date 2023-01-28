@@ -14,6 +14,7 @@ import { mainTsEffects } from './main-ts.effects'
 import { provideStore } from '@ngrx/store'
 import { provideRouterStore } from '@ngrx/router-store'
 import { metaReducers, reducers } from '@shared/data-access/store'
+import { DatePipe } from '@angular/common'
 
 export const mainTsProviders = [
   provideRouter(appRoutes, withEnabledBlockingInitialNavigation()),
@@ -24,6 +25,7 @@ export const mainTsProviders = [
     MatDialogModule,
     MatSnackBarModule,
     MatSnackBarRef,
+    DatePipe,
   ),
   provideStore(reducers, { metaReducers }),
   provideRouterStore(),

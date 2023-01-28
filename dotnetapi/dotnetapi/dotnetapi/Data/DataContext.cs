@@ -12,7 +12,7 @@ namespace dotnetapi.Data;
 
 public class DataContext : IdentityDbContext<AppUser, AppRole, int,
     IdentityUserClaim<int>, AppUserRole, IdentityUserLogin<int>,
-    IdentityRoleClaim<int>, IdentityUserToken<int>>
+    IdentityRoleClaim<int>, IdentityUserToken<int>>, IDataContext
 {
     public DataContext(DbContextOptions<DataContext> options) : base(options)
     {
@@ -24,7 +24,6 @@ public class DataContext : IdentityDbContext<AppUser, AppRole, int,
     public DbSet<PanelLink> PanelLinks { get; set; } = default!;
     public DbSet<Path> Paths { get; set; } = default!;
     public DbSet<AppUserProject> AppUserProjects { get; set; } = default!;
-    public DbSet<AppUserGroupChat> AppUserGroupChats { get; set; } = default!;
 
     public DbSet<AppUserFriend> AppUserFriends { get; set; } = default!;
 
@@ -36,6 +35,8 @@ public class DataContext : IdentityDbContext<AppUser, AppRole, int,
     public DbSet<GroupChatMessage> GroupChatMessages { get; set; } = default!;
 
     public DbSet<GroupChatReadTime> GroupChatReadTimes { get; set; } = default!;
+
+    public DbSet<AppUserGroupChat> AppUserGroupChats { get; set; } = default!;
     // public DbSet<Notification> Notifications { get; set; } = default!;
 
     // public DbSet<FriendRequest> FriendRequests { get; set; } = default!;
@@ -56,6 +57,7 @@ public class DataContext : IdentityDbContext<AppUser, AppRole, int,
 
         builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
     }
+
 
     // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     // => optionsBuilder.UseNpgsql("Server=localhost;Port=5432;Database=solardotnetbackend;User ID=postgres;Password=password;");

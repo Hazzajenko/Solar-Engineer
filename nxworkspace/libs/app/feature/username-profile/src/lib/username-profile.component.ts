@@ -28,17 +28,27 @@ import { FriendsComponent } from '@app/feature/friends'
 import { MessagesComponent } from '@app/messages'
 import { AuthStoreService } from '@auth/data-access/facades'
 
-import { UserModel } from '@shared/data-access/models'
+import { FriendModel, UserModel, WebUserModel } from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
 import { GetFriendRequestPipe } from 'libs/app/feature/notifications/src/lib/get-friend-request.pipe'
 import { SortNotificationsPipe } from 'libs/app/feature/notifications/src/lib/sort-notifications.pipe'
-import { combineLatest, combineLatestWith, map, Observable, of, startWith, switchMap, tap } from 'rxjs'
+import {
+  combineLatest,
+  combineLatestWith,
+  map,
+  Observable,
+  of,
+  startWith,
+  switchMap,
+  tap,
+} from 'rxjs'
 import { NotificationsComponent } from '../../../notifications/src/lib/component/notifications.component'
 import { ActivatedRoute } from '@angular/router'
 import { UsersService, UsersStoreService } from '@app/data-access/users'
 import { RouterFacade } from '@shared/data-access/router'
 import { ConnectionsStoreService } from '@shared/data-access/connections'
+import { TimeDifferenceFromNowPipe } from '@shared/pipes'
 
 @Component({
   selector: 'app-notifications-dialog',
@@ -72,8 +82,10 @@ import { ConnectionsStoreService } from '@shared/data-access/connections'
     FriendsComponent,
     MessagesComponent,
     ChatroomsComponent,
+    TimeDifferenceFromNowPipe,
   ],
   standalone: true,
+  providers: [DatePipe],
 })
 export class UsernameProfileComponent {
   private authStore = inject(AuthStoreService)
@@ -89,25 +101,7 @@ export class UsernameProfileComponent {
     }),
   )
   user$: Observable<UserModel | undefined> = this.authStore.select.user$
-  userProfile$: Observable<
-    UserModel | undefined
-  > /* = this.usersStore.select.userByRouteParams$.pipe(
-    switchMap((user) => {
-      if (!user) {
-        return this.routerFacade.routeParam$('userName').pipe(
-          switchMap((userName) =>
-            this.usersService.getUserByUserName(userName).pipe(
-              map((res) => res.user),
-              tap((user) => this.usersStore.dispatch.addUser(user)),
-            ),
-          ),
-        )
-      }
-      return of(user)
-    }),
-  ) */ /* =this.usersStore.select.userByRouteParams$
-    .pipe(startWith((this.route.snapshot.data as { userNameProfile: UserModel }).userNameProfile))
-    .subscribe((res) => console.log(res))*/
+  userProfile$: Observable<WebUserModel | undefined>
 
   constructor(
     private dialogRef: MatDialogRef<UsernameProfileComponent>,
@@ -123,12 +117,22 @@ export class UsernameProfileComponent {
         }
         return of(user)
       }),
-      switchMap(user => combineLatest([of(user), this.connectionsStore.select.isUserOnline$(user.userName)])),
-      map(([user, isOnline]) => ({ ...user, isOnline } as UserModel))
+      switchMap((user) =>
+        combineLatest([
+          of(user),
+          this.connectionsStore.select.isUserOnline$(user.userName),
+          this.friendsStore.select.getUserFriendStatus$(user.userName),
+        ]),
+      ),
+      map(([user, isOnline, isFriend]) => ({ ...user, ...isFriend, isOnline } as WebUserModel)),
     )
-    // this.recipient = data.recipient
-    /*    this.usersStore.select.userByRouteParams$
-          .pipe(startWith(data.user as UserModel))
-          .subscribe((res) => console.log(res))*/
+  }
+
+  sendFriendRequest(userName: string) {
+    this.friendsStore.dispatch.sendFriendRequest(userName)
+  }
+
+  sendMessage(userName: string) {
+    this.dialogRef.close(userName)
   }
 }

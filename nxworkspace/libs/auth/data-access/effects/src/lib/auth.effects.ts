@@ -122,7 +122,7 @@ export class AuthEffects {
             })
             // error.error.forEach((x: ErrorModel) => console.log(x.errorMessage))
 
-            // return of(AuthActions.signInError({ error: error.message }))
+            // return of(ChatRoomsActions.signInError({ error: error.message }))
             return of(AuthActions.signInErrors({ errors: errorMessages }))
           }),
         ),

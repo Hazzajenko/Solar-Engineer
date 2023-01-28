@@ -1,17 +1,16 @@
 ﻿using dotnetapi.Data;
-using dotnetapi.Features.Users.Data;
-using dotnetapi.Features.Users.Mapping;
+using dotnetapi.Models.Entities;
 using Mediator;
 using MethodTimer;
 using Microsoft.EntityFrameworkCore;
 
 namespace dotnetapi.Features.Users.Handlers;
 
-public sealed record GetUserByUserNameQuery(string UserName) : IRequest<GetUserDto?>;
+public sealed record GetUserByUserNameQuery(string UserName) : IRequest<AppUser?>;
 
 [Time]
 public class
-    GetUserByUserNameHandler : IRequestHandler<GetUserByUserNameQuery, GetUserDto?>
+    GetUserByUserNameHandler : IRequestHandler<GetUserByUserNameQuery, AppUser?>
 {
     private readonly IServiceScopeFactory _scopeFactory;
 
@@ -20,7 +19,7 @@ public class
         _scopeFactory = scopeFactory;
     }
 
-    public async ValueTask<GetUserDto?>
+    public async ValueTask<AppUser?>
         Handle(GetUserByUserNameQuery request, CancellationToken cT)
     {
         using var scope = _scopeFactory.CreateScope();
@@ -28,7 +27,6 @@ public class
 
         return await db.Users
             .Where(x => x.UserName == request.UserName)
-            .Select(x => x.ToGetUserDto())
             .SingleOrDefaultAsync(cT);
     }
 }

@@ -1,230 +1,27 @@
-<ng-container *ngIf='user$ | async as user'>
-  <ng-container *ngIf='messages$ | async as messages'>
-    <ng-container *ngrxLet='isDialog$ | async as isDialog'>
-      <button (click)='toggleFullScreen()' mat-icon-button class='absolute right-[1px]'>
-        <mat-icon>fullscreen</mat-icon>
-      </button>
-      <div style='height: 100%; min-height: max-content; overflow: hidden' [ngStyle]='{
-      "top": isDialog ? "0px" : "80px",
-        "position": isDialog ? "" : "relative"
-      }' class='flex flex-col items-center content-center h-[100%] min-h-max'>
-        <h1 *ngIf='isDialog' mat-dialog-title>Messages</h1>
-
-        <div
-          class='flex flex-row w-[100%] min-w-[100%]'>
-          <!--<div
-            class='flex-auto w-[20%] min-w-[20%]'>
-            <ng-container
-              *ngrxLet='selectedMessage?.senderUsername === user.userName ? selectedMessage?.recipientUsername : selectedMessage?.senderUsername as recipient'>
-
-
-              &lt;!&ndash;            <mat-checkbox [(ngModel)]='unreadFilter'>Filter by Unread</mat-checkbox>&ndash;&gt;
-              <mat-selection-list
-                (selectionChange)='change($event, user.userName)'
-                [multiple]='false'
-
-                class='flex flex-col items-center content-center w-[100%]'>
-                <cdk-virtual-scroll-viewport
-                  [ngStyle]='{
-      "height": isDialog ? "550px" : "900px"
-      }'
-                  itemSize='25'
-
-                  class='flex flex-col items-center content-center w-[100%]'>
-                  &lt;!&ndash;          [ngStyle]='{"background-color": notification.status === 0 ? "#60a1fa" : ""}'&ndash;&gt;
-                  <mat-list-option appMessageDirective [message]='message'
-                                   [selectedMessage]='selectedMessage'
-                                   [filter]='unreadFilter'
-                                   (dblclick)='openConversation(message, recipient)'
-                                   *cdkVirtualFor='let message of messages | sortMessages : unreadFilter'
-                                   [value]='message'>
-
-            <span
-              matListItemTitle>{{message.senderUsername === user.userName ? message.recipientUsername : message.senderUsername}}</span>
-                    <span matListItemLine>{{message.messageSentTime | date : 'short'}}</span>
-                    <p
-                      matListItemLine>{{message.senderUsername === user.userName ? 'You:' : message.senderUsername + ':'}} {{message.content}}</p>
-
-                    &lt;!&ndash;          [color]='notification.status === 0 ? "primary" : "accent"'&ndash;&gt;
-                  </mat-list-option>
-                </cdk-virtual-scroll-viewport>
-              </mat-selection-list>
-            </ng-container>
-          </div>-->
-          <div
-            class='flex-auto w-[20%] min-w-[20%] p-2'>
-            <app-chatroom-list-component (selectMessageEvent)='selectRecipient($event)'
-                                         (selectChatRoomEvent)='chatRoomSelect = $event'
-                                         (selectGroupChatEvent)='selectGroupChat($event)'></app-chatroom-list-component>
-          </div>
-          <div
-            class='grow w-[80%] min-w-[80%] p-2'>
-            <ng-container *ngIf='chatRoomSelect'>
-              <ng-template appChangeChatRoom [chatRoom]='chatRoomSelect'></ng-template>
-              <!--         <ng-container *ngIf='chatRoomSelect.isGroup else userMessage'>
-                         <ng-container *ngIf='chatRoomSelect.groupChat'>
-                           <app-group-chat-conversation-component
-                             [selectChatroom]='chatRoomSelect'></app-group-chat-conversation-component>
-                         </ng-container>
-                       </ng-container>
-                       <ng-template #userMessage>
-                         <ng-container *ngIf='chatRoomSelect.message'>
-                           <app-user-conversation-component
-                             *ngrxLet='chatRoomSelect.message.senderUsername === user.userName ? chatRoomSelect.message.recipientUsername : chatRoomSelect.message.senderUsername as recipient'
-                             [recipientImport]='recipient'></app-user-conversation-component>
-                         </ng-container>
-                       </ng-template>-->
-            </ng-container>
-            <!--<div *ngIf='conversationMessages$ | async as conversationMessages'
-                 class='flex flex-col items-center content-center'>
-              &lt;!&ndash;            <h1 mat-dialog-title>{{recipient}}</h1>&ndash;&gt;
-              <cdk-virtual-scroll-viewport
-                [ngStyle]='{
-      "height": isDialog ? "550px" : "100%",
-      "min-height": isDialog ? "max-content" : "max-content"
-      }'
-
-                appScrollViewportDirective
-                #viewport
-                (scrolledIndexChange)='scrollIndex = $event'
-                [scrollIndex]='scrollIndex'
-                [viewport]='viewport'
-                [messages]='messages'
-                style='overflow-y: scroll '
-                itemSize='25'
-                class='flex w-[100%] min-w-max'>
-                &lt;!&ndash;        column-reverse;&ndash;&gt;
-                &lt;!&ndash;   (scroll)='scrolled($event)'&ndash;&gt;
-                &lt;!&ndash;          [ngStyle]='{"background-color": notification.status === 0 ? "#60a1fa" : ""}'&ndash;&gt;
-                <div appConversationMessageDirective
-                     [userName]='user.userName'
-                     [message]='message'
-
-                     class='flex grow'
-                     *cdkVirtualFor='let message of conversationMessages | sortConversationMessages'>
-                  <ng-container [ngSwitch]='true'>
-                    <ng-container *ngSwitchCase='user.userName === message.senderUsername'>
-                      <div
-                        (click)='selectMessage(message)'
-                        [ngClass]='{
-                      "bg-blue-400/75": selectedConversationMessage?.id === message.id,
-                      "hover:bg-blue-400": selectedConversationMessage?.id === message.id,
-                      "hover:bg-sky-400": selectedConversationMessage?.id !== message.id
-                      }'
-                        class='flex flex-col my-2 p-1 min-w-[250px] max-w-[250px] rounded-tl-lg rounded-tr-lg rounded-bl-lg bg-sky-400/75  mx-5'>
-                        &lt;!&ndash;                      <span matListItemTitle>{{message.senderUsername}}</span>&ndash;&gt;
-
-                        <span *ngIf='selectedConversationMessage && selectedConversationMessage.id === message.id'
-                              matListItemLine>{{message.messageSentTime | date : 'short'}}</span>
-                        <p style='white-space: pre-line' matListItemLine>{{message.content}}</p>
-                      </div>
-                    </ng-container>
-                    <ng-container *ngSwitchCase='user.userName !== message.senderUsername'>
-                      <div
-                        (click)='selectMessage(message)'
-                        class='flex flex-col my-2 p-1 min-w-[250px] max-w-[250px] rounded-lg bg-gray-400/75 hover:bg-gray-400 mx-5'>
-                        <span matListItemTitle>{{message.senderUsername}}</span>
-                        <span *ngIf='selectedConversationMessage && selectedConversationMessage.id === message.id'
-                              matListItemLine>{{message.messageSentTime | date : 'short'}}</span>
-                        <p style='white-space: pre-line' matListItemLine>{{message.content}}</p>
-                      </div>
-                    </ng-container>
-                  </ng-container>
-                  &lt;!&ndash;                <div
-
-                                    [ngStyle]='{
-                                    "border-radius": user.userName === message.senderUsername ? "15px 15px 0px 15px" : "15px 15px 15px 15px"}'
-                                    [ngClass]='{
-                                    "bg-sky-400/50": user.userName === message.senderUsername}'
-                                    class='flex flex-col my-2 p-1 min-w-[250px] max-w-[250px] hover:bg-sky-300 mx-5'>
-                                    <span matListItemTitle>{{message.senderUsername}}</span>
-                                    <span matListItemLine>{{message.messageSentTime | date : 'short'}}</span>
-                                    <p style='white-space: pre-line' matListItemLine>{{message.content}}</p>
-                                  </div>&ndash;&gt;
-
-                  &lt;!&ndash;          class='flex min-w-max bg-gray-100 hover:bg-gray-300'&ndash;&gt;
-                  &lt;!&ndash;          [color]='notification.status === 0 ? "primary" : "accent"'&ndash;&gt;
-                </div>
-              </cdk-virtual-scroll-viewport>
-
-              <form class='min-w-max w-[100%] grow-0'>
-                <label for='chat' class='sr-only'>Your message</label>
-                <div class='flex items-center px-3 py-2 rounded-lg'>
-                  <button type='button'
-                          class='inline-flex justify-center p-2 text-gray-500 rounded-lg cursor-pointer hover:text-gray-900 hover:bg-gray-100'>
-                    <svg aria-hidden='true' class='w-6 h-6' fill='currentColor' viewBox='0 0 20 20'
-                         xmlns='http://www.w3.org/2000/svg'>
-                      <path fill-rule='evenodd'
-                            d='M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z'
-                            clip-rule='evenodd'></path>
-                    </svg>
-                    <span class='sr-only'>Upload image</span>
-                  </button>
-                  <button type='button'
-                          class='p-2 text-gray-500 rounded-lg cursor-pointer hover:text-gray-900 hover:bg-gray-100'>
-                    <svg aria-hidden='true' class='w-6 h-6' fill='currentColor' viewBox='0 0 20 20'
-                         xmlns='http://www.w3.org/2000/svg'>
-                      <path fill-rule='evenodd'
-                            d='M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 100-2 1 1 0 000 2zm7-1a1 1 0 11-2 0 1 1 0 012 0zm-.464 5.535a1 1 0 10-1.415-1.414 3 3 0 01-4.242 0 1 1 0 00-1.415 1.414 5 5 0 007.072 0z'
-                            clip-rule='evenodd'></path>
-                    </svg>
-                    <span class='sr-only'>Add emoji</span>
-                  </button>
-                  <textarea id='chat'
-                            #autosize='cdkTextareaAutosize'
-                            cdkTextareaAutosize
-                            [cdkAutosizeMinRows]='3'
-                            [cdkAutosizeMaxRows]='3'
-                            [formControl]='messageControl'
-                            class='block mx-4 p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500'
-                            placeholder='Your message...'></textarea>
-                  <button type='submit' (click)='sendMessage()'
-                          class='inline-flex justify-center p-2 text-blue-600 rounded-full cursor-pointer hover:bg-blue-100'>
-                    <svg aria-hidden='true' class='w-6 h-6 rotate-90' fill='currentColor' viewBox='0 0 20 20'
-                         xmlns='http://www.w3.org/2000/svg'>
-                      <path
-                        d='M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z'></path>
-                    </svg>
-                    <span class='sr-only'>Send message</span>
-                  </button>
-                </div>
-              </form>
-              &lt;!&ndash;<div class='flex flex-row items-stretch min-h-[100px] max-h-[100px]'>
-
-                <form>
-                  <mat-form-field>
-                    <div>
-                      &lt;!&ndash;                    <mat-label>Message</mat-label>&ndash;&gt;
-                      &lt;!&ndash;            <input [formControl]='messageControl' matInput>&ndash;&gt;
-                      <textarea
-                        cdkTextareaAutosize
-                        [cdkAutosizeMinRows]='1'
-                        [cdkAutosizeMaxRows]='5'
-                        matInput [formControl]='messageControl'
-                        style='resize: none; white-space: pre-line; height: 100px'></textarea>
-                    </div>
-
-                  </mat-form-field>
-                </form>
-                &lt;!&ndash;        {{messageControl.value}}&ndash;&gt;
-                <button
-
-                  style='overflow: hidden; min-height: max-content'
-                  color='primary'
-                  (click)='sendMessage()'
-                  mat-button>
-                  Send
-                </button>
-
-              </div>&ndash;&gt;
-
-
-            </div>-->
-          </div>
-
+<ng-container *ngIf="user$ | async as user">
+  <ng-container *ngrxLet="isDialog$ | async as isDialog">
+    <button (click)="toggleFullScreen()" mat-icon-button class="absolute right-[1px]">
+      <mat-icon>fullscreen</mat-icon>
+    </button>
+    <div
+      style="height: 100%; min-height: max-content; overflow: hidden"
+      [ngStyle]="{
+        top: isDialog ? '0px' : '80px',
+        position: isDialog ? '' : 'relative'
+      }"
+      class="flex flex-col items-center content-center h-[100%] min-h-max"
+    >
+      <h1 *ngIf="isDialog" mat-dialog-title>Messages</h1>
+      <div class="flex flex-row w-[100%] min-w-[100%]">
+        <div class="flex-auto w-[20%] min-w-[20%] p-2">
+          <app-chatroom-list-component></app-chatroom-list-component>
         </div>
-
+        <div class="grow w-[80%] min-w-[80%] p-2">
+          <ng-container *ngIf="chatRoomToMessage$ | async as chatRoomToMessage">
+            <ng-template appChangeChatRoom [chatRoom]="chatRoomToMessage"></ng-template>
+          </ng-container>
+        </div>
       </div>
-    </ng-container>
+    </div>
   </ng-container>
 </ng-container>

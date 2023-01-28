@@ -23,22 +23,20 @@ public sealed record GetGroupChatsQuery(AppUser AppUser) : IRequest<IEnumerable<
 
 public class GetGroupChatsHandler : IRequestHandler<GetGroupChatsQuery, IEnumerable<GroupChatWithoutMembersDto>>
 {
-    private readonly ILogger<GetGroupChatsHandler> _logger;
-    private readonly IServiceScopeFactory _scopeFactory;
+    private readonly IDataContext _context;
 
-    public GetGroupChatsHandler(IServiceScopeFactory scopeFactory, ILogger<GetGroupChatsHandler> logger)
+    public GetGroupChatsHandler(IDataContext context)
     {
-        _scopeFactory = scopeFactory;
-        _logger = logger;
+        _context = context;
     }
 
     public async ValueTask<IEnumerable<GroupChatWithoutMembersDto>>
         Handle(GetGroupChatsQuery request, CancellationToken cT)
     {
-        using var scope = _scopeFactory.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<DataContext>();
+        // using var scope = _scopeFactory.CreateScope();
+        // var db = scope.ServiceProvider.GetRequiredService<DataContext>();
 
-        return await db.AppUserGroupChats
+        return await _context.AppUserGroupChats
             .Where(x => x.AppUserId == request.AppUser.Id)
             .Include(x => x.GroupChat)
             .Select(x => x.ToDtoWithoutMembers())

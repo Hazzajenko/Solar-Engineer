@@ -27,6 +27,7 @@ public static class GroupChatsMapping
             UserName = request.AppUser.UserName!,
             FirstName = request.AppUser.FirstName,
             LastName = request.AppUser.LastName,
+            PhotoUrl = request.AppUser.PhotoUrl,
             JoinedAt = request.JoinedAt,
             Role = request.Role,
             LastActive = request.AppUser.LastActive

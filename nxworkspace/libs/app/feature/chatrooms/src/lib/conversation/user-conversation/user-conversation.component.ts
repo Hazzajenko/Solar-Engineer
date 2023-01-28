@@ -37,8 +37,6 @@ import { SortMessagesPipe } from '../../../../../../messages/src/lib/feature/com
 import { ConversationMessageDirective } from '../../../../../../messages/src/lib/feature/conversation/conversation-message.directive'
 import { ScrollViewportDirective } from '../../../../../../messages/src/lib/feature/conversation/scroll-viewport.directive'
 import { SortConversationMessagesPipe } from '../../../../../../messages/src/lib/feature/conversation/sort-conversation-messages.pipe'
-import { IsLastMessagePipe } from '../../is-last-message.pipe'
-import { LastMessageIdPipe } from '../../last-message-id.pipe'
 import { MessageBarComponent } from '../message-bar/message-bar.component'
 
 @Component({
@@ -108,8 +106,6 @@ import { MessageBarComponent } from '../message-bar/message-bar.component'
     ScrollViewportDirective,
     ConversationMessageDirective,
     SortConversationMessagesPipe,
-    IsLastMessagePipe,
-    LastMessageIdPipe,
     MessageBarComponent,
   ],
   standalone: true,
