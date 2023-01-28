@@ -7,7 +7,7 @@ import {
   GroupChatModel,
 } from '@shared/data-access/models'
 import { GroupChatMembersActions, GroupChatMessagesActions, GroupChatsActions } from '../store'
-import { SendGroupChatMessageRequest } from '../models'
+import { CreateGroupChatRequest, SendGroupChatMessageRequest } from '../models'
 
 @Injectable({
   providedIn: 'root',
@@ -21,6 +21,10 @@ export class GroupChatsRepository {
 
   sendMessageToGroupChat(request: SendGroupChatMessageRequest) {
     this.store.dispatch(GroupChatMessagesActions.sendMessageToGroupChat({ request }))
+  }
+
+  createGroupChat(request: CreateGroupChatRequest) {
+    this.store.dispatch(GroupChatsActions.createGroupChat({ request }))
   }
 
   addGroupChat(groupChat: GroupChatModel) {

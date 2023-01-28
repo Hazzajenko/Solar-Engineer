@@ -23,21 +23,19 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatInputModule } from '@angular/material/input'
 import { MatListModule } from '@angular/material/list'
 import { ActivatedRoute, Router } from '@angular/router'
-import { MessagesComponent, MessagesStoreService, SendMessageRequest } from '@app/messages'
+import { MessagesComponent } from '@app/messages'
+import { MessagesStoreService, SendMessageRequest } from '@app/data-access/messages'
 import { AuthStoreService } from '@auth/data-access/facades'
 import { LetModule } from '@ngrx/component'
 
-import { MessageModel, UserModel } from '@shared/data-access/models'
+import { MessageModel, MessageWebUserModel, UserModel } from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
 import { map, Observable } from 'rxjs'
 
-import { MessageDirective } from '../../../../../../messages/src/lib/feature/component/message.directive'
-import { SortMessagesPipe } from '../../../../../../messages/src/lib/feature/component/sort-messages.pipe'
-import { ConversationMessageDirective } from '../../../../../../messages/src/lib/feature/conversation/conversation-message.directive'
-import { ScrollViewportDirective } from '../../../../../../messages/src/lib/feature/conversation/scroll-viewport.directive'
-import { SortConversationMessagesPipe } from '../../../../../../messages/src/lib/feature/conversation/sort-conversation-messages.pipe'
+import { ConversationMessageDirective, ScrollViewportDirective } from '@shared/directives'
 import { MessageBarComponent } from '../message-bar/message-bar.component'
+import { SortConversationMessagesPipe } from '@shared/pipes'
 
 @Component({
   selector: 'app-user-conversation-component',
@@ -101,12 +99,11 @@ import { MessageBarComponent } from '../message-bar/message-bar.component'
     MatCheckboxModule,
     LetModule,
     MessagesComponent,
-    MessageDirective,
-    SortMessagesPipe,
+
     ScrollViewportDirective,
     ConversationMessageDirective,
-    SortConversationMessagesPipe,
     MessageBarComponent,
+    SortConversationMessagesPipe,
   ],
   standalone: true,
 })
@@ -122,9 +119,8 @@ export class UserConversationComponent {
       return paths[0].path !== 'messages'
     }),
   )
-  messages$: Observable<MessageModel[] | undefined> =
-    this.messagesStore.select.firstMessageOfEveryConversation$()
-  userMessages$?: Observable<MessageModel[] | undefined>
+
+  userMessages$?: Observable<MessageWebUserModel[]>
   user$: Observable<UserModel | undefined> = this.authStore.select.user$
   selectedConversationMessage?: MessageModel
   unreadFilter = false

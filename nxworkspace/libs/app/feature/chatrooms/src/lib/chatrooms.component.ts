@@ -36,6 +36,7 @@ import { ChatRoomListComponent } from './list/chat-room-list.component'
 import { UserConversationComponent } from './conversation/user-conversation/user-conversation.component'
 import { ChangeChatRoomDirective } from './change-chatroom.directive'
 import { ChatRoomsService } from './services/chat-rooms.service'
+import { NewChatRoomComponent } from './new-chat-room/new-chat-room.component'
 
 @Component({
   selector: 'app-chatrooms-component',
@@ -80,6 +81,7 @@ import { ChatRoomsService } from './services/chat-rooms.service'
     GroupChatConversationComponent,
     UserConversationComponent,
     ChangeChatRoomDirective,
+    NewChatRoomComponent,
   ],
   standalone: true,
 })
@@ -98,8 +100,14 @@ export class ChatroomsComponent {
   user$: Observable<UserModel | undefined> = this.authStore.select.user$
   chatRoomToMessage$ = this.chatRoomsService.chatRoomToMessage$
 
+  createNewChat = false
+
   async toggleFullScreen() {
     this.dialog.closeAll()
     await this.router.navigateByUrl('messages')
+  }
+
+  createNewChatRoom() {
+    this.createNewChat = true
   }
 }

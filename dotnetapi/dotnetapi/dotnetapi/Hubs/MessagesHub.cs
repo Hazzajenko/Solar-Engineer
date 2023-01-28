@@ -3,6 +3,7 @@ using dotnetapi.Features.GroupChats.Handlers;
 using dotnetapi.Features.GroupChats.Services;
 using dotnetapi.Features.Messages.Contracts.Requests;
 using dotnetapi.Features.Messages.Entities;
+using dotnetapi.Features.Messages.Handlers;
 using dotnetapi.Features.Messages.Mapping;
 using dotnetapi.Features.Messages.Services;
 using dotnetapi.Models.Entities;
@@ -49,7 +50,8 @@ public class MessagesHub : Hub
         if (recipient is null) throw new HubException("recipient is null");
 
         _logger.LogInformation("{User} GetMessages with {Recipient}", appUser.UserName!, recipient.UserName!);
-        var messages = await _messagesRepository.GetUserMessagesAsync(appUser, recipient);
+        var messages = await _mediator.Send(new GetUserMessagesByUserNameQuery(appUser, recipient));
+        // var messages = await _messagesRepository.GetUserMessagesAsync(appUser, recipient);
         await Clients.Caller.SendAsync("GetMessages", messages);
     }
 

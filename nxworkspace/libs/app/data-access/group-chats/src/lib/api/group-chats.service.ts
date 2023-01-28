@@ -4,8 +4,9 @@ import { MessagesService, SendMessageRequest } from '@app/messages'
 import { GroupChatMessageModel, MessageModel } from '@shared/data-access/models'
 import { GroupChatsStoreService } from '../facades'
 import { AllGroupChatsDataResponse } from '../models/all-group-chats.response'
-import { SendGroupChatMessageRequest } from '../models'
+import { CreateGroupChatRequest, SendGroupChatMessageRequest } from '../models'
 import { MessagesSignalrService } from '@app/data-access/signalr'
+import { CreateGroupChatResponse } from '../models/create-group-chat.response'
 
 @Injectable({
   providedIn: 'root',
@@ -15,6 +16,12 @@ export class GroupChatsService {
   private groupChatsStore = inject(GroupChatsStoreService)
   private messagesService = inject(MessagesService)
   private messagesSignalrService = inject(MessagesSignalrService)
+
+  createGroupChat(request: CreateGroupChatRequest) {
+    return this.http.post<CreateGroupChatResponse>('/api/group-chats', {
+      ...request,
+    })
+  }
 
   waitForGroupChatsMessages() {
     if (!this.messagesSignalrService.messagesHub) return

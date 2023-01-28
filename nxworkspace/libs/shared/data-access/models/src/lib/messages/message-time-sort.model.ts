@@ -1,5 +1,5 @@
 import { GroupChatCombinedModel } from '../groups'
-import { MessageModel } from '../users'
+import { MessageModel } from '..'
 
 export interface MessageTimeSortModel {
   isGroup: boolean

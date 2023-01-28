@@ -1,6 +1,6 @@
 import { FriendsEffects } from '@app/data-access/friends'
 import { GroupChatsEffects } from '@app/data-access/group-chats'
-import { MessagesEffects } from '@app/messages'
+import { MessagesEffects } from '@app/data-access/messages'
 import { AuthEffects } from '@auth/data-access/effects'
 import { ProjectsEffects } from '@projects/data-access/effects'
 import { NotificationsEffects } from '@shared/data-access/notifications'

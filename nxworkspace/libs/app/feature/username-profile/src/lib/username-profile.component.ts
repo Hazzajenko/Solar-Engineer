@@ -28,21 +28,12 @@ import { FriendsComponent } from '@app/feature/friends'
 import { MessagesComponent } from '@app/messages'
 import { AuthStoreService } from '@auth/data-access/facades'
 
-import { FriendModel, UserModel, WebUserModel } from '@shared/data-access/models'
+import { UserModel, WebUserModel } from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
 import { GetFriendRequestPipe } from 'libs/app/feature/notifications/src/lib/get-friend-request.pipe'
 import { SortNotificationsPipe } from 'libs/app/feature/notifications/src/lib/sort-notifications.pipe'
-import {
-  combineLatest,
-  combineLatestWith,
-  map,
-  Observable,
-  of,
-  startWith,
-  switchMap,
-  tap,
-} from 'rxjs'
+import { combineLatest, map, Observable, of, switchMap, tap } from 'rxjs'
 import { NotificationsComponent } from '../../../notifications/src/lib/component/notifications.component'
 import { ActivatedRoute } from '@angular/router'
 import { UsersService, UsersStoreService } from '@app/data-access/users'
@@ -107,25 +98,26 @@ export class UsernameProfileComponent {
     private dialogRef: MatDialogRef<UsernameProfileComponent>,
     @Inject(MAT_DIALOG_DATA) data: { user: UserModel },
   ) {
-    this.userProfile$ = this.usersStore.select.userByRouteParams$.pipe(
-      switchMap((user) => {
-        if (!user) {
-          return this.usersService.getUserByUserName(data.user.userName).pipe(
-            map((res) => res.user),
-            tap((user) => this.usersStore.dispatch.addUser(user)),
-          )
-        }
-        return of(user)
-      }),
-      switchMap((user) =>
-        combineLatest([
-          of(user),
-          this.connectionsStore.select.isUserOnline$(user.userName),
-          this.friendsStore.select.getUserFriendStatus$(user.userName),
-        ]),
-      ),
-      map(([user, isOnline, isFriend]) => ({ ...user, ...isFriend, isOnline } as WebUserModel)),
-    )
+    this.userProfile$ = this.usersStore.select.webUserCombinedByUserName$(data.user.userName)
+    /*    this.userProfile$ = this.usersStore.select.userByRouteParams$.pipe(
+          switchMap((user) => {
+            if (!user) {
+              return this.usersService.getUserByUserName(data.user.userName).pipe(
+                map((res) => res.user),
+                tap((user) => this.usersStore.dispatch.addUser(user)),
+              )
+            }
+            return of(user)
+          }),
+          switchMap((user) =>
+            combineLatest([
+              of(user),
+              this.connectionsStore.select.isUserOnline$(user.userName),
+              this.friendsStore.select.getUserFriendStatus$(user.userName),
+            ]),
+          ),
+          map(([user, isOnline, isFriend]) => ({ ...user, ...isFriend, isOnline } as WebUserModel)),
+        )*/
   }
 
   sendFriendRequest(userName: string) {

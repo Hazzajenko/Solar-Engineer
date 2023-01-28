@@ -6,7 +6,6 @@ import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { map, switchMap } from 'rxjs/operators'
 import { GroupChatsService } from '../api'
 import { GroupChatMembersActions, GroupChatMessagesActions, GroupChatsActions } from '../store'
-import { MessagesActions } from '@app/messages'
 
 @Injectable({
   providedIn: 'root',
@@ -16,6 +15,16 @@ export class GroupChatsEffects {
   private groupChatsService = inject(GroupChatsService)
   private snackBar = inject(MatSnackBar)
 
+  createGroupChat$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(GroupChatsActions.createGroupChat),
+      switchMap(({ request }) =>
+        this.groupChatsService
+          .createGroupChat(request)
+          .pipe(map(({ groupChat }) => GroupChatsActions.addGroupChat({ groupChat }))),
+      ),
+    ),
+  )
   init$ = createEffect(() =>
     this.actions$.pipe(
       ofType(AuthActions.signInSuccess),

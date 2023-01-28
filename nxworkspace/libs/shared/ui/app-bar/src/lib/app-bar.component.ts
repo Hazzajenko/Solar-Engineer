@@ -9,22 +9,15 @@ import { ChatroomsComponent } from '@app/feature/chatrooms'
 import { ProfileDialog } from '@app/feature/profile'
 import { AuthStoreService } from '@auth/data-access/facades'
 import { LetModule } from '@ngrx/component'
+import { AppUserProfileComponent } from '@app/feature/app-user-profile'
 
 @Component({
   selector: 'app-app-bar',
   templateUrl: 'app-bar.component.html',
   standalone: true,
-  imports: [
-    MatToolbarModule,
-    MatButtonModule,
-    MatIconModule,
-    AsyncPipe,
-    LetModule,
-    NgIf,
-  ],
+  imports: [MatToolbarModule, MatButtonModule, MatIconModule, AsyncPipe, LetModule, NgIf],
   styles: [],
 })
-
 export class AppBarComponent {
   private authStore = inject(AuthStoreService)
   user$ = this.authStore.select.user$
@@ -42,7 +35,6 @@ export class AppBarComponent {
     // if (!this.menuState) return
 
     this.toggle.emit(true)
-
   }
 
   openProfile() {
@@ -52,7 +44,8 @@ export class AppBarComponent {
       width: '1200px',
     } as MatDialogConfig
 
-    this.dialog.open(ProfileDialog, dialogConfig)
+    this.dialog.open(AppUserProfileComponent, dialogConfig)
+    // this.dialog.open(ProfileDialog, dialogConfig)
   }
 
   openChatrooms() {

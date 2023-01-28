@@ -154,11 +154,16 @@ namespace dotnetapi.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("CreatedById")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
 
                     b.ToTable("GroupChats");
                 });
@@ -788,6 +793,17 @@ namespace dotnetapi.Data.Migrations
                     b.Navigation("AppUser");
 
                     b.Navigation("GroupChat");
+                });
+
+            modelBuilder.Entity("dotnetapi.Features.GroupChats.Entities.GroupChat", b =>
+                {
+                    b.HasOne("dotnetapi.Models.Entities.AppUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CreatedBy");
                 });
 
             modelBuilder.Entity("dotnetapi.Features.Messages.Entities.GroupChatMessage", b =>

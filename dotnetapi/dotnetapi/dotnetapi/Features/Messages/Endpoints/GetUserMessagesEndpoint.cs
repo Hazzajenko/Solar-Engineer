@@ -1,7 +1,9 @@
 ﻿using dotnetapi.Features.Messages.Contracts.Responses;
+using dotnetapi.Features.Messages.Handlers;
 using dotnetapi.Features.Messages.Services;
 using dotnetapi.Models.Entities;
 using FastEndpoints;
+using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -12,16 +14,19 @@ namespace dotnetapi.Features.Messages.Endpoints;
 public class GetUserMessagesEndpoint : EndpointWithoutRequest<UserManyMessagesResponse>
 {
     private readonly ILogger<GetUserMessagesEndpoint> _logger;
+    private readonly IMediator _mediator;
     private readonly IMessagesRepository _messagesRepository;
     private readonly UserManager<AppUser> _userManager;
 
     public GetUserMessagesEndpoint(
         ILogger<GetUserMessagesEndpoint> logger,
         IMessagesRepository messagesRepository,
+        IMediator mediator,
         UserManager<AppUser> userManager)
     {
         _logger = logger;
         _messagesRepository = messagesRepository;
+        _mediator = mediator;
         _userManager = userManager;
     }
 
@@ -33,8 +38,8 @@ public class GetUserMessagesEndpoint : EndpointWithoutRequest<UserManyMessagesRe
 
     public override async Task HandleAsync(CancellationToken ct)
     {
-        var user = await _userManager.GetUserAsync(User);
-        if (user is null)
+        var appUser = await _userManager.GetUserAsync(User);
+        if (appUser is null)
         {
             _logger.LogError("Bad request, User is invalid");
             ThrowError("UserName is invalid");
@@ -50,7 +55,8 @@ public class GetUserMessagesEndpoint : EndpointWithoutRequest<UserManyMessagesRe
             ThrowError("Recipient is invalid");
         }
 
-        var conversationMessages = await _messagesRepository.GetUserMessagesAsync(user, recipient);
+        var conversationMessages = await _mediator.Send(new GetUserMessagesByUserNameQuery(appUser, recipient), ct);
+        // var conversationMessages = await _messagesRepository.GetUserMessagesAsync(user, recipient);
 
         var response = new UserManyMessagesResponse
         {

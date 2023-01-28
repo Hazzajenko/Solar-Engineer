@@ -1,4 +1,4 @@
-import { MessageModel } from '../users'
+import { MessageModel } from '../messages'
 
 export interface UserChatCombinedModel {
   id: number

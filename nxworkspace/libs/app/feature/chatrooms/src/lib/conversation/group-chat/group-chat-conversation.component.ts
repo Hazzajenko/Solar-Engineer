@@ -153,10 +153,14 @@ export class GroupChatConversationComponent {
     console.log(selectChatroom)
     if (!selectChatroom) return
     if (!selectChatroom.isGroup || !selectChatroom.groupChat) return
+    this.groupChatsStore.select
+      .groupChatById$(selectChatroom.groupChat.id)
+      .subscribe((res) => console.log(res))
     this.groupChatId = selectChatroom.groupChat.id
     this.groupChatCombined$ = this.groupChatsStore.select.groupChatById$(
       selectChatroom.groupChat.id,
     )
+    this.groupChatCombined$.subscribe((res) => console.log(res))
     this.groupChatMessages$ = this.groupChatsStore.select.groupChatMessagesById$(
       selectChatroom.groupChat.id,
     )

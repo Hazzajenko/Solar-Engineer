@@ -34,7 +34,7 @@ public class
             .GroupBy(x => x.GroupChatId)
             .Select(x => x.OrderBy(o => o.MessageSentTime)
                 .Select(y => y.ToDto(request.AppUser))
-                .SingleOrDefault())
+                .Last())
             .ToListAsync(cT);
 
         /*var groupChatMessages = await db.GroupChatMessages

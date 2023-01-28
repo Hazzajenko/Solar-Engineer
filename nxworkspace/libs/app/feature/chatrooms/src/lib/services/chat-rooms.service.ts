@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core'
-import { MessagesStoreService } from '@app/messages'
+import { MessagesStoreService } from '@app/data-access/messages'
 import { GroupChatsStoreService } from '@app/data-access/group-chats'
 import { BehaviorSubject, combineLatest, map } from 'rxjs'
 import { MessageTimeSortModel } from '@shared/data-access/models'
@@ -15,18 +15,8 @@ export class ChatRoomsService {
   private _chatRoomToMessage$ = new BehaviorSubject<MessageTimeSortModel | undefined>(undefined)
   chatRoomToMessage$ = this._chatRoomToMessage$.asObservable()
 
-  setChatRoomToMessage(chatRoom: MessageTimeSortModel) {
-    if (chatRoom.isGroup) {
-      if (!chatRoom.groupChat) return Error('groupChat should not be null')
-      this.groupChatsStore.dispatch.initGroupChat(chatRoom.groupChat.id)
-      return this._chatRoomToMessage$.next(chatRoom)
-    }
-    this.messagesStore.dispatch.initMessagesWithUser(chatRoom.chatRoomName)
-    return this._chatRoomToMessage$.next(chatRoom)
-  }
-
-  get combinedUserMessagesAndGroupChats$() {
-    return combineLatest([
+  combinedUserMessagesAndGroupChats$ =
+    combineLatest([
       this.messagesStore.select.latestUserMessages$,
       this.groupChatsStore.select.groupChatsWithLatestMessage$,
     ]).pipe(
@@ -49,9 +39,17 @@ export class ChatRoomsService {
           } as MessageTimeSortModel
         })
 
-        const combined = latestGroupChatMessages.concat(
-          latestUserMessages ? latestUserMessages : [],
+        let combined: MessageTimeSortModel[] = []
+        combined = combined.concat(
+          latestGroupChatMessages ? latestGroupChatMessages : []
         )
+        combined = combined.concat(
+          latestUserMessages ? latestUserMessages : []
+        )
+
+        /*      const combined = latestGroupChatMessages.concat(
+                latestUserMessages ? latestUserMessages : [],
+              )*/
 
         return combined.sort(
           (a: MessageTimeSortModel, b: MessageTimeSortModel) =>
@@ -60,5 +58,17 @@ export class ChatRoomsService {
         )
       }),
     )
+
+
+  setChatRoomToMessage(chatRoom: MessageTimeSortModel) {
+    if (chatRoom.isGroup) {
+      if (!chatRoom.groupChat) return Error('groupChat should not be null')
+      this.groupChatsStore.dispatch.initGroupChat(chatRoom.groupChat.id)
+      return this._chatRoomToMessage$.next(chatRoom)
+    }
+    this.messagesStore.dispatch.initMessagesWithUser(chatRoom.chatRoomName)
+    return this._chatRoomToMessage$.next(chatRoom)
   }
+
+
 }

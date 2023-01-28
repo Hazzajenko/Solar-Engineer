@@ -22,7 +22,7 @@
             [userName]="user.userName"
             [message]="message"
             class="flex grow"
-            *cdkVirtualFor="let message of messages | sortConversationMessages; let i = index"
+            *cdkVirtualFor="let message of messages | sortConversationMessages"
           >
             <ng-container *ngrxLet="messages[messages.length - 1].id as lastMessageId">
               <ng-container *ngIf="user.userName === message.senderUserName; else recipientMessage">
@@ -60,7 +60,24 @@
                   (click)="selectMessage(message)"
                   class="flex flex-col my-2 p-1 min-w-[250px] max-w-[250px] rounded-lg bg-gray-400/75 hover:bg-gray-400 mx-5"
                 >
-                  <span matListItemTitle>{{ message.senderUserName }}</span>
+                  <!--                  <span matListItemTitle>{{ message.senderUserName }}</span>-->
+                  <span class="flex" matListItemTitle>
+                    <mat-icon
+                      color="primary"
+                      style="transform: scale(0.75)"
+                      *ngIf="message.sender.isOnline"
+                      >wifi</mat-icon
+                    >
+                    <img
+                      mat-card-avatar
+                      width="25px"
+                      height="25px"
+                      [src]="message.sender.photoUrl"
+                      alt=""
+                    />
+                    {{ message.senderUserName }}
+                    <!--{{message.sender.isOnline ? 'ONLINE' : ''}}-->
+                  </span>
                   <span
                     *ngIf="
                       selectedConversationMessage &&

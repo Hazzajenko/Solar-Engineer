@@ -1,0 +1,24 @@
+<ng-container *ngIf="user$ | async as user">
+  <ng-container *ngIf="appUser$ | async as appUser">
+    <mat-card class="max-w-[100%] max-h-[100%]">
+      <mat-card-header>
+        <div mat-card-avatar>
+          <mat-icon color="primary"></mat-icon>
+        </div>
+        <img mat-card-avatar [src]="appUser.photoUrl" alt="" />
+        <mat-card-title>{{ appUser.userName }}</mat-card-title>
+        <mat-card-subtitle> Online</mat-card-subtitle>
+        <mat-card-subtitle> {{ appUser.friendsLength }} Friends</mat-card-subtitle>
+        <mat-card-subtitle> {{ appUser.projectsLength }} Projects</mat-card-subtitle>
+
+        <mat-card-subtitle
+          >User Since {{ appUser.created | timeDifferenceFromNow }}</mat-card-subtitle
+        >
+      </mat-card-header>
+      <mat-card-content> </mat-card-content>
+      <mat-card-actions>
+        <button mat-button>Edit</button>
+      </mat-card-actions>
+    </mat-card>
+  </ng-container>
+</ng-container>
