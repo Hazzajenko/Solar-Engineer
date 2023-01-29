@@ -1,4 +1,4 @@
-﻿using dotnetapi.Features.Messages.Entities;
+﻿using dotnetapi.Features.GroupChats.Entities;
 
 namespace dotnetapi.Features.Messages.Contracts.Responses;
 

@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core'
 import * as signalR from '@microsoft/signalr'
-import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr'
-import { MessageModel } from '@shared/data-access/models'
-import { SignalrLogger } from '@shared/data-access/signalr'
+import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr'
 
 @Injectable({
   providedIn: 'root',
@@ -17,7 +15,8 @@ export class MessagesSignalrService {
         skipNegotiation: true,
         transport: signalR.HttpTransportType.WebSockets,
       })
-      .configureLogging(new SignalrLogger())
+      .configureLogging(LogLevel.Information)
+      // .configureLogging(new SignalrLogger())
       .withAutomaticReconnect()
       .build()
 

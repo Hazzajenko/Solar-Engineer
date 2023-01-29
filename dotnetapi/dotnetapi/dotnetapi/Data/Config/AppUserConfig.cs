@@ -28,6 +28,26 @@ public class AppUserConfig : IEntityTypeConfiguration<AppUser>
             .HasForeignKey(ur => ur.RequestedToId)
             .IsRequired();
 
+        builder.HasMany(ur => ur.MessagesSent)
+            .WithOne(u => u.Sender)
+            .HasForeignKey(ur => ur.SenderId)
+            .IsRequired();
+
+        builder.HasMany(ur => ur.MessagesReceived)
+            .WithOne(u => u.Recipient)
+            .HasForeignKey(ur => ur.RecipientId)
+            .IsRequired();
+
+        builder.HasMany(ur => ur.AppUserGroupChats)
+            .WithOne(u => u.AppUser)
+            .HasForeignKey(ur => ur.AppUserId)
+            .IsRequired();
+
+        builder.HasMany(ur => ur.GroupChatMessagesSent)
+            .WithOne(u => u.Sender)
+            .HasForeignKey(ur => ur.SenderId)
+            .IsRequired();
+
         /*
         builder.HasMany(ur => ur.Images)
             .WithOne(u => u.AppUser)

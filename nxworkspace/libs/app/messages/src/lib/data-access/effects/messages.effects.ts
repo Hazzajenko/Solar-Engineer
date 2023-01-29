@@ -27,7 +27,7 @@ export class MessagesEffects {
       ofType(AuthActions.signInSuccess),
       tap(({ token }) => this.messagesSignalR.createMessagesConnection(token)),
       tap(() => this.messagesService.waitForGetMessages()),
-      tap(() => this.groupChatsService.waitForGroupChatsMessages()),
+      tap(() => this.groupChatsService.waitForGroupChatMessages()),
       switchMap(() =>
         this.messagesService
           .getLatestUserMessages()

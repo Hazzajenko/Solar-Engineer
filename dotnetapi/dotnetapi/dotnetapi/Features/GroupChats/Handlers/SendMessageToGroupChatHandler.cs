@@ -1,10 +1,10 @@
 ﻿using dotnetapi.Data;
-using dotnetapi.Features.Messages.Entities;
+using dotnetapi.Features.GroupChats.Entities;
 using dotnetapi.Features.Messages.Mapping;
 using dotnetapi.Models.Entities;
 using Mediator;
 
-namespace dotnetapi.Features.Messages.Handlers;
+namespace dotnetapi.Features.GroupChats.Handlers;
 
 public sealed record SendMessageToGroupChatQuery
     (GroupChatMessage Message, AppUser AppUser) : IRequest<GroupChatMessageDto>;

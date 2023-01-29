@@ -1,4 +1,4 @@
-namespace dotnetapi.Features.Messages.Entities;
+namespace dotnetapi.Features.GroupChats.Entities;
 
 public class LastGroupChatMessageDto
 {

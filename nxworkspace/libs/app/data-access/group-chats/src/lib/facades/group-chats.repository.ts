@@ -5,9 +5,15 @@ import {
   GroupChatMemberModel,
   GroupChatMessageModel,
   GroupChatModel,
+  GroupChatServerMessageModel,
 } from '@shared/data-access/models'
 import { GroupChatMembersActions, GroupChatMessagesActions, GroupChatsActions } from '../store'
-import { CreateGroupChatRequest, SendGroupChatMessageRequest } from '../models'
+import {
+  CreateGroupChatRequest,
+  InviteToGroupChatRequest,
+  SendGroupChatMessageRequest,
+} from '../models'
+import { GroupChatServerMessagesActions } from '../store/group-chat-server-messages/group-chat-server-messages.actions'
 
 @Injectable({
   providedIn: 'root',
@@ -21,6 +27,10 @@ export class GroupChatsRepository {
 
   sendMessageToGroupChat(request: SendGroupChatMessageRequest) {
     this.store.dispatch(GroupChatMessagesActions.sendMessageToGroupChat({ request }))
+  }
+
+  inviteMembersToGroupChat(request: InviteToGroupChatRequest) {
+    this.store.dispatch(GroupChatMembersActions.inviteGroupChatMembers({ request }))
   }
 
   createGroupChat(request: CreateGroupChatRequest) {
@@ -73,5 +83,17 @@ export class GroupChatsRepository {
 
   removeGroupChatMessage(groupChatMessageId: number) {
     this.store.dispatch(GroupChatMessagesActions.removeGroupChatMessage({ groupChatMessageId }))
+  }
+
+  addGroupChatServerMessage(groupChatServerMessage: GroupChatServerMessageModel) {
+    this.store.dispatch(
+      GroupChatServerMessagesActions.addGroupChatServerMessage({ groupChatServerMessage }),
+    )
+  }
+
+  addManyGroupChatServerMessages(groupChatServerMessages: GroupChatServerMessageModel[]) {
+    this.store.dispatch(
+      GroupChatServerMessagesActions.addManyGroupChatServerMessages({ groupChatServerMessages }),
+    )
   }
 }

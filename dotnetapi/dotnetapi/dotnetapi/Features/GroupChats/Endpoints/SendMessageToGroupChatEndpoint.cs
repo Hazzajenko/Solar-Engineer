@@ -2,7 +2,6 @@
 using dotnetapi.Features.GroupChats.Services;
 using dotnetapi.Features.Messages.Contracts.Requests;
 using dotnetapi.Features.Messages.Contracts.Responses;
-using dotnetapi.Features.Messages.Handlers;
 using dotnetapi.Features.Messages.Mapping;
 using dotnetapi.Features.Messages.Services;
 using dotnetapi.Models.Entities;
@@ -11,7 +10,7 @@ using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 
-namespace dotnetapi.Features.Messages.Endpoints;
+namespace dotnetapi.Features.GroupChats.Endpoints;
 
 [Authorize]
 public class SendMessageToGroupChatEndpoint : Endpoint<SendGroupChatMessageRequest, GroupChatMessageResponse>
@@ -38,7 +37,7 @@ public class SendMessageToGroupChatEndpoint : Endpoint<SendGroupChatMessageReque
 
     public override void Configure()
     {
-        Post("message/group-chat/{groupChatId:int}");
+        Post("group-chats/{groupChatId:int}/messages");
         Policies("BeAuthenticated");
     }
 

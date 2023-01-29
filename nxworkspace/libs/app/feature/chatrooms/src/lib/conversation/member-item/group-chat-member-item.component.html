@@ -1,0 +1,38 @@
+<ng-container *ngIf="member && !webUser">
+  <div class="flex items-center space-x-3">
+    <img class="w-8 h-8 rounded-full" matListItemIcon [src]="member.photoUrl" alt="" />
+    <span
+      *ngIf="member.isOnline"
+      class="top-1 left-7 absolute w-3.5 h-3.5 bg-green-400 border-2 border-white dark:border-gray-800 rounded-full"
+    ></span>
+    <span matListItemTitle>{{ member.userName }} </span>
+    <!--    <span
+          class="inline-flex items-center bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300"
+        >
+          <span class="w-2 h-2 mr-1 bg-green-500 rounded-full"></span>
+          Available
+        </span>-->
+  </div>
+</ng-container>
+
+<ng-container *ngIf="webUser && !member">
+  <div class="flex items-center space-x-3">
+    <img class="w-8 h-8 rounded-full" matListItemIcon [src]="webUser.photoUrl" alt="" />
+    <span
+      *ngIf="webUser.isOnline"
+      class="top-1 left-7 absolute w-3.5 h-3.5 bg-green-400 border-2 border-white dark:border-gray-800 rounded-full"
+    ></span>
+    <div class="flex flex-col">
+      <span matListItemTitle>{{ webUser.userName }} </span>
+      <span class="text-xs text-gray-900" *ngIf="webUser.isFriend && webUser.becameFriendsTime">
+        Friends Since {{ webUser.becameFriendsTime | timeDifferenceFromNow }}
+      </span>
+    </div>
+    <!--    <span
+          class="inline-flex items-center bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300"
+        >
+          <span class="w-2 h-2 mr-1 bg-green-500 rounded-full"></span>
+          Available
+        </span>-->
+  </div>
+</ng-container>

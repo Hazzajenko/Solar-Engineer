@@ -68,9 +68,15 @@ public class MessagesHub : Hub
         var messageIds = chatMessageDtos.Select(x => x.Id).ToList();
         var update = await _messagesRepository.MarkAllGroupChatMessagesReadByUserAsync(messageIds, appUser);
 
+
         _logger.LogInformation("{User} GetMessages with Group {Group}", appUser.UserName!, groupChatId);
 
         await Clients.Caller.SendAsync("GetGroupChatMessages", groupChatMessages);
+
+        var serverMessages = await _mediator.Send(new GetGroupChatServerMessagesByGroupIdQuery(groupChatId));
+        if (serverMessages is null) throw new HubException("serverMessages is null");
+
+        await Clients.Caller.SendAsync("GetGroupChatServerMessages", serverMessages);
     }
 
     public async Task SendMessageToUser(SendMessageRequest request)

@@ -154,10 +154,17 @@ namespace dotnetapi.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<int>("CreatedById")
                         .HasColumnType("integer");
 
                     b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PhotoUrl")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -168,7 +175,7 @@ namespace dotnetapi.Data.Migrations
                     b.ToTable("GroupChats");
                 });
 
-            modelBuilder.Entity("dotnetapi.Features.Messages.Entities.GroupChatMessage", b =>
+            modelBuilder.Entity("dotnetapi.Features.GroupChats.Entities.GroupChatMessage", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -201,7 +208,7 @@ namespace dotnetapi.Data.Migrations
                     b.ToTable("GroupChatMessages");
                 });
 
-            modelBuilder.Entity("dotnetapi.Features.Messages.Entities.GroupChatReadTime", b =>
+            modelBuilder.Entity("dotnetapi.Features.GroupChats.Entities.GroupChatReadTime", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -225,6 +232,31 @@ namespace dotnetapi.Data.Migrations
                     b.HasIndex("GroupChatMessageId");
 
                     b.ToTable("GroupChatReadTimes");
+                });
+
+            modelBuilder.Entity("dotnetapi.Features.GroupChats.Entities.GroupChatServerMessage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("GroupChatId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("MessageSentTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GroupChatId");
+
+                    b.ToTable("GroupChatServerMessages");
                 });
 
             modelBuilder.Entity("dotnetapi.Features.Messages.Entities.Message", b =>
@@ -806,18 +838,18 @@ namespace dotnetapi.Data.Migrations
                     b.Navigation("CreatedBy");
                 });
 
-            modelBuilder.Entity("dotnetapi.Features.Messages.Entities.GroupChatMessage", b =>
+            modelBuilder.Entity("dotnetapi.Features.GroupChats.Entities.GroupChatMessage", b =>
                 {
                     b.HasOne("dotnetapi.Features.GroupChats.Entities.GroupChat", "GroupChat")
                         .WithMany("GroupChatMessages")
                         .HasForeignKey("GroupChatId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("dotnetapi.Models.Entities.AppUser", "Sender")
                         .WithMany("GroupChatMessagesSent")
                         .HasForeignKey("SenderId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("GroupChat");
@@ -825,7 +857,7 @@ namespace dotnetapi.Data.Migrations
                     b.Navigation("Sender");
                 });
 
-            modelBuilder.Entity("dotnetapi.Features.Messages.Entities.GroupChatReadTime", b =>
+            modelBuilder.Entity("dotnetapi.Features.GroupChats.Entities.GroupChatReadTime", b =>
                 {
                     b.HasOne("dotnetapi.Models.Entities.AppUser", "AppUser")
                         .WithMany()
@@ -833,7 +865,7 @@ namespace dotnetapi.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("dotnetapi.Features.Messages.Entities.GroupChatMessage", "GroupChatMessage")
+                    b.HasOne("dotnetapi.Features.GroupChats.Entities.GroupChatMessage", "GroupChatMessage")
                         .WithMany("MessageReadTimes")
                         .HasForeignKey("GroupChatMessageId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -842,6 +874,17 @@ namespace dotnetapi.Data.Migrations
                     b.Navigation("AppUser");
 
                     b.Navigation("GroupChatMessage");
+                });
+
+            modelBuilder.Entity("dotnetapi.Features.GroupChats.Entities.GroupChatServerMessage", b =>
+                {
+                    b.HasOne("dotnetapi.Features.GroupChats.Entities.GroupChat", "GroupChat")
+                        .WithMany("GroupChatServerMessages")
+                        .HasForeignKey("GroupChatId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("GroupChat");
                 });
 
             modelBuilder.Entity("dotnetapi.Features.Messages.Entities.Message", b =>
@@ -1059,9 +1102,11 @@ namespace dotnetapi.Data.Migrations
                     b.Navigation("AppUserGroupChats");
 
                     b.Navigation("GroupChatMessages");
+
+                    b.Navigation("GroupChatServerMessages");
                 });
 
-            modelBuilder.Entity("dotnetapi.Features.Messages.Entities.GroupChatMessage", b =>
+            modelBuilder.Entity("dotnetapi.Features.GroupChats.Entities.GroupChatMessage", b =>
                 {
                     b.Navigation("MessageReadTimes");
                 });

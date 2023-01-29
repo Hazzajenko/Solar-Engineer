@@ -4,13 +4,16 @@ using dotnetapi.Features.GroupChats.Services;
 using dotnetapi.Models.Entities;
 using FastEndpoints;
 using Mediator;
+using MethodTimer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 
 namespace dotnetapi.Features.GroupChats.Endpoints;
 
+[Time]
 [Authorize]
-public class GetGroupChatsDataEndpoint : EndpointWithoutRequest<ManyGroupChatsDataResponse>
+// public class GetGroupChatsDataEndpoint : EndpointWithoutRequest<ManyGroupChatsDataResponse>
+public class GetGroupChatsDataEndpoint : EndpointWithoutRequest<InitialGroupChatCombinedResponse>
 {
     private readonly IGroupChatsRepository _groupChatsRepository;
     private readonly ILogger<GetGroupChatsDataEndpoint> _logger;
@@ -45,19 +48,32 @@ public class GetGroupChatsDataEndpoint : EndpointWithoutRequest<ManyGroupChatsDa
         }
 
 
-        var groupChatIds = await _mediator.Send(new GetGroupChatIdsQuery(appUser), ct);
+        /*var groupChatIds = await _mediator.Send(new GetGroupChatIdsQuery(appUser), ct);
         var groupChats = await _mediator.Send(new GetGroupChatsQuery(appUser), ct);
         var members = await _mediator.Send(new GetGroupChatMembersQuery(groupChatIds), ct);
-        var messages = await _mediator.Send(new GetGroupChatMessagesQuery(appUser, groupChatIds), ct);
+        var messages = await _mediator.Send(new GetGroupChatMessagesQuery(appUser, groupChatIds), ct);*/
 
 
-        var response = new ManyGroupChatsDataResponse
+        var combinedGroupChats = await _mediator.Send(new GetInitialGroupChatsCombinedQuery(appUser), ct);
+        // var globalData = await _mediator.Send(new GetGroupChatsCombinedQuery(appUser), ct);
+        // globalData.T
+
+        // var groupChatCombinedDtos = globalData.ToList();
+        // var result = new DataStore<IEnumerable<GroupChatCombinedDto>>(groupChatCombinedDtos);
+
+        /*var response = new ManyGroupChatsDataResponse
         {
             GroupChats = groupChats,
             GroupChatMembers = members,
             GroupChatMessages = messages
+        };*/
+
+        var response = new InitialGroupChatCombinedResponse
+        {
+            GroupChats = combinedGroupChats
         };
 
+        // await SendOkAsync(response, ct);
         await SendOkAsync(response, ct);
     }
 }

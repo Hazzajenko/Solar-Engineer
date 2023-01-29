@@ -234,7 +234,7 @@ export class GroupChatsFacade {
     )
   }
 
-  groupChatMemberWebUsers$(groupChatId: number) {
+  groupChatMemberWebUsers$(groupChatId: number): Observable<GroupChatMemberModel[]> {
     return this.groupChatMembersById$(groupChatId).pipe(
       switchMap((members) =>
         combineLatest(
@@ -265,61 +265,9 @@ export class GroupChatsFacade {
     )
   }
 
-  /*
-    groupChatMembersById$(groupChatId: number) {
-      return this.connectionsStore.select.connections$.pipe(
-        switchMap((connections) =>
-          this.members$.pipe(
-            map((members) =>
-              members
-                .filter((member) => member.groupChatId === groupChatId)
-                .map(
-                  (member) =>
-                    ({
-                      ...member,
-                      isOnline: !!connections.find(
-                        (connection) => connection.userName === member.userName,
-                      ),
-                    } as GroupChatMemberModel),
-                ),
-            ),
-          ),
-        ),
-      )
-    }*/
-
   groupChatMembersById$(groupChatId: number) {
     return this.members$.pipe(
       map((members) => members.filter((member) => member.groupChatId === groupChatId)),
-    )
-  }
-
-  get groupChatsCombined$() {
-    return this.groupChats$.pipe(
-      switchMap((groupChats) =>
-        groupChats.map((group) => {
-          const groupChat = group
-          const groupMembers = this.members$.pipe(
-            map((members) => members.filter((member) => member.groupChatId === groupChat.id)),
-          )
-          const groupMessages = this.messages$.pipe(
-            map((messages) => messages.filter((message) => message.groupChatId === groupChat.id)),
-          )
-          return [groupChat, groupMembers, groupMessages]
-          /*    return {
-                groupChat,
-                groupMembers,
-                groupMessages
-              }*/
-        }),
-      ),
-      /*    switchMap(() => {
-            return {
-              groupChat: of(groupChat),
-              groupMembers,
-              groupMessages
-            }
-          })*/
     )
   }
 }

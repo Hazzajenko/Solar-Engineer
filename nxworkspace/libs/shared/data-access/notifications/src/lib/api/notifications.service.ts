@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core'
 import { Router } from '@angular/router'
 import { SignInResponse } from '@auth/shared/models'
 import * as signalR from '@microsoft/signalr'
-import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr'
+import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr'
 import { Update } from '@ngrx/entity'
 import { NotificationModel, NotificationType } from '@shared/data-access/models'
 import { SignalrLogger } from '@shared/data-access/signalr'
@@ -12,17 +12,14 @@ import { ManyNotificationsResponse } from '../models'
 import { UpdateManyNotificationsResponse } from '../models/update-many-notifications.response'
 import { UpdateNotificationResponse } from '../models/update-notification.response'
 
-
 @Injectable({
   providedIn: 'root',
 })
 export class NotificationsService {
-
   private notificationHub?: HubConnection
   private notificationsStore = inject(NotificationsStoreService)
   private http = inject(HttpClient)
   connectionId?: string
-
 
   updateNotification(update: Update<NotificationModel>, type: NotificationType) {
     return this.http.put<UpdateNotificationResponse>(`/api/notification/${update.id}`, {
@@ -37,7 +34,6 @@ export class NotificationsService {
     })
   }
 
-
   getAllUserNotifications() {
     return this.http.get<ManyNotificationsResponse>('/api/notifications')
   }
@@ -49,7 +45,8 @@ export class NotificationsService {
         skipNegotiation: true,
         transport: signalR.HttpTransportType.WebSockets,
       })
-      .configureLogging(new SignalrLogger())
+      .configureLogging(LogLevel.Information)
+      // .configureLogging(new SignalrLogger())
       .withAutomaticReconnect()
       .build()
 
@@ -57,13 +54,12 @@ export class NotificationsService {
       .start()
       .then(() => console.log('Connection started'))
       .then(() => this.getConnectionId())
-      .catch(err => console.log('Error while starting connection: ' + err))
+      .catch((err) => console.log('Error while starting connection: ' + err))
 
-    this.notificationHub.on('getNotifications', notification => {
+    this.notificationHub.on('getNotifications', (notification) => {
       console.log('getNotifications', notification)
       if ('friendRequest' in notification) {
         this.notificationsStore.dispatch.addNotification(notification)
-
       }
     })
   }
@@ -84,23 +80,22 @@ export class NotificationsService {
 
   private getConnectionId = () => {
     if (!this.notificationHub) return
-    this.notificationHub.invoke('getConnectionId')
-      .then((data) => {
-        console.log(data)
-        this.connectionId = data
-        this.getNotifications()
-      })
+    this.notificationHub.invoke('getConnectionId').then((data) => {
+      console.log(data)
+      this.connectionId = data
+      this.getNotifications()
+    })
   }
   public getNotifications = () => {
     if (!this.notificationHub) return
     if (!this.connectionId) return
-    this.notificationHub.invoke('GetNotifications', this.connectionId)
-      .catch(err => console.error(err))
+    this.notificationHub
+      .invoke('GetNotifications', this.connectionId)
+      .catch((err) => console.error(err))
   }
-
 
   stopHubConnection() {
     if (!this.notificationHub) return
-    this.notificationHub.stop().catch(error => console.log(error))
+    this.notificationHub.stop().catch((error) => console.log(error))
   }
 }

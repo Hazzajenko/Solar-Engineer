@@ -28,13 +28,13 @@ public class DataContext : IdentityDbContext<AppUser, AppRole, int,
     public DbSet<AppUserFriend> AppUserFriends { get; set; } = default!;
 
     public DbSet<Group> Groups { get; set; } = default!;
-    public DbSet<GroupChat> GroupChats { get; set; } = default!;
 
     public DbSet<Message> Messages { get; set; } = default!;
 
+    public DbSet<GroupChat> GroupChats { get; set; } = default!;
     public DbSet<GroupChatMessage> GroupChatMessages { get; set; } = default!;
-
     public DbSet<GroupChatReadTime> GroupChatReadTimes { get; set; } = default!;
+    public DbSet<GroupChatServerMessage> GroupChatServerMessages { get; set; } = default!;
 
     public DbSet<AppUserGroupChat> AppUserGroupChats { get; set; } = default!;
     // public DbSet<Notification> Notifications { get; set; } = default!;

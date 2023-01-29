@@ -7,7 +7,7 @@ using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 
-namespace dotnetapi.Features.Messages.Endpoints;
+namespace dotnetapi.Features.GroupChats.Endpoints;
 
 [Authorize]
 public class GetGroupChatMessagesEndpoint : EndpointWithoutRequest<GroupChatManyMessagesResponse>
@@ -31,7 +31,7 @@ public class GetGroupChatMessagesEndpoint : EndpointWithoutRequest<GroupChatMany
 
     public override void Configure()
     {
-        Get("messages/group-chat/{groupChatId:int}");
+        Get("group-chats/{groupChatId:int}/messages");
         Policies("BeAuthenticated");
     }
 

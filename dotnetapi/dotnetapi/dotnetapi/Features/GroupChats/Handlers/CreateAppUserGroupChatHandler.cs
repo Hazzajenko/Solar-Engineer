@@ -4,19 +4,19 @@ using Mediator;
 
 namespace dotnetapi.Features.GroupChats.Handlers;
 
-public sealed record CreateGroupChatQuery(AppUserGroupChat AppUserGroupChat) : IRequest<AppUserGroupChat>;
+public sealed record CreateAppUserGroupChatQuery(AppUserGroupChat AppUserGroupChat) : IRequest<AppUserGroupChat>;
 
-public class CreateGroupChatHandler : IRequestHandler<CreateGroupChatQuery, AppUserGroupChat>
+public class CreateAppUserGroupChatHandler : IRequestHandler<CreateAppUserGroupChatQuery, AppUserGroupChat>
 {
     private readonly IDataContext _context;
 
-    public CreateGroupChatHandler(IDataContext context)
+    public CreateAppUserGroupChatHandler(IDataContext context)
     {
         _context = context;
     }
 
     public async ValueTask<AppUserGroupChat>
-        Handle(CreateGroupChatQuery request, CancellationToken cT)
+        Handle(CreateAppUserGroupChatQuery request, CancellationToken cT)
     {
         await _context.AppUserGroupChats.AddAsync(request.AppUserGroupChat, cT);
         await _context.SaveChangesAsync(cT);

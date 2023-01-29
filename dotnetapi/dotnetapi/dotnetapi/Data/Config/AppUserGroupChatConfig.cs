@@ -12,16 +12,17 @@ public class AppUserGroupChatConfig : IEntityTypeConfiguration<AppUserGroupChat>
 
         // builder.HasKey(f => new { f.RequestedById, f.RequestedToId });
 
-        builder.HasOne(a => a.AppUser)
+        /*builder.HasOne(a => a.AppUser)
             .WithMany(b => b.AppUserGroupChats)
             .HasForeignKey(c => c.AppUserId)
-            .IsRequired();
+            .IsRequired();*/
         // .OnDelete(DeleteBehavior.ClientNoAction)
 
+        /*
         builder.HasOne(a => a.GroupChat)
             .WithMany(b => b.AppUserGroupChats)
             .HasForeignKey(c => c.GroupChatId)
-            .IsRequired();
+            .IsRequired();*/
         // .OnDelete(DeleteBehavior.Cascade);
         // .OnDelete(DeleteBehavior.ClientNoAction)
     }

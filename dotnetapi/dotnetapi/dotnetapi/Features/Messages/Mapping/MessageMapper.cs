@@ -1,4 +1,5 @@
-﻿using dotnetapi.Features.Messages.Contracts.Requests;
+﻿using dotnetapi.Features.GroupChats.Entities;
+using dotnetapi.Features.Messages.Contracts.Requests;
 using dotnetapi.Features.Messages.Entities;
 using dotnetapi.Models.Entities;
 
@@ -43,7 +44,9 @@ public static class MessageMapper
             SenderUserName = request.Sender.UserName!,
             MessageSentTime = request.MessageSentTime,
             GroupChatId = request.GroupChatId,
-            MessageReadTimes = request.MessageReadTimes.Select(x => x.ToDto()),
+            MessageReadTimes = request.MessageReadTimes.Any()
+                ? request.MessageReadTimes.Select(x => x.ToDto())
+                : new List<GroupChatReadTimeDto>(),
             IsUserSender = appUser.UserName! == request.Sender.UserName!
         };
     }

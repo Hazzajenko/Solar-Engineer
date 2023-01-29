@@ -2,7 +2,6 @@
 using dotnetapi.Features.GroupChats.Contracts.Responses;
 using dotnetapi.Features.GroupChats.Entities;
 using dotnetapi.Features.GroupChats.Mapping;
-using dotnetapi.Features.Messages.Entities;
 using dotnetapi.Features.Messages.Mapping;
 using dotnetapi.Models.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -48,6 +47,7 @@ public class GroupChatsRepository : IGroupChatsRepository
             .Where(x => x.AppUser.Id == appUser.Id && x.GroupChatId == groupChatId)
             // .Where(x => x.GroupChatId == groupChatId)
             .Include(x => x.GroupChat)
+            // .ThenInclude(x => x.GroupChat)
             .SingleOrDefaultAsync();
     }
 

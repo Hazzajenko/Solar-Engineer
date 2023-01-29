@@ -26,7 +26,7 @@ public class GetGroupChatMembersEndpoint : EndpointWithoutRequest<GroupChatMembe
 
     public override void Configure()
     {
-        Get("group-chat/{groupChatId:int}/members");
+        Get("group-chats/{groupChatId:int}/members");
         Policies("BeAuthenticated");
     }
 

@@ -1,4 +1,5 @@
 using dotnetapi.Data;
+using dotnetapi.Features.GroupChats.Entities;
 using dotnetapi.Features.Messages.Entities;
 using dotnetapi.Models.Entities;
 using Microsoft.EntityFrameworkCore;

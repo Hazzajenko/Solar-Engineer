@@ -12,21 +12,17 @@ public sealed record GetUserByUserNameQuery(string UserName) : IRequest<AppUser?
 public class
     GetUserByUserNameHandler : IRequestHandler<GetUserByUserNameQuery, AppUser?>
 {
-    private readonly IServiceScopeFactory _scopeFactory;
+    private readonly IDataContext _context;
 
-    public GetUserByUserNameHandler(IServiceScopeFactory scopeFactory)
+    public GetUserByUserNameHandler(IDataContext context)
     {
-        _scopeFactory = scopeFactory;
+        _context = context;
     }
 
     public async ValueTask<AppUser?>
         Handle(GetUserByUserNameQuery request, CancellationToken cT)
     {
-        using var scope = _scopeFactory.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<DataContext>();
-
-        return await db.Users
-            .Where(x => x.UserName == request.UserName)
-            .SingleOrDefaultAsync(cT);
+        return await _context.Users
+            .SingleOrDefaultAsync(x => x.UserName == request.UserName, cT);
     }
 }

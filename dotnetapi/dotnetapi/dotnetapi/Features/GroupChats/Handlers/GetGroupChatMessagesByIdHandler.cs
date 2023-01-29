@@ -1,5 +1,5 @@
 ﻿using dotnetapi.Data;
-using dotnetapi.Features.Messages.Entities;
+using dotnetapi.Features.GroupChats.Entities;
 using dotnetapi.Features.Messages.Mapping;
 using dotnetapi.Models.Entities;
 using Mediator;
@@ -28,13 +28,9 @@ public class
 
         return await db.GroupChatMessages
             .Where(x => x.GroupChatId == request.GroupChatId)
-            // .AsNoTracking()
             .Include(x => x.Sender)
-            // .AsNoTracking()
             .Include(x => x.MessageReadTimes)
             .ThenInclude(x => x.AppUser)
-            // .AsNoTracking()
-            // .MarkUnreadAsReadFromUser(db, request.AppUser)
             .OrderBy(x => x.MessageSentTime)
             .Select(x => x.ToDto(request.AppUser))
             .ToListAsync(cT);

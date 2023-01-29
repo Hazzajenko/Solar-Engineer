@@ -6,7 +6,7 @@ using FastEndpoints;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 
-namespace dotnetapi.Features.Messages.Endpoints;
+namespace dotnetapi.Features.GroupChats.Endpoints;
 
 [Authorize]
 public class UpdateManyGroupChatMessagesEndpoint : Endpoint<UpdateManyGroupChatMessagesRequest, ManyUpdatesResponse>
@@ -27,7 +27,7 @@ public class UpdateManyGroupChatMessagesEndpoint : Endpoint<UpdateManyGroupChatM
 
     public override void Configure()
     {
-        Put("messages/group-chat/{groupChatId:int}");
+        Put("group-chats/{groupChatId:int}/messages");
         Policies("BeAuthenticated");
     }
 

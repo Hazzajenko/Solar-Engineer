@@ -3,7 +3,7 @@ import { MatSnackBar } from '@angular/material/snack-bar'
 import { Router } from '@angular/router'
 import { AuthStoreService } from '@auth/data-access/facades'
 import * as signalR from '@microsoft/signalr'
-import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr'
+import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr'
 import { ConnectionModel } from '@shared/data-access/models'
 import { SignalrLogger } from '@shared/data-access/signalr'
 import { ConnectionsStoreService } from 'libs/shared/data-access/connections/src/lib/facades'
@@ -30,7 +30,8 @@ export class ConnectionsService {
         skipNegotiation: true,
         transport: signalR.HttpTransportType.WebSockets,
       })
-      .configureLogging(new SignalrLogger())
+      .configureLogging(LogLevel.Information)
+      // .configureLogging(new SignalrLogger())
       .withAutomaticReconnect()
       .build()
 

@@ -3,24 +3,34 @@ import { Action, createReducer, on } from '@ngrx/store'
 import { GroupChatModel } from '@shared/data-access/models'
 
 import { GroupChatsActions } from './group-chats.actions'
+import {
+  groupChatServerMessagesAdapter,
+  GroupChatServerMessagesState,
+  initialGroupChatServerMessagesState,
+} from '../group-chat-server-messages/group-chat-server-messages.reducer'
+import { GroupChatServerMessagesActions } from '../group-chat-server-messages/group-chat-server-messages.actions'
 
 export const GROUP_CHATS_FEATURE_KEY = 'group-chats'
 
 export interface GroupChatsState extends EntityState<GroupChatModel> {
   loaded: boolean
   error?: string | null
+  serverMessages: GroupChatServerMessagesState
 }
 
 export function groupChatSelectId(a: GroupChatModel): number {
   return a.id
 }
 
-export const groupChatsAdapter: EntityAdapter<GroupChatModel> = createEntityAdapter<GroupChatModel>({
-  selectId: groupChatSelectId,
-})
+export const groupChatsAdapter: EntityAdapter<GroupChatModel> = createEntityAdapter<GroupChatModel>(
+  {
+    selectId: groupChatSelectId,
+  },
+)
 
 export const initialGroupChatsState: GroupChatsState = groupChatsAdapter.getInitialState({
   loaded: false,
+  serverMessages: initialGroupChatServerMessagesState,
 })
 
 const reducer = createReducer(
@@ -38,8 +48,26 @@ const reducer = createReducer(
   on(GroupChatsActions.removeGroupChat, (state, { groupChatId }) =>
     groupChatsAdapter.removeOne(groupChatId, state),
   ),
-  on(GroupChatsActions.clearGroupChatsState, (state) =>
-    groupChatsAdapter.removeAll(state),
+  on(GroupChatsActions.clearGroupChatsState, (state) => groupChatsAdapter.removeAll(state)),
+  on(
+    GroupChatServerMessagesActions.addGroupChatServerMessage,
+    (state, { groupChatServerMessage }) => ({
+      ...state,
+      serverMessages: groupChatServerMessagesAdapter.addOne(
+        groupChatServerMessage,
+        state.serverMessages,
+      ),
+    }),
+  ),
+  on(
+    GroupChatServerMessagesActions.addManyGroupChatServerMessages,
+    (state, { groupChatServerMessages }) => ({
+      ...state,
+      serverMessages: groupChatServerMessagesAdapter.addMany(
+        groupChatServerMessages,
+        state.serverMessages,
+      ),
+    }),
   ),
 )
 

@@ -3,5 +3,5 @@
 public class CreateGroupChatRequest
 {
     public string GroupChatName { get; set; } = default!;
-    public IEnumerable<string> UserNamesToInvite { get; set; } = default!;
+    public IEnumerable<MemberInvite> Invites { get; set; } = default!;
 }

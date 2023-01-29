@@ -23,10 +23,7 @@ public static class ApplicationServiceExtensions
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
     {
-        services.AddMediator(options =>
-        {
-            options.ServiceLifetime = ServiceLifetime.Transient;
-        });
+        services.AddMediator(options => { options.ServiceLifetime = ServiceLifetime.Transient; });
 
         // services.AddMediator();
         services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));
@@ -72,13 +69,12 @@ public static class ApplicationServiceExtensions
             string? connStr;
 
             var connectionString = config.GetConnectionString("PostgresConnection");
-            Console.WriteLine(connectionString);
+            // Console.WriteLine(connectionString);
 
             var host = Environment.GetEnvironmentVariable("DATABASE_HOST")!;
             connStr = string.IsNullOrEmpty(host) ? connectionString : BuildConnectionString();
-            Console.WriteLine(connStr);
+            // Console.WriteLine(connStr);
             options.UseNpgsql(connStr);
-
         });
 
         services.AddDbContext<InMemoryDatabase>
@@ -104,7 +100,7 @@ public static class ApplicationServiceExtensions
             SslMode = SslMode.Require,
             TrustServerCertificate = true
         };
-        Console.WriteLine(builder);
+        // Console.WriteLine(builder);
         return builder.ToString();
     }
 }

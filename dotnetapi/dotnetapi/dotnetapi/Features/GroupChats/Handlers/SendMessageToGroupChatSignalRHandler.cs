@@ -1,9 +1,9 @@
-﻿using dotnetapi.Features.Messages.Entities;
+﻿using dotnetapi.Features.GroupChats.Entities;
 using dotnetapi.Hubs;
 using Mediator;
 using Microsoft.AspNetCore.SignalR;
 
-namespace dotnetapi.Features.Messages.Handlers;
+namespace dotnetapi.Features.GroupChats.Handlers;
 
 public sealed record SendMessageToGroupChatSignalRQuery
     (GroupChatMessageDto Message, string[] UserNames) : IRequest<GroupChatMessageDto>;

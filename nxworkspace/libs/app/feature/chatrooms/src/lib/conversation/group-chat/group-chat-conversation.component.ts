@@ -46,6 +46,7 @@ import { MessageBarComponent } from '../message-bar/message-bar.component'
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
 import { GroupChatMessageMenuComponent } from './menu/group-chat-message-menu.component'
 import { ConversationMessageDirective, ScrollViewportDirective } from '@shared/directives'
+import { GroupChatOptionsBarComponent } from './options-bar/group-chat-options-bar.component'
 
 @Component({
   selector: 'app-group-chat-conversation-component',
@@ -120,6 +121,7 @@ import { ConversationMessageDirective, ScrollViewportDirective } from '@shared/d
     GroupChatMessageMenuComponent,
     ConversationMessageDirective,
     ScrollViewportDirective,
+    GroupChatOptionsBarComponent,
   ],
   standalone: true,
 })
@@ -140,7 +142,7 @@ export class GroupChatConversationComponent {
 
   groupChatCombined$!: Observable<GroupChatCombinedModel | undefined>
   groupChatMessages$!: Observable<GroupChatMessageModel[] | undefined>
-  groupChatMembers$!: Observable<GroupChatMemberModel[]>
+  // groupChatMembers$!: Observable<GroupChatMemberModel[]>
   groupChatMessagesWithMembersById$!: Observable<GroupChatMessageMemberModel[]>
   user$: Observable<UserModel | undefined> = this.authStore.select.user$
   selectedGroupChatMessage?: GroupChatMessageMemberModel
@@ -164,9 +166,9 @@ export class GroupChatConversationComponent {
     this.groupChatMessages$ = this.groupChatsStore.select.groupChatMessagesById$(
       selectChatroom.groupChat.id,
     )
-    this.groupChatMembers$ = this.groupChatsStore.select.groupChatMembersById$(
-      selectChatroom.groupChat.id,
-    )
+    /*    this.groupChatMembers$ = this.groupChatsStore.select.groupChatMembersById$(
+          selectChatroom.groupChat.id,
+        )*/
     this.groupChatMessagesWithMembersById$ =
       this.groupChatsStore.select.groupChatMessagesWithMembersById$(selectChatroom.groupChat.id)
   }
@@ -186,6 +188,10 @@ export class GroupChatConversationComponent {
     }
     this.selectedGroupChatMessage = message
     return
+  }
+
+  trackByFn(index: number, element: GroupChatMessageMemberModel) {
+    return element.id
   }
 
   onRightClick(event: MouseEvent, message: GroupChatMessageMemberModel) {

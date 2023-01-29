@@ -18,6 +18,19 @@ public static class GroupChatsMapping
         };
     }*/
 
+
+    public static InitialGroupChatMemberDto ToInitialMemberDto(this AppUserGroupChat request)
+    {
+        return new InitialGroupChatMemberDto
+        {
+            Id = request.Id,
+            GroupChatId = request.GroupChatId,
+            UserName = request.AppUser.UserName!,
+            JoinedAt = request.JoinedAt,
+            Role = request.Role
+        };
+    }
+
     public static GroupChatMemberDto ToMemberDto(this AppUserGroupChat request)
     {
         return new GroupChatMemberDto
@@ -40,6 +53,8 @@ public static class GroupChatsMapping
         {
             Id = request.Id,
             Name = request.GroupChat.Name,
+            PhotoUrl = request.GroupChat.PhotoUrl,
+            Created = request.GroupChat.Created,
             Members = new List<GroupChatMemberDto>()
         };
     }
@@ -49,7 +64,9 @@ public static class GroupChatsMapping
         return new GroupChatWithoutMembersDto
         {
             Id = request.GroupChatId,
-            Name = request.GroupChat.Name
+            Name = request.GroupChat.Name,
+            PhotoUrl = request.GroupChat.PhotoUrl,
+            Created = request.GroupChat.Created
         };
     }
 
@@ -60,7 +77,23 @@ public static class GroupChatsMapping
         {
             Id = request.Id,
             Name = request.GroupChat.Name,
+            PhotoUrl = request.GroupChat.PhotoUrl,
+            Created = request.GroupChat.Created,
             Members = memberDtos
+        };
+    }
+
+    public static GroupChatDto ToResponseDto(this AppUserGroupChat request,
+        IEnumerable<GroupChatMemberDto> memberDtos, IEnumerable<GroupChatServerMessageDto> serverMessageDtos)
+    {
+        return new GroupChatDto
+        {
+            Id = request.Id,
+            Name = request.GroupChat.Name,
+            PhotoUrl = request.GroupChat.PhotoUrl,
+            Created = request.GroupChat.Created,
+            Members = memberDtos,
+            ServerMessages = serverMessageDtos
         };
     }
 
@@ -70,6 +103,8 @@ public static class GroupChatsMapping
         {
             Id = request.Id,
             Name = request.Name,
+            PhotoUrl = request.PhotoUrl,
+            Created = request.Created,
             Members = memberDtos
         };
     }

@@ -1,7 +1,6 @@
-using dotnetapi.Features.GroupChats.Entities;
 using dotnetapi.Models.Entities;
 
-namespace dotnetapi.Features.Messages.Entities;
+namespace dotnetapi.Features.GroupChats.Entities;
 
 public class GroupChatMessage : BaseEntity
 {

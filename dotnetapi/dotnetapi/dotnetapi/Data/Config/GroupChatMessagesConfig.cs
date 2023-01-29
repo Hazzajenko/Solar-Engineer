@@ -1,4 +1,4 @@
-﻿using dotnetapi.Features.Messages.Entities;
+﻿using dotnetapi.Features.GroupChats.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -8,19 +8,19 @@ public class GroupChatMessagesConfig : IEntityTypeConfiguration<GroupChatMessage
 {
     public void Configure(EntityTypeBuilder<GroupChatMessage> builder)
     {
-        builder
+        /*builder
             .HasOne(u => u.GroupChat)
             .WithMany(m => m.GroupChatMessages)
             .HasForeignKey(x => x.GroupChatId)
             .OnDelete(DeleteBehavior.NoAction)
-            .IsRequired();
+            .IsRequired();*/
 
-        builder
+        /*builder
             .HasOne(u => u.Sender)
             .WithMany(m => m.GroupChatMessagesSent)
             .HasForeignKey(x => x.SenderId)
             .OnDelete(DeleteBehavior.NoAction)
-            .IsRequired();
+            .IsRequired();*/
 
         builder
             .HasMany(u => u.MessageReadTimes)

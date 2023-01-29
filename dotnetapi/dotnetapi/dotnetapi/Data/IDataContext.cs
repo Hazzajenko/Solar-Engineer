@@ -9,6 +9,7 @@ namespace dotnetapi.Data;
 
 public interface IDataContext
 {
+    DbSet<AppUser> Users { get; set; }
     DbSet<AppUserGroupChat> AppUserGroupChats { get; set; }
     DbSet<Project> Projects { get; set; }
     DbSet<String> Strings { get; set; }
@@ -21,6 +22,7 @@ public interface IDataContext
     DbSet<GroupChat> GroupChats { get; set; }
     DbSet<Message> Messages { get; set; }
     DbSet<GroupChatMessage> GroupChatMessages { get; set; }
+    DbSet<GroupChatServerMessage> GroupChatServerMessages { get; set; }
     DbSet<GroupChatReadTime> GroupChatReadTimes { get; set; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);

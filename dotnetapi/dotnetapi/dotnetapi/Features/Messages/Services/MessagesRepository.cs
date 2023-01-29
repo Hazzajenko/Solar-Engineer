@@ -1,5 +1,6 @@
 ﻿using dotnetapi.Data;
 using dotnetapi.Extensions;
+using dotnetapi.Features.GroupChats.Entities;
 using dotnetapi.Features.Messages.Contracts.Requests;
 using dotnetapi.Features.Messages.Entities;
 using dotnetapi.Features.Messages.Mapping;

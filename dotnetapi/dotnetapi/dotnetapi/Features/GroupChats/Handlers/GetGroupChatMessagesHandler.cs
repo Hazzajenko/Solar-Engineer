@@ -1,5 +1,5 @@
 ﻿using dotnetapi.Data;
-using dotnetapi.Features.Messages.Entities;
+using dotnetapi.Features.GroupChats.Entities;
 using dotnetapi.Features.Messages.Mapping;
 using dotnetapi.Models.Entities;
 using Mediator;

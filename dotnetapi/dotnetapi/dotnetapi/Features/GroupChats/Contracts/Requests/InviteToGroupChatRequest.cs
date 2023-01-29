@@ -12,6 +12,6 @@ public class InviteToGroupChatRequest
 
 public class MemberInvite
 {
-    [Required] public string Recipient { get; set; } = default!;
+    [Required] public string UserName { get; set; } = default!;
     public string Role { get; set; } = "Member";
 }
