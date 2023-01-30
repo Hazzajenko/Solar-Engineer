@@ -1,14 +1,12 @@
 ﻿using dotnetapi.Data;
 using dotnetapi.Models.Entities;
 using Mediator;
-using MethodTimer;
 using Microsoft.EntityFrameworkCore;
 
 namespace dotnetapi.Features.Users.Handlers;
 
 public sealed record GetUserByUserNameQuery(string UserName) : IRequest<AppUser?>;
 
-[Time]
 public class
     GetUserByUserNameHandler : IRequestHandler<GetUserByUserNameQuery, AppUser?>
 {

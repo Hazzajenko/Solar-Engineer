@@ -1,5 +1,6 @@
 ﻿using dotnetapi.Features.GroupChats.Contracts.Responses;
 using dotnetapi.Features.GroupChats.Handlers;
+using dotnetapi.Features.GroupChats.Handlers.InitialGroupChats;
 using dotnetapi.Features.GroupChats.Services;
 using dotnetapi.Models.Entities;
 using FastEndpoints;
@@ -55,6 +56,7 @@ public class GetGroupChatsDataEndpoint : EndpointWithoutRequest<InitialGroupChat
 
 
         var combinedGroupChats = await _mediator.Send(new GetInitialGroupChatsCombinedQuery(appUser), ct);
+        var combinedGroupChats2 = await _mediator.Send(new GetInitialGroupChatsQuery(appUser), ct);
         // var globalData = await _mediator.Send(new GetGroupChatsCombinedQuery(appUser), ct);
         // globalData.T
 

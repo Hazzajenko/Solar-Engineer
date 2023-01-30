@@ -10,7 +10,10 @@ public class GroupChatMessageDto
 
     public DateTime MessageSentTime { get; set; } = DateTime.UtcNow;
 
-    public bool IsUserSender { get; set; }
+    public MessageFrom MessageFrom { get; set; } = MessageFrom.Unknown;
+    // public bool IsUserSender { get; set; }
+    //
+    // public bool IsServer { get; set; }
     // public NotificationStatus Status { get; set; }
 }
 

@@ -1,3 +1,6 @@
+using System.Data.Entity.Core.Objects;
+using System.Reflection;
+using System.Text;
 using dotnetapi.Data;
 using dotnetapi.Features.GroupChats.Entities;
 using dotnetapi.Features.Messages.Entities;
@@ -18,6 +21,58 @@ public static class QueryableExtensions
                 message.MessageReadTime = DateTime.UtcNow;
 
         return query;
+    }
+
+    /// <summary>
+    ///     For an Entity Framework IQueryable, returns the SQL with inlined Parameters.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="query"></param>
+    /// <returns></returns>
+    public static string? ToTraceQuery<T>(this IQueryable<T> query)
+    {
+        var objectQuery = GetQueryFromQueryable(query);
+
+        var result = objectQuery?.ToTraceString();
+        foreach (var parameter in objectQuery?.Parameters!)
+        {
+            var name = "@" + parameter.Name;
+            var value = "'" + parameter.Value + "'";
+            result = result?.Replace(name, value);
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    ///     For an Entity Framework IQueryable, returns the SQL and Parameters.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="query"></param>
+    /// <returns></returns>
+    public static string ToTraceString<T>(this IQueryable<T> query)
+    {
+        var objectQuery = GetQueryFromQueryable(query);
+
+        var traceString = new StringBuilder();
+
+        traceString.AppendLine(objectQuery?.ToTraceString());
+        traceString.AppendLine();
+
+        foreach (var parameter in objectQuery?.Parameters!)
+            traceString.AppendLine(parameter.Name + " [" + parameter.ParameterType.FullName + "] = " + parameter.Value);
+
+        return traceString.ToString();
+    }
+
+    private static ObjectQuery<T>? GetQueryFromQueryable<T>(IQueryable<T> query)
+    {
+        var internalQueryField = query.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance)
+            .FirstOrDefault(f => f.Name.Equals("_internalQuery"));
+        var internalQuery = internalQueryField?.GetValue(query);
+        var objectQueryField = internalQuery?.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance)
+            .FirstOrDefault(f => f.Name.Equals("_objectQuery"));
+        return objectQueryField?.GetValue(internalQuery) as ObjectQuery<T>;
     }
 
     public static IQueryable<GroupChatMessage> MarkUnreadAsReadFromUser(this IQueryable<GroupChatMessage> query,

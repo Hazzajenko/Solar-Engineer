@@ -27,7 +27,7 @@ public class
     public async ValueTask<IEnumerable<InitialGroupChatCombinedDto>>
         Handle(GetInitialGroupChatsCombinedQuery request, CancellationToken cT)
     {
-        var res = await _context.AppUserGroupChats
+        var res = _context.AppUserGroupChats
             .Where(x => x.AppUserId == request.AppUser.Id)
             .Include(x => x.GroupChat)
             .ThenInclude(x => x.CreatedBy)
@@ -47,6 +47,11 @@ public class
                 Id = x.GroupChat.Id,
                 Name = x.GroupChat.Name,
                 PhotoUrl = x.GroupChat.PhotoUrl,
+                Permissions = new GroupChatPermissions
+                {
+                    CanInvite = x.CanInvite,
+                    CanKick = x.CanKick
+                },
                 Members = x.GroupChat.AppUserGroupChats
                     .OrderBy(c => c.JoinedAt)
                     .Select(c => c.ToInitialMemberDto()),
@@ -58,8 +63,14 @@ public class
                     .OrderBy(o => o.MessageSentTime)
                     .Select(c => c.ToDto())
                     .LastOrDefault()
-            })
-            .ToListAsync(cT);
+            });
+        // .ToListAsync(cT);;
+
+        // res.
+        var yo = res.ToQueryString();
+        return await res.ToListAsync(cT);
+
+        // Console.WriteLine((res.ToS).ToTraceString());
 
         return res;
     }

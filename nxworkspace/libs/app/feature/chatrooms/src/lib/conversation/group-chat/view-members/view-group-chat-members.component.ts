@@ -29,6 +29,7 @@ import { LetModule } from '@ngrx/component'
 import {
   GroupChatMemberModel,
   GroupChatMessageMemberModel,
+  PermissionsModel,
   UserModel,
   WebUserModel,
 } from '@shared/data-access/models'
@@ -91,9 +92,11 @@ export class ViewGroupChatMembersComponent {
   )
   user$: Observable<UserModel | undefined> = this.authStore.select.user$
   selectedMembersToInvite: WebUserModel[] = []
+  selectedMember?: GroupChatMemberModel
   groupChatMembers$: Observable<GroupChatMemberModel[]>
   groupChatName: string
-
+  groupChatPermissions: PermissionsModel
+  kickMode = false
   // membersToInvite$
 
   membersToInvite$: Observable<WebUserModel[]> = this.friendsStore.select.friends$.pipe(
@@ -107,14 +110,17 @@ export class ViewGroupChatMembersComponent {
 
   constructor(
     private dialogRef: MatDialogRef<ViewGroupChatMembersComponent>,
-    @Inject(MAT_DIALOG_DATA) data: { groupChatName: string; groupChatId: number },
+    @Inject(MAT_DIALOG_DATA)
+    data: { groupChatName: string; groupChatId: number; groupChatPermissions: PermissionsModel },
   ) {
     this.groupChatMembers$ = this.groupChatsStore.select.groupChatMemberWebUsers$(data.groupChatId)
     this.groupChatName = data.groupChatName
+    this.groupChatPermissions = data.groupChatPermissions
   }
 
   memberListChange(event: MatSelectionListChange) {
     this.selectedMembersToInvite = event.source.selectedOptions.selected.map((value) => value.value)
+    this.selectedMember = event.source.selectedOptions.selected[0].value as GroupChatMemberModel
   }
 
   createChatRoom() {
@@ -127,5 +133,11 @@ export class ViewGroupChatMembersComponent {
           : [],
     }
     this.groupChatsStore.dispatch.createGroupChat(request)
+  }
+
+  removeFromGroup() {}
+
+  enableKickMode() {
+    this.kickMode = !this.kickMode
   }
 }

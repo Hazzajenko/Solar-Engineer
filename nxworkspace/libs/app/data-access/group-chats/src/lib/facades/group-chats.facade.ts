@@ -4,16 +4,13 @@ import {
   catchError,
   combineLatest,
   EMPTY,
-  filter,
   firstValueFrom,
-  forkJoin,
   Observable,
   of,
   startWith,
   switchMap,
   take,
   tap,
-  throwIfEmpty,
 } from 'rxjs'
 import {
   GroupChatMembersSelectors,
@@ -22,17 +19,18 @@ import {
 } from '../store'
 import { map } from 'rxjs/operators'
 import {
+  GROUP_CHAT_SERVER_MEMBER_MODEL,
+  GROUP_CHAT_SERVER_MESSAGE_MODEL,
   GroupChatCombinedModel,
   GroupChatMemberModel,
   GroupChatMessageMemberModel,
   GroupChatMessageModel,
-  MessageModel,
-  WebUserModel,
+  GroupChatServerMessageModel,
+  MessageFrom,
 } from '@shared/data-access/models'
-import { orderBy, sortBy } from 'lodash'
 import { ConnectionsStoreService } from '@shared/data-access/connections'
 import { UsersStoreService } from '@app/data-access/users'
-import { instanceOf } from 'ts-pattern/dist/patterns'
+import { sortByMessageSentTime } from '@shared/utils'
 
 @Injectable({
   providedIn: 'root',
@@ -54,6 +52,8 @@ export class GroupChatsFacade {
   messagesError$ = this.store.select(GroupChatMessagesSelectors.selectGroupChatMessagesError)
   messagesLoaded$ = this.store.select(GroupChatMessagesSelectors.selectGroupChatMessagesLoaded)
 
+  serverMessages$ = this.store.select(GroupChatsSelectors.selectAllGroupServerChatMessages)
+
   get groupChats() {
     return firstValueFrom(this.groupChats$)
   }
@@ -66,9 +66,6 @@ export class GroupChatsFacade {
     return firstValueFrom(this.messages$)
   }
 
-  /*  sort((a: MessageModel, b: MessageModel) => {
-    return new Date(b.messageSentTime).getTime() - new Date(a.messageSentTime).getTime()
-  })*/
   get groupChatsWithLatestMessage$() {
     return this.groupChats$.pipe(
       switchMap((groupChats) =>
@@ -141,10 +138,12 @@ export class GroupChatsFacade {
         /*        const groupMembers = this.members$.pipe(
                   map((members) => members.filter((member) => member.groupChatId === groupChat.id)),
                 )*/
-        const groupMembers = this.groupChatMemberWebUsers$(groupChatId).pipe(startWith([]))
-        const groupMessages = this.groupChatMessagesWithMembersById$(groupChatId).pipe(
-          startWith([]),
+        const groupMembers = this.groupChatMemberWebUsers$(groupChatId).pipe(
+          startWith([] as GroupChatMemberModel[]),
         )
+        const groupMessages = this.groupChatMessagesWithMembersCombinedWithServerMessagesById2$(
+          groupChatId,
+        ).pipe(startWith([] as GroupChatMessageMemberModel[]))
         const latestSentMessage = groupMessages.pipe(
           map((messages) => (messages[0] ? messages[0] : undefined)),
           take(1),
@@ -188,29 +187,6 @@ export class GroupChatsFacade {
     )
   }
 
-  /*  groupChatWebUserMembersById$(
-      groupChatId: number,
-    ) {
-      return this.members$.pipe(
-        map((members) => members.filter((member) => member.groupChatId === groupChatId)),
-        switchMap((members) =>
-          combineLatest(
-            messages.map((message) => {
-              const sender$ = this.groupChatSenderWebUser$(groupChatId, message)
-              return combineLatest([of(message), sender$]).pipe(
-                map(([message, sender]) => ({ ...message, sender } as GroupChatMessageMemberModel)),
-              )
-            }),
-          ),
-        ),
-        map((messages) =>
-          messages.sort((a: GroupChatMessageMemberModel, b: GroupChatMessageMemberModel) => {
-            return new Date(a.messageSentTime).getTime() - new Date(b.messageSentTime).getTime()
-          }),
-        ),
-      )
-    }*/
-
   groupChatMessagesWithMembersById$(
     groupChatId: number,
   ): Observable<GroupChatMessageMemberModel[]> {
@@ -219,19 +195,62 @@ export class GroupChatsFacade {
       switchMap((messages) =>
         combineLatest(
           messages.map((message) => {
-            const sender$ = this.groupChatSenderWebUser$(groupChatId, message)
+            const sender$ = this.groupChatSenderWebUser$(message)
             return combineLatest([of(message), sender$]).pipe(
               map(([message, sender]) => ({ ...message, sender } as GroupChatMessageMemberModel)),
             )
           }),
         ),
       ),
-      map((messages) =>
-        messages.sort((a: GroupChatMessageMemberModel, b: GroupChatMessageMemberModel) => {
-          return new Date(a.messageSentTime).getTime() - new Date(b.messageSentTime).getTime()
-        }),
+      map(
+        (messages) => sortByMessageSentTime<GroupChatMessageMemberModel>(messages),
+        /*        messages.sort((a: GroupChatMessageMemberModel, b: GroupChatMessageMemberModel) => {
+                  return new Date(a.messageSentTime).getTime() - new Date(b.messageSentTime).getTime()
+                }),*/
       ),
     )
+  }
+
+  getMessagesAndServerMessagesCombined$(groupChatId: number) {
+    return combineLatest([
+      this.messages$.pipe(
+        map((messages) => messages.filter((message) => message.groupChatId === groupChatId)),
+      ),
+      this.serverMessages$.pipe(
+        map((messages) =>
+          messages
+            .filter((message) => message.groupChatId === groupChatId)
+            .map((msg) => {
+              return {
+                ...msg,
+                id: 0,
+              } as GroupChatMessageModel
+            }),
+        ),
+      ),
+    ]).pipe(map(([messages, serverMessages]) => [...messages, ...serverMessages]))
+  }
+
+  groupChatMessagesWithMembersCombinedWithServerMessagesById2$(groupChatId: number) {
+    return this.getMessagesAndServerMessagesCombined$(groupChatId).pipe(
+      switchMap((messages) => combineLatest(this.combineMessagesWithWebUsers$(messages))),
+      map((messages) => sortByMessageSentTime<GroupChatMessageMemberModel>(messages)),
+    )
+  }
+
+  combineMessagesWithWebUsers$(messages: GroupChatMessageModel[]) {
+    return messages.map((message) => {
+      if (message.messageFrom === MessageFrom.Server) {
+        const sender$ = of(GROUP_CHAT_SERVER_MEMBER_MODEL())
+        return combineLatest([of(message), sender$]).pipe(
+          map(([message, sender]) => ({ ...message, sender } as GroupChatMessageMemberModel)),
+        )
+      }
+      const sender$ = this.groupChatSenderWebUser$(message)
+      return combineLatest([of(message), sender$]).pipe(
+        map(([message, sender]) => ({ ...message, sender } as GroupChatMessageMemberModel)),
+      )
+    })
   }
 
   groupChatMemberWebUsers$(groupChatId: number): Observable<GroupChatMemberModel[]> {
@@ -242,7 +261,16 @@ export class GroupChatsFacade {
             return combineLatest([
               of(member),
               this.usersStore.select.webUserCombinedByUserName$(member.userName),
-            ]).pipe(map(([member, webUser]) => ({ ...member, ...webUser } as GroupChatMemberModel)))
+            ]).pipe(
+              map(
+                ([member, webUser]) =>
+                  ({
+                    ...member,
+                    ...webUser,
+                    isServer: false,
+                  } as GroupChatMemberModel),
+              ),
+            )
           }),
         ),
       ),
@@ -250,20 +278,32 @@ export class GroupChatsFacade {
   }
 
   groupChatSenderWebUser$(
-    groupChatId: number,
     message: GroupChatMessageModel,
   ): Observable<GroupChatMemberModel | undefined> {
-    return this.groupChatMembersById$(groupChatId).pipe(
+    return this.groupChatMembersById$(message.groupChatId).pipe(
       map((members) => members.find((member) => member.userName === message.senderUserName)),
       switchMap((member) => {
         if (!member) return of(undefined)
         return combineLatest([
           of(member),
           this.usersStore.select.webUserCombinedByUserName$(member.userName),
-        ]).pipe(map(([member, webUser]) => ({ ...member, ...webUser } as GroupChatMemberModel)))
+        ]).pipe(
+          map(
+            ([member, webUser]) =>
+              ({
+                ...member,
+                ...webUser,
+                isServer: false,
+              } as GroupChatMemberModel),
+          ),
+        )
       }),
     )
   }
+
+  /*  isOnline: boolean
+    isFriend: boolean
+    becameFriendsTime: string | null*/
 
   groupChatMembersById$(groupChatId: number) {
     return this.members$.pipe(

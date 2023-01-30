@@ -1,32 +1,36 @@
-<ng-container *ngIf="user$ | async as user">
-  <div class="flex flex-row items-center justify-center">
-    <form class="px-8 pt-6 pb-8 mb-4">
+<ng-container *ngIf='user$ | async as user'>
+  <div class='flex flex-row items-center justify-center'>
+    <form class='px-8 pt-6 pb-8 mb-4'>
       <h3>{{ groupChatName }} Members</h3>
 
+      <!--      <button (click)="enableKickMode()" mat-stroked-button color="primary" type="button">-->
+      <!--        Kick Members-->
+      <!--      </button>-->
+      <!--      [multiple]="true"-->
       <mat-selection-list
-        (selectionChange)="memberListChange($event)"
-        [multiple]="true"
-        class="flex flex-col items-center content-center"
+        (selectionChange)='memberListChange($event)'
+        [multiple]='false'
+        class='flex flex-col items-center content-center'
       >
         <cdk-virtual-scroll-viewport
           [ngStyle]="{
             height: '350px',
             width: '400px'
           }"
-          class="flex flex-col items-center content-center"
-          itemSize="25"
+          class='flex flex-col items-center content-center'
+          itemSize='25'
         >
           <!--          [ngStyle]='{"background-color": notification.status === 0 ? "#60a1fa" : ""}'-->
           <!--            messages | sortMessages : false'-->
           <!--            [message]='message'-->
           <mat-list-option
-            *cdkVirtualFor="let member of groupChatMembers$ | async"
-            [value]="member"
+            *cdkVirtualFor='let member of groupChatMembers$ | async'
+            [value]='member'
           >
             <!--            <mat-icon *ngIf="member.isOnline" matListItemIcon>wifi</mat-icon>-->
             <!--            <div class="relative">-->
             <app-group-chat-member-item-component
-              [member]="member"
+              [member]='member'
             ></app-group-chat-member-item-component>
             <!--            <img class="w-8 h-8 rounded-full" matListItemIcon [src]="member.photoUrl" alt="" />
                         <span
@@ -59,23 +63,40 @@
               {{ item.userName }}
             </div>-->
 
-      <!--      <div class="flex items-center content-center justify-center">
-              <button
-                [disabled]="!chatRoomNameControl.value || chatRoomNameControl.value.length < 1"
-                (click)="createChatRoom()"
-                mat-stroked-button
-                color="primary"
-                type="button"
-              >
-                Create {{ chatRoomNameControl.value }}
-              </button>
-              &lt;!&ndash;        <a
-                        class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
-                        href="#"
-                      >
-                        Cancel
-                      </a>&ndash;&gt;
-            </div>-->
+      <div class='flex items-center content-center justify-center'>
+        <!--        <button (click)="enableKickMode()" mat-stroked-button color="primary" type="button">
+                  Kick Mode
+                </button>-->
+        <button
+          [disabled]='
+            !groupChatPermissions.canKick ||
+            selectedMembersToInvite.length < 1 ||
+            selectedMember?.userName === user.userName
+          '
+          (click)='removeFromGroup()'
+          mat-stroked-button
+          color='primary'
+          type='button'
+        >
+          <span *ngIf='groupChatPermissions.canKick; else cantKick'>
+
+              Remove {{ selectedMember?.userName }}<!-- from {{ groupChatName }}-->
+
+          </span
+          >
+          <ng-template #cantKick>
+            <span *ngIf='!groupChatPermissions.canKick'
+            >Do not have group chat permissions to kick</span
+            >
+          </ng-template>
+        </button>
+        <!--        <a
+                  class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
+                  href="#"
+                >
+                  Cancel
+                </a>-->
+      </div>
     </form>
   </div>
 </ng-container>

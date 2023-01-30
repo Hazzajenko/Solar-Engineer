@@ -12,9 +12,11 @@ import {
   GroupChatModel,
   GroupChatServerMessageModel,
   InitialGroupChatMemberModel,
+  MESSAGE_FROM,
 } from '@shared/data-access/models'
 import { notEmpty } from '@shared/utils'
 import { GroupChatServerMessagesActions } from '../store/group-chat-server-messages/group-chat-server-messages.actions'
+import { tap } from 'rxjs'
 
 @Injectable({
   providedIn: 'root',
@@ -85,6 +87,7 @@ export class GroupChatsEffects {
               id: groupChat.id,
               name: groupChat.name,
               photoUrl: groupChat.photoUrl,
+              permissions: groupChat.permissions,
             } as GroupChatModel),
         ),
       ),
@@ -109,7 +112,7 @@ export class GroupChatsEffects {
             groupChat.members.map(
               (member) =>
                 ({
-                  id: groupChat.id,
+                  id: member.id,
                   groupChatId: groupChat.id,
                   userName: member.userName,
                   role: member.role,
@@ -119,6 +122,7 @@ export class GroupChatsEffects {
           )
           .flatMap((member) => member),
       ),
+      // tap((res) => console.log('members', res)),
       map((groupChatMembers) =>
         GroupChatMembersActions.addManyGroupChatMembers({ groupChatMembers }),
       ),
@@ -142,6 +146,8 @@ export class GroupChatsEffects {
         ({ response }) =>
           response.groupChats
             .map((groupChat) => groupChat.latestMessage)
+            // .map(msg => ({ ...msg, messageFrom: MESSAGE_FROM[msg.messageFrom] } as GroupChatMessageModel))
+
             // .flatMap((f) => (f ? [f] : [])),
             .filter((x): x is GroupChatMessageModel => x !== null),
         // .flatMap((member) => member),

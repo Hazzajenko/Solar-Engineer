@@ -39,6 +39,7 @@ import { ScrollViewportDirective } from '../../../../../messages/src/lib/feature
 import { SortConversationMessagesPipe } from '../../../../../messages/src/lib/feature/conversation/sort-conversation-messages.pipe'
 import { ChatRoomsService } from '../services/chat-rooms.service'
 import { SortChatroomsPipe } from './sort-chatrooms.pipe'
+import { TruncatePipe } from '../../../../../../shared/pipes/src/lib/text/truncate.pipe'
 
 @Component({
   selector: 'app-chatroom-list-component',
@@ -76,6 +77,7 @@ import { SortChatroomsPipe } from './sort-chatrooms.pipe'
     SortConversationMessagesPipe,
     MatAutocompleteModule,
     SortChatroomsPipe,
+    TruncatePipe,
   ],
   standalone: true,
 })

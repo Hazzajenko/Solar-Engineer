@@ -10,8 +10,12 @@ public static class GroupChatServerMessagesMapping
         {
             Id = request.Id,
             GroupChatId = request.GroupChatId,
+            // SenderUserName = "SERVER",
             Content = request.Content,
             MessageSentTime = request.MessageSentTime
+            // MessageFrom = MessageFrom.Server
+            // IsUserSender = false,
+            // IsServer = true
         };
     }
 }

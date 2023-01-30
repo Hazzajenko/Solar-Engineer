@@ -215,6 +215,7 @@ public class MessagesRepository : IMessagesRepository
     public async Task<GroupChatMessageDto> SendMessageToGroupChatAsync(GroupChatMessage message, AppUser appUser)
     {
         await _context.GroupChatMessages.AddAsync(message);
+        // var das= _context.SaveChanges();
         await _context.SaveChangesAsync();
         return message.ToDto(appUser);
     }

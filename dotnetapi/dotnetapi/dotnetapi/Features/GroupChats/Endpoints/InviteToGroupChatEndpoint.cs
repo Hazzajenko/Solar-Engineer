@@ -108,7 +108,8 @@ public class InviteToGroupChatEndpoint : Endpoint<InviteToGroupChatRequest, Invi
         var groupChatServerMessage = new GroupChatServerMessage
         {
             GroupChat = appUserGroupChat.GroupChat,
-            Content = $"{appUser} invited {invitedMembers.Count} members to {appUserGroupChat.GroupChat.Name}"
+            Content =
+                $"{appUser} invited {invitedMembers.Count} {MemberOrMembers(invitedMembers.Count)} members to {appUserGroupChat.GroupChat.Name}"
         };
 
 
@@ -126,5 +127,12 @@ public class InviteToGroupChatEndpoint : Endpoint<InviteToGroupChatRequest, Invi
         };
 
         await SendOkAsync(response, ct);
+    }
+
+    private string MemberOrMembers(int count)
+    {
+        if (count > 1) return "members";
+
+        return "member";
     }
 }

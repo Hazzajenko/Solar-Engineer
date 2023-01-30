@@ -12,7 +12,9 @@ public class GroupChatMessage : BaseEntity
     public string Content { get; set; } = default!;
     public IEnumerable<GroupChatReadTime> MessageReadTimes { get; set; } = default!;
     public DateTime MessageSentTime { get; set; } = DateTime.UtcNow;
+
     public bool SenderDeleted { get; set; }
+    // public bool IsServer { get; set; }
 }
 
 public class GroupChatReadTime : BaseEntity

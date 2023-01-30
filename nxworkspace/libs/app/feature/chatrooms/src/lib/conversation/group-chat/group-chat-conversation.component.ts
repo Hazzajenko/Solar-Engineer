@@ -31,6 +31,7 @@ import {
   GroupChatMemberModel,
   GroupChatMessageMemberModel,
   GroupChatMessageModel,
+  MessageFrom,
   MessageTimeSortModel,
   UserModel,
 } from '@shared/data-access/models'
@@ -129,6 +130,7 @@ export class GroupChatConversationComponent {
   private authStore = inject(AuthStoreService)
   private route = inject(ActivatedRoute)
   private groupChatsStore = inject(GroupChatsStoreService)
+  readonly MessageFrom = MessageFrom
 
   isDialog$ = this.route.url.pipe(
     map((paths) => {
@@ -166,6 +168,7 @@ export class GroupChatConversationComponent {
     this.groupChatMessages$ = this.groupChatsStore.select.groupChatMessagesById$(
       selectChatroom.groupChat.id,
     )
+    this.groupChatsStore.select.serverMessages$.subscribe((res) => console.log('SERVER', res))
     /*    this.groupChatMembers$ = this.groupChatsStore.select.groupChatMembersById$(
           selectChatroom.groupChat.id,
         )*/
@@ -191,7 +194,7 @@ export class GroupChatConversationComponent {
   }
 
   trackByFn(index: number, element: GroupChatMessageMemberModel) {
-    return element.id
+    return new Date(element.messageSentTime).getTime()
   }
 
   onRightClick(event: MouseEvent, message: GroupChatMessageMemberModel) {

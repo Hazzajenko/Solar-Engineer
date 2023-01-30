@@ -75,6 +75,7 @@ export class GroupChatOptionsBarComponent {
       data: {
         groupChatName: this.groupChat.name,
         groupChatId: this.groupChat.id,
+        groupChatPermissions: this.groupChat.permissions,
       },
     } as MatDialogConfig
 

@@ -48,6 +48,7 @@ public class InitialGroupChatCombinedDto
     public int Id { get; set; }
     public string Name { get; set; } = default!;
     public string PhotoUrl { get; set; } = default!;
+    public GroupChatPermissions Permissions { get; set; } = new();
     public IEnumerable<InitialGroupChatMemberDto> Members { get; set; } = default!;
     public GroupChatMessageDto? LatestMessage { get; set; } = default!;
     public GroupChatServerMessageDto? LatestServerMessage { get; set; } = default!;

@@ -1,4 +1,4 @@
-import { GroupChatMemberModel, GroupChatReadTime } from '..'
+import { GroupChatMemberModel, GroupChatReadTime, MessageFrom } from '..'
 
 export interface GroupChatMessageMemberModel {
   id: number
@@ -8,4 +8,7 @@ export interface GroupChatMessageMemberModel {
   content: string
   messageReadTimes: GroupChatReadTime[]
   messageSentTime: string
+  // isUserSender: boolean
+  // isServer: boolean
+  messageFrom: MessageFrom
 }
