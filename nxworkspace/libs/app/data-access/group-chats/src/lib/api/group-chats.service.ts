@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http'
+import { HttpClient, HttpResponse } from '@angular/common/http'
 import { inject, Injectable } from '@angular/core'
 import { GroupChatMessageModel, GroupChatServerMessageModel } from '@shared/data-access/models'
 import { GroupChatsStoreService } from '../facades'
@@ -6,6 +6,8 @@ import { AllGroupChatsDataResponse } from '../models/all-group-chats.response'
 import {
   CreateGroupChatRequest,
   InviteToGroupChatRequest,
+  RemoveFromGroupChatRequest,
+  RemoveFromGroupChatResponse,
   SendGroupChatMessageRequest,
 } from '../models'
 import { MessagesSignalrService } from '@app/data-access/signalr'
@@ -37,33 +39,45 @@ export class GroupChatsService {
     )
   }
 
-  waitForGroupChatMessages() {
-    if (!this.messagesSignalrService.messagesHub) return
-    this.messagesSignalrService.messagesHub.on(
-      'getGroupChatMessages',
-      (message: GroupChatMessageModel | GroupChatMessageModel[]) => {
-        if (Array.isArray(message)) {
-          this.groupChatsStore.dispatch.addManyGroupChatMessages(message)
-        } else {
-          this.groupChatsStore.dispatch.addGroupChatMessage(message)
-        }
+  removeFromGroupChat(request: RemoveFromGroupChatRequest) {
+    return this.http.delete<RemoveFromGroupChatResponse>(
+      `/api/${GROUP_CHATS}/${request.groupChatId}/users/${request.userNames[0]}`,
+      {
+        body: {
+          userNames: request.userNames,
+        },
       },
     )
   }
 
-  waitForGroupChatServerMessages() {
-    if (!this.messagesSignalrService.messagesHub) return
-    this.messagesSignalrService.messagesHub.on(
-      'getGroupChatServerMessages',
-      (serverMessage: GroupChatServerMessageModel | GroupChatServerMessageModel[]) => {
-        if (Array.isArray(serverMessage)) {
-          this.groupChatsStore.dispatch.addManyGroupChatServerMessages(serverMessage)
-        } else {
-          this.groupChatsStore.dispatch.addGroupChatServerMessage(serverMessage)
-        }
-      },
-    )
-  }
+  /*
+    waitForGroupChatMessages() {
+      if (!this.messagesSignalrService.messagesHub) return
+      this.messagesSignalrService.messagesHub.on(
+        'getGroupChatMessages',
+        (message: GroupChatMessageModel | GroupChatMessageModel[]) => {
+          if (Array.isArray(message)) {
+            this.groupChatsStore.dispatch.addManyGroupChatMessages(message)
+          } else {
+            this.groupChatsStore.dispatch.addGroupChatMessage(message)
+          }
+        },
+      )
+    }
+
+    waitForGroupChatServerMessages() {
+      if (!this.messagesSignalrService.messagesHub) return
+      this.messagesSignalrService.messagesHub.on(
+        'getGroupChatServerMessages',
+        (serverMessage: GroupChatServerMessageModel | GroupChatServerMessageModel[]) => {
+          if (Array.isArray(serverMessage)) {
+            this.groupChatsStore.dispatch.addManyGroupChatServerMessages(serverMessage)
+          } else {
+            this.groupChatsStore.dispatch.addGroupChatServerMessage(serverMessage)
+          }
+        },
+      )
+    }*/
 
   getAllGroupChats() {
     return this.http.get<AllGroupChatsDataResponse>(`/api/${GROUP_CHATS}/data`)
@@ -73,19 +87,20 @@ export class GroupChatsService {
     return this.http.get<InitialCombinedGroupChatsResponse>(`/api/${GROUP_CHATS}/data`)
   }
 
-  getMessagesWithGroupChatSignalR(groupChatId: number) {
-    if (!this.messagesSignalrService.messagesHub) return
-    this.messagesSignalrService.messagesHub
-      .invoke('getGroupChatMessages', groupChatId)
-      .catch((error) => console.log(error))
-  }
+  /*
+    getMessagesWithGroupChatSignalR(groupChatId: number) {
+      if (!this.messagesSignalrService.messagesHub) return
+      this.messagesSignalrService.messagesHub
+        .invoke('getGroupChatMessages', groupChatId)
+        .catch((error) => console.log(error))
+    }
 
-  sendMessageToGroupChatSignalR(request: SendGroupChatMessageRequest) {
-    if (!this.messagesSignalrService.messagesHub) return
-    return this.messagesSignalrService.messagesHub
-      .invoke('sendMessageToGroupChat', request)
-      .catch((error) => console.log(error))
-  }
+    sendMessageToGroupChatSignalR(request: SendGroupChatMessageRequest) {
+      if (!this.messagesSignalrService.messagesHub) return
+      return this.messagesSignalrService.messagesHub
+        .invoke('sendMessageToGroupChat', request)
+        .catch((error) => console.log(error))
+    }*/
 
   /*
 

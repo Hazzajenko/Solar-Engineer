@@ -46,7 +46,8 @@ public class AppUserConfig : IEntityTypeConfiguration<AppUser>
         builder.HasMany(ur => ur.GroupChatMessagesSent)
             .WithOne(u => u.Sender)
             .HasForeignKey(ur => ur.SenderId)
-            .IsRequired();
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Restrict);
 
         /*
         builder.HasMany(ur => ur.Images)

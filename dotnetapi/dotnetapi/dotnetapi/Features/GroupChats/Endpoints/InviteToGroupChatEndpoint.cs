@@ -1,5 +1,4 @@
 ﻿using dotnetapi.Features.GroupChats.Contracts.Requests;
-using dotnetapi.Features.GroupChats.Contracts.Responses;
 using dotnetapi.Features.GroupChats.Entities;
 using dotnetapi.Features.GroupChats.Handlers;
 using dotnetapi.Features.GroupChats.Mapping;
@@ -14,7 +13,7 @@ using Microsoft.AspNetCore.Identity;
 namespace dotnetapi.Features.GroupChats.Endpoints;
 
 [Authorize]
-public class InviteToGroupChatEndpoint : Endpoint<InviteToGroupChatRequest, InviteManyToGroupChatResponse>
+public class InviteToGroupChatEndpoint : Endpoint<InviteToGroupChatRequest>
 {
     private readonly IGroupChatsRepository _groupChatsRepository;
     private readonly ILogger<InviteToGroupChatEndpoint> _logger;
@@ -109,13 +108,30 @@ public class InviteToGroupChatEndpoint : Endpoint<InviteToGroupChatRequest, Invi
         {
             GroupChat = appUserGroupChat.GroupChat,
             Content =
-                $"{appUser} invited {invitedMembers.Count} {MemberOrMembers(invitedMembers.Count)} members to {appUserGroupChat.GroupChat.Name}"
+                $"{appUser} invited {invitedMembers.Count} {MemberOrMembers(invitedMembers.Count)} to {appUserGroupChat.GroupChat.Name}"
         };
 
 
         var sendServerMessage = await _mediator.Send(new CreateGroupChatServerMessageQuery(groupChatServerMessage), ct);
 
-        var serverMessages = new List<GroupChatServerMessageDto>
+        /*
+        var groupMemberUserNames = await _mediator.Send(new GetGroupChatMemberUserNamesQuery(groupChatId), ct);
+
+        var sendSignalRMessage =
+            await _mediator.Send(
+                new SendServerMessageToGroupChatQuery(sendServerMessage, groupMemberUserNames.UserNames), ct);*/
+
+        /*
+        if (sendSignalRMessage is false)
+        {
+            _logger.LogError("Group {Group} has no members to update",
+                groupChatId);
+            await SendNotFoundAsync(ct);
+            return;
+            // ThrowError("User is not apart of group chat");
+        }*/
+
+        /*var serverMessages = new List<GroupChatServerMessageDto>
         {
             sendServerMessage.ToDto()
         };
@@ -124,9 +140,9 @@ public class InviteToGroupChatEndpoint : Endpoint<InviteToGroupChatRequest, Invi
         {
             NewMembers = invitedMembers,
             ServerMessages = serverMessages
-        };
+        };*/
 
-        await SendOkAsync(response, ct);
+        await SendNoContentAsync(ct);
     }
 
     private string MemberOrMembers(int count)

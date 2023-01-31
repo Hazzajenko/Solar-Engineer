@@ -16,7 +16,6 @@ export class MessagesSignalrService {
         transport: signalR.HttpTransportType.WebSockets,
       })
       .configureLogging(LogLevel.Information)
-      // .configureLogging(new SignalrLogger())
       .withAutomaticReconnect()
       .build()
 
@@ -24,30 +23,5 @@ export class MessagesSignalrService {
       .start()
       .then(() => console.log('Connection started'))
       .catch((err) => console.log('Error while starting connection: ' + err))
-
-    /*    this.messagesHub.on('getMessages', (message: MessageModel) => {
-          if (Array.isArray(message)) {
-            console.log('Array.isArray(message)', message)
-            this.messagesStore.dispatch.addManyMessages(message)
-          } else {
-            console.log('getMessages', message)
-            this.messagesStore.dispatch.addMessage(message)
-          }
-        })*/
   }
-
-  /*
-    sendMessageToUserSignalR(request: SendMessageRequest) {
-      if (!this.messagesHub) return
-      return this.messagesHub.invoke('SendMessageToUser', request)
-        .catch(error => console.log(error))
-    }
-
-    getMessagesWithUserSignalR(userName: string) {
-      if (!this.messagesHub) return
-      this.messagesHub.invoke('getMessages', userName)
-        .then((data) => {
-          console.log(data)
-      })
-    }  */
 }

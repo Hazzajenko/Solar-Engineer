@@ -4,19 +4,15 @@ import { AuthActions } from '@auth/data-access/store'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 
 import { map, switchMap } from 'rxjs/operators'
-import { GroupChatsService } from '../api'
+import { GroupChatsService, GroupChatsSignalrService } from '../api'
 import { GroupChatMembersActions, GroupChatMessagesActions, GroupChatsActions } from '../store'
 import {
-  GroupChatMemberModel,
   GroupChatMessageModel,
   GroupChatModel,
   GroupChatServerMessageModel,
   InitialGroupChatMemberModel,
-  MESSAGE_FROM,
 } from '@shared/data-access/models'
-import { notEmpty } from '@shared/utils'
-import { GroupChatServerMessagesActions } from '../store/group-chat-server-messages/group-chat-server-messages.actions'
-import { tap } from 'rxjs'
+import { GroupChatServerMessagesActions } from '../store/group-chat-server-messages'
 
 @Injectable({
   providedIn: 'root',
@@ -24,6 +20,7 @@ import { tap } from 'rxjs'
 export class GroupChatsEffects {
   private actions$ = inject(Actions)
   private groupChatsService = inject(GroupChatsService)
+  private groupChatsSignalR = inject(GroupChatsSignalrService)
   private snackBar = inject(MatSnackBar)
 
   createGroupChat$ = createEffect(() =>
@@ -48,6 +45,21 @@ export class GroupChatsEffects {
               GroupChatMembersActions.addManyGroupChatMembers({ groupChatMembers: newMembers }),
             ),
           ),
+      ),
+    ),
+  )
+
+  removeFromGroupChat$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(GroupChatMembersActions.removeUserFromGroup),
+      switchMap(({ request }) =>
+        this.groupChatsService.removeFromGroupChat(request).pipe(
+          map(({ removedMembers }) =>
+            GroupChatMembersActions.removeGroupChatMember({
+              groupChatMemberId: removedMembers[0],
+            }),
+          ),
+        ),
       ),
     ),
   )
@@ -194,7 +206,7 @@ export class GroupChatsEffects {
       this.actions$.pipe(
         ofType(GroupChatsActions.initGroupChat),
         map(({ groupChatId }) =>
-          this.groupChatsService.getMessagesWithGroupChatSignalR(groupChatId),
+          this.groupChatsSignalR.getMessagesWithGroupChatSignalR(groupChatId),
         ),
       ),
     { dispatch: false },
@@ -204,7 +216,7 @@ export class GroupChatsEffects {
     () =>
       this.actions$.pipe(
         ofType(GroupChatMessagesActions.sendMessageToGroupChat),
-        map(({ request }) => this.groupChatsService.sendMessageToGroupChatSignalR(request)),
+        map(({ request }) => this.groupChatsSignalR.sendMessageToGroupChatSignalR(request)),
       ),
     { dispatch: false },
   )

@@ -30,7 +30,7 @@ import {
 } from '@shared/data-access/models'
 import { ConnectionsStoreService } from '@shared/data-access/connections'
 import { UsersStoreService } from '@app/data-access/users'
-import { sortByMessageSentTime } from '@shared/utils'
+import { byMessageSentTime, sortByMessageSentTime } from '@shared/utils'
 
 @Injectable({
   providedIn: 'root',
