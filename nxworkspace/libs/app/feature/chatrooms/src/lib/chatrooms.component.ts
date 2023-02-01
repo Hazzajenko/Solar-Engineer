@@ -92,6 +92,8 @@ export class ChatroomsComponent {
   private route = inject(ActivatedRoute)
   private chatRoomsService = inject(ChatRoomsService)
 
+  isCreatingGroupChat$ = this.chatRoomsService.creatingGroupChat$
+
   isDialog$ = this.route.url.pipe(
     map((paths) => {
       return paths[0].path !== 'messages'

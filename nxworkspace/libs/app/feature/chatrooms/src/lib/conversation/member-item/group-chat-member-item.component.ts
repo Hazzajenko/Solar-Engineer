@@ -2,7 +2,7 @@ import { NgIf } from '@angular/common'
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core'
 import { MatListModule } from '@angular/material/list'
 
-import { GroupChatMemberModel, WebUserModel } from '@shared/data-access/models'
+import { GroupChatMemberModel, UserModel, WebUserModel } from '@shared/data-access/models'
 import { TimeDifferenceFromNowPipe } from '@shared/pipes'
 
 @Component({
@@ -16,4 +16,5 @@ import { TimeDifferenceFromNowPipe } from '@shared/pipes'
 export class GroupChatMemberItemComponent {
   @Input() member!: GroupChatMemberModel
   @Input() webUser!: WebUserModel
+  @Input() user!: UserModel
 }

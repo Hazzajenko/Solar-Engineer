@@ -49,9 +49,28 @@ public static class MessageMapper
                 : new List<GroupChatReadTimeDto>(),
             // IsUserSender = appUser.UserName! == request.Sender.UserName!,
             // IsServer = false,
-            MessageFrom = appUser.UserName! == request.Sender.UserName!
-                ? MessageFrom.CurrentUser
-                : MessageFrom.OtherUser
+            MessageFrom =
+                appUser.UserName! == request.Sender.UserName!
+                    ? MessageFrom.CurrentUser
+                    : MessageFrom.OtherUser
+        };
+    }
+
+    public static GroupChatMessageDto ToOtherUsersDto(this GroupChatMessage request)
+    {
+        return new GroupChatMessageDto
+        {
+            Id = request.Id,
+            GroupChatId = request.GroupChatId,
+            Content = request.Content,
+            SenderUserName = request.Sender.UserName!,
+            MessageSentTime = request.MessageSentTime,
+            MessageReadTimes = request.MessageReadTimes.Any()
+                ? request.MessageReadTimes.Select(x => x.ToDto())
+                : new List<GroupChatReadTimeDto>(),
+            // IsUserSender = appUser.UserName! == request.Sender.UserName!,
+            // IsServer = false,
+            MessageFrom = MessageFrom.OtherUser
         };
     }
 

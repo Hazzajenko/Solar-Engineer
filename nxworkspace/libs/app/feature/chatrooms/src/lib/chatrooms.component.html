@@ -13,17 +13,31 @@
     >
       <h1 *ngIf="isDialog" mat-dialog-title>Messages</h1>
       <div class="flex flex-row w-[100%] min-w-[100%]">
-        <button (click)="createNewChatRoom()" mat-button>Create new chat</button>
         <!--        <button mat-button>Create new chat</button>-->
       </div>
       <div class="flex flex-row w-[100%] min-w-[100%]">
         <div class="flex-auto w-[20%] min-w-[20%] p-2">
+          <!--     <button (click)="createNewChatRoom()" mat-button>Create new chat</button>-->
           <app-chatroom-list-component></app-chatroom-list-component>
         </div>
-        <div class="grow w-[80%] min-w-[80%] p-2">
+        <div
+          class="grow w-[80%] min-w-[80%] p-2"
+          *ngrxLet="{
+            isCreatingGroupChat: isCreatingGroupChat$ | async,
+            chatRoomToMessage: chatRoomToMessage$ | async
+          } as groupChatValues"
+        >
           <!--          <ng-container *ngIf="!createNewChat; else createNewChat">-->
-          <ng-container *ngIf="chatRoomToMessage$ | async as chatRoomToMessage; else createNewChat">
-            <ng-template appChangeChatRoom [chatRoom]="chatRoomToMessage"></ng-template>
+          <ng-container
+            *ngIf="
+              groupChatValues.chatRoomToMessage && !groupChatValues.isCreatingGroupChat;
+              else createNewChat
+            "
+          >
+            <ng-template
+              appChangeChatRoom
+              [chatRoom]="groupChatValues.chatRoomToMessage"
+            ></ng-template>
           </ng-container>
           <!--          </ng-container>-->
           <ng-template #createNewChat>

@@ -3,11 +3,39 @@
     <ng-container *ngIf="chatrooms$ | async as chatrooms">
       <ng-container *ngrxLet="chatRoomToMessage$ | async as selectedChatRoom">
         <form>
+          <!--          <button mat-button>Create new chat</button>-->
+          <!--          <app-group-chat-member-item-component
+                      class="p-6"
+                      [user]="user"
+                    ></app-group-chat-member-item-component>
+                    <mat-icon class="absolute left-20">more_vert</mat-icon>-->
+
+          <!--          <div class="flex flex-row justify-between">
+                      <app-group-chat-member-item-component
+                        class="p-2"
+                        [user]="user"
+                      ></app-group-chat-member-item-component>
+                      <mat-icon class="relative top-4">more_vert</mat-icon>
+                    </div>-->
+          <div class="flex flex-row justify-between p-2 items-center">
+            <app-group-chat-member-item-component
+              [user]="user"
+            ></app-group-chat-member-item-component>
+            <!--            <mat-icon>more_vert</mat-icon>-->
+            <!--            <span>-->
+            <button [matMenuTriggerFor]="menu" mat-icon-button>
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <!--            </span>-->
+          </div>
           <label class="mb-2 text-sm font-medium text-gray-900 sr-only" for="default-search"
             >Search</label
           >
+          <!--         <span class="material-symbols-outlined">
+         more_vert
+         </span>-->
           <div class="relative">
-            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            <div class="p-6 absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
               <svg
                 aria-hidden="true"
                 class="w-5 h-5 text-gray-500"
@@ -51,6 +79,62 @@
                          Search
                        </button>-->
           </div>
+          <!--       <button mat-icon-button>
+                   <mat-icon [svgIcon]="'heroicons_outline:search'"></mat-icon>
+                 </button>-->
+          <!-- <div class='absolute inset-0 flex items-center shrink-0 z-99 bg-card'>
+             <mat-icon
+               class='absolute ml-6 sm:ml-8'
+               [svgIcon]="'heroicons_outline:search'"
+             ></mat-icon>
+             <input
+               class='w-full h-full px-16 sm:px-18'
+               [matAutocomplete]='matAutocomplete'
+               [placeholder]="'Search...'"
+               #barSearchInput
+             />
+             <mat-autocomplete
+               class='max-h-128 sm:px-2 border-t rounded-b shadow-md'
+               [autoSelectActiveOption]='true'
+               [disableRipple]='true'
+               #matAutocomplete='matAutocomplete'
+             >
+               <mat-option
+                 class='py-0 px-6 text-md pointer-events-none text-secondary bg-transparent'
+               >
+                 No results found!
+               </mat-option>
+               <ng-container>
+                 <mat-optgroup class='flex items-center mt-2 px-2'>
+                   <span class='text-sm font-semibold tracking-wider text-secondary'></span>
+                 </mat-optgroup>
+                 <ng-container>
+                   <mat-option
+                     class='group relative mb-1 py-0 px-6 text-md rounded-md hover:bg-gray-100 dark:hover:bg-hover'
+                   >
+                     &lt;!&ndash; Contacts &ndash;&gt;
+                     &lt;!&ndash;               <ng-container *ngIf="resultSet.id === 'contacts'">
+                                      <ng-container *ngTemplateOutlet="contactResult; context: {$implicit: result}"></ng-container>
+                                    </ng-container>
+                                    &lt;!&ndash; Pages &ndash;&gt;
+                                    <ng-container *ngIf="resultSet.id === 'pages'">
+                                      <ng-container *ngTemplateOutlet="pageResult; context: {$implicit: result}"></ng-container>
+                                    </ng-container>
+                                    &lt;!&ndash; Tasks &ndash;&gt;
+                                    <ng-container *ngIf="resultSet.id === 'tasks'">
+                                      <ng-container *ngTemplateOutlet="taskResult; context: {$implicit: result}"></ng-container>
+                                    </ng-container>&ndash;&gt;
+                   </mat-option>
+                 </ng-container>
+               </ng-container>
+             </mat-autocomplete>
+             <button
+               class='absolute top-1/2 right-5 sm:right-7 shrink-0 w-10 h-10 -mt-5'
+               mat-icon-button
+             >
+               <mat-icon [svgIcon]="'heroicons_outline:x'"></mat-icon>
+             </button>
+           </div>-->
         </form>
         <!--            <mat-checkbox [(ngModel)]='unreadFilter'>Filter by Unread</mat-checkbox>-->
         <mat-selection-list
@@ -116,3 +200,8 @@
     </ng-container>
   </ng-container>
 </ng-container>
+
+<mat-menu #menu="matMenu">
+  <button mat-menu-item (click)="creatingGroupChat()">New GroupChat</button>
+  <!--  <button mat-menu-item>Item 2</button>-->
+</mat-menu>

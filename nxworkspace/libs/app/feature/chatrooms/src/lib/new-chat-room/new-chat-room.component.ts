@@ -34,6 +34,7 @@ import { FriendsStoreService } from '@app/data-access/friends'
 import { UsersStoreService } from '@app/data-access/users'
 import { combineLatest } from 'rxjs'
 import { CreateGroupChatRequest, GroupChatsStoreService } from '@app/data-access/group-chats'
+import { GroupChatMemberItemComponent } from '../conversation/member-item/group-chat-member-item.component'
 
 @Component({
   selector: 'app-new-chat-room-component',
@@ -63,6 +64,7 @@ import { CreateGroupChatRequest, GroupChatsStoreService } from '@app/data-access
     MatCheckboxModule,
     LetModule,
     MessagesComponent,
+    GroupChatMemberItemComponent,
   ],
   standalone: true,
 })

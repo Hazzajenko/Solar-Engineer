@@ -1,33 +1,29 @@
 ﻿using dotnetapi.Data;
 using dotnetapi.Features.GroupChats.Entities;
-using dotnetapi.Features.Messages.Mapping;
 using dotnetapi.Models.Entities;
 using Mediator;
 
 namespace dotnetapi.Features.GroupChats.Handlers;
 
 public sealed record SendMessageToGroupChatQuery
-    (GroupChatMessage Message, AppUser AppUser) : IRequest<GroupChatMessageDto>;
+    (GroupChatMessage Message, AppUser AppUser) : IRequest<GroupChatMessage>;
 
 public class
-    SendMessageToGroupChatHandler : IRequestHandler<SendMessageToGroupChatQuery, GroupChatMessageDto>
+    SendMessageToGroupChatHandler : IRequestHandler<SendMessageToGroupChatQuery, GroupChatMessage>
 {
-    private readonly IServiceScopeFactory _scopeFactory;
+    private readonly IDataContext _context;
 
-    public SendMessageToGroupChatHandler(IServiceScopeFactory scopeFactory)
+    public SendMessageToGroupChatHandler(IDataContext context)
     {
-        _scopeFactory = scopeFactory;
+        _context = context;
     }
 
-    public async ValueTask<GroupChatMessageDto>
+    public async ValueTask<GroupChatMessage>
         Handle(SendMessageToGroupChatQuery request, CancellationToken cT)
     {
-        using var scope = _scopeFactory.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<DataContext>();
+        await _context.GroupChatMessages.AddAsync(request.Message, cT);
+        await _context.SaveChangesAsync(cT);
 
-        await db.GroupChatMessages.AddAsync(request.Message, cT);
-        await db.SaveChangesAsync(cT);
-
-        return request.Message.ToDto(request.AppUser);
+        return request.Message;
     }
 }

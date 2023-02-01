@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace dotnetapi.Features.Users.Handlers;
 
-public sealed record GetUserByUserNameQuery(string UserName) : IRequest<AppUser?>;
+public record GetUserByUserNameQuery(string UserName) : IRequest<AppUser?>;
 
 public class
     GetUserByUserNameHandler : IRequestHandler<GetUserByUserNameQuery, AppUser?>

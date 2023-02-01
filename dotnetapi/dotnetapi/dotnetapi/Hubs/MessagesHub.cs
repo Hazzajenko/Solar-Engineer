@@ -1,12 +1,14 @@
 using dotnetapi.Extensions;
 using dotnetapi.Features.GroupChats.Entities;
 using dotnetapi.Features.GroupChats.Handlers;
+using dotnetapi.Features.GroupChats.Mapping;
 using dotnetapi.Features.GroupChats.Services;
 using dotnetapi.Features.Messages.Contracts.Requests;
 using dotnetapi.Features.Messages.Entities;
 using dotnetapi.Features.Messages.Handlers;
 using dotnetapi.Features.Messages.Mapping;
 using dotnetapi.Features.Messages.Services;
+using dotnetapi.Features.Users.Handlers;
 using dotnetapi.Models.Entities;
 using Mediator;
 using Microsoft.AspNetCore.Identity;
@@ -18,10 +20,27 @@ namespace dotnetapi.Hubs;
 public interface IMessagesHub
 {
     Task GetMessages(IEnumerable<MessageDto> messages, CancellationToken ct);
-    Task GetGroupChatMessages(IEnumerable<GroupChatMessageDto> groupChatMessages, CancellationToken ct);
-    Task GetGroupChatServerMessages(IEnumerable<GroupChatServerMessageDto> serverMessages, CancellationToken ct);
-    Task UpdateGroupChatMessages(IEnumerable<GroupChatMessageUpdateDto> groupChatMessageUpdates, CancellationToken ct);
-    Task AddGroupChatMembers(IEnumerable<InitialGroupChatMemberDto> groupChatMembers, CancellationToken ct);
+
+    Task GetGroupChatMessages(
+        IEnumerable<GroupChatMessageDto> groupChatMessages,
+        CancellationToken ct
+    );
+
+    Task GetGroupChatServerMessages(
+        IEnumerable<GroupChatServerMessageDto> serverMessages,
+        CancellationToken ct
+    );
+
+    Task UpdateGroupChatMessages(
+        IEnumerable<GroupChatMessageUpdateDto> groupChatMessageUpdates,
+        CancellationToken ct
+    );
+
+    Task AddGroupChatMembers(
+        IEnumerable<InitialGroupChatMemberDto> groupChatMembers,
+        CancellationToken ct
+    );
+
     Task RemoveGroupChatMembers(IEnumerable<int> groupChatMemberIds, CancellationToken ct);
 }
 
@@ -33,11 +52,13 @@ public class MessagesHub : Hub<IMessagesHub>
     private readonly IMessagesRepository _messagesRepository;
     private readonly UserManager<AppUser> _userManager;
 
-    public MessagesHub(UserManager<AppUser> userManager,
+    public MessagesHub(
+        UserManager<AppUser> userManager,
         IMessagesRepository messagesRepository,
         IGroupChatsRepository groupChatsRepository,
         IMediator mediator,
-        ILogger<MessagesHub> logger)
+        ILogger<MessagesHub> logger
+    )
     {
         _userManager = userManager;
         _messagesRepository = messagesRepository;
@@ -46,53 +67,85 @@ public class MessagesHub : Hub<IMessagesHub>
         _logger = logger;
     }
 
-
-    public async Task GetMessages(string username, CancellationToken cT)
+    public async Task GetMessages(string username)
     {
-        var appUser = await _userManager.Users.Where(x => x.UserName == Context.User!.GetUsername())
-            .SingleOrDefaultAsync(cT);
-        if (appUser is null) throw new HubException("appUser is null");
-        var recipient = await _userManager.Users.Where(x => x.UserName == username).SingleOrDefaultAsync(cT);
-        if (recipient is null) throw new HubException("recipient is null");
+        var appUser = await _userManager.Users
+            .Where(x => x.UserName == Context.User!.GetUsername())
+            .SingleOrDefaultAsync(CancellationToken.None);
+        if (appUser is null)
+            throw new HubException("appUser is null");
+        var recipient = await _userManager.Users
+            .Where(x => x.UserName == username)
+            .SingleOrDefaultAsync(CancellationToken.None);
+        if (recipient is null)
+            throw new HubException("recipient is null");
 
-        _logger.LogInformation("{User} GetMessages with {Recipient}", appUser.UserName!, recipient.UserName!);
-        var messages = await _mediator.Send(new GetUserMessagesByUserNameQuery(appUser, recipient), cT);
+        _logger.LogInformation(
+            "{User} GetMessages with {Recipient}",
+            appUser.UserName!,
+            recipient.UserName!
+        );
+        var messages = await _mediator.Send(
+            new GetUserMessagesByUserNameQuery(appUser, recipient),
+            CancellationToken.None
+        );
         // var messages = await _messagesRepository.GetUserMessagesAsync(appUser, recipient);
-        await Clients.Caller.GetMessages(messages, cT);
+        await Clients.Caller.GetMessages(messages, CancellationToken.None);
     }
 
-    public async Task GetGroupChatMessages(int groupChatId, CancellationToken cT)
+    public async Task GetGroupChatMessages(int groupChatId)
     {
-        var appUser = await _userManager.Users.Where(x => x.UserName == Context.User!.GetUsername())
-            .SingleOrDefaultAsync(cT);
-        if (appUser is null) throw new HubException("appUser is null");
+        var appUser = await _userManager.Users
+            .Where(x => x.UserName == Context.User!.GetUsername())
+            .SingleOrDefaultAsync(CancellationToken.None);
+        if (appUser is null)
+            throw new HubException("appUser is null");
 
-        var groupChatMessages = await _mediator.Send(new GetGroupChatMessagesByIdQuery(appUser, groupChatId), cT);
+        var groupChatMessages = await _mediator.Send(
+            new GetGroupChatMessagesByIdQuery(appUser, groupChatId),
+            CancellationToken.None
+        );
         // var groupChatMessages = await _messagesRepository.GetGroupChatMessagesAsync(groupChatId);
-        if (groupChatMessages is null) throw new HubException("groupChatMessages is null");
+        if (groupChatMessages is null)
+            throw new HubException("groupChatMessages is null");
         var chatMessageDtos = groupChatMessages.ToList();
         var messageIds = chatMessageDtos.Select(x => x.Id).ToList();
-        var update = await _messagesRepository.MarkAllGroupChatMessagesReadByUserAsync(messageIds, appUser);
+        var update = await _messagesRepository.MarkAllGroupChatMessagesReadByUserAsync(
+            messageIds,
+            appUser
+        );
 
+        _logger.LogInformation(
+            "{User} GetMessages with Group {Group}",
+            appUser.UserName!,
+            groupChatId
+        );
 
-        _logger.LogInformation("{User} GetMessages with Group {Group}", appUser.UserName!, groupChatId);
+        await Clients.Caller.GetGroupChatMessages(chatMessageDtos, CancellationToken.None);
 
-        await Clients.Caller.GetGroupChatMessages(chatMessageDtos, cT);
+        var serverMessages = await _mediator.Send(
+            new GetGroupChatServerMessagesByGroupIdQuery(groupChatId),
+            CancellationToken.None
+        );
+        if (serverMessages is null)
+            throw new HubException("serverMessages is null");
 
-        var serverMessages = await _mediator.Send(new GetGroupChatServerMessagesByGroupIdQuery(groupChatId), cT);
-        if (serverMessages is null) throw new HubException("serverMessages is null");
-
-        await Clients.Caller.GetGroupChatServerMessages(serverMessages, cT);
+        await Clients.Caller.GetGroupChatServerMessages(serverMessages, CancellationToken.None);
     }
 
-    public async Task SendMessageToUser(SendMessageRequest request, CancellationToken cT)
+    public async Task SendMessageToUser(SendMessageRequest request)
     {
-        var appUser = await _userManager.Users.Where(x => x.UserName == Context.User!.GetUsername())
-            .SingleOrDefaultAsync(cT);
-        if (appUser is null) throw new HubException("appUser is null");
+        /*var appUser = await _userManager.Users
+            .Where(x => x.UserName == Context.User!.GetUsername())
+            .SingleOrDefaultAsync(CancellationToken.None);*/
+        var appUser = await _userManager.GetUserAsync(Context.User!);
+        if (appUser is null)
+            throw new HubException("appUser is null");
 
-        var recipient = await _userManager.Users.Where(x => x.UserName == request.RecipientUserName)
-            .SingleOrDefaultAsync(cT);
+        var recipient = await _mediator.Send(new GetUserByUserNameQuery(request.RecipientUserName));
+        /*var recipient = await _userManager.Users
+            .Where(x => x.UserName == request.RecipientUserName)
+            .SingleOrDefaultAsync(CancellationToken.None);*/
         if (recipient is null)
         {
             _logger.LogError("Bad request, Recipient is invalid");
@@ -103,56 +156,65 @@ public class MessagesHub : Hub<IMessagesHub>
 
         var result = await _messagesRepository.AddMessageAsync(message);
 
-        _logger.LogInformation("{User} Sent a Message To User {Recipient}", appUser.UserName!, recipient.UserName!);
+        _logger.LogInformation(
+            "{User} Sent a Message To User {Recipient}",
+            appUser.UserName!,
+            recipient.UserName!
+        );
 
         var newMessage = result.ToDto(appUser);
 
-        await Clients.Users(appUser.UserName!, recipient.UserName!)
-            .GetMessages(new List<MessageDto> { newMessage }, cT);
+        await Clients
+            .Users(appUser.UserName!, recipient.UserName!)
+            .GetMessages(new List<MessageDto> { newMessage }, CancellationToken.None);
         /*await Clients.Users(appUser.UserName!, recipient.UserName!)
             .GetMessages(result.ToDto(appUser));*/
     }
 
-    public async Task SendMessageToGroupChat(SendGroupChatMessageRequest request, CancellationToken cT)
+    public async Task SendMessageToGroupChat(SendGroupChatMessageRequest request)
     {
-        var appUser = await _userManager.Users.Where(x => x.UserName == Context.User!.GetUsername())
-            .SingleOrDefaultAsync(cT);
-        if (appUser is null) throw new HubException("appUser is null");
+        var appUser = await _userManager.GetUserAsync(Context.User!);
+        
+        if (appUser is null)
+            throw new HubException("appUser is null");
 
-        // var appUserGroupChat = await _mediator.Send(new).GetAppUserGroupChatAsync(appUser, request.GroupChatId);
-        var appUserGroupChat = await _groupChatsRepository.GetAppUserGroupChatAsync(appUser, request.GroupChatId);
+        var appUserGroupChat = await _mediator.Send(
+            new GetAppUserGroupChatQuery(appUser, request.GroupChatId)
+        );
+
         if (appUserGroupChat is null)
         {
             _logger.LogError("Bad request, appUserGroupChat is invalid");
             throw new HubException("appUserGroupChat is invalid");
         }
 
-        var groupChatMemberDtos = await _mediator.Send(new GetGroupChatMembersByIdQuery(request.GroupChatId), cT);
-        // var groupChatMemberDtos = await _groupChatsRepository.GetGroupChatMembersAsync(request.GroupChatId);
+        var otherUserNames = await _mediator.Send(request.ToGroupChatMemberUserNamesQuery(appUser));
 
-        var chatMemberDtos = groupChatMemberDtos.ToList();
-        var isUserInGroupChat = chatMemberDtos.FirstOrDefault(x => x.UserName == appUser.UserName!);
-        if (isUserInGroupChat is null)
-        {
-            _logger.LogError("Bad request, user is not in conversation");
-            throw new HubException("Bad request, user is not in conversation");
-        }
+        var result = await _mediator.Send(
+            request.ToSendGroupChatMessageQuery(appUser, appUserGroupChat.GroupChat)
+        );
+        var userMessage = result.ToDto(appUser);
+        var otherUsersMessage = result.ToOtherUsersDto();
 
-        var groupChatMessage = request.ToEntity(appUser, appUserGroupChat.GroupChat);
+        _logger.LogInformation(
+            "{User} Sent a Message To Group {Group}",
+            appUser.UserName!,
+            appUserGroupChat.GroupChat.Name!
+        );
 
-        // var groupChatMessageDto = await _mediator.Send(new SendMessageToGroupChatQuery(groupChatMessage));
-        var groupChatMessageDto = await _messagesRepository.SendMessageToGroupChatAsync(groupChatMessage, appUser);
-
-        var groupChatUsers = chatMemberDtos.Select(x => x.UserName).ToArray();
-        // var groupChatUsernames = await _groupChatsRepository.GetGroupChatMembersAsync()
-
-        _logger.LogInformation("{User} Sent a Message To Group {Recipient}", appUser.UserName!,
-            appUserGroupChat.GroupChat.Name!);
-
-        await Clients.Users(groupChatUsers)
-            .GetGroupChatMessages(new List<GroupChatMessageDto> { groupChatMessageDto }, cT);
+        await Clients
+            .User(appUser.UserName!)
+            .GetGroupChatMessages(
+                new List<GroupChatMessageDto> { userMessage },
+                CancellationToken.None
+            );
+        await Clients
+            .Users(otherUserNames)
+            .GetGroupChatMessages(
+                new List<GroupChatMessageDto> { otherUsersMessage },
+                CancellationToken.None
+            );
     }
-
 
     private async Task<Group> AddToGroup(string groupName)
     {

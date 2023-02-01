@@ -40,6 +40,8 @@ import { SortConversationMessagesPipe } from '../../../../../messages/src/lib/fe
 import { ChatRoomsService } from '../services/chat-rooms.service'
 import { SortChatroomsPipe } from './sort-chatrooms.pipe'
 import { TruncatePipe } from '../../../../../../shared/pipes/src/lib/text/truncate.pipe'
+import { GroupChatMemberItemComponent } from '../conversation/member-item/group-chat-member-item.component'
+import { MatMenuModule } from '@angular/material/menu'
 
 @Component({
   selector: 'app-chatroom-list-component',
@@ -78,6 +80,8 @@ import { TruncatePipe } from '../../../../../../shared/pipes/src/lib/text/trunca
     MatAutocompleteModule,
     SortChatroomsPipe,
     TruncatePipe,
+    GroupChatMemberItemComponent,
+    MatMenuModule,
   ],
   standalone: true,
 })
@@ -117,11 +121,13 @@ export class ChatRoomListComponent implements OnInit {
     const chatRoom = event.options[0].value as MessageTimeSortModel
     if (!chatRoom) return
     this.chatRoomsService.setChatRoomToMessage(chatRoom)
+    this.chatRoomsService.toggleCreatingGroupChat(false)
   }
 
   openConversationFromSearch(event: MatAutocompleteSelectedEvent) {
     const chatroom = event.option.value as MessageTimeSortModel
     if (!chatroom) return
+    this.chatRoomsService.toggleCreatingGroupChat(false)
     return this.chatRoomsService.setChatRoomToMessage(chatroom)
   }
 
@@ -133,5 +139,9 @@ export class ChatRoomListComponent implements OnInit {
         data.filter((search) => search.chatRoomName.toLowerCase().includes(filterValue)),
       ),
     )
+  }
+
+  creatingGroupChat() {
+    this.chatRoomsService.toggleCreatingGroupChat(true)
   }
 }

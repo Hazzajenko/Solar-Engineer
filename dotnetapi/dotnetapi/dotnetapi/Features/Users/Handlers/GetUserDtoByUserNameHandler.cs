@@ -2,14 +2,13 @@
 using dotnetapi.Features.Users.Data;
 using dotnetapi.Features.Users.Mapping;
 using Mediator;
-using MethodTimer;
 using Microsoft.EntityFrameworkCore;
 
 namespace dotnetapi.Features.Users.Handlers;
 
-public sealed record GetUserDtoByUserNameQuery(string UserName) : IRequest<GetUserDto?>;
+public record GetUserDtoByUserNameQuery(string UserName) : IRequest<GetUserDto?>;
 
-[Time]
+// [Time]
 public class
     GetUserDtoByUserNameHandler : IRequestHandler<GetUserDtoByUserNameQuery, GetUserDto?>
 {

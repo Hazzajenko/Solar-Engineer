@@ -1,6 +1,5 @@
 ﻿using dotnetapi.Features.GroupChats.Entities;
 using dotnetapi.Features.Messages.Contracts.Requests;
-using dotnetapi.Features.Messages.Entities;
 using dotnetapi.Models.Entities;
 
 namespace dotnetapi.Features.Messages.Mapping;
@@ -14,7 +13,7 @@ public static class MessageRequestsMapper
         {
             Content = request.Content,
             Sender = user,
-            MessageSentTime = DateTime.Now,
+            MessageSentTime = DateTime.UtcNow,
             GroupChat = groupChat,
             MessageReadTimes = new List<GroupChatReadTime>()
         };

@@ -13,52 +13,52 @@ export class ChatRoomsService {
   private authStore = inject(AuthStoreService)
   private groupChatsStore = inject(GroupChatsStoreService)
   private _chatRoomToMessage$ = new BehaviorSubject<MessageTimeSortModel | undefined>(undefined)
+  private _creatingGroupChat$ = new BehaviorSubject<boolean>(false)
   chatRoomToMessage$ = this._chatRoomToMessage$.asObservable()
+  creatingGroupChat$ = this._creatingGroupChat$.asObservable()
 
-  combinedUserMessagesAndGroupChats$ =
-    combineLatest([
-      this.messagesStore.select.latestUserMessages$,
-      this.groupChatsStore.select.groupChatsWithLatestMessage$,
-    ]).pipe(
-      map(([messages, groupChats]) => {
-        const latestGroupChatMessages = [...groupChats].map((groupChat) => {
-          return {
-            isGroup: true,
-            chatRoomName: groupChat.name,
-            latestSentMessageTime: groupChat.latestSentMessageTime,
-            groupChat,
-          } as MessageTimeSortModel
-        })
+  combinedUserMessagesAndGroupChats$ = combineLatest([
+    this.messagesStore.select.latestUserMessages$,
+    this.groupChatsStore.select.groupChatsWithLatestMessage$,
+  ]).pipe(
+    map(([messages, groupChats]) => {
+      const latestGroupChatMessages = [...groupChats].map((groupChat) => {
+        return {
+          isGroup: true,
+          chatRoomName: groupChat.name,
+          latestSentMessageTime: groupChat.latestSentMessageTime,
+          groupChat,
+        } as MessageTimeSortModel
+      })
 
-        const latestUserMessages = [...messages].map((message) => {
-          return {
-            isGroup: false,
-            chatRoomName: message.isUserSender ? message.recipientUserName : message.senderUserName,
-            latestSentMessageTime: message.messageSentTime,
-            message,
-          } as MessageTimeSortModel
-        })
+      const latestUserMessages = [...messages].map((message) => {
+        return {
+          isGroup: false,
+          chatRoomName: message.isUserSender ? message.recipientUserName : message.senderUserName,
+          latestSentMessageTime: message.messageSentTime,
+          message,
+        } as MessageTimeSortModel
+      })
 
-        let combined: MessageTimeSortModel[] = []
-        combined = combined.concat(
-          latestGroupChatMessages ? latestGroupChatMessages : []
-        )
-        combined = combined.concat(
-          latestUserMessages ? latestUserMessages : []
-        )
+      let combined: MessageTimeSortModel[] = []
+      combined = combined.concat(latestGroupChatMessages ? latestGroupChatMessages : [])
+      combined = combined.concat(latestUserMessages ? latestUserMessages : [])
 
-        /*      const combined = latestGroupChatMessages.concat(
+      /*      const combined = latestGroupChatMessages.concat(
                 latestUserMessages ? latestUserMessages : [],
               )*/
 
-        return combined.sort(
-          (a: MessageTimeSortModel, b: MessageTimeSortModel) =>
-            new Date(b.latestSentMessageTime).getTime() -
-            new Date(a.latestSentMessageTime).getTime(),
-        )
-      }),
-    )
+      return combined.sort(
+        (a: MessageTimeSortModel, b: MessageTimeSortModel) =>
+          new Date(b.latestSentMessageTime).getTime() - new Date(a.latestSentMessageTime).getTime(),
+      )
+    }),
+  )
 
+  toggleCreatingGroupChat(val: boolean) {
+    if (val) this._chatRoomToMessage$.next(undefined)
+    this._creatingGroupChat$.next(val)
+  }
 
   setChatRoomToMessage(chatRoom: MessageTimeSortModel) {
     if (chatRoom.isGroup) {
@@ -69,6 +69,4 @@ export class ChatRoomsService {
     this.messagesStore.dispatch.initMessagesWithUser(chatRoom.chatRoomName)
     return this._chatRoomToMessage$.next(chatRoom)
   }
-
-
 }

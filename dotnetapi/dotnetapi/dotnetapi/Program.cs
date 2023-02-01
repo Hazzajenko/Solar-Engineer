@@ -189,7 +189,12 @@ builder.Services.AddCors(options =>
             .AllowCredentials());
 });
 // builder.Services.AddSignalR();
-builder.Services.AddSignalR(options => { options.DisableImplicitFromServicesParameters = true; });
+builder.Services.AddSignalR(options =>
+{
+    options.DisableImplicitFromServicesParameters = true;
+    options.EnableDetailedErrors = true;
+    // options.
+});
 // builder.Services.AddSignalR().AddMessagePackProtocol();
 // builder.Services.AddWebSockets();
 builder.Services.AddSwaggerServices(config);

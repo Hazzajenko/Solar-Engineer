@@ -3,14 +3,13 @@ using dotnetapi.Features.Users.Handlers;
 using dotnetapi.Models.Entities;
 using FastEndpoints;
 using Mediator;
-using MethodTimer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 
 namespace dotnetapi.Features.Users.Endpoints;
 
 [Authorize]
-[Time]
+// [Time]
 public class GetUserByUserNameEndpoint : EndpointWithoutRequest<GetUserResponse>
 {
     private readonly ILogger<GetUserByUserNameEndpoint> _logger;

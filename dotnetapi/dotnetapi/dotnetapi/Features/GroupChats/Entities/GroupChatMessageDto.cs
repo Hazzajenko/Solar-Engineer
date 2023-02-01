@@ -12,7 +12,7 @@ public class GroupChatMessageDto
 
     public MessageFrom MessageFrom { get; set; } = MessageFrom.Unknown;
 
-    public bool SenderInGroup { get; set; }
+    public bool SenderInGroup { get; set; } = true;
     // public bool IsUserSender { get; set; }
     //
     // public bool IsServer { get; set; }
