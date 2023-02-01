@@ -10,6 +10,16 @@ public class GroupChatDto
     public IEnumerable<GroupChatServerMessageDto> ServerMessages { get; set; } = default!;
 }
 
+public class InitialGroupChatDto
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = default!;
+    public string PhotoUrl { get; set; } = default!;
+    public DateTime Created { get; set; }
+    public IEnumerable<InitialGroupChatMemberDto> Members { get; set; } = default!;
+    public IEnumerable<GroupChatServerMessageDto> ServerMessages { get; set; } = default!;
+}
+
 public class GroupChatWithoutMembersDto
 {
     public int Id { get; set; }

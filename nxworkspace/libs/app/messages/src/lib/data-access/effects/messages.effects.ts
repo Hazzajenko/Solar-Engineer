@@ -1,3 +1,4 @@
+/*
 import { inject, Injectable } from '@angular/core'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { MessagesSignalrService } from '@app/data-access/signalr'
@@ -36,7 +37,7 @@ export class MessagesEffects {
     ),
   )
 
-  /*  initMessagesWithUser$ = createEffect(
+  /!*  initMessagesWithUser$ = createEffect(
       () =>
         this.actions$.pipe(
           ofType(GroupChatMessagesActions.initMessagesWithUser),
@@ -45,7 +46,7 @@ export class MessagesEffects {
             map(({ messages }) => GroupChatMessagesActions.addManyMessages({ messages })),
           )),
         ),
-    )*/
+    )*!/
 
   initMessagesConnectionWithUser$ = createEffect(
     () =>
@@ -56,7 +57,7 @@ export class MessagesEffects {
     { dispatch: false },
   )
 
-  /* sendMessageToUser$ = createEffect(
+  /!* sendMessageToUser$ = createEffect(
      () =>
        this.actions$.pipe(
          ofType(GroupChatMessagesActions.sendMessageToUser),
@@ -66,7 +67,7 @@ export class MessagesEffects {
            ),
          ),
        ),
-   )*/
+   )*!/
 
   sendMessageToUserSignalR$ = createEffect(
     () =>
@@ -144,3 +145,4 @@ export class MessagesEffects {
     // { dispatch: false },
   )
 }
+*/

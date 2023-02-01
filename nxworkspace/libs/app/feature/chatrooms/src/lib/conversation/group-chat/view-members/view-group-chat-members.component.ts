@@ -39,7 +39,11 @@ import { map, Observable, of, switchMap } from 'rxjs'
 import { FriendsStoreService } from '@app/data-access/friends'
 import { UsersStoreService } from '@app/data-access/users'
 import { combineLatest } from 'rxjs'
-import { CreateGroupChatRequest, GroupChatsStoreService } from '@app/data-access/group-chats'
+import {
+  CreateGroupChatRequest,
+  GroupChatsStoreService,
+  RemoveFromGroupChatRequest,
+} from '@app/data-access/group-chats'
 import { GroupChatMemberItemComponent } from '../../member-item/group-chat-member-item.component'
 
 @Component({
@@ -94,6 +98,7 @@ export class ViewGroupChatMembersComponent {
   selectedMembersToInvite: WebUserModel[] = []
   selectedMember?: GroupChatMemberModel
   groupChatMembers$: Observable<GroupChatMemberModel[]>
+  groupChatId: number
   groupChatName: string
   groupChatPermissions: PermissionsModel
   kickMode = false
@@ -111,9 +116,10 @@ export class ViewGroupChatMembersComponent {
   constructor(
     private dialogRef: MatDialogRef<ViewGroupChatMembersComponent>,
     @Inject(MAT_DIALOG_DATA)
-    data: { groupChatName: string; groupChatId: number; groupChatPermissions: PermissionsModel },
+    data: { groupChatId: number; groupChatName: string; groupChatPermissions: PermissionsModel },
   ) {
     this.groupChatMembers$ = this.groupChatsStore.select.groupChatMemberWebUsers$(data.groupChatId)
+    this.groupChatId = data.groupChatId
     this.groupChatName = data.groupChatName
     this.groupChatPermissions = data.groupChatPermissions
   }
@@ -135,7 +141,14 @@ export class ViewGroupChatMembersComponent {
     this.groupChatsStore.dispatch.createGroupChat(request)
   }
 
-  removeFromGroup() {}
+  removeFromGroup() {
+    const userNames = this.selectedMembersToInvite.map((m) => m.userName)
+    const request: RemoveFromGroupChatRequest = {
+      groupChatId: this.groupChatId,
+      userNames,
+    }
+    this.groupChatsStore.dispatch.removeUsersFromGroup(request)
+  }
 
   enableKickMode() {
     this.kickMode = !this.kickMode

@@ -6,11 +6,13 @@ import {
   GroupChatMessageModel,
   GroupChatModel,
   GroupChatServerMessageModel,
+  InitialGroupChatMemberModel,
 } from '@shared/data-access/models'
 import { GroupChatMembersActions, GroupChatMessagesActions, GroupChatsActions } from '../store'
 import {
   CreateGroupChatRequest,
   InviteToGroupChatRequest,
+  RemoveFromGroupChatRequest,
   SendGroupChatMessageRequest,
 } from '../models'
 import { GroupChatServerMessagesActions } from '../store/group-chat-server-messages/group-chat-server-messages.actions'
@@ -53,7 +55,7 @@ export class GroupChatsRepository {
     this.store.dispatch(GroupChatMembersActions.addGroupChatMember({ groupChatMember }))
   }
 
-  addManyGroupChatMembers(groupChatMembers: GroupChatMemberModel[]) {
+  addManyGroupChatMembers(groupChatMembers: InitialGroupChatMemberModel[]) {
     this.store.dispatch(GroupChatMembersActions.addManyGroupChatMembers({ groupChatMembers }))
   }
 
@@ -63,6 +65,14 @@ export class GroupChatsRepository {
 
   removeGroupChatMember(groupChatMemberId: number) {
     this.store.dispatch(GroupChatMembersActions.removeGroupChatMember({ groupChatMemberId }))
+  }
+
+  removeUsersFromGroup(request: RemoveFromGroupChatRequest) {
+    this.store.dispatch(GroupChatMembersActions.removeUserFromGroup({ request }))
+  }
+
+  removeManyGroupChatMembers(groupChatMemberIds: number[]) {
+    this.store.dispatch(GroupChatMembersActions.removeManyGroupChatMembers({ groupChatMemberIds }))
   }
 
   addGroupChatMessage(groupChatMessage: GroupChatMessageModel) {

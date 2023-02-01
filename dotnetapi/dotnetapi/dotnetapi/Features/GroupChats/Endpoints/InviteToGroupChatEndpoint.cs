@@ -1,7 +1,6 @@
-﻿using dotnetapi.Features.GroupChats.Contracts.Requests;
+﻿/*using dotnetapi.Features.GroupChats.Contracts.Requests;
 using dotnetapi.Features.GroupChats.Entities;
 using dotnetapi.Features.GroupChats.Handlers;
-using dotnetapi.Features.GroupChats.Mapping;
 using dotnetapi.Features.GroupChats.Services;
 using dotnetapi.Features.Users.Handlers;
 using dotnetapi.Models.Entities;
@@ -68,12 +67,13 @@ public class InviteToGroupChatEndpoint : Endpoint<InviteToGroupChatRequest>
 
 
         var invitedMembers = new List<GroupChatMemberDto>();
+        var newAppUserGroupChats = new List<AppUserGroupChat>();
 
         foreach (var requestInvite in request.Invites)
         {
             var invitedUser = await _mediator.Send(new GetUserByUserNameQuery(requestInvite.UserName), ct);
             /*var recipient = await _userManager.Users.Where(x => x.UserName == requestInvite.Recipient)
-                .SingleOrDefaultAsync(ct);*/
+                .SingleOrDefaultAsync(ct);#1#
 
             if (invitedUser is null)
             {
@@ -99,27 +99,32 @@ public class InviteToGroupChatEndpoint : Endpoint<InviteToGroupChatRequest>
                 AppUser = invitedUser,
                 JoinedAt = DateTime.Now
             };
-            var result = await _mediator.Send(new CreateAppUserGroupChatQuery(invitedUserAppUserGroupChat), ct);
+            newAppUserGroupChats.Add(invitedUserAppUserGroupChat);
+            /*var result = await _mediator.Send(new CreateAppUserGroupChatsQuery(invitedUserAppUserGroupChat), ct);
             // var result = await _groupChatsRepository.InviteToGroupChatAsync(inviteRecipientGroupChat);
-            invitedMembers.Add(result.ToMemberDto());
+            invitedMembers.AddRange(result.ToMemberDto());#1#
         }
+
+        var result = await _mediator.Send(new CreateManyAppUserGroupChatsQuery(groupChatId, newAppUserGroupChats), ct);
+        // var result = await _groupChatsRepository.InviteToGroupChatAsync(inviteRecipientGroupChat);
+        // invitedMembers.AddRange(result.ToMemberDto());
 
         var groupChatServerMessage = new GroupChatServerMessage
         {
             GroupChat = appUserGroupChat.GroupChat,
             Content =
-                $"{appUser} invited {invitedMembers.Count} {MemberOrMembers(invitedMembers.Count)} to {appUserGroupChat.GroupChat.Name}"
+                $"{appUser} invited {result.Count()} {MemberOrMembers(result.Count())} to {appUserGroupChat.GroupChat.Name}"
         };
 
 
-        var sendServerMessage = await _mediator.Send(new CreateGroupChatServerMessageQuery(groupChatServerMessage), ct);
+        await _mediator.Send(new CreateGroupChatServerMessageQuery(groupChatServerMessage), ct);
 
         /*
         var groupMemberUserNames = await _mediator.Send(new GetGroupChatMemberUserNamesQuery(groupChatId), ct);
 
         var sendSignalRMessage =
             await _mediator.Send(
-                new SendServerMessageToGroupChatQuery(sendServerMessage, groupMemberUserNames.UserNames), ct);*/
+                new SendServerMessageToGroupChatQuery(sendServerMessage, groupMemberUserNames.UserNames), ct);#1#
 
         /*
         if (sendSignalRMessage is false)
@@ -129,7 +134,7 @@ public class InviteToGroupChatEndpoint : Endpoint<InviteToGroupChatRequest>
             await SendNotFoundAsync(ct);
             return;
             // ThrowError("User is not apart of group chat");
-        }*/
+        }#1#
 
         /*var serverMessages = new List<GroupChatServerMessageDto>
         {
@@ -140,7 +145,7 @@ public class InviteToGroupChatEndpoint : Endpoint<InviteToGroupChatRequest>
         {
             NewMembers = invitedMembers,
             ServerMessages = serverMessages
-        };*/
+        };#1#
 
         await SendNoContentAsync(ct);
     }
@@ -151,4 +156,5 @@ public class InviteToGroupChatEndpoint : Endpoint<InviteToGroupChatRequest>
 
         return "member";
     }
-}
+}*/
+

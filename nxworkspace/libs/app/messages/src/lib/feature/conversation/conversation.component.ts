@@ -1,5 +1,14 @@
 import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrolling'
-import { AsyncPipe, DatePipe, NgClass, NgForOf, NgIf, NgStyle, NgSwitch, NgSwitchCase } from '@angular/common'
+import {
+  AsyncPipe,
+  DatePipe,
+  NgClass,
+  NgForOf,
+  NgIf,
+  NgStyle,
+  NgSwitch,
+  NgSwitchCase,
+} from '@angular/common'
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -7,7 +16,8 @@ import {
   ElementRef,
   Inject,
   inject,
-  OnInit, QueryList,
+  OnInit,
+  QueryList,
   ViewChild,
   ViewChildren,
 } from '@angular/core'
@@ -25,7 +35,12 @@ import { MatListModule, MatSelectionListChange } from '@angular/material/list'
 import { AuthStoreService } from '@auth/data-access/facades'
 import { Update } from '@ngrx/entity'
 
-import { MessageModel, NotificationModel, NotificationStatus, UserModel } from '@shared/data-access/models'
+import {
+  MessageModel,
+  NotificationModel,
+  NotificationStatus,
+  UserModel,
+} from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
 import { Observable } from 'rxjs'
@@ -34,34 +49,34 @@ import { ConversationMessageDirective } from './conversation-message.directive'
 import { ScrollViewportDirective } from './scroll-viewport.directive'
 import { SortConversationMessagesPipe } from './sort-conversation-messages.pipe'
 
-
 @Component({
   selector: 'app-conversation-component',
   templateUrl: './conversation.component.html',
-  styles: [`
-    *::-webkit-scrollbar {
-      width: 12px;
-    }
+  styles: [
+    `
+      *::-webkit-scrollbar {
+        width: 12px;
+      }
 
-    ::-webkit-scrollbar-track {
-      background-color: transparent;
-    }
+      ::-webkit-scrollbar-track {
+        background-color: transparent;
+      }
 
-    ::-webkit-scrollbar-thumb {
-      /*      background-color: #9b9fd8;
+      ::-webkit-scrollbar-thumb {
+        /*      background-color: #9b9fd8;
             border-radius: 20px;
             border: 6px solid transparent;
             background-clip: content-box;*/
-      background-color: #60a1fa;
-      border-radius: 20px;
-      border: 1px solid #3e8bf5;
-    }
+        background-color: #60a1fa;
+        border-radius: 20px;
+        border: 1px solid #3e8bf5;
+      }
 
-    ::-webkit-scrollbar-thumb:hover {
-      background-color: #a8bbbf;
-    }
+      ::-webkit-scrollbar-thumb:hover {
+        background-color: #a8bbbf;
+      }
 
-    /*    *::-webkit-scrollbar-track {
+      /*    *::-webkit-scrollbar-track {
           background: #71b1d8;
         }
 
@@ -70,7 +85,8 @@ import { SortConversationMessagesPipe } from './sort-conversation-messages.pipe'
           border-radius: 20px;
           border: 3px solid #3e8bf5;
         }*/
-  `],
+    `,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatDialogModule,
@@ -100,7 +116,6 @@ import { SortConversationMessagesPipe } from './sort-conversation-messages.pipe'
   standalone: true,
 })
 export class ConversationComponent implements OnInit {
-
   private messagesStore = inject(MessagesStoreService)
   private authStore = inject(AuthStoreService)
   /*  @ViewChild('viewport', { static: false }) viewport!: ElementRef<HTMLElement>*/
@@ -123,7 +138,6 @@ export class ConversationComponent implements OnInit {
   private items = []
   private isNearBottom = true
 
-
   constructor(
     private dialogRef: MatDialogRef<ConversationComponent>,
     @Inject(MAT_DIALOG_DATA) data: any,
@@ -144,8 +158,8 @@ export class ConversationComponent implements OnInit {
 
   ngOnInit() {
     if (this.recipient) {
-      this.messagesStore.dispatch.initMessagesWithUser(this.recipient)
-      this.messages$ = this.messagesStore.select.messagesWithUser$(this.recipient)
+      // this.messagesStore.dispatch.initMessagesWithUser(this.recipient)
+      // this.messages$ = this.messagesStore.select.messagesWithUser$(this.recipient)
     }
   }
 
@@ -157,7 +171,7 @@ export class ConversationComponent implements OnInit {
       recipientUsername: this.recipient,
       content: this.messageControl.value,
     }
-    this.messagesStore.dispatch.sendMessageToUser(request)
+    // this.messagesStore.dispatch.sendMessageToUser(request)
     /*    // console.log(this.viewport.nativeElement.scrollTop)
         console.log(this.viewport.nativeElement)
         this.viewport.nativeElement.scrollTop = this.viewport.nativeElement.scrollHeight - this.viewport.nativeElement.clientHeight
@@ -196,4 +210,3 @@ export class ConversationComponent implements OnInit {
     console.log(event)
   }
 }
-

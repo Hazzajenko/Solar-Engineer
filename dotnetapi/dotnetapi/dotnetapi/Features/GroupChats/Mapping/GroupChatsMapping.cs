@@ -1,5 +1,4 @@
-﻿using dotnetapi.Features.GroupChats.Contracts.Responses;
-using dotnetapi.Features.GroupChats.Entities;
+﻿using dotnetapi.Features.GroupChats.Entities;
 
 namespace dotnetapi.Features.GroupChats.Mapping;
 
@@ -97,6 +96,20 @@ public static class GroupChatsMapping
         };
     }
 
+    public static InitialGroupChatDto ToInitialResponseDto(this AppUserGroupChat request,
+        IEnumerable<InitialGroupChatMemberDto> memberDtos, IEnumerable<GroupChatServerMessageDto> serverMessageDtos)
+    {
+        return new InitialGroupChatDto
+        {
+            Id = request.Id,
+            Name = request.GroupChat.Name,
+            PhotoUrl = request.GroupChat.PhotoUrl,
+            Created = request.GroupChat.Created,
+            Members = memberDtos,
+            ServerMessages = serverMessageDtos
+        };
+    }
+
     public static GroupChatDto ToDto(this GroupChat request, IEnumerable<GroupChatMemberDto> memberDtos)
     {
         return new GroupChatDto
@@ -109,14 +122,14 @@ public static class GroupChatsMapping
         };
     }
 
-    public static CreateGroupChatResponse ToResponse(this GroupChat request,
+    /*public static CreateGroupChatResponse ToResponse(this GroupChat request,
         IEnumerable<GroupChatMemberDto> memberDtos)
     {
         return new CreateGroupChatResponse
         {
             GroupChat = request.ToDto(memberDtos)
         };
-    }
+    }*/
 }
 /*response = new CreateConversationResponse
 {

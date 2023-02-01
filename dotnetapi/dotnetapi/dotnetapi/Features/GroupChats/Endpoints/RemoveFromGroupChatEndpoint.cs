@@ -131,7 +131,7 @@ public class RemoveFromGroupChatEndpoint : Endpoint<RemoveFromGroupChatRequest>
         {
             GroupChat = appUserGroupChat.GroupChat,
             Content =
-                $"{appUser} removed {request.UserNames.Count()} members from {appUserGroupChat.GroupChat.Name}"
+                $"{appUser} removed {request.UserNames.Count()} {MemberOrMembers(request.UserNames.Count())} from {appUserGroupChat.GroupChat.Name}"
         };
 
         var sendServerMessage = await _mediator.Send(new CreateGroupChatServerMessageQuery(groupChatServerMessage), ct);
@@ -155,5 +155,12 @@ public class RemoveFromGroupChatEndpoint : Endpoint<RemoveFromGroupChatRequest>
 
         await SendNoContentAsync(ct);
         // await SendOkAsync(response, ct);
+    }
+
+    private string MemberOrMembers(int count)
+    {
+        if (count > 1) return "members";
+
+        return "member";
     }
 }

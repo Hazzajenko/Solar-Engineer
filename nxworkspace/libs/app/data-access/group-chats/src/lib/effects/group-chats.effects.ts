@@ -34,34 +34,37 @@ export class GroupChatsEffects {
     ),
   )
 
-  inviteToGroupChat$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(GroupChatMembersActions.inviteGroupChatMembers),
-      switchMap(({ request }) =>
-        this.groupChatsService
-          .inviteToGroupChat(request)
-          .pipe(
-            map(({ newMembers }) =>
-              GroupChatMembersActions.addManyGroupChatMembers({ groupChatMembers: newMembers }),
-            ),
-          ),
+  inviteToGroupChat$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(GroupChatMembersActions.inviteGroupChatMembers),
+        switchMap(
+          ({ request }) => this.groupChatsService.inviteToGroupChat(request),
+          /*          .pipe(
+                      map(({ newMembers }) =>
+                        GroupChatMembersActions.addManyGroupChatMembers({ groupChatMembers: newMembers }),
+                      ),
+                    ),*/
+        ),
       ),
-    ),
+    { dispatch: false },
   )
 
-  removeFromGroupChat$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(GroupChatMembersActions.removeUserFromGroup),
-      switchMap(({ request }) =>
-        this.groupChatsService.removeFromGroupChat(request).pipe(
+  removeFromGroupChat$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(GroupChatMembersActions.removeUserFromGroup),
+        switchMap(
+          ({ request }) => this.groupChatsService.removeFromGroupChat(request) /*.pipe(
           map(({ removedMembers }) =>
             GroupChatMembersActions.removeGroupChatMember({
               groupChatMemberId: removedMembers[0],
             }),
           ),
+        ),*/,
         ),
       ),
-    ),
+    { dispatch: false },
   )
   /*
     init$ = createEffect(() =>

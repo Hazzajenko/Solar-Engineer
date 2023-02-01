@@ -44,6 +44,9 @@ const reducer = createReducer(
   on(GroupChatMembersActions.removeGroupChatMember, (state, { groupChatMemberId }) =>
     groupChatMembersAdapter.removeOne(groupChatMemberId, state),
   ),
+  on(GroupChatMembersActions.removeManyGroupChatMembers, (state, { groupChatMemberIds }) =>
+    groupChatMembersAdapter.removeMany(groupChatMemberIds, state),
+  ),
   on(GroupChatMembersActions.clearGroupChatMembersState, (state) =>
     groupChatMembersAdapter.removeAll(state),
   ),

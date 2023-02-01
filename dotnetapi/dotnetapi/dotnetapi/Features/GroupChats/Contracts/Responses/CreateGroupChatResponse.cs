@@ -4,5 +4,5 @@ namespace dotnetapi.Features.GroupChats.Contracts.Responses;
 
 public class CreateGroupChatResponse
 {
-    public GroupChatDto GroupChat { get; set; } = default!;
+    public InitialGroupChatDto GroupChat { get; set; } = default!;
 }

@@ -10,36 +10,36 @@ import { MessagesActions } from '../store'
 })
 export class MessagesRepository {
   private store = inject(Store)
+  /*
+    initMessagesWithUser(userName: string) {
+      this.store.dispatch(MessagesActions.initMessagesWithUser({ userName }))
+    }
 
-  initMessagesWithUser(userName: string) {
-    this.store.dispatch(MessagesActions.initMessagesWithUser({ userName }))
-  }
+    sendMessageToUser(request: SendMessageRequest) {
+      this.store.dispatch(MessagesActions.sendMessageToUser({ request }))
+    }
 
-  sendMessageToUser(request: SendMessageRequest) {
-    this.store.dispatch(MessagesActions.sendMessageToUser({ request }))
-  }
+    addMessage(message: MessageModel) {
+      this.store.dispatch(MessagesActions.addMessage({ message }))
+    }
 
-  addMessage(message: MessageModel) {
-    this.store.dispatch(MessagesActions.addMessage({ message }))
-  }
+    addManyMessages(messages: MessageModel[]) {
+      this.store.dispatch(MessagesActions.addManyMessages({ messages }))
+    }
 
-  addManyMessages(messages: MessageModel[]) {
-    this.store.dispatch(MessagesActions.addManyMessages({ messages }))
-  }
+    updateMessage(update: Update<MessageModel>) {
+      this.store.dispatch(MessagesActions.updateMessage({ update }))
+    }
 
-  updateMessage(update: Update<MessageModel>) {
-    this.store.dispatch(MessagesActions.updateMessage({ update }))
-  }
+    markAllMessagesAsReadWithUser(recipient: string) {
+      this.store.dispatch(MessagesActions.markAllMessagesAsReadWithUser({ recipient }))
+    }
 
-  markAllMessagesAsReadWithUser(recipient: string) {
-    this.store.dispatch(MessagesActions.markAllMessagesAsReadWithUser({ recipient }))
-  }
+    updateManyMessages(updates: Update<MessageModel>[]) {
+      this.store.dispatch(MessagesActions.updateManyMessages({ updates }))
+    }
 
-  updateManyMessages(updates: Update<MessageModel>[]) {
-    this.store.dispatch(MessagesActions.updateManyMessages({ updates }))
-  }
-
-  deleteMessage(messageId: number) {
-    this.store.dispatch(MessagesActions.deleteMessage({ messageId }))
-  }
+    deleteMessage(messageId: number) {
+      this.store.dispatch(MessagesActions.deleteMessage({ messageId }))
+    }*/
 }

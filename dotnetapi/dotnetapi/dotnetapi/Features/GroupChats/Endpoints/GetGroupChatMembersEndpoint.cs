@@ -54,11 +54,14 @@ public class GetGroupChatMembersEndpoint : EndpointWithoutRequest<GroupChatMembe
             ThrowError("User is not in Group Chat");
         }
 
+        Response.Members = groupChatMemberDtos;
+
+        /*
         var response = new GroupChatMembersResponse
         {
             Members = groupChatMemberDtos
-        };
+        };*/
 
-        await SendOkAsync(response, ct);
+        await SendOkAsync(Response, ct);
     }
 }

@@ -8,7 +8,7 @@ import { Store } from '@ngrx/store'
 import { MessageModel, NotificationStatus } from '@shared/data-access/models'
 
 import { map, switchMap, tap } from 'rxjs/operators'
-import { GroupChatsService } from '@app/data-access/group-chats'
+import { GroupChatsService, GroupChatsSignalrService } from '@app/data-access/group-chats'
 import { MessagesService } from '../api'
 import { MessagesActions, MessagesSelectors } from '../store'
 
@@ -20,6 +20,7 @@ export class MessagesEffects {
   private store = inject(Store)
   private messagesService = inject(MessagesService)
   private groupChatsService = inject(GroupChatsService)
+  private groupChatsSignalR = inject(GroupChatsSignalrService)
   private messagesSignalR = inject(MessagesSignalrService)
   private snackBar = inject(MatSnackBar)
   initMessages$ = createEffect(() =>
@@ -27,8 +28,8 @@ export class MessagesEffects {
       ofType(AuthActions.signInSuccess),
       tap(({ token }) => this.messagesSignalR.createMessagesConnection(token)),
       tap(() => this.messagesService.waitForGetMessages()),
-      tap(() => this.groupChatsService.waitForGroupChatMessages()),
-      tap(() => this.groupChatsService.waitForGroupChatServerMessages()),
+      tap(() => this.groupChatsSignalR.init()),
+      // tap(() => this.groupChatsSignalR.onGetGroupChatServerMessages()),
       switchMap(() =>
         this.messagesService
           .getLatestUserMessages()

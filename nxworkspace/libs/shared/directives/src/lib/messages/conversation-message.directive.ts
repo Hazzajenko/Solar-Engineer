@@ -28,11 +28,16 @@ export class ConversationMessageDirective {
     switch (message.messageFrom) {
       case MessageFrom.OtherUser: {
         this.elRef.nativeElement.style.flexDirection = 'row'
+        this.elRef.nativeElement.style.boxRadius = ''
+        this.elRef.nativeElement.style.alignItems = ''
+        this.elRef.nativeElement.style.justifyContent = ''
         return
       }
       case MessageFrom.CurrentUser: {
         this.elRef.nativeElement.style.flexDirection = 'row-reverse'
         this.elRef.nativeElement.style.boxRadius = '15px 15px 0px 15px'
+        this.elRef.nativeElement.style.alignItems = ''
+        this.elRef.nativeElement.style.justifyContent = ''
         return
       }
       case MessageFrom.Server: {

@@ -98,7 +98,7 @@ export class MessagesComponent {
         status: NotificationStatus.Read,
       },
     }
-    this.messagesStore.dispatch.updateMessage(update)
+    // this.messagesStore.dispatch.updateMessage(update)
   }
 
   markAllMessagesAsRead(messages: MessageModel[]) {
@@ -117,7 +117,7 @@ export class MessagesComponent {
       }
       return update
     })
-    this.messagesStore.dispatch.updateManyMessages(updates)
+    // this.messagesStore.dispatch.updateManyMessages(updates)
   }
 
   openConversation(selectedMessage: MessageModel, recipient: string | undefined) {

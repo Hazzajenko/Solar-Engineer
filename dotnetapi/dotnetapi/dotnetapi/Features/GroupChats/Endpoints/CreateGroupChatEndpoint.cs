@@ -75,12 +75,14 @@ public class CreateGroupChatEndpoint : Endpoint<CreateGroupChatRequest, CreateGr
 
 
         appUserGroupChat.GroupChat = groupChat;*/
+        var queryParam = new List<AppUserGroupChat> { appUserGroupChat };
 
         var adminAppUserGroupChat = await _mediator.Send(new CreateAppUserGroupChatQuery(appUserGroupChat), ct);
         // var result = await _groupChatsRepository.CreateGroupChatAsync(appUserGroupChat);
         // appUserGroupChat.ToMemberDto();
         // result.GroupChat.ToResponse()
-        var groupChatMembers = new List<GroupChatMemberDto>();
+
+        var newGroupChatMembers = new List<AppUserGroupChat>();
         if (request.Invites.Any())
             // var invitedMembers = new List<GroupChatMemberDto>();
             foreach (var requestInvite in request.Invites)
@@ -114,12 +116,21 @@ public class CreateGroupChatEndpoint : Endpoint<CreateGroupChatRequest, CreateGr
                     AppUser = invitedUser,
                     JoinedAt = DateTime.Now
                 };
-                var result = await _mediator.Send(new CreateAppUserGroupChatQuery(invitedUserAppUserGroupChat), ct);
+                newGroupChatMembers.Add(invitedUserAppUserGroupChat);
+                /*var result = await _mediator.Send(new CreateAppUserGroupChatsQuery(invitedUserAppUserGroupChat), ct);
                 // var result = await _groupChatsRepository.InviteToGroupChatAsync(inviteRecipientGroupChat);
-                groupChatMembers.Add(result.ToMemberDto());
+                groupChatMembers.Add(result.ToMemberDto());*/
             }
 
-        groupChatMembers.Add(adminAppUserGroupChat.ToMemberDto());
+        var result =
+            await _mediator.Send(
+                new CreateManyAppUserGroupChatsQuery(adminAppUserGroupChat.GroupChatId, newGroupChatMembers), ct);
+        // var result = await _groupChatsRepository.InviteToGroupChatAsync(inviteRecipientGroupChat);
+        // groupChatMembers.Add(result.ToMemberDto());
+
+        var resultToInitialDto = result.Select(x => x.ToInitialMemberDto());
+        var groupChatMembers = new List<InitialGroupChatMemberDto>(resultToInitialDto)
+            { adminAppUserGroupChat.ToInitialMemberDto() };
 
         var groupChatServerMessage = new GroupChatServerMessage
         {
@@ -135,7 +146,7 @@ public class CreateGroupChatEndpoint : Endpoint<CreateGroupChatRequest, CreateGr
 
         var response = new CreateGroupChatResponse
         {
-            GroupChat = adminAppUserGroupChat.ToResponseDto(groupChatMembers, serverMessages)
+            GroupChat = adminAppUserGroupChat.ToInitialResponseDto(groupChatMembers, serverMessages)
         };
         // var response = adminAppUserGroupChat.GroupChat.ToResponse(new List<GroupChatMemberDto> { appUserGroupChat.ToMemberDto() });
 

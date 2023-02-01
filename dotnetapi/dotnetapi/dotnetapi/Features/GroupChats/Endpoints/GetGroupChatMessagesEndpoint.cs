@@ -21,7 +21,8 @@ public class GetGroupChatMessagesEndpoint : EndpointWithoutRequest<GroupChatMany
         ILogger<GetGroupChatMessagesEndpoint> logger,
         IMessagesRepository messagesRepository,
         IMediator mediator,
-        UserManager<AppUser> userManager)
+        UserManager<AppUser> userManager
+    )
     {
         _logger = logger;
         _messagesRepository = messagesRepository;
@@ -45,7 +46,8 @@ public class GetGroupChatMessagesEndpoint : EndpointWithoutRequest<GroupChatMany
         }
 
         var groupChatId = Route<int>("groupChatId");
-        if (groupChatId < 0) ThrowError("Invalid groupChatId");
+        if (groupChatId < 0)
+            ThrowError("Invalid groupChatId");
 
         /*var recipient = await _userManager.Users.Where(x => x.UserName == recipientUserName).SingleOrDefaultAsync(ct);
         if (recipient is null)
@@ -54,10 +56,16 @@ public class GetGroupChatMessagesEndpoint : EndpointWithoutRequest<GroupChatMany
             ThrowError("Recipient is invalid");
         }*/
 
-        var groupChatMessageDtos = await _mediator.Send(new GetGroupChatMessagesByIdQuery(appUser, groupChatId), ct);
+        var groupChatMessageDtos = await _mediator.Send(
+            new GetGroupChatMessagesByIdQuery(appUser, groupChatId),
+            ct
+        );
         var chatMessageDtos = groupChatMessageDtos.ToList();
         var messageIds = chatMessageDtos.Select(x => x.Id).ToList();
-        var update = await _messagesRepository.MarkAllGroupChatMessagesReadByUserAsync(messageIds, appUser);
+        var update = await _messagesRepository.MarkAllGroupChatMessagesReadByUserAsync(
+            messageIds,
+            appUser
+        );
 
         if (groupChatMessageDtos is null)
         {

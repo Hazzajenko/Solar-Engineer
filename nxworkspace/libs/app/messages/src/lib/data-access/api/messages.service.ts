@@ -1,3 +1,4 @@
+/*
 import { HttpClient } from '@angular/common/http'
 import { inject, Injectable } from '@angular/core'
 import { MessagesSignalrService } from '@app/data-access/signalr'
@@ -62,7 +63,7 @@ export class MessagesService {
     return this.http.get<AllMessagesResponse>(`/api/messages/user/${userName}`)
   }
 
-  /*  createMessagesConnection(token: string) {
+  /!*  createMessagesConnection(token: string) {
       this.messagesHub = new HubConnectionBuilder()
         .withUrl('/ws/hubs/messages', {
           accessTokenFactory: () => token,
@@ -88,7 +89,7 @@ export class MessagesService {
         }
 
       })
-    }*/
+    }*!/
 
   waitForGetMessages() {
     if (!this.messagesSignalR.messagesHub) return
@@ -117,3 +118,4 @@ export class MessagesService {
     })
   }
 }
+*/

@@ -31,23 +31,17 @@ export class GroupChatsService {
   }
 
   inviteToGroupChat(request: InviteToGroupChatRequest) {
-    return this.http.post<InviteToGroupChatResponse>(
-      `/api/${GROUP_CHATS}/${request.groupChatId}/invites`,
-      {
-        invites: request.invites,
-      },
-    )
+    return this.http.post<HttpResponse<any>>(`/api/${GROUP_CHATS}/${request.groupChatId}/invites`, {
+      invites: request.invites,
+    })
   }
 
   removeFromGroupChat(request: RemoveFromGroupChatRequest) {
-    return this.http.delete<RemoveFromGroupChatResponse>(
-      `/api/${GROUP_CHATS}/${request.groupChatId}/users/${request.userNames[0]}`,
-      {
-        body: {
-          userNames: request.userNames,
-        },
+    return this.http.delete<HttpResponse<any>>(`/api/${GROUP_CHATS}/${request.groupChatId}/users`, {
+      body: {
+        userNames: request.userNames,
       },
-    )
+    })
   }
 
   /*
