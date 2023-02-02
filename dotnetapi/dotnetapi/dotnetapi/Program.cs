@@ -210,7 +210,9 @@ builder.Services.AddIdentityServices(config);
 // builder.Services.AddEndpointsApiExplorer();
 // builder.Services.AddSwaggerGen();
 builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
-builder.Services.AddAWSService<IAmazonS3>();
+// builder.Services.AddAWSService<IAmazonS3>();
+builder.Services.AddSingleton<IAmazonS3, AmazonS3Client>();
+
 
 /*builder.Services.AddHsts(options =>
 {

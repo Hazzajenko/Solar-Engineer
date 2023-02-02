@@ -23,6 +23,7 @@
       "@app/config": ["libs/app/config/src/index.ts"],
       "@app/data-access/friends": ["libs/app/data-access/friends/src/index.ts"],
       "@app/data-access/group-chats": ["libs/app/data-access/group-chats/src/index.ts"],
+      "@app/data-access/images": ["libs/app/data-access/images/src/index.ts"],
       "@app/data-access/messages": ["libs/app/data-access/messages/src/index.ts"],
       "@app/data-access/signalr": ["libs/app/data-access/signalr/src/index.ts"],
       "@app/data-access/users": ["libs/app/data-access/users/src/index.ts"],

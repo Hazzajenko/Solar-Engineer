@@ -72,6 +72,8 @@ public class UploadDisplayPictureEndpoint : Endpoint<UploadImageRequest, ImageUp
         };
         var uploadResult = await _cloudinary.UploadAsync(uploadParams);
 
+        var list = _cloudinary.ListResources();
+
 
         _logger.LogInformation("{UserName} uploaded an image", user.UserName);
 

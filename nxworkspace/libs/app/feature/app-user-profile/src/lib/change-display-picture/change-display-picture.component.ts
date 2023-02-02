@@ -14,13 +14,7 @@ import { ChangeDetectionStrategy, Component, Inject, inject } from '@angular/cor
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { MatButtonModule } from '@angular/material/button'
 import { MatCardModule } from '@angular/material/card'
-import {
-  MAT_DIALOG_DATA,
-  MatDialog,
-  MatDialogConfig,
-  MatDialogModule,
-  MatDialogRef,
-} from '@angular/material/dialog'
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog'
 import { MatFormFieldModule } from '@angular/material/form-field'
 
 import { MatIconModule } from '@angular/material/icon'
@@ -33,24 +27,27 @@ import { FriendsComponent } from '@app/feature/friends'
 import { MessagesComponent } from '@app/messages'
 import { AuthStoreService } from '@auth/data-access/facades'
 
-import { CombinedAppUserModel, UserModel, WebUserModel } from '@shared/data-access/models'
+import {
+  CombinedAppUserModel,
+  ImageModel,
+  S3ImageModel,
+  UserModel,
+} from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
-import { GetFriendRequestPipe } from 'libs/app/feature/notifications/src/lib/get-friend-request.pipe'
-import { SortNotificationsPipe } from 'libs/app/feature/notifications/src/lib/sort-notifications.pipe'
 import { map, Observable } from 'rxjs'
-import { NotificationsComponent } from '../../../notifications/src/lib/component/notifications.component'
 import { ActivatedRoute } from '@angular/router'
 import { UsersService, UsersStoreService } from '@app/data-access/users'
 import { RouterFacade } from '@shared/data-access/router'
 import { ConnectionsStoreService } from '@shared/data-access/connections'
-import { TimeDifferenceFromNowPipe } from '@shared/pipes'
-import { NotificationsDialog } from '@app/feature/notifications'
-import { ChangeDisplayPictureComponent } from './change-display-picture/change-display-picture.component'
+import { GetFullUrlPipe, TimeDifferenceFromNowPipe } from '@shared/pipes'
+import { ImagesService } from '@app/data-access/images'
+import { GetImagesResponse } from '../../../../../data-access/images/src/lib/models/get-images.response'
+import { HttpClient } from '@angular/common/http'
 
 @Component({
-  selector: 'app-user-profile-component',
-  templateUrl: './app-user-profile.component.html',
+  selector: 'app-change-display-picture-component',
+  templateUrl: './change-display-picture.component.html',
   styles: [],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
@@ -73,51 +70,44 @@ import { ChangeDisplayPictureComponent } from './change-display-picture/change-d
     NgSwitch,
     NgSwitchCase,
     DatePipe,
-    SortNotificationsPipe,
-    GetFriendRequestPipe,
     MatTabsModule,
-    NotificationsComponent,
     FriendsComponent,
     MessagesComponent,
     ChatroomsComponent,
     TimeDifferenceFromNowPipe,
+    GetFullUrlPipe,
   ],
   standalone: true,
   providers: [DatePipe],
 })
-export class AppUserProfileComponent {
+export class ChangeDisplayPictureComponent {
   private authStore = inject(AuthStoreService)
   private friendsStore = inject(FriendsStoreService)
   private route = inject(ActivatedRoute)
   private usersStore = inject(UsersStoreService)
   private usersService = inject(UsersService)
   private connectionsStore = inject(ConnectionsStoreService)
-  private dialog = inject(MatDialog)
+  private imagesService = inject(ImagesService)
+  private http = inject(HttpClient)
   isDialog$ = this.route.url.pipe(
     map((paths) => {
       return paths[0].path !== 'messages'
     }),
   )
   user$: Observable<UserModel | undefined> = this.authStore.select.user$
+  defaultImages$: Observable<S3ImageModel[]> = this.imagesService.defaultImages
+
   appUser$: Observable<CombinedAppUserModel> = this.usersStore.select.personalCombinedAppUser$
 
   // userProfile$: Observable<WebUserModel | undefined>
 
   constructor(
-    private dialogRef: MatDialogRef<AppUserProfileComponent>,
+    private dialogRef: MatDialogRef<ChangeDisplayPictureComponent>,
     @Inject(MAT_DIALOG_DATA) data: { user: UserModel },
   ) {
     this.appUser$.subscribe((res) => console.log(res))
-  }
-
-  changeDisplayPicture() {
-    const dialogConfig = {
-      // disableClose: true,
-      autoFocus: true,
-      height: '600px',
-      width: '800px',
-    } as MatDialogConfig
-
-    const dialog = this.dialog.open(ChangeDisplayPictureComponent, dialogConfig)
+    this.imagesService.defaultImages.subscribe((res) => console.log(res))
+    // this.imagesService.getDefaultImages().subscribe((res) => console.log(res))
+    // this.http.get<GetImagesResponse>(`/api/images/default`).subscribe((res) => console.log(res))
   }
 }

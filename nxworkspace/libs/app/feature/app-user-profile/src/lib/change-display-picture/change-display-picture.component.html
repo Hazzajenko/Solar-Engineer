@@ -1,0 +1,24 @@
+<ng-container *ngIf="user$ | async as user">
+  <!--  <ng-container *ngIf='appUser$ | async as appUser'></ng-container>-->
+  <ng-container *ngIf="defaultImages$ | async as images">
+    <div class="flex items-center justify-center">
+      <div class="flex-wrap flex flex-row w-[80%]">
+        <div *ngFor="let image of images; index as i">
+          <!--      <div *ngIf='i < 10' class='flex'>-->
+          <img
+            class="my-2"
+            width="75px"
+            [ngStyle]="{ flex: i === 10 }"
+            [src]="image | getFullUrl"
+            alt="#"
+          />
+          <!--      </div>-->
+          <!--      <div *ngIf='i > 10' class='flex'>-->
+          <!--        <img [src]='image | getFullUrl' alt='#' />-->
+          <!--      </div>-->
+          <!--        <div *ngFor=''></div>-->
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</ng-container>
