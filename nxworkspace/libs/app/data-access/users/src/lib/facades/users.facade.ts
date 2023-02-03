@@ -80,23 +80,4 @@ export class UsersFacade {
     )
   }
 
-  /*
-    get userByUserNameRoute$(){
-      return this.userByRouteParams$.pipe(
-        switchMap((user) => {
-          if (!user) {
-            return this.routerFacade.routeParam$('userName').pipe(
-              switchMap((userName) =>
-                this.usersService.getUserByUserName(userName).pipe(
-                  map((res) => res.user),
-                  tap((user) => this.usersStore.dispatch.addUser(user)),
-                ),
-              ),
-            )
-          }
-          return of(user)
-        }),
-      )
-    }
-    }*/
 }

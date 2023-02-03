@@ -38,7 +38,7 @@ public class GetDefaultImagesEndpoint : EndpointWithoutRequest<IEnumerable<Image
 
     public override void Configure()
     {
-        Get("images/default");
+        Get("images/deprecated");
         Policies("BeAuthenticated");
         AllowFileUploads();
         // Description(b => b

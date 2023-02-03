@@ -44,7 +44,7 @@ import { ActivatedRoute } from '@angular/router'
 import { UsersService, UsersStoreService } from '@app/data-access/users'
 import { RouterFacade } from '@shared/data-access/router'
 import { ConnectionsStoreService } from '@shared/data-access/connections'
-import { TimeDifferenceFromNowPipe } from '@shared/pipes'
+import { GetCdnUrlStringPipe, TimeDifferenceFromNowPipe } from '@shared/pipes'
 import { NotificationsDialog } from '@app/feature/notifications'
 import { ChangeDisplayPictureComponent } from './change-display-picture/change-display-picture.component'
 
@@ -81,6 +81,7 @@ import { ChangeDisplayPictureComponent } from './change-display-picture/change-d
     MessagesComponent,
     ChatroomsComponent,
     TimeDifferenceFromNowPipe,
+    GetCdnUrlStringPipe,
   ],
   standalone: true,
   providers: [DatePipe],

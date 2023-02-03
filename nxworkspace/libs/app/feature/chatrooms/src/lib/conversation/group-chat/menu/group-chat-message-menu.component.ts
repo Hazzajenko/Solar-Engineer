@@ -62,13 +62,21 @@ export class GroupChatMessageMenuComponent {
     } as MatDialogConfig
 
     this.dialog.open(UsernameProfileComponent, dialogConfig)
+    /*
+        this.dialogRef
+          .afterClosed()
+          .pipe
+          /!*        first(),
+                    map((data) => data),*!/
+          ()
+          .subscribe((res) => console.log(res))*/
+  }
 
-    this.dialogRef
-      .afterClosed()
-      .pipe
-      /*        first(),
-                map((data) => data),*/
-      ()
-      .subscribe((res) => console.log(res))
+  sendFriendRequest(sender: GroupChatMemberModel) {
+    console.log(sender)
+  }
+
+  messagePrivately(sender: GroupChatMemberModel) {
+    console.log(sender)
   }
 }

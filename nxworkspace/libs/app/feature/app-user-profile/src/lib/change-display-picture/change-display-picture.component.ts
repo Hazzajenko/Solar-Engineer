@@ -35,15 +35,19 @@ import {
 } from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
-import { map, Observable } from 'rxjs'
+import { delay, map, Observable } from 'rxjs'
 import { ActivatedRoute } from '@angular/router'
 import { UsersService, UsersStoreService } from '@app/data-access/users'
 import { RouterFacade } from '@shared/data-access/router'
 import { ConnectionsStoreService } from '@shared/data-access/connections'
-import { GetFullUrlPipe, TimeDifferenceFromNowPipe } from '@shared/pipes'
+import { GetCdnUrlStringPipe, GetFullUrlPipe, TimeDifferenceFromNowPipe } from '@shared/pipes'
 import { ImagesService } from '@app/data-access/images'
 import { GetImagesResponse } from '../../../../../data-access/images/src/lib/models/get-images.response'
 import { HttpClient } from '@angular/common/http'
+import { MatProgressBarModule } from '@angular/material/progress-bar'
+import { LetModule } from '@ngrx/component'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { UpdateDisplayPictureRequest } from '../../../../../data-access/users/src/lib/models'
 
 @Component({
   selector: 'app-change-display-picture-component',
@@ -76,6 +80,10 @@ import { HttpClient } from '@angular/common/http'
     ChatroomsComponent,
     TimeDifferenceFromNowPipe,
     GetFullUrlPipe,
+    GetCdnUrlStringPipe,
+    MatProgressBarModule,
+    LetModule,
+    MatProgressSpinnerModule,
   ],
   standalone: true,
   providers: [DatePipe],
@@ -95,9 +103,16 @@ export class ChangeDisplayPictureComponent {
     }),
   )
   user$: Observable<UserModel | undefined> = this.authStore.select.user$
-  defaultImages$: Observable<S3ImageModel[]> = this.imagesService.defaultImages
+  defaultImages$: Observable<S3ImageModel[]> = this.imagesService.defaultImages$.pipe(delay(1000))
+  imagesLength$: Observable<number> = this.imagesService.defaultImages$.pipe(
+    map((images) => images.length),
+  )
 
   appUser$: Observable<CombinedAppUserModel> = this.usersStore.select.personalCombinedAppUser$
+
+  selectedImage?: S3ImageModel
+  loaded = 0
+  allImagesLoaded = false
 
   // userProfile$: Observable<WebUserModel | undefined>
 
@@ -106,8 +121,30 @@ export class ChangeDisplayPictureComponent {
     @Inject(MAT_DIALOG_DATA) data: { user: UserModel },
   ) {
     this.appUser$.subscribe((res) => console.log(res))
-    this.imagesService.defaultImages.subscribe((res) => console.log(res))
+    this.imagesService.defaultImages$.subscribe((res) => console.log(res))
     // this.imagesService.getDefaultImages().subscribe((res) => console.log(res))
     // this.http.get<GetImagesResponse>(`/api/images/default`).subscribe((res) => console.log(res))
+  }
+
+  selectImage(image: S3ImageModel) {
+    this.selectedImage = image
+  }
+
+  loadedImage(images: S3ImageModel[]) {
+    this.loaded++
+    if (images.length == this.loaded) {
+      //all images loaded
+      this.allImagesLoaded = true
+    }
+  }
+
+  updateProfileDp(userName: string) {
+    if (!this.selectedImage) return
+    const request: UpdateDisplayPictureRequest = {
+      userName,
+      image: this.selectedImage,
+    }
+    this.usersStore.dispatch.updateDisplayPicture(request)
+    this.dialogRef.close()
   }
 }

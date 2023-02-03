@@ -95,13 +95,14 @@ public class MessagesHub : Hub<IMessagesHub>
 
     public async Task GetGroupChatMessages(int groupChatId)
     {
-        var appUser = await _userManager.Users
+        /*var appUser = await _userManager.Users
             .Where(x => x.UserName == Context.User!.GetUsername())
-            .SingleOrDefaultAsync(CancellationToken.None);
+            .SingleOrDefaultAsync(CancellationToken.None);*/
+        var appUser = await _mediator.Send(new GetUserByUserNameQuery(Context.User!.GetUsername()));
         if (appUser is null)
             throw new HubException("appUser is null");
 
-        var groupChatMessages = await _mediator.Send(
+        /*var groupChatMessages = await _mediator.Send(
             new GetGroupChatMessagesByIdQuery(appUser, groupChatId),
             CancellationToken.None
         );
@@ -109,11 +110,16 @@ public class MessagesHub : Hub<IMessagesHub>
         if (groupChatMessages is null)
             throw new HubException("groupChatMessages is null");
         var chatMessageDtos = groupChatMessages.ToList();
-        var messageIds = chatMessageDtos.Select(x => x.Id).ToList();
-        var update = await _messagesRepository.MarkAllGroupChatMessagesReadByUserAsync(
+        var messageIds = chatMessageDtos.Select(x => x.Id).ToList();*/
+        /*var update = await _messagesRepository.MarkAllGroupChatMessagesReadByUserAsync(
             messageIds,
             appUser
+        );*/
+
+        var update = await _mediator.Send(
+            new MarkAllGroupChatMessagesReadCommand(groupChatId, appUser)
         );
+        // if (!update) throw new HubException("unable to read messages");
 
         _logger.LogInformation(
             "{User} GetMessages with Group {Group}",
@@ -121,7 +127,12 @@ public class MessagesHub : Hub<IMessagesHub>
             groupChatId
         );
 
-        await Clients.Caller.GetGroupChatMessages(chatMessageDtos, CancellationToken.None);
+        var groupChatMessages = await _mediator.Send(
+            new GetGroupChatMessagesByIdQuery(appUser, groupChatId),
+            CancellationToken.None
+        );
+
+        await Clients.Caller.GetGroupChatMessages(groupChatMessages, CancellationToken.None);
 
         var serverMessages = await _mediator.Send(
             new GetGroupChatServerMessagesByGroupIdQuery(groupChatId),
@@ -174,7 +185,7 @@ public class MessagesHub : Hub<IMessagesHub>
     public async Task SendMessageToGroupChat(SendGroupChatMessageRequest request)
     {
         var appUser = await _userManager.GetUserAsync(Context.User!);
-        
+
         if (appUser is null)
             throw new HubException("appUser is null");
 

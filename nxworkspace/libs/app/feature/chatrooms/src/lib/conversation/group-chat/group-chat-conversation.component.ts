@@ -48,6 +48,10 @@ import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
 import { GroupChatMessageMenuComponent } from './menu/group-chat-message-menu.component'
 import { ConversationMessageDirective, ScrollViewportDirective } from '@shared/directives'
 import { GroupChatOptionsBarComponent } from './options-bar/group-chat-options-bar.component'
+import { GetCdnUrlStringPipe, PrintSeenTextPipe } from '@shared/pipes'
+import { IsLastInArrayPipe } from '../../../../../../../shared/pipes/src/lib/arrays'
+import { ExcludeSenderFromSeenPipe } from './pipes/exclude-sender-from-seen.pipe'
+import { YouOrUserNamePipe } from '../../../../../../../shared/pipes/src/lib/text'
 
 @Component({
   selector: 'app-group-chat-conversation-component',
@@ -123,6 +127,11 @@ import { GroupChatOptionsBarComponent } from './options-bar/group-chat-options-b
     ConversationMessageDirective,
     ScrollViewportDirective,
     GroupChatOptionsBarComponent,
+    GetCdnUrlStringPipe,
+    IsLastInArrayPipe,
+    ExcludeSenderFromSeenPipe,
+    YouOrUserNamePipe,
+    PrintSeenTextPipe,
   ],
   standalone: true,
 })

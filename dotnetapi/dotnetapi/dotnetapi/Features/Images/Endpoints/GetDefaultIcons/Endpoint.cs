@@ -39,7 +39,7 @@ public class GetDefaultIconsEndpoint : EndpointWithoutRequest<Contracts.GetDefau
 
     public override void Configure()
     {
-        Get("images/icons");
+        Get("images/default-dps");
         Policies("BeAuthenticated");
     }
 

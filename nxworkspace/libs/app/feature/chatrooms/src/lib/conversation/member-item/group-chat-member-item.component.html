@@ -1,6 +1,11 @@
 <ng-container *ngIf="member && !webUser">
   <div class="flex items-center space-x-3">
-    <img class="w-8 h-8 rounded-full" matListItemIcon [src]="member.photoUrl" alt="" />
+    <img
+      class="w-8 h-8 rounded-full"
+      matListItemIcon
+      [src]="member.photoUrl | getCdnUrlString"
+      alt=""
+    />
     <span
       *ngIf="member.isOnline"
       class="top-1 left-7 absolute w-3.5 h-3.5 bg-green-400 border-2 border-white dark:border-gray-800 rounded-full"
@@ -17,7 +22,12 @@
 
 <ng-container *ngIf="webUser && !member">
   <div class="flex items-center space-x-3">
-    <img class="w-8 h-8 rounded-full" matListItemIcon [src]="webUser.photoUrl" alt="" />
+    <img
+      class="w-8 h-8 rounded-full"
+      matListItemIcon
+      [src]="webUser.photoUrl | getCdnUrlString"
+      alt=""
+    />
     <span
       *ngIf="webUser.isOnline"
       class="top-1 left-7 absolute w-3.5 h-3.5 bg-green-400 border-2 border-white dark:border-gray-800 rounded-full"
@@ -39,7 +49,12 @@
 
 <ng-container *ngIf="user">
   <div class="flex items-center space-x-3">
-    <img class="w-8 h-8 rounded-full" matListItemIcon [src]="user.photoUrl" alt="" />
+    <img
+      class="w-8 h-8 rounded-full"
+      matListItemIcon
+      [src]="user.photoUrl | getCdnUrlString"
+      alt=""
+    />
     <span
       *ngIf="user.isOnline"
       class="top-1 left-7 absolute w-3.5 h-3.5 bg-green-400 border-2 border-white dark:border-gray-800 rounded-full"

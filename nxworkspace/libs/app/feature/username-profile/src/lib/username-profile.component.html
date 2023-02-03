@@ -6,11 +6,11 @@
     <mat-card class="max-w-[100%] max-h-[100%]">
       <mat-card-header>
         <div mat-card-avatar class="example-header-image">
-          <mat-icon color="primary" *ngIf="userProfile.isOnline">wifi </mat-icon>
+          <mat-icon color="primary" *ngIf="userProfile.isOnline">wifi</mat-icon>
         </div>
-        <img mat-card-avatar [src]="userProfile.photoUrl" alt="" />
+        <img mat-card-avatar [src]="userProfile.photoUrl | getCdnUrlString" alt="" />
         <mat-card-title>{{ userProfile.userName }}</mat-card-title>
-        <mat-card-subtitle *ngIf="userProfile.isOnline; else offline"> Online </mat-card-subtitle>
+        <mat-card-subtitle *ngIf="userProfile.isOnline; else offline"> Online</mat-card-subtitle>
         <mat-card-subtitle *ngIf="userProfile.isFriend">
           Friends {{ userProfile.becameFriendsTime ? "since" : "" }}
           {{ userProfile.becameFriendsTime | timeDifferenceFromNow }}
@@ -18,7 +18,7 @@
         <span
           class="inline-flex items-center bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300"
         >
-          <span class="w-2 h-2 mr-1 bg-green-500 rounded-full"></span>
+          <span class="w-1 h-1 mr-1 bg-green-500 rounded-full"></span>
           Available
         </span>
         <!--        <span *ngIf='userProfile.isOnline else offline'>

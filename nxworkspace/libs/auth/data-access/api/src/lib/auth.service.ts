@@ -1,6 +1,10 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http'
 import { inject, Injectable } from '@angular/core'
 import { SignInRequest, SignInResponse, StorageModel } from '@auth/shared/models'
+import { SignInZodResponse } from './sign-in-zod.response'
+import { map } from 'rxjs'
+import { UserSchema } from './user.type'
+import { UserModel } from '@shared/data-access/models'
 
 @Injectable({
   providedIn: 'root',
@@ -44,5 +48,16 @@ export class AuthService {
         headers: new HttpHeaders({ Authorization: `Bearer ${userInStorage.token}` }),
       },
     )
+    /*      .pipe(
+            map((res) => {
+              const user = UserSchema.parse(res.user)
+              return {
+                user: {
+                  ...user,
+                },
+                token: res.token,
+              } as SignInResponse
+            }),
+          )*/
   }
 }

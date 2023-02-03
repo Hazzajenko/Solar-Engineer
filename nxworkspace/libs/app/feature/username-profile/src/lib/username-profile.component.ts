@@ -39,7 +39,7 @@ import { ActivatedRoute } from '@angular/router'
 import { UsersService, UsersStoreService } from '@app/data-access/users'
 import { RouterFacade } from '@shared/data-access/router'
 import { ConnectionsStoreService } from '@shared/data-access/connections'
-import { TimeDifferenceFromNowPipe } from '@shared/pipes'
+import { GetCdnUrlStringPipe, TimeDifferenceFromNowPipe } from '@shared/pipes'
 
 @Component({
   selector: 'app-notifications-dialog',
@@ -74,6 +74,7 @@ import { TimeDifferenceFromNowPipe } from '@shared/pipes'
     MessagesComponent,
     ChatroomsComponent,
     TimeDifferenceFromNowPipe,
+    GetCdnUrlStringPipe,
   ],
   standalone: true,
   providers: [DatePipe],

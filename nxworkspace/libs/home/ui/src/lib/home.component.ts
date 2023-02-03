@@ -78,6 +78,13 @@ export class HomeComponent implements OnInit {
     })
   }
 
+  loginDevBot2() {
+    this.authStore.dispatch.init({
+      userName: 'postmantest2',
+      password: 'PostmanTest1',
+    })
+  }
+
   async authenticate(login: boolean) {
     // const dialogConfig = new MatDialogConfig()
     const dialogConfig = {

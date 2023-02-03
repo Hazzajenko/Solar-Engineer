@@ -14,8 +14,9 @@ export class AnyGroupMessageSeenPipe implements PipeTransform {
     if (array.length < 1) {
       return false
     }
-    const index = array.map((time) => time.recipientUserName).indexOf(userName)
+    return array.length > 0
+    /*    const index.ts = array.map((time) => time.recipientUserName).indexOf(userName)
 
-    return index <= -1
+        return index.ts <= -1*/
   }
 }

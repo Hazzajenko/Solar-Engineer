@@ -72,7 +72,7 @@
                       mat-card-avatar
                       width="25px"
                       height="25px"
-                      [src]="message.sender.photoUrl"
+                      [src]="message.sender.photoUrl | getCdnUrlString"
                       alt=""
                     />
                     {{ message.senderUserName }}

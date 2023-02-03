@@ -35,6 +35,7 @@ import { UsersStoreService } from '@app/data-access/users'
 import { combineLatest } from 'rxjs'
 import { CreateGroupChatRequest, GroupChatsStoreService } from '@app/data-access/group-chats'
 import { GroupChatMemberItemComponent } from '../conversation/member-item/group-chat-member-item.component'
+import { GetCdnUrlStringPipe } from '@shared/pipes'
 
 @Component({
   selector: 'app-new-chat-room-component',
@@ -65,6 +66,7 @@ import { GroupChatMemberItemComponent } from '../conversation/member-item/group-
     LetModule,
     MessagesComponent,
     GroupChatMemberItemComponent,
+    GetCdnUrlStringPipe,
   ],
   standalone: true,
 })

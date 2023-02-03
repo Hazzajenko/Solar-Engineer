@@ -52,13 +52,27 @@ export const reducer = createReducer(
     token,
   })),
 
+  on(AuthActions.updateUser, (state, { update }) => ({
+    ...state,
+    user: state.user
+      ? {
+          ...state.user,
+          ...update,
+        }
+      : undefined,
+  })),
+
+  on(AuthActions.addError, (state, { error }) => ({
+    ...state,
+    error,
+  })),
+
   on(AuthActions.signOut, () => ({
     user: undefined,
     token: undefined,
     error: null,
   })),
 )
-
 
 export function authReducer(state: AuthState | undefined, action: Action) {
   return reducer(state, action)

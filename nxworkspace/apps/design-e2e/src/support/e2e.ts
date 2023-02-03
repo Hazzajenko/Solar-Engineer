@@ -1,5 +1,5 @@
 // ***********************************************************
-// This example support/index.js is processed and
+// This example support/index.ts.js is processed and
 // loaded automatically before your test files.
 //
 // This is a great place to put global configuration and

@@ -13,20 +13,19 @@ public sealed record GetGroupChatMessagesByIdQuery
 public class
     GetGroupChatMessagesByIdHandler : IRequestHandler<GetGroupChatMessagesByIdQuery, IEnumerable<GroupChatMessageDto?>>
 {
-    private readonly IServiceScopeFactory _scopeFactory;
+    private readonly IDataContext _context;
 
-    public GetGroupChatMessagesByIdHandler(IServiceScopeFactory scopeFactory)
+    public GetGroupChatMessagesByIdHandler(IDataContext context)
     {
-        _scopeFactory = scopeFactory;
+        _context = context;
     }
 
     public async ValueTask<IEnumerable<GroupChatMessageDto?>>
         Handle(GetGroupChatMessagesByIdQuery request, CancellationToken cT)
     {
-        using var scope = _scopeFactory.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<DataContext>();
 
-        return await db.GroupChatMessages
+
+        return await _context.GroupChatMessages
             .Where(x => x.GroupChatId == request.GroupChatId)
             .Include(x => x.Sender)
             .Include(x => x.MessageReadTimes)

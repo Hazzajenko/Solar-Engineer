@@ -35,7 +35,7 @@ import { map, Observable } from 'rxjs'
 
 import { ConversationMessageDirective, ScrollViewportDirective } from '@shared/directives'
 import { MessageBarComponent } from '../message-bar/message-bar.component'
-import { SortConversationMessagesPipe } from '@shared/pipes'
+import { GetCdnUrlStringPipe, SortConversationMessagesPipe } from '@shared/pipes'
 
 @Component({
   selector: 'app-user-conversation-component',
@@ -104,6 +104,7 @@ import { SortConversationMessagesPipe } from '@shared/pipes'
     ConversationMessageDirective,
     MessageBarComponent,
     SortConversationMessagesPipe,
+    GetCdnUrlStringPipe,
   ],
   standalone: true,
 })
