@@ -9,6 +9,7 @@ import {
   NgStyle,
   NgSwitch,
   NgSwitchCase,
+  NgTemplateOutlet,
 } from '@angular/common'
 import { ChangeDetectionStrategy, Component, inject, Input, ViewChild } from '@angular/core'
 
@@ -28,7 +29,14 @@ import { MessagesStoreService, SendMessageRequest } from '@app/data-access/messa
 import { AuthStoreService } from '@auth/data-access/facades'
 import { LetModule } from '@ngrx/component'
 
-import { MessageModel, MessageWebUserModel, UserModel } from '@shared/data-access/models'
+import {
+  CombinedMessageUserModel,
+  MessageFrom,
+  MessageModel,
+  MessageWebUserModel,
+  UserModel,
+  WebUserModel,
+} from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
 import { map, Observable } from 'rxjs'
@@ -36,6 +44,10 @@ import { map, Observable } from 'rxjs'
 import { ConversationMessageDirective, ScrollViewportDirective } from '@shared/directives'
 import { MessageBarComponent } from '../message-bar/message-bar.component'
 import { GetCdnUrlStringPipe, SortConversationMessagesPipe } from '@shared/pipes'
+import { YouOrUserNamePipe } from '../../../../../../../shared/pipes/src/lib/text'
+import { MessageItemComponent } from '../message-item/message-item.component'
+import { MessageOptionsBarComponent } from '../options-bar/message-options-bar.component'
+import { UsersService, UsersStoreService } from '@app/data-access/users'
 
 @Component({
   selector: 'app-user-conversation-component',
@@ -105,6 +117,10 @@ import { GetCdnUrlStringPipe, SortConversationMessagesPipe } from '@shared/pipes
     MessageBarComponent,
     SortConversationMessagesPipe,
     GetCdnUrlStringPipe,
+    YouOrUserNamePipe,
+    NgTemplateOutlet,
+    MessageItemComponent,
+    MessageOptionsBarComponent,
   ],
   standalone: true,
 })
@@ -114,6 +130,8 @@ export class UserConversationComponent {
   private dialog = inject(MatDialog)
   private router = inject(Router)
   private route = inject(ActivatedRoute)
+  private usersStore = inject(UsersStoreService)
+  readonly MessageFrom = MessageFrom
 
   isDialog$ = this.route.url.pipe(
     map((paths) => {
@@ -123,9 +141,10 @@ export class UserConversationComponent {
 
   userMessages$?: Observable<MessageWebUserModel[]>
   user$: Observable<UserModel | undefined> = this.authStore.select.user$
-  selectedConversationMessage?: MessageModel
+  selectedConversationMessage?: MessageWebUserModel
   unreadFilter = false
   recipient?: string
+  recipientUser$?: Observable<WebUserModel>
   scrollIndex = 0
 
   @ViewChild('autosize') autosize!: CdkTextareaAutosize
@@ -133,7 +152,9 @@ export class UserConversationComponent {
   @Input() set recipientImport(recipient: string | undefined) {
     if (!recipient) return
     this.recipient = recipient
+    // this.userMessages$ = this.messagesStore.select.messagesWithUser2$(recipient)
     this.userMessages$ = this.messagesStore.select.messagesWithUser$(recipient)
+    this.recipientUser$ = this.usersStore.select.webUserCombinedByUserName$(recipient)
   }
 
   sendMessage(message: string) {
@@ -147,7 +168,7 @@ export class UserConversationComponent {
     this.messagesStore.dispatch.sendMessageToUser(request)
   }
 
-  selectMessage(message: MessageModel) {
+  selectMessage(message: MessageWebUserModel) {
     if (this.selectedConversationMessage && this.selectedConversationMessage.id === message.id) {
       this.selectedConversationMessage = undefined
       return

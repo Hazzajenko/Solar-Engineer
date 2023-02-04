@@ -11,6 +11,7 @@ import { AuthActions } from '@auth/data-access/store'
 import { Update } from '@ngrx/entity'
 import { UserModel } from '@shared/data-access/models'
 import { of } from 'rxjs'
+import { FriendsActions } from '@app/data-access/friends'
 
 @Injectable({
   providedIn: 'root',
@@ -26,7 +27,7 @@ export class UsersEffects {
       ofType(UsersActions.getUserByUsername),
       switchMap(({ userName }) =>
         this.usersService
-          .getUserByUserName(userName)
+          .getUserByUserNameV2(userName)
           .pipe(map((res) => UsersActions.addUser({ user: res.user }))),
       ),
     ),
@@ -39,17 +40,42 @@ export class UsersEffects {
         switchMap(({ request }) =>
           this.usersService.updateDisplayPicture(request).pipe(
             map(() => {
-
               const update: Partial<UserModel> = {
                 photoUrl: request.image.imageName,
               }
               return AuthActions.updateUser({ update })
-
             }),
             catchError((err: Error) => of(AuthActions.addError({ error: err.message }))),
           ),
         ),
       ),
     // { dispatch: false }
+  )
+
+  sendFriendRequest$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(UsersActions.sendFriendRequest),
+        switchMap(({ userName }) => this.usersService.sendFriendRequest(userName)),
+      ),
+    { dispatch: false },
+  )
+
+  acceptFriendRequest$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(UsersActions.acceptFriendRequest),
+        switchMap(({ userName }) => this.usersService.acceptFriendRequest(userName)),
+      ),
+    { dispatch: false },
+  )
+
+  rejectFriendRequest$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(UsersActions.rejectFriendRequest),
+        switchMap(({ userName }) => this.usersService.rejectFriendRequest(userName)),
+      ),
+    { dispatch: false },
   )
 }

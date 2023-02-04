@@ -19,6 +19,7 @@ import {
 } from '../store'
 import { map } from 'rxjs/operators'
 import {
+  CombinedMessageUserModel,
   GROUP_CHAT_SERVER_MEMBER_MODEL,
   GROUP_CHAT_SERVER_MESSAGE_MODEL,
   GroupChatCombinedModel,
@@ -144,6 +145,9 @@ export class GroupChatsFacade {
         const groupMessages = this.groupChatMessagesWithMembersCombinedWithServerMessagesById2$(
           groupChatId,
         ).pipe(startWith([] as GroupChatMessageMemberModel[]))
+        /*        const groupMessages = this.groupChatMessagesWithMembersCombinedWithServerMessagesById3$(
+                  groupChatId,
+                ).pipe(startWith([] as CombinedMessageUserModel[]))*/
         const latestSentMessage = groupMessages.pipe(
           map((messages) => (messages[0] ? messages[0] : undefined)),
           take(1),
@@ -231,10 +235,25 @@ export class GroupChatsFacade {
     ]).pipe(map(([messages, serverMessages]) => [...messages, ...serverMessages]))
   }
 
-  groupChatMessagesWithMembersCombinedWithServerMessagesById2$(groupChatId: number) {
+  groupChatMessagesWithMembersCombinedWithServerMessagesById2$(
+    groupChatId: number,
+  ): Observable<GroupChatMessageMemberModel[]> {
     return this.getMessagesAndServerMessagesCombined$(groupChatId).pipe(
       switchMap((messages) => combineLatest(this.combineMessagesWithWebUsers$(messages))),
       map((messages) => sortByMessageSentTime<GroupChatMessageMemberModel>(messages)),
+      // map((messages) => messages.map(message => ({...message} as CombinedMessageUserModel)),
+    )
+  }
+
+  groupChatMessagesWithMembersCombinedWithServerMessagesById3$(
+    groupChatId: number,
+  ): Observable<CombinedMessageUserModel[]> {
+    return this.getMessagesAndServerMessagesCombined$(groupChatId).pipe(
+      switchMap((messages) => combineLatest(this.combineMessagesWithWebUsers$(messages))),
+      map((messages) => sortByMessageSentTime<GroupChatMessageMemberModel>(messages)),
+      map((messages) =>
+        messages.map((message) => ({ ...message, isGroup: true } as CombinedMessageUserModel)),
+      ),
     )
   }
 
@@ -260,14 +279,14 @@ export class GroupChatsFacade {
           members.map((member) => {
             return combineLatest([
               of(member),
-              this.usersStore.select.webUserCombinedByUserName$(member.userName),
+              this.usersStore.select.appUserLinkCombinedByUserName$(member.userName),
+              // this.usersStore.select.webUserCombinedByUserName$(member.userName),
             ]).pipe(
               map(
                 ([member, webUser]) =>
                   ({
                     ...member,
                     ...webUser,
-                    isServer: false,
                   } as GroupChatMemberModel),
               ),
             )
@@ -286,14 +305,14 @@ export class GroupChatsFacade {
         if (!member) return of(undefined)
         return combineLatest([
           of(member),
-          this.usersStore.select.webUserCombinedByUserName$(member.userName),
+          this.usersStore.select.appUserLinkCombinedByUserName$(member.userName),
+          // this.usersStore.select.webUserCombinedByUserName$(member.userName),
         ]).pipe(
           map(
             ([member, webUser]) =>
               ({
                 ...member,
                 ...webUser,
-                isServer: false,
               } as GroupChatMemberModel),
           ),
         )

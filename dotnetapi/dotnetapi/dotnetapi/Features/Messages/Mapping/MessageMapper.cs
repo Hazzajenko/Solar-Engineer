@@ -30,7 +30,23 @@ public static class MessageMapper
             MessageSentTime = request.MessageSentTime,
             RecipientUserName = request.RecipientUserName,
             SenderUserName = request.SenderUserName,
-            Status = request.Status,
+            // Status = request.Status,
+
+            MessageReadTimes = request.MessageReadTime.HasValue
+                ? new List<GroupChatReadTimeDto>
+                {
+                    new()
+                    {
+                        Id = 0,
+                        RecipientUserName = request.RecipientUserName,
+                        MessageReadTime = request.MessageReadTime.Value!
+                    }
+                }
+                : new List<GroupChatReadTimeDto>(),
+            MessageFrom =
+                appUser.UserName! == request.Sender.UserName!
+                    ? MessageFrom.CurrentUser
+                    : MessageFrom.OtherUser,
             IsUserSender = appUser.UserName! == request.SenderUserName!
         };
     }

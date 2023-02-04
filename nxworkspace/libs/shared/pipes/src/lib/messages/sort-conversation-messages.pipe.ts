@@ -1,5 +1,9 @@
 import { Pipe, PipeTransform } from '@angular/core'
-import { MessageModel, MessageWebUserModel } from '@shared/data-access/models'
+import {
+  CombinedMessageUserModel,
+  MessageModel,
+  MessageWebUserModel,
+} from '@shared/data-access/models'
 
 @Pipe({
   name: 'sortConversationMessages',

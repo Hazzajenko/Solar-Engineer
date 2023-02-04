@@ -1,6 +1,10 @@
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling'
 import { Directive, ElementRef, inject, Input } from '@angular/core'
-import { GroupChatMessageModel, MessageModel } from '@shared/data-access/models'
+import {
+  GroupChatMessageModel,
+  MessageModel,
+  MessageWebUserModel,
+} from '@shared/data-access/models'
 
 @Directive({
   selector: '[appScrollViewportDirective]',
@@ -9,7 +13,7 @@ import { GroupChatMessageModel, MessageModel } from '@shared/data-access/models'
 export class ScrollViewportDirective {
   private elRef = inject(ElementRef)
   private _viewport!: CdkVirtualScrollViewport
-  private _messages: MessageModel[] = []
+  private _messages: MessageWebUserModel[] = []
   private _groupChatMessages: GroupChatMessageModel[] = []
   private _scrollIndex = 0
   private _recipient = ''
@@ -60,7 +64,7 @@ export class ScrollViewportDirective {
     this.scrollToBottom()
   }
 
-  @Input() set messages(messages: MessageModel[] | undefined | null) {
+  @Input() set messages(messages: MessageWebUserModel[] | undefined | null) {
     if (!messages) return
 
     this._messages = messages

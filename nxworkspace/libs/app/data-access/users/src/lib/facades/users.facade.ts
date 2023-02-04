@@ -6,7 +6,7 @@ import { map, switchMap } from 'rxjs/operators'
 import { UsersActions, UsersSelectors } from '../store'
 import { RouterFacade } from '@shared/data-access/router'
 import { UsersService } from '../api'
-import { CombinedAppUserModel, WebUserModel } from '@shared/data-access/models'
+import { AppUserLinkModel, CombinedAppUserModel, WebUserModel } from '@shared/data-access/models'
 import { FriendsSelectors, FriendsStoreService } from '@app/data-access/friends'
 import { AuthSelectors } from '@auth/data-access/store'
 import { ProjectsSelectors } from '@projects/data-access/store'
@@ -29,14 +29,17 @@ export class UsersFacade {
   personalCombinedAppUser$ = combineLatest([
     this.store.select(AuthSelectors.selectUser),
     this.store.select(ProjectsSelectors.selectAllProjects),
-    this.store.select(FriendsSelectors.selectAllFriends)
-  ]).pipe(map(
-    ([user, projects, friends]) => ({
-      ...user,
-      projectsLength: projects.length,
-      friendsLength: friends.length
-    } as CombinedAppUserModel)
-  ))
+    this.store.select(FriendsSelectors.selectAllFriends),
+  ]).pipe(
+    map(
+      ([user, projects, friends]) =>
+        ({
+          ...user,
+          projectsLength: projects.length,
+          friendsLength: friends.length,
+        } as CombinedAppUserModel),
+    ),
+  )
 
   usersOnline$ = this.connectionsStore.select.connections$.pipe(
     combineLatestWith(this.users$),
@@ -62,7 +65,7 @@ export class UsersFacade {
     return this.userByUserName$(userName).pipe(
       switchMap((user) => {
         if (!user) {
-          return this.usersService.getUserByUserName(userName).pipe(
+          return this.usersService.getUserByUserNameV2(userName).pipe(
             map((res) => res.user),
             tap((user) => this.store.dispatch(UsersActions.addUser({ user }))),
           )
@@ -76,8 +79,32 @@ export class UsersFacade {
           this.friendsStore.select.getUserFriendStatus$(user.userName),
         ]),
       ),
-      map(([user, isOnline, isFriend]) => ({ ...user, ...isFriend, isOnline } as WebUserModel)),
+      map(
+        ([user, isOnline, isFriend]) =>
+          ({ ...user, ...isFriend, isOnline } as unknown as WebUserModel),
+      ),
     )
   }
 
+  appUserLinkCombinedByUserName$(userName: string): Observable<AppUserLinkModel> {
+    return this.userByUserName$(userName).pipe(
+      switchMap((user) => {
+        if (!user) {
+          return this.usersService.getUserByUserNameV2(userName).pipe(
+            map((res) => res.user),
+            tap((user) => this.store.dispatch(UsersActions.addUser({ user }))),
+          )
+        }
+        return of(user)
+      }),
+      switchMap((user) =>
+        combineLatest([
+          of(user),
+          this.connectionsStore.select.isUserOnline$(user.userName),
+          // this.friendsStore.select.getUserFriendStatus$(user.userName),
+        ]),
+      ),
+      map(([user, isOnline]) => ({ ...user, isOnline } as AppUserLinkModel)),
+    )
+  }
 }

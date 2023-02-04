@@ -1,4 +1,4 @@
-﻿using dotnetapi.Models.Dtos;
+﻿using dotnetapi.Features.Users.Data;
 using Microsoft.AspNetCore.SignalR;
 
 namespace dotnetapi.Hubs;
@@ -6,17 +6,18 @@ namespace dotnetapi.Hubs;
 public interface INotificationsHub
 {
     // Task SendNotification(string[] connections, AppUserFriend appUserFriend);
-    Task GetNotifications(NotificationDto notification);
+    Task GetAppUserLinks(IEnumerable<AppUserLinkDto> appUserLinks);
 }
 
 public class NotificationsHub : Hub<INotificationsHub>
 {
-    private readonly ILogger<NotificationsHub> _serilog;
+    private readonly ILogger<NotificationsHub> _logger;
 
-    public NotificationsHub(ILogger<NotificationsHub> serilog)
+    public NotificationsHub(ILogger<NotificationsHub> logger)
     {
-        _serilog = serilog;
+        _logger = logger;
     }
+
     /*public override async Task OnConnectedAsync() {
         ConnectedCount++;
         _serilog.LogInformation("OnConnectedAsync {ConnectedCount}, Id {Id}", ConnectedCount, Context.ConnectionId);

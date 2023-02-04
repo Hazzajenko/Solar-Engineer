@@ -27,6 +27,7 @@ import { AuthStoreService } from '@auth/data-access/facades'
 import { LetModule } from '@ngrx/component'
 
 import {
+  CombinedMessageUserModel,
   GroupChatCombinedModel,
   GroupChatMemberModel,
   GroupChatMessageMemberModel,
@@ -52,6 +53,8 @@ import { GetCdnUrlStringPipe, PrintSeenTextPipe } from '@shared/pipes'
 import { IsLastInArrayPipe } from '../../../../../../../shared/pipes/src/lib/arrays'
 import { ExcludeSenderFromSeenPipe } from './pipes/exclude-sender-from-seen.pipe'
 import { YouOrUserNamePipe } from '../../../../../../../shared/pipes/src/lib/text'
+import { MessageItemComponent } from '../message-item/message-item.component'
+import { MessageOptionsBarComponent } from '../options-bar/message-options-bar.component'
 
 @Component({
   selector: 'app-group-chat-conversation-component',
@@ -132,6 +135,8 @@ import { YouOrUserNamePipe } from '../../../../../../../shared/pipes/src/lib/tex
     ExcludeSenderFromSeenPipe,
     YouOrUserNamePipe,
     PrintSeenTextPipe,
+    MessageItemComponent,
+    MessageOptionsBarComponent,
   ],
   standalone: true,
 })

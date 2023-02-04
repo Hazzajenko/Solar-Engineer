@@ -1,12 +1,19 @@
 import { inject, Injectable } from '@angular/core'
 import { AuthSelectors } from '@auth/data-access/store'
 import { Store } from '@ngrx/store'
-import { MessageModel, MessageWebUserModel } from '@shared/data-access/models'
+import {
+  CombinedMessageUserModel,
+  GroupChatMessageMemberModel,
+  MessageFrom,
+  MessageModel,
+  MessageWebUserModel,
+} from '@shared/data-access/models'
 import { combineLatest, combineLatestWith, firstValueFrom, Observable, of } from 'rxjs'
 import { map, switchMap } from 'rxjs/operators'
 import { MessagesSelectors } from '../store'
 import { ConnectionsStoreService } from '@shared/data-access/connections'
 import { UsersStoreService } from '@app/data-access/users'
+import { sortByMessageSentTime } from '@shared/utils'
 
 @Injectable({
   providedIn: 'root',
@@ -68,9 +75,46 @@ export class MessagesFacade {
           ),
         ),
       ),
+      map((messages) => sortByMessageSentTime<MessageWebUserModel>(messages)),
     )
   }
 
+  messagesWithUser2$(userName: string): Observable<CombinedMessageUserModel[]> {
+    return this.store.select(MessagesSelectors.selectAllMessages).pipe(
+      combineLatestWith(this.store.select(AuthSelectors.selectUser)),
+      map(([messages, user]) =>
+        messages.filter(
+          (message) =>
+            (message.senderUserName === userName && message.recipientUserName === user?.userName) ||
+            (message.recipientUserName === userName && message.senderUserName === user?.userName),
+        ),
+      ),
+      switchMap((messages) =>
+        combineLatest(
+          messages.map((message) =>
+            combineLatest([
+              of(message),
+              this.usersStore.select.webUserCombinedByUserName$(message.senderUserName),
+            ]).pipe(
+              map(
+                ([message, sender]) =>
+                  ({
+                    ...message,
+                    sender,
+                    isGroup: false,
+                    groupChatId: 0,
+                    senderInGroup: true,
+                    messageReadTimes: [],
+                  } as CombinedMessageUserModel),
+              ),
+            ),
+          ),
+        ),
+      ),
+    )
+  }
+
+  // CombinedMessageUserModel
   groupItemByVal<T>(arr: T[], fn: (item: T) => any): Record<string, T[]> {
     return arr.reduce<Record<string, T[]>>((prev, curr) => {
       const groupKey = fn(curr)

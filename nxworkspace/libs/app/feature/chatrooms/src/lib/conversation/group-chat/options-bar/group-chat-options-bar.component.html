@@ -1,4 +1,4 @@
-<ng-container *ngIf="groupChat">
+<ng-container *ngIf="groupChat || webUser">
   <nav class="p-3 border-gray-200 rounded bg-gray-50">
     <div class="container flex flex-wrap items-center justify-between mx-auto">
       <a href="#" class="flex items-center">
@@ -8,8 +8,17 @@
           class="h-6 mr-3 sm:h-10"
           alt="GroupChat Logo"
         />
-        <span class="self-center text-xl font-semibold whitespace-nowrap">{{
+        <img
+          *ngIf="webUser.photoUrl"
+          [src]="webUser.photoUrl"
+          class="h-6 mr-3 sm:h-10"
+          alt="GroupChat Logo"
+        />
+        <span *ngIf="groupChat" class="self-center text-xl font-semibold whitespace-nowrap">{{
           groupChat.name
+        }}</span>
+        <span *ngIf="webUser" class="self-center text-xl font-semibold whitespace-nowrap">{{
+          webUser.userName
         }}</span>
       </a>
       <button
@@ -38,7 +47,7 @@
         <ul
           class="flex flex-col mt-4 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium"
         >
-          <li>
+          <li *ngIf="groupChat">
             <button (click)="addGroupChatMembers()" mat-icon-button>
               <mat-icon>person_add</mat-icon>
             </button>
@@ -51,7 +60,7 @@
                           >Members</a
                         >-->
           </li>
-          <li>
+          <li *ngIf="groupChat">
             <button (click)="viewGroupChatMembers()" mat-icon-button>
               <mat-icon>group</mat-icon>
             </button>
@@ -63,6 +72,11 @@
                           aria-current="page"
                           >Members</a
                         >-->
+          </li>
+          <li *ngIf="webUser">
+            <button (click)="startGroupChatWithUser(webUser)" mat-icon-button>
+              <mat-icon>person_add</mat-icon>
+            </button>
           </li>
           <li>
             <button (click)="openSettings($event)" mat-icon-button>

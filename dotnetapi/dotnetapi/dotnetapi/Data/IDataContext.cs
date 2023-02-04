@@ -24,6 +24,7 @@ public interface IDataContext
     DbSet<GroupChatMessage> GroupChatMessages { get; set; }
     DbSet<GroupChatServerMessage> GroupChatServerMessages { get; set; }
     DbSet<GroupChatReadTime> GroupChatReadTimes { get; set; }
+    DbSet<AppUserLink> AppUserLinks { get; set; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     int SaveChanges();

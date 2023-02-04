@@ -1,0 +1,30 @@
+<ng-container *ngIf="appUserName && state">
+  <ng-container *ngIf="message">
+    <span class="flex" matListItemTitle>
+      <mat-icon color="primary" style="transform: scale(0.75)" *ngIf="message.sender.isOnline"
+        >wifi</mat-icon
+      >
+      <img
+        mat-card-avatar
+        style="width: 25px; height: 25px"
+        [src]="message.sender.photoUrl | getCdnUrlString"
+        alt=""
+      />
+      <span class="mx-1">
+        {{ message.senderUserName | youOrUserName: appUserName }}
+      </span>
+    </span>
+
+    <span *ngIf="state.isSelectedMessage && !state.isLastMessage">{{
+      message.messageSentTime | date: "short"
+    }}</span>
+    <span *ngIf="state.isLastMessage">{{ message.messageSentTime | date: "short" }}</span>
+    <p style="white-space: pre-line">{{ message.content }}</p>
+    <br />
+    <span *ngIf="state.isLastMessage">
+      <span *ngFor="let readTime of message | printSeenText: appUserName">
+        {{ readTime }}
+      </span>
+    </span>
+  </ng-container>
+</ng-container>

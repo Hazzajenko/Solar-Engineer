@@ -1,112 +1,66 @@
 <ng-container *ngIf="user$ | async as user">
-  <ng-container *ngIf="userMessages$ | async as messages">
-    <ng-container *ngrxLet="isDialog$ | async as isDialog">
-      <div class="flex flex-col items-center content-center">
-        <cdk-virtual-scroll-viewport
-          [ngStyle]="{
-            height: isDialog ? '550px' : '550px'
-          }"
-          appScrollViewportDirective
-          #viewport
-          (scrolledIndexChange)="scrollIndex = $event"
-          [scrollIndex]="scrollIndex"
-          [recipient]="recipient"
-          [viewport]="viewport"
-          [messages]="messages"
-          style="overflow-y: scroll"
-          itemSize="25"
-          class="flex w-[100%] min-w-max"
-        >
-          <div
-            appConversationMessageDirective
-            [userName]="user.userName"
-            [message]="message"
-            class="flex grow"
-            *cdkVirtualFor="let message of messages | sortConversationMessages"
+  <ng-container *ngIf="recipientUser$ | async as recipientUser">
+    <ng-container *ngIf="userMessages$ | async as messages">
+      <ng-container *ngrxLet="isDialog$ | async as isDialog">
+        <app-message-options-bar-component
+          [webUser]="recipientUser"
+        ></app-message-options-bar-component>
+        <div class="flex flex-col items-center content-center">
+          <cdk-virtual-scroll-viewport
+            [ngStyle]="{
+              height: isDialog ? '550px' : '550px'
+            }"
+            appScrollViewportDirective
+            #viewport
+            (scrolledIndexChange)="scrollIndex = $event"
+            [scrollIndex]="scrollIndex"
+            [recipient]="recipient"
+            [viewport]="viewport"
+            [messages]="messages"
+            style="overflow-y: scroll"
+            itemSize="25"
+            class="flex w-[100%] min-w-max"
           >
-            <ng-container *ngrxLet="messages[messages.length - 1].id as lastMessageId">
-              <ng-container *ngIf="user.userName === message.senderUserName; else recipientMessage">
+            <div
+              appConversationMessageDirective
+              [userName]="user.userName"
+              [message]="message"
+              class="flex grow"
+              *cdkVirtualFor="let message of messages"
+            >
+              <ng-container
+                *ngIf="{
+                  isLastMessage: message.id === messages[messages.length - 1].id,
+                  isSelectedMessage: selectedConversationMessage?.id === message.id,
+                  isUserSender: message.messageFrom === MessageFrom.CurrentUser
+                } as state"
+              >
                 <div
                   (click)="selectMessage(message)"
                   [ngClass]="{
-                    'bg-blue-400/75': selectedConversationMessage?.id === message.id,
-                    'hover:bg-blue-400': selectedConversationMessage?.id === message.id,
-                    'hover:bg-sky-400': selectedConversationMessage?.id !== message.id
+                    'bg-blue-400/75 hover:bg-blue-400':
+                      state.isSelectedMessage && state.isUserSender,
+                    'hover:bg-sky-400': !state.isSelectedMessage && state.isUserSender,
+                    'rounded-tl-lg rounded-tr-lg rounded-bl-lg bg-sky-400/75': state.isUserSender,
+                    'rounded-lg bg-gray-400/75 hover:bg-gray-400': !state.isUserSender
                   }"
-                  class="flex flex-col my-2 p-1 min-w-[250px] max-w-[250px] rounded-tl-lg rounded-tr-lg rounded-bl-lg bg-sky-400/75 mx-5"
+                  class="flex flex-col my-2 p-1 min-w-[250px] max-w-[250px] mx-5"
                 >
-                  <span
-                    *ngIf="
-                      selectedConversationMessage &&
-                      selectedConversationMessage.id === message.id &&
-                      message.id !== lastMessageId
-                    "
-                    matListItemLine
-                    >{{ message.messageSentTime | date: "short" }}</span
-                  >
-                  <p style="white-space: pre-line" matListItemLine>{{ message.content }}</p>
-                  <span *ngIf="message.id === lastMessageId" matListItemLine
-                    >Sent {{ message.messageSentTime | date: "short" }}</span
-                  >
-                  <span
-                    *ngIf="message.messageReadTime && message.id === lastMessageId"
-                    matListItemLine
-                    >Seen {{ message.messageReadTime | date: "short" }}</span
-                  >
+                  <app-message-item-component
+                    [message]="message"
+                    [appUserName]="user.userName"
+                    [state]="state"
+                  ></app-message-item-component>
                 </div>
               </ng-container>
-              <ng-template #recipientMessage>
-                <div
-                  (click)="selectMessage(message)"
-                  class="flex flex-col my-2 p-1 min-w-[250px] max-w-[250px] rounded-lg bg-gray-400/75 hover:bg-gray-400 mx-5"
-                >
-                  <!--                  <span matListItemTitle>{{ message.senderUserName }}</span>-->
-                  <span class="flex" matListItemTitle>
-                    <mat-icon
-                      color="primary"
-                      style="transform: scale(0.75)"
-                      *ngIf="message.sender.isOnline"
-                      >wifi</mat-icon
-                    >
-                    <img
-                      mat-card-avatar
-                      width="25px"
-                      height="25px"
-                      [src]="message.sender.photoUrl | getCdnUrlString"
-                      alt=""
-                    />
-                    {{ message.senderUserName }}
-                    <!--{{message.sender.isOnline ? 'ONLINE' : ''}}-->
-                  </span>
-                  <span
-                    *ngIf="
-                      selectedConversationMessage &&
-                      selectedConversationMessage.id === message.id &&
-                      message.id !== lastMessageId
-                    "
-                    matListItemLine
-                    >{{ message.messageSentTime | date: "short" }}</span
-                  >
-                  <p style="white-space: pre-line" matListItemLine>{{ message.content }}</p>
-                  <span *ngIf="message.id === lastMessageId" matListItemLine
-                    >Sent {{ message.messageSentTime | date: "short" }}</span
-                  >
-                  <span
-                    *ngIf="message.id === lastMessageId && message.messageReadTime"
-                    matListItemLine
-                    >Seen By You {{ message.messageReadTime | date: "short" }}</span
-                  >
-                </div>
-              </ng-template>
-            </ng-container>
-          </div>
-        </cdk-virtual-scroll-viewport>
-
-        <app-message-bar-component
-          class="min-w-max w-[100%] grow-0"
-          (sendMessageEvent)="sendMessage($event)"
-        ></app-message-bar-component>
-      </div>
+            </div>
+          </cdk-virtual-scroll-viewport>
+          <app-message-bar-component
+            class="min-w-max w-[100%] grow-0"
+            (sendMessageEvent)="sendMessage($event)"
+          ></app-message-bar-component>
+        </div>
+      </ng-container>
     </ng-container>
   </ng-container>
 </ng-container>

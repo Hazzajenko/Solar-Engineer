@@ -16,7 +16,12 @@ import { MatTooltipModule } from '@angular/material/tooltip'
 import { PanelLinkComponent } from '@grid-layout/feature/blocks/shared-ui'
 
 import { LetModule } from '@ngrx/component'
-import { GroupChatMemberModel, GroupChatMessageMemberModel } from '@shared/data-access/models'
+import {
+  CombinedMessageUserModel,
+  GroupChatMemberModel,
+  GroupChatMessageMemberModel,
+  TypeOfUser,
+} from '@shared/data-access/models'
 import { Router } from '@angular/router'
 import { MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog'
 
@@ -50,7 +55,7 @@ export class GroupChatMessageMenuComponent {
   // private dialogRef: MatDialogRef<ChangeDisplayPictureComponent>
   @Input() message!: GroupChatMessageMemberModel
 
-  async routeToUserProfile(user: GroupChatMemberModel) {
+  async routeToUserProfile(user: TypeOfUser) {
     // await this.router.navigateByUrl(`user/${sender.userName}`)
     const dialogConfig = {
       autoFocus: true,
@@ -72,11 +77,11 @@ export class GroupChatMessageMenuComponent {
           .subscribe((res) => console.log(res))*/
   }
 
-  sendFriendRequest(sender: GroupChatMemberModel) {
+  sendFriendRequest(sender: TypeOfUser) {
     console.log(sender)
   }
 
-  messagePrivately(sender: GroupChatMemberModel) {
+  messagePrivately(sender: TypeOfUser) {
     console.log(sender)
   }
 }

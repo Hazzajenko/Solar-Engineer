@@ -1,21 +1,21 @@
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity'
 import { Action, createReducer, on } from '@ngrx/store'
-import { UserModel } from '@shared/data-access/models'
+import { AppUserLinkModel, UserModel } from '@shared/data-access/models'
 
 import { UsersActions } from './users.actions'
 
 export const USERS_FEATURE_KEY = 'users'
 
-export interface UsersState extends EntityState<UserModel> {
+export interface UsersState extends EntityState<AppUserLinkModel> {
   loaded: boolean
   error?: string | null
 }
 
-export function selectUsername(a: UserModel): string {
+export function selectUsername(a: AppUserLinkModel): string {
   return a.userName
 }
 
-export const usersAdapter: EntityAdapter<UserModel> = createEntityAdapter<UserModel>({
+export const usersAdapter: EntityAdapter<AppUserLinkModel> = createEntityAdapter<AppUserLinkModel>({
   selectId: selectUsername,
 })
 

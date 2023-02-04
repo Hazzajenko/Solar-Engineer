@@ -1,9 +1,11 @@
 import { Directive, ElementRef, inject, Input } from '@angular/core'
 import {
+  CombinedMessageUserModel,
   GroupChatMessageMemberModel,
   GroupChatMessageModel,
   MessageFrom,
   MessageModel,
+  MessageWebUserModel,
 } from '@shared/data-access/models'
 
 @Directive({
@@ -12,7 +14,7 @@ import {
 })
 export class ConversationMessageDirective {
   private elRef = inject(ElementRef)
-  private _message!: MessageModel
+  private _message!: MessageWebUserModel
   private _groupChatMessage!: GroupChatMessageModel
   private _userName!: string
 
@@ -66,7 +68,7 @@ export class ConversationMessageDirective {
         }*/
   }
 
-  @Input() set message(message: MessageModel) {
+  @Input() set message(message: MessageWebUserModel) {
     if (!message) return
     this._message = message
 

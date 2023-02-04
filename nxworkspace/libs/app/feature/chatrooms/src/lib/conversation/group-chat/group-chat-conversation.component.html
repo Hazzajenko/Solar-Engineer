@@ -1,10 +1,9 @@
 <ng-container *ngIf="user$ | async as user">
-  <!--  <ng-container *ngIf='messages$ | async as messages'>-->
   <ng-container *ngIf="groupChatCombined$ | async as groupChat">
-    <!--    <ng-container *ngrxLet="groupChatMessages$ | async as groupChatMessages">-->
-    <app-group-chat-options-bar-component
-      [groupChat]="groupChat"
-    ></app-group-chat-options-bar-component>
+    <!--    <app-group-chat-options-bar-component
+          [groupChat]="groupChat"
+        ></app-group-chat-options-bar-component>-->
+    <app-message-options-bar-component [groupChat]="groupChat"></app-message-options-bar-component>
     <ng-container *ngrxLet="isDialog$ | async as isDialog">
       <div class="flex flex-col items-center content-center">
         <cdk-virtual-scroll-viewport
@@ -27,7 +26,7 @@
             [userName]="user.userName"
             [groupChatMessage]="message"
             class="flex grow"
-            *cdkVirtualFor="let message of groupChat.messages; trackBy: trackByFn"
+            *cdkVirtualFor="let message of groupChat.messages"
           >
             <ng-container
               *ngIf="{
@@ -37,94 +36,39 @@
               } as state"
             >
               <ng-container
-                *ngrxLet="groupChat.messages[groupChat.messages.length - 1].id as lastMessageId"
-              >
-                <ng-container
-                  *ngIf="message.messageFrom === MessageFrom.Server; else notServerMessage"
-                >
-                  <!--              <ng-container
-                                  *ngIf="
-                                    message.sender.isServer && message.sender.role === 'SERVER';
-                                    else notServerMessage
-                                  "
-                                >-->
-                  <div>
-                    {{ message.content }}
+                *ngIf="
+                  message.messageFrom === MessageFrom.Server;
+                  then serverMessage;
+                  else userMessage
+                "
+              ></ng-container>
+              <ng-template #serverMessage>
+                <div>
+                  {{ message.content }}
+                </div>
+              </ng-template>
+              <ng-template #userMessage>
+                <ng-container>
+                  <div
+                    (click)="selectGroupChatMessage(message)"
+                    (contextmenu)="onRightClick($event, message)"
+                    [ngClass]="{
+                      'bg-blue-400/75 hover:bg-blue-400':
+                        state.isSelectedMessage && state.isUserSender,
+                      'hover:bg-sky-400': !state.isSelectedMessage && state.isUserSender,
+                      'rounded-tl-lg rounded-tr-lg rounded-bl-lg bg-sky-400/75': state.isUserSender,
+                      'rounded-lg bg-gray-400/75 hover:bg-gray-400': !state.isUserSender
+                    }"
+                    class="flex flex-col my-2 p-1 min-w-[250px] max-w-[250px] mx-5"
+                  >
+                    <app-message-item-component
+                      [message]="message"
+                      [state]="state"
+                      [appUserName]="user.userName"
+                    ></app-message-item-component>
                   </div>
                 </ng-container>
-                <ng-template #notServerMessage>
-                  <!--                  *ngIf="user.userName === message.senderUserName; else recipientMessage"-->
-                  <!--                  *ngIf="message.messageFrom === MessageFrom.CurrentUser; else recipientMessage"-->
-                  <ng-container>
-                    <div
-                      (click)="selectGroupChatMessage(message)"
-                      (contextmenu)="onRightClick($event, message)"
-                      [ngClass]="{
-                        'bg-blue-400/75 hover:bg-blue-400':
-                          state.isSelectedMessage && state.isUserSender,
-                        'hover:bg-sky-400': !state.isSelectedMessage && state.isUserSender,
-                        'rounded-tl-lg rounded-tr-lg rounded-bl-lg bg-sky-400/75':
-                          state.isUserSender,
-                        'rounded-lg bg-gray-400/75 hover:bg-gray-400': !state.isUserSender
-                      }"
-                      class="flex flex-col my-2 p-1 min-w-[250px] max-w-[250px] mx-5"
-                    >
-                      <span class="flex" matListItemTitle>
-                        <mat-icon
-                          color="primary"
-                          style="transform: scale(0.75)"
-                          *ngIf="message.sender.isOnline"
-                          >wifi</mat-icon
-                        >
-                        <img
-                          mat-card-avatar
-                          style="width: 25px; height: 25px"
-                          [src]="message.sender.photoUrl | getCdnUrlString"
-                          alt=""
-                        />
-                        <span class="mx-1">
-                          {{ message.senderUserName | youOrUserName: user.userName }}
-                        </span>
-                        <!--{{message.sender.isOnline ? 'ONLINE' : ''}}-->
-                      </span>
-
-                      <span *ngIf="state.isSelectedMessage && !state.isLastMessage">{{
-                        message.messageSentTime | date: "short"
-                      }}</span>
-                      <span *ngIf="state.isLastMessage">{{
-                        message.messageSentTime | date: "short"
-                      }}</span>
-                      <p style="white-space: pre-line">{{ message.content }}</p>
-                      <br />
-                      <span
-                        style="clear: left"
-                        *ngIf="
-                          (message.messageReadTimes | anyGroupMessageSeen: user.userName) &&
-                          state.isLastMessage
-                        "
-                      >
-                        Seen by
-
-                        <span *ngFor="let readTime of message | printSeenText: user.userName">
-                          {{ readTime }}
-                        </span>
-                        <!--       <span
-                                 *ngFor="
-                                   let readTime of message.messageReadTimes
-                                     | excludeSenderFromSeen: message.senderUserName
-                                 "
-                               >
-                                 {{ readTime.recipientUserName | youOrUserName: user.userName }}
-                                 <ng-container *ngIf="state.isSelectedMessage">
-                                   {{ readTime.messageReadTime | date: "short" }}
-                                 </ng-container>
-                                 {{ (readTime | isLastInArray: message.messageReadTimes) ? "" : "," }}
-                               </span>-->
-                      </span>
-                    </div>
-                  </ng-container>
-                </ng-template>
-              </ng-container>
+              </ng-template>
             </ng-container>
           </div>
         </cdk-virtual-scroll-viewport>
@@ -134,7 +78,6 @@
         ></app-message-bar-component>
       </div>
     </ng-container>
-    <!--    </ng-container>-->
   </ng-container>
 </ng-container>
 
@@ -151,43 +94,6 @@
   backdropClass="bg-transparent"
 >
   <ng-template matMenuContent>
-    <!--<div
-      class="z-10 bg-transparent divide-y divide-gray-100 rounded-lg w-44 dark:bg-gray-700 dark:divide-gray-600"
-    >
-      <ul
-        class="py-2 text-sm text-gray-700 dark:text-gray-200"
-        aria-labelledby="dropdownMenuIconButton"
-      >
-        <li>
-          <a
-            href="#"
-            class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-            >Dashboard</a
-          >
-        </li>
-        <li>
-          <a
-            href="#"
-            class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-            >Settings</a
-          >
-        </li>
-        <li>
-          <a
-            href="#"
-            class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-            >Earnings</a
-          >
-        </li>
-      </ul>
-      <div class="py-2">
-        <a
-          href="#"
-          class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-          >Separated link</a
-        >
-      </div>
-    </div>-->
     <app-group-chat-message-menu-component
       *ngIf="selectedGroupChatMessage"
       [message]="selectedGroupChatMessage"

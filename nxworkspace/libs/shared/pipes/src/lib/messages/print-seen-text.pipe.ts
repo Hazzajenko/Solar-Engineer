@@ -1,13 +1,23 @@
 import { Pipe, PipeTransform } from '@angular/core'
-import { GroupChatMessageMemberModel, MessageFrom } from '@shared/data-access/models'
+import {
+  CombinedMessageUserModel,
+  GroupChatMessageMemberModel,
+  MessageFrom,
+  TypeOfMessage,
+} from '@shared/data-access/models'
 
 @Pipe({
   name: 'printSeenText',
   standalone: true,
 })
 export class PrintSeenTextPipe implements PipeTransform {
-  transform(message: GroupChatMessageMemberModel | undefined | null, appUserName: string) {
-    if (!message) return
+  transform(message: TypeOfMessage | undefined | null, appUserName: string) {
+    if (!message) return [''] as string[]
+
+    if (message.messageReadTimes.length < 1) {
+      return [''] as string[]
+    }
+
     const request = { ...message }
 
     const readTimes = request.messageReadTimes
@@ -19,7 +29,7 @@ export class PrintSeenTextPipe implements PipeTransform {
       readTimes.splice(senderIndex, 1)
     }
 
-    return readTimes.map((time) => {
+    const result = readTimes.map((time) => {
       // const isUserReader = time.recipientUserName === appUserName
 
       const isUserReader = time.recipientUserName === appUserName
@@ -28,6 +38,8 @@ export class PrintSeenTextPipe implements PipeTransform {
       const comma = isLast ? '' : ', '
       return `${user}${comma}`
     })
+    result.unshift('Seen by ')
+    return result
   }
 }
 

@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core'
 import { ActivatedRoute, Resolve } from '@angular/router'
 import { map, Observable, of, switchMap, tap } from 'rxjs'
 
-import { UserModel } from '@shared/data-access/models'
+import { AppUserLinkModel, UserModel } from '@shared/data-access/models'
 import { AuthStoreService } from '@auth/data-access/facades'
 import { UsersService, UsersStoreService } from '@app/data-access/users'
 import { RouterFacade } from '@shared/data-access/router'
@@ -10,7 +10,7 @@ import { RouterFacade } from '@shared/data-access/router'
 @Injectable({
   providedIn: 'root',
 })
-export class UserNameProfileResolver implements Resolve<Observable<UserModel>> {
+export class UserNameProfileResolver implements Resolve<Observable<AppUserLinkModel>> {
   private usersService = inject(UsersService)
   private authStore = inject(AuthStoreService)
   private usersStore = inject(UsersStoreService)
@@ -23,7 +23,7 @@ export class UserNameProfileResolver implements Resolve<Observable<UserModel>> {
         if (!user) {
           return this.routerFacade.routeParam$('userName').pipe(
             switchMap((userName) =>
-              this.usersService.getUserByUserName(userName).pipe(
+              this.usersService.getUserByUserNameV2(userName).pipe(
                 map((res) => res.user),
                 tap((user) => this.usersStore.dispatch.addUser(user)),
               ),

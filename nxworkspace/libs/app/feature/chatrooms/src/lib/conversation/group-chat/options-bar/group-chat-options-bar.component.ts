@@ -16,7 +16,11 @@ import { MatTooltipModule } from '@angular/material/tooltip'
 import { PanelLinkComponent } from '@grid-layout/feature/blocks/shared-ui'
 
 import { LetModule } from '@ngrx/component'
-import { GroupChatCombinedModel, GroupChatMemberModel } from '@shared/data-access/models'
+import {
+  GroupChatCombinedModel,
+  GroupChatMemberModel,
+  WebUserModel,
+} from '@shared/data-access/models'
 import { Router } from '@angular/router'
 import { MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog'
 
@@ -25,6 +29,7 @@ import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
 import { ViewGroupChatMembersComponent } from '../view-members/view-group-chat-members.component'
 import { AddGroupChatMembersComponent } from '../add-members/add-group-chat-members.component'
+import { CreateGroupChatRequest } from '@app/data-access/group-chats'
 
 @Component({
   selector: 'app-group-chat-options-bar-component',
@@ -58,6 +63,7 @@ export class GroupChatOptionsBarComponent {
   matMenuTrigger!: MatMenuTrigger
   // private dialogRef: MatDialogRef<ChangeDisplayPictureComponent>
   @Input() groupChat!: GroupChatCombinedModel
+  @Input() webUser!: WebUserModel
 
   openSettings(event: MouseEvent) {
     this.menuTopLeftPosition.x = event.clientX + 10 + 'px'
@@ -94,5 +100,16 @@ export class GroupChatOptionsBarComponent {
     } as MatDialogConfig
 
     this.dialog.open(AddGroupChatMembersComponent, dialogConfig)
+  }
+
+  startGroupChatWithUser(webUser: WebUserModel) {
+    /*    const request: CreateGroupChatRequest = {
+          groupChatName: this.webUser.userName,
+          userNamesToInvite:
+            this.selectedMembersToInvite.length > 0
+              ? this.selectedMembersToInvite.map((m) => m.userName)
+              : [],
+        }
+        this.groupChatsStore.dispatch.createGroupChat(request)*/
   }
 }

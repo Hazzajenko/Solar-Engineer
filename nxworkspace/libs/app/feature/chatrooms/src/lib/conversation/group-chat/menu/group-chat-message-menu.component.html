@@ -1,8 +1,67 @@
-<ng-container *ngIf='message'>
-  <div class='bg-white'>
-    <button (click)='routeToUserProfile(message.sender)' class='p-1 text-xs cursor-pointer hover:bg-[#545bff]'
-            style='border-radius: inherit' mat-menu-item>
-      View {{message.sender.userName}}'s profile
-    </button>
+<ng-container *ngIf="message">
+  <div
+    class="z-10 bg-transparent divide-y divide-gray-100 rounded-lg w-44 dark:bg-gray-700 dark:divide-gray-600"
+  >
+    <div class="py-2">
+      <a
+        href="#"
+        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+        >{{ message.senderUserName }}</a
+      >
+    </div>
+    <ul
+      class="py-2 text-sm text-gray-700 dark:text-gray-200"
+      aria-labelledby="dropdownMenuIconButton"
+    >
+      <li>
+        <a
+          (click)="routeToUserProfile(message.sender)"
+          class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+        >
+          Profile
+        </a>
+      </li>
+      <li *ngIf="!message.sender.isFriend">
+        <a
+          (click)="sendFriendRequest(message.sender)"
+          class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+          >Send Friend Request</a
+        >
+      </li>
+      <li>
+        <a
+          (click)="messagePrivately(message.sender)"
+          class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+          >Message Privately</a
+        >
+      </li>
+      <li>
+        <a
+          href="#"
+          class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+          >Delete Message</a
+        >
+      </li>
+      <li>
+        <a
+          href="#"
+          class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+          >Remove From Group</a
+        >
+      </li>
+    </ul>
+    <!--    <div class="py-2">
+          <a
+            href="#"
+            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+            >Separated link</a
+          >
+        </div>-->
   </div>
+  <!--  <div class='bg-white'>
+      <button (click)='routeToUserProfile(message.sender)' class='p-1 text-xs cursor-pointer hover:bg-[#545bff]'
+              style='border-radius: inherit' mat-menu-item>
+        View {{message.sender.userName}}'s profile
+      </button>
+    </div>-->
 </ng-container>

@@ -464,6 +464,52 @@ namespace dotnetapi.Data.Migrations
                     b.ToTable("AppUserFriends");
                 });
 
+            modelBuilder.Entity("dotnetapi.Models.Entities.AppUserLink", b =>
+                {
+                    b.Property<int>("AppUserRequestedId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("AppUserReceivedId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("AppUserReceivedNickName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("AppUserReceivedUserName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("AppUserRequestedNickName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("AppUserRequestedUserName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("BecameFriendsTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("Friends")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("Id")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("UserToUserStatus")
+                        .HasColumnType("integer");
+
+                    b.HasKey("AppUserRequestedId", "AppUserReceivedId");
+
+                    b.HasIndex("AppUserReceivedId");
+
+                    b.ToTable("AppUserLinks");
+                });
+
             modelBuilder.Entity("dotnetapi.Models.Entities.AppUserProject", b =>
                 {
                     b.Property<int>("Id")
@@ -928,6 +974,25 @@ namespace dotnetapi.Data.Migrations
                     b.Navigation("RequestedTo");
                 });
 
+            modelBuilder.Entity("dotnetapi.Models.Entities.AppUserLink", b =>
+                {
+                    b.HasOne("dotnetapi.Models.Entities.AppUser", "AppUserReceived")
+                        .WithMany("ReceivedAppUserLinks")
+                        .HasForeignKey("AppUserReceivedId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("dotnetapi.Models.Entities.AppUser", "AppUserRequested")
+                        .WithMany("RequestedAppUserLinks")
+                        .HasForeignKey("AppUserRequestedId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppUserReceived");
+
+                    b.Navigation("AppUserRequested");
+                });
+
             modelBuilder.Entity("dotnetapi.Models.Entities.AppUserProject", b =>
                 {
                     b.HasOne("dotnetapi.Models.Entities.AppUser", "AppUser")
@@ -1131,7 +1196,11 @@ namespace dotnetapi.Data.Migrations
 
                     b.Navigation("MessagesSent");
 
+                    b.Navigation("ReceivedAppUserLinks");
+
                     b.Navigation("ReceivedFriendRequests");
+
+                    b.Navigation("RequestedAppUserLinks");
 
                     b.Navigation("SentFriendRequests");
 

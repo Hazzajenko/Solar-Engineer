@@ -8,47 +8,66 @@ public class AppUserConfig : IEntityTypeConfiguration<AppUser>
 {
     public void Configure(EntityTypeBuilder<AppUser> builder)
     {
-        builder.HasMany(ur => ur.UserRoles)
+        builder
+            .HasMany(ur => ur.UserRoles)
             .WithOne(u => u.User)
             .HasForeignKey(ur => ur.UserId)
             .IsRequired();
 
-        builder.HasMany(ur => ur.AppUserProjects)
+        builder
+            .HasMany(ur => ur.AppUserProjects)
             .WithOne(u => u.AppUser)
             .HasForeignKey(ur => ur.AppUserId)
             .IsRequired();
 
-        builder.HasMany(ur => ur.SentFriendRequests)
+        builder
+            .HasMany(ur => ur.SentFriendRequests)
             .WithOne(u => u.RequestedBy)
             .HasForeignKey(ur => ur.RequestedById)
             .IsRequired();
 
-        builder.HasMany(ur => ur.ReceivedFriendRequests)
+        builder
+            .HasMany(ur => ur.ReceivedFriendRequests)
             .WithOne(u => u.RequestedTo)
             .HasForeignKey(ur => ur.RequestedToId)
             .IsRequired();
 
-        builder.HasMany(ur => ur.MessagesSent)
+        builder
+            .HasMany(ur => ur.MessagesSent)
             .WithOne(u => u.Sender)
             .HasForeignKey(ur => ur.SenderId)
             .IsRequired();
 
-        builder.HasMany(ur => ur.MessagesReceived)
+        builder
+            .HasMany(ur => ur.MessagesReceived)
             .WithOne(u => u.Recipient)
             .HasForeignKey(ur => ur.RecipientId)
             .IsRequired();
 
-        builder.HasMany(ur => ur.AppUserGroupChats)
+        builder
+            .HasMany(ur => ur.AppUserGroupChats)
             .WithOne(u => u.AppUser)
             .HasForeignKey(ur => ur.AppUserId)
             .IsRequired();
 
-        builder.HasMany(ur => ur.GroupChatMessagesSent)
+        builder
+            .HasMany(ur => ur.GroupChatMessagesSent)
             .WithOne(u => u.Sender)
             .HasForeignKey(ur => ur.SenderId)
             .IsRequired()
             .OnDelete(DeleteBehavior.Restrict);
 
+        builder
+            .HasMany(ur => ur.RequestedAppUserLinks)
+            .WithOne(x => x.AppUserRequested)
+            .HasForeignKey(ur => ur.AppUserRequestedId)
+            .IsRequired();
+
+        builder
+            .HasMany(ur => ur.ReceivedAppUserLinks)
+            .WithOne(x => x.AppUserReceived)
+            .HasForeignKey(ur => ur.AppUserReceivedId)
+            .IsRequired();
         /*
         builder.HasMany(ur => ur.Images)
             .WithOne(u => u.AppUser)

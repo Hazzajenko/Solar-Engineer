@@ -1,3 +1,4 @@
+import { GroupChatReadTime, MessageFrom } from '../groups'
 import { NotificationStatus } from '../signalr'
 
 export interface MessageModel {
@@ -6,7 +7,9 @@ export interface MessageModel {
   recipientUserName: string
   content: string
   messageReadTime: string | null
+  messageReadTimes: GroupChatReadTime[]
   messageSentTime: string
   status: NotificationStatus
   isUserSender: boolean
+  messageFrom: MessageFrom
 }

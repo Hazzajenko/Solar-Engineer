@@ -12,14 +12,21 @@ public class AppUser : IdentityUser<int>
         ReceievedFriendRequests = new List<AppUserFriend>();
     }*/
 
+    // public override string UserName { get; set; } = default!;
     public string FirstName { get; init; } = default!;
     public string LastName { get; init; } = default!;
     public string PhotoUrl { get; set; } = default!;
     public DateTime Created { get; set; } = DateTime.Now;
 
     public DateTime LastActive { get; set; } = DateTime.Now;
+
     // public ICollection<Image> Images { get; set; } = default!;
 
+    public ICollection<AppUserLink> RequestedAppUserLinks { get; set; } = default!;
+    public ICollection<AppUserLink> ReceivedAppUserLinks { get; set; } = default!;
+
+    // public ICollection<AppUserMessage> SentAppUserMessages { get; set; } = default!;
+    // public ICollection<AppUserMessage> ReceivedAppUserMessages { get; set; } = default!;
     public ICollection<AppUserProject> AppUserProjects { get; set; } = default!;
     public ICollection<AppUserRole> UserRoles { get; set; } = default!;
 

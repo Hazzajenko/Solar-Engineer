@@ -31,6 +31,14 @@ public class MarkAllGroupChatMessagesReadHandler
             .ThenInclude(x => x.AppUser)
             .OrderBy(x => x.MessageSentTime)
             .ToListAsync(cT);
+        
+        /*
+        await _context.GroupChatMessages
+                
+            .Where(x => x.GroupChatId == request.GroupChatId)
+            .Include(x => x.MessageReadTimes)
+            .SelectMany(x => x.MessageReadTimes)
+            .ExecuteUpdateAsync(x => x.SetProperty(c => c.))*/
 
 
         foreach (var groupChatMessage in messages)

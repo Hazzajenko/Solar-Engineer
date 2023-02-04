@@ -103,20 +103,20 @@ export class MessagesComponent {
 
   markAllMessagesAsRead(messages: MessageModel[]) {
     if (!messages) return
-    const unreadMessages = messages.filter(
-      (message) => message.status === NotificationStatus.Unread,
-    )
-    if (!unreadMessages) return
+    /*   const unreadMessages = messages.filter(
+         (message) => message.status === NotificationStatus.Unread,
+       )*/
+    // if (!unreadMessages) return
 
-    const updates: Update<MessageModel>[] = unreadMessages.map((notification) => {
-      const update: Update<MessageModel> = {
-        id: notification.id,
-        changes: {
-          status: NotificationStatus.Read,
-        },
-      }
-      return update
-    })
+    /*    const updates: Update<MessageModel>[] = unreadMessages.map((notification) => {
+          const update: Update<MessageModel> = {
+            id: notification.id,
+            changes: {
+              status: NotificationStatus.Read,
+            },
+          }
+          return update
+        })*/
     // this.messagesStore.dispatch.updateManyMessages(updates)
   }
 

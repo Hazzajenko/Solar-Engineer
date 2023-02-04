@@ -3,11 +3,12 @@
 public class Notification : BaseEntity
 {
     public int AppUserId { get; set; }
+    public string AppUserUserName { get; set; }
 
     public AppUser AppUser { get; set; } = default!;
 
-    public FriendRequest? FriendRequest { get; set; }
-    public int? FriendRequestId { get; set; }
+    // public FriendRequest? FriendRequest { get; set; }
+    // public int? FriendRequestId { get; set; }
 
     /*public AppUserFriend? AppUserFriend { get; set; }
 
@@ -18,7 +19,8 @@ public class Notification : BaseEntity
     public AppUser NotificationFrom { get; set; } = default!;*/
     public NotificationType Type { get; set; }
     public DateTime TimeCreated { get; set; }
-    public NotificationStatus Status { get; set; }
+    public bool SeenByAppUser { get; set; }
+    // public NotificationStatus Status { get; set; }
 }
 
 public enum NotificationType

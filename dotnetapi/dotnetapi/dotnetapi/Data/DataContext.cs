@@ -10,13 +10,25 @@ using String = dotnetapi.Models.Entities.String;
 
 namespace dotnetapi.Data;
 
-public class DataContext : IdentityDbContext<AppUser, AppRole, int,
-    IdentityUserClaim<int>, AppUserRole, IdentityUserLogin<int>,
-    IdentityRoleClaim<int>, IdentityUserToken<int>>, IDataContext
+public class DataContext
+    : IdentityDbContext<
+            AppUser,
+            AppRole,
+            int,
+            IdentityUserClaim<int>,
+            AppUserRole,
+            IdentityUserLogin<int>,
+            IdentityRoleClaim<int>,
+            IdentityUserToken<int>
+        >,
+        IDataContext
 {
-    public DataContext(DbContextOptions<DataContext> options) : base(options)
+    public DataContext(DbContextOptions<DataContext> options)
+        : base(options)
     {
     }
+
+    public DbSet<AppUserLink> AppUserLinks { get; set; } = default!;
 
     public DbSet<Project> Projects { get; set; } = default!;
     public DbSet<String> Strings { get; set; } = default!;
@@ -37,6 +49,7 @@ public class DataContext : IdentityDbContext<AppUser, AppRole, int,
     public DbSet<GroupChatServerMessage> GroupChatServerMessages { get; set; } = default!;
 
     public DbSet<AppUserGroupChat> AppUserGroupChats { get; set; } = default!;
+
     // public DbSet<Notification> Notifications { get; set; } = default!;
 
     // public DbSet<FriendRequest> FriendRequests { get; set; } = default!;
@@ -46,18 +59,16 @@ public class DataContext : IdentityDbContext<AppUser, AppRole, int,
     {
         if (!options.IsConfigured)
             options.UseNpgsql(
-                "Server=localhost;Port=5432;Database=solardotnetbackend;User ID=postgres;Password=password;");
+                "Server=localhost;Port=5432;Database=solardotnetbackend;User ID=postgres;Password=password;"
+            );
     }
-
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
 
-
         builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
     }
-
 
     // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     // => optionsBuilder.UseNpgsql("Server=localhost;Port=5432;Database=solardotnetbackend;User ID=postgres;Password=password;");

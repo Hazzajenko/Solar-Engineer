@@ -13,7 +13,7 @@ export interface GroupChatMemberModel {
   role: string
   joinedAt: string
   isOnline: boolean
-  isServer: boolean
+  // isServer: boolean
   isFriend: boolean
   becameFriendsTime: string | null
   // messageFrom: typeof(MESSAGE_FROM)
@@ -40,7 +40,7 @@ export const GROUP_CHAT_SERVER_MEMBER_MODEL = () =>
   ({
     userName: 'SERVER',
     role: 'SERVER',
-    isServer: true,
+    // isServer: true,
   } as GroupChatMemberModel)
 /*export const GROUP_CHAT_SERVER_MEMBER_MODEL = () =>
   ({

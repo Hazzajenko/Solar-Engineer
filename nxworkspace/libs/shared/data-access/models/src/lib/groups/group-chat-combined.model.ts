@@ -2,6 +2,7 @@ import { GroupChatMemberModel } from './group-chat-member.model'
 import { GroupChatMessageModel } from './group-chat-message.model'
 import { GroupChatMessageMemberModel } from './group-chat-message-member.model'
 import { PermissionsModel } from './group-chat.model'
+import { CombinedMessageUserModel } from '../messages'
 
 export interface GroupChatCombinedModel {
   id: number
@@ -12,4 +13,5 @@ export interface GroupChatCombinedModel {
   latestSentMessage: GroupChatMessageModel
   members: GroupChatMemberModel[]
   messages: GroupChatMessageMemberModel[]
+  // messages: GroupChatMessageMemberModel[]
 }
