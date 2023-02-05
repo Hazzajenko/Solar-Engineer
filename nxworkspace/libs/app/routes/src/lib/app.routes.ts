@@ -16,7 +16,7 @@ export const appRoutes: Route[] = [
     path: 'messages',
     loadComponent: () => import('@app/feature/chatrooms').then((m) => m.ChatroomsComponent),
     canActivate: [loggedInGuard],
-    resolve: { windowSize: ChatroomResolver },
+    // resolve: { windowSize: ChatroomResolver },
     // ChatroomResolver
     /*    providers: [projectsProviders],
         resolve: { localProject: LocalProjectResolver },*/

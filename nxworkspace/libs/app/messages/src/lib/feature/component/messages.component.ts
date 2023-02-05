@@ -85,19 +85,19 @@ export class MessagesComponent {
   change(event: MatSelectionListChange) {
     console.log(event)
     this.selectedMessage = event.options[0].value
-    if ((event.options[0].value as NotificationModel).status === NotificationStatus.Unread) {
-      this.readMessage()
-    }
+    /*    if ((event.options[0].value as NotificationModel).status === NotificationStatus.Unread) {
+          this.readMessage()
+        }*/
   }
 
   readMessage() {
     if (!this.selectedMessage) return
-    const update: Update<NotificationModel> = {
-      id: this.selectedMessage.id,
-      changes: {
-        status: NotificationStatus.Read,
-      },
-    }
+    /*    const update: Update<NotificationModel> = {
+          id: this.selectedMessage.id,
+          changes: {
+            status: NotificationStatus.Read,
+          },
+        }*/
     // this.messagesStore.dispatch.updateMessage(update)
   }
 

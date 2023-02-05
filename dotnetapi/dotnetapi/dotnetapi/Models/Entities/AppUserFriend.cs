@@ -5,7 +5,7 @@ namespace dotnetapi.Models.Entities;
 public class AppUserFriendDto
 {
     public int Id { get; set; }
-    public NotificationType Type { get; set; }
+    public string Type { get; set; }
     public DateTime RequestTime { get; set; }
     public NotificationStatus Status { get; set; }
     public string RequestedByUserName { get; set; } = default!;

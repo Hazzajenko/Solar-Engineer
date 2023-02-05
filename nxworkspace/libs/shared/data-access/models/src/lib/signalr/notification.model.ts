@@ -2,19 +2,27 @@ import { FriendRequestModel } from './friendrequest.model'
 
 export interface NotificationModel {
   id: number
-  userName: string
+  appUserId: number
+  appUserUserName: string
+  notificationFromId: number
+  notificationFromUserName: string
+  content: string
   type: NotificationType
-  requestTime: string
-  status: NotificationStatus
-  friendRequest: FriendRequestModel
+  created: string
+  seenByAppUser: boolean
+  deletedByAppUser: boolean
+  cancelledBySender: boolean
 }
 
-export enum NotificationType {
+export type NotificationType = keyof typeof import('./notification.types')
+// const hi : NotificationType = 'PROJECT_INVITE_REJECTED'
+
+/*export enum NotificationType {
   Unknown,
   FriendRequest,
   Message,
   ProjectInvite,
-}
+}*/
 
 export enum NotificationStatus {
   Unread,

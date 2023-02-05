@@ -6,7 +6,7 @@ public class NotificationDto
 {
     public int Id { get; set; }
     public string Username { get; set; } = default!;
-    public NotificationType Type { get; set; }
+    public string Type { get; set; }
     public DateTime RequestTime { get; set; }
 
     public NotificationStatus Status { get; set; }

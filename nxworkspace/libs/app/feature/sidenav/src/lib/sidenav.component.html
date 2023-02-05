@@ -1,60 +1,63 @@
-<div class='w-[300px] mx-2'>
-  <ng-container *ngrxLet='user$ | async as user'>
-    <ng-container *ngIf='user else notLoggedIn'>
-      <p>{{user.userName}}</p>
+<div class="w-[300px] mx-2">
+  <ng-container *ngrxLet="user$ | async as user">
+    <ng-container *ngIf="user; else notLoggedIn">
+      <p>{{ user.userName }}</p>
       <!--          <p>{{user.firstName}}</p>-->
 
-
-      <div *ngIf='projects$ | async as projects' class='min-w-max'>
-        <button style='width: 100%; min-width: 100%' (click)='showProjects()' mat-button>
+      <div *ngIf="projects$ | async as projects" class="min-w-max">
+        <button style="width: 100%; min-width: 100%" (click)="showProjects()" mat-button>
           <mat-icon>
-            {{viewProjects ? 'expand_more' : 'chevron_right'}}
+            {{ viewProjects ? "expand_more" : "chevron_right" }}
           </mat-icon>
-          Projects [{{projects.length}}]
+          Projects [{{ projects.length }}]
         </button>
-        <ng-container *ngIf='viewProjects'>
+        <ng-container *ngIf="viewProjects">
           <mat-nav-list>
-            <a *ngFor='let project of projects' mat-list-item
-               (click)='closeDrawer()'
-               [routerLink]='user.userName + "/" + project.name'>{{project.name}}</a>
+            <a
+              *ngFor="let project of projects"
+              mat-list-item
+              (click)="closeDrawer()"
+              [routerLink]="user.userName + '/' + project.name"
+              >{{ project.name }}</a
+            >
             <!--                <a mat-list-item routerLink='.'>Projects</a>-->
           </mat-nav-list>
         </ng-container>
       </div>
-      <div *ngIf='friends$ | async as friends' class='min-w-max'>
-        <button style='width: 100%; min-width: 100%' (click)='showFriends()' mat-button>
+      <div *ngIf="friends$ | async as friends" class="min-w-max">
+        <button style="width: 100%; min-width: 100%" (click)="showFriends()" mat-button>
           <mat-icon>
-            {{viewFriends ? 'expand_more' : 'chevron_right'}}
+            {{ viewFriends ? "expand_more" : "chevron_right" }}
           </mat-icon>
-          Friends [{{friends.length}}]
+          Friends [{{ friends.length }}]
         </button>
-        <ng-container *ngIf='viewFriends'>
-          <span>Friends Online: {{friends | onlineFriends}}</span>
+        <ng-container *ngIf="viewFriends">
+          <span>Friends Online: {{ friends | onlineFriends }}</span>
           <mat-nav-list>
-            <a *ngFor='let friend of friends' mat-list-item
-               (click)='closeDrawer()'
-               routerLink=''>{{friend.userName}} {{friend.online ? 'ONLINE' : ''}}</a>
+            <a *ngFor="let friend of friends" mat-list-item (click)="closeDrawer()" routerLink=""
+              >{{ friend.userName }} {{ friend.online ? "ONLINE" : "" }}</a
+            >
           </mat-nav-list>
         </ng-container>
       </div>
-      <div *ngIf='notifications$ | async as notifications' class='min-w-max'>
-        <button style='width: 100%; min-width: 100%' (click)='showNotifications()' mat-button>
+      <div *ngIf="notifications$ | async as notifications" class="min-w-max">
+        <button style="width: 100%; min-width: 100%" (click)="showNotifications()" mat-button>
           <mat-icon>
-            {{viewNotifications ? 'expand_more' : 'chevron_right'}}
+            {{ viewNotifications ? "expand_more" : "chevron_right" }}
           </mat-icon>
-          Notifications [{{notifications.length}}]
+          Notifications [{{ notifications.length }}]
         </button>
-        <ng-container *ngIf='viewNotifications'>
+        <ng-container *ngIf="viewNotifications">
           <mat-nav-list>
-            <ng-container *ngFor='let notification of notifications' [ngSwitch]='notification.type'>
-              <ng-container *ngSwitchCase='1'>
-                <a>
-                  <span matListItemTitle>Friend Request</span>
-                  <span matListItemLine>{{notification.requestTime | date : 'short'}}</span>
-                  <span matListItemLine>From {{notification.friendRequest.requestedByUserName}}</span>
-                </a>
+            <ng-container *ngFor="let notification of notifications" [ngSwitch]="notification.type">
+              <!--              <ng-container *ngSwitchCase='1'>
+                              <a>
+                                <span matListItemTitle>Friend Request</span>
+                                <span matListItemLine>{{notification.requestTime | date : 'short'}}</span>
+                                <span matListItemLine>From {{notification.friendRequest.requestedByUserName}}</span>
+                              </a>
 
-              </ng-container>
+                            </ng-container>-->
             </ng-container>
             <!--                <a *ngFor='let notification of notifications' mat-list-item
                                (click)='drawer.toggle()'
@@ -62,7 +65,6 @@
           </mat-nav-list>
         </ng-container>
       </div>
-
 
       <!--<mat-accordion class='shadow-none bg-inherit' multi>
         <mat-expansion-panel class='shadow-none bg-inherit'
@@ -98,10 +100,7 @@
 
 
   <button (click)='closeDrawer()' mat-raised-button color='primary'>Close</button>-->
-
     </ng-container>
-    <ng-template #notLoggedIn>
-
-    </ng-template>
+    <ng-template #notLoggedIn> </ng-template>
   </ng-container>
 </div>

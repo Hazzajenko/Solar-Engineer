@@ -50,7 +50,7 @@ export class ConnectionsEffects {
                 },
               }
 
-              return UsersActions.updateFriend({ update })
+              return NotificationsActions.updateFriend({ update })
             })
           )),
         ),
@@ -79,7 +79,7 @@ export class ConnectionsEffects {
               })
 
 
-              return UsersActions.updateManyFriends({ updates })
+              return NotificationsActions.updateManyFriends({ updates })
             })
           )),
         ),
@@ -102,7 +102,7 @@ export class ConnectionsEffects {
             },
           }
 
-          return UsersActions.updateFriend({ update })
+          return NotificationsActions.updateFriend({ update })
         }),
       ),
     )*/

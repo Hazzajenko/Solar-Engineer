@@ -16,6 +16,6 @@ export class GetFriendRequestPipe implements PipeTransform {
   transform(request: any | undefined | null) {
     if (!request) return
 
-    return (request as NotificationModel).friendRequest.requestedByUserName
+    // return (request as NotificationModel).friendRequest.requestedByUserName
   }
 }

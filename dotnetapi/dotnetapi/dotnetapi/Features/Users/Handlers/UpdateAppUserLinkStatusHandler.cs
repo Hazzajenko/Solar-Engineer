@@ -17,13 +17,13 @@ public record UpdateAppUserLinkStatusCommand(
 public class UpdateAppUserLinkStatusHandler : IRequestHandler<UpdateAppUserLinkStatusCommand, bool>
 {
     private readonly IDataContext _context;
-    private readonly IHubContext<NotificationsHub, INotificationsHub> _hubContext;
+    private readonly IHubContext<UsersHub, IUsersHub> _hubContext;
     private readonly IMediator _mediator;
 
     public UpdateAppUserLinkStatusHandler(
         IDataContext context,
         IMediator mediator,
-        IHubContext<NotificationsHub, INotificationsHub> hubContext
+        IHubContext<UsersHub, IUsersHub> hubContext
     )
     {
         _context = context;
@@ -31,14 +31,18 @@ public class UpdateAppUserLinkStatusHandler : IRequestHandler<UpdateAppUserLinkS
         _hubContext = hubContext;
     }
 
-    public async ValueTask<bool> Handle(UpdateAppUserLinkStatusCommand request, CancellationToken cT)
+    public async ValueTask<bool> Handle(
+        UpdateAppUserLinkStatusCommand request,
+        CancellationToken cT
+    )
     {
         var appUserLink = await _mediator.Send(
             new GetOrCreateAppUserLinkCommand(request.AppUser, request.RecipientUser),
             cT
         );
 
-        if (request.Status == UserToUserStatus.Pending) appUserLink.UserToUserStatus = UserToUserStatus.Pending;
+        if (request.Status == UserToUserStatus.Pending)
+            appUserLink.UserToUserStatus = UserToUserStatus.Pending;
 
         if (request.Status == UserToUserStatus.Approved)
         {
@@ -47,11 +51,12 @@ public class UpdateAppUserLinkStatusHandler : IRequestHandler<UpdateAppUserLinkS
             appUserLink.Friends = true;
         }
 
-        if (request.Status == UserToUserStatus.Rejected) appUserLink.UserToUserStatus = UserToUserStatus.Rejected;
-
+        if (request.Status == UserToUserStatus.Rejected)
+            appUserLink.UserToUserStatus = UserToUserStatus.Rejected;
 
         var update = await _context.SaveChangesAsync(cT) > 0;
-        if (!update) return update;
+        if (!update)
+            return update;
 
         var notification = new List<AppUserLinkDto> { appUserLink.ToDto() };
 

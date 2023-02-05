@@ -10,7 +10,7 @@ export class NotificationsFacade {
   private store = inject(Store)
 
   notifications$ = this.store.select(NotificationsSelectors.selectAllNotifications)
-  unreadNotifications$ = this.store.select(NotificationsSelectors.selectUnreadNotifications)
+  // unreadNotifications$ = this.store.select(NotificationsSelectors.selectUnreadNotifications)
   error$ = this.store.select(NotificationsSelectors.selectNotificationsError)
   loaded$ = this.store.select(NotificationsSelectors.selectNotificationsLoaded)
 
@@ -18,8 +18,8 @@ export class NotificationsFacade {
     return firstValueFrom(this.notifications$)
   }
 
-  get unreadNotifications() {
-    return firstValueFrom(this.unreadNotifications$)
-  }
-
+  /*
+    get unreadNotifications() {
+      return firstValueFrom(this.unreadNotifications$)
+    }*/
 }

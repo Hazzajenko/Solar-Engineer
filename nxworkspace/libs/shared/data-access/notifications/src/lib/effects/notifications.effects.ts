@@ -35,45 +35,45 @@ export class NotificationsEffects {
         ofType(AuthActions.signInSuccess),
         switchMap(
           () =>
-            this.notificationsService
-              .getAllUserNotifications()
-              .pipe(
-                map((notifications) =>
-                  NotificationsActions.addManyNotifications({
-                    notifications: notifications.notifications,
-                  }),
-                ),
+            this.notificationsService.getAllUserNotifications().pipe(
+              map((notifications) =>
+                NotificationsActions.addManyNotifications({
+                  notifications: notifications.notifications,
+                }),
               ),
+            ),
           // this.notificationsService.createNotificationsConnection(token)
         ),
       ),
     // { dispatch: false },
   )
 
-  addNotification$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(NotificationsActions.addNotification),
-        map(({ notification }) => {
-          const notificationFrom = notification.friendRequest.requestedByUserName
-          this.snackBar.open(`New friend request from ${notificationFrom}!`, 'OK', {
-            duration: 5000,
-          })
-        }),
-      ),
-    { dispatch: false },
-  )
-
-  updateNotification$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(NotificationsActions.updateOneNotification),
-        switchMap(({ update }) =>
-          this.notificationsService.updateNotification(update, NotificationType.FriendRequest),
+  /*  addNotification$ = createEffect(
+      () =>
+        this.actions$.pipe(
+          ofType(NotificationsActions.addNotification),
+          map(({ notification }) => {
+            const notificationFrom = notification.friendRequest.requestedByUserName
+            this.snackBar.open(`New friend request from ${notificationFrom}!`, 'OK', {
+              duration: 5000,
+            })
+          }),
         ),
-      ),
-    { dispatch: false },
-  )
+      { dispatch: false },
+    )*/
+
+  /*
+    updateNotification$ = createEffect(
+      () =>
+        this.actions$.pipe(
+          ofType(NotificationsActions.updateOneNotification),
+          switchMap(({ update }) =>
+            this.notificationsService.updateNotification(update, NotificationType.FriendRequest),
+          ),
+        ),
+      { dispatch: false },
+    )
+  */
 
   updateManyNotifications$ = createEffect(
     () =>

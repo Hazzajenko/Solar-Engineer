@@ -45,8 +45,8 @@ public class NotificationsService : INotificationsService
 
     public async Task<bool> UpdateNotificationAsync(UpdateNotificationRequest request)
     {
-        if (request.Type == NotificationType.FriendRequest)
-            return await _notificationsRepository.UpdateFriendRequestAsync(request);
+        // if (request.Type == NotificationType.FriendRequest)
+        return await _notificationsRepository.UpdateFriendRequestAsync(request);
         // UpdateFriendRequestAsync
         // var update = await _notificationsRepository.UpdateNotificationAsync(request);
         // return update;

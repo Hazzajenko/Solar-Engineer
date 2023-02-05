@@ -1,49 +1,35 @@
-﻿using dotnetapi.Features.Users.Data;
+﻿using dotnetapi.Extensions;
+using dotnetapi.Features.Notifications.Data;
+using dotnetapi.Features.Notifications.Handlers;
+using dotnetapi.Features.Users.Handlers;
+using Mediator;
 using Microsoft.AspNetCore.SignalR;
 
 namespace dotnetapi.Hubs;
 
 public interface INotificationsHub
 {
-    // Task SendNotification(string[] connections, AppUserFriend appUserFriend);
-    Task GetAppUserLinks(IEnumerable<AppUserLinkDto> appUserLinks);
+    Task GetNotifications(IEnumerable<NotificationDto> notifications);
 }
 
 public class NotificationsHub : Hub<INotificationsHub>
 {
     private readonly ILogger<NotificationsHub> _logger;
+    private readonly IMediator _mediator;
 
-    public NotificationsHub(ILogger<NotificationsHub> logger)
+    public NotificationsHub(ILogger<NotificationsHub> logger, IMediator mediator)
     {
         _logger = logger;
+        _mediator = mediator;
     }
-
-    /*public override async Task OnConnectedAsync() {
-        ConnectedCount++;
-        _serilog.LogInformation("OnConnectedAsync {ConnectedCount}, Id {Id}", ConnectedCount, Context.ConnectionId);
-        await Clients.All.ConnectedUpdate(ConnectedCount);
-
-        await base.OnConnectedAsync();
-    }*/
-    /*public override async Task OnConnectedAsync()
-    {
-        var userId = Context.User!.GetUserId();
-        var username = Context.User!.GetUsername();
-        var connectionId = Context.ConnectionId;
-
-
-        await Clients.Caller.SendAsync("GetNotifications", "Hello");
-    }*/
 
     public async Task GetNotifications(string connectionId)
     {
-        // await Clients.Client(connectionId).SendAsync("GetNotifications", "data");
-        // await Clients.User("hazza").SendAsync("GetNotifications", "datasdasa");
-        // await Clients.Client(connectionId).("GetNotifications", "data");
-    }
+        var appUser = await _mediator.Send(new GetUserByUserNameQuery(Context.User!.GetUsername()));
+        if (appUser is null)
+            throw new HubException("appUser is null");
 
-    public string GetConnectionId()
-    {
-        return Context.ConnectionId;
+        var notifications = await _mediator.Send(new GetNotificationsQuery(appUser));
+        await Clients.Caller.GetNotifications(notifications);
     }
 }

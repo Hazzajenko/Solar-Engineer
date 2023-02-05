@@ -1,4 +1,5 @@
-﻿using dotnetapi.Features.Users.Contracts.Requests;
+﻿using dotnetapi.Features.Notifications.Handlers;
+using dotnetapi.Features.Users.Contracts.Requests;
 using dotnetapi.Features.Users.Data;
 using dotnetapi.Features.Users.Handlers;
 using dotnetapi.Models.Entities;
@@ -67,6 +68,15 @@ public class AcceptFriendRequestEndpoint : Endpoint<AcceptFriendRequestRequest>
             );
             ThrowError("No changes made to app user link");
         }
+
+        var notification = new Notification(
+            recipientUser,
+            appUser,
+            NotificationType.FriendRequest.Accepted,
+            $"New friend request from {appUser.UserName!}"
+        );
+
+        var send = await _mediator.Send(new CreateNotificationCommand(notification), cT);
 
         _logger.LogInformation(
             "{User} accepted a friend request from {Recipient}",

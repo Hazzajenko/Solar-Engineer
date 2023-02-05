@@ -13,7 +13,7 @@ import { provideState } from '@ngrx/store'
 import { UI_FEATURE_KEY, uiReducer } from '@project-id/data-access/store'
 import { PROJECTS_FEATURE_KEY, projectsReducer } from '@projects/data-access/store'
 import { CONNECTIONS_FEATURE_KEY, connectionsReducer } from '@shared/data-access/connections'
-import { NOTIFICATIONS_FEATURE_KEY, notificationsReducer } from '@shared/data-access/notifications'
+import { NOTIFICATIONS_FEATURE_KEY, notificationsReducer } from '@app/data-access/notifications'
 import { USERS_FEATURE_KEY, usersReducer } from '@app/data-access/users'
 // import { CHAT_ROOMS_FEATURE_KEY, chatRoomsReducer } from '../../../feature/chatrooms/src/lib/store'
 

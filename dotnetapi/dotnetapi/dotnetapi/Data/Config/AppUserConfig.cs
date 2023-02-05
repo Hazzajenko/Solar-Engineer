@@ -9,7 +9,7 @@ public class AppUserConfig : IEntityTypeConfiguration<AppUser>
     public void Configure(EntityTypeBuilder<AppUser> builder)
     {
         builder
-            .HasMany(ur => ur.UserRoles)
+            .HasMany(ur => ur.AppUserRoles)
             .WithOne(u => u.User)
             .HasForeignKey(ur => ur.UserId)
             .IsRequired();
@@ -18,18 +18,6 @@ public class AppUserConfig : IEntityTypeConfiguration<AppUser>
             .HasMany(ur => ur.AppUserProjects)
             .WithOne(u => u.AppUser)
             .HasForeignKey(ur => ur.AppUserId)
-            .IsRequired();
-
-        builder
-            .HasMany(ur => ur.SentFriendRequests)
-            .WithOne(u => u.RequestedBy)
-            .HasForeignKey(ur => ur.RequestedById)
-            .IsRequired();
-
-        builder
-            .HasMany(ur => ur.ReceivedFriendRequests)
-            .WithOne(u => u.RequestedTo)
-            .HasForeignKey(ur => ur.RequestedToId)
             .IsRequired();
 
         builder
@@ -58,33 +46,27 @@ public class AppUserConfig : IEntityTypeConfiguration<AppUser>
             .OnDelete(DeleteBehavior.Restrict);
 
         builder
-            .HasMany(ur => ur.RequestedAppUserLinks)
+            .HasMany(ur => ur.AppUserLinksSent)
             .WithOne(x => x.AppUserRequested)
             .HasForeignKey(ur => ur.AppUserRequestedId)
             .IsRequired();
 
         builder
-            .HasMany(ur => ur.ReceivedAppUserLinks)
+            .HasMany(ur => ur.AppUserLinksReceived)
             .WithOne(x => x.AppUserReceived)
             .HasForeignKey(ur => ur.AppUserReceivedId)
             .IsRequired();
-        /*
-        builder.HasMany(ur => ur.Images)
-            .WithOne(u => u.AppUser)
+
+        builder
+            .HasMany(ur => ur.NotificationsSent)
+            .WithOne(x => x.NotificationFrom)
+            .HasForeignKey(ur => ur.NotificationFromId)
+            .IsRequired();
+
+        builder
+            .HasMany(ur => ur.NotificationsReceived)
+            .WithOne(x => x.AppUser)
             .HasForeignKey(ur => ur.AppUserId)
             .IsRequired();
-            */
-
-        /*
-        builder.HasMany(ur => ur.Notifications)
-            .WithOne(u => u.AppUser)
-            .HasForeignKey(ur => ur.AppUserId)
-            .IsRequired();*/
-
-
-        /*builder.HasMany(ur => ur.Connections)
-            .WithOne(u => u.AppUser)
-            .HasForeignKey(ur => ur.AppUserId)
-            .IsRequired();*/
     }
 }

@@ -54,15 +54,6 @@ import { UsersService, UsersStoreService } from '@app/data-access/users'
   templateUrl: './user-conversation.component.html',
   styles: [
     `
-      html,
-      body {
-        height: 100%;
-        width: 100%;
-        margin: 0px;
-        padding: 0px;
-        overflow: hidden;
-      }
-
       *::-webkit-scrollbar {
         width: 12px;
       }

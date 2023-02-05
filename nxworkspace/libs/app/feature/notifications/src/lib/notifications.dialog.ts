@@ -1,6 +1,15 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
 import { ScrollingModule } from '@angular/cdk/scrolling'
-import { AsyncPipe, DatePipe, NgClass, NgForOf, NgIf, NgStyle, NgSwitch, NgSwitchCase } from '@angular/common'
+import {
+  AsyncPipe,
+  DatePipe,
+  NgClass,
+  NgForOf,
+  NgIf,
+  NgStyle,
+  NgSwitch,
+  NgSwitchCase,
+} from '@angular/common'
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
@@ -20,10 +29,7 @@ import { NotificationModel, NotificationStatus, UserModel } from '@shared/data-a
 import { NotificationsStoreService } from '@shared/data-access/notifications'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
-import { GetFriendRequestPipe } from 'libs/app/feature/notifications/src/lib/get-friend-request.pipe'
-import { SortNotificationsPipe } from 'libs/app/feature/notifications/src/lib/sort-notifications.pipe'
 import { Observable } from 'rxjs'
-
 
 @Component({
   selector: 'app-notifications-dialog',
@@ -50,13 +56,10 @@ import { Observable } from 'rxjs'
     NgSwitch,
     NgSwitchCase,
     DatePipe,
-    SortNotificationsPipe,
-    GetFriendRequestPipe,
   ],
   standalone: true,
 })
 export class NotificationsDialog {
-
   private notificationsStore = inject(NotificationsStoreService)
   private authStore = inject(AuthStoreService)
   private friendsService = inject(FriendsService)
@@ -69,9 +72,9 @@ export class NotificationsDialog {
   change(event: MatSelectionListChange) {
     console.log(event)
     this.selectedNotification = event.options[0].value
-    if ((event.options[0].value as NotificationModel).status === NotificationStatus.Unread) {
-      this.readNotification()
-    }
+    /*    if ((event.options[0].value as NotificationModel).status === NotificationStatus.Unread) {
+          this.readNotification()
+        }*/
   }
 
   acceptFriend(requestedByUsername: string) {
@@ -81,30 +84,29 @@ export class NotificationsDialog {
 
   readNotification() {
     if (!this.selectedNotification) return
-    const update: Update<NotificationModel> = {
-      id: this.selectedNotification.id,
-      changes: {
-        status: NotificationStatus.Read,
-      },
-    }
-    this.notificationsStore.dispatch.updateNotification(update)
+    /*    const update: Update<NotificationModel> = {
+          id: this.selectedNotification.id,
+          changes: {
+            status: NotificationStatus.Read,
+          },
+        }*/
+    // this.notificationsStore.dispatch.updateNotification(update)
   }
 
   markAllNotificationsAsRead(notifications: NotificationModel[]) {
     if (!notifications) return
-    const unReadNotifications = notifications.filter(notification => notification.status === NotificationStatus.Unread)
-    if (!unReadNotifications) return
+    // const unReadNotifications = notifications.filter(notification => notification.status === NotificationStatus.Unread)
+    // if (!unReadNotifications) return
 
-    const updates: Update<NotificationModel>[] = unReadNotifications.map(notification => {
-      const update: Update<NotificationModel> = {
-        id: notification.id,
-        changes: {
-          status: NotificationStatus.Read,
-        },
-      }
-      return update
-    })
-    this.notificationsStore.dispatch.updateManyNotifications(updates)
+    /*    const updates: Update<NotificationModel>[] = unReadNotifications.map(notification => {
+          const update: Update<NotificationModel> = {
+            id: notification.id,
+            changes: {
+              status: NotificationStatus.Read,
+            },
+          }
+          return update
+        })
+        this.notificationsStore.dispatch.updateManyNotifications(updates)*/
   }
 }
-

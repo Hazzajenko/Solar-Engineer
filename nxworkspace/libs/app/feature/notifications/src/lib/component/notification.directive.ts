@@ -1,7 +1,6 @@
 import { Directive, ElementRef, inject, Input } from '@angular/core'
 import { NotificationModel, NotificationStatus } from '@shared/data-access/models'
 
-
 @Directive({
   selector: '[appNotificationDirective]',
   standalone: true,
@@ -14,9 +13,9 @@ export class NotificationDirective {
     if (!notification) return
     this._notification = notification
 
-    if (notification.status === NotificationStatus.Unread) {
-      this.elRef.nativeElement.style.backgroundColor = '#60a1fa'
-    }
+    /*    if (notification.status === NotificationStatus.Unread) {
+          this.elRef.nativeElement.style.backgroundColor = '#60a1fa'
+        }*/
   }
 
   @Input() set selectedNotification(notification: NotificationModel | undefined) {
@@ -31,11 +30,11 @@ export class NotificationDirective {
       this.elRef.nativeElement.style.backgroundColor = ''
       this.elRef.nativeElement.style.border = ''
       // this.elRef.nativeElement.style.fontSize = ''
-      if (this._notification.status === NotificationStatus.Unread) {
-        this.elRef.nativeElement.style.backgroundColor = '#60a1fa'
-      } else {
-        this.elRef.nativeElement.style.backgroundColor = ''
-      }
+      /*      if (this._notification.status === NotificationStatus.Unread) {
+              this.elRef.nativeElement.style.backgroundColor = '#60a1fa'
+            } else {
+              this.elRef.nativeElement.style.backgroundColor = ''
+            }*/
     }
   }
 }

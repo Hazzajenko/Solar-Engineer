@@ -1,7 +1,6 @@
 ﻿using dotnetapi.Data;
 using dotnetapi.Features.Notifications.Contracts.Requests;
 using dotnetapi.Models.Entities;
-using Microsoft.EntityFrameworkCore;
 
 namespace dotnetapi.Features.Notifications.Services;
 
@@ -10,6 +9,7 @@ public interface INotificationsRepository
     Task<Notification> SendNotificationToUserAsync(Notification request);
 
     Task<Notification> CreateNotificationAsync(Notification request);
+
     // Task<IEnumerable<AppUserFriend>> GetAllFriendRequestsAsync(string username);
 
     // Task<IEnumerable<Notification>> GetAllUserNotifications(string username);
@@ -46,8 +46,10 @@ public class NotificationsRepository : INotificationsRepository
         return await _context.AppUserFriends.Where(x => x.RequestedTo.UserName == username)
     }*/
 
-    public async Task<Notification> CreateFriendRequest(FriendRequest newFriendRequest,
-        Notification notificationEntity)
+    public async Task<Notification> CreateFriendRequest(
+        FriendRequest newFriendRequest,
+        Notification notificationEntity
+    )
     {
         // await _context.FriendRequests.AddAsync(newFriendRequest);
         await _context.SaveChangesAsync();
@@ -72,13 +74,13 @@ public class NotificationsRepository : INotificationsRepository
 
     public async Task<bool> UpdateFriendRequestAsync(UpdateNotificationRequest request)
     {
-        var friendRequest = await _context.AppUserFriends.Where(x => x.Id == request.Id).SingleOrDefaultAsync();
+        // var friendRequest = await _context.AppUserFriends.Where(x => x.Id == request.Id).SingleOrDefaultAsync();
 
 
         // .SingleOrDefaultAsync();
-        if (friendRequest is null) return false;
+        // if (friendRequest is null) return false;
 
-        if (request.Changes.Status is not null) friendRequest.Status = request.Changes.Status.Value;
+        // if (request.Changes.Status is not null) friendRequest.Status = request.Changes.Status.Value;
 
         await _context.SaveChangesAsync();
         return true;

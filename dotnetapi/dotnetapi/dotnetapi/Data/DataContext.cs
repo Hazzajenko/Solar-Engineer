@@ -28,6 +28,8 @@ public class DataContext
     {
     }
 
+    public DbSet<Notification> Notifications { get; set; } = default!;
+
     public DbSet<AppUserLink> AppUserLinks { get; set; } = default!;
 
     public DbSet<Project> Projects { get; set; } = default!;
@@ -37,7 +39,7 @@ public class DataContext
     public DbSet<Path> Paths { get; set; } = default!;
     public DbSet<AppUserProject> AppUserProjects { get; set; } = default!;
 
-    public DbSet<AppUserFriend> AppUserFriends { get; set; } = default!;
+    // public DbSet<AppUserFriend> AppUserFriends { get; set; } = default!;
 
     public DbSet<Group> Groups { get; set; } = default!;
 
@@ -49,8 +51,6 @@ public class DataContext
     public DbSet<GroupChatServerMessage> GroupChatServerMessages { get; set; } = default!;
 
     public DbSet<AppUserGroupChat> AppUserGroupChats { get; set; } = default!;
-
-    // public DbSet<Notification> Notifications { get; set; } = default!;
 
     // public DbSet<FriendRequest> FriendRequests { get; set; } = default!;
     // public DbSet<FriendRequestNotification> FriendRequestNotifications { get; set; } = default!;

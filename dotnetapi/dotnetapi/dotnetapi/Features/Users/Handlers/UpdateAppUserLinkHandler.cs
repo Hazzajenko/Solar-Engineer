@@ -17,13 +17,13 @@ public record UpdateAppUserLinkCommand(
 public class UpdateAppUserLinkHandler : IRequestHandler<UpdateAppUserLinkCommand, bool>
 {
     private readonly IDataContext _context;
-    private readonly IHubContext<NotificationsHub, INotificationsHub> _hubContext;
+    private readonly IHubContext<UsersHub, IUsersHub> _hubContext;
     private readonly IMediator _mediator;
 
     public UpdateAppUserLinkHandler(
         IDataContext context,
         IMediator mediator,
-        IHubContext<NotificationsHub, INotificationsHub> hubContext
+        IHubContext<UsersHub, IUsersHub> hubContext
     )
     {
         _context = context;
@@ -52,7 +52,8 @@ public class UpdateAppUserLinkHandler : IRequestHandler<UpdateAppUserLinkCommand
             appUserLink.BecameFriendsTime = changes.BecameFriendsTime;
 
         var update = await _context.SaveChangesAsync(cT) > 0;
-        if (!update) return update;
+        if (!update)
+            return update;
 
         var notification = new List<AppUserLinkDto> { appUserLink.ToDto() };
 

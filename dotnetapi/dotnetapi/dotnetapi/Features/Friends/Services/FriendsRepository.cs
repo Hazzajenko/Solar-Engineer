@@ -1,8 +1,6 @@
 ﻿using dotnetapi.Data;
-using dotnetapi.Mapping;
 using dotnetapi.Models.Dtos;
 using dotnetapi.Models.Entities;
-using Microsoft.EntityFrameworkCore;
 
 namespace dotnetapi.Features.Friends.Services;
 
@@ -27,39 +25,37 @@ public class FriendsRepository : IFriendsRepository
 
     public async Task<IEnumerable<AppUserFriend>> GetSentRequestsAsync(AppUser user)
     {
-        return await _context.AppUserFriends
+        return new List<AppUserFriend>();
+        /*return await _context.AppUserFriends
             .Where(x => x.RequestedById == user.Id)
             .Where(x => x.FriendRequestFlag == FriendRequestFlag.None)
             .Include(x => x.RequestedBy)
             .Include(x => x.RequestedTo)
-            .ToListAsync();
+            .ToListAsync();*/
     }
 
     public async Task<IEnumerable<AppUserFriend>> GetReceivedRequestsAsync(AppUser user)
     {
-        return await _context.AppUserFriends
+        return new List<AppUserFriend>();
+        /*return await _context.AppUserFriends
             .Where(x => x.RequestedToId == user.Id)
             .Where(x => x.FriendRequestFlag == FriendRequestFlag.None)
             .Include(x => x.RequestedBy)
             .Include(x => x.RequestedTo)
-            .ToListAsync();
+            .ToListAsync();*/
     }
-
 
     public async Task<AppUserFriend> AddFriendAsync(AppUserFriend request)
     {
-        await _context.AppUserFriends.AddAsync(request);
-        await _context.SaveChangesAsync();
+        /*await _context.AppUserFriends.AddAsync(request);
+        await _context.SaveChangesAsync();*/
 
         return request;
     }
 
     public async Task<AppUserFriend?> GetAppUserFriendAsync(AppUser user, AppUser friend)
     {
-        var app = await _context.AppUserFriends
-            .Where(x => x.RequestedById == friend.Id)
-            .Where(x => x.RequestedToId == user.Id)
-            .FirstOrDefaultAsync();
+        var app = new AppUserFriend();
 
         return app;
         /*await _context.AppUserFriends.AddAsync(request);
@@ -84,7 +80,7 @@ public class FriendsRepository : IFriendsRepository
 
     public async Task<IEnumerable<FriendDto>> GetAllFriendsAsync(AppUser user)
     {
-        var friendsFromSent = await _context.AppUserFriends
+        /*var friendsFromSent = await _context.AppUserFriends
             .Where(x => x.RequestedById == user.Id)
             .Where(x => x.FriendRequestFlag == FriendRequestFlag.Approved)
             .Include(x => x.RequestedTo)
@@ -97,9 +93,9 @@ public class FriendsRepository : IFriendsRepository
             .Where(x => x.FriendRequestFlag == FriendRequestFlag.Approved)
             .Include(x => x.RequestedBy)
             .Select(x => x.ToFriendDtoFromReceived())
-            .ToListAsync();
+            .ToListAsync();*/
 
-        friendsFromSent.AddRange(friendsFromReceived);
-        return friendsFromSent;
+        // friendsFromSent.AddRange(friendsFromReceived);
+        return new List<FriendDto>();
     }
 }

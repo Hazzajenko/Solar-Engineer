@@ -67,7 +67,6 @@
     <ItemGroup>
         <Folder Include="Data\Json" />
         <Folder Include="Features\GroupChats\Handlers\Get" />
-        <Folder Include="Features\Notifications\Contracts\Responses" />
         <Folder Include="Services\Friends" />
     </ItemGroup>
 

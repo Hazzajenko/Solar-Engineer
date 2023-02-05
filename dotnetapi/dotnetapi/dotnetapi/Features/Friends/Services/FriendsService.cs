@@ -75,8 +75,8 @@ public class FriendsService : IFriendsService
             RequestedToId = friendUser.Id,
             RequestTime = DateTime.Now,
             FriendRequestFlag = FriendRequestFlag.None,
-            Status = NotificationStatus.Unread,
-            Type = NotificationType.FriendRequest
+            Status = NotificationStatus.Unread
+            // Type = NotificationType.FriendRequest
         };
 
         var result = await _friendsRepository.AddFriendAsync(friendRequest);

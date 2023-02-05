@@ -16,8 +16,10 @@ public interface IDataContext
     DbSet<Panel> Panels { get; set; }
     DbSet<PanelLink> PanelLinks { get; set; }
     DbSet<Path> Paths { get; set; }
+
     DbSet<AppUserProject> AppUserProjects { get; set; }
-    DbSet<AppUserFriend> AppUserFriends { get; set; }
+
+    // DbSet<AppUserFriend> AppUserFriends { get; set; }
     DbSet<Group> Groups { get; set; }
     DbSet<GroupChat> GroupChats { get; set; }
     DbSet<Message> Messages { get; set; }
@@ -25,6 +27,7 @@ public interface IDataContext
     DbSet<GroupChatServerMessage> GroupChatServerMessages { get; set; }
     DbSet<GroupChatReadTime> GroupChatReadTimes { get; set; }
     DbSet<AppUserLink> AppUserLinks { get; set; }
+    DbSet<Notification> Notifications { get; set; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     int SaveChanges();

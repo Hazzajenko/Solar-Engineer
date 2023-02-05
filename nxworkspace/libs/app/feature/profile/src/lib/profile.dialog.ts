@@ -1,6 +1,15 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
 import { ScrollingModule } from '@angular/cdk/scrolling'
-import { AsyncPipe, DatePipe, NgClass, NgForOf, NgIf, NgStyle, NgSwitch, NgSwitchCase } from '@angular/common'
+import {
+  AsyncPipe,
+  DatePipe,
+  NgClass,
+  NgForOf,
+  NgIf,
+  NgStyle,
+  NgSwitch,
+  NgSwitchCase,
+} from '@angular/common'
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
 
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms'
@@ -29,7 +38,6 @@ import { SortNotificationsPipe } from 'libs/app/feature/notifications/src/lib/so
 import { Observable } from 'rxjs'
 import { NotificationsComponent } from '../../../notifications/src/lib/component/notifications.component'
 import { ProfileComponent } from './component'
-
 
 @Component({
   selector: 'app-notifications-dialog',
@@ -68,7 +76,6 @@ import { ProfileComponent } from './component'
   standalone: true,
 })
 export class ProfileDialog {
-
   private notificationsStore = inject(NotificationsStoreService)
   private authStore = inject(AuthStoreService)
   private friendsService = inject(FriendsService)
@@ -82,9 +89,9 @@ export class ProfileDialog {
   change(event: MatSelectionListChange) {
     console.log(event)
     this.selectedNotification = event.options[0].value
-    if ((event.options[0].value as NotificationModel).status === NotificationStatus.Unread) {
-      this.readNotification()
-    }
+    /*    if ((event.options[0].value as NotificationModel).status === NotificationStatus.Unread) {
+          this.readNotification()
+        }*/
   }
 
   acceptFriend(requestedByUsername: string) {
@@ -94,30 +101,29 @@ export class ProfileDialog {
 
   readNotification() {
     if (!this.selectedNotification) return
-    const update: Update<NotificationModel> = {
-      id: this.selectedNotification.id,
-      changes: {
-        status: NotificationStatus.Read,
-      },
-    }
-    this.notificationsStore.dispatch.updateNotification(update)
+    /*    const update: Update<NotificationModel> = {
+          id: this.selectedNotification.id,
+          changes: {
+            status: NotificationStatus.Read,
+          },
+        }*/
+    // this.notificationsStore.dispatch.updateNotification(update)
   }
 
   markAllNotificationsAsRead(notifications: NotificationModel[]) {
     if (!notifications) return
-    const unReadNotifications = notifications.filter(notification => notification.status === NotificationStatus.Unread)
-    if (!unReadNotifications) return
+    /*    const unReadNotifications = notifications.filter(notification => notification.status === NotificationStatus.Unread)
+        if (!unReadNotifications) return
 
-    const updates: Update<NotificationModel>[] = unReadNotifications.map(notification => {
-      const update: Update<NotificationModel> = {
-        id: notification.id,
-        changes: {
-          status: NotificationStatus.Read,
-        },
-      }
-      return update
-    })
-    this.notificationsStore.dispatch.updateManyNotifications(updates)
+        const updates: Update<NotificationModel>[] = unReadNotifications.map(notification => {
+          const update: Update<NotificationModel> = {
+            id: notification.id,
+            changes: {
+              status: NotificationStatus.Read,
+            },
+          }
+          return update
+        })
+        this.notificationsStore.dispatch.updateManyNotifications(updates)*/
   }
 }
-

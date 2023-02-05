@@ -9,7 +9,7 @@ public class NotificationBase : BaseEntity
 
     public virtual AppUser RequestedBy { get; set; } = default!;
     public virtual AppUser RequestedTo { get; set; } = default!;
-    public NotificationType Type { get; set; }
+    public string Type { get; set; }
     public DateTime RequestTime { get; set; }
     public NotificationStatus Status { get; set; }
 }

@@ -1,7 +1,8 @@
-﻿using dotnetapi.Contracts.Responses.Users;
-using dotnetapi.Features.Notifications.Services;
+﻿using dotnetapi.Features.Notifications.Contracts.Responses;
+using dotnetapi.Features.Notifications.Handlers;
 using dotnetapi.Models.Entities;
 using FastEndpoints;
+using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 
@@ -11,50 +12,37 @@ namespace dotnetapi.Features.Notifications.Endpoints;
 public class GetAllNotificationsEndpoint : EndpointWithoutRequest<AllNotificationsResponse>
 {
     private readonly ILogger<GetAllNotificationsEndpoint> _logger;
-    private readonly INotificationsService _notificationsService;
+    private readonly IMediator _mediator;
     private readonly UserManager<AppUser> _userManager;
 
     public GetAllNotificationsEndpoint(
         ILogger<GetAllNotificationsEndpoint> logger,
-        INotificationsService notificationsService,
-        UserManager<AppUser> userManager)
+        IMediator mediator,
+        UserManager<AppUser> userManager
+    )
     {
         _logger = logger;
-        _notificationsService = notificationsService;
+        _mediator = mediator;
         _userManager = userManager;
     }
 
     public override void Configure()
     {
         Get("/notifications");
-        // Roles("Admin");
+        Policies("BeAuthenticated");
     }
 
-    public override async Task HandleAsync(CancellationToken cancellationToken)
+    public override async Task HandleAsync(CancellationToken cT)
     {
-        var user = await _userManager.GetUserAsync(User);
-        if (user is null)
+        var appUser = await _userManager.GetUserAsync(User);
+        if (appUser is null)
         {
             _logger.LogError("Bad request, User is invalid");
             ThrowError("UserName is invalid");
         }
 
-        var notifications = await _notificationsService.GetAllUserNotifications(user);
+        Response.Notifications = await _mediator.Send(new GetNotificationsQuery(appUser), cT);
 
-        /*
-        if (notifications is null)
-        {
-            _logger.LogError("Notifications is null");
-            ThrowError("Notifications is null");
-        }
-        */
-
-
-        var response = new AllNotificationsResponse
-        {
-            Notifications = notifications
-        };
-
-        await SendOkAsync(response, cancellationToken);
+        await SendOkAsync(Response, cT);
     }
 }

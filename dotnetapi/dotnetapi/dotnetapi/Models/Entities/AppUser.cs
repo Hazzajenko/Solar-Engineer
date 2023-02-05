@@ -6,58 +6,19 @@ namespace dotnetapi.Models.Entities;
 
 public class AppUser : IdentityUser<int>
 {
-    /*public AppUser()
-    {
-        SentFriendRequests = new List<AppUserFriend>();
-        ReceievedFriendRequests = new List<AppUserFriend>();
-    }*/
-
-    // public override string UserName { get; set; } = default!;
     public string FirstName { get; init; } = default!;
     public string LastName { get; init; } = default!;
     public string PhotoUrl { get; set; } = default!;
     public DateTime Created { get; set; } = DateTime.Now;
-
     public DateTime LastActive { get; set; } = DateTime.Now;
-
-    // public ICollection<Image> Images { get; set; } = default!;
-
-    public ICollection<AppUserLink> RequestedAppUserLinks { get; set; } = default!;
-    public ICollection<AppUserLink> ReceivedAppUserLinks { get; set; } = default!;
-
-    // public ICollection<AppUserMessage> SentAppUserMessages { get; set; } = default!;
-    // public ICollection<AppUserMessage> ReceivedAppUserMessages { get; set; } = default!;
+    public ICollection<AppUserLink> AppUserLinksSent { get; set; } = default!;
+    public ICollection<AppUserLink> AppUserLinksReceived { get; set; } = default!;
     public ICollection<AppUserProject> AppUserProjects { get; set; } = default!;
-    public ICollection<AppUserRole> UserRoles { get; set; } = default!;
-
-    public ICollection<AppUserFriend> SentFriendRequests { get; set; } = default!;
-    public ICollection<AppUserFriend> ReceivedFriendRequests { get; set; } = default!;
-
-    // public ICollection<Notification> Notifications { get; set; } = default!;
+    public ICollection<AppUserRole> AppUserRoles { get; set; } = default!;
+    public ICollection<Notification> NotificationsReceived { get; set; } = default!;
+    public ICollection<Notification> NotificationsSent { get; set; } = default!;
     public ICollection<Message> MessagesSent { get; set; } = default!;
     public ICollection<Message> MessagesReceived { get; set; } = default!;
-
     public ICollection<AppUserGroupChat> AppUserGroupChats { get; set; } = default!;
-
     public ICollection<GroupChatMessage> GroupChatMessagesSent { get; set; } = default!;
-    // public ICollection<ConversationMessage> ConversationMessagesReceived { get; set; } = default!;
-
-
-    // public ICollection<FriendRequestNotification> FriendRequestNotifications { get; set; } = default!;
-
-
-    /*
-    [NotMapped]
-    public ICollection<AppUserFriend> Friends
-    {
-        get
-        {
-            var friends = SentFriendRequests.Where(x => x.Approved).ToList();
-            if (friends.Count < 1)
-                friends = ReceivedFriendRequests.Where(x => x.Approved).ToList();
-            else
-                friends.AddRange(ReceivedFriendRequests.Where(x => x.Approved));
-            return friends;
-        }
-    }*/
 }

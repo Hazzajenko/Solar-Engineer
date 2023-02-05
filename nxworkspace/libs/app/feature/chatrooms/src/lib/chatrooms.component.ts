@@ -15,7 +15,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { MatButtonModule } from '@angular/material/button'
 import { MatCardModule } from '@angular/material/card'
 import { MatCheckboxModule } from '@angular/material/checkbox'
-import { MatDialog, MatDialogModule } from '@angular/material/dialog'
+import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog'
 import { MatFormFieldModule } from '@angular/material/form-field'
 
 import { MatIconModule } from '@angular/material/icon'
@@ -41,18 +41,7 @@ import { NewChatRoomComponent } from './new-chat-room/new-chat-room.component'
 @Component({
   selector: 'app-chatrooms-component',
   templateUrl: './chatrooms.component.html',
-  styles: [
-    `
-      html,
-      body {
-        height: 100%;
-        width: 100%;
-        margin: 0px;
-        padding: 0px;
-        overflow: hidden;
-      }
-    `,
-  ],
+  styles: [],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatDialogModule,
@@ -84,6 +73,12 @@ import { NewChatRoomComponent } from './new-chat-room/new-chat-room.component'
     NewChatRoomComponent,
   ],
   standalone: true,
+  providers: [
+    {
+      provide: MatDialogRef,
+      useValue: {},
+    },
+  ],
 })
 export class ChatroomsComponent {
   private authStore = inject(AuthStoreService)
@@ -91,6 +86,8 @@ export class ChatroomsComponent {
   private router = inject(Router)
   private route = inject(ActivatedRoute)
   private chatRoomsService = inject(ChatRoomsService)
+  private matDialogRef = inject(MatDialogRef<ChatroomsComponent>)
+  height = window.innerHeight
 
   isCreatingGroupChat$ = this.chatRoomsService.creatingGroupChat$
 
