@@ -18,6 +18,7 @@ export const UsersActions = createActionGroup({
     'Update Many Users': props<{ updates: Update<AppUserLinkModel>[] }>(),
     'Remove User': props<{ userUserName: string }>(),
     'Remove Many Users': props<{ userUserNames: string[] }>(),
+    'Empty Users Event': emptyProps(),
     'Clear Users State': emptyProps(),
   },
 })

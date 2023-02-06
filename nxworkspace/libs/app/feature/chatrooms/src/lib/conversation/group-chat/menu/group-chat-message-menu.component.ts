@@ -52,7 +52,7 @@ export class GroupChatMessageMenuComponent {
   private router = inject(Router)
   private dialog = inject(MatDialog)
   private dialogRef = inject(MatDialogRef<UsernameProfileComponent>)
-  // private dialogRef: MatDialogRef<ChangeDisplayPictureComponent>
+  // private dialogRef: MatDialogRef<AppUserItemComponent>
   @Input() message!: GroupChatMessageMemberModel
 
   async routeToUserProfile(user: TypeOfUser) {

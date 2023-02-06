@@ -59,7 +59,7 @@ export class MessageOptionsBarComponent {
   menuTopLeftPosition = { x: '0', y: '0' }
   @ViewChild(MatMenuTrigger, { static: true })
   matMenuTrigger!: MatMenuTrigger
-  // private dialogRef: MatDialogRef<ChangeDisplayPictureComponent>
+  // private dialogRef: MatDialogRef<AppUserItemComponent>
   private _groupChat!: GroupChatCombinedModel
   private _webUser!: WebUserModel
   isGroup = false
@@ -89,8 +89,7 @@ export class MessageOptionsBarComponent {
     this.matMenuTrigger.openMenu()
   }
 
-  editChatRoomName() {
-  }
+  editChatRoomName() {}
 
   viewGroupChatMembers() {
     const dialogConfig = {

@@ -144,27 +144,38 @@
         >
           <cdk-virtual-scroll-viewport
             [ngStyle]="{
-              height: isDialog ? '550px' : '550px'
+              height: isDialog ? '550px' : '650px'
             }"
+            style.display="flex"
             class="flex flex-col items-center content-center w-[100%]"
             itemSize="25"
           >
-            <!--          [ngStyle]='{"background-color": notification.status === 0 ? "#60a1fa" : ""}'-->
-            <!--            messages | sortMessages : false'-->
-            <!--            [message]='message'-->
             <mat-list-option
               [selected]="chatroom.chatRoomName === selectedChatRoom?.chatRoomName"
               *cdkVirtualFor="let chatroom of chatrooms | sortChatrooms"
               [value]="chatroom"
             >
+              <!--         <div
+                         [ngStyle]="{
+                           height: isDialog ? '550px' : '80%'
+                         }"
+                         class="flex flex-col items-center content-center w-[100%]"
+                       >-->
+              <!--            <mat-list-option
+                            [selected]="chatroom.chatRoomName === selectedChatRoom?.chatRoomName"
+                            *ngFor="let chatroom of chatrooms | sortChatrooms"
+                            [value]="chatroom"
+                          >-->
               <ng-container *ngIf="chatroom.isGroup; else userMessage">
-                <span matListItemTitle>{{ chatroom.groupChat.name | truncate: 12 }}</span>
-                <ng-container *ngIf="chatroom.groupChat.latestSentMessage; else noMessagesSent">
-                  <span matListItemLine>{{
+                <span *ngIf="chatroom.groupChat" matListItemTitle>{{
+                  chatroom.groupChat.name | truncate: 12
+                }}</span>
+                <ng-container *ngIf="chatroom.groupChat?.latestSentMessage; else noMessagesSent">
+                  <span *ngIf="chatroom.groupChat" matListItemLine>{{
                     chatroom.groupChat.latestSentMessage?.messageSentTime | date: "short"
                   }}</span>
 
-                  <p matListItemLine>
+                  <p *ngIf="chatroom.groupChat" matListItemLine>
                     {{
                       chatroom.groupChat.latestSentMessage?.senderUserName === user.userName
                         ? "You:"
@@ -178,13 +189,15 @@
                 </ng-template>
               </ng-container>
               <ng-template #userMessage>
-                <span matListItemTitle>{{
+                <span *ngIf="chatroom.message" matListItemTitle>{{
                   chatroom.message.senderUserName === user.userName
                     ? chatroom.message.recipientUserName
                     : chatroom.message.senderUserName
                 }}</span>
-                <span matListItemLine>{{ chatroom.message.messageSentTime | date: "short" }}</span>
-                <p matListItemLine>
+                <span *ngIf="chatroom.message" matListItemLine>{{
+                  chatroom.message.messageSentTime | date: "short"
+                }}</span>
+                <p *ngIf="chatroom.message" matListItemLine>
                   {{
                     chatroom.message.senderUserName === user.userName
                       ? "You:"
@@ -194,6 +207,7 @@
                 </p>
               </ng-template>
             </mat-list-option>
+            <!--          </div>-->
           </cdk-virtual-scroll-viewport>
         </mat-selection-list>
       </ng-container>

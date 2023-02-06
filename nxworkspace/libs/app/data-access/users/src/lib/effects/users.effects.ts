@@ -4,14 +4,10 @@ import { Store } from '@ngrx/store'
 import { catchError, map, switchMap } from 'rxjs/operators'
 import { UsersActions } from '../store'
 import { UsersService } from '../api'
-import { AuthService } from '@auth/data-access/api'
 import { AuthFacade } from '@auth/data-access/facades'
-import { HttpStatusCode } from '@angular/common/http'
 import { AuthActions } from '@auth/data-access/store'
-import { Update } from '@ngrx/entity'
 import { UserModel } from '@shared/data-access/models'
 import { of } from 'rxjs'
-import { FriendsActions } from '@app/data-access/friends'
 
 @Injectable({
   providedIn: 'root',
@@ -21,6 +17,25 @@ export class UsersEffects {
   private store = inject(Store)
   private usersService = inject(UsersService)
   private authFacade = inject(AuthFacade)
+
+  initUsers$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AuthActions.signInSuccess),
+      switchMap(() =>
+        this.usersService.getAllFriends().pipe(
+          map((res) => {
+            if (!res.appUserLinks) {
+              return UsersActions.emptyUsersEvent()
+            }
+            if (res.appUserLinks.length < 1) {
+              return UsersActions.emptyUsersEvent()
+            }
+            return UsersActions.addManyUsers({ users: res.appUserLinks })
+          }),
+        ),
+      ),
+    ),
+  )
 
   getUserByUserName$ = createEffect(() =>
     this.actions$.pipe(

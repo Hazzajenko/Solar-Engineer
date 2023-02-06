@@ -14,7 +14,11 @@ public class AppUserLinkDto
     public DateTime Created { get; set; } = DateTime.Now;
     public DateTime? BecameFriendsTime { get; set; }
     public bool Friends { get; set; }
+
     public UserToUserStatus UserToUserStatus { get; set; }
+    public string AppUserRequestedToUserStatus { get; set; } = default!;
+
+    public string AppUserReceivedToUserStatus { get; set; } = default!;
     // public bool Friends { get; set; }
 }
 
@@ -31,4 +35,12 @@ public class AppUserLinkChanges
     public DateTime? BecameFriendsTime { get; set; }
     public bool? Friends { get; set; }
     public UserToUserStatus? UserToUserStatus { get; set; }
+    public string? AppUserRequestedToUserStatus { get; set; }
+    public string? AppUserReceivedToUserStatus { get; set; }
+}
+
+public class AppUserLinkStatusChanges
+{
+    public string AppUserRequestedToUserStatus { get; set; } = default!;
+    public string AppUserReceivedToUserStatus { get; set; } = default!;
 }

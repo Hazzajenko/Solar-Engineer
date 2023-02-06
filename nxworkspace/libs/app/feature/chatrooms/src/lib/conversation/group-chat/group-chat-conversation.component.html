@@ -1,46 +1,46 @@
-<ng-container *ngIf='user$ | async as user'>
-  <ng-container *ngIf='groupChatCombined$ | async as groupChat'>
+<ng-container *ngIf="user$ | async as user">
+  <ng-container *ngIf="groupChatCombined$ | async as groupChat">
     <!--    <app-group-chat-options-bar-component
           [groupChat]="groupChat"
         ></app-group-chat-options-bar-component>-->
-    <app-message-options-bar-component [groupChat]='groupChat'></app-message-options-bar-component>
-    <ng-container *ngrxLet='isDialog$ | async as isDialog'>
-      <div class='flex flex-col items-center content-center'>
+    <app-message-options-bar-component [groupChat]="groupChat"></app-message-options-bar-component>
+    <ng-container *ngrxLet="isDialog$ | async as isDialog">
+      <div class="flex flex-col items-center content-center">
         <cdk-virtual-scroll-viewport
           [ngStyle]="{
-            height: isDialog ? '550px' : '550px'
+            height: isDialog ? '575px' : '650px'
           }"
           appScrollViewportDirective
           #viewport
-          (scrolledIndexChange)='scrollIndex = $event'
-          [scrollIndex]='scrollIndex'
-          [viewport]='viewport'
-          [isGroup]='true'
-          [groupChatMessages]='groupChat.messages'
-          style='overflow-y: scroll'
-          itemSize='25'
-          class='flex w-[100%] min-w-max'
+          (scrolledIndexChange)="scrollIndex = $event"
+          [scrollIndex]="scrollIndex"
+          [viewport]="viewport"
+          [isGroup]="true"
+          [groupChatMessages]="groupChat.messages"
+          style="overflow-y: scroll"
+          itemSize="25"
+          class="flex w-[100%] min-w-max"
         >
           <div
             appConversationMessageDirective
-            [userName]='user.userName'
-            [groupChatMessage]='message'
-            class='flex grow'
-            *cdkVirtualFor='let message of groupChat.messages'
+            [userName]="user.userName"
+            [groupChatMessage]="message"
+            class="flex grow"
+            *cdkVirtualFor="let message of groupChat.messages"
           >
             <ng-container
-              *ngIf='{
+              *ngIf="{
                 isLastMessage: message.id === groupChat.messages[groupChat.messages.length - 1].id,
                 isSelectedMessage: selectedGroupChatMessage?.id === message.id,
                 isUserSender: message.messageFrom === MessageFrom.CurrentUser
-              } as state'
+              } as state"
             >
               <ng-container
-                *ngIf='
+                *ngIf="
                   message.messageFrom === MessageFrom.Server;
                   then serverMessage;
                   else userMessage
-                '
+                "
               ></ng-container>
               <ng-template #serverMessage>
                 <div>
@@ -50,8 +50,8 @@
               <ng-template #userMessage>
                 <ng-container>
                   <div
-                    (click)='selectGroupChatMessage(message)'
-                    (contextmenu)='onRightClick($event, message)'
+                    (click)="selectGroupChatMessage(message)"
+                    (contextmenu)="onRightClick($event, message)"
                     [ngClass]="{
                       'bg-blue-400/75 hover:bg-blue-400':
                         state.isSelectedMessage && state.isUserSender,
@@ -59,12 +59,12 @@
                       'rounded-tl-lg rounded-tr-lg rounded-bl-lg bg-sky-400/75': state.isUserSender,
                       'rounded-lg bg-gray-400/75 hover:bg-gray-400': !state.isUserSender
                     }"
-                    class='flex flex-col my-2 p-1 min-w-[250px] max-w-[250px] mx-5'
+                    class="flex flex-col my-2 p-1 min-w-[250px] max-w-[250px] mx-5"
                   >
                     <app-message-item-component
-                      [message]='message'
-                      [state]='state'
-                      [appUserName]='user.userName'
+                      [message]="message"
+                      [state]="state"
+                      [appUserName]="user.userName"
                     ></app-message-item-component>
                   </div>
                 </ng-container>
@@ -72,38 +72,49 @@
             </ng-container>
           </div>
         </cdk-virtual-scroll-viewport>
-        <div class='relative bottom-10 left-0 min-w-max w-[100%]'>
+        <div *ngIf="isDialog" class="bottom-[-5px] right-[1px] w-[100%]">
           <app-message-bar-component
-            class='min-w-max w-[100%] grow-0'
-            (sendMessageEvent)='sendGroupChatMessage($event)'
+            class="min-w-max w-[100%] grow-0"
+            (sendMessageEvent)="sendGroupChatMessage($event)"
           ></app-message-bar-component>
         </div>
-        <!--        <app-message-bar-component
-                  class="min-w-max w-[100%] grow-0"
-                  (sendMessageEvent)="sendGroupChatMessage($event)"
-                ></app-message-bar-component>-->
+        <div style="flex: 0 1 40px" *ngIf="!isDialog" class="bottom-[-5px] right-[1px] w-[100%]">
+          <app-message-bar-component
+            class="min-w-max w-[100%] grow-0"
+            (sendMessageEvent)="sendGroupChatMessage($event)"
+          ></app-message-bar-component>
+          <!--        <div class='relative bottom-10 left-0 min-w-max w-[100%]'>
+                    <app-message-bar-component
+                      class='min-w-max w-[100%] grow-0'
+                      (sendMessageEvent)='sendGroupChatMessage($event)'
+                    ></app-message-bar-component>
+                  </div>-->
+          <!--        <app-message-bar-component
+                    class="min-w-max w-[100%] grow-0"
+                    (sendMessageEvent)="sendGroupChatMessage($event)"
+                  ></app-message-bar-component>-->
+        </div>
       </div>
     </ng-container>
   </ng-container>
 </ng-container>
 
 <div
-  [matMenuTriggerFor]='rightMenu'
-  [style.left]='menuTopLeftPosition.x'
-  [style.top]='menuTopLeftPosition.y'
-  style='visibility: hidden; position: fixed'
+  [matMenuTriggerFor]="rightMenu"
+  [style.left]="menuTopLeftPosition.x"
+  [style.top]="menuTopLeftPosition.y"
+  style="visibility: hidden; position: fixed"
 ></div>
 
 <mat-menu
-  #rightMenu='matMenu'
-  class='z-10 bg-transparent divide-y divide-gray-100 rounded-lg w-44 dark:bg-gray-700 dark:divide-gray-600'
-  backdropClass='bg-transparent'
+  #rightMenu="matMenu"
+  class="z-10 bg-transparent divide-y divide-gray-100 rounded-lg w-44 dark:bg-gray-700 dark:divide-gray-600"
+  backdropClass="bg-transparent"
 >
   <ng-template matMenuContent>
-
     <app-group-chat-message-menu-component
-      *ngIf='selectedGroupChatMessage'
-      [message]='selectedGroupChatMessage'
+      *ngIf="selectedGroupChatMessage"
+      [message]="selectedGroupChatMessage"
     ></app-group-chat-message-menu-component>
   </ng-template>
 </mat-menu>

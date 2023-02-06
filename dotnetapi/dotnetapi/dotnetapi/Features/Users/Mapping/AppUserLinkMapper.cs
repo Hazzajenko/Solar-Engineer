@@ -23,6 +23,12 @@ public static class AppUserLinkMapper
             NickName = appUser.Id.Equals(request.AppUserReceivedId)
                 ? request.AppUserRequestedNickName
                 : request.AppUserReceivedNickName,
+            ToUserStatusEvent = appUser.Id.Equals(request.AppUserReceivedId)
+                ? request.AppUserRequestedStatusEvent
+                : request.AppUserReceivedStatusEvent,
+            ToUserStatusDate = appUser.Id.Equals(request.AppUserReceivedId)
+                ? request.AppUserRequestedStatusDate
+                : request.AppUserReceivedStatusDate,
             Created = recipientUser.Created,
             LastActive = recipientUser.LastActive,
             BecameFriendsTime = request.BecameFriendsTime,

@@ -20,6 +20,66 @@
         <button mat-button>Edit</button>
         <button (click)="changeDisplayPicture()" mat-button>Change Display Picture</button>
       </mat-card-actions>
+      <mat-card-content class="h-screen">
+        <div class="mt-10 grid grid-cols-5 gap-4 p-10">
+          <div class="col-span-2">
+            <ng-container *ngTemplateOutlet="friends"></ng-container>
+          </div>
+          <div class="..."></div>
+          <div class="col-span-2">
+            <app-search-app-user-component></app-search-app-user-component>
+          </div>
+          <!--          <div class="col-span-2">04</div>-->
+        </div>
+        <!--        <ng-container *ngTemplateOutlet="friends"></ng-container>-->
+        <!--        <mat-tab-group animationDuration="0ms">
+                  <mat-tab label="Friends">
+                    <ng-container *ngTemplateOutlet="friendsTab"></ng-container>
+                  </mat-tab>
+                  <mat-tab label="Second">
+                    <app-add-new-friend-component></app-add-new-friend-component>
+                  </mat-tab>
+                  <mat-tab label="Third"> Content 3</mat-tab>
+                </mat-tab-group>-->
+        <!--        <ng-container *ngIf="friends$ | async as friends">
+                  <ng-container *ngIf="friends && friends.length; else noFriends">
+                    <div *ngFor="let friend of friends">
+                      <app-app-user-item-component [appUser]="friend"></app-app-user-item-component>
+                      &lt;!&ndash;          {{ friend.userName }}&ndash;&gt;
+                    </div>
+                  </ng-container>
+                  <ng-template #noFriends>
+                    <span>No friends found</span>
+                  </ng-template>-->
+        <!--        </ng-container>-->
+        <!--        <button (click)="addUser()" mat-button>Add User</button>-->
+      </mat-card-content>
     </mat-card>
   </ng-container>
 </ng-container>
+
+<ng-template #friends>
+  <ng-container *ngIf="friends$ | async as friends">
+    <h4>Friends</h4>
+    <ng-container *ngIf="friends && friends.length; else noFriends">
+      <!--      <mat-list>-->
+      <div *ngFor="let friend of friends">
+        <app-app-user-item-component
+          [selected]="selectedFriend === friend"
+          (selectEvent)="selectFriendItem($event)"
+          [appUser]="friend"
+        ></app-app-user-item-component>
+        <!--        (click)="selectFriendItem(friend)"-->
+        <!--          {{ friend.userName }}-->
+      </div>
+      <!--        <mat-action-list>
+                <button mat-list-item>Save</button>
+                <button mat-list-item>Undo</button>
+              </mat-action-list>-->
+      <!--      </mat-list>-->
+    </ng-container>
+    <ng-template #noFriends>
+      <span>No friends found</span>
+    </ng-template>
+  </ng-container>
+</ng-template>

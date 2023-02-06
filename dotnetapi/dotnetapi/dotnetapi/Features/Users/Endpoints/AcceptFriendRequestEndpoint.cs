@@ -28,7 +28,6 @@ public class AcceptFriendRequestEndpoint : Endpoint<AcceptFriendRequestRequest>
         _mediator = mediator;
     }
 
-
     public override void Configure()
     {
         Put("/users/{@username}/accept", x => new { x.UserName });
@@ -51,8 +50,30 @@ public class AcceptFriendRequestEndpoint : Endpoint<AcceptFriendRequestRequest>
             ThrowError("recipientUser is invalid");
         }
 
+        var appUserLink = await _mediator.Send(
+            new GetOrCreateAppUserLinkCommand(appUser, recipientUser),
+            cT
+        );
+
         var changes = new AppUserLinkChanges
-            { UserToUserStatus = UserToUserStatus.Approved, Friends = true, BecameFriendsTime = DateTime.Now };
+        {
+            UserToUserStatus = UserToUserStatus.Approved,
+            Friends = true,
+            BecameFriendsTime = DateTime.Now
+            // AppUserReceivedToUserStatus = UserStatus.
+        };
+
+        var isAppUserRequested = appUserLink.AppUserRequested.UserName == appUser.UserName!;
+        if (isAppUserRequested)
+        {
+            changes.AppUserRequestedToUserStatus = UserStatus.FriendRequestSent.Accepted;
+            changes.AppUserReceivedToUserStatus = UserStatus.FriendRequestReceived.Accepted;
+        }
+        else
+        {
+            changes.AppUserReceivedToUserStatus = UserStatus.FriendRequestSent.Accepted;
+            changes.AppUserRequestedToUserStatus = UserStatus.FriendRequestReceived.Accepted;
+        }
 
         var update = await _mediator.Send(
             new UpdateAppUserLinkCommand(appUser, recipientUser, changes),
@@ -73,7 +94,7 @@ public class AcceptFriendRequestEndpoint : Endpoint<AcceptFriendRequestRequest>
             recipientUser,
             appUser,
             NotificationType.FriendRequest.Accepted,
-            $"New friend request from {appUser.UserName!}"
+            $"{appUser.UserName!} has accepted your friend request!"
         );
 
         var send = await _mediator.Send(new CreateNotificationCommand(notification), cT);

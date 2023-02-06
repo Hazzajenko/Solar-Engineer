@@ -16,4 +16,9 @@ public class AppUserToUserDto
     public DateTime Created { get; set; }
     public DateTime LastActive { get; set; }
     public bool LatestSeenByAppUser { get; set; }
+
+    public string ToUserStatusEvent { get; set; } = default!;
+
+    public DateTime ToUserStatusDate { get; set; } = default!;
+    // public string AppUserReceivedToUserStatus { get; set; } = default!;
 }

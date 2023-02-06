@@ -11,7 +11,15 @@ import {
   NgSwitchCase,
   NgTemplateOutlet,
 } from '@angular/common'
-import { ChangeDetectionStrategy, Component, inject, Input, ViewChild } from '@angular/core'
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  inject,
+  Input,
+  ViewChild,
+} from '@angular/core'
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { MatButtonModule } from '@angular/material/button'
@@ -115,13 +123,14 @@ import { UsersService, UsersStoreService } from '@app/data-access/users'
   ],
   standalone: true,
 })
-export class UserConversationComponent {
+export class UserConversationComponent implements AfterViewInit {
   private messagesStore = inject(MessagesStoreService)
   private authStore = inject(AuthStoreService)
   private dialog = inject(MatDialog)
   private router = inject(Router)
   private route = inject(ActivatedRoute)
   private usersStore = inject(UsersStoreService)
+  private elementRef = inject(ElementRef)
   readonly MessageFrom = MessageFrom
 
   isDialog$ = this.route.url.pipe(
@@ -137,6 +146,11 @@ export class UserConversationComponent {
   recipient?: string
   recipientUser$?: Observable<WebUserModel>
   scrollIndex = 0
+  elDistanceToTop = 0
+  elDistanceToBottom = 0
+  element!: any
+  yPosition = 0
+  idk = 0
 
   @ViewChild('autosize') autosize!: CdkTextareaAutosize
 
@@ -146,6 +160,31 @@ export class UserConversationComponent {
     // this.userMessages$ = this.messagesStore.select.messagesWithUser2$(recipient)
     this.userMessages$ = this.messagesStore.select.messagesWithUser$(recipient)
     this.recipientUser$ = this.usersStore.select.webUserCombinedByUserName$(recipient)
+  }
+
+  ngAfterViewInit() {
+    this.elDistanceToTop =
+      window.pageYOffset + this.elementRef.nativeElement.getBoundingClientRect().top
+    /*    this.elDistanceToTop =
+          window.pageYOffset +
+          this.elementRef.nativeElement.getBoundingClientRect().top -
+          this.elementRef.nativeElement.offsetTop*/
+    if (this.elementRef.nativeElement.offsetParent) {
+      this.idk =
+        this.elementRef.nativeElement.getBoundingClientRect().top +
+        this.elementRef.nativeElement.offsetParent
+    }
+    this.element = this.elementRef
+    while (this.element) {
+      //   xPosition += (element.offsetLeft - element.scrollLeft + element.clientLeft);
+      this.yPosition += this.element.offsetTop - this.element.scrollTop + this.element.clientTop
+      this.element = this.element.offsetParent
+    }
+
+    // return { x: xPosition, y: yPosition };
+    // this.elDistanceToTop = window.innerHeight / 2
+    this.elDistanceToBottom =
+      window.pageYOffset + this.elementRef.nativeElement.getBoundingClientRect().bottom
   }
 
   sendMessage(message: string) {

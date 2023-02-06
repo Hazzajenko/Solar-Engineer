@@ -4,9 +4,7 @@ import { GetUserResponse } from '../models/get-user.response'
 import { map } from 'rxjs'
 import { UpdateDisplayPictureRequest } from '../models'
 import { GetUserLinkResponse } from '../models/get-user-link.response'
-import { AcceptFriendResponse } from '../../../../friends/src/lib/models/accept-friend.response'
-import { SendFriendRequestResponse } from '../../../../friends/src/lib/models/send-friend-request.response'
-import { AllFriendsResponse } from '../../../../friends/src/lib/models/all-friends.response'
+import { AllFriendsResponse } from '../models/all-friends.response'
 
 @Injectable({
   providedIn: 'root',
@@ -50,5 +48,6 @@ export class UsersService {
 
   getAllFriends() {
     return this.http.get<AllFriendsResponse>(`/api/users?filter=friends`)
+    // /users?filter=friends
   }
 }

@@ -19,11 +19,9 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Serilog;
 using Serilog.Sinks.AwsCloudWatch;
 
-var builder = WebApplication.CreateBuilder(new WebApplicationOptions
-{
-    Args = args,
-    ContentRootPath = Directory.GetCurrentDirectory()
-});
+var builder = WebApplication.CreateBuilder(
+    new WebApplicationOptions { Args = args, ContentRootPath = Directory.GetCurrentDirectory() }
+);
 
 /*{
     configure.AddFilter("Microsoft.AspNetCore.SignalR", LogLevel.Debug);
@@ -59,18 +57,24 @@ var configuration = new ConfigurationBuilder()
 var config = builder.Configuration;
 config.AddEnvironmentVariables("dotnetapi_");
 
-builder.Host.UseSerilog((_, loggerConfig) =>
-{
-    loggerConfig.WriteTo.Console()
-        .WriteTo.AmazonCloudWatch(
-            // logGroup: $"{builder.Environment.EnvironmentName}/{builder.Environment.ApplicationName}",
-            "/dotnet/logging-demo/serilog",
-            createLogGroup: true,
-            logStreamPrefix: DateTime.UtcNow.ToString("yyyyMMddHHmmssfff"),
-            cloudWatchClient: new AmazonCloudWatchLogsClient()
-        )
-        .ReadFrom.Configuration(config) /*.CreateLogger()*/;
-});
+builder.Host.UseSerilog(
+    (_, loggerConfig) =>
+    {
+        loggerConfig.WriteTo
+            .Console()
+            .WriteTo.AmazonCloudWatch(
+                // logGroup: $"{builder.Environment.EnvironmentName}/{builder.Environment.ApplicationName}",
+                "/dotnet/logging-demo/serilog",
+                createLogGroup: true,
+                logStreamPrefix: DateTime.UtcNow.ToString("yyyyMMddHHmmssfff"),
+                cloudWatchClient: new AmazonCloudWatchLogsClient()
+            )
+            .ReadFrom.Configuration(
+                config
+            ) /*.CreateLogger()*/
+            ;
+    }
+);
 
 /*builder.Services.AddMassTransit(x =>
 {
@@ -167,6 +171,7 @@ await logClient.PutLogEventsAsync(new PutLogEventsRequest
 
 builder.Services.AddApplicationServices(config);
 builder.Services.AddHealthChecks();
+
 // builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 /*builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -180,14 +185,21 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy(
         "CorsPolicy",
-        policy => policy
-            // .WithOrigins(builder.Configuration.GetValue<string>("AllowedOrigins")!)
-            .WithOrigins("http://localhost:8100", "http://localhost:4200", "http://127.0.0.1:5173")
-            // .AllowAnyOrigin()
-            .AllowAnyMethod()
-            .AllowAnyHeader()
-            .AllowCredentials());
+        policy =>
+            policy
+                // .WithOrigins(builder.Configuration.GetValue<string>("AllowedOrigins")!)
+                .WithOrigins(
+                    "http://localhost:8100",
+                    "http://localhost:4200",
+                    "http://127.0.0.1:5173"
+                )
+                // .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials()
+    );
 });
+
 // builder.Services.AddSignalR();
 builder.Services.AddSignalR(options =>
 {
@@ -195,12 +207,13 @@ builder.Services.AddSignalR(options =>
     options.EnableDetailedErrors = true;
     // options.
 });
+
 // builder.Services.AddSignalR().AddMessagePackProtocol();
 // builder.Services.AddWebSockets();
 builder.Services.AddSwaggerServices(config);
 
-
 builder.Services.AddIdentityServices(config);
+
 /*.AddFluentValidation(x =>
 {
     x.RegisterValidatorsFromAssemblyContaining<Program>();
@@ -210,9 +223,9 @@ builder.Services.AddIdentityServices(config);
 // builder.Services.AddEndpointsApiExplorer();
 // builder.Services.AddSwaggerGen();
 builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
+
 // builder.Services.AddAWSService<IAmazonS3>();
 builder.Services.AddSingleton<IAmazonS3, AmazonS3Client>();
-
 
 /*builder.Services.AddHsts(options =>
 {
@@ -238,7 +251,6 @@ app.UseSerilogRequestLogging();
 // var apiVersionDescriptionProvider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
 app.UseForwardedHeaders();
 
-
 app.UseRouting();
 
 // app.UseHsts();
@@ -249,10 +261,12 @@ app.UseRouting();
 
 app.UseCors("CorsPolicy");
 
-app.UseForwardedHeaders(new ForwardedHeadersOptions
-{
-    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-});
+app.UseForwardedHeaders(
+    new ForwardedHeadersOptions
+    {
+        ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+    }
+);
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -266,6 +280,7 @@ app.UseFastEndpoints(options =>
     options.Endpoints.Configurator = ep => { ep.PreProcessors(Order.Before, new UpdateLastActiveProcessor()); };
     // x.Serializer.Options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
 });
+
 // app.MapHealthChecks("api_health_check");
 //     /*.AddJsonOptions(options =>
 // {
@@ -291,7 +306,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUi3(s => s.ConfigureDefaults());
 }
 
-app.UseHealthChecks("/health",
+app.UseHealthChecks(
+    "/health",
     new HealthCheckOptions
     {
         ResponseWriter = async (context, report) =>
@@ -299,16 +315,20 @@ app.UseHealthChecks("/health",
             var result = new
             {
                 status = report.Status.ToString(),
-                errors = report.Entries.Select(e => new
-                {
-                    key = e.Key,
-                    value = Enum.GetName(typeof(HealthStatus), e.Value.Status)
-                })
+                errors = report.Entries.Select(
+                    e =>
+                        new
+                        {
+                            key = e.Key,
+                            value = Enum.GetName(typeof(HealthStatus), e.Value.Status)
+                        }
+                )
             }.ToJson();
             context.Response.ContentType = MediaTypeNames.Application.Json;
             await context.Response.WriteAsync(result);
         }
-    });
+    }
+);
 
 // app.UseDefaultFiles();
 // app.UseStaticFiles();
@@ -316,14 +336,14 @@ app.UseHealthChecks("/health",
 // app.MapControllers();
 
 // app.UseWebSockets();
-app.UseWebSockets(new WebSocketOptions
-{
-    KeepAliveInterval = TimeSpan.FromSeconds(120)
-});
+app.UseWebSockets(new WebSocketOptions { KeepAliveInterval = TimeSpan.FromSeconds(120) });
+
 // app.MapHub<UserHub>("/user");
 app.MapHub<ConnectionsHub>("hubs/connections");
 app.MapHub<NotificationsHub>("hubs/notifications");
 app.MapHub<MessagesHub>("hubs/messages");
+app.MapHub<UsersHub>("hubs/users");
+
 // app.MapHub<ViewsHub>("hubs/views");
 
 

@@ -1,5 +1,4 @@
-﻿using dotnetapi.Features.Notifications.Handlers;
-using dotnetapi.Features.Users.Contracts.Requests;
+﻿using dotnetapi.Features.Users.Contracts.Requests;
 using dotnetapi.Features.Users.Data;
 using dotnetapi.Features.Users.Handlers;
 using dotnetapi.Models.Entities;
@@ -51,7 +50,25 @@ public class RejectFriendRequestEndpoint : Endpoint<SendFriendRequestRequest>
             ThrowError("recipientUser is invalid");
         }
 
+        var appUserLink = await _mediator.Send(
+            new GetOrCreateAppUserLinkCommand(appUser, recipientUser),
+            cT
+        );
+
         var changes = new AppUserLinkChanges { UserToUserStatus = UserToUserStatus.Rejected };
+
+        var isAppUserRequested = appUserLink.AppUserRequested.UserName == appUser.UserName!;
+        if (isAppUserRequested)
+        {
+            changes.AppUserRequestedToUserStatus = UserStatus.FriendRequestSent.Rejected;
+            changes.AppUserReceivedToUserStatus = UserStatus.FriendRequestReceived.Rejected;
+        }
+        else
+        {
+            changes.AppUserReceivedToUserStatus = UserStatus.FriendRequestSent.Rejected;
+            changes.AppUserRequestedToUserStatus = UserStatus.FriendRequestReceived.Rejected;
+        }
+
 
         var update = await _mediator.Send(
             new UpdateAppUserLinkCommand(appUser, recipientUser, changes),
@@ -68,17 +85,17 @@ public class RejectFriendRequestEndpoint : Endpoint<SendFriendRequestRequest>
             ThrowError("No changes made to app user link");
         }
 
-        var notification = new Notification(
+        /*var notification = new Notification(
             recipientUser,
             appUser,
             NotificationType.FriendRequest.Rejected,
             $"New friend request from {appUser.UserName!}"
         );
 
-        var send = await _mediator.Send(new CreateNotificationCommand(notification), cT);
+        var send = await _mediator.Send(new CreateNotificationCommand(notification), cT);*/
 
         _logger.LogInformation(
-            "{UserName} sent a friend request to {FriendUserName}",
+            "{UserName} rejected a friend request to {Recipient}",
             appUser.UserName,
             recipientUser.UserName
         );

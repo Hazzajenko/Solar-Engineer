@@ -61,7 +61,7 @@ export class GroupChatOptionsBarComponent {
   menuTopLeftPosition = { x: '0', y: '0' }
   @ViewChild(MatMenuTrigger, { static: true })
   matMenuTrigger!: MatMenuTrigger
-  // private dialogRef: MatDialogRef<ChangeDisplayPictureComponent>
+  // private dialogRef: MatDialogRef<AppUserItemComponent>
   @Input() groupChat!: GroupChatCombinedModel
   @Input() webUser!: WebUserModel
 

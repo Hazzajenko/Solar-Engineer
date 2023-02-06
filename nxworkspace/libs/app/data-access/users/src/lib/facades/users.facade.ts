@@ -1,8 +1,17 @@
 import { inject, Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
 import { ConnectionsStoreService } from '@shared/data-access/connections'
-import { combineLatest, combineLatestWith, EMPTY, firstValueFrom, Observable, of, tap } from 'rxjs'
-import { map, switchMap } from 'rxjs/operators'
+import {
+  combineLatest,
+  combineLatestWith,
+  EMPTY,
+  filter,
+  firstValueFrom,
+  Observable,
+  of,
+  tap,
+} from 'rxjs'
+import { catchError, map, switchMap } from 'rxjs/operators'
 import { UsersActions, UsersSelectors } from '../store'
 import { RouterFacade } from '@shared/data-access/router'
 import { UsersService } from '../api'
@@ -38,6 +47,29 @@ export class UsersFacade {
           projectsLength: projects.length,
           friendsLength: friends.length,
         } as CombinedAppUserModel),
+    ),
+  )
+
+  get friendsOnline$() {
+    return this.connectionsStore.select.connections$.pipe(
+      combineLatestWith(this.users$.pipe(map((users) => users.filter((user) => user.isFriend)))),
+      map(([connections, friends]) => {
+        const connectionUsernames = connections.map((connection) => connection.userName)
+        return friends.filter((friend) => connectionUsernames.includes(friend.userName))
+      }),
+    )
+  }
+
+  friends$: Observable<AppUserLinkModel[]> = this.connectionsStore.select.connections$.pipe(
+    combineLatestWith(this.users$.pipe(map((users) => users.filter((user) => user.isFriend)))),
+    map(([connections, friends]) =>
+      friends.map((friend) => {
+        const isOnline = !!connections.find((connection) => connection.userName === friend.userName)
+        return {
+          ...friend,
+          isOnline,
+        } as AppUserLinkModel
+      }),
     ),
   )
 
@@ -83,6 +115,28 @@ export class UsersFacade {
         ([user, isOnline, isFriend]) =>
           ({ ...user, ...isFriend, isOnline } as unknown as WebUserModel),
       ),
+    )
+  }
+
+  queryAppUser$(userName: string): Observable<AppUserLinkModel | undefined> {
+    return this.userByUserName$(userName).pipe(
+      switchMap((user) => {
+        if (!user) {
+          return this.usersService.getUserByUserNameV2(userName).pipe(
+            map((res) => res.user),
+            // combineLatestWith(this.connectionsStore.select.isUserOnline$(user.userName)),
+            switchMap((user) =>
+              of(user).pipe(
+                combineLatestWith(this.connectionsStore.select.isUserOnline$(user.userName)),
+                map(([user, isOnline]) => ({ ...user, isOnline } as AppUserLinkModel)),
+              ),
+            ),
+            tap((user) => (user ? this.store.dispatch(UsersActions.addUser({ user })) : null)),
+            catchError(() => of(undefined)),
+          )
+        }
+        return of(user)
+      }),
     )
   }
 

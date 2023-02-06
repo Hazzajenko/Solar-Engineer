@@ -8,6 +8,7 @@ import {
   NgStyle,
   NgSwitch,
   NgSwitchCase,
+  NgTemplateOutlet,
 } from '@angular/common'
 import { ChangeDetectionStrategy, Component, Inject, inject } from '@angular/core'
 
@@ -33,7 +34,12 @@ import { FriendsComponent } from '@app/feature/friends'
 import { MessagesComponent } from '@app/messages'
 import { AuthStoreService } from '@auth/data-access/facades'
 
-import { CombinedAppUserModel, UserModel, WebUserModel } from '@shared/data-access/models'
+import {
+  AppUserLinkModel,
+  CombinedAppUserModel,
+  UserModel,
+  WebUserModel,
+} from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
 import { GetFriendRequestPipe } from 'libs/app/feature/notifications/src/lib/get-friend-request.pipe'
@@ -47,6 +53,9 @@ import { ConnectionsStoreService } from '@shared/data-access/connections'
 import { GetCdnUrlStringPipe, TimeDifferenceFromNowPipe } from '@shared/pipes'
 import { NotificationsDialog } from '@app/feature/notifications'
 import { ChangeDisplayPictureComponent } from './change-display-picture/change-display-picture.component'
+import { AddNewFriendComponent } from './add-new-friend/add-new-friend.component'
+import { AppUserItemComponent } from './app-user-item/app-user-item.component'
+import { SearchAppUserComponent } from './search-app-user/search-app-user.component'
 
 @Component({
   selector: 'app-user-profile-component',
@@ -82,6 +91,10 @@ import { ChangeDisplayPictureComponent } from './change-display-picture/change-d
     ChatroomsComponent,
     TimeDifferenceFromNowPipe,
     GetCdnUrlStringPipe,
+    AppUserItemComponent,
+    NgTemplateOutlet,
+    AddNewFriendComponent,
+    SearchAppUserComponent,
   ],
   standalone: true,
   providers: [DatePipe],
@@ -101,6 +114,8 @@ export class AppUserProfileComponent {
   )
   user$: Observable<UserModel | undefined> = this.authStore.select.user$
   appUser$: Observable<CombinedAppUserModel> = this.usersStore.select.personalCombinedAppUser$
+  friends$: Observable<AppUserLinkModel[]> = this.usersStore.select.friends$
+  selectedFriend?: AppUserLinkModel
 
   // userProfile$: Observable<WebUserModel | undefined>
 
@@ -113,12 +128,30 @@ export class AppUserProfileComponent {
 
   changeDisplayPicture() {
     const dialogConfig = {
-      // disableClose: true,
       autoFocus: true,
       height: '600px',
       width: '800px',
     } as MatDialogConfig
 
-    const dialog = this.dialog.open(ChangeDisplayPictureComponent, dialogConfig)
+    this.dialog.open(ChangeDisplayPictureComponent, dialogConfig)
+  }
+
+  addUser() {
+    const dialogConfig = {
+      autoFocus: true,
+      height: '400px',
+      width: '400px',
+    } as MatDialogConfig
+
+    this.dialog.open(AddNewFriendComponent, dialogConfig)
+  }
+
+  selectFriendItem(friend: AppUserLinkModel) {
+    if (this.selectedFriend === friend) {
+      this.selectedFriend = undefined
+      return
+    }
+    this.selectedFriend = friend
+    return
   }
 }

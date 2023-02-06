@@ -50,7 +50,25 @@ public class SendFriendRequestEndpoint : Endpoint<SendFriendRequestRequest>
             ThrowError("recipientUser is invalid");
         }
 
+        var appUserLink = await _mediator.Send(
+            new GetOrCreateAppUserLinkCommand(appUser, recipientUser),
+            cT
+        );
+        var statusChanges = new AppUserLinkStatusChanges();
+        // var appUserInLink = appUserLink.AppUserRequested == appUser ? appUserLink.AppUserRequested : appUserLink.AppUserReceived;
+
         var changes = new AppUserLinkChanges { UserToUserStatus = UserToUserStatus.Pending };
+        var isAppUserRequested = appUserLink.AppUserRequested.UserName == appUser.UserName!;
+        if (isAppUserRequested)
+        {
+            changes.AppUserRequestedToUserStatus = UserStatus.FriendRequestSent.Pending;
+            changes.AppUserReceivedToUserStatus = UserStatus.FriendRequestReceived.Pending;
+        }
+        else
+        {
+            changes.AppUserReceivedToUserStatus = UserStatus.FriendRequestSent.Pending;
+            changes.AppUserRequestedToUserStatus = UserStatus.FriendRequestReceived.Pending;
+        }
 
         var update = await _mediator.Send(
             new UpdateAppUserLinkCommand(appUser, recipientUser, changes),

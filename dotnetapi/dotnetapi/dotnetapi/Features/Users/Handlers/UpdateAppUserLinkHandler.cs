@@ -46,6 +46,10 @@ public class UpdateAppUserLinkHandler : IRequestHandler<UpdateAppUserLinkCommand
             appUserLink.AppUserReceivedNickName = changes.AppUserReceivedNickName;
         if (changes.UserToUserStatus is not null)
             appUserLink.UserToUserStatus = (UserToUserStatus)changes.UserToUserStatus;
+        if (changes.AppUserReceivedToUserStatus is not null)
+            appUserLink.AppUserReceivedStatusEvent = changes.AppUserReceivedToUserStatus;
+        if (changes.AppUserRequestedToUserStatus is not null)
+            appUserLink.AppUserRequestedStatusEvent = changes.AppUserRequestedToUserStatus;
         if (changes.Friends is not null)
             appUserLink.Friends = (bool)changes.Friends;
         if (changes.BecameFriendsTime is not null)

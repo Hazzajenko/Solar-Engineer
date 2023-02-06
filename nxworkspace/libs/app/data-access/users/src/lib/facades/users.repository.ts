@@ -15,6 +15,19 @@ export class UsersRepository {
     this.store.dispatch(UsersActions.getUserByUsername({ userName }))
   }
 
+  sendFriendRequest(userName: string) {
+    this.store.dispatch(UsersActions.sendFriendRequest({ userName }))
+  }
+
+  acceptFriendRequest(userName: string) {
+    this.store.dispatch(UsersActions.acceptFriendRequest({ userName }))
+  }
+
+  rejectFriendRequest(userName: string) {
+    this.store.dispatch(UsersActions.rejectFriendRequest({ userName }))
+  }
+
+
   updateDisplayPicture(request: UpdateDisplayPictureRequest) {
     this.store.dispatch(UsersActions.updateAppuserDisplayPictureWithIcon({ request }))
   }
