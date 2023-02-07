@@ -40,6 +40,25 @@ public static class AppUserLinkMapper
         };
     }
 
+    // AppUserFriendDto
+
+    public static RecipientUserFriendDto ToRecipientFriendDto(
+        this AppUserLink request,
+        AppUser appUser
+    )
+    {
+        var recipientUser = appUser.Id.Equals(request.AppUserReceivedId)
+            ? request.AppUserRequested
+            : request.AppUserReceived;
+        return new RecipientUserFriendDto
+        {
+            Id = recipientUser.Id,
+            UserName = recipientUser.UserName!,
+            PhotoUrl = recipientUser.PhotoUrl,
+            LastActive = recipientUser.LastActive
+        };
+    }
+
     public static AppUserLink ToEntity(
         this CreateAppUserLinkRequest _,
         AppUser appUser,

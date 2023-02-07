@@ -1,5 +1,4 @@
-﻿using dotnetapi.Features.Notifications.Handlers;
-using dotnetapi.Features.Users.Contracts.Requests;
+﻿using dotnetapi.Features.Users.Contracts.Requests;
 using dotnetapi.Features.Users.Data;
 using dotnetapi.Features.Users.Handlers;
 using dotnetapi.Models.Entities;
@@ -8,17 +7,17 @@ using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 
-namespace dotnetapi.Features.Users.Endpoints;
+namespace dotnetapi.Features.Users.Endpoints.Friends;
 
 [Authorize]
-public class SendFriendRequestEndpoint : Endpoint<SendFriendRequestRequest>
+public class RejectFriendRequestEndpoint : Endpoint<SendFriendRequestRequest>
 {
-    private readonly ILogger<SendFriendRequestEndpoint> _logger;
+    private readonly ILogger<RejectFriendRequestEndpoint> _logger;
     private readonly IMediator _mediator;
     private readonly UserManager<AppUser> _userManager;
 
-    public SendFriendRequestEndpoint(
-        ILogger<SendFriendRequestEndpoint> logger,
+    public RejectFriendRequestEndpoint(
+        ILogger<RejectFriendRequestEndpoint> logger,
         UserManager<AppUser> userManager,
         IMediator mediator
     )
@@ -28,9 +27,10 @@ public class SendFriendRequestEndpoint : Endpoint<SendFriendRequestRequest>
         _mediator = mediator;
     }
 
+
     public override void Configure()
     {
-        Put("/users/{@username}/add", x => new { x.UserName });
+        Put("/users/{@username}/reject", x => new { x.UserName });
         Policies("BeAuthenticated");
     }
 
@@ -54,21 +54,21 @@ public class SendFriendRequestEndpoint : Endpoint<SendFriendRequestRequest>
             new GetOrCreateAppUserLinkCommand(appUser, recipientUser),
             cT
         );
-        var statusChanges = new AppUserLinkStatusChanges();
-        // var appUserInLink = appUserLink.AppUserRequested == appUser ? appUserLink.AppUserRequested : appUserLink.AppUserReceived;
 
-        var changes = new AppUserLinkChanges { UserToUserStatus = UserToUserStatus.Pending };
+        var changes = new AppUserLinkChanges { UserToUserStatus = UserToUserStatus.Rejected };
+
         var isAppUserRequested = appUserLink.AppUserRequested.UserName == appUser.UserName!;
         if (isAppUserRequested)
         {
-            changes.AppUserRequestedToUserStatus = UserStatus.FriendRequestSent.Pending;
-            changes.AppUserReceivedToUserStatus = UserStatus.FriendRequestReceived.Pending;
+            changes.AppUserRequestedToUserStatus = UserStatus.FriendRequestSent.Rejected;
+            changes.AppUserReceivedToUserStatus = UserStatus.FriendRequestReceived.Rejected;
         }
         else
         {
-            changes.AppUserReceivedToUserStatus = UserStatus.FriendRequestSent.Pending;
-            changes.AppUserRequestedToUserStatus = UserStatus.FriendRequestReceived.Pending;
+            changes.AppUserReceivedToUserStatus = UserStatus.FriendRequestSent.Rejected;
+            changes.AppUserRequestedToUserStatus = UserStatus.FriendRequestReceived.Rejected;
         }
+
 
         var update = await _mediator.Send(
             new UpdateAppUserLinkCommand(appUser, recipientUser, changes),
@@ -85,17 +85,17 @@ public class SendFriendRequestEndpoint : Endpoint<SendFriendRequestRequest>
             ThrowError("No changes made to app user link");
         }
 
-        var notification = new Notification(
+        /*var notification = new Notification(
             recipientUser,
             appUser,
-            NotificationType.FriendRequest.Sent,
+            NotificationType.FriendRequest.Rejected,
             $"New friend request from {appUser.UserName!}"
         );
 
-        var send = await _mediator.Send(new CreateNotificationCommand(notification), cT);
+        var send = await _mediator.Send(new CreateNotificationCommand(notification), cT);*/
 
         _logger.LogInformation(
-            "{UserName} sent a friend request to {FriendUserName}",
+            "{UserName} rejected a friend request to {Recipient}",
             appUser.UserName,
             recipientUser.UserName
         );

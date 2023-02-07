@@ -31,8 +31,12 @@
       "@app/feature/app-user-profile": ["libs/app/feature/app-user-profile/src/index.ts"],
       "@app/feature/chatrooms": ["libs/app/feature/chatrooms/src/index.ts"],
       "@app/feature/friends": ["libs/app/feature/friends/src/index.ts"],
+      "@app/feature/main-dialog": ["libs/app/feature/main-dialog/src/index.ts"],
       "@app/feature/notifications": ["libs/app/feature/notifications/src/index.ts"],
       "@app/feature/profile": ["libs/app/feature/profile/src/index.ts"],
+      "@app/feature/recipient-user-profile": [
+        "libs/app/feature/recipient-user-profile/src/index.ts"
+      ],
       "@app/feature/sidenav": ["libs/app/feature/sidenav/src/index.ts"],
       "@app/feature/userName-profile": ["libs/app/feature/userName-profile/src/index.ts"],
       "@app/messages": ["libs/app/messages/src/index.ts"],
@@ -80,6 +84,7 @@
       "@projects/data-access/facades": ["libs/projects/data-access/facades/src/index.ts"],
       "@projects/data-access/store": ["libs/projects/data-access/store/src/index.ts"],
       "@projects/feature/projects-list": ["libs/projects/feature/projects-list/src/index.ts"],
+      "@shared/animations": ["libs/shared/animations/src/index.ts"],
       "@shared/config": ["libs/shared/config/src/index.ts"],
       "@shared/data-access/connections": ["libs/shared/data-access/connections/src/index.ts"],
       "@shared/data-access/models": ["libs/shared/data-access/models/src/index.ts"],

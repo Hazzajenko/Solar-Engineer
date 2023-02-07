@@ -88,6 +88,22 @@
               </span>
               </button>-->
       </ng-template>
+      <!--      <button (click)="auth.loginWithRedirect()">Log in</button>-->
+      <ng-container *ngIf="auth.isAuthenticated$ | async; else loggedOut">
+        <button (click)="authLogout()">Log out</button>
+        <!--        <button (click)="auth.logout({ logoutParams: { returnTo: document.location.origin } })">
+                  Log out
+                </button>-->
+        <ul *ngIf="auth.user$ | async as user">
+          <li>{{ user.name }}</li>
+          <li>{{ user.email }}</li>
+        </ul>
+        `
+      </ng-container>
+
+      <ng-template #loggedOut>
+        <button (click)="auth.loginWithRedirect()">Log in</button>
+      </ng-template>
     </div>
   </div>
   <ng-container *ngIf="onlineUsers$ | async as onlineUsers">

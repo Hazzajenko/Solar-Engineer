@@ -63,7 +63,32 @@
     <h4>Friends</h4>
     <ng-container *ngIf="friends && friends.length; else noFriends">
       <!--      <mat-list>-->
-      <div *ngFor="let friend of friends">
+      <div class="mb-4 flex flex-row max-h-[50px]">
+        <!--            <input type="text"
+                           placeholder="Search for a street"
+
+                           class="example-input">--><!---->
+
+        <!--        (optionSelected)="openConversationFromSearch($event)"-->
+        <mat-autocomplete #auto="matAutocomplete" [displayWith]="autoCompleteDisplayFunc">
+          <mat-option *ngFor="let friend of filteredFriends$ | async" [value]="friend">
+            {{ friend.userName }}
+          </mat-option>
+        </mat-autocomplete>
+        <input
+          [formControl]="autoCompleteControl"
+          [matAutocomplete]="auto"
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          id="default-search"
+          placeholder="Search Messages..."
+          required
+          type="search"
+        />
+        <button (click)="search()" mat-icon-button>
+          <mat-icon>search</mat-icon>
+        </button>
+      </div>
+      <div *ngFor="let friend of filteredFriends$ | async">
         <app-app-user-item-component
           [selected]="selectedFriend === friend"
           (selectEvent)="selectFriendItem($event)"

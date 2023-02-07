@@ -1,80 +1,85 @@
-<ng-container *ngIf="appUser">
+<ng-container *ngIf='appUser'>
   <div
-    (click)="select()"
-    (contextmenu)="onRightClick($event)"
-    [ngStyle]="{ 'background-color': selected ? '#b3dcff' : '' }"
-    class="flex space-x-3"
+    (click)='select()'
+    (contextmenu)='onRightClick($event)'
+    [ngClass]="{ 'bg-blue-200': selected }"
+    class='flex space-x-3 m-2 p-2 rounded hover:bg-blue-100'
   >
     <img
-      class="w-8 h-8 rounded-full"
+      class='w-8 h-8 rounded-full'
       matListItemIcon
-      *ngIf="appUser.photoUrl"
-      [src]="appUser.photoUrl | getCdnUrlString"
-      alt=""
+      *ngIf='appUser.photoUrl'
+      [src]='appUser.photoUrl | getCdnUrlString'
+      alt=''
     />
-    <div class="flex flex-col">
-      <span *ngIf="appUser.userName" matListItemTitle>{{ appUser.userName }} </span>
-      <ng-container *ngIf="appUser.isOnline; then online; else offline"></ng-container>
+    <div class='flex flex-col'>
+      <span *ngIf='appUser.userName' matListItemTitle>{{ appUser.userName }} </span>
+      <ng-container *ngIf='appUser.isOnline; then online; else offline'></ng-container>
       <ng-template #online>
         <span
-          *ngIf="appUser.isOnline"
-          class="top-1 left-7 absolute w-3.5 h-3.5 bg-green-400 border-2 border-white dark:border-gray-800 rounded-full"
+          *ngIf='appUser.isOnline'
+          class='top-1 left-7 absolute w-3.5 h-3.5 bg-green-400 border-2 border-white dark:border-gray-800 rounded-full'
         ></span>
       </ng-template>
       <ng-template #offline>
-        <span class="text-xs" *ngIf="appUser.lastActive && !appUser.isOnline" matListItemLine
-          >Last Active {{ appUser.lastActive | timeDifferenceFromNow }}
+        <span class='text-xs' *ngIf='appUser.lastActive && !appUser.isOnline' matListItemLine
+        >Last Active {{ appUser.lastActive | timeDifferenceFromNow }}
         </span>
       </ng-template>
-      <ng-container *ngIf="selected">
-        <ng-container *ngIf="appUser.isFriend">
+      <ng-container *ngIf='selected'>
+        <!--        <div class="flex flex-col" @fadeInAnimationX2>-->
+        <ng-container *ngIf='appUser.isFriend'>
           <span
-            class="text-xs"
-            *ngIf="appUser.isFriend && appUser.becameFriendsTime"
+            @fadeInAnimationX2
+            class='text-xs'
+            *ngIf='appUser.isFriend && appUser.becameFriendsTime'
             matListItemLine
-            >Friends Since {{ appUser.becameFriendsTime | timeDifferenceFromNow }}
+          >Friends Since {{ appUser.becameFriendsTime | timeDifferenceFromNow }}
           </span>
         </ng-container>
-        <span class="text-xs" *ngIf="appUser.created" matListItemLine
-          >User Since {{ appUser.created | timeDifferenceFromNow }}
+        <span @fadeInAnimationX2 class='text-xs' *ngIf='appUser.created' matListItemLine
+        >User Since {{ appUser.created | timeDifferenceFromNow }}
         </span>
-        <span *ngIf="appUser.firstName && appUser.lastName" matListItemLine
-          >{{ appUser.firstName }} {{ appUser.lastName }}</span
-        ></ng-container
-      >
+        <span @fadeInAnimationX2 *ngIf='appUser.firstName && appUser.lastName' matListItemLine
+        >{{ appUser.firstName }} {{ appUser.lastName }}</span
+        >
+        <!--        </div>-->
+      </ng-container>
     </div>
   </div>
 </ng-container>
 
 <div
-  [matMenuTriggerFor]="rightMenu"
-  [style.left]="menuTopLeftPosition.x"
-  [style.top]="menuTopLeftPosition.y"
-  style="visibility: hidden; position: fixed"
+  [matMenuTriggerFor]='rightMenu'
+  [style.left]='menuTopLeftPosition.x'
+  [style.top]='menuTopLeftPosition.y'
+  style='visibility: hidden; position: fixed'
 ></div>
 
 <mat-menu
-  #rightMenu="matMenu"
-  class="z-10 bg-transparent divide-y divide-gray-100 rounded-lg w-44 dark:bg-gray-700 dark:divide-gray-600"
-  backdropClass="bg-transparent"
+  #rightMenu='matMenu'
+  class='z-10 bg-transparent divide-y divide-gray-100 rounded-lg w-44 dark:bg-gray-700 dark:divide-gray-600'
+  backdropClass='bg-transparent'
 >
   <ng-template matMenuContent>
     <div
-      *ngIf="appUser"
-      class="z-10 bg-transparent divide-y divide-gray-100 rounded-lg w-44 dark:bg-gray-700 dark:divide-gray-600"
+      *ngIf='appUser'
+      class='z-10 bg-transparent divide-y divide-gray-100 rounded-lg w-44 dark:bg-gray-700 dark:divide-gray-600'
     >
-      <div class="py-2">
+      <div class='py-2'>
         <a
-          class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-          >{{ appUser.userName }}</a
+          class='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white'
+        >{{ appUser.userName }}</a
         >
       </div>
       <ul
-        class="py-2 text-sm text-gray-700 dark:text-gray-200"
-        aria-labelledby="dropdownMenuIconButton"
+        class='py-2 text-sm text-gray-700 dark:text-gray-200'
+        aria-labelledby='dropdownMenuIconButton'
       >
         <li>
-          <a class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+          <a
+            (click)='viewProfile(appUser)'
+            class='block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white'>
             Profile
           </a>
         </li>

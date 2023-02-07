@@ -10,6 +10,10 @@ import { ProfileDialog } from '@app/feature/profile'
 import { AuthStoreService } from '@auth/data-access/facades'
 import { LetModule } from '@ngrx/component'
 import { AppUserProfileComponent } from '@app/feature/app-user-profile'
+import {
+  DialogRouteType,
+  MainDialogComponent,
+} from '../../../../../app/feature/main-dialog/src/lib'
 
 @Component({
   selector: 'app-app-bar',
@@ -38,13 +42,20 @@ export class AppBarComponent {
   }
 
   openProfile() {
+    const route: DialogRouteType = AppUserProfileComponent
+    const data = {
+      route,
+    }
+
     const dialogConfig = {
       autoFocus: true,
       height: '800px',
       width: '1200px',
+      data,
     } as MatDialogConfig
 
-    this.dialog.open(AppUserProfileComponent, dialogConfig)
+    this.dialog.open(MainDialogComponent, dialogConfig)
+    // this.dialog.open(AppUserProfileComponent, dialogConfig)
     // this.dialog.open(ProfileDialog, dialogConfig)
   }
 

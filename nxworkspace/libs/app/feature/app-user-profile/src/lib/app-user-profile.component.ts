@@ -12,7 +12,7 @@ import {
 } from '@angular/common'
 import { ChangeDetectionStrategy, Component, Inject, inject } from '@angular/core'
 
-import { FormsModule, ReactiveFormsModule } from '@angular/forms'
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { MatButtonModule } from '@angular/material/button'
 import { MatCardModule } from '@angular/material/card'
 import {
@@ -37,6 +37,7 @@ import { AuthStoreService } from '@auth/data-access/facades'
 import {
   AppUserLinkModel,
   CombinedAppUserModel,
+  MessageTimeSortModel,
   UserModel,
   WebUserModel,
 } from '@shared/data-access/models'
@@ -44,7 +45,7 @@ import { ShowHideComponent } from '@shared/ui/show-hide'
 
 import { GetFriendRequestPipe } from 'libs/app/feature/notifications/src/lib/get-friend-request.pipe'
 import { SortNotificationsPipe } from 'libs/app/feature/notifications/src/lib/sort-notifications.pipe'
-import { map, Observable } from 'rxjs'
+import { map, Observable, startWith, switchMap } from 'rxjs'
 import { NotificationsComponent } from '../../../notifications/src/lib/component/notifications.component'
 import { ActivatedRoute } from '@angular/router'
 import { UsersService, UsersStoreService } from '@app/data-access/users'
@@ -56,6 +57,8 @@ import { ChangeDisplayPictureComponent } from './change-display-picture/change-d
 import { AddNewFriendComponent } from './add-new-friend/add-new-friend.component'
 import { AppUserItemComponent } from './app-user-item/app-user-item.component'
 import { SearchAppUserComponent } from './search-app-user/search-app-user.component'
+import { MatAutocompleteModule } from '@angular/material/autocomplete'
+import { object } from 'zod'
 
 @Component({
   selector: 'app-user-profile-component',
@@ -95,6 +98,7 @@ import { SearchAppUserComponent } from './search-app-user/search-app-user.compon
     NgTemplateOutlet,
     AddNewFriendComponent,
     SearchAppUserComponent,
+    MatAutocompleteModule,
   ],
   standalone: true,
   providers: [DatePipe],
@@ -112,12 +116,25 @@ export class AppUserProfileComponent {
       return paths[0].path !== 'messages'
     }),
   )
+  searchFriendsControl = new FormControl('')
   user$: Observable<UserModel | undefined> = this.authStore.select.user$
   appUser$: Observable<CombinedAppUserModel> = this.usersStore.select.personalCombinedAppUser$
   friends$: Observable<AppUserLinkModel[]> = this.usersStore.select.friends$
+  // filteredFriends$!
+
   selectedFriend?: AppUserLinkModel
 
   // userProfile$: Observable<WebUserModel | undefined>
+  autoCompleteControl = new FormControl('')
+  filteredFriends$: Observable<AppUserLinkModel[] | undefined> =
+    this.autoCompleteControl.valueChanges.pipe(
+      startWith(''),
+      switchMap((value) => this.filterFriends(value || '')),
+    )
+
+  autoCompleteDisplayFunc(appUser: AppUserLinkModel): string {
+    return appUser && appUser.userName ? appUser.userName : ''
+  }
 
   constructor(
     private dialogRef: MatDialogRef<AppUserProfileComponent>,
@@ -153,5 +170,15 @@ export class AppUserProfileComponent {
     }
     this.selectedFriend = friend
     return
+  }
+
+  search() {}
+
+  private filterFriends(query: string): Observable<AppUserLinkModel[] | undefined> {
+    const filterValue = query.toLowerCase()
+
+    return this.friends$.pipe(
+      map((data) => data.filter((search) => search.userName.toLowerCase().includes(filterValue))),
+    )
   }
 }

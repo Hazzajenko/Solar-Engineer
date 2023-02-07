@@ -8,17 +8,17 @@ using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 
-namespace dotnetapi.Features.Users.Endpoints;
+namespace dotnetapi.Features.Users.Endpoints.Friends;
 
 [Authorize]
-public class AcceptFriendRequestEndpoint : Endpoint<AcceptFriendRequestRequest>
+public class SendFriendRequestEndpoint : Endpoint<SendFriendRequestRequest>
 {
-    private readonly ILogger<AcceptFriendRequestEndpoint> _logger;
+    private readonly ILogger<SendFriendRequestEndpoint> _logger;
     private readonly IMediator _mediator;
     private readonly UserManager<AppUser> _userManager;
 
-    public AcceptFriendRequestEndpoint(
-        ILogger<AcceptFriendRequestEndpoint> logger,
+    public SendFriendRequestEndpoint(
+        ILogger<SendFriendRequestEndpoint> logger,
         UserManager<AppUser> userManager,
         IMediator mediator
     )
@@ -30,11 +30,11 @@ public class AcceptFriendRequestEndpoint : Endpoint<AcceptFriendRequestRequest>
 
     public override void Configure()
     {
-        Put("/users/{@username}/accept", x => new { x.UserName });
+        Put("/users/{@username}/add", x => new { x.UserName });
         Policies("BeAuthenticated");
     }
 
-    public override async Task HandleAsync(AcceptFriendRequestRequest request, CancellationToken cT)
+    public override async Task HandleAsync(SendFriendRequestRequest request, CancellationToken cT)
     {
         var appUser = await _userManager.GetUserAsync(User);
         if (appUser is null)
@@ -54,25 +54,20 @@ public class AcceptFriendRequestEndpoint : Endpoint<AcceptFriendRequestRequest>
             new GetOrCreateAppUserLinkCommand(appUser, recipientUser),
             cT
         );
+        var statusChanges = new AppUserLinkStatusChanges();
+        // var appUserInLink = appUserLink.AppUserRequested == appUser ? appUserLink.AppUserRequested : appUserLink.AppUserReceived;
 
-        var changes = new AppUserLinkChanges
-        {
-            UserToUserStatus = UserToUserStatus.Approved,
-            Friends = true,
-            BecameFriendsTime = DateTime.Now
-            // AppUserReceivedToUserStatus = UserStatus.
-        };
-
+        var changes = new AppUserLinkChanges { UserToUserStatus = UserToUserStatus.Pending };
         var isAppUserRequested = appUserLink.AppUserRequested.UserName == appUser.UserName!;
         if (isAppUserRequested)
         {
-            changes.AppUserRequestedToUserStatus = UserStatus.FriendRequestSent.Accepted;
-            changes.AppUserReceivedToUserStatus = UserStatus.FriendRequestReceived.Accepted;
+            changes.AppUserRequestedToUserStatus = UserStatus.FriendRequestSent.Pending;
+            changes.AppUserReceivedToUserStatus = UserStatus.FriendRequestReceived.Pending;
         }
         else
         {
-            changes.AppUserReceivedToUserStatus = UserStatus.FriendRequestSent.Accepted;
-            changes.AppUserRequestedToUserStatus = UserStatus.FriendRequestReceived.Accepted;
+            changes.AppUserReceivedToUserStatus = UserStatus.FriendRequestSent.Pending;
+            changes.AppUserRequestedToUserStatus = UserStatus.FriendRequestReceived.Pending;
         }
 
         var update = await _mediator.Send(
@@ -93,14 +88,14 @@ public class AcceptFriendRequestEndpoint : Endpoint<AcceptFriendRequestRequest>
         var notification = new Notification(
             recipientUser,
             appUser,
-            NotificationType.FriendRequest.Accepted,
-            $"{appUser.UserName!} has accepted your friend request!"
+            NotificationType.FriendRequest.Sent,
+            $"New friend request from {appUser.UserName!}"
         );
 
         var send = await _mediator.Send(new CreateNotificationCommand(notification), cT);
 
         _logger.LogInformation(
-            "{User} accepted a friend request from {Recipient}",
+            "{UserName} sent a friend request to {FriendUserName}",
             appUser.UserName,
             recipientUser.UserName
         );

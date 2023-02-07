@@ -5,6 +5,7 @@ import { map } from 'rxjs'
 import { UpdateDisplayPictureRequest } from '../models'
 import { GetUserLinkResponse } from '../models/get-user-link.response'
 import { AllFriendsResponse } from '../models/all-friends.response'
+import { GetRecipientUserFriendsResponse } from '../models/get-recipient-user-friends.response'
 
 @Injectable({
   providedIn: 'root',
@@ -20,6 +21,10 @@ export class UsersService {
   getUserByUserNameV2(userName: string) {
     return this.http.get<GetUserLinkResponse>(`/api/v2/user/${userName}`)
     // .pipe(map((response) => response.user))
+  }
+
+  getRecipientUserFriends(userName: string) {
+    return this.http.get<GetRecipientUserFriendsResponse>(`/api/users/${userName}/friends`)
   }
 
   updateDisplayPicture(request: UpdateDisplayPictureRequest) {

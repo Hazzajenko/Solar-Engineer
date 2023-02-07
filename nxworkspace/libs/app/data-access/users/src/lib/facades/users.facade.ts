@@ -15,7 +15,12 @@ import { catchError, map, switchMap } from 'rxjs/operators'
 import { UsersActions, UsersSelectors } from '../store'
 import { RouterFacade } from '@shared/data-access/router'
 import { UsersService } from '../api'
-import { AppUserLinkModel, CombinedAppUserModel, WebUserModel } from '@shared/data-access/models'
+import {
+  AppUserLinkModel,
+  CombinedAppUserModel,
+  RecipientFriendModel,
+  WebUserModel,
+} from '@shared/data-access/models'
 import { FriendsSelectors, FriendsStoreService } from '@app/data-access/friends'
 import { AuthSelectors } from '@auth/data-access/store'
 import { ProjectsSelectors } from '@projects/data-access/store'
@@ -137,6 +142,13 @@ export class UsersFacade {
         }
         return of(user)
       }),
+    )
+  }
+
+  queryRecipientUserFriends$(userName: string): Observable<RecipientFriendModel[] | undefined> {
+    return this.usersService.getRecipientUserFriends(userName).pipe(
+      map((res) => res.recipientUserFriends),
+      catchError(() => of(undefined)),
     )
   }
 

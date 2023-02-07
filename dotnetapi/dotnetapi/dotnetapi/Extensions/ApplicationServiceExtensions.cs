@@ -1,4 +1,5 @@
-﻿using CloudinaryDotNet;
+﻿using System.Net.Http.Headers;
+using CloudinaryDotNet;
 using dotnetapi.Data;
 using dotnetapi.Features.Friends.Services;
 using dotnetapi.Features.GroupChats.Services;
@@ -6,6 +7,7 @@ using dotnetapi.Features.Messages.Services;
 using dotnetapi.Features.Notifications.Services;
 using dotnetapi.Services.Auth;
 using dotnetapi.Services.Cache;
+using dotnetapi.Services.Http;
 using dotnetapi.Services.Links;
 using dotnetapi.Services.Panels;
 using dotnetapi.Services.Paths;
@@ -21,11 +23,31 @@ namespace dotnetapi.Extensions;
 
 public static class ApplicationServiceExtensions
 {
-    public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
+    public static IServiceCollection AddApplicationServices(
+        this IServiceCollection services,
+        IConfiguration config
+    )
     {
+        services.AddHttpClient(
+            "Auth0",
+            httpClient =>
+            {
+                var domain = config.GetValue<string>("Auth0:Domain");
+                httpClient.BaseAddress = new Uri(
+                    domain ?? throw new InvalidOperationException("Please specify Auth0:Domain!")
+                );
+
+                httpClient.DefaultRequestHeaders.Accept.Add(
+                    new MediaTypeWithQualityHeaderValue("application/json")
+                );
+            }
+        );
+        services.AddScoped<IHttpClientFactoryService, HttpClientFactoryFactoryService>();
+
         services.AddMediator(options => { options.ServiceLifetime = ServiceLifetime.Transient; });
 
         // services.AddMediator();
+        services.Configure<Auth0Settings>(config.GetSection("Auth0Settings"));
         services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));
         var cloudName = config.GetValue<string>("CloudinarySettings:CloudName");
         var apiKey = config.GetValue<string>("CloudinarySettings:ApiKey");
@@ -62,7 +84,6 @@ public static class ApplicationServiceExtensions
         services.AddScoped<IPathsService, PathsService>();
         services.AddScoped<IPathsRepository, PathsRepository>();
 
-
         services.AddDbContext<DataContext>(options =>
         {
             // options.EnableSensitiveDataLogging();
@@ -77,8 +98,7 @@ public static class ApplicationServiceExtensions
             options.UseNpgsql(connStr);
         });
 
-        services.AddDbContext<InMemoryDatabase>
-            (o => o.UseInMemoryDatabase("InMemoryDatabase"));
+        services.AddDbContext<InMemoryDatabase>(o => o.UseInMemoryDatabase("InMemoryDatabase"));
 
         return services;
     }

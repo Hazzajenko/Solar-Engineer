@@ -1,0 +1,77 @@
+<ng-container *ngIf="user$ | async as user">
+  <ng-container *ngIf="recipientUser$ | async as userProfile">
+    <mat-card class="max-w-[100%] max-h-[100%]">
+      <mat-card-header>
+        <div mat-card-avatar>
+          <mat-icon color="primary" *ngIf="userProfile.isOnline">wifi</mat-icon>
+        </div>
+        <img mat-card-avatar [src]="userProfile.photoUrl | getCdnUrlString" alt="" />
+        <mat-card-title>{{ userProfile.userName }}</mat-card-title>
+        <mat-card-subtitle *ngIf="userProfile.isOnline; else offline"> Online</mat-card-subtitle>
+        <mat-card-subtitle *ngIf="userProfile.isFriend">
+          Friends {{ userProfile.becameFriendsTime ? "since" : "" }}
+          {{ userProfile.becameFriendsTime | timeDifferenceFromNow }}
+        </mat-card-subtitle>
+
+        <ng-template #offline>
+          <mat-card-subtitle *ngIf="!userProfile.isOnline"
+            >Last Active {{ userProfile.lastActive | timeDifferenceFromNow }}</mat-card-subtitle
+          >
+        </ng-template>
+
+        <mat-card-subtitle
+          >User Since {{ userProfile.created | timeDifferenceFromNow }}</mat-card-subtitle
+        >
+      </mat-card-header>
+
+      <mat-card-content>
+        <ng-container *ngIf="recipientFriends$ | async as recipientFriends">
+          <div *ngFor="let friend of recipientFriends">
+            <div class="flex space-x-3 m-2 p-2 rounded hover:bg-blue-100">
+              <img
+                class="w-8 h-8 rounded-full"
+                matListItemIcon
+                *ngIf="friend.photoUrl"
+                [src]="friend.photoUrl | getCdnUrlString"
+                alt=""
+              />
+              <div class="flex flex-col">
+                <span *ngIf="friend.userName" matListItemTitle>{{ friend.userName }} </span>
+                <ng-container *ngIf="friend.isOnline; then online; else offline"></ng-container>
+                <ng-template #online>
+                  <span
+                    *ngIf="friend.isOnline"
+                    class="top-1 left-7 absolute w-3.5 h-3.5 bg-green-400 border-2 border-white dark:border-gray-800 rounded-full"
+                  ></span>
+                </ng-template>
+                <ng-template #offline>
+                  <span
+                    class="text-xs"
+                    *ngIf="friend.lastActive && !friend.isOnline"
+                    matListItemLine
+                    >Last Active {{ friend.lastActive | timeDifferenceFromNow }}
+                  </span>
+                </ng-template>
+
+                <!--        </div>-->
+              </div>
+            </div>
+            <!--        (click)="selectFriendItem(friend)"-->
+            <!--          {{ friend.userName }}-->
+          </div>
+        </ng-container>
+      </mat-card-content>
+      <mat-card-actions>
+        <button
+          (click)="sendFriendRequest(userProfile.userName)"
+          *ngIf="!userProfile.isFriend"
+          mat-button
+        >
+          Send Friend Request
+        </button>
+        <button (click)="sendMessage(userProfile.userName)" mat-button>Message</button>
+        <button *ngIf="userProfile.isFriend" mat-button>Remove Friend</button>
+      </mat-card-actions>
+    </mat-card>
+  </ng-container>
+</ng-container>

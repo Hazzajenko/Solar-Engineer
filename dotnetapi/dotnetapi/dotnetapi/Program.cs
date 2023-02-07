@@ -5,7 +5,6 @@ using Amazon.S3;
 using dotnetapi;
 using dotnetapi.Data;
 using dotnetapi.Extensions;
-using dotnetapi.Helpers;
 using dotnetapi.Hubs;
 using dotnetapi.Models.Entities;
 using dotnetapi.Validation;
@@ -277,7 +276,7 @@ app.UseFastEndpoints(options =>
 {
     // options.Errors.ResponseBuilder = (errors, _) => errors.ToResponse();
     options.Serializer.Options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-    options.Endpoints.Configurator = ep => { ep.PreProcessors(Order.Before, new UpdateLastActiveProcessor()); };
+    // options.Endpoints.Configurator = ep => { ep.PreProcessors(Order.Before, new UpdateLastActiveProcessor()); };
     // x.Serializer.Options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
 });
 

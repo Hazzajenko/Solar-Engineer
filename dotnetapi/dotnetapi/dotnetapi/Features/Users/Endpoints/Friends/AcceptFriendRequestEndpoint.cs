@@ -1,4 +1,5 @@
-﻿using dotnetapi.Features.Users.Contracts.Requests;
+﻿using dotnetapi.Features.Notifications.Handlers;
+using dotnetapi.Features.Users.Contracts.Requests;
 using dotnetapi.Features.Users.Data;
 using dotnetapi.Features.Users.Handlers;
 using dotnetapi.Models.Entities;
@@ -7,17 +8,17 @@ using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 
-namespace dotnetapi.Features.Users.Endpoints;
+namespace dotnetapi.Features.Users.Endpoints.Friends;
 
 [Authorize]
-public class RejectFriendRequestEndpoint : Endpoint<SendFriendRequestRequest>
+public class AcceptFriendRequestEndpoint : Endpoint<AcceptFriendRequestRequest>
 {
-    private readonly ILogger<RejectFriendRequestEndpoint> _logger;
+    private readonly ILogger<AcceptFriendRequestEndpoint> _logger;
     private readonly IMediator _mediator;
     private readonly UserManager<AppUser> _userManager;
 
-    public RejectFriendRequestEndpoint(
-        ILogger<RejectFriendRequestEndpoint> logger,
+    public AcceptFriendRequestEndpoint(
+        ILogger<AcceptFriendRequestEndpoint> logger,
         UserManager<AppUser> userManager,
         IMediator mediator
     )
@@ -27,14 +28,13 @@ public class RejectFriendRequestEndpoint : Endpoint<SendFriendRequestRequest>
         _mediator = mediator;
     }
 
-
     public override void Configure()
     {
-        Put("/users/{@username}/reject", x => new { x.UserName });
+        Put("/users/{@username}/accept", x => new { x.UserName });
         Policies("BeAuthenticated");
     }
 
-    public override async Task HandleAsync(SendFriendRequestRequest request, CancellationToken cT)
+    public override async Task HandleAsync(AcceptFriendRequestRequest request, CancellationToken cT)
     {
         var appUser = await _userManager.GetUserAsync(User);
         if (appUser is null)
@@ -55,20 +55,25 @@ public class RejectFriendRequestEndpoint : Endpoint<SendFriendRequestRequest>
             cT
         );
 
-        var changes = new AppUserLinkChanges { UserToUserStatus = UserToUserStatus.Rejected };
+        var changes = new AppUserLinkChanges
+        {
+            UserToUserStatus = UserToUserStatus.Approved,
+            Friends = true,
+            BecameFriendsTime = DateTime.Now
+            // AppUserReceivedToUserStatus = UserStatus.
+        };
 
         var isAppUserRequested = appUserLink.AppUserRequested.UserName == appUser.UserName!;
         if (isAppUserRequested)
         {
-            changes.AppUserRequestedToUserStatus = UserStatus.FriendRequestSent.Rejected;
-            changes.AppUserReceivedToUserStatus = UserStatus.FriendRequestReceived.Rejected;
+            changes.AppUserRequestedToUserStatus = UserStatus.FriendRequestSent.Accepted;
+            changes.AppUserReceivedToUserStatus = UserStatus.FriendRequestReceived.Accepted;
         }
         else
         {
-            changes.AppUserReceivedToUserStatus = UserStatus.FriendRequestSent.Rejected;
-            changes.AppUserRequestedToUserStatus = UserStatus.FriendRequestReceived.Rejected;
+            changes.AppUserReceivedToUserStatus = UserStatus.FriendRequestSent.Accepted;
+            changes.AppUserRequestedToUserStatus = UserStatus.FriendRequestReceived.Accepted;
         }
-
 
         var update = await _mediator.Send(
             new UpdateAppUserLinkCommand(appUser, recipientUser, changes),
@@ -85,17 +90,17 @@ public class RejectFriendRequestEndpoint : Endpoint<SendFriendRequestRequest>
             ThrowError("No changes made to app user link");
         }
 
-        /*var notification = new Notification(
+        var notification = new Notification(
             recipientUser,
             appUser,
-            NotificationType.FriendRequest.Rejected,
-            $"New friend request from {appUser.UserName!}"
+            NotificationType.FriendRequest.Accepted,
+            $"{appUser.UserName!} has accepted your friend request!"
         );
 
-        var send = await _mediator.Send(new CreateNotificationCommand(notification), cT);*/
+        var send = await _mediator.Send(new CreateNotificationCommand(notification), cT);
 
         _logger.LogInformation(
-            "{UserName} rejected a friend request to {Recipient}",
+            "{User} accepted a friend request from {Recipient}",
             appUser.UserName,
             recipientUser.UserName
         );
