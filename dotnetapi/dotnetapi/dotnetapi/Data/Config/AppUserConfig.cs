@@ -9,6 +9,18 @@ public class AppUserConfig : IEntityTypeConfiguration<AppUser>
     public void Configure(EntityTypeBuilder<AppUser> builder)
     {
         builder
+            .HasMany(ur => ur.Auth0Users)
+            .WithOne(u => u.AppUser)
+            .HasForeignKey(ur => ur.AppUserId)
+            .IsRequired();
+
+        builder
+            .HasMany(ur => ur.AppUserIdentities)
+            .WithOne(u => u.AppUser)
+            .HasForeignKey(ur => ur.UserId)
+            .IsRequired();
+
+        builder
             .HasMany(ur => ur.AppUserRoles)
             .WithOne(u => u.User)
             .HasForeignKey(ur => ur.UserId)

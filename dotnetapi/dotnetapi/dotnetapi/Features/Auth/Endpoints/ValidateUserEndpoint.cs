@@ -5,7 +5,7 @@ using dotnetapi.Services.Auth;
 using FastEndpoints;
 using Microsoft.AspNetCore.Identity;
 
-namespace dotnetapi.Features.Auth;
+namespace dotnetapi.Features.Auth.Endpoints;
 
 public class ValidateUserEndpoint : Endpoint<ValidateUserRequest, LoginResponse>
 {

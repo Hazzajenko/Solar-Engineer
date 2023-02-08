@@ -89,6 +89,14 @@
               </button>-->
       </ng-template>
       <!--      <button (click)="auth.loginWithRedirect()">Log in</button>-->
+      <!--      <ng-container *ngIf="auth0.isAuthenticated"></ng-container>-->
+      <!--     <h4 *ngIf="auth0.isAuthenticated()">You are logged in!</h4>
+           <h4 *ngIf="!auth0.isAuthenticated()">
+             You are not logged in! Please <a (click)="auth0.login()">Log In</a> to continue.
+           </h4>-->
+      <!--      auth0-->
+      <!--      https://dev-t8co2m74.us.auth0.com/authorize?client_id=uE6uqQDFUsznlWaTqa2MNj1ObKuGlmNq&response_type=token%20id_token&redirect_uri=http%3A%2F%2Flocalhost%3A4200%2Fcallback&scope=openid%20profile%20read%3Acurrent_user&audience=https%3A%2F%2Fsolarengineer.dev&state=o5-DhDZxIn6ZG.amwN6N_JJzGMpzjc0I&nonce=9ziQbldm3adPx00tl3Q.TT8Mk.VwIGeb&auth0Client=eyJuYW1lIjoiYXV0aDAuanMiLCJ2ZXJzaW9uIjoiOS4yMC4xIn0%3D-->
+
       <ng-container *ngIf="auth.isAuthenticated$ | async; else loggedOut">
         <button (click)="authLogout()">Log out</button>
         <!--        <button (click)="auth.logout({ logoutParams: { returnTo: document.location.origin } })">

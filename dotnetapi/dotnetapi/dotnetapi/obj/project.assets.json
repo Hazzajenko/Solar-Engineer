@@ -2,6 +2,19 @@
   "version": 3,
   "targets": {
     "net7.0": {
+      "Auth0.AspNetCore.Authentication/1.1.0": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNetCore.Authentication.OpenIdConnect": "7.0.2",
+          "System.Text.Encodings.Web": "4.5.1"
+        },
+        "compile": {
+          "lib/net7.0/Auth0.AspNetCore.Authentication.dll": {}
+        },
+        "runtime": {
+          "lib/net7.0/Auth0.AspNetCore.Authentication.dll": {}
+        }
+      },
       "AWS.Logger.Core/3.1.0": {
         "type": "package",
         "dependencies": {
@@ -413,6 +426,25 @@
         },
         "runtime": {
           "lib/net7.0/Microsoft.AspNetCore.Authentication.JwtBearer.dll": {
+            "related": ".xml"
+          }
+        },
+        "frameworkReferences": [
+          "Microsoft.AspNetCore.App"
+        ]
+      },
+      "Microsoft.AspNetCore.Authentication.OpenIdConnect/7.0.2": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.IdentityModel.Protocols.OpenIdConnect": "6.15.1"
+        },
+        "compile": {
+          "lib/net7.0/Microsoft.AspNetCore.Authentication.OpenIdConnect.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net7.0/Microsoft.AspNetCore.Authentication.OpenIdConnect.dll": {
             "related": ".xml"
           }
         },
@@ -2324,6 +2356,20 @@
     }
   },
   "libraries": {
+    "Auth0.AspNetCore.Authentication/1.1.0": {
+      "sha512": "DEMpWFAXxyW2ryBQTtTMHtPO6QnnlIb+tLTV6mDhSoy6I1chCnEeZiqv1q/H4P0Z8e3cvXggX1kSINmPegZlpQ==",
+      "type": "package",
+      "path": "auth0.aspnetcore.authentication/1.1.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Auth0Icon.png",
+        "auth0.aspnetcore.authentication.1.1.0.nupkg.sha512",
+        "auth0.aspnetcore.authentication.nuspec",
+        "lib/net6.0/Auth0.AspNetCore.Authentication.dll",
+        "lib/net7.0/Auth0.AspNetCore.Authentication.dll"
+      ]
+    },
     "AWS.Logger.Core/3.1.0": {
       "sha512": "ruKBNASE/IBnVZhyeUy0ueuxq1CuMtDHNpU2cqGUg12SxvClkqqY/PVXyM6I4ltsMh/1tF8WdpTBj9k3Fw/PgA==",
       "type": "package",
@@ -2841,6 +2887,21 @@
         "lib/net7.0/Microsoft.AspNetCore.Authentication.JwtBearer.xml",
         "microsoft.aspnetcore.authentication.jwtbearer.7.0.0.nupkg.sha512",
         "microsoft.aspnetcore.authentication.jwtbearer.nuspec"
+      ]
+    },
+    "Microsoft.AspNetCore.Authentication.OpenIdConnect/7.0.2": {
+      "sha512": "CAaGKlMv2D7xC43Sz+wP7JMymCmkeEk/N/GADWCfDmPDEb+Jme1hYOxG/To5LRYH4WoENnZj2W3vjpEcVxKh5w==",
+      "type": "package",
+      "path": "microsoft.aspnetcore.authentication.openidconnect/7.0.2",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "THIRD-PARTY-NOTICES.TXT",
+        "lib/net7.0/Microsoft.AspNetCore.Authentication.OpenIdConnect.dll",
+        "lib/net7.0/Microsoft.AspNetCore.Authentication.OpenIdConnect.xml",
+        "microsoft.aspnetcore.authentication.openidconnect.7.0.2.nupkg.sha512",
+        "microsoft.aspnetcore.authentication.openidconnect.nuspec"
       ]
     },
     "Microsoft.AspNetCore.Connections.Abstractions/7.0.0": {
@@ -6083,6 +6144,7 @@
       "AWSSDK.CloudWatchLogs >= 3.7.104",
       "AWSSDK.Extensions.NETCore.Setup >= 3.7.2",
       "AWSSDK.S3 >= 3.7.101.36",
+      "Auth0.AspNetCore.Authentication >= 1.1.0",
       "CloudinaryDotNet >= 1.20.0",
       "EntityFramework >= 6.4.4",
       "FastEndpoints >= 5.6.0",
@@ -6178,6 +6240,10 @@
           "AWSSDK.S3": {
             "target": "Package",
             "version": "[3.7.101.36, )"
+          },
+          "Auth0.AspNetCore.Authentication": {
+            "target": "Package",
+            "version": "[1.1.0, )"
           },
           "CloudinaryDotNet": {
             "target": "Package",

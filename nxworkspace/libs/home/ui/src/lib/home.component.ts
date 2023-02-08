@@ -28,8 +28,11 @@ import { OnlineUsersDialog } from 'libs/home/ui/src/lib/dialogs/online-users/onl
 
 import { concatMap, map, Observable, switchMap, tap } from 'rxjs'
 import { fadeIn, fadeInV2 } from './animations/animations'
-import { AuthService } from '@auth0/auth0-angular'
-import { HttpClient } from '@angular/common/http'
+import { AuthService, RedirectLoginOptions } from '@auth0/auth0-angular'
+import { HttpClient, HttpHeaders } from '@angular/common/http'
+import * as auth0 from 'auth0-js'
+import { AUTH_CONFIG } from './auth-config'
+import { Auth0Service } from './auth0.service'
 
 @Component({
   selector: 'app-home',
@@ -63,6 +66,18 @@ export class HomeComponent implements OnInit {
   private http = inject(HttpClient)
   private hubConnection: any
   public auth = inject(AuthService)
+  public auth0 = inject(Auth0Service)
+
+  /*  requestedScopes = 'openid profile read:current_user'
+    auth0 = new auth0.WebAuth({
+      clientID: AUTH_CONFIG.clientID,
+      domain: AUTH_CONFIG.domain,
+      responseType: 'token id_token',
+      audience: AUTH_CONFIG.audience,
+      redirectUri: AUTH_CONFIG.callbackURL,
+      scope: this.requestedScopes,
+      leeway: 30,
+    })*/
 
   usersOnline$ = this.connectionsStore.select.connections$
 
@@ -70,30 +85,106 @@ export class HomeComponent implements OnInit {
   user$ = this.authStore.select.user$
 
   routerEvents$ = this.router.events
+  profile: any
 
   ngOnInit(): void {
+    /*    this.auth0.handleAuthentication()
+        this.auth0.scheduleRenewal()
+        if (this.auth0.userProfile) {
+          this.profile = this.auth0.userProfile
+        } else {
+          this.auth0.getProfile((err: any, profile: any) => {
+            this.profile = profile
+          })
+        }*/
+    // console.log(parent)
+    /*    if (this.auth0.isAuthenticated()) {
+          const profile = this.auth0.userProfile
+          let profileAny: any
+          let err: any
+          const dl = this.auth0.getProfile(profileAny)
+          console.log(profile)
+          console.log(dl)
+          console.log(profileAny)
+        }*/
     this.connectionsService.onlineUsers$.subscribe((res) => console.log(res))
-    this.auth.idTokenClaims$.subscribe((res) => console.log(res))
-    this.auth.getAccessTokenSilently().subscribe((res) => console.log(res))
-    this.auth.user$
-      .pipe(
-        /*        concatMap((user) =>
-                  // Use HttpClient to make the call
-                  this.http.get(encodeURI(`https://dev-t8co2m74.us.auth0.com/api/v2/users/${user?.sub}`)),
-                ),
-                map((user) => (user as any).user_metadata),*/
-        // tap((meta) => (this.metadata = meta))
-        /*        concatMap((user) =>
-                  // Use HttpClient to make the call
-                  this.http.get(encodeURI(`https://YOUR_DOMAIN/api/v2/users/${user.sub}`)),
-                ),
-                map((user) => user['user_metadata']),*/
-        tap((meta) => console.log('meta', meta)),
-        switchMap((user) => this.http.get(`/api/account/profile/${user?.sub}`)),
-        tap((meta) => console.log('meta', meta)),
-        // tap((meta) => (this.metadata = meta)),
-      )
-      .subscribe()
+    // this.auth.idTokenClaims$.subscribe((res) => console.log(res))
+    // this.auth.getAccessTokenSilently().subscribe((res) => console.log(res))
+    // this.auth.user$.subscribe((res) => console.log(res))
+    // this.auth.idTokenClaims$.subscribe((res) => console.log(res))
+
+    // this.auth.
+    /*    this.http.get('https://dev-t8co2m74.us.auth0.com/userinfo').subscribe((res) => console.log(res))
+        this.http
+          .get(
+            'https://dev-t8co2m74.us.auth0.com/authorize?' +
+              'response_type=code&' +
+              'client_id=uE6uqQDFUsznlWaTqa2MNj1ObKuGlmNq&' +
+              'redirect_uri=http://localhost:4200&' +
+              'scope=read:users&' +
+              'audience=https://solarengineer.dev&' +
+              'state=xyzABC123',
+          )
+          .subscribe((res) => console.log('authorize', res))*/
+    /*    this.auth.user$
+          .pipe(
+            /!*        concatMap((user) =>
+                      // Use HttpClient to make the call
+                      this.http.get(encodeURI(`https://dev-t8co2m74.us.auth0.com/api/v2/users/${user?.sub}`)),
+                    ),
+                    map((user) => (user as any).user_metadata),*!/
+            // tap((meta) => (this.metadata = meta))
+            /!*        concatMap((user) =>
+                      // Use HttpClient to make the call
+                      this.http.get(encodeURI(`https://YOUR_DOMAIN/api/v2/users/${user.sub}`)),
+                    ),
+                    map((user) => user['user_metadata']),*!/
+            tap((meta) => console.log('meta', meta)),
+            switchMap((user) => this.http.get(`/api/account/profile`)),
+            tap((meta) => console.log('meta', meta)),
+            // tap((meta) => (this.metadata = meta)),
+          )
+          .subscribe()*/
+    this.http.get(`/api/account/profile`).subscribe((res) => console.log('profile', res))
+    this.http.post(`/api/auth0/login`, {}).subscribe((res) => console.log('profile', res))
+    // this.auth.
+    /*    Accept: 'application/json',
+          'Access-Control-Allow-Headers': 'Content-Type',*/
+    const headerDict = {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    }
+    const requestOptions = {
+      headers: new HttpHeaders(headerDict),
+    }
+    // this.auth.
+    /*    this.http
+          .post(
+            `https://solarengineer.dev/oauth/token`,
+            {
+              grant_type: 'client_credentials',
+              client_id: 'uE6uqQDFUsznlWaTqa2MNj1ObKuGlmNq',
+              client_secret: 'le-rnpL59fiCWhiNYKLvdI9vAkRHsUFkbnZrFi51PbndtBNAnAF9lbtSz7Q4piS-',
+              audience: 'https://solarengineer.dev',
+            },
+            requestOptions,
+          )
+          .subscribe((res) => console.log('token!!', res))*/
+    // this.auth
+    /*    domain: 'dev-t8co2m74.us.auth0.com',
+          clientId: 'uE6uqQDFUsznlWaTqa2MNj1ObKuGlmNq',*/
+    /*    curl --request POST \
+      --url 'https://dev-t8co2m74.us.auth0.com/oauth/token' \
+      --header 'content-type: application/x-www-form-urlencoded' \
+      --data grant_type=client_credentials \
+      --data client_id=YOUR_CLIENT_ID \
+      --data client_secret=YOUR_CLIENT_SECRET \
+      --data audience=YOUR_API_IDENTIFIER*/
+  }
+
+  authLogin() {
+    this.auth.loginWithRedirect({
+      authorizationParams: {},
+    })
   }
 
   loginDevBot() {

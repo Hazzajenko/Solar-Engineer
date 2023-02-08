@@ -25,8 +25,10 @@ public static class IdentityServiceExtensions
             ;
 
         // services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-        var domain = config.GetValue<string>("Auth0:Domain");
+        var domain = $"https://{config["Auth0:Domain"]}/";
+        // var domain = config.GetValue<string>("Auth0:Domain");
         services
+            // .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddAuthentication(options =>
             {
                 // Identity made Cookie authentication the default.
@@ -42,17 +44,33 @@ public static class IdentityServiceExtensions
                 // opts.ClientSecret = "babQzWPLGwfOQVi0EYR-7Fbb";
                 opts.SignInScheme = IdentityConstants.ExternalScheme;
             })*/
-            .AddJwtBearer(o =>
+            .AddJwtBearer(options =>
             {
-                o.Authority = config.GetValue<string>("Auth0:Domain");
-                o.Audience = config.GetValue<string>("Auth0:Audience");
+                options.Authority = domain;
+                options.Audience = config["Auth0:Audience"];
+                // o.Authority = config.GetValue<string>("Auth0:Domain");
+                // o.Audience = config.GetValue<string>("Auth0:Audience");
                 // o.Authority = $"https://{config["Auth0:Domain"]}/";
                 // o.Audience = config["Auth0:Audience"];
-                o.TokenValidationParameters = new TokenValidationParameters
+                options.TokenValidationParameters = new TokenValidationParameters
                 {
                     NameClaimType = ClaimTypes.NameIdentifier
                 };
             });
+
+        /*services
+            .AddAuth0WebAppAuthentication(options =>
+            {
+                options.Domain = config["Auth0Settings:Domain"]!;
+                options.ClientId = config["Auth0Settings:ClientId"]!;
+                options.ClientSecret = config["Auth0Settings:ClientSecret"]!;
+            })
+            .WithAccessToken(options =>
+            {
+                options.Audience = config["Auth0Settings:Audience"]!;
+                options.UseRefreshTokens = true;
+            });*/
+        ;
         /*.AddJwtBearer(options =>
         {
             options.TokenValidationParameters = new TokenValidationParameters
@@ -88,6 +106,10 @@ public static class IdentityServiceExtensions
             opt.AddPolicy(
                 "read:messages",
                 policy => policy.Requirements.Add(new HasScopeRequirement("read:messages", domain!))
+            );
+            opt.AddPolicy(
+                "read:current_user",
+                policy => policy.Requirements.Add(new HasScopeRequirement("read:current_user", domain!))
             );
         });
 

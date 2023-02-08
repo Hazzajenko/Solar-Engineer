@@ -6,7 +6,7 @@ using FastEndpoints;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace dotnetapi.Features.Auth;
+namespace dotnetapi.Features.Auth.Endpoints;
 
 public class LoginEndpoint : Endpoint<AuthRequest, LoginResponse>
 {

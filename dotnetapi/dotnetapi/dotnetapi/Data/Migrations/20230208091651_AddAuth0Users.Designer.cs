@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using dotnetapi.Data;
@@ -11,9 +12,11 @@ using dotnetapi.Data;
 namespace dotnetapi.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230208091651_AddAuth0Users")]
+    partial class AddAuth0Users
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -78,10 +81,6 @@ namespace dotnetapi.Data.Migrations
                     b.Property<string>("ProviderKey")
                         .HasColumnType("text");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("text");
 
@@ -90,11 +89,9 @@ namespace dotnetapi.Data.Migrations
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
+                    b.HasIndex("UserId");
+
                     b.ToTable("AspNetUserLogins", (string)null);
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUserLogin<int>");
-
-                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
@@ -869,15 +866,6 @@ namespace dotnetapi.Data.Migrations
                     b.ToTable("Connection");
                 });
 
-            modelBuilder.Entity("dotnetapi.Models.Entities.AppUserIdentity", b =>
-                {
-                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>");
-
-                    b.HasIndex("UserId");
-
-                    b.HasDiscriminator().HasValue("AppUserIdentity");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.HasOne("dotnetapi.Models.Entities.AppRole", null)
@@ -888,6 +876,15 @@ namespace dotnetapi.Data.Migrations
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
+                {
+                    b.HasOne("dotnetapi.Models.Entities.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
                 {
                     b.HasOne("dotnetapi.Models.Entities.AppUser", null)
                         .WithMany()
@@ -1224,17 +1221,6 @@ namespace dotnetapi.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("dotnetapi.Models.Entities.AppUserIdentity", b =>
-                {
-                    b.HasOne("dotnetapi.Models.Entities.AppUser", "AppUser")
-                        .WithMany("AppUserIdentities")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AppUser");
-                });
-
             modelBuilder.Entity("dotnetapi.Features.GroupChats.Entities.GroupChat", b =>
                 {
                     b.Navigation("AppUserGroupChats");
@@ -1257,8 +1243,6 @@ namespace dotnetapi.Data.Migrations
             modelBuilder.Entity("dotnetapi.Models.Entities.AppUser", b =>
                 {
                     b.Navigation("AppUserGroupChats");
-
-                    b.Navigation("AppUserIdentities");
 
                     b.Navigation("AppUserLinksReceived");
 

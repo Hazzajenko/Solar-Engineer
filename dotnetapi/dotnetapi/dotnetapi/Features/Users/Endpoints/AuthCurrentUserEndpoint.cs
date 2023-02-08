@@ -3,7 +3,6 @@ using dotnetapi.Features.Users.Entities;
 using dotnetapi.Models.Entities;
 using dotnetapi.Services.Http;
 using FastEndpoints;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -11,12 +10,12 @@ using Microsoft.IdentityModel.Tokens;
 namespace dotnetapi.Features.Users.Endpoints;
 
 [Authorize]
-public class AuthAccountEndpoint : EndpointWithoutRequest<Auth0UserDto>
+public class AuthCurrentUserEndpoint : EndpointWithoutRequest<Auth0UserDto>
 {
     private readonly IHttpClientFactoryService _httpClientFactoryService;
     private readonly UserManager<AppUser> _userManager;
 
-    public AuthAccountEndpoint(
+    public AuthCurrentUserEndpoint(
         UserManager<AppUser> userManager,
         IHttpClientFactoryService httpClientFactoryService
     )
@@ -27,19 +26,19 @@ public class AuthAccountEndpoint : EndpointWithoutRequest<Auth0UserDto>
 
     public override void Configure()
     {
-        Get("/account/profile/{sub}");
+        Get("/account/profile");
         // AllowAnonymous();
-        PermissionsAll("read:current_user");
+        // PermissionsAll("read:current_user");
         // PermissionsAll("read:messages");
         // PermissionsAll("Profile_Read", "Profile_Update");
     }
 
     public override async Task HandleAsync(CancellationToken cT)
     {
-        var accessToken = await HttpContext.GetTokenAsync("Bearer");
-        var me = HttpContext.Request.Headers.Authorization;
-        me = me.ToString().Replace("Bearer ", "");
-        var token1 = new JwtSecurityToken(me);
+        // var accessToken = await HttpContext.GetTokenAsync("Bearer");
+        // var me = HttpContext.Request.Headers.Authorization;
+        // me = me.ToString().Replace("Bearer ", "");
+        // var token1 = new JwtSecurityToken(me);
         /*foreach (var prop in token1.GetType().GetProperties())
         {
             var type = Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType;
@@ -51,14 +50,15 @@ public class AuthAccountEndpoint : EndpointWithoutRequest<Auth0UserDto>
             }#1#
         }*/
 
-        Logger.LogInformation("accessToken {AccessToken}", accessToken);
-        var userName = User.Identity?.Name;
-        Logger.LogInformation("UserName {UserName}", userName);
-        // var user = HttpContext.User;
-        // Logger.LogInformation("USER {@User}", user);
-        string authHeader = HttpContext.Request.Headers["Authorization"]!;
-        Logger.LogInformation("AuthHeader {@AuthHeader}", authHeader);
+        // Logger.LogInformation("accessToken {AccessToken}", accessToken);
+        // var userName = User.Identity?.Name;
+        // Logger.LogInformation("UserName {UserName}", userName);
+        var user = HttpContext.User;
+        Logger.LogInformation("USER {@User}", user);
+        string authHeader = HttpContext.Request.Headers.Authorization!;
+        // Logger.LogInformation("AuthHeader {@AuthHeader}", authHeader);
         authHeader = authHeader.Replace("Bearer ", "");
+        var claims = User;
         // var jsonToken = handler.ReadToken(authHeader);
         // var tokenS = handler.ReadToken(authHeader) as JwtSecurityToken;
         // var id = tokenS.Claims.First(claim => claim.Type == "nameid").Value;

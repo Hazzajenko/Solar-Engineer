@@ -19,18 +19,36 @@ import { SidenavComponent } from '../../../../libs/app/feature/sidenav/src/lib/s
 
 @Component({
   standalone: true,
-  imports: [RouterModule, AppBarComponent, MatSidenavModule, MatButtonModule, NgIf, AsyncPipe, LetModule, MatListModule, MatExpansionModule, NgForOf, MatIconModule, NgSwitch, NgSwitchCase, DatePipe, SidenavComponent],
+  imports: [
+    RouterModule,
+    AppBarComponent,
+    MatSidenavModule,
+    MatButtonModule,
+    NgIf,
+    AsyncPipe,
+    LetModule,
+    MatListModule,
+    MatExpansionModule,
+    NgForOf,
+    MatIconModule,
+    NgSwitch,
+    NgSwitchCase,
+    DatePipe,
+    SidenavComponent,
+  ],
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styles: [`
-    html,
-    body {
-      height: 100%;
-      width: 100%;
-      margin: 0px;
-      padding: 0px
-    }
-  `],
+  styles: [
+    `
+      html,
+      body {
+        height: 100%;
+        width: 100%;
+        margin: 0px;
+        padding: 0px;
+      }
+    `,
+  ],
   providers: [AuthFacade],
 })
 export class AppComponent implements OnInit {
@@ -57,14 +75,13 @@ export class AppComponent implements OnInit {
   returningUser = true
 
   ngOnInit(): void {
-    this.uiStore.dispatch.setWindowSize({
-      innerHeight: window.innerHeight,
-      innerWidth: window.innerWidth,
-    })
-
-    if (this.returningUser) {
-      this.authStore.dispatch.isReturningUser()
-    }
+    /*    this.uiStore.dispatch.setWindowSize({
+          innerHeight: window.innerHeight,
+          innerWidth: window.innerWidth,
+        })*/
+    /*    if (this.returningUser) {
+          this.authStore.dispatch.isReturningUser()
+        }*/
   }
 
   openNotificationsDialog() {
@@ -79,7 +96,6 @@ export class AppComponent implements OnInit {
       height: '400px',
       width: '300px',
     } as MatDialogConfig
-
 
     const dialog = this.dialog.open(NotificationsDialog, dialogConfig)
     /*    const result = await firstValueFrom(dialog.afterClosed())

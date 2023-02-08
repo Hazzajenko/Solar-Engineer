@@ -32,6 +32,18 @@ public static class AppUserMapper
         };
     }
 
+    public static AppUser ToAppUser(this AuthRequest request)
+    {
+        return new AppUser
+        {
+            Email = "",
+            UserName = request.UserName,
+            FirstName = "",
+            LastName = "",
+            PhotoUrl = ""
+        };
+    }
+
     public static AppUserProject ToAppUserProject(this CreateProjectRequest request, AppUser user)
     {
         return new AppUserProject

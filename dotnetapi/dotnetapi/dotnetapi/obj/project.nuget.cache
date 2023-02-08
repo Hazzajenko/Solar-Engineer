@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "thw5YXZpjaq/LpyBbsiYTz+FeCHiM8R8DR0BTiCPu2u9Kl788dmuqw5fuurM+T6wgbeRY1D209M2FBKWdWrRgg==",
+  "dgSpecHash": "PO7vHoXAXpKn7DgY2WxxvYAjnCfpLEDPPZsuaqEo84K9L7kfBOTPQdSloIBEbzpWPZ2Zm9ewv5F/qzGxj7vU+w==",
   "success": true,
   "projectFilePath": "C:\\Users\\jenki\\source\\app\\solar-engineer\\dotnetapi\\dotnetapi\\dotnetapi\\dotnetapi.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\jenki\\.nuget\\packages\\auth0.aspnetcore.authentication\\1.1.0\\auth0.aspnetcore.authentication.1.1.0.nupkg.sha512",
     "C:\\Users\\jenki\\.nuget\\packages\\aws.logger.core\\3.1.0\\aws.logger.core.3.1.0.nupkg.sha512",
     "C:\\Users\\jenki\\.nuget\\packages\\aws.logger.serilog\\3.2.0\\aws.logger.serilog.3.2.0.nupkg.sha512",
     "C:\\Users\\jenki\\.nuget\\packages\\awssdk.cloudwatchlogs\\3.7.104\\awssdk.cloudwatchlogs.3.7.104.nupkg.sha512",
@@ -29,6 +30,7 @@
     "C:\\Users\\jenki\\.nuget\\packages\\messagepack.annotations\\2.1.90\\messagepack.annotations.2.1.90.nupkg.sha512",
     "C:\\Users\\jenki\\.nuget\\packages\\methodtimer.fody\\3.2.1\\methodtimer.fody.3.2.1.nupkg.sha512",
     "C:\\Users\\jenki\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\7.0.0\\microsoft.aspnetcore.authentication.jwtbearer.7.0.0.nupkg.sha512",
+    "C:\\Users\\jenki\\.nuget\\packages\\microsoft.aspnetcore.authentication.openidconnect\\7.0.2\\microsoft.aspnetcore.authentication.openidconnect.7.0.2.nupkg.sha512",
     "C:\\Users\\jenki\\.nuget\\packages\\microsoft.aspnetcore.connections.abstractions\\7.0.0\\microsoft.aspnetcore.connections.abstractions.7.0.0.nupkg.sha512",
     "C:\\Users\\jenki\\.nuget\\packages\\microsoft.aspnetcore.cryptography.internal\\7.0.0\\microsoft.aspnetcore.cryptography.internal.7.0.0.nupkg.sha512",
     "C:\\Users\\jenki\\.nuget\\packages\\microsoft.aspnetcore.cryptography.keyderivation\\7.0.0\\microsoft.aspnetcore.cryptography.keyderivation.7.0.0.nupkg.sha512",

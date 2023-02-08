@@ -11,6 +11,11 @@ public class AppUser : IdentityUser<int>
     public string PhotoUrl { get; set; } = default!;
     public DateTime Created { get; set; } = DateTime.Now;
     public DateTime LastActive { get; set; } = DateTime.Now;
+
+    public ICollection<AppUserIdentity> AppUserIdentities { get; set; } = default!;
+
+    // public ICollection<IdentityUserLogin<int>> Identities { get; set; } = default!;
+    public ICollection<Auth0User> Auth0Users { get; set; } = default!;
     public ICollection<AppUserLink> AppUserLinksSent { get; set; } = default!;
     public ICollection<AppUserLink> AppUserLinksReceived { get; set; } = default!;
     public ICollection<AppUserProject> AppUserProjects { get; set; } = default!;

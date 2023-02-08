@@ -13,8 +13,9 @@ namespace dotnetapi.Services.Http;
 public interface IHttpClientFactoryService
 {
     Task<bool> GetAuth0Token();
-    Task<Auth0User?> GetAuthUser(string sub);
+    Task<Auth0UserDto?> GetAuthUser(string sub);
     Task<T?> GetHttpData<T>(string uri, string? args = null);
+    Task<RefreshTokenResponse?> RefreshToken(string refreshToken);
 }
 
 public class HttpClientFactoryFactoryService : IHttpClientFactoryService
@@ -60,7 +61,7 @@ public class HttpClientFactoryFactoryService : IHttpClientFactoryService
         return true;
     }
 
-    public async Task<Auth0User?> GetAuthUser(string sub)
+    public async Task<Auth0UserDto?> GetAuthUser(string sub)
     {
         if (IsTokenValid() is false) await GetAuth0Token();
         var path = $"api/v2/users/{sub}";
@@ -70,7 +71,7 @@ public class HttpClientFactoryFactoryService : IHttpClientFactoryService
         );
         using var response = await _authHttp.GetAsync(path);
         response.EnsureSuccessStatusCode();
-        return await response.Content.ReadFromJsonAsync<Auth0User>(_options);
+        return await response.Content.ReadFromJsonAsync<Auth0UserDto>(_options);
     }
 
     public async Task<T?> GetHttpData<T>(string uri, string? args = null)
@@ -85,6 +86,26 @@ public class HttpClientFactoryFactoryService : IHttpClientFactoryService
         using var response = await _authHttp.GetAsync(path);
         response.EnsureSuccessStatusCode();
         return await response.Content.ReadFromJsonAsync<T>(_options);
+    }
+
+    public async Task<RefreshTokenResponse?> RefreshToken(string refreshToken)
+    {
+        if (IsTokenValid() is false) await GetAuth0Token();
+        var path = "oauth/token";
+
+        var request = new RefreshTokenRequest
+        {
+            GrantType = "refresh_token",
+            ClientId = _credentials.ClientId,
+            ClientSecret = _credentials.ClientSecret,
+            RefreshToken = refreshToken
+        };
+
+        var refreshRequest = JsonSerializer.Serialize(request);
+        var content = new StringContent(refreshRequest, Encoding.UTF8, "application/json");
+        using var response = await _authHttp.PostAsync(path, content);
+        response.EnsureSuccessStatusCode();
+        return await response.Content.ReadFromJsonAsync<RefreshTokenResponse>(_options);
     }
 
     private bool IsTokenValid()

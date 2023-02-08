@@ -12,6 +12,7 @@
           "AWSSDK.CloudWatchLogs": "3.7.104",
           "AWSSDK.Extensions.NETCore.Setup": "3.7.2",
           "AWSSDK.S3": "3.7.101.36",
+          "Auth0.AspNetCore.Authentication": "1.1.0",
           "CloudinaryDotNet": "1.20.0",
           "EntityFramework": "6.4.4",
           "FastEndpoints": "5.6.0",
@@ -48,6 +49,18 @@
         },
         "runtime": {
           "dotnetapi.dll": {}
+        }
+      },
+      "Auth0.AspNetCore.Authentication/1.1.0": {
+        "dependencies": {
+          "Microsoft.AspNetCore.Authentication.OpenIdConnect": "7.0.2",
+          "System.Text.Encodings.Web": "7.0.0"
+        },
+        "runtime": {
+          "lib/net7.0/Auth0.AspNetCore.Authentication.dll": {
+            "assemblyVersion": "1.1.0.0",
+            "fileVersion": "1.1.0.0"
+          }
         }
       },
       "AWS.Logger.Core/3.1.0": {
@@ -320,6 +333,17 @@
           "lib/net7.0/Microsoft.AspNetCore.Authentication.JwtBearer.dll": {
             "assemblyVersion": "7.0.0.0",
             "fileVersion": "7.0.22.51819"
+          }
+        }
+      },
+      "Microsoft.AspNetCore.Authentication.OpenIdConnect/7.0.2": {
+        "dependencies": {
+          "Microsoft.IdentityModel.Protocols.OpenIdConnect": "6.15.1"
+        },
+        "runtime": {
+          "lib/net7.0/Microsoft.AspNetCore.Authentication.OpenIdConnect.dll": {
+            "assemblyVersion": "7.0.2.0",
+            "fileVersion": "7.0.222.60606"
           }
         }
       },
@@ -1307,6 +1331,13 @@
       "serviceable": false,
       "sha512": ""
     },
+    "Auth0.AspNetCore.Authentication/1.1.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-DEMpWFAXxyW2ryBQTtTMHtPO6QnnlIb+tLTV6mDhSoy6I1chCnEeZiqv1q/H4P0Z8e3cvXggX1kSINmPegZlpQ==",
+      "path": "auth0.aspnetcore.authentication/1.1.0",
+      "hashPath": "auth0.aspnetcore.authentication.1.1.0.nupkg.sha512"
+    },
     "AWS.Logger.Core/3.1.0": {
       "type": "package",
       "serviceable": true,
@@ -1481,6 +1512,13 @@
       "sha512": "sha512-q2suMVl1gO6rBJkV7rxm0F2sBufValm2RKxY3zoWN4y6cAufDJYmzpLWPKju3kKFJFKNgivWgoTw0dvf4W5QDQ==",
       "path": "microsoft.aspnetcore.authentication.jwtbearer/7.0.0",
       "hashPath": "microsoft.aspnetcore.authentication.jwtbearer.7.0.0.nupkg.sha512"
+    },
+    "Microsoft.AspNetCore.Authentication.OpenIdConnect/7.0.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-CAaGKlMv2D7xC43Sz+wP7JMymCmkeEk/N/GADWCfDmPDEb+Jme1hYOxG/To5LRYH4WoENnZj2W3vjpEcVxKh5w==",
+      "path": "microsoft.aspnetcore.authentication.openidconnect/7.0.2",
+      "hashPath": "microsoft.aspnetcore.authentication.openidconnect.7.0.2.nupkg.sha512"
     },
     "Microsoft.AspNetCore.Connections.Abstractions/7.0.0": {
       "type": "package",

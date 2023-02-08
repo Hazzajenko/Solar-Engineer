@@ -9,6 +9,8 @@ namespace dotnetapi.Data;
 
 public interface IDataContext
 {
+    DbSet<Auth0User> Auth0Users { get; set; }
+    DbSet<AppUserIdentity> AppUserIdentities { get; set; }
     DbSet<AppUser> Users { get; set; }
     DbSet<AppUserGroupChat> AppUserGroupChats { get; set; }
     DbSet<Project> Projects { get; set; }

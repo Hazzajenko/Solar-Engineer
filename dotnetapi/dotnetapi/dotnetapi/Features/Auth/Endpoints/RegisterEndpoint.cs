@@ -8,7 +8,7 @@ using FastEndpoints;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
-namespace dotnetapi.Features.Auth;
+namespace dotnetapi.Features.Auth.Endpoints;
 
 public class RegisterEndpoint : Endpoint<AuthRequest, LoginResponse>
 {
@@ -47,7 +47,7 @@ public class RegisterEndpoint : Endpoint<AuthRequest, LoginResponse>
             foreach (var error in validResult.Errors)
                 AddError(error.ErrorMessage);
         ThrowIfAnyErrors();
-
+        await _userManager.FindByIdAsync(request.UserName);
         var userExists = await _userManager.FindByNameAsync(request.UserName);
         if (userExists is not null)
         {

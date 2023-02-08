@@ -28,11 +28,15 @@ public static class ApplicationServiceExtensions
         IConfiguration config
     )
     {
+        var domain = $"https://{config["Auth0:Domain"]}/";
+        Console.WriteLine("domain");
+        Console.WriteLine(domain);
+
         services.AddHttpClient(
             "Auth0",
             httpClient =>
             {
-                var domain = config.GetValue<string>("Auth0:Domain");
+                // var domain = config.GetValue<string>("Auth0:Domain");
                 httpClient.BaseAddress = new Uri(
                     domain ?? throw new InvalidOperationException("Please specify Auth0:Domain!")
                 );
@@ -48,6 +52,7 @@ public static class ApplicationServiceExtensions
 
         // services.AddMediator();
         services.Configure<Auth0Settings>(config.GetSection("Auth0Settings"));
+        Console.Write(config.GetSection("Auth0Settings"));
         services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));
         var cloudName = config.GetValue<string>("CloudinarySettings:CloudName");
         var apiKey = config.GetValue<string>("CloudinarySettings:ApiKey");

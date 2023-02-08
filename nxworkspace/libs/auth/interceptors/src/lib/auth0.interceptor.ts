@@ -21,6 +21,8 @@ export class Auth0Interceptor implements HttpInterceptor {
           return next.handle(req)
         }
         // const serializable = JSON.stringify(token)
+        // const bearer = window.localStorage.getItem('access_token')
+        // if (!bearer) return next.handle()
         const headers = req.headers.set('Authorization', `Bearer ${token}`)
         const authReq = req.clone({
           headers,

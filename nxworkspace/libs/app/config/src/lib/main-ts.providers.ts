@@ -33,18 +33,21 @@ export const mainTsProviders = [
       domain: 'dev-t8co2m74.us.auth0.com',
       clientId: 'uE6uqQDFUsznlWaTqa2MNj1ObKuGlmNq',
       /*      authorizationParams: {
-              redirect_uri: window.location.origin,
-            },*/
+                redirect_uri: window.location.origin,
+              },*/
       /*
-            "Domain": "https://dev-t8co2m74.us.auth0.com/",
-            "Audience": "https://solarengineer.dev"
-            */
+              "Domain": "https://dev-t8co2m74.us.auth0.com/",
+              "Audience": "https://solarengineer.dev"
+              */
       authorizationParams: {
         // Request this audience at user authentication time
-        audience: 'https://dev-t8co2m74.us.auth0.com/api/v2/',
+        // audience: 'https://solarengineer.dev',
+        audience: 'https://solarengineer.dev',
 
         // Request this scope at user authentication time
-        scope: 'read:current_user',
+        // scope: 'read:users',
+        scope: 'offline_access',
+        // scope: 'read:current_user',
       },
 
       // Specify configuration for the interceptor
@@ -52,19 +55,23 @@ export const mainTsProviders = [
         allowedList: [
           {
             // Match any request that starts 'https://YOUR_DOMAIN/api/v2/' (note the asterisk)
-            uri: 'https://dev-t8co2m74.us.auth0.com/api/v2/*',
+            uri: 'https://solarengineer.dev*',
             tokenOptions: {
               authorizationParams: {
                 // The attached token should target this audience
-                audience: 'https://dev-t8co2m74.us.auth0.com/api/v2/',
+                // audience: 'https://solarengineer.dev',
+                audience: 'https://solarengineer.dev',
 
                 // The attached token should have these scopes
-                scope: 'read:current_user',
+                // scope: 'read:users',
+                scope: 'read:users offline_access',
+                // scope: 'read:current_user',
               },
             },
           },
         ],
       },
+      // useRefreshTokens: true,
     }),
   ),
   provideStore(reducers, { metaReducers }),
@@ -77,6 +84,6 @@ export const mainTsProviders = [
       provide: HTTP_INTERCEPTORS,
       useClass: JwtInterceptor,
       multi: true,
-    },
-    { provide: HTTP_INTERCEPTORS, useClass: AuthHttpInterceptor, multi: true },*/
+    },*/
+  // { provide: HTTP_INTERCEPTORS, useClass: AuthHttpInterceptor, multi: true },
 ]
