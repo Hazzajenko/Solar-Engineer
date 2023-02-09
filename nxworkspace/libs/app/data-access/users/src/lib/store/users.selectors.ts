@@ -22,6 +22,6 @@ export const selectUserByRouteParams = createSelector(
   selectAllUsers,
   RouterSelectors.selectRouteParams,
   (state, users, { userName }) => {
-    return users.find((user) => user.userName === userName)
+    return users.find((user) => user.displayName === userName)
   },
 )

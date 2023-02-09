@@ -10,13 +10,16 @@
 <!--<div class='absolute left-1 top-1 z-10'>
   SolarEngineer v0.0.1 By Harry Jenkins
 </div>-->
-<mat-sidenav-container [hasBackdrop]='true'>
-  <mat-sidenav #drawer mode='over'>
-    <ng-container *ngIf='navMenu$ | async as navMenu'>
-      {{drawer.toggle()}}
+<ng-container
+  *ngrxLet="{ isAuthenticated: isAuthenticated$ | async, user: user$ | async } | initLogin"
+>
+</ng-container>
+<mat-sidenav-container [hasBackdrop]="true">
+  <mat-sidenav #drawer mode="over">
+    <ng-container *ngIf="navMenu$ | async as navMenu">
+      {{ drawer.toggle() }}
     </ng-container>
-    <app-sidenav-component
-      (toggle)='drawer.toggle()'></app-sidenav-component>
+    <app-sidenav-component (toggle)="drawer.toggle()"></app-sidenav-component>
     <!-- <div class='w-[300px] mx-2'>
        <ng-container *ngrxLet='user$ | async as user'>
          <ng-container *ngIf='user else notLoggedIn'>
@@ -123,7 +126,6 @@
          </ng-template>
        </ng-container>
      </div>-->
-
   </mat-sidenav>
   <mat-sidenav-content>
     <!--    <mat-form-field appearance="fill">
@@ -143,14 +145,11 @@
           </mat-select>
         </mat-form-field>-->
     <!--    <button mat-raised-button (click)="drawer.toggle()">Toggle drawer</button>-->
-    <app-app-bar (toggle)='drawer.toggle()'></app-app-bar>
+    <app-app-bar (toggle)="drawer.toggle()"></app-app-bar>
 
     <router-outlet></router-outlet>
   </mat-sidenav-content>
 </mat-sidenav-container>
 
-
-<div class='absolute left-1 bottom-1 z-10'>
-  SolarEngineer v0.0.1 By Harry Jenkins
-</div>
+<div class="absolute left-1 bottom-1 z-10">SolarEngineer v0.0.1 By Harry Jenkins</div>
 <!--</div>-->

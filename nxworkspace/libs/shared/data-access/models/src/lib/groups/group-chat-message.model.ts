@@ -3,7 +3,7 @@ import { MessageFrom } from './message-from.model'
 export interface GroupChatMessageModel {
   id: number
   groupChatId: number
-  senderUserName: string
+  senderDisplayName: string
   content: string
   messageReadTimes: GroupChatReadTime[]
   messageSentTime: string
@@ -14,7 +14,7 @@ export interface GroupChatMessageModel {
 
 export interface GroupChatReadTime {
   id: number
-  recipientUserName: string
+  recipientDisplayName: string
   messageReadTime: string
 }
 

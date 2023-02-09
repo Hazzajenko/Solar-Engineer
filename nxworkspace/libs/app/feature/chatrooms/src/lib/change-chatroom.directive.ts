@@ -45,8 +45,8 @@ export class ChangeChatRoomDirective implements OnDestroy {
       _viewContainerRef.createComponent<UserConversationComponent>(UserConversationComponent)
 
     const recipient = chatRoom.message?.isUserSender
-      ? chatRoom.message.recipientUserName
-      : chatRoom.message?.senderUserName
+      ? chatRoom.message.recipientDisplayName
+      : chatRoom.message?.senderDisplayName
     // e === user.userName ? chatRoomSelect.message.recipientUsername : chatRoomSelect.message.senderUsername
 
     // panelComponentRef.instance.id = block.id

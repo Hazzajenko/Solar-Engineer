@@ -6,10 +6,10 @@ public class AppUserLinkDto
 {
     public int Id { get; set; }
     public int AppUserRequestedId { get; set; } = default!;
-    public string AppUserRequestedUserName { get; set; } = default!;
+    public string AppUserRequestedDisplayName { get; set; } = default!;
     public string AppUserRequestedNickName { get; set; } = default!;
     public int AppUserReceivedId { get; set; } = default!;
-    public string AppUserReceivedUserName { get; set; } = default!;
+    public string AppUserReceivedDisplayName { get; set; } = default!;
     public string AppUserReceivedNickName { get; set; } = default!;
     public DateTime Created { get; set; } = DateTime.Now;
     public DateTime? BecameFriendsTime { get; set; }

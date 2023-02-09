@@ -53,8 +53,8 @@ public class AuthCurrentUserEndpoint : EndpointWithoutRequest<Auth0UserDto>
         // Logger.LogInformation("accessToken {AccessToken}", accessToken);
         // var userName = User.Identity?.Name;
         // Logger.LogInformation("UserName {UserName}", userName);
-        var user = HttpContext.User;
-        Logger.LogInformation("USER {@User}", user);
+        // var user = HttpContext.User;
+        // Logger.LogInformation("USER {@User}", user);
         string authHeader = HttpContext.Request.Headers.Authorization!;
         // Logger.LogInformation("AuthHeader {@AuthHeader}", authHeader);
         authHeader = authHeader.Replace("Bearer ", "");

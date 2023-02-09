@@ -3,7 +3,7 @@
 public class GetUserDto
 {
     public int Id { get; set; }
-    public string UserName { get; init; } = default!;
+    public string DisplayName { get; init; } = default!;
     public string FirstName { get; init; } = default!;
     public string LastName { get; init; } = default!;
     public string PhotoUrl { get; set; } = default!;

@@ -46,7 +46,7 @@ public class GetGroupChatMembersEndpoint : EndpointWithoutRequest<GroupChatMembe
         var result = await _groupChatsRepository.GetGroupChatMembersAsync(groupChatId);
 
         var groupChatMemberDtos = result.ToList();
-        var isUserInGroupChat = groupChatMemberDtos.SingleOrDefault(x => x.UserName == user.UserName!);
+        var isUserInGroupChat = groupChatMemberDtos.SingleOrDefault(x => x.DisplayName == user.UserName!);
 
         if (isUserInGroupChat is null)
         {

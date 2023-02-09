@@ -60,7 +60,7 @@ export class UsersFacade {
       combineLatestWith(this.users$.pipe(map((users) => users.filter((user) => user.isFriend)))),
       map(([connections, friends]) => {
         const connectionUsernames = connections.map((connection) => connection.userName)
-        return friends.filter((friend) => connectionUsernames.includes(friend.userName))
+        return friends.filter((friend) => connectionUsernames.includes(friend.displayName))
       }),
     )
   }
@@ -69,7 +69,9 @@ export class UsersFacade {
     combineLatestWith(this.users$.pipe(map((users) => users.filter((user) => user.isFriend)))),
     map(([connections, friends]) =>
       friends.map((friend) => {
-        const isOnline = !!connections.find((connection) => connection.userName === friend.userName)
+        const isOnline = !!connections.find(
+          (connection) => connection.userName === friend.displayName,
+        )
         return {
           ...friend,
           isOnline,
@@ -82,18 +84,18 @@ export class UsersFacade {
     combineLatestWith(this.users$),
     map(([connections, users]) => {
       const connectionUsernames = connections.map((connection) => connection.userName)
-      return users.filter((user) => connectionUsernames.includes(user.userName))
+      return users.filter((user) => connectionUsernames.includes(user.displayName))
     }),
   )
   users = firstValueFrom(this.users$)
 
   userByUserName$(userName: string) {
-    return this.users$.pipe(map((users) => users.find((user) => user.userName === userName)))
+    return this.users$.pipe(map((users) => users.find((user) => user.displayName === userName)))
   }
 
   userByUserNameWithOnline$(userName: string) {
     return combineLatest([
-      this.users$.pipe(map((users) => users.find((user) => user.userName === userName))),
+      this.users$.pipe(map((users) => users.find((user) => user.displayName === userName))),
       this.connectionsStore.select.isUserOnline$(userName),
     ]).pipe(map(([user, isOnline]) => ({ ...user, isOnline } as WebUserModel)))
   }
@@ -112,8 +114,8 @@ export class UsersFacade {
       switchMap((user) =>
         combineLatest([
           of(user),
-          this.connectionsStore.select.isUserOnline$(user.userName),
-          this.friendsStore.select.getUserFriendStatus$(user.userName),
+          this.connectionsStore.select.isUserOnline$(user.displayName),
+          this.friendsStore.select.getUserFriendStatus$(user.displayName),
         ]),
       ),
       map(
@@ -132,7 +134,7 @@ export class UsersFacade {
             // combineLatestWith(this.connectionsStore.select.isUserOnline$(user.userName)),
             switchMap((user) =>
               of(user).pipe(
-                combineLatestWith(this.connectionsStore.select.isUserOnline$(user.userName)),
+                combineLatestWith(this.connectionsStore.select.isUserOnline$(user.displayName)),
                 map(([user, isOnline]) => ({ ...user, isOnline } as AppUserLinkModel)),
               ),
             ),
@@ -166,7 +168,7 @@ export class UsersFacade {
       switchMap((user) =>
         combineLatest([
           of(user),
-          this.connectionsStore.select.isUserOnline$(user.userName),
+          this.connectionsStore.select.isUserOnline$(user.displayName),
           // this.friendsStore.select.getUserFriendStatus$(user.userName),
         ]),
       ),

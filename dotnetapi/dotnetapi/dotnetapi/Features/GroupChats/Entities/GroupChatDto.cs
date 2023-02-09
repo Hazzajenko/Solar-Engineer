@@ -46,7 +46,7 @@ public class GroupChatCombinedDto
     public string Name { get; set; } = default!;
     public string PhotoUrl { get; set; } = default!;
     public int CreatedById { get; set; } = default!;
-    public string CreatedByUserName { get; set; } = default!;
+    public string CreatedByDisplayName { get; set; } = default!;
     public DateTime Created { get; set; }
     public IEnumerable<GroupChatMessageDto> Messages { get; set; } = default!;
     public IEnumerable<GroupChatMemberDto> Members { get; set; } = default!;

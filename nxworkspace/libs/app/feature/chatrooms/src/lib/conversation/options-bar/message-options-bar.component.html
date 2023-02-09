@@ -11,7 +11,7 @@
             imgTemplate;
             context: {
               imgSrc: isGroup ? groupChat.photoUrl : webUser.photoUrl,
-              name: isGroup ? groupChat.name : webUser.userName
+              name: isGroup ? groupChat.name : webUser.displayName
             }
           "
         >
@@ -33,12 +33,13 @@
                   />
                 </ng-template>-->
         <ng-template #imgTemplate let-imgSrc="imgSrc" let-name="name">
-          <img
-            *ngIf="imgSrc"
-            [src]="imgSrc | getCdnUrlString"
-            class="h-6 mr-3 sm:h-10"
-            alt="GroupChat Logo"
-          />
+          <!--          <img
+                      *ngIf="imgSrc"
+                      [src]="imgSrc | getCdnUrlString"
+                      class="h-6 mr-3 sm:h-10"
+                      alt="GroupChat Logo"
+                    />-->
+          <img *ngIf="imgSrc" [src]="imgSrc" class="h-6 mr-3 sm:h-10" alt="GroupChat Logo" />
           <span *ngIf="name" class="self-center text-xl font-semibold whitespace-nowrap">{{
             name
           }}</span>
@@ -151,7 +152,7 @@
           *ngTemplateOutlet="
             nameTemplate;
             context: {
-              name: isGroup ? groupChat.name : webUser.userName
+              name: isGroup ? groupChat.name : webUser.displayName
             }
           "
         >

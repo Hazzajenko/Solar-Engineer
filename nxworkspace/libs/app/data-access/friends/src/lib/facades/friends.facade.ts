@@ -25,20 +25,20 @@ export class FriendsFacade {
       combineLatestWith(this.friends$),
       map(([connections, friends]) => {
         const connectionUsernames = connections.map((connection) => connection.userName)
-        return friends.filter((friend) => connectionUsernames.includes(friend.userName))
+        return friends.filter((friend) => connectionUsernames.includes(friend.displayName))
       }),
     )
   }
 
   isUserFriend$(userName: string) {
     return this.friends$.pipe(
-      map((friends) => !!friends.find((friend) => friend.userName === userName)),
+      map((friends) => !!friends.find((friend) => friend.displayName === userName)),
     )
   }
 
   getUserFriendStatus$(userName: string) {
     return this.friends$.pipe(
-      map((friends) => friends.find((friend) => friend.userName === userName)),
+      map((friends) => friends.find((friend) => friend.displayName === userName)),
       map((friend) => ({ isFriend: !!friend, becameFriendsTime: friend?.becameFriendsTime })),
     )
   }

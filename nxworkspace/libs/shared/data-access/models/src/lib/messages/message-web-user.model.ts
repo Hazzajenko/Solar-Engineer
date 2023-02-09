@@ -9,8 +9,8 @@ import {
 
 export interface MessageWebUserModel {
   id: number
-  senderUserName: string
-  recipientUserName: string
+  senderDisplayName: string
+  recipientDisplayName: string
   sender: WebUserModel
   content: string
   messageReadTime: string | null
@@ -25,9 +25,9 @@ export interface CombinedMessageUserModel {
   id: number
   isGroup: boolean
   groupChatId: 0
-  senderUserName: string
+  senderDisplayName: string
   senderInGroup: boolean
-  recipientUserName: string
+  recipientDisplayName: string
   sender: WebUserModel | GroupChatMemberModel
   content: string
   messageReadTime: string | null

@@ -32,14 +32,15 @@
           <!--            [message]='message'-->
           <mat-list-option *cdkVirtualFor="let member of membersToInvite$ | async" [value]="member">
             <mat-icon *ngIf="member.isOnline" matListItemIcon>wifi</mat-icon>
-            <img
-              matListItemIcon
-              width="25px"
-              height="25px"
-              [src]="member.photoUrl | getCdnUrlString"
-              alt=""
-            />
-            <span matListItemTitle>{{ member.userName }} </span>
+            <!--            <img
+                          matListItemIcon
+                          width="25px"
+                          height="25px"
+                          [src]="member.photoUrl | getCdnUrlString"
+                          alt=""
+                        />-->
+            <img matListItemIcon width="25px" height="25px" [src]="member.photoUrl" alt="" />
+            <span matListItemTitle>{{ member.displayName }} </span>
             <!--            <span matListItemLine>{{ member..messageSentTime | date: "short" }}</span>-->
             <!--            <p matListItemLine>
                           {{
@@ -54,7 +55,7 @@
       </mat-selection-list>
 
       <div *ngFor="let item of selectedMembersToInvite">
-        {{ item.userName }}
+        {{ item.displayName }}
       </div>
 
       <div class="flex items-center content-center justify-center">

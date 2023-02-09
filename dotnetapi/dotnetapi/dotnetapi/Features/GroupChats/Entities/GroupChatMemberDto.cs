@@ -4,7 +4,8 @@ public class GroupChatMemberDto
 {
     public int Id { get; set; }
     public int GroupChatId { get; set; }
-    public string UserName { get; set; } = default!;
+    public int UserId { get; set; }
+    public string DisplayName { get; set; } = default!;
     public string FirstName { get; init; } = default!;
     public string LastName { get; init; } = default!;
     public string PhotoUrl { get; init; } = default!;

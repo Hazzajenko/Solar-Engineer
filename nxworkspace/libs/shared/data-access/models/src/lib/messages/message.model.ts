@@ -3,8 +3,8 @@ import { NotificationStatus } from '../signalr'
 
 export interface MessageModel {
   id: number
-  senderUserName: string
-  recipientUserName: string
+  senderDisplayName: string
+  recipientDisplayName: string
   content: string
   messageReadTime: string | null
   messageReadTimes: GroupChatReadTime[]

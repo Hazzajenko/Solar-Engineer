@@ -34,7 +34,9 @@ export class ChatRoomsService {
       const latestUserMessages = [...messages].map((message) => {
         return {
           isGroup: false,
-          chatRoomName: message.isUserSender ? message.recipientUserName : message.senderUserName,
+          chatRoomName: message.isUserSender
+            ? message.recipientDisplayName
+            : message.senderDisplayName,
           latestSentMessageTime: message.messageSentTime,
           message,
         } as MessageTimeSortModel

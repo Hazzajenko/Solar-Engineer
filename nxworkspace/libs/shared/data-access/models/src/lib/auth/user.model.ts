@@ -1,8 +1,8 @@
 export interface UserModel {
-  email: string
+  id: number
   firstName: string
   lastName: string
-  userName: string
+  displayName: string
   photoUrl: string
   created: string
   lastActive: string

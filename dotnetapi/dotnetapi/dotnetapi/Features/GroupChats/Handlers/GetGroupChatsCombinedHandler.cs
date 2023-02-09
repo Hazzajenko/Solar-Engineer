@@ -47,7 +47,7 @@ public class
                 Name = x.GroupChat.Name,
                 PhotoUrl = x.GroupChat.PhotoUrl,
                 CreatedById = x.GroupChat.CreatedBy.Id,
-                CreatedByUserName = x.GroupChat.CreatedBy.UserName!,
+                CreatedByDisplayName = x.GroupChat.CreatedBy.UserName!,
                 Created = x.GroupChat.Created,
                 Messages = x.GroupChat.GroupChatMessages
                     .OrderBy(o => o.MessageSentTime)

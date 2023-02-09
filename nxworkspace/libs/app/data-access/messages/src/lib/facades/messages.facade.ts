@@ -36,9 +36,9 @@ export class MessagesFacade {
               new Date(b.messageSentTime).getTime() - new Date(a.messageSentTime).getTime(),
           )
           const groupedArr = this.groupItemByVal<MessageModel>(orderedMessages, (message) =>
-            message.senderUserName !== user?.userName
-              ? message.senderUserName
-              : message.recipientUserName,
+            message.senderDisplayName !== user?.userName
+              ? message.senderDisplayName
+              : message.recipientDisplayName,
           )
           const map = new Map<string, MessageModel>()
           for (const key in groupedArr) {
@@ -61,8 +61,10 @@ export class MessagesFacade {
       map(([messages, user]) =>
         messages.filter(
           (message) =>
-            (message.senderUserName === userName && message.recipientUserName === user?.userName) ||
-            (message.recipientUserName === userName && message.senderUserName === user?.userName),
+            (message.senderDisplayName === userName &&
+              message.recipientDisplayName === user?.userName) ||
+            (message.recipientDisplayName === userName &&
+              message.senderDisplayName === user?.userName),
         ),
       ),
       switchMap((messages) =>
@@ -70,7 +72,7 @@ export class MessagesFacade {
           messages.map((message) =>
             combineLatest([
               of(message),
-              this.usersStore.select.webUserCombinedByUserName$(message.senderUserName),
+              this.usersStore.select.webUserCombinedByUserName$(message.senderDisplayName),
             ]).pipe(map(([message, sender]) => ({ ...message, sender } as MessageWebUserModel))),
           ),
         ),
@@ -85,8 +87,10 @@ export class MessagesFacade {
       map(([messages, user]) =>
         messages.filter(
           (message) =>
-            (message.senderUserName === userName && message.recipientUserName === user?.userName) ||
-            (message.recipientUserName === userName && message.senderUserName === user?.userName),
+            (message.senderDisplayName === userName &&
+              message.recipientDisplayName === user?.userName) ||
+            (message.recipientDisplayName === userName &&
+              message.senderDisplayName === user?.userName),
         ),
       ),
       switchMap((messages) =>
@@ -94,7 +98,7 @@ export class MessagesFacade {
           messages.map((message) =>
             combineLatest([
               of(message),
-              this.usersStore.select.webUserCombinedByUserName$(message.senderUserName),
+              this.usersStore.select.webUserCombinedByUserName$(message.senderDisplayName),
             ]).pipe(
               map(
                 ([message, sender]) =>

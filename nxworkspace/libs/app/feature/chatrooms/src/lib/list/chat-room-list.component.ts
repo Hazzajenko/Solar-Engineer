@@ -24,10 +24,10 @@ import { MatInputModule } from '@angular/material/input'
 import { MatListModule, MatSelectionListChange } from '@angular/material/list'
 import { ActivatedRoute } from '@angular/router'
 import { MessagesComponent } from '@app/messages'
-import { AuthStoreService } from '@auth/data-access/facades'
+import { AuthStoreService } from '@auth/data-access'
 import { LetModule } from '@ngrx/component'
 
-import { MessageTimeSortModel, UserModel } from '@shared/data-access/models'
+import { AuthUserModel, MessageTimeSortModel, UserModel } from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
 import { map, Observable, startWith, switchMap } from 'rxjs'
@@ -93,7 +93,7 @@ export class ChatRoomListComponent implements OnInit {
   filteredChatRooms$?: Observable<MessageTimeSortModel[] | undefined>
   autoCompleteControl = new FormControl('')
   unreadFilter = false
-  user$: Observable<UserModel | undefined> = this.authStore.select.user$
+  user$ = this.authStore.select.user$
 
   chatrooms$: Observable<MessageTimeSortModel[]> =
     this.chatRoomsService.combinedUserMessagesAndGroupChats$

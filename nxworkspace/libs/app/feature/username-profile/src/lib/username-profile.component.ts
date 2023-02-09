@@ -99,7 +99,7 @@ export class UsernameProfileComponent {
     private dialogRef: MatDialogRef<UsernameProfileComponent>,
     @Inject(MAT_DIALOG_DATA) data: { user: UserModel },
   ) {
-    this.userProfile$ = this.usersStore.select.webUserCombinedByUserName$(data.user.userName)
+    this.userProfile$ = this.usersStore.select.webUserCombinedByUserName$(data.user.displayName)
     /*    this.userProfile$ = this.usersStore.select.userByRouteParams$.pipe(
           switchMap((user) => {
             if (!user) {

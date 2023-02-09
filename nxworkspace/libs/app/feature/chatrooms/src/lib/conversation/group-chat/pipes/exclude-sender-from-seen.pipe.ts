@@ -10,7 +10,7 @@ export class ExcludeSenderFromSeenPipe implements PipeTransform {
     if (!readTimes) return
 
     const array = [...readTimes]
-    const senderIndex = array.map((time) => time.recipientUserName).indexOf(senderUserName)
+    const senderIndex = array.map((time) => time.recipientDisplayName).indexOf(senderUserName)
     if (senderIndex > -1) {
       array.splice(senderIndex, 1)
     }

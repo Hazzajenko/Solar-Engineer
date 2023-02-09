@@ -23,7 +23,7 @@
         >
           <div
             appConversationMessageDirective
-            [userName]="user.userName"
+            [userName]="user.displayName"
             [groupChatMessage]="message"
             class="flex grow"
             *cdkVirtualFor="let message of groupChat.messages"
@@ -64,7 +64,7 @@
                     <app-message-item-component
                       [message]="message"
                       [state]="state"
-                      [appUserName]="user.userName"
+                      [appUserName]="user.displayName"
                     ></app-message-item-component>
                   </div>
                 </ng-container>

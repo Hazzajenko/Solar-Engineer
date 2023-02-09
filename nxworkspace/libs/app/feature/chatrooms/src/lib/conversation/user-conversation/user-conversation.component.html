@@ -75,7 +75,7 @@
         >
           <div
             appConversationMessageDirective
-            [userName]="user.userName"
+            [userName]="user.displayName"
             [message]="message"
             class="flex grow"
             *cdkVirtualFor="let message of messages"
@@ -99,7 +99,7 @@
               >
                 <app-message-item-component
                   [message]="message"
-                  [appUserName]="user.userName"
+                  [appUserName]="user.displayName"
                   [state]="state"
                 ></app-message-item-component>
               </div>

@@ -129,7 +129,7 @@ export class GroupChatsEffects {
                 ({
                   id: member.id,
                   groupChatId: groupChat.id,
-                  userName: member.userName,
+                  displayName: member.displayName,
                   role: member.role,
                   joinedAt: member.joinedAt,
                 } as InitialGroupChatMemberModel),
@@ -229,7 +229,7 @@ export class GroupChatsEffects {
       this.actions$.pipe(
         ofType(GroupChatMessagesActions.addGroupChatMessage),
         map(({ groupChatMessage }) => {
-          const messageFrom = groupChatMessage.senderUserName
+          const messageFrom = groupChatMessage.senderDisplayName
           this.snackBar.open(`New message from ${messageFrom}!`, 'OK', {
             duration: 5000,
           })

@@ -76,7 +76,7 @@ public class SendMessageToGroupChatEndpoint : Endpoint<SendGroupChatMessageReque
         var addMessage = await _messagesRepository.SendMessageToGroupChatAsync(groupChatMessage, appUser);
 
         var groupChatMemberDtos = await _mediator.Send(new GetGroupChatMembersByIdQuery(request.GroupChatId), ct);
-        var groupChatUsers = groupChatMemberDtos.Select(x => x.UserName).ToArray();
+        var groupChatUsers = groupChatMemberDtos.Select(x => x.DisplayName).ToArray();
         // var groupChatMemberDtos = await _groupChatsRepository.GetGroupChatMembersAsync(request.GroupChatId);
         var res = await _mediator.Send(
             new SendMessageToGroupChatSignalRQuery(groupChatMessage.ToDto(appUser), groupChatUsers),

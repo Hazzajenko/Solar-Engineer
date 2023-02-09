@@ -8,8 +8,9 @@
         <div mat-card-avatar class="example-header-image">
           <mat-icon color="primary" *ngIf="userProfile.isOnline">wifi</mat-icon>
         </div>
-        <img mat-card-avatar [src]="userProfile.photoUrl | getCdnUrlString" alt="" />
-        <mat-card-title>{{ userProfile.userName }}</mat-card-title>
+        <img mat-card-avatar [src]="userProfile.photoUrl" alt="" />
+        <!--        <img mat-card-avatar [src]="userProfile.photoUrl | getCdnUrlString" alt="" />-->
+        <mat-card-title>{{ userProfile.displayName }}</mat-card-title>
         <mat-card-subtitle *ngIf="userProfile.isOnline; else offline"> Online</mat-card-subtitle>
         <mat-card-subtitle *ngIf="userProfile.isFriend">
           Friends {{ userProfile.becameFriendsTime ? "since" : "" }}
@@ -26,7 +27,7 @@
                     color='primary'
                     style='transform: scale(0.75);'
                     *ngIf='userProfile.isOnline'>wifi
-                  </mat-icon> 
+                  </mat-icon>
                   &lt;!&ndash;        <mat-card-subtitle>{{userProfile.firstName}} {{userProfile.lastName}}</mat-card-subtitle>&ndash;&gt;
 
                 </span>-->
@@ -58,13 +59,13 @@
       </mat-card-content>
       <mat-card-actions>
         <button
-          (click)="sendFriendRequest(userProfile.userName)"
+          (click)="sendFriendRequest(userProfile.displayName)"
           *ngIf="!userProfile.isFriend"
           mat-button
         >
           Send Friend Request
         </button>
-        <button (click)="sendMessage(userProfile.userName)" mat-button>Message</button>
+        <button (click)="sendMessage(userProfile.displayName)" mat-button>Message</button>
         <button *ngIf="userProfile.isFriend" mat-button>Remove Friend</button>
       </mat-card-actions>
     </mat-card>

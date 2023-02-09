@@ -1,7 +1,7 @@
 <div class="w-[300px] mx-2">
   <ng-container *ngrxLet="user$ | async as user">
     <ng-container *ngIf="user; else notLoggedIn">
-      <p>{{ user.userName }}</p>
+      <p>{{ user.displayName }}</p>
       <!--          <p>{{user.firstName}}</p>-->
 
       <div *ngIf="projects$ | async as projects" class="min-w-max">
@@ -17,7 +17,7 @@
               *ngFor="let project of projects"
               mat-list-item
               (click)="closeDrawer()"
-              [routerLink]="user.userName + '/' + project.name"
+              [routerLink]="user.displayName + '/' + project.name"
               >{{ project.name }}</a
             >
             <!--                <a mat-list-item routerLink='.'>Projects</a>-->
@@ -35,7 +35,7 @@
           <span>Friends Online: {{ friends | onlineFriends }}</span>
           <mat-nav-list>
             <a *ngFor="let friend of friends" mat-list-item (click)="closeDrawer()" routerLink=""
-              >{{ friend.userName }} {{ friend.online ? "ONLINE" : "" }}</a
+              >{{ friend.displayName }} {{ friend.online ? "ONLINE" : "" }}</a
             >
           </mat-nav-list>
         </ng-container>
@@ -101,6 +101,6 @@
 
   <button (click)='closeDrawer()' mat-raised-button color='primary'>Close</button>-->
     </ng-container>
-    <ng-template #notLoggedIn> </ng-template>
+    <ng-template #notLoggedIn></ng-template>
   </ng-container>
 </div>

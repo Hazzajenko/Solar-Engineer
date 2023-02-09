@@ -24,7 +24,8 @@ public static class GroupChatsMapping
         {
             Id = request.Id,
             GroupChatId = request.GroupChatId,
-            UserName = request.AppUser.UserName!,
+            UserId = request.AppUser.Id,
+            DisplayName = request.AppUser.DisplayName,
             JoinedAt = request.JoinedAt,
             Role = request.Role
         };
@@ -36,7 +37,8 @@ public static class GroupChatsMapping
         {
             Id = request.Id,
             GroupChatId = request.GroupChatId,
-            UserName = request.AppUser.UserName!,
+            UserId = request.AppUser.Id,
+            DisplayName = request.AppUser.DisplayName,
             FirstName = request.AppUser.FirstName,
             LastName = request.AppUser.LastName,
             PhotoUrl = request.AppUser.PhotoUrl,

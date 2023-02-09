@@ -38,7 +38,7 @@ public static class MessageMapper
                     new()
                     {
                         Id = 0,
-                        RecipientUserName = request.RecipientUserName,
+                        RecipientDisplayName = request.RecipientUserName,
                         MessageReadTime = request.MessageReadTime.Value!
                     }
                 }
@@ -58,7 +58,7 @@ public static class MessageMapper
             Id = request.Id,
             GroupChatId = request.GroupChatId,
             Content = request.Content,
-            SenderUserName = request.Sender.UserName!,
+            SenderDisplayName = request.Sender.UserName!,
             MessageSentTime = request.MessageSentTime,
             MessageReadTimes = request.MessageReadTimes.Any()
                 ? request.MessageReadTimes.Select(x => x.ToDto())
@@ -79,7 +79,7 @@ public static class MessageMapper
             Id = request.Id,
             GroupChatId = request.GroupChatId,
             Content = request.Content,
-            SenderUserName = request.Sender.UserName!,
+            SenderDisplayName = request.Sender.UserName!,
             MessageSentTime = request.MessageSentTime,
             MessageReadTimes = request.MessageReadTimes.Any()
                 ? request.MessageReadTimes.Select(x => x.ToDto())
@@ -95,7 +95,7 @@ public static class MessageMapper
         return new GroupChatReadTimeDto
         {
             Id = request.Id,
-            RecipientUserName = request.AppUser.UserName!,
+            RecipientDisplayName = request.AppUser.UserName!,
             MessageReadTime = request.MessageReadTime
         };
     }

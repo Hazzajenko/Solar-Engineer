@@ -8,7 +8,7 @@ import {
   groupChatsReducer,
 } from '@app/data-access/group-chats'
 import { MESSAGES_FEATURE_KEY, messagesReducer } from '@app/data-access/messages'
-import { AUTH_FEATURE_KEY, authReducer } from '@auth/data-access/store'
+import { AUTH_FEATURE_KEY, authReducer } from '@auth/data-access'
 import { provideState } from '@ngrx/store'
 import { UI_FEATURE_KEY, uiReducer } from '@project-id/data-access/store'
 import { PROJECTS_FEATURE_KEY, projectsReducer } from '@projects/data-access/store'

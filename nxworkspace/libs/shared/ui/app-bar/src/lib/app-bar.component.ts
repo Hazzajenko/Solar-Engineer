@@ -6,20 +6,30 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatToolbarModule } from '@angular/material/toolbar'
 import { Router } from '@angular/router'
 import { ChatroomsComponent } from '@app/feature/chatrooms'
-import { ProfileDialog } from '@app/feature/profile'
-import { AuthStoreService } from '@auth/data-access/facades'
+import { AuthStoreService } from '@auth/data-access'
 import { LetModule } from '@ngrx/component'
 import { AppUserProfileComponent } from '@app/feature/app-user-profile'
 import {
   DialogRouteType,
   MainDialogComponent,
 } from '../../../../../app/feature/main-dialog/src/lib'
+import { MatCardModule } from '@angular/material/card'
+import { MatListModule } from '@angular/material/list'
 
 @Component({
   selector: 'app-app-bar',
   templateUrl: 'app-bar.component.html',
   standalone: true,
-  imports: [MatToolbarModule, MatButtonModule, MatIconModule, AsyncPipe, LetModule, NgIf],
+  imports: [
+    MatToolbarModule,
+    MatButtonModule,
+    MatIconModule,
+    AsyncPipe,
+    LetModule,
+    NgIf,
+    MatCardModule,
+    MatListModule,
+  ],
   styles: [],
 })
 export class AppBarComponent {

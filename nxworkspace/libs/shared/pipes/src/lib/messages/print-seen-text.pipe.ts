@@ -23,8 +23,8 @@ export class PrintSeenTextPipe implements PipeTransform {
     const readTimes = request.messageReadTimes
 
     const senderIndex = readTimes
-      .map((time) => time.recipientUserName)
-      .indexOf(request.senderUserName)
+      .map((time) => time.recipientDisplayName)
+      .indexOf(request.senderDisplayName)
     if (senderIndex > -1) {
       readTimes.splice(senderIndex, 1)
     }
@@ -32,8 +32,8 @@ export class PrintSeenTextPipe implements PipeTransform {
     const result = readTimes.map((time) => {
       // const isUserReader = time.recipientUserName === appUserName
 
-      const isUserReader = time.recipientUserName === appUserName
-      const user = isUserReader ? 'you' : time.recipientUserName
+      const isUserReader = time.recipientDisplayName === appUserName
+      const user = isUserReader ? 'you' : time.recipientDisplayName
       const isLast = time.id === readTimes[readTimes.length - 1].id
       const comma = isLast ? '' : ', '
       return `${user}${comma}`

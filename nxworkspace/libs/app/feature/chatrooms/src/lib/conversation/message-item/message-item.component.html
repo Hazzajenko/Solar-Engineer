@@ -4,14 +4,20 @@
       <mat-icon color="primary" style="transform: scale(0.75)" *ngIf="message.sender.isOnline"
         >wifi</mat-icon
       >
+      <!--      <img
+              mat-card-avatar
+              style="width: 25px; height: 25px"
+              [src]="message.sender.photoUrl | getCdnUrlString"
+              alt=""
+            />-->
       <img
         mat-card-avatar
         style="width: 25px; height: 25px"
-        [src]="message.sender.photoUrl | getCdnUrlString"
+        [src]="message.sender.photoUrl"
         alt=""
       />
       <span class="mx-1">
-        {{ message.senderUserName | youOrUserName: appUserName }}
+        {{ message.senderDisplayName | youOrUserName: appUserName }}
       </span>
     </span>
 

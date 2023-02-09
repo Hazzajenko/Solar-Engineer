@@ -1,6 +1,6 @@
 export interface RecipientFriendModel {
   id: number
-  userName: string
+  displayName: string
   photoUrl: string
   lastActive: string
   isOnline: boolean

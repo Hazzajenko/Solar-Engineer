@@ -18,15 +18,24 @@
       </div>
       <ng-container *ngIf="userResult; else userUndefined">
         <div class="flex items-center space-x-3">
+          <!--          <img
+                      class="w-8 h-8 rounded-full"
+                      matListItemIcon
+                      *ngIf="userResult.photoUrl"
+                      [src]="userResult.photoUrl | getCdnUrlString"
+                      alt=""
+                    />-->
           <img
             class="w-8 h-8 rounded-full"
             matListItemIcon
             *ngIf="userResult.photoUrl"
-            [src]="userResult.photoUrl | getCdnUrlString"
+            [src]="userResult.photoUrl"
             alt=""
           />
           <div class="flex flex-col">
-            <span *ngIf="userResult.userName" matListItemTitle>{{ userResult.userName }} </span>
+            <span *ngIf="userResult.displayName" matListItemTitle
+              >{{ userResult.displayName }}
+            </span>
             <ng-container *ngIf="userResult.isOnline; then online; else offline"></ng-container>
             <ng-template #online>
               <span

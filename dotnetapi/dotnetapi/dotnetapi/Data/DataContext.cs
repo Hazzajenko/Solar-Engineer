@@ -40,7 +40,7 @@ public class DataContext
     public DbSet<AppUserProject> AppUserProjects { get; set; } = default!;
     public DbSet<Auth0User> Auth0Users { get; set; } = default!;
 
-    public DbSet<AppUserIdentity> AppUserIdentities { get; set; }
+    public DbSet<AppUserIdentity> AppUserIdentities { get; set; } = default!;
     // public DbSet<AppUserFriend> AppUserFriends { get; set; } = default!;
 
     public DbSet<Group> Groups { get; set; } = default!;

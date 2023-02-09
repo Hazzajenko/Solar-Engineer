@@ -12,7 +12,7 @@ export interface FriendsState extends EntityState<FriendModel> {
 }
 
 export function selectUsername(a: FriendModel): string {
-  return a.userName
+  return a.displayName
 }
 
 export const friendsAdapter: EntityAdapter<FriendModel> = createEntityAdapter<FriendModel>({

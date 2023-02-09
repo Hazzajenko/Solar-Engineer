@@ -20,7 +20,7 @@ export class ConversationMessageDirective {
     if (!message) return
     this._groupChatMessage = message
 
-    if (this._userName === message.senderUserName) {
+    if (this._userName === message.senderDisplayName) {
       // this.elRef.nativeElement.style.backgroundColor = '#60a1fa'
       this.elRef.nativeElement.style.flexDirection = 'row-reverse'
       this.elRef.nativeElement.style.boxRadius = '15px 15px 0px 15px'
@@ -40,7 +40,7 @@ export class ConversationMessageDirective {
     if (!message) return
     this._message = message
 
-    if (this._userName === message.senderUserName) {
+    if (this._userName === message.senderDisplayName) {
       // this.elRef.nativeElement.style.backgroundColor = '#60a1fa'
       this.elRef.nativeElement.style.flexDirection = 'row-reverse'
       this.elRef.nativeElement.style.boxRadius = '15px 15px 0px 15px'

@@ -1,7 +1,7 @@
 export interface InitialGroupChatMemberModel {
   id: number
   groupChatId: number
-  userName: string
+  displayName: string
   role: string
   joinedAt: string
 }

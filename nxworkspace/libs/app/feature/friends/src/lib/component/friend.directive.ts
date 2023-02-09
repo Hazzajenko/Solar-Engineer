@@ -21,7 +21,7 @@ export class FriendDirective {
   @Input() set selectedFriend(friend: FriendModel | undefined) {
     if (!friend) return
 
-    if (friend.userName === this._friend.userName) {
+    if (friend.displayName === this._friend.displayName) {
       // this.elRef.nativeElement.style.backgroundColor = '#253fff'
       this.elRef.nativeElement.style.backgroundColor = '#18FFFF'
       // this.elRef.nativeElement.style.backgroundColor = 'rgb(194, 222, 209)'

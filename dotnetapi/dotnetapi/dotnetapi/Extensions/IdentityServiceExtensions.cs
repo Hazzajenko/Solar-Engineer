@@ -56,8 +56,21 @@ public static class IdentityServiceExtensions
                 {
                     NameClaimType = ClaimTypes.NameIdentifier
                 };
-            });
 
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+
+                        var path = context.HttpContext.Request.Path;
+                        if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
+                            context.Token = accessToken;
+
+                        return Task.CompletedTask;
+                    }
+                };
+            });
         /*services
             .AddAuth0WebAppAuthentication(options =>
             {
@@ -109,8 +122,10 @@ public static class IdentityServiceExtensions
             );
             opt.AddPolicy(
                 "read:current_user",
-                policy => policy.Requirements.Add(new HasScopeRequirement("read:current_user", domain!))
+                policy =>
+                    policy.Requirements.Add(new HasScopeRequirement("read:current_user", domain!))
             );
+            // read:current_user
         });
 
         services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();

@@ -20,7 +20,10 @@ export class MessageDirective {
     if (!this._userName) return
     this._message = message
 
-    if (message.status === NotificationStatus.Unread && message.senderUserName !== this._userName) {
+    if (
+      message.status === NotificationStatus.Unread &&
+      message.senderDisplayName !== this._userName
+    ) {
       this.elRef.nativeElement.style.backgroundColor = '#60a1fa'
     } else {
       this.elRef.nativeElement.style.backgroundColor = ''

@@ -10,7 +10,7 @@ public static class UserMapper
         return new GetUserDto
         {
             Id = request.Id,
-            UserName = request.UserName!,
+            DisplayName = request.DisplayName!,
             FirstName = request.FirstName,
             LastName = request.LastName,
             PhotoUrl = request.PhotoUrl,

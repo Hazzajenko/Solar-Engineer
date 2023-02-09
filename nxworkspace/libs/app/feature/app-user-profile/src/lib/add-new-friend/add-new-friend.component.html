@@ -20,19 +20,27 @@
           <button (click)="search()" mat-icon-button>
             <mat-icon>search</mat-icon>
           </button>
-
         </div>
         <ng-container *ngIf="userResult; else userUndefined">
           <div class="flex items-center space-x-3">
+            <!--           <img
+                         class="w-8 h-8 rounded-full"
+                         matListItemIcon
+                         *ngIf="userResult.photoUrl"
+                         [src]="userResult.photoUrl | getCdnUrlString"
+                         alt=""
+                       />-->
             <img
               class="w-8 h-8 rounded-full"
               matListItemIcon
               *ngIf="userResult.photoUrl"
-              [src]="userResult.photoUrl | getCdnUrlString"
+              [src]="userResult.photoUrl"
               alt=""
             />
             <div class="flex flex-col">
-              <span *ngIf="userResult.userName" matListItemTitle>{{ userResult.userName }} </span>
+              <span *ngIf="userResult.displayName" matListItemTitle
+                >{{ userResult.displayName }}
+              </span>
               <ng-container *ngIf="userResult.isOnline; then online; else offline"></ng-container>
               <ng-template #online>
                 <span
@@ -65,15 +73,15 @@
             </div>
           </div>
 
-<!--          <ng-container *ngIf="userResult && userResult.isFriend">
-            <div *ngIf="latestSearch && !searching">
-              &lt;!&ndash;            <mat-icon>error</mat-icon>&ndash;&gt;
-              <span>{{ userResult.userName }} is already your friend</span>
-              <button mat-button (click)="viewProfile(userResult.userName)">
-                {{ userResult.userName }} Profile
-              </button>
-            </div>
-          </ng-container>-->
+          <!--          <ng-container *ngIf="userResult && userResult.isFriend">
+                      <div *ngIf="latestSearch && !searching">
+                        &lt;!&ndash;            <mat-icon>error</mat-icon>&ndash;&gt;
+                        <span>{{ userResult.userName }} is already your friend</span>
+                        <button mat-button (click)="viewProfile(userResult.userName)">
+                          {{ userResult.userName }} Profile
+                        </button>
+                      </div>
+                    </ng-container>-->
           <!--          <ng-container *ngIf="userResult.toUserStatusEvent === 'SENT_FRIEND_REQUEST_PENDING'">
                       <span>Friend request sent at {{ userResult.toUserStatusDate | date: "short" }}</span>
                       &lt;!&ndash;            <button mat-button (click)="cancelRequest(userResult.userName)">Cancel</button>&ndash;&gt;
@@ -129,7 +137,7 @@
               <span class="text-xs"
                 >Friend request sent at {{ userResult.toUserStatusDate | date: "short" }}</span
               >
-              <button mat-button (click)="cancelRequest(userResult.userName)">
+              <button mat-button (click)="cancelRequest(userResult.displayName)">
                 Cancel friend request
               </button>
             </div>
@@ -140,7 +148,7 @@
               <span class="text-xs"
                 >Received friend request at {{ userResult.toUserStatusDate | date: "short" }}</span
               >
-              <button mat-button (click)="acceptFriend(userResult.userName)">
+              <button mat-button (click)="acceptFriend(userResult.displayName)">
                 Accept friend request
               </button>
             </div>
@@ -148,13 +156,13 @@
               *ngIf="!userResult.toUserStatusEvent && !userResult.isFriend"
               mat-button
               [disabled]="searching || userResult.isFriend"
-              (click)="sendFriendRequest(userResult.userName)"
+              (click)="sendFriendRequest(userResult.displayName)"
             >
               Send friend request
             </button>
             <div class="flex flex-col" *ngIf="userResult.isFriend">
-              <span class="text-xs">{{ userResult.userName }} is already your friend</span>
-              <button mat-button (click)="viewProfile(userResult.userName)">View profile</button>
+              <span class="text-xs">{{ userResult.displayName }} is already your friend</span>
+              <button mat-button (click)="viewProfile(userResult.displayName)">View profile</button>
             </div>
             <!--            </ng-container>-->
             <!--       <ng-container [ngSwitch]="userResult.toUserStatusEvent">
@@ -179,7 +187,7 @@
           <button
             [disabled]="!userResult || !latestSearch || searching || userResult.isFriend"
             mat-button
-            (click)="sendFriendRequest(userResult?.userName)"
+            (click)="sendFriendRequest(userResult?.displayName)"
             cdkFocusInitial
           >
             Select a user

@@ -2,7 +2,7 @@
   <ng-container *ngIf="recipientUser">
     <div class="flex flex-row items-center justify-center">
       <form class="">
-        <h3>New Group Chat with {{ recipientUser.userName }}</h3>
+        <h3>New Group Chat with {{ recipientUser.displayName }}</h3>
         <div class="mb-4">
           <label class="block text-gray-700 text-sm font-bold mb-2" for="chatRoomName">
             Name
@@ -38,14 +38,15 @@
               [value]="member"
             >
               <mat-icon *ngIf="member.isOnline" matListItemIcon>wifi</mat-icon>
-              <img
-                matListItemIcon
-                width="25px"
-                height="25px"
-                [src]="member.photoUrl | getCdnUrlString"
-                alt=""
-              />
-              <span matListItemTitle>{{ member.userName }} </span>
+              <!--              <img
+                              matListItemIcon
+                              width="25px"
+                              height="25px"
+                              [src]="member.photoUrl | getCdnUrlString"
+                              alt=""
+                            />-->
+              <img matListItemIcon width="25px" height="25px" [src]="member.photoUrl" alt="" />
+              <span matListItemTitle>{{ member.displayName }} </span>
             </mat-list-option>
           </cdk-virtual-scroll-viewport>
         </mat-selection-list>

@@ -5,8 +5,9 @@
         <div mat-card-avatar>
           <mat-icon color="primary" *ngIf="userProfile.isOnline">wifi</mat-icon>
         </div>
-        <img mat-card-avatar [src]="userProfile.photoUrl | getCdnUrlString" alt="" />
-        <mat-card-title>{{ userProfile.userName }}</mat-card-title>
+        <img mat-card-avatar [src]="userProfile.photoUrl" alt="" />
+        <!--        <img mat-card-avatar [src]="userProfile.photoUrl | getCdnUrlString" alt="" />-->
+        <mat-card-title>{{ userProfile.displayName }}</mat-card-title>
         <mat-card-subtitle *ngIf="userProfile.isOnline; else offline"> Online</mat-card-subtitle>
         <mat-card-subtitle *ngIf="userProfile.isFriend">
           Friends {{ userProfile.becameFriendsTime ? "since" : "" }}
@@ -28,15 +29,22 @@
         <ng-container *ngIf="recipientFriends$ | async as recipientFriends">
           <div *ngFor="let friend of recipientFriends">
             <div class="flex space-x-3 m-2 p-2 rounded hover:bg-blue-100">
+              <!--              <img
+                              class="w-8 h-8 rounded-full"
+                              matListItemIcon
+                              *ngIf="friend.photoUrl"
+                              [src]="friend.photoUrl | getCdnUrlString"
+                              alt=""
+                            />-->
               <img
                 class="w-8 h-8 rounded-full"
                 matListItemIcon
                 *ngIf="friend.photoUrl"
-                [src]="friend.photoUrl | getCdnUrlString"
+                [src]="friend.photoUrl"
                 alt=""
               />
               <div class="flex flex-col">
-                <span *ngIf="friend.userName" matListItemTitle>{{ friend.userName }} </span>
+                <span *ngIf="friend.displayName" matListItemTitle>{{ friend.displayName }} </span>
                 <ng-container *ngIf="friend.isOnline; then online; else offline"></ng-container>
                 <ng-template #online>
                   <span
@@ -63,13 +71,13 @@
       </mat-card-content>
       <mat-card-actions>
         <button
-          (click)="sendFriendRequest(userProfile.userName)"
+          (click)="sendFriendRequest(userProfile.displayName)"
           *ngIf="!userProfile.isFriend"
           mat-button
         >
           Send Friend Request
         </button>
-        <button (click)="sendMessage(userProfile.userName)" mat-button>Message</button>
+        <button (click)="sendMessage(userProfile.displayName)" mat-button>Message</button>
         <button *ngIf="userProfile.isFriend" mat-button>Remove Friend</button>
       </mat-card-actions>
     </mat-card>

@@ -15,11 +15,11 @@ export class ExcludeUserFromSeenPipe implements PipeTransform {
     if (!userName) return
 
     const array = [...readTimes]
-    const index = array.map((time) => time.recipientUserName).indexOf(userName)
+    const index = array.map((time) => time.recipientDisplayName).indexOf(userName)
     if (index > -1) {
       array.splice(index, 1)
     }
-    const senderIndex = array.map((time) => time.recipientUserName).indexOf(senderUserName)
+    const senderIndex = array.map((time) => time.recipientDisplayName).indexOf(senderUserName)
     if (senderIndex > -1) {
       array.splice(senderIndex, 1)
     }

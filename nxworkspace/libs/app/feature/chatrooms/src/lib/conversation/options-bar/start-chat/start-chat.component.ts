@@ -94,7 +94,9 @@ export class StartChatComponent {
     map((friends) => friends),
     switchMap((friends) =>
       combineLatest(
-        friends.map((friend) => this.usersStore.select.webUserCombinedByUserName$(friend.userName)),
+        friends.map((friend) =>
+          this.usersStore.select.webUserCombinedByUserName$(friend.displayName),
+        ),
       ),
     ),
   )
@@ -109,7 +111,7 @@ export class StartChatComponent {
       groupChatName: this.chatRoomNameControl.value,
       userNamesToInvite:
         this.selectedMembersToInvite.length > 0
-          ? this.selectedMembersToInvite.map((m) => m.userName)
+          ? this.selectedMembersToInvite.map((m) => m.displayName)
           : [],
     }
     this.groupChatsStore.dispatch.createGroupChat(request)

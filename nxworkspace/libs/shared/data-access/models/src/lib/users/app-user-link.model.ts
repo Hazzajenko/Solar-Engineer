@@ -1,6 +1,6 @@
 export interface AppUserLinkModel {
   id: number
-  userName: string
+  displayName: string
   nickName: string
   created: string
   becameFriendsTime: string | null

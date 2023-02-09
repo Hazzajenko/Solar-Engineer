@@ -5,7 +5,7 @@ import { MessageFrom } from './message-from.model'
 export interface GroupChatMemberModel {
   id: number
   groupChatId: number
-  userName: string
+  displayName: string
   firstName: string
   lastName: string
   lastActive: string
@@ -19,6 +19,23 @@ export interface GroupChatMemberModel {
   // messageFrom: typeof(MESSAGE_FROM)
 }
 
+/*export interface GroupChatMemberModel {
+  id: number
+  groupChatId: number
+  userName: string
+  firstName: string
+  lastName: string
+  lastActive: string
+  photoUrl: string
+  role: string
+  joinedAt: string
+  isOnline: boolean
+  // isServer: boolean
+  isFriend: boolean
+  becameFriendsTime: string | null
+  // messageFrom: typeof(MESSAGE_FROM)
+}*/
+
 /*id: number
 groupChatId: number
 content: string
@@ -29,7 +46,7 @@ export const GROUP_CHAT_SERVER_MESSAGE_MODEL = (serverMessage: GroupChatServerMe
     groupChatId: 0,
     content: serverMessage.content,
     messageSentTime: serverMessage.messageSentTime,
-    senderUserName: 'SERVER',
+    senderDisplayName: 'SERVER',
     messageReadTimes: [],
     isServer: true,
     isUserSender: false,
@@ -38,7 +55,7 @@ export const GROUP_CHAT_SERVER_MESSAGE_MODEL = (serverMessage: GroupChatServerMe
 
 export const GROUP_CHAT_SERVER_MEMBER_MODEL = () =>
   ({
-    userName: 'SERVER',
+    displayName: 'SERVER',
     role: 'SERVER',
     // isServer: true,
   } as GroupChatMemberModel)

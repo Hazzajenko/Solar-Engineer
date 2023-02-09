@@ -6,8 +6,14 @@ namespace dotnetapi.Models.Entities;
 
 public class AppUser : IdentityUser<int>
 {
+    public AppUser()
+    {
+        DisplayName = $"{FirstName} {LastName}";
+    }
+
     public string FirstName { get; init; } = default!;
     public string LastName { get; init; } = default!;
+    public string DisplayName { get; init; }
     public string PhotoUrl { get; set; } = default!;
     public DateTime Created { get; set; } = DateTime.Now;
     public DateTime LastActive { get; set; } = DateTime.Now;

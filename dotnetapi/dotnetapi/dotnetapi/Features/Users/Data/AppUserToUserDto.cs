@@ -5,7 +5,7 @@ namespace dotnetapi.Features.Users.Data;
 public class AppUserToUserDto
 {
     public int Id { get; set; } = default!;
-    public string UserName { get; set; } = default!;
+    public string DisplayName { get; set; } = default!;
     public string NickName { get; set; } = default!;
     public DateTime? BecameFriendsTime { get; set; }
     public bool IsFriend { get; set; }

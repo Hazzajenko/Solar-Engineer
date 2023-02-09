@@ -1,9 +1,9 @@
 export interface NotificationModel {
   id: number
   appUserId: number
-  appUserUserName: string
+  appUserDisplayName: string
   notificationFromId: number
-  notificationFromUserName: string
+  notificationFromDisplayName: string
   content: string
   type: NotificationType
   created: string

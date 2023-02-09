@@ -12,7 +12,7 @@ export interface UsersState extends EntityState<AppUserLinkModel> {
 }
 
 export function selectUsername(a: AppUserLinkModel): string {
-  return a.userName
+  return a.displayName
 }
 
 export const usersAdapter: EntityAdapter<AppUserLinkModel> = createEntityAdapter<AppUserLinkModel>({

@@ -5,8 +5,9 @@
         <div mat-card-avatar>
           <mat-icon color="primary"></mat-icon>
         </div>
-        <img mat-card-avatar [src]="appUser.photoUrl | getCdnUrlString" alt="" />
-        <mat-card-title>{{ appUser.userName }}</mat-card-title>
+        <img mat-card-avatar [src]="appUser.photoUrl" alt="" />
+        <!--        <img mat-card-avatar [src]="appUser.photoUrl | getCdnUrlString" alt="" />-->
+        <mat-card-title>{{ appUser.displayName }}</mat-card-title>
         <mat-card-subtitle> Online</mat-card-subtitle>
         <mat-card-subtitle> {{ appUser.friendsLength }} Friends</mat-card-subtitle>
         <mat-card-subtitle> {{ appUser.projectsLength }} Projects</mat-card-subtitle>
@@ -72,7 +73,7 @@
         <!--        (optionSelected)="openConversationFromSearch($event)"-->
         <mat-autocomplete #auto="matAutocomplete" [displayWith]="autoCompleteDisplayFunc">
           <mat-option *ngFor="let friend of filteredFriends$ | async" [value]="friend">
-            {{ friend.userName }}
+            {{ friend.displayName }}
           </mat-option>
         </mat-autocomplete>
         <input

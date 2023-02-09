@@ -133,7 +133,7 @@ export class AppUserProfileComponent {
     )
 
   autoCompleteDisplayFunc(appUser: AppUserLinkModel): string {
-    return appUser && appUser.userName ? appUser.userName : ''
+    return appUser && appUser.displayName ? appUser.displayName : ''
   }
 
   constructor(
@@ -178,7 +178,9 @@ export class AppUserProfileComponent {
     const filterValue = query.toLowerCase()
 
     return this.friends$.pipe(
-      map((data) => data.filter((search) => search.userName.toLowerCase().includes(filterValue))),
+      map((data) =>
+        data.filter((search) => search.displayName.toLowerCase().includes(filterValue)),
+      ),
     )
   }
 }

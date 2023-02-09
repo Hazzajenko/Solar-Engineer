@@ -84,7 +84,7 @@ export class MessagesEffects {
       this.actions$.pipe(
         ofType(MessagesActions.addReceivedMessage),
         map(({ message }) => {
-          const messageFrom = message.senderUserName
+          const messageFrom = message.senderDisplayName
           this.snackBar.open(`New message from ${messageFrom}!`, 'OK', {
             duration: 5000,
           })
@@ -122,7 +122,7 @@ export class MessagesEffects {
               map((messages) =>
                 messages.filter(
                   (message) =>
-                    message.senderUserName === recipient &&
+                    message.senderDisplayName === recipient &&
                     message.status === NotificationStatus.Unread,
                 ),
               ),

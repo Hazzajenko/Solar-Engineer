@@ -24,7 +24,9 @@ public static class GroupChatResponsesMapping
         {
             Member = new GroupChatMemberDto
             {
-                UserName = request.AppUser.UserName!,
+                Id = request.Id,
+                UserId = request.AppUser.Id,
+                DisplayName = request.AppUser.DisplayName!,
                 FirstName = request.AppUser.FirstName,
                 LastName = request.AppUser.LastName,
                 JoinedAt = request.JoinedAt,

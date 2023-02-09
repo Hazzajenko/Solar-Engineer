@@ -105,9 +105,9 @@ export class RecipientUserProfileComponent {
     @Inject(MAT_DIALOG_DATA) data: { appUser: AppUserLinkModel },
   ) {
     // this.userProfile$ = this.usersStore.select.webUserCombinedByUserName$(data.user.userName)
-    this.recipientUser$ = this.usersStore.select.queryAppUser$(data.appUser.userName)
+    this.recipientUser$ = this.usersStore.select.queryAppUser$(data.appUser.displayName)
     this.recipientFriends$ = this.usersStore.select.queryRecipientUserFriends$(
-      data.appUser.userName,
+      data.appUser.displayName,
     )
   }
 

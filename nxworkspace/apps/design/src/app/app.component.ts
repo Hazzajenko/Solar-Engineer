@@ -8,7 +8,7 @@ import { MatListModule } from '@angular/material/list'
 import { MatSidenavModule } from '@angular/material/sidenav'
 import { RouterModule } from '@angular/router'
 import { FriendsStoreService } from '@app/data-access/friends'
-import { AuthFacade, AuthStoreService } from '@auth/data-access/facades'
+import { AuthStoreService } from '@auth/data-access'
 import { LetModule } from '@ngrx/component'
 import { UiStoreService } from '@project-id/data-access/facades'
 import { ProjectsStoreService } from '@projects/data-access/facades'
@@ -16,6 +16,7 @@ import { NotificationsStoreService } from '@shared/data-access/notifications'
 import { AppBarComponent } from '@shared/ui/app-bar'
 import { NotificationsDialog } from 'libs/app/feature/notifications/src/lib/notifications.dialog'
 import { SidenavComponent } from '../../../../libs/app/feature/sidenav/src/lib/sidenav.component'
+import { InitLoginPipe } from '@app/shared'
 
 @Component({
   standalone: true,
@@ -35,6 +36,7 @@ import { SidenavComponent } from '../../../../libs/app/feature/sidenav/src/lib/s
     NgSwitchCase,
     DatePipe,
     SidenavComponent,
+    InitLoginPipe,
   ],
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -49,7 +51,7 @@ import { SidenavComponent } from '../../../../libs/app/feature/sidenav/src/lib/s
       }
     `,
   ],
-  providers: [AuthFacade],
+  // providers: [AuthFacade],
 })
 export class AppComponent implements OnInit {
   title = 'design'
@@ -65,6 +67,7 @@ export class AppComponent implements OnInit {
   friends$ = this.friendsStoreService.select.friends$
   friendsOnline$ = this.friendsStoreService.select.friendsOnline$
   notifications$ = this.notificationsStore.select.notifications$
+  isAuthenticated$ = this.authStore.select.isAuthenticated$
 
   navMenu$ = this.uiStore.select.navMenuState$
   viewProjects = false
@@ -75,6 +78,7 @@ export class AppComponent implements OnInit {
   returningUser = true
 
   ngOnInit(): void {
+    // this.authStore.
     /*    this.uiStore.dispatch.setWindowSize({
           innerHeight: window.innerHeight,
           innerWidth: window.innerWidth,

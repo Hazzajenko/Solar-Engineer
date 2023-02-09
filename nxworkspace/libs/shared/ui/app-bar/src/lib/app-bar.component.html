@@ -8,14 +8,16 @@
     >
       <mat-icon>menu</mat-icon>
     </button>
-    <span *ngIf="user">{{ user.userName }}</span>
-    <button
+    <img
       *ngIf="user"
-      (click)="routeHome()"
-      mat-icon-button
-      class="example-icon"
-      aria-label="Example icon-button with menu icon"
-    >
+      class="w-8 h-8 rounded-full mx-2"
+      matListItemIcon
+      [src]="user.photoUrl"
+      alt=""
+    />
+    <!--    <img *ngIf="user" mat-card-avatar [src]="user.photoUrl" alt="" />-->
+    <span class="mx-2" *ngIf="user">{{ user.displayName }}</span>
+    <button *ngIf="user" (click)="routeHome()" mat-icon-button>
       <mat-icon> home</mat-icon>
       <!--      Profile-->
     </button>

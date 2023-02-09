@@ -279,7 +279,7 @@ export class GroupChatsFacade {
           members.map((member) => {
             return combineLatest([
               of(member),
-              this.usersStore.select.appUserLinkCombinedByUserName$(member.userName),
+              this.usersStore.select.appUserLinkCombinedByUserName$(member.displayName),
               // this.usersStore.select.webUserCombinedByUserName$(member.userName),
             ]).pipe(
               map(
@@ -300,12 +300,12 @@ export class GroupChatsFacade {
     message: GroupChatMessageModel,
   ): Observable<GroupChatMemberModel | undefined> {
     return this.groupChatMembersById$(message.groupChatId).pipe(
-      map((members) => members.find((member) => member.userName === message.senderUserName)),
+      map((members) => members.find((member) => member.displayName === message.senderDisplayName)),
       switchMap((member) => {
         if (!member) return of(undefined)
         return combineLatest([
           of(member),
-          this.usersStore.select.appUserLinkCombinedByUserName$(member.userName),
+          this.usersStore.select.appUserLinkCombinedByUserName$(member.displayName),
           // this.usersStore.select.webUserCombinedByUserName$(member.userName),
         ]).pipe(
           map(

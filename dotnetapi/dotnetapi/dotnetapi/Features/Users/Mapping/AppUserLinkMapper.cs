@@ -14,12 +14,8 @@ public static class AppUserLinkMapper
 
         return new AppUserToUserDto
         {
-            Id = appUser.Id.Equals(request.AppUserReceivedId)
-                ? request.AppUserRequestedId
-                : request.AppUserReceivedId,
-            UserName = appUser.Id.Equals(request.AppUserReceivedId)
-                ? request.AppUserRequestedUserName
-                : request.AppUserReceivedUserName,
+            Id = recipientUser.Id,
+            DisplayName = recipientUser.DisplayName,
             NickName = appUser.Id.Equals(request.AppUserReceivedId)
                 ? request.AppUserRequestedNickName
                 : request.AppUserReceivedNickName,
@@ -53,7 +49,7 @@ public static class AppUserLinkMapper
         return new RecipientUserFriendDto
         {
             Id = recipientUser.Id,
-            UserName = recipientUser.UserName!,
+            DisplayName = recipientUser.DisplayName,
             PhotoUrl = recipientUser.PhotoUrl,
             LastActive = recipientUser.LastActive
         };
@@ -88,10 +84,10 @@ public static class AppUserLinkMapper
         {
             Id = request.Id,
             AppUserRequestedId = request.AppUserRequestedId,
-            AppUserRequestedUserName = request.AppUserRequestedUserName,
+            AppUserRequestedDisplayName = request.AppUserRequestedUserName,
             AppUserRequestedNickName = request.AppUserRequestedNickName,
             AppUserReceivedId = request.AppUserReceivedId,
-            AppUserReceivedUserName = request.AppUserReceivedUserName,
+            AppUserReceivedDisplayName = request.AppUserReceivedUserName,
             AppUserReceivedNickName = request.AppUserReceivedNickName,
             Created = request.Created,
             BecameFriendsTime = request.BecameFriendsTime,
@@ -100,4 +96,37 @@ public static class AppUserLinkMapper
         };
     }
 }
-//
+/*//
+public static AppUserToUserDto ToUserToUserDto(this AppUserLink request, AppUser appUser)
+{
+    var recipientUser = appUser.Id.Equals(request.AppUserReceivedId)
+        ? request.AppUserRequested
+        : request.AppUserReceived;
+
+    return new AppUserToUserDto
+    {
+        Id = appUser.Id.Equals(request.AppUserReceivedId)
+            ? request.AppUserRequestedId
+            : request.AppUserReceivedId,
+        DisplayName = appUser.Id.Equals(request.AppUserReceivedId)
+            ? request.AppUserRequestedUserName
+            : request.AppUserReceivedUserName,
+        NickName = appUser.Id.Equals(request.AppUserReceivedId)
+            ? request.AppUserRequestedNickName
+            : request.AppUserReceivedNickName,
+        ToUserStatusEvent = appUser.Id.Equals(request.AppUserReceivedId)
+            ? request.AppUserRequestedStatusEvent
+            : request.AppUserReceivedStatusEvent,
+        ToUserStatusDate = appUser.Id.Equals(request.AppUserReceivedId)
+            ? request.AppUserRequestedStatusDate
+            : request.AppUserReceivedStatusDate,
+        Created = recipientUser.Created,
+        LastActive = recipientUser.LastActive,
+        BecameFriendsTime = request.BecameFriendsTime,
+        IsFriend = request.Friends,
+        UserToUserStatus = request.UserToUserStatus,
+        FirstName = recipientUser.FirstName,
+        LastName = recipientUser.LastName,
+        PhotoUrl = recipientUser.PhotoUrl
+    };
+}*/

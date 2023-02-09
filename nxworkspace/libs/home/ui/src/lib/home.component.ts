@@ -13,7 +13,7 @@ import {
   RouterEvent,
   RouterLink,
 } from '@angular/router'
-import { AuthFacade, AuthStoreService } from '@auth/data-access/facades'
+import { AuthStoreService } from '@auth/data-access'
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr'
 import * as signalR from '@microsoft/signalr'
 import { LetModule } from '@ngrx/component'
@@ -145,8 +145,8 @@ export class HomeComponent implements OnInit {
             // tap((meta) => (this.metadata = meta)),
           )
           .subscribe()*/
-    this.http.get(`/api/account/profile`).subscribe((res) => console.log('profile', res))
-    this.http.post(`/api/auth0/login`, {}).subscribe((res) => console.log('profile', res))
+    // this.http.get(`/api/account/profile`).subscribe((res) => console.log('profile', res))
+    // this.http.post(`/api/auth0/login`, {}).subscribe((res) => console.log('profile', res))
     // this.auth.
     /*    Accept: 'application/json',
           'Access-Control-Allow-Headers': 'Content-Type',*/
@@ -188,17 +188,17 @@ export class HomeComponent implements OnInit {
   }
 
   loginDevBot() {
-    this.authStore.dispatch.init({
-      userName: 'postmantest',
-      password: 'PostmanTest1',
-    })
+    /*    this.authStore.dispatch.init({
+          userName: 'postmantest',
+          password: 'PostmanTest1',
+        })*/
   }
 
   loginDevBot2() {
-    this.authStore.dispatch.init({
-      userName: 'postmantest2',
-      password: 'PostmanTest1',
-    })
+    /*    this.authStore.dispatch.init({
+          userName: 'postmantest2',
+          password: 'PostmanTest1',
+        })*/
   }
 
   async authenticate(login: boolean) {
@@ -226,13 +226,13 @@ export class HomeComponent implements OnInit {
 
         height: '400px',
           width: '600px',*/
+    /*
+        this.dialog.open(AuthDialog, dialogConfig)
 
-    this.dialog.open(AuthDialog, dialogConfig)
-
-    const user = await this.authStore.select.user
-    if (user) {
-      this.dialog.closeAll()
-    }
+        const user = await this.authStore.select.user
+        if (user) {
+          this.dialog.closeAll()
+        }*/
 
     /*    // const dialog = this.dialog.open(ProfileComponent)
         const result = await firstValueFrom(dialog.afterClosed())

@@ -87,13 +87,15 @@ export class AddGroupChatMembersComponent {
     map((friends) => friends),
     switchMap((friends) =>
       combineLatest(
-        friends.map((friend) => this.usersStore.select.webUserCombinedByUserName$(friend.userName)),
+        friends.map((friend) =>
+          this.usersStore.select.webUserCombinedByUserName$(friend.displayName),
+        ),
       ),
     ),
     switchMap((users) =>
       this.groupChatsStore.select.groupChatMembersById$(this.groupChatId).pipe(
-        map((members) => members.map((member) => member.userName)),
-        map((userNames) => users.filter((user) => !userNames.includes(user.userName))),
+        map((members) => members.map((member) => member.displayName)),
+        map((userNames) => users.filter((user) => !userNames.includes(user.displayName))),
       ),
     ),
   )
@@ -116,7 +118,7 @@ export class AddGroupChatMembersComponent {
     const invites = this.selectedMembersToInvite.map(
       (member) =>
         ({
-          userName: member.userName,
+          userName: member.displayName,
           role: 'Member',
         } as MemberInviteModel),
     )

@@ -1,6 +1,6 @@
 <ng-container *ngIf="user$ | async as user">
   <ng-container *ngrxLet="isDialog$ | async as isDialog">
-    <ng-container *ngIf="chatrooms$ | async as chatrooms">
+    <ng-container *ngrxLet="chatrooms$ | async as chatrooms">
       <ng-container *ngrxLet="chatRoomToMessage$ | async as selectedChatRoom">
         <form>
           <!--          <button mat-button>Create new chat</button>-->
@@ -19,7 +19,7 @@
                     </div>-->
           <div class="flex flex-row justify-between p-2 items-center">
             <app-group-chat-member-item-component
-              [user]="user"
+              [authUser]="user"
             ></app-group-chat-member-item-component>
             <!--            <mat-icon>more_vert</mat-icon>-->
             <!--            <span>-->
@@ -150,6 +150,7 @@
             class="flex flex-col items-center content-center w-[100%]"
             itemSize="25"
           >
+            <div *ngIf="!chatrooms || !chatrooms?.length">No chatrooms</div>
             <mat-list-option
               [selected]="chatroom.chatRoomName === selectedChatRoom?.chatRoomName"
               *cdkVirtualFor="let chatroom of chatrooms | sortChatrooms"
@@ -177,9 +178,9 @@
 
                   <p *ngIf="chatroom.groupChat" matListItemLine>
                     {{
-                      chatroom.groupChat.latestSentMessage?.senderUserName === user.userName
+                      chatroom.groupChat.latestSentMessage?.senderDisplayName === user.displayName
                         ? "You:"
-                        : chatroom.groupChat.latestSentMessage?.senderUserName + ":"
+                        : chatroom.groupChat.latestSentMessage?.senderDisplayName + ":"
                     }}
                     {{ chatroom.groupChat.latestSentMessage?.content }}
                   </p>
@@ -190,18 +191,18 @@
               </ng-container>
               <ng-template #userMessage>
                 <span *ngIf="chatroom.message" matListItemTitle>{{
-                  chatroom.message.senderUserName === user.userName
-                    ? chatroom.message.recipientUserName
-                    : chatroom.message.senderUserName
+                  chatroom.message.senderDisplayName === user.displayName
+                    ? chatroom.message.recipientDisplayName
+                    : chatroom.message.senderDisplayName
                 }}</span>
                 <span *ngIf="chatroom.message" matListItemLine>{{
                   chatroom.message.messageSentTime | date: "short"
                 }}</span>
                 <p *ngIf="chatroom.message" matListItemLine>
                   {{
-                    chatroom.message.senderUserName === user.userName
+                    chatroom.message.senderDisplayName === user.displayName
                       ? "You:"
-                      : chatroom.message.senderUserName + ":"
+                      : chatroom.message.senderDisplayName + ":"
                   }}
                   {{ chatroom.message.content }}
                 </p>
