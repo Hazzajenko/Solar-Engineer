@@ -1,4 +1,4 @@
-﻿using Auth.API.Data;
+﻿using Auth.API.Contracts.Data;
 
 namespace Auth.API.Contracts.Responses;
 

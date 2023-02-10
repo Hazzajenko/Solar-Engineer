@@ -1,3 +1,5 @@
+using Microsoft.VisualStudio.TestPlatform.TestHost;
+
 [assembly: CollectionBehavior(DisableTestParallelization = true)]
 
 namespace Auth.API.E2E.Tests;

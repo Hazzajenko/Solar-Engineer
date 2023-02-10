@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Auth.API.Data;
+namespace Auth.API.Services;
 
 public class Token
 {

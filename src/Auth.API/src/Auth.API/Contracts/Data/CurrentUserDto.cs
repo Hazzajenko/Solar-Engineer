@@ -1,4 +1,4 @@
-﻿namespace Auth.API.Data;
+﻿namespace Auth.API.Contracts.Data;
 
 public class CurrentUserDto
 {
