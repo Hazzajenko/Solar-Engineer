@@ -17,6 +17,8 @@ import { AppBarComponent } from '@shared/ui/app-bar'
 import { NotificationsDialog } from 'libs/app/feature/notifications/src/lib/notifications.dialog'
 import { SidenavComponent } from '../../../../libs/app/feature/sidenav/src/lib/sidenav.component'
 import { InitLoginPipe } from '@app/shared'
+import { HttpClient } from '@angular/common/http'
+import { from, Observable, of } from 'rxjs'
 
 @Component({
   standalone: true,
@@ -59,6 +61,7 @@ export class AppComponent implements OnInit {
   private projectsStore = inject(ProjectsStoreService)
   private friendsStoreService = inject(FriendsStoreService)
   private notificationsStore = inject(NotificationsStoreService)
+  private http = inject(HttpClient)
 
   private uiStore = inject(UiStoreService)
   private dialog = inject(MatDialog)
@@ -78,6 +81,48 @@ export class AppComponent implements OnInit {
   returningUser = true
 
   ngOnInit(): void {
+    // successful-login
+    /*    this.http.get('/auth/successful-login', { withCredentials: true }).subscribe((res) => {
+          console.log(res)
+          console.log('LINK', res)
+          // /!*      window.location.href = `${res}`*!/
+        })*/
+    this.http.get('/auth/data', { withCredentials: true }).subscribe((res) => {
+      console.log(res)
+      console.log('LINK', res)
+      // /!*      window.location.href = `${res}`*!/
+    })
+    this.http.get('/auth/authorize', { withCredentials: true }).subscribe((res) => {
+      console.log(res)
+      console.log('authorize', res)
+      // /!*      window.location.href = `${res}`*!/
+    })
+    /*    this.http.get('http://localhost:5005/google2', { withCredentials: true }).subscribe((res) => {
+          console.log(res)
+          console.log('LINK', res)
+          // /!*      window.location.href = `${res}`*!/
+        })*/
+    /*    this.http.get('/auth/login/google').subscribe((res) => {
+          console.log(res)
+          console.log('LINK', res)
+          /!*      window.location.href = `${res}`*!/
+        })
+        this.http.get('/auth/google2').subscribe((res) => {
+          console.log(res)
+          console.log('LINK', res)
+          /!*      window.location.href = `${res}`*!/
+        })
+        this.http.get('/auth/github').subscribe((res) => {
+          console.log(res)
+          console.log('LINK', res)
+          /!*      window.location.href = `${res}`*!/
+        })*/
+
+    /*    this.http.get('/auth/test').subscribe((res) => {
+          console.log(res)
+          console.log('LINK', res)
+          // window.location.href = `${res}`
+        })*/
     // this.authStore.
     /*    this.uiStore.dispatch.setWindowSize({
           innerHeight: window.innerHeight,
@@ -86,6 +131,29 @@ export class AppComponent implements OnInit {
     /*    if (this.returningUser) {
           this.authStore.dispatch.isReturningUser()
         }*/
+  }
+
+  makeFileRequest(url: string, files: Array<File>) {
+    return from(
+      new Promise((resolve, reject) => {
+        const formData: any = new FormData()
+        const xhr = new XMLHttpRequest()
+        for (const file of files) {
+          formData.append('uploads[]', file, file.name)
+        }
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+              resolve(JSON.parse(xhr.response))
+            } else {
+              reject(xhr.response)
+            }
+          }
+        }
+        xhr.open('POST', url, true)
+        xhr.send(formData)
+      }),
+    )
   }
 
   openNotificationsDialog() {

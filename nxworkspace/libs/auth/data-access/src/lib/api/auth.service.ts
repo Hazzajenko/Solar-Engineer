@@ -10,17 +10,18 @@ import { switchMap } from 'rxjs'
 })
 export class AuthService {
   private http = inject(HttpClient)
-  private auth0 = inject(Auth0)
+
+  // private auth0 = inject(Auth0)
 
   login() {
-    return this.auth0.getAccessTokenSilently().pipe(
-      switchMap((token) =>
-        this.http.post<SignInResponse>('/api/auth0/login', null, {
-          headers: new HttpHeaders({
-            Authorization: `Bearer ${token}`,
-          }),
-        }),
-      ),
-    )
+    /*    return this.auth0.getAccessTokenSilently().pipe(
+          switchMap((token) =>
+            this.http.post<SignInResponse>('/api/auth0/login', null, {
+              headers: new HttpHeaders({
+                Authorization: `Bearer ${token}`,
+              }),
+            }),
+          ),
+        )*/
   }
 }

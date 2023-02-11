@@ -36,7 +36,7 @@ export class MessagesFacade {
               new Date(b.messageSentTime).getTime() - new Date(a.messageSentTime).getTime(),
           )
           const groupedArr = this.groupItemByVal<MessageModel>(orderedMessages, (message) =>
-            message.senderDisplayName !== user?.userName
+            message.senderDisplayName !== user?.displayName
               ? message.senderDisplayName
               : message.recipientDisplayName,
           )
@@ -62,9 +62,9 @@ export class MessagesFacade {
         messages.filter(
           (message) =>
             (message.senderDisplayName === userName &&
-              message.recipientDisplayName === user?.userName) ||
+              message.recipientDisplayName === user?.displayName) ||
             (message.recipientDisplayName === userName &&
-              message.senderDisplayName === user?.userName),
+              message.senderDisplayName === user?.displayName),
         ),
       ),
       switchMap((messages) =>
@@ -88,9 +88,9 @@ export class MessagesFacade {
         messages.filter(
           (message) =>
             (message.senderDisplayName === userName &&
-              message.recipientDisplayName === user?.userName) ||
+              message.recipientDisplayName === user?.displayName) ||
             (message.recipientDisplayName === userName &&
-              message.senderDisplayName === user?.userName),
+              message.senderDisplayName === user?.displayName),
         ),
       ),
       switchMap((messages) =>

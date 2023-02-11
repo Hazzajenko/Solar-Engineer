@@ -30,9 +30,6 @@ import { concatMap, map, Observable, switchMap, tap } from 'rxjs'
 import { fadeIn, fadeInV2 } from './animations/animations'
 import { AuthService, RedirectLoginOptions } from '@auth0/auth0-angular'
 import { HttpClient, HttpHeaders } from '@angular/common/http'
-import * as auth0 from 'auth0-js'
-import { AUTH_CONFIG } from './auth-config'
-import { Auth0Service } from './auth0.service'
 
 @Component({
   selector: 'app-home',
@@ -65,8 +62,8 @@ export class HomeComponent implements OnInit {
   private connectionsStore = inject(ConnectionsStoreService)
   private http = inject(HttpClient)
   private hubConnection: any
-  public auth = inject(AuthService)
-  public auth0 = inject(Auth0Service)
+  // public auth = inject(AuthService)
+  // public auth0 = inject(Auth0Service)
 
   /*  requestedScopes = 'openid profile read:current_user'
     auth0 = new auth0.WebAuth({
@@ -182,9 +179,9 @@ export class HomeComponent implements OnInit {
   }
 
   authLogin() {
-    this.auth.loginWithRedirect({
-      authorizationParams: {},
-    })
+    /*    this.auth.loginWithRedirect({
+          authorizationParams: {},
+        })*/
   }
 
   loginDevBot() {
@@ -282,6 +279,6 @@ export class HomeComponent implements OnInit {
   }
 
   authLogout() {
-    this.auth.logout({ logoutParams: { returnTo: document.location.origin } })
+    // this.auth.logout({ logoutParams: { returnTo: document.location.origin } })
   }
 }

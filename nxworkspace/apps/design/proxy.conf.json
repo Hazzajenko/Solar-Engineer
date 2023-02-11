@@ -8,6 +8,17 @@
       "^/api": ""
     }
   },
+  "/auth": {
+    "target": "http://localhost:5005",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "withCredentials": true,
+    "cookieDomainRewrite": "localhost",
+    "pathRewrite": {
+      "^/auth": ""
+    }
+  },
   "/ws": {
     "target": "http://localhost:5000",
     "secure": false,
