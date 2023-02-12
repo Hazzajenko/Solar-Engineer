@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+option csharp_namespace = "Auth.API";
+
+service AuthGrpc {
+  rpc GetAppUserById(AppUserRequest) returns (AppUserResponse) {}
+}
+
+message AppUserRequest {
+  string id = 1;
+}
+
+message AppUserResponse {
+  string id = 1;
+  string firstName = 2;
+  string lastName = 3;
+  string photoUrl = 4;
+}
+

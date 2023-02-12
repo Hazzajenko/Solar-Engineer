@@ -1,0 +1,21 @@
+services:
+  angularclient:
+    image: hazzajenko/angularclient:1.0.0
+    ports:
+      - 4200:80
+    depends_on:
+      dotnetapi:
+        condition: service_started
+
+
+  dotnetapi:
+    image: hazzajenko/dotnetapi:1.0.1
+    ports:
+      - 5000:80
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      DATABASE_HOST: DATABASE_HOST
+      DATABASE_PORT: 2506DATABASE_PORT0
+      DATABASE_USERNAME: DATABASE_USERNAME
+      DATABASE_PASSWORD: DATABASE_PASSWORD
+      DATABASE_DATABASE: DATABASE_DATABASE

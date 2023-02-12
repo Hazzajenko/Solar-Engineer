@@ -1,0 +1,57 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <UserSecretsId>4a66aed7-5a93-4d12-9f4c-437087528d6a</UserSecretsId>
+    </PropertyGroup>
+
+    <ItemGroup>
+
+        <PackageReference Include="FastEndpoints.Generator" Version="5.7.1">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+
+        <PackageReference Include="FastEndpoints.Security" Version="5.7.1" />
+
+        <PackageReference Include="FastEndpoints.Swagger" Version="5.7.1" />
+
+        <PackageReference Include="Grpc.Tools" Version="2.51.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Google.Protobuf" Version="3.21.5" />
+        <PackageReference Include="Grpc.Net.Client" Version="2.51.0" />
+
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.0" />
+
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.2">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Content Include="..\..\.dockerignore">
+            <Link>.dockerignore</Link>
+        </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\BuildingBlocks\Infrastructure\Infrastructure.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Folder Include="Data\Migrations" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Protobuf Include="Proto\auth.proto" GrpcServices="Client" />
+
+    </ItemGroup>
+
+</Project>
