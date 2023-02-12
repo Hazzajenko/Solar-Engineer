@@ -18,7 +18,7 @@ import { NotificationsDialog } from 'libs/app/feature/notifications/src/lib/noti
 import { SidenavComponent } from '../../../../libs/app/feature/sidenav/src/lib/sidenav.component'
 import { InitLoginPipe } from '@app/shared'
 import { HttpClient } from '@angular/common/http'
-import { from, Observable, of } from 'rxjs'
+import { catchError, EMPTY, from, Observable, of } from 'rxjs'
 
 @Component({
   standalone: true,
@@ -87,16 +87,31 @@ export class AppComponent implements OnInit {
           console.log('LINK', res)
           // /!*      window.location.href = `${res}`*!/
         })*/
-    this.http.get('/auth/data', { withCredentials: true }).subscribe((res) => {
-      console.log(res)
-      console.log('LINK', res)
-      // /!*      window.location.href = `${res}`*!/
-    })
-    this.http.get('/auth/authorize', { withCredentials: true }).subscribe((res) => {
-      console.log(res)
-      console.log('authorize', res)
-      // /!*      window.location.href = `${res}`*!/
-    })
+    this.http
+      .get('/auth/data', { withCredentials: true })
+      .pipe(catchError(() => EMPTY))
+      .subscribe((res) => {
+        console.log(res)
+        console.log('LINK', res)
+        // /!*      window.location.href = `${res}`*!/
+      })
+
+    this.http
+      .get('/auth/google2', { withCredentials: true })
+      .pipe(catchError(() => EMPTY))
+      .subscribe((res) => {
+        console.log(res)
+        console.log('LINK', res)
+        // /!*      window.location.href = `${res}`*!/
+      })
+    this.http
+      .get('/auth/authorize', { withCredentials: true })
+      .pipe(catchError(() => EMPTY))
+      .subscribe((res) => {
+        console.log(res)
+        console.log('authorize', res)
+        // /!*      window.location.href = `${res}`*!/
+      })
     /*    this.http.get('http://localhost:5005/google2', { withCredentials: true }).subscribe((res) => {
           console.log(res)
           console.log('LINK', res)

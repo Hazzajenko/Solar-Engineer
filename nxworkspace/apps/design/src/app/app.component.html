@@ -14,13 +14,13 @@
   *ngrxLet="{ isAuthenticated: isAuthenticated$ | async, user: user$ | async } | initLogin"
 >
 </ng-container>-->
-<script type="text/javascript">
+<!--<script type="text/javascript">
   var xhr = new XMLHttpRequest()
   xhr.open("GET", "/auth/authorize", true)
   xhr.withCredentials = true
   xhr.send(null)
   console.log("test")
-</script>
+</script>-->
 <mat-sidenav-container [hasBackdrop]="true">
   <mat-sidenav #drawer mode="over">
     <ng-container *ngIf="navMenu$ | async as navMenu">
