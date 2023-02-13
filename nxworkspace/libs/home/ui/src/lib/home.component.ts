@@ -30,6 +30,7 @@ import { concatMap, map, Observable, switchMap, tap } from 'rxjs'
 import { fadeIn, fadeInV2 } from './animations/animations'
 import { AuthService, RedirectLoginOptions } from '@auth0/auth0-angular'
 import { HttpClient, HttpHeaders } from '@angular/common/http'
+import { Location } from '@angular/common'
 
 @Component({
   selector: 'app-home',
@@ -54,6 +55,7 @@ export class HomeComponent implements OnInit {
   // user$: Observable<UserModel | undefined> = inject(AuthFacade).user$
   fade = false
   showProjects = false
+  private location = inject(Location)
   private dialog = inject(MatDialog)
   private router = inject(Router)
   private projectsStore = inject(ProjectsFacade)
@@ -280,5 +282,38 @@ export class HomeComponent implements OnInit {
 
   authLogout() {
     // this.auth.logout({ logoutParams: { returnTo: document.location.origin } })
+  }
+
+  loginWithGoogle() {
+    /*    this.http
+          .get('/auth/login/google', { withCredentials: true })
+          // .pipe(catchError(() => EMPTY))
+          .subscribe((res) => {
+            // console.log(res)
+            console.log('google', res)
+            // /!*      window.location.href = `${res}`*!/
+          })*/
+    this.http
+      .get('/auth-https/login/google', { withCredentials: true })
+      // .pipe(catchError(() => EMPTY))
+      .subscribe((res) => {
+        // console.log(res)
+        console.log('google-https', res)
+        // /*      window.location.href = `${res}`*/
+      })
+    this.location.go('/auth/login/google')
+    window.location.reload()
+
+    /*    this.http
+          .get('/auth/login/google', { withCredentials: true })
+          // .pipe(catchError(() => EMPTY))
+          .subscribe((res) => {
+            // console.log(res)
+            console.log('google', res)
+            // /!*      window.location.href = `${res}`*!/
+          })*/
+    // this.location.onUrlChange((url, state) => this.location.forward())
+    // Location.go('/auth/login/google')
+    // this.router.navigateByUrl('/auth/login/google')
   }
 }

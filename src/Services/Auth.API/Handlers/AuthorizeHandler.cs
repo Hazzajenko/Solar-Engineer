@@ -1,5 +1,4 @@
 ﻿using System.Security.Claims;
-using Auth.API.Commands;
 using Auth.API.Contracts.Data;
 using Auth.API.Exceptions;
 using Auth.API.Mapping;

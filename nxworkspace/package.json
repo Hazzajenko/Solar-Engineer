@@ -4,6 +4,8 @@
   "scripts": {
     "ng": "nx",
     "start": "nx serve",
+    "start-ssl": "nx serve --ssl",
+    "start-ssl-certs": "nx serve --ssl --ssl-key /ssl/localhost.key --ssl-cert /ssl/localhost.crt",
     "proxy": "nx serve --proxy-config src/proxy.conf.json",
     "inspect": "nx serve --inspect",
     "build": "nx build",

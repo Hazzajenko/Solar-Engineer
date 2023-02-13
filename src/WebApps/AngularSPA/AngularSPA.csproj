@@ -1,0 +1,462 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <IsPackable>false</IsPackable>
+        <SpaRoot>ClientApp\</SpaRoot>
+        <SpaProxyServerUrl>https://localhost:44492</SpaProxyServerUrl>
+        <SpaProxyLaunchCommand>npm start</SpaProxyLaunchCommand>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.SpaProxy" Version="7.0.0" />
+        <PackageReference Include="Microsoft.AspNetCore.SpaServices" Version="3.1.32" />
+        <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="7.0.2" />
+        <PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <!-- Don't publish the SPA source files, but do show them in the project files list -->
+        <Content Remove="$(SpaRoot)**" />
+        <Content Include="..\..\.dockerignore">
+          <Link>.dockerignore</Link>
+        </Content>
+        <None Remove="$(SpaRoot)**" />
+        <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
+        <None Remove="ClientApp\**" />
+        <Content Remove="ClientApp\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="ClientApp\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="ClientApp\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="ClientApp\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\apps\design-e2e\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\apps\design-e2e\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\apps\design-e2e\src\fixtures\example.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\apps\design-e2e\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\apps\design\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\apps\design\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\apps\design\proxy.conf.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\apps\design\tsconfig.app.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\apps\design\tsconfig.editor.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\apps\design\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\apps\design\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\config\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\config\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\config\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\config\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\config\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\data-access\friends\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\data-access\friends\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\data-access\friends\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\data-access\friends\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\data-access\friends\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\data-access\group-chats\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\data-access\group-chats\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\data-access\group-chats\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\data-access\group-chats\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\data-access\group-chats\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\data-access\images\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\data-access\images\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\data-access\images\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\data-access\images\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\data-access\images\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\data-access\messages\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\data-access\messages\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\data-access\messages\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\data-access\messages\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\data-access\messages\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\data-access\notifications\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\data-access\notifications\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\data-access\notifications\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\data-access\notifications\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\data-access\notifications\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\data-access\signalr\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\data-access\signalr\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\data-access\signalr\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\data-access\signalr\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\data-access\signalr\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\data-access\users\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\data-access\users\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\data-access\users\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\data-access\users\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\data-access\users\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\feature\app-user-profile\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\feature\app-user-profile\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\feature\app-user-profile\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\feature\app-user-profile\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\feature\app-user-profile\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\feature\chatrooms\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\feature\chatrooms\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\feature\chatrooms\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\feature\chatrooms\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\feature\chatrooms\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\feature\friends\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\feature\friends\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\feature\friends\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\feature\friends\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\feature\friends\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\feature\main-dialog\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\feature\main-dialog\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\feature\main-dialog\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\feature\main-dialog\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\feature\main-dialog\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\feature\notifications\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\feature\notifications\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\feature\notifications\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\feature\notifications\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\feature\notifications\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\feature\profile\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\feature\profile\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\feature\profile\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\feature\profile\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\feature\profile\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\feature\recipient-user-profile\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\feature\recipient-user-profile\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\feature\recipient-user-profile\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\feature\recipient-user-profile\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\feature\recipient-user-profile\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\feature\sidenav\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\feature\sidenav\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\feature\sidenav\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\feature\sidenav\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\feature\sidenav\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\feature\username-profile\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\feature\username-profile\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\feature\username-profile\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\feature\username-profile\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\feature\username-profile\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\messages\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\messages\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\messages\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\messages\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\messages\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\routes\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\routes\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\routes\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\routes\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\routes\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\shared\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\shared\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\shared\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\shared\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\app\shared\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\auth\data-access\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\auth\data-access\api\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\auth\data-access\api\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\auth\data-access\api\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\auth\data-access\api\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\auth\data-access\api\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\auth\data-access\effects\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\auth\data-access\effects\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\auth\data-access\effects\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\auth\data-access\effects\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\auth\data-access\effects\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\auth\data-access\facades\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\auth\data-access\facades\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\auth\data-access\facades\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\auth\data-access\facades\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\auth\data-access\facades\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\auth\data-access\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\auth\data-access\store\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\auth\data-access\store\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\auth\data-access\store\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\auth\data-access\store\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\auth\data-access\store\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\auth\data-access\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\auth\data-access\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\auth\data-access\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\auth\guards\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\auth\guards\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\auth\guards\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\auth\guards\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\auth\guards\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\auth\interceptors\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\auth\interceptors\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\auth\interceptors\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\auth\interceptors\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\auth\interceptors\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\auth\shared\models\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\auth\shared\models\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\auth\shared\models\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\auth\shared\models\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\auth\shared\models\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\data-access\actions\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\data-access\actions\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\data-access\actions\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\data-access\actions\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\data-access\actions\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\data-access\services\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\data-access\services\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\data-access\services\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\data-access\services\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\data-access\services\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\data-access\utils\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\data-access\utils\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\data-access\utils\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\data-access\utils\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\data-access\utils\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\feature\blocks\block-disconnection-point\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\feature\blocks\block-disconnection-point\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\feature\blocks\block-disconnection-point\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\feature\blocks\block-disconnection-point\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\feature\blocks\block-disconnection-point\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\feature\blocks\block-panel\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\feature\blocks\block-panel\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\feature\blocks\block-panel\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\feature\blocks\block-panel\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\feature\blocks\block-panel\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\feature\blocks\block-tray\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\feature\blocks\block-tray\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\feature\blocks\block-tray\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\feature\blocks\block-tray\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\feature\blocks\block-tray\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\feature\blocks\shared-ui\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\feature\blocks\shared-ui\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\feature\blocks\shared-ui\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\feature\blocks\shared-ui\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\feature\blocks\shared-ui\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\feature\index\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\feature\index\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\feature\index\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\feature\index\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\feature\index\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\feature\keymap\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\feature\keymap\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\feature\keymap\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\feature\keymap\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\feature\keymap\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\feature\string-stats\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\feature\string-stats\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\feature\string-stats\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\feature\string-stats\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\feature\string-stats\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\shared\models\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\shared\models\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\shared\models\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\shared\models\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\shared\models\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\utils\factory\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\utils\factory\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\utils\factory\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\utils\factory\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\grid-layout\utils\factory\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\home\ui\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\home\ui\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\home\ui\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\home\ui\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\home\ui\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\project-id\data-access\api\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\project-id\data-access\api\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\project-id\data-access\api\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\project-id\data-access\api\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\project-id\data-access\api\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\project-id\data-access\effects\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\project-id\data-access\effects\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\project-id\data-access\effects\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\project-id\data-access\effects\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\project-id\data-access\effects\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\project-id\data-access\facades\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\project-id\data-access\facades\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\project-id\data-access\facades\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\project-id\data-access\facades\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\project-id\data-access\facades\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\project-id\data-access\resolvers\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\project-id\data-access\resolvers\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\project-id\data-access\resolvers\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\project-id\data-access\resolvers\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\project-id\data-access\resolvers\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\project-id\data-access\store\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\project-id\data-access\store\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\project-id\data-access\store\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\project-id\data-access\store\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\project-id\data-access\store\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\project-id\feature\local\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\project-id\feature\local\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\project-id\feature\local\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\project-id\feature\local\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\project-id\feature\local\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\project-id\feature\toolbar\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\project-id\feature\toolbar\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\project-id\feature\toolbar\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\project-id\feature\toolbar\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\project-id\feature\toolbar\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\project-id\feature\web\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\project-id\feature\web\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\project-id\feature\web\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\project-id\feature\web\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\project-id\feature\web\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\project-id\shared\models\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\project-id\shared\models\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\project-id\shared\models\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\project-id\shared\models\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\project-id\shared\models\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\projects\data-access\api\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\projects\data-access\api\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\projects\data-access\api\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\projects\data-access\api\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\projects\data-access\api\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\projects\data-access\effects\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\projects\data-access\effects\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\projects\data-access\effects\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\projects\data-access\effects\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\projects\data-access\effects\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\projects\data-access\facades\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\projects\data-access\facades\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\projects\data-access\facades\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\projects\data-access\facades\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\projects\data-access\facades\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\projects\data-access\store\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\projects\data-access\store\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\projects\data-access\store\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\projects\data-access\store\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\projects\data-access\store\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\projects\feature\projects-list\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\projects\feature\projects-list\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\projects\feature\projects-list\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\projects\feature\projects-list\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\projects\feature\projects-list\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\animations\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\animations\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\animations\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\animations\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\animations\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\config\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\config\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\config\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\config\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\config\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\data-access\connections\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\data-access\connections\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\data-access\connections\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\data-access\connections\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\data-access\connections\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\data-access\models\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\data-access\models\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\data-access\models\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\data-access\models\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\data-access\models\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\data-access\notifications\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\data-access\notifications\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\data-access\notifications\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\data-access\notifications\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\data-access\notifications\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\data-access\router\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\data-access\router\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\data-access\router\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\data-access\router\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\data-access\router\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\data-access\signalr\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\data-access\signalr\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\data-access\signalr\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\data-access\signalr\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\data-access\signalr\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\data-access\store\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\data-access\store\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\data-access\store\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\data-access\store\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\data-access\store\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\data-access\types\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\data-access\types\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\data-access\types\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\data-access\types\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\data-access\types\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\directives\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\directives\on-destroy\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\directives\on-destroy\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\directives\on-destroy\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\directives\on-destroy\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\directives\on-destroy\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\directives\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\directives\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\directives\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\directives\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\environment\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\environment\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\environment\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\environment\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\environment\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\interceptors\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\interceptors\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\interceptors\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\interceptors\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\interceptors\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\pipes\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\pipes\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\pipes\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\pipes\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\pipes\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\ui\app-bar\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\ui\app-bar\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\ui\app-bar\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\ui\app-bar\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\ui\app-bar\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\ui\logo\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\ui\logo\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\ui\logo\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\ui\logo\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\ui\logo\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\ui\show-hide\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\ui\show-hide\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\ui\show-hide\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\ui\show-hide\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\ui\show-hide\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\ui\spinner\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\ui\spinner\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\ui\spinner\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\ui\spinner\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\ui\spinner\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\utils\.eslintrc.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\utils\project.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\utils\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\utils\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\libs\shared\utils\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\nx.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\output.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\package-lock.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\package.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\rome.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\tools\tsconfig.tools.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\tsconfig.base.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\BuildingBlocks\Infrastructure\Infrastructure.csproj" />
+    </ItemGroup>
+
+    <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
+        <!-- Ensure Node.js is installed -->
+        <Exec Command="node --version" ContinueOnError="true">
+            <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
+        </Exec>
+        <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js is required to build and run this project. To continue, please install Node.js from https://nodejs.org/, and then restart your command prompt or IDE." />
+        <Message Importance="high" Text="Restoring dependencies using 'npm'. This may take several minutes..." />
+        <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
+    </Target>
+
+    <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
+        <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
+        <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
+        <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build -- --configuration production" />
+
+        <!-- Include the newly-built files in the publish output -->
+        <ItemGroup>
+            <DistFiles Include="$(SpaRoot)dist\**; $(SpaRoot)dist-server\**" />
+            <ResolvedFileToPublish Include="@(DistFiles->'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
+                <RelativePath>wwwroot\%(RecursiveDir)%(FileName)%(Extension)</RelativePath>
+                <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+                <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+            </ResolvedFileToPublish>
+        </ItemGroup>
+    </Target>
+</Project>

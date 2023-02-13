@@ -1,0 +1,58 @@
+<ng-container *ngIf="user$ | async as user">
+  <ng-container *ngIf="messages$ | async as messages">
+    <div class="flex flex-col items-center content-center">
+      <h1 mat-dialog-title>{{ recipient }}</h1>
+
+      <cdk-virtual-scroll-viewport
+        appScrollViewportDirective
+        #viewport
+        (scrolledIndexChange)="scrollIndexChanged($event)"
+        [scrollIndex]="scrollIndex"
+        [viewport]="viewport"
+        [messages]="messages"
+        style="height: 600px; width: 600px; overflow: scroll"
+        itemSize="25"
+        class="flex flex-col items-center content-center top-0"
+      >
+        <!--        column-reverse;-->
+        <!--   (scroll)='scrolled($event)'-->
+        <!--          [ngStyle]='{"background-color": notification.status === 0 ? "#60a1fa" : ""}'-->
+        <div
+          appConversationMessageDirective
+          [userName]="user.displayName"
+          [message]="message"
+          class="flex"
+          *cdkVirtualFor="let message of messages | sortConversationMessages"
+        >
+          <div
+            class="flex flex-col mx-3 p-2 rounded-md min-w-[250px] max-w-[250px] hover:bg-gray-200"
+          >
+            <span matListItemTitle>{{ message.senderDisplayName }}</span>
+            <span matListItemLine>{{ message.messageSentTime | date: "short" }}</span>
+            <p style="white-space: pre-line" matListItemLine>{{ message.content }}</p>
+          </div>
+
+          <!--          class='flex min-w-max bg-gray-100 hover:bg-gray-300'-->
+          <!--          [color]='notification.status === 0 ? "primary" : "accent"'-->
+        </div>
+      </cdk-virtual-scroll-viewport>
+
+      <div class="flex flex-row">
+        <form>
+          <mat-form-field>
+            <mat-label>Message</mat-label>
+            <!--            <input [formControl]='messageControl' matInput>-->
+            <textarea
+              matInput
+              [formControl]="messageControl"
+              style="resize: none; white-space: pre-line"
+            ></textarea>
+          </mat-form-field>
+        </form>
+        <!--        {{messageControl.value}}-->
+        <button style="overflow: hidden" (click)="sendMessage()" mat-button>Send</button>
+      </div>
+    </div>
+    <!--    <button mat-button mat-dialog-close='true'>Exit</button>-->
+  </ng-container>
+</ng-container>

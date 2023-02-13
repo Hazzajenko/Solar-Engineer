@@ -1,5 +1,5 @@
-﻿using Auth.API.Commands;
-using Auth.API.Contracts.Responses;
+﻿using Auth.API.Contracts.Responses;
+using Auth.API.Handlers;
 using Auth.API.Mapping;
 using Mediator;
 

@@ -7,15 +7,22 @@
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:browser",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
         "outputPath": "dist/apps/design",
         "index": "apps/design/src/index.html",
         "main": "apps/design/src/main.ts",
-        "polyfills": ["zone.js"],
+        "polyfills": [
+          "zone.js"
+        ],
         "tsConfig": "apps/design/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
-        "assets": ["apps/design/src/favicon.ico", "apps/design/src/assets"],
+        "assets": [
+          "apps/design/src/favicon.ico",
+          "apps/design/src/assets"
+        ],
         "styles": [
           "@angular/material/prebuilt-themes/deeppurple-amber.css",
           "apps/design/src/styles.scss"
@@ -53,7 +60,10 @@
       "executor": "@angular-devkit/build-angular:dev-server",
       "options": {
         "browserTarget": "design:build",
-        "proxyConfig": "apps/design/proxy.conf.json"
+        "proxyConfig": "apps/design/proxy.conf.json",
+        "ssl": true,
+        "sslKey": "ssl/localhost.key",
+        "sslCert": "ssl/localhost.crt"
       },
       "configurations": {
         "production": {
@@ -83,14 +93,21 @@
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",
-      "outputs": ["{options.outputFile}"],
+      "outputs": [
+        "{options.outputFile}"
+      ],
       "options": {
-        "lintFilePatterns": ["apps/design/**/*.ts", "apps/design/**/*.html"]
+        "lintFilePatterns": [
+          "apps/design/**/*.ts",
+          "apps/design/**/*.html"
+        ]
       }
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "outputs": [
+        "{workspaceRoot}/coverage/{projectRoot}"
+      ],
       "options": {
         "jestConfig": "apps/design/jest.config.ts",
         "passWithNoTests": true

@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Text.Json;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -17,11 +18,21 @@ public static class AuthConfig
     {
         services
             .AddAuthentication("cookie")
-            .AddCookie("cookie", options => { options.LoginPath = "/google2"; })
+            .AddCookie("cookie", options =>
+            {
+                // options.
+                options.LoginPath = "/auth/login";
+                // options.Cookie. = true,
+                options.Cookie.HttpOnly = true;
+                // options.Cookie.SameSite = SameSiteMode.None;
+                // options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+            })
             // .AddCookie("cookie", options => { options.Events.OnValidatePrincipal = PrincipalValidator.ValidateAsync; })
             .AddGoogle("google", options =>
             {
                 options.SignInScheme = "cookie";
+                // options.Re
+                // options.CallbackPath = "/auth/login/google";
 
                 options.ClientId = config["Google:ClientId"] ??
                                    throw new ArgumentNullException(nameof(options.ClientId));
@@ -34,16 +45,16 @@ public static class AuthConfig
 
                 options.SaveTokens = true;
 
-                options.Events.OnCreatingTicket = async ctx =>
+                /*options.Events.OnCreatingTicket = async ctx =>
                 {
                     using var request = new HttpRequestMessage(HttpMethod.Get, ctx.Options.UserInformationEndpoint);
                     request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", ctx.AccessToken);
                     using var result = await ctx.Backchannel.SendAsync(request);
                     var user = await result.Content.ReadFromJsonAsync<JsonElement>();
                     ctx.RunClaimActions(user);
-                };
+                };*/
 
-                /*options.Events.OnCreatingTicket = ctx =>
+                options.Events.OnCreatingTicket = ctx =>
                 {
                     var tokens = ctx.Properties.GetTokens().ToList();
 
@@ -55,7 +66,7 @@ public static class AuthConfig
                     ctx.Properties.StoreTokens(tokens);
 
                     return Task.CompletedTask;
-                };*/
+                };
             })
             .AddOAuth("github", options =>
             {

@@ -14,10 +14,15 @@
     "changeOrigin": true,
     "logLevel": "debug",
     "withCredentials": true,
-    "cookieDomainRewrite": "localhost",
-    "pathRewrite": {
-      "^/auth": ""
-    }
+    "cookieDomainRewrite": "localhost"
+  },
+  "/auth-https": {
+    "target": "https://localhost:6005",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "withCredentials": true,
+    "cookieDomainRewrite": "localhost"
   },
   "/ws": {
     "target": "http://localhost:5000",

@@ -84,6 +84,7 @@ app.UseAuthentication();
 app.UseFastEndpoints(options =>
 {
     // options.Errors.ResponseBuilder = (errors, _) => errors.ToResponse();
+    options.Endpoints.RoutePrefix = "users";
     options.Errors.StatusCode = StatusCodes.Status422UnprocessableEntity;
     options.Serializer.Options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
     options.Serializer.Options.ReferenceHandler = ReferenceHandler.IgnoreCycles;

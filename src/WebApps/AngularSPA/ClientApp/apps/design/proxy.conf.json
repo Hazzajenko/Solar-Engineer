@@ -1,0 +1,48 @@
+{
+  "/api": {
+    "target": "http://localhost:5000",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/api": ""
+    }
+  },
+  "/auth": {
+    "target": "http://localhost:5005",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "withCredentials": true,
+    "cookieDomainRewrite": "localhost"
+  },
+  "/users": {
+    "target": "http://localhost:5004",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "withCredentials": true,
+    "cookieDomainRewrite": "localhost"
+  },
+  "/auth-old": {
+    "target": "http://localhost:5005",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "withCredentials": true,
+    "cookieDomainRewrite": "localhost",
+    "pathRewrite": {
+      "^/auth": ""
+    }
+  },
+  "/ws": {
+    "target": "http://localhost:5000",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "ws": true,
+    "pathRewrite": {
+      "^/ws": ""
+    }
+  }
+}

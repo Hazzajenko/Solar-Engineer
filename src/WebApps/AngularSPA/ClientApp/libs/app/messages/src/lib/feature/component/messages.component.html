@@ -1,0 +1,74 @@
+<ng-container *ngIf="user$ | async as user">
+  <ng-container *ngIf="messages$ | async as messages">
+    <div class="flex flex-col items-center content-center">
+      <h1 mat-dialog-title>Messages</h1>
+
+      <button
+        class="flex flex-col items-center content-center"
+        mat-button
+        (click)="markAllMessagesAsRead(messages)"
+      >
+        Mark All As Read
+      </button>
+      <ng-container
+        *ngrxLet="
+          selectedMessage?.senderDisplayName === user.displayName
+            ? selectedMessage?.recipientDisplayName
+            : selectedMessage?.senderDisplayName as recipient
+        "
+      >
+        <mat-checkbox [(ngModel)]="unreadFilter">Filter by Unread</mat-checkbox>
+        <mat-selection-list
+          (selectionChange)="change($event)"
+          [multiple]="false"
+          class="flex flex-col items-center content-center"
+        >
+          <cdk-virtual-scroll-viewport
+            style="height: 400px; width: 400px"
+            itemSize="25"
+            class="flex flex-col items-center content-center"
+          >
+            <!--          [ngStyle]='{"background-color": notification.status === 0 ? "#60a1fa" : ""}'-->
+            <mat-list-option
+              appMessageDirective
+              [message]="message"
+              [selectedMessage]="selectedMessage"
+              [filter]="unreadFilter"
+              (dblclick)="openConversation(message, recipient)"
+              *cdkVirtualFor="let message of messages | sortMessages: unreadFilter"
+              [value]="message"
+            >
+              <span matListItemTitle>{{
+                message.senderDisplayName === user.displayName
+                  ? message.recipientDisplayName
+                  : message.senderDisplayName
+              }}</span>
+              <span matListItemLine>{{ message.messageSentTime | date: "short" }}</span>
+              <p matListItemLine>
+                {{
+                  message.senderDisplayName === user.displayName
+                    ? "You:"
+                    : message.senderDisplayName + ":"
+                }}
+                {{ message.content }}
+              </p>
+
+              <!--          [color]='notification.status === 0 ? "primary" : "accent"'-->
+            </mat-list-option>
+          </cdk-virtual-scroll-viewport>
+        </mat-selection-list>
+
+        <ng-container *ngIf="selectedMessage">
+          <button
+            style="overflow: hidden"
+            mat-button
+            (click)="openConversation(selectedMessage, recipient)"
+          >
+            Open {{ recipient }} Conversation
+          </button>
+        </ng-container>
+      </ng-container>
+    </div>
+    <!--    <button mat-button mat-dialog-close='true'>Exit</button>-->
+  </ng-container>
+</ng-container>

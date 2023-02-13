@@ -18,9 +18,37 @@
       ]
     },
     {
-      "DownstreamPathTemplate": "/grpc/{id}",
+      "DownstreamPathTemplate": "/auth/login/google",
+      "DownstreamScheme": "https",
+      "UpstreamPathTemplate": "/auth/login/google",
+      "UpstreamHttpMethod": [
+        "Get"
+      ],
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5005
+        }
+      ]
+    },
+    {
+      "DownstreamPathTemplate": "/users/grpc/{id}",
       "DownstreamScheme": "http",
-      "UpstreamPathTemplate": "/grpc/{id}",
+      "UpstreamPathTemplate": "/users/grpc/{id}",
+      "UpstreamHttpMethod": [
+        "Get"
+      ],
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5004
+        }
+      ]
+    },
+    {
+      "DownstreamPathTemplate": "/users/current",
+      "DownstreamScheme": "http",
+      "UpstreamPathTemplate": "/users/current",
       "UpstreamHttpMethod": [
         "Get"
       ],

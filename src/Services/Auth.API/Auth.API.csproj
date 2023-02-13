@@ -10,42 +10,48 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Grpc.AspNetCore" Version="2.51.0"/>
-        <PackageReference Include="DotNetCore.AspNetCore" Version="17.20.0"/>
-        <PackageReference Include="DotNetCore.EntityFrameworkCore" Version="17.20.0"/>
-        <PackageReference Include="DotNetCore.IoC" Version="17.20.0"/>
-        <PackageReference Include="DotNetCore.Objects" Version="17.20.0"/>
-        <PackageReference Include="DotNetCore.Services" Version="17.20.0"/>
-        <PackageReference Include="FastEndpoints" Version="5.7.1"/>
+        <PackageReference Include="Grpc.AspNetCore" Version="2.51.0" />
+        <PackageReference Include="DotNetCore.AspNetCore" Version="17.20.0" />
+        <PackageReference Include="DotNetCore.EntityFrameworkCore" Version="17.20.0" />
+        <PackageReference Include="DotNetCore.IoC" Version="17.20.0" />
+        <PackageReference Include="DotNetCore.Objects" Version="17.20.0" />
+        <PackageReference Include="DotNetCore.Services" Version="17.20.0" />
+        <PackageReference Include="FastEndpoints" Version="5.7.1" />
         <PackageReference Include="FastEndpoints.Generator" Version="5.7.1">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="FastEndpoints.Security" Version="5.7.1"/>
-        <PackageReference Include="FastEndpoints.Swagger" Version="5.7.1"/>
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="7.0.2"/>
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.2"/>
-        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.2"/>
-        <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="7.0.2"/>
+        <PackageReference Include="FastEndpoints.Security" Version="5.7.1" />
+        <PackageReference Include="FastEndpoints.Swagger" Version="5.7.1" />
+        <PackageReference Include="Mediator.Abstractions" Version="2.0.30" />
+        <PackageReference Include="Mediator.SourceGenerator" Version="2.0.30">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="7.0.2" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.2" />
+        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.2" />
+        <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="7.0.2" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.2">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.1"/>
-        <PackageReference Include="Serilog" Version="2.12.0"/>
-        <PackageReference Include="Serilog.AspNetCore" Version="6.1.0"/>
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.1" />
+        <PackageReference Include="Serilog" Version="2.12.0" />
+        <PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
     </ItemGroup>
 
     <ItemGroup>
-        <Protobuf Include="Proto\auth.proto" GrpcServices="Server"/>
+        <Protobuf Include="Proto\auth.proto" GrpcServices="Server" />
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Data\Migrations"/>
+        <Folder Include="Commands" />
+        <Folder Include="Data\Migrations" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\BuildingBlocks\Infrastructure\Infrastructure.csproj"/>
+        <ProjectReference Include="..\..\BuildingBlocks\Infrastructure\Infrastructure.csproj" />
     </ItemGroup>
 
 </Project>

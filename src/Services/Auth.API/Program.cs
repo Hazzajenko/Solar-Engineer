@@ -40,6 +40,19 @@ builder.Host.UseSerilog(
 builder.Services.AddApplicationServices();
 builder.Services.AddIdentityServices(config);
 builder.Services.AddAuth(config);
+/*builder.Services.AddMediator(options =>
+{
+    options.ServiceLifetime = ServiceLifetime.Transient;
+});*/
+/*builder.Services.AddMediator(options =>
+{
+    options.ServiceLifetime = ServiceLifetime.Transient;
+});*/
+/*builder.Services.AddMediator(options =>
+{
+    // options.Namespace = "Auth.API.Handlers";
+    options.ServiceLifetime = ServiceLifetime.Transient;
+});*/
 // builder.Services.AddAuthorization();
 builder.Services.InitDbContext<AuthContext>(config, builder.Environment);
 
@@ -137,22 +150,29 @@ app.UseSerilogRequestLogging();
 
 
 app.UseCors(corsPolicy);
-// app.UseHttpsRedirection();
+app.UseHttpsRedirection();
+/*app.UseWhen(context => context.Request.Path.StartsWithSegments("/auth/login"),
+    applicationBuilder => applicationBuilder.UseHttpsRedirection());*/
+
 
 
 app.UseAuthentication();
 // app.UseAuthorization();
 
-app.MapGet("github", () => Results.Challenge(
+var loginEndpoints = app.MapGroup("auth/login");
+
+loginEndpoints.MapGet("/github", () => Results.Challenge(
     new AuthenticationProperties
     {
         RedirectUri = "http://localhost:4200/"
     }, new List<string> { "github" }));
 
-app.MapGet("google2", () => Results.Challenge(
+loginEndpoints.MapGet("/google", () => Results.Challenge(
     new AuthenticationProperties
     {
-        RedirectUri = "http://localhost:4200/"
+        RedirectUri = "https://localhost:4200/"
+        // RedirectUri = "https://localhost:7222/auth/login/google"
+        // RedirectUri = "https://localhost:7222/"
     }, new List<string> { "google" }));
 
 app.MapGrpcService<AppUsersGrpcService>();
@@ -166,6 +186,7 @@ app.MapGrpcService<AppUsersGrpcService>();
 app.UseFastEndpoints(options =>
 {
     // options.Errors.ResponseBuilder = (errors, _) => errors.ToResponse();
+    options.Endpoints.RoutePrefix = "auth";
     options.Errors.StatusCode = StatusCodes.Status422UnprocessableEntity;
     options.Serializer.Options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
     options.Serializer.Options.ReferenceHandler = ReferenceHandler.IgnoreCycles;

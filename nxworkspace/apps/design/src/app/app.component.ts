@@ -81,37 +81,60 @@ export class AppComponent implements OnInit {
   returningUser = true
 
   ngOnInit(): void {
+    this.http
+      .get('/auth/login/google', { withCredentials: true })
+      // .pipe(catchError(() => EMPTY))
+      .subscribe((res) => {
+        // console.log(res)
+        console.log('google', res)
+        // /*      window.location.href = `${res}`*/
+      })
+    this.http
+      .get('/auth-https/login/google', { withCredentials: true })
+      // .pipe(catchError(() => EMPTY))
+      .subscribe((res) => {
+        // console.log(res)
+        console.log('google-https', res)
+        // /*      window.location.href = `${res}`*/
+      })
+    this.http
+      .get('/auth/authorize', { withCredentials: true })
+      // .pipe(catchError(() => EMPTY))
+      .subscribe((res) => {
+        // console.log(res)
+        console.log('authorize', res)
+        // /*      window.location.href = `${res}`*/
+      })
     // successful-login
     /*    this.http.get('/auth/successful-login', { withCredentials: true }).subscribe((res) => {
           console.log(res)
           console.log('LINK', res)
           // /!*      window.location.href = `${res}`*!/
         })*/
-    this.http
-      .get('/auth/data', { withCredentials: true })
-      .pipe(catchError(() => EMPTY))
-      .subscribe((res) => {
-        console.log(res)
-        console.log('LINK', res)
-        // /!*      window.location.href = `${res}`*!/
-      })
-
-    this.http
-      .get('/auth/google2', { withCredentials: true })
-      .pipe(catchError(() => EMPTY))
-      .subscribe((res) => {
-        console.log(res)
-        console.log('LINK', res)
-        // /!*      window.location.href = `${res}`*!/
-      })
-    this.http
-      .get('/auth/authorize', { withCredentials: true })
-      .pipe(catchError(() => EMPTY))
-      .subscribe((res) => {
-        console.log(res)
-        console.log('authorize', res)
-        // /!*      window.location.href = `${res}`*!/
-      })
+    /*    this.http
+          .get('/auth/data', { withCredentials: true })
+          .pipe(catchError(() => EMPTY))
+          .subscribe((res) => {
+            console.log(res)
+            console.log('LINK', res)
+            // /!*      window.location.href = `${res}`*!/
+          })*/
+    /* this.http
+       .get('/auth/login/google', { withCredentials: true })
+       .pipe(catchError(() => EMPTY))
+       .subscribe((res) => {
+         console.log(res)
+         console.log('LINK', res)
+         // /!*      window.location.href = `${res}`*!/
+       })*/
+    /*    this.http
+          .get('/auth/authorize', { withCredentials: true })
+          .pipe(catchError(() => EMPTY))
+          .subscribe((res) => {
+            console.log(res)
+            console.log('authorize', res)
+            // /!*      window.location.href = `${res}`*!/
+          })*/
     /*    this.http.get('http://localhost:5005/google2', { withCredentials: true }).subscribe((res) => {
           console.log(res)
           console.log('LINK', res)
@@ -132,7 +155,6 @@ export class AppComponent implements OnInit {
           console.log('LINK', res)
           /!*      window.location.href = `${res}`*!/
         })*/
-
     /*    this.http.get('/auth/test').subscribe((res) => {
           console.log(res)
           console.log('LINK', res)

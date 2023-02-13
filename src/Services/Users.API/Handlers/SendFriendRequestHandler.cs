@@ -6,10 +6,10 @@ using Users.API.Entities;
 
 namespace Users.API.Handlers;
 
-public class SendFriendRequestHandler
+/*public class SendFriendRequestHandler
     : IRequestHandler<SendFriendRequestCommand, UserLink>
 {
-    private readonly ILogger<SendFriendRequestHandler> _logger;
+    /*private readonly ILogger<SendFriendRequestHandler> _logger;
     private readonly UserManager<AppUser> _userManager;
 
     public SendFriendRequestHandler(UserManager<AppUser> userManager,
@@ -25,5 +25,5 @@ public class SendFriendRequestHandler
     )
     {
         return new UserLink();
-    }
-}
+    }#1#
+}*/
