@@ -1,0 +1,63 @@
+<ng-container *ngrxLet="user$ | async as user">
+  <mat-toolbar class="absolute">
+    <button
+      (click)="toggleMenu()"
+      mat-icon-button
+      class="example-icon"
+      aria-label="Example icon-button with menu icon"
+    >
+      <mat-icon>menu</mat-icon>
+    </button>
+    <img
+      *ngIf="user"
+      class="w-8 h-8 rounded-full mx-2"
+      matListItemIcon
+      [src]="user.photoUrl"
+      alt=""
+    />
+    <!--    <img *ngIf="user" mat-card-avatar [src]="user.photoUrl" alt="" />-->
+    <span class="mx-2" *ngIf="user">{{ user.displayName }}</span>
+    <button *ngIf="user" (click)="routeHome()" mat-icon-button>
+      <mat-icon> home</mat-icon>
+      <!--      Profile-->
+    </button>
+    <button
+      *ngIf="user"
+      (click)="openProfile()"
+      mat-icon-button
+      class="example-icon"
+      aria-label="Example icon-button with menu icon"
+    >
+      <mat-icon> account_circle</mat-icon>
+      <!--      Profile-->
+    </button>
+    <button
+      *ngIf="user"
+      (click)="openChatrooms()"
+      mat-icon-button
+      class="example-icon"
+      aria-label="Example icon-button with menu icon"
+    >
+      <mat-icon> chat</mat-icon>
+      <!--      Profile-->
+    </button>
+    <a
+      ><img
+        src="https://wakatime.com/badge/user/296a375f-5127-4c09-a524-368ebbdaaeab/project/242aff23-0829-4c0b-b5fd-604eccf8fe8d.svg"
+        alt="wakatime"
+    /></a>
+
+    <!--  <span> SolarEngineer v0.0.1 By Harry Jenkins</span>
+      <span class='example-spacer'></span>
+      <button mat-icon-button class='example-icon favorite-icon' aria-label='Example icon-button with heart icon'>
+        <mat-icon>favorite</mat-icon>
+      </button>
+      <button mat-icon-button class='example-icon' aria-label='Example icon-button with share icon'>
+        <mat-icon>share</mat-icon>
+      </button>-->
+  </mat-toolbar>
+</ng-container>
+<!--
+<div class='absolute left-1 top-1 z-10'>
+  SolarEngineer v0.0.1 By Harry Jenkins
+</div>-->

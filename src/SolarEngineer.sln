@@ -20,6 +20,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AngularSPA", "WebApps\Angul
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AngularSPA-Test", "WebApps\AngularSPA-Test\AngularSPA-Test.csproj", "{70D98EEB-2A89-4EFD-A98C-4D55351F01FF}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebUI", "WebUI", "{0BEDA918-9F7E-4722-A741-53B0EAC0DE9F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

@@ -1,0 +1,131 @@
+<!--<div
+  class="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#121828] to-[#002171]"
+>-->
+<ng-container *ngrxLet="user$ | async as user">
+  <div class="flex min-h-screen flex-col items-center justify-center bg-gray-100">
+    <div
+      @fadeIn
+      class="relative container flex flex-col items-center justify-center gap-12 px-4 py-10"
+    >
+      <!--   <h1 class="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
+        <span class="text-white">Solar</span>
+        <span class="text-transparent bg-clip-text text-[#6666ff]">Engineer</span>
+        <span class="text-3xl text-gray-300"></span><span class="text-4xl text-white">Dev</span>
+      </h1> -->
+      <!-- <app-logo-name-background></app-logo-name-background> -->
+      <app-logo-name-background-v2></app-logo-name-background-v2>
+    </div>
+    <div @fadeIn class="relative container flex flex-col items-center justify-center top-6">
+      <div *ngIf="usersOnline$ | async as usersOnline" class="flex flex-row space-x-3">
+        <p class="font-medium tracking-tight font-mono text-xl text-black-200 mb-5">
+          {{ usersOnline.length }} users online
+        </p>
+        <button [disabled]="!user" (click)="viewOnlineUsers()" mat-raised-button color="primary">
+          View
+        </button>
+      </div>
+      <ng-container *ngIf="user; else notLoggedIn">
+        <p class="font-medium tracking-tight font-mono text-xl text-black-200 mb-5">
+          Welcome {{ user.displayName }}
+        </p>
+
+        <!--      <button
+                (click)='routeToProjects()'
+                class='relative inline-flex items-center justify-center p-0.5 mb-2 mr-2 overflow-hidden text-sm font-medium text-gray-800 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800'
+              >
+              <span
+                class='relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-800 rounded-md group-hover:bg-opacity-0'
+              >
+                Projects
+              </span>
+              </button>-->
+        <div class="flex flex-col m-3 my-10 space-y-3">
+          <button (click)="routeToWebProject()" mat-raised-button color="primary">
+            Start Project
+          </button>
+          <button (click)="routeToProjects()" mat-raised-button color="primary">
+            View Projects
+          </button>
+          <ng-container *ngIf="showProjects">
+            <app-project-list @fadeInV2></app-project-list>
+          </ng-container>
+          <!--          <button (click)='routeToLocalProject()' mat-raised-button color='primary'>Start Local Project
+                    </button>-->
+        </div>
+        <!--      <button
+                (click)='routeToLocalProject()'
+                class='relative inline-flex items-center justify-center p-0.5 mb-2 mr-2 overflow-hidden text-sm font-medium text-gray-800 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800'
+              >
+              <span
+                class='relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-800 rounded-md group-hover:bg-opacity-0'
+              >
+                Start Local Project
+              </span>
+              </button>-->
+      </ng-container>
+      <ng-template #notLoggedIn>
+        <div class="flex flex-col m-3 my-10 space-y-3">
+          <button (click)="routeToLocalProject()" mat-raised-button color="primary">
+            Start Guest Project
+          </button>
+          <button (click)="authenticate(true)" mat-raised-button color="primary">
+            Login/Register
+          </button>
+          <button (click)="loginDevBot()" mat-raised-button color="primary">Login Dev Bot 1</button>
+          <button (click)="loginDevBot2()" mat-raised-button color="primary">
+            Login Dev Bot 2
+          </button>
+          <button (click)="loginWithGoogle()" mat-raised-button color="primary">
+            Login With Google
+          </button>
+          <!--          <button (click)='authenticate(false)' mat-raised-button color='primary'>Register</button>-->
+        </div>
+        <!--      <button
+                (click)='routeToLocalProject()'
+                class='relative inline-flex items-center justify-center p-0.5 mb-2 mr-2 overflow-hidden text-sm font-medium text-gray-800 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800'
+              >
+              <span
+                class='relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-800 rounded-md group-hover:bg-opacity-0'
+              >
+                Start Project
+              </span>
+              </button>-->
+      </ng-template>
+      <!--      <button (click)="auth.loginWithRedirect()">Log in</button>-->
+      <!--      <ng-container *ngIf="auth0.isAuthenticated"></ng-container>-->
+      <!--     <h4 *ngIf="auth0.isAuthenticated()">You are logged in!</h4>
+           <h4 *ngIf="!auth0.isAuthenticated()">
+             You are not logged in! Please <a (click)="auth0.login()">Log In</a> to continue.
+           </h4>-->
+      <!--      auth0-->
+      <!--      https://dev-t8co2m74.us.auth0.com/authorize?client_id=uE6uqQDFUsznlWaTqa2MNj1ObKuGlmNq&response_type=token%20id_token&redirect_uri=http%3A%2F%2Flocalhost%3A4200%2Fcallback&scope=openid%20profile%20read%3Acurrent_user&audience=https%3A%2F%2Fsolarengineer.dev&state=o5-DhDZxIn6ZG.amwN6N_JJzGMpzjc0I&nonce=9ziQbldm3adPx00tl3Q.TT8Mk.VwIGeb&auth0Client=eyJuYW1lIjoiYXV0aDAuanMiLCJ2ZXJzaW9uIjoiOS4yMC4xIn0%3D-->
+      <!--
+            <ng-container *ngIf="auth.isAuthenticated$ | async; else loggedOut">
+              <button (click)="authLogout()">Log out</button>
+              &lt;!&ndash;        <button (click)="auth.logout({ logoutParams: { returnTo: document.location.origin } })">
+                        Log out
+                      </button>&ndash;&gt;
+              <ul *ngIf="auth.user$ | async as user">
+                <li>{{ user.name }}</li>
+                <li>{{ user.email }}</li>
+              </ul>
+              `
+            </ng-container>
+
+            <ng-template #loggedOut>
+              <button (click)="auth.loginWithRedirect()">Log in</button>
+            </ng-template>-->
+    </div>
+  </div>
+  <ng-container *ngIf="onlineUsers$ | async as onlineUsers">
+    <div *ngFor="let user of onlineUsers">
+      {{ user.toString() }}
+    </div>
+  </ng-container>
+  <ng-container *ngIf="routerEvents$ | async as routerEvents">
+    <ng-container *ngIf="instanceOfNavigationStart(routerEvents)">
+      <mat-spinner></mat-spinner>
+    </ng-container>
+  </ng-container>
+  <!--</div>-->
+</ng-container>

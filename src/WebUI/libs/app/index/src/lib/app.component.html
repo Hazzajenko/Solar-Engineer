@@ -1,0 +1,14 @@
+<mat-sidenav-container [hasBackdrop]="true">
+  <mat-sidenav #drawer mode="over">
+    <ng-container *ngIf="navMenu$ | async">
+      {{ drawer.toggle() }}
+    </ng-container>
+    <app-sidenav-component (toggle)="drawer.toggle()"></app-sidenav-component>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <app-app-bar (toggle)="drawer.toggle()"></app-app-bar>
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>
+
+<div class="absolute left-1 bottom-1 z-10">SolarEngineer v0.0.1 By Harry Jenkins</div>

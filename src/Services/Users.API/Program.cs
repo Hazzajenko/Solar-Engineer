@@ -45,6 +45,22 @@ builder.Services.AddScoped<IUserLinksRepository, UserLinksRepository>();
 builder.Services.AddScoped<IAuthGrpcGrabber, AuthGrpcGrabber>();
 builder.Services.AddMediator(options => { options.ServiceLifetime = ServiceLifetime.Transient; });
 builder.Services.AddAuth(config);
+// builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(opt =>
+{
+    opt.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
+    opt.AddPolicy("BeAuthenticated", policy => policy.RequireRole("User"));
+    /*opt.AddPolicy(
+        "read:messages",
+        policy => policy.Requirements.Add(new HasScopeRequirement("read:messages", domain!))
+    );
+    opt.AddPolicy(
+        "read:current_user",
+        policy =>
+            policy.Requirements.Add(new HasScopeRequirement("read:current_user", domain!))
+    );*/
+    // read:current_user
+});
 builder.Services.InitDbContext<UsersContext>(config, builder.Environment);
 builder.Services.Configure<UrlsConfig>(config.GetSection("Urls"));
 
@@ -62,6 +78,7 @@ const string corsPolicy = "CorsPolicy";
 builder.Services.InitCors(corsPolicy);
 
 builder.Services.AddFastEndpoints(options => { options.SourceGeneratorDiscoveredTypes = DiscoveredTypes.All; });
+// builder.Services.AddCookieAuth(validFor: TimeSpan.FromMinutes(10));
 
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
@@ -80,6 +97,8 @@ app.UseSerilogRequestLogging();
 // app.ConfigureSerilog();
 app.UseCors(corsPolicy);
 app.UseAuthentication();
+app.UseAuthorization();
+app.UseCookiePolicy();
 
 app.UseFastEndpoints(options =>
 {

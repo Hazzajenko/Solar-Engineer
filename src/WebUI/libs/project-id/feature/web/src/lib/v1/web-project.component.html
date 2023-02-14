@@ -1,0 +1,13 @@
+<!--<ng-container *ngIf='project$ | async as project'>
+  <app-toolbar class='flex border border-white mb-4 h-fit min-w-fit w-full'></app-toolbar>
+
+  <div
+    class='bg-green-300 flex-auto content-center items-center flex justify-between border border-black'
+  >
+
+  </div>
+</ng-container>-->
+<!--[rows]="rows" [cols]="cols"-->
+<ng-container *ngIf='project$ | async as project'>
+  <app-grid-layout [blocks$]='blocks$'></app-grid-layout>
+</ng-container>

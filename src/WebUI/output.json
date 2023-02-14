@@ -1,0 +1,3911 @@
+{
+  "graph": {
+    "nodes": {
+      "shared-data-access-app-component-store": {
+        "name": "shared-data-access-app-component-store",
+        "type": "lib",
+        "data": {
+          "name": "shared-data-access-app-component-store",
+          "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+          "projectType": "library",
+          "sourceRoot": "libs/shared/data-access/app-component-store/src",
+          "prefix": "app",
+          "targets": {
+            "test": {
+              "executor": "@nrwl/jest:jest",
+              "outputs": [
+                "{workspaceRoot}/coverage/{projectRoot}"
+              ],
+              "options": {
+                "jestConfig": "libs/shared/data-access/app-component-store/jest.config.ts",
+                "passWithNoTests": true
+              },
+              "inputs": [
+                "default",
+                "^production",
+                "{workspaceRoot}/karma.conf.js",
+                "{workspaceRoot}/jest.preset.js"
+              ]
+            },
+            "lint": {
+              "executor": "@nrwl/linter:eslint",
+              "outputs": [
+                "{options.outputFile}"
+              ],
+              "options": {
+                "lintFilePatterns": [
+                  "libs/shared/data-access/app-component-store/**/*.ts",
+                  "libs/shared/data-access/app-component-store/**/*.html"
+                ]
+              },
+              "inputs": [
+                "default",
+                "{workspaceRoot}/.eslintrc.json"
+              ]
+            }
+          },
+          "tags": [],
+          "root": "libs/shared/data-access/app-component-store",
+          "files": [
+            {
+              "file": "libs/shared/data-access/app-component-store/.eslintrc.json",
+              "hash": "6a6262bc0547f621b0543ceaaab685b09acf4ce6"
+            },
+            {
+              "file": "libs/shared/data-access/app-component-store/jest.config.ts",
+              "hash": "f3d666ebfbcb5bcdf8ae3f734becdc7ca1370c25"
+            },
+            {
+              "file": "libs/shared/data-access/app-component-store/project.json",
+              "hash": "6ac1e2789620d2735585a7c43f3f82d54f999e34"
+            },
+            {
+              "file": "libs/shared/data-access/app-component-store/README.md",
+              "hash": "941a5a8e95c6da4d09a317cf6a0de30a54f91bc7"
+            },
+            {
+              "file": "libs/shared/data-access/app-component-store/src/index.ts",
+              "hash": "d8a907d6d5f46d83ae30841ece03e3f02ea4fd06"
+            },
+            {
+              "file": "libs/shared/data-access/app-component-store/src/lib/app.component.store.ts",
+              "hash": "69856ac4d172019f845bee5c080611ddce049397",
+              "deps": [
+                "npm:@angular/core",
+                "auth-data-access-api",
+                "auth-data-access-store",
+                "npm:@ngrx/component-store",
+                "npm:@ngrx/store",
+                "shared-data-access-store",
+                "npm:rxjs"
+              ]
+            },
+            {
+              "file": "libs/shared/data-access/app-component-store/src/test-setup.ts",
+              "hash": "90bc5062ea65effafeab7f3b3a5a50da3d0e6651",
+              "deps": [
+                "npm:jest-preset-angular"
+              ]
+            },
+            {
+              "file": "libs/shared/data-access/app-component-store/tsconfig.json",
+              "hash": "74226e184e6ba8a8d25d88a661ab709fcd96c189"
+            },
+            {
+              "file": "libs/shared/data-access/app-component-store/tsconfig.lib.json",
+              "hash": "295db43c313abf54cc1f2a84e4255ee877a8f41a"
+            },
+            {
+              "file": "libs/shared/data-access/app-component-store/tsconfig.spec.json",
+              "hash": "3cdc0af6d3579e6d309451bcf7dca53adeb7f83d"
+            }
+          ]
+        }
+      },
+      "project-id-data-access-services": {
+        "name": "project-id-data-access-services",
+        "type": "lib",
+        "data": {
+          "name": "project-id-data-access-services",
+          "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+          "projectType": "library",
+          "sourceRoot": "libs/project-id/data-access/services/src",
+          "prefix": "app",
+          "targets": {
+            "test": {
+              "executor": "@nrwl/jest:jest",
+              "outputs": [
+                "{workspaceRoot}/coverage/{projectRoot}"
+              ],
+              "options": {
+                "jestConfig": "libs/project-id/data-access/services/jest.config.ts",
+                "passWithNoTests": true
+              },
+              "inputs": [
+                "default",
+                "^production",
+                "{workspaceRoot}/karma.conf.js",
+                "{workspaceRoot}/jest.preset.js"
+              ]
+            },
+            "lint": {
+              "executor": "@nrwl/linter:eslint",
+              "outputs": [
+                "{options.outputFile}"
+              ],
+              "options": {
+                "lintFilePatterns": [
+                  "libs/project-id/data-access/services/**/*.ts",
+                  "libs/project-id/data-access/services/**/*.html"
+                ]
+              },
+              "inputs": [
+                "default",
+                "{workspaceRoot}/.eslintrc.json"
+              ]
+            }
+          },
+          "tags": [],
+          "root": "libs/project-id/data-access/services",
+          "files": [
+            {
+              "file": "libs/project-id/data-access/services/.eslintrc.json",
+              "hash": "6a6262bc0547f621b0543ceaaab685b09acf4ce6"
+            },
+            {
+              "file": "libs/project-id/data-access/services/jest.config.ts",
+              "hash": "441182d3c46e5e5736d07e397eaf0ff48f9c8db0"
+            },
+            {
+              "file": "libs/project-id/data-access/services/project.json",
+              "hash": "e5767e282df52a46501067f4728afb882ab6277f"
+            },
+            {
+              "file": "libs/project-id/data-access/services/README.md",
+              "hash": "12c01b8c0f7e0ff80b8fec1f0a5e034b0979e16f"
+            },
+            {
+              "file": "libs/project-id/data-access/services/src/index.ts",
+              "hash": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+            },
+            {
+              "file": "libs/project-id/data-access/services/src/lib/grid.service.ts",
+              "hash": "34a2db387a10197e539be5121c87877d67578a2c",
+              "deps": [
+                "npm:@angular/cdk",
+                "npm:@angular/core",
+                "npm:@ngrx/entity",
+                "project-id-data-access-store",
+                "shared-data-access-models"
+              ]
+            },
+            {
+              "file": "libs/project-id/data-access/services/src/test-setup.ts",
+              "hash": "90bc5062ea65effafeab7f3b3a5a50da3d0e6651",
+              "deps": [
+                "npm:jest-preset-angular"
+              ]
+            },
+            {
+              "file": "libs/project-id/data-access/services/tsconfig.json",
+              "hash": "74226e184e6ba8a8d25d88a661ab709fcd96c189"
+            },
+            {
+              "file": "libs/project-id/data-access/services/tsconfig.lib.json",
+              "hash": "295db43c313abf54cc1f2a84e4255ee877a8f41a"
+            },
+            {
+              "file": "libs/project-id/data-access/services/tsconfig.spec.json",
+              "hash": "3cdc0af6d3579e6d309451bcf7dca53adeb7f83d"
+            }
+          ]
+        }
+      },
+      "project-id-feature-grid-layout": {
+        "name": "project-id-feature-grid-layout",
+        "type": "lib",
+        "data": {
+          "name": "project-id-feature-grid-layout",
+          "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+          "projectType": "library",
+          "sourceRoot": "libs/project-id/feature/grid-layout/src",
+          "prefix": "app",
+          "targets": {
+            "test": {
+              "executor": "@nrwl/jest:jest",
+              "outputs": [
+                "{workspaceRoot}/coverage/{projectRoot}"
+              ],
+              "options": {
+                "jestConfig": "libs/project-id/feature/grid-layout/jest.config.ts",
+                "passWithNoTests": true
+              },
+              "inputs": [
+                "default",
+                "^production",
+                "{workspaceRoot}/karma.conf.js",
+                "{workspaceRoot}/jest.preset.js"
+              ]
+            },
+            "lint": {
+              "executor": "@nrwl/linter:eslint",
+              "outputs": [
+                "{options.outputFile}"
+              ],
+              "options": {
+                "lintFilePatterns": [
+                  "libs/project-id/feature/grid-layout/**/*.ts",
+                  "libs/project-id/feature/grid-layout/**/*.html"
+                ]
+              },
+              "inputs": [
+                "default",
+                "{workspaceRoot}/.eslintrc.json"
+              ]
+            }
+          },
+          "tags": [],
+          "root": "libs/project-id/feature/grid-layout",
+          "files": [
+            {
+              "file": "libs/project-id/feature/grid-layout/.eslintrc.json",
+              "hash": "6a6262bc0547f621b0543ceaaab685b09acf4ce6"
+            },
+            {
+              "file": "libs/project-id/feature/grid-layout/jest.config.ts",
+              "hash": "a2d852b1d1e641e2241288f8eed1ab2323c12571"
+            },
+            {
+              "file": "libs/project-id/feature/grid-layout/project.json",
+              "hash": "84beb8126cb3bb9d89b925756c41f90af386ce41"
+            },
+            {
+              "file": "libs/project-id/feature/grid-layout/README.md",
+              "hash": "5b1edf9ec107145c3dfcf7a536082ea11759c489"
+            },
+            {
+              "file": "libs/project-id/feature/grid-layout/src/index.ts",
+              "hash": "7bf5bccf8784536ef1d5141deb0653acb1b071ea"
+            },
+            {
+              "file": "libs/project-id/feature/grid-layout/src/lib/data-access/grid.store.ts",
+              "hash": "f6f26084a1f31dbb6adf590264086288b38ac69a",
+              "deps": [
+                "project-id-data-access-services",
+                "project-id-data-access-store",
+                "npm:@ngrx/component-store",
+                "npm:@angular/core",
+                "npm:rxjs",
+                "npm:@angular/cdk"
+              ]
+            },
+            {
+              "file": "libs/project-id/feature/grid-layout/src/lib/grid-layout.component.html",
+              "hash": "c6861b80d0649fa40bc4d4fe6c55395d4d45172d"
+            },
+            {
+              "file": "libs/project-id/feature/grid-layout/src/lib/grid-layout.component.spec.ts",
+              "hash": "31cb64353f2e040f8a154a30ea58dc8cfc80efd2",
+              "deps": [
+                "npm:@angular/core"
+              ]
+            },
+            {
+              "file": "libs/project-id/feature/grid-layout/src/lib/grid-layout.component.ts",
+              "hash": "dac618b88c10a275c9de6d896803e77fe79316b3",
+              "deps": [
+                "project-id-ui-block-switch",
+                "npm:@angular/cdk",
+                "npm:@angular/common",
+                "npm:@angular/core",
+                "npm:@ngrx/component",
+                "project-id-data-access-store",
+                "shared-data-access-models",
+                "npm:rxjs"
+              ]
+            },
+            {
+              "file": "libs/project-id/feature/grid-layout/src/lib/pipes/get-block-async.pipe.ts",
+              "hash": "a81dd9f63c241058989aab33a7a0068fe3af1c53",
+              "deps": [
+                "npm:rxjs",
+                "npm:@angular/core",
+                "shared-data-access-models"
+              ]
+            },
+            {
+              "file": "libs/project-id/feature/grid-layout/src/lib/pipes/get-block.pipe.ts",
+              "hash": "ff6cf83c24be626b18ed2056e3b9e42605b4f2ae",
+              "deps": [
+                "npm:@angular/core",
+                "shared-data-access-models"
+              ]
+            },
+            {
+              "file": "libs/project-id/feature/grid-layout/src/lib/pipes/get-location.pipe.ts",
+              "hash": "8485e3d56bb52efe995abcc0eab0fb7f8cdda1a2",
+              "deps": [
+                "npm:@angular/core"
+              ]
+            },
+            {
+              "file": "libs/project-id/feature/grid-layout/src/test-setup.ts",
+              "hash": "90bc5062ea65effafeab7f3b3a5a50da3d0e6651",
+              "deps": [
+                "npm:jest-preset-angular"
+              ]
+            },
+            {
+              "file": "libs/project-id/feature/grid-layout/tsconfig.json",
+              "hash": "74226e184e6ba8a8d25d88a661ab709fcd96c189"
+            },
+            {
+              "file": "libs/project-id/feature/grid-layout/tsconfig.lib.json",
+              "hash": "295db43c313abf54cc1f2a84e4255ee877a8f41a"
+            },
+            {
+              "file": "libs/project-id/feature/grid-layout/tsconfig.spec.json",
+              "hash": "3cdc0af6d3579e6d309451bcf7dca53adeb7f83d"
+            }
+          ]
+        }
+      },
+      "projects-feature-projects-list": {
+        "name": "projects-feature-projects-list",
+        "type": "lib",
+        "data": {
+          "name": "projects-feature-projects-list",
+          "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+          "projectType": "library",
+          "sourceRoot": "libs/projects/feature/projects-list/src",
+          "prefix": "app",
+          "targets": {
+            "test": {
+              "executor": "@nrwl/jest:jest",
+              "outputs": [
+                "{workspaceRoot}/coverage/{projectRoot}"
+              ],
+              "options": {
+                "jestConfig": "libs/projects/feature/projects-list/jest.config.ts",
+                "passWithNoTests": true
+              },
+              "inputs": [
+                "default",
+                "^production",
+                "{workspaceRoot}/karma.conf.js",
+                "{workspaceRoot}/jest.preset.js"
+              ]
+            },
+            "lint": {
+              "executor": "@nrwl/linter:eslint",
+              "outputs": [
+                "{options.outputFile}"
+              ],
+              "options": {
+                "lintFilePatterns": [
+                  "libs/projects/feature/projects-list/**/*.ts",
+                  "libs/projects/feature/projects-list/**/*.html"
+                ]
+              },
+              "inputs": [
+                "default",
+                "{workspaceRoot}/.eslintrc.json"
+              ]
+            }
+          },
+          "tags": [],
+          "root": "libs/projects/feature/projects-list",
+          "files": [
+            {
+              "file": "libs/projects/feature/projects-list/.eslintrc.json",
+              "hash": "6a6262bc0547f621b0543ceaaab685b09acf4ce6"
+            },
+            {
+              "file": "libs/projects/feature/projects-list/jest.config.ts",
+              "hash": "7ba6265b57a46c9a5d9fd354ee4634c08f745fbb"
+            },
+            {
+              "file": "libs/projects/feature/projects-list/project.json",
+              "hash": "a6d7c049cb7dad9b8ecbb1d044c329c019d17f16"
+            },
+            {
+              "file": "libs/projects/feature/projects-list/README.md",
+              "hash": "74898ae4cb6499b097d6205e6f3523280df50222"
+            },
+            {
+              "file": "libs/projects/feature/projects-list/src/index.ts",
+              "hash": "e7e2ac61b38a3a98e4c472ef7c87671aac50ff82"
+            },
+            {
+              "file": "libs/projects/feature/projects-list/src/lib/projects-list.component.html",
+              "hash": "c78be11e48da0dd87139e2d2fbcf8ce936fcdad9"
+            },
+            {
+              "file": "libs/projects/feature/projects-list/src/lib/projects-list.component.spec.ts",
+              "hash": "66010c289277246981c93e2aaede6db82eee316f",
+              "deps": [
+                "npm:@angular/core"
+              ]
+            },
+            {
+              "file": "libs/projects/feature/projects-list/src/lib/projects-list.component.ts",
+              "hash": "67153437e76d9fc88fde87c36d9ca9811ed1e1e7",
+              "deps": [
+                "npm:@angular/common",
+                "npm:@angular/core",
+                "npm:@angular/router",
+                "projects-data-access-store",
+                "shared-data-access-models",
+                "npm:rxjs"
+              ]
+            },
+            {
+              "file": "libs/projects/feature/projects-list/src/test-setup.ts",
+              "hash": "90bc5062ea65effafeab7f3b3a5a50da3d0e6651",
+              "deps": [
+                "npm:jest-preset-angular"
+              ]
+            },
+            {
+              "file": "libs/projects/feature/projects-list/tsconfig.json",
+              "hash": "74226e184e6ba8a8d25d88a661ab709fcd96c189"
+            },
+            {
+              "file": "libs/projects/feature/projects-list/tsconfig.lib.json",
+              "hash": "295db43c313abf54cc1f2a84e4255ee877a8f41a"
+            },
+            {
+              "file": "libs/projects/feature/projects-list/tsconfig.spec.json",
+              "hash": "3cdc0af6d3579e6d309451bcf7dca53adeb7f83d"
+            }
+          ]
+        }
+      },
+      "project-id-data-access-store": {
+        "name": "project-id-data-access-store",
+        "type": "lib",
+        "data": {
+          "name": "project-id-data-access-store",
+          "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+          "projectType": "library",
+          "sourceRoot": "libs/project-id/data-access/store/src",
+          "prefix": "app",
+          "targets": {
+            "test": {
+              "executor": "@nrwl/jest:jest",
+              "outputs": [
+                "{workspaceRoot}/coverage/{projectRoot}"
+              ],
+              "options": {
+                "jestConfig": "libs/project-id/data-access/store/jest.config.ts",
+                "passWithNoTests": true
+              },
+              "inputs": [
+                "default",
+                "^production",
+                "{workspaceRoot}/karma.conf.js",
+                "{workspaceRoot}/jest.preset.js"
+              ]
+            },
+            "lint": {
+              "executor": "@nrwl/linter:eslint",
+              "outputs": [
+                "{options.outputFile}"
+              ],
+              "options": {
+                "lintFilePatterns": [
+                  "libs/project-id/data-access/store/**/*.ts",
+                  "libs/project-id/data-access/store/**/*.html"
+                ]
+              },
+              "inputs": [
+                "default",
+                "{workspaceRoot}/.eslintrc.json"
+              ]
+            }
+          },
+          "tags": [],
+          "root": "libs/project-id/data-access/store",
+          "files": [
+            {
+              "file": "libs/project-id/data-access/store/.eslintrc.json",
+              "hash": "6a6262bc0547f621b0543ceaaab685b09acf4ce6"
+            },
+            {
+              "file": "libs/project-id/data-access/store/jest.config.ts",
+              "hash": "ac7849e59c78f8b527accf1af927c5cdfb2c618d"
+            },
+            {
+              "file": "libs/project-id/data-access/store/project.json",
+              "hash": "6f0841ea9b9906d0b844db844fc21af7d540aada"
+            },
+            {
+              "file": "libs/project-id/data-access/store/README.md",
+              "hash": "437fe05676c7088c6e53f1eaef17affaf3f22ede"
+            },
+            {
+              "file": "libs/project-id/data-access/store/src/index.ts",
+              "hash": "f850ac2d44873d0ca94fb23ed22956cebd7c86d8"
+            },
+            {
+              "file": "libs/project-id/data-access/store/src/lib/blocks/blocks.actions.ts",
+              "hash": "f00f819498f004f3f6376b18c4ce9e9f57ac2b97",
+              "deps": [
+                "npm:@ngrx/entity",
+                "npm:@ngrx/store",
+                "shared-data-access-models"
+              ]
+            },
+            {
+              "file": "libs/project-id/data-access/store/src/lib/blocks/blocks.effects.ts",
+              "hash": "a22ca627d408c668d61eb0cf1454c0a297dd0e9f",
+              "deps": [
+                "npm:@angular/core",
+                "npm:@ngrx/effects"
+              ]
+            },
+            {
+              "file": "libs/project-id/data-access/store/src/lib/blocks/blocks.facade.ts",
+              "hash": "0f11c53b1e364f247a3d7924f2f1f6ffe1a45833",
+              "deps": [
+                "npm:@angular/core",
+                "npm:@ngrx/store"
+              ]
+            },
+            {
+              "file": "libs/project-id/data-access/store/src/lib/blocks/blocks.reducer.ts",
+              "hash": "5a6aede774035da2418b5d76e57222728449ba87",
+              "deps": [
+                "npm:@ngrx/entity",
+                "npm:@ngrx/store",
+                "shared-data-access-models"
+              ]
+            },
+            {
+              "file": "libs/project-id/data-access/store/src/lib/blocks/blocks.selectors.ts",
+              "hash": "c9567a2248f4b72a15d78eaba89967f1c8db80cc",
+              "deps": [
+                "npm:@ngrx/store",
+                "shared-data-access-models",
+                "shared-data-access-router"
+              ]
+            },
+            {
+              "file": "libs/project-id/data-access/store/src/lib/blocks/index.ts",
+              "hash": "6838f5f441269c8ef24b662cad1c092fd462fda7"
+            },
+            {
+              "file": "libs/project-id/data-access/store/src/lib/entities/entities.actions.ts",
+              "hash": "ec33b7598c2dbdafa17c8a59a1ef8284b7ffaafd",
+              "deps": [
+                "npm:@ngrx/entity",
+                "npm:@ngrx/store",
+                "shared-data-access-models"
+              ]
+            },
+            {
+              "file": "libs/project-id/data-access/store/src/lib/entities/entities.effects.ts",
+              "hash": "7a9a851015b20e7c640bc6f16499c6326dae9148",
+              "deps": [
+                "npm:@angular/core",
+                "npm:@ngrx/effects"
+              ]
+            },
+            {
+              "file": "libs/project-id/data-access/store/src/lib/entities/entities.facade.ts",
+              "hash": "443eb6708c5c4ee994037ac2058d6462568a71c7",
+              "deps": [
+                "npm:@angular/core",
+                "npm:@ngrx/store"
+              ]
+            },
+            {
+              "file": "libs/project-id/data-access/store/src/lib/entities/entities.reducer.ts",
+              "hash": "d22edb3913a4ebbf96f28fc89da1267930f5adae",
+              "deps": [
+                "npm:@ngrx/entity",
+                "npm:@ngrx/store",
+                "shared-data-access-models"
+              ]
+            },
+            {
+              "file": "libs/project-id/data-access/store/src/lib/entities/entities.selectors.ts",
+              "hash": "d1d7cbf48bfa163acdad161fb60e719137fff89a",
+              "deps": [
+                "npm:@ngrx/store",
+                "shared-data-access-router"
+              ]
+            },
+            {
+              "file": "libs/project-id/data-access/store/src/lib/entities/index.ts",
+              "hash": "afbb04d6119a1e01ca3cf1f7a717fe5213bcb7d0"
+            },
+            {
+              "file": "libs/project-id/data-access/store/src/lib/index.ts",
+              "hash": "f0e5d88ed2347c15be56c417e8874c42bb9fb341"
+            },
+            {
+              "file": "libs/project-id/data-access/store/src/lib/links/index.ts",
+              "hash": "649cf1cbb79127eafabd9fd52276b265feb45d18"
+            },
+            {
+              "file": "libs/project-id/data-access/store/src/lib/links/links.actions.ts",
+              "hash": "ad7831e4ffca8e28340ddc45d9def5b2b10914d4",
+              "deps": [
+                "npm:@ngrx/entity",
+                "npm:@ngrx/store",
+                "shared-data-access-models"
+              ]
+            },
+            {
+              "file": "libs/project-id/data-access/store/src/lib/links/links.effects.ts",
+              "hash": "fd80ab8f69f1e7667078c3999df62b5ab7a92cc7",
+              "deps": [
+                "projects-data-access-store",
+                "npm:@angular/core",
+                "npm:@ngrx/component-store",
+                "npm:@ngrx/effects",
+                "npm:@ngrx/store",
+                "project-id-data-access-api",
+                "shared-data-access-models",
+                "npm:rxjs"
+              ]
+            },
+            {
+              "file": "libs/project-id/data-access/store/src/lib/links/links.facade.ts",
+              "hash": "59cb22c81706aced4e4ab968f2b6589823808ba0",
+              "deps": [
+                "shared-data-access-models",
+                "npm:@angular/core",
+                "npm:@ngrx/store"
+              ]
+            },
+            {
+              "file": "libs/project-id/data-access/store/src/lib/links/links.reducer.ts",
+              "hash": "531db8427b6dd770f60020eed01ecf70a402e48a",
+              "deps": [
+                "npm:@ngrx/entity",
+                "npm:@ngrx/store",
+                "shared-data-access-models"
+              ]
+            },
+            {
+              "file": "libs/project-id/data-access/store/src/lib/links/links.selectors.ts",
+              "hash": "9e942ae00b261fedbbfc1196228ad9c3299ea4df",
+              "deps": [
+                "shared-data-access-models",
+                "npm:@ngrx/store",
+                "shared-data-access-router"
+              ]
+            },
+            {
+              "file": "libs/project-id/data-access/store/src/lib/panels/index.ts",
+              "hash": "c8b88e540ea797f01f19a6ed8de9ac5bcee49794"
+            },
+            {
+              "file": "libs/project-id/data-access/store/src/lib/panels/panels.actions.ts",
+              "hash": "351b8b7bdcd1637d91cf45b84308ba1664ecff66",
+              "deps": [
+                "npm:@ngrx/entity",
+                "npm:@ngrx/store",
+                "shared-data-access-models"
+              ]
+            },
+            {
+              "file": "libs/project-id/data-access/store/src/lib/panels/panels.effects.ts",
+              "hash": "d4c34602d8be7a3910f0fe7dc6c09e1baea7dfa2",
+              "deps": [
+                "npm:@angular/core",
+                "npm:@ngrx/component-store",
+                "npm:@ngrx/effects",
+                "npm:@ngrx/store",
+                "project-id-data-access-api",
+                "projects-data-access-store",
+                "shared-data-access-models",
+                "npm:rxjs"
+              ]
+            },
+            {
+              "file": "libs/project-id/data-access/store/src/lib/panels/panels.facade.ts",
+              "hash": "b83e1ed5e0d85f382ef6540a1d95a16fac7004b5",
+              "deps": [
+                "npm:@ngrx/entity",
+                "npm:@angular/core",
+                "npm:@ngrx/store",
+                "shared-data-access-models"
+              ]
+            },
+            {
+              "file": "libs/project-id/data-access/store/src/lib/panels/panels.reducer.ts",
+              "hash": "80b199629fad9ae3d76f353fd65cd5ba5de8d256",
+              "deps": [
+                "npm:@ngrx/entity",
+                "npm:@ngrx/store",
+                "shared-data-access-models"
+              ]
+            },
+            {
+              "file": "libs/project-id/data-access/store/src/lib/panels/panels.selectors.ts",
+              "hash": "bd33d520205db5c3b74be61cf0db91951d898c9c",
+              "deps": [
+                "shared-data-access-models",
+                "npm:@ngrx/store",
+                "shared-data-access-router"
+              ]
+            },
+            {
+              "file": "libs/project-id/data-access/store/src/lib/selected/index.ts",
+              "hash": "ea04846decb9562f79962093dc92f11aaa06e3dd"
+            },
+            {
+              "file": "libs/project-id/data-access/store/src/lib/selected/selected.actions.ts",
+              "hash": "f89023e3eecb1ddc2453d305de74dd1fe59d09ea",
+              "deps": [
+                "shared-data-access-models",
+                "npm:@ngrx/store"
+              ]
+            },
+            {
+              "file": "libs/project-id/data-access/store/src/lib/selected/selected.effects.ts",
+              "hash": "29dedd4fb3d9abafee54df8f0449e5e704bc876b",
+              "deps": [
+                "npm:@angular/core",
+                "npm:@ngrx/effects",
+                "npm:@ngrx/store",
+                "project-id-utils",
+                "shared-data-access-models",
+                "npm:rxjs"
+              ]
+            },
+            {
+              "file": "libs/project-id/data-access/store/src/lib/selected/selected.facade.ts",
+              "hash": "62100c5a55e0864d1e695eec28523e338943f3af",
+              "deps": [
+                "npm:@angular/core",
+                "npm:@ngrx/store"
+              ]
+            },
+            {
+              "file": "libs/project-id/data-access/store/src/lib/selected/selected.helpers.ts",
+              "hash": "babf1807e878a100bcfbe1995b55c807094182c3",
+              "deps": [
+                "shared-data-access-models"
+              ]
+            },
+            {
+              "file": "libs/project-id/data-access/store/src/lib/selected/selected.reducer.ts",
+              "hash": "2d2accfde5d9e12fdd4c4cf24c3f30e3ee58ee35",
+              "deps": [
+                "npm:@ngrx/store",
+                "shared-data-access-models"
+              ]
+            },
+            {
+              "file": "libs/project-id/data-access/store/src/lib/selected/selected.selectors.ts",
+              "hash": "d97b0d448a8ed15eac6327355d441ceda942e778",
+              "deps": [
+                "npm:@ngrx/store",
+                "shared-data-access-models"
+              ]
+            },
+            {
+              "file": "libs/project-id/data-access/store/src/lib/strings/index.ts",
+              "hash": "9a58628556a6ad8989e28ab4c6315fb9a6bdc11b"
+            },
+            {
+              "file": "libs/project-id/data-access/store/src/lib/strings/strings.actions.ts",
+              "hash": "157e20897609acb367c1b3c379c6eba888341817",
+              "deps": [
+                "npm:@ngrx/entity",
+                "npm:@ngrx/store",
+                "shared-data-access-models"
+              ]
+            },
+            {
+              "file": "libs/project-id/data-access/store/src/lib/strings/strings.effects.ts",
+              "hash": "425953c80835610133ea21f74b381d49f1f93c50",
+              "deps": [
+                "npm:@angular/core",
+                "npm:@ngrx/component-store",
+                "npm:@ngrx/effects",
+                "npm:@ngrx/store",
+                "project-id-data-access-api",
+                "projects-data-access-store",
+                "shared-data-access-models",
+                "npm:rxjs"
+              ]
+            },
+            {
+              "file": "libs/project-id/data-access/store/src/lib/strings/strings.facade.ts",
+              "hash": "7450a9a945e9e94a3b4920a9be9947f26ad07ea0",
+              "deps": [
+                "npm:@angular/core",
+                "npm:@ngrx/store"
+              ]
+            },
+            {
+              "file": "libs/project-id/data-access/store/src/lib/strings/strings.reducer.ts",
+              "hash": "c50d7f18b597ee16d72dc2a4a48d429247c1f786",
+              "deps": [
+                "npm:@ngrx/entity",
+                "npm:@ngrx/store",
+                "shared-data-access-models"
+              ]
+            },
+            {
+              "file": "libs/project-id/data-access/store/src/lib/strings/strings.selectors.ts",
+              "hash": "37c878c800ef864611529f5dd0f8220ae7ce55c0",
+              "deps": [
+                "shared-data-access-models",
+                "npm:@ngrx/store",
+                "shared-data-access-router"
+              ]
+            },
+            {
+              "file": "libs/project-id/data-access/store/src/test-setup.ts",
+              "hash": "90bc5062ea65effafeab7f3b3a5a50da3d0e6651",
+              "deps": [
+                "npm:jest-preset-angular"
+              ]
+            },
+            {
+              "file": "libs/project-id/data-access/store/tsconfig.json",
+              "hash": "74226e184e6ba8a8d25d88a661ab709fcd96c189"
+            },
+            {
+              "file": "libs/project-id/data-access/store/tsconfig.lib.json",
+              "hash": "295db43c313abf54cc1f2a84e4255ee877a8f41a"
+            },
+            {
+              "file": "libs/project-id/data-access/store/tsconfig.spec.json",
+              "hash": "3cdc0af6d3579e6d309451bcf7dca53adeb7f83d"
+            }
+          ]
+        }
+      },
+      "shared-directives-on-destroy": {
+        "name": "shared-directives-on-destroy",
+        "type": "lib",
+        "data": {
+          "name": "shared-directives-on-destroy",
+          "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+          "projectType": "library",
+          "sourceRoot": "libs/shared/directives/on-destroy/src",
+          "prefix": "app",
+          "targets": {
+            "test": {
+              "executor": "@nrwl/jest:jest",
+              "outputs": [
+                "{workspaceRoot}/coverage/{projectRoot}"
+              ],
+              "options": {
+                "jestConfig": "libs/shared/directives/on-destroy/jest.config.ts",
+                "passWithNoTests": true
+              },
+              "inputs": [
+                "default",
+                "^production",
+                "{workspaceRoot}/karma.conf.js",
+                "{workspaceRoot}/jest.preset.js"
+              ]
+            },
+            "lint": {
+              "executor": "@nrwl/linter:eslint",
+              "outputs": [
+                "{options.outputFile}"
+              ],
+              "options": {
+                "lintFilePatterns": [
+                  "libs/shared/directives/on-destroy/**/*.ts",
+                  "libs/shared/directives/on-destroy/**/*.html"
+                ]
+              },
+              "inputs": [
+                "default",
+                "{workspaceRoot}/.eslintrc.json"
+              ]
+            }
+          },
+          "tags": [],
+          "root": "libs/shared/directives/on-destroy",
+          "files": [
+            {
+              "file": "libs/shared/directives/on-destroy/.eslintrc.json",
+              "hash": "6a6262bc0547f621b0543ceaaab685b09acf4ce6"
+            },
+            {
+              "file": "libs/shared/directives/on-destroy/jest.config.ts",
+              "hash": "78c54d79bb8c9b4ff031a6a33cf5f26356745efc"
+            },
+            {
+              "file": "libs/shared/directives/on-destroy/project.json",
+              "hash": "57c78c658ee4bd18c5bb91a7d3c02b9dd119474a"
+            },
+            {
+              "file": "libs/shared/directives/on-destroy/README.md",
+              "hash": "b64dee88cf8487cd4c86eed5be18dafd2587e7f4"
+            },
+            {
+              "file": "libs/shared/directives/on-destroy/src/index.ts",
+              "hash": "79fb3d5816e60bcabe3b53f9af28aa8f3b0c7fa1"
+            },
+            {
+              "file": "libs/shared/directives/on-destroy/src/lib/on-destroy.directive.ts",
+              "hash": "b1aa4ea2f65ddb678b69e9ebf14c3c55c249ef08",
+              "deps": [
+                "npm:@angular/core",
+                "npm:rxjs"
+              ]
+            },
+            {
+              "file": "libs/shared/directives/on-destroy/src/test-setup.ts",
+              "hash": "90bc5062ea65effafeab7f3b3a5a50da3d0e6651",
+              "deps": [
+                "npm:jest-preset-angular"
+              ]
+            },
+            {
+              "file": "libs/shared/directives/on-destroy/tsconfig.json",
+              "hash": "74226e184e6ba8a8d25d88a661ab709fcd96c189"
+            },
+            {
+              "file": "libs/shared/directives/on-destroy/tsconfig.lib.json",
+              "hash": "295db43c313abf54cc1f2a84e4255ee877a8f41a"
+            },
+            {
+              "file": "libs/shared/directives/on-destroy/tsconfig.spec.json",
+              "hash": "3cdc0af6d3579e6d309451bcf7dca53adeb7f83d"
+            }
+          ]
+        }
+      },
+      "project-id-data-access-api": {
+        "name": "project-id-data-access-api",
+        "type": "lib",
+        "data": {
+          "name": "project-id-data-access-api",
+          "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+          "projectType": "library",
+          "sourceRoot": "libs/project-id/data-access/api/src",
+          "prefix": "app",
+          "targets": {
+            "test": {
+              "executor": "@nrwl/jest:jest",
+              "outputs": [
+                "{workspaceRoot}/coverage/{projectRoot}"
+              ],
+              "options": {
+                "jestConfig": "libs/project-id/data-access/api/jest.config.ts",
+                "passWithNoTests": true
+              },
+              "inputs": [
+                "default",
+                "^production",
+                "{workspaceRoot}/karma.conf.js",
+                "{workspaceRoot}/jest.preset.js"
+              ]
+            },
+            "lint": {
+              "executor": "@nrwl/linter:eslint",
+              "outputs": [
+                "{options.outputFile}"
+              ],
+              "options": {
+                "lintFilePatterns": [
+                  "libs/project-id/data-access/api/**/*.ts",
+                  "libs/project-id/data-access/api/**/*.html"
+                ]
+              },
+              "inputs": [
+                "default",
+                "{workspaceRoot}/.eslintrc.json"
+              ]
+            }
+          },
+          "tags": [],
+          "root": "libs/project-id/data-access/api",
+          "files": [
+            {
+              "file": "libs/project-id/data-access/api/.eslintrc.json",
+              "hash": "6a6262bc0547f621b0543ceaaab685b09acf4ce6"
+            },
+            {
+              "file": "libs/project-id/data-access/api/jest.config.ts",
+              "hash": "44e6d9786924dde3aa7162220d898c43bc36ab91"
+            },
+            {
+              "file": "libs/project-id/data-access/api/project.json",
+              "hash": "2144981b5d1f78a4bf01d9ba93a5bf183622021c"
+            },
+            {
+              "file": "libs/project-id/data-access/api/README.md",
+              "hash": "70c8e25b012d090b067df44b8954675f87589081"
+            },
+            {
+              "file": "libs/project-id/data-access/api/src/index.ts",
+              "hash": "f850ac2d44873d0ca94fb23ed22956cebd7c86d8"
+            },
+            {
+              "file": "libs/project-id/data-access/api/src/lib/index.ts",
+              "hash": "f67b041d4d8833ac963d1983874c254ee1d03dc6"
+            },
+            {
+              "file": "libs/project-id/data-access/api/src/lib/links/get-links.response.ts",
+              "hash": "79837c8776f5e69d2a6fa5e0dc0c378d498ec958",
+              "deps": [
+                "shared-data-access-models"
+              ]
+            },
+            {
+              "file": "libs/project-id/data-access/api/src/lib/links/index.ts",
+              "hash": "292d07d2221f88d7e1530f2d8eb50fb73adb37cc"
+            },
+            {
+              "file": "libs/project-id/data-access/api/src/lib/links/links.service.ts",
+              "hash": "81913dba96e93b2d8c918650a1013cf7111a70da",
+              "deps": [
+                "npm:@angular/common",
+                "npm:@angular/core",
+                "shared-data-access-models",
+                "npm:rxjs"
+              ]
+            },
+            {
+              "file": "libs/project-id/data-access/api/src/lib/panels/get-panels.response.ts",
+              "hash": "97004fea218c72c263a068376f0519f04f592038",
+              "deps": [
+                "shared-data-access-models"
+              ]
+            },
+            {
+              "file": "libs/project-id/data-access/api/src/lib/panels/index.ts",
+              "hash": "5ac0f5df698bb023ece7abb028af154e6db97946"
+            },
+            {
+              "file": "libs/project-id/data-access/api/src/lib/panels/panels.service.ts",
+              "hash": "fa50065ad8e3d044922e9829dad7dda5ba273262",
+              "deps": [
+                "npm:@ngrx/entity",
+                "npm:@angular/common",
+                "npm:@angular/core",
+                "shared-data-access-models",
+                "npm:rxjs"
+              ]
+            },
+            {
+              "file": "libs/project-id/data-access/api/src/lib/strings/get-strings.response.ts",
+              "hash": "c47eb06424389426d6601c56ae401f8f072a1382",
+              "deps": [
+                "shared-data-access-models"
+              ]
+            },
+            {
+              "file": "libs/project-id/data-access/api/src/lib/strings/index.ts",
+              "hash": "ad7516aa64ff84cd55da1e4d0a9560db09d8e1b1"
+            },
+            {
+              "file": "libs/project-id/data-access/api/src/lib/strings/strings.service.ts",
+              "hash": "0672431979e5042e9a29a144e05eeb9aa7df57d6",
+              "deps": [
+                "npm:@angular/common",
+                "npm:@angular/core",
+                "shared-data-access-models",
+                "npm:rxjs"
+              ]
+            },
+            {
+              "file": "libs/project-id/data-access/api/src/test-setup.ts",
+              "hash": "90bc5062ea65effafeab7f3b3a5a50da3d0e6651",
+              "deps": [
+                "npm:jest-preset-angular"
+              ]
+            },
+            {
+              "file": "libs/project-id/data-access/api/tsconfig.json",
+              "hash": "74226e184e6ba8a8d25d88a661ab709fcd96c189"
+            },
+            {
+              "file": "libs/project-id/data-access/api/tsconfig.lib.json",
+              "hash": "295db43c313abf54cc1f2a84e4255ee877a8f41a"
+            },
+            {
+              "file": "libs/project-id/data-access/api/tsconfig.spec.json",
+              "hash": "3cdc0af6d3579e6d309451bcf7dca53adeb7f83d"
+            }
+          ]
+        }
+      },
+      "project-id-ui-block-switch": {
+        "name": "project-id-ui-block-switch",
+        "type": "lib",
+        "data": {
+          "name": "project-id-ui-block-switch",
+          "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+          "projectType": "library",
+          "sourceRoot": "libs/project-id/ui/block-switch/src",
+          "prefix": "app",
+          "targets": {
+            "test": {
+              "executor": "@nrwl/jest:jest",
+              "outputs": [
+                "{workspaceRoot}/coverage/{projectRoot}"
+              ],
+              "options": {
+                "jestConfig": "libs/project-id/ui/block-switch/jest.config.ts",
+                "passWithNoTests": true
+              },
+              "inputs": [
+                "default",
+                "^production",
+                "{workspaceRoot}/karma.conf.js",
+                "{workspaceRoot}/jest.preset.js"
+              ]
+            },
+            "lint": {
+              "executor": "@nrwl/linter:eslint",
+              "outputs": [
+                "{options.outputFile}"
+              ],
+              "options": {
+                "lintFilePatterns": [
+                  "libs/project-id/ui/block-switch/**/*.ts",
+                  "libs/project-id/ui/block-switch/**/*.html"
+                ]
+              },
+              "inputs": [
+                "default",
+                "{workspaceRoot}/.eslintrc.json"
+              ]
+            }
+          },
+          "tags": [],
+          "root": "libs/project-id/ui/block-switch",
+          "files": [
+            {
+              "file": "libs/project-id/ui/block-switch/.eslintrc.json",
+              "hash": "6a6262bc0547f621b0543ceaaab685b09acf4ce6"
+            },
+            {
+              "file": "libs/project-id/ui/block-switch/jest.config.ts",
+              "hash": "912b5d32eee4d2be9af81a57d886aab74d4e58b9"
+            },
+            {
+              "file": "libs/project-id/ui/block-switch/project.json",
+              "hash": "f15d0d76778cc1b1976d44ccd09d0c40543cf02b"
+            },
+            {
+              "file": "libs/project-id/ui/block-switch/README.md",
+              "hash": "1a2c76433b180c338030604e0d4b69aa6ea6d224"
+            },
+            {
+              "file": "libs/project-id/ui/block-switch/src/index.ts",
+              "hash": "c8d17e59e08c226338f01f1f479e67b36131808f"
+            },
+            {
+              "file": "libs/project-id/ui/block-switch/src/lib/block-switch.component.html",
+              "hash": "5802305a6154b88921ad4e13c533a759140b36be"
+            },
+            {
+              "file": "libs/project-id/ui/block-switch/src/lib/block-switch.component.ts",
+              "hash": "2ec32a1f0efd3c609c1bfd86f8fcfda57b43d586",
+              "deps": [
+                "npm:@angular/common",
+                "npm:@angular/core",
+                "project-id-feature-blocks",
+                "shared-data-access-models"
+              ]
+            },
+            {
+              "file": "libs/project-id/ui/block-switch/src/test-setup.ts",
+              "hash": "90bc5062ea65effafeab7f3b3a5a50da3d0e6651",
+              "deps": [
+                "npm:jest-preset-angular"
+              ]
+            },
+            {
+              "file": "libs/project-id/ui/block-switch/tsconfig.json",
+              "hash": "74226e184e6ba8a8d25d88a661ab709fcd96c189"
+            },
+            {
+              "file": "libs/project-id/ui/block-switch/tsconfig.lib.json",
+              "hash": "295db43c313abf54cc1f2a84e4255ee877a8f41a"
+            },
+            {
+              "file": "libs/project-id/ui/block-switch/tsconfig.spec.json",
+              "hash": "3cdc0af6d3579e6d309451bcf7dca53adeb7f83d"
+            }
+          ]
+        }
+      },
+      "projects-data-access-store": {
+        "name": "projects-data-access-store",
+        "type": "lib",
+        "data": {
+          "name": "projects-data-access-store",
+          "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+          "projectType": "library",
+          "sourceRoot": "libs/projects/data-access/store/src",
+          "prefix": "app",
+          "targets": {
+            "test": {
+              "executor": "@nrwl/jest:jest",
+              "outputs": [
+                "{workspaceRoot}/coverage/{projectRoot}"
+              ],
+              "options": {
+                "jestConfig": "libs/projects/data-access/store/jest.config.ts",
+                "passWithNoTests": true
+              },
+              "inputs": [
+                "default",
+                "^production",
+                "{workspaceRoot}/karma.conf.js",
+                "{workspaceRoot}/jest.preset.js"
+              ]
+            },
+            "lint": {
+              "executor": "@nrwl/linter:eslint",
+              "outputs": [
+                "{options.outputFile}"
+              ],
+              "options": {
+                "lintFilePatterns": [
+                  "libs/projects/data-access/store/**/*.ts",
+                  "libs/projects/data-access/store/**/*.html"
+                ]
+              },
+              "inputs": [
+                "default",
+                "{workspaceRoot}/.eslintrc.json"
+              ]
+            }
+          },
+          "tags": [],
+          "root": "libs/projects/data-access/store",
+          "files": [
+            {
+              "file": "libs/projects/data-access/store/.eslintrc.json",
+              "hash": "6a6262bc0547f621b0543ceaaab685b09acf4ce6"
+            },
+            {
+              "file": "libs/projects/data-access/store/jest.config.ts",
+              "hash": "02b4f5d28c246ed4cdc213b8ba0fd86e3ec68e71"
+            },
+            {
+              "file": "libs/projects/data-access/store/project.json",
+              "hash": "4b361f9827fe5095d05fa56d5e600eb93c563c62"
+            },
+            {
+              "file": "libs/projects/data-access/store/README.md",
+              "hash": "e42558afbbb6c0395992a05c472171511929723a"
+            },
+            {
+              "file": "libs/projects/data-access/store/src/index.ts",
+              "hash": "c06ec07d715da366cb469fccca282770eb6435c5"
+            },
+            {
+              "file": "libs/projects/data-access/store/src/lib/projects/index.ts",
+              "hash": "30374c25a5327346fab317bfe1403d0587f18247"
+            },
+            {
+              "file": "libs/projects/data-access/store/src/lib/projects/projects.actions.ts",
+              "hash": "a21cf948b074ba9d2c62ce82fdc0f943a8b8b9fd",
+              "deps": [
+                "npm:@ngrx/store",
+                "shared-data-access-models"
+              ]
+            },
+            {
+              "file": "libs/projects/data-access/store/src/lib/projects/projects.effects.spec.ts",
+              "hash": "0d126f9d871aef17a5d2a52ac83a79d7ca6b45b7",
+              "deps": [
+                "npm:@angular/core",
+                "npm:@ngrx/effects",
+                "npm:@ngrx/store",
+                "npm:jasmine-marbles",
+                "npm:rxjs"
+              ]
+            },
+            {
+              "file": "libs/projects/data-access/store/src/lib/projects/projects.effects.ts",
+              "hash": "3bf88681f344cd4caf6925f2454be25a2232ad61",
+              "deps": [
+                "npm:@angular/core",
+                "npm:@ngrx/component-store",
+                "npm:@ngrx/effects",
+                "npm:@ngrx/store",
+                "projects-data-access-api",
+                "shared-data-access-models",
+                "npm:rxjs"
+              ]
+            },
+            {
+              "file": "libs/projects/data-access/store/src/lib/projects/projects.facade.ts",
+              "hash": "bf3415fe04c2ca24206579989e522d9ecc6932c0",
+              "deps": [
+                "npm:@angular/core",
+                "npm:@ngrx/store"
+              ]
+            },
+            {
+              "file": "libs/projects/data-access/store/src/lib/projects/projects.reducer.spec.ts",
+              "hash": "9911d951ad185cbcae57ff7c89c3100498c7330a",
+              "deps": [
+                "npm:@ngrx/store",
+                "shared-data-access-models"
+              ]
+            },
+            {
+              "file": "libs/projects/data-access/store/src/lib/projects/projects.reducer.ts",
+              "hash": "f0e5b99604b73044ada2f88031c44d4a9953644a",
+              "deps": [
+                "npm:@ngrx/entity",
+                "npm:@ngrx/store",
+                "shared-data-access-models"
+              ]
+            },
+            {
+              "file": "libs/projects/data-access/store/src/lib/projects/projects.selectors.spec.ts",
+              "hash": "c22ed6895ba592ddc7475b16cbbdb7ef2f941aff",
+              "deps": [
+                "shared-data-access-models"
+              ]
+            },
+            {
+              "file": "libs/projects/data-access/store/src/lib/projects/projects.selectors.ts",
+              "hash": "c4eb67eac9d94ebd844d0f88e2bb6973c680049e",
+              "deps": [
+                "npm:@ngrx/store",
+                "shared-data-access-router"
+              ]
+            },
+            {
+              "file": "libs/projects/data-access/store/src/test-setup.ts",
+              "hash": "90bc5062ea65effafeab7f3b3a5a50da3d0e6651",
+              "deps": [
+                "npm:jest-preset-angular"
+              ]
+            },
+            {
+              "file": "libs/projects/data-access/store/tsconfig.json",
+              "hash": "74226e184e6ba8a8d25d88a661ab709fcd96c189"
+            },
+            {
+              "file": "libs/projects/data-access/store/tsconfig.lib.json",
+              "hash": "295db43c313abf54cc1f2a84e4255ee877a8f41a"
+            },
+            {
+              "file": "libs/projects/data-access/store/tsconfig.spec.json",
+              "hash": "3cdc0af6d3579e6d309451bcf7dca53adeb7f83d"
+            }
+          ]
+        }
+      },
+      "project-id-feature-blocks": {
+        "name": "project-id-feature-blocks",
+        "type": "lib",
+        "data": {
+          "name": "project-id-feature-blocks",
+          "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+          "projectType": "library",
+          "sourceRoot": "libs/project-id/feature/blocks/src",
+          "prefix": "app",
+          "targets": {
+            "test": {
+              "executor": "@nrwl/jest:jest",
+              "outputs": [
+                "{workspaceRoot}/coverage/{projectRoot}"
+              ],
+              "options": {
+                "jestConfig": "libs/project-id/feature/blocks/jest.config.ts",
+                "passWithNoTests": true
+              },
+              "inputs": [
+                "default",
+                "^production",
+                "{workspaceRoot}/karma.conf.js",
+                "{workspaceRoot}/jest.preset.js"
+              ]
+            },
+            "lint": {
+              "executor": "@nrwl/linter:eslint",
+              "outputs": [
+                "{options.outputFile}"
+              ],
+              "options": {
+                "lintFilePatterns": [
+                  "libs/project-id/feature/blocks/**/*.ts",
+                  "libs/project-id/feature/blocks/**/*.html"
+                ]
+              },
+              "inputs": [
+                "default",
+                "{workspaceRoot}/.eslintrc.json"
+              ]
+            }
+          },
+          "tags": [],
+          "root": "libs/project-id/feature/blocks",
+          "files": [
+            {
+              "file": "libs/project-id/feature/blocks/.eslintrc.json",
+              "hash": "6a6262bc0547f621b0543ceaaab685b09acf4ce6"
+            },
+            {
+              "file": "libs/project-id/feature/blocks/jest.config.ts",
+              "hash": "802b9a77d76ae11bb140f3c0208b2393ac6d2029"
+            },
+            {
+              "file": "libs/project-id/feature/blocks/project.json",
+              "hash": "70cd2ed26df55d09161b5f286af25775a5cfa91d"
+            },
+            {
+              "file": "libs/project-id/feature/blocks/README.md",
+              "hash": "8ec8b07a7081064db8372b97462ccfeb129b19dc"
+            },
+            {
+              "file": "libs/project-id/feature/blocks/src/index.ts",
+              "hash": "f850ac2d44873d0ca94fb23ed22956cebd7c86d8"
+            },
+            {
+              "file": "libs/project-id/feature/blocks/src/lib/block-disconnection-point/block-disconnection-point.component.html",
+              "hash": "e90810e281137bc0a7f2244d24f89bffd9bf448e"
+            },
+            {
+              "file": "libs/project-id/feature/blocks/src/lib/block-disconnection-point/block-disconnection-point.component.scss",
+              "hash": "915245f5b4a2a39c8e3cdcc16923adfbfdfcf09c"
+            },
+            {
+              "file": "libs/project-id/feature/blocks/src/lib/block-disconnection-point/block-disconnection-point.component.ts",
+              "hash": "0b0429862c175c5636d943a92ac292b7dce06dc7",
+              "deps": [
+                "npm:@angular/cdk",
+                "npm:@angular/common",
+                "npm:@angular/core",
+                "npm:@angular/material",
+                "npm:@ngrx/component",
+                "project-id-data-access-api",
+                "npm:@ngrx/store",
+                "shared-data-access-models",
+                "shared-data-access-store"
+              ]
+            },
+            {
+              "file": "libs/project-id/feature/blocks/src/lib/block-disconnection-point/index.ts",
+              "hash": "2668ddd942f3bca69869deee46b3a55a866491a0"
+            },
+            {
+              "file": "libs/project-id/feature/blocks/src/lib/block-panel/block-panel.component.html",
+              "hash": "a48f5da1eeaf80230ee4314a32694b62993f6cdd"
+            },
+            {
+              "file": "libs/project-id/feature/blocks/src/lib/block-panel/block-panel.component.scss",
+              "hash": "317cd8d34168e0171fb37fd32bb924cf2f2c69eb"
+            },
+            {
+              "file": "libs/project-id/feature/blocks/src/lib/block-panel/block-panel.component.spec.ts",
+              "hash": "5261ef9622f96d7945883a719849258a3903cd9c",
+              "deps": [
+                "npm:@angular/core"
+              ]
+            },
+            {
+              "file": "libs/project-id/feature/blocks/src/lib/block-panel/block-panel.component.ts",
+              "hash": "8dbbc10cc51e004a5340c37df1efd8a34298cc65",
+              "deps": [
+                "npm:@angular/core",
+                "npm:@angular/cdk",
+                "npm:@angular/common",
+                "npm:@angular/material",
+                "npm:@ngrx/component",
+                "npm:@ngrx/store",
+                "project-id-data-access-store",
+                "npm:rxjs",
+                "shared-data-access-models",
+                "shared-data-access-store"
+              ]
+            },
+            {
+              "file": "libs/project-id/feature/blocks/src/lib/block-panel/directives/panel.directive.ts",
+              "hash": "02d034ca15294ce6497fd0819dbccaf8ea4cecd3",
+              "deps": [
+                "npm:@angular/core"
+              ]
+            },
+            {
+              "file": "libs/project-id/feature/blocks/src/lib/block-panel/index.ts",
+              "hash": "e9ea458326457142bd513ccfcb895367780f2170"
+            },
+            {
+              "file": "libs/project-id/feature/blocks/src/lib/block-tray/block-tray.component.html",
+              "hash": "b3dd7a253310d1a9a3fa9c2c715ebec027d6a050"
+            },
+            {
+              "file": "libs/project-id/feature/blocks/src/lib/block-tray/block-tray.component.scss",
+              "hash": "b27887ddc351cc9cb1a5b3afe6ae14184274f578"
+            },
+            {
+              "file": "libs/project-id/feature/blocks/src/lib/block-tray/block-tray.component.ts",
+              "hash": "ae15282a7ecae269e1a20ad9f7d27ae7151b59a6",
+              "deps": [
+                "npm:@angular/core",
+                "npm:@angular/cdk",
+                "npm:@angular/material",
+                "npm:@angular/common",
+                "npm:@ngrx/component",
+                "npm:@ngrx/store",
+                "npm:rxjs",
+                "shared-data-access-models",
+                "shared-data-access-store"
+              ]
+            },
+            {
+              "file": "libs/project-id/feature/blocks/src/lib/block-tray/index.ts",
+              "hash": "a5e408be69f1c84aab7210ed67427ed85623e4d0"
+            },
+            {
+              "file": "libs/project-id/feature/blocks/src/lib/index.ts",
+              "hash": "a779df23f32d4d35f844a99a3c3286746701a4b1"
+            },
+            {
+              "file": "libs/project-id/feature/blocks/src/lib/ui/index.ts",
+              "hash": "6a91efa7e406e0db99a06ef0164d454f2c4e402c"
+            },
+            {
+              "file": "libs/project-id/feature/blocks/src/lib/ui/panel-link/panel-link.component.html",
+              "hash": "119e7231823d52bd579f00c50c675cbfb8bc7f69"
+            },
+            {
+              "file": "libs/project-id/feature/blocks/src/lib/ui/panel-link/panel-link.component.scss",
+              "hash": "f061d99a46b0af80b9a45e0906d19fd5ceb3d761"
+            },
+            {
+              "file": "libs/project-id/feature/blocks/src/lib/ui/panel-link/panel-link.component.spec.ts",
+              "hash": "dd2b4b50e03dce722d3b15850f5421db9100be87",
+              "deps": [
+                "npm:@angular/core"
+              ]
+            },
+            {
+              "file": "libs/project-id/feature/blocks/src/lib/ui/panel-link/panel-link.component.ts",
+              "hash": "ce0e4d042a2755bb5a188a292760c2cb2014e343",
+              "deps": [
+                "npm:@angular/common",
+                "npm:@angular/core"
+              ]
+            },
+            {
+              "file": "libs/project-id/feature/blocks/src/lib/ui/tray-join/tray-join.component.html",
+              "hash": "984b0d49b440f6e41bc9ff33e7721b942337c928"
+            },
+            {
+              "file": "libs/project-id/feature/blocks/src/lib/ui/tray-join/tray-join.component.scss",
+              "hash": "280afbadaccb92f0b4e5a5c10ffd632b6d7c79a1"
+            },
+            {
+              "file": "libs/project-id/feature/blocks/src/lib/ui/tray-join/tray-join.component.spec.ts",
+              "hash": "5820c28e1d82027b629c0eb0668b04c4b2a9b073",
+              "deps": [
+                "npm:@angular/core"
+              ]
+            },
+            {
+              "file": "libs/project-id/feature/blocks/src/lib/ui/tray-join/tray-join.component.ts",
+              "hash": "4da1ffe1f89baa97e652a1d068ec360a4802d80d",
+              "deps": [
+                "npm:@angular/common",
+                "npm:@angular/core",
+                "shared-data-access-models"
+              ]
+            },
+            {
+              "file": "libs/project-id/feature/blocks/src/test-setup.ts",
+              "hash": "90bc5062ea65effafeab7f3b3a5a50da3d0e6651",
+              "deps": [
+                "npm:jest-preset-angular"
+              ]
+            },
+            {
+              "file": "libs/project-id/feature/blocks/tsconfig.json",
+              "hash": "74226e184e6ba8a8d25d88a661ab709fcd96c189"
+            },
+            {
+              "file": "libs/project-id/feature/blocks/tsconfig.lib.json",
+              "hash": "295db43c313abf54cc1f2a84e4255ee877a8f41a"
+            },
+            {
+              "file": "libs/project-id/feature/blocks/tsconfig.spec.json",
+              "hash": "3cdc0af6d3579e6d309451bcf7dca53adeb7f83d"
+            }
+          ]
+        }
+      },
+      "shared-data-access-models": {
+        "name": "shared-data-access-models",
+        "type": "lib",
+        "data": {
+          "name": "shared-data-access-models",
+          "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+          "projectType": "library",
+          "sourceRoot": "libs/shared/data-access/models/src",
+          "prefix": "app",
+          "targets": {
+            "test": {
+              "executor": "@nrwl/jest:jest",
+              "outputs": [
+                "{workspaceRoot}/coverage/{projectRoot}"
+              ],
+              "options": {
+                "jestConfig": "libs/shared/data-access/models/jest.config.ts",
+                "passWithNoTests": true
+              },
+              "inputs": [
+                "default",
+                "^production",
+                "{workspaceRoot}/karma.conf.js",
+                "{workspaceRoot}/jest.preset.js"
+              ]
+            },
+            "lint": {
+              "executor": "@nrwl/linter:eslint",
+              "outputs": [
+                "{options.outputFile}"
+              ],
+              "options": {
+                "lintFilePatterns": [
+                  "libs/shared/data-access/models/**/*.ts",
+                  "libs/shared/data-access/models/**/*.html"
+                ]
+              },
+              "inputs": [
+                "default",
+                "{workspaceRoot}/.eslintrc.json"
+              ]
+            }
+          },
+          "tags": [],
+          "root": "libs/shared/data-access/models",
+          "files": [
+            {
+              "file": "libs/shared/data-access/models/.eslintrc.json",
+              "hash": "6a6262bc0547f621b0543ceaaab685b09acf4ce6"
+            },
+            {
+              "file": "libs/shared/data-access/models/jest.config.ts",
+              "hash": "e776527c27dfb08bcda15e77542d905376825560"
+            },
+            {
+              "file": "libs/shared/data-access/models/project.json",
+              "hash": "2aa052b91bca0ee941cb579dd7b4283f25fd6a6a"
+            },
+            {
+              "file": "libs/shared/data-access/models/README.md",
+              "hash": "fac89b76f517904c868f47edae0a826592017176"
+            },
+            {
+              "file": "libs/shared/data-access/models/src/index.ts",
+              "hash": "f850ac2d44873d0ca94fb23ed22956cebd7c86d8"
+            },
+            {
+              "file": "libs/shared/data-access/models/src/lib/auth/index.ts",
+              "hash": "41ba7099f3b040ccbb5ae6cd61ea9958435e9a92"
+            },
+            {
+              "file": "libs/shared/data-access/models/src/lib/auth/user.model.ts",
+              "hash": "d9534faf5c3c69afe198d4fff40b8c2162482c83"
+            },
+            {
+              "file": "libs/shared/data-access/models/src/lib/color.model.ts",
+              "hash": "c67cfb7555a9f04760443b65a19dd42507142f98"
+            },
+            {
+              "file": "libs/shared/data-access/models/src/lib/disconnection-point.model.ts",
+              "hash": "4e2c85718b8eecd7e144b2b0222aff866a10a489",
+              "deps": [
+                "npm:guid-typescript"
+              ]
+            },
+            {
+              "file": "libs/shared/data-access/models/src/lib/grid/grid-mode.model.ts",
+              "hash": "51cf4cf529b4cb7e37f98d36ae6aa5295227beea"
+            },
+            {
+              "file": "libs/shared/data-access/models/src/lib/grid/index.ts",
+              "hash": "5278a323e32cf32f5c5bb0ef3934df275807914a"
+            },
+            {
+              "file": "libs/shared/data-access/models/src/lib/index.ts",
+              "hash": "e6733b1f69708f13bd1226a25d6e7dd24a8428e3"
+            },
+            {
+              "file": "libs/shared/data-access/models/src/lib/panel-links-to.model.ts",
+              "hash": "389f86c188ad9b9043d16f4f60d048c5f9faeb29"
+            },
+            {
+              "file": "libs/shared/data-access/models/src/lib/projects/block.model.ts",
+              "hash": "a739ac1410ac82e40f9767ba35666ba79b8263e2"
+            },
+            {
+              "file": "libs/shared/data-access/models/src/lib/projects/entity.model.ts",
+              "hash": "ac67b788999badaf13a763a7e88059c6d6962c61"
+            },
+            {
+              "file": "libs/shared/data-access/models/src/lib/projects/index.ts",
+              "hash": "648df0159ace357c681610d24b6e6cbe4b606002"
+            },
+            {
+              "file": "libs/shared/data-access/models/src/lib/projects/link-path.model.ts",
+              "hash": "831f8224406477635c7618858d3624cf57bb1f32"
+            },
+            {
+              "file": "libs/shared/data-access/models/src/lib/projects/panel-link.model.ts",
+              "hash": "db7689325ed5d64b58f3187a7dd90001074ce753",
+              "deps": [
+                "shared-utils"
+              ]
+            },
+            {
+              "file": "libs/shared/data-access/models/src/lib/projects/panel.model.ts",
+              "hash": "24618992133f5033a90392d02ad6a664c87758a8",
+              "deps": [
+                "shared-utils"
+              ]
+            },
+            {
+              "file": "libs/shared/data-access/models/src/lib/projects/project.model.ts",
+              "hash": "1c8bc01b912c1b1960e62329512a6a47b4f8120c"
+            },
+            {
+              "file": "libs/shared/data-access/models/src/lib/projects/string.model.ts",
+              "hash": "714cb6875834d4c5d899e997bd3515b0472ff6b1",
+              "deps": [
+                "shared-utils"
+              ]
+            },
+            {
+              "file": "libs/shared/data-access/models/src/lib/projects/tray.model.ts",
+              "hash": "9f7379011e871e2bc0802743dfab56651200650a",
+              "deps": [
+                "shared-utils"
+              ]
+            },
+            {
+              "file": "libs/shared/data-access/models/src/lib/projects/type.model.ts",
+              "hash": "d548c70645358b3ba5c9ceff5639e85825fbe3f7"
+            },
+            {
+              "file": "libs/shared/data-access/models/src/lib/right-click.model.ts",
+              "hash": "1f20f02c9ab43e086282ef2d9f254d072f32f370"
+            },
+            {
+              "file": "libs/shared/data-access/models/src/lib/scene.model.ts",
+              "hash": "533a41f739025a87a7715ce70a2cdaba107227a3"
+            },
+            {
+              "file": "libs/shared/data-access/models/src/lib/surrounding.model.ts",
+              "hash": "26d39eae739910aee4919f9552944a945272fd87"
+            },
+            {
+              "file": "libs/shared/data-access/models/src/lib/total.model.ts",
+              "hash": "c623325e7d94cbe3142bb8e8727ffae7bcfb155b"
+            },
+            {
+              "file": "libs/shared/data-access/models/src/test-setup.ts",
+              "hash": "90bc5062ea65effafeab7f3b3a5a50da3d0e6651",
+              "deps": [
+                "npm:jest-preset-angular"
+              ]
+            },
+            {
+              "file": "libs/shared/data-access/models/tsconfig.json",
+              "hash": "b9e5be0863ab091bf171af45fa5284e558448611"
+            },
+            {
+              "file": "libs/shared/data-access/models/tsconfig.lib.json",
+              "hash": "295db43c313abf54cc1f2a84e4255ee877a8f41a"
+            },
+            {
+              "file": "libs/shared/data-access/models/tsconfig.spec.json",
+              "hash": "3cdc0af6d3579e6d309451bcf7dca53adeb7f83d"
+            }
+          ]
+        }
+      },
+      "shared-data-access-router": {
+        "name": "shared-data-access-router",
+        "type": "lib",
+        "data": {
+          "name": "shared-data-access-router",
+          "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+          "projectType": "library",
+          "sourceRoot": "libs/shared/data-access/router/src",
+          "prefix": "app",
+          "targets": {
+            "test": {
+              "executor": "@nrwl/jest:jest",
+              "outputs": [
+                "{workspaceRoot}/coverage/{projectRoot}"
+              ],
+              "options": {
+                "jestConfig": "libs/shared/data-access/router/jest.config.ts",
+                "passWithNoTests": true
+              },
+              "inputs": [
+                "default",
+                "^production",
+                "{workspaceRoot}/karma.conf.js",
+                "{workspaceRoot}/jest.preset.js"
+              ]
+            },
+            "lint": {
+              "executor": "@nrwl/linter:eslint",
+              "outputs": [
+                "{options.outputFile}"
+              ],
+              "options": {
+                "lintFilePatterns": [
+                  "libs/shared/data-access/router/**/*.ts",
+                  "libs/shared/data-access/router/**/*.html"
+                ]
+              },
+              "inputs": [
+                "default",
+                "{workspaceRoot}/.eslintrc.json"
+              ]
+            }
+          },
+          "tags": [],
+          "root": "libs/shared/data-access/router",
+          "files": [
+            {
+              "file": "libs/shared/data-access/router/.eslintrc.json",
+              "hash": "6a6262bc0547f621b0543ceaaab685b09acf4ce6"
+            },
+            {
+              "file": "libs/shared/data-access/router/jest.config.ts",
+              "hash": "978427b8d5f94fc9cfb16b685de5322e4ba177d5"
+            },
+            {
+              "file": "libs/shared/data-access/router/project.json",
+              "hash": "678fdf143c2e90d0fa09ee7b2c7c1529a208c444"
+            },
+            {
+              "file": "libs/shared/data-access/router/README.md",
+              "hash": "e7fea6236a05241b7ce3192b12fcceef92a1cd50"
+            },
+            {
+              "file": "libs/shared/data-access/router/src/index.ts",
+              "hash": "264e6b5936d889d0a42728c1bab47eb2ef5e036e"
+            },
+            {
+              "file": "libs/shared/data-access/router/src/lib/router.selectors.ts",
+              "hash": "dc1e010bd67afcc34874a1d13a6d17139684608c",
+              "deps": [
+                "npm:@ngrx/router-store",
+                "npm:@ngrx/store",
+                "npm:@angular/router"
+              ]
+            },
+            {
+              "file": "libs/shared/data-access/router/src/test-setup.ts",
+              "hash": "90bc5062ea65effafeab7f3b3a5a50da3d0e6651",
+              "deps": [
+                "npm:jest-preset-angular"
+              ]
+            },
+            {
+              "file": "libs/shared/data-access/router/tsconfig.json",
+              "hash": "74226e184e6ba8a8d25d88a661ab709fcd96c189"
+            },
+            {
+              "file": "libs/shared/data-access/router/tsconfig.lib.json",
+              "hash": "295db43c313abf54cc1f2a84e4255ee877a8f41a"
+            },
+            {
+              "file": "libs/shared/data-access/router/tsconfig.spec.json",
+              "hash": "3cdc0af6d3579e6d309451bcf7dca53adeb7f83d"
+            }
+          ]
+        }
+      },
+      "project-id-feature-index": {
+        "name": "project-id-feature-index",
+        "type": "lib",
+        "data": {
+          "name": "project-id-feature-index",
+          "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+          "projectType": "library",
+          "sourceRoot": "libs/project-id/feature/index/src",
+          "prefix": "app",
+          "targets": {
+            "test": {
+              "executor": "@nrwl/jest:jest",
+              "outputs": [
+                "{workspaceRoot}/coverage/{projectRoot}"
+              ],
+              "options": {
+                "jestConfig": "libs/project-id/feature/index/jest.config.ts",
+                "passWithNoTests": true
+              },
+              "inputs": [
+                "default",
+                "^production",
+                "{workspaceRoot}/karma.conf.js",
+                "{workspaceRoot}/jest.preset.js"
+              ]
+            },
+            "lint": {
+              "executor": "@nrwl/linter:eslint",
+              "outputs": [
+                "{options.outputFile}"
+              ],
+              "options": {
+                "lintFilePatterns": [
+                  "libs/project-id/feature/index/**/*.ts",
+                  "libs/project-id/feature/index/**/*.html"
+                ]
+              },
+              "inputs": [
+                "default",
+                "{workspaceRoot}/.eslintrc.json"
+              ]
+            }
+          },
+          "tags": [],
+          "root": "libs/project-id/feature/index",
+          "files": [
+            {
+              "file": "libs/project-id/feature/index/.eslintrc.json",
+              "hash": "6a6262bc0547f621b0543ceaaab685b09acf4ce6"
+            },
+            {
+              "file": "libs/project-id/feature/index/jest.config.ts",
+              "hash": "5d6103bf148feeb27fdd3c8f3a50b9660ac111dd"
+            },
+            {
+              "file": "libs/project-id/feature/index/project.json",
+              "hash": "124a3dbbe834fee276034898f01174029e7f653e"
+            },
+            {
+              "file": "libs/project-id/feature/index/README.md",
+              "hash": "2181a07e498313357dc3c16cc58dcb26ce95aafe"
+            },
+            {
+              "file": "libs/project-id/feature/index/src/index.ts",
+              "hash": "8072fcd8d9510194dc7e6843ac4bcbb56efd0e4d"
+            },
+            {
+              "file": "libs/project-id/feature/index/src/lib/data-access/project-id.store.ts",
+              "hash": "7e3696857b8e7b932aa1388722bedb8aaed5ebeb",
+              "deps": [
+                "npm:@angular/core",
+                "auth-data-access-api",
+                "auth-data-access-store",
+                "npm:@ngrx/component-store",
+                "npm:@ngrx/store",
+                "projects-data-access-store",
+                "shared-data-access-models",
+                "shared-data-access-store",
+                "npm:rxjs"
+              ]
+            },
+            {
+              "file": "libs/project-id/feature/index/src/lib/project-id.component.html",
+              "hash": "57c3e30ded8408476c12944c907522fcfa9eff73"
+            },
+            {
+              "file": "libs/project-id/feature/index/src/lib/project-id.component.spec.ts",
+              "hash": "83f7e3643745f5259baae89077054b615ee7d76f",
+              "deps": [
+                "npm:@angular/core"
+              ]
+            },
+            {
+              "file": "libs/project-id/feature/index/src/lib/project-id.component.ts",
+              "hash": "90110051bbab5a19d88ec089a4e2e57eee9075c7",
+              "deps": [
+                "npm:@angular/common",
+                "npm:@angular/core",
+                "project-id-feature-grid-layout",
+                "projects-data-access-store",
+                "shared-data-access-models",
+                "npm:rxjs"
+              ]
+            },
+            {
+              "file": "libs/project-id/feature/index/src/test-setup.ts",
+              "hash": "90bc5062ea65effafeab7f3b3a5a50da3d0e6651",
+              "deps": [
+                "npm:jest-preset-angular"
+              ]
+            },
+            {
+              "file": "libs/project-id/feature/index/tsconfig.json",
+              "hash": "74226e184e6ba8a8d25d88a661ab709fcd96c189"
+            },
+            {
+              "file": "libs/project-id/feature/index/tsconfig.lib.json",
+              "hash": "295db43c313abf54cc1f2a84e4255ee877a8f41a"
+            },
+            {
+              "file": "libs/project-id/feature/index/tsconfig.spec.json",
+              "hash": "3cdc0af6d3579e6d309451bcf7dca53adeb7f83d"
+            }
+          ]
+        }
+      },
+      "projects-data-access-api": {
+        "name": "projects-data-access-api",
+        "type": "lib",
+        "data": {
+          "name": "projects-data-access-api",
+          "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+          "projectType": "library",
+          "sourceRoot": "libs/projects/data-access/api/src",
+          "prefix": "app",
+          "targets": {
+            "test": {
+              "executor": "@nrwl/jest:jest",
+              "outputs": [
+                "{workspaceRoot}/coverage/{projectRoot}"
+              ],
+              "options": {
+                "jestConfig": "libs/projects/data-access/api/jest.config.ts",
+                "passWithNoTests": true
+              },
+              "inputs": [
+                "default",
+                "^production",
+                "{workspaceRoot}/karma.conf.js",
+                "{workspaceRoot}/jest.preset.js"
+              ]
+            },
+            "lint": {
+              "executor": "@nrwl/linter:eslint",
+              "outputs": [
+                "{options.outputFile}"
+              ],
+              "options": {
+                "lintFilePatterns": [
+                  "libs/projects/data-access/api/**/*.ts",
+                  "libs/projects/data-access/api/**/*.html"
+                ]
+              },
+              "inputs": [
+                "default",
+                "{workspaceRoot}/.eslintrc.json"
+              ]
+            }
+          },
+          "tags": [],
+          "root": "libs/projects/data-access/api",
+          "files": [
+            {
+              "file": "libs/projects/data-access/api/.eslintrc.json",
+              "hash": "6a6262bc0547f621b0543ceaaab685b09acf4ce6"
+            },
+            {
+              "file": "libs/projects/data-access/api/jest.config.ts",
+              "hash": "ffd590e5c382a0a966f389cee04297a74262e730"
+            },
+            {
+              "file": "libs/projects/data-access/api/project.json",
+              "hash": "a78e33c0da643c2986f317bd7672186bf5c66f75"
+            },
+            {
+              "file": "libs/projects/data-access/api/README.md",
+              "hash": "d083a319ad10584c290d4f79140b1426e33ae37b"
+            },
+            {
+              "file": "libs/projects/data-access/api/src/index.ts",
+              "hash": "d8ab8466a1a3ae0fbf1b39826532e701e84c4d6a"
+            },
+            {
+              "file": "libs/projects/data-access/api/src/lib/get-project-by-id.response.ts",
+              "hash": "99a02da27910dbe81e3782efea155d16e1218350",
+              "deps": [
+                "shared-data-access-models"
+              ]
+            },
+            {
+              "file": "libs/projects/data-access/api/src/lib/get-projects.response.ts",
+              "hash": "81ee732535b31248919880801121214fc21f79ca",
+              "deps": [
+                "shared-data-access-models"
+              ]
+            },
+            {
+              "file": "libs/projects/data-access/api/src/lib/projects.service.ts",
+              "hash": "e83201a65deab1594788cd3f3cf5b0537495bc11",
+              "deps": [
+                "npm:@angular/common",
+                "npm:@angular/core",
+                "shared-data-access-models",
+                "npm:rxjs"
+              ]
+            },
+            {
+              "file": "libs/projects/data-access/api/src/test-setup.ts",
+              "hash": "90bc5062ea65effafeab7f3b3a5a50da3d0e6651",
+              "deps": [
+                "npm:jest-preset-angular"
+              ]
+            },
+            {
+              "file": "libs/projects/data-access/api/tsconfig.json",
+              "hash": "b9e5be0863ab091bf171af45fa5284e558448611"
+            },
+            {
+              "file": "libs/projects/data-access/api/tsconfig.lib.json",
+              "hash": "e79b46f145f18480746cb9d0cecdc1dcf95dbc1a"
+            },
+            {
+              "file": "libs/projects/data-access/api/tsconfig.spec.json",
+              "hash": "3cdc0af6d3579e6d309451bcf7dca53adeb7f83d"
+            }
+          ]
+        }
+      },
+      "shared-data-access-store": {
+        "name": "shared-data-access-store",
+        "type": "lib",
+        "data": {
+          "name": "shared-data-access-store",
+          "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+          "projectType": "library",
+          "sourceRoot": "libs/shared/data-access/store/src",
+          "prefix": "app",
+          "targets": {
+            "test": {
+              "executor": "@nrwl/jest:jest",
+              "outputs": [
+                "{workspaceRoot}/coverage/{projectRoot}"
+              ],
+              "options": {
+                "jestConfig": "libs/shared/data-access/store/jest.config.ts",
+                "passWithNoTests": true
+              },
+              "inputs": [
+                "default",
+                "^production",
+                "{workspaceRoot}/karma.conf.js",
+                "{workspaceRoot}/jest.preset.js"
+              ]
+            },
+            "lint": {
+              "executor": "@nrwl/linter:eslint",
+              "outputs": [
+                "{options.outputFile}"
+              ],
+              "options": {
+                "lintFilePatterns": [
+                  "libs/shared/data-access/store/**/*.ts",
+                  "libs/shared/data-access/store/**/*.html"
+                ]
+              },
+              "inputs": [
+                "default",
+                "{workspaceRoot}/.eslintrc.json"
+              ]
+            }
+          },
+          "tags": [],
+          "root": "libs/shared/data-access/store",
+          "files": [
+            {
+              "file": "libs/shared/data-access/store/.eslintrc.json",
+              "hash": "6a6262bc0547f621b0543ceaaab685b09acf4ce6"
+            },
+            {
+              "file": "libs/shared/data-access/store/jest.config.ts",
+              "hash": "61a7b43ef42303d3326ecfec6fa4dae08844c958"
+            },
+            {
+              "file": "libs/shared/data-access/store/project.json",
+              "hash": "f1c713ba68dcc057914d98c9afa8218ec0c37a49"
+            },
+            {
+              "file": "libs/shared/data-access/store/README.md",
+              "hash": "6134e5f67563433530e2cbaa29197b780f81ff45"
+            },
+            {
+              "file": "libs/shared/data-access/store/src/index.ts",
+              "hash": "52c79105b15f86357f6be93d0bd88dadf966bfa2"
+            },
+            {
+              "file": "libs/shared/data-access/store/src/lib/app.state.ts",
+              "hash": "484cb6230bd0c86b46b9cb481294cde3bc32a346",
+              "deps": [
+                "auth-data-access-store",
+                "npm:@ngrx/router-store",
+                "npm:@ngrx/store"
+              ]
+            },
+            {
+              "file": "libs/shared/data-access/store/src/test-setup.ts",
+              "hash": "90bc5062ea65effafeab7f3b3a5a50da3d0e6651",
+              "deps": [
+                "npm:jest-preset-angular"
+              ]
+            },
+            {
+              "file": "libs/shared/data-access/store/tsconfig.json",
+              "hash": "b9e5be0863ab091bf171af45fa5284e558448611"
+            },
+            {
+              "file": "libs/shared/data-access/store/tsconfig.lib.json",
+              "hash": "295db43c313abf54cc1f2a84e4255ee877a8f41a"
+            },
+            {
+              "file": "libs/shared/data-access/store/tsconfig.spec.json",
+              "hash": "3cdc0af6d3579e6d309451bcf7dca53adeb7f83d"
+            }
+          ]
+        }
+      },
+      "auth-data-access-facade": {
+        "name": "auth-data-access-facade",
+        "type": "lib",
+        "data": {
+          "name": "auth-data-access-facade",
+          "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+          "projectType": "library",
+          "sourceRoot": "libs/auth/data-access/facade/src",
+          "prefix": "app",
+          "targets": {
+            "test": {
+              "executor": "@angular-devkit/build-angular:karma",
+              "options": {
+                "tsConfig": "libs/auth/data-access/facade/tsconfig.spec.json",
+                "karmaConfig": "libs/auth/data-access/facade/karma.conf.js",
+                "polyfills": [
+                  "zone.js",
+                  "zone.js/testing"
+                ]
+              },
+              "inputs": [
+                "default",
+                "^production",
+                "{workspaceRoot}/karma.conf.js",
+                "{workspaceRoot}/jest.preset.js"
+              ]
+            },
+            "lint": {
+              "executor": "@nrwl/linter:eslint",
+              "outputs": [
+                "{options.outputFile}"
+              ],
+              "options": {
+                "lintFilePatterns": [
+                  "libs/auth/data-access/facade/**/*.ts",
+                  "libs/auth/data-access/facade/**/*.html"
+                ]
+              },
+              "inputs": [
+                "default",
+                "{workspaceRoot}/.eslintrc.json"
+              ]
+            }
+          },
+          "tags": [],
+          "root": "libs/auth/data-access/facade",
+          "files": [
+            {
+              "file": "libs/auth/data-access/facade/.eslintrc.json",
+              "hash": "6a6262bc0547f621b0543ceaaab685b09acf4ce6"
+            },
+            {
+              "file": "libs/auth/data-access/facade/karma.conf.js",
+              "hash": "4c6e480e15010d5f5445839db38eb2fd1178b54f"
+            },
+            {
+              "file": "libs/auth/data-access/facade/project.json",
+              "hash": "0adf1f4758642938ce16297b8b45983e1764d745"
+            },
+            {
+              "file": "libs/auth/data-access/facade/README.md",
+              "hash": "5c5761a44110a7fe22d5987287deef75f7efc175"
+            },
+            {
+              "file": "libs/auth/data-access/facade/src/index.ts",
+              "hash": "78d0c449f9abcfe7d4f5c2e2843a5bc0d6bd1c81"
+            },
+            {
+              "file": "libs/auth/data-access/facade/src/lib/auth.facade.ts",
+              "hash": "986e8cd70fcf3fdac9d3033c5e7c246abdcd5b93",
+              "deps": [
+                "npm:@angular/core",
+                "auth-data-access-store",
+                "npm:@ngrx/store",
+                "shared-data-access-models",
+                "shared-data-access-store",
+                "npm:rxjs"
+              ]
+            },
+            {
+              "file": "libs/auth/data-access/facade/tsconfig.json",
+              "hash": "74226e184e6ba8a8d25d88a661ab709fcd96c189"
+            },
+            {
+              "file": "libs/auth/data-access/facade/tsconfig.lib.json",
+              "hash": "cffe0e84d88f388763f1508d32f7cdbc712403dc"
+            },
+            {
+              "file": "libs/auth/data-access/facade/tsconfig.spec.json",
+              "hash": "9be806ac0a554976c8c617b79f8acc4138c76d02"
+            }
+          ]
+        }
+      },
+      "auth-data-access-store": {
+        "name": "auth-data-access-store",
+        "type": "lib",
+        "data": {
+          "name": "auth-data-access-store",
+          "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+          "projectType": "library",
+          "sourceRoot": "libs/auth/data-access/store/src",
+          "prefix": "app",
+          "targets": {
+            "test": {
+              "executor": "@nrwl/jest:jest",
+              "outputs": [
+                "{workspaceRoot}/coverage/{projectRoot}"
+              ],
+              "options": {
+                "jestConfig": "libs/auth/data-access/store/jest.config.ts",
+                "passWithNoTests": true
+              },
+              "inputs": [
+                "default",
+                "^production",
+                "{workspaceRoot}/karma.conf.js",
+                "{workspaceRoot}/jest.preset.js"
+              ]
+            },
+            "lint": {
+              "executor": "@nrwl/linter:eslint",
+              "outputs": [
+                "{options.outputFile}"
+              ],
+              "options": {
+                "lintFilePatterns": [
+                  "libs/auth/data-access/store/**/*.ts",
+                  "libs/auth/data-access/store/**/*.html"
+                ]
+              },
+              "inputs": [
+                "default",
+                "{workspaceRoot}/.eslintrc.json"
+              ]
+            }
+          },
+          "tags": [],
+          "root": "libs/auth/data-access/store",
+          "files": [
+            {
+              "file": "libs/auth/data-access/store/.eslintrc.json",
+              "hash": "6a6262bc0547f621b0543ceaaab685b09acf4ce6"
+            },
+            {
+              "file": "libs/auth/data-access/store/jest.config.ts",
+              "hash": "08fdf75d76144301b8a4fc822c629798d6658c2c"
+            },
+            {
+              "file": "libs/auth/data-access/store/project.json",
+              "hash": "a31360ea73802deca3cca0f6908f84191f8e8395"
+            },
+            {
+              "file": "libs/auth/data-access/store/README.md",
+              "hash": "5e1b5c94cd7456ef3d20bc121cb020ef9014913a"
+            },
+            {
+              "file": "libs/auth/data-access/store/src/index.ts",
+              "hash": "b0eaa3db179d183f2d85381c505e218f79e376a8"
+            },
+            {
+              "file": "libs/auth/data-access/store/src/lib/auth.actions.ts",
+              "hash": "da1f501d65373cb30f4f6364aba41376521ca9be",
+              "deps": [
+                "auth-data-access-api",
+                "npm:@ngrx/store",
+                "shared-data-access-models"
+              ]
+            },
+            {
+              "file": "libs/auth/data-access/store/src/lib/auth.effects.ts",
+              "hash": "842a278332ac527b8f13cd5139ba5794f5269a40",
+              "deps": [
+                "npm:@angular/core",
+                "auth-data-access-api",
+                "npm:@ngrx/component-store",
+                "npm:@ngrx/effects",
+                "npm:@ngrx/store",
+                "projects-data-access-store",
+                "shared-data-access-store",
+                "npm:rxjs"
+              ]
+            },
+            {
+              "file": "libs/auth/data-access/store/src/lib/auth.facade.ts",
+              "hash": "34e3d9534d52c3a5482383ec74670aee1aee9adc",
+              "deps": [
+                "npm:@angular/core",
+                "auth-data-access-api",
+                "npm:@ngrx/store"
+              ]
+            },
+            {
+              "file": "libs/auth/data-access/store/src/lib/auth.reducer.ts",
+              "hash": "3c7239d286f3039e30df98add83caaf70b499205",
+              "deps": [
+                "npm:@ngrx/store"
+              ]
+            },
+            {
+              "file": "libs/auth/data-access/store/src/lib/auth.selectors.ts",
+              "hash": "dc02386309e19d22ddf86e56a9b54be695a77681",
+              "deps": [
+                "npm:@ngrx/store"
+              ]
+            },
+            {
+              "file": "libs/auth/data-access/store/src/lib/auth.state.ts",
+              "hash": "fe3dd8e2e9355014a38663f34a6dbd2abfaf4ef6",
+              "deps": [
+                "shared-data-access-models"
+              ]
+            },
+            {
+              "file": "libs/auth/data-access/store/src/test-setup.ts",
+              "hash": "90bc5062ea65effafeab7f3b3a5a50da3d0e6651",
+              "deps": [
+                "npm:jest-preset-angular"
+              ]
+            },
+            {
+              "file": "libs/auth/data-access/store/tsconfig.json",
+              "hash": "b9e5be0863ab091bf171af45fa5284e558448611"
+            },
+            {
+              "file": "libs/auth/data-access/store/tsconfig.lib.json",
+              "hash": "295db43c313abf54cc1f2a84e4255ee877a8f41a"
+            },
+            {
+              "file": "libs/auth/data-access/store/tsconfig.spec.json",
+              "hash": "3cdc0af6d3579e6d309451bcf7dca53adeb7f83d"
+            }
+          ]
+        }
+      },
+      "auth-data-access-api": {
+        "name": "auth-data-access-api",
+        "type": "lib",
+        "data": {
+          "name": "auth-data-access-api",
+          "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+          "projectType": "library",
+          "sourceRoot": "libs/auth/data-access/api/src",
+          "prefix": "app",
+          "targets": {
+            "test": {
+              "executor": "@nrwl/jest:jest",
+              "outputs": [
+                "{workspaceRoot}/coverage/{projectRoot}"
+              ],
+              "options": {
+                "jestConfig": "libs/auth/data-access/api/jest.config.ts",
+                "passWithNoTests": true
+              },
+              "inputs": [
+                "default",
+                "^production",
+                "{workspaceRoot}/karma.conf.js",
+                "{workspaceRoot}/jest.preset.js"
+              ]
+            },
+            "lint": {
+              "executor": "@nrwl/linter:eslint",
+              "outputs": [
+                "{options.outputFile}"
+              ],
+              "options": {
+                "lintFilePatterns": [
+                  "libs/auth/data-access/api/**/*.ts",
+                  "libs/auth/data-access/api/**/*.html"
+                ]
+              },
+              "inputs": [
+                "default",
+                "{workspaceRoot}/.eslintrc.json"
+              ]
+            }
+          },
+          "tags": [],
+          "root": "libs/auth/data-access/api",
+          "files": [
+            {
+              "file": "libs/auth/data-access/api/.eslintrc.json",
+              "hash": "6a6262bc0547f621b0543ceaaab685b09acf4ce6"
+            },
+            {
+              "file": "libs/auth/data-access/api/jest.config.ts",
+              "hash": "7ccb0265b2d51dba42a2b4d12d90566bd01b1e89"
+            },
+            {
+              "file": "libs/auth/data-access/api/project.json",
+              "hash": "22fbfd2e040c56151e5cf42e1b4b2118532def08"
+            },
+            {
+              "file": "libs/auth/data-access/api/README.md",
+              "hash": "21ea2a8035964d93d63ce64a097a4b7db6e70114"
+            },
+            {
+              "file": "libs/auth/data-access/api/src/index.ts",
+              "hash": "e728b1f65bd18d7270ffa29a1276de21e2caf0b8"
+            },
+            {
+              "file": "libs/auth/data-access/api/src/lib/auth.service.spec.ts",
+              "hash": "f1251cacf9dda3b3bd9dc5222583fafa110ffe8f",
+              "deps": [
+                "npm:@angular/core"
+              ]
+            },
+            {
+              "file": "libs/auth/data-access/api/src/lib/auth.service.ts",
+              "hash": "15bb6920da69d4a69f7908cdc4bc9c5976548ac1",
+              "deps": [
+                "npm:@angular/core",
+                "npm:@angular/common"
+              ]
+            },
+            {
+              "file": "libs/auth/data-access/api/src/lib/models/index.ts",
+              "hash": "fbda2c3625e418518ba2da4c986464ecf9b7e9bc"
+            },
+            {
+              "file": "libs/auth/data-access/api/src/lib/models/sign-in.request.ts",
+              "hash": "2135cb84b632a51eadcaa02a62d382a3b6d48b18"
+            },
+            {
+              "file": "libs/auth/data-access/api/src/lib/models/sign-in.response.ts",
+              "hash": "6b6605252cd50dfc8566810eb89ad4d9c716e858"
+            },
+            {
+              "file": "libs/auth/data-access/api/src/test-setup.ts",
+              "hash": "90bc5062ea65effafeab7f3b3a5a50da3d0e6651",
+              "deps": [
+                "npm:jest-preset-angular"
+              ]
+            },
+            {
+              "file": "libs/auth/data-access/api/tsconfig.json",
+              "hash": "b9e5be0863ab091bf171af45fa5284e558448611"
+            },
+            {
+              "file": "libs/auth/data-access/api/tsconfig.lib.json",
+              "hash": "295db43c313abf54cc1f2a84e4255ee877a8f41a"
+            },
+            {
+              "file": "libs/auth/data-access/api/tsconfig.spec.json",
+              "hash": "3cdc0af6d3579e6d309451bcf7dca53adeb7f83d"
+            }
+          ]
+        }
+      },
+      "shared-interceptors": {
+        "name": "shared-interceptors",
+        "type": "lib",
+        "data": {
+          "name": "shared-interceptors",
+          "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+          "projectType": "library",
+          "sourceRoot": "libs/shared/interceptors/src",
+          "prefix": "app",
+          "targets": {
+            "test": {
+              "executor": "@nrwl/jest:jest",
+              "outputs": [
+                "{workspaceRoot}/coverage/{projectRoot}"
+              ],
+              "options": {
+                "jestConfig": "libs/shared/interceptors/jest.config.ts",
+                "passWithNoTests": true
+              },
+              "inputs": [
+                "default",
+                "^production",
+                "{workspaceRoot}/karma.conf.js",
+                "{workspaceRoot}/jest.preset.js"
+              ]
+            },
+            "lint": {
+              "executor": "@nrwl/linter:eslint",
+              "outputs": [
+                "{options.outputFile}"
+              ],
+              "options": {
+                "lintFilePatterns": [
+                  "libs/shared/interceptors/**/*.ts",
+                  "libs/shared/interceptors/**/*.html"
+                ]
+              },
+              "inputs": [
+                "default",
+                "{workspaceRoot}/.eslintrc.json"
+              ]
+            }
+          },
+          "tags": [],
+          "root": "libs/shared/interceptors",
+          "files": [
+            {
+              "file": "libs/shared/interceptors/.eslintrc.json",
+              "hash": "894caa58de3238e5ee24c5d7ac0fa51963a891a5"
+            },
+            {
+              "file": "libs/shared/interceptors/jest.config.ts",
+              "hash": "af731730622ed89d190f9b07d3ff9ccdd9b59073"
+            },
+            {
+              "file": "libs/shared/interceptors/project.json",
+              "hash": "bcecd1ee38460c6d04057ae9ff1374c2fb9a8431"
+            },
+            {
+              "file": "libs/shared/interceptors/README.md",
+              "hash": "824b62f5c847bb2c041c6c926f84a1183a36d1c7"
+            },
+            {
+              "file": "libs/shared/interceptors/src/index.ts",
+              "hash": "fc80885f0d0b07abc84c1b154425cf9909ee316c"
+            },
+            {
+              "file": "libs/shared/interceptors/src/lib/current-project.interceptor.ts",
+              "hash": "cc8cac63f274d87613b7574bf964b9111fac53a1",
+              "deps": [
+                "npm:@angular/core",
+                "npm:@angular/common",
+                "npm:rxjs",
+                "npm:@ngrx/store",
+                "shared-data-access-store"
+              ]
+            },
+            {
+              "file": "libs/shared/interceptors/src/test-setup.ts",
+              "hash": "90bc5062ea65effafeab7f3b3a5a50da3d0e6651",
+              "deps": [
+                "npm:jest-preset-angular"
+              ]
+            },
+            {
+              "file": "libs/shared/interceptors/tsconfig.json",
+              "hash": "5cf0a165647594e7436a4b4bb411fad9e1a7d4dc"
+            },
+            {
+              "file": "libs/shared/interceptors/tsconfig.lib.json",
+              "hash": "17469f1e4af3ea771aaa29b1d48f9bb5bf62a020"
+            },
+            {
+              "file": "libs/shared/interceptors/tsconfig.spec.json",
+              "hash": "875b121e84f7c4fbb86768fc9084b1ae4e3e32f2"
+            }
+          ]
+        }
+      },
+      "auth-interceptors": {
+        "name": "auth-interceptors",
+        "type": "lib",
+        "data": {
+          "name": "auth-interceptors",
+          "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+          "projectType": "library",
+          "sourceRoot": "libs/auth/interceptors/src",
+          "prefix": "app",
+          "targets": {
+            "test": {
+              "executor": "@nrwl/jest:jest",
+              "outputs": [
+                "{workspaceRoot}/coverage/{projectRoot}"
+              ],
+              "options": {
+                "jestConfig": "libs/auth/interceptors/jest.config.ts",
+                "passWithNoTests": true
+              },
+              "inputs": [
+                "default",
+                "^production",
+                "{workspaceRoot}/karma.conf.js",
+                "{workspaceRoot}/jest.preset.js"
+              ]
+            },
+            "lint": {
+              "executor": "@nrwl/linter:eslint",
+              "outputs": [
+                "{options.outputFile}"
+              ],
+              "options": {
+                "lintFilePatterns": [
+                  "libs/auth/interceptors/**/*.ts",
+                  "libs/auth/interceptors/**/*.html"
+                ]
+              },
+              "inputs": [
+                "default",
+                "{workspaceRoot}/.eslintrc.json"
+              ]
+            }
+          },
+          "tags": [],
+          "root": "libs/auth/interceptors",
+          "files": [
+            {
+              "file": "libs/auth/interceptors/.eslintrc.json",
+              "hash": "894caa58de3238e5ee24c5d7ac0fa51963a891a5"
+            },
+            {
+              "file": "libs/auth/interceptors/jest.config.ts",
+              "hash": "c286eb2012d726e70d3c245a15a794754176aac3"
+            },
+            {
+              "file": "libs/auth/interceptors/project.json",
+              "hash": "934a4120738fd4d2018181ce8f72b668a79a8a13"
+            },
+            {
+              "file": "libs/auth/interceptors/README.md",
+              "hash": "7678f5e9ad3647894aa2a85cd7414a13491d1ee9"
+            },
+            {
+              "file": "libs/auth/interceptors/src/index.ts",
+              "hash": "df51d0013095f6d69f8c72ae7b932bf2852c81f8"
+            },
+            {
+              "file": "libs/auth/interceptors/src/lib/jwt.interceptor.ts",
+              "hash": "9871c7b73e86998c6aa257d9ae51205fe160721b",
+              "deps": [
+                "npm:@angular/common",
+                "npm:@angular/core",
+                "auth-data-access-store",
+                "npm:rxjs"
+              ]
+            },
+            {
+              "file": "libs/auth/interceptors/src/test-setup.ts",
+              "hash": "90bc5062ea65effafeab7f3b3a5a50da3d0e6651",
+              "deps": [
+                "npm:jest-preset-angular"
+              ]
+            },
+            {
+              "file": "libs/auth/interceptors/tsconfig.json",
+              "hash": "5cf0a165647594e7436a4b4bb411fad9e1a7d4dc"
+            },
+            {
+              "file": "libs/auth/interceptors/tsconfig.lib.json",
+              "hash": "17469f1e4af3ea771aaa29b1d48f9bb5bf62a020"
+            },
+            {
+              "file": "libs/auth/interceptors/tsconfig.spec.json",
+              "hash": "875b121e84f7c4fbb86768fc9084b1ae4e3e32f2"
+            }
+          ]
+        }
+      },
+      "shared-ui-spinner": {
+        "name": "shared-ui-spinner",
+        "type": "lib",
+        "data": {
+          "name": "shared-ui-spinner",
+          "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+          "projectType": "library",
+          "sourceRoot": "libs/shared/ui/spinner/src",
+          "prefix": "app",
+          "targets": {
+            "test": {
+              "executor": "@nrwl/jest:jest",
+              "outputs": [
+                "{workspaceRoot}/coverage/{projectRoot}"
+              ],
+              "options": {
+                "jestConfig": "libs/shared/ui/spinner/jest.config.ts",
+                "passWithNoTests": true
+              },
+              "inputs": [
+                "default",
+                "^production",
+                "{workspaceRoot}/karma.conf.js",
+                "{workspaceRoot}/jest.preset.js"
+              ]
+            },
+            "lint": {
+              "executor": "@nrwl/linter:eslint",
+              "outputs": [
+                "{options.outputFile}"
+              ],
+              "options": {
+                "lintFilePatterns": [
+                  "libs/shared/ui/spinner/**/*.ts",
+                  "libs/shared/ui/spinner/**/*.html"
+                ]
+              },
+              "inputs": [
+                "default",
+                "{workspaceRoot}/.eslintrc.json"
+              ]
+            }
+          },
+          "tags": [],
+          "root": "libs/shared/ui/spinner",
+          "files": [
+            {
+              "file": "libs/shared/ui/spinner/.eslintrc.json",
+              "hash": "6a6262bc0547f621b0543ceaaab685b09acf4ce6"
+            },
+            {
+              "file": "libs/shared/ui/spinner/jest.config.ts",
+              "hash": "132d325beefc7826c85435475c7c2bd75e551ebb"
+            },
+            {
+              "file": "libs/shared/ui/spinner/project.json",
+              "hash": "fed5c28c4b4997af8ad0f89246bc2c562861032d"
+            },
+            {
+              "file": "libs/shared/ui/spinner/README.md",
+              "hash": "73c117b0014fa48899eaf67f7d24ae130357058d"
+            },
+            {
+              "file": "libs/shared/ui/spinner/src/index.ts",
+              "hash": "1a88c233762fd913d77885162d8d81db14d3d226"
+            },
+            {
+              "file": "libs/shared/ui/spinner/src/lib/spinner.component.ts",
+              "hash": "ac397eb155aa219f79a3e43f1616afdc60cd0c83",
+              "deps": [
+                "npm:@angular/core"
+              ]
+            },
+            {
+              "file": "libs/shared/ui/spinner/src/test-setup.ts",
+              "hash": "90bc5062ea65effafeab7f3b3a5a50da3d0e6651",
+              "deps": [
+                "npm:jest-preset-angular"
+              ]
+            },
+            {
+              "file": "libs/shared/ui/spinner/tsconfig.json",
+              "hash": "74226e184e6ba8a8d25d88a661ab709fcd96c189"
+            },
+            {
+              "file": "libs/shared/ui/spinner/tsconfig.lib.json",
+              "hash": "295db43c313abf54cc1f2a84e4255ee877a8f41a"
+            },
+            {
+              "file": "libs/shared/ui/spinner/tsconfig.spec.json",
+              "hash": "3cdc0af6d3579e6d309451bcf7dca53adeb7f83d"
+            }
+          ]
+        }
+      },
+      "project-id-utils": {
+        "name": "project-id-utils",
+        "type": "lib",
+        "data": {
+          "name": "project-id-utils",
+          "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+          "projectType": "library",
+          "sourceRoot": "libs/project-id/utils/src",
+          "prefix": "app",
+          "targets": {
+            "test": {
+              "executor": "@nrwl/jest:jest",
+              "outputs": [
+                "{workspaceRoot}/coverage/{projectRoot}"
+              ],
+              "options": {
+                "jestConfig": "libs/project-id/utils/jest.config.ts",
+                "passWithNoTests": true
+              },
+              "inputs": [
+                "default",
+                "^production",
+                "{workspaceRoot}/karma.conf.js",
+                "{workspaceRoot}/jest.preset.js"
+              ]
+            },
+            "lint": {
+              "executor": "@nrwl/linter:eslint",
+              "outputs": [
+                "{options.outputFile}"
+              ],
+              "options": {
+                "lintFilePatterns": [
+                  "libs/project-id/utils/**/*.ts",
+                  "libs/project-id/utils/**/*.html"
+                ]
+              },
+              "inputs": [
+                "default",
+                "{workspaceRoot}/.eslintrc.json"
+              ]
+            }
+          },
+          "tags": [],
+          "root": "libs/project-id/utils",
+          "files": [
+            {
+              "file": "libs/project-id/utils/.eslintrc.json",
+              "hash": "894caa58de3238e5ee24c5d7ac0fa51963a891a5"
+            },
+            {
+              "file": "libs/project-id/utils/jest.config.ts",
+              "hash": "d47d1583f10637af2d2941f51fcaa24a8f275953"
+            },
+            {
+              "file": "libs/project-id/utils/project.json",
+              "hash": "ddd485c20732266d4b9c121cd028e68c1c2e9d10"
+            },
+            {
+              "file": "libs/project-id/utils/README.md",
+              "hash": "bb11437d10d2e24d6a036ba7167eaa3b6a9ff72a"
+            },
+            {
+              "file": "libs/project-id/utils/src/index.ts",
+              "hash": "f850ac2d44873d0ca94fb23ed22956cebd7c86d8"
+            },
+            {
+              "file": "libs/project-id/utils/src/lib/index.ts",
+              "hash": "9aec15a3554fb04ef5bea40188b8d9b77a9a2b13"
+            },
+            {
+              "file": "libs/project-id/utils/src/lib/links-path.service.ts",
+              "hash": "d93bdcda5f46c6efbe1331470b674b449bf94b84",
+              "deps": [
+                "shared-data-access-models",
+                "project-id-data-access-store",
+                "npm:@angular/core",
+                "npm:rxjs"
+              ]
+            },
+            {
+              "file": "libs/project-id/utils/src/lib/string-stats.service.ts",
+              "hash": "f13e03dad91d8b69eda93e6bc2ebc4b883ad8809",
+              "deps": [
+                "shared-data-access-models",
+                "project-id-data-access-store",
+                "npm:@angular/core",
+                "npm:rxjs"
+              ]
+            },
+            {
+              "file": "libs/project-id/utils/src/test-setup.ts",
+              "hash": "90bc5062ea65effafeab7f3b3a5a50da3d0e6651",
+              "deps": [
+                "npm:jest-preset-angular"
+              ]
+            },
+            {
+              "file": "libs/project-id/utils/tsconfig.json",
+              "hash": "b9d3d8bd16a384886cd3457069feb30eacae4b84"
+            },
+            {
+              "file": "libs/project-id/utils/tsconfig.lib.json",
+              "hash": "17469f1e4af3ea771aaa29b1d48f9bb5bf62a020"
+            },
+            {
+              "file": "libs/project-id/utils/tsconfig.spec.json",
+              "hash": "875b121e84f7c4fbb86768fc9084b1ae4e3e32f2"
+            }
+          ]
+        }
+      },
+      "shared-config": {
+        "name": "shared-config",
+        "type": "lib",
+        "data": {
+          "name": "shared-config",
+          "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+          "projectType": "library",
+          "sourceRoot": "libs/shared/config/src",
+          "prefix": "app",
+          "targets": {
+            "test": {
+              "executor": "@nrwl/jest:jest",
+              "outputs": [
+                "{workspaceRoot}/coverage/{projectRoot}"
+              ],
+              "options": {
+                "jestConfig": "libs/shared/config/jest.config.ts",
+                "passWithNoTests": true
+              },
+              "inputs": [
+                "default",
+                "^production",
+                "{workspaceRoot}/karma.conf.js",
+                "{workspaceRoot}/jest.preset.js"
+              ]
+            },
+            "lint": {
+              "executor": "@nrwl/linter:eslint",
+              "outputs": [
+                "{options.outputFile}"
+              ],
+              "options": {
+                "lintFilePatterns": [
+                  "libs/shared/config/**/*.ts",
+                  "libs/shared/config/**/*.html"
+                ]
+              },
+              "inputs": [
+                "default",
+                "{workspaceRoot}/.eslintrc.json"
+              ]
+            }
+          },
+          "tags": [],
+          "root": "libs/shared/config",
+          "files": [
+            {
+              "file": "libs/shared/config/.eslintrc.json",
+              "hash": "894caa58de3238e5ee24c5d7ac0fa51963a891a5"
+            },
+            {
+              "file": "libs/shared/config/jest.config.ts",
+              "hash": "2af93bbee793cfdcc633c8a9c5c7852a8b6da26c"
+            },
+            {
+              "file": "libs/shared/config/project.json",
+              "hash": "a2cbecefedff0f44f058fc8af6beb2180fe7c750"
+            },
+            {
+              "file": "libs/shared/config/README.md",
+              "hash": "563f70fec99688275c5a6a6e93d90c3bdb3b4258"
+            },
+            {
+              "file": "libs/shared/config/src/index.ts",
+              "hash": "f5989d4451a7f76755d43c91283aab048be6a971"
+            },
+            {
+              "file": "libs/shared/config/src/lib/app-config.token.ts",
+              "hash": "d0154aa8eaea637dad2c9fa08c64d63e3f213ac1",
+              "deps": [
+                "npm:@angular/core"
+              ]
+            },
+            {
+              "file": "libs/shared/config/src/lib/app.config.ts",
+              "hash": "937ce56030dc8409e8c934bce3d2d73813413452"
+            },
+            {
+              "file": "libs/shared/config/src/test-setup.ts",
+              "hash": "90bc5062ea65effafeab7f3b3a5a50da3d0e6651",
+              "deps": [
+                "npm:jest-preset-angular"
+              ]
+            },
+            {
+              "file": "libs/shared/config/tsconfig.json",
+              "hash": "5cf0a165647594e7436a4b4bb411fad9e1a7d4dc"
+            },
+            {
+              "file": "libs/shared/config/tsconfig.lib.json",
+              "hash": "17469f1e4af3ea771aaa29b1d48f9bb5bf62a020"
+            },
+            {
+              "file": "libs/shared/config/tsconfig.spec.json",
+              "hash": "875b121e84f7c4fbb86768fc9084b1ae4e3e32f2"
+            }
+          ]
+        }
+      },
+      "shared-utils": {
+        "name": "shared-utils",
+        "type": "lib",
+        "data": {
+          "name": "shared-utils",
+          "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+          "projectType": "library",
+          "sourceRoot": "libs/shared/utils/src",
+          "prefix": "app",
+          "targets": {
+            "test": {
+              "executor": "@nrwl/jest:jest",
+              "outputs": [
+                "{workspaceRoot}/coverage/{projectRoot}"
+              ],
+              "options": {
+                "jestConfig": "libs/shared/utils/jest.config.ts",
+                "passWithNoTests": true
+              },
+              "inputs": [
+                "default",
+                "^production",
+                "{workspaceRoot}/karma.conf.js",
+                "{workspaceRoot}/jest.preset.js"
+              ]
+            },
+            "lint": {
+              "executor": "@nrwl/linter:eslint",
+              "outputs": [
+                "{options.outputFile}"
+              ],
+              "options": {
+                "lintFilePatterns": [
+                  "libs/shared/utils/**/*.ts",
+                  "libs/shared/utils/**/*.html"
+                ]
+              },
+              "inputs": [
+                "default",
+                "{workspaceRoot}/.eslintrc.json"
+              ]
+            }
+          },
+          "tags": [],
+          "root": "libs/shared/utils",
+          "files": [
+            {
+              "file": "libs/shared/utils/.eslintrc.json",
+              "hash": "894caa58de3238e5ee24c5d7ac0fa51963a891a5"
+            },
+            {
+              "file": "libs/shared/utils/jest.config.ts",
+              "hash": "94926a1c090487f7c8f04913ded8d520e3ba3f52"
+            },
+            {
+              "file": "libs/shared/utils/project.json",
+              "hash": "c95506009eed80f049387a7212033f1c3cbd0ec2"
+            },
+            {
+              "file": "libs/shared/utils/README.md",
+              "hash": "146a8b829e9087327cdb834ed8076fec095cdfe1"
+            },
+            {
+              "file": "libs/shared/utils/src/index.ts",
+              "hash": "f850ac2d44873d0ca94fb23ed22956cebd7c86d8"
+            },
+            {
+              "file": "libs/shared/utils/src/lib/get-guid.ts",
+              "hash": "5862fcec5e8b6b8eb66d5d3224dd7331051b7808"
+            },
+            {
+              "file": "libs/shared/utils/src/lib/index.ts",
+              "hash": "a0750937f001d4b3b3ce944371ab05e537e73483"
+            },
+            {
+              "file": "libs/shared/utils/src/test-setup.ts",
+              "hash": "90bc5062ea65effafeab7f3b3a5a50da3d0e6651",
+              "deps": [
+                "npm:jest-preset-angular"
+              ]
+            },
+            {
+              "file": "libs/shared/utils/tsconfig.json",
+              "hash": "b9d3d8bd16a384886cd3457069feb30eacae4b84"
+            },
+            {
+              "file": "libs/shared/utils/tsconfig.lib.json",
+              "hash": "17469f1e4af3ea771aaa29b1d48f9bb5bf62a020"
+            },
+            {
+              "file": "libs/shared/utils/tsconfig.spec.json",
+              "hash": "875b121e84f7c4fbb86768fc9084b1ae4e3e32f2"
+            }
+          ]
+        }
+      },
+      "auth-guards": {
+        "name": "auth-guards",
+        "type": "lib",
+        "data": {
+          "name": "auth-guards",
+          "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+          "projectType": "library",
+          "sourceRoot": "libs/auth/guards/src",
+          "prefix": "app",
+          "targets": {
+            "test": {
+              "executor": "@nrwl/jest:jest",
+              "outputs": [
+                "{workspaceRoot}/coverage/{projectRoot}"
+              ],
+              "options": {
+                "jestConfig": "libs/auth/guards/jest.config.ts",
+                "passWithNoTests": true
+              },
+              "inputs": [
+                "default",
+                "^production",
+                "{workspaceRoot}/karma.conf.js",
+                "{workspaceRoot}/jest.preset.js"
+              ]
+            },
+            "lint": {
+              "executor": "@nrwl/linter:eslint",
+              "outputs": [
+                "{options.outputFile}"
+              ],
+              "options": {
+                "lintFilePatterns": [
+                  "libs/auth/guards/**/*.ts",
+                  "libs/auth/guards/**/*.html"
+                ]
+              },
+              "inputs": [
+                "default",
+                "{workspaceRoot}/.eslintrc.json"
+              ]
+            }
+          },
+          "tags": [],
+          "root": "libs/auth/guards",
+          "files": [
+            {
+              "file": "libs/auth/guards/.eslintrc.json",
+              "hash": "894caa58de3238e5ee24c5d7ac0fa51963a891a5"
+            },
+            {
+              "file": "libs/auth/guards/jest.config.ts",
+              "hash": "d1ad150470ec6c8815300d66c617f450e5a8d647"
+            },
+            {
+              "file": "libs/auth/guards/project.json",
+              "hash": "b0a71fddd21fa8e3349dfdf0240033188998d5b6"
+            },
+            {
+              "file": "libs/auth/guards/README.md",
+              "hash": "4396c7aaea684b731d7bb72448c0ef8b0a27f883"
+            },
+            {
+              "file": "libs/auth/guards/src/index.ts",
+              "hash": "e751170234ce246cbbf444a9d48e9725aea8d968"
+            },
+            {
+              "file": "libs/auth/guards/src/lib/logged-in.guard.ts",
+              "hash": "fbce152390a24379fb82833c60fd78f0949bbced",
+              "deps": [
+                "npm:@angular/core",
+                "npm:@angular/router",
+                "auth-data-access-store",
+                "npm:rxjs"
+              ]
+            },
+            {
+              "file": "libs/auth/guards/src/test-setup.ts",
+              "hash": "90bc5062ea65effafeab7f3b3a5a50da3d0e6651",
+              "deps": [
+                "npm:jest-preset-angular"
+              ]
+            },
+            {
+              "file": "libs/auth/guards/tsconfig.json",
+              "hash": "5cf0a165647594e7436a4b4bb411fad9e1a7d4dc"
+            },
+            {
+              "file": "libs/auth/guards/tsconfig.lib.json",
+              "hash": "17469f1e4af3ea771aaa29b1d48f9bb5bf62a020"
+            },
+            {
+              "file": "libs/auth/guards/tsconfig.spec.json",
+              "hash": "875b121e84f7c4fbb86768fc9084b1ae4e3e32f2"
+            }
+          ]
+        }
+      },
+      "design": {
+        "name": "design",
+        "type": "app",
+        "data": {
+          "name": "design",
+          "$schema": "../../node_modules/nx/schemas/project-schema.json",
+          "projectType": "application",
+          "sourceRoot": "apps/design/src",
+          "prefix": "app",
+          "targets": {
+            "build": {
+              "executor": "@angular-devkit/build-angular:browser",
+              "outputs": [
+                "{options.outputPath}"
+              ],
+              "options": {
+                "outputPath": "dist/apps/design",
+                "index": "apps/design/src/index.html",
+                "main": "apps/design/src/main.ts",
+                "polyfills": [
+                  "zone.js"
+                ],
+                "tsConfig": "apps/design/tsconfig.app.json",
+                "inlineStyleLanguage": "scss",
+                "assets": [
+                  "apps/design/src/favicon.ico",
+                  "apps/design/src/assets"
+                ],
+                "styles": [
+                  "apps/design/src/styles.scss"
+                ],
+                "scripts": []
+              },
+              "configurations": {
+                "production": {
+                  "budgets": [
+                    {
+                      "type": "initial",
+                      "maximumWarning": "500kb",
+                      "maximumError": "1mb"
+                    },
+                    {
+                      "type": "anyComponentStyle",
+                      "maximumWarning": "2kb",
+                      "maximumError": "4kb"
+                    }
+                  ],
+                  "outputHashing": "all"
+                },
+                "development": {
+                  "buildOptimizer": false,
+                  "optimization": false,
+                  "vendorChunk": true,
+                  "extractLicenses": false,
+                  "sourceMap": true,
+                  "namedChunks": true
+                }
+              },
+              "defaultConfiguration": "production",
+              "dependsOn": [
+                "^build"
+              ],
+              "inputs": [
+                "production",
+                "^production"
+              ]
+            },
+            "serve": {
+              "executor": "@angular-devkit/build-angular:dev-server",
+              "options": {
+                "browserTarget": "design:build",
+                "proxyConfig": "apps/design/proxy.conf.json"
+              },
+              "configurations": {
+                "production": {
+                  "browserTarget": "design:build:production"
+                },
+                "development": {
+                  "browserTarget": "design:build:development"
+                }
+              },
+              "defaultConfiguration": "development"
+            },
+            "extract-i18n": {
+              "executor": "@angular-devkit/build-angular:extract-i18n",
+              "options": {
+                "browserTarget": "design:build"
+              }
+            },
+            "lint": {
+              "executor": "@nrwl/linter:eslint",
+              "outputs": [
+                "{options.outputFile}"
+              ],
+              "options": {
+                "lintFilePatterns": [
+                  "apps/design/**/*.ts",
+                  "apps/design/**/*.html"
+                ]
+              },
+              "inputs": [
+                "default",
+                "{workspaceRoot}/.eslintrc.json"
+              ]
+            },
+            "test": {
+              "executor": "@nrwl/jest:jest",
+              "outputs": [
+                "{workspaceRoot}/coverage/{projectRoot}"
+              ],
+              "options": {
+                "jestConfig": "apps/design/jest.config.ts",
+                "passWithNoTests": true
+              },
+              "inputs": [
+                "default",
+                "^production",
+                "{workspaceRoot}/karma.conf.js",
+                "{workspaceRoot}/jest.preset.js"
+              ]
+            }
+          },
+          "tags": [],
+          "root": "apps/design",
+          "files": [
+            {
+              "file": "apps/design/.eslintrc.json",
+              "hash": "c34c7ddfb61eeb745983c31583e916087764adee"
+            },
+            {
+              "file": "apps/design/jest.config.ts",
+              "hash": "2decde8a8ed6bb30ce9759abca26a74240425da6"
+            },
+            {
+              "file": "apps/design/project.json",
+              "hash": "a758f5933ac76b58324f2f95dd77e717c6375693"
+            },
+            {
+              "file": "apps/design/proxy.conf.json",
+              "hash": "3ab252405292351905a0032903421b19317d93fa"
+            },
+            {
+              "file": "apps/design/src/app/app.component.html",
+              "hash": "830c4929375896846d51b774791c3e1ca3209dd3"
+            },
+            {
+              "file": "apps/design/src/app/app.component.scss",
+              "hash": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+            },
+            {
+              "file": "apps/design/src/app/app.component.spec.ts",
+              "hash": "62378fbaa96f41b28fa8881be77d9386b5928c1f",
+              "deps": [
+                "npm:@angular/core",
+                "npm:@angular/router"
+              ]
+            },
+            {
+              "file": "apps/design/src/app/app.component.ts",
+              "hash": "969d0767837d322fb63944dfbac33708bd075846",
+              "deps": [
+                "npm:@angular/core",
+                "npm:@angular/router",
+                "auth-data-access-store",
+                "projects-data-access-store",
+                "shared-data-access-app-component-store"
+              ]
+            },
+            {
+              "file": "apps/design/src/app/app.routes.ts",
+              "hash": "e69a307b90ee58dd45680fd43e0fda4a281b9e53",
+              "deps": [
+                "npm:@angular/material",
+                "project-id-data-access-store",
+                "npm:@angular/router",
+                "auth-guards",
+                "npm:@ngrx/effects",
+                "npm:@ngrx/store",
+                "projects-data-access-store",
+                "npm:@angular/core",
+                "project-id-feature-index"
+              ]
+            },
+            {
+              "file": "apps/design/src/app/home/home.component.html",
+              "hash": "c41ccd686eaaf79220f594cea96efdb07cb729fb"
+            },
+            {
+              "file": "apps/design/src/app/home/home.component.spec.ts",
+              "hash": "b0ded9849975b0476b7ed23498be0899735deae0",
+              "deps": [
+                "npm:@angular/core"
+              ]
+            },
+            {
+              "file": "apps/design/src/app/home/home.component.ts",
+              "hash": "124ad7dd4dff5596fddc8fd4935eae89a31592c8",
+              "deps": [
+                "npm:@angular/animations",
+                "npm:@angular/common",
+                "npm:@angular/core",
+                "npm:@angular/material",
+                "npm:@angular/router",
+                "auth-data-access-facade",
+                "projects-data-access-store",
+                "projects-feature-projects-list",
+                "shared-data-access-models",
+                "npm:rxjs"
+              ]
+            },
+            {
+              "file": "apps/design/src/assets/.gitkeep",
+              "hash": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+            },
+            {
+              "file": "apps/design/src/favicon.ico",
+              "hash": "317ebcb2336e0833a22dddf0ab287849f26fda57"
+            },
+            {
+              "file": "apps/design/src/index.html",
+              "hash": "99c05e4756f51330cc730f0f5fa1f592c66b8bc0"
+            },
+            {
+              "file": "apps/design/src/main.ts",
+              "hash": "89da611e81612d23cccb50f635cca6777469feb3",
+              "deps": [
+                "npm:@angular/common",
+                "npm:@angular/core",
+                "npm:@angular/platform-browser",
+                "npm:@angular/router",
+                "auth-interceptors",
+                "npm:@ngrx/effects",
+                "npm:@ngrx/router-store",
+                "npm:@ngrx/store",
+                "npm:@ngrx/store-devtools",
+                "shared-data-access-store",
+                "auth-data-access-store"
+              ]
+            },
+            {
+              "file": "apps/design/src/styles.scss",
+              "hash": "77e408aa8b560f44eda957921647fb6e0d154090"
+            },
+            {
+              "file": "apps/design/src/test-setup.ts",
+              "hash": "90bc5062ea65effafeab7f3b3a5a50da3d0e6651",
+              "deps": [
+                "npm:jest-preset-angular"
+              ]
+            },
+            {
+              "file": "apps/design/tailwind.config.js",
+              "hash": "9bc8b774ea0e9398e0432a00d2346a223875ca8e",
+              "deps": [
+                "npm:@nrwl/angular"
+              ]
+            },
+            {
+              "file": "apps/design/tsconfig.app.json",
+              "hash": "fff4a41d444a486d4cf163be19f8601e0510c270"
+            },
+            {
+              "file": "apps/design/tsconfig.editor.json",
+              "hash": "8ae117d96293c675141bebfc2fad8c5df58429d3"
+            },
+            {
+              "file": "apps/design/tsconfig.json",
+              "hash": "e01cf19bd9d5ff6c8db1b3c2e180e5d79e6999b1"
+            },
+            {
+              "file": "apps/design/tsconfig.spec.json",
+              "hash": "9e1c0c77911676dd3bb4238ed194691c2ffccd88"
+            }
+          ]
+        }
+      }
+    },
+    "dependencies": {
+      "shared-data-access-app-component-store": [
+        {
+          "source": "shared-data-access-app-component-store",
+          "target": "auth-data-access-api",
+          "type": "static"
+        },
+        {
+          "source": "shared-data-access-app-component-store",
+          "target": "auth-data-access-store",
+          "type": "static"
+        },
+        {
+          "source": "shared-data-access-app-component-store",
+          "target": "shared-data-access-store",
+          "type": "static"
+        }
+      ],
+      "project-id-data-access-services": [
+        {
+          "source": "project-id-data-access-services",
+          "target": "project-id-data-access-store",
+          "type": "static"
+        },
+        {
+          "source": "project-id-data-access-services",
+          "target": "shared-data-access-models",
+          "type": "static"
+        }
+      ],
+      "project-id-feature-grid-layout": [
+        {
+          "source": "project-id-feature-grid-layout",
+          "target": "project-id-data-access-services",
+          "type": "static"
+        },
+        {
+          "source": "project-id-feature-grid-layout",
+          "target": "project-id-data-access-store",
+          "type": "static"
+        },
+        {
+          "source": "project-id-feature-grid-layout",
+          "target": "project-id-ui-block-switch",
+          "type": "static"
+        },
+        {
+          "source": "project-id-feature-grid-layout",
+          "target": "shared-data-access-models",
+          "type": "static"
+        }
+      ],
+      "projects-feature-projects-list": [
+        {
+          "source": "projects-feature-projects-list",
+          "target": "projects-data-access-store",
+          "type": "static"
+        },
+        {
+          "source": "projects-feature-projects-list",
+          "target": "shared-data-access-models",
+          "type": "static"
+        }
+      ],
+      "project-id-data-access-store": [
+        {
+          "source": "project-id-data-access-store",
+          "target": "shared-data-access-models",
+          "type": "static"
+        },
+        {
+          "source": "project-id-data-access-store",
+          "target": "shared-data-access-router",
+          "type": "static"
+        },
+        {
+          "source": "project-id-data-access-store",
+          "target": "projects-data-access-store",
+          "type": "static"
+        },
+        {
+          "source": "project-id-data-access-store",
+          "target": "project-id-data-access-api",
+          "type": "static"
+        },
+        {
+          "source": "project-id-data-access-store",
+          "target": "project-id-utils",
+          "type": "static"
+        }
+      ],
+      "shared-directives-on-destroy": [],
+      "project-id-data-access-api": [
+        {
+          "source": "project-id-data-access-api",
+          "target": "shared-data-access-models",
+          "type": "static"
+        }
+      ],
+      "project-id-ui-block-switch": [
+        {
+          "source": "project-id-ui-block-switch",
+          "target": "project-id-feature-blocks",
+          "type": "static"
+        },
+        {
+          "source": "project-id-ui-block-switch",
+          "target": "shared-data-access-models",
+          "type": "static"
+        }
+      ],
+      "projects-data-access-store": [
+        {
+          "source": "projects-data-access-store",
+          "target": "shared-data-access-models",
+          "type": "static"
+        },
+        {
+          "source": "projects-data-access-store",
+          "target": "projects-data-access-api",
+          "type": "static"
+        },
+        {
+          "source": "projects-data-access-store",
+          "target": "shared-data-access-router",
+          "type": "static"
+        }
+      ],
+      "project-id-feature-blocks": [
+        {
+          "source": "project-id-feature-blocks",
+          "target": "project-id-data-access-api",
+          "type": "static"
+        },
+        {
+          "source": "project-id-feature-blocks",
+          "target": "shared-data-access-models",
+          "type": "static"
+        },
+        {
+          "source": "project-id-feature-blocks",
+          "target": "shared-data-access-store",
+          "type": "static"
+        },
+        {
+          "source": "project-id-feature-blocks",
+          "target": "project-id-data-access-store",
+          "type": "static"
+        }
+      ],
+      "shared-data-access-models": [
+        {
+          "source": "shared-data-access-models",
+          "target": "shared-utils",
+          "type": "static"
+        }
+      ],
+      "shared-data-access-router": [],
+      "project-id-feature-index": [
+        {
+          "source": "project-id-feature-index",
+          "target": "auth-data-access-api",
+          "type": "static"
+        },
+        {
+          "source": "project-id-feature-index",
+          "target": "auth-data-access-store",
+          "type": "static"
+        },
+        {
+          "source": "project-id-feature-index",
+          "target": "projects-data-access-store",
+          "type": "static"
+        },
+        {
+          "source": "project-id-feature-index",
+          "target": "shared-data-access-models",
+          "type": "static"
+        },
+        {
+          "source": "project-id-feature-index",
+          "target": "shared-data-access-store",
+          "type": "static"
+        },
+        {
+          "source": "project-id-feature-index",
+          "target": "project-id-feature-grid-layout",
+          "type": "static"
+        }
+      ],
+      "projects-data-access-api": [
+        {
+          "source": "projects-data-access-api",
+          "target": "shared-data-access-models",
+          "type": "static"
+        }
+      ],
+      "shared-data-access-store": [
+        {
+          "source": "shared-data-access-store",
+          "target": "auth-data-access-store",
+          "type": "static"
+        }
+      ],
+      "auth-data-access-facade": [
+        {
+          "source": "auth-data-access-facade",
+          "target": "auth-data-access-store",
+          "type": "static"
+        },
+        {
+          "source": "auth-data-access-facade",
+          "target": "shared-data-access-models",
+          "type": "static"
+        },
+        {
+          "source": "auth-data-access-facade",
+          "target": "shared-data-access-store",
+          "type": "static"
+        }
+      ],
+      "auth-data-access-store": [
+        {
+          "source": "auth-data-access-store",
+          "target": "auth-data-access-api",
+          "type": "static"
+        },
+        {
+          "source": "auth-data-access-store",
+          "target": "shared-data-access-models",
+          "type": "static"
+        },
+        {
+          "source": "auth-data-access-store",
+          "target": "projects-data-access-store",
+          "type": "static"
+        },
+        {
+          "source": "auth-data-access-store",
+          "target": "shared-data-access-store",
+          "type": "static"
+        }
+      ],
+      "auth-data-access-api": [],
+      "shared-interceptors": [
+        {
+          "source": "shared-interceptors",
+          "target": "shared-data-access-store",
+          "type": "static"
+        }
+      ],
+      "auth-interceptors": [
+        {
+          "source": "auth-interceptors",
+          "target": "auth-data-access-store",
+          "type": "static"
+        }
+      ],
+      "shared-ui-spinner": [],
+      "project-id-utils": [
+        {
+          "source": "project-id-utils",
+          "target": "shared-data-access-models",
+          "type": "static"
+        },
+        {
+          "source": "project-id-utils",
+          "target": "project-id-data-access-store",
+          "type": "static"
+        }
+      ],
+      "shared-config": [],
+      "shared-utils": [],
+      "auth-guards": [
+        {
+          "source": "auth-guards",
+          "target": "auth-data-access-store",
+          "type": "static"
+        }
+      ],
+      "design": [
+        {
+          "source": "design",
+          "target": "auth-data-access-store",
+          "type": "static"
+        },
+        {
+          "source": "design",
+          "target": "projects-data-access-store",
+          "type": "static"
+        },
+        {
+          "source": "design",
+          "target": "shared-data-access-app-component-store",
+          "type": "static"
+        },
+        {
+          "source": "design",
+          "target": "project-id-data-access-store",
+          "type": "static"
+        },
+        {
+          "source": "design",
+          "target": "auth-guards",
+          "type": "static"
+        },
+        {
+          "source": "design",
+          "target": "project-id-feature-index",
+          "type": "static"
+        },
+        {
+          "source": "design",
+          "target": "auth-data-access-facade",
+          "type": "static"
+        },
+        {
+          "source": "design",
+          "target": "projects-feature-projects-list",
+          "type": "static"
+        },
+        {
+          "source": "design",
+          "target": "shared-data-access-models",
+          "type": "static"
+        },
+        {
+          "source": "design",
+          "target": "auth-interceptors",
+          "type": "static"
+        },
+        {
+          "source": "design",
+          "target": "shared-data-access-store",
+          "type": "static"
+        }
+      ]
+    }
+  },
+  "affectedProjects": [],
+  "criticalPath": []
+}

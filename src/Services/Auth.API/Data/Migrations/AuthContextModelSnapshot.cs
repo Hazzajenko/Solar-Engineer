@@ -209,6 +209,10 @@ namespace Auth.API.Data.Migrations
                     b.Property<string>("ProviderKey")
                         .HasColumnType("text");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("text");
 
@@ -220,6 +224,10 @@ namespace Auth.API.Data.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("AspNetUserLogins", (string)null);
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUserLogin<Guid>");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
@@ -239,6 +247,17 @@ namespace Auth.API.Data.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("Infrastructure.Entities.Identity.AppUserLogin", b =>
+                {
+                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>");
+
+                    b.Property<string>("ProviderEmail")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasDiscriminator().HasValue("AppUserLogin");
                 });
 
             modelBuilder.Entity("Infrastructure.Entities.Identity.AppUserRole", b =>

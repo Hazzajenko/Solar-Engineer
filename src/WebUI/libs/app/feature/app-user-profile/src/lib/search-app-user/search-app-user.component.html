@@ -1,0 +1,81 @@
+<ng-container *ngrxLet="searchedUser$ | async as userResult">
+  <div class="flex flex-row items-center justify-center">
+    <form>
+      <div class="flex flex-row items-center justify-center">
+        <h2 mat-dialog-title>Search for user by username</h2>
+      </div>
+      <div class="mb-4 flex flex-row max-h-[50px]">
+        <input
+          [formControl]="userNameControl"
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          id="userName"
+          type="text"
+          placeholder="UserName..."
+        />
+        <button (click)="search()" mat-icon-button>
+          <mat-icon>search</mat-icon>
+        </button>
+      </div>
+      <ng-container *ngIf="userResult; else userUndefined">
+        <div class="flex items-center space-x-3">
+          <!--          <img
+                      class="w-8 h-8 rounded-full"
+                      matListItemIcon
+                      *ngIf="userResult.photoUrl"
+                      [src]="userResult.photoUrl | getCdnUrlString"
+                      alt=""
+                    />-->
+          <img
+            class="w-8 h-8 rounded-full"
+            matListItemIcon
+            *ngIf="userResult.photoUrl"
+            [src]="userResult.photoUrl"
+            alt=""
+          />
+          <div class="flex flex-col">
+            <span *ngIf="userResult.displayName" matListItemTitle
+              >{{ userResult.displayName }}
+            </span>
+            <ng-container *ngIf="userResult.isOnline; then online; else offline"></ng-container>
+            <ng-template #online>
+              <span
+                *ngIf="userResult.isOnline"
+                class="top-1 left-7 absolute w-3.5 h-3.5 bg-green-400 border-2 border-white dark:border-gray-800 rounded-full"
+              ></span>
+            </ng-template>
+            <ng-template #offline>
+              <span
+                class="text-xs"
+                *ngIf="userResult.lastActive && !userResult.isOnline"
+                matListItemLine
+                >Last Active {{ userResult.lastActive | timeDifferenceFromNow }}
+              </span>
+            </ng-template>
+            <ng-container *ngIf="userResult.isFriend">
+              <span
+                class="text-xs"
+                *ngIf="userResult.isFriend && userResult.becameFriendsTime"
+                matListItemLine
+                >Friends Since {{ userResult.becameFriendsTime | timeDifferenceFromNow }}
+              </span>
+            </ng-container>
+            <span class="text-xs" *ngIf="userResult.created" matListItemLine
+              >User Since {{ userResult.created | timeDifferenceFromNow }}
+            </span>
+            <span *ngIf="userResult.firstName && userResult.lastName" matListItemLine
+              >{{ userResult.firstName }} {{ userResult.lastName }}</span
+            >
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-template #userUndefined>
+        <mat-progress-bar *ngIf="searching" mode="indeterminate"></mat-progress-bar>
+        <div *ngIf="latestSearch && !searching">
+          <mat-icon>error</mat-icon>
+          <span>Unable to find {{ latestSearch }}</span>
+        </div>
+      </ng-template>
+    </form>
+  </div>
+</ng-container>

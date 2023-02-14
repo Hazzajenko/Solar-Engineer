@@ -155,7 +155,6 @@ app.UseHttpsRedirection();
     applicationBuilder => applicationBuilder.UseHttpsRedirection());*/
 
 
-
 app.UseAuthentication();
 // app.UseAuthorization();
 
