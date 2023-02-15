@@ -21,6 +21,7 @@
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="MassTransit.Abstractions" Version="8.0.12" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="7.0.2" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.2" />
         <FrameworkReference Include="Microsoft.AspNetCore.App" />
@@ -31,6 +32,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Contracts\Data" />
       <Folder Include="Entities\Users" />
     </ItemGroup>
 

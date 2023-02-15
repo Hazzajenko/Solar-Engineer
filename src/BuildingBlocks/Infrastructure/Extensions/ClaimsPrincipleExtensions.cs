@@ -12,11 +12,11 @@ public static class ClaimsPrincipleExtensions
         return identity;
     }
 
-    public static int GetUserId(this ClaimsPrincipal user)
+    public static string GetUserId(this ClaimsPrincipal user)
     {
         var value = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (value == null)
             throw new ArgumentNullException(nameof(user));
-        return int.Parse(value);
+        return value;
     }
 }

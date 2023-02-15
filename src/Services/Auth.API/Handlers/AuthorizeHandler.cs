@@ -1,21 +1,16 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using Auth.API.Commands;
+﻿using Auth.API.Commands;
 using Auth.API.Exceptions;
 using Auth.API.Extensions;
 using Auth.API.Helpers;
 using Auth.API.Mapping;
-using Infrastructure.Authentication;
+using FastEndpoints;
 using Infrastructure.Entities.Identity;
-using Mediator;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 
 namespace Auth.API.Handlers;
 
 public class AuthorizeHandler
-    : IRequestHandler<AuthorizeCommand, AppUser>
+    : ICommandHandler<AuthorizeCommand, AppUser>
 {
     private readonly ILogger<AuthorizeHandler> _logger;
     private readonly UserManager<AppUser> _userManager;
@@ -27,7 +22,7 @@ public class AuthorizeHandler
         _logger = logger;
     }
 
-    public async ValueTask<AppUser> Handle(
+    public async Task<AppUser> ExecuteAsync(
         AuthorizeCommand request,
         CancellationToken cT
     )
@@ -35,7 +30,8 @@ public class AuthorizeHandler
         var user = request.HttpContext.User;
         var externalLogin = user.GetLogin();
 
-        var existingAppUser = await _userManager.FindByLoginAsync(externalLogin.LoginProvider, externalLogin.ProviderKey);
+        var existingAppUser =
+            await _userManager.FindByLoginAsync(externalLogin.LoginProvider, externalLogin.ProviderKey);
 
         if (existingAppUser is not null)
         {
@@ -43,8 +39,8 @@ public class AuthorizeHandler
             return existingAppUser;
         }
 
-        AppUser appUser = user.ToAppUser();
-        
+        var appUser = user.ToAppUser();
+
         var result = await _userManager.CreateAsync(appUser);
 
         if (!result.Succeeded)
@@ -75,7 +71,5 @@ public class AuthorizeHandler
         await request.HttpContext.SignInAppUserAsync(appUser);
 
         return appUser;
-
-
     }
 }

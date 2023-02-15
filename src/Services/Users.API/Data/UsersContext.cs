@@ -5,13 +5,14 @@ using Users.API.Entities;
 namespace Users.API.Data;
 
 public class UsersContext
-    : DbContext
+    : DbContext, ITrackContext, IUsersContext
 {
     public UsersContext(DbContextOptions<UsersContext> options)
         : base(options)
     {
     }
 
+    public DbSet<User> Users { get; set; } = default!;
     public DbSet<UserLink> UserLinks { get; set; } = default!;
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)

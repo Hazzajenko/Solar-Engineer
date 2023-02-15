@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using DotNetCore.EntityFrameworkCore;
 using Infrastructure.Entities.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -16,7 +17,7 @@ public class AuthContext
         IdentityUserLogin<Guid>,
         IdentityRoleClaim<Guid>,
         IdentityUserToken<Guid>
-    >, IAuthContext, IDbContext
+    >, IAuthContext, IDbContext, IUnitOfWork
     /*IdentityDbContext<
             AppUser,
             AppRole,
@@ -31,6 +32,13 @@ public class AuthContext
     {
         // Database.SetInitializer
         // Database.CurrentTransaction
+    }
+
+    // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    // => optionsBuilder.UseNpgsql("Server=localhost;Port=5432;Database=solardotnetbackend;User ID=postgres;Password=password;");
+    public async Task<int> SaveChangesAsync()
+    {
+        return await base.SaveChangesAsync();
     }
 
     // public DbSet<AppUser> AppUsers { get; set; } = default!;
@@ -49,7 +57,4 @@ public class AuthContext
 
         builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
     }
-
-    // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    // => optionsBuilder.UseNpgsql("Server=localhost;Port=5432;Database=solardotnetbackend;User ID=postgres;Password=password;");
 }

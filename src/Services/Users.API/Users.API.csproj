@@ -25,6 +25,9 @@
         </PackageReference>
         <PackageReference Include="Google.Protobuf" Version="3.21.5" />
         <PackageReference Include="Grpc.Net.Client" Version="2.51.0" />
+        <PackageReference Include="MassTransit" Version="8.0.12" />
+        <PackageReference Include="MassTransit.AspNetCore" Version="7.3.1" />
+        <PackageReference Include="MassTransit.RabbitMQ" Version="8.0.12" />
         <PackageReference Include="Mediator.Abstractions" Version="2.0.30" />
         <PackageReference Include="Mediator.SourceGenerator" Version="2.0.30">
           <PrivateAssets>all</PrivateAssets>
@@ -37,6 +40,8 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+
+        <PackageReference Include="RabbitMQ.Client" Version="6.4.0" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
     </ItemGroup>
 
@@ -47,6 +52,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\BuildingBlocks\EventBus\EventBus.csproj" />
         <ProjectReference Include="..\..\BuildingBlocks\Infrastructure\Infrastructure.csproj" />
     </ItemGroup>
 

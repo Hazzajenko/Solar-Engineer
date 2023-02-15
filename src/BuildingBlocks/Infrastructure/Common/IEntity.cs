@@ -1,8 +1,8 @@
 ﻿namespace Infrastructure.Common;
 
-public interface IEntity
+public abstract class IEntity<T>
 {
-    public Guid Id { get; protected init; }
+    public T Id { get; protected init; }
     public DateTime CreatedTime { get; set; }
     public DateTime LastModifiedTime { get; set; }
 }

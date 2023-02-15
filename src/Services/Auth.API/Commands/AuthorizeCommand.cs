@@ -1,7 +1,7 @@
-﻿using Infrastructure.Entities.Identity;
-using Mediator;
+﻿using FastEndpoints;
+using Infrastructure.Entities.Identity;
 
 namespace Auth.API.Commands;
 
 public sealed record AuthorizeCommand(HttpContext HttpContext)
-    : IRequest<AppUser>;
+    : ICommand<AppUser>;

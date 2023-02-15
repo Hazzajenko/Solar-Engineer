@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using Auth.API.Data;
 using Auth.API.Extensions.ServiceCollection;
 using Auth.API.Services;
+using FastEndpoints;
 using FastEndpoints.Swagger;
 using Infrastructure.Authentication;
 using Infrastructure.Data;
@@ -34,10 +35,12 @@ builder.Host.UseSerilog(
     }
 );
 
+// builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory())
+
 // builder.Services.AddApplicationServices(config);
 // builder.Services.AddTransient<ISerializationService>();
 // builder.Services.AddInfrastructureServices();
-builder.Services.AddApplicationServices();
+builder.Services.AddApplicationServices(config);
 builder.Services.AddIdentityServices(config);
 builder.Services.AddAuth(config);
 /*builder.Services.AddMediator(options =>
@@ -89,6 +92,7 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 builder.Services.AddSwaggerDoc();
 
 builder.Services.AddGrpc();
+// builder.Use
 /*builder.WebHost.ConfigureKestrel(options =>
 {
     var grpcPort = config.GetValue("GRPC_PORT", 5001);
@@ -217,3 +221,29 @@ catch (Exception ex)
 }
 
 await app.RunAsync();
+
+// IServiceCollection serviceCollection;
+// services.
+
+/*await new HostBuilder()
+    .UseServiceProviderFactory(new AutofacServiceProviderFactory())
+    .ConfigureServices(services => services.AddApplicationServices(config))
+    /*.ConfigureContainer<ContainerBuilder>(builder =>
+    {
+        // builder.
+        // builder.
+        // builder.
+        // registering services in the Autofac ContainerBuilder
+    })#1#
+    .UseSerilog()
+    // .Use
+    .UseConsoleLifetime()
+    .Build()
+    .RunAsync();*/
+
+
+public partial class Program
+{
+    public static string Namespace = typeof(Program).Namespace;
+    public static string AppName = Namespace.Substring(Namespace.LastIndexOf('.', Namespace.LastIndexOf('.') - 1) + 1);
+}

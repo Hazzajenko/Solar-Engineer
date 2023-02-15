@@ -12,8 +12,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Options;
 using Serilog;
 using Users.API.Data;
-using Users.API.Grpc;
-using Users.API.Repositories;
+using Users.API.Extensions;
 
 // var builder = WebApplication.CreateBuilder(args);
 var builder = WebApplication.CreateBuilder(
@@ -40,11 +39,10 @@ builder.Host.UseSerilog(
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 // builder.Services.AddEndpointsApiExplorer();
 // builder.Services.AddSwaggerGen();
-builder.Services.AddTransient<GrpcExceptionInterceptor>();
-builder.Services.AddScoped<IUserLinksRepository, UserLinksRepository>();
-builder.Services.AddScoped<IAuthGrpcGrabber, AuthGrpcGrabber>();
+
 builder.Services.AddMediator(options => { options.ServiceLifetime = ServiceLifetime.Transient; });
 builder.Services.AddAuth(config);
+builder.Services.AddAppServices(config);
 // builder.Services.AddAuthorization();
 builder.Services.AddAuthorization(opt =>
 {
@@ -128,4 +126,35 @@ if (app.Environment.IsDevelopment())
 
 // app.MapControllers();
 
+// app.ConfigureEventBus();
+
 app.Run();
+
+
+public partial class Program
+{
+    public static string Namespace = typeof(Program).Namespace;
+    public static string AppName = Namespace.Substring(Namespace.LastIndexOf('.', Namespace.LastIndexOf('.') - 1) + 1);
+}
+
+/*
+var factory = new ConnectionFactory
+{
+    HostName = "localhost"
+};
+var connection = factory.CreateConnection();
+using var channel = connection.CreateModel();
+channel.QueueDeclare("orders", exclusive: false);
+
+var consumer = new EventingBasicConsumer(channel);
+consumer.Received += (model, eventArgs) =>
+{
+    var body = eventArgs.Body.ToArray();
+    var message = Encoding.UTF8.GetString(body);
+
+    Console.WriteLine($"Message received: {message}");
+};
+
+channel.BasicConsume("orders", true, consumer);
+
+Console.ReadKey();*/
