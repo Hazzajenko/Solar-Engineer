@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: C:\Users\jenki\path\kompose.exe convert
+    kompose.version: 1.26.0 (40646f47)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: dotnetapi
+  name: dotnetapi
+spec:
+  ports:
+    - name: "5000"
+      port: 5000
+      targetPort: 80
+  selector:
+    io.kompose.service: dotnetapi
+status:
+  loadBalancer: {}

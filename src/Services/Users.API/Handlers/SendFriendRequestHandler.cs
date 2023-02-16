@@ -5,6 +5,8 @@ using Users.API.Entities;
 using Users.API.Grpc;
 using Users.API.Models;
 using Users.API.Repositories;
+// using IUnitOfWork = DotNetCore.EntityFrameworkCore.IUnitOfWork;
+
 // using AppUser = Users.API.Entities.AppUser;
 
 namespace Users.API.Handlers;
@@ -15,20 +17,20 @@ public sealed record SendFriendRequestCommand(UserLink UserLink, AppUser AppUser
 public class SendFriendRequestHandler
     : ICommandHandler<SendFriendRequestCommand, bool>
 {
-    private readonly IAuthGrpcService _auth;
+    // private readonly IAuthGrpcService _auth;
     private readonly ILogger<SendFriendRequestHandler> _logger;
-    private readonly ITrackContext _trackContext;
-    private readonly IUsersContext _unitOfWork;
-    private readonly IUserLinksRepository _userLinksRepository;
+    private readonly IUnitOfWork _unitOfWork;
+    // private readonly IUsersContext _unitOfWork;
+    // private readonly IUserLinksRepository _userLinksRepository;
 
-    public SendFriendRequestHandler(ILogger<SendFriendRequestHandler> logger, IAuthGrpcService auth,
-        IUserLinksRepository userLinksRepository, IUsersContext unitOfWork, ITrackContext trackContext)
+    public SendFriendRequestHandler(ILogger<SendFriendRequestHandler> logger, IUnitOfWork unitOfWork)
     {
         _logger = logger;
-        _auth = auth;
-        _userLinksRepository = userLinksRepository;
         _unitOfWork = unitOfWork;
-        _trackContext = trackContext;
+        // _auth = auth;
+        // _userLinksRepository = userLinksRepository;
+        // _unitOfWork = unitOfWork;
+        // _trackContext = trackContext;
     }
 
     public async ValueTask<bool> Handle(
@@ -37,7 +39,7 @@ public class SendFriendRequestHandler
     )
     {
         var userLink = request.UserLink;
-        _trackContext.Attach(userLink);
+        _unitOfWork.Attach(userLink);
         var isAppUserRequested = userLink.AppUserRequestedId == request.AppUser.Id;
         if (isAppUserRequested)
         {
@@ -50,6 +52,6 @@ public class SendFriendRequestHandler
             userLink.AppUserReceivedStatusEvent = UserStatus.FriendRequestSent.Pending;
         }
 
-        return await _unitOfWork.SaveChangesAsync(cT) > 0;
+        return await _unitOfWork.Complete();
     }
 }

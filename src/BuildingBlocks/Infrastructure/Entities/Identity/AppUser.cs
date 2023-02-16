@@ -17,6 +17,12 @@ public class AppUser : IdentityUser<Guid>
     public DateTime LastActiveTime { get; set; } = DateTime.Now;
     public ICollection<AppUserRole> AppUserRoles { get; set; } = default!;
 
+    /*
+    [NotMapped]
+    public AppUserEvent*/
+    // public AppUserDto MapT() => this.ToDto();
+
+
     /*public ICollection<AppUserIdentity> AppUserIdentities { get; set; } = default!;
     public ICollection<Auth0User> Auth0Users { get; set; } = default!;
     public ICollection<AppUserLink> AppUserLinksSent { get; set; } = default!;

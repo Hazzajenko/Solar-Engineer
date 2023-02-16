@@ -22,19 +22,53 @@ namespace Users.API.Data.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Users.API.Entities.UserLink", b =>
+            modelBuilder.Entity("Users.API.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("gen_random_uuid ()");
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("LastActiveTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("LastModifiedTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PhotoUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("Users.API.Entities.UserLink", b =>
+                {
+                    b.Property<Guid>("AppUserRequestedId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AppUserReceivedId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("AppUserReceivedDisplayName")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<Guid>("AppUserReceivedId")
-                        .HasColumnType("uuid");
 
                     b.Property<string>("AppUserReceivedNickName")
                         .IsRequired()
@@ -50,9 +84,6 @@ namespace Users.API.Data.Migrations
                     b.Property<string>("AppUserRequestedDisplayName")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<Guid>("AppUserRequestedId")
-                        .HasColumnType("uuid");
 
                     b.Property<string>("AppUserRequestedNickName")
                         .IsRequired()
@@ -74,12 +105,43 @@ namespace Users.API.Data.Migrations
                     b.Property<bool>("Friends")
                         .HasColumnType("boolean");
 
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTime>("LastModifiedTime")
                         .HasColumnType("timestamp with time zone");
 
-                    b.HasKey("Id");
+                    b.HasKey("AppUserRequestedId", "AppUserReceivedId");
+
+                    b.HasIndex("AppUserReceivedId");
 
                     b.ToTable("UserLinks");
+                });
+
+            modelBuilder.Entity("Users.API.Entities.UserLink", b =>
+                {
+                    b.HasOne("Users.API.Entities.User", "AppUserReceived")
+                        .WithMany("AppUserLinksReceived")
+                        .HasForeignKey("AppUserReceivedId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Users.API.Entities.User", "AppUserRequested")
+                        .WithMany("AppUserLinksRequested")
+                        .HasForeignKey("AppUserRequestedId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppUserReceived");
+
+                    b.Navigation("AppUserRequested");
+                });
+
+            modelBuilder.Entity("Users.API.Entities.User", b =>
+                {
+                    b.Navigation("AppUserLinksReceived");
+
+                    b.Navigation("AppUserLinksRequested");
                 });
 #pragma warning restore 612, 618
         }

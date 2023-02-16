@@ -3,7 +3,7 @@ using Infrastructure.Entities.Identity;
 
 namespace Users.API.Entities;
 
-public class UserLink : IEntity<Guid>
+public class UserLink : Entity<Guid>
 {
     public UserLink(AppUser appUser, AppUser recipient)
     {

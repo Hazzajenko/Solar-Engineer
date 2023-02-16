@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: C:\Users\jenki\path\kompose.exe convert
+    kompose.version: 1.26.0 (40646f47)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: angularclient
+  name: angularclient
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: angularclient
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: C:\Users\jenki\path\kompose.exe convert
+        kompose.version: 1.26.0 (40646f47)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: angularclient
+    spec:
+      containers:
+        - image: hazzajenko/angularclient:1.0.0
+          name: angularclient
+          ports:
+            - containerPort: 80
+          resources: {}
+      restartPolicy: Always
+status: {}

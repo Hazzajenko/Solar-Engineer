@@ -3,8 +3,8 @@ using Auth.API.Contracts.Responses;
 using Auth.API.Mapping;
 using Auth.API.RabbitMQ;
 using Auth.API.Services;
+using EventBus.Mapping;
 using FastEndpoints;
-using Infrastructure.Events;
 using MassTransit.Mediator;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
@@ -45,7 +45,11 @@ public class AuthorizeEndpoint : EndpointWithoutRequest<AuthorizeResponse>
         var token = await _authService.Generate(appUser);
         Response.User = appUser.ToCurrentUserDto();
         Response.Token = token.Token;
-        var newAppUser = new CreatedAppUser
+        var appUserCreatedEvent = appUser.ToEvent().Created();
+        // evy.Created();
+        // evy.
+        // var ev = new AppUserCreatedEvent(appUser.ToDto());
+        /*var newAppUser = new AppUserCreatedEvent
         {
             Id = appUser.Id,
             FirstName = appUser.FirstName,
@@ -54,8 +58,8 @@ public class AuthorizeEndpoint : EndpointWithoutRequest<AuthorizeResponse>
             PhotoUrl = appUser.PhotoUrl,
             CreatedTime = appUser.CreatedTime,
             LastActiveTime = appUser.LastActiveTime
-        };
-        await _publishEndpoint.Publish(newAppUser, cT);
+        };*/
+        await _publishEndpoint.Publish(appUserCreatedEvent, cT);
         /*
         _messagePublisher.SendMessage(appUser.ToCurrentUserDto());
         var priceChangedEvent =

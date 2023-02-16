@@ -6,5 +6,5 @@ public interface ISerializationService : ITransientService
 
     string Serialize<T>(T obj, Type type);
 
-    T Deserialize<T>(string text);
+    T? Deserialize<T>(string text);
 }

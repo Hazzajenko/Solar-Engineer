@@ -1,8 +1,10 @@
-﻿using Auth.API.Events;
-using Infrastructure.Events;
+﻿// using Auth.API.Events;
+
+// using DotNetCore.EntityFrameworkCore;
 using Infrastructure.Grpc;
 using MassTransit;
 using Users.API.Data;
+using Users.API.Events;
 using Users.API.Grpc;
 using Users.API.Repositories;
 
@@ -18,9 +20,12 @@ public static class ServiceExtensions
         services.AddTransient<GrpcExceptionInterceptor>();
         // services.AddScoped<IUserLinksRepository, UserLinksRepository>();
         services.AddScoped<IAuthGrpcService, AuthGrpcService>();
-        services.AddScoped<IUsersContext, UsersContext>();
+        // services.AddScoped<IUsersContext, UsersContext>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+        
         services.AddScoped<ITrackContext, UsersContext>();
         services.AddScoped<IUserLinksRepository, UserLinksRepository>();
+        services.AddScoped<IUsersRepository, UsersRepository>();
         // services.AddScoped<IUsersContext, UsersContext>();
 
         /*
@@ -75,7 +80,7 @@ public static class ServiceExtensions
         services.AddMassTransit(x =>
         {
             // x.UsingRabbitMq();
-            x.AddConsumer<TicketConsumer>();
+            // x.AddConsumer<TicketConsumer>();
             x.AddConsumer<CreatedAppUserConsumer>();
             x.AddBus(provider => Bus.Factory.CreateUsingRabbitMq(config =>
             {
@@ -85,13 +90,13 @@ public static class ServiceExtensions
                     h.Username("guest");
                     h.Password("guest");
                 });
-                config.ReceiveEndpoint("ticketQueue", ep =>
+                /*config.ReceiveEndpoint("ticketQueue", ep =>
                 {
                     ep.PrefetchCount = 16;
                     ep.UseMessageRetry(r => r.Interval(2, 100));
                     ep.ConfigureConsumer<TicketConsumer>(provider);
-                });
-                config.ReceiveEndpoint("appUserQueue", ep =>
+                });*/
+                config.ReceiveEndpoint("createdAppUserQueue", ep =>
                 {
                     ep.PrefetchCount = 16;
                     ep.UseMessageRetry(r => r.Interval(2, 100));

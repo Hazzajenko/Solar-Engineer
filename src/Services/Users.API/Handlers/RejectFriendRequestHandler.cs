@@ -14,15 +14,15 @@ public class RejectFriendRequestHandler
     : ICommandHandler<RejectFriendRequestCommand, bool>
 {
     private readonly ILogger<RejectFriendRequestHandler> _logger;
-    private readonly ITrackContext _trackContext;
-    private readonly IUsersContext _unitOfWork;
+    private readonly IUnitOfWork _unitOfWork;
+    // private readonly ITrackContext _trackContext;
+    // private readonly IUsersContext _unitOfWork;
 
-    public RejectFriendRequestHandler(ILogger<RejectFriendRequestHandler> logger, IUsersContext unitOfWork,
-        ITrackContext trackContext)
+    public RejectFriendRequestHandler(ILogger<RejectFriendRequestHandler> logger, IUnitOfWork unitOfWork)
     {
         _logger = logger;
         _unitOfWork = unitOfWork;
-        _trackContext = trackContext;
+        // _trackContext = trackContext;
     }
 
     public async ValueTask<bool> Handle(
@@ -31,7 +31,7 @@ public class RejectFriendRequestHandler
     )
     {
         var userLink = request.UserLink;
-        _trackContext.Attach(userLink);
+        _unitOfWork.Attach(userLink);
         var isAppUserRequested = userLink.AppUserRequestedId == request.AppUser.Id;
         if (isAppUserRequested)
         {
@@ -44,6 +44,6 @@ public class RejectFriendRequestHandler
             userLink.AppUserReceivedStatusEvent = UserStatus.FriendRequestSent.Rejected;
         }
 
-        return await _unitOfWork.SaveChangesAsync(cT) > 0;
+        return await _unitOfWork.Complete();
     }
 }

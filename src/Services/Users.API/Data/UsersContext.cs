@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using DotNetCore.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Users.API.Entities;
 
@@ -28,5 +29,10 @@ public class UsersContext
         base.OnModelCreating(builder);
 
         builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+    }
+
+    public async Task<int> SaveChangesAsync()
+    {
+       return await base.SaveChangesAsync();
     }
 }

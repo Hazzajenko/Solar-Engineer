@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Auth.API.Data;
@@ -5,9 +6,11 @@ using Auth.API.Extensions.ServiceCollection;
 using Auth.API.Services;
 using FastEndpoints;
 using FastEndpoints.Swagger;
+using Infrastructure;
 using Infrastructure.Authentication;
 using Infrastructure.Data;
 using Infrastructure.Entities.Identity;
+using Infrastructure.Logging.Serilog;
 using Infrastructure.Web;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -23,8 +26,10 @@ var builder = WebApplication.CreateBuilder(
 var config = builder.Configuration;
 config.AddEnvironmentVariables("solarengineer_");
 
+var appName = builder.RegisterSerilog();
 
-builder.Host.UseSerilog(
+
+/*builder.Host.UseSerilog(
     (_, loggerConfig) =>
     {
         loggerConfig.WriteTo
@@ -33,7 +38,7 @@ builder.Host.UseSerilog(
                 config
             );
     }
-);
+);*/
 
 // builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory())
 
@@ -43,6 +48,8 @@ builder.Host.UseSerilog(
 builder.Services.AddApplicationServices(config);
 builder.Services.AddIdentityServices(config);
 builder.Services.AddAuth(config);
+builder.Services.AddOptions();
+builder.Services.AddInfrastructureServices();
 /*builder.Services.AddMediator(options =>
 {
     options.ServiceLifetime = ServiceLifetime.Transient;
@@ -58,6 +65,9 @@ builder.Services.AddAuth(config);
 });*/
 // builder.Services.AddAuthorization();
 builder.Services.InitDbContext<AuthContext>(config, builder.Environment);
+
+var assembly = typeof(Program).GetTypeInfo().Assembly;
+builder.Services.AddAutoMapper(assembly);
 
 const string corsPolicy = "CorsPolicy";
 /*builder.Services.AddCors(options =>
@@ -150,7 +160,7 @@ if (app.Environment.IsDevelopment()) app.UseDefaultExceptionHandler();
 
 
 app.UseSerilogRequestLogging();
-// app.ConfigureSerilog();
+app.ConfigureSerilog();
 
 
 app.UseCors(corsPolicy);

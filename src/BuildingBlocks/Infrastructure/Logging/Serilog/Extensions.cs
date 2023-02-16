@@ -46,6 +46,7 @@ public static class Extensions
         });
 
         // Console.WriteLine(FiggleFonts.Standard.Render(appName!));
+        Console.WriteLine(appName);
         builder.Services.AddScoped<ExceptionMiddleware>();
         // builder.Services.AddScoped<ISerializationService>();
 

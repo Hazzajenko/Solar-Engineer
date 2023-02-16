@@ -4,7 +4,7 @@ using Auth.API.RabbitMQ;
 using Auth.API.Repositories;
 using Auth.API.Services;
 using DotNetCore.EntityFrameworkCore;
-using Infrastructure.Events;
+
 // using Autofac;
 // using EventBus;
 // using EventBus.Abstractions;
@@ -37,12 +37,13 @@ public static class ServiceExtensions
         services.AddScoped<IMessageProducer, RabbitMqProducer>();
         services.AddScoped<IUnitOfWork, AuthContext>();
         // services.AddMediator()
+        // services.AddJwtService(options => options.);
         services.AddMediator(options => { options.AddConsumer<TicketConsumer>(); });
         services.AddMassTransit(x =>
         {
             // x.UsingRabbitMq();
-            x.AddConsumer<TicketConsumer>();
-            x.AddConsumer<CreatedAppUserConsumer>();
+            // x.AddConsumer<TicketConsumer>();
+            // x.AddConsumer<CreatedAppUserConsumer>();
             x.AddBus(provider => Bus.Factory.CreateUsingRabbitMq(config =>
             {
                 // config.UseHealthCheck(provider);

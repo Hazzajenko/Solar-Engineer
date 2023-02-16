@@ -1,5 +1,5 @@
 ﻿using EventBus.Abstractions;
-using EventBus.Events;
+using EventBus.Domain;
 
 namespace EventBus;
 

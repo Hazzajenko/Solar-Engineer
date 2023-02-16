@@ -16,20 +16,22 @@ public sealed record UserEventCommand(ClaimsPrincipal User, UserEventRequest Req
 public class UserEventHandler
     : Mediator.ICommandHandler<UserEventCommand, bool>
 {
-    private readonly IAuthGrpcService _auth;
+    // private readonly IAuthGrpcService _auth;
     private readonly ILogger<UserEventHandler> _logger;
+    private readonly IUnitOfWork _unitOfWork;
+
     private readonly IMediator _mediator;
-    private readonly IUsersContext _unitOfWork;
-    private readonly IUserLinksRepository _userLinksRepository;
+    // private readonly IUsersContext _unitOfWork;
+    // private readonly IUserLinksRepository _userLinksRepository;
 
 
-    public UserEventHandler(ILogger<UserEventHandler> logger, IAuthGrpcService auth,
-        IUserLinksRepository userLinksRepository, IUsersContext unitOfWork, IMediator mediator)
+    public UserEventHandler(ILogger<UserEventHandler> logger, IUnitOfWork unitOfWork, IMediator mediator)
     {
         _logger = logger;
-        _auth = auth;
-        _userLinksRepository = userLinksRepository;
         _unitOfWork = unitOfWork;
+        // _auth = auth;
+        // _userLinksRepository = userLinksRepository;
+        // _unitOfWork = unitOfWork;
         _mediator = mediator;
     }
 
@@ -39,7 +41,7 @@ public class UserEventHandler
     )
     {
         var userId = request.User.GetUserId();
-        var appUser = await _auth.GetAppUserById(userId);
+        /*var appUser = await _auth.GetAppUserById(userId);
 
         var recipientUser = await _auth.GetAppUserById(request.Request.UserId);
 
@@ -69,7 +71,7 @@ public class UserEventHandler
             default:
                 _logger.LogError("Unknown request from User {User} Event {Event}", appUser.Id, request.Request.Event);
                 throw new ValidationFailureException($"unknown request {request.Request.Event}");
-        }
+        }*/
 
 
         return true;

@@ -1,11 +1,12 @@
+version: "3"
+
 services:
   angularclient:
     image: hazzajenko/angularclient:1.0.0
     ports:
       - 4200:80
     depends_on:
-      dotnetapi:
-        condition: service_started
+      - dotnetapi
 
 
   dotnetapi:

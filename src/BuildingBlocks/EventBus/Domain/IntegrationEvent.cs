@@ -1,4 +1,4 @@
-﻿namespace EventBus.Events;
+﻿namespace EventBus.Domain;
 
 public record IntegrationEvent
 {

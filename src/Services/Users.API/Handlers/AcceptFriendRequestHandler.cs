@@ -14,15 +14,16 @@ public class AcceptFriendRequestHandler
     : ICommandHandler<AcceptFriendRequestCommand, bool>
 {
     private readonly ILogger<AcceptFriendRequestHandler> _logger;
-    private readonly ITrackContext _trackContext;
-    private readonly IUsersContext _unitOfWork;
+    // private readonly ITrackContext _trackContext;
+    // private readonly IUsersContext _unitOfWork;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public AcceptFriendRequestHandler(ILogger<AcceptFriendRequestHandler> logger, IUsersContext unitOfWork,
-        ITrackContext trackContext)
+    public AcceptFriendRequestHandler(ILogger<AcceptFriendRequestHandler> logger, IUnitOfWork unitOfWork)
     {
         _logger = logger;
         _unitOfWork = unitOfWork;
-        _trackContext = trackContext;
+        // _unitOfWork = unitOfWork;
+        // _trackContext = trackContext;
     }
 
     public async ValueTask<bool> Handle(
@@ -31,7 +32,7 @@ public class AcceptFriendRequestHandler
     )
     {
         var userLink = request.UserLink;
-        _trackContext.Attach(userLink);
+        _unitOfWork.Attach(userLink);
         var isAppUserRequested = userLink.AppUserRequestedId == request.AppUser.Id;
         if (isAppUserRequested)
         {
@@ -44,6 +45,6 @@ public class AcceptFriendRequestHandler
             userLink.AppUserReceivedStatusEvent = UserStatus.FriendRequestSent.Accepted;
         }
 
-        return await _unitOfWork.SaveChangesAsync(cT) > 0;
+        return await _unitOfWork.Complete();
     }
 }

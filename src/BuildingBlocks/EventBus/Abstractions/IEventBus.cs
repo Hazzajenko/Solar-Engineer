@@ -1,4 +1,4 @@
-﻿using EventBus.Events;
+﻿using EventBus.Domain;
 
 namespace EventBus.Abstractions;
 
