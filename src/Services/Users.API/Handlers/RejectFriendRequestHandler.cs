@@ -1,19 +1,22 @@
-﻿using Infrastructure.Entities.Identity;
+﻿// using Infrastructure.Entities.Identity;
+
 using Mediator;
 using Users.API.Data;
 using Users.API.Entities;
 using Users.API.Models;
+
 // using AppUser = Users.API.Entities.AppUser;
 
 namespace Users.API.Handlers;
 
-public sealed record RejectFriendRequestCommand(UserLink UserLink, AppUser AppUser)
+public sealed record RejectFriendRequestCommand(UserLink UserLink, User User)
     : ICommand<bool>;
 
 public class RejectFriendRequestHandler
     : ICommandHandler<RejectFriendRequestCommand, bool>
 {
     private readonly ILogger<RejectFriendRequestHandler> _logger;
+
     private readonly IUnitOfWork _unitOfWork;
     // private readonly ITrackContext _trackContext;
     // private readonly IUsersContext _unitOfWork;
@@ -32,7 +35,7 @@ public class RejectFriendRequestHandler
     {
         var userLink = request.UserLink;
         _unitOfWork.Attach(userLink);
-        var isAppUserRequested = userLink.AppUserRequestedId == request.AppUser.Id;
+        var isAppUserRequested = userLink.AppUserRequestedId == request.User.Id;
         if (isAppUserRequested)
         {
             userLink.AppUserRequestedStatusEvent = UserStatus.FriendRequestSent.Rejected;

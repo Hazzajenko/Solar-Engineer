@@ -1,9 +1,11 @@
 ﻿using Auth.API.Data;
-using Auth.API.Events;
-using Auth.API.RabbitMQ;
 using Auth.API.Repositories;
 using Auth.API.Services;
 using DotNetCore.EntityFrameworkCore;
+using EventBus.Domain.AppUserEvents.Events;
+using MassTransit.Transports.Fabric;
+
+// using Auth.API.RabbitMQ;
 
 // using Autofac;
 // using EventBus;
@@ -34,16 +36,17 @@ public static class ServiceExtensions
         // services.AddScoped<ICustomUserManager, CustomUserManager>();
         // services.Replace(ServiceDescriptor.Scoped(typeof(UserManager<AppUser>), typeof(CustomUserManager)));
         services.AddScoped<IAppUserRepository, AppUserRepository>();
-        services.AddScoped<IMessageProducer, RabbitMqProducer>();
+        // services.AddScoped<IMessageProducer, RabbitMqProducer>();
         services.AddScoped<IUnitOfWork, AuthContext>();
         // services.AddMediator()
         // services.AddJwtService(options => options.);
-        services.AddMediator(options => { options.AddConsumer<TicketConsumer>(); });
+        services.AddMediator(options => { options.ServiceLifetime = ServiceLifetime.Transient; });
         services.AddMassTransit(x =>
         {
             // x.UsingRabbitMq();
             // x.AddConsumer<TicketConsumer>();
             // x.AddConsumer<CreatedAppUserConsumer>();
+            
             x.AddBus(provider => Bus.Factory.CreateUsingRabbitMq(config =>
             {
                 // config.UseHealthCheck(provider);
@@ -52,6 +55,10 @@ public static class ServiceExtensions
                     h.Username("guest");
                     h.Password("guest");
                 });
+                /*config.Publish<AppUserLoggedInEvent>(options =>
+                {
+                    options.ExchangeType = ExchangeType.FanOut;
+                });*/
                 /*config.ReceiveEndpoint("ticketQueue", ep =>
                 {
                     ep.PrefetchCount = 16;

@@ -1,14 +1,17 @@
 ﻿using Infrastructure.Common;
-using Infrastructure.Entities.Identity;
+
+// using Infrastructure.Entities.Identity;
 
 namespace Users.API.Entities;
 
-public class UserLink : Entity<Guid>
+public class UserLink : Entity
 {
-    public UserLink(AppUser appUser, AppUser recipient)
+    public UserLink(User appUser, User recipient)
     {
+        AppUserRequested = appUser;
         AppUserRequestedId = appUser.Id;
         AppUserRequestedDisplayName = appUser.DisplayName;
+        AppUserReceived = recipient;
         AppUserReceivedId = recipient.Id;
         AppUserReceivedDisplayName = recipient.DisplayName;
         CreatedTime = DateTime.Now;
@@ -18,11 +21,11 @@ public class UserLink : Entity<Guid>
     {
     }
 
-    public User AppUserRequested { get; set; }
+    public User AppUserRequested { get; set; } = default!;
     public Guid AppUserRequestedId { get; set; }
     public string AppUserRequestedDisplayName { get; set; } = default!;
     public string AppUserRequestedNickName { get; set; } = default!;
-    public User AppUserReceived { get; set; }
+    public User AppUserReceived { get; set; } = default!;
     public Guid AppUserReceivedId { get; set; }
     public string AppUserReceivedDisplayName { get; set; } = default!;
     public string AppUserReceivedNickName { get; set; } = default!;
@@ -31,6 +34,7 @@ public class UserLink : Entity<Guid>
     public string AppUserRequestedStatusEvent { get; set; } = default!;
     public DateTime AppUserRequestedStatusTime { get; set; }
     public string AppUserReceivedStatusEvent { get; set; } = default!;
+
     public DateTime AppUserReceivedStatusTime { get; set; }
     // public Guid Id { get; init; }
     // public DateTime CreatedTime { get; set; }

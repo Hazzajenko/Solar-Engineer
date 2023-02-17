@@ -26,4 +26,9 @@ public static class StringExtensions
 
         return sb.ToString();
     }
+
+    public static Guid ToGuid(this string id)
+    {
+        return Guid.Parse(id);
+    }
 }

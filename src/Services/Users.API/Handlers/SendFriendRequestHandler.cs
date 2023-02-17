@@ -1,17 +1,17 @@
-﻿using Infrastructure.Entities.Identity;
+﻿// using Infrastructure.Entities.Identity;
+
 using Mediator;
 using Users.API.Data;
 using Users.API.Entities;
-using Users.API.Grpc;
 using Users.API.Models;
-using Users.API.Repositories;
+
 // using IUnitOfWork = DotNetCore.EntityFrameworkCore.IUnitOfWork;
 
 // using AppUser = Users.API.Entities.AppUser;
 
 namespace Users.API.Handlers;
 
-public sealed record SendFriendRequestCommand(UserLink UserLink, AppUser AppUser)
+public sealed record SendFriendRequestCommand(UserLink UserLink, User User)
     : ICommand<bool>;
 
 public class SendFriendRequestHandler
@@ -19,6 +19,7 @@ public class SendFriendRequestHandler
 {
     // private readonly IAuthGrpcService _auth;
     private readonly ILogger<SendFriendRequestHandler> _logger;
+
     private readonly IUnitOfWork _unitOfWork;
     // private readonly IUsersContext _unitOfWork;
     // private readonly IUserLinksRepository _userLinksRepository;
@@ -40,7 +41,7 @@ public class SendFriendRequestHandler
     {
         var userLink = request.UserLink;
         _unitOfWork.Attach(userLink);
-        var isAppUserRequested = userLink.AppUserRequestedId == request.AppUser.Id;
+        var isAppUserRequested = userLink.AppUserRequestedId == request.User.Id;
         if (isAppUserRequested)
         {
             userLink.AppUserRequestedStatusEvent = UserStatus.FriendRequestSent.Pending;

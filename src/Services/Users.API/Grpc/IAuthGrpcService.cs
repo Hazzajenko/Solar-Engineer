@@ -1,9 +1,11 @@
-using Infrastructure.Entities.Identity;
+// using Infrastructure.Entities.Identity;
 // using AppUser = Users.API.Entities.AppUser;
+
+using Users.API.Entities;
 
 namespace Users.API.Grpc;
 
 public interface IAuthGrpcService
 {
-    Task<AppUser> GetAppUserById(string appUserId);
+    Task<User> GetAppUserById(string appUserId);
 }

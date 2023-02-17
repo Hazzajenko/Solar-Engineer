@@ -1,21 +1,32 @@
 ﻿using EventBus.Domain.AppUserEvents.Events;
+using Infrastructure.Common;
 using Infrastructure.Contracts.Data;
-using Infrastructure.Entities.Identity;
 using Infrastructure.Mapping;
+// using Infrastructure.Entities.Identity;
 
 namespace EventBus.Domain.AppUserEvents;
 
 public class AppUserEvent
 {
-    public AppUserEvent(AppUser appUser)
+    public AppUserEvent(IUser appUser)
     {
-        AppUserDto = appUser.ToDto();
+        UserDto = appUser.ToDto();
     }
 
-    private AppUserDto AppUserDto { get; }
+    private UserDto UserDto { get; }
 
     public AppUserCreatedEvent Created()
     {
-        return new AppUserCreatedEvent(AppUserDto);
+        return new AppUserCreatedEvent(UserDto);
+    }
+
+    public AppUserLoggedInEvent LoggedIn()
+    {
+        return new AppUserLoggedInEvent(UserDto);
+    }
+
+    public AppUserModifiedEvent Modified()
+    {
+        return new AppUserModifiedEvent(UserDto);
     }
 }

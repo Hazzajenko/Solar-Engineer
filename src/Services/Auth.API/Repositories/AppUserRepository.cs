@@ -1,6 +1,6 @@
 using Auth.API.Data;
+using Auth.API.Entities;
 using DotNetCore.EntityFrameworkCore;
-using Infrastructure.Entities.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Auth.API.Repositories;

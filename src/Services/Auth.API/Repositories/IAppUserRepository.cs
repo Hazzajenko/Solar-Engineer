@@ -1,5 +1,5 @@
+using Auth.API.Entities;
 using DotNetCore.Repositories;
-using Infrastructure.Entities.Identity;
 
 namespace Auth.API.Repositories;
 

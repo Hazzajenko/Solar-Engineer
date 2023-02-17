@@ -1,11 +1,13 @@
 ﻿using EventBus.Domain.AppUserEvents;
-using Infrastructure.Entities.Identity;
+using Infrastructure.Common;
+
+// using Infrastructure.Entities.Identity;
 
 namespace EventBus.Mapping;
 
 public static class AppUserMapper
 {
-    public static AppUserEvent ToEvent(this AppUser request)
+    public static AppUserEvent ToEvent(this IUser request)
     {
         return new AppUserEvent
             (request);

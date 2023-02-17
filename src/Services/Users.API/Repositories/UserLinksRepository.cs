@@ -1,8 +1,9 @@
 using DotNetCore.EntityFrameworkCore;
-using Infrastructure.Entities.Identity;
 using Microsoft.EntityFrameworkCore;
 using Users.API.Data;
 using Users.API.Entities;
+// using Infrastructure.Entities.Identity;
+
 // using AppUser = Users.API.Entities.AppUser;
 
 namespace Users.API.Repositories;
@@ -26,7 +27,7 @@ public sealed class UserLinksRepository : EFRepository<UserLink>, IUserLinksRepo
         return userLink;
     }*/
 
-    public Task<UserLink?> GetByBothUsersAsync(AppUser appUser, AppUser recipient)
+    public Task<UserLink?> GetByBothUsersAsync(User appUser, User recipient)
     {
         return Queryable
             .Where(m => (m.AppUserRequestedId == appUser.Id

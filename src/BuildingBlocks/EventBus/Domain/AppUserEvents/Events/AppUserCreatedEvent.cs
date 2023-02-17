@@ -4,10 +4,10 @@ namespace EventBus.Domain.AppUserEvents.Events;
 
 public class AppUserCreatedEvent : EventBase, IAppUserEvent
 {
-    public AppUserCreatedEvent(AppUserDto appUser)
+    public AppUserCreatedEvent(UserDto user)
     {
-        AppUser = appUser;
+        User = user;
     }
 
-    public AppUserDto AppUser { get; set; }
+    public UserDto User { get; set; }
 }

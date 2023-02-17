@@ -1,15 +1,20 @@
 ﻿namespace Infrastructure.Common;
 
-public abstract class Entity<T>
+public interface IEntity
 {
-    public T Id { get; protected init; }
-    public DateTime CreatedTime { get; set; }
-    public DateTime LastModifiedTime { get; set; }
+    public Guid Id { get; set; }
 }
 
-public abstract class CopyEntity<T>
+public abstract class Entity : IEntity
 {
-    public T Id { get; set; }
     public DateTime CreatedTime { get; set; }
     public DateTime LastModifiedTime { get; set; }
+    public Guid Id { get; set; } = Guid.NewGuid();
+}
+
+public abstract class CopyEntity : IEntity
+{
+    public DateTime CreatedTime { get; set; }
+    public DateTime LastModifiedTime { get; set; }
+    public Guid Id { get; set; } = Guid.NewGuid();
 }

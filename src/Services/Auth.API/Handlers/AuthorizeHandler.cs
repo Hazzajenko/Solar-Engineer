@@ -1,28 +1,33 @@
-﻿using Auth.API.Commands;
+﻿using Auth.API.Entities;
 using Auth.API.Exceptions;
 using Auth.API.Extensions;
 using Auth.API.Helpers;
 using Auth.API.Mapping;
-using FastEndpoints;
-using Infrastructure.Entities.Identity;
+using EventBus.Mapping;
+using Mediator;
 using Microsoft.AspNetCore.Identity;
 
 namespace Auth.API.Handlers;
+
+public sealed record AuthorizeCommand(HttpContext HttpContext)
+    : ICommand<AppUser>;
 
 public class AuthorizeHandler
     : ICommandHandler<AuthorizeCommand, AppUser>
 {
     private readonly ILogger<AuthorizeHandler> _logger;
+    private readonly IPublishEndpoint _publishEndpoint;
     private readonly UserManager<AppUser> _userManager;
 
     public AuthorizeHandler(UserManager<AppUser> userManager,
-        ILogger<AuthorizeHandler> logger)
+        ILogger<AuthorizeHandler> logger, IPublishEndpoint publishEndpoint)
     {
         _userManager = userManager;
         _logger = logger;
+        _publishEndpoint = publishEndpoint;
     }
 
-    public async Task<AppUser> ExecuteAsync(
+    public async ValueTask<AppUser> Handle(
         AuthorizeCommand request,
         CancellationToken cT
     )
@@ -36,6 +41,8 @@ public class AuthorizeHandler
         if (existingAppUser is not null)
         {
             await request.HttpContext.SignInAppUserAsync(existingAppUser);
+            // var appUserLoggedInEvent = existingAppUser.ToEvent().LoggedIn();
+            await _publishEndpoint.Publish(existingAppUser.ToEvent().LoggedIn(), cT);
             return existingAppUser;
         }
 
@@ -69,6 +76,8 @@ public class AuthorizeHandler
         }
 
         await request.HttpContext.SignInAppUserAsync(appUser);
+        // var appUserLoggedInEvent = appUser.ToEvent().LoggedIn();
+        await _publishEndpoint.Publish(appUser.ToEvent().LoggedIn(), cT);
 
         return appUser;
     }

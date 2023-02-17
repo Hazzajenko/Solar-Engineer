@@ -2,7 +2,9 @@
 using System.Security.Claims;
 using System.Text;
 using Auth.API.Contracts.Data;
-using Infrastructure.Entities.Identity;
+using Auth.API.Entities;
+using Auth.API.Models;
+using Infrastructure.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
@@ -10,7 +12,7 @@ namespace Auth.API.Services;
 
 public interface IAuthService
 {
-    Task<TokenResponse> Generate(AppUser request);
+    Task<TokenResponse> Generate(AppUser request, ExternalLogin externalLogin);
 }
 
 public class AuthService : IAuthService
@@ -24,12 +26,14 @@ public class AuthService : IAuthService
         _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenKey"]!));
     }
 
-    public async Task<TokenResponse> Generate(AppUser request)
+    public async Task<TokenResponse> Generate(AppUser request, ExternalLogin externalLogin)
     {
         var claims = new List<Claim>
         {
             new(JwtRegisteredClaimNames.NameId, request.Id.ToString()),
-            new(JwtRegisteredClaimNames.UniqueName, request.UserName!)
+            new(JwtRegisteredClaimNames.UniqueName, request.UserName!),
+            new(CustomClaims.LoginProvider, externalLogin.LoginProvider),
+            new(CustomClaims.ProviderKey, externalLogin.ProviderKey)
         };
 
         var roles = await _userManager.GetRolesAsync(request);

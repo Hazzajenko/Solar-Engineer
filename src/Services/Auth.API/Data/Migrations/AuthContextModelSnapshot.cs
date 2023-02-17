@@ -22,7 +22,7 @@ namespace Auth.API.Data.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Infrastructure.Entities.Identity.AppRole", b =>
+            modelBuilder.Entity("Auth.API.Entities.AppRole", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -50,7 +50,7 @@ namespace Auth.API.Data.Migrations
                     b.ToTable("AspNetRoles", (string)null);
                 });
 
-            modelBuilder.Entity("Infrastructure.Entities.Identity.AppUser", b =>
+            modelBuilder.Entity("Auth.API.Entities.AppUser", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -83,6 +83,9 @@ namespace Auth.API.Data.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("LastActiveTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("LastModifiedTime")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("LastName")
@@ -138,7 +141,7 @@ namespace Auth.API.Data.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("Infrastructure.Entities.Identity.AppUserRole", b =>
+            modelBuilder.Entity("Auth.API.Entities.AppUserRole", b =>
                 {
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
@@ -241,15 +244,15 @@ namespace Auth.API.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Infrastructure.Entities.Identity.AppUserRole", b =>
+            modelBuilder.Entity("Auth.API.Entities.AppUserRole", b =>
                 {
-                    b.HasOne("Infrastructure.Entities.Identity.AppRole", "Role")
+                    b.HasOne("Auth.API.Entities.AppRole", "Role")
                         .WithMany("UserRoles")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Infrastructure.Entities.Identity.AppUser", "User")
+                    b.HasOne("Auth.API.Entities.AppUser", "User")
                         .WithMany("AppUserRoles")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -262,7 +265,7 @@ namespace Auth.API.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
-                    b.HasOne("Infrastructure.Entities.Identity.AppRole", null)
+                    b.HasOne("Auth.API.Entities.AppRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -271,7 +274,7 @@ namespace Auth.API.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
-                    b.HasOne("Infrastructure.Entities.Identity.AppUser", null)
+                    b.HasOne("Auth.API.Entities.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -280,7 +283,7 @@ namespace Auth.API.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
-                    b.HasOne("Infrastructure.Entities.Identity.AppUser", null)
+                    b.HasOne("Auth.API.Entities.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -289,19 +292,19 @@ namespace Auth.API.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
-                    b.HasOne("Infrastructure.Entities.Identity.AppUser", null)
+                    b.HasOne("Auth.API.Entities.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Infrastructure.Entities.Identity.AppRole", b =>
+            modelBuilder.Entity("Auth.API.Entities.AppRole", b =>
                 {
                     b.Navigation("UserRoles");
                 });
 
-            modelBuilder.Entity("Infrastructure.Entities.Identity.AppUser", b =>
+            modelBuilder.Entity("Auth.API.Entities.AppUser", b =>
                 {
                     b.Navigation("AppUserRoles");
                 });

@@ -1,3 +1,0 @@
-/* type SelectedSource = {
-  source: 'SELECTED'
-} */

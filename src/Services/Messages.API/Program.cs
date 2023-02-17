@@ -1,12 +1,14 @@
 // var builder = WebApplication.CreateBuilder(args);
 
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using FastEndpoints;
 using FastEndpoints.Swagger;
 using Infrastructure.Authentication;
+using Infrastructure.Data;
 using Infrastructure.Web;
+using Messages.API.Data;
+using Messages.API.Extensions;
+using Messages.API.Hubs;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(
@@ -27,8 +29,16 @@ builder.Host.UseSerilog(
             );
     }
 );
-builder.Services.AddMediator(options => { options.ServiceLifetime = ServiceLifetime.Transient; });
+
 builder.Services.AddAuth(config);
+builder.Services.AddAppServices(config);
+builder.Services.AddSignalR(options =>
+{
+    options.DisableImplicitFromServicesParameters = true;
+    if (builder.Environment.IsDevelopment()) options.EnableDetailedErrors = true;
+
+    // options.
+});
 
 builder.Services.AddAuthorization(opt =>
 {
@@ -50,10 +60,12 @@ builder.Services.AddAuthorization(opt =>
 // builder.Services.AddEndpointsApiExplorer();
 // builder.Services.AddSwaggerGen();
 
+builder.Services.InitDbContext<MessagesContext>(config, builder.Environment);
+
 const string corsPolicy = "CorsPolicy";
 builder.Services.InitCors(corsPolicy);
 
-builder.Services.AddFastEndpoints(options => { options.SourceGeneratorDiscoveredTypes = DiscoveredTypes.All; });
+// builder.Services.AddFastEndpoints(options => { options.SourceGeneratorDiscoveredTypes = DiscoveredTypes.All; });
 
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
@@ -73,6 +85,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseCookiePolicy();
 
+
+/*
 app.UseFastEndpoints(options =>
 {
     // options.Errors.ResponseBuilder = (errors, _) => errors.ToResponse();
@@ -81,12 +95,16 @@ app.UseFastEndpoints(options =>
     options.Serializer.Options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
     options.Serializer.Options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 });
+*/
 
+app.MapHub<MessagesHub>("hubs/messages");
+
+/*
 if (app.Environment.IsDevelopment())
 {
     app.UseOpenApi();
     app.UseSwaggerUi3(x => x.ConfigureDefaults());
-}
+}*/
 
 // app.UseHttpsRedirection();
 
@@ -94,4 +112,24 @@ if (app.Environment.IsDevelopment())
 
 // app.MapControllers();
 
-app.Run();
+// app.Run();
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
+using var scope = app.Services.CreateScope();
+var services = scope.ServiceProvider;
+try
+{
+    var context = services.GetRequiredService<MessagesContext>();
+    // var userManager = services.GetRequiredService<UserManager<AppUser>>();
+    // var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
+    await context.Database.MigrateAsync();
+    await context.SeedAsync();
+    // await Seed.SeedUsers(userManager, roleManager);
+}
+catch (Exception ex)
+{
+    var logger = services.GetRequiredService<ILogger<Program>>();
+    logger.LogError(ex, "An error occurred during migration");
+}
+
+await app.RunAsync();

@@ -1,4 +1,4 @@
-﻿using Infrastructure.Entities.Identity;
+﻿using Auth.API.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

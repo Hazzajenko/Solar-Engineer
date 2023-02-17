@@ -1,5 +1,5 @@
 ﻿using Auth.API.Data;
-using Infrastructure.Entities.Identity;
+using Auth.API.Entities;
 using Microsoft.AspNetCore.Identity;
 
 namespace Auth.API.Extensions.ServiceCollection;

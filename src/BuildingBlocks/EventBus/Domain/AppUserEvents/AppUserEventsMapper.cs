@@ -8,14 +8,14 @@ public static class AppUserEventsMapper
     {
         return new T
         {
-            Id = Guid.Parse(request.AppUser.Id),
-            CreatedTime = request.AppUser.CreatedTime,
+            Id = request.User.Id,
+            CreatedTime = request.User.CreatedTime,
             LastModifiedTime = DateTime.Now,
-            FirstName = request.AppUser.FirstName,
-            LastName = request.AppUser.LastName,
-            DisplayName = request.AppUser.DisplayName,
-            PhotoUrl = request.AppUser.PhotoUrl,
-            LastActiveTime = request.AppUser.LastActiveTime
+            FirstName = request.User.FirstName,
+            LastName = request.User.LastName,
+            DisplayName = request.User.DisplayName,
+            PhotoUrl = request.User.PhotoUrl,
+            LastActiveTime = request.User.LastActiveTime
         };
     }
 }

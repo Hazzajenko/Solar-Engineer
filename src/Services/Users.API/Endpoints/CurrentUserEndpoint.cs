@@ -1,15 +1,14 @@
-﻿using System.Security.Claims;
-using FastEndpoints;
-using Infrastructure.Entities.Identity;
+﻿using FastEndpoints;
 using Infrastructure.Extensions;
 using Mediator;
-using Microsoft.AspNetCore.Authentication;
 using Users.API.Grpc;
+// using Infrastructure.Entities.Identity;
+
 // using AppUser = Users.API.Entities.AppUser;
 
 namespace Users.API.Endpoints;
 
-public class CurrentUserEndpoint : EndpointWithoutRequest<AppUser>
+public class CurrentUserEndpoint : EndpointWithoutRequest
 {
     private readonly IAuthGrpcService _authGrpcService;
     private readonly IMediator _mediator;

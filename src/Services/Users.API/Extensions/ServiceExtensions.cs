@@ -3,6 +3,7 @@
 // using DotNetCore.EntityFrameworkCore;
 using Infrastructure.Grpc;
 using MassTransit;
+using Users.API.Consumers;
 using Users.API.Data;
 using Users.API.Events;
 using Users.API.Grpc;
@@ -82,6 +83,7 @@ public static class ServiceExtensions
             // x.UsingRabbitMq();
             // x.AddConsumer<TicketConsumer>();
             x.AddConsumer<CreatedAppUserConsumer>();
+            x.AddConsumer<AppUserLoggedInConsumer>();
             x.AddBus(provider => Bus.Factory.CreateUsingRabbitMq(config =>
             {
                 // config.UseHealthCheck(provider);
@@ -96,6 +98,19 @@ public static class ServiceExtensions
                     ep.UseMessageRetry(r => r.Interval(2, 100));
                     ep.ConfigureConsumer<TicketConsumer>(provider);
                 });*/
+                config.ReceiveEndpoint("appUserLoggedIn-Users", ep =>
+                {
+                    ep.PrefetchCount = 16;
+                    ep.UseMessageRetry(r => r.Interval(2, 100));
+                    ep.ConfigureConsumer<AppUserLoggedInConsumer>(provider);
+                });
+                config.ReceiveEndpoint("appUserLoggedInQueue", ep =>
+                {
+                    ep.PrefetchCount = 16;
+                    // ep.
+                    ep.UseMessageRetry(r => r.Interval(2, 100));
+                    ep.ConfigureConsumer<AppUserLoggedInConsumer>(provider);
+                });
                 config.ReceiveEndpoint("createdAppUserQueue", ep =>
                 {
                     ep.PrefetchCount = 16;

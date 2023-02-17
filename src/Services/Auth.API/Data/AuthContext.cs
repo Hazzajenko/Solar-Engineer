@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
+using Auth.API.Entities;
 using DotNetCore.EntityFrameworkCore;
-using Infrastructure.Entities.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;

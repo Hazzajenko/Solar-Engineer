@@ -1,6 +1,6 @@
-﻿using Auth.API.Repositories;
+﻿using Auth.API.Entities;
+using Auth.API.Repositories;
 using Grpc.Core;
-using Infrastructure.Entities.Identity;
 
 namespace Auth.API.Services;
 

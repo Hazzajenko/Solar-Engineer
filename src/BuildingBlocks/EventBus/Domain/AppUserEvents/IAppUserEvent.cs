@@ -4,5 +4,5 @@ namespace EventBus.Domain.AppUserEvents;
 
 public interface IAppUserEvent
 {
-    AppUserDto AppUser { get; set; }
+    UserDto User { get; set; }
 }

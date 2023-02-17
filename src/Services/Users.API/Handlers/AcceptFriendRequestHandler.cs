@@ -1,19 +1,22 @@
-﻿using Infrastructure.Entities.Identity;
+﻿// using Infrastructure.Entities.Identity;
+
 using Mediator;
 using Users.API.Data;
 using Users.API.Entities;
 using Users.API.Models;
+
 // using AppUser = Users.API.Entities.AppUser;
 
 namespace Users.API.Handlers;
 
-public sealed record AcceptFriendRequestCommand(UserLink UserLink, AppUser AppUser)
+public sealed record AcceptFriendRequestCommand(UserLink UserLink, User User)
     : ICommand<bool>;
 
 public class AcceptFriendRequestHandler
     : ICommandHandler<AcceptFriendRequestCommand, bool>
 {
     private readonly ILogger<AcceptFriendRequestHandler> _logger;
+
     // private readonly ITrackContext _trackContext;
     // private readonly IUsersContext _unitOfWork;
     private readonly IUnitOfWork _unitOfWork;
@@ -32,8 +35,9 @@ public class AcceptFriendRequestHandler
     )
     {
         var userLink = request.UserLink;
+        // await _unitOfWork.UsersRepository.GetAsync("dsa");
         _unitOfWork.Attach(userLink);
-        var isAppUserRequested = userLink.AppUserRequestedId == request.AppUser.Id;
+        var isAppUserRequested = userLink.AppUserRequestedId == request.User.Id;
         if (isAppUserRequested)
         {
             userLink.AppUserRequestedStatusEvent = UserStatus.FriendRequestSent.Accepted;

@@ -1,6 +1,5 @@
 ﻿using System.Security.Claims;
-using Infrastructure.Authentication;
-using Infrastructure.Entities.Identity;
+using Auth.API.Entities;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.IdentityModel.JsonWebTokens;

@@ -1,5 +1,6 @@
 ﻿using Auth.API;
-using Infrastructure.Entities.Identity;
+using Users.API.Entities;
+// using Infrastructure.Entities.Identity;
 
 // using AppUser = Users.API.Entities.AppUser;
 
@@ -7,15 +8,18 @@ namespace Users.API.Mapping;
 
 public static class AppUserMapper
 {
-    public static AppUser ToAppUser(this AppUserResponse grpcRequest)
+    public static User ToUser(this AppUserResponse grpcRequest)
     {
-        return new AppUser
+        return new User
         {
             Id = Guid.Parse(grpcRequest.Id),
+            // CreatedTime = grpcRequest.CreatedTime,
+            // LastModifiedTime = grpcRequest.LastModifiedTime,
             FirstName = grpcRequest.FirstName,
             LastName = grpcRequest.LastName,
-            Email = grpcRequest.FirstName,
+            DisplayName = grpcRequest.FirstName,
             PhotoUrl = grpcRequest.PhotoUrl
+            // LastActiveTime = grpcRequest.LastActiveTime,
         };
     }
 }

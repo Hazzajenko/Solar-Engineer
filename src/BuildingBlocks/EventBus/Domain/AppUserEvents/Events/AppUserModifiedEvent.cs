@@ -4,10 +4,10 @@ namespace EventBus.Domain.AppUserEvents.Events;
 
 public class AppUserModifiedEvent : EventBase, IAppUserEvent
 {
-    public AppUserModifiedEvent(AppUserDto appUser)
+    public AppUserModifiedEvent(UserDto user)
     {
-        AppUser = appUser;
+        User = user;
     }
 
-    public AppUserDto AppUser { get; set; }
+    public UserDto User { get; set; }
 }

@@ -1,34 +1,30 @@
-﻿using Auth.API.Commands;
-using Auth.API.Contracts.Responses;
-using Auth.API.Mapping;
-using Auth.API.RabbitMQ;
+﻿using Auth.API.Contracts.Responses;
+using Auth.API.Extensions;
+using Auth.API.Handlers;
 using Auth.API.Services;
 using EventBus.Mapping;
 using FastEndpoints;
-using MassTransit.Mediator;
+using Mediator;
 using Microsoft.AspNetCore.Authentication.Cookies;
+// using Auth.API.RabbitMQ;
+
+// using MassTransit.Mediator;
 
 namespace Auth.API.Endpoints;
 
 public class AuthorizeEndpoint : EndpointWithoutRequest<AuthorizeResponse>
 {
     private readonly IAuthService _authService;
-
-    // private readonly ICatalogIntegrationEventService _catalogIntegrationEventService;
     private readonly IMediator _mediator;
-    private readonly IMessageProducer _messagePublisher;
-    private readonly IPublishEndpoint _publishEndpoint;
+    private readonly IBus _bus;
 
 
     public AuthorizeEndpoint(
-        IMediator mediator, IAuthService authService, IMessageProducer messagePublisher,
-        IPublishEndpoint publishEndpoint)
+        IMediator mediator, IAuthService authService, IBus bus)
     {
         _mediator = mediator;
         _authService = authService;
-        _messagePublisher = messagePublisher;
-        _publishEndpoint = publishEndpoint;
-        // _catalogIntegrationEventService = catalogIntegrationEventService;
+        _bus = bus;
     }
 
 
@@ -40,36 +36,18 @@ public class AuthorizeEndpoint : EndpointWithoutRequest<AuthorizeResponse>
 
     public override async Task HandleAsync(CancellationToken cT)
     {
-        var appUser = await new AuthorizeCommand(HttpContext).ExecuteAsync(cT);
-        // var appUser = await _mediator.Send(new AuthorizeCommand(HttpContext), cT);
-        var token = await _authService.Generate(appUser);
-        Response.User = appUser.ToCurrentUserDto();
+        var appUser = await _mediator.Send(new AuthorizeCommand(HttpContext), cT);
+        var token = await _authService.Generate(appUser, HttpContext.User.GetLogin());
+        
+        Uri uri1 = new Uri("rabbitmq://localhost/appUserLoggedIn-Users");
+        Uri uri2 = new Uri("rabbitmq://localhost/appUserLoggedIn-Messages");
+        var endPoint1 = await _bus.GetSendEndpoint(uri1);
+        var endPoint2 = await _bus.GetSendEndpoint(uri2);
+        await endPoint1.Send(appUser.ToEvent().LoggedIn(), cT);
+        await endPoint2.Send(appUser.ToEvent().LoggedIn(), cT);
+
         Response.Token = token.Token;
-        var appUserCreatedEvent = appUser.ToEvent().Created();
-        // evy.Created();
-        // evy.
-        // var ev = new AppUserCreatedEvent(appUser.ToDto());
-        /*var newAppUser = new AppUserCreatedEvent
-        {
-            Id = appUser.Id,
-            FirstName = appUser.FirstName,
-            LastName = appUser.LastName,
-            DisplayName = appUser.DisplayName,
-            PhotoUrl = appUser.PhotoUrl,
-            CreatedTime = appUser.CreatedTime,
-            LastActiveTime = appUser.LastActiveTime
-        };*/
-        await _publishEndpoint.Publish(appUserCreatedEvent, cT);
-        /*
-        _messagePublisher.SendMessage(appUser.ToCurrentUserDto());
-        var priceChangedEvent =
-            new ProductPriceChangedIntegrationEvent(1, decimal.One, decimal.MaxValue);*/
 
-        // Achieving atomicity between original Catalog database operation and the IntegrationEventLog thanks to a local transaction
-        // await _catalogIntegrationEventService.SaveEventAndCatalogContextChangesAsync(priceChangedEvent);
-
-        // Publish through the Event Bus and mark the saved event as published
-        // await _catalogIntegrationEventService.PublishThroughEventBusAsync(priceChangedEvent);
         await SendOkAsync(Response, cT);
     }
 }

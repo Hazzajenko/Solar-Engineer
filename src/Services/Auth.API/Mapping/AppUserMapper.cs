@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using Auth.API.Contracts.Data;
+using Auth.API.Entities;
 using Infrastructure.Authentication;
-using Infrastructure.Entities.Identity;
 
 namespace Auth.API.Mapping;
 
@@ -17,7 +17,7 @@ public static class AppUserMapper
         if (email is null) throw new ArgumentNullException(nameof(email));
         var photoUrl = user.FindFirst(CustomClaims.Picture)?.Value;
         if (photoUrl is null) throw new ArgumentNullException(nameof(photoUrl));
-        
+
         return new AppUser
         {
             FirstName = firstName,
@@ -27,7 +27,7 @@ public static class AppUserMapper
             PhotoUrl = photoUrl
         };
     }
-    
+
     public static CurrentUserDto ToCurrentUserDto(this AppUser request)
     {
         return new CurrentUserDto
