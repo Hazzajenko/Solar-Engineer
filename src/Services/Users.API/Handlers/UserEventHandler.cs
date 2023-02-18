@@ -18,14 +18,14 @@ public class UserEventHandler
 {
     // private readonly IAuthGrpcService _auth;
     private readonly ILogger<UserEventHandler> _logger;
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IUsersUnitOfWork _unitOfWork;
 
     private readonly IMediator _mediator;
     // private readonly IUsersContext _unitOfWork;
     // private readonly IUserLinksRepository _userLinksRepository;
 
 
-    public UserEventHandler(ILogger<UserEventHandler> logger, IUnitOfWork unitOfWork, IMediator mediator)
+    public UserEventHandler(ILogger<UserEventHandler> logger, IUsersUnitOfWork unitOfWork, IMediator mediator)
     {
         _logger = logger;
         _unitOfWork = unitOfWork;

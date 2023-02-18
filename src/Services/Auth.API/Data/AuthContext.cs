@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using Auth.API.Entities;
-using DotNetCore.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +8,7 @@ namespace Auth.API.Data;
 
 public class AuthContext
     : IdentityDbContext<
-        AppUser,
+        AuthUser,
         AppRole,
         Guid,
         IdentityUserClaim<Guid>,
@@ -17,7 +16,7 @@ public class AuthContext
         IdentityUserLogin<Guid>,
         IdentityRoleClaim<Guid>,
         IdentityUserToken<Guid>
-    >, IAuthContext, IDbContext, IUnitOfWork
+    >
     /*IdentityDbContext<
             AppUser,
             AppRole,
@@ -36,10 +35,7 @@ public class AuthContext
 
     // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     // => optionsBuilder.UseNpgsql("Server=localhost;Port=5432;Database=solardotnetbackend;User ID=postgres;Password=password;");
-    public async Task<int> SaveChangesAsync()
-    {
-        return await base.SaveChangesAsync();
-    }
+
 
     // public DbSet<AppUser> AppUsers { get; set; } = default!;
 

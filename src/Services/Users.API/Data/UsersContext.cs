@@ -1,12 +1,13 @@
 ﻿using System.Reflection;
 using DotNetCore.EntityFrameworkCore;
+using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Users.API.Entities;
 
 namespace Users.API.Data;
 
 public class UsersContext
-    : DbContext, ITrackContext, IUsersContext
+    : DbContext, IDataContext<User>
 {
     public UsersContext(DbContextOptions<UsersContext> options)
         : base(options)
@@ -29,10 +30,5 @@ public class UsersContext
         base.OnModelCreating(builder);
 
         builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
-    }
-
-    public async Task<int> SaveChangesAsync()
-    {
-       return await base.SaveChangesAsync();
     }
 }

@@ -103,6 +103,7 @@
       "@shared/interceptors": ["libs/shared/interceptors/src/index.ts"],
       "@shared/pipes": ["libs/shared/pipes/src/index.ts"],
       "@shared/ui/app-bar": ["libs/shared/ui/app-bar/src/index.ts"],
+      "@shared/ui/google-login-button": ["libs/shared/ui/google-login-button/src/index.ts"],
       "@shared/ui/logo": ["libs/shared/ui/logo/src/index.ts"],
       "@shared/ui/show-hide": ["libs/shared/ui/show-hide/src/index.ts"],
       "@shared/ui/spinner": ["libs/shared/ui/spinner/src/index.ts"],

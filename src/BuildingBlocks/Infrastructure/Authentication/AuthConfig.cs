@@ -42,6 +42,7 @@ public static class AuthConfig
             // .AddCookie("cookie", options => { options.Events.OnValidatePrincipal = PrincipalValidator.ValidateAsync; })
             .AddGoogle("google", options =>
             {
+                // options.SignInScheme = "bearer";
                 options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 // options.SignInScheme = "cookie";
                 // options.Re

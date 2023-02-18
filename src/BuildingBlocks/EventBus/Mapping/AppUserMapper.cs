@@ -7,9 +7,9 @@ namespace EventBus.Mapping;
 
 public static class AppUserMapper
 {
-    public static AppUserEvent ToEvent(this IUser request)
+    public static AppUserEventFactory ToEvent(this IUser request)
     {
-        return new AppUserEvent
+        return new AppUserEventFactory
             (request);
     }
 }

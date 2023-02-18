@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Auth.API.Data.Config;
 
-public class AppUserConfig : IEntityTypeConfiguration<AppUser>
+public class AppUserConfig : IEntityTypeConfiguration<AuthUser>
 {
-    public void Configure(EntityTypeBuilder<AppUser> builder)
+    public void Configure(EntityTypeBuilder<AuthUser> builder)
     {
         builder.Property(x => x.Id).HasDefaultValueSql("gen_random_uuid ()").IsRequired();
 

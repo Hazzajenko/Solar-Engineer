@@ -1,9 +1,10 @@
 using Auth.API.Entities;
 using DotNetCore.Repositories;
+using Infrastructure.Repositories;
 
 namespace Auth.API.Repositories;
 
-public interface IAppUserRepository : IRepository<AppUser>
+public interface IAppUserRepository : IGenericRepository<AuthUser>
 {
-    Task<AppUser?> GetByIdAsync(Guid id);
+
 }

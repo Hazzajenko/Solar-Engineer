@@ -4,6 +4,6 @@ namespace Auth.API.Entities;
 
 public class AppUserRole : IdentityUserRole<Guid>
 {
-    public AppUser User { get; set; } = default!;
+    public AuthUser User { get; set; } = default!;
     public AppRole Role { get; set; } = default!;
 }

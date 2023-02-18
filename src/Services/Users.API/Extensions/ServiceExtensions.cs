@@ -1,13 +1,17 @@
 ﻿// using Auth.API.Events;
 
 // using DotNetCore.EntityFrameworkCore;
+
+// using EventBus.Extensions;
 using Infrastructure.Grpc;
 using MassTransit;
 using Users.API.Consumers;
 using Users.API.Data;
-using Users.API.Events;
+// using Users.API.Events;
 using Users.API.Grpc;
 using Users.API.Repositories;
+using Users.API.Repositories.UserLinks;
+using Users.API.Repositories.Users;
 
 namespace Users.API.Extensions;
 
@@ -19,107 +23,14 @@ public static class ServiceExtensions
     )
     {
         services.AddTransient<GrpcExceptionInterceptor>();
-        // services.AddScoped<IUserLinksRepository, UserLinksRepository>();
         services.AddScoped<IAuthGrpcService, AuthGrpcService>();
-        // services.AddScoped<IUsersContext, UsersContext>();
-        services.AddScoped<IUnitOfWork, UnitOfWork>();
-        
-        services.AddScoped<ITrackContext, UsersContext>();
+        services.AddScoped<IUsersUnitOfWork, UsersUnitOfWork>();
         services.AddScoped<IUserLinksRepository, UserLinksRepository>();
         services.AddScoped<IUsersRepository, UsersRepository>();
-        // services.AddScoped<IUsersContext, UsersContext>();
-
-        /*
-        services.AddSingleton<IRabbitMqPersistentConnection>(sp =>
-        {
-            var logger = sp.GetRequiredService<ILogger<DefaultRabbitMqPersistentConnection>>();
-
-            var factory = new ConnectionFactory
-            {
-                HostName = "localhost",
-                // HostName = Configuration["EventBusConnection"],
-                DispatchConsumersAsync = true
-            };
-
-            /*if (!string.IsNullOrEmpty(Configuration["EventBusUserName"]))
-            {
-                factory.UserName = Configuration["EventBusUserName"];
-            }
-
-            if (!string.IsNullOrEmpty(Configuration["EventBusPassword"]))
-            {
-                factory.Password = Configuration["EventBusPassword"];
-            }#1#
-
-            var retryCount = 5;
-            /*if (!string.IsNullOrEmpty(Configuration["EventBusRetryCount"]))
-            {
-                retryCount = int.Parse(Configuration["EventBusRetryCount"]);
-            }#1#
-
-            return new DefaultRabbitMqPersistentConnection(factory, logger, retryCount);
-        });
-
-        services.AddSingleton<IEventBus, EventBusRabbitMq>(sp =>
-        {
-            var subscriptionClientName = config["SubscriptionClientName"];
-            var rabbitMqPersistentConnection = sp.GetRequiredService<IRabbitMqPersistentConnection>();
-            var iLifetimeScope = sp.GetRequiredService<ILifetimeScope>();
-            var logger = sp.GetRequiredService<ILogger<EventBusRabbitMq>>();
-            var eventBusSubscriptionsManager = sp.GetRequiredService<IEventBusSubscriptionsManager>();
-
-            var retryCount = 5;
-            if (!string.IsNullOrEmpty(config["EventBusRetryCount"]))
-                retryCount = int.Parse(config["EventBusRetryCount"]);
-
-            return new EventBusRabbitMq(rabbitMqPersistentConnection, logger, iLifetimeScope,
-                eventBusSubscriptionsManager, subscriptionClientName, retryCount);
-        });
-
-        services.AddSingleton<IEventBusSubscriptionsManager, InMemoryEventBusSubscriptionsManager>();*/
-
-        services.AddMassTransit(x =>
-        {
-            // x.UsingRabbitMq();
-            // x.AddConsumer<TicketConsumer>();
-            x.AddConsumer<CreatedAppUserConsumer>();
-            x.AddConsumer<AppUserLoggedInConsumer>();
-            x.AddBus(provider => Bus.Factory.CreateUsingRabbitMq(config =>
-            {
-                // config.UseHealthCheck(provider);
-                config.Host(new Uri("rabbitmq://localhost"), h =>
-                {
-                    h.Username("guest");
-                    h.Password("guest");
-                });
-                /*config.ReceiveEndpoint("ticketQueue", ep =>
-                {
-                    ep.PrefetchCount = 16;
-                    ep.UseMessageRetry(r => r.Interval(2, 100));
-                    ep.ConfigureConsumer<TicketConsumer>(provider);
-                });*/
-                config.ReceiveEndpoint("appUserLoggedIn-Users", ep =>
-                {
-                    ep.PrefetchCount = 16;
-                    ep.UseMessageRetry(r => r.Interval(2, 100));
-                    ep.ConfigureConsumer<AppUserLoggedInConsumer>(provider);
-                });
-                config.ReceiveEndpoint("appUserLoggedInQueue", ep =>
-                {
-                    ep.PrefetchCount = 16;
-                    // ep.
-                    ep.UseMessageRetry(r => r.Interval(2, 100));
-                    ep.ConfigureConsumer<AppUserLoggedInConsumer>(provider);
-                });
-                config.ReceiveEndpoint("createdAppUserQueue", ep =>
-                {
-                    ep.PrefetchCount = 16;
-                    ep.UseMessageRetry(r => r.Interval(2, 100));
-                    ep.ConfigureConsumer<CreatedAppUserConsumer>(provider);
-                });
-            }));
-        });
+        
+        services.InitMassTransit();
 
         return services;
     }
+
 }

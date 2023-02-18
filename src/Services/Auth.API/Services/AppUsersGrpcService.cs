@@ -16,7 +16,7 @@ public class AppUsersGrpcService : AuthGrpc.AuthGrpcBase
     public override async Task<AppUserResponse> GetAppUserById(AppUserRequest request, ServerCallContext context)
     {
         var appUser = await _appUserRepository.GetByIdAsync(Guid.Parse(request.Id));
-        if (appUser is null) throw new ArgumentNullException(nameof(AppUser));
+        if (appUser is null) throw new ArgumentNullException(nameof(AuthUser));
 
         var response = new AppUserResponse
         {

@@ -1,4 +1,5 @@
 using System.Net;
+using System.Text.Json;
 using Infrastructure.Common;
 using Infrastructure.Exceptions;
 using Microsoft.AspNetCore.Http;
@@ -10,12 +11,6 @@ namespace Infrastructure.Logging.Serilog;
 
 public class ExceptionMiddleware : IMiddleware
 {
-    private readonly ISerializationService _jsonSerializer;
-
-    public ExceptionMiddleware(ISerializationService jsonSerializer)
-    {
-        _jsonSerializer = jsonSerializer;
-    }
 
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
@@ -27,7 +22,7 @@ public class ExceptionMiddleware : IMiddleware
         {
             var errorId = Guid.NewGuid().ToString();
             LogContext.PushProperty("ErrorId", errorId);
-            LogContext.PushProperty("StackTrace", exception.StackTrace.Trim());
+            LogContext.PushProperty("StackTrace", exception.StackTrace!.Trim());
             LogContext.PushProperty("ErrorMessage", exception.Message.Trim());
             LogContext.PushProperty("ErrorType", exception.GetType().FullName);
             var errorResult = new ProblemDetails
@@ -48,17 +43,17 @@ public class ExceptionMiddleware : IMiddleware
                 KeyNotFoundException => (int)HttpStatusCode.NotFound,
                 _ => (int?)(int)HttpStatusCode.InternalServerError
             };
-            Log.Error($"Request failed with Status Code {errorResult.Status} and Error Id {errorId}.");
+            Log.Error("Request failed with Status Code {ErrorStatus} and Error Id {ErrorId}", errorResult.Status, errorId);
             var response = context.Response;
             if (!response.HasStarted)
             {
                 response.ContentType = "application/json";
-                response.StatusCode = (int)errorResult.Status;
-                await response.WriteAsync(_jsonSerializer.Serialize(errorResult));
+                response.StatusCode = (int)errorResult.Status!;
+                await response.WriteAsync(JsonSerializer.Serialize(errorResult));
             }
             else
             {
-                Log.Warning("Can't write error response. Response has already started.");
+                Log.Warning("Can't write error response. Response has already started");
             }
         }
     }

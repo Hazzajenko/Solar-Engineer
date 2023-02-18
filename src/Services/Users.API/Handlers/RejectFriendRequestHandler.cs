@@ -17,11 +17,11 @@ public class RejectFriendRequestHandler
 {
     private readonly ILogger<RejectFriendRequestHandler> _logger;
 
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IUsersUnitOfWork _unitOfWork;
     // private readonly ITrackContext _trackContext;
     // private readonly IUsersContext _unitOfWork;
 
-    public RejectFriendRequestHandler(ILogger<RejectFriendRequestHandler> logger, IUnitOfWork unitOfWork)
+    public RejectFriendRequestHandler(ILogger<RejectFriendRequestHandler> logger, IUsersUnitOfWork unitOfWork)
     {
         _logger = logger;
         _unitOfWork = unitOfWork;
@@ -47,6 +47,6 @@ public class RejectFriendRequestHandler
             userLink.AppUserReceivedStatusEvent = UserStatus.FriendRequestSent.Rejected;
         }
 
-        return await _unitOfWork.Complete();
+        return await _unitOfWork.SaveChangesAsync();
     }
 }

@@ -19,9 +19,9 @@ public class AcceptFriendRequestHandler
 
     // private readonly ITrackContext _trackContext;
     // private readonly IUsersContext _unitOfWork;
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IUsersUnitOfWork _unitOfWork;
 
-    public AcceptFriendRequestHandler(ILogger<AcceptFriendRequestHandler> logger, IUnitOfWork unitOfWork)
+    public AcceptFriendRequestHandler(ILogger<AcceptFriendRequestHandler> logger, IUsersUnitOfWork unitOfWork)
     {
         _logger = logger;
         _unitOfWork = unitOfWork;
@@ -49,6 +49,6 @@ public class AcceptFriendRequestHandler
             userLink.AppUserReceivedStatusEvent = UserStatus.FriendRequestSent.Accepted;
         }
 
-        return await _unitOfWork.Complete();
+        return await _unitOfWork.SaveChangesAsync();
     }
 }

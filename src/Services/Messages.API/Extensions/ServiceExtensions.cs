@@ -44,19 +44,19 @@ public static class ServiceExtensions
                     h.Password("guest");
                 });
                 // appUserLoggedIn-Messages
-                config.ReceiveEndpoint("appUserLoggedIn-Messages", ep =>
+                config.ReceiveEndpoint("AppUserLoggedInEvent-Messages", ep =>
                 {
                     ep.PrefetchCount = 16;
                     ep.UseMessageRetry(r => r.Interval(2, 100));
                     ep.ConfigureConsumer<AppUserLoggedInConsumer>(provider);
                 });
-                config.ReceiveEndpoint("appUserLoggedInQueue", ep =>
+                /*config.ReceiveEndpoint("appUserLoggedInQueue", ep =>
                 {
                     ep.PrefetchCount = 16;
                     // ep.
                     ep.UseMessageRetry(r => r.Interval(2, 100));
                     ep.ConfigureConsumer<AppUserLoggedInConsumer>(provider);
-                });
+                });*/
                 /*config.ReceiveEndpoint("createdAppUserQueue", ep =>
                 {
                     ep.PrefetchCount = 16;

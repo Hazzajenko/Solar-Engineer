@@ -1,11 +1,12 @@
 ﻿using System.Reflection;
+using Infrastructure.Data;
 using Messages.API.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Messages.API.Data;
 
 public class MessagesContext
-    : DbContext
+    : DbContext, IDataContext<User>
 {
     public MessagesContext(DbContextOptions<MessagesContext> options)
         : base(options)

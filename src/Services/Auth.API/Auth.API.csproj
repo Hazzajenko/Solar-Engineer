@@ -12,6 +12,9 @@
     <ItemGroup>
         <PackageReference Include="Autofac" Version="6.5.0" />
         <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="8.0.0" />
+        <PackageReference Include="Azure.Identity" Version="1.8.2" />
+        <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.12.0" />
+        <PackageReference Include="Azure.Security.KeyVault.Secrets" Version="4.4.0" />
         <PackageReference Include="Grpc.AspNetCore" Version="2.51.0" />
         <PackageReference Include="DotNetCore.AspNetCore" Version="17.20.0" />
         <PackageReference Include="DotNetCore.EntityFrameworkCore" Version="17.20.0" />
@@ -26,6 +29,8 @@
         <PackageReference Include="FastEndpoints.Security" Version="5.7.1" />
         <PackageReference Include="FastEndpoints.Swagger" Version="5.7.1" />
         <PackageReference Include="MassTransit.AspNetCore" Version="7.3.1" />
+        <PackageReference Include="MassTransit.Azure.ServiceBus.Core" Version="8.0.12" />
+        <PackageReference Include="MassTransit.AzureServiceBus" Version="5.5.6" />
         <PackageReference Include="MassTransit.RabbitMQ" Version="8.0.12" />
         <PackageReference Include="Mediator.Abstractions" Version="2.0.30" />
         <PackageReference Include="Mediator.SourceGenerator" Version="2.0.30">

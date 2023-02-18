@@ -45,7 +45,8 @@ var appName = builder.RegisterSerilog();
 // builder.Services.AddApplicationServices(config);
 // builder.Services.AddTransient<ISerializationService>();
 // builder.Services.AddInfrastructureServices();
-builder.Services.AddApplicationServices(config);
+var entryAssembly = Assembly.GetEntryAssembly() ?? throw new ArgumentNullException(nameof(Assembly));
+builder.Services.AddApplicationServices(config, entryAssembly);
 builder.Services.AddIdentityServices(config);
 builder.Services.AddAuth(config);
 builder.Services.AddOptions();
@@ -70,24 +71,6 @@ var assembly = typeof(Program).GetTypeInfo().Assembly;
 builder.Services.AddAutoMapper(assembly);
 
 const string corsPolicy = "CorsPolicy";
-/*builder.Services.AddCors(options =>
-{
-    options.AddPolicy(
-        corsPolicy,
-        policy =>
-            policy
-                .WithOrigins(
-                    "http://localhost:4200",
-                    "http://127.0.0.1:4200",
-                    "https://localhost:4200",
-                    "https://127.0.0.1:4200"
-                )
-                .AllowAnyMethod()
-                .AllowAnyHeader()
-                .AllowCredentials()
-    );
-});*/
-
 builder.Services.InitCors(corsPolicy);
 
 
@@ -219,7 +202,7 @@ var services = scope.ServiceProvider;
 try
 {
     var context = services.GetRequiredService<AuthContext>();
-    var userManager = services.GetRequiredService<UserManager<AppUser>>();
+    var userManager = services.GetRequiredService<UserManager<AuthUser>>();
     var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
     await context.Database.MigrateAsync();
     await AuthContextSeed.SeedAll(userManager, roleManager);
@@ -230,7 +213,135 @@ catch (Exception ex)
     logger.LogError(ex, "An error occurred during migration");
 }
 
+/*
+var clientOptions = new ServiceBusClientOptions
+{
+    TransportType = ServiceBusTransportType.AmqpWebSockets
+};
+//TODO: Replace the "<NAMESPACE-NAME>" and "<QUEUE-NAME>" placeholders.
+ServiceBusClient client;
+
+ServiceBusSender sender;
+client = new ServiceBusClient(
+    "solarengineer.servicebus.windows.net",
+    new DefaultAzureCredential(),
+    clientOptions);
+sender = client.CreateSender("solarQueue");
+
+using var messageBatch = await sender.CreateMessageBatchAsync();
+const int numOfMessages = 3;
+for (var i = 1; i <= numOfMessages; i++)
+    // try adding a message to the batch
+    if (!messageBatch.TryAddMessage(new ServiceBusMessage($"Message {i}")))
+        // if it is too large for the batch
+        throw new Exception($"The message {i} is too large to fit in the batch.");
+
+try
+{
+    // Use the producer client to send the batch of messages to the Service Bus queue
+    await sender.SendMessagesAsync(messageBatch);
+    Console.WriteLine($"A batch of {numOfMessages} messages has been published to the queue.");
+}
+finally
+{
+    // Calling DisposeAsync on client types is required to ensure that network
+    // resources and other unmanaged objects are properly cleaned up.
+    await sender.DisposeAsync();
+    await client.DisposeAsync();
+}
+
+var options = new SecretClientOptions
+{
+    Retry =
+    {
+        Delay = TimeSpan.FromSeconds(2),
+        MaxDelay = TimeSpan.FromSeconds(16),
+        MaxRetries = 5,
+        Mode = RetryMode.Exponential
+    }
+};
+
+var uri = config["Azure:Vault:Uri"]!;
+var secretClient =
+    new SecretClient(new Uri(uri), new DefaultAzureCredential(), options);
+// new SecretClient(new Uri("https://solarengineer.vault.azure.net/"), new DefaultAzureCredential(), options);
+
+KeyVaultSecret secret = secretClient.GetSecret("secret");
+
+var secretValue = secret.Value;
+Console.WriteLine(secretValue);
+
+try
+{
+    /*var bus = services.GetRequiredService<IBus>();
+    var endpoint = await bus.GetSendEndpoint(new Uri(""));
+    var obj = new
+    {
+        hey = "hello"
+    };
+    await endpoint.Send(obj);
+    Console.WriteLine("sent");#1#
+    // var userManager = services.GetRequiredService<UserManager<AppUser>>();
+    // var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
+    // await context.Database.MigrateAsync();
+    // await AuthContextSeed.SeedAll(userManager, roleManager);
+}
+catch (Exception ex)
+{
+    var logger = services.GetRequiredService<ILogger<Program>>();
+    logger.LogError(ex, "An error occurred during migration");
+}
+*/
+
+/*
+ServiceBusProcessor processor;
+processor = client.CreateProcessor("solarQueue", new ServiceBusProcessorOptions());
+
+try
+{
+    // add handler to process messages
+    processor.ProcessMessageAsync += MessageHandler;
+
+    // add handler to process any errors
+    processor.ProcessErrorAsync += ErrorHandler;
+
+    // start processing 
+    await processor.StartProcessingAsync();
+
+    Console.WriteLine("Wait for a minute and then press any key to end the processing");
+    Console.ReadKey();
+
+    // stop processing 
+    Console.WriteLine("\nStopping the receiver...");
+    await processor.StopProcessingAsync();
+    Console.WriteLine("Stopped receiving messages");
+}
+finally
+{
+    // Calling DisposeAsync on client types is required to ensure that network
+    // resources and other unmanaged objects are properly cleaned up.
+    await processor.DisposeAsync();
+    await client.DisposeAsync();
+}*/
+
 await app.RunAsync();
+
+// handle received messages
+/*async Task MessageHandler(ProcessMessageEventArgs args)
+{
+    var body = args.Message.Body.ToString();
+    Console.WriteLine($"Received: {body}");
+
+    // complete the message. message is deleted from the queue. 
+    await args.CompleteMessageAsync(args.Message);
+}
+
+// handle any errors when receiving messages
+Task ErrorHandler(ProcessErrorEventArgs args)
+{
+    Console.WriteLine(args.Exception.ToString());
+    return Task.CompletedTask;
+}*/
 
 // IServiceCollection serviceCollection;
 // services.

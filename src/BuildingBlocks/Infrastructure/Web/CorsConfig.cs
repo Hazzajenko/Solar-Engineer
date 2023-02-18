@@ -25,6 +25,8 @@ public static class CorsConfig
                             "http://localhost:4200",
                             "http://127.0.0.1:4200",
                             "https://localhost:4200",
+                            // "https://localhost:4200/identity/login",
+                            // "https://localhost:4200/identity/login/google",
                             "https://127.0.0.1:4200"
                         )
                         .AllowAnyMethod()

@@ -6,7 +6,7 @@ namespace Auth.API.Data;
 
 public class AuthContextSeed
 {
-    public static async Task SeedAll(UserManager<AppUser> userManager,
+    public static async Task SeedAll(UserManager<AuthUser> userManager,
         RoleManager<AppRole> roleManager)
     {
         if (await userManager.Users.AnyAsync()) return;
@@ -33,11 +33,11 @@ public class AuthContextSeed
             });
     }
 
-    private static async Task SeedUsers(UserManager<AppUser> userManager)
+    private static async Task SeedUsers(UserManager<AuthUser> userManager)
     {
         if (await userManager.FindByNameAsync("Administrator") == null)
         {
-            var user = new AppUser
+            var user = new AuthUser
             {
                 // Id = Guid.NewGuid().ToString(),
                 UserName = "Administrator",
@@ -54,7 +54,7 @@ public class AuthContextSeed
 
         if (await userManager.FindByNameAsync("TestBot1") == null)
         {
-            var user = new AppUser
+            var user = new AuthUser
             {
                 // Id = Guid.NewGuid().ToString(),
                 UserName = "TestBot1",
@@ -71,7 +71,7 @@ public class AuthContextSeed
 
         if (await userManager.FindByNameAsync("TestBot2") == null)
         {
-            var user = new AppUser
+            var user = new AuthUser
             {
                 // Id = Guid.NewGuid().ToString(),
                 UserName = "TestBot2",

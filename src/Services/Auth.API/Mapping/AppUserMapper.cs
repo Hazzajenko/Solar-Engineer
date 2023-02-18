@@ -7,7 +7,7 @@ namespace Auth.API.Mapping;
 
 public static class AppUserMapper
 {
-    public static AppUser ToAppUser(this ClaimsPrincipal user)
+    public static AuthUser ToAppUser(this ClaimsPrincipal user)
     {
         var firstName = user.FindFirst(ClaimTypes.GivenName)?.Value;
         if (firstName is null) throw new ArgumentNullException(nameof(firstName));
@@ -18,7 +18,7 @@ public static class AppUserMapper
         var photoUrl = user.FindFirst(CustomClaims.Picture)?.Value;
         if (photoUrl is null) throw new ArgumentNullException(nameof(photoUrl));
 
-        return new AppUser
+        return new AuthUser
         {
             FirstName = firstName,
             LastName = lastName,
@@ -28,7 +28,7 @@ public static class AppUserMapper
         };
     }
 
-    public static CurrentUserDto ToCurrentUserDto(this AppUser request)
+    public static CurrentUserDto ToCurrentUserDto(this AuthUser request)
     {
         return new CurrentUserDto
         {

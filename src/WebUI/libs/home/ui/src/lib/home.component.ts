@@ -31,6 +31,12 @@ import { fadeIn, fadeInV2 } from './animations/animations'
 import { AuthService, RedirectLoginOptions } from '@auth0/auth0-angular'
 import { HttpClient, HttpHeaders } from '@angular/common/http'
 import { Location } from '@angular/common'
+import {
+  GoogleLoginButtonComponent,
+  GoogleLoginSvgButtonComponent,
+} from '@shared/ui/google-login-button'
+import { NotificationsDialog } from '@app/feature/notifications'
+import { SignInDialog } from '@auth/feature'
 
 @Component({
   selector: 'app-home',
@@ -43,6 +49,8 @@ import { Location } from '@angular/common'
     ProjectsListComponent,
     LogoNameBackgroundV2Component,
     LetModule,
+    GoogleLoginButtonComponent,
+    GoogleLoginSvgButtonComponent,
   ],
   templateUrl: './home.component.html',
   styles: [],
@@ -315,5 +323,69 @@ export class HomeComponent implements OnInit {
     // this.location.onUrlChange((url, state) => this.location.forward())
     // Location.go('/auth/login/google')
     // this.router.navigateByUrl('/auth/login/google')
+  }
+
+  openSignInDialog() {
+    const dialogConfig = {
+      autoFocus: true,
+      height: '300px',
+      width: '300px',
+    } as MatDialogConfig
+
+    this.dialog.open(SignInDialog, dialogConfig)
+  }
+
+  signInTest() {
+    this.http
+      .get('/identity/authorize', { withCredentials: true })
+      // .pipe(catchError(() => EMPTY))
+      .subscribe((res) => {
+        // console.log(res)
+        console.log('authorize', res)
+        // /!*      window.location.href = `${res}`*!/
+      })
+    /*    this.http
+          .get('/identity', { withCredentials: true })
+          // .pipe(catchError(() => EMPTY))
+          .subscribe((res) => {
+            // console.log(res)
+            console.log('identity', res)
+            // /!*      window.location.href = `${res}`*!/
+          })
+        this.http
+          .get('/users/current', { withCredentials: true })
+          // .pipe(catchError(() => EMPTY))
+          .subscribe((res) => {
+            // console.log(res)
+            console.log('current-user', res)
+            // /!*      window.location.href = `${res}`*!/
+          })*/
+    /*    this.http
+          .get('/identity/challenge', { withCredentials: true })
+          // .pipe(catchError(() => EMPTY))
+          .subscribe((res) => {
+            // console.log(res)
+            console.log('google-https', res)
+            // /!*      window.location.href = `${res}`*!/
+          })*/
+    /*    const xhr = new XMLHttpRequest()
+        xhr.open('get', '/identity/login/google')
+        xhr.withCredentials = true
+        xhr.onload = () => {
+          if (xhr.status != 200) {
+            console.log(`Error ${xhr.status}: ${xhr.statusText}`)
+          } else {
+            console.log(xhr.response.length)
+          }
+        }
+        xhr.send()*/
+    /*    this.http
+          .get('/identity/login/google', { withCredentials: true })
+          // .pipe(catchError(() => EMPTY))
+          .subscribe((res) => {
+            // console.log(res)
+            console.log('google-https', res)
+            // /!*      window.location.href = `${res}`*!/
+          })*/
   }
 }

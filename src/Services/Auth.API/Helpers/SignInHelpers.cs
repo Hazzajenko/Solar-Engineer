@@ -8,12 +8,12 @@ namespace Auth.API.Helpers;
 
 public static class SignInHelpers
 {
-    public static async Task SignInAppUserAsync(this HttpContext context, AppUser appUser)
+    public static async Task SignInAppUserAsync(this HttpContext context, AuthUser authUser)
     {
         var newAppUserClaims = new List<Claim>
         {
-            new(JwtRegisteredClaimNames.NameId, appUser.Id.ToString()),
-            new(JwtRegisteredClaimNames.UniqueName, appUser.UserName!)
+            new(JwtRegisteredClaimNames.NameId, authUser.Id.ToString()),
+            new(JwtRegisteredClaimNames.UniqueName, authUser.UserName!)
         };
         var newAppUserIdentity = new ClaimsIdentity(
             newAppUserClaims, CookieAuthenticationDefaults.AuthenticationScheme);

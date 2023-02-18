@@ -7,8 +7,8 @@ public static class ServiceRegistrations
 {
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
     {
-        services
-            .AddServices(typeof(ITransientService), ServiceLifetime.Transient);
+        /*services
+            .AddServices(typeof(ITransientService), ServiceLifetime.Transient);*/
         return services;
     }
 

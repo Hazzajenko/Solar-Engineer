@@ -12,21 +12,21 @@ namespace Auth.API.Services;
 
 public interface IAuthService
 {
-    Task<TokenResponse> Generate(AppUser request, ExternalLogin externalLogin);
+    Task<TokenResponse> Generate(AuthUser request, ExternalLogin externalLogin);
 }
 
 public class AuthService : IAuthService
 {
     private readonly SymmetricSecurityKey _key;
-    private readonly UserManager<AppUser> _userManager;
+    private readonly UserManager<AuthUser> _userManager;
 
-    public AuthService(IConfiguration config, UserManager<AppUser> userManager)
+    public AuthService(IConfiguration config, UserManager<AuthUser> userManager)
     {
         _userManager = userManager;
         _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenKey"]!));
     }
 
-    public async Task<TokenResponse> Generate(AppUser request, ExternalLogin externalLogin)
+    public async Task<TokenResponse> Generate(AuthUser request, ExternalLogin externalLogin)
     {
         var claims = new List<Claim>
         {

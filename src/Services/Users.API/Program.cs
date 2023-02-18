@@ -35,10 +35,11 @@ builder.Host.UseSerilog(
 );
 
 builder.Services.AddMediator(options => { options.ServiceLifetime = ServiceLifetime.Transient; });
-builder.Services.AddAuth(config);
+builder.Services.InitAuth(config);
+// builder.Services.AddAuth(config);
 builder.Services.AddAppServices(config);
 // builder.Services.AddAuthorization();
-builder.Services.AddAuthorization(opt =>
+/*builder.Services.AddAuthorization(opt =>
 {
     opt.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
     opt.AddPolicy("BeAuthenticated", policy => policy.RequireRole("User"));
@@ -50,16 +51,16 @@ builder.Services.AddAuthorization(opt =>
         "read:current_user",
         policy =>
             policy.Requirements.Add(new HasScopeRequirement("read:current_user", domain!))
-    );*/
+    );#1#
     // read:current_user
-});
+});*/
 builder.Services.InitDbContext<UsersContext>(config, builder.Environment);
 builder.Services.Configure<UrlsConfig>(config.GetSection("Urls"));
 
 builder.Services.AddGrpcClient<AuthGrpc.AuthGrpcClient>((services, options) =>
 {
     var grpcAuth = services.GetRequiredService<IOptions<UrlsConfig>>().Value.GrpcAuth;
-    if (grpcAuth is null) grpcAuth = config["Urls:grpcAuth"];
+    if (string.IsNullOrEmpty(grpcAuth)) grpcAuth = config["Urls:grpcAuth"]!;
     options.Address = new Uri(grpcAuth);
 }).AddInterceptor<GrpcExceptionInterceptor>();
 
@@ -107,8 +108,13 @@ AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 app.Run();
 
 
-public partial class Program
+namespace Users.API
 {
-    public static string Namespace = typeof(Program).Namespace;
-    public static string AppName = Namespace.Substring(Namespace.LastIndexOf('.', Namespace.LastIndexOf('.') - 1) + 1);
+    public class Program
+    {
+        public static string Namespace = typeof(Program).Namespace;
+
+        public static string AppName =
+            Namespace.Substring(Namespace.LastIndexOf('.', Namespace.LastIndexOf('.') - 1) + 1);
+    }
 }

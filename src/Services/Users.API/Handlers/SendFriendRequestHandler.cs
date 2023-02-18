@@ -20,11 +20,11 @@ public class SendFriendRequestHandler
     // private readonly IAuthGrpcService _auth;
     private readonly ILogger<SendFriendRequestHandler> _logger;
 
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IUsersUnitOfWork _unitOfWork;
     // private readonly IUsersContext _unitOfWork;
     // private readonly IUserLinksRepository _userLinksRepository;
 
-    public SendFriendRequestHandler(ILogger<SendFriendRequestHandler> logger, IUnitOfWork unitOfWork)
+    public SendFriendRequestHandler(ILogger<SendFriendRequestHandler> logger, IUsersUnitOfWork unitOfWork)
     {
         _logger = logger;
         _unitOfWork = unitOfWork;
@@ -53,6 +53,6 @@ public class SendFriendRequestHandler
             userLink.AppUserReceivedStatusEvent = UserStatus.FriendRequestSent.Pending;
         }
 
-        return await _unitOfWork.Complete();
+        return await _unitOfWork.SaveChangesAsync();
     }
 }

@@ -11,4 +11,12 @@ export class AuthRepository {
   login() {
     this.store.dispatch(AuthActions.login())
   }
+
+  loginWithGoogle() {
+    this.store.dispatch(AuthActions.loginWithGoogle())
+  }
+
+  authorizeRequest() {
+    this.store.dispatch(AuthActions.authorizeRequest())
+  }
 }
