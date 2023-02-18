@@ -31,6 +31,16 @@ public static class ServiceExtensions
         services.AddMediator(options => { options.ServiceLifetime = ServiceLifetime.Transient; });
         services.InitMassTransit(config, assembly);
         services.AddTransient<IEventPublisherService, EventPublisherService>();
+        // adds user and client access token management
+        services.AddAccessTokenManagement()
+            .ConfigureBackchannelHttpClient();
+        /*.AddTransientHttpErrorPolicy(policy => policy.WaitAndRetryAsync(new[]
+    {
+        TimeSpan.FromSeconds(1),
+        TimeSpan.FromSeconds(2),
+        TimeSpan.FromSeconds(3)
+    }));*/
+        // services.AddSingleton<IUserAccessTokenStore>();/*<IUserAccessTokenStore, AuthenticationSessionUserAccessTokenStore>();*/
         // services.AddMassTransitHostedService();
         /*services.AddTransient<ICatalogIntegrationEventService, CatalogIntegrationEventService>();
         services.AddSingleton<IRabbitMqPersistentConnection>(sp =>

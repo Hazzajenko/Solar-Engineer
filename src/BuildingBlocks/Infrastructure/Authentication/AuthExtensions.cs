@@ -8,12 +8,11 @@ namespace Infrastructure.Authentication;
 
 public static class AuthExtensions
 {
-    public static IServiceCollection InitAuth(
+    public static IServiceCollection InitIdentityAuth(
         this IServiceCollection services,
         IConfiguration config
     )
     {
- 
         var authConfig = services.GetRequiredConfiguration<AuthOptions>();
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>

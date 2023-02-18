@@ -1,6 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Reflection;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using Duende.IdentityServer;
 using Duende.IdentityServer.Events;
 using Duende.IdentityServer.Services;
@@ -9,10 +7,12 @@ using Identity.API.Entities;
 using Identity.API.Exceptions;
 using Identity.API.Mapping;
 using IdentityModel;
+using IdentityModel.AspNetCore.AccessTokenManagement;
 using Infrastructure.Extensions;
 using Mediator;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
+using ClaimsPrincipleExtensions = Identity.API.Extensions.ClaimsPrincipleExtensions;
 
 namespace Identity.API.Endpoints;
 // using Auth.API.RabbitMQ;
@@ -21,6 +21,8 @@ namespace Identity.API.Endpoints;
 
 public class FuckEndpoint : EndpointWithoutRequest
 {
+    private const string TokenPrefix = ".Token.";
+    private const string TokenNamesKey = ".TokenNames";
     private readonly IEventService _events;
 
     private readonly IIdentityServerInteractionService _interaction;
@@ -28,17 +30,21 @@ public class FuckEndpoint : EndpointWithoutRequest
     // private readonly IAuthService _authService;
     // private readonly IBus _bus;
     private readonly IMediator _mediator;
+    private readonly SignInManager<AppUser> _signInManager;
+    private readonly IUserAccessTokenStore _userAccessTokenStore;
     private readonly UserManager<AppUser> _usersManager;
 
 
     public FuckEndpoint(
         IMediator mediator, UserManager<AppUser> usersManager, IIdentityServerInteractionService interaction,
-        IEventService events)
+        IEventService events, IUserAccessTokenStore userAccessTokenStore, SignInManager<AppUser> signInManager)
     {
         _mediator = mediator;
         _usersManager = usersManager;
         _interaction = interaction;
         _events = events;
+        _userAccessTokenStore = userAccessTokenStore;
+        _signInManager = signInManager;
         // _authService = authService;
         // _bus = bus;
         // _publisherService = publisherService;
@@ -51,23 +57,26 @@ public class FuckEndpoint : EndpointWithoutRequest
         // AuthSchemes(JwtBearerDefaults.AuthenticationScheme);
         // AllowAnonymous();
         AuthSchemes("google");
+        // PreProcessors(new SecurityHeadersProcessor());
         // AuthSchemes(IdentityServerConstants.ExternalCookieAuthenticationScheme);
     }
 
     public override async Task HandleAsync(CancellationToken cT)
     {
-        var accessToken = await HttpContext.GetTokenAsync("access_token");
-        var idToken = await HttpContext.GetTokenAsync("id_token");
-        var refreshToken = await HttpContext.GetTokenAsync("refresh_token");
+        // var token = await /*User.GetT();*/
+        // var token = await HttpContext.GetUserAccessTokenAsync();
+        // var accessToken = await HttpContext.GetTokenAsync("access_token");
+        // var idToken = await HttpContext.GetTokenAsync("id_token");
+        // var refreshToken = await HttpContext.GetTokenAsync("refresh_token");
 
-        var claims2 = User.Claims.ToList();
+        // var claims2 = User.Claims.ToList();
 
         // var _accessToken = new JwtSecurityTokenHandler().ReadJwtToken(accessToken);
         // var _idToken = new JwtSecurityTokenHandler().ReadJwtToken(idToken);
 
         // var result2 = await GetSecret(accessToken);
-        
-        
+
+
         var result = await HttpContext.AuthenticateAsync(IdentityServerConstants.ExternalCookieAuthenticationScheme);
         if (result?.Succeeded != true) throw new Exception("External authentication error");
 
@@ -152,6 +161,29 @@ public class FuckEndpoint : EndpointWithoutRequest
             IdentityProvider = provider,
             AdditionalClaims = additionalLocalClaims
         };
+// result.
+        /*var token = result.Properties?.Items.Where(x => x.Key.StartsWith(TokenPrefix)).ToList();
+        foreach (var (key, value) in token)
+        {
+            Logger.LogInformation("{K}, {V}", key, value);
+        }*/
+
+        var token = ClaimsPrincipleExtensions.GetUserAccessToken(result) ??
+                    throw new ArgumentNullException(nameof(UserAccessToken));
+        await _userAccessTokenStore.StoreTokenAsync(User, token.AccessToken!, (DateTimeOffset)token.Expiration!);
+        var addTokensResult = await _signInManager.UpdateExternalAuthenticationTokensAsync(new ExternalLoginInfo(User,
+            provider,
+            providerUserId, user.DisplayName));
+        if (addTokensResult.Errors.Any())
+            foreach (var identityError in addTokensResult.Errors)
+                Logger.LogError("Error: {E} {B}", identityError.Code, identityError.Description);
+        // var token = await _userAccessTokenStore.GetTokenAsync(externalUser);
+
+        // var token2 = await _usersManager.Generate(user, provider, providerUserId);
+        // var token2 = await _usersManager.GenerateUserTokenAsync(user, provider, providerUserId);
+        // var token = await _usersManager.GetAuthenticationTokenAsync(user, provider, providerUserId);
+        // Logger.LogInformation("Token {Token}", token2);
+        // Logger.LogInformation("Token {@Token}", token);
 
         await HttpContext.SignInAsync(isUser, localSignInProps);
 
@@ -177,7 +209,10 @@ public class FuckEndpoint : EndpointWithoutRequest
             }
         }*/
 
-        await SendRedirectAsync($"{returnUrl}?status=logged-in", cancellation: cT);
+        Logger.LogInformation("ReturnUrl {ReturnUrl}", returnUrl);
+
+        Console.WriteLine($"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}{HttpContext.Request.PathBase}");
+        await SendRedirectAsync("/success", cancellation: cT);
         // return Redirect(returnUrl);
         /*var id = User.FindFirstValue(IdentityServerConstants.ClaimTypes.Tenant)!;
         Logger.LogInformation("User {User}", id);*/
@@ -214,7 +249,7 @@ public class FuckEndpoint : EndpointWithoutRequest
         if (idToken != null)
             localSignInProps.StoreTokens(new[] { new AuthenticationToken { Name = "id_token", Value = idToken } });
     }
-    
+
     /*public async Task<string> GetSecret(string accessToken)
     {
         var apiClient = _httpClientFactory.CreateClient();

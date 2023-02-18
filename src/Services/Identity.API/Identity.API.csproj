@@ -9,6 +9,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Duende.AccessTokenManagement" Version="1.0.0" />
         <PackageReference Include="Duende.IdentityServer" Version="6.2.3" />
         <PackageReference Include="Duende.IdentityServer.AspNetIdentity" Version="6.2.3" />
         <PackageReference Include="Duende.IdentityServer.EntityFramework" Version="6.2.3" />
@@ -16,6 +17,8 @@
         <PackageReference Include="FastEndpoints" Version="5.7.2" />
         <PackageReference Include="FastEndpoints.Security" Version="5.7.2" />
         <PackageReference Include="FastEndpoints.Swagger" Version="5.7.2" />
+        <PackageReference Include="IdentityModel.AspNetCore" Version="4.3.0" />
+        <PackageReference Include="IdentityModel.AspNetCore.ScopeValidation" Version="1.1.1" />
         <PackageReference Include="MassTransit.AspNetCore" Version="7.3.1" />
         <PackageReference Include="MassTransit.RabbitMQ" Version="8.0.12" />
         <PackageReference Include="Mediator.Abstractions" Version="2.0.30" />
@@ -23,6 +26,7 @@
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.3" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.3" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.0" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.3">
@@ -42,6 +46,10 @@
       <ProjectReference Include="..\..\BuildingBlocks\Domain\Domain.csproj" />
       <ProjectReference Include="..\..\BuildingBlocks\EventBus\EventBus.csproj" />
       <ProjectReference Include="..\..\BuildingBlocks\Infrastructure\Infrastructure.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Services" />
     </ItemGroup>
 
 </Project>

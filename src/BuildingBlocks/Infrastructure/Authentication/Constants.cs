@@ -1,4 +1,4 @@
-namespace Identity.API.Data;
+namespace Infrastructure.Authentication;
 
 public static class Constants
 {

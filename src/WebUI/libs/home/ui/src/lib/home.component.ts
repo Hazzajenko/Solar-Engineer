@@ -37,6 +37,7 @@ import {
 } from '@shared/ui/google-login-button'
 import { NotificationsDialog } from '@app/feature/notifications'
 import { SignInDialog } from '@auth/feature'
+import { AuthorizeResponse } from './authorize-response'
 
 @Component({
   selector: 'app-home',
@@ -337,7 +338,7 @@ export class HomeComponent implements OnInit {
 
   signInTest() {
     this.http
-      .get('/identity/authorize', { withCredentials: true })
+      .get<AuthorizeResponse>('/identity/authorize', { withCredentials: true })
       // .pipe(catchError(() => EMPTY))
       .subscribe((res) => {
         // console.log(res)
@@ -387,5 +388,16 @@ export class HomeComponent implements OnInit {
             console.log('google-https', res)
             // /!*      window.location.href = `${res}`*!/
           })*/
+  }
+
+  signInTest2() {
+    this.http
+      .get('/identity/token', { withCredentials: true })
+      // .pipe(catchError(() => EMPTY))
+      .subscribe((res) => {
+        // console.log(res)
+        console.log('token', res)
+        // /!*      window.location.href = `${res}`*!/
+      })
   }
 }
