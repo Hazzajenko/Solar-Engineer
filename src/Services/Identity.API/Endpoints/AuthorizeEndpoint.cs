@@ -5,14 +5,13 @@ using Duende.IdentityServer.Services;
 using FastEndpoints;
 using Identity.API.Entities;
 using Identity.API.Exceptions;
+using Identity.API.Extensions;
 using Identity.API.Mapping;
 using IdentityModel;
 using IdentityModel.AspNetCore.AccessTokenManagement;
-using Infrastructure.Extensions;
 using Mediator;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
-using ClaimsPrincipleExtensions = Identity.API.Extensions.ClaimsPrincipleExtensions;
 
 namespace Identity.API.Endpoints;
 // using Auth.API.RabbitMQ;
@@ -151,11 +150,14 @@ public class FuckEndpoint : EndpointWithoutRequest
         // for the specific protocols used and store them in the local auth cookie.
         // this is typically used to store data needed for signout from those protocols.
         var additionalLocalClaims = new List<Claim>();
-        var localSignInProps = new AuthenticationProperties();
+        var localSignInProps = new AuthenticationProperties
+        {
+            RedirectUri = "https://localhost:4200"
+        };
         CaptureExternalLoginContext(result, additionalLocalClaims, localSignInProps);
 
         // issue authentication cookie for user
-        var isUser = new IdentityServerUser(externalUser.GetUserId())
+        var isUser = new IdentityServerUser(user.Id.ToString())
         {
             DisplayName = user.DisplayName,
             IdentityProvider = provider,
@@ -168,15 +170,15 @@ public class FuckEndpoint : EndpointWithoutRequest
             Logger.LogInformation("{K}, {V}", key, value);
         }*/
 
-        var token = ClaimsPrincipleExtensions.GetUserAccessToken(result) ??
+        var token = result.GetUserAccessToken() ??
                     throw new ArgumentNullException(nameof(UserAccessToken));
-        await _userAccessTokenStore.StoreTokenAsync(User, token.AccessToken!, (DateTimeOffset)token.Expiration!);
-        var addTokensResult = await _signInManager.UpdateExternalAuthenticationTokensAsync(new ExternalLoginInfo(User,
+        // await _userAccessTokenStore.StoreTokenAsync(User, token.AccessToken!, (DateTimeOffset)token.Expiration!);
+        /*var addTokensResult = await _signInManager.UpdateExternalAuthenticationTokensAsync(new ExternalLoginInfo(User,
             provider,
             providerUserId, user.DisplayName));
         if (addTokensResult.Errors.Any())
             foreach (var identityError in addTokensResult.Errors)
-                Logger.LogError("Error: {E} {B}", identityError.Code, identityError.Description);
+                Logger.LogError("Error: {E} {B}", identityError.Code, identityError.Description);*/
         // var token = await _userAccessTokenStore.GetTokenAsync(externalUser);
 
         // var token2 = await _usersManager.Generate(user, provider, providerUserId);
@@ -210,9 +212,12 @@ public class FuckEndpoint : EndpointWithoutRequest
         }*/
 
         Logger.LogInformation("ReturnUrl {ReturnUrl}", returnUrl);
-
+        // "/bff/login?returnUrl=/logged-in";
+        // var returnUrlResult = "?returnUrl=/logged-in";
         Console.WriteLine($"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}{HttpContext.Request.PathBase}");
-        await SendRedirectAsync("/success", cancellation: cT);
+        // await SendRedirectAsync(returnUrlResult, cancellation: cT);
+        await SendOkAsync(token, cT);
+        // await SendRedirectAsync("/success", cancellation: cT);
         // return Redirect(returnUrl);
         /*var id = User.FindFirstValue(IdentityServerConstants.ClaimTypes.Tenant)!;
         Logger.LogInformation("User {User}", id);*/

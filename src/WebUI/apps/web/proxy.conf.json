@@ -16,6 +16,14 @@
     "withCredentials": true,
     "cookieDomainRewrite": "localhost"
   },
+  "/connect": {
+    "target": "https://localhost:6006",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "withCredentials": true,
+    "cookieDomainRewrite": "localhost"
+  },
   "/auth": {
     "target": "https://localhost:6005",
     "secure": false,

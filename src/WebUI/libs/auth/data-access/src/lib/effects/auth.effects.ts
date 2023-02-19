@@ -4,17 +4,29 @@ import { AuthActions } from '../store'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { catchError, map, of, switchMap, tap } from 'rxjs'
 import { Location } from '@angular/common'
+import { HttpClient, HttpHeaders } from '@angular/common/http'
 
 @Injectable()
 export class AuthEffects {
   private actions$ = inject(Actions)
   private location = inject(Location)
   private authService = inject(AuthService)
+  private http = inject(HttpClient)
+  headers = new HttpHeaders().set('Access-Control-Allow-Origin', 'https://localhost:6006')
+  // .set('content-type', 'application/json')
 
+  // y: No 'Access-Control-Allow-Origin' header is present
+
+  /*  const headers = new HttpHeaders()
+      .set('content-type', 'application/json')
+      .set('Access-Control-Allow-Origin', '*');*/
   getRedirect$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType(AuthActions.loginWithGoogle),
+        /*        switchMap(() =>
+                  this.http.get('/identity/login/google', { headers: this.headers, withCredentials: true }),
+                ),*/
         tap(() => {
           window.location.href = '/identity/login/google'
           // window.location.href = '/auth/login/google'
@@ -34,10 +46,25 @@ export class AuthEffects {
       this.actions$.pipe(
         ofType(AuthActions.authorizeRequest),
         switchMap(
+          () => this.authService.authorizeRequest().pipe(map(() => AuthActions.getToken())),
+          // .pipe(map((res) => localStorage.setItem('token', res.token))),
+          // this.authService.loginWithGoogle()
+        ),
+      ),
+    // { dispatch: false },
+  )
+
+  getToken$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(AuthActions.getToken),
+        switchMap(
           () =>
-            this.authService
-              .authorizeRequest()
-              .pipe(map((res) => localStorage.setItem('token', res.token))),
+            this.authService.getToken().pipe(
+              tap((res) => console.log(res)),
+              tap((res) => localStorage.setItem('token', JSON.stringify(res.accessToken))),
+              // map((res) => localStorage.setItem('token', res.accessToken)),
+            ),
           // this.authService.loginWithGoogle()
         ),
       ),

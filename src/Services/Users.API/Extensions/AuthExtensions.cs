@@ -1,24 +1,48 @@
-﻿namespace Users.API.Extensions;
+﻿using Infrastructure.Authentication;
+
+namespace Users.API.Extensions;
 
 public static class AuthExtensions
 {
-    public static IServiceCollection InitIdentityAuth(this IServiceCollection services,
-        IConfiguration config, IWebHostEnvironment env)
+    public static IServiceCollection InitIdentityAuthUsers(this IServiceCollection services,
+        IConfiguration config)
     {
-        services.AddAuthentication("Bearer")
+        /*ClientId = "client",
+        ClientSecret = "secret",
+        Scope = $"{Constants.StandardScopes.UsersApi}"*/
+        /*services.AddAuthentication("Bearer")
             .AddJwtBearer(options =>
             {
-                options.Authority = "https://localhost:6001";
+                options.Authority = "https://localhost:6006";
                 options.TokenValidationParameters.ValidateAudience = false;
+            })    */
+        services.AddAuthentication(opt =>
+            {
+                opt.DefaultScheme = "cookie";
+                opt.DefaultChallengeScheme = "oidc";
+            })
+            .AddCookie("cookie")
+            .AddOpenIdConnect("oidc", opt =>
+            {
+                opt.Authority = "https://localhost:6006";
+                opt.ClientId = "interactive";
+                // opt.ClientId = "client";
+                opt.ClientSecret = "secret";
+                opt.ResponseType = "code";
+                opt.Scope.Add(Constants.StandardScopes.UsersApi);
+                opt.UsePkce = true;
+                opt.ResponseMode = "query";
+                opt.SaveTokens = true;
             });
-        services.AddAuthorization(options =>
+        services.AddAuthorization();
+        /*services.AddAuthorization(options =>
         {
             options.AddPolicy("ApiScope", policy =>
             {
                 policy.RequireAuthenticatedUser();
                 // policy.RequireClaim("scope", "api1");
             });
-        });
+        });*/
         /*services.AddAuthentication(options =>
             {
                 options.DefaultScheme = "Cookies";

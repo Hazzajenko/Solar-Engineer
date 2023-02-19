@@ -1,5 +1,7 @@
 ﻿using System.Reflection;
 using EventBus.Services;
+using Identity.API.Services;
+using Identity.API.Settings;
 
 // using Auth.API.RabbitMQ;
 
@@ -14,7 +16,7 @@ using EventBus.Services;
 // using MassTransit;
 // using RabbitMQ.Client;
 
-namespace Identity.API.Extensions;
+namespace Identity.API.Extensions.Services;
 
 public static class ServiceExtensions
 {
@@ -34,6 +36,9 @@ public static class ServiceExtensions
         // adds user and client access token management
         services.AddAccessTokenManagement()
             .ConfigureBackchannelHttpClient();
+        
+        services.Configure<IdentityServerSettings>(config.GetSection("IdentityServerSettings"));
+        services.AddSingleton<ITokenService, TokenService>();
         /*.AddTransientHttpErrorPolicy(policy => policy.WaitAndRetryAsync(new[]
     {
         TimeSpan.FromSeconds(1),

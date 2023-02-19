@@ -3,9 +3,8 @@ using System.Text.Json;
 using Duende.IdentityServer;
 using Infrastructure.Authentication;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.IdentityModel.Tokens;
 
-namespace Identity.API.Extensions;
+namespace Identity.API.Extensions.Services;
 
 public static class AuthExtensions
 {
@@ -41,24 +40,36 @@ public static class AuthExtensions
                     var user = await result.Content.ReadFromJsonAsync<JsonElement>();
                     ctx.RunClaimActions(user);
                 };
-            }).AddOpenIdConnect("oidc", "Demo IdentityServer", options =>
+            }).AddOpenIdConnect("oidc", opt =>
             {
-                options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
-                options.SignOutScheme = IdentityServerConstants.SignoutScheme;
-                options.SaveTokens = true;
-
-                options.Authority = "https://demo.duendesoftware.com";
-                options.ClientId = "interactive.confidential";
-                options.ClientSecret = "secret";
-                options.ResponseType = "code";
-
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    NameClaimType = "name",
-                    RoleClaimType = "role"
-                };
+                opt.Authority = "https://localhost:6006";
+                opt.ClientId = "interactive";
+                // opt.ClientId = "client";
+                opt.ClientSecret = "secret";
+                opt.ResponseType = "code";
+                opt.Scope.Add(Constants.StandardScopes.UsersApi);
+                opt.UsePkce = true;
+                opt.ResponseMode = "query";
+                opt.SaveTokens = true;
             });
-        ;
+        /*.AddOpenIdConnect("oidc", "Demo IdentityServer", options =>
+        {
+            options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
+            options.SignOutScheme = IdentityServerConstants.SignoutScheme;
+            options.SaveTokens = true;
+
+            options.Authority = "https://demo.duendesoftware.com";
+            options.ClientId = "client";
+            options.ClientSecret = "secret";
+            options.ResponseType = "code";
+
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                NameClaimType = "name",
+                RoleClaimType = "role"
+            };
+        });*/
+
 
 // var authConfig = builder.Services.GetRequiredConfiguration<AuthOptions>();
         services.AddAuthorization(options =>

@@ -15,3 +15,10 @@ public static class Constants
         public const string MessagesApi = "messages-api";
     }
 }
+
+public static class StandardScopes
+{
+    public const string Roles = "roles";
+    public const string UsersApi = "users-api";
+    public const string MessagesApi = "messages-api";
+}

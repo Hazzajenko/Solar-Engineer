@@ -1,18 +1,20 @@
+using Duende.IdentityServer.EntityFramework.DbContexts;
+using Duende.IdentityServer.EntityFramework.Mappers;
 using Identity.API.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Identity.API.Data;
 
-public static class IdentityContextSeed
+public static class IdentitySeeder
 {
-    public static async Task SeedAll(UserManager<AppUser> userManager)
+    /*public static async Task SeedAll(UserManager<AppUser> userManager)
     {
         if (await userManager.Users.AnyAsync()) return;
 
         // await SeedRoles(roleManager);
         await SeedUsers(userManager);
-    }
+    }*/
 
     /*private static async Task SeedRoles(
         RoleManager<AppRole> roleManager)
@@ -31,6 +33,49 @@ public static class IdentityContextSeed
                 Name = Constants.Role.User
             });#1#
     }*/
+
+
+    public static async void InitializeDatabase(IApplicationBuilder app)
+    {
+        var getService = app.ApplicationServices.GetService<IServiceScopeFactory>() ??
+                         throw new ArgumentNullException(nameof(IServiceScopeFactory));
+        using var serviceScope = getService.CreateScope();
+
+        await serviceScope.ServiceProvider.GetRequiredService<IdentityContext>().Database.MigrateAsync();
+        var userManager = serviceScope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+
+        if (!userManager.Users.Any()) await SeedUsers(userManager);
+
+        await serviceScope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>().Database.MigrateAsync();
+
+        var context = serviceScope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
+        await context.Database.MigrateAsync();
+        /*if (!context.Clients.Any())
+        {*/
+        // foreach (var client in IdentityConfig.Clients) context.Clients.Add(client.ToEntity());
+        foreach (var client in IdentityConfig.Clients)
+        {
+            var getClient = await context.Clients.SingleOrDefaultAsync(x => x.ClientId == client.ClientId);
+            if (getClient is null) await context.Clients.AddAsync(client.ToEntity());
+        }
+
+
+        await context.SaveChangesAsync();
+        // }
+
+        if (!context.IdentityResources.Any())
+        {
+            foreach (var resource in IdentityConfig.IdentityResources)
+                context.IdentityResources.Add(resource.ToEntity());
+            await context.SaveChangesAsync();
+        }
+
+        if (!context.ApiScopes.Any())
+        {
+            foreach (var resource in IdentityConfig.ApiScopes) context.ApiScopes.Add(resource.ToEntity());
+            await context.SaveChangesAsync();
+        }
+    }
 
     private static async Task SeedUsers(UserManager<AppUser> userManager)
     {

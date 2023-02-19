@@ -1,41 +1,24 @@
 import { AnimationEvent } from '@angular/animations'
-import { CommonModule } from '@angular/common'
+import { CommonModule, Location } from '@angular/common'
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
-import {
-  NavigationCancel,
-  NavigationEnd,
-  NavigationError,
-  NavigationStart,
-  Router,
-  RouterEvent,
-  RouterLink,
-} from '@angular/router'
+import { NavigationStart, Router, RouterEvent, RouterLink } from '@angular/router'
 import { AuthStoreService } from '@auth/data-access'
-import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr'
-import * as signalR from '@microsoft/signalr'
 import { LetModule } from '@ngrx/component'
 import { ProjectsFacade } from '@projects/data-access/facades'
 import { ProjectsListComponent } from '@projects/feature/projects-list'
-import { UserModel } from '@shared/data-access/models'
 import { LogoNameBackgroundV2Component } from '@shared/ui/logo'
-import { AuthDialog } from 'libs/home/ui/src/lib/dialogs/auth/auth.dialog'
 import { CreateProjectDialog } from 'libs/home/ui/src/lib/dialogs/create-project/create-project.dialog'
 import { ConnectionsService, ConnectionsStoreService } from '@shared/data-access/connections'
 import { OnlineUsersDialog } from 'libs/home/ui/src/lib/dialogs/online-users/online-users.dialog'
-
-import { concatMap, map, Observable, switchMap, tap } from 'rxjs'
 import { fadeIn, fadeInV2 } from './animations/animations'
-import { AuthService, RedirectLoginOptions } from '@auth0/auth0-angular'
 import { HttpClient, HttpHeaders } from '@angular/common/http'
-import { Location } from '@angular/common'
 import {
   GoogleLoginButtonComponent,
   GoogleLoginSvgButtonComponent,
 } from '@shared/ui/google-login-button'
-import { NotificationsDialog } from '@app/feature/notifications'
 import { SignInDialog } from '@auth/feature'
 import { AuthorizeResponse } from './authorize-response'
 
@@ -391,13 +374,27 @@ export class HomeComponent implements OnInit {
   }
 
   signInTest2() {
+    this.authStore.dispatch.authorizeRequest()
+    /*    this.http
+          .get('/identity/token', { withCredentials: true })
+          // .pipe(catchError(() => EMPTY))
+          .subscribe((res) => {
+            // console.log(res)
+            console.log('token', res)
+            // /!*      window.location.href = `${res}`*!/
+          })*/
+  }
+
+  usersTest() {
     this.http
       .get('/identity/token', { withCredentials: true })
       // .pipe(catchError(() => EMPTY))
       .subscribe((res) => {
         // console.log(res)
-        console.log('token', res)
-        // /!*      window.location.href = `${res}`*!/
+        console.log('users-token', res)
+        // /*      window.location.href = `${res}`*/
       })
+    // this.location.go(url)
+    // window.location.reload()
   }
 }

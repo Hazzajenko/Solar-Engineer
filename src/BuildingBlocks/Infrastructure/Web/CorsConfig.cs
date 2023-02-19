@@ -17,6 +17,10 @@ public static class CorsConfig
                     policy
                         .WithOrigins(
                             "https://localhost:7222",
+                            "https://localhost:6006",
+                            "https://localhost:6005",
+                            "https://localhost:6004",
+                            "https://localhost:6003",
                             "http://localhost:5045",
                             "http://localhost:5001",
                             "http://127.0.0.1:5001",

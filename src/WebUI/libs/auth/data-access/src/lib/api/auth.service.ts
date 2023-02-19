@@ -1,6 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http'
 import { inject, Injectable } from '@angular/core'
 import { SignInResponseWithToken } from '../contracts'
+import { GetTokenResponse } from '../contracts/get-token.response'
 
 @Injectable({
   providedIn: 'root',
@@ -11,11 +12,15 @@ export class AuthService {
   // private auth0 = inject(Auth0)
 
   authorizeRequest() {
-    return this.http.get<SignInResponseWithToken>('/auth/authorize', { withCredentials: true })
+    return this.http.get('/identity/authorize', { withCredentials: true })
+  }
+
+  getToken() {
+    return this.http.get<GetTokenResponse>('/identity/token', { withCredentials: true })
   }
 
   loginWithGoogle() {
-    return this.http.get('/auth/login/google', { withCredentials: true })
+    return this.http.get('/identity/login/google', { withCredentials: true })
   }
 
   login() {

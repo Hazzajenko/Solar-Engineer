@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using MassTransit;
 
-namespace Identity.API.Extensions;
+namespace Identity.API.Extensions.Services;
 
 public class Message
 {

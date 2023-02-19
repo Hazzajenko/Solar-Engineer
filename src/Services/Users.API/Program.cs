@@ -3,8 +3,6 @@ using System.Text.Json.Serialization;
 using Auth.API;
 using FastEndpoints;
 using FastEndpoints.Swagger;
-using IdentityModel.Client;
-using Infrastructure.Authentication;
 using Infrastructure.Config;
 using Infrastructure.Data;
 using Infrastructure.Grpc;
@@ -36,7 +34,7 @@ builder.Host.UseSerilog(
 );
 
 builder.Services.AddMediator(options => { options.ServiceLifetime = ServiceLifetime.Transient; });
-builder.Services.InitIdentityAuth(config);
+builder.Services.InitIdentityAuthUsers(config);
 // builder.Services.AddAuth(config);
 builder.Services.AddAppServices(config);
 // builder.Services.AddAuthorization();
@@ -105,9 +103,9 @@ if (app.Environment.IsDevelopment())
 }
 
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-
+/*
 var client = new HttpClient();
-var disco = await client.GetDiscoveryDocumentAsync("https://localhost:5001");
+var disco = await client.GetDiscoveryDocumentAsync("https://localhost:6006");
 if (disco.IsError)
 {
     Console.WriteLine(disco.Error);
@@ -115,13 +113,17 @@ if (disco.IsError)
 }
 
 // request token
-var tokenResponse = await client.RequestClientCredentialsTokenAsync(new ClientCredentialsTokenRequest
+IdentityServerConstants.StandardScopes.OpenId,
+IdentityServerConstants.StandardScopes.Profile,
+Constants.StandardScopes.UsersApi,*/
+/*var tokenResponse = await client.RequestClientCredentialsTokenAsync(new ClientCredentialsTokenRequest
 {
     Address = disco.TokenEndpoint,
 
     ClientId = "client",
     ClientSecret = "secret",
-    Scope = "api1"
+    Scope = $"{Constants.StandardScopes.UsersApi}"
+    // Scope = "api1"
 });
 
 if (tokenResponse.IsError)
@@ -151,7 +153,7 @@ else
     var formatted = JsonSerializer.Serialize(parsed, new JsonSerializerOptions { WriteIndented = true });
 
     Console.WriteLine(formatted);
-}
+}*/
 
 
 app.Run();

@@ -3,8 +3,20 @@
 migrate:
 	dotnet ef migrations add ${name} -o Data/Migrations --context IdentityContext
 
+migrate-persisted:
+	dotnet ef migrations add InitialIdentityServerPersistedGrantDbMigration -c PersistedGrantDbContext -o Data/Migrations/PersistedGrantDb
+   
+migrate-configuration:
+	dotnet ef migrations add InitialIdentityServerConfigurationDbMigration -c ConfigurationDbContext -o Data/Migrations/ConfigurationDb
+
 update:
 	dotnet ef database update --context IdentityContext
+
+update-persisted:
+	dotnet ef database update --context PersistedGrantDbContext
+
+update-configuration:
+	dotnet ef database update --context ConfigurationDbContext
 
 remove:
 	dotnet ef migrations remove --context IdentityContext

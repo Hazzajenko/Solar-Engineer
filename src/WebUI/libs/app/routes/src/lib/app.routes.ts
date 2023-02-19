@@ -22,6 +22,10 @@ export const appRoutes: Route[] = [
         resolve: { localProject: LocalProjectResolver },*/
   },
   {
+    path: 'success',
+    loadComponent: () => import('@auth/feature').then((m) => m.AuthenticatedPageComponent),
+  },
+  {
     path: 'projects/local',
     loadComponent: () => import('@project-id/feature/local').then((m) => m.LocalProjectComponent),
     providers: [projectsProviders],
