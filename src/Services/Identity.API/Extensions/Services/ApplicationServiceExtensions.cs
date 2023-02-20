@@ -2,6 +2,7 @@
 using EventBus.Services;
 using Identity.API.Services;
 using Identity.API.Settings;
+using IdentityModel.Client;
 
 // using Auth.API.RabbitMQ;
 
@@ -34,9 +35,21 @@ public static class ServiceExtensions
         services.InitMassTransit(config, assembly);
         services.AddTransient<IEventPublisherService, EventPublisherService>();
         // adds user and client access token management
-        services.AddAccessTokenManagement()
-            .ConfigureBackchannelHttpClient();
-        
+        services.AddAccessTokenManagement(options =>
+        {
+            options.Client.Clients.Add("client", new ClientCredentialsTokenRequest
+            {
+                Address = config["IdentityServerSettings:TokenEndpoint"],
+                ClientId = config["IdentityServerSettings:ClientId"],
+                ClientSecret = config["IdentityServerSettings:ClientSecret"],
+                Scope = config["IdentityServerSettings:Scopes"]
+                /*Address = "https://demo.duendesoftware.com/connect/token",
+                ClientId = "m2m",
+                ClientSecret = "secret",
+                Scope = "api"*/
+            });
+        });
+
         services.Configure<IdentityServerSettings>(config.GetSection("IdentityServerSettings"));
         services.AddSingleton<ITokenService, TokenService>();
         /*.AddTransientHttpErrorPolicy(policy => policy.WaitAndRetryAsync(new[]

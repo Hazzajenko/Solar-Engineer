@@ -23,27 +23,27 @@ public class UserValidator : IResourceOwnerPasswordValidator
         var user = await _userManager.FindByNameAsync(context.UserName);
         if (user is not null)
         {
-            var signIn = await _signInManager.PasswordSignInAsync(
+            /*var signIn = await _signInManager.PasswordSignInAsync(
                 user!,
                 context.Password,
                 true,
                 true);
 
             if (signIn.Succeeded)
-            {
-                var userId = user!.Id.ToString();
-                context.Result = new GrantValidationResult(
-                    userId,
-                    "custom",
-                    new[]
-                    {
-                        new(ClaimTypes.NameIdentifier, userId),
-                        new Claim(ClaimTypes.Name, user.UserName!)
-                    }
-                );
+            {*/
+            var userId = user!.Id.ToString();
+            context.Result = new GrantValidationResult(
+                userId,
+                "custom",
+                new[]
+                {
+                    new(ClaimTypes.NameIdentifier, userId),
+                    new Claim(ClaimTypes.Name, user.UserName!)
+                }
+            );
 
-                return;
-            }
+            // return;
+            // }
         }
 
         context.Result = new GrantValidationResult(TokenRequestErrors.UnauthorizedClient, "Invalid Credentials");

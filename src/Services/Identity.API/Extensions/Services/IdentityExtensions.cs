@@ -1,7 +1,9 @@
 ﻿using System.Reflection;
 using Duende.IdentityServer.EntityFramework.Storage;
+using Duende.IdentityServer.Services;
 using Identity.API.Data;
 using Identity.API.Entities;
+using Identity.API.Services;
 using Infrastructure.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -32,6 +34,7 @@ public static class IdentityExtensions
                 options.Events.RaiseInformationEvents = true;
                 options.Events.RaiseFailureEvents = true;
                 options.Events.RaiseSuccessEvents = true;
+                options.EmitStaticAudienceClaim = true;
                 options.LicenseKey = config["IdentityKey"];
                 options.Caching.ClientStoreExpiration = TimeSpan.FromMinutes(5);
                 options.Caching.ResourceStoreExpiration = TimeSpan.FromMinutes(5);
@@ -41,9 +44,10 @@ public static class IdentityExtensions
             .AddInMemoryApiResources(IdentityConfig.ApiResources)
             .AddInMemoryApiScopes(IdentityConfig.ApiScopes)
             .AddInMemoryClients(IdentityConfig.Clients)*/
-            .AddAspNetIdentity<AppUser>()
             .AddResourceOwnerValidator<UserValidator>()
-            .AddConfigurationStore(options =>
+            .AddProfileService<CustomProfileService>()
+            .AddAspNetIdentity<AppUser>()
+            .AddCustomTokenRequestValidator<TransactionScopeTokenRequestValidator>().AddConfigurationStore(options =>
             {
                 options.ConfigureDbContext = builder => builder.UseNpgsql(connectionString,
                     sqlOptions => { sqlOptions.MigrationsAssembly(migrationsAssembly); });
@@ -56,6 +60,11 @@ public static class IdentityExtensions
                 options.EnableTokenCleanup = true;
                 options.TokenCleanupInterval = 3600;
             });
+
+
+        // services.AddScoped<IProfileService, CustomProfileService>();
+        services.AddTransient<IProfileService, CustomProfileService>()
+            ;
 
         services.AddOperationalDbContext(options =>
         {

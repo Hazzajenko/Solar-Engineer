@@ -1,6 +1,4 @@
-﻿using Infrastructure.Authentication;
-
-namespace Users.API.Extensions;
+﻿namespace Users.API.Extensions;
 
 public static class AuthExtensions
 {
@@ -10,13 +8,13 @@ public static class AuthExtensions
         /*ClientId = "client",
         ClientSecret = "secret",
         Scope = $"{Constants.StandardScopes.UsersApi}"*/
-        /*services.AddAuthentication("Bearer")
+        services.AddAuthentication("Bearer")
             .AddJwtBearer(options =>
             {
                 options.Authority = "https://localhost:6006";
                 options.TokenValidationParameters.ValidateAudience = false;
-            })    */
-        services.AddAuthentication(opt =>
+            });
+        /*services.AddAuthentication(opt =>
             {
                 opt.DefaultScheme = "cookie";
                 opt.DefaultChallengeScheme = "oidc";
@@ -25,7 +23,8 @@ public static class AuthExtensions
             .AddOpenIdConnect("oidc", opt =>
             {
                 opt.Authority = "https://localhost:6006";
-                opt.ClientId = "interactive";
+                opt.ClientId = "m2m.client";
+                // opt.ClientId = "interactive";
                 // opt.ClientId = "client";
                 opt.ClientSecret = "secret";
                 opt.ResponseType = "code";
@@ -33,16 +32,16 @@ public static class AuthExtensions
                 opt.UsePkce = true;
                 opt.ResponseMode = "query";
                 opt.SaveTokens = true;
-            });
-        services.AddAuthorization();
-        /*services.AddAuthorization(options =>
+            });*/
+        // services.AddAuthorization();
+        services.AddAuthorization(options =>
         {
             options.AddPolicy("ApiScope", policy =>
             {
                 policy.RequireAuthenticatedUser();
-                // policy.RequireClaim("scope", "api1");
+                policy.RequireClaim("scope", "users-api");
             });
-        });*/
+        });
         /*services.AddAuthentication(options =>
             {
                 options.DefaultScheme = "Cookies";

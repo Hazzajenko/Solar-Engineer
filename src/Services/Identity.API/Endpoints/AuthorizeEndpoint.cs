@@ -12,6 +12,7 @@ using IdentityModel.AspNetCore.AccessTokenManagement;
 using Mediator;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
+using ITokenService = Identity.API.Services.ITokenService;
 
 namespace Identity.API.Endpoints;
 // using Auth.API.RabbitMQ;
@@ -25,25 +26,31 @@ public class FuckEndpoint : EndpointWithoutRequest
     private readonly IEventService _events;
 
     private readonly IIdentityServerInteractionService _interaction;
+    private readonly IMediator _mediator;
+    private readonly SignInManager<AppUser> _signInManager;
+    private readonly ITokenService _tokenService;
 
     // private readonly IAuthService _authService;
     // private readonly IBus _bus;
-    private readonly IMediator _mediator;
-    private readonly SignInManager<AppUser> _signInManager;
+    private readonly IdentityServerTools _tools;
     private readonly IUserAccessTokenStore _userAccessTokenStore;
     private readonly UserManager<AppUser> _usersManager;
 
 
     public FuckEndpoint(
+        IdentityServerTools tools,
         IMediator mediator, UserManager<AppUser> usersManager, IIdentityServerInteractionService interaction,
-        IEventService events, IUserAccessTokenStore userAccessTokenStore, SignInManager<AppUser> signInManager)
+        IEventService events, IUserAccessTokenStore userAccessTokenStore, SignInManager<AppUser> signInManager,
+        ITokenService tokenService)
     {
+        _tools = tools;
         _mediator = mediator;
         _usersManager = usersManager;
         _interaction = interaction;
         _events = events;
         _userAccessTokenStore = userAccessTokenStore;
         _signInManager = signInManager;
+        _tokenService = tokenService;
         // _authService = authService;
         // _bus = bus;
         // _publisherService = publisherService;
@@ -100,6 +107,8 @@ public class FuckEndpoint : EndpointWithoutRequest
                        throw new ArgumentNullException(nameof(result.Properties.Items));
         var providerUserId = userIdClaim.Value;
 
+        // await _usersManager.Get
+        // await _usersManager.GetClaimsAsync(a)
         var user = await _usersManager.FindByLoginAsync(provider, providerUserId);
         if (user == null)
         {
@@ -154,7 +163,7 @@ public class FuckEndpoint : EndpointWithoutRequest
         {
             RedirectUri = "https://localhost:4200"
         };
-        CaptureExternalLoginContext(result, additionalLocalClaims, localSignInProps);
+        // CaptureExternalLoginContext(result, additionalLocalClaims, localSignInProps);
 
         // issue authentication cookie for user
         var isUser = new IdentityServerUser(user.Id.ToString())
@@ -214,9 +223,46 @@ public class FuckEndpoint : EndpointWithoutRequest
         Logger.LogInformation("ReturnUrl {ReturnUrl}", returnUrl);
         // "/bff/login?returnUrl=/logged-in";
         // var returnUrlResult = "?returnUrl=/logged-in";
-        Console.WriteLine($"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}{HttpContext.Request.PathBase}");
+        /*var emailAddress = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress";
+        var surname = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname";
+        var name = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name";
+        var scopes = $"users-api {emailAddress} {surname} {name}";
+        Console.WriteLine($"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}{HttpContext.Request.PathBase}");*/
+        var tokenResponse = await _tokenService.GetToken("users-api");
+        // var tokenResponse = await _tokenService.GetToken("openid users-api");
+
+        /*var token2 = await _tools.IssueClientJwtAsync(
+            "m2m.client",
+            3600,
+            // scopes: "users-api",
+            new[] { "scope", "profile", "users-api" },
+            new[] { "https://localhost:6006" },
+            externalUser.Claims
+        );
+        var nexty = new AppUserToken
+        {
+            AccessToken = token2
+        };*/
+
+        /*var client = new HttpClient();
+        var metaDataResponse = await client.GetDiscoveryDocumentAsync("https://localhost:6006", cancellationToken: cT);
+        var response = await client.GetUserInfoAsync(new UserInfoRequest
+        {
+            Address = metaDataResponse.UserInfoEndpoint,
+            Token = token2
+        }, cancellationToken: cT);
+        if(response.IsError)
+        {
+            Logger.LogError("Problem while fetching data from the UserInfo endpoint {E}", response.Exception);
+            // throw new Exception("Problem while fetching data from the UserInfo endpoint", response.Exception);
+        }*/
+        /*Response = new()
+        {
+           string AccessToken = token2;
+            
+        }*/
         // await SendRedirectAsync(returnUrlResult, cancellation: cT);
-        await SendOkAsync(token, cT);
+        await SendOkAsync(tokenResponse, cT);
         // await SendRedirectAsync("/success", cancellation: cT);
         // return Redirect(returnUrl);
         /*var id = User.FindFirstValue(IdentityServerConstants.ClaimTypes.Tenant)!;
@@ -241,7 +287,7 @@ public class FuckEndpoint : EndpointWithoutRequest
 
     // if the external login is OIDC-based, there are certain things we need to preserve to make logout work
     // this will be different for WS-Fed, SAML2p or other protocols
-    private void CaptureExternalLoginContext(AuthenticateResult externalResult, List<Claim> localClaims,
+    /*private void CaptureExternalLoginContext(AuthenticateResult externalResult, List<Claim> localClaims,
         AuthenticationProperties localSignInProps)
     {
         // if the external system sent a session id claim, copy it over
@@ -253,7 +299,7 @@ public class FuckEndpoint : EndpointWithoutRequest
         var idToken = externalResult.Properties.GetTokenValue("id_token");
         if (idToken != null)
             localSignInProps.StoreTokens(new[] { new AuthenticationToken { Name = "id_token", Value = idToken } });
-    }
+    }*/
 
     /*public async Task<string> GetSecret(string accessToken)
     {

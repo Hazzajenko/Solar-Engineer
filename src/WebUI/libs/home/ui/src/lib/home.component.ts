@@ -386,14 +386,47 @@ export class HomeComponent implements OnInit {
   }
 
   usersTest() {
+    /*    this.http
+          .get('/connect/authorize?', {  withCredentials: true })
+          // .pipe(catchError(() => EMPTY))
+          .subscribe((res) => {
+            // console.log(res)
+            console.log('/users/test', res)
+            // /!*      window.location.href = `${res}`*!/
+          })*/
+    /*    GET /connect/authorize?
+          client_id=client1&
+          scope=openid api1&
+          response_type=code&
+          redirect_uri=https://myapp/callback&*/
+    const token = localStorage.getItem('token')
+    if (!token) return
+    console.log(token)
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`)
     this.http
-      .get('/identity/token', { withCredentials: true })
+      .get('/users/test', { headers, withCredentials: true })
       // .pipe(catchError(() => EMPTY))
       .subscribe((res) => {
         // console.log(res)
-        console.log('users-token', res)
+        console.log('/users/test', res)
         // /*      window.location.href = `${res}`*/
       })
+    this.http
+      .get('/identity/user', { withCredentials: true })
+      // .pipe(catchError(() => EMPTY))
+      .subscribe((res) => {
+        // console.log(res)
+        console.log('/identity/user', res)
+        // /*      window.location.href = `${res}`*/
+      })
+    /*    this.http
+          .get('/users/test', { withCredentials: true })
+          // .pipe(catchError(() => EMPTY))
+          .subscribe((res) => {
+            // console.log(res)
+            console.log('/users/test', res)
+            // /!*      window.location.href = `${res}`*!/
+          })*/
     // this.location.go(url)
     // window.location.reload()
   }

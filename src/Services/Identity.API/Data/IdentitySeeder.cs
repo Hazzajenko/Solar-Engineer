@@ -1,5 +1,4 @@
 using Duende.IdentityServer.EntityFramework.DbContexts;
-using Duende.IdentityServer.EntityFramework.Mappers;
 using Identity.API.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -53,28 +52,78 @@ public static class IdentitySeeder
         /*if (!context.Clients.Any())
         {*/
         // foreach (var client in IdentityConfig.Clients) context.Clients.Add(client.ToEntity());
+        /*
+        foreach (var client in IdentityConfig.Clients)
+        {
+            // var getClient = await context.Clients.SingleOrDefaultAsync(x => x.ClientId == client.ClientId);
+            // if (getClient is null) await context.Clients.AddAsync(client.ToEntity());
+            // context.Clients.Update(client.ToEntity());
+        }
+        */
+
         foreach (var client in IdentityConfig.Clients)
         {
             var getClient = await context.Clients.SingleOrDefaultAsync(x => x.ClientId == client.ClientId);
-            if (getClient is null) await context.Clients.AddAsync(client.ToEntity());
+            if (getClient is not null) context.Clients.Entry(getClient).CurrentValues.SetValues(getClient);
+            ;
+
+            // context.Clients.Update(client.ToEntity());
         }
 
 
-        await context.SaveChangesAsync();
+        // await context.SaveChangesAsync();
         // }
 
-        if (!context.IdentityResources.Any())
+        /*if (!context.IdentityResources.Any())
         {
             foreach (var resource in IdentityConfig.IdentityResources)
                 context.IdentityResources.Add(resource.ToEntity());
             await context.SaveChangesAsync();
+        }*/
+
+        foreach (var client in IdentityConfig.IdentityResources)
+        {
+            var getClient = await context.IdentityResources.SingleOrDefaultAsync(x => x.Name == client.Name);
+            if (getClient is not null) context.IdentityResources.Entry(getClient).CurrentValues.SetValues(getClient);
+            ;
+
+            // context.Clients.Update(client.ToEntity());
         }
 
-        if (!context.ApiScopes.Any())
+        foreach (var client in IdentityConfig.ApiResources)
+        {
+            var getClient = await context.ApiResources.SingleOrDefaultAsync(x => x.Name == client.Name);
+            if (getClient is not null) context.ApiResources.Entry(getClient).CurrentValues.SetValues(getClient);
+            ;
+
+            // context.Clients.Update(client.ToEntity());
+        }
+
+        foreach (var client in IdentityConfig.ApiScopes)
+        {
+            var getClient = await context.ApiScopes.SingleOrDefaultAsync(x => x.Name == client.Name);
+            if (getClient is not null) context.ApiScopes.Entry(getClient).CurrentValues.SetValues(getClient);
+            ;
+
+            // context.Clients.Update(client.ToEntity());
+        }
+
+        await context.SaveChangesAsync();
+
+        /*
+        if (!context.ApiResources.Any())
+        {
+            // deb.Entry(oldEntry).CurrentValues.SetValues(newEntry);
+            foreach (var resource in IdentityConfig.ApiResources)
+                context.ApiResources.Add(resource.ToEntity());
+            await context.SaveChangesAsync();
+        }*/
+
+        /*if (!context.ApiScopes.Any())
         {
             foreach (var resource in IdentityConfig.ApiScopes) context.ApiScopes.Add(resource.ToEntity());
             await context.SaveChangesAsync();
-        }
+        }*/
     }
 
     private static async Task SeedUsers(UserManager<AppUser> userManager)

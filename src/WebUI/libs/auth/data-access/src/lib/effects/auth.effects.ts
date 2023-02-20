@@ -45,14 +45,33 @@ export class AuthEffects {
     () =>
       this.actions$.pipe(
         ofType(AuthActions.authorizeRequest),
-        switchMap(
-          () => this.authService.authorizeRequest().pipe(map(() => AuthActions.getToken())),
-          // .pipe(map((res) => localStorage.setItem('token', res.token))),
-          // this.authService.loginWithGoogle()
+        switchMap(() =>
+          this.authService.authorizeRequest().pipe(
+            tap((res) => console.log(res)),
+            tap((res) => console.log(res.accessToken)),
+            tap((res) =>
+              localStorage.setItem('token', res.accessToken),
+            ) /*.pipe(map(() => AuthActions.getToken())),*/,
+            // .pipe(map((res) => localStorage.setItem('token', res.token))),
+            // this.authService.loginWithGoogle()
+          ),
         ),
       ),
-    // { dispatch: false },
+    { dispatch: false },
   )
+  /*
+    authorizeRequest$ = createEffect(
+      () =>
+        this.actions$.pipe(
+          ofType(AuthActions.authorizeRequest),
+          switchMap(
+            () => this.authService.authorizeRequest().pipe(map(() => AuthActions.getToken())),
+            // .pipe(map((res) => localStorage.setItem('token', res.token))),
+            // this.authService.loginWithGoogle()
+          ),
+        ),
+      // { dispatch: false },
+    )*/
 
   getToken$ = createEffect(
     () =>

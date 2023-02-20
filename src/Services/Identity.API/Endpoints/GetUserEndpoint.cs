@@ -1,16 +1,16 @@
 ﻿using FastEndpoints;
-using Identity.API.Models;
 using Identity.API.Services;
 using Mediator;
+using Microsoft.AspNetCore.Authentication;
 
 namespace Identity.API.Endpoints;
 
-public class GetTokenEndpoint : EndpointWithoutRequest<AppUserToken>
+public class GetUserEndpoint : EndpointWithoutRequest
 {
     private readonly IMediator _mediator;
     private readonly ITokenService _tokenService;
 
-    public GetTokenEndpoint(
+    public GetUserEndpoint(
         IMediator mediator, ITokenService tokenService)
     {
         _mediator = mediator;
@@ -19,45 +19,14 @@ public class GetTokenEndpoint : EndpointWithoutRequest<AppUserToken>
 
     public override void Configure()
     {
-        Get("/token");
+        Get("/user");
         // Policies("ApiScope");
     }
 
     public override async Task HandleAsync(CancellationToken cT)
     {
-        // using var client = new HttpClient();
-        var tokenResponse = await _tokenService.GetToken("users-api");
-        /*var disco = await client.GetDiscoveryDocumentAsync("https://localhost:6006", cT);
-        if (disco.IsError)
-        {
-            Console.WriteLine(disco.Error);
-            return;
-        }
-
-        var tokenResponse = await client.RequestClientCredentialsTokenAsync(new ClientCredentialsTokenRequest
-        {
-            Address = disco.TokenEndpoint,
-
-            ClientId = "m2m.client",
-            // ClientId = "client",
-            ClientSecret = "secret",
-            Scope = StandardScopes.UsersApi
-            // Scope = "api1"
-        }, cT);
-
-        if (tokenResponse.IsError)
-        {
-            Console.WriteLine(tokenResponse.Error);
-            Console.WriteLine(tokenResponse.ErrorDescription);
-            return;
-        }*/
-
-        Response = new AppUserToken
-        {
-            AccessToken = tokenResponse.AccessToken,
-            ExpiresIn = tokenResponse.ExpiresIn
-        };
-        // Console.WriteLine(tokenResponse.AccessToken);
+        await HttpContext.GetTokenAsync("access_token");
+        Response = HttpContext.User.Claims.Select(x => new { x.Type, x.Value }).ToList();
 
         await SendOkAsync(Response, cT);
 /*
