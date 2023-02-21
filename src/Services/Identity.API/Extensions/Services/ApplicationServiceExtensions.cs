@@ -2,7 +2,6 @@
 using EventBus.Services;
 using Identity.API.Services;
 using Identity.API.Settings;
-using IdentityModel.Client;
 
 // using Auth.API.RabbitMQ;
 
@@ -35,6 +34,7 @@ public static class ServiceExtensions
         services.InitMassTransit(config, assembly);
         services.AddTransient<IEventPublisherService, EventPublisherService>();
         // adds user and client access token management
+        /*
         services.AddAccessTokenManagement(options =>
         {
             options.Client.Clients.Add("client", new ClientCredentialsTokenRequest
@@ -46,12 +46,22 @@ public static class ServiceExtensions
                 /*Address = "https://demo.duendesoftware.com/connect/token",
                 ClientId = "m2m",
                 ClientSecret = "secret",
-                Scope = "api"*/
+                Scope = "api"#1#
             });
         });
+        */
 
         services.Configure<IdentityServerSettings>(config.GetSection("IdentityServerSettings"));
         services.AddSingleton<ITokenService, TokenService>();
+        services.AddLogging(options => { options.AddFilter("Duende", LogLevel.Debug); });
+        /*services.AddDataProtection()
+            .PersistKeysToFileSystem(new DirectoryInfo(@"c:\keys"))
+            .SetApplicationName("SharedCookieApp");
+
+        services.ConfigureApplicationCookie(options => {
+            options.Cookie.Name = ".AspNet.SharedCookie";
+            options.Cookie.Path = "/";
+        });*/
         /*.AddTransientHttpErrorPolicy(policy => policy.WaitAndRetryAsync(new[]
     {
         TimeSpan.FromSeconds(1),

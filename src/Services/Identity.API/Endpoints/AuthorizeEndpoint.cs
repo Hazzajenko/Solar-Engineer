@@ -2,13 +2,12 @@
 using Duende.IdentityServer;
 using Duende.IdentityServer.Events;
 using Duende.IdentityServer.Services;
+using Duende.IdentityServer.Validation;
 using FastEndpoints;
 using Identity.API.Entities;
 using Identity.API.Exceptions;
-using Identity.API.Extensions;
 using Identity.API.Mapping;
 using IdentityModel;
-using IdentityModel.AspNetCore.AccessTokenManagement;
 using Mediator;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
@@ -19,11 +18,12 @@ namespace Identity.API.Endpoints;
 
 // using MassTransit.Mediator;
 
-public class FuckEndpoint : EndpointWithoutRequest
+public class AuthorizeEndpoint : EndpointWithoutRequest
 {
     private const string TokenPrefix = ".Token.";
     private const string TokenNamesKey = ".TokenNames";
     private readonly IEventService _events;
+    private readonly IExtensionGrantValidator _grantValidator;
 
     private readonly IIdentityServerInteractionService _interaction;
     private readonly IMediator _mediator;
@@ -33,24 +33,26 @@ public class FuckEndpoint : EndpointWithoutRequest
     // private readonly IAuthService _authService;
     // private readonly IBus _bus;
     private readonly IdentityServerTools _tools;
-    private readonly IUserAccessTokenStore _userAccessTokenStore;
+
+    // private readonly IUserAccessTokenStore _userAccessTokenStore;
     private readonly UserManager<AppUser> _usersManager;
 
 
-    public FuckEndpoint(
+    public AuthorizeEndpoint(
         IdentityServerTools tools,
         IMediator mediator, UserManager<AppUser> usersManager, IIdentityServerInteractionService interaction,
-        IEventService events, IUserAccessTokenStore userAccessTokenStore, SignInManager<AppUser> signInManager,
-        ITokenService tokenService)
+        IEventService events, SignInManager<AppUser> signInManager,
+        ITokenService tokenService, IExtensionGrantValidator grantValidator)
     {
         _tools = tools;
         _mediator = mediator;
         _usersManager = usersManager;
         _interaction = interaction;
         _events = events;
-        _userAccessTokenStore = userAccessTokenStore;
+        // _userAccessTokenStore = userAccessTokenStore;
         _signInManager = signInManager;
         _tokenService = tokenService;
+        _grantValidator = grantValidator;
         // _authService = authService;
         // _bus = bus;
         // _publisherService = publisherService;
@@ -86,7 +88,8 @@ public class FuckEndpoint : EndpointWithoutRequest
         var result = await HttpContext.AuthenticateAsync(IdentityServerConstants.ExternalCookieAuthenticationScheme);
         if (result?.Succeeded != true) throw new Exception("External authentication error");
 
-        var externalUser = result.Principal ?? throw new ArgumentNullException(nameof(result.Principal));
+        var externalUser = result.Principal /* ?? throw new ArgumentNullException(nameof(result.Principal))*/;
+        ArgumentNullException.ThrowIfNull(externalUser);
 
         if (Logger.IsEnabled(LogLevel.Debug))
         {
@@ -103,8 +106,9 @@ public class FuckEndpoint : EndpointWithoutRequest
                           throw new Exception("Unknown userid");
 
         var props = result.Properties;
-        var provider = result.Properties?.Items.FirstOrDefault(x => x.Key == ".AuthScheme").Value ??
-                       throw new ArgumentNullException(nameof(result.Properties.Items));
+        var provider = result.Properties?.Items.FirstOrDefault(x => x.Key == ".AuthScheme").Value; /* ??
+                       throw new ArgumentNullException(nameof(result.Properties.Items));*/
+        ArgumentNullException.ThrowIfNull(provider);
         var providerUserId = userIdClaim.Value;
 
         // await _usersManager.Get
@@ -179,8 +183,8 @@ public class FuckEndpoint : EndpointWithoutRequest
             Logger.LogInformation("{K}, {V}", key, value);
         }*/
 
-        var token = result.GetUserAccessToken() ??
-                    throw new ArgumentNullException(nameof(UserAccessToken));
+        /*var token = result.GetUserAccessToken() ??
+                    throw new ArgumentNullException(nameof(UserAccessToken));*/
         // await _userAccessTokenStore.StoreTokenAsync(User, token.AccessToken!, (DateTimeOffset)token.Expiration!);
         /*var addTokensResult = await _signInManager.UpdateExternalAuthenticationTokensAsync(new ExternalLoginInfo(User,
             provider,
@@ -229,6 +233,7 @@ public class FuckEndpoint : EndpointWithoutRequest
         var scopes = $"users-api {emailAddress} {surname} {name}";
         Console.WriteLine($"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}{HttpContext.Request.PathBase}");*/
         var tokenResponse = await _tokenService.GetToken("users-api");
+        // _grantValidator.ValidateAsync()
         // var tokenResponse = await _tokenService.GetToken("openid users-api");
 
         /*var token2 = await _tools.IssueClientJwtAsync(

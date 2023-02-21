@@ -15,32 +15,31 @@ public static class IdentityConfig
             new IdentityResources.Email(),
             new IdentityResources.Phone(),
             new IdentityResources.Address(),
-            new(Constants.StandardScopes.Roles, new List<string> { "role" }),
+            new(Constants.StandardScopes.Roles, new List<string> { "role" })
             /*new ("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"),
             new ("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname"),
             new ("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname"),*/
-            new IdentityResources.Phone(),
-            new IdentityResources.Address(),
-            new("info", new List<string>
+            // new IdentityResources.Phone(),
+            // new IdentityResources.Address(), /*new("info", new List<string>
+            // {
+            //     "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress",
+            //     "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname",
+            //     "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"
+            // }),*/
+            /*new(Constants.StandardScopes.UsersApi, new List<string>
             {
                 "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress",
                 "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname",
                 "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"
-            }),
-            new(Constants.StandardScopes.UsersApi, new List<string>
-            {
-                "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress",
-                "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname",
-                "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"
-            })
+            })*/
         };
 
 
     public static IEnumerable<ApiScope> ApiScopes =>
         new List<ApiScope>
         {
-            new(IdentityServerConstants.StandardScopes.OpenId),
-            new(IdentityServerConstants.StandardScopes.Profile),
+            // new(IdentityServerConstants.StandardScopes.OpenId),
+            // new(IdentityServerConstants.StandardScopes.Profile),
             new(Constants.StandardScopes.UsersApi)
             {
                 Enabled = true,
@@ -58,9 +57,9 @@ public static class IdentityConfig
             },
             new(Constants.StandardScopes.MessagesApi),
             new("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"),
-            new("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname"),
-            new("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname"),
-            new()
+            new("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname")
+            // new("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname"),
+            /*new()
             {
                 Name = "user_id",
                 DisplayName = "User Id",
@@ -78,7 +77,7 @@ public static class IdentityConfig
                 Name = "toto_api",
                 DisplayName = "Api of Toto",
                 UserClaims = { JwtClaimTypes.Email }
-            }
+            }*/
         };
 
 
@@ -103,8 +102,8 @@ public static class IdentityConfig
                     "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"
                 }
             },
-            new(Constants.StandardScopes.MessagesApi),
-            new("toto_api")
+            new(Constants.StandardScopes.MessagesApi)
+            // new("toto_api")
         };
 
     public static IEnumerable<Client> Clients =>
@@ -117,18 +116,25 @@ public static class IdentityConfig
 
                 AlwaysSendClientClaims = true,
                 // AlwaysIncludeUserClaimsInIdToken = true
-                AllowedGrantTypes = GrantTypes.ClientCredentials,
+                // AllowedGrantTypes = GrantTypes.ClientCredentials,
                 ClientSecrets = { new Secret("secret".Sha256()) },
                 RequireConsent = false,
                 AlwaysIncludeUserClaimsInIdToken = true,
 
-                /*Claims =
+                Claims =
                 {
-                    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress",
+                    new ClientClaim("dog_id", "123")
+                    /*// JwtClaimTypes.Subject,
                     "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname",
-                    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"
+                    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"*/
+                },
+                AllowedGrantTypes = CustomAllowedGrantTypes(),
+                /*AllowedGrantTypes =
+                {
+                    
+                    OidcConstants.GrantTypes.TokenExchange,
+                    GrantTypes.ClientCredentials
                 },*/
-
                 AllowedScopes =
                 {
                     IdentityServerConstants.StandardScopes.OpenId,
@@ -136,7 +142,7 @@ public static class IdentityConfig
                     Constants.StandardScopes.UsersApi,
                     /*new(IdentityServerConstants.StandardScopes.OpenId),
                     new(IdentityServerConstants.StandardScopes.Profile),
-                    "openid", "profile", "toto_api", */"users-api", "users-api.read", "users-api.write"
+                    "openid", "profile", "toto_api", */"users-api.read", "users-api.write"
                     /*"http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress",
                     "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname",
                     "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"*/
@@ -156,7 +162,7 @@ public static class IdentityConfig
                 FrontChannelLogoutUri = "https://localhost:6004/signout-oidc",
                 PostLogoutRedirectUris = { "https://localhost:6004/signout-callback-oidc" },
 
-                AllowOfflineAccess = true,
+                // AllowOfflineAccess = true,
                 AllowedScopes = { "openid", "profile", "users-api", "users-api.read", "users-api.write" },
                 RequirePkce = true,
                 RequireConsent = false,
@@ -217,4 +223,11 @@ public static class IdentityConfig
                 }
             }
         };
+
+    private static List<string> CustomAllowedGrantTypes()
+    {
+        var list = new List<string> { OidcConstants.GrantTypes.TokenExchange };
+        list.AddRange(GrantTypes.ClientCredentials);
+        return list;
+    }
 }

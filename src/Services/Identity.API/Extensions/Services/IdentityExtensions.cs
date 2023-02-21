@@ -1,6 +1,4 @@
 ﻿using System.Reflection;
-using Duende.IdentityServer.EntityFramework.Storage;
-using Duende.IdentityServer.Services;
 using Identity.API.Data;
 using Identity.API.Entities;
 using Identity.API.Services;
@@ -30,6 +28,18 @@ public static class IdentityExtensions
 
         services.AddIdentityServer(options =>
             {
+                /*// set path where to store keys
+                options.KeyManagement.KeyPath = "/home/shared/keys";
+                // options.KeyManagement.
+                // new key every 30 days
+                options.KeyManagement.RotationInterval = TimeSpan.FromDays(30);
+    
+                // announce new key 2 days in advance in discovery
+                options.KeyManagement.PropagationTime = TimeSpan.FromDays(2);
+    
+                // keep old key for 7 days in discovery for validation of tokens
+                options.KeyManagement.RetentionDuration = TimeSpan.FromDays(7);*/
+
                 options.Events.RaiseErrorEvents = true;
                 options.Events.RaiseInformationEvents = true;
                 options.Events.RaiseFailureEvents = true;
@@ -44,10 +54,8 @@ public static class IdentityExtensions
             .AddInMemoryApiResources(IdentityConfig.ApiResources)
             .AddInMemoryApiScopes(IdentityConfig.ApiScopes)
             .AddInMemoryClients(IdentityConfig.Clients)*/
-            .AddResourceOwnerValidator<UserValidator>()
-            .AddProfileService<CustomProfileService>()
             .AddAspNetIdentity<AppUser>()
-            .AddCustomTokenRequestValidator<TransactionScopeTokenRequestValidator>().AddConfigurationStore(options =>
+            .AddConfigurationStore(options =>
             {
                 options.ConfigureDbContext = builder => builder.UseNpgsql(connectionString,
                     sqlOptions => { sqlOptions.MigrationsAssembly(migrationsAssembly); });
@@ -59,13 +67,18 @@ public static class IdentityExtensions
                     sqlOptions => { sqlOptions.MigrationsAssembly(migrationsAssembly); });
                 options.EnableTokenCleanup = true;
                 options.TokenCleanupInterval = 3600;
-            });
+            }).AddExtensionGrantValidator<TokenExchangeGrantValidator>()
+            // .AddResourceOwnerValidator<UserValidator>()
+            .AddProfileService<CustomProfileService>()
+            .AddCustomTokenRequestValidator<TransactionScopeTokenRequestValidator>();
 
 
         // services.AddScoped<IProfileService, CustomProfileService>();
-        services.AddTransient<IProfileService, CustomProfileService>()
-            ;
+        // services.AddTransient<IProfileService, CustomProfileService>()
+        // ;
+        // services.AddScoped<IExtensionGrantValidator, TokenExchangeGrantValidator>();
 
+        /*
         services.AddOperationalDbContext(options =>
         {
             options.ConfigureDbContext = builder => builder.UseNpgsql(connectionString,
@@ -75,7 +88,7 @@ public static class IdentityExtensions
         {
             options.ConfigureDbContext = builder => builder.UseNpgsql(connectionString,
                 sqlOptions => { sqlOptions.MigrationsAssembly(migrationsAssembly); });
-        });
+        });*/
 
         // if (env.IsDevelopment()) identityServerBuilder.AddDeveloperSigningCredential();
 

@@ -1,19 +1,68 @@
-﻿namespace Users.API.Extensions;
+﻿using Duende.IdentityServer;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.DataProtection;
+using StackExchange.Redis;
+
+namespace Users.API.Extensions;
 
 public static class AuthExtensions
 {
     public static IServiceCollection InitIdentityAuthUsers(this IServiceCollection services,
         IConfiguration config)
     {
+        
+        services.AddDataProtection()
+            .PersistKeysToStackExchangeRedis(ConnectionMultiplexer.Connect("localhost"))
+            .SetApplicationName("solarEngineer");
         /*ClientId = "client",
         ClientSecret = "secret",
         Scope = $"{Constants.StandardScopes.UsersApi}"*/
-        services.AddAuthentication("Bearer")
+        /*services.AddAuthentication("Bearer")
             .AddJwtBearer(options =>
             {
                 options.Authority = "https://localhost:6006";
                 options.TokenValidationParameters.ValidateAudience = false;
-            });
+                
+                    
+                options.TokenValidationParameters.ValidTypes = new[] { "at+jwt" };
+                // options.
+            });*/
+        
+        services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme);
+        /*services.AddAuthentication(options =>
+            {
+                /*options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;#1#
+                options.DefaultScheme = "idsrv.external";
+                options.DefaultSignInScheme = "idsrv.external";
+                options.DefaultChallengeScheme = "idsrv.external";
+            })
+            /*.AddCookie( options =>
+            {
+                options.Cookie.HttpOnly = true;
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+                // options.LoginPath = "/Auth/Login";
+                // options.AccessDeniedPath = "/Auth/AccessDenied";
+                options.SlidingExpiration = true;
+            })#1#.AddOpenIdConnect("idsrv.external", "Sign-in with Google", options =>
+            {
+                options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
+                options.ForwardSignOut = IdentityServerConstants.DefaultCookieAuthenticationScheme;
+
+                options.Authority = "https://accounts.google.com/";
+                options.ClientId = config["Google:ClientId"] ??
+                                   throw new ArgumentNullException(nameof(options.ClientId));
+            });*/
+        /*.AddOpenIdConnect("oidc", opt =>
+    {
+        opt.Authority = "https://localhost:6006";
+        opt.ClientId = "m2m.client";
+        // opt.ClientId = "interactive";
+        // opt.ClientId = "client";
+        opt.ClientSecret = "secret";
+        opt.ResponseType = "code";
+    });*/
         /*services.AddAuthentication(opt =>
             {
                 opt.DefaultScheme = "cookie";
@@ -36,11 +85,11 @@ public static class AuthExtensions
         // services.AddAuthorization();
         services.AddAuthorization(options =>
         {
-            options.AddPolicy("ApiScope", policy =>
+            /*options.AddPolicy("ApiScope", policy =>
             {
                 policy.RequireAuthenticatedUser();
                 policy.RequireClaim("scope", "users-api");
-            });
+            });*/
         });
         /*services.AddAuthentication(options =>
             {

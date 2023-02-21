@@ -9,7 +9,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Duende.AccessTokenManagement" Version="1.0.0" />
+        <PackageReference Include="Duende.AccessTokenManagement" Version="1.1.0" />
+        <PackageReference Include="Duende.AccessTokenManagement.OpenIdConnect" Version="1.1.0" />
         <PackageReference Include="Duende.IdentityServer" Version="6.2.3" />
         <PackageReference Include="Duende.IdentityServer.AspNetIdentity" Version="6.2.3" />
         <PackageReference Include="Duende.IdentityServer.EntityFramework" Version="6.2.3" />

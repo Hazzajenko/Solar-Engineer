@@ -8,15 +8,16 @@ using Auth.API.Services;
 using FastEndpoints;
 using FastEndpoints.Swagger;
 using Infrastructure;
-using Infrastructure.Authentication;
 using Infrastructure.Data;
 using Infrastructure.Logging.Serilog;
 using Infrastructure.Web;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(
     new WebApplicationOptions { Args = args, ContentRootPath = Directory.GetCurrentDirectory() }
@@ -48,9 +49,18 @@ var appName = builder.RegisterSerilog();
 var entryAssembly = Assembly.GetEntryAssembly() ?? throw new ArgumentNullException(nameof(Assembly));
 builder.Services.AddApplicationServices(config, entryAssembly);
 builder.Services.AddIdentityServices(config);
-builder.Services.AddAuth(config);
+builder.Services.AddAuthServices(config);
 builder.Services.AddOptions();
 builder.Services.AddInfrastructureServices();
+/*var option = new ConfigurationOptions
+{
+    AbortOnConnectFail = false,
+    EndPoints = { "localhost:6379" }
+};*/
+var redisConn = ConnectionMultiplexer.Connect("localhost");
+builder.Services.AddDataProtection()
+    .PersistKeysToStackExchangeRedis(redisConn)
+    .SetApplicationName("solarEngineer");
 /*builder.Services.AddMediator(options =>
 {
     options.ServiceLifetime = ServiceLifetime.Transient;
@@ -153,7 +163,13 @@ app.UseHttpsRedirection();
 
 
 app.UseAuthentication();
-// app.UseAuthorization();
+app.UseAuthorization();
+app.UseCookiePolicy(
+    new CookiePolicyOptions
+    {
+        Secure = CookieSecurePolicy.Always,
+        MinimumSameSitePolicy = SameSiteMode.Strict     
+    });
 
 var loginEndpoints = app.MapGroup("auth/login");
 
@@ -218,7 +234,7 @@ var clientOptions = new ServiceBusClientOptions
 {
     TransportType = ServiceBusTransportType.AmqpWebSockets
 };
-//TODO: Replace the "<NAMESPACE-NAME>" and "<QUEUE-NAME>" placeholders.
+
 ServiceBusClient client;
 
 ServiceBusSender sender;

@@ -12,11 +12,13 @@ export class AuthService {
   // private auth0 = inject(Auth0)
 
   authorizeRequest() {
-    return this.http.get<GetTokenResponse>('/identity/authorize', { withCredentials: true })
+    return this.http.get<GetTokenResponse>('/auth/authorize', { withCredentials: true })
+    // return this.http.get<GetTokenResponse>('/identity/authorize', { withCredentials: true })
   }
 
   getToken() {
-    return this.http.get<GetTokenResponse>('/identity/token', { withCredentials: true })
+    return this.http.get<GetTokenResponse>('/auth/token', { withCredentials: true })
+    // return this.http.get<GetTokenResponse>('/identity/token', { withCredentials: true })
   }
 
   loginWithGoogle() {

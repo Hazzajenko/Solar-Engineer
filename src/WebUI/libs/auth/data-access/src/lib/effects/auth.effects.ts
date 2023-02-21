@@ -28,7 +28,8 @@ export class AuthEffects {
                   this.http.get('/identity/login/google', { headers: this.headers, withCredentials: true }),
                 ),*/
         tap(() => {
-          window.location.href = '/identity/login/google'
+          window.location.href = '/auth/login/google'
+          // window.location.href = '/identity/login/google'
           // window.location.href = '/auth/login/google'
           // this.location.go('/auth/login/google')
           // window.location.reload()

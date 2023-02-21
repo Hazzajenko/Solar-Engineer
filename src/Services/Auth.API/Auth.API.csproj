@@ -39,6 +39,7 @@
         </PackageReference>
         <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="7.0.2" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.2" />
+        <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="7.0.3" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.2" />
         <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="7.0.2" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.2">

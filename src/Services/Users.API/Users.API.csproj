@@ -19,6 +19,8 @@
 
         <PackageReference Include="FastEndpoints.Swagger" Version="5.7.1" />
 
+        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.5.1" />
+
         <PackageReference Include="Grpc.Tools" Version="2.51.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -33,6 +35,7 @@
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="7.0.3" />
 
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.0" />
 

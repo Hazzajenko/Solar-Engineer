@@ -30,6 +30,7 @@ public class TokenService : ITokenService
         {
             Address = _discoveryDocument.TokenEndpoint,
 
+            // ClientId = "interactive",
             ClientId = _identityServerSettings.Value.ClientName,
             ClientSecret = _identityServerSettings.Value.ClientPassword,
             Scope = scope

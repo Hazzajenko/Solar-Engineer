@@ -1,5 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using Duende.IdentityServer;
+﻿using Duende.IdentityServer;
 using Infrastructure.Authentication;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.IdentityModel.Tokens;
@@ -11,7 +10,7 @@ public static class AuthExtensions
     public static IServiceCollection InitIdentityAuthConfig(this IServiceCollection services,
         IConfiguration config, IWebHostEnvironment env)
     {
-        JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+        // JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
         services.AddAuthentication( /*options =>
     {
         // options.DefaultScheme = "JWT_OR_COOKIE";
@@ -57,10 +56,56 @@ public static class AuthExtensions
                 options.Scope.Add("email");
                 options.Scope.Add("openid");
                 options.Scope.Add("profile");
+                options.ClaimActions.MapUniqueJsonKey("sub", "sub");
+                options.ClaimActions.MapUniqueJsonKey("name", "name");
                 options.ClaimActions.MapJsonKey("urn:google:picture", "picture", "url");
                 options.ClaimActions.MapJsonKey(CustomClaims.Picture, "picture", "url");
                 options.ClaimActions.MapJsonKey("urn:google:locale", "locale", "string");
                 options.SaveTokens = true;
+
+
+                /*options.Events.OnRedirectToIdentityProvider = context =>
+                {
+                    // only modify requests to the authorization endpoint
+                    if (context.ProtocolMessage.RequestType == OpenIdConnectRequestType.Authentication)
+                    {
+                        // generate code_verifier
+                        var codeVerifier = CryptoRandom.CreateUniqueId(32);
+
+                        // store codeVerifier for later use
+                        context.Properties.Items.Add("code_verifier", codeVerifier);
+
+                        // create code_challenge
+                        string codeChallenge;
+                        using (var sha256 = SHA256.Create())
+                        {
+                            var challengeBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(codeVerifier));
+                            codeChallenge = Base64Url.Encode(challengeBytes);
+                        }
+
+                        // add code_challenge and code_challenge_method to request
+                        context.ProtocolMessage.Parameters.Add("code_challenge", codeChallenge);
+                        context.ProtocolMessage.Parameters.Add("code_challenge_method", "S256");
+                    }
+
+                    return Task.CompletedTask;
+                };
+                
+                options.Events.OnAuthorizationCodeReceived = context =>
+                {
+                    // only when authorization code is being swapped for tokens
+                    if (context.TokenEndpointRequest?.GrantType == OpenIdConnectGrantTypes.AuthorizationCode)
+                    {
+                        // get stored code_verifier
+                        if (context.Properties.Items.TryGetValue("code_verifier", out var codeVerifier))
+                        {
+                            // add code_verifier to token request
+                            context.TokenEndpointRequest.Parameters.Add("code_verifier", codeVerifier);
+                        }
+                    }
+
+                    return Task.CompletedTask;
+                };*/
             })
             .AddOpenIdConnect("oidc", opt =>
             {
@@ -79,7 +124,7 @@ public static class AuthExtensions
                 // options.Scope.Add("openid");
                 opt.Scope.Add("email");
                 // options.Scope.Add("scope1");
-                opt.Scope.Add("offline_access");
+                // opt.Scope.Add("offline_access");
 
                 // not mapped by default
                 opt.ClaimActions.MapUniqueJsonKey("sub", "sub");
@@ -102,6 +147,15 @@ public static class AuthExtensions
                     NameClaimType = "name",
                     RoleClaimType = "role"
                 };
+
+                /*opt.Events.OnCreatingTicket = async ctx =>
+                {
+                    using var request = new HttpRequestMessage(HttpMethod.Get, ctx.Options.UserInformationEndpoint);
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", ctx.AccessToken);
+                    using var result = await ctx.Backchannel.SendAsync(request);
+                    var user = await result.Content.ReadFromJsonAsync<JsonElement>();
+                    ctx.RunClaimActions(user);
+                };*/
             });
         /*.AddOpenIdConnect("oidc", "Demo IdentityServer", options =>
         {

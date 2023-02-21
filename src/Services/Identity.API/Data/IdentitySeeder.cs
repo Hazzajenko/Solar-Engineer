@@ -1,4 +1,5 @@
 using Duende.IdentityServer.EntityFramework.DbContexts;
+using Duende.IdentityServer.EntityFramework.Mappers;
 using Identity.API.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -49,18 +50,36 @@ public static class IdentitySeeder
 
         var context = serviceScope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
         await context.Database.MigrateAsync();
-        /*if (!context.Clients.Any())
-        {*/
-        // foreach (var client in IdentityConfig.Clients) context.Clients.Add(client.ToEntity());
-        /*
-        foreach (var client in IdentityConfig.Clients)
+        if (!context.Clients.Any())
+        {
+            foreach (var client in IdentityConfig.Clients) context.Clients.Add(client.ToEntity());
+            await context.SaveChangesAsync();
+        }
+        if (!context.IdentityResources.Any())
+        {
+            foreach (var client in IdentityConfig.IdentityResources) context.IdentityResources.Add(client.ToEntity());
+            await context.SaveChangesAsync();
+        }
+        if (!context.ApiResources.Any())
+        {
+            foreach (var client in IdentityConfig.ApiResources) context.ApiResources.Add(client.ToEntity());
+            await context.SaveChangesAsync();
+        }
+        if (!context.ApiScopes.Any())
+        {
+            foreach (var client in IdentityConfig.ApiScopes) context.ApiScopes.Add(client.ToEntity());
+            await context.SaveChangesAsync();
+        }
+
+        /*foreach (var client in IdentityConfig.Clients)
         {
             // var getClient = await context.Clients.SingleOrDefaultAsync(x => x.ClientId == client.ClientId);
             // if (getClient is null) await context.Clients.AddAsync(client.ToEntity());
             // context.Clients.Update(client.ToEntity());
         }
-        */
+        #1#*/
 
+        /*
         foreach (var client in IdentityConfig.Clients)
         {
             var getClient = await context.Clients.SingleOrDefaultAsync(x => x.ClientId == client.ClientId);
@@ -69,6 +88,7 @@ public static class IdentitySeeder
 
             // context.Clients.Update(client.ToEntity());
         }
+        */
 
 
         // await context.SaveChangesAsync();
@@ -81,6 +101,7 @@ public static class IdentitySeeder
             await context.SaveChangesAsync();
         }*/
 
+        /*
         foreach (var client in IdentityConfig.IdentityResources)
         {
             var getClient = await context.IdentityResources.SingleOrDefaultAsync(x => x.Name == client.Name);
@@ -106,9 +127,9 @@ public static class IdentitySeeder
             ;
 
             // context.Clients.Update(client.ToEntity());
-        }
+        }*/
 
-        await context.SaveChangesAsync();
+        // await context.SaveChangesAsync();
 
         /*
         if (!context.ApiResources.Any())

@@ -12,7 +12,7 @@ public static class SignInHelpers
     {
         var newAppUserClaims = new List<Claim>
         {
-            new(JwtRegisteredClaimNames.NameId, authUser.Id.ToString()),
+            new(JwtRegisteredClaimNames.Sub, authUser.Id.ToString()),
             new(JwtRegisteredClaimNames.UniqueName, authUser.UserName!)
         };
         var newAppUserIdentity = new ClaimsIdentity(
