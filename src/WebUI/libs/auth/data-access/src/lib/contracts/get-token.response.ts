@@ -1,4 +1,4 @@
 export interface GetTokenResponse {
-  accessToken: string
+  token: string
   expiresIn: number
 }

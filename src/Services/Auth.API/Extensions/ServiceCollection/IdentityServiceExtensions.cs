@@ -11,16 +11,6 @@ public static class IdentityServiceExtensions
         IConfiguration config
     )
     {
-        /*services.AddIdentity<AppUser, IdentityRole<Guid>>(config =>
-            {
-                config.Password.RequiredLength = 6;
-                config.Password.RequireDigit = false;
-                config.Password.RequireNonAlphanumeric = false;
-                config.Password.RequireUppercase = false;
-            })
-            .AddEntityFrameworkStores<AuthContext>()
-            .AddDefaultTokenProviders();*/
-
         services
             .AddIdentityCore<AuthUser>(opt => { opt.Password.RequireNonAlphanumeric = false; })
             .AddRoles<AppRole>()

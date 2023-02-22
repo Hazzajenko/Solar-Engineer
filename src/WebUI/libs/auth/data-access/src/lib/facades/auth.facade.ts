@@ -11,6 +11,8 @@ export class AuthFacade {
   private store = inject(Store)
   // private auth0 = inject(Auth0)
   user$ = this.store.select(AuthSelectors.selectUser)
+
+  token$ = of(localStorage.getItem('token'))
   isAuthenticated$ = of(true)
   // isAuthenticated$ = this.auth0.isAuthenticated$
 }

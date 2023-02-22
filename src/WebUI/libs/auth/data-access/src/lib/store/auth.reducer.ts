@@ -31,6 +31,16 @@ export const reducer = createReducer(
     error,
   })),
 
+  on(AuthActions.getCurrentUserSuccess, (state, { user }) => ({
+    ...state,
+    user,
+  })),
+
+  on(AuthActions.getCurrentUserError, (state, { error }) => ({
+    ...state,
+    error,
+  })),
+
   on(AuthActions.updateUser, (state, { update }) => ({
     ...state,
     user: state.user

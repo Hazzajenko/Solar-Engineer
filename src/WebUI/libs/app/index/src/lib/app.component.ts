@@ -63,47 +63,8 @@ export class AppComponent implements OnInit {
   navMenu$ = this.uiStore.select.navMenuState$
 
   menu = false
-  _token = ''
-  get token() {
-    return this._token
-  }
-
-  set token(token: string) {
-    this._token = token
-    const headerDict = {
-      Authorization: `bearer ${token}`,
-    }
-    const requestOptions = {
-      headers: new HttpHeaders(headerDict),
-    }
-    this.http
-      .get('/users/current', { withCredentials: true, headers: new HttpHeaders(headerDict) })
-      // .pipe(catchError(() => EMPTY))
-      .subscribe((res) => {
-        // console.log(res)
-        console.log('authorize', res)
-        // /*      window.location.href = `${res}`*/
-      })
-  }
 
   ngOnInit(): void {
-    this.http
-      .get<SignInResponseWithToken>('/auth/authorize', { withCredentials: true })
-      // .pipe(catchError(() => EMPTY))
-      .subscribe((res) => {
-        // console.log(res)
-        console.log('authorize', res)
-        this.token = res.token
-        // /*      window.location.href = `${res}`*/
-      })
-    /*
-        this.http
-          .get('/users/current', { withCredentials: true })
-          // .pipe(catchError(() => EMPTY))
-          .subscribe((res) => {
-            // console.log(res)
-            console.log('authorize', res)
-            // /!*      window.location.href = `${res}`*!/
-          })*/
+    this.authStore.dispatch.isReturningUser()
   }
 }

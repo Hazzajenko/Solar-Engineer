@@ -19,4 +19,8 @@ export class AuthRepository {
   authorizeRequest() {
     this.store.dispatch(AuthActions.authorizeRequest())
   }
+
+  isReturningUser() {
+    this.store.dispatch(AuthActions.isReturningUser())
+  }
 }

@@ -6,7 +6,11 @@ import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { provideRouter, withEnabledBlockingInitialNavigation } from '@angular/router'
 import { appRoutes } from '@app/routes'
-import { Auth0InterceptorProvider, JwtInterceptor } from '@auth/interceptors'
+import {
+  Auth0InterceptorProvider,
+  JwtInterceptor,
+  jwtInterceptorProvider,
+} from '@auth/interceptors'
 import { storeDevtoolsModule } from '@shared/config'
 import { mainTsStates } from './main-ts.states'
 import { provideEffects } from '@ngrx/effects'
@@ -81,7 +85,8 @@ export const mainTsProviders = [
   ...mainTsStates,
   ...storeDevtoolsModule,
   // Auth0InterceptorProvider,
-  AddCookieInterceptorProvider,
+  jwtInterceptorProvider,
+  // AddCookieInterceptorProvider,
   /*  {
       provide: HTTP_INTERCEPTORS,
       useClass: JwtInterceptor,

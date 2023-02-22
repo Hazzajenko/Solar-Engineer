@@ -1,7 +1,10 @@
-﻿using Auth.API.Services;
-using DotNetCore.Extensions;
+﻿using System.Text;
+using Auth.API.Contracts.Responses;
+using Auth.API.Handlers;
+using Auth.API.Services;
 using EventBus.Services;
 using FastEndpoints;
+using Infrastructure.Extensions;
 using Mediator;
 
 // using Auth.API.RabbitMQ;
@@ -10,24 +13,18 @@ using Mediator;
 
 namespace Auth.API.Endpoints;
 
-public record RandomObj
-{
-    public Guid Id { get; set; } = Guid.NewGuid();
-
-    // public Random rnd = new Random();
-    public string Data { get; set; } = new Random().Next(1, 1000).ToString();
-}
-
-public class TestEndpoint : EndpointWithoutRequest<RandomObj>
+public class TokenEndpoint : EndpointWithoutRequest<AuthorizeResponse>
 {
     private readonly IAuthService _authService;
     private readonly IBus _bus;
+
     private readonly IMediator _mediator;
     private readonly IPublishEndpoint _publishEndpoint;
     private readonly IEventPublisherService _publisherService;
+    private readonly byte[] _tokenKey;
 
 
-    public TestEndpoint(
+    public TokenEndpoint(IConfiguration config,
         IMediator mediator, IAuthService authService, IBus bus, IEventPublisherService publisherService,
         IPublishEndpoint publishEndpoint /*,
         IPublishEndpoint publishEndpoint*/)
@@ -37,26 +34,22 @@ public class TestEndpoint : EndpointWithoutRequest<RandomObj>
         _bus = bus;
         _publisherService = publisherService;
         _publishEndpoint = publishEndpoint;
+        _tokenKey = Encoding.UTF8.GetBytes(config["TokenKey"]!);
         // _publishEndpoint = publishEndpoint;
     }
 
 
     public override void Configure()
     {
-        Post("/test");
-        AllowAnonymous();
+        Get("/token");
+        // AllowAnonymous();
     }
 
     public override async Task HandleAsync(CancellationToken cT)
     {
-        Logger.LogInformation("User {User}", User.Id());
-        var message = new RandomObj();
-        /*var endpoint = await _bus.GetSendEndpoint(new Uri(
-            "Endpoint=sb://solarengineer.servicebus.windows.net/;SharedAccessKeyName=boss;SharedAccessKey=0/gLgr7UCAW6ApZ25mrGqTllh4rjhovwd+ASbHEAIFc=;EntityPath=solarqueue"));
-        await endpoint.Send(message, cT);*/
-        // await _publishEndpoint.Publish(message, cT);
-        await _bus.Publish(message, cT);
-
-        await SendOkAsync(message, cT);
+        var userId = User.GetUserId().ToGuid();
+        var token = await _mediator.Send(new GetTokenCommand(userId), cT);
+        Response.Token = token;
+        await SendOkAsync(Response, cT);
     }
 }

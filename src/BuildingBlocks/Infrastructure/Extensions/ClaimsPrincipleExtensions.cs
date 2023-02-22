@@ -15,8 +15,7 @@ public static class ClaimsPrincipleExtensions
     public static string GetUserId(this ClaimsPrincipal user)
     {
         var value = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (value == null)
-            throw new ArgumentNullException(nameof(user));
+        ArgumentNullException.ThrowIfNull(value);
         return value;
     }
 }

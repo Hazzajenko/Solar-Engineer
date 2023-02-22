@@ -1,11 +1,7 @@
 <ng-container *ngrxLet="user$ | async as user">
   <mat-toolbar class="absolute">
-    <button
-      (click)="toggleMenu()"
-      mat-icon-button
-      class="example-icon"
-      aria-label="Example icon-button with menu icon"
-    >
+    <button (click)="toggleMenu()" mat-icon-button>
+      <!--      <mat-icon>menu</mat-icon>-->
       <mat-icon>menu</mat-icon>
     </button>
     <img

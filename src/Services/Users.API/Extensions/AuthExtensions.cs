@@ -1,7 +1,6 @@
-﻿using Duende.IdentityServer;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.DataProtection;
-using StackExchange.Redis;
+﻿using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Users.API.Extensions;
 
@@ -10,10 +9,9 @@ public static class AuthExtensions
     public static IServiceCollection InitIdentityAuthUsers(this IServiceCollection services,
         IConfiguration config)
     {
-        
-        services.AddDataProtection()
+        /*services.AddDataProtection()
             .PersistKeysToStackExchangeRedis(ConnectionMultiplexer.Connect("localhost"))
-            .SetApplicationName("solarEngineer");
+            .SetApplicationName("solarEngineer");*/
         /*ClientId = "client",
         ClientSecret = "secret",
         Scope = $"{Constants.StandardScopes.UsersApi}"*/
@@ -27,9 +25,43 @@ public static class AuthExtensions
                 options.TokenValidationParameters.ValidTypes = new[] { "at+jwt" };
                 // options.
             });*/
-        
-        services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-            .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme);
+
+        services.AddAuthentication(x =>
+        {
+            x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+        }).AddJwtBearer(x =>
+        {
+            x.TokenValidationParameters = new TokenValidationParameters
+            {
+                IssuerSigningKey = new SymmetricSecurityKey(
+                    Encoding.UTF8.GetBytes(config["Jwt:Key"]!)),
+                ValidateIssuerSigningKey = true,
+                ValidateLifetime = true,
+                ValidIssuer = config["Jwt:Issuer"],
+                ValidAudience = config["Jwt:Audience"],
+                ValidateIssuer = true,
+                ValidateAudience = true
+            };
+        });
+
+        /*services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddJwtBearer("bearer", x =>
+            {
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(config["Jwt:Key"]!)),
+                    ValidateIssuerSigningKey = true,
+                    ValidateLifetime = true,
+                    ValidIssuer = config["Jwt:Issuer"],
+                    ValidAudience = config["Jwt:Audience"],
+                    ValidateIssuer = true,
+                    ValidateAudience = true
+                };
+            });;*/
         /*services.AddAuthentication(options =>
             {
                 /*options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;

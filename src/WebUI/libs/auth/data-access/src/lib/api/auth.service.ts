@@ -1,7 +1,7 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http'
+import { HttpClient } from '@angular/common/http'
 import { inject, Injectable } from '@angular/core'
-import { SignInResponseWithToken } from '../contracts'
 import { GetTokenResponse } from '../contracts/get-token.response'
+import { GetUserResponse } from '../contracts/get-user.response'
 
 @Injectable({
   providedIn: 'root',
@@ -9,31 +9,19 @@ import { GetTokenResponse } from '../contracts/get-token.response'
 export class AuthService {
   private http = inject(HttpClient)
 
-  // private auth0 = inject(Auth0)
-
   authorizeRequest() {
     return this.http.get<GetTokenResponse>('/auth/authorize', { withCredentials: true })
-    // return this.http.get<GetTokenResponse>('/identity/authorize', { withCredentials: true })
+  }
+
+  isReturningUser() {
+    return this.http.post<GetTokenResponse>('/auth/returning-user', {})
+  }
+
+  getCurrentUser() {
+    return this.http.get<GetUserResponse>('/auth/user')
   }
 
   getToken() {
     return this.http.get<GetTokenResponse>('/auth/token', { withCredentials: true })
-    // return this.http.get<GetTokenResponse>('/identity/token', { withCredentials: true })
-  }
-
-  loginWithGoogle() {
-    return this.http.get('/identity/login/google', { withCredentials: true })
-  }
-
-  login() {
-    /*    return this.auth0.getAccessTokenSilently().pipe(
-          switchMap((token) =>
-            this.http.post<SignInResponse>('/api/auth0/login', null, {
-              headers: new HttpHeaders({
-                Authorization: `Bearer ${token}`,
-              }),
-            }),
-          ),
-        )*/
   }
 }
