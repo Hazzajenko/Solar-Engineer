@@ -18,4 +18,11 @@ public static class ClaimsPrincipleExtensions
         ArgumentNullException.ThrowIfNull(value);
         return value;
     }
+
+    public static Guid GetGuidUserId(this ClaimsPrincipal user)
+    {
+        var value = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        ArgumentNullException.ThrowIfNull(value);
+        return value.ToGuid();
+    }
 }

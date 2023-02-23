@@ -6,17 +6,19 @@ namespace Messages.API.Mapping;
 
 public static class MessageMapper
 {
-    public static Message ToEntity(this SendMessageRequest request, User user, User recipient)
+    public static Message ToEntity(this SendMessageRequest request, Guid senderId, Guid recipientId)
     {
         return new Message
         {
-            Sender = user,
-            Recipient = recipient,
+            /*Sender = user,
+            Recipient = recipient,*/
+            SenderId = senderId,
+            RecipientId = recipientId,
             Content = request.Content
         };
     }
 
-    public static MessageDto ToDto(this Message request, User appUser)
+    public static MessageDto ToDto(this Message request, Guid appUserId)
     {
         return new MessageDto
         {
@@ -24,34 +26,32 @@ public static class MessageMapper
             Content = request.Content,
             MessageReadTime = request.MessageReadTime,
             MessageSentTime = request.MessageSentTime,
-            /*RecipientUserName = request.RecipientUserName,
-            SenderUserName = request.SenderUserName,*/
-            // Status = request.Status,
-
+            RecipientId = request.RecipientId.ToString(),
+            SenderId = request.SenderId.ToString(),
             MessageReadTimes = request.MessageReadTime.HasValue
                 ? new List<GroupChatReadTimeDto>
                 {
                     new()
                     {
                         Id = "",
-                        RecipientDisplayName = request.Recipient.DisplayName,
+                        RecipientId = request.RecipientId.ToString(),
                         MessageReadTime = request.MessageReadTime.Value!
                     }
                 }
                 : new List<GroupChatReadTimeDto>(),
             MessageFrom =
-                appUser.Id == request.Sender.Id
+                appUserId == request.SenderId
                     ? MessageFrom.CurrentUser
                     : MessageFrom.OtherUser,
-            IsUserSender = appUser.Id == request.Id
+            IsUserSender = appUserId == request.SenderId
         };
     }
 
-    public static List<MessageDto> ToDtoList(this Message request, User appUser)
+    public static List<MessageDto> ToDtoList(this Message request, Guid appUserId)
     {
         return new List<MessageDto>
         {
-            request.ToDto(appUser)
+            request.ToDto(appUserId)
         };
     }
 

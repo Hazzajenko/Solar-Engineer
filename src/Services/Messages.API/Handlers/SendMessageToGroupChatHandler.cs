@@ -35,15 +35,15 @@ public class SendMessageToGroupChatHandler
     {
         if (request.Context.User is null) throw new HubException("Context user is null");
 
-        var userId = request.Context.User.GetUserId();
-        var appUser = await _unitOfWork.UsersRepository.GetByIdAsync(Guid.Parse(userId));
+        var appUserId = request.Context.User.GetUserId().ToGuid();
+        /*var appUser = await _unitOfWork.UsersRepository.GetByIdAsync(Guid.Parse(userId));
         if (appUser is null)
         {
             _logger.LogError("Bad request, AppUser is invalid");
             throw new HubException("Bad request, AppUser is invalid");
         }
 
-        ;
+        ;*/
 
         var groupChat =
             await _unitOfWork.GroupChatsRepository.GetByIdAsync(request.GroupChatMessageRequest.GroupChatId.ToGuid());
@@ -53,18 +53,18 @@ public class SendMessageToGroupChatHandler
             throw new HubException("Bad request, GroupChat is invalid");
         }
 
-        var groupChatMessage = request.GroupChatMessageRequest.ToEntity(appUser, groupChat);
+        var groupChatMessage = request.GroupChatMessageRequest.ToEntity(appUserId, groupChat);
 
         await _unitOfWork.GroupChatMessagesRepository.AddAsync(groupChatMessage);
 
-        var appUserMessage = groupChatMessage.ToDtoList(appUser);
+        var appUserMessage = groupChatMessage.ToDtoList(appUserId);
         var otherUsersMessage = groupChatMessage.ToOtherUsersDtoList();
 
         var groupChatMemberIds =
-            await _unitOfWork.UserGroupChatsRepository.GetGroupChatMemberIdsAsync(groupChat.Id, appUser);
+            await _unitOfWork.UserGroupChatsRepository.GetGroupChatMemberIdsAsync(groupChat.Id, appUserId);
 
         await _hubContext.Clients
-            .User(appUser.Id.ToString())
+            .User(appUserId.ToString())
             .GetGroupChatMessages(appUserMessage, CancellationToken.None);
         await _hubContext.Clients
             .Users(groupChatMemberIds)
@@ -73,7 +73,7 @@ public class SendMessageToGroupChatHandler
 
         _logger.LogInformation(
             "{User} Sent a Message To Group {Group}",
-            appUser.Id,
+            appUserId,
             groupChat.Id
         );
 

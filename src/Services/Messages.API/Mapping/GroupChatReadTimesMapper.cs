@@ -10,7 +10,8 @@ public static class GroupChatReadTimesMapper
         return new GroupChatReadTimeDto
         {
             Id = request.Id.ToString(),
-            RecipientDisplayName = request.User.DisplayName,
+            RecipientId = request.UserId.ToString(),
+            // RecipientDisplayName = request.User.DisplayName,
             MessageReadTime = request.MessageReadTime
         };
     }

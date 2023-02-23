@@ -8,7 +8,7 @@ public class MessagesConfig : IEntityTypeConfiguration<Message>
 {
     public void Configure(EntityTypeBuilder<Message> builder)
     {
-        builder
+        /*builder
             .HasOne(u => u.Recipient)
             .WithMany(m => m.MessagesReceived)
             .OnDelete(DeleteBehavior.Restrict);
@@ -16,6 +16,6 @@ public class MessagesConfig : IEntityTypeConfiguration<Message>
         builder
             .HasOne(u => u.Sender)
             .WithMany(m => m.MessagesSent)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Restrict);*/
     }
 }

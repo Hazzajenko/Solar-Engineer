@@ -34,22 +34,23 @@ public class GetMessagesWithUserHandler
     {
         if (request.Context.User is null) throw new HubException("Context user is null");
 
-        var userId = request.Context.User.GetUserId();
-        var appUser = await _unitOfWork.UsersRepository.GetByIdAsync(Guid.Parse(userId));
+        var appUserId = request.Context.User.GetGuidUserId();
+        var recipientUserId = request.RecipientId.ToGuid();
+        /*var appUser = await _unitOfWork.UsersRepository.GetByIdAsync(Guid.Parse(userId));
         if (appUser is null) throw new HubException("AppUser is null");
         var recipient = await _unitOfWork.UsersRepository.GetByIdAsync(Guid.Parse(request.RecipientId));
-        if (recipient is null) throw new HubException("Recipient is null");
+        if (recipient is null) throw new HubException("Recipient is null");*/
 
-        var messages = await _unitOfWork.MessagesRepository.GetUserMessagesWithUser(appUser, recipient);
+        var messages = await _unitOfWork.MessagesRepository.GetUserMessagesWithUserAsync(appUserId, recipientUserId);
 
         await _hubContext.Clients
-            .User(appUser.Id.ToString())
+            .User(appUserId.ToString())
             .GetMessages(messages, CancellationToken.None);
 
         _logger.LogInformation(
             "{User} GetMessages with {Recipient}",
-            appUser.Id,
-            recipient.Id
+            appUserId,
+            recipientUserId
         );
 
         return true;

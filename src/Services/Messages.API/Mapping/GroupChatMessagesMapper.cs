@@ -6,41 +6,64 @@ namespace Messages.API.Mapping;
 
 public static class GroupChatMessagesMapper
 {
-    public static GroupChatMessage ToEntity(this SendGroupChatMessageRequest request, User user, GroupChat groupChat)
+    public static GroupChatMessage ToEntity(this SendGroupChatMessageRequest request, Guid appUserId,
+        GroupChat groupChat)
     {
         return new GroupChatMessage
         {
-            Sender = user,
+            // Sender = user,
+            SenderId = appUserId,
             GroupChat = groupChat,
             Content = request.Content
         };
     }
 
 
-    public static GroupChatMessageDto ToDto(this GroupChatMessage request, User appUser)
+    public static GroupChatMessageDto ToDto(this GroupChatMessage request, Guid appUserId)
     {
         return new GroupChatMessageDto
         {
             Id = request.Id.ToString(),
             GroupChatId = request.GroupChatId.ToString(),
             Content = request.Content,
-            SenderDisplayName = request.Sender.DisplayName,
+            SenderId = request.SenderId.ToString(),
+            // SenderDisplayName = request.Sender.DisplayName,
             MessageSentTime = request.MessageSentTime,
             MessageReadTimes = request.MessageReadTimes.Any()
                 ? request.MessageReadTimes.Select(x => x.ToDto())
                 : new List<GroupChatReadTimeDto>(),
             MessageFrom =
-                appUser.Id == request.Sender.Id
+                appUserId == request.SenderId
                     ? MessageFrom.CurrentUser
                     : MessageFrom.OtherUser
         };
     }
 
-    public static List<GroupChatMessageDto> ToDtoList(this GroupChatMessage request, User appUser)
+    public static GroupChatCombinedMessageDto ToCombinedDto(this GroupChatMessage request, Guid appUserId)
+    {
+        return new GroupChatCombinedMessageDto
+        {
+            Id = request.Id.ToString(),
+            GroupChatId = request.GroupChatId.ToString(),
+            Content = request.Content,
+            SenderId = request.SenderId.ToString(),
+            // SenderDisplayName = request.Sender.DisplayName,
+            MessageSentTime = request.MessageSentTime,
+            MessageReadTimes = request.MessageReadTimes.Any()
+                ? request.MessageReadTimes.Select(x => x.ToDto())
+                : new List<GroupChatReadTimeDto>(),
+            MessageFrom =
+                appUserId == request.SenderId
+                    ? MessageFrom.CurrentUser
+                    : MessageFrom.OtherUser
+        };
+    }
+
+    public static List<GroupChatMessageDto> ToDtoList(this GroupChatMessage request, Guid appUserId)
     {
         return new List<GroupChatMessageDto>
         {
-            request.ToDto(appUser)
+            request.ToDto(appUserId)
         };
     }
 
@@ -52,7 +75,7 @@ public static class GroupChatMessagesMapper
             GroupChatId = request.GroupChatId.ToString(),
             SenderId = request.SenderId.ToString(),
             Content = request.Content,
-            SenderDisplayName = request.Sender.DisplayName,
+            // SenderDisplayName = request.Sender.DisplayName,
             MessageSentTime = request.MessageSentTime,
             MessageReadTimes = request.MessageReadTimes.Any()
                 ? request.MessageReadTimes.Select(x => x.ToDto())

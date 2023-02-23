@@ -8,7 +8,7 @@ public class UsersConfig : IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> builder)
     {
-        builder
+        /*builder
             .HasMany(ur => ur.MessagesSent)
             .WithOne(u => u.Sender)
             .HasForeignKey(ur => ur.SenderId)
@@ -18,9 +18,9 @@ public class UsersConfig : IEntityTypeConfiguration<User>
             .HasMany(ur => ur.MessagesReceived)
             .WithOne(u => u.Recipient)
             .HasForeignKey(ur => ur.RecipientId)
-            .IsRequired();
+            .IsRequired();*/
 
-        builder
+        /*builder
             .HasMany(ur => ur.UserGroupChats)
             .WithOne(u => u.User)
             .HasForeignKey(ur => ur.UserId)
@@ -31,6 +31,6 @@ public class UsersConfig : IEntityTypeConfiguration<User>
             .WithOne(u => u.Sender)
             .HasForeignKey(ur => ur.SenderId)
             .IsRequired()
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Restrict);*/
     }
 }

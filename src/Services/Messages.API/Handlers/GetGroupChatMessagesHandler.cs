@@ -29,28 +29,28 @@ public class
     {
         if (request.Context.User is null) throw new HubException("Context user is null");
 
-        var userId = request.Context.User.GetUserId();
-        var appUser = await _unitOfWork.UsersRepository.GetByIdAsync(Guid.Parse(userId));
-        if (appUser is null) throw new HubException("AppUser is null");
+        var appUserId = request.Context.User.GetGuidUserId();
+        /*var appUser = await _unitOfWork.UsersRepository.GetByIdAsync(Guid.Parse(userId));
+        if (appUser is null) throw new HubException("AppUser is null");*/
 
-        var groupChatMessages = await _unitOfWork.GroupChatMessagesRepository.GetGroupChatMessagesAsync(appUser,
-            Guid.Parse(request.GroupChatId));
+        var groupChatMessages = await _unitOfWork.GroupChatMessagesRepository.GetGroupChatMessagesAsync(appUserId,
+            request.GroupChatId.ToGuid());
 
         await _hubContext.Clients
-            .User(appUser.Id.ToString())
+            .User(appUserId.ToString())
             .GetGroupChatMessages(groupChatMessages, CancellationToken.None);
 
         var groupChatServerMessages =
             await _unitOfWork.GroupChatServerMessagesRepository.GetGroupChatServerMessagesAsync(
-                Guid.Parse(request.GroupChatId));
+                request.GroupChatId.ToGuid());
 
         await _hubContext.Clients
-            .User(appUser.Id.ToString())
+            .User(appUserId.ToString())
             .GetGroupChatServerMessages(groupChatServerMessages, CancellationToken.None);
 
         _logger.LogInformation(
             "{User} GetGroupChatMessages with GroupChat {Recipient}",
-            appUser.Id,
+            appUserId,
             request.GroupChatId
         );
 

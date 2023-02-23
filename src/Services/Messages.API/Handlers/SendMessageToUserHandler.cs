@@ -34,33 +34,38 @@ public class SendMessageToUserHandler
     {
         if (request.Context.User is null) throw new HubException("Context user is null");
 
-        var userId = request.Context.User.GetUserId();
-        var appUser = await _unitOfWork.UsersRepository.GetByIdAsync(Guid.Parse(userId));
+        var appUserId = request.Context.User.GetUserId().ToGuid();
+        var recipientUserId = request.MessageRequest.RecipientUserId.ToGuid();
+        /*
+        var appUser = await _unitOfWork.UsersRepository.GetByIdAsync(Guid.Parse(appUserId));
         if (appUser is null) throw new HubException("AppUser is null");
         var recipientUser =
             await _unitOfWork.UsersRepository.GetByIdAsync(Guid.Parse(request.MessageRequest.RecipientUserId));
         if (recipientUser is null) throw new HubException("Recipient is null");
 
-        var message = request.MessageRequest.ToEntity(appUser, recipientUser);
+        // var appUserId = userId.ToGuid();
+        */
+
+        var message = request.MessageRequest.ToEntity(appUserId, recipientUserId);
 
         await _unitOfWork.MessagesRepository.AddAsync(message);
         await _unitOfWork.SaveChangesAsync();
 
-        var appUserResult = message.ToDtoList(appUser);
-        var recipientUserResult = message.ToDtoList(recipientUser);
+        var appUserResult = message.ToDtoList(appUserId);
+        var recipientUserResult = message.ToDtoList(recipientUserId);
 
         await _hubContext.Clients
-            .User(appUser.Id.ToString())
+            .User(appUserId.ToString())
             .GetMessages(appUserResult, CancellationToken.None);
 
         await _hubContext.Clients
-            .User(recipientUser.Id.ToString())
+            .User(recipientUserId.ToString())
             .GetMessages(recipientUserResult, CancellationToken.None);
 
         _logger.LogInformation(
             "{User} Sent a Message to {Recipient}",
-            appUser.Id,
-            recipientUser.Id
+            appUserId,
+            recipientUserId
         );
 
         return true;

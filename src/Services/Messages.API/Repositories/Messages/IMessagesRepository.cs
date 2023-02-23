@@ -6,5 +6,6 @@ namespace Messages.API.Repositories.Messages;
 
 public interface IMessagesRepository : IGenericRepository<Message>
 {
-    Task<IEnumerable<MessageDto>> GetUserMessagesWithUser(User appUser, User recipientUser);
+    Task<IEnumerable<MessageDto>> GetUserMessagesWithUserAsync(Guid appUserId, Guid recipientUserId);
+    Task<IEnumerable<LatestUserMessageDto>> GetLatestUserMessagesAsync(Guid appUserId);
 }

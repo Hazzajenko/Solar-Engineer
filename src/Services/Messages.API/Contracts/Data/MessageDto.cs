@@ -3,8 +3,8 @@ namespace Messages.API.Contracts.Data;
 public class MessageDto
 {
     public string Id { get; set; }
-    public string SenderUserName { get; set; } = default!;
-    public string RecipientUserName { get; set; } = default!;
+    public string SenderId { get; set; } = default!;
+    public string RecipientId { get; set; } = default!;
     public string Content { get; set; } = default!;
     public DateTime? MessageReadTime { get; set; }
     public DateTime MessageSentTime { get; set; } = DateTime.UtcNow;

@@ -4,5 +4,5 @@ namespace Messages.API.Contracts.Responses;
 
 public class LatestUserMessagesResponse
 {
-    public IEnumerable<LatestUserMessageDto> Messages { get; init; } = default!;
+    public IEnumerable<LatestUserMessageDto> Messages { get; set; } = default!;
 }
