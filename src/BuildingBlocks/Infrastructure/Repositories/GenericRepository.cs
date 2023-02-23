@@ -16,4 +16,10 @@ public abstract class GenericRepository<TContext, TModel> : EFRepository<TModel>
     {
         return Queryable.SingleOrDefaultAsync(user => user.Id == id);
     }
+
+    /*
+    public async Task<bool> DeleteAsync(Guid id)
+    {
+        return Queryable.ExecuteDelete(user => user.Id == id);
+    }*/
 }

@@ -46,8 +46,4 @@
       <ProjectReference Include="..\..\BuildingBlocks\Infrastructure\Infrastructure.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Endpoints" />
-    </ItemGroup>
-
 </Project>

@@ -41,13 +41,23 @@
     "cookieDomainRewrite": "localhost"
   },
   "/ws": {
-    "target": "http://localhost:5000",
+    "target": "https://localhost:6004",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug",
     "ws": true,
     "pathRewrite": {
       "^/ws": ""
+    }
+  },
+  "/blaaa/connections": {
+    "target": "https://localhost:6004",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "ws": true,
+    "pathRewrite": {
+      "^/ws/connections": "/users/hubs/connections"
     }
   }
 }

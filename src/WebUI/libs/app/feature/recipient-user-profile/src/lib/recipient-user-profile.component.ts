@@ -41,7 +41,7 @@ import { map, Observable } from 'rxjs'
 import { ActivatedRoute } from '@angular/router'
 import { UsersService, UsersStoreService } from '@app/data-access/users'
 import { RouterFacade } from '@shared/data-access/router'
-import { ConnectionsStoreService } from '@shared/data-access/connections'
+import { ConnectionsStoreService } from '@app/data-access/connections'
 import { GetCdnUrlStringPipe, TimeDifferenceFromNowPipe } from '@shared/pipes'
 
 @Component({

@@ -11,7 +11,7 @@ import { ProjectsFacade } from '@projects/data-access/facades'
 import { ProjectsListComponent } from '@projects/feature/projects-list'
 import { LogoNameBackgroundV2Component } from '@shared/ui/logo'
 import { CreateProjectDialog } from 'libs/home/ui/src/lib/dialogs/create-project/create-project.dialog'
-import { ConnectionsService, ConnectionsStoreService } from '@shared/data-access/connections'
+import { ConnectionsStoreService } from '@app/data-access/connections'
 import { OnlineUsersDialog } from 'libs/home/ui/src/lib/dialogs/online-users/online-users.dialog'
 import { fadeIn, fadeInV2 } from './animations/animations'
 import { HttpClient, HttpHeaders } from '@angular/common/http'
@@ -52,7 +52,7 @@ export class HomeComponent implements OnInit {
   private router = inject(Router)
   private projectsStore = inject(ProjectsFacade)
   private authStore = inject(AuthStoreService)
-  private connectionsService = inject(ConnectionsService)
+  // private connectionsService = inject(ConnectionsService)
   private connectionsStore = inject(ConnectionsStoreService)
   private http = inject(HttpClient)
   private hubConnection: any
@@ -70,9 +70,9 @@ export class HomeComponent implements OnInit {
       leeway: 30,
     })*/
 
-  usersOnline$ = this.connectionsStore.select.connections$
+  onlineUsers$ = this.connectionsStore.select.connections$
 
-  onlineUsers$ = this.connectionsService.onlineUsers$
+  // onlineUsers$ = this.connectionsService.onlineUsers$
   user$ = this.authStore.select.user$
 
   routerEvents$ = this.router.events
@@ -98,7 +98,7 @@ export class HomeComponent implements OnInit {
           console.log(dl)
           console.log(profileAny)
         }*/
-    this.connectionsService.onlineUsers$.subscribe((res) => console.log(res))
+    // this.connectionsService.onlineUsers$.subscribe((res) => console.log(res))
     // this.auth.idTokenClaims$.subscribe((res) => console.log(res))
     // this.auth.getAccessTokenSilently().subscribe((res) => console.log(res))
     // this.auth.user$.subscribe((res) => console.log(res))

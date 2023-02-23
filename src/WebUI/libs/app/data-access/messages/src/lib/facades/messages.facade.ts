@@ -11,7 +11,7 @@ import {
 import { combineLatest, combineLatestWith, firstValueFrom, Observable, of } from 'rxjs'
 import { map, switchMap } from 'rxjs/operators'
 import { MessagesSelectors } from '../store'
-import { ConnectionsStoreService } from '@shared/data-access/connections'
+import { ConnectionsStoreService } from '@app/data-access/connections'
 import { UsersStoreService } from '@app/data-access/users'
 import { sortByMessageSentTime } from '@shared/utils'
 

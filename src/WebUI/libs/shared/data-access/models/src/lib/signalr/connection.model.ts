@@ -1,4 +1,5 @@
 export interface ConnectionModel {
   // userId: number
-  userName: string
+  userId: string
+  // userName: string
 }

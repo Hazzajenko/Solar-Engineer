@@ -2,6 +2,7 @@
 using Infrastructure.Authentication;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Auth.API.Extensions.ServiceCollection;
@@ -14,8 +15,10 @@ public static class AuthExtensions
     )
     {
         services
-            .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-            .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+            .AddAuthentication()
+            // .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            
+            /*.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
             {
                 options.LoginPath = "/auth/login";
 
@@ -25,12 +28,13 @@ public static class AuthExtensions
                 /*options.Events = new CookieAuthenticationEvents
                 {
                     OnValidatePrincipal = CookieHelpers.ValidateAsync
-                };*/
-            })
+                };#1#
+            })*/
             // .AddCookie("cookie", options => { options.Events.OnValidatePrincipal = PrincipalValidator.ValidateAsync; })
+            // .AddGoogle( options =>
             .AddGoogle("google", options =>
             {
-                options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                // options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 
                 options.ClientId = config["Google:ClientId"] ??
                                    throw new ArgumentNullException(nameof(options.ClientId));
@@ -67,7 +71,11 @@ public static class AuthExtensions
                         Value = DateTime.UtcNow.ToString()
                     });
                     ctx.Properties.StoreTokens(tokens);
-                    ctx.Properties.Items.Add(new KeyValuePair<string, string?>("provider", "google"));
+                    foreach (var (key, value) in ctx.Properties.Items)
+                    {
+                        Console.WriteLine($"{key} {value}");
+                    }
+                    ctx.Properties.Items.Add(new KeyValuePair<string, string?>("LoginProvider", "google"));
 
                     return Task.CompletedTask;
                 };

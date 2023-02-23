@@ -26,7 +26,22 @@ export class AuthEffects {
       switchMap(() =>
         this.authService.authorizeRequest().pipe(
           tap(({ token }) => localStorage.setItem('token', token)),
-          map(() => AuthActions.getCurrentUser()),
+          map(({ token }) => AuthActions.signInSuccess({ token })),
+        ),
+      ),
+    ),
+  )
+
+  connectToSignalR$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AuthActions.signInSuccess),
+      switchMap(() =>
+        this.authService.getCurrentUser().pipe(
+          map(({ user }) => AuthActions.getCurrentUserSuccess({ user })),
+          catchError((error: Error) => {
+            console.error(error)
+            return of(AuthActions.getCurrentUserError({ error: error.message }))
+          }),
         ),
       ),
     ),
@@ -34,7 +49,7 @@ export class AuthEffects {
 
   getCurrentUser$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(AuthActions.getCurrentUser),
+      ofType(AuthActions.signInSuccess),
       switchMap(() =>
         this.authService.getCurrentUser().pipe(
           map(({ user }) => AuthActions.getCurrentUserSuccess({ user })),
@@ -53,7 +68,7 @@ export class AuthEffects {
       switchMap(() =>
         this.authService.isReturningUser().pipe(
           tap(({ token }) => localStorage.setItem('token', token)),
-          map(() => AuthActions.getCurrentUser()),
+          map(({ token }) => AuthActions.signInSuccess({ token })),
         ),
       ),
     ),
