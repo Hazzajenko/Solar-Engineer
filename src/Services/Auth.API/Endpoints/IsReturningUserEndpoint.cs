@@ -30,7 +30,8 @@ public class IsReturningUserEndpoint : EndpointWithoutRequest<AuthorizeResponse>
         if (appUser is null)
         {
             Logger.LogError("Unable to find user {UserId}", User.GetUserId());
-            await SendUnauthorizedAsync(cT);
+            await SendRedirectAsync("/auth/login/google", cancellation: cT);
+            // await SendUnauthorizedAsync(cT);
             return;
         }
 

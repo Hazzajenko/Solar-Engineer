@@ -8,6 +8,8 @@ export const AuthActions = createActionGroup({
     'Login With Google': emptyProps(),
     'Is Returning User': emptyProps(),
     'Authorize Request': emptyProps(),
+    'Sign In Success': props<{ token: string }>(),
+    'Sign In Error': props<{ error: string | null }>(),
     'Get Token': emptyProps(),
     'Get Current User': emptyProps(),
     'Get Current User Success': props<{ user: AuthUserModel }>(),

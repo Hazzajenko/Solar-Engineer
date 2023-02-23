@@ -32,10 +32,11 @@ builder.Services.AddAuthServices(config);
 // builder.Services.AddOptions();
 // builder.Services.AddInfrastructureServices();
 
+/*
 var redisConn = ConnectionMultiplexer.Connect("localhost");
 builder.Services.AddDataProtection()
     .PersistKeysToStackExchangeRedis(redisConn)
-    .SetApplicationName("solarEngineer");
+    .SetApplicationName("solarEngineer");*/
 
 builder.Services.InitDbContext<AuthContext>(config, builder.Environment);
 

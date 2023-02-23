@@ -29,7 +29,7 @@ import {
   GroupChatServerMessageModel,
   MessageFrom,
 } from '@shared/data-access/models'
-import { ConnectionsStoreService } from '@shared/data-access/connections'
+import { ConnectionsStoreService } from '@app/data-access/connections'
 import { UsersStoreService } from '@app/data-access/users'
 import { byMessageSentTime, sortByMessageSentTime } from '@shared/utils'
 

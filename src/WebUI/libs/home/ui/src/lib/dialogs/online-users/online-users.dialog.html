@@ -4,10 +4,10 @@
   </div>
   <mat-selection-list #onlineUsers [multiple]="false">
     <mat-list-option *ngFor="let onlineUser of onlineUsers$ | async" [value]="onlineUser">
-      <ng-container *ngIf="user.displayName !== onlineUser.userName else you">
-        {{onlineUser.userName}}
+      <ng-container *ngIf="user.displayName !== onlineUser.userId else you">
+        {{onlineUser.userId}}
       </ng-container>
-      <ng-template #you> {{onlineUser.userName}} (YOU) </ng-template>
+      <ng-template #you> {{onlineUser.userId}} (YOU)</ng-template>
     </mat-list-option>
   </mat-selection-list>
 

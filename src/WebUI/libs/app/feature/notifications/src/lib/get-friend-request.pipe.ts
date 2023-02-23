@@ -1,8 +1,9 @@
 import { inject, Pipe, PipeTransform } from '@angular/core'
 import { Router } from '@angular/router'
 import { AuthStoreService } from '@auth/data-access/facades'
-import { ConnectionsService } from '@shared/data-access/connections'
-import { NotificationModel } from '@shared/data-access/models'
+import { ConnectionsService } from '@app/data-access/connections'
+
+// import { NotificationModel } from '@shared/data-access/models'
 
 @Pipe({
   name: 'getRequested',

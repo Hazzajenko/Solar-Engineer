@@ -8,6 +8,8 @@ public class UserConnection : IEntity
     public DateTime InitialConnectedTime { get; set; } = DateTime.Now;
     public List<WebConnection> Connections { get; set; } = new();
     public Guid Id { get; set; }
+    public DateTime CreatedTime { get; set; } = DateTime.Now;
+    public DateTime LastModifiedTime { get; set; } = DateTime.Now;
 }
 
 public class WebConnection

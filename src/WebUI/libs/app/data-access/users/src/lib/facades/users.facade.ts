@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
-import { ConnectionsStoreService } from '@shared/data-access/connections'
+import { ConnectionsStoreService } from '@app/data-access/connections'
 import {
   combineLatest,
   combineLatestWith,
@@ -59,7 +59,7 @@ export class UsersFacade {
     return this.connectionsStore.select.connections$.pipe(
       combineLatestWith(this.users$.pipe(map((users) => users.filter((user) => user.isFriend)))),
       map(([connections, friends]) => {
-        const connectionUsernames = connections.map((connection) => connection.userName)
+        const connectionUsernames = connections.map((connection) => connection.userId)
         return friends.filter((friend) => connectionUsernames.includes(friend.displayName))
       }),
     )
@@ -70,7 +70,7 @@ export class UsersFacade {
     map(([connections, friends]) =>
       friends.map((friend) => {
         const isOnline = !!connections.find(
-          (connection) => connection.userName === friend.displayName,
+          (connection) => connection.userId === friend.displayName,
         )
         return {
           ...friend,
@@ -83,7 +83,7 @@ export class UsersFacade {
   usersOnline$ = this.connectionsStore.select.connections$.pipe(
     combineLatestWith(this.users$),
     map(([connections, users]) => {
-      const connectionUsernames = connections.map((connection) => connection.userName)
+      const connectionUsernames = connections.map((connection) => connection.userId)
       return users.filter((user) => connectionUsernames.includes(user.displayName))
     }),
   )

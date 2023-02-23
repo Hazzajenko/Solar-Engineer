@@ -7,4 +7,7 @@ public interface IGenericRepository<TModel>
 {
     Task AddAsync(TModel model);
     Task<TModel?> GetByIdAsync(Guid id);
+
+    Task DeleteAsync(object key);
+    // Task<bool> DeleteAsync(Guid id);
 }

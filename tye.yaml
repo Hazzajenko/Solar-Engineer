@@ -1,0 +1,22 @@
+name: SolarEngineer
+# containerEngine: docker
+
+services:
+  - name: auth-service
+    project: src\Services\Auth.API\Auth.API.csproj
+    bindings:
+      - port: 6005
+        name:  secure
+        protocol: https
+      - port: 5005
+        name:  non-secure
+        protocol: http
+  - name: users-service
+    project: src\Services\Users.API\Users.API.csproj
+    bindings:
+      - port: 6004
+        name:  secure
+        protocol: https
+      - port: 5004
+        name:  non-secure
+        protocol: http

@@ -16,7 +16,7 @@
       <app-logo-name-background-v2></app-logo-name-background-v2>
     </div>
     <div @fadeIn class="relative container flex flex-col items-center justify-center top-6">
-      <div *ngIf="usersOnline$ | async as usersOnline" class="flex flex-row space-x-3">
+      <div *ngIf="onlineUsers$ | async as usersOnline" class="flex flex-row space-x-3">
         <p class="font-medium tracking-tight font-mono text-xl text-black-200 mb-5">
           {{ usersOnline.length }} users online
         </p>

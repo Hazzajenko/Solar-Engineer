@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
-import { ConnectionsStoreService } from '@shared/data-access/connections'
+import { ConnectionsStoreService } from '@app/data-access/connections'
 import { combineLatestWith, firstValueFrom } from 'rxjs'
 import { map } from 'rxjs/operators'
 import { FriendsSelectors } from '../store'
@@ -24,7 +24,7 @@ export class FriendsFacade {
     return this.connectionsStore.select.connections$.pipe(
       combineLatestWith(this.friends$),
       map(([connections, friends]) => {
-        const connectionUsernames = connections.map((connection) => connection.userName)
+        const connectionUsernames = connections.map((connection) => connection.userId)
         return friends.filter((friend) => connectionUsernames.includes(friend.displayName))
       }),
     )
