@@ -9,7 +9,6 @@ public class MessagesHub : Hub<IMessagesHub>
 {
     private readonly IMediator _mediator;
 
-
     public MessagesHub(
         IMediator mediator
     )

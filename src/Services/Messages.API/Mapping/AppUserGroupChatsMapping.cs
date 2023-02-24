@@ -1,6 +1,10 @@
-﻿namespace Messages.API.Mapping;
+﻿using Messages.API.Contracts.Data;
+using Messages.API.Contracts.Requests;
+using Messages.API.Entities;
 
-public static class GroupChatsMapping
+namespace Messages.API.Mapping;
+
+public static class AppUserGroupChatsMapping
 {
     /*public static Conversation ToEntity(this SendMessageRequest request, AppUser user, AppUser recipient)
     {
@@ -15,8 +19,26 @@ public static class GroupChatsMapping
         };
     }*/
 
+    public static AppUserGroupChat ToDomain(this CreateGroupChatRequest request, Guid appUserId)
+    {
+        return new AppUserGroupChat
+        {
+            AppUserId = appUserId,
+            Role = "Admin",
+            CanInvite = true,
+            CanKick = true,
+            GroupChat = new GroupChat
+            {
+                Name = request.GroupChatName,
+                CreatedById = appUserId
+                // PhotoUrl = appUser.PhotoUrl,
+                // Created = DateTime.Now
+            }
+        };
+    }
 
-    /*public static InitialGroupChatMemberDto ToInitialMemberDto(this AppUserGroupChat request)
+
+    public static InitialGroupChatMemberDto ToInitialMemberDto(this AppUserGroupChat request)
     {
         return new InitialGroupChatMemberDto
         {
@@ -28,7 +50,7 @@ public static class GroupChatsMapping
 
             Role = request.Role
         };
-    }*/
+    }
 
     /*public static GroupChatMemberDto ToMemberDto(this AppUserGroupChat request)
     {

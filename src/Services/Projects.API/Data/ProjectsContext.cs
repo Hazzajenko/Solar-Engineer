@@ -1,22 +1,25 @@
 ﻿using System.Reflection;
 using Infrastructure.Data;
-using Messages.API.Entities;
 using Microsoft.EntityFrameworkCore;
+using Projects.API.Entities;
 
-namespace Messages.API.Data;
+namespace Projects.API.Data;
 
-public class MessagesContext
+public class ProjectsContext
     : DbContext, IDataContext
 {
-    public MessagesContext(DbContextOptions<MessagesContext> options)
+    public ProjectsContext(DbContextOptions<ProjectsContext> options)
         : base(options)
     {
     }
 
-    public DbSet<Message> Messages { get; set; } = default!;
+    public DbSet<Project> Projects { get; set; } = default!;
+
+    public DbSet<AppUserProject> AppUserProjects { get; set; } = default!;
+    /*public DbSet<Message> Messages { get; set; } = default!;
     public DbSet<AppUserGroupChat> UserGroupChats { get; set; } = default!;
     public DbSet<GroupChat> GroupChats { get; set; } = default!;
-    public DbSet<GroupChatMessage> GroupChatMessages { get; set; } = default!;
+    public DbSet<GroupChatMessage> GroupChatMessages { get; set; } = default!;*/
 
     // public DbSet<User> Users { get; set; } = default!;
     // public DbSet<GroupChatServerMessage> GroupChatServerMessages { get; set; } = default!;

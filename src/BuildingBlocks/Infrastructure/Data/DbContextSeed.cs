@@ -1,15 +1,14 @@
 ﻿using Infrastructure.Common;
-using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Data;
 
 public class DbContextSeedUsers<TContext, TUser>
-where TContext : IDataContext<TUser>
-where TUser : SharedUser, new()
+    where TContext : IDataContext
+    where TUser : SharedUser, new()
 {
     public async Task SeedUsersAsync(TContext context)
     {
-        var defaultUser = await context.Users.FindAsync(Guid.Empty);
+        /*var defaultUser = await context.Users.FindAsync(Guid.Empty);
         if (defaultUser is null)
         {
             var user = new TUser
@@ -22,6 +21,6 @@ where TUser : SharedUser, new()
             };
             await context.Users.AddAsync(user);
             await context.SaveChangesAsync();
-        }
+        }*/
     }
 }

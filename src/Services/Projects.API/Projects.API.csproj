@@ -32,9 +32,4 @@
       <ProjectReference Include="..\..\BuildingBlocks\Infrastructure\Infrastructure.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Data" />
-      <Folder Include="Endpoints\Projects" />
-    </ItemGroup>
-
 </Project>

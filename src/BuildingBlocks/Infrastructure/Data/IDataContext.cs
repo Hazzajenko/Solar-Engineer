@@ -1,11 +1,8 @@
-﻿using Infrastructure.Common;
-using Microsoft.EntityFrameworkCore;
+﻿namespace Infrastructure.Data;
 
-namespace Infrastructure.Data;
-
-public interface IDataContext<TUser>
-where TUser : SharedUser
+public interface IDataContext
+// where TUser : SharedUser
 {
-    DbSet<TUser> Users { get; set; }
+    // DbSet<TUser> Users { get; set; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

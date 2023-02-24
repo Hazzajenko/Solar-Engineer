@@ -1,27 +1,23 @@
 ﻿using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using Projects.API.Data;
-using Projects.API.Repositories.Projects;
 
-namespace Projects.API.Extensions.Application;
+namespace YarpGateway.Extensions.Services;
 
-public static class ServiceCollectionExtensions
+public static class ServiceExtensions
 {
-    public static IServiceCollection AddApplicationServices(
+    public static IServiceCollection InitServiceCollection(
         this IServiceCollection services,
         IConfiguration config
     )
     {
-        services.AddScoped<IProjectsUnitOfWork, ProjectsUnitOfWork>();
-        services.AddScoped<IProjectsRepository, ProjectsRepository>();
-        services.AddMediator(options => { options.ServiceLifetime = ServiceLifetime.Transient; });
-        services.AddJwtAuthentication(config);
+        services.InitIdentityAuthUsers(config);
+        services.AddReverseProxy().LoadFromConfig(config.GetSection("ReverseProxy"));
 
         return services;
     }
 
-    private static IServiceCollection AddJwtAuthentication(this IServiceCollection services,
+    public static IServiceCollection InitIdentityAuthUsers(this IServiceCollection services,
         IConfiguration config)
     {
         services.AddAuthentication(x =>
@@ -42,9 +38,31 @@ public static class ServiceCollectionExtensions
                 ValidateIssuer = true,
                 ValidateAudience = true
             };
+
+
+            x.Events = new JwtBearerEvents
+            {
+                OnMessageReceived = context =>
+                {
+                    var accessToken = context.Request.Query["access_token"];
+
+                    var path = context.HttpContext.Request.Path;
+                    if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
+                        context.Token = accessToken;
+
+                    return Task.CompletedTask;
+                }
+            };
         });
 
-        services.AddAuthorization();
+        services.AddAuthorization(options =>
+        {
+            /*options.AddPolicy("ApiScope", policy =>
+            {
+                policy.RequireAuthenticatedUser();
+                policy.RequireClaim("scope", "users-api");
+            });*/
+        });
 
 
         return services;

@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using DotNetCore.EntityFrameworkCore;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Users.API.Entities;
@@ -7,7 +6,7 @@ using Users.API.Entities;
 namespace Users.API.Data;
 
 public class UsersContext
-    : DbContext, IDataContext<User>
+    : DbContext, IDataContext
 {
     public UsersContext(DbContextOptions<UsersContext> options)
         : base(options)
