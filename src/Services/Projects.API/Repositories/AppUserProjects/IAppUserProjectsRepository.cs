@@ -6,11 +6,13 @@ namespace Projects.API.Repositories.AppUserProjects;
 
 public interface IAppUserProjectsRepository : IGenericRepository<AppUserProject>
 {
-    Task<IEnumerable<AppUserProject>> GetByAppUserId(Guid appUserId);
+    Task<IEnumerable<AppUserProject>> GetByAppUserIdAsync(Guid appUserId);
 
-    Task<IEnumerable<ProjectDto>> GetProjectsByAppUserId(Guid appUserId);
+    Task<IEnumerable<ProjectDto>> GetProjectsByAppUserIdAsync(Guid appUserId);
 
-    Task<AppUserProject?> GetByAppUserAndProjectId(Guid appUserId, Guid projectId);
+    Task<AppUserProject?> GetByAppUserAndProjectIdAsync(Guid appUserId, Guid projectId);
+    Task<ProjectDto?> GetProjectByAppUserAndProjectIdAsync(Guid appUserId, Guid projectId);
+    Task<IEnumerable<string>> GetProjectMemberIdsByProjectId(Guid projectId);
     // Task<IEnumerable<string>> GetGroupChatMemberIdsAsync(Guid groupChatId, Guid? userId = null);
     // Task<IEnumerable<GroupChatDto>> GetLatestGroupChatMessagesAsync(Guid appUserId);
     // Task<AppUserGroupChat?> GetByAppUserAndGroupChatIdAsync(Guid appUserId, Guid groupChatId);

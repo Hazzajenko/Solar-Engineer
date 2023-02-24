@@ -28,8 +28,8 @@ public class UpdateProjectHandler : IRequestHandler<UpdateProjectCommand, bool>
     public async ValueTask<bool> Handle(UpdateProjectCommand request, CancellationToken cT)
     {
         var appUserId = request.User.GetGuidUserId();
-        var projectId = request.UpdateProjectRequest.Id.ToGuid();
-        var appUserProject = await _unitOfWork.AppUserProjectsRepository.GetByAppUserAndProjectId(
+        var projectId = request.UpdateProjectRequest.ProjectId.ToGuid();
+        var appUserProject = await _unitOfWork.AppUserProjectsRepository.GetByAppUserAndProjectIdAsync(
             appUserId,
             projectId
         );

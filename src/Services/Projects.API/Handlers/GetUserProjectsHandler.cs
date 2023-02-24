@@ -3,6 +3,7 @@ using Infrastructure.Extensions;
 using Mediator;
 using Projects.API.Contracts.Data;
 using Projects.API.Data;
+using Projects.API.Entities;
 
 namespace Projects.API.Handlers;
 
@@ -25,7 +26,7 @@ public class
         Handle(GetUserProjectsQuery request, CancellationToken cT)
     {
         var appUserId = request.User.GetGuidUserId();
-        var userProjects = await _unitOfWork.AppUserProjectsRepository.GetProjectsByAppUserId(appUserId);
+        var userProjects = await _unitOfWork.AppUserProjectsRepository.GetProjectsByAppUserIdAsync(appUserId);
 
         _logger.LogInformation("User {User} get user projects", appUserId);
 

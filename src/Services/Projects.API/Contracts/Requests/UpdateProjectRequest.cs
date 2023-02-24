@@ -4,7 +4,7 @@ namespace Projects.API.Contracts.Requests;
 
 public class UpdateProjectRequest
 {
-    public string Id { get; set; } = default!;
+    public string ProjectId { get; set; } = default!;
 
     public ProjectChanges Changes { get; set; } = default!;
 }
@@ -18,7 +18,7 @@ public class UpdateProjectRequestValidator : AbstractValidator<UpdateProjectRequ
 {
     public UpdateProjectRequestValidator()
     {
-        RuleFor(v => v.Id)
+        RuleFor(v => v.ProjectId)
             .NotNull()
             .WithMessage("Id cannot be null")
             .NotEmpty()

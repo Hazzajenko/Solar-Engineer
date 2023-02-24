@@ -16,14 +16,14 @@ public sealed class AppUserProjectsRepository : GenericRepository<ProjectsContex
     {
     }
 
-    public async Task<IEnumerable<AppUserProject>> GetByAppUserId(Guid appUserId)
+    public async Task<IEnumerable<AppUserProject>> GetByAppUserIdAsync(Guid appUserId)
     {
         return await Queryable
             .Where(x => x.AppUserId == appUserId)
             .ToListAsync();
     }
 
-    public async Task<IEnumerable<ProjectDto>> GetProjectsByAppUserId(Guid appUserId)
+    public async Task<IEnumerable<ProjectDto>> GetProjectsByAppUserIdAsync(Guid appUserId)
     {
         return await Queryable
             .Where(x => x.AppUserId == appUserId)
@@ -32,11 +32,28 @@ public sealed class AppUserProjectsRepository : GenericRepository<ProjectsContex
             .ToListAsync();
     }
 
-    public async Task<AppUserProject?> GetByAppUserAndProjectId(Guid appUserId, Guid projectId)
+    public async Task<AppUserProject?> GetByAppUserAndProjectIdAsync(Guid appUserId, Guid projectId)
     {
         return await Queryable
             .Include(x => x.Project)
             .SingleOrDefaultAsync(x => x.AppUserId == appUserId && x.ProjectId == projectId);
+    }
+
+    public async Task<ProjectDto?> GetProjectByAppUserAndProjectIdAsync(Guid appUserId, Guid projectId)
+    {
+        return await Queryable
+            .Where(x => x.AppUserId == appUserId && x.ProjectId == projectId)
+            .Include(x => x.Project)
+            .Select(x => x.ToDto())
+            .SingleOrDefaultAsync(); 
+    }
+
+    public async Task<IEnumerable<string>> GetProjectMemberIdsByProjectId(Guid projectId)
+    {
+        return await Queryable
+            .Where(x => x.ProjectId == projectId)
+            .Select(x => x.AppUserId.ToString())
+            .ToArrayAsync();
     }
 
     /*public async Task<IEnumerable<string>> GetGroupChatMemberIdsAsync(Guid groupChatId, Guid? userId = null)

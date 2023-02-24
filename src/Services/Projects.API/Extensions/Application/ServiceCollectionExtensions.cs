@@ -1,5 +1,7 @@
 ﻿using System.Text;
+using Infrastructure.SignalR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.IdentityModel.Tokens;
 using Projects.API.Data;
 using Projects.API.Repositories.Projects;
@@ -13,6 +15,7 @@ public static class ServiceCollectionExtensions
         IConfiguration config
     )
     {
+        services.AddSingleton<IUserIdProvider, HubsUserIdProvider>();
         services.AddScoped<IProjectsUnitOfWork, ProjectsUnitOfWork>();
         services.AddScoped<IProjectsRepository, ProjectsRepository>();
         services.AddMediator(options => { options.ServiceLifetime = ServiceLifetime.Transient; });
