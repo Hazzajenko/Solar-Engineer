@@ -4,7 +4,7 @@ using Mediator;
 using Messages.API.Contracts.Data;
 using Messages.API.Data;
 
-namespace Messages.API.Handlers;
+namespace Messages.API.Handlers.Http;
 
 public sealed record GetLatestUserMessagesQuery(ClaimsPrincipal User) : IRequest<IEnumerable<LatestUserMessageDto>>;
 

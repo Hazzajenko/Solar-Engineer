@@ -6,7 +6,7 @@ using Messages.API.Hubs;
 using Messages.API.Mapping;
 using Microsoft.AspNetCore.SignalR;
 
-namespace Messages.API.Handlers;
+namespace Messages.API.Handlers.SignalR;
 
 public sealed record SendMessageToUserCommand(HubCallerContext Context, SendMessageRequest MessageRequest)
     : IQuery<bool>;
@@ -36,15 +36,6 @@ public class SendMessageToUserHandler
 
         var appUserId = request.Context.User.GetUserId().ToGuid();
         var recipientUserId = request.MessageRequest.RecipientUserId.ToGuid();
-        /*
-        var appUser = await _unitOfWork.UsersRepository.GetByIdAsync(Guid.Parse(appUserId));
-        if (appUser is null) throw new HubException("AppUser is null");
-        var recipientUser =
-            await _unitOfWork.UsersRepository.GetByIdAsync(Guid.Parse(request.MessageRequest.RecipientUserId));
-        if (recipientUser is null) throw new HubException("Recipient is null");
-
-        // var appUserId = userId.ToGuid();
-        */
 
         var message = request.MessageRequest.ToEntity(appUserId, recipientUserId);
 
@@ -56,11 +47,11 @@ public class SendMessageToUserHandler
 
         await _hubContext.Clients
             .User(appUserId.ToString())
-            .GetMessages(appUserResult, CancellationToken.None);
+            .GetMessages(appUserResult);
 
         await _hubContext.Clients
             .User(recipientUserId.ToString())
-            .GetMessages(recipientUserResult, CancellationToken.None);
+            .GetMessages(recipientUserResult);
 
         _logger.LogInformation(
             "{User} Sent a Message to {Recipient}",

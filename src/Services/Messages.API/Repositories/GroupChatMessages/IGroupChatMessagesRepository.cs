@@ -6,5 +6,5 @@ namespace Messages.API.Repositories.GroupChatMessages;
 
 public interface IGroupChatMessagesRepository : IGenericRepository<GroupChatMessage>
 {
-    Task<IEnumerable<GroupChatMessageDto>> GetGroupChatMessagesAsync(Guid appUserId, Guid groupChatId);
+    Task<IEnumerable<GroupChatCombinedMessageDto>> GetGroupChatMessagesAsync(Guid appUserId, Guid groupChatId);
 }

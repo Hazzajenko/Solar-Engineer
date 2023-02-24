@@ -4,7 +4,7 @@ using Messages.API.Data;
 using Messages.API.Hubs;
 using Microsoft.AspNetCore.SignalR;
 
-namespace Messages.API.Handlers;
+namespace Messages.API.Handlers.SignalR;
 
 public sealed record GetGroupChatMessagesQuery
     (HubCallerContext Context, string GroupChatId) : IRequest<bool>;
@@ -36,17 +36,20 @@ public class
         var groupChatMessages = await _unitOfWork.GroupChatMessagesRepository.GetGroupChatMessagesAsync(appUserId,
             request.GroupChatId.ToGuid());
 
+        // var toCombinedMessages = groupChatMessages.Select(x => x.)
+
         await _hubContext.Clients
             .User(appUserId.ToString())
-            .GetGroupChatMessages(groupChatMessages, CancellationToken.None);
+            .GetGroupChatMessages(groupChatMessages);
 
-        var groupChatServerMessages =
+        /*var groupChatServerMessages =
             await _unitOfWork.GroupChatServerMessagesRepository.GetGroupChatServerMessagesAsync(
-                request.GroupChatId.ToGuid());
+                request.GroupChatId.ToGuid());*/
 
+        /*
         await _hubContext.Clients
             .User(appUserId.ToString())
-            .GetGroupChatServerMessages(groupChatServerMessages, CancellationToken.None);
+            .GetGroupChatMessages(groupChatServerMessages);*/
 
         _logger.LogInformation(
             "{User} GetGroupChatMessages with GroupChat {Recipient}",

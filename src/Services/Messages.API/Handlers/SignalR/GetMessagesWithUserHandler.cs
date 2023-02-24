@@ -6,7 +6,7 @@ using Messages.API.Data;
 using Messages.API.Hubs;
 using Microsoft.AspNetCore.SignalR;
 
-namespace Messages.API.Handlers;
+namespace Messages.API.Handlers.SignalR;
 
 public sealed record GetMessagesWithUserQuery(HubCallerContext Context, string RecipientId)
     : IQuery<bool>;
@@ -45,7 +45,7 @@ public class GetMessagesWithUserHandler
 
         await _hubContext.Clients
             .User(appUserId.ToString())
-            .GetMessages(messages, CancellationToken.None);
+            .GetMessages(messages);
 
         _logger.LogInformation(
             "{User} GetMessages with {Recipient}",

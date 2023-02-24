@@ -19,7 +19,7 @@ public static class GroupChatsMapping
     }*/
 
 
-    public static InitialGroupChatMemberDto ToInitialMemberDto(this UserGroupChat request)
+    public static InitialGroupChatMemberDto ToInitialMemberDto(this AppUserGroupChat request)
     {
         return new InitialGroupChatMemberDto
         {
@@ -27,7 +27,8 @@ public static class GroupChatsMapping
             GroupChatId = request.GroupChatId.ToString(),
             AppUserId = request.AppUserId.ToString(),
             // DisplayName = request.AppUser.DisplayName,
-            JoinedAt = request.JoinedAt,
+            JoinedAt = request.CreatedTime,
+
             Role = request.Role
         };
     }

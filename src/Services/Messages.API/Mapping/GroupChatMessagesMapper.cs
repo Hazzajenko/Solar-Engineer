@@ -1,4 +1,5 @@
-﻿using Messages.API.Contracts.Data;
+﻿using System.Text;
+using Messages.API.Contracts.Data;
 using Messages.API.Contracts.Requests;
 using Messages.API.Entities;
 
@@ -31,11 +32,11 @@ public static class GroupChatMessagesMapper
             MessageSentTime = request.MessageSentTime,
             MessageReadTimes = request.MessageReadTimes.Any()
                 ? request.MessageReadTimes.Select(x => x.ToDto())
-                : new List<GroupChatReadTimeDto>(),
-            MessageFrom =
+                : new List<GroupChatReadTimeDto>()
+            /*MessageFrom =
                 appUserId == request.SenderId
                     ? MessageFrom.CurrentUser
-                    : MessageFrom.OtherUser
+                    : MessageFrom.OtherUser*/
         };
     }
 
@@ -47,15 +48,25 @@ public static class GroupChatMessagesMapper
             GroupChatId = request.GroupChatId.ToString(),
             Content = request.Content,
             SenderId = request.SenderId.ToString(),
+            ServerMessage = request.ServerMessage,
             // SenderDisplayName = request.Sender.DisplayName,
             MessageSentTime = request.MessageSentTime,
             MessageReadTimes = request.MessageReadTimes.Any()
                 ? request.MessageReadTimes.Select(x => x.ToDto())
-                : new List<GroupChatReadTimeDto>(),
-            MessageFrom =
+                : new List<GroupChatReadTimeDto>()
+            /*MessageFrom =
                 appUserId == request.SenderId
                     ? MessageFrom.CurrentUser
-                    : MessageFrom.OtherUser
+                    : MessageFrom.OtherUser*/
+        };
+    }
+
+    public static IEnumerable<GroupChatCombinedMessageDto> ToCombinedDtoList(this GroupChatMessage request,
+        Guid appUserId)
+    {
+        return new List<GroupChatCombinedMessageDto>
+        {
+            request.ToCombinedDto(appUserId)
         };
     }
 
@@ -84,12 +95,69 @@ public static class GroupChatMessagesMapper
         };
     }
 
+    public static GroupChatCombinedMessageDto ToOtherUsersCombinedDto(this GroupChatMessage request)
+    {
+        return new GroupChatCombinedMessageDto
+        {
+            Id = request.Id.ToString(),
+            ServerMessage = request.ServerMessage,
+            GroupChatId = request.GroupChatId.ToString(),
+            SenderId = request.SenderId.ToString(),
+            Content = request.Content,
+            // SenderDisplayName = request.Sender.DisplayName,
+            MessageSentTime = request.MessageSentTime,
+            MessageReadTimes = request.MessageReadTimes.Any()
+                ? request.MessageReadTimes.Select(x => x.ToDto())
+                : new List<GroupChatReadTimeDto>(),
+            MessageFrom = MessageFrom.OtherUser
+        };
+    }
+
     public static List<GroupChatMessageDto> ToOtherUsersDtoList(this GroupChatMessage request)
     {
         return new List<GroupChatMessageDto>
         {
             request.ToOtherUsersDto()
         };
+    }
+
+    public static IEnumerable<GroupChatCombinedMessageDto> ToOtherUsersCombinedDtoList(this GroupChatMessage request)
+    {
+        return new List<GroupChatCombinedMessageDto>
+        {
+            request.ToOtherUsersCombinedDto()
+        };
+    }
+
+    public static GroupChatServerMessage ToServerMessage(
+        this IEnumerable<AppUserGroupChat> request,
+        Guid appUserId
+    )
+    {
+        return new GroupChatServerMessage
+        {
+            GroupChat = request.First().GroupChat,
+            Content = PrintMembers(request, appUserId),
+            MessageSentTime = DateTime.UtcNow
+        };
+
+        static string PrintMembers(IEnumerable<AppUserGroupChat> appUserGroupChats, Guid appUserId)
+        {
+            var memberIds = appUserGroupChats.Select(x => x.AppUserId.ToString());
+            var sb = new StringBuilder();
+
+            sb.Append($"{appUserId} invited ");
+            foreach (var userName in memberIds)
+            {
+                sb.Append(userName);
+                if (userName != memberIds.Last())
+                    sb.Append(", ");
+            }
+
+            sb.Append($" to {appUserGroupChats.First().GroupChat.Name}");
+
+            return sb.ToString();
+        }
     }
 
     /*  public static GroupChatMessageDto ToOtherUsersDto(this GroupChatMessage request)

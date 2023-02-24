@@ -6,7 +6,7 @@ using Messages.API.Hubs;
 using Messages.API.Mapping;
 using Microsoft.AspNetCore.SignalR;
 
-namespace Messages.API.Handlers;
+namespace Messages.API.Handlers.SignalR;
 
 public sealed record SendMessageToGroupChatCommand(HubCallerContext Context,
         SendGroupChatMessageRequest GroupChatMessageRequest)
@@ -57,18 +57,18 @@ public class SendMessageToGroupChatHandler
 
         await _unitOfWork.GroupChatMessagesRepository.AddAsync(groupChatMessage);
 
-        var appUserMessage = groupChatMessage.ToDtoList(appUserId);
-        var otherUsersMessage = groupChatMessage.ToOtherUsersDtoList();
+        var appUserMessage = groupChatMessage.ToCombinedDtoList(appUserId);
+        var otherUsersMessage = groupChatMessage.ToOtherUsersCombinedDtoList();
 
         var groupChatMemberIds =
             await _unitOfWork.UserGroupChatsRepository.GetGroupChatMemberIdsAsync(groupChat.Id, appUserId);
 
         await _hubContext.Clients
             .User(appUserId.ToString())
-            .GetGroupChatMessages(appUserMessage, CancellationToken.None);
+            .GetGroupChatMessages(appUserMessage);
         await _hubContext.Clients
             .Users(groupChatMemberIds)
-            .GetGroupChatMessages(otherUsersMessage, CancellationToken.None);
+            .GetGroupChatMessages(otherUsersMessage);
 
 
         _logger.LogInformation(

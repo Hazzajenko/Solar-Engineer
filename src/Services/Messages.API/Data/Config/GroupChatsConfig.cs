@@ -14,11 +14,11 @@ public class GroupChatsConfig : IEntityTypeConfiguration<GroupChat>
             .HasForeignKey(x => x.GroupChatId)
             .IsRequired();
 
-        builder
+        /*builder
             .HasMany(u => u.GroupChatServerMessages)
             .WithOne(m => m.GroupChat)
             .HasForeignKey(x => x.GroupChatId)
-            .IsRequired();
+            .IsRequired();*/
 
         builder
             .HasMany(u => u.GroupChatMessages)

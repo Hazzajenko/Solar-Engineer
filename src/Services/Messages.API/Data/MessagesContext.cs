@@ -13,12 +13,13 @@ public class MessagesContext
     {
     }
 
-    public DbSet<User> Users { get; set; } = default!;
     public DbSet<Message> Messages { get; set; } = default!;
-    public DbSet<UserGroupChat> UserGroupChats { get; set; } = default!;
+    public DbSet<AppUserGroupChat> UserGroupChats { get; set; } = default!;
     public DbSet<GroupChat> GroupChats { get; set; } = default!;
     public DbSet<GroupChatMessage> GroupChatMessages { get; set; } = default!;
-    public DbSet<GroupChatServerMessage> GroupChatServerMessages { get; set; } = default!;
+
+    public DbSet<User> Users { get; set; } = default!;
+    // public DbSet<GroupChatServerMessage> GroupChatServerMessages { get; set; } = default!;
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {

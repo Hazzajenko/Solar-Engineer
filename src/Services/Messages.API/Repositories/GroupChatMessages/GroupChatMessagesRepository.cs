@@ -14,12 +14,13 @@ public sealed class GroupChatMessagesRepository : GenericRepository<MessagesCont
     {
     }
 
-    public async Task<IEnumerable<GroupChatMessageDto>> GetGroupChatMessagesAsync(Guid appUserId, Guid groupChatId)
+    public async Task<IEnumerable<GroupChatCombinedMessageDto>> GetGroupChatMessagesAsync(Guid appUserId,
+        Guid groupChatId)
     {
         return await Queryable
             .Where(x => x.GroupChatId == groupChatId)
             .OrderBy(x => x.MessageSentTime)
-            .Select(x => x.ToDto(appUserId))
+            .Select(x => x.ToCombinedDto(appUserId))
             .ToListAsync();
     }
 }

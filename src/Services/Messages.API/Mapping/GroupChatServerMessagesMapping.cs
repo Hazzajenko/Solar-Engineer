@@ -19,4 +19,27 @@ public static class GroupChatServerMessagesMapping
             // IsServer = true
         };
     }
+
+    public static GroupChatCombinedMessageDto ToCombinedDto(this GroupChatServerMessage request)
+    {
+        return new GroupChatCombinedMessageDto
+        {
+            Id = request.Id.ToString(),
+            GroupChatId = request.GroupChatId.ToString(),
+            // SenderUserName = "SERVER",
+            Content = request.Content,
+            MessageSentTime = request.MessageSentTime
+            // MessageFrom = MessageFrom.Server
+            // IsUserSender = false,
+            // IsServer = true
+        };
+    }
+
+    public static IEnumerable<GroupChatCombinedMessageDto> ToCombinedDtoList(this GroupChatServerMessage request)
+    {
+        return new List<GroupChatCombinedMessageDto>
+        {
+            request.ToCombinedDto()
+        };
+    }
 }

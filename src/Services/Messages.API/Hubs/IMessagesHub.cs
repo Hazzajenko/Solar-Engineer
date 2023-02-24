@@ -4,27 +4,24 @@ namespace Messages.API.Hubs;
 
 public interface IMessagesHub
 {
-    Task GetMessages(IEnumerable<MessageDto> messages, CancellationToken ct);
+    Task GetMessages(IEnumerable<MessageDto> messages);
 
     Task GetGroupChatMessages(
-        IEnumerable<GroupChatMessageDto> groupChatMessages,
-        CancellationToken ct
+        IEnumerable<GroupChatCombinedMessageDto> groupChatMessages
     );
 
+    /*
     Task GetGroupChatServerMessages(
-        IEnumerable<GroupChatServerMessageDto> serverMessages,
-        CancellationToken ct
-    );
+        IEnumerable<GroupChatServerMessageDto> serverMessages
+    );*/
 
     Task UpdateGroupChatMessages(
-        IEnumerable<GroupChatMessageUpdateDto> groupChatMessageUpdates,
-        CancellationToken ct
+        IEnumerable<GroupChatMessageUpdateDto> groupChatMessageUpdates
     );
 
     Task AddGroupChatMembers(
-        IEnumerable<InitialGroupChatMemberDto> groupChatMembers,
-        CancellationToken ct
+        IEnumerable<InitialGroupChatMemberDto> groupChatMembers
     );
 
-    Task RemoveGroupChatMembers(IEnumerable<int> groupChatMemberIds, CancellationToken ct);
+    Task RemoveGroupChatMembers(IEnumerable<string> groupChatMemberIds);
 }

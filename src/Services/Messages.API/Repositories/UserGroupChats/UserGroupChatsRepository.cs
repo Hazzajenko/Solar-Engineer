@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Messages.API.Repositories.UserGroupChats;
 
-public sealed class UserGroupChatsRepository : GenericRepository<MessagesContext, UserGroupChat>,
+public sealed class UserGroupChatsRepository : GenericRepository<MessagesContext, AppUserGroupChat>,
     IUserGroupChatsRepository
 {
     public UserGroupChatsRepository(MessagesContext context) : base(context)
@@ -20,11 +20,9 @@ public sealed class UserGroupChatsRepository : GenericRepository<MessagesContext
     {
         return await Queryable
             .Where(x => x.GroupChatId == groupChatId)
-            // .Include(x => x.User)
             .Select(x => x.AppUserId.ToString())
             .Where(x => userId == null || x != userId.ToString())
             .ToArrayAsync();
-        // return new List<string>();
     }
 
     public async Task<IEnumerable<GroupChatDto>> GetLatestGroupChatMessagesAsync(Guid appUserId)
@@ -39,10 +37,6 @@ public sealed class UserGroupChatsRepository : GenericRepository<MessagesContext
             .AsSplitQuery()
             .Include(x => x.GroupChat)
             .ThenInclude(x => x.UserGroupChats)
-            // .ThenInclude(x => x.AppUser)
-            .AsSplitQuery()
-            .Include(x => x.GroupChat)
-            .ThenInclude(x => x.GroupChatServerMessages)
             .AsSplitQuery()
             .Select(x => new GroupChatDto
             {
@@ -50,16 +44,18 @@ public sealed class UserGroupChatsRepository : GenericRepository<MessagesContext
                 Name = x.GroupChat.Name,
                 PhotoUrl = x.GroupChat.PhotoUrl,
                 Members = x.GroupChat.UserGroupChats
-                    .OrderBy(c => c.JoinedAt)
+                    .OrderBy(c => c.CreatedTime)
                     .Select(c => c.ToInitialMemberDto()),
                 LatestMessage = x.GroupChat.GroupChatMessages
                     .OrderBy(o => o.MessageSentTime)
                     .Select(y => y.ToCombinedDto(appUserId))
                     .LastOrDefault()
-                /*LatestServerMessage = x.GroupChat.GroupChatServerMessages
-                    .OrderBy(o => o.MessageSentTime)
-                    .Select(c => c.ToDto())
-                    .LastOrDefault()*/
             }).ToListAsync();
+    }
+
+    public async Task<AppUserGroupChat?> GetByAppUserAndGroupChatIdAsync(Guid appUserId, Guid groupChatId)
+    {
+        return await Queryable
+            .SingleOrDefaultAsync(x => x.AppUserId == appUserId && x.GroupChatId == groupChatId);
     }
 }

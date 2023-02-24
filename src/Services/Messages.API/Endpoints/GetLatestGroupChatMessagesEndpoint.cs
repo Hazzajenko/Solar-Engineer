@@ -2,6 +2,7 @@
 using Mediator;
 using Messages.API.Contracts.Responses;
 using Messages.API.Handlers;
+using Messages.API.Handlers.Http;
 
 namespace Messages.API.Endpoints;
 
