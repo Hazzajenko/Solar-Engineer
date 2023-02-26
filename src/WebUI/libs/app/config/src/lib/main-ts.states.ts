@@ -7,7 +7,7 @@ import {
   groupChatMessagesReducer,
   groupChatsReducer,
 } from '@app/data-access/group-chats'
-import { MESSAGES_FEATURE_KEY, messagesReducer } from '@app/data-access/messages'
+import { USER_MESSAGES_FEATURE_KEY, userMessagesReducer } from '@app/data-access/messages'
 import { AUTH_FEATURE_KEY, authReducer } from '@auth/data-access'
 import { provideState } from '@ngrx/store'
 import { UI_FEATURE_KEY, uiReducer } from '@project-id/data-access/store'
@@ -24,7 +24,7 @@ export const mainTsStates = [
   provideState(UI_FEATURE_KEY, uiReducer),
   provideState(NOTIFICATIONS_FEATURE_KEY, notificationsReducer),
   provideState(FRIENDS_FEATURE_KEY, friendsReducer),
-  provideState(MESSAGES_FEATURE_KEY, messagesReducer),
+  provideState(USER_MESSAGES_FEATURE_KEY, userMessagesReducer),
   provideState(GROUP_CHATS_FEATURE_KEY, groupChatsReducer),
   provideState(GROUP_CHAT_MEMBERS_FEATURE_KEY, groupChatMembersReducer),
   provideState(GROUP_CHAT_MESSAGES_FEATURE_KEY, groupChatMessagesReducer),

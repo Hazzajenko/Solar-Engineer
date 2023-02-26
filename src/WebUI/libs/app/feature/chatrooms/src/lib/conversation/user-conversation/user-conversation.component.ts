@@ -33,7 +33,7 @@ import { MatInputModule } from '@angular/material/input'
 import { MatListModule } from '@angular/material/list'
 import { ActivatedRoute, Router } from '@angular/router'
 import { MessagesComponent } from '@app/messages'
-import { MessagesStoreService, SendMessageRequest } from '@app/data-access/messages'
+import { UserMessagesStoreService, SendMessageRequest } from '@app/data-access/messages'
 import { AuthStoreService } from '@auth/data-access/facades'
 import { LetModule } from '@ngrx/component'
 
@@ -124,7 +124,7 @@ import { UsersService, UsersStoreService } from '@app/data-access/users'
   standalone: true,
 })
 export class UserConversationComponent implements AfterViewInit {
-  private messagesStore = inject(MessagesStoreService)
+  private messagesStore = inject(UserMessagesStoreService)
   private authStore = inject(AuthStoreService)
   private dialog = inject(MatDialog)
   private router = inject(Router)
@@ -191,7 +191,7 @@ export class UserConversationComponent implements AfterViewInit {
     if (!this.recipient) return
 
     const request: SendMessageRequest = {
-      recipientUsername: this.recipient,
+      recipientUserId: this.recipient,
       content: message,
     }
 

@@ -9,7 +9,7 @@ import { GetOnlineUsers, UserIsOffline, UserIsOnline } from './connections.metho
 @Injectable({
   providedIn: 'root',
 })
-export class ConnectionsService {
+export class ConnectionsSignalrService {
   private hubConnection?: HubConnection
   private connectionsStore = inject(ConnectionsStoreService)
 

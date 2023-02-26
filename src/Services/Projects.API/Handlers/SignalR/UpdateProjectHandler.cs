@@ -1,10 +1,8 @@
-﻿using System.Security.Claims;
-using FluentValidation;
+﻿using FluentValidation;
 using Infrastructure.Extensions;
 using Infrastructure.Mapping;
 using Mediator;
 using Microsoft.AspNetCore.SignalR;
-using Projects.API.Contracts.Data;
 using Projects.API.Contracts.Requests;
 using Projects.API.Data;
 using Projects.API.Entities;
@@ -18,11 +16,12 @@ public sealed record UpdateProjectCommand
 public class
     UpdateProjectHandler : IRequestHandler<UpdateProjectCommand, bool>
 {
-    private readonly Logger<UpdateProjectHandler> _logger;
     private readonly IHubContext<ProjectsHub, IProjectsHub> _hubContext;
+    private readonly ILogger<UpdateProjectHandler> _logger;
     private readonly IProjectsUnitOfWork _unitOfWork;
 
-    public UpdateProjectHandler(Logger<UpdateProjectHandler> logger, IProjectsUnitOfWork unitOfWork, IHubContext<ProjectsHub, IProjectsHub> hubContext)
+    public UpdateProjectHandler(ILogger<UpdateProjectHandler> logger, IProjectsUnitOfWork unitOfWork,
+        IHubContext<ProjectsHub, IProjectsHub> hubContext)
     {
         _logger = logger;
         _unitOfWork = unitOfWork;
@@ -55,9 +54,9 @@ public class
             appUserProject.Project.Name = projectChanges.Name;
 
         await _unitOfWork.SaveChangesAsync();
-        
+
         var projectMemberIds = await _unitOfWork.AppUserProjectsRepository.GetProjectMemberIdsByProjectId(projectId);
-        
+
         await _hubContext.Clients.Users(projectMemberIds).UpdateProject(projectChanges);
 
         _logger.LogInformation("User {User} updated {Project}", appUserId.ToString(), projectId.ToString());

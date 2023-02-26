@@ -3,7 +3,6 @@ using System.Text.Json.Serialization;
 using Auth.API.Services;
 using FastEndpoints;
 using FastEndpoints.Swagger;
-using Infrastructure.Logging.Serilog;
 using Serilog;
 
 namespace Auth.API.Extensions.Application;
@@ -17,7 +16,7 @@ public static partial class WebApplicationExtensions
         if (app.Environment.IsDevelopment()) app.UseDefaultExceptionHandler();
 
         app.UseSerilogRequestLogging();
-        app.ConfigureSerilog();
+        // app.ConfigureSerilog();
 
         app.UseCors("corsPolicy");
         app.UseHttpsRedirection();

@@ -19,7 +19,7 @@
             class="flex flex-col flex-auto sm:max-h-120 divide-y overflow-y-auto bg-card"
           >
             &lt;!&ndash; Messages &ndash;&gt;
-            <ng-container *ngFor="let message of messages">
+            <ng-container *ngFor="let message of user-user-user-messages">
               <div class="flex group hover:bg-gray-50 dark:hover:bg-black dark:hover:bg-opacity-5">
                 <div
                   appConversationMessageDirective
@@ -29,7 +29,7 @@
                 >
                   <ng-container
                     *ngIf="{
-                      isLastMessage: message.id === messages[messages.length - 1].id,
+                      isLastMessage: message.id === user-user-user-messages[user-user-user-messages.length - 1].id,
                       isSelectedMessage: selectedConversationMessage?.id === message.id,
                       isUserSender: message.messageFrom === MessageFrom.CurrentUser
                     } as state"

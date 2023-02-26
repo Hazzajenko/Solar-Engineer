@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-  displayName: 'app-messages',
+  displayName: 'app-user-user-user-messages',
   preset: '../../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   globals: {
@@ -9,7 +9,7 @@ export default {
       stringifyContentPathRegex: '\\.(html|svg)$',
     },
   },
-  coverageDirectory: '../../../coverage/libs/app/messages',
+  coverageDirectory: '../../../coverage/libs/app/user-user-user-messages',
   transform: {
     '^.+\\.(ts|mjs|js|html)$': 'jest-preset-angular',
   },

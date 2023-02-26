@@ -121,7 +121,7 @@ export class ConversationComponent implements OnInit {
   /*  @ViewChild('viewport', { static: false }) viewport!: ElementRef<HTMLElement>*/
 
   messages$?: Observable<MessageModel[]>
-  // messages$: Observable<MessageModel[]> = this.messagesStore.select.messages$
+  // user-user-user-messages$: Observable<MessageModel[]> = this.messagesStore.select.user-user-user-messages$
   user$: Observable<UserModel | undefined> = this.authStore.select.user$
   selectedMessage?: MessageModel
   unreadFilter = false
@@ -159,7 +159,7 @@ export class ConversationComponent implements OnInit {
   ngOnInit() {
     if (this.recipient) {
       // this.messagesStore.dispatch.initMessagesWithUser(this.recipient)
-      // this.messages$ = this.messagesStore.select.messagesWithUser$(this.recipient)
+      // this.user-user-user-messages$ = this.messagesStore.select.messagesWithUser$(this.recipient)
     }
   }
 

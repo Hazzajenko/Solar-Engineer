@@ -11,11 +11,12 @@ namespace Users.API.Extensions.Services;
 
 public static class ServiceExtensions
 {
-    public static IServiceCollection AddAppServices(
+    public static IServiceCollection AddApplicationServices(
         this IServiceCollection services,
         IConfiguration config
     )
     {
+        services.AddMediator(options => { options.ServiceLifetime = ServiceLifetime.Transient; });
         services.AddTransient<GrpcExceptionInterceptor>();
         services.AddScoped<IAuthGrpcService, AuthGrpcService>();
         services.AddScoped<IUsersUnitOfWork, UsersUnitOfWork>();
@@ -26,7 +27,7 @@ public static class ServiceExtensions
         services.AddValidatorsFromAssemblyContaining<IApplicationMarker>(ServiceLifetime.Singleton);
 
         services.InitMassTransit();
-        
+
         services.AddDbContext<ConnectionsContext>(o => o.UseInMemoryDatabase("Connections"));
 
         return services;

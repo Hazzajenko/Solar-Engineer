@@ -1,1 +1,1 @@
-export * from './messages.effects'
+export * from './user-messages/user-messages.effects'

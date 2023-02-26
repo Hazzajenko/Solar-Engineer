@@ -12,34 +12,34 @@ export class MessagesRepository {
   private store = inject(Store)
   /*
     initMessagesWithUser(userName: string) {
-      this.store.dispatch(MessagesActions.initMessagesWithUser({ userName }))
+      this.store.dispatch(UserMessagesActions.initMessagesWithUser({ userName }))
     }
 
     sendMessageToUser(request: SendMessageRequest) {
-      this.store.dispatch(MessagesActions.sendMessageToUser({ request }))
+      this.store.dispatch(UserMessagesActions.sendMessageToUser({ request }))
     }
 
     addMessage(message: MessageModel) {
-      this.store.dispatch(MessagesActions.addMessage({ message }))
+      this.store.dispatch(UserMessagesActions.addMessage({ message }))
     }
 
-    addManyMessages(messages: MessageModel[]) {
-      this.store.dispatch(MessagesActions.addManyMessages({ messages }))
+    addManyMessages(user-user-user-messages: MessageModel[]) {
+      this.store.dispatch(UserMessagesActions.addManyMessages({ user-user-user-messages }))
     }
 
     updateMessage(update: Update<MessageModel>) {
-      this.store.dispatch(MessagesActions.updateMessage({ update }))
+      this.store.dispatch(UserMessagesActions.updateMessage({ update }))
     }
 
     markAllMessagesAsReadWithUser(recipient: string) {
-      this.store.dispatch(MessagesActions.markAllMessagesAsReadWithUser({ recipient }))
+      this.store.dispatch(UserMessagesActions.markAllMessagesAsReadWithUser({ recipient }))
     }
 
     updateManyMessages(updates: Update<MessageModel>[]) {
-      this.store.dispatch(MessagesActions.updateManyMessages({ updates }))
+      this.store.dispatch(UserMessagesActions.updateManyMessages({ updates }))
     }
 
     deleteMessage(messageId: number) {
-      this.store.dispatch(MessagesActions.deleteMessage({ messageId }))
+      this.store.dispatch(UserMessagesActions.deleteMessage({ messageId }))
     }*/
 }

@@ -1,16 +1,16 @@
 using Auth.API;
 using FastEndpoints;
 using FastEndpoints.Swagger;
+using Infrastructure.Authentication;
 using Infrastructure.Config;
 using Infrastructure.Data;
 using Infrastructure.Grpc;
-using Infrastructure.Logging.Serilog;
+using Infrastructure.Logging;
+using Infrastructure.SignalR;
 using Infrastructure.Web;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Options;
-using Serilog;
 using Users.API.Data;
-using Users.API.Extensions;
 using Users.API.Extensions.Application;
 using Users.API.Extensions.Services;
 
@@ -19,11 +19,12 @@ var builder = WebApplication.CreateBuilder(
     new WebApplicationOptions { Args = args, ContentRootPath = Directory.GetCurrentDirectory() }
 );
 // var appName = builder.RegisterSerilog();
+builder.ConfigureSerilog();
 
 var config = builder.Configuration;
 config.AddEnvironmentVariables("solarengineer_");
 
-builder.Host.UseSerilog(
+/*builder.Host.UseSerilog(
     (_, loggerConfig) =>
     {
         loggerConfig.WriteTo
@@ -32,12 +33,14 @@ builder.Host.UseSerilog(
                 config
             );
     }
-);
+);*/
 
-builder.Services.AddMediator(options => { options.ServiceLifetime = ServiceLifetime.Transient; });
-builder.Services.InitIdentityAuthUsers(config);
 
-builder.Services.AddAppServices(config);
+// builder.Services.InitIdentityAuthUsers(config);
+
+builder.Services.AddApplicationServices(config);
+builder.Services.ConfigureJwtAuthentication(config);
+builder.Services.AddAuthorization();
 
 builder.Services.InitDbContext<UsersContext>(config, builder.Environment);
 builder.Services.Configure<UrlsConfig>(config.GetSection("Urls"));
@@ -49,14 +52,15 @@ builder.Services.AddGrpcClient<AuthGrpc.AuthGrpcClient>((services, options) =>
     options.Address = new Uri(grpcAuth);
 }).AddInterceptor<GrpcExceptionInterceptor>();
 
-builder.Services.AddSignalR(options =>
+builder.Services.ConfigureSignalRWithRedis(builder.Environment);
+/*builder.Services.AddSignalR(options =>
 {
     options.DisableImplicitFromServicesParameters = true;
     // options.
     if (builder.Environment.IsDevelopment()) options.EnableDetailedErrors = true;
 }).AddStackExchangeRedis("localhost", options => {
     options.Configuration.ChannelPrefix = "SolarEngineerApp";
-});
+});*/
 
 
 const string corsPolicy = "CorsPolicy";

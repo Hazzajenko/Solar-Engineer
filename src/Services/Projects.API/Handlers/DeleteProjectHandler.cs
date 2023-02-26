@@ -16,10 +16,10 @@ public sealed record DeleteProjectCommand(
 
 public class DeleteProjectHandler : IRequestHandler<DeleteProjectCommand, bool>
 {
-    private readonly Logger<DeleteProjectHandler> _logger;
+    private readonly ILogger<DeleteProjectHandler> _logger;
     private readonly IProjectsUnitOfWork _unitOfWork;
 
-    public DeleteProjectHandler(Logger<DeleteProjectHandler> logger, IProjectsUnitOfWork unitOfWork)
+    public DeleteProjectHandler(ILogger<DeleteProjectHandler> logger, IProjectsUnitOfWork unitOfWork)
     {
         _logger = logger;
         _unitOfWork = unitOfWork;

@@ -48,16 +48,16 @@ export class MessagesFacade {
   error$ = this.store.select(MessagesSelectors.selectMessagesError)
   loaded$ = this.store.select(MessagesSelectors.selectMessagesLoaded)
   /*
-    get messages() {
-      return firstValueFrom(this.messages$)
+    get user-user-user-messages() {
+      return firstValueFrom(this.user-user-user-messages$)
     }
 
     messagesWithUser$(userName: string): Observable<MessageModel[]> {
       return this.store
         .select(MessagesSelectors.selectAllMessages)
         .pipe(
-          map((messages) =>
-            messages.filter(
+          map((user-user-user-messages) =>
+            user-user-user-messages.filter(
               (message) =>
                 message.senderUserName === userName || message.recipientUserName === userName,
             ),
@@ -68,14 +68,14 @@ export class MessagesFacade {
     get latestUserMessages$(): Observable<MessageModel[]> {
       return this.store.select(AuthSelectors.selectUser).pipe(
         switchMap((user) =>
-          this.messages$.pipe(
-            map((messages) => {
+          this.user-user-user-messages$.pipe(
+            map((user-user-user-messages) => {
               /!*         const orderedMessages = orderBy(
-                         messages,
+                         user-user-user-messages,
                          (m) => new Date(m.messageSentTime).getTime(),
                          'desc',
                        )*!/
-              const orderedMessages = messages.sort(
+              const orderedMessages = user-user-user-messages.sort(
                 (a: MessageModel, b: MessageModel) =>
                   new Date(b.messageSentTime).getTime() - new Date(a.messageSentTime).getTime(),
               )

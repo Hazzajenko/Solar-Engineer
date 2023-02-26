@@ -13,5 +13,5 @@ export interface GroupChatCombinedModel {
   latestSentMessage: GroupChatMessageModel
   members: GroupChatMemberModel[]
   messages: GroupChatMessageMemberModel[]
-  // messages: GroupChatMessageMemberModel[]
+  // user-user-user-messages: GroupChatMessageMemberModel[]
 }

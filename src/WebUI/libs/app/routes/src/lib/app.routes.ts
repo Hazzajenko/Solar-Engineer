@@ -22,7 +22,7 @@ export const appRoutes: Route[] = [
         resolve: { localProject: LocalProjectResolver },*/
   },
   {
-    path: 'success',
+    path: 'authorize',
     loadComponent: () => import('@auth/feature').then((m) => m.AuthenticatedPageComponent),
   },
   {
@@ -51,5 +51,10 @@ export const appRoutes: Route[] = [
     canActivate: [loggedInGuard],
     providers: [projectsProviders],
     resolve: { project: SelectProjectResolver },
+  },
+  {
+    path: '',
+    redirectTo: '',
+    pathMatch: 'full',
   },
 ]

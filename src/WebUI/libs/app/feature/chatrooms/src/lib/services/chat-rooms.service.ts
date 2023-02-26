@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core'
-import { MessagesStoreService } from '@app/data-access/messages'
+import { UserMessagesStoreService } from '@app/data-access/messages'
 import { GroupChatsStoreService } from '@app/data-access/group-chats'
 import { BehaviorSubject, combineLatest, map } from 'rxjs'
 import { MessageTimeSortModel } from '@shared/data-access/models'
@@ -9,7 +9,7 @@ import { AuthStoreService } from '@auth/data-access/facades'
   providedIn: 'root',
 })
 export class ChatRoomsService {
-  private messagesStore = inject(MessagesStoreService)
+  private messagesStore = inject(UserMessagesStoreService)
   private authStore = inject(AuthStoreService)
   private groupChatsStore = inject(GroupChatsStoreService)
   private _chatRoomToMessage$ = new BehaviorSubject<MessageTimeSortModel | undefined>(undefined)

@@ -2,6 +2,7 @@
 using System.Text.Json.Serialization;
 using FastEndpoints;
 using FastEndpoints.Swagger;
+using Projects.API.Hubs;
 using Serilog;
 
 namespace Projects.API.Extensions.Application;
@@ -23,12 +24,14 @@ public static class WebApplicationExtensions
             options.Serializer.Options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
             options.Serializer.Options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
         });
-        
+
         if (app.Environment.IsDevelopment())
         {
             app.UseOpenApi();
             app.UseSwaggerUi3(x => x.ConfigureDefaults());
         }
+
+        app.MapHub<ProjectsHub>("hubs/projects");
 
         return app;
     }

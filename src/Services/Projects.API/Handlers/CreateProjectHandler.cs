@@ -13,10 +13,10 @@ public sealed record CreateProjectCommand
 public class
     CreateProjectHandler : IRequestHandler<CreateProjectCommand, bool>
 {
-    private readonly Logger<CreateProjectHandler> _logger;
+    private readonly ILogger _logger;
     private readonly IProjectsUnitOfWork _unitOfWork;
 
-    public CreateProjectHandler(Logger<CreateProjectHandler> logger, IProjectsUnitOfWork unitOfWork)
+    public CreateProjectHandler(ILogger<CreateProjectHandler> logger, IProjectsUnitOfWork unitOfWork)
     {
         _logger = logger;
         _unitOfWork = unitOfWork;

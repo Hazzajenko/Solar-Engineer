@@ -208,7 +208,7 @@ export class GroupChatsFacade {
       ),
       map(
         (messages) => sortByMessageSentTime<GroupChatMessageMemberModel>(messages),
-        /*        messages.sort((a: GroupChatMessageMemberModel, b: GroupChatMessageMemberModel) => {
+        /*        user-user-user-messages.sort((a: GroupChatMessageMemberModel, b: GroupChatMessageMemberModel) => {
                   return new Date(a.messageSentTime).getTime() - new Date(b.messageSentTime).getTime()
                 }),*/
       ),
@@ -241,7 +241,7 @@ export class GroupChatsFacade {
     return this.getMessagesAndServerMessagesCombined$(groupChatId).pipe(
       switchMap((messages) => combineLatest(this.combineMessagesWithWebUsers$(messages))),
       map((messages) => sortByMessageSentTime<GroupChatMessageMemberModel>(messages)),
-      // map((messages) => messages.map(message => ({...message} as CombinedMessageUserModel)),
+      // map((user-user-user-messages) => user-user-user-messages.map(message => ({...message} as CombinedMessageUserModel)),
     )
   }
 

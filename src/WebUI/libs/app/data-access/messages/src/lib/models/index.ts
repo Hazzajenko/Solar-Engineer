@@ -1,1 +1,2 @@
-export * from './send-message.request'
+export * from './requests/index'
+export * from './responses/index'

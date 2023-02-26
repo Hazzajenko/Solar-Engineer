@@ -41,7 +41,7 @@ import { MessageDirective } from './message.directive'
 import { SortMessagesPipe } from './sort-messages.pipe'
 
 @Component({
-  selector: 'app-messages-component',
+  selector: 'app-user-user-user-messages-component',
   templateUrl: './messages.component.html',
   styles: [],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -103,7 +103,7 @@ export class MessagesComponent {
 
   markAllMessagesAsRead(messages: MessageModel[]) {
     if (!messages) return
-    /*   const unreadMessages = messages.filter(
+    /*   const unreadMessages = user-user-user-messages.filter(
          (message) => message.status === NotificationStatus.Unread,
        )*/
     // if (!unreadMessages) return

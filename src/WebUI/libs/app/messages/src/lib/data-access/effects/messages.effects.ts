@@ -1,7 +1,7 @@
 /*
 import { inject, Injectable } from '@angular/core'
 import { MatSnackBar } from '@angular/material/snack-bar'
-import { MessagesSignalrService } from '@app/data-access/signalr'
+import { UserMessagesSignalrService } from '@app/data-access/signalr'
 import { AuthActions } from '@auth/data-access/store'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { Update } from '@ngrx/entity'
@@ -10,18 +10,18 @@ import { MessageModel, NotificationStatus } from '@shared/data-access/models'
 
 import { map, switchMap, tap } from 'rxjs/operators'
 import { GroupChatsService } from '../../../../../data-access/group-chats/src/lib'
-import { MessagesService } from '../api'
-import { MessagesActions, MessagesSelectors } from '../store'
+import { UserMessagesService } from '../api'
+import { UserMessagesActions, MessagesSelectors } from '../store'
 
 @Injectable({
   providedIn: 'root',
 })
-export class MessagesEffects {
+export class UserMessagesEffects {
   private actions$ = inject(Actions)
   private store = inject(Store)
-  private messagesService = inject(MessagesService)
+  private messagesService = inject(UserMessagesService)
   private groupChatsService = inject(GroupChatsService)
-  private messagesSignalR = inject(MessagesSignalrService)
+  private messagesSignalR = inject(UserMessagesSignalrService)
   private snackBar = inject(MatSnackBar)
   initMessages$ = createEffect(() =>
     this.actions$.pipe(
@@ -32,7 +32,7 @@ export class MessagesEffects {
       switchMap(() =>
         this.messagesService
           .getLatestUserMessages()
-          .pipe(map((messages) => MessagesActions.addManyMessages({ messages }))),
+          .pipe(map((user-user-user-messages) => UserMessagesActions.addManyMessages({ user-user-user-messages }))),
       ),
     ),
   )
@@ -43,7 +43,7 @@ export class MessagesEffects {
           ofType(GroupChatMessagesActions.initMessagesWithUser),
           switchMap(({ userName }) => this.messagesService.getAllMessagesWithUser(userName).pipe(
             // switchMap(({ userName }) => this.messagesService.getAllMessagesWithUser(userName).pipe(
-            map(({ messages }) => GroupChatMessagesActions.addManyMessages({ messages })),
+            map(({ user-user-user-messages }) => GroupChatMessagesActions.addManyMessages({ user-user-user-messages })),
           )),
         ),
     )*!/
@@ -51,7 +51,7 @@ export class MessagesEffects {
   initMessagesConnectionWithUser$ = createEffect(
     () =>
       this.actions$.pipe(
-        ofType(MessagesActions.initMessagesWithUser),
+        ofType(UserMessagesActions.initMessagesWithUser),
         map(({ userName }) => this.messagesService.getMessagesWithUserSignalR(userName)),
       ),
     { dispatch: false },
@@ -72,7 +72,7 @@ export class MessagesEffects {
   sendMessageToUserSignalR$ = createEffect(
     () =>
       this.actions$.pipe(
-        ofType(MessagesActions.sendMessageToUser),
+        ofType(UserMessagesActions.sendMessageToUser),
         map(({ request }) => this.messagesService.sendMessageToUserSignalR(request)),
       ),
     { dispatch: false },
@@ -81,7 +81,7 @@ export class MessagesEffects {
   addMessage$ = createEffect(
     () =>
       this.actions$.pipe(
-        ofType(MessagesActions.addReceivedMessage),
+        ofType(UserMessagesActions.addReceivedMessage),
         map(({ message }) => {
           const messageFrom = message.senderUserName
           this.snackBar.open(`New message from ${messageFrom}!`, 'OK', {
@@ -95,7 +95,7 @@ export class MessagesEffects {
   updateMessage$ = createEffect(
     () =>
       this.actions$.pipe(
-        ofType(MessagesActions.updateMessage),
+        ofType(UserMessagesActions.updateMessage),
         switchMap(({ update }) => this.messagesService.updateMessage(update)),
       ),
     { dispatch: false },
@@ -104,7 +104,7 @@ export class MessagesEffects {
   updateManyMessages$ = createEffect(
     () =>
       this.actions$.pipe(
-        ofType(MessagesActions.updateManyMessages),
+        ofType(UserMessagesActions.updateManyMessages),
         switchMap(({ updates }) => this.messagesService.updateManyMessages(updates)),
       ),
     { dispatch: false },
@@ -113,13 +113,13 @@ export class MessagesEffects {
   markAllMessagesAsReadWithUser$ = createEffect(
     () =>
       this.actions$.pipe(
-        ofType(MessagesActions.markAllMessagesAsReadWithUser),
+        ofType(UserMessagesActions.markAllMessagesAsReadWithUser),
         switchMap(({ recipient }) =>
           this.store
             .select(MessagesSelectors.selectAllMessages)
             .pipe(
-              map((messages) =>
-                messages.filter(
+              map((user-user-user-messages) =>
+                user-user-user-messages.filter(
                   (message) =>
                     message.senderUserName === recipient &&
                     message.status === NotificationStatus.Unread,
@@ -137,7 +137,7 @@ export class MessagesEffects {
                   }
                   return update
                 })
-                return MessagesActions.updateManyMessages({ updates })
+                return UserMessagesActions.updateManyMessages({ updates })
               }),
             ),
         ),

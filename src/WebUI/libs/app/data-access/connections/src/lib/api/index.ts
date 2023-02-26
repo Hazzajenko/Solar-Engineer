@@ -1,1 +1,1 @@
-export * from './connections.service'
+export * from './connections-signalr.service'

@@ -1,13 +1,13 @@
 import { Update } from '@ngrx/entity'
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
 import { MessageModel } from '@shared/data-access/models'
-import { SendMessageRequest } from '../models'
+import { SendMessageRequest } from '../../models'
 
-export const MessagesActions = createActionGroup({
+export const UserMessagesActions = createActionGroup({
   source: 'Messages Store',
   events: {
     'Init Messages': emptyProps(),
-    'Init Messages With User': props<{ userName: string }>(),
+    'Init Messages With User': props<{ userId: string }>(),
     'Send Message To User': props<{ request: SendMessageRequest }>(),
     'Add Message': props<{ message: MessageModel }>(),
     'Add Received Message': props<{ message: MessageModel }>(),

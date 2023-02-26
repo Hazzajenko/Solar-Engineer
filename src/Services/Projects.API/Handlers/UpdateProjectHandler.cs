@@ -16,10 +16,10 @@ public sealed record UpdateProjectCommand(
 
 public class UpdateProjectHandler : IRequestHandler<UpdateProjectCommand, bool>
 {
-    private readonly Logger<UpdateProjectHandler> _logger;
+    private readonly ILogger<UpdateProjectHandler> _logger;
     private readonly IProjectsUnitOfWork _unitOfWork;
 
-    public UpdateProjectHandler(Logger<UpdateProjectHandler> logger, IProjectsUnitOfWork unitOfWork)
+    public UpdateProjectHandler(ILogger<UpdateProjectHandler> logger, IProjectsUnitOfWork unitOfWork)
     {
         _logger = logger;
         _unitOfWork = unitOfWork;

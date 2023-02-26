@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { map } from 'rxjs/operators'
-import { ConnectionsService } from '../api'
+import { ConnectionsSignalrService } from '../api'
 import { AuthActions } from '@auth/data-access'
 
 @Injectable({
@@ -9,7 +9,7 @@ import { AuthActions } from '@auth/data-access'
 })
 export class ConnectionsEffects {
   private actions$ = inject(Actions)
-  private connectionsService = inject(ConnectionsService)
+  private connectionsService = inject(ConnectionsSignalrService)
   initConnections$ = createEffect(
     () =>
       this.actions$.pipe(

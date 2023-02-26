@@ -1,7 +1,7 @@
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity'
 import { GroupChatServerMessageModel } from '@shared/data-access/models'
 
-export const GROUP_CHAT_SERVER_MESSAGES_FEATURE_KEY = 'group-chat-messages'
+export const GROUP_CHAT_SERVER_MESSAGES_FEATURE_KEY = 'group-chat-user-user-user-messages'
 
 export interface GroupChatServerMessagesState extends EntityState<GroupChatServerMessageModel> {
   loaded: boolean

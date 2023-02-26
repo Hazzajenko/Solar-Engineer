@@ -17,10 +17,10 @@ public class
     CreateGroupChatHandler : IRequestHandler<CreateGroupChatCommand, bool>
 {
     private readonly IHubContext<MessagesHub, IMessagesHub> _hubContext;
-    private readonly Logger<CreateGroupChatHandler> _logger;
+    private readonly ILogger<CreateGroupChatHandler> _logger;
     private readonly IMessagesUnitOfWork _unitOfWork;
 
-    public CreateGroupChatHandler(IMessagesUnitOfWork unitOfWork, Logger<CreateGroupChatHandler> logger,
+    public CreateGroupChatHandler(IMessagesUnitOfWork unitOfWork, ILogger<CreateGroupChatHandler> logger,
         IHubContext<MessagesHub, IMessagesHub> hubContext)
     {
         _unitOfWork = unitOfWork;

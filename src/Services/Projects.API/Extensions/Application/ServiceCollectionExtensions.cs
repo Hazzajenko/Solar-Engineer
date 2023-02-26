@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.IdentityModel.Tokens;
 using Projects.API.Data;
+using Projects.API.Repositories.AppUserProjects;
 using Projects.API.Repositories.Projects;
 
 namespace Projects.API.Extensions.Application;
@@ -18,37 +19,42 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IUserIdProvider, HubsUserIdProvider>();
         services.AddScoped<IProjectsUnitOfWork, ProjectsUnitOfWork>();
         services.AddScoped<IProjectsRepository, ProjectsRepository>();
+        services.AddScoped<IAppUserProjectsRepository, AppUserProjectsRepository>();
         services.AddMediator(options => { options.ServiceLifetime = ServiceLifetime.Transient; });
-        services.AddJwtAuthentication(config);
+        // services.AddJwtAuthentication(config);
 
         return services;
     }
 
-    private static IServiceCollection AddJwtAuthentication(this IServiceCollection services,
-        IConfiguration config)
+    private static IServiceCollection AddJwtAuthentication(
+        this IServiceCollection services,
+        IConfiguration config
+    )
     {
-        services.AddAuthentication(x =>
-        {
-            x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-        }).AddJwtBearer(x =>
-        {
-            x.TokenValidationParameters = new TokenValidationParameters
+        services
+            .AddAuthentication(x =>
             {
-                IssuerSigningKey = new SymmetricSecurityKey(
-                    Encoding.UTF8.GetBytes(config["Jwt:Key"]!)),
-                ValidateIssuerSigningKey = true,
-                ValidateLifetime = true,
-                ValidIssuer = config["Jwt:Issuer"],
-                ValidAudience = config["Jwt:Audience"],
-                ValidateIssuer = true,
-                ValidateAudience = true
-            };
-        });
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(x =>
+            {
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(config["Jwt:Key"]!)
+                    ),
+                    ValidateIssuerSigningKey = true,
+                    ValidateLifetime = true,
+                    ValidIssuer = config["Jwt:Issuer"],
+                    ValidAudience = config["Jwt:Audience"],
+                    ValidateIssuer = true,
+                    ValidateAudience = true
+                };
+            });
 
         services.AddAuthorization();
-
 
         return services;
     }

@@ -3,11 +3,13 @@ import { AuthService } from '../api'
 import { AuthActions } from '../store'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { catchError, map, of, switchMap, tap } from 'rxjs'
+import { Router } from '@angular/router'
 
 @Injectable()
 export class AuthEffects {
   private actions$ = inject(Actions)
   private authService = inject(AuthService)
+  private router = inject(Router)
 
   getRedirect$ = createEffect(
     () =>
@@ -17,7 +19,7 @@ export class AuthEffects {
           window.location.href = '/auth/login/google'
         }),
       ),
-    { dispatch: false },
+    // { dispatch: false },
   )
 
   authorizeRequest$ = createEffect(() =>
@@ -32,20 +34,40 @@ export class AuthEffects {
     ),
   )
 
-  connectToSignalR$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(AuthActions.signInSuccess),
-      switchMap(() =>
-        this.authService.getCurrentUser().pipe(
-          map(({ user }) => AuthActions.getCurrentUserSuccess({ user })),
-          catchError((error: Error) => {
-            console.error(error)
-            return of(AuthActions.getCurrentUserError({ error: error.message }))
-          }),
+  /*  signInSuccess$ = createEffect(() =>
+      this.actions$.pipe(
+        ofType(AuthActions.signInSuccess),
+        tap(() => {
+          this.router
+            .navigateByUrl('')
+            .then()
+            .catch((err) => console.error(err))
+        }),
+      ),
+    )*/
+
+  /*  connectToSignalR$ = createEffect(() =>
+      this.actions$.pipe(
+        ofType(AuthActions.signInSuccess),
+        /!*      tap(
+                () => {
+                  this.router
+                    .navigateByUrl('')
+                    .then()
+                    .catch((err) => console.error(err))
+                },
+              ),*!/
+        switchMap(() =>
+          this.authService.getCurrentUser().pipe(
+            map(({ user }) => AuthActions.getCurrentUserSuccess({ user })),
+            catchError((error: Error) => {
+              console.error(error)
+              return of(AuthActions.getCurrentUserError({ error: error.message }))
+            }),
+          ),
         ),
       ),
-    ),
-  )
+    )*/
 
   getCurrentUser$ = createEffect(() =>
     this.actions$.pipe(

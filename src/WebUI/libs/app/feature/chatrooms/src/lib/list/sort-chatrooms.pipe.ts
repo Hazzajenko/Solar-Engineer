@@ -9,8 +9,7 @@ export class SortChatroomsPipe implements PipeTransform {
   transform(messages: MessageTimeSortModel[] | undefined | null) {
     if (!messages) return
 
-    // const array = [...messages]
-
+    // const array = [...user-user-user-messages]
 
     return [...messages].sort((a: MessageTimeSortModel, b: MessageTimeSortModel) => {
       return (

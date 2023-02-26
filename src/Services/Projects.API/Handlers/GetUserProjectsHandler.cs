@@ -3,7 +3,6 @@ using Infrastructure.Extensions;
 using Mediator;
 using Projects.API.Contracts.Data;
 using Projects.API.Data;
-using Projects.API.Entities;
 
 namespace Projects.API.Handlers;
 
@@ -13,10 +12,10 @@ public sealed record GetUserProjectsQuery
 public class
     GetUserProjectsHandler : IRequestHandler<GetUserProjectsQuery, IEnumerable<ProjectDto>>
 {
-    private readonly Logger<GetUserProjectsHandler> _logger;
+    private readonly ILogger<GetUserProjectsHandler> _logger;
     private readonly IProjectsUnitOfWork _unitOfWork;
 
-    public GetUserProjectsHandler(Logger<GetUserProjectsHandler> logger, IProjectsUnitOfWork unitOfWork)
+    public GetUserProjectsHandler(ILogger<GetUserProjectsHandler> logger, IProjectsUnitOfWork unitOfWork)
     {
         _logger = logger;
         _unitOfWork = unitOfWork;

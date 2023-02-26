@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-  displayName: 'app-data-access-messages',
+  displayName: 'app-data-access-user-user-user-messages',
   preset: '../../../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   globals: {
@@ -9,7 +9,7 @@ export default {
       stringifyContentPathRegex: '\\.(html|svg)$',
     },
   },
-  coverageDirectory: '../../../../coverage/libs/app/data-access/messages',
+  coverageDirectory: '../../../../coverage/libs/app/data-access/user-user-user-messages',
   transform: {
     '^.+\\.(ts|mjs|js|html)$': 'jest-preset-angular',
   },

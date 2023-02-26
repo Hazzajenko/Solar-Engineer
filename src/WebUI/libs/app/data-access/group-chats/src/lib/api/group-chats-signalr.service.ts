@@ -16,10 +16,10 @@ import { Update } from '@ngrx/entity'
 })
 export class GroupChatsSignalrService {
   private groupChatsStore = inject(GroupChatsStoreService)
-  // private messagesSignalrService = inject(MessagesSignalrService)
+  // private messagesSignalrService = inject(UserMessagesSignalrService)
   private messagesSignalrService = inject(MessagesSignalrService)
 
-  // private messagesHub = inject(MessagesSignalrService).messagesHub
+  // private messagesHub = inject(UserMessagesSignalrService).messagesHub
 
   init() {
     this.onGetGroupChatMessages()

@@ -6,23 +6,22 @@ using Auth.API.Extensions.ServiceCollection;
 using FastEndpoints;
 using FastEndpoints.Swagger;
 using Infrastructure.Data;
-using Infrastructure.Logging.Serilog;
+using Infrastructure.Logging;
 using Infrastructure.Web;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(
     new WebApplicationOptions { Args = args, ContentRootPath = Directory.GetCurrentDirectory() }
 );
 // var appName = builder.RegisterSerilog();
+builder.ConfigureSerilog();
 
 var config = builder.Configuration;
 config.AddEnvironmentVariables("solarengineer_");
 
-var appName = builder.RegisterSerilog();
+// var appName = builder.RegisterSerilog();
 
 var entryAssembly = Assembly.GetEntryAssembly();
 ArgumentNullException.ThrowIfNull(entryAssembly);
@@ -76,10 +75,3 @@ catch (Exception ex)
 }
 
 await app.RunAsync();
-
-
-public partial class Program
-{
-    public static string Namespace = typeof(Program).Namespace;
-    public static string AppName = Namespace.Substring(Namespace.LastIndexOf('.', Namespace.LastIndexOf('.') - 1) + 1);
-}

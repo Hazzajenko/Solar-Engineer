@@ -52,7 +52,7 @@ export class HomeComponent implements OnInit {
   private router = inject(Router)
   private projectsStore = inject(ProjectsFacade)
   private authStore = inject(AuthStoreService)
-  // private connectionsService = inject(ConnectionsService)
+  // private connectionsService = inject(ConnectionsSignalrService)
   private connectionsStore = inject(ConnectionsStoreService)
   private http = inject(HttpClient)
   private hubConnection: any

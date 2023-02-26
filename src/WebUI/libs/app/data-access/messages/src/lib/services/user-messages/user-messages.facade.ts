@@ -3,14 +3,12 @@ import { AuthSelectors } from '@auth/data-access/store'
 import { Store } from '@ngrx/store'
 import {
   CombinedMessageUserModel,
-  GroupChatMessageMemberModel,
-  MessageFrom,
   MessageModel,
   MessageWebUserModel,
 } from '@shared/data-access/models'
 import { combineLatest, combineLatestWith, firstValueFrom, Observable, of } from 'rxjs'
 import { map, switchMap } from 'rxjs/operators'
-import { MessagesSelectors } from '../store'
+import { MessagesSelectors } from '../../store/user-messages'
 import { ConnectionsStoreService } from '@app/data-access/connections'
 import { UsersStoreService } from '@app/data-access/users'
 import { sortByMessageSentTime } from '@shared/utils'
@@ -18,7 +16,7 @@ import { sortByMessageSentTime } from '@shared/utils'
 @Injectable({
   providedIn: 'root',
 })
-export class MessagesFacade {
+export class UserMessagesFacade {
   private store = inject(Store)
   private connectionsStore = inject(ConnectionsStoreService)
   private usersStore = inject(UsersStoreService)
