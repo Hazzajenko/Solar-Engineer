@@ -34,7 +34,12 @@ public static class LoggingExtensions
             loggerConfig
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
                 .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
+                .MinimumLevel.Override("Microsoft.AspNetCore.SignalR", LogEventLevel.Information)
+                .MinimumLevel.Override("Microsoft.AspNetCore.Http.Connections", LogEventLevel.Information)
                 .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Error);
+
+            /*logging.AddFilter("Microsoft.AspNetCore.SignalR", LogLevel.Debug);
+            logging.AddFilter("Microsoft.AspNetCore.Http.Connections", LogLevel.Debug);*/
         });
 
         return builder;

@@ -19,11 +19,14 @@ import { MessagesSignalrService } from '../messages-signalr.service'
 export class GroupChatsSignalrService {
   private groupChatsStore = inject(GroupChatsStoreService)
   private messagesSignalRService = inject(MessagesSignalrService)
-  messagesHubConnection: HubConnection =
-    this.messagesSignalRService.messagesHubConnection ??
-    throwExpression('Not connected to messages hub')
+  messagesHubConnection?: HubConnection
 
-  initGroupChatsHandlers() {
+  /*  messagesHubConnection: HubConnection =
+      this.messagesSignalRService.messagesHubConnection ??
+      throwExpression('Not connected to messages hub')*/
+
+  initGroupChatsHandlers(messagesHubConnection: HubConnection) {
+    this.messagesHubConnection = messagesHubConnection
     this.messagesHubConnection.on(GetGroupChatMessages, (messages: GroupChatMessageModel[]) => {
       this.groupChatsStore.dispatch.addManyGroupChatMessages(messages)
     })
@@ -38,12 +41,14 @@ export class GroupChatsSignalrService {
   }
 
   getMessagesWithGroupChat(groupChatId: number) {
+    if (!this.messagesHubConnection) return
     this.messagesHubConnection
       .invoke(GetGroupChatMessages, groupChatId)
       .catch((error) => console.error(error))
   }
 
   sendMessageToGroupChat(request: SendGroupChatMessageRequest) {
+    if (!this.messagesHubConnection) return
     return this.messagesHubConnection
       .invoke(SendMessageToGroupChat, request)
       .catch((error) => console.error(error))

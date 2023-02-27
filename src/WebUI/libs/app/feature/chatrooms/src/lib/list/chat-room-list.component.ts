@@ -39,7 +39,7 @@ import { ScrollViewportDirective } from '../../../../../messages/src/lib/feature
 import { SortConversationMessagesPipe } from '../../../../../messages/src/lib/feature/conversation/sort-conversation-messages.pipe'
 import { ChatRoomsService } from '../services/chat-rooms.service'
 import { SortChatroomsPipe } from './sort-chatrooms.pipe'
-import { TruncatePipe } from '../../../../../../shared/pipes/src/lib/text/truncate.pipe'
+import { TruncatePipe } from '../../../../../../shared/pipes/src/lib/text'
 import { GroupChatMemberItemComponent } from '../conversation/member-item/group-chat-member-item.component'
 import { MatMenuModule } from '@angular/material/menu'
 

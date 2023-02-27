@@ -6,10 +6,11 @@ import { AllMessagesResponse } from '../../models/responses/all-messages.respons
 
 import { MessageResponse } from '../../models/responses/message.response'
 import { MessagesFilter } from '../../models/requests/messages.filter'
-import { SendMessageRequest } from '../../models'
+// import { SendMessageRequest } from '../../models'
 import { ManyLatestUserMessagesResponse } from '../../models/responses/many-latest-user-messages.response'
 import { map } from 'rxjs/operators'
 import { Observable } from 'rxjs'
+import { SendMessageRequest } from '../../models/requests/send-message.request'
 
 @Injectable({
   providedIn: 'root',

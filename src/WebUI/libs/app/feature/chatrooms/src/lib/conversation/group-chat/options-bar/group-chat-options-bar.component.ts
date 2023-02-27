@@ -24,7 +24,7 @@ import {
 import { Router } from '@angular/router'
 import { MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog'
 
-import { UsernameProfileComponent } from '@app/feature/userName-profile'
+// import { UsernameProfileComponent } from '@app/feature/userName-profile'
 import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
 import { ViewGroupChatMembersComponent } from '../view-members/view-group-chat-members.component'
@@ -57,7 +57,7 @@ import { CreateGroupChatRequest } from '@app/data-access/group-chats'
 export class GroupChatOptionsBarComponent {
   private router = inject(Router)
   private dialog = inject(MatDialog)
-  private dialogRef = inject(MatDialogRef<UsernameProfileComponent>)
+  // private dialogRef = inject(MatDialogRef<UsernameProfileComponent>)
   menuTopLeftPosition = { x: '0', y: '0' }
   @ViewChild(MatMenuTrigger, { static: true })
   matMenuTrigger!: MatMenuTrigger
@@ -71,7 +71,7 @@ export class GroupChatOptionsBarComponent {
     this.matMenuTrigger.openMenu()
   }
 
-  editChatRoomName() {}
+  // editChatRoomName() {}
 
   viewGroupChatMembers() {
     const dialogConfig = {

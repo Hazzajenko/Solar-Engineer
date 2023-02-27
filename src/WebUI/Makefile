@@ -86,3 +86,9 @@ remove:
 
 rm:
 	nx generate @nrwl/workspace:remove --project ${name} --forceRemove
+
+build-nocache2:
+	docker build . -t angularclient:1.0.1  --no-cache --pull
+
+docker-build-client2:
+	docker build . -t angularclient:1.0.1

@@ -15,11 +15,11 @@ export class AuthEffects {
     () =>
       this.actions$.pipe(
         ofType(AuthActions.loginWithGoogle),
-        tap(() => {
+        map(() => {
           window.location.href = '/auth/login/google'
         }),
       ),
-    // { dispatch: false },
+    { dispatch: false },
   )
 
   authorizeRequest$ = createEffect(() =>

@@ -82,5 +82,13 @@ export class AppComponent implements OnInit {
       }
     })
     this.authStore.dispatch.isReturningUser()
+    this.http
+      .get('/gateway/users/test')
+      // .pipe(catchError(() => EMPTY))
+      .subscribe((res) => {
+        // console.log(res)
+        console.log('/gateway/users/test', res)
+        // /*      window.location.href = `${res}`*/
+      })
   }
 }

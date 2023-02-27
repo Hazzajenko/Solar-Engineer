@@ -2,8 +2,9 @@ import { inject, Injectable } from '@angular/core'
 import { Update } from '@ngrx/entity'
 import { Store } from '@ngrx/store'
 import { MessageModel } from '@shared/data-access/models'
-import { SendMessageRequest } from '../../models'
+// import { SendMessageRequest } from '../../models'
 import { UserMessagesActions } from '../../store'
+import { SendMessageRequest } from '../../models/requests/send-message.request'
 
 @Injectable({
   providedIn: 'root',

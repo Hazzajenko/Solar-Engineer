@@ -8,11 +8,11 @@ COPY ./package.json .
 RUN npm install
 COPY . .
 ENV NODE_ENV=production
-RUN npx nx build design --configuration=production
+RUN npx nx build web --configuration=production
 # RUN npm run build
 
 FROM nginx as runtime
-COPY --from=build /app/dist/apps/design /usr/share/nginx/html
+COPY --from=build /app/dist/apps/web /usr/share/nginx/html
 #COPY ["./conf/http.conf","/etc/nginx/conf.d/default.conf"]
 COPY ["./conf/default.conf","/etc/nginx/conf.d/default.conf"]
 #COPY ["./ssl/solarengineer_app.crt","/etc/ssl/certs/solarengineer_app.crt"]

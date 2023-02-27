@@ -24,20 +24,20 @@ export class UserMessagesEffects {
   private groupChatsSignalR = inject(GroupChatsSignalrService)
   private messagesSignalrService = inject(UserMessagesSignalrService)
   private snackBar = inject(MatSnackBar)
-  initMessages$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(AuthActions.signInSuccess),
-      tap(({ token }) => this.messagesSignalrService.initUserMessagesHandlers(token)),
-      // tap(() => this.messagesService.waitForGetMessages()),
-      tap(() => this.groupChatsSignalR.init()),
-      // tap(() => this.groupChatsSignalR.onGetGroupChatServerMessages()),
-      switchMap(() =>
-        this.messagesService
-          .getLatestUserMessages()
-          .pipe(map((messages) => UserMessagesActions.addManyMessages({ messages }))),
+  /*  initMessages$ = createEffect(() =>
+      this.actions$.pipe(
+        ofType(AuthActions.signInSuccess),
+        tap(({ token }) => this.messagesSignalrService.initUserMessagesHandlers(token)),
+        // tap(() => this.messagesService.waitForGetMessages()),
+        tap(() => this.groupChatsSignalR.init()),
+        // tap(() => this.groupChatsSignalR.onGetGroupChatServerMessages()),
+        switchMap(() =>
+          this.messagesService
+            .getLatestUserMessages()
+            .pipe(map((messages) => UserMessagesActions.addManyMessages({ messages }))),
+        ),
       ),
-    ),
-  )
+    )*/
 
   /*  initMessagesWithUser$ = createEffect(
       () =>

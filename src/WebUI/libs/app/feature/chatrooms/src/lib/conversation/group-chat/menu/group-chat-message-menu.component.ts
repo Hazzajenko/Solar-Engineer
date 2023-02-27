@@ -25,7 +25,7 @@ import {
 import { Router } from '@angular/router'
 import { MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog'
 
-import { UsernameProfileComponent } from '@app/feature/userName-profile'
+// import { UsernameProfileComponent } from '@app/feature/userName-profile'
 
 @Component({
   selector: 'app-group-chat-message-menu-component',
@@ -51,7 +51,7 @@ import { UsernameProfileComponent } from '@app/feature/userName-profile'
 export class GroupChatMessageMenuComponent {
   private router = inject(Router)
   private dialog = inject(MatDialog)
-  private dialogRef = inject(MatDialogRef<UsernameProfileComponent>)
+  // private dialogRef = inject(MatDialogRef<UsernameProfileComponent>)
   // private dialogRef: MatDialogRef<AppUserItemComponent>
   @Input() message!: GroupChatMessageMemberModel
 
@@ -66,7 +66,7 @@ export class GroupChatMessageMenuComponent {
       },
     } as MatDialogConfig
 
-    this.dialog.open(UsernameProfileComponent, dialogConfig)
+    // this.dialog.open(UsernameProfileComponent, dialogConfig)
     /*
         this.dialogRef
           .afterClosed()

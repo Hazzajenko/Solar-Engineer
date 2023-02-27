@@ -34,8 +34,8 @@
           "budgets": [
             {
               "type": "initial",
-              "maximumWarning": "500kb",
-              "maximumError": "1mb"
+              "maximumWarning": "5mb",
+              "maximumError": "10mb"
             },
             {
               "type": "anyComponentStyle",
@@ -61,7 +61,7 @@
       "options": {
         "browserTarget": "design:build",
         "proxyConfig": "apps/web/proxy.conf.json",
-        "ssl": true,
+        "ssl": false,
         "sslKey": "ssl/localhost.key",
         "sslCert": "ssl/localhost.crt"
       },

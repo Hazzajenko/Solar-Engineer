@@ -25,7 +25,7 @@ import { ShowHideComponent } from '@shared/ui/show-hide'
 import { GetCdnUrlStringPipe, GetFullUrlPipe, TimeDifferenceFromNowPipe } from '@shared/pipes'
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
 import { fadeInAnimation, fadeInAnimationX2 } from '@shared/animations'
-import { UsernameProfileComponent } from '@app/feature/userName-profile'
+// import { UsernameProfileComponent } from '@app/feature/userName-profile'
 import { RecipientUserProfileComponent } from '@app/feature/recipient-user-profile'
 
 @Component({

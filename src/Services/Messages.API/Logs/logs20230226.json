@@ -7,3 +7,5 @@
 {"@t":"2023-02-26T04:44:09.0542696Z","@mt":"Hosting environment: {EnvName}","EnvName":"Development","SourceContext":"Microsoft.Hosting.Lifetime","Application":"messages-service"}
 {"@t":"2023-02-26T04:44:09.0548174Z","@mt":"Content root path: {ContentRoot}","ContentRoot":"C:\\Users\\jenki\\source\\app\\solar-engineer\\src\\Services\\Messages.API","SourceContext":"Microsoft.Hosting.Lifetime","Application":"messages-service"}
 {"@t":"2023-02-26T04:44:09.1262172Z","@mt":"Bus started: {HostAddress}","HostAddress":"rabbitmq://localhost/","SourceContext":"MassTransit","Application":"messages-service"}
+{"@t":"2023-02-26T09:41:54.9787914Z","@mt":"Application is shutting down...","SourceContext":"Microsoft.Hosting.Lifetime","Application":"messages-service"}
+{"@t":"2023-02-26T09:41:55.0947574Z","@mt":"Bus stopped: {HostAddress}","HostAddress":"rabbitmq://localhost/","SourceContext":"MassTransit","Application":"messages-service"}
