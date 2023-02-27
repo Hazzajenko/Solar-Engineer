@@ -1,5 +1,4 @@
 ﻿using FastEndpoints.Swagger;
-using Microsoft.AspNetCore.Authentication;
 using Serilog;
 
 namespace YarpGateway.Extensions.Application;
@@ -8,12 +7,11 @@ public static class WebApplicationExtensions
 {
     public static WebApplication ConfigurePipeline(this WebApplication app)
     {
-        app.UseForwardedHeaders();
+        // app.UseForwardedHeaders();
 
         app.UseSerilogRequestLogging();
         // app.UseCors("corsPolicy");
-        app.UseAuthentication();
-        app.UseAuthorization();
+
         // app.UseCookiePolicy();
 
         /*app.UseFastEndpoints(options =>
@@ -31,19 +29,28 @@ public static class WebApplicationExtensions
             app.UseSwaggerUi3(x => x.ConfigureDefaults());
         }
 
+        app.UseHttpsRedirection();
         app.UseStaticFiles(); // T
         app.UseRouting();
-        app.MapReverseProxy(config =>
+        app.UseAuthentication();
+        app.UseAuthorization();
+        // app.UseWebSockets(new WebSocketOptions { KeepAliveInterval = TimeSpan.FromSeconds(120) });
+        /*app.MapReverseProxy(config =>
         {
-            config.Use(async (context, next) =>
-            {
-                var token = await context.GetTokenAsync("access_token");
-                context.Request.Headers["Authorization"] = $"Bearer {token}";
+            config.UseSessionAffinity(); // Has no affect on delegation destinations
+            config.UseLoadBalancing();
+            config.UsePassiveHealthChecks();
+            // config.UseHttpSysDelegation();
+            config.Use(
+                async (context, next) =>
+                {
+                    var token = await context.GetTokenAsync("access_token");
+                    context.Request.Headers["Authorization"] = $"Bearer {token}";
 
-                await next().ConfigureAwait(false);
-            });
-        });
-
+                    await next().ConfigureAwait(false);
+                }
+            );
+        });*/
 
         // app.UseWebSockets(new WebSocketOptions { KeepAliveInterval = TimeSpan.FromSeconds(120) });
         // app.MapHub<ConnectionsHub>("hubs/connections");

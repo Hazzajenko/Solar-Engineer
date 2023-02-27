@@ -10,14 +10,14 @@ namespace Users.API.Endpoints;
 
 public class CurrentUserEndpoint : EndpointWithoutRequest
 {
-    private readonly IAuthGrpcService _authGrpcService;
+    // private readonly IAuthGrpcService _authGrpcService;
     private readonly IMediator _mediator;
 
     public CurrentUserEndpoint(
-        IMediator mediator, IAuthGrpcService authGrpcService)
+        IMediator mediator/*, IAuthGrpcService authGrpcService*/)
     {
         _mediator = mediator;
-        _authGrpcService = authGrpcService;
+        // _authGrpcService = authGrpcService;
     }
 
 
@@ -28,7 +28,7 @@ public class CurrentUserEndpoint : EndpointWithoutRequest
 
     public override async Task HandleAsync(CancellationToken cT)
     {
-        Response = await _authGrpcService.GetAppUserById(User.GetUserId());
+        // Response = await _authGrpcService.GetAppUserById(User.GetUserId());
         await SendOkAsync(Response, cT);
     }
 }

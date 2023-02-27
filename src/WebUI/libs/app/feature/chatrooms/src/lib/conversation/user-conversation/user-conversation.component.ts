@@ -57,6 +57,8 @@ import { MessageItemComponent } from '../message-item/message-item.component'
 import { MessageOptionsBarComponent } from '../options-bar/message-options-bar.component'
 import { UsersService, UsersStoreService } from '@app/data-access/users'
 
+// import { UserMessagesStoreService } from '@app/data-access/messages'
+
 @Component({
   selector: 'app-user-conversation-component',
   templateUrl: './user-conversation.component.html',

@@ -20,7 +20,7 @@ import { GroupChatCombinedModel, WebUserModel } from '@shared/data-access/models
 import { Router } from '@angular/router'
 import { MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog'
 
-import { UsernameProfileComponent } from '@app/feature/userName-profile'
+// import { UsernameProfileComponent } from '@app/feature/userName-profile'
 import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
 import { ViewGroupChatMembersComponent } from '../group-chat/view-members/view-group-chat-members.component'
@@ -55,7 +55,7 @@ import { GetCdnUrlStringPipe } from '@shared/pipes'
 export class MessageOptionsBarComponent {
   private router = inject(Router)
   private dialog = inject(MatDialog)
-  private dialogRef = inject(MatDialogRef<UsernameProfileComponent>)
+  // private dialogRef = inject(MatDialogRef<UsernameProfileComponent>)
   menuTopLeftPosition = { x: '0', y: '0' }
   @ViewChild(MatMenuTrigger, { static: true })
   matMenuTrigger!: MatMenuTrigger
@@ -89,7 +89,7 @@ export class MessageOptionsBarComponent {
     this.matMenuTrigger.openMenu()
   }
 
-  editChatRoomName() {}
+  // editChatRoomName() {}
 
   viewGroupChatMembers() {
     const dialogConfig = {

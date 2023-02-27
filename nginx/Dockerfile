@@ -1,2 +1,4 @@
 FROM nginx:latest
-COPY ["./default.conf","/etc/nginx/conf.d/default.conf"]
+COPY ["./newdefault.conf","/etc/nginx/conf.d/default.conf"]
+COPY ["./cert.pem","/etc/nginx/cert.pem"]
+COPY ["./cert.key","/etc/nginx/cert.key"]

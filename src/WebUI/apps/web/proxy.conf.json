@@ -8,6 +8,25 @@
       "^/api": ""
     }
   },
+  "/gateway": {
+    "target": "https://localhost:6000",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/gateway": ""
+    }
+  },
+  "/signalr": {
+    "target": "https://localhost:6000",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "ws": true,
+    "pathRewrite": {
+      "^/signalr": ""
+    }
+  },
   "/identity": {
     "target": "https://localhost:6006",
     "secure": false,

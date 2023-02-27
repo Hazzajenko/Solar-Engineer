@@ -3,7 +3,7 @@ import { Router } from '@angular/router'
 import * as signalR from '@microsoft/signalr'
 import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr'
 import { ConnectionModel } from '@shared/data-access/models'
-import { ConnectionsStoreService } from '../facades'
+import { ConnectionsStoreService } from '../services'
 import { GetOnlineUsers, UserIsOffline, UserIsOnline } from './connections.methods'
 
 @Injectable({
@@ -16,7 +16,13 @@ export class ConnectionsSignalrService {
   createHubConnection(token: string) {
     this.hubConnection = new HubConnectionBuilder()
       // .withUrl('/users/hubs/connections', {
-      .withUrl('/ws/hubs/connections', {
+      // .withUrl('https://localhost:6004/hubs/connections', {
+      // .withUrl('https://localhost:6000/users/hubs/connections', {
+      // .withUrl('https://localhost:6000/connections', {
+      // .withUrl('/hubs/connections', {
+      // .withUrl('/ws-gateway/connections', {
+      .withUrl('/signalr/users/hubs/connections', {
+        // .withUrl('/ws/hubs/connections', {
         // .withUrl('/ws/connections', {
         accessTokenFactory: () => token,
         skipNegotiation: true,

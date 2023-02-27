@@ -6,7 +6,7 @@ import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signal
   providedIn: 'root',
 })
 export class MessagesSignalrService {
-  public messagesHubConnection?: HubConnection
+  private messagesHubConnection?: HubConnection
 
   createMessagesHubConnection(token: string) {
     this.messagesHubConnection = new HubConnectionBuilder()
@@ -19,12 +19,9 @@ export class MessagesSignalrService {
       .withAutomaticReconnect()
       .build()
 
-
     this.messagesHubConnection
       .start()
-      .then(() =>
-        console.log('Messages Hub Connection started')
-      )
+      .then(() => console.log('Messages Hub Connection started'))
       .catch((err) => {
         console.error('Error while starting Messages Hub connection: ' + err)
         throw new Error('Error while starting Messages Hub connection: ' + err)

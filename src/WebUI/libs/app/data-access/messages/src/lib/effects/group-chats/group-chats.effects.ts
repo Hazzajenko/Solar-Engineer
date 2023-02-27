@@ -9,11 +9,10 @@ import { GroupChatMembersActions, GroupChatMessagesActions, GroupChatsActions } 
 import {
   GroupChatMessageModel,
   GroupChatModel,
-  GroupChatServerMessageModel,
   InitialGroupChatMemberModel,
 } from '@shared/data-access/models'
-import { GroupChatsService } from '../../api/group-chats/group-chats.service'
-import { GroupChatsSignalrService } from '../../api/group-chats/group-chats-signalr.service'
+import { GroupChatsService } from '../../api/group-chats'
+import { GroupChatsSignalrService } from '../../api/group-chats'
 
 // import { GroupChatServerMessagesActions } from '../store/group-chat-server-user-user-user-messages'
 
@@ -211,9 +210,7 @@ export class GroupChatsEffects {
     () =>
       this.actions$.pipe(
         ofType(GroupChatsActions.initGroupChat),
-        map(({ groupChatId }) =>
-          this.groupChatsSignalR.getMessagesWithGroupChatSignalR(groupChatId),
-        ),
+        map(({ groupChatId }) => this.groupChatsSignalR.getMessagesWithGroupChat(groupChatId)),
       ),
     { dispatch: false },
   )
@@ -222,7 +219,7 @@ export class GroupChatsEffects {
     () =>
       this.actions$.pipe(
         ofType(GroupChatMessagesActions.sendMessageToGroupChat),
-        map(({ request }) => this.groupChatsSignalR.sendMessageToGroupChatSignalR(request)),
+        map(({ request }) => this.groupChatsSignalR.sendMessageToGroupChat(request)),
       ),
     { dispatch: false },
   )

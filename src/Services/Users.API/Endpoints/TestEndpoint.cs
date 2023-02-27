@@ -14,7 +14,7 @@ public class TestEndpoint : EndpointWithoutRequest
     private readonly IMediator _mediator;
 
     public TestEndpoint(
-        IMediator mediator, IAuthGrpcService authGrpcService)
+        IMediator mediator/*, IAuthGrpcService authGrpcService*/)
     {
         _mediator = mediator;
         // _authGrpcService = authGrpcService;
