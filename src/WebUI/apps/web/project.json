@@ -61,7 +61,7 @@
       "options": {
         "browserTarget": "design:build",
         "proxyConfig": "apps/web/proxy.conf.json",
-        "ssl": false,
+        "ssl": true,
         "sslKey": "ssl/localhost.key",
         "sslCert": "ssl/localhost.crt"
       },

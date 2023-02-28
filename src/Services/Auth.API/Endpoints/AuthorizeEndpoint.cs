@@ -3,7 +3,6 @@ using Auth.API.Entities;
 using Auth.API.Handlers;
 using FastEndpoints;
 using Mediator;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 
 namespace Auth.API.Endpoints;
@@ -23,7 +22,7 @@ public class AuthorizeEndpoint : EndpointWithoutRequest<AuthorizeResponse>
 
     public override void Configure()
     {
-        Get("/authorize");
+        Post("/authorize");
         AuthSchemes(IdentityConstants.ExternalScheme);
         // AuthSchemes("google");
         // AuthSchemes(CookieAuthenticationDefaults.AuthenticationScheme);
@@ -37,14 +36,10 @@ public class AuthorizeEndpoint : EndpointWithoutRequest<AuthorizeResponse>
         Response.Token = token;
         // await Send
         // await _signInManager.
-       var tokenResult =  await _userManager.SetAuthenticationTokenAsync(appUser, "google", "token", token);
-       if (!tokenResult.Succeeded)
-       {
-           foreach (var tokenResultError in tokenResult.Errors)
-           {
-               Logger.LogError("{@E}", tokenResultError);
-           }
-       }
+        var tokenResult = await _userManager.SetAuthenticationTokenAsync(appUser, "google", "token", token);
+        if (!tokenResult.Succeeded)
+            foreach (var tokenResultError in tokenResult.Errors)
+                Logger.LogError("{@E}", tokenResultError);
         await SendOkAsync(Response, cT);
     }
 }

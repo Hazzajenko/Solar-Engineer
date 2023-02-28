@@ -10,7 +10,7 @@ export class AuthService {
   private http = inject(HttpClient)
 
   authorizeRequest() {
-    return this.http.get<GetTokenResponse>('/auth/authorize', { withCredentials: true })
+    return this.http.post<GetTokenResponse>('/auth/authorize', {}, { withCredentials: true })
   }
 
   isReturningUser() {

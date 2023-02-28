@@ -8,6 +8,15 @@
       "^/api": ""
     }
   },
+  "/projects-api": {
+    "target": "https://localhost:6003",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/projects-api": ""
+    }
+  },
   "/gateway": {
     "target": "https://localhost:6000",
     "secure": false,
@@ -25,6 +34,16 @@
     "ws": true,
     "pathRewrite": {
       "^/signalr": ""
+    }
+  },
+  "/connections": {
+    "target": "https://localhost:6004",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "ws": true,
+    "pathRewrite": {
+      "^/connections": "/hubs/connections"
     }
   },
   "/identity": {

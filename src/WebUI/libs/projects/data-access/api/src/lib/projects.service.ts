@@ -14,7 +14,7 @@ export class ProjectsService {
   private version = 2
 
   getProjectById(projectId: number): Observable<GetProjectByIdResponse> {
-    return this.http.get<GetProjectByIdResponse>(`/api/projects/${projectId}`).pipe(
+    return this.http.get<GetProjectByIdResponse>(`/projects-api/projects/${projectId}`).pipe(
       catchError((err) => {
         console.log(err)
         return EMPTY
@@ -24,16 +24,15 @@ export class ProjectsService {
   }
 
   createWebProject(projectName: string): Observable<ProjectModel> {
-    return this.http.post<ProjectModel>(`/api/projects`, {
-      name: projectName,
-    }).pipe(
-      map((res: ProjectModel) => res),
-    )
+    return this.http
+      .post<ProjectModel>(`/projects-api/projects`, {
+        name: projectName,
+      })
+      .pipe(map((res: ProjectModel) => res))
   }
 
-
   getUserProjects(): Observable<ProjectModel[]> {
-    return this.http.get<GetProjectsResponse>('/api/projects').pipe(
+    return this.http.get<GetProjectsResponse>('/projects-api/projects').pipe(
       catchError((err) => {
         console.log(err)
         return EMPTY
@@ -43,7 +42,7 @@ export class ProjectsService {
   }
 
   getLocalProject(): Observable<ProjectModel[]> {
-    return this.http.get<GetProjectsResponse>('/api/projects').pipe(
+    return this.http.get<GetProjectsResponse>('/projects-api/projects').pipe(
       catchError((err) => {
         console.log(err)
         return EMPTY

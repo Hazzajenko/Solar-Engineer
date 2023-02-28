@@ -1,22 +1,64 @@
-version: "3"
+version: '3'
 
 services:
-  angularclient:
-    image: hazzajenko/angularclient:1.0.0
+
+  reverse-proxy:
+    image: nginx:1.17.10
+    container_name: reverse_proxy
+    depends_on:
+        - users-api
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./cert.pem:/etc/nginx/cert.pem
+      - ./cert.key:/etc/nginx/cert.key
+    ports:
+      - 443:443
+      - 80:80
+
+  angular-client:
+    image: angularclient:1.0.1
+    container_name: angular-client
+    depends_on:
+      - users-api
     ports:
       - 4200:80
+    restart: on-failure
+
+  users-api:
+    image: users-api:1.0.0
+    container_name: users-api
     depends_on:
-      - dotnetapi
-
-
-  dotnetapi:
-    image: hazzajenko/dotnetapi:1.0.1
+      - redis
+      - postgres
     ports:
-      - 5000:80
+      - 5004:80
+      - 6004:443
+    restart: on-failure
+
+  postgres:
+    image: 'postgres:14.0'
+    ports:
+      - "5432:5432"
+    restart: always
     environment:
-      ASPNETCORE_ENVIRONMENT: Production
-      DATABASE_HOST: DATABASE_HOST
-      DATABASE_PORT: 2506DATABASE_PORT0
-      DATABASE_USERNAME: DATABASE_USERNAME
-      DATABASE_PASSWORD: DATABASE_PASSWORD
-      DATABASE_DATABASE: DATABASE_DATABASE
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: SolarEngineer.Root
+
+
+  # rabbitmq:
+  #   image: rabbitmq:3-management
+  #   hostname: "rabbitmq"
+  #   labels:
+  #     NAME: "rabbitmq"
+  #   ports:
+  #     - "5672:5672"
+  #     - "15672:15672"
+
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+
+
+

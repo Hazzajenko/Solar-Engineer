@@ -1,0 +1,42 @@
+version: '3'
+
+services:
+  envoy-gateway:
+    build: .
+    ports:
+      - "9901:9901"
+      - "10000:10000"
+      - "10001:10001"
+    volumes:
+      - ./envoy.yaml:/etc/envoy/envoy.yaml
+      - ./https.crt:/etc/ssl/certs/https.crt
+      - ./csr.pem:/etc/ssl/certs/csr.pem
+      - ./key.pem:/etc/ssl/certs/key.pem
+
+  users-api-envoy:
+    image: users-api:1.0.0
+    depends_on:
+      - postgres
+    expose:
+      - "80"
+    ports:
+      - 5004:80
+      - 6004:443
+    restart: on-failure
+    # environment:
+    #   ASPNETCORE_URLS: "https://+;http://+"
+    #   ASPNETCORE_HTTPS_PORT: "6004"
+    #   ASPNETCORE_ENVIRONMENT: "Development"
+    # volumes:
+    #   - ${APPDATA}\microsoft\UserSecrets\:/root/.microsoft/usersecrets
+    #   - ${USERPROFILE}\.aspnet\https:/root/.aspnet/https/
+
+  postgres:
+    image: 'postgres:14.0'
+    ports:
+      - "5432:5432"
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: SolarEngineer.Root
