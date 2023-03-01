@@ -46,10 +46,13 @@ export class ProjectsEffects {
       ofType(ProjectsActions.createWebProject),
       switchMap(({ projectName }) =>
         this.projectsService.createWebProject(projectName).pipe(
-          map(project => ProjectsActions.createWebProjectSuccess({ project })),
+          map(() => ProjectsActions.createWebProjectSuccess()),
+          // map(project => ProjectsActions.createWebProjectSuccess({ project })),
         ),
       ),
-      catchError((error: Error) => of(ProjectsActions.createWebProjectError({ error: error.message }))),
+      catchError((error: Error) =>
+        of(ProjectsActions.createWebProjectError({ error: error.message })),
+      ),
     ),
   )
 

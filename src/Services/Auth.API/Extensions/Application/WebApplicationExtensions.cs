@@ -13,7 +13,8 @@ public static partial class WebApplicationExtensions
     {
         app.UseForwardedHeaders();
 
-        if (app.Environment.IsDevelopment()) app.UseDefaultExceptionHandler();
+        if (app.Environment.IsDevelopment())
+            app.UseDefaultExceptionHandler();
 
         app.UseSerilogRequestLogging();
         // app.ConfigureSerilog();
@@ -28,11 +29,10 @@ public static partial class WebApplicationExtensions
             {
                 Secure = CookieSecurePolicy.Always,
                 MinimumSameSitePolicy = SameSiteMode.Strict
-            });
-
+            }
+        );
 
         app.MapGrpcService<AppUsersGrpcService>();
-
 
         app.MapEndpoints();
 

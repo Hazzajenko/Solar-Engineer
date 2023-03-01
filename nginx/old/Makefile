@@ -15,3 +15,6 @@ kill:
 
 gen:
 	./generate-crt.ps1
+
+reload-nginx:
+	docker compose exec webserver nginx -s reload

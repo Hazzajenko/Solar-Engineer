@@ -15,6 +15,7 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(
     new WebApplicationOptions { Args = args, ContentRootPath = Directory.GetCurrentDirectory() }
 );
+
 // var appName = builder.RegisterSerilog();
 builder.ConfigureSerilog();
 
@@ -28,6 +29,7 @@ ArgumentNullException.ThrowIfNull(entryAssembly);
 builder.Services.AddApplicationServices(config, entryAssembly);
 builder.Services.AddIdentityServices(config);
 builder.Services.AddAuthServices(config);
+
 // builder.Services.AddOptions();
 // builder.Services.AddInfrastructureServices();
 
@@ -44,14 +46,15 @@ builder.Services.InitCors("corsPolicy");
 builder.Services.AddFastEndpoints(options => { options.SourceGeneratorDiscoveredTypes = DiscoveredTypes.All; });
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
-    options.ForwardedHeaders =
-        ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
 });
 
 builder.Services.AddSwaggerDoc();
 
 builder.Services.AddGrpc();
-
 
 var app = builder.Build();
 

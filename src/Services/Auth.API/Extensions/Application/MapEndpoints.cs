@@ -24,7 +24,8 @@ public static partial class WebApplicationExtensions
                     new AuthenticationProperties
                     {
                         // RedirectUri = "/authorize"
-                        RedirectUri = "https://localhost:4200/?authorize=true"
+                        RedirectUri = "https://solarengineer.net/?authorize=true"
+                        // RedirectUri = "https://localhost:4200/?authorize=true"
                     },
                     new List<string> { "google" }
                 )

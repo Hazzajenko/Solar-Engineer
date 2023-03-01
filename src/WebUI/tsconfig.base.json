@@ -84,6 +84,7 @@
       "@project-id/feature/toolbar": ["libs/project-id/feature/toolbar/src/index.ts"],
       "@project-id/feature/web": ["libs/project-id/feature/web/src/index.ts"],
       "@project-id/shared/models": ["libs/project-id/shared/models/src/index.ts"],
+      "@projects/data-access": ["libs/projects/data-access/src/index.ts"],
       "@projects/data-access/api": ["libs/projects/data-access/api/src/index.ts"],
       "@projects/data-access/effects": ["libs/projects/data-access/effects/src/index.ts"],
       "@projects/data-access/facades": ["libs/projects/data-access/facades/src/index.ts"],

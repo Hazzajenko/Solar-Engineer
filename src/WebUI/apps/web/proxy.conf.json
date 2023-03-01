@@ -8,6 +8,15 @@
       "^/api": ""
     }
   },
+  "/auth-api": {
+    "target": "https://localhost:6005",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/auth-api": ""
+    }
+  },
   "/projects-api": {
     "target": "https://localhost:6003",
     "secure": false,
@@ -15,6 +24,54 @@
     "logLevel": "debug",
     "pathRewrite": {
       "^/projects-api": ""
+    }
+  },
+  "/projects-hub": {
+    "target": "https://localhost:6003",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "ws": true,
+    "pathRewrite": {
+      "^/projects-hub": "/hubs/projects"
+    }
+  },
+  "/messages-api": {
+    "target": "https://localhost:6002",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/messages-api": ""
+    }
+  },
+  "/messages-hub": {
+    "target": "https://localhost:6002",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "ws": true,
+    "pathRewrite": {
+      "^/messages-hub": "/hubs/messages"
+    }
+  },
+  "/users-api": {
+    "target": "https://localhost:6004",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/users-api": ""
+    }
+  },
+  "/connections-hub": {
+    "target": "https://localhost:6004",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "ws": true,
+    "pathRewrite": {
+      "^/connections-hub": "/hubs/connections"
     }
   },
   "/gateway": {
@@ -34,16 +91,6 @@
     "ws": true,
     "pathRewrite": {
       "^/signalr": ""
-    }
-  },
-  "/connections": {
-    "target": "https://localhost:6004",
-    "secure": false,
-    "changeOrigin": true,
-    "logLevel": "debug",
-    "ws": true,
-    "pathRewrite": {
-      "^/connections": "/hubs/connections"
     }
   },
   "/identity": {

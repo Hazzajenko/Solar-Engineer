@@ -6,7 +6,7 @@ import {
   UserMessagesEffects,
 } from '@app/data-access/messages'
 import { AuthEffects } from '@auth/data-access'
-import { ProjectsEffects } from '@projects/data-access/effects'
+import { ProjectsEffects } from '@projects/data-access'
 import { NotificationsEffects } from '@app/data-access/notifications'
 import { ConnectionsEffects } from '@app/data-access/connections'
 import { UsersEffects } from '@app/data-access/users'

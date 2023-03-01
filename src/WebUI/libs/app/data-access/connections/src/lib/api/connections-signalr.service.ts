@@ -21,7 +21,7 @@ export class ConnectionsSignalrService {
       // .withUrl('https://localhost:6000/connections', {
       // .withUrl('/hubs/connections', {
       // .withUrl('/ws-gateway/connections', {
-      .withUrl('/connections', {
+      .withUrl('/connections-hub', {
         // .withUrl('/signalr/users/hubs/connections', {
         // .withUrl('/ws/hubs/connections', {
         // .withUrl('/ws/connections', {

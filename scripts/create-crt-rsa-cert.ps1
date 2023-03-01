@@ -15,5 +15,7 @@ Export-PfxCertificate -Cert $certpath -FilePath $pfxCertLocation -Password $pass
 $crtLocation = "${sslDomainDirectory}\${domain}.crt"
 $rsaLocation = "${sslDomainDirectory}\${domain}.rsa"
 
+Write-Host "Password is pa55w0rd!"
 openssl pkcs12 -in $pfxCertLocation -clcerts -nokeys -out $crtLocation
+Write-Host "Password is pa55w0rd!"
 openssl pkcs12 -in $pfxCertLocation -nocerts -nodes -out $rsaLocation

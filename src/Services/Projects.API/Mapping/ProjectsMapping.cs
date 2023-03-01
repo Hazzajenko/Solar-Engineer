@@ -11,7 +11,19 @@ public static class ProjectsMapping
         return new Project
         {
             Name = request.Name,
-            CreatedById = appUserId
+            CreatedById = appUserId,
+            AppUserProjects = new List<AppUserProject>
+            {
+                new()
+                {
+                    AppUserId = appUserId,
+                    Role = "Admin",
+                    CanCreate = true,
+                    CanDelete = true,
+                    CanInvite = true,
+                    CanKick = true
+                }
+            }
         };
     }
 

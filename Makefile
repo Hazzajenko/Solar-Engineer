@@ -12,3 +12,6 @@ describe:
 
 clean-up:
 	kubectl delete -f frontend-tcp-service.yaml,redis-master-service.yaml,redis-slave-service.yaml,frontend-deployment.yaml,redis-master-deployment.yaml,redis-slave-deployment.yaml
+
+new-cert:
+	openssl req -x509 -subj /CN=${domain} -days 365 -set_serial 2 -newkey rsa:4096 -keyout ${domain}.key -nodes -out ${domain}.pem

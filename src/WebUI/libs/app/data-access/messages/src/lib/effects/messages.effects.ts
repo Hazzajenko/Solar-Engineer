@@ -4,8 +4,8 @@ import { AuthActions } from '@auth/data-access/store'
 import { tap } from 'rxjs/operators'
 import { MessagesSignalrService } from '../api'
 // import { UserMessagesSignalrService } from '@app/data-access/messages'
-import { GroupChatsSignalrService } from '../api/group-chats'
-import { UserMessagesSignalrService } from '@app/data-access/messages'
+import { GroupChatsSignalrService } from '../api'
+import { UserMessagesSignalrService } from '../api'
 
 // import { UserMessagesSignalrService } from '@app/data-access/messages'
 
