@@ -15,7 +15,8 @@ export class ProjectsSignalrService {
 
   createProjectsHubConnection(token: string) {
     this.projectsHubConnection = new HubConnectionBuilder()
-      .withUrl('/projects-hub', {
+      .withUrl('/projects-api/hubs/projects', {
+        // .withUrl('/projects-hub', {
         accessTokenFactory: () => token,
         skipNegotiation: true,
         transport: signalR.HttpTransportType.WebSockets,

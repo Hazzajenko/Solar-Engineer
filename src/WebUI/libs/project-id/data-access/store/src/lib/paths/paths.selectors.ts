@@ -33,7 +33,8 @@ export const selectPathsEntities = createSelector(selectPathMapsState, (state: P
 export const selectPathsByRouteParams = createSelector(
   selectAllPaths,
   RouterSelectors.selectRouteParams,
-  (paths, { projectId }) => paths.filter((path) => path.projectId === Number(projectId)),
+  (paths, { projectId }) =>
+    paths.filter((path) => path.projectId === projectId /*Number(projectId)*/),
 )
 
 export const selectPathsById = (props: { pathId: string }) =>

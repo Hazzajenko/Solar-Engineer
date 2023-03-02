@@ -1,8 +1,10 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store'
 import { BlockModel } from '@shared/data-access/models'
 import { RouterSelectors } from '@shared/data-access/router'
-import { selectProjectByRouteParams } from 'libs/projects/data-access/store/src/lib/projects/projects.selectors'
+// import { selectProjectByRouteParams } from 'libs/projects/data-access/store/src/lib/projects/projects.selectors'
 import { BLOCKS_FEATURE_KEY, blocksAdapter, BlocksState } from './blocks.reducer'
+import { selectProjectByRouteParams } from '../../../../../../projects/data-access/src/lib/store/projects.selectors'
+// import { selectProjectByRouteParams } from '../../../../../../projects/data-access/src/lib/store/projects.selectors'
 
 export const selectBlocksState = createFeatureSelector<BlocksState>(BLOCKS_FEATURE_KEY)
 
@@ -51,21 +53,22 @@ export const selectBlocksByProjectIdRouteParams = createSelector(
   RouterSelectors.selectRouteParams,
   (blocks, { projectId }) => {
     if (!projectId) {
-      return blocks.filter((block) => block.projectId === 0)
+      return blocks.filter((block) => block.projectId === '0')
     }
     if (blocks) {
-      return blocks.filter((block) => block.projectId === Number(projectId))
+      return blocks.filter((block) => block.projectId === projectId /* Number(projectId)*/)
     }
     return []
   },
 )
 
 export const selectBlocksByProjectNameRouteParams = createSelector(
-  selectProjectByRouteParams,
+  // ProjectsSelectors selectProjectByRouteParams,
+  /*ProjectsSelectors.*/ selectProjectByRouteParams,
   selectAllBlocks,
   (project, blocks) => {
     if (!project) {
-      return blocks.filter((block) => block.projectId === 0)
+      return blocks.filter((block) => block.projectId === '0')
     }
     if (blocks) {
       return blocks.filter((block) => block.projectId === project.id)

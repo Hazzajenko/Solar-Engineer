@@ -37,12 +37,12 @@ builder.Services.ConfigureSignalRWithRedis(builder.Environment);
 
 builder.Services.InitCors("corsPolicy");
 
-builder.Services.AddFastEndpoints( /*options => { options.SourceGeneratorDiscoveredTypes = DiscoveredTypes.All; }*/);
+builder.Services.AddFastEndpoints( /*options => { options.SourceGeneratorDiscoveredTypes = DiscoveredTypes.All; }*/
+);
 
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
-    options.ForwardedHeaders =
-        ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
 });
 
 builder.Services.AddSwaggerDoc();
@@ -50,6 +50,19 @@ builder.Services.AddSwaggerDoc();
 var app = builder.Build();
 
 app.ConfigurePipeline();
+
+app.Use(
+    async (context, next) =>
+    {
+        // Connection: RemoteIp
+        app.Logger.LogInformation(
+            "Request RemoteIp: {RemoteIpAddress}",
+            context.Connection.RemoteIpAddress
+        );
+
+        await next(context);
+    }
+);
 
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 app.Run();

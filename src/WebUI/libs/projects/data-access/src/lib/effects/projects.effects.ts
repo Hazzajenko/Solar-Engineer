@@ -7,7 +7,7 @@ import { ProjectModel } from '@shared/data-access/models'
 import { catchError, map, of, switchMap } from 'rxjs'
 import { ProjectsActions } from '@projects/data-access/store'
 import { AuthActions } from '@auth/data-access'
-import { tap } from 'rxjs/operators'
+// import { tap } from 'rxjs/operators'
 import { ProjectsSignalrService } from '../api'
 
 @Injectable({
@@ -27,7 +27,6 @@ export class ProjectsEffects {
           this.projectsSignalrService.createProjectsHubConnection(token)
         }),
       ),
-
     { dispatch: false },
   )
   init$ = createEffect(
@@ -81,16 +80,16 @@ export class ProjectsEffects {
       ),
     )*/
 
-  /*   initSelectProject$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(ProjectsActions.initSelectProject),
-        tap(({ projectId }) => {
-          this.store.dispatch(StringsActions.initStrings({ projectId }))
-          this.store.dispatch(PanelsActions.initPanels({ projectId }))
-          this.store.dispatch(LinksActions.initLinks({ projectId }))
-        }),
-      ),
-    { dispatch: false },
-  ) */
+  /*     initSelectProject$ = createEffect(
+      () =>
+        this.actions$.pipe(
+          ofType(ProjectsActions.initSelectProject),
+          tap(({ projectId }) => {
+            this.store.dispatch(StringsActions.initStrings({ projectId }))
+            this.store.dispatch(PanelsActions.initPanels({ projectId }))
+            this.store.dispatch(LinksActions.initLinks({ projectId }))
+          }),
+        ),
+      { dispatch: false },
+    ) */
 }

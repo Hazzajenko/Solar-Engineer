@@ -1,7 +1,6 @@
 ﻿using FastEndpoints;
-using Infrastructure.Extensions;
 using Mediator;
-using Users.API.Grpc;
+
 // using Infrastructure.Entities.Identity;
 
 // using AppUser = Users.API.Entities.AppUser;
@@ -14,12 +13,12 @@ public class CurrentUserEndpoint : EndpointWithoutRequest
     private readonly IMediator _mediator;
 
     public CurrentUserEndpoint(
-        IMediator mediator/*, IAuthGrpcService authGrpcService*/)
+        IMediator mediator /*, IAuthGrpcService authGrpcService*/
+    )
     {
         _mediator = mediator;
         // _authGrpcService = authGrpcService;
     }
-
 
     public override void Configure()
     {
@@ -29,6 +28,7 @@ public class CurrentUserEndpoint : EndpointWithoutRequest
     public override async Task HandleAsync(CancellationToken cT)
     {
         // Response = await _authGrpcService.GetAppUserById(User.GetUserId());
+        Response = HttpContext.User.Claims.Select(x => new { x.Type, x.Value }).ToList();
         await SendOkAsync(Response, cT);
     }
 }

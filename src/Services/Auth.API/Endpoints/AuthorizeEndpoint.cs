@@ -12,13 +12,11 @@ public class AuthorizeEndpoint : EndpointWithoutRequest<AuthorizeResponse>
     private readonly IMediator _mediator;
     private readonly UserManager<AuthUser> _userManager;
 
-    public AuthorizeEndpoint(
-        IMediator mediator, UserManager<AuthUser> userManager)
+    public AuthorizeEndpoint(IMediator mediator, UserManager<AuthUser> userManager)
     {
         _mediator = mediator;
         _userManager = userManager;
     }
-
 
     public override void Configure()
     {
@@ -36,7 +34,26 @@ public class AuthorizeEndpoint : EndpointWithoutRequest<AuthorizeResponse>
         Response.Token = token;
         // await Send
         // await _signInManager.
-        var tokenResult = await _userManager.SetAuthenticationTokenAsync(appUser, "google", "token", token);
+        var storedToken = await _userManager.GetAuthenticationTokenAsync(
+            appUser,
+            "google",
+            "token"
+        );
+        if (storedToken is not null)
+        {
+            var removeTokenResult = await _userManager.RemoveAuthenticationTokenAsync(
+                appUser,
+                "google",
+                "token"
+            );
+        }
+
+        var tokenResult = await _userManager.SetAuthenticationTokenAsync(
+            appUser,
+            "google",
+            "token",
+            token
+        );
         if (!tokenResult.Succeeded)
             foreach (var tokenResultError in tokenResult.Errors)
                 Logger.LogError("{@E}", tokenResultError);

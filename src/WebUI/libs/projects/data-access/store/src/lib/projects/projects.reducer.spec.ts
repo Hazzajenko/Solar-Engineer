@@ -10,7 +10,7 @@ describe('Projects Reducer', () => {
     id,
     name: name || `name-${id}`,
     createdAt: '123456',
-    createdBy: 1,
+    createdById: 1,
   })
 
   describe('valid Projects actions', () => {

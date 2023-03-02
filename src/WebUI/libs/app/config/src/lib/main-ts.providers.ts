@@ -19,8 +19,8 @@ import { provideStore } from '@ngrx/store'
 import { provideRouterStore } from '@ngrx/router-store'
 import { metaReducers, reducers } from '@shared/data-access/store'
 import { DatePipe } from '@angular/common'
-import { AuthHttpInterceptor, AuthModule } from '@auth0/auth0-angular'
-import { AddCookieInterceptorProvider } from '../../../../auth/interceptors/src/lib/add-cookie.interceptor'
+// import { AuthHttpInterceptor, AuthModule } from '@auth0/auth0-angular'
+// import { AddCookieInterceptorProvider } from '../../../../auth/interceptors/src/lib/add-cookie.interceptor'
 
 export const mainTsProviders = [
   provideRouter(appRoutes, withEnabledBlockingInitialNavigation()),

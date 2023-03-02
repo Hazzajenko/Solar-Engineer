@@ -16,14 +16,14 @@ export class LinksService {
   private http = inject(HttpClient)
 
   addLink(link: PanelLinkModel): Observable<PanelLinkModel> {
-    return this.http.post<LinkResponse>(`/api/projects/${link.projectId}/link`, {
-      ...link,
-    }).pipe(
-      map((res: LinkResponse) => res.link),
-    )
+    return this.http
+      .post<LinkResponse>(`/api/projects/${link.projectId}/link`, {
+        ...link,
+      })
+      .pipe(map((res: LinkResponse) => res.link))
   }
 
-  getLinksByProjectId(projectId: number): Observable<PanelLinkModel[]> {
+  getLinksByProjectId(projectId: string): Observable<PanelLinkModel[]> {
     return this.http.get<ManyLinksResponse>(`/api/projects/${projectId}/links`).pipe(
       /*      catchError((err) => {
               console.log(err)
@@ -33,11 +33,9 @@ export class LinksService {
     )
   }
 
-
-  deleteLink(linkId: string, projectId: number) {
-    return this.http.delete<DeleteLinkResponse>(`/api/projects/${projectId}/panel/${linkId}`).pipe(
-      map((res: DeleteLinkResponse) => res.linkId),
-    )
+  deleteLink(linkId: string, projectId: string) {
+    return this.http
+      .delete<DeleteLinkResponse>(`/api/projects/${projectId}/panel/${linkId}`)
+      .pipe(map((res: DeleteLinkResponse) => res.linkId))
   }
-
 }

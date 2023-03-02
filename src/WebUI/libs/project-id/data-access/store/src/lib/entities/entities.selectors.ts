@@ -29,7 +29,7 @@ export const selectEntitiesByProjectIdRouteParams = createSelector(
   RouterSelectors.selectRouteParams,
   (entities, { projectId }) => {
     if (entities) {
-      return entities.filter((entity) => entity.projectId === Number(projectId))
+      return entities.filter((entity) => entity.projectId === projectId /* Number(projectId)*/)
     }
     return []
   },

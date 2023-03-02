@@ -4,12 +4,14 @@ import { AuthActions } from '../store'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { catchError, map, of, switchMap, tap } from 'rxjs'
 import { Router } from '@angular/router'
+import { Location } from '@angular/common'
 
 @Injectable()
 export class AuthEffects {
   private actions$ = inject(Actions)
   private authService = inject(AuthService)
   private router = inject(Router)
+  private location = inject(Location)
 
   getRedirect$ = createEffect(
     () =>
@@ -27,11 +29,26 @@ export class AuthEffects {
       ofType(AuthActions.authorizeRequest),
       switchMap(() =>
         this.authService.authorizeRequest().pipe(
-          tap(({ token }) => localStorage.setItem('token', token)),
-          map(({ token }) => AuthActions.signInSuccess({ token })),
+          // tap(({ token }) => localStorage.setItem('token', token)),
+          map(({ token }) => {
+            localStorage.setItem('token', token)
+            return AuthActions.signInSuccess({ token })
+          }),
         ),
       ),
     ),
+  )
+
+  backToHome$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(AuthActions.signInSuccess),
+        map(() => {
+          // window.location.href = ''
+          this.location.go('/')
+        }),
+      ),
+    { dispatch: false },
   )
 
   /*  signInSuccess$ = createEffect(() =>
@@ -72,8 +89,8 @@ export class AuthEffects {
   getCurrentUser$ = createEffect(() =>
     this.actions$.pipe(
       ofType(AuthActions.signInSuccess),
-      switchMap(() =>
-        this.authService.getCurrentUser().pipe(
+      switchMap(({ token }) =>
+        this.authService.getCurrentUser(token).pipe(
           map(({ user }) => AuthActions.getCurrentUserSuccess({ user })),
           catchError((error: Error) => {
             console.error(error)

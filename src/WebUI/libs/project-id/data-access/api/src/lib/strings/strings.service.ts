@@ -14,15 +14,15 @@ export class StringsService {
   private http = inject(HttpClient)
 
   addString(string: StringModel): Observable<StringModel> {
-    return this.http.post<StringResponse>(`/api/projects/${string.projectId}/string`, {
-      ...string,
-      color: 'orange',
-    }).pipe(
-      map((res: StringResponse) => res.string),
-    )
+    return this.http
+      .post<StringResponse>(`/api/projects/${string.projectId}/string`, {
+        ...string,
+        color: 'orange',
+      })
+      .pipe(map((res: StringResponse) => res.string))
   }
 
-  getStringsByProjectId(projectId: number): Observable<StringModel[]> {
+  getStringsByProjectId(projectId: string): Observable<StringModel[]> {
     return this.http.get<ManyStringsResponse>(`/api/projects/${projectId}/strings`).pipe(
       /*      catchError((err) => {
               console.log(err)
@@ -32,17 +32,17 @@ export class StringsService {
     )
   }
 
-  updateString(update: Update<StringModel>, projectId: number) {
-    return this.http.put<StringResponse>(`/api/projects/${projectId}/string/${update.id}`, {
-      ...update,
-    }).pipe(
-      map((res: StringResponse) => res.string),
-    )
+  updateString(update: Update<StringModel>, projectId: string) {
+    return this.http
+      .put<StringResponse>(`/api/projects/${projectId}/string/${update.id}`, {
+        ...update,
+      })
+      .pipe(map((res: StringResponse) => res.string))
   }
 
-  deleteString(stringId: string, projectId: number) {
-    return this.http.delete<DeleteStringResponse>(`/api/projects/${projectId}/string/${stringId}`).pipe(
-      map((res: DeleteStringResponse) => res.stringId),
-    )
+  deleteString(stringId: string, projectId: string) {
+    return this.http
+      .delete<DeleteStringResponse>(`/api/projects/${projectId}/string/${stringId}`)
+      .pipe(map((res: DeleteStringResponse) => res.stringId))
   }
 }

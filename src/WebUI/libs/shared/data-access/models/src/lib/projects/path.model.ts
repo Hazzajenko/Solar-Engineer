@@ -6,7 +6,6 @@ export interface PanelPathModel {
   color: string
 }
 
-
 export interface PanelIdPath {
   panelId: string
   path: PanelPathModel
@@ -14,7 +13,7 @@ export interface PanelIdPath {
 
 export interface PathOptions {
   id?: string
-  projectId: number
+  projectId: string
   stringId: string
   panelId: string
   link: number
@@ -25,7 +24,7 @@ export interface PathOptions {
 
 export class PathModel {
   id: string
-  projectId: number
+  projectId: string
   stringId: string
   panelId: string
   link: number

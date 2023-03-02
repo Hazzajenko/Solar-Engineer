@@ -27,3 +27,16 @@
 {"@t":"2023-03-01T09:44:21.1592359Z","@mt":"Bus started: {HostAddress}","HostAddress":"rabbitmq://localhost/","SourceContext":"MassTransit","Application":"messages-service"}
 {"@t":"2023-03-01T09:44:30.8134877Z","@mt":"Application is shutting down...","SourceContext":"Microsoft.Hosting.Lifetime","Application":"messages-service"}
 {"@t":"2023-03-01T09:44:30.8724707Z","@mt":"Bus stopped: {HostAddress}","HostAddress":"rabbitmq://localhost/","SourceContext":"MassTransit","Application":"messages-service"}
+{"@t":"2023-03-01T09:44:42.9203266Z","@mt":"Registered 3 endpoints in 125 milliseconds.","SourceContext":"FastEndpoints.StartupTimer","Application":"messages-service"}
+{"@t":"2023-03-01T09:44:42.9970203Z","@mt":"No validators found in the system!","SourceContext":"FastEndpoints.Swagger.ValidationSchemaProcessor","Application":"messages-service"}
+{"@t":"2023-03-01T09:44:43.0182840Z","@mt":"Connecting to Redis endpoints: {Endpoints}. Using Server Name: {ServerName}","Endpoints":"localhost","ServerName":"DESKTOP-G3RIR5H_3811506bf37b47b59792225be69a45b6","EventId":{"Id":1,"Name":"ConnectingToEndpoints"},"SourceContext":"Microsoft.AspNetCore.SignalR.StackExchangeRedis.RedisHubLifetimeManager","Application":"messages-service"}
+{"@t":"2023-03-01T09:44:43.1207263Z","@mt":"Connected to Redis.","EventId":{"Id":2,"Name":"Connected"},"SourceContext":"Microsoft.AspNetCore.SignalR.StackExchangeRedis.RedisHubLifetimeManager","Application":"messages-service"}
+{"@t":"2023-03-01T09:44:44.3316316Z","@mt":"Configured endpoint {Endpoint}, Consumer: {ConsumerType}","Endpoint":"AppUserLoggedInEvent-Messages","ConsumerType":"Messages.API.Consumers.AppUserLoggedInConsumer","SourceContext":"MassTransit","Application":"messages-service"}
+{"@t":"2023-03-01T09:44:44.5670162Z","@mt":"Now listening on: {address}","address":"https://localhost:6002","EventId":{"Id":14,"Name":"ListeningOnAddress"},"SourceContext":"Microsoft.Hosting.Lifetime","Application":"messages-service"}
+{"@t":"2023-03-01T09:44:44.5677342Z","@mt":"Now listening on: {address}","address":"http://localhost:5002","EventId":{"Id":14,"Name":"ListeningOnAddress"},"SourceContext":"Microsoft.Hosting.Lifetime","Application":"messages-service"}
+{"@t":"2023-03-01T09:44:44.5683861Z","@mt":"Application started. Press Ctrl+C to shut down.","SourceContext":"Microsoft.Hosting.Lifetime","Application":"messages-service"}
+{"@t":"2023-03-01T09:44:44.5688779Z","@mt":"Hosting environment: {EnvName}","EnvName":"Development","SourceContext":"Microsoft.Hosting.Lifetime","Application":"messages-service"}
+{"@t":"2023-03-01T09:44:44.5694206Z","@mt":"Content root path: {ContentRoot}","ContentRoot":"C:\\Users\\jenki\\source\\app\\solar-engineer\\src\\Services\\Messages.API","SourceContext":"Microsoft.Hosting.Lifetime","Application":"messages-service"}
+{"@t":"2023-03-01T09:44:44.6892613Z","@mt":"Bus started: {HostAddress}","HostAddress":"rabbitmq://localhost/","SourceContext":"MassTransit","Application":"messages-service"}
+{"@t":"2023-03-01T11:35:08.1839834Z","@mt":"Application is shutting down...","SourceContext":"Microsoft.Hosting.Lifetime","Application":"messages-service"}
+{"@t":"2023-03-01T11:35:08.2628098Z","@mt":"Bus stopped: {HostAddress}","HostAddress":"rabbitmq://localhost/","SourceContext":"MassTransit","Application":"messages-service"}

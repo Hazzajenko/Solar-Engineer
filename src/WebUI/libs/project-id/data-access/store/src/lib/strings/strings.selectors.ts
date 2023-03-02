@@ -28,7 +28,8 @@ export const selectStringsEntities = createSelector(selectStringsState, (state: 
 export const selectStringsByRouteParams = createSelector(
   selectAllStrings,
   RouterSelectors.selectRouteParams,
-  (strings, { projectId }) => strings.filter((s) => s.projectId === Number(projectId)),
+  (strings, { projectId }) =>
+    strings.filter((s) => s.projectId === projectId /*Number(projectId)*/),
 )
 
 export const selectStringById = (props: { id: string }) =>

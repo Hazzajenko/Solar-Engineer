@@ -12,7 +12,7 @@ export class ProjectsRepository {
     this.store.dispatch(ProjectsActions.initProjects())
   }
 
-  initSelectProject(projectId: number) {
+  initSelectProject(projectId: string) {
     this.store.dispatch(ProjectsActions.initSelectProject({ projectId }))
   }
 
@@ -20,7 +20,7 @@ export class ProjectsRepository {
     this.store.dispatch(ProjectsActions.createWebProject({ projectName }))
   }
 
-  selectWebProject(projectId: number) {
+  selectWebProject(projectId: string) {
     this.store.dispatch(ProjectsActions.initSelectProject({ projectId }))
   }
 
@@ -34,10 +34,10 @@ export class ProjectsRepository {
     }
     const localProject: LocalProjectModel = {
       project: {
-        id: 0,
+        id: '0',
         name: 'localProject',
         createdAt: new Date().getDate().toString(),
-        createdBy: 0,
+        createdById: '0',
       },
       strings: [],
       panels: [],

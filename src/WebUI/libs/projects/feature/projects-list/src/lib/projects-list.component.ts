@@ -38,7 +38,16 @@ export class ProjectsListComponent {
     if (!user) return
     // this.store.initSelectProject(project.id)
 
+    // this.router.navigate([`projects/${project.name}`]).then((r) => r)
     this.router.navigate([`${user.displayName}/${project.name}`]).then((r) => r)
+  }
+
+  async routeToProjectV3(project: ProjectModel) {
+    this.loading = true
+    const user = await this.authStore.select.user
+    if (!user) return
+
+    await this.router.navigate([`projects/${project.name}`]).then(() => (this.loading = false))
   }
 
   instanceOfNavigationStart(routerEvents: RouterEvent | any) {

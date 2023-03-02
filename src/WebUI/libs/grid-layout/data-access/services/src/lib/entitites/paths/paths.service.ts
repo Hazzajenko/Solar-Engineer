@@ -1,5 +1,9 @@
 import { inject, Injectable } from '@angular/core'
-import { PathsStoreService, SelectedFacade, SelectedStoreService } from '@project-id/data-access/facades'
+import {
+  PathsStoreService,
+  SelectedFacade,
+  SelectedStoreService,
+} from '@project-id/data-access/facades'
 
 import { ProjectsFacade } from '@projects/data-access/facades'
 import {
@@ -9,13 +13,12 @@ import {
   SelectedPathModel,
   PathModel,
 } from '@shared/data-access/models'
-import { LinksPathService } from '../links/links-path.service'
+import { LinksPathService } from '../links'
 
 @Injectable({
   providedIn: 'root',
 })
 export class PathsService {
-
   private projectsFacade = inject(ProjectsFacade)
   private selectedFacade = inject(SelectedFacade)
 
@@ -53,7 +56,7 @@ export class PathsService {
     if (!project) {
       return
     }
-    const paths = panelIdPaths.map(panelIdPath => {
+    const paths = panelIdPaths.map((panelIdPath) => {
       return new PathModel({
         projectId: project.id,
         stringId: selectedStringId,
@@ -86,7 +89,9 @@ export class PathsService {
       console.error('project undefined')
       return
     }
-    const panelIdPaths = await this.linksPathService.orderPanelsInLinkOrderForSelectedPanel(selectedPanelId)
+    const panelIdPaths = await this.linksPathService.orderPanelsInLinkOrderForSelectedPanel(
+      selectedPanelId,
+    )
     // console.error(panelIdPaths)
     if (!panelIdPaths) {
       // console.error('panelIdPaths undefined')
@@ -94,14 +99,12 @@ export class PathsService {
       return
     }
 
-    const panelPaths = panelIdPaths.map(panelIdPath => {
-
+    const panelPaths = panelIdPaths.map((panelIdPath) => {
       const panelPath: SelectedPathModel = {
         panelId: panelIdPath.panelId,
         count: panelIdPath.path.count,
       }
       return panelPath
-
     })
     const selectedPanelLinkPath: SelectedPanelLinkPathModel = {
       selectedPanelId,

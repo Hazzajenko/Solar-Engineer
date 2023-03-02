@@ -1,7 +1,7 @@
 import { getGuid } from '@shared/utils'
 
 export interface EntityOptions {
-  projectId: number
+  projectId: string
   // type: EntityType
   id?: string
 }
@@ -15,7 +15,7 @@ export enum EntityType {
 
 export class EntityModel {
   id: string
-  projectId: number
+  projectId: string
   type: EntityType = EntityType.UNDEFINED
 
   constructor(options: EntityOptions) {

@@ -3,7 +3,7 @@ import { BlockType, PanelModel } from '@shared/data-access/models'
 export function locationArrayMap(
   type: BlockType,
   locationArray: string[],
-  projectId: number,
+  projectId: string,
   selectedStringId: string | undefined,
 ) {
   switch (type) {

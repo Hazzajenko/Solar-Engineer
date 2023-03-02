@@ -1,7 +1,7 @@
 import { getGuid } from '@shared/utils'
 
 export interface BlockOptions {
-  projectId: number
+  projectId: string
   location: string
   // type: BlockType
 }
@@ -18,7 +18,7 @@ export enum BlockType {
 
 export class BlockModel {
   id: string
-  projectId: number
+  projectId: string
   location: string
   type: BlockType = BlockType.UNDEFINED
 

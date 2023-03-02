@@ -11,9 +11,9 @@ import { ProjectsFacade } from '@projects/data-access/facades'
 import { PanelModel } from '@shared/data-access/models'
 import { combineLatest, firstValueFrom, map } from 'rxjs'
 import { getSelectedLinks } from '../links/get-selected-links'
-import { PathsService } from 'libs/grid-layout/data-access/services/src/lib/entitites/paths/paths.service'
+// import { PathsService } from 'libs/grid-layout/data-access/services/src/lib/entitites/paths/paths.service'
 import { toUpdatePanelArray } from './update-panel-map'
-
+import { PathsService } from '../paths'
 
 @Injectable({
   providedIn: 'root',
@@ -83,7 +83,10 @@ export class PanelsService {
 
   async rotateSelectedPanels(rotation: number) {
     const selectedPanelIds = await firstValueFrom(
-      combineLatest([this.selectedStore.select.multiSelectIds$, this.panelsStore.select.allPanels$]).pipe(
+      combineLatest([
+        this.selectedStore.select.multiSelectIds$,
+        this.panelsStore.select.allPanels$,
+      ]).pipe(
         map(([multiSelectIds, panels]) =>
           panels.filter((p) => multiSelectIds?.includes(p.id)).map((panels) => panels.id),
         ),

@@ -1,6 +1,6 @@
 export interface ProjectModel {
-  id: number
+  id: string
   name: string
-  createdBy: number
+  createdById: string
   createdAt: string
 }

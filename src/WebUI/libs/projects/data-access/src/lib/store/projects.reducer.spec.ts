@@ -6,16 +6,16 @@ import { ProjectsActions } from './projects.actions'
 import { initialProjectsState, projectsReducer, ProjectsState } from './projects.reducer'
 
 describe('Projects Reducer', () => {
-  const createProjectsEntity = (id: number, name = ''): ProjectModel => ({
+  const createProjectsEntity = (id: string, name = ''): ProjectModel => ({
     id,
     name: name || `name-${id}`,
     createdAt: '123456',
-    createdBy: 1,
+    createdById: '1',
   })
 
   describe('valid Projects actions', () => {
     it('loadProjectsSuccess should return the list of known Projects', () => {
-      const projects = [createProjectsEntity(1), createProjectsEntity(2)]
+      const projects = [createProjectsEntity('1'), createProjectsEntity('2')]
       const action = ProjectsActions.loadProjectsSuccess({ projects })
 
       const result: ProjectsState = projectsReducer(initialProjectsState, action)

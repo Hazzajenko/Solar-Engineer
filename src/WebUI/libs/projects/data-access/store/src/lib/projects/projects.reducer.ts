@@ -7,9 +7,9 @@ import { ProjectsActions } from './projects.actions'
 export const PROJECTS_FEATURE_KEY = 'projects'
 
 export interface ProjectsState extends EntityState<ProjectModel> {
-  selectedId?: number
-  selectedProjectId?: number
-  localProjectId?: number
+  selectedId?: string
+  selectedProjectId?: string
+  localProjectId?: string
   localProject?: ProjectModel
   loaded: boolean
   local: boolean

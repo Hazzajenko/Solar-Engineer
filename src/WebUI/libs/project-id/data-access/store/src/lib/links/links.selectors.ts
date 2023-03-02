@@ -26,7 +26,8 @@ export const selectLinksEntities = createSelector(selectLinksState, (state: Link
 export const selectLinksByRouteParams = createSelector(
   selectAllLinks,
   RouterSelectors.selectRouteParams,
-  (links, { projectId }) => links.filter((link) => link.projectId === Number(projectId)),
+  (links, { projectId }) =>
+    links.filter((link) => link.projectId === projectId /*Number(projectId)*/),
 )
 
 export const selectLinksByPanels = (props: { panels: PanelModel[] }) =>

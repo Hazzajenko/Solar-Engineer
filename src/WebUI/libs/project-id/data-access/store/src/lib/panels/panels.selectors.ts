@@ -28,7 +28,7 @@ export const selectPanelsEntities = createSelector(selectPanelsState, (state: Pa
 export const selectPanelsByRouteParams = createSelector(
   selectAllPanels,
   RouterSelectors.selectRouteParams,
-  (panels, { projectId }) => panels.filter((p) => p.projectId === Number(projectId)),
+  (panels, { projectId }) => panels.filter((p) => p.projectId === projectId /*Number(projectId)*/),
 )
 
 export const selectPanelById = (props: { id: string }) =>

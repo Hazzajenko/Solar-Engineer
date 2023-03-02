@@ -13,7 +13,7 @@ export const ProjectsActions = createActionGroup({
     'Load Local Project Success': props<{ project: ProjectModel }>(),
     'Load Projects Success': props<{ projects: ProjectModel[] }>(),
     'Load Projects Failure': props<{ error: string | null }>(),
-    'Init Select Project': props<{ projectId: number }>(),
+    'Init Select Project': props<{ projectId: string }>(),
     'Create Web Project': props<{ projectName: string }>(),
     'Create Web Project Success': emptyProps(),
     // 'Create Web Project Success': props<{ project: ProjectModel }>(),

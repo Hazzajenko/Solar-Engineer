@@ -75,14 +75,24 @@ export class AppComponent implements OnInit {
       console.log(params)
       if (params === 'true') {
         this.authStore.dispatch.authorizeRequest()
-        this.router
-          .navigateByUrl('')
-          .then()
-          .catch((err) => console.error(err))
+        /*        this.router
+                  .navigateByUrl('')
+                  .then()
+                  .catch((err) => console.error(err))*/
+      } else {
+        this.authStore.dispatch.isReturningUser()
       }
     })
-    this.authStore.dispatch.isReturningUser()
-    this.authStore.dispatch.authorizeRequest()
+    // this.http
+    //   .get('/users/current')
+    //   // .pipe(catchError(() => EMPTY))
+    //   .subscribe((res) => {
+    //     // console.log(res)
+    //     console.log('/users/current', res)
+    //     // /*      window.location.href = `${res}`*/
+    //   })
+    // this.authStore.dispatch.isReturningUser()
+    // this.authStore.dispatch.authorizeRequest()
     // this.http
     //   .get('/gateway/users/test')
     //   // .pipe(catchError(() => EMPTY))
