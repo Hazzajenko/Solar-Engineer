@@ -6,7 +6,7 @@
     <app-sidenav-component (toggle)="drawer.toggle()"></app-sidenav-component>
   </mat-sidenav>
   <mat-sidenav-content>
-    <app-app-bar (toggle)="drawer.toggle()"></app-app-bar>
+    <app-app-bar class="absolute" (toggle)="drawer.toggle()"></app-app-bar>
     <router-outlet></router-outlet>
   </mat-sidenav-content>
 </mat-sidenav-container>

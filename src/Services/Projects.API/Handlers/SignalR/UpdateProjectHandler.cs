@@ -4,6 +4,7 @@ using Infrastructure.Mapping;
 using Mediator;
 using Microsoft.AspNetCore.SignalR;
 using Projects.API.Contracts.Requests;
+using Projects.API.Contracts.Requests.Projects;
 using Projects.API.Data;
 using Projects.API.Entities;
 using Projects.API.Hubs;

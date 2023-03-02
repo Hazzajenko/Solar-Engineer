@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Projects.API.Contracts.Requests;
+namespace Projects.API.Contracts.Requests.Projects;
 
 public class UpdateProjectRequest
 {

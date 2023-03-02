@@ -12,7 +12,13 @@ import {
 
 import { KeymapOverlayComponent } from '@grid-layout/feature/keymap'
 import { StringTotalsOverlayComponent } from '@grid-layout/feature/string-stats'
-import { ClientXY, ElementOffsets, GridLayoutXY, MouseXY, XYModel } from '@grid-layout/shared/models'
+import {
+  ClientXY,
+  ElementOffsets,
+  GridLayoutXY,
+  MouseXY,
+  XYModel,
+} from '@grid-layout/shared/models'
 import { LetModule } from '@ngrx/component'
 import {
   GridFacade,
@@ -37,7 +43,6 @@ import { WrapperDirective } from './directives/wrapper.directive'
 import { GetBlockPipe } from './pipes/get-block.pipe'
 import { GetLocationPipe } from './pipes/get-location.pipe'
 import { GridBackgroundComponent } from './ui/grid-background.component'
-
 
 @Component({
   selector: 'app-grid-layout',
@@ -126,12 +131,9 @@ export class GridLayoutComponent implements OnInit {
   isStringStatsEnabled$ = this.uiStore.select.isStringStatsEnabled$
 
   uiState$: Observable<{
-    keyMap: boolean,
+    keyMap: boolean
     stringStats: boolean
-  }> = combineLatest([
-    this.isKeyMapEnabled$,
-    this.isStringStatsEnabled$,
-  ]).pipe(
+  }> = combineLatest([this.isKeyMapEnabled$, this.isStringStatsEnabled$]).pipe(
     map(([keyMap, stringStats]) => {
       return {
         keyMap,
@@ -141,12 +143,10 @@ export class GridLayoutComponent implements OnInit {
   )
 
   constructor() {
-
     // console.log(`${this.getScreenWidth}x${this.getScreenHeight}`)
   }
 
-
-  @Input() set gridSize(size: { rows: number, cols: number }) {
+  @Input() set gridSize(size: { rows: number; cols: number }) {
     // this.backgroundHeight = `${size.rows * this.blockHeight + 1}px`
     // this.backgroundWidth = `${size.cols * this.blockWidth + 1}px`
   }
@@ -180,28 +180,32 @@ export class GridLayoutComponent implements OnInit {
 
   screenHasBeenSet = false
 
-
   selectedString$: Observable<StringModel | undefined> = this.selectedFacade.selectedStringId$.pipe(
-    switchMap(stringId => this.stringsFacade.stringById$(stringId).pipe(
-      map(string => {
-        if (!string) return undefined
-        return string
-      }),
-    )),
+    switchMap((stringId) =>
+      this.stringsFacade.stringById$(stringId).pipe(
+        map((string) => {
+          if (!string) return undefined
+          return string
+        }),
+      ),
+    ),
   )
 
-  panelLinkPath$: Observable<SelectedPanelLinkPathModel | undefined> = this.pathsStore.select.selectedPanelLinkPath$.pipe(
-    combineLatestWith(this.selectedStore.select.selectedId$),
-    map(([paths, isSelectedString]) => {
-      if (!isSelectedString) return undefined
-      return paths
-    }),
-  )
+  panelLinkPath$: Observable<SelectedPanelLinkPathModel | undefined> =
+    this.pathsStore.select.selectedPanelLinkPath$.pipe(
+      combineLatestWith(this.selectedStore.select.selectedId$),
+      map(([paths, isSelectedString]) => {
+        if (!isSelectedString) return undefined
+        return paths
+      }),
+    )
 
   ngOnInit() {
     this.getScreenWidth = window.innerWidth
+    // this.getScreenHeight = window.innerHeight - 160
     this.getScreenHeight = window.innerHeight
     this.gridContainerWidth = `${window.innerWidth}px`
+    // this.gridContainerHeight = `${window.innerHeight - 160}px`
     this.gridContainerHeight = `${window.innerHeight}px`
     /*    this.layoutWidth = window.innerWidth - 100
         this.layoutHeight = window.innerHeight - 100
@@ -232,7 +236,6 @@ export class GridLayoutComponent implements OnInit {
     this.screenHasBeenSet = true
   }
 
-
   numSequence(n: number): Array<number> {
     return Array(n)
   }
@@ -254,6 +257,4 @@ export class GridLayoutComponent implements OnInit {
   async drop(drop: CdkDragDrop<BlockModel[]>) {
     await this.dropService.drop(drop)
   }
-
-
 }

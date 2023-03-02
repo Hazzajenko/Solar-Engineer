@@ -49,7 +49,12 @@
         <PackageReference Include="Microsoft.NET.Build.Containers" Version="0.3.2" />
 
         <PackageReference Include="RabbitMQ.Client" Version="6.4.0" />
+
+        <PackageReference Include="SixLabors.ImageSharp" Version="3.0.0" />
+
+        <PackageReference Include="SixLabors.ImageSharp.Web" Version="2.0.2" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+        <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
     </ItemGroup>
 
     <ItemGroup>

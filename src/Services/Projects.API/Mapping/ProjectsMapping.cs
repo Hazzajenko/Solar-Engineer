@@ -1,5 +1,6 @@
 ﻿using Projects.API.Contracts.Data;
 using Projects.API.Contracts.Requests;
+using Projects.API.Contracts.Requests.Projects;
 using Projects.API.Entities;
 
 namespace Projects.API.Mapping;

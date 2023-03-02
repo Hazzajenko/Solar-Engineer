@@ -2,6 +2,7 @@
 using Infrastructure.Extensions;
 using Mediator;
 using Projects.API.Contracts.Requests;
+using Projects.API.Contracts.Requests.Projects;
 using Projects.API.Data;
 using Projects.API.Mapping;
 

@@ -1,6 +1,7 @@
 ﻿using FastEndpoints;
 using Mediator;
 using Projects.API.Contracts.Requests;
+using Projects.API.Contracts.Requests.Projects;
 using Projects.API.Handlers;
 
 namespace Projects.API.Endpoints;
