@@ -1,8 +1,9 @@
 ﻿using Mediator;
 using Microsoft.AspNetCore.SignalR;
-using Projects.API.Contracts.Requests;
+using Projects.API.Contracts.Requests.Panels;
 using Projects.API.Contracts.Requests.Projects;
 using Projects.API.Handlers.SignalR;
+using Projects.API.Handlers.SignalR.Panels;
 
 namespace Projects.API.Hubs;
 
@@ -35,6 +36,11 @@ public class ProjectsHub : Hub<IProjectsHub>
     public async Task UpdateProject(UpdateProjectRequest request)
     {
         await _mediator.Send(new UpdateProjectCommand(Context, request));
+    }
+
+    public async Task CreatePanel(CreatePanelRequest request)
+    {
+        await _mediator.Send(new CreatePanelCommand(Context, request));
     }
 
     public async Task CreateProjectItem(UpdateProjectRequest request)

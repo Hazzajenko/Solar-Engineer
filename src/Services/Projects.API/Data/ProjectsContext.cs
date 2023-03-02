@@ -5,8 +5,7 @@ using Projects.API.Entities;
 
 namespace Projects.API.Data;
 
-public class ProjectsContext
-    : DbContext, IDataContext
+public class ProjectsContext : DbContext, IDataContext
 {
     public ProjectsContext(DbContextOptions<ProjectsContext> options)
         : base(options)
@@ -14,15 +13,11 @@ public class ProjectsContext
     }
 
     public DbSet<Project> Projects { get; set; } = default!;
-
     public DbSet<AppUserProject> AppUserProjects { get; set; } = default!;
-    /*public DbSet<Message> Messages { get; set; } = default!;
-    public DbSet<AppUserGroupChat> UserGroupChats { get; set; } = default!;
-    public DbSet<GroupChat> GroupChats { get; set; } = default!;
-    public DbSet<GroupChatMessage> GroupChatMessages { get; set; } = default!;*/
-
-    // public DbSet<User> Users { get; set; } = default!;
-    // public DbSet<GroupChatServerMessage> GroupChatServerMessages { get; set; } = default!;
+    public DbSet<String> Strings { get; set; } = default!;
+    public DbSet<Panel> Panels { get; set; } = default!;
+    public DbSet<PanelLink> PanelLinks { get; set; } = default!;
+    public DbSet<PanelConfig> PanelConfigs { get; set; } = default!;
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {

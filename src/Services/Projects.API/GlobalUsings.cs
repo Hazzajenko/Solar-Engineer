@@ -1,0 +1,1 @@
+﻿global using String = Projects.API.Entities.String;
