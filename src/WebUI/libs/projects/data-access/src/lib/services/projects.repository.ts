@@ -1,7 +1,7 @@
 import { LocalProjectModel, ProjectModel } from '@shared/data-access/models'
 import { inject, Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
-import { ProjectsActions } from '@projects/data-access/store'
+import { ProjectsActions } from '../store'
 
 @Injectable({ providedIn: 'root' })
 export class ProjectsRepository {

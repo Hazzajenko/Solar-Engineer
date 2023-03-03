@@ -4,10 +4,7 @@ namespace Infrastructure.Web;
 
 public static class CorsConfig
 {
-    public static IServiceCollection InitCors(
-        this IServiceCollection services,
-        string corsPolicy
-    )
+    public static IServiceCollection InitCors(this IServiceCollection services, string corsPolicy)
     {
         services.AddCors(options =>
         {
@@ -31,7 +28,8 @@ public static class CorsConfig
                             "https://localhost:4200",
                             // "https://localhost:4200/identity/login",
                             // "https://localhost:4200/identity/login/google",
-                            "https://127.0.0.1:4200"
+                            "https://127.0.0.1:4200",
+                            "https://solarengineer.net"
                         )
                         .AllowAnyMethod()
                         .AllowAnyHeader()

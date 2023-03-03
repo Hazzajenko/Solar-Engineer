@@ -3,17 +3,13 @@ using Projects.API.Data;
 
 namespace Projects.API.Contracts.Data;
 
-public class ProjectDto : IEntityDto, IUserObjectDto, IProject
+public class PanelLinkDto : IEntityDto, IUserObjectDto, IProject
 {
-    public string Name { get; set; } = default!;
+    public string PositiveToId { get; set; } = default!;
+    public string NegativeToId { get; set; } = default!;
+    public string ProjectId { get; set; } = default!;
     public string Id { get; set; } = default!;
     public DateTime CreatedTime { get; set; }
     public DateTime LastModifiedTime { get; set; }
     public string CreatedById { get; set; } = default!;
-
-    /*
-    public void ThrowIfNull()
-    {
-        throw new NotImplementedException();
-    }*/
 }

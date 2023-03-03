@@ -7,7 +7,7 @@ using Projects.API.Data;
 using Projects.API.Repositories.AppUserProjects;
 using Projects.API.Repositories.Projects;
 
-namespace Projects.API.Extensions.Application;
+namespace Projects.API.Extensions;
 
 public static class ServiceCollectionExtensions
 {

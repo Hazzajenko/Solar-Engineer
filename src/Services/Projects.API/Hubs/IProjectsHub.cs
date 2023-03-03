@@ -7,6 +7,7 @@ public interface IProjectsHub
 {
     Task GetProjects(IEnumerable<ProjectDto> projects);
     Task GetUserProject(ProjectDto project);
+    Task GetProjectData(ProjectDataDto projectData);
 
     Task UpdateProject(ProjectChanges projectChanges);
 

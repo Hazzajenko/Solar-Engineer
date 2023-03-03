@@ -5,6 +5,7 @@ import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { catchError, map, of, switchMap, tap } from 'rxjs'
 import { Router } from '@angular/router'
 import { Location } from '@angular/common'
+import { HttpClient } from '@angular/common/http'
 
 @Injectable()
 export class AuthEffects {
@@ -12,13 +13,15 @@ export class AuthEffects {
   private authService = inject(AuthService)
   private router = inject(Router)
   private location = inject(Location)
+  private http = inject(HttpClient)
 
   getRedirect$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType(AuthActions.loginWithGoogle),
+        // switchMap(() => this.http.get('/auth-api/login/google')),
         map(() => {
-          window.location.href = '/auth/login/google'
+          window.location.href = '/auth-api/login/google'
         }),
       ),
     { dispatch: false },

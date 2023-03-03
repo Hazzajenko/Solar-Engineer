@@ -1,10 +1,11 @@
 ﻿using Infrastructure.Common;
+using Projects.API.Data;
 
-namespace Projects.API.Entities;
+namespace Projects.API.Contracts.Data;
 
-public class PanelConfig : IEntity, IUserObject
+public class PanelConfigDto : IEntityDto, IUserObjectDto, IProject
 {
-    public string Brand { get; set; } = "";
+    public string Brand { get; set; } = default!;
     public string Name { get; set; } = default!;
     public double CurrentAtMaximumPower { get; set; }
     public double ShortCircuitCurrent { get; set; }
@@ -18,9 +19,8 @@ public class PanelConfig : IEntity, IUserObject
     public double Weight { get; set; }
     public double Width { get; set; }
     public bool Default { get; set; }
-    public ICollection<Panel> Panels { get; set; } = new List<Panel>();
-    public Guid Id { get; set; }
+    public string Id { get; set; } = default!;
     public DateTime CreatedTime { get; set; }
     public DateTime LastModifiedTime { get; set; }
-    public Guid CreatedById { get; set; }
+    public string CreatedById { get; set; } = default!;
 }

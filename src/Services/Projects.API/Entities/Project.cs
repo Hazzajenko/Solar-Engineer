@@ -1,8 +1,9 @@
 ﻿using Infrastructure.Common;
+using Projects.API.Data;
 
 namespace Projects.API.Entities;
 
-public class Project : IEntity, IUserObject
+public class Project : IEntity, IUserObject, IProject
 {
     public string Name { get; set; } = default!;
     public ICollection<AppUserProject> AppUserProjects { get; set; } = default!;

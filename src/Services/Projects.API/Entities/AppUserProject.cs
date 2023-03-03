@@ -4,8 +4,8 @@ namespace Projects.API.Entities;
 
 public class AppUserProject : IEntity
 {
-    public Guid AppUserId { get; set; } = default!;
-    public Guid ProjectId { get; set; } = default!;
+    public Guid AppUserId { get; set; }
+    public Guid ProjectId { get; set; }
     public Project Project { get; set; } = default!;
     public string Role { get; set; } = default!;
     public bool CanCreate { get; set; }

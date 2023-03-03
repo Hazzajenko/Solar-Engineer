@@ -20,7 +20,7 @@ public static partial class WebApplicationExtensions
             }
         );
 
-        var loginEndpoints = app.MapGroup("auth/login");
+        var loginEndpoints = app.MapGroup("login");
 
         loginEndpoints.MapGet(
             "/github",

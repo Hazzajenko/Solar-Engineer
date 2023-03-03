@@ -14,8 +14,8 @@ services:
     volumes:
       - ./docker_postgres_init.sql:/docker-entrypoint-initdb.d/docker_postgres_init.sql
       - ./db-data/postgres/:/var/lib/postgresql/data/
-  
-  
+
+
   rabbitmq:
     image: rabbitmq:3-management
     hostname: "rabbitmq"
@@ -24,14 +24,9 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
-  
+
   redis:
     image: redis
     ports:
       - "6379:6379"
-  
-  nginxserver:
-    image: nginxserver
-    ports:
-      - "80:80"
 

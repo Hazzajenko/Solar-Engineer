@@ -4,7 +4,8 @@ import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signal
 // import { UserIsOnline } from '../../../../../app/data-access/connections/src/lib/api/connections.methods'
 import { ProjectModel } from '@shared/data-access/models'
 import { ProjectsStoreService } from '../services'
-import { GetProjects } from './projects.methods'
+import { GetProjectData, GetProjects } from './projects.methods'
+import { GetProjectDataResponse } from '../models/get-project-data.response'
 
 @Injectable({
   providedIn: 'root',
@@ -39,6 +40,11 @@ export class ProjectsSignalrService {
     this.projectsHubConnection.on(GetProjects, (projects: ProjectModel[]) => {
       console.log(projects)
       this.projectsStore.dispatch.addManyProjects(projects)
+    })
+
+    this.projectsHubConnection.on(GetProjectData, (projectData: GetProjectDataResponse) => {
+      console.log(projectData)
+      // this.projectsStore.dispatch.addManyProjects(projects)
     })
 
     // this.projectsHubConnection.invoke(GetProjects, (projects: ProjectModel[]) => {

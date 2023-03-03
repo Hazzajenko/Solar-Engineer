@@ -8,11 +8,11 @@ public class AppUserProjectsConfig : IEntityTypeConfiguration<AppUserProject>
 {
     public void Configure(EntityTypeBuilder<AppUserProject> builder)
     {
-        builder
+        /*builder
             .HasOne(u => u.Project)
             .WithMany(m => m.AppUserProjects)
             .HasForeignKey(x => x.ProjectId)
             .OnDelete(DeleteBehavior.NoAction)
-            .IsRequired();
+            .IsRequired();*/
     }
 }

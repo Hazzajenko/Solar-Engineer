@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
-import { ProjectsSelectors } from '@projects/data-access/store'
+import { ProjectsSelectors } from '../store'
 import { combineLatest, firstValueFrom } from 'rxjs'
 
 @Injectable({ providedIn: 'root' })
@@ -21,9 +21,8 @@ export class ProjectsFacade {
 
   isWebWithProject$ = combineLatest([
     this.store.select(ProjectsSelectors.selectIsWebProject),
-    this.store.select(ProjectsSelectors.selectProjectByRouteParams)
+    this.store.select(ProjectsSelectors.selectProjectByRouteParams),
   ])
-
 
   get currentProjectId() {
     return firstValueFrom(this.currentProjectId$)

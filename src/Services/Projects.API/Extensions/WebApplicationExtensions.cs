@@ -5,7 +5,7 @@ using FastEndpoints.Swagger;
 using Projects.API.Hubs;
 using Serilog;
 
-namespace Projects.API.Extensions.Application;
+namespace Projects.API.Extensions;
 
 public static class WebApplicationExtensions
 {

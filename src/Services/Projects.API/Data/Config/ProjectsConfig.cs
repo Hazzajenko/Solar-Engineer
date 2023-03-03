@@ -8,11 +8,32 @@ public class ProjectsConfig : IEntityTypeConfiguration<Project>
 {
     public void Configure(EntityTypeBuilder<Project> builder)
     {
-        // builder
-        //     .HasMany(u => u.AppUserProjects)
-        //     .WithOne(m => m.Project)
-        //     .HasForeignKey(x => x.GroupChatMessageId)
-        //     .OnDelete(DeleteBehavior.NoAction)
-        //     .IsRequired();
+        builder
+            .HasMany(u => u.AppUserProjects)
+            .WithOne(m => m.Project)
+            .HasForeignKey(x => x.ProjectId)
+            .OnDelete(DeleteBehavior.NoAction)
+            .IsRequired();
+
+        builder
+            .HasMany(u => u.Panels)
+            .WithOne(m => m.Project)
+            .HasForeignKey(x => x.ProjectId)
+            .OnDelete(DeleteBehavior.Cascade)
+            .IsRequired();
+
+        builder
+            .HasMany(u => u.PanelLinks)
+            .WithOne(m => m.Project)
+            .HasForeignKey(x => x.ProjectId)
+            .OnDelete(DeleteBehavior.Cascade)
+            .IsRequired();
+
+        builder
+            .HasMany(u => u.Strings)
+            .WithOne(m => m.Project)
+            .HasForeignKey(x => x.ProjectId)
+            .OnDelete(DeleteBehavior.Cascade)
+            .IsRequired();
     }
 }

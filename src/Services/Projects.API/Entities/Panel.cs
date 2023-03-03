@@ -3,7 +3,7 @@ using Projects.API.Data;
 
 namespace Projects.API.Entities;
 
-public class Panel : IEntity, IProjectItem
+public class Panel : IEntity, IProjectItem, IUserObject
 {
     public String String { get; set; } = default!;
     public Guid StringId { get; set; }
@@ -14,4 +14,5 @@ public class Panel : IEntity, IProjectItem
     public DateTime LastModifiedTime { get; set; }
     public Guid ProjectId { get; set; }
     public Project Project { get; set; } = default!;
+    public Guid CreatedById { get; set; }
 }

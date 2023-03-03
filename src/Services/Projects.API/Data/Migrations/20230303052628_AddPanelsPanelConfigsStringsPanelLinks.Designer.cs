@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Projects.API.Data;
@@ -11,9 +12,11 @@ using Projects.API.Data;
 namespace Projects.API.Data.Migrations
 {
     [DbContext(typeof(ProjectsContext))]
-    partial class ProjectsContextModelSnapshot : ModelSnapshot
+    [Migration("20230303052628_AddPanelsPanelConfigsStringsPanelLinks")]
+    partial class AddPanelsPanelConfigsStringsPanelLinks
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -111,9 +114,6 @@ namespace Projects.API.Data.Migrations
                     b.Property<double>("CurrentAtMaximumPower")
                         .HasColumnType("double precision");
 
-                    b.Property<bool>("Default")
-                        .HasColumnType("boolean");
-
                     b.Property<DateTime>("LastModifiedTime")
                         .HasColumnType("timestamp with time zone");
 
@@ -177,6 +177,9 @@ namespace Projects.API.Data.Migrations
                     b.Property<Guid>("ProjectId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("StringId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
 
                     b.HasIndex("NegativeToId");
@@ -184,6 +187,8 @@ namespace Projects.API.Data.Migrations
                     b.HasIndex("PositiveToId");
 
                     b.HasIndex("ProjectId");
+
+                    b.HasIndex("StringId");
 
                     b.ToTable("PanelLinks");
                 });
@@ -261,7 +266,7 @@ namespace Projects.API.Data.Migrations
                     b.HasOne("Projects.API.Entities.PanelConfig", "PanelConfig")
                         .WithMany("Panels")
                         .HasForeignKey("PanelConfigId")
-                        .OnDelete(DeleteBehavior.SetNull)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Projects.API.Entities.Project", "Project")
@@ -271,9 +276,9 @@ namespace Projects.API.Data.Migrations
                         .IsRequired();
 
                     b.HasOne("Projects.API.Entities.String", "String")
-                        .WithMany("Panels")
+                        .WithMany()
                         .HasForeignKey("StringId")
-                        .OnDelete(DeleteBehavior.SetNull)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("PanelConfig");
@@ -303,11 +308,19 @@ namespace Projects.API.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Projects.API.Entities.String", "String")
+                        .WithMany()
+                        .HasForeignKey("StringId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("NegativeTo");
 
                     b.Navigation("PositiveTo");
 
                     b.Navigation("Project");
+
+                    b.Navigation("String");
                 });
 
             modelBuilder.Entity("Projects.API.Entities.String", b =>
@@ -335,11 +348,6 @@ namespace Projects.API.Data.Migrations
                     b.Navigation("Panels");
 
                     b.Navigation("Strings");
-                });
-
-            modelBuilder.Entity("Projects.API.Entities.String", b =>
-                {
-                    b.Navigation("Panels");
                 });
 #pragma warning restore 612, 618
         }

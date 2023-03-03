@@ -7,7 +7,7 @@ using Infrastructure.SignalR;
 using Infrastructure.Web;
 using Microsoft.AspNetCore.HttpOverrides;
 using Projects.API.Data;
-using Projects.API.Extensions.Application;
+using Projects.API.Extensions;
 
 var builder = WebApplication.CreateBuilder(
     new WebApplicationOptions { Args = args, ContentRootPath = Directory.GetCurrentDirectory() }

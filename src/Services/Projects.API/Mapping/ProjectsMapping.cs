@@ -1,5 +1,4 @@
 ﻿using Projects.API.Contracts.Data;
-using Projects.API.Contracts.Requests;
 using Projects.API.Contracts.Requests.Projects;
 using Projects.API.Entities;
 
@@ -35,7 +34,7 @@ public static class ProjectsMapping
             Id = request.Project.Id.ToString(),
             Name = request.Project.Name,
             CreatedById = request.Project.CreatedById.ToString(),
-            CreatedAt = request.Project.CreatedTime
+            CreatedTime = request.Project.CreatedTime
         };
     }
 }

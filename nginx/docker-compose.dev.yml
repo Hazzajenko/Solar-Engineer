@@ -9,6 +9,8 @@ services:
     #     - users-api
     volumes:
       - ./nginx.dev.conf:/etc/nginx/nginx.conf
+      # - ./solarengineer.net.crt:/etc/nginx/solarengineer.net.crt
+      # - ./solarengineer.net.rsa:/etc/nginx/solarengineer.net.rsa
       - ../etc/ssl/solarengineer.net/solarengineer.net.crt:/etc/nginx/solarengineer.net.crt
       - ../etc/ssl/solarengineer.net/solarengineer.net.rsa:/etc/nginx/solarengineer.net.rsa
     ports:
