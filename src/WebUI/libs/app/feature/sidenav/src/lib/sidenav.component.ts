@@ -27,7 +27,7 @@ import { LetModule } from '@ngrx/component'
 import { ProjectsStoreService } from '@projects/data-access'
 
 import { FriendModel, UserModel } from '@shared/data-access/models'
-import { NotificationsStoreService } from '@shared/data-access/notifications'
+import { NotificationsStoreService } from '@app/data-access/notifications'
 import { OnlineFriendsPipe } from '@shared/pipes'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 

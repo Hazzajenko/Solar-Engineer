@@ -12,7 +12,7 @@ import { AuthStoreService } from '@auth/data-access'
 import { LetModule } from '@ngrx/component'
 import { UiStoreService } from '@grid-layout/data-access'
 import { ProjectsStoreService } from '@projects/data-access'
-import { NotificationsStoreService } from '@shared/data-access/notifications'
+import { NotificationsStoreService } from '@app/data-access/notifications'
 import { AppBarComponent } from '@shared/ui/app-bar'
 
 import { InitLoginPipe } from '@app/shared'

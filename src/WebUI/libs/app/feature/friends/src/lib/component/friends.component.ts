@@ -1,5 +1,14 @@
 import { ScrollingModule } from '@angular/cdk/scrolling'
-import { AsyncPipe, DatePipe, NgClass, NgForOf, NgIf, NgStyle, NgSwitch, NgSwitchCase } from '@angular/common'
+import {
+  AsyncPipe,
+  DatePipe,
+  NgClass,
+  NgForOf,
+  NgIf,
+  NgStyle,
+  NgSwitch,
+  NgSwitchCase,
+} from '@angular/common'
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
@@ -15,12 +24,11 @@ import { FriendsService, FriendsStoreService } from '@app/data-access/friends'
 import { AuthStoreService } from '@auth/data-access/facades'
 
 import { FriendModel, UserModel } from '@shared/data-access/models'
-import { NotificationsStoreService } from '@shared/data-access/notifications'
+import { NotificationsStoreService } from '@app/data-access/notifications'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
 import { Observable } from 'rxjs'
 import { FriendDirective } from './friend.directive'
-
 
 @Component({
   selector: 'app-friends-component',
@@ -52,7 +60,6 @@ import { FriendDirective } from './friend.directive'
   standalone: true,
 })
 export class FriendsComponent {
-
   private notificationsStore = inject(NotificationsStoreService)
   private authStore = inject(AuthStoreService)
   private friendsService = inject(FriendsService)
@@ -70,7 +77,4 @@ export class FriendsComponent {
           // this.readNotification()
         }*/
   }
-
-
 }
-

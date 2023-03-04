@@ -26,7 +26,7 @@ import { AuthStoreService } from '@auth/data-access/facades'
 import { Update } from '@ngrx/entity'
 
 import { NotificationModel, NotificationStatus, UserModel } from '@shared/data-access/models'
-import { NotificationsStoreService } from '@shared/data-access/notifications'
+import { NotificationsStoreService } from '@app/data-access/notifications'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
 import { Observable } from 'rxjs'
