@@ -11,7 +11,7 @@ import { ProjectsFacade } from '@projects/data-access/facades'
 import { PanelModel } from '@shared/data-access/models'
 import { combineLatest, firstValueFrom, map } from 'rxjs'
 import { getSelectedLinks } from '../links/get-selected-links'
-// import { PathsService } from 'libs/grid-layout/data-access/services/src/lib/entitites/paths/paths.service'
+// import { PathsEventService } from 'libs/grid-layout/data-access/services/src/lib/entitites/paths/paths.service'
 import { toUpdatePanelArray } from './update-panel-map'
 import { PathsService } from '../paths'
 

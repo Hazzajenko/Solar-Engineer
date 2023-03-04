@@ -18,7 +18,6 @@ import { LinksService } from '../entitites/links/links.service'
   providedIn: 'root',
 })
 export class ClickService {
-
   private gridFacade = inject(GridFacade)
   private blocksFacade = inject(BlocksFacade)
   private panelsFacade = inject(PanelsFacade)
@@ -26,7 +25,7 @@ export class ClickService {
   private blocksStore = inject(BlocksStoreService)
   private gridStore = inject(GridStoreService)
   // private factory = inject(GlobalFactory)
-  // private facade = inject(GlobalFacade)
+  // private facade = inject(GridLayoutStoreService)
 
   private gridFactory = inject(GridService)
   private panelsFactory = inject(PanelsService)
@@ -37,7 +36,6 @@ export class ClickService {
       return console.error('click, click.event.altKey')
     }
 
-
     const existingBlock = await this.blocksStore.select.blockByLocation(click.location)
 
     if (existingBlock) {
@@ -47,10 +45,7 @@ export class ClickService {
     return this.gridModeSwitch(click.location)
   }
 
-  async existingBlockSwitch(
-    click: MouseEventRequest,
-    existingBlock: BlockModel,
-  ) {
+  async existingBlockSwitch(click: MouseEventRequest, existingBlock: BlockModel) {
     switch (existingBlock.type) {
       case BlockType.PANEL:
         return this.clickPanelSwitch(click, existingBlock)
@@ -59,10 +54,7 @@ export class ClickService {
     }
   }
 
-  private async clickPanelSwitch(
-    click: MouseEventRequest,
-    block: BlockModel,
-  ) {
+  private async clickPanelSwitch(click: MouseEventRequest, block: BlockModel) {
     const panel = await this.panelsFacade.panelById(block.id)
     if (!panel) {
       return console.error('!(panel instanceof PanelModel)')
@@ -71,7 +63,7 @@ export class ClickService {
     const gridMode = await this.gridFacade.gridMode
     if (gridMode === GridMode.LINK) {
       return this.linksService.addPanelToLink(click, panel)
-    }/*
+    } /*
 
     const selectedStringId = await this.facade.selected.selectedStringId
     if (selectedStringId === panel.stringId) {

@@ -7,7 +7,7 @@
         *ngFor="let project of projects"
       >
         <span matListItemTitle>{{ project.name }}</span>
-        <span matListItemLine>Created At {{ project.createdAt | date: "short" }}</span>
+        <span matListItemLine>Created At {{ project.createdTime | date: "short" }}</span>
         <!--        <span matListItemLine>Last Edited Today</span>-->
       </mat-list-item>
     </div>

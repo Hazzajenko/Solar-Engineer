@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common'
 import { Component, inject } from '@angular/core'
 import { BlocksStoreService } from '@project-id/data-access/facades'
-import { GridLayoutComponent } from '@grid-layout/feature/index'
+import { GridLayoutComponent } from '@grid-layout/feature'
+// import { GridLayoutComponent } from '@grid-layout/feature/index'
 import { ToolbarComponent } from '@project-id/feature/toolbar'
 
 import { ProjectsFacade, ProjectsStoreService } from '@projects/data-access/facades'

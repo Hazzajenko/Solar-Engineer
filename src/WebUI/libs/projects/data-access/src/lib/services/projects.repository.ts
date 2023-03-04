@@ -39,7 +39,7 @@ export class ProjectsRepository {
       project: {
         id: '0',
         name: 'localProject',
-        createdAt: new Date().getDate().toString(),
+        createdTime: new Date().getDate().toString(),
         createdById: '0',
       },
       strings: [],

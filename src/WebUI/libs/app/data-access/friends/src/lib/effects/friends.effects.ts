@@ -15,7 +15,7 @@ export class FriendsEffects {
   private actions$ = inject(Actions)
   private store = inject(Store)
 
-  // private panelsService = inject(PathsService)
+  // private panelsService = inject(PathsEventService)
   // private projectsFacade = inject(ProjectsFacade)
   private projectsStore = inject(ProjectsStoreService)
   private friendsService = inject(FriendsService)

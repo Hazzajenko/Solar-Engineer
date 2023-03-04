@@ -9,7 +9,7 @@ describe('Projects Reducer', () => {
   const createProjectsEntity = (id: number, name = ''): ProjectModel => ({
     id,
     name: name || `name-${id}`,
-    createdAt: '123456',
+    createdTime: '123456',
     createdById: 1,
   })
 

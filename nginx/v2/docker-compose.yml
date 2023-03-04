@@ -1,0 +1,27 @@
+version: "3.3"
+services:
+  # nginx:
+  #   build:
+  #     context: "."
+  #     dockerfile: "Dockerfile"
+
+  reverse-proxy:
+    image: nginx:latest
+    # container_name: reverse_proxy
+    # depends_on:
+    #     - users-api
+    volumes:
+      # COPY . /etc/nginx/
+      # - ./:/etc/nginx/
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./sites-available:/etc/nginx/sites-available/
+      - ./sites-enabled:/etc/nginx/sites-enabled/
+      - ./solarengineer.config:/etc/nginx/solarengineer.config/
+      # - ./nginx:/etc/nginx/nginx.conf
+      - ../../etc/ssl/solarengineer.net/solarengineer.net.crt:/etc/nginx/solarengineer.net.crt
+      - ./solarengineer.net.rsa:/etc/nginx/solarengineer.net.rsa
+    ports:
+      - 443:443
+      - 80:80
+    # command: >
+    #   sh -c "ln -s /etc/nginx/sites-available/solarengineer.net.conf /etc/nginx/sites-enabled/solarengineer.net.conf"

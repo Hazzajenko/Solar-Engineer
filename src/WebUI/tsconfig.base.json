@@ -53,9 +53,9 @@
       "@auth/guards": ["libs/auth/guards/src/index.ts"],
       "@auth/interceptors": ["libs/auth/interceptors/src/index.ts"],
       "@auth/shared/models": ["libs/auth/shared/models/src/index.ts"],
-      "@grid-layout/data-access/actions": ["libs/grid-layout/data-access/actions/src/index.ts"],
+      "@grid-layout/data-access": ["libs/grid-layout/data-access/src/index.ts"],
       "@grid-layout/data-access/services": ["libs/grid-layout/data-access/services/src/index.ts"],
-      "@grid-layout/data-access/utils": ["libs/grid-layout/data-access/utils/src/index.ts"],
+      "@grid-layout/feature": ["libs/grid-layout/feature/src/index.ts"],
       "@grid-layout/feature/blocks/block-disconnection-point": [
         "libs/grid-layout/feature/blocks/block-disconnection-point/src/index.ts"
       ],

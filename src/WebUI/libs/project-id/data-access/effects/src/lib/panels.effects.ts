@@ -17,7 +17,7 @@ export class PanelsEffects {
   private actions$ = inject(Actions)
   private store = inject(Store)
 
-  // private panelsService = inject(PathsService)
+  // private panelsService = inject(PathsEventService)
   // private projectsFacade = inject(ProjectsFacade)
   private projectsStore = inject(ProjectsStoreService)
   private panelsService = inject(PanelsService)
@@ -59,20 +59,21 @@ export class PanelsEffects {
     ),
   )
 
-  addPanelHttp$ = createEffect(() =>
+  addPanelHttp$ = createEffect(
+    () =>
       this.actions$.pipe(
         ofType(PanelsActions.addPanel),
-        switchMap(({ panel }) => this.projectsStore.select.selectIsWebProject$.pipe(
-          switchMap(
-            isWeb => {
+        switchMap(({ panel }) =>
+          this.projectsStore.select.selectIsWebProject$.pipe(
+            switchMap((isWeb) => {
               if (isWeb) {
                 return this.panelsService.addPanel(panel)
               }
               // update local state
               return of(undefined)
-            },
+            }),
           ),
-        )),
+        ),
       ),
     { dispatch: false },
   )
@@ -84,21 +85,22 @@ export class PanelsEffects {
     ),
   )
 
-  addManyPanelsHttp$ = createEffect(() =>
+  addManyPanelsHttp$ = createEffect(
+    () =>
       this.actions$.pipe(
         ofType(PanelsActions.addManyPanels),
-        switchMap(({ panels }) => this.projectsStore.select.isWebWithProject$.pipe(
-          switchMap(
-            ([isWeb, project]) => {
+        switchMap(({ panels }) =>
+          this.projectsStore.select.isWebWithProject$.pipe(
+            switchMap(([isWeb, project]) => {
               if (!project) return of(undefined)
               if (isWeb) {
                 return this.panelsService.addManyPanels(panels, project.id)
               }
               // update local state
               return of(undefined)
-            },
+            }),
           ),
-        )),
+        ),
       ),
     { dispatch: false },
   )
@@ -114,21 +116,22 @@ export class PanelsEffects {
     ),
   )
 
-  updatePanelHttp$ = createEffect(() =>
+  updatePanelHttp$ = createEffect(
+    () =>
       this.actions$.pipe(
         ofType(PanelsActions.updatePanel),
-        switchMap(({ update }) => this.projectsStore.select.isWebWithProject$.pipe(
-          switchMap(
-            ([isWeb, project]) => {
+        switchMap(({ update }) =>
+          this.projectsStore.select.isWebWithProject$.pipe(
+            switchMap(([isWeb, project]) => {
               if (!project) return of(undefined)
               if (isWeb) {
                 return this.panelsService.updatePanel(update, project.id)
               }
               // update local state
               return of(undefined)
-            },
+            }),
           ),
-        )),
+        ),
       ),
     { dispatch: false },
   )
@@ -140,22 +143,23 @@ export class PanelsEffects {
     ),
   )
 
-  updateManyPanelsHttp$ = createEffect(() =>
+  updateManyPanelsHttp$ = createEffect(
+    () =>
       this.actions$.pipe(
         ofType(PanelsActions.updateManyPanels),
-        switchMap(({ updates }) => this.projectsStore.select.selectIsWebProject$.pipe(
-          combineLatestWith(this.projectsStore.select.projectFromRoute$),
-          switchMap(
-            ([isWeb, project]) => {
+        switchMap(({ updates }) =>
+          this.projectsStore.select.selectIsWebProject$.pipe(
+            combineLatestWith(this.projectsStore.select.projectFromRoute$),
+            switchMap(([isWeb, project]) => {
               if (!project) return of(undefined)
               if (isWeb) {
                 return this.panelsService.updateManyPanels(updates, project.id)
               }
               // update local state
               return of(undefined)
-            },
+            }),
           ),
-        )),
+        ),
       ),
     { dispatch: false },
   )
@@ -171,21 +175,22 @@ export class PanelsEffects {
     ),
   )
 
-  deletePanelHttp$ = createEffect(() =>
+  deletePanelHttp$ = createEffect(
+    () =>
       this.actions$.pipe(
         ofType(PanelsActions.deletePanel),
-        switchMap(({ panelId }) => this.projectsStore.select.isWebWithProject$.pipe(
-          switchMap(
-            ([isWeb, project]) => {
+        switchMap(({ panelId }) =>
+          this.projectsStore.select.isWebWithProject$.pipe(
+            switchMap(([isWeb, project]) => {
               if (!project) return of(undefined)
               if (isWeb) {
                 return this.panelsService.deletePanel(panelId, project.id)
               }
               // update local state
               return of(undefined)
-            },
+            }),
           ),
-        )),
+        ),
       ),
     { dispatch: false },
   )
@@ -201,21 +206,22 @@ export class PanelsEffects {
     ),
   )
 
-  deleteManyPanelsHttp$ = createEffect(() =>
+  deleteManyPanelsHttp$ = createEffect(
+    () =>
       this.actions$.pipe(
         ofType(PanelsActions.deleteManyPanels),
-        switchMap(({ panelIds }) => this.projectsStore.select.isWebWithProject$.pipe(
-          switchMap(
-            ([isWeb, project]) => {
+        switchMap(({ panelIds }) =>
+          this.projectsStore.select.isWebWithProject$.pipe(
+            switchMap(([isWeb, project]) => {
               if (!project) return of(undefined)
               if (isWeb) {
                 return this.panelsService.deleteManyPanels(panelIds, project.id)
               }
               // update local state
               return of(undefined)
-            },
+            }),
           ),
-        )),
+        ),
       ),
     { dispatch: false },
   )

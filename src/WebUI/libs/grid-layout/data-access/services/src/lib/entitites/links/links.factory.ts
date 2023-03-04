@@ -11,8 +11,8 @@ import { ProjectsFacade } from '@projects/data-access/facades'
 import { PanelLinkModel, PanelModel, ProjectModel } from '@shared/data-access/models'
 import { StringsService } from '../strings'
 import { PathsService } from '../paths'
-// import { PathsService } from 'libs/grid-layout/data-access/services/src/lib/entitites/paths/paths.service'
-// import { StringsService } from 'libs/grid-layout/data-access/services/src/lib/entitites/strings/strings.service'
+// import { PathsEventService } from 'libs/grid-layout/data-access/services/src/lib/entitites/paths/paths.service'
+// import { StringsEventService } from 'libs/grid-layout/data-access/services/src/lib/entitites/strings/strings.service'
 
 @Injectable({
   providedIn: 'root',
