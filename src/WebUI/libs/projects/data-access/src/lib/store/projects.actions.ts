@@ -14,6 +14,7 @@ export const ProjectsActions = createActionGroup({
     'Load Projects Success': props<{ projects: ProjectModel[] }>(),
     'Load Projects Failure': props<{ error: string | null }>(),
     'Init Select Project': props<{ projectId: string }>(),
+    'Get Project Data': emptyProps(),
     'Create Web Project': props<{ projectName: string }>(),
     'Create Web Project Success': emptyProps(),
     // 'Create Web Project Success': props<{ project: ProjectModel }>(),

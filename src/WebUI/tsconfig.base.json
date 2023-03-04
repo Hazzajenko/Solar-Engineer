@@ -56,44 +56,12 @@
       "@grid-layout/data-access": ["libs/grid-layout/data-access/src/index.ts"],
       "@grid-layout/data-access/services": ["libs/grid-layout/data-access/services/src/index.ts"],
       "@grid-layout/feature": ["libs/grid-layout/feature/src/index.ts"],
-      "@grid-layout/feature/blocks/block-disconnection-point": [
-        "libs/grid-layout/feature/blocks/block-disconnection-point/src/index.ts"
-      ],
-      "@grid-layout/feature/blocks/block-panel": [
-        "libs/grid-layout/feature/blocks/block-panel/src/index.ts"
-      ],
-      "@grid-layout/feature/blocks/block-tray": [
-        "libs/grid-layout/feature/blocks/block-tray/src/index.ts"
-      ],
-      "@grid-layout/feature/blocks/shared-ui": [
-        "libs/grid-layout/feature/blocks/shared-ui/src/index.ts"
-      ],
-      "@grid-layout/feature/index": ["libs/grid-layout/feature/index/src/index.ts"],
-      "@grid-layout/feature/keymap": ["libs/grid-layout/feature/keymap/src/index.ts"],
-      "@grid-layout/feature/string-stats": ["libs/grid-layout/feature/string-stats/src/index.ts"],
-      "@grid-layout/shared/models": ["libs/grid-layout/shared/models/src/index.ts"],
-      "@grid-layout/utils/factory": ["libs/grid-layout/utils/factory/src/index.ts"],
       "@home/ui": ["libs/home/ui/src/index.ts"],
-      "@project-id/data-access/api": ["libs/project-id/data-access/api/src/index.ts"],
-      "@project-id/data-access/effects": ["libs/project-id/data-access/effects/src/index.ts"],
-      "@project-id/data-access/facades": ["libs/project-id/data-access/facades/src/index.ts"],
-      "@project-id/data-access/resolvers": ["libs/project-id/data-access/resolvers/src/index.ts"],
       "@project-id/data-access/services": ["libs/project-id/data-access/services/src/index.ts"],
-      "@project-id/data-access/store": ["libs/project-id/data-access/store/src/index.ts"],
-      "@project-id/feature/local": ["libs/project-id/feature/local/src/index.ts"],
-      "@project-id/feature/toolbar": ["libs/project-id/feature/toolbar/src/index.ts"],
-      "@project-id/feature/web": ["libs/project-id/feature/web/src/index.ts"],
-      "@project-id/shared/models": ["libs/project-id/shared/models/src/index.ts"],
       "@projects/data-access": ["libs/projects/data-access/src/index.ts"],
-      "@projects/data-access/api": ["libs/projects/data-access/api/src/index.ts"],
-      "@projects/data-access/effects": ["libs/projects/data-access/effects/src/index.ts"],
-      "@projects/data-access/facades": ["libs/projects/data-access/facades/src/index.ts"],
-      "@projects/data-access/store": ["libs/projects/data-access/store/src/index.ts"],
       "@projects/feature": ["libs/projects/feature/src/index.ts"],
-      "@projects/feature/projects-list": ["libs/projects/feature/projects-list/src/index.ts"],
       "@shared/animations": ["libs/shared/animations/src/index.ts"],
       "@shared/config": ["libs/shared/config/src/index.ts"],
-      "@shared/data-access/connections": ["libs/shared/data-access/connections/src/index.ts"],
       "@shared/data-access/models": ["libs/shared/data-access/models/src/index.ts"],
       "@shared/data-access/notifications": ["libs/shared/data-access/notifications/src/index.ts"],
       "@shared/data-access/router": ["libs/shared/data-access/router/src/index.ts"],

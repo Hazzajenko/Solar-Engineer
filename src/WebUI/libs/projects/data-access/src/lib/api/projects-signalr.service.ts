@@ -11,13 +11,21 @@ import { GetProjectDataResponse } from '../models/get-project-data.response'
   providedIn: 'root',
 })
 export class ProjectsSignalrService {
-  private projectsHubConnection?: HubConnection
+  protected projectsHubConnection?: HubConnection
   private projectsStore = inject(ProjectsStoreService)
+  private hubConnectionIsInitialized = false
+  // protected hi = "ss"
+
+  /*  createProjectsHubConnection(token: string) {
+      if (this.hubConnectionIsInitialized) return
+      this.initHubConnection(token)
+      this.hubConnectionIsInitialized = true
+    }*/
 
   createProjectsHubConnection(token: string) {
+    if (this.projectsHubConnection) return this.projectsHubConnection
     this.projectsHubConnection = new HubConnectionBuilder()
       .withUrl('/projects-api/hubs/projects', {
-        // .withUrl('/projects-hub', {
         accessTokenFactory: () => token,
         skipNegotiation: true,
         transport: signalR.HttpTransportType.WebSockets,
@@ -30,7 +38,7 @@ export class ProjectsSignalrService {
       .start()
       .then(() => {
         console.log('Projects Hub Connection started')
-        this.invokeTest()
+        // this.invokeTest()
       })
       .catch((err) => {
         console.error('Error while starting Projects Hub connection: ' + err)
@@ -55,13 +63,23 @@ export class ProjectsSignalrService {
     return this.projectsHubConnection
   }
 
-  invokeTest() {
+  /*
+    invokeTest() {
+      if (!this.projectsHubConnection) return
+      this.projectsHubConnection
+        .invoke(GetProjects)
+        .then((r) => console.log(r))
+        .catch((e) => console.error(e))
+    }*/
+
+  invokeGetProjectData(projectId: string) {
     if (!this.projectsHubConnection) return
     this.projectsHubConnection
-      .invoke(GetProjects)
+      .invoke(GetProjectData, projectId)
       .then((r) => console.log(r))
-      .catch((e) => console.log(e))
+      .catch((e) => console.error(e))
   }
+
 
   stopHubConnection() {
     if (!this.projectsHubConnection) return

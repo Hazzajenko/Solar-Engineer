@@ -7,6 +7,8 @@ import { ProjectsActions } from '../store'
 export class ProjectsRepository {
   private store = inject(Store)
 
+  // private projects = inject(Store)
+
   init() {
     this.store.dispatch(ProjectsActions.initProjects())
   }
@@ -17,6 +19,10 @@ export class ProjectsRepository {
 
   initSelectProject(projectId: string) {
     this.store.dispatch(ProjectsActions.initSelectProject({ projectId }))
+  }
+
+  getProjectData() {
+    this.store.dispatch(ProjectsActions.getProjectData())
   }
 
   createWebProject(projectName: string) {

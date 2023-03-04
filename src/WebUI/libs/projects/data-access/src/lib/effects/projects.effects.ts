@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core'
 import { tapResponse } from '@ngrx/component-store'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { Store } from '@ngrx/store'
-import { ProjectsService } from '@projects/data-access'
+import { ProjectsService, ProjectsStoreService } from '@projects/data-access'
 import { ProjectModel } from '@shared/data-access/models'
 import { catchError, map, of, switchMap } from 'rxjs'
 import { ProjectsActions } from '@projects/data-access'
@@ -16,6 +16,7 @@ import { ProjectsSignalrService } from '../api'
 export class ProjectsEffects {
   private actions$ = inject(Actions)
   private projectsService = inject(ProjectsService)
+  private projectsStore = inject(ProjectsStoreService)
   private projectsSignalrService = inject(ProjectsSignalrService)
   private store = inject(Store)
 
@@ -40,6 +41,21 @@ export class ProjectsEffects {
                 this.store.dispatch(ProjectsActions.loadProjectsSuccess({ projects })),
               (error: Error) =>
                 this.store.dispatch(ProjectsActions.loadProjectsFailure({ error: error.message })),
+            ),
+          ),
+        ),
+      ),
+    { dispatch: false },
+  )
+
+  getProjectData$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(ProjectsActions.getProjectData),
+        switchMap(() =>
+          this.projectsStore.select.projectFromRoute$.pipe(
+            map((project) =>
+              project ? this.projectsSignalrService.invokeGetProjectData(project.id) : null,
             ),
           ),
         ),

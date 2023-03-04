@@ -10,7 +10,7 @@ namespace Projects.API.Handlers.SignalR;
 public sealed record GetProjectDataByIdQuery(HubCallerContext Context, string ProjectId)
     : IRequest<bool>;
 
-public class GetProjectDataByIdHandler : IRequestHandler<GetProjectByIdQuery, bool>
+public class GetProjectDataByIdHandler : IRequestHandler<GetProjectDataByIdQuery, bool>
 {
     private readonly IHubContext<ProjectsHub, IProjectsHub> _hubContext;
     private readonly ILogger<GetProjectDataByIdHandler> _logger;
@@ -27,9 +27,14 @@ public class GetProjectDataByIdHandler : IRequestHandler<GetProjectByIdQuery, bo
         _hubContext = hubContext;
     }
 
-    public async ValueTask<bool> Handle(GetProjectByIdQuery request, CancellationToken cT)
+    public async ValueTask<bool> Handle(GetProjectDataByIdQuery request, CancellationToken cT)
     {
         ArgumentNullException.ThrowIfNull(request.Context.User);
+        _logger.LogInformation(
+            "User {User} requested project {Project}",
+            request.Context.User.GetGuidUserId().ToString(),
+            request.ProjectId
+        );
         var appUserId = request.Context.User.GetGuidUserId();
         var projectId = request.ProjectId.ToGuid();
         var project =
@@ -66,7 +71,8 @@ public class GetProjectDataByIdHandler : IRequestHandler<GetProjectByIdQuery, bo
             PanelLinks = panelLinks
         };
 
-        await _hubContext.Clients.User(appUserId.ToString()).GetProjectData(response);
+        // await _hubContext.Clients.User(appUserId.ToString()).GetProjectData(response);
+        await _hubContext.Clients.Client(request.Context.ConnectionId).GetProjectData(response);
 
         _logger.LogInformation(
             "User {User} get project data {Project}",

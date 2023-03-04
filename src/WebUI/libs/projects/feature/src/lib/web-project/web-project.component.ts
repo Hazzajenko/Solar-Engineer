@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common'
-import { Component, inject } from '@angular/core'
+import { Component, inject, OnInit } from '@angular/core'
 import { GridLayoutComponent } from '@grid-layout/feature'
 import { ProjectsStoreService } from '@projects/data-access'
 import { BlockModel, ProjectModel } from '@shared/data-access/models'
@@ -13,7 +13,7 @@ import { BlocksStoreService } from '@grid-layout/data-access'
   templateUrl: './web-project.component.html',
   styles: [],
 })
-export class WebProjectComponent {
+export class WebProjectComponent implements OnInit {
   private projectsStore = inject(ProjectsStoreService)
   private blocksStore = inject(BlocksStoreService)
   rows = 20
@@ -23,4 +23,9 @@ export class WebProjectComponent {
   // blocks$: Observable<BlockModel[]> = new Observable<BlockModel[]>()
   // hi = this.projectsStore.select.
   blocks$: Observable<BlockModel[]> = this.blocksStore.select.blocksFromProject$
+
+  ngOnInit(): void {
+    this.projectsStore.dispatch.getProjectData()
+    // this.projectsStore.invoke.invokeGetProjectData('test')
+  }
 }

@@ -30,11 +30,14 @@ public class OnConnectedAsyncHandler : IRequestHandler<OnConnectedAsyncCommand, 
         ArgumentNullException.ThrowIfNull(request.Context.User);
         var appUserId = request.Context.User.GetGuidUserId();
 
+        _logger.LogInformation("User {User} connected to projects hub", appUserId.ToString());
+        
         var projects = await _unitOfWork.AppUserProjectsRepository.GetProjectsByAppUserIdAsync(
             appUserId
         );
 
-        await _hubContext.Clients.User(appUserId.ToString()).GetProjects(projects);
+        await _hubContext.Clients.Client(request.Context.ConnectionId).GetProjects(projects);
+        // await _hubContext.Clients.User(appUserId.ToString()).GetProjects(projects);
 
 
         _logger.LogInformation(

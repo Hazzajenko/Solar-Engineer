@@ -1,4 +1,5 @@
-﻿using Mediator;
+﻿using Infrastructure.Extensions;
+using Mediator;
 using Microsoft.AspNetCore.SignalR;
 using Projects.API.Contracts.Requests.Panels;
 using Projects.API.Contracts.Requests.Projects;
@@ -19,13 +20,16 @@ public class ProjectsHub : Hub<IProjectsHub>
     public override async Task OnConnectedAsync()
     {
         await _mediator.Send(new OnConnectedAsyncCommand(Context));
-
-        await base.OnConnectedAsync();
     }
 
     public async Task GetProjects()
     {
         await _mediator.Send(new GetProjectsQuery(Context));
+    }
+
+    public async Task GetProjectData(string projectId)
+    {
+        await _mediator.Send(new GetProjectDataByIdQuery(Context, projectId));
     }
 
     public async Task GetUserProject(string projectId)
