@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
-import { LinksSelectors, PanelsSelectors, SelectedSelectors } from '@project-id/data-access/store'
+import { LinksSelectors, PanelsSelectors, SelectedSelectors } from '../../store'
 import { BlockType } from '@shared/data-access/models'
 import { firstValueFrom } from 'rxjs'
 import { combineLatestWith, map } from 'rxjs/operators'
@@ -11,11 +11,9 @@ import { combineLatestWith, map } from 'rxjs/operators'
 export class PanelsFacade {
   private store = inject(Store)
 
-
   loaded$ = this.store.select(PanelsSelectors.selectPanelsLoaded)
   allPanels$ = this.store.select(PanelsSelectors.selectAllPanels)
   panelsFromRoute$ = this.store.select(PanelsSelectors.selectPanelsByRouteParams)
-
 
   panelById$(id: string) {
     return this.store.select(PanelsSelectors.selectPanelById({ id }))

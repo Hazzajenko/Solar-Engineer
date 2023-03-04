@@ -7,12 +7,14 @@ import {
   GridStoreService,
   PanelsFacade,
   PanelsStoreService,
-} from '@project-id/data-access/facades'
+  LinksEventService,
+  GridEventService,
+  PanelsEventService,
+  MouseEventRequest,
+
+} from '../..'
 import { BlockModel, BlockType, GridMode } from '@shared/data-access/models'
-import { GridService } from 'libs/grid-layout/data-access/services/src/lib/entitites/grid'
-import { PanelsService } from 'libs/grid-layout/data-access/services/src/lib/entitites/panels'
-import { MouseEventRequest } from 'libs/grid-layout/data-access/services/src/lib/mouse-event-request'
-import { LinksEventService } from '../links'
+
 
 @Injectable({
   providedIn: 'root',
@@ -27,8 +29,8 @@ export class ClickService {
   // private factory = inject(GlobalFactory)
   // private facade = inject(GridLayoutStoreService)
 
-  private gridFactory = inject(GridService)
-  private panelsFactory = inject(PanelsService)
+  private gridFactory = inject(GridEventService)
+  private panelsFactory = inject(PanelsEventService)
   private linksService = inject(LinksEventService)
 
   async click(click: MouseEventRequest) {

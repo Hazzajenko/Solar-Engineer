@@ -1,10 +1,9 @@
 import { inject, Pipe, PipeTransform } from '@angular/core'
-import { StatsService } from '@grid-layout/data-access/services'
-import { LinksStoreService, PanelsStoreService } from '@project-id/data-access/facades'
+import { StatsService } from '@grid-layout/data-access'
+import { LinksStoreService, PanelsStoreService } from '@grid-layout/data-access'
 import { StringModel, TotalModel } from '@shared/data-access/models'
 import { Observable, of, switchMap } from 'rxjs'
 import { map } from 'rxjs/operators'
-
 
 export interface StringStatsModel {
   totals: TotalModel
@@ -18,7 +17,6 @@ export interface StringStatsModel {
   standalone: true,
 })
 export class StringStatsAsyncPipe implements PipeTransform {
-
   private statsService = inject(StatsService)
   private panelsStore = inject(PanelsStoreService)
   private linksStore = inject(LinksStoreService)
@@ -40,10 +38,12 @@ export class StringStatsAsyncPipe implements PipeTransform {
       return of(stringStats)
     }
 
-    return this.panelsStore.select.panelsByStringId$(string.id)
+    return this.panelsStore.select
+      .panelsByStringId$(string.id)
       .pipe(
         switchMap((stringPanels) =>
-          this.linksStore.select.linksByPanels$(stringPanels)
+          this.linksStore.select
+            .linksByPanels$(stringPanels)
             .pipe(map((stringLinks) => ({ stringPanels, stringLinks }))),
         ),
       )

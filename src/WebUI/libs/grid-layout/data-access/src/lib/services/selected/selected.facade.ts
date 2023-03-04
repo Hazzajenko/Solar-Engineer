@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
-import { SelectedSelectors } from '@project-id/data-access/store'
+import { SelectedSelectors } from '../../store'
 import { firstValueFrom } from 'rxjs'
 
 @Injectable({
@@ -37,5 +37,4 @@ export class SelectedFacade {
   get selectedId() {
     return firstValueFrom(this.selectedId$)
   }
-
 }

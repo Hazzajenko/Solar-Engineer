@@ -1,3 +1,4 @@
+/*
 import { BlockType } from './block.model'
 import { Injectable, inject } from '@angular/core'
 import { Update } from '@ngrx/entity'
@@ -12,7 +13,7 @@ import { firstValueFrom } from 'rxjs'
 export class BlockService {
   private readonly store = inject(Store)
 
-  
+
   update() {
     this.store.dispatch(PanelsActions.updatePanel())
   }
@@ -27,3 +28,4 @@ export class BlockService {
   }
 
 }
+*/

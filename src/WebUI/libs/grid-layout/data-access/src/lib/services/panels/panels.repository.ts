@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core'
 import { Update } from '@ngrx/entity'
 import { Store } from '@ngrx/store'
-import { PanelsActions, SelectedActions } from '@project-id/data-access/store'
+import { PanelsActions, SelectedActions } from '../../store'
 import { PanelModel } from '@shared/data-access/models'
 
 @Injectable({
@@ -9,7 +9,6 @@ import { PanelModel } from '@shared/data-access/models'
 })
 export class PanelsRepository {
   private store = inject(Store)
-
 
   init(projectId: number) {
     this.store.dispatch(PanelsActions.initPanels({ projectId }))
@@ -35,5 +34,4 @@ export class PanelsRepository {
   deleteManyPanels(panelIds: string[]) {
     this.store.dispatch(PanelsActions.deleteManyPanels({ panelIds }))
   }
-
 }

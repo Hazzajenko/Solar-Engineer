@@ -1,4 +1,4 @@
-import { BlockRectModel } from '@grid-layout/shared/models'
+import { BlockRectModel } from '@grid-layout/data-access'
 
 export function topLeftCorner(rect: BlockRectModel) {
   const x = rect.x - rect.width / 2.5

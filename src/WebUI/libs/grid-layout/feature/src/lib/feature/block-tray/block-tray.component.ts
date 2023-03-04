@@ -1,8 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component, inject,
-  Input, ViewChild
-} from '@angular/core'
+import { ChangeDetectionStrategy, Component, inject, Input, ViewChild } from '@angular/core'
 
 import { DragDropModule } from '@angular/cdk/drag-drop'
 import { AsyncPipe, NgClass, NgIf, NgStyle, NgTemplateOutlet } from '@angular/common'
@@ -19,9 +15,8 @@ import { Observable } from 'rxjs'
 import { TrayJoinComponent } from './ui/tray-join/tray-join.component'
 
 import { TrayModel } from '@shared/data-access/models'
-import { AppState } from '@shared/data-access/store'
 
-
+// import { AppState } from '@shared/data-access/store'
 
 @Component({
   selector: 'app-block-tray',
@@ -38,12 +33,12 @@ import { AppState } from '@shared/data-access/store'
     MatMenuModule,
     NgTemplateOutlet,
     NgClass,
-    TrayJoinComponent
+    TrayJoinComponent,
   ],
   standalone: true,
 })
-export class BlockTrayComponent{
-  private store = inject(Store<AppState>)
+export class BlockTrayComponent {
+  // private store = inject(Store<AppState>)
   // private traysEntity = inject(TraysEntityService)
   @Input() location!: string
 
@@ -53,13 +48,14 @@ export class BlockTrayComponent{
   menuTopLeftPosition = { x: '0', y: '0' }
   @ViewChild(MatMenuTrigger, { static: true })
   matMenuTrigger!: MatMenuTrigger
-/*
-  ngOnInit() {
-    this.tray$ = this.traysEntity.entities$.pipe(
-      map((trays) => trays.find((tray) => tray.location === this.location)),
-    )
-    this.selectedId$ = this.store.select(selectSelectedId).pipe(distinctUntilChanged())
-  } */
+
+  /*
+    ngOnInit() {
+      this.tray$ = this.traysEntity.entities$.pipe(
+        map((trays) => trays.find((tray) => tray.location === this.location)),
+      )
+      this.selectedId$ = this.store.select(selectSelectedId).pipe(distinctUntilChanged())
+    } */
 
   displayTooltip(tray: TrayModel): string {
     return `
@@ -84,24 +80,24 @@ export class BlockTrayComponent{
     if (!tray) {
       return console.error('err trayAction !tray')
     }
-/*
-    firstValueFrom(this.store.select(selectGridMode))
-      .then((gridMode) => {
-        switch (gridMode) {
-          case GridMode.DELETE:
-            this.traysEntity.delete(tray)
-            break
-          case GridMode.SELECT:
-            this.store.dispatch(SelectedStateActions.selectTray({ trayId: tray.id }))
-            break
-          default:
-            this.store.dispatch(GridStateActions.changeGridmode({ mode: GridMode.SELECT }))
-            this.store.dispatch(SelectedStateActions.selectTray({ trayId: tray.id }))
-            break
-        }
-      })
-      .catch((err) => {
-        return console.error('err trayAction this.store.select(selectGridMode)' + err)
-      }) */
+    /*
+        firstValueFrom(this.store.select(selectGridMode))
+          .then((gridMode) => {
+            switch (gridMode) {
+              case GridMode.DELETE:
+                this.traysEntity.delete(tray)
+                break
+              case GridMode.SELECT:
+                this.store.dispatch(SelectedStateActions.selectTray({ trayId: tray.id }))
+                break
+              default:
+                this.store.dispatch(GridStateActions.changeGridmode({ mode: GridMode.SELECT }))
+                this.store.dispatch(SelectedStateActions.selectTray({ trayId: tray.id }))
+                break
+            }
+          })
+          .catch((err) => {
+            return console.error('err trayAction this.store.select(selectGridMode)' + err)
+          }) */
   }
 }

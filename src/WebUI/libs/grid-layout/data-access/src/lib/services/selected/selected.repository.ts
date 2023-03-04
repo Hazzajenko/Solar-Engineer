@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
-import { SelectedActions } from '@project-id/data-access/store'
+import { SelectedActions } from '../../store'
 import { PanelLinksToModel, PanelModel, StringModel } from '@shared/data-access/models'
 
 @Injectable({
@@ -25,7 +25,6 @@ export class SelectedRepository {
   }
 
   async selectPanelWhenStringSelected(panelId: string, panelLink: PanelLinksToModel) {
-
     this.store.dispatch(SelectedActions.selectPanelWhenStringSelected({ panelId, panelLink }))
     // const res = await this.linkPathService.orderPanelsInLinkOrderForSelectedPanel(panelId)
     // if (!res) return

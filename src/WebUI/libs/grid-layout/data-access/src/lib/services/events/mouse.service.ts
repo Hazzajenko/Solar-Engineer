@@ -1,12 +1,17 @@
 import { inject, Injectable } from '@angular/core'
 
-import { BlocksFacade, GridFacade, MultiFacade, MultiStoreService } from '@project-id/data-access/facades'
+import {
+  BlocksFacade,
+  GridFacade,
+  MultiFacade,
+  MultiStoreService,
+} from '@project-id/data-access/facades'
 import { MultiStateModel } from '@project-id/shared/models'
 import { ProjectsFacade } from '@projects/data-access/facades'
 import { BlockType, GridMode } from '@shared/data-access/models'
-import { MultiService } from 'libs/grid-layout/data-access/services/src/lib/entitites/multi'
-import { MouseEventRequest } from 'libs/grid-layout/data-access/services/src/lib/mouse-event-request'
-import { getLocationsInBox } from './utils/get-locations-in-box'
+import { MultiEventService } from '../multi'
+import { MouseEventRequest } from '../../models'
+import { getLocationsInBox } from '../utils'
 
 @Injectable({
   providedIn: 'root',
@@ -17,11 +22,10 @@ export class MouseService {
   // private eventFactory = new GridEventFactory()
   private blocksFacade = inject(BlocksFacade)
   private multiFacade = inject(MultiFacade)
-  private multiFactory = inject(MultiService)
+  private multiFactory = inject(MultiEventService)
   private multiStore = inject(MultiStoreService)
 
   private gridFacade = inject(GridFacade)
-
 
   async mouse(mouse: MouseEventRequest) {
     const multiState = await this.multiStore.select.state

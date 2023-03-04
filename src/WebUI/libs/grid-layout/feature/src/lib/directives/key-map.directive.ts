@@ -1,14 +1,23 @@
 import { Directive, EventEmitter, HostListener, inject, Output } from '@angular/core'
 import { MatSnackBar } from '@angular/material/snack-bar'
-import { GridService, MultiService, SelectedService, StringsService } from '@grid-layout/data-access/services'
-
 import {
-  GridFacade, GridStoreService, LinksStoreService,
-  MultiFacade, MultiStoreService,
-  PanelsFacade, PanelsStoreService,
-  SelectedFacade, SelectedStoreService,
-  StringsFacade, UiStoreService,
-} from '@project-id/data-access/facades'
+  GridEventService,
+  MultiEventService,
+  SelectedEventService,
+  GridFacade,
+  GridStoreService,
+  LinksStoreService,
+  MultiFacade,
+  MultiStoreService,
+  PanelsFacade,
+  PanelsStoreService,
+  SelectedFacade,
+  SelectedStoreService,
+  StringsFacade,
+  UiStoreService,
+  StringsEventService,
+} from '@grid-layout/data-access'
+
 import { GridMode } from '@shared/data-access/models'
 import { firstValueFrom } from 'rxjs'
 
@@ -22,16 +31,16 @@ export class KeyMapDirective {
   private multiFacade = inject(MultiFacade)
   private selectedFacade = inject(SelectedFacade)
   private panelsFacade = inject(PanelsFacade)
-  private gridFactory = inject(GridService)
-  private selectedFactory = inject(SelectedService)
-  private multiFactory = inject(MultiService)
+  private gridFactory = inject(GridEventService)
+  private selectedFactory = inject(SelectedEventService)
+  private multiFactory = inject(MultiEventService)
   private multiStore = inject(MultiStoreService)
   private gridStore = inject(GridStoreService)
   private linksStore = inject(LinksStoreService)
   private selectedStore = inject(SelectedStoreService)
   private panelsStore = inject(PanelsStoreService)
   private stringsFacade = inject(StringsFacade)
-  private stringFactory = inject(StringsService)
+  private stringFactory = inject(StringsEventService)
   private uiStore = inject(UiStoreService)
   private snackBar = inject(MatSnackBar)
 
@@ -41,12 +50,13 @@ export class KeyMapDirective {
   async keyEvent(event: KeyboardEvent) {
     console.log(event)
     switch (event.key) {
-      case 'Alt': {
-        const multiState = await firstValueFrom(this.multiFacade.state$)
-        if (multiState.locationStart && event.key === 'Alt') {
-          this.multiStore.dispatch.clearMultiState()
+      case 'Alt':
+        {
+          const multiState = await firstValueFrom(this.multiFacade.state$)
+          if (multiState.locationStart && event.key === 'Alt') {
+            this.multiStore.dispatch.clearMultiState()
+          }
         }
-      }
         break
       case 's': {
         const selectedId = await this.selectedFacade.selectedId
@@ -88,7 +98,6 @@ export class KeyMapDirective {
         })
 
         break
-
       }
       case 'c':
         this.gridStore.dispatch.selectCreateMode()
@@ -117,7 +126,6 @@ export class KeyMapDirective {
         break
       }
       case 'Tab': {
-
         this.uiStore.dispatch.toggleNavMenu()
         // this.keyUp.emit('reset')
         // this.isDragging = false

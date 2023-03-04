@@ -1,14 +1,17 @@
 import { Directive, ElementRef, HostListener, inject, Input, NgZone, OnInit } from '@angular/core'
-import { BlockRectModel, ClientXY, ElementOffsets, PosXY, XYModel } from '@grid-layout/shared/models'
-import { PanelsStoreService } from '@project-id/data-access/facades'
 import {
-  GridMode, PanelIdPath,
-  PanelModel,
-  SelectedPanelLinkPathModel, SelectedPathModel,
-  PathModel,
+  BlockRectModel,
+  ClientXY,
+  ElementOffsets,
+  PanelsStoreService,
+  XYModel,
+} from '@grid-layout/data-access'
+import {
+  GridMode,
+  SelectedPanelLinkPathModel,
+  SelectedPathModel,
   VibrantColor,
 } from '@shared/data-access/models'
-import { reducers } from '@shared/data-access/store'
 import {
   downAndLeft,
   downAndRight,
@@ -27,11 +30,7 @@ export class CanvasDirective implements OnInit {
   private panelsStore = inject(PanelsStoreService)
   private ctx: CanvasRenderingContext2D = this.canvas.nativeElement.getContext('2d')
 
-
-  constructor(private ngZone: NgZone) {
-
-  }
-
+  constructor(private ngZone: NgZone) {}
 
   height!: number
   negativeHeight!: number
@@ -46,10 +45,9 @@ export class CanvasDirective implements OnInit {
   offsetY?: number
   currentGridMode = GridMode.UNDEFINED
   fillStyle = '#7585d8'
-  pathMap?: void | Map<number, { x: number; y: number; }>
+  pathMap?: void | Map<number, { x: number; y: number }>
   pathMapAnimationId?: number
   pathMapAnimating = false
-
 
   @Input() set gridMode(gridMode: GridMode) {
     if (!gridMode) return
@@ -95,9 +93,7 @@ export class CanvasDirective implements OnInit {
     this.startY = xy.y - rect.top
   }
 
-  @Input() set startDragging(clientXY: ClientXY) {
-
-  }
+  @Input() set startDragging(clientXY: ClientXY) {}
 
   selectedPaths?: SelectedPanelLinkPathModel
 
@@ -116,8 +112,7 @@ export class CanvasDirective implements OnInit {
     this.selectedPaths = selectedPaths
     this.pathMapAnimating = true
 
-    this.animateSelectedPathMap().then(r => console.log(r))
-
+    this.animateSelectedPathMap().then((r) => console.log(r))
   }
 
   @Input() set setScale(scale: number | null) {
@@ -135,10 +130,9 @@ export class CanvasDirective implements OnInit {
   fpsInterval = 1000 / 60
   startTime = Date.now()
 
-  lines: { x: number, y: number }[] = []
+  lines: { x: number; y: number }[] = []
   parentHeight?: number
   parentWidth?: number
-
 
   @HostListener('document:mouseup', ['$event'])
   mouseUp(event: MouseEvent) {
@@ -166,14 +160,13 @@ export class CanvasDirective implements OnInit {
 
   ngOnInit(): void {
     this.height = Number(this.canvas.nativeElement.style.height.split('p')[0])
-    this.negativeHeight = Number(this.canvas.nativeElement.style.height.split('p')[0]) * -1.
+    this.negativeHeight = Number(this.canvas.nativeElement.style.height.split('p')[0]) * -1
     this.width = Number(this.canvas.nativeElement.style.width.split('p')[0])
-    this.negativeWidth = Number(this.canvas.nativeElement.style.width.split('p')[0]) * -1.
+    this.negativeWidth = Number(this.canvas.nativeElement.style.width.split('p')[0]) * -1
     const parentRect = this.canvas.nativeElement.parentNode.getBoundingClientRect()
     this.parentHeight = parentRect.height
     this.parentWidth = parentRect.width
   }
-
 
   animate() {
     if (!this.startX || !this.startY || !this.pageX || !this.pageY) {
@@ -182,10 +175,8 @@ export class CanvasDirective implements OnInit {
     }
     const rect = this.canvas.nativeElement.getBoundingClientRect()
 
-
     const mouseX = this.pageX - rect.left
     const mouseY = this.pageY - rect.top
-
 
     this.ctx.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height)
 
@@ -202,7 +193,6 @@ export class CanvasDirective implements OnInit {
 
     requestAnimationFrame(() => this.animate())
   }
-
 
   private async createLineMap(selectedPaths: SelectedPanelLinkPathModel) {
     let job = true
@@ -239,9 +229,7 @@ export class CanvasDirective implements OnInit {
     }
     let negJob = true
     panelCounter = -1
-    nextPath = selectedPaths.panelPaths.find(
-      (panel) => panel.count === panelCounter,
-    )
+    nextPath = selectedPaths.panelPaths.find((panel) => panel.count === panelCounter)
     while (negJob) {
       if (nextPath) {
         const blockRect = await this.getBlockRect(nextPath.panelId)
@@ -320,7 +308,6 @@ export class CanvasDirective implements OnInit {
       }
     }
 
-
     let letNegativeJob = true
     const doesHaveNegative = pathMap.get(pathCounter - 1)
     pathCounter = 0
@@ -344,11 +331,9 @@ export class CanvasDirective implements OnInit {
         pathCounter--
       }
     }
-
   }
 
   private drawTwoPoints(first: BlockRectModel, second: BlockRectModel, color: string) {
-
     const res = this.getValuesFromTwoBlocks({ first, second })
 
     if (!res) return
@@ -361,8 +346,7 @@ export class CanvasDirective implements OnInit {
     this.ctx.stroke()
   }
 
-
-  private getValuesFromTwoBlocks(twoBlocks: { first: BlockRectModel, second: BlockRectModel }) {
+  private getValuesFromTwoBlocks(twoBlocks: { first: BlockRectModel; second: BlockRectModel }) {
     const first = twoBlocks.first
     const second = twoBlocks.second
 
@@ -425,14 +409,12 @@ export class CanvasDirective implements OnInit {
       return undefined
     }
 
-
     const panelRect = panelDiv.getBoundingClientRect()
 
     const canvasRect = this.canvas.nativeElement.getBoundingClientRect()
-    const x = panelRect.left - canvasRect.left + (panelRect.width / 2)
-    const y = panelRect.top - canvasRect.top + (panelRect.height / 2)
+    const x = panelRect.left - canvasRect.left + panelRect.width / 2
+    const y = panelRect.top - canvasRect.top + panelRect.height / 2
 
     return { x, y, height: panelRect.height, width: panelRect.width }
   }
-
 }

@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
-import { LinksActions, LinksSelectors } from '@project-id/data-access/store'
+import { LinksActions, LinksSelectors } from '../../store'
 import { PanelModel } from '@shared/data-access/models'
 import { firstValueFrom } from 'rxjs'
 
@@ -85,7 +85,8 @@ export class LinksFacade {
   }
 
   isPanelExistingPositiveLink(panelId: string) {
-    return firstValueFrom(this.store.select(LinksSelectors.isPanelExistingPositiveLink({ panelId })))
+    return firstValueFrom(
+      this.store.select(LinksSelectors.isPanelExistingPositiveLink({ panelId })),
+    )
   }
-
 }

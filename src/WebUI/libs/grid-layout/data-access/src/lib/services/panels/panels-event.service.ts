@@ -1,12 +1,10 @@
 import { inject, Injectable } from '@angular/core'
 import { Update } from '@ngrx/entity'
 import { LinksStoreService, PanelsStoreService, PathsStoreService, SelectedStoreService } from '../'
-
 import { ProjectsFacade } from '@projects/data-access'
 import { PanelModel } from '@shared/data-access/models'
 import { combineLatest, firstValueFrom, map } from 'rxjs'
 import { getSelectedLinks } from '../'
-// import { PathsEventService } from 'libs/grid-layout/data-access/services/src/lib/entitites/paths/paths.service'
 import { toUpdatePanelArray } from '../'
 import { PathsEventService } from '../paths'
 

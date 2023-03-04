@@ -5,7 +5,7 @@ import {
   SelectedFacade,
   SelectedStoreService,
   StringsFacade,
-} from '@project-id/data-access/facades'
+} from '@grid-layout/data-access'
 import { switchMap } from 'rxjs'
 import { map } from 'rxjs/operators'
 

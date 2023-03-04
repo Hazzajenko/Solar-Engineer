@@ -1,5 +1,13 @@
 import { DragDropModule } from '@angular/cdk/drag-drop'
-import { AsyncPipe, NgClass, NgIf, NgStyle, NgSwitch, NgSwitchCase, NgTemplateOutlet } from '@angular/common'
+import {
+  AsyncPipe,
+  NgClass,
+  NgIf,
+  NgStyle,
+  NgSwitch,
+  NgSwitchCase,
+  NgTemplateOutlet,
+} from '@angular/common'
 import { ChangeDetectionStrategy, Component, inject, Input, ViewChild } from '@angular/core'
 
 import { MatDialog } from '@angular/material/dialog'
@@ -7,16 +15,22 @@ import { MatDialog } from '@angular/material/dialog'
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { MatTooltipModule } from '@angular/material/tooltip'
-import { LinksFactory } from '@grid-layout/data-access/services'
+import {
+  LinksFactory,
+  LinksFacade,
+  PanelsFacade,
+  SelectedFacade,
+  StringsFacade,
+  PathsFacade,
+} from '@grid-layout/data-access'
 
-import { PanelLinkComponent } from '@grid-layout/feature/blocks/shared-ui'
-
+import { PanelLinkComponent } from '../shared-ui/panel-link/panel-link.component'
 
 import { LetModule } from '@ngrx/component'
-import { LinksFacade, PanelsFacade, SelectedFacade, StringsFacade } from '@project-id/data-access/facades'
+// import {  } from '@project-id/data-access/facades'
 import { PanelModel, PanelPathModel, SelectedPathModel } from '@shared/data-access/models'
 import { PanelMenuComponent } from './menu/panel-menu.component'
-import { PathsFacade } from '@project-id/data-access/facades'
+// import {  } from '@project-id/data-access/facades'
 
 import { combineLatest, Observable, switchMap } from 'rxjs'
 
@@ -68,7 +82,6 @@ export class BlockPanelComponent {
   private dialog = inject(MatDialog)
   private _id!: string
 
-
   //endregion
   @Input() set id(id: string) {
     this._id = id
@@ -78,7 +91,6 @@ export class BlockPanelComponent {
   constructor() {
     console.log('render')
   }
-
 
   //region Observables
   private isSelectedPanel$: Observable<SelectedPanelVal> = this.selectedFacade.selectedId$.pipe(
@@ -114,26 +126,26 @@ export class BlockPanelComponent {
     ),
     map(([selectedStringId, stringId]) => {
       return selectedStringId === stringId
-
     }),
   )
-  private stringSelected$: Observable<StringSelectedVal> = this.selectedFacade.selectedStringId$.pipe(
-    combineLatestWith(
-      this.panelsFacade.allPanels$.pipe(
-        map((panels) => panels.find((panel) => panel.id === this._id)),
-        map((panel) => panel?.stringId),
+  private stringSelected$: Observable<StringSelectedVal> =
+    this.selectedFacade.selectedStringId$.pipe(
+      combineLatestWith(
+        this.panelsFacade.allPanels$.pipe(
+          map((panels) => panels.find((panel) => panel.id === this._id)),
+          map((panel) => panel?.stringId),
+        ),
       ),
-    ),
-    map(([selectedStringId, stringId]) => {
-      if (selectedStringId === stringId) {
-        return StringSelectedVal.SELECTED
-      }
-      if (selectedStringId && selectedStringId !== stringId) {
-        return StringSelectedVal.OTHER_SELECTED
-      }
-      return StringSelectedVal.NOT_SELECTED
-    }),
-  )
+      map(([selectedStringId, stringId]) => {
+        if (selectedStringId === stringId) {
+          return StringSelectedVal.SELECTED
+        }
+        if (selectedStringId && selectedStringId !== stringId) {
+          return StringSelectedVal.OTHER_SELECTED
+        }
+        return StringSelectedVal.NOT_SELECTED
+      }),
+    )
 
   selectedStringTooltip$ = this.selectedFacade.selectedStringTooltip$.pipe(
     combineLatestWith(this.isSelectedString$),
@@ -145,7 +157,7 @@ export class BlockPanelComponent {
   panelStringColor$ = this.panelsFacade.allPanels$.pipe(
     map((panels) => panels.find((panel) => panel.id === this._id)),
     map((panel) => panel?.stringId),
-    switchMap(stringId => this.stringsFacade.stringById$(stringId)),
+    switchMap((stringId) => this.stringsFacade.stringById$(stringId)),
     map((string) => {
       if (!string) {
         return undefined
@@ -157,7 +169,7 @@ export class BlockPanelComponent {
   panelStringName$: Observable<string | undefined> = this.panelsFacade.allPanels$.pipe(
     map((panels) => panels.find((panel) => panel.id === this._id)),
     map((panel) => panel?.stringId),
-    switchMap(stringId => this.stringsFacade.stringById$(stringId)),
+    switchMap((stringId) => this.stringsFacade.stringById$(stringId)),
     map((string) => {
       if (!string) {
         return undefined
@@ -179,9 +191,9 @@ export class BlockPanelComponent {
     combineLatestWith(this.isSelectedString$),
     map(([paths, isSelectedString]) => {
       if (!isSelectedString) return undefined
-      return paths.find(path => path.panelId === this._id)
+      return paths.find((path) => path.panelId === this._id)
     }),
-    map(path => path),
+    map((path) => path),
   )
 
   /*  panelLinkPath$: Observable<PanelPathModel | undefined> = this.selectedFacade.selectedStringPathMap$.pipe(
@@ -193,12 +205,13 @@ export class BlockPanelComponent {
       }),
     )*/
 
-  selectedPanelLinkPath$: Observable<SelectedPathModel | undefined> = this.pathsFacade.selectedPanelLinkPath$.pipe(
-    map((selectedPath) => {
-      if (!selectedPath) return undefined
-      return selectedPath.panelPaths.find(panel => panel.panelId === this._id)
-    }),
-  )
+  selectedPanelLinkPath$: Observable<SelectedPathModel | undefined> =
+    this.pathsFacade.selectedPanelLinkPath$.pipe(
+      map((selectedPath) => {
+        if (!selectedPath) return undefined
+        return selectedPath.panelPaths.find((panel) => panel.panelId === this._id)
+      }),
+    )
   private isToLinkId$: Observable<boolean> = this.linksFacade.toLinkId$.pipe(
     map((toLinkId) => {
       return toLinkId === this._id
@@ -218,15 +231,15 @@ export class BlockPanelComponent {
   ]).pipe(
     map(
       ([
-         isSelectedPanel,
-         isSelectedPositiveTo,
-         isSelectedNegativeTo,
-         stringColor,
-         isPanelToLink,
-         stringSelected,
-         panelLinkPath,
-         selectedPanelLinkPath,
-       ]) => {
+        isSelectedPanel,
+        isSelectedPositiveTo,
+        isSelectedNegativeTo,
+        stringColor,
+        isPanelToLink,
+        stringSelected,
+        panelLinkPath,
+        selectedPanelLinkPath,
+      ]) => {
         return {
           isSelectedPanel,
           isSelectedPositiveTo,
@@ -242,7 +255,6 @@ export class BlockPanelComponent {
   )
 
   //endregion
-
 
   //region Component Functions
   displayTooltip(isSelectedString: boolean, selectedStringTooltip?: string): string {

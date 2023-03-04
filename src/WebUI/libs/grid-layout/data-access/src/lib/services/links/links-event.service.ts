@@ -2,12 +2,11 @@ import { inject, Injectable } from '@angular/core'
 
 import { GridStoreService, LinksFacade } from '../'
 
-import { LinksState } from '@project-id/shared/models'
 import { BlockType, PanelModel } from '@shared/data-access/models'
 // import { GridService } from 'libs/grid-layout/data-access/services/src/lib/entitites/grid/grid.service'
 import { LinksFactory } from './links.factory'
 // import { GridService } from '@grid-layout/data-access/services'
-import { MouseEventRequest } from '../../models'
+import { MouseEventRequest, LinksState } from '../../models'
 
 // import { MouseEventRequest } from '../../../models/mouse-event-request'
 

@@ -1,5 +1,5 @@
 import { inject, Pipe, PipeTransform } from '@angular/core'
-import { PanelsFacade } from '@project-id/data-access/facades'
+import { PanelsFacade } from '@grid-layout/data-access'
 import { StringModel } from '@shared/data-access/models'
 import { Observable, of } from 'rxjs'
 import { map } from 'rxjs/operators'

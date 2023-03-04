@@ -1,3 +1,4 @@
+/*
 import { BlocksFacade } from '@project-id/data-access/facades'
 import { getGuid } from '@shared/utils'
 import { firstValueFrom } from 'rxjs'
@@ -70,9 +71,9 @@ export class PanelModel {
     this.block = block
   }
 
-/*   init() {
+/!*   init() {
     this.block.
-  } */
+  } *!/
 }
 
 const bf = new BlockService()
@@ -80,4 +81,4 @@ const block = new Block(bf, {type: 1, location: 'asd', projectId: 1})
 
 const panel = new PanelModel(block)
 
-panel.block.getChild
+panel.block.getChild*/

@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core'
-import { ClientXY } from '@grid-layout/shared/models'
+import { ClientXY } from '../..'
 import { Store } from '@ngrx/store'
-import { GridActions, LinksActions, MultiActions, SelectedActions } from '@project-id/data-access/store'
+import { GridActions, LinksActions, MultiActions, SelectedActions } from '../../store'
 import { BlockType, GridMode } from '@shared/data-access/models'
 
 @Injectable({
@@ -9,7 +9,6 @@ import { BlockType, GridMode } from '@shared/data-access/models'
 })
 export class GridRepository {
   private readonly store = inject(Store)
-
 
   changeCreateType(createType: BlockType) {
     this.store.dispatch(GridActions.changeCreateType({ createType }))

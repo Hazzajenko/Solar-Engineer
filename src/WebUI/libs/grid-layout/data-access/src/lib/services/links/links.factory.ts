@@ -1,13 +1,8 @@
 import { inject, Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
-import {
-  LinksFacade,
-  LinksStoreService,
-  PanelsFacade,
-  SelectedFacade,
-} from '@project-id/data-access/facades'
+import { LinksFacade, LinksStoreService, PanelsFacade, SelectedFacade } from '../../services'
 import { LinksPathService } from './links-path.service'
-import { ProjectsFacade } from '@projects/data-access/facades'
+import { ProjectsFacade } from '@projects/data-access'
 import { PanelLinkModel, PanelModel, ProjectModel } from '@shared/data-access/models'
 import { StringsEventService } from '../strings'
 import { PathsEventService } from '../paths'

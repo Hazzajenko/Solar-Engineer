@@ -1,5 +1,13 @@
 import { DragDropModule } from '@angular/cdk/drag-drop'
-import { AsyncPipe, NgClass, NgIf, NgStyle, NgSwitch, NgSwitchCase, NgTemplateOutlet } from '@angular/common'
+import {
+  AsyncPipe,
+  NgClass,
+  NgIf,
+  NgStyle,
+  NgSwitch,
+  NgSwitchCase,
+  NgTemplateOutlet,
+} from '@angular/common'
 import { ChangeDetectionStrategy, Component, inject, Input, ViewChild } from '@angular/core'
 
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog'
@@ -7,21 +15,25 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog'
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { MatTooltipModule } from '@angular/material/tooltip'
-import { LinksFactory, PanelsService, StringsService } from '@grid-layout/data-access/services'
+import {
+  LinksFacade,
+  LinksFactory,
+  PanelsEventService,
+  PanelsFacade,
+  SelectedFacade,
+  StringsEventService,
+  StringsFacade,
+} from '@grid-layout/data-access'
 
-import { PanelLinkComponent } from '@grid-layout/feature/blocks/shared-ui'
+import { PanelLinkComponent } from '../../shared-ui/panel-link/panel-link.component'
 
 import { LetModule } from '@ngrx/component'
-import { LinksFacade, PanelsFacade, SelectedFacade, StringsFacade } from '@project-id/data-access/facades'
 import { PanelModel, StringModel } from '@shared/data-access/models'
-import { EditStringDialog } from 'libs/grid-layout/feature/blocks/block-panel/src/lib/dialogs/edit-string.dialog'
-import {
-  ExistingStringsDialog,
-} from 'libs/grid-layout/feature/blocks/block-panel/src/lib/dialogs/existing-strings.dialog'
-import { PanelNgModel } from 'libs/grid-layout/feature/blocks/block-panel/src/lib/models/panel-ng.model'
+import { EditStringDialog, ExistingStringsDialog } from '../dialogs'
+
+import { PanelNgModel } from '../models/panel-ng.model'
 
 import { firstValueFrom, Observable } from 'rxjs'
-
 
 @Component({
   selector: 'app-panel-menu',
@@ -46,8 +58,8 @@ import { firstValueFrom, Observable } from 'rxjs'
 })
 export class PanelMenuComponent {
   //region Services
-  public stringsFactory = inject(StringsService)
-  public panelsFactory = inject(PanelsService)
+  public stringsFactory = inject(StringsEventService)
+  public panelsFactory = inject(PanelsEventService)
   @Input() panel!: PanelModel
   @Input() panelNg!: PanelNgModel
   panel$!: Observable<PanelModel | undefined>
@@ -63,7 +75,6 @@ export class PanelMenuComponent {
   private snackBar = inject(MatSnackBar)
   private dialog = inject(MatDialog)
   private _id!: string
-
 
   //region Component Functions
   async selectString(panel: PanelModel) {
@@ -109,7 +120,6 @@ export class PanelMenuComponent {
       this.snack(`Created and selected new string ${result.name}`)
     }
   }
-
 
   async addSelectedToExistingString() {
     const dialog = this.dialog.open(ExistingStringsDialog)

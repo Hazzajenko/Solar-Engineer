@@ -1,5 +1,4 @@
 import { PanelPathModel, SelectedPathModel } from '@shared/data-access/models'
-import { Observable } from 'rxjs'
 
 export interface PanelNgModel {
   isSelectedPanel: SelectedPanelVal
@@ -15,11 +14,11 @@ export interface PanelNgModel {
 export enum SelectedPanelVal {
   NOT_SELECTED,
   SINGLE_SELECTED,
-  MULTI_SELECTED
+  MULTI_SELECTED,
 }
 
 export enum StringSelectedVal {
   NOT_SELECTED,
   SELECTED,
-  OTHER_SELECTED
+  OTHER_SELECTED,
 }

@@ -1,21 +1,20 @@
 import {
-  PanelModel,
   LinkColor,
+  PanelIdPath,
   PanelLinkModel,
-  PanelPathModel, PanelIdPath, PathModel,
+  PanelModel,
+  PanelPathModel,
+  PathModel,
 } from '@shared/data-access/models'
 
-import { PanelsFacade, LinksFacade, StringsFacade, PathsStoreService } from '@project-id/data-access/facades'
+import { LinksFacade, PanelsFacade, PathsStoreService, StringsFacade } from '../'
 
 import { inject, Injectable } from '@angular/core'
-import {
-  generateDifferentVibrantColorHex,
+import { generateDifferentVibrantColorHex } from '@shared/utils'
 
-} from '@shared/utils'
+import { firstValueFrom } from 'rxjs'
 
-import { firstValueFrom, of } from 'rxjs'
-
-import { combineLatestWith, map, switchMap } from 'rxjs/operators'
+import { map } from 'rxjs/operators'
 
 
 @Injectable({

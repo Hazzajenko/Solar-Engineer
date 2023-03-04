@@ -1,3 +1,4 @@
+/*
 import { Injectable, inject } from '@angular/core'
 import { GridEventFactory } from '@grid-layout/data-access/utils'
 import { Update } from '@ngrx/entity'
@@ -38,7 +39,7 @@ export class BlockFactory {
     return firstValueFrom(this.selectedStringId$)
   }
 
-  /*   async create(location: string, rotation: number) {
+  /!*   async create(location: string, rotation: number) {
     const projectId = await firstValueFrom(this.projectId$)
     const selectedStringId = await firstValueFrom(this.selectedStringId$)
 
@@ -49,7 +50,7 @@ export class BlockFactory {
       location,
       rotation
     })
-  } */
+  } *!/
 }
 
 @Injectable({
@@ -73,3 +74,4 @@ export class PanelFactory extends BlockFactory {
     return this.result.action({ action: 'CREATE_PANEL', data: { panel } })
   }
 }
+*/

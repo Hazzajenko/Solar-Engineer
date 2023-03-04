@@ -1,13 +1,7 @@
-import { firstValueFrom } from 'rxjs'
 import { inject, Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
 import { BlockType, PanelModel } from '@shared/data-access/models'
-import {
-  MultiSelectors,
-  MultiActions,
-  SelectedActions,
-  PanelsActions,
-} from '@project-id/data-access/store'
+import { MultiActions, PanelsActions, SelectedActions } from '../../store'
 
 @Injectable({
   providedIn: 'root',

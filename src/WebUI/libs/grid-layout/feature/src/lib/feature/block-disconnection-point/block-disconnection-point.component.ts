@@ -5,13 +5,13 @@ import { Component, inject, Input, ViewChild } from '@angular/core'
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
 import { MatTooltipModule } from '@angular/material/tooltip'
 import { LetModule } from '@ngrx/component'
-import { LinksService } from '@grid-layout/data-access/services'
+import { LinksService } from '@grid-layout/data-access'
 
 import { Store } from '@ngrx/store'
 import { DisconnectionPointModel } from '@shared/data-access/models'
-import { AppState } from '@shared/data-access/store'
+// import { AppState } from '@shared/data-access/store'
 
-import { PanelLinkComponent } from '@grid-layout/feature/blocks/shared-ui'
+import { PanelLinkComponent } from '../shared-ui/panel-link/panel-link.component'
 
 @Component({
   selector: 'app-block-disconnection-point',
@@ -35,7 +35,7 @@ export class BlockDisconnectionPointComponent {
   menuTopLeftPosition = { x: '0', y: '0' }
   @ViewChild(MatMenuTrigger, { static: true })
   matMenuTrigger!: MatMenuTrigger
-  private store = inject(Store<AppState>)
+  // private store = inject(Store<AppState>)
   // private disconnectionPointsEntity = inject(DisconnectionPointsEntityService)
   private linksService = inject(LinksService)
 

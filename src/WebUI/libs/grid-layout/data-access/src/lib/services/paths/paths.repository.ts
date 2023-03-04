@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core'
 import { Update } from '@ngrx/entity'
 import { Store } from '@ngrx/store'
-import { PathsActions } from '@project-id/data-access/store'
+import { PathsActions } from '../../store'
 import { SelectedPanelLinkPathModel, PathModel } from '@shared/data-access/models'
 
 @Injectable({
@@ -38,9 +38,7 @@ export class PathsRepository {
     return this.store.dispatch(PathsActions.deleteManyPaths({ pathIds }))
   }
 
-
   clearSelectedPanelPaths() {
     return this.store.dispatch(PathsActions.clearSelectedPanelLinkPaths())
   }
-
 }

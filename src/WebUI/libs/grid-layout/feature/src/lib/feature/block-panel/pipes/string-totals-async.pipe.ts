@@ -1,10 +1,9 @@
-import { StatsService } from '@grid-layout/data-access/services'
+import { StatsService } from '@grid-layout/data-access'
 import { inject, Pipe, PipeTransform } from '@angular/core'
 import { Observable, of } from 'rxjs'
 import { map } from 'rxjs/operators'
-import { PanelsFacade } from '@project-id/data-access/facades'
+import { PanelsFacade } from '@grid-layout/data-access'
 import { StringModel, TotalModel } from '@shared/data-access/models'
-
 
 @Pipe({
   name: 'stringTotalsAsync',

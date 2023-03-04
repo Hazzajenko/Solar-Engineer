@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
-import { LinksActions } from '@project-id/data-access/store'
+import { LinksActions } from '../../store'
 import { PanelLinkModel } from '@shared/data-access/models'
 
 @Injectable({
@@ -8,7 +8,6 @@ import { PanelLinkModel } from '@shared/data-access/models'
 })
 export class LinksRepository {
   private store = inject(Store)
-
 
   init(projectId: number) {
     this.store.dispatch(LinksActions.initLinks({ projectId }))

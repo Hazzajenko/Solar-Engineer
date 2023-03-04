@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
-import { UiActions, UiSelectors } from '@project-id/data-access/store'
+import { UiSelectors } from '../../store'
 import { firstValueFrom } from 'rxjs'
 
 @Injectable({

@@ -11,9 +11,6 @@ import { ProjectsFacade } from '@projects/data-access'
 
 import { BlockType } from '@shared/data-access/models'
 
-// import { getLocationsInBox } from './get-locations-in-box'
-// import { locationArrayMap } from './location-array-map'
-
 @Injectable({
   providedIn: 'root',
 })

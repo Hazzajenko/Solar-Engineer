@@ -12,9 +12,8 @@ import {
   LinksPathService,
   toUpdatePanelArray,
 } from '../'
-import { ProjectsFacade } from '@projects/data-access/facades'
+import { ProjectsFacade } from '@projects/data-access'
 import { BlockType, GridMode, StringModel } from '@shared/data-access/models'
-// import { getRandomColor } from '../'
 import { combineLatest, combineLatestWith, firstValueFrom, map } from 'rxjs'
 
 @Injectable({

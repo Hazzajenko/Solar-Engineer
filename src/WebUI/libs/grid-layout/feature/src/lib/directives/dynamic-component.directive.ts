@@ -1,15 +1,14 @@
 import { ComponentRef, Directive, inject, Input, OnDestroy, ViewContainerRef } from '@angular/core'
-import { BlockPanelComponent } from '@grid-layout/feature/blocks/block-panel'
+import { BlockPanelComponent } from '../feature/block-panel'
 import { StringsFacade } from '@project-id/data-access/facades'
-import { BlockModel, BlockType, PanelModel } from '@shared/data-access/models'
+import { BlockModel, BlockType } from '@shared/data-access/models'
 
 @Directive({
   selector: '[appDynamic]',
   standalone: true,
 })
 export class DynamicComponentDirective implements OnDestroy {
-  constructor(public viewContainerRef: ViewContainerRef) {
-  }
+  constructor(public viewContainerRef: ViewContainerRef) {}
 
   private stringsFacade = inject(StringsFacade)
 

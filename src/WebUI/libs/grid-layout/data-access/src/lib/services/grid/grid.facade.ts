@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
-import { GridSelectors } from '@project-id/data-access/store'
+import { GridSelectors } from '../../store'
 import { firstValueFrom } from 'rxjs'
 
 @Injectable({
@@ -25,5 +25,4 @@ export class GridFacade {
   get gridMode() {
     return firstValueFrom(this.gridMode$)
   }
-
 }

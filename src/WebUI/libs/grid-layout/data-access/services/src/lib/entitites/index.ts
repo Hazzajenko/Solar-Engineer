@@ -1,7 +1,0 @@
-export * from './grid/index'
-export * from './links/index'
-export * from './multi/index'
-export * from './panels/index'
-export * from './paths/index'
-export * from './selected/index'
-export * from './strings/index'

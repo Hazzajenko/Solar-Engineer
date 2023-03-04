@@ -1,6 +1,5 @@
 import { inject, Injectable } from '@angular/core'
-import { ClientXY } from '@grid-layout/shared/models'
-import { GridStoreService, LinksStoreService } from '@project-id/data-access/facades'
+import { GridStoreService, LinksStoreService, ClientXY } from '../..'
 import { GridMode } from '@shared/data-access/models'
 
 @Injectable({

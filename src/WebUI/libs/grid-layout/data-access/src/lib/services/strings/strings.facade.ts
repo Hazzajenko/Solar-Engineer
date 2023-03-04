@@ -1,9 +1,6 @@
-import { Update } from '@ngrx/entity'
-import { StringModel } from '@shared/data-access/models'
 import { inject, Injectable } from '@angular/core'
-import { select, Store } from '@ngrx/store'
-import { StringsActions, StringsSelectors } from '@project-id/data-access/store'
-import { selectPanelPathRecordByStringId } from 'libs/project-id/data-access/store/src/lib/strings/strings.selectors'
+import { Store } from '@ngrx/store'
+import { StringsActions, StringsSelectors } from '../../store'
 import { firstValueFrom, map, of } from 'rxjs'
 
 @Injectable({ providedIn: 'root' })

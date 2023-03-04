@@ -4,13 +4,14 @@ import {
   ElementRef,
   EventEmitter,
   HostListener,
-  inject, Input,
+  inject,
+  Input,
   Output,
   Renderer2,
 } from '@angular/core'
-import { BlockRectModel, ElementOffsets } from '@grid-layout/shared/models'
-import { UiStoreService } from '@project-id/data-access/facades'
+import { ElementOffsets, UiStoreService } from '@grid-layout/data-access'
 
+// import { UiStoreService } from '@project-id/data-access/facades'
 
 @Directive({
   selector: '[appGrid]',
@@ -27,7 +28,6 @@ export class GridDirective implements AfterViewInit {
   speed = 0.1
   maxScale = 2
   minScale = 1
-
 
   @Output() elementOffsets: EventEmitter<ElementOffsets> = new EventEmitter<ElementOffsets>()
   @Output() outputScale: EventEmitter<number> = new EventEmitter<number>()
@@ -55,7 +55,6 @@ export class GridDirective implements AfterViewInit {
     }
     this.resetKeyUp.emit('')
   }
-
 
   ngAfterViewInit() {
     const offsets: ElementOffsets = {
@@ -109,7 +108,6 @@ export class GridDirective implements AfterViewInit {
           posY: this.posY,
         })*/
 
-
     this.outputScale.emit(this.scale)
     this.uiStore.dispatch.setScale(this.scale)
 
@@ -119,5 +117,4 @@ export class GridDirective implements AfterViewInit {
       `translate(${this.posX}px,${this.posY}px) scale(${this.scale})`,
     )
   }
-
 }

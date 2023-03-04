@@ -13,13 +13,6 @@ import {
   GridLayoutXY,
   MouseXY,
   XYModel,
-} from '@grid-layout/data-access'
-
-import { KeymapOverlayComponent } from './ui/keymap/keymap.component'
-import { StringTotalsOverlayComponent } from './ui/string-stats/string-stats.component'
-
-import { LetModule } from '@ngrx/component'
-import {
   GridFacade,
   PathsStoreService,
   SelectedFacade,
@@ -28,7 +21,12 @@ import {
   StringsStoreService,
   UiFacade,
   UiStoreService,
-} from '@project-id/data-access/facades'
+} from '@grid-layout/data-access'
+
+import { KeymapOverlayComponent } from './ui/keymap/keymap.component'
+import { StringTotalsOverlayComponent } from './ui/string-stats/string-stats.component'
+
+import { LetModule } from '@ngrx/component'
 import { BlockModel, SelectedPanelLinkPathModel, StringModel } from '@shared/data-access/models'
 import { combineLatest, map, Observable, switchMap } from 'rxjs'
 import { combineLatestWith } from 'rxjs/operators'

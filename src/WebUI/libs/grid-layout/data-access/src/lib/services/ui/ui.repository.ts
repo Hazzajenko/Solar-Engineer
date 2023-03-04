@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core'
-import { ClientXY, GridLayoutXY, MouseXY, PosXY } from '@grid-layout/shared/models'
+import { ClientXY, GridLayoutXY, MouseXY, PosXY } from '../..'
 import { Store } from '@ngrx/store'
-import { UiActions } from '@project-id/data-access/store'
+import { UiActions } from '../../store'
 import { WindowSizeModel } from '@shared/data-access/models'
 
 @Injectable({
@@ -9,7 +9,6 @@ import { WindowSizeModel } from '@shared/data-access/models'
 })
 export class UiRepository {
   private store = inject(Store)
-
 
   toggleKeyMap() {
     return this.store.dispatch(UiActions.toggleKeymap())
@@ -82,6 +81,4 @@ export class UiRepository {
   resetGridlayoutComponentXy() {
     return this.store.dispatch(UiActions.resetGridlayoutComponentXy())
   }
-
-
 }
