@@ -41,7 +41,6 @@
       "@app/feature/sidenav": ["libs/app/feature/sidenav/src/index.ts"],
       "@app/feature/userName-profile": ["libs/app/feature/userName-profile/src/index.ts"],
       "@app/index": ["libs/app/index/src/index.ts"],
-      "@app/messages": ["libs/app/messages/src/index.ts"],
       "@app/routes": ["libs/app/routes/src/index.ts"],
       "@app/shared": ["libs/app/shared/src/index.ts"],
       "@auth/data-access": ["libs/auth/data-access/src/index.ts"],

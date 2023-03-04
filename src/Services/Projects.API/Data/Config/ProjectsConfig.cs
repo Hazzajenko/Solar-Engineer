@@ -9,6 +9,10 @@ public class ProjectsConfig : IEntityTypeConfiguration<Project>
     public void Configure(EntityTypeBuilder<Project> builder)
     {
         builder
+            .Property(x => x.Id)
+            .HasDefaultValueSql("uuid_generate_v4()");
+
+        builder
             .HasMany(u => u.AppUserProjects)
             .WithOne(m => m.Project)
             .HasForeignKey(x => x.ProjectId)

@@ -6,10 +6,9 @@ public class CreatePanelRequest
 {
     public required string Id { get; init; } = default!;
     public required string ProjectId { get; init; } = default!;
-    public required string StringId { get; init; } = default!;
-    public required string Name { get; init; } = default!;
+    public required string StringId { get; init; }
     public required string Location { get; init; } = default!;
-    public required string PanelConfigId { get; init; } = "default";
+    public required string PanelConfigId { get; init; }
     public required int Rotation { get; init; } = 0;
 }
 
@@ -34,12 +33,6 @@ public class CreatePanelRequestValidator : AbstractValidator<CreatePanelRequest>
             .WithMessage("StringId cannot be null")
             .NotEmpty()
             .WithMessage("StringId cannot be empty");
-
-        RuleFor(v => v.Name)
-            .NotNull()
-            .WithMessage("Name cannot be null")
-            .NotEmpty()
-            .WithMessage("Name cannot be empty");
 
         RuleFor(v => v.Location)
             .NotNull()

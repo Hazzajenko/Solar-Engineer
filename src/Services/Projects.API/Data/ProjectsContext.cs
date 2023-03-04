@@ -21,10 +21,6 @@ public class ProjectsContext : DbContext, IDataContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
-        if (!options.IsConfigured)
-            options.UseNpgsql(
-                "Server=localhost;Port=5432;Database=SolarEngineer.UsersDb;User ID=postgres;Password=password;"
-            );
     }
 
     protected override void OnModelCreating(ModelBuilder builder)

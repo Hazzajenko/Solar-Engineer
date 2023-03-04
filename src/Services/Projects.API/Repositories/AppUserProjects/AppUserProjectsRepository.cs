@@ -9,18 +9,18 @@ using Projects.API.Mapping;
 
 namespace Projects.API.Repositories.AppUserProjects;
 
-public sealed class AppUserProjectsRepository : GenericRepository<ProjectsContext, AppUserProject>,
-    IAppUserProjectsRepository
+public sealed class AppUserProjectsRepository
+    : GenericRepository<ProjectsContext, AppUserProject>,
+        IAppUserProjectsRepository
 {
-    public AppUserProjectsRepository(ProjectsContext context) : base(context)
+    public AppUserProjectsRepository(ProjectsContext context)
+        : base(context)
     {
     }
 
     public async Task<IEnumerable<AppUserProject>> GetByAppUserIdAsync(Guid appUserId)
     {
-        return await Queryable
-            .Where(x => x.AppUserId == appUserId)
-            .ToListAsync();
+        return await Queryable.Where(x => x.AppUserId == appUserId).ToListAsync();
     }
 
     public async Task<IEnumerable<ProjectDto>> GetProjectsByAppUserIdAsync(Guid appUserId)
@@ -32,14 +32,23 @@ public sealed class AppUserProjectsRepository : GenericRepository<ProjectsContex
             .ToListAsync();
     }
 
-    public async Task<AppUserProject?> GetByAppUserAndProjectIdAsync(Guid appUserId, Guid projectId)
+    public async Task<AppUserProject> GetByAppUserIdAndProjectIdAsync(
+        Guid appUserId,
+        Guid projectId
+    )
     {
         return await Queryable
             .Include(x => x.Project)
-            .SingleOrDefaultAsync(x => x.AppUserId == appUserId && x.ProjectId == projectId);
+            .ThrowHubExceptionIfNullSingleOrDefaultAsync(
+                x => x.AppUserId == appUserId && x.ProjectId == projectId,
+                "User is not apart of this project"
+            );
     }
 
-    public async Task<ProjectDto?> GetProjectByAppUserAndProjectIdAsync(Guid appUserId, Guid projectId)
+    public async Task<ProjectDto?> GetProjectByAppUserAndProjectIdAsync(
+        Guid appUserId,
+        Guid projectId
+    )
     {
         return await Queryable
             .Where(x => x.AppUserId == appUserId && x.ProjectId == projectId)

@@ -22,7 +22,6 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatInputModule } from '@angular/material/input'
 import { MatListModule, MatSelectionListChange } from '@angular/material/list'
 import { ActivatedRoute, Router } from '@angular/router'
-import { MessagesComponent } from '@app/messages'
 import { AuthStoreService } from '@auth/data-access/facades'
 import { LetModule } from '@ngrx/component'
 
@@ -73,7 +72,6 @@ import { GroupChatMemberItemComponent } from '../../member-item/group-chat-membe
     DatePipe,
     MatCheckboxModule,
     LetModule,
-    MessagesComponent,
     GroupChatMemberItemComponent,
   ],
   standalone: true,

@@ -1,5 +1,7 @@
 export const GetProjects = 'GetProjects'
 export const GetProjectData = 'GetProjectData'
+export const CreatePanel = 'CreatePanel'
+
 export const GetUserProject = 'GetUserProject'
 export const UpdateProject = 'UpdateProject'
 //

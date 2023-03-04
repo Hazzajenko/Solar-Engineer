@@ -23,4 +23,17 @@ public static class StringsMapping
     {
         return new List<StringDto> { @string.ToDto() };
     }
+
+    /*
+    public static String ToUndefinedString(this String nullString, Guid projectId, Guid appUserId)
+    {
+        return new String
+        {
+            Name = "undefined",
+            Color = "#808080",
+            Parallel = false,
+            ProjectId = projectId,
+            CreatedById = appUserId
+        };
+    }*/
 }

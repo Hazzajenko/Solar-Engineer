@@ -1,4 +1,5 @@
 using Infrastructure.Repositories;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Projects.API.Contracts.Data;
 using Projects.API.Data;
@@ -21,5 +22,49 @@ public sealed class StringsRepository
             .Where(x => x.ProjectId == projectId)
             .Select(x => x.ToDto())
             .ToListAsync();
+    }
+
+    public async Task<String?> GetStringByNameAsync(string name)
+    {
+        return await Queryable.FirstOrDefaultAsync(x => x.Name == name);
+    }
+
+    public async Task<String?> GetUndefinedStringByProjectIdAsync(Guid projectId)
+    {
+        return await Queryable.FirstOrDefaultAsync(
+            x => x.Name == "undefined" && x.ProjectId == projectId
+        );
+    }
+
+    public async Task<String> GetOrCreateUndefinedStringAsync(Guid projectId)
+    {
+        var undefinedString = await Queryable.FirstOrDefaultAsync(
+            x => x.Name == "undefined" && x.ProjectId == projectId
+        );
+
+        if (undefinedString is not null)
+            return undefinedString;
+
+        undefinedString = new String
+        {
+            Name = "undefined",
+            Color = "#808080",
+            Parallel = false,
+            ProjectId = projectId,
+            CreatedById = projectId
+        };
+
+        await AddAsync(undefinedString);
+        // SaveC
+
+        return undefinedString;
+    }
+
+    public async Task<String> GetByIdAndProjectIdAsync(Guid id, Guid projectId)
+    {
+        return await Queryable
+            .Where(x => x.ProjectId == projectId && x.Id == id)
+            // .Select(x => x.ToDto())
+            .SingleOrDefaultAsync() ?? throw new HubException("String not found");
     }
 }

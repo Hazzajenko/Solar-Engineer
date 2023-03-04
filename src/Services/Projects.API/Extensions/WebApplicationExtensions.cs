@@ -2,6 +2,7 @@
 using System.Text.Json.Serialization;
 using FastEndpoints;
 using FastEndpoints.Swagger;
+using Projects.API.Data.Seed;
 using Projects.API.Hubs;
 using Serilog;
 
@@ -32,6 +33,8 @@ public static class WebApplicationExtensions
         }
 
         app.MapHub<ProjectsHub>("hubs/projects");
+
+        ProjectsSeeder.InitializeDatabase(app);
 
         return app;
     }

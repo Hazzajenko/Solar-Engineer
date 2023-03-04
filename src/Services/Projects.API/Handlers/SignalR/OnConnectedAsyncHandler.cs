@@ -36,8 +36,8 @@ public class OnConnectedAsyncHandler : IRequestHandler<OnConnectedAsyncCommand, 
             appUserId
         );
 
-        await _hubContext.Clients.Client(request.Context.ConnectionId).GetProjects(projects);
-        // await _hubContext.Clients.User(appUserId.ToString()).GetProjects(projects);
+        // await _hubContext.Clients.Client(request.Context.ConnectionId).GetProjects(projects);
+        await _hubContext.Clients.User(appUserId.ToString()).GetProjects(projects);
 
 
         _logger.LogInformation(

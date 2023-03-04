@@ -22,7 +22,7 @@ import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatIconModule } from '@angular/material/icon'
 import { MatInputModule } from '@angular/material/input'
 import { MatListModule } from '@angular/material/list'
-import { MessagesComponent } from '@app/messages'
+// import { MessagesComponent } from '@app/messages'
 import { LetModule } from '@ngrx/component'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
@@ -54,7 +54,7 @@ import { ShowHideComponent } from '@shared/ui/show-hide'
 
     MatCheckboxModule,
     LetModule,
-    MessagesComponent,
+    // MessagesComponent,
   ],
   standalone: true,
 })

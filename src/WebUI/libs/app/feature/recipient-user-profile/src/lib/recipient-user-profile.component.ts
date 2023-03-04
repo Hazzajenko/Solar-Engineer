@@ -24,25 +24,21 @@ import { MatTabsModule } from '@angular/material/tabs'
 import { FriendsStoreService } from '@app/data-access/friends'
 import { ChatroomsComponent } from '@app/feature/chatrooms'
 import { FriendsComponent } from '@app/feature/friends'
-import { MessagesComponent } from '@app/messages'
+// import { MessagesComponent } from '@app/data-access/messages'
 import { AuthStoreService } from '@auth/data-access/facades'
 
-import {
-  AppUserLinkModel,
-  RecipientFriendModel,
-  UserModel,
-  WebUserModel,
-} from '@shared/data-access/models'
+import { AppUserLinkModel, RecipientFriendModel, UserModel } from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
-import { GetFriendRequestPipe } from 'libs/app/feature/notifications/src/lib/get-friend-request.pipe'
-import { SortNotificationsPipe } from 'libs/app/feature/notifications/src/lib/sort-notifications.pipe'
+// import { GetFriendRequestPipe } from 'libs/app/feature/notifications/src/lib/get-friend-request.pipe'
+// import { SortNotificationsPipe } from 'libs/app/feature/notifications/src/lib/sort-notifications.pipe'
 import { map, Observable } from 'rxjs'
 import { ActivatedRoute } from '@angular/router'
 import { UsersService, UsersStoreService } from '@app/data-access/users'
 import { RouterFacade } from '@shared/data-access/router'
 import { ConnectionsStoreService } from '@app/data-access/connections'
 import { GetCdnUrlStringPipe, TimeDifferenceFromNowPipe } from '@shared/pipes'
+import { GetFriendRequestPipe, SortNotificationsPipe } from '@app/feature/notifications'
 
 @Component({
   selector: 'app-recipient-user-profile-dialog',
@@ -73,7 +69,6 @@ import { GetCdnUrlStringPipe, TimeDifferenceFromNowPipe } from '@shared/pipes'
     GetFriendRequestPipe,
     MatTabsModule,
     FriendsComponent,
-    MessagesComponent,
     ChatroomsComponent,
     TimeDifferenceFromNowPipe,
     GetCdnUrlStringPipe,

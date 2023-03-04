@@ -24,7 +24,6 @@ import { MatTabsModule } from '@angular/material/tabs'
 import { FriendsStoreService } from '@app/data-access/friends'
 import { ChatroomsComponent } from '@app/feature/chatrooms'
 import { FriendsComponent } from '@app/feature/friends'
-import { MessagesComponent } from '@app/messages'
 import { AuthStoreService } from '@auth/data-access/facades'
 
 import {
@@ -42,12 +41,11 @@ import { RouterFacade } from '@shared/data-access/router'
 import { ConnectionsStoreService } from '@app/data-access/connections'
 import { GetCdnUrlStringPipe, GetFullUrlPipe, TimeDifferenceFromNowPipe } from '@shared/pipes'
 import { ImagesService } from '@app/data-access/images'
-import { GetImagesResponse } from '../../../../../data-access/images/src/lib/models/get-images.response'
 import { HttpClient } from '@angular/common/http'
 import { MatProgressBarModule } from '@angular/material/progress-bar'
 import { LetModule } from '@ngrx/component'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
-import { UpdateDisplayPictureRequest } from '../../../../../data-access/users/src/lib/models'
+import { UpdateDisplayPictureRequest } from '@app/data-access/users'
 
 @Component({
   selector: 'app-change-display-picture-component',
@@ -76,7 +74,6 @@ import { UpdateDisplayPictureRequest } from '../../../../../data-access/users/sr
     DatePipe,
     MatTabsModule,
     FriendsComponent,
-    MessagesComponent,
     ChatroomsComponent,
     TimeDifferenceFromNowPipe,
     GetFullUrlPipe,

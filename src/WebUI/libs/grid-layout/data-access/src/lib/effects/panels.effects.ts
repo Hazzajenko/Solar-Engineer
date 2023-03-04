@@ -2,13 +2,15 @@ import { inject, Injectable } from '@angular/core'
 import { tapResponse } from '@ngrx/component-store'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { Store } from '@ngrx/store'
-import { PanelsService } from '../'
+import { CreatePanelRequest, PanelsService, PanelsSignalrService } from '../'
 import { BlocksActions, PanelsActions } from '../store'
 import { ProjectsStoreService } from '@projects/data-access'
 import { ProjectsActions } from '@projects/data-access'
 import { PanelModel } from '@shared/data-access/models'
 import { combineLatestWith, of, switchMap } from 'rxjs'
 import { map } from 'rxjs/operators'
+
+import { v4 as uuidv4 } from 'uuid'
 
 @Injectable({
   providedIn: 'root',
@@ -21,6 +23,7 @@ export class PanelsEffects {
   // private projectsFacade = inject(ProjectsFacade)
   private projectsStore = inject(ProjectsStoreService)
   private panelsService = inject(PanelsService)
+  private panelsSignalrService = inject(PanelsSignalrService)
   initPanels$ = createEffect(
     () =>
       this.actions$.pipe(
@@ -66,6 +69,21 @@ export class PanelsEffects {
         switchMap(({ panel }) =>
           this.projectsStore.select.selectIsWebProject$.pipe(
             switchMap((isWeb) => {
+              const isSignalr = true
+              if (isSignalr) {
+                // const panelConfigId = panel.panelConfigId ? panel.panelConfigId : undefined
+                const request: CreatePanelRequest = {
+                  id: panel.id,
+                  projectId: panel.projectId,
+                  stringId: panel.stringId,
+                  location: panel.location,
+                  panelConfigId: 'undefined',
+                  rotation: panel.rotation,
+                }
+                console.log(request)
+                this.panelsSignalrService.addPanelSignalr(request)
+                return of(undefined)
+              }
               if (isWeb) {
                 return this.panelsService.addPanel(panel)
               }

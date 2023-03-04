@@ -26,7 +26,8 @@ namespace Projects.API.Data.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("uuid_generate_v4()");
 
                     b.Property<Guid>("AppUserId")
                         .HasColumnType("uuid");
@@ -67,7 +68,8 @@ namespace Projects.API.Data.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("uuid_generate_v4()");
 
                     b.Property<Guid>("CreatedById")
                         .HasColumnType("uuid");
@@ -102,13 +104,13 @@ namespace Projects.API.Data.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("uuid_generate_v4()");
 
                     b.Property<string>("Brand")
-                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<Guid>("CreatedById")
+                    b.Property<Guid?>("CreatedById")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedTime")
@@ -201,7 +203,8 @@ namespace Projects.API.Data.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("uuid_generate_v4()");
 
                     b.Property<Guid>("CreatedById")
                         .HasColumnType("uuid");
@@ -225,7 +228,8 @@ namespace Projects.API.Data.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("uuid_generate_v4()");
 
                     b.Property<string>("Color")
                         .IsRequired()
@@ -285,7 +289,7 @@ namespace Projects.API.Data.Migrations
                     b.HasOne("Projects.API.Entities.String", "String")
                         .WithMany("Panels")
                         .HasForeignKey("StringId")
-                        .OnDelete(DeleteBehavior.SetNull)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("PanelConfig");

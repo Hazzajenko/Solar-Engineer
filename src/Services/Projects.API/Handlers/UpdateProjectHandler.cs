@@ -3,7 +3,6 @@ using FluentValidation;
 using Infrastructure.Extensions;
 using Infrastructure.Mapping;
 using Mediator;
-using Projects.API.Contracts.Requests;
 using Projects.API.Contracts.Requests.Projects;
 using Projects.API.Data;
 using Projects.API.Entities;
@@ -30,7 +29,7 @@ public class UpdateProjectHandler : IRequestHandler<UpdateProjectCommand, bool>
     {
         var appUserId = request.User.GetGuidUserId();
         var projectId = request.UpdateProjectRequest.ProjectId.ToGuid();
-        var appUserProject = await _unitOfWork.AppUserProjectsRepository.GetByAppUserAndProjectIdAsync(
+        var appUserProject = await _unitOfWork.AppUserProjectsRepository.GetByAppUserIdAndProjectIdAsync(
             appUserId,
             projectId
         );

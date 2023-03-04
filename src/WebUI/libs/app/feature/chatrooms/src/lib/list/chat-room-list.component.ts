@@ -23,25 +23,21 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatInputModule } from '@angular/material/input'
 import { MatListModule, MatSelectionListChange } from '@angular/material/list'
 import { ActivatedRoute } from '@angular/router'
-import { MessagesComponent } from '@app/messages'
+// import { MessagesComponent } from '@app/messages'
 import { AuthStoreService } from '@auth/data-access'
 import { LetModule } from '@ngrx/component'
 
-import { AuthUserModel, MessageTimeSortModel, UserModel } from '@shared/data-access/models'
+import { MessageTimeSortModel } from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
 import { map, Observable, startWith, switchMap } from 'rxjs'
 
-import { MessageDirective } from '../../../../../messages/src/lib/feature/component/message.directive'
-import { SortMessagesPipe } from '../../../../../messages/src/lib/feature/component/sort-messages.pipe'
-import { ConversationMessageDirective } from '../../../../../messages/src/lib/feature/conversation/conversation-message.directive'
-import { ScrollViewportDirective } from '../../../../../messages/src/lib/feature/conversation/scroll-viewport.directive'
-import { SortConversationMessagesPipe } from '../../../../../messages/src/lib/feature/conversation/sort-conversation-messages.pipe'
 import { ChatRoomsService } from '../services/chat-rooms.service'
 import { SortChatroomsPipe } from './sort-chatrooms.pipe'
-import { TruncatePipe } from '../../../../../../shared/pipes/src/lib/text'
+import { SortConversationMessagesPipe, TruncatePipe } from '@shared/pipes'
 import { GroupChatMemberItemComponent } from '../conversation/member-item/group-chat-member-item.component'
 import { MatMenuModule } from '@angular/material/menu'
+import { ConversationMessageDirective, ScrollViewportDirective } from '@shared/directives'
 
 @Component({
   selector: 'app-chatroom-list-component',
@@ -71,9 +67,8 @@ import { MatMenuModule } from '@angular/material/menu'
 
     MatCheckboxModule,
     LetModule,
-    MessagesComponent,
-    MessageDirective,
-    SortMessagesPipe,
+    // MessageDirective,
+    // SortMessagesPipe,
     ScrollViewportDirective,
     ConversationMessageDirective,
     SortConversationMessagesPipe,

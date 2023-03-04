@@ -23,7 +23,6 @@ import { MatListModule } from '@angular/material/list'
 import { MatTabsModule } from '@angular/material/tabs'
 import { ChatroomsComponent } from '@app/feature/chatrooms'
 import { FriendsComponent } from '@app/feature/friends'
-import { MessagesComponent } from '@app/messages'
 
 import { AppUserLinkModel } from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
@@ -62,7 +61,6 @@ import { UsersStoreService } from '@app/data-access/users'
     DatePipe,
     MatTabsModule,
     FriendsComponent,
-    MessagesComponent,
     ChatroomsComponent,
     TimeDifferenceFromNowPipe,
     GetFullUrlPipe,
@@ -95,10 +93,4 @@ export class SearchAppUserComponent {
       .pipe(tap(() => (this.searching = false)))
     // this.searching = false
   }
-
-  viewProfile(userName: string) {}
-
-  acceptFriend(userName: string) {}
-
-  cancelRequest(userName: string) {}
 }

@@ -1,8 +1,9 @@
 ﻿using Infrastructure.Common;
+using Projects.API.Data;
 
 namespace Projects.API.Entities;
 
-public class AppUserProject : IEntity
+public class AppUserProject : IEntity, IProject
 {
     public Guid AppUserId { get; set; }
     public Guid ProjectId { get; set; }

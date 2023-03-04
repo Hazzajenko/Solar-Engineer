@@ -20,8 +20,8 @@
         </PackageReference>
         <PackageReference Include="MassTransit.AspNetCore" Version="7.3.1" />
         <PackageReference Include="MassTransit.RabbitMQ" Version="8.0.12" />
-        <PackageReference Include="Mediator.Abstractions" Version="2.0.30" />
-        <PackageReference Include="Mediator.SourceGenerator" Version="2.0.30">
+        <PackageReference Include="Mediator.Abstractions" Version="2.1.1" />
+        <PackageReference Include="Mediator.SourceGenerator" Version="2.1.1">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>

@@ -11,7 +11,7 @@ import { GetProjectDataResponse } from '../models/get-project-data.response'
   providedIn: 'root',
 })
 export class ProjectsSignalrService {
-  protected projectsHubConnection?: HubConnection
+  public projectsHubConnection?: HubConnection
   private projectsStore = inject(ProjectsStoreService)
   private hubConnectionIsInitialized = false
   // protected hi = "ss"
@@ -38,7 +38,7 @@ export class ProjectsSignalrService {
       .start()
       .then(() => {
         console.log('Projects Hub Connection started')
-        // this.invokeTest()
+        this.getProjects()
       })
       .catch((err) => {
         console.error('Error while starting Projects Hub connection: ' + err)
@@ -63,14 +63,13 @@ export class ProjectsSignalrService {
     return this.projectsHubConnection
   }
 
-  /*
-    invokeTest() {
-      if (!this.projectsHubConnection) return
-      this.projectsHubConnection
-        .invoke(GetProjects)
-        .then((r) => console.log(r))
-        .catch((e) => console.error(e))
-    }*/
+  getProjects() {
+    if (!this.projectsHubConnection) return
+    this.projectsHubConnection
+      .invoke(GetProjects)
+      .then((r) => console.log(r))
+      .catch((e) => console.error(e))
+  }
 
   invokeGetProjectData(projectId: string) {
     if (!this.projectsHubConnection) return
@@ -79,7 +78,6 @@ export class ProjectsSignalrService {
       .then((r) => console.log(r))
       .catch((e) => console.error(e))
   }
-
 
   stopHubConnection() {
     if (!this.projectsHubConnection) return

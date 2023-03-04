@@ -32,15 +32,13 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatInputModule } from '@angular/material/input'
 import { MatListModule } from '@angular/material/list'
 import { ActivatedRoute, Router } from '@angular/router'
-import { MessagesComponent } from '@app/messages'
-import { UserMessagesStoreService, SendMessageRequest } from '@app/data-access/messages'
+// import { MessagesComponent } from '@app/messages'
+import { SendMessageRequest, UserMessagesStoreService } from '@app/data-access/messages'
 import { AuthStoreService } from '@auth/data-access/facades'
 import { LetModule } from '@ngrx/component'
 
 import {
-  CombinedMessageUserModel,
   MessageFrom,
-  MessageModel,
   MessageWebUserModel,
   UserModel,
   WebUserModel,
@@ -51,11 +49,10 @@ import { map, Observable } from 'rxjs'
 
 import { ConversationMessageDirective, ScrollViewportDirective } from '@shared/directives'
 import { MessageBarComponent } from '../message-bar/message-bar.component'
-import { GetCdnUrlStringPipe, SortConversationMessagesPipe } from '@shared/pipes'
-import { YouOrUserNamePipe } from '../../../../../../../shared/pipes/src/lib/text'
+import { GetCdnUrlStringPipe, SortConversationMessagesPipe, YouOrUserNamePipe } from '@shared/pipes'
 import { MessageItemComponent } from '../message-item/message-item.component'
 import { MessageOptionsBarComponent } from '../options-bar/message-options-bar.component'
-import { UsersService, UsersStoreService } from '@app/data-access/users'
+import { UsersStoreService } from '@app/data-access/users'
 
 // import { UserMessagesStoreService } from '@app/data-access/messages'
 
@@ -111,7 +108,7 @@ import { UsersService, UsersStoreService } from '@app/data-access/users'
 
     MatCheckboxModule,
     LetModule,
-    MessagesComponent,
+    // MessagesComponent,
 
     ScrollViewportDirective,
     ConversationMessageDirective,

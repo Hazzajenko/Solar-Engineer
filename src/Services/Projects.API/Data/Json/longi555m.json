@@ -1,0 +1,15 @@
+{
+  "brand": "Longi",
+  "name": "Himo555m",
+  "currentAtMaximumPower": 13.19,
+  "shortCircuitCurrent": 14.01,
+  "shortCircuitCurrentTemp": 0.050,
+  "maximumPower": 555,
+  "maximumPowerTemp": -0.340,
+  "voltageAtMaximumPower": 42.10,
+  "openCircuitVoltage": 49.95,
+  "openCircuitVoltageTemp": -0.265,
+  "length": 2256,
+  "width": 1133,
+  "weight": 27.2
+}

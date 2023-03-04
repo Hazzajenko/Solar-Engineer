@@ -1,4 +1,5 @@
 import { getGuid } from '@shared/utils'
+import { v4 as uuidv4 } from 'uuid'
 import { StringModel } from './string.model'
 import { BlockModel, BlockOptions, BlockType } from './block.model'
 
@@ -25,12 +26,13 @@ export class PanelModel extends BlockModel {
   length: number
   weight: number
   width: number
-  inverterId?: string
-  trackerId?: string
+
+  /*  inverterId?: string
+    trackerId?: string*/
 
   constructor(options: PanelOptions) {
     super(options)
-    this.id = getGuid().toString()
+    this.id = uuidv4().toString()
     // this.string = string
     this.rotation = options.rotation
     this.projectId = options.projectId

@@ -1,5 +1,0 @@
-// export * from './api/index.ts'
-// export * from './effects/index.ts'
-export * from './facades/index'
-export * from './store/index'
-export * from './models/index'

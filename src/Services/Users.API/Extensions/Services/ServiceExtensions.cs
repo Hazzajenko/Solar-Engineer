@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
+using Infrastructure.Mediator;
 using Microsoft.EntityFrameworkCore;
 using Users.API.Data;
-using Users.API.Grpc;
 using Users.API.Repositories.UserConnections;
 using Users.API.Repositories.UserLinks;
 using Users.API.Repositories.Users;
@@ -15,7 +15,8 @@ public static class ServiceExtensions
         IConfiguration config
     )
     {
-        services.AddMediator(options => { options.ServiceLifetime = ServiceLifetime.Transient; });
+        services.InitMediator();
+        // services.AddMediator(options => { options.ServiceLifetime = ServiceLifetime.Transient; });
         // services.AddTransient<GrpcExceptionInterceptor>();
         // services.AddScoped<IAuthGrpcService, AuthGrpcService>();
         services.AddScoped<IUsersUnitOfWork, UsersUnitOfWork>();

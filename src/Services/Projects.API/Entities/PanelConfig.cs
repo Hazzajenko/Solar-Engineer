@@ -1,11 +1,13 @@
 ﻿using Infrastructure.Common;
+using Projects.API.Data;
 
 namespace Projects.API.Entities;
 
-public class PanelConfig : IEntity, IUserObject
+public class PanelConfig : IEntity, IProject
 {
-    public string Brand { get; set; } = "";
+    public string? Brand { get; set; }
     public string Name { get; set; } = default!;
+    public string FullName => Brand is null ? Name : $"{Brand} {Name}";
     public double CurrentAtMaximumPower { get; set; }
     public double ShortCircuitCurrent { get; set; }
     public double ShortCircuitCurrentTemp { get; set; }
@@ -18,9 +20,9 @@ public class PanelConfig : IEntity, IUserObject
     public double Weight { get; set; }
     public double Width { get; set; }
     public bool Default { get; set; }
-    public ICollection<Panel> Panels { get; set; } = new List<Panel>();
+    public ICollection<Panel> Panels { get; set; } = default!;
+    public Guid? CreatedById { get; set; }
     public Guid Id { get; set; }
-    public DateTime CreatedTime { get; set; }
-    public DateTime LastModifiedTime { get; set; }
-    public Guid CreatedById { get; set; }
+    public DateTime CreatedTime { get; set; } = DateTime.UtcNow;
+    public DateTime LastModifiedTime { get; set; } = DateTime.UtcNow;
 }

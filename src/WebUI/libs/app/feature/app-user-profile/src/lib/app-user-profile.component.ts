@@ -31,7 +31,6 @@ import { MatTabsModule } from '@angular/material/tabs'
 import { FriendsStoreService } from '@app/data-access/friends'
 import { ChatroomsComponent } from '@app/feature/chatrooms'
 import { FriendsComponent } from '@app/feature/friends'
-import { MessagesComponent } from '@app/messages'
 import { AuthStoreService } from '@auth/data-access/facades'
 
 import {
@@ -90,7 +89,6 @@ import { object } from 'zod'
     MatTabsModule,
     NotificationsComponent,
     FriendsComponent,
-    MessagesComponent,
     ChatroomsComponent,
     TimeDifferenceFromNowPipe,
     GetCdnUrlStringPipe,

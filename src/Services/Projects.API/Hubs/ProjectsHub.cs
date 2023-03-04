@@ -20,6 +20,7 @@ public class ProjectsHub : Hub<IProjectsHub>
     public override async Task OnConnectedAsync()
     {
         await _mediator.Send(new OnConnectedAsyncCommand(Context));
+        await base.OnConnectedAsync();
     }
 
     public async Task GetProjects()

@@ -3,6 +3,7 @@
 // using DotNetCore.EntityFrameworkCore;
 
 using Infrastructure.Grpc;
+using Infrastructure.Mediator;
 using MassTransit;
 using Messages.API.Consumers;
 using Messages.API.Data;
@@ -28,42 +29,52 @@ public static class ServiceExtensions
         services.AddScoped<IGroupChatsRepository, GroupChatsRepository>();
         services.AddScoped<IGroupChatMessagesRepository, GroupChatMessagesRepository>();
         services.AddScoped<IGroupChatServerMessagesRepository, GroupChatServerMessagesRepository>();
-        services.AddMediator(options => { options.ServiceLifetime = ServiceLifetime.Transient; });
+        services.InitMediator();
+        // services.AddMediator(options => { options.ServiceLifetime = ServiceLifetime.Transient; });
 
         services.AddMassTransit(x =>
         {
             // x.UsingRabbitMq();
             // x.AddConsumer<TicketConsumer>();
             x.AddConsumer<AppUserLoggedInConsumer>();
-            x.AddBus(provider => Bus.Factory.CreateUsingRabbitMq(config =>
-            {
-                // config.UseHealthCheck(provider);
-                config.Host(new Uri("rabbitmq://localhost"), h =>
-                {
-                    h.Username("guest");
-                    h.Password("guest");
-                });
-                // appUserLoggedIn-Messages
-                config.ReceiveEndpoint("AppUserLoggedInEvent-Messages", ep =>
-                {
-                    ep.PrefetchCount = 16;
-                    ep.UseMessageRetry(r => r.Interval(2, 100));
-                    ep.ConfigureConsumer<AppUserLoggedInConsumer>(provider);
-                });
-                /*config.ReceiveEndpoint("appUserLoggedInQueue", ep =>
-                {
-                    ep.PrefetchCount = 16;
-                    // ep.
-                    ep.UseMessageRetry(r => r.Interval(2, 100));
-                    ep.ConfigureConsumer<AppUserLoggedInConsumer>(provider);
-                });*/
-                /*config.ReceiveEndpoint("createdAppUserQueue", ep =>
-                {
-                    ep.PrefetchCount = 16;
-                    ep.UseMessageRetry(r => r.Interval(2, 100));
-                    ep.ConfigureConsumer<CreatedAppUserConsumer>(provider);
-                });*/
-            }));
+            x.AddBus(
+                provider =>
+                    Bus.Factory.CreateUsingRabbitMq(config =>
+                    {
+                        // config.UseHealthCheck(provider);
+                        config.Host(
+                            new Uri("rabbitmq://localhost"),
+                            h =>
+                            {
+                                h.Username("guest");
+                                h.Password("guest");
+                            }
+                        );
+                        // appUserLoggedIn-Messages
+                        config.ReceiveEndpoint(
+                            "AppUserLoggedInEvent-Messages",
+                            ep =>
+                            {
+                                ep.PrefetchCount = 16;
+                                ep.UseMessageRetry(r => r.Interval(2, 100));
+                                ep.ConfigureConsumer<AppUserLoggedInConsumer>(provider);
+                            }
+                        );
+                        /*config.ReceiveEndpoint("appUserLoggedInQueue", ep =>
+                        {
+                            ep.PrefetchCount = 16;
+                            // ep.
+                            ep.UseMessageRetry(r => r.Interval(2, 100));
+                            ep.ConfigureConsumer<AppUserLoggedInConsumer>(provider);
+                        });*/
+                        /*config.ReceiveEndpoint("createdAppUserQueue", ep =>
+                        {
+                            ep.PrefetchCount = 16;
+                            ep.UseMessageRetry(r => r.Interval(2, 100));
+                            ep.ConfigureConsumer<CreatedAppUserConsumer>(provider);
+                        });*/
+                    })
+            );
         });
 
         return services;

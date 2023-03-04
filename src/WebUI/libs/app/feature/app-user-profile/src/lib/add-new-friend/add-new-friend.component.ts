@@ -23,15 +23,9 @@ import { MatListModule } from '@angular/material/list'
 import { MatTabsModule } from '@angular/material/tabs'
 import { ChatroomsComponent } from '@app/feature/chatrooms'
 import { FriendsComponent } from '@app/feature/friends'
-import { MessagesComponent } from '@app/messages'
 import { AuthStoreService } from '@auth/data-access/facades'
 
-import {
-  AppUserLinkModel,
-  ToUserStatus,
-  UserModel,
-  UserToUserStatus,
-} from '@shared/data-access/models'
+import { AppUserLinkModel, UserModel, UserToUserStatus } from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
 import { map, Observable, tap } from 'rxjs'
@@ -40,7 +34,7 @@ import { GetCdnUrlStringPipe, GetFullUrlPipe, TimeDifferenceFromNowPipe } from '
 import { MatProgressBarModule } from '@angular/material/progress-bar'
 import { LetModule } from '@ngrx/component'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
-import { UsersService, UsersStoreService } from '@app/data-access/users'
+import { UsersStoreService } from '@app/data-access/users'
 
 @Component({
   selector: 'app-add-new-friend-component',
@@ -69,7 +63,6 @@ import { UsersService, UsersStoreService } from '@app/data-access/users'
     DatePipe,
     MatTabsModule,
     FriendsComponent,
-    MessagesComponent,
     ChatroomsComponent,
     TimeDifferenceFromNowPipe,
     GetFullUrlPipe,
@@ -102,8 +95,7 @@ export class AddNewFriendComponent {
   constructor(
     private dialogRef: MatDialogRef<AddNewFriendComponent>,
     @Inject(MAT_DIALOG_DATA) data: { user: UserModel },
-  ) {
-  }
+  ) {}
 
   sendFriendRequest(userName: string | undefined | null) {
     if (!userName) return
@@ -120,14 +112,9 @@ export class AddNewFriendComponent {
     // this.searching = false
   }
 
-  viewProfile(userName: string) {
-  }
+  viewProfile(userName: string) {}
 
-  acceptFriend(userName: string) {
+  acceptFriend(userName: string) {}
 
-  }
-
-  cancelRequest(userName: string) {
-
-  }
+  cancelRequest(userName: string) {}
 }
