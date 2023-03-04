@@ -65,6 +65,5 @@
       "style": "scss",
       "standalone": true
     }
-  },
-  "defaultProject": "design"
+  }
 }
