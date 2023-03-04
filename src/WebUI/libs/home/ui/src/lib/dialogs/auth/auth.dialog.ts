@@ -23,12 +23,12 @@ import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatInputModule } from '@angular/material/input'
 import { AuthService } from '@auth/data-access/api'
 import { AuthFacade, AuthStoreService } from '@auth/data-access/facades'
-import { StringsService } from '@grid-layout/data-access/services'
+import { StringsService } from '@grid-layout/data-access'
 
 import { StringModel } from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
-import { CheckUserPipe } from 'libs/home/ui/src/lib/dialogs/auth/check-user.pipe'
 import { map } from 'rxjs'
+import { CheckUserPipe } from './check-user.pipe'
 
 @Component({
   selector: 'app-auth-dialog',

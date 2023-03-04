@@ -1,11 +1,9 @@
 import { Route } from '@angular/router'
 import { loggedInGuard } from '@auth/guards'
-import { LocalProjectResolver, SelectProjectResolver } from '@project-id/data-access/resolvers'
-// import { ChatroomResolver } from '../../../feature/chatrooms/src/lib/chatroom.resolver'
+import { LocalProjectResolver, SelectProjectResolver } from '@grid-layout/data-access'
 import { homeProviders } from './home/providers'
 import { projectsProviders } from './projects/providers'
-// import { UserNameProfileResolver } from '../../../feature/userName-profile/src/lib/user-name-profile.resolver'
-// nx bu/
+
 export const appRoutes: Route[] = [
   {
     path: '',
@@ -27,7 +25,7 @@ export const appRoutes: Route[] = [
   },
   {
     path: 'projects/local',
-    loadComponent: () => import('@project-id/feature/local').then((m) => m.LocalProjectComponent),
+    loadComponent: () => import('@projects/feature').then((m) => m.LocalProjectComponent),
     providers: [projectsProviders],
     resolve: { localProject: LocalProjectResolver },
   },
@@ -54,10 +52,10 @@ export const appRoutes: Route[] = [
     },*/
   {
     path: 'projects/:projectName',
-    loadComponent: () => import('@project-id/feature/web').then((m) => m.WebProjectV2Component),
+    loadComponent: () => import('@projects/feature').then((m) => m.WebProjectComponent),
     canActivate: [loggedInGuard],
     providers: [projectsProviders],
-    resolve: { project: SelectProjectResolver },
+    // resolve: { project: SelectProjectResolver },
   },
   {
     path: '',

@@ -13,23 +13,23 @@ import { MatIconModule } from '@angular/material/icon'
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatInputModule } from '@angular/material/input'
-import { StringsService } from '@grid-layout/data-access/services'
+import { StringsEventService } from '@grid-layout/data-access'
 
 import { StringModel } from '@shared/data-access/models'
 
 @Component({
   selector: 'app-new-string-dialog',
   template: `
-    <div class='flex flex-col items-center content-center'>
+    <div class="flex flex-col items-center content-center">
       <h1 mat-dialog-title>Create String</h1>
     </div>
-    <form ngForm class='example-form'>
-      <label for='name'>Name: </label>
-      <input id='name' type='text' [formControl]='name' />
+    <form ngForm class="example-form">
+      <label for="name">Name: </label>
+      <input id="name" type="text" [formControl]="name" />
     </form>
-    <mat-dialog-actions align='end'>
-      <button mat-button mat-dialog-close='true'>Cancel</button>
-      <button (click)='addSelectedToNew()' cdkFocusInitial mat-button>
+    <mat-dialog-actions align="end">
+      <button mat-button mat-dialog-close="true">Cancel</button>
+      <button (click)="addSelectedToNew()" cdkFocusInitial mat-button>
         Create {{ name.value }}
       </button>
     </mat-dialog-actions>
@@ -55,7 +55,7 @@ import { StringModel } from '@shared/data-access/models'
 })
 export class NewStringDialog {
   name = new FormControl('')
-  private stringsFactory = inject(StringsService)
+  private stringsFactory = inject(StringsEventService)
   private dialogRef = inject(MatDialogRef<NewStringDialog>)
 
   async addSelectedToNew() {

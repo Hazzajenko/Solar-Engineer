@@ -1,6 +1,6 @@
 import { BlockType } from '@shared/data-access/models'
 
-export interface LinksState {
+export interface LinksStateModel {
   loaded: boolean
   error?: string | null
   typeToLink?: BlockType

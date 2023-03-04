@@ -13,12 +13,12 @@ import { ChangeDetectionStrategy, Component, inject, Input, ViewChild } from '@a
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
 import { MatTooltipModule } from '@angular/material/tooltip'
 
-import { PanelLinkComponent } from '@grid-layout/feature/blocks/shared-ui'
+// import { PanelLinkComponent } from '@grid-layout/feature/blocks/shared-ui'
 
 import { LetModule } from '@ngrx/component'
 import { GroupChatCombinedModel, WebUserModel } from '@shared/data-access/models'
 import { Router } from '@angular/router'
-import { MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog'
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog'
 
 // import { UsernameProfileComponent } from '@app/feature/userName-profile'
 import { MatButtonModule } from '@angular/material/button'
@@ -45,7 +45,6 @@ import { GetCdnUrlStringPipe } from '@shared/pipes'
     NgClass,
     NgSwitch,
     NgSwitchCase,
-    PanelLinkComponent,
     MatButtonModule,
     MatIconModule,
     GetCdnUrlStringPipe,

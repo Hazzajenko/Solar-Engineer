@@ -10,7 +10,7 @@ import {
 import { USER_MESSAGES_FEATURE_KEY, userMessagesReducer } from '@app/data-access/messages'
 import { AUTH_FEATURE_KEY, authReducer } from '@auth/data-access'
 import { provideState } from '@ngrx/store'
-import { UI_FEATURE_KEY, uiReducer } from '@project-id/data-access/store'
+import { UI_FEATURE_KEY, uiReducer } from '@grid-layout/data-access'
 import { PROJECTS_FEATURE_KEY, projectsReducer } from '@projects/data-access'
 import { CONNECTIONS_FEATURE_KEY, connectionsReducer } from '@app/data-access/connections'
 import { NOTIFICATIONS_FEATURE_KEY, notificationsReducer } from '@app/data-access/notifications'

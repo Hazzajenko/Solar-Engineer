@@ -1,6 +1,6 @@
 import { ComponentRef, Directive, inject, Input, OnDestroy, ViewContainerRef } from '@angular/core'
 import { BlockPanelComponent } from '../feature/block-panel'
-import { StringsFacade } from '@project-id/data-access/facades'
+import { StringsFacade } from '@grid-layout/data-access'
 import { BlockModel, BlockType } from '@shared/data-access/models'
 
 @Directive({

@@ -23,8 +23,6 @@ import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatInputModule } from '@angular/material/input'
 import { AuthService } from '@auth/data-access/api'
 import { AuthFacade, AuthStoreService } from '@auth/data-access/facades'
-import { StringsService } from '@grid-layout/data-access/services'
-import { ProjectsStoreService } from '@projects/data-access/facades'
 import { ConnectionsStoreService } from '@app/data-access/connections'
 
 import { ConnectionModel, StringModel, UserModel } from '@shared/data-access/models'

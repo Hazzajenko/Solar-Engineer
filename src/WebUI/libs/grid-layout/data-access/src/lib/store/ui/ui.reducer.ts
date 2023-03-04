@@ -1,12 +1,10 @@
-import { ClientXY, GridLayoutXY, MouseXY, PosXY } from '@grid-layout/shared/models'
+import { ClientXY, GridLayoutXY, MouseXY, PosXY } from '../..'
 import { Action, createReducer, on } from '@ngrx/store'
 import { WindowSizeModel } from '@shared/data-access/models'
-import { GridActions } from 'libs/project-id/data-access/store/src/lib/grid'
 
 import { UiActions } from './ui.actions'
 
 export const UI_FEATURE_KEY = 'ui'
-
 
 export interface UiState {
   keymap: boolean
@@ -55,7 +53,6 @@ export const initialUiState: UiState = {
   },
 }
 
-
 const reducer = createReducer(
   initialUiState,
   on(UiActions.toggleKeymap, (state) => ({ ...state, keymap: !state.keymap })),
@@ -67,7 +64,8 @@ const reducer = createReducer(
   })),
   on(UiActions.stopGridlayoutMoving, (state) => ({ ...state, gridLayoutMoving: false })),
   on(UiActions.resetGridlayoutComponentXy, (state) => ({
-    ...state, gridLayoutXY: {
+    ...state,
+    gridLayoutXY: {
       componentX: undefined,
       componentY: undefined,
     },
@@ -75,7 +73,8 @@ const reducer = createReducer(
   })),
   on(UiActions.setGridlayoutZoom, (state, { zoom }) => ({ ...state, gridLayoutZoom: zoom })),
   on(UiActions.resetGridlayoutZoom, (state) => ({
-    ...state, zoom: 1,
+    ...state,
+    zoom: 1,
   })),
   on(UiActions.setMouseXy, (state, { mouseXY }) => ({
     ...state,

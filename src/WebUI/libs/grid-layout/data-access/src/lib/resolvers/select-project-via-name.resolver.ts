@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core'
 import { Resolve } from '@angular/router'
-import { ProjectsStoreService } from '@projects/data-access/facades'
+import { ProjectsStoreService } from '@projects/data-access'
 import { EMPTY, of } from 'rxjs'
 import { switchMap } from 'rxjs/operators'
 

@@ -1,1 +1,2 @@
-export * from './lib/local-project.component'
+// export * from './lib/local-project.component'
+//

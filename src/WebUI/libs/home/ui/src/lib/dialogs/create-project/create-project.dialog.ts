@@ -11,15 +11,20 @@ import { MatListModule } from '@angular/material/list'
 
 import { MatIconModule } from '@angular/material/icon'
 
-import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms'
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms'
 import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatInputModule } from '@angular/material/input'
 import { AuthService } from '@auth/data-access/api'
 import { AuthFacade } from '@auth/data-access/facades'
-import { StringsService } from '@grid-layout/data-access/services'
-import { ProjectsStoreService } from '@projects/data-access/facades'
-
-import { StringModel } from '@shared/data-access/models'
+import { StringsService } from '@grid-layout/data-access'
+import { ProjectsStoreService } from '@projects/data-access'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
 @Component({
@@ -48,11 +53,8 @@ import { ShowHideComponent } from '@shared/ui/show-hide'
   standalone: true,
 })
 export class CreateProjectDialog {
-
   projectForm: FormGroup = new FormGroup({
-    'projectName': new FormControl('', Validators.compose([
-      Validators.required,
-    ])),
+    projectName: new FormControl('', Validators.compose([Validators.required])),
   })
 
   private stringsFactory = inject(StringsService)
@@ -62,11 +64,8 @@ export class CreateProjectDialog {
   private projectsStore = inject(ProjectsStoreService)
   private dialogRef = inject(MatDialogRef<CreateProjectDialog>)
   validationMessages = {
-    'projectName': [
-      { type: 'required', message: 'Username is required.' },
-    ],
+    projectName: [{ type: 'required', message: 'Username is required.' }],
   }
-
 
   async onSubmit() {
     const projectName = this.projectForm.get('projectName')?.value

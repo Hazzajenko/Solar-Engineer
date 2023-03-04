@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core'
 // import { GridEventResult } from '@grid-layout/data-access/actions'
-import { BlocksStoreService, PanelsStoreService } from '@project-id/data-access/facades'
+import { BlocksStoreService, PanelsStoreService } from '../..'
 import { BlockModel, BlockType } from '@shared/data-access/models'
 import { SelectedEventService } from '../selected'
 import { StringsEventService } from '../strings'

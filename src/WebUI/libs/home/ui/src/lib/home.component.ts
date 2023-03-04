@@ -7,12 +7,10 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 import { NavigationStart, Router, RouterEvent, RouterLink } from '@angular/router'
 import { AuthStoreService } from '@auth/data-access'
 import { LetModule } from '@ngrx/component'
-import { ProjectsFacade } from '@projects/data-access/facades'
-import { ProjectsListComponent } from '@projects/feature/projects-list'
+import { ProjectsFacade } from '@projects/data-access'
+import { ProjectsListComponent } from '@projects/feature'
 import { LogoNameBackgroundV2Component } from '@shared/ui/logo'
-import { CreateProjectDialog } from 'libs/home/ui/src/lib/dialogs/create-project/create-project.dialog'
 import { ConnectionsStoreService } from '@app/data-access/connections'
-import { OnlineUsersDialog } from 'libs/home/ui/src/lib/dialogs/online-users/online-users.dialog'
 import { fadeIn, fadeInV2 } from './animations/animations'
 import { HttpClient, HttpHeaders } from '@angular/common/http'
 import {
@@ -21,6 +19,8 @@ import {
 } from '@shared/ui/google-login-button'
 import { SignInDialog } from '@auth/feature'
 import { AuthorizeResponse } from './authorize-response'
+import { CreateProjectDialog } from './dialogs/create-project/create-project.dialog'
+import { OnlineUsersDialog } from './dialogs/online-users/online-users.dialog'
 
 @Component({
   selector: 'app-home',

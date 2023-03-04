@@ -3,14 +3,11 @@ import { ChangeDetectionStrategy, Component, inject, Inject } from '@angular/cor
 import { MatButtonModule } from '@angular/material/button'
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
 
-
 import { ScrollingModule } from '@angular/cdk/scrolling'
 import { AsyncPipe, NgForOf, NgIf, NgStyle } from '@angular/common'
 import { MatListModule } from '@angular/material/list'
 
 import { MatIconModule } from '@angular/material/icon'
-import { StringsService } from '@grid-layout/data-access/services'
-
 
 import { map } from 'rxjs/operators'
 
@@ -18,42 +15,46 @@ import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angul
 import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatInputModule } from '@angular/material/input'
 
-import { StringsFacade } from '@project-id/data-access/facades'
 import { WarmColor } from '@shared/data-access/models'
 import { StringTotalsAsyncPipe } from '../pipes/string-totals-async.pipe'
+import { StringsEventService, StringsFacade } from '@grid-layout/data-access'
 
 @Component({
   selector: 'app-edit-string-dialog',
   template: `
-    <ng-container *ngIf='string$ | async as string'>
-      <div class='container'>
+    <ng-container *ngIf="string$ | async as string">
+      <div class="container">
         <h1 mat-dialog-title>Edit String {{ string.name }}</h1>
       </div>
-      <form ngForm class='example-form'>
-        <label for='name'>Name: </label>
-        <input id='name' type='text' [placeholder]='string.name' [formControl]='name' />
-        <mat-selection-list [multiple]='false' #colorSelection [formControl]='color'>
+      <form ngForm class="example-form">
+        <label for="name">Name: </label>
+        <input id="name" type="text" [placeholder]="string.name" [formControl]="name" />
+        <mat-selection-list [multiple]="false" #colorSelection [formControl]="color">
           <mat-list-option
             [ngStyle]="{ 'background-color': color }"
-            [value]='color'
-            *ngFor='let color of colors'
+            [value]="color"
+            *ngFor="let color of colors"
           >
             {{ color }}
           </mat-list-option>
         </mat-selection-list>
-
       </form>
       <p>
         Name: {{ name.value }} Color selected:
         {{
-        colorSelection.selectedOptions.hasValue()
-          ? colorSelection.selectedOptions.selected[0].value.toString()
-          : 'None'
+          colorSelection.selectedOptions.hasValue()
+            ? colorSelection.selectedOptions.selected[0].value.toString()
+            : 'None'
         }}
       </p>
-      <mat-dialog-actions align='end'>
-        <button mat-button mat-dialog-close='true'>Cancel</button>
-        <button (click)='updateString(string.id)' [mat-dialog-close]='true' cdkFocusInitial mat-button>
+      <mat-dialog-actions align="end">
+        <button mat-button mat-dialog-close="true">Cancel</button>
+        <button
+          (click)="updateString(string.id)"
+          [mat-dialog-close]="true"
+          cdkFocusInitial
+          mat-button
+        >
           Edit {{ name.value }}
         </button>
       </mat-dialog-actions>
@@ -95,8 +96,7 @@ export class EditStringDialog {
   color = new FormControl('')
   form!: FormGroup
   private stringsFacade = inject(StringsFacade)
-  private stringsFactory = inject(StringsService)
-
+  private stringsFactory = inject(StringsEventService)
 
   constructor(
     private dialogRef: MatDialogRef<EditStringDialog>,

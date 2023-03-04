@@ -1,4 +1,4 @@
-import { ClientXY } from '@grid-layout/shared/models'
+import { ClientXY } from '../../models'
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
 import { BlockType } from '@shared/data-access/models'
 

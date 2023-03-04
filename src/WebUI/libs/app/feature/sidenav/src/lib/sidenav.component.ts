@@ -1,5 +1,14 @@
 import { ScrollingModule } from '@angular/cdk/scrolling'
-import { AsyncPipe, DatePipe, NgClass, NgForOf, NgIf, NgStyle, NgSwitch, NgSwitchCase } from '@angular/common'
+import {
+  AsyncPipe,
+  DatePipe,
+  NgClass,
+  NgForOf,
+  NgIf,
+  NgStyle,
+  NgSwitch,
+  NgSwitchCase,
+} from '@angular/common'
 import { ChangeDetectionStrategy, Component, EventEmitter, inject, Output } from '@angular/core'
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
@@ -15,7 +24,7 @@ import { RouterLink } from '@angular/router'
 import { FriendsService, FriendsStoreService } from '@app/data-access/friends'
 import { AuthStoreService } from '@auth/data-access/facades'
 import { LetModule } from '@ngrx/component'
-import { ProjectsStoreService } from '@projects/data-access/facades'
+import { ProjectsStoreService } from '@projects/data-access'
 
 import { FriendModel, UserModel } from '@shared/data-access/models'
 import { NotificationsStoreService } from '@shared/data-access/notifications'
@@ -23,7 +32,6 @@ import { OnlineFriendsPipe } from '@shared/pipes'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
 import { Observable } from 'rxjs'
-
 
 @Component({
   selector: 'app-sidenav-component',
@@ -57,7 +65,6 @@ import { Observable } from 'rxjs'
   standalone: true,
 })
 export class SidenavComponent {
-
   private notificationsStore = inject(NotificationsStoreService)
   private authStore = inject(AuthStoreService)
   private friendsService = inject(FriendsService)
@@ -88,7 +95,4 @@ export class SidenavComponent {
   showNotifications() {
     this.viewNotifications = !this.viewNotifications
   }
-
-
 }
-

@@ -1,7 +1,6 @@
-import { ComponentRef, Directive, inject, Input, OnDestroy, ViewContainerRef } from '@angular/core'
-import { BlockPanelComponent } from '@grid-layout/feature/blocks/block-panel'
-import { StringsFacade } from '@project-id/data-access/facades'
-import { BlockModel, BlockType, MessageTimeSortModel, PanelModel } from '@shared/data-access/models'
+import { ComponentRef, Directive, Input, OnDestroy, ViewContainerRef } from '@angular/core'
+
+import { MessageTimeSortModel } from '@shared/data-access/models'
 import { UserConversationComponent } from './conversation/user-conversation/user-conversation.component'
 import { GroupChatConversationComponent } from './conversation/group-chat/group-chat-conversation.component'
 

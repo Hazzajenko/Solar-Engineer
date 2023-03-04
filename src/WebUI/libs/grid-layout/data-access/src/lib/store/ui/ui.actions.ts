@@ -1,4 +1,4 @@
-import { ClientXY, GridLayoutXY, MouseXY, PosXY } from '@grid-layout/shared/models'
+import { ClientXY, GridLayoutXY, MouseXY, PosXY } from '../..'
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
 import { WindowSizeModel } from '@shared/data-access/models'
 

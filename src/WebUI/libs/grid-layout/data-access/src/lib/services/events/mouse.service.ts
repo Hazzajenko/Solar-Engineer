@@ -1,13 +1,8 @@
 import { inject, Injectable } from '@angular/core'
 
-import {
-  BlocksFacade,
-  GridFacade,
-  MultiFacade,
-  MultiStoreService,
-} from '@project-id/data-access/facades'
-import { MultiStateModel } from '@project-id/shared/models'
-import { ProjectsFacade } from '@projects/data-access/facades'
+import { BlocksFacade, GridFacade, MultiFacade, MultiStoreService } from '../..'
+import { MultiStateModel } from '../../models'
+import { ProjectsFacade } from '@projects/data-access'
 import { BlockType, GridMode } from '@shared/data-access/models'
 import { MultiEventService } from '../multi'
 import { MouseEventRequest } from '../../models'

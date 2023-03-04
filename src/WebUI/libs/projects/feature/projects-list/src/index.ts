@@ -1,1 +1,1 @@
-export * from './lib/projects-list.component'
+// export * from './lib/projects-list.component'

@@ -89,6 +89,7 @@
       "@projects/data-access/effects": ["libs/projects/data-access/effects/src/index.ts"],
       "@projects/data-access/facades": ["libs/projects/data-access/facades/src/index.ts"],
       "@projects/data-access/store": ["libs/projects/data-access/store/src/index.ts"],
+      "@projects/feature": ["libs/projects/feature/src/index.ts"],
       "@projects/feature/projects-list": ["libs/projects/feature/projects-list/src/index.ts"],
       "@shared/animations": ["libs/shared/animations/src/index.ts"],
       "@shared/config": ["libs/shared/config/src/index.ts"],

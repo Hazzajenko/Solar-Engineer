@@ -8,7 +8,94 @@
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
   </head>
+  <style>
+    .whitescreen {
+      display: none;
+      z-index: -1000;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 400px;
+      max-width: 100%;
+      -webkit-box-shadow: 0 0 20px 0 #ccc;
+      -moz-box-shadow: 0 0 20px 0 #ccc;
+      box-shadow: 0 0 20px 0 #ccc;
+      font-size: 14px;
+    }
+
+    .whitescreen p {
+      margin: 0;
+    }
+
+    .whitescreen-top {
+      background: #1976d2;
+      color: #fff;
+      padding: 20px;
+    }
+
+    .whitescreen-icon {
+      font-size: 30px;
+      padding-bottom: 20px;
+    }
+
+    .whitescreen-message {
+      line-height: 20px;
+    }
+
+    .whitescreen-email {
+      padding-top: 20px;
+    }
+
+    .whitescreen-bottom {
+      padding: 20px;
+    }
+
+    .whitescreen-bottom p {
+      font-size: 10px;
+      background: #fff;
+      color: #000;
+    }
+  </style>
+
   <body>
     <app-root></app-root>
+    <div id="whitescreen" class="whitescreen">
+      <div class="whitescreen-top">
+        <p class="whitescreen-icon">:-(</p>
+        <p class="whitescreen-message">
+          It looks like the application is not working properly on this device. Please send us a
+          screenshot of this message, so that we can help you:
+        </p>
+        <p class="whitescreen-email">support@example.com</p>
+      </div>
+      <div class="whitescreen-bottom"><p id="whitescreen-stack"></p></div>
+    </div>
+    <script>
+      const WHITESCREEN_EMPTY_APP_ROOT_DELAY = 8000
+      const WHITESCREEN_ERROR_DELAY = 5000
+
+      function showWhitescreenError(e) {
+        console.error(e)
+        const r = document.getElementById("whitescreen")
+        "block" !== r.style.display &&
+          ((document.getElementById("whitescreen-stack").innerHTML = e.stack.replace(
+            /\n/g,
+            "<br/>",
+          )),
+          (r.style.display = "block"),
+          (document.body.style.display = "block"))
+      }
+
+      window.addEventListener("error", function (e) {
+        setTimeout(() => {
+          showWhitescreenError(e.error)
+        }, WHITESCREEN_ERROR_DELAY)
+      }),
+        setTimeout(function () {
+          document.getElementsByTagName("app-root")[0].children.length ||
+            showWhitescreenError(new Error("Empty app-root"))
+        }, WHITESCREEN_EMPTY_APP_ROOT_DELAY)
+    </script>
   </body>
 </html>

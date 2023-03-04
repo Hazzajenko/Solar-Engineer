@@ -1,6 +1,6 @@
 import { CdkDragDrop } from '@angular/cdk/drag-drop'
 import { inject, Injectable } from '@angular/core'
-import { BlocksFacade, BlocksStoreService } from '@project-id/data-access/facades'
+import { BlocksFacade, BlocksStoreService } from '../..'
 import { BlockModel, BlockType } from '@shared/data-access/models'
 import { PanelsEventService } from '../panels'
 

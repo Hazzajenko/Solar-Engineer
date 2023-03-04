@@ -1,4 +1,4 @@
-import { ClientXY } from '@grid-layout/shared/models'
+import { ClientXY } from '../../models'
 import { Action, createReducer, on } from '@ngrx/store'
 import { BlockType, GridMode } from '@shared/data-access/models'
 import { GridActions } from './grid.actions'
@@ -16,8 +16,8 @@ export const initialGridState: GridState = {
   gridMode: GridMode.SELECT,
   clientXY: {
     clientX: undefined,
-    clientY: undefined
-  }
+    clientY: undefined,
+  },
 }
 
 export const reducer = createReducer(
@@ -53,16 +53,16 @@ export const reducer = createReducer(
     gridMode: GridMode.SELECT,
   })),
 
-  on(GridActions.setClientxy, (state, {clientXY}) => ({
+  on(GridActions.setClientxy, (state, { clientXY }) => ({
     ...state,
-    clientXY
+    clientXY,
   })),
   on(GridActions.clearClientxy, (state) => ({
     ...state,
     clientXY: {
       clientX: undefined,
-      clientY: undefined
-    }
+      clientY: undefined,
+    },
   })),
 )
 

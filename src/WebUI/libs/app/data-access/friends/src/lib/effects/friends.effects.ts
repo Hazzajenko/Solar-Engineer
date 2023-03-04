@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core'
 import { AuthActions } from '@auth/data-access/store'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { Store } from '@ngrx/store'
-import { ProjectsStoreService } from '@projects/data-access/facades'
+import { ProjectsStoreService } from '@projects/data-access'
 
 import { map, switchMap } from 'rxjs/operators'
 import { FriendsService } from '../api'

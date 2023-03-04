@@ -41,6 +41,7 @@ export class ProjectsRepository {
         name: 'localProject',
         createdTime: new Date().getDate().toString(),
         createdById: '0',
+        lastModifiedTime: new Date().getDate().toString(),
       },
       strings: [],
       panels: [],

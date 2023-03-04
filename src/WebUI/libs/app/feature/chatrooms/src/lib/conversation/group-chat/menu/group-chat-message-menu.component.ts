@@ -13,19 +13,10 @@ import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core
 import { MatMenuModule } from '@angular/material/menu'
 import { MatTooltipModule } from '@angular/material/tooltip'
 
-import { PanelLinkComponent } from '@grid-layout/feature/blocks/shared-ui'
-
 import { LetModule } from '@ngrx/component'
-import {
-  CombinedMessageUserModel,
-  GroupChatMemberModel,
-  GroupChatMessageMemberModel,
-  TypeOfUser,
-} from '@shared/data-access/models'
+import { GroupChatMessageMemberModel, TypeOfUser } from '@shared/data-access/models'
 import { Router } from '@angular/router'
-import { MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog'
-
-// import { UsernameProfileComponent } from '@app/feature/userName-profile'
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog'
 
 @Component({
   selector: 'app-group-chat-message-menu-component',
@@ -44,7 +35,6 @@ import { MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dial
     NgClass,
     NgSwitch,
     NgSwitchCase,
-    PanelLinkComponent,
   ],
   standalone: true,
 })
