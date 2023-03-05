@@ -67,12 +67,12 @@ export class StringsEventService {
           }),
         ),
     )
-    console.log(selectedPanelIds)
+    // console.log(selectedPanelIds)
     if (!selectedPanelIds) {
       return
     }
     const string = await this.create(stringName)
-    console.log(string)
+    // console.log(string)
     if (!(string instanceof StringModel)) {
       return
     }

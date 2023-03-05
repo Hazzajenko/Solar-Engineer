@@ -10,6 +10,7 @@ import {
   PathModel,
 } from '@shared/data-access/models'
 import { LinksPathService } from '../links'
+import { LoggerService } from '@shared/logger'
 
 @Injectable({
   providedIn: 'root',
@@ -21,11 +22,13 @@ export class PathsEventService {
   private linksPathService = inject(LinksPathService)
   private pathsStore = inject(PathsStoreService)
   private selectedStore = inject(SelectedStoreService)
+  private logger = inject(LoggerService)
 
   async createPath(panelId: string, panelPath: PanelPathModel) {
     const project = await this.projectsFacade.projectFromRoute
     const selectedStringId = await this.selectedFacade.selectedStringId
-    if (!selectedStringId) return console.error('!selectedStringId')
+    // if (!selectedStringId) return console.error('!selectedStringId')
+    if (!selectedStringId) return this.logger.error({ source: 'Paths-Event-Service', objects: ['!selectedStringId'] })
 
     if (!project) {
       return
@@ -47,7 +50,7 @@ export class PathsEventService {
   async createManyPaths(panelIdPaths: PanelIdPath[]) {
     const project = await this.projectsFacade.projectFromRoute
     const selectedStringId = await this.selectedStore.select.selectedStringId
-    if (!selectedStringId) return console.error('!selectedStringId')
+    if (!selectedStringId) return this.logger.error({ source: 'Paths-Event-Service', objects: ['!selectedStringId'] })
 
     if (!project) {
       return
@@ -82,7 +85,8 @@ export class PathsEventService {
     }
 
     if (!project) {
-      console.error('project undefined')
+      // console.error('project undefined')
+      this.pathsStore.dispatch.clearSelectedPanelPaths()
       return
     }
     const panelIdPaths = await this.linksPathService.orderPanelsInLinkOrderForSelectedPanel(

@@ -7,6 +7,7 @@ import { ProjectsStoreService } from '../services'
 import { GetProjectData, GetProjects } from './projects.methods'
 import { GetProjectDataResponse } from '../models/get-project-data.response'
 import { LoggerService } from '@shared/logger'
+import { PanelsStoreService } from '@grid-layout/data-access'
 
 @Injectable({
   providedIn: 'root',
@@ -14,6 +15,7 @@ import { LoggerService } from '@shared/logger'
 export class ProjectsSignalrService {
   public projectsHubConnection?: HubConnection
   private projectsStore = inject(ProjectsStoreService)
+  private panelsStore = inject(PanelsStoreService)
   private hubConnectionIsInitialized = false
   private logger = inject(LoggerService)
   // protected hi = "ss"
@@ -41,7 +43,6 @@ export class ProjectsSignalrService {
       .start()
       .then(() => {
         this.logger.debug({ source: 'Projects-Signalr-Service', objects: ['Projects Hub Connection started'] })
-        // this.logger.debug('Projects-Signalr-Service', 'GetProjects')
         this.getProjects()
       })
       .catch((err) => {
@@ -53,14 +54,13 @@ export class ProjectsSignalrService {
       })
 
     this.projectsHubConnection.on(GetProjects, (projects: ProjectModel[]) => {
-      // console.log(projects)
       this.logger.debug({ source: 'Projects-Signalr-Service', objects: ['GetProjects', projects] })
       this.projectsStore.dispatch.addManyProjects(projects)
     })
 
     this.projectsHubConnection.on(GetProjectData, (projectData: GetProjectDataResponse) => {
-      // console.log(projectData)
       this.logger.debug({ source: 'Projects-Signalr-Service', objects: ['GetProjectData', projectData] })
+      this.panelsStore.dispatch.addManyPanels(projectData.panels)
       // this.projectsStore.dispatch.addManyProjects(projects)
     })
 

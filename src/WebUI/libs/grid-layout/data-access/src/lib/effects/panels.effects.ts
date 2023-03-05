@@ -103,25 +103,25 @@ export class PanelsEffects {
     ),
   )
 
-  addManyPanelsHttp$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(PanelsActions.addManyPanels),
-        switchMap(({ panels }) =>
-          this.projectsStore.select.isWebWithProject$.pipe(
-            switchMap(([isWeb, project]) => {
-              if (!project) return of(undefined)
-              if (isWeb) {
-                return this.panelsService.addManyPanels(panels, project.id)
-              }
-              // update local state
-              return of(undefined)
-            }),
+  /*  addManyPanelsHttp$ = createEffect(
+      () =>
+        this.actions$.pipe(
+          ofType(PanelsActions.addManyPanels),
+          switchMap(({ panels }) =>
+            this.projectsStore.select.isWebWithProject$.pipe(
+              switchMap(([isWeb, project]) => {
+                if (!project) return of(undefined)
+                if (isWeb) {
+                  return this.panelsService.addManyPanels(panels, project.id)
+                }
+                // update local state
+                return of(undefined)
+              }),
+            ),
           ),
         ),
-      ),
-    { dispatch: false },
-  )
+      { dispatch: false },
+    )*/
 
   updateOnePanel$ = createEffect(() =>
     this.actions$.pipe(

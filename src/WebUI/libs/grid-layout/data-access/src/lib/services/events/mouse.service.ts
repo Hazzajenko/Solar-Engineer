@@ -7,12 +7,14 @@ import { BlockType, GridMode } from '@shared/data-access/models'
 import { MultiEventService } from '../multi'
 import { MouseEventRequest } from '../../models'
 import { getLocationsInBox } from '../utils'
+import { LoggerService } from '@shared/logger'
 
 @Injectable({
   providedIn: 'root',
 })
 export class MouseService {
   private projectsFacade = inject(ProjectsFacade)
+  private logger = inject(LoggerService)
 
   // private eventFactory = new GridEventFactory()
   private blocksFacade = inject(BlocksFacade)
@@ -52,10 +54,13 @@ export class MouseService {
       (mouse.event.type === 'mouseup' && !multiState.locationStart)
     ) {
       // return this.eventFactory.undefined('already in mouse movement')
-      return console.error('already in mouse movement')
+      return
+      // return console.error('already in mouse movement')
     }
     if (!mouse.event.altKey) {
-      return console.error('mouse, !mouse.event.altKey')
+      this.logger.debug({ source: 'MouseService', objects: ['mouse, !mouse.event.altKey'] })
+      return
+      // return console.error('mouse, !mouse.event.altKey')
       // return this.eventFactory.undefined('mouse, !mouse.event.altKey')
     }
 
@@ -70,7 +75,8 @@ export class MouseService {
       case GridMode.CREATE:
         return this.create(multiState, location)
       default:
-        return console.error(`cannot drag with gridmode ${gridMode}`)
+        return this.logger.debug({ source: 'MouseService', objects: [`cannot drag with grid-mode ${gridMode}`] })
+      // return console.error(`cannot drag with gridmode ${gridMode}`)
       // return this.eventFactory.error(`cannot drag with gridmode ${gridMode}`)
     }
   }
@@ -95,7 +101,8 @@ export class MouseService {
       case BlockType.PANEL:
         return this.multiFactory.createBlocks(createMode, locationArray, location)
       default:
-        return console.error(`cannot multi create with type ${createMode}`)
+        return this.logger.debug({ source: 'MouseService', objects: [`cannot multi create with type ${createMode}`] })
+      // return console.error(`cannot multi create with type ${createMode}`)
     }
   }
 }

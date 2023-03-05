@@ -68,7 +68,7 @@ export class GridDirective implements AfterViewInit {
 
   @HostListener('window:resize', ['$event'])
   onResize(event: Event) {
-    console.log(event)
+    // console.log(event)
     const offsets: ElementOffsets = {
       offsetHeight: this.elementRef.nativeElement.offsetHeight,
       offsetWidth: this.elementRef.nativeElement.offsetWidth,
@@ -80,7 +80,7 @@ export class GridDirective implements AfterViewInit {
 
   @HostListener('wheel', ['$event'])
   public onScroll(event: WheelEvent) {
-    console.log(event)
+    // console.log(event)
     event.preventDefault()
 
     const sizeH = this.elementRef.nativeElement.offsetHeight

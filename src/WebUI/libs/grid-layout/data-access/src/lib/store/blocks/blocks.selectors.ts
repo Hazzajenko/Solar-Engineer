@@ -1,9 +1,11 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store'
+import { ProjectsSelectors, selectProjectByNameRouteParams } from '@projects/data-access'
 import { BlockModel } from '@shared/data-access/models'
 import { RouterSelectors } from '@shared/data-access/router'
 // import { selectProjectByRouteParams } from 'libs/projects/data-access/store/src/lib/projects/projects.selectors'
 import { BLOCKS_FEATURE_KEY, blocksAdapter, BlocksState } from './blocks.reducer'
-import { selectProjectByRouteParams } from '../../../../../../projects/data-access/src/lib/store/projects.selectors'
+// import { selectProjectByRouteParams } from '../../../../../../projects/data-access/src/lib/store/projects.selectors'
+// import { selectProjectByRouteParams } from '../../../../../../projects/data-access/src/lib/store/projects.selectors'
 // import { selectProjectByRouteParams } from '../../../../../../projects/data-access/src/lib/store/projects.selectors'
 
 export const selectBlocksState = createFeatureSelector<BlocksState>(BLOCKS_FEATURE_KEY)
@@ -31,6 +33,11 @@ export const selectBlocksEntities = createSelector(selectBlocksState, (state: Bl
 export const selectBlockById = (props: { id: string }) =>
   createSelector(selectAllBlocks, (blocks: BlockModel[]) =>
     blocks.find((block) => block.id === props.id),
+  )
+
+export const selectBlocksByProjectId = (props: { projectId: string }) =>
+  createSelector(selectAllBlocks, (blocks: BlockModel[]) =>
+    blocks.filter((block) => block.projectId === props.projectId),
   )
 
 export const selectBlockByLocation = (props: { location: string }) =>
@@ -62,9 +69,9 @@ export const selectBlocksByProjectIdRouteParams = createSelector(
   },
 )
 
-export const selectBlocksByProjectNameRouteParams = createSelector(
-  // ProjectsSelectors selectProjectByRouteParams,
-  /*ProjectsSelectors.*/ selectProjectByRouteParams,
+/*export const selectBlocksByProjectNameRouteParams = createSelector(
+  // selectProjectByNameRouteParams,
+  ProjectsSelectors.selectProjectByNameRouteParams,
   selectAllBlocks,
   (project, blocks) => {
     if (!project) {
@@ -75,4 +82,4 @@ export const selectBlocksByProjectNameRouteParams = createSelector(
     }
     return []
   },
-)
+)*/

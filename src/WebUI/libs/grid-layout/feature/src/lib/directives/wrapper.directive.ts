@@ -81,14 +81,14 @@ export class WrapperDirective implements OnInit {
   async mouseUp(event: MouseEvent) {
     event.preventDefault()
     event.stopPropagation()
-    console.log('MOUSEUP--WRAPPER', event)
+    // console.log('MOUSEUP--WRAPPER', event)
     if (this.isDragging || event.ctrlKey) {
       this.isDragging = false
       this.elementRef.nativeElement.style.cursor = ''
       return
     }
     const location = (event.composedPath()[0] as HTMLDivElement).getAttribute('location')
-    console.log(location)
+    // console.log(location)
     if (!location) return
     return this.mouseService.mouse({ event, location })
   }
@@ -125,7 +125,7 @@ export class WrapperDirective implements OnInit {
 
     const location = (event.composedPath()[0] as HTMLDivElement).getAttribute('location')
     if (!location) return
-    console.log(location)
+    // console.log(location)
     const clientX = event.clientX
     const clientY = event.clientY
     this.pageXY.emit({
@@ -143,9 +143,9 @@ export class WrapperDirective implements OnInit {
   @HostListener('document:click', ['$event'])
   handleClick(event: MouseEvent) {
     if (event.ctrlKey) return
-    console.log(event)
-    const div = event.composedPath()[0] as HTMLDivElement
-    console.log(div)
+    // console.log(event)
+    // const div = event.composedPath()[0] as HTMLDivElement
+    // console.log(div)
 
     const location = (event.composedPath()[0] as HTMLDivElement).getAttribute('location')
     if (location) {
@@ -161,11 +161,11 @@ export class WrapperDirective implements OnInit {
 
   @HostListener('document:dblclick', ['$event'])
   handleDoubleClick(event: MouseEvent) {
-    console.log(event)
-    const divs = event.composedPath()
-    console.log(divs)
-    const div = event.composedPath()[0] as HTMLDivElement
-    console.log(div)
+    // console.log(event)
+    // const divs = event.composedPath()
+    // console.log(divs)
+    // const div = event.composedPath()[0] as HTMLDivElement
+    // console.log(div)
     const location = (event.composedPath()[0] as HTMLDivElement).getAttribute('location')
     if (location) {
       return this.doubleClickService.doubleCLick({ event: event as MouseEvent, location })
@@ -197,7 +197,7 @@ export class WrapperDirective implements OnInit {
         }*/
 
     if (event.ctrlKey /* || this.middleClickDown*/) {
-      console.log('MOUSEMOVE --WRAPPER', event)
+      // console.log('MOUSEMOVE --WRAPPER', event)
       /*      if (event.button === 1) {
               console.log('event.button ===1')
             }*/

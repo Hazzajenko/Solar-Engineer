@@ -22,7 +22,7 @@ export class WebProjectComponent implements OnInit {
   project$: Observable<ProjectModel | undefined> = this.projectsStore.select.projectNameFromRoute$
   // blocks$: Observable<BlockModel[]> = new Observable<BlockModel[]>()
   // hi = this.projectsStore.select.
-  blocks$: Observable<BlockModel[]> = this.blocksStore.select.blocksFromProject$
+  blocks$: Observable<BlockModel[]> = this.blocksStore.select.blocksFromProject$()
 
   ngOnInit(): void {
     this.projectsStore.dispatch.getProjectData()

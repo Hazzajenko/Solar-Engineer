@@ -19,6 +19,10 @@ export class PanelsRepository {
     this.store.dispatch(PanelsActions.addPanel({ panel }))
   }
 
+  addManyPanels(panels: PanelModel[]) {
+    this.store.dispatch(PanelsActions.addManyPanels({ panels }))
+  }
+
   updatePanel(update: Update<PanelModel>) {
     this.store.dispatch(PanelsActions.updatePanel({ update }))
   }

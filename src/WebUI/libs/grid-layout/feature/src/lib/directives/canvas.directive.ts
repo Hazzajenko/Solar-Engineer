@@ -20,6 +20,7 @@ import {
   upAndLeft,
   upAndRight,
 } from './utils/handle-axis'
+import { LoggerService } from '@shared/logger'
 
 @Directive({
   selector: '[appCanvas]',
@@ -29,6 +30,7 @@ export class CanvasDirective implements OnInit {
   private canvas = inject(ElementRef<HTMLCanvasElement>)
   private panelsStore = inject(PanelsStoreService)
   private ctx: CanvasRenderingContext2D = this.canvas.nativeElement.getContext('2d')
+  private logger = inject(LoggerService)
 
   constructor(private ngZone: NgZone) {
   }
@@ -138,7 +140,7 @@ export class CanvasDirective implements OnInit {
 
   @HostListener('document:mouseup', ['$event'])
   mouseUp(event: MouseEvent) {
-    console.log(event.clientX, event.clientY)
+    // console.log(event.clientX, event.clientY)
     this.ctx.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height)
     this.startX = undefined
     this.startY = undefined
@@ -275,12 +277,12 @@ export class CanvasDirective implements OnInit {
   private async drawSelectedPathMap(pathMap: Map<number, BlockRectModel> | undefined) {
     this.ctx.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height)
     if (!this.selectedPaths) {
-      console.error('!this.selectedPaths')
+      // console.error('!this.selectedPaths')
       return
     }
 
     if (!pathMap) {
-      console.error('!pathMap')
+      // console.error('!pathMap')
       return
     }
 
@@ -293,7 +295,7 @@ export class CanvasDirective implements OnInit {
       while (job) {
         const start = pathMap.get(pathCounter)
         if (!start) {
-          console.error('!start')
+          // console.error('!start')
           return
         }
         const next = pathMap.get(pathCounter + 1)
@@ -302,7 +304,7 @@ export class CanvasDirective implements OnInit {
           break
         }
         if (start.x === next.x && start.y === next.y) {
-          console.error('shit')
+          // console.error('shit')
         }
 
         this.drawTwoPoints(start, next, '#ff0000')
@@ -317,7 +319,7 @@ export class CanvasDirective implements OnInit {
       while (letNegativeJob) {
         const start = pathMap.get(pathCounter)
         if (!start) {
-          console.error('!start')
+          // console.error('!start')
           return
         }
         const next = pathMap.get(pathCounter - 1)
@@ -326,7 +328,7 @@ export class CanvasDirective implements OnInit {
           return
         }
         if (start.x === next.x && start.y === next.y) {
-          console.error('shit2')
+          // console.error('shit2')
         }
 
         this.drawTwoPoints(start, next, 'blue')
@@ -397,17 +399,33 @@ export class CanvasDirective implements OnInit {
 
   private async getBlockRect(panelId: string) {
     if (!this.parentWidth || !this.parentHeight) {
-      console.error('(!this.parentHeight || !this.parentHeight)')
+      // console.error('(!this.parentHeight || !this.parentHeight)')
+      this.logger.error(
+        {
+          source: 'Canvas-directive',
+          objects: ['(!this.parentHeight || !this.parentHeight)'],
+        })
       return undefined
     }
     const panel = await this.panelsStore.select.panelById(panelId)
     if (!panel) {
-      console.error('panel')
+
+      // console.error('panel')
+      this.logger.error(
+        {
+          source: 'Canvas-directive',
+          objects: ['panel'],
+        })
       return undefined
     }
     const panelDiv = document.querySelector(`[blockLocation=${panel.location}]`)
     if (!panelDiv) {
-      console.error('!firstPanelDiv')
+      // console.error('!firstPanelDiv')
+      this.logger.error(
+        {
+          source: 'Canvas-directive',
+          objects: ['firstPanelDiv'],
+        })
       return undefined
     }
 

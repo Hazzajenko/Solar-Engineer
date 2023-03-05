@@ -64,9 +64,7 @@ import { PanelRotationComponent } from './ui/panel-rotation.component'
   standalone: true,
 })
 export class BlockPanelComponent {
-  //region Services
-  /*  public stringFactory = inject(StringFactory)
-    public panelFactory = inject(PanelFactory)*/
+
   panel$!: Observable<PanelModel | undefined>
   color$!: Observable<string | undefined>
   menuTopLeftPosition = { x: '0', y: '0' }
@@ -82,17 +80,13 @@ export class BlockPanelComponent {
   private dialog = inject(MatDialog)
   private _id!: string
 
-  //endregion
+
   @Input() set id(id: string) {
     this._id = id
     this.panel$ = this.panelsFacade.panelById$(id)
   }
 
-  constructor() {
-    // console.log('render')
-  }
 
-  //region Observables
   private isSelectedPanel$: Observable<SelectedPanelVal> = this.selectedFacade.selectedId$.pipe(
     combineLatestWith(this.selectedFacade.multiSelectIds$),
     map(([singleSelectId, multiSelectIds]) => {
@@ -254,9 +248,7 @@ export class BlockPanelComponent {
     ),
   )
 
-  //endregion
 
-  //region Component Functions
   displayTooltip(isSelectedString: boolean, selectedStringTooltip?: string): string {
     if (isSelectedString) {
       return <string>selectedStringTooltip
@@ -272,7 +264,6 @@ export class BlockPanelComponent {
     this.matMenuTrigger.openMenu()
   }
 
-  //endregion
 
   private snack(message: string) {
     this.snackBar.open(message, 'OK', {

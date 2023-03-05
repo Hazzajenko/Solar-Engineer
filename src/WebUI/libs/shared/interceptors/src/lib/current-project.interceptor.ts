@@ -1,29 +1,33 @@
-import { Injectable } from '@angular/core'
+import { inject, Injectable } from '@angular/core'
 import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http'
-import { Observable } from 'rxjs'
+import { Observable, switchMap, take } from 'rxjs'
 import { Store } from '@ngrx/store'
 import { AppState } from '@shared/data-access/store'
-import { ProjectState, selectCurrentProjectId } from '@grid-layout/data-access/store'
+import { ProjectsStoreService } from '@projects/data-access'
+
+// import { ProjectState, selectCurrentProjectId } from '@grid-layout/data-access'
 
 @Injectable()
 export class CurrentProjectInterceptor implements HttpInterceptor {
-  constructor(private store: Store<ProjectState>) {
-  }
+  /*
+    constructor(private store: Store<ProjectState>) {
+    }
+  */
+  private projectsStore = inject(ProjectsStoreService)
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    this.store.select(selectCurrentProjectId).subscribe((project) => {
-      // console.log(project)
-      if (project) {
-        // console.log(project)
-        request = request.clone({
-          setHeaders: {
-            // Project: `Project 3`,
-            Project: `Project ${project}`,
-          },
+    return this.projectsStore.select.projectFromRoute$.pipe(
+      take(1),
+      switchMap((project) => {
+        if (!project) {
+          return next.handle(request)
+        }
+        const headers = request.headers.set('Project', `Project ${project.id}`)
+        const projectReq = request.clone({
+          headers,
         })
-      }
-    })
-
-    return next.handle(request)
+        return next.handle(projectReq)
+      }),
+    )
   }
 }
