@@ -22,11 +22,11 @@ import { MatInputModule } from '@angular/material/input'
 import { MatListModule, MatSelectionListChange } from '@angular/material/list'
 import { RouterLink } from '@angular/router'
 import { FriendsService, FriendsStoreService } from '@app/data-access/friends'
-import { AuthStoreService } from '@auth/data-access/facades'
+import { AuthStoreService } from '@auth/data-access'
 import { LetModule } from '@ngrx/component'
 import { ProjectsStoreService } from '@projects/data-access'
 
-import { FriendModel, UserModel } from '@shared/data-access/models'
+import { AuthUserModel, FriendModel, UserModel } from '@shared/data-access/models'
 import { NotificationsStoreService } from '@app/data-access/notifications'
 import { OnlineFriendsPipe } from '@shared/pipes'
 import { ShowHideComponent } from '@shared/ui/show-hide'
@@ -72,7 +72,7 @@ export class SidenavComponent {
   private projectsStore = inject(ProjectsStoreService)
 
   @Output() toggle = new EventEmitter<boolean>()
-  user$: Observable<UserModel | undefined> = this.authStore.select.user$
+  user$: Observable<AuthUserModel | undefined> = this.authStore.select.user$
   notifications$ = this.notificationsStore.select.notifications$
   friends$ = this.friendsStore.select.friends$
   projects$ = this.projectsStore.select.allProjects$

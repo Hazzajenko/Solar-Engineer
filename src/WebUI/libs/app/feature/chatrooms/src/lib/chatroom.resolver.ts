@@ -1,9 +1,8 @@
 import { inject, Injectable } from '@angular/core'
 import { Resolve } from '@angular/router'
-import { UiStoreService } from '@project-id/data-access/facades'
+import { UiStoreService } from '@project-id/data-access/services'
 import { WindowSizeModel } from '@shared/data-access/models'
 import { Observable } from 'rxjs'
-
 
 @Injectable({
   providedIn: 'root',

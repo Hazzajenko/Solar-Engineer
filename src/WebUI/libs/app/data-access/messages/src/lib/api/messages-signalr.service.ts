@@ -1,12 +1,14 @@
-import { Injectable } from '@angular/core'
+import { inject, Injectable } from '@angular/core'
 import * as signalR from '@microsoft/signalr'
 import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr'
+import { LoggerService } from '@shared/logger'
 
 @Injectable({
   providedIn: 'root',
 })
 export class MessagesSignalrService {
   private messagesHubConnection?: HubConnection
+  private logger = inject(LoggerService)
 
   createMessagesHubConnection(token: string) {
     this.messagesHubConnection = new HubConnectionBuilder()
@@ -21,9 +23,13 @@ export class MessagesSignalrService {
 
     this.messagesHubConnection
       .start()
-      .then(() => console.log('Messages Hub Connection started'))
+      // .then(() => console.log('Messages Hub Connection started'))
       .catch((err) => {
-        console.error('Error while starting Messages Hub connection: ' + err)
+        this.logger.error({
+          source: 'Messages-Signalr-Service',
+          objects: ['Error while starting Messages Hub connection: ' + err],
+        })
+        // console.error('Error while starting Messages Hub connection: ' + err)
         throw new Error('Error while starting Messages Hub connection: ' + err)
       })
     return this.messagesHubConnection
@@ -31,6 +37,9 @@ export class MessagesSignalrService {
 
   stopHubConnection() {
     if (!this.messagesHubConnection) return
-    this.messagesHubConnection.stop().catch((error) => console.log(error))
+    this.messagesHubConnection.stop().catch((error) => this.logger.error({
+      source: 'Messages-Signalr-Service',
+      objects: ['Error while stopping Hub connection: ' + error],
+    }))
   }
 }

@@ -23,10 +23,10 @@ import { MatInputModule } from '@angular/material/input'
 import { MatListModule, MatSelectionListChange } from '@angular/material/list'
 import { ActivatedRoute, Router } from '@angular/router'
 // import { MessagesComponent } from '@app/messages'
-import { AuthStoreService } from '@auth/data-access/facades'
+import { AuthStoreService } from '@auth/data-access'
 import { LetModule } from '@ngrx/component'
 
-import { UserModel, WebUserModel } from '@shared/data-access/models'
+import { AuthUserModel, UserModel, WebUserModel } from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
 import { map, Observable, of, switchMap } from 'rxjs'
@@ -84,7 +84,7 @@ export class StartChatComponent {
       return paths[0].path !== 'messages'
     }),
   )
-  user$: Observable<UserModel | undefined> = this.authStore.select.user$
+  user$: Observable<AuthUserModel | undefined> = this.authStore.select.user$
   selectedMembersToInvite: WebUserModel[] = []
 
   // membersToInvite$

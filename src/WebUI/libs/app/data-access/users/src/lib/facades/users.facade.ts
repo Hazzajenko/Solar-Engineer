@@ -22,7 +22,7 @@ import {
   WebUserModel,
 } from '@shared/data-access/models'
 import { FriendsSelectors, FriendsStoreService } from '@app/data-access/friends'
-import { AuthSelectors } from '@auth/data-access/store'
+import { AuthSelectors } from '@auth/data-access'
 import { ProjectsSelectors } from '@projects/data-access'
 
 @Injectable({

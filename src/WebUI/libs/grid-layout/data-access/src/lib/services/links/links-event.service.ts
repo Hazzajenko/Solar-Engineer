@@ -22,7 +22,7 @@ export class LinksEventService {
   async addPanelToLink(click: MouseEventRequest, panel: PanelModel) {
     const linksState = await this.linksFacade.state
     if (panel.stringId === 'undefined') {
-      console.log('panel needs to be apart of a string')
+      // console.log('panel needs to be apart of a string')
       this.gridStore.dispatch.clearEntireGridState()
       // return this.gridFactory.clearState('panel needs to be apart of a string')
     }

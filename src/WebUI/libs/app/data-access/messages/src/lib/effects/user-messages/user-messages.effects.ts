@@ -1,7 +1,6 @@
 import { inject, Injectable } from '@angular/core'
 import { MatSnackBar } from '@angular/material/snack-bar'
 // import { UserMessagesSignalrService } from '@app/data-access/signalr'
-import { AuthActions } from '@auth/data-access/store'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { Update } from '@ngrx/entity'
 import { Store } from '@ngrx/store'
@@ -9,9 +8,9 @@ import { MessageModel, NotificationStatus } from '@shared/data-access/models'
 
 import { map, switchMap, tap } from 'rxjs/operators'
 import { GroupChatsService, GroupChatsSignalrService } from '@app/data-access/group-chats'
-import { UserMessagesService } from '../../api/user-messages'
+import { UserMessagesService } from '../../api'
 import { UserMessagesActions, MessagesSelectors } from '../../store/user-messages'
-import { UserMessagesSignalrService } from '../../api/user-messages/user-messages-signalr.service'
+import { UserMessagesSignalrService } from '../../api'
 
 @Injectable({
   providedIn: 'root',

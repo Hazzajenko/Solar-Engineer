@@ -13,6 +13,7 @@ import {
 } from './panels.response'
 import { CreatePanel, ProjectsSignalrService } from '@projects/data-access'
 import { CreatePanelRequest } from '../../models'
+
 // import { GetProjectData } from '../../../../../../projects/data-access/src/lib/api/projects.methods'
 
 @Injectable({
@@ -26,8 +27,8 @@ export class PanelsService {
     if (!this.projectsSignalrService.projectsHubConnection) return
     this.projectsSignalrService.projectsHubConnection
       .invoke(CreatePanel, request)
-      .then((r) => console.log(r))
-      .catch((e) => console.error(e))
+      // .then((r) => console.log(r))
+      .catch((e) => e /*console.error(e)*/)
 
   }
 

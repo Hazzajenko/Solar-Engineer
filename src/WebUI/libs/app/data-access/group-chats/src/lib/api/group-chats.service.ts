@@ -24,25 +24,25 @@ export class GroupChatsService {
   private groupChatsStore = inject(GroupChatsStoreService)
   private messagesSignalrService = inject(MessagesSignalrService)
 
-  createGroupChat(request: CreateGroupChatRequest) {
-    return this.http.post<CreateGroupChatResponse>(`/api/${GROUP_CHATS}`, {
-      ...request,
-    })
-  }
+  /*  createGroupChat(request: CreateGroupChatRequest) {
+      return this.http.post<CreateGroupChatResponse>(`/api/${GROUP_CHATS}`, {
+        ...request,
+      })
+    }
 
-  inviteToGroupChat(request: InviteToGroupChatRequest) {
-    return this.http.post<HttpResponse<any>>(`/api/${GROUP_CHATS}/${request.groupChatId}/invites`, {
-      invites: request.invites,
-    })
-  }
+    inviteToGroupChat(request: InviteToGroupChatRequest) {
+      return this.http.post<HttpResponse<any>>(`/api/${GROUP_CHATS}/${request.groupChatId}/invites`, {
+        invites: request.invites,
+      })
+    }
 
-  removeFromGroupChat(request: RemoveFromGroupChatRequest) {
-    return this.http.delete<HttpResponse<any>>(`/api/${GROUP_CHATS}/${request.groupChatId}/users`, {
-      body: {
-        userNames: request.userNames,
-      },
-    })
-  }
+    removeFromGroupChat(request: RemoveFromGroupChatRequest) {
+      return this.http.delete<HttpResponse<any>>(`/api/${GROUP_CHATS}/${request.groupChatId}/users`, {
+        body: {
+          userNames: request.userNames,
+        },
+      })
+    }*/
 
   /*
     waitForGroupChatMessages() {
@@ -73,13 +73,13 @@ export class GroupChatsService {
       )
     }*/
 
-  getAllGroupChats() {
-    return this.http.get<AllGroupChatsDataResponse>(`/api/${GROUP_CHATS}/data`)
-  }
+  /*  getAllGroupChats() {
+      return this.http.get<AllGroupChatsDataResponse>(`/api/${GROUP_CHATS}/data`)
+    }
 
-  getInitialCombinedGroupChats() {
-    return this.http.get<InitialCombinedGroupChatsResponse>(`/api/${GROUP_CHATS}/data`)
-  }
+    getInitialCombinedGroupChats() {
+      return this.http.get<InitialCombinedGroupChatsResponse>(`/api/${GROUP_CHATS}/data`)
+    }*/
 
   /*
     getMessagesWithGroupChatSignalR(groupChatId: number) {

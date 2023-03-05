@@ -22,10 +22,11 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatInputModule } from '@angular/material/input'
 import { MatListModule } from '@angular/material/list'
 import { ActivatedRoute } from '@angular/router'
-import { AuthStoreService } from '@auth/data-access/facades'
+import { AuthStoreService } from '@auth/data-access'
 import { LetModule } from '@ngrx/component'
 
 import {
+  AuthUserModel,
   CombinedMessageUserModel,
   GroupChatCombinedModel,
   GroupChatMemberModel,
@@ -157,7 +158,7 @@ export class GroupChatConversationComponent {
   groupChatMessages$!: Observable<GroupChatMessageModel[] | undefined>
   // groupChatMembers$!: Observable<GroupChatMemberModel[]>
   groupChatMessagesWithMembersById$!: Observable<GroupChatMessageMemberModel[]>
-  user$: Observable<UserModel | undefined> = this.authStore.select.user$
+  user$: Observable<AuthUserModel | undefined> = this.authStore.select.user$
   selectedGroupChatMessage?: GroupChatMessageMemberModel
   unreadFilter = false
   scrollIndex = 0
@@ -165,21 +166,21 @@ export class GroupChatConversationComponent {
   groupChatId = 0
 
   @Input() set selectChatroom(selectChatroom: MessageTimeSortModel | undefined) {
-    console.log(selectChatroom)
+    // console.log(selectChatroom)
     if (!selectChatroom) return
     if (!selectChatroom.isGroup || !selectChatroom.groupChat) return
-    this.groupChatsStore.select
-      .groupChatById$(selectChatroom.groupChat.id)
-      .subscribe((res) => console.log(res))
+    /*   this.groupChatsStore.select
+         .groupChatById$(selectChatroom.groupChat.id)
+         .subscribe((res) => console.log(res))*/
     this.groupChatId = selectChatroom.groupChat.id
     this.groupChatCombined$ = this.groupChatsStore.select.groupChatById$(
       selectChatroom.groupChat.id,
     )
-    this.groupChatCombined$.subscribe((res) => console.log(res))
+    // this.groupChatCombined$.subscribe((res) => console.log(res))
     this.groupChatMessages$ = this.groupChatsStore.select.groupChatMessagesById$(
       selectChatroom.groupChat.id,
     )
-    this.groupChatsStore.select.serverMessages$.subscribe((res) => console.log('SERVER', res))
+    // this.groupChatsStore.select.serverMessages$.subscribe((res) => console.log('SERVER', res))
     /*    this.groupChatMembers$ = this.groupChatsStore.select.groupChatMembersById$(
           selectChatroom.groupChat.id,
         )*/

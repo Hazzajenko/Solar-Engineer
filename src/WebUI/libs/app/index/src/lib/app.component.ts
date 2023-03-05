@@ -19,6 +19,7 @@ import { InitLoginPipe } from '@app/shared'
 import { HttpClient } from '@angular/common/http'
 import { SidenavComponent } from '@app/feature/sidenav'
 import { RouterFacade } from '@shared/data-access/router'
+import { LoggerService } from '@shared/logger'
 
 @Component({
   standalone: true,
@@ -46,6 +47,7 @@ import { RouterFacade } from '@shared/data-access/router'
 })
 export class AppComponent implements OnInit {
   title = 'web'
+  private logger = inject(LoggerService)
   private authStore = inject(AuthStoreService)
   private projectsStore = inject(ProjectsStoreService)
   private friendsStoreService = inject(FriendsStoreService)
@@ -68,11 +70,13 @@ export class AppComponent implements OnInit {
   menu = false
 
   ngOnInit(): void {
-    this.routerStore.currentRoute$.subscribe((route) => console.log(route))
-    this.routerStore.routeParams$.subscribe((params) => console.log(params))
-    this.routerStore.queryParams$.subscribe((query) => console.log(query))
+    // this.routerStore.currentRoute$.subscribe((route) => console.log(route))
+    // this.routerStore.routeParams$.subscribe((params) => console.log(params))
+    // this.routerStore.queryParams$.subscribe((query) => console.log(query))
     this.routerStore.queryParam$('authorize').subscribe((params) => {
-      console.log(params)
+      // console.log(params)
+      this.logger.debug({ source: 'AppComponent', objects: ['authorize', params] })
+      // this.logger
       if (params === 'true') {
         this.authStore.dispatch.authorizeRequest()
         /*        this.router

@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core'
-import { AuthActions } from '@auth/data-access/store'
+import { AuthActions } from '@auth/data-access'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { Store } from '@ngrx/store'
 import { ProjectsStoreService } from '@projects/data-access'

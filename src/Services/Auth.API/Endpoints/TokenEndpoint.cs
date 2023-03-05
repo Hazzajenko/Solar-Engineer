@@ -2,7 +2,6 @@
 using Auth.API.Contracts.Responses;
 using Auth.API.Handlers;
 using Auth.API.Services;
-using EventBus.Services;
 using FastEndpoints;
 using Infrastructure.Extensions;
 using Mediator;
@@ -16,24 +15,16 @@ namespace Auth.API.Endpoints;
 public class TokenEndpoint : EndpointWithoutRequest<AuthorizeResponse>
 {
     private readonly IAuthService _authService;
-    private readonly IBus _bus;
 
     private readonly IMediator _mediator;
-    private readonly IPublishEndpoint _publishEndpoint;
-    private readonly IEventPublisherService _publisherService;
     private readonly byte[] _tokenKey;
 
 
     public TokenEndpoint(IConfiguration config,
-        IMediator mediator, IAuthService authService, IBus bus, IEventPublisherService publisherService,
-        IPublishEndpoint publishEndpoint /*,
-        IPublishEndpoint publishEndpoint*/)
+        IMediator mediator, IAuthService authService)
     {
         _mediator = mediator;
         _authService = authService;
-        _bus = bus;
-        _publisherService = publisherService;
-        _publishEndpoint = publishEndpoint;
         _tokenKey = Encoding.UTF8.GetBytes(config["TokenKey"]!);
         // _publishEndpoint = publishEndpoint;
     }

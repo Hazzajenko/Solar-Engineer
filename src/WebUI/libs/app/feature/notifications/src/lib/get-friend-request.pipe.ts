@@ -1,6 +1,6 @@
 import { inject, Pipe, PipeTransform } from '@angular/core'
 import { Router } from '@angular/router'
-import { AuthStoreService } from '@auth/data-access/facades'
+import { AuthStoreService } from '@auth/data-access'
 import { ConnectionsSignalrService } from '@app/data-access/connections'
 
 // import { NotificationModel } from '@shared/data-access/models'

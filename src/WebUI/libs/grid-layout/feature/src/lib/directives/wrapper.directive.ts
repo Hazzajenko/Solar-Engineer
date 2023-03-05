@@ -67,7 +67,7 @@ export class WrapperDirective implements OnInit {
         break
       }
       case 'Control': {
-        console.log('CONTROL')
+        // console.log('CONTROL')
         this.isDragging = false
         this.multiStore.dispatch.clearMultiState()
         this.elementRef.nativeElement.style.cursor = ''

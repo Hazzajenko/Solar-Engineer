@@ -31,10 +31,10 @@ import { MatTabsModule } from '@angular/material/tabs'
 import { FriendsStoreService } from '@app/data-access/friends'
 import { ChatroomsComponent } from '@app/feature/chatrooms'
 import { FriendsComponent } from '@app/feature/friends'
-import { AuthStoreService } from '@auth/data-access/facades'
+import { AuthStoreService } from '@auth/data-access'
 
 import {
-  AppUserLinkModel,
+  AppUserLinkModel, AuthUserModel,
   CombinedAppUserModel,
   MessageTimeSortModel,
   UserModel,
@@ -115,7 +115,7 @@ export class AppUserProfileComponent {
     }),
   )
   searchFriendsControl = new FormControl('')
-  user$: Observable<UserModel | undefined> = this.authStore.select.user$
+  user$: Observable<AuthUserModel | undefined> = this.authStore.select.user$
   appUser$: Observable<CombinedAppUserModel> = this.usersStore.select.personalCombinedAppUser$
   friends$: Observable<AppUserLinkModel[]> = this.usersStore.select.friends$
   // filteredFriends$!
@@ -170,7 +170,8 @@ export class AppUserProfileComponent {
     return
   }
 
-  search() {}
+  search() {
+  }
 
   private filterFriends(query: string): Observable<AppUserLinkModel[] | undefined> {
     const filterValue = query.toLowerCase()

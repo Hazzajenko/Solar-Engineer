@@ -1,0 +1,12 @@
+version: '3'
+services:
+  envoy-gateway:
+    build: .
+    ports:
+      - "9901:9901"
+      - "10000:10000"
+      - "10001:10001"
+    volumes:
+      - ./envoy.v2.yaml:/etc/envoy/envoy.yaml
+      - ./https.crt:/etc/ssl/certs/https.crt
+      - ./key.pem:/etc/ssl/certs/key.pem

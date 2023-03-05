@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+
+  postgres:
+    image: 'postgres:14.0'
+    ports:
+      - "5432:5432"
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: SolarEngineer.Root
+    volumes:
+      - ./docker_postgres_init.sql:/docker-entrypoint-initdb.d/docker_postgres_init.sql
+      - ./db-data/postgres/:/var/lib/postgresql/data/
+
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    hostname: "rabbitmq"
+    labels:
+      NAME: "rabbitmq"
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+
+  nginx:
+    image: nginx:1.17.10
+    volumes:
+      - ../nginx/nginx.dev.conf:/etc/nginx/nginx.conf
+      - ../etc/ssl/solarengineer.net/solarengineer.net.crt:/etc/nginx/solarengineer.net.crt
+      - ../etc/ssl/solarengineer.net/solarengineer.net.rsa:/etc/nginx/solarengineer.net.rsa
+    ports:
+      - 443:443
+      - 80:80

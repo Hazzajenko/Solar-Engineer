@@ -35,7 +35,7 @@ export class ProjectsRepository {
 
   initLocalProject() {
     const storage = localStorage.getItem('slreng-prj')
-    console.log(storage)
+    // console.log(storage)
     if (storage) {
       const localProject: LocalProjectModel = JSON.parse(storage)
 

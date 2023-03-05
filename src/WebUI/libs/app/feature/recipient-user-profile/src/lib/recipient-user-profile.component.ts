@@ -25,9 +25,9 @@ import { FriendsStoreService } from '@app/data-access/friends'
 import { ChatroomsComponent } from '@app/feature/chatrooms'
 import { FriendsComponent } from '@app/feature/friends'
 // import { MessagesComponent } from '@app/data-access/messages'
-import { AuthStoreService } from '@auth/data-access/facades'
+import { AuthStoreService } from '@auth/data-access'
 
-import { AppUserLinkModel, RecipientFriendModel, UserModel } from '@shared/data-access/models'
+import { AppUserLinkModel, AuthUserModel, RecipientFriendModel, UserModel } from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
 // import { GetFriendRequestPipe } from 'libs/app/feature/notifications/src/lib/get-friend-request.pipe'
@@ -89,7 +89,7 @@ export class RecipientUserProfileComponent {
       return paths[0].path !== 'messages'
     }),
   )
-  user$: Observable<UserModel | undefined> = this.authStore.select.user$
+  user$: Observable<AuthUserModel | undefined> = this.authStore.select.user$
   // userProfile$: Observable<WebUserModel | undefined>
 
   recipientUser$: Observable<AppUserLinkModel | undefined>

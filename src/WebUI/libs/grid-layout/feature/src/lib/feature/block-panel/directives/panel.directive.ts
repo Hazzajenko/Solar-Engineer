@@ -11,7 +11,7 @@ export class PanelDirective {
   private elRef = inject(ElementRef)
 
   constructor() {
-    console.log(this.elRef.nativeElement.getBoundingClientRect())
+    // console.log(this.elRef.nativeElement.getBoundingClientRect())
   }
 
   @Input() set id(id: string) {

@@ -22,7 +22,7 @@ import {
 import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatInputModule } from '@angular/material/input'
 import { AuthService } from '@auth/data-access/api'
-import { AuthFacade, AuthStoreService } from '@auth/data-access/facades'
+import { AuthFacade, AuthStoreService } from '@auth/data-access/services'
 import { StringsService } from '@grid-layout/data-access'
 
 import { StringModel } from '@shared/data-access/models'

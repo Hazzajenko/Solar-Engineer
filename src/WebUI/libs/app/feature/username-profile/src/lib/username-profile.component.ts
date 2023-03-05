@@ -26,7 +26,7 @@ import { FriendsStoreService } from '@app/data-access/friends'
 import { ChatroomsComponent } from '@app/feature/chatrooms'
 import { FriendsComponent } from '@app/feature/friends'
 import { MessagesComponent } from '@app/messages'
-import { AuthStoreService } from '@auth/data-access/facades'
+import { AuthStoreService } from '@auth/data-access/services'
 
 import { UserModel, WebUserModel } from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'

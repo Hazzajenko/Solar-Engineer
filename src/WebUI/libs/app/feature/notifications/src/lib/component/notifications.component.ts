@@ -22,9 +22,9 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatInputModule } from '@angular/material/input'
 import { MatListModule, MatSelectionListChange } from '@angular/material/list'
 import { FriendsService, FriendsStoreService } from '@app/data-access/friends'
-import { AuthStoreService } from '@auth/data-access/facades'
+import { AuthStoreService } from '@auth/data-access'
 
-import { NotificationModel, UserModel } from '@shared/data-access/models'
+import { AuthUserModel, NotificationModel, UserModel } from '@shared/data-access/models'
 import { NotificationsStoreService } from '@app/data-access/notifications'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
@@ -72,13 +72,13 @@ export class NotificationsComponent {
   private friendsStore = inject(FriendsStoreService)
 
   notifications$: Observable<NotificationModel[]> = this.notificationsStore.select.notifications$
-  user$: Observable<UserModel | undefined> = this.authStore.select.user$
+  user$: Observable<AuthUserModel | undefined> = this.authStore.select.user$
   selectedNotification?: NotificationModel
 
   unreadFilter = false
 
   change(event: MatSelectionListChange) {
-    console.log(event)
+    // console.log(event)
     this.selectedNotification = event.options[0].value
     /*    if ((event.options[0].value as NotificationModel).status === NotificationStatus.Unread) {
           this.readNotification()
@@ -86,7 +86,7 @@ export class NotificationsComponent {
   }
 
   acceptFriend(requestedByUsername: string) {
-    console.log(requestedByUsername)
+    // console.log(requestedByUsername)
     this.friendsStore.dispatch.acceptFriendRequest(requestedByUsername)
   }
 

@@ -23,9 +23,9 @@ import { MatListModule } from '@angular/material/list'
 import { MatTabsModule } from '@angular/material/tabs'
 import { ChatroomsComponent } from '@app/feature/chatrooms'
 import { FriendsComponent } from '@app/feature/friends'
-import { AuthStoreService } from '@auth/data-access/facades'
+import { AuthStoreService } from '@auth/data-access'
 
-import { AppUserLinkModel, UserModel, UserToUserStatus } from '@shared/data-access/models'
+import { AppUserLinkModel, AuthUserModel, UserModel, UserToUserStatus } from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
 import { map, Observable, tap } from 'rxjs'
@@ -88,14 +88,15 @@ export class AddNewFriendComponent {
       return paths[0].path !== 'messages'
     }),
   )
-  user$: Observable<UserModel | undefined> = this.authStore.select.user$
+  user$: Observable<AuthUserModel | undefined> = this.authStore.select.user$
   searchedUser$?: Observable<AppUserLinkModel | undefined>
   latestSearch?: string
 
   constructor(
     private dialogRef: MatDialogRef<AddNewFriendComponent>,
     @Inject(MAT_DIALOG_DATA) data: { user: UserModel },
-  ) {}
+  ) {
+  }
 
   sendFriendRequest(userName: string | undefined | null) {
     if (!userName) return
@@ -112,9 +113,12 @@ export class AddNewFriendComponent {
     // this.searching = false
   }
 
-  viewProfile(userName: string) {}
+  viewProfile(userName: string) {
+  }
 
-  acceptFriend(userName: string) {}
+  acceptFriend(userName: string) {
+  }
 
-  cancelRequest(userName: string) {}
+  cancelRequest(userName: string) {
+  }
 }

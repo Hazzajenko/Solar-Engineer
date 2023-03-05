@@ -7,13 +7,14 @@ import { ProjectState, selectCurrentProjectId } from '@grid-layout/data-access/s
 
 @Injectable()
 export class CurrentProjectInterceptor implements HttpInterceptor {
-  constructor(private store: Store<ProjectState>) {}
+  constructor(private store: Store<ProjectState>) {
+  }
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     this.store.select(selectCurrentProjectId).subscribe((project) => {
-      console.log(project)
+      // console.log(project)
       if (project) {
-        console.log(project)
+        // console.log(project)
         request = request.clone({
           setHeaders: {
             // Project: `Project 3`,

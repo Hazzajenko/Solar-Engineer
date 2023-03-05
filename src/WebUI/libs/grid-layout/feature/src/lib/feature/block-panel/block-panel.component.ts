@@ -27,10 +27,10 @@ import {
 import { PanelLinkComponent } from '../shared-ui/panel-link/panel-link.component'
 
 import { LetModule } from '@ngrx/component'
-// import {  } from '@project-id/data-access/facades'
+// import {  } from '@project-id/data-access/services'
 import { PanelModel, PanelPathModel, SelectedPathModel } from '@shared/data-access/models'
 import { PanelMenuComponent } from './menu/panel-menu.component'
-// import {  } from '@project-id/data-access/facades'
+// import {  } from '@project-id/data-access/services'
 
 import { combineLatest, Observable, switchMap } from 'rxjs'
 
@@ -89,7 +89,7 @@ export class BlockPanelComponent {
   }
 
   constructor() {
-    console.log('render')
+    // console.log('render')
   }
 
   //region Observables
@@ -231,15 +231,15 @@ export class BlockPanelComponent {
   ]).pipe(
     map(
       ([
-        isSelectedPanel,
-        isSelectedPositiveTo,
-        isSelectedNegativeTo,
-        stringColor,
-        isPanelToLink,
-        stringSelected,
-        panelLinkPath,
-        selectedPanelLinkPath,
-      ]) => {
+         isSelectedPanel,
+         isSelectedPositiveTo,
+         isSelectedNegativeTo,
+         stringColor,
+         isPanelToLink,
+         stringSelected,
+         panelLinkPath,
+         selectedPanelLinkPath,
+       ]) => {
         return {
           isSelectedPanel,
           isSelectedPositiveTo,

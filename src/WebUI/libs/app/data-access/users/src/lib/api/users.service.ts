@@ -13,7 +13,16 @@ import { GetRecipientUserFriendsResponse } from '../models/get-recipient-user-fr
 export class UsersService {
   private http = inject(HttpClient)
 
-  getUserByUserName(userName: string) {
+  getRecipientUserFriends(userName: string) {
+    return this.http.get<GetRecipientUserFriendsResponse>(`/api/users/${userName}/friends`)
+  }
+
+  getUserByUserNameV2(userName: string) {
+    return this.http.get<GetUserLinkResponse>(`/api/v2/user/${userName}`)
+    // .pipe(map((response) => response.user))
+  }
+
+  /*getUserByUserName(userName: string) {
     return this.http.get<GetUserResponse>(`/api/user/${userName}`)
     // .pipe(map((response) => response.user))
   }
@@ -54,5 +63,5 @@ export class UsersService {
   getAllFriends() {
     return this.http.get<AllFriendsResponse>(`/api/users?filter=friends`)
     // /users?filter=friends
-  }
+  }*/
 }

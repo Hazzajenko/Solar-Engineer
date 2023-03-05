@@ -2,16 +2,13 @@
 
 // using DotNetCore.EntityFrameworkCore;
 
-using Infrastructure.Grpc;
-using Infrastructure.Mediator;
-using MassTransit;
-using Messages.API.Consumers;
 using Messages.API.Data;
 using Messages.API.Repositories.GroupChatMessages;
 using Messages.API.Repositories.GroupChats;
 using Messages.API.Repositories.GroupChatServerMessages;
 using Messages.API.Repositories.Messages;
 using Messages.API.Repositories.UserGroupChats;
+// using Infrastructure.Mediator;
 
 namespace Messages.API.Extensions;
 
@@ -22,17 +19,19 @@ public static class ServiceExtensions
         IConfiguration config
     )
     {
-        services.AddTransient<GrpcExceptionInterceptor>();
+        /*services.AddMediator(options => { options.ServiceLifetime = ServiceLifetime.Transient; });*/
+        // services.AddTransient<GrpcExceptionInterceptor>();
         services.AddScoped<IMessagesUnitOfWork, MessagesUnitOfWork>();
         services.AddScoped<IUserGroupChatsRepository, UserGroupChatsRepository>();
         services.AddScoped<IMessagesRepository, MessagesRepository>();
         services.AddScoped<IGroupChatsRepository, GroupChatsRepository>();
         services.AddScoped<IGroupChatMessagesRepository, GroupChatMessagesRepository>();
         services.AddScoped<IGroupChatServerMessagesRepository, GroupChatServerMessagesRepository>();
-        services.InitMediator();
-        // services.AddMediator(options => { options.ServiceLifetime = ServiceLifetime.Transient; });
+        // services.InitMediator();
+        // services.AddMediator(options => options.);
 
-        services.AddMassTransit(x =>
+
+        /*services.AddMassTransit(x =>
         {
             // x.UsingRabbitMq();
             // x.AddConsumer<TicketConsumer>();
@@ -66,16 +65,16 @@ public static class ServiceExtensions
                             // ep.
                             ep.UseMessageRetry(r => r.Interval(2, 100));
                             ep.ConfigureConsumer<AppUserLoggedInConsumer>(provider);
-                        });*/
+                        });#1#
                         /*config.ReceiveEndpoint("createdAppUserQueue", ep =>
                         {
                             ep.PrefetchCount = 16;
                             ep.UseMessageRetry(r => r.Interval(2, 100));
                             ep.ConfigureConsumer<CreatedAppUserConsumer>(provider);
-                        });*/
+                        });#1#
                     })
             );
-        });
+        });*/
 
         return services;
     }

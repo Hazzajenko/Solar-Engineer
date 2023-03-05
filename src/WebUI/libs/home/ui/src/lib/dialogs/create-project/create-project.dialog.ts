@@ -21,8 +21,7 @@ import {
 } from '@angular/forms'
 import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatInputModule } from '@angular/material/input'
-import { AuthService } from '@auth/data-access/api'
-import { AuthFacade } from '@auth/data-access/facades'
+import { AuthFacade, AuthService } from '@auth/data-access'
 import { StringsService } from '@grid-layout/data-access'
 import { ProjectsStoreService } from '@projects/data-access'
 import { ShowHideComponent } from '@shared/ui/show-hide'
@@ -69,7 +68,7 @@ export class CreateProjectDialog {
 
   async onSubmit() {
     const projectName = this.projectForm.get('projectName')?.value
-    console.log(projectName)
+    // console.log(projectName)
     if (!projectName) return console.error('!this.projectName.value')
     this.projectsStore.dispatch.createWebProject(projectName)
 

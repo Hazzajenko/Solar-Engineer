@@ -158,8 +158,10 @@ static_resources:
         - endpoint:
             address:
               socket_address:
-                address: users-api-envoy
-                port_value: 80
+                address: host.docker.internal
+                # address: users-api-envoy
+                port_value: 5001
+                # port_value: 80
                 # address: users-api-envoy
                 # port_value: 443
     transport_socket:
@@ -179,8 +181,9 @@ static_resources:
         - endpoint:
             address:
               socket_address:
-                address: users-api-envoy
-                port_value: 443
+                address: host.docker.internal
+                # address: users-api-envoy
+                port_value: 6001
     transport_socket:
       name: envoy.transport_sockets.tls
       typed_config:

@@ -16,7 +16,7 @@ export class ProjectsService {
   getProjectById(projectId: number): Observable<GetProjectByIdResponse> {
     return this.http.get<GetProjectByIdResponse>(`/projects-api/projects/${projectId}`).pipe(
       catchError((err) => {
-        console.log(err)
+        // console.log(err)
         return EMPTY
       }),
       map((res: GetProjectByIdResponse) => res),
@@ -34,7 +34,7 @@ export class ProjectsService {
   getUserProjects(): Observable<ProjectModel[]> {
     return this.http.get<GetProjectsResponse>('/projects-api/projects').pipe(
       catchError((err) => {
-        console.log(err)
+        // console.log(err)
         return EMPTY
       }),
       map((res: GetProjectsResponse) => res.projects),
@@ -44,7 +44,7 @@ export class ProjectsService {
   getLocalProject(): Observable<ProjectModel[]> {
     return this.http.get<GetProjectsResponse>('/projects-api/projects').pipe(
       catchError((err) => {
-        console.log(err)
+        // console.log(err)
         return EMPTY
       }),
       map((res: GetProjectsResponse) => res.projects),

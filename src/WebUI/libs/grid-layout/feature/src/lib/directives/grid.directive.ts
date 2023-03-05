@@ -11,7 +11,7 @@ import {
 } from '@angular/core'
 import { ElementOffsets, UiStoreService } from '@grid-layout/data-access'
 
-// import { UiStoreService } from '@project-id/data-access/facades'
+// import { UiStoreService } from '@project-id/data-access/services'
 
 @Directive({
   selector: '[appGrid]',
@@ -37,7 +37,7 @@ export class GridDirective implements AfterViewInit {
     if (!keyUp) return
     switch (keyUp) {
       case 'r': {
-        console.log(keyUp)
+        // console.log(keyUp)
 
         this.posX = 0
         this.posY = 0

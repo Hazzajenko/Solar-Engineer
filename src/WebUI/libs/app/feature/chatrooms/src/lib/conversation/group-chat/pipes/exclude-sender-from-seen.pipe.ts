@@ -15,7 +15,7 @@ export class ExcludeSenderFromSeenPipe implements PipeTransform {
       array.splice(senderIndex, 1)
     }
 
-    console.log(array)
+    // console.log(array)
 
     return array
   }

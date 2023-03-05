@@ -1,32 +1,28 @@
 ﻿using Auth.API.Entities;
 using Auth.API.Exceptions;
 using Auth.API.Extensions;
-using Auth.API.Helpers;
 using Auth.API.Mapping;
-using EventBus.Mapping;
 using Mediator;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 
 namespace Auth.API.Handlers;
 
-public sealed record AuthorizeCommand(HttpContext HttpContext)
-    : ICommand<AuthUser>;
+public record AuthorizeCommand(HttpContext HttpContext)
+    : IRequest<AuthUser>;
 
 public class AuthorizeHandler
-    : ICommandHandler<AuthorizeCommand, AuthUser>
+    : IRequestHandler<AuthorizeCommand, AuthUser>
 {
     private readonly ILogger<AuthorizeHandler> _logger;
-    private readonly IPublishEndpoint _publishEndpoint;
-    private readonly UserManager<AuthUser> _userManager;
     private readonly SignInManager<AuthUser> _signInManager;
+    private readonly UserManager<AuthUser> _userManager;
 
     public AuthorizeHandler(UserManager<AuthUser> userManager,
-        ILogger<AuthorizeHandler> logger, IPublishEndpoint publishEndpoint, SignInManager<AuthUser> signInManager)
+        ILogger<AuthorizeHandler> logger, SignInManager<AuthUser> signInManager)
     {
         _userManager = userManager;
         _logger = logger;
-        _publishEndpoint = publishEndpoint;
         _signInManager = signInManager;
     }
 
@@ -51,15 +47,16 @@ public class AuthorizeHandler
             props.StoreTokens(info.AuthenticationTokens);
             props.IsPersistent = false;
             // await _signInManager.SignInAsync(existingAppUser, props, info.LoginProvider);
-            var externalLoginSignInResult = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor: true);
+            var externalLoginSignInResult =
+                await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, false, true);
             if (externalLoginSignInResult.Succeeded is false)
             {
                 _logger.LogError("Unable to login user {User}, {Provider}", existingAppUser.Id, info.LoginProvider);
                 throw new UnauthorizedException();
             }
-            
+
             // await _signInManager.SignInAsync(existingAppUser, props, info.LoginProvider);
-            
+
             /*if (signInResult.Succeeded)
             {
                 _logger.LogInformation("{Name} logged in with {LoginProvider} provider.", info.Principal.Identity.Name, info.LoginProvider);
@@ -67,8 +64,8 @@ public class AuthorizeHandler
                 {
                 }*/
 
-                /*var props = new AuthenticationProperties();
-                props.StoreTokens(info!.AuthenticationTokens!);*/
+            /*var props = new AuthenticationProperties();
+            props.StoreTokens(info!.AuthenticationTokens!);*/
             // props.IsPersistent = false;
             // await request.HttpContext.SignInAppUserAsync(existingAppUser);
             // var appUserLoggedInEvent = existingAppUser.ToEvent().LoggedIn();
@@ -105,7 +102,8 @@ public class AuthorizeHandler
             throw new UnauthorizedException();
         }
 
-        var createdUserLoginResult = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor: true);
+        var createdUserLoginResult =
+            await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, false, true);
         if (createdUserLoginResult.Succeeded is false)
         {
             _logger.LogError("Unable to login user {User}, {Provider}", appUser.Id, info.LoginProvider);

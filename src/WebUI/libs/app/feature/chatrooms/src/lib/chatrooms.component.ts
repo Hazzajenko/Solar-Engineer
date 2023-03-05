@@ -22,10 +22,10 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatInputModule } from '@angular/material/input'
 import { MatListModule } from '@angular/material/list'
 import { ActivatedRoute, Router } from '@angular/router'
-import { AuthStoreService } from '@auth/data-access/facades'
+import { AuthStoreService } from '@auth/data-access'
 import { LetModule } from '@ngrx/component'
 
-import { UserModel } from '@shared/data-access/models'
+import { AuthUserModel, UserModel } from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
 import { map, Observable } from 'rxjs'
@@ -94,7 +94,7 @@ export class ChatroomsComponent {
       return paths[0].path !== 'messages'
     }),
   )
-  user$: Observable<UserModel | undefined> = this.authStore.select.user$
+  user$: Observable<AuthUserModel | undefined> = this.authStore.select.user$
   chatRoomToMessage$ = this.chatRoomsService.chatRoomToMessage$
 
   createNewChat = false

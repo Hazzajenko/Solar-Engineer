@@ -49,26 +49,26 @@ const reducer = createReducer(
     groupChatsAdapter.removeOne(groupChatId, state),
   ),
   on(GroupChatsActions.clearGroupChatsState, (state) => groupChatsAdapter.removeAll(state)),
-  on(
-    GroupChatServerMessagesActions.addGroupChatServerMessage,
-    (state, { groupChatServerMessage }) => ({
-      ...state,
-      serverMessages: groupChatServerMessagesAdapter.addOne(
-        groupChatServerMessage,
-        state.serverMessages,
-      ),
-    }),
-  ),
-  on(
-    GroupChatServerMessagesActions.addManyGroupChatServerMessages,
-    (state, { groupChatServerMessages }) => ({
-      ...state,
-      serverMessages: groupChatServerMessagesAdapter.addMany(
-        groupChatServerMessages,
-        state.serverMessages,
-      ),
-    }),
-  ),
+  /*  on(
+      GroupChatServerMessagesActions.addGroupChatServerMessage,
+      (state, { groupChatServerMessage }) => ({
+        ...state,
+        serverMessages: groupChatServerMessagesAdapter.addOne(
+          groupChatServerMessage,
+          state.serverMessages,
+        ),
+      }),
+    ),
+    on(
+      GroupChatServerMessagesActions.addManyGroupChatServerMessages,
+      (state, { groupChatServerMessages }) => ({
+        ...state,
+        serverMessages: groupChatServerMessagesAdapter.addMany(
+          groupChatServerMessages,
+          state.serverMessages,
+        ),
+      }),
+    ),*/
 )
 
 export function groupChatsReducer(state: GroupChatsState | undefined, action: Action) {

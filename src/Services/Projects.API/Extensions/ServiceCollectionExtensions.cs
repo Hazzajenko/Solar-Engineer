@@ -1,7 +1,5 @@
 ﻿using System.Text;
-using Infrastructure.Mediator;
 using Infrastructure.SignalR;
-using Mediator;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.IdentityModel.Tokens;
@@ -24,9 +22,9 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IProjectsRepository, ProjectsRepository>();
         services.AddScoped<IStringsService, StringsService>();
         services.AddScoped<IAppUserProjectsRepository, AppUserProjectsRepository>();
-        // services.AddMediator(options => { options.ServiceLifetime = ServiceLifetime.Transient; });
-        services.InitMediator();
-        services.AddSingleton(typeof(IPipelineBehavior<,>), typeof(ErrorLoggerHandler<,>));
+        services.AddMediator(options => { options.ServiceLifetime = ServiceLifetime.Transient; });
+        // services.InitMediator();
+        // services.AddSingleton(typeof(IPipelineBehavior<,>), typeof(ErrorLoggerHandler<,>));
         // services.AddJwtAuthentication(config);
 
         return services;

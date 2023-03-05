@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core'
 import { MatSnackBar } from '@angular/material/snack-bar'
-import { AuthActions } from '@auth/data-access/store'
+import { AuthActions } from '@auth/data-access'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 
 import { map, switchMap } from 'rxjs/operators'

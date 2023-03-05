@@ -3,7 +3,7 @@ import { UserMessagesStoreService } from '@app/data-access/messages'
 import { GroupChatsStoreService } from '@app/data-access/group-chats'
 import { BehaviorSubject, combineLatest, map } from 'rxjs'
 import { MessageTimeSortModel } from '@shared/data-access/models'
-import { AuthStoreService } from '@auth/data-access/facades'
+import { AuthStoreService } from '@auth/data-access'
 
 @Injectable({
   providedIn: 'root',

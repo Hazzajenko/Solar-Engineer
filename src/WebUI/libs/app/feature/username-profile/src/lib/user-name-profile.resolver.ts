@@ -3,7 +3,7 @@ import { ActivatedRoute, Resolve } from '@angular/router'
 import { map, Observable, of, switchMap, tap } from 'rxjs'
 
 import { AppUserLinkModel, UserModel } from '@shared/data-access/models'
-import { AuthStoreService } from '@auth/data-access/facades'
+import { AuthStoreService } from '@auth/data-access/services'
 import { UsersService, UsersStoreService } from '@app/data-access/users'
 import { RouterFacade } from '@shared/data-access/router'
 

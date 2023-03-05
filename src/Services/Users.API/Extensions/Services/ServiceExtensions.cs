@@ -1,10 +1,10 @@
 ﻿using FluentValidation;
-using Infrastructure.Mediator;
 using Microsoft.EntityFrameworkCore;
 using Users.API.Data;
 using Users.API.Repositories.UserConnections;
 using Users.API.Repositories.UserLinks;
 using Users.API.Repositories.Users;
+using Users.API.Services.AzureStorage;
 
 namespace Users.API.Extensions.Services;
 
@@ -15,10 +15,11 @@ public static class ServiceExtensions
         IConfiguration config
     )
     {
-        services.InitMediator();
-        // services.AddMediator(options => { options.ServiceLifetime = ServiceLifetime.Transient; });
+        // services.InitMediator();
+        services.AddMediator(options => { options.ServiceLifetime = ServiceLifetime.Transient; });
         // services.AddTransient<GrpcExceptionInterceptor>();
         // services.AddScoped<IAuthGrpcService, AuthGrpcService>();
+        services.AddTransient<IAzureStorage, AzureStorage>();
         services.AddScoped<IUsersUnitOfWork, UsersUnitOfWork>();
         services.AddScoped<IUserLinksRepository, UserLinksRepository>();
         services.AddScoped<IUsersRepository, UsersRepository>();

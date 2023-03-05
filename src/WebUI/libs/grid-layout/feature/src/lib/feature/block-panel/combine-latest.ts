@@ -1,6 +1,7 @@
-import { LinksFacade, PanelsFacade, SelectedFacade } from '@project-id/data-access/facades'
+import { LinksFacade, PanelsFacade, SelectedFacade } from '@project-id/data-access/services'
 import { BlockType } from '@shared/data-access/models'
 import { combineLatestWith, map, Observable } from 'rxjs'
+
 export const isSelectedPanel$ = (selectedFacade: SelectedFacade, id: string): Observable<boolean> =>
   selectedFacade.selectedIdWithType$.pipe(
     map(({ singleSelectId, type }) => {

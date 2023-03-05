@@ -9,7 +9,7 @@ export class IsLastInArrayPipe implements PipeTransform {
   transform(item: { id: number } | undefined | null, arr: { id: number }[]) {
     if (!item) return
     if (!arr) return
-    console.log(item, arr)
+    // console.log(item, arr)
     return item.id === arr[arr.length - 1].id
   }
 }

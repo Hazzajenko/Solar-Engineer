@@ -15,7 +15,7 @@ public static class MassTransitExtensions
         Assembly assembly
     )
     {
-        services.AddMassTransit(x =>
+        /*services.AddMassTransit(x =>
         {
             x.AddConsumers(assembly);
             x.AddBus(provider => Bus.Factory.CreateUsingRabbitMq(config =>
@@ -27,13 +27,13 @@ public static class MassTransitExtensions
                 });
                 // config.ConfigureMassTransitEndpoints(provider);
             }));
-        });
+        });*/
 
 
         return services;
     }
 
-    private static IBusRegistrationConfigurator AddMassTransitConsumers(this IBusRegistrationConfigurator x)
+    /*private static IBusRegistrationConfigurator AddMassTransitConsumers(this IBusRegistrationConfigurator x)
     {
         // x.AddConsumer<AppUserLoggedInConsumer>();
         // x.AddConsumer<ServiceBusConsumer>();
@@ -48,7 +48,7 @@ public static class MassTransitExtensions
             ep.PrefetchCount = 16;
             ep.UseMessageRetry(r => r.Interval(2, 100));
             ep.ConfigureConsumer<AppUserLoggedInConsumer>(provider);
-        });*/
+        });#1#
         return config;
-    }
+    }*/
 }

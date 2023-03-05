@@ -24,9 +24,10 @@ import { MatTabsModule } from '@angular/material/tabs'
 import { FriendsStoreService } from '@app/data-access/friends'
 import { ChatroomsComponent } from '@app/feature/chatrooms'
 import { FriendsComponent } from '@app/feature/friends'
-import { AuthStoreService } from '@auth/data-access/facades'
+import { AuthStoreService } from '@auth/data-access'
 
 import {
+  AuthUserModel,
   CombinedAppUserModel,
   ImageModel,
   S3ImageModel,
@@ -99,7 +100,7 @@ export class ChangeDisplayPictureComponent {
       return paths[0].path !== 'messages'
     }),
   )
-  user$: Observable<UserModel | undefined> = this.authStore.select.user$
+  user$: Observable<AuthUserModel | undefined> = this.authStore.select.user$
   defaultImages$: Observable<S3ImageModel[]> = this.imagesService.defaultImages$.pipe(delay(1000))
   imagesLength$: Observable<number> = this.imagesService.defaultImages$.pipe(
     map((images) => images.length),
@@ -117,8 +118,8 @@ export class ChangeDisplayPictureComponent {
     private dialogRef: MatDialogRef<ChangeDisplayPictureComponent>,
     @Inject(MAT_DIALOG_DATA) data: { user: UserModel },
   ) {
-    this.appUser$.subscribe((res) => console.log(res))
-    this.imagesService.defaultImages$.subscribe((res) => console.log(res))
+    // this.appUser$.subscribe((res) => console.log(res))
+    // this.imagesService.defaultImages$.subscribe((res) => console.log(res))
     // this.imagesService.getDefaultImages().subscribe((res) => console.log(res))
     // this.http.get<GetImagesResponse>(`/api/images/default`).subscribe((res) => console.log(res))
   }

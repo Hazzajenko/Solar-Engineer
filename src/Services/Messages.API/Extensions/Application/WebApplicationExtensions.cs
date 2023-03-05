@@ -19,7 +19,7 @@ public static class WebApplicationExtensions
 
         app.UseFastEndpoints(options =>
         {
-            options.Endpoints.RoutePrefix = "messages";
+            // options.Endpoints.RoutePrefix = "messages";
             options.Errors.StatusCode = StatusCodes.Status422UnprocessableEntity;
             options.Serializer.Options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
             options.Serializer.Options.ReferenceHandler = ReferenceHandler.IgnoreCycles;

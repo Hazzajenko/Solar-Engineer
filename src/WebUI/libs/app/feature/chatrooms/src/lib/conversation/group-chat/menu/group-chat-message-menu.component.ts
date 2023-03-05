@@ -68,10 +68,10 @@ export class GroupChatMessageMenuComponent {
   }
 
   sendFriendRequest(sender: TypeOfUser) {
-    console.log(sender)
+    // console.log(sender)
   }
 
   messagePrivately(sender: TypeOfUser) {
-    console.log(sender)
+    // console.log(sender)
   }
 }

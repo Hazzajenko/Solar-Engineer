@@ -1,9 +1,6 @@
-﻿using Mediator;
-using Microsoft.Extensions.Logging;
+﻿namespace Infrastructure.Mediator;
 
-namespace Infrastructure.Mediator;
-
-public sealed record ErrorMessage(Exception Exception) : INotification;
+/*public sealed record ErrorMessage(Exception Exception) : INotification;
 
 public sealed record SuccessfulMessage : INotification;
 
@@ -34,4 +31,4 @@ public sealed class ErrorLoggerHandler<TMessage, TResponse> : IPipelineBehavior<
             throw;
         }
     }
-}
+}*/

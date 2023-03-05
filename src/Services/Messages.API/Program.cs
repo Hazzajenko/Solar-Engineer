@@ -6,11 +6,9 @@ using Infrastructure.Logging;
 using Infrastructure.SignalR;
 using Infrastructure.Web;
 using Messages.API.Data;
-using Messages.API.Entities;
 using Messages.API.Extensions;
 using Messages.API.Extensions.Application;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(
     new WebApplicationOptions { Args = args, ContentRootPath = Directory.GetCurrentDirectory() }
@@ -36,6 +34,7 @@ builder.Host.UseSerilog(
 
 // builder.Services.AddAuth(config);
 // builder.Services.AddApplicationServices(config);
+builder.Services.AddMediator(options => { options.ServiceLifetime = ServiceLifetime.Transient; });
 builder.Services.AddApplicationServices(config);
 builder.Services.ConfigureJwtAuthentication(config);
 builder.Services.AddAuthorization();
@@ -83,7 +82,7 @@ app.ConfigurePipeline();
 
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
-using var scope = app.Services.CreateScope();
+/*using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
 try
 {
@@ -96,6 +95,6 @@ catch (Exception ex)
 {
     var logger = services.GetRequiredService<ILogger<Program>>();
     logger.LogError(ex, "An error occurred during migration");
-}
-
-await app.RunAsync();
+}*/
+app.Run();
+// await app.RunAsync();

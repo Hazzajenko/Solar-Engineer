@@ -30,7 +30,8 @@ export class CanvasDirective implements OnInit {
   private panelsStore = inject(PanelsStoreService)
   private ctx: CanvasRenderingContext2D = this.canvas.nativeElement.getContext('2d')
 
-  constructor(private ngZone: NgZone) {}
+  constructor(private ngZone: NgZone) {
+  }
 
   height!: number
   negativeHeight!: number
@@ -93,13 +94,14 @@ export class CanvasDirective implements OnInit {
     this.startY = xy.y - rect.top
   }
 
-  @Input() set startDragging(clientXY: ClientXY) {}
+  @Input() set startDragging(clientXY: ClientXY) {
+  }
 
   selectedPaths?: SelectedPanelLinkPathModel
 
   @Input() set setStringPaths(selectedPaths: SelectedPanelLinkPathModel | undefined | null) {
     if (!selectedPaths || selectedPaths.panelPaths.length < 1) {
-      console.log('undefined')
+      // console.log('undefined')
       if (this.pathMapAnimationId) {
         cancelAnimationFrame(this.pathMapAnimationId)
       }
@@ -108,7 +110,7 @@ export class CanvasDirective implements OnInit {
       return
     }
 
-    console.log(selectedPaths)
+    // console.log(selectedPaths)
     this.selectedPaths = selectedPaths
     this.pathMapAnimating = true
 

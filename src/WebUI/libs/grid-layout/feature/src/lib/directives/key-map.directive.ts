@@ -48,15 +48,14 @@ export class KeyMapDirective {
 
   @HostListener('window:keyup', ['$event'])
   async keyEvent(event: KeyboardEvent) {
-    console.log(event)
+    // console.log(event)
     switch (event.key) {
-      case 'Alt':
-        {
-          const multiState = await firstValueFrom(this.multiFacade.state$)
-          if (multiState.locationStart && event.key === 'Alt') {
-            this.multiStore.dispatch.clearMultiState()
-          }
+      case 'Alt': {
+        const multiState = await firstValueFrom(this.multiFacade.state$)
+        if (multiState.locationStart && event.key === 'Alt') {
+          this.multiStore.dispatch.clearMultiState()
         }
+      }
         break
       case 's': {
         const selectedId = await this.selectedFacade.selectedId

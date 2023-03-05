@@ -22,10 +22,11 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatInputModule } from '@angular/material/input'
 import { MatListModule, MatSelectionListChange } from '@angular/material/list'
 import { ActivatedRoute, Router } from '@angular/router'
-import { AuthStoreService } from '@auth/data-access/facades'
+import { AuthStoreService } from '@auth/data-access'
 import { LetModule } from '@ngrx/component'
 
 import {
+  AuthUserModel,
   GroupChatMemberModel,
   GroupChatMessageMemberModel,
   PermissionsModel,
@@ -92,7 +93,7 @@ export class ViewGroupChatMembersComponent {
       return paths[0].path !== 'messages'
     }),
   )
-  user$: Observable<UserModel | undefined> = this.authStore.select.user$
+  user$: Observable<AuthUserModel | undefined> = this.authStore.select.user$
   selectedMembersToInvite: WebUserModel[] = []
   selectedMember?: GroupChatMemberModel
   groupChatMembers$: Observable<GroupChatMemberModel[]>
@@ -116,7 +117,7 @@ export class ViewGroupChatMembersComponent {
   constructor(
     private dialogRef: MatDialogRef<ViewGroupChatMembersComponent>,
     @Inject(MAT_DIALOG_DATA)
-    data: { groupChatId: number; groupChatName: string; groupChatPermissions: PermissionsModel },
+      data: { groupChatId: number; groupChatName: string; groupChatPermissions: PermissionsModel },
   ) {
     this.groupChatMembers$ = this.groupChatsStore.select.groupChatMemberWebUsers$(data.groupChatId)
     this.groupChatId = data.groupChatId

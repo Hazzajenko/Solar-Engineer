@@ -4,8 +4,8 @@ import { Store } from '@ngrx/store'
 import { catchError, map, switchMap } from 'rxjs/operators'
 import { UsersActions } from '../store'
 import { UsersService } from '../api'
-import { AuthFacade } from '@auth/data-access/facades'
-import { AuthActions } from '@auth/data-access/store'
+import { AuthFacade } from '@auth/data-access'
+import { AuthActions } from '@auth/data-access'
 import { UserModel } from '@shared/data-access/models'
 import { of } from 'rxjs'
 
@@ -18,7 +18,7 @@ export class UsersEffects {
   private usersService = inject(UsersService)
   private authFacade = inject(AuthFacade)
 
-  initUsers$ = createEffect(() =>
+  /*initUsers$ = createEffect(() =>
     this.actions$.pipe(
       ofType(AuthActions.signInSuccess),
       switchMap(() =>
@@ -92,5 +92,5 @@ export class UsersEffects {
         switchMap(({ userName }) => this.usersService.rejectFriendRequest(userName)),
       ),
     { dispatch: false },
-  )
+  )*/
 }

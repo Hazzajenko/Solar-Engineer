@@ -10,6 +10,8 @@
 
     <ItemGroup>
 
+        <PackageReference Include="Azure.Storage.Blobs" Version="12.15.0" />
+
         <PackageReference Include="FastEndpoints.Generator" Version="5.7.1">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -52,9 +54,12 @@
 
         <PackageReference Include="SixLabors.ImageSharp" Version="3.0.0" />
 
+        <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta15" />
+
         <PackageReference Include="SixLabors.ImageSharp.Web" Version="2.0.2" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
         <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
+        <PackageReference Include="WindowsAzure.Storage" Version="9.3.3" />
     </ItemGroup>
 
     <ItemGroup>

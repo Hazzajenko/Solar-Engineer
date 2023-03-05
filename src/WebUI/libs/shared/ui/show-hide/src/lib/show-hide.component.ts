@@ -17,7 +17,7 @@ export class ShowHideComponent {
 
   toggleShow() {
     this.show = !this.show
-    console.log(this.input)
+    // console.log(this.input)
     this.input.type = this.show ? 'text' : 'password'
   }
 }

@@ -2,7 +2,6 @@
 using EventBus.Services;
 using Identity.API.Services;
 using Identity.API.Settings;
-using Infrastructure.Mediator;
 
 // using Auth.API.RabbitMQ;
 
@@ -31,8 +30,8 @@ public static class ServiceExtensions
         /*services.AddScoped<IAuthUnitOfWork, AuthUnitOfWork>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IAppUserRepository, AppUserRepository>();*/
-        services.InitMediator();
-        // services.AddMediator(options => { options.ServiceLifetime = ServiceLifetime.Transient; });
+        // services.InitMediator();
+        services.AddMediator(options => { options.ServiceLifetime = ServiceLifetime.Transient; });
         services.InitMassTransit(config, assembly);
         services.AddTransient<IEventPublisherService, EventPublisherService>();
         // adds user and client access token management

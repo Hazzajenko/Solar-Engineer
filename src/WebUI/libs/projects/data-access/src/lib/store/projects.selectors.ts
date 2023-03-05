@@ -67,7 +67,7 @@ export const selectProjectByRouteParams = createSelector(
   selectAllProjects,
   RouterSelectors.selectRouteParams,
   (state, projects, { projectName }) => {
-    console.log('selectProjectByRouteParams', projectName)
+    // console.log('selectProjectByRouteParams', projectName)
     if (!projectName) {
       return state.localProject
     }
@@ -80,7 +80,7 @@ export const selectProjectByNameRouteParams = createSelector(
   selectAllProjects,
   RouterSelectors.selectRouteParams,
   (state, projects, { projectName }) => {
-    console.log('selectProjectByRouteParams', projectName)
+    // console.log('selectProjectByRouteParams', projectName)
     if (!projectName) {
       return state.localProject
     }
@@ -93,7 +93,7 @@ export const selectProjectIdByRouteParams = createSelector(
   selectProjectsEntities,
   RouterSelectors.selectRouteParams,
   (state, projects, { projectId }) => {
-    console.log('selectProjectByRouteParams', projectId)
+    // console.log('selectProjectByRouteParams', projectId)
     if (!projectId) {
       return state.localProject?.id
     }

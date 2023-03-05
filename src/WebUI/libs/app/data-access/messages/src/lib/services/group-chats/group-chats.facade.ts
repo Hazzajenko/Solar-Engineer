@@ -101,12 +101,12 @@ export class GroupChatsFacade {
             ]).pipe(
               map(
                 ([
-                  groupChat,
-                  groupMembers,
-                  groupMessages,
-                  latestSentMessage,
-                  latestSentMessageTime,
-                ]) => {
+                   groupChat,
+                   groupMembers,
+                   groupMessages,
+                   latestSentMessage,
+                   latestSentMessageTime,
+                 ]) => {
                   return {
                     ...groupChat,
                     latestSentMessage,
@@ -130,7 +130,7 @@ export class GroupChatsFacade {
   groupChatById$(groupChatId: number) {
     return this.groupChats$.pipe(
       map((groupChats) => groupChats.find((chat) => chat.id === groupChatId)),
-      tap((groupChat) => console.log(groupChat)),
+      // tap((groupChat) => console.log(groupChat)),
       switchMap((groupChat) => {
         if (!groupChat) return of(undefined)
         /*        const groupMembers = this.members$.pipe(
@@ -162,12 +162,12 @@ export class GroupChatsFacade {
         ]).pipe(
           map(
             ([
-              groupChat,
-              groupMembers,
-              groupMessages,
-              latestSentMessage,
-              latestSentMessageTime,
-            ]) => {
+               groupChat,
+               groupMembers,
+               groupMessages,
+               latestSentMessage,
+               latestSentMessageTime,
+             ]) => {
               return {
                 ...groupChat,
                 latestSentMessage,

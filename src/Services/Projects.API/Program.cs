@@ -3,7 +3,6 @@ using FastEndpoints.Swagger;
 using Infrastructure.Authentication;
 using Infrastructure.Data;
 using Infrastructure.Logging;
-using Infrastructure.SignalR;
 using Infrastructure.Web;
 using Microsoft.AspNetCore.HttpOverrides;
 using Projects.API.Data;
@@ -18,7 +17,7 @@ builder.ConfigureSerilog();
 
 var config = builder.Configuration;
 config.AddEnvironmentVariables("solarengineer_");
-
+/*builder.Services.AddMediator(options => { options.ServiceLifetime = ServiceLifetime.Transient; });*/
 builder.Services.AddApplicationServices(config);
 builder.Services.ConfigureJwtAuthentication(config);
 builder.Services.AddAuthorization();

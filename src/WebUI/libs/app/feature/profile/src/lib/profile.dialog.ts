@@ -25,18 +25,16 @@ import { MatTabsModule } from '@angular/material/tabs'
 import { FriendsService, FriendsStoreService } from '@app/data-access/friends'
 import { ChatroomsComponent } from '@app/feature/chatrooms'
 import { FriendsComponent } from '@app/feature/friends'
-import { MessagesComponent } from '@app/messages'
-import { AuthStoreService } from '@auth/data-access/facades'
+// import { MessagesComponent } from '@app/messages'
+import { AuthStoreService } from '@auth/data-access'
 import { Update } from '@ngrx/entity'
 
-import { NotificationModel, NotificationStatus, UserModel } from '@shared/data-access/models'
-import { NotificationsStoreService } from '@shared/data-access/notifications'
+import { AuthUserModel, NotificationModel, NotificationStatus, UserModel } from '@shared/data-access/models'
+import { NotificationsStoreService } from '@app/data-access/notifications'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
-import { GetFriendRequestPipe } from 'libs/app/feature/notifications/src/lib/get-friend-request.pipe'
-import { SortNotificationsPipe } from 'libs/app/feature/notifications/src/lib/sort-notifications.pipe'
 import { Observable } from 'rxjs'
-import { NotificationsComponent } from '../../../notifications/src/lib/component/notifications.component'
+import { NotificationsComponent } from '@app/feature/notifications'
 import { ProfileComponent } from './component'
 
 @Component({
@@ -64,13 +62,10 @@ import { ProfileComponent } from './component'
     NgSwitch,
     NgSwitchCase,
     DatePipe,
-    SortNotificationsPipe,
-    GetFriendRequestPipe,
     MatTabsModule,
     NotificationsComponent,
     FriendsComponent,
     ProfileComponent,
-    MessagesComponent,
     ChatroomsComponent,
   ],
   standalone: true,
@@ -83,11 +78,11 @@ export class ProfileDialog {
 
   selected = new FormControl(0)
   notifications$: Observable<NotificationModel[]> = this.notificationsStore.select.notifications$
-  user$: Observable<UserModel | undefined> = this.authStore.select.user$
+  user$: Observable<AuthUserModel | undefined> = this.authStore.select.user$
   selectedNotification?: NotificationModel
 
   change(event: MatSelectionListChange) {
-    console.log(event)
+    // console.log(event)
     this.selectedNotification = event.options[0].value
     /*    if ((event.options[0].value as NotificationModel).status === NotificationStatus.Unread) {
           this.readNotification()
@@ -95,7 +90,7 @@ export class ProfileDialog {
   }
 
   acceptFriend(requestedByUsername: string) {
-    console.log(requestedByUsername)
+    // console.log(requestedByUsername)
     this.friendsStore.dispatch.acceptFriendRequest(requestedByUsername)
   }
 

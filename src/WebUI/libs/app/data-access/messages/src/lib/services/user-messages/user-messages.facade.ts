@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core'
-import { AuthSelectors } from '@auth/data-access/store'
+import { AuthSelectors } from '@auth/data-access'
 import { Store } from '@ngrx/store'
 import {
   CombinedMessageUserModel,

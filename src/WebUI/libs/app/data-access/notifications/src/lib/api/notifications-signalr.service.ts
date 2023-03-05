@@ -25,15 +25,15 @@ export class NotificationsSignalrService {
 
     this.notificationsHub
       .start()
-      .then(() => console.log('Notifications Connection started'))
+      // .then(() => console.log('Notifications Connection started'))
       .then(() => this.waitGetNotifications())
-      .catch((err) => console.log('Error while starting Users connection: ' + err))
+      .catch((err) => err /*console.log('Error while starting Users connection: ' + err)*/)
   }
 
   waitGetNotifications() {
     if (!this.notificationsHub) return
     this.notificationsHub.on('GetNotifications', (notifications: NotificationModel[]) => {
-      console.log('GetNotifications', notifications)
+      // console.log('GetNotifications', notifications)
       this.notificationsStore.dispatch.addManyNotifications(notifications)
       // this.messagesStore.dispatch.addManyMessages(message)
     })

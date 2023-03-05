@@ -5,6 +5,7 @@ import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signal
 import { ConnectionModel } from '@shared/data-access/models'
 import { ConnectionsStoreService } from '../services'
 import { GetOnlineUsers, UserIsOffline, UserIsOnline } from './connections.methods'
+import { LoggerService } from '@shared/logger'
 
 @Injectable({
   providedIn: 'root',
@@ -12,20 +13,11 @@ import { GetOnlineUsers, UserIsOffline, UserIsOnline } from './connections.metho
 export class ConnectionsSignalrService {
   private hubConnection?: HubConnection
   private connectionsStore = inject(ConnectionsStoreService)
+  private logger = inject(LoggerService)
 
   createHubConnection(token: string) {
     this.hubConnection = new HubConnectionBuilder()
-      // .withUrl('/users/hubs/connections', {
-      // .withUrl('https://localhost:6004/hubs/connections', {
-      // .withUrl('https://localhost:6000/users/hubs/connections', {
-      // .withUrl('https://localhost:6000/connections', {
-      // .withUrl('/hubs/connections', {
-      // .withUrl('/ws-gateway/connections', {
-      .withUrl('/users-api/hubs/connections', {
-        // .withUrl('/connections-hub', {
-        // .withUrl('/signalr/users/hubs/connections', {
-        // .withUrl('/ws/hubs/connections', {
-        // .withUrl('/ws/connections', {
+      .withUrl('/hubs/connections', {
         accessTokenFactory: () => token,
         skipNegotiation: true,
         transport: signalR.HttpTransportType.WebSockets,
@@ -36,8 +28,11 @@ export class ConnectionsSignalrService {
 
     this.hubConnection
       .start()
-      .then(() => console.log('Connection started'))
-      .catch((err) => console.log('Error while starting connection: ' + err))
+      .then(() => this.logger.debug({ source: 'Connections-Signalr-Service', objects: ['Hub Connection started'] }))
+      .catch((err) => this.logger.error({
+        source: 'Connections-Signalr-Service',
+        objects: ['Error while starting Hub connection: ' + err],
+      }))
 
     this.hubConnection.on(UserIsOnline, (connections: ConnectionModel[]) => {
       this.connectionsStore.dispatch.addManyConnections(connections)
@@ -54,6 +49,9 @@ export class ConnectionsSignalrService {
 
   stopHubConnection() {
     if (!this.hubConnection) return
-    this.hubConnection.stop().catch((error) => console.log(error))
+    this.hubConnection.stop().catch((error) => this.logger.error({
+      source: 'Connections-Signalr-Service',
+      objects: ['Error while stopping Hub connection: ' + error],
+    }))
   }
 }

@@ -78,7 +78,7 @@ var app = builder.Build();
 
 app.ConfigurePipeline();
 
-app.Use(
+/*app.Use(
     async (context, next) =>
     {
         // Connection: RemoteIp
@@ -89,7 +89,7 @@ app.Use(
 
         await next(context);
     }
-);
+);*/
 
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 

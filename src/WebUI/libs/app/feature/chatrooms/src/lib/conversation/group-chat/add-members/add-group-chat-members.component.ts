@@ -21,10 +21,10 @@ import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatIconModule } from '@angular/material/icon'
 import { MatInputModule } from '@angular/material/input'
 import { MatListModule, MatSelectionListChange } from '@angular/material/list'
-import { AuthStoreService } from '@auth/data-access/facades'
+import { AuthStoreService } from '@auth/data-access'
 import { LetModule } from '@ngrx/component'
 
-import { GroupChatMemberModel, UserModel, WebUserModel } from '@shared/data-access/models'
+import { AuthUserModel, GroupChatMemberModel, UserModel, WebUserModel } from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
 import { combineLatest, map, Observable, switchMap } from 'rxjs'
@@ -75,7 +75,7 @@ export class AddGroupChatMembersComponent {
   private usersStore = inject(UsersStoreService)
   private groupChatsStore = inject(GroupChatsStoreService)
 
-  user$: Observable<UserModel | undefined> = this.authStore.select.user$
+  user$: Observable<AuthUserModel | undefined> = this.authStore.select.user$
   selectedMembersToInvite: WebUserModel[] = []
   groupChatMembers$: Observable<GroupChatMemberModel[]>
   groupChatId: number

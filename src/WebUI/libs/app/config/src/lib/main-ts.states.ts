@@ -1,13 +1,14 @@
 import { FRIENDS_FEATURE_KEY, friendsReducer } from '@app/data-access/friends'
+
 import {
+  USER_MESSAGES_FEATURE_KEY, userMessagesReducer,
   GROUP_CHAT_MEMBERS_FEATURE_KEY,
   GROUP_CHAT_MESSAGES_FEATURE_KEY,
   GROUP_CHATS_FEATURE_KEY,
   groupChatMembersReducer,
   groupChatMessagesReducer,
   groupChatsReducer,
-} from '@app/data-access/group-chats'
-import { USER_MESSAGES_FEATURE_KEY, userMessagesReducer } from '@app/data-access/messages'
+} from '@app/data-access/messages'
 import { AUTH_FEATURE_KEY, authReducer } from '@auth/data-access'
 import { provideState } from '@ngrx/store'
 import { UI_FEATURE_KEY, uiReducer } from '@grid-layout/data-access'

@@ -23,15 +23,15 @@ export class UsersSignalrService {
 
     this.usersHub
       .start()
-      .then(() => console.log('Users Connection started'))
+      // .then(() => console.log('Users Connection started'))
       .then(() => this.waitGetAppUserLinks())
-      .catch((err) => console.log('Error while starting Users connection: ' + err))
+      .catch((err) => err/*console.log('Error while starting Users connection: ' + err)*/)
   }
 
   waitGetAppUserLinks() {
     if (!this.usersHub) return
     this.usersHub.on('GetAppUserLinks', (users: AppUserLinkModel[]) => {
-      console.log('GetAppUserLinks', users)
+      // console.log('GetAppUserLinks', users)
       // this.messagesStore.dispatch.addManyMessages(message)
     })
   }

@@ -34,10 +34,11 @@ import { MatListModule } from '@angular/material/list'
 import { ActivatedRoute, Router } from '@angular/router'
 // import { MessagesComponent } from '@app/messages'
 import { SendMessageRequest, UserMessagesStoreService } from '@app/data-access/messages'
-import { AuthStoreService } from '@auth/data-access/facades'
+import { AuthStoreService } from '@auth/data-access'
 import { LetModule } from '@ngrx/component'
 
 import {
+  AuthUserModel,
   MessageFrom,
   MessageWebUserModel,
   UserModel,
@@ -139,7 +140,7 @@ export class UserConversationComponent implements AfterViewInit {
   )
 
   userMessages$?: Observable<MessageWebUserModel[]>
-  user$: Observable<UserModel | undefined> = this.authStore.select.user$
+  user$: Observable<AuthUserModel | undefined> = this.authStore.select.user$
   selectedConversationMessage?: MessageWebUserModel
   unreadFilter = false
   recipient?: string
