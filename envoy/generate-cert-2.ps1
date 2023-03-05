@@ -1,0 +1,1 @@
+openssl req -x509 -newkey rsa:4096 -keyout solarengineer.net.key -out solarengineer.net.crt -days 365

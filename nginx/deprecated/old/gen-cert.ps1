@@ -1,0 +1,1 @@
+openssl req -x509 -subj /CN=localhost -days 365 -set_serial 2 -newkey rsa:4096 -keyout cert.key -nodes -out cert.pem

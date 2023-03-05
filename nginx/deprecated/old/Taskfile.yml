@@ -1,0 +1,10 @@
+version: '3'
+
+tasks:
+  build:
+    cmds:
+      - docker build -t nginxserver .
+
+  run:
+    cmds:
+      - docker run -it --rm -d -p 7000:80 --name nginxserver nginxserver
