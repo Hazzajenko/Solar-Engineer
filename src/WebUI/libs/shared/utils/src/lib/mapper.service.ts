@@ -1,3 +1,4 @@
+/*
 import { Injectable } from '@angular/core'
 import {
   GroupChatMessageModel,
@@ -25,3 +26,4 @@ export class MapperService {
     // return 'member' in object
   }
 }
+*/

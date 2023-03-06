@@ -15,17 +15,17 @@ export class PathsEffects {
   private projectsStore = inject(ProjectsStoreService)
   private pathsService = inject(PathsService)
 
-  initPaths$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(ProjectsActions.initSelectProject),
-      switchMap(({ projectId }) =>
-        this.pathsService.getPathsByProjectId(projectId).pipe(
-          map((paths) => PathsActions.loadPathsSuccess({ paths })),
-          catchError((error) => of(PathsActions.loadPathsFailure({ error: error.message }))),
+  /*  initPaths$ = createEffect(() =>
+      this.actions$.pipe(
+        ofType(ProjectsActions.initSelectProject),
+        switchMap(({ projectId }) =>
+          this.pathsService.getPathsByProjectId(projectId).pipe(
+            map((paths) => PathsActions.loadPathsSuccess({ paths })),
+            catchError((error) => of(PathsActions.loadPathsFailure({ error: error.message }))),
+          ),
         ),
       ),
-    ),
-  )
+    )*/
   /*  initLocalPaths$ = createEffect(() =>
       this.actions$.pipe(
         ofType(ProjectsActions.initLocalProject),

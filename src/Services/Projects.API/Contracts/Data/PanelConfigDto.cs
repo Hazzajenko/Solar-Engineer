@@ -5,8 +5,10 @@ namespace Projects.API.Contracts.Data;
 
 public class PanelConfigDto : IEntityDto, IUserObjectDto, IProject
 {
-    public string Brand { get; set; } = default!;
+    public string Type { get; set; } = EntityType.PanelConfig;
+    public string? Brand { get; set; }
     public string Name { get; set; } = default!;
+    public string FullName => Brand is null ? Name : $"{Brand} {Name}";
     public double CurrentAtMaximumPower { get; set; }
     public double ShortCircuitCurrent { get; set; }
     public double ShortCircuitCurrentTemp { get; set; }

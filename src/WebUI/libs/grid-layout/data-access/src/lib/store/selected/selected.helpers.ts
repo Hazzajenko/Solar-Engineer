@@ -1,5 +1,5 @@
 import { SelectedState } from './selected.reducer'
-import { BlockType, TypeModel } from '@shared/data-access/models'
+import { BLOCK_TYPE, BlockType, TypeModel } from '@shared/data-access/models'
 
 export function addToMultiSelectArray(newItem: string, multiSelectIds?: string[]): string[] {
   if (multiSelectIds) {
@@ -33,7 +33,7 @@ export function addToMap(
 
 export function addPanelToMultiselect(panelId: string, state: SelectedState) {
   if (!state.multiSelect) {
-    if (state.type === BlockType.PANEL) {
+    if (state.type === BLOCK_TYPE.PANEL) {
       if (state.singleSelectId) {
         return {
           multiSelectUnit: TypeModel.PANEL,
@@ -46,20 +46,20 @@ export function addPanelToMultiselect(panelId: string, state: SelectedState) {
   if (state.multiSelectIds) {
     if (state.multiSelectIds.length > 0) {
       return {
-        multiSelectUnit: BlockType.PANEL,
+        multiSelectUnit: BLOCK_TYPE.PANEL,
         multiSelect: true,
         multiSelectIds: [...state.multiSelectIds, panelId],
       }
     } else {
       return {
-        multiSelectUnit: BlockType.PANEL,
+        multiSelectUnit: BLOCK_TYPE.PANEL,
         multiSelect: true,
         multiSelectIds: [panelId],
       }
     }
   } else {
     return {
-      multiSelectUnit: BlockType.PANEL,
+      multiSelectUnit: BLOCK_TYPE.PANEL,
       multiSelect: true,
       multiSelectIds: [panelId],
     }

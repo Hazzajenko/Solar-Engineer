@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core'
 import { BlocksFacade, GridFacade, MultiFacade, MultiStoreService } from '../..'
 import { MultiStateModel } from '../../models'
 import { ProjectsFacade } from '@projects/data-access'
-import { BlockType, GridMode } from '@shared/data-access/models'
+import { BLOCK_TYPE, BlockType, GridMode } from '@shared/data-access/models'
 import { MultiEventService } from '../multi'
 import { MouseEventRequest } from '../../models'
 import { getLocationsInBox } from '../utils'
@@ -98,7 +98,7 @@ export class MouseService {
     }
 
     switch (createMode) {
-      case BlockType.PANEL:
+      case BLOCK_TYPE.PANEL:
         return this.multiFactory.createBlocks(createMode, locationArray, location)
       default:
         return this.logger.debug({ source: 'MouseService', objects: [`cannot multi create with type ${createMode}`] })

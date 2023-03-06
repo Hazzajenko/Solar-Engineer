@@ -1,8 +1,8 @@
-﻿using System.Text;
+﻿using System.Reflection;
 using Infrastructure.SignalR;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Mapster;
+using MapsterMapper;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.IdentityModel.Tokens;
 using Projects.API.Data;
 using Projects.API.Repositories.AppUserProjects;
 using Projects.API.Repositories.Projects;
@@ -23,6 +23,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IStringsService, StringsService>();
         services.AddScoped<IAppUserProjectsRepository, AppUserProjectsRepository>();
         services.AddMediator(options => { options.ServiceLifetime = ServiceLifetime.Transient; });
+        services.AddAutoMapper(typeof(Program));
+        services.AddMappings();
         // services.InitMediator();
         // services.AddSingleton(typeof(IPipelineBehavior<,>), typeof(ErrorLoggerHandler<,>));
         // services.AddJwtAuthentication(config);
@@ -30,36 +32,13 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    private static IServiceCollection AddJwtAuthentication(
-        this IServiceCollection services,
-        IConfiguration config
-    )
+    public static IServiceCollection AddMappings(this IServiceCollection services)
     {
-        services
-            .AddAuthentication(x =>
-            {
-                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(x =>
-            {
-                x.TokenValidationParameters = new TokenValidationParameters
-                {
-                    IssuerSigningKey = new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(config["Jwt:Key"]!)
-                    ),
-                    ValidateIssuerSigningKey = true,
-                    ValidateLifetime = true,
-                    ValidIssuer = config["Jwt:Issuer"],
-                    ValidAudience = config["Jwt:Audience"],
-                    ValidateIssuer = true,
-                    ValidateAudience = true
-                };
-            });
+        var config = TypeAdapterConfig.GlobalSettings;
+        config.Scan(Assembly.GetExecutingAssembly());
 
-        services.AddAuthorization();
-
+        services.AddSingleton(config);
+        services.AddScoped<IMapper, ServiceMapper>();
         return services;
     }
 }

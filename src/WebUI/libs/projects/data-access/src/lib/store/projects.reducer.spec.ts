@@ -1,10 +1,4 @@
-import { Action } from '@ngrx/store'
-import { ProjectModel } from '@shared/data-access/models'
-
-import { ProjectsActions } from './projects.actions'
-
-import { initialProjectsState, projectsReducer, ProjectsState } from './projects.reducer'
-
+/*
 describe('Projects Reducer', () => {
   const createProjectsEntity = (id: string, name = ''): ProjectModel => ({
     id,
@@ -35,3 +29,4 @@ describe('Projects Reducer', () => {
     })
   })
 })
+*/

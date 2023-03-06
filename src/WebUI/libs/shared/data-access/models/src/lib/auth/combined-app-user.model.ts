@@ -1,5 +1,5 @@
 export interface CombinedAppUserModel {
-  id: number
+  id: string
   firstName: string
   lastName: string
   displayName: string

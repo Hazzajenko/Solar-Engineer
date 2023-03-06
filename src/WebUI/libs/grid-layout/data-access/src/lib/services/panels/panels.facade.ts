@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
 import { LinksSelectors, PanelsSelectors, SelectedSelectors } from '../../store'
-import { BlockType } from '@shared/data-access/models'
+import { BLOCK_TYPE } from '@shared/data-access/models'
 import { firstValueFrom } from 'rxjs'
 import { combineLatestWith, map } from 'rxjs/operators'
 
@@ -77,7 +77,7 @@ export class PanelsFacade {
   isPanelToJoin$(id: string) {
     return this.store.select(LinksSelectors.selectToLinkIdWithType).pipe(
       map(({ type, toLinkId }) => {
-        if (type !== BlockType.PANEL) {
+        if (type !== BLOCK_TYPE.PANEL) {
           return false
         }
         if (toLinkId === id) {

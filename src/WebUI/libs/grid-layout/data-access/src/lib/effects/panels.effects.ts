@@ -4,8 +4,7 @@ import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { Store } from '@ngrx/store'
 import { CreatePanelRequest, PanelsService, PanelsSignalrService } from '../'
 import { BlocksActions, PanelsActions } from '../store'
-import { ProjectsStoreService } from '@projects/data-access'
-import { ProjectsActions } from '@projects/data-access'
+import { ProjectsActions, ProjectsStoreService } from '@projects/data-access'
 import { PanelModel } from '@shared/data-access/models'
 import { combineLatestWith, of, switchMap } from 'rxjs'
 import { map } from 'rxjs/operators'
@@ -24,23 +23,23 @@ export class PanelsEffects {
   private projectsStore = inject(ProjectsStoreService)
   private panelsService = inject(PanelsService)
   private panelsSignalrService = inject(PanelsSignalrService)
-  initPanels$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(ProjectsActions.initSelectProject),
-        switchMap(({ projectId }) =>
-          this.panelsService.getPanelsByProjectId(projectId).pipe(
-            tapResponse(
-              (panels: PanelModel[]) =>
-                this.store.dispatch(PanelsActions.loadPanelsSuccess({ panels })),
-              (error: Error) =>
-                this.store.dispatch(PanelsActions.loadPanelsFailure({ error: error.message })),
+  /*  initPanels$ = createEffect(
+      () =>
+        this.actions$.pipe(
+          ofType(ProjectsActions.initSelectProject),
+          switchMap(({ projectId }) =>
+            this.panelsService.getPanelsByProjectId(projectId).pipe(
+              tapResponse(
+                (panels: PanelModel[]) =>
+                  this.store.dispatch(PanelsActions.loadPanelsSuccess({ panels })),
+                (error: Error) =>
+                  this.store.dispatch(PanelsActions.loadPanelsFailure({ error: error.message })),
+              ),
             ),
           ),
         ),
-      ),
-    { dispatch: false },
-  )
+      { dispatch: false },
+    )*/
   loadPanelsSuccess$ = createEffect(() =>
     this.actions$.pipe(
       ofType(PanelsActions.loadPanelsSuccess),
@@ -62,7 +61,33 @@ export class PanelsEffects {
     ),
   )
 
-  addPanelHttp$ = createEffect(
+  addPanelSignalR$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(PanelsActions.addPanel),
+        map(({ panel }) =>{
+              const isSignalr = true
+              if (!isSignalr) return
+
+                const request: CreatePanelRequest = {
+                  id: panel.id,
+                  projectId: panel.projectId,
+                  stringId: panel.stringId,
+                  location: panel.location,
+                  panelConfigId: 'undefined',
+                  rotation: panel.rotation,
+                }
+                // console.log(request)
+                this.panelsSignalrService.addPanelSignalr(request)
+                // return of(undefined)
+
+
+        }),
+      ),
+    { dispatch: false },
+  )
+
+/*  addPanelBackend$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType(PanelsActions.addPanel),
@@ -94,7 +119,7 @@ export class PanelsEffects {
         ),
       ),
     { dispatch: false },
-  )
+  )*/
 
   addManyPanels$ = createEffect(() =>
     this.actions$.pipe(

@@ -3,17 +3,17 @@ import { Update } from '@ngrx/entity'
 import {
   GridFacade,
   GridStoreService,
+  LinksPathService,
   PanelsFacade,
   PanelsStoreService,
   SelectedFacade,
   SelectedStoreService,
   StringsFacade,
   StringsStoreService,
-  LinksPathService,
   toUpdatePanelArray,
 } from '../'
 import { ProjectsFacade } from '@projects/data-access'
-import { BlockType, GridMode, StringModel } from '@shared/data-access/models'
+import { BLOCK_TYPE, GridMode, PanelModel, StringModel } from '@shared/data-access/models'
 import { combineLatest, combineLatestWith, firstValueFrom, map } from 'rxjs'
 
 @Injectable({
@@ -76,7 +76,10 @@ export class StringsEventService {
     if (!(string instanceof StringModel)) {
       return
     }
-    const selectedPanelUpdates = toUpdatePanelArray(selectedPanelIds, string.id)
+    const updates: Partial<PanelModel> = {
+      stringId: string.id,
+    }
+    const selectedPanelUpdates = toUpdatePanelArray(selectedPanelIds, updates)
 
     this.panelsStore.dispatch.updateManyPanels(selectedPanelUpdates)
     this.selectedStore.dispatch.clearSelected()
@@ -96,7 +99,7 @@ export class StringsEventService {
           if (multiSelectIds) {
             return panels.filter((p) => multiSelectIds?.includes(p.id)).map((panels) => panels.id)
           }
-          if (selectedIdWithType.singleSelectId && selectedIdWithType.type === BlockType.PANEL) {
+          if (selectedIdWithType.singleSelectId && selectedIdWithType.type === BLOCK_TYPE.PANEL) {
             return [selectedIdWithType.singleSelectId]
           }
           return undefined
@@ -108,7 +111,11 @@ export class StringsEventService {
       return
     }
 
-    const selectedPanelUpdates = toUpdatePanelArray(selectedPanelIds, stringId)
+    const updates: Partial<PanelModel> = {
+      stringId,
+    }
+
+    const selectedPanelUpdates = toUpdatePanelArray(selectedPanelIds, updates)
     this.panelsStore.dispatch.updateManyPanels(selectedPanelUpdates)
     return
   }

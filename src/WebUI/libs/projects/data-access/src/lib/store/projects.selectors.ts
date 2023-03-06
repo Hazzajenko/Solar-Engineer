@@ -34,6 +34,11 @@ export const selectSelectedProjectId = createSelector(
   (state: ProjectsState) => state.selectedProjectId,
 )
 
+export const selectSelectedProject = createSelector(
+  selectProjectsState,
+  (state: ProjectsState) => state.selectedProject,
+)
+
 export const selectIsWebProject = createSelector(
   selectProjectsState,
   (state: ProjectsState) => state.web,

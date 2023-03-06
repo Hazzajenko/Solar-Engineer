@@ -24,12 +24,10 @@ namespace Projects.API.Data.Migrations
 
             modelBuilder.Entity("Projects.API.Entities.AppUserProject", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("uuid_generate_v4()");
-
                     b.Property<Guid>("AppUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ProjectId")
                         .HasColumnType("uuid");
 
                     b.Property<bool>("CanCreate")
@@ -47,17 +45,19 @@ namespace Projects.API.Data.Migrations
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("uuid_generate_v4()");
+
                     b.Property<DateTime>("LastModifiedTime")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uuid");
 
                     b.Property<string>("Role")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.HasKey("Id");
+                    b.HasKey("AppUserId", "ProjectId");
 
                     b.HasIndex("ProjectId");
 
@@ -71,6 +71,9 @@ namespace Projects.API.Data.Migrations
                         .HasColumnType("uuid")
                         .HasDefaultValueSql("uuid_generate_v4()");
 
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("CreatedById")
                         .HasColumnType("uuid");
 
@@ -80,16 +83,20 @@ namespace Projects.API.Data.Migrations
                     b.Property<DateTime>("LastModifiedTime")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<Guid>("PanelConfigId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uuid");
+                    b.Property<int>("Rotation")
+                        .HasColumnType("integer");
 
                     b.Property<Guid>("StringId")
                         .HasColumnType("uuid");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id", "ProjectId");
 
                     b.HasIndex("PanelConfigId");
 
@@ -182,7 +189,13 @@ namespace Projects.API.Data.Migrations
                     b.Property<Guid>("NegativeToId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("NegativeToProjectId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("PositiveToId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("PositiveToProjectId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("ProjectId")
@@ -190,11 +203,11 @@ namespace Projects.API.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("NegativeToId");
-
-                    b.HasIndex("PositiveToId");
-
                     b.HasIndex("ProjectId");
+
+                    b.HasIndex("NegativeToId", "NegativeToProjectId");
+
+                    b.HasIndex("PositiveToId", "PositiveToProjectId");
 
                     b.ToTable("PanelLinks");
                 });
@@ -231,6 +244,9 @@ namespace Projects.API.Data.Migrations
                         .HasColumnType("uuid")
                         .HasDefaultValueSql("uuid_generate_v4()");
 
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Color")
                         .IsRequired()
                         .HasColumnType("text");
@@ -251,10 +267,7 @@ namespace Projects.API.Data.Migrations
                     b.Property<bool>("Parallel")
                         .HasColumnType("boolean");
 
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
+                    b.HasKey("Id", "ProjectId");
 
                     b.HasIndex("ProjectId");
 
@@ -289,6 +302,7 @@ namespace Projects.API.Data.Migrations
                     b.HasOne("Projects.API.Entities.String", "String")
                         .WithMany("Panels")
                         .HasForeignKey("StringId")
+                        .HasPrincipalKey("Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -301,21 +315,21 @@ namespace Projects.API.Data.Migrations
 
             modelBuilder.Entity("Projects.API.Entities.PanelLink", b =>
                 {
+                    b.HasOne("Projects.API.Entities.Project", "Project")
+                        .WithMany("PanelLinks")
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Projects.API.Entities.Panel", "NegativeTo")
                         .WithMany()
-                        .HasForeignKey("NegativeToId")
+                        .HasForeignKey("NegativeToId", "NegativeToProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Projects.API.Entities.Panel", "PositiveTo")
                         .WithMany()
-                        .HasForeignKey("PositiveToId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Projects.API.Entities.Project", "Project")
-                        .WithMany("PanelLinks")
-                        .HasForeignKey("ProjectId")
+                        .HasForeignKey("PositiveToId", "PositiveToProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

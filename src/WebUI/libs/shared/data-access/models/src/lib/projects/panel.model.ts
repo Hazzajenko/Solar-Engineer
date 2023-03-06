@@ -1,12 +1,12 @@
-import { getGuid } from '@shared/utils'
+/*
 import { v4 as uuidv4 } from 'uuid'
-import { StringModel } from './string.model'
 import { BlockModel, BlockOptions, BlockType } from './block.model'
 
 export interface PanelOptions extends BlockOptions {
   stringId: string
   rotation: number
 }
+
 
 export class PanelModel extends BlockModel {
   override type = BlockType.PANEL
@@ -27,8 +27,8 @@ export class PanelModel extends BlockModel {
   weight: number
   width: number
 
-  /*  inverterId?: string
-    trackerId?: string*/
+  /!*  inverterId?: string
+    trackerId?: string*!/
 
   constructor(options: PanelOptions) {
     super(options)
@@ -59,3 +59,4 @@ export class PanelModel extends BlockModel {
     return this
   }
 }
+*/

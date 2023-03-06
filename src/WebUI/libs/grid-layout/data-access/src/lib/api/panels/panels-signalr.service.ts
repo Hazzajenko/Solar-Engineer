@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core'
 import { CreatePanel, ProjectsSignalrService } from '@projects/data-access'
-import { CreatePanelRequest } from '../../models'
+import { CreatePanelRequest } from '../../contracts'
 
 @Injectable({
   providedIn: 'root',

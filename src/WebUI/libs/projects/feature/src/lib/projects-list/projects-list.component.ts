@@ -43,11 +43,14 @@ export class ProjectsListComponent {
 
   async routeToProjectV3(project: ProjectModel) {
     this.loading = true
-    const user = await this.authStore.select.isLoggedIn()
-    console.error(project)
-    if (!user) return
+    await this.authStore.select.isLoggedIn()
 
-    await this.router.navigate([`projects/${project.name}`]).then(() => (this.loading = false))
+
+    await this.router.navigate([`projects/${project.name}`]).then(() => {
+        this.projectsStore.dispatch.initSelectProject(project.id)
+        this.loading = false
+      },
+    )
   }
 
   instanceOfNavigationStart(routerEvents: RouterEvent | any) {

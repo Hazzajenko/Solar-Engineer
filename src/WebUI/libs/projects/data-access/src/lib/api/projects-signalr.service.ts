@@ -42,7 +42,10 @@ export class ProjectsSignalrService {
     this.projectsHubConnection
       .start()
       .then(() => {
-        this.logger.debug({ source: 'Projects-Signalr-Service', objects: ['Projects Hub Connection started'] })
+        this.logger.debug({
+          source: 'Projects-Signalr-Service',
+          objects: ['Projects Hub Connection started'],
+        })
         this.getProjects()
       })
       .catch((err) => {
@@ -59,8 +62,14 @@ export class ProjectsSignalrService {
     })
 
     this.projectsHubConnection.on(GetProjectData, (projectData: GetProjectDataResponse) => {
-      this.logger.debug({ source: 'Projects-Signalr-Service', objects: ['GetProjectData', projectData] })
-      this.panelsStore.dispatch.addManyPanels(projectData.panels)
+      this.logger.debug({
+        source: 'Projects-Signalr-Service',
+        objects: ['GetProjectData', projectData],
+      })
+      if (projectData.panels) {
+        this.panelsStore.dispatch.loadPanelsSuccess(projectData.panels)
+      }
+
       // this.projectsStore.dispatch.addManyProjects(projects)
     })
 
@@ -77,8 +86,12 @@ export class ProjectsSignalrService {
     this.projectsHubConnection
       .invoke(GetProjects)
       // .then((r) => this.logger.debug('Projects-Signalr-Service', 'GetProjects', r))
-      .then((r) => this.logger.debug({ source: 'Projects-Signalr-Service', objects: ['GetProjects', r] }))
-      .catch((e) => this.logger.debug({ source: 'Projects-Signalr-Service', objects: ['GetProjects', e] }))
+      .then((r) =>
+        this.logger.debug({ source: 'Projects-Signalr-Service', objects: ['GetProjects', r] }),
+      )
+      .catch((e) =>
+        this.logger.debug({ source: 'Projects-Signalr-Service', objects: ['GetProjects', e] }),
+      )
     // .catch((e) => this.logger.error('Projects-Signalr-Service', 'GetProjects', e))
   }
 
@@ -86,16 +99,22 @@ export class ProjectsSignalrService {
     if (!this.projectsHubConnection) return
     this.projectsHubConnection
       .invoke(GetProjectData, projectId)
-      .then((r) => this.logger.debug({ source: 'Projects-Signalr-Service', objects: ['GetProjectData', r] }))
-      .catch((e) => this.logger.debug({ source: 'Projects-Signalr-Service', objects: ['GetProjectData', e] }))
+      .then((r) =>
+        this.logger.debug({ source: 'Projects-Signalr-Service', objects: ['GetProjectData', r] }),
+      )
+      .catch((e) =>
+        this.logger.debug({ source: 'Projects-Signalr-Service', objects: ['GetProjectData', e] }),
+      )
   }
 
   stopHubConnection() {
     if (!this.projectsHubConnection) return
     // this.projectsHubConnection.stop().catch((error) => this.logger.error('Projects-Signalr-Service', 'StopHubConnection', error))
-    this.projectsHubConnection.stop().catch((error) => this.logger.error({
-      source: 'Projects-Signalr-Service',
-      objects: ['StopHubConnection', error],
-    }))
+    this.projectsHubConnection.stop().catch((error) =>
+      this.logger.error({
+        source: 'Projects-Signalr-Service',
+        objects: ['StopHubConnection', error],
+      }),
+    )
   }
 }

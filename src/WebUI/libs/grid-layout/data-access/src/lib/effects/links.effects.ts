@@ -20,18 +20,18 @@ export class LinksEffects {
       map(({ links }) => EntitiesActions.addManyEntitiesForGrid({ entities: links })),
     ),
   )
-
-  initLinks$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(ProjectsActions.initSelectProject),
-      switchMap(({ projectId }) =>
-        this.linksService.getLinksByProjectId(projectId).pipe(
-          map((links) => LinksActions.loadLinksSuccess({ links })),
-          catchError((error) => of(LinksActions.loadLinksFailure({ error: error.message }))),
+  /*
+    initLinks$ = createEffect(() =>
+      this.actions$.pipe(
+        ofType(ProjectsActions.initSelectProject),
+        switchMap(({ projectId }) =>
+          this.linksService.getLinksByProjectId(projectId).pipe(
+            map((links) => LinksActions.loadLinksSuccess({ links })),
+            catchError((error) => of(LinksActions.loadLinksFailure({ error: error.message }))),
+          ),
         ),
       ),
-    ),
-  )
+    )*/
   initLocalLinks$ = createEffect(() =>
     this.actions$.pipe(
       ofType(ProjectsActions.initLocalProject),

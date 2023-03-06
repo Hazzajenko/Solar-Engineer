@@ -1,4 +1,5 @@
 version: '3'
+
 services:
   envoy-gateway:
     build: .
@@ -6,17 +7,7 @@ services:
       - "9901:9901"
       - "80:80"
       - "443:443"
-      # - "10000:10000"
-      # - "10001:10001"
     volumes:
       - ./envoy.yaml:/etc/envoy/envoy.yaml
-      # - ./solarengineer.net.crt:/etc/ssl/certs/solarengineer.net.crt
-      # - ./solarengineer.net.key:/etc/ssl/certs/solarengineer.net.key
-      # - ./build/https.crt:/etc/ssl/certs/https.crt
-      # - ./build/key.pem:/etc/ssl/certs/key.pem
-      # - ../build/https.crt:/etc/ssl/certs/https.crt
-      # - ../build/key.pem:/etc/ssl/certs/key.pem
       - ../etc/ssl/solarengineer.net/solarengineer.net.crt:/etc/ssl/certs/solarengineer.net.crt
       - ../etc/ssl/solarengineer.net/solarengineer.net.rsa:/etc/ssl/certs/solarengineer.net.rsa
-      # - ./https.crt:/etc/ssl/certs/https.crt
-      # - ./key.pem:/etc/ssl/certs/key.pem

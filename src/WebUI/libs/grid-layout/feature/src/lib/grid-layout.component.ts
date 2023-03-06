@@ -4,23 +4,18 @@ import { ChangeDetectionStrategy, Component, inject, Input, OnInit } from '@angu
 import { MatSnackBar } from '@angular/material/snack-bar'
 import {
   ClickService,
+  ClientXY,
   DoubleClickService,
   DropService,
-  MouseEventRequest,
-  MouseService,
-  ClientXY,
   ElementOffsets,
-  GridLayoutXY,
-  MouseXY,
-  XYModel,
   GridFacade,
+  MouseEventRequest,
   PathsStoreService,
   SelectedFacade,
   SelectedStoreService,
   StringsFacade,
-  StringsStoreService,
-  UiFacade,
   UiStoreService,
+  XYModel,
 } from '@grid-layout/data-access'
 
 import { KeymapOverlayComponent } from './ui/keymap/keymap.component'
@@ -40,6 +35,7 @@ import { WrapperDirective } from './directives/wrapper.directive'
 import { GetBlockPipe } from './pipes/get-block.pipe'
 import { GetLocationPipe } from './pipes/get-location.pipe'
 import { GridBackgroundComponent } from './ui/grid-background/grid-background.component'
+import { ContainerSizes } from './container-sizes'
 
 @Component({
   selector: 'app-grid-layout',
@@ -60,77 +56,57 @@ import { GridBackgroundComponent } from './ui/grid-background/grid-background.co
     KeyMapDirective,
   ],
   templateUrl: './grid-layout.component.html',
-  /*  hostDirectives: [KeyMapDirective],*/
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: [],
 })
 export class GridLayoutComponent implements OnInit {
   public clickService = inject(ClickService)
   public dropService = inject(DropService)
-  public mouseService = inject(MouseService)
   public doubleClickService = inject(DoubleClickService)
-  private gridFacade = inject(GridFacade)
-  private uiFacade = inject(UiFacade)
+  private uiStore = inject(UiStoreService)
   private snackBar = inject(MatSnackBar)
   private selectedFacade = inject(SelectedFacade)
   private stringsFacade = inject(StringsFacade)
-  private uiStore = inject(UiStoreService)
-  private pathsStore = inject(PathsStoreService)
-  private stringsStore = inject(StringsStoreService)
-  private selectedStore = inject(SelectedStoreService)
+  private gridFacade = inject(GridFacade)
+  // private gridLayoutService = inject(GridLayoutService)
+
+  @Input() blocks$!: Observable<BlockModel[]>
+  // containerSizes: ContainerSizes = this.initContainerSize()
+  // containerSizes: ContainerSizes = this.gridLayoutService.initContainerSize()
+  // containerSizes: ContainerSizes | undefined
   getScreenWidth!: number
   getScreenHeight!: number
-
   gridContainerWidth!: string
-
   gridContainerHeight!: string
   layoutWidth!: number
   layoutHeight!: number
   layoutWidthString!: string
   layoutHeightString!: string
-  containerWidth!: number
-  containerHeight!: number
-  containerWidthString!: string
-  containerHeightString!: string
-  // getScreenWidth-200
-  // private uiFacade = inject(UiFacade)
-  showKeymap$ = this.uiFacade.isKeyMapEnabled$
-  keyPressed$ = this.uiStore.select.keyPressed$
-  scale$ = this.uiStore.select.scale$
-  zoomLevel = 2
-  isGridMoving = false
   scale = 1
   height!: number
-  negativeHeight!: number
   keyUp = ''
-
   width!: number
-  negativeWidth!: number
   clientXY: ClientXY = {
     clientX: undefined,
     clientY: undefined,
   }
-
-  isZoomed = false
   blockHeight = 32
   blockWidth = 32
-
   blockHeightString = `${this.blockHeight}px`
   blockWidthString = `${this.blockWidth}px`
   backgroundHeight?: string
   backgroundWidth?: string
-
   pageXY: XYModel = {
     x: 0,
     y: 0,
   }
-  isKeyMapEnabled$ = this.uiStore.select.isKeyMapEnabled$
-  isStringStatsEnabled$ = this.uiStore.select.isStringStatsEnabled$
-
   uiState$: Observable<{
     keyMap: boolean
     stringStats: boolean
-  }> = combineLatest([this.isKeyMapEnabled$, this.isStringStatsEnabled$]).pipe(
+  }> = combineLatest([
+    this.uiStore.select.isKeyMapEnabled$,
+    this.uiStore.select.isStringStatsEnabled$,
+  ]).pipe(
     map(([keyMap, stringStats]) => {
       return {
         keyMap,
@@ -138,44 +114,15 @@ export class GridLayoutComponent implements OnInit {
       }
     }),
   )
-
-  constructor() {
-    // console.log(`${this.getScreenWidth}x${this.getScreenHeight}`)
-  }
-
-  @Input() set gridSize(size: { rows: number; cols: number }) {
-    // this.backgroundHeight = `${size.rows * this.blockHeight + 1}px`
-    // this.backgroundWidth = `${size.cols * this.blockWidth + 1}px`
-  }
-
-  // rows = 28
-  // cols = 37 + 14
   rows!: number
   cols!: number
-  //
-  // @Input() rows!: number
-  // @Input() cols!: number
-  @Input() blocks$!: Observable<BlockModel[]>
-
-  gridMode$ = this.gridFacade.gridMode$
-  clientXY$ = this.gridFacade.clientXY$
-  gridLayoutXY$ = this.uiFacade.gridLayoutXY$
-  gridLayoutXY: GridLayoutXY = {
-    componentX: undefined,
-    componentY: undefined,
-  }
-
-  mouseXY: MouseXY = {
-    mouseX: undefined,
-    mouseY: undefined,
-  }
 
   offsets: ElementOffsets = {
     offsetHeight: undefined,
     offsetWidth: undefined,
   }
-
   screenHasBeenSet = false
+  gridMode$ = this.gridFacade.gridMode$
 
   selectedString$: Observable<StringModel | undefined> = this.selectedFacade.selectedStringId$.pipe(
     switchMap((stringId) =>
@@ -188,6 +135,10 @@ export class GridLayoutComponent implements OnInit {
     ),
   )
 
+  keyPressed$ = this.uiStore.select.keyPressed$
+  scale$ = this.uiStore.select.scale$
+  private pathsStore = inject(PathsStoreService)
+  private selectedStore = inject(SelectedStoreService)
   panelLinkPath$: Observable<SelectedPanelLinkPathModel | undefined> =
     this.pathsStore.select.selectedPanelLinkPath$.pipe(
       combineLatestWith(this.selectedStore.select.selectedId$),
@@ -198,36 +149,26 @@ export class GridLayoutComponent implements OnInit {
     )
 
   ngOnInit() {
+    // this.gridLayoutService.initContainerSize()
+    /*    this.containerSizes = this.gridLayoutService.initContainerSize(
+          window.innerHeight,
+          window.innerWidth,
+        )*/
+    // this.containerSizes = this.initContainerSize()
     this.getScreenWidth = window.innerWidth
-    // this.getScreenHeight = window.innerHeight - 160
     this.getScreenHeight = window.innerHeight
     this.gridContainerWidth = `${window.innerWidth}px`
-    // this.gridContainerHeight = `${window.innerHeight - 160}px`
     this.gridContainerHeight = `${window.innerHeight}px`
-    /*    this.layoutWidth = window.innerWidth - 100
-        this.layoutHeight = window.innerHeight - 100
-        this.layoutWidthString = `${window.innerWidth - 100}px`
-        this.layoutHeightString = `${window.innerHeight - 100}px`
-        this.containerWidth = window.innerWidth - 200
-        this.containerHeight = window.innerHeight - 200
-        this.containerWidthString = `${window.innerWidth - 200}px`
-        this.containerHeightString = `${window.innerHeight - 200}px`
-        console.log(`${this.getScreenWidth}x${this.getScreenHeight}`)
-        console.log(`${this.containerWidth}x${this.containerHeight}`)*/
     this.initScreenSize()
   }
 
   initScreenSize() {
     this.rows = Math.floor((this.getScreenHeight - 100) / this.blockHeight)
     this.cols = Math.floor((this.getScreenWidth - 100) / this.blockWidth)
-    console.log(this.rows, this.cols)
     this.layoutHeight = this.rows * this.blockHeight
     this.layoutWidth = this.cols * this.blockWidth
     this.layoutWidthString = `${this.layoutWidth}px`
     this.layoutHeightString = `${this.layoutHeight}px`
-
-    // this.rows = 28
-    // this.cols = 37 + 14
     this.backgroundHeight = `${this.layoutHeight + 1}px`
     this.backgroundWidth = `${this.layoutWidth + 1}px`
     this.screenHasBeenSet = true
@@ -235,12 +176,6 @@ export class GridLayoutComponent implements OnInit {
 
   numSequence(n: number): Array<number> {
     return Array(n)
-  }
-
-  private snack(message: string, action: string, duration: number) {
-    this.snackBar.open(message, action, {
-      duration,
-    })
   }
 
   async doubleCLick(doubleClick: MouseEventRequest) {
@@ -253,5 +188,35 @@ export class GridLayoutComponent implements OnInit {
 
   async drop(drop: CdkDragDrop<BlockModel[]>) {
     await this.dropService.drop(drop)
+  }
+
+  private snack(message: string, action: string, duration: number) {
+    this.snackBar.open(message, action, {
+      duration,
+    })
+  }
+
+  private initContainerSize() {
+    const gridContainerWidth = window.innerWidth
+    const gridContainerHeight = window.innerHeight
+    const gridContainerWidthString = `${window.innerWidth}px`
+    const gridContainerHeightString = `${window.innerHeight}px`
+    const rows = Math.floor((gridContainerHeight - 100) / this.blockHeight)
+    const cols = Math.floor((gridContainerWidth - 100) / this.blockWidth)
+    const layoutHeight = rows * this.blockHeight
+    const layoutWidth = cols * this.blockWidth
+    const layoutWidthString = `${layoutWidth}px`
+    const layoutHeightString = `${layoutHeight}px`
+    const backgroundHeightString = `${layoutHeight + 1}px`
+    const backgroundWidthString = `${layoutWidth + 1}px`
+    const containerSizes: ContainerSizes = {
+      gridContainerWidthString,
+      gridContainerHeightString,
+      layoutWidthString,
+      layoutHeightString,
+      backgroundHeightString,
+      backgroundWidthString,
+    }
+    return containerSizes
   }
 }

@@ -87,4 +87,7 @@ Global
 		{9FB72D54-EBD1-47D6-9E96-3C57C886CF0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9FB72D54-EBD1-47D6-9E96-3C57C886CF0E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
+	GlobalSection(RiderSharedRunConfigurations) = postSolution
+		File = Combined-Https-V2.run.xml
+	EndGlobalSection
 EndGlobal

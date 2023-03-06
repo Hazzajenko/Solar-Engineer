@@ -1,0 +1,1 @@
+export * from './i-entity.interface'

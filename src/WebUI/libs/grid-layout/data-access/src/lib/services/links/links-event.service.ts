@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core'
 
 import { GridStoreService, LinksFacade } from '../'
 
-import { BlockType, PanelModel } from '@shared/data-access/models'
+import { BLOCK_TYPE, BlockType, PanelModel } from '@shared/data-access/models'
 // import { GridService } from 'libs/grid-layout/data-access/services/src/lib/entitites/grid/grid.service'
 import { LinksFactory } from './links.factory'
 // import { GridService } from '@grid-layout/data-access/services'
@@ -48,7 +48,7 @@ export class LinksEventService {
     panel: PanelModel,
   ) {
     switch (linksState.typeToLink) {
-      case BlockType.PANEL:
+      case BLOCK_TYPE.PANEL:
         return this.linksFactory.create(panel, linksState.toLinkId, click.event.shiftKey)
       default:
         return this.logger.debug({ source: 'LinksEventService', objects: ['unknown type to link'] })

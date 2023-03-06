@@ -6,7 +6,19 @@ export interface BlockOptions {
   // type: BlockType
 }
 
-export enum BlockType {
+export const BLOCK_TYPE = {
+  UNDEFINED: 'UNDEFINED',
+  INVERTER: 'INVERTER',
+  PANEL: 'PANEL',
+  CABLE: 'CABLE',
+  DISCONNECTIONPOINT: 'DISCONNECTIONPOINT',
+  TRAY: 'TRAY',
+  RAIL: 'RAIL',
+} as const
+
+export type BlockType = typeof BLOCK_TYPE[keyof typeof BLOCK_TYPE]
+
+/*export enum BlockType {
   UNDEFINED,
   INVERTER,
   PANEL,
@@ -14,16 +26,16 @@ export enum BlockType {
   DISCONNECTIONPOINT,
   TRAY,
   RAIL,
-}
+}*/
 
 export class BlockModel {
   id: string
   projectId: string
   location: string
-  type: BlockType = BlockType.UNDEFINED
+  type: BlockType = BLOCK_TYPE.UNDEFINED
 
   constructor(options: BlockOptions, id?: string) {
-    this.id = id ? id : getGuid.toString()
+    this.id = id ? id : getGuid()
     this.projectId = options.projectId
     this.location = options.location
     // this.type = options.type

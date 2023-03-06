@@ -1,6 +1,6 @@
 import { getGuid } from '@shared/utils'
-import { PanelPathModel, PanelIdPath } from 'libs/shared/data-access/models/src/lib/projects/path.model'
-import { EntityModel, EntityOptions, EntityType } from './entity.model'
+import { PanelIdPath } from 'libs/shared/data-access/models/src/lib/projects/path.model'
+import { ENTITY_TYPE, EntityModel, EntityOptions, EntityType } from './entity.model'
 
 export interface StringOptions extends EntityOptions {
   name: string
@@ -9,7 +9,7 @@ export interface StringOptions extends EntityOptions {
 }
 
 export class StringModel extends EntityModel {
-  override type: EntityType = EntityType.STRING
+  override type: EntityType = ENTITY_TYPE.STRING
   name: string
   parallel: boolean
   color: string

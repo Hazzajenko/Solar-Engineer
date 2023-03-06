@@ -1,5 +1,5 @@
 export interface AuthUserModel {
-  id: number
+  id: string
   displayName: string
   firstName: string
   lastName: string

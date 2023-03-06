@@ -7,6 +7,7 @@ import { combineLatest, firstValueFrom, map } from 'rxjs'
 import { getSelectedLinks } from '../'
 import { toUpdatePanelArray } from '../'
 import { PathsEventService } from '../paths'
+import { AuthStoreService } from '@auth/data-access'
 
 @Injectable({
   providedIn: 'root',
@@ -18,19 +19,27 @@ export class PanelsEventService {
   private panelsStore = inject(PanelsStoreService)
   private selectedStore = inject(SelectedStoreService)
   private pathsStore = inject(PathsStoreService)
+  private authStore = inject(AuthStoreService)
 
   async createPanel(location: string, rotation: number) {
-    const project = await this.projectsFacade.projectFromRoute
+    // const project = await this.projectsFacade.projectFromRoute
+    const project = await this.projectsFacade.selectedProject()
     const selectedStringId = await this.selectedStore.select.selectedStringId
+    /*
+        if (!project) {
+          return
+        }*/
 
-    if (!project) {
-      return
-    }
+    const userId = await this.authStore.select.userId()
+    // if
+
     const panel = new PanelModel({
       projectId: project.id,
       stringId: selectedStringId ? selectedStringId : 'undefined',
       location,
       rotation,
+      createdById: userId,
+      panelConfigId: 'undefined',
     })
     this.panelsStore.dispatch.createPanel(panel)
     this.selectedStore.dispatch.clearSingleSelected()

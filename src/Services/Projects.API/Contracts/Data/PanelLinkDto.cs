@@ -5,6 +5,7 @@ namespace Projects.API.Contracts.Data;
 
 public class PanelLinkDto : IEntityDto, IUserObjectDto, IProject
 {
+    public string Type { get; set; } = EntityType.PanelLink;
     public string PositiveToId { get; set; } = default!;
     public string NegativeToId { get; set; } = default!;
     public string ProjectId { get; set; } = default!;

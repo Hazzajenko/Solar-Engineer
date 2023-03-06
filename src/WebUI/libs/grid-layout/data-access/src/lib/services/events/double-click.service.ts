@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core'
 // import { GridEventResult } from '@grid-layout/data-access/actions'
 import { BlocksStoreService, PanelsStoreService } from '../..'
-import { BlockModel, BlockType } from '@shared/data-access/models'
+import { BLOCK_TYPE, BlockModel, BlockType } from '@shared/data-access/models'
 import { SelectedEventService } from '../selected'
 import { StringsEventService } from '../strings'
 import { GridEventService } from '../grid'
@@ -41,7 +41,7 @@ export class DoubleClickService {
 
   async existingBlockSwitch(click: MouseEventRequest, existingBlock: BlockModel) {
     switch (existingBlock.type) {
-      case BlockType.PANEL:
+      case BLOCK_TYPE.PANEL:
         return this.doubleClickPanel(existingBlock)
       default:
         return this.logger.debug({ source: 'DoubleClickService', objects: ['unknown object for existingBlockSwitch'] })
@@ -59,7 +59,7 @@ export class DoubleClickService {
     if (panel.stringId === 'undefined') {
       return this.logger.debug({
         source: 'DoubleClickService',
-        objects: ['panel needs to have a string to double click']
+        objects: ['panel needs to have a string to double click'],
       })
       // return console.error('panel needs to have a string to double click')
     }

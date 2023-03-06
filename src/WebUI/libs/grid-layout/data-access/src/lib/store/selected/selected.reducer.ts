@@ -1,6 +1,6 @@
 import { Action, createReducer, on } from '@ngrx/store'
 import { SelectedActions } from './selected.actions'
-import { BlockType, TypeModel } from '@shared/data-access/models'
+import { BLOCK_TYPE, BlockType, TypeModel } from '@shared/data-access/models'
 import { addPanelToMultiselect, addToMultiSelectArray } from './selected.helpers'
 
 export const SELECTED_FEATURE_KEY = 'selected'
@@ -21,8 +21,8 @@ export interface SelectedState {
 }
 
 export const initialSelectedState: SelectedState = {
-  type: BlockType.UNDEFINED,
-  multiSelectType: BlockType.UNDEFINED,
+  type: BLOCK_TYPE.UNDEFINED,
+  multiSelectType: BLOCK_TYPE.UNDEFINED,
   multiSelect: false,
   singleSelectId: undefined,
   multiSelectIds: [],
@@ -57,7 +57,7 @@ const reducer = createReducer(
   })),
 
   on(SelectedActions.selectPanel, (state, { panelId, panelLink }) => ({
-    type: BlockType.PANEL,
+    type: BLOCK_TYPE.PANEL,
     ...state,
     singleSelectId: panelId,
     selectedPanelId: panelId,
@@ -152,7 +152,7 @@ const reducer = createReducer(
   })),
 
   on(SelectedActions.clearSelectedState, () => ({
-    type: BlockType.UNDEFINED,
+    type: BLOCK_TYPE.UNDEFINED,
     multiSelect: false,
     singleSelectId: undefined,
     multiSelectIds: [],

@@ -1,5 +1,5 @@
 import { PanelLinkModel } from './panel-link.model'
-import { PanelModel } from './panel.model'
+import { PanelModel } from './panel'
 import { ProjectModel } from './project.model'
 import { StringModel } from './string.model'
 

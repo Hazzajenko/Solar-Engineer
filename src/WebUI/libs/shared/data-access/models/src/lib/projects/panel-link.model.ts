@@ -1,5 +1,5 @@
 import { getGuid } from '@shared/utils'
-import { EntityModel, EntityOptions, EntityType } from './entity.model'
+import { ENTITY_TYPE, EntityModel, EntityOptions } from './entity.model'
 
 export interface LinkOptions extends EntityOptions {
   stringId: string
@@ -16,7 +16,7 @@ export class PanelLinkModel extends EntityModel {
     super(options)
     this.id = getGuid().toString()
     this.projectId = options.projectId
-    this.type = EntityType.LINK
+    this.type = ENTITY_TYPE.PANEL_LINK
     this.stringId = options.stringId
     this.positiveToId = options.positiveToId
     this.negativeToId = options.negativeToId

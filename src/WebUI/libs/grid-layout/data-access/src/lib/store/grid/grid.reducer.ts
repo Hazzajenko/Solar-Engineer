@@ -1,6 +1,6 @@
 import { ClientXY } from '../../models'
 import { Action, createReducer, on } from '@ngrx/store'
-import { BlockType, GridMode } from '@shared/data-access/models'
+import { BLOCK_TYPE, BlockType, GridMode } from '@shared/data-access/models'
 import { GridActions } from './grid.actions'
 
 export const GRID_FEATURE_KEY = 'grid'
@@ -12,7 +12,7 @@ export interface GridState {
 }
 
 export const initialGridState: GridState = {
-  createMode: BlockType.PANEL,
+  createMode: BLOCK_TYPE.PANEL,
   gridMode: GridMode.SELECT,
   clientXY: {
     clientX: undefined,

@@ -1,6 +1,6 @@
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity'
 import { Action, createReducer, on } from '@ngrx/store'
-import { BlockType, PanelLinkModel } from '@shared/data-access/models'
+import { BLOCK_TYPE, BlockType, PanelLinkModel } from '@shared/data-access/models'
 
 import { LinksActions } from './links.actions'
 
@@ -33,7 +33,7 @@ const reducer = createReducer(
   on(LinksActions.loadLinksFailure, (state, { error }) => ({ ...state, error })),
   on(LinksActions.startLinkPanel, (state, { panelId }) => ({
     ...state,
-    typeToLink: BlockType.PANEL,
+    typeToLink: BLOCK_TYPE.PANEL,
     toLinkId: panelId,
   })),
 

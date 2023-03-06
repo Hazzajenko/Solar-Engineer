@@ -1,7 +1,7 @@
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
-import { ProjectModel } from '@shared/data-access/models'
+import { LocalProjectModel, ProjectModel } from '@shared/data-access/models'
 // import * as ts from 'typescript/lib/tsserverlibrary'
-import { LocalProjectModel } from './local-project.model'
+// import { LocalProjectModel } from './local-project.model'
 // import Project = ts.server.Project
 
 export const ProjectsActions = createActionGroup({

@@ -2,7 +2,8 @@ import { inject, Injectable } from '@angular/core'
 import { AuthSelectors } from '../store'
 import { Store } from '@ngrx/store'
 import { AuthService as Auth0 } from '@auth0/auth0-angular'
-import { firstValueFrom, of } from 'rxjs'
+import { firstValueFrom, map, of } from 'rxjs'
+import { throwExpression } from '@shared/utils'
 
 @Injectable({
   providedIn: 'root',
@@ -19,7 +20,11 @@ export class AuthFacade {
 
   // isAuthenticated$ = this.auth0.isAuthenticated$
 
+  async userId() {
+    return await firstValueFrom(this.user$.pipe(map((user) => user?.id))) ?? throwExpression('User not logged in')
+  }
+
   async isLoggedIn() {
-    return await firstValueFrom(this.isLoggedIn$)
+    return await firstValueFrom(this.isLoggedIn$) ?? throwExpression('User not logged in')
   }
 }

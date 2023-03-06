@@ -5,6 +5,7 @@ namespace Projects.API.Contracts.Data;
 
 public class StringDto : IEntityDto, IUserObjectDto, IProject
 {
+    public string Type { get; set; } = EntityType.String;
     public string Name { get; set; } = default!;
     public string Color { get; set; } = default!;
     public bool Parallel { get; set; }

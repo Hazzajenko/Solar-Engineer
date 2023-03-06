@@ -9,6 +9,7 @@ export const PROJECTS_FEATURE_KEY = 'projects'
 export interface ProjectsState extends EntityState<ProjectModel> {
   selectedId?: string
   selectedProjectId?: string
+  selectedProject?: ProjectModel
   localProjectId?: string
   localProject?: ProjectModel
   loaded: boolean
@@ -54,6 +55,7 @@ const reducer = createReducer(
     ...state,
     selectedId: projectId,
     selectedProjectId: projectId,
+    selectedProject: state.entities[projectId],
     web: true,
     local: false,
   })),

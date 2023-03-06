@@ -1,7 +1,7 @@
 import { CdkDragDrop } from '@angular/cdk/drag-drop'
 import { inject, Injectable } from '@angular/core'
 import { BlocksFacade, BlocksStoreService } from '../..'
-import { BlockModel, BlockType } from '@shared/data-access/models'
+import { BLOCK_TYPE, BlockModel, BlockType } from '@shared/data-access/models'
 import { PanelsEventService } from '../panels'
 import { LoggerService } from '@shared/logger'
 
@@ -35,7 +35,7 @@ export class DropService {
 
   async blockTypeSwitch(block: BlockModel, location: string) {
     switch (block.type) {
-      case BlockType.PANEL:
+      case BLOCK_TYPE.PANEL:
         return this.panelsFactory.updatePanel(block.id, { location })
       default:
         return this.logger.debug({ source: 'DropService', objects: ['blockTypeSwitch, default'] })

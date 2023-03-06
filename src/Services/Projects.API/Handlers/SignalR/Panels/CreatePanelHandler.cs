@@ -3,6 +3,7 @@ using Mediator;
 using Microsoft.AspNetCore.SignalR;
 using Projects.API.Contracts.Requests.Panels;
 using Projects.API.Data;
+using Projects.API.Entities;
 using Projects.API.Hubs;
 using Projects.API.Mapping;
 using Projects.API.Services.Strings;
@@ -85,11 +86,19 @@ public class CreatePanelHandler : IRequestHandler<CreatePanelCommand, bool>
         // panelConfig = ThrowHubExceptionIfNull(panelConfig, "Panel config does not exist");
         ThrowHubExceptionIfNull(panelConfig, "Panel config does not exist");
 
-        var panel = request.CreatePanelRequest.ToDomain(
+        /*var panel = request.CreatePanelRequest.ToDomain(
             appUserProject.ProjectId,
             panelString.Id,
             panelConfig.Id
-        );
+        );*/
+        var panel = new Panel
+        {
+            StringId = panelString.Id,
+            PanelConfigId = panelConfig.Id,
+            ProjectId = appUserProject.ProjectId,
+            Location = request.CreatePanelRequest.Location,
+            Rotation = request.CreatePanelRequest.Rotation
+        };
         await _unitOfWork.PanelsRepository.AddAsync(panel);
         await _unitOfWork.SaveChangesAsync();
 

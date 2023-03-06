@@ -8,9 +8,9 @@ public class PanelsConfig : IEntityTypeConfiguration<Panel>
 {
     public void Configure(EntityTypeBuilder<Panel> builder)
     {
-        builder
-            .Property(x => x.Id)
-            .HasDefaultValueSql("uuid_generate_v4()");
+        builder.HasKey(x => new { x.Id, x.ProjectId });
+
+        builder.Property(x => x.Id).HasDefaultValueSql("uuid_generate_v4()");
 
         /*builder
             .Property(x => x.StringId)

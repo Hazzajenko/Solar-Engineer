@@ -3,17 +3,16 @@ import { inject, Injectable } from '@angular/core'
 import {
   BlocksFacade,
   BlocksStoreService,
+  GridEventService,
   GridFacade,
   GridStoreService,
+  LinksEventService,
+  MouseEventRequest,
+  PanelsEventService,
   PanelsFacade,
   PanelsStoreService,
-  LinksEventService,
-  GridEventService,
-  PanelsEventService,
-  MouseEventRequest,
-
 } from '../..'
-import { BlockModel, BlockType, GridMode } from '@shared/data-access/models'
+import { BLOCK_TYPE, BlockModel, GridMode } from '@shared/data-access/models'
 import { LoggerService } from '@shared/logger'
 
 
@@ -52,7 +51,7 @@ export class ClickService {
 
   async existingBlockSwitch(click: MouseEventRequest, existingBlock: BlockModel) {
     switch (existingBlock.type) {
-      case BlockType.PANEL:
+      case BLOCK_TYPE.PANEL:
         return this.clickPanelSwitch(click, existingBlock)
       default:
         return this.logger.debug({ source: 'ClickService', objects: ['unknown object for existingBlockSwitch'] })
@@ -122,7 +121,7 @@ export class ClickService {
         }*/
     const createMode = await this.gridFacade.createMode
     switch (createMode) {
-      case BlockType.PANEL:
+      case BLOCK_TYPE.PANEL:
         return this.panelsFactory.createPanel(location, 0)
       default:
         return this.logger.debug({ source: 'ClickService', objects: ['createSwitch, default'] })

@@ -20,7 +20,9 @@ public class CreatePanelRequestValidator : AbstractValidator<CreatePanelRequest>
             .NotNull()
             .WithMessage("Id cannot be null")
             .NotEmpty()
-            .WithMessage("Id cannot be empty");
+            .WithMessage("Id cannot be empty")
+            .Must(x => Guid.TryParse(x, out _))
+            .WithMessage("Id must be a valid Guid");
 
         RuleFor(v => v.ProjectId)
             .NotNull()

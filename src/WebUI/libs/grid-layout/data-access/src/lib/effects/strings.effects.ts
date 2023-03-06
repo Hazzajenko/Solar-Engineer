@@ -15,17 +15,17 @@ export class StringsEffects {
 
   private stringsService = inject(StringsService)
   private projectsStore = inject(ProjectsStoreService)
-  initStrings$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(ProjectsActions.initSelectProject),
-      switchMap(({ projectId }) =>
-        this.stringsService.getStringsByProjectId(projectId).pipe(
-          map((strings) => StringsActions.loadStringsSuccess({ strings })),
-          catchError((error) => of(StringsActions.loadStringsFailure({ error: error.message }))),
+  /*  initStrings$ = createEffect(() =>
+      this.actions$.pipe(
+        ofType(ProjectsActions.initSelectProject),
+        switchMap(({ projectId }) =>
+          this.stringsService.getStringsByProjectId(projectId).pipe(
+            map((strings) => StringsActions.loadStringsSuccess({ strings })),
+            catchError((error) => of(StringsActions.loadStringsFailure({ error: error.message }))),
+          ),
         ),
       ),
-    ),
-  )
+    )*/
 
   /* loadStringsSuccess$ = createEffect(() =>
      this.actions$.pipe(

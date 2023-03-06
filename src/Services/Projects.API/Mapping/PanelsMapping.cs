@@ -30,7 +30,8 @@ public static class PanelsMapping
             CreatedTime = panel.CreatedTime,
             PanelConfigId = panel.PanelConfigId.ToString(),
             StringId = panel.StringId.ToString(),
-            LastModifiedTime = panel.LastModifiedTime
+            LastModifiedTime = panel.LastModifiedTime,
+            CreatedById = panel.CreatedById.ToString()
         };
     }
 

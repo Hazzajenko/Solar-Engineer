@@ -5,6 +5,7 @@ namespace Projects.API.Contracts.Requests.Strings;
 public class CreateStringRequest
 {
     public required string Id { get; init; } = default!;
+    public required string ProjectId { get; init; } = default!;
     public required string Name { get; init; } = default!;
     public string Color { get; init; } = "blue";
 }
@@ -17,7 +18,9 @@ public class CreateStringRequestValidator : AbstractValidator<CreateStringReques
             .NotNull()
             .WithMessage("Id cannot be null")
             .NotEmpty()
-            .WithMessage("Id cannot be empty");
+            .WithMessage("Id cannot be empty")
+            .Must(x => Guid.TryParse(x, out _))
+            .WithMessage("Id must be a valid Guid");
 
         RuleFor(v => v.Name)
             .NotNull()

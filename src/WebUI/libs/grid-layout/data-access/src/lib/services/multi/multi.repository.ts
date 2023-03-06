@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
-import { BlockType, PanelModel } from '@shared/data-access/models'
+import { BLOCK_TYPE, BlockType, PanelModel } from '@shared/data-access/models'
 import { MultiActions, PanelsActions, SelectedActions } from '../../store'
 
 @Injectable({
@@ -20,14 +20,14 @@ export class MultiRepository {
 
   startMultiCreate(location: string, type: BlockType) {
     switch (type) {
-      case BlockType.PANEL:
+      case BLOCK_TYPE.PANEL:
         this.store.dispatch(MultiActions.startMultiCreatePanel({ location }))
     }
   }
 
   finishMultiCreate(location: string, type: BlockType, panels: PanelModel[]) {
     switch (type) {
-      case BlockType.PANEL:
+      case BLOCK_TYPE.PANEL:
         this.store.dispatch(MultiActions.finishMultiCreatePanel({ location }))
         this.store.dispatch(PanelsActions.addManyPanels({ panels }))
     }
