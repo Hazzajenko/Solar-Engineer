@@ -12,6 +12,9 @@ public interface IProjectsHub
     Task UpdateProject(ProjectChanges projectChanges);
 
     Task PanelsCreated(IEnumerable<PanelDto> panels);
+    Task PanelsUpdated(IEnumerable<PanelDto> panels);
+
+    Task StringsCreated(IEnumerable<StringDto> strings);
     // Task UserIsOnline(IEnumerable<ConnectionDto> connections);
     // Task UserIsOffline(IEnumerable<ConnectionDto> connections);
     // Task GetOnlineUsers(IEnumerable<ConnectionDto> connections);

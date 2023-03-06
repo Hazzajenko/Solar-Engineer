@@ -8,6 +8,7 @@ public interface IGenericRepository<TModel>
     Task AddAsync(TModel model);
     Task<TModel?> GetByIdAsync(Guid id);
     Task AddRangeAsync(IEnumerable<TModel> items);
+    Task UpdateAsync(TModel item);
 
     Task DeleteAsync(object key);
     // Task<bool> DeleteAsync(Guid id);

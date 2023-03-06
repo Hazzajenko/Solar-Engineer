@@ -1,10 +1,10 @@
 import { inject, Injectable } from '@angular/core'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { Store } from '@ngrx/store'
-import { StringsService, StringsActions } from '../'
-import { ProjectsStoreService } from '@projects/data-access'
-import { ProjectsActions } from '@projects/data-access'
-import { catchError, map, of, switchMap } from 'rxjs'
+import { CreateStringRequest, ProjectsHubActions, StringsActions, StringsService } from '../'
+import { ProjectsActions, ProjectsStoreService } from '@projects/data-access'
+import { map } from 'rxjs'
+import { StringsSignalrService } from '../api/strings/strings-signalr.service'
 
 @Injectable({
   providedIn: 'root',
@@ -14,6 +14,7 @@ export class StringsEffects {
   private store = inject(Store)
 
   private stringsService = inject(StringsService)
+  private stringsSignalrService = inject(StringsSignalrService)
   private projectsStore = inject(ProjectsStoreService)
   /*  initStrings$ = createEffect(() =>
       this.actions$.pipe(
@@ -43,42 +44,61 @@ export class StringsEffects {
     ),
   )
 
-  addStringHttp$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(StringsActions.addString),
-        switchMap(({ string }) =>
-          this.projectsStore.select.selectIsWebProject$.pipe(
-            switchMap((isWeb) => {
-              if (isWeb) {
-                return this.stringsService.addString(string)
-              }
-              // update local state
-              return of(undefined)
-            }),
-          ),
-        ),
-      ),
-    { dispatch: false },
+  addStringSignalR$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(StringsActions.addString),
+      map(({ string }) => {
+        const isSignalr = true
+        if (!isSignalr) {
+          return ProjectsHubActions.cancelSignalrRequest()
+        }
+        const request: CreateStringRequest = {
+          id: string.id,
+          projectId: string.projectId,
+          name: string.name,
+        }
+        this.stringsSignalrService.addStringSignalr(request)
+        return ProjectsHubActions.sendSignalrRequest({ request })
+      }),
+    ),
   )
 
-  deleteStringHttp$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(StringsActions.deleteString),
-        switchMap(({ stringId }) =>
-          this.projectsStore.select.isWebWithProject$.pipe(
-            switchMap(([isWeb, project]) => {
-              if (!project) return of(undefined)
-              if (isWeb) {
-                return this.stringsService.deleteString(stringId, project.id)
-              }
-              // update local state
-              return of(undefined)
-            }),
+  /* addStringHttp$ = createEffect(
+     () =>
+       this.actions$.pipe(
+         ofType(StringsActions.addString),
+         switchMap(({ string }) =>
+           this.projectsStore.select.selectIsWebProject$.pipe(
+             switchMap((isWeb) => {
+               if (isWeb) {
+                 return this.stringsService.addString(string)
+               }
+               // update local state
+               return of(undefined)
+             }),
+           ),
+         ),
+       ),
+     { dispatch: false },
+   )*/
+
+  /*  deleteStringHttp$ = createEffect(
+      () =>
+        this.actions$.pipe(
+          ofType(StringsActions.deleteString),
+          switchMap(({ stringId }) =>
+            this.projectsStore.select.isWebWithProject$.pipe(
+              switchMap(([isWeb, project]) => {
+                if (!project) return of(undefined)
+                if (isWeb) {
+                  return this.stringsService.deleteString(stringId, project.id)
+                }
+                // update local state
+                return of(undefined)
+              }),
+            ),
           ),
         ),
-      ),
-    { dispatch: false },
-  )
+      { dispatch: false },
+    )*/
 }

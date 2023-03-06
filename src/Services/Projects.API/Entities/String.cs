@@ -1,4 +1,5 @@
 ﻿using Infrastructure.Common;
+using Projects.API.Contracts.Requests.Strings;
 using Projects.API.Data;
 
 namespace Projects.API.Entities;
@@ -16,9 +17,19 @@ public class String : IEntity, IProjectItem, IUserObject
     public Project Project { get; set; } = default!;
     public Guid CreatedById { get; set; }
 
-    public static String CreateUndefined(
-        Guid projectId,
-        Guid appUserId)
+    public static String Create(CreateStringRequest request, Guid projectId, Guid appUserId)
+    {
+        return new String
+        {
+            Name = request.Name,
+            Color = request.Color,
+            Parallel = false,
+            ProjectId = projectId,
+            CreatedById = appUserId
+        };
+    }
+
+    public static String CreateUndefined(Guid projectId, Guid appUserId)
     {
         return new String
         {

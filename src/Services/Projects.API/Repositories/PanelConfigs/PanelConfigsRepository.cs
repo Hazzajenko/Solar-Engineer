@@ -14,11 +14,17 @@ public sealed class PanelConfigsRepository
     {
     }
 
+    public async Task<PanelConfig> GetByIdNotNullAsync(Guid id)
+    {
+        return await Queryable.ThrowHubExceptionIfNullSingleOrDefaultAsync(
+            x => x.Id == id,
+            "PanelConfig does not exist"
+        );
+    }
+
     public async Task<PanelConfig> GetDefaultPanelConfigAsync()
     {
-        return await Queryable
-            .Where(x => x.Default)
-            .Take(1)
-            .SingleOrDefaultAsync() ?? throw new ArgumentNullException(nameof(PanelConfig));
+        return await Queryable.Where(x => x.Default).Take(1).SingleOrDefaultAsync()
+               ?? throw new ArgumentNullException(nameof(PanelConfig));
     }
 }

@@ -4,6 +4,7 @@ import { LinksSelectors, PanelsSelectors, SelectedSelectors } from '../../store'
 import { BLOCK_TYPE } from '@shared/data-access/models'
 import { firstValueFrom } from 'rxjs'
 import { combineLatestWith, map } from 'rxjs/operators'
+import { throwExpression } from '@shared/utils'
 
 @Injectable({
   providedIn: 'root',
@@ -19,8 +20,11 @@ export class PanelsFacade {
     return this.store.select(PanelsSelectors.selectPanelById({ id }))
   }
 
-  panelById(id: string) {
-    return firstValueFrom(this.store.select(PanelsSelectors.selectPanelById({ id })))
+  async panelById(id: string) {
+    return (
+      (await firstValueFrom(this.store.select(PanelsSelectors.selectPanelById({ id })))) ??
+      throwExpression('Panel not found')
+    )
   }
 
   panelsByStringId$(stringId: string) {

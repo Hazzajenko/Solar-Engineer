@@ -1,18 +1,21 @@
 import { inject, Injectable } from '@angular/core'
-import { CreatePanel, ProjectsSignalrService } from '@projects/data-access'
+import { CreateString, ProjectsSignalrService } from '@projects/data-access'
 import { CreateStringRequest } from '../../contracts'
+import { LoggerService } from '@shared/logger'
 
 @Injectable({
   providedIn: 'root',
 })
-export class PanelsSignalrService {
+export class StringsSignalrService {
   private hub = inject(ProjectsSignalrService)
+  private logger = inject(LoggerService)
 
   addStringSignalr(request: CreateStringRequest) {
     if (!this.hub.projectsHubConnection) return
     this.hub.projectsHubConnection
-      .invoke(CreatePanel, request)
-      .then((r) => console.log(r))
-      .catch((e) => console.error(e))
+      .invoke(CreateString, request)
+      .catch((e) =>
+        this.logger.error({ source: 'StringsSignalrService', objects: ['addStringSignalr', e] }),
+      )
   }
 }

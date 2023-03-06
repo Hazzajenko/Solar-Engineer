@@ -18,7 +18,7 @@ public sealed record CreatePanelCommand(
 public class CreatePanelHandler : IRequestHandler<CreatePanelCommand, bool>
 {
     private readonly IHubContext<ProjectsHub, IProjectsHub> _hubContext;
-    private readonly ILogger _logger;
+    private readonly ILogger<CreatePanelHandler> _logger;
     private readonly IMediator _mediator;
     private readonly IStringsService _stringsService;
     private readonly IProjectsUnitOfWork _unitOfWork;
@@ -93,6 +93,7 @@ public class CreatePanelHandler : IRequestHandler<CreatePanelCommand, bool>
         );*/
         var panel = new Panel
         {
+            Id = request.CreatePanelRequest.Id.ToGuid(),
             StringId = panelString.Id,
             PanelConfigId = panelConfig.Id,
             ProjectId = appUserProject.ProjectId,
