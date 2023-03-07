@@ -14,6 +14,8 @@ import { ProjectsActions, ProjectsStoreService } from '@projects/data-access'
 import { of, switchMap } from 'rxjs'
 import { map } from 'rxjs/operators'
 import { LoggerService } from '@shared/logger'
+import { SignalrRequest } from '@shared/data-access/models'
+import { getGuid } from '@shared/utils'
 
 @Injectable({
   providedIn: 'root',
@@ -85,7 +87,7 @@ export class PanelsEffects {
           rotation: panel.rotation,
         }
         this.panelsSignalrService.addPanelSignalr(request)
-        return ProjectsHubActions.sendSignalrRequest({ request })
+        return ProjectsHubActions.sendSignalrRequest({ signalrRequest: request })
       }),
     ),
   )
@@ -178,14 +180,19 @@ export class PanelsEffects {
 
           const panel = await this.panelsStore.select.panelById(update.id)
 
+          const signalrRequestId = getGuid()
           const request: UpdatePanelRequest = {
-            id: panel.id,
+            signalrRequestId,
             projectId: panel.projectId,
-            stringId: panel.stringId,
-            changes: update.changes,
+            update: {
+              id: panel.id,
+              changes: update.changes,
+            },
           }
+          const signalrRequest = new SignalrRequest(signalrRequestId, 'UpdatePanel', request)
+          // this.panelsSignalrService['updatePanelSignalr'](request)
           this.panelsSignalrService.updatePanelSignalr(request)
-          return ProjectsHubActions.sendSignalrRequest({ request })
+          return ProjectsHubActions.sendSignalrRequest({ signalrRequest })
         }),
       ),
     { dispatch: false },

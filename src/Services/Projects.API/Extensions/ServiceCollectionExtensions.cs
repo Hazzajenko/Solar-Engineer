@@ -23,7 +23,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IStringsService, StringsService>();
         services.AddScoped<IAppUserProjectsRepository, AppUserProjectsRepository>();
         services.AddMediator(options => { options.ServiceLifetime = ServiceLifetime.Transient; });
-        services.AddAutoMapper(typeof(Program));
+        // services.AddAutoMapper(typeof(Program));
         services.AddMappings();
         // services.InitMediator();
         // services.AddSingleton(typeof(IPipelineBehavior<,>), typeof(ErrorLoggerHandler<,>));

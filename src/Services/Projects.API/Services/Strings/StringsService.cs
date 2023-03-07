@@ -11,7 +11,7 @@ public class StringsService : IStringsService
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<String> GetOrCreateUndefinedStringAsync(Guid projectId)
+    /*public async Task<String> GetOrCreateUndefinedStringAsync(Guid projectId)
     {
         var undefinedString = await _unitOfWork.StringsRepository.GetStringByNameAsync("undefined");
         if (undefinedString is not null) return undefinedString;
@@ -29,5 +29,5 @@ public class StringsService : IStringsService
         await _unitOfWork.SaveChangesAsync();
 
         return undefinedString;
-    }
+    }*/
 }

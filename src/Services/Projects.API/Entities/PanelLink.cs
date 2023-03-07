@@ -16,8 +16,8 @@ public class PanelLink : IEntity, IProjectItem, IUserObject
     // public Panel? DisconnectionPointPanel { get; set; }
     // public string? DisconnectionPointPanelId { get; set; }
     public Guid Id { get; set; }
-    public DateTime CreatedTime { get; set; }
-    public DateTime LastModifiedTime { get; set; }
+    public DateTime CreatedTime { get; set; } = DateTime.UtcNow;
+    public DateTime LastModifiedTime { get; set; } = DateTime.UtcNow;
     public Guid ProjectId { get; set; }
     public Project Project { get; set; } = default!;
     public Guid CreatedById { get; set; }

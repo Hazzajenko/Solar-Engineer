@@ -1,17 +1,20 @@
 ﻿using Projects.API.Contracts.Data;
 using Projects.API.Contracts.Requests.Projects;
+using Projects.API.Contracts.Responses;
 
 namespace Projects.API.Hubs;
 
 public interface IProjectsHub
 {
-    Task GetProjects(IEnumerable<ProjectDto> projects);
+    Task GetManyProjects(IEnumerable<ProjectDto> projects);
     Task GetUserProject(ProjectDto project);
-    Task GetProjectData(ProjectDataDto projectData);
+    Task GetProject(ProjectDataDto projectData);
 
     Task UpdateProject(ProjectChanges projectChanges);
 
-    Task PanelsCreated(IEnumerable<PanelDto> panels);
+    Task PanelsCreated(IEnumerable<PanelCreatedResponse> panels);
+
+    // Task PanelsCreated(IEnumerable<PanelDto> panels);
     Task PanelsUpdated(IEnumerable<PanelDto> panels);
 
     Task StringsCreated(IEnumerable<StringDto> strings);

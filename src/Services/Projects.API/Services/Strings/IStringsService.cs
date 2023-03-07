@@ -2,5 +2,5 @@
 
 public interface IStringsService
 {
-    Task<String> GetOrCreateUndefinedStringAsync(Guid projectId);
+    // Task<String> GetOrCreateUndefinedStringAsync(Guid projectId);
 }

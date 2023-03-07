@@ -41,7 +41,7 @@ public class GetProjectsHandler : IRequestHandler<GetProjectsQuery, IEnumerable<
 
         // _logger.LogInformation("User Identifier {User}", request.Context.UserIdentifier);
 
-        await _hubContext.Clients.Client(request.Context.ConnectionId).GetProjects(projects);
+        await _hubContext.Clients.Client(request.Context.ConnectionId).GetManyProjects(projects);
         // await _hubContext.Clients.User(appUserId.ToString()).GetProjects(projects);
 
         _logger.LogInformation("User {User} get projects", appUserId.ToString());

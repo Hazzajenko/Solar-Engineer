@@ -1,4 +1,5 @@
-﻿using Infrastructure.Repositories;
+﻿using Infrastructure.Common;
+using Infrastructure.Repositories;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Projects.API.Contracts.Data;
@@ -29,5 +30,14 @@ public sealed class PanelsRepository : GenericRepository<ProjectsContext, Panel>
             x => x.Id == id && x.ProjectId == projectId,
             "Panel does not exist"
         );
+    }
+
+    public async Task<TPanelResponse> CreatePanelAsync<TPanelResponse>(Panel panel)
+        where TPanelResponse : IMappable<Panel>
+    {
+        await AddAsync(panel);
+        await SaveChangesAsync();
+
+        return panel.Adapt<TPanelResponse>();
     }
 }

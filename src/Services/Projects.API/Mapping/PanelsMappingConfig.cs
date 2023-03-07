@@ -1,10 +1,12 @@
 ﻿using System.Globalization;
+using System.Security.Claims;
 using Mapster;
 using Microsoft.AspNetCore.SignalR;
 using Projects.API.Contracts.Data;
 using Projects.API.Contracts.Requests.Panels;
+using Projects.API.Contracts.Responses;
 using Projects.API.Entities;
-using Projects.API.Handlers.SignalR.Panels;
+using Projects.API.Handlers.Panels.CreatePanel;
 
 namespace Projects.API.Mapping;
 
@@ -18,12 +20,23 @@ public class PanelsMappingConfig : IRegister
     {
         config
             .NewConfig<(CreatePanelRequest Request, HubCallerContext Context), CreatePanelCommand>()
-            .Map(dest => dest.CreatePanelRequest, src => src.Request)
-            .Map(dest => dest.Context, src => src.Context);
+            .Map(dest => dest.Panel, src => src.Request)
+            .Map<ClaimsPrincipal, HubCallerContext>(dest => dest.User, src => src.Context);
 
         // .Map(dest => dest.ProjectId, src => src.projectId)
         /*config.NewConfig< (CreatePanelRequest Request, Guid projectId, Guid stringId, Guid panelConfigId), CreatePanelCommand>()
             .Map(dest => dest.ProjectId, src => src.projectId)*/
+
+        config
+            .NewConfig<Panel, PanelCreatedResponse>()
+            .Map(dest => dest.ProjectId, src => src.ProjectId.ToString())
+            .Map(dest => dest.Time, src => src.CreatedTime)
+            .Map(dest => dest.ByAppUserId, src => src.CreatedById.ToString())
+            .Map(dest => dest.Panel, src => src);
+
+        config
+            .NewConfig<PanelCreatedResponse, IEnumerable<PanelCreatedResponse>>()
+            .Map(dest => dest, src => new[] { src });
 
         config
             .NewConfig<Panel, PanelDto>()

@@ -2,7 +2,7 @@
 
 public static class StringsFactory
 {
-    public static String CreateUndefinedString(Guid projectId, Guid appUserId)
+    /*public static String CreateUndefinedString(Guid projectId, Guid appUserId)
     {
         return new String
         {
@@ -12,5 +12,5 @@ public static class StringsFactory
             ProjectId = projectId,
             CreatedById = appUserId
         };
-    }
+    }*/
 }

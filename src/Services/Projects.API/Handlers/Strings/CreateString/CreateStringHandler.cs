@@ -1,19 +1,18 @@
 ﻿using Infrastructure.Extensions;
 using Mediator;
 using Microsoft.AspNetCore.SignalR;
-using Projects.API.Contracts.Requests.Strings;
 using Projects.API.Data;
 using Projects.API.Hubs;
 using Projects.API.Mapping;
 
-namespace Projects.API.Handlers.SignalR.Strings;
+namespace Projects.API.Handlers.Strings.CreateString;
 
-public sealed record CreateStringCommand(
+/*public sealed record CreateStringCommand(
     HubCallerContext Context,
     CreateStringRequest CreateStringRequest
-) : IRequest<bool>;
+) : IRequest<bool>;*/
 
-public class CreateStringHandler : IRequestHandler<CreateStringCommand, bool>
+public class CreateStringHandler : ICommandHandler<CreateStringCommand, bool>
 {
     private readonly IHubContext<ProjectsHub, IProjectsHub> _hubContext;
     private readonly ILogger<CreateStringHandler> _logger;
@@ -30,18 +29,17 @@ public class CreateStringHandler : IRequestHandler<CreateStringCommand, bool>
         _hubContext = hubContext;
     }
 
-    public async ValueTask<bool> Handle(CreateStringCommand request, CancellationToken cT)
+    public async ValueTask<bool> Handle(CreateStringCommand command, CancellationToken cT)
     {
-        var user = ThrowHubExceptionIfNull(request.Context.User, "User is null");
-        var appUserId = user.GetGuidUserId();
-        var projectId = request.CreateStringRequest.ProjectId.ToGuid();
+        var appUserId = command.User.GetGuidUserId();
+        var projectId = command.CreateString.ProjectId.ToGuid();
         var appUserProject =
             await _unitOfWork.AppUserProjectsRepository.GetByAppUserIdAndProjectIdAsync(
                 appUserId,
                 projectId
             );
 
-        var @string = String.Create(request.CreateStringRequest, projectId, appUserId);
+        var @string = String.Create(command.CreateString, projectId, appUserId);
 
         await _unitOfWork.StringsRepository.AddAsync(@string);
         await _unitOfWork.SaveChangesAsync();

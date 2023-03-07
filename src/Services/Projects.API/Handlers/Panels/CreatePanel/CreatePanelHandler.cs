@@ -1,48 +1,40 @@
 ﻿using Infrastructure.Extensions;
+using Infrastructure.Mapping;
 using Mediator;
 using Microsoft.AspNetCore.SignalR;
-using Projects.API.Contracts.Requests.Panels;
+using Projects.API.Contracts.Responses;
 using Projects.API.Data;
 using Projects.API.Entities;
 using Projects.API.Hubs;
-using Projects.API.Mapping;
-using Projects.API.Services.Strings;
 
-namespace Projects.API.Handlers.SignalR.Panels;
+namespace Projects.API.Handlers.Panels.CreatePanel;
 
-public sealed record CreatePanelCommand(
+/*public sealed record CreatePanelCommand(
     HubCallerContext Context,
     CreatePanelRequest CreatePanelRequest
-) : IRequest<bool>;
+) : IRequest<bool>;*/
 
-public class CreatePanelHandler : IRequestHandler<CreatePanelCommand, bool>
+public class CreatePanelHandler : ICommandHandler<CreatePanelCommand, bool>
 {
     private readonly IHubContext<ProjectsHub, IProjectsHub> _hubContext;
     private readonly ILogger<CreatePanelHandler> _logger;
-    private readonly IMediator _mediator;
-    private readonly IStringsService _stringsService;
     private readonly IProjectsUnitOfWork _unitOfWork;
 
     public CreatePanelHandler(
         ILogger<CreatePanelHandler> logger,
         IProjectsUnitOfWork unitOfWork,
-        IHubContext<ProjectsHub, IProjectsHub> hubContext,
-        IStringsService stringsService,
-        IMediator mediator
+        IHubContext<ProjectsHub, IProjectsHub> hubContext
     )
     {
         _logger = logger;
         _unitOfWork = unitOfWork;
         _hubContext = hubContext;
-        _stringsService = stringsService;
-        _mediator = mediator;
     }
 
-    public async ValueTask<bool> Handle(CreatePanelCommand request, CancellationToken cT)
+    public async ValueTask<bool> Handle(CreatePanelCommand command, CancellationToken cT)
     {
-        var user = ThrowHubExceptionIfNull(request.Context.User, "User is null");
-        var appUserId = user.GetGuidUserId();
-        var projectId = request.CreatePanelRequest.ProjectId.ToGuid();
+        var appUserId = command.User.GetGuidUserId();
+        var projectId = command.Panel.ProjectId.ToGuid();
         var appUserProject =
             await _unitOfWork.AppUserProjectsRepository.GetByAppUserIdAndProjectIdAsync(
                 appUserId,
@@ -55,7 +47,7 @@ public class CreatePanelHandler : IRequestHandler<CreatePanelCommand, bool>
             "User is not apart of this project"
         );*/
 
-        var panelStringId = request.CreatePanelRequest.StringId;
+        var panelStringId = command.Panel.StringId;
         var panelHasString = panelStringId.Equals("undefined") is false;
 
         var panelString = panelHasString
@@ -77,7 +69,7 @@ public class CreatePanelHandler : IRequestHandler<CreatePanelCommand, bool>
 
         ThrowHubExceptionIfNull(panelString, "String does not exist");
 
-        var panelConfigId = request.CreatePanelRequest.PanelConfigId;
+        var panelConfigId = command.Panel.PanelConfigId;
         var doesPanelHaveConfig = panelConfigId.Equals("undefined") is false;
 
         var panelConfig = doesPanelHaveConfig is false
@@ -91,17 +83,30 @@ public class CreatePanelHandler : IRequestHandler<CreatePanelCommand, bool>
             panelString.Id,
             panelConfig.Id
         );*/
-        var panel = new Panel
+        /*var panel = new Panel
         {
-            Id = request.CreatePanelRequest.Id.ToGuid(),
+            Id = command.Panel.Id.ToGuid(),
             StringId = panelString.Id,
             PanelConfigId = panelConfig.Id,
             ProjectId = appUserProject.ProjectId,
-            Location = request.CreatePanelRequest.Location,
-            Rotation = request.CreatePanelRequest.Rotation
-        };
-        await _unitOfWork.PanelsRepository.AddAsync(panel);
-        await _unitOfWork.SaveChangesAsync();
+            Location = command.Panel.Location,
+            Rotation = command.Panel.Rotation
+        };*/
+        var panel = Panel.Create(
+            command.Panel.Id.ToGuid(),
+            appUserProject.ProjectId,
+            panelString.Id,
+            panelConfig.Id,
+            command.Panel.Location,
+            command.Panel.Rotation,
+            appUserId
+        );
+        // var panel = Panel.Create(command.Panel.Id.ToG, panelString.Id, panelConfig.Id, appUserProject.ProjectId);
+        // await _unitOfWork.PanelsRepository.AddAsync(panel);
+        // await _unitOfWork.SaveChangesAsync();
+        var response = await _unitOfWork.PanelsRepository.CreatePanelAsync<PanelCreatedResponse>(
+            panel
+        );
 
         var projectMembers =
             await _unitOfWork.AppUserProjectsRepository.GetProjectMemberIdsByProjectId(
@@ -110,8 +115,13 @@ public class CreatePanelHandler : IRequestHandler<CreatePanelCommand, bool>
 
         await _hubContext.Clients
             .Group(appUserProject.ProjectId.ToString())
-            .PanelsCreated(panel.ToDtoList());
-        await _hubContext.Clients.Users(projectMembers).PanelsCreated(panel.ToDtoList());
+            .PanelsCreated(response.ToIEnumerable());
+
+        /*await _hubContext.Clients
+            .Group(appUserProject.ProjectId.ToString())
+            .PanelsCreated(panel.ToDtoList());*/
+        await _hubContext.Clients.Users(projectMembers).PanelsCreated(response.ToIEnumerable());
+        // await _hubContext.Clients.Users(projectMembers).PanelsCreated(panel.ToDtoList());
 
         _logger.LogInformation(
             "User {User} created panel {Panel} in project {Project}",

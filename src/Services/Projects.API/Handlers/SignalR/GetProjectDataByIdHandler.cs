@@ -71,8 +71,9 @@ public class GetProjectDataByIdHandler : IRequestHandler<GetProjectDataByIdQuery
             PanelLinks = panelLinks
         };
 
+        // _hubContext.Clients.
         // await _hubContext.Clients.User(appUserId.ToString()).GetProjectData(response);
-        await _hubContext.Clients.Client(request.Context.ConnectionId).GetProjectData(response);
+        await _hubContext.Clients.Client(request.Context.ConnectionId).GetProject(response);
 
         _logger.LogInformation(
             "User {User} get project data {Project}",

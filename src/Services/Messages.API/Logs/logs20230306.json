@@ -8,3 +8,4 @@
 {"@t":"2023-03-06T05:31:05.0691654Z","@mt":"Application started. Press Ctrl+C to shut down.","SourceContext":"Microsoft.Hosting.Lifetime","Application":"messages-service"}
 {"@t":"2023-03-06T05:31:05.0697687Z","@mt":"Hosting environment: {EnvName}","EnvName":"Development","SourceContext":"Microsoft.Hosting.Lifetime","Application":"messages-service"}
 {"@t":"2023-03-06T05:31:05.0704507Z","@mt":"Content root path: {ContentRoot}","ContentRoot":"C:\\Users\\jenki\\source\\app\\solar-engineer\\src\\Services\\Messages.API","SourceContext":"Microsoft.Hosting.Lifetime","Application":"messages-service"}
+{"@t":"2023-03-06T11:31:23.6547946Z","@mt":"Application is shutting down...","SourceContext":"Microsoft.Hosting.Lifetime","Application":"messages-service"}

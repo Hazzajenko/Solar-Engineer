@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
+using Infrastructure.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
@@ -37,6 +38,18 @@ public static class SignalRExtensions
             return hubItem;
         Log.Logger.Error("{Message}", message);
         throw new HubException(message);
+    }
+
+    public static Guid GetGuidUserId(this HubCallerContext context)
+    {
+        var user = ThrowHubExceptionIfNull(context.User, "User is not authenticated");
+        return user.TryGetGuidUserId(new HubException("User is not authenticated"));
+    }
+
+    public static HubAppUser ToHubAppUser(this HubCallerContext context)
+    {
+        var userId = context.GetGuidUserId();
+        return HubAppUser.Create(userId, context.ConnectionId);
     }
 
     public static T ThrowHubExceptionIfNull<T>([NotNull] T? projectItem, string message)

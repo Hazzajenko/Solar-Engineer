@@ -5,12 +5,18 @@ using Infrastructure.Data;
 using Infrastructure.Logging;
 using Infrastructure.Web;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.SignalR;
 using Projects.API.Data;
 using Projects.API.Extensions;
+using Projects.API.HubFilters;
 
 var builder = WebApplication.CreateBuilder(
     new WebApplicationOptions { Args = args, ContentRootPath = Directory.GetCurrentDirectory() }
 );
+
+// var webHost = WebHost.CreateDefaultBuilder(args)
+/*.UseStartup<Startup>()*/
+;
 
 // builder.RegisterSerilog();
 builder.ConfigureSerilog();
@@ -19,12 +25,29 @@ var config = builder.Configuration;
 config.AddEnvironmentVariables("solarengineer_");
 /*builder.Services.AddMediator(options => { options.ServiceLifetime = ServiceLifetime.Transient; });*/
 builder.Services.AddApplicationServices(config);
+// Register(typeof(IUserIdProvider), () => new HubsUserIdProvider());
+// builder.WebHost.
+// GlobalHost.DependencyResolver.Register(typeof(IUserIdProvider), () => new MyIdProvider());
+// GlobalHost;
+// GlobalHost.DependencyResolver.Register(typeof(IUserIdProvider), () => new HubsUserIdProvider());
 builder.Services.ConfigureJwtAuthentication(config);
 builder.Services.AddAuthorization();
 builder.Services.InitDbContext<ProjectsContext>(config, builder.Environment);
 
-builder.Services.ConfigureSignalRWithRedis(builder.Environment);
-
+// builder.Services.ConfigureSignalRWithRedis(builder.Environment);
+builder.Services
+    .AddSignalR(options =>
+    {
+        options.DisableImplicitFromServicesParameters = true;
+        if (builder.Environment.IsDevelopment())
+            options.EnableDetailedErrors = true;
+        options.AddFilter<HubLoggerFilter>();
+    })
+    .AddStackExchangeRedis(
+        "localhost",
+        options => { options.Configuration.ChannelPrefix = "SolarEngineerApp"; }
+    );
+// options.AddFilter<CustomFilter>();
 /*builder.Services.AddSignalR(options =>
 {
     options.DisableImplicitFromServicesParameters = true;

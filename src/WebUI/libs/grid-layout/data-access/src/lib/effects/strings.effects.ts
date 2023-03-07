@@ -58,7 +58,7 @@ export class StringsEffects {
           name: string.name,
         }
         this.stringsSignalrService.addStringSignalr(request)
-        return ProjectsHubActions.sendSignalrRequest({ request })
+        return ProjectsHubActions.sendSignalrRequest({ signalrRequest: request })
       }),
     ),
   )

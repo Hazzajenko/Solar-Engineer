@@ -2,13 +2,13 @@ import { inject, Injectable } from '@angular/core'
 import { tapResponse } from '@ngrx/component-store'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { Store } from '@ngrx/store'
-import { ProjectsService, ProjectsStoreService } from '@projects/data-access'
+import { ProjectsActions, ProjectsService, ProjectsStoreService } from '@projects/data-access'
 import { ProjectModel } from '@shared/data-access/models'
 import { catchError, map, of, switchMap } from 'rxjs'
-import { ProjectsActions } from '@projects/data-access'
 import { AuthActions } from '@auth/data-access'
 // import { tap } from 'rxjs/operators'
 import { ProjectsSignalrService } from '../api'
+import { PanelsSignalrService } from '@grid-layout/data-access'
 
 @Injectable({
   providedIn: 'root',
@@ -18,6 +18,7 @@ export class ProjectsEffects {
   private projectsService = inject(ProjectsService)
   private projectsStore = inject(ProjectsStoreService)
   private projectsSignalrService = inject(ProjectsSignalrService)
+  private panelsSignalrService = inject(PanelsSignalrService)
   private store = inject(Store)
 
   initProjectsConnection$ = createEffect(
@@ -25,7 +26,9 @@ export class ProjectsEffects {
       this.actions$.pipe(
         ofType(AuthActions.signInSuccess),
         map(({ token }) => {
-          this.projectsSignalrService.createProjectsHubConnection(token)
+          const projectsHubConnection =
+            this.projectsSignalrService.createProjectsHubConnection(token)
+          this.panelsSignalrService.initPanelsHub(projectsHubConnection)
         }),
       ),
     { dispatch: false },
@@ -54,9 +57,7 @@ export class ProjectsEffects {
         ofType(ProjectsActions.getProjectData),
         switchMap(() =>
           this.projectsStore.select.projectFromRoute$.pipe(
-            map((project) =>
-              project ? this.projectsSignalrService.invokeGetProjectData(project.id) : null,
-            ),
+            map((project) => (project ? this.projectsSignalrService.getProject(project.id) : null)),
           ),
         ),
       ),

@@ -11,12 +11,12 @@ import {
 } from '@angular/core'
 
 import {
-  ClientXY,
-  XYModel,
   ClickService,
+  ClientXY,
   DoubleClickService,
   MouseService,
   MultiStoreService,
+  XYModel,
 } from '@grid-layout/data-access'
 
 @Directive({
@@ -97,9 +97,9 @@ export class WrapperDirective implements OnInit {
   async mouseDown(event: MouseEvent) {
     event.preventDefault()
     event.stopPropagation()
-    console.log('MOUSEDOWN--WRAPPER', event)
+    // console.log('MOUSEDOWN--WRAPPER', event)
     if (event.ctrlKey /* || event.button === 1*/) {
-      console.log('MOUSEDOWN--WRAPPER', event)
+      // console.log('MOUSEDOWN--WRAPPER', event)
       const rect = this.elementRef.nativeElement.getBoundingClientRect()
       this.startX = event.clientX - rect.left
       this.startY = event.clientY - rect.top

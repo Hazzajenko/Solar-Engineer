@@ -1,34 +1,18 @@
 ﻿using FluentValidation;
+using Projects.API.Contracts.Data;
 
 namespace Projects.API.Contracts.Requests.Panels;
 
 public class UpdatePanelRequest
 {
-    public required string Id { get; init; } = default!;
-    public required string ProjectId { get; init; } = default!;
-    public required string StringId { get; init; }
-    public PanelChanges Changes { get; init; } = default!;
-}
-
-public class PanelChanges
-{
-    public string? Location { get; init; }
-    public string? PanelConfigId { get; init; }
-    public int? Rotation { get; init; }
+    public required string ProjectId { get; init; }
+    public required PanelUpdate Update { get; init; }
 }
 
 public class UpdatePanelRequestValidator : AbstractValidator<UpdatePanelRequest>
 {
     public UpdatePanelRequestValidator()
     {
-        RuleFor(v => v.Id)
-            .NotNull()
-            .WithMessage("Id cannot be null")
-            .NotEmpty()
-            .WithMessage("Id cannot be empty")
-            .Must(x => Guid.TryParse(x, out _))
-            .WithMessage("Id must be a valid Guid");
-
         RuleFor(v => v.ProjectId)
             .NotNull()
             .WithMessage("ProjectId cannot be null")
@@ -37,15 +21,21 @@ public class UpdatePanelRequestValidator : AbstractValidator<UpdatePanelRequest>
             .Must(x => Guid.TryParse(x, out _))
             .WithMessage("ProjectId must be a valid Guid");
 
-        RuleFor(v => v.StringId)
+        RuleFor(v => v.Update)
             .NotNull()
-            .WithMessage("StringId cannot be null")
+            .WithMessage("Update cannot be null")
             .NotEmpty()
-            .WithMessage("StringId cannot be empty")
-            .Must(x => Guid.TryParse(x, out _))
-            .WithMessage("StringId must be a valid Guid");
+            .WithMessage("Update cannot be empty");
 
-        RuleFor(v => v.Changes)
+        RuleFor(v => v.Update.Id)
+            .NotNull()
+            .WithMessage("Id cannot be null")
+            .NotEmpty()
+            .WithMessage("Id cannot be empty")
+            .Must(x => Guid.TryParse(x, out _))
+            .WithMessage("Id must be a valid Guid");
+
+        RuleFor(v => v.Update.Changes)
             .NotNull()
             .WithMessage("Changes cannot be null")
             .NotEmpty()

@@ -1,25 +1,24 @@
 ﻿using Projects.API.Contracts.Data;
-using Projects.API.Contracts.Requests.Panels;
 using Projects.API.Entities;
 
 namespace Projects.API.Mapping;
 
 public static class PanelsMapping
 {
-    public static Panel ToDomain(
+    /*public static Panel ToDomain(
         this CreatePanelRequest request,
         Guid projectId,
         Guid stringId,
         Guid panelConfigId
     )
     {
-        return new Panel
+        /*return new Panel
         {
             StringId = stringId,
             PanelConfigId = panelConfigId,
             ProjectId = projectId
-        };
-    }
+        };#1#
+    }*/
 
     public static PanelDto ToDto(this Panel panel)
     {

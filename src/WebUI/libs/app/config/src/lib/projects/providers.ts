@@ -4,11 +4,6 @@ import { MatSnackBarModule, MatSnackBarRef } from '@angular/material/snack-bar'
 import { provideEffects } from '@ngrx/effects'
 import { provideState } from '@ngrx/store'
 import {
-  LinksEffects,
-  PanelsEffects,
-  PathsEffects,
-  SelectedEffects,
-  StringsEffects,
   BLOCKS_FEATURE_KEY,
   blocksReducer,
   ENTITIES_FEATURE_KEY,
@@ -16,25 +11,33 @@ import {
   GRID_FEATURE_KEY,
   gridReducer,
   LINKS_FEATURE_KEY,
+  LinksEffects,
   linksReducer,
   MULTI_FEATURE_KEY,
   multiReducer,
   PANELS_FEATURE_KEY,
+  PanelsEffects,
   panelsReducer,
   PATHS_FEATURE_KEY,
+  PathsEffects,
   pathsReducer,
+  PROJECTS_HUB_FEATURE_KEY,
+  projectsHubReducer,
+  ProjectsHubsEffects,
   SELECTED_FEATURE_KEY,
+  SelectedEffects,
   selectedReducer,
   STRINGS_FEATURE_KEY,
+  StringsEffects,
   stringsReducer,
   UI_FEATURE_KEY,
   uiReducer,
 } from '@grid-layout/data-access'
-import { ProjectsEffects } from '@projects/data-access'
-import { PROJECTS_FEATURE_KEY, projectsReducer } from '@projects/data-access'
+import { PROJECTS_FEATURE_KEY, ProjectsEffects, projectsReducer } from '@projects/data-access'
 
 export const projectsProviders = [
   importProvidersFrom(MatDialogModule, MatSnackBarModule, MatSnackBarRef),
+  provideState(PROJECTS_HUB_FEATURE_KEY, projectsHubReducer),
   provideState(PROJECTS_FEATURE_KEY, projectsReducer),
   provideState(PANELS_FEATURE_KEY, panelsReducer),
   provideState(STRINGS_FEATURE_KEY, stringsReducer),
@@ -55,5 +58,6 @@ export const projectsProviders = [
     EntitiesEffects,*/,
     SelectedEffects,
     PathsEffects,
+    ProjectsHubsEffects,
   ]),
 ]

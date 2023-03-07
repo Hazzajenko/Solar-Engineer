@@ -4,7 +4,7 @@ import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signal
 // import { UserIsOnline } from '../../../../../app/data-access/connections/src/lib/api/connections.methods'
 import { ProjectModel } from '@shared/data-access/models'
 import { ProjectsStoreService } from '../services'
-import { GetProjectData, GetProjects } from './projects.methods'
+import { GetManyProjects, GetProject } from './projects.methods'
 import { GetProjectDataResponse } from '../models/get-project-data.response'
 import { LoggerService } from '@shared/logger'
 import { PanelsStoreService } from '@grid-layout/data-access'
@@ -46,7 +46,7 @@ export class ProjectsSignalrService {
           source: 'Projects-Signalr-Service',
           objects: ['Projects Hub Connection started'],
         })
-        this.getProjects()
+        this.getUserProjects()
       })
       .catch((err) => {
         this.logger.error({
@@ -56,60 +56,47 @@ export class ProjectsSignalrService {
         throw new Error('Error while starting Projects Hub connection: ' + err)
       })
 
-    this.projectsHubConnection.on(GetProjects, (projects: ProjectModel[]) => {
-      this.logger.debug({ source: 'Projects-Signalr-Service', objects: ['GetProjects', projects] })
+    this.projectsHubConnection.on(GetManyProjects, (projects: ProjectModel[]) => {
+      this.logger.debug({
+        source: 'Projects-Signalr-Service',
+        objects: [GetManyProjects, projects],
+      })
       this.projectsStore.dispatch.addManyProjects(projects)
     })
 
-    this.projectsHubConnection.on(GetProjectData, (projectData: GetProjectDataResponse) => {
+    this.projectsHubConnection.on(GetProject, (projectData: GetProjectDataResponse) => {
       this.logger.debug({
         source: 'Projects-Signalr-Service',
-        objects: ['GetProjectData', projectData],
+        objects: [GetProject, projectData],
       })
       if (projectData.panels) {
         this.panelsStore.dispatch.loadPanelsSuccess(projectData.panels)
       }
-
-      // this.projectsStore.dispatch.addManyProjects(projects)
     })
-
-    // this.projectsHubConnection.invoke(GetProjects, (projects: ProjectModel[]) => {
-    //   console.log(projects)
-    //   this.projectsStore.dispatch.addManyProjects(projects)
-    // }).then(r => console.log(r)).catch(e => console.log(e))
 
     return this.projectsHubConnection
   }
 
-  getProjects() {
+  getUserProjects() {
     if (!this.projectsHubConnection) return
     this.projectsHubConnection
-      .invoke(GetProjects)
-      // .then((r) => this.logger.debug('Projects-Signalr-Service', 'GetProjects', r))
-      .then((r) =>
-        this.logger.debug({ source: 'Projects-Signalr-Service', objects: ['GetProjects', r] }),
-      )
+      .invoke(GetManyProjects)
       .catch((e) =>
         this.logger.debug({ source: 'Projects-Signalr-Service', objects: ['GetProjects', e] }),
       )
-    // .catch((e) => this.logger.error('Projects-Signalr-Service', 'GetProjects', e))
   }
 
-  invokeGetProjectData(projectId: string) {
+  getProject(projectId: string) {
     if (!this.projectsHubConnection) return
     this.projectsHubConnection
-      .invoke(GetProjectData, projectId)
-      .then((r) =>
-        this.logger.debug({ source: 'Projects-Signalr-Service', objects: ['GetProjectData', r] }),
-      )
+      .invoke(GetProject, projectId)
       .catch((e) =>
-        this.logger.debug({ source: 'Projects-Signalr-Service', objects: ['GetProjectData', e] }),
+        this.logger.debug({ source: 'Projects-Signalr-Service', objects: ['getProject', e] }),
       )
   }
 
   stopHubConnection() {
     if (!this.projectsHubConnection) return
-    // this.projectsHubConnection.stop().catch((error) => this.logger.error('Projects-Signalr-Service', 'StopHubConnection', error))
     this.projectsHubConnection.stop().catch((error) =>
       this.logger.error({
         source: 'Projects-Signalr-Service',

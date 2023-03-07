@@ -1,19 +1,13 @@
 ﻿using Infrastructure.Extensions;
 using Mediator;
 using Microsoft.AspNetCore.SignalR;
-using Projects.API.Contracts.Requests.Panels;
 using Projects.API.Data;
 using Projects.API.Hubs;
 using Projects.API.Mapping;
 
-namespace Projects.API.Handlers.SignalR.Panels;
+namespace Projects.API.Handlers.Panels.UpdatePanel;
 
-public sealed record UpdatePanelCommand(
-    HubCallerContext Context,
-    UpdatePanelRequest UpdatePanelRequest
-) : IRequest<bool>;
-
-public class UpdatePanelHandler : IRequestHandler<UpdatePanelCommand, bool>
+public class UpdatePanelHandler : ICommandHandler<UpdatePanelCommand, bool>
 {
     private readonly IHubContext<ProjectsHub, IProjectsHub> _hubContext;
     private readonly ILogger<UpdatePanelHandler> _logger;
@@ -30,25 +24,24 @@ public class UpdatePanelHandler : IRequestHandler<UpdatePanelCommand, bool>
         _hubContext = hubContext;
     }
 
-    public async ValueTask<bool> Handle(UpdatePanelCommand request, CancellationToken cT)
+    public async ValueTask<bool> Handle(UpdatePanelCommand command, CancellationToken cT)
     {
-        var user = ThrowHubExceptionIfNull(request.Context.User, "User is null");
-        var appUserId = user.GetGuidUserId();
-        var projectId = request.UpdatePanelRequest.ProjectId.ToGuid();
+        var appUserId = command.User.GetGuidUserId();
+        var projectId = command.UpdatePanel.ProjectId.ToGuid();
         var appUserProject =
             await _unitOfWork.AppUserProjectsRepository.GetByAppUserIdAndProjectIdAsync(
                 appUserId,
                 projectId
             );
 
-        var panelId = request.UpdatePanelRequest.Id.ToGuid();
+        var panelId = command.UpdatePanel.Update.Id.ToGuid();
 
         var panel = await _unitOfWork.PanelsRepository.GetPanelByIdAndProjectIdAsync(
             panelId,
             projectId
         );
 
-        var changes = request.UpdatePanelRequest.Changes;
+        var changes = command.UpdatePanel.Update.Changes;
 
         _unitOfWork.Attach(panel);
         if (changes.Location is not null)

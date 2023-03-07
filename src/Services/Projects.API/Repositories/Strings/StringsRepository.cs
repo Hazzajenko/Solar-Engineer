@@ -36,7 +36,7 @@ public sealed class StringsRepository
         );
     }
 
-    public async Task<String> GetOrCreateUndefinedStringAsync(Guid projectId)
+    /*public async Task<String> GetOrCreateUndefinedStringAsync(Guid projectId)
     {
         var undefinedString = await Queryable.FirstOrDefaultAsync(
             x => x.Name == "undefined" && x.ProjectId == projectId
@@ -58,7 +58,7 @@ public sealed class StringsRepository
         // SaveC
 
         return undefinedString;
-    }
+    }*/
 
     public async Task<String> GetByIdAndProjectIdAsync(Guid id, Guid projectId)
     {

@@ -14,6 +14,6 @@ public class AppUserProject : IEntity, IProject
     public bool CanInvite { get; set; }
     public bool CanKick { get; set; }
     public Guid Id { get; set; }
-    public DateTime CreatedTime { get; set; }
-    public DateTime LastModifiedTime { get; set; }
+    public DateTime CreatedTime { get; set; } = DateTime.UtcNow;
+    public DateTime LastModifiedTime { get; set; } = DateTime.UtcNow;
 }
