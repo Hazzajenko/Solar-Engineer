@@ -7,6 +7,7 @@ import {
   PanelsSignalrService,
   PanelsStoreService,
   ProjectsHubActions,
+  ProjectsHubService,
   UpdatePanelRequest,
 } from '../'
 import { BlocksActions, PanelsActions } from '../store'
@@ -14,8 +15,8 @@ import { ProjectsActions, ProjectsStoreService } from '@projects/data-access'
 import { of, switchMap } from 'rxjs'
 import { map } from 'rxjs/operators'
 import { LoggerService } from '@shared/logger'
-import { SignalrRequest } from '@shared/data-access/models'
-import { getGuid } from '@shared/utils'
+
+// import { SignalrRequest } from '@shared/data-access/models'
 
 @Injectable({
   providedIn: 'root',
@@ -31,6 +32,7 @@ export class PanelsEffects {
   private panelsStore = inject(PanelsStoreService)
   private panelsSignalrService = inject(PanelsSignalrService)
   private logger = inject(LoggerService)
+  private projectsHubService = inject(ProjectsHubService)
   /*  initPanels$ = createEffect(
       () =>
         this.actions$.pipe(
@@ -69,27 +71,44 @@ export class PanelsEffects {
     ),
   )
 
-  addPanelSignalR$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(PanelsActions.addPanel),
-      map(({ panel }) => {
-        // TODO implement a service that determines if the project is using signalr
-        const isSignalr = true
-        if (!isSignalr) {
-          return ProjectsHubActions.cancelSignalrRequest()
-        }
-        const request: CreatePanelRequest = {
-          id: panel.id,
-          projectId: panel.projectId,
-          stringId: panel.stringId,
-          location: panel.location,
-          panelConfigId: 'undefined',
-          rotation: panel.rotation,
-        }
-        this.panelsSignalrService.addPanelSignalr(request)
-        return ProjectsHubActions.sendSignalrRequest({ signalrRequest: request })
-      }),
-    ),
+  addPanelSignalR$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(PanelsActions.addPanel),
+        map(({ panel }) => {
+          // TODO implement a service that determines if the project is using signalr
+          const isSignalr = true
+          if (!isSignalr) {
+            return ProjectsHubActions.cancelSignalrRequest()
+          }
+          let request: CreatePanelRequest = {
+            signalrRequestId: undefined,
+            projectId: panel.projectId,
+            create: {
+              id: panel.id,
+              projectId: panel.projectId,
+              stringId: panel.stringId,
+              location: panel.location,
+              panelConfigId: 'undefined',
+              rotation: panel.rotation,
+            },
+          }
+          /*
+                    let request: UpdatePanelRequest = {
+                      id: undefined,
+                      projectId: panel.projectId,
+                      update: {
+                        id: panel.id,
+                        changes: update.changes,
+                      },
+                    }*/
+          request = this.projectsHubService.createSignalrRequest(request, 'PANEL', 'CREATE')
+          // return this.panelsSignalrService.updatePanelSignalr(request)
+          return this.panelsSignalrService.addPanelSignalr(request)
+          // return ProjectsHubActions.sendSignalrRequest({ signalrRequest: request })
+        }),
+      ),
+    { dispatch: false },
   )
 
   /*  addPanelBackend$ = createEffect(
@@ -173,6 +192,7 @@ export class PanelsEffects {
           if (!isSignalr) {
             return ProjectsHubActions.cancelSignalrRequest()
           }
+
           if (typeof update.id !== 'string') {
             this.logger.error({ source: 'panels.effects', objects: ['update.id is not a string'] })
             throw new Error('update.id is not a string')
@@ -180,19 +200,16 @@ export class PanelsEffects {
 
           const panel = await this.panelsStore.select.panelById(update.id)
 
-          const signalrRequestId = getGuid()
-          const request: UpdatePanelRequest = {
-            signalrRequestId,
+          let request: UpdatePanelRequest = {
+            signalrRequestId: undefined,
             projectId: panel.projectId,
             update: {
               id: panel.id,
               changes: update.changes,
             },
           }
-          const signalrRequest = new SignalrRequest(signalrRequestId, 'UpdatePanel', request)
-          // this.panelsSignalrService['updatePanelSignalr'](request)
-          this.panelsSignalrService.updatePanelSignalr(request)
-          return ProjectsHubActions.sendSignalrRequest({ signalrRequest })
+          request = this.projectsHubService.createSignalrRequest(request, 'PANEL', 'UPDATE')
+          return this.panelsSignalrService.updatePanelSignalr(request)
         }),
       ),
     { dispatch: false },

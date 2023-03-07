@@ -1,7 +1,13 @@
 import { inject, Injectable } from '@angular/core'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { Store } from '@ngrx/store'
-import { CreateStringRequest, ProjectsHubActions, StringsActions, StringsService } from '../'
+import {
+  CreateStringRequest,
+  ProjectsHubActions,
+  ProjectsHubService,
+  StringsActions,
+  StringsService,
+} from '../'
 import { ProjectsActions, ProjectsStoreService } from '@projects/data-access'
 import { map } from 'rxjs'
 import { StringsSignalrService } from '../api/strings/strings-signalr.service'
@@ -16,6 +22,7 @@ export class StringsEffects {
   private stringsService = inject(StringsService)
   private stringsSignalrService = inject(StringsSignalrService)
   private projectsStore = inject(ProjectsStoreService)
+  private projectsHubService = inject(ProjectsHubService)
   /*  initStrings$ = createEffect(() =>
       this.actions$.pipe(
         ofType(ProjectsActions.initSelectProject),
@@ -44,23 +51,32 @@ export class StringsEffects {
     ),
   )
 
-  addStringSignalR$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(StringsActions.addString),
-      map(({ string }) => {
-        const isSignalr = true
-        if (!isSignalr) {
-          return ProjectsHubActions.cancelSignalrRequest()
-        }
-        const request: CreateStringRequest = {
-          id: string.id,
-          projectId: string.projectId,
-          name: string.name,
-        }
-        this.stringsSignalrService.addStringSignalr(request)
-        return ProjectsHubActions.sendSignalrRequest({ signalrRequest: request })
-      }),
-    ),
+  addStringSignalR$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(StringsActions.addString),
+        map(({ string }) => {
+          const isSignalr = true
+          if (!isSignalr) {
+            return ProjectsHubActions.cancelSignalrRequest()
+          }
+          let request: CreateStringRequest = {
+            signalrRequestId: undefined,
+            projectId: string.projectId,
+            create: {
+              id: string.id,
+              projectId: string.projectId,
+              name: string.name,
+            },
+            // name: string.name,
+          }
+          request = this.projectsHubService.createSignalrRequest(request, 'STRING', 'CREATE')
+
+          return this.stringsSignalrService.addStringSignalr(request)
+          // return ProjectsHubActions.sendSignalrRequest({ signalrRequest: request })
+        }),
+      ),
+    { dispatch: false },
   )
 
   /* addStringHttp$ = createEffect(

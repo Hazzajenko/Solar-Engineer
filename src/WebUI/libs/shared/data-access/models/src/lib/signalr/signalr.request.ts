@@ -1,5 +1,4 @@
-import { getGuid } from '@shared/utils'
-
+/*
 export class SignalrRequest {
   id: string
   model: string
@@ -18,3 +17,4 @@ export class SignalrRequest {
     this.time = new Date()
   }
 }
+*/

@@ -6,10 +6,37 @@ namespace Projects.API.HubFilters;
 public class HubLoggerFilter : IHubFilter
 {
     public async ValueTask<object?> InvokeMethodAsync(
-        HubInvocationContext invocationContext, Func<HubInvocationContext, ValueTask<object?>> next)
+        HubInvocationContext invocationContext,
+        Func<HubInvocationContext, ValueTask<object?>> next
+    )
     {
-        Log.Logger.Information("Calling hub method {HubMethodName}", invocationContext.HubMethodName);
+        var userId = invocationContext.Context.GetGuidUserId();
+        // invocationContext.Context.Features.Get<IUserIdProvider>();
+        // invocationContext.HubMethodArguments.;
+        Log.Logger.Information(
+            "User {UserId}: Calling hub method {HubMethodName}",
+            userId,
+            invocationContext.HubMethodName
+        );
+        if (invocationContext.HubMethodArguments.Any())
+            invocationContext.HubMethodArguments
+                .ToList()
+                .ForEach(arg =>
+                {
+                    Log.Logger.Information(
+                        "User {UserId}: Calling hub method {HubMethodName} with argument {Argument}",
+                        userId,
+                        invocationContext.HubMethodName,
+                        arg
+                    );
+                });
+        /*Log.Logger.Information(
+            "Calling hub method {HubMethodName}",
+            invocationContext.HubMethodName
+        );*/
         // Console.WriteLine($"Calling hub method '{invocationContext.HubMethodName}'");
+        // invocationContext.Context.GetGuidUserId();
+        // invocationContext.ServiceProvider.
         try
         {
             return await next(invocationContext);
@@ -17,11 +44,30 @@ public class HubLoggerFilter : IHubFilter
         catch (Exception ex)
         {
             Console.WriteLine($"Exception calling '{invocationContext.HubMethodName}': {ex}");
-            Log.Logger.Error(ex, "Exception calling hub method {HubMethodName}", invocationContext.HubMethodName);
+            Log.Logger.Error(
+                ex,
+                "User {UserId}: Exception calling hub method {HubMethodName}",
+                userId,
+                invocationContext.HubMethodName
+            );
             // Log.Logger.Error("{StackTrace}", ex.);
 
             throw;
         }
+    }
+
+    public Task OnConnectedAsync(HubLifetimeContext context, Func<HubLifetimeContext, Task> next)
+    {
+        var userId = context.Context.GetGuidUserId();
+        // invocationContext.Context.Features.Get<IUserIdProvider>();
+        // invocationContext.HubMethodArguments.;
+        Log.Logger.Information(
+            "User {UserId} connected",
+            userId
+            // context.Context.
+        );
+
+        return next(context);
     }
 
     /*// Optional method

@@ -1,4 +1,5 @@
-﻿using Infrastructure.Extensions;
+﻿using Infrastructure.Exceptions;
+using Infrastructure.Extensions;
 using Infrastructure.Mapping;
 using Mediator;
 using Microsoft.AspNetCore.SignalR;
@@ -34,7 +35,7 @@ public class CreatePanelHandler : ICommandHandler<CreatePanelCommand, bool>
     public async ValueTask<bool> Handle(CreatePanelCommand command, CancellationToken cT)
     {
         var appUserId = command.User.GetGuidUserId();
-        var projectId = command.Panel.ProjectId.ToGuid();
+        var projectId = command.Request.ProjectId.ToGuid();
         var appUserProject =
             await _unitOfWork.AppUserProjectsRepository.GetByAppUserIdAndProjectIdAsync(
                 appUserId,
@@ -47,7 +48,7 @@ public class CreatePanelHandler : ICommandHandler<CreatePanelCommand, bool>
             "User is not apart of this project"
         );*/
 
-        var panelStringId = command.Panel.StringId;
+        var panelStringId = command.Request.Create.StringId;
         var panelHasString = panelStringId.Equals("undefined") is false;
 
         var panelString = panelHasString
@@ -67,16 +68,18 @@ public class CreatePanelHandler : ICommandHandler<CreatePanelCommand, bool>
             await _unitOfWork.SaveChangesAsync();
         }
 
-        ThrowHubExceptionIfNull(panelString, "String does not exist");
+        // ThrowHubExceptionIfNull(panelString, "String does not exist");
+        panelString.ThrowExceptionIfNull(new HubException("String does not exist"));
 
-        var panelConfigId = command.Panel.PanelConfigId;
+        var panelConfigId = command.Request.Create.PanelConfigId;
         var doesPanelHaveConfig = panelConfigId.Equals("undefined") is false;
 
         var panelConfig = doesPanelHaveConfig is false
             ? await _unitOfWork.PanelConfigsRepository.GetDefaultPanelConfigAsync()
             : await _unitOfWork.PanelConfigsRepository.GetByIdAsync(panelConfigId.ToGuid());
         // panelConfig = ThrowHubExceptionIfNull(panelConfig, "Panel config does not exist");
-        ThrowHubExceptionIfNull(panelConfig, "Panel config does not exist");
+        panelConfig.ThrowExceptionIfNull(new HubException("Panel config does not exist"));
+        // ThrowHubExceptionIfNull(panelConfig, "Panel config does not exist");
 
         /*var panel = request.CreatePanelRequest.ToDomain(
             appUserProject.ProjectId,
@@ -93,12 +96,12 @@ public class CreatePanelHandler : ICommandHandler<CreatePanelCommand, bool>
             Rotation = command.Panel.Rotation
         };*/
         var panel = Panel.Create(
-            command.Panel.Id.ToGuid(),
+            command.Request.SignalrRequestId.ToGuid(),
             appUserProject.ProjectId,
             panelString.Id,
             panelConfig.Id,
-            command.Panel.Location,
-            command.Panel.Rotation,
+            command.Request.Create.Location,
+            command.Request.Create.Rotation,
             appUserId
         );
         // var panel = Panel.Create(command.Panel.Id.ToG, panelString.Id, panelConfig.Id, appUserProject.ProjectId);
@@ -127,7 +130,7 @@ public class CreatePanelHandler : ICommandHandler<CreatePanelCommand, bool>
             "User {User} created panel {Panel} in project {Project}",
             appUserId.ToString(),
             panel.Id.ToString(),
-            appUserProject.Project.Name
+            appUserProject.Project.Id.ToString()
         );
 
         return true;

@@ -2,7 +2,6 @@ import { inject, Injectable } from '@angular/core'
 import { CreatePanel, UpdateManyPanels, UpdatePanel } from '@projects/data-access'
 import {
   CreatePanelRequest,
-  CreateTRequest,
   PanelCreatedResponse,
   UpdateManyPanelsRequest,
   UpdatePanelRequest,
@@ -17,10 +16,6 @@ import { HubConnection } from '@microsoft/signalr'
 export class PanelsSignalrService {
   private hub?: HubConnection
   private logger = inject(LoggerService)
-
-  createRequest<T>(request: T) {
-    new CreateTRequest('Panel', 'Create', request)
-  }
 
   initPanelsHub(projectsHubConnection: HubConnection) {
     this.hub = projectsHubConnection

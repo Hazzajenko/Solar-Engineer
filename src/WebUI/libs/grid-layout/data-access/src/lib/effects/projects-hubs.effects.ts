@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { map } from 'rxjs/operators'
-import { ProjectsHubActions } from '../store/projects-hub'
+import { ProjectsHubActions } from '../store'
 import { LoggerService } from '@shared/logger'
 
 @Injectable({
@@ -15,10 +15,10 @@ export class ProjectsHubsEffects {
     () =>
       this.actions$.pipe(
         ofType(ProjectsHubActions.sendSignalrRequest),
-        map(({ request }) =>
+        map(({ signalrRequest }) =>
           this.logger.debug({
             source: 'ProjectsHubsEffects',
-            objects: ['onSendSignalRRequest', request],
+            objects: ['onSendSignalRRequest', signalrRequest],
           }),
         ),
       ),

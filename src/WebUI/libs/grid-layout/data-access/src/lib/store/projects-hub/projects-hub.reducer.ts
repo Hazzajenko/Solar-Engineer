@@ -5,28 +5,28 @@ import { ProjectsHubActions } from './projects-hub.actions'
 
 export const PROJECTS_HUB_FEATURE_KEY = 'projects-hub'
 
-export interface ProjectsHubSate extends EntityState<any> {
+export interface ProjectsHubState extends EntityState<any> {
   loaded: boolean
   error?: string | null
 }
 
 export interface ProjectsHubPartialState {
-  readonly [PROJECTS_HUB_FEATURE_KEY]: ProjectsHubSate
+  readonly [PROJECTS_HUB_FEATURE_KEY]: ProjectsHubState
 }
 
 export const projectsHubAdapter: EntityAdapter<any> = createEntityAdapter<any>()
 
-export const initialProjectsHubState: ProjectsHubSate = projectsHubAdapter.getInitialState({
+export const initialProjectsHubState: ProjectsHubState = projectsHubAdapter.getInitialState({
   loaded: false,
 })
 
 const reducer = createReducer(
   initialProjectsHubState,
-  on(ProjectsHubActions.sendSignalrRequest, (state, { request }) =>
-    projectsHubAdapter.addOne(request, state),
+  on(ProjectsHubActions.sendSignalrRequest, (state, { signalrRequest }) =>
+    projectsHubAdapter.addOne(signalrRequest, state),
   ),
 )
 
-export function projectsHubReducer(state: ProjectsHubSate | undefined, action: Action) {
+export function projectsHubReducer(state: ProjectsHubState | undefined, action: Action) {
   return reducer(state, action)
 }

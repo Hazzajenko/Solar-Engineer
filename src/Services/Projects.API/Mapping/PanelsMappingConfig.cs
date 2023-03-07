@@ -20,7 +20,7 @@ public class PanelsMappingConfig : IRegister
     {
         config
             .NewConfig<(CreatePanelRequest Request, HubCallerContext Context), CreatePanelCommand>()
-            .Map(dest => dest.Panel, src => src.Request)
+            .Map(dest => dest.Request, src => src.Request)
             .Map<ClaimsPrincipal, HubCallerContext>(dest => dest.User, src => src.Context);
 
         // .Map(dest => dest.ProjectId, src => src.projectId)
