@@ -38,7 +38,7 @@ public class CreatePanelHandler : ICommandHandler<CreatePanelCommand, bool>
 
     public async ValueTask<bool> Handle(CreatePanelCommand command, CancellationToken cT)
     {
-        var appUserId = command.User.GetGuidUserId();
+        var appUserId = command.User.Id;
         var projectId = command.Request.ProjectId.ToGuid();
         var appUserProject =
             await _unitOfWork.AppUserProjectsRepository.GetByAppUserIdAndProjectIdAsync(
@@ -52,7 +52,7 @@ public class CreatePanelHandler : ICommandHandler<CreatePanelCommand, bool>
             "User is not apart of this project"
         );*/
 
-        var panelStringId = command.Request.Create.StringId;
+        var panelStringId = command.Request.StringId;
         var panelHasString = panelStringId.Equals("undefined") is false;
 
         var panelString = panelHasString
@@ -61,6 +61,16 @@ public class CreatePanelHandler : ICommandHandler<CreatePanelCommand, bool>
                 projectId
             )
             : await _unitOfWork.StringsRepository.GetUndefinedStringByProjectIdAsync(projectId);
+        /*String? panelString;
+        if (panelHasString)
+            panelString = await _unitOfWork.StringsRepository.GetByIdAndProjectIdAsync(
+                panelStringId.ToGuid(),
+                projectId
+            );
+        else
+            panelString = await _unitOfWork.StringsRepository.GetUndefinedStringByProjectIdAsync(
+                projectId
+            );*/
 
         var projectDoesNotHaveUndefinedString = panelString is null && !panelHasString;
 
@@ -75,8 +85,49 @@ public class CreatePanelHandler : ICommandHandler<CreatePanelCommand, bool>
         // ThrowHubExceptionIfNull(panelString, "String does not exist");
         panelString.ThrowExceptionIfNull(new HubException("String does not exist"));
 
-        var panelConfigId = command.Request.Create.PanelConfigId;
+        var panelConfigId = command.Request.PanelConfigId;
         var doesPanelHaveConfig = panelConfigId.Equals("undefined") is false;
+
+        /*PanelConfig? panelConfig;
+        if (doesPanelHaveConfig)
+        {
+            panelConfig = await _unitOfWork.PanelConfigsRepository.GetByIdAsync(
+                panelConfigId.ToGuid()
+            );
+        }
+        else
+        {
+            panelConfig = await _unitOfWork.PanelConfigsRepository.GetDefaultPanelConfigAsync();
+        }*/
+
+        // panelconfig = switch (doesPanelHaveConfig)
+        /*switch (doesPanelHaveConfig)
+        {
+            case true:
+                panelConfig = await _unitOfWork.PanelConfigsRepository.GetByIdAsync(
+                    panelConfigId.ToGuid()
+                );
+                break;
+            case false:
+                panelConfig = await _unitOfWork.PanelConfigsRepository.GetDefaultPanelConfigAsync();
+                break;
+        }*/
+
+
+        /*panelConfig = switch (doesPanelHaveConfig)
+        {
+                true: await _unitOfWork.PanelConfigsRepository.GetByIdAsync(
+                    panelConfigId.ToGuid()
+                );
+                panelConfig = await _unitOfWork.PanelConfigsRepository.GetByIdAsync(
+                    panelConfigId.ToGuid()
+                );
+                break;
+            false:
+                panelConfig = await _unitOfWork.PanelConfigsRepository.GetDefaultPanelConfigAsync();
+                break;
+            
+        }*/
 
         var panelConfig = doesPanelHaveConfig is false
             ? await _unitOfWork.PanelConfigsRepository.GetDefaultPanelConfigAsync()
@@ -100,12 +151,12 @@ public class CreatePanelHandler : ICommandHandler<CreatePanelCommand, bool>
             Rotation = command.Panel.Rotation
         };*/
         var panel = Panel.Create(
-            command.Request.RequestId.ToGuid(),
+            command.RequestId.ToGuid(),
             appUserProject.ProjectId,
             panelString.Id,
             panelConfig.Id,
-            command.Request.Create.Location,
-            command.Request.Create.Rotation,
+            command.Request.Location,
+            command.Request.Rotation,
             appUserId
         );
         // var panel = Panel.Create(command.Panel.Id.ToG, panelString.Id, panelConfig.Id, appUserProject.ProjectId);
@@ -116,7 +167,7 @@ public class CreatePanelHandler : ICommandHandler<CreatePanelCommand, bool>
         );*/
         panel = await _unitOfWork.PanelsRepository.AddAndSaveChangesAsync(panel);
         var response = _mapper.Map<(Panel, string), ProjectEventResponse>(
-            (panel, command.Request.RequestId)
+            (panel, command.RequestId)
         );
         // var response = _mapper.Map<(Panel, string), PanelCreatedResponse>((panel, command.Request.RequestId));
 

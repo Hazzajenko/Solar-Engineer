@@ -1,13 +1,21 @@
 ﻿using FluentValidation;
-using Projects.API.Common;
 
 namespace Projects.API.Contracts.Requests.Panels;
 
-public class CreatePanelRequest : ICreateRequest<PanelCreate>
+public class CreatePanelRequest /* : ICreateRequest<PanelCreate>*/
 {
-    public required string RequestId { get; init; }
+    // public required string RequestId { get; init; }
     public required string ProjectId { get; init; }
-    public required PanelCreate Create { get; init; }
+
+    public required string Id { get; init; }
+
+    // public required string ProjectId { get; init; }
+    public required string StringId { get; init; }
+    public required string Location { get; init; }
+    public required string PanelConfigId { get; init; }
+
+    public required int Rotation { get; init; } = 0;
+    // public required PanelCreate Create { get; init; }
 }
 
 /*public class PanelCreate
@@ -34,13 +42,13 @@ public class CreatePanelRequestValidator : AbstractValidator<CreatePanelRequest>
 {
     public CreatePanelRequestValidator()
     {
-        RuleFor(v => v.RequestId)
+        /*RuleFor(v => v.RequestId)
             .NotNull()
             .WithMessage("SignalrRequestId cannot be null")
             .NotEmpty()
             .WithMessage("SignalrRequestId cannot be empty")
             .Must(x => Guid.TryParse(x, out _))
-            .WithMessage("SignalrRequestId must be a valid Guid");
+            .WithMessage("SignalrRequestId must be a valid Guid");*/
 
         RuleFor(v => v.ProjectId)
             .NotNull()
@@ -50,6 +58,7 @@ public class CreatePanelRequestValidator : AbstractValidator<CreatePanelRequest>
             .Must(x => Guid.TryParse(x, out _))
             .WithMessage("ProjectId must be a valid Guid");
 
+        /*
         RuleFor(v => v.Create.Id)
             .NotNull()
             .WithMessage("Id cannot be null")
@@ -82,6 +91,6 @@ public class CreatePanelRequestValidator : AbstractValidator<CreatePanelRequest>
             .NotEmpty()
             .WithMessage("Rotation cannot be empty")
             .Must(r => r is >= 0 and <= 2)
-            .WithMessage("Rotation cannot more than 1");
+            .WithMessage("Rotation cannot more than 1");*/
     }
 }

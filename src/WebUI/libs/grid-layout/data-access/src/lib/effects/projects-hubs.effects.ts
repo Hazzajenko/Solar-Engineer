@@ -8,7 +8,6 @@ import { Store } from '@ngrx/store'
 import { Update } from '@ngrx/entity'
 import { ProjectSignalrEvent } from '@shared/data-access/models'
 import { firstValueFrom } from 'rxjs'
-import { throwExpression } from '@shared/utils'
 
 @Injectable({
   providedIn: 'root',
@@ -69,7 +68,14 @@ export class ProjectsHubsEffects {
               source: 'ProjectsHubsEffects',
               objects: ['onReceiveManySignalREvents', 'event already in store', event],
             })
-            event.serverTime = event.serverTime ?? throwExpression("event.serverTime can't be null")
+            if (!event.serverTime) {
+              this.logger.debug({
+                source: 'ProjectsHubsEffects',
+                objects: ['onReceiveManySignalREvents', 'event.serverTime is null', event],
+              })
+              continue
+            }
+            // event.serverTime = event.serverTime ?? throwExpression("event.serverTime can't be null")
             /*          if (!event.serverTime) {
                         this.logger.debug({
                           source: 'ProjectsHubsEffects',

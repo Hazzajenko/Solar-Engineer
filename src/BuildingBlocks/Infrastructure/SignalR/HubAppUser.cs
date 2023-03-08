@@ -2,7 +2,7 @@
 
 public class HubAppUser
 {
-    private HubAppUser(Guid id, string connectionId)
+    public HubAppUser(Guid id, string connectionId)
     {
         Id = id;
         ConnectionId = connectionId;

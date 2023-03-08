@@ -1,10 +1,10 @@
 ﻿using System.Globalization;
-using System.Security.Claims;
 using System.Text.Json;
 using Mapster;
 using Microsoft.AspNetCore.SignalR;
 using Projects.API.Contracts.Data;
 using Projects.API.Contracts.Requests.Panels;
+using Projects.API.Contracts.Requests.Projects;
 using Projects.API.Contracts.Responses;
 using Projects.API.Entities;
 using Projects.API.Handlers.Panels.CreatePanel;
@@ -19,10 +19,10 @@ public class PanelsMappingConfig : IRegister
 {
     public void Register(TypeAdapterConfig config)
     {
-        config
+        /*config
             .NewConfig<(CreatePanelRequest Request, HubCallerContext Context), CreatePanelCommand>()
             .Map(dest => dest.Request, src => src.Request)
-            .Map<ClaimsPrincipal, HubCallerContext>(dest => dest.User, src => src.Context);
+            .Map<ClaimsPrincipal, HubCallerContext>(dest => dest.User, src => src.Context);*/
 
         // .Map(dest => dest.ProjectId, src => src.projectId)
         /*config.NewConfig< (CreatePanelRequest Request, Guid projectId, Guid stringId, Guid panelConfigId), CreatePanelCommand>()
@@ -54,6 +54,28 @@ public class PanelsMappingConfig : IRegister
                         JsonSerializerOptions.Default
                     )
             );
+
+        // NewProjectEventRequest
+        // create a map from NewProjectEventRequest to CreatePanelCommand
+        config
+            .NewConfig<
+                (NewProjectEventRequest Request, HubCallerContext Context),
+                CreatePanelCommand
+            >()
+            .Map(
+                dest => dest.Request,
+                src =>
+                    JsonSerializer.Deserialize<CreatePanelRequest>(
+                        src.Request.Data,
+                        // JsonSerializerOptions.Default
+                        new JsonSerializerOptions
+                        {
+                            PropertyNameCaseInsensitive = true
+                        }
+                    )
+            )
+            .Map(dest => dest.User, src => src.Context.ToHubAppUser())
+            .Map(dest => dest.RequestId, src => src.Request.RequestId);
 
         config
             .NewConfig<PanelCreatedResponse, IEnumerable<PanelCreatedResponse>>()
