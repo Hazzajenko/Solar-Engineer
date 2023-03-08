@@ -15,12 +15,26 @@ export interface ProjectSignalrEvent {
   timeDiff?: number
 }
 
-export interface ProjectSignalrRequest {
+export interface ProjectSignalrJsonRequest {
   projectId: string
   requestId: string
   action: ProjectsSignalrType
   model: ProjectItemType
   data: string
+}
+
+export interface ProjectSignalrEventV2 {
+  action: ProjectsSignalrType
+  byAppUserId?: string
+  data: string
+  error?: string
+  isSuccess: boolean
+  model: ProjectItemType
+  projectId: string
+  requestId: string
+  time: Date
+  serverTime?: Date
+  timeDiff?: number
 }
 
 /*export interface ProjectsSignalrRequestV2 {

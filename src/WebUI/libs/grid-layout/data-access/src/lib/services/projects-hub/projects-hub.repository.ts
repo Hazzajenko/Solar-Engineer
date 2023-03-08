@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
 import { ProjectsHubActions } from '../../store'
-import { ProjectSignalrEvent } from '@shared/data-access/models'
+import { ProjectSignalrEvent, ProjectSignalrEventV2 } from '@shared/data-access/models'
 import { Update } from '@ngrx/entity'
 
 @Injectable({
@@ -19,6 +19,10 @@ export class ProjectsHubRepository {
     }*/
 
   sendSignalrRequest(projectSignalrEvent: ProjectSignalrEvent) {
+    this.store.dispatch(ProjectsHubActions.sendSignalrRequest({ projectSignalrEvent }))
+  }
+
+  sendSignalrRequestV2(projectSignalrEvent: ProjectSignalrEventV2) {
     this.store.dispatch(ProjectsHubActions.sendSignalrRequest({ projectSignalrEvent }))
   }
 

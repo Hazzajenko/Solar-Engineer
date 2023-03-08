@@ -16,7 +16,7 @@ import { of, switchMap } from 'rxjs'
 import { map } from 'rxjs/operators'
 import { LoggerService } from '@shared/logger'
 import { getGuid } from '@shared/utils'
-import { ProjectSignalrRequest } from '@shared/data-access/models'
+import { ProjectSignalrJsonRequest } from '@shared/data-access/models'
 
 // import { SignalrRequest } from '@shared/data-access/models'
 
@@ -101,13 +101,14 @@ export class PanelsEffects {
           const action = 'CREATE'
           const model = 'PANEL'
           // const defaultSerializer = new JsonSerializer()
-          const projectSignalrEvent: ProjectSignalrRequest = {
+          const projectSignalrEvent: ProjectSignalrJsonRequest = {
             action,
             model,
             projectId: panel.projectId,
             requestId: getGuid(),
             data: JSON.stringify(panel),
           }
+          this.projectsHubService.sendJsonSignalrRequest(projectSignalrEvent)
           // const json = defaultSerializer.serialize(panel)
           // json.
           // const json2 = defaultSerializer.deserialize(panel)
@@ -120,12 +121,13 @@ export class PanelsEffects {
                          changes: update.changes,
                        },
                      }*/
-          this.projectsHubService.sendSignalrRequest(request, 'PANEL', 'CREATE')
+          // this.projectsHubService.sendSignalrRequest(request, 'PANEL', 'CREATE')
+          return
           // this.projectsHubService.createSignalrRequestV2(request, 'PANEL', 'CREATE')
           // request = this.projectsHubService.createSignalrRequestV2(request)
           // request = this.projectsHubService.createSignalrRequest(request, 'PANEL', 'CREATE')
           // return this.panelsSignalrService.updatePanelSignalr(request)
-          return this.panelsSignalrService.addPanelSignalr(request)
+          // return this.panelsSignalrService.addPanelSignalr(request)
           // return ProjectsHubActions.sendSignalrRequest({ signalrRequest: request })
         }),
       ),

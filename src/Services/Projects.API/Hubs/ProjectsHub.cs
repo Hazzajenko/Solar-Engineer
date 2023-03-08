@@ -10,6 +10,7 @@ using Projects.API.Handlers.Projects.GetProject;
 using Projects.API.Handlers.SignalR;
 using Projects.API.Handlers.SignalR.OnConnected;
 using Projects.API.Handlers.Strings.CreateString;
+using Serilog;
 
 namespace Projects.API.Hubs;
 
@@ -27,6 +28,7 @@ public class ProjectsHub : Hub<IProjectsHub>
         await _mediator.Send(new OnConnectedCommand(Context.ToHubAppUser()));
         await base.OnConnectedAsync();
     }
+
     /*public override async Task OnDisconnectedAsync(bool stopCalled)
     {
         return base.OnDisconnectedAsync(stopCalled);
@@ -57,6 +59,13 @@ public class ProjectsHub : Hub<IProjectsHub>
     {
         await _mediator.Send(new CreatePanelCommand(Context.AppUser(), request));
     }*/
+
+    public async Task NewProjectEvent(NewProjectEventRequest request)
+    {
+        Log.Logger.Information("NewProjectEvent called {@Request}", request);
+        await Task.CompletedTask;
+        // await _mediator.Send(new CreatePanelCommand(Context.AppUser(), request));
+    }
 
     public async Task CreatePanel(CreatePanelRequest request)
     {

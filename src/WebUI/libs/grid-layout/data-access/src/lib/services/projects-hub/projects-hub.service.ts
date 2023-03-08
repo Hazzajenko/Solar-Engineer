@@ -5,10 +5,12 @@ import { ProjectsHubRepository } from './projects-hub.repository'
 import {
   ProjectItemType,
   ProjectSignalrEvent,
+  ProjectSignalrEventV2,
+  ProjectSignalrJsonRequest,
   ProjectsSignalrRequest,
   ProjectsSignalrType,
 } from '@shared/data-access/models'
-import { NewProjectEvents } from '@projects/data-access'
+import { NewProjectEvent, NewProjectEvents } from '@projects/data-access'
 import { HubConnection } from '@microsoft/signalr'
 import { LoggerService } from '@shared/logger'
 
@@ -39,6 +41,10 @@ export class ProjectsHubService {
 
       // this.projectsStore.dispatch.addManyProjects(projects)
     })
+  }
+
+  sendEvent(event: ProjectSignalrEvent) {
+    this.hubConnection?.send(NewProjectEvents, event)
   }
 
   createSignalrRequest<TRequest extends ProjectsSignalrRequest>(
@@ -101,20 +107,26 @@ export class ProjectsHubService {
     return this.projectsHubRepository.sendSignalrRequest(projectSignalrEvent)
   }
 
-  sendJsonSignalrRequest<TRequest extends ProjectsSignalrRequest>(
-    request: TRequest,
-    model: ProjectItemType,
-    action: ProjectsSignalrType,
-  ) {
-    const projectSignalrEvent: ProjectSignalrEvent = {
-      action,
+  sendJsonSignalrRequest<TRequest extends ProjectSignalrJsonRequest>(request: TRequest) {
+    const projectSignalrEvent: ProjectSignalrEventV2 = {
+      ...request,
       isSuccess: false,
-      model,
-      projectId: request.projectId,
-      requestId: request.requestId,
       time: new Date(),
     }
-    return this.projectsHubRepository.sendSignalrRequest(projectSignalrEvent)
+    this.projectsHubRepository.sendSignalrRequestV2(projectSignalrEvent)
+    if (!this.hubConnection) {
+      this.logger.error({
+        source: 'Projects-Signalr-Service',
+        objects: ['HubConnection is undefined', request],
+      })
+      return
+    }
+    this.hubConnection.invoke(NewProjectEvent, request).catch((error) => {
+      this.logger.error({
+        source: 'Projects-Signalr-Service',
+        objects: ['Error sending signalr request', request, error],
+      })
+    })
   }
 }
 

@@ -15,13 +15,7 @@ import { ChangeDetectionStrategy, Component, Inject, inject } from '@angular/cor
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { MatButtonModule } from '@angular/material/button'
 import { MatCardModule } from '@angular/material/card'
-import {
-  MAT_DIALOG_DATA,
-  MatDialog,
-  MatDialogConfig,
-  MatDialogModule,
-  MatDialogRef,
-} from '@angular/material/dialog'
+import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogModule, MatDialogRef } from '@angular/material/dialog'
 import { MatFormFieldModule } from '@angular/material/form-field'
 
 import { MatIconModule } from '@angular/material/icon'
@@ -33,13 +27,7 @@ import { ChatroomsComponent } from '@app/feature/chatrooms'
 import { FriendsComponent } from '@app/feature/friends'
 import { AuthStoreService } from '@auth/data-access'
 
-import {
-  AppUserLinkModel, AuthUserModel,
-  CombinedAppUserModel,
-  MessageTimeSortModel,
-  UserModel,
-  WebUserModel,
-} from '@shared/data-access/models'
+import { AppUserLinkModel, AuthUserModel, CombinedAppUserModel, UserModel } from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
 import { GetFriendRequestPipe } from 'libs/app/feature/notifications/src/lib/get-friend-request.pipe'
@@ -48,16 +36,15 @@ import { map, Observable, startWith, switchMap } from 'rxjs'
 import { NotificationsComponent } from '@app/feature/notifications'
 import { ActivatedRoute } from '@angular/router'
 import { UsersService, UsersStoreService } from '@app/data-access/users'
-import { RouterFacade } from '@shared/data-access/router'
 import { ConnectionsStoreService } from '@app/data-access/connections'
 import { GetCdnUrlStringPipe, TimeDifferenceFromNowPipe } from '@shared/pipes'
-import { NotificationsDialog } from '@app/feature/notifications'
 import { ChangeDisplayPictureComponent } from './change-display-picture/change-display-picture.component'
 import { AddNewFriendComponent } from './add-new-friend/add-new-friend.component'
 import { AppUserItemComponent } from './app-user-item/app-user-item.component'
 import { SearchAppUserComponent } from './search-app-user/search-app-user.component'
 import { MatAutocompleteModule } from '@angular/material/autocomplete'
-import { object } from 'zod'
+
+// import { object } from 'zod'
 
 @Component({
   selector: 'app-user-profile-component',
@@ -170,8 +157,7 @@ export class AppUserProfileComponent {
     return
   }
 
-  search() {
-  }
+  search() {}
 
   private filterFriends(query: string): Observable<AppUserLinkModel[] | undefined> {
     const filterValue = query.toLowerCase()
