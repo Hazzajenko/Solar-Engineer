@@ -53,6 +53,11 @@ public class ProjectsHub : Hub<IProjectsHub>
         await _mediator.Send(new UpdateProjectCommand(Context, request));
     }
 
+    /*public async Task CreatePanel(CreateRequest<PanelCreate> request)
+    {
+        await _mediator.Send(new CreatePanelCommand(Context.AppUser(), request));
+    }*/
+
     public async Task CreatePanel(CreatePanelRequest request)
     {
         await _mediator.Send(new CreatePanelCommand(Context.AppUser(), request));

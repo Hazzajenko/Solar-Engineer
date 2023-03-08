@@ -11,6 +11,7 @@ import {
 import { ProjectsActions, ProjectsStoreService } from '@projects/data-access'
 import { map } from 'rxjs'
 import { StringsSignalrService } from '../api/strings/strings-signalr.service'
+import { getGuid } from '@shared/utils'
 
 @Injectable({
   providedIn: 'root',
@@ -60,8 +61,8 @@ export class StringsEffects {
           if (!isSignalr) {
             return ProjectsHubActions.cancelSignalrRequest()
           }
-          let request: CreateStringRequest = {
-            signalrRequestId: undefined,
+          const request: CreateStringRequest = {
+            requestId: getGuid(),
             projectId: string.projectId,
             create: {
               id: string.id,
@@ -70,7 +71,8 @@ export class StringsEffects {
             },
             // name: string.name,
           }
-          request = this.projectsHubService.createSignalrRequest(request, 'STRING', 'CREATE')
+          this.projectsHubService.sendSignalrRequest(request, 'STRING', 'CREATE')
+          // request = this.projectsHubService.createSignalrRequest(request, 'STRING', 'CREATE')
 
           return this.stringsSignalrService.addStringSignalr(request)
           // return ProjectsHubActions.sendSignalrRequest({ signalrRequest: request })

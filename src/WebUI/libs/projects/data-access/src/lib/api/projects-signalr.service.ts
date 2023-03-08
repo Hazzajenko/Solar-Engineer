@@ -74,6 +74,14 @@ export class ProjectsSignalrService {
       }
     })
 
+    /*    this.projectsHubConnection.on(NewProjectEvents, (events: any[]) => {
+          this.logger.debug({
+            source: 'Projects-Signalr-Service',
+            objects: [NewProjectEvents, events],
+          })
+          // this.projectsStore.dispatch.addManyProjects(projects)
+        })*/
+
     return this.projectsHubConnection
   }
 

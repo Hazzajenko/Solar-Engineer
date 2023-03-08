@@ -1,11 +1,16 @@
 import { inject, Injectable } from '@angular/core'
 import { Update } from '@ngrx/entity'
-import { LinksStoreService, PanelsStoreService, PathsStoreService, SelectedStoreService } from '../'
+import {
+  getSelectedLinks,
+  LinksStoreService,
+  PanelsStoreService,
+  PathsStoreService,
+  SelectedStoreService,
+  toUpdatePanelArray,
+} from '../'
 import { ProjectsFacade } from '@projects/data-access'
 import { PanelModel } from '@shared/data-access/models'
 import { combineLatest, firstValueFrom, map } from 'rxjs'
-import { getSelectedLinks } from '../'
-import { toUpdatePanelArray } from '../'
 import { PathsEventService } from '../paths'
 import { AuthStoreService } from '@auth/data-access'
 
@@ -32,6 +37,7 @@ export class PanelsEventService {
 
     const userId = await this.authStore.select.userId()
     // if
+    // TODO give panel a default config
 
     const panel = new PanelModel({
       projectId: project.id,

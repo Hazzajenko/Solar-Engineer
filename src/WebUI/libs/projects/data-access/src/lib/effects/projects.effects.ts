@@ -8,7 +8,7 @@ import { catchError, map, of, switchMap } from 'rxjs'
 import { AuthActions } from '@auth/data-access'
 // import { tap } from 'rxjs/operators'
 import { ProjectsSignalrService } from '../api'
-import { PanelsSignalrService } from '@grid-layout/data-access'
+import { PanelsSignalrService, ProjectsHubService } from '@grid-layout/data-access'
 
 @Injectable({
   providedIn: 'root',
@@ -19,6 +19,7 @@ export class ProjectsEffects {
   private projectsStore = inject(ProjectsStoreService)
   private projectsSignalrService = inject(ProjectsSignalrService)
   private panelsSignalrService = inject(PanelsSignalrService)
+  private projectsHubService = inject(ProjectsHubService)
   private store = inject(Store)
 
   initProjectsConnection$ = createEffect(
@@ -28,6 +29,7 @@ export class ProjectsEffects {
         map(({ token }) => {
           const projectsHubConnection =
             this.projectsSignalrService.createProjectsHubConnection(token)
+          this.projectsHubService.initHubConnection(projectsHubConnection)
           this.panelsSignalrService.initPanelsHub(projectsHubConnection)
         }),
       ),

@@ -15,6 +15,13 @@ public abstract class GenericRepository<TContext, TModel> : EFRepository<TModel>
         _context = context;
     }
 
+    public async Task<TModel> AddAndSaveChangesAsync(TModel model)
+    {
+        await AddAsync(model);
+        await SaveChangesAsync();
+        return model;
+    }
+
     public Task<TModel?> GetByIdAsync(Guid id)
     {
         return Queryable.SingleOrDefaultAsync(user => user.Id == id);

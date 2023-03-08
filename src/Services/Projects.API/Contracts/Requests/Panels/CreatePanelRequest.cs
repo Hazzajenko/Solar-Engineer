@@ -1,14 +1,25 @@
 ﻿using FluentValidation;
+using Projects.API.Common;
 
 namespace Projects.API.Contracts.Requests.Panels;
 
-public class CreatePanelRequest
+public class CreatePanelRequest : ICreateRequest<PanelCreate>
 {
-    public required string SignalrRequestId { get; init; }
+    public required string RequestId { get; init; }
     public required string ProjectId { get; init; }
     public required PanelCreate Create { get; init; }
 }
 
+/*public class PanelCreate
+{
+    public required string Id { get; init; }
+    public required string ProjectId { get; init; }
+    public required string StringId { get; init; }
+    public required string Location { get; init; }
+    public required string PanelConfigId { get; init; }
+    public required int Rotation { get; init; } = 0;
+}*/
+/*
 public class PanelCreate
 {
     public required string Id { get; init; }
@@ -17,13 +28,13 @@ public class PanelCreate
     public required string Location { get; init; }
     public required string PanelConfigId { get; init; }
     public required int Rotation { get; init; } = 0;
-}
+}*/
 
 public class CreatePanelRequestValidator : AbstractValidator<CreatePanelRequest>
 {
     public CreatePanelRequestValidator()
     {
-        RuleFor(v => v.SignalrRequestId)
+        RuleFor(v => v.RequestId)
             .NotNull()
             .WithMessage("SignalrRequestId cannot be null")
             .NotEmpty()

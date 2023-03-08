@@ -10,6 +10,7 @@ namespace Projects.API.Repositories.Panels;
 
 public sealed class PanelsRepository : GenericRepository<ProjectsContext, Panel>, IPanelsRepository
 {
+    // private readonly IMapper _mapper;
     public PanelsRepository(ProjectsContext context)
         : base(context)
     {
@@ -38,6 +39,7 @@ public sealed class PanelsRepository : GenericRepository<ProjectsContext, Panel>
         await AddAsync(panel);
         await SaveChangesAsync();
 
+        // _mapper.Map<(Panel, string), TPanelResponse>((panel, "Create"));
         return panel.Adapt<TPanelResponse>();
     }
 }

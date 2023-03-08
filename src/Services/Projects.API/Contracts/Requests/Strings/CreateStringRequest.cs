@@ -8,7 +8,23 @@ public class CreateStringRequest
     public required string ProjectId { get; init; } = default!;
     public required string Name { get; init; } = default!;
     public string Color { get; init; } = "blue";
+
+    public class Create
+    {
+        public required string Id { get; init; }
+        public required string ProjectId { get; init; }
+        public required string Name { get; init; }
+        public string Color { get; init; } = "blue";
+    }
 }
+
+/*public class StringCreate
+{
+    public required string Id { get; init; }
+    public required string ProjectId { get; init; }
+    public required string Name { get; init; }
+    public string Color { get; init; } = "blue";
+}*/
 
 public class CreateStringRequestValidator : AbstractValidator<CreateStringRequest>
 {
@@ -21,7 +37,7 @@ public class CreateStringRequestValidator : AbstractValidator<CreateStringReques
             .WithMessage("Id cannot be empty")
             .Must(x => Guid.TryParse(x, out _))
             .WithMessage("Id must be a valid Guid");
-        
+
         RuleFor(v => v.ProjectId)
             .NotNull()
             .WithMessage("ProjectId cannot be null")

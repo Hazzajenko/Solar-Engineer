@@ -15,6 +15,8 @@ import { ProjectsActions, ProjectsStoreService } from '@projects/data-access'
 import { of, switchMap } from 'rxjs'
 import { map } from 'rxjs/operators'
 import { LoggerService } from '@shared/logger'
+import { getGuid } from '@shared/utils'
+import { ProjectSignalrRequest } from '@shared/data-access/models'
 
 // import { SignalrRequest } from '@shared/data-access/models'
 
@@ -81,8 +83,8 @@ export class PanelsEffects {
           if (!isSignalr) {
             return ProjectsHubActions.cancelSignalrRequest()
           }
-          let request: CreatePanelRequest = {
-            signalrRequestId: undefined,
+          const request: CreatePanelRequest = {
+            requestId: getGuid(),
             projectId: panel.projectId,
             create: {
               id: panel.id,
@@ -91,18 +93,37 @@ export class PanelsEffects {
               location: panel.location,
               panelConfigId: 'undefined',
               rotation: panel.rotation,
-            },
+            } /*
+            time: new Date(),
+            model: 'PANEL',
+            action: 'CREATE',*/,
           }
+          const action = 'CREATE'
+          const model = 'PANEL'
+          // const defaultSerializer = new JsonSerializer()
+          const projectSignalrEvent: ProjectSignalrRequest = {
+            action,
+            model,
+            projectId: panel.projectId,
+            requestId: getGuid(),
+            data: JSON.stringify(panel),
+          }
+          // const json = defaultSerializer.serialize(panel)
+          // json.
+          // const json2 = defaultSerializer.deserialize(panel)
           /*
-                    let request: UpdatePanelRequest = {
-                      id: undefined,
-                      projectId: panel.projectId,
-                      update: {
-                        id: panel.id,
-                        changes: update.changes,
-                      },
-                    }*/
-          request = this.projectsHubService.createSignalrRequest(request, 'PANEL', 'CREATE')
+                     let request: UpdatePanelRequest = {
+                       id: undefined,
+                       projectId: panel.projectId,
+                       update: {
+                         id: panel.id,
+                         changes: update.changes,
+                       },
+                     }*/
+          this.projectsHubService.sendSignalrRequest(request, 'PANEL', 'CREATE')
+          // this.projectsHubService.createSignalrRequestV2(request, 'PANEL', 'CREATE')
+          // request = this.projectsHubService.createSignalrRequestV2(request)
+          // request = this.projectsHubService.createSignalrRequest(request, 'PANEL', 'CREATE')
           // return this.panelsSignalrService.updatePanelSignalr(request)
           return this.panelsSignalrService.addPanelSignalr(request)
           // return ProjectsHubActions.sendSignalrRequest({ signalrRequest: request })
@@ -200,15 +221,16 @@ export class PanelsEffects {
 
           const panel = await this.panelsStore.select.panelById(update.id)
 
-          let request: UpdatePanelRequest = {
-            signalrRequestId: undefined,
+          const request: UpdatePanelRequest = {
+            requestId: getGuid(),
             projectId: panel.projectId,
             update: {
               id: panel.id,
               changes: update.changes,
             },
           }
-          request = this.projectsHubService.createSignalrRequest(request, 'PANEL', 'UPDATE')
+          this.projectsHubService.sendSignalrRequest(request, 'PANEL', 'UPDATE')
+          // request = this.projectsHubService.createSignalrRequest(request, 'PANEL', 'UPDATE')
           return this.panelsSignalrService.updatePanelSignalr(request)
         }),
       ),

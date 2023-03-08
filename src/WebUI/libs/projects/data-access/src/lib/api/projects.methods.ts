@@ -1,5 +1,6 @@
 export const GetManyProjects = 'GetManyProjects'
 export const GetProject = 'GetProject'
+export const NewProjectEvents = 'NewProjectEvents'
 export const CreatePanel = 'CreatePanel'
 export const UpdatePanel = 'UpdatePanel'
 export const UpdateManyPanels = 'UpdateManyPanels'

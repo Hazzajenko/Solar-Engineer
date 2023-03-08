@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.Security.Claims;
+using System.Text.Json;
 using Mapster;
 using Microsoft.AspNetCore.SignalR;
 using Projects.API.Contracts.Data;
@@ -28,11 +29,31 @@ public class PanelsMappingConfig : IRegister
             .Map(dest => dest.ProjectId, src => src.projectId)*/
 
         config
-            .NewConfig<Panel, PanelCreatedResponse>()
-            .Map(dest => dest.ProjectId, src => src.ProjectId.ToString())
-            .Map(dest => dest.Time, src => src.CreatedTime)
-            .Map(dest => dest.ByAppUserId, src => src.CreatedById.ToString())
-            .Map(dest => dest.Panel, src => src);
+            .NewConfig<(Entities.Panel Panel, string RequestId), PanelCreatedResponse>()
+            .Map(dest => dest.RequestId, src => src.RequestId)
+            .Map(dest => dest.ProjectId, src => src.Panel.ProjectId.ToString())
+            .Map(dest => dest.Time, src => src.Panel.CreatedTime)
+            .Map(dest => dest.ByAppUserId, src => src.Panel.CreatedById.ToString())
+            .Map(dest => dest.Action, src => "Create")
+            .Map(dest => dest.Model, src => "Panel")
+            .Map(dest => dest.Create, src => src.Panel.Adapt<PanelDto>());
+
+        config
+            .NewConfig<(Entities.Panel Panel, string RequestId), ProjectEventResponse>()
+            .Map(dest => dest.RequestId, src => src.RequestId)
+            .Map(dest => dest.ProjectId, src => src.Panel.ProjectId.ToString())
+            .Map(dest => dest.ServerTime, src => src.Panel.CreatedTime)
+            .Map(dest => dest.ByAppUserId, src => src.Panel.CreatedById.ToString())
+            .Map(dest => dest.Action, src => "Create")
+            .Map(dest => dest.Model, src => "Panel")
+            .Map(
+                dest => dest.Data,
+                src =>
+                    JsonSerializer.Serialize(
+                        src.Panel.Adapt<PanelDto>(),
+                        JsonSerializerOptions.Default
+                    )
+            );
 
         config
             .NewConfig<PanelCreatedResponse, IEnumerable<PanelCreatedResponse>>()
@@ -45,7 +66,6 @@ public class PanelsMappingConfig : IRegister
             .Map(dest => dest.PanelConfigId, src => src.PanelConfigId.ToString())
             .Map(dest => dest.StringId, src => src.StringId.ToString())
             .Map(dest => dest.CreatedById, src => src.CreatedById.ToString())
-            // .Map(dest => dest.LastModifiedById, src => src.LastModifiedById.ToString())
             .Map(
                 dest => dest.CreatedTime,
                 src => src.CreatedTime.ToString(CultureInfo.CurrentCulture)

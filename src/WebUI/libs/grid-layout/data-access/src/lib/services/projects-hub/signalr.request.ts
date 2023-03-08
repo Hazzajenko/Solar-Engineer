@@ -1,16 +1,19 @@
 import { getGuid } from '@shared/utils'
-import { ProjectItemType, ProjectsSignalrType } from '@shared/data-access/models'
+import {
+  ProjectItemType,
+  ProjectsSignalrRequest,
+  ProjectsSignalrType,
+} from '@shared/data-access/models'
 
-export class SignalrRequest<T> {
-  signalrRequestId: string
+export class SignalrRequest<TRequest extends ProjectsSignalrRequest> {
+  requestId: string
   model: ProjectItemType
   event: ProjectsSignalrType
-  // event: string
   time: Date
-  request: T
+  request: TRequest
 
-  constructor(model: ProjectItemType, event: ProjectsSignalrType, request: T) {
-    this.signalrRequestId = getGuid()
+  constructor(model: ProjectItemType, event: ProjectsSignalrType, request: TRequest) {
+    this.requestId = getGuid()
     this.model = model
     this.event = event
     this.request = request

@@ -13,6 +13,7 @@ public interface IProjectsHub
     Task UpdateProject(ProjectChanges projectChanges);
 
     Task PanelsCreated(IEnumerable<PanelCreatedResponse> panels);
+    Task NewProjectEvents(IEnumerable<ProjectEventResponse> projectEvents);
 
     // Task PanelsCreated(IEnumerable<PanelDto> panels);
     Task PanelsUpdated(IEnumerable<PanelDto> panels);

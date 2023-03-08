@@ -1,6 +1,7 @@
 ﻿using Infrastructure.Exceptions;
 using Infrastructure.Extensions;
 using Infrastructure.Mapping;
+using MapsterMapper;
 using Mediator;
 using Microsoft.AspNetCore.SignalR;
 using Projects.API.Contracts.Responses;
@@ -19,17 +20,20 @@ public class CreatePanelHandler : ICommandHandler<CreatePanelCommand, bool>
 {
     private readonly IHubContext<ProjectsHub, IProjectsHub> _hubContext;
     private readonly ILogger<CreatePanelHandler> _logger;
+    private readonly IMapper _mapper;
     private readonly IProjectsUnitOfWork _unitOfWork;
 
     public CreatePanelHandler(
         ILogger<CreatePanelHandler> logger,
         IProjectsUnitOfWork unitOfWork,
-        IHubContext<ProjectsHub, IProjectsHub> hubContext
+        IHubContext<ProjectsHub, IProjectsHub> hubContext,
+        IMapper mapper
     )
     {
         _logger = logger;
         _unitOfWork = unitOfWork;
         _hubContext = hubContext;
+        _mapper = mapper;
     }
 
     public async ValueTask<bool> Handle(CreatePanelCommand command, CancellationToken cT)
@@ -96,7 +100,7 @@ public class CreatePanelHandler : ICommandHandler<CreatePanelCommand, bool>
             Rotation = command.Panel.Rotation
         };*/
         var panel = Panel.Create(
-            command.Request.SignalrRequestId.ToGuid(),
+            command.Request.RequestId.ToGuid(),
             appUserProject.ProjectId,
             panelString.Id,
             panelConfig.Id,
@@ -107,9 +111,14 @@ public class CreatePanelHandler : ICommandHandler<CreatePanelCommand, bool>
         // var panel = Panel.Create(command.Panel.Id.ToG, panelString.Id, panelConfig.Id, appUserProject.ProjectId);
         // await _unitOfWork.PanelsRepository.AddAsync(panel);
         // await _unitOfWork.SaveChangesAsync();
-        var response = await _unitOfWork.PanelsRepository.CreatePanelAsync<PanelCreatedResponse>(
+        /*var response = await _unitOfWork.PanelsRepository.CreatePanelAsync<PanelCreatedResponse>(
             panel
+        );*/
+        panel = await _unitOfWork.PanelsRepository.AddAndSaveChangesAsync(panel);
+        var response = _mapper.Map<(Panel, string), ProjectEventResponse>(
+            (panel, command.Request.RequestId)
         );
+        // var response = _mapper.Map<(Panel, string), PanelCreatedResponse>((panel, command.Request.RequestId));
 
         var projectMembers =
             await _unitOfWork.AppUserProjectsRepository.GetProjectMemberIdsByProjectId(
@@ -118,12 +127,16 @@ public class CreatePanelHandler : ICommandHandler<CreatePanelCommand, bool>
 
         await _hubContext.Clients
             .Group(appUserProject.ProjectId.ToString())
-            .PanelsCreated(response.ToIEnumerable());
+            .NewProjectEvents(response.ToIEnumerable());
+        /*await _hubContext.Clients
+            .Group(appUserProject.ProjectId.ToString())
+            .PanelsCreated(response.ToIEnumerable());*/
 
         /*await _hubContext.Clients
             .Group(appUserProject.ProjectId.ToString())
             .PanelsCreated(panel.ToDtoList());*/
-        await _hubContext.Clients.Users(projectMembers).PanelsCreated(response.ToIEnumerable());
+        await _hubContext.Clients.Users(projectMembers).NewProjectEvents(response.ToIEnumerable());
+        // await _hubContext.Clients.Users(projectMembers).PanelsCreated(response.ToIEnumerable());
         // await _hubContext.Clients.Users(projectMembers).PanelsCreated(panel.ToDtoList());
 
         _logger.LogInformation(
