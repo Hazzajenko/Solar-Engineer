@@ -1,14 +1,15 @@
 import { inject, Injectable } from '@angular/core'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { Store } from '@ngrx/store'
-import { PanelsService, PanelsSignalrService, PanelsStoreService, ProjectsHubActions, ProjectsHubService } from '../'
+import { PanelsService, PanelsSignalrService, PanelsStoreService, ProjectsHubService } from '../'
 import { BlocksActions, PanelsActions } from '../store'
 import { ProjectsActions, ProjectsStoreService } from '@projects/data-access'
-import { of, switchMap } from 'rxjs'
+import { of, switchMap, tap } from 'rxjs'
 import { map } from 'rxjs/operators'
 import { LoggerService } from '@shared/logger'
 import { getGuid } from '@shared/utils'
 import { ProjectEventAction, ProjectItemType, ProjectSignalrJsonRequest } from '@shared/data-access/models'
+import { SignalrEventsService } from '@app/data-access/signalr'
 
 // import { SignalrRequest } from '@shared/data-access/models'
 
@@ -27,6 +28,7 @@ export class PanelsEffects {
   private panelsSignalrService = inject(PanelsSignalrService)
   private logger = inject(LoggerService)
   private projectsHubService = inject(ProjectsHubService)
+  private signalrEventsService = inject(SignalrEventsService)
   /*  initPanels$ = createEffect(
       () =>
         this.actions$.pipe(
@@ -70,11 +72,6 @@ export class PanelsEffects {
       this.actions$.pipe(
         ofType(PanelsActions.addPanel),
         map(({ panel }) => {
-          // TODO implement a service that determines if the project is using signalr
-          const isSignalr = true
-          if (!isSignalr) {
-            return ProjectsHubActions.cancelSignalrRequest()
-          }
           const action: ProjectEventAction = 'CREATE'
           const model: ProjectItemType = 'PANEL'
           const projectSignalrEvent: ProjectSignalrJsonRequest = {
@@ -84,9 +81,12 @@ export class PanelsEffects {
             requestId: getGuid(),
             data: JSON.stringify(panel),
           }
-          this.projectsHubService.sendJsonSignalrRequest(projectSignalrEvent)
-          return
+          return projectSignalrEvent
+          // this.projectsHubService.sendJsonSignalrRequest(projectSignalrEvent)
+          // this.signalrEventsService.sendProjectSignalrEvent(projectSignalrEvent)
+          // return
         }),
+        tap((signalrRequest) => this.signalrEventsService.sendProjectSignalrEvent(signalrRequest)),
       ),
     { dispatch: false },
   )
@@ -167,29 +167,14 @@ export class PanelsEffects {
     () =>
       this.actions$.pipe(
         ofType(PanelsActions.updatePanel),
-        map(async ({ update }) => {
-          const isSignalr = true
-          if (!isSignalr) {
-            return ProjectsHubActions.cancelSignalrRequest()
-          }
+        map(({ update }) => {
+          /*       const isSignalr = true
+                 if (!isSignalr) {
+                   return ProjectsHubActions.cancelSignalrRequest()
+                 }*/
 
-          /*          if (typeof update.id !== 'string') {
-                      this.logger.error({ source: 'panels.effects', objects: ['update.id is not a string'] })
-                      throw new Error('update.id is not a string')
-                    }*/
-
-          // const panel = await this.panelsStore.select.panelById(update.id)
-          /*        const request: UpdatePanelRequest = {
-                    requestId: getGuid(),
-                    projectId: update.projectId,
-                    update: {
-                      id: update.id,
-                      changes: update.changes,
-                    },
-                  }*/
           const action: ProjectEventAction = 'UPDATE'
           const model: ProjectItemType = 'PANEL'
-          // const defaultSerializer = new JsonSerializer()
           const projectSignalrEvent: ProjectSignalrJsonRequest = {
             action,
             model,
@@ -197,21 +182,9 @@ export class PanelsEffects {
             requestId: getGuid(),
             data: JSON.stringify(update),
           }
-          this.projectsHubService.sendJsonSignalrRequest(projectSignalrEvent)
-          return
-
-          /*          const request: UpdatePanelRequest = {
-                      requestId: getGuid(),
-                      projectId: panel.projectId,
-                      update: {
-                        id: panel.id,
-                        changes: update.changes,
-                      },
-                    }
-                    this.projectsHubService.sendSignalrRequest(request, 'PANEL', 'UPDATE')
-                    // request = this.projectsHubService.createSignalrRequest(request, 'PANEL', 'UPDATE')
-                    return this.panelsSignalrService.updatePanelSignalr(request)*/
+          return projectSignalrEvent
         }),
+        tap((signalrRequest) => this.signalrEventsService.sendProjectSignalrEvent(signalrRequest)),
       ),
     { dispatch: false },
   )

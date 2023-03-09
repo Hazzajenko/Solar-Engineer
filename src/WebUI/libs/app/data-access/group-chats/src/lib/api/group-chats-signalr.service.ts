@@ -1,13 +1,6 @@
 import { inject, Injectable } from '@angular/core'
-import {
-  GroupChatMessageModel,
-  GroupChatServerMessageModel,
-  InitialGroupChatMemberModel,
-} from '@shared/data-access/models'
 import { GroupChatsStoreService } from '../facades'
-import { SendGroupChatMessageRequest } from '../models'
-import { MessagesSignalrService } from '@app/data-access/signalr'
-import { Update } from '@ngrx/entity'
+import { SignalrService } from '@app/data-access/signalr'
 
 // import nullCancellationToken = ts.server.nullCancellationToken
 
@@ -17,7 +10,7 @@ import { Update } from '@ngrx/entity'
 export class GroupChatsSignalrService {
   private groupChatsStore = inject(GroupChatsStoreService)
   // private messagesSignalrService = inject(UserMessagesSignalrService)
-  private messagesSignalrService = inject(MessagesSignalrService)
+  private messagesSignalrService = inject(SignalrService)
 
   // private messagesHub = inject(UserMessagesSignalrService).messagesHub
   /*

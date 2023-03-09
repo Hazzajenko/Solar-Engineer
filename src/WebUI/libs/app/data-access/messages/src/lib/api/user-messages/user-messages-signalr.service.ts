@@ -3,8 +3,6 @@ import { HubConnection } from '@microsoft/signalr'
 import { MessageModel } from '@shared/data-access/models'
 import { UserMessagesStoreService } from '../../services/user-messages'
 import { GetMessages, SendMessageToUser } from './user-messages-signalr.methods'
-import { MessagesSignalrService } from '../messages-signalr.service'
-import { throwExpression } from '@shared/utils'
 import { SendMessageRequest } from '../../models/requests/send-message.request'
 
 // import { SendMessageRequest } from '../../models'
@@ -14,7 +12,7 @@ import { SendMessageRequest } from '../../models/requests/send-message.request'
 })
 export class UserMessagesSignalrService {
   private messagesStore = inject(UserMessagesStoreService)
-  // private messagesSignalRService = inject(MessagesSignalrService)
+  // private messagesSignalRService = inject(SignalrService)
   /*  messagesHubConnection: HubConnection =
       this.messagesSignalRService.messagesHubConnection ??
       throwExpression('Not connected to messages hub')*/

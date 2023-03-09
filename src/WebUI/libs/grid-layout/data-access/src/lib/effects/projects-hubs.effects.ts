@@ -78,7 +78,7 @@ export class ProjectsHubsEffects {
             // event.serverTime = event.serverTime ?? throwExpression("event.serverTime can't be null")
             /*          if (!event.serverTime) {
                         this.logger.debug({
-                          source: 'ProjectsHubsEffects',
+                          source: 'SignalrEventsEffects',
                           objects: ['onReceiveManySignalREvents', 'event.serverTime is null', event],
                         })
                         continue

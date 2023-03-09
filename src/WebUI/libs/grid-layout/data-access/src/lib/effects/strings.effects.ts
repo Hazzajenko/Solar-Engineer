@@ -1,9 +1,9 @@
 import { inject, Injectable } from '@angular/core'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { Store } from '@ngrx/store'
-import { ProjectsHubActions, ProjectsHubService, StringsActions, StringsService } from '../'
+import { ProjectsHubService, StringsActions, StringsService } from '../'
 import { ProjectsActions, ProjectsStoreService } from '@projects/data-access'
-import { map } from 'rxjs'
+import { map, tap } from 'rxjs'
 import { StringsSignalrService } from '../api/strings/strings-signalr.service'
 import { getGuid } from '@shared/utils'
 import {
@@ -11,6 +11,7 @@ import {
   ProjectItemType,
   ProjectSignalrJsonRequest,
 } from '@shared/data-access/models'
+import { SignalrEventsService } from '@app/data-access/signalr'
 
 @Injectable({
   providedIn: 'root',
@@ -23,6 +24,7 @@ export class StringsEffects {
   private stringsSignalrService = inject(StringsSignalrService)
   private projectsStore = inject(ProjectsStoreService)
   private projectsHubService = inject(ProjectsHubService)
+  private signalrEventsService = inject(SignalrEventsService)
   /*  initStrings$ = createEffect(() =>
       this.actions$.pipe(
         ofType(ProjectsActions.initSelectProject),
@@ -56,10 +58,10 @@ export class StringsEffects {
       this.actions$.pipe(
         ofType(StringsActions.addString),
         map(({ string }) => {
-          const isSignalr = true
-          if (!isSignalr) {
-            return ProjectsHubActions.cancelSignalrRequest()
-          }
+          /*          const isSignalr = true
+                    if (!isSignalr) {
+                      return ProjectsHubActions.cancelSignalrRequest()
+                    }*/
           const action: ProjectEventAction = 'CREATE'
           const model: ProjectItemType = 'STRING'
           const projectSignalrEvent: ProjectSignalrJsonRequest = {
@@ -69,24 +71,9 @@ export class StringsEffects {
             requestId: getGuid(),
             data: JSON.stringify(string),
           }
-          this.projectsHubService.sendJsonSignalrRequest(projectSignalrEvent)
-          return
-          /*          const request: CreateStringRequest = {
-                      requestId: getGuid(),
-                      projectId: string.projectId,
-                      create: {
-                        id: string.id,
-                        projectId: string.projectId,
-                        name: string.name,
-                      },
-                      // name: string.name,
-                    }
-                    this.projectsHubService.sendSignalrRequest(request, 'STRING', 'CREATE')
-                    // request = this.projectsHubService.createSignalrRequest(request, 'STRING', 'CREATE')
-
-                    return this.stringsSignalrService.addStringSignalr(request)*/
-          // return ProjectsHubActions.sendSignalrRequest({ signalrRequest: request })
+          return projectSignalrEvent
         }),
+        tap((signalrRequest) => this.signalrEventsService.sendProjectSignalrEvent(signalrRequest)),
       ),
     { dispatch: false },
   )

@@ -1,20 +1,7 @@
-import { HttpClient, HttpResponse } from '@angular/common/http'
+import { HttpClient } from '@angular/common/http'
 import { inject, Injectable } from '@angular/core'
-import { GroupChatMessageModel, GroupChatServerMessageModel } from '@shared/data-access/models'
 import { GroupChatsStoreService } from '../facades'
-import { AllGroupChatsDataResponse } from '../models/all-group-chats.response'
-import {
-  CreateGroupChatRequest,
-  InviteToGroupChatRequest,
-  RemoveFromGroupChatRequest,
-  RemoveFromGroupChatResponse,
-  SendGroupChatMessageRequest,
-} from '../models'
-import { MessagesSignalrService } from '@app/data-access/signalr'
-import { CreateGroupChatResponse } from '../models/create-group-chat.response'
-import { InviteToGroupChatResponse } from '../models/invite-to-group-chat.response'
-import { GROUP_CHATS } from './group-chats.endpoint'
-import { InitialCombinedGroupChatsResponse } from '../models/initial-combined-group-chats.response'
+import { SignalrService } from '@app/data-access/signalr'
 
 @Injectable({
   providedIn: 'root',
@@ -22,7 +9,7 @@ import { InitialCombinedGroupChatsResponse } from '../models/initial-combined-gr
 export class GroupChatsService {
   private http = inject(HttpClient)
   private groupChatsStore = inject(GroupChatsStoreService)
-  private messagesSignalrService = inject(MessagesSignalrService)
+  private messagesSignalrService = inject(SignalrService)
 
   /*  createGroupChat(request: CreateGroupChatRequest) {
       return this.http.post<CreateGroupChatResponse>(`/api/${GROUP_CHATS}`, {

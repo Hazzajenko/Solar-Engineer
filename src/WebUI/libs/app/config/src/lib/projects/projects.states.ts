@@ -1,8 +1,5 @@
-import { importProvidersFrom } from '@angular/core'
-import { MatDialogModule } from '@angular/material/dialog'
-import { MatSnackBarModule, MatSnackBarRef } from '@angular/material/snack-bar'
-import { provideEffects } from '@ngrx/effects'
 import { provideState } from '@ngrx/store'
+import { PROJECTS_FEATURE_KEY, projectsReducer } from '@projects/data-access'
 import {
   BLOCKS_FEATURE_KEY,
   blocksReducer,
@@ -11,33 +8,25 @@ import {
   GRID_FEATURE_KEY,
   gridReducer,
   LINKS_FEATURE_KEY,
-  LinksEffects,
   linksReducer,
   MULTI_FEATURE_KEY,
   multiReducer,
   PANELS_FEATURE_KEY,
-  PanelsEffects,
   panelsReducer,
   PATHS_FEATURE_KEY,
-  PathsEffects,
   pathsReducer,
-  PROJECTS_HUB_FEATURE_KEY,
-  projectsHubReducer,
-  ProjectsHubsEffects,
   SELECTED_FEATURE_KEY,
-  SelectedEffects,
   selectedReducer,
   STRINGS_FEATURE_KEY,
-  StringsEffects,
   stringsReducer,
   UI_FEATURE_KEY,
   uiReducer,
 } from '@grid-layout/data-access'
-import { PROJECTS_FEATURE_KEY, ProjectsEffects, projectsReducer } from '@projects/data-access'
+import { SIGNALR_EVENTS_FEATURE_KEY, signalrEventsReducer } from '@app/data-access/signalr'
 
-export const projectsProviders = [
-  importProvidersFrom(MatDialogModule, MatSnackBarModule, MatSnackBarRef),
-  provideState(PROJECTS_HUB_FEATURE_KEY, projectsHubReducer),
+export const projectsStates = [
+  // provideState(PROJECTS_HUB_FEATURE_KEY, projectsHubReducer),
+  provideState(SIGNALR_EVENTS_FEATURE_KEY, signalrEventsReducer),
   provideState(PROJECTS_FEATURE_KEY, projectsReducer),
   provideState(PANELS_FEATURE_KEY, panelsReducer),
   provideState(STRINGS_FEATURE_KEY, stringsReducer),
@@ -49,15 +38,4 @@ export const projectsProviders = [
   provideState(MULTI_FEATURE_KEY, multiReducer),
   provideState(UI_FEATURE_KEY, uiReducer),
   provideState(PATHS_FEATURE_KEY, pathsReducer),
-  provideEffects([
-    ProjectsEffects,
-    PanelsEffects,
-    StringsEffects,
-    LinksEffects /*
-    BlocksEffects,
-    EntitiesEffects,*/,
-    SelectedEffects,
-    PathsEffects,
-    ProjectsHubsEffects,
-  ]),
 ]

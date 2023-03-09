@@ -1,7 +1,7 @@
 import { HttpClient, HttpResponse } from '@angular/common/http'
 import { inject, Injectable } from '@angular/core'
 
-import { MessagesSignalrService } from '@app/data-access/signalr'
+import { SignalrService } from '@app/data-access/signalr'
 import { GROUP_CHATS } from './group-chats.endpoint'
 import { GroupChatsStoreService } from '../../services/group-chats'
 import { CreateGroupChatRequest } from '../../models/requests/create-group-chat.request'
@@ -17,7 +17,7 @@ import { InitialCombinedGroupChatsResponse } from '../../models/responses/initia
 export class GroupChatsService {
   private http = inject(HttpClient)
   private groupChatsStore = inject(GroupChatsStoreService)
-  private messagesSignalrService = inject(MessagesSignalrService)
+  private messagesSignalrService = inject(SignalrService)
 
   createGroupChat(request: CreateGroupChatRequest) {
     return this.http.post<CreateGroupChatResponse>(`/api/${GROUP_CHATS}`, {

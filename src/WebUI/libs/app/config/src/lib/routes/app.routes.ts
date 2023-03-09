@@ -2,7 +2,7 @@ import { Route } from '@angular/router'
 import { loggedInGuard } from '@auth/guards'
 import { LocalProjectResolver } from '@grid-layout/data-access'
 import { homeProviders } from '../home/providers'
-import { projectsProviders } from '../projects/providers'
+import { projectsProviders } from '../projects/projects.providers'
 
 export const appRoutes: Route[] = [
   {
