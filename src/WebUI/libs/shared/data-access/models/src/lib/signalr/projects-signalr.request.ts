@@ -1,5 +1,5 @@
 import { ProjectItemType } from '../projects'
-import { ProjectsSignalrType } from './projects-signalr.type'
+import { ProjectEventAction } from './project-event.action'
 
 export interface ProjectsSignalrRequest {
   requestId: string
@@ -15,7 +15,7 @@ export interface ProjectsSignalrRequestV2 {
   requestId: string
   projectId: string
   model: ProjectItemType
-  action: ProjectsSignalrType
+  action: ProjectEventAction
   time: Date
   receivedSuccess: boolean
   error?: string

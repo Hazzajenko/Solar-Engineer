@@ -1,17 +1,16 @@
 import { inject, Injectable } from '@angular/core'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { Store } from '@ngrx/store'
-import {
-  CreateStringRequest,
-  ProjectsHubActions,
-  ProjectsHubService,
-  StringsActions,
-  StringsService,
-} from '../'
+import { ProjectsHubActions, ProjectsHubService, StringsActions, StringsService } from '../'
 import { ProjectsActions, ProjectsStoreService } from '@projects/data-access'
 import { map } from 'rxjs'
 import { StringsSignalrService } from '../api/strings/strings-signalr.service'
 import { getGuid } from '@shared/utils'
+import {
+  ProjectEventAction,
+  ProjectItemType,
+  ProjectSignalrJsonRequest,
+} from '@shared/data-access/models'
 
 @Injectable({
   providedIn: 'root',
@@ -61,20 +60,31 @@ export class StringsEffects {
           if (!isSignalr) {
             return ProjectsHubActions.cancelSignalrRequest()
           }
-          const request: CreateStringRequest = {
-            requestId: getGuid(),
+          const action: ProjectEventAction = 'CREATE'
+          const model: ProjectItemType = 'STRING'
+          const projectSignalrEvent: ProjectSignalrJsonRequest = {
+            action,
+            model,
             projectId: string.projectId,
-            create: {
-              id: string.id,
-              projectId: string.projectId,
-              name: string.name,
-            },
-            // name: string.name,
+            requestId: getGuid(),
+            data: JSON.stringify(string),
           }
-          this.projectsHubService.sendSignalrRequest(request, 'STRING', 'CREATE')
-          // request = this.projectsHubService.createSignalrRequest(request, 'STRING', 'CREATE')
+          this.projectsHubService.sendJsonSignalrRequest(projectSignalrEvent)
+          return
+          /*          const request: CreateStringRequest = {
+                      requestId: getGuid(),
+                      projectId: string.projectId,
+                      create: {
+                        id: string.id,
+                        projectId: string.projectId,
+                        name: string.name,
+                      },
+                      // name: string.name,
+                    }
+                    this.projectsHubService.sendSignalrRequest(request, 'STRING', 'CREATE')
+                    // request = this.projectsHubService.createSignalrRequest(request, 'STRING', 'CREATE')
 
-          return this.stringsSignalrService.addStringSignalr(request)
+                    return this.stringsSignalrService.addStringSignalr(request)*/
           // return ProjectsHubActions.sendSignalrRequest({ signalrRequest: request })
         }),
       ),

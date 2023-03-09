@@ -1,8 +1,8 @@
 import { inject, Injectable } from '@angular/core'
-import { Update } from '@ngrx/entity'
 import { Store } from '@ngrx/store'
 import { StringsActions } from '../../store'
 import { StringModel } from '@shared/data-access/models'
+import { ProjectItemUpdate } from '@shared/utils'
 
 @Injectable({ providedIn: 'root' })
 export class StringsRepository {
@@ -16,7 +16,7 @@ export class StringsRepository {
     this.store.dispatch(StringsActions.addString({ string }))
   }
 
-  update(update: Update<StringModel>) {
+  update(update: ProjectItemUpdate<StringModel>) {
     this.store.dispatch(StringsActions.updateString({ update }))
   }
 

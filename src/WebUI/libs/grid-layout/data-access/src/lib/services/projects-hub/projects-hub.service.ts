@@ -3,14 +3,14 @@ import { SignalrRequest } from './signalr.request'
 import { PanelsSignalrService } from '@grid-layout/data-access'
 import { ProjectsHubRepository } from './projects-hub.repository'
 import {
+  ProjectEventAction,
   ProjectItemType,
   ProjectSignalrEvent,
   ProjectSignalrEventV2,
   ProjectSignalrJsonRequest,
   ProjectsSignalrRequest,
-  ProjectsSignalrType,
 } from '@shared/data-access/models'
-import { NewProjectEvent, NewProjectEvents } from '@projects/data-access'
+import { NewProjectEvents, SendProjectEvent } from '@projects/data-access'
 import { HubConnection } from '@microsoft/signalr'
 import { LoggerService } from '@shared/logger'
 
@@ -50,7 +50,7 @@ export class ProjectsHubService {
   createSignalrRequest<TRequest extends ProjectsSignalrRequest>(
     request: TRequest,
     model: ProjectItemType,
-    event: ProjectsSignalrType,
+    event: ProjectEventAction,
   ) {
     const tRequest = new SignalrRequest(model, event, request)
     const newRequest = {
@@ -94,7 +94,7 @@ export class ProjectsHubService {
   sendSignalrRequest<TRequest extends ProjectsSignalrRequest>(
     request: TRequest,
     model: ProjectItemType,
-    action: ProjectsSignalrType,
+    action: ProjectEventAction,
   ) {
     const projectSignalrEvent: ProjectSignalrEvent = {
       action,
@@ -121,7 +121,7 @@ export class ProjectsHubService {
       })
       return
     }
-    this.hubConnection.invoke(NewProjectEvent, request).catch((error) => {
+    this.hubConnection.invoke(SendProjectEvent, request).catch((error) => {
       this.logger.error({
         source: 'Projects-Signalr-Service',
         objects: ['Error sending signalr request', request, error],

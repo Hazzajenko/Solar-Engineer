@@ -7,11 +7,6 @@ using Projects.API.Mapping;
 
 namespace Projects.API.Handlers.Strings.CreateString;
 
-/*public sealed record CreateStringCommand(
-    HubCallerContext Context,
-    CreateStringRequest CreateStringRequest
-) : IRequest<bool>;*/
-
 public class CreateStringHandler : ICommandHandler<CreateStringCommand, bool>
 {
     private readonly IHubContext<ProjectsHub, IProjectsHub> _hubContext;
@@ -31,15 +26,15 @@ public class CreateStringHandler : ICommandHandler<CreateStringCommand, bool>
 
     public async ValueTask<bool> Handle(CreateStringCommand command, CancellationToken cT)
     {
-        var appUserId = command.User.GetGuidUserId();
-        var projectId = command.CreateString.ProjectId.ToGuid();
+        var appUserId = command.User.Id;
+        var projectId = command.Request.ProjectId.ToGuid();
         var appUserProject =
             await _unitOfWork.AppUserProjectsRepository.GetByAppUserIdAndProjectIdAsync(
                 appUserId,
                 projectId
             );
 
-        var @string = String.Create(command.CreateString, projectId, appUserId);
+        var @string = String.Create(command.Request, projectId, appUserId);
 
         await _unitOfWork.StringsRepository.AddAsync(@string);
         await _unitOfWork.SaveChangesAsync();

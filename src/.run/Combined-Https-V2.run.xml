@@ -1,0 +1,9 @@
+﻿<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Combined-Https-V2" type="CompoundRunConfigurationType">
+    <toRun name="Auth.API: Auth-Https-V2" type="LaunchSettings" />
+    <toRun name="Messages.API: Messages-Https-V2" type="LaunchSettings" />
+    <toRun name="Projects.API: Projects-Https-V2" type="LaunchSettings" />
+    <toRun name="Users.API: Users-Https-V2" type="LaunchSettings" />
+    <method v="2" />
+  </configuration>
+</component>

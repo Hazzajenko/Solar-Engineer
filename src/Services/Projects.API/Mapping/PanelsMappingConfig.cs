@@ -78,6 +78,25 @@ public class PanelsMappingConfig : IRegister
             .Map(dest => dest.RequestId, src => src.Request.RequestId);
 
         config
+            .NewConfig<
+                (ProjectEvent ProjectEvent, HubCallerContext Context),
+                CreatePanelCommand
+            >()
+            .Map(
+                dest => dest.Request,
+                src =>
+                    JsonSerializer.Deserialize<CreatePanelRequest>(
+                        src.ProjectEvent.Data,
+                        new JsonSerializerOptions
+                        {
+                            PropertyNameCaseInsensitive = true
+                        }
+                    )
+            )
+            .Map(dest => dest.User, src => src.Context.ToHubAppUser())
+            .Map(dest => dest.RequestId, src => src.ProjectEvent.RequestId);
+
+        config
             .NewConfig<PanelCreatedResponse, IEnumerable<PanelCreatedResponse>>()
             .Map(dest => dest, src => new[] { src });
 

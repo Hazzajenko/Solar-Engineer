@@ -1,21 +1,22 @@
 ﻿using FluentValidation;
+using Projects.API.Common;
 
 namespace Projects.API.Contracts.Requests.Strings;
 
-public class CreateStringRequest
+public class CreateStringRequest : IProjectEventRequest
 {
     public required string Id { get; init; } = default!;
     public required string ProjectId { get; init; } = default!;
     public required string Name { get; init; } = default!;
     public string Color { get; init; } = "blue";
 
-    public class Create
+    /*public class Create
     {
         public required string Id { get; init; }
         public required string ProjectId { get; init; }
         public required string Name { get; init; }
         public string Color { get; init; } = "blue";
-    }
+    }*/
 }
 
 /*public class StringCreate

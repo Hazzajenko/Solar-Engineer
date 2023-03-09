@@ -3,6 +3,7 @@ import { Update } from '@ngrx/entity'
 import { Store } from '@ngrx/store'
 import { PanelsActions, SelectedActions } from '../../store'
 import { PanelModel } from '@shared/data-access/models'
+import { ProjectItemUpdate } from '@shared/utils'
 
 @Injectable({
   providedIn: 'root',
@@ -27,7 +28,7 @@ export class PanelsRepository {
     this.store.dispatch(PanelsActions.loadPanelsSuccess({ panels }))
   }
 
-  updatePanel(update: Update<PanelModel>) {
+  updatePanel(update: ProjectItemUpdate<PanelModel>) {
     this.store.dispatch(PanelsActions.updatePanel({ update }))
   }
 

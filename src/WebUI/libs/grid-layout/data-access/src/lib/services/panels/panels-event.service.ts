@@ -1,5 +1,4 @@
 import { inject, Injectable } from '@angular/core'
-import { Update } from '@ngrx/entity'
 import {
   getSelectedLinks,
   LinksStoreService,
@@ -13,6 +12,7 @@ import { PanelModel } from '@shared/data-access/models'
 import { combineLatest, firstValueFrom, map } from 'rxjs'
 import { PathsEventService } from '../paths'
 import { AuthStoreService } from '@auth/data-access'
+import { ProjectItemUpdate } from '@shared/utils'
 
 @Injectable({
   providedIn: 'root',
@@ -80,8 +80,10 @@ export class PanelsEventService {
   }
 
   async updatePanel(panelId: string, changes: Partial<PanelModel>) {
-    const update: Update<PanelModel> = {
+    const project = await this.projectsFacade.selectedProject()
+    const update: ProjectItemUpdate<PanelModel> = {
       id: panelId,
+      projectId: project.id,
       changes,
     }
     this.panelsStore.dispatch.updatePanel(update)

@@ -1,20 +1,15 @@
-﻿using System.Text.Json;
-using Infrastructure.Extensions;
+﻿using Infrastructure.Extensions;
 using MapsterMapper;
 using Mediator;
 using Microsoft.AspNetCore.SignalR;
-using Projects.API.Contracts.Data;
 using Projects.API.Contracts.Requests.Panels;
 using Projects.API.Contracts.Requests.Projects;
 using Projects.API.Contracts.Requests.Strings;
-using Projects.API.Handlers.Panels.CreatePanel;
-using Projects.API.Handlers.Panels.UpdatePanel;
 using Projects.API.Handlers.Projects.GetProject;
 using Projects.API.Handlers.SignalR;
 using Projects.API.Handlers.SignalR.OnConnected;
 using Projects.API.Handlers.Strings.CreateString;
 using Projects.API.Mapping;
-using Serilog;
 
 namespace Projects.API.Hubs;
 
@@ -22,11 +17,16 @@ public class ProjectsHub : Hub<IProjectsHub>
 {
     private readonly IMapper _mapper;
     private readonly IMediator _mediator;
+    private readonly Dictionary<string, Type> _messageTypes;
 
     public ProjectsHub(IMediator mediator, IMapper mapper)
     {
         _mediator = mediator;
         _mapper = mapper;
+        _messageTypes = typeof(Program).Assembly.DefinedTypes
+            .Where(x =>
+                typeof(ICommand<bool>).IsAssignableFrom(x) && x is { IsInterface: false })
+            .ToDictionary(type => type.Name, type => type.AsType());
     }
 
     public override async Task OnConnectedAsync()
@@ -66,7 +66,13 @@ public class ProjectsHub : Hub<IProjectsHub>
         await _mediator.Send(new CreatePanelCommand(Context.AppUser(), request));
     }*/
 
-    public async Task NewProjectEvent(NewProjectEventRequest request)
+    public async Task SendProjectEvent(ProjectEvent projectEvent)
+    {
+        var eventRequest = projectEvent.ToCommandObject(Context);
+        await _mediator.Send(eventRequest);
+    }
+
+    /*public async Task NewProjectEvent(NewProjectEventRequest request)
     {
         switch (request.Model)
         {
@@ -74,10 +80,29 @@ public class ProjectsHub : Hub<IProjectsHub>
                 switch (request.Action)
                 {
                     case EventType.Create:
+                        // var typeName = typeof(CreatePanelCommand).Name;
+                        // Log.Logger.Information("TypeName: {TypeName}", typeName);
+                        var typeName2 = nameof(CreatePanelCommand);
+                        Log.Logger.Information("TypeName: {TypeName}", typeName2);
+                        // var messageType = "Projects.API.Handlers.Panels.CreatePanel.CreatePanelCommand";
+                        var messageType2 = $"Projects.API.Handlers.Panels.CreatePanel.{typeName2}";
+                        // Projects.API.Handlers.Panels.CreatePanel;
+                        var type = Type.GetType(messageType2);
+                        // var type = _messageTypes.GetValueOrDefault(messageType2);
+                        if (type is null)
+                        {
+                            Log.Logger.Error("Could not find type {MessageType}", messageType2);
+                            return;
+                        }
+
+                        var typedMessage = (ICommand)JsonSerializer.Deserialize(request.Data, type)!;
+                        Log.Logger.Information("Sending {@TypedMessage}", typedMessage);
+                        await _mediator.Send(typedMessage);
+                        // var type = _messageTypes[messageType];
                         // var command = _mapper.Map<CreatePanelCommand>(request, Context);
                         // var command = _mapper.Map<CreatePanelCommand>((request, Context));
-                        var command2 = request.ToCommand<CreatePanelCommand, CreatePanelRequest>(Context);
-                        await _mediator.Send(command2);
+                        // var command2 = request.ToCommand<CreatePanelCommand, CreatePanelRequest>(Context);
+                        // await _mediator.Send(command2);
                         break;
                     case EventType.Update:
                         await _mediator.Send(
@@ -111,21 +136,21 @@ public class ProjectsHub : Hub<IProjectsHub>
         Log.Logger.Information("NewProjectEvent called {@Request}", request);
         await Task.CompletedTask;
         // await _mediator.Send(new CreatePanelCommand(Context.AppUser(), request));
-    }
+    }*/
 
     public async Task CreatePanel(CreatePanelRequest request)
     {
         // await _mediator.Send(new CreatePanelCommand(Context.AppUser(), request));
     }
 
-    public async Task UpdatePanel(UpdatePanelRequest request)
+    /*public async Task UpdatePanel(UpdatePanelRequest request)
     {
         await _mediator.Send(new UpdatePanelCommand(Context.AppUser(), request));
-    }
+    }*/
 
     public async Task CreateString(CreateStringRequest request)
     {
-        await _mediator.Send(new CreateStringCommand(Context.AppUser(), request));
+        // await _mediator.Send(new CreateStringCommand(Context.AppUser(), request));
     }
 
     public async Task CreateProjectItem(UpdateProjectRequest request)

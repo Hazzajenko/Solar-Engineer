@@ -1,21 +1,16 @@
 ﻿using FluentValidation;
+using Projects.API.Common;
 
 namespace Projects.API.Contracts.Requests.Panels;
 
-public class CreatePanelRequest /* : ICreateRequest<PanelCreate>*/
+public class CreatePanelRequest : IProjectEventRequest /* : ICreateRequest<PanelCreate>*/
 {
-    // public required string RequestId { get; init; }
     public required string ProjectId { get; init; }
-
     public required string Id { get; init; }
-
-    // public required string ProjectId { get; init; }
     public required string StringId { get; init; }
     public required string Location { get; init; }
     public required string PanelConfigId { get; init; }
-
-    public required int Rotation { get; init; } = 0;
-    // public required PanelCreate Create { get; init; }
+    public required int Rotation { get; init; }
 }
 
 /*public class PanelCreate

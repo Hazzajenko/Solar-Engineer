@@ -1,8 +1,8 @@
 import { ProjectItemType } from '../../projects'
-import { ProjectsSignalrType } from '../projects-signalr.type'
+import { ProjectEventAction } from '../project-event.action'
 
 export interface ProjectSignalrEvent {
-  action: ProjectsSignalrType
+  action: ProjectEventAction
   byAppUserId?: string
   data?: string
   error?: string
@@ -18,13 +18,13 @@ export interface ProjectSignalrEvent {
 export interface ProjectSignalrJsonRequest {
   projectId: string
   requestId: string
-  action: ProjectsSignalrType
+  action: ProjectEventAction
   model: ProjectItemType
   data: string
 }
 
 export interface ProjectSignalrEventV2 {
-  action: ProjectsSignalrType
+  action: ProjectEventAction
   byAppUserId?: string
   data: string
   error?: string

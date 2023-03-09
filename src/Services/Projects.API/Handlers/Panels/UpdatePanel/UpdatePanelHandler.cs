@@ -26,22 +26,22 @@ public class UpdatePanelHandler : ICommandHandler<UpdatePanelCommand, bool>
 
     public async ValueTask<bool> Handle(UpdatePanelCommand command, CancellationToken cT)
     {
-        var appUserId = command.User.GetGuidUserId();
-        var projectId = command.UpdatePanel.ProjectId.ToGuid();
+        var appUserId = command.User.Id;
+        var projectId = command.Request.ProjectId.ToGuid();
         var appUserProject =
             await _unitOfWork.AppUserProjectsRepository.GetByAppUserIdAndProjectIdAsync(
                 appUserId,
                 projectId
             );
 
-        var panelId = command.UpdatePanel.Update.Id.ToGuid();
+        var panelId = command.Request.Id.ToGuid();
 
         var panel = await _unitOfWork.PanelsRepository.GetPanelByIdAndProjectIdAsync(
             panelId,
             projectId
         );
 
-        var changes = command.UpdatePanel.Update.Changes;
+        var changes = command.Request.Changes;
 
         _unitOfWork.Attach(panel);
         if (changes.Location is not null)

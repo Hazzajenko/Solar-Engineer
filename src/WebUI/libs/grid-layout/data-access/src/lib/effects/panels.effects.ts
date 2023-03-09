@@ -1,22 +1,14 @@
 import { inject, Injectable } from '@angular/core'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { Store } from '@ngrx/store'
-import {
-  CreatePanelRequest,
-  PanelsService,
-  PanelsSignalrService,
-  PanelsStoreService,
-  ProjectsHubActions,
-  ProjectsHubService,
-  UpdatePanelRequest,
-} from '../'
+import { PanelsService, PanelsSignalrService, PanelsStoreService, ProjectsHubActions, ProjectsHubService } from '../'
 import { BlocksActions, PanelsActions } from '../store'
 import { ProjectsActions, ProjectsStoreService } from '@projects/data-access'
 import { of, switchMap } from 'rxjs'
 import { map } from 'rxjs/operators'
 import { LoggerService } from '@shared/logger'
 import { getGuid } from '@shared/utils'
-import { ProjectSignalrJsonRequest } from '@shared/data-access/models'
+import { ProjectEventAction, ProjectItemType, ProjectSignalrJsonRequest } from '@shared/data-access/models'
 
 // import { SignalrRequest } from '@shared/data-access/models'
 
@@ -83,24 +75,8 @@ export class PanelsEffects {
           if (!isSignalr) {
             return ProjectsHubActions.cancelSignalrRequest()
           }
-          const request: CreatePanelRequest = {
-            requestId: getGuid(),
-            projectId: panel.projectId,
-            create: {
-              id: panel.id,
-              projectId: panel.projectId,
-              stringId: panel.stringId,
-              location: panel.location,
-              panelConfigId: 'undefined',
-              rotation: panel.rotation,
-            } /*
-            time: new Date(),
-            model: 'PANEL',
-            action: 'CREATE',*/,
-          }
-          const action = 'CREATE'
-          const model = 'PANEL'
-          // const defaultSerializer = new JsonSerializer()
+          const action: ProjectEventAction = 'CREATE'
+          const model: ProjectItemType = 'PANEL'
           const projectSignalrEvent: ProjectSignalrJsonRequest = {
             action,
             model,
@@ -109,26 +85,7 @@ export class PanelsEffects {
             data: JSON.stringify(panel),
           }
           this.projectsHubService.sendJsonSignalrRequest(projectSignalrEvent)
-          // const json = defaultSerializer.serialize(panel)
-          // json.
-          // const json2 = defaultSerializer.deserialize(panel)
-          /*
-                     let request: UpdatePanelRequest = {
-                       id: undefined,
-                       projectId: panel.projectId,
-                       update: {
-                         id: panel.id,
-                         changes: update.changes,
-                       },
-                     }*/
-          // this.projectsHubService.sendSignalrRequest(request, 'PANEL', 'CREATE')
           return
-          // this.projectsHubService.createSignalrRequestV2(request, 'PANEL', 'CREATE')
-          // request = this.projectsHubService.createSignalrRequestV2(request)
-          // request = this.projectsHubService.createSignalrRequest(request, 'PANEL', 'CREATE')
-          // return this.panelsSignalrService.updatePanelSignalr(request)
-          // return this.panelsSignalrService.addPanelSignalr(request)
-          // return ProjectsHubActions.sendSignalrRequest({ signalrRequest: request })
         }),
       ),
     { dispatch: false },
@@ -216,24 +173,44 @@ export class PanelsEffects {
             return ProjectsHubActions.cancelSignalrRequest()
           }
 
-          if (typeof update.id !== 'string') {
-            this.logger.error({ source: 'panels.effects', objects: ['update.id is not a string'] })
-            throw new Error('update.id is not a string')
-          }
+          /*          if (typeof update.id !== 'string') {
+                      this.logger.error({ source: 'panels.effects', objects: ['update.id is not a string'] })
+                      throw new Error('update.id is not a string')
+                    }*/
 
-          const panel = await this.panelsStore.select.panelById(update.id)
-
-          const request: UpdatePanelRequest = {
+          // const panel = await this.panelsStore.select.panelById(update.id)
+          /*        const request: UpdatePanelRequest = {
+                    requestId: getGuid(),
+                    projectId: update.projectId,
+                    update: {
+                      id: update.id,
+                      changes: update.changes,
+                    },
+                  }*/
+          const action: ProjectEventAction = 'UPDATE'
+          const model: ProjectItemType = 'PANEL'
+          // const defaultSerializer = new JsonSerializer()
+          const projectSignalrEvent: ProjectSignalrJsonRequest = {
+            action,
+            model,
+            projectId: update.projectId,
             requestId: getGuid(),
-            projectId: panel.projectId,
-            update: {
-              id: panel.id,
-              changes: update.changes,
-            },
+            data: JSON.stringify(update),
           }
-          this.projectsHubService.sendSignalrRequest(request, 'PANEL', 'UPDATE')
-          // request = this.projectsHubService.createSignalrRequest(request, 'PANEL', 'UPDATE')
-          return this.panelsSignalrService.updatePanelSignalr(request)
+          this.projectsHubService.sendJsonSignalrRequest(projectSignalrEvent)
+          return
+
+          /*          const request: UpdatePanelRequest = {
+                      requestId: getGuid(),
+                      projectId: panel.projectId,
+                      update: {
+                        id: panel.id,
+                        changes: update.changes,
+                      },
+                    }
+                    this.projectsHubService.sendSignalrRequest(request, 'PANEL', 'UPDATE')
+                    // request = this.projectsHubService.createSignalrRequest(request, 'PANEL', 'UPDATE')
+                    return this.panelsSignalrService.updatePanelSignalr(request)*/
         }),
       ),
     { dispatch: false },

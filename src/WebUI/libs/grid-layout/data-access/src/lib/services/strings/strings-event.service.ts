@@ -1,5 +1,4 @@
 import { inject, Injectable } from '@angular/core'
-import { Update } from '@ngrx/entity'
 import {
   GridFacade,
   GridStoreService,
@@ -15,6 +14,7 @@ import {
 import { ProjectsFacade } from '@projects/data-access'
 import { BLOCK_TYPE, GridMode, PanelModel, StringModel } from '@shared/data-access/models'
 import { combineLatest, combineLatestWith, firstValueFrom, map } from 'rxjs'
+import { ProjectItemUpdate } from '@shared/utils'
 
 @Injectable({
   providedIn: 'root',
@@ -32,15 +32,15 @@ export class StringsEventService {
   private panelsStore = inject(PanelsStoreService)
 
   async create(stringName: string) {
-    const project = await this.projectsFacade.projectFromRoute
-    console.log(project)
-    if (!project) {
-      return
-    }
+    const project = await this.projectsFacade.selectedProject()
+    // console.log(project)
+    /*    if (!project) {
+          return
+        }*/
     const string = new StringModel({
       projectId: project.id,
       name: stringName,
-      color: '',
+      color: 'undefined',
       parallel: false,
     })
     this.stringsStore.dispatch.createString(string)
@@ -73,9 +73,9 @@ export class StringsEventService {
     }
     const string = await this.create(stringName)
     // console.log(string)
-    if (!(string instanceof StringModel)) {
-      return
-    }
+    /*    if (!(string instanceof StringModel)) {
+          return
+        }*/
     const updates: Partial<PanelModel> = {
       stringId: string.id,
     }
@@ -121,8 +121,10 @@ export class StringsEventService {
   }
 
   async updateString(stringId: string, changes: Partial<StringModel>) {
-    const update: Update<StringModel> = {
+    const project = await this.projectsFacade.selectedProject()
+    const update: ProjectItemUpdate<StringModel> = {
       id: stringId,
+      projectId: project.id,
       changes,
     }
 

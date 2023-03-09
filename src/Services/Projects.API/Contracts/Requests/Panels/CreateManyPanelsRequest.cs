@@ -1,8 +1,9 @@
 ﻿using FluentValidation;
+using Projects.API.Common;
 
 namespace Projects.API.Contracts.Requests.Panels;
 
-public class CreateManyPanelsRequest
+public class CreateManyPanelsRequest : IProjectEventRequest
 {
     public required string ProjectId { get; set; } = default!;
     public required string StringId { get; set; } = default!;
