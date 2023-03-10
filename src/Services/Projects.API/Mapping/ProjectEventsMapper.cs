@@ -93,41 +93,11 @@ public static class ProjectEventsMapper
     {
         var dtoType = entity.ToDtoType();
         Log.Logger.Information("dtoType: {DtoType}", dtoType);
-        // var entityDto = entity.Adapt();
-        // var entityDto = entity.Adapt(dtoType);
+
         var dtoObject = entity.ToDtoObject(dtoType);
         Log.Logger.Information("dtoObject: {DtoObject}", dtoObject);
-        foreach (var propertyInfo in dtoObject.GetType().GetProperties())
-        {
-            Log.Logger.Information("propertyInfo: {@PropertyInfo}", propertyInfo);
-            var entityProperty = dtoObject.GetType().GetProperty(propertyInfo.Name);
-            if (entityProperty != null)
-            {
-                var entityValue = entityProperty.GetValue(dtoObject);
-                Log.Logger.Information("entityValue: {EntityValue}", entityValue);
-                /*if (entityValue is Guid)
-                    entityValue = entityValue.ToString();
-                propertyInfo.SetValue(dtoObject, entityValue);*/
-            }
-            /*var entityProperty = entity.GetType().GetProperty(propertyInfo.Name);
-            if (entityProperty is null)
-            {
-                Log.Logger.Information("entityProperty is null");
-                continue;
-            }*/
-            // Log.Logger.Information("propertyInfo: {@PropertyInfo}", propertyInfo.GetValue());
-        }
 
-        // Log.Logger.Information("entityDto: {EntityDto}", entityDto);
-        // return new dtoType { };
-
-        /*JsonSerializer.Deserialize(
-            entity.Adapt(dtoType),
-            // dtoType,
-            new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
-        )!;*/
-        // var toJson = JsonSerializer.Serialize(entityDto);
-        var toJson = JsonSerializer.Serialize(entity);
+        var toJson = JsonSerializer.Serialize(dtoObject);
         return new ProjectEventResponse
         {
             RequestId = command.RequestId,
@@ -137,31 +107,11 @@ public static class ProjectEventsMapper
             Model = entity.GetType().Name,
             Data = toJson
         };
-        /*{
-            User = context.ToHubAppUser(),
-            Request = fromJson,
-            RequestId = projectEvent.RequestId
-        };*/
     }
 
     public static object ToDtoObject<TEntity>(this TEntity entity, Type dtoType)
         where TEntity : IProjectItem
     {
-        /*var entityDto = entity.Adapt(dtoType);
-        var json = JsonSerializer.Deserialize(
-            entityDto,
-            dtoType,
-            new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
-        )!;*/
-        // var requestType = projectEvent.ToRequestType();
-        /*var eventRequest = (IProjectEventRequest)
-            JsonSerializer.Deserialize(
-                projectEvent.Data,
-                requestType,
-                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
-            )!;*/
-
-        // var commandType = projectEvent.ToCommandType();
         var dtoObject = Activator.CreateInstance(dtoType)!;
         foreach (var propertyInfo in dtoType.GetProperties())
         {
@@ -175,13 +125,6 @@ public static class ProjectEventsMapper
                 propertyInfo.SetValue(dtoObject, entityValue);
             }
         }
-
-        /*var commandProperty = commandType.GetProperty("Request")!;
-        commandProperty.SetValue(dtoObject, eventRequest);
-        var userProperty = commandType.GetProperty("User")!;
-        userProperty.SetValue(dtoObject, context.ToHubAppUser());
-        var requestIdProperty = commandType.GetProperty("RequestId")!;
-        requestIdProperty.SetValue(dtoObject, projectEvent.RequestId);*/
         return dtoObject;
     }
 
