@@ -29,7 +29,6 @@ import { AuthStoreService } from '@auth/data-access'
 import {
   AuthUserModel,
   CombinedAppUserModel,
-  ImageModel,
   S3ImageModel,
   UserModel,
 } from '@shared/data-access/models'
@@ -37,8 +36,11 @@ import { ShowHideComponent } from '@shared/ui/show-hide'
 
 import { delay, map, Observable } from 'rxjs'
 import { ActivatedRoute } from '@angular/router'
-import { UsersService, UsersStoreService } from '@app/data-access/users'
-import { RouterFacade } from '@shared/data-access/router'
+import {
+  UpdateDisplayPictureRequest,
+  UsersService,
+  UsersStoreService,
+} from '@app/data-access/users'
 import { ConnectionsStoreService } from '@app/data-access/connections'
 import { GetCdnUrlStringPipe, GetFullUrlPipe, TimeDifferenceFromNowPipe } from '@shared/pipes'
 import { ImagesService } from '@app/data-access/images'
@@ -46,7 +48,6 @@ import { HttpClient } from '@angular/common/http'
 import { MatProgressBarModule } from '@angular/material/progress-bar'
 import { LetModule } from '@ngrx/component'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
-import { UpdateDisplayPictureRequest } from '@app/data-access/users'
 
 @Component({
   selector: 'app-change-display-picture-component',
@@ -121,7 +122,7 @@ export class ChangeDisplayPictureComponent {
     // this.appUser$.subscribe((res) => console.log(res))
     // this.imagesService.defaultImages$.subscribe((res) => console.log(res))
     // this.imagesService.getDefaultImages().subscribe((res) => console.log(res))
-    // this.http.get<GetImagesResponse>(`/api/images/default`).subscribe((res) => console.log(res))
+    // this.http.get<GetImagesResponse>(`/services/images/default`).subscribe((res) => console.log(res))
   }
 
   selectImage(image: S3ImageModel) {

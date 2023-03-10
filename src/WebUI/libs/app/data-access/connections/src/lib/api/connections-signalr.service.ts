@@ -1,19 +1,23 @@
 import { inject, Injectable } from '@angular/core'
-import { Router } from '@angular/router'
 import * as signalR from '@microsoft/signalr'
 import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr'
 import { ConnectionModel } from '@shared/data-access/models'
 import { ConnectionsStoreService } from '../services'
 import { GetOnlineUsers, UserIsOffline, UserIsOnline } from './connections.methods'
-import { LoggerService } from '@shared/logger'
+import { Logger, LoggerService } from '@shared/logger'
 
 @Injectable({
   providedIn: 'root',
 })
-export class ConnectionsSignalrService {
+export class ConnectionsSignalrService extends Logger {
   private hubConnection?: HubConnection
   private connectionsStore = inject(ConnectionsStoreService)
-  private logger = inject(LoggerService)
+
+  // private logger = inject(LoggerService)
+
+  constructor(logger: LoggerService) {
+    super(logger)
+  }
 
   createHubConnection(token: string) {
     this.hubConnection = new HubConnectionBuilder()
@@ -28,11 +32,17 @@ export class ConnectionsSignalrService {
 
     this.hubConnection
       .start()
-      .then(() => this.logger.debug({ source: 'Connections-Signalr-Service', objects: ['Hub Connection started'] }))
-      .catch((err) => this.logger.error({
+      .then(
+        () => this.logDebug('Hub Connection started'),
+        /*this.logger.debug({ source: 'Connections-Signalr-Service', objects: ['Hub Connection started'] })*/
+      )
+      .catch(
+        (err) => this.logError('Error while starting Hub connection: ' + err),
+        /*this.logger.error({
         source: 'Connections-Signalr-Service',
         objects: ['Error while starting Hub connection: ' + err],
-      }))
+      })*/
+      )
 
     this.hubConnection.on(UserIsOnline, (connections: ConnectionModel[]) => {
       this.connectionsStore.dispatch.addManyConnections(connections)
@@ -49,9 +59,12 @@ export class ConnectionsSignalrService {
 
   stopHubConnection() {
     if (!this.hubConnection) return
-    this.hubConnection.stop().catch((error) => this.logger.error({
+    this.hubConnection.stop().catch(
+      (error) => this.logError('Error while stopping Hub connection: ' + error),
+      /*this.logger.error({
       source: 'Connections-Signalr-Service',
       objects: ['Error while stopping Hub connection: ' + error],
-    }))
+    })*/
+    )
   }
 }

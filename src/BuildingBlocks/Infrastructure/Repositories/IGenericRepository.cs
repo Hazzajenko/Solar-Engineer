@@ -7,9 +7,11 @@ public interface IGenericRepository<TModel>
 {
     Task AddAsync(TModel model);
     Task<TModel> AddAndSaveChangesAsync(TModel model);
-    Task<TModel?> GetByIdAsync(Guid id);
     Task AddRangeAsync(IEnumerable<TModel> items);
+    Task<IEnumerable<TModel>> AddManyAndSaveChangesAsync(IEnumerable<TModel> items);
+    Task<TModel?> GetByIdAsync(Guid id);
     Task UpdateAsync(TModel item);
+    Task<TModel> UpdateAndSaveChangesAsync(TModel model);
 
     Task DeleteAsync(object key);
     // Task<bool> DeleteAsync(Guid id);

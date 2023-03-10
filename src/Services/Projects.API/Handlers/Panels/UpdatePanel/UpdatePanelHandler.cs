@@ -1,6 +1,8 @@
-﻿using Infrastructure.Extensions;
+﻿using Infrastructure.Exceptions;
+using Infrastructure.Extensions;
 using Mediator;
 using Microsoft.AspNetCore.SignalR;
+using Projects.API.Contracts.Data;
 using Projects.API.Data;
 using Projects.API.Hubs;
 using Projects.API.Mapping;
@@ -40,6 +42,7 @@ public class UpdatePanelHandler : ICommandHandler<UpdatePanelCommand, bool>
             panelId,
             projectId
         );
+        panel.ThrowExceptionIfNull(new HubException("Panel not found"));
 
         var changes = command.Request.Changes;
 
@@ -66,10 +69,21 @@ public class UpdatePanelHandler : ICommandHandler<UpdatePanelCommand, bool>
                 appUserProject.ProjectId
             );
 
-        await _hubContext.Clients
+        /*var response = panel.ToProjectEventResponse(command.RequestId, appUserId.ToString(), ActionType.Update,
+            ModelType.Panel);*/
+
+        var response = panel.ToProjectEventResponseV3(command, ActionType.Update);
+        /*await _hubContext.Clients
             .Group(appUserProject.ProjectId.ToString())
             .PanelsUpdated(panel.ToDtoList());
-        await _hubContext.Clients.Users(projectMembers).PanelsUpdated(panel.ToDtoList());
+        await _hubContext.Clients.Users(projectMembers).PanelsUpdated(panel.ToDtoList());*/
+        /*await _hubContext.Clients
+            .Group(appUserProject.ProjectId.ToString())
+            .ReceiveProjectEvents(response.ToIEnumerable());*/
+        /*await _hubContext.Clients
+            .Users(projectMembers)
+            .ReceiveProjectEvents(response.ToIEnumerable());*/
+        await _hubContext.Clients.Users(projectMembers).ReceiveProjectEvent(response);
 
         _logger.LogInformation(
             "User {User} updated panel {Panel} in project {Project}",

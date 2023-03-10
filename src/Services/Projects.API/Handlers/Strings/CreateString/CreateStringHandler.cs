@@ -1,6 +1,7 @@
 ﻿using Infrastructure.Extensions;
 using Mediator;
 using Microsoft.AspNetCore.SignalR;
+using Projects.API.Contracts.Data;
 using Projects.API.Data;
 using Projects.API.Hubs;
 using Projects.API.Mapping;
@@ -44,10 +45,30 @@ public class CreateStringHandler : ICommandHandler<CreateStringCommand, bool>
                 appUserProject.ProjectId
             );
 
-        await _hubContext.Clients
+        /*var response = @string.ToProjectEventResponse(
+            appUserId.ToString(),
+            command.RequestId,
+            ActionType.Create,
+            ModelType.String
+        );*/
+        /*var response = @string.ToProjectEventResponseV2(
+            command,
+            ActionType.Create,
+            ModelType.String
+        );*/
+        var response = @string.ToProjectEventResponseV3(command, ActionType.Create);
+
+        /*await _hubContext.Clients
             .Group(appUserProject.ProjectId.ToString())
             .StringsCreated(@string.ToDtoList());
-        await _hubContext.Clients.Users(projectMembers).StringsCreated(@string.ToDtoList());
+        await _hubContext.Clients.Users(projectMembers).StringsCreated(@string.ToDtoList());*/
+        /*await _hubContext.Clients
+            .Group(appUserProject.ProjectId.ToString())
+            .ReceiveProjectEvents(response.ToIEnumerable());*/
+        /*await _hubContext.Clients
+            .Users(projectMembers)
+            .ReceiveProjectEvents(response.ToIEnumerable());*/
+        await _hubContext.Clients.Users(projectMembers).ReceiveProjectEvent(response);
 
         _logger.LogInformation(
             "User {User} created string {String} in project {Project}",

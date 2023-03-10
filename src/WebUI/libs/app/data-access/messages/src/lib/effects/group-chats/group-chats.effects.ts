@@ -4,15 +4,10 @@ import { AuthActions } from '@auth/data-access'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 
 import { map, switchMap } from 'rxjs/operators'
-// import { GroupChatsService, GroupChatsSignalrService } from '../api/user-user-user-messages'
+// import { GroupChatsService, GroupChatsSignalrService } from '../services/user-user-user-messages'
 import { GroupChatMembersActions, GroupChatMessagesActions, GroupChatsActions } from '../../store'
-import {
-  GroupChatMessageModel,
-  GroupChatModel,
-  InitialGroupChatMemberModel,
-} from '@shared/data-access/models'
-import { GroupChatsService } from '../../api/group-chats'
-import { GroupChatsSignalrService } from '../../api/group-chats'
+import { GroupChatMessageModel, GroupChatModel, InitialGroupChatMemberModel } from '@shared/data-access/models'
+import { GroupChatsService, GroupChatsSignalrService } from '../../api/group-chats'
 
 // import { GroupChatServerMessagesActions } from '../store/group-chat-server-user-user-user-messages'
 

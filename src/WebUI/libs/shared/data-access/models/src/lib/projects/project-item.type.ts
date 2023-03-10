@@ -1,15 +1,15 @@
 export const PROJECT_ITEM_TYPE = {
-  UNDEFINED: 'UNDEFINED',
-  INVERTER: 'INVERTER',
-  PANEL: 'PANEL',
-  CABLE: 'CABLE',
-  DISCONNECTIONPOINT: 'DISCONNECTIONPOINT',
-  TRAY: 'TRAY',
-  RAIL: 'RAIL',
-  TRACKER: 'TRACKER',
-  STRING: 'STRING',
-  PANEL_LINK: 'PANEL_LINK',
-  PANEL_CONFIG: 'PANEL_CONFIG',
+  UNDEFINED: 'Undefined',
+  INVERTER: 'Inverter',
+  PANEL: 'Panel',
+  CABLE: 'Cable',
+  DISCONNECTIONPOINT: 'DisconnectionPoint',
+  TRAY: 'Tray',
+  RAIL: 'Rail',
+  TRACKER: 'Tracker',
+  STRING: 'String',
+  PANEL_LINK: 'PanelLink',
+  PANEL_CONFIG: 'PanelConfig',
 } as const
 
-export type ProjectItemType = typeof PROJECT_ITEM_TYPE[keyof typeof PROJECT_ITEM_TYPE]
+export type ProjectItemType = (typeof PROJECT_ITEM_TYPE)[keyof typeof PROJECT_ITEM_TYPE]

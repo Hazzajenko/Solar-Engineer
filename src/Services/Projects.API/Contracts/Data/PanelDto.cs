@@ -1,9 +1,21 @@
 ﻿using Infrastructure.Common;
+using Projects.API.Common;
 using Projects.API.Data;
+using Projects.API.Entities;
 
 namespace Projects.API.Contracts.Data;
 
-public class PanelDto : IEntityDto, IUserObjectDto, IProject
+public interface IPanelDto : IProjectItemDtoOf<Panel>, IEntityDto, IUserObjectDto, IProject
+{
+    string Type { get; set; }
+    string StringId { get; set; }
+    string PanelConfigId { get; set; }
+    string Location { get; set; }
+    int Rotation { get; set; }
+    string ProjectId { get; set; }
+}
+
+public class PanelDto : IPanelDto
 {
     public string Type { get; set; } = BlockType.Panel;
     public string StringId { get; set; } = default!;

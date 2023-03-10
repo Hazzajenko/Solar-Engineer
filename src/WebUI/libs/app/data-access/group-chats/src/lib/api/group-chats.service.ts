@@ -12,19 +12,19 @@ export class GroupChatsService {
   private messagesSignalrService = inject(SignalrService)
 
   /*  createGroupChat(request: CreateGroupChatRequest) {
-      return this.http.post<CreateGroupChatResponse>(`/api/${GROUP_CHATS}`, {
+      return this.http.post<CreateGroupChatResponse>(`/services/${GROUP_CHATS}`, {
         ...request,
       })
     }
 
     inviteToGroupChat(request: InviteToGroupChatRequest) {
-      return this.http.post<HttpResponse<any>>(`/api/${GROUP_CHATS}/${request.groupChatId}/invites`, {
+      return this.http.post<HttpResponse<any>>(`/services/${GROUP_CHATS}/${request.groupChatId}/invites`, {
         invites: request.invites,
       })
     }
 
     removeFromGroupChat(request: RemoveFromGroupChatRequest) {
-      return this.http.delete<HttpResponse<any>>(`/api/${GROUP_CHATS}/${request.groupChatId}/users`, {
+      return this.http.delete<HttpResponse<any>>(`/services/${GROUP_CHATS}/${request.groupChatId}/users`, {
         body: {
           userNames: request.userNames,
         },
@@ -61,11 +61,11 @@ export class GroupChatsService {
     }*/
 
   /*  getAllGroupChats() {
-      return this.http.get<AllGroupChatsDataResponse>(`/api/${GROUP_CHATS}/data`)
+      return this.http.get<AllGroupChatsDataResponse>(`/services/${GROUP_CHATS}/data`)
     }
 
     getInitialCombinedGroupChats() {
-      return this.http.get<InitialCombinedGroupChatsResponse>(`/api/${GROUP_CHATS}/data`)
+      return this.http.get<InitialCombinedGroupChatsResponse>(`/services/${GROUP_CHATS}/data`)
     }*/
 
   /*
@@ -86,7 +86,7 @@ export class GroupChatsService {
   /*
 
     sendMessageToGroupChat(request: SendGroupChatMessageRequest) {
-      /!*    return this.http.post<MessageResponse>(`/api/message/user/${request.recipientUsername}`, {
+      /!*    return this.http.post<MessageResponse>(`/services/message/user/${request.recipientUsername}`, {
             ...request,
           })*!/
     }

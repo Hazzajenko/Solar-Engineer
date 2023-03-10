@@ -5,30 +5,36 @@ import { ProjectsFacade } from '@projects/data-access'
 import {
   PanelIdPath,
   PanelPathModel,
+  PathModel,
   SelectedPanelLinkPathModel,
   SelectedPathModel,
-  PathModel,
 } from '@shared/data-access/models'
 import { LinksPathService } from '../links'
-import { LoggerService } from '@shared/logger'
+import { Logger, LoggerService } from '@shared/logger'
 
 @Injectable({
   providedIn: 'root',
 })
-export class PathsEventService {
+export class PathsEventService extends Logger {
   private projectsFacade = inject(ProjectsFacade)
   private selectedFacade = inject(SelectedFacade)
 
   private linksPathService = inject(LinksPathService)
   private pathsStore = inject(PathsStoreService)
   private selectedStore = inject(SelectedStoreService)
-  private logger = inject(LoggerService)
+
+  // private logger = inject(LoggerService)
+
+  constructor(logger: LoggerService) {
+    super(logger)
+  }
 
   async createPath(panelId: string, panelPath: PanelPathModel) {
     const project = await this.projectsFacade.projectFromRoute
     const selectedStringId = await this.selectedFacade.selectedStringId
     // if (!selectedStringId) return console.error('!selectedStringId')
-    if (!selectedStringId) return this.logger.error({ source: 'Paths-Event-Service', objects: ['!selectedStringId'] })
+    if (!selectedStringId) return this.logError('!selectedStringId')
+    // return this.logger.error({ source: 'Paths-Event-Service', objects: ['!selectedStringId'] })
 
     if (!project) {
       return
@@ -50,7 +56,8 @@ export class PathsEventService {
   async createManyPaths(panelIdPaths: PanelIdPath[]) {
     const project = await this.projectsFacade.projectFromRoute
     const selectedStringId = await this.selectedStore.select.selectedStringId
-    if (!selectedStringId) return this.logger.error({ source: 'Paths-Event-Service', objects: ['!selectedStringId'] })
+    if (!selectedStringId) return this.logError('!selectedStringId')
+    // if (!selectedStringId) return this.logger.error({ source: 'Paths-Event-Service', objects: ['!selectedStringId'] })
 
     if (!project) {
       return

@@ -36,6 +36,7 @@ public class PanelsMappingConfig : IRegister
             .Map(dest => dest.ByAppUserId, src => src.Panel.CreatedById.ToString())
             .Map(dest => dest.Action, src => "Create")
             .Map(dest => dest.Model, src => "Panel")
+            .Map(dest => dest.IsSuccess, src => true)
             .Map(dest => dest.Create, src => src.Panel.Adapt<PanelDto>());
 
         config
@@ -44,6 +45,7 @@ public class PanelsMappingConfig : IRegister
             .Map(dest => dest.ProjectId, src => src.Panel.ProjectId.ToString())
             .Map(dest => dest.ServerTime, src => src.Panel.CreatedTime)
             .Map(dest => dest.ByAppUserId, src => src.Panel.CreatedById.ToString())
+            .Map(dest => dest.IsSuccess, src => true)
             .Map(dest => dest.Action, src => "Create")
             .Map(dest => dest.Model, src => "Panel")
             .Map(
@@ -68,29 +70,20 @@ public class PanelsMappingConfig : IRegister
                     JsonSerializer.Deserialize<CreatePanelRequest>(
                         src.Request.Data,
                         // JsonSerializerOptions.Default
-                        new JsonSerializerOptions
-                        {
-                            PropertyNameCaseInsensitive = true
-                        }
+                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
                     )
             )
             .Map(dest => dest.User, src => src.Context.ToHubAppUser())
             .Map(dest => dest.RequestId, src => src.Request.RequestId);
 
         config
-            .NewConfig<
-                (ProjectEvent ProjectEvent, HubCallerContext Context),
-                CreatePanelCommand
-            >()
+            .NewConfig<(ProjectEvent ProjectEvent, HubCallerContext Context), CreatePanelCommand>()
             .Map(
                 dest => dest.Request,
                 src =>
                     JsonSerializer.Deserialize<CreatePanelRequest>(
                         src.ProjectEvent.Data,
-                        new JsonSerializerOptions
-                        {
-                            PropertyNameCaseInsensitive = true
-                        }
+                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
                     )
             )
             .Map(dest => dest.User, src => src.Context.ToHubAppUser())

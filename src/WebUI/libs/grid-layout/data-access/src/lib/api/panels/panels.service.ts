@@ -13,21 +13,27 @@ import {
 } from './panels.response'
 import { CreatePanel, ProjectsSignalrService } from '@projects/data-access'
 import { CreatePanelRequest } from '../../contracts'
-import { LoggerService } from '@shared/logger'
+import { Logger, LoggerService } from '@shared/logger'
 
 @Injectable({
   providedIn: 'root',
 })
-export class PanelsService {
+export class PanelsService extends Logger {
   private http = inject(HttpClient)
   private projectsSignalrService = inject(ProjectsSignalrService)
-  private logger = inject(LoggerService)
+
+  // private logger = inject(LoggerService)
+
+  constructor(logger: LoggerService) {
+    super(logger)
+  }
 
   addPanelSignalr(request: CreatePanelRequest) {
     if (!this.projectsSignalrService.projectsHubConnection) return
     this.projectsSignalrService.projectsHubConnection
       .invoke(CreatePanel, request)
-      .catch((e) => this.logger.error({ source: 'PanelsSignalrService', objects: [e] }))
+      .catch((e) => this.logError('addPanelSignalr', e))
+    // .catch((e) => this.logger.error({ source: 'PanelsSignalrService', objects: [e] }))
   }
 
   addPanel(panel: PanelModel): Observable<PanelModel> {

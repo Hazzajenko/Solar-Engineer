@@ -7,6 +7,8 @@ public class CreateManyPanelsRequest : IProjectEventRequest
 {
     public required string ProjectId { get; set; } = default!;
     public required string StringId { get; set; } = default!;
+    public required string PanelConfigId { get; set; } = default!;
+
 
     public required IEnumerable<CreatePanelRequest> Panels { get; init; } =
         new List<CreatePanelRequest>();

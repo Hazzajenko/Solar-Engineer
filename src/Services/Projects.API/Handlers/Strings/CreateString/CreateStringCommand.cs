@@ -8,11 +8,12 @@ namespace Projects.API.Handlers.Strings.CreateString;
 public sealed record CreateStringCommand(
     HubAppUser User,
     CreateStringRequest Request,
-    string RequestId
+    string RequestId,
+    string ProjectId
 ) : ICommand<bool>, IProjectCommand<CreateStringRequest>
 {
     public CreateStringCommand()
-        : this(null, null, null)
+        : this(null!, null!, null!, null!)
     {
     }
 }

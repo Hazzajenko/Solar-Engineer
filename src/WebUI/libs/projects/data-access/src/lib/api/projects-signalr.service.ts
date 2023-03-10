@@ -5,119 +5,61 @@ import {
   ProjectSignalrEvent,
   ProjectSignalrJsonRequest,
 } from '@shared/data-access/models'
-import { ProjectsStoreService } from '../services'
-import {
-  GetManyProjects,
-  GetProject,
-  ReceiveProjectEvent,
-  SendProjectEvent,
-} from './projects.methods'
+import { ProjectsStoreService, SignalrEventsRepository } from '../services'
+import { GetManyProjects, GetProject, SendProjectEvent } from './projects.methods'
 import { GetProjectDataResponse } from '../models/get-project-data.response'
-import { LoggerService } from '@shared/logger'
+import { Logger, LoggerService } from '@shared/logger'
 import { PanelsStoreService } from '@grid-layout/data-access'
 import { SignalrService } from '@app/data-access/signalr'
+import { GetProjectById, GetUserProjects } from './projects-signalr.invoke-methods'
+import { ReceiveProjectEvent, ReceiveProjectEvents } from './projects-signalr.handlers'
 
 @Injectable({
   providedIn: 'root',
 })
-export class ProjectsSignalrService {
+export class ProjectsSignalrService extends Logger {
   public projectsHubConnection?: HubConnection
   private projectsStore = inject(ProjectsStoreService)
   private panelsStore = inject(PanelsStoreService)
-  private hubConnectionIsInitialized = false
-  private logger = inject(LoggerService)
   private signalrService = inject(SignalrService)
-  // protected hi = "ss"
+  // private signalrEventsService = inject(SignalrEventsService)
 
-  /*  createProjectsHubConnection(token: string) {
-      if (this.hubConnectionIsInitialized) return
-      this.initHubConnection(token)
-      this.hubConnectionIsInitialized = true
-    }*/
+  private signalrEventsRepository = inject(SignalrEventsRepository)
+
+  constructor(logger: LoggerService) {
+    super(logger)
+  }
 
   createProjectsHubConnection(token: string) {
     if (this.projectsHubConnection) return this.projectsHubConnection
-    /*    this.projectsHubConnection = new HubConnectionBuilder()
-          .withUrl('/hubs/projects', {
-            accessTokenFactory: () => token,
-            skipNegotiation: true,
-            transport: signalR.HttpTransportType.WebSockets,
-          })
-          .configureLogging(LogLevel.Information)
-          .withAutomaticReconnect()
-          .build()
-
-        this.projectsHubConnection
-          .start()
-          .then(() => {
-            this.logger.debug({
-              source: 'Projects-Signalr-Service',
-              objects: ['Projects Hub Connection started'],
-            })
-            this.getUserProjects()
-          })
-          .catch((err) => {
-            this.logger.error({
-              source: 'Projects-Signalr-Service',
-              objects: ['Error while starting Projects Hub connection: ' + err],
-            })
-            throw new Error('Error while starting Projects Hub connection: ' + err)
-          })*/
     this.projectsHubConnection = this.signalrService.createHubConnection(
       token,
       'Projects',
       '/hubs/projects',
-      // this.getUserProjects('hi'),
-      // this.initHubConnection.bind(this),
+      GetUserProjects,
     )
-    /*    if (this.projectsHubConnection.state === 'Connected') {
-          this.getUserProjects()
-        }*/
-    /*.then((hubConnection) => {
-      if (this.projectsHubConnection.state === 'Connected') {
-        this.getUserProjects()
-      }
-    })*/
-    /*    if (this.projectsHubConnection.state === 'Connected') {
-          this.getUserProjects()
-        }*/
 
     this.projectsHubConnection.on(GetManyProjects, (projects: ProjectModel[]) => {
-      this.logger.debug({
-        source: 'Projects-Signalr-Service',
-        objects: [GetManyProjects, projects],
-      })
+      this.logDebug(GetManyProjects, projects)
       this.projectsStore.dispatch.addManyProjects(projects)
     })
 
     this.projectsHubConnection.on(GetProject, (projectData: GetProjectDataResponse) => {
-      this.logger.debug({
-        source: 'Projects-Signalr-Service',
-        objects: [GetProject, projectData],
-      })
+      this.logDebug(GetProject, projectData)
       if (projectData.panels) {
         this.panelsStore.dispatch.loadPanelsSuccess(projectData.panels)
       }
     })
 
-    this.projectsHubConnection.on(ReceiveProjectEvent, (signalrEvents: ProjectSignalrEvent[]) => {
-      this.logger.debug({
-        source: 'Projects-Signalr-Service',
-        objects: [ReceiveProjectEvent, signalrEvents],
-      })
-
-      // this.projectsHubRepository.receiveManyProjectSignalrEvents(signalrEvents)
-
-      // this.projectsStore.dispatch.addManyProjects(projects)
+    this.projectsHubConnection.on(ReceiveProjectEvents, (signalrEvents: ProjectSignalrEvent[]) => {
+      this.logDebug(ReceiveProjectEvents, signalrEvents)
     })
 
-    /*    this.projectsHubConnection.on(NewProjectEvents, (events: any[]) => {
-          this.logger.debug({
-            source: 'Projects-Signalr-Service',
-            objects: [NewProjectEvents, events],
-          })
-          // this.projectsStore.dispatch.addManyProjects(projects)
-        })*/
+    this.projectsHubConnection.on(ReceiveProjectEvent, (signalrEvent: ProjectSignalrEvent) => {
+      this.logDebug(ReceiveProjectEvent, signalrEvent)
+      this.signalrEventsRepository.receiveProjectSignalrEvent(signalrEvent)
+      // this.signalrEventsService.receiveManyProjectSignalrEvents(signalrEvent)
+    })
 
     return this.projectsHubConnection
   }
@@ -125,37 +67,26 @@ export class ProjectsSignalrService {
   getUserProjects() {
     if (!this.projectsHubConnection) return
     this.projectsHubConnection
-      .invoke(GetManyProjects)
-      .catch((err) =>
-        this.logger.error({ source: 'Projects-Signalr-Service', objects: ['GetProjects', err] }),
-      )
+      .invoke(GetUserProjects)
+      .catch((err) => this.logError(GetUserProjects, err))
   }
 
   sendProjectEvent(projectEvent: ProjectSignalrJsonRequest) {
     if (!this.projectsHubConnection) return
     this.projectsHubConnection
       .invoke(SendProjectEvent, projectEvent)
-      .catch((err) =>
-        this.logger.error({ source: 'Projects-Signalr-Service', objects: [SendProjectEvent, err] }),
-      )
+      .catch((err) => this.logError(SendProjectEvent, err))
   }
 
-  getProject(projectId: string) {
+  getProjectById(projectId: string) {
     if (!this.projectsHubConnection) return
     this.projectsHubConnection
-      .invoke(GetProject, projectId)
-      .catch((e) =>
-        this.logger.debug({ source: 'Projects-Signalr-Service', objects: ['getProject', e] }),
-      )
+      .invoke(GetProjectById, projectId)
+      .catch((err) => this.logError(GetProjectById, err))
   }
 
   stopHubConnection() {
     if (!this.projectsHubConnection) return
-    this.projectsHubConnection.stop().catch((error) =>
-      this.logger.error({
-        source: 'Projects-Signalr-Service',
-        objects: ['StopHubConnection', error],
-      }),
-    )
+    this.projectsHubConnection.stop().catch((err) => this.logError('StopHubConnection', err))
   }
 }

@@ -8,11 +8,12 @@ namespace Projects.API.Handlers.Panels.UpdatePanel;
 public sealed record UpdatePanelCommand(
     HubAppUser User,
     UpdatePanelRequest Request,
-    string RequestId
+    string RequestId,
+    string ProjectId
 ) : ICommand<bool>, IProjectCommand<UpdatePanelRequest>
 {
     public UpdatePanelCommand()
-        : this(null, null, null)
+        : this(null!, null!, null!, null!)
     {
     }
 }

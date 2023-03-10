@@ -19,7 +19,7 @@ import { InitLoginPipe } from '@app/shared'
 import { HttpClient } from '@angular/common/http'
 import { SidenavComponent } from '@app/feature/sidenav'
 import { RouterFacade } from '@shared/data-access/router'
-import { LoggerService } from '@shared/logger'
+import { Logger, LoggerService } from '@shared/logger'
 
 @Component({
   standalone: true,
@@ -45,9 +45,9 @@ import { LoggerService } from '@shared/logger'
   templateUrl: './app.component.html',
   styles: [],
 })
-export class AppComponent implements OnInit {
+export class AppComponent extends Logger implements OnInit {
   title = 'web'
-  private logger = inject(LoggerService)
+  // private logger = inject(LoggerService)
   private authStore = inject(AuthStoreService)
   private projectsStore = inject(ProjectsStoreService)
   private friendsStoreService = inject(FriendsStoreService)
@@ -58,6 +58,11 @@ export class AppComponent implements OnInit {
   private uiStore = inject(UiStoreService)
   private dialog = inject(MatDialog)
   private router = inject(Router)
+
+  constructor(logger: LoggerService) {
+    super(logger)
+  }
+
   user$ = this.authStore.select.user$
   projects$ = this.projectsStore.select.allProjects$
   friends$ = this.friendsStoreService.select.friends$
@@ -75,7 +80,8 @@ export class AppComponent implements OnInit {
     // this.routerStore.queryParams$.subscribe((query) => console.log(query))
     this.routerStore.queryParam$('authorize').subscribe((params) => {
       // console.log(params)
-      this.logger.debug({ source: 'AppComponent', objects: ['authorize', params] })
+      this.logDebug('authorize', params)
+      // this.logger.debug({ source: 'AppComponent', objects: ['authorize', params] })
       // this.logger
       if (params === 'true') {
         this.authStore.dispatch.authorizeRequest()

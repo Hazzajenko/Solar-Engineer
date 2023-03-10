@@ -19,9 +19,9 @@ export class AuthEffects {
     () =>
       this.actions$.pipe(
         ofType(AuthActions.loginWithGoogle),
-        // switchMap(() => this.http.get('/auth-api/login/google')),
+        // switchMap(() => this.http.get('/auth-services/login/google')),
         map(() => {
-          window.location.href = '/auth-api/login/google'
+          window.location.href = '/auth-services/login/google'
         }),
       ),
     { dispatch: false },

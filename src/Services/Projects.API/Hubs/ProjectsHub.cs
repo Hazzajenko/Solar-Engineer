@@ -1,15 +1,13 @@
-﻿using Infrastructure.Extensions;
-using MapsterMapper;
+﻿using MapsterMapper;
 using Mediator;
 using Microsoft.AspNetCore.SignalR;
 using Projects.API.Contracts.Requests.Panels;
 using Projects.API.Contracts.Requests.Projects;
 using Projects.API.Contracts.Requests.Strings;
-using Projects.API.Handlers.Projects.GetProject;
 using Projects.API.Handlers.SignalR;
 using Projects.API.Handlers.SignalR.OnConnected;
-using Projects.API.Handlers.Strings.CreateString;
 using Projects.API.Mapping;
+using GetProjectByIdQuery = Projects.API.Handlers.Projects.GetProject.GetProjectByIdQuery;
 
 namespace Projects.API.Hubs;
 
@@ -41,19 +39,19 @@ public class ProjectsHub : Hub<IProjectsHub>
     }*/
 
 
-    public async Task GetManyProjects()
+    public async Task GetUserProjects()
     {
         await _mediator.Send(new GetProjectsQuery(Context));
     }
 
-    public async Task GetProject(string projectId)
+    public async Task GetProjectById(string projectId)
     {
-        await _mediator.Send(new GetProjectQuery(Context.ToHubAppUser(), projectId));
+        await _mediator.Send(new GetProjectByIdQuery(Context.ToHubAppUser(), projectId));
     }
 
     public async Task GetUserProject(string projectId)
     {
-        await _mediator.Send(new GetProjectByIdQuery(Context, projectId));
+        await _mediator.Send(new Handlers.SignalR.GetProjectByIdQuery(Context, projectId));
     }
 
     public async Task UpdateProject(UpdateProjectRequest request)

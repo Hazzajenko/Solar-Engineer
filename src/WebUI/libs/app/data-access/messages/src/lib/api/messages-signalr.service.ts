@@ -1,14 +1,19 @@
-import { inject, Injectable } from '@angular/core'
+import { Injectable } from '@angular/core'
 import * as signalR from '@microsoft/signalr'
 import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr'
-import { LoggerService } from '@shared/logger'
+import { Logger, LoggerService } from '@shared/logger'
 
 @Injectable({
   providedIn: 'root',
 })
-export class MessagesSignalrService {
+export class MessagesSignalrService extends Logger {
   private messagesHubConnection?: HubConnection
-  private logger = inject(LoggerService)
+
+  // private logger = inject(LoggerService)
+
+  constructor(logger: LoggerService) {
+    super(logger)
+  }
 
   createMessagesHubConnection(token: string) {
     this.messagesHubConnection = new HubConnectionBuilder()
@@ -25,10 +30,11 @@ export class MessagesSignalrService {
       .start()
       // .then(() => console.log('Messages Hub Connection started'))
       .catch((err) => {
-        this.logger.error({
-          source: 'Messages-Signalr-Service',
-          objects: ['Error while starting Messages Hub connection: ' + err],
-        })
+        this.logError('Error while starting Messages Hub connection: ' + err)
+        /*        this.logger.error({
+                  source: 'Messages-Signalr-Service',
+                  objects: ['Error while starting Messages Hub connection: ' + err],
+                })*/
         // console.error('Error while starting Messages Hub connection: ' + err)
         throw new Error('Error while starting Messages Hub connection: ' + err)
       })
@@ -37,9 +43,12 @@ export class MessagesSignalrService {
 
   stopHubConnection() {
     if (!this.messagesHubConnection) return
-    this.messagesHubConnection.stop().catch((error) => this.logger.error({
+    this.messagesHubConnection
+      .stop()
+      .catch((error) => this.logError('Error while stopping Hub connection: ' + error))
+    /*this.logger.error({
       source: 'Messages-Signalr-Service',
       objects: ['Error while stopping Hub connection: ' + error],
-    }))
+    }))*/
   }
 }

@@ -1,10 +1,6 @@
-import { HttpClient, HttpResponse } from '@angular/common/http'
+import { HttpClient } from '@angular/common/http'
 import { inject, Injectable } from '@angular/core'
-import { GetUserResponse } from '../models/get-user.response'
-import { map } from 'rxjs'
-import { UpdateDisplayPictureRequest } from '../models'
 import { GetUserLinkResponse } from '../models/get-user-link.response'
-import { AllFriendsResponse } from '../models/all-friends.response'
 import { GetRecipientUserFriendsResponse } from '../models/get-recipient-user-friends.response'
 
 @Injectable({
@@ -23,45 +19,45 @@ export class UsersService {
   }
 
   /*getUserByUserName(userName: string) {
-    return this.http.get<GetUserResponse>(`/api/user/${userName}`)
+    return this.http.get<GetUserResponse>(`/services/user/${userName}`)
     // .pipe(map((response) => response.user))
   }
 
   getUserByUserNameV2(userName: string) {
-    return this.http.get<GetUserLinkResponse>(`/api/v2/user/${userName}`)
+    return this.http.get<GetUserLinkResponse>(`/services/v2/user/${userName}`)
     // .pipe(map((response) => response.user))
   }
 
   getRecipientUserFriends(userName: string) {
-    return this.http.get<GetRecipientUserFriendsResponse>(`/api/users/${userName}/friends`)
+    return this.http.get<GetRecipientUserFriendsResponse>(`/services/users/${userName}/friends`)
   }
 
   updateDisplayPicture(request: UpdateDisplayPictureRequest) {
-    return this.http.put(`/api/users/${request.userName}/dp`, {
+    return this.http.put(`/services/users/${request.userName}/dp`, {
       ...request,
     })
   }
 
   acceptFriendRequest(userName: string) {
-    return this.http.put(`/api/users/${userName}/accept`, {
+    return this.http.put(`/services/users/${userName}/accept`, {
       userName,
     })
   }
 
   rejectFriendRequest(userName: string) {
-    return this.http.put(`/api/users/${userName}/accept`, {
+    return this.http.put(`/services/users/${userName}/accept`, {
       userName,
     })
   }
 
   sendFriendRequest(userName: string) {
-    return this.http.put(`/api/users/${userName}/add`, {
+    return this.http.put(`/services/users/${userName}/add`, {
       friendUserName: userName,
     })
   }
 
   getAllFriends() {
-    return this.http.get<AllFriendsResponse>(`/api/users?filter=friends`)
+    return this.http.get<AllFriendsResponse>(`/services/users?filter=friends`)
     // /users?filter=friends
   }*/
 }

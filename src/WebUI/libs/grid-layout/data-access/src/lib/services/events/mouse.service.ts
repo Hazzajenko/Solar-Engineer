@@ -1,20 +1,19 @@
 import { inject, Injectable } from '@angular/core'
 
 import { BlocksFacade, GridFacade, MultiFacade, MultiStoreService } from '../..'
-import { MultiStateModel } from '../../models'
+import { MouseEventRequest, MultiStateModel } from '../../models'
 import { ProjectsFacade } from '@projects/data-access'
-import { BLOCK_TYPE, BlockType, GridMode } from '@shared/data-access/models'
+import { BLOCK_TYPE, GridMode } from '@shared/data-access/models'
 import { MultiEventService } from '../multi'
-import { MouseEventRequest } from '../../models'
 import { getLocationsInBox } from '../utils'
-import { LoggerService } from '@shared/logger'
+import { Logger, LoggerService } from '@shared/logger'
 
 @Injectable({
   providedIn: 'root',
 })
-export class MouseService {
+export class MouseService extends Logger {
   private projectsFacade = inject(ProjectsFacade)
-  private logger = inject(LoggerService)
+  // private logger = inject(LoggerService)
 
   // private eventFactory = new GridEventFactory()
   private blocksFacade = inject(BlocksFacade)
@@ -23,6 +22,10 @@ export class MouseService {
   private multiStore = inject(MultiStoreService)
 
   private gridFacade = inject(GridFacade)
+
+  constructor(logger: LoggerService) {
+    super(logger)
+  }
 
   async mouse(mouse: MouseEventRequest) {
     const multiState = await this.multiStore.select.state
@@ -58,7 +61,8 @@ export class MouseService {
       // return console.error('already in mouse movement')
     }
     if (!mouse.event.altKey) {
-      this.logger.debug({ source: 'MouseService', objects: ['mouse, !mouse.event.altKey'] })
+      this.logDebug('mouse, !mouse.event.altKey')
+      // this.logger.debug({ source: 'MouseService', objects: ['mouse, !mouse.event.altKey'] })
       return
       // return console.error('mouse, !mouse.event.altKey')
       // return this.eventFactory.undefined('mouse, !mouse.event.altKey')
@@ -75,7 +79,8 @@ export class MouseService {
       case GridMode.CREATE:
         return this.create(multiState, location)
       default:
-        return this.logger.debug({ source: 'MouseService', objects: [`cannot drag with grid-mode ${gridMode}`] })
+        return this.logDebug(`cannot drag with grid-mode ${gridMode}`)
+      // return this.logger.debug({ source: 'MouseService', objects: [`cannot drag with grid-mode ${gridMode}`] })
       // return console.error(`cannot drag with gridmode ${gridMode}`)
       // return this.eventFactory.error(`cannot drag with gridmode ${gridMode}`)
     }
@@ -101,7 +106,8 @@ export class MouseService {
       case BLOCK_TYPE.PANEL:
         return this.multiFactory.createBlocks(createMode, locationArray, location)
       default:
-        return this.logger.debug({ source: 'MouseService', objects: [`cannot multi create with type ${createMode}`] })
+        return this.logDebug(`cannot multi create with type ${createMode}`)
+      // return this.logger.debug({ source: 'MouseService', objects: [`cannot multi create with type ${createMode}`] })
       // return console.error(`cannot multi create with type ${createMode}`)
     }
   }

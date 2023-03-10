@@ -20,19 +20,21 @@ import {
   upAndLeft,
   upAndRight,
 } from './utils/handle-axis'
-import { LoggerService } from '@shared/logger'
+import { Logger, LoggerService } from '@shared/logger'
 
 @Directive({
   selector: '[appCanvas]',
   standalone: true,
 })
-export class CanvasDirective implements OnInit {
+export class CanvasDirective extends Logger implements OnInit {
   private canvas = inject(ElementRef<HTMLCanvasElement>)
   private panelsStore = inject(PanelsStoreService)
   private ctx: CanvasRenderingContext2D = this.canvas.nativeElement.getContext('2d')
-  private logger = inject(LoggerService)
 
-  constructor(private ngZone: NgZone) {
+  // private logger = inject(LoggerService)
+
+  constructor(private ngZone: NgZone, logger: LoggerService) {
+    super(logger)
   }
 
   height!: number
@@ -96,8 +98,7 @@ export class CanvasDirective implements OnInit {
     this.startY = xy.y - rect.top
   }
 
-  @Input() set startDragging(clientXY: ClientXY) {
-  }
+  @Input() set startDragging(clientXY: ClientXY) {}
 
   selectedPaths?: SelectedPanelLinkPathModel
 
@@ -140,6 +141,9 @@ export class CanvasDirective implements OnInit {
 
   @HostListener('document:mouseup', ['$event'])
   mouseUp(event: MouseEvent) {
+    event.preventDefault()
+    event.stopPropagation()
+    // mouseUp(_: MouseEvent) {
     // console.log(event.clientX, event.clientY)
     this.ctx.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height)
     this.startX = undefined
@@ -400,32 +404,34 @@ export class CanvasDirective implements OnInit {
   private async getBlockRect(panelId: string) {
     if (!this.parentWidth || !this.parentHeight) {
       // console.error('(!this.parentHeight || !this.parentHeight)')
-      this.logger.error(
-        {
-          source: 'Canvas-directive',
-          objects: ['(!this.parentHeight || !this.parentHeight)'],
-        })
+      this.logError('Canvas-directive', '(!this.parentHeight || !this.parentHeight)')
+      /*      this.logger.error(
+              {
+                source: 'Canvas-directive',
+                objects: ['(!this.parentHeight || !this.parentHeight)'],
+              })*/
       return undefined
     }
     const panel = await this.panelsStore.select.panelById(panelId)
     if (!panel) {
-
       // console.error('panel')
-      this.logger.error(
-        {
-          source: 'Canvas-directive',
-          objects: ['panel'],
-        })
+      this.logError('Canvas-directive', '!panel')
+      /*      this.logger.error(
+              {
+                source: 'Canvas-directive',
+                objects: ['panel'],
+              })*/
       return undefined
     }
     const panelDiv = document.querySelector(`[blockLocation=${panel.location}]`)
     if (!panelDiv) {
       // console.error('!firstPanelDiv')
-      this.logger.error(
-        {
-          source: 'Canvas-directive',
-          objects: ['firstPanelDiv'],
-        })
+      this.logError('Canvas-directive', '!panelDiv')
+      /*      this.logger.error(
+              {
+                source: 'Canvas-directive',
+                objects: ['firstPanelDiv'],
+              })*/
       return undefined
     }
 

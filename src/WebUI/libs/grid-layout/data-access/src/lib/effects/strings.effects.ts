@@ -2,16 +2,19 @@ import { inject, Injectable } from '@angular/core'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { Store } from '@ngrx/store'
 import { ProjectsHubService, StringsActions, StringsService } from '../'
-import { ProjectsActions, ProjectsStoreService } from '@projects/data-access'
+import { ProjectsActions, ProjectsStoreService, SignalrEventsService } from '@projects/data-access'
 import { map, tap } from 'rxjs'
 import { StringsSignalrService } from '../api/strings/strings-signalr.service'
 import { getGuid } from '@shared/utils'
 import {
+  PROJECT_ITEM_TYPE,
+  PROJECT_SIGNALR_TYPE,
   ProjectEventAction,
   ProjectItemType,
   ProjectSignalrJsonRequest,
 } from '@shared/data-access/models'
-import { SignalrEventsService } from '@app/data-access/signalr'
+
+// import { SignalrEventsService } from '@app/data-access/signalr'
 
 @Injectable({
   providedIn: 'root',
@@ -62,8 +65,10 @@ export class StringsEffects {
                     if (!isSignalr) {
                       return ProjectsHubActions.cancelSignalrRequest()
                     }*/
-          const action: ProjectEventAction = 'CREATE'
-          const model: ProjectItemType = 'STRING'
+          // const action: ProjectEventAction = 'CREATE'
+          // const model: ProjectItemType = 'STRING'
+          const action: ProjectEventAction = PROJECT_SIGNALR_TYPE.CREATE
+          const model: ProjectItemType = PROJECT_ITEM_TYPE.STRING
           const projectSignalrEvent: ProjectSignalrJsonRequest = {
             action,
             model,

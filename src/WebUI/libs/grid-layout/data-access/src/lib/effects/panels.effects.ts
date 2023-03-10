@@ -3,13 +3,19 @@ import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { Store } from '@ngrx/store'
 import { PanelsService, PanelsSignalrService, PanelsStoreService, ProjectsHubService } from '../'
 import { BlocksActions, PanelsActions } from '../store'
-import { ProjectsActions, ProjectsStoreService } from '@projects/data-access'
+import { ProjectsActions, ProjectsStoreService, SignalrEventsService } from '@projects/data-access'
 import { of, switchMap, tap } from 'rxjs'
 import { map } from 'rxjs/operators'
 import { LoggerService } from '@shared/logger'
 import { getGuid } from '@shared/utils'
-import { ProjectEventAction, ProjectItemType, ProjectSignalrJsonRequest } from '@shared/data-access/models'
-import { SignalrEventsService } from '@app/data-access/signalr'
+import {
+  PROJECT_ITEM_TYPE,
+  PROJECT_SIGNALR_TYPE,
+  ProjectEventAction,
+  ProjectItemType,
+  ProjectSignalrJsonRequest,
+} from '@shared/data-access/models'
+// import { SignalrEventsService } from '@app/data-access/signalr'
 
 // import { SignalrRequest } from '@shared/data-access/models'
 
@@ -72,8 +78,8 @@ export class PanelsEffects {
       this.actions$.pipe(
         ofType(PanelsActions.addPanel),
         map(({ panel }) => {
-          const action: ProjectEventAction = 'CREATE'
-          const model: ProjectItemType = 'PANEL'
+          const action: ProjectEventAction = PROJECT_SIGNALR_TYPE.CREATE
+          const model: ProjectItemType = PROJECT_ITEM_TYPE.PANEL
           const projectSignalrEvent: ProjectSignalrJsonRequest = {
             action,
             model,
@@ -82,9 +88,6 @@ export class PanelsEffects {
             data: JSON.stringify(panel),
           }
           return projectSignalrEvent
-          // this.projectsHubService.sendJsonSignalrRequest(projectSignalrEvent)
-          // this.signalrEventsService.sendProjectSignalrEvent(projectSignalrEvent)
-          // return
         }),
         tap((signalrRequest) => this.signalrEventsService.sendProjectSignalrEvent(signalrRequest)),
       ),
@@ -132,6 +135,27 @@ export class PanelsEffects {
     ),
   )
 
+  addManyPanelsSignalr$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(PanelsActions.addManyPanels),
+        map(({ panels }) => {
+          const action: ProjectEventAction = PROJECT_SIGNALR_TYPE.CREATE_MANY
+          const model: ProjectItemType = PROJECT_ITEM_TYPE.PANEL
+          const projectSignalrEvent: ProjectSignalrJsonRequest = {
+            action,
+            model,
+            projectId: panels[0].projectId,
+            requestId: getGuid(),
+            data: JSON.stringify(panels),
+          }
+          return projectSignalrEvent
+        }),
+        tap((signalrRequest) => this.signalrEventsService.sendProjectSignalrEvent(signalrRequest)),
+      ),
+    { dispatch: false },
+  )
+
   /*  addManyPanelsHttp$ = createEffect(
       () =>
         this.actions$.pipe(
@@ -168,13 +192,8 @@ export class PanelsEffects {
       this.actions$.pipe(
         ofType(PanelsActions.updatePanel),
         map(({ update }) => {
-          /*       const isSignalr = true
-                 if (!isSignalr) {
-                   return ProjectsHubActions.cancelSignalrRequest()
-                 }*/
-
-          const action: ProjectEventAction = 'UPDATE'
-          const model: ProjectItemType = 'PANEL'
+          const action: ProjectEventAction = PROJECT_SIGNALR_TYPE.UPDATE
+          const model: ProjectItemType = PROJECT_ITEM_TYPE.PANEL
           const projectSignalrEvent: ProjectSignalrJsonRequest = {
             action,
             model,

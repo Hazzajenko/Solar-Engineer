@@ -2,13 +2,15 @@ import { inject, Injectable } from '@angular/core'
 import { tapResponse } from '@ngrx/component-store'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { Store } from '@ngrx/store'
-import { ProjectsActions, ProjectsService, ProjectsStoreService } from '@projects/data-access'
+import { ProjectsActions, ProjectsService, ProjectsStoreService, SignalrEventsService } from '@projects/data-access'
 import { ProjectModel } from '@shared/data-access/models'
 import { catchError, map, of, switchMap } from 'rxjs'
 import { AuthActions } from '@auth/data-access'
 // import { tap } from 'rxjs/operators'
 import { ProjectsSignalrService } from '../api'
 import { PanelsSignalrService, ProjectsHubService } from '@grid-layout/data-access'
+
+// import { SignalrEventsService } from '@app/data-access/signalr'
 
 @Injectable({
   providedIn: 'root',
@@ -20,6 +22,7 @@ export class ProjectsEffects {
   private projectsSignalrService = inject(ProjectsSignalrService)
   private panelsSignalrService = inject(PanelsSignalrService)
   private projectsHubService = inject(ProjectsHubService)
+  private signalrEventsService = inject(SignalrEventsService)
   private store = inject(Store)
 
   initProjectsConnection$ = createEffect(
@@ -29,8 +32,9 @@ export class ProjectsEffects {
         map(({ token }) => {
           const projectsHubConnection =
             this.projectsSignalrService.createProjectsHubConnection(token)
-          this.projectsHubService.initHubConnection(projectsHubConnection)
-          this.panelsSignalrService.initPanelsHub(projectsHubConnection)
+          this.signalrEventsService.initHubConnection(projectsHubConnection)
+          // this.projectsHubService.initHubConnection(projectsHubConnection)
+          // this.panelsSignalrService.initPanelsHub(projectsHubConnection)
         }),
       ),
     { dispatch: false },
@@ -59,7 +63,9 @@ export class ProjectsEffects {
         ofType(ProjectsActions.getProjectData),
         switchMap(() =>
           this.projectsStore.select.projectFromRoute$.pipe(
-            map((project) => (project ? this.projectsSignalrService.getProject(project.id) : null)),
+            map((project) =>
+              project ? this.projectsSignalrService.getProjectById(project.id) : null,
+            ),
           ),
         ),
       ),

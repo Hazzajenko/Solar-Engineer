@@ -2,9 +2,9 @@
 
 public static class EntityType
 {
-    public const string Tracker = "TRACKER";
-    public const string String = "STRING";
-    public const string PanelLink = "PANEL_LINK";
-    public const string PanelConfig = "PANEL_CONFIG";
-    public const string Undefined = "UNDEFINED";
+    public const string Tracker = "Tracker";
+    public const string String = "String";
+    public const string PanelLink = "PanelLink";
+    public const string PanelConfig = "PanelConfig";
+    public const string Undefined = "Undefined";
 }

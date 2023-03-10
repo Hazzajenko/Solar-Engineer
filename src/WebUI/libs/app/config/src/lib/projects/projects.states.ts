@@ -1,5 +1,10 @@
 import { provideState } from '@ngrx/store'
-import { PROJECTS_FEATURE_KEY, projectsReducer } from '@projects/data-access'
+import {
+  PROJECTS_FEATURE_KEY,
+  projectsReducer,
+  SIGNALR_EVENTS_FEATURE_KEY,
+  signalrEventsReducer,
+} from '@projects/data-access'
 import {
   BLOCKS_FEATURE_KEY,
   blocksReducer,
@@ -22,7 +27,7 @@ import {
   UI_FEATURE_KEY,
   uiReducer,
 } from '@grid-layout/data-access'
-import { SIGNALR_EVENTS_FEATURE_KEY, signalrEventsReducer } from '@app/data-access/signalr'
+// import { SIGNALR_EVENTS_FEATURE_KEY, signalrEventsReducer } from '@app/data-access/signalr'
 
 export const projectsStates = [
   // provideState(PROJECTS_HUB_FEATURE_KEY, projectsHubReducer),

@@ -131,13 +131,13 @@ export class HomeComponent implements OnInit {
                     ),
                     map((user) => user['user_metadata']),*!/
             tap((meta) => console.log('meta', meta)),
-            switchMap((user) => this.http.get(`/api/account/profile`)),
+            switchMap((user) => this.http.get(`/services/account/profile`)),
             tap((meta) => console.log('meta', meta)),
             // tap((meta) => (this.metadata = meta)),
           )
           .subscribe()*/
-    // this.http.get(`/api/account/profile`).subscribe((res) => console.log('profile', res))
-    // this.http.post(`/api/auth0/login`, {}).subscribe((res) => console.log('profile', res))
+    // this.http.get(`/services/account/profile`).subscribe((res) => console.log('profile', res))
+    // this.http.post(`/services/auth0/login`, {}).subscribe((res) => console.log('profile', res))
     // this.auth.
     /*    Accept: 'application/json',
           'Access-Control-Allow-Headers': 'Content-Type',*/

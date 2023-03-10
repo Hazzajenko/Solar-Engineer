@@ -34,6 +34,7 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./envoy/envoy.yaml:/etc/envoy/envoy.yaml
+      - ./src/ApiGateways/EnvoyGateway/envoy.yaml:/etc/envoy/envoy.yaml
+      # - ./envoy/envoy.yaml:/etc/envoy/envoy.yaml
       - ./etc/ssl/solarengineer.net/solarengineer.net.crt:/etc/ssl/certs/solarengineer.net.crt
       - ./etc/ssl/solarengineer.net/solarengineer.net.rsa:/etc/ssl/certs/solarengineer.net.rsa

@@ -12,24 +12,31 @@ import {
 } from '@shared/data-access/models'
 import { NewProjectEvents, SendProjectEvent } from '@projects/data-access'
 import { HubConnection } from '@microsoft/signalr'
-import { LoggerService } from '@shared/logger'
+import { Logger, LoggerService } from '@shared/logger'
 
 @Injectable({
   providedIn: 'root',
 })
-export class ProjectsHubService {
+export class ProjectsHubService extends Logger {
   private projectsHubRepository = inject(ProjectsHubRepository)
   private panelsSignalrService = inject(PanelsSignalrService)
   private hubConnection?: HubConnection
-  private logger = inject(LoggerService)
+
+  // private logger = inject(LoggerService)
+
+  constructor(logger: LoggerService) {
+    super(logger)
+    // this.initHubConnection(this.projectsSignalrService.projectsHubConnection)
+  }
 
   initHubConnection(projectsHubConnection: HubConnection) {
     this.hubConnection = projectsHubConnection
     this.hubConnection.on(NewProjectEvents, (signalrEvents: ProjectSignalrEvent[]) => {
-      this.logger.debug({
-        source: 'Projects-Signalr-Service',
-        objects: [NewProjectEvents, signalrEvents],
-      })
+      this.logDebug(NewProjectEvents, signalrEvents)
+      /*     this.logger.debug({
+             source: 'Projects-Signalr-Service',
+             objects: [NewProjectEvents, signalrEvents],
+           })*/
       /*      const events = signalrEvents.map((signalrEvent) => {
               const serverTime = new Date(signalrEvent.time)
               return {
@@ -115,17 +122,19 @@ export class ProjectsHubService {
     }
     this.projectsHubRepository.sendSignalrRequestV2(projectSignalrEvent)
     if (!this.hubConnection) {
-      this.logger.error({
-        source: 'Projects-Signalr-Service',
-        objects: ['HubConnection is undefined', request],
-      })
+      this.logError('HubConnection is undefined', request)
+      /*      this.logger.error({
+              source: 'Projects-Signalr-Service',
+              objects: ['HubConnection is undefined', request],
+            })*/
       return
     }
     this.hubConnection.invoke(SendProjectEvent, request).catch((error) => {
-      this.logger.error({
-        source: 'Projects-Signalr-Service',
-        objects: ['Error sending signalr request', request, error],
-      })
+      this.logError('Error sending signalr request', request, error)
+      /*      this.logger.error({
+              source: 'Projects-Signalr-Service',
+              objects: ['Error sending signalr request', request, error],
+            })*/
     })
   }
 }

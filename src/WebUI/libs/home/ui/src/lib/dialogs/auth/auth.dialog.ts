@@ -1,6 +1,5 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
-import { Inject, inject } from '@angular/core'
-import { ChangeDetectionStrategy, Component } from '@angular/core'
+import { ChangeDetectionStrategy, Component, Inject, inject } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatCardModule } from '@angular/material/card'
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog'
@@ -11,21 +10,11 @@ import { MatListModule } from '@angular/material/list'
 
 import { MatIconModule } from '@angular/material/icon'
 
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms'
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms'
 import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatInputModule } from '@angular/material/input'
-import { AuthService } from '@auth/data-access/api'
-import { AuthFacade, AuthStoreService } from '@auth/data-access/services'
+import { AuthFacade, AuthService, AuthStoreService } from '@auth/data-access/services'
 import { StringsService } from '@grid-layout/data-access'
-
-import { StringModel } from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 import { map } from 'rxjs'
 import { CheckUserPipe } from './check-user.pipe'

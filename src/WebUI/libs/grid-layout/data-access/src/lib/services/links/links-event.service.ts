@@ -2,24 +2,29 @@ import { inject, Injectable } from '@angular/core'
 
 import { GridStoreService, LinksFacade } from '../'
 
-import { BLOCK_TYPE, BlockType, PanelModel } from '@shared/data-access/models'
+import { BLOCK_TYPE, PanelModel } from '@shared/data-access/models'
 // import { GridService } from 'libs/grid-layout/data-access/services/src/lib/entitites/grid/grid.service'
 import { LinksFactory } from './links.factory'
 // import { GridService } from '@grid-layout/data-access/services'
-import { MouseEventRequest, LinksStateModel } from '../../models'
-import { LoggerService } from '@shared/logger'
+import { LinksStateModel, MouseEventRequest } from '../../models'
+import { Logger, LoggerService } from '@shared/logger'
 
 // import { MouseEventRequest } from '../../../models/mouse-event-request'
 
 @Injectable({
   providedIn: 'root',
 })
-export class LinksEventService {
+export class LinksEventService extends Logger {
   private linksFactory = inject(LinksFactory)
   // private gridFactory = inject(GridService)
   private gridStore = inject(GridStoreService)
   private linksFacade = inject(LinksFacade)
-  private logger = inject(LoggerService)
+
+  // private logger = inject(LoggerService)
+
+  constructor(logger: LoggerService) {
+    super(logger)
+  }
 
   async addPanelToLink(click: MouseEventRequest, panel: PanelModel) {
     const linksState = await this.linksFacade.state
@@ -33,7 +38,10 @@ export class LinksEventService {
       const existingPanelPositiveLink = await this.linksFacade.isPanelExistingPositiveLink(panel.id)
 
       if (existingPanelPositiveLink) {
-        return this.logger.debug({ source: 'LinksEventService', objects: ['this panel already has a positive link'] })
+        this.logDebug('this panel already has a positive link')
+        return
+        // return this.logger.debug({ source: 'LinksEventService', objects: ['this panel already has a positive link'] })
+        // return this.logger.debug({ source: 'LinksEventService', objects: ['this panel already has a positive link'] })
         // return console.error('this panel already has a positive link')
       }
       return this.linksFactory.startLinkPanel(panel.id)
@@ -51,7 +59,8 @@ export class LinksEventService {
       case BLOCK_TYPE.PANEL:
         return this.linksFactory.create(panel, linksState.toLinkId, click.event.shiftKey)
       default:
-        return this.logger.debug({ source: 'LinksEventService', objects: ['unknown type to link'] })
+        return this.logError('unknown type to link')
+      // return this.logger.debug({ source: 'LinksEventService', objects: ['unknown type to link'] })
       // return console.error('unknown type to link')
     }
   }

@@ -1,20 +1,25 @@
 import { CdkDragDrop } from '@angular/cdk/drag-drop'
 import { inject, Injectable } from '@angular/core'
 import { BlocksFacade, BlocksStoreService } from '../..'
-import { BLOCK_TYPE, BlockModel, BlockType } from '@shared/data-access/models'
+import { BLOCK_TYPE, BlockModel } from '@shared/data-access/models'
 import { PanelsEventService } from '../panels'
-import { LoggerService } from '@shared/logger'
+import { Logger, LoggerService } from '@shared/logger'
 
 // import { PanelsService } from 'libs/grid-layout/data-access/services/src/lib/entitites/panels'
 
 @Injectable({
   providedIn: 'root',
 })
-export class DropService {
+export class DropService extends Logger {
   private blocksFacade = inject(BlocksFacade)
   private blocksStore = inject(BlocksStoreService)
   private panelsFactory = inject(PanelsEventService)
-  private logger = inject(LoggerService)
+
+  // private logger = inject(LoggerService)
+
+  constructor(logger: LoggerService) {
+    super(logger)
+  }
 
   async drop(drop: CdkDragDrop<BlockModel[]>) {
     drop.event.preventDefault()
@@ -22,7 +27,8 @@ export class DropService {
     const existingBlock = await this.blocksStore.select.blockByLocation(drop.container.id)
 
     if (existingBlock) {
-      this.logger.debug({ source: 'DropService', objects: ['drop, existingblock'] })
+      this.logDebug('drop, existing-block')
+      // this.logger.debug({ source: 'DropService', objects: ['drop, existingblock'] })
       return
       // return console.error('drop, existingblock')
     }
@@ -38,7 +44,8 @@ export class DropService {
       case BLOCK_TYPE.PANEL:
         return this.panelsFactory.updatePanel(block.id, { location })
       default:
-        return this.logger.debug({ source: 'DropService', objects: ['blockTypeSwitch, default'] })
+        return this.logDebug('blockTypeSwitch, default')
+      // return this.logger.debug({ source: 'DropService', objects: ['blockTypeSwitch, default'] })
       // return console.error('blockTypeSwitch, default')
     }
   }

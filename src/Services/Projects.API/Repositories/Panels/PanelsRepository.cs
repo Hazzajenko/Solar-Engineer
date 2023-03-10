@@ -25,12 +25,13 @@ public sealed class PanelsRepository : GenericRepository<ProjectsContext, Panel>
             .ToListAsync();
     }
 
-    public async Task<Panel> GetPanelByIdAndProjectIdAsync(Guid id, Guid projectId)
+    public async Task<Panel?> GetPanelByIdAndProjectIdAsync(Guid id, Guid projectId)
     {
-        return await Queryable.ThrowHubExceptionIfNullSingleOrDefaultAsync(
+        return await Queryable.SingleOrDefaultAsync(x => x.Id == id && x.ProjectId == projectId);
+        /*return await Queryable.ThrowHubExceptionIfNullSingleOrDefaultAsync(
             x => x.Id == id && x.ProjectId == projectId,
             "Panel does not exist"
-        );
+        );*/
     }
 
     public async Task<TPanelResponse> CreatePanelAsync<TPanelResponse>(Panel panel)

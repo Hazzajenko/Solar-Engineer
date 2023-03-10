@@ -1,13 +1,13 @@
 ﻿using Infrastructure.Exceptions;
 using Infrastructure.Extensions;
-using Infrastructure.Mapping;
 using MapsterMapper;
 using Mediator;
 using Microsoft.AspNetCore.SignalR;
-using Projects.API.Contracts.Responses;
+using Projects.API.Contracts.Data;
 using Projects.API.Data;
 using Projects.API.Entities;
 using Projects.API.Hubs;
+using Projects.API.Mapping;
 
 namespace Projects.API.Handlers.Panels.CreatePanel;
 
@@ -151,7 +151,7 @@ public class CreatePanelHandler : ICommandHandler<CreatePanelCommand, bool>
             Rotation = command.Panel.Rotation
         };*/
         var panel = Panel.Create(
-            command.RequestId.ToGuid(),
+            command.Request.Id.ToGuid(),
             appUserProject.ProjectId,
             panelString.Id,
             panelConfig.Id,
@@ -166,9 +166,13 @@ public class CreatePanelHandler : ICommandHandler<CreatePanelCommand, bool>
             panel
         );*/
         panel = await _unitOfWork.PanelsRepository.AddAndSaveChangesAsync(panel);
-        var response = _mapper.Map<(Panel, string), ProjectEventResponse>(
+        /*var response = _mapper.Map<(Panel, string), ProjectEventResponse>(
             (panel, command.RequestId)
-        );
+        );*/
+        // var response = panel.ToProjectEventResponseV2(command, ActionType.Create, ModelType.Panel);
+        var response = panel.ToProjectEventResponseV3(command, ActionType.Create);
+        // _logger.LogInformation("Panel created: {@Panel}", panel);
+        // _logger.LogInformation("Panel created response: {@Response}", response);
         // var response = _mapper.Map<(Panel, string), PanelCreatedResponse>((panel, command.Request.RequestId));
 
         var projectMembers =
@@ -176,9 +180,12 @@ public class CreatePanelHandler : ICommandHandler<CreatePanelCommand, bool>
                 appUserProject.ProjectId
             );
 
-        await _hubContext.Clients
+        /*await _hubContext.Clients
             .Group(appUserProject.ProjectId.ToString())
-            .NewProjectEvents(response.ToIEnumerable());
+            .NewProjectEvents(response.ToIEnumerable());*/
+        /*await _hubContext.Clients
+            .Group(appUserProject.ProjectId.ToString())
+            .ReceiveProjectEvents(response.ToIEnumerable());*/
         /*await _hubContext.Clients
             .Group(appUserProject.ProjectId.ToString())
             .PanelsCreated(response.ToIEnumerable());*/
@@ -186,7 +193,11 @@ public class CreatePanelHandler : ICommandHandler<CreatePanelCommand, bool>
         /*await _hubContext.Clients
             .Group(appUserProject.ProjectId.ToString())
             .PanelsCreated(panel.ToDtoList());*/
-        await _hubContext.Clients.Users(projectMembers).NewProjectEvents(response.ToIEnumerable());
+        /*await _hubContext.Clients
+            .Users(projectMembers)
+            .ReceiveProjectEvents(response.ToIEnumerable());*/
+        await _hubContext.Clients.Users(projectMembers).ReceiveProjectEvent(response);
+        // await _hubContext.Clients.Users(projectMembers).NewProjectEvents(response.ToIEnumerable());
         // await _hubContext.Clients.Users(projectMembers).PanelsCreated(response.ToIEnumerable());
         // await _hubContext.Clients.Users(projectMembers).PanelsCreated(panel.ToDtoList());
 

@@ -2,155 +2,203 @@ admin:
   access_log_path: /tmp/admin_access.log
   address:
     socket_address:
-      # protocol: TCP
+      protocol: TCP
       address: 0.0.0.0
-      # address: 0.0.0.0
       port_value: 9901
-      # address: 0.0.0.0
-      # port_value: 8001
 static_resources:
-
   listeners:
   - name: listener_0
     address:
-  # - name: listener_0
-  # - address:
       socket_address:
-        # protocol: TCP
+        protocol: TCP
         address: 0.0.0.0
-        port_value: 10000
+        port_value: 80
+        # port_value: 10000
     filter_chains:
     - filters:
       - name: envoy.filters.network.http_connection_manager
         typed_config:
-          "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+          "@type": type.googleapis.com/envoy.config.filter.network.http_connection_manager.v2.HttpConnectionManager
           stat_prefix: ingress_http
-          http_filters:
-          - name: envoy.filters.http.router
-            typed_config:
-              "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
           route_config:
             name: local_route
             virtual_hosts:
             - name: local_service
+              # domains: ["solarengineer.net"]
               domains: ["*"]
               routes:
-              # - match:
-              #     prefix: "/"
-              #   route:
-              #     # host_rewrite_literal: www.envoyproxy.io
-              #     # cluster: service_envoyproxy_io
-              #     auto_host_rewrite: true
-              #     cluster: users-api
-              #     timeout: 300s
               - match:
-                  prefix: "/u"
-                route:
-                  prefix_rewrite: "/users"
-                  cluster: users-api
+                  prefix: "/"
+                redirect:
+                  prefix_rewrite: "/"
+                  https_redirect: true
               - match:
                   prefix: "/"
                 route:
-                  host_rewrite_literal: www.envoyproxy.io
-                  cluster: service_envoyproxy_io
-      # transport_socket:
-      #   name: envoy.transport_sockets.tls
-      #   typed_config:
-      #     "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.DownstreamTlsContext
-      #     common_tls_context:
-      #       tls_certificates:
-      #       - certificate_chain:
-      #           # filename: "/etc/ssl/certs/csr.pem"
-      #           filename: "/etc/ssl/certs/https.crt"
-      #         private_key:
-      #           filename: "/etc/ssl/certs/key.pem"
-            # - certificate_chain:
-                # filename: certs/servercert.pem
-              # private_key:
-                # filename: certs/serverkey.pem
-  # - name: listener_1
-  #   address:
-  #     socket_address:
-  #       # protocol: TCP
-  #       address: 0.0.0.0
-  #       port_value: 10001
-  #   filter_chains:
-    # - filters:
-    #   - name: envoy.filters.network.http_connection_manager
-    #     typed_config:
-    #       "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
-    #       stat_prefix: ingress_http
-    #       http_filters:
-    #       - name: envoy.filters.http.router
-    #         typed_config:
-    #           "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
-    #       route_config:
-    #         name: local_route
-    #         virtual_hosts:
-    #         - name: local_service
-    #           domains: ["*"]
-    #           routes:
-    #           - match:
-    #               prefix: "/"
-    #             route:
-    #               # host_rewrite_literal: www.envoyproxy.io
-    #               # cluster: service_envoyproxy_io
-    #               auto_host_rewrite: true
-    #               cluster: users-api
-    #               timeout: 300s
-    #           - match:
-    #               prefix: "/u"
-    #             route:
-    #               prefix_rewrite: "/users"
-    #               cluster: users-api
-    #   transport_socket:
-    #     name: envoy.transport_sockets.tls
-    #     typed_config:
-    #       "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.DownstreamTlsContext
-    #       common_tls_context:
-    #         tls_certificates:
-    #         - certificate_chain:
-    #             # filename: "/etc/ssl/certs/csr.pem"
-    #             filename: "/etc/ssl/certs/https.crt"
-    #           private_key:
-    #             filename: "/etc/ssl/certs/key.pem"
-            # - certificate_chain:
-                # filename: certs/servercert.pem
-              # private_key:
-                # filename: certs/serverkey.pem
-    # filter_chains:
-    # - filters:
-    #   - name: envoy.filters.network.http_connection_manager
-    #     typed_config:
-    #       "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
-    #       stat_prefix: ingress_http
-    #       access_log:
-    #       - name: envoy.access_loggers.stdout
-    #         typed_config:
-    #           "@type": type.googleapis.com/envoy.extensions.access_loggers.stream.v3.StdoutAccessLog
-    #       http_filters:
-    #       - name: envoy.filters.http.router
-    #         typed_config:
-    #           "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
-    #       route_config:
-    #         name: local_route
-    #         virtual_hosts:
-    #         - name: local_service
-    #           domains: ["*"]
-    #           routes:
-    #           - match:
-    #               prefix: "/"
-    #             route:
-    #               host_rewrite_literal: www.envoyproxy.io
-    #               cluster: service_envoyproxy_io
+                  # host_rewrite: www.google.com
+                  host_rewrite: solarengineer.net
+                  cluster: web-ui
+                  # cluster: google_service
+          http_filters:
+          - name: envoy.filters.http.router
+  - name: listener_1
+    address:
+      socket_address:
+        protocol: TCP
+        address: 0.0.0.0
+        port_value: 443
+        # port_value: 10001
+    filter_chains:
+    - filters:
+      - name: envoy.filters.network.http_connection_manager
+        typed_config:
+          "@type": type.googleapis.com/envoy.config.filter.network.http_connection_manager.v2.HttpConnectionManager
+          stat_prefix: ingress_http
+          # upgrade_configs:
+          # - upgrade_type: websocket
 
+          route_config:
+            name: local_route
+            virtual_hosts:
+            - name: local_service
+              # domains: ["solarengineer.net"]
+              domains: ["*"]
+              routes:
+              - match:
+                  prefix: "/auth-api/"
+                route:
+                  # auto_host_rewrite: true
+                  host_rewrite: solarengineer.net
+                  prefix_rewrite: "/"
+                  cluster: auth-api
+              - match:
+                  prefix: "/signin-google"
+                route:
+                  # auto_host_rewrite: true
+                  host_rewrite: solarengineer.net
+                  # prefix_rewrite: "/signin-google"
+                  cluster: auth-api
+              - match:
+                  prefix: "/signin"
+                route:
+                  # auto_host_rewrite: true
+                  host_rewrite: solarengineer.net
+                  # prefix_rewrite: "/signin"
+                  cluster: auth-api
+              - match:
+                  prefix: "/users-api/"
+                route:
+                  prefix_rewrite: "/"
+                  cluster: users-api
+              - match:
+                  prefix: "/hubs/connections"
+                route:
+                  # auto_host_rewrite: true
+                  prefix_rewrite: "/hubs/connections"
+                  cluster: users-api
+                  timeout: 300s
+                  upgrade_configs:
+                    upgrade_type: "websocket"
+                    enabled: true
+              - match:
+                  prefix: "/messages-api/"
+                route:
+                  prefix_rewrite: "/"
+                  cluster: messages-api
+              - match:
+                  prefix: "/projects-api/"
+                route:
+                  prefix_rewrite: "/"
+                  cluster: projects-api
+              - match:
+                  prefix: "/hubs/projects"
+                route:
+                  # auto_host_rewrite: true
+                  prefix_rewrite: "/hubs/projects"
+                  cluster: projects-api
+                  timeout: 300s
+                  upgrade_configs:
+                    upgrade_type: "websocket"
+                    enabled: true
+              - match:
+                  prefix: "/"
+                route:
+                  # use_remote_address: true
+                  host_rewrite: solarengineer.net
+                  cluster: web-ui
+                  timeout: 300s
+                  upgrade_configs:
+                    upgrade_type: "websocket"
+                    enabled: true
+                  # cluster: google_service
+          http_filters:
+          - name: envoy.filters.http.router
+          access_log:
+          - name: envoy.file_access_log
+            filter:
+              not_health_check_filter: {}
+            config:
+              json_format:
+                time: "%START_TIME%"
+                protocol: "%PROTOCOL%"
+                duration: "%DURATION%"
+                request_method: "%REQ(:METHOD)%"
+                request_host: "%REQ(HOST)%"
+                path: "%REQ(X-ENVOY-ORIGINAL-PATH?:PATH)%"
+                response_flags: "%RESPONSE_FLAGS%"
+                route_name: "%ROUTE_NAME%"
+                upstream_host: "%UPSTREAM_HOST%"
+                upstream_cluster: "%UPSTREAM_CLUSTER%"
+                upstream_local_address: "%UPSTREAM_LOCAL_ADDRESS%"
+              path: "/tmp/access.log"
+      tls_context:
+        common_tls_context:
+          tls_certificates:
+            - certificate_chain:
+                filename: "/etc/ssl/certs/solarengineer.net.crt"
+                # filename: "/etc/ssl/certs/https.crt"
+              private_key:
+                filename: "/etc/ssl/certs/solarengineer.net.rsa"
+                # filename: "/etc/ssl/certs/key.pem"
   clusters:
-  - name: users-api
+  - name: web-ui
+    connect_timeout: 0.25s
     type: LOGICAL_DNS
-    connect_timeout: 15.0s
-    lb_policy: ROUND_ROBIN
-    # Comment out the following line to test on v6 networks
     dns_lookup_family: V4_ONLY
+    lb_policy: ROUND_ROBIN
+    load_assignment:
+      cluster_name: web-ui
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address:
+                address: host.docker.internal
+                port_value: 4200
+  - name: auth-api
+    connect_timeout: 0.25s
+    type: LOGICAL_DNS
+    dns_lookup_family: V4_ONLY
+    lb_policy: ROUND_ROBIN
+    load_assignment:
+      cluster_name: auth-api
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address:
+                address: host.docker.internal
+                port_value: 5001
+    transport_socket:
+      name: envoy.transport_sockets.tls
+      typed_config:
+        "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
+        sni: localhost
+  - name: users-api
+    connect_timeout: 0.25s
+    type: LOGICAL_DNS
+    dns_lookup_family: V4_ONLY
+    lb_policy: ROUND_ROBIN
     load_assignment:
       cluster_name: users-api
       endpoints:
@@ -159,174 +207,67 @@ static_resources:
             address:
               socket_address:
                 address: host.docker.internal
-                # address: users-api-envoy
-                port_value: 5001
-                # port_value: 80
-                # address: users-api-envoy
-                # port_value: 443
+                port_value: 5003
     transport_socket:
       name: envoy.transport_sockets.tls
       typed_config:
         "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
-  - name: secure_users-api
-    connect_timeout: 15.0s
+        sni: localhost
+  - name: messages-api
+    connect_timeout: 0.25s
     type: LOGICAL_DNS
-    # Comment out the following line to test on v6 networks
-    # dns_lookup_family: V4_ONLY
+    dns_lookup_family: V4_ONLY
     lb_policy: ROUND_ROBIN
     load_assignment:
-      cluster_name: secure_users-api
+      cluster_name: messages-api
       endpoints:
       - lb_endpoints:
         - endpoint:
             address:
               socket_address:
                 address: host.docker.internal
-                # address: users-api-envoy
-                port_value: 6001
+                port_value: 5005
     transport_socket:
       name: envoy.transport_sockets.tls
       typed_config:
         "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
         sni: localhost
-  - name: service_envoyproxy_io
+  - name: projects-api
+    connect_timeout: 0.25s
     type: LOGICAL_DNS
-    connect_timeout: 15.0s
-    # Comment out the following line to test on v6 networks
-    # dns_lookup_family: V4_ONLY
+    dns_lookup_family: V4_ONLY
+    lb_policy: ROUND_ROBIN
     load_assignment:
-      cluster_name: service_envoyproxy_io
+      cluster_name: projects-api
       endpoints:
       - lb_endpoints:
         - endpoint:
             address:
               socket_address:
-                address: www.envoyproxy.io
-                port_value: 443
+                address: host.docker.internal
+                port_value: 5007
     transport_socket:
       name: envoy.transport_sockets.tls
       typed_config:
         "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
-        sni: www.envoyproxy.io
-
-layered_runtime:
-  layers:
-    - name: static_layer_0
-      static_layer:
-        envoy:
-          resource_limits:
-            listener:
-              example_listener_name:
-                connection_limit: 10000
-        overload:
-          global_downstream_max_connections: 50000
-# static_resources:
-#   listeners:
-#   - name: listener_0
-#     address:
-#       socket_address:
-#         protocol: TCP
-#         address: 0.0.0.0
-#         port_value: 10000
-#       filter_chains:
-#       - filters:
-#         - name: envoy.filters.network.http_connection_manager
-#           typed_config:
-#             "@type": type.googleapis.com/envoy.config.filter.network.http_connection_manager.v2.HttpConnectionManager
-#             config:
-#               # codec_type: auto
-#               stat_prefix: ingress_http
-#               route_config:
-#                 name: local_route
-#                 virtual_hosts:
-#                 - name: local_service
-#                   domains: ["*"]
-#                   # cors:
-#                   #   # allow_origin_string_match:
-#                   #   #   - safe_regex:
-#                   #   #       google_re2: { }
-#                   #   #       regex: \*
-#                   #   allow_methods: "GET, POST, PUT"
-#                   #   allow_headers: "authorization, content-type, x-requestid, x-requested-with, x-signalr-user-agent"
-#                   #   allow_credentials: true
-#                   routes:
-#                     # - name: "users"
-#                   - match:
-#                       prefix: "/users"
-#                       # prefix: "/hubs/connections"
-#                     route:
-#                       auto_host_rewrite: true
-#                       cluster: users-api
-#                       timeout: 300s
-#           http_filters:
-#           - name: envoy.filters.http.router
-#       tls_context:
-#         common_tls_context:
-#           tls_certificates:
-#             - certificate_chain:
-#                 filename: "/etc/ssl/certs/https.crt"
-#               private_key:
-#                 filename: "/etc/ssl/certs/key.pem"
-#                 # http_filters:
-#                 #   # - name: envoy.cors
-#                 #   - name: envoy.router
-#                 # access_log:
-#                 #   - name: envoy.file_access_log
-#                 #     filter:
-#                 #       not_health_check_filter: { }
-#                 #     config:
-#                 #       json_format:
-#                 #         time: "%START_TIME%"
-#                 #         protocol: "%PROTOCOL%"
-#                 #         duration: "%DURATION%"
-#                 #         request_method: "%REQ(:METHOD)%"
-#                 #         request_host: "%REQ(HOST)%"
-#                 #         path: "%REQ(X-ENVOY-ORIGINAL-PATH?:PATH)%"
-#                 #         response_flags: "%RESPONSE_FLAGS%"
-#                 #         route_name: "%ROUTE_NAME%"
-#                 #         upstream_host: "%UPSTREAM_HOST%"
-#                 #         upstream_cluster: "%UPSTREAM_CLUSTER%"
-#                 #         upstream_local_address: "%UPSTREAM_LOCAL_ADDRESS%"
-#                 #       path: "/tmp/access.log"
-#   clusters:
-#     #    - name: dapr
-#     #      connect_timeout: 0.25s
-#     #      type: strict_dns
-#     #      lb_policy: round_robin
-#     #      hosts:
-#     #        - socket_address:
-#     #            address: 127.0.0.1
-#     #            port_value: 3500
-#     - name: users-api
-#       connect_timeout: 0.25s
-#       type: LOGICAL_DNS
-#       # type: strict_dns
-#       lb_policy: round_robin
-#       load_assignment:
-#         cluster_name: users-api
-#         endpoints:
-#         - lb_endpoints:
-#           - endpoint:
-#               address:
-#                 socket_address:
-#                   address: 127.0.0.1
-#                   #            address: ${ENVOY_CATALOG_API_ADDRESS}
-#                   port_value: 5004
-#       # hosts:
-#       #   - socket_address:
-#       #       address: 127.0.0.1
-#       #       #            address: ${ENVOY_CATALOG_API_ADDRESS}
-#       #       port_value: 5004
-#       # transport_socket:
-#       #   name: envoy.transport_sockets.tls
-#       #   typed_config:
-#       #     "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
-#       #     sni: localhost
-# #    - name: ordering-api
-# #      connect_timeout: 0.25s
-# #      type: strict_dns
-# #      lb_policy: round_robin
-# #      hosts:
-# #        - socket_address:
-# #            address: ${ENVOY_ORDERING_API_ADDRESS}
-# #            port_value: 80
+        sni: localhost
+  - name: google_service
+    connect_timeout: 0.25s
+    type: LOGICAL_DNS
+    # Comment out the following line to test on v6 networks
+    dns_lookup_family: V4_ONLY
+    lb_policy: ROUND_ROBIN
+    load_assignment:
+      cluster_name: google_service
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address:
+                address: www.google.com
+                port_value: 443
+    transport_socket:
+      name: envoy.transport_sockets.tls
+      typed_config:
+        "@type": type.googleapis.com/envoy.api.v2.auth.UpstreamTlsContext
+        sni: www.google.com

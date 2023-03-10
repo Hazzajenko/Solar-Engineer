@@ -7,16 +7,16 @@ export interface BlockOptions {
 }
 
 export const BLOCK_TYPE = {
-  UNDEFINED: 'UNDEFINED',
-  INVERTER: 'INVERTER',
-  PANEL: 'PANEL',
-  CABLE: 'CABLE',
-  DISCONNECTIONPOINT: 'DISCONNECTIONPOINT',
-  TRAY: 'TRAY',
-  RAIL: 'RAIL',
+  UNDEFINED: 'Undefined',
+  INVERTER: 'Inverter',
+  PANEL: 'Panel',
+  CABLE: 'Cable',
+  DISCONNECTIONPOINT: 'DisconnectionPoint',
+  TRAY: 'Tray',
+  RAIL: 'Rail',
 } as const
 
-export type BlockType = typeof BLOCK_TYPE[keyof typeof BLOCK_TYPE]
+export type BlockType = (typeof BLOCK_TYPE)[keyof typeof BLOCK_TYPE]
 
 /*export enum BlockType {
   UNDEFINED,

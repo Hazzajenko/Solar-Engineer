@@ -1,8 +1,7 @@
-import { Inject, inject } from '@angular/core'
-import { ChangeDetectionStrategy, Component } from '@angular/core'
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatCardModule } from '@angular/material/card'
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog'
+import { MatDialogModule } from '@angular/material/dialog'
 
 import { ScrollingModule } from '@angular/cdk/scrolling'
 import { AsyncPipe, NgClass, NgForOf, NgIf, NgStyle } from '@angular/common'
@@ -20,8 +19,7 @@ import {
 } from '@angular/forms'
 import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatInputModule } from '@angular/material/input'
-import { AuthService } from '@auth/data-access/api'
-import { AuthFacade, AuthStoreService } from '@auth/data-access/services'
+import { AuthFacade, AuthService, AuthStoreService } from '@auth/data-access/services'
 import { StringsService } from '@grid-layout/data-access/services'
 
 import { ShowHideComponent } from '@shared/ui/show-hide'
