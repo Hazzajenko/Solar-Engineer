@@ -6,8 +6,6 @@ namespace Projects.API.Contracts.Requests.Panels;
 
 public class UpdatePanelRequest : IProjectEventRequest
 {
-    /*public required string ProjectId { get; init; }
-    public required PanelUpdate Update { get; init; }*/
     public required string Id { get; set; }
     public required string ProjectId { get; init; }
     public required PanelChanges Changes { get; set; }

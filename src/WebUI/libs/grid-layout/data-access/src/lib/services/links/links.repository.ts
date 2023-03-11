@@ -21,6 +21,10 @@ export class LinksRepository {
     this.store.dispatch(LinksActions.addLink({ link }))
   }
 
+  loadPanelLinksSuccess(links: PanelLinkModel[]) {
+    this.store.dispatch(LinksActions.loadLinksSuccess({ links }))
+  }
+
   deleteLink(linkId: string) {
     this.store.dispatch(LinksActions.deleteLink({ linkId }))
   }

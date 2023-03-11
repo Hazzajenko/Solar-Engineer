@@ -51,12 +51,17 @@ public class DeletePanelHandler : ICommandHandler<DeletePanelCommand, bool>
             throw new HubException("Panel not found");
 
         var panelIdString = panelId.ToString();
-        var response = panelIdString.ToProjectEventResponseWithStringV3(
+        /*var response = panelIdString.ToProjectEventResponseWithStringV3(
             command,
             ActionType.Delete,
             projectId.ToString(),
             typeof(Panel)
+        );*/
+        var response = panelIdString.ToProjectEventResponseFromId<Panel>(
+            command,
+            ActionType.Delete
         );
+        // ToProjectEventResponseFromId
 
         var projectMembers =
             await _unitOfWork.AppUserProjectsRepository.GetProjectMemberIdsByProjectId(

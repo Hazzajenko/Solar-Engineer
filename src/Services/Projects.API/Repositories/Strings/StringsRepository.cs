@@ -67,4 +67,19 @@ public sealed class StringsRepository
             // .Select(x => x.ToDto())
             .SingleOrDefaultAsync() ?? throw new HubException("String not found");
     }
+
+    public async Task<bool> DeleteStringByIdAndProjectIdAsync(Guid id, Guid projectId)
+    {
+        var @string = await Queryable.SingleOrDefaultAsync(
+            x => x.Id == id && x.ProjectId == projectId
+        );
+        if (@string is null)
+            return false;
+
+        await Queryable.Where(x => x.Id == id && x.ProjectId == projectId).ExecuteDeleteAsync();
+
+        await SaveChangesAsync();
+
+        return true;
+    }
 }

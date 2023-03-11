@@ -6,6 +6,9 @@ migrate:
 update:
 	dotnet ef database update --context ProjectsContext
 
+rollback:
+	dotnet ef database update EditKeys --context ProjectsContext
+#EditKeys
 remove:
 	dotnet ef migrations remove --context ProjectsContext
 

@@ -12,4 +12,5 @@ public interface IStringsRepository : IGenericRepository<String>
 
     // Task<String> GetOrCreateUndefinedStringAsync(Guid projectId);
     Task<String> GetByIdAndProjectIdAsync(Guid id, Guid projectId);
+    Task<bool> DeleteStringByIdAndProjectIdAsync(Guid id, Guid projectId);
 }

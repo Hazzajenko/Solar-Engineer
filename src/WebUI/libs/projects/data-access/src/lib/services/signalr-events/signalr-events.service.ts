@@ -25,22 +25,10 @@ export class SignalrEventsService extends Logger {
   initHubConnection(projectsHubConnection: HubConnection) {
     this.hubConnection = projectsHubConnection
     this.hubConnection.on(NewProjectEvents, (signalrEvents: ProjectSignalrEvent[]) => {
-      /*      this.logger.debug({
-              source: 'Projects-Signalr-Service',
-              objects: [NewProjectEvents, signalrEvents],
-            })*/
       this.logDebug(NewProjectEvents, signalrEvents)
       this.receiveManyProjectSignalrEvents(signalrEvents).catch((error) => {
         this.logError(NewProjectEvents, signalrEvents, error)
-        /*        this.logger.error({
-                  source: 'Projects-Signalr-Service',
-                  objects: [NewProjectEvents, signalrEvents, error],
-                })*/
       })
-
-      // this.signalrEventsRepository.receiveManyProjectSignalrEvents(signalrEvents)
-
-      // this.projectsStore.dispatch.addManyProjects(projects)
     })
   }
 

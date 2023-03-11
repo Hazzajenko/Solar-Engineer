@@ -34,6 +34,10 @@ public class Panel : IEntity, IProjectItem, IUserObject
     public Guid PanelConfigId { get; set; }
     public string Location { get; set; } = default!;
     public int Rotation { get; set; }
+    public PanelLink? LinkPositiveTo { get; set; }
+    public PanelLink? LinkNegativeTo { get; set; }
+    public Guid? LinkPositiveToId { get; set; }
+    public Guid? LinkNegativeToId { get; set; }
     public Guid Id { get; set; }
     public DateTime CreatedTime { get; set; } = DateTime.UtcNow;
     public DateTime LastModifiedTime { get; set; } = DateTime.UtcNow;

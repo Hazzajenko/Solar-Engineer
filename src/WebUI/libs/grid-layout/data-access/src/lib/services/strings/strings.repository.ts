@@ -20,6 +20,10 @@ export class StringsRepository {
     this.store.dispatch(StringsActions.updateString({ update }))
   }
 
+  loadStringsSuccess(strings: StringModel[]) {
+    this.store.dispatch(StringsActions.loadStringsSuccess({ strings }))
+  }
+
   delete(stringId: string) {
     this.store.dispatch(StringsActions.deleteString({ stringId }))
   }

@@ -30,6 +30,9 @@ const reducer = createReducer(
   on(PanelsActions.addPanel, (state, { panel }) => panelsAdapter.addOne(panel, state)),
   on(PanelsActions.addManyPanels, (state, { panels }) => panelsAdapter.addMany(panels, state)),
   on(PanelsActions.updatePanel, (state, { update }) => panelsAdapter.updateOne(update, state)),
+  on(PanelsActions.updatePanelWithoutSignalr, (state, { update }) =>
+    panelsAdapter.updateOne(update, state),
+  ),
   on(PanelsActions.updateManyPanels, (state, { updates }) =>
     panelsAdapter.updateMany(updates, state),
   ),

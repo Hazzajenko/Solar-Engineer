@@ -19,6 +19,14 @@ public class StringsConfig : IEntityTypeConfiguration<String>
             .OnDelete(DeleteBehavior.Cascade)
             .IsRequired();
 
+        builder
+            .HasMany(u => u.PanelLinks)
+            .WithOne(m => m.String)
+            .HasForeignKey(x => x.StringId)
+            .HasPrincipalKey(x => x.Id)
+            .OnDelete(DeleteBehavior.Cascade)
+            .IsRequired();
+
         // builder.
     }
 }

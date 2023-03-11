@@ -32,6 +32,7 @@ public class String : IEntity, IProjectItem, IUserObject
     public string Color { get; set; } = default!;
     public bool Parallel { get; set; }
     public ICollection<Panel> Panels { get; set; } = default!;
+    public ICollection<PanelLink> PanelLinks { get; set; } = default!;
     public Guid Id { get; set; }
     public DateTime CreatedTime { get; set; } = DateTime.UtcNow;
     public DateTime LastModifiedTime { get; set; } = DateTime.UtcNow;

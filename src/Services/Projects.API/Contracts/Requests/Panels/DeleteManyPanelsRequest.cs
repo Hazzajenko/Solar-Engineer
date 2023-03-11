@@ -6,7 +6,6 @@ namespace Projects.API.Contracts.Requests.Panels;
 public class DeleteManyPanelsRequest : IProjectEventRequest
 {
     public required string ProjectId { get; set; } = default!;
-    public required int Rotation { get; set; } = 0;
 
     public required IEnumerable<DeletePanelRequest> PanelIds { get; init; } =
         new List<DeletePanelRequest>();

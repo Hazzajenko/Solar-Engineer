@@ -9,7 +9,11 @@ import { ProjectsStoreService, SignalrEventsRepository } from '../services'
 import { GetManyProjects, GetProject, SendProjectEvent } from './projects.methods'
 import { GetProjectDataResponse } from '../models/get-project-data.response'
 import { Logger, LoggerService } from '@shared/logger'
-import { PanelsStoreService } from '@grid-layout/data-access'
+import {
+  LinksStoreService,
+  PanelsStoreService,
+  StringsStoreService,
+} from '@grid-layout/data-access'
 import { SignalrService } from '@app/data-access/signalr'
 import { GetProjectById, GetUserProjects } from './projects-signalr.invoke-methods'
 import { ReceiveProjectEvent, ReceiveProjectEvents } from './projects-signalr.handlers'
@@ -22,6 +26,8 @@ export class ProjectsSignalrService extends Logger {
   private projectsStore = inject(ProjectsStoreService)
   private panelsStore = inject(PanelsStoreService)
   private signalrService = inject(SignalrService)
+  private stringsStore = inject(StringsStoreService)
+  private panelLinksStore = inject(LinksStoreService)
   // private signalrEventsService = inject(SignalrEventsService)
 
   private signalrEventsRepository = inject(SignalrEventsRepository)
@@ -48,6 +54,12 @@ export class ProjectsSignalrService extends Logger {
       this.logDebug(GetProject, projectData)
       if (projectData.panels) {
         this.panelsStore.dispatch.loadPanelsSuccess(projectData.panels)
+      }
+      if (projectData.strings) {
+        this.stringsStore.dispatch.loadStringsSuccess(projectData.strings)
+      }
+      if (projectData.panelLinks) {
+        this.panelLinksStore.dispatch.loadPanelLinksSuccess(projectData.panelLinks)
       }
     })
 

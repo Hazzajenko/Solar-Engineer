@@ -83,6 +83,12 @@ namespace Projects.API.Data.Migrations
                     b.Property<DateTime>("LastModifiedTime")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<Guid?>("LinkNegativeToId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("LinkPositiveToId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Location")
                         .IsRequired()
                         .HasColumnType("text");
@@ -97,6 +103,12 @@ namespace Projects.API.Data.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("Id", "ProjectId");
+
+                    b.HasIndex("LinkNegativeToId")
+                        .IsUnique();
+
+                    b.HasIndex("LinkPositiveToId")
+                        .IsUnique();
 
                     b.HasIndex("PanelConfigId");
 
@@ -175,6 +187,10 @@ namespace Projects.API.Data.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("uuid_generate_v4()");
+
+                    b.Property<Guid>("ProjectId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("CreatedById")
@@ -186,28 +202,20 @@ namespace Projects.API.Data.Migrations
                     b.Property<DateTime>("LastModifiedTime")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("NegativeToId")
+                    b.Property<Guid>("PanelNegativeToId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("NegativeToProjectId")
+                    b.Property<Guid>("PanelPositiveToId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("PositiveToId")
+                    b.Property<Guid>("StringId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("PositiveToProjectId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
+                    b.HasKey("Id", "ProjectId");
 
                     b.HasIndex("ProjectId");
 
-                    b.HasIndex("NegativeToId", "NegativeToProjectId");
-
-                    b.HasIndex("PositiveToId", "PositiveToProjectId");
+                    b.HasIndex("StringId");
 
                     b.ToTable("PanelLinks");
                 });
@@ -287,6 +295,18 @@ namespace Projects.API.Data.Migrations
 
             modelBuilder.Entity("Projects.API.Entities.Panel", b =>
                 {
+                    b.HasOne("Projects.API.Entities.PanelLink", "LinkNegativeTo")
+                        .WithOne("PanelPositiveTo")
+                        .HasForeignKey("Projects.API.Entities.Panel", "LinkNegativeToId")
+                        .HasPrincipalKey("Projects.API.Entities.PanelLink", "Id")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Projects.API.Entities.PanelLink", "LinkPositiveTo")
+                        .WithOne("PanelNegativeTo")
+                        .HasForeignKey("Projects.API.Entities.Panel", "LinkPositiveToId")
+                        .HasPrincipalKey("Projects.API.Entities.PanelLink", "Id")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("Projects.API.Entities.PanelConfig", "PanelConfig")
                         .WithMany("Panels")
                         .HasForeignKey("PanelConfigId")
@@ -306,6 +326,10 @@ namespace Projects.API.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("LinkNegativeTo");
+
+                    b.Navigation("LinkPositiveTo");
+
                     b.Navigation("PanelConfig");
 
                     b.Navigation("Project");
@@ -321,23 +345,16 @@ namespace Projects.API.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Projects.API.Entities.Panel", "NegativeTo")
-                        .WithMany()
-                        .HasForeignKey("NegativeToId", "NegativeToProjectId")
+                    b.HasOne("Projects.API.Entities.String", "String")
+                        .WithMany("PanelLinks")
+                        .HasForeignKey("StringId")
+                        .HasPrincipalKey("Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("Projects.API.Entities.Panel", "PositiveTo")
-                        .WithMany()
-                        .HasForeignKey("PositiveToId", "PositiveToProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("NegativeTo");
-
-                    b.Navigation("PositiveTo");
 
                     b.Navigation("Project");
+
+                    b.Navigation("String");
                 });
 
             modelBuilder.Entity("Projects.API.Entities.String", b =>
@@ -356,6 +373,15 @@ namespace Projects.API.Data.Migrations
                     b.Navigation("Panels");
                 });
 
+            modelBuilder.Entity("Projects.API.Entities.PanelLink", b =>
+                {
+                    b.Navigation("PanelNegativeTo")
+                        .IsRequired();
+
+                    b.Navigation("PanelPositiveTo")
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Projects.API.Entities.Project", b =>
                 {
                     b.Navigation("AppUserProjects");
@@ -369,6 +395,8 @@ namespace Projects.API.Data.Migrations
 
             modelBuilder.Entity("Projects.API.Entities.String", b =>
                 {
+                    b.Navigation("PanelLinks");
+
                     b.Navigation("Panels");
                 });
 #pragma warning restore 612, 618

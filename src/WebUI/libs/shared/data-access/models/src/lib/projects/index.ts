@@ -1,5 +1,5 @@
 export * from './project.model'
-export * from './block.model'
+export * from './block/index'
 export * from './panel/index'
 export * from './interfaces/index'
 export * from './panel-config/index'

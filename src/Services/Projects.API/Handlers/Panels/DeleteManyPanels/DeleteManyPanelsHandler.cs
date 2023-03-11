@@ -47,24 +47,24 @@ public class DeleteManyPanelsHandler : ICommandHandler<DeleteManyPanelsCommand, 
         if (panels.Count() != panelIdGuids.Count())
             throw new HubException("Some panels do not exist");
 
-        await _unitOfWork.PanelsRepository.DeleteManyPanelsAsync(
-            projectId,
-            panelIdGuids
-        );
-        
+        await _unitOfWork.PanelsRepository.DeleteManyPanelsAsync(projectId, panelIdGuids);
+
         var projectMembers =
             await _unitOfWork.AppUserProjectsRepository.GetProjectMemberIdsByProjectId(
                 appUserProject.ProjectId
             );
         var panelIds = panels.Select(x => x.Id.ToString()).ToList();
-        var response = panelIds.ToProjectEventResponseWithStringListV3(
+        /*var response = panelIds.ToProjectEventResponseWithStringListV3(
             command,
-            ActionType.Create,
+            ActionType.DeleteMany,
             projectId.ToString(),
             typeof(Panel)
+        );*/
+        var response = panelIds.ToProjectEventResponseFromIdList<Panel>(
+            command,
+            ActionType.DeleteMany
         );
         await _hubContext.Clients.Users(projectMembers).ReceiveProjectEvent(response);
-
 
         _logger.LogInformation(
             "User {User} deleted {Amount} {Panels} in project {Project}",

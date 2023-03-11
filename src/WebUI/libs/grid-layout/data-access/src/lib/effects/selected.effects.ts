@@ -9,6 +9,7 @@ import {
   SelectedActions,
   SelectedFacade,
   StatsService,
+  StringsActions,
   StringsFacade,
 } from '../'
 import { map } from 'rxjs/operators'
@@ -81,6 +82,17 @@ export class SelectedEffects {
                   Isc: ${stringStats.totalIsc}A \n
                 `
           return SelectedActions.setSelectedStringTooltip({ tooltip })
+        }),
+      ),
+    // { dispatch: false },
+  )
+
+  clearSelectedString$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(StringsActions.deleteString),
+        map(() => {
+          return SelectedActions.clearSelectedState()
         }),
       ),
     // { dispatch: false },

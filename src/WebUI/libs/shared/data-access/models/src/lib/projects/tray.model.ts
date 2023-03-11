@@ -1,5 +1,5 @@
 import { getGuid } from '@shared/utils'
-import { BLOCK_TYPE, BlockModel, BlockOptions } from './block.model'
+import { BLOCK_TYPE, BlockModel, BlockOptions } from './block/block.model'
 
 export interface TrayOptions extends BlockOptions {
   size: number

@@ -66,7 +66,11 @@ public static class ProjectEventsMapper
         where TEntity : IProjectItem
         where TProjectCommand : IProjectCommand
     {
-        var toJson = JsonSerializer.Serialize(entity);
+        // var toJson = JsonSerializer.Serialize(entity);
+        var toJson = JsonSerializer.Serialize(
+            entity,
+            new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }
+        );
         return new ProjectEventResponse
         {
             RequestId = command.RequestId,
@@ -100,7 +104,11 @@ public static class ProjectEventsMapper
         // dtoObject.DumpObjectProperties();
         dtoObject.DumpObjectJson();
 
-        var toJson = JsonSerializer.Serialize(dtoObject);
+        // var toJson = JsonSerializer.Serialize(dtoObject);
+        var toJson = JsonSerializer.Serialize(
+            dtoObject,
+            new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }
+        );
         return new ProjectEventResponse
         {
             RequestId = command.RequestId,
@@ -126,7 +134,11 @@ public static class ProjectEventsMapper
 
         dtoObject.DumpObjectJson();
 
-        var toJson = JsonSerializer.Serialize(dtoObject);
+        // var toJson = JsonSerializer.Serialize(dtoObject);
+        var toJson = JsonSerializer.Serialize(
+            dtoObject,
+            new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }
+        );
         return new ProjectEventResponse
         {
             RequestId = command.RequestId,
@@ -149,7 +161,11 @@ public static class ProjectEventsMapper
     {
         var response = new { Id = entityId };
 
-        var toJson = JsonSerializer.Serialize(response);
+        // var toJson = JsonSerializer.Serialize(response);
+        var toJson = JsonSerializer.Serialize(
+            response,
+            new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }
+        );
         return new ProjectEventResponse
         {
             RequestId = command.RequestId,
@@ -160,7 +176,33 @@ public static class ProjectEventsMapper
             Data = toJson
         };
     }
-    
+
+    public static ProjectEventResponse ToProjectEventResponseFromId<TEntity>(
+        this string entityId,
+        IProjectCommand command,
+        string action
+    )
+        where TEntity : IProjectItem
+    {
+        var response = new { Id = entityId };
+
+        var toJson = JsonSerializer.Serialize(
+            response,
+            new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }
+        );
+        // var toJson = JsonSerializer.Serialize(response);
+        return new ProjectEventResponse
+        {
+            RequestId = command.RequestId,
+            ProjectId = command.ProjectId,
+            ByAppUserId = command.User.Id.ToString(),
+            Action = action,
+            Model = typeof(TEntity).Name,
+            Data = toJson
+        };
+    }
+
+    // ToProjectEventResponseFromIdList
     public static ProjectEventResponse ToProjectEventResponseWithStringListV3<TProjectCommand>(
         this IEnumerable<string> entityIds,
         TProjectCommand command,
@@ -173,7 +215,11 @@ public static class ProjectEventsMapper
         var response = entityIds.Select(id => new { Id = id });
         // var response = new { Id = entityId };
 
-        var toJson = JsonSerializer.Serialize(response);
+        // var toJson = JsonSerializer.Serialize(response);
+        var toJson = JsonSerializer.Serialize(
+            response,
+            new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }
+        );
         return new ProjectEventResponse
         {
             RequestId = command.RequestId,
@@ -181,6 +227,31 @@ public static class ProjectEventsMapper
             ByAppUserId = command.User.Id.ToString(),
             Action = action,
             Model = modelType.Name,
+            Data = toJson
+        };
+    }
+
+    public static ProjectEventResponse ToProjectEventResponseFromIdList<TEntity>(
+        this IEnumerable<string> entityIds,
+        IProjectCommand command,
+        string action
+    )
+        where TEntity : IProjectItem
+    {
+        var response = entityIds.Select(id => new { Id = id });
+
+        // var toJson = JsonSerializer.Serialize(response);
+        var toJson = JsonSerializer.Serialize(
+            response,
+            new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }
+        );
+        return new ProjectEventResponse
+        {
+            RequestId = command.RequestId,
+            ProjectId = command.ProjectId,
+            ByAppUserId = command.User.Id.ToString(),
+            Action = action,
+            Model = typeof(TEntity).Name,
             Data = toJson
         };
     }

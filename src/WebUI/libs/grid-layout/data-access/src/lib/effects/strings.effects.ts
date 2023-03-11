@@ -3,7 +3,7 @@ import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { Store } from '@ngrx/store'
 import { ProjectsHubService, StringsActions, StringsService } from '../'
 import { ProjectsActions, ProjectsStoreService, SignalrEventsService } from '@projects/data-access'
-import { map, tap } from 'rxjs'
+import { combineLatestWith, map, tap } from 'rxjs'
 import { StringsSignalrService } from '../api/strings/strings-signalr.service'
 import { getGuid } from '@shared/utils'
 import {
@@ -13,13 +13,14 @@ import {
   ProjectItemType,
   ProjectSignalrJsonRequest,
 } from '@shared/data-access/models'
+import { Logger, LoggerService } from '@shared/logger'
 
 // import { SignalrEventsService } from '@app/data-access/signalr'
 
 @Injectable({
   providedIn: 'root',
 })
-export class StringsEffects {
+export class StringsEffects extends Logger {
   private actions$ = inject(Actions)
   private store = inject(Store)
 
@@ -28,6 +29,11 @@ export class StringsEffects {
   private projectsStore = inject(ProjectsStoreService)
   private projectsHubService = inject(ProjectsHubService)
   private signalrEventsService = inject(SignalrEventsService)
+
+  constructor(logger: LoggerService) {
+    super(logger)
+  }
+
   /*  initStrings$ = createEffect(() =>
       this.actions$.pipe(
         ofType(ProjectsActions.initSelectProject),
@@ -60,21 +66,45 @@ export class StringsEffects {
     () =>
       this.actions$.pipe(
         ofType(StringsActions.addString),
-        map(({ string }) => {
-          /*          const isSignalr = true
-                    if (!isSignalr) {
-                      return ProjectsHubActions.cancelSignalrRequest()
-                    }*/
-          // const action: ProjectEventAction = 'CREATE'
-          // const model: ProjectItemType = 'STRING'
+        combineLatestWith(this.projectsStore.select.selectedProject$),
+        map(([{ string }, project]) => {
+          project = this.throwIfNull(project, 'No project selected')
           const action: ProjectEventAction = PROJECT_SIGNALR_TYPE.CREATE
           const model: ProjectItemType = PROJECT_ITEM_TYPE.STRING
           const projectSignalrEvent: ProjectSignalrJsonRequest = {
             action,
             model,
-            projectId: string.projectId,
+            projectId: project.id,
             requestId: getGuid(),
             data: JSON.stringify(string),
+          }
+          return projectSignalrEvent
+        }),
+        tap((signalrRequest) => this.signalrEventsService.sendProjectSignalrEvent(signalrRequest)),
+      ),
+    { dispatch: false },
+  )
+
+  deleteStringSignalR$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(StringsActions.deleteString),
+        combineLatestWith(this.projectsStore.select.selectedProject$),
+        map(([{ stringId }, project]) => {
+          project = this.throwIfNull(project, 'No project selected')
+          const action: ProjectEventAction = PROJECT_SIGNALR_TYPE.DELETE
+          const model: ProjectItemType = PROJECT_ITEM_TYPE.STRING
+
+          const deleteRequest = {
+            id: stringId,
+          }
+
+          const projectSignalrEvent: ProjectSignalrJsonRequest = {
+            action,
+            model,
+            projectId: project.id,
+            requestId: getGuid(),
+            data: JSON.stringify(deleteRequest),
           }
           return projectSignalrEvent
         }),

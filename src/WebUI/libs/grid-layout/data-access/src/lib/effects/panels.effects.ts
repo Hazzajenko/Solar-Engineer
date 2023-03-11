@@ -82,13 +82,16 @@ export class PanelsEffects extends Logger {
     () =>
       this.actions$.pipe(
         ofType(PanelsActions.addPanel),
-        map(({ panel }) => {
+        combineLatestWith(this.projectsStore.select.selectedProject$),
+        map(([{ panel }, project]) => {
+          // map(({ panel }) => {
+          project = this.throwIfNull(project, 'project is null')
           const action: ProjectEventAction = PROJECT_SIGNALR_TYPE.CREATE
           const model: ProjectItemType = PROJECT_ITEM_TYPE.PANEL
           const projectSignalrEvent: ProjectSignalrJsonRequest = {
             action,
             model,
-            projectId: panel.projectId,
+            projectId: project.id,
             requestId: getGuid(),
             data: JSON.stringify(panel),
           }
@@ -144,11 +147,14 @@ export class PanelsEffects extends Logger {
     () =>
       this.actions$.pipe(
         ofType(PanelsActions.addManyPanels),
-        map(({ panels }) => {
+        combineLatestWith(this.projectsStore.select.selectedProject$),
+        map(([{ panels }, project]) => {
+          // map(({ panels }) => {
+          project = this.throwIfNull(project, 'project is null')
           const action: ProjectEventAction = PROJECT_SIGNALR_TYPE.CREATE_MANY
           const model: ProjectItemType = PROJECT_ITEM_TYPE.PANEL
           const createManyPanelsRequest = {
-            projectId: panels[0].projectId,
+            projectId: project.id,
             stringId: panels[0].stringId,
             panelConfigId: panels[0].panelConfigId,
             rotation: panels[0].rotation,
@@ -157,7 +163,7 @@ export class PanelsEffects extends Logger {
           const projectSignalrEvent: ProjectSignalrJsonRequest = {
             action,
             model,
-            projectId: panels[0].projectId,
+            projectId: project.id,
             requestId: getGuid(),
             data: JSON.stringify(createManyPanelsRequest),
           }
@@ -340,23 +346,56 @@ export class PanelsEffects extends Logger {
     ),
   )
 
-  deleteManyPanelsHttp$ = createEffect(
+  deleteManyPanelsSignalr$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType(PanelsActions.deleteManyPanels),
-        switchMap(({ panelIds }) =>
-          this.projectsStore.select.isWebWithProject$.pipe(
-            switchMap(([isWeb, project]) => {
-              if (!project) return of(undefined)
-              if (isWeb) {
-                return this.panelsService.deleteManyPanels(panelIds, project.id)
-              }
-              // update local state
-              return of(undefined)
-            }),
-          ),
-        ),
+        combineLatestWith(this.projectsStore.select.selectedProject$),
+        map(([{ panelIds }, project]) => {
+          project = this.throwIfNull(project, 'No project selected')
+          const action: ProjectEventAction = PROJECT_SIGNALR_TYPE.DELETE_MANY
+          const model: ProjectItemType = PROJECT_ITEM_TYPE.PANEL
+
+          const panelIdsRequest = panelIds.map((panelId) => ({
+            id: panelId,
+          }))
+
+          const deleteManyRequest = {
+            projectId: project.id,
+            panelIds: panelIdsRequest,
+          }
+
+          const projectSignalrEvent: ProjectSignalrJsonRequest = {
+            action,
+            model,
+            projectId: project.id,
+            requestId: getGuid(),
+            data: JSON.stringify(deleteManyRequest),
+          }
+          return projectSignalrEvent
+        }),
+        tap((signalrRequest) => this.signalrEventsService.sendProjectSignalrEvent(signalrRequest)),
       ),
     { dispatch: false },
   )
+
+  /* deleteManyPanelsHttp$ = createEffect(
+     () =>
+       this.actions$.pipe(
+         ofType(PanelsActions.deleteManyPanels),
+         switchMap(({ panelIds }) =>
+           this.projectsStore.select.isWebWithProject$.pipe(
+             switchMap(([isWeb, project]) => {
+               if (!project) return of(undefined)
+               if (isWeb) {
+                 return this.panelsService.deleteManyPanels(panelIds, project.id)
+               }
+               // update local state
+               return of(undefined)
+             }),
+           ),
+         ),
+       ),
+     { dispatch: false },
+   )*/
 }

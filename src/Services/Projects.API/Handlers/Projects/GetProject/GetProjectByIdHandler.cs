@@ -27,25 +27,20 @@ public class GetProjectByIdHandler : IQueryHandler<GetProjectByIdQuery, bool>
 
     public async ValueTask<bool> Handle(GetProjectByIdQuery request, CancellationToken cT)
     {
-        _logger.LogInformation(
-            "User {User} requested project {Project}",
-            request.User.ToString(),
-            request.ProjectId
-        );
-        var appUserId = request.User.Id;
-        var projectId = request.ProjectId.TryToGuidOrThrow(new HubException("Invalid project id"));
+        var appUserIdGuid = request.User.Id;
+        var projectIdGuid = request.ProjectId.ToGuid();
         var project =
             await _unitOfWork.AppUserProjectsRepository.GetProjectByAppUserAndProjectIdAsync(
-                appUserId,
-                projectId
+                appUserIdGuid,
+                projectIdGuid
             );
 
         project.ThrowExceptionIfNull(new HubException("User is not apart of this project"));
 
-        var strings = await _unitOfWork.StringsRepository.GetStringsByProjectIdAsync(projectId);
-        var panels = await _unitOfWork.PanelsRepository.GetPanelsByProjectIdAsync(projectId);
+        var strings = await _unitOfWork.StringsRepository.GetStringsByProjectIdAsync(projectIdGuid);
+        var panels = await _unitOfWork.PanelsRepository.GetPanelsByProjectIdAsync(projectIdGuid);
         var panelLinks = await _unitOfWork.PanelLinksRepository.GetPanelLinksByProjectIdAsync(
-            projectId
+            projectIdGuid
         );
 
         var response = new ProjectDataDto
@@ -65,8 +60,8 @@ public class GetProjectByIdHandler : IQueryHandler<GetProjectByIdQuery, bool>
 
         _logger.LogInformation(
             "User {User} get project data {Project}",
-            appUserId.ToString(),
-            projectId.ToString()
+            appUserIdGuid.ToString(),
+            projectIdGuid.ToString()
         );
 
         return true;

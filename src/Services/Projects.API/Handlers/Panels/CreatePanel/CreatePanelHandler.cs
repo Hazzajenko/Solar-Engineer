@@ -11,11 +11,6 @@ using Projects.API.Mapping;
 
 namespace Projects.API.Handlers.Panels.CreatePanel;
 
-/*public sealed record CreatePanelCommand(
-    HubCallerContext Context,
-    CreatePanelRequest CreatePanelRequest
-) : IRequest<bool>;*/
-
 public class CreatePanelHandler : ICommandHandler<CreatePanelCommand, bool>
 {
     private readonly IHubContext<ProjectsHub, IProjectsHub> _hubContext;

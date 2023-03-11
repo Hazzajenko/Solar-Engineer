@@ -1,12 +1,10 @@
 <!--<ng-container *ngIf='panel'>-->
-<ng-container *ngIf='panel$ | async as panel'>
-  <ng-container *ngIf='panelNg$ | async as panelNg'>
+<ng-container *ngIf="panel$ | async as panel">
+  <ng-container *ngIf="panelNg$ | async as panelNg">
     <div
-      style='width: 32px; height: 32px'
-      class='flex whitespace-pre-wrap content-center items-center justify-center'
+      style="width: 32px; height: 32px"
+      class="flex whitespace-pre-wrap content-center items-center justify-center"
     >
-
-
       <!--      <app-panel-rotation *ngIf='panel.rotation' class='pointer-events-none'
                                 [setRotation]='panel.rotation'></app-panel-rotation>-->
       <!--      <app-panel-link
@@ -14,40 +12,40 @@
               [isPositiveLink]='panelNg.isSelectedPositiveTo'
               class='pointer-events-none z-20 relative left-2'
             ></app-panel-link>-->
-      <ng-container [ngSwitch]='panel?.rotation'>
-        <ng-container *ngSwitchCase='0'>
-          <svg viewBox='0 0 100 100' class='pointer-events-none relative'>
+      <ng-container [ngSwitch]="panel?.rotation">
+        <ng-container *ngSwitchCase="0">
+          <svg viewBox="0 0 100 100" class="pointer-events-none relative">
             <path
-              class='stroke-slate-800 fill-none stroke-[8px] z-10'
-              d='
+              class="stroke-slate-800 fill-none stroke-[8px] z-10"
+              d="
                         M 30, 0
                         V 100
-                        '
+                        "
             />
             <path
-              class='stroke-slate-800 fill-none stroke-[8px] z-10'
-              d='
+              class="stroke-slate-800 fill-none stroke-[8px] z-10"
+              d="
                         M 70, 0
                         V 100
-                        '
+                        "
             />
           </svg>
         </ng-container>
-        <ng-container *ngSwitchCase='1'>
-          <svg viewBox='0 0 100 100' class='pointer-events-none relative'>
+        <ng-container *ngSwitchCase="1">
+          <svg viewBox="0 0 100 100" class="pointer-events-none relative">
             <path
-              class='stroke-slate-800 fill-none stroke-[8px] z-10'
-              d='
+              class="stroke-slate-800 fill-none stroke-[8px] z-10"
+              d="
                         M 0, 30
                         H 100
-                        '
+                        "
             />
             <path
-              class='stroke-slate-800 fill-none stroke-[8px] z-10'
-              d='
+              class="stroke-slate-800 fill-none stroke-[8px] z-10"
+              d="
                         M 0, 70
                         H 100
-                        '
+                        "
             />
           </svg>
         </ng-container>
@@ -55,31 +53,29 @@
       <ng-container>
         <div
           appPanelDirective
-          [id]='panel.id'
-          [panelNg]='panelNg'
-          bind-attr.id='panel.id'
-          bind-attr.blockId='panel.id'
-          bind-attr.location='panel.location'
-          bind-attr.blockLocation='panel.location'
-          (contextmenu)='onRightClick($event, panel)'
-          [cdkDragData]='panel'
+          [id]="panel.id"
+          [panelNg]="panelNg"
+          bind-attr.id="panel.id"
+          bind-attr.blockId="panel.id"
+          bind-attr.location="panel.location"
+          bind-attr.blockLocation="panel.location"
+          (contextmenu)="onRightClick($event, panel)"
+          [cdkDragData]="panel"
           [ngStyle]="{
             height: panel?.rotation === 0 ? '18px' : '23px',
             width: panel?.rotation === 0 ? '23px' : '18px'
           }"
           cdkDrag
-          class='block panel absolute border border-black flex items-center justify-center content-center hover:bg-red-500'
-
+          class="block panel absolute border border-black flex items-center justify-center content-center hover:bg-red-500"
         >
-          <ng-container *ngIf='panelNg.stringSelected === 1 else stringNotSelected'>
-            <ng-container *ngIf='panelNg.isSelectedPanel === 0 && !panelNg.selectedPanelLinkPath'>
-
-              <div class='relative bottom-2.5' *ngIf='panelNg.panelLinkPath'>
+          <ng-container *ngIf="panelNg.stringSelected === 1; else stringNotSelected">
+            <ng-container *ngIf="panelNg.isSelectedPanel === 0 && !panelNg.selectedPanelLinkPath">
+              <div class="relative bottom-2.5" *ngIf="panelNg.panelLinkPath">
                 {{ panelNg.panelLinkPath.link + ":" + panelNg.panelLinkPath.count }}
               </div>
             </ng-container>
-            <ng-container *ngIf='panelNg.isSelectedPanel === 0  && panelNg.selectedPanelLinkPath'>
-              <div class='relative'>
+            <ng-container *ngIf="panelNg.isSelectedPanel === 0 && panelNg.selectedPanelLinkPath">
+              <div class="relative">
                 {{ panelNg.selectedPanelLinkPath.count }}
               </div>
             </ng-container>
@@ -89,16 +85,25 @@
                             {{ panelNg.panelLinkPath.count }}
                           </div>
                         </ng-template>-->
-            <ng-container *ngIf='panelNg.isSelectedPanel === 1 && panelNg.selectedPanelLinkPath'>
-              <div class='relative'>
+            <ng-container *ngIf="panelNg.isSelectedPanel === 1 && panelNg.selectedPanelLinkPath">
+              <div class="relative">
                 {{ panelNg.selectedPanelLinkPath.count }}
               </div>
             </ng-container>
           </ng-container>
           <ng-template #stringNotSelected>
-            <ng-container *ngIf='!panelNg.panelLinkPath'>
-              <div class='relative  text-xs' *ngIf='panelStringName$ | async as stringName'>
-                {{ stringName }}
+            <ng-container *ngIf="!panelNg.panelLinkPath">
+              <div class="relative text-xs bottom-2" *ngIf="panelStringName$ | async as stringName">
+                <span *ngIf="stringName !== 'undefined'">
+                  {{ stringName }}
+                  <!--           <ng-container *ngIf='panelNg.isSelectedNegativeTo'>
+                               -
+                             </ng-container>
+                             <ng-container *ngIf='panelNg.isSelectedPositiveTo'>
+                               +
+                             </ng-container>-->
+                </span>
+                <!--                {{ stringName }}-->
               </div>
             </ng-container>
           </ng-template>
@@ -144,7 +149,6 @@
                    </ng-container>-->
 
           <!--          </ng-container>-->
-
         </div>
       </ng-container>
     </div>
@@ -152,16 +156,18 @@
 </ng-container>
 
 <div
-  [matMenuTriggerFor]='rightMenu'
-  [style.left]='menuTopLeftPosition.x'
-  [style.top]='menuTopLeftPosition.y'
-  style='visibility: hidden; position: fixed'
+  [matMenuTriggerFor]="rightMenu"
+  [style.left]="menuTopLeftPosition.x"
+  [style.top]="menuTopLeftPosition.y"
+  style="visibility: hidden; position: fixed"
 ></div>
 
-<mat-menu #rightMenu='matMenu'>
+<mat-menu #rightMenu="matMenu">
   <ng-template matMenuContent>
     <app-panel-menu
-      class='right-click-menu bg-white'
-      [panel]='(panel$ | async)!' [panelNg]='(panelNg$ | async)!'></app-panel-menu>
+      class="right-click-menu bg-white"
+      [panel]="(panel$ | async)!"
+      [panelNg]="(panelNg$ | async)!"
+    ></app-panel-menu>
   </ng-template>
 </mat-menu>

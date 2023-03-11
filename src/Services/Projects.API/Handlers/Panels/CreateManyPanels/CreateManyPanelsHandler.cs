@@ -102,7 +102,7 @@ public class CreateManyPanelsHandler : ICommandHandler<CreateManyPanelsCommand, 
             );
         var response = panels.ToProjectEventResponseV3(
             command,
-            ActionType.Create,
+            ActionType.CreateMany,
             projectId.ToString()
         );
         // var response = panelDtos4.ToProjectEventResponseV3(command, ActionType.Create, projectId.ToString());

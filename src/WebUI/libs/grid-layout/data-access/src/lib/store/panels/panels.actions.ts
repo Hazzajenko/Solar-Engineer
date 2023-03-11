@@ -12,6 +12,7 @@ export const PanelsActions = createActionGroup({
     'Add Panel': props<{ panel: PanelModel }>(),
     'Add Many Panels': props<{ panels: PanelModel[] }>(),
     'Update Panel': props<{ update: ProjectItemUpdate<PanelModel> }>(),
+    'Update Panel Without Signalr': props<{ update: ProjectItemUpdate<PanelModel> }>(),
     // 'Update Panel': props<{ update: Update<PanelModel> }>(),
     'Update Many Panels': props<{ updates: Update<PanelModel>[] }>(),
     'Delete Panel': props<{ panelId: string }>(),
