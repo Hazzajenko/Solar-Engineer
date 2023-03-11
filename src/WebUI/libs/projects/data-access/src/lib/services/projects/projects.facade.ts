@@ -3,6 +3,7 @@ import { Store } from '@ngrx/store'
 import { ProjectsSelectors } from '../../store'
 import { combineLatest, firstValueFrom } from 'rxjs'
 import { throwExpression } from '@shared/utils'
+import { map } from 'rxjs/operators'
 
 @Injectable({ providedIn: 'root' })
 export class ProjectsFacade {
@@ -26,8 +27,19 @@ export class ProjectsFacade {
     this.store.select(ProjectsSelectors.selectProjectByRouteParams),
   ])
 
+  selectedProjectNoNull$() {
+    /*    return this.selectedProject$.pipe(
+          map((project) => project ?? throwError(() => new Error('No project selected'))),
+          catchError((err) => EMPTY),
+        )*/
+    // return this.selectedProject$.pipe(filter((project): project is ProjectModel => !!project))
+    // return this.selectedProject$.pipe(filter((project) => project is ProjectModel => !!project))
+    return this.selectedProject$.pipe(map((project) => project))
+  }
+
   async selectedProject() {
     return (await firstValueFrom(this.selectedProjects$)) ?? throwExpression('No project selected')
+    // return (await firstValueFrom(this.selectedProjects$)) ?? throwExpression('No project selected')
   }
 
   get currentProjectId() {

@@ -1,18 +1,27 @@
+using System.Linq.Expressions;
 using DotNetCore.EntityFrameworkCore;
 using Infrastructure.Common;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
 
-public abstract class GenericRepository<TContext, TModel> : EFRepository<TModel>, IGenericRepository<TModel>
+public abstract class GenericRepository<TContext, TModel>
+    : EFRepository<TModel>,
+        IGenericRepository<TModel>
     where TContext : DbContext
     where TModel : class, IEntity
 {
     private readonly TContext _context;
 
-    protected GenericRepository(TContext context) : base(context)
+    protected GenericRepository(TContext context)
+        : base(context)
     {
         _context = context;
+    }
+
+    public Task<TModel?> GetByIdAsync(Guid id)
+    {
+        return Queryable.SingleOrDefaultAsync(user => user.Id == id);
     }
 
     public async Task<TModel> AddAndSaveChangesAsync(TModel model)
@@ -36,12 +45,47 @@ public abstract class GenericRepository<TContext, TModel> : EFRepository<TModel>
         return model;
     }
 
-    public Task<TModel?> GetByIdAsync(Guid id)
+    public object[] GetKeys(TModel entity)
     {
-        return Queryable.SingleOrDefaultAsync(user => user.Id == id);
+        var keyNames = _context.Model
+            .FindEntityType(typeof(TModel))!
+            .FindPrimaryKey()!
+            .Properties.Select(x => x.Name);
+        return keyNames
+            .Select(keyName => entity.GetType().GetProperty(keyName)!.GetValue(entity, null)!)
+            .ToArray();
     }
 
-    public async Task<bool> SaveChangesAsync()
+    public async Task<bool> FindAndDeleteAsync(Expression<Func<TModel, bool>> where)
+    {
+        var model = await Queryable.SingleOrDefaultAsync(where);
+        if (model is null)
+            return false;
+        await Queryable.Where(where).Take(1).ExecuteDeleteAsync();
+        return await SaveChangesAsync();
+    }
+
+    public async Task<bool> FindManyAndDeleteAsync(Expression<Func<TModel, bool>> where)
+    {
+        var entities = await Queryable.Where(where).ToListAsync();
+        if (entities.Any() is false)
+            return false;
+        // _context.Set<TModel>().RemoveRange(entities);
+        // _context.Model
+        // _context[typeof(TModel).Name].RemoveRange(entities);
+        await Queryable.Where(where).ExecuteDeleteAsync();
+        // await Queryable.Where(where).ExecuteDeleteAsync();
+        return await SaveChangesAsync();
+    }
+
+    public async Task<IEnumerable<TModel>> UpdateManyAndSaveChangesAsync(IEnumerable<TModel> items)
+    {
+        await UpdateRangeAsync(items);
+        await SaveChangesAsync();
+        return items;
+    }
+
+    protected async Task<bool> SaveChangesAsync()
     {
         return await _context.SaveChangesAsync() > 0;
     }

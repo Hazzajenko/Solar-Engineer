@@ -1,4 +1,6 @@
-﻿using Infrastructure.Common;
+﻿using System.Linq.Expressions;
+using Infrastructure.Common;
+using Infrastructure.Logging;
 using Infrastructure.Repositories;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
@@ -42,6 +44,16 @@ public sealed class PanelsRepository : GenericRepository<ProjectsContext, Panel>
             .SingleOrDefaultAsync();
     }
 
+    public async Task<IEnumerable<Panel>> GetManyPanelsAsync(
+        Guid projectId,
+        IEnumerable<Guid> panelIds
+    )
+    {
+        return await Queryable
+            .Where(x => x.ProjectId == projectId && panelIds.Contains(x.Id))
+            .ToListAsync();
+    }
+
     public async Task<bool> ArePanelLocationsUniqueAsync(
         Guid projectId,
         IEnumerable<string> locations
@@ -60,5 +72,55 @@ public sealed class PanelsRepository : GenericRepository<ProjectsContext, Panel>
 
         // _mapper.Map<(Panel, string), TPanelResponse>((panel, "Create"));
         return panel.Adapt<TPanelResponse>();
+    }
+
+    public async Task<bool> DeletePanelByIdAndProjectIdAsync(Guid id, Guid projectId)
+    {
+        Expression<Func<Panel, bool>> where = x => x.Id == id && x.ProjectId == projectId;
+        var panel = await Queryable.SingleOrDefaultAsync(
+            where
+            // x => x.Id == id && x.ProjectId == projectId
+        );
+        if (panel is null)
+            return false;
+        var keys = GetKeys(panel);
+        if (keys.Any())
+            keys.DumpObjectJson();
+
+        await Queryable.Where(where).ExecuteDeleteAsync();
+
+        // await FindManyAndDeleteAsync(where);
+
+        // await DeleteAsync(new { id, projectId });
+        // await DeleteAsync(where);
+        // await DeleteAsync(x => x.Id == id && x.ProjectId == projectId);
+        // await DeleteAsync(panel.Id);
+        await SaveChangesAsync();
+
+        return true;
+    }
+
+    public async Task<bool> DeleteManyPanelsAsync(Guid projectId, IEnumerable<Guid> panelIds)
+    {
+        /*Expression<Func<Panel, bool>> where = x =>
+            x.ProjectId == projectId && panelIds.Contains(x.Id);
+        var panels = await Queryable
+            .Where(
+                where
+                // x => x.Id == id && x.ProjectId == projectId
+            )
+            .ToListAsync();
+        if (panels.Any() is false)
+            return false;
+        if (panels.Count() != panelIds.Count())
+            throw new HubException("Some panels do not exist");*/
+
+        await Queryable
+            .Where(x => x.ProjectId == projectId && panelIds.Contains(x.Id))
+            .ExecuteDeleteAsync();
+
+        await SaveChangesAsync();
+
+        return true;
     }
 }

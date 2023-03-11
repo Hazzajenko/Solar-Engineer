@@ -4,9 +4,9 @@ import { Store } from '@ngrx/store'
 import { PanelsService, PanelsSignalrService, PanelsStoreService, ProjectsHubService } from '../'
 import { BlocksActions, PanelsActions } from '../store'
 import { ProjectsActions, ProjectsStoreService, SignalrEventsService } from '@projects/data-access'
-import { of, switchMap, tap } from 'rxjs'
+import { combineLatestWith, of, switchMap, tap } from 'rxjs'
 import { map } from 'rxjs/operators'
-import { LoggerService } from '@shared/logger'
+import { Logger, LoggerService } from '@shared/logger'
 import { getGuid } from '@shared/utils'
 import {
   PROJECT_ITEM_TYPE,
@@ -22,7 +22,7 @@ import {
 @Injectable({
   providedIn: 'root',
 })
-export class PanelsEffects {
+export class PanelsEffects extends Logger {
   private actions$ = inject(Actions)
   private store = inject(Store)
 
@@ -32,9 +32,14 @@ export class PanelsEffects {
   private panelsService = inject(PanelsService)
   private panelsStore = inject(PanelsStoreService)
   private panelsSignalrService = inject(PanelsSignalrService)
-  private logger = inject(LoggerService)
+  // private logger = inject(LoggerService)
   private projectsHubService = inject(ProjectsHubService)
   private signalrEventsService = inject(SignalrEventsService)
+
+  constructor(logger: LoggerService) {
+    super(logger)
+  }
+
   /*  initPanels$ = createEffect(
       () =>
         this.actions$.pipe(
@@ -278,16 +283,24 @@ export class PanelsEffects {
     () =>
       this.actions$.pipe(
         ofType(PanelsActions.deletePanel),
-        map(async ({ panelId }) => {
-          const project = await this.projectsStore.select.selectedProject()
-          const action: ProjectEventAction = PROJECT_SIGNALR_TYPE.UPDATE
+        combineLatestWith(this.projectsStore.select.selectedProject$),
+        map(([{ panelId }, project]) => {
+          // if (!project) throw new Error('No project selected')
+          project = this.throwIfNull(project, 'No project selected')
+          // const project = await this.projectsStore.select.selectedProject()
+          const action: ProjectEventAction = PROJECT_SIGNALR_TYPE.DELETE
           const model: ProjectItemType = PROJECT_ITEM_TYPE.PANEL
+
+          const deleteRequest = {
+            id: panelId,
+          }
+
           const projectSignalrEvent: ProjectSignalrJsonRequest = {
             action,
             model,
             projectId: project.id,
             requestId: getGuid(),
-            data: JSON.stringify(update),
+            data: JSON.stringify(deleteRequest),
           }
           return projectSignalrEvent
         }),

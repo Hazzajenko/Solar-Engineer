@@ -50,24 +50,6 @@ public class CreateManyPanelsHandler : ICommandHandler<CreateManyPanelsCommand, 
         if (existingPanels)
             throw new HubException("Panel already exists at this location");
 
-        /*foreach (var panel in command.Request.Panels)
-        {
-            var existingPanel = await _unitOfWork.PanelsRepository.GetPanelByLocationAsync(
-                appUserId,
-                projectId,
-                panel.Location
-            );
-            if (existingPanel is not null)
-                throw new HubException("Panel already exists at this location");
-        }*/
-
-        /*
-        var existingPanel = await _unitOfWork.PanelsRepository.GetPanelByLocationAsync(
-            appUserId,
-            projectId,
-            command.Request.Location
-        );*/
-
         var panelStringId = command.Request.StringId;
         var panelHasString = panelStringId.Equals("undefined") is false;
 
@@ -126,57 +108,11 @@ public class CreateManyPanelsHandler : ICommandHandler<CreateManyPanelsCommand, 
         // var response = panelDtos4.ToProjectEventResponseV3(command, ActionType.Create, projectId.ToString());
         await _hubContext.Clients.Users(projectMembers).ReceiveProjectEvent(response);
 
-        /*panelDtos4.DumpObjectJson();
-        var panelDtos = _mapper.Map<IEnumerable<Panel>, IEnumerable<PanelDto>>(panels);
-        panelDtos.DumpObjectJson();
-        var panelDtos2 = panels.Adapt<IEnumerable<PanelDto>>();
-        panelDtos2.DumpObjectJson();*/
-        /*var response = _mapper.Map<(Panel, string), ProjectEventResponse>(
-            (panel, command.RequestId)
-        );*/
-        // var response = panel.ToProjectEventResponseV2(command, ActionType.Create, ModelType.Panel);
-        /*var response = panel.ToProjectEventResponseV3(command, ActionType.Create);
-        // _logger.LogInformation("Panel created: {@Panel}", panel);
-        // _logger.LogInformation("Panel created response: {@Response}", response);
-        // var response = _mapper.Map<(Panel, string), PanelCreatedResponse>((panel, command.Request.RequestId));
-
-        var projectMembers =
-            await _unitOfWork.AppUserProjectsRepository.GetProjectMemberIdsByProjectId(
-                appUserProject.ProjectId
-            );
-
-        /*await _hubContext.Clients
-            .Group(appUserProject.ProjectId.ToString())
-            .NewProjectEvents(response.ToIEnumerable());#1#
-        /*await _hubContext.Clients
-            .Group(appUserProject.ProjectId.ToString())
-            .ReceiveProjectEvents(response.ToIEnumerable());#1#
-        /*await _hubContext.Clients
-            .Group(appUserProject.ProjectId.ToString())
-            .PanelsCreated(response.ToIEnumerable());#1#
-
-        /*await _hubContext.Clients
-            .Group(appUserProject.ProjectId.ToString())
-            .PanelsCreated(panel.ToDtoList());#1#
-        /*await _hubContext.Clients
-            .Users(projectMembers)
-            .ReceiveProjectEvents(response.ToIEnumerable());#1#
-        await _hubContext.Clients.Users(projectMembers).ReceiveProjectEvent(response);
-        // await _hubContext.Clients.Users(projectMembers).NewProjectEvents(response.ToIEnumerable());
-        // await _hubContext.Clients.Users(projectMembers).PanelsCreated(response.ToIEnumerable());
-        // await _hubContext.Clients.Users(projectMembers).PanelsCreated(panel.ToDtoList());
-
         _logger.LogInformation(
-            "User {User} created panel {Panel} in project {Project}",
-            appUserId.ToString(),
-            panel.Id.ToString(),
-            appUserProject.Project.Id.ToString()
-        );*/
-
-        _logger.LogInformation(
-            "User {User} created {Amount} panels in project {Project}",
+            "User {User} created {Amount} {Panels} in project {Project}",
             appUserId.ToString(),
             panels.Count(),
+            panels.Count() == 1 ? "panel" : "panels",
             appUserProject.Project.Id.ToString()
         );
 

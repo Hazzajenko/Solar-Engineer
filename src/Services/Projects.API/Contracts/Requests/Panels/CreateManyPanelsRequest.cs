@@ -28,13 +28,17 @@ public class CreateManyPanelsRequestValidator : AbstractValidator<CreateManyPane
             .NotNull()
             .WithMessage("ProjectId cannot be null")
             .NotEmpty()
-            .WithMessage("ProjectId cannot be empty");
+            .WithMessage("ProjectId cannot be empty")
+            .Must(x => Guid.TryParse(x, out _))
+            .WithMessage("ProjectId must be a valid Guid");
 
         RuleFor(v => v.StringId)
             .NotNull()
             .WithMessage("StringId cannot be null")
             .NotEmpty()
-            .WithMessage("StringId cannot be empty");
+            .WithMessage("StringId cannot be empty")
+            .Must(x => Guid.TryParse(x, out _))
+            .WithMessage("StringId must be a valid Guid");
 
         RuleFor(v => v.Panels)
             .NotNull()

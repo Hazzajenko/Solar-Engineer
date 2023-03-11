@@ -137,4 +137,51 @@ public static class ProjectEventsMapper
             Data = toJson
         };
     }
+
+    public static ProjectEventResponse ToProjectEventResponseWithStringV3<TProjectCommand>(
+        this string entityId,
+        TProjectCommand command,
+        string action,
+        string projectId,
+        Type modelType
+    )
+        where TProjectCommand : IProjectCommand
+    {
+        var response = new { Id = entityId };
+
+        var toJson = JsonSerializer.Serialize(response);
+        return new ProjectEventResponse
+        {
+            RequestId = command.RequestId,
+            ProjectId = projectId,
+            ByAppUserId = command.User.Id.ToString(),
+            Action = action,
+            Model = modelType.Name,
+            Data = toJson
+        };
+    }
+    
+    public static ProjectEventResponse ToProjectEventResponseWithStringListV3<TProjectCommand>(
+        this IEnumerable<string> entityIds,
+        TProjectCommand command,
+        string action,
+        string projectId,
+        Type modelType
+    )
+        where TProjectCommand : IProjectCommand
+    {
+        var response = entityIds.Select(id => new { Id = id });
+        // var response = new { Id = entityId };
+
+        var toJson = JsonSerializer.Serialize(response);
+        return new ProjectEventResponse
+        {
+            RequestId = command.RequestId,
+            ProjectId = projectId,
+            ByAppUserId = command.User.Id.ToString(),
+            Action = action,
+            Model = modelType.Name,
+            Data = toJson
+        };
+    }
 }

@@ -19,6 +19,7 @@ export class WebProjectComponent implements OnInit {
   rows = 20
   cols = 40
 
+  // project$: Observable<ProjectModel> = this.projectsStore.select.selectedProjectNoNull$
   project$: Observable<ProjectModel | undefined> = this.projectsStore.select.projectNameFromRoute$
   // blocks$: Observable<BlockModel[]> = new Observable<BlockModel[]>()
   // hi = this.projectsStore.select.
