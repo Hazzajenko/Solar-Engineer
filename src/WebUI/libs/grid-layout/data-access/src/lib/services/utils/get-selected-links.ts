@@ -10,8 +10,12 @@ export function getSelectedLinks(
       selectedNegativeLinkTo: undefined,
     } as PanelLinksToModel
   }
-  const positive = panelJoins.find((pJoin) => pJoin.negativeToId === selectedPanelId)?.positiveToId
-  const negative = panelJoins.find((pJoin) => pJoin.positiveToId === selectedPanelId)?.negativeToId
+  const positive = panelJoins.find(
+    (pJoin) => pJoin.panelNegativeToId === selectedPanelId,
+  )?.panelPositiveToId
+  const negative = panelJoins.find(
+    (pJoin) => pJoin.panelPositiveToId === selectedPanelId,
+  )?.panelNegativeToId
   return {
     selectedPositiveLinkTo: positive,
     selectedNegativeLinkTo: negative,

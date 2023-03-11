@@ -1,6 +1,7 @@
 import { getGuid } from '@shared/utils'
 import { PanelIdPath } from 'libs/shared/data-access/models/src/lib/projects/path.model'
-import { ENTITY_TYPE, EntityModel, EntityOptions, EntityType } from './entity.model'
+import { EntityModel, EntityOptions } from './entity.model'
+import { ProjectModelType } from './model'
 
 export interface StringOptions extends EntityOptions {
   name: string
@@ -9,11 +10,11 @@ export interface StringOptions extends EntityOptions {
 }
 
 export class StringModel extends EntityModel {
-  override type: EntityType = ENTITY_TYPE.STRING
+  override type: ProjectModelType = ProjectModelType.String
   name: string
   parallel: boolean
   color: string
-  panelPaths: PanelIdPath[] = []
+  panelPaths?: PanelIdPath[] = []
   // panelPathRecord: PanelPathRecord = {}
   // linkPathMap?: { [panelId: string]: StringPanelLinkPath }
   // linkPathMap?: Map<PanelId, PanelLinkPath>

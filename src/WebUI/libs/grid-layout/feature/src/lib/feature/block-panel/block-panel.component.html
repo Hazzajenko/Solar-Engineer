@@ -93,7 +93,10 @@
           </ng-container>
           <ng-template #stringNotSelected>
             <ng-container *ngIf="!panelNg.panelLinkPath">
-              <div class="relative text-xs bottom-2" *ngIf="panelStringName$ | async as stringName">
+              <div
+                class="relative text-xs bottom-2 pointer-events-none"
+                *ngIf="panelStringName$ | async as stringName"
+              >
                 <span *ngIf="stringName !== 'undefined'">
                   {{ stringName }}
                   <!--           <ng-container *ngIf='panelNg.isSelectedNegativeTo'>

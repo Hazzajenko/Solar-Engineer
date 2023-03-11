@@ -1,4 +1,5 @@
 import { getGuid } from '@shared/utils'
+import { ProjectModelType } from '../model'
 
 export interface BlockOptions {
   projectId: string
@@ -32,7 +33,9 @@ export class BlockModel {
   id: string
   projectId: string
   location: string
-  type: BlockType = BLOCK_TYPE.UNDEFINED
+  type: ProjectModelType = ProjectModelType.Undefined
+
+  // type: BlockType = BLOCK_TYPE.UNDEFINED
 
   constructor(options: BlockOptions, id?: string) {
     this.id = id ? id : getGuid()

@@ -1,4 +1,4 @@
-import { createEntityAdapter, EntityAdapter, EntityMap, EntityMapOne, EntityState } from '@ngrx/entity'
+import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity'
 import { Action, createReducer, on } from '@ngrx/store'
 import { StringModel } from '@shared/data-access/models'
 
@@ -32,6 +32,11 @@ const reducer = createReducer(
   ),
   on(StringsActions.loadStringsFailure, (state, { error }) => ({ ...state, error })),
   on(StringsActions.addString, (state, { string }) => stringsAdapter.addOne(string, state)),
+  on(StringsActions.addStringWithoutSignalr, (state, { string }) =>
+    stringsAdapter.addOne(string, state),
+  ),
+
+  on(StringsActions.addManyStrings, (state, { strings }) => stringsAdapter.addMany(strings, state)),
 
   on(StringsActions.updateString, (state, { update }) => stringsAdapter.updateOne(update, state)),
   // on(StringsActions.updateStringPathmap, (state, { linkPathMap }) => ({ ...state, pathMap: linkPathMap })),

@@ -16,7 +16,6 @@ import { firstValueFrom } from 'rxjs'
 
 import { map } from 'rxjs/operators'
 
-
 @Injectable({
   providedIn: 'root',
 })
@@ -32,10 +31,10 @@ export class LinksPathService {
     return this.linksFacade.linksByPanels$(panels).pipe(
       map((links) => {
         const starterLinks = links.filter((link) => {
-          const firstPanel = panels.find((panel) => panel.id === link.positiveToId)
+          const firstPanel = panels.find((panel) => panel.id === link.panelPositiveToId)
 
           const doesFirstHavePreviousLink = links.find(
-            (link) => link.negativeToId === firstPanel?.id,
+            (link) => link.panelNegativeToId === firstPanel?.id,
           )
 
           if (doesFirstHavePreviousLink) {
@@ -54,7 +53,7 @@ export class LinksPathService {
           let job = true
 
           let nextPanel: PanelModel | undefined = panels.find(
-            (panel) => panel.id === starterLink.positiveToId,
+            (panel) => panel.id === starterLink.panelPositiveToId,
           )
 
           while (job) {
@@ -65,7 +64,9 @@ export class LinksPathService {
                 color: linkColor,
               })
               if (panelCounter === 1) {
-                const secondPanel = panels.find((panel) => panel.id === starterLink.negativeToId)
+                const secondPanel = panels.find(
+                  (panel) => panel.id === starterLink.panelNegativeToId,
+                )
                 if (secondPanel) {
                   nextPanel = secondPanel
                 } else {
@@ -73,9 +74,9 @@ export class LinksPathService {
                   job = false
                 }
               } else {
-                const upcomingLink = links.find((link) => link.positiveToId === nextPanel?.id)
+                const upcomingLink = links.find((link) => link.panelPositiveToId === nextPanel?.id)
                 const upcomingPanel = panels.find(
-                  (panel) => panel.id === upcomingLink?.negativeToId,
+                  (panel) => panel.id === upcomingLink?.panelNegativeToId,
                 )
                 if (upcomingLink && upcomingPanel) {
                   nextPanel = upcomingPanel
@@ -116,7 +117,6 @@ export class LinksPathService {
     )
   }
 
-
   async orderPanelsInLinkOrderWithLinkAsync(link: PanelLinkModel) {
     const stringPanels = await this.panelsFacade.panelsByStringId(link.stringId)
     if (!stringPanels) return
@@ -125,14 +125,16 @@ export class LinksPathService {
     /*    const panelPathRecord = await this.stringsFacade.panelPathRecordByStringId(link.stringId)
         if (!panelPathRecord) return*/
     const stringLinkPaths = await this.pathsStore.select.pathsByStringId(link.stringId)
-    const existingColors = await firstValueFrom(this.pathsStore.select.pathsByStringId$(link.stringId).pipe(
-      map(paths => paths.map(path => path.color)),
-    ))
+    const existingColors = await firstValueFrom(
+      this.pathsStore.select
+        .pathsByStringId$(link.stringId)
+        .pipe(map((paths) => paths.map((path) => path.color))),
+    )
     const starterLinks = stringLinks.filter((link) => {
-      const firstPanel = stringPanels.find((panel) => panel.id === link.positiveToId)
+      const firstPanel = stringPanels.find((panel) => panel.id === link.panelPositiveToId)
 
       const doesFirstHavePreviousLink = stringLinks.find(
-        (link) => link.negativeToId === firstPanel?.id,
+        (link) => link.panelNegativeToId === firstPanel?.id,
       )
 
       if (doesFirstHavePreviousLink) {
@@ -145,9 +147,14 @@ export class LinksPathService {
     let panelPaths: PanelIdPath[] = []
 
     starterLinks.forEach((starterLink, linkCounter) => {
-
-
-      const starterLinkPanelPath = this.updateStringPanelPaths(linkCounter, stringLinkPaths, starterLink, stringPanels, stringLinks, existingColors)
+      const starterLinkPanelPath = this.updateStringPanelPaths(
+        linkCounter,
+        stringLinkPaths,
+        starterLink,
+        stringPanels,
+        stringLinks,
+        existingColors,
+      )
 
       if (starterLinkPanelPath) {
         panelPaths = panelPaths.concat(starterLinkPanelPath)
@@ -168,8 +175,8 @@ export class LinksPathService {
     const selectedPanelLinks = await this.linksFacade.linksByPanelId(panelId)
     console.log(selectedPanelLinks)
     if (!selectedPanelLinks) return
-    const starterPosLink = stringLinks.find(link => link.positiveToId === panelId)
-    const starterNegLink = stringLinks.find(link => link.negativeToId === panelId)
+    const starterPosLink = stringLinks.find((link) => link.panelPositiveToId === panelId)
+    const starterNegLink = stringLinks.find((link) => link.panelNegativeToId === panelId)
     const positive = this.getPanelPaths(starterPosLink, stringPanels, stringLinks, true)
     const negative = this.getPanelPaths(starterNegLink, stringPanels, stringLinks, false)
 
@@ -184,7 +191,14 @@ export class LinksPathService {
     return undefined
   }
 
-  updateStringPanelPaths(linkCounter: number, stringLinkPaths: PathModel[], starterLink: PanelLinkModel, stringPanels: PanelModel[], stringLinks: PanelLinkModel[], existingColors: string[]) {
+  updateStringPanelPaths(
+    linkCounter: number,
+    stringLinkPaths: PathModel[],
+    starterLink: PanelLinkModel,
+    stringPanels: PanelModel[],
+    stringLinks: PanelLinkModel[],
+    existingColors: string[],
+  ) {
     let panelCounter = 1
     let job = true
     let linkColor = generateDifferentVibrantColorHex(existingColors)
@@ -193,7 +207,7 @@ export class LinksPathService {
     let spareLinkCountSpotJob = true
 
     while (spareLinkCountSpotJob) {
-      const isThisCountFree = stringLinkPaths.find(linkPath => linkPath.link === linkCounter)
+      const isThisCountFree = stringLinkPaths.find((linkPath) => linkPath.link === linkCounter)
       if (isThisCountFree) {
         linkCounter++
       } else {
@@ -202,12 +216,14 @@ export class LinksPathService {
     }
 
     let nextPanel: PanelModel | undefined = stringPanels.find(
-      (panel) => panel.id === starterLink.positiveToId,
+      (panel) => panel.id === starterLink.panelPositiveToId,
     )
     while (job) {
       if (nextPanel) {
         if (!existingLinkHasBeenSet) {
-          const isExistingInPath = stringLinkPaths.find(linkPath => linkPath.panelId === nextPanel?.id)
+          const isExistingInPath = stringLinkPaths.find(
+            (linkPath) => linkPath.panelId === nextPanel?.id,
+          )
           if (isExistingInPath) {
             linkColor = isExistingInPath.color
             linkCounter = isExistingInPath.link
@@ -224,7 +240,9 @@ export class LinksPathService {
           },
         })
         if (panelCounter === 1) {
-          const secondPanel = stringPanels.find((panel) => panel.id === starterLink.negativeToId)
+          const secondPanel = stringPanels.find(
+            (panel) => panel.id === starterLink.panelNegativeToId,
+          )
           if (secondPanel) {
             nextPanel = secondPanel
           } else {
@@ -232,9 +250,9 @@ export class LinksPathService {
             job = false
           }
         } else {
-          const upcomingLink = stringLinks.find((link) => link.positiveToId === nextPanel?.id)
+          const upcomingLink = stringLinks.find((link) => link.panelPositiveToId === nextPanel?.id)
           const upcomingPanel = stringPanels.find(
-            (panel) => panel.id === upcomingLink?.negativeToId,
+            (panel) => panel.id === upcomingLink?.panelNegativeToId,
           )
           if (upcomingLink && upcomingPanel) {
             nextPanel = upcomingPanel
@@ -250,7 +268,7 @@ export class LinksPathService {
       }
     }
     if (existingLinkHasBeenSet) {
-      return panelPaths.map(panelPath => {
+      return panelPaths.map((panelPath) => {
         return {
           ...panelPath,
           path: {
@@ -264,11 +282,15 @@ export class LinksPathService {
     }
   }
 
-
-  getPanelPaths(starterLink: PanelLinkModel | undefined, stringPanels: PanelModel[], stringLinks: PanelLinkModel[], positive: boolean) {
+  getPanelPaths(
+    starterLink: PanelLinkModel | undefined,
+    stringPanels: PanelModel[],
+    stringLinks: PanelLinkModel[],
+    positive: boolean,
+  ) {
     if (!starterLink) return undefined
-    const nextPosPanel = stringPanels.find(panel => panel.id === starterLink.positiveToId)
-    const nextNegPanel = stringPanels.find(panel => panel.id === starterLink.negativeToId)
+    const nextPosPanel = stringPanels.find((panel) => panel.id === starterLink.panelPositiveToId)
+    const nextNegPanel = stringPanels.find((panel) => panel.id === starterLink.panelNegativeToId)
     let nextPanel = positive ? nextPosPanel : nextNegPanel
 
     let job = true
@@ -279,7 +301,6 @@ export class LinksPathService {
 
     while (job) {
       if (nextPanel) {
-
         panelPaths.push({
           panelId: nextPanel.id,
           path: {
@@ -289,8 +310,12 @@ export class LinksPathService {
           },
         })
         if (panelCounter === 0) {
-          const secondPosPanel = stringPanels.find((panel) => panel.id === starterLink.negativeToId)
-          const secondNegPanel = stringPanels.find((panel) => panel.id === starterLink.positiveToId)
+          const secondPosPanel = stringPanels.find(
+            (panel) => panel.id === starterLink.panelNegativeToId,
+          )
+          const secondNegPanel = stringPanels.find(
+            (panel) => panel.id === starterLink.panelPositiveToId,
+          )
           const secondPanel = positive ? secondPosPanel : secondNegPanel
           if (secondPanel) {
             nextPanel = secondPanel
@@ -299,14 +324,18 @@ export class LinksPathService {
             job = false
           }
         } else {
-          const upcomingPosLink = stringLinks.find((link) => link.positiveToId === nextPanel?.id)
-          const upcomingNegLink = stringLinks.find((link) => link.negativeToId === nextPanel?.id)
+          const upcomingPosLink = stringLinks.find(
+            (link) => link.panelPositiveToId === nextPanel?.id,
+          )
+          const upcomingNegLink = stringLinks.find(
+            (link) => link.panelNegativeToId === nextPanel?.id,
+          )
           const upcomingLink = positive ? upcomingPosLink : upcomingNegLink
           const upcomingPosPanel = stringPanels.find(
-            (panel) => panel.id === upcomingLink?.negativeToId,
+            (panel) => panel.id === upcomingLink?.panelNegativeToId,
           )
           const upcomingNegPanel = stringPanels.find(
-            (panel) => panel.id === upcomingLink?.positiveToId,
+            (panel) => panel.id === upcomingLink?.panelPositiveToId,
           )
           const upcomingPanel = positive ? upcomingPosPanel : upcomingNegPanel
           if (upcomingLink && upcomingPanel) {
@@ -328,5 +357,4 @@ export class LinksPathService {
     }
     return panelPaths
   }
-
 }

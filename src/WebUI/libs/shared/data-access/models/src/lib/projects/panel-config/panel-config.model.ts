@@ -1,12 +1,14 @@
-import { ENTITY_TYPE, EntityModel, EntityType } from '../entity.model'
+import { EntityModel } from '../entity.model'
 import { IEntity } from '../interfaces'
 import { IUserObject } from '../interfaces/i-user-object.interface'
 import { getGuid } from '@shared/utils'
 import { IPanelConfig } from './i-panel-config.interface'
 import { PanelConfigOptions } from './panel-config.options'
+import { ProjectModelType } from '../model'
 
 export class PanelConfigModel extends EntityModel implements IEntity, IUserObject, IPanelConfig {
-  override type: EntityType = ENTITY_TYPE.PANEL_CONFIG
+  override type: ProjectModelType = ProjectModelType.PanelConfig
+  // override type: EntityType = ENTITY_TYPE.PANEL_CONFIG
   brand?: string
   name: string
   fullName: string

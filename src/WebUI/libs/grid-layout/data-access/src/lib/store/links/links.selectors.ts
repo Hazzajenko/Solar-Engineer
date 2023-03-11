@@ -1,4 +1,4 @@
-import { PanelModel, PanelLinkModel } from '@shared/data-access/models'
+import { PanelLinkModel, PanelModel } from '@shared/data-access/models'
 import { createFeatureSelector, createSelector } from '@ngrx/store'
 import { RouterSelectors } from '@shared/data-access/router'
 
@@ -32,7 +32,7 @@ export const selectLinksByRouteParams = createSelector(
 
 export const selectLinksByPanels = (props: { panels: PanelModel[] }) =>
   createSelector(selectAllLinks, (links: PanelLinkModel[]) =>
-    links.filter((link) => props.panels.map((panel) => panel.id).includes(link.positiveToId)),
+    links.filter((link) => props.panels.map((panel) => panel.id).includes(link.panelPositiveToId)),
   )
 
 export const selectLinksByStringId = (props: { stringId: string }) =>
@@ -42,8 +42,8 @@ export const selectLinksByStringId = (props: { stringId: string }) =>
 
 export const selectLinksByPanelId = (props: { panelId: string }) =>
   createSelector(selectAllLinks, (links: PanelLinkModel[]) => {
-    const panelPositiveLink = links.find((link) => link.positiveToId === props.panelId)
-    const panelNegativeLink = links.find((link) => link.negativeToId === props.panelId)
+    const panelPositiveLink = links.find((link) => link.panelPositiveToId === props.panelId)
+    const panelNegativeLink = links.find((link) => link.panelNegativeToId === props.panelId)
     return {
       panelPositiveLink,
       panelNegativeLink,
@@ -71,10 +71,10 @@ export const selectLinkById = (props: { linkId: string }) =>
 
 export const isPanelExistingNegativeLink = (props: { panelId: string }) =>
   createSelector(selectAllLinks, (links: PanelLinkModel[]) =>
-    links.find((link) => link.negativeToId === props.panelId),
+    links.find((link) => link.panelNegativeToId === props.panelId),
   )
 
 export const isPanelExistingPositiveLink = (props: { panelId: string }) =>
   createSelector(selectAllLinks, (links: PanelLinkModel[]) =>
-    links.find((link) => link.positiveToId === props.panelId),
+    links.find((link) => link.panelPositiveToId === props.panelId),
   )

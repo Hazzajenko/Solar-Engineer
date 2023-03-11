@@ -8,8 +8,8 @@ public class CreatePanelLinkRequest : IProjectEventRequest
     public required string Id { get; init; }
     public required string ProjectId { get; init; }
     public required string StringId { get; init; }
-    public required string PositiveToId { get; init; }
-    public required string NegativeToId { get; init; }
+    public required string PanelPositiveToId { get; init; }
+    public required string PanelNegativeToId { get; init; }
 }
 
 public class CreatePanelLinkRequestValidator : AbstractValidator<CreatePanelLinkRequest>
@@ -40,7 +40,7 @@ public class CreatePanelLinkRequestValidator : AbstractValidator<CreatePanelLink
             .Must(x => Guid.TryParse(x, out _))
             .WithMessage("StringId must be a valid Guid");
 
-        RuleFor(v => v.PositiveToId)
+        RuleFor(v => v.PanelPositiveToId)
             .NotNull()
             .WithMessage("PositiveToId cannot be null")
             .NotEmpty()
@@ -48,7 +48,7 @@ public class CreatePanelLinkRequestValidator : AbstractValidator<CreatePanelLink
             .Must(x => Guid.TryParse(x, out _))
             .WithMessage("PositiveToId must be a valid Guid");
 
-        RuleFor(v => v.NegativeToId)
+        RuleFor(v => v.PanelNegativeToId)
             .NotNull()
             .WithMessage("NegativeToId cannot be null")
             .NotEmpty()

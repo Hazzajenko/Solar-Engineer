@@ -1,4 +1,5 @@
 import { getGuid } from '@shared/utils'
+import { ProjectModelType } from './model'
 
 export interface EntityOptions {
   projectId: string
@@ -14,7 +15,7 @@ export const ENTITY_TYPE = {
   PANEL_CONFIG: 'PANEL_CONFIG',
 } as const
 
-export type EntityType = typeof ENTITY_TYPE[keyof typeof ENTITY_TYPE]
+export type EntityType = (typeof ENTITY_TYPE)[keyof typeof ENTITY_TYPE]
 // const hi : EntityType = 'UNDEFINED'
 /*export enum EntityType {
   UNDEFINED,
@@ -26,7 +27,9 @@ export type EntityType = typeof ENTITY_TYPE[keyof typeof ENTITY_TYPE]
 export class EntityModel {
   id: string
   projectId: string
-  type: EntityType = ENTITY_TYPE.UNDEFINED
+  type: ProjectModelType = ProjectModelType.Undefined
+
+  // type: EntityType = ENTITY_TYPE.UNDEFINED
 
   constructor(options: EntityOptions) {
     this.id = options.id ? options.id : getGuid()

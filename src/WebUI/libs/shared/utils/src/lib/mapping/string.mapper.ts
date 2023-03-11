@@ -13,16 +13,15 @@ export class StringMapper {
 }
 
 export const StringSchemaModel = z.object({
-  Type: z.string(),
-  StringId: z.string(),
-  PanelConfigId: z.string(),
-  ProjectId: z.string(),
-  Location: z.string(),
-  Rotation: z.number(),
-  Id: z.string(),
-  CreatedTime: z.string(),
-  LastModifiedTime: z.string(),
-  CreatedById: z.string(),
+  type: z.string(),
+  name: z.string(),
+  color: z.string(),
+  parallel: z.boolean(),
+  projectId: z.string(),
+  id: z.string(),
+  createdTime: z.string(),
+  lastModifiedTime: z.string(),
+  createdById: z.string(),
 })
 
 export type StringJsonModel = z.infer<typeof StringSchemaModel>

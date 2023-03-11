@@ -20,7 +20,11 @@ public static class DtoMapping
                 if (entityValue is Guid)
                     entityValue = entityValue.ToString();
                 propertyInfo.SetValue(dtoObject, entityValue);
-            }
+            } /* else if (propertyInfo.Name.Contains("Id"))
+            {
+                
+                propertyInfo.SetValue(dtoObject, entity.ProjectId.ToString());
+            }*/
         }
 
         return dtoObject;

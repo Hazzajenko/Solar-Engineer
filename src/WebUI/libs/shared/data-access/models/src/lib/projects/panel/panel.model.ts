@@ -1,13 +1,15 @@
-import { BLOCK_TYPE, BlockModel } from '../block/block.model'
+import { BlockModel } from '../block/block.model'
 import { PanelOptions } from './panel.options'
 import { IEntity } from '../interfaces'
 import { IUserObject } from '../interfaces/i-user-object.interface'
 import { IPanel } from './i-panel.interface'
 import { getGuid } from '@shared/utils'
+import { ProjectModelType } from '../model'
 
 export class PanelModel extends BlockModel implements IEntity, IUserObject, IPanel {
   /*, IBlockJson<PanelModel>*/
-  override type = BLOCK_TYPE.PANEL
+  override type = ProjectModelType.Panel
+  // override type = BLOCK_TYPE.PANEL
   stringId: string
   rotation: number
   panelConfigId: string

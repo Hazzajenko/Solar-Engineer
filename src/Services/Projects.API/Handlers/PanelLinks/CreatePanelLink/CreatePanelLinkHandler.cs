@@ -39,8 +39,8 @@ public class CreatePanelLinkHandler : ICommandHandler<CreatePanelLinkCommand, bo
         appUserProject.ThrowExceptionIfNull(new HubException("User is not apart of this project"));
 
         var panelLinkIdGuid = command.Request.Id.ToGuid();
-        var positiveToIdGuid = command.Request.PositiveToId.ToGuid();
-        var negativeToIdGuid = command.Request.NegativeToId.ToGuid();
+        var positiveToIdGuid = command.Request.PanelPositiveToId.ToGuid();
+        var negativeToIdGuid = command.Request.PanelNegativeToId.ToGuid();
         var stringIdGuid = command.Request.StringId.ToGuid();
 
         var positiveToPanel = await _unitOfWork.PanelsRepository.GetPanelByIdAndProjectIdAsync(
@@ -79,6 +79,7 @@ public class CreatePanelLinkHandler : ICommandHandler<CreatePanelLinkCommand, bo
         await _unitOfWork.PanelsRepository.UpdateAndSaveChangesAsync(negativeToPanel);
 
         var panelLinkResponse = panelLink.ToProjectEventResponseV3(command, ActionType.Create);
+        /*
         var positiveToPanelResponse = positiveToPanel.ToProjectEventResponseV3(
             command,
             ActionType.Update
@@ -87,6 +88,7 @@ public class CreatePanelLinkHandler : ICommandHandler<CreatePanelLinkCommand, bo
             command,
             ActionType.Update
         );
+        */
 
         var projectMembers =
             await _unitOfWork.AppUserProjectsRepository.GetProjectMemberIdsByProjectId(
@@ -94,12 +96,12 @@ public class CreatePanelLinkHandler : ICommandHandler<CreatePanelLinkCommand, bo
             );
 
         await _hubContext.Clients.Users(projectMembers).ReceiveProjectEvent(panelLinkResponse);
-        await _hubContext.Clients
+        /*await _hubContext.Clients
             .Users(projectMembers)
             .ReceiveProjectEvent(positiveToPanelResponse);
         await _hubContext.Clients
             .Users(projectMembers)
-            .ReceiveProjectEvent(negativeToPanelResponse);
+            .ReceiveProjectEvent(negativeToPanelResponse);*/
 
         _logger.LogInformation(
             "User {User} created panel link {Panel} in project {Project}",

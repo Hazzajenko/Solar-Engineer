@@ -2,6 +2,7 @@ import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity'
 import { Action, createReducer, on } from '@ngrx/store'
 import { PanelModel } from '@shared/data-access/models'
 import { PanelsActions } from './panels.actions'
+import { compareObjects } from '@shared/utils'
 
 export const PANELS_FEATURE_KEY = 'panels'
 
@@ -28,10 +29,23 @@ const reducer = createReducer(
   ),
   on(PanelsActions.loadPanelsFailure, (state, { error }) => ({ ...state, error })),
   on(PanelsActions.addPanel, (state, { panel }) => panelsAdapter.addOne(panel, state)),
+  on(PanelsActions.addPanelWithoutSignalr, (state, { panel }) =>
+    panelsAdapter.addOne(panel, state),
+  ),
   on(PanelsActions.addManyPanels, (state, { panels }) => panelsAdapter.addMany(panels, state)),
   on(PanelsActions.updatePanel, (state, { update }) => panelsAdapter.updateOne(update, state)),
   on(PanelsActions.updatePanelWithoutSignalr, (state, { update }) =>
     panelsAdapter.updateOne(update, state),
+  ),
+  on(PanelsActions.updatePanelWithoutSignalrv2, (state, { update }) =>
+    // panelsAdapter.updateOne(update, state),
+    // (state.entities[update.id] = update.changes),
+    compareObjects({
+      o1: state.entities[update.id],
+      o2: update.changes,
+    })
+      ? panelsAdapter.updateOne(update, state)
+      : state,
   ),
   on(PanelsActions.updateManyPanels, (state, { updates }) =>
     panelsAdapter.updateMany(updates, state),

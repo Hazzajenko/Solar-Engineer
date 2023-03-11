@@ -6,10 +6,25 @@ import { Logger, LoggerService } from '@shared/logger'
 import { SignalrEventsFacade, SignalrEventsRepository } from '../services'
 import { Store } from '@ngrx/store'
 import { Update } from '@ngrx/entity'
-import { BLOCK_TYPE, PanelModel, ProjectSignalrEvent } from '@shared/data-access/models'
+import {
+  PanelModel,
+  ProjectModelType,
+  ProjectSignalrEvent,
+  StringModel,
+} from '@shared/data-access/models'
 import { combineLatest, firstValueFrom } from 'rxjs'
-import { PanelJsonModel, PanelSchemaModel, ProjectItemUpdate } from '@shared/utils'
-import { PanelsActions } from '@grid-layout/data-access'
+import {
+  PanelJsonModel,
+  PanelSchemaModel,
+  ProjectItemUpdate,
+  StringJsonModel,
+  StringSchemaModel,
+} from '@shared/utils'
+import { PanelsActions, StringsActions } from '@grid-layout/data-access'
+import {
+  PanelLinkJsonModel,
+  PanelLinkSchemaModel,
+} from '../../../../../shared/utils/src/lib/mapping/panel-link.mapper'
 
 @Injectable({
   providedIn: 'root',
@@ -119,27 +134,79 @@ export class SignalrEventsEffects extends Logger {
               },
             }
             this.signalrEventsRepository.updateSignalrEvent(update)
-            if (existing.model == 'Panel') {
-              const json = this.throwIfNull(newEvent.data, 'data is null')
+            const json = this.throwIfNull(newEvent.data, 'data is null')
+            if (existing.model == ProjectModelType.Panel) {
               const panelJson: PanelJsonModel = JSON.parse(json)
               const validate = PanelSchemaModel.parse(panelJson)
               this.logDebug('onReceiveSignalrEvent', 'update panel validate', validate)
               const panel: PanelModel = {
                 ...validate,
-                type: BLOCK_TYPE.PANEL,
+                type: ProjectModelType.Panel,
               }
               const update: ProjectItemUpdate<PanelModel> = {
                 id: panel.id,
                 projectId: panel.projectId,
                 changes: panel,
               }
+              // this.store.dispatch(PanelsActions.updatePanelWithoutSignalrv2({ update }))
               this.store.dispatch(PanelsActions.updatePanelWithoutSignalr({ update }))
-              // this.store.dispatch(PanelsActions.updatePanel({ update }))
-              // if (existing.action)
-              // this.store.dispatch(SignalrEventsActions.updatePanel({ panel: newEvent }))
+            }
+            if (existing.model == ProjectModelType.String) {
+              // this.logDebug('onReceiveSignalrEvent', 'update string', newEvent)
+              const stringJson: StringJsonModel = JSON.parse(json)
+              const validate = StringSchemaModel.parse(stringJson)
+              this.logDebug('onReceiveSignalrEvent', 'update string validate', validate)
+              const string: StringModel = {
+                ...validate,
+                type: ProjectModelType.String,
+              }
+              const update: ProjectItemUpdate<StringModel> = {
+                id: string.id,
+                projectId: string.projectId,
+                changes: string,
+              }
+              this.store.dispatch(StringsActions.updateStringWithoutSignalr({ update }))
+            }
+            if (existing.model == ProjectModelType.PanelLink) {
+              // this.logDebug('onReceiveSignalrEvent', 'update string', newEvent)
+              const linkJson: PanelLinkJsonModel = JSON.parse(json)
+              const validate = PanelLinkSchemaModel.parse(linkJson)
+              this.logDebug('onReceiveSignalrEvent', 'update link validate', validate)
+              /*   const link: PanelLinkModel = {
+                   ...validate,
+                   type: ProjectModelType.PanelLink,
+                 }
+                 const update: ProjectItemUpdate<PanelLinkModel> = {
+                   id: link.id,
+                   projectId: link.projectId,
+                   changes: link,
+                 }
+                 this.store.dispatch(LinksActions.updateLinkWithoutSignalr({ update }))*/
             }
           } else {
             this.signalrEventsRepository.addSignalrEvent(newEvent)
+            const json = this.throwIfNull(newEvent.data, 'data is null')
+            if (newEvent.model == ProjectModelType.Panel) {
+              const panelJson: PanelJsonModel = JSON.parse(json)
+              const validate = PanelSchemaModel.parse(panelJson)
+              this.logDebug('onReceiveSignalrEvent', 'add panel validate', validate)
+              const panel: PanelModel = {
+                ...validate,
+                type: ProjectModelType.Panel,
+              }
+              this.store.dispatch(PanelsActions.addPanelWithoutSignalr({ panel }))
+            }
+            if (newEvent.model == ProjectModelType.String) {
+              // this.logDebug('onReceiveSignalrEvent', 'add string', newEvent)
+              const stringJson: StringJsonModel = JSON.parse(json)
+              const validate = StringSchemaModel.parse(stringJson)
+              this.logDebug('onReceiveSignalrEvent', 'add string validate', validate)
+              const string: StringModel = {
+                ...validate,
+                type: ProjectModelType.String,
+              }
+              this.store.dispatch(StringsActions.addStringWithoutSignalr({ string }))
+            }
           }
         }),
       ),

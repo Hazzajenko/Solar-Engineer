@@ -14,8 +14,8 @@ public static class PanelLinksMapping
             CreatedTime = panelLink.CreatedTime,
             LastModifiedTime = panelLink.LastModifiedTime,
             CreatedById = panelLink.CreatedById.ToString(),
-            NegativeToId = panelLink.PanelNegativeToId.ToString(),
-            PositiveToId = panelLink.PanelPositiveToId.ToString()
+            PanelNegativeToId = panelLink.PanelNegativeToId.ToString(),
+            PanelPositiveToId = panelLink.PanelPositiveToId.ToString()
         };
     }
 
