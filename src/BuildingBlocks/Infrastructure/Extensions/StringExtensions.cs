@@ -35,7 +35,7 @@ public static class StringExtensions
         return Guid.Parse(id);
     }
 
-    public static Guid TryToGuid<TException>(this string id, TException exception)
+    public static Guid TryToGuidOrThrow<TException>(this string id, TException exception)
         where TException : Exception
     {
         try
@@ -47,6 +47,18 @@ public static class StringExtensions
             throw exception;
         }
     }
+
+    /*public static Guid TryToGuid(this string id)
+    {
+        try
+        {
+            return Guid.TryParse(id);
+        }
+        catch (Exception e)
+        {
+            throw exception;
+        }
+    }*/
 
     public static string ToCamelCase(this string s)
     {

@@ -32,17 +32,20 @@ public sealed class AppUserProjectsRepository
             .ToListAsync();
     }
 
-    public async Task<AppUserProject> GetByAppUserIdAndProjectIdAsync(
+    public async Task<AppUserProject?> GetByAppUserIdAndProjectIdAsync(
         Guid appUserId,
         Guid projectId
     )
     {
         return await Queryable
             .Include(x => x.Project)
+            .SingleOrDefaultAsync(x => x.AppUserId == appUserId && x.ProjectId == projectId);
+        /*return await Queryable
+            .Include(x => x.Project)
             .ThrowHubExceptionIfNullSingleOrDefaultAsync(
                 x => x.AppUserId == appUserId && x.ProjectId == projectId,
                 "User is not apart of this project"
-            );
+            );*/
     }
 
     public async Task<ProjectDto?> GetProjectByAppUserAndProjectIdAsync(

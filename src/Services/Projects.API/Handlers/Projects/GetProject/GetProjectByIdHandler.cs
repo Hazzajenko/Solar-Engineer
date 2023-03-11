@@ -33,7 +33,7 @@ public class GetProjectByIdHandler : IQueryHandler<GetProjectByIdQuery, bool>
             request.ProjectId
         );
         var appUserId = request.User.Id;
-        var projectId = request.ProjectId.TryToGuid(new HubException("Invalid project id"));
+        var projectId = request.ProjectId.TryToGuidOrThrow(new HubException("Invalid project id"));
         var project =
             await _unitOfWork.AppUserProjectsRepository.GetProjectByAppUserAndProjectIdAsync(
                 appUserId,

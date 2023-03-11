@@ -1,4 +1,5 @@
-﻿using Infrastructure.Extensions;
+﻿using Infrastructure.Exceptions;
+using Infrastructure.Extensions;
 using Mediator;
 using Microsoft.AspNetCore.SignalR;
 using Projects.API.Contracts.Data;
@@ -34,6 +35,10 @@ public class CreateStringHandler : ICommandHandler<CreateStringCommand, bool>
                 appUserId,
                 projectId
             );
+        appUserProject.ThrowExceptionIfNull(new HubException("User is not apart of this project"));
+
+        var stringId = command.Request.Id;
+        if (stringId == "undefined") throw new HubException("String Id is undefined");
 
         var @string = String.Create(command.Request, projectId, appUserId);
 

@@ -1,9 +1,8 @@
-﻿using Infrastructure.Common;
-using Projects.API.Data;
+﻿using Projects.API.Common;
 
 namespace Projects.API.Contracts.Data;
 
-public class PanelConfigDto : IEntityDto, IUserObjectDto, IProject
+public class PanelConfigDto : IProjectItemDto
 {
     public string Type { get; set; } = EntityType.PanelConfig;
     public string? Brand { get; set; }
@@ -24,5 +23,5 @@ public class PanelConfigDto : IEntityDto, IUserObjectDto, IProject
     public string Id { get; set; } = default!;
     public DateTime CreatedTime { get; set; }
     public DateTime LastModifiedTime { get; set; }
-    public string CreatedById { get; set; } = default!;
+    public string? CreatedById { get; set; }
 }

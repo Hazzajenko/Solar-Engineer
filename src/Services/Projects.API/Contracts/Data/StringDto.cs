@@ -1,9 +1,8 @@
-﻿using Infrastructure.Common;
-using Projects.API.Data;
+﻿using Projects.API.Common;
 
 namespace Projects.API.Contracts.Data;
 
-public class StringDto : IEntityDto, IUserObjectDto, IProject
+public class StringDto : IProjectItemDto
 {
     public string Type { get; set; } = EntityType.String;
     public string Name { get; set; } = default!;

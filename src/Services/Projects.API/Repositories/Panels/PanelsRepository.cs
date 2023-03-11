@@ -34,6 +34,24 @@ public sealed class PanelsRepository : GenericRepository<ProjectsContext, Panel>
         );*/
     }
 
+    public async Task<PanelDto?> GetPanelByLocationAsync(Guid id, Guid projectId, string location)
+    {
+        return await Queryable
+            .Where(x => x.Id == id && x.ProjectId == projectId && x.Location == location)
+            .ProjectToType<PanelDto>()
+            .SingleOrDefaultAsync();
+    }
+
+    public async Task<bool> ArePanelLocationsUniqueAsync(
+        Guid projectId,
+        IEnumerable<string> locations
+    )
+    {
+        return await Queryable
+            .Where(x => x.ProjectId == projectId && locations.Contains(x.Location))
+            .AnyAsync();
+    }
+
     public async Task<TPanelResponse> CreatePanelAsync<TPanelResponse>(Panel panel)
         where TPanelResponse : IMappable<Panel>
     {

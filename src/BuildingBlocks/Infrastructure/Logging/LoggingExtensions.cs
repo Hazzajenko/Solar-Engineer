@@ -8,7 +8,7 @@ using Serilog.Formatting.Compact;
 
 namespace Infrastructure.Logging;
 
-public static class LoggingExtensions
+public static partial class LoggingExtensions
 {
     public static WebApplicationBuilder ConfigureSerilog(this WebApplicationBuilder builder)
     {

@@ -35,7 +35,7 @@ public static class ClaimsPrincipleExtensions
         var value = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (value is null) throw exception;
         // ArgumentNullException.ThrowIfNull(value);
-        return value.TryToGuid(exception);
+        return value.TryToGuidOrThrow(exception);
     }
 
     public static ClaimsPrincipal AppUser(this HubCallerContext context)

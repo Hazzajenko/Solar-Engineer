@@ -1,9 +1,8 @@
-﻿using Infrastructure.Common;
-using Projects.API.Data;
+﻿using Projects.API.Common;
 
 namespace Projects.API.Contracts.Data;
 
-public class PanelLinkDto : IEntityDto, IUserObjectDto, IProject
+public class PanelLinkDto : IProjectItemDto
 {
     public string Type { get; set; } = EntityType.PanelLink;
     public string PositiveToId { get; set; } = default!;

@@ -53,4 +53,30 @@ public class Panel : IEntity, IProjectItem, IUserObject
     {
         return new Panel(id, projectId, stringId, panelConfigId, location, rotation, createdById);
     }
+
+    /*
+    public static Panel CreateV2(PanelOptions options)
+    {
+        return new Panel(
+            options.Id,
+            options.ProjectId,
+            options.StringId,
+            options.PanelConfigId,
+            options.Location,
+            options.Rotation,
+            options.CreatedById
+        );
+        // return new Panel(id, projectId, stringId, panelConfigId, location, rotation, createdById);
+    }
+
+    public class PanelOptions
+    {
+        public Guid Id { get; set; }
+        public Guid ProjectId { get; set; }
+        public Guid StringId { get; set; }
+        public Guid PanelConfigId { get; set; }
+        public string Location { get; set; } = default!;
+        public int Rotation { get; set; }
+        public Guid CreatedById { get; set; }
+    }*/
 }

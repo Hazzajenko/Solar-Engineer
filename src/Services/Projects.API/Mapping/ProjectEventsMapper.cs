@@ -1,5 +1,5 @@
 ﻿using System.Text.Json;
-using Infrastructure.Extensions;
+using Infrastructure.Logging;
 using Microsoft.AspNetCore.SignalR;
 using Projects.API.Common;
 using Projects.API.Contracts.Requests.Projects;
@@ -64,7 +64,7 @@ public static class ProjectEventsMapper
         string model
     )
         where TEntity : IProjectItem
-        where TProjectCommand : IProjectCommandBase
+        where TProjectCommand : IProjectCommand
     {
         var toJson = JsonSerializer.Serialize(entity);
         return new ProjectEventResponse
@@ -89,13 +89,16 @@ public static class ProjectEventsMapper
         string action
     )
         where TEntity : IProjectItem
-        where TProjectCommand : IProjectCommandBase
+        where TProjectCommand : IProjectCommand
     {
-        var dtoType = entity.ToDtoType();
-        Log.Logger.Information("dtoType: {DtoType}", dtoType);
+        // var dtoType = entity.ToDtoType();
+        // Log.Logger.Information("dtoType: {DtoType}", dtoType);
 
-        var dtoObject = entity.ToDtoObject(dtoType);
+        var dtoObject = entity.ToDtoObject();
         Log.Logger.Information("dtoObject: {DtoObject}", dtoObject);
+
+        // dtoObject.DumpObjectProperties();
+        dtoObject.DumpObjectJson();
 
         var toJson = JsonSerializer.Serialize(dtoObject);
         return new ProjectEventResponse
@@ -109,70 +112,29 @@ public static class ProjectEventsMapper
         };
     }
 
-    public static object ToDtoObject<TEntity>(this TEntity entity, Type dtoType)
+    public static ProjectEventResponse ToProjectEventResponseV3<TEntity, TProjectCommand>(
+        this IEnumerable<TEntity> entity,
+        TProjectCommand command,
+        string action,
+        string projectId
+    )
         where TEntity : IProjectItem
+        where TProjectCommand : IProjectCommand
     {
-        var dtoObject = Activator.CreateInstance(dtoType)!;
-        foreach (var propertyInfo in dtoType.GetProperties())
+        var dtoObject = entity.ToDtoObject();
+        Log.Logger.Information("dtoObject: {DtoObject}", dtoObject);
+
+        dtoObject.DumpObjectJson();
+
+        var toJson = JsonSerializer.Serialize(dtoObject);
+        return new ProjectEventResponse
         {
-            Log.Logger.Information("propertyInfo: {@PropertyInfo}", propertyInfo);
-            var entityProperty = entity.GetType().GetProperty(propertyInfo.Name);
-            if (entityProperty != null)
-            {
-                var entityValue = entityProperty.GetValue(entity);
-                if (entityValue is Guid)
-                    entityValue = entityValue.ToString();
-                propertyInfo.SetValue(dtoObject, entityValue);
-            }
-        }
-        return dtoObject;
-    }
-
-    public static object ToCommandObject(this ProjectEvent projectEvent, HubCallerContext context)
-    {
-        var requestType = projectEvent.ToRequestType();
-        var eventRequest = (IProjectEventRequest)
-            JsonSerializer.Deserialize(
-                projectEvent.Data,
-                requestType,
-                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
-            )!;
-
-        var commandType = projectEvent.ToCommandType();
-        var command = Activator.CreateInstance(commandType)!;
-
-        var commandProperty = commandType.GetProperty("Request")!;
-        commandProperty.SetValue(command, eventRequest);
-        var userProperty = commandType.GetProperty("User")!;
-        userProperty.SetValue(command, context.ToHubAppUser());
-        var requestIdProperty = commandType.GetProperty("RequestId")!;
-        requestIdProperty.SetValue(command, projectEvent.RequestId);
-        return command;
-    }
-
-    private static Type ToCommandType(this ProjectEvent request)
-    {
-        var model = request.Model.ToPascalCase();
-        var action = request.Action.ToPascalCase();
-
-        var typeName = $"Projects.API.Handlers.{model}s.{action}{model}.{action}{model}Command";
-        return Type.GetType(typeName) ?? throw new InvalidOperationException();
-    }
-
-    private static Type ToRequestType(this ProjectEvent request)
-    {
-        var model = request.Model.ToPascalCase();
-        var action = request.Action.ToPascalCase();
-
-        var typeName = $"Projects.API.Contracts.Requests.{model}s.{action}{model}Request";
-        return Type.GetType(typeName) ?? throw new InvalidOperationException();
-    }
-
-    private static Type ToDtoType<TEntity>(this TEntity request)
-        where TEntity : IProjectItem
-    {
-        var entityModel = request.GetType().Name.ToPascalCase();
-        var typeName = $"Projects.API.Contracts.Data.{entityModel}Dto";
-        return Type.GetType(typeName) ?? throw new InvalidOperationException();
+            RequestId = command.RequestId,
+            ProjectId = projectId,
+            ByAppUserId = command.User.Id.ToString(),
+            Action = action,
+            Model = typeof(TEntity).Name,
+            Data = toJson
+        };
     }
 }

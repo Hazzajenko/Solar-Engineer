@@ -35,6 +35,7 @@ public class UpdatePanelHandler : ICommandHandler<UpdatePanelCommand, bool>
                 appUserId,
                 projectId
             );
+        appUserProject.ThrowExceptionIfNull(new HubException("User is not apart of this project"));
 
         var panelId = command.Request.Id.ToGuid();
 
@@ -48,7 +49,15 @@ public class UpdatePanelHandler : ICommandHandler<UpdatePanelCommand, bool>
 
         _unitOfWork.Attach(panel);
         if (changes.Location is not null)
+        {
+            var existingPanel = await _unitOfWork.PanelsRepository.ArePanelLocationsUniqueAsync(
+                projectId,
+                new[] { changes.Location }
+            );
+            if (existingPanel)
+                throw new HubException("Panel already exists at this location");
             panel.Location = changes.Location;
+        }
 
         if (changes.Rotation is not null)
             panel.Rotation = (int)changes.Rotation;

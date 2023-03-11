@@ -142,12 +142,19 @@ export class PanelsEffects {
         map(({ panels }) => {
           const action: ProjectEventAction = PROJECT_SIGNALR_TYPE.CREATE_MANY
           const model: ProjectItemType = PROJECT_ITEM_TYPE.PANEL
+          const createManyPanelsRequest = {
+            projectId: panels[0].projectId,
+            stringId: panels[0].stringId,
+            panelConfigId: panels[0].panelConfigId,
+            rotation: panels[0].rotation,
+            panels,
+          }
           const projectSignalrEvent: ProjectSignalrJsonRequest = {
             action,
             model,
             projectId: panels[0].projectId,
             requestId: getGuid(),
-            data: JSON.stringify(panels),
+            data: JSON.stringify(createManyPanelsRequest),
           }
           return projectSignalrEvent
         }),
@@ -267,25 +274,47 @@ export class PanelsEffects {
     ),
   )
 
-  deletePanelHttp$ = createEffect(
+  deletePanelSignalr$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType(PanelsActions.deletePanel),
-        switchMap(({ panelId }) =>
-          this.projectsStore.select.isWebWithProject$.pipe(
-            switchMap(([isWeb, project]) => {
-              if (!project) return of(undefined)
-              if (isWeb) {
-                return this.panelsService.deletePanel(panelId, project.id)
-              }
-              // update local state
-              return of(undefined)
-            }),
-          ),
-        ),
+        map(async ({ panelId }) => {
+          const project = await this.projectsStore.select.selectedProject()
+          const action: ProjectEventAction = PROJECT_SIGNALR_TYPE.UPDATE
+          const model: ProjectItemType = PROJECT_ITEM_TYPE.PANEL
+          const projectSignalrEvent: ProjectSignalrJsonRequest = {
+            action,
+            model,
+            projectId: project.id,
+            requestId: getGuid(),
+            data: JSON.stringify(update),
+          }
+          return projectSignalrEvent
+        }),
+        tap((signalrRequest) => this.signalrEventsService.sendProjectSignalrEvent(signalrRequest)),
       ),
     { dispatch: false },
   )
+
+  /*  deletePanelHttp$ = createEffect(
+      () =>
+        this.actions$.pipe(
+          ofType(PanelsActions.deletePanel),
+          switchMap(({ panelId }) =>
+            this.projectsStore.select.isWebWithProject$.pipe(
+              switchMap(([isWeb, project]) => {
+                if (!project) return of(undefined)
+                if (isWeb) {
+                  return this.panelsService.deletePanel(panelId, project.id)
+                }
+                // update local state
+                return of(undefined)
+              }),
+            ),
+          ),
+        ),
+      { dispatch: false },
+    )*/
 
   deleteManyPanels$ = createEffect(() =>
     this.actions$.pipe(

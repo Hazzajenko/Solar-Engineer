@@ -7,6 +7,7 @@ using Projects.API.Contracts.Data;
 using Projects.API.Data;
 using Projects.API.Entities;
 using Projects.API.Hubs;
+using Projects.API.Mapping;
 
 namespace Projects.API.Handlers.Panels.CreateManyPanels;
 
@@ -39,6 +40,33 @@ public class CreateManyPanelsHandler : ICommandHandler<CreateManyPanelsCommand, 
                 appUserId,
                 projectId
             );
+        appUserProject.ThrowExceptionIfNull(new HubException("User is not apart of this project"));
+
+        var locations = command.Request.Panels.Select(x => x.Location).ToList();
+        var existingPanels = await _unitOfWork.PanelsRepository.ArePanelLocationsUniqueAsync(
+            projectId,
+            locations
+        );
+        if (existingPanels)
+            throw new HubException("Panel already exists at this location");
+
+        /*foreach (var panel in command.Request.Panels)
+        {
+            var existingPanel = await _unitOfWork.PanelsRepository.GetPanelByLocationAsync(
+                appUserId,
+                projectId,
+                panel.Location
+            );
+            if (existingPanel is not null)
+                throw new HubException("Panel already exists at this location");
+        }*/
+
+        /*
+        var existingPanel = await _unitOfWork.PanelsRepository.GetPanelByLocationAsync(
+            appUserId,
+            projectId,
+            command.Request.Location
+        );*/
 
         var panelStringId = command.Request.StringId;
         var panelHasString = panelStringId.Equals("undefined") is false;
@@ -71,10 +99,6 @@ public class CreateManyPanelsHandler : ICommandHandler<CreateManyPanelsCommand, 
 
         panelConfig.ThrowExceptionIfNull(new HubException("Panel config does not exist"));
 
-        /*foreach (var createPanelRequest in command.Request.Panels)
-        {
-            
-        }*/
         var panels = command.Request.Panels.Select(
             x =>
                 Panel.Create(
@@ -83,27 +107,30 @@ public class CreateManyPanelsHandler : ICommandHandler<CreateManyPanelsCommand, 
                     panelString.Id,
                     panelConfig.Id,
                     x.Location,
-                    x.Rotation,
+                    command.Request.Rotation,
                     appUserId
                 )
         );
-        /*var panel = Panel.Create(
-            command.Request.Id.ToGuid(),
-            appUserProject.ProjectId,
-            panelString.Id,
-            panelConfig.Id,
-            command.Request.Location,
-            command.Request.Rotation,
-            appUserId
-        );*/
-        // var panel = Panel.Create(command.Panel.Id.ToG, panelString.Id, panelConfig.Id, appUserProject.ProjectId);
-        // await _unitOfWork.PanelsRepository.AddAsync(panel);
-        // await _unitOfWork.SaveChangesAsync();
-        /*var response = await _unitOfWork.PanelsRepository.CreatePanelAsync<PanelCreatedResponse>(
-            panel
-        );*/
+
         panels = await _unitOfWork.PanelsRepository.AddManyAndSaveChangesAsync(panels);
+        // var panelDtos4 = panels.ToDtoIEnumerable<Panel, PanelDto>();
+        var projectMembers =
+            await _unitOfWork.AppUserProjectsRepository.GetProjectMemberIdsByProjectId(
+                appUserProject.ProjectId
+            );
+        var response = panels.ToProjectEventResponseV3(
+            command,
+            ActionType.Create,
+            projectId.ToString()
+        );
+        // var response = panelDtos4.ToProjectEventResponseV3(command, ActionType.Create, projectId.ToString());
+        await _hubContext.Clients.Users(projectMembers).ReceiveProjectEvent(response);
+
+        /*panelDtos4.DumpObjectJson();
         var panelDtos = _mapper.Map<IEnumerable<Panel>, IEnumerable<PanelDto>>(panels);
+        panelDtos.DumpObjectJson();
+        var panelDtos2 = panels.Adapt<IEnumerable<PanelDto>>();
+        panelDtos2.DumpObjectJson();*/
         /*var response = _mapper.Map<(Panel, string), ProjectEventResponse>(
             (panel, command.RequestId)
         );*/
@@ -145,6 +172,13 @@ public class CreateManyPanelsHandler : ICommandHandler<CreateManyPanelsCommand, 
             panel.Id.ToString(),
             appUserProject.Project.Id.ToString()
         );*/
+
+        _logger.LogInformation(
+            "User {User} created {Amount} panels in project {Project}",
+            appUserId.ToString(),
+            panels.Count(),
+            appUserProject.Project.Id.ToString()
+        );
 
         return true;
     }
