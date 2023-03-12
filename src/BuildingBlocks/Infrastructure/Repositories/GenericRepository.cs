@@ -80,7 +80,8 @@ public abstract class GenericRepository<TContext, TModel>
 
     public async Task<IEnumerable<TModel>> UpdateManyAndSaveChangesAsync(IEnumerable<TModel> items)
     {
-        await UpdateRangeAsync(items);
+        _context.Set<TModel>().UpdateRange(items);
+        // await UpdateRangeAsync(items);
         await SaveChangesAsync();
         return items;
     }

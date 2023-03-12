@@ -23,7 +23,7 @@ import { StringTotalsOverlayComponent } from './ui/string-stats/string-stats.com
 
 import { LetModule } from '@ngrx/component'
 import { BlockModel, SelectedPanelLinkPathModel, StringModel } from '@shared/data-access/models'
-import { combineLatest, map, Observable, switchMap } from 'rxjs'
+import { combineLatest, map, Observable, of, switchMap } from 'rxjs'
 import { combineLatestWith } from 'rxjs/operators'
 
 import { CanvasDirective } from './directives/canvas.directive'
@@ -126,12 +126,14 @@ export class GridLayoutComponent implements OnInit {
 
   selectedString$: Observable<StringModel | undefined> = this.selectedFacade.selectedStringId$.pipe(
     switchMap((stringId) =>
-      this.stringsFacade.stringById$(stringId).pipe(
-        map((string) => {
-          if (!string) return undefined
-          return string
-        }),
-      ),
+      stringId
+        ? this.stringsFacade.stringById$(stringId).pipe(
+            map((string) => {
+              if (!string) return undefined
+              return string
+            }),
+          )
+        : of(undefined),
     ),
   )
 

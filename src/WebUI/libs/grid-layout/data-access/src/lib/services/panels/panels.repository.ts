@@ -1,9 +1,9 @@
 import { inject, Injectable } from '@angular/core'
-import { Update } from '@ngrx/entity'
 import { Store } from '@ngrx/store'
 import { PanelsActions, SelectedActions } from '../../store'
 import { PanelModel } from '@shared/data-access/models'
 import { ProjectItemUpdate } from '@shared/utils'
+import { UpdateStr } from '@ngrx/entity/src/models'
 
 @Injectable({
   providedIn: 'root',
@@ -32,7 +32,7 @@ export class PanelsRepository {
     this.store.dispatch(PanelsActions.updatePanel({ update }))
   }
 
-  updateManyPanels(updates: Update<PanelModel>[]) {
+  updateManyPanels(updates: UpdateStr<PanelModel>[]) {
     this.store.dispatch(PanelsActions.updateManyPanels({ updates }))
   }
 

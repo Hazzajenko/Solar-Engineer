@@ -81,7 +81,8 @@ public class UpdatePanelHandler : ICommandHandler<UpdatePanelCommand, bool>
         /*var response = panel.ToProjectEventResponse(command.RequestId, appUserId.ToString(), ActionType.Update,
             ModelType.Panel);*/
 
-        var response = panel.ToProjectEventResponseV3(command, ActionType.Update);
+        var response = panel.ToProjectEventResponseFromEntity(command, ActionType.Update);
+        // var response = panel.ToProjectEventResponseV3(command, ActionType.Update);
         /*await _hubContext.Clients
             .Group(appUserProject.ProjectId.ToString())
             .PanelsUpdated(panel.ToDtoList());

@@ -4,7 +4,7 @@ import { LinksSelectors, PanelsSelectors, SelectedSelectors } from '../../store'
 import { BLOCK_TYPE } from '@shared/data-access/models'
 import { firstValueFrom } from 'rxjs'
 import { combineLatestWith, map } from 'rxjs/operators'
-import { throwExpression } from '@shared/utils'
+import { rejectNil, throwExpression } from '@shared/utils'
 
 @Injectable({
   providedIn: 'root',
@@ -18,6 +18,14 @@ export class PanelsFacade {
 
   panelById$(id: string) {
     return this.store.select(PanelsSelectors.selectPanelById({ id }))
+  }
+
+  panelByIdOrThrow$(id: string) {
+    // console.log(id)
+    return this.store.select(PanelsSelectors.selectPanelById({ id })).pipe(
+      // tap((panel) => console.log(panel)),
+      rejectNil(),
+    )
   }
 
   async panelById(id: string) {

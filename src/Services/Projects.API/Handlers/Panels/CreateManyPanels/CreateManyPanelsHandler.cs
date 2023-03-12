@@ -100,11 +100,12 @@ public class CreateManyPanelsHandler : ICommandHandler<CreateManyPanelsCommand, 
             await _unitOfWork.AppUserProjectsRepository.GetProjectMemberIdsByProjectId(
                 appUserProject.ProjectId
             );
-        var response = panels.ToProjectEventResponseV3(
+        /*var response = panels.ToProjectEventResponseV3(
             command,
             ActionType.CreateMany,
             projectId.ToString()
-        );
+        );*/
+        var response = panels.ToProjectEventResponseFromEntityList(command, ActionType.CreateMany);
         // var response = panelDtos4.ToProjectEventResponseV3(command, ActionType.Create, projectId.ToString());
         await _hubContext.Clients.Users(projectMembers).ReceiveProjectEvent(response);
 

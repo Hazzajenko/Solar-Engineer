@@ -98,7 +98,8 @@ public class CreatePanelHandler : ICommandHandler<CreatePanelCommand, bool>
 
         panel = await _unitOfWork.PanelsRepository.AddAndSaveChangesAsync(panel);
 
-        var response = panel.ToProjectEventResponseV3(command, ActionType.Create);
+        var response = panel.ToProjectEventResponseFromEntity(command, ActionType.Create);
+        // var response = panel.ToProjectEventResponseV3(command, ActionType.Create);
 
         var projectMembers =
             await _unitOfWork.AppUserProjectsRepository.GetProjectMemberIdsByProjectId(

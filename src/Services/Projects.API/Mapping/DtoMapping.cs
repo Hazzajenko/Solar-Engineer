@@ -43,7 +43,7 @@ public static class DtoMapping
 
     public static TDto ToDtoObjectWithGenerics<TEntity, TDto>(this TEntity entity)
         where TEntity : IProjectItem
-        where TDto : IProjectItemDtoOf<TEntity>
+        where TDto : IProjectItemDto
     {
         var dtoType = entity.ToDtoType();
         var dtoObject = Activator.CreateInstance(dtoType)!;
@@ -66,7 +66,7 @@ public static class DtoMapping
         this IEnumerable<TEntity> entities
     )
         where TEntity : IProjectItem
-        where TDto : IProjectItemDtoOf<TEntity>
+        where TDto : IProjectItemDto
     {
         return entities.Select(x => x.ToDtoObjectWithGenerics<TEntity, TDto>());
     }

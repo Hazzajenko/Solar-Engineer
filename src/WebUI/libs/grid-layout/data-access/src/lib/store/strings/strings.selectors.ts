@@ -25,6 +25,10 @@ export const selectStringsEntities = createSelector(selectStringsState, (state: 
   selectEntities(state),
 )
 
+export const selectAllDefinedStrings = createSelector(selectAllStrings, (strings) =>
+  strings.filter((s) => s.name !== undefined && s.name !== null && s.name !== ''),
+)
+
 export const selectStringsByRouteParams = createSelector(
   selectAllStrings,
   RouterSelectors.selectRouteParams,
@@ -37,8 +41,10 @@ export const selectStringById = (props: { id: string }) =>
     strings.find((string) => string.id === props.id),
   )
 
+/*
 export const selectPanelPathRecordByStringId = (props: { stringId: string }) =>
   createSelector(
     selectAllStrings,
     (strings: StringModel[]) => strings.find((string) => string.id === props.stringId)?.panelPaths,
   )
+*/

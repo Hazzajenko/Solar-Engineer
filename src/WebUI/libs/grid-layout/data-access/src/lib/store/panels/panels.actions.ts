@@ -1,7 +1,6 @@
-import { Update } from '@ngrx/entity'
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
 import { PanelModel } from '@shared/data-access/models'
-import { ProjectItemUpdate } from '@shared/utils'
+import { UpdateStr } from '@ngrx/entity/src/models'
 
 export const PanelsActions = createActionGroup({
   source: 'Panels Store',
@@ -13,11 +12,10 @@ export const PanelsActions = createActionGroup({
     'Add Panel Without Signalr': props<{ panel: PanelModel }>(),
     'Add Many Panels': props<{ panels: PanelModel[] }>(),
     'Add Many Panels Without Signalr': props<{ panels: PanelModel[] }>(),
-    'Update Panel': props<{ update: ProjectItemUpdate<PanelModel> }>(),
-    'Update Panel Without Signalr': props<{ update: ProjectItemUpdate<PanelModel> }>(),
-    'Update Panel Without SignalrV2': props<{ update: ProjectItemUpdate<PanelModel> }>(),
-    'Update Many Panels': props<{ updates: Update<PanelModel>[] }>(),
-    'Update Many Panels Without Signalr': props<{ updates: Update<PanelModel>[] }>(),
+    'Update Panel': props<{ update: UpdateStr<PanelModel> }>(),
+    'Update Panel Without Signalr': props<{ update: UpdateStr<PanelModel> }>(),
+    'Update Many Panels': props<{ updates: UpdateStr<PanelModel>[] }>(),
+    'Update Many Panels Without Signalr': props<{ updates: UpdateStr<PanelModel>[] }>(),
     'Delete Panel': props<{ panelId: string }>(),
     'Delete Panel Without Signalr': props<{ panelId: string }>(),
     'Delete Many Panels': props<{ panelIds: string[] }>(),

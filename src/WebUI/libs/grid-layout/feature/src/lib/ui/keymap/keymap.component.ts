@@ -6,7 +6,7 @@ import {
   SelectedStoreService,
   StringsFacade,
 } from '@grid-layout/data-access'
-import { switchMap } from 'rxjs'
+import { of, switchMap } from 'rxjs'
 import { map } from 'rxjs/operators'
 
 @Component({
@@ -51,9 +51,10 @@ export class KeymapOverlayComponent {
   private gridStore = inject(GridStoreService)
   private stringsFacade = inject(StringsFacade)
   isStringSelected$ = this.selectedStore.select.selectedStringId$.pipe(
-    switchMap((stringId) =>
-      this.stringsFacade.stringById$(stringId).pipe(map((string) => !!string)),
-    ),
+    switchMap((stringId) => {
+      if (!stringId) return of(false)
+      return this.stringsFacade.stringById$(stringId).pipe(map((string) => !!string))
+    }),
   )
   gridMode$ = this.gridStore.select.gridMode$
 }

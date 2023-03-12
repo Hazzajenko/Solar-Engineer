@@ -16,28 +16,35 @@ import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { MatTooltipModule } from '@angular/material/tooltip'
 import {
-  LinksFactory,
   LinksFacade,
+  LinksFactory,
   PanelsFacade,
+  PathsFacade,
   SelectedFacade,
   StringsFacade,
-  PathsFacade,
 } from '@grid-layout/data-access'
 
 import { PanelLinkComponent } from '../shared-ui/panel-link/panel-link.component'
 
 import { LetModule } from '@ngrx/component'
 // import {  } from '@project-id/data-access/services'
-import { PanelModel, PanelPathModel, SelectedPathModel } from '@shared/data-access/models'
+import {
+  PanelModel,
+  PanelPathModel,
+  SelectedPathModel,
+  StringModel,
+} from '@shared/data-access/models'
 import { PanelMenuComponent } from './menu/panel-menu.component'
 // import {  } from '@project-id/data-access/services'
-
 import { combineLatest, Observable, switchMap } from 'rxjs'
 
 import { combineLatestWith, map } from 'rxjs/operators'
 import { PanelDirective } from './directives/panel.directive'
 import { PanelNgModel, SelectedPanelVal, StringSelectedVal } from './models/panel-ng.model'
 import { PanelRotationComponent } from './ui/panel-rotation.component'
+import { Logger, LoggerService } from '@shared/logger'
+import { BlockPanelService } from './block-panel.service'
+import { BlockPanelStateModel } from './models/new-ng'
 
 @Component({
   selector: 'app-block-panel',
@@ -61,12 +68,15 @@ import { PanelRotationComponent } from './ui/panel-rotation.component'
     PanelMenuComponent,
     PanelRotationComponent,
   ],
+  providers: [BlockPanelService],
   standalone: true,
 })
-export class BlockPanelComponent {
-
+export class BlockPanelComponent extends Logger {
   panel$!: Observable<PanelModel | undefined>
+  panelStringName$!: Observable<string | undefined>
+  panelString$!: Observable<StringModel | undefined>
   color$!: Observable<string | undefined>
+  blockPanelStateModel$!: Observable<BlockPanelStateModel>
   menuTopLeftPosition = { x: '0', y: '0' }
   @ViewChild(MatMenuTrigger, { static: true })
   matMenuTrigger!: MatMenuTrigger
@@ -78,14 +88,24 @@ export class BlockPanelComponent {
   private selectedFacade = inject(SelectedFacade)
   private snackBar = inject(MatSnackBar)
   private dialog = inject(MatDialog)
+  private panelService = inject(BlockPanelService)
   private _id!: string
 
-
-  @Input() set id(id: string) {
-    this._id = id
-    this.panel$ = this.panelsFacade.panelById$(id)
+  constructor(logger: LoggerService) {
+    super(logger)
   }
 
+  @Input() set id(id: string) {
+    // console.log(id)
+    this._id = id
+    this.blockPanelStateModel$ = this.panelService.join3(id)
+    // this.panel$ = this.panelService.join(id).pipe(map((panel) => panel?.panel))
+    // this.panel$ = this.panelService.panel$(id)
+    // this.panelStringName$ = this.panelService.join(id).pipe(map((panel) => panel?.stringName))
+    // this.panelString$ = this.panelService.join(id).pipe(map((panel) => panel?.string))
+    // this.panelString$ = this.panelService.panelStringName$()
+    // this.panel$ = this.panelsFacade.panelById$(id)
+  }
 
   private isSelectedPanel$: Observable<SelectedPanelVal> = this.selectedFacade.selectedId$.pipe(
     combineLatestWith(this.selectedFacade.multiSelectIds$),
@@ -151,7 +171,7 @@ export class BlockPanelComponent {
   panelStringColor$ = this.panelsFacade.allPanels$.pipe(
     map((panels) => panels.find((panel) => panel.id === this._id)),
     map((panel) => panel?.stringId),
-    switchMap((stringId) => this.stringsFacade.stringById$(stringId)),
+    switchMap((stringId) => this.stringsFacade.stringById$(stringId!)),
     map((string) => {
       if (!string) {
         return undefined
@@ -160,17 +180,25 @@ export class BlockPanelComponent {
     }),
   )
 
-  panelStringName$: Observable<string | undefined> = this.panelsFacade.allPanels$.pipe(
-    map((panels) => panels.find((panel) => panel.id === this._id)),
-    map((panel) => panel?.stringId),
-    switchMap((stringId) => this.stringsFacade.stringById$(stringId)),
-    map((string) => {
-      if (!string) {
-        return undefined
-      }
-      return string.name
-    }),
-  )
+  /*  panelStringName$: Observable<string | undefined> = this.panelsFacade
+      .panelByIdOrThrow$(this._id)
+      .pipe(
+        delay(1000),
+        // map((panel) => panel.stringId),
+        switchMap((panel) => this.stringsFacade.stringByIdOrThrow$(panel.stringId)),
+        map((string) => string.name),
+      )*/
+  /*  panelStringName$: Observable<string | undefined> = this.panelsFacade.allPanels$.pipe(
+      map((panels) => panels.find((panel) => panel.id === this._id)),
+      map((panel) => panel?.stringId),
+      switchMap((stringId) => this.stringsFacade.stringById$(stringId)),
+      map((string) => {
+        if (!string) {
+          return undefined
+        }
+        return string.name
+      }),
+    )*/
 
   /*  panelLinkPath$: Observable<PanelPathModel | undefined> = this.pathsFacade.pathByPanelId$(this._id).pipe(
       combineLatestWith(this.isSelectedString$),
@@ -225,15 +253,15 @@ export class BlockPanelComponent {
   ]).pipe(
     map(
       ([
-         isSelectedPanel,
-         isSelectedPositiveTo,
-         isSelectedNegativeTo,
-         stringColor,
-         isPanelToLink,
-         stringSelected,
-         panelLinkPath,
-         selectedPanelLinkPath,
-       ]) => {
+        isSelectedPanel,
+        isSelectedPositiveTo,
+        isSelectedNegativeTo,
+        stringColor,
+        isPanelToLink,
+        stringSelected,
+        panelLinkPath,
+        selectedPanelLinkPath,
+      ]) => {
         return {
           isSelectedPanel,
           isSelectedPositiveTo,
@@ -247,7 +275,6 @@ export class BlockPanelComponent {
       },
     ),
   )
-
 
   displayTooltip(isSelectedString: boolean, selectedStringTooltip?: string): string {
     if (isSelectedString) {
@@ -263,7 +290,6 @@ export class BlockPanelComponent {
     this.matMenuTrigger.menuData = { panel }
     this.matMenuTrigger.openMenu()
   }
-
 
   private snack(message: string) {
     this.snackBar.open(message, 'OK', {

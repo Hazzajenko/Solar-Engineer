@@ -12,10 +12,13 @@ export interface StringsState extends EntityState<StringModel> {
   error?: string | null
 }
 
-export const stringsAdapter: EntityAdapter<StringModel> = createEntityAdapter<StringModel>()
+export const stringsAdapter: EntityAdapter<StringModel> = createEntityAdapter<StringModel>({
+  selectId: (string) => string.id,
+})
 
 export const initialStringsState: StringsState = stringsAdapter.getInitialState({
   loaded: false,
+  error: null,
 })
 
 /*const hi: EntityMap<StringModel> = entity => entity.linkPathMap
@@ -39,7 +42,9 @@ const reducer = createReducer(
   on(StringsActions.addManyStrings, (state, { strings }) => stringsAdapter.addMany(strings, state)),
 
   on(StringsActions.updateString, (state, { update }) => stringsAdapter.updateOne(update, state)),
-  // on(StringsActions.updateStringPathmap, (state, { linkPathMap }) => ({ ...state, pathMap: linkPathMap })),
+  on(StringsActions.updateStringWithoutSignalr, (state, { update }) =>
+    stringsAdapter.updateOne(update, state),
+  ),
 
   on(StringsActions.deleteString, (state, { stringId }) =>
     stringsAdapter.removeOne(stringId, state),

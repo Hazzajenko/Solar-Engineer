@@ -16,6 +16,10 @@ export class StringsRepository {
     this.store.dispatch(StringsActions.addString({ string }))
   }
 
+  createStringWithPanels(string: StringModel, panelIds: string[]) {
+    this.store.dispatch(StringsActions.createStringWithPanels({ string, panelIds }))
+  }
+
   update(update: ProjectItemUpdate<StringModel>) {
     this.store.dispatch(StringsActions.updateString({ update }))
   }

@@ -31,7 +31,7 @@ export class SignalrEventsFacade {
     return await firstValueFrom(this.selectManySignalrEventsByRequestIds$(requestIds))
   }
 
-  selectSignalrEventByRequestId(requestId: string) {
-    return this.store.select(selectSignalrEventByRequestId({ requestId }))
+  async selectSignalrEventByRequestId(requestId: string) {
+    return await firstValueFrom(this.store.select(selectSignalrEventByRequestId({ requestId })))
   }
 }

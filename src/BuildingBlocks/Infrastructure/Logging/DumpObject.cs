@@ -27,7 +27,11 @@ public static partial class LoggingExtensions
         var typeName = type.Name;
         var json = JsonSerializer.Serialize(
             obj,
-            new JsonSerializerOptions { WriteIndented = true }
+            new JsonSerializerOptions
+            {
+                WriteIndented = true,
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            }
         );
         Log.Logger.Information("{Type} json: {Json}", typeName, json);
     }

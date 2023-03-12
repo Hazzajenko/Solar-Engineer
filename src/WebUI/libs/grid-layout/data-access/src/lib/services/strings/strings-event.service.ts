@@ -31,6 +31,17 @@ export class StringsEventService {
   private selectedStore = inject(SelectedStoreService)
   private panelsStore = inject(PanelsStoreService)
 
+  async createNoDispatch(stringName: string) {
+    const project = await this.projectsFacade.selectedProject()
+    return new StringModel({
+      projectId: project.id,
+      name: stringName,
+      color: 'undefined',
+      parallel: false,
+      createdById: 'undefined',
+    })
+  }
+
   async create(stringName: string) {
     const project = await this.projectsFacade.selectedProject()
     // console.log(project)
@@ -42,8 +53,15 @@ export class StringsEventService {
       name: stringName,
       color: 'undefined',
       parallel: false,
+      createdById: 'undefined',
     })
     this.stringsStore.dispatch.createString(string)
+    return string
+  }
+
+  async createWithPanels(stringName: string, panelIds: string[]) {
+    const string = await this.createNoDispatch(stringName)
+    this.stringsStore.dispatch.createStringWithPanels(string, panelIds)
     return string
   }
 
@@ -71,17 +89,18 @@ export class StringsEventService {
     if (!selectedPanelIds) {
       return
     }
-    const string = await this.create(stringName)
+    const string = await this.createWithPanels(stringName, selectedPanelIds)
+    // const string = await this.create(stringName)
     // console.log(string)
     /*    if (!(string instanceof StringModel)) {
           return
         }*/
-    const updates: Partial<PanelModel> = {
-      stringId: string.id,
-    }
-    const selectedPanelUpdates = toUpdatePanelArray(selectedPanelIds, updates)
+    /*    const updates: Partial<PanelModel> = {
+          stringId: string.id,
+        }
+        const selectedPanelUpdates = toUpdatePanelArray(selectedPanelIds, updates)
 
-    this.panelsStore.dispatch.updateManyPanels(selectedPanelUpdates)
+        this.panelsStore.dispatch.updateManyPanels(selectedPanelUpdates)*/
     this.selectedStore.dispatch.clearSelected()
 
     // await this.select(string.id)

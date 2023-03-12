@@ -133,7 +133,7 @@ export const selectSelectedPanels = createSelector(
 
 export const selectSelectedStrings = createSelector(
   selectSelectedState,
-  (state: State.SelectedState) => state.strings,
+  (state: State.SelectedState) => state.string,
 )
 
 export const selectSelectedDisconnectionPoint = createSelector(

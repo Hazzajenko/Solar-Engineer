@@ -14,7 +14,7 @@ import { StringTotalsAsyncPipe } from '../pipes/string-totals-async.pipe'
 
 /* eslint-disable @angular-eslint/component-class-suffix */
 @Component({
-  /**/ selector: 'app-view-strings-dialog',
+  /**/ selector: 'app-view-string-dialog',
   template: `
     <div class="container">
       <h1 mat-dialog-title>Strings</h1>

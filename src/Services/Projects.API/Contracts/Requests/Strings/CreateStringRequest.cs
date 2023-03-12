@@ -10,22 +10,13 @@ public class CreateStringRequest : IProjectEventRequest
     public required string Name { get; init; }
     public string Color { get; init; } = "blue";
 
-    /*public class Create
-    {
-        public required string Id { get; init; }
-        public required string ProjectId { get; init; }
-        public required string Name { get; init; }
-        public string Color { get; init; } = "blue";
-    }*/
+    public IEnumerable<PanelIdRequest>? PanelIds { get; init; } = default!;
 }
 
-/*public class StringCreate
+public class PanelIdRequest
 {
     public required string Id { get; init; }
-    public required string ProjectId { get; init; }
-    public required string Name { get; init; }
-    public string Color { get; init; } = "blue";
-}*/
+}
 
 public class CreateStringRequestValidator : AbstractValidator<CreateStringRequest>
 {

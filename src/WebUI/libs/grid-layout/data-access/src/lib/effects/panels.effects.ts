@@ -209,13 +209,15 @@ export class PanelsEffects extends Logger {
     () =>
       this.actions$.pipe(
         ofType(PanelsActions.updatePanel),
-        map(({ update }) => {
+        combineLatestWith(this.projectsStore.select.selectedProject$),
+        map(([{ update }, project]) => {
+          project = this.throwIfNull(project, 'project is null')
           const action: ProjectEventAction = PROJECT_SIGNALR_TYPE.UPDATE
           const model: ProjectItemType = PROJECT_ITEM_TYPE.PANEL
           const projectSignalrEvent: ProjectSignalrJsonRequest = {
             action,
             model,
-            projectId: update.projectId,
+            projectId: project.id,
             requestId: getGuid(),
             data: JSON.stringify(update),
           }
@@ -249,6 +251,13 @@ export class PanelsEffects extends Logger {
   updateManyPanels$ = createEffect(() =>
     this.actions$.pipe(
       ofType(PanelsActions.updateManyPanels),
+      map(({ updates }) => BlocksActions.updateManyBlocksForGrid({ updates })),
+    ),
+  )
+
+  updateManyPanelsWithoutSignalr$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(PanelsActions.updateManyPanelsWithoutSignalr),
       map(({ updates }) => BlocksActions.updateManyBlocksForGrid({ updates })),
     ),
   )

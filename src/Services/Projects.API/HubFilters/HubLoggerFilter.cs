@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using Infrastructure.Logging;
+using Microsoft.AspNetCore.SignalR;
 using Serilog;
 
 namespace Projects.API.HubFilters;
@@ -18,17 +19,32 @@ public class HubLoggerFilter : IHubFilter
             userId,
             invocationContext.HubMethodName
         );
+        if (invocationContext.HubMethodName == "SendProjectEvent")
+        {
+            var arguments = invocationContext.HubMethodArguments.ToArray();
+
+            // arguments[languageFilter.FilterArgument] = str;
+            // arguments[0].DumpObjectJson();
+            Log.Logger.Information(
+                "User {UserId}: Calling hub method {HubMethodName} with argument {Argument}",
+                userId,
+                invocationContext.HubMethodName,
+                arguments[0]
+            );
+        }
+
         if (invocationContext.HubMethodArguments.Any())
             invocationContext.HubMethodArguments
                 .ToList()
                 .ForEach(arg =>
                 {
-                    Log.Logger.Information(
+                    if (arg != null) arg.DumpObjectJson();
+                    /*Log.Logger.Information(
                         "User {UserId}: Calling hub method {HubMethodName} with argument {Argument}",
                         userId,
                         invocationContext.HubMethodName,
                         arg
-                    );
+                    );*/
                 });
         /*Log.Logger.Information(
             "Calling hub method {HubMethodName}",
@@ -43,7 +59,7 @@ public class HubLoggerFilter : IHubFilter
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Exception calling '{invocationContext.HubMethodName}': {ex}");
+            // Console.WriteLine($"Exception calling '{invocationContext.HubMethodName}': {ex}");
             Log.Logger.Error(
                 ex,
                 "User {UserId}: Exception calling hub method {HubMethodName}",

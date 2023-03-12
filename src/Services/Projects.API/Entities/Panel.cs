@@ -24,6 +24,23 @@ public class Panel : IEntity, IProjectItem, IUserObject
         CreatedById = createdById;
     }
 
+    private Panel(
+        Guid projectId,
+        Guid stringId,
+        Guid panelConfigId,
+        string location,
+        int rotation,
+        Guid createdById
+    )
+    {
+        ProjectId = projectId;
+        StringId = stringId;
+        PanelConfigId = panelConfigId;
+        Location = location;
+        Rotation = rotation;
+        CreatedById = createdById;
+    }
+
     public Panel()
     {
     }
@@ -56,6 +73,15 @@ public class Panel : IEntity, IProjectItem, IUserObject
     )
     {
         return new Panel(id, projectId, stringId, panelConfigId, location, rotation, createdById);
+    }
+
+    // public
+    // method that changes the stringId
+
+    public static Panel AddStringId(Panel panel, Guid stringId)
+    {
+        panel.StringId = stringId;
+        return panel;
     }
 
     /*

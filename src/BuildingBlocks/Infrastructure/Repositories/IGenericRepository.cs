@@ -13,6 +13,7 @@ public interface IGenericRepository<TModel>
     Task<TModel?> GetByIdAsync(Guid id);
     Task UpdateAsync(TModel item);
     Task<TModel> UpdateAndSaveChangesAsync(TModel model);
+    Task<IEnumerable<TModel>> UpdateManyAndSaveChangesAsync(IEnumerable<TModel> items);
     Task<bool> FindAndDeleteAsync(Expression<Func<TModel, bool>> where);
     Task<bool> FindManyAndDeleteAsync(Expression<Func<TModel, bool>> where);
     object[] GetKeys(TModel entity);

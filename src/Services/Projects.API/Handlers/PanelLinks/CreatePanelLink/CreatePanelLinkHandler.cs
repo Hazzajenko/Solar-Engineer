@@ -78,7 +78,11 @@ public class CreatePanelLinkHandler : ICommandHandler<CreatePanelLinkCommand, bo
         await _unitOfWork.PanelsRepository.UpdateAndSaveChangesAsync(positiveToPanel);
         await _unitOfWork.PanelsRepository.UpdateAndSaveChangesAsync(negativeToPanel);
 
-        var panelLinkResponse = panelLink.ToProjectEventResponseV3(command, ActionType.Create);
+        var panelLinkResponse = panelLink.ToProjectEventResponseFromEntity(
+            command,
+            ActionType.Create
+        );
+        // var panelLinkResponse = panelLink.ToProjectEventResponseV3(command, ActionType.Create);
         /*
         var positiveToPanelResponse = positiveToPanel.ToProjectEventResponseV3(
             command,

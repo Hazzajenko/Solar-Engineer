@@ -39,7 +39,7 @@ export class StringsEffects extends Logger {
         ofType(ProjectsActions.initSelectProject),
         switchMap(({ projectId }) =>
           this.stringsService.getStringsByProjectId(projectId).pipe(
-            map((strings) => StringsActions.loadStringsSuccess({ strings })),
+            map((string) => StringsActions.loadStringsSuccess({ string })),
             catchError((error) => of(StringsActions.loadStringsFailure({ error: error.message }))),
           ),
         ),
@@ -49,7 +49,7 @@ export class StringsEffects extends Logger {
   /* loadStringsSuccess$ = createEffect(() =>
      this.actions$.pipe(
        ofType(StringsActions.loadStringsSuccess),
-       map(({ strings }) => EntitiesActions.addManyEntitiesForGrid({ entities: strings })),
+       map(({ string }) => EntitiesActions.addManyEntitiesForGrid({ entities: string })),
      ),
    )
  */
@@ -77,6 +77,34 @@ export class StringsEffects extends Logger {
             projectId: project.id,
             requestId: getGuid(),
             data: JSON.stringify(string),
+          }
+          return projectSignalrEvent
+        }),
+        tap((signalrRequest) => this.signalrEventsService.sendProjectSignalrEvent(signalrRequest)),
+      ),
+    { dispatch: false },
+  )
+
+  createStringWithPanelsSignalR$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(StringsActions.createStringWithPanels),
+        combineLatestWith(this.projectsStore.select.selectedProject$),
+        map(([{ string, panelIds }, project]) => {
+          project = this.throwIfNull(project, 'No project selected')
+          const action: ProjectEventAction = PROJECT_SIGNALR_TYPE.CREATE
+          const model: ProjectItemType = PROJECT_ITEM_TYPE.STRING
+          const panelIdsRequest = panelIds.map((panelId) => ({ id: panelId }))
+          const createStringRequest = {
+            ...string,
+            panelIds: panelIdsRequest,
+          }
+          const projectSignalrEvent: ProjectSignalrJsonRequest = {
+            action,
+            model,
+            projectId: project.id,
+            requestId: getGuid(),
+            data: JSON.stringify(createStringRequest),
           }
           return projectSignalrEvent
         }),

@@ -12,7 +12,7 @@ export class StringMapper {
   }
 }
 
-export const StringSchemaModel = z.object({
+export const StringSchema = z.object({
   type: z.string(),
   name: z.string(),
   color: z.string(),
@@ -24,7 +24,7 @@ export const StringSchemaModel = z.object({
   createdById: z.string(),
 })
 
-export type StringJsonModel = z.infer<typeof StringSchemaModel>
+export type StringSchemaModel = z.infer<typeof StringSchema>
 
 // stringSchema.parse();
 //

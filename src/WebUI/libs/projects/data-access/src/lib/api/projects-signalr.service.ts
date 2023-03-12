@@ -65,6 +65,7 @@ export class ProjectsSignalrService extends Logger {
 
     this.projectsHubConnection.on(ReceiveProjectEvents, (signalrEvents: ProjectSignalrEvent[]) => {
       this.logDebug(ReceiveProjectEvents, signalrEvents)
+      this.signalrEventsRepository.receiveManyProjectSignalrEvents(signalrEvents)
     })
 
     this.projectsHubConnection.on(ReceiveProjectEvent, (signalrEvent: ProjectSignalrEvent) => {

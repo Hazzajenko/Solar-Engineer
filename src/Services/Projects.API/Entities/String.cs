@@ -13,7 +13,8 @@ public class String : IEntity, IProjectItem, IUserObject
         Guid appUserId,
         string name,
         string color,
-        bool parallel
+        bool parallel,
+        List<Panel> panels = null!
     )
     {
         Id = id;
@@ -22,6 +23,23 @@ public class String : IEntity, IProjectItem, IUserObject
         Name = name;
         Color = color;
         Parallel = parallel;
+    }
+
+    private String(
+        Guid projectId,
+        Guid appUserId,
+        string name,
+        string color,
+        bool parallel,
+        List<Panel>? panels = null!
+    )
+    {
+        ProjectId = projectId;
+        CreatedById = appUserId;
+        Name = name;
+        Color = color;
+        Parallel = parallel;
+        Panels = panels ?? new List<Panel>();
     }
 
     public String()
@@ -49,6 +67,46 @@ public class String : IEntity, IProjectItem, IUserObject
             request.Name,
             request.Color,
             false
+        );
+    }
+
+    public static String CreateNoId(CreateStringRequest request, Guid projectId, Guid appUserId)
+    {
+        return new String(projectId, appUserId, request.Name, request.Color, false);
+    }
+
+    public static String CreateWithPanels(
+        CreateStringRequest request,
+        Guid projectId,
+        Guid appUserId,
+        IEnumerable<Panel> panels
+    )
+    {
+        return new String(
+            request.Id.ToGuid(),
+            projectId,
+            appUserId,
+            request.Name,
+            request.Color,
+            false,
+            panels.ToList()
+        );
+    }
+
+    public static String CreateWithPanelNoIds(
+        CreateStringRequest request,
+        Guid projectId,
+        Guid appUserId,
+        IEnumerable<Panel> panels
+    )
+    {
+        return new String(
+            projectId,
+            appUserId,
+            request.Name,
+            request.Color,
+            false,
+            panels.ToList()
         );
     }
 

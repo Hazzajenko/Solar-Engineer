@@ -7,7 +7,7 @@ import { PanelLinkModel, PanelModel, ProjectModel } from '@shared/data-access/mo
 import { StringsEventService } from '../strings'
 import { PathsEventService } from '../paths'
 // import { PathsEventService } from 'libs/grid-layout/data-access/services/src/lib/entitites/paths/paths.service'
-// import { StringsEventService } from 'libs/grid-layout/data-access/services/src/lib/entitites/strings/strings.service'
+// import { StringsEventService } from 'libs/grid-layout/data-access/services/src/lib/entitites/string/string.service'
 
 @Injectable({
   providedIn: 'root',
@@ -53,7 +53,7 @@ export class LinksFactory {
       // this.store.dispatch(SelectedActions.setSelectedStringLinkPaths({ pathMap: linkPathMap }))
       // const name = 'sadsakodsa'
       // const panelPathRecord: PanelPathRecord = Object.fromEntries(linkPathMap)
-      await this.stringsFactory.updateString(selectedStringId, { panelPaths })
+      // await this.stringsFactory.updateString(selectedStringId, { panelPaths })
       await this.pathsFactory.createManyPaths(panelPaths)
       // this.store.dispatch(StringsActions.updateStringPathmap({ linkPathMap: result }))
     }

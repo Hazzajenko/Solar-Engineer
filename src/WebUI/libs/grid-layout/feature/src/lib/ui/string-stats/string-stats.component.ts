@@ -4,7 +4,7 @@ import { SelectedFacade, StringsFacade } from '@grid-layout/data-access'
 import { StringModel } from '@shared/data-access/models'
 import { StringStatsAsyncPipe } from './string-stats-async.pipe'
 
-import { switchMap } from 'rxjs'
+import { of, switchMap } from 'rxjs'
 
 import { map } from 'rxjs/operators'
 
@@ -52,13 +52,14 @@ export class StringTotalsOverlayComponent {
   private stringsFacade = inject(StringsFacade)
   @Input() selectedString!: StringModel
   selectedString$ = this.selectedFacade.selectedStringId$.pipe(
-    switchMap((stringId) =>
-      this.stringsFacade.stringById$(stringId).pipe(
+    switchMap((stringId) => {
+      if (!stringId) return of(undefined)
+      return this.stringsFacade.stringById$(stringId).pipe(
         map((string) => {
           if (!string) return undefined
           return string
         }),
-      ),
-    ),
+      )
+    }),
   )
 }
