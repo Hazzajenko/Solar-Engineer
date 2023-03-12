@@ -2,6 +2,7 @@ import { Directive, ElementRef, inject, Input } from '@angular/core'
 
 import { PanelPathModel, SoftColor, VibrantColor } from '@shared/data-access/models'
 import { PanelNgModel, SelectedPanelVal, StringSelectedVal } from '../models/panel-ng.model'
+import { BlockPanelStateModel } from '../models/new-ng'
 
 @Directive({
   selector: '[appPanelDirective]',
@@ -28,6 +29,67 @@ export class PanelDirective {
         } */
   }
 
+  @Input() set blockPanelStateModel(state: BlockPanelStateModel) {
+    switch (state.selected) {
+      case SelectedPanelVal.NOT_SELECTED: {
+        this.elRef.nativeElement.style.backgroundColor = SoftColor.SoftBrown
+        // this.elRef.nativeElement.style.backgroundColor = '#95c2fa'
+        this.elRef.nativeElement.style.boxShadow = ``
+        break
+      }
+
+      case SelectedPanelVal.SINGLE_SELECTED: {
+        // this.elRef.nativeElement.style.backgroundColor = '#07ffd4'
+        this.elRef.nativeElement.style.boxShadow = `0 0 0 1px red`
+        break
+      }
+
+      case SelectedPanelVal.MULTI_SELECTED: {
+        // this.elRef.nativeElement.style.backgroundColor = '#07ffd4'
+        this.elRef.nativeElement.style.boxShadow = `0 0 0 1px red`
+        break
+      }
+    }
+
+    switch (state.string.selected) {
+      case StringSelectedVal.SELECTED: {
+        break
+      }
+      case StringSelectedVal.OTHER_SELECTED: {
+        this.elRef.nativeElement.style.backgroundColor = '#636363'
+        break
+      }
+    }
+    if (state.string.color && state.string.selected !== 2) {
+      // this.elRef.nativeElement.style.backgroundColor = panelNg.stringColor
+    }
+    if (state.links.linkPath && state.selected !== 1) {
+      this.elRef.nativeElement.style.backgroundColor = state.links.linkPath.color
+    }
+
+    if (state.links.selectedLinkPath) {
+      if (state.links.selectedLinkPath.count > 0) {
+        this.elRef.nativeElement.style.backgroundColor = SoftColor.SoftRed
+      }
+      if (state.links.selectedLinkPath.count < 0) {
+        this.elRef.nativeElement.style.backgroundColor = SoftColor.SoftCyan
+      }
+      if (state.links.selectedLinkPath.count === 0) {
+        this.elRef.nativeElement.style.backgroundColor = SoftColor.SoftGreen
+        // this.elRef.nativeElement.style.backgroundColor = SoftColor.SoftYellow
+      }
+    }
+
+    /*    if (panelNg.isSelectedPositiveTo) {
+          this.elRef.nativeElement.style.backgroundColor = SoftColor.SoftRed
+        }
+        if (panelNg.isSelectedNegativeTo) {
+          this.elRef.nativeElement.style.backgroundColor = SoftColor.SoftCyan
+        }*/
+    if (state.links.isToLinkId) {
+      this.elRef.nativeElement.style.backgroundColor = VibrantColor.VibrantPurple
+    }
+  }
 
   @Input() set panelNg(panelNg: PanelNgModel) {
     // console.error(panelNg.panelLinkPath)
@@ -55,7 +117,6 @@ export class PanelDirective {
 
     switch (panelNg.stringSelected) {
       case StringSelectedVal.SELECTED: {
-
         break
       }
       case StringSelectedVal.OTHER_SELECTED: {
@@ -83,7 +144,6 @@ export class PanelDirective {
       }
     }
 
-
     /*    if (panelNg.isSelectedPositiveTo) {
           this.elRef.nativeElement.style.backgroundColor = SoftColor.SoftRed
         }
@@ -93,6 +153,5 @@ export class PanelDirective {
     if (panelNg.isPanelToLink) {
       this.elRef.nativeElement.style.backgroundColor = VibrantColor.VibrantPurple
     }
-
   }
 }

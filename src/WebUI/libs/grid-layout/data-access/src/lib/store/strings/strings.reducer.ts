@@ -39,6 +39,10 @@ const reducer = createReducer(
     stringsAdapter.addOne(string, state),
   ),
 
+  on(StringsActions.createStringWithPanels, (state, { string }) =>
+    stringsAdapter.addOne(string, state),
+  ),
+
   on(StringsActions.addManyStrings, (state, { strings }) => stringsAdapter.addMany(strings, state)),
 
   on(StringsActions.updateString, (state, { update }) => stringsAdapter.updateOne(update, state)),

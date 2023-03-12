@@ -56,6 +56,7 @@
       <div
         appPanelDirective
         [id]="state.panel.id"
+        [blockPanelStateModel]="state"
         bind-attr.id="state.panel.id"
         bind-attr.blockId="state.panel.id"
         bind-attr.location="state.panel.location"
@@ -69,7 +70,7 @@
         cdkDrag
         class="block panel absolute border border-black flex items-center justify-center content-center hover:bg-red-500"
       >
-        <ng-container *ngIf="panelString$ | async" />
+        <!--        <ng-container *ngIf="panelString$ | async" />-->
         <ng-container *ngIf="state.string.selected === 1; else stringNotSelected">
           <ng-container *ngIf="state.selected === 0 && !state.links.selectedLinkPath">
             <div class="relative bottom-2.5" *ngIf="state.links.linkPath">
@@ -109,13 +110,11 @@
                     </span>
                     &lt;!&ndash;                {{ stringName }}&ndash;&gt;
                   </div>-->
-          <ng-container *ngIf="!state.links.linkPath">
-            <div
-              class="relative text-xs bottom-2 pointer-events-none"
-              *ngIf="panelStringName$ | async as stringName"
-            >
-              <span *ngIf="stringName !== 'undefined'">
-                {{ stringName }}
+          <ng-container>
+            <!--          <ng-container *ngIf="!state.links.linkPath">-->
+            <div class="relative text-xs bottom-2 pointer-events-none" *ngIf="state.string.name">
+              <span *ngIf="state.string.name !== 'undefined'">
+                {{ state.string.name }}
                 <!--           <ng-container *ngIf='panelNg.isSelectedNegativeTo'>
                                -
                              </ng-container>

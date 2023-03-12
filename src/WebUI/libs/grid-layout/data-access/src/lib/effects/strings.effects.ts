@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { Store } from '@ngrx/store'
-import { ProjectsHubService, StringsActions, StringsService } from '../'
+import { EntitiesActions, ProjectsHubService, StringsActions, StringsService } from '../'
 import { ProjectsActions, ProjectsStoreService, SignalrEventsService } from '@projects/data-access'
 import { combineLatestWith, map, tap } from 'rxjs'
 import { StringsSignalrService } from '../api/strings/strings-signalr.service'
@@ -59,6 +59,13 @@ export class StringsEffects extends Logger {
       map(({ localProject }) =>
         StringsActions.loadStringsSuccess({ strings: localProject.strings }),
       ),
+    ),
+  )
+
+  addStringEntity$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(StringsActions.addString),
+      map(({ string }) => EntitiesActions.addEntityForGrid({ entity: string })),
     ),
   )
 

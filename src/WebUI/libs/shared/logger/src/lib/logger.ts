@@ -1,5 +1,5 @@
 import { LoggerService } from './'
-import { catchError, EMPTY, map, OperatorFunction, pipe, tap } from 'rxjs'
+import { map, OperatorFunction, pipe, tap } from 'rxjs'
 
 export class Logger {
   private logger: LoggerService
@@ -50,20 +50,35 @@ export class Logger {
     })
   }
 
-  throwIfNull$<T>(...objects: unknown[]): OperatorFunction<T, NonNullable<T>> {
+  throwIfNull$<T>(typeName: string, ...objects: unknown[]): OperatorFunction<T, NonNullable<T>> {
     return pipe(
-      tap((e) => {
+      map((e) => {
         if (e === null || e === undefined) {
           const source = `${this.source}.throwIfNull`
-          this.logger.error(source, e, ...objects)
+          this.logger.error(source, typeName, ...objects)
           throw new Error(objects.join(' '))
+          // e.constructor.name
         }
+        /* e.constructor.name*/
+        // return e
+        return e as NonNullable<T>
       }),
-      catchError((error) => {
-        this.logError(error)
-        return EMPTY
-      }),
-      map((e) => e as NonNullable<T>),
+      /*     tap((e) => {
+             if (e === null || e === undefined) {
+               const source = `${this.source}.throwIfNull`
+               this.logger.error(source, e, ...objects)
+               throw new Error(objects.join(' '))
+             }
+           }),
+           // retry(2),
+           /!*      retryWhen((errors) => {
+                   return errors.pipe(tap(() => console.log('retrying...')))
+                 }),*!/
+           /!*      catchError((error) => {
+                   this.logError(error)
+                   return EMPTY
+                 }),*!/
+           map((e) => e as NonNullable<T>),*/
     )
   }
 

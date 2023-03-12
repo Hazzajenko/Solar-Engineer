@@ -1,15 +1,16 @@
-import { combineLatestWith, map, switchMap } from 'rxjs/operators'
+import { catchError, combineLatestWith, map, retry, switchMap } from 'rxjs/operators'
 import {
   LinksFacade,
   PanelsFacade,
   PathsFacade,
   SelectedFacade,
   StringsFacade,
+  StringsSelectors,
 } from '@grid-layout/data-access'
 import { inject, Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
 import { Logger, LoggerService } from '@shared/logger'
-import { Observable, of } from 'rxjs'
+import { EMPTY, Observable, of } from 'rxjs'
 import { SelectedPanelVal, StringSelectedVal } from './models/panel-ng.model'
 import { LINKED_TO_SELECTED, LinkedToSelected } from './models/is-panel-linked-to-selected'
 import { PanelStringNameColor } from './models/panel-string-name-color'
@@ -30,60 +31,14 @@ export class BlockPanelService extends Logger {
     super(logger)
   }
 
-  join(id: string) {
-    return this.panel$(id).pipe(
-      this.throwIfNull$(),
-      switchMap((panel) => {
-        return of(panel).pipe(combineLatestWith(this.panelStringName$(panel.stringId)))
-      }),
-      map(([panel, stringName]) => {
-        return { panel, stringName }
-      }),
-    )
-  }
-
-  // Type = SelectedPanelVal
-
-  join2(id: string) {
-    return this.panel$(id).pipe(
-      this.throwIfNull$(),
-      switchMap((panel) => {
-        // return combineLatest([of(panel), this.panelStringName$(panel.stringId)])
-        return of(panel)
-          .pipe(
-            combineLatestWith(
-              // this.panelStringName$(panel.stringId),
-              this.panelStringNameAndColor$(panel.stringId),
-              this.isPanelSelected$(id),
-              this.isPanelLinkedToSelected$(id),
-              this.isPanelSelectedStringWithToolTip$(panel.stringId),
-              // this.isPanelSelectedString$(panel.stringId),
-            ),
-          )
-          .pipe(
-            map(
-              ([panel, stringNameColor, selected, linkedToSelected, selectedStringWithTooltip]) => {
-                return {
-                  panel,
-                  stringNameColor,
-                  selected,
-                  linkedToSelected,
-                  selectedStringWithTooltip,
-                }
-              },
-            ),
-          )
-      }),
-      /*      map(([panel, stringName]) => {
-              return { panel, stringName }
-            }),*/
-    )
-  }
-
   join3(id: string): Observable<BlockPanelStateModel> {
     return this.panel$(id).pipe(
-      this.throwIfNull$(),
+      this.throwIfNull$('panel'),
+      retry(1),
+      // map(panel => panel ?? th),
+
       switchMap((panel) => {
+        // if (!panel) return EMPTY
         return of(panel).pipe(
           combineLatestWith(
             this.panelStringNameAndColor$(panel.stringId),
@@ -175,20 +130,28 @@ export class BlockPanelService extends Logger {
     )*/
 
   panel$(id: string) {
-    return this.panelsFacade.panelById$(id).pipe(this.logDebug$('panel$', 'Panel'))
+    return this.panelsFacade.panelById$(id)
+    // return this.panelsFacade.panelById$(id).pipe(this.logDebug$('panel$', 'Panel'))
     // return this.store.select(PanelsSelectors.selectPanelById({ id }))
   }
 
-  panelStringName$(stringId: string) {
-    return this.stringsFacade.stringById$(stringId).pipe(
-      this.throwIfNull$(),
-      map((string) => string?.name),
-    )
-  }
+  /*  panelStringName$(stringId: string) {
+      return this.stringsFacade.stringById$(stringId).pipe(
+        this.throwIfNull$('string'),
+        map((string) => string?.name),
+      )
+    }*/
 
   panelStringNameAndColor$(stringId: string): Observable<PanelStringNameColor> {
-    return this.stringsFacade.stringById$(stringId).pipe(
-      this.throwIfNull$(),
+    return this.store.select(StringsSelectors.selectStringById({ id: stringId })).pipe(
+      // return this.stringsFacade.stringById$(stringId).pipe(
+      this.throwIfNull$('string', stringId),
+      retry({
+        delay: 1000,
+        count: 10,
+      }),
+      // retry(() => stringId),
+      catchError(() => EMPTY),
       map((string) => {
         return { stringName: string.name, stringColor: string.color }
       }),
@@ -228,38 +191,54 @@ export class BlockPanelService extends Logger {
   isPanelSelectedStringWithToolTipAndPanelLinkPaths$(stringId: string, panelId: string) {
     return this.selectedFacade.selectedStringId$.pipe(
       combineLatestWith(
+        // this.panelStringNameAndColor$(stringId),
         this.selectedFacade.selectedStringTooltip$,
         this.pathsFacade.pathByPanelId$(stringId),
         this.selectedPanelLinkPath$(panelId),
         this.isToLinkId$(panelId),
       ),
-      map(([selectedStringId, stringTooltip, panelLinkPath, selectedPanelLinkPath, isToLinkId]) => {
-        if (selectedStringId === stringId) {
-          return {
-            stringSelected: StringSelectedVal.SELECTED,
-            stringTooltip,
-            panelLinkPath,
-            selectedPanelLinkPath,
-            isToLinkId,
+      map(
+        ([
+          selectedStringId,
+          // stringNameAndColor,
+          stringTooltip,
+          panelLinkPath,
+          selectedPanelLinkPath,
+          isToLinkId,
+        ]) => {
+          if (selectedStringId === stringId) {
+            return {
+              stringSelected: StringSelectedVal.SELECTED,
+              // stringName: stringNameAndColor.stringName,
+              // stringColor: stringNameAndColor.stringColor,
+              stringTooltip,
+              panelLinkPath,
+              selectedPanelLinkPath,
+              isToLinkId,
+            }
           }
-        }
-        if (selectedStringId && selectedStringId !== stringId) {
+          if (selectedStringId && selectedStringId !== stringId) {
+            return {
+              stringSelected: StringSelectedVal.OTHER_SELECTED,
+              // stringName: undefined,
+              // stringColor: undefined,
+              stringTooltip: undefined,
+              panelLinkPath: undefined,
+              selectedPanelLinkPath: undefined,
+              isToLinkId: false,
+            }
+          }
           return {
-            stringSelected: StringSelectedVal.OTHER_SELECTED,
+            stringSelected: StringSelectedVal.NOT_SELECTED,
+            // stringName: undefined,
+            // stringColor: undefined,
             stringTooltip: undefined,
             panelLinkPath: undefined,
             selectedPanelLinkPath: undefined,
             isToLinkId: false,
           }
-        }
-        return {
-          stringSelected: StringSelectedVal.NOT_SELECTED,
-          stringTooltip: undefined,
-          panelLinkPath: undefined,
-          selectedPanelLinkPath: undefined,
-          isToLinkId: false,
-        }
-      }),
+        },
+      ),
     )
   }
 

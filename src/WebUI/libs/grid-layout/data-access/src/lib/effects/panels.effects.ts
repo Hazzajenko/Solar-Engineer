@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { Store } from '@ngrx/store'
-import { PanelsService, PanelsSignalrService, PanelsStoreService, ProjectsHubService } from '../'
+import { PanelsService, PanelsSignalrService, PanelsStoreService, ProjectsHubService, StringsActions } from '../'
 import { BlocksActions, PanelsActions } from '../store'
 import { ProjectsActions, ProjectsStoreService, SignalrEventsService } from '@projects/data-access'
 import { combineLatestWith, of, switchMap, tap } from 'rxjs'
@@ -260,6 +260,38 @@ export class PanelsEffects extends Logger {
       ofType(PanelsActions.updateManyPanelsWithoutSignalr),
       map(({ updates }) => BlocksActions.updateManyBlocksForGrid({ updates })),
     ),
+  )
+
+  createStringWithPanels$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(StringsActions.createStringWithPanels),
+        combineLatestWith(this.projectsStore.select.selectedProject$),
+        map(([{ panelIds, string }, project]) => {
+          this.throwIfNull(project, 'project is null')
+          const updates = panelIds.map((panelId) => {
+            return {
+              id: panelId,
+              changes: {
+                stringId: string.id,
+              },
+            }
+          })
+          return PanelsActions.updateManyPanelsWithoutSignalr({ updates })
+          // project = this.throwIfNull(project, 'project is null')
+          /*      const action: ProjectEventAction = PROJECT_SIGNALR_TYPE.UPDATE_MANY
+                  const model: ProjectItemType = PROJECT_ITEM_TYPE.PANEL
+                  const projectSignalrEvent: ProjectSignalrJsonRequest = {
+                    action,
+                    model,
+                    projectId: project.id,
+                    requestId: getGuid(),
+                    data: JSON.stringify(updates),
+                  }
+                  return projectSignalrEvent*/
+        }),
+      ),
+    { dispatch: false },
   )
 
   /*  updateManyPanelsHttp$ = createEffect(
