@@ -7,14 +7,14 @@ import { BLOCK_TYPE, PanelModel } from '@shared/data-access/models'
 import { LinksFactory } from './links.factory'
 // import { GridService } from '@grid-layout/data-access/services'
 import { LinksStateModel, MouseEventRequest } from '../../models'
-import { Logger, LoggerService } from '@shared/logger'
+import { BaseService } from '@shared/logger'
 
 // import { MouseEventRequest } from '../../../models/mouse-event-request'
 
 @Injectable({
   providedIn: 'root',
 })
-export class LinksEventService extends Logger {
+export class LinksEventService extends BaseService {
   private linksFactory = inject(LinksFactory)
   // private gridFactory = inject(GridService)
   private gridStore = inject(GridStoreService)
@@ -22,9 +22,9 @@ export class LinksEventService extends Logger {
 
   // private logger = inject(LoggerService)
 
-  constructor(logger: LoggerService) {
-    super(logger)
-  }
+  /*  constructor(logger: LoggerService) {
+      super(logger)
+    }*/
 
   async addPanelToLink(click: MouseEventRequest, panel: PanelModel) {
     const linksState = await this.linksFacade.state

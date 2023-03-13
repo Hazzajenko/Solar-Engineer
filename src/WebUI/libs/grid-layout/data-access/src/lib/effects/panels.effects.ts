@@ -6,7 +6,7 @@ import { BlocksActions, PanelsActions } from '../store'
 import { ProjectsActions, ProjectsStoreService, SignalrEventsService } from '@projects/data-access'
 import { combineLatestWith, of, switchMap, tap } from 'rxjs'
 import { map } from 'rxjs/operators'
-import { Logger, LoggerService } from '@shared/logger'
+import { BaseService } from '@shared/logger'
 import { getGuid } from '@shared/utils'
 import {
   PROJECT_ITEM_TYPE,
@@ -22,7 +22,7 @@ import {
 @Injectable({
   providedIn: 'root',
 })
-export class PanelsEffects extends Logger {
+export class PanelsEffects extends BaseService {
   private actions$ = inject(Actions)
   private store = inject(Store)
 
@@ -36,9 +36,9 @@ export class PanelsEffects extends Logger {
   private projectsHubService = inject(ProjectsHubService)
   private signalrEventsService = inject(SignalrEventsService)
 
-  constructor(logger: LoggerService) {
-    super(logger)
-  }
+  /*  constructor(logger: LoggerService) {
+      super(logger)
+    }*/
 
   /*  initPanels$ = createEffect(
       () =>

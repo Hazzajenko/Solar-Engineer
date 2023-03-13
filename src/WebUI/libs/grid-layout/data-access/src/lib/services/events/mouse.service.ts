@@ -6,12 +6,12 @@ import { ProjectsFacade } from '@projects/data-access'
 import { BLOCK_TYPE, GridMode } from '@shared/data-access/models'
 import { MultiEventService } from '../multi'
 import { getLocationsInBox } from '../utils'
-import { Logger, LoggerService } from '@shared/logger'
+import { BaseService } from '@shared/logger'
 
 @Injectable({
   providedIn: 'root',
 })
-export class MouseService extends Logger {
+export class MouseService extends BaseService {
   private projectsFacade = inject(ProjectsFacade)
   // private logger = inject(LoggerService)
 
@@ -23,9 +23,9 @@ export class MouseService extends Logger {
 
   private gridFacade = inject(GridFacade)
 
-  constructor(logger: LoggerService) {
-    super(logger)
-  }
+  /*  constructor(logger: LoggerService) {
+      super(logger)
+    }*/
 
   async mouse(mouse: MouseEventRequest) {
     const multiState = await this.multiStore.select.state

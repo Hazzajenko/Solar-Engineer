@@ -3,23 +3,23 @@ import { inject, Injectable } from '@angular/core'
 import { BlocksFacade, BlocksStoreService } from '../..'
 import { BLOCK_TYPE, BlockModel } from '@shared/data-access/models'
 import { PanelsEventService } from '../panels'
-import { Logger, LoggerService } from '@shared/logger'
+import { BaseService } from '@shared/logger'
 
 // import { PanelsService } from 'libs/grid-layout/data-access/services/src/lib/entitites/panels'
 
 @Injectable({
   providedIn: 'root',
 })
-export class DropService extends Logger {
+export class DropService extends BaseService {
   private blocksFacade = inject(BlocksFacade)
   private blocksStore = inject(BlocksStoreService)
   private panelsFactory = inject(PanelsEventService)
 
   // private logger = inject(LoggerService)
 
-  constructor(logger: LoggerService) {
-    super(logger)
-  }
+  /*  constructor(logger: LoggerService) {
+      super(logger)
+    }*/
 
   async drop(drop: CdkDragDrop<BlockModel[]>) {
     drop.event.preventDefault()

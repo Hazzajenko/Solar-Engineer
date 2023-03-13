@@ -13,14 +13,14 @@ import {
   ProjectItemType,
   ProjectSignalrJsonRequest,
 } from '@shared/data-access/models'
-import { Logger, LoggerService } from '@shared/logger'
+import { BaseService } from '@shared/logger'
 
 // import { SignalrEventsService } from '@app/data-access/signalr'
 
 @Injectable({
   providedIn: 'root',
 })
-export class StringsEffects extends Logger {
+export class StringsEffects extends BaseService {
   private actions$ = inject(Actions)
   private store = inject(Store)
 
@@ -30,9 +30,9 @@ export class StringsEffects extends Logger {
   private projectsHubService = inject(ProjectsHubService)
   private signalrEventsService = inject(SignalrEventsService)
 
-  constructor(logger: LoggerService) {
-    super(logger)
-  }
+  /*  constructor(logger: LoggerService) {
+      super(logger)
+    }*/
 
   /*  initStrings$ = createEffect(() =>
       this.actions$.pipe(

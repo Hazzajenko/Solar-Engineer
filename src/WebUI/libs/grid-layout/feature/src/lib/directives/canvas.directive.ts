@@ -1,7 +1,6 @@
-import { Directive, ElementRef, HostListener, inject, Input, NgZone, OnInit } from '@angular/core'
+import { Directive, ElementRef, inject, Input, NgZone, OnInit, Renderer2 } from '@angular/core'
 import {
   BlockRectModel,
-  ClientXY,
   ElementOffsets,
   PanelsStoreService,
   XYModel,
@@ -20,21 +19,22 @@ import {
   upAndLeft,
   upAndRight,
 } from './utils/handle-axis'
-import { Logger, LoggerService } from '@shared/logger'
+import { BaseService } from '@shared/logger'
 
 @Directive({
   selector: '[appCanvas]',
   standalone: true,
 })
-export class CanvasDirective extends Logger implements OnInit {
+export class CanvasDirective extends BaseService implements OnInit {
   private canvas = inject(ElementRef<HTMLCanvasElement>)
   private panelsStore = inject(PanelsStoreService)
   private ctx: CanvasRenderingContext2D = this.canvas.nativeElement.getContext('2d')
+  private renderer = inject(Renderer2)
 
   // private logger = inject(LoggerService)
 
-  constructor(private ngZone: NgZone, logger: LoggerService) {
-    super(logger)
+  constructor(private ngZone: NgZone) {
+    super()
   }
 
   height!: number
@@ -85,6 +85,7 @@ export class CanvasDirective extends Logger implements OnInit {
   }
 
   @Input() set startDraggingWithPage(xy: XYModel) {
+    this.logDebug('startDraggingWithPage', xy)
     if (!xy.x || !xy.y) {
       this.ctx.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height)
       this.startX = undefined
@@ -98,7 +99,7 @@ export class CanvasDirective extends Logger implements OnInit {
     this.startY = xy.y - rect.top
   }
 
-  @Input() set startDragging(clientXY: ClientXY) {}
+  // @Input() set startDragging(clientXY: ClientXY) {}
 
   selectedPaths?: SelectedPanelLinkPathModel
 
@@ -139,8 +140,19 @@ export class CanvasDirective extends Logger implements OnInit {
   parentHeight?: number
   parentWidth?: number
 
-  @HostListener('document:mouseup', ['$event'])
-  mouseUp(event: MouseEvent) {
+  /*  @HostListener('document:mouseup', ['$event'])
+    mouseUp(event: MouseEvent) {
+      event.preventDefault()
+      event.stopPropagation()
+      // mouseUp(_: MouseEvent) {
+      // console.log(event.clientX, event.clientY)
+      this.ctx.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height)
+      this.startX = undefined
+      this.startY = undefined
+      return
+    }*/
+
+  private onMouseUpHandler(event: MouseEvent) {
     event.preventDefault()
     event.stopPropagation()
     // mouseUp(_: MouseEvent) {
@@ -151,9 +163,28 @@ export class CanvasDirective extends Logger implements OnInit {
     return
   }
 
-  @HostListener('document:mousemove', ['$event'])
-  onDragging(event: MouseEvent) {
+  /*  @HostListener('document:mousemove', ['$event'])
+    onDragging(event: MouseEvent) {
+      this.logDebug('onDragging', event.clientX, event.clientY)
+      if (!this.startX || !this.startY || !event.altKey) {
+        return
+      } else {
+        this.pageX = event.pageX
+        this.pageY = event.pageY
+      }
+      this.ngZone.runOutsideAngular(() => {
+        this.animate()
+      })
+      event.preventDefault()
+      event.stopPropagation()
+    }*/
+
+  private onMouseMoveHandler(event: MouseEvent) {
+    event.preventDefault()
+    event.stopPropagation()
+    this.logDebug('onDragging', event.clientX, event.clientY)
     if (!this.startX || !this.startY || !event.altKey) {
+      this.logDebug('onDragging', 'returning', this.startX, this.startY, event.altKey)
       return
     } else {
       this.pageX = event.pageX
@@ -162,8 +193,26 @@ export class CanvasDirective extends Logger implements OnInit {
     this.ngZone.runOutsideAngular(() => {
       this.animate()
     })
-    event.preventDefault()
-    event.stopPropagation()
+  }
+
+  private setUpMouseEvents() {
+    this.ngZone.runOutsideAngular(() => {
+      /*      this.renderer.listen(this.canvas.nativeElement, 'mousedown', (event: MouseEvent) => {
+              this.onMouseDownHandler(event)
+              event.stopPropagation()
+              event.preventDefault()
+            })*/
+      /*      this.renderer.listen(this.canvas.nativeElement, 'mouseup', (event: MouseEvent) => {
+              event.stopPropagation()
+              event.preventDefault()
+              this.onMouseUpHandler(event)
+            })
+            this.renderer.listen(this.ctx, 'mousemove', (event: MouseEvent) => {
+              event.stopPropagation()
+              event.preventDefault()
+              this.onMouseMoveHandler(event)
+            })*/
+    })
   }
 
   ngOnInit(): void {
@@ -174,6 +223,7 @@ export class CanvasDirective extends Logger implements OnInit {
     const parentRect = this.canvas.nativeElement.parentNode.getBoundingClientRect()
     this.parentHeight = parentRect.height
     this.parentWidth = parentRect.width
+    this.setUpMouseEvents()
   }
 
   animate() {

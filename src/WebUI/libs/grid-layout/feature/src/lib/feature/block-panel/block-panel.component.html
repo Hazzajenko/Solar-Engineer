@@ -1,7 +1,4 @@
-<!--<ng-container *ngIf='panel'>-->
-<!--<ng-container *ngIf="panel$ | async as panel">-->
-<!--  <ng-container *ngIf="panelNg$ | async as panelNg">-->
-<ng-container *ngIf="blockPanelStateModel$ | async as state">
+<ng-container *ngIf="componentState$ | async as state">
   <div
     style="width: 32px; height: 32px"
     class="flex whitespace-pre-wrap content-center items-center justify-center"
@@ -13,7 +10,7 @@
             [isPositiveLink]='panelNg.isSelectedPositiveTo'
             class='pointer-events-none z-20 relative left-2'
           ></app-panel-link>-->
-    <ng-container [ngSwitch]="state.panel.rotation">
+    <ng-container [ngSwitch]="state.rotation">
       <ng-container *ngSwitchCase="0">
         <svg viewBox="0 0 100 100" class="pointer-events-none relative">
           <path
@@ -51,127 +48,53 @@
         </svg>
       </ng-container>
     </ng-container>
-    <!--      [panelNg]="panelNg"-->
+
     <ng-container>
       <div
         appPanelDirective
-        [id]="state.panel.id"
-        [blockPanelStateModel]="state"
-        bind-attr.id="state.panel.id"
-        bind-attr.blockId="state.panel.id"
-        bind-attr.location="state.panel.location"
-        bind-attr.blockLocation="state.panel.location"
-        (contextmenu)="onRightClick($event, state.panel)"
-        [cdkDragData]="state.panel"
+        [state]="state"
+        bind-attr.id="state.id"
+        bind-attr.blockId="state.id"
+        bind-attr.location="state.location"
+        bind-attr.blockLocation="state.location"
+        (contextmenu)="onRightClick($event, state)"
+        [cdkDragData]="state"
         [ngStyle]="{
-          height: state.panel.rotation === 0 ? '18px' : '23px',
-          width: state.panel.rotation === 0 ? '23px' : '18px'
+          height: state.rotation === 0 ? '18px' : '23px',
+          width: state.rotation === 0 ? '23px' : '18px'
         }"
         cdkDrag
         class="block panel absolute border border-black flex items-center justify-center content-center hover:bg-red-500"
       >
-        <!--        <ng-container *ngIf="panelString$ | async" />-->
-        <ng-container *ngIf="state.string.selected === 1; else stringNotSelected">
-          <ng-container *ngIf="state.selected === 0 && !state.links.selectedLinkPath">
-            <div class="relative bottom-2.5" *ngIf="state.links.linkPath">
-              {{ state.links.linkPath.link + ":" + state.links.linkPath.count }}
+        <ng-container *ngIf="state.stringSelected === 'Selected'; else stringNotSelected">
+          <ng-container *ngIf="state.selected === 'NotSelected' && !state.selectedPanelPath">
+            <div class="relative bottom-2.5 pointer-events-none" *ngIf="state.panelPath">
+              {{ state.panelPath.link + ":" + state.panelPath.count }}
             </div>
           </ng-container>
-          <ng-container *ngIf="state.selected === 0 && state.links.selectedLinkPath">
+          <ng-container *ngIf="state.selected === 'NotSelected' && state.selectedPanelPath">
             <div class="relative">
-              {{ state.links.selectedLinkPath.count }}
+              {{ state.selectedPanelPath.count }}
             </div>
           </ng-container>
-          <!--
-                      <ng-template #panelSelected>
-                        <div *ngIf='panelNg.panelLinkPath' class='relative'>
-                          {{ panelNg.panelLinkPath.count }}
-                        </div>
-                      </ng-template>-->
-          <ng-container *ngIf="state.selected === 1 && state.links.selectedLinkPath">
+          <ng-container *ngIf="state.selected === 'SingleSelected' && state.selectedPanelPath">
             <div class="relative">
-              {{ state.links.selectedLinkPath.count }}
+              {{ state.selectedPanelPath.count }}
             </div>
           </ng-container>
         </ng-container>
         <ng-template #stringNotSelected>
-          <!--        <div
-                    class="relative text-xs bottom-2 pointer-events-none"
-                    *ngIf="panelStringName$ | async as stringName"
-                  >
-                    <span *ngIf="stringName !== 'undefined'">
-                      {{ stringName }}
-                      &lt;!&ndash;           <ng-container *ngIf='panelNg.isSelectedNegativeTo'>
-                                     -
-                                   </ng-container>
-                                   <ng-container *ngIf='panelNg.isSelectedPositiveTo'>
-                                     +
-                                   </ng-container>&ndash;&gt;
-                    </span>
-                    &lt;!&ndash;                {{ stringName }}&ndash;&gt;
-                  </div>-->
-          <ng-container>
-            <!--          <ng-container *ngIf="!state.links.linkPath">-->
-            <div class="relative text-xs bottom-2 pointer-events-none" *ngIf="state.string.name">
-              <span *ngIf="state.string.name !== 'undefined'">
-                {{ state.string.name }}
-                <!--           <ng-container *ngIf='panelNg.isSelectedNegativeTo'>
-                               -
-                             </ng-container>
-                             <ng-container *ngIf='panelNg.isSelectedPositiveTo'>
-                               +
-                             </ng-container>-->
+          <ng-container *ngIf="!state.panelPath">
+            <div class="relative text-xs bottom-2 pointer-events-none" *ngIf="state.stringName">
+              <span *ngIf="state.stringName !== 'undefined'">
+                {{ state.stringName }}
               </span>
-              <!--                {{ stringName }}-->
             </div>
           </ng-container>
         </ng-template>
-        <!--         [matTooltip]='displayTooltip((panelNg.stringSelected === 1), (selectedStringTooltip$ | async)!)'
-                 [matTooltipDisabled]='panelNg.stringSelected !== 1'
-                 matTooltipPosition='right'-->
-        <!--         <ng-container *ngrxLet='selectedPanelLinkPath$ | async as selectedPanelPath'>
-                   <ng-container *ngIf='panelNg.stringSelected === 1 else stringNotSelected'>
-                     <ng-container *ngIf='panelNg.isSelectedPanel === 0 && !selectedPanelPath'>
-
-
-                       <div class='relative bottom-2.5' *ngIf='panelLinkPath'>
-                         {{ panelLinkPath.link + ":" + panelLinkPath.count }}
-                       </div>
-                     </ng-container>
-                     <ng-container *ngIf='selectedPanelPath'>
-                       <div class='relative'>
-                         {{ selectedPanelPath.count }}
-                       </div>
-                     </ng-container>
-                     &lt;!&ndash;              <ng-template #panelSelected>
-                                     <div *ngIf='selectedPanelPath' class='relative'>
-                                       {{ selectedPanelPath.count }}
-                                     </div>
-                                   </ng-template>&ndash;&gt;
-                     &lt;!&ndash;          <ng-container *ngIf='panelNg.isSelectedPanel === 1 && selectedPanelPath'>
-                                 <div class='relative'>
-                                   {{ selectedPanelPath.count }}
-                                 </div>
-                               </ng-container>&ndash;&gt;
-
-                   </ng-container>
-                   <ng-template #stringNotSelected>
-                     <ng-container *ngIf='!selectedPanelPath'>
-                       <div class='relative  text-xs' *ngIf='panelStringName$ | async as stringName'>
-                         {{ stringName }}
-                       </div>
-                     </ng-container>
-                   </ng-template>
-
-                   &lt;!&ndash;          <ng-container *ngIf='panelNg.isSelectedPanel === 1'>&ndash;&gt;
-
-                 </ng-container>-->
-
-        <!--          </ng-container>-->
       </div>
     </ng-container>
   </div>
-  <!--  </ng-container>-->
 </ng-container>
 
 <div
@@ -182,11 +105,9 @@
 ></div>
 
 <mat-menu #rightMenu="matMenu">
-  <ng-template matMenuContent>
-    <app-panel-menu
-      class="right-click-menu bg-white"
-      [panel]="(panel$ | async)!"
-      [panelNg]="(panelNg$ | async)!"
-    ></app-panel-menu>
+  <ng-template matMenuContent let-state="state">
+    <app-panel-menu class="right-click-menu bg-white" [panelComponentState]="state" />
+    <!--    [panelNg]="(panelNg$ | async)!"-->
   </ng-template>
 </mat-menu>
+<!--</ng-container>-->

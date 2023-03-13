@@ -12,22 +12,22 @@ import {
 } from '@shared/data-access/models'
 import { NewProjectEvents, SendProjectEvent } from '@projects/data-access'
 import { HubConnection } from '@microsoft/signalr'
-import { Logger, LoggerService } from '@shared/logger'
+import { BaseService } from '@shared/logger'
 
 @Injectable({
   providedIn: 'root',
 })
-export class ProjectsHubService extends Logger {
+export class ProjectsHubService extends BaseService {
   private projectsHubRepository = inject(ProjectsHubRepository)
   private panelsSignalrService = inject(PanelsSignalrService)
   private hubConnection?: HubConnection
 
   // private logger = inject(LoggerService)
 
-  constructor(logger: LoggerService) {
-    super(logger)
-    // this.initHubConnection(this.projectsSignalrService.projectsHubConnection)
-  }
+  /*  constructor(logger: LoggerService) {
+      super(logger)
+      // this.initHubConnection(this.projectsSignalrService.projectsHubConnection)
+    }*/
 
   initHubConnection(projectsHubConnection: HubConnection) {
     this.hubConnection = projectsHubConnection

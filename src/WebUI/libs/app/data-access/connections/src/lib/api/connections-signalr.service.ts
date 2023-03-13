@@ -4,20 +4,20 @@ import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signal
 import { ConnectionModel } from '@shared/data-access/models'
 import { ConnectionsStoreService } from '../services'
 import { GetOnlineUsers, UserIsOffline, UserIsOnline } from './connections.methods'
-import { Logger, LoggerService } from '@shared/logger'
+import { BaseService } from '@shared/logger'
 
 @Injectable({
   providedIn: 'root',
 })
-export class ConnectionsSignalrService extends Logger {
+export class ConnectionsSignalrService extends BaseService {
   private hubConnection?: HubConnection
   private connectionsStore = inject(ConnectionsStoreService)
 
   // private logger = inject(LoggerService)
 
-  constructor(logger: LoggerService) {
-    super(logger)
-  }
+  /* constructor(logger: LoggerService) {
+     super(logger)
+   }*/
 
   createHubConnection(token: string) {
     this.hubConnection = new HubConnectionBuilder()

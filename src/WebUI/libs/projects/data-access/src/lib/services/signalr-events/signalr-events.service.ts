@@ -5,22 +5,22 @@ import { SignalrEventsRepository } from './signalr-events.repository'
 import { HubConnection } from '@microsoft/signalr'
 import { SignalrEventsFacade } from './signalr-events.facade'
 import { Update } from '@ngrx/entity'
-import { Logger, LoggerService } from '@shared/logger'
+import { BaseService } from '@shared/logger'
 
 @Injectable({
   providedIn: 'root',
 })
-export class SignalrEventsService extends Logger {
+export class SignalrEventsService extends BaseService {
   // logger = inject(LoggerService)
   private signalrEventsRepository = inject(SignalrEventsRepository)
   private projectsSignalrService = inject(ProjectsSignalrService)
   private signalrEventsFacade = inject(SignalrEventsFacade)
   private hubConnection?: HubConnection
 
-  constructor(logger: LoggerService) {
-    super(logger)
-    // this.initHubConnection(this.projectsSignalrService.projectsHubConnection)
-  }
+  /*  constructor(logger: LoggerService) {
+      super(logger)
+      // this.initHubConnection(this.projectsSignalrService.projectsHubConnection)
+    }*/
 
   initHubConnection(projectsHubConnection: HubConnection) {
     this.hubConnection = projectsHubConnection

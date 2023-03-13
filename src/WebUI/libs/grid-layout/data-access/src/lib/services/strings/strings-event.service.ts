@@ -12,14 +12,14 @@ import {
   toUpdatePanelArray,
 } from '../'
 import { ProjectsFacade } from '@projects/data-access'
-import { BLOCK_TYPE, GridMode, PanelModel, StringModel } from '@shared/data-access/models'
-import { combineLatest, combineLatestWith, firstValueFrom, map } from 'rxjs'
-import { ProjectItemUpdate } from '@shared/utils'
+import { GridMode, PanelModel, StringModel, UndefinedString } from '@shared/data-access/models'
+import { BaseService } from '@shared/logger'
+import { UpdateStr } from '@ngrx/entity/src/models'
 
 @Injectable({
   providedIn: 'root',
 })
-export class StringsEventService {
+export class StringsEventService extends BaseService {
   private readonly projectsFacade = inject(ProjectsFacade)
   private readonly gridFacade = inject(GridFacade)
   private readonly selectedFacade = inject(SelectedFacade)
@@ -30,20 +30,27 @@ export class StringsEventService {
   private stringsStore = inject(StringsStoreService)
   private selectedStore = inject(SelectedStoreService)
   private panelsStore = inject(PanelsStoreService)
+  // logger = inject(LoggerService)
+
+  /*  constructor(logger: LoggerService) {
+      super(logger)
+    }*/
 
   async createNoDispatch(stringName: string) {
     const project = await this.projectsFacade.selectedProject()
+    const userId = await this.currentUserId
     return new StringModel({
       projectId: project.id,
       name: stringName,
       color: 'undefined',
       parallel: false,
-      createdById: 'undefined',
+      createdById: userId,
     })
   }
 
   async create(stringName: string) {
     const project = await this.projectsFacade.selectedProject()
+    const userId = await this.currentUserId
     // console.log(project)
     /*    if (!project) {
           return
@@ -53,7 +60,7 @@ export class StringsEventService {
       name: stringName,
       color: 'undefined',
       parallel: false,
-      createdById: 'undefined',
+      createdById: userId,
     })
     this.stringsStore.dispatch.createString(string)
     return string
@@ -69,6 +76,10 @@ export class StringsEventService {
     this.gridStore.dispatch.selectGridMode(GridMode.SELECT)
     const string = await this.stringsFacade.stringById(stringId)
     if (!string) return
+    if (string.name === UndefinedString) {
+      this.logDebug('select string undefined')
+      return
+    }
     const panels = await this.panelsFacade.panelsByStringId(stringId)
     this.selectedStore.dispatch.selectString(string, panels)
     // this.linksPathService.orderPanelsInLinkOrderWithLinkAsync()
@@ -76,15 +87,16 @@ export class StringsEventService {
   }
 
   async addSelectedToNew(stringName: string) {
-    const selectedPanelIds = await firstValueFrom(
-      this.selectedStore.select.multiSelectIds$
-        .pipe(combineLatestWith(this.panelsStore.select.allPanels$))
-        .pipe(
-          map(([multiSelectIds, panels]) => {
-            return panels.filter((p) => multiSelectIds?.includes(p.id)).map((panels) => panels.id)
-          }),
-        ),
-    )
+    /*    const selectedPanelIds = await firstValueFrom(
+          this.selectedStore.select.multiSelectIds$
+            .pipe(combineLatestWith(this.panelsStore.select.allPanels$))
+            .pipe(
+              map(([multiSelectIds, panels]) => {
+                return panels.filter((p) => multiSelectIds?.includes(p.id)).map((panels) => panels.id)
+              }),
+            ),
+        )*/
+    const selectedPanelIds = await this.selectedFacade.multiSelectPanelIds()
     // console.log(selectedPanelIds)
     if (!selectedPanelIds) {
       return
@@ -108,23 +120,25 @@ export class StringsEventService {
   }
 
   async addSelectedToExisting(stringId: string) {
-    const selectedPanelIds = await firstValueFrom(
-      combineLatest([
-        this.selectedFacade.selectedIdWithType$,
-        this.selectedFacade.multiSelectIds$,
-        this.panelsFacade.allPanels$,
-      ]).pipe(
-        map(([selectedIdWithType, multiSelectIds, panels]) => {
-          if (multiSelectIds) {
-            return panels.filter((p) => multiSelectIds?.includes(p.id)).map((panels) => panels.id)
-          }
-          if (selectedIdWithType.singleSelectId && selectedIdWithType.type === BLOCK_TYPE.PANEL) {
-            return [selectedIdWithType.singleSelectId]
-          }
-          return undefined
-        }),
-      ),
-    )
+    /*    const selectedPanelIds = await firstValueFrom(
+          combineLatest([
+            this.selectedFacade.selectedIdWithType$,
+            this.selectedFacade.multiSelectIds$,
+            this.panelsFacade.allPanels$,
+          ]).pipe(
+            map(([selectedIdWithType, multiSelectIds, panels]) => {
+              if (multiSelectIds) {
+                return panels.filter((p) => multiSelectIds?.includes(p.id)).map((panels) => panels.id)
+              }
+              if (selectedIdWithType.singleSelectId && selectedIdWithType.type === BLOCK_TYPE.PANEL) {
+                return [selectedIdWithType.singleSelectId]
+              }
+              return undefined
+            }),
+          ),
+        )*/
+
+    const selectedPanelIds = await this.selectedFacade.multiSelectPanelIds()
 
     if (!selectedPanelIds) {
       return
@@ -140,10 +154,9 @@ export class StringsEventService {
   }
 
   async updateString(stringId: string, changes: Partial<StringModel>) {
-    const project = await this.projectsFacade.selectedProject()
-    const update: ProjectItemUpdate<StringModel> = {
+    // const project = await this.projectsFacade.selectedProject()
+    const update: UpdateStr<StringModel> = {
       id: stringId,
-      projectId: project.id,
       changes,
     }
 

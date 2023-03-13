@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { map, switchMap, tap } from 'rxjs/operators'
 import { SignalrEventsActions } from '../store'
-import { Logger, LoggerService } from '@shared/logger'
+import { BaseService } from '@shared/logger'
 import { SignalrEventsFacade, SignalrEventsRepository } from '../services'
 import { Store } from '@ngrx/store'
 import { Update } from '@ngrx/entity'
@@ -30,7 +30,7 @@ import { HandleEventsService } from '../utils/handle-events.service'
 @Injectable({
   providedIn: 'root',
 })
-export class SignalrEventsEffects extends Logger {
+export class SignalrEventsEffects extends BaseService {
   private actions$ = inject(Actions)
   private store = inject(Store)
   // private logger = inject(LoggerService)
@@ -38,9 +38,9 @@ export class SignalrEventsEffects extends Logger {
   private signalrEventsRepository = inject(SignalrEventsRepository)
   private handleEventsService = inject(HandleEventsService)
 
-  constructor(logger: LoggerService) {
-    super(logger)
-  }
+  /*  constructor(logger: LoggerService) {
+      super(logger)
+    }*/
 
   onReceiveSignalrEventV3$ = createEffect(
     () =>

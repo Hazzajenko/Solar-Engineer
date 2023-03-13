@@ -13,20 +13,20 @@ import {
 } from './panels.response'
 import { CreatePanel, ProjectsSignalrService } from '@projects/data-access'
 import { CreatePanelRequest } from '../../contracts'
-import { Logger, LoggerService } from '@shared/logger'
+import { BaseService } from '@shared/logger'
 
 @Injectable({
   providedIn: 'root',
 })
-export class PanelsService extends Logger {
+export class PanelsService extends BaseService {
   private http = inject(HttpClient)
   private projectsSignalrService = inject(ProjectsSignalrService)
 
   // private logger = inject(LoggerService)
 
-  constructor(logger: LoggerService) {
-    super(logger)
-  }
+  /*  constructor(logger: LoggerService) {
+      super(logger)
+    }*/
 
   addPanelSignalr(request: CreatePanelRequest) {
     if (!this.projectsSignalrService.projectsHubConnection) return

@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core'
-import { Logger, LoggerService } from '@shared/logger'
+import { BaseService } from '@shared/logger'
 import {
   PanelModel,
   ProjectModelType,
@@ -25,14 +25,14 @@ import { Store } from '@ngrx/store'
 @Injectable({
   providedIn: 'root',
 })
-export class HandleEventsService extends Logger {
+export class HandleEventsService extends BaseService {
   private signalrEventsRepository = inject(SignalrEventsRepository)
   private store = inject(Store)
   private signalrEventsFacade = inject(SignalrEventsFacade)
 
-  constructor(logger: LoggerService) {
-    super(logger)
-  }
+  /*  constructor(logger: LoggerService) {
+      super(logger)
+    }*/
 
   handleEvent(newEvent: ProjectSignalrEvent, existing?: ProjectSignalrEvent) {
     this.logDebug('handleEvent', newEvent)

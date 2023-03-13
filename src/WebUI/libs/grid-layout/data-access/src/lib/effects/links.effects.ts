@@ -14,19 +14,19 @@ import {
   ProjectSignalrJsonRequest,
 } from '@shared/data-access/models'
 import { getGuid } from '@shared/utils'
-import { Logger, LoggerService } from '@shared/logger'
+import { BaseService } from '@shared/logger'
 
 @Injectable()
-export class LinksEffects extends Logger {
+export class LinksEffects extends BaseService {
   private actions$ = inject(Actions)
   private store = inject(Store)
   private linksService = inject(LinksService)
   private projectsStore = inject(ProjectsStoreService)
   private signalrEventsService = inject(SignalrEventsService)
 
-  constructor(logger: LoggerService) {
-    super(logger)
-  }
+  /*  constructor(logger: LoggerService) {
+      super(logger)
+    }*/
 
   loadLinksSuccess$ = createEffect(() =>
     this.actions$.pipe(

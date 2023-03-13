@@ -31,9 +31,8 @@ import { LetModule } from '@ngrx/component'
 import { PanelModel, StringModel } from '@shared/data-access/models'
 import { EditStringDialog, ExistingStringsDialog } from '../dialogs'
 
-import { PanelNgModel } from '../models/panel-ng.model'
-
 import { firstValueFrom, Observable } from 'rxjs'
+import { PanelComponentState } from '../models/panel-component.state'
 
 @Component({
   selector: 'app-panel-menu',
@@ -60,8 +59,9 @@ export class PanelMenuComponent {
   //region Services
   public stringsFactory = inject(StringsEventService)
   public panelsFactory = inject(PanelsEventService)
-  @Input() panel!: PanelModel
-  @Input() panelNg!: PanelNgModel
+  // @Input() panel!: PanelModel
+  // @Input() panelNg!: PanelNgModel
+  @Input() panelComponentState!: PanelComponentState
   panel$!: Observable<PanelModel | undefined>
   color$!: Observable<string | undefined>
   menuTopLeftPosition = { x: '0', y: '0' }
@@ -81,14 +81,15 @@ export class PanelMenuComponent {
     await this.stringsFactory.select(panel.stringId)
   }
 
-  async editString(panel: PanelModel) {
+  async editString(stringId: string) {
+    // async editString(panel: PanelModel) {
     const dialogConfig = new MatDialogConfig()
 
     dialogConfig.disableClose = true
     dialogConfig.autoFocus = true
 
     dialogConfig.data = {
-      stringId: panel.stringId,
+      stringId: stringId,
     }
 
     const dialog = this.dialog.open(EditStringDialog, dialogConfig)
@@ -135,9 +136,10 @@ export class PanelMenuComponent {
     this.snack(`String ${stringId} deleted`)
   }
 
-  async rotatePanel(panel: PanelModel) {
-    const rotation = panel.rotation === 0 ? 1 : 0
-    await this.panelsFactory.updatePanel(panel.id, { rotation })
+  async rotatePanel(panelId: string, panelRotation: number) {
+    // async rotatePanel(panel: PanelModel) {
+    const rotation = panelRotation === 0 ? 1 : 0
+    await this.panelsFactory.updatePanel(panelId, { rotation })
   }
 
   async deletePanelLink(panelId: string, link: 'POSITIVE' | 'NEGATIVE') {

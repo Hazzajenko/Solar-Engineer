@@ -1,19 +1,21 @@
 import { Injectable } from '@angular/core'
 import * as signalR from '@microsoft/signalr'
 import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr'
-import { Logger, LoggerService } from '@shared/logger'
+import { BaseService } from '@shared/logger'
 
 @Injectable({
   providedIn: 'root',
 })
-export class MessagesSignalrService extends Logger {
+export class MessagesSignalrService extends BaseService {
   private messagesHubConnection?: HubConnection
 
   // private logger = inject(LoggerService)
 
-  constructor(logger: LoggerService) {
-    super(logger)
-  }
+  /*
+    constructor(logger: LoggerService) {
+      super(logger)
+    }
+  */
 
   createMessagesHubConnection(token: string) {
     this.messagesHubConnection = new HubConnectionBuilder()

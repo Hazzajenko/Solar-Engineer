@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
 import { StringsActions } from '../../store'
 import { StringModel } from '@shared/data-access/models'
-import { ProjectItemUpdate } from '@shared/utils'
+import { UpdateStr } from '@ngrx/entity/src/models'
 
 @Injectable({ providedIn: 'root' })
 export class StringsRepository {
@@ -20,7 +20,7 @@ export class StringsRepository {
     this.store.dispatch(StringsActions.createStringWithPanels({ string, panelIds }))
   }
 
-  update(update: ProjectItemUpdate<StringModel>) {
+  update(update: UpdateStr<StringModel>) {
     this.store.dispatch(StringsActions.updateString({ update }))
   }
 

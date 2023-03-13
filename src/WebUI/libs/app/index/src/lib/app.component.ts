@@ -19,7 +19,7 @@ import { InitLoginPipe } from '@app/shared'
 import { HttpClient } from '@angular/common/http'
 import { SidenavComponent } from '@app/feature/sidenav'
 import { RouterFacade } from '@shared/data-access/router'
-import { Logger, LoggerService } from '@shared/logger'
+import { BaseService } from '@shared/logger'
 
 @Component({
   standalone: true,
@@ -45,7 +45,7 @@ import { Logger, LoggerService } from '@shared/logger'
   templateUrl: './app.component.html',
   styles: [],
 })
-export class AppComponent extends Logger implements OnInit {
+export class AppComponent extends BaseService implements OnInit {
   title = 'web'
   // private logger = inject(LoggerService)
   private authStore = inject(AuthStoreService)
@@ -59,9 +59,11 @@ export class AppComponent extends Logger implements OnInit {
   private dialog = inject(MatDialog)
   private router = inject(Router)
 
-  constructor(logger: LoggerService) {
-    super(logger)
-  }
+  /*
+    constructor(logger: LoggerService) {
+      super(logger)
+    }
+  */
 
   user$ = this.authStore.select.user$
   projects$ = this.projectsStore.select.allProjects$

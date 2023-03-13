@@ -1,7 +1,6 @@
 <ng-container *ngIf='blocks$ | async as blocks'>
   <ng-container *ngrxLet='keyPressed$ | async as keyPressed'>
     <ng-container *ngrxLet='scale$ | async as scaleUI'>
-
       <div
         class='h-fit w-fit containerDIV flex flex-col items-center relative left-0 top-0 justify-center overflow-hidden'
         [style.min-width]='gridContainerWidth'
@@ -10,10 +9,11 @@
         <!--        [style.min-width]='containerSizes.gridContainerWidthString'-->
         <!--        [style.min-height]='containerSizes.gridContainerHeightString'-->
         <!--  <div class='h-fit w-fit containerDIV border border-black'
+
+          [startDragging]="clientXY"
           >-->
         <canvas
           appCanvas
-          [startDragging]='clientXY'
           [startDraggingWithPage]='pageXY'
           [gridMode]='(gridMode$ | async)!'
           [canvasOffsets]='offsets'
@@ -24,7 +24,6 @@
           class='pointer-events-none absolute z-10'
           style='overflow: hidden; z-index: 10'
         >
-          
           <!--        width: 100%; height: 100%;-->
           <!-- [startDragging]='(clientXY$ | async)!'-->
         </canvas>
@@ -66,7 +65,7 @@
 
             <div *ngFor='let n of numSequence(rows); let row = index' class='flex'>
               <div *ngFor='let n of numSequence(cols); let col = index'>
-                <ng-container *ngrxLet='row | getLocation: col; let location'>
+                <ng-container *ngrxLet='row | getLocation : col; let location'>
                   <div
                     (cdkDropListDropped)='drop($event)'
                     [id]='location'
@@ -78,8 +77,12 @@
                   >
                     <!--                      (click)='click({ event: $event, location })'-->
                     <!--                      (dblclick)='doubleCLick({event: $event, location })'-->
-                    <ng-container *ngIf='blocks | getBlock: location as block'>
-                      <ng-template appDynamic [block]='block'></ng-template>
+                    <ng-container *ngIf='blocks | getBlock : location as block'>
+                      <ng-template
+                        appDynamic
+                        [blockId]='{ blockId: block.id, blockType: block.type }'
+                      ></ng-template>
+                      <!--                      <ng-template appDynamic [block]='block'></ng-template>-->
                     </ng-container>
                   </div>
                 </ng-container>
@@ -97,7 +100,6 @@
           </ng-container>
         </ng-container>
       </div>
-
     </ng-container>
   </ng-container>
 </ng-container>

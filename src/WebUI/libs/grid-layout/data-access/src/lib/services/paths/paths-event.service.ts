@@ -5,17 +5,18 @@ import { ProjectsFacade } from '@projects/data-access'
 import {
   PanelIdPath,
   PanelPathModel,
+  PanelPathModelV2,
   PathModel,
   SelectedPanelLinkPathModel,
   SelectedPathModel,
 } from '@shared/data-access/models'
 import { LinksPathService } from '../links'
-import { Logger, LoggerService } from '@shared/logger'
+import { BaseService } from '@shared/logger'
 
 @Injectable({
   providedIn: 'root',
 })
-export class PathsEventService extends Logger {
+export class PathsEventService extends BaseService {
   private projectsFacade = inject(ProjectsFacade)
   private selectedFacade = inject(SelectedFacade)
 
@@ -25,9 +26,9 @@ export class PathsEventService extends Logger {
 
   // private logger = inject(LoggerService)
 
-  constructor(logger: LoggerService) {
-    super(logger)
-  }
+  /*  constructor(logger: LoggerService) {
+      super(logger)
+    }*/
 
   async createPath(panelId: string, panelPath: PanelPathModel) {
     const project = await this.projectsFacade.projectFromRoute
@@ -110,6 +111,12 @@ export class PathsEventService extends Logger {
       const panelPath: SelectedPathModel = {
         panelId: panelIdPath.panelId,
         count: panelIdPath.path.count,
+      }
+      const panelPath2: PanelPathModelV2 = {
+        panelId: panelIdPath.panelId,
+        count: panelIdPath.path.count,
+        color: panelIdPath.path.color,
+        link: panelIdPath.path.link,
       }
       return panelPath
     })

@@ -8,12 +8,12 @@ import { GridEventService } from '../grid'
 import { PanelsEventService } from '../panels'
 import { LinksEventService } from '../links'
 import { MouseEventRequest } from '../../models'
-import { Logger, LoggerService } from '@shared/logger'
+import { BaseService } from '@shared/logger'
 
 @Injectable({
   providedIn: 'root',
 })
-export class DoubleClickService extends Logger {
+export class DoubleClickService extends BaseService {
   private blocksStore = inject(BlocksStoreService)
   private panelsStore = inject(PanelsStoreService)
   private selectedFactory = inject(SelectedEventService)
@@ -24,9 +24,9 @@ export class DoubleClickService extends Logger {
 
   // private logger = inject(LoggerService)
 
-  constructor(logger: LoggerService) {
-    super(logger)
-  }
+  /*  constructor(logger: LoggerService) {
+      super(logger)
+    }*/
 
   async doubleCLick(doubleClick: MouseEventRequest) {
     if (doubleClick.event.type !== 'dblclick') {

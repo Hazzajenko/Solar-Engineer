@@ -164,6 +164,10 @@ export class GridLayoutComponent implements OnInit {
     this.initScreenSize()
   }
 
+  trackByBlockId(index: number, block: BlockModel) {
+    return block.id
+  }
+
   initScreenSize() {
     this.rows = Math.floor((this.getScreenHeight - 100) / this.blockHeight)
     this.cols = Math.floor((this.getScreenWidth - 100) / this.blockWidth)

@@ -13,12 +13,12 @@ import {
   PanelsStoreService,
 } from '../..'
 import { BLOCK_TYPE, BlockModel, GridMode } from '@shared/data-access/models'
-import { Logger, LoggerService } from '@shared/logger'
+import { BaseService } from '@shared/logger'
 
 @Injectable({
   providedIn: 'root',
 })
-export class ClickService extends Logger {
+export class ClickService extends BaseService {
   private gridFacade = inject(GridFacade)
   private blocksFacade = inject(BlocksFacade)
   private panelsFacade = inject(PanelsFacade)
@@ -33,9 +33,9 @@ export class ClickService extends Logger {
   private panelsFactory = inject(PanelsEventService)
   private linksService = inject(LinksEventService)
 
-  constructor(logger: LoggerService) {
-    super(logger)
-  }
+  /*  constructor(logger: LoggerService) {
+      super(logger)
+    }*/
 
   async click(click: MouseEventRequest) {
     if (click.event.altKey) {

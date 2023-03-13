@@ -1,6 +1,11 @@
-import { getGuid } from '@shared/utils'
-
 export interface PanelPathModel {
+  link: number
+  count: number
+  color: string
+}
+
+export interface PanelPathModelV2 {
+  panelId: string
   link: number
   count: number
   color: string
@@ -21,6 +26,8 @@ export interface PathOptions {
   color: string
   // panelPath: PanelPathModel
 }
+
+/*
 
 export class PathModel {
   id: string
@@ -43,6 +50,7 @@ export class PathModel {
     this.color = options.color
   }
 }
+*/
 
 export interface SelectedPathModel {
   panelId: string

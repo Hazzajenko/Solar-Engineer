@@ -8,7 +8,7 @@ import {
 import { ProjectsStoreService, SignalrEventsRepository } from '../services'
 import { GetManyProjects, GetProject, SendProjectEvent } from './projects.methods'
 import { GetProjectDataResponse } from '../models/get-project-data.response'
-import { Logger, LoggerService } from '@shared/logger'
+import { BaseService } from '@shared/logger'
 import {
   LinksStoreService,
   PanelsStoreService,
@@ -21,7 +21,7 @@ import { ReceiveProjectEvent, ReceiveProjectEvents } from './projects-signalr.ha
 @Injectable({
   providedIn: 'root',
 })
-export class ProjectsSignalrService extends Logger {
+export class ProjectsSignalrService extends BaseService {
   public projectsHubConnection?: HubConnection
   private projectsStore = inject(ProjectsStoreService)
   private panelsStore = inject(PanelsStoreService)
@@ -32,9 +32,9 @@ export class ProjectsSignalrService extends Logger {
 
   private signalrEventsRepository = inject(SignalrEventsRepository)
 
-  constructor(logger: LoggerService) {
-    super(logger)
-  }
+  /*  constructor(logger: LoggerService) {
+      super(logger)
+    }*/
 
   createProjectsHubConnection(token: string) {
     if (this.projectsHubConnection) return this.projectsHubConnection
