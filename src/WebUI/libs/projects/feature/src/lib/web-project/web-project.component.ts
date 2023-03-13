@@ -5,11 +5,12 @@ import { ProjectsStoreService } from '@projects/data-access'
 import { BlockModel, ProjectModel } from '@shared/data-access/models'
 import { Observable } from 'rxjs'
 import { BlocksStoreService } from '@grid-layout/data-access'
+import { ProjectsBreadcrumbBarComponent } from '../projects-breadcrumb-bar'
 
 @Component({
   selector: 'app-web-project',
   standalone: true,
-  imports: [CommonModule, GridLayoutComponent],
+  imports: [CommonModule, GridLayoutComponent, ProjectsBreadcrumbBarComponent],
   templateUrl: './web-project.component.html',
   styles: [],
 })

@@ -1,8 +1,9 @@
+<!--
 <div class="w-[300px] mx-2">
   <ng-container *ngrxLet="user$ | async as user">
     <ng-container *ngIf="user; else notLoggedIn">
       <p>{{ user.displayName }}</p>
-      <!--          <p>{{user.firstName}}</p>-->
+      &lt;!&ndash;          <p>{{user.firstName}}</p>&ndash;&gt;
 
       <div *ngIf="projects$ | async as projects" class="min-w-max">
         <button style="width: 100%; min-width: 100%" (click)="showProjects()" mat-button>
@@ -20,7 +21,7 @@
               [routerLink]="user.displayName + '/' + project.name"
               >{{ project.name }}</a
             >
-            <!--                <a mat-list-item routerLink='.'>Projects</a>-->
+            &lt;!&ndash;                <a mat-list-item routerLink='.'>Projects</a>&ndash;&gt;
           </mat-nav-list>
         </ng-container>
       </div>
@@ -50,23 +51,23 @@
         <ng-container *ngIf="viewNotifications">
           <mat-nav-list>
             <ng-container *ngFor="let notification of notifications" [ngSwitch]="notification.type">
-              <!--              <ng-container *ngSwitchCase='1'>
+              &lt;!&ndash;              <ng-container *ngSwitchCase='1'>
                               <a>
                                 <span matListItemTitle>Friend Request</span>
                                 <span matListItemLine>{{notification.requestTime | date : 'short'}}</span>
                                 <span matListItemLine>From {{notification.friendRequest.requestedByUserName}}</span>
                               </a>
 
-                            </ng-container>-->
+                            </ng-container>&ndash;&gt;
             </ng-container>
-            <!--                <a *ngFor='let notification of notifications' mat-list-item
+            &lt;!&ndash;                <a *ngFor='let notification of notifications' mat-list-item
                                (click)='drawer.toggle()'
-                               routerLink=''>{{notification.requestTime}}</a>-->
+                               routerLink=''>{{notification.requestTime}}</a>&ndash;&gt;
           </mat-nav-list>
         </ng-container>
       </div>
 
-      <!--<mat-accordion class='shadow-none bg-inherit' multi>
+      &lt;!&ndash;<mat-accordion class='shadow-none bg-inherit' multi>
         <mat-expansion-panel class='shadow-none bg-inherit'
         >
           <mat-expansion-panel-header>
@@ -99,8 +100,12 @@
   </mat-nav-list>
 
 
-  <button (click)='closeDrawer()' mat-raised-button color='primary'>Close</button>-->
+  <button (click)='closeDrawer()' mat-raised-button color='primary'>Close</button>&ndash;&gt;
     </ng-container>
     <ng-template #notLoggedIn></ng-template>
   </ng-container>
+</div>
+-->
+<div class="w-[300px]">
+  <app-shared-sidenav-component />
 </div>

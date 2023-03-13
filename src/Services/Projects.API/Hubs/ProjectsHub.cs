@@ -2,6 +2,7 @@
 using Mediator;
 using Microsoft.AspNetCore.SignalR;
 using Projects.API.Contracts.Requests.Projects;
+using Projects.API.Handlers.Projects.CreateProject;
 using Projects.API.Handlers.SignalR;
 using Projects.API.Handlers.SignalR.OnConnected;
 using Projects.API.Mapping;
@@ -38,6 +39,12 @@ public class ProjectsHub : Hub<IProjectsHub>
         Log.Logger.Information("Disconnected: {ConnectionId}", Context.ConnectionId);
         Connections.Remove(Context.ToHubAppUser().Id.ToString(), Context.ConnectionId);
         await base.OnDisconnectedAsync(exception);
+    }
+
+    public async Task CreateProject(CreateProjectRequest request)
+    {
+        var command = new CreateProjectCommand(Context.ToHubAppUser(), request);
+        await _mediator.Send(command);
     }
 
     public async Task GetUserProjects()

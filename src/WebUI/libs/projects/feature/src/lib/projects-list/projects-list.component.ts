@@ -9,7 +9,7 @@ import { ProjectModel } from '@shared/data-access/models'
 import { Observable } from 'rxjs'
 
 @Component({
-  selector: 'app-project-list',
+  selector: 'app-projects-list',
   standalone: true,
   imports: [CommonModule, MatListModule, MatProgressSpinnerModule],
   templateUrl: './projects-list.component.html',
@@ -45,12 +45,10 @@ export class ProjectsListComponent {
     this.loading = true
     await this.authStore.select.isLoggedIn()
 
-
     await this.router.navigate([`projects/${project.name}`]).then(() => {
-        this.projectsStore.dispatch.initSelectProject(project.id)
-        this.loading = false
-      },
-    )
+      this.projectsStore.dispatch.initSelectProject(project.id)
+      this.loading = false
+    })
   }
 
   instanceOfNavigationStart(routerEvents: RouterEvent | any) {

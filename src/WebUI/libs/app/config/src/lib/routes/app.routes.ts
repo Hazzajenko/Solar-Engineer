@@ -24,6 +24,10 @@ export const appRoutes: Route[] = [
     loadComponent: () => import('@auth/feature').then((m) => m.AuthenticatedPageComponent),
   },
   {
+    path: 'user-settings',
+    loadComponent: () => import('@app/feature/user-settings').then((m) => m.UserSettingsComponent),
+  },
+  {
     path: 'projects/local',
     loadComponent: () => import('@projects/feature').then((m) => m.LocalProjectComponent),
     providers: [projectsProviders],
@@ -32,7 +36,7 @@ export const appRoutes: Route[] = [
   /*  {
       path: 'user/:userName',
       loadComponent: () =>
-        import('@app/feature/userName-profile').then((m) => m.UsernameProfileComponent),
+        import('@app/feature/userName-profile').then((m) => m.UsersOverlayComponent),
       canActivate: [loggedInGuard],
       resolve: { userNameProfile: UserNameProfileResolver },
     },*/
@@ -50,6 +54,26 @@ export const appRoutes: Route[] = [
       providers: [projectsProviders],
       resolve: { project: SelectProjectResolver },
     },*/
+  {
+    path: 'projects/new',
+    loadComponent: () => import('@projects/feature').then((m) => m.NewProjectHomeComponent),
+  },
+  {
+    path: 'projects/search',
+    loadComponent: () => import('@projects/feature').then((m) => m.ProjectsCommandPaletteComponent),
+  },
+  {
+    path: 'projects/add-members',
+    loadComponent: () => import('@projects/feature').then((m) => m.AddProjectMembersComponent),
+  },
+  {
+    path: 'projects/add-item',
+    loadComponent: () => import('@projects/feature').then((m) => m.AddProjectItemComponent),
+  },
+  {
+    path: 'projects/settings',
+    loadComponent: () => import('@projects/feature').then((m) => m.ProjectsSettingsComponent),
+  },
   {
     path: 'projects/:projectName',
     loadComponent: () => import('@projects/feature').then((m) => m.WebProjectComponent),

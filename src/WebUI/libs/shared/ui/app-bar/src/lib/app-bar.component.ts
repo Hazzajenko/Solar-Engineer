@@ -65,7 +65,7 @@ export class AppBarComponent {
     } as MatDialogConfig
 
     this.dialog.open(MainDialogComponent, dialogConfig)
-    // this.dialog.open(AppUserProfileComponent, dialogConfig)
+    // this.dialog.open(UserSettingsComponent, dialogConfig)
     // this.dialog.open(ProfileDialog, dialogConfig)
   }
 

@@ -8,7 +8,13 @@ import { NavigationStart, Router, RouterEvent, RouterLink } from '@angular/route
 import { AuthStoreService } from '@auth/data-access'
 import { LetModule } from '@ngrx/component'
 import { ProjectsFacade } from '@projects/data-access'
-import { ProjectsListComponent } from '@projects/feature'
+import {
+  CreateProjectOverlayComponent,
+  NoProjectsComponent,
+  ProjectsBreadcrumbBarComponent,
+  ProjectsCardsComponent,
+  ProjectsListComponent,
+} from '@projects/feature'
 import { LogoNameBackgroundV2Component } from '@shared/ui/logo'
 import { ConnectionsStoreService } from '@app/data-access/connections'
 import { fadeIn, fadeInV2 } from './animations/animations'
@@ -21,6 +27,13 @@ import { SignInDialog } from '@auth/feature'
 import { AuthorizeResponse } from './authorize-response'
 import { CreateProjectDialog } from './dialogs/create-project/create-project.dialog'
 import { OnlineUsersDialog } from './dialogs/online-users/online-users.dialog'
+import { StatisticsComponent } from '@shared/ui/statistics'
+import { UsersOverlayComponent } from '@app/feature/users-overlay'
+import {
+  RequestNotificationComponent,
+  SuccessNotificationComponent,
+} from '@shared/ui/notifications'
+import { CancelModalComponent, SuccessModalComponent } from '@shared/ui/modals'
 
 @Component({
   selector: 'app-home',
@@ -35,6 +48,16 @@ import { OnlineUsersDialog } from './dialogs/online-users/online-users.dialog'
     LetModule,
     GoogleLoginButtonComponent,
     GoogleLoginSvgButtonComponent,
+    ProjectsCardsComponent,
+    ProjectsBreadcrumbBarComponent,
+    StatisticsComponent,
+    CreateProjectOverlayComponent,
+    UsersOverlayComponent,
+    SuccessNotificationComponent,
+    RequestNotificationComponent,
+    SuccessModalComponent,
+    CancelModalComponent,
+    NoProjectsComponent,
   ],
   templateUrl: './home.component.html',
   styles: [],
@@ -77,6 +100,10 @@ export class HomeComponent implements OnInit {
 
   routerEvents$ = this.router.events
   profile: any
+  createProjectOverlayEnabled = false
+  viewUsersOverlayEnabled = false
+  notificationsEnabled = false
+  modalEnabled = false
 
   ngOnInit(): void {
     /*    this.auth0.handleAuthentication()
@@ -439,5 +466,30 @@ export class HomeComponent implements OnInit {
           })*/
     // this.location.go(url)
     // window.location.reload()
+  }
+
+  startProjectWithOverlay() {
+    this.createProjectOverlayEnabled = true
+  }
+
+  viewUsersOverlay() {
+    this.viewUsersOverlayEnabled = true
+  }
+
+  showNotification() {
+    this.notificationsEnabled = true
+    /*    this.notificationService.showNotification(
+      'This is a test notification',
+      'test',
+      NotificationType.Success,
+    )*/
+  }
+
+  showModal() {
+    this.modalEnabled = true
+  }
+
+  newProjectHome() {
+    this.router.navigateByUrl('/projects/new').catch((err) => err)
   }
 }

@@ -15,8 +15,8 @@ import {
   StringsStoreService,
 } from '@grid-layout/data-access'
 import { SignalrService } from '@app/data-access/signalr'
-import { GetProjectById, GetUserProjects } from './projects-signalr.invoke-methods'
-import { ReceiveProjectEvent, ReceiveProjectEvents } from './projects-signalr.handlers'
+import { CreateProject, GetProjectById, GetUserProjects } from './projects-signalr.invoke-methods'
+import { NewProject, ReceiveProjectEvent, ReceiveProjectEvents } from './projects-signalr.handlers'
 
 @Injectable({
   providedIn: 'root',
@@ -44,6 +44,11 @@ export class ProjectsSignalrService extends BaseService {
       '/hubs/projects',
       GetUserProjects,
     )
+
+    this.projectsHubConnection.on(NewProject, (project: ProjectModel) => {
+      this.logDebug(NewProject, project)
+      this.projectsStore.dispatch.addProject(project)
+    })
 
     this.projectsHubConnection.on(GetManyProjects, (projects: ProjectModel[]) => {
       this.logDebug(GetManyProjects, projects)
@@ -75,6 +80,16 @@ export class ProjectsSignalrService extends BaseService {
     })
 
     return this.projectsHubConnection
+  }
+
+  createProject(projectName: string) {
+    if (!this.projectsHubConnection) return
+    const request = {
+      projectName,
+    }
+    this.projectsHubConnection
+      .invoke(CreateProject, request)
+      .catch((err) => this.logError(CreateProject, err))
   }
 
   getUserProjects() {

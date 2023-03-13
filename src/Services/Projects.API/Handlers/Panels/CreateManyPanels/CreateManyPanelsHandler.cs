@@ -1,6 +1,5 @@
 ﻿using Infrastructure.Exceptions;
 using Infrastructure.Extensions;
-using MapsterMapper;
 using Mediator;
 using Microsoft.AspNetCore.SignalR;
 using Projects.API.Contracts.Data;
@@ -15,20 +14,17 @@ public class CreateManyPanelsHandler : ICommandHandler<CreateManyPanelsCommand, 
 {
     private readonly IHubContext<ProjectsHub, IProjectsHub> _hubContext;
     private readonly ILogger<CreateManyPanelsHandler> _logger;
-    private readonly IMapper _mapper;
     private readonly IProjectsUnitOfWork _unitOfWork;
 
     public CreateManyPanelsHandler(
         ILogger<CreateManyPanelsHandler> logger,
         IProjectsUnitOfWork unitOfWork,
-        IHubContext<ProjectsHub, IProjectsHub> hubContext,
-        IMapper mapper
+        IHubContext<ProjectsHub, IProjectsHub> hubContext
     )
     {
         _logger = logger;
         _unitOfWork = unitOfWork;
         _hubContext = hubContext;
-        _mapper = mapper;
     }
 
     public async ValueTask<bool> Handle(CreateManyPanelsCommand command, CancellationToken cT)

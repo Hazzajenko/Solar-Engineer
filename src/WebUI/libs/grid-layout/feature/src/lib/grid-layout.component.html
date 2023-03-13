@@ -1,105 +1,105 @@
-<ng-container *ngIf='blocks$ | async as blocks'>
-  <ng-container *ngrxLet='keyPressed$ | async as keyPressed'>
-    <ng-container *ngrxLet='scale$ | async as scaleUI'>
-      <div
-        class='h-fit w-fit containerDIV flex flex-col items-center relative left-0 top-0 justify-center overflow-hidden'
-        [style.min-width]='gridContainerWidth'
-        [style.min-height]='gridContainerHeight'
+<ng-container *ngIf="blocks$ | async as blocks">
+  <ng-container *ngrxLet="keyPressed$ | async as keyPressed">
+    <div
+      class="h-fit w-fit containerDIV flex flex-col items-center relative left-0 top-0 justify-center overflow-hidden"
+      [style.min-width]="gridContainerWidth"
+      [style.min-height]="gridContainerHeight"
+    >
+      <!--        [style.min-width]='containerSizes.gridContainerWidthString'-->
+      <!--        [style.min-height]='containerSizes.gridContainerHeightString'-->
+      <!--  <div class='h-fit w-fit containerDIV border border-black'
+
+        [startDragging]="clientXY"
+        >-->
+      <!--   [startDraggingWithPage]="pageXY"
+         [gridMode]="(gridMode$ | async)!"
+         [canvasOffsets]="offsets"
+         [setScale]="scaleUI"
+         [setStringPaths]="(panelLinkPath$ | async)!"-->
+      <!--        appCanvas-->
+      <canvas
+        [style.min-height]="layoutHeightString"
+        [style.min-width]="layoutWidthString"
+        class="pointer-events-none absolute z-10"
+        style="overflow: hidden; z-index: 10"
       >
-        <!--        [style.min-width]='containerSizes.gridContainerWidthString'-->
-        <!--        [style.min-height]='containerSizes.gridContainerHeightString'-->
-        <!--  <div class='h-fit w-fit containerDIV border border-black'
-
-          [startDragging]="clientXY"
-          >-->
-        <canvas
-          appCanvas
-          [startDraggingWithPage]='pageXY'
-          [gridMode]='(gridMode$ | async)!'
-          [canvasOffsets]='offsets'
-          [setScale]='scaleUI'
-          [setStringPaths]='(panelLinkPath$ | async)!'
-          [style.min-height]='layoutHeightString'
-          [style.min-width]='layoutWidthString'
-          class='pointer-events-none absolute z-10'
-          style='overflow: hidden; z-index: 10'
-        >
-          <!--        width: 100%; height: 100%;-->
-          <!-- [startDragging]='(clientXY$ | async)!'-->
-        </canvas>
+        <!--        width: 100%; height: 100%;-->
+        <!-- [startDragging]='(clientXY$ | async)!'-->
+        <!--          (clientXY)="clientXY = $event"-->
+        <!--          (pageXY)="pageXY = $event"-->
+      </canvas>
+      <div
+        appWrapper
+        appKeyMap
+        [gridMode]="(gridMode$ | async)!"
+        [canvasOffsets]="offsets"
+        [setStringPaths]="(panelLinkPath$ | async)!"
+        [keyUp]="keyPressed"
+        (resetKeyUp)="keyUp = $event"
+        [style.height]="layoutHeightString"
+        [style.width]="layoutWidthString"
+        class="appWrapper flex flex-col items-center relative"
+      >
+        <!--          style='transition: transform .01s; transform-origin: 0 0;'-->
+        <!--      transition: transform .1s;
+              transform-origin: 0 0;-->
+        <!--      (zoomedIn)='isZoomed = $event'
+              (outputScale)='scale = $event'-->
+        <!--          style='transition: transform .1s; transform-origin: 0 0 '-->
         <div
-          appWrapper
-          appKeyMap
-          [keyUp]='keyPressed'
-          (resetKeyUp)='keyUp = $event'
-          [style.height]='layoutHeightString'
-          [style.width]='layoutWidthString'
-          [setScale]='scaleUI'
-          (clientXY)='clientXY = $event'
-          (pageXY)='pageXY = $event'
-          class='appWrapper flex flex-col items-center relative'
+          appGrid
+          (elementOffsets)="offsets = $event"
+          (outputScale)="scale = $event"
+          [keyUp]="keyPressed"
+          (resetKeyUp)="keyUp = $event"
+          style="transition: transform 0.1s; transform-origin: 0 0"
+          cdkDropListGroup
+          [style.height]="layoutHeightString"
+          [style.width]="layoutWidthString"
+          class="appGrid flex flex-col items-center relative"
         >
-          <!--          style='transition: transform .01s; transform-origin: 0 0;'-->
-          <!--      transition: transform .1s;
-                transform-origin: 0 0;-->
-          <!--      (zoomedIn)='isZoomed = $event'
-                (outputScale)='scale = $event'-->
-          <!--          style='transition: transform .1s; transform-origin: 0 0 '-->
-          <div
-            appGrid
-            (elementOffsets)='offsets = $event'
-            (outputScale)='scale = $event'
-            [keyUp]='keyPressed'
-            (resetKeyUp)='keyUp = $event'
-            style='transition: transform 0.1s; transform-origin: 0 0'
-            cdkDropListGroup
-            [style.height]='layoutHeightString'
-            [style.width]='layoutWidthString'
-            class='appGrid flex flex-col items-center relative'
-          >
-            <app-grid-background
-              [style.height]='backgroundHeight'
-              [style.width]='backgroundWidth'
-              class='pointer-events-none absolute flex flex-col items-center'
-            />
+          <app-grid-background
+            [style.height]="backgroundHeight"
+            [style.width]="backgroundWidth"
+            class="pointer-events-none absolute flex flex-col items-center"
+          />
 
-            <div *ngFor='let n of numSequence(rows); let row = index' class='flex'>
-              <div *ngFor='let n of numSequence(cols); let col = index'>
-                <ng-container *ngrxLet='row | getLocation : col; let location'>
-                  <div
-                    (cdkDropListDropped)='drop($event)'
-                    [id]='location'
-                    bind-attr.location='location'
-                    cdkDropList
-                    [style.width]='blockWidthString'
-                    [style.height]='blockHeightString'
-                    class='flex justify-center items-center'
-                  >
-                    <!--                      (click)='click({ event: $event, location })'-->
-                    <!--                      (dblclick)='doubleCLick({event: $event, location })'-->
-                    <ng-container *ngIf='blocks | getBlock : location as block'>
-                      <ng-template
-                        appDynamic
-                        [blockId]='{ blockId: block.id, blockType: block.type }'
-                      ></ng-template>
-                      <!--                      <ng-template appDynamic [block]='block'></ng-template>-->
-                    </ng-container>
-                  </div>
-                </ng-container>
-              </div>
+          <div *ngFor="let n of numSequence(rows); let row = index" class="flex">
+            <div *ngFor="let n of numSequence(cols); let col = index">
+              <ng-container *ngrxLet="row | getLocation : col; let location">
+                <div
+                  (cdkDropListDropped)="drop($event)"
+                  [id]="location"
+                  bind-attr.location="location"
+                  cdkDropList
+                  [style.width]="blockWidthString"
+                  [style.height]="blockHeightString"
+                  class="flex justify-center items-center"
+                >
+                  <!--                      (click)='click({ event: $event, location })'-->
+                  <!--                      (dblclick)='doubleCLick({event: $event, location })'-->
+                  <ng-container *ngIf="blocks | getBlock : location as block">
+                    <ng-template
+                      appDynamic
+                      [blockId]="{ blockId: block.id, blockType: block.type }"
+                    ></ng-template>
+                    <!--                      <ng-template appDynamic [block]='block'></ng-template>-->
+                  </ng-container>
+                </div>
+              </ng-container>
             </div>
           </div>
         </div>
-        <ng-container *ngIf='uiState$ | async as uiState'>
-          <app-keymap-overlay *ngIf='uiState.keyMap'></app-keymap-overlay>
-          <ng-container *ngIf='uiState.stringStats'>
-            <app-string-totals-overlay
-              *ngIf='selectedString$ | async as selectedString'
-              [selectedString]='selectedString'
-            ></app-string-totals-overlay>
-          </ng-container>
-        </ng-container>
       </div>
-    </ng-container>
+      <ng-container *ngIf="uiState$ | async as uiState">
+        <app-keymap-overlay *ngIf="uiState.keyMap"></app-keymap-overlay>
+        <ng-container *ngIf="uiState.stringStats">
+          <app-string-totals-overlay
+            *ngIf="selectedString$ | async as selectedString"
+            [selectedString]="selectedString"
+          ></app-string-totals-overlay>
+        </ng-container>
+      </ng-container>
+    </div>
   </ng-container>
 </ng-container>

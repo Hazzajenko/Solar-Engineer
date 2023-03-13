@@ -35,7 +35,6 @@ import { WrapperDirective } from './directives/wrapper.directive'
 import { GetBlockPipe } from './pipes/get-block.pipe'
 import { GetLocationPipe } from './pipes/get-location.pipe'
 import { GridBackgroundComponent } from './ui/grid-background/grid-background.component'
-import { ContainerSizes } from './container-sizes'
 
 @Component({
   selector: 'app-grid-layout',
@@ -200,29 +199,5 @@ export class GridLayoutComponent implements OnInit {
     this.snackBar.open(message, action, {
       duration,
     })
-  }
-
-  private initContainerSize() {
-    const gridContainerWidth = window.innerWidth
-    const gridContainerHeight = window.innerHeight
-    const gridContainerWidthString = `${window.innerWidth}px`
-    const gridContainerHeightString = `${window.innerHeight}px`
-    const rows = Math.floor((gridContainerHeight - 100) / this.blockHeight)
-    const cols = Math.floor((gridContainerWidth - 100) / this.blockWidth)
-    const layoutHeight = rows * this.blockHeight
-    const layoutWidth = cols * this.blockWidth
-    const layoutWidthString = `${layoutWidth}px`
-    const layoutHeightString = `${layoutHeight}px`
-    const backgroundHeightString = `${layoutHeight + 1}px`
-    const backgroundWidthString = `${layoutWidth + 1}px`
-    const containerSizes: ContainerSizes = {
-      gridContainerWidthString,
-      gridContainerHeightString,
-      layoutWidthString,
-      layoutHeightString,
-      backgroundHeightString,
-      backgroundWidthString,
-    }
-    return containerSizes
   }
 }

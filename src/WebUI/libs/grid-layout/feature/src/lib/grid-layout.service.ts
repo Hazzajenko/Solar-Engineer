@@ -1,34 +1,34 @@
 import { Injectable } from '@angular/core'
-import { ContainerSizes } from './container-sizes'
+import { BaseService } from '@shared/logger'
 
 @Injectable({
   providedIn: 'root',
 })
-export class GridLayoutService {
-  blockHeight = 32
-  blockWidth = 32
+export class GridLayoutService extends BaseService {
+  private _blockComponentsLoaded = 0
+  amountOfInitialBlocks?: number
 
-  initContainerSize(innerHeight: number, innerWidth: number) {
-    const gridContainerWidth = innerWidth
-    const gridContainerHeight = innerHeight
-    const gridContainerWidthString = `${innerWidth}px`
-    const gridContainerHeightString = `${innerHeight}px`
-    const rows = Math.floor((gridContainerHeight - 100) / this.blockHeight)
-    const cols = Math.floor((gridContainerWidth - 100) / this.blockWidth)
-    const layoutHeight = rows * this.blockHeight
-    const layoutWidth = cols * this.blockWidth
-    const layoutWidthString = `${layoutWidth}px`
-    const layoutHeightString = `${layoutHeight}px`
-    const backgroundHeightString = `${layoutHeight + 1}px`
-    const backgroundWidthString = `${layoutWidth + 1}px`
-    const containerSizes: ContainerSizes = {
-      gridContainerWidthString,
-      gridContainerHeightString,
-      layoutWidthString,
-      layoutHeightString,
-      backgroundHeightString,
-      backgroundWidthString,
+  /*
+    get blockComponentsLoaded() {
+      return this._blockComponentsLoaded
     }
-    return containerSizes
+
+    set blockComponentsLoaded(value: number) {
+      this._blockComponentsLoaded = value
+      if (this.amountOfInitialBlocks === undefined) return
+      this.logDebug('blockComponentsLoaded', this._blockComponentsLoaded)
+      if (this._blockComponentsLoaded === this.amountOfInitialBlocks) {
+        // console.log('All blocks loaded')
+        this.logDebug('All blocks loaded')
+      }
+    }*/
+
+  increaseByOne() {
+    this._blockComponentsLoaded++
+    if (this._blockComponentsLoaded === this.amountOfInitialBlocks) {
+      // console.log('All blocks loaded')
+      this.logDebug('All blocks loaded')
+    }
+    // this.logDebug('increaseByOne', this._blockComponentsLoaded)
   }
 }

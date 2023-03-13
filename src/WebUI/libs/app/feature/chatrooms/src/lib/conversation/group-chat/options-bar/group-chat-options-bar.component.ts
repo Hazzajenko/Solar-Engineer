@@ -48,7 +48,7 @@ import { AddGroupChatMembersComponent } from '../add-members/add-group-chat-memb
 export class GroupChatOptionsBarComponent {
   private router = inject(Router)
   private dialog = inject(MatDialog)
-  // private dialogRef = inject(MatDialogRef<UsernameProfileComponent>)
+  // private dialogRef = inject(MatDialogRef<UsersOverlayComponent>)
   menuTopLeftPosition = { x: '0', y: '0' }
   @ViewChild(MatMenuTrigger, { static: true })
   matMenuTrigger!: MatMenuTrigger

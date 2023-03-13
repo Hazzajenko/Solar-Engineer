@@ -6,9 +6,81 @@
     <app-sidenav-component (toggle)="drawer.toggle()"></app-sidenav-component>
   </mat-sidenav>
   <mat-sidenav-content>
-    <app-app-bar class="absolute" (toggle)="drawer.toggle()"></app-app-bar>
+    <app-header />
+    <!--    <app-app-bar (toggle)="drawer.toggle()"></app-app-bar>-->
     <router-outlet></router-outlet>
   </mat-sidenav-content>
 </mat-sidenav-container>
 
-<div class="absolute left-1 bottom-1 z-10">SolarEngineer v1.0.0 By Harry Jenkins</div>
+<!-- Wrapper -->
+<!--<div class="flex flex-col flex-auto items-center w-full min-w-0 bg-gray-200 dark:bg-card">
+  &lt;!&ndash; Header &ndash;&gt;
+  <div class="relative flex justify-center w-full overflow-hidden z-49 bg-primary-700 print:hidden">
+    <div
+      class="max-w-360 w-full sm:py-3 sm:m-8 sm:mb-0 md:mt-12 md:mx-8 md:pt-4 md:pb-3 sm:rounded-t-xl border-b sm:shadow-2xl overflow-hidden bg-card"
+    >
+      &lt;!&ndash; Top bar &ndash;&gt;
+      <div class="relative flex flex-auto flex-0 items-center h-16 px-4 md:px-6">
+        &lt;!&ndash; Logo &ndash;&gt;
+        <ng-container>
+          <div class="flex items-center mx-2">
+            &lt;!&ndash; Light version &ndash;&gt;
+            <img class="w-24 dark:hidden" src="assets/images/logo/logo-text.svg" alt="Logo image" />
+            &lt;!&ndash; Dark version &ndash;&gt;
+            <img
+              class="hidden dark:flex w-24"
+              src="assets/images/logo/logo-text-on-dark.svg"
+              alt="Logo image"
+            />
+          </div>
+        </ng-container>
+        &lt;!&ndash; Navigation toggle button &ndash;&gt;
+        &lt;!&ndash;        <ng-container *ngIf="isScreenSmall">
+        &lt;!&ndash;        <ng-container *ngIf="isScreenSmall">&ndash;&gt;
+
+        &lt;!&ndash;          (click)="toggleNavigation('mainNavigation')"&ndash;&gt;
+                  <button
+                    mat-icon-button
+                   >
+                    <mat-icon [svgIcon]="'heroicons_outline:menu'"></mat-icon>
+                  </button>
+                </ng-container>&ndash;&gt;
+        &lt;!&ndash; Components &ndash;&gt;
+        <div class="flex items-center pl-2 ml-auto space-x-1 sm:space-x-2">
+          &lt;!&ndash;          <languages></languages>
+                    <fuse-fullscreen class="hidden md:block"></fuse-fullscreen>
+                    <search [appearance]="'bar'"></search>
+                    <shortcuts></shortcuts>
+                    <messages></messages>
+                    <notifications></notifications>
+                    <user></user>&ndash;&gt;
+        </div>
+      </div>
+      &lt;!&ndash; Bottom bar &ndash;&gt;
+      <ng-container>
+        &lt;!&ndash;      <ng-container *ngIf="!isScreenSmall">&ndash;&gt;
+        <div class="relative flex flex-auto flex-0 items-center h-16 px-4">
+          &lt;!&ndash; <fuse-horizontal-navigation
+             [name]="'mainNavigation'"
+             [navigation]="navigation.horizontal"></fuse-horizontal-navigation>&ndash;&gt;
+        </div>
+      </ng-container>
+    </div>
+  </div>
+
+  &lt;!&ndash; Content &ndash;&gt;
+  <div class="flex flex-auto justify-center w-full sm:px-8">
+    <div
+      class="flex flex-col flex-auto w-full sm:max-w-360 sm:shadow-xl sm:overflow-hidden bg-default"
+    >
+      &lt;!&ndash; *ngIf="true" hack is required here for router-outlet to work correctly.
+           Otherwise, layout changes won't be registered and the view won't be updated! &ndash;&gt;
+      <router-outlet *ngIf="true"></router-outlet>
+    </div>
+  </div>
+
+</div>-->
+
+<!--<div class="absolute left-1 bottom-1 z-10">SolarEngineer v1.0.0 By Harry Jenkins</div>-->
+<app-footer-component class="absolute bottom-0 left-0 right-0 z-10" />
+<!--<app-footer-component class="absolute flex flex-row left-1 bottom-1 z-10 h-1 w-full" />-->

@@ -8,6 +8,7 @@ export const ProjectsActions = createActionGroup({
   source: 'Projects Store',
   events: {
     'Init Projects': emptyProps(),
+    'Add Project': props<{ project: ProjectModel }>(),
     'Add Many Projects': props<{ projects: ProjectModel[] }>(),
     'Init Local Project': props<{ localProject: LocalProjectModel }>(),
     'Load Local Project Success': props<{ project: ProjectModel }>(),

@@ -20,6 +20,8 @@ import { HttpClient } from '@angular/common/http'
 import { SidenavComponent } from '@app/feature/sidenav'
 import { RouterFacade } from '@shared/data-access/router'
 import { BaseService } from '@shared/logger'
+import { FooterComponent } from '@shared/ui/footer'
+import { HeaderComponent } from '@shared/ui/header'
 
 @Component({
   standalone: true,
@@ -40,6 +42,8 @@ import { BaseService } from '@shared/logger'
     DatePipe,
     SidenavComponent,
     InitLoginPipe,
+    FooterComponent,
+    HeaderComponent,
   ],
   selector: 'app-root',
   templateUrl: './app.component.html',

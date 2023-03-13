@@ -37,4 +37,15 @@ public static class ProjectsMapping
             CreatedTime = request.Project.CreatedTime
         };
     }
+
+    public static ProjectDto ToDto(this Project request)
+    {
+        return new ProjectDto
+        {
+            Id = request.Id.ToString(),
+            Name = request.Name,
+            CreatedById = request.CreatedById.ToString(),
+            CreatedTime = request.CreatedTime
+        };
+    }
 }

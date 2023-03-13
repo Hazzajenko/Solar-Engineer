@@ -2,21 +2,21 @@
 import { AppUserProfileComponent } from '@app/feature/app-user-profile'
 
 export type DialogRouteType = AppUserProfileRoute
-// const shit: DialogRouteType = AppUserProfileComponent
+// const shit: DialogRouteType = UserSettingsComponent
 
-/*export const AppUserProfileComponent: DialogRouteModel = {
+/*export const UserSettingsComponent: DialogRouteModel = {
   name: 'appUserProfileComponent',
   selector: 'app-app-user-profile-component',
 }*/
 
-// export type DialogRoutes = AppUserProfileComponent
+// export type DialogRoutes = UserSettingsComponent
 export type AppUserProfileRoute = typeof AppUserProfileComponent
-/*export const AppUserProfileRoute2 = AppUserProfileComponent*/
+/*export const AppUserProfileRoute2 = UserSettingsComponent*/
 // type hi = typeof AppUserProfileRoute | typeof AppUserProfileRoute2
 // const shit: hi = AppUserProfileRoute2
 // AppUserProfileRoute
 
-/*export type fuck = AppUserProfileComponent
+/*export type fuck = UserSettingsComponent
 const fu: fuck = {
 
 }*/

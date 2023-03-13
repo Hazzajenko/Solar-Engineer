@@ -20,12 +20,12 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatInputModule } from '@angular/material/input'
 import { MatListModule } from '@angular/material/list'
 
-import { AppUserLinkModel, GroupChatMessageMemberModel } from '@shared/data-access/models'
+import { AppUserLinkModel } from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 import { GetCdnUrlStringPipe, GetFullUrlPipe, TimeDifferenceFromNowPipe } from '@shared/pipes'
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
-import { fadeInAnimation, fadeInAnimationX2 } from '@shared/animations'
-// import { UsernameProfileComponent } from '@app/feature/userName-profile'
+import { fadeInAnimationX2 } from '@shared/animations'
+// import { UsersOverlayComponent } from '@app/feature/userName-profile'
 import { RecipientUserProfileComponent } from '@app/feature/recipient-user-profile'
 
 @Component({

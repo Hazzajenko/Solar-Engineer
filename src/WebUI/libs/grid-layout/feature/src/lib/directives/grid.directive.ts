@@ -80,6 +80,7 @@ export class GridDirective implements AfterViewInit {
 
   @HostListener('wheel', ['$event'])
   public onScroll(event: WheelEvent) {
+
     // console.log(event)
     event.preventDefault()
 
@@ -108,8 +109,8 @@ export class GridDirective implements AfterViewInit {
           posY: this.posY,
         })*/
 
-    this.outputScale.emit(this.scale)
-    this.uiStore.dispatch.setScale(this.scale)
+    // this.outputScale.emit(this.scale)
+    // this.uiStore.dispatch.setScale(this.scale)
 
     this.renderer.setStyle(
       this.elementRef.nativeElement,

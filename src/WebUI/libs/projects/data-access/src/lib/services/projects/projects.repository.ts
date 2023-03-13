@@ -13,6 +13,10 @@ export class ProjectsRepository {
     this.store.dispatch(ProjectsActions.initProjects())
   }
 
+  addProject(project: ProjectModel) {
+    this.store.dispatch(ProjectsActions.addProject({ project }))
+  }
+
   addManyProjects(projects: ProjectModel[]) {
     this.store.dispatch(ProjectsActions.addManyProjects({ projects }))
   }

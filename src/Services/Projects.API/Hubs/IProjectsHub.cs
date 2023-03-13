@@ -9,6 +9,10 @@ public interface IProjectsHub
     Task GetManyProjects(IEnumerable<ProjectDto> projects);
     Task GetUserProject(ProjectDto project);
     Task GetProject(ProjectDataDto projectData);
+    Task NewProject(ProjectDto project);
+    Task UpdateProject(ProjectDto project);
+    Task DeleteProject();
+    Task InvitedToProject(ProjectDto project);
 
     Task UpdateProject(ProjectChanges projectChanges);
 

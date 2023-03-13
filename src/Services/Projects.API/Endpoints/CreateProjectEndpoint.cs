@@ -1,8 +1,6 @@
 ﻿using FastEndpoints;
 using Mediator;
-using Projects.API.Contracts.Requests;
 using Projects.API.Contracts.Requests.Projects;
-using Projects.API.Handlers;
 
 namespace Projects.API.Endpoints;
 
@@ -22,7 +20,7 @@ public class CreateProjectEndpoint : Endpoint<CreateProjectRequest>
 
     public override async Task HandleAsync(CreateProjectRequest request, CancellationToken cT)
     {
-        await _mediator.Send(new CreateProjectCommand(User, request), cT);
+        // await _mediator.Send(new CreateProjectCommand(User, request), cT);
         await SendNoContentAsync(cT);
     }
 }

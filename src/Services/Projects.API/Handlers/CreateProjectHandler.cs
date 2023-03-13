@@ -1,30 +1,22 @@
-﻿using System.Security.Claims;
-using Infrastructure.Extensions;
-using Mediator;
-using Projects.API.Contracts.Requests;
-using Projects.API.Contracts.Requests.Projects;
-using Projects.API.Data;
-using Projects.API.Mapping;
+﻿namespace Projects.API.Handlers;
 
-namespace Projects.API.Handlers;
-
-public sealed record CreateProjectCommand(
+/*public sealed record CreateProjectCommand(
     ClaimsPrincipal User,
     CreateProjectRequest CreateProjectRequest
-) : IRequest<bool>;
-
-public class CreateProjectHandler : IRequestHandler<CreateProjectCommand, bool>
+) : IRequest<bool>;*/
+/*public class CreateProjectHandler : IRequestHandler<CreateProjectCommand, bool>
 {
     private readonly ILogger _logger;
     private readonly IProjectsUnitOfWork _unitOfWork;
+    private readonly IHubContext<ProjectsHub, IProjectsHub> _hubContext;
 
     public CreateProjectHandler(
         ILogger<CreateProjectHandler> logger,
-        IProjectsUnitOfWork unitOfWork
-    )
+        IProjectsUnitOfWork unitOfWork, IHubContext<ProjectsHub, IProjectsHub> hubContext)
     {
         _logger = logger;
         _unitOfWork = unitOfWork;
+        _hubContext = hubContext;
     }
 
     public async ValueTask<bool> Handle(CreateProjectCommand request, CancellationToken cT)
@@ -38,4 +30,4 @@ public class CreateProjectHandler : IRequestHandler<CreateProjectCommand, bool>
 
         return true;
     }
-}
+}*/

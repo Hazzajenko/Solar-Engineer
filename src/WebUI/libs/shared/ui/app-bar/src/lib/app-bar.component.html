@@ -1,5 +1,14 @@
 <ng-container *ngrxLet="user$ | async as user">
-  <mat-toolbar class="absolute z-10">
+  <!--    class="absolute z-10 bg-gradient-to-r from-gray-200 min-w-max max-w-full left-0 right-0"-->
+  <!--  >-->
+  <!--    class="absolute z-10 bg-gradient-to-r from-indigo-500 min-w-max max-w-full left-0 right-0"-->
+  <!--  <mat-toolbar-->
+  <!--  bg-gradient-to-b from-pink-500 via-red-500 to-yellow-500-->
+
+  <mat-toolbar
+    class="absolute z-10 bg-gradient-to-b from-gray-300 min-w-max max-w-full left-0 right-0"
+  >
+    <!--  <mat-toolbar class="absolute z-10 bg-gray-200 min-w-max max-w-full left-0 right-0">-->
     <button (click)="toggleMenu()" mat-icon-button>
       <!--      <mat-icon>menu</mat-icon>-->
       <mat-icon>menu</mat-icon>

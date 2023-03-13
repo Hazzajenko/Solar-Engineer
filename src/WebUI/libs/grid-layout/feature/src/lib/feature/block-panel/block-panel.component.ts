@@ -25,6 +25,7 @@ import { PanelRotationComponent } from './ui/panel-rotation.component'
 import { BaseService } from '@shared/logger'
 import { BlockPanelService } from './block-panel.service'
 import { PanelComponentState } from './models/panel-component.state'
+import { GridLayoutService } from '../../grid-layout.service'
 
 @Component({
   selector: 'app-block-panel',
@@ -58,9 +59,12 @@ export class BlockPanelComponent extends BaseService {
   matMenuTrigger!: MatMenuTrigger
 
   private blockPanelService = inject(BlockPanelService)
+  private gridLayoutService = inject(GridLayoutService)
 
   @Input() set id(id: string) {
     this.componentState$ = this.blockPanelService.panelComponentState$(id)
+    // this.gridLayoutService.blockComponentsLoaded++
+    this.gridLayoutService.increaseByOne()
   }
 
   onRightClick(event: MouseEvent, state: PanelComponentState) {

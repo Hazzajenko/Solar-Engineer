@@ -1,9 +1,8 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
-import { Inject, inject } from '@angular/core'
-import { ChangeDetectionStrategy, Component } from '@angular/core'
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatCardModule } from '@angular/material/card'
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog'
+import { MatDialogModule, MatDialogRef } from '@angular/material/dialog'
 
 import { ScrollingModule } from '@angular/cdk/scrolling'
 import { AsyncPipe, NgClass, NgForOf, NgIf, NgStyle } from '@angular/common'
@@ -11,19 +10,10 @@ import { MatListModule } from '@angular/material/list'
 
 import { MatIconModule } from '@angular/material/icon'
 
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms'
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms'
 import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatInputModule } from '@angular/material/input'
-import { AuthFacade, AuthService } from '@auth/data-access'
-import { StringsService } from '@grid-layout/data-access'
-import { ProjectsStoreService } from '@projects/data-access'
+import { ProjectsSignalrService } from '@projects/data-access'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
 @Component({
@@ -56,12 +46,8 @@ export class CreateProjectDialog {
     projectName: new FormControl('', Validators.compose([Validators.required])),
   })
 
-  private stringsFactory = inject(StringsService)
-  private authService = inject(AuthService)
-  private authFacade = inject(AuthFacade)
-  private formBuilder = inject(FormBuilder)
-  private projectsStore = inject(ProjectsStoreService)
   private dialogRef = inject(MatDialogRef<CreateProjectDialog>)
+  private projectsSignalr = inject(ProjectsSignalrService)
   validationMessages = {
     projectName: [{ type: 'required', message: 'Username is required.' }],
   }
@@ -70,7 +56,8 @@ export class CreateProjectDialog {
     const projectName = this.projectForm.get('projectName')?.value
     // console.log(projectName)
     if (!projectName) return console.error('!this.projectName.value')
-    this.projectsStore.dispatch.createWebProject(projectName)
+    this.projectsSignalr.createProject(projectName)
+    // this.projectsStore.dispatch.createWebProject(projectName)
 
     this.dialogRef.close(undefined)
   }

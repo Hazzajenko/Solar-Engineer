@@ -1,21 +1,21 @@
-import { Directive, EventEmitter, HostListener, inject, Output } from '@angular/core'
+import { Directive, EventEmitter, inject, NgZone, OnInit, Output, Renderer2 } from '@angular/core'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import {
   GridEventService,
-  MultiEventService,
-  SelectedEventService,
   GridFacade,
   GridStoreService,
   LinksStoreService,
+  MultiEventService,
   MultiFacade,
   MultiStoreService,
   PanelsFacade,
   PanelsStoreService,
+  SelectedEventService,
   SelectedFacade,
   SelectedStoreService,
+  StringsEventService,
   StringsFacade,
   UiStoreService,
-  StringsEventService,
 } from '@grid-layout/data-access'
 
 import { GridMode } from '@shared/data-access/models'
@@ -25,7 +25,7 @@ import { firstValueFrom } from 'rxjs'
   selector: '[appKeyMap]',
   standalone: true,
 })
-export class KeyMapDirective {
+export class KeyMapDirective implements OnInit {
   private gridFacade = inject(GridFacade)
 
   private multiFacade = inject(MultiFacade)
@@ -43,19 +43,35 @@ export class KeyMapDirective {
   private stringFactory = inject(StringsEventService)
   private uiStore = inject(UiStoreService)
   private snackBar = inject(MatSnackBar)
+  private renderer = inject(Renderer2)
 
   @Output() keyUp: EventEmitter<string> = new EventEmitter<string>()
 
-  @HostListener('window:keyup', ['$event'])
-  async keyEvent(event: KeyboardEvent) {
-    // console.log(event)
+  constructor(private ngZone: NgZone) {}
+
+  ngOnInit() {
+    this.setupMouseEventListeners()
+  }
+
+  private setupMouseEventListeners() {
+    this.ngZone.runOutsideAngular(() => {
+      this.renderer.listen(window, 'keyup', (event: KeyboardEvent) => {
+        event.stopPropagation()
+        event.preventDefault()
+        this.onKeyUpHandler(event).catch((err) => console.error(err))
+      })
+    })
+  }
+
+  private async onKeyUpHandler(event: KeyboardEvent) {
     switch (event.key) {
-      case 'Alt': {
-        const multiState = await firstValueFrom(this.multiFacade.state$)
-        if (multiState.locationStart && event.key === 'Alt') {
-          this.multiStore.dispatch.clearMultiState()
+      case 'Alt':
+        {
+          const multiState = await firstValueFrom(this.multiFacade.state$)
+          if (multiState.locationStart && event.key === 'Alt') {
+            this.multiStore.dispatch.clearMultiState()
+          }
         }
-      }
         break
       case 's': {
         const selectedId = await this.selectedFacade.selectedId

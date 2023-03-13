@@ -41,7 +41,7 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog'
 export class GroupChatMessageMenuComponent {
   private router = inject(Router)
   private dialog = inject(MatDialog)
-  // private dialogRef = inject(MatDialogRef<UsernameProfileComponent>)
+  // private dialogRef = inject(MatDialogRef<UsersOverlayComponent>)
   // private dialogRef: MatDialogRef<AppUserItemComponent>
   @Input() message!: GroupChatMessageMemberModel
 
@@ -56,7 +56,7 @@ export class GroupChatMessageMenuComponent {
       },
     } as MatDialogConfig
 
-    // this.dialog.open(UsernameProfileComponent, dialogConfig)
+    // this.dialog.open(UsersOverlayComponent, dialogConfig)
     /*
         this.dialogRef
           .afterClosed()

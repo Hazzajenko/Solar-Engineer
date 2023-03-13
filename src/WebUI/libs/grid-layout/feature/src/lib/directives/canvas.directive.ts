@@ -104,21 +104,21 @@ export class CanvasDirective extends BaseService implements OnInit {
   selectedPaths?: SelectedPanelLinkPathModel
 
   @Input() set setStringPaths(selectedPaths: SelectedPanelLinkPathModel | undefined | null) {
-    if (!selectedPaths || selectedPaths.panelPaths.length < 1) {
-      // console.log('undefined')
-      if (this.pathMapAnimationId) {
-        cancelAnimationFrame(this.pathMapAnimationId)
-      }
-      this.ctx.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height)
-      this.pathMapAnimating = false
-      return
-    }
+    /*    if (!selectedPaths || selectedPaths.panelPaths.length < 1) {
+          // console.log('undefined')
+          if (this.pathMapAnimationId) {
+            cancelAnimationFrame(this.pathMapAnimationId)
+          }
+          this.ctx.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height)
+          this.pathMapAnimating = false
+          return
+        }
 
-    // console.log(selectedPaths)
-    this.selectedPaths = selectedPaths
-    this.pathMapAnimating = true
+        // console.log(selectedPaths)
+        this.selectedPaths = selectedPaths
+        this.pathMapAnimating = true
 
-    this.animateSelectedPathMap().then((r) => console.log(r))
+        this.animateSelectedPathMap().then((r) => console.log(r))*/
   }
 
   @Input() set setScale(scale: number | null) {
@@ -223,7 +223,7 @@ export class CanvasDirective extends BaseService implements OnInit {
     const parentRect = this.canvas.nativeElement.parentNode.getBoundingClientRect()
     this.parentHeight = parentRect.height
     this.parentWidth = parentRect.width
-    this.setUpMouseEvents()
+    // this.setUpMouseEvents()
   }
 
   animate() {
