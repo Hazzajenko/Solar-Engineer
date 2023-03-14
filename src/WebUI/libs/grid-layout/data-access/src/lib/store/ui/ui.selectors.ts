@@ -7,6 +7,10 @@ export const selectUiState = createFeatureSelector<UiState>(UI_FEATURE_KEY)
 export const selectIsKeymapEnabled = createSelector(selectUiState, (state: UiState) => state.keymap)
 
 export const selectNavMenuState = createSelector(selectUiState, (state: UiState) => state.navMenu)
+export const selectCreateProjectOverlayState = createSelector(
+  selectUiState,
+  (state: UiState) => state.createProjectOverlay,
+)
 
 export const selectWindowSize = createSelector(selectUiState, (state: UiState) => state.windowSize)
 

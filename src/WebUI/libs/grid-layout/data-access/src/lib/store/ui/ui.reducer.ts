@@ -7,6 +7,7 @@ import { UiActions } from './ui.actions'
 export const UI_FEATURE_KEY = 'ui'
 
 export interface UiState {
+  createProjectOverlay: boolean
   keymap: boolean
   navMenu: boolean
   pathLines: boolean
@@ -23,6 +24,7 @@ export interface UiState {
 }
 
 export const initialUiState: UiState = {
+  createProjectOverlay: false,
   keymap: true,
   navMenu: false,
   pathLines: true,
@@ -56,6 +58,10 @@ export const initialUiState: UiState = {
 const reducer = createReducer(
   initialUiState,
   on(UiActions.toggleKeymap, (state) => ({ ...state, keymap: !state.keymap })),
+  on(UiActions.toggleCreateProjectOverlay, (state) => ({
+    ...state,
+    createProjectOverlay: !state.createProjectOverlay,
+  })),
   on(UiActions.togglePathLines, (state) => ({ ...state, pathLines: !state.pathLines })),
   on(UiActions.toggleStringStatistics, (state) => ({ ...state, stringStats: !state.stringStats })),
   on(UiActions.setGridlayoutComponentXy, (state, { gridLayoutXY }) => ({

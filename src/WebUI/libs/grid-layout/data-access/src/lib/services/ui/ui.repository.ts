@@ -14,6 +14,10 @@ export class UiRepository {
     return this.store.dispatch(UiActions.toggleKeymap())
   }
 
+  toggleCreateProjectOverlay() {
+    return this.store.dispatch(UiActions.toggleCreateProjectOverlay())
+  }
+
   toggleNavMenu() {
     return this.store.dispatch(UiActions.toggleNavmenu())
   }

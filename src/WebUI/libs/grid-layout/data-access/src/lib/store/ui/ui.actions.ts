@@ -8,6 +8,7 @@ export const UiActions = createActionGroup({
     'Toggle Keymap': emptyProps(),
     'Toggle Path Lines': emptyProps(),
     'Toggle String Statistics': emptyProps(),
+    'Toggle Create Project Overlay': emptyProps(),
     'Set ClientXY': props<{ clientXY: ClientXY }>(),
     'Clear ClientXY': emptyProps(),
     'Set GridLayout Component XY': props<{ gridLayoutXY: GridLayoutXY }>(),

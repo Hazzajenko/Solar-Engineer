@@ -28,6 +28,10 @@ export const appRoutes: Route[] = [
     loadComponent: () => import('@app/feature/user-settings').then((m) => m.UserSettingsComponent),
   },
   {
+    path: 'center-feature',
+    loadComponent: () => import('@app/feature/app-features').then((m) => m.CenterFeatureComponent),
+  },
+  {
     path: 'projects/local',
     loadComponent: () => import('@projects/feature').then((m) => m.LocalProjectComponent),
     providers: [projectsProviders],

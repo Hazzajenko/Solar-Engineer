@@ -45,67 +45,72 @@
           <button (click)="routeToWebProject()" mat-raised-button color="primary">
             Start Project
           </button>
-          <button (click)="startProjectWithOverlay()" mat-raised-button color="primary">
-            Start Project With Overlay
-          </button>
-          <ng-container *ngIf="createProjectOverlayEnabled">
-            <app-create-project-overlay />
-            <!--            (closeOverlay)="createProjectOverlayEnabled = false"-->
-          </ng-container>
-          <button (click)="viewUsersOverlay()" mat-raised-button color="primary">
-            View Users Overlay
-          </button>
-          <ng-container *ngIf="viewUsersOverlayEnabled">
-            <app-users-overlay />
-          </ng-container>
-          <button routerLink="/projects/search" mat-raised-button color="primary">
-            Search Projects
-          </button>
-          <button routerLink="/projects/add-item" mat-raised-button color="primary">
-            Add Project Item
-          </button>
-          <button routerLink="/user-settings" mat-raised-button color="primary">
-            User Settings
-          </button>
-          <button routerLink="/projects/settings" mat-raised-button color="primary">
-            Projects Settings
-          </button>
-          <button (click)="showNotification()" mat-raised-button color="primary">
-            Show Notification
-          </button>
-          <ng-container *ngIf="notificationsEnabled">
-            <app-request-notification />
-            <!--            <app-success-notification />-->
-          </ng-container>
-          <button (click)="showModal()" mat-raised-button color="primary">Show Modal</button>
-          <ng-container *ngIf="modalEnabled">
-            <!--            <app-success-modal />-->
-            <app-cancel-modal />
-            <!--            <app-success-notification />-->
-          </ng-container>
-          <button routerLink="/projects/add-members" mat-raised-button color="primary">
-            Add Project Members
-          </button>
-          <button (click)="newProjectHome()" mat-raised-button color="primary">
-            New Project Home
-          </button>
+          <!-- <button (click)="startProjectWithOverlay()" mat-raised-button color="primary">
+             Start Project With Overlay
+           </button>
+           <ng-container *ngIf="createProjectOverlayEnabled">
+             <app-create-project-overlay />
+             &lt;!&ndash;            (closeOverlay)="createProjectOverlayEnabled = false"&ndash;&gt;
+           </ng-container>
+           <button (click)="viewUsersOverlay()" mat-raised-button color="primary">
+             View Users Overlay
+           </button>
+           <ng-container *ngIf="viewUsersOverlayEnabled">
+             <app-users-overlay />
+           </ng-container>
+           <button routerLink="/center-feature" mat-raised-button color="primary">
+             Center Feature
+           </button>
+           <button routerLink="/projects/search" mat-raised-button color="primary">
+             Search Projects
+           </button>
+           <button routerLink="/projects/add-item" mat-raised-button color="primary">
+             Add Project Item
+           </button>
+           <button routerLink="/user-settings" mat-raised-button color="primary">
+             User Settings
+           </button>
+           <button routerLink="/projects/settings" mat-raised-button color="primary">
+             Projects Settings
+           </button>
+           <button (click)="showNotification()" mat-raised-button color="primary">
+             Show Notification
+           </button>
+           <ng-container *ngIf="notificationsEnabled">
+             <app-request-notification />
+             &lt;!&ndash;            <app-success-notification />&ndash;&gt;
+           </ng-container>
+           <button (click)="showModal()" mat-raised-button color="primary">Show Modal</button>
+           <ng-container *ngIf="modalEnabled">
+             &lt;!&ndash;            <app-success-modal />&ndash;&gt;
+             <app-cancel-modal />
+             &lt;!&ndash;            <app-success-notification />&ndash;&gt;
+           </ng-container>
+           <button routerLink="/projects/add-members" mat-raised-button color="primary">
+             Add Project Members
+           </button>
+           <button (click)="newProjectHome()" mat-raised-button color="primary">
+             New Project Home
+           </button>-->
           <button (click)="routeToProjects()" mat-raised-button color="primary">
             View Projects
           </button>
+          <!--          <app-projects-cards />-->
           <!--&lt;!&ndash;     <ng-container *ngIf="showProjects">
                 &lt;!&ndash;            <app-project-list @fadeInV2></app-project-list>&ndash;&gt;-->
           <!--                 <app-project-cards />&ndash;&gt;-->
-          <ng-container *ngIf="showProjects">
-            <app-projects-list @fadeInV2 />
-          </ng-container>
+          <!-- <ng-container *ngIf="showProjects">
+             <app-projects-list @fadeInV2 />
+           </ng-container>-->
           <!--          <button (click)='routeToLocalProject()' mat-raised-button color='primary'>Start Local Project
                     </button>-->
         </div>
-        <ng-container *ngIf="showProjects">
-          <app-no-projects />
-          <!--            <app-project-list @fadeInV2></app-project-list>-->
-          <app-projects-cards />
-        </ng-container>
+        <app-projects-cards />
+        <!--        <ng-container *ngIf="showProjects">
+                  <app-no-projects />
+                  &lt;!&ndash;            <app-project-list @fadeInV2></app-project-list>&ndash;&gt;
+                  &lt;!&ndash;          <app-projects-cards />&ndash;&gt;
+                </ng-container>-->
         <!--      <button
                 (click)='routeToLocalProject()'
                 class='relative inline-flex items-center justify-center p-0.5 mb-2 mr-2 overflow-hidden text-sm font-medium text-gray-800 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800'

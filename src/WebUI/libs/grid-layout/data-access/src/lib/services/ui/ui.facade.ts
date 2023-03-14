@@ -12,6 +12,7 @@ export class UiFacade {
   isKeyMapEnabled$ = this.store.select(UiSelectors.selectIsKeymapEnabled)
   windowSize$ = this.store.select(UiSelectors.selectWindowSize)
   navMenuState$ = this.store.select(UiSelectors.selectNavMenuState)
+  createProjectOverlayState$ = this.store.select(UiSelectors.selectCreateProjectOverlayState)
   isPathLinesEnabled$ = this.store.select(UiSelectors.selectIsPathLinesEnabled)
   isStringStatsEnabled$ = this.store.select(UiSelectors.selectIsStringStatsEnabled)
   gridLayoutMoving$ = this.store.select(UiSelectors.selectGridLayoutMoving)
@@ -74,5 +75,4 @@ export class UiFacade {
   get clientXY() {
     return firstValueFrom(this.clientXY$)
   }
-
 }

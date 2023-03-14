@@ -1,17 +1,39 @@
-<mat-sidenav-container [hasBackdrop]="true">
-  <mat-sidenav #drawer mode="over">
-    <ng-container *ngIf="navMenu$ | async">
-      {{ drawer.toggle() }}
-    </ng-container>
-    <app-sidenav-component (toggle)="drawer.toggle()"></app-sidenav-component>
+<mat-sidenav-container [hasBackdrop]="false">
+  <!--<mat-sidenav-container [hasBackdrop]="true">-->
+  <ng-container *ngIf="toggleSideNav$ | async" />
+  <ng-container *ngIf="toggleCreateProject$ | async" />
+  <!--  <ng-container *ngIf="toggleSideNav$ | async" />-->
+  <mat-sidenav [opened]="sideNavIsOpen" (openedChange)="openedChangedV2($event)" mode="over">
+    <!--  <mat-sidenav #drawer mode="over">-->
+    <!--    <ng-container *ngIf="navMenu$ | async">
+          &lt;!&ndash;            {{ drawer.toggle() }}&ndash;&gt;
+          &lt;!&ndash;      {{sideNavIsOpen = !sideNavIsOpen}}&ndash;&gt;
+          {{ toggleMenu() }}
+        </ng-container>-->
+    <app-sidenav-component />
+    <!--    <app-sidenav-component (toggle)="drawer.toggle()"></app-sidenav-component>-->
   </mat-sidenav>
-  <mat-sidenav-content>
-    <app-header />
+  <mat-sidenav
+    (openedChange)="openedChanged($event)"
+    [opened]="createProjectIsOpen"
+    mode="over"
+    position="end"
+  >
+    <app-create-project-overlay />
+  </mat-sidenav>
+  <!--  (click)="clockedIn ? (sideNavIsOpen = false) : (sideNavIsOpen = true)"-->
+  <mat-sidenav-content (click)="backDropClick()">
+    <!--    <app-header />-->
+    <app-app-bar (toggle)="sideNavIsOpen = true"></app-app-bar>
     <!--    <app-app-bar (toggle)="drawer.toggle()"></app-app-bar>-->
     <router-outlet></router-outlet>
   </mat-sidenav-content>
 </mat-sidenav-container>
-
+<!--<mat-sidenav-container [hasBackdrop]="true">
+  &lt;!&ndash;          <mat-sidenav>Start</mat-sidenav>&ndash;&gt;
+  <mat-sidenav [opened]="openProjectSideNav$ | async" mode="over" position="end">End</mat-sidenav>
+  <section>Main</section>
+</mat-sidenav-container>-->
 <!-- Wrapper -->
 <!--<div class="flex flex-col flex-auto items-center w-full min-w-0 bg-gray-200 dark:bg-card">
   &lt;!&ndash; Header &ndash;&gt;

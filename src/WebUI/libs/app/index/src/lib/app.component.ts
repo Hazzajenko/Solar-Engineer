@@ -22,6 +22,8 @@ import { RouterFacade } from '@shared/data-access/router'
 import { BaseService } from '@shared/logger'
 import { FooterComponent } from '@shared/ui/footer'
 import { HeaderComponent } from '@shared/ui/header'
+import { delay, map, of, tap } from 'rxjs'
+import { CreateProjectOverlayComponent } from '@projects/feature'
 
 @Component({
   standalone: true,
@@ -44,6 +46,7 @@ import { HeaderComponent } from '@shared/ui/header'
     InitLoginPipe,
     FooterComponent,
     HeaderComponent,
+    CreateProjectOverlayComponent,
   ],
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -78,7 +81,107 @@ export class AppComponent extends BaseService implements OnInit {
 
   navMenu$ = this.uiStore.select.navMenuState$
 
+  toggleSideNav$ = this.uiStore.select.navMenuState$.pipe(
+    tap((value) => (this.sideNavIsOpen = value)),
+  )
+
+  toggleCreateProject$ = this.uiStore.select.createProjectOverlayState$.pipe(
+    tap((value) => (this.createProjectIsOpen = value)),
+  )
+  createProjectOverlayState$ = this.uiStore.select.createProjectOverlayState$
+
+  openProjectSideNav$ = of(false).pipe(
+    delay(1000),
+    map(() => true),
+  )
+
   menu = false
+  // sideNavIsOpen = false
+  private _sideNavIsOpen = false
+  get sideNavIsOpen() {
+    return this._sideNavIsOpen
+  }
+
+  set sideNavIsOpen(value) {
+    if (!value) {
+      this._sideNavIsOpen = value
+      return
+    }
+    this.sideNavTimeLeft = 1
+    this._sideNavIsOpen = value
+    this.startSideNavTimer()
+  }
+
+  private _createProjectIsOpen = false
+  get createProjectIsOpen() {
+    return this._sideNavIsOpen
+  }
+
+  set createProjectIsOpen(value) {
+    if (!value) {
+      this._createProjectIsOpen = value
+      return
+    }
+    this.sideNavTimeLeft = 1
+    this._createProjectIsOpen = value
+    this.startCreateProjectTimer()
+  }
+
+  get clockedInSideNav() {
+    return this.sideNavTimeLeft === 0
+  }
+
+  get clockedInCreateProject() {
+    return this.createProjectTimeLeft === 0
+  }
+
+  sideNavTimeLeft = 0
+  createProjectTimeLeft = 0
+  // clockedIn = this.timeLeft === 0
+
+  sideNavInterval!: NodeJS.Timer
+  createProjectInterval!: NodeJS.Timer
+
+  // interval!: NodeJS.Timer
+
+  startSideNavTimer() {
+    this.sideNavInterval = setInterval(() => {
+      if (this.sideNavTimeLeft > 0) {
+        this.sideNavTimeLeft--
+      }
+    }, 100)
+  }
+
+  startCreateProjectTimer() {
+    this.createProjectInterval = setInterval(() => {
+      if (this.createProjectTimeLeft > 0) {
+        this.createProjectTimeLeft--
+      }
+    }, 100)
+  }
+
+  backDropClick() {
+    if (this.clockedInSideNav) {
+      if (!this.sideNavIsOpen && !this.createProjectIsOpen) return
+      if (this.sideNavIsOpen) {
+        this.sideNavIsOpen = false
+      }
+      if (this.createProjectIsOpen) {
+        this.createProjectIsOpen = false
+      }
+      return
+    }
+    if (this.sideNavIsOpen && this.createProjectIsOpen) return
+    if (!this.sideNavIsOpen) {
+      this.sideNavIsOpen = true
+    }
+    if (!this.createProjectIsOpen) {
+      this.createProjectIsOpen = true
+    }
+    // this.sideNavIsOpen = true
+  }
+
+  // sideNavProm =
 
   ngOnInit(): void {
     // this.routerStore.currentRoute$.subscribe((route) => console.log(route))
@@ -117,5 +220,19 @@ export class AppComponent extends BaseService implements OnInit {
     //     console.log('/gateway/users/test', res)
     //     // /*      window.location.href = `${res}`*/
     //   })
+  }
+
+  openedChanged(event: boolean) {
+    if (event) return
+    this.uiStore.dispatch.toggleCreateProjectOverlay()
+  }
+
+  openedChangedV2(event: boolean) {
+    if (event) return
+    this.sideNavIsOpen = false
+  }
+
+  toggleMenu() {
+    this.sideNavIsOpen = !this.sideNavIsOpen
   }
 }
