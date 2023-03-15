@@ -15,6 +15,7 @@ export class BaseService {
 
   protected currentUser$ = this.authFacade.user$
   protected currentUserId = this.authFacade.userId()
+  protected isLoggedIn$ = this.authFacade.isLoggedIn$
 
   /*  currentUserId() {
 

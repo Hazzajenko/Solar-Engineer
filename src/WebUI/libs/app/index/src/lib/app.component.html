@@ -1,32 +1,37 @@
-<mat-sidenav-container [hasBackdrop]="false">
-  <!--<mat-sidenav-container [hasBackdrop]="true">-->
-  <ng-container *ngIf="toggleSideNav$ | async" />
-  <ng-container *ngIf="toggleCreateProject$ | async" />
-  <!--  <ng-container *ngIf="toggleSideNav$ | async" />-->
-  <mat-sidenav [opened]="sideNavIsOpen" (openedChange)="openedChangedV2($event)" mode="over">
-    <!--  <mat-sidenav #drawer mode="over">-->
-    <!--    <ng-container *ngIf="navMenu$ | async">
-          &lt;!&ndash;            {{ drawer.toggle() }}&ndash;&gt;
-          &lt;!&ndash;      {{sideNavIsOpen = !sideNavIsOpen}}&ndash;&gt;
-          {{ toggleMenu() }}
-        </ng-container>-->
+<!--<mat-sidenav-container autosize [hasBackdrop]="sideNavExpanded">-->
+<mat-sidenav-container (backdropClick)="drawer.close()">
+  <ng-container *ngIf="navMenuDistinct$ | async" />
+
+  <!--  [opened]="toggleSideNav$ | async"-->
+  <mat-sidenav #drawer (openedChange)="openedChangedV2($event)" mode="over">
     <app-sidenav-component />
     <!--    <app-sidenav-component (toggle)="drawer.toggle()"></app-sidenav-component>-->
   </mat-sidenav>
-  <mat-sidenav
-    (openedChange)="openedChanged($event)"
-    [opened]="createProjectIsOpen"
-    mode="over"
-    position="end"
-  >
-    <app-create-project-overlay />
-  </mat-sidenav>
+  <!--  <mat-sidenav opened mode="over">
+      &lt;!&ndash;    <app-sidenav-component />&ndash;&gt;
+      <app-narrow-mat-sidenav (opened)="sideNavExpanded = $event" />
+      &lt;!&ndash;    <app-sidenav-component (toggle)="drawer.toggle()"></app-sidenav-component>&ndash;&gt;
+    </mat-sidenav>-->
+  <!--  <mat-sidenav
+      (openedChange)="openedChanged($event)"
+      [opened]="toggleCreateProject$ | async"
+      mode="over"
+      position="end"
+    >
+      <app-create-project-overlay />
+    </mat-sidenav>-->
   <!--  (click)="clockedIn ? (sideNavIsOpen = false) : (sideNavIsOpen = true)"-->
-  <mat-sidenav-content (click)="backDropClick()">
+  <mat-sidenav-content (click)="backDropClickV2($event)">
+    <!--    <app-narrow-sidebar-purple />-->
+    <!--    <app-narrow-sidebar-dark />-->
+    <!--  <mat-sidenav-content (click)="backDropClick()">-->
     <!--    <app-header />-->
-    <app-app-bar (toggle)="sideNavIsOpen = true"></app-app-bar>
+    <app-dark-nav-overlap />
+    <!--    <app-dark-nav-compact />-->
+    <!--    <app-app-bar (toggle)="sideNavIsOpen = true"></app-app-bar>-->
     <!--    <app-app-bar (toggle)="drawer.toggle()"></app-app-bar>-->
     <router-outlet></router-outlet>
+    <app-footer-component class="absolute bottom-0 left-0 right-0 z-10" />
   </mat-sidenav-content>
 </mat-sidenav-container>
 <!--<mat-sidenav-container [hasBackdrop]="true">
@@ -104,5 +109,5 @@
 </div>-->
 
 <!--<div class="absolute left-1 bottom-1 z-10">SolarEngineer v1.0.0 By Harry Jenkins</div>-->
-<app-footer-component class="absolute bottom-0 left-0 right-0 z-10" />
+<!--<app-footer-component class="absolute bottom-0 left-0 right-0 z-10" />-->
 <!--<app-footer-component class="absolute flex flex-row left-1 bottom-1 z-10 h-1 w-full" />-->

@@ -20,12 +20,13 @@ import {
 
 import { GridMode } from '@shared/data-access/models'
 import { firstValueFrom } from 'rxjs'
+import { BaseService } from '@shared/logger'
 
 @Directive({
   selector: '[appKeyMap]',
   standalone: true,
 })
-export class KeyMapDirective implements OnInit {
+export class KeyMapDirective extends BaseService implements OnInit {
   private gridFacade = inject(GridFacade)
 
   private multiFacade = inject(MultiFacade)
@@ -47,7 +48,9 @@ export class KeyMapDirective implements OnInit {
 
   @Output() keyUp: EventEmitter<string> = new EventEmitter<string>()
 
-  constructor(private ngZone: NgZone) {}
+  constructor(private ngZone: NgZone) {
+    super()
+  }
 
   ngOnInit() {
     this.setupMouseEventListeners()
@@ -64,6 +67,7 @@ export class KeyMapDirective implements OnInit {
   }
 
   private async onKeyUpHandler(event: KeyboardEvent) {
+    // this.logDebug('onKeyUpHandler', event.key)
     switch (event.key) {
       case 'Alt':
         {
@@ -138,6 +142,14 @@ export class KeyMapDirective implements OnInit {
         this.keyUp.emit('r')
         this.uiStore.dispatch.keyPressed('r')
         // this.keyUp.emit('reset')
+        break
+      }
+      case '`': {
+        this.uiStore.dispatch.toggleNavMenu()
+        // this.keyUp.emit('reset')
+        // this.isDragging = false
+        // this.multiStore.dispatch.clearMultiState()
+        // this.elementRef.nativeElement.style.cursor = ''
         break
       }
       case 'Tab': {

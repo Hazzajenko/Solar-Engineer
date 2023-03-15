@@ -1,5 +1,13 @@
 import { CommonModule, DatePipe } from '@angular/common'
-import { ChangeDetectionStrategy, Component, inject, ViewChild } from '@angular/core'
+import {
+  AfterViewChecked,
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  inject,
+  Output,
+  ViewChild,
+} from '@angular/core'
 import { MatListModule } from '@angular/material/list'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 import { Router } from '@angular/router'
@@ -35,7 +43,7 @@ import { UiStoreService } from '@grid-layout/data-access'
   providers: [DatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProjectsCardsComponent {
+export class ProjectsCardsComponent implements AfterViewChecked {
   private router = inject(Router)
   private store = inject(ProjectsFacade)
   private projectsStore = inject(ProjectsStoreService)
@@ -59,6 +67,11 @@ export class ProjectsCardsComponent {
       }),
     )
   createProjectModalEnabled = false
+  @Output() finishedLoading: EventEmitter<boolean> = new EventEmitter<boolean>()
+
+  ngAfterViewChecked(): void {
+    this.finishedLoading.emit(true)
+  }
 
   async routeToProject(project: ProjectModel) {
     this.loading = true

@@ -9,5 +9,5 @@ import { CommonModule } from '@angular/common'
   standalone: true,
 })
 export class HeaderComponent {
-  style = 1
+  style = 0
 }

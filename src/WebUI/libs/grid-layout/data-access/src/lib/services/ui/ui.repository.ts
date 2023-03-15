@@ -9,16 +9,37 @@ import { WindowSizeModel } from '@shared/data-access/models'
 })
 export class UiRepository {
   private store = inject(Store)
+  toggleCreateProjectOverlayTimer = 0
+  toggleNavManuTimer = 0
 
   toggleKeyMap() {
     return this.store.dispatch(UiActions.toggleKeymap())
   }
 
   toggleCreateProjectOverlay() {
-    return this.store.dispatch(UiActions.toggleCreateProjectOverlay())
+    if (this.toggleCreateProjectOverlayTimer > 0) return
+    this.toggleCreateProjectOverlayTimer = 5
+    this.store.dispatch(UiActions.toggleCreateProjectOverlay())
+    setInterval(() => {
+      if (this.toggleCreateProjectOverlayTimer > 0) {
+        console.log(this.toggleCreateProjectOverlayTimer)
+        this.toggleCreateProjectOverlayTimer--
+      }
+    }, 500)
+    return
   }
 
   toggleNavMenu() {
+    /*   if (this.toggleNavManuTimer > 0) return
+       this.toggleNavManuTimer = 5
+       this.store.dispatch(UiActions.toggleNavmenu())
+       setInterval(() => {
+         if (this.toggleNavManuTimer > 0) {
+           console.log(this.toggleNavManuTimer)
+           this.toggleNavManuTimer--
+         }
+       }, 500)
+       return*/
     return this.store.dispatch(UiActions.toggleNavmenu())
   }
 

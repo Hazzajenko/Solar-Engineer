@@ -7,7 +7,8 @@ import { projectsProviders } from '../projects/projects.providers'
 export const appRoutes: Route[] = [
   {
     path: '',
-    loadComponent: () => import('@home/ui').then((m) => m.HomeComponent),
+    loadComponent: () => import('@home/ui').then((m) => m.HomeV2Component),
+    // loadComponent: () => import('@home/ui').then((m) => m.HomeComponent),
     providers: [homeProviders],
   },
   {

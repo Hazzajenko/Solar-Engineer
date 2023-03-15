@@ -15,6 +15,7 @@ import {
 } from '../../../../../app/feature/main-dialog/src/lib'
 import { MatCardModule } from '@angular/material/card'
 import { MatListModule } from '@angular/material/list'
+import { UiStoreService } from '@grid-layout/data-access'
 
 @Component({
   selector: 'app-app-bar',
@@ -37,6 +38,7 @@ export class AppBarComponent {
   user$ = this.authStore.select.user$
   private dialog = inject(MatDialog)
   private router = inject(Router)
+  private uiStore = inject(UiStoreService)
   /*  menu = false
 
     @Input() set menuState(state: boolean) {
@@ -47,7 +49,7 @@ export class AppBarComponent {
 
   toggleMenu() {
     // if (!this.menuState) return
-
+    // this.uiStore.dispatch.toggleNavMenu()
     this.toggle.emit(true)
   }
 

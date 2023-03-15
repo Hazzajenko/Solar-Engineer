@@ -1,11 +1,11 @@
 import { AsyncPipe, DatePipe, NgForOf, NgIf, NgSwitch, NgSwitchCase } from '@angular/common'
-import { Component, inject, OnInit } from '@angular/core'
+import { Component, inject, OnInit, ViewChild } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatDialog } from '@angular/material/dialog'
 import { MatExpansionModule } from '@angular/material/expansion'
 import { MatIconModule } from '@angular/material/icon'
 import { MatListModule } from '@angular/material/list'
-import { MatSidenavModule } from '@angular/material/sidenav'
+import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav'
 import { Router, RouterModule } from '@angular/router'
 import { FriendsStoreService } from '@app/data-access/friends'
 import { AuthStoreService } from '@auth/data-access'
@@ -22,8 +22,14 @@ import { RouterFacade } from '@shared/data-access/router'
 import { BaseService } from '@shared/logger'
 import { FooterComponent } from '@shared/ui/footer'
 import { HeaderComponent } from '@shared/ui/header'
-import { delay, map, of, tap } from 'rxjs'
+import { delay, distinctUntilChanged, map, of, tap } from 'rxjs'
 import { CreateProjectOverlayComponent } from '@projects/feature'
+import { DarkNavCompactComponent, DarkNavOverlapComponent } from '@shared/ui/nav-bars'
+import {
+  NarrowMatSidenavComponent,
+  NarrowSidebarDarkComponent,
+  NarrowSidebarPurpleComponent,
+} from '@shared/ui/sidebars'
 
 @Component({
   standalone: true,
@@ -47,13 +53,25 @@ import { CreateProjectOverlayComponent } from '@projects/feature'
     FooterComponent,
     HeaderComponent,
     CreateProjectOverlayComponent,
+    DarkNavOverlapComponent,
+    DarkNavCompactComponent,
+    NarrowSidebarPurpleComponent,
+    NarrowSidebarDarkComponent,
+    NarrowMatSidenavComponent,
   ],
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styles: [],
+  styles: [
+    `
+      ::ng-deep .mat-drawer-backdrop.mat-drawer-shown {
+        background-color: rgba(53, 53, 53, 0.44);
+      }
+    `,
+  ],
 })
 export class AppComponent extends BaseService implements OnInit {
   title = 'web'
+  @ViewChild('drawer') drawer!: MatSidenav
   // private logger = inject(LoggerService)
   private authStore = inject(AuthStoreService)
   private projectsStore = inject(ProjectsStoreService)
@@ -80,13 +98,30 @@ export class AppComponent extends BaseService implements OnInit {
   isAuthenticated$ = this.authStore.select.isAuthenticated$
 
   navMenu$ = this.uiStore.select.navMenuState$
+  navMenuDistinct$ = this.uiStore.select.navMenuState$.pipe(
+    distinctUntilChanged(),
+    map((value) => {
+      console.log('navMenuDistinct$', value)
+      if (this.drawer) {
+        this.drawer.toggle(undefined, 'keyboard').catch((e) => {
+          console.log(e)
+        })
+      }
+    }),
+  )
 
+  /*  toggleSideNav$ = this.uiStore.select.navMenuState$.pipe(
+      tap((value) => (this.sideNavIsOpen = value)),
+    )*/
   toggleSideNav$ = this.uiStore.select.navMenuState$.pipe(
-    tap((value) => (this.sideNavIsOpen = value)),
+    // tap((value) => (this.isSideNavOpen = value)),
+    tap((value) => console.log('toggleSideNav$', value)),
+    tap((value) => (this.drawer.opened = value)),
   )
 
   toggleCreateProject$ = this.uiStore.select.createProjectOverlayState$.pipe(
-    tap((value) => (this.createProjectIsOpen = value)),
+    tap((value) => (this.isItOpen = value)),
+    tap((value) => console.log('toggleCreateProject$', value)),
   )
   createProjectOverlayState$ = this.uiStore.select.createProjectOverlayState$
 
@@ -96,6 +131,7 @@ export class AppComponent extends BaseService implements OnInit {
   )
 
   menu = false
+  public sideNavExpanded = false
   // sideNavIsOpen = false
   private _sideNavIsOpen = false
   get sideNavIsOpen() {
@@ -112,19 +148,27 @@ export class AppComponent extends BaseService implements OnInit {
     this.startSideNavTimer()
   }
 
+  isItOpen = false
+  isSideNavOpen = false
+
   private _createProjectIsOpen = false
   get createProjectIsOpen() {
-    return this._sideNavIsOpen
+    return this._createProjectIsOpen
   }
 
   set createProjectIsOpen(value) {
     if (!value) {
       this._createProjectIsOpen = value
-      return
+      // this.uiStore.dispatch.toggleCreateProjectOverlay()
+      // return
+    } else {
+      this._createProjectIsOpen = value
     }
-    this.sideNavTimeLeft = 1
-    this._createProjectIsOpen = value
-    this.startCreateProjectTimer()
+    console.log(this._createProjectIsOpen)
+
+    /*    this.createProjectTimeLeft = 1
+        this._createProjectIsOpen = value
+        this.startCreateProjectTimer()*/
   }
 
   get clockedInSideNav() {
@@ -161,36 +205,92 @@ export class AppComponent extends BaseService implements OnInit {
   }
 
   backDropClick() {
-    if (this.clockedInSideNav) {
-      if (!this.sideNavIsOpen && !this.createProjectIsOpen) return
-      if (this.sideNavIsOpen) {
-        this.sideNavIsOpen = false
-      }
-      if (this.createProjectIsOpen) {
-        this.createProjectIsOpen = false
-      }
-      return
-    }
-    if (this.sideNavIsOpen && this.createProjectIsOpen) return
-    if (!this.sideNavIsOpen) {
-      this.sideNavIsOpen = true
-    }
-    if (!this.createProjectIsOpen) {
-      this.createProjectIsOpen = true
-    }
+    /*    if (this.clockedInSideNav) {
+          // if (!this.sideNavIsOpen) return
+          if (this.sideNavIsOpen) {
+            this.sideNavIsOpen = false
+          }
+          // return
+        }
+        if (this.clockedInCreateProject) {
+          // if (!this.createProjectIsOpen) return
+          if (this.createProjectIsOpen) {
+            this.createProjectIsOpen = false
+          }
+          // return
+        }
+        if (this.sideNavIsOpen && this.createProjectIsOpen) return
+        if (!this.sideNavIsOpen) {
+          this.sideNavIsOpen = true
+        }
+        if (!this.createProjectIsOpen) {
+          this.createProjectIsOpen = true
+        }*/
     // this.sideNavIsOpen = true
+  }
+
+  async backDropClickV2(event: MouseEvent) {
+    console.log(event)
+    event.stopPropagation()
+    event.preventDefault()
+    // create a delay to allow the click to propagate to the sidenav
+    // and then close it
+    /*
+        const delay = 100
+        const hi = setTimeout(() => {
+          this.uiStore.dispatch.toggleNavMenu()
+        }, delay)
+    */
+
+    /*    await new Promise((f) => setTimeout(f, 1000))
+
+        firstValueFrom(this.toggleCreateProject$).then((value) => {
+          if (value) {
+            this.uiStore.dispatch.toggleCreateProjectOverlay()
+          }
+        })*/
+
+    /*    if (this.isItOpen) {
+          // this.isItOpen = false
+          this.uiStore.dispatch.toggleCreateProjectOverlay()
+          // return
+        }*/
   }
 
   // sideNavProm =
 
   ngOnInit(): void {
+    /*  this.navMenuDistinct$
+        .pipe(
+          map((value) => {
+            console.log('navMenuDistinct$', value)
+            if (this.drawer) {
+              this.drawer.toggle(undefined, 'keyboard').catch((e) => {
+                console.log(e)
+              })
+            }
+          }),
+          // tap((value) => (this.isSideNavOpen = value)),
+          // tap((value) => console.log('toggleSideNav$', value)),
+          // tap((value) => console.log('toggleSideNav$', this.drawer)),
+          // tap((value) => this.drawer.toggle(value, 'keyboard')),
+        )
+        .subscribe()*/
+    /*    this.uiStore.select.navMenuState$
+          .pipe(
+            // tap((value) => (this.isSideNavOpen = value)),
+            tap((value) => console.log('toggleSideNav$', value)),
+            tap((value) => console.log('toggleSideNav$', this.drawer)),
+            tap((value) => this.drawer.toggle(value, 'keyboard')),
+          )
+          .subscribe()*/
     // this.routerStore.currentRoute$.subscribe((route) => console.log(route))
     // this.routerStore.routeParams$.subscribe((params) => console.log(params))
     // this.routerStore.queryParams$.subscribe((query) => console.log(query))
     this.routerStore.queryParam$('authorize').subscribe((params) => {
       // console.log(params)
       this.logDebug('authorize', params)
-      // this.logger.debug({ source: 'AppComponent', objects: ['authorize', params] })
+      // this.logger.debug({ source: 'AppV2Component', objects: ['authorize', params] })
       // this.logger
       if (params === 'true') {
         this.authStore.dispatch.authorizeRequest()
@@ -223,13 +323,14 @@ export class AppComponent extends BaseService implements OnInit {
   }
 
   openedChanged(event: boolean) {
-    if (event) return
-    this.uiStore.dispatch.toggleCreateProjectOverlay()
+    // if (event) return
+    // this.createProjectIsOpen = false
+    // this.uiStore.dispatch.toggleCreateProjectOverlay()
   }
 
   openedChangedV2(event: boolean) {
     if (event) return
-    this.sideNavIsOpen = false
+    // this.sideNavIsOpen = false
   }
 
   toggleMenu() {
