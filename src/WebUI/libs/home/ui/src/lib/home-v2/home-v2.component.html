@@ -18,16 +18,16 @@
               <div class="hidden md:block">
                 <div class="ml-10 flex items-baseline space-x-4">
                   <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
-                  <a
-                    [ngClass]="{
-                      'bg-gray-900 text-white': currentPage === 'Dashboard',
-                      'text-gray-300 hover:bg-gray-700 hover:text-white':
-                        currentPage !== 'Dashboard'
-                    }"
-                    (click)="changeHomePage('Dashboard')"
-                    class="text-white rounded-md px-3 py-2 text-sm font-medium"
-                    >Dashboard</a
-                  >
+                  <!--                  <a
+                                      [ngClass]="{
+                                        'bg-gray-900 text-white': currentPage === 'Dashboard',
+                                        'text-gray-300 hover:bg-gray-700 hover:text-white':
+                                          currentPage !== 'Dashboard'
+                                      }"
+                                      (click)="changeHomePage('Dashboard')"
+                                      class="text-white rounded-md px-3 py-2 text-sm font-medium"
+                                      >Dashboard</a
+                                    >-->
 
                   <!--             <a
                                  [ngClass]="{
@@ -97,7 +97,7 @@
                 </button>
 
                 <div class="relative ml-3">
-                  <div *ngIf="currentUser$ | async as user">
+                  <div *ngIf="user$ | async as user">
                     <button
                       [matMenuTriggerFor]="userMenu"
                       type="button"
@@ -158,13 +158,15 @@
       <div class="border-b border-gray-700 md:hidden" id="mobile-menu">
         <div class="space-y-1 px-2 py-3 sm:px-3">
           <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
-          <a
-            href="#"
-            (click)="changeHomePage('Dashboard')"
-            class="bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium"
-            aria-current="page"
-            >Dashboard</a
-          >
+          <!--
+                    <a
+                      href="#"
+                      (click)="changeHomePage('Dashboard')"
+                      class="bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium"
+                      aria-current="page"
+                      >Dashboard</a
+                    >
+          -->
 
           <a
             href="#"
@@ -266,6 +268,9 @@
         <ng-container *ngSwitchCase="'Projects'">
           <ng-container *ngTemplateOutlet="ProjectsTemplate"></ng-container>
         </ng-container>
+        <ng-container *ngSwitchCase="'Settings'">
+          <ng-container *ngTemplateOutlet="SettingsTemplate"></ng-container>
+        </ng-container>
       </ng-container>
 
       <!-- Your content -->
@@ -288,6 +293,13 @@
   <!--  <app-projects-command-palette />-->
 </ng-template>
 
+<ng-template #SettingsTemplate>
+  <app-user-settings />
+  <!--  <app-projects-home-page />-->
+  <!--  <app-projects-->
+  <!--  <app-projects-command-palette />-->
+</ng-template>
+
 <mat-menu #userMenu="matMenu">
   <div role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1">
     <a
@@ -300,7 +312,7 @@
     >
 
     <a
-      href="#"
+      (click)="changeHomePage('Settings')"
       class="block px-4 py-2 text-sm text-gray-700"
       role="menuitem"
       tabindex="-1"

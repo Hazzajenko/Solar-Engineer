@@ -6,10 +6,11 @@ import { MatMenuModule } from '@angular/material/menu'
 import { FormControl, ReactiveFormsModule } from '@angular/forms'
 import { MatAutocompleteModule } from '@angular/material/autocomplete'
 import { ProjectModel } from '@shared/data-access/models'
-import { map, Observable, of, startWith, switchMap } from 'rxjs'
+import { firstValueFrom, map, Observable, of, startWith, switchMap } from 'rxjs'
 import { throwExpression } from '@shared/utils'
 import { RandomNumberPipe } from '../../../../../shared/pipes/src/lib/numbers'
 import { MatIconModule } from '@angular/material/icon'
+import { Router } from '@angular/router'
 
 @Component({
   selector: 'app-projects-home-page',
@@ -28,11 +29,13 @@ import { MatIconModule } from '@angular/material/icon'
 })
 export class ProjectsHomePageComponent extends BaseService implements OnInit {
   private projectsStore = inject(ProjectsStoreService)
+  private router = inject(Router)
   autoCompleteControl = new FormControl('')
   projects$ = this.projectsStore.select.allProjects$
   filteredProjects$?: Observable<ProjectModel[] | undefined>
   selectedProject?: ProjectModel
   isHovered = new Map<string, boolean>()
+  loading = false
 
   autoCompleteDisplayFunc(project: ProjectModel): string {
     return project.name ?? throwExpression('project.name is undefined')
@@ -72,5 +75,24 @@ export class ProjectsHomePageComponent extends BaseService implements OnInit {
     return this.projects$.pipe(
       map((data) => data.filter((search) => search.name.toLowerCase().includes(filterValue))),
     )
+  }
+
+  async routeToProject(project: ProjectModel) {
+    this.loading = true
+    // this.user
+    // const user = firstValueFrom(this.currentUser$)
+    const userName = await firstValueFrom(this.userName$)
+    // const userName = await this.user().
+    // await this.authStore.select.isLoggedIn()
+
+    await this.router.navigate([`${userName.toLowerCase()}/${project.name}`]).then(() => {
+      this.projectsStore.dispatch.initSelectProject(project.id)
+      this.loading = false
+    })
+  }
+
+  createRange(number: number) {
+    // return new Array(number);
+    return new Array(number).fill(0).map((n, index) => index + 1)
   }
 }

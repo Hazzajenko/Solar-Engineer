@@ -13,12 +13,20 @@ export class BaseService {
       this.logger = logger
     }*/
 
-  protected currentUser$ = this.authFacade.user$
+  protected user$ = this.authFacade.user$
+  protected userName$ = this.authFacade.user$.pipe(
+    map((user) => user?.userName ?? 'User not logged in'),
+  )
   protected currentUserId = this.authFacade.userId()
   protected isLoggedIn$ = this.authFacade.isLoggedIn$
+  // protected user = async () => await this.authFacade.user
 
   /*  currentUserId() {
 
+    }*/
+
+  /*  protected async user() {
+      return await firstValueFrom(this.authFacade.user$)
     }*/
 
   protected logDebug(...objects: unknown[]): void {

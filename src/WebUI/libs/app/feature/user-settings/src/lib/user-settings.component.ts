@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common'
 import { ChangeDetectionStrategy, Component } from '@angular/core'
+import { BaseService } from '@shared/logger'
 
 @Component({
   selector: 'app-user-settings',
@@ -9,4 +10,4 @@ import { ChangeDetectionStrategy, Component } from '@angular/core'
   imports: [CommonModule],
   standalone: true,
 })
-export class UserSettingsComponent {}
+export class UserSettingsComponent extends BaseService {}

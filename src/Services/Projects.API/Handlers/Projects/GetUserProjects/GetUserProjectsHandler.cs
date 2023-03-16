@@ -25,9 +25,19 @@ public class GetUserProjectsHandler : IQueryHandler<GetUserProjectsQuery, bool>
     public async ValueTask<bool> Handle(GetUserProjectsQuery request, CancellationToken cT)
     {
         var appUserId = request.User.Id;
-        var projects = await _unitOfWork.AppUserProjectsRepository.GetProjectsByAppUserIdAsync(
+        /*var projects = await _unitOfWork.AppUserProjectsRepository.GetProjectsByAppUserIdAsync(
             appUserId
-        );
+        );*/
+        var projects =
+            await _unitOfWork.AppUserProjectsRepository.GetProjectsWithMembersByAppUserIdAsync(
+                appUserId
+            );
+
+        /*var projectMembers = await _unitOfWork.AppUserProjectsRepository.GetProjectsByAppUserIdAsync(
+            appUserId
+        );*/
+
+        // await _unitOfWork.AppUserProjectsRepository.
 
         // _logger.LogInformation("User {User} get user projects", appUserId);
 

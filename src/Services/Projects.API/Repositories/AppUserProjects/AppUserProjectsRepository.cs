@@ -68,7 +68,7 @@ public sealed class AppUserProjectsRepository
             .ToArrayAsync();
     }
 
-    public async Task<IEnumerable<ProjectV2Dto>> GetProjectsWithMembersByAppUserIdAsync(
+    public async Task<IEnumerable<ProjectDto>> GetProjectsWithMembersByAppUserIdAsync(
         Guid appUserId
     )
     {
@@ -78,7 +78,7 @@ public sealed class AppUserProjectsRepository
             .ThenInclude(x => x.AppUserProjects)
             .Select(
                 x =>
-                    new ProjectV2Dto
+                    new ProjectDto
                     {
                         Name = x.Project.Name,
                         Id = x.Project.Id.ToString(),

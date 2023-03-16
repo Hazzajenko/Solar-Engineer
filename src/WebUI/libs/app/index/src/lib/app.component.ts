@@ -90,7 +90,7 @@ export class AppComponent extends BaseService implements OnInit {
     }
   */
 
-  user$ = this.authStore.select.user$
+  // user$ = this.authStore.select.user$
   projects$ = this.projectsStore.select.allProjects$
   friends$ = this.friendsStoreService.select.friends$
   friendsOnline$ = this.friendsStoreService.select.friendsOnline$

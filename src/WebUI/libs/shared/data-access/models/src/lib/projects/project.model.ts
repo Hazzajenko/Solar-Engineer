@@ -1,4 +1,4 @@
-interface IProject {
+/*interface IProject {
   id: string
   name: string
   createdById: string
@@ -13,7 +13,7 @@ export interface ProjectModel extends IProject {
   createdTime: string
   lastModifiedTime: string
   // createdBy
-}
+}*/
 
 /*
 class ProjectModelImpl implements ProjectModel {

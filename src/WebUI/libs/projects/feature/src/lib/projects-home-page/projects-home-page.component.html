@@ -1,4 +1,4 @@
-<ng-container *ngIf="currentUser$ | async as user">
+<ng-container *ngIf="user$ | async as user">
   <!--<div class='fixed top-0 left-0 h-full w-1/2 bg-white' aria-hidden='true'></div>-->
   <!--<div class='fixed top-0 right-0 h-full w-1/2 bg-gray-50' aria-hidden='true'></div>-->
   <!--<div class="relative flex min-h-full flex-col">-->
@@ -368,6 +368,7 @@
               <!--            <tbody class="divide-y divide-gray-100 bg-white">-->
               <tr
                 (click)="selectProject(project)"
+                (dblclick)="routeToProject(project)"
                 (mouseover)="isHovered.set(project.name, true)"
                 (mouseout)="isHovered.set(project.name, false)"
                 class="active:bg-violet-300 focus:outline-none focus:ring focus:blue-100"
@@ -408,7 +409,7 @@
                           </svg>
                           <span
                             class="truncate text-sm font-medium text-gray-500 group-hover:text-gray-900"
-                            >{{ user.displayName }}/{{ project.name }}</span
+                            >{{ user.userName | lowercase }}/{{ project.name }}</span
                           >
                         </a>
                         <!--                        <span class="font-normal text-gray-500">in Engineering</span>-->
@@ -420,32 +421,41 @@
                   <div class="flex items-center space-x-2">
                     <div class="flex flex-shrink-0 -space-x-1">
                       <img
+                        *ngFor="let item of createRange(4)"
                         class="h-6 w-6 max-w-none rounded-full ring-2 ring-white"
-                        src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                        alt="Dries Vincent"
+                        [src]="user.photoUrl"
+                        [alt]="user.userName"
                       />
+                      <!--        <img
+                      class="h-6 w-6 max-w-none rounded-full ring-2 ring-white"
+                      src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                      alt="Dries Vincent"
+                    />-->
 
-                      <img
-                        class="h-6 w-6 max-w-none rounded-full ring-2 ring-white"
-                        src="https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                        alt="Lindsay Walton"
-                      />
+                      <!--                 <img
+                               class="h-6 w-6 max-w-none rounded-full ring-2 ring-white"
+                               src="https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                               alt="Lindsay Walton"
+                             />
 
-                      <img
-                        class="h-6 w-6 max-w-none rounded-full ring-2 ring-white"
-                        src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                        alt="Courtney Henry"
-                      />
+                             <img
+                               class="h-6 w-6 max-w-none rounded-full ring-2 ring-white"
+                               src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                               alt="Courtney Henry"
+                             />
 
-                      <img
-                        class="h-6 w-6 max-w-none rounded-full ring-2 ring-white"
-                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                        alt="Tom Cook"
-                      />
+                             <img
+                               class="h-6 w-6 max-w-none rounded-full ring-2 ring-white"
+                               src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                               alt="Tom Cook"
+                             />-->
                     </div>
 
+                    <!--                  <span class="flex-shrink-0 text-xs font-medium leading-5"
+                        >+{{ 5 | getRandomNumber : 10 }}</span
+                      >-->
                     <span class="flex-shrink-0 text-xs font-medium leading-5"
-                      >+{{ 5 | getRandomNumber : 10 }}</span
+                      >+{{ project.memberIds.length ?? 0 }}</span
                     >
                     <!--                    <span class="flex-shrink-0 text-xs font-medium leading-5">+8</span>-->
                   </div>
@@ -465,10 +475,10 @@
                     />
                   </svg>
                   <!--         <svg xmlns="http://www.w3.org/2000/svg" height="20" width="20">
-                 <path
-                   d="m34.3 17.85-4.05-4 1.05-1.15 3 3.05 7.2-7.3 1.1 1.15ZM12 39V10.65q0-1.15.8-1.975.8-.825 1.95-.825H26.7V9.4H14.75q-.45 0-.825.375-.375.375-.375.875V36.6L24 32.15l10.45 4.45V21.4H36V39l-12-5.15Zm1.55-29.6H26.7 24Z"
-                 />
-               </svg>-->
+ <path
+   d="m34.3 17.85-4.05-4 1.05-1.15 3 3.05 7.2-7.3 1.1 1.15ZM12 39V10.65q0-1.15.8-1.975.8-.825 1.95-.825H26.7V9.4H14.75q-.45 0-.825.375-.375.375-.375.875V36.6L24 32.15l10.45 4.45V21.4H36V39l-12-5.15Zm1.55-29.6H26.7 24Z"
+ />
+</svg>-->
                 </td>
               </tr>
 

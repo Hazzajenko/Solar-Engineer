@@ -3,7 +3,6 @@ import { loggedInGuard, loggedInV2Guard, notLoggedInGuard } from '@auth/guards'
 import { LocalProjectResolver } from '@grid-layout/data-access'
 import { homeProviders } from '../home/providers'
 import { projectsProviders } from '../projects/projects.providers'
-import { GoogleSignInResolver } from '@auth/feature'
 
 export const appRoutes: Route[] = [
   {
@@ -28,15 +27,15 @@ export const appRoutes: Route[] = [
       path: 'signin-google',
       loadComponent: () => import('@auth/feature').then((m) => m.GoogleSignInComponent),
     },*/
-  {
-    path: 'login/google',
-    loadComponent: () => import('@auth/feature').then((m) => m.GoogleSignInComponent),
-    resolve: { googleSignIn: GoogleSignInResolver },
-    // loadComponent: () => import('@home/ui').then((m) => m.HomeComponent),
-    // canActivate: [loggedInV2Guard],
-    // canActivate: [loggedInGuard],
-    // providers: [homeProviders],
-  },
+  /*  {
+      path: 'login/google',
+      loadComponent: () => import('@auth/feature').then((m) => m.GoogleSignInComponent),
+      resolve: { googleSignIn: GoogleSignInResolver },
+      // loadComponent: () => import('@home/ui').then((m) => m.HomeComponent),
+      // canActivate: [loggedInV2Guard],
+      // canActivate: [loggedInGuard],
+      // providers: [homeProviders],
+    },*/
   /*  {
       path: 'sign-in',
       loadComponent: () => import('@home/ui').then((m) => m.HomeAnonymousComponent),
@@ -114,12 +113,19 @@ export const appRoutes: Route[] = [
     loadComponent: () => import('@projects/feature').then((m) => m.ProjectsSettingsComponent),
   },
   {
-    path: 'projects/:projectName',
+    path: ':userName/:projectName',
     loadComponent: () => import('@projects/feature').then((m) => m.WebProjectComponent),
     canActivate: [loggedInGuard],
     providers: [projectsProviders],
     // resolve: { project: SelectProjectResolver },
   },
+  /*  {
+      path: 'projects/:projectName',
+      loadComponent: () => import('@projects/feature').then((m) => m.WebProjectComponent),
+      canActivate: [loggedInGuard],
+      providers: [projectsProviders],
+      // resolve: { project: SelectProjectResolver },
+    },*/
   {
     path: '',
     redirectTo: '',

@@ -93,7 +93,7 @@
                                   />
                                 </button>
                               </div>-->
-                  <div *ngIf="currentUser$ | async as user">
+                  <div *ngIf="user$ | async as user">
                     <button
                       [matMenuTriggerFor]="userMenu"
                       type="button"
