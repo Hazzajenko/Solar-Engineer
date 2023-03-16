@@ -67,4 +67,33 @@ public sealed class AppUserProjectsRepository
             .Select(x => x.AppUserId.ToString())
             .ToArrayAsync();
     }
+
+    public async Task<IEnumerable<ProjectV2Dto>> GetProjectsWithMembersByAppUserIdAsync(
+        Guid appUserId
+    )
+    {
+        return await Queryable
+            .Where(x => x.AppUserId == appUserId)
+            .Include(x => x.Project)
+            .ThenInclude(x => x.AppUserProjects)
+            .Select(
+                x =>
+                    new ProjectV2Dto
+                    {
+                        Name = x.Project.Name,
+                        Id = x.Project.Id.ToString(),
+                        CreatedTime = x.Project.CreatedTime,
+                        LastModifiedTime = x.Project.LastModifiedTime,
+                        CreatedById = x.Project.CreatedById.ToString(),
+                        MemberIds = x.Project.AppUserProjects.Select(x => x.AppUserId.ToString())
+                    }
+            )
+            // .Select(x => x.ToDto())
+            .ToListAsync();
+        /*public string Name { get; set; } = default!;
+        public string Id { get; set; } = default!;
+        public DateTime CreatedTime { get; set; }
+        public DateTime LastModifiedTime { get; set; }
+        public string CreatedById { get; set; } = default!;*/
+    }
 }

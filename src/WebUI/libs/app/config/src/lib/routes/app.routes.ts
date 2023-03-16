@@ -1,16 +1,50 @@
 import { Route } from '@angular/router'
-import { loggedInGuard } from '@auth/guards'
+import { loggedInGuard, loggedInV2Guard, notLoggedInGuard } from '@auth/guards'
 import { LocalProjectResolver } from '@grid-layout/data-access'
 import { homeProviders } from '../home/providers'
 import { projectsProviders } from '../projects/projects.providers'
+import { GoogleSignInResolver } from '@auth/feature'
 
 export const appRoutes: Route[] = [
   {
     path: '',
     loadComponent: () => import('@home/ui').then((m) => m.HomeV2Component),
     // loadComponent: () => import('@home/ui').then((m) => m.HomeComponent),
+    canActivate: [loggedInV2Guard],
+    // canActivate: [loggedInGuard],
+    pathMatch: 'full',
     providers: [homeProviders],
   },
+  {
+    path: 'sign-in',
+    loadComponent: () => import('@auth/feature').then((m) => m.SignInComponent),
+    canActivate: [notLoggedInGuard],
+    // loadComponent: () => import('@home/ui').then((m) => m.HomeComponent),
+    // canActivate: [loggedInV2Guard],
+    // canActivate: [loggedInGuard],
+    // providers: [homeProviders],
+  },
+  /*  {
+      path: 'signin-google',
+      loadComponent: () => import('@auth/feature').then((m) => m.GoogleSignInComponent),
+    },*/
+  {
+    path: 'login/google',
+    loadComponent: () => import('@auth/feature').then((m) => m.GoogleSignInComponent),
+    resolve: { googleSignIn: GoogleSignInResolver },
+    // loadComponent: () => import('@home/ui').then((m) => m.HomeComponent),
+    // canActivate: [loggedInV2Guard],
+    // canActivate: [loggedInGuard],
+    // providers: [homeProviders],
+  },
+  /*  {
+      path: 'sign-in',
+      loadComponent: () => import('@home/ui').then((m) => m.HomeAnonymousComponent),
+      // loadComponent: () => import('@home/ui').then((m) => m.HomeComponent),
+      // canActivate: [loggedInV2Guard],
+      // canActivate: [loggedInGuard],
+      providers: [homeProviders],
+    },*/
   {
     path: 'messages',
     loadComponent: () => import('@app/feature/chatrooms').then((m) => m.ChatroomsComponent),

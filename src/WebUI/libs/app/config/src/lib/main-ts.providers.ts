@@ -15,6 +15,11 @@ import { provideStore } from '@ngrx/store'
 import { provideRouterStore } from '@ngrx/router-store'
 import { metaReducers, reducers } from '@shared/data-access/store'
 import { DatePipe } from '@angular/common'
+import { JwtModule } from '@auth0/angular-jwt'
+
+export function tokenGetter() {
+  return localStorage.getItem('token')
+}
 
 export const mainTsProviders = [
   provideRouter(appRoutes, withEnabledBlockingInitialNavigation()),
@@ -26,6 +31,11 @@ export const mainTsProviders = [
     MatSnackBarModule,
     MatSnackBarRef,
     DatePipe,
+    JwtModule.forRoot({
+      config: {
+        tokenGetter: tokenGetter,
+      },
+    }),
   ),
   provideStore(reducers, { metaReducers }),
   provideRouterStore(),

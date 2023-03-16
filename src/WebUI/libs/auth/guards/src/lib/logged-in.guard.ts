@@ -12,3 +12,22 @@ export const loggedInGuard = () => {
     }),
   )
 }
+
+/*
+return this._authService.check().pipe(
+  switchMap((authenticated) => {
+
+    // If the user is not authenticated...
+    if ( !authenticated )
+    {
+      // Redirect to the sign-in page with a redirectUrl param
+      const redirectURL = `/${segments.join('/')}`;
+      const urlTree = this._router.parseUrl(`sign-in?redirectURL=${redirectURL}`);
+
+      return of(urlTree);
+    }
+
+    // Allow the access
+    return of(true);
+  })
+);*/

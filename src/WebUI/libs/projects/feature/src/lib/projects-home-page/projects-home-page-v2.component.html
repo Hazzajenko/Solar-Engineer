@@ -1,0 +1,621 @@
+<ng-container *ngIf="currentUser$ | async as user">
+  <!--<div class='fixed top-0 left-0 h-full w-1/2 bg-white' aria-hidden='true'></div>-->
+  <!--<div class='fixed top-0 right-0 h-full w-1/2 bg-gray-50' aria-hidden='true'></div>-->
+  <!--<div class="relative flex min-h-full flex-col">-->
+  <!-- Navbar -->
+  <!--<nav class='flex-shrink-0 bg-indigo-600'>
+    <div class='mx-auto max-w-7xl px-2 sm:px-4 lg:px-8'>
+      <div class='relative flex h-16 items-center justify-between'>
+        &lt;!&ndash; Logo section &ndash;&gt;
+        <div class='flex items-center px-2 lg:px-0 xl:w-64'>
+          <div class='flex-shrink-0'>
+            <img class='h-8 w-auto' src='https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=300'
+                 alt='Your Company'>
+          </div>
+        </div>
+
+        &lt;!&ndash; Search section &ndash;&gt;
+        <div class='flex flex-1 justify-center lg:justify-end'>
+          <div class='w-full px-2 lg:px-6'>
+            <label for='search' class='sr-only'>Search projects</label>
+            <div class='relative text-indigo-200 focus-within:text-gray-400'>
+              <div class='pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3'>
+                <svg class='h-5 w-5' viewBox='0 0 20 20' fill='currentColor' aria-hidden='true'>
+                  <path fill-rule='evenodd'
+                        d='M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z'
+                        clip-rule='evenodd' />
+                </svg>
+              </div>
+              <input id='search' name='search'
+                     class='block w-full rounded-md border-0 bg-indigo-400 bg-opacity-25 py-1.5 pl-10 pr-3 text-indigo-100 placeholder:text-indigo-200 focus:bg-white focus:text-gray-900 focus:outline-none focus:ring-0 focus:placeholder:text-gray-400 sm:text-sm sm:leading-6'
+                     placeholder='Search projects' type='search'>
+            </div>
+          </div>
+        </div>
+        <div class='flex lg:hidden'>
+          &lt;!&ndash; Mobile menu button &ndash;&gt;
+          <button type='button'
+                  class='inline-flex items-center justify-center rounded-md bg-indigo-600 p-2 text-indigo-400 hover:bg-indigo-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-indigo-600'
+                  aria-controls='mobile-menu' aria-expanded='false'>
+            <span class='sr-only'>Open main menu</span>
+            &lt;!&ndash;
+              Icon when menu is closed.
+
+              Menu open: "hidden", Menu closed: "block"
+            &ndash;&gt;
+            <svg class='block h-6 w-6' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='currentColor'
+                 aria-hidden='true'>
+              <path stroke-linecap='round' stroke-linejoin='round' d='M3.75 6.75h16.5M3.75 12H12m-8.25 5.25h16.5' />
+            </svg>
+            &lt;!&ndash;
+              Icon when menu is open.
+
+              Menu open: "block", Menu closed: "hidden"
+            &ndash;&gt;
+            <svg class='hidden h-6 w-6' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='currentColor'
+                 aria-hidden='true'>
+              <path stroke-linecap='round' stroke-linejoin='round' d='M6 18L18 6M6 6l12 12' />
+            </svg>
+          </button>
+        </div>
+        &lt;!&ndash; Links section &ndash;&gt;
+        <div class='hidden lg:block lg:w-80'>
+          <div class='flex items-center justify-end'>
+            <div class='flex'>
+              <a href='#' class='rounded-md px-3 py-2 text-sm font-medium text-indigo-200 hover:text-white'
+                 aria-current='page'>Dashboard</a>
+
+              <a href='#' class='rounded-md px-3 py-2 text-sm font-medium text-indigo-200 hover:text-white'>Domains</a>
+            </div>
+            &lt;!&ndash; Profile dropdown &ndash;&gt;
+            <div class='relative ml-4 flex-shrink-0'>
+              <div>
+                <button type='button'
+                        class='flex rounded-full bg-indigo-700 text-sm text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-indigo-700'
+                        id='user-menu-button' aria-expanded='false' aria-haspopup='true'>
+                  <span class='sr-only'>Open user menu</span>
+                  <img class='h-8 w-8 rounded-full'
+                       src='https://images.unsplash.com/photo-1517365830460-955ce3ccd263?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=256&h=256&q=80'
+                       alt=''>
+                </button>
+              </div>
+
+              &lt;!&ndash;
+                Dropdown menu, show/hide based on menu state.
+
+                Entering: "transition ease-out duration-100"
+                  From: "transform opacity-0 scale-95"
+                  To: "transform opacity-100 scale-100"
+                Leaving: "transition ease-in duration-75"
+                  From: "transform opacity-100 scale-100"
+                  To: "transform opacity-0 scale-95"
+              &ndash;&gt;
+              <div
+                class='absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'
+                role='menu' aria-orientation='vertical' aria-labelledby='user-menu-button' tabindex='-1'>
+                &lt;!&ndash; Active: "bg-gray-100", Not Active: "" &ndash;&gt;
+                <a href='#' class='block px-4 py-2 text-sm text-gray-700' role='menuitem' tabindex='-1'
+                   id='user-menu-item-0'>Your Profile</a>
+
+                <a href='#' class='block px-4 py-2 text-sm text-gray-700' role='menuitem' tabindex='-1'
+                   id='user-menu-item-1'>Settings</a>
+
+                <a href='#' class='block px-4 py-2 text-sm text-gray-700' role='menuitem' tabindex='-1'
+                   id='user-menu-item-2'>Sign out</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    &lt;!&ndash; Mobile menu, show/hide based on menu state. &ndash;&gt;
+    <div class='lg:hidden' id='mobile-menu'>
+      <div class='space-y-1 px-2 pt-2 pb-3'>
+        &lt;!&ndash; Current: "bg-indigo-800 text-white", Default: "text-indigo-200 hover:bg-indigo-600 hover:text-indigo-100" &ndash;&gt;
+        <a href='#' class='bg-indigo-800 text-white block rounded-md px-3 py-2 text-base font-medium'
+           aria-current='page'>Dashboard</a>
+
+        <a href='#'
+           class='text-indigo-200 hover:bg-indigo-600 hover:text-indigo-100 block rounded-md px-3 py-2 text-base font-medium'>Domains</a>
+      </div>
+      <div class='border-t border-indigo-800 pt-4 pb-3'>
+        <div class='space-y-1 px-2'>
+          <a href='#'
+             class='block rounded-md px-3 py-2 text-base font-medium text-indigo-200 hover:bg-indigo-600 hover:text-indigo-100'>Your
+            Profile</a>
+
+          <a href='#'
+             class='block rounded-md px-3 py-2 text-base font-medium text-indigo-200 hover:bg-indigo-600 hover:text-indigo-100'>Settings</a>
+
+          <a href='#'
+             class='block rounded-md px-3 py-2 text-base font-medium text-indigo-200 hover:bg-indigo-600 hover:text-indigo-100'>Sign
+            out</a>
+        </div>
+      </div>
+    </div>
+  </nav>-->
+
+  <!-- 3 column wrapper -->
+  <!--max-w-7xl-->
+  <div
+    class="mx-auto w-full h-full min-h-[600px] flex-grow lg:flex xl:px-8 bg-white rounded-md bg-gradient-to-b from-white to-transparent"
+  >
+    <!-- Left sidebar & main wrapper -->
+    <div class="min-w-0 flex-1 bg-white xl:flex">
+      <!-- Account profile -->
+      <div class="flex flex-shrink-0 items-center px-4">
+        <img class="h-8 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=purple&shade=500" alt="Your Company">
+      </div>
+      <div class="mt-5 h-0 flex-1 overflow-y-auto">
+        <nav class="px-2">
+          <div class="space-y-1">
+            <!-- Current: "bg-gray-100 text-gray-900", Default: "text-gray-600 hover:bg-gray-50 hover:text-gray-900" -->
+            <a href="#" class="bg-gray-100 text-gray-900 group flex items-center rounded-md px-2 py-2 text-base font-medium leading-5" aria-current="page">
+              <!-- Current: "text-gray-500", Default: "text-gray-400 group-hover:text-gray-500" -->
+              <svg class="text-gray-500 mr-3 h-6 w-6 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+              </svg>
+              Home
+            </a>
+
+            <a href="#" class="text-gray-600 hover:bg-gray-50 hover:text-gray-900 group flex items-center rounded-md px-2 py-2 text-base font-medium leading-5">
+              <svg class="text-gray-400 group-hover:text-gray-500 mr-3 h-6 w-6 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 5.25h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5" />
+              </svg>
+              My tasks
+            </a>
+
+            <a href="#" class="text-gray-600 hover:bg-gray-50 hover:text-gray-900 group flex items-center rounded-md px-2 py-2 text-base font-medium leading-5">
+              <svg class="text-gray-400 group-hover:text-gray-500 mr-3 h-6 w-6 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Recent
+            </a>
+          </div>
+          <div class="mt-8">
+            <h3 class="px-3 text-sm font-medium text-gray-500" id="mobile-teams-headline">Teams</h3>
+            <div class="mt-1 space-y-1" role="group" aria-labelledby="mobile-teams-headline">
+              <a href="#" class="group flex items-center rounded-md px-3 py-2 text-base font-medium leading-5 text-gray-600 hover:bg-gray-50 hover:text-gray-900">
+                <span class="mr-4 h-2.5 w-2.5 bg-indigo-500 rounded-full" aria-hidden="true"></span>
+                <span class="truncate">Engineering</span>
+              </a>
+
+              <a href="#" class="group flex items-center rounded-md px-3 py-2 text-base font-medium leading-5 text-gray-600 hover:bg-gray-50 hover:text-gray-900">
+                <span class="mr-4 h-2.5 w-2.5 bg-green-500 rounded-full" aria-hidden="true"></span>
+                <span class="truncate">Human Resources</span>
+              </a>
+
+              <a href="#" class="group flex items-center rounded-md px-3 py-2 text-base font-medium leading-5 text-gray-600 hover:bg-gray-50 hover:text-gray-900">
+                <span class="mr-4 h-2.5 w-2.5 bg-yellow-500 rounded-full" aria-hidden="true"></span>
+                <span class="truncate">Customer Success</span>
+              </a>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </div>
+
+    <div class="w-14 flex-shrink-0" aria-hidden="true">
+      <!-- Dummy element to force sidebar to shrink to fit close icon -->
+    </div>
+  </div>
+<!--  </div>-->
+      <!--      <div class="bg-white lg:min-w-0 lg:flex-1">-->
+      <!--  <div-->
+      <!--    class="border-b border-t border-gray-200 pl-4 pr-6 pt-4 pb-4 sm:pl-6 lg:pl-8 xl:border-t-0 xl:pl-6 xl:pt-6 p-4"-->
+      <!--  >-->
+      <!--    <div class="flex items-center">-->
+
+      <div class="lg:min-w-0 lg:flex-1">
+        <div class="inline-block min-w-full border-b border-gray-200 align-middle">
+          <div
+            class="border-b border-t border-gray-200 pl-4 pr-6 pt-4 pb-4 sm:pl-6 lg:pl-8 xl:border-t-0 xl:pl-6 xl:pt-6 p-4"
+          >
+            <div class="flex items-center">
+              <h1 class="flex-1 text-lg font-medium">Projects</h1>
+              <div class="relative">
+                <button
+                  [matMenuTriggerFor]="projectMenu"
+                  type="button"
+                  class="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                  id="sort-menu-button"
+                  aria-expanded="false"
+                  aria-haspopup="true"
+                >
+                  <svg
+                    class="-ml-0.5 h-5 w-5 text-gray-400"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M2 3.75A.75.75 0 012.75 3h11.5a.75.75 0 010 1.5H2.75A.75.75 0 012 3.75zM2 7.5a.75.75 0 01.75-.75h6.365a.75.75 0 010 1.5H2.75A.75.75 0 012 7.5zM14 7a.75.75 0 01.55.24l3.25 3.5a.75.75 0 11-1.1 1.02l-1.95-2.1v6.59a.75.75 0 01-1.5 0V9.66l-1.95 2.1a.75.75 0 11-1.1-1.02l3.25-3.5A.75.75 0 0114 7zM2 11.25a.75.75 0 01.75-.75H7A.75.75 0 017 12H2.75a.75.75 0 01-.75-.75z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                  Sort
+                  <svg
+                    class="-mr-1 h-5 w-5 text-gray-400"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <table class="min-w-full min-h-full">
+            <thead>
+              <tr class="border-t border-gray-200">
+                <th
+                  class="border-b border-gray-200 px-6 py-3 text-left text-sm font-semibold text-gray-900"
+                  scope="col"
+                >
+                  <span class="lg:pl-2">Name</span>
+                </th>
+                <th
+                  class="border-b border-gray-200 px-6 py-3 text-left text-sm font-semibold text-gray-900"
+                  scope="col"
+                >
+                  Members
+                </th>
+                <th
+                  class="hidden border-b border-gray-200 px-6 py-3 text-right text-sm font-semibold text-gray-900 md:table-cell"
+                  scope="col"
+                >
+                  Last updated
+                </th>
+                <th
+                  class="border-b border-gray-200 py-3 pr-6 text-right text-sm font-semibold text-gray-900"
+                  scope="col"
+                ></th>
+              </tr>
+            </thead>
+            <!--            <ul role="list" class="divide-y divide-gray-200 border-b border-gray-200">-->
+            <tbody class="divide-y divide-gray-200 border-b border-gray-200">
+              <!--            <tbody class="divide-y divide-gray-100 bg-white">-->
+              <tr *ngFor="let project of projects$ | async">
+                <td
+                  class="w-full max-w-0 whitespace-nowrap px-6 py-3 text-sm font-medium text-gray-900 hover:bg-gray-50"
+                >
+                  <div class="flex items-center space-x-3 lg:pl-2">
+                    <div
+                      class="h-2.5 w-2.5 flex-shrink-0 rounded-full bg-pink-600"
+                      aria-hidden="true"
+                    ></div>
+                    <a href="#" class="truncate hover:text-gray-600">
+                      <span>
+                        {{ project.name }}
+                        <a href="#" class="group relative flex items-center space-x-2.5">
+                          <svg
+                            class="h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
+                            viewBox="0 0 18 18"
+                            fill="none"
+                            aria-hidden="true"
+                          >
+                            <path
+                              fill-rule="evenodd"
+                              clip-rule="evenodd"
+                              d="M8.99917 0C4.02996 0 0 4.02545 0 8.99143C0 12.9639 2.57853 16.3336 6.15489 17.5225C6.60518 17.6053 6.76927 17.3277 6.76927 17.0892C6.76927 16.8762 6.76153 16.3104 6.75711 15.5603C4.25372 16.1034 3.72553 14.3548 3.72553 14.3548C3.31612 13.316 2.72605 13.0395 2.72605 13.0395C1.9089 12.482 2.78793 12.4931 2.78793 12.4931C3.69127 12.5565 4.16643 13.4198 4.16643 13.4198C4.96921 14.7936 6.27312 14.3968 6.78584 14.1666C6.86761 13.5859 7.10022 13.1896 7.35713 12.965C5.35873 12.7381 3.25756 11.9665 3.25756 8.52116C3.25756 7.53978 3.6084 6.73667 4.18411 6.10854C4.09129 5.88114 3.78244 4.96654 4.27251 3.72904C4.27251 3.72904 5.02778 3.48728 6.74717 4.65082C7.46487 4.45101 8.23506 4.35165 9.00028 4.34779C9.76494 4.35165 10.5346 4.45101 11.2534 4.65082C12.9717 3.48728 13.7258 3.72904 13.7258 3.72904C14.217 4.96654 13.9082 5.88114 13.8159 6.10854C14.3927 6.73667 14.7408 7.53978 14.7408 8.52116C14.7408 11.9753 12.6363 12.7354 10.6318 12.9578C10.9545 13.2355 11.2423 13.7841 11.2423 14.6231C11.2423 15.8247 11.2313 16.7945 11.2313 17.0892C11.2313 17.3299 11.3937 17.6097 11.8501 17.522C15.4237 16.3303 18 12.9628 18 8.99143C18 4.02545 13.97 0 8.99917 0Z"
+                              fill="currentcolor"
+                            />
+                          </svg>
+                          <span
+                            class="truncate text-sm font-medium text-gray-500 group-hover:text-gray-900"
+                            >{{ user.displayName }}/{{ project.name }}</span
+                          >
+                        </a>
+                        <!--                        <span class="font-normal text-gray-500">in Engineering</span>-->
+                      </span>
+                    </a>
+                  </div>
+                </td>
+                <td class="px-6 py-3 text-sm font-medium text-gray-500">
+                  <div class="flex items-center space-x-2">
+                    <div class="flex flex-shrink-0 -space-x-1">
+                      <img
+                        class="h-6 w-6 max-w-none rounded-full ring-2 ring-white"
+                        src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                        alt="Dries Vincent"
+                      />
+
+                      <img
+                        class="h-6 w-6 max-w-none rounded-full ring-2 ring-white"
+                        src="https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                        alt="Lindsay Walton"
+                      />
+
+                      <img
+                        class="h-6 w-6 max-w-none rounded-full ring-2 ring-white"
+                        src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                        alt="Courtney Henry"
+                      />
+
+                      <img
+                        class="h-6 w-6 max-w-none rounded-full ring-2 ring-white"
+                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                        alt="Tom Cook"
+                      />
+                    </div>
+
+                    <span class="flex-shrink-0 text-xs font-medium leading-5">+8</span>
+                  </div>
+                </td>
+                <td
+                  class="hidden whitespace-nowrap px-6 py-3 text-right text-sm text-gray-500 md:table-cell"
+                >
+                  <!--                  March 17, 2020-->
+                  {{ project.lastModifiedTime | date : "medium" }}
+                </td>
+                <td class="whitespace-nowrap px-6 py-3 text-right text-sm font-medium">
+                  <a href="#" class="text-indigo-600 hover:text-indigo-900">Edit</a>
+                </td>
+              </tr>
+
+              <!-- More projects... -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Projects List -->
+      <!--<div class="bg-white lg:min-w-0 lg:flex-1">
+        <div
+          class="border-b border-t border-gray-200 pl-4 pr-6 pt-4 pb-4 sm:pl-6 lg:pl-8 xl:border-t-0 xl:pl-6 xl:pt-6 p-4"
+        >
+          <div class="flex items-center">
+            <h1 class="flex-1 text-lg font-medium">Projects</h1>
+            <div class="relative">
+              <button
+                [matMenuTriggerFor]="projectMenu"
+                type="button"
+                class="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                id="sort-menu-button"
+                aria-expanded="false"
+                aria-haspopup="true"
+              >
+                <svg
+                  class="-ml-0.5 h-5 w-5 text-gray-400"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M2 3.75A.75.75 0 012.75 3h11.5a.75.75 0 010 1.5H2.75A.75.75 0 012 3.75zM2 7.5a.75.75 0 01.75-.75h6.365a.75.75 0 010 1.5H2.75A.75.75 0 012 7.5zM14 7a.75.75 0 01.55.24l3.25 3.5a.75.75 0 11-1.1 1.02l-1.95-2.1v6.59a.75.75 0 01-1.5 0V9.66l-1.95 2.1a.75.75 0 11-1.1-1.02l3.25-3.5A.75.75 0 0114 7zM2 11.25a.75.75 0 01.75-.75H7A.75.75 0 017 12H2.75a.75.75 0 01-.75-.75z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                Sort
+                <svg
+                  class="-mr-1 h-5 w-5 text-gray-400"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </button>
+              &lt;!&ndash; Dropdown menu, show/hide based on menu state. &ndash;&gt;
+              &lt;!&ndash; <div
+                 class="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                 role="menu"
+                 aria-orientation="vertical"
+                 aria-labelledby="sort-menu-button"
+                 tabindex="-1"
+               >
+                 <div class="py-1" role="none">
+                   &lt;!&ndash; Active: "bg-gray-100 text-gray-900", Not Active: "text-gray-700" &ndash;&gt;
+                   <a
+                     href="#"
+                     class="text-gray-700 block px-4 py-2 text-sm"
+                     role="menuitem"
+                     tabindex="-1"
+                     id="sort-menu-item-0"
+                     >Name</a
+                   >
+                   <a
+                     href="#"
+                     class="text-gray-700 block px-4 py-2 text-sm"
+                     role="menuitem"
+                     tabindex="-1"
+                     id="sort-menu-item-1"
+                     >Date modified</a
+                   >
+                   <a
+                     href="#"
+                     class="text-gray-700 block px-4 py-2 text-sm"
+                     role="menuitem"
+                     tabindex="-1"
+                     id="sort-menu-item-2"
+                     >Date created</a
+                   >
+                 </div>
+               </div>&ndash;&gt;
+            </div>
+          </div>
+        </div>
+        <ul role="list" class="divide-y divide-gray-200 border-b border-gray-200">
+          <li
+            *ngFor="let project of projects$ | async"
+            class="relative py-5 pl-4 pr-6 hover:bg-gray-50 sm:py-6 sm:pl-6 lg:pl-8 xl:pl-6"
+          >
+            <div class="flex items-center justify-between space-x-4">
+              &lt;!&ndash; Repo name and link &ndash;&gt;
+              <div class="min-w-0 space-y-3">
+                <div class="flex items-center space-x-3">
+                  <span
+                    class="h-4 w-4 bg-green-100 flex items-center justify-center rounded-full"
+                    aria-hidden="true"
+                  >
+                    <span class="h-2 w-2 bg-green-400 rounded-full"></span>
+                  </span>
+
+                  <h2 class="text-sm font-medium">
+                    <a href="#">
+                      <span class="absolute inset-0" aria-hidden="true"></span>
+                      {{ project.name }} <span class="sr-only">Running</span>
+                    </a>
+                  </h2>
+                </div>
+                <a href="#" class="group relative flex items-center space-x-2.5">
+                  <svg
+                    class="h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
+                    viewBox="0 0 18 18"
+                    fill="none"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      clip-rule="evenodd"
+                      d="M8.99917 0C4.02996 0 0 4.02545 0 8.99143C0 12.9639 2.57853 16.3336 6.15489 17.5225C6.60518 17.6053 6.76927 17.3277 6.76927 17.0892C6.76927 16.8762 6.76153 16.3104 6.75711 15.5603C4.25372 16.1034 3.72553 14.3548 3.72553 14.3548C3.31612 13.316 2.72605 13.0395 2.72605 13.0395C1.9089 12.482 2.78793 12.4931 2.78793 12.4931C3.69127 12.5565 4.16643 13.4198 4.16643 13.4198C4.96921 14.7936 6.27312 14.3968 6.78584 14.1666C6.86761 13.5859 7.10022 13.1896 7.35713 12.965C5.35873 12.7381 3.25756 11.9665 3.25756 8.52116C3.25756 7.53978 3.6084 6.73667 4.18411 6.10854C4.09129 5.88114 3.78244 4.96654 4.27251 3.72904C4.27251 3.72904 5.02778 3.48728 6.74717 4.65082C7.46487 4.45101 8.23506 4.35165 9.00028 4.34779C9.76494 4.35165 10.5346 4.45101 11.2534 4.65082C12.9717 3.48728 13.7258 3.72904 13.7258 3.72904C14.217 4.96654 13.9082 5.88114 13.8159 6.10854C14.3927 6.73667 14.7408 7.53978 14.7408 8.52116C14.7408 11.9753 12.6363 12.7354 10.6318 12.9578C10.9545 13.2355 11.2423 13.7841 11.2423 14.6231C11.2423 15.8247 11.2313 16.7945 11.2313 17.0892C11.2313 17.3299 11.3937 17.6097 11.8501 17.522C15.4237 16.3303 18 12.9628 18 8.99143C18 4.02545 13.97 0 8.99917 0Z"
+                      fill="currentcolor"
+                    />
+                  </svg>
+                  <span class="truncate text-sm font-medium text-gray-500 group-hover:text-gray-900"
+                    >{{ user.displayName }}/{{ project.name }}</span
+                  >
+                </a>
+              </div>
+              <div class="sm:hidden">
+                <svg
+                  class="h-5 w-5 text-gray-400"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </div>
+              &lt;!&ndash; Repo meta info &ndash;&gt;
+              <div class="hidden flex-shrink-0 flex-col items-end space-y-3 sm:flex">
+                <p class="flex items-center space-x-4">
+                  <a href="#" class="relative text-sm font-medium text-gray-500 hover:text-gray-900"
+                    >Visit site</a
+                  >
+                  <button
+                    type="button"
+                    class="relative rounded-full bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                  >
+                    <span class="sr-only">Add to favorites</span>
+                    &lt;!&ndash; Starred: "text-yellow-300 hover:text-yellow-400", Not Starred: "text-gray-300 hover:text-gray-400" &ndash;&gt;
+                    <svg
+                      class="text-yellow-300 hover:text-yellow-400 h-5 w-5"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                  </button>
+                </p>
+                <p class="flex space-x-2 text-sm text-gray-500">
+                  <span>Laravel</span>
+                  <span aria-hidden="true">&middot;</span>
+                  <span>Last deploy 3h ago</span>
+                  <span aria-hidden="true">&middot;</span>
+                  <span>United states</span>
+                </p>
+              </div>
+            </div>
+          </li>
+
+        </ul>
+      </div>-->
+    </div>
+    <!-- Activity feed -->
+    <div
+      class="bg-gray-50 pr-4 sm:pr-6 lg:flex-shrink-0 lg:border-l lg:border-gray-200 lg:pr-8 xl:pr-0"
+    >
+      <div class="pl-6 lg:w-80 p-4">
+        <div class="pt-6 pb-2">
+          <h2 class="text-sm font-semibold">Activity</h2>
+        </div>
+        <div>
+          <ul role="list" class="divide-y divide-gray-200">
+            <li class="py-4">
+              <div class="flex space-x-3">
+                <img
+                  class="h-6 w-6 rounded-full"
+                  src="https://images.unsplash.com/photo-1517365830460-955ce3ccd263?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=256&h=256&q=80"
+                  alt=""
+                />
+                <div class="flex-1 space-y-1">
+                  <div class="flex items-center justify-between">
+                    <h3 class="text-sm font-medium">You</h3>
+                    <p class="text-sm text-gray-500">1h</p>
+                  </div>
+                  <p class="text-sm text-gray-500">
+                    Deployed Workcation (2d89f0c8 in master) to production
+                  </p>
+                </div>
+              </div>
+            </li>
+
+            <!-- More items... -->
+          </ul>
+          <div class="border-t border-gray-200 py-4 text-sm">
+            <a href="#" class="font-semibold text-indigo-600 hover:text-indigo-900">
+              View all activity
+              <span aria-hidden="true"> &rarr;</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--</div>--></ng-container
+>
+
+<mat-menu #projectMenu="matMenu">
+  <div role="menu" aria-orientation="vertical" aria-labelledby="sort-menu-button" tabindex="-1">
+    <div class="py-1" role="none">
+      <!-- Active: "bg-gray-100 text-gray-900", Not Active: "text-gray-700" -->
+      <a
+        href="#"
+        class="text-gray-700 block px-4 py-2 text-sm"
+        role="menuitem"
+        tabindex="-1"
+        id="sort-menu-item-0"
+        >Name</a
+      >
+      <a
+        href="#"
+        class="text-gray-700 block px-4 py-2 text-sm"
+        role="menuitem"
+        tabindex="-1"
+        id="sort-menu-item-1"
+        >Date modified</a
+      >
+      <a
+        href="#"
+        class="text-gray-700 block px-4 py-2 text-sm"
+        role="menuitem"
+        tabindex="-1"
+        id="sort-menu-item-2"
+        >Date created</a
+      >
+    </div>
+  </div>
+</mat-menu>

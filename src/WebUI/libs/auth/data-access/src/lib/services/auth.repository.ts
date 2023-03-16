@@ -12,6 +12,10 @@ export class AuthRepository {
     this.store.dispatch(AuthActions.login())
   }
 
+  signInSuccess(token: string) {
+    this.store.dispatch(AuthActions.signInSuccess({ token }))
+  }
+
   loginWithGoogle() {
     this.store.dispatch(AuthActions.loginWithGoogle())
   }

@@ -3,11 +3,11 @@ using Mediator;
 using Microsoft.AspNetCore.SignalR;
 using Projects.API.Contracts.Requests.Projects;
 using Projects.API.Handlers.Projects.CreateProject;
-using Projects.API.Handlers.SignalR;
+using Projects.API.Handlers.Projects.GetProject;
+using Projects.API.Handlers.Projects.GetUserProjects;
 using Projects.API.Handlers.SignalR.OnConnected;
 using Projects.API.Mapping;
 using Serilog;
-using GetProjectByIdQuery = Projects.API.Handlers.Projects.GetProject.GetProjectByIdQuery;
 
 namespace Projects.API.Hubs;
 
@@ -49,7 +49,7 @@ public class ProjectsHub : Hub<IProjectsHub>
 
     public async Task GetUserProjects()
     {
-        await _mediator.Send(new GetProjectsQuery(Context));
+        await _mediator.Send(new GetUserProjectsQuery(Context.ToHubAppUser()));
     }
 
     public async Task GetProjectById(string projectId)

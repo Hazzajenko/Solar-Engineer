@@ -40,8 +40,8 @@ public static partial class WebApplicationExtensions
                 // var returnUrl = "https://localhost:4200/";
                 var redirectUrl =
                     $"https://api.domain.com/identity/v1/account/external-auth-callback?returnUrl={returnUrl}";*/
-                var redirectUrl = "https://solarengineer.net/authorize";
-                // var redirectUrl = "https://solarengineer.net/?authorize=true";
+                // var redirectUrl = "https://solarengineer.net/authorize";
+                var redirectUrl = "https://solarengineer.net/?authorize=true";
                 var properties = signInManager.ConfigureExternalAuthenticationProperties(
                     provider,
                     redirectUrl

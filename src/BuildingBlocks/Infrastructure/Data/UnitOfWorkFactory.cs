@@ -1,3 +1,4 @@
+using Infrastructure.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
@@ -13,15 +14,17 @@ public abstract class UnitOfWorkFactory<TContext> : IUnitOfWorkFactory
         Context = context;
     }
 
-    // public 
+    // public
 
-    public EntityEntry<TEntity> Attach<TEntity>(TEntity entity) where TEntity : class
+    public EntityEntry<TEntity> Attach<TEntity>(TEntity entity)
+        where TEntity : class
     {
         return Context.Attach(entity);
     }
 
     public async Task<bool> SaveChangesAsync()
     {
+        UpdateLastModifiedTimeBeforeSave();
         return await Context.SaveChangesAsync() > 0;
     }
 
@@ -31,5 +34,16 @@ public abstract class UnitOfWorkFactory<TContext> : IUnitOfWorkFactory
         var changes = Context.ChangeTracker.HasChanges();
 
         return changes;
+    }
+
+    private void UpdateLastModifiedTimeBeforeSave()
+    {
+        foreach (var entry in Context.ChangeTracker.Entries<IEntity>().ToList())
+            switch (entry.State)
+            {
+                case EntityState.Modified:
+                    entry.Entity.LastModifiedTime = DateTime.UtcNow;
+                    break;
+            }
     }
 }

@@ -72,19 +72,26 @@ static_resources:
                   prefix_rewrite: "/"
                   cluster: auth-api
               - match:
-                  prefix: "/signin-google"
+                  prefix: "/login/google"
                 route:
                   # auto_host_rewrite: true
                   host_rewrite: solarengineer.net
                   # prefix_rewrite: "/signin-google"
                   cluster: auth-api
               - match:
-                  prefix: "/signin"
+                  prefix: "/signin-google"
                 route:
                   # auto_host_rewrite: true
-                  host_rewrite: solarengineer.net
-                  # prefix_rewrite: "/signin"
+                  # host_rewrite: solarengineer.net
+                  # prefix_rewrite: "/signin-google"
                   cluster: auth-api
+              # - match:
+              #     prefix: "/signin"
+              #   route:
+              #     # auto_host_rewrite: true
+              #     host_rewrite: solarengineer.net
+              #     # prefix_rewrite: "/signin"
+              #     cluster: auth-api
               - match:
                   prefix: "/users-api/"
                 route:
