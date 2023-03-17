@@ -33,7 +33,7 @@ public class CreateProjectHandler : ICommandHandler<CreateProjectCommand, bool>
 
         var response = project.ToDto();
 
-        await _hubContext.Clients.User(appUserId.ToString()).NewProject(response);
+        await _hubContext.Clients.User(appUserId.ToString()).ProjectCreated(response);
         _logger.LogInformation("User {User} created project {Project}", appUserId, project.Name);
 
         return true;

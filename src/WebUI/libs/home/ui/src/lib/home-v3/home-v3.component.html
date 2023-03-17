@@ -1,0 +1,23 @@
+<ng-container *ngIf="user$ | async as user">
+  <div class="min-h-full">
+    <div class="bg-white flex flex-col">
+      <header class="pb-32">
+        <app-home-header [user]="user" />
+      </header>
+
+      <main class="-mt-32 border-t-2 border-indigo-500">
+        <!--    max-w-7xl-->
+        <div class="mx-auto px-4 pb-12 sm:px-6 lg:px-8">
+          <app-projects-home-page class="flex" />
+          <!--     <ng-container [ngSwitch]='currentPage'>
+
+               </ng-container>-->
+
+          <!-- Your content -->
+          <!--      hello-->
+          <!--      <app-projects-cards />-->
+        </div>
+      </main>
+    </div>
+  </div>
+</ng-container>

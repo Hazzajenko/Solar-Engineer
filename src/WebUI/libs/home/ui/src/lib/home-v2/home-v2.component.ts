@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common'
 import { ChangeDetectionStrategy, Component } from '@angular/core'
 import { MatMenuModule } from '@angular/material/menu'
 import {
+  ProjectsBreadcrumbBarComponent,
   ProjectsCardsComponent,
   ProjectsCommandPaletteComponent,
   ProjectsHomePageComponent,
@@ -10,6 +11,8 @@ import { BaseService } from '@shared/logger'
 import { HOME_PAGE, HomePage } from './home-pages'
 import { RouterLink } from '@angular/router'
 import { UserSettingsComponent } from '@app/feature/user-settings'
+import { RouteBreadcrumbsComponent } from '@shared/ui/route-breadcrumbs'
+import { HeaderComponent } from '@shared/ui/header'
 
 @Component({
   selector: 'app-home-v2',
@@ -22,6 +25,9 @@ import { UserSettingsComponent } from '@app/feature/user-settings'
     ProjectsHomePageComponent,
     RouterLink,
     UserSettingsComponent,
+    ProjectsBreadcrumbBarComponent,
+    RouteBreadcrumbsComponent,
+    HeaderComponent,
   ],
   templateUrl: './home-v2.component.html',
   styles: [],

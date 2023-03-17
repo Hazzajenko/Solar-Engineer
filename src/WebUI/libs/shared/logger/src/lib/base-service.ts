@@ -19,6 +19,7 @@ export class BaseService {
   )
   protected currentUserId = this.authFacade.userId()
   protected isLoggedIn$ = this.authFacade.isLoggedIn$
+  protected isLoggedIn = this.authFacade.isLoggedIn
   // protected user = async () => await this.authFacade.user
 
   /*  currentUserId() {

@@ -34,8 +34,12 @@ const reducer = createReducer(
     error: null,
     local: true,
   })),
+  on(ProjectsActions.addProject, (state, { project }) => projectsAdapter.addOne(project, state)),
   on(ProjectsActions.addManyProjects, (state, { projects }) =>
     projectsAdapter.addMany(projects, state),
+  ),
+  on(ProjectsActions.deleteProject, (state, { projectId }) =>
+    projectsAdapter.removeOne(projectId, state),
   ),
   on(ProjectsActions.loadLocalProjectSuccess, (state, { project }) =>
     projectsAdapter.setOne(project, {

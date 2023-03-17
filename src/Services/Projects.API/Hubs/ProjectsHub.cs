@@ -1,13 +1,16 @@
-﻿using MapsterMapper;
+﻿using Infrastructure.Logging;
+using MapsterMapper;
 using Mediator;
 using Microsoft.AspNetCore.SignalR;
 using Projects.API.Contracts.Requests.Projects;
 using Projects.API.Handlers.Projects.CreateProject;
+using Projects.API.Handlers.Projects.DeleteProject;
 using Projects.API.Handlers.Projects.GetProject;
 using Projects.API.Handlers.Projects.GetUserProjects;
 using Projects.API.Handlers.SignalR.OnConnected;
 using Projects.API.Mapping;
 using Serilog;
+// using Projects.API.Handlers;
 
 namespace Projects.API.Hubs;
 
@@ -31,6 +34,7 @@ public class ProjectsHub : Hub<IProjectsHub>
     {
         await _mediator.Send(new OnConnectedCommand(Context.ToHubAppUser()));
         Connections.Add(Context.ToHubAppUser().Id.ToString(), Context.ConnectionId);
+        Connections.DumpObjectJson();
         await base.OnConnectedAsync();
     }
 
@@ -44,6 +48,12 @@ public class ProjectsHub : Hub<IProjectsHub>
     public async Task CreateProject(CreateProjectRequest request)
     {
         var command = new CreateProjectCommand(Context.ToHubAppUser(), request);
+        await _mediator.Send(command);
+    }
+
+    public async Task DeleteProject(DeleteProjectRequest request)
+    {
+        var command = new DeleteProjectCommand(Context.ToHubAppUser(), request);
         await _mediator.Send(command);
     }
 

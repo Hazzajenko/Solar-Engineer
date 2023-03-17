@@ -1,0 +1,135 @@
+<div class="mx-auto max-w-7xl px-4 sm:px-6">
+  <div class="border-t border-gray-200 py-3">
+    <nav class="flex" aria-label="Breadcrumb">
+      <!--     <div class="flex sm:hidden">
+             <a
+               href="#"
+               class="group inline-flex space-x-3 text-sm font-medium text-gray-500 hover:text-gray-700"
+             >
+               <svg
+                 class="h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-600"
+                 viewBox="0 0 20 20"
+                 fill="currentColor"
+                 aria-hidden="true"
+               >
+                 <path
+                   fill-rule="evenodd"
+                   d="M18 10a.75.75 0 01-.75.75H4.66l2.1 1.95a.75.75 0 11-1.02 1.1l-3.5-3.25a.75.75 0 010-1.1l3.5-3.25a.75.75 0 111.02 1.1l-2.1 1.95h12.59A.75.75 0 0118 10z"
+                   clip-rule="evenodd"
+                 />
+               </svg>
+               <span>Back to Applicants</span>
+             </a>
+           </div>-->
+      <div class="hidden sm:block">
+        <ol role="list" class="flex items-center space-x-4">
+          <li>
+            <div>
+              <a href="#" class="text-gray-400 hover:text-gray-500">
+                <svg
+                  class="h-5 w-5 flex-shrink-0"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M9.293 2.293a1 1 0 011.414 0l7 7A1 1 0 0117 11h-1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-3a1 1 0 00-1-1H9a1 1 0 00-1 1v3a1 1 0 01-1 1H5a1 1 0 01-1-1v-6H3a1 1 0 01-.707-1.707l7-7z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <span class="sr-only">Home</span>
+              </a>
+            </div>
+          </li>
+          <li *ngFor="let route of routes">
+            <div class="flex items-center">
+              <svg
+                class="h-5 w-5 flex-shrink-0 text-gray-300"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+              >
+                <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
+              </svg>
+              <!--              <a href="#" class="ml-4 text-sm font-medium text-white hover:text-gray-700">{{-->
+              <a href="#" class="ml-4 text-sm font-medium text-gray-500 hover:text-gray-700">{{
+                route
+              }}</a>
+            </div>
+          </li>
+          <!--          <li>
+                      <div>
+                        <a href="#" class="text-gray-400 hover:text-gray-500">
+                          <svg
+                            class="h-5 w-5 flex-shrink-0"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                            aria-hidden="true"
+                          >
+                            <path
+                              fill-rule="evenodd"
+                              d="M9.293 2.293a1 1 0 011.414 0l7 7A1 1 0 0117 11h-1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-3a1 1 0 00-1-1H9a1 1 0 00-1 1v3a1 1 0 01-1 1H5a1 1 0 01-1-1v-6H3a1 1 0 01-.707-1.707l7-7z"
+                              clip-rule="evenodd"
+                            />
+                          </svg>
+                          <span class="sr-only">Home</span>
+                        </a>
+                      </div>
+                    </li>-->
+
+          <!-- <li>
+             <div class="flex items-center">
+               <svg
+                 class="h-5 w-5 flex-shrink-0 text-gray-300"
+                 fill="currentColor"
+                 viewBox="0 0 20 20"
+                 aria-hidden="true"
+               >
+                 <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
+               </svg>
+               <a href="#" class="ml-4 text-sm font-medium text-gray-500 hover:text-gray-700"
+                 >Jobs</a
+               >
+             </div>
+           </li>
+
+           <li>
+             <div class="flex items-center">
+               <svg
+                 class="h-5 w-5 flex-shrink-0 text-gray-300"
+                 fill="currentColor"
+                 viewBox="0 0 20 20"
+                 aria-hidden="true"
+               >
+                 <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
+               </svg>
+               <a href="#" class="ml-4 text-sm font-medium text-gray-500 hover:text-gray-700"
+                 >Front End Developer</a
+               >
+             </div>
+           </li>
+
+           <li>
+             <div class="flex items-center">
+               <svg
+                 class="h-5 w-5 flex-shrink-0 text-gray-300"
+                 fill="currentColor"
+                 viewBox="0 0 20 20"
+                 aria-hidden="true"
+               >
+                 <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
+               </svg>
+               <a
+                 href="#"
+                 class="ml-4 text-sm font-medium text-gray-500 hover:text-gray-700"
+                 aria-current="page"
+                 >Applicants</a
+               >
+             </div>
+           </li>-->
+        </ol>
+      </div>
+    </nav>
+  </div>
+</div>

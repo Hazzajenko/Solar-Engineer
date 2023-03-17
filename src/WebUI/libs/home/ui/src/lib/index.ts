@@ -1,3 +1,5 @@
 export * from './home.component'
 export * from './home-v2/home-v2.component'
 export * from './home-anonymous/home-anonymous.component'
+export * from './home-header/home-header.component'
+export * from './home-v3/home-v3.component'

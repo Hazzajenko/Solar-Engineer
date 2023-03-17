@@ -43,7 +43,7 @@ export class ProjectsListComponent {
 
   async routeToProjectV3(project: ProjectModel) {
     this.loading = true
-    await this.authStore.select.isLoggedIn()
+    await this.authStore.select.isLoggedIn
 
     await this.router.navigate([`projects/${project.name}`]).then(() => {
       this.projectsStore.dispatch.initSelectProject(project.id)

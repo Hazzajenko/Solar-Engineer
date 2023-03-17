@@ -7,7 +7,8 @@ import { projectsProviders } from '../projects/projects.providers'
 export const appRoutes: Route[] = [
   {
     path: '',
-    loadComponent: () => import('@home/ui').then((m) => m.HomeV2Component),
+    loadComponent: () => import('@home/ui').then((m) => m.HomeV3Component),
+    // loadComponent: () => import('@home/ui').then((m) => m.HomeV2Component),
     // loadComponent: () => import('@home/ui').then((m) => m.HomeComponent),
     canActivate: [loggedInV2Guard],
     // canActivate: [loggedInGuard],
@@ -64,6 +65,10 @@ export const appRoutes: Route[] = [
   {
     path: 'center-feature',
     loadComponent: () => import('@app/feature/app-features').then((m) => m.CenterFeatureComponent),
+  },
+  {
+    path: 'header',
+    loadComponent: () => import('@shared/ui/header').then((m) => m.HeaderComponent),
   },
   {
     path: 'projects/local',

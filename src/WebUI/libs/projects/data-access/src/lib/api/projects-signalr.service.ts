@@ -15,8 +15,19 @@ import {
   StringsStoreService,
 } from '@grid-layout/data-access'
 import { SignalrService } from '@app/data-access/signalr'
-import { CreateProject, GetProjectById, GetUserProjects } from './projects-signalr.invoke-methods'
-import { NewProject, ReceiveProjectEvent, ReceiveProjectEvents } from './projects-signalr.handlers'
+import {
+  CreateProject,
+  DeleteProject,
+  GetProjectById,
+  GetUserProjects,
+} from './projects-signalr.invoke-methods'
+import {
+  ProjectCreated,
+  ProjectDeleted,
+  ReceiveProjectEvent,
+  ReceiveProjectEvents,
+} from './projects-signalr.handlers'
+import { ProjectDeletedResponse } from '../contracts'
 
 @Injectable({
   providedIn: 'root',
@@ -45,9 +56,14 @@ export class ProjectsSignalrService extends BaseService {
       GetUserProjects,
     )
 
-    this.projectsHubConnection.on(NewProject, (project: ProjectModel) => {
-      this.logDebug(NewProject, project)
+    this.projectsHubConnection.on(ProjectCreated, (project: ProjectModel) => {
+      this.logDebug(ProjectCreated, project)
       this.projectsStore.dispatch.addProject(project)
+    })
+
+    this.projectsHubConnection.on(ProjectDeleted, (response: ProjectDeletedResponse) => {
+      this.logDebug(ProjectDeleted, response)
+      this.projectsStore.dispatch.deleteProject(response.id)
     })
 
     this.projectsHubConnection.on(GetManyProjects, (projects: ProjectModel[]) => {
@@ -85,11 +101,21 @@ export class ProjectsSignalrService extends BaseService {
   createProject(projectName: string) {
     if (!this.projectsHubConnection) return
     const request = {
-      projectName,
+      name: projectName,
     }
     this.projectsHubConnection
       .invoke(CreateProject, request)
       .catch((err) => this.logError(CreateProject, err))
+  }
+
+  deleteProject(projectId: string) {
+    if (!this.projectsHubConnection) return
+    const request = {
+      id: projectId,
+    }
+    this.projectsHubConnection
+      .invoke(DeleteProject, request)
+      .catch((err) => this.logError(DeleteProject, err))
   }
 
   getUserProjects() {

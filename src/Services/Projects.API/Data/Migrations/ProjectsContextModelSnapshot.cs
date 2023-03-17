@@ -287,7 +287,7 @@ namespace Projects.API.Data.Migrations
                     b.HasOne("Projects.API.Entities.Project", "Project")
                         .WithMany("AppUserProjects")
                         .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Project");

@@ -16,7 +16,7 @@ public class ProjectsConfig : IEntityTypeConfiguration<Project>
             .HasMany(u => u.AppUserProjects)
             .WithOne(m => m.Project)
             .HasForeignKey(x => x.ProjectId)
-            .OnDelete(DeleteBehavior.NoAction)
+            .OnDelete(DeleteBehavior.Cascade)
             .IsRequired();
 
         builder

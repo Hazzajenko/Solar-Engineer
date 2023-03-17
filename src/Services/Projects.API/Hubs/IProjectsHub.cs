@@ -1,6 +1,7 @@
 ﻿using Projects.API.Contracts.Data;
 using Projects.API.Contracts.Requests.Projects;
 using Projects.API.Contracts.Responses;
+using Projects.API.Contracts.Responses.Projects;
 
 namespace Projects.API.Hubs;
 
@@ -9,9 +10,9 @@ public interface IProjectsHub
     Task GetManyProjects(IEnumerable<ProjectDto> projects);
     Task GetUserProject(ProjectDto project);
     Task GetProject(ProjectDataDto projectData);
-    Task NewProject(ProjectDto project);
+    Task ProjectCreated(ProjectDto project);
     Task UpdateProject(ProjectDto project);
-    Task DeleteProject();
+    Task ProjectDeleted(DeleteProjectResponse response);
     Task InvitedToProject(ProjectDto project);
 
     Task UpdateProject(ProjectChanges projectChanges);

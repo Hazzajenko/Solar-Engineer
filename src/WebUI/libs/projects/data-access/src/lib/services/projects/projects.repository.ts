@@ -21,6 +21,10 @@ export class ProjectsRepository {
     this.store.dispatch(ProjectsActions.addManyProjects({ projects }))
   }
 
+  deleteProject(projectId: string) {
+    this.store.dispatch(ProjectsActions.deleteProject({ projectId }))
+  }
+
   initSelectProject(projectId: string) {
     this.store.dispatch(ProjectsActions.initSelectProject({ projectId }))
   }

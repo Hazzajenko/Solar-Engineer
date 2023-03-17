@@ -81,6 +81,7 @@
       "@shared/ui/models": ["libs/shared/ui/models/src/index.ts"],
       "@shared/ui/nav-bars": ["libs/shared/ui/nav-bars/src/index.ts"],
       "@shared/ui/notifications": ["libs/shared/ui/notifications/src/index.ts"],
+      "@shared/ui/route-breadcrumbs": ["libs/shared/ui/route-breadcrumbs/src/index.ts"],
       "@shared/ui/show-hide": ["libs/shared/ui/show-hide/src/index.ts"],
       "@shared/ui/sidebars": ["libs/shared/ui/sidebars/src/index.ts"],
       "@shared/ui/sidenav": ["libs/shared/ui/sidenav/src/index.ts"],

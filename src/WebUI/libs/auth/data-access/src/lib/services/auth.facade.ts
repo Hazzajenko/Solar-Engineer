@@ -13,6 +13,7 @@ export class AuthFacade {
   user$ = this.store.select(AuthSelectors.selectUser)
   // user = firstValueFrom(this.user$)
   isLoggedIn$ = this.store.select(AuthSelectors.isLoggedIn)
+  isLoggedIn = firstValueFrom(this.isLoggedIn$)
 
   token$ = of(localStorage.getItem('token'))
   isAuthenticated$ = of(true)
@@ -33,9 +34,9 @@ export class AuthFacade {
     )
   }
 
-  async isLoggedIn() {
-    return (await firstValueFrom(this.isLoggedIn$)) ?? throwExpression('User not logged in')
-  }
+  /*  async isLoggedIn() {
+      return (await firstValueFrom(this.isLoggedIn$)) ?? throwExpression('User not logged in')
+    }*/
 
   async user() {
     return (await firstValueFrom(this.user$)) ?? throwExpression('User not logged in')

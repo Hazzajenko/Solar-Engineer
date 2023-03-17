@@ -10,13 +10,17 @@ public static class AppUserMapper
     public static AuthUser ToAppUser(this ClaimsPrincipal user)
     {
         var firstName = user.FindFirst(ClaimTypes.GivenName)?.Value;
-        if (firstName is null) throw new ArgumentNullException(nameof(firstName));
+        if (firstName is null)
+            throw new ArgumentNullException(nameof(firstName));
         var lastName = user.FindFirst(ClaimTypes.Surname)?.Value;
-        if (lastName is null) throw new ArgumentNullException(nameof(lastName));
+        if (lastName is null)
+            throw new ArgumentNullException(nameof(lastName));
         var email = user.FindFirst(ClaimTypes.Email)?.Value;
-        if (email is null) throw new ArgumentNullException(nameof(email));
+        if (email is null)
+            throw new ArgumentNullException(nameof(email));
         var photoUrl = user.FindFirst(CustomClaims.Picture)?.Value;
-        if (photoUrl is null) throw new ArgumentNullException(nameof(photoUrl));
+        if (photoUrl is null)
+            throw new ArgumentNullException(nameof(photoUrl));
 
         return new AuthUser
         {
@@ -34,6 +38,7 @@ public static class AppUserMapper
         {
             Id = request.Id.ToString(),
             DisplayName = request.DisplayName,
+            UserName = request.UserName!,
             FirstName = request.FirstName,
             LastName = request.LastName,
             PhotoUrl = request.PhotoUrl

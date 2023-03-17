@@ -35,6 +35,9 @@ export const loggedInV2Guard = () => {
     switchMap(([authenticated, authorizeQuery]) => {
       console.log('guard', authenticated, authorizeQuery)
       if (authenticated) {
+        if (authorizeQuery === 'true') {
+          location.go('/')
+        }
         return of(true)
       }
       // If the user is not authenticated...
@@ -54,6 +57,9 @@ export const loggedInV2Guard = () => {
                        map(({ token }) => AuthActions.signInSuccess({ token })),
                      )*/
             authStore.dispatch.isReturningUser()
+            if (authorizeQuery === 'true') {
+              location.go('/')
+            }
             return of(true)
           }
         }
@@ -77,6 +83,7 @@ export const loggedInV2Guard = () => {
             map(({ token }) => {
               localStorage.setItem('token', token)
               authStore.dispatch.signInSuccess(token)
+              location.go('/')
               return true
               // router.navigateByUrl('').catch((err) => console.error(err))
               // const urlTree = router.parseUrl(``)

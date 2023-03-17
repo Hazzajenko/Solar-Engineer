@@ -258,7 +258,29 @@ export class AppV2Component extends BaseService implements OnInit {
 
   // sideNavProm =
 
-  ngOnInit(): void {
+  async ngOnInit() {
+    const authorizeParam = await this.routerStore.authorizeParam
+    if (authorizeParam === 'true') {
+      if (await this.isLoggedIn) {
+        location.href = '/'
+      }
+    }
+    /*   this.routerStore.queryParam$('authorize').subscribe((params) => {
+         // console.log(params)
+         this.logDebug('authorize', params)
+         // this.logger.debug({ source: 'AppV2Component', objects: ['authorize', params] })
+         // this.logger
+         if (params === 'true') {
+    /!*       this.authStore.dispatch.authorizeRequest()
+                  this.router
+             .navigateByUrl('')
+             .then()
+             .catch((err) => console.error(err))*!/!*!/
+         } else {
+           this.authStore.dispatch.isReturningUser()
+         }
+       })*/
+
     /*  this.navMenuDistinct$
         .pipe(
           map((value) => {
@@ -286,21 +308,21 @@ export class AppV2Component extends BaseService implements OnInit {
     // this.routerStore.currentRoute$.subscribe((route) => console.log(route))
     // this.routerStore.routeParams$.subscribe((params) => console.log(params))
     // this.routerStore.queryParams$.subscribe((query) => console.log(query))
-    this.routerStore.queryParam$('authorize').subscribe((params) => {
-      // console.log(params)
-      this.logDebug('authorize', params)
-      // this.logger.debug({ source: 'AppV2Component', objects: ['authorize', params] })
-      // this.logger
-      if (params === 'true') {
-        this.authStore.dispatch.authorizeRequest()
-        /*        this.router
-                  .navigateByUrl('')
-                  .then()
-                  .catch((err) => console.error(err))*/
-      } else {
-        this.authStore.dispatch.isReturningUser()
-      }
-    })
+    /*    this.routerStore.queryParam$('authorize').subscribe((params) => {
+          // console.log(params)
+          this.logDebug('authorize', params)
+          // this.logger.debug({ source: 'AppV2Component', objects: ['authorize', params] })
+          // this.logger
+          if (params === 'true') {
+            this.authStore.dispatch.authorizeRequest()
+            /!*        this.router
+                      .navigateByUrl('')
+                      .then()
+                      .catch((err) => console.error(err))*!/
+          } else {
+            this.authStore.dispatch.isReturningUser()
+          }
+        })*/
     // this.http
     //   .get('/users/current')
     //   // .pipe(catchError(() => EMPTY))

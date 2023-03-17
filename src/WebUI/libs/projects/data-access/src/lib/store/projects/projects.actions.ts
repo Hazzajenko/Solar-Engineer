@@ -10,6 +10,7 @@ export const ProjectsActions = createActionGroup({
     'Init Projects': emptyProps(),
     'Add Project': props<{ project: ProjectModel }>(),
     'Add Many Projects': props<{ projects: ProjectModel[] }>(),
+    'Delete Project': props<{ projectId: string }>(),
     'Init Local Project': props<{ localProject: LocalProjectModel }>(),
     'Load Local Project Success': props<{ project: ProjectModel }>(),
     'Load Projects Success': props<{ projects: ProjectModel[] }>(),

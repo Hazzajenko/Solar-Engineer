@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
 import { RouterSelectors } from '..'
+import { firstValueFrom } from 'rxjs'
 
 @Injectable({
   providedIn: 'root',
@@ -11,6 +12,8 @@ export class RouterFacade {
   routeParams$ = this.store.select(RouterSelectors.selectRouteParams)
   currentRoute$ = this.store.select(RouterSelectors.selectCurrentRoute)
   queryParams$ = this.store.select(RouterSelectors.selectQueryParams)
+  authorizeParams$ = this.store.select(RouterSelectors.selectQueryParam('authorize'))
+  authorizeParam = firstValueFrom(this.authorizeParams$)
 
   // queryParam$ = this.store.select(RouterSelectors.selectQueryParam)
 
@@ -21,4 +24,8 @@ export class RouterFacade {
   queryParam$(param: string) {
     return this.store.select(RouterSelectors.selectQueryParam(param))
   }
+
+  /*  authorizeParam() {
+      return this.store.select(RouterSelectors.selectQueryParam('authorize'))
+    }*/
 }
