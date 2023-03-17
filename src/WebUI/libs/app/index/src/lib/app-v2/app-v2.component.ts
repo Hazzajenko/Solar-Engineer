@@ -23,7 +23,7 @@ import { BaseService } from '@shared/logger'
 import { FooterComponent } from '@shared/ui/footer'
 import { HeaderComponent } from '@shared/ui/header'
 import { delay, distinctUntilChanged, map, of, tap } from 'rxjs'
-import { CreateProjectOverlayComponent } from '@projects/feature'
+import { CreateProjectOverlayComponent, ProjectsHomePageComponent } from '@projects/feature'
 import {
   DarkNavCompactComponent,
   DarkNavOverlapComponent,
@@ -34,6 +34,7 @@ import {
   NarrowSidebarDarkComponent,
   NarrowSidebarPurpleComponent,
 } from '@shared/ui/sidebars'
+import { HomeHeaderComponent } from '@home/ui'
 
 @Component({
   standalone: true,
@@ -63,6 +64,8 @@ import {
     NarrowSidebarDarkComponent,
     NarrowMatSidenavComponent,
     DarkNavOverlapV2Component,
+    HomeHeaderComponent,
+    ProjectsHomePageComponent,
   ],
   selector: 'app-root',
   templateUrl: './app-v2.component.html',

@@ -14,10 +14,13 @@ export class BaseService {
     }*/
 
   protected user$ = this.authFacade.user$
-  protected userName$ = this.authFacade.user$.pipe(
-    map((user) => user?.userName ?? 'User not logged in'),
-  )
+  protected userName$ = this.authFacade.userName$
+  protected userName = this.authFacade.userName
+  /*  protected userName$ = this.authFacade.user$.pipe(
+      map((user) => user?.userName ?? 'User not logged in'),
+    )*/
   protected currentUserId = this.authFacade.userId()
+
   protected isLoggedIn$ = this.authFacade.isLoggedIn$
   protected isLoggedIn = this.authFacade.isLoggedIn
   // protected user = async () => await this.authFacade.user
@@ -29,6 +32,10 @@ export class BaseService {
   /*  protected async user() {
       return await firstValueFrom(this.authFacade.user$)
     }*/
+
+  protected createRange(number: number) {
+    return new Array(number).fill(0).map((n, index) => index + 1)
+  }
 
   protected logDebug(...objects: unknown[]): void {
     const source =

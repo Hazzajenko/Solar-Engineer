@@ -7,14 +7,36 @@ import { projectsProviders } from '../projects/projects.providers'
 export const appRoutes: Route[] = [
   {
     path: '',
-    loadComponent: () => import('@home/ui').then((m) => m.HomeV3Component),
+    loadComponent: () => import('@projects/feature').then((m) => m.ProjectsHomePageComponent),
     // loadComponent: () => import('@home/ui').then((m) => m.HomeV2Component),
     // loadComponent: () => import('@home/ui').then((m) => m.HomeComponent),
     canActivate: [loggedInV2Guard],
     // canActivate: [loggedInGuard],
     pathMatch: 'full',
+    // redirectTo: 'projects',
     providers: [homeProviders],
   },
+  /*  {
+      path: '',
+      loadComponent: () => import('@projects/feature').then((m) => m.ProjectsHomePageComponent),
+      // loadComponent: () => import('@home/ui').then((m) => m.HomeV2Component),
+      // loadComponent: () => import('@home/ui').then((m) => m.HomeComponent),
+      canActivate: [loggedInV2Guard],
+      // canActivate: [loggedInGuard],
+      pathMatch: 'full',
+      redirectTo: 'projects',
+      providers: [homeProviders],
+    },*/
+  /*  {
+      path: '',
+      loadComponent: () => import('@home/ui').then((m) => m.HomeV3Component),
+      // loadComponent: () => import('@home/ui').then((m) => m.HomeV2Component),
+      // loadComponent: () => import('@home/ui').then((m) => m.HomeComponent),
+      canActivate: [loggedInV2Guard],
+      // canActivate: [loggedInGuard],
+      pathMatch: 'full',
+      providers: [homeProviders],
+    },*/
   {
     path: 'sign-in',
     loadComponent: () => import('@auth/feature').then((m) => m.SignInComponent),
@@ -98,6 +120,10 @@ export const appRoutes: Route[] = [
       resolve: { project: SelectProjectResolver },
     },*/
   {
+    path: 'projects/dashboard',
+    loadComponent: () => import('@projects/feature').then((m) => m.ProjectDashboardComponent),
+  },
+  {
     path: 'projects/new',
     loadComponent: () => import('@projects/feature').then((m) => m.NewProjectHomeComponent),
   },
@@ -117,8 +143,29 @@ export const appRoutes: Route[] = [
     path: 'projects/settings',
     loadComponent: () => import('@projects/feature').then((m) => m.ProjectsSettingsComponent),
   },
+  /*  {
+      path: ':userName/:projectName/dashboard',
+      loadComponent: () => import('@projects/feature').then((m) => m.ProjectDashboardComponent),
+      canActivate: [loggedInGuard],
+      providers: [projectsProviders],
+      // resolve: { project: SelectProjectResolver },
+    },*/
   {
     path: ':userName/:projectName',
+    loadComponent: () => import('@projects/feature').then((m) => m.WebProjectComponent),
+    canActivate: [loggedInGuard],
+    providers: [projectsProviders],
+    // resolve: { project: SelectProjectResolver },
+  },
+  {
+    path: ':userName/:projectName/dashboard',
+    loadComponent: () => import('@projects/feature').then((m) => m.ProjectDashboardComponent),
+    canActivate: [loggedInGuard],
+    providers: [projectsProviders],
+    // resolve: { project: SelectProjectResolver },
+  },
+  {
+    path: ':userName/:projectName/grid-layout',
     loadComponent: () => import('@projects/feature').then((m) => m.WebProjectComponent),
     canActivate: [loggedInGuard],
     providers: [projectsProviders],

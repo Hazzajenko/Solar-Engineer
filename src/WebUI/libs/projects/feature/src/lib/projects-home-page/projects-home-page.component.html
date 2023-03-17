@@ -237,7 +237,7 @@
                 <tr
                   (click)="selectProject(project)"
                   (dblclick)="routeToProject(project)"
-                  (contextmenu)="onRightClick($event, project)"
+                  (contextmenu)="onRightClick($event, project, user)"
                   (mouseover)="isHovered.set(project.name, true)"
                   (mouseout)="isHovered.set(project.name, false)"
                   class="active:bg-violet-300 focus:outline-none focus:ring focus:blue-100"
@@ -361,9 +361,10 @@
         </div>
       </div>
     </div>
-    <!--</div>-->
   </ng-container>
 </ng-container>
+
+<!--</div>-->
 
 <div
   [matMenuTriggerFor]="projectOptionsMenu"
@@ -377,7 +378,7 @@
   #projectOptionsMenu="matMenu"
 >
   <!--  <test></test>-->
-  <ng-template matMenuContent let-project="project">
+  <ng-template matMenuContent let-project="project" let-user="user">
     <div
       class="z-10 bg-transparent divide-y divide-gray-100 rounded-lg w-44 dark:bg-gray-700 dark:divide-gray-600"
     >
@@ -400,6 +401,13 @@
         <li (click)="routeToProject(project)">
           <a class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
             Open Grid-Layout
+          </a>
+        </li>
+        <!--        (click)="routeToDashboard(project)"-->
+        <!--        {{user.userName}}-->
+        <li (click)="routeToDashboard(project)">
+          <a class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+            Open Dashboard
           </a>
         </li>
         <li>

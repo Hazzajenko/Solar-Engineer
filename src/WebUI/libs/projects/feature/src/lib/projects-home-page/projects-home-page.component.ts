@@ -5,16 +5,17 @@ import { ProjectsSignalrService, ProjectsStoreService } from '@projects/data-acc
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
 import { FormControl, ReactiveFormsModule } from '@angular/forms'
 import { MatAutocompleteModule } from '@angular/material/autocomplete'
-import { ProjectModel } from '@shared/data-access/models'
-import { firstValueFrom, map, Observable, of, startWith, switchMap } from 'rxjs'
+import { AuthUserModel, ProjectModel } from '@shared/data-access/models'
+import { map, Observable, of, startWith, switchMap } from 'rxjs'
 import { RandomNumberPipe } from '../../../../../shared/pipes/src/lib/numbers'
 import { MatIconModule } from '@angular/material/icon'
-import { Router } from '@angular/router'
+import { Router, RouterLink } from '@angular/router'
 import { ProjectsBreadcrumbBarComponent } from '../projects-breadcrumb-bar'
 import { MatDialog } from '@angular/material/dialog'
 import { CreateProjectDialogComponent } from '../create-project-dialog/create-project-dialog.component'
 import { PROJECTS_SORTS, ProjectSorts } from './project-sorts'
 import { LetModule } from '@ngrx/component'
+import { throwExpression } from '@shared/utils'
 
 @Component({
   selector: 'app-projects-home-page',
@@ -28,6 +29,7 @@ import { LetModule } from '@ngrx/component'
     MatIconModule,
     ProjectsBreadcrumbBarComponent,
     LetModule,
+    RouterLink,
   ],
   templateUrl: './projects-home-page.component.html',
   styles: [],
@@ -119,9 +121,11 @@ export class ProjectsHomePageComponent extends BaseService implements OnInit {
     this.loading = true
     // this.user
     // const user = firstValueFrom(this.currentUser$)
-    const userName = await firstValueFrom(this.userName$)
+    // const userName = await firstValueFrom(this.userName$
+    // )
     // const userName = await this.user().
     // await this.authStore.select.isLoggedIn()
+    const userName = (await this.userName) ?? throwExpression('userName is undefined')
 
     await this.router.navigate([`${userName.toLowerCase()}/${project.name}`]).then(() => {
       this.projectsStore.dispatch.initSelectProject(project.id)
@@ -129,12 +133,7 @@ export class ProjectsHomePageComponent extends BaseService implements OnInit {
     })
   }
 
-  createRange(number: number) {
-    // return new Array(number);
-    return new Array(number).fill(0).map((n, index) => index + 1)
-  }
-
-  onRightClick(event: MouseEvent, project: ProjectModel) {
+  onRightClick(event: MouseEvent, project: ProjectModel, user: AuthUserModel) {
     event.preventDefault()
     // this.logDebug('onRightClick', event, project)
     // this.logDebug('onRightClick', this.projectOptsionsMenu)
@@ -143,7 +142,7 @@ export class ProjectsHomePageComponent extends BaseService implements OnInit {
     // this.matMenuTrigger.
     // this.projectOptionsMenu.menuData = { project }
     // this.projectOptionsMenu.openMenu()
-    this.matMenuTrigger.menuData = { project }
+    this.matMenuTrigger.menuData = { project, user }
     this.matMenuTrigger.openMenu()
   }
 
@@ -157,5 +156,12 @@ export class ProjectsHomePageComponent extends BaseService implements OnInit {
 
   deleteProject(project: ProjectModel) {
     this.projectsSignalrService.deleteProject(project.id)
+  }
+
+  async routeToDashboard(project: ProjectModel) {
+    const userName = (await this.userName) ?? throwExpression('userName is undefined')
+    await this.router
+      .navigate([`/${userName}/${project.name}/dashboard`])
+      .catch((err) => this.logError(err))
   }
 }

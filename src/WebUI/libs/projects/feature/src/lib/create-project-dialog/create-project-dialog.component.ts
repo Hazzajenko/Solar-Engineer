@@ -32,10 +32,6 @@ export class CreateProjectDialogComponent extends BaseService {
     this.close()
   }
 
-  createRange(number: number) {
-    return new Array(number).fill(0).map((n, index) => index + 1)
-  }
-
   close() {
     this.matDialog.closeAll()
   }

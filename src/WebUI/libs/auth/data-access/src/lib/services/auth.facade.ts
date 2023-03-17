@@ -11,12 +11,19 @@ export class AuthFacade {
   private store = inject(Store)
   // private auth0 = inject(Auth0)
   user$ = this.store.select(AuthSelectors.selectUser)
+  userName$ = this.user$.pipe(map((user) => user?.userName))
+
   // user = firstValueFrom(this.user$)
   isLoggedIn$ = this.store.select(AuthSelectors.isLoggedIn)
   isLoggedIn = firstValueFrom(this.isLoggedIn$)
 
   token$ = of(localStorage.getItem('token'))
   isAuthenticated$ = of(true)
+
+  // userName = () => firstValueFrom(this.userName$)
+  get userName() {
+    return firstValueFrom(this.userName$.pipe(map((userName) => userName?.toLowerCase())))
+  }
 
   // isAuthenticated$ = this.auth0.isAuthenticated$
 
