@@ -1,11 +1,21 @@
 {
   "root": true,
-  "ignorePatterns": ["**/*"],
-  "plugins": ["@nrwl/nx"],
+  "ignorePatterns": [
+    "**/*"
+  ],
+  "plugins": [
+    "@nrwl/nx"
+  ],
   "overrides": [
     {
-      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+      "files": [
+        "*.ts",
+        "*.tsx",
+        "*.js",
+        "*.jsx"
+      ],
       "rules": {
+        "@angular-eslint/component-selector": "off",
         "@nrwl/nx/enforce-module-boundaries": [
           "error",
           {
@@ -14,7 +24,10 @@
             "depConstraints": [
               {
                 "sourceTag": "auth:api",
-                "onlyDependOnLibsWithTags": ["shared", "auth:shared"]
+                "onlyDependOnLibsWithTags": [
+                  "shared",
+                  "auth:shared"
+                ]
               },
               {
                 "sourceTag": "auth:effects",
@@ -31,23 +44,43 @@
               },
               {
                 "sourceTag": "auth:facades",
-                "onlyDependOnLibsWithTags": ["shared", "auth:shared", "auth:store", "auth:api"]
+                "onlyDependOnLibsWithTags": [
+                  "shared",
+                  "auth:shared",
+                  "auth:store",
+                  "auth:api"
+                ]
               },
               {
                 "sourceTag": "auth:store",
-                "onlyDependOnLibsWithTags": ["shared", "auth:shared", "auth:store"]
+                "onlyDependOnLibsWithTags": [
+                  "shared",
+                  "auth:shared",
+                  "auth:store"
+                ]
               },
               {
                 "sourceTag": "auth:guards",
-                "onlyDependOnLibsWithTags": ["shared", "auth:shared", "auth:facades"]
+                "onlyDependOnLibsWithTags": [
+                  "shared",
+                  "auth:shared",
+                  "auth:facades"
+                ]
               },
               {
                 "sourceTag": "auth:interceptors",
-                "onlyDependOnLibsWithTags": ["shared", "auth:shared", "auth:facades"]
+                "onlyDependOnLibsWithTags": [
+                  "shared",
+                  "auth:shared",
+                  "auth:facades"
+                ]
               },
               {
                 "sourceTag": "auth:shared",
-                "onlyDependOnLibsWithTags": ["shared", "auth:shared"]
+                "onlyDependOnLibsWithTags": [
+                  "shared",
+                  "auth:shared"
+                ]
               },
               {
                 "sourceTag": "grid-layout:actions",
@@ -128,7 +161,11 @@
               },
               {
                 "sourceTag": "project-id:api",
-                "onlyDependOnLibsWithTags": ["shared", "project-id:shared", "projects:shared"]
+                "onlyDependOnLibsWithTags": [
+                  "shared",
+                  "project-id:shared",
+                  "projects:shared"
+                ]
               },
               {
                 "sourceTag": "project-id:effects",
@@ -166,7 +203,11 @@
               },
               {
                 "sourceTag": "project-id:store",
-                "onlyDependOnLibsWithTags": ["shared", "project-id:shared", "projects:shared"]
+                "onlyDependOnLibsWithTags": [
+                  "shared",
+                  "project-id:shared",
+                  "projects:shared"
+                ]
               },
               {
                 "sourceTag": "project-id:feature",
@@ -182,7 +223,10 @@
               },
               {
                 "sourceTag": "projects:api",
-                "onlyDependOnLibsWithTags": ["shared", "projects:shared"]
+                "onlyDependOnLibsWithTags": [
+                  "shared",
+                  "projects:shared"
+                ]
               },
               {
                 "sourceTag": "projects:effects",
@@ -196,23 +240,39 @@
               },
               {
                 "sourceTag": "projects:facades",
-                "onlyDependOnLibsWithTags": ["shared", "projects:shared", "projects:store"]
+                "onlyDependOnLibsWithTags": [
+                  "shared",
+                  "projects:shared",
+                  "projects:store"
+                ]
               },
               {
                 "sourceTag": "projects:store",
-                "onlyDependOnLibsWithTags": ["shared", "projects:shared", "projects:store"]
+                "onlyDependOnLibsWithTags": [
+                  "shared",
+                  "projects:shared",
+                  "projects:store"
+                ]
               },
               {
                 "sourceTag": "projects:feature",
-                "onlyDependOnLibsWithTags": ["shared", "projects:shared", "projects:facades"]
+                "onlyDependOnLibsWithTags": [
+                  "shared",
+                  "projects:shared",
+                  "projects:facades"
+                ]
               },
               {
                 "sourceTag": "shared",
-                "onlyDependOnLibsWithTags": ["shared"]
+                "onlyDependOnLibsWithTags": [
+                  "shared"
+                ]
               },
               {
                 "sourceTag": "*",
-                "onlyDependOnLibsWithTags": ["*"]
+                "onlyDependOnLibsWithTags": [
+                  "*"
+                ]
               }
             ]
           }
@@ -220,17 +280,32 @@
       }
     },
     {
-      "files": ["*.ts", "*.tsx"],
-      "extends": ["plugin:@nrwl/nx/typescript"],
+      "files": [
+        "*.ts",
+        "*.tsx"
+      ],
+      "extends": [
+        "plugin:@nrwl/nx/typescript"
+      ],
       "rules": {}
     },
     {
-      "files": ["*.js", "*.jsx"],
-      "extends": ["plugin:@nrwl/nx/javascript"],
+      "files": [
+        "*.js",
+        "*.jsx"
+      ],
+      "extends": [
+        "plugin:@nrwl/nx/javascript"
+      ],
       "rules": {}
     },
     {
-      "files": ["*.spec.ts", "*.spec.tsx", "*.spec.js", "*.spec.jsx"],
+      "files": [
+        "*.spec.ts",
+        "*.spec.tsx",
+        "*.spec.js",
+        "*.spec.jsx"
+      ],
       "env": {
         "jest": true
       },

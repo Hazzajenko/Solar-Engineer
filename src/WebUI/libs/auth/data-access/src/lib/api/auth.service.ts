@@ -19,6 +19,10 @@ export class AuthService {
     return this.jwtHelperService.isTokenExpired(token)
   }
 
+  decodeToken(token: string) {
+    return this.jwtHelperService.decodeToken(token)
+  }
+
   isReturningUser() {
     return this.http.post<GetTokenResponse>('/auth-api/returning-user', {})
   }

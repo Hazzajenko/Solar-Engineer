@@ -1,23 +1,209 @@
 <ng-container *ngIf="user$ | async as user">
-  <div class="min-h-full">
-    <div class="bg-white flex flex-col">
-      <header class="pb-32">
-        <app-home-header [user]="user" />
-      </header>
+  <ng-container *ngrxLet="projects$ | async as projects">
+    <!--
+   <app-statistics-component />
+   <app-projects-cards />
+   -->
+    <main class="mt-5 pb-8">
+      <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:max-w-7xl lg:px-8">
+        <h1 class="sr-only">Profile</h1>
+        <!-- Main 3 column grid -->
+        <div class="grid grid-cols-1 items-start gap-4 lg:grid-cols-3 lg:gap-8">
+          <!-- Left column -->
+          <div class="grid grid-cols-1 gap-4 lg:col-span-2">
+            <!-- Welcome panel -->
+            <section aria-labelledby="profile-overview-title">
+              <div class="overflow-hidden rounded-lg bg-white shadow">
+                <h2 class="sr-only" id="profile-overview-title">Profile Overview</h2>
+                <div class="bg-white p-6">
+                  <div class="sm:flex sm:items-center sm:justify-between">
+                    <div class="sm:flex sm:space-x-5">
+                      <div class="flex-shrink-0">
+                        <img
+                          class="mx-auto h-20 w-20 rounded-full"
+                          [src]="user.photoUrl"
+                          [alt]="user.userName"
+                        />
+                      </div>
+                      <div class="mt-4 text-center sm:mt-0 sm:pt-1 sm:text-left">
+                        <p class="text-sm font-medium text-gray-600">Welcome back,</p>
+                        <p class="text-xl font-bold text-gray-900 sm:text-2xl">
+                          {{ user.displayName }}
+                        </p>
+                        <p class="text-sm font-medium text-gray-600">Solar Engineer</p>
+                      </div>
+                    </div>
+                    <div class="mt-5 flex justify-center sm:mt-0">
+                      <a
+                        href="#"
+                        class="flex items-center justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                        >View profile</a
+                      >
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="grid grid-cols-1 divide-y divide-gray-200 border-t border-gray-200 bg-gray-50 sm:grid-cols-3 sm:divide-y-0 sm:divide-x"
+                >
+                  <div
+                    *ngIf="projects && projects.length > 0"
+                    class="px-6 py-5 text-center text-sm font-medium"
+                  >
+                    <span class="text-gray-900">{{ projects.length + " " }}</span>
+                    <span class="text-gray-600">Projects</span>
+                  </div>
 
-      <main class="-mt-32 border-t-2 border-indigo-500">
-        <!--    max-w-7xl-->
-        <div class="mx-auto px-4 pb-12 sm:px-6 lg:px-8">
-          <app-projects-home-page class="flex" />
-          <!--     <ng-container [ngSwitch]='currentPage'>
+                  <div class="px-6 py-5 text-center text-sm font-medium">
+                    <span class="text-gray-900">{{ 4 + " " }}</span>
+                    <span class="text-gray-600">Followers</span>
+                  </div>
 
-               </ng-container>-->
+                  <div class="px-6 py-5 text-center text-sm font-medium">
+                    <span class="text-gray-900">{{ 2 + " " }}</span>
+                    <span class="text-gray-600">Friends Online</span>
+                  </div>
+                </div>
+              </div>
+            </section>
 
-          <!-- Your content -->
-          <!--      hello-->
-          <!--      <app-projects-cards />-->
+            <section>
+              <!--              <app-projects-cards />-->
+              <app-recent-projects-cards />
+            </section>
+
+            <!--        <section>
+                      <app-pinned-projects-cards />
+                    </section>-->
+
+            <section>
+              <app-home-feed />
+            </section>
+          </div>
+
+          <!-- Right column -->
+          <div class="grid grid-cols-1 gap-4">
+            <!-- Announcements -->
+            <section aria-labelledby="announcements-title">
+              <app-home-announcements />
+            </section>
+
+            <!-- Recent Hires -->
+            <!--<section aria-labelledby="recent-hires-title">
+              <div class="overflow-hidden rounded-lg bg-white shadow">
+                <div class="p-6">
+                  <h2 class="text-base font-medium text-gray-900" id="recent-hires-title">
+                    Recent Hires
+                  </h2>
+                  <div class="mt-6 flow-root">
+                    <ul role="list" class="-my-5 divide-y divide-gray-200">
+                      <li class="py-4">
+                        <div class="flex items-center space-x-4">
+                          <div class="flex-shrink-0">
+                            <img
+                              class="h-8 w-8 rounded-full"
+                              src="https://images.unsplash.com/photo-1519345182560-3f2917c472ef?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                              alt=""
+                            />
+                          </div>
+                          <div class="min-w-0 flex-1">
+                            <p class="truncate text-sm font-medium text-gray-900">
+                              Leonard Krasner
+                            </p>
+                            <p class="truncate text-sm text-gray-500">@leonardkrasner</p>
+                          </div>
+                          <div>
+                            <a
+                              href="#"
+                              class="inline-flex items-center rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                              >View</a
+                            >
+                          </div>
+                        </div>
+                      </li>
+
+                      <li class="py-4">
+                        <div class="flex items-center space-x-4">
+                          <div class="flex-shrink-0">
+                            <img
+                              class="h-8 w-8 rounded-full"
+                              src="https://images.unsplash.com/photo-1463453091185-61582044d556?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                              alt=""
+                            />
+                          </div>
+                          <div class="min-w-0 flex-1">
+                            <p class="truncate text-sm font-medium text-gray-900">Floyd Miles</p>
+                            <p class="truncate text-sm text-gray-500">@floydmiles</p>
+                          </div>
+                          <div>
+                            <a
+                              href="#"
+                              class="inline-flex items-center rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                              >View</a
+                            >
+                          </div>
+                        </div>
+                      </li>
+
+                      <li class="py-4">
+                        <div class="flex items-center space-x-4">
+                          <div class="flex-shrink-0">
+                            <img
+                              class="h-8 w-8 rounded-full"
+                              src="https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                              alt=""
+                            />
+                          </div>
+                          <div class="min-w-0 flex-1">
+                            <p class="truncate text-sm font-medium text-gray-900">Emily Selman</p>
+                            <p class="truncate text-sm text-gray-500">@emilyselman</p>
+                          </div>
+                          <div>
+                            <a
+                              href="#"
+                              class="inline-flex items-center rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                              >View</a
+                            >
+                          </div>
+                        </div>
+                      </li>
+
+                      <li class="py-4">
+                        <div class="flex items-center space-x-4">
+                          <div class="flex-shrink-0">
+                            <img
+                              class="h-8 w-8 rounded-full"
+                              src="https://images.unsplash.com/photo-1500917293891-ef795e70e1f6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                              alt=""
+                            />
+                          </div>
+                          <div class="min-w-0 flex-1">
+                            <p class="truncate text-sm font-medium text-gray-900">Kristin Watson</p>
+                            <p class="truncate text-sm text-gray-500">@kristinwatson</p>
+                          </div>
+                          <div>
+                            <a
+                              href="#"
+                              class="inline-flex items-center rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                              >View</a
+                            >
+                          </div>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="mt-6">
+                    <a
+                      href="#"
+                      class="flex w-full items-center justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                      >View all</a
+                    >
+                  </div>
+                </div>
+              </div>
+            </section>-->
+          </div>
         </div>
-      </main>
-    </div>
-  </div>
+      </div>
+    </main>
+  </ng-container>
 </ng-container>

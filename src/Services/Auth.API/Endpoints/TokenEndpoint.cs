@@ -19,16 +19,13 @@ public class TokenEndpoint : EndpointWithoutRequest<AuthorizeResponse>
     private readonly IMediator _mediator;
     private readonly byte[] _tokenKey;
 
-
-    public TokenEndpoint(IConfiguration config,
-        IMediator mediator, IAuthService authService)
+    public TokenEndpoint(IConfiguration config, IMediator mediator, IAuthService authService)
     {
         _mediator = mediator;
         _authService = authService;
         _tokenKey = Encoding.UTF8.GetBytes(config["TokenKey"]!);
         // _publishEndpoint = publishEndpoint;
     }
-
 
     public override void Configure()
     {
@@ -39,7 +36,7 @@ public class TokenEndpoint : EndpointWithoutRequest<AuthorizeResponse>
     public override async Task HandleAsync(CancellationToken cT)
     {
         var userId = User.GetUserId().ToGuid();
-        var token = await _mediator.Send(new GetTokenCommand(userId), cT);
+        var token = await _mediator.Send(new GetTokenCommand(userId, "hazzajenko"), cT);
         Response.Token = token;
         await SendOkAsync(Response, cT);
     }

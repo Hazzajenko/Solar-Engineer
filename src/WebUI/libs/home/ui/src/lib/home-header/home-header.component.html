@@ -1,5 +1,5 @@
-<ng-container>
-  <header class="bg-white shadow">
+<ng-container *ngrxLet="user$ | async as user">
+  <header class="bg-white shadow dark:bg-slate-800">
     <div class="mx-auto max-w-7xl px-2 sm:px-4 lg:px-8">
       <div class="flex h-16 justify-between">
         <div class="flex px-2 lg:px-0">
@@ -12,27 +12,65 @@
               />
             </a>
           </div>
+
           <nav aria-label="Global" class="hidden lg:ml-6 lg:flex lg:items-center lg:space-x-4">
-            <!--            <a href="#" class="px-3 py-2 text-sm font-medium text-gray-900">Dashboard</a>-->
-            <a
-              [ngClass]="{
-                'bg-gray-900 text-white': currentPage === 'Projects',
-                'text-gray-900 hover:bg-gray-700 hover:text-white': currentPage !== 'Projects'
-              }"
-              (click)="changeHomePage('Projects')"
-              class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
-              >Projects</a
+            <!--            bg-white dark:bg-slate-800-->
+            <ng-container *ngIf="user"
+              ><a
+                *ngFor="let route of routes"
+                [ngClass]="{
+                  'text-white bg-slate-500 hover:text-slate-100 hover:bg-slate-700  dark:bg-slate-400 dark:text-white  hover:dark:text-slate-800 hover:dark:bg-slate-400':
+                    currentPage === route.name,
+                  'text-slate-600 bg-slate-200 hover:text-slate-200 hover:bg-slate-600 dark:text-white dark:bg-slate-600 hover:dark:text-slate-700 hover:dark:bg-slate-200':
+                    currentPage !== route.name
+                }"
+                routerLink=""
+                (click)="changeHomePage(route.name)"
+                class="rounded-md px-3 py-2 text-sm font-medium"
+                >{{ route.name }}
+              </a></ng-container
             >
-            <!--            'text-gray-300 hover:bg-gray-700 hover:text-white': currentPage !== 'Social'-->
-            <a
-              [ngClass]="{
-                'bg-gray-900 text-white': currentPage === 'Social',
-                'text-gray-900 hover:bg-gray-700 hover:text-white': currentPage !== 'Social'
-              }"
-              (click)="changeHomePage('Social')"
-              class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
-              >Social</a
-            >
+            <!-- <a
+               *ngIf="user"
+               [ngClass]="{
+                 'text-white bg-slate-500  hover:text-slate-300 dark:bg-slate-400 dark:text-white  dark:hover:text-slate-500':
+                   currentPage === 'Home',
+                 'text-slate-400 bg-white dark:text-white dark:bg-slate-600 hover:dark:text-slate-500':
+                   currentPage !== 'Home'
+               }"
+               routerLink=""
+               (click)="changeHomePage('Home')"
+               class="rounded-md px-3 py-2 text-sm font-medium hover:bg-slate-600 dark:hover:bg-slate-200"
+               >Home
+             </a>
+
+             <ng-container *ngIf="user">
+               <a
+                 routerLink="projects"
+                 [ngClass]="{
+                   'text-white bg-slate-500 hover:bg-slate-700 hover:text-slate-300 dark:bg-slate-400 dark:text-white dark:hover:bg-slate-700 dark:hover:text-slate-300':
+                     currentPage === 'Projects',
+                   'text-slate-400 bg-white hover:bg-slate-700 hover:text-white dark:text-white dark:bg-slate-600 hover:dark:bg-white hover:dark:text-slate-500':
+                     currentPage !== 'Projects'
+                 }"
+                 (click)="changeHomePage('Projects')"
+                 class="rounded-md px-3 py-2 text-sm font-medium hover:bg-slate-600 dark:hover:bg-slate-200"
+                 >Projects</a
+               >
+               &lt;!&ndash;            'text-gray-300 hover:bg-gray-700 hover:text-white': currentPage !== 'Social'&ndash;&gt;
+               <a
+                 [routerLink]="(user.userName | lowercase) + '/social'"
+                 [ngClass]="{
+                   'text-white bg-slate-500 hover:bg-slate-700 hover:text-slate-300 dark:bg-slate-400 dark:text-white dark:hover:bg-slate-700 dark:hover:text-slate-300':
+                     currentPage === 'Social',
+                   'text-slate-400 bg-white hover:bg-slate-700 hover:text-white dark:text-white dark:bg-slate-600 hover:dark:bg-white hover:dark:text-slate-500':
+                     currentPage !== 'Social'
+                 }"
+                 (click)="changeHomePage('Social')"
+                 class="rounded-md px-3 py-2 text-sm font-medium hover:bg-slate-600 dark:hover:bg-slate-200"
+                 >Social</a
+               ></ng-container
+             >-->
 
             <!--            <a href="#" class="px-3 py-2 text-sm font-medium text-gray-900">Jobs</a>
 
@@ -213,148 +251,58 @@
         </div>
 
         <div class="hidden lg:ml-4 lg:flex lg:items-center">
-          <button
-            type="button"
-            class="flex-shrink-0 rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-          >
-            <span class="sr-only">View notifications</span>
-            <svg
-              class="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              aria-hidden="true"
+          <!--          <app-select-theme />-->
+          <app-theme-toggle class="mr-2" />
+          <ng-container *ngIf="user; else notLoggedIn">
+            <button
+              type="button"
+              class="flex-shrink-0 rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"
-              />
-            </svg>
-          </button>
-
-          <!-- Profile dropdown -->
-          <div class="relative ml-3">
-            <div *ngIf="user">
-              <button
-                [matMenuTriggerFor]="userMenu"
-                type="button"
-                class="flex max-w-xs items-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                id="user-menu-button"
-                aria-expanded="false"
-                aria-haspopup="true"
+              <span class="sr-only">View notifications</span>
+              <svg
+                class="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                aria-hidden="true"
               >
-                <span class="sr-only">Open user menu</span>
-                <img class="h-8 w-8 rounded-full" [src]="user.photoUrl" alt="" />
-              </button>
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"
+                />
+              </svg>
+            </button>
+
+            <!-- Profile dropdown -->
+            <div class="relative ml-3">
+              <div *ngIf="user">
+                <button
+                  [matMenuTriggerFor]="userMenu"
+                  type="button"
+                  class="flex max-w-xs items-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                  id="user-menu-button"
+                  aria-expanded="false"
+                  aria-haspopup="true"
+                >
+                  <span class="sr-only">Open user menu</span>
+                  <img class="h-8 w-8 rounded-full" [src]="user.photoUrl" alt="" />
+                </button>
+              </div>
             </div>
-          </div>
+          </ng-container>
+          <ng-template #notLoggedIn>
+            <div class="hidden lg:flex lg:flex-1 lg:justify-end">
+              <a href="#" class="text-sm font-semibold leading-6 text-gray-900"
+                >Log in <span aria-hidden="true">&rarr;</span></a
+              >
+            </div>
+          </ng-template>
         </div>
       </div>
     </div>
     <app-route-breadcrumbs [routes]="['projects', 'route']" />
-
-    <!-- <div class="mx-auto max-w-7xl px-4 sm:px-6">
-       <div class="border-t border-gray-200 py-3">
-         <nav class="flex" aria-label="Breadcrumb">
-           <div class="flex sm:hidden">
-             <a
-               href="#"
-               class="group inline-flex space-x-3 text-sm font-medium text-gray-500 hover:text-gray-700"
-             >
-               <svg
-                 class="h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-600"
-                 viewBox="0 0 20 20"
-                 fill="currentColor"
-                 aria-hidden="true"
-               >
-                 <path
-                   fill-rule="evenodd"
-                   d="M18 10a.75.75 0 01-.75.75H4.66l2.1 1.95a.75.75 0 11-1.02 1.1l-3.5-3.25a.75.75 0 010-1.1l3.5-3.25a.75.75 0 111.02 1.1l-2.1 1.95h12.59A.75.75 0 0118 10z"
-                   clip-rule="evenodd"
-                 />
-               </svg>
-               <span>Back to Applicants</span>
-             </a>
-           </div>
-           <div class="hidden sm:block">
-             <ol role="list" class="flex items-center space-x-4">
-               <li>
-                 <div>
-                   <a href="#" class="text-gray-400 hover:text-gray-500">
-                     <svg
-                       class="h-5 w-5 flex-shrink-0"
-                       viewBox="0 0 20 20"
-                       fill="currentColor"
-                       aria-hidden="true"
-                     >
-                       <path
-                         fill-rule="evenodd"
-                         d="M9.293 2.293a1 1 0 011.414 0l7 7A1 1 0 0117 11h-1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-3a1 1 0 00-1-1H9a1 1 0 00-1 1v3a1 1 0 01-1 1H5a1 1 0 01-1-1v-6H3a1 1 0 01-.707-1.707l7-7z"
-                         clip-rule="evenodd"
-                       />
-                     </svg>
-                     <span class="sr-only">Home</span>
-                   </a>
-                 </div>
-               </li>
-
-               <li>
-                 <div class="flex items-center">
-                   <svg
-                     class="h-5 w-5 flex-shrink-0 text-gray-300"
-                     fill="currentColor"
-                     viewBox="0 0 20 20"
-                     aria-hidden="true"
-                   >
-                     <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
-                   </svg>
-                   <a href="#" class="ml-4 text-sm font-medium text-gray-500 hover:text-gray-700"
-                     >Jobs</a
-                   >
-                 </div>
-               </li>
-
-               <li>
-                 <div class="flex items-center">
-                   <svg
-                     class="h-5 w-5 flex-shrink-0 text-gray-300"
-                     fill="currentColor"
-                     viewBox="0 0 20 20"
-                     aria-hidden="true"
-                   >
-                     <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
-                   </svg>
-                   <a href="#" class="ml-4 text-sm font-medium text-gray-500 hover:text-gray-700"
-                     >Front End Developer</a
-                   >
-                 </div>
-               </li>
-
-               <li>
-                 <div class="flex items-center">
-                   <svg
-                     class="h-5 w-5 flex-shrink-0 text-gray-300"
-                     fill="currentColor"
-                     viewBox="0 0 20 20"
-                     aria-hidden="true"
-                   >
-                     <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
-                   </svg>
-                   <a
-                     href="#"
-                     class="ml-4 text-sm font-medium text-gray-500 hover:text-gray-700"
-                     aria-current="page"
-                     >Applicants</a
-                   >
-                 </div>
-               </li>
-             </ol>
-           </div>
-         </nav>
-       </div>
-     </div>-->
   </header>
 </ng-container>
 

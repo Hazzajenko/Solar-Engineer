@@ -95,7 +95,7 @@ export class AppComponent extends BaseService implements OnInit {
   friends$ = this.friendsStoreService.select.friends$
   friendsOnline$ = this.friendsStoreService.select.friendsOnline$
   notifications$ = this.notificationsStore.select.notifications$
-  isAuthenticated$ = this.authStore.select.isAuthenticated$
+  // isAuthenticated$ = this.authStore.select.isAuthenticated$
 
   navMenu$ = this.uiStore.select.navMenuState$
   navMenuDistinct$ = this.uiStore.select.navMenuState$.pipe(

@@ -6,11 +6,9 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Auth.API.Handlers;
 
-public sealed record GetTokenCommand(Guid AppUserId)
-    : ICommand<string>;
+public sealed record GetTokenCommand(Guid AppUserId, string UserName) : ICommand<string>;
 
-public class GetTokenHandler
-    : ICommandHandler<GetTokenCommand, string>
+public class GetTokenHandler : ICommandHandler<GetTokenCommand, string>
 {
     private static readonly TimeSpan TokenLifetime = TimeSpan.FromHours(8);
     private readonly IConfiguration _config;
@@ -20,10 +18,7 @@ public class GetTokenHandler
         _config = config;
     }
 
-    public ValueTask<string> Handle(
-        GetTokenCommand request,
-        CancellationToken cT
-    )
+    public ValueTask<string> Handle(GetTokenCommand request, CancellationToken cT)
     {
         var tokenKey = _config["TokenKey"];
         ArgumentNullException.ThrowIfNull(tokenKey);
@@ -33,9 +28,9 @@ public class GetTokenHandler
         var claims = new List<Claim>
         {
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new(JwtRegisteredClaimNames.Sub, request.AppUserId.ToString())
+            new(JwtRegisteredClaimNames.Sub, request.AppUserId.ToString()),
+            new("userName", request.UserName)
         };
-
 
         var tokenDescriptor = new SecurityTokenDescriptor
         {
@@ -43,8 +38,10 @@ public class GetTokenHandler
             Expires = DateTime.UtcNow.Add(TokenLifetime),
             Issuer = "https://solarengineer.app",
             Audience = "https://api.solarengineer.app",
-            SigningCredentials =
-                new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            SigningCredentials = new SigningCredentials(
+                new SymmetricSecurityKey(key),
+                SecurityAlgorithms.HmacSha256Signature
+            )
         };
 
         var token = tokenHandler.CreateToken(tokenDescriptor);

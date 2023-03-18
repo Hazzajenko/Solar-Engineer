@@ -30,7 +30,8 @@ public class AuthorizeEndpoint : EndpointWithoutRequest<AuthorizeResponse>
     {
         // var info = await _signInManager.GetExternalLoginInfoAsync();
         var appUser = await _mediator.Send(new AuthorizeCommand(HttpContext), cT);
-        var token = await _mediator.Send(new GetTokenCommand(appUser.Id), cT);
+        ArgumentNullException.ThrowIfNull(appUser.UserName);
+        var token = await _mediator.Send(new GetTokenCommand(appUser.Id, appUser.UserName), cT);
         Response.Token = token;
         // await Send
         // await _signInManager.

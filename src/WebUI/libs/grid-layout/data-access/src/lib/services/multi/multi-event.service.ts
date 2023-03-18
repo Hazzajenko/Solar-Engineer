@@ -11,6 +11,7 @@ import { ProjectsFacade } from '@projects/data-access'
 
 import { BlockType } from '@shared/data-access/models'
 import { AuthStoreService } from '@auth/data-access'
+import { throwExpression } from '@shared/utils'
 
 @Injectable({
   providedIn: 'root',
@@ -34,7 +35,8 @@ export class MultiEventService {
     /*    if (!project) {
           return
         }*/
-    const userId = await this.authStore.select.userId()
+    const userId = (await this.authStore.select.userId) ?? throwExpression('User not logged in')
+
     const selectedStringId = await this.selectedStore.select.selectedStringId
     const blocks = locationArrayMap(type, locationArray, project.id, selectedStringId, userId)
     if (!blocks) {

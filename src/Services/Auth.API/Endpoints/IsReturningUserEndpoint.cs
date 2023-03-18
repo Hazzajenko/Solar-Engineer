@@ -10,12 +10,10 @@ public class IsReturningUserEndpoint : EndpointWithoutRequest<AuthorizeResponse>
 {
     private readonly IMediator _mediator;
 
-    public IsReturningUserEndpoint(
-        IMediator mediator)
+    public IsReturningUserEndpoint(IMediator mediator)
     {
         _mediator = mediator;
     }
-
 
     public override void Configure()
     {
@@ -35,7 +33,10 @@ public class IsReturningUserEndpoint : EndpointWithoutRequest<AuthorizeResponse>
             return;
         }
 
-        var token = await _mediator.Send(new GetTokenCommand(appUser.Id), cT);
+        // appUser.UserName.Thr
+        ArgumentNullException.ThrowIfNull(appUser.UserName);
+
+        var token = await _mediator.Send(new GetTokenCommand(appUser.Id, appUser.UserName), cT);
         Response.Token = token;
         await SendOkAsync(Response, cT);
     }

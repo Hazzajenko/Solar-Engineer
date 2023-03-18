@@ -1,21 +1,87 @@
 ﻿// using System.Drawing;
-using SixLabors.Fonts;
-using Color = SixLabors.ImageSharp.Color;
-using PointF = SixLabors.ImageSharp.PointF;
-using SixLabors.ImageSharp.Processing;
-using SixLabors.ImageSharp.Drawing.Processing;
-using SixLabors.ImageSharp.PixelFormats;
+
+using SkiaSharp;
+// using Color = SixLabors.ImageSharp.Color;
+// using PointF = SixLabors.ImageSharp.PointF;
 
 namespace Users.API.Services.Images;
 
 public class ImagesService
 {
-    
-    public ImagesService()
+    public static byte[] GenerateProfilePicture(string initials, int size)
     {
+        // Create a new SKBitmap with the desired size and format
+        var bitmap = new SKBitmap(size, size, SKColorType.Rgba8888, SKAlphaType.Premul);
+
+        // Create a new SKCanvas to draw on the bitmap
+        using (var canvas = new SKCanvas(bitmap))
+        {
+            // Clear the canvas with a background color
+            canvas.Clear(SKColors.LightGray);
+
+            // Set up a paint object with the desired text style
+            using (var paint = new SKPaint())
+            {
+                paint.Typeface = SKTypeface.FromFamilyName("Arial", SKFontStyleWeight.Normal, SKFontStyleWidth.Normal,
+                    SKFontStyleSlant.Upright);
+                paint.TextSize = size / 2;
+                paint.Color = SKColors.White;
+                paint.IsAntialias = true;
+
+                // Calculate the position of the text based on its size and the size of the bitmap
+                var textBounds = new SKRect();
+                paint.MeasureText(initials, ref textBounds);
+                var x = (size - textBounds.Width) / 2;
+                var y = (size + textBounds.Height) / 2;
+
+                // Draw the text on the canvas
+                canvas.DrawText(initials, x, y, paint);
+            }
+        }
+
+        // Convert the bitmap to a byte array in PNG format
+        using (var image = SKImage.FromBitmap(bitmap))
+        using (var data = image.Encode(SKEncodedImageFormat.Png, 100))
+        {
+            return data.ToArray();
+        }
     }
-    
-    public IFormFile GenerateDpWithInitials(string firstName, string lastName)
+
+    /*public static string GenerateProfilePicture(string initials, int size = 128, string backgroundColor = "#4caf50", string textColor = "#ffffff")
+    {
+        using var image = new Image<Rgba32>(new Configuration(), size, size);
+
+        // Draw the background color
+        image.Mutate(x => x
+            .BackgroundColor(Color.ParseHex(backgroundColor))
+            .DrawImage(image, 1.0f)
+        );
+
+        // FontFamily sansSerifFont = FontFamily.GenericSansSerif;
+
+        FontFamily mySansSerifFont = new FontFamily();
+        Font mySansSerif12 = new Font(mySansSerifFont, 12);
+        // Draw the initials
+        var font = new Font(FontFamily.GenericSansSerif, size / 2);
+        var textGraphicsOptions = new TextGraphicsOptions()
+        {
+            TextOptions = new TextOptions()
+            {
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            }
+        };
+        image.Mutate(x => x
+            .DrawText(textGraphicsOptions, initials.ToUpper(), font, Color.FromHex(textColor), new PointF(size / 2, size / 2))
+        );
+
+        // Return the base64-encoded PNG image
+        using var memoryStream = new MemoryStream();
+        image.Save(memoryStream, new PngEncoder());
+        return $"data:image/png;base64,{Convert.ToBase64String(memoryStream.ToArray())}";
+    }*/
+
+    /*public IFormFile GenerateDpWithInitials(string firstName, string lastName)
     {
         var width = 200;
         var height = 200;
@@ -42,7 +108,7 @@ public class ImagesService
 
         } 
         return null;
-    }
+    }*/
     /*
     public MemoryStream GenerateDpWithInitials(string firstName, string lastName)
     {

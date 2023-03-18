@@ -15,6 +15,7 @@ import { ProjectsFacade } from '@projects/data-access'
 import { GridMode, PanelModel, StringModel, UndefinedString } from '@shared/data-access/models'
 import { BaseService } from '@shared/logger'
 import { UpdateStr } from '@ngrx/entity/src/models'
+import { throwExpression } from '@shared/utils'
 
 @Injectable({
   providedIn: 'root',
@@ -38,7 +39,7 @@ export class StringsEventService extends BaseService {
 
   async createNoDispatch(stringName: string) {
     const project = await this.projectsFacade.selectedProject()
-    const userId = await this.currentUserId
+    const userId = (await this.userId) ?? throwExpression('User not logged in')
     return new StringModel({
       projectId: project.id,
       name: stringName,
@@ -50,7 +51,8 @@ export class StringsEventService extends BaseService {
 
   async create(stringName: string) {
     const project = await this.projectsFacade.selectedProject()
-    const userId = await this.currentUserId
+    const userId = (await this.userId) ?? throwExpression('User not logged in')
+
     // console.log(project)
     /*    if (!project) {
           return

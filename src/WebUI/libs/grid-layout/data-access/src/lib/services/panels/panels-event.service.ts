@@ -12,7 +12,7 @@ import { PanelModel } from '@shared/data-access/models'
 import { combineLatest, firstValueFrom, map } from 'rxjs'
 import { PathsEventService } from '../paths'
 import { AuthStoreService } from '@auth/data-access'
-import { ProjectItemUpdate } from '@shared/utils'
+import { ProjectItemUpdate, throwExpression } from '@shared/utils'
 
 @Injectable({
   providedIn: 'root',
@@ -35,7 +35,7 @@ export class PanelsEventService {
           return
         }*/
 
-    const userId = await this.authStore.select.userId()
+    const userId = (await this.authStore.select.userId) ?? throwExpression('User not logged in')
     // if
     // TODO give panel a default config
 

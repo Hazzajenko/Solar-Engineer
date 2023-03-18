@@ -5,6 +5,8 @@ export const HOME_PAGE = {
   PROJECTS: 'Projects',
   MESSAGES: 'Messages',
   SOCIAL: 'Social',
+  PROFILE: 'Profile',
+  HOME: 'Home',
   SETTINGS: 'Settings',
 } as const
 

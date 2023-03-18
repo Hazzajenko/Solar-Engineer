@@ -19,7 +19,7 @@ export class BaseService {
   /*  protected userName$ = this.authFacade.user$.pipe(
       map((user) => user?.userName ?? 'User not logged in'),
     )*/
-  protected currentUserId = this.authFacade.userId()
+  protected userId = this.authFacade.userId
 
   protected isLoggedIn$ = this.authFacade.isLoggedIn$
   protected isLoggedIn = this.authFacade.isLoggedIn

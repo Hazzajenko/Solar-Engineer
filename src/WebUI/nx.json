@@ -65,5 +65,8 @@
       "style": "scss",
       "standalone": true
     }
+  },
+  "cli": {
+    "defaultCollection": "@nxext/stencil"
   }
 }

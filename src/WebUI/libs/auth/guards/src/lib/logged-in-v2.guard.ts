@@ -57,9 +57,15 @@ export const loggedInV2Guard = () => {
                        map(({ token }) => AuthActions.signInSuccess({ token })),
                      )*/
             authStore.dispatch.isReturningUser()
+            /*       this.authService.isReturningUser().pipe(
+                     tap(({ token }) => localStorage.setItem('token', token)),
+                     map(({ token }) => AuthActions.signInSuccess({ token })),
+                   ),*/
             if (authorizeQuery === 'true') {
               location.go('/')
             }
+            // const urlTree = router.parseUrl(`${user.}`)
+            // return of(urlTree)
             return of(true)
           }
         }
