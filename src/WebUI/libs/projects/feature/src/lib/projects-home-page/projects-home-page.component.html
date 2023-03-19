@@ -6,229 +6,238 @@
       filteredProjects: filteredProjects$ | async
     } as projectsState'
   >
-    <div
-      class='mx-auto w-full h-full min-h-[600px] flex-grow lg:flex xl:px-8 bg-white rounded-md dark:bg-slate-800'
-    >
-      <!-- Left sidebar & main wrapper -->
-      <div class='min-w-0 flex-1 bg-white xl:flex dark:bg-slate-700'>
-        <!-- Account profile -->
-        <div class='xl:w-64 xl:flex-shrink-0 xl:border-r xl:border-gray-200 p-4'>
-          <div class='py-6 pl-4 pr-6 sm:pl-6 lg:pl-8 xl:pl-0'>
-            <div class='flex items-center justify-between'>
-              <div class='flex-1 space-y-8'>
-                <div
-                  class='space-y-8 sm:flex sm:items-center sm:justify-between sm:space-y-0 xl:block xl:space-y-8'
-                >
-                  <!-- Profile -->
-                  <div class='flex items-center space-x-3'>
-                    <div class='h-12 w-12 flex-shrink-0'>
-                      <img class='h-12 w-12 rounded-full'
-                           [src]='user.photoUrl'
-                           alt='' />
+    <!--    mx-auto max-w-3xl px-4 sm:px-6 lg:max-w-7xl lg:px-8-->
+    <!--    <div
+          class='mx-auto w-full h-full min-h-[600px] flex-grow lg:flex xl:px-8 bg-white rounded-md dark:bg-slate-800'
+        >-->
+    <!--    dark:bg-slate-700-->
+    <!--    dark:bg-slate-700-->
+    <!--    bg-white-->
+    <!--    bg-white-->
+    <main class='mt-5 pb-8'>
+      <div
+        class='mx-auto w-full h-full min-h-[600px] flex-grow max-w-3xl px-4 sm:px-6 lg:max-w-7xl lg:px-8 rounded-md'
+      >
+        <!-- Left sidebar & main wrapper -->
+        <div class='min-w-0 flex-1 xl:flex'>
+          <!-- Account profile -->
+          <div class='xl:w-64 xl:flex-shrink-0 xl:border-r xl:border-gray-200 p-4 dark:xl:border-gray-600'>
+            <div class='py-6 pl-4 pr-6 sm:pl-6 lg:pl-8 xl:pl-0'>
+              <div class='flex items-center justify-between'>
+                <div class='flex-1 space-y-8'>
+                  <div
+                    class='space-y-8 sm:flex sm:items-center sm:justify-between sm:space-y-0 xl:block xl:space-y-8'
+                  >
+                    <!-- Profile -->
+                    <div class='flex items-center space-x-3'>
+                      <div class='h-12 w-12 flex-shrink-0'>
+                        <img class='h-12 w-12 rounded-full'
+                             [src]='user.photoUrl'
+                             alt='' />
+                      </div>
+                      <div class='space-y-1'>
+                        <div class='text-sm font-medium text-gray-900 dark:text-white'>{{ user.displayName }}</div>
+                        <a href='#'
+                           class='group flex items-center space-x-2.5'>
+                          <svg
+                            class='h-5 w-5 text-gray-400 group-hover:text-gray-500 dark:text-gray-300 dark:group-hover:text-white'
+                            fill='currentColor'
+                            viewBox='0 0 20 20'
+                            aria-hidden='true'
+                          >
+                            <path
+                              fill-rule='evenodd'
+                              d='M10 0C4.477 0 0 4.484 0 10.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0110 4.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.942.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0020 10.017C20 4.484 15.522 0 10 0z'
+                              clip-rule='evenodd'
+                            />
+                          </svg>
+                          <span class='text-sm text-gray-400  font-medium group-hover:text-gray-500 dark:text-gray-300 dark:group-hover:text-white'>{{
+                            user.displayName
+                            }}</span>
+                        </a>
+                      </div>
                     </div>
-                    <div class='space-y-1'>
-                      <div class='text-sm font-medium text-gray-900 dark:text-white'>{{ user.displayName }}</div>
-                      <a href='#'
-                         class='group flex items-center space-x-2.5'>
-                        <svg
-                          class='h-5 w-5 text-gray-400 group-hover:text-gray-500 dark:text-gray-300 dark:group-hover:text-white'
-                          fill='currentColor'
-                          viewBox='0 0 20 20'
-                          aria-hidden='true'
-                        >
-                          <path
-                            fill-rule='evenodd'
-                            d='M10 0C4.477 0 0 4.484 0 10.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0110 4.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.942.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0020 10.017C20 4.484 15.522 0 10 0z'
-                            clip-rule='evenodd'
-                          />
-                        </svg>
-                        <span class='text-sm text-gray-400  font-medium group-hover:text-gray-500 dark:text-gray-300 dark:group-hover:text-white'>{{
-                          user.displayName
-                          }}</span>
-                      </a>
+                    <div class='flex flex-col sm:flex-row xl:flex-col'>
+                      <button
+                        (click)='openCreateProjectDialog()'
+                        type='button'
+                        class='inline-flex items-center justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 xl:w-full'
+                      >
+                        New Project
+                      </button>
                     </div>
                   </div>
-                  <div class='flex flex-col sm:flex-row xl:flex-col'>
-                    <button
-                      (click)='openCreateProjectDialog()'
-                      type='button'
-                      class='inline-flex items-center justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 xl:w-full'
-                    >
-                      New Project
-                    </button>
-                  </div>
-                </div>
-                <div
-                  class='flex flex-col space-y-6 sm:flex-row sm:space-y-0 sm:space-x-8 xl:flex-col xl:space-x-0 xl:space-y-6'
-                >
-                  <div class='flex items-center space-x-2'>
-                    <svg
-                      class='h-5 w-5 text-gray-400 dark:text-gray-300'
-                      viewBox='0 0 20 20'
-                      fill='currentColor'
-                      aria-hidden='true'
-                    >
-                      <path
-                        d='M5.127 3.502L5.25 3.5h9.5c.041 0 .082 0 .123.002A2.251 2.251 0 0012.75 2h-5.5a2.25 2.25 0 00-2.123 1.502zM1 10.25A2.25 2.25 0 013.25 8h13.5A2.25 2.25 0 0119 10.25v5.5A2.25 2.25 0 0116.75 18H3.25A2.25 2.25 0 011 15.75v-5.5zM3.25 6.5c-.04 0-.082 0-.123.002A2.25 2.25 0 015.25 5h9.5c.98 0 1.814.627 2.123 1.502a3.819 3.819 0 00-.123-.002H3.25z'
-                      />
-                    </svg>
-                    <span class='text-sm font-medium text-gray-500 dark:text-gray-400'
-                    >{{ projectsState.amountOfProjects ?? 0 }} Projects</span
-                    >
+                  <div
+                    class='flex flex-col space-y-6 sm:flex-row sm:space-y-0 sm:space-x-8 xl:flex-col xl:space-x-0 xl:space-y-6'
+                  >
+                    <div class='flex items-center space-x-2'>
+                      <svg
+                        class='h-5 w-5 text-gray-400 dark:text-gray-300'
+                        viewBox='0 0 20 20'
+                        fill='currentColor'
+                        aria-hidden='true'
+                      >
+                        <path
+                          d='M5.127 3.502L5.25 3.5h9.5c.041 0 .082 0 .123.002A2.251 2.251 0 0012.75 2h-5.5a2.25 2.25 0 00-2.123 1.502zM1 10.25A2.25 2.25 0 013.25 8h13.5A2.25 2.25 0 0119 10.25v5.5A2.25 2.25 0 0116.75 18H3.25A2.25 2.25 0 011 15.75v-5.5zM3.25 6.5c-.04 0-.082 0-.123.002A2.25 2.25 0 015.25 5h9.5c.98 0 1.814.627 2.123 1.502a3.819 3.819 0 00-.123-.002H3.25z'
+                        />
+                      </svg>
+                      <span class='text-sm font-medium text-gray-500 dark:text-gray-400'
+                      >{{ projectsState.amountOfProjects ?? 0 }} Projects</span
+                      >
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        <!--      <div class="bg-white lg:min-w-0 lg:flex-1">-->
-        <!--  <div-->
-        <!--    class="border-b border-t border-gray-200 pl-4 pr-6 pt-4 pb-4 sm:pl-6 lg:pl-8 xl:border-t-0 xl:pl-6 xl:pt-6 p-4"-->
-        <!--  >-->
-        <!--    <div class="flex items-center">-->
+          <!--      <div class="bg-white lg:min-w-0 lg:flex-1">-->
+          <!--  <div-->
+          <!--    class="border-b border-t border-gray-200 pl-4 pr-6 pt-4 pb-4 sm:pl-6 lg:pl-8 xl:border-t-0 xl:pl-6 xl:pt-6 p-4"-->
+          <!--  >-->
+          <!--    <div class="flex items-center">-->
 
-        <div class='lg:min-w-0 lg:flex-1'>
-          <div class='inline-block min-w-full border-b border-gray-200 align-middle'>
-            <div
-              class='border-b border-t border-gray-200 pl-4 pr-6 pt-4 pb-4 sm:pl-6 lg:pl-8 xl:border-t-0 xl:pl-6 xl:pt-6 p-4'
-            >
-              <div class='flex items-center'>
-                <div class='flex-1 px-3'>
-                  <label for='search'
-                         class='sr-only'>Search</label>
-                  <div class='relative rounded-md shadow-sm bg-white dark:bg-slate-600'>
-                    <div
-                      class='pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3'
-                      aria-hidden='true'
+          <div class='lg:min-w-0 lg:flex-1'>
+            <div class='inline-block min-w-full border-b border-gray-200 align-middle dark:border-gray-600'>
+              <div
+                class='border-b border-gray-200 pl-4 pr-6 pt-4 pb-4 sm:pl-6 lg:pl-8 xl:border-t-0 xl:pl-6 xl:pt-6 p-4 dark:border-gray-600'
+              >
+                <div class='flex items-center'>
+                  <div class='flex-1 px-3'>
+                    <label for='search'
+                           class='sr-only'>Search</label>
+                    <div class='relative rounded-md shadow-sm bg-white dark:bg-slate-700'>
+                      <div
+                        class='pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3'
+                        aria-hidden='true'
+                      >
+                        <svg
+                          class='h-4 w-4 text-gray-400 dark:text-gray-200'
+                          viewBox='0 0 20 20'
+                          fill='currentColor'
+                          aria-hidden='true'
+                        >
+                          <path
+                            fill-rule='evenodd'
+                            d='M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z'
+                            clip-rule='evenodd'
+                          />
+                        </svg>
+                      </div>
+                      <input
+                        [formControl]='autoCompleteControl'
+                        name='search'
+                        id='search'
+                        class='bg-white block w-full rounded-md border-0 py-1.5 pl-9 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 darK:ring-200 dark:placeholder:text-gray-300 dark:bg-slate-700 dark:border-gray-600'
+                        placeholder='Search Projects...'
+                        required
+                        type='search'
+                      />
+                    </div>
+                  </div>
+                  <div class='relative'>
+                    <button
+                      [matMenuTriggerFor]='projectSortMenu'
+                      type='button'
+                      class='inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600 dark:text-white dark:bg-slate-700 dark:ring-200 dark:hover:bg-slate-500'
+                      id='sort-menu-button'
+                      aria-expanded='false'
+                      aria-haspopup='true'
                     >
                       <svg
-                        class='h-4 w-4 text-gray-400 dark:text-gray-200'
+                        class='-ml-0.5 h-5 w-5 text-gray-400 dark:text-gray-200'
                         viewBox='0 0 20 20'
                         fill='currentColor'
                         aria-hidden='true'
                       >
                         <path
                           fill-rule='evenodd'
-                          d='M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z'
+                          d='M2 3.75A.75.75 0 012.75 3h11.5a.75.75 0 010 1.5H2.75A.75.75 0 012 3.75zM2 7.5a.75.75 0 01.75-.75h6.365a.75.75 0 010 1.5H2.75A.75.75 0 012 7.5zM14 7a.75.75 0 01.55.24l3.25 3.5a.75.75 0 11-1.1 1.02l-1.95-2.1v6.59a.75.75 0 01-1.5 0V9.66l-1.95 2.1a.75.75 0 11-1.1-1.02l3.25-3.5A.75.75 0 0114 7zM2 11.25a.75.75 0 01.75-.75H7A.75.75 0 017 12H2.75a.75.75 0 01-.75-.75z'
                           clip-rule='evenodd'
                         />
                       </svg>
-                    </div>
-                    <input
-                      [formControl]='autoCompleteControl'
-                      name='search'
-                      id='search'
-                      class='bg-white block w-full rounded-md border-0 py-1.5 pl-9 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 darK:ring-200 dark:placeholder:text-gray-300 dark:bg-slate-600'
-                      placeholder='Search Projects...'
-                      required
-                      type='search'
-                    />
+                      Sort
+                      <svg
+                        class='-mr-1 h-5 w-5 text-gray-400 dark:text-gray-200'
+                        viewBox='0 0 20 20'
+                        fill='currentColor'
+                        aria-hidden='true'
+                      >
+                        <path
+                          fill-rule='evenodd'
+                          d='M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z'
+                          clip-rule='evenodd'
+                        />
+                      </svg>
+                    </button>
                   </div>
                 </div>
-                <div class='relative'>
-                  <button
-                    [matMenuTriggerFor]='projectSortMenu'
-                    type='button'
-                    class='inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600 dark:text-white dark:bg-slate-600 dark:ring-200 dark:hover:bg-slate-500'
-                    id='sort-menu-button'
-                    aria-expanded='false'
-                    aria-haspopup='true'
-                  >
-                    <svg
-                      class='-ml-0.5 h-5 w-5 text-gray-400 dark:text-white'
-                      viewBox='0 0 20 20'
-                      fill='currentColor'
-                      aria-hidden='true'
-                    >
-                      <path
-                        fill-rule='evenodd'
-                        d='M2 3.75A.75.75 0 012.75 3h11.5a.75.75 0 010 1.5H2.75A.75.75 0 012 3.75zM2 7.5a.75.75 0 01.75-.75h6.365a.75.75 0 010 1.5H2.75A.75.75 0 012 7.5zM14 7a.75.75 0 01.55.24l3.25 3.5a.75.75 0 11-1.1 1.02l-1.95-2.1v6.59a.75.75 0 01-1.5 0V9.66l-1.95 2.1a.75.75 0 11-1.1-1.02l3.25-3.5A.75.75 0 0114 7zM2 11.25a.75.75 0 01.75-.75H7A.75.75 0 017 12H2.75a.75.75 0 01-.75-.75z'
-                        clip-rule='evenodd'
-                      />
-                    </svg>
-                    Sort
-                    <svg
-                      class='-mr-1 h-5 w-5 text-gray-400 dark:text-white'
-                      viewBox='0 0 20 20'
-                      fill='currentColor'
-                      aria-hidden='true'
-                    >
-                      <path
-                        fill-rule='evenodd'
-                        d='M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z'
-                        clip-rule='evenodd'
-                      />
-                    </svg>
-                  </button>
-                </div>
               </div>
-            </div>
 
-            <table class='min-w-full min-h-full'>
-              <thead>
-              <tr class='border-t border-gray-200'>
-                <th
-                  class='border-b border-gray-200 px-6 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-300'
-                  scope='col'
-                >
-                  <span class='lg:pl-2'>Name</span>
-                </th>
-                <th
-                  class='border-b border-gray-200 px-6 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-300'
-                  scope='col'
-                >
-                  Members
-                </th>
-                <th
-                  class='hidden border-b border-gray-200 px-6 py-3 text-right text-sm font-semibold text-gray-900 md:table-cell dark:text-gray-300'
-                  scope='col'
-                >
-                  Last Modified
-                </th>
-                <th
-                  class='border-b border-gray-200 py-3 pr-6 text-right text-sm font-semibold text-gray-900 dark:text-gray-300'
-                  scope='col'
-                ></th>
-              </tr>
-              </thead>
-              <!--            <ul role="list" class="divide-y divide-gray-200 border-b border-gray-200">-->
-              <tbody class='divide-y divide-gray-200 border-b border-gray-200'>
-              <!--            <tbody class="divide-y divide-gray-100 bg-white">-->
-              <tr
-                (click)='selectProject(project)'
-                (dblclick)='routeToProject(project)'
-                (contextmenu)='onRightClick($event, project, user)'
-                (mouseover)='isHovered.set(project.name, true)'
-                (mouseout)='isHovered.set(project.name, false)'
-                class='active:bg-violet-300 focus:outline-none focus:ring focus:blue-100'
-                [ngClass]="{
-                    'bg-blue-200':
+              <table class='min-w-full min-h-full'>
+                <thead>
+                <tr class='border-t border-gray-200 dark:border-gray-600'>
+                  <th
+                    class='border-b border-gray-200 px-6 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 dark:border-gray-600'
+                    scope='col'
+                  >
+                    <span class='lg:pl-2'>Name</span>
+                  </th>
+                  <th
+                    class='border-b border-gray-200 px-6 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 dark:border-gray-600'
+                    scope='col'
+                  >
+                    Members
+                  </th>
+                  <th
+                    class='hidden border-b border-gray-200 px-6 py-3 text-right text-sm font-semibold text-gray-900 md:table-cell dark:text-gray-300  dark:border-gray-600'
+                    scope='col'
+                  >
+                    Last Modified
+                  </th>
+                  <th
+                    class='border-b border-gray-200 py-3 pr-6 text-right text-sm font-semibold text-gray-900 dark:text-gray-300 dark:border-gray-600'
+                    scope='col'
+                  ></th>
+                </tr>
+                </thead>
+                <!--            <ul role="list" class="divide-y divide-gray-200 border-b border-gray-200">-->
+                <tbody class='divide-y divide-gray-200 border-b border-gray-200 dark:divide-gray-600 dark:border-gray-600'>
+                <!--            <tbody class="divide-y divide-gray-100 bg-white">-->
+                <tr
+                  (click)='selectProject(project)'
+                  (dblclick)='routeToProject(project)'
+                  (contextmenu)='onRightClick($event, project, user)'
+                  (mouseover)='isHovered.set(project.name, true)'
+                  (mouseout)='isHovered.set(project.name, false)'
+                  class='active:bg-violet-300 focus:outline-none focus:ring focus:blue-100'
+                  [ngClass]="{
+                    'bg-blue-200 dark:bg-indigo-700':
                       selectedProject?.id === project.id && !isHovered.get(project.name),
-                    'bg-blue-50': isHovered.get(project.name) && selectedProject?.id !== project.id,
-                    'bg-blue-300':
+                    'bg-blue-50 dark:bg-indigo-800': isHovered.get(project.name) && selectedProject?.id !== project.id,
+                    'bg-blue-300 dark:bg-indigo-600':
                       isHovered.get(project.name) && selectedProject?.id === project.id,
 
                     'bg-white dark:bg-slate-700': !isHovered.get(project.name) && selectedProject?.id !== project.id
                   }"
-                *ngFor='let project of filteredProjects$ | async'
-              >
-                <!--              <tr *ngFor="let project of projects$ | async">-->
-                <td
-                  class='w-full max-w-0 whitespace-nowrap px-6 py-3 text-sm font-medium text-gray-900'
+                  *ngFor='let project of filteredProjects$ | async'
                 >
-                  <div class='flex items-center space-x-3 lg:pl-2'>
-                    <div
-                      class='h-2.5 w-2.5 flex-shrink-0 rounded-full bg-pink-600'
-                      aria-hidden='true'
-                    ></div>
-                    <a href='#'
-                       class='truncate hover:text-gray-600'>
+                  <!--              <tr *ngFor="let project of projects$ | async">-->
+                  <td
+                    class='w-full max-w-0 whitespace-nowrap px-6 py-3 text-sm font-medium text-gray-900 dark:text-gray-300'
+                  >
+                    <div class='flex items-center space-x-3 lg:pl-2'>
+                      <div
+                        class='h-2.5 w-2.5 flex-shrink-0 rounded-full bg-pink-600'
+                        aria-hidden='true'
+                      ></div>
+                      <a href='#'
+                         class='truncate hover:text-gray-600 dark:hover:text-white'>
                         <span>
                           {{ project.name }}
                           <a href='#'
                              class='group relative flex items-center space-x-2.5'>
                             <svg
-                              class='h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500'
+                              class='h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500 dark:text-gray-300 dark:group-hover:text-white'
                               viewBox='0 0 18 18'
                               fill='none'
                               aria-hidden='true'
@@ -241,94 +250,94 @@
                               />
                             </svg>
                             <span
-                              class='truncate text-sm font-medium text-gray-500 group-hover:text-gray-900'
+                              class='truncate text-sm font-medium text-gray-500 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white'
                             >{{ user.userName | lowercase }}/{{ project.name }}</span
                             >
                           </a>
                           <!--                        <span class="font-normal text-gray-500">in Engineering</span>-->
                         </span>
-                    </a>
-                  </div>
-                </td>
-                <td class='px-6 py-3 text-sm font-medium text-gray-500'>
-                  <div class='flex items-center space-x-2'>
-                    <div class='flex flex-shrink-0 -space-x-1'>
-                      <img
-                        *ngFor='let item of createRange(4)'
-                        class='h-6 w-6 max-w-none rounded-full ring-2 ring-white'
-                        [src]='user.photoUrl'
-                        [alt]='user.userName'
+                      </a>
+                    </div>
+                  </td>
+                  <td class='px-6 py-3 text-sm font-medium text-gray-500 dark:text-gray-300'>
+                    <div class='flex items-center space-x-2'>
+                      <div class='flex flex-shrink-0 -space-x-1'>
+                        <img
+                          *ngFor='let item of createRange(4)'
+                          class='h-6 w-6 max-w-none rounded-full ring-2 ring-white'
+                          [src]='user.photoUrl'
+                          [alt]='user.userName'
+                        />
+                      </div>
+
+                      <span class='flex-shrink-0 text-xs font-medium leading-5'
+                      >+{{ project.memberIds.length ?? 0 }}</span
+                      >
+                    </div>
+                  </td>
+                  <td
+                    class='hidden whitespace-nowrap px-6 py-3 text-right text-sm text-gray-500 md:table-cell dark:text-gray-300'
+                  >
+                    <!--                  March 17, 2020-->
+                    {{ project.lastModifiedTime | date : "medium" }}
+                  </td>
+                  <td class='whitespace-nowrap px-6 py-3 text-right text-sm font-medium text-gray-500 hover:text-gray-600 dark:text-gray-300 dark:hover:text-white'>
+                    <svg xmlns='http://www.w3.org/2000/svg'
+                         height='24'
+                         width='24'>
+                      <path
+                        d='M17.125 9 15 6.875l.7-.7L17.125 7.6l3.525-3.55.7.7ZM6 19.5V5.625q0-.7.463-1.162Q6.925 4 7.625 4H13v1H7.625q-.25 0-.437.188Q7 5.375 7 5.625V17.95l5-2.15 5 2.15V11h1v8.5l-6-2.575ZM7 5h6-1Z'
                       />
-                    </div>
-
-                    <span class='flex-shrink-0 text-xs font-medium leading-5'
-                    >+{{ project.memberIds.length ?? 0 }}</span
-                    >
-                  </div>
-                </td>
-                <td
-                  class='hidden whitespace-nowrap px-6 py-3 text-right text-sm text-gray-500 md:table-cell'
-                >
-                  <!--                  March 17, 2020-->
-                  {{ project.lastModifiedTime | date : "medium" }}
-                </td>
-                <td class='whitespace-nowrap px-6 py-3 text-right text-sm font-medium'>
-                  <svg xmlns='http://www.w3.org/2000/svg'
-                       height='24'
-                       width='24'>
-                    <path
-                      d='M17.125 9 15 6.875l.7-.7L17.125 7.6l3.525-3.55.7.7ZM6 19.5V5.625q0-.7.463-1.162Q6.925 4 7.625 4H13v1H7.625q-.25 0-.437.188Q7 5.375 7 5.625V17.95l5-2.15 5 2.15V11h1v8.5l-6-2.575ZM7 5h6-1Z'
-                    />
-                  </svg>
-                </td>
-              </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-      <!-- Activity home -->
-      <div
-        class='bg-gray-50 pr-4 sm:pr-6 lg:flex-shrink-0 lg:border-l lg:border-gray-200 lg:pr-8 xl:pr-0'
-      >
-        <div class='pl-6 lg:w-80 p-4'>
-          <div class='pt-6 pb-2'>
-            <h2 class='text-sm font-semibold'>Activity</h2>
-          </div>
-          <div>
-            <ul role='list'
-                class='divide-y divide-gray-200'>
-              <li class='py-4'>
-                <div class='flex space-x-3'>
-                  <img class='h-6 w-6 rounded-full'
-                       [src]='user.photoUrl'
-                       alt='' />
-                  <div class='flex-1 space-y-1'>
-                    <div class='flex items-center justify-between'>
-                      <h3 class='text-sm font-medium'>You</h3>
-                      <p class='text-sm text-gray-500'>1h</p>
-                    </div>
-                    <p class='text-sm text-gray-500'>
-                      Deployed {{ (projects$ | async)![0]?.name }} (2d89f0c8 in master) to
-                      production
-                    </p>
-                  </div>
-                </div>
-              </li>
-
-              <!-- More items... -->
-            </ul>
-            <div class='border-t border-gray-200 py-4 text-sm'>
-              <a href='#'
-                 class='font-semibold text-indigo-600 hover:text-indigo-900'>
-                View all activity
-                <span aria-hidden='true'> &rarr;</span>
-              </a>
+                    </svg>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
+        <!--<div
+          class='bg-gray-50 pr-4 sm:pr-6 lg:flex-shrink-0 lg:border-l lg:border-gray-200 lg:pr-8 xl:pr-0 dark:bg-slate-700 dark:border-gray-600'
+        >
+          <div class='pl-6 lg:w-80 p-4'>
+            <div class='pt-6 pb-2'>
+              <h2 class='text-sm font-semibold text-gray-500 dark:text-gray-300'>Activity</h2>
+            </div>
+            <div>
+              <ul role='list'
+                  class='divide-y divide-gray-200 dark:divide-gray-600'>
+                <li class='py-4'>
+                  <div class='flex space-x-3'>
+                    <img class='h-6 w-6 rounded-full'
+                         [src]='user.photoUrl'
+                         alt='' />
+                    <div class='flex-1 space-y-1'>
+                      <div class='flex items-center justify-between'>
+                        <h3 class='text-sm font-medium text-gray-500 dark:text-gray-300'>You</h3>
+                        <p class='text-sm text-gray-500 dark:text-gray-300'>1h</p>
+                      </div>
+                      <p class='text-sm text-gray-500 dark:text-gray-300'>
+                        Deployed {{ (projects$ | async)![0]?.name }} (2d89f0c8 in master) to
+                        production
+                      </p>
+                    </div>
+                  </div>
+                </li>
+
+                &lt;!&ndash; More items... &ndash;&gt;
+              </ul>
+              <div class='border-t border-gray-200 py-4 text-sm dark:border-gray-600'>
+                <a href='#'
+                   class='font-semibold text-indigo-600 hover:text-indigo-900 dark:hover:text-indigo-300'>
+                  View all activity
+                  <span aria-hidden='true'> &rarr;</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>-->
       </div>
-    </div>
+    </main>
   </ng-container>
 </ng-container>
 

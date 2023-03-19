@@ -127,10 +127,14 @@ export class ProjectsHomePageComponent extends BaseService implements OnInit {
     // await this.authStore.select.isLoggedIn()
     const userName = (await this.userName) ?? throwExpression('userName is undefined')
 
-    await this.router.navigate([`${userName.toLowerCase()}/${project.name}`]).then(() => {
+    await this.router.navigate([`${userName.toLowerCase()}/${project.name}`], { preserveFragment: true }).then(() => {
       this.projectsStore.dispatch.initSelectProject(project.id)
       this.loading = false
     })
+    /*    await this.router.navigate([`${userName.toLowerCase()}/${project.name}`]).then(() => {
+     this.projectsStore.dispatch.initSelectProject(project.id)
+     this.loading = false
+     })*/
   }
 
   onRightClick(event: MouseEvent, project: ProjectModel, user: AuthUserModel) {
@@ -161,7 +165,7 @@ export class ProjectsHomePageComponent extends BaseService implements OnInit {
   async routeToDashboard(project: ProjectModel) {
     const userName = (await this.userName) ?? throwExpression('userName is undefined')
     await this.router
-      .navigate([`/${userName}/${project.name}/dashboard`])
-      .catch((err) => this.logError(err))
+              .navigate([`/${userName}/${project.name}/dashboard`])
+              .catch((err) => this.logError(err))
   }
 }
