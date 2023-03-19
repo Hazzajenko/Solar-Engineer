@@ -1,26 +1,29 @@
-<ng-container *ngIf="pinnedProjects$ | async as pinnedProjects">
+<ng-container *ngIf='pinnedProjects$ | async as pinnedProjects'>
   <div>
-    <h2 class="text-sm font-medium text-gray-500">Recent Projects</h2>
+    <h2 class='text-sm font-medium text-gray-500 dark:text-white'>Recent Projects</h2>
     <!--    <h2 class="text-sm font-medium text-gray-500">Pinned Projects</h2>-->
-    <ul role="list" class="mt-3 grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
-      <ng-container *ngFor="let project of pinnedProjects">
+    <ul role='list'
+        class='mt-3 grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4'>
+      <ng-container *ngFor='let project of pinnedProjects'>
         <!--    <ng-container *ngFor='projectsSortedByLastModifiedTime$ | async mostRecentProjects'>-->
         <!--        (mouseover)="isHovered.set(project.name, true)"-->
         <!--        (click)="routeToProject(project)"-->
         <li
-          (dblclick)="routeToProject(project)"
-          (mouseover)="isHovered.set(project.name, true)"
-          (mouseout)="isHovered.set(project.name, false)"
+          (dblclick)='routeToProject(project)'
+          (mouseover)='isHovered.set(project.name, true)'
+          (mouseout)='isHovered.set(project.name, false)'
           [ngClass]="{
             'cursor-pointer': isHovered.get(project.name),
             'cursor-default': !isHovered.get(project.name)
           }"
-          class="col-span-1 flex rounded-md shadow-sm bg-white active:bg-violet-700"
+          class='col-span-1 flex rounded-md bg-white shadow-sm dark:bg-gray-800'
         >
+
           <!--          cursor-pointer-->
           <!--        <div
                   class="flex w-16 flex-shrink-0 items-center justify-center bg-pink-600 rounded-l-md text-sm font-medium text-white"
                 >-->
+
           <div
             [ngClass]="{
               'bg-pink-600':
@@ -33,70 +36,96 @@
               'bg-blue-600':
                 pinnedProjects.length > 3 ? project.name === pinnedProjects[3].name : false
             }"
-            class="flex w-16 flex-shrink-0 items-center justify-center rounded-l-md text-sm font-medium text-white"
+            class='flex w-16 flex-shrink-0 items-center justify-center rounded-l-md text-sm font-medium text-white'
           >
             {{ project.name | slice : 0 : 2 | uppercase }}
             <!--          GA-->
           </div>
           <div
             [ngClass]="{
-              'bg-gray-200': isHovered.get(project.name),
-              'bg-white': !isHovered.get(project.name)
+              'bg-gray-100 text-gray-800 dark:bg-slate-500 dark:text-white': isHovered.get(
+                project.name
+              ),
+              'bg-white text-gray-600 dark:bg-slate-600 dark:text-gray-300': !isHovered.get(
+                project.name
+              )
             }"
-            class="flex flex-1 items-center justify-between truncate rounded-r-md border-t border-r border-b border-gray-200 active:bg-violet-300 focus:outline-none focus:ring focus:ring-violet-100"
+            class='flex flex-1 items-center justify-between truncate rounded-r-md border-t border-r border-b border-gray-200 focus:outline-none focus:ring focus:ring-violet-100 active:bg-violet-300 dark:active:bg-slate-600'
           >
-            <div class="flex-1 truncate px-4 py-2 text-sm">
-              <a href="#" class="font-medium">{{ project.name | truncate : 12 }}</a>
+            <div class='flex-1 truncate px-4 py-2 text-sm'>
+              <a href='#'
+                 class='font-medium'>{{ project.name | truncate : 12 }}</a>
               <!--            <a href='#' class='font-medium text-gray-900 hover:text-gray-600'>Graph API</a>-->
               <!--            <p class='text-gray-500'>{{project}}</p>-->
-              <p class="text-gray-500">{{ (5 | getRandomNumber : 10) + " Members" }}</p>
+              <p class=''>
+                {{ (5 | getRandomNumber : 10) + " Members" }}
+              </p>
               <!--              <p class="text-gray-500">16 Members</p>-->
               <!--       <p class="text-gray-500">
                        {{ mostRecentProject.lastModifiedTime | timeDifferenceFromNow }}
                      </p>-->
             </div>
-            <div class="flex-shrink-0 pr-2">
-              <button
-                [ngClass]="{
-                  'bg-gray-200 text-gray-500': isHovered.get(project.name),
-                  'bg-white text-gray-400': !isHovered.get(project.name)
-                }"
-                (click)="openProjectSettings($event, project)"
-                type="button"
-                class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white bg-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            <div class='flex-shrink-0 pr-2'>
+              <!--         [ngClass]="{
+                       'bg-gray-200 text-gray-500': isHovered.get(project.name),
+                       'bg-white text-gray-400': !isHovered.get(project.name)
+                       }"-->
+              <!--        [ngClass]="{
+                      'bg-gray-100 text-gray-800 dark:bg-slate-500 dark:text-white': isHovered.get(
+                        project.name
+                      ),
+                      'bg-white text-gray-600 dark:bg-slate-600 dark:text-gray-400': !isHovered.get(
+                        project.name
+                      )
+                      }"-->
+              <div
+                class='text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-white'
               >
-                <span class="sr-only">Open options</span>
-                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                  <path
-                    d="M10 3a1.5 1.5 0 110 3 1.5 1.5 0 010-3zM10 8.5a1.5 1.5 0 110 3 1.5 1.5 0 010-3zM11.5 15.5a1.5 1.5 0 10-3 0 1.5 1.5 0 003 0z"
-                  />
-                </svg>
-              </button>
+                <button
+                  [ngClass]="{
+                    'bg-gray-100 dark:bg-slate-500': isHovered.get(project.name),
+                    'bg-white dark:bg-slate-600': !isHovered.get(project.name)
+                  }"
+                  (click)='openProjectSettings($event, project)'
+                  type='button'
+                  class='inline-flex h-8 w-8 items-center justify-center rounded-full bg-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'
+                >
+                  <span class='sr-only'>Open options</span>
+                  <svg class='h-5 w-5'
+                       viewBox='0 0 20 20'
+                       fill='currentColor'
+                       aria-hidden='true'>
+                    <path
+                      d='M10 3a1.5 1.5 0 110 3 1.5 1.5 0 010-3zM10 8.5a1.5 1.5 0 110 3 1.5 1.5 0 010-3zM11.5 15.5a1.5 1.5 0 10-3 0 1.5 1.5 0 003 0z'
+                    />
+                  </svg>
+                </button>
+              </div>
             </div>
           </div>
         </li>
       </ng-container>
-      <ng-container *ngIf="pinnedProjects.length < 4">
-        <li class="col-span-1 flex rounded-md shadow-sm">
+      <ng-container *ngIf='pinnedProjects.length < 4'>
+        <li class='col-span-1 flex rounded-md shadow-sm'>
           <button
-            (click)="openCreateProjectDialog()"
-            type="button"
-            class="inline-flex w-full h-full items-center justify-center rounded-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+            (click)='openCreateProjectDialog()'
+            type='button'
+            class='inline-flex h-full w-full items-center justify-center rounded-md border border-gray-300 bg-white text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-800 dark:bg-slate-600 dark:text-gray-300 dark:hover:bg-slate-500 dark:hover:text-white active:bg-violet-300 dark:active:bg-slate-600'
           >
             <svg
-              class="h-5 w-5 text-gray-400"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              aria-hidden="true"
+              class='h-5 w-5'
+              xmlns='http://www.w3.org/2000/svg'
+              viewBox='0 0 20 20'
+              fill='currentColor'
+              aria-hidden='true'
             >
               <path
-                fill-rule="evenodd"
-                d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 5a1 1 0 011-1h6a1 1 0 110 2H4a1 1 0 01-1-1z"
-                clip-rule="evenodd"
+                fill-rule='evenodd'
+                d='M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 5a1 1 0 011-1h6a1 1 0 110 2H4a1 1 0 01-1-1z'
+                clip-rule='evenodd'
               />
             </svg>
-            <span class="ml-2">Create new project</span>
+            <span class='ml-2'>Create new project</span>
           </button>
           <!--          <app-no-projects />-->
         </li>
@@ -114,38 +143,39 @@
 </ng-container>
 
 <div
-  [matMenuTriggerFor]="rightMenu"
-  [style.left]="menuTopLeftPosition.x"
-  [style.top]="menuTopLeftPosition.y"
-  style="visibility: hidden; position: fixed"
+  [matMenuTriggerFor]='rightMenu'
+  [style.left]='menuTopLeftPosition.x'
+  [style.top]='menuTopLeftPosition.y'
+  style='visibility: hidden; position: fixed'
 ></div>
 
 <mat-menu
-  class="z-10 bg-transparent divide-y divide-gray-100 rounded-lg w-44 dark:bg-gray-700 dark:divide-gray-600"
-  #rightMenu="matMenu"
+  class='z-10 w-44 divide-y divide-gray-100 rounded-lg bg-transparent dark:divide-gray-600 dark:bg-gray-700'
+  #rightMenu='matMenu'
 >
-  <ng-template matMenuContent let-project="project">
+  <ng-template matMenuContent
+               let-project='project'>
     <div
-      class="z-10 bg-transparent divide-y divide-gray-100 rounded-lg w-44 dark:bg-gray-700 dark:divide-gray-600"
+      class='z-10 w-44 divide-y divide-gray-100 rounded-lg bg-transparent dark:divide-gray-600 dark:bg-gray-700'
     >
-      <div class="py-2">
+      <div class='py-2'>
         <a
-          href="#"
-          class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-          >{{ project.name }}</a
+          href='#'
+          class='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white'
+        >{{ project.name }}</a
         >
       </div>
       <ul
-        class="py-2 text-sm text-gray-700 dark:text-gray-200"
-        aria-labelledby="dropdownMenuIconButton"
+        class='py-2 text-sm text-gray-700 dark:text-gray-200'
+        aria-labelledby='dropdownMenuIconButton'
       >
         <ng-container
-          *ngTemplateOutlet="
+          *ngTemplateOutlet='
             projectTemplate;
             context: {
               project
             }
-          "
+          '
         >
         </ng-container>
         <!--        <ng-container *ngIf="isGroup; then groupList; else userList"></ng-container>-->
@@ -154,15 +184,16 @@
   </ng-template>
 </mat-menu>
 
-<ng-template #projectTemplate let-project="project">
-  <ng-container *ngIf="project">
-    <li (click)="routeToProject(project)">
-      <a class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+<ng-template #projectTemplate
+             let-project='project'>
+  <ng-container *ngIf='project'>
+    <li (click)='routeToProject(project)'>
+      <a class='block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white'>
         Open
       </a>
     </li>
     <li>
-      <a class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+      <a class='block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white'>
         Edit
       </a>
     </li>
@@ -172,7 +203,7 @@
           </a>
         </li>-->
     <li>
-      <a class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+      <a class='block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white'>
         Delete</a
       >
     </li>

@@ -1,36 +1,45 @@
 import { CommonModule, DatePipe } from '@angular/common'
 import { Router } from '@angular/router'
-import { ChangeDetectionStrategy, Component, inject, ViewChild } from '@angular/core'
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  ViewChild,
+} from '@angular/core'
 import { ProjectsStoreService } from '@projects/data-access'
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
 import { Observable } from 'rxjs'
 import { ProjectModel } from '@shared/data-access/models'
-import { RandomNumberPipe } from '../../../../../../shared/pipes/src/lib/numbers'
+import {
+  RandomNumberPipe,
+} from '../../../../../../shared/pipes/src/lib/numbers'
 import { TruncatePipe } from '@shared/pipes'
 import { MatDialog } from '@angular/material/dialog'
 import { CreateProjectOverlayComponent } from '@projects/feature'
 
 @Component({
-  selector: 'app-recent-projects-cards',
-  standalone: true,
-  imports: [CommonModule, RandomNumberPipe, TruncatePipe, MatMenuModule],
-  templateUrl: './recent-projects-cards.component.html',
-  styles: [],
-  providers: [DatePipe],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-})
+             selector: 'app-recent-projects-cards',
+             standalone: true,
+             imports: [CommonModule, RandomNumberPipe, TruncatePipe, MatMenuModule],
+             templateUrl: './recent-projects-cards.component.html',
+             styles: [],
+             providers: [DatePipe],
+             changeDetection: ChangeDetectionStrategy.OnPush,
+           })
 export class RecentProjectsCardsComponent {
-  private router = inject(Router)
-  private projectsStore = inject(ProjectsStoreService)
-  private matDialog = inject(MatDialog)
   menuTopLeftPosition = { x: '0', y: '0' }
   @ViewChild(MatMenuTrigger, { static: true })
   matMenuTrigger!: MatMenuTrigger
+  hello = 'hello'
   isHovered = new Map<string, boolean>()
+
   isTrue = false
+  loading = false
+  private router = inject(Router)
+  private projectsStore = inject(ProjectsStoreService)
   projects$: Observable<ProjectModel[] | undefined> = this.projectsStore.select.allProjects$
   pinnedProjects$: Observable<ProjectModel[] | undefined> = this.projects$
-  loading = false
+  private matDialog = inject(MatDialog)
 
   async routeToProject(project: ProjectModel) {
     this.loading = true
@@ -40,6 +49,7 @@ export class RecentProjectsCardsComponent {
       this.projectsStore.dispatch.initSelectProject(project.id)
       this.loading = false
     })
+
   }
 
   openProjectSettings(event: MouseEvent, project: ProjectModel) {

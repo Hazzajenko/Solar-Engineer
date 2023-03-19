@@ -7,6 +7,8 @@ import { BaseService } from '@shared/logger'
 import { LetModule } from '@ngrx/component'
 import { Router, RouterLink, RouterLinkActive } from '@angular/router'
 import { SelectThemeComponent, ThemeToggleComponent } from '@app/utils'
+import { toRecord } from '@shared/utils'
+import { RouteModel } from './route.model'
 
 @Component({
   selector: 'app-home-header',
@@ -28,18 +30,27 @@ export class HomeHeaderComponent extends BaseService {
   private router = inject(Router)
   currentPage: HomePage = HOME_PAGE.HOME
 
-  routes = [
-    { name: HOME_PAGE.HOME, path: HOME_PAGE.HOME },
-    { name: HOME_PAGE.PROFILE, path: HOME_PAGE.PROFILE },
-    { name: HOME_PAGE.SOCIAL, path: HOME_PAGE.SOCIAL },
+  routes: RouteModel[] = [
+    { name: HOME_PAGE.HOME, path: '' },
+    { name: HOME_PAGE.PROJECTS, path: 'projects' },
+    { name: HOME_PAGE.SOCIAL, path: 'social' },
   ]
-
-  // @Input() user!: AuthUserModel
+  routesRecord = toRecord(this.routes, 'name')
 
   changeHomePage(pageName: HomePage) {
     this.currentPage = pageName
-    /*    this.router.navigate([pageName]).catch((err) => {
+    const path = this.routesRecord[pageName].path
+
+    if (path === '') {
+      this.router.navigate([]).catch((err) => {
+        this.logError('changeHomePage', err)
+      })
+      return
+    }
+
+    // this.logInfo('changeHomePage', pageName)
+    this.router.navigate([], { queryParams: { tab: path } }).catch((err) => {
       this.logError('changeHomePage', err)
-    }*/
+    })
   }
 }

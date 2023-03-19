@@ -33,6 +33,14 @@ export class RouteBreadcrumbsComponent extends BaseService {
     super()
     this.routesFacade.routeParams$.subscribe((x) => {
       this.logDebug('routeParams$', x)
+      // this.logInfo(console.log && console.log.apply ? console.log.apply(console, x) : console.log(x))
+      // this.logInfo(console.log, 'routeParams$', x).apply(console, x as any)
+      // this.log()
+      /*      const trace = new Error().stack?.split('\n')
+            const logger = new Logger({ name: 'RouteBreadcrumbsComponent' })
+            logger.debug('routeParams$', trace)
+            const src = new Error().stack?.split('\n')?.[2].trim().split(' ')[1]
+            this.logInfo(src, x)*/
     })
     this.routesFacade.routeUrls$.subscribe((x) => {
       this.logDebug('routeUrls$', x)

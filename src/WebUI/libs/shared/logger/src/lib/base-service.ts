@@ -1,46 +1,42 @@
-import { LoggerService } from './'
+import { LoggerService, LogOutput } from './'
 import { map, OperatorFunction, pipe, tap } from 'rxjs'
 import { inject } from '@angular/core'
 import { AuthFacade } from '@auth/data-access'
+import { Logger } from 'tslog'
+
+// import { Logger } from '@ngrx/data'
 
 export class BaseService {
+  static outputs: LogOutput[] = []
   protected logger = inject(LoggerService)
   protected authFacade = inject(AuthFacade)
-  // private logger: LoggerService
+  protected customLogger = new Logger({ name: this.constructor.name })
   private source = this.constructor.name
-
-  /*  constructor(logger: LoggerService) {
-      this.logger = logger
-    }*/
 
   protected user$ = this.authFacade.user$
   protected userName$ = this.authFacade.userName$
   protected userName = this.authFacade.userName
-  /*  protected userName$ = this.authFacade.user$.pipe(
-      map((user) => user?.userName ?? 'User not logged in'),
-    )*/
   protected userId = this.authFacade.userId
 
   protected isLoggedIn$ = this.authFacade.isLoggedIn$
   protected isLoggedIn = this.authFacade.isLoggedIn
-  // protected user = async () => await this.authFacade.user
-
-  /*  currentUserId() {
-
-    }*/
-
-  /*  protected async user() {
-      return await firstValueFrom(this.authFacade.user$)
-    }*/
 
   protected createRange(number: number) {
     return new Array(number).fill(0).map((n, index) => index + 1)
+  }
+
+  protected logInfo = (...objects: unknown[]): void => {
+    const source =
+      new Error().stack?.split('\n')[1].trim().split(' ')[1] ?? `${this.source}.logInfo`
+    this.logger.debug(source, ...objects)
+    // this.customLogger.info(...objects)
   }
 
   protected logDebug(...objects: unknown[]): void {
     const source =
       new Error().stack?.split('\n')[1].trim().split(' ')[1] ?? `${this.source}.logDebug`
     this.logger.debug(source, ...objects)
+    // this.customLogger.debug(...objects)
   }
 
   protected logError(...objects: unknown[]): void {

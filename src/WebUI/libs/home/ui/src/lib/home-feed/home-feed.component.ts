@@ -27,6 +27,7 @@ import { map, of } from 'rxjs'
 })
 export class HomeFeedComponent extends BaseService {
   currentPage: HomePage = HOME_PAGE.PROFILE
+
   profilePictureUrl = generateProfilePicture('HJ')
   users = GenerateUserData(4)
   feeds = GenerateHomeFeedData(4)
