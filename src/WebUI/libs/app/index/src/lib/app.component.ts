@@ -85,10 +85,10 @@ export class AppComponent extends BaseService implements OnInit {
   private router = inject(Router)
 
   /*
-    constructor(logger: LoggerService) {
-      super(logger)
-    }
-  */
+   constructor(logger: LoggerService) {
+   super(logger)
+   }
+   */
 
   // user$ = this.authStore.select.user$
   projects$ = this.projectsStore.select.allProjects$
@@ -111,8 +111,8 @@ export class AppComponent extends BaseService implements OnInit {
   )
 
   /*  toggleSideNav$ = this.uiStore.select.navMenuState$.pipe(
-      tap((value) => (this.sideNavIsOpen = value)),
-    )*/
+   tap((value) => (this.sideNavIsOpen = value)),
+   )*/
   toggleSideNav$ = this.uiStore.select.navMenuState$.pipe(
     // tap((value) => (this.isSideNavOpen = value)),
     tap((value) => console.log('toggleSideNav$', value)),
@@ -167,8 +167,8 @@ export class AppComponent extends BaseService implements OnInit {
     console.log(this._createProjectIsOpen)
 
     /*    this.createProjectTimeLeft = 1
-        this._createProjectIsOpen = value
-        this.startCreateProjectTimer()*/
+     this._createProjectIsOpen = value
+     this.startCreateProjectTimer()*/
   }
 
   get clockedInSideNav() {
@@ -206,26 +206,26 @@ export class AppComponent extends BaseService implements OnInit {
 
   backDropClick() {
     /*    if (this.clockedInSideNav) {
-          // if (!this.sideNavIsOpen) return
-          if (this.sideNavIsOpen) {
-            this.sideNavIsOpen = false
-          }
-          // return
-        }
-        if (this.clockedInCreateProject) {
-          // if (!this.createProjectIsOpen) return
-          if (this.createProjectIsOpen) {
-            this.createProjectIsOpen = false
-          }
-          // return
-        }
-        if (this.sideNavIsOpen && this.createProjectIsOpen) return
-        if (!this.sideNavIsOpen) {
-          this.sideNavIsOpen = true
-        }
-        if (!this.createProjectIsOpen) {
-          this.createProjectIsOpen = true
-        }*/
+     // if (!this.sideNavIsOpen) return
+     if (this.sideNavIsOpen) {
+     this.sideNavIsOpen = false
+     }
+     // return
+     }
+     if (this.clockedInCreateProject) {
+     // if (!this.createProjectIsOpen) return
+     if (this.createProjectIsOpen) {
+     this.createProjectIsOpen = false
+     }
+     // return
+     }
+     if (this.sideNavIsOpen && this.createProjectIsOpen) return
+     if (!this.sideNavIsOpen) {
+     this.sideNavIsOpen = true
+     }
+     if (!this.createProjectIsOpen) {
+     this.createProjectIsOpen = true
+     }*/
     // this.sideNavIsOpen = true
   }
 
@@ -236,68 +236,68 @@ export class AppComponent extends BaseService implements OnInit {
     // create a delay to allow the click to propagate to the sidenav
     // and then close it
     /*
-        const delay = 100
-        const hi = setTimeout(() => {
-          this.uiStore.dispatch.toggleNavMenu()
-        }, delay)
-    */
+     const delay = 100
+     const hi = setTimeout(() => {
+     this.uiStore.dispatch.toggleNavMenu()
+     }, delay)
+     */
 
     /*    await new Promise((f) => setTimeout(f, 1000))
 
-        firstValueFrom(this.toggleCreateProject$).then((value) => {
-          if (value) {
-            this.uiStore.dispatch.toggleCreateProjectOverlay()
-          }
-        })*/
+     firstValueFrom(this.toggleCreateProject$).then((value) => {
+     if (value) {
+     this.uiStore.dispatch.toggleCreateProjectOverlay()
+     }
+     })*/
 
     /*    if (this.isItOpen) {
-          // this.isItOpen = false
-          this.uiStore.dispatch.toggleCreateProjectOverlay()
-          // return
-        }*/
+     // this.isItOpen = false
+     this.uiStore.dispatch.toggleCreateProjectOverlay()
+     // return
+     }*/
   }
 
   // sideNavProm =
 
   ngOnInit(): void {
     /*  this.navMenuDistinct$
-        .pipe(
-          map((value) => {
-            console.log('navMenuDistinct$', value)
-            if (this.drawer) {
-              this.drawer.toggle(undefined, 'keyboard').catch((e) => {
-                console.log(e)
-              })
-            }
-          }),
-          // tap((value) => (this.isSideNavOpen = value)),
-          // tap((value) => console.log('toggleSideNav$', value)),
-          // tap((value) => console.log('toggleSideNav$', this.drawer)),
-          // tap((value) => this.drawer.toggle(value, 'keyboard')),
-        )
-        .subscribe()*/
+     .pipe(
+     map((value) => {
+     console.log('navMenuDistinct$', value)
+     if (this.drawer) {
+     this.drawer.toggle(undefined, 'keyboard').catch((e) => {
+     console.log(e)
+     })
+     }
+     }),
+     // tap((value) => (this.isSideNavOpen = value)),
+     // tap((value) => console.log('toggleSideNav$', value)),
+     // tap((value) => console.log('toggleSideNav$', this.drawer)),
+     // tap((value) => this.drawer.toggle(value, 'keyboard')),
+     )
+     .subscribe()*/
     /*    this.uiStore.select.navMenuState$
-          .pipe(
-            // tap((value) => (this.isSideNavOpen = value)),
-            tap((value) => console.log('toggleSideNav$', value)),
-            tap((value) => console.log('toggleSideNav$', this.drawer)),
-            tap((value) => this.drawer.toggle(value, 'keyboard')),
-          )
-          .subscribe()*/
+     .pipe(
+     // tap((value) => (this.isSideNavOpen = value)),
+     tap((value) => console.log('toggleSideNav$', value)),
+     tap((value) => console.log('toggleSideNav$', this.drawer)),
+     tap((value) => this.drawer.toggle(value, 'keyboard')),
+     )
+     .subscribe()*/
     // this.routerStore.currentRoute$.subscribe((route) => console.log(route))
     // this.routerStore.routeParams$.subscribe((params) => console.log(params))
     // this.routerStore.queryParams$.subscribe((query) => console.log(query))
     this.routerStore.queryParam$('authorize').subscribe((params) => {
       // console.log(params)
       this.logDebug('authorize', params)
-      // this.logger.debug({ source: 'AppV2Component', objects: ['authorize', params] })
+      // this.logger.debug({ source: 'AppComponent', objects: ['authorize', params] })
       // this.logger
       if (params === 'true') {
         this.authStore.dispatch.authorizeRequest()
         /*        this.router
-                  .navigateByUrl('')
-                  .then()
-                  .catch((err) => console.error(err))*/
+         .navigateByUrl('')
+         .then()
+         .catch((err) => console.error(err))*/
       } else {
         this.authStore.dispatch.isReturningUser()
       }
