@@ -6,20 +6,20 @@ import { Router } from '@angular/router'
 import { RouterFacade } from '@shared/data-access/router'
 import { Location } from '@angular/common'
 /*this.routerStore.queryParam$('authorize').subscribe((params) => {
-  // console.log(params)
-  this.logDebug('authorize', params)
-  // this.logger.debug({ source: 'AppV2Component', objects: ['authorize', params] })
-  // this.logger
-  if (params === 'true') {
-    this.authStore.dispatch.authorizeRequest()
-    /!*        this.router
-              .navigateByUrl('')
-              .then()
-              .catch((err) => console.error(err))*!/
-  } else {
-    this.authStore.dispatch.isReturningUser()
-  }
-})*/
+ // console.log(params)
+ this.logDebug('authorize', params)
+ // this.logger.debug({ source: 'AppComponent', objects: ['authorize', params] })
+ // this.logger
+ if (params === 'true') {
+ this.authStore.dispatch.authorizeRequest()
+ /!*        this.router
+ .navigateByUrl('')
+ .then()
+ .catch((err) => console.error(err))*!/
+ } else {
+ this.authStore.dispatch.isReturningUser()
+ }
+ })*/
 export const loggedInV2Guard = () => {
   const auth = inject(AuthFacade)
   const authService = inject(AuthService)
@@ -44,23 +44,23 @@ export const loggedInV2Guard = () => {
       if (!authenticated) {
         if (token) {
           /*          const decoded = jwtDecode(token)
-                    console.log(decoded)
-                    const now = Date.now().valueOf() / 1000
-                    console.log(now)
-                    if (decoded.exp > now) {
-                      authStore.dispatch.signInSuccess(token)
-                      return of(true)
-                    }*/
+           console.log(decoded)
+           const now = Date.now().valueOf() / 1000
+           console.log(now)
+           if (decoded.exp > now) {
+           authStore.dispatch.signInSuccess(token)
+           return of(true)
+           }*/
           if (!authService.isTokenExpired(token)) {
             /*         return authService.isReturningUser().pipe(
-                       tap(({ token }) => localStorage.setItem('token', token)),
-                       map(({ token }) => AuthActions.signInSuccess({ token })),
-                     )*/
+             tap(({ token }) => localStorage.setItem('token', token)),
+             map(({ token }) => AuthActions.signInSuccess({ token })),
+             )*/
             authStore.dispatch.isReturningUser()
             /*       this.authService.isReturningUser().pipe(
-                     tap(({ token }) => localStorage.setItem('token', token)),
-                     map(({ token }) => AuthActions.signInSuccess({ token })),
-                   ),*/
+             tap(({ token }) => localStorage.setItem('token', token)),
+             map(({ token }) => AuthActions.signInSuccess({ token })),
+             ),*/
             if (authorizeQuery === 'true') {
               location.go('/')
             }
@@ -99,11 +99,11 @@ export const loggedInV2Guard = () => {
               // return AuthActions.signInSuccess({ token })
             }),
             /*            catchError((error) => {
-                          console.error(error)
-                          const urlTree = router.parseUrl(`sign-in`)
-                          return of(urlTree)
-                          // return of(false)
-                        }),*/
+             console.error(error)
+             const urlTree = router.parseUrl(`sign-in`)
+             return of(urlTree)
+             // return of(false)
+             }),*/
           )
         }
         const urlTree = router.parseUrl(`sign-in`)

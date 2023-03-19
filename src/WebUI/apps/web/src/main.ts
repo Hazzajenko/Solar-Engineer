@@ -1,11 +1,12 @@
 import { bootstrapApplication } from '@angular/platform-browser'
-import { AppV2Component } from '@app/index'
+// import { AppV2Component } from '@app/index'
 import { mainTsProviders } from '@app/config'
+import { AppComponent } from '@app/app-component'
 
 /*bootstrapApplication(AppComponent, {
-  providers: [...mainTsProviders],
-}).catch((err) => console.error(err))*/
+ providers: [...mainTsProviders],
+ }).catch((err) => console.error(err))*/
 
-bootstrapApplication(AppV2Component, {
+bootstrapApplication(AppComponent, {
   providers: [...mainTsProviders],
 }).catch((err) => console.error(err))
