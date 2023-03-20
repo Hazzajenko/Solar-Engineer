@@ -1,10 +1,11 @@
-import { AuthService, AuthStoreService } from '@auth/data-access'
-import { Router } from '@angular/router'
 import { Location } from '@angular/common'
+import { Router } from '@angular/router'
+import { AuthService, AuthStoreService } from '@auth/data-access'
 import { RouterFacade } from '@shared/data-access/router'
-import { switchMap, tap } from 'rxjs/operators'
-import { map, of } from 'rxjs'
 import { StringTextSchema } from '@shared/utils'
+import { map, of } from 'rxjs'
+import { switchMap, tap } from 'rxjs/operators'
+
 
 export const handleGetAuthenticated = (
   authService: AuthService,
@@ -12,6 +13,7 @@ export const handleGetAuthenticated = (
   router: Router,
   location: Location,
   routerFacade: RouterFacade,
+  authorizeQuery: string | undefined,
 ) => {
   const token = localStorage.getItem('token')
   if (token) {
@@ -26,6 +28,27 @@ export const handleGetAuthenticated = (
           console.log(userName)
           // const urlTree = router.parseUrl(`${userName}`)
           authStoreService.dispatch.signInSuccess(token)
+          if (authorizeQuery === 'true') {
+            console.log('authorize')
+            const route = router.url
+            console.log('route', route)
+            router.navigate([router.url]).catch((err) => {
+              console.error(err)
+            })
+            // location.go(`/`)
+          }
+          // const url = router.createUrlTree(['/']).toString()
+
+          // location.go(url)
+          // this.location.go(url);
+          /*   const urlTree = router.createUrlTree([router.url], {
+           queryParams: {},
+           preserveFragment: false,
+           })*/
+          // const urlTree = router.parseUrl(router.url)
+          // return of(urlTree)
+          // location.go(``)
+
           // return urlTree
           return true
         }),
@@ -41,7 +64,10 @@ export const handleGetAuthenticated = (
           map(({ token }) => {
             localStorage.setItem('token', token)
             authStoreService.dispatch.signInSuccess(token)
-            location.go('/')
+            // location.go('/')
+            router.navigate([router.url]).catch((err) => {
+              console.error(err)
+            })
             return true
           }),
         )

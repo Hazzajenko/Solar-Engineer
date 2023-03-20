@@ -9,13 +9,14 @@ import { AuthUserModel, ProjectModel } from '@shared/data-access/models'
 import { map, Observable, of, startWith, switchMap } from 'rxjs'
 import { RandomNumberPipe } from '../../../../../shared/pipes/src/lib/numbers'
 import { MatIconModule } from '@angular/material/icon'
-import { Router, RouterLink } from '@angular/router'
+import { ActivatedRoute, Router, RouterLink } from '@angular/router'
 import { ProjectsBreadcrumbBarComponent } from '../projects-breadcrumb-bar'
 import { MatDialog } from '@angular/material/dialog'
 import { CreateProjectDialogComponent } from '../create-project-dialog/create-project-dialog.component'
 import { PROJECTS_SORTS, ProjectSorts } from './project-sorts'
 import { LetModule } from '@ngrx/component'
-import { throwExpression } from '@shared/utils'
+import { GenerateUserDataPipe, throwExpression } from '@shared/utils'
+import { AuthStoreService } from '@auth/data-access'
 
 @Component({
   selector: 'app-projects-home-page',
@@ -30,6 +31,7 @@ import { throwExpression } from '@shared/utils'
     ProjectsBreadcrumbBarComponent,
     LetModule,
     RouterLink,
+    GenerateUserDataPipe,
   ],
   templateUrl: './projects-home-page.component.html',
   styles: [],
@@ -38,8 +40,10 @@ import { throwExpression } from '@shared/utils'
 export class ProjectsHomePageComponent extends BaseService implements OnInit {
   private projectsStore = inject(ProjectsStoreService)
   private router = inject(Router)
+  private route = inject(ActivatedRoute)
   private matDialog = inject(MatDialog)
   private projectsSignalrService = inject(ProjectsSignalrService)
+  private authStore = inject(AuthStoreService)
 
   menuTopLeftPosition = { x: '0', y: '0' }
   @ViewChild(MatMenuTrigger, { static: true })
@@ -125,12 +129,26 @@ export class ProjectsHomePageComponent extends BaseService implements OnInit {
     // )
     // const userName = await this.user().
     // await this.authStore.select.isLoggedIn()
+    // const userName = (await this.authStore.select.userName) ?? throwExpression('userName is undefined')
     const userName = (await this.userName) ?? throwExpression('userName is undefined')
 
-    await this.router.navigate([`${userName.toLowerCase()}/${project.name}`], { preserveFragment: true }).then(() => {
+    await this.router.navigate([`projects`, userName, project.name]).then(() => {
       this.projectsStore.dispatch.initSelectProject(project.id)
       this.loading = false
-    })
+    }).catch((err) => {
+        this.logError('routeToProject', err)
+      },
+    )
+
+    /*    await this.router.navigate([`${userName.toLowerCase()}/${project.name}`], { relativeTo: this.route }).then(() => {
+     this.projectsStore.dispatch.initSelectProject(project.id)
+     this.loading = false
+     })*/
+
+    /*    await this.router.navigate([`${userName.toLowerCase()}/${project.name}`], { preserveFragment: true }).then(() => {
+     this.projectsStore.dispatch.initSelectProject(project.id)
+     this.loading = false
+     })*/
     /*    await this.router.navigate([`${userName.toLowerCase()}/${project.name}`]).then(() => {
      this.projectsStore.dispatch.initSelectProject(project.id)
      this.loading = false

@@ -15,6 +15,24 @@ export class HomeComponentDirective implements OnDestroy {
   projectsHomeComponentRef?: ComponentRef<ProjectsHomePageComponent>
   projectDashboardComponentRef?: ComponentRef<ProjectDashboardComponent>
 
+  @Input() set homeNavRoute(route: string | null | undefined) {
+    if (!route) return
+    const _viewContainerRef = this.viewContainerRef
+
+    _viewContainerRef.clear()
+    switch (route) {
+      case 'home':
+        this.homeComponentRef = _viewContainerRef.createComponent<HomeV3Component>(HomeV3Component)
+        break
+      case 'projects':
+        this.projectsHomeComponentRef = _viewContainerRef.createComponent<ProjectsHomePageComponent>(ProjectsHomePageComponent)
+        break
+      default:
+        this.homeComponentRef = _viewContainerRef.createComponent<HomeV3Component>(HomeV3Component)
+        break
+    }
+  }
+
   @Input() set state(state: string | null | undefined) {
     if (!state) return
     if (state !== 'projects') return

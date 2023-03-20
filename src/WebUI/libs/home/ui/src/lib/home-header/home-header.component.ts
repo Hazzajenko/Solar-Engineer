@@ -1,14 +1,14 @@
-import { Component, inject } from '@angular/core'
+import { Component, inject, OnDestroy, OnInit } from '@angular/core'
 import { CommonModule } from '@angular/common'
-import { HOME_PAGE, HomePage } from '../home-v2/home-pages'
 import { MatMenuModule } from '@angular/material/menu'
 import { RouteBreadcrumbsComponent } from '@shared/ui/route-breadcrumbs'
 import { BaseService } from '@shared/logger'
 import { LetModule } from '@ngrx/component'
-import { Router, RouterLink, RouterLinkActive } from '@angular/router'
+import { ActivatedRoute, Params, Router, RouterLink, RouterLinkActive } from '@angular/router'
 import { SelectThemeComponent, ThemeToggleComponent } from '@app/utils'
-import { toRecord } from '@shared/utils'
-import { RouteModel } from './route.model'
+import { map } from 'rxjs'
+import { HOME_NAV_ROUTE, HomeNavRoute, HomeNavService } from '@home/data-access'
+import { ToPascalCasePipe } from '@shared/utils'
 
 @Component({
   selector: 'app-home-header',
@@ -22,35 +22,120 @@ import { RouteModel } from './route.model'
     RouterLinkActive,
     SelectThemeComponent,
     ThemeToggleComponent,
+    ToPascalCasePipe,
   ],
   styles: [],
   standalone: true,
 })
-export class HomeHeaderComponent extends BaseService {
+export class HomeHeaderComponent extends BaseService implements OnInit, OnDestroy {
+
   private router = inject(Router)
-  currentPage: HomePage = HOME_PAGE.HOME
+  private route = inject(ActivatedRoute)
+  private homeNavService = inject(HomeNavService)
+  homeNavRoute$ = this.homeNavService.route$
+  // currentPage: HomePage = HOME_PAGE.HOME
 
-  routes: RouteModel[] = [
-    { name: HOME_PAGE.HOME, path: '' },
-    { name: HOME_PAGE.PROJECTS, path: 'projects' },
-    { name: HOME_PAGE.SOCIAL, path: 'social' },
+  routeState$ = this.route.data.pipe(map((data) => (data as { state: string }).state))
+
+  /*  routes: RouteModel[] = [
+   { name: HOME_PAGE.HOME, path: '' },
+   { name: HOME_PAGE.PROJECTS, path: 'projects' },
+   { name: HOME_PAGE.SOCIAL, path: 'social' },
+   ]*/
+
+  routes: HomeNavRoute[] = [
+    HOME_NAV_ROUTE.HOME,
+    HOME_NAV_ROUTE.PROJECTS,
+    HOME_NAV_ROUTE.SOCIAL,
   ]
-  routesRecord = toRecord(this.routes, 'name')
+  // routesRecord = toRecord(this.routes, '')
+  // routesRecord = toRecord(this.routes, 'name')
 
-  changeHomePage(pageName: HomePage) {
-    this.currentPage = pageName
-    const path = this.routesRecord[pageName].path
+  ngOnInit(): void {
+    this.logDebug('ngOnInit')
+    /*    this.route.queryParamMap.subscribe((params) => {
+     const tab = params.get('tab')
+     if (tab) {
+     this.currentPage = this.routesRecord[tab].name
+     }
+     })*/
+    /*    this.routeState$.subscribe((state) => {
+     this.logDebug('routeState$', state)
+     switch (state) {
+     case 'home':
+     this.currentPage = HOME_PAGE.HOME
+     break
+     case 'projects':
+     this.currentPage = HOME_PAGE.PROJECTS
+     break
+     case 'social':
+     this.currentPage = HOME_PAGE.SOCIAL
+     break
+     default:
+     this.currentPage = HOME_PAGE.HOME
+     break
+     }
+     // this.currentPage = this.routesRecord[state].name
+     },
+     )*/
+  }
 
-    if (path === '') {
-      this.router.navigate([]).catch((err) => {
-        this.logError('changeHomePage', err)
-      })
-      return
-    }
+  changeHomePage(pageName: HomeNavRoute) {
+    // this.currentPage = pageName
+    // const path = this.routesRecord[pageName].path
+
+    /*    if (path === '') {
+     /!*  this.router.navigate([]).catch((err) => {
+     this.logError('changeHomePage', err)
+     })*!/
+     this.homeNavService.updateRoute(HOME_NAV_ROUTE.HOME)
+     return
+     }*/
 
     // this.logInfo('changeHomePage', pageName)
-    this.router.navigate([], { queryParams: { tab: path } }).catch((err) => {
-      this.logError('changeHomePage', err)
+    // this.homeNavService.updateRoute(HOME_A)
+    switch (pageName) {
+      case HOME_NAV_ROUTE.HOME:
+        this.homeNavService.updateRoute(HOME_NAV_ROUTE.HOME)
+        this.routerNavigate('')
+        // this.routerQueryParamNavigate({ tab: undefined })
+
+        break
+      case HOME_NAV_ROUTE.PROJECTS:
+        this.homeNavService.updateRoute(HOME_NAV_ROUTE.PROJECTS)
+        this.routerNavigate('projects')
+        // this.routerQueryParamNavigate({ tab: 'projects' })
+        break
+      case HOME_NAV_ROUTE.SOCIAL:
+        this.homeNavService.updateRoute(HOME_NAV_ROUTE.SOCIAL)
+        this.routerNavigate('social')
+        // this.routerQueryParamNavigate({ tab: 'social' })
+        break
+      default:
+        this.homeNavService.updateRoute(HOME_NAV_ROUTE.HOME)
+        this.routerNavigate('')
+        // this.routerQueryParamNavigate({ tab: undefined })
+        break
+    }
+    /*       this.router.navigate([], { queryParams: { tab: path } }).catch((err) => {
+     this.logError('changeHomePage', err)
+     })*/
+  }
+
+  routerNavigate(path: string) {
+    this.router.navigate([path]).catch((err) => {
+      this.logError('routerNavigate', err)
     })
+  }
+
+  routerQueryParamNavigate(queryParams: Params) {
+    this.router.navigate([''], { queryParams }).catch((err) => {
+      this.logError('routerQueryParamNavigate', err)
+    })
+  }
+
+  ngOnDestroy(): void {
+    this.logDebug('ngOnDestroy')
+    // throw new Error('Method not implemented.')
   }
 }

@@ -1,8 +1,9 @@
-import { LoggerService, LogOutput } from './'
-import { map, OperatorFunction, pipe, tap } from 'rxjs'
-import { inject } from '@angular/core'
-import { AuthFacade } from '@auth/data-access'
-import { Logger } from 'tslog'
+import { LoggerService, LogOutput } from './';
+import { inject } from '@angular/core';
+import { AuthFacade } from '@auth/data-access';
+import { map, OperatorFunction, pipe, tap } from 'rxjs';
+import { Logger } from 'tslog';
+
 
 // import { Logger } from '@ngrx/data'
 
@@ -15,11 +16,16 @@ export class BaseService {
 
   protected user$ = this.authFacade.user$
   protected userName$ = this.authFacade.userName$
-  protected userName = this.authFacade.userName
+  // protected userName = this.authFacade.userName
+  // protected userName = this.authFacade.userName
   protected userId = this.authFacade.userId
 
   protected isLoggedIn$ = this.authFacade.isLoggedIn$
   protected isLoggedIn = this.authFacade.isLoggedIn
+
+  get userName() {
+    return this.authFacade.userName
+  }
 
   protected createRange(number: number) {
     return new Array(number).fill(0).map((n, index) => index + 1)
@@ -61,7 +67,7 @@ export class BaseService {
       // e.constructor.name
       // const name = x.name
       /*      const source =
-              new Error().stack?.split('\n')[1].trim().split(' ')[1] ?? `${this.source}.logDebug`*/
+       new Error().stack?.split('\n')[1].trim().split(' ')[1] ?? `${this.source}.logDebug`*/
       this.logger.debug(source, model, e)
     })
   }
@@ -91,33 +97,33 @@ export class BaseService {
         return e as NonNullable<T>
       }),
       /*     tap((e) => {
-             if (e === null || e === undefined) {
-               const source = `${this.source}.throwIfNull`
-               this.logger.error(source, e, ...objects)
-               throw new Error(objects.join(' '))
-             }
-           }),
-           // retry(2),
-           /!*      retryWhen((errors) => {
-                   return errors.pipe(tap(() => console.log('retrying...')))
-                 }),*!/
-           /!*      catchError((error) => {
-                   this.logError(error)
-                   return EMPTY
-                 }),*!/
-           map((e) => e as NonNullable<T>),*/
+       if (e === null || e === undefined) {
+       const source = `${this.source}.throwIfNull`
+       this.logger.error(source, e, ...objects)
+       throw new Error(objects.join(' '))
+       }
+       }),
+       // retry(2),
+       /!*      retryWhen((errors) => {
+       return errors.pipe(tap(() => console.log('retrying...')))
+       }),*!/
+       /!*      catchError((error) => {
+       this.logError(error)
+       return EMPTY
+       }),*!/
+       map((e) => e as NonNullable<T>),*/
     )
   }
 
   /*  notNullSwitchMap<T, O extends ObservableInput<any>>(
-      project: (value: T, index: number) => O
-    ): OperatorFunction<T, ObservedValueOf<O>> {
-      return (source) =>
-        source.pipe(
-          // this.throwIfNull$(),
-          map((e) => e as T),
-          // map((e) => this.throwIfNull(project(e))),
-          // this.throwIfNull$()
-        )
-    }*/
+   project: (value: T, index: number) => O
+   ): OperatorFunction<T, ObservedValueOf<O>> {
+   return (source) =>
+   source.pipe(
+   // this.throwIfNull$(),
+   map((e) => e as T),
+   // map((e) => this.throwIfNull(project(e))),
+   // this.throwIfNull$()
+   )
+   }*/
 }

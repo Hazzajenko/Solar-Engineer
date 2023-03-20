@@ -3,13 +3,16 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
 import { BaseService } from '@shared/logger'
 import { ProjectsStoreService } from '@projects/data-access'
 import { ProjectModel } from '@shared/data-access/models'
-import { throwExpression } from '@shared/utils'
+import { CreateRangePipe, GenerateUserDataPipe, throwExpression } from '@shared/utils'
 import { Router } from '@angular/router'
+import { ProjectDashboardFeedComponent } from '../project-dashboard-feed/project-dashboard-feed.component'
+import { ProjectDashboardTimelineComponent } from '../project-dashboard-timeline/project-dashboard-timeline.component'
+import { ButtonBuilderComponent } from '@shared/ui'
 
 @Component({
   selector: 'app-project-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ProjectDashboardFeedComponent, ProjectDashboardTimelineComponent, ButtonBuilderComponent, CreateRangePipe, GenerateUserDataPipe],
   templateUrl: './project-dashboard.component.html',
   styles: [],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -25,10 +28,10 @@ export class ProjectDashboardComponent extends BaseService {
     const userName = (await this.userName) ?? throwExpression('userName is undefined')
 
     await this.router
-      .navigateByUrl(`${userName.toLowerCase()}/${project.name}/grid-layout`)
-      .then(() => {
-        this.projectsStore.dispatch.initSelectProject(project.id)
-        this.loading = false
-      })
+              .navigateByUrl(`${userName.toLowerCase()}/${project.name}/grid-layout`)
+              .then(() => {
+                this.projectsStore.dispatch.initSelectProject(project.id)
+                this.loading = false
+              })
   }
 }

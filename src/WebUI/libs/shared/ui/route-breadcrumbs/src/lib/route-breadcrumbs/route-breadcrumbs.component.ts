@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common'
 import { BaseService } from '@shared/logger'
 import { RouterFacade } from '@shared/data-access/router'
 import { map } from 'rxjs'
+import { Router } from '@angular/router'
 
 @Component({
   selector: 'app-route-breadcrumbs',
@@ -13,6 +14,7 @@ import { map } from 'rxjs'
 })
 export class RouteBreadcrumbsComponent extends BaseService {
   private routesFacade = inject(RouterFacade)
+  private router = inject(Router)
   // routes = []
   private _routes: string[] = []
   routeParams$ = this.routesFacade.routeParams$
@@ -37,10 +39,10 @@ export class RouteBreadcrumbsComponent extends BaseService {
       // this.logInfo(console.log, 'routeParams$', x).apply(console, x as any)
       // this.log()
       /*      const trace = new Error().stack?.split('\n')
-            const logger = new Logger({ name: 'RouteBreadcrumbsComponent' })
-            logger.debug('routeParams$', trace)
-            const src = new Error().stack?.split('\n')?.[2].trim().split(' ')[1]
-            this.logInfo(src, x)*/
+       const logger = new Logger({ name: 'RouteBreadcrumbsComponent' })
+       logger.debug('routeParams$', trace)
+       const src = new Error().stack?.split('\n')?.[2].trim().split(' ')[1]
+       this.logInfo(src, x)*/
     })
     this.routesFacade.routeUrls$.subscribe((x) => {
       this.logDebug('routeUrls$', x)
@@ -54,4 +56,23 @@ export class RouteBreadcrumbsComponent extends BaseService {
   }
 
   // @Input() routes!: string[]
+  routeTo(route: string, urlRoutes: string[]) {
+    // find the index of route in urlRoutes
+    const index = urlRoutes.indexOf(route)
+    // if it's not found, then route to the route
+    if (index === -1) {
+      this.logDebug('routeTo', route)
+      this.router.navigate([route]).catch((e) => this.logError(e))
+      return
+    }
+    // if it's found, then route to the urlRoutes up to that index
+    const url = urlRoutes.slice(0, index + 1).join('/')
+    this.logDebug('routeTo', url)
+    this.router.navigate([url]).catch((e) => this.logError(e))
+
+    // this.logDebug('routeTo', route)
+    // this.router.navigate([route]).catch((e) => this.logError(e))
+    // this.routesFacade.goToRoute(route)
+
+  }
 }

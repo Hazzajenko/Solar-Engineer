@@ -1,16 +1,53 @@
-import { Route } from '@angular/router'
-import { emptyRouteAuthGuard, notLoggedInGuard } from '@auth/guards'
 import { homeProviders } from '../home/providers'
 import { projectsProviders } from '../projects/projects.providers'
-import { SplitImageNotFoundComponent } from '@shared/ui/not-found'
+import { Route } from '@angular/router'
+import { emptyRouteAuthGuard, notLoggedInGuard } from '@auth/guards'
+import { SimpleNotFoundComponent } from '@shared/ui/not-found'
+
 
 export const appRoutes: Route[] = [
   {
     path: '',
     loadComponent: () => import('@home/feature').then((m) => m.HomeComponent),
+    // loadComponent: () => import('@home/feature').then((m) => m.HomeComponent),
     canActivate: [emptyRouteAuthGuard],
     pathMatch: 'full',
     providers: [homeProviders],
+    /*    children: [
+     {
+     path: 'projects',
+     loadComponent: () => import('@projects/feature').then((m) => m.ProjectsHomePageComponent),
+     },
+     ],*/
+  },
+  {
+    path: 'projects',
+    loadComponent: () => import('@projects/feature').then((m) => m.ProjectsHomePageComponent),
+    canActivate: [emptyRouteAuthGuard],
+    /*    children: [
+     {
+     path: ':userName/:projectName',
+     loadComponent: () => import('@projects/feature').then((m) => m.ProjectDashboardComponent),
+     // data: { tab: 'projects', state: 'projects' },
+     // loadComponent: () => import('@projects/feature').then((m) => m.ProjectDashboardTimelineComponent),
+     // canActivate: [loggedInGuard],
+     providers: [projectsProviders],
+     // resolve: { project: SelectProjectResolver },
+     },
+     ],*/
+  },
+  {
+    path: 'projects/:userName/:projectName',
+    loadComponent: () => import('@projects/feature').then((m) => m.ProjectDashboardComponent),
+    data: { tab: 'projects', state: 'projects' },
+    // loadComponent: () => import('@projects/feature').then((m) => m.ProjectDashboardTimelineComponent),
+    // canActivate: [loggedInGuard],
+    providers: [projectsProviders],
+    // resolve: { project: SelectProjectResolver },
+  },
+  {
+    path: 'social',
+    loadComponent: () => import('@home/feature').then((m) => m.HomeComponent),
   },
   {
     path: 'blog/:blogPostName',
@@ -22,15 +59,16 @@ export const appRoutes: Route[] = [
     loadComponent: () => import('@auth/feature').then((m) => m.SignInComponent),
     canActivate: [notLoggedInGuard],
   },
-  {
-    path: ':userName/:projectName',
-    loadComponent: () => import('@home/feature').then((m) => m.HomeComponent),
-    data: { tab: 'projects', state: 'projects' },
-    // loadComponent: () => import('@projects/feature').then((m) => m.ProjectDashboardComponent),
-    // canActivate: [loggedInGuard],
-    providers: [projectsProviders],
-    // resolve: { project: SelectProjectResolver },
-  },
+
+  /*  {
+   path: ':userName/:projectName',
+   loadComponent: () => import('@home/feature').then((m) => m.HomeComponent),
+   data: { tab: 'projects', state: 'projects' },
+   // loadComponent: () => import('@projects/feature').then((m) => m.ProjectDashboardTimelineComponent),
+   // canActivate: [loggedInGuard],
+   providers: [projectsProviders],
+   // resolve: { project: SelectProjectResolver },
+   },*/
 
   /*{
    path: 'projects',
@@ -40,11 +78,11 @@ export const appRoutes: Route[] = [
    children: [
    {
    path: ':projectName',
-   loadComponent: () => import('@projects/feature').then((m) => m.ProjectDashboardComponent),
+   loadComponent: () => import('@projects/feature').then((m) => m.ProjectDashboardTimelineComponent),
    },
    /!*      {
    path: 'dashboard',
-   loadComponent: () => import('@projects/feature').then((m) => m.ProjectDashboardComponent),
+   loadComponent: () => import('@projects/feature').then((m) => m.ProjectDashboardTimelineComponent),
    },
    {
    path: 'new',
@@ -184,7 +222,7 @@ export const appRoutes: Route[] = [
 
   /*  {
    path: 'projects/dashboard',
-   loadComponent: () => import('@projects/feature').then((m) => m.ProjectDashboardComponent),
+   loadComponent: () => import('@projects/feature').then((m) => m.ProjectDashboardTimelineComponent),
    },
    {
    path: 'projects/new',
@@ -208,7 +246,7 @@ export const appRoutes: Route[] = [
    },*/
   /*  {
    path: ':userName/:projectName/dashboard',
-   loadComponent: () => import('@projects/feature').then((m) => m.ProjectDashboardComponent),
+   loadComponent: () => import('@projects/feature').then((m) => m.ProjectDashboardTimelineComponent),
    canActivate: [loggedInGuard],
    providers: [projectsProviders],
    // resolve: { project: SelectProjectResolver },
@@ -229,7 +267,7 @@ export const appRoutes: Route[] = [
    },
    {
    path: ':userName/:projectName/dashboard',
-   loadComponent: () => import('@projects/feature').then((m) => m.ProjectDashboardComponent),
+   loadComponent: () => import('@projects/feature').then((m) => m.ProjectDashboardTimelineComponent),
    canActivate: [loggedInGuard],
    providers: [projectsProviders],
    // resolve: { project: SelectProjectResolver },
@@ -261,5 +299,10 @@ export const appRoutes: Route[] = [
     pathMatch: 'full',
   },
   // { path: '**', component: BgNotFoundComponent },
-  { path: '**', component: SplitImageNotFoundComponent },
+  {
+    path: '**',
+    title: '404',
+    component: SimpleNotFoundComponent,
+  },
+  // { path: '**', component: SplitImageNotFoundComponent },
 ]

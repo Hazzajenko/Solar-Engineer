@@ -1,11 +1,11 @@
-import { inject } from '@angular/core'
-import { AuthFacade, AuthService, AuthStoreService } from '@auth/data-access'
-import { combineLatestWith, switchMap } from 'rxjs/operators'
-import { of } from 'rxjs'
-import { Router } from '@angular/router'
-import { RouterFacade } from '@shared/data-access/router'
 import { Location } from '@angular/common'
-import { handleGetAuthenticated } from './handle-get-authenticated'
+import { inject } from '@angular/core'
+import { Router } from '@angular/router'
+import { AuthFacade, AuthService, AuthStoreService } from '@auth/data-access'
+import { RouterFacade } from '@shared/data-access/router'
+import { of } from 'rxjs'
+import { combineLatestWith, switchMap } from 'rxjs/operators'
+
 
 export const userAuthGuard = () => {
   const auth = inject(AuthFacade)
@@ -43,8 +43,16 @@ export const userAuthGuard = () => {
         console.log('different user')
         return of(true)
       }
+      return of(true)
 
-      return handleGetAuthenticated(authService, authStore, router, location, routerStore)
+      /*    return handleGetAuthenticated(
+       authService,
+       authStore,
+       router,
+       location,
+       routerStore,
+       authorizeQuery,
+       )*/
 
       // return of(true)
     }),
