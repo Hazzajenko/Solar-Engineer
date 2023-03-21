@@ -1,29 +1,18 @@
-import { ChangeDetectionStrategy, Component, inject, NgZone, OnInit } from '@angular/core'
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
 import { AuthStoreService } from '@auth/data-access'
 import { Router } from '@angular/router'
 
-import { HttpClient } from '@angular/common/http'
-
 @Component({
-  selector: 'app-create-project-dialog',
+  selector: 'app-sign-in',
   templateUrl: './sign-in.component.html',
   styles: [],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [],
   standalone: true,
 })
-export class SignInComponent implements OnInit {
+export class SignInComponent {
   private authStore = inject(AuthStoreService)
   private router = inject(Router)
-  private http = inject(HttpClient)
-
-  // private authService = inject(AuthService)
-
-  constructor(private ngZone: NgZone) {}
-
-  ngOnInit(): void {
-    // this.authStore.dispatch.authorizeRequest()
-  }
 
   loginWithGoogle() {
     // this.router.url

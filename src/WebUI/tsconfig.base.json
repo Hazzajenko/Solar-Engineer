@@ -55,6 +55,7 @@
       "@auth/guards": ["libs/auth/guards/src/index.ts"],
       "@auth/interceptors": ["libs/auth/interceptors/src/index.ts"],
       "@auth/shared/models": ["libs/auth/shared/models/src/index.ts"],
+      "@auth/utils": ["libs/auth/utils/src/index.ts"],
       "@blog/feature": ["libs/blog/feature/src/index.ts"],
       "@core-components": ["libs/core-components/src"],
       "@grid-layout/data-access": ["libs/grid-layout/data-access/src/index.ts"],

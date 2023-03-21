@@ -27,7 +27,7 @@ export const appRoutes: Route[] = [
     /*    children: [
      {
      path: ':userName/:projectName',
-     loadComponent: () => import('@projects/feature').then((m) => m.ProjectDashboardComponent),
+     loadComponent: () => import('@projects/feature').then((m) => m.ProjectMembersDialogComponent),
      // data: { tab: 'projects', state: 'projects' },
      // loadComponent: () => import('@projects/feature').then((m) => m.ProjectDashboardTimelineComponent),
      // canActivate: [loggedInGuard],
@@ -36,8 +36,9 @@ export const appRoutes: Route[] = [
      },
      ],*/
   },
+
   {
-    path: 'projects/:userName/:projectName',
+    path: ':userName/:projectName',
     loadComponent: () => import('@projects/feature').then((m) => m.ProjectDashboardComponent),
     data: { tab: 'projects', state: 'projects' },
     // loadComponent: () => import('@projects/feature').then((m) => m.ProjectDashboardTimelineComponent),
@@ -45,6 +46,39 @@ export const appRoutes: Route[] = [
     providers: [projectsProviders],
     // resolve: { project: SelectProjectResolver },
   },
+  {
+    path: ':userName/:projectName/grid',
+    loadComponent: () => import('@projects/feature').then((m) => m.WebProjectComponent),
+    data: { tab: 'projects', state: 'projects' },
+    // loadComponent: () => import('@projects/feature').then((m) => m.ProjectDashboardTimelineComponent),
+    // canActivate: [loggedInGuard],
+    providers: [projectsProviders],
+    // resolve: { project: SelectProjectResolver },
+  },
+  {
+    path: ':userName/:projectName/invite',
+    data: { tab: 'projects', state: 'projects' },
+    providers: [projectsProviders],
+    loadComponent: () => import('@projects/feature').then((m) => m.AddProjectMembersComponent),
+  },
+  {
+    path: ':userName/:projectName/item',
+    loadComponent: () => import('@projects/feature').then((m) => m.AddProjectItemComponent),
+  },
+  {
+    path: ':userName/:projectName/cmd',
+    loadComponent: () => import('@projects/feature').then((m) => m.ProjectsCommandPaletteComponent),
+  },
+  // ProjectsCommandPaletteComponent
+  /* {
+   path: 'projects/:userName/:projectName',
+   loadComponent: () => import('@projects/feature').then((m) => m.ProjectMembersDialogComponent),
+   data: { tab: 'projects', state: 'projects' },
+   // loadComponent: () => import('@projects/feature').then((m) => m.ProjectDashboardTimelineComponent),
+   // canActivate: [loggedInGuard],
+   providers: [projectsProviders],
+   // resolve: { project: SelectProjectResolver },
+   },*/
   {
     path: 'social',
     loadComponent: () => import('@home/feature').then((m) => m.HomeComponent),
@@ -56,7 +90,8 @@ export const appRoutes: Route[] = [
   },
   {
     path: 'sign-in',
-    loadComponent: () => import('@auth/feature').then((m) => m.SignInComponent),
+    loadComponent: () => import('@auth/feature').then((m) => m.SignInCenterComponent),
+    // loadComponent: () => import('@auth/feature').then((m) => m.SignInComponent),
     canActivate: [notLoggedInGuard],
   },
 

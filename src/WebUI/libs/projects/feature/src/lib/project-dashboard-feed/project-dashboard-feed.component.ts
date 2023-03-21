@@ -5,6 +5,7 @@ import { GenerateHomeFeedData } from '@shared/data-access/models'
 import { TimeDifferenceFromNowPipe } from '@shared/pipes'
 import { map, of } from 'rxjs'
 import { ButtonBuilderComponent } from '@shared/ui'
+import { GenerateFeedDataPipe } from '@shared/utils'
 
 @Component({
   selector: 'app-project-dashboard-feed',
@@ -13,6 +14,7 @@ import { ButtonBuilderComponent } from '@shared/ui'
     CommonModule,
     TimeDifferenceFromNowPipe,
     ButtonBuilderComponent,
+    GenerateFeedDataPipe,
   ],
   providers: [DatePipe],
   styles: [],

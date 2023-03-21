@@ -105,7 +105,7 @@
               <div class="relative ml-3">
                 <div *ngIf="user">
                   <button
-                    [matMenuTriggerFor]="userMenu"
+                    [matMenuTriggerFor]="userMenu.menu"
                     type="button"
                     class="flex max-w-xs items-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                     id="user-menu-button"
@@ -254,33 +254,40 @@
   </div>
 </ng-template>
 
-<mat-menu #userMenu="matMenu">
-  <div role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1">
-    <a
-      href="#"
-      class="block px-4 py-2 text-sm text-gray-700"
-      role="menuitem"
-      tabindex="-1"
-      id="user-menu-item-0"
-      >Your Profile</a
-    >
+<app-menu-builder #userMenu [menuItems]="profileMenuItems" />
 
-    <a
-      (click)="logDebug('Settings clicked')"
-      class="block px-4 py-2 text-sm text-gray-700"
-      role="menuitem"
-      tabindex="-1"
-      id="user-menu-item-1"
-      >Settings</a
-    >
+<!--#userMenu="matMenu"-->
+<!--<mat-menu'
 
-    <a
-      href="#"
-      class="block px-4 py-2 text-sm text-gray-700"
-      role="menuitem"
-      tabindex="-1"
-      id="user-menu-item-2"
-      >Sign out</a
-    >
-  </div>
-</mat-menu>
+  class="z-10 w-44 divide-y divide-gray-100 rounded-lg bg-transparent dark:divide-gray-600 dark:bg-gray-700"
+>-->
+<!--<ng-container (click)='userMenu'></ng-container>-->
+<!--<div role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1">
+  <a
+    href="#"
+    class="block px-4 py-2 text-sm text-gray-700"
+    role="menuitem"
+    tabindex="-1"
+    id="user-menu-item-0"
+    >Your Profile</a
+  >
+
+  <a
+    (click)="logDebug('Settings clicked')"
+    class="block px-4 py-2 text-sm text-gray-700"
+    role="menuitem"
+    tabindex="-1"
+    id="user-menu-item-1"
+    >Settings</a
+  >
+
+  <a
+    href="#"
+    class="block px-4 py-2 text-sm text-gray-700"
+    role="menuitem"
+    tabindex="-1"
+    id="user-menu-item-2"
+    >Sign out</a
+  >
+</div>-->
+<!--</mat-menu>-->

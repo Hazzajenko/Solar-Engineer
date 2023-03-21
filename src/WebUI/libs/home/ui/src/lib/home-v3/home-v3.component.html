@@ -1,66 +1,76 @@
-<ng-container *ngIf='user$ | async as user'>
-  <ng-container *ngrxLet='projects$ | async as projects'>
-    <main class='mt-5 pb-8'>
-      <div class='mx-auto max-w-3xl px-4 sm:px-6 lg:max-w-7xl lg:px-8'>
-        <h1 class='sr-only'>Profile</h1>
+<!--<ng-template *appUser="let appUser">-->
+<!--  <ng-container *ngrxLet='user(appUser) as user'></ng-container>-->
+<!--  <ng-container *appUser="let user">-->
+<!--<ng-container *appUser="let user">-->
+<ng-container *ngIf="user$ | async as user">
+  <ng-container *ngrxLet="projects$ | async as projects">
+    <main class="mt-5 pb-8">
+      <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:max-w-7xl lg:px-8">
+        <h1 class="sr-only">Profile</h1>
         <div
-          class='grid grid-cols-1 items-start gap-4 lg:grid-cols-3 lg:gap-8 bg-white dark:bg-slate-800'
+          class="grid grid-cols-1 items-start gap-4 bg-white dark:bg-slate-800 lg:grid-cols-3 lg:gap-8"
         >
-          <div class='grid grid-cols-1 gap-4 lg:col-span-2'>
-            <section aria-labelledby='profile-overview-title'>
-              <div class='overflow-hidden rounded-lg bg-white shadow dark:bg-slate-700'>
-                <h2 class='sr-only'
-                    id='profile-overview-title'>Profile Overview</h2>
-                <div class='bg-white p-6 dark:bg-slate-700'>
-                  <div class='sm:flex sm:items-center sm:justify-between'>
-                    <div class='sm:flex sm:space-x-5'>
-                      <div class='flex-shrink-0'>
+          <div class="grid grid-cols-1 gap-4 lg:col-span-2">
+            <section aria-labelledby="profile-overview-title">
+              <div class="overflow-hidden rounded-lg bg-white shadow dark:bg-slate-700">
+                <h2 class="sr-only" id="profile-overview-title">Profile Overview</h2>
+                <div class="bg-white p-6 dark:bg-slate-700">
+                  <div class="sm:flex sm:items-center sm:justify-between">
+                    <div class="sm:flex sm:space-x-5">
+                      <div class="flex-shrink-0">
+                        <!--                 <ng-if-for [ngIf]="user" [ngFor]="projects">
+                                           <img
+                                             class="mx-auto h-20 w-20 rounded-full"
+                                             [src]="user.photoUrl"
+                                             [alt]="user.userName"
+                                           />
+                                         </ng-if-for>-->
                         <img
-                          class='mx-auto h-20 w-20 rounded-full'
-                          [src]='user.photoUrl'
-                          [alt]='user.userName'
+                          class="mx-auto h-20 w-20 rounded-full"
+                          [src]="user.photoUrl"
+                          [alt]="user.userName"
                         />
                       </div>
-                      <div class='mt-4 text-center sm:mt-0 sm:pt-1 sm:text-left'>
-                        <p class='text-sm font-medium text-gray-600 dark:text-gray-300'>
+                      <div class="mt-4 text-center sm:mt-0 sm:pt-1 sm:text-left">
+                        <p class="text-sm font-medium text-gray-600 dark:text-gray-300">
                           Welcome back,
                         </p>
-                        <p class='text-xl font-bold text-gray-900 sm:text-2xl dark:text-white'>
+                        <p class="text-xl font-bold text-gray-900 dark:text-white sm:text-2xl">
                           {{ user.displayName }}
                         </p>
-                        <p class='text-sm font-medium text-gray-600 dark:text-gray-300'>
+                        <p class="text-sm font-medium text-gray-600 dark:text-gray-300">
                           Solar Engineer
                         </p>
                       </div>
                     </div>
-                    <div class='mt-5 flex justify-center sm:mt-0'>
+                    <div class="mt-5 flex justify-center sm:mt-0">
                       <a
-                        href='#'
-                        class='flex items-center justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50  active:bg-violet-300 dark:bg-slate-600 dark:text-white dark:hover:bg-slate-500  dark:active:bg-slate-600'
-                      >View profile</a
+                        href="#"
+                        class="flex items-center justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 active:bg-violet-300 dark:bg-slate-600 dark:text-white dark:hover:bg-slate-500 dark:active:bg-slate-600"
+                        >View profile</a
                       >
                     </div>
                   </div>
                 </div>
                 <div
-                  class='grid grid-cols-1 divide-y divide-gray-200 border-t border-gray-200 bg-gray-50 sm:grid-cols-3 sm:divide-y-0 sm:divide-x dark:bg-slate-600 dark:text-white'
+                  class="grid grid-cols-1 divide-y divide-gray-200 border-t border-gray-200 bg-gray-50 dark:bg-slate-600 dark:text-white sm:grid-cols-3 sm:divide-y-0 sm:divide-x"
                 >
                   <div
-                    *ngIf='projects && projects.length > 0'
-                    class='px-6 py-5 text-center text-sm font-medium'
+                    *ngIf="projects && projects.length > 0"
+                    class="px-6 py-5 text-center text-sm font-medium"
                   >
-                    <span class='text-gray-900 dark:text-white'>{{ projects.length + " " }}</span>
-                    <span class='text-gray-600 dark:text-gray-300'>Projects</span>
+                    <span class="text-gray-900 dark:text-white">{{ projects.length + " " }}</span>
+                    <span class="text-gray-600 dark:text-gray-300">Projects</span>
                   </div>
 
-                  <div class='px-6 py-5 text-center text-sm font-medium'>
-                    <span class='text-gray-900 dark:text-white'>{{ 4 + " " }}</span>
-                    <span class='text-gray-600 dark:text-gray-300'>Followers</span>
+                  <div class="px-6 py-5 text-center text-sm font-medium">
+                    <span class="text-gray-900 dark:text-white">{{ 4 + " " }}</span>
+                    <span class="text-gray-600 dark:text-gray-300">Followers</span>
                   </div>
 
-                  <div class='px-6 py-5 text-center text-sm font-medium'>
-                    <span class='text-gray-900 dark:text-white'>{{ 2 + " " }}</span>
-                    <span class='text-gray-600 dark:text-gray-300'>Friends Online</span>
+                  <div class="px-6 py-5 text-center text-sm font-medium">
+                    <span class="text-gray-900 dark:text-white">{{ 2 + " " }}</span>
+                    <span class="text-gray-600 dark:text-gray-300">Friends Online</span>
                   </div>
                 </div>
               </div>
@@ -75,7 +85,7 @@
             </section>
           </div>
 
-          <div class='grid grid-cols-1 gap-4'>
+          <div class="grid grid-cols-1 gap-4">
             <section>
               <app-home-announcements />
             </section>

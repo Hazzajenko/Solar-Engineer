@@ -1,6 +1,7 @@
 import { LoggerService, LogOutput } from './';
 import { inject } from '@angular/core';
 import { AuthFacade } from '@auth/data-access';
+import { RouterService } from '@shared/data-access/router';
 import { map, OperatorFunction, pipe, tap } from 'rxjs';
 import { Logger } from 'tslog';
 
@@ -11,6 +12,7 @@ export class BaseService {
   static outputs: LogOutput[] = []
   protected logger = inject(LoggerService)
   protected authFacade = inject(AuthFacade)
+  protected routerService = inject(RouterService)
   protected customLogger = new Logger({ name: this.constructor.name })
   private source = this.constructor.name
 
@@ -24,8 +26,13 @@ export class BaseService {
   protected isLoggedIn = this.authFacade.isLoggedIn
 
   get userName() {
-    return this.authFacade.userName
+    // return this.authFacade.userName
+    return this.authFacade.userName.then((x) => this.throwIfNull(x, 'userNameNotNull'))
   }
+
+  /*  get userNameNotNull() {
+   return this.authFacade.userName.then((x) => this.throwIfNull(x, 'userNameNotNull'))
+   }*/
 
   protected createRange(number: number) {
     return new Array(number).fill(0).map((n, index) => index + 1)

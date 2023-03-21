@@ -12,6 +12,7 @@ import { HomeAnnouncementsComponent } from '../../../../ui/src/lib/home-announce
 import { BaseService } from '@shared/logger'
 import { LetModule } from '@ngrx/component'
 import { ProjectsStoreService } from '@projects/data-access'
+import { NgIfForComponent } from '@shared/utils'
 
 @Component({
   selector: 'app-home',
@@ -25,6 +26,7 @@ import { ProjectsStoreService } from '@projects/data-access'
     HomeFeedComponent,
     HomeAnnouncementsComponent,
     LetModule,
+    NgIfForComponent,
   ],
   templateUrl: './home.component.html',
   styles: [],

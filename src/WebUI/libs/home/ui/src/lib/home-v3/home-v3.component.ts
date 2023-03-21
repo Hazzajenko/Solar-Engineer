@@ -14,6 +14,9 @@ import { ProjectsStoreService } from '@projects/data-access'
 import { LetModule } from '@ngrx/component'
 import { HomeFeedComponent } from '../home-feed/home-feed.component'
 import { HomeAnnouncementsComponent } from '../home-announcements/home-announcements.component'
+import { UserDirective } from '@auth/utils'
+import { AuthUserModel } from '@shared/data-access/models'
+import { NgIfForComponent } from '@shared/utils'
 
 // import { PinnedProjectsCardsComponent } from '../../../../../projects/feature/src/lib/projects-cards/pinned-projects-cards/pinned-projects-cards.component'
 
@@ -31,6 +34,8 @@ import { HomeAnnouncementsComponent } from '../home-announcements/home-announcem
     RecentProjectsCardsComponent,
     HomeFeedComponent,
     HomeAnnouncementsComponent,
+    UserDirective,
+    NgIfForComponent,
   ],
   templateUrl: './home-v3.component.html',
   styles: [],
@@ -40,4 +45,6 @@ export class HomeV3Component extends BaseService {
   private projectsStore = inject(ProjectsStoreService)
   projects$ = this.projectsStore.select.allProjects$
   currentPage: HomePage = HOME_PAGE.PROJECTS
+
+  user = (user: AuthUserModel) => user
 }

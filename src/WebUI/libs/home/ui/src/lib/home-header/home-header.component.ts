@@ -9,6 +9,8 @@ import { SelectThemeComponent, ThemeToggleComponent } from '@app/utils'
 import { map } from 'rxjs'
 import { HOME_NAV_ROUTE, HomeNavRoute, HomeNavService } from '@home/data-access'
 import { ToPascalCasePipe } from '@shared/utils'
+import { MenuBuilderComponent } from '@shared/ui'
+import { MenuItemModel } from '../../../../../shared/ui/src/lib/menus/menu-item.model'
 
 @Component({
   selector: 'app-home-header',
@@ -23,6 +25,7 @@ import { ToPascalCasePipe } from '@shared/utils'
     SelectThemeComponent,
     ThemeToggleComponent,
     ToPascalCasePipe,
+    MenuBuilderComponent,
   ],
   styles: [],
   standalone: true,
@@ -47,6 +50,12 @@ export class HomeHeaderComponent extends BaseService implements OnInit, OnDestro
     HOME_NAV_ROUTE.HOME,
     HOME_NAV_ROUTE.PROJECTS,
     HOME_NAV_ROUTE.SOCIAL,
+  ]
+
+  profileMenuItems: MenuItemModel[] = [
+    { name: 'Profile', icon: 'person', route: 'profile' },
+    { name: 'Settings', icon: 'settings', route: 'settings' },
+    { name: 'Logout', icon: 'logout', route: 'logout' },
   ]
   // routesRecord = toRecord(this.routes, '')
   // routesRecord = toRecord(this.routes, 'name')

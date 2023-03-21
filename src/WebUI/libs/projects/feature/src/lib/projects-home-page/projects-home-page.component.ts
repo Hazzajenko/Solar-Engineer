@@ -130,15 +130,18 @@ export class ProjectsHomePageComponent extends BaseService implements OnInit {
     // const userName = await this.user().
     // await this.authStore.select.isLoggedIn()
     // const userName = (await this.authStore.select.userName) ?? throwExpression('userName is undefined')
-    const userName = (await this.userName) ?? throwExpression('userName is undefined')
+    // const userName = (await this.userName) ?? throwExpression('userName is undefined')
+    const userName = await this.userName
 
-    await this.router.navigate([`projects`, userName, project.name]).then(() => {
-      this.projectsStore.dispatch.initSelectProject(project.id)
-      this.loading = false
-    }).catch((err) => {
-        this.logError('routeToProject', err)
-      },
-    )
+    await this.routerService.navigateToProject(userName, project.name)
+
+    /*    await this.router.navigate([`projects`, project.name]).then(() => {
+     this.projectsStore.dispatch.initSelectProject(project.id)
+     this.loading = false
+     }).catch((err) => {
+     this.logError('routeToProject', err)
+     },
+     )*/
 
     /*    await this.router.navigate([`${userName.toLowerCase()}/${project.name}`], { relativeTo: this.route }).then(() => {
      this.projectsStore.dispatch.initSelectProject(project.id)

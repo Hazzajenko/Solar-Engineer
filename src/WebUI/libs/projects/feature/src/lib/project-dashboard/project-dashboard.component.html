@@ -38,7 +38,13 @@
           class="justify-stretch mt-6 flex flex-col-reverse space-y-4 space-y-reverse sm:flex-row-reverse sm:justify-end sm:space-y-0 sm:space-x-3 sm:space-x-reverse md:mt-0 md:flex-row md:space-x-3"
         >
           <app-button-builder
-            (clickEvent)="logDebug($event)"
+            (clickEvent)="generateMembers(project, 5)"
+            tone="Secondary"
+            size="lg"
+            text="GenerateMembers(5)"
+          />
+          <app-button-builder
+            (clickEvent)="routeToInvite(project)"
             tone="Secondary"
             size="lg"
             text="Invite"
@@ -106,6 +112,12 @@
                         class="flex-shrink-0 text-xs font-medium leading-5 text-gray-500 dark:text-gray-300"
                         >+{{ project.memberIds.length ?? 0 }}</span
                       >
+                      <app-button-builder
+                        (clickEvent)="viewAllMembers(project)"
+                        tone="Secondary"
+                        size="sm"
+                        text="View All"
+                      />
                     </div>
                   </div>
                   <div class="sm:col-span-1">

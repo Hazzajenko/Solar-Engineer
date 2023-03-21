@@ -1,5 +1,5 @@
 export interface MenuItemModel {
-  id: string
+  // id: string
   name: string
   icon: string
   route: string
