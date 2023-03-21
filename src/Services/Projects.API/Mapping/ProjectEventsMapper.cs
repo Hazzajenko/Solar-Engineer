@@ -38,11 +38,11 @@ public static class ProjectEventsMapper
     public static ProjectEventResponse ToProjectEventResponseFromEntityList<
         TEntity,
         TProjectCommand
-    >(this IEnumerable<TEntity> entity, TProjectCommand command, string action)
+    >(this IEnumerable<TEntity> entities, TProjectCommand command, string action)
         where TEntity : IProjectItem
         where TProjectCommand : IProjectCommand
     {
-        var dtoObject = entity.ToDtoObject();
+        var dtoObject = entities.ToDtoObject();
 
         var toJson = JsonSerializer.Serialize(
             dtoObject,

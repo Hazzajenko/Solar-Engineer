@@ -7,6 +7,7 @@ using Infrastructure.Web;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.SignalR;
 using Projects.API.Data;
+using Projects.API.Data.Bogus;
 using Projects.API.Extensions;
 using Projects.API.HubFilters;
 
@@ -23,8 +24,10 @@ builder.ConfigureSerilog();
 
 var config = builder.Configuration;
 config.AddEnvironmentVariables("solarengineer_");
+
 /*builder.Services.AddMediator(options => { options.ServiceLifetime = ServiceLifetime.Transient; });*/
 builder.Services.AddApplicationServices(config);
+
 // Register(typeof(IUserIdProvider), () => new HubsUserIdProvider());
 // builder.WebHost.
 // GlobalHost.DependencyResolver.Register(typeof(IUserIdProvider), () => new MyIdProvider());
@@ -47,6 +50,9 @@ builder.Services
         "localhost",
         options => { options.Configuration.ChannelPrefix = "SolarEngineerApp"; }
     );
+
+// BogusGenerators.InitBogusData();
+
 // options.AddFilter<CustomFilter>();
 /*builder.Services.AddSignalR(options =>
 {
@@ -87,4 +93,5 @@ app.Use(
 );
 
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+BogusGenerators.InitBogusData();
 app.Run();

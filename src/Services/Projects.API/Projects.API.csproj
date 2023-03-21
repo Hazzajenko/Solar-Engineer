@@ -8,6 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Bogus" Version="34.0.2" />
         <PackageReference Include="FastEndpoints" Version="5.7.2" />
         <PackageReference Include="FastEndpoints.Swagger" Version="5.7.2" />
         <PackageReference Include="Mapster" Version="7.3.0" />

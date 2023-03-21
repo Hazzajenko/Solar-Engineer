@@ -28,6 +28,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Projects.API", "Services\Pr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YarpGateway", "ApiGateways\YarpGateway\YarpGateway.csproj", "{9FB72D54-EBD1-47D6-9E96-3C57C886CF0E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Admin.API", "Services\Admin.API\Admin.API.csproj", "{558A43D9-5C2C-49F1-91C9-0E9053B246AE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,6 +46,7 @@ Global
 		{1EC26FBB-5E35-4ED0-A520-5F82328577D3} = {6A3CCCED-4155-4DAC-A375-29BB295C07FE}
 		{9FB72D54-EBD1-47D6-9E96-3C57C886CF0E} = {7BA525D5-4FE8-4B51-8DCF-DF68839BADBF}
 		{B90D016A-EF7A-4A51-A81F-5612695EA095} = {6A3CCCED-4155-4DAC-A375-29BB295C07FE}
+		{558A43D9-5C2C-49F1-91C9-0E9053B246AE} = {6A3CCCED-4155-4DAC-A375-29BB295C07FE}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{53FB622A-E290-4AD2-A755-5BBC255CF268}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -86,6 +89,10 @@ Global
 		{9FB72D54-EBD1-47D6-9E96-3C57C886CF0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9FB72D54-EBD1-47D6-9E96-3C57C886CF0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9FB72D54-EBD1-47D6-9E96-3C57C886CF0E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{558A43D9-5C2C-49F1-91C9-0E9053B246AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{558A43D9-5C2C-49F1-91C9-0E9053B246AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{558A43D9-5C2C-49F1-91C9-0E9053B246AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{558A43D9-5C2C-49F1-91C9-0E9053B246AE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(RiderSharedRunConfigurations) = postSolution
 		File = Combined-Https-V2.run.xml

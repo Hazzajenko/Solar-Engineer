@@ -30,15 +30,6 @@ builder.Services.AddApplicationServices(config, entryAssembly);
 builder.Services.AddIdentityServices(config);
 builder.Services.AddAuthServices(config);
 
-// builder.Services.AddOptions();
-// builder.Services.AddInfrastructureServices();
-
-/*
-var redisConn = ConnectionMultiplexer.Connect("localhost");
-builder.Services.AddDataProtection()
-    .PersistKeysToStackExchangeRedis(redisConn)
-    .SetApplicationName("solarEngineer");*/
-
 builder.Services.InitDbContext<AuthContext>(config, builder.Environment);
 
 builder.Services.InitCors("corsPolicy");
