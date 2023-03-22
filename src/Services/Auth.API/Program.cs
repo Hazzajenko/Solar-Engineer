@@ -30,11 +30,26 @@ builder.Services.AddApplicationServices(config, entryAssembly);
 builder.Services.AddIdentityServices(config);
 builder.Services.AddAuthServices(config);
 
+builder.Services.AddHttpClient(
+    "Images",
+    httpClient =>
+    {
+        // httpClient.BaseAddress = new Uri(config.GetValue<string>("GitHub:ApiBaseUrl"));
+        /*httpClient.DefaultRequestHeaders.Add(
+            HeaderNames.Accept, "application/vnd.github.v3+json");
+        httpClient.DefaultRequestHeaders.Add(
+            HeaderNames.UserAgent, $"Course-{Environment.MachineName}");*/
+    }
+);
+
 builder.Services.InitDbContext<AuthContext>(config, builder.Environment);
 
 builder.Services.InitCors("corsPolicy");
 
-builder.Services.AddFastEndpoints(options => { options.SourceGeneratorDiscoveredTypes = DiscoveredTypes.All; });
+builder.Services.AddFastEndpoints(options =>
+{
+    options.SourceGeneratorDiscoveredTypes = DiscoveredTypes.All;
+});
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
