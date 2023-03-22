@@ -5,11 +5,12 @@ import { BaseService } from '@shared/logger'
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms'
 import { ProjectsSignalrService } from '@projects/data-access'
 import { MatIconModule } from '@angular/material/icon'
+import { CreateRangePipe } from '@shared/utils'
 
 @Component({
   selector: 'app-create-project-dialog',
   standalone: true,
-  imports: [CommonModule, MatIconModule, ReactiveFormsModule],
+  imports: [CommonModule, MatIconModule, ReactiveFormsModule, CreateRangePipe],
   templateUrl: './create-project-dialog.component.html',
   styles: [],
   changeDetection: ChangeDetectionStrategy.OnPush,

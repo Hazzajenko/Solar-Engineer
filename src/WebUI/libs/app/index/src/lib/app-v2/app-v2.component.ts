@@ -20,7 +20,7 @@ import { RouterFacade } from '@shared/data-access/router'
     CoreComponentsAngularModule,
     AppDynamicComponentDirective,
   ],
-  selector: 'app-root',
+  selector: 'app-root-old-v2',
   templateUrl: './app-v2.component.html',
   styles: [],
 })

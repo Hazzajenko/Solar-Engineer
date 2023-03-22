@@ -12,6 +12,8 @@ export class BaseService {
   static outputs: LogOutput[] = []
   protected logger = inject(LoggerService)
   protected authFacade = inject(AuthFacade)
+  // protected authStore = inject(AuthStoreService)
+
   protected routerService = inject(RouterService)
   protected customLogger = new Logger({ name: this.constructor.name })
   private source = this.constructor.name
@@ -34,9 +36,9 @@ export class BaseService {
    return this.authFacade.userName.then((x) => this.throwIfNull(x, 'userNameNotNull'))
    }*/
 
-  protected createRange(number: number) {
-    return new Array(number).fill(0).map((n, index) => index + 1)
-  }
+  /*  signOut() {
+   this.authStore.dispatch.signOut()
+   }*/
 
   protected logInfo = (...objects: unknown[]): void => {
     const source =

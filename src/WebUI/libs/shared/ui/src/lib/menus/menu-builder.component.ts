@@ -1,7 +1,8 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core'
+import { Component, Input, ViewChild } from '@angular/core'
 import { CommonModule } from '@angular/common'
-import { MenuItemModel } from './menu-item.model'
 import { MatMenu, MatMenuModule } from '@angular/material/menu'
+import { MenuBuilderModel } from './menu-builder.model'
+import { MenuItemModel } from './menu-item.model'
 
 @Component({
   selector: 'app-menu-builder',
@@ -15,36 +16,24 @@ import { MatMenu, MatMenuModule } from '@angular/material/menu'
     MatMenuModule,
   ],
 })
-export class MenuBuilderComponent extends MatMenu implements OnInit {
-  @Input() header?: string
-  @Input() menuItems: MenuItemModel[] = []
-  @Output() menuItemSelected = new EventEmitter<MenuItemModel>()
-  @ViewChild(MatMenu) menu!: MatMenu
+export class MenuBuilderComponent {
 
-  // @Output() menu
+  @Input() menuBuilder!: MenuBuilderModel/*
+   @Output() menuItemSelected = new EventEmitter<MenuItemModel>()*/
 
-  override ngOnInit(): void {
-    this.menuItems.forEach(menuItem => {
-        if (menuItem.hasChildren) {
-          menuItem.children?.forEach(child => {
-            child.route = `${menuItem.route}/${child.route}`
-          })
+  @ViewChild('menu', { static: true }) menu!: MatMenu
 
-          // menuItem.onClick = new EventEmitter<any>()
-          /*    menuItem.onClick.subscribe(() => {
-           this.onMenuItemSelected(menuItem)
-           }*/
-          /*     menuItem.click = () => {
+  /*
+   onMenuItemSelected(menuItem: MenuItemModel) {
+   menuItem.click?.()
+   this.menuItemSelected.emit(menuItem)
+   }*/
 
-           }*/
-        }
-      },
-    )
-    super.ngOnInit()
+  onClick(menuItem: MenuItemModel) {
+    if (menuItem.click == null) {
+      console.log('menuItem.click == null', menuItem)
+      return
+    }
+    menuItem.click?.()
   }
-
-  onMenuItemSelected(menuItem: MenuItemModel) {
-    this.menuItemSelected.emit(menuItem)
-  }
-
 }

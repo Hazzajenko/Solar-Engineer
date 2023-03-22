@@ -59,7 +59,7 @@ import {
     NarrowSidebarDarkComponent,
     NarrowMatSidenavComponent,
   ],
-  selector: 'app-root',
+  selector: 'app-root-old',
   templateUrl: './app.component.html',
   styles: [
     `

@@ -11,6 +11,7 @@ public class AuthUser : IdentityUser<Guid>, IUser, IEntity
     }
 
     public ICollection<AppUserRole> AppUserRoles { get; set; } = default!;
+    public override string UserName { get; set; } = default!;
 
     public string FirstName { get; init; } = default!;
     public string LastName { get; init; } = default!;

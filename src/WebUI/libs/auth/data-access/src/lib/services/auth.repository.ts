@@ -27,4 +27,9 @@ export class AuthRepository {
   isReturningUser() {
     this.store.dispatch(AuthActions.isReturningUser())
   }
+
+  signOut() {
+    // TODO implement signOut
+    this.store.dispatch(AuthActions.signOut())
+  }
 }

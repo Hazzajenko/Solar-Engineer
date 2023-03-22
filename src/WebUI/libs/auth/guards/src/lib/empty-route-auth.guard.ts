@@ -15,6 +15,7 @@ export const emptyRouteAuthGuard = () => {
   const router = inject(Router)
   const routerStore = inject(RouterFacade)
   const location = inject(Location)
+  console.log('emptyRouteAuthGuard', this)
   return auth.user$.pipe(
     combineLatestWith(routerStore.queryParam$('authorize')),
     switchMap(([user, authorizeQuery]) => {

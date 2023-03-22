@@ -2,6 +2,7 @@
 using Auth.API.Data;
 using Auth.API.Repositories;
 using Auth.API.Services;
+using Auth.API.Services.Images;
 using Infrastructure.Settings;
 
 namespace Auth.API.Extensions.ServiceCollection;
@@ -18,6 +19,7 @@ public static class ServiceExtensions
         services.AddScoped<IAuthUnitOfWork, AuthUnitOfWork>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IAppUserRepository, AppUserRepository>();
+        services.AddScoped<IImagesService, ImagesService>();
         // services.InitMediator();
         // services.AddMediator(options => options.Namespace = "Auth.API");
         // services.AddSingleton(typeof(IPipelineBehavior<,>), typeof(ErrorLoggerHandler<,>));

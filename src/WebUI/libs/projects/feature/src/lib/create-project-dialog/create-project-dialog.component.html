@@ -54,7 +54,7 @@
               </div>
             </div>
 
-            <div class="items-center text-red-500 text-sm">
+            <div class="items-center text-sm text-red-500">
               <ng-container *ngFor="let validation of validationMessages.projectName">
                 <div
                   class="error-message"
@@ -74,7 +74,7 @@
               <h3 class="text-sm font-medium leading-6 text-gray-900">Team Members</h3>
               <div class="mt-2">
                 <div class="flex space-x-2">
-                  <a *ngFor="let item of createRange(4)" class="rounded-full hover:opacity-75">
+                  <a *ngFor="let item of 4 | createRange" class="rounded-full hover:opacity-75">
                     <img
                       class="inline-block h-8 w-8 rounded-full"
                       [src]="user.photoUrl"

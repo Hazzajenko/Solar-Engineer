@@ -1,6 +1,7 @@
 ﻿// using System.Drawing;
 
 using SkiaSharp;
+
 // using Color = SixLabors.ImageSharp.Color;
 // using PointF = SixLabors.ImageSharp.PointF;
 
@@ -10,7 +11,9 @@ public class ImagesService
 {
     public static byte[] GenerateProfilePicture(string initials, int size)
     {
+        // Image hi = Image.FromFile("C:\\Users\\james\\Desktop\\hi.png");
         // Create a new SKBitmap with the desired size and format
+
         var bitmap = new SKBitmap(size, size, SKColorType.Rgba8888, SKAlphaType.Premul);
 
         // Create a new SKCanvas to draw on the bitmap

@@ -4,7 +4,7 @@ export interface MenuItemModel {
   icon: string
   route: string
   // onClick?: EventEmitter<any>
-  // click?: () => void
+  click?: () => void
   hasChildren?: boolean
 
   children?: MenuItemModel[]

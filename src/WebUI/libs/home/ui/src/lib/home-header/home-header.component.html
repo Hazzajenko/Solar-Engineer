@@ -254,8 +254,10 @@
   </div>
 </ng-template>
 
-<app-menu-builder #userMenu [menuItems]="profileMenuItems" />
+<app-menu-builder #userMenu [menuBuilder]="profileMenuBuilder" />
 
+<!--(menuItemSelected)="logDebug($event)"-->
+<!--[menuItems]="profileMenuItems"-->
 <!--#userMenu="matMenu"-->
 <!--<mat-menu'
 

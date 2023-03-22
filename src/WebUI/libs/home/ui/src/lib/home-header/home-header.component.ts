@@ -9,8 +9,8 @@ import { SelectThemeComponent, ThemeToggleComponent } from '@app/utils'
 import { map } from 'rxjs'
 import { HOME_NAV_ROUTE, HomeNavRoute, HomeNavService } from '@home/data-access'
 import { ToPascalCasePipe } from '@shared/utils'
-import { MenuBuilderComponent } from '@shared/ui'
-import { MenuItemModel } from '../../../../../shared/ui/src/lib/menus/menu-item.model'
+import { MenuBuilderComponent, MenuBuilderModel } from '@shared/ui'
+import { AuthRepository } from '@auth/data-access'
 
 @Component({
   selector: 'app-home-header',
@@ -35,6 +35,7 @@ export class HomeHeaderComponent extends BaseService implements OnInit, OnDestro
   private router = inject(Router)
   private route = inject(ActivatedRoute)
   private homeNavService = inject(HomeNavService)
+  private authRepository = inject(AuthRepository)
   homeNavRoute$ = this.homeNavService.route$
   // currentPage: HomePage = HOME_PAGE.HOME
 
@@ -52,11 +53,40 @@ export class HomeHeaderComponent extends BaseService implements OnInit, OnDestro
     HOME_NAV_ROUTE.SOCIAL,
   ]
 
-  profileMenuItems: MenuItemModel[] = [
-    { name: 'Profile', icon: 'person', route: 'profile' },
-    { name: 'Settings', icon: 'settings', route: 'settings' },
-    { name: 'Logout', icon: 'logout', route: 'logout' },
-  ]
+  profileMenuBuilder: MenuBuilderModel = {
+    // header: 'Profile',
+    menuItems: [
+      {
+        name: 'Profile', icon: 'person', route: 'profile', click: async () => {
+          this.logDebug('profileMenuItems click')
+          await this.routerService.navigateToProfile()
+        },
+      },
+      {
+        name: 'Settings', icon: 'settings', route: 'settings', click: async () => {
+          this.logDebug('profileMenuItems click')
+          await this.routerService.navigateToProfile()
+        },
+      },
+      {
+        name: 'Logout', icon: 'logout', route: 'logout', click: () => {
+          this.logDebug('profileMenuItems click')
+          this.authRepository.signOut()
+        },
+      },
+    ],
+  }
+
+  /*  profileMenuItems: MenuItemModel[] = [
+   {
+   name: 'Profile', icon: 'person', route: 'profile', click: () => {
+   this.logDebug('profileMenuItems click')
+   this.routerService.navigateToProjectsHome()
+   },
+   },
+   { name: 'Settings', icon: 'settings', route: 'settings' },
+   { name: 'Logout', icon: 'logout', route: 'logout' },
+   ]*/
   // routesRecord = toRecord(this.routes, '')
   // routesRecord = toRecord(this.routes, 'name')
 
