@@ -5,9 +5,7 @@ using Mediator;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Identity.Application.Handlers;
-
-public record GetTokenCommand(Guid AppUserId, string UserName) : ICommand<string>;
+namespace Identity.Application.Handlers.Auth.Token;
 
 public class GetTokenHandler : ICommandHandler<GetTokenCommand, string>
 {

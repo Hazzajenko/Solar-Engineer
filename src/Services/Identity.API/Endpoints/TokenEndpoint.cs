@@ -1,6 +1,6 @@
 ﻿using System.Text;
 using FastEndpoints;
-using Identity.Application.Handlers;
+using Identity.Application.Handlers.Auth.Token;
 using Identity.Contracts.Responses;
 using Infrastructure.Extensions;
 using Mediator;

@@ -1,12 +1,9 @@
-﻿using System.Security.Claims;
-using Identity.Application.Entities;
-using Identity.Application.Repositories;
+﻿using Identity.Application.Entities;
+using Identity.Application.Repositories.AppUsers;
 using Infrastructure.Extensions;
 using Mediator;
 
-namespace Identity.Application.Handlers;
-
-public record GetAppUserQuery(ClaimsPrincipal ClaimsPrincipal) : IQuery<AppUser?>;
+namespace Identity.Application.Handlers.AppUsers;
 
 public class GetAppUserHandler : IQueryHandler<GetAppUserQuery, AppUser?>
 {

@@ -16,7 +16,7 @@ export class ConnectionsSignalrService extends BaseService {
   // private logger = inject(LoggerService)
 
   /* constructor(logger: LoggerService) {
-     super(logger)
+   super(logger)
    }*/
 
   createHubConnection(token: string) {
@@ -31,25 +31,25 @@ export class ConnectionsSignalrService extends BaseService {
       .build()
 
     this.hubConnection
-      .start()
-      .then(
-        () => this.logDebug('Hub Connection started'),
-        /*this.logger.debug({ source: 'Connections-Signalr-Service', objects: ['Hub Connection started'] })*/
-      )
-      .catch(
-        (err) => this.logError('Error while starting Hub connection: ' + err),
-        /*this.logger.error({
-        source: 'Connections-Signalr-Service',
-        objects: ['Error while starting Hub connection: ' + err],
-      })*/
-      )
+        .start()
+        .then(
+          () => this.logDebug('Hub Connection started'),
+          /*this.logger.debug({ source: 'Connections-Signalr-Service', objects: ['Hub Connection started'] })*/
+        )
+        .catch(
+          (err) => this.logError('Error while starting Hub connection: ' + err),
+          /*this.logger.error({
+           source: 'Connections-Signalr-Service',
+           objects: ['Error while starting Hub connection: ' + err],
+           })*/
+        )
 
-    this.hubConnection.on(UserIsOnline, (connections: ConnectionModel[]) => {
-      this.connectionsStore.dispatch.addManyConnections(connections)
+    this.hubConnection.on(UserIsOnline, (connection: ConnectionModel) => {
+      this.connectionsStore.dispatch.addConnection(connection)
     })
 
-    this.hubConnection.on(UserIsOffline, (connections: ConnectionModel[]) => {
-      this.connectionsStore.dispatch.removeManyConnections(connections)
+    this.hubConnection.on(UserIsOffline, (connection: ConnectionModel) => {
+      this.connectionsStore.dispatch.removeConnection(connection)
     })
 
     this.hubConnection.on(GetOnlineUsers, (connections: ConnectionModel[]) => {
@@ -62,9 +62,9 @@ export class ConnectionsSignalrService extends BaseService {
     this.hubConnection.stop().catch(
       (error) => this.logError('Error while stopping Hub connection: ' + error),
       /*this.logger.error({
-      source: 'Connections-Signalr-Service',
-      objects: ['Error while stopping Hub connection: ' + error],
-    })*/
+       source: 'Connections-Signalr-Service',
+       objects: ['Error while stopping Hub connection: ' + error],
+       })*/
     )
   }
 }

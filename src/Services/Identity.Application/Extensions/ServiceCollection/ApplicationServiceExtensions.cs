@@ -1,7 +1,8 @@
 ﻿using Identity.Application.Data;
-using Identity.Application.Repositories;
+using Identity.Application.Repositories.AppUsers;
 using Identity.Application.Services.Images;
 using Identity.Application.Settings;
+using Identity.SignalR.Services;
 using Infrastructure.Settings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,6 +17,7 @@ public static class ServiceExtensions
     )
     {
         services.Configure<QueueSettings>(config.GetSection("Queues"));
+        services.AddSingleton<ConnectionsService>();
         services.AddScoped<IIdentityUnitOfWork, IdentityUnitOfWork>();
         services.AddScoped<IAppUserRepository, AppUserRepository>();
         services.AddScoped<IImagesService, ImagesService>();

@@ -4,13 +4,10 @@ using Identity.Application.Extensions;
 using Identity.Application.Mapping;
 using Mediator;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 
-namespace Identity.Application.Handlers;
-
-public record AuthorizeCommand(HttpContext HttpContext) : IRequest<AppUser>;
+namespace Identity.Application.Handlers.Auth.Authorize;
 
 public class AuthorizeHandler : IRequestHandler<AuthorizeCommand, AppUser>
 {

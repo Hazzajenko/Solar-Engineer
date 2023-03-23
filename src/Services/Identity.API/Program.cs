@@ -5,6 +5,7 @@ using Identity.Application.Extensions.Application;
 using Identity.Application.Extensions.ServiceCollection;
 using Infrastructure.Data;
 using Infrastructure.Logging;
+using Infrastructure.SignalR;
 using Infrastructure.Web;
 using Microsoft.AspNetCore.HttpOverrides;
 
@@ -25,6 +26,7 @@ config.AddEnvironmentVariables("solarengineer_");
 builder.Services.AddApplicationServices(config);
 builder.Services.AddIdentityServices(config);
 builder.Services.AddAuthServices(config);
+builder.Services.ConfigureSignalRWithRedis(builder.Environment);
 
 builder.Services.AddHttpClient(
     "Images",

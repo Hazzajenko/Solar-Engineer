@@ -1,8 +1,10 @@
 ﻿using FastEndpoints;
-
 using Identity.Application.Entities;
-using Identity.Application.Handlers;
+using Identity.Application.Handlers.AppUsers.GetAppUserDto;
+using Identity.Application.Handlers.Auth.Authorize;
+using Identity.Application.Handlers.Auth.Token;
 using Identity.Contracts.Responses;
+using Infrastructure.Extensions;
 using Mediator;
 using Microsoft.AspNetCore.Identity;
 
@@ -25,19 +27,13 @@ public class AuthorizeEndpoint : EndpointWithoutRequest<AuthorizeResponse>
     {
         Post("/authorize");
         AuthSchemes(IdentityConstants.ExternalScheme);
-        // AuthSchemes("google");
-        // AuthSchemes(CookieAuthenticationDefaults.AuthenticationScheme);
     }
 
     public override async Task HandleAsync(CancellationToken cT)
     {
-        // var info = await _signInManager.GetExternalLoginInfoAsync();
         var appUser = await _mediator.Send(new AuthorizeCommand(HttpContext), cT);
-        ArgumentNullException.ThrowIfNull(appUser.UserName);
         var token = await _mediator.Send(new GetTokenCommand(appUser.Id, appUser.UserName), cT);
-        Response.Token = token;
-        // await Send
-        // await _signInManager.
+
         var storedToken = await _userManager.GetAuthenticationTokenAsync(
             appUser,
             "google",
@@ -61,6 +57,18 @@ public class AuthorizeEndpoint : EndpointWithoutRequest<AuthorizeResponse>
         if (!tokenResult.Succeeded)
             foreach (var tokenResultError in tokenResult.Errors)
                 Logger.LogError("{@E}", tokenResultError);
+
+        var user = await _mediator.Send(new GetAppUserDtoQuery(User), cT);
+        if (user is null)
+        {
+            Logger.LogError("Unable to find user {UserId}", User.GetUserId());
+            await SendUnauthorizedAsync(cT);
+            return;
+        }
+        
+        Response.Token = token;
+        Response.User = user;
+
         await SendOkAsync(Response, cT);
     }
 }

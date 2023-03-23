@@ -2,6 +2,7 @@
 using System.Text.Json.Serialization;
 using FastEndpoints;
 using FastEndpoints.Swagger;
+using Identity.SignalR.Hubs;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
@@ -47,6 +48,9 @@ public static partial class WebApplicationExtensions
             app.UseOpenApi();
             app.UseSwaggerUi3(x => x.ConfigureDefaults());
         }
+
+        app.UseWebSockets(new WebSocketOptions { KeepAliveInterval = TimeSpan.FromSeconds(120) });
+        app.MapHub<ConnectionsHub>("hubs/connections");
 
         return app;
     }

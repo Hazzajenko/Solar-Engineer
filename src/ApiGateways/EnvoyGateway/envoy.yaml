@@ -102,7 +102,9 @@ static_resources:
                 route:
                   # auto_host_rewrite: true
                   prefix_rewrite: "/hubs/connections"
-                  cluster: users-api
+                  # prefix_rewrite: "/hubs/connections"
+                  cluster: auth-api
+                  # cluster: users-api
                   timeout: 300s
                   upgrade_configs:
                     upgrade_type: "websocket"

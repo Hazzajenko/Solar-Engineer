@@ -1,5 +1,6 @@
 ﻿using FastEndpoints;
-using Identity.Application.Handlers;
+using Identity.Application.Handlers.AppUsers;
+using Identity.Application.Handlers.Auth.Token;
 using Identity.Contracts.Responses;
 using Infrastructure.Extensions;
 using Mediator;
@@ -34,7 +35,7 @@ public class IsReturningUserEndpoint : EndpointWithoutRequest<AuthorizeResponse>
         }
 
         // appUser.UserName.Thr
-        ArgumentNullException.ThrowIfNull(appUser.UserName);
+        // ArgumentNullException.ThrowIfNull(appUser.UserName);
 
         var token = await _mediator.Send(new GetTokenCommand(appUser.Id, appUser.UserName), cT);
         Response.Token = token;
