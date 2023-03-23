@@ -2,6 +2,7 @@
 using System.Text.Json.Serialization;
 using FastEndpoints;
 using FastEndpoints.Swagger;
+using Identity.Application.Data.Seed;
 using Identity.SignalR.Hubs;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -51,6 +52,8 @@ public static partial class WebApplicationExtensions
 
         app.UseWebSockets(new WebSocketOptions { KeepAliveInterval = TimeSpan.FromSeconds(120) });
         app.MapHub<ConnectionsHub>("hubs/connections");
+
+        IdentityContextSeed.InitializeDatabase(app);
 
         return app;
     }

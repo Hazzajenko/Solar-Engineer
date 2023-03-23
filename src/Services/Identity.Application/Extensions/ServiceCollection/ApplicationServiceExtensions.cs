@@ -1,4 +1,4 @@
-﻿using Identity.Application.Data;
+﻿using Identity.Application.Data.UnitOfWork;
 using Identity.Application.Repositories.AppUsers;
 using Identity.Application.Services.Images;
 using Identity.Application.Settings;

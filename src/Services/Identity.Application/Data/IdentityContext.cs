@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Identity.Domain.Auth;
+using Identity.Domain.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -17,14 +18,14 @@ public class IdentityContext
         IdentityRoleClaim<Guid>,
         IdentityUserToken<Guid>
     >
-    /*IdentityDbContext<
-            AppUser,
-            AppRole,
-            int,
-            AppUserRole,
-            IdentityUserLogin<int>,
-        >,
-        IAuthContext*/
+/*IdentityDbContext<
+        AppUser,
+        AppRole,
+        int,
+        AppUserRole,
+        IdentityUserLogin<int>,
+    >,
+    IAuthContext*/
 {
     public IdentityContext(DbContextOptions<IdentityContext> options)
         : base(options)
@@ -38,6 +39,7 @@ public class IdentityContext
 
 
     // public DbSet<AppUser> AppUsers { get; set; } = default!;
+    public DbSet<UserLink> UserLinks { get; set; } = default!;
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {

@@ -1,3 +1,4 @@
+using Infrastructure.Data.Seed;
 using Microsoft.EntityFrameworkCore;
 
 namespace Projects.API.Data.Seed;
@@ -13,7 +14,7 @@ public static class ProjectsSeeder
 
         var context = serviceScope.ServiceProvider.GetRequiredService<ProjectsContext>();
 
-        await context.Database.ExecuteSqlAsync($"CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\"");
+        await DbExtensionSeed<ProjectsContext>.CreateUuidOsspIfNotExists(context);
 
         await context.Database.MigrateAsync();
         if (context.PanelConfigs.Any() is false)
@@ -24,3 +25,4 @@ public static class ProjectsSeeder
         }
     }
 }
+// await context.Database.ExecuteSqlAsync($"CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\"");

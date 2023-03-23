@@ -1,4 +1,5 @@
-﻿using Infrastructure.Common;
+﻿using Identity.Domain.Users;
+using Infrastructure.Common;
 using Microsoft.AspNetCore.Identity;
 
 namespace Identity.Domain.Auth;
@@ -12,6 +13,9 @@ public class AppUser : IdentityUser<Guid>, IUser, IEntity
 
     public ICollection<AppUserRole> AppUserRoles { get; set; } = default!;
     public override string UserName { get; set; } = default!;
+
+    public ICollection<UserLink> AppUserLinksRequested { get; set; } = default!;
+    public ICollection<UserLink> AppUserLinksReceived { get; set; } = default!;
 
     public string FirstName { get; init; } = default!;
     public string LastName { get; init; } = default!;
