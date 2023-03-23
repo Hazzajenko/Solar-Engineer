@@ -24,6 +24,8 @@ public static class ServiceExtensions
         services.Configure<StorageSettings>(config.GetSection("Azure:Storage"));
         services.AddMediator(options => { options.ServiceLifetime = ServiceLifetime.Transient; });
 
+        // services.UseWolverine();
+
         return services;
     }
 }

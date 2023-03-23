@@ -20,7 +20,7 @@ export class GenerateUserDataPipe implements PipeTransform {
       displayName: () => `${faker.name.firstName()} ${faker.name.lastName().at(0)}`,
       firstName: () => faker.name.firstName(),
       lastName: () => faker.name.lastName(),
-      photoUrl: () => `https://robohash.org/${faker.internet.userName()}.png?size=${imgSize}x${imgSize}}`,
+      photoUrl: () => `https://robohash.org/${faker.internet.userName()}.png?size=${imgSize}x${imgSize}`,
     })
     // return GenerateUserData(value)
   }

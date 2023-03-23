@@ -19,6 +19,9 @@ builder.ConfigureSerilog();
 var config = builder.Configuration;
 config.AddEnvironmentVariables("solarengineer_");
 
+// builder.UseWolverine();
+builder.Host.InitWolverine();
+
 // var appName = builder.RegisterSerilog();
 
 // var entryAssembly = Assembly.GetEntryAssembly();
@@ -69,6 +72,7 @@ var app = builder.Build();
 app.ConfigurePipeline();
 
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
 /*using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
 try

@@ -1,6 +1,8 @@
 ﻿using FastEndpoints;
+using Identity.Application.Data;
 using Identity.Application.Data.Bogus;
 using Identity.Application.Mapping;
+using Identity.Application.Services.Images;
 using Identity.Contracts.Data;
 using Identity.Domain.Auth;
 using Microsoft.AspNetCore.Identity;
@@ -19,11 +21,13 @@ public class CreateManyUsersResponse
 
 public class CreateManyUsersEndpoint : Endpoint<CreateManyUsersRequest, CreateManyUsersResponse>
 {
+    private readonly IImagesService _imagesService;
     private readonly UserManager<AppUser> _userManager;
 
-    public CreateManyUsersEndpoint(UserManager<AppUser> userManager)
+    public CreateManyUsersEndpoint(UserManager<AppUser> userManager, IImagesService imagesService)
     {
         _userManager = userManager;
+        _imagesService = imagesService;
     }
 
     public override void Configure()
@@ -35,21 +39,38 @@ public class CreateManyUsersEndpoint : Endpoint<CreateManyUsersRequest, CreateMa
     public override async Task HandleAsync(CreateManyUsersRequest request, CancellationToken cT)
     {
         var appUsers = BogusGenerators.GetAppUserGenerator().Generate(request.Count);
-        // var appUsers = BogusGenerators.GetAuthUserGenerator().Generate(request.Count);
 
         foreach (var appUser in appUsers)
         {
             var createUserResult = await _userManager.CreateAsync(appUser);
-            if (createUserResult.Succeeded)
-                continue;
-            Logger.LogError(
-                "Unable to create user {@User}, {@Errors}",
-                appUser,
-                createUserResult.Errors
-            );
-        }
 
-        // appUsers.ForEach(CreateAsync);
+            if (!createUserResult.Succeeded)
+            {
+                Logger.LogError(
+                    "Unable to create user {@User}, {@Errors}",
+                    appUser,
+                    createUserResult.Errors
+                );
+                continue;
+            }
+
+            var addRoleResult = await _userManager.AddToRoleAsync(appUser, AppRoles.User);
+            if (!addRoleResult.Succeeded)
+            {
+                Logger.LogError(
+                    "Unable to add role to user {@User}, {@Errors}",
+                    appUser,
+                    addRoleResult.Errors
+                );
+                continue;
+            }
+
+            var imageUrl = $"https://robohash.org/{appUser.UserName}.png?size=30x30&set=set1";
+            var getRobotImage = await _imagesService.DownloadImageAsync(imageUrl);
+
+            appUser.PhotoUrl = getRobotImage;
+            await _userManager.UpdateAsync(appUser);
+        }
 
         Response.Users = appUsers.Select(x => x.ToCurrentUserDto());
 

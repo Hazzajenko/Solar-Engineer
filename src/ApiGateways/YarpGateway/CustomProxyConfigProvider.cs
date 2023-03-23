@@ -3,6 +3,8 @@ using Yarp.ReverseProxy.Configuration;
 using Yarp.ReverseProxy.LoadBalancing;
 using Yarp.ReverseProxy.Transforms;
 
+namespace YarpGateway;
+
 public class CustomProxyConfigProvider : IProxyConfigProvider
 {
     private CustomMemoryConfig _config;

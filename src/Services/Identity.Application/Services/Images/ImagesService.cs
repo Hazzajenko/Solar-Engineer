@@ -1,7 +1,6 @@
 ﻿using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Identity.Application.Settings;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 
 namespace Identity.Application.Services.Images;
@@ -24,10 +23,12 @@ public class ImagesService : IImagesService
             ?? throw new InvalidOperationException();*/
     }
 
+    /*
     public async Task<string> UploadImageAsync(IFormFile file, string folderName, string fileName)
     {
         throw new NotImplementedException();
-    }
+  
+    }  */
 
     public async Task<string> DownloadImageAsync(string imageUrl)
     {

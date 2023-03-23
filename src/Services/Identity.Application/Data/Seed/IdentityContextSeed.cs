@@ -43,21 +43,21 @@ public static class IdentityContextSeed
 
     private static async Task SeedRoles(RoleManager<AppRole> roleManager)
     {
-        if (!await roleManager.RoleExistsAsync(Constants.Role.Admin))
+        if (!await roleManager.RoleExistsAsync(AppRoles.Admin))
             await roleManager.CreateAsync(
                 new AppRole
                 {
                     // Id = Guid.NewGuid().ToString(),
-                    Name = Constants.Role.Admin
+                    Name = AppRoles.Admin
                 }
             );
 
-        if (!await roleManager.RoleExistsAsync(Constants.Role.User))
+        if (!await roleManager.RoleExistsAsync(AppRoles.User))
             await roleManager.CreateAsync(
                 new AppRole
                 {
                     // Id = Guid.NewGuid().ToString(),
-                    Name = Constants.Role.User
+                    Name = AppRoles.User
                 }
             );
     }
@@ -79,7 +79,7 @@ public static class IdentityContextSeed
             var result = await userManager.CreateAsync(user, "123Pa$$word!");
 
             if (result.Succeeded)
-                await userManager.AddToRoleAsync(user, Constants.Role.Admin);
+                await userManager.AddToRoleAsync(user, AppRoles.Admin);
         }
 
         if (await userManager.FindByNameAsync("TestBot1") == null)
@@ -97,7 +97,7 @@ public static class IdentityContextSeed
             var result = await userManager.CreateAsync(user, "123Pa$$word!");
 
             if (result.Succeeded)
-                await userManager.AddToRoleAsync(user, Constants.Role.User);
+                await userManager.AddToRoleAsync(user, AppRoles.User);
         }
 
         if (await userManager.FindByNameAsync("TestBot2") == null)
@@ -115,7 +115,7 @@ public static class IdentityContextSeed
             var result = await userManager.CreateAsync(user, "123Pa$$word!");
 
             if (result.Succeeded)
-                await userManager.AddToRoleAsync(user, Constants.Role.User);
+                await userManager.AddToRoleAsync(user, AppRoles.User);
         }
     }
 }

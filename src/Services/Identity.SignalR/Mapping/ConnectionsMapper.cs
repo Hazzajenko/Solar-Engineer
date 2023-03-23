@@ -1,7 +1,7 @@
 ﻿using Identity.Contracts.Data;
 using Identity.SignalR.Entities;
 
-namespace Identity.SignalR;
+namespace Identity.SignalR.Mapping;
 
 public static class ConnectionsMapper
 {
