@@ -1,8 +1,8 @@
 ﻿using FastEndpoints;
 using Identity.Application.Data.Bogus;
-using Identity.Application.Entities;
 using Identity.Application.Mapping;
 using Identity.Contracts.Data;
+using Identity.Domain.Auth;
 using Microsoft.AspNetCore.Identity;
 
 namespace Identity.API.Endpoints.Admin;

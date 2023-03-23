@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
-using Identity.Application.Entities;
 using Identity.Contracts.Data;
+using Identity.Domain.Auth;
 using Infrastructure.Authentication;
 
 namespace Identity.Application.Mapping;

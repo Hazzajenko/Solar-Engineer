@@ -1,7 +1,7 @@
-﻿using Identity.Application.Entities;
-using Identity.Application.Exceptions;
+﻿using Identity.Application.Exceptions;
 using Identity.Application.Extensions;
 using Identity.Application.Mapping;
+using Identity.Domain.Auth;
 using Mediator;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;

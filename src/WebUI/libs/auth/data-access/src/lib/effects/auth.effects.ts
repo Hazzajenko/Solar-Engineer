@@ -33,9 +33,10 @@ export class AuthEffects {
       switchMap(() =>
         this.authService.authorizeRequest().pipe(
           // tap(({ token }) => localStorage.setItem('token', token)),
-          map(({ token }) => {
+          map(({ token, user }) => {
             localStorage.setItem('token', token)
-            return AuthActions.signInSuccess({ token })
+            return AuthActions.signInFetchUserSuccess({ token, user })
+            // return AuthActions.signInSuccess({ token })
           }),
         ),
       ),
@@ -55,39 +56,39 @@ export class AuthEffects {
   )
 
   /*  signInSuccess$ = createEffect(() =>
-      this.actions$.pipe(
-        ofType(AuthActions.signInSuccess),
-        tap(() => {
-          this.router
-            .navigateByUrl('')
-            .then()
-            .catch((err) => console.error(err))
-        }),
-      ),
-    )*/
+   this.actions$.pipe(
+   ofType(AuthActions.signInSuccess),
+   tap(() => {
+   this.router
+   .navigateByUrl('')
+   .then()
+   .catch((err) => console.error(err))
+   }),
+   ),
+   )*/
 
   /*  connectToSignalR$ = createEffect(() =>
-      this.actions$.pipe(
-        ofType(AuthActions.signInSuccess),
-        /!*      tap(
-                () => {
-                  this.router
-                    .navigateByUrl('')
-                    .then()
-                    .catch((err) => console.error(err))
-                },
-              ),*!/
-        switchMap(() =>
-          this.authService.getCurrentUser().pipe(
-            map(({ user }) => AuthActions.getCurrentUserSuccess({ user })),
-            catchError((error: Error) => {
-              console.error(error)
-              return of(AuthActions.getCurrentUserError({ error: error.message }))
-            }),
-          ),
-        ),
-      ),
-    )*/
+   this.actions$.pipe(
+   ofType(AuthActions.signInSuccess),
+   /!*      tap(
+   () => {
+   this.router
+   .navigateByUrl('')
+   .then()
+   .catch((err) => console.error(err))
+   },
+   ),*!/
+   switchMap(() =>
+   this.authService.getCurrentUser().pipe(
+   map(({ user }) => AuthActions.getCurrentUserSuccess({ user })),
+   catchError((error: Error) => {
+   console.error(error)
+   return of(AuthActions.getCurrentUserError({ error: error.message }))
+   }),
+   ),
+   ),
+   ),
+   )*/
 
   getCurrentUser$ = createEffect(() =>
     this.actions$.pipe(

@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core'
 import { AuthActions } from '../store'
 import { Store } from '@ngrx/store'
+import { AuthUserModel } from '@shared/data-access/models'
 
 @Injectable({
   providedIn: 'root',
@@ -14,6 +15,10 @@ export class AuthRepository {
 
   signInSuccess(token: string) {
     this.store.dispatch(AuthActions.signInSuccess({ token }))
+  }
+
+  signInFetchUserSuccess(token: string, user: AuthUserModel) {
+    this.store.dispatch(AuthActions.signInFetchUserSuccess({ token, user }))
   }
 
   loginWithGoogle() {

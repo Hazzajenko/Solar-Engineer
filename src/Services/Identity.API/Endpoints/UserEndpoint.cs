@@ -1,5 +1,5 @@
 ﻿using FastEndpoints;
-using Identity.Application.Handlers.AppUsers;
+using Identity.Application.Handlers.AppUsers.GetAppUser;
 using Identity.Application.Mapping;
 using Identity.Contracts.Responses;
 using Infrastructure.Extensions;

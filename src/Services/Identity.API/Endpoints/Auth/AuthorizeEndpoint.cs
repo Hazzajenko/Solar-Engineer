@@ -1,16 +1,16 @@
 ﻿using FastEndpoints;
-using Identity.Application.Entities;
 using Identity.Application.Handlers.AppUsers.GetAppUserDto;
 using Identity.Application.Handlers.Auth.Authorize;
 using Identity.Application.Handlers.Auth.Token;
 using Identity.Contracts.Responses;
+using Identity.Domain.Auth;
 using Infrastructure.Extensions;
 using Mediator;
 using Microsoft.AspNetCore.Identity;
 
 // using GetTokenCommand = Identity.API.Handlers.GetTokenCommand;
 
-namespace Identity.API.Endpoints;
+namespace Identity.API.Endpoints.Auth;
 
 public class AuthorizeEndpoint : EndpointWithoutRequest<AuthorizeResponse>
 {
@@ -65,7 +65,7 @@ public class AuthorizeEndpoint : EndpointWithoutRequest<AuthorizeResponse>
             await SendUnauthorizedAsync(cT);
             return;
         }
-        
+
         Response.Token = token;
         Response.User = user;
 

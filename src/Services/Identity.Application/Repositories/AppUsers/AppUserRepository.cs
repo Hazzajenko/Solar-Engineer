@@ -1,7 +1,7 @@
 using Identity.Application.Data;
-using Identity.Application.Entities;
 using Identity.Application.Mapping;
 using Identity.Contracts.Data;
+using Identity.Domain.Auth;
 using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 

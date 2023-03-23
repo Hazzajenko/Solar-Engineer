@@ -15,5 +15,3 @@ public static class ConnectionsMapper
         return new List<ConnectionDto> { request.ToDto() };
     }
 }
-
-// IUser

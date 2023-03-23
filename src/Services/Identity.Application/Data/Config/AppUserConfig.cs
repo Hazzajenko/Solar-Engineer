@@ -1,4 +1,4 @@
-﻿using Identity.Application.Entities;
+﻿using Identity.Domain.Auth;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

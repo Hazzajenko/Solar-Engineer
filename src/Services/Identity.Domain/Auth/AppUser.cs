@@ -1,7 +1,7 @@
 ﻿using Infrastructure.Common;
 using Microsoft.AspNetCore.Identity;
 
-namespace Identity.Application.Entities;
+namespace Identity.Domain.Auth;
 
 public class AppUser : IdentityUser<Guid>, IUser, IEntity
 {

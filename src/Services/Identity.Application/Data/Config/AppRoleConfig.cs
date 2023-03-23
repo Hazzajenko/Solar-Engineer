@@ -1,4 +1,4 @@
-﻿using Identity.Application.Entities;
+﻿using Identity.Domain.Auth;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -10,10 +10,10 @@ public class AppRoleConfig : IEntityTypeConfiguration<AppRole>
     {
         builder.Property(x => x.Id).HasDefaultValueSql("gen_random_uuid ()").IsRequired();
 
-        builder
-            .HasKey(x => x.Id);
+        builder.HasKey(x => x.Id);
 
-        builder.HasMany(ur => ur.UserRoles)
+        builder
+            .HasMany(ur => ur.UserRoles)
             .WithOne(u => u.Role)
             .HasForeignKey(ur => ur.RoleId)
             .IsRequired();

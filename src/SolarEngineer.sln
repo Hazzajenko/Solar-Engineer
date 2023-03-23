@@ -38,6 +38,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Identity.Contracts", "Servi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Identity.SignalR", "Services\Identity.SignalR\Identity.SignalR.csproj", "{AF85F382-C833-48AE-8DA3-ED15E0F91655}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Identity.Domain", "Services\Identity.Domain\Identity.Domain.csproj", "{14AEE7F9-9C73-4259-91B8-2D09282E5341}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +61,7 @@ Global
 		{DD787684-5FDF-4416-955E-F27D575772C9} = {D0F9BD2A-180E-4113-A0A0-94C18C21BA16}
 		{6EFB43D2-ECC6-48DA-AA64-97E272470772} = {D0F9BD2A-180E-4113-A0A0-94C18C21BA16}
 		{AF85F382-C833-48AE-8DA3-ED15E0F91655} = {D0F9BD2A-180E-4113-A0A0-94C18C21BA16}
+		{14AEE7F9-9C73-4259-91B8-2D09282E5341} = {D0F9BD2A-180E-4113-A0A0-94C18C21BA16}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{53FB622A-E290-4AD2-A755-5BBC255CF268}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -117,6 +120,10 @@ Global
 		{AF85F382-C833-48AE-8DA3-ED15E0F91655}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AF85F382-C833-48AE-8DA3-ED15E0F91655}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AF85F382-C833-48AE-8DA3-ED15E0F91655}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14AEE7F9-9C73-4259-91B8-2D09282E5341}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14AEE7F9-9C73-4259-91B8-2D09282E5341}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14AEE7F9-9C73-4259-91B8-2D09282E5341}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14AEE7F9-9C73-4259-91B8-2D09282E5341}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(RiderSharedRunConfigurations) = postSolution
 		File = Combined-Https-V2.run.xml

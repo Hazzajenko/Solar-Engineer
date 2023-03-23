@@ -1,4 +1,4 @@
-﻿using Identity.Application.Entities;
+﻿using Identity.Domain.Auth;
 using Mediator;
 using Microsoft.AspNetCore.Http;
 

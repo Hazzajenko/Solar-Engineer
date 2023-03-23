@@ -1,5 +1,5 @@
-using Identity.Application.Entities;
 using Identity.Contracts.Data;
+using Identity.Domain.Auth;
 using Infrastructure.Repositories;
 
 namespace Identity.Application.Repositories.AppUsers;

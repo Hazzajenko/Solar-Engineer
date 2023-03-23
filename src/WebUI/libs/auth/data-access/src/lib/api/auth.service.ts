@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core'
 import { GetTokenResponse } from '../contracts/get-token.response'
 import { GetUserResponse } from '../contracts/get-user.response'
 import { JwtHelperService } from '@auth0/angular-jwt'
+import { AuthorizeResponse } from '../contracts'
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +13,8 @@ export class AuthService {
   private jwtHelperService = inject(JwtHelperService)
 
   authorizeRequest() {
-    return this.http.post<GetTokenResponse>('/auth-api/authorize', {}, { withCredentials: true })
+    return this.http.post<AuthorizeResponse>('/auth-api/authorize', {}, { withCredentials: true })
+    // return this.http.post<GetTokenResponse>('/auth-api/authorize', {}, { withCredentials: true })
   }
 
   isTokenExpired(token: string) {
@@ -24,7 +26,8 @@ export class AuthService {
   }
 
   isReturningUser() {
-    return this.http.post<GetTokenResponse>('/auth-api/returning-user', {})
+    return this.http.post<AuthorizeResponse>('/auth-api/returning-user', {})
+    // return this.http.post<GetTokenResponse>('/auth-api/returning-user', {})
   }
 
   getCurrentUser(token?: string) {

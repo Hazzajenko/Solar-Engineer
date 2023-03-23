@@ -1,4 +1,4 @@
-﻿using Identity.Application.Entities;
+﻿using Identity.Domain.Auth;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;

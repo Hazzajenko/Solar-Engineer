@@ -1,6 +1,6 @@
+import { AuthActions } from './auth.actions'
 import { Action, createReducer, on } from '@ngrx/store'
 import { AuthUserModel } from '@shared/data-access/models'
-import { AuthActions } from './auth.actions'
 
 export interface AuthState {
   user?: AuthUserModel
@@ -15,6 +15,11 @@ export const initialAuthState: AuthState = {
 
 export const reducer = createReducer(
   initialAuthState,
+
+  on(AuthActions.signInFetchUserSuccess, (state, { user }) => ({
+    ...state,
+    user,
+  })),
 
   on(AuthActions.modifiedUser, (state, { user }) => ({
     ...state,

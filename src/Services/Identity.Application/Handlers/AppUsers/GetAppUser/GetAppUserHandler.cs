@@ -1,9 +1,9 @@
-﻿using Identity.Application.Entities;
-using Identity.Application.Repositories.AppUsers;
+﻿using Identity.Application.Repositories.AppUsers;
+using Identity.Domain.Auth;
 using Infrastructure.Extensions;
 using Mediator;
 
-namespace Identity.Application.Handlers.AppUsers;
+namespace Identity.Application.Handlers.AppUsers.GetAppUser;
 
 public class GetAppUserHandler : IQueryHandler<GetAppUserQuery, AppUser?>
 {

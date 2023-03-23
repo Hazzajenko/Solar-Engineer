@@ -20,14 +20,15 @@ export const handleGetAuthenticated = (
     if (!authService.isTokenExpired(token)) {
       return authService.isReturningUser().pipe(
         tap(({ token }) => localStorage.setItem('token', token)),
-        map(({ token }) => {
+        map(({ token, user }) => {
           const decoded = authService.decodeToken(token)
           console.log(decoded)
           const decodedUserName = decoded.userName
           const userName = StringTextSchema.parse(decodedUserName).toLowerCase()
           console.log(userName)
           // const urlTree = router.parseUrl(`${userName}`)
-          authStoreService.dispatch.signInSuccess(token)
+          authStoreService.dispatch.signInFetchUserSuccess(token, user)
+          // authStoreService.dispatch.signInSuccess(token)
           if (authorizeQuery === 'true') {
             console.log('authorize')
             const route = router.url
@@ -61,9 +62,10 @@ export const handleGetAuthenticated = (
       if (authorizeQuery === 'true') {
         console.log('authorize')
         return authService.authorizeRequest().pipe(
-          map(({ token }) => {
+          map(({ token, user }) => {
             localStorage.setItem('token', token)
-            authStoreService.dispatch.signInSuccess(token)
+            authStoreService.dispatch.signInFetchUserSuccess(token, user)
+            // authStoreService.dispatch.signInSuccess(token)
             // location.go('/')
             router.navigate([router.url]).catch((err) => {
               console.error(err)

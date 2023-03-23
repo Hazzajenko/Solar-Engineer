@@ -9,6 +9,7 @@ export const AuthActions = createActionGroup({
     'Is Returning User': emptyProps(),
     'Authorize Request': emptyProps(),
     'Sign In Success': props<{ token: string }>(),
+    'Sign In Fetch User Success': props<{ token: string; user: AuthUserModel }>(),
     'Sign In Error': props<{ error: string | null }>(),
     'Get Token': emptyProps(),
     'Get Current User': emptyProps(),

@@ -39,6 +39,21 @@ export class ProjectsEffects {
       ),
     { dispatch: false },
   )
+
+  initProjectsConnectionV2$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(AuthActions.signInFetchUserSuccess),
+        map(({ token }) => {
+          const projectsHubConnection =
+            this.projectsSignalrService.createProjectsHubConnection(token)
+          this.signalrEventsService.initHubConnection(projectsHubConnection)
+          // this.projectsHubService.initHubConnection(projectsHubConnection)
+          // this.panelsSignalrService.initPanelsHub(projectsHubConnection)
+        }),
+      ),
+    { dispatch: false },
+  )
   init$ = createEffect(
     () =>
       this.actions$.pipe(
@@ -97,24 +112,24 @@ export class ProjectsEffects {
   )
 
   /*  createWebProjectSuccess$ = createEffect(() =>
-      this.actions$.pipe(
-        ofType(ProjectsActions.createWebProjectSuccess),
-        map(({ project }) =>
-          ProjectsActions.initSelectProject({ projectId: project.id }),
-        ),
-      ),
-    )*/
+   this.actions$.pipe(
+   ofType(ProjectsActions.createWebProjectSuccess),
+   map(({ project }) =>
+   ProjectsActions.initSelectProject({ projectId: project.id }),
+   ),
+   ),
+   )*/
 
   /*     initSelectProject$ = createEffect(
-      () =>
-        this.actions$.pipe(
-          ofType(ProjectsActions.initSelectProject),
-          tap(({ projectId }) => {
-            this.store.dispatch(StringsActions.initStrings({ projectId }))
-            this.store.dispatch(PanelsActions.initPanels({ projectId }))
-            this.store.dispatch(LinksActions.initLinks({ projectId }))
-          }),
-        ),
-      { dispatch: false },
-    ) */
+   () =>
+   this.actions$.pipe(
+   ofType(ProjectsActions.initSelectProject),
+   tap(({ projectId }) => {
+   this.store.dispatch(StringsActions.initStrings({ projectId }))
+   this.store.dispatch(PanelsActions.initPanels({ projectId }))
+   this.store.dispatch(LinksActions.initLinks({ projectId }))
+   }),
+   ),
+   { dispatch: false },
+   ) */
 }

@@ -1,11 +1,11 @@
 ﻿using FastEndpoints;
-using Identity.Application.Handlers.AppUsers;
+using Identity.Application.Handlers.AppUsers.GetAppUserDto;
 using Identity.Application.Handlers.Auth.Token;
 using Identity.Contracts.Responses;
 using Infrastructure.Extensions;
 using Mediator;
 
-namespace Identity.API.Endpoints;
+namespace Identity.API.Endpoints.Auth;
 
 public class IsReturningUserEndpoint : EndpointWithoutRequest<AuthorizeResponse>
 {
@@ -24,21 +24,18 @@ public class IsReturningUserEndpoint : EndpointWithoutRequest<AuthorizeResponse>
 
     public override async Task HandleAsync(CancellationToken cT)
     {
-        // var appUser = await _mediator.Send(new AuthorizeCommand(HttpContext), cT);
-        var appUser = await _mediator.Send(new GetAppUserQuery(User), cT);
+        var appUser = await _mediator.Send(new GetAppUserDtoQuery(User), cT);
         if (appUser is null)
         {
             Logger.LogError("Unable to find user {UserId}", User.GetUserId());
             await SendRedirectAsync("/auth/login/google", cancellation: cT);
-            // await SendUnauthorizedAsync(cT);
             return;
         }
 
-        // appUser.UserName.Thr
-        // ArgumentNullException.ThrowIfNull(appUser.UserName);
 
-        var token = await _mediator.Send(new GetTokenCommand(appUser.Id, appUser.UserName), cT);
+        var token = await _mediator.Send(new GetTokenCommand(appUser.Id.ToGuid(), appUser.UserName), cT);
         Response.Token = token;
+        Response.User = appUser;
         await SendOkAsync(Response, cT);
     }
 }
