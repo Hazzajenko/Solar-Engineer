@@ -12,14 +12,19 @@ public static class DbContextFactory
     public static IServiceCollection InitDbContext<T>(
         this IServiceCollection services,
         IConfiguration config,
-        IWebHostEnvironment env
-    ) where T : DbContext
+        IWebHostEnvironment env,
+        string? migrationsAssembly = null
+    )
+        where T : DbContext
     {
         services.AddDbContext<T>(options =>
         {
             var connectionString = GetConnectionString(config, env);
 
-            options.UseNpgsql(connectionString);
+            if (migrationsAssembly != null)
+                options.UseNpgsql(connectionString, x => x.MigrationsAssembly(migrationsAssembly));
+            else
+                options.UseNpgsql(connectionString);
         });
 
         return services;
@@ -27,10 +32,11 @@ public static class DbContextFactory
 
     private static string GetConnectionString(IConfiguration config, IWebHostEnvironment env)
     {
-        if (env.IsProduction()) return BuildPostgresConnectionString();
+        if (env.IsProduction())
+            return BuildPostgresConnectionString();
 
-        return config.GetConnectionString("PostgresConnection") ??
-               throw new ArgumentNullException(nameof(GetConnectionString));
+        return config.GetConnectionString("PostgresConnection")
+               ?? throw new ArgumentNullException(nameof(GetConnectionString));
     }
 
     private static string BuildPostgresConnectionString()
@@ -51,6 +57,7 @@ public static class DbContextFactory
 
     private static string GetEnvironmentVariable(string name)
     {
-        return Environment.GetEnvironmentVariable(name) ?? throw new ArgumentNullException(nameof(name));
+        return Environment.GetEnvironmentVariable(name)
+               ?? throw new ArgumentNullException(nameof(name));
     }
 }

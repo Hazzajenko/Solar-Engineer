@@ -1,25 +1,20 @@
 
 
 migrate:
-	dotnet ef migrations add ${name} -o Data/Migrations --context IdentityContext
+	dotnet ef migrations add ${name} -o Data/Migrations --context AuthContext
 
-migrate-persisted:
-	dotnet ef migrations add InitialIdentityServerPersistedGrantDbMigration -c PersistedGrantDbContext -o Data/Migrations/PersistedGrantDb
-   
-migrate-configuration:
-	dotnet ef migrations add InitialIdentityServerConfigurationDbMigration -c ConfigurationDbContext -o Data/Migrations/ConfigurationDb
+migrate2:
+	dotnet ef migrations add ${name} -o ../Identity.Application/Data/Migrations --context IdentityContext
+
+migrate3:
+	dotnet ef migrations add Migration2 --startup-project ../Identity.Application/ --context IdentityContext
+	#dotnet ef migrations add Migration2 --startup-project ../MyApp.Web/MyApp.Web.csproj --context MyAppDbContext
 
 update:
-	dotnet ef database update --context IdentityContext
-
-update-persisted:
-	dotnet ef database update --context PersistedGrantDbContext
-
-update-configuration:
-	dotnet ef database update --context ConfigurationDbContext
+	dotnet ef database update --context AuthContext
 
 remove:
-	dotnet ef migrations remove --context IdentityContext
+	dotnet ef migrations remove --context AuthContext
 
 publish:
 	dotnet publish --os linux --arch x64 -c Release -p:PublishProfile=DefaultContainer

@@ -1,116 +1,81 @@
-using System.Reflection;
 using FastEndpoints;
-using Identity.API.Data;
-using Identity.API.Extensions.Application;
-using Identity.API.Extensions.Services;
+using FastEndpoints.Swagger;
+using Identity.Application.Data;
+using Identity.Application.Extensions.Application;
+using Identity.Application.Extensions.ServiceCollection;
 using Infrastructure.Data;
+using Infrastructure.Logging;
 using Infrastructure.Web;
 using Microsoft.AspNetCore.HttpOverrides;
-using Serilog;
 
 var builder = WebApplication.CreateBuilder(
     new WebApplicationOptions { Args = args, ContentRootPath = Directory.GetCurrentDirectory() }
 );
 
+// var appName = builder.RegisterSerilog();
+builder.ConfigureSerilog();
 
 var config = builder.Configuration;
 config.AddEnvironmentVariables("solarengineer_");
 
-builder.Host.UseSerilog(
-    (_, loggerConfig) =>
+// var appName = builder.RegisterSerilog();
+
+// var entryAssembly = Assembly.GetEntryAssembly();
+// ArgumentNullException.ThrowIfNull(entryAssembly);
+builder.Services.AddApplicationServices(config);
+builder.Services.AddIdentityServices(config);
+builder.Services.AddAuthServices(config);
+
+builder.Services.AddHttpClient(
+    "Images",
+    httpClient =>
     {
-        loggerConfig.WriteTo
-            .Console()
-            .ReadFrom.Configuration(
-                config
-            );
+        // httpClient.BaseAddress = new Uri(config.GetValue<string>("GitHub:ApiBaseUrl"));
+        /*httpClient.DefaultRequestHeaders.Add(
+            HeaderNames.Accept, "application/vnd.github.v3+json");
+        httpClient.DefaultRequestHeaders.Add(
+            HeaderNames.UserAgent, $"Course-{Environment.MachineName}");*/
     }
 );
 
-// JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
-var entryAssembly = Assembly.GetEntryAssembly() ?? throw new ArgumentNullException(nameof(Assembly));
-builder.Services.AddApplicationServices(config, entryAssembly);
+builder.Services.InitDbContext<IdentityContext>(
+    config,
+    builder.Environment,
+    "Identity.Application"
+);
 
+// builder.Services.InitDbContext<AuthContext>(config, builder.Environment);
 
-builder.Services.InitDbContext<IdentityContext>(config, builder.Environment);
-builder.Services.InitIdentityServer(config, builder.Environment);
-builder.Services.InitIdentityAuthConfig(config, builder.Environment);
+builder.Services.InitCors("corsPolicy");
 
-const string corsPolicy = "CorsPolicy";
-builder.Services.InitCors(corsPolicy);
-
-builder.Services.AddFastEndpoints();
-
+builder.Services.AddFastEndpoints(options => { options.SourceGeneratorDiscoveredTypes = DiscoveredTypes.All; });
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
-    options.ForwardedHeaders =
-        ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-});
-// Add services to the container.
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
 
-// builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-// builder.Services.AddEndpointsApiExplorer();
-// builder.Services.AddSwaggerGen();
+    // options.KnownNetworks.Clear();
+    // options.KnownProxies.Clear();
+});
+
+builder.Services.AddSwaggerDoc();
+
+// builder.Services.AddGrpc();
 
 var app = builder.Build();
 
+// app.ConfigurePipeline();
 app.ConfigurePipeline();
 
-/*
-app.UseForwardedHeaders();
-
-app.UseSerilogRequestLogging();
-
-app.UseCors(corsPolicy);
-app.UseHttpsRedirection();
-
-app.UseAuthentication();
-app.UseAuthorization();
-
-app.UseFastEndpoints(options =>
-{
-    options.Endpoints.Configurator = ep => { ep.PreProcessors(Order.Before, new SecurityHeadersProcessor()); };
-    options.Endpoints.RoutePrefix = "identity";
-    options.Errors.StatusCode = StatusCodes.Status422UnprocessableEntity;
-    options.Serializer.Options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-    options.Serializer.Options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-});
-
-app.UseIdentityServer();
-IdentitySeeder.InitializeDatabase(app);
-
-var loginEndpoints = app.MapGroup("identity/login");
-var identityEndpoints = app.MapGroup("identity");
-
-loginEndpoints.MapGet("/github", () => Results.Challenge(
-    new AuthenticationProperties
-    {
-        RedirectUri = "http://localhost:4200/"
-    }, new List<string> { "github" }));
-
-loginEndpoints.MapGet("/google", () => Results.Challenge(
-    new AuthenticationProperties
-    {
-        RedirectUri = "https://localhost:4200/"
-    }, new List<string> { "google" }));
-
-identityEndpoints.MapGet("/", (HttpContext ctx) =>
-{
-    ctx.GetTokenAsync("access_token");
-    return ctx.User.Claims.Select(x => new { x.Type, x.Value }).ToList();
-}).RequireAuthorization("ApiScope");
-
-
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-using var scope = app.Services.CreateScope();
+/*using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
 try
 {
-    var context = services.GetRequiredService<IdentityContext>();
-    var userManager = services.GetRequiredService<UserManager<AppUser>>();
+    var context = services.GetRequiredService<AuthContext>();
+    var userManager = services.GetRequiredService<UserManager<AuthUser>>();
+    var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
     await context.Database.MigrateAsync();
-    await IdentitySeeder.SeedAll(userManager);
+    await AuthContextSeed.SeedAll(userManager, roleManager);
 }
 catch (Exception ex)
 {
@@ -118,4 +83,4 @@ catch (Exception ex)
     logger.LogError(ex, "An error occurred during migration");
 }*/
 
-app.Run();
+await app.RunAsync();

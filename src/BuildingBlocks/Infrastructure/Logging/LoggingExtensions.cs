@@ -25,9 +25,9 @@ public static partial class LoggingExtensions
                     .Enrich.FromLogContext()
                     .Enrich.WithProperty("Application", appName)
                     .Enrich.WithExceptionDetails()
-                    // .Enrich.WithMachineName()
-                    // .Enrich.WithProcessId()
-                    // .Enrich.WithThreadId()
+                    .Enrich.WithMachineName()
+                    .Enrich.WithProcessId()
+                    .Enrich.WithThreadId()
                     .Enrich.FromLogContext()
                     .WriteTo.Console();
 
@@ -35,7 +35,7 @@ public static partial class LoggingExtensions
 
                 loggerConfig.WriteTo.File(
                     new CompactJsonFormatter(),
-                    "Logs/logs.json",
+                    "Logs/log.json",
                     LogEventLevel.Information,
                     rollingInterval: RollingInterval.Day,
                     retainedFileCountLimit: 5
