@@ -1,0 +1,55 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\BuildingBlocks\Domain\Domain.csproj" />
+      <ProjectReference Include="..\..\..\BuildingBlocks\EventBus\EventBus.csproj" />
+      <ProjectReference Include="..\..\..\BuildingBlocks\Infrastructure\Infrastructure.csproj" />
+      <ProjectReference Include="..\Projects.Contracts\Projects.Contracts.csproj" />
+      <ProjectReference Include="..\Projects.Domain\Projects.Domain.csproj" />
+      <ProjectReference Include="..\Projects.SignalR\Projects.SignalR.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Bogus" Version="34.0.2" />
+      <PackageReference Include="ErrorOr" Version="1.2.1" />
+      <PackageReference Include="Mapster" Version="7.3.0" />
+      <PackageReference Include="Mapster.DependencyInjection" Version="1.0.0" />
+      <PackageReference Include="Mediator.Abstractions" Version="2.1.1" />
+      <PackageReference Include="Mediator.SourceGenerator" Version="2.1.1">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.4">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="Serilog" Version="2.12.0" />
+      <PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
+      <PackageReference Include="WolverineFx" Version="0.9.15" />
+      <PackageReference Include="WolverineFx.RabbitMQ" Version="0.9.15" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Handlers\PanelLinks\CreatePanelLink" />
+      <Folder Include="Handlers\Panels\CreateManyPanels" />
+      <Folder Include="Handlers\Panels\CreatePanel" />
+      <Folder Include="Handlers\Panels\DeleteManyPanels" />
+      <Folder Include="Handlers\Panels\DeletePanel" />
+      <Folder Include="Handlers\Panels\UpdateManyPanels" />
+      <Folder Include="Handlers\Panels\UpdatePanel" />
+      <Folder Include="Handlers\Projects\CreateProject" />
+      <Folder Include="Handlers\Projects\DeleteProject" />
+      <Folder Include="Handlers\Projects\GetProject" />
+      <Folder Include="Handlers\Projects\GetUserProjects" />
+      <Folder Include="Handlers\Projects\InviteToProject" />
+      <Folder Include="Handlers\Strings\CreateString" />
+      <Folder Include="Handlers\Strings\DeleteString" />
+    </ItemGroup>
+
+</Project>

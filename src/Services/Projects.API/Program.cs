@@ -5,11 +5,9 @@ using Infrastructure.Data;
 using Infrastructure.Logging;
 using Infrastructure.Web;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.AspNetCore.SignalR;
-using Projects.API.Data;
-using Projects.API.Data.Bogus;
-using Projects.API.Extensions;
-using Projects.API.HubFilters;
+using Projects.Application.Data;
+using Projects.Application.Data.Bogus;
+using Projects.Application.Extensions;
 
 var builder = WebApplication.CreateBuilder(
     new WebApplicationOptions { Args = args, ContentRootPath = Directory.GetCurrentDirectory() }
@@ -36,10 +34,17 @@ builder.Services.AddApplicationServices(config);
 // GlobalHost.DependencyResolver.Register(typeof(IUserIdProvider), () => new HubsUserIdProvider());
 builder.Services.ConfigureJwtAuthentication(config);
 builder.Services.AddAuthorization();
-builder.Services.InitDbContext<ProjectsContext>(config, builder.Environment);
 
-// builder.Services.ConfigureSignalRWithRedis(builder.Environment);
-builder.Services
+// builder.Services.InitDbContext<ProjectsContext>(config, builder.Environment);
+builder.Services.InitDbContext<ProjectsContext>(
+    config,
+    builder.Environment,
+    "Projects.Application"
+);
+
+builder.Services.ConfigureSignalRWithRedis(builder.Environment);
+
+/*builder.Services
     .AddSignalR(options =>
     {
         options.DisableImplicitFromServicesParameters = true;
@@ -50,7 +55,7 @@ builder.Services
     .AddStackExchangeRedis(
         "localhost",
         options => { options.Configuration.ChannelPrefix = "SolarEngineerApp"; }
-    );
+    );*/
 
 // BogusGenerators.InitBogusData();
 
@@ -80,7 +85,7 @@ var app = builder.Build();
 
 app.ConfigurePipeline();
 
-app.Use(
+/*app.Use(
     async (context, next) =>
     {
         // Connection: RemoteIp
@@ -91,8 +96,8 @@ app.Use(
 
         await next(context);
     }
-);
+);*/
 
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-BogusGenerators.InitBogusData();
+// BogusGenerators.InitBogusData();
 app.Run();

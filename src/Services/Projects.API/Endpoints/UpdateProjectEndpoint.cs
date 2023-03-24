@@ -1,8 +1,6 @@
 ﻿using FastEndpoints;
 using Mediator;
-using Projects.API.Contracts.Requests;
-using Projects.API.Contracts.Requests.Projects;
-using Projects.API.Handlers;
+using Projects.Domain.Contracts.Requests.Projects;
 
 namespace Projects.API.Endpoints;
 
@@ -22,7 +20,7 @@ public class UpdateProjectEndpoint : Endpoint<UpdateProjectRequest>
 
     public override async Task HandleAsync(UpdateProjectRequest request, CancellationToken cT)
     {
-        await _mediator.Send(new UpdateProjectCommand(User, request), cT);
+        // await _mediator.Send(new UpdateProjectCommand(User.ToAuthUser(), request), cT);
         await SendNoContentAsync(cT);
     }
 }

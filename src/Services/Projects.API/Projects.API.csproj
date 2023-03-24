@@ -9,6 +9,7 @@
 
     <ItemGroup>
         <PackageReference Include="Bogus" Version="34.0.2" />
+        <PackageReference Include="ErrorOr" Version="1.2.1" />
         <PackageReference Include="FastEndpoints" Version="5.7.2" />
         <PackageReference Include="FastEndpoints.Generator" Version="5.8.0">
           <PrivateAssets>all</PrivateAssets>
@@ -47,11 +48,11 @@
         <ProjectReference Include="..\..\BuildingBlocks\Domain\Domain.csproj" />
         <ProjectReference Include="..\..\BuildingBlocks\EventBus\EventBus.csproj" />
         <ProjectReference Include="..\..\BuildingBlocks\Infrastructure\Infrastructure.csproj" />
+        <ProjectReference Include="..\Projects\Projects.Application\Projects.Application.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Handlers\SignalR\Panels" />
-        <Folder Include="Handlers\SignalR\Strings" />
+      <_ContentIncludedByDefault Remove="Data\Json\longi555m.json" />
     </ItemGroup>
 
 <!--     <Target Name="Mapster">

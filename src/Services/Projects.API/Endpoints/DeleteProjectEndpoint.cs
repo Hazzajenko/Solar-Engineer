@@ -1,8 +1,6 @@
 ﻿using FastEndpoints;
 using Mediator;
-using Projects.API.Contracts.Requests;
-using Projects.API.Contracts.Requests.Projects;
-using Projects.API.Handlers;
+using Projects.Domain.Contracts.Requests.Projects;
 
 namespace Projects.API.Endpoints;
 
@@ -22,7 +20,7 @@ public class DeleteProjectEndpoint : Endpoint<DeleteProjectRequest>
 
     public override async Task HandleAsync(DeleteProjectRequest request, CancellationToken cT)
     {
-        await _mediator.Send(new DeleteProjectCommand(User, request), cT);
+        // await _mediator.Send(new DeleteProjectCommand(User, request), cT);
         await SendNoContentAsync(cT);
     }
 }

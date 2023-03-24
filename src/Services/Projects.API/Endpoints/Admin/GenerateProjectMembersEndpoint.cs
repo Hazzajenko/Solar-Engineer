@@ -2,11 +2,11 @@
 using Infrastructure.Extensions;
 using Mapster;
 using Mediator;
-using Projects.API.Contracts.Data;
-using Projects.API.Contracts.Requests.Admin;
-using Projects.API.Contracts.Responses.Admin;
-using Projects.API.Data.Bogus;
-using Projects.API.Repositories.AppUserProjects;
+using Projects.Application.Data.Bogus;
+using Projects.Application.Repositories.AppUserProjects;
+using Projects.Domain.Contracts.Data;
+using Projects.Domain.Contracts.Requests.Admin;
+using Projects.Domain.Contracts.Responses.Admin;
 
 namespace Projects.API.Endpoints.Admin;
 
