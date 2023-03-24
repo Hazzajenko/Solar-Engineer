@@ -10,7 +10,7 @@ using Projects.API.Mapping;
 namespace Projects.API.Repositories.AppUserProjects;
 
 public sealed class AppUserProjectsRepository
-    : GenericRepository<ProjectsContext, AppUserProject>,
+    : EntityToEntityRepository<ProjectsContext, AppUserProject>,
         IAppUserProjectsRepository
 {
     public AppUserProjectsRepository(ProjectsContext context)
@@ -85,7 +85,7 @@ public sealed class AppUserProjectsRepository
                         CreatedTime = x.Project.CreatedTime,
                         LastModifiedTime = x.Project.LastModifiedTime,
                         CreatedById = x.Project.CreatedById.ToString(),
-                        MemberIds = x.Project.AppUserProjects.Select(x => x.AppUserId.ToString())
+                        MemberIds = x.Project.AppUserProjects.Select(z => z.AppUserId.ToString())
                     }
             )
             // .Select(x => x.ToDto())

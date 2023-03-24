@@ -4,7 +4,7 @@ using Projects.API.Entities;
 
 namespace Projects.API.Repositories.AppUserProjects;
 
-public interface IAppUserProjectsRepository : IGenericRepository<AppUserProject>
+public interface IAppUserProjectsRepository : IEntityToEntityRepository<AppUserProject>
 {
     Task<IEnumerable<AppUserProject>> GetByAppUserIdAsync(Guid appUserId);
     Task<IEnumerable<ProjectDto>> GetProjectsByAppUserIdAsync(Guid appUserId);

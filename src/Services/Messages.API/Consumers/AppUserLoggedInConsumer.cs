@@ -11,7 +11,7 @@ using Messages.API.Entities;
 
 namespace Messages.API.Consumers;
 
-public class AppUserLoggedInConsumer : IConsumer<AppUserLoggedInEvent>
+public class AppUserLoggedInConsumer : IConsumer<AppUserLoggedInEventDeprecated>
 {
     private readonly ILogger<AppUserLoggedInConsumer> _logger;
     private readonly IMessagesUnitOfWork _unitOfWork;
@@ -22,7 +22,7 @@ public class AppUserLoggedInConsumer : IConsumer<AppUserLoggedInEvent>
         _unitOfWork = unitOfWork;
     }
 
-    public async Task Consume(ConsumeContext<AppUserLoggedInEvent> context)
+    public async Task Consume(ConsumeContext<AppUserLoggedInEventDeprecated> context)
     {
         _logger.LogInformation("Messages Service received AppUserLoggedInEvent User {User}", context.Message.User.Id);
         var user = context.Message.ToUser<User>();

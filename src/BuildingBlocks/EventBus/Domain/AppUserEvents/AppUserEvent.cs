@@ -1,12 +1,34 @@
-﻿using EventBus.Domain.AppUserEvents.Events;
-using Infrastructure.Common;
-using Infrastructure.Contracts.Data;
-using Infrastructure.Mapping;
+﻿using Infrastructure.Contracts.Data;
+
 // using Infrastructure.Entities.Identity;
 
 namespace EventBus.Domain.AppUserEvents;
 
-public abstract class AppUserEvent: EventBase, IAppUserEvent
+public class AppUserEvent : IEventBase, IAppUserEvent
 {
-    public UserDto User { get; set; } = default!;
+    /*public AppUserEvent(IUser appUser, string eventType)
+    {
+        User = appUser.ToDto();
+        EventType = eventType;
+        Queues = new List<string> { "messages", "projects" };
+        CreatedAt = DateTime.Now;
+    }*/
+
+    public AppUserEvent(UserDto appUser, AppUserEventType appUserEventType)
+    {
+        User = appUser;
+        EventType = "";
+        AppUserEventType = appUserEventType;
+        Queues = new List<string> { "messages", "projects" };
+        CreatedAt = DateTime.Now;
+    }
+
+    public AppUserEventType AppUserEventType { get; set; }
+
+    public UserDto User { get; set; }
+    public string EventType { get; }
+
+    // public string EventType { get; }
+    public DateTime CreatedAt { get; }
+    public List<string> Queues { get; set; }
 }

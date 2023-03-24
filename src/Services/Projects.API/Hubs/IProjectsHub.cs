@@ -12,6 +12,8 @@ public interface IProjectsHub
     Task GetProject(ProjectDataDto projectData);
     Task ProjectCreated(ProjectDto project);
     Task UpdateProject(ProjectDto project);
+    Task ProjectUpdated(ProjectDto project);
+    Task NewProjectMembers(InviteToProjectResponse response);
     Task ProjectDeleted(DeleteProjectResponse response);
     Task InvitedToProject(ProjectDto project);
 

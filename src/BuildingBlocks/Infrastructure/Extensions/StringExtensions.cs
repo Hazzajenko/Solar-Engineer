@@ -35,6 +35,11 @@ public static class StringExtensions
         return Guid.Parse(id);
     }
 
+    public static bool TryToGuid(this string id)
+    {
+        return Guid.TryParse(id, out _);
+    }
+
     public static Guid TryToGuidOrThrow<TException>(this string id, TException exception)
         where TException : Exception
     {
@@ -63,9 +68,13 @@ public static class StringExtensions
     public static string ToCamelCase(this string s)
     {
         var x = s.Replace("_", "");
-        if (x.Length == 0) return "null";
-        x = Regex.Replace(x, "([A-Z])([A-Z]+)($|[A-Z])",
-            m => m.Groups[1].Value + m.Groups[2].Value.ToLower() + m.Groups[3].Value);
+        if (x.Length == 0)
+            return "null";
+        x = Regex.Replace(
+            x,
+            "([A-Z])([A-Z]+)($|[A-Z])",
+            m => m.Groups[1].Value + m.Groups[2].Value.ToLower() + m.Groups[3].Value
+        );
         return char.ToLower(x[0]) + x.Substring(1);
     }
 

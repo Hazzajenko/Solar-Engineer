@@ -1,5 +1,6 @@
 ﻿using Identity.Domain.Users;
 using Infrastructure.Common;
+using Infrastructure.Common.User;
 using Microsoft.AspNetCore.Identity;
 
 namespace Identity.Domain.Auth;
@@ -16,6 +17,7 @@ public class AppUser : IdentityUser<Guid>, IUser, IEntity
 
     public ICollection<UserLink> AppUserLinksRequested { get; set; } = default!;
     public ICollection<UserLink> AppUserLinksReceived { get; set; } = default!;
+    public DateTime LastActiveTime { get; set; } = DateTime.Now;
 
     public string FirstName { get; init; } = default!;
     public string LastName { get; init; } = default!;
@@ -23,7 +25,6 @@ public class AppUser : IdentityUser<Guid>, IUser, IEntity
     public string PhotoUrl { get; set; } = default!;
     public DateTime CreatedTime { get; set; } = DateTime.Now;
     public DateTime LastModifiedTime { get; set; }
-    public DateTime LastActiveTime { get; set; } = DateTime.Now;
 
     /*
     [NotMapped]

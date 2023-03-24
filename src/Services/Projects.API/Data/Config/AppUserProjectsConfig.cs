@@ -10,7 +10,15 @@ public class AppUserProjectsConfig : IEntityTypeConfiguration<AppUserProject>
     {
         builder.HasKey(x => new { x.AppUserId, x.ProjectId });
 
-        builder.Property(x => x.Id).HasDefaultValueSql("uuid_generate_v4()");
+        // builder.Property(x => x.Id).HasDefaultValueSql("uuid_generate_v4()");
+        builder.Property(x => x.CreatedTime).HasDefaultValueSql("now()");
+        builder.Property(x => x.LastModifiedTime).HasDefaultValueSql("now()");
+        builder.Property(x => x.Role).IsRequired();
+        builder.Property(x => x.CanCreate).IsRequired();
+        builder.Property(x => x.CanDelete).IsRequired();
+        builder.Property(x => x.CanInvite).IsRequired();
+        builder.Property(x => x.CanKick).IsRequired();
+
 
         /*builder
             .HasOne(u => u.Project)

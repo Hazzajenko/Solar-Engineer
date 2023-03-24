@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using Infrastructure.Authentication;
 using Microsoft.AspNetCore.SignalR;
 using Serilog;
 
@@ -45,5 +46,11 @@ public static class ClaimsPrincipleExtensions
         var message = "User is not authenticated";
         Log.Logger.Error("{Message}", message);
         throw new HubException(message);
+    }
+
+    public static AuthUser ToAuthUser(this ClaimsPrincipal context)
+    {
+        var userId = context.GetGuidUserId();
+        return AuthUser.Create(userId);
     }
 }

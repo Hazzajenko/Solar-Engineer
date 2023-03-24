@@ -1,21 +1,12 @@
-﻿using EventBus.Domain.AppUserEvents;
-using Identity.Application.Services.Pinger;
-using Identity.Contracts.Data;
-using Identity.SignalR.Entities;
-using Marten;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Oakton.Resources;
-using Weasel.Core;
+﻿using Humanizer;
 using Wolverine;
 using Wolverine.RabbitMQ;
 
-namespace Identity.Application.Extensions.ServiceCollection;
+namespace Projects.API.Extensions;
 
 public static class WolverineExtensions
 {
-    public static IServiceCollection InitMarten(
+    /*public static IServiceCollection InitMarten(
         this IServiceCollection services,
         IConfiguration config
     )
@@ -44,9 +35,9 @@ public static class WolverineExtensions
         // with Wolverine's outbox
         // .IntegrateWithWolverine();
         return services;
-    }
+    }*/
 
-    public static IHostBuilder InitWolverine(this IHostBuilder builder)
+    public static IHostBuilder InitWolverine(this IHostBuilder builder, string[] args = null)
     {
         // TODO - This is temporary, change
 
@@ -56,17 +47,41 @@ public static class WolverineExtensions
             // 15 seconds
             // opts.ListenToRabbitQueue("pings", queue => queue.TimeToLive(15.Seconds()));
 
-            opts.ListenToRabbitQueue("pongs")
+            /*opts.ListenToRabbitQueue("pongs")
                 // This won't be necessary by the time Wolverine goes 2.0
                 // but for now, I've got to help Wolverine out a little bit
-                .UseForReplies();
+                .UseForReplies();*/
 
-            opts.PublishMessage<PingMessage>().ToRabbitExchange("pings");
-            opts.PublishMessage<AppUserEvent>().ToRabbitExchange("appusers");
+            opts.ListenToRabbitQueue("pings", queue => queue.TimeToLive(15.Seconds()));
+            opts.ListenToRabbitQueue("appusers", queue => queue.TimeToLive(15.Seconds()));
+
+            // opts.PublishMessage<PingMessage>().ToRabbitExchange("pings");
+
+            opts.UseRabbitMq() // This is short hand to connect locally
+                .DeclareExchange(
+                    "appusers",
+                    exchange =>
+                    {
+                        // Also declares the queue too
+                        exchange.BindQueue("appusers");
+                    }
+                )
+                .DeclareExchange(
+                    "pings",
+                    exchange =>
+                    {
+                        // Also declares the queue too
+                        exchange.BindQueue("pings");
+                    }
+                )
+                .AutoProvision()
+                // Option to blow away existing messages in
+                // all queues on application startup
+                .AutoPurgeOnStartup();
 
             // Configure Rabbit MQ connections and optionally declare Rabbit MQ
             // objects through an extension method on WolverineOptions.Endpoints
-            opts.UseRabbitMq(rabbit =>
+            /*opts.UseRabbitMq(rabbit =>
                 {
                     // Using a local installation of Rabbit MQ
                     // via a running Docker image
@@ -80,13 +95,13 @@ public static class WolverineExtensions
                         // Also declares the queue too
                         exchange.BindQueue("pings");
                     }
-                )*/
+                )#1#
                 .AutoProvision()
                 // Option to blow away existing messages in
                 // all queues on application startup
-                .AutoPurgeOnStartup();
+                .AutoPurgeOnStartup();*/
 
-            opts.Services.AddResourceSetupOnStartup();
+            // opts.Services.AddResourceSetupOnStartup();
 
             // opts.Services.AddHostedService<PingerService>();
         });

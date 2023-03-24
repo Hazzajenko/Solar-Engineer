@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.Common;
+﻿namespace Infrastructure.Common.User;
 
 public interface IUser
 {
@@ -8,6 +8,7 @@ public interface IUser
     string DisplayName { get; init; }
     string PhotoUrl { get; set; }
     DateTime CreatedTime { get; set; }
+
     DateTime LastModifiedTime { get; set; }
-    DateTime LastActiveTime { get; set; }
+    // DateTime LastActiveTime { get; set; }
 }

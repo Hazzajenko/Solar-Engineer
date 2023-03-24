@@ -2,9 +2,9 @@
 
 namespace EventBus.Domain.AppUserEvents.Events;
 
-public class AppUserModifiedEvent : AppUserEvent
+public class AppUserModifiedEventDeprecated : AppUserEventDeprecated
 {
-    public AppUserModifiedEvent(UserDto user)
+    public AppUserModifiedEventDeprecated(UserDto user)
     {
         User = user;
     }

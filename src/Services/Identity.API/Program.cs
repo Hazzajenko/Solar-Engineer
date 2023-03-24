@@ -20,6 +20,7 @@ var config = builder.Configuration;
 config.AddEnvironmentVariables("solarengineer_");
 
 // builder.UseWolverine();
+builder.Services.InitMarten(config);
 builder.Host.InitWolverine();
 
 // var appName = builder.RegisterSerilog();
@@ -52,6 +53,8 @@ builder.Services.InitDbContext<IdentityContext>(
 // builder.Services.InitDbContext<AuthContext>(config, builder.Environment);
 
 builder.Services.InitCors("corsPolicy");
+
+// builder.Services.AddFastEndpoints();
 
 builder.Services.AddFastEndpoints(options => { options.SourceGeneratorDiscoveredTypes = DiscoveredTypes.All; });
 builder.Services.Configure<ForwardedHeadersOptions>(options =>

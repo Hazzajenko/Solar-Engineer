@@ -17,13 +17,14 @@ var builder = WebApplication.CreateBuilder(
 
 // var webHost = WebHost.CreateDefaultBuilder(args)
 /*.UseStartup<Startup>()*/
-;
+// ;
 
 // builder.RegisterSerilog();
 builder.ConfigureSerilog();
 
 var config = builder.Configuration;
 config.AddEnvironmentVariables("solarengineer_");
+builder.Host.InitWolverine();
 
 /*builder.Services.AddMediator(options => { options.ServiceLifetime = ServiceLifetime.Transient; });*/
 builder.Services.AddApplicationServices(config);
@@ -65,8 +66,8 @@ builder.Services
 
 builder.Services.InitCors("corsPolicy");
 
-builder.Services.AddFastEndpoints( /*options => { options.SourceGeneratorDiscoveredTypes = DiscoveredTypes.All; }*/
-);
+// builder.Services.AddFastEndpoints(options => { options.SourceGeneratorDiscoveredTypes = DiscoveredTypes.All; });
+builder.Services.AddFastEndpoints(options => { options.SourceGeneratorDiscoveredTypes = DiscoveredTypes.All; });
 
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {

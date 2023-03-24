@@ -9,6 +9,7 @@
     <ItemGroup>
       <PackageReference Include="Azure.Storage.Blobs" Version="12.15.0" />
       <PackageReference Include="Bogus" Version="34.0.2" />
+      <PackageReference Include="Marten" Version="6.0.0-alpha.10" />
       <PackageReference Include="Mediator.Abstractions" Version="2.1.1" />
       <PackageReference Include="Mediator.SourceGenerator" Version="2.1.1">
         <PrivateAssets>all</PrivateAssets>
@@ -24,6 +25,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\BuildingBlocks\EventBus\EventBus.csproj" />
       <ProjectReference Include="..\..\BuildingBlocks\Infrastructure\Infrastructure.csproj" />
       <ProjectReference Include="..\Identity.Contracts\Identity.Contracts.csproj" />
       <ProjectReference Include="..\Identity.Domain\Identity.Domain.csproj" />

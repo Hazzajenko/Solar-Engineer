@@ -1,4 +1,4 @@
-﻿using Infrastructure.Common;
+﻿using Infrastructure.Common.User;
 using Infrastructure.Contracts.Data;
 
 // using Infrastructure.Entities.Identity;
@@ -9,7 +9,8 @@ namespace Infrastructure.Mapping;
 
 public static class UserMapper
 {
-    public static T ToEntity<T>(this UserDto request) where T : IUser, new()
+    public static T ToEntity<T>(this UserDto request)
+        where T : IUser, new()
     {
         return new T
         {
@@ -18,12 +19,13 @@ public static class UserMapper
             LastName = request.LastName,
             DisplayName = request.DisplayName,
             CreatedTime = request.CreatedTime,
-            LastActiveTime = request.LastActiveTime,
+            // LastActiveTime = request.LastActiveTime,
             PhotoUrl = request.PhotoUrl
         };
     }
 
-    public static UserDto ToDto<T>(this T request) where T : IUser
+    public static UserDto ToDto<T>(this T request)
+        where T : IUser
     {
         return new UserDto
         {
@@ -33,7 +35,8 @@ public static class UserMapper
             DisplayName = request.DisplayName,
             PhotoUrl = request.PhotoUrl,
             CreatedTime = request.CreatedTime,
-            LastActiveTime = request.LastActiveTime
+            LastModifiedTime = request.LastModifiedTime
+            // LastActiveTime = request.LastActiveTime
         };
     }
 }

@@ -1,6 +1,5 @@
 ﻿using EventBus.Domain.AppUserEvents;
-using Infrastructure.Common;
-using Users.API.Entities;
+using Infrastructure.Common.User;
 
 namespace Users.API.Mapping;
 
@@ -16,12 +15,13 @@ public static class UserMapper
             FirstName = request.User.FirstName,
             LastName = request.User.LastName,
             DisplayName = request.User.DisplayName,
-            PhotoUrl = request.User.PhotoUrl,
-            LastActiveTime = request.User.LastActiveTime
+            PhotoUrl = request.User.PhotoUrl
+            // LastActiveTime = request.User.LastActiveTime
         };
     }
 
-    public static T ToCustomUser<T>(this IAppUserEvent request) where T : IUser, new()
+    public static T ToCustomUser<T>(this IAppUserEvent request)
+        where T : IUser, new()
     {
         return new T
         {
@@ -31,8 +31,8 @@ public static class UserMapper
             FirstName = request.User.FirstName,
             LastName = request.User.LastName,
             DisplayName = request.User.DisplayName,
-            PhotoUrl = request.User.PhotoUrl,
-            LastActiveTime = request.User.LastActiveTime
+            PhotoUrl = request.User.PhotoUrl
+            // LastActiveTime = request.User.LastActiveTime
         };
     }
 }

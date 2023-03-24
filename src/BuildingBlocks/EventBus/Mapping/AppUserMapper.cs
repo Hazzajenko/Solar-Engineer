@@ -1,5 +1,5 @@
 ﻿using EventBus.Domain.AppUserEvents;
-using Infrastructure.Common;
+using Infrastructure.Common.User;
 
 // using Infrastructure.Entities.Identity;
 

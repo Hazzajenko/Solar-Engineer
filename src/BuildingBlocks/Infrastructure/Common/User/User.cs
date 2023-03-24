@@ -1,8 +1,6 @@
-﻿using Infrastructure.Common.User;
+﻿namespace Infrastructure.Common.User;
 
-namespace Infrastructure.Contracts.Data;
-
-public class UserDto : IUser
+public class User : IUser
 {
     public Guid Id { get; set; }
     public string FirstName { get; init; } = default!;

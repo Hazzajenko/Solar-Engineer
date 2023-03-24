@@ -1,4 +1,6 @@
-﻿using Identity.Domain.Auth;
+﻿using Identity.Contracts.Data;
+using Identity.Domain.Auth;
+using Marten;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -60,6 +62,38 @@ public static partial class WebApplicationExtensions
             //     new List<string> { "google" }
             // )
         );
+
+        app.MapGet(
+            "/load/{guid}",
+            (string guid, IDocumentSession session) =>
+            {
+                var user = session.Load<CurrentUserDto>(guid);
+                // var user = await session.Query<AppUser>().FirstOrDefaultAsync();
+                return Results.Ok(user);
+            }
+        );
+
+        app.MapGet("/list", (IQuerySession session) => session.Query<CurrentUserDto>().ToList());
+
+        app.MapGet(
+            "/create",
+            async (IDocumentSession session) =>
+            {
+                var user = new CurrentUserDto
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    DisplayName = "Solar Engineer",
+                    UserName = "solarengineer",
+                    FirstName = "Solar",
+                    LastName = "Engineer",
+                    PhotoUrl = "https://avatars.githubusercontent.com/u/132562?v=4"
+                };
+                session.Store(user);
+                await session.SaveChangesAsync();
+                return Results.Ok(user);
+            }
+        );
+
         return app;
     }
 }

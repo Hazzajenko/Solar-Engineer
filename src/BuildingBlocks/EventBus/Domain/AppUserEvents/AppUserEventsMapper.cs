@@ -1,10 +1,11 @@
-﻿using Infrastructure.Common;
+﻿using Infrastructure.Common.User;
 
 namespace EventBus.Domain.AppUserEvents;
 
 public static class AppUserEventsMapper
 {
-    public static T ToUser<T>(this IAppUserEvent request) where T : IUser, new()
+    public static T ToUser<T>(this IAppUserEvent request)
+        where T : IUser, new()
     {
         return new T
         {
@@ -14,8 +15,8 @@ public static class AppUserEventsMapper
             FirstName = request.User.FirstName,
             LastName = request.User.LastName,
             DisplayName = request.User.DisplayName,
-            PhotoUrl = request.User.PhotoUrl,
-            LastActiveTime = request.User.LastActiveTime
+            PhotoUrl = request.User.PhotoUrl
+            // LastActiveTime = request.User.LastActiveTime
         };
     }
 }

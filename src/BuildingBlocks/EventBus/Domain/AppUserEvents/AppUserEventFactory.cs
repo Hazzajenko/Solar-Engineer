@@ -1,7 +1,8 @@
 ﻿using EventBus.Domain.AppUserEvents.Events;
-using Infrastructure.Common;
+using Infrastructure.Common.User;
 using Infrastructure.Contracts.Data;
 using Infrastructure.Mapping;
+
 // using Infrastructure.Entities.Identity;
 
 namespace EventBus.Domain.AppUserEvents;
@@ -11,27 +12,29 @@ public class AppUserEventFactory : EventBase
     public AppUserEventFactory(IUser appUser)
     {
         UserDto = appUser.ToDto();
-        Queues = new List<string>
-        {
-            "users", "messages"
-        };
+        Queues = new List<string> { "messages", "projects" };
+    }
+
+    public AppUserEventFactory(UserDto appUser)
+    {
+        UserDto = appUser;
+        Queues = new List<string> { "messages", "projects" };
     }
 
     private UserDto UserDto { get; }
-    
 
-    public AppUserCreatedEvent Created()
+    public AppUserCreatedEventDeprecated Created()
     {
-        return new AppUserCreatedEvent(UserDto);
+        return new AppUserCreatedEventDeprecated(UserDto);
     }
 
-    public AppUserLoggedInEvent LoggedIn()
+    public AppUserLoggedInEventDeprecated LoggedIn()
     {
-        return new AppUserLoggedInEvent(UserDto);
+        return new AppUserLoggedInEventDeprecated(UserDto);
     }
 
-    public AppUserModifiedEvent Modified()
+    public AppUserModifiedEventDeprecated Modified()
     {
-        return new AppUserModifiedEvent(UserDto);
+        return new AppUserModifiedEventDeprecated(UserDto);
     }
 }
