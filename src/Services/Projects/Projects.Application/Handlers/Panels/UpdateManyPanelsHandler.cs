@@ -3,7 +3,7 @@ using Infrastructure.Extensions;
 using Infrastructure.Logging;
 using Mediator;
 using Microsoft.AspNetCore.SignalR;
-using Projects.Application.Data;
+using Projects.Application.Data.UnitOfWork;
 using Projects.Domain.Commands.Panels;
 using Projects.SignalR.Hubs;
 

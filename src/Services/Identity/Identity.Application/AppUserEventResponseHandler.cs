@@ -1,6 +1,5 @@
 using EventBus.Domain.AppUserEvents;
 using Infrastructure.Logging;
-using Spectre.Console;
 
 namespace Identity.Application;
 
@@ -14,7 +13,7 @@ public static class AppUserEventResponseHandler
     // method. Handler methods can be static or instance methods
     public static void Handle(AppUserEventResponse message)
     {
-        AnsiConsole.Write($"[blue]Got pong #{message.Message}[/]");
+        // AnsiConsole.Write($"[blue]Got pong #{message.Message}[/]");
         message.DumpObjectJson();
     }
 }

@@ -6,7 +6,7 @@ using Infrastructure.Logging;
 using Infrastructure.Mapping;
 using Mediator;
 using Microsoft.AspNetCore.SignalR;
-using Projects.Application.Data;
+using Projects.Application.Data.UnitOfWork;
 using Projects.Application.Mapping;
 using Projects.Domain.Commands.Projects;
 using Projects.Domain.Contracts.Responses.Projects;

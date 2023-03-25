@@ -2,7 +2,7 @@
 using Infrastructure.Extensions;
 using Mediator;
 using Microsoft.AspNetCore.SignalR;
-using Projects.Application.Data;
+using Projects.Application.Data.UnitOfWork;
 using Projects.Domain.Contracts.Data;
 using Projects.Domain.Queries.Projects;
 using Projects.SignalR.Hubs;

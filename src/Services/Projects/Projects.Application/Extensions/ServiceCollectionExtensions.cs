@@ -5,7 +5,7 @@ using MapsterMapper;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Projects.Application.Data;
+using Projects.Application.Data.UnitOfWork;
 using Projects.Application.Repositories.AppUserProjects;
 using Projects.Application.Repositories.Projects;
 using Projects.Application.Services.Strings;

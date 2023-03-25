@@ -10,6 +10,7 @@
       <PackageReference Include="Azure.Storage.Blobs" Version="12.15.0" />
       <PackageReference Include="Bogus" Version="34.0.2" />
       <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.5.1" />
+      <PackageReference Include="Mapster" Version="7.3.0" />
       <PackageReference Include="Marten" Version="6.0.0-alpha.10" />
       <PackageReference Include="Mediator.Abstractions" Version="2.1.1" />
       <PackageReference Include="Mediator.SourceGenerator" Version="2.1.1">
@@ -21,8 +22,9 @@
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
-      <PackageReference Include="WolverineFx" Version="0.9.14" />
-      <PackageReference Include="WolverineFx.RabbitMQ" Version="0.9.14" />
+      <PackageReference Include="WolverineFx" Version="0.9.15" />
+      <PackageReference Include="WolverineFx.Marten" Version="0.9.15" />
+      <PackageReference Include="WolverineFx.RabbitMQ" Version="0.9.15" />
     </ItemGroup>
 
     <ItemGroup>

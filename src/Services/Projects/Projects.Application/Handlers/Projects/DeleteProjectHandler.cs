@@ -3,7 +3,7 @@ using Infrastructure.Extensions;
 using Infrastructure.Mapping;
 using Mediator;
 using Microsoft.AspNetCore.SignalR;
-using Projects.Application.Data;
+using Projects.Application.Data.UnitOfWork;
 using Projects.Domain.Commands.Projects;
 using Projects.Domain.Contracts.Responses.Projects;
 using Projects.Domain.Entities;

@@ -3,7 +3,7 @@ using Infrastructure.Extensions;
 using MapsterMapper;
 using Mediator;
 using Microsoft.AspNetCore.SignalR;
-using Projects.Application.Data;
+using Projects.Application.Data.UnitOfWork;
 using Projects.Application.Mapping;
 using Projects.Domain.Commands.Panels;
 using Projects.Domain.Contracts.Data;

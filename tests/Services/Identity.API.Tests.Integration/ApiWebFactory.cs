@@ -1,7 +1,9 @@
 ﻿using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Containers;
 using Identity.Application.Data;
+using Identity.Application.Services.Jwt;
 using Infrastructure.Data;
+using Infrastructure.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -68,8 +70,11 @@ public class ApiWebFactory : WebApplicationFactory<IIdentityApiAssemblyMarker>, 
             services.InitDbContext<IdentityContext>(
                 inputConnectionString: "Server=localhost;Port=5555;Database=mydb;User ID=course;Password=changeme;"
             );
+            services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
+            services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+
             // services.AddScoped<IIdentityUnitOfWork, IdentityUnitOfWork>();
-            services.AddScoped<IdentityContext>();
+            // services.AddScoped<IdentityContext>();
             /*services
                 .AddIdentity<AppUser, AppRole>()
                 .AddRoleManager<RoleManager<AppRole>>()

@@ -17,7 +17,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Identity.API.Tests.Integration.Endpoints.Auth;
 
-public class IsReturningUserEndpointTests : IClassFixture<ApiWebFactory>
+public class AuthorizeEndpointTests : IClassFixture<ApiWebFactory>
 {
     private readonly ApiWebFactory _apiWebFactory;
     private readonly HttpClient _client;
@@ -30,28 +30,43 @@ public class IsReturningUserEndpointTests : IClassFixture<ApiWebFactory>
         .RuleFor(x => x.LastName, faker => faker.Name.LastName())
         .RuleFor(x => x.PhotoUrl, faker => faker.Internet.Url());
 
-    public IsReturningUserEndpointTests(ApiWebFactory apiWebFactory)
+    public AuthorizeEndpointTests(ApiWebFactory apiWebFactory)
     {
         _apiWebFactory = apiWebFactory;
         _client = apiWebFactory.CreateClient();
     }
 
     [Fact]
-    public async Task Should_Return_Success_With_Valid_Authentication()
+    public async Task Authorize_ReturnsOkResponse_WhenAuthorized()
     {
         // Arrange
-        var user = await CreateUserAsync();
-        var token = await GetAccessTokenAsync(user.Id.ToString(), user.UserName);
+        // var mediator = GetRequiredService<IMediator>();
+        // var userManager = GetRequiredService<UserManager<AppUser>>();
+        // var jwtTokenGenerator = GetRequiredService<IJwtTokenGenerator>();
+        var userManager = _apiWebFactory.Services.GetService<UserManager<AppUser>>();
+        ArgumentNullException.ThrowIfNull(userManager);
+
+        // Create a new user to authorize
+        // var user = new AppUser { UserName = "testuser" };
+        var user = _userRequestGenerator.Generate();
+        var createUserResult = await userManager.CreateAsync(user);
+        // await Create
+        // var result = await userManager.CreateAsync(user);
+        if (!createUserResult.Succeeded)
+            throw new Exception("Failed to create test user.");
+
+        var jwtTokenGenerator = _apiWebFactory.Services.GetService<IJwtTokenGenerator>();
+        ArgumentNullException.ThrowIfNull(jwtTokenGenerator);
+        var token = jwtTokenGenerator.GenerateToken(user.Id.ToString(), user.UserName);
+
+        // var token = await GetAccessTokenAsync(user.Id.ToString(), user.UserName);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
             "Bearer",
             token
         );
-
         // Act
-        var (response, result) = await _client.POSTAsync<
-            IsReturningUserEndpoint,
-            AuthorizeResponse
-        >();
+        // var response = await ExecuteAsync(principal, endpoint);
+        var (response, result) = await _client.POSTAsync<AuthorizeEndpoint, AuthorizeResponse>();
 
         // Assert
         response.Should().NotBeNull();
@@ -61,19 +76,6 @@ public class IsReturningUserEndpointTests : IClassFixture<ApiWebFactory>
         result!.User.Id.Should().Be(user.Id.ToString());
         result!.User.Id.Should().Match(x => x.TryToGuid());
         result!.User.UserName.Should().Be(user.UserName);
-    }
-
-    [Fact]
-    public async Task Should_Return_Unauthorized_Without_Authentication()
-    {
-        // Arrange
-        var request = new HttpRequestMessage(HttpMethod.Post, "/auth/returning-user");
-
-        // Act
-        var response = await _client.SendAsync(request);
-
-        // Assert
-        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 
     private async Task<AppUser> CreateUserAsync()

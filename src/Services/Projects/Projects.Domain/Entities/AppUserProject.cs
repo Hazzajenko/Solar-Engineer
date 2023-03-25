@@ -7,7 +7,7 @@ public class AppUserProject : IEntityToEntity, IProjectItem
 {
     private AppUserProject(
         Guid projectId,
-        Guid appUserId,
+        Guid projectUserId,
         string role,
         bool canCreate,
         bool canDelete,
@@ -16,7 +16,7 @@ public class AppUserProject : IEntityToEntity, IProjectItem
     )
     {
         ProjectId = projectId;
-        AppUserId = appUserId;
+        ProjectUserId = projectUserId;
         Role = role;
         CanCreate = canCreate;
         CanDelete = canDelete;
@@ -28,15 +28,15 @@ public class AppUserProject : IEntityToEntity, IProjectItem
     {
     }
 
-    public Guid AppUserId { get; set; }
+    // public Guid AppUserId { get; set; }
     public string Role { get; set; } = "Member";
     public bool CanCreate { get; set; }
     public bool CanDelete { get; set; }
     public bool CanInvite { get; set; }
 
     public bool CanKick { get; set; }
-
-    // public Guid Id { get; set; }
+    public Guid ProjectUserId { get; set; }
+    public ProjectUser ProjectUser { get; set; } = default!;
     public DateTime CreatedTime { get; set; } = DateTime.UtcNow;
     public DateTime LastModifiedTime { get; set; } = DateTime.UtcNow;
     public Guid ProjectId { get; set; }
@@ -44,7 +44,7 @@ public class AppUserProject : IEntityToEntity, IProjectItem
 
     public static AppUserProject Create(
         Guid projectId,
-        Guid appUserId,
+        Guid projectUserId,
         string role,
         bool canCreate = false,
         bool canDelete = false,
@@ -54,7 +54,7 @@ public class AppUserProject : IEntityToEntity, IProjectItem
     {
         return new AppUserProject(
             projectId,
-            appUserId,
+            projectUserId,
             role,
             canCreate,
             canDelete,

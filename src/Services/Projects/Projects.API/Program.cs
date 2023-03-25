@@ -21,6 +21,7 @@ builder.ConfigureSerilog();
 
 var config = builder.Configuration;
 config.AddEnvironmentVariables("solarengineer_");
+builder.Services.InitMarten(config);
 builder.Host.InitWolverine();
 
 /*builder.Services.AddMediator(options => { options.ServiceLifetime = ServiceLifetime.Transient; });*/

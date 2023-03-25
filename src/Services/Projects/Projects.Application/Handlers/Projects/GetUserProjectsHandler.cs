@@ -1,6 +1,6 @@
 ﻿using Mediator;
 using Microsoft.AspNetCore.SignalR;
-using Projects.Application.Data;
+using Projects.Application.Data.UnitOfWork;
 using Projects.Domain.Queries.Projects;
 using Projects.SignalR.Hubs;
 

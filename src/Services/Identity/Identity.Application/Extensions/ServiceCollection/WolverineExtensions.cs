@@ -1,7 +1,5 @@
-﻿using EventBus.Domain.AppUserEvents;
-using Identity.Application.Services.Pinger;
-using Identity.Contracts.Data;
-using Identity.SignalR.Entities;
+﻿using EventBus.Common;
+using EventBus.Domain.AppUserEvents;
 using Marten;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,6 +7,7 @@ using Microsoft.Extensions.Hosting;
 using Oakton.Resources;
 using Weasel.Core;
 using Wolverine;
+using Wolverine.Marten;
 using Wolverine.RabbitMQ;
 
 namespace Identity.Application.Extensions.ServiceCollection;
@@ -32,19 +31,24 @@ public static class WolverineExtensions
 
                 opts.AutoCreateSchemaObjects = AutoCreate.None;
 
-                opts.Schema.For<CurrentUserDto>();
-                opts.Schema.For<WebConnection>().Index(x => x.UserId);
+                // opts.Schema.For<CurrentUserDto>();
+                opts.Schema.For<AppUserEvent>();
+
+                // opts.Schema.For<WebConnection>().Index(x => x.UserId);
 
                 // opts.DatabaseSchemaName = "orders";
             })
             .ApplyAllDatabaseChangesOnStartup()
             .AssertDatabaseMatchesConfigurationOnStartup()
-            .UseLightweightSessions();
+            .UseLightweightSessions()
+            .IntegrateWithWolverine();
         // Optionally add Marten/Postgresql integration
         // with Wolverine's outbox
         // .IntegrateWithWolverine();
         return services;
     }
+
+    /*public const string AppUserEventsQueue = "appuser-events";*/
 
     public static IHostBuilder InitWolverine(this IHostBuilder builder)
     {
@@ -56,13 +60,18 @@ public static class WolverineExtensions
             // 15 seconds
             // opts.ListenToRabbitQueue("pings", queue => queue.TimeToLive(15.Seconds()));
 
-            opts.ListenToRabbitQueue("pongs")
+            /*opts.ListenToRabbitQueue("pongs")
                 // This won't be necessary by the time Wolverine goes 2.0
                 // but for now, I've got to help Wolverine out a little bit
+                .UseForReplies();*/
+
+            opts.ListenToRabbitQueue(MessageQueues.AppUsers.EventResponsesQueue)
                 .UseForReplies();
 
-            opts.PublishMessage<PingMessage>().ToRabbitExchange("pings");
-            opts.PublishMessage<AppUserEvent>().ToRabbitExchange("appusers");
+            // opts.PublishMessage<PingMessage>().ToRabbitExchange("pings");
+            opts.PublishMessage<AppUserEvent>()
+                .ToRabbitExchange(MessageQueues.AppUsers.EventsExchange);
+            // opts.PublishMessage<AppUserEvent>().ToRabbitExchange("appusers");
 
             // Configure Rabbit MQ connections and optionally declare Rabbit MQ
             // objects through an extension method on WolverineOptions.Endpoints
@@ -70,7 +79,8 @@ public static class WolverineExtensions
                 {
                     // Using a local installation of Rabbit MQ
                     // via a running Docker image
-                    rabbit.HostName = "localhost";
+                    rabbit.HostName = MessageQueues.LocalHost;
+                    // rabbit.HostName = "localhost";
                 })
                 // Direc // This is short hand to connect locally
                 /*.DeclareExchange(
@@ -81,11 +91,20 @@ public static class WolverineExtensions
                         exchange.BindQueue("pings");
                     }
                 )*/
+                .DeclareExchange(
+                    MessageQueues.AppUsers.EventResponsesExchange,
+                    exchange =>
+                    {
+                        // Also declares the queue too
+                        exchange.BindQueue(MessageQueues.AppUsers.EventResponsesQueue);
+                    }
+                )
                 .AutoProvision()
                 // Option to blow away existing messages in
                 // all queues on application startup
                 .AutoPurgeOnStartup();
 
+            opts.Policies.AutoApplyTransactions();
             opts.Services.AddResourceSetupOnStartup();
 
             // opts.Services.AddHostedService<PingerService>();

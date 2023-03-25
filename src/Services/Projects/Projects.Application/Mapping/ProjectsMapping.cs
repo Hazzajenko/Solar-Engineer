@@ -6,17 +6,17 @@ namespace Projects.Application.Mapping;
 
 public static class ProjectsMapping
 {
-    public static Project ToDomain(this CreateProjectRequest request, Guid appUserId)
+    public static Project ToDomain(this CreateProjectRequest request, Guid projectUserId)
     {
         return new Project
         {
             Name = request.Name,
-            CreatedById = appUserId,
+            CreatedById = projectUserId,
             AppUserProjects = new List<AppUserProject>
             {
                 new()
                 {
-                    AppUserId = appUserId,
+                    ProjectUserId = projectUserId,
                     Role = "Admin",
                     CanCreate = true,
                     CanDelete = true,
@@ -47,7 +47,7 @@ public static class ProjectsMapping
             CreatedById = request.CreatedById.ToString(),
             CreatedTime = request.CreatedTime,
             LastModifiedTime = request.LastModifiedTime,
-            MemberIds = request.AppUserProjects.Select(x => x.AppUserId.ToString())
+            MemberIds = request.AppUserProjects.Select(x => x.ProjectUserId.ToString())
         };
     }
 }
