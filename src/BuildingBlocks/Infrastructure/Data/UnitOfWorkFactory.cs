@@ -38,7 +38,7 @@ public abstract class UnitOfWorkFactory<TContext> : IUnitOfWorkFactory
 
     private void UpdateLastModifiedTimeBeforeSave()
     {
-        foreach (var entry in Context.ChangeTracker.Entries<IEntity>().ToList())
+        foreach (var entry in Context.ChangeTracker.Entries<IEntityBase>().ToList())
             switch (entry.State)
             {
                 case EntityState.Modified:

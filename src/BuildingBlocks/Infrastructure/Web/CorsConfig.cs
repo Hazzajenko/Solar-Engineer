@@ -29,7 +29,8 @@ public static class CorsConfig
                             // "https://localhost:4200/identity/login",
                             // "https://localhost:4200/identity/login/google",
                             "https://127.0.0.1:4200",
-                            "https://solarengineer.net"
+                            "https://solarengineer.net",
+                            "https://solarengineer.net/auth-api"
                         )
                         .AllowAnyMethod()
                         .AllowAnyHeader()

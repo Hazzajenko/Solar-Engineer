@@ -1,10 +1,10 @@
 ﻿namespace Infrastructure.Common;
 
-public interface IEntity
+public interface IEntity : IEntityBase
 {
     public Guid Id { get; set; }
-    public DateTime CreatedTime { get; set; }
-    public DateTime LastModifiedTime { get; set; }
+    // public DateTime CreatedTime { get; set; }
+    // public DateTime LastModifiedTime { get; set; }
 }
 
 public abstract class Entity : IEntity

@@ -1,5 +1,6 @@
 ﻿using EventBus.Domain.ProjectsEvents;
 using FluentValidation;
+using FluentValidation.Results;
 using Infrastructure.Extensions;
 using Infrastructure.Logging;
 using Infrastructure.Mapping;
@@ -81,8 +82,13 @@ public class InviteToProjectHandler
                 appUserId,
                 projectIdGuid
             );
-            // TODO: Add a better error message
-            throw new ValidationException("User does not have invite permissions in this project");
+            var message = "User does not have invite permissions in project";
+            var errors = new ValidationFailure(nameof(AppUserProject), message).ToArray();
+            throw new ValidationException(
+                message,
+                errors
+            );
+            // throw new ValidationException("User does not have invite permissions in this project");
         }
 
         foreach (var requestInvite in command.Request.Invites)
@@ -102,12 +108,15 @@ public class InviteToProjectHandler
                     requestInvite.UserId,
                     projectIdGuid
                 );
-                var message =
+                continue;
+                /*var message =
                     $"User {requestInvite.UserId} is already apart of project {projectIdGuid}";
+                var errors = new ValidationFailure(nameof(AppUserProject), message).ToArray();
                 throw new ValidationException(
                     message,
-                    message.ToValidationFailure<AppUserProject>()
-                );
+                    errors
+                    // message.ToValidationFailure<AppUserProject>()
+                );*/
             }
 
             var requestAppUserProject = AppUserProject.Create(

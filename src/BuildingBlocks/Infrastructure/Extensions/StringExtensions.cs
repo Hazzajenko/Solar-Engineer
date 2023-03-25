@@ -47,10 +47,15 @@ public static class StringExtensions
         {
             return Guid.Parse(id);
         }
-        catch (Exception e)
+        catch (Exception _)
         {
             throw exception;
         }
+    }
+
+    public static bool IsStringNullOrEmpty(this string s)
+    {
+        return string.IsNullOrEmpty(s);
     }
 
     /*public static Guid TryToGuid(this string id)

@@ -1,9 +1,7 @@
-﻿using Infrastructure.SignalR;
+﻿using Infrastructure.Authentication;
 using Projects.Domain.Contracts.Requests.Projects;
 
 namespace Projects.Domain.Commands.Projects;
 
-public sealed record DeleteProjectCommand(
-    HubAppUser User,
-    DeleteProjectRequest DeleteProjectRequest
-) : ICommand<bool>;
+public sealed record DeleteProjectCommand(AuthUser User, DeleteProjectRequest DeleteProjectRequest)
+    : ICommand<bool>;

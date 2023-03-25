@@ -22,8 +22,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "BuildingBlocks\Do
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Identity.API.Deprecated", "Services\Identity.API.Deprecated\Identity.API.Deprecated.csproj", "{1EC26FBB-5E35-4ED0-A520-5F82328577D3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Projects.API", "Services\Projects.API\Projects.API.csproj", "{B90D016A-EF7A-4A51-A81F-5612695EA095}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YarpGateway", "ApiGateways\YarpGateway\YarpGateway.csproj", "{9FB72D54-EBD1-47D6-9E96-3C57C886CF0E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Admin.API", "Services\Admin.API\Admin.API.csproj", "{558A43D9-5C2C-49F1-91C9-0E9053B246AE}"
@@ -42,6 +40,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Identity.Domain", "Services
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projects", "Projects", "{C0C36B17-EDEB-4BBC-871C-66CF45D2D6D0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Projects.API", "Services\Projects\Projects.API\Projects.API.csproj", "{B90D016A-EF7A-4A51-A81F-5612695EA095}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Projects.Application", "Services\Projects\Projects.Application\Projects.Application.csproj", "{A2109277-A928-4D1E-8178-CD5CF14166EC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Projects.Contracts", "Services\Projects\Projects.Contracts\Projects.Contracts.csproj", "{BE2FCE7E-525C-4DA5-A803-10B19E8D237E}"
@@ -49,6 +49,14 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Projects.Domain", "Services\Projects\Projects.Domain\Projects.Domain.csproj", "{C16E79AE-4FAB-4BE3-AC70-5019D8DF2ED3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Projects.SignalR", "Services\Projects\Projects.SignalR\Projects.SignalR.csproj", "{CC1A908D-B847-4ABF-A7DE-964A78FF6A3E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{9A644480-02C2-4E6E-B812-8D10D6B3B91A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{A6248A65-1A51-41CC-BC6F-E01F39D9280D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{E4B6FCE3-FEEC-414E-8AC6-E421FB36CDD1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Identity.API.Tests.Integration", "..\tests\Services\Identity.API.Tests.Integration\Identity.API.Tests.Integration.csproj", "{7EFA9807-0DEE-4B1A-AF98-D2AF027E1FDC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -77,6 +85,12 @@ Global
 		{BE2FCE7E-525C-4DA5-A803-10B19E8D237E} = {C0C36B17-EDEB-4BBC-871C-66CF45D2D6D0}
 		{C16E79AE-4FAB-4BE3-AC70-5019D8DF2ED3} = {C0C36B17-EDEB-4BBC-871C-66CF45D2D6D0}
 		{CC1A908D-B847-4ABF-A7DE-964A78FF6A3E} = {C0C36B17-EDEB-4BBC-871C-66CF45D2D6D0}
+		{0BEDA918-9F7E-4722-A741-53B0EAC0DE9F} = {A6248A65-1A51-41CC-BC6F-E01F39D9280D}
+		{6A3CCCED-4155-4DAC-A375-29BB295C07FE} = {A6248A65-1A51-41CC-BC6F-E01F39D9280D}
+		{2EAD1BF8-005F-4567-A588-E42E65B7FD15} = {A6248A65-1A51-41CC-BC6F-E01F39D9280D}
+		{7BA525D5-4FE8-4B51-8DCF-DF68839BADBF} = {A6248A65-1A51-41CC-BC6F-E01F39D9280D}
+		{E4B6FCE3-FEEC-414E-8AC6-E421FB36CDD1} = {9A644480-02C2-4E6E-B812-8D10D6B3B91A}
+		{7EFA9807-0DEE-4B1A-AF98-D2AF027E1FDC} = {E4B6FCE3-FEEC-414E-8AC6-E421FB36CDD1}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{53FB622A-E290-4AD2-A755-5BBC255CF268}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -155,6 +169,10 @@ Global
 		{CC1A908D-B847-4ABF-A7DE-964A78FF6A3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CC1A908D-B847-4ABF-A7DE-964A78FF6A3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CC1A908D-B847-4ABF-A7DE-964A78FF6A3E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7EFA9807-0DEE-4B1A-AF98-D2AF027E1FDC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7EFA9807-0DEE-4B1A-AF98-D2AF027E1FDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7EFA9807-0DEE-4B1A-AF98-D2AF027E1FDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7EFA9807-0DEE-4B1A-AF98-D2AF027E1FDC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(RiderSharedRunConfigurations) = postSolution
 		File = Combined-Https-V2.run.xml

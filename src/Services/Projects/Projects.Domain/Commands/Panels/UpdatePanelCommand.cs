@@ -1,11 +1,11 @@
-﻿using Infrastructure.SignalR;
+﻿using Infrastructure.Authentication;
 using Projects.Domain.Common;
 using Projects.Domain.Contracts.Requests.Panels;
 
 namespace Projects.Domain.Commands.Panels;
 
 public sealed record UpdatePanelCommand(
-    HubAppUser User,
+    AuthUser User,
     UpdatePanelRequest Request,
     string RequestId,
     string ProjectId

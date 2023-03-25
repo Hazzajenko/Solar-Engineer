@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
+using Infrastructure.Authentication;
 using Infrastructure.Extensions;
+using Infrastructure.SignalR.HubFilters;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +25,8 @@ public static class SignalRExtensions
                 options.DisableImplicitFromServicesParameters = true;
                 if (env.IsDevelopment())
                     options.EnableDetailedErrors = true;
+
+                options.AddFilter<HubLoggerFilter>();
             })
             .AddStackExchangeRedis(
                 "localhost",
@@ -50,6 +54,12 @@ public static class SignalRExtensions
     {
         var userId = context.GetGuidUserId();
         return HubAppUser.Create(userId, context.ConnectionId);
+    }
+
+    public static AuthUser ToAuthUser(this HubCallerContext context)
+    {
+        var userId = context.GetGuidUserId();
+        return AuthUser.Create(userId, true, context.ConnectionId);
     }
 
     public static T ThrowHubExceptionIfNull<T>([NotNull] T? projectItem, string message)

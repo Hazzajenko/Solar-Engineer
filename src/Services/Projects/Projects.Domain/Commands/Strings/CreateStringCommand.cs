@@ -1,11 +1,11 @@
-﻿using Infrastructure.SignalR;
+﻿using Infrastructure.Authentication;
 using Projects.Domain.Common;
 using Projects.Domain.Contracts.Requests.Strings;
 
 namespace Projects.Domain.Commands.Strings;
 
 public sealed record CreateStringCommand(
-    HubAppUser User,
+    AuthUser User,
     CreateStringRequest Request,
     string RequestId,
     string ProjectId

@@ -1,10 +1,10 @@
-﻿using Infrastructure.SignalR;
+﻿using Infrastructure.Authentication;
 
 namespace Projects.Domain.Common;
 
 public interface IProjectCommand
 {
-    HubAppUser User { get; init; }
+    AuthUser User { get; init; }
     string RequestId { get; init; }
     string ProjectId { get; init; }
 }

@@ -1,11 +1,11 @@
-﻿using Infrastructure.SignalR;
+﻿using Infrastructure.Authentication;
 using Projects.Domain.Common;
 using Projects.Domain.Contracts.Requests.Strings;
 
 namespace Projects.Domain.Commands.Strings;
 
 public record DeleteStringCommand(
-    HubAppUser User,
+    AuthUser User,
     DeleteStringRequest Request,
     string RequestId,
     string ProjectId

@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Azure.Storage.Blobs" Version="12.15.0" />
+      <PackageReference Include="Bogus" Version="34.0.2" />
+      <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.5.1" />
+      <PackageReference Include="Marten" Version="6.0.0-alpha.10" />
+      <PackageReference Include="Mediator.Abstractions" Version="2.1.1" />
+      <PackageReference Include="Mediator.SourceGenerator" Version="2.1.1">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.4" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.4">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="WolverineFx" Version="0.9.14" />
+      <PackageReference Include="WolverineFx.RabbitMQ" Version="0.9.14" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\BuildingBlocks\Domain\Domain.csproj" />
+      <ProjectReference Include="..\..\..\BuildingBlocks\EventBus\EventBus.csproj" />
+      <ProjectReference Include="..\..\..\BuildingBlocks\Infrastructure\Infrastructure.csproj" />
+      <ProjectReference Include="..\Identity.Contracts\Identity.Contracts.csproj" />
+      <ProjectReference Include="..\Identity.Domain\Identity.Domain.csproj" />
+      <ProjectReference Include="..\Identity.SignalR\Identity.SignalR.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Validation" />
+    </ItemGroup>
+
+</Project>

@@ -1,11 +1,11 @@
-﻿using Infrastructure.SignalR;
+﻿using Infrastructure.Authentication;
 using Projects.Domain.Common;
 using Projects.Domain.Contracts.Requests.Panels;
 
 namespace Projects.Domain.Commands.Panels;
 
 public record UpdateManyPanelsCommand(
-    HubAppUser User,
+    AuthUser User,
     UpdateManyPanelsRequest Request,
     string RequestId,
     string ProjectId

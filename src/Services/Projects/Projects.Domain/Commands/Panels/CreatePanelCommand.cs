@@ -1,10 +1,10 @@
-﻿using Infrastructure.SignalR;
+﻿using Infrastructure.Authentication;
 using Projects.Domain.Common;
 using Projects.Domain.Contracts.Requests.Panels;
 
 namespace Projects.Domain.Commands.Panels;
 
-public record CreatePanelCommand(HubAppUser User, CreatePanelRequest Request, string RequestId, string ProjectId)
+public record CreatePanelCommand(AuthUser User, CreatePanelRequest Request, string RequestId, string ProjectId)
     : ICommand<bool>,
         IProjectCommand<CreatePanelRequest>
 {

@@ -1,11 +1,11 @@
-﻿using Infrastructure.SignalR;
+﻿using Infrastructure.Authentication;
 using Projects.Domain.Common;
 using Projects.Domain.Contracts.Requests.PanelLinks;
 
 namespace Projects.Domain.Commands.Panels;
 
 public record CreatePanelLinkCommand(
-    HubAppUser User,
+    AuthUser User,
     CreatePanelLinkRequest Request,
     string RequestId,
     string ProjectId

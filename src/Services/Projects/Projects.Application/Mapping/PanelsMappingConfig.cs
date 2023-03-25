@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.SignalR;
 using Projects.Domain.Commands.Panels;
 using Projects.Domain.Contracts.Data;
 using Projects.Domain.Contracts.Requests.Panels;
+using Projects.Domain.Contracts.Requests.Projects;
 using Projects.Domain.Contracts.Responses;
 using Projects.Domain.Entities;
-using NewProjectEventRequest = Projects.Domain.Contracts.Requests.Projects.NewProjectEventRequest;
 
 namespace Projects.Application.Mapping;
 
@@ -77,7 +77,7 @@ public class PanelsMappingConfig : IRegister
             .Map(dest => dest.RequestId, src => src.Request.RequestId);
 
         config
-            .NewConfig<(Domain.Contracts.Requests.Projects.ProjectEvent ProjectEvent, HubCallerContext Context), CreatePanelCommand>()
+            .NewConfig<(ProjectGridEvent ProjectEvent, HubCallerContext Context), CreatePanelCommand>()
             .Map(
                 dest => dest.Request,
                 src =>

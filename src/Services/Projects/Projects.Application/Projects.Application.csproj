@@ -35,21 +35,4 @@
       <PackageReference Include="WolverineFx.RabbitMQ" Version="0.9.15" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Handlers\PanelLinks\CreatePanelLink" />
-      <Folder Include="Handlers\Panels\CreateManyPanels" />
-      <Folder Include="Handlers\Panels\CreatePanel" />
-      <Folder Include="Handlers\Panels\DeleteManyPanels" />
-      <Folder Include="Handlers\Panels\DeletePanel" />
-      <Folder Include="Handlers\Panels\UpdateManyPanels" />
-      <Folder Include="Handlers\Panels\UpdatePanel" />
-      <Folder Include="Handlers\Projects\CreateProject" />
-      <Folder Include="Handlers\Projects\DeleteProject" />
-      <Folder Include="Handlers\Projects\GetProject" />
-      <Folder Include="Handlers\Projects\GetUserProjects" />
-      <Folder Include="Handlers\Projects\InviteToProject" />
-      <Folder Include="Handlers\Strings\CreateString" />
-      <Folder Include="Handlers\Strings\DeleteString" />
-    </ItemGroup>
-
 </Project>

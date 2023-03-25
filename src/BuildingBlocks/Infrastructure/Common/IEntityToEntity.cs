@@ -1,7 +1,7 @@
 ﻿namespace Infrastructure.Common;
 
-public interface IEntityToEntity
+public interface IEntityToEntity : IEntityBase
 {
-    public DateTime CreatedTime { get; set; }
-    public DateTime LastModifiedTime { get; set; }
+    // public DateTime CreatedTime { get; set; }
+    // public DateTime LastModifiedTime { get; set; }
 }

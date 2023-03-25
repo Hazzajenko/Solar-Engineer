@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Npgsql;
+using Serilog;
 
 namespace Infrastructure.Data;
 
@@ -11,14 +12,25 @@ public static class DbContextFactory
 {
     public static IServiceCollection InitDbContext<T>(
         this IServiceCollection services,
-        IConfiguration config,
-        IWebHostEnvironment env,
-        string? migrationsAssembly = null
+        IConfiguration? config = null,
+        IWebHostEnvironment? env = null,
+        string? migrationsAssembly = null,
+        string? inputConnectionString = null
     )
         where T : DbContext
     {
         services.AddDbContext<T>(options =>
         {
+            if (inputConnectionString is not null)
+            {
+                options.UseNpgsql(inputConnectionString);
+                Log.Logger.Information("Using input connection string");
+                return;
+            }
+
+            ArgumentNullException.ThrowIfNull(config);
+            ArgumentNullException.ThrowIfNull(env);
+
             var connectionString = GetConnectionString(config, env);
 
             if (migrationsAssembly != null)

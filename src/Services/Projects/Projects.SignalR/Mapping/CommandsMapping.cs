@@ -9,19 +9,19 @@ namespace Projects.SignalR.Mapping;
 public static class CommandsMapping
 {
     public static IProjectCommand ToCommandObject(
-        this ProjectEvent projectEvent,
+        this ProjectGridEvent projectGridEvent,
         HubCallerContext context
     )
     {
-        var requestType = projectEvent.ToRequestType();
+        var requestType = projectGridEvent.ToRequestType();
         var eventRequest = (IProjectEventRequest)
             JsonSerializer.Deserialize(
-                projectEvent.Data,
+                projectGridEvent.Data,
                 requestType,
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
             )!;
 
-        var commandType = projectEvent.ToCommandType();
+        var commandType = projectGridEvent.ToCommandType();
         var command = Activator.CreateInstance(commandType)!;
 
         if (
@@ -39,15 +39,15 @@ public static class CommandsMapping
         userProperty.SetValue(command, context.ToHubAppUser());
 
         var requestIdProperty = commandType.GetProperty("RequestId")!;
-        requestIdProperty.SetValue(command, projectEvent.RequestId);
+        requestIdProperty.SetValue(command, projectGridEvent.RequestId);
 
         var projectIdProperty = commandType.GetProperty("ProjectId")!;
-        projectIdProperty.SetValue(command, projectEvent.ProjectId);
+        projectIdProperty.SetValue(command, projectGridEvent.ProjectId);
 
         return (IProjectCommand)command;
     }
 
-    private static Type ToCommandType(this ProjectEvent request)
+    private static Type ToCommandType(this ProjectGridEvent request)
     {
         // var action = request.Action.Transform(To.TitleCase);
         // var action = request.Action.Transform(To.LowerCase, To.TitleCase);
@@ -58,7 +58,7 @@ public static class CommandsMapping
         return ScanForType(typeof(IProjectCommand), commandName);
     }
 
-    private static Type ToRequestType(this ProjectEvent request)
+    private static Type ToRequestType(this ProjectGridEvent request)
     {
         // var action = request.Action.ToPascalCase();
         // var model = request.Model.ToPascalCase();

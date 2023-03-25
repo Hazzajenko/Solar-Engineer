@@ -21,6 +21,8 @@ public abstract class GenericRepository<TContext, TModel>
 
     public Task<TModel?> GetByIdAsync(Guid id)
     {
+        // Queryable.Find
+        // base.Find(id);
         return Queryable.SingleOrDefaultAsync(user => user.Id == id);
     }
 

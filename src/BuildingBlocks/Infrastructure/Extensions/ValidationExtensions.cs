@@ -1,8 +1,6 @@
-using FluentValidation.Results;
-
 namespace Infrastructure.Extensions;
 
-public class ValidationResponse
+/*public class ValidationResponse
 {
     public string Property { get; init; } = default!;
     public string Message { get; init; } = default!;
@@ -23,4 +21,4 @@ public static class ValidationExtensions
 
         return list;
     }
-}
+}*/

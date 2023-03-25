@@ -2,6 +2,7 @@
 using System.Text.Json.Serialization;
 using FastEndpoints;
 using FastEndpoints.Swagger;
+using Infrastructure.Validation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
@@ -38,6 +39,8 @@ public static class WebApplicationExtensions
         app.MapHub<ProjectsHub>("hubs/projects");
 
         ProjectsSeeder.InitializeDatabase(app);
+
+        app.UseMiddleware<ValidationMappingMiddleware>();
 
         return app;
     }
