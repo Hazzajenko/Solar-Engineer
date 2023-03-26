@@ -79,7 +79,11 @@ public class CreateManyUsersEndpoint : Endpoint<CreateManyUsersRequest, CreateMa
 
             appUser.PhotoUrl = getRobotImage;
             await _userManager.UpdateAsync(appUser);
-            var appUserEvent = new AppUserEvent(appUser.ToDto(), AppUserEventType.Created);
+            var appUserEvent = new AppUserEvent(
+                appUser.Id,
+                appUser.ToDto(),
+                AppUserEventType.Created
+            );
             await _bus.SendAsync(appUserEvent);
         }
 

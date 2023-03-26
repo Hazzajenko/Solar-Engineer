@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Npgsql;
 using Serilog;
+using Wolverine.EntityFrameworkCore;
 
 namespace Infrastructure.Data;
 
@@ -20,6 +21,38 @@ public static class DbContextFactory
         where T : DbContext
     {
         services.AddDbContext<T>(options =>
+        {
+            if (inputConnectionString is not null)
+            {
+                options.UseNpgsql(inputConnectionString);
+                Log.Logger.Information("Using input connection string");
+                return;
+            }
+
+            ArgumentNullException.ThrowIfNull(config);
+            ArgumentNullException.ThrowIfNull(env);
+
+            var connectionString = GetConnectionString(config, env);
+
+            if (migrationsAssembly != null)
+                options.UseNpgsql(connectionString, x => x.MigrationsAssembly(migrationsAssembly));
+            else
+                options.UseNpgsql(connectionString);
+        });
+
+        return services;
+    }
+
+    public static IServiceCollection InitDbContextWithWolverine<T>(
+        this IServiceCollection services,
+        IConfiguration? config = null,
+        IWebHostEnvironment? env = null,
+        string? migrationsAssembly = null,
+        string? inputConnectionString = null
+    )
+        where T : DbContext
+    {
+        services.AddDbContextWithWolverineIntegration<T>(options =>
         {
             if (inputConnectionString is not null)
             {

@@ -30,9 +30,16 @@ namespace EventBus.Domain.AppUserEvents;
     public List<string> Queues { get; set; }#1#
 }*/
 
+public interface IAppUserEventMessage
+{
+    // Guid Id { get; init; }
+    Guid UserId { get; init; }
+}
+
 public record AppUserEventResponse(
-    Guid Id,
+    // Guid Id,
+    Guid UserId,
     EventResponseType EventResponseType,
     UserDto? User,
     bool Success = true
-);
+) : IAppUserEventMessage;

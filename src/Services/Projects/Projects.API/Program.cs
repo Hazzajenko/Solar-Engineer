@@ -1,16 +1,23 @@
+using EventBus.Common;
+using EventBus.Domain.AppUserEvents.Responses;
 using FastEndpoints;
 using Infrastructure.Authentication;
 using Infrastructure.Data;
 using Infrastructure.Logging;
+using Infrastructure.OpenTelemetry;
 using Infrastructure.Swagger;
 using Infrastructure.Web;
+using Marten;
 using Microsoft.AspNetCore.HttpOverrides;
+using Oakton;
 using Projects.Application.Data;
 using Projects.Application.Extensions;
 
 var builder = WebApplication.CreateBuilder(
     new WebApplicationOptions { Args = args, ContentRootPath = Directory.GetCurrentDirectory() }
 );
+
+builder.Host.ApplyOaktonExtensions();
 
 // var webHost = WebHost.CreateDefaultBuilder(args)
 /*.UseStartup<Startup>()*/
@@ -21,8 +28,10 @@ builder.ConfigureSerilog();
 
 var config = builder.Configuration;
 config.AddEnvironmentVariables("solarengineer_");
-builder.Services.InitMarten(config);
-builder.Host.InitWolverine();
+
+// builder.Services.InitMarten(config);
+builder.Host.InitWolverine(config);
+builder.Services.InitOpenTelemetry(config);
 
 /*builder.Services.AddMediator(options => { options.ServiceLifetime = ServiceLifetime.Transient; });*/
 builder.Services.AddApplicationServices(config);
@@ -87,6 +96,39 @@ var app = builder.Build();
 
 app.ConfigurePipeline();
 
+/*app.MapGet("/stream", (IQuerySession Session) =>
+{
+    var stream = Session.Events.FetchStream(Guid.NewGuid());
+    return stream;
+});*/
+
+app.MapGet(
+    "/rebuild",
+    async (IDocumentStore store) =>
+    {
+        var daemon = await store.BuildProjectionDaemonAsync();
+        await daemon.RebuildProjection<UserSummary>(CancellationToken.None);
+        return "rebuilt!";
+    }
+);
+
+app.MapGet(
+    "/append/{guid}",
+    async (Guid guid, IDocumentSession session) =>
+    {
+        session.Events.Append(guid, new UserCreated(guid, ServiceName.Projects));
+
+        await session.SaveChangesAsync();
+
+        return "created!";
+    }
+);
+
+app.MapGet(
+    "/stream/{guid}",
+    (Guid guid, IQuerySession session) => { return session.LoadAsync<UserSummary>(guid); }
+);
+
 /*app.Use(
     async (context, next) =>
     {
@@ -104,3 +146,30 @@ AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 // BogusGenerators.InitBogusData();
 app.Run();
+
+/*
+public class UserSummary
+{
+    public Guid Id { get; set; }
+    
+    public List<string> Logs { get; set; } = new();
+}
+
+public class UserSummaryProjector : MultiStreamAggregation<UserSummary, Guid>
+{
+    public UserSummaryProjector()
+    {
+        Identity<IAppUserEventMessage>(x => x.UserId);
+    }
+
+    public void Apply(UserSummary snapshot, UserCreated e)
+    {
+        snapshot.Logs.Add($"{e.UserId} created");
+    }
+
+    /*public void Apply(UserSummary snapshot, User e)
+    {
+        snapshot.Comments.Add(e.Content);
+    }#1#
+}
+*/

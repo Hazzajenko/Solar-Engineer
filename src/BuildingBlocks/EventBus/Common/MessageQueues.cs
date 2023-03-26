@@ -42,11 +42,13 @@ public static class MessageQueues
 
     public static class AppUsers
     {
-        public const string EventsQueue = "appusers-events";
-        public const string EventsExchange = "appusers-events-exchange";
+        public const string Events = "appusers-events";
+        public const string EventsQueue = "appuser-events";
+        public const string EventsExchange = "appuser-events-exchange";
 
-        public const string EventResponsesQueue = "appusers-event-responses";
-        public const string EventResponsesExchange = "appusers-event-responses-exchange";
+        public const string EventResponses = "appusers-event-responses";
+        public const string EventResponsesQueue = "appuser-event-responses";
+        public const string EventResponsesExchange = "appuser-event-responses-exchange";
     }
 
     /*

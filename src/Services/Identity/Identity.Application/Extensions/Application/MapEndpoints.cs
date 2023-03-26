@@ -23,6 +23,8 @@ public static partial class WebApplicationExtensions
             }
         );
 
+        // app.MapPost("/message", ([FromServices] IDbContextOutbox<IdentityContext> outbox))
+
         var loginEndpoints = app.MapGroup("login");
 
         loginEndpoints.MapGet(

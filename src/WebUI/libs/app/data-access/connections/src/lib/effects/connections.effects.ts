@@ -10,10 +10,19 @@ import { AuthActions } from '@auth/data-access'
 export class ConnectionsEffects {
   private actions$ = inject(Actions)
   private connectionsService = inject(ConnectionsSignalrService)
+  /*  initConnections$ = createEffect(
+   () =>
+   this.actions$.pipe(
+   ofType(AuthActions.signInSuccess),
+   map(({ token }) => this.connectionsService.createHubConnection(token)),
+   ),
+   { dispatch: false },
+   )*/
+
   initConnections$ = createEffect(
     () =>
       this.actions$.pipe(
-        ofType(AuthActions.signInSuccess),
+        ofType(AuthActions.signInFetchUserSuccess),
         map(({ token }) => this.connectionsService.createHubConnection(token)),
       ),
     { dispatch: false },

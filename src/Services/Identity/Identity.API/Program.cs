@@ -8,6 +8,7 @@ using Identity.Application.Extensions.Application;
 using Identity.Application.Extensions.ServiceCollection;
 using Infrastructure.Data;
 using Infrastructure.Logging;
+using Infrastructure.OpenTelemetry;
 using Infrastructure.SignalR;
 using Infrastructure.Swagger;
 using Infrastructure.Web;
@@ -15,6 +16,8 @@ using Microsoft.AspNetCore.HttpOverrides;
 using NJsonSchema.CodeGeneration.TypeScript;
 using NSwag;
 using NSwag.CodeGeneration.TypeScript;
+
+AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
 
 var builder = WebApplication.CreateBuilder(
     new WebApplicationOptions { Args = args, ContentRootPath = Directory.GetCurrentDirectory() }
@@ -25,8 +28,18 @@ builder.ConfigureSerilog();
 var config = builder.Configuration;
 config.AddEnvironmentVariables("solarengineer_");
 
-builder.Services.InitMarten(config);
-builder.Host.InitWolverine();
+// builder.Services.InitMarten(config);
+builder.Host.InitWolverine(config);
+
+builder.Services.InitOpenTelemetry(config);
+
+/*builder.Logging.AddOpenTelemetry(loggerOptions =>
+{
+    loggerOptions.IncludeFormattedMessage = true;
+    loggerOptions.IncludeScopes = true;
+    loggerOptions.ParseStateValues = true;
+    loggerOptions.AddOtlpExporter(options => options.Endpoint = new Uri("http://localhost:4317"));
+});*/
 
 builder.Services.AddApplicationServices(config);
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
@@ -50,7 +63,12 @@ builder.Services.AddHttpClient(
     }
 );
 
-builder.Services.InitDbContext<IdentityContext>(
+/*builder.Services.InitDbContext<IdentityContext>(
+    config,
+    builder.Environment,
+    "Identity.Application"
+);*/
+builder.Services.InitDbContextWithWolverine<IdentityContext>(
     config,
     builder.Environment,
     "Identity.Application"

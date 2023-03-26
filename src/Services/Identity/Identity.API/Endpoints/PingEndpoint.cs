@@ -1,13 +1,15 @@
-﻿using Bogus;
+﻿using System.Diagnostics.Metrics;
+using Bogus;
 using EventBus.Domain.AppUserEvents;
 using FastEndpoints;
+using Identity.Application.Extensions.ServiceCollection;
 using Identity.Application.Services.Pinger;
 using Identity.Domain.Auth;
 using Infrastructure.Contracts.Data;
 using Infrastructure.Logging;
 using Mapster;
 using Marten;
-using Mediator;
+using Microsoft.AspNetCore.Http.Features;
 using Wolverine;
 using Wolverine.Marten;
 
@@ -15,12 +17,20 @@ using Wolverine.Marten;
 
 namespace Identity.API.Endpoints;
 
-public class PingEndpoint : EndpointWithoutRequest<AppUserEvent>
+// public class PingEndpoint : EndpointWithoutRequest<Acknowledgement>
+// public class PingEndpoint : EndpointWithoutRequest<string>
+public class PingEndpoint : EndpointWithoutRequest<AppUserEventResponse>
 {
     private readonly IMessageBus _bus;
-    private readonly IMediator _mediator;
+
+    // private readonly IDbContextOutbox<IdentityContext> _dbContextOutbox;
+
+    // private readonly IMessagePublisher
+    // private readonly IMediator _mediator;
+
     private readonly IMartenOutbox _outbox;
     private readonly IDocumentSession _session;
+
 
     private readonly Faker<AppUser> _userRequestGenerator = new Faker<AppUser>()
         .RuleFor(x => x.Id, faker => Guid.NewGuid())
@@ -33,16 +43,20 @@ public class PingEndpoint : EndpointWithoutRequest<AppUserEvent>
     // private readonly
 
     public PingEndpoint(
-        IMediator mediator,
+        // [FromServices] IMediator mediator,
         IMessageBus bus,
-        IDocumentSession session,
-        IMartenOutbox outbox
+        // IDocumentSession session,
+        IMartenOutbox outbox,
+        IDocumentSession session
+        // IDbContextOutbox<IdentityContext> dbContextOutbox
     )
     {
-        _mediator = mediator;
+        // _mediator = mediator;
         _bus = bus;
-        _session = session;
+        // _session = session;
         _outbox = outbox;
+        _session = session;
+        // _dbContextOutbox = dbContextOutbox;
     }
 
     public override void Configure()
@@ -56,46 +70,43 @@ public class PingEndpoint : EndpointWithoutRequest<AppUserEvent>
         var pingMessage = new PingMessage { Number = 1 };
         var appUser = _userRequestGenerator.Generate();
         var userDto = appUser.Adapt<UserDto>();
-        var appUserEvent = new AppUserEvent(userDto, AppUserEventType.Created);
-        /*var userDto = new UserDto
-        {
-            Id = appUser.Id,
-            FirstName = appUser.FirstName,
-            LastName = appUser.LastName,
-            UserName = appUser.UserName,
-            DisplayName = appUser.DisplayName,
-            PhotoUrl = appUser.PhotoUrl,
-            CreatedTime = DateTime.Now,
-            LastModifiedTime = DateTime.Now
-        };*/
-        /*var appUserEvent = new AppUserEvent(
-            new UserDto
-            {
-                Id = Guid.NewGuid(),
-                FirstName = "John",
-                LastName = "Doe",
-                UserName = "johndoe",
-                DisplayName = "John Doe",
-                PhotoUrl = "https://www.google.com",
-                CreatedTime = DateTime.Now,
-                LastModifiedTime = DateTime.Now
-            },
-            // "UserCreated",
-            AppUserEventType.Created
-        );*/
-        // _session.Store(appUserEvent);
-        // await _outbox.SendAsync(appUserEvent);
+        var appUserEvent = new AppUserEvent(appUser.Id, userDto, AppUserEventType.Created);
         appUserEvent.DumpObjectJson();
-        _session.Store(appUserEvent);
-        // var response = await _outbox.InvokeAsync<AppUserEventResponse>(appUserEvent, cT);
-        // if (response is null) ThrowError("Failed to invoke app user event.");
+        DiagnosticsConfig.RequestCounter.Add(
+            1,
+            new KeyValuePair<string, object?>("Action", nameof(Index)),
+            new KeyValuePair<string, object?>("Endpoint", nameof(PingEndpoint))
+        );
 
-        await _outbox.PublishAsync(appUserEvent);
+        var meter = new Meter("MyApplicationMetrics");
+        var requestCounter = meter.CreateCounter<int>("compute_requests");
+        requestCounter.Add(1);
+        var activity = HttpContext.Features.Get<IHttpActivityFeature>()?.Activity;
+        activity?.SetTag("auth", "ping");
 
-        // await _session.SaveChangesAsync(cT);
+        // var results = await _bus.InvokeAsync<UserCreated>(appUserEvent, cT);
+        // results.DumpObjectJson();
+
+        // _session.Store(appUserEvent);
+
+        // await _outbox.SendAsync(appUserEvent);
+        _session.Events.StartStream(appUserEvent);
+        await _outbox.SendAsync(appUserEvent);
+        await _session.SaveChangesAsync(cT);
+        // await _outbox.SaveChangesAndFlushMessagesAsync(cT);
+
         // await _bus.SendAsync(appUserEvent);
-        // await _bus.SendAsync(pingMessage);
-        await SendOkAsync(appUserEvent, cT);
-        // await SendOkAsync(appUserEvent, cT);
+        // await _bus.PublishAsync(appUserEvent);
+
+        // _dbContextOutbox.DbContext.Users.Add(appUser);
+        /*var test2 = await _bus.EndpointFor(
+                new Uri($"rabbitmq://queue/{MessageQueues.AppUsers.EventsQueue}")
+            )
+            .InvokeAsync(appUserEvent, cT);*/
+
+        // await _dbContextOutbox.InvokeAsync<AppUserEventResponse>(appUserEvent, cT);
+        // await _dbContextOutbox.PublishAsync(appUserEvent);
+
+        // await _dbContextOutbox.SaveChangesAndFlushMessagesAsync(cT);
     }
 }

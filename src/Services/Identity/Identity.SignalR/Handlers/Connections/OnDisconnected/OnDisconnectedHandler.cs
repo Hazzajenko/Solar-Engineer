@@ -1,5 +1,4 @@
 ﻿using Identity.Contracts.Data;
-using Identity.SignalR.Handlers.Connections.OnConnected;
 using Identity.SignalR.Hubs;
 using Identity.SignalR.Services;
 using Mediator;
@@ -8,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Identity.SignalR.Handlers.Connections.OnDisconnected;
 
-public class OnDisconnectedHandler : ICommandHandler<OnConnectedCommand, bool>
+public class OnDisconnectedHandler : ICommandHandler<OnDisconnectedCommand, bool>
 {
     private readonly ConnectionsService _connections;
     private readonly IHubContext<ConnectionsHub, IConnectionsHub> _hubContext;
@@ -25,12 +24,12 @@ public class OnDisconnectedHandler : ICommandHandler<OnConnectedCommand, bool>
         _connections = connections;
     }
 
-    public async ValueTask<bool> Handle(OnConnectedCommand request, CancellationToken cT)
+    public async ValueTask<bool> Handle(OnDisconnectedCommand request, CancellationToken cT)
     {
         var userId = request.User.Id;
         var userConnections = _connections.GetConnections(userId);
 
-        if (userConnections.Any())
+        if (userConnections.Any() is false)
             return true;
 
         _connections.Remove(userId, request.User.ConnectionId);

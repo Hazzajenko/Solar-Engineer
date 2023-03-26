@@ -4,7 +4,7 @@
 
 namespace EventBus.Domain.AppUserEvents;
 
-public class AppUserEvent : IAppUserEvent
+/*public class AppUserEvent : IAppUserEvent, IAppUserEventMessage
 {
     public AppUserEvent(UserDto appUser, AppUserEventType appUserEventType)
     {
@@ -14,9 +14,20 @@ public class AppUserEvent : IAppUserEvent
         CreatedAt = DateTime.Now;
     }
 
-    public Guid Id { get; set; } = Guid.NewGuid();
     public AppUserEventType AppUserEventType { get; set; }
     public UserDto User { get; set; }
     public DateTime CreatedAt { get; }
     public List<string> Queues { get; set; }
+
+    public Guid Id { get; } = Guid.NewGuid();
+}*/
+
+public record AppUserEvent(Guid UserId, UserDto User, AppUserEventType AppUserEventType)
+    : IAppUserEvent,
+        IAppUserEventMessage
+{
+    public DateTime CreatedAt { get; } = DateTime.UtcNow;
+
+    public List<string> Queues { get; set; } = new() { "messages", "projects" };
+    // public Guid Id { get; init; } = Guid.NewGuid();
 }

@@ -53,8 +53,11 @@ public static partial class LoggingExtensions
                         "Microsoft.AspNetCore.Http.Connections",
                         LogEventLevel.Information
                     )
-                    // .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Information);
-                    .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Error);
+                    .MinimumLevel.Override(
+                        "Microsoft.EntityFrameworkCore",
+                        LogEventLevel.Information
+                    );
+                // .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Error);
 
                 /*logging.AddFilter("Microsoft.AspNetCore.SignalR", LogLevel.Debug);
                 logging.AddFilter("Microsoft.AspNetCore.Http.Connections", LogLevel.Debug);*/

@@ -1,7 +1,8 @@
-using EventBus.Domain;
+using EventBus.Common;
 using EventBus.Domain.AppUserEvents;
-using Infrastructure.Contracts.Data;
+using EventBus.Domain.AppUserEvents.Responses;
 using Infrastructure.Logging;
+using Marten;
 using Projects.Application.Data.UnitOfWork;
 using Projects.Domain.Entities;
 using Wolverine;
@@ -19,16 +20,26 @@ public static class AppUserEventHandler
         // being handled
         // todo add db
         IMessageContext context,
-        IProjectsUnitOfWork unitOfWork
+        IProjectsUnitOfWork unitOfWork,
+        IDocumentSession session
     )
     {
         message.DumpObjectJson();
-        // var type = message.AppUserEventType;
-        // var typeString = type.ToString();
-        // Log.Logger.Information("AppUserEvent type: {Type}", typeString);
-        // AnsiConsole.Write($"[blue]Got ping #{message.User}[/]");
-        if (message.AppUserEventType == AppUserEventType.LoggedIn ||
-            message.AppUserEventType == AppUserEventType.Created)
+        /*var pUser = ProjectUser.Create(
+            message.User.Id,
+            message.User.UserName,
+            message.User.DisplayName,
+            message.User.PhotoUrl
+        );
+
+        var res = new AppUserEventResponse(message.Id, EventResponseType.Created, null);*/
+
+        // return context.RespondToSenderAsync(res);
+
+        if (
+            message.AppUserEventType == AppUserEventType.LoggedIn
+            || message.AppUserEventType == AppUserEventType.Created
+        )
         {
             var existingProjectUser = unitOfWork.ProjectUsersRepository
                 .GetByIdAsync(message.User.Id)
@@ -42,8 +53,18 @@ public static class AppUserEventHandler
                     message.User.PhotoUrl
                 );
                 unitOfWork.ProjectUsersRepository.AddAsync(projectUser).Wait();
+                // context.
+                // session.Store(projectUser);
+                // session.Events.StartStream(projectUser);
+
                 unitOfWork.SaveChangesAsync().Wait();
-                var projectUserDto = new UserDto
+
+                var userCreated = new UserCreated(message.User.Id, ServiceName.Projects);
+                session.Events.StartStream(userCreated);
+                // session.Events.Append(message.User.Id, userCreated);
+                session.SaveChanges();
+                // documentStore.
+                /*var projectUserDto = new UserDto
                 {
                     Id = projectUser.Id,
                     UserName = projectUser.UserName,
@@ -55,11 +76,16 @@ public static class AppUserEventHandler
                     message.Id,
                     EventResponseType.Created,
                     projectUserDto
-                );
-                return context.RespondToSenderAsync(projectUserCreatedResponse);
+                );*/
+                return context.RespondToSenderAsync(userCreated);
+                // return session.SaveChangesAsync();
+                // return context.RespondToSenderAsync(projectUserCreatedResponse);
             }
 
-            var exProjectUserDto = new UserDto
+            return context.RespondToSenderAsync(
+                new UserNoChange(message.User.Id, ServiceName.Projects)
+            );
+            /*var exProjectUserDto = new UserDto
             {
                 Id = existingProjectUser.Id,
                 UserName = existingProjectUser.UserName,
@@ -71,7 +97,7 @@ public static class AppUserEventHandler
                 EventResponseType.NoChange,
                 exProjectUserDto
             );
-            return context.RespondToSenderAsync(projectUserCreatedResponseV2);
+            return context.RespondToSenderAsync(projectUserCreatedResponseV2);*/
         }
 
         return ValueTask.CompletedTask;
