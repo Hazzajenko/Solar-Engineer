@@ -22,6 +22,7 @@ public static class OpenTelemetryExtensions
     {
         var serviceName = config["App:ServiceName"];
         ArgumentNullException.ThrowIfNull(serviceName, nameof(serviceName));
+        Console.WriteLine($"ServiceName: {serviceName}");
         ActivitySource activitySource = new(serviceName);
         Meter meter = new(serviceName);
 
@@ -50,7 +51,10 @@ public static class OpenTelemetryExtensions
             .AddHttpClientInstrumentation()
             .AddAspNetCoreInstrumentation()
             .AddAzureMonitorTraceExporterIfEnabled(config)
-            .AddZipkinExporterIfEnabled(config);
+            .AddZipkinExporterIfEnabled(config)
+            .AddSource("Wolverine");
+        ;
+
         /*.AddOtlpExporter(
                        options => options.Endpoint = new Uri("http://localhost:4317")
                    )*/

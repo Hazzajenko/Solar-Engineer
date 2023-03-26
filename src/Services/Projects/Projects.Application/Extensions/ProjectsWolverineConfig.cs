@@ -1,5 +1,4 @@
 ﻿using EventBus.Common;
-using EventBus.Domain.AppUserEvents;
 using EventBus.Domain.AppUserEvents.Responses;
 using EventBus.Domain.ProjectsEvents;
 using Humanizer;
@@ -10,7 +9,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Npgsql;
 using Oakton.Resources;
-using Weasel.Core;
 using Wolverine;
 using Wolverine.ErrorHandling;
 using Wolverine.Marten;
@@ -35,10 +33,10 @@ public static class ProjectsWolverineConfig
 
                 opts.Connection(connectionString);
 
-                opts.AutoCreateSchemaObjects = AutoCreate.None;
+                /*opts.AutoCreateSchemaObjects = AutoCreate.None;
 
                 // opts.Schema.For<CurrentUserDto>();
-                opts.Schema.For<AppUserEvent>();
+                opts.Schema.For<AppUserEvent>();*/
 
                 // opts.Schema.For<WebConnection>().Index(x => x.UserId);
 
@@ -54,12 +52,12 @@ public static class ProjectsWolverineConfig
         return services;
     }
 
-    public static IHostBuilder InitWolverine(this IHostBuilder builder, IConfiguration config)
+    public static IHostBuilder InitProjectsWolverine(this IHostBuilder builder, IConfiguration config)
     {
         // TODO - This is temporary, change
         var connectionString =
             config.GetConnectionString("PostgresConnection")
-            ?? throw new ArgumentNullException(nameof(InitWolverine));
+            ?? throw new ArgumentNullException(nameof(InitProjectsWolverine));
         builder.UseWolverine(opts =>
         {
             /*var connectionString =

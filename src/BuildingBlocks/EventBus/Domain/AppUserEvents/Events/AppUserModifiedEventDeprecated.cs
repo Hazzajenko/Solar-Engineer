@@ -1,7 +1,6 @@
-﻿using Infrastructure.Contracts.Data;
+﻿namespace EventBus.Domain.AppUserEvents.Events;
 
-namespace EventBus.Domain.AppUserEvents.Events;
-
+/*
 public class AppUserModifiedEventDeprecated : AppUserEventDeprecated
 {
     public AppUserModifiedEventDeprecated(UserDto user)
@@ -10,4 +9,4 @@ public class AppUserModifiedEventDeprecated : AppUserEventDeprecated
     }
 
     // public UserDto User { get; set; }
-}
+}*/

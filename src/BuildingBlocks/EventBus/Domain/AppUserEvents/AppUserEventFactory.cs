@@ -1,5 +1,4 @@
-﻿using EventBus.Domain.AppUserEvents.Events;
-using Infrastructure.Common.User;
+﻿using Infrastructure.Common.User;
 using Infrastructure.Contracts.Data;
 using Infrastructure.Mapping;
 
@@ -23,6 +22,7 @@ public class AppUserEventFactory : EventBase
 
     private UserDto UserDto { get; }
 
+    /*
     public AppUserCreatedEventDeprecated Created()
     {
         return new AppUserCreatedEventDeprecated(UserDto);
@@ -36,5 +36,5 @@ public class AppUserEventFactory : EventBase
     public AppUserModifiedEventDeprecated Modified()
     {
         return new AppUserModifiedEventDeprecated(UserDto);
-    }
+    }*/
 }

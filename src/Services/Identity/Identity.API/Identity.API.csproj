@@ -26,7 +26,8 @@
         </PackageReference>
         <PackageReference Include="FastEndpoints.Security" Version="5.8.0" />
         <PackageReference Include="FastEndpoints.Swagger" Version="5.8.0" />
-        <PackageReference Include="Marten.AspNetCore" Version="6.0.0-alpha.10" />
+        <PackageReference Include="Marten" Version="6.0.0-alpha.11" />
+        <PackageReference Include="Marten.AspNetCore" Version="6.0.0-alpha.11" />
         <PackageReference Include="Mediator.Abstractions" Version="2.1.1" />
         <PackageReference Include="Mediator.SourceGenerator" Version="2.1.1">
           <PrivateAssets>all</PrivateAssets>

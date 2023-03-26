@@ -26,6 +26,7 @@ public record AppUserEvent(Guid UserId, UserDto User, AppUserEventType AppUserEv
     : IAppUserEvent,
         IAppUserEventMessage
 {
+    public Guid Id { get; } = Guid.NewGuid();
     public DateTime CreatedAt { get; } = DateTime.UtcNow;
 
     public List<string> Queues { get; set; } = new() { "messages", "projects" };

@@ -9,12 +9,20 @@
     <ItemGroup>
       <PackageReference Include="Ardalis.SmartEnum" Version="7.0.0" />
       <PackageReference Include="Autofac" Version="6.5.0" />
+      <PackageReference Include="Marten" Version="6.0.0-alpha.11" />
+      <PackageReference Include="Marten.AspNetCore" Version="6.0.0-alpha.11" />
+      <PackageReference Include="Marten.CommandLine" Version="6.0.0-alpha.11" />
       <PackageReference Include="MassTransit.AspNetCore" Version="7.3.1" />
       <PackageReference Include="MassTransit.RabbitMQ" Version="8.0.12" />
       <PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
       <PackageReference Include="Polly" Version="7.2.3" />
       <PackageReference Include="RabbitMQ.Client" Version="6.4.0" />
       <PackageReference Include="System.Linq.Async" Version="6.0.1" />
+      <PackageReference Include="WolverineFx" Version="0.9.15" />
+      <PackageReference Include="WolverineFx.EntityFrameworkCore" Version="0.9.15" />
+      <PackageReference Include="WolverineFx.FluentValidation" Version="0.9.15" />
+      <PackageReference Include="WolverineFx.Marten" Version="0.9.15" />
+      <PackageReference Include="WolverineFx.RabbitMQ" Version="0.9.15" />
     </ItemGroup>
 
     <ItemGroup>

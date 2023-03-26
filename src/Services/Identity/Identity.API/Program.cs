@@ -1,8 +1,11 @@
+using EventBus.Wolverine;
 using FastEndpoints;
 using FastEndpoints.ClientGen;
 using FluentValidation;
 using Identity.API.Auth;
 using Identity.API.Extensions;
+using Identity.API.Queues;
+using Identity.Application;
 using Identity.Application.Data;
 using Identity.Application.Extensions.Application;
 using Identity.Application.Extensions.ServiceCollection;
@@ -29,7 +32,21 @@ var config = builder.Configuration;
 config.AddEnvironmentVariables("solarengineer_");
 
 // builder.Services.InitMarten(config);
-builder.Host.InitWolverine(config);
+// var listenerQueues = new[] { "appuser-events" };
+/*var listenerQueues = new ListenerQueue[]
+{
+    new("appuser-event-responses", true),
+    new("projects-events")
+};
+var senderQueues = new[] { new SenderQueue("appuser-events", typeof(AppUserEvent)) };*/
+builder.Host.InitWolverine(
+    config,
+    QueueConfig.ListenerQueues,
+    QueueConfig.SenderQueues,
+    typeof(IIdentityApplicationAssemblyMarker).Assembly
+);
+
+// builder.Host.InitIdentityWolverine(config);
 
 builder.Services.InitOpenTelemetry(config);
 

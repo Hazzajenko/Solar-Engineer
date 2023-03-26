@@ -1,5 +1,6 @@
 ﻿using MassTransit;
-using Users.API.Consumers;
+
+// using Users.API.Consumers;
 
 namespace Users.API.Extensions;
 
@@ -27,19 +28,19 @@ public static class MassTransitExtensions
 
     private static IBusRegistrationConfigurator AddMassTransitConsumers(this IBusRegistrationConfigurator x)
     {
-        x.AddConsumer<AppUserLoggedInConsumer>();
+        // x.AddConsumer<AppUserLoggedInConsumer>();
         return x;
     }
 
     private static IRabbitMqBusFactoryConfigurator ConfigureMassTransitEndpoints(
         this IRabbitMqBusFactoryConfigurator config, IBusRegistrationContext provider)
     {
-        config.ReceiveEndpoint("AppUserLoggedInEvent-Users", ep =>
+        /*config.ReceiveEndpoint("AppUserLoggedInEvent-Users", ep =>
         {
             ep.PrefetchCount = 16;
             ep.UseMessageRetry(r => r.Interval(2, 100));
             ep.ConfigureConsumer<AppUserLoggedInConsumer>(provider);
-        });
+        });*/
         return config;
     }
 }

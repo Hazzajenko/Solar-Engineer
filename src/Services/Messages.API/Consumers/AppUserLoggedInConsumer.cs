@@ -1,4 +1,4 @@
-﻿// using DotNetCore.EntityFrameworkCore;
+﻿/*// using DotNetCore.EntityFrameworkCore;
 
 // using DotNetCore.EntityFrameworkCore;
 
@@ -44,4 +44,5 @@ public class AppUserLoggedInConsumer : IConsumer<AppUserLoggedInEventDeprecated>
             await _unitOfWork.SaveChangesAsync();
         }
     }
-}
+}*/
+

@@ -2,7 +2,7 @@
 
 namespace Infrastructure.Helpers;
 
-public static class Helpers
+public static partial class Helpers
 {
     public static bool CompareObjects(object obj1, object obj2)
     {

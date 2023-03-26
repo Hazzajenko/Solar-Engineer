@@ -53,7 +53,7 @@ public static class IdentityWolverineConfig
 
     /*public const string AppUserEventsQueue = "appuser-events";*/
 
-    public static IHostBuilder InitWolverine(this IHostBuilder builder, IConfiguration config)
+    public static IHostBuilder InitIdentityWolverine(this IHostBuilder builder, IConfiguration config)
     {
         // TODO - This is temporary, change
         var connectionString =

@@ -1,4 +1,4 @@
-﻿// using DotNetCore.EntityFrameworkCore;
+﻿/*// using DotNetCore.EntityFrameworkCore;
 
 // using DotNetCore.EntityFrameworkCore;
 
@@ -14,7 +14,7 @@ public class AppUserLoggedInConsumer : IConsumer<AppUserLoggedInEventDeprecated>
     private readonly ILogger<AppUserLoggedInConsumer> _logger;
     // private readonly IMessagesUnitOfWork _unitOfWork;
 
-    public AppUserLoggedInConsumer(ILogger<AppUserLoggedInConsumer> logger /*, IMessagesUnitOfWork unitOfWork*/)
+    public AppUserLoggedInConsumer(ILogger<AppUserLoggedInConsumer> logger /*, IMessagesUnitOfWork unitOfWork#1#)
     {
         _logger = logger;
         // _unitOfWork = unitOfWork;
@@ -40,6 +40,7 @@ public class AppUserLoggedInConsumer : IConsumer<AppUserLoggedInEventDeprecated>
         {
             await _unitOfWork.UsersRepository.UpdateAsync(user);
             await _unitOfWork.SaveChangesAsync();
-        }*/
+        }#1#
     }
-}
+}*/
+

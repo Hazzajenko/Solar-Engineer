@@ -1,0 +1,10 @@
+{
+  "Queues": {
+    "ListeningTo": [
+      {
+        "QueueName": "MyQueue",
+        "ExchangeName": "MyExchange"
+      }
+    ]
+  }
+}

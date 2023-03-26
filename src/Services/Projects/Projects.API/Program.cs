@@ -1,5 +1,6 @@
 using EventBus.Common;
 using EventBus.Domain.AppUserEvents.Responses;
+using EventBus.Wolverine;
 using FastEndpoints;
 using Infrastructure.Authentication;
 using Infrastructure.Data;
@@ -10,6 +11,8 @@ using Infrastructure.Web;
 using Marten;
 using Microsoft.AspNetCore.HttpOverrides;
 using Oakton;
+using Projects.API.Queues;
+using Projects.Application;
 using Projects.Application.Data;
 using Projects.Application.Extensions;
 
@@ -30,7 +33,23 @@ var config = builder.Configuration;
 config.AddEnvironmentVariables("solarengineer_");
 
 // builder.Services.InitMarten(config);
-builder.Host.InitWolverine(config);
+
+// var listenerQueues = new[] { "appuser-events", "project-event-responses" };
+/*var listenerQueues = new ListenerQueue[]
+{
+    new("appuser-events"),
+    new("project-event-responses", true)
+};
+var senderQueues = new SenderQueue[] { new("project-events", typeof(ProjectEvent)) };*/
+
+builder.Host.InitWolverine(
+    config,
+    QueueConfig.ListenerQueues,
+    QueueConfig.SenderQueues,
+    typeof(IProjectsApplicationAssemblyMarker).Assembly
+);
+
+// builder.Host.InitProjectsWolverine(config);
 builder.Services.InitOpenTelemetry(config);
 
 /*builder.Services.AddMediator(options => { options.ServiceLifetime = ServiceLifetime.Transient; });*/
