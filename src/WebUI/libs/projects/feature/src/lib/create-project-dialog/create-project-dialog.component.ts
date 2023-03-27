@@ -22,7 +22,7 @@ export class CreateProjectDialogComponent extends BaseService {
     projectName: new FormControl('', Validators.compose([Validators.required])),
   })
   validationMessages = {
-    projectName: [{ type: 'required', message: 'Username is required.' }],
+    projectName: [{ type: 'required', message: 'Project Name is required.' }],
   }
 
   onSubmit() {

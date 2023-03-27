@@ -23,6 +23,10 @@ export const appRoutes: Route[] = [
      ],*/
   },
   {
+    path: 'free',
+    loadComponent: () => import('@no-grid-layout/feature').then((m) => m.NoGridLayoutComponent),
+  },
+  {
     path: 'projects',
     loadComponent: () => import('@projects/feature').then((m) => m.ProjectsHomePageComponent),
     canActivate: [emptyRouteAuthGuard],

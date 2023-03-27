@@ -1,7 +1,7 @@
 <ng-container *ngIf="componentState$ | async as state">
   <div
     style="width: 32px; height: 32px"
-    class="flex whitespace-pre-wrap content-center items-center justify-center"
+    class="flex content-center items-center justify-center whitespace-pre-wrap"
   >
     <!--      <app-panel-rotation *ngIf='panel.rotation' class='pointer-events-none'
                               [setRotation]='panel.rotation'></app-panel-rotation>-->
@@ -14,14 +14,14 @@
       <ng-container *ngSwitchCase="0">
         <svg viewBox="0 0 100 100" class="pointer-events-none relative">
           <path
-            class="stroke-slate-800 fill-none stroke-[8px] z-10"
+            class="z-10 fill-none stroke-slate-800 stroke-[8px] dark:stroke-gray-400"
             d="
                         M 30, 0
                         V 100
                         "
           />
           <path
-            class="stroke-slate-800 fill-none stroke-[8px] z-10"
+            class="z-10 fill-none stroke-slate-800 stroke-[8px] dark:stroke-gray-400"
             d="
                         M 70, 0
                         V 100
@@ -32,14 +32,14 @@
       <ng-container *ngSwitchCase="1">
         <svg viewBox="0 0 100 100" class="pointer-events-none relative">
           <path
-            class="stroke-slate-800 fill-none stroke-[8px] z-10"
+            class="z-10 fill-none stroke-slate-800 stroke-[8px] dark:stroke-gray-400"
             d="
                         M 0, 30
                         H 100
                         "
           />
           <path
-            class="stroke-slate-800 fill-none stroke-[8px] z-10"
+            class="z-10 fill-none stroke-slate-800 stroke-[8px] dark:stroke-gray-400"
             d="
                         M 0, 70
                         H 100
@@ -64,11 +64,11 @@
           width: state.rotation === 0 ? '23px' : '18px'
         }"
         cdkDrag
-        class="block panel absolute border border-black flex items-center justify-center content-center hover:bg-red-500"
+        class="panel absolute block flex content-center items-center justify-center border border-black hover:bg-red-500 dark:border-gray-400"
       >
         <ng-container *ngIf="state.stringSelected === 'Selected'; else stringNotSelected">
           <ng-container *ngIf="state.selected === 'NotSelected' && !state.selectedPanelPath">
-            <div class="relative bottom-2.5 pointer-events-none" *ngIf="state.panelPath">
+            <div class="pointer-events-none relative bottom-2.5" *ngIf="state.panelPath">
               {{ state.panelPath.link + ":" + state.panelPath.count }}
             </div>
           </ng-container>
@@ -85,7 +85,7 @@
         </ng-container>
         <ng-template #stringNotSelected>
           <ng-container *ngIf="!state.panelPath">
-            <div class="relative text-xs bottom-2 pointer-events-none" *ngIf="state.stringName">
+            <div class="pointer-events-none relative bottom-2 text-xs" *ngIf="state.stringName">
               <span *ngIf="state.stringName !== 'undefined'">
                 {{ state.stringName }}
               </span>

@@ -1,4 +1,5 @@
-﻿using Serilog;
+﻿using Projects.Domain;
+using Serilog;
 
 namespace Projects.SignalR.Helpers;
 
@@ -8,7 +9,8 @@ public static partial class Helpers
     {
         try
         {
-            return typeof(IProjectsSignalrAssemblyMarker).Assembly.DefinedTypes
+            return typeof(IProjectsDomainAssemblyMarker).Assembly.DefinedTypes
+                // return typeof(IProjectsSignalrAssemblyMarker).Assembly.DefinedTypes
                 .Where(x => interfaceType.IsAssignableFrom(x) && x is { IsInterface: false })
                 .ToDictionary(type => type.Name, type => type.AsType())
                 .SingleOrDefault(x => x.Key == typeName)

@@ -1,0 +1,21 @@
+<div
+  class="containerDIV relative left-0 top-0 flex h-fit w-fit flex-col items-center justify-center overflow-hidden"
+  (click)="createFreePanel($event)"
+  [style.min-width]="gridContainerWidth"
+  [style.min-height]="gridContainerHeight"
+>
+  <canvas
+    [style.min-height]="gridContainerHeight"
+    [style.min-width]="gridContainerWidth"
+    class="pointer-events-none absolute z-10"
+    style="overflow: hidden; z-index: 10"
+  >
+  </canvas>
+  <div
+    [style.height]="gridContainerHeight"
+    [style.width]="gridContainerWidth"
+    class="appWrapper relative flex flex-col items-center"
+  >
+    <app-free-panel [freePanel]="panel" *ngFor="let panel of freePanels" />
+  </div>
+</div>

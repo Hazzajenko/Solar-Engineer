@@ -36,7 +36,8 @@ public static class CommandsMapping
         commandProperty.SetValue(command, eventRequest);
 
         var userProperty = commandType.GetProperty("User")!;
-        userProperty.SetValue(command, context.ToHubAppUser());
+        userProperty.SetValue(command, context.ToAuthUser());
+        // userProperty.SetValue(command, context.ToHubAppUser());
 
         var requestIdProperty = commandType.GetProperty("RequestId")!;
         requestIdProperty.SetValue(command, projectGridEvent.RequestId);

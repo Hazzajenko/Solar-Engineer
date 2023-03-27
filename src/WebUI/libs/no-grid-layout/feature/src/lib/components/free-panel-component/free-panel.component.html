@@ -1,0 +1,87 @@
+<ng-container *ngIf="freePanel">
+  <div
+    style="width: 32px; height: 32px"
+    class="flex content-center items-center justify-center whitespace-pre-wrap"
+  >
+    <ng-container [ngSwitch]="rotation">
+      <ng-container *ngSwitchCase="0">
+        <svg viewBox="0 0 100 100" class="pointer-events-none relative">
+          <path
+            class="z-10 fill-none stroke-slate-800 stroke-[8px] dark:stroke-gray-400"
+            d="
+                        M 30, 0
+                        V 100
+                        "
+          />
+          <path
+            class="z-10 fill-none stroke-slate-800 stroke-[8px] dark:stroke-gray-400"
+            d="
+                        M 70, 0
+                        V 100
+                        "
+          />
+        </svg>
+      </ng-container>
+      <ng-container *ngSwitchCase="1">
+        <svg viewBox="0 0 100 100" class="pointer-events-none relative">
+          <path
+            class="z-10 fill-none stroke-slate-800 stroke-[8px] dark:stroke-gray-400"
+            d="
+                        M 0, 30
+                        H 100
+                        "
+          />
+          <path
+            class="z-10 fill-none stroke-slate-800 stroke-[8px] dark:stroke-gray-400"
+            d="
+                        M 0, 70
+                        H 100
+                        "
+          />
+        </svg>
+      </ng-container>
+    </ng-container>
+    <!--    [cdkDragFreeDragPosition]="dragPosition"-->
+    <ng-container>
+      <div
+        [cdkDragData]="freePanel"
+        [cdkDragFreeDragPosition]="dragPosition"
+        (cdkDragDropped)="dragDropped($event)"
+        (cdkDragMoved)="dragMoved($event)"
+        [ngStyle]="{
+          height: rotation === 0 ? '18px' : '23px',
+          width: rotation === 0 ? '23px' : '18px'
+        }"
+        cdkDrag
+        class="panel absolute block flex content-center items-center justify-center border border-black hover:bg-red-500 dark:border-gray-400"
+      >
+        <!--<ng-container *ngIf="state.stringSelected === 'Selected'; else stringNotSelected">
+          <ng-container *ngIf="state.selected === 'NotSelected' && !state.selectedPanelPath">
+            <div class="pointer-events-none relative bottom-2.5" *ngIf="state.panelPath">
+              {{ state.panelPath.link + ":" + state.panelPath.count }}
+            </div>
+          </ng-container>
+          <ng-container *ngIf="state.selected === 'NotSelected' && state.selectedPanelPath">
+            <div class="relative">
+              {{ state.selectedPanelPath.count }}
+            </div>
+          </ng-container>
+          <ng-container *ngIf="state.selected === 'SingleSelected' && state.selectedPanelPath">
+            <div class="relative">
+              {{ state.selectedPanelPath.count }}
+            </div>
+          </ng-container>
+        </ng-container>-->
+        <!--   <ng-template #stringNotSelected>
+             <ng-container *ngIf="!state.panelPath">
+               <div class="pointer-events-none relative bottom-2 text-xs" *ngIf="state.stringName">
+                 <span *ngIf="state.stringName !== 'undefined'">
+                   {{ state.stringName }}
+                 </span>
+               </div>
+             </ng-container>
+           </ng-template>-->
+      </div>
+    </ng-container>
+  </div>
+</ng-container>

@@ -1,10 +1,10 @@
 <ng-container *ngIf="user$ | async as user">
   <form
     [formGroup]="projectForm"
-    class="flex h-full flex-col divide-y divide-gray-200 bg-white shadow-xl"
+    class="flex h-full flex-col divide-y divide-gray-200 bg-white shadow-xl dark:divide-gray-700 dark:bg-slate-700"
   >
     <div class="h-0 flex-1 overflow-y-auto">
-      <div class="bg-indigo-700 py-6 px-4 sm:px-6">
+      <div class="bg-indigo-700 py-6 px-4 dark:bg-indigo-500 sm:px-6">
         <div class="flex items-center justify-between">
           <h2 class="text-base font-semibold leading-6 text-white" id="slide-over-title">
             New Project
@@ -13,7 +13,7 @@
             <button
               (click)="close()"
               type="button"
-              class="rounded-md bg-indigo-700 text-indigo-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
+              class="rounded-md bg-indigo-700 text-indigo-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-white dark:bg-indigo-500 dark:text-indigo-100 dark:hover:text-white"
             >
               <span class="sr-only">Close panel</span>
               <svg
@@ -30,16 +30,18 @@
           </div>
         </div>
         <div class="mt-1">
-          <p class="text-sm text-indigo-300">
+          <p class="text-sm text-indigo-300 dark:text-gray-100">
             Get started by filling in the information below to create your new project.
           </p>
         </div>
       </div>
       <div class="flex flex-1 flex-col justify-between">
-        <div class="divide-y divide-gray-200 px-4 sm:px-6">
+        <div class="divide-y divide-gray-200 px-4 dark:divide-gray-600 sm:px-6">
           <div class="space-y-6 pt-6 pb-5">
             <div>
-              <label for="projectName" class="block text-sm font-medium leading-6 text-gray-900"
+              <label
+                for="projectName"
+                class="block text-sm font-medium leading-6 text-gray-900 dark:text-gray-100"
                 >Project name</label
               >
               <div class="mt-2">
@@ -49,7 +51,7 @@
                   id="projectName"
                   formControlName="projectName"
                   [ngClass]="{ 'border border-red-500': projectForm.get('projectName')!.dirty }"
-                  class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 dark:bg-slate-600 dark:text-gray-100 dark:placeholder-gray-400 dark:ring-gray-600 sm:text-sm sm:leading-6"
                 />
               </div>
             </div>
@@ -71,7 +73,9 @@
             </div>
 
             <div>
-              <h3 class="text-sm font-medium leading-6 text-gray-900">Team Members</h3>
+              <h3 class="text-sm font-medium leading-6 text-gray-900 dark:text-gray-100">
+                Team Members
+              </h3>
               <div class="mt-2">
                 <div class="flex space-x-2">
                   <a *ngFor="let item of 4 | createRange" class="rounded-full hover:opacity-75">
@@ -84,7 +88,7 @@
 
                   <button
                     type="button"
-                    class="inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border-2 border-dashed border-gray-200 bg-white text-gray-400 hover:border-gray-300 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    class="inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border-2 border-dashed border-gray-200 bg-white text-gray-400 hover:border-gray-300 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:border-gray-600 dark:bg-slate-600 dark:text-gray-300 dark:hover:border-gray-500 dark:hover:text-gray-400 dark:focus:ring-offset-gray-800"
                   >
                     <span class="sr-only">Add team member</span>
                     <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -97,7 +101,9 @@
               </div>
             </div>
             <fieldset>
-              <legend class="text-sm font-medium leading-6 text-gray-900">Privacy</legend>
+              <legend class="text-sm font-medium leading-6 text-gray-900 dark:text-gray-100">
+                Privacy
+              </legend>
               <div class="mt-2 space-y-4">
                 <div class="relative flex items-start">
                   <div class="absolute flex h-6 items-center">
@@ -106,12 +112,12 @@
                       name="privacy"
                       aria-describedby="privacy-public-description"
                       type="radio"
-                      class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                      class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600 dark:border-gray-600 dark:text-indigo-400"
                       checked
                     />
                   </div>
                   <div class="pl-7 text-sm leading-6">
-                    <label for="privacy-public" class="font-medium text-gray-900"
+                    <label for="privacy-public" class="font-medium text-gray-900 dark:text-gray-100"
                       >Public access</label
                     >
                     <p id="privacy-public-description" class="text-gray-500">
@@ -127,11 +133,13 @@
                         name="privacy"
                         aria-describedby="privacy-private-to-project-description"
                         type="radio"
-                        class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                        class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600 dark:border-gray-600 dark:text-indigo-400"
                       />
                     </div>
                     <div class="pl-7 text-sm leading-6">
-                      <label for="privacy-private-to-project" class="font-medium text-gray-900"
+                      <label
+                        for="privacy-private-to-project"
+                        class="font-medium text-gray-900 dark:text-gray-100"
                         >Private to project members</label
                       >
                       <p id="privacy-private-to-project-description" class="text-gray-500">
@@ -148,11 +156,13 @@
                         name="privacy"
                         aria-describedby="privacy-private-to-project-description"
                         type="radio"
-                        class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                        class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600 dark:border-gray-600 dark:text-indigo-400"
                       />
                     </div>
                     <div class="pl-7 text-sm leading-6">
-                      <label for="privacy-private" class="font-medium text-gray-900"
+                      <label
+                        for="privacy-private"
+                        class="font-medium text-gray-900 dark:text-gray-100"
                         >Private to you</label
                       >
                       <p id="privacy-private-description" class="text-gray-500">
@@ -168,10 +178,10 @@
             <div class="flex text-sm">
               <a
                 href="#"
-                class="group inline-flex items-center font-medium text-indigo-600 hover:text-indigo-900"
+                class="group inline-flex items-center font-medium text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300"
               >
                 <svg
-                  class="h-5 w-5 text-indigo-500 group-hover:text-indigo-900"
+                  class="h-5 w-5 text-indigo-500 group-hover:text-indigo-900 dark:text-indigo-400 dark:group-hover:text-indigo-300"
                   viewBox="0 0 20 20"
                   fill="currentColor"
                   aria-hidden="true"
@@ -187,9 +197,12 @@
               </a>
             </div>
             <div class="mt-4 flex text-sm">
-              <a href="#" class="group inline-flex items-center text-gray-500 hover:text-gray-900">
+              <a
+                href="#"
+                class="group inline-flex items-center text-gray-500 hover:text-gray-900 dark:text-gray-100"
+              >
                 <svg
-                  class="h-5 w-5 text-gray-400 group-hover:text-gray-500"
+                  class="h-5 w-5 text-gray-400 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300"
                   viewBox="0 0 20 20"
                   fill="currentColor"
                   aria-hidden="true"
@@ -211,14 +224,14 @@
       <button
         (click)="close()"
         type="button"
-        class="rounded-md bg-white py-2 px-3 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+        class="rounded-md bg-white py-2 px-3 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500 dark:bg-gray-800 dark:text-gray-100 dark:ring-gray-600 dark:hover:bg-gray-700"
       >
         Cancel
       </button>
       <button
         (click)="onSubmit()"
         type="submit"
-        class="ml-4 inline-flex justify-center rounded-md bg-indigo-600 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+        class="ml-4 inline-flex justify-center rounded-md bg-indigo-600 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:bg-indigo-400 dark:hover:bg-indigo-300"
       >
         Save
       </button>

@@ -15,7 +15,7 @@
             'cursor-pointer': isHovered.get(project.name),
             'cursor-default': !isHovered.get(project.name)
           }"
-          class="min-h-5 col-span-1 flex rounded-md bg-white shadow-sm dark:bg-gray-800"
+          class="col-span-1 flex h-[58px] min-h-[58px] rounded-md bg-white shadow-sm dark:bg-gray-800"
         >
           <!--          cursor-pointer-->
           <!--        <div
@@ -100,7 +100,7 @@
         </li>
       </ng-container>
       <ng-container *ngIf="pinnedProjects.length < 4">
-        <li class="min-h-5 col-span-1 flex rounded-md shadow-sm">
+        <li class="col-span-1 flex h-[58px] min-h-[58px] rounded-md shadow-sm">
           <button
             (click)="openCreateProjectDialog()"
             type="button"

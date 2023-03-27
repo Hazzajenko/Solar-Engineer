@@ -1,8 +1,8 @@
 <ng-container *ngIf="post$ | async as post">
-  <div class="mt-4 mx-auto max-w-7xl px-2 sm:px-4 lg:px-8">
+  <div class="mx-auto mt-4 max-w-7xl px-2 sm:px-4 lg:px-8">
     <h1 class="sr-only">{{ post.title }}</h1>
     <ul role="list" class="space-y-4">
-      <li class="bg-white px-4 py-6 shadow sm:rounded-lg sm:p-6">
+      <li class="bg-white px-4 py-6 shadow dark:bg-slate-700 sm:rounded-lg sm:p-6">
         <article aria-labelledby="question-title-81614">
           <div>
             <div class="flex space-x-3">
@@ -11,7 +11,7 @@
                 <!--                <img class="h-10 w-10 rounded-full" [src]="post.authorPhotoUrl" alt="" />-->
               </div>
               <div class="min-w-0 flex-1">
-                <p class="text-sm font-medium text-gray-900">
+                <p class="text-sm font-medium text-gray-900 dark:text-gray-100">
                   <a href="#" class="hover:underline">{{ post.authorDisplayName }}</a>
                   <!--                  <a href='#' class='hover:underline'>Dries Vincent</a>-->
                 </p>
@@ -30,7 +30,7 @@
                   <div>
                     <button
                       type="button"
-                      class="-m-2 flex items-center rounded-full p-2 text-gray-400 hover:text-gray-600"
+                      class="-m-2 flex items-center rounded-full p-2 text-gray-400 hover:text-gray-600 dark:text-gray-300 dark:hover:text-gray-100"
                       id="options-menu-0-button"
                       aria-expanded="false"
                       aria-haspopup="true"
@@ -134,12 +134,15 @@
                 </div>
               </div>
             </div>
-            <h2 id="question-title-81614" class="mt-4 text-base font-medium text-gray-900">
+            <h2
+              id="question-title-81614"
+              class="mt-4 text-base font-medium text-gray-900 dark:text-gray-100"
+            >
               <!--              What would you have done differently if you ran Jurassic Park?-->
               {{ post.title }}
             </h2>
           </div>
-          <div class="mt-2 space-y-4 text-sm text-gray-700">
+          <div class="mt-2 space-y-4 text-sm text-gray-700 dark:text-gray-300">
             <p [innerHTML]="post.content | lineBreaksToHtml">
               <!--         <p>
                          Jurassic Park was an incredible idea and a magnificent feat of engineering, but poor
@@ -158,21 +161,21 @@
               <span class="inline-flex items-center text-sm">
                 <button
                   type="button"
-                  class="inline-flex space-x-2 text-gray-400 hover:text-gray-500"
+                  class="inline-flex space-x-2 text-gray-400 hover:text-gray-500 dark:text-gray-300 dark:hover:text-gray-200"
                 >
                   <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                     <path
                       d="M1 8.25a1.25 1.25 0 112.5 0v7.5a1.25 1.25 0 11-2.5 0v-7.5zM11 3V1.7c0-.268.14-.526.395-.607A2 2 0 0114 3c0 .995-.182 1.948-.514 2.826-.204.54.166 1.174.744 1.174h2.52c1.243 0 2.261 1.01 2.146 2.247a23.864 23.864 0 01-1.341 5.974C17.153 16.323 16.072 17 14.9 17h-3.192a3 3 0 01-1.341-.317l-2.734-1.366A3 3 0 006.292 15H5V8h.963c.685 0 1.258-.483 1.612-1.068a4.011 4.011 0 012.166-1.73c.432-.143.853-.386 1.011-.814.16-.432.248-.9.248-1.388z"
                     />
                   </svg>
-                  <span class="font-medium text-gray-900">29</span>
+                  <span class="font-medium text-gray-900 dark:text-gray-100">29</span>
                   <span class="sr-only">likes</span>
                 </button>
               </span>
               <span class="inline-flex items-center text-sm">
                 <button
                   type="button"
-                  class="inline-flex space-x-2 text-gray-400 hover:text-gray-500"
+                  class="inline-flex space-x-2 text-gray-400 hover:text-gray-500 dark:text-gray-300 dark:hover:text-gray-200"
                 >
                   <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                     <path
@@ -181,14 +184,14 @@
                       clip-rule="evenodd"
                     />
                   </svg>
-                  <span class="font-medium text-gray-900">11</span>
+                  <span class="font-medium text-gray-900 dark:text-gray-100">11</span>
                   <span class="sr-only">replies</span>
                 </button>
               </span>
               <span class="inline-flex items-center text-sm">
                 <button
                   type="button"
-                  class="inline-flex space-x-2 text-gray-400 hover:text-gray-500"
+                  class="inline-flex space-x-2 text-gray-400 hover:text-gray-500 dark:text-gray-300 dark:hover:text-gray-200"
                 >
                   <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                     <path d="M10 12.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5z" />
@@ -198,7 +201,7 @@
                       clip-rule="evenodd"
                     />
                   </svg>
-                  <span class="font-medium text-gray-900">2.7k</span>
+                  <span class="font-medium text-gray-900 dark:text-gray-100">2.7k</span>
                   <span class="sr-only">views</span>
                 </button>
               </span>
@@ -207,14 +210,14 @@
               <span class="inline-flex items-center text-sm">
                 <button
                   type="button"
-                  class="inline-flex space-x-2 text-gray-400 hover:text-gray-500"
+                  class="inline-flex space-x-2 text-gray-400 hover:text-gray-500 dark:text-gray-300 dark:hover:text-gray-200"
                 >
                   <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                     <path
                       d="M13 4.5a2.5 2.5 0 11.702 1.737L6.97 9.604a2.518 2.518 0 010 .792l6.733 3.367a2.5 2.5 0 11-.671 1.341l-6.733-3.367a2.5 2.5 0 110-3.475l6.733-3.366A2.52 2.52 0 0113 4.5z"
                     />
                   </svg>
-                  <span class="font-medium text-gray-900">Share</span>
+                  <span class="font-medium text-gray-900 dark:text-gray-100">Share</span>
                 </button>
               </span>
             </div>

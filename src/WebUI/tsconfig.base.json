@@ -57,12 +57,12 @@
       "@auth/shared/models": ["libs/auth/shared/models/src/index.ts"],
       "@auth/utils": ["libs/auth/utils/src/index.ts"],
       "@blog/feature": ["libs/blog/feature/src/index.ts"],
-      "@core-components": ["libs/core-components/src"],
       "@grid-layout/data-access": ["libs/grid-layout/data-access/src/index.ts"],
       "@grid-layout/feature": ["libs/grid-layout/feature/src/index.ts"],
       "@home/data-access": ["libs/home/data-access/src/index.ts"],
       "@home/feature": ["libs/home/feature/src/index.ts"],
       "@home/ui": ["libs/home/ui/src/index.ts"],
+      "@no-grid-layout/feature": ["libs/no-grid-layout/feature/src/index.ts"],
       "@project-id/data-access/services": ["libs/project-id/data-access/services/src/index.ts"],
       "@projects/data-access": ["libs/projects/data-access/src/index.ts"],
       "@projects/feature": ["libs/projects/feature/src/index.ts"],
@@ -99,8 +99,7 @@
       "@shared/utils": ["libs/shared/utils/src/index.ts"],
       "@undefined/core-components": ["dist/libs/core-components"],
       "@undefined/core-components/*": ["dist/libs/core-components/dist/components/*"],
-      "@undefined/core-components/loader": ["dist/libs/core-components/loader"],
-      "core-components-angular": ["libs/core-components-angular/src/index.ts"]
+      "@undefined/core-components/loader": ["dist/libs/core-components/loader"]
     },
     "rootDir": ".",
     "emitDecoratorMetadata": true

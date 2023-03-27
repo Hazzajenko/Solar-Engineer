@@ -4,11 +4,12 @@ import { BaseService } from '@shared/logger'
 import { DialogService, GenerateUserDataPipe } from '@shared/utils'
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog'
 import { ProjectModel } from '@shared/data-access/models'
+import { ExcludeCurrentUserPipe } from '@shared/pipes'
 
 @Component({
   selector: 'app-project-members',
   standalone: true,
-  imports: [CommonModule, GenerateUserDataPipe],
+  imports: [CommonModule, GenerateUserDataPipe, ExcludeCurrentUserPipe],
   templateUrl: './project-members-dialog.component.html',
   styles: [],
   changeDetection: ChangeDetectionStrategy.OnPush,
