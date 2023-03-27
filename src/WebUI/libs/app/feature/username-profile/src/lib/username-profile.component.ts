@@ -1,15 +1,6 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
 import { ScrollingModule } from '@angular/cdk/scrolling'
-import {
-  AsyncPipe,
-  DatePipe,
-  NgClass,
-  NgForOf,
-  NgIf,
-  NgStyle,
-  NgSwitch,
-  NgSwitchCase,
-} from '@angular/common'
+import { AsyncPipe, DatePipe, NgClass, NgForOf, NgIf, NgStyle, NgSwitch, NgSwitchCase } from '@angular/common'
 import { ChangeDetectionStrategy, Component, Inject, inject } from '@angular/core'
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
@@ -28,12 +19,12 @@ import { FriendsComponent } from '@app/feature/friends'
 import { MessagesComponent } from '@app/messages'
 import { AuthStoreService } from '@auth/data-access/services'
 
-import { UserModel, WebUserModel } from '@shared/data-access/models'
+import { IUserModel, WebUserModel } from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
 import { GetFriendRequestPipe } from 'libs/app/feature/notifications/src/lib/get-friend-request.pipe'
 import { SortNotificationsPipe } from 'libs/app/feature/notifications/src/lib/sort-notifications.pipe'
-import { combineLatest, map, Observable, of, switchMap, tap } from 'rxjs'
+import { map, Observable } from 'rxjs'
 import { NotificationsComponent } from '@app/feature/notifications'
 import { ActivatedRoute } from '@angular/router'
 import { UsersService, UsersStoreService } from '@app/data-access/users'
@@ -92,33 +83,33 @@ export class UsernameProfileComponent {
       return paths[0].path !== 'messages'
     }),
   )
-  user$: Observable<UserModel | undefined> = this.authStore.select.user$
+  user$: Observable<IUserModel | undefined> = this.authStore.select.user$
   userProfile$: Observable<WebUserModel | undefined>
 
   constructor(
     private dialogRef: MatDialogRef<UsernameProfileComponent>,
-    @Inject(MAT_DIALOG_DATA) data: { user: UserModel },
+    @Inject(MAT_DIALOG_DATA) data: { user: IUserModel },
   ) {
     this.userProfile$ = this.usersStore.select.webUserCombinedByUserName$(data.user.displayName)
     /*    this.userProfile$ = this.usersStore.select.userByRouteParams$.pipe(
-          switchMap((user) => {
-            if (!user) {
-              return this.usersService.getUserByUserName(data.user.userName).pipe(
-                map((res) => res.user),
-                tap((user) => this.usersStore.dispatch.addUser(user)),
-              )
-            }
-            return of(user)
-          }),
-          switchMap((user) =>
-            combineLatest([
-              of(user),
-              this.connectionsStore.select.isUserOnline$(user.userName),
-              this.friendsStore.select.getUserFriendStatus$(user.userName),
-            ]),
-          ),
-          map(([user, isOnline, isFriend]) => ({ ...user, ...isFriend, isOnline } as WebUserModel)),
-        )*/
+     switchMap((user) => {
+     if (!user) {
+     return this.usersService.getUserByUserName(data.user.userName).pipe(
+     map((res) => res.user),
+     tap((user) => this.usersStore.dispatch.addUser(user)),
+     )
+     }
+     return of(user)
+     }),
+     switchMap((user) =>
+     combineLatest([
+     of(user),
+     this.connectionsStore.select.isUserOnline$(user.userName),
+     this.friendsStore.select.getUserFriendStatus$(user.userName),
+     ]),
+     ),
+     map(([user, isOnline, isFriend]) => ({ ...user, ...isFriend, isOnline } as WebUserModel)),
+     )*/
   }
 
   sendFriendRequest(userName: string) {

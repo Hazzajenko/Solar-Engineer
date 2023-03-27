@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core'
 import { Update } from '@ngrx/entity'
 import { Store } from '@ngrx/store'
-import { AppUserLinkModel, UserModel } from '@shared/data-access/models'
+import { AppUserLinkModel } from '@shared/data-access/models'
 import { UsersActions } from '../store'
 import { UpdateDisplayPictureRequest } from '../models'
 
@@ -26,7 +26,6 @@ export class UsersRepository {
   rejectFriendRequest(userName: string) {
     this.store.dispatch(UsersActions.rejectFriendRequest({ userName }))
   }
-
 
   updateDisplayPicture(request: UpdateDisplayPictureRequest) {
     this.store.dispatch(UsersActions.updateAppuserDisplayPictureWithIcon({ request }))

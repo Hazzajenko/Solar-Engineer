@@ -1,14 +1,5 @@
 import { ScrollingModule } from '@angular/cdk/scrolling'
-import {
-  AsyncPipe,
-  DatePipe,
-  NgClass,
-  NgForOf,
-  NgIf,
-  NgStyle,
-  NgSwitch,
-  NgSwitchCase,
-} from '@angular/common'
+import { AsyncPipe, DatePipe, NgClass, NgForOf, NgIf, NgStyle, NgSwitch, NgSwitchCase } from '@angular/common'
 import { ChangeDetectionStrategy, Component, Inject, inject } from '@angular/core'
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
@@ -27,7 +18,7 @@ import { FriendsComponent } from '@app/feature/friends'
 // import { MessagesComponent } from '@app/data-access/messages'
 import { AuthStoreService } from '@auth/data-access'
 
-import { AppUserLinkModel, AuthUserModel, RecipientFriendModel, UserModel } from '@shared/data-access/models'
+import { AppUserLinkModel, AuthUserModel, RecipientFriendModel } from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
 // import { GetFriendRequestPipe } from 'libs/app/feature/notifications/src/lib/get-friend-request.pipe'

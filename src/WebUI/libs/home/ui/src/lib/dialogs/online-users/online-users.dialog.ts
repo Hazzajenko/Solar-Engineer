@@ -1,9 +1,8 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
-import { Inject, inject } from '@angular/core'
-import { ChangeDetectionStrategy, Component } from '@angular/core'
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatCardModule } from '@angular/material/card'
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog'
+import { MatDialogModule } from '@angular/material/dialog'
 
 import { ScrollingModule } from '@angular/cdk/scrolling'
 import { AsyncPipe, NgClass, NgForOf, NgIf, NgStyle } from '@angular/common'
@@ -11,20 +10,13 @@ import { MatListModule } from '@angular/material/list'
 
 import { MatIconModule } from '@angular/material/icon'
 
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms'
+import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatInputModule } from '@angular/material/input'
-import { AuthFacade, AuthStoreService } from '@auth/data-access'
+import { AuthStoreService } from '@auth/data-access'
 import { ConnectionsStoreService } from '@app/data-access/connections'
 
-import { AuthUserModel, ConnectionModel, StringModel, UserModel } from '@shared/data-access/models'
+import { AuthUserModel, ConnectionModel } from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 import { Observable } from 'rxjs'
 

@@ -2,7 +2,7 @@ import { Inject, inject, Pipe, PipeTransform } from '@angular/core'
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog'
 import { Router } from '@angular/router'
 import { AuthStoreService } from '@auth/data-access/services'
-import { UserModel } from '@shared/data-access/models'
+import { IUserModel } from '@shared/data-access/models'
 // import { AuthDialog } from 'libs/home/ui/src/lib/dialogs/auth/auth.dialog'
 import { ConnectionsStoreService } from '@app/data-access/connections'
 import { AuthDialog } from './auth.dialog'
@@ -16,9 +16,10 @@ export class CheckUserPipe implements PipeTransform {
   private authStore = inject(AuthStoreService)
   private connectionsService = inject(ConnectionsStoreService)
 
-  constructor(private dialogRef: MatDialogRef<AuthDialog>, @Inject(MAT_DIALOG_DATA) data: any) {}
+  constructor(private dialogRef: MatDialogRef<AuthDialog>, @Inject(MAT_DIALOG_DATA) data: any) {
+  }
 
-  async transform(user: UserModel | undefined | null) {
+  async transform(user: IUserModel | undefined | null) {
     if (!user) return
 
     const token = await this.authStore.select.token

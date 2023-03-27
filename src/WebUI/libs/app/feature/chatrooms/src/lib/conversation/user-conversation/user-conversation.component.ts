@@ -11,15 +11,7 @@ import {
   NgSwitchCase,
   NgTemplateOutlet,
 } from '@angular/common'
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  Component,
-  ElementRef,
-  inject,
-  Input,
-  ViewChild,
-} from '@angular/core'
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, inject, Input, ViewChild } from '@angular/core'
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { MatButtonModule } from '@angular/material/button'
@@ -37,13 +29,7 @@ import { SendMessageRequest, UserMessagesStoreService } from '@app/data-access/m
 import { AuthStoreService } from '@auth/data-access'
 import { LetModule } from '@ngrx/component'
 
-import {
-  AuthUserModel,
-  MessageFrom,
-  MessageWebUserModel,
-  UserModel,
-  WebUserModel,
-} from '@shared/data-access/models'
+import { AuthUserModel, MessageFrom, MessageWebUserModel, WebUserModel } from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
 import { map, Observable } from 'rxjs'
@@ -166,9 +152,9 @@ export class UserConversationComponent implements AfterViewInit {
     this.elDistanceToTop =
       window.pageYOffset + this.elementRef.nativeElement.getBoundingClientRect().top
     /*    this.elDistanceToTop =
-          window.pageYOffset +
-          this.elementRef.nativeElement.getBoundingClientRect().top -
-          this.elementRef.nativeElement.offsetTop*/
+     window.pageYOffset +
+     this.elementRef.nativeElement.getBoundingClientRect().top -
+     this.elementRef.nativeElement.offsetTop*/
     if (this.elementRef.nativeElement.offsetParent) {
       this.idk =
         this.elementRef.nativeElement.getBoundingClientRect().top +

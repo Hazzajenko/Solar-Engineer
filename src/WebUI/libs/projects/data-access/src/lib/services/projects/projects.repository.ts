@@ -57,6 +57,7 @@ export class ProjectsRepository {
         createdById: '0',
         lastModifiedTime: new Date().getDate().toString(),
         memberIds: [],
+        members: [],
       },
       strings: [],
       panels: [],

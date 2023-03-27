@@ -61,7 +61,7 @@ public static class ClaimsPrincipleExtensions
     ///     Get the user id as a Guid.
     ///     If the user id is not a Guid, then throw an exception.
     /// </summary>
-    public static AuthUser ToAuthUser(this ClaimsPrincipal context)
+    public static AuthUser ClaimsToAuthUser(this ClaimsPrincipal context)
     {
         // check if in development mode
         if (context.Identity?.Name is null)

@@ -1,8 +1,7 @@
+import { UsersActions } from './users.actions'
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity'
 import { Action, createReducer, on } from '@ngrx/store'
-import { AppUserLinkModel, UserModel } from '@shared/data-access/models'
-
-import { UsersActions } from './users.actions'
+import { AppUserLinkModel } from '@shared/data-access/models'
 
 export const USERS_FEATURE_KEY = 'users'
 

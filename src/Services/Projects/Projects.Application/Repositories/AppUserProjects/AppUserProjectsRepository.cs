@@ -76,6 +76,7 @@ public sealed class AppUserProjectsRepository
             .Where(x => x.ProjectUserId == appUserId)
             .Include(x => x.Project)
             .ThenInclude(x => x.AppUserProjects)
+            .ThenInclude(x => x.ProjectUser)
             .Select(
                 x =>
                     new ProjectDto
@@ -87,6 +88,17 @@ public sealed class AppUserProjectsRepository
                         CreatedById = x.Project.CreatedById.ToString(),
                         MemberIds = x.Project.AppUserProjects.Select(
                             z => z.ProjectUserId.ToString()
+                        ),
+                        Members = x.Project.AppUserProjects.Select(
+                            z =>
+                                new ProjectUserDto
+                                {
+                                    Id = z.ProjectUserId.ToString(),
+                                    DisplayName = z.ProjectUser.DisplayName,
+                                    UserName = z.ProjectUser.UserName,
+                                    PhotoUrl = z.ProjectUser.PhotoUrl,
+                                    JoinedAtTime = z.CreatedTime
+                                }
                         )
                     }
             )

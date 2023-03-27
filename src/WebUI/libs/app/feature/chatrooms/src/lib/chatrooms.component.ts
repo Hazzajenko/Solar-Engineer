@@ -1,14 +1,5 @@
 import { ScrollingModule } from '@angular/cdk/scrolling'
-import {
-  AsyncPipe,
-  DatePipe,
-  NgClass,
-  NgForOf,
-  NgIf,
-  NgStyle,
-  NgSwitch,
-  NgSwitchCase,
-} from '@angular/common'
+import { AsyncPipe, DatePipe, NgClass, NgForOf, NgIf, NgStyle, NgSwitch, NgSwitchCase } from '@angular/common'
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
@@ -25,7 +16,7 @@ import { ActivatedRoute, Router } from '@angular/router'
 import { AuthStoreService } from '@auth/data-access'
 import { LetModule } from '@ngrx/component'
 
-import { AuthUserModel, UserModel } from '@shared/data-access/models'
+import { AuthUserModel } from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
 import { map, Observable } from 'rxjs'

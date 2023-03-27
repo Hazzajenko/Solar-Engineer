@@ -1,6 +1,8 @@
 ﻿using FastEndpoints;
+using Infrastructure.Extensions;
 using Mediator;
 using Projects.Domain.Contracts.Responses;
+using Projects.Domain.Queries.Projects;
 
 namespace Projects.API.Endpoints;
 
@@ -27,8 +29,10 @@ public class GetUserProjectsEndpoint : EndpointWithoutRequest<GetUserProjectsRes
 
     public override async Task HandleAsync(CancellationToken cT)
     {
-        // Response.Projects = await _mediator.Send(new GetUserProjectsQuery(User.ToAuthUser()), cT);
-        // Response.Projects = new List<ProjectDto>();
+        Response.Projects = await _mediator.Send(
+            new GetUserProjectsQuery(User.ClaimsToAuthUser()),
+            cT
+        );
 
         await SendOkAsync(Response, cT);
     }

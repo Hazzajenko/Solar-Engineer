@@ -1,6 +1,7 @@
+import { IProject } from './iproject.interface'
+import { ProjectUserModel } from './project-user.model'
 import { ProjectOptions } from './project.options'
 import { getGuid } from '@shared/utils'
-import { IProject } from './iproject.interface'
 
 export class ProjectModel implements IProject {
   id!: string
@@ -9,6 +10,7 @@ export class ProjectModel implements IProject {
   createdTime: string
   lastModifiedTime: string
   memberIds: string[]
+  members: ProjectUserModel[]
 
   constructor(options: ProjectOptions) {
     this.id = getGuid()
@@ -17,5 +19,6 @@ export class ProjectModel implements IProject {
     this.createdTime = new Date().toISOString()
     this.lastModifiedTime = new Date().toISOString()
     this.memberIds = []
+    this.members = []
   }
 }

@@ -29,7 +29,7 @@ public class InviteToProjectEndpoint : Endpoint<InviteToProjectRequest>
 
     public override async Task HandleAsync(InviteToProjectRequest request, CancellationToken cT)
     {
-        await _mediator.Send(new InviteToProjectCommand(User.ToAuthUser(), request), cT);
+        await _mediator.Send(new InviteToProjectCommand(User.ClaimsToAuthUser(), request), cT);
         await SendNoContentAsync(cT);
     }
 }

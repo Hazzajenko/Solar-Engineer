@@ -1,14 +1,5 @@
 import { ScrollingModule } from '@angular/cdk/scrolling'
-import {
-  AsyncPipe,
-  DatePipe,
-  NgClass,
-  NgForOf,
-  NgIf,
-  NgStyle,
-  NgSwitch,
-  NgSwitchCase,
-} from '@angular/common'
+import { AsyncPipe, DatePipe, NgClass, NgForOf, NgIf, NgStyle, NgSwitch, NgSwitchCase } from '@angular/common'
 import { ChangeDetectionStrategy, Component, Inject, inject } from '@angular/core'
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
@@ -26,21 +17,12 @@ import { ChatroomsComponent } from '@app/feature/chatrooms'
 import { FriendsComponent } from '@app/feature/friends'
 import { AuthStoreService } from '@auth/data-access'
 
-import {
-  AuthUserModel,
-  CombinedAppUserModel,
-  S3ImageModel,
-  UserModel,
-} from '@shared/data-access/models'
+import { AuthUserModel, CombinedAppUserModel, IUserModel, S3ImageModel } from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
 import { delay, map, Observable } from 'rxjs'
 import { ActivatedRoute } from '@angular/router'
-import {
-  UpdateDisplayPictureRequest,
-  UsersService,
-  UsersStoreService,
-} from '@app/data-access/users'
+import { UpdateDisplayPictureRequest, UsersService, UsersStoreService } from '@app/data-access/users'
 import { ConnectionsStoreService } from '@app/data-access/connections'
 import { GetCdnUrlStringPipe, GetFullUrlPipe, TimeDifferenceFromNowPipe } from '@shared/pipes'
 import { ImagesService } from '@app/data-access/images'
@@ -117,7 +99,7 @@ export class ChangeDisplayPictureComponent {
 
   constructor(
     private dialogRef: MatDialogRef<ChangeDisplayPictureComponent>,
-    @Inject(MAT_DIALOG_DATA) data: { user: UserModel },
+    @Inject(MAT_DIALOG_DATA) data: { user: IUserModel },
   ) {
     // this.appUser$.subscribe((res) => console.log(res))
     // this.imagesService.defaultImages$.subscribe((res) => console.log(res))

@@ -1,14 +1,5 @@
 import { ScrollingModule } from '@angular/cdk/scrolling'
-import {
-  AsyncPipe,
-  DatePipe,
-  NgClass,
-  NgForOf,
-  NgIf,
-  NgStyle,
-  NgSwitch,
-  NgSwitchCase,
-} from '@angular/common'
+import { AsyncPipe, DatePipe, NgClass, NgForOf, NgIf, NgStyle, NgSwitch, NgSwitchCase } from '@angular/common'
 import { ChangeDetectionStrategy, Component, inject, Input, ViewChild } from '@angular/core'
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
@@ -27,14 +18,11 @@ import { LetModule } from '@ngrx/component'
 
 import {
   AuthUserModel,
-  CombinedMessageUserModel,
   GroupChatCombinedModel,
-  GroupChatMemberModel,
   GroupChatMessageMemberModel,
   GroupChatMessageModel,
   MessageFrom,
   MessageTimeSortModel,
-  UserModel,
 } from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
@@ -49,10 +37,8 @@ import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
 import { GroupChatMessageMenuComponent } from './menu/group-chat-message-menu.component'
 import { ConversationMessageDirective, ScrollViewportDirective } from '@shared/directives'
 import { GroupChatOptionsBarComponent } from './options-bar/group-chat-options-bar.component'
-import { GetCdnUrlStringPipe, PrintSeenTextPipe } from '@shared/pipes'
-import { IsLastInArrayPipe } from '@shared/pipes'
+import { GetCdnUrlStringPipe, IsLastInArrayPipe, PrintSeenTextPipe, YouOrUserNamePipe } from '@shared/pipes'
 import { ExcludeSenderFromSeenPipe } from './pipes/exclude-sender-from-seen.pipe'
-import { YouOrUserNamePipe } from '@shared/pipes'
 import { MessageItemComponent } from '../message-item/message-item.component'
 import { MessageOptionsBarComponent } from '../options-bar/message-options-bar.component'
 
@@ -170,8 +156,8 @@ export class GroupChatConversationComponent {
     if (!selectChatroom) return
     if (!selectChatroom.isGroup || !selectChatroom.groupChat) return
     /*   this.groupChatsStore.select
-         .groupChatById$(selectChatroom.groupChat.id)
-         .subscribe((res) => console.log(res))*/
+     .groupChatById$(selectChatroom.groupChat.id)
+     .subscribe((res) => console.log(res))*/
     this.groupChatId = selectChatroom.groupChat.id
     this.groupChatCombined$ = this.groupChatsStore.select.groupChatById$(
       selectChatroom.groupChat.id,
@@ -182,8 +168,8 @@ export class GroupChatConversationComponent {
     )
     // this.groupChatsStore.select.serverMessages$.subscribe((res) => console.log('SERVER', res))
     /*    this.groupChatMembers$ = this.groupChatsStore.select.groupChatMembersById$(
-          selectChatroom.groupChat.id,
-        )*/
+     selectChatroom.groupChat.id,
+     )*/
     this.groupChatMessagesWithMembersById$ =
       this.groupChatsStore.select.groupChatMessagesWithMembersById$(selectChatroom.groupChat.id)
   }

@@ -27,6 +27,7 @@ public class UpdateProjectEndpoint : Endpoint<UpdateProjectRequest>
 
     public override async Task HandleAsync(UpdateProjectRequest request, CancellationToken cT)
     {
+        // TODO: Implement
         // await _mediator.Send(new UpdateProjectCommand(User.ToAuthUser(), request), cT);
         await SendNoContentAsync(cT);
     }

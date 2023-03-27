@@ -17,6 +17,7 @@ import { PROJECTS_SORTS, ProjectSorts } from './project-sorts'
 import { LetModule } from '@ngrx/component'
 import { GenerateUserDataPipe, throwExpression } from '@shared/utils'
 import { AuthStoreService } from '@auth/data-access'
+import { FilterByJoinedAtAndLimitPipe, ShowAdditionalMembersPipe } from '@shared/pipes'
 
 @Component({
   selector: 'app-projects-home-page',
@@ -32,6 +33,8 @@ import { AuthStoreService } from '@auth/data-access'
     LetModule,
     RouterLink,
     GenerateUserDataPipe,
+    FilterByJoinedAtAndLimitPipe,
+    ShowAdditionalMembersPipe,
   ],
   templateUrl: './projects-home-page.component.html',
   styles: [],

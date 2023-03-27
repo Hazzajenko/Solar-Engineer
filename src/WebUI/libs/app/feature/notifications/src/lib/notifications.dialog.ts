@@ -1,15 +1,6 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
 import { ScrollingModule } from '@angular/cdk/scrolling'
-import {
-  AsyncPipe,
-  DatePipe,
-  NgClass,
-  NgForOf,
-  NgIf,
-  NgStyle,
-  NgSwitch,
-  NgSwitchCase,
-} from '@angular/common'
+import { AsyncPipe, DatePipe, NgClass, NgForOf, NgIf, NgStyle, NgSwitch, NgSwitchCase } from '@angular/common'
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
@@ -23,9 +14,8 @@ import { MatInputModule } from '@angular/material/input'
 import { MatListModule, MatSelectionListChange } from '@angular/material/list'
 import { FriendsService, FriendsStoreService } from '@app/data-access/friends'
 import { AuthStoreService } from '@auth/data-access'
-import { Update } from '@ngrx/entity'
 
-import { AuthUserModel, NotificationModel, NotificationStatus, UserModel } from '@shared/data-access/models'
+import { AuthUserModel, NotificationModel } from '@shared/data-access/models'
 import { NotificationsStoreService } from '@app/data-access/notifications'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
@@ -73,8 +63,8 @@ export class NotificationsDialog {
     // console.log(event)
     this.selectedNotification = event.options[0].value
     /*    if ((event.options[0].value as NotificationModel).status === NotificationStatus.Unread) {
-          this.readNotification()
-        }*/
+     this.readNotification()
+     }*/
   }
 
   acceptFriend(requestedByUsername: string) {
@@ -85,11 +75,11 @@ export class NotificationsDialog {
   readNotification() {
     if (!this.selectedNotification) return
     /*    const update: Update<NotificationModel> = {
-          id: this.selectedNotification.id,
-          changes: {
-            status: NotificationStatus.Read,
-          },
-        }*/
+     id: this.selectedNotification.id,
+     changes: {
+     status: NotificationStatus.Read,
+     },
+     }*/
     // this.notificationsStore.dispatch.updateNotification(update)
   }
 
@@ -99,14 +89,14 @@ export class NotificationsDialog {
     // if (!unReadNotifications) return
 
     /*    const updates: Update<NotificationModel>[] = unReadNotifications.map(notification => {
-          const update: Update<NotificationModel> = {
-            id: notification.id,
-            changes: {
-              status: NotificationStatus.Read,
-            },
-          }
-          return update
-        })
-        this.notificationsStore.dispatch.updateManyNotifications(updates)*/
+     const update: Update<NotificationModel> = {
+     id: notification.id,
+     changes: {
+     status: NotificationStatus.Read,
+     },
+     }
+     return update
+     })
+     this.notificationsStore.dispatch.updateManyNotifications(updates)*/
   }
 }

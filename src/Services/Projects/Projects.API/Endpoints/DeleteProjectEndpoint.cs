@@ -27,6 +27,7 @@ public class DeleteProjectEndpoint : Endpoint<DeleteProjectRequest>
 
     public override async Task HandleAsync(DeleteProjectRequest request, CancellationToken cT)
     {
+        // TODO: Implement
         // await _mediator.Send(new DeleteProjectCommand(User, request), cT);
         await SendNoContentAsync(cT);
     }

@@ -1,7 +1,7 @@
+import { UpdateDisplayPictureRequest } from '../models'
 import { Update } from '@ngrx/entity'
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
-import { AppUserLinkModel, S3ImageModel, UserModel } from '@shared/data-access/models'
-import { UpdateDisplayPictureRequest } from '../models'
+import { AppUserLinkModel } from '@shared/data-access/models'
 
 export const UsersActions = createActionGroup({
   source: 'Users Store',

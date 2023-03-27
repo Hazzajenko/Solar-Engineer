@@ -1,14 +1,5 @@
 import { ScrollingModule } from '@angular/cdk/scrolling'
-import {
-  AsyncPipe,
-  DatePipe,
-  NgClass,
-  NgForOf,
-  NgIf,
-  NgStyle,
-  NgSwitch,
-  NgSwitchCase,
-} from '@angular/common'
+import { AsyncPipe, DatePipe, NgClass, NgForOf, NgIf, NgStyle, NgSwitch, NgSwitchCase } from '@angular/common'
 import { ChangeDetectionStrategy, Component, Inject, inject } from '@angular/core'
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
@@ -24,17 +15,13 @@ import { MatListModule, MatSelectionListChange } from '@angular/material/list'
 import { AuthStoreService } from '@auth/data-access'
 import { LetModule } from '@ngrx/component'
 
-import { AuthUserModel, GroupChatMemberModel, UserModel, WebUserModel } from '@shared/data-access/models'
+import { AuthUserModel, GroupChatMemberModel, WebUserModel } from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
 import { combineLatest, map, Observable, switchMap } from 'rxjs'
 import { FriendsStoreService } from '@app/data-access/friends'
 import { UsersStoreService } from '@app/data-access/users'
-import {
-  GroupChatsStoreService,
-  InviteToGroupChatRequest,
-  MemberInviteModel,
-} from '@app/data-access/group-chats'
+import { GroupChatsStoreService, InviteToGroupChatRequest, MemberInviteModel } from '@app/data-access/group-chats'
 import { GroupChatMemberItemComponent } from '../../member-item/group-chat-member-item.component'
 
 @Component({

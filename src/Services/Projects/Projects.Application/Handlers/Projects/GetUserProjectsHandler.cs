@@ -1,12 +1,13 @@
 ﻿using Mediator;
 using Microsoft.AspNetCore.SignalR;
 using Projects.Application.Data.UnitOfWork;
+using Projects.Domain.Contracts.Data;
 using Projects.Domain.Queries.Projects;
 using Projects.SignalR.Hubs;
 
 namespace Projects.Application.Handlers.Projects;
 
-public class GetUserProjectsHandler : IQueryHandler<GetUserProjectsQuery, bool>
+public class GetUserProjectsHandler : IQueryHandler<GetUserProjectsQuery, IEnumerable<ProjectDto>>
 {
     private readonly IHubContext<ProjectsHub, IProjectsHub> _hubContext;
     private readonly ILogger<GetUserProjectsHandler> _logger;
@@ -23,7 +24,10 @@ public class GetUserProjectsHandler : IQueryHandler<GetUserProjectsQuery, bool>
         _hubContext = hubContext;
     }
 
-    public async ValueTask<bool> Handle(GetUserProjectsQuery request, CancellationToken cT)
+    public async ValueTask<IEnumerable<ProjectDto>> Handle(
+        GetUserProjectsQuery request,
+        CancellationToken cT
+    )
     {
         var appUserId = request.User.Id;
         /*var projects = await _unitOfWork.AppUserProjectsRepository.GetProjectsByAppUserIdAsync(
@@ -49,6 +53,6 @@ public class GetUserProjectsHandler : IQueryHandler<GetUserProjectsQuery, bool>
 
         _logger.LogInformation("User {User} get projects", appUserId.ToString());
 
-        return true;
+        return projects;
     }
 }

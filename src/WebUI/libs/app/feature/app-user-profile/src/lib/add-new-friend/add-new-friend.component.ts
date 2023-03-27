@@ -1,14 +1,5 @@
 import { ScrollingModule } from '@angular/cdk/scrolling'
-import {
-  AsyncPipe,
-  DatePipe,
-  NgClass,
-  NgForOf,
-  NgIf,
-  NgStyle,
-  NgSwitch,
-  NgSwitchCase,
-} from '@angular/common'
+import { AsyncPipe, DatePipe, NgClass, NgForOf, NgIf, NgStyle, NgSwitch, NgSwitchCase } from '@angular/common'
 import { ChangeDetectionStrategy, Component, Inject, inject } from '@angular/core'
 
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms'
@@ -25,7 +16,7 @@ import { ChatroomsComponent } from '@app/feature/chatrooms'
 import { FriendsComponent } from '@app/feature/friends'
 import { AuthStoreService } from '@auth/data-access'
 
-import { AppUserLinkModel, AuthUserModel, UserModel, UserToUserStatus } from '@shared/data-access/models'
+import { AppUserLinkModel, AuthUserModel, IUserModel, UserToUserStatus } from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
 import { map, Observable, tap } from 'rxjs'
@@ -94,7 +85,7 @@ export class AddNewFriendComponent {
 
   constructor(
     private dialogRef: MatDialogRef<AddNewFriendComponent>,
-    @Inject(MAT_DIALOG_DATA) data: { user: UserModel },
+    @Inject(MAT_DIALOG_DATA) data: { user: IUserModel },
   ) {
   }
 
@@ -108,8 +99,8 @@ export class AddNewFriendComponent {
     this.searching = true
     this.latestSearch = this.userNameControl.value
     this.searchedUser$ = this.usersStore.select
-      .queryAppUser$(this.userNameControl.value)
-      .pipe(tap(() => (this.searching = false)))
+                             .queryAppUser$(this.userNameControl.value)
+                             .pipe(tap(() => (this.searching = false)))
     // this.searching = false
   }
 

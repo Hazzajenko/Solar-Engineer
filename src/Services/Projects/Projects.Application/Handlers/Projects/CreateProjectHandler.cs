@@ -8,7 +8,7 @@ using Projects.SignalR.Hubs;
 
 namespace Projects.Application.Handlers.Projects;
 
-public class CreateProjectHandler : ICommandHandler<CreateProjectCommand, bool>
+public class CreateProjectHandler : ICommandHandler<CreateProjectCommand, Guid>
 {
     private readonly IHubContext<ProjectsHub, IProjectsHub> _hubContext;
     private readonly ILogger _logger;
@@ -25,7 +25,7 @@ public class CreateProjectHandler : ICommandHandler<CreateProjectCommand, bool>
         _hubContext = hubContext;
     }
 
-    public async ValueTask<bool> Handle(CreateProjectCommand command, CancellationToken cT)
+    public async ValueTask<Guid> Handle(CreateProjectCommand command, CancellationToken cT)
     {
         var appUserId = command.User.Id;
         // var project = request.CreateProjectRequest.ToDomain(appUserId);
@@ -55,6 +55,6 @@ public class CreateProjectHandler : ICommandHandler<CreateProjectCommand, bool>
             appUserProject.Project.Name
         );
 
-        return true;
+        return appUserProject.Project.Id;
     }
 }

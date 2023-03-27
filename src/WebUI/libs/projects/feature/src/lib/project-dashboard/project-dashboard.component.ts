@@ -9,11 +9,12 @@ import { ProjectDashboardFeedComponent } from '../project-dashboard-feed/project
 import { ProjectDashboardTimelineComponent } from '../project-dashboard-timeline/project-dashboard-timeline.component'
 import { ButtonBuilderComponent } from '@shared/ui'
 import { ProjectMembersDialogComponent } from '../project-members-dialog/project-members-dialog.component'
+import { FilterByJoinedAtAndLimitPipe, ShowAdditionalMembersPipe } from '@shared/pipes'
 
 @Component({
   selector: 'app-project-dashboard',
   standalone: true,
-  imports: [CommonModule, ProjectDashboardFeedComponent, ProjectDashboardTimelineComponent, ButtonBuilderComponent, CreateRangePipe, GenerateUserDataPipe],
+  imports: [CommonModule, ProjectDashboardFeedComponent, ProjectDashboardTimelineComponent, ButtonBuilderComponent, CreateRangePipe, GenerateUserDataPipe, FilterByJoinedAtAndLimitPipe, ShowAdditionalMembersPipe],
   templateUrl: './project-dashboard.component.html',
   styles: [],
   changeDetection: ChangeDetectionStrategy.OnPush,

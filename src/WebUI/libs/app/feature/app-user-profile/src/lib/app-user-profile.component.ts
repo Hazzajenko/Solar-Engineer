@@ -27,7 +27,7 @@ import { ChatroomsComponent } from '@app/feature/chatrooms'
 import { FriendsComponent } from '@app/feature/friends'
 import { AuthStoreService } from '@auth/data-access'
 
-import { AppUserLinkModel, AuthUserModel, CombinedAppUserModel, UserModel } from '@shared/data-access/models'
+import { AppUserLinkModel, AuthUserModel, CombinedAppUserModel, IUserModel } from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
 import { GetFriendRequestPipe } from 'libs/app/feature/notifications/src/lib/get-friend-request.pipe'
@@ -123,7 +123,7 @@ export class AppUserProfileComponent {
 
   constructor(
     private dialogRef: MatDialogRef<AppUserProfileComponent>,
-    @Inject(MAT_DIALOG_DATA) data: { user: UserModel },
+    @Inject(MAT_DIALOG_DATA) data: { user: IUserModel },
   ) {
     this.appUser$.subscribe((res) => console.log(res))
   }
@@ -157,7 +157,8 @@ export class AppUserProfileComponent {
     return
   }
 
-  search() {}
+  search() {
+  }
 
   private filterFriends(query: string): Observable<AppUserLinkModel[] | undefined> {
     const filterValue = query.toLowerCase()

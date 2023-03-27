@@ -1,14 +1,5 @@
 import { ScrollingModule } from '@angular/cdk/scrolling'
-import {
-  AsyncPipe,
-  DatePipe,
-  NgClass,
-  NgForOf,
-  NgIf,
-  NgStyle,
-  NgSwitch,
-  NgSwitchCase,
-} from '@angular/common'
+import { AsyncPipe, DatePipe, NgClass, NgForOf, NgIf, NgStyle, NgSwitch, NgSwitchCase } from '@angular/common'
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
@@ -23,7 +14,7 @@ import { MatListModule, MatSelectionListChange } from '@angular/material/list'
 import { FriendsService, FriendsStoreService } from '@app/data-access/friends'
 import { AuthStoreService } from '@auth/data-access'
 
-import { AuthUserModel, FriendModel, UserModel } from '@shared/data-access/models'
+import { AuthUserModel, FriendModel } from '@shared/data-access/models'
 import { NotificationsStoreService } from '@app/data-access/notifications'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
@@ -74,7 +65,7 @@ export class FriendsComponent {
     // console.log(event)
     this.selectedFriend = event.options[0].value
     /*    if ((event.options[0].value as NotificationModel).status === NotificationStatus.Unread) {
-          // this.readNotification()
-        }*/
+     // this.readNotification()
+     }*/
   }
 }

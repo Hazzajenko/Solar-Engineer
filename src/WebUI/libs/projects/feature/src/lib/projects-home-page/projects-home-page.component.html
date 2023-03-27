@@ -268,16 +268,27 @@
                       <div class="flex items-center space-x-2">
                         <div class="flex flex-shrink-0 -space-x-1">
                           <img
-                            *ngFor="let item of 4 | generateUserData"
+                            *ngFor="
+                              let member of project.members | filterByJoinedAtAndLimit : 4 : user.id
+                            "
                             class="h-6 w-6 max-w-none rounded-full ring-2 ring-white"
-                            [src]="item.photoUrl"
-                            [alt]="item.userName"
+                            [src]="member.photoUrl"
+                            [alt]="member.userName"
                           />
+                          <!--         <img
+                               *ngFor="let item of 4 | generateUserData"
+                               class="h-6 w-6 max-w-none rounded-full ring-2 ring-white"
+                               [src]="item.photoUrl"
+                               [alt]="item.userName"
+                             />-->
                         </div>
-
-                        <span class="flex-shrink-0 text-xs font-medium leading-5"
-                          >+{{ project.memberIds.length ?? 0 }}</span
-                        >
+                        <!--                        >{{ project.members | showAdditionalMembers }}</span-->
+                        <span class="flex-shrink-0 text-xs font-medium leading-5">{{
+                          project.members | showAdditionalMembers
+                        }}</span>
+                        <!-- <span class="flex-shrink-0 text-xs font-medium leading-5"
+                         >+{{ project.memberIds.length ?? 0 }}</span
+                       >-->
                       </div>
                     </td>
                     <td

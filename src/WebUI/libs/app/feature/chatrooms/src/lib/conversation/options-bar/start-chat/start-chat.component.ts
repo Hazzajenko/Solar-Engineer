@@ -1,14 +1,5 @@
 import { ScrollingModule } from '@angular/cdk/scrolling'
-import {
-  AsyncPipe,
-  DatePipe,
-  NgClass,
-  NgForOf,
-  NgIf,
-  NgStyle,
-  NgSwitch,
-  NgSwitchCase,
-} from '@angular/common'
+import { AsyncPipe, DatePipe, NgClass, NgForOf, NgIf, NgStyle, NgSwitch, NgSwitchCase } from '@angular/common'
 import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core'
 
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms'
@@ -26,13 +17,12 @@ import { ActivatedRoute, Router } from '@angular/router'
 import { AuthStoreService } from '@auth/data-access'
 import { LetModule } from '@ngrx/component'
 
-import { AuthUserModel, UserModel, WebUserModel } from '@shared/data-access/models'
+import { AuthUserModel, WebUserModel } from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
-import { map, Observable, of, switchMap } from 'rxjs'
+import { combineLatest, map, Observable, switchMap } from 'rxjs'
 import { FriendsStoreService } from '@app/data-access/friends'
 import { UsersStoreService } from '@app/data-access/users'
-import { combineLatest } from 'rxjs'
 import { CreateGroupChatRequest, GroupChatsStoreService } from '@app/data-access/group-chats'
 import { GetCdnUrlStringPipe } from '@shared/pipes'
 
