@@ -73,46 +73,6 @@ public class String : IEntity, IProjectItem, IUserObject
         );
     }
 
-    /*public static String CreateNoId(CreateStringRequest request, Guid projectId, Guid appUserId)
-    {
-        return new String(projectId, appUserId, request.Name, request.Color, false);
-    }
-
-    public static String CreateWithPanels(
-        CreateStringRequest request,
-        Guid projectId,
-        Guid appUserId,
-        IEnumerable<Panel> panels
-    )
-    {
-        return new String(
-            request.Id.ToGuid(),
-            projectId,
-            appUserId,
-            request.Name,
-            request.Color,
-            false,
-            panels.ToList()
-        );
-    }
-
-    public static String CreateWithPanelNoIds(
-        CreateStringRequest request,
-        Guid projectId,
-        Guid appUserId,
-        IEnumerable<Panel> panels
-    )
-    {
-        return new String(
-            projectId,
-            appUserId,
-            request.Name,
-            request.Color,
-            false,
-            panels.ToList()
-        );
-    }*/
-
     public static String CreateUndefined(Guid projectId, Guid appUserId)
     {
         return new String(Guid.NewGuid(), projectId, appUserId, "undefined", "#808080", false);

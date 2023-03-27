@@ -135,7 +135,7 @@ app.MapGet(
     "/append/{guid}",
     async (Guid guid, IDocumentSession session) =>
     {
-        session.Events.Append(guid, new UserCreated(guid, ServiceName.Projects));
+        session.Events.Append(guid, new UserCreated(Guid.NewGuid(), ServiceName.Projects));
 
         await session.SaveChangesAsync();
 

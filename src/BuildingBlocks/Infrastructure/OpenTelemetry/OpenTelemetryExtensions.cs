@@ -15,6 +15,11 @@ public static class OpenTelemetryExtensions
 
     // public static readonly ActivitySource ActivitySource = new(ServiceName);
     // public static Meter Meter = new(ServiceName);
+
+    /// <summary>
+    ///     This method is used to initialize the OpenTelemetry.
+    ///     It is called from the Program class.
+    /// </summary>
     public static IServiceCollection InitOpenTelemetry(
         this IServiceCollection services,
         IConfiguration config

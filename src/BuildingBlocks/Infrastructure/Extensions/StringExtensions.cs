@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using System.Text.RegularExpressions;
+using Serilog;
 
 namespace Infrastructure.Extensions;
 
@@ -47,8 +48,9 @@ public static class StringExtensions
         {
             return Guid.Parse(id);
         }
-        catch (Exception _)
+        catch (Exception e)
         {
+            Log.Logger.Error(e, "Error in TryToGuidOrThrow");
             throw exception;
         }
     }

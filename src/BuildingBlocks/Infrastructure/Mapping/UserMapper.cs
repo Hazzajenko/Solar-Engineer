@@ -32,6 +32,7 @@ public static class UserMapper
             Id = request.Id,
             FirstName = request.FirstName,
             LastName = request.LastName,
+            UserName = request.UserName,
             DisplayName = request.DisplayName,
             PhotoUrl = request.PhotoUrl,
             CreatedTime = request.CreatedTime,

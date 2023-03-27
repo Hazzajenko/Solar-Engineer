@@ -11,5 +11,8 @@ public static class QueueConfig
     };
 
     public static SenderQueue[] SenderQueues { get; } =
-        { new("appuser-events", typeof(AppUserEvent)) };
+    {
+        new("appuser-events", typeof(AppUserEvent)),
+        new("appuser-events", typeof(AppUserCreated))
+    };
 }

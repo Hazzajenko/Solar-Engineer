@@ -20,10 +20,6 @@
         <PackageReference Include="Mapster" Version="7.3.0" />
         <PackageReference Include="Mapster.DependencyInjection" Version="1.0.0" />
         <PackageReference Include="Mediator.Abstractions" Version="2.1.1" />
-        <PackageReference Include="Mediator.SourceGenerator" Version="2.1.1">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.4" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.4" />
         <PackageReference Include="Microsoft.AspNetCore.SignalR.StackExchangeRedis" Version="7.0.4" />

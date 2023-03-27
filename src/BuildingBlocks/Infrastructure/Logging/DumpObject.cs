@@ -21,6 +21,10 @@ public static partial class LoggingExtensions
         Log.Logger.Information("{Type} properties: {Sb}", typeName, sb.ToString());
     }
 
+    /// <summary>
+    ///     Dump an object to the log as json.
+    ///     This is useful for debugging.
+    /// </summary>
     public static void DumpObjectJson(this object obj)
     {
         var type = obj.GetType();

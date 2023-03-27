@@ -1,32 +1,26 @@
 import { CommonModule, DatePipe } from '@angular/common'
 import { Router } from '@angular/router'
-import {
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-  ViewChild,
-} from '@angular/core'
+import { ChangeDetectionStrategy, Component, inject, ViewChild } from '@angular/core'
 import { ProjectsStoreService } from '@projects/data-access'
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
 import { Observable } from 'rxjs'
 import { ProjectModel } from '@shared/data-access/models'
-import {
-  RandomNumberPipe,
-} from '../../../../../../shared/pipes/src/lib/numbers'
+import { RandomNumberPipe } from '../../../../../../shared/pipes/src/lib/numbers'
 import { TruncatePipe } from '@shared/pipes'
 import { MatDialog } from '@angular/material/dialog'
-import { CreateProjectOverlayComponent } from '@projects/feature'
+import { CreateProjectDialogComponent } from '@projects/feature'
 
 @Component({
-             selector: 'app-recent-projects-cards',
-             standalone: true,
-             imports: [CommonModule, RandomNumberPipe, TruncatePipe, MatMenuModule],
-             templateUrl: './recent-projects-cards.component.html',
-             styles: [],
-             providers: [DatePipe],
-             changeDetection: ChangeDetectionStrategy.OnPush,
-           })
+  selector: 'app-recent-projects-cards',
+  standalone: true,
+  imports: [CommonModule, RandomNumberPipe, TruncatePipe, MatMenuModule],
+  templateUrl: './recent-projects-cards.component.html',
+  styles: [],
+  providers: [DatePipe],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
 export class RecentProjectsCardsComponent {
+
   menuTopLeftPosition = { x: '0', y: '0' }
   @ViewChild(MatMenuTrigger, { static: true })
   matMenuTrigger!: MatMenuTrigger
@@ -60,12 +54,10 @@ export class RecentProjectsCardsComponent {
   }
 
   openCreateProjectDialog() {
-    this.matDialog.open(CreateProjectOverlayComponent, {
-      // width: '100%',
-      // maxWidth: '500px',
-      // height: '100%',
-      // maxHeight: '500px',
-      // panelClass: 'create-project-dialog',
+    this.matDialog.open(CreateProjectDialogComponent, {
+      // width: '500px',
+      // height: '500px',
+      // data: { name: 'test' },
     })
   }
 }

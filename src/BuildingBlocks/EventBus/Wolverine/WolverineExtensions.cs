@@ -118,20 +118,25 @@ public static class WolverineExtensions
         return transport;
     }
 
-    /**
-     * This is a generic extension method that will be called by the
-     * InitWolverine method above. It's a little bit of a hack, but
-     * it's the only way I could figure out how to get the generic
-     * type of the message to be published to Rabbit MQ
-     * 
-     * DO NOT DELETE THIS METHOD
-     */
+    /// <summary>
+    ///     Publish a message to a RabbitMQ exchange
+    ///     This method is used to publish a message to a RabbitMQ exchange.
+    ///     It is called from the InitWolverine method above.
+    ///     It is a little bit of a hack, but it's the only way I could figure out how to get the generic
+    ///     type of the message to be published to Rabbit MQ
+    ///     DO NOT DELETE THIS METHOD
+    /// </summary>
     public static WolverineOptions PublishToRabbitMqExchange<TMessage>(
         this WolverineOptions opts,
         string queueName
     )
         where TMessage : class
     {
+        // Console.WriteLine(nameof(TMessage));
+        // request.GetType().Name;
+        var type = typeof(TMessage);
+        Console.WriteLine(type.Name);
+
         opts.PublishMessage<TMessage>().ToRabbitExchange(queueName);
         return opts;
     }

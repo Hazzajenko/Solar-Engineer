@@ -44,29 +44,7 @@ public static partial class WebApplicationExtensions
         {
             app.UseDefaultExceptionHandler();
             app.UseOpenApi();
-            // app.Swag
-            /*app.UseSwaggerUi3(x =>
-                {
-                    // x.ServerUrl = "https://solarengineer.net/auth-api/";
-                    // x.ServerUrl = "https://localhost:5001";
-                    // x.
-                    // x.Path
-                    // x.
-                    /*x.SwaggerRoutes.Add(
-                        new SwaggerUi3Route("v1", "/swagger/v1/swagger.json")
-                        {
-                            Name = "Identity API"
-                        }
-                    );#1#
-                }
-                // x => x.ConfigureDefaults(z => z.ServerUrl = "https://localhost:5001")
-            );*/
-            app.UseSwaggerUi3(x =>
-            {
-                // x.SwaggerRoutes.Add(new SwaggerUi3Route("v1", "/swagger/v1/swagger.json"));
-                x.ServerUrl = "https://localhost:5001";
-                // x.
-            });
+            app.UseSwaggerUi3(x => { x.ServerUrl = "https://localhost:5001"; });
         }
 
         /*

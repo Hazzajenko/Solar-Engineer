@@ -6,6 +6,26 @@ namespace Projects.Domain.Entities;
 public class AppUserProject : IEntityToEntity, IProjectItem
 {
     private AppUserProject(
+        Project project,
+        Guid projectUserId,
+        string role,
+        bool canCreate,
+        bool canDelete,
+        bool canInvite,
+        bool canKick
+    )
+    {
+        Project = project;
+        ProjectId = project.Id;
+        ProjectUserId = projectUserId;
+        Role = role;
+        CanCreate = canCreate;
+        CanDelete = canDelete;
+        CanInvite = canInvite;
+        CanKick = canKick;
+    }
+
+    private AppUserProject(
         Guid projectId,
         Guid projectUserId,
         string role,
@@ -61,5 +81,12 @@ public class AppUserProject : IEntityToEntity, IProjectItem
             canInvite,
             canKick
         );
+    }
+
+    public static AppUserProject CreateAsOwner(string projectName, Guid projectUserId)
+    {
+        var project = Project.Create(projectName, projectUserId);
+
+        return new AppUserProject(project, projectUserId, "Admin", true, true, true, true);
     }
 }

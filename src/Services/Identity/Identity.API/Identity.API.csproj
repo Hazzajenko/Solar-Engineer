@@ -29,10 +29,6 @@
         <PackageReference Include="Marten" Version="6.0.0-alpha.11" />
         <PackageReference Include="Marten.AspNetCore" Version="6.0.0-alpha.11" />
         <PackageReference Include="Mediator.Abstractions" Version="2.1.1" />
-        <PackageReference Include="Mediator.SourceGenerator" Version="2.1.1">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
         <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="7.0.4" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.4" />
         <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="7.0.4" />

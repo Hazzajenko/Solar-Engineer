@@ -14,10 +14,6 @@
         <PackageReference Include="Duende.IdentityServer.AspNetIdentity" Version="6.2.3" />
         <PackageReference Include="Duende.IdentityServer.EntityFramework" Version="6.2.3" />
         <PackageReference Include="FastEndpoints" Version="5.7.1" />
-        <PackageReference Include="FastEndpoints.Generator" Version="5.7.1">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
         <PackageReference Include="FastEndpoints.Security" Version="5.7.1" />
         <PackageReference Include="FastEndpoints.Swagger" Version="5.7.1" />
         <PackageReference Include="Grpc.AspNetCore" Version="2.51.0" />

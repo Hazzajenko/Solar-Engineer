@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.SignalR;
 using Projects.Application.Data.UnitOfWork;
 using Projects.Application.Mapping;
 using Projects.Domain.Commands.Projects;
+using Projects.Domain.Entities;
 using Projects.SignalR.Hubs;
 
 namespace Projects.Application.Handlers.Projects;
@@ -24,18 +25,35 @@ public class CreateProjectHandler : ICommandHandler<CreateProjectCommand, bool>
         _hubContext = hubContext;
     }
 
-    public async ValueTask<bool> Handle(CreateProjectCommand request, CancellationToken cT)
+    public async ValueTask<bool> Handle(CreateProjectCommand command, CancellationToken cT)
     {
-        var appUserId = request.User.Id;
-        var project = request.CreateProjectRequest.ToDomain(appUserId);
+        var appUserId = command.User.Id;
+        // var project = request.CreateProjectRequest.ToDomain(appUserId);
+        var projectUser = await _unitOfWork.ProjectUsersRepository.GetByIdAsync(appUserId);
+        if (projectUser is null)
+        {
+            _logger.LogError("ProjectUser {User} does not exist", appUserId);
+            throw new Exception($"ProjectUser {appUserId} does not exist");
+        }
+
+        var appUserProject = AppUserProject.CreateAsOwner(
+            command.CreateProjectRequest.Name,
+            projectUser.Id
+        );
+        await _unitOfWork.AppUserProjectsRepository.AddAsync(appUserProject);
+        await _unitOfWork.SaveChangesAsync();
         // await _unitOfWork.ProjectsRepository.AddAsync(project);
         // await _unitOfWork.SaveChangesAsync();
-        await _unitOfWork.ProjectsRepository.AddAndSaveChangesAsync(project);
+        // await _unitOfWork.ProjectsRepository.AddAndSaveChangesAsync(project);
 
-        var response = project.ToDto();
+        var response = appUserProject.Project.ToDto();
 
         await _hubContext.Clients.User(appUserId.ToString()).ProjectCreated(response);
-        _logger.LogInformation("User {User} created project {Project}", appUserId, project.Name);
+        _logger.LogInformation(
+            "User {User} created project {Project}",
+            appUserId,
+            appUserProject.Project.Name
+        );
 
         return true;
     }

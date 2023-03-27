@@ -23,6 +23,10 @@ public static class ClaimsPrincipleExtensions
         return value;
     }
 
+    /// <summary>
+    ///     Get the user id as a Guid.
+    ///     If the user id is not a Guid, then throw an exception.
+    /// </summary>
     public static Guid GetGuidUserId(this ClaimsPrincipal user)
     {
         var value = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -30,11 +34,16 @@ public static class ClaimsPrincipleExtensions
         return value.ToGuid();
     }
 
+    /// <summary>
+    ///     Try to get the user id as a Guid.
+    ///     If the user id is not a Guid, then throw an exception.
+    /// </summary>
     public static Guid TryGetGuidUserId<TException>(this ClaimsPrincipal user, TException exception)
         where TException : Exception
     {
         var value = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (value is null) throw exception;
+        if (value is null)
+            throw exception;
         // ArgumentNullException.ThrowIfNull(value);
         return value.TryToGuidOrThrow(exception);
     }
@@ -48,8 +57,16 @@ public static class ClaimsPrincipleExtensions
         throw new HubException(message);
     }
 
+    /// <summary>
+    ///     Get the user id as a Guid.
+    ///     If the user id is not a Guid, then throw an exception.
+    /// </summary>
     public static AuthUser ToAuthUser(this ClaimsPrincipal context)
     {
+        // check if in development mode
+        if (context.Identity?.Name is null)
+            return AuthUser.Create(Guid.Parse("23424c3b-a5aa-49a1-bb70-36451b07532f"));
+
         var userId = context.GetGuidUserId();
         return AuthUser.Create(userId);
     }

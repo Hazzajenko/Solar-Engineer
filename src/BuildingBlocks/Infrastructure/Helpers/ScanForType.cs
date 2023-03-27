@@ -4,6 +4,10 @@ namespace Infrastructure.Helpers;
 
 public static partial class Helpers
 {
+    /// <summary>
+    ///     Scan for a type in the assembly of the assemblyMarker.
+    ///     The type must implement the interfaceType.
+    /// </summary>
     public static Type ScanForType(Type assemblyMarker, Type interfaceType, string typeName)
     {
         try

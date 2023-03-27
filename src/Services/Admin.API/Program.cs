@@ -1,5 +1,4 @@
 using System.Reflection;
-using FastEndpoints;
 using FastEndpoints.Swagger;
 using Infrastructure.Logging;
 using Infrastructure.Web;
@@ -18,7 +17,7 @@ ArgumentNullException.ThrowIfNull(entryAssembly);
 
 builder.Services.InitCors("corsPolicy");
 
-builder.Services.AddFastEndpoints(options => { options.SourceGeneratorDiscoveredTypes = DiscoveredTypes.All; });
+// builder.Services.AddFastEndpoints(options => { options.SourceGeneratorDiscoveredTypes = DiscoveredTypes.All; });
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;

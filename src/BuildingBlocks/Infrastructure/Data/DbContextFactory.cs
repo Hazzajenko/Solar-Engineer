@@ -9,8 +9,23 @@ using Wolverine.EntityFrameworkCore;
 
 namespace Infrastructure.Data;
 
+/// <summary>
+///     This class is used to initialize the DbContext.
+///     It is called from the Program class.
+///     It is also called from the Integration Tests.
+/// </summary>
 public static class DbContextFactory
 {
+    private const string DatabaseHost = "DATABASE_HOST";
+    private const string DatabasePort = "DATABASE_PORT";
+    private const string DatabaseUsername = "DATABASE_USERNAME";
+    private const string DatabasePassword = "DATABASE_PASSWORD";
+    private const string DatabaseDatabase = "DATABASE_DATABASE";
+
+    /// <summary>
+    ///     This method is used to initialize the DbContext.
+    ///     It is called from the Program class.
+    /// </summary>
     public static IServiceCollection InitDbContext<T>(
         this IServiceCollection services,
         IConfiguration? config = null,
@@ -75,6 +90,10 @@ public static class DbContextFactory
         return services;
     }
 
+    /// <summary>
+    ///     This method is used to get the connection string.
+    ///     It is called from the DbContextFactory class.
+    /// </summary>
     private static string GetConnectionString(IConfiguration config, IWebHostEnvironment env)
     {
         if (env.IsProduction())
@@ -84,15 +103,19 @@ public static class DbContextFactory
                ?? throw new ArgumentNullException(nameof(GetConnectionString));
     }
 
+    /// <summary>
+    ///     This method is used to build the connection string.
+    ///     It is called from the DbContextFactory class.
+    /// </summary>
     private static string BuildPostgresConnectionString()
     {
         var builder = new NpgsqlConnectionStringBuilder
         {
-            Host = GetEnvironmentVariable("DATABASE_HOST"),
-            Port = int.Parse(GetEnvironmentVariable("DATABASE_PORT")),
-            Username = GetEnvironmentVariable("DATABASE_USERNAME"),
-            Password = GetEnvironmentVariable("DATABASE_PASSWORD"),
-            Database = GetEnvironmentVariable("DATABASE_DATABASE"),
+            Host = GetEnvironmentVariable(DatabaseHost),
+            Port = int.Parse(GetEnvironmentVariable(DatabasePort)),
+            Username = GetEnvironmentVariable(DatabaseUsername),
+            Password = GetEnvironmentVariable(DatabasePassword),
+            Database = GetEnvironmentVariable(DatabaseDatabase),
             SslMode = SslMode.Require,
             TrustServerCertificate = true
         };
@@ -100,6 +123,10 @@ public static class DbContextFactory
         return builder.ToString();
     }
 
+    /// <summary>
+    ///     This method is used to get the environment variable.
+    ///     It is called from the DbContextFactory class.
+    /// </summary>
     private static string GetEnvironmentVariable(string name)
     {
         return Environment.GetEnvironmentVariable(name)

@@ -9,6 +9,7 @@ using Identity.Application;
 using Identity.Application.Data;
 using Identity.Application.Extensions.Application;
 using Identity.Application.Extensions.ServiceCollection;
+using Identity.Domain.Auth;
 using Infrastructure.Data;
 using Infrastructure.Logging;
 using Infrastructure.OpenTelemetry;
@@ -16,6 +17,7 @@ using Infrastructure.SignalR;
 using Infrastructure.Swagger;
 using Infrastructure.Web;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Identity;
 using NJsonSchema.CodeGeneration.TypeScript;
 using NSwag;
 using NSwag.CodeGeneration.TypeScript;
@@ -178,6 +180,23 @@ app.MapTypeScriptClientEndpoint(
 );
 
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
+var loginEndpoints = app.MapGroup("login");
+
+loginEndpoints.MapGet(
+    "/google",
+    (SignInManager<AppUser> signInManager) =>
+    {
+        var provider = "google";
+        var redirectUrl = "https://solarengineer.net/?authorize=true";
+        var properties = signInManager.ConfigureExternalAuthenticationProperties(
+            provider,
+            redirectUrl
+        );
+        properties.AllowRefresh = true;
+        return Results.Challenge(properties, new List<string> { "google" });
+    }
+);
 
 /*using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;

@@ -4,6 +4,11 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Infrastructure.Data;
 
+/// <summary>
+///     This class is used to initialize the DbContext.
+///     It is called from the Program class.
+///     It is also called from the Integration Tests.
+/// </summary>
 public abstract class UnitOfWorkFactory<TContext> : IUnitOfWorkFactory
     where TContext : DbContext
 {
@@ -22,6 +27,10 @@ public abstract class UnitOfWorkFactory<TContext> : IUnitOfWorkFactory
         return Context.Attach(entity);
     }
 
+    /// <summary>
+    ///     This method is used to save changes to the database.
+    ///     It is called from the Command Handlers.
+    /// </summary>
     public async Task<bool> SaveChangesAsync()
     {
         UpdateLastModifiedTimeBeforeSave();

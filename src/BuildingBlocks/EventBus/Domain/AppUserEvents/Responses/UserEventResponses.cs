@@ -4,23 +4,24 @@ namespace EventBus.Domain.AppUserEvents.Responses;
 
 public interface IAppUserEventResponse
 {
-    // Guid Id { get; }
-    Guid UserId { get; }
+    Guid Id { get; }
+
+    // Guid UserId { get; }
     ServiceName ServiceName { get; }
 }
 
-public record UserCreated(Guid UserId, ServiceName ServiceName) : IAppUserEventResponse
+public record UserCreated(Guid Id, ServiceName ServiceName) : IAppUserEventResponse
 {
 }
 
-public record UserUpdated(Guid UserId, ServiceName ServiceName) : IAppUserEventResponse
+public record UserUpdated(Guid Id, ServiceName ServiceName) : IAppUserEventResponse
 {
 }
 
-public record UserNoChange(Guid UserId, ServiceName ServiceName) : IAppUserEventResponse
+public record UserNoChange(Guid Id, ServiceName ServiceName) : IAppUserEventResponse
 {
 }
 
-public record UserDeleted(Guid UserId, ServiceName ServiceName) : IAppUserEventResponse
+public record UserDeleted(Guid Id, ServiceName ServiceName) : IAppUserEventResponse
 {
 }

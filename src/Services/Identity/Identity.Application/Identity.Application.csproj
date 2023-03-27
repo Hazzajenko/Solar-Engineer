@@ -26,6 +26,7 @@
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
+      <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.27.0" />
       <PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.4.0" />
       <PackageReference Include="OpenTelemetry.Exporter.Jaeger" Version="1.5.0-alpha.1" />
       <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.5.0-alpha.1" />
@@ -34,6 +35,7 @@
       <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.4.0" />
       <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.0.0-rc9.14" />
       <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.0.0-rc9.14" />
+      <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.27.0" />
       <PackageReference Include="WolverineFx" Version="0.9.15" />
       <PackageReference Include="WolverineFx.EntityFrameworkCore" Version="0.9.15" />
       <PackageReference Include="WolverineFx.FluentValidation" Version="0.9.15" />

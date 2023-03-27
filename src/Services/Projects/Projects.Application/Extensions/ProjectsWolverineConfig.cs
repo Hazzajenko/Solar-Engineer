@@ -230,12 +230,12 @@ public class UserSummaryProjector : MultiStreamAggregation<UserSummary, Guid>
 {
     public UserSummaryProjector()
     {
-        Identity<IAppUserEventResponse>(x => x.UserId);
+        Identity<IAppUserEventResponse>(x => x.Id);
     }
 
     public void Apply(UserSummary snapshot, UserCreated e)
     {
-        snapshot.Logs.Add($"{e.UserId} created");
+        snapshot.Logs.Add($"{e.Id} created");
     }
 
     /*public void Apply(UserSummary snapshot, User e)

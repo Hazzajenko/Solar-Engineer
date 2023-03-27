@@ -46,13 +46,37 @@ public class AuthorizeHandler : IRequestHandler<AuthorizeCommand, AppUser>
             props.StoreTokens(info.AuthenticationTokens);
             props.IsPersistent = false;
             // await _signInManager.SignInAsync(existingAppUser, props, info.LoginProvider);
-            var externalLoginSignInResult = await _signInManager.ExternalLoginSignInAsync(
+            /*var externalLoginSignInResult = await _signInManager.ExternalLoginSignInAsync(
                 info.LoginProvider,
                 info.ProviderKey,
                 false,
                 true
-            );
-            if (externalLoginSignInResult.Succeeded is false)
+            );*/
+            try
+            {
+                var externalLoginSignInResult = await _signInManager.ExternalLoginSignInAsync(
+                    info.LoginProvider,
+                    info.ProviderKey,
+                    false,
+                    true
+                );
+                if (externalLoginSignInResult.Succeeded is false)
+                {
+                    _logger.LogError(
+                        "Unable to login user {User}, {Provider}",
+                        existingAppUser.Id,
+                        info.LoginProvider
+                    );
+                    throw new UnauthorizedException();
+                    // throw new UnauthorizedException();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw new UnauthorizedException();
+            }
+            /*if (externalLoginSignInResult.Succeeded is false)
             {
                 _logger.LogError(
                     "Unable to login user {User}, {Provider}",
@@ -61,7 +85,7 @@ public class AuthorizeHandler : IRequestHandler<AuthorizeCommand, AppUser>
                 );
                 throw new UnauthorizedException();
                 // throw new UnauthorizedException();
-            }
+            }*/
 
             // await _signInManager.SignInAsync(existingAppUser, props, info.LoginProvider);
 

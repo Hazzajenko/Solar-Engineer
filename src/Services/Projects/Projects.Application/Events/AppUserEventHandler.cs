@@ -5,12 +5,52 @@ using Infrastructure.Logging;
 using Marten;
 using Projects.Application.Data.UnitOfWork;
 using Projects.Domain.Entities;
+using Serilog;
 using Wolverine;
 
 namespace Projects.Application.Events;
 
 public static class AppUserEventHandler
 {
+    public static ValueTask Handle(
+        AppUserCreated message,
+        IMessageContext context,
+        IProjectsUnitOfWork unitOfWork,
+        IDocumentSession session
+    )
+    {
+        message.DumpObjectJson();
+        context.Envelope?.DumpObjectJson();
+        // context.CorrelationId.conso
+        Log.Logger.Information("CorrelationId: {CorrelationId}", context.CorrelationId);
+        var existingProjectUser = unitOfWork.ProjectUsersRepository
+            .GetByIdAsync(message.User.Id)
+            .Result;
+        if (existingProjectUser == null)
+        {
+            var projectUser = ProjectUser.Create(
+                message.User.Id,
+                message.User.UserName,
+                message.User.DisplayName,
+                message.User.PhotoUrl
+            );
+            unitOfWork.ProjectUsersRepository.AddAsync(projectUser).Wait();
+
+            unitOfWork.SaveChangesAsync().Wait();
+
+            var userCreated = new UserCreated(message.Id, ServiceName.Projects);
+            session.Store(userCreated);
+            // session.Events.StartStream(userCreated);
+            // session.SaveChanges();
+
+            return context.RespondToSenderAsync(userCreated);
+        }
+
+        var noChange = new UserNoChange(message.Id, ServiceName.Projects);
+        session.Store(noChange);
+        return context.RespondToSenderAsync(noChange);
+    }
+
     // Simple message handler for the PingMessage message type
     public static ValueTask Handle(
         // The first argument is assumed to be the message type
@@ -25,6 +65,7 @@ public static class AppUserEventHandler
     )
     {
         message.DumpObjectJson();
+
         /*var pUser = ProjectUser.Create(
             message.User.Id,
             message.User.UserName,
@@ -59,7 +100,7 @@ public static class AppUserEventHandler
 
                 unitOfWork.SaveChangesAsync().Wait();
 
-                var userCreated = new UserCreated(message.User.Id, ServiceName.Projects);
+                var userCreated = new UserCreated(message.Id, ServiceName.Projects);
                 session.Events.StartStream(userCreated);
                 // session.Events.Append(message.User.Id, userCreated);
                 session.SaveChanges();
@@ -82,9 +123,7 @@ public static class AppUserEventHandler
                 // return context.RespondToSenderAsync(projectUserCreatedResponse);
             }
 
-            return context.RespondToSenderAsync(
-                new UserNoChange(message.User.Id, ServiceName.Projects)
-            );
+            return context.RespondToSenderAsync(new UserNoChange(message.Id, ServiceName.Projects));
             /*var exProjectUserDto = new UserDto
             {
                 Id = existingProjectUser.Id,

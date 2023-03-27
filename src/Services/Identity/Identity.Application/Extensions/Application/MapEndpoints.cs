@@ -1,10 +1,7 @@
 ﻿using Identity.Contracts.Data;
-using Identity.Domain.Auth;
 using Marten;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 
 namespace Identity.Application.Extensions.Application;
 
@@ -25,7 +22,7 @@ public static partial class WebApplicationExtensions
 
         // app.MapPost("/message", ([FromServices] IDbContextOutbox<IdentityContext> outbox))
 
-        var loginEndpoints = app.MapGroup("login");
+        /*var loginEndpoints = app.MapGroup("login");
 
         loginEndpoints.MapGet(
             "/github",
@@ -44,7 +41,7 @@ public static partial class WebApplicationExtensions
                 /*var returnUrl = "https://solarengineer.net/";
                 // var returnUrl = "https://localhost:4200/";
                 var redirectUrl =
-                    $"https://api.domain.com/identity/v1/account/external-auth-callback?returnUrl={returnUrl}";*/
+                    $"https://api.domain.com/identity/v1/account/external-auth-callback?returnUrl={returnUrl}";#1#
                 // var redirectUrl = "https://solarengineer.net/authorize";
                 var redirectUrl = "https://solarengineer.net/?authorize=true";
                 var properties = signInManager.ConfigureExternalAuthenticationProperties(
@@ -63,7 +60,7 @@ public static partial class WebApplicationExtensions
             //     },
             //     new List<string> { "google" }
             // )
-        );
+        );*/
 
         app.MapGet(
             "/load/{guid}",
