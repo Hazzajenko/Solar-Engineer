@@ -3,6 +3,9 @@
   <div class="absolute flex content-center items-center justify-center whitespace-pre-wrap">
     <ng-container>
       <div
+        #panelMarker
+        id="{{ freePanel.id }}"
+        bind-attr.panelId="freePanel.id"
         bind-attr.location="freePanel.location"
         cdkDrag
         [cdkDragData]="freePanel"
