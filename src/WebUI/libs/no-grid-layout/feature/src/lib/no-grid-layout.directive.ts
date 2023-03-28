@@ -38,6 +38,7 @@ export class NoGridLayoutDirective implements OnInit {
   pathMapAnimating = false
   fpsInterval = 1000 / 60
   startTime = Date.now()
+  cachedPanels: BlockRectModel[] = []
 
   constructor(private readonly ngZone: NgZone) {
   }
@@ -390,7 +391,7 @@ export class NoGridLayoutDirective implements OnInit {
         console.error('no panelDimensions')
         return
       }
-      this.animateLineFromAboutPanelToTopOfPage(panelDimensions)
+      this.animateLinesFromBlock(panelDimensions)
       /*      if (this.selectedPaths && this.pathMapAnimating) {
        const pathMap = await this.createLineMap(this.selectedPaths)
        await this.drawSelectedPathMap(pathMap)
@@ -399,6 +400,7 @@ export class NoGridLayoutDirective implements OnInit {
   }
 
   animate() {
+    // const startTime = performance.now()
     if (!this.pageX || !this.pageY) {
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
       console.error('no pageX or pageY')
@@ -421,7 +423,8 @@ export class NoGridLayoutDirective implements OnInit {
       console.error('no panelDimensions')
       return
     }
-    this.animateLineFromAboutPanelToTopOfPage(panelDimensions)
+    // this.animateLineFromAboutPanelToTopOfPageV2(panelDimensions)
+    this.animateLinesFromBlock(panelDimensions)
     /*    const rect = this.canvas.getBoundingClientRect()
 
      const mouseX = this.pageX - rect.left
@@ -439,31 +442,352 @@ export class NoGridLayoutDirective implements OnInit {
      this.ctx.fillRect(this.startX, this.startY, width, height)
 
      this.ctx.globalAlpha = 1.0*/
-
+    // const endTime = performance.now()
+    // const elapsedTime = endTime - startTime
+    // const fps = 1000 / elapsedTime;
+    // console.log('elapsedTime', elapsedTime)
     this.animationId = requestAnimationFrame(() => this.animate())
+
   }
 
-  animateLineFromAboutPanelToTopOfPage(blockRectModel: BlockRectModel) {
+  animateLinesFromBlock(blockRectModel: BlockRectModel) {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
 
     this.ctx.lineWidth = 2
-    this.ctx.beginPath()
-    this.ctx.moveTo(blockRectModel.x, blockRectModel.y - blockRectModel.height / 2)
-    this.ctx.lineTo(blockRectModel.x, 0)
     this.ctx.strokeStyle = 'red'
-    this.ctx.stroke()
+
+    this.drawLineForAboveBlock(blockRectModel)
+    this.drawLineForBelowBlock(blockRectModel)
+    this.drawLineForLeftBlock(blockRectModel)
+    this.drawLineForRightBlock(blockRectModel)
+  }
+
+  private drawLineForBelowBlock(blockRectModel: BlockRectModel) {
+    if (this.cachedPanels) {
+
+      const panelRectsToCheck = this.cachedPanels.filter(rect => blockRectModel.x >= rect.x - rect.width / 2 && blockRectModel.x <= rect.x + rect.width / 2 && blockRectModel.y < rect.y)
+      if (panelRectsToCheck.length) {
+        const panelRectsToCheckWithDistance = panelRectsToCheck.map(rect => {
+          const distance = Math.sqrt(Math.pow(rect.x - blockRectModel.x, 2) + Math.pow(rect.y - blockRectModel.y, 2))
+
+          return { ...rect, distance }
+        })
+        const panelRectsToCheckWithDistanceSorted = panelRectsToCheckWithDistance.sort((a, b) => a.distance - b.distance)
+        const closestPanelRect = panelRectsToCheckWithDistanceSorted[0]
+        if (closestPanelRect) {
+          this.ctx.beginPath()
+          this.ctx.moveTo(blockRectModel.x, blockRectModel.y + blockRectModel.height / 2)
+          this.ctx.lineTo(blockRectModel.x, closestPanelRect.y - closestPanelRect.height / 2)
+          this.ctx.stroke()
+
+          const distanceToClosestPanel = closestPanelRect.y - closestPanelRect.height / 2 - (blockRectModel.y + blockRectModel.height / 2)
+          this.ctx.fillStyle = 'red'
+          this.ctx.font = '15px Arial'
+          this.ctx.fillText(`${distanceToClosestPanel}px`, blockRectModel.x - 50, blockRectModel.y + blockRectModel.height / 2 + 50)
+        }
+      } else {
+        this.ctx.beginPath()
+        this.ctx.moveTo(blockRectModel.x, blockRectModel.y + blockRectModel.height / 2)
+        this.ctx.lineTo(blockRectModel.x, this.canvas.height)
+        this.ctx.stroke()
+
+        const distanceToBottomOfPage = this.canvas.height - (blockRectModel.y + blockRectModel.height / 2)
+        this.ctx.fillStyle = 'red'
+        this.ctx.font = '15px Arial'
+        this.ctx.fillText(`${distanceToBottomOfPage}px`, blockRectModel.x - 50, this.canvas.height - 50)
+      }
+    } else {
+      this.ctx.beginPath()
+      this.ctx.moveTo(blockRectModel.x, blockRectModel.y + blockRectModel.height / 2)
+      this.ctx.lineTo(blockRectModel.x, this.canvas.height)
+      this.ctx.stroke()
+
+      const distanceToBottomOfPage = this.canvas.height - (blockRectModel.y + blockRectModel.height / 2)
+      this.ctx.fillStyle = 'red'
+      this.ctx.font = '15px Arial'
+      this.ctx.fillText(`${distanceToBottomOfPage}px`, blockRectModel.x - 50, this.canvas.height - 50)
+    }
+  }
+
+  private drawLineForAboveBlock(blockRectModel: BlockRectModel) {
+    if (this.cachedPanels) {
+      const panelRectsToCheck = this.cachedPanels.filter(rect => blockRectModel.x >= rect.x - rect.width / 2 && blockRectModel.x <= rect.x + rect.width / 2 && blockRectModel.y > rect.y)
+      if (panelRectsToCheck.length) {
+        const panelRectsToCheckWithDistance = panelRectsToCheck.map(rect => {
+          const distance = Math.sqrt(Math.pow(rect.x - blockRectModel.x, 2) + Math.pow(rect.y - blockRectModel.y, 2))
+
+          return { ...rect, distance }
+        })
+        const panelRectsToCheckWithDistanceSorted = panelRectsToCheckWithDistance.sort((a, b) => a.distance - b.distance)
+        const closestPanelRect = panelRectsToCheckWithDistanceSorted[0]
+        if (closestPanelRect) {
+          this.ctx.beginPath()
+          // this.ctx.moveTo(blockRectModel.x, blockRectModel.y + blockRectModel.height / 2)
+          // this.ctx.lineTo(blockRectModel.x, closestPanelRect.y - closestPanelRect.height / 2)
+          this.ctx.moveTo(blockRectModel.x, blockRectModel.y - blockRectModel.height / 2)
+          this.ctx.lineTo(blockRectModel.x, closestPanelRect.y + closestPanelRect.height / 2)
+          this.ctx.stroke()
+
+          const distanceToClosestPanel = closestPanelRect.y + closestPanelRect.height / 2 - (blockRectModel.y - blockRectModel.height / 2)
+          this.ctx.fillStyle = 'red'
+          this.ctx.font = '15px Arial'
+          this.ctx.fillText(`${distanceToClosestPanel}px`, blockRectModel.x - 50, blockRectModel.y - blockRectModel.height / 2 - 50)
+        }
+      } else {
+        this.ctx.beginPath()
+        this.ctx.moveTo(blockRectModel.x, blockRectModel.y - blockRectModel.height / 2)
+        this.ctx.lineTo(blockRectModel.x, 0)
+        this.ctx.stroke()
+
+        const distanceToTopOfPage = blockRectModel.y - blockRectModel.height / 2
+        this.ctx.fillStyle = 'red'
+        this.ctx.font = '15px Arial'
+        this.ctx.fillText(`${distanceToTopOfPage}px`, blockRectModel.x - 50, 50)
+      }
+    } else {
+      this.ctx.beginPath()
+      this.ctx.moveTo(blockRectModel.x, blockRectModel.y - blockRectModel.height / 2)
+      this.ctx.lineTo(blockRectModel.x, 0)
+      this.ctx.stroke()
+
+      const distanceToTopOfPage = blockRectModel.y - blockRectModel.height / 2
+      this.ctx.fillStyle = 'red'
+      this.ctx.font = '15px Arial'
+      this.ctx.fillText(`${distanceToTopOfPage}px`, blockRectModel.x - 50, 50)
+    }
+  }
+
+  private drawLineForLeftBlock(blockRectModel: BlockRectModel) {
+    if (this.cachedPanels) {
+      const panelRectsToCheck = this.cachedPanels.filter(rect => blockRectModel.y >= rect.y - rect.height / 2 && blockRectModel.y <= rect.y + rect.height / 2 && blockRectModel.x > rect.x)
+      if (panelRectsToCheck.length) {
+        const panelRectsToCheckWithDistance = panelRectsToCheck.map(rect => {
+          const distance = Math.sqrt(Math.pow(rect.x - blockRectModel.x, 2) + Math.pow(rect.y - blockRectModel.y, 2))
+
+          return { ...rect, distance }
+        })
+        const panelRectsToCheckWithDistanceSorted = panelRectsToCheckWithDistance.sort((a, b) => a.distance - b.distance)
+        const closestPanelRect = panelRectsToCheckWithDistanceSorted[0]
+        if (closestPanelRect) {
+          this.ctx.beginPath()
+          this.ctx.moveTo(blockRectModel.x - blockRectModel.width / 2, blockRectModel.y)
+          this.ctx.lineTo(closestPanelRect.x + closestPanelRect.width / 2, blockRectModel.y)
+          this.ctx.stroke()
+
+          const distanceToClosestPanel = closestPanelRect.x + closestPanelRect.width / 2 - (blockRectModel.x - blockRectModel.width / 2)
+          this.ctx.fillStyle = 'red'
+          this.ctx.font = '15px Arial'
+          this.ctx.fillText(`${distanceToClosestPanel}px`, blockRectModel.x - blockRectModel.width / 2 - 50, blockRectModel.y - 50)
+        }
+      } else {
+        this.ctx.beginPath()
+        this.ctx.moveTo(blockRectModel.x - blockRectModel.width / 2, blockRectModel.y)
+        this.ctx.lineTo(0, blockRectModel.y)
+        this.ctx.stroke()
+
+        const distanceToLeftOfPage = blockRectModel.x - blockRectModel.width / 2
+        this.ctx.fillStyle = 'red'
+        this.ctx.font = '15px Arial'
+        this.ctx.fillText(`${distanceToLeftOfPage}px`, 50, blockRectModel.y - 50)
+      }
+    } else {
+      this.ctx.beginPath()
+      this.ctx.moveTo(blockRectModel.x - blockRectModel.width / 2, blockRectModel.y)
+      this.ctx.lineTo(0, blockRectModel.y)
+      this.ctx.stroke()
+
+      const distanceToLeftOfPage = blockRectModel.x - blockRectModel.width / 2
+      this.ctx.fillStyle = 'red'
+      this.ctx.font = '15px Arial'
+      this.ctx.fillText(`${distanceToLeftOfPage}px`, 50, blockRectModel.y - 50)
+    }
+  }
+
+  private drawLineForRightBlock(blockRectModel: BlockRectModel) {
+    if (this.cachedPanels) {
+      const panelRectsToCheck = this.cachedPanels.filter(rect => blockRectModel.y >= rect.y - rect.height / 2 && blockRectModel.y <= rect.y + rect.height / 2 && blockRectModel.x < rect.x)
+      if (panelRectsToCheck.length) {
+        const panelRectsToCheckWithDistance = panelRectsToCheck.map(rect => {
+          const distance = Math.sqrt(Math.pow(rect.x - blockRectModel.x, 2) + Math.pow(rect.y - blockRectModel.y, 2))
+
+          return { ...rect, distance }
+        })
+        const panelRectsToCheckWithDistanceSorted = panelRectsToCheckWithDistance.sort((a, b) => a.distance - b.distance)
+        const closestPanelRect = panelRectsToCheckWithDistanceSorted[0]
+        if (closestPanelRect) {
+          this.ctx.beginPath()
+          this.ctx.moveTo(blockRectModel.x + blockRectModel.width / 2, blockRectModel.y)
+          this.ctx.lineTo(closestPanelRect.x - closestPanelRect.width / 2, blockRectModel.y)
+          this.ctx.stroke()
+
+          const distanceToClosestPanel = closestPanelRect.x - closestPanelRect.width / 2 - (blockRectModel.x + blockRectModel.width / 2)
+          this.ctx.fillStyle = 'red'
+          this.ctx.font = '15px Arial'
+          this.ctx.fillText(`${distanceToClosestPanel}px`, blockRectModel.x + blockRectModel.width / 2 + 50, blockRectModel.y - 50)
+        }
+      } else {
+        this.ctx.beginPath()
+        this.ctx.moveTo(blockRectModel.x + blockRectModel.width / 2, blockRectModel.y)
+        this.ctx.lineTo(this.canvas.width, blockRectModel.y)
+        this.ctx.stroke()
+
+        const distanceToRightOfPage = this.canvas.width - (blockRectModel.x + blockRectModel.width / 2)
+        this.ctx.fillStyle = 'red'
+        this.ctx.font = '15px Arial'
+        this.ctx.fillText(`${distanceToRightOfPage}px`, this.canvas.width - 50, blockRectModel.y - 50)
+      }
+    } else {
+      this.ctx.beginPath()
+      this.ctx.moveTo(blockRectModel.x + blockRectModel.width / 2, blockRectModel.y)
+      this.ctx.lineTo(this.canvas.width, blockRectModel.y)
+      this.ctx.stroke()
+
+    }
+  }
+
+  private drawLinesForBlockV2(blockRectModel: BlockRectModel) {
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+    this.ctx.lineWidth = 2
+    this.ctx.strokeStyle = 'red'
+
+    const belowPanelRect = this.cachedPanels?.find(rect => blockRectModel.x >= rect.x - rect.width / 2 && blockRectModel.x <= rect.x + rect.width / 2 && blockRectModel.y < rect.y)
+    if (belowPanelRect) {
+      this.drawLineToPanel(belowPanelRect, blockRectModel)
+    } else {
+      this.drawLineToY(this.canvas.height, blockRectModel)
+      const distanceToBottomOfPage = this.canvas.height - (blockRectModel.y + blockRectModel.height / 2)
+      this.ctx.fillStyle = 'red'
+      this.ctx.font = '15px Arial'
+      this.ctx.fillText(`${distanceToBottomOfPage}px`, blockRectModel.x - 50, this.canvas.height - 50)
+    }
+
+    const abovePanelRect = this.cachedPanels?.find(rect => blockRectModel.x >= rect.x - rect.width / 2 && blockRectModel.x <= rect.x + rect.width / 2 && blockRectModel.y > rect.y)
+    if (abovePanelRect) {
+      this.drawLineToPanel(abovePanelRect, blockRectModel)
+    } else {
+      this.drawLineToY(0, blockRectModel)
+      const distanceToTopOfPage = blockRectModel.y - blockRectModel.height / 2
+      this.ctx.fillStyle = 'red'
+      this.ctx.font = '15px Arial'
+      this.ctx.fillText(`${distanceToTopOfPage}px`, blockRectModel.x - 50, 50)
+    }
+
+  }
+
+  drawLineToY(y: number, blockRectModel: BlockRectModel) {
     this.ctx.beginPath()
-    this.ctx.moveTo(blockRectModel.x, blockRectModel.y + blockRectModel.height / 2)
-    this.ctx.lineTo(blockRectModel.x, this.canvas.height)
+    this.ctx.moveTo(blockRectModel.x, blockRectModel.y)
+    this.ctx.lineTo(blockRectModel.x, y)
     this.ctx.stroke()
+  }
+
+  drawLineToPanel(panelRect: BlockRectModel, blockRectModel: BlockRectModel) {
+    const y = panelRect.y - panelRect.height / 2
+    this.drawLineToY(y, blockRectModel)
+
+    const distanceToPanel = y - (blockRectModel.y + blockRectModel.height / 2)
+    this.ctx.fillStyle = 'red'
+    this.ctx.font = '15px Arial'
+    this.ctx.fillText(`${distanceToPanel}px`, blockRectModel.x - 50, y - 50)
+  }
+
+  animateLineFromAboutPanelToTopOfPageV2(blockRectModel: BlockRectModel) {
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+
+    const panelRects = this.cachedPanels?.filter(panel => panel.x !== blockRectModel.x) || []
+
+    const panelRectsToCheck = panelRects.filter(rect =>
+      blockRectModel.x >= rect.x - rect.width / 2 && blockRectModel.x <= rect.x + rect.width / 2,
+    )
+
+    const distanceToTopOfPage = blockRectModel.y - blockRectModel.height / 2
+    const distanceToBottomOfPage = this.canvas.height - (blockRectModel.y + blockRectModel.height / 2)
+    const distanceToLeftOfPage = blockRectModel.x - blockRectModel.width / 2
+    const distanceToRightOfPage = this.canvas.width - (blockRectModel.x + blockRectModel.width / 2)
+
+    /*    this.drawVerticalLine(blockRectModel.x, blockRectModel.y - blockRectModel.height / 2, 0)
+     this.drawLabel(`${distanceToTopOfPage}px`, blockRectModel.x - 50, 50)*/
+
+    this.handlePanelRectsToCheck(blockRectModel, panelRectsToCheck)
+    /* if (panelRectsToCheck.length) {
+     /!*   const closestPanelRect = panelRectsToCheck.reduce((closestRect, rect) => {
+     const distance = Math.abs(rect.y - blockRectModel.y)
+     return (distance < closestRect.distance) ? { ...rect, distance } : closestRect
+     }, { distance: Infinity, width: 0, height: 0 })*!/
+     const closestPanelRect = panelRectsToCheck.reduce((closestRect, rect) => {
+     const distance = Math.abs(rect.y - blockRectModel.y)
+     return (distance < closestRect.distance) ? { ...rect, distance } : closestRect
+     }, { distance: Infinity })
+
+     this.drawVerticalLine(blockRectModel.x, blockRectModel.y + blockRectModel.height / 2, closestPanelRect.y - closestPanelRect.height / 2)
+     this.drawLabel(`${closestPanelRect.y - closestPanelRect.height / 2 - (blockRectModel.y + blockRectModel.height / 2)}px`, blockRectModel.x - 50, blockRectModel.y + blockRectModel.height / 2 + 50)
+     } else {
+     this.drawVerticalLine(blockRectModel.x, blockRectModel.y + blockRectModel.height / 2, this.canvas.height)
+     this.drawLabel(`${distanceToBottomOfPage}px`, blockRectModel.x - 50, this.canvas.height - 50)
+     }*/
+
+    this.drawHorizontalLine(blockRectModel.x - blockRectModel.width / 2, blockRectModel.y, 0)
+    this.drawLabel(`${distanceToLeftOfPage}px`, 25, blockRectModel.y + 50)
+
+    this.drawHorizontalLine(blockRectModel.x + blockRectModel.width / 2, blockRectModel.y, this.canvas.width)
+    this.drawLabel(`${distanceToRightOfPage}px`, this.canvas.width - 75, blockRectModel.y + 50)
+  }
+
+  drawVerticalLine(x: number, startY: number, endY: number) {
+    this.ctx.lineWidth = 2
+    this.ctx.strokeStyle = 'red'
     this.ctx.beginPath()
-    this.ctx.moveTo(blockRectModel.x - blockRectModel.width / 2, blockRectModel.y)
-    this.ctx.lineTo(0, blockRectModel.y)
+    this.ctx.moveTo(x, startY)
+    this.ctx.lineTo(x, endY)
     this.ctx.stroke()
+  }
+
+  drawHorizontalLine(startX: number, y: number, endX: number) {
+    this.ctx.lineWidth = 2
+    this.ctx.strokeStyle = 'red'
     this.ctx.beginPath()
-    this.ctx.moveTo(blockRectModel.x + blockRectModel.width / 2, blockRectModel.y)
-    this.ctx.lineTo(this.canvas.width, blockRectModel.y)
+    this.ctx.moveTo(startX, y)
+    this.ctx.lineTo(endX, y)
     this.ctx.stroke()
+  }
+
+  drawLabel(label: string, x: number, y: number) {
+    this.ctx.fillStyle = 'red'
+    this.ctx.font = '15px Arial'
+    this.ctx.fillText(label, x, y)
+  }
+
+  handlePanelRectsToCheck(blockRectModel: BlockRectModel, panelRectsToCheck: BlockRectModel[]) {
+    if (panelRectsToCheck.length) {
+      const panelRectsToCheckWithDistance = panelRectsToCheck.map(rect => {
+        const distance = Math.abs(rect.y - blockRectModel.y)
+        return { ...rect, distance }
+      })
+      const panelRectsToCheckWithDistanceSorted = panelRectsToCheckWithDistance.sort((a, b) => a.distance - b.distance)
+      const closestPanelRect = panelRectsToCheckWithDistanceSorted[0]
+      if (closestPanelRect) {
+        this.ctx.beginPath()
+        this.ctx.moveTo(blockRectModel.x, blockRectModel.y + blockRectModel.height / 2)
+        this.ctx.lineTo(blockRectModel.x, closestPanelRect.y - closestPanelRect.height / 2)
+        this.ctx.stroke()
+
+        // distance to closest panel
+        const distanceToClosestPanel = closestPanelRect.y - closestPanelRect.height / 2 - (blockRectModel.y + blockRectModel.height / 2)
+        this.ctx.fillStyle = 'red'
+        this.ctx.font = '15px Arial'
+        this.ctx.fillText(`${distanceToClosestPanel}px`, blockRectModel.x - 50, blockRectModel.y + blockRectModel.height / 2 + 50)
+      }
+    } else {
+      this.ctx.beginPath()
+      this.ctx.moveTo(blockRectModel.x, blockRectModel.y + blockRectModel.height / 2)
+      this.ctx.lineTo(blockRectModel.x, this.canvas.height)
+      this.ctx.stroke()
+
+      const distanceToBottomOfPage = this.canvas.height - (blockRectModel.y + blockRectModel.height / 2)
+      this.ctx.fillStyle = 'red'
+      this.ctx.font = '15px Arial'
+      this.ctx.fillText(`${distanceToBottomOfPage}px`, blockRectModel.x - 50, this.canvas.height - 50)
+    }
   }
 
   private getBlockRect(panelId: string): BlockRectModel | undefined {
@@ -501,9 +825,16 @@ export class NoGridLayoutDirective implements OnInit {
      console.log('rect', rect)*/
 
     const panels = document.querySelectorAll('[panelId]')
+
     if (!panels) {
       return undefined
     }
+    // const cachedPanels = this.blockRectCache.get(panelId)
+    /*    const cachedPanels = panels.forEach(p => {
+
+     })*/
+    this.cachedPanels = Array.from(panels).map(panel => this.getBlockRectFromElement(panel))
+    // console.log('cachedPanels', this.cachedPanels)
     // console.log('panels', panels)
     const panelDiv = Array.from(panels).find(p => p.getAttribute('panelId') === panelId)
     // const panel = Array.from(panels).find(p => p.getAttribute('panelId') === '505f066d-b5c1-45af-8cf1-200ad8f85ebe')
@@ -522,6 +853,15 @@ export class NoGridLayoutDirective implements OnInit {
     // panelDiv.
 
     const panelRect = panelDiv.getBoundingClientRect()
+    const canvasRect = this.canvas.getBoundingClientRect()
+    const x = panelRect.left - canvasRect.left + panelRect.width / 2
+    const y = panelRect.top - canvasRect.top + panelRect.height / 2
+
+    return { x, y, height: panelRect.height, width: panelRect.width }
+  }
+
+  private getBlockRectFromElement(element: Element): BlockRectModel {
+    const panelRect = element.getBoundingClientRect()
     const canvasRect = this.canvas.getBoundingClientRect()
     const x = panelRect.left - canvasRect.left + panelRect.width / 2
     const y = panelRect.top - canvasRect.top + panelRect.height / 2
@@ -556,4 +896,43 @@ export class NoGridLayoutDirective implements OnInit {
       // content: 'Bazinga!',
     })
   }
+
+  /*  private animateLineFromAboutPanelToTopOfPageWithCachedPanels(blockRectModel: BlockRectModel) {
+   const distanceToTopOfPage = blockRectModel.y - blockRectModel.height / 2
+   const distanceToBottomOfPage = this.canvas.height - (blockRectModel.y + blockRectModel.height / 2)
+   const distanceToLeftOfPage = blockRectModel.x - blockRectModel.width / 2
+   const distanceToRightOfPage = this.canvas.width - (blockRectModel.x + blockRectModel.width / 2)
+
+   const minDistance = Math.min(distanceToTopOfPage, distanceToBottomOfPage, distanceToLeftOfPage, distanceToRightOfPage)
+
+   if (minDistance === distanceToTopOfPage) {
+   this.animateLineFromAboutPanelToTopOfPage(blockRectModel)
+   } else if (minDistance === distanceToBottomOfPage) {
+   this.animateLineFromAboutPanelToBottomOfPage(blockRectModel)
+   } else if (minDistance === distanceToLeftOfPage) {
+   this.animateLineFromAboutPanelToLeftOfPage(blockRectModel)
+   } else if (minDistance === distanceToRightOfPage) {
+   this.animateLineFromAboutPanelToRightOfPage(blockRectModel)
+   }
+
+   }*/
+  /*  private animateLineFromAboutPanelToTopOfPageWithCachedPanels(blockRectModel: BlockRectModel, panelRectsToCheck: BlockRectModel[]) {
+   const distanceToTopOfPage = blockRectModel.y - blockRectModel.height / 2
+   const distanceToBottomOfPage = this.canvas.height - (blockRectModel.y + blockRectModel.height / 2)
+   const distanceToLeftOfPage = blockRectModel.x - blockRectModel.width / 2
+   const distanceToRightOfPage = this.canvas.width - (blockRectModel.x + blockRectModel.width / 2)
+
+   const minDistance = Math.min(distanceToTopOfPage, distanceToBottomOfPage, distanceToLeftOfPage, distanceToRightOfPage)
+
+   if (minDistance === distanceToTopOfPage) {
+   this.animateLineFromAboutPanelToTopOfPage(blockRectModel)
+   } else if (minDistance === distanceToBottomOfPage) {
+   this.animateLineFromAboutPanelToBottomOfPage(blockRectModel)
+   } else if (minDistance === distanceToLeftOfPage) {
+   this.animateLineFromAboutPanelToLeftOfPage(blockRectModel)
+   } else if (minDistance === distanceToRightOfPage) {
+   this.animateLineFromAboutPanelToRightOfPage(blockRectModel)
+   }
+
+   }*/
 }
