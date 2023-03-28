@@ -1,21 +1,35 @@
+<!-- class='w-fit h-fit' -->
 <div
-  class="containerDIV relative left-0 top-0 flex h-fit w-fit flex-col items-center justify-center overflow-hidden"
-  (click)="createFreePanel($event)"
+  appNoGridLayoutDirective
+  class="absolute left-0 top-0 right-0 bottom-0 h-full w-full flex-col overflow-hidden"
   [style.min-width]="gridContainerWidth"
   [style.min-height]="gridContainerHeight"
 >
-  <canvas
-    [style.min-height]="gridContainerHeight"
-    [style.min-width]="gridContainerWidth"
-    class="pointer-events-none absolute z-10"
-    style="overflow: hidden; z-index: 10"
-  >
-  </canvas>
-  <div
-    [style.height]="gridContainerHeight"
-    [style.width]="gridContainerWidth"
-    class="appWrapper relative flex flex-col items-center"
-  >
-    <app-free-panel [freePanel]="panel" *ngFor="let panel of freePanels" />
-  </div>
+  <!--  <canvas
+      [style.min-height]="gridContainerHeight"
+      [style.min-width]="gridContainerWidth"
+      class="pointer-events-none absolute z-10"
+      style="overflow: hidden; z-index: 10"
+    >
+    </canvas>-->
+  <!--  (click)="createFreePanel($event)"-->
+  <!--  <canvas
+      [style.min-height]="gridContainerHeight"
+      [style.min-width]="gridContainerWidth"
+      class="pointer-events-none absolute z-10"
+      style="overflow: hidden; z-index: 10"
+    >
+    </canvas>
+    <div
+      [style.height]="gridContainerHeight"
+      [style.width]="gridContainerWidth"
+      class="appWrapper relative flex flex-col items-center"
+    >-->
+  <app-free-panel
+    [style.height]="blockHeight"
+    [style.width]="blockWidth"
+    [freePanel]="panel"
+    *ngFor="let panel of freePanels$ | async"
+  />
+  <!--  </div>-->
 </div>
