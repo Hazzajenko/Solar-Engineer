@@ -14,10 +14,12 @@ import { FreePanelComponent, FreePanelModel } from '@no-grid-layout/feature'
 import { NoGridLayoutService } from './no-grid-layout.service'
 import { getGuid } from '@shared/utils'
 import { BlockRectModel } from '@grid-layout/data-access'
+import { LineDrawerService } from './line-drawer.service'
 
 @Directive({
   selector: '[appNoGridLayoutDirective]',
   standalone: true,
+  // providers
 })
 export class NoGridLayoutDirective implements OnInit {
   private elementRef = inject(ElementRef<HTMLDivElement>)
@@ -26,6 +28,9 @@ export class NoGridLayoutDirective implements OnInit {
   private clickTimeout: NodeJS.Timeout | undefined
   private canvas!: HTMLCanvasElement
   private ctx!: CanvasRenderingContext2D
+  // private ngZone = inject(NgZone)
+  // private lineDrawerService = new LineDrawerService(can)
+  private lineDrawerService!: LineDrawerService
   @ViewChildren(FreePanelComponent) myDivs!: QueryList<FreePanelComponent>
   @ViewChildren('panelMarker') panelMarkers!: QueryList<any>
   @ContentChildren(FreePanelComponent) freePanelComponents!: QueryList<FreePanelComponent>
@@ -41,6 +46,11 @@ export class NoGridLayoutDirective implements OnInit {
   cachedPanels: BlockRectModel[] = []
 
   constructor(private readonly ngZone: NgZone) {
+
+    // super( )
+
+    // this.ngZone = ngZone
+    // lineDrawerService.setCanvas(this.canvas)
   }
 
   ngOnInit() {
@@ -71,14 +81,10 @@ export class NoGridLayoutDirective implements OnInit {
     this.canvas.height = this.elementRef.nativeElement.offsetHeight
     this.ctx.fillStyle = 'rgba(0, 0, 0, 0.1)'
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height)
+    this.lineDrawerService = new LineDrawerService(this.canvas)
   }
 
   private setupMouseEventListeners() {
-    /*    this.renderer.listen(this.elementRef.nativeElement, 'click', (event: MouseEvent) => {
-     event.stopPropagation()
-     event.preventDefault()
-     this.handleClickEvent(event)
-     })*/
     this.renderer.listen(this.elementRef.nativeElement, 'mouseup', (event: MouseEvent) => {
       event.stopPropagation()
       event.preventDefault()
@@ -94,42 +100,13 @@ export class NoGridLayoutDirective implements OnInit {
       event.preventDefault()
       this.onMouseMoveHandler(event)
     })
-    /*this.ngZone.runOutsideAngular(() => {
-     /!*      this.renderer.listen(this.elementRef.nativeElement, 'mousedown', (event: MouseEvent) => {
-     event.stopPropagation()
-     event.preventDefault()
-     this.onMouseDownHandler(event)
-     })
-     this.renderer.listen(this.elementRef.nativeElement, 'mouseup', (event: MouseEvent) => {
-     event.stopPropagation()
-     event.preventDefault()
-     this.onMouseUpHandler(event)
-     })
-     this.renderer.listen(this.elementRef.nativeElement, 'mousemove', (event: MouseEvent) => {
-     event.stopPropagation()
-     event.preventDefault()
-     this.onMouseMoveHandler(event)
-     })*!/
-     /!*     this.renderer.listen(this.elementRef.nativeElement, 'click', (event: MouseEvent) => {
-     event.stopPropagation()
-     event.preventDefault()
-     this.handleClickEvent(event)
-     })*!/
-     /!*    this.renderer.listen(this.elementRef.nativeElement, 'dblclick', (event: MouseEvent) => {
+    /*   this.renderer.listen(this.elementRef.nativeElement, 'dblclick', (event: MouseEvent) => {
      event.stopPropagation()
      event.preventDefault()
      this.handleDoubleClickEvent(event)
-     })*!/
+     })
      })*/
   }
-
-  /*  private onMouseMoveHandler(event: MouseEvent) {
-   event.stopPropagation()
-   event.preventDefault()
-   // console.log('mousemove', event)
-   // this.isDragging = true
-   return
-   }*/
 
   private onMouseUpHandler(event: MouseEvent) {
     event.stopPropagation()
@@ -147,21 +124,8 @@ export class NoGridLayoutDirective implements OnInit {
       this.handleClickEvent(event)
     } else {
       console.log('Button dragged')
-      // handle the click event
     }
     return
-    /*    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
-     this.startX = undefined
-     this.startY = undefined
-     if (this.isDragging || event.ctrlKey) {
-     this.isDragging = false
-     this.elementRef.nativeElement.style.cursor = ''
-     return
-     }
-
-     const location = (event.composedPath()[0] as HTMLDivElement).getAttribute('location')
-     if (!location) return
-     return this.mouseService.mouse({ event, location })*/
   }
 
   private onMouseDownHandler(event: MouseEvent) {
@@ -169,23 +133,6 @@ export class NoGridLayoutDirective implements OnInit {
     event.preventDefault()
     console.log('mousedown', event)
     this.isDragging = true
-    // console.log(this.myDivs)
-    // console.log(this.freePanelComponents)
-    /*    console.log(this.panelMarkers)
-     if (this.panelMarkers) {
-     this.panelMarkers.forEach(marker => {
-     console.log(marker)
-     // div.nativeElement.style.backgroundColor = 'red'
-     })
-     }*/
-    // if ()
-    /*    if (this.myDivs.toArray()) {
-     this.myDivs.toArray().forEach(div => {
-     console.log(div)
-     // div.nativeElement.style.backgroundColor = 'red'
-     })
-     }*/
-    // console.log(this.myDivs.toArray())
 
     const panelId = (event.composedPath()[0] as HTMLDivElement).getAttribute('panelId')
     if (panelId) {
@@ -197,63 +144,20 @@ export class NoGridLayoutDirective implements OnInit {
       this.clickTimeout = undefined
     }, 300)
     return
-    /*    if (event.ctrlKey || event.button === 1) {
-     /!*   const rect = this.elementRef.nativeElement.getBoundingClientRect()
-     this.startX = event.clientX - rect.left
-     this.startY = event.clientY - rect.top*!/
-     this.isDragging = true
-     /!*      if (event.button === 1) {
-     this.middleClickDown = true
-     }*!/
-     return
-     }
-     if (event.altKey) {
-     /!*      this.altKeyDragging = true
-     if (!event.pageX || !event.pageY) {
-     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
-     this.startX = undefined
-     this.startY = undefined
-     return
-     }
-
-     const rect = this.canvas.getBoundingClientRect()
-
-     this.startX = event.pageX - rect.left
-     this.startY = event.pageY - rect.top*!/
-     }
-
-     this.isDragging = false*/
-    // this.middleClickDown = false
-    // const clientX = event.clientX
-    // const clientY = event.clientY
-
-    /*    const location = (event.composedPath()[0] as HTMLDivElement).getAttribute('location')
-     if (!location) return*/
-
-    // return this.mouseService.mouse({ event, location })
   }
 
   private handleClickEvent(event: MouseEvent) {
-    // event.stopPropagation()
-    // event.preventDefault()
-    // check if it is mouse up event
-    // if (event.type === 'mouseup') return
-
-    /*    const existingPanel = (event.composedPath()[0] as HTMLDivElement)
-     console.log('existingPanel', existingPanel)*/
-
-    // check if mouse is on a panel or not
     const location = (event.composedPath()[0] as HTMLDivElement).getAttribute('location')
     console.log('location', location)
     if (location) return
-    // check if it is a middle click
-    if (event.button === 1) return
-    // check if it is a right click
-    if (event.button === 2) return
-    // check if it is a ctrl click
-    if (event.ctrlKey) return
-    // check if it is a alt click
-    if (event.altKey) return
+    /*    // check if it is a middle click
+     if (event.button === 1) return
+     // check if it is a right click
+     if (event.button === 2) return
+     // check if it is a ctrl click
+     if (event.ctrlKey) return
+     // check if it is a alt click
+     if (event.altKey) return*/
 
     console.log('click')
     if (event.ctrlKey) return
@@ -261,49 +165,23 @@ export class NoGridLayoutDirective implements OnInit {
     const mouseX = event.pageX - rect.left
     const mouseY = event.pageY - rect.top
 
-    // const length = this.noGridLayoutService.getLength()
     const freePanel: FreePanelModel = {
       id: getGuid(),
       location: {
         x: mouseX,
         y: mouseY,
       },
-      /*      x: mouseX,
-       y: mouseY,*/
     }
 
     console.log('clickEvent', event)
     this.noGridLayoutService.addFreePanel(freePanel)
-    // console.log('freePanel', freePanel)
-    /*    this.freePanels.push(freePanel,
-     )
-     this.freePanelsChange.emit(this.freePanels)*/
-    /*    const location = (event.composedPath()[0] as HTMLDivElement).getAttribute('location')
-     if (location) {
-     return this.clickService.click({ event: event as MouseEvent, location })
-     }
-     if (!location) {
-     const secondDiv = (event.composedPath()[1] as HTMLDivElement).getAttribute('location')
-     if (!secondDiv) return
-     return this.clickService.click({ event: event as MouseEvent, location: secondDiv })
-     }*/
     return
   }
 
   private onMouseMoveHandler(event: MouseEvent) {
-    /*    if (!this.isDragging) {
-     this.isDragging = false
-     return
-     }*/
-
     if (this.isDragging) {
-      // this.elementRef.nativeElement.style.cursor = 'grabbing'
-      // return
       const panelId = (event.composedPath()[0] as HTMLDivElement).getAttribute('panelId')
-      // const location = (event.composedPath()[0] as HTMLDivElement).getAttribute('location')
       if (panelId) {
-        /*     const rect = (event.composedPath()[0] as HTMLDivElement).getBoundingClientRect()
-         const dimensions = this.getDivDimensions(rect)*/
         this.selectedPanelId = panelId
         this.pageX = event.pageX
         this.pageY = event.pageY
@@ -311,92 +189,9 @@ export class NoGridLayoutDirective implements OnInit {
           this.animate()
           // this.animateLines()
         })
-        /*   const mouseX = event.pageX - rect.left
-         const mouseY = event.pageY - rect.top*/
-        // this.noGridLayoutService.updateFreePanelLocation(location, { x: mouseX, y: mouseY })
       }
     }
-
-    // console.log('location', panelId)
-
-    /*    if (event.altKey) {
-     this.pageX = event.pageX
-     this.pageY = event.pageY
-     this.ngZone.runOutsideAngular(() => {
-     this.animate()
-     })
-     }
-
-     if (!event.ctrlKey) {
-     return
-     }*/
-    /*
-     const parentRect = this.elementRef.nativeElement.parentNode.getBoundingClientRect()
-     const mouseX =
-     event.pageX -
-     (parentRect.width - this.width) / 2 -
-     this.elementRef.nativeElement.parentNode.offsetLeft
-
-     const mouseY =
-     event.pageY -
-     (parentRect.height - this.height) / 2 -
-     this.elementRef.nativeElement.parentNode.offsetTop
-
-     const newStartY = this.startY
-     const newStartX = this.startX
-
-     const top = mouseY - newStartY
-     const left = mouseX - newStartX
-
-     if (
-     top > (this.height * this.scale) / 2 ||
-     top < this.negativeHeight / 2 - this.scale * 200 + this.height / 4.485
-     ) {
-     return
-     }
-
-     if (
-     left > (this.width * this.scale) / 2 ||
-     left < this.negativeWidth / 2 - this.scale * 200 + this.width / 5.925
-     ) {
-     return
-     }
-
-     this.elementRef.nativeElement.style.top = top + 'px'
-     this.elementRef.nativeElement.style.left = left + 'px'
-     this.elementRef.nativeElement.style.cursor = 'grab'*/
     return
-  }
-
-  animateLines() {
-    this.animationId = requestAnimationFrame(() => this.animateLines())
-    const now = Date.now()
-    const elapsed = now - this.startTime
-    if (elapsed > this.fpsInterval) {
-      this.startTime = now - (elapsed % this.fpsInterval)
-      if (!this.pageX || !this.pageY) {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
-        console.error('no pageX or pageY')
-        return
-      }
-      if (!this.selectedPanelId) {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
-        cancelAnimationFrame(this.animationId)
-        console.error('no panel selected')
-        return
-      }
-      const panelDimensions = this.getBlockRect(this.selectedPanelId)
-      if (!panelDimensions) {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
-        console.error('no panelDimensions')
-        return
-      }
-      this.animateLinesFromBlock(panelDimensions)
-      /*      if (this.selectedPaths && this.pathMapAnimating) {
-       const pathMap = await this.createLineMap(this.selectedPaths)
-       await this.drawSelectedPathMap(pathMap)
-       }*/
-    }
   }
 
   animate() {
@@ -423,29 +218,7 @@ export class NoGridLayoutDirective implements OnInit {
       console.error('no panelDimensions')
       return
     }
-    // this.animateLineFromAboutPanelToTopOfPageV2(panelDimensions)
     this.animateLinesFromBlock(panelDimensions)
-    /*    const rect = this.canvas.getBoundingClientRect()
-
-     const mouseX = this.pageX - rect.left
-     const mouseY = this.pageY - rect.top
-
-     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
-
-     const width = mouseX - this.startX
-     const height = mouseY - this.startY
-
-     this.ctx.globalAlpha = 0.4
-
-     this.ctx.fillStyle = this.fillStyle
-
-     this.ctx.fillRect(this.startX, this.startY, width, height)
-
-     this.ctx.globalAlpha = 1.0*/
-    // const endTime = performance.now()
-    // const elapsedTime = endTime - startTime
-    // const fps = 1000 / elapsedTime;
-    // console.log('elapsedTime', elapsedTime)
     this.animationId = requestAnimationFrame(() => this.animate())
 
   }
@@ -456,57 +229,53 @@ export class NoGridLayoutDirective implements OnInit {
     this.ctx.lineWidth = 2
     this.ctx.strokeStyle = 'red'
 
-    this.drawLineForAboveBlock(blockRectModel)
-    this.drawLineForBelowBlock(blockRectModel)
-    this.drawLineForLeftBlock(blockRectModel)
-    this.drawLineForRightBlock(blockRectModel)
+    // this.lineDrawerService.drawLineForAboveBlockV2(blockRectModel)
+    this.drawLineForAboveBlockV2(blockRectModel)
+    // this.drawLineForAboveBlock(blockRectModel)
+    this.drawLineForBelowBlockV2(blockRectModel)
+    // this.drawLineForBelowBlock(blockRectModel)
+    this.drawLineForLeftBlockV2(blockRectModel)
+    // this.drawLineForLeftBlock(blockRectModel)
+    this.drawLineForRightBlockV2(blockRectModel)
+    // this.drawLineForRightBlock(blockRectModel)
   }
 
-  private drawLineForBelowBlock(blockRectModel: BlockRectModel) {
-    if (this.cachedPanels) {
-
-      const panelRectsToCheck = this.cachedPanels.filter(rect => blockRectModel.x >= rect.x - rect.width / 2 && blockRectModel.x <= rect.x + rect.width / 2 && blockRectModel.y < rect.y)
-      if (panelRectsToCheck.length) {
-        const panelRectsToCheckWithDistance = panelRectsToCheck.map(rect => {
-          const distance = Math.sqrt(Math.pow(rect.x - blockRectModel.x, 2) + Math.pow(rect.y - blockRectModel.y, 2))
-
-          return { ...rect, distance }
-        })
-        const panelRectsToCheckWithDistanceSorted = panelRectsToCheckWithDistance.sort((a, b) => a.distance - b.distance)
-        const closestPanelRect = panelRectsToCheckWithDistanceSorted[0]
-        if (closestPanelRect) {
-          this.ctx.beginPath()
-          this.ctx.moveTo(blockRectModel.x, blockRectModel.y + blockRectModel.height / 2)
-          this.ctx.lineTo(blockRectModel.x, closestPanelRect.y - closestPanelRect.height / 2)
-          this.ctx.stroke()
-
-          const distanceToClosestPanel = closestPanelRect.y - closestPanelRect.height / 2 - (blockRectModel.y + blockRectModel.height / 2)
-          this.ctx.fillStyle = 'red'
-          this.ctx.font = '15px Arial'
-          this.ctx.fillText(`${distanceToClosestPanel}px`, blockRectModel.x - 50, blockRectModel.y + blockRectModel.height / 2 + 50)
-        }
-      } else {
-        this.ctx.beginPath()
-        this.ctx.moveTo(blockRectModel.x, blockRectModel.y + blockRectModel.height / 2)
-        this.ctx.lineTo(blockRectModel.x, this.canvas.height)
-        this.ctx.stroke()
-
-        const distanceToBottomOfPage = this.canvas.height - (blockRectModel.y + blockRectModel.height / 2)
-        this.ctx.fillStyle = 'red'
-        this.ctx.font = '15px Arial'
-        this.ctx.fillText(`${distanceToBottomOfPage}px`, blockRectModel.x - 50, this.canvas.height - 50)
-      }
-    } else {
+  private drawLineForBelowBlockV2(blockRectModel: BlockRectModel) {
+    const printDefault = () => {
       this.ctx.beginPath()
       this.ctx.moveTo(blockRectModel.x, blockRectModel.y + blockRectModel.height / 2)
       this.ctx.lineTo(blockRectModel.x, this.canvas.height)
       this.ctx.stroke()
 
       const distanceToBottomOfPage = this.canvas.height - (blockRectModel.y + blockRectModel.height / 2)
-      this.ctx.fillStyle = 'red'
-      this.ctx.font = '15px Arial'
-      this.ctx.fillText(`${distanceToBottomOfPage}px`, blockRectModel.x - 50, this.canvas.height - 50)
+      const absoluteDistance = Math.abs(distanceToBottomOfPage)
+      this.ctx.fillText(`${absoluteDistance}px`, blockRectModel.x - 50, this.canvas.height - 50)
     }
+    if (!this.cachedPanels) {
+      return printDefault()
+    }
+    const panelRectsToCheck = this.cachedPanels.filter(rect => blockRectModel.x >= rect.x - rect.width / 2 && blockRectModel.x <= rect.x + rect.width / 2 && blockRectModel.y < rect.y)
+    if (!panelRectsToCheck.length) {
+      return printDefault()
+    }
+
+    const panelRectsToCheckWithDistance = panelRectsToCheck.map(rect => {
+      const distance = Math.abs(rect.y - blockRectModel.y)
+
+      return { ...rect, distance }
+    })
+    const panelRectsToCheckWithDistanceSorted = panelRectsToCheckWithDistance.sort((a, b) => a.distance - b.distance)
+    const closestPanelRect = panelRectsToCheckWithDistanceSorted[0]
+    if (!closestPanelRect) return printDefault()
+    this.ctx.beginPath()
+    this.ctx.moveTo(blockRectModel.x, blockRectModel.y + blockRectModel.height / 2)
+    this.ctx.lineTo(blockRectModel.x, closestPanelRect.y - closestPanelRect.height / 2)
+    this.ctx.stroke()
+
+    const distanceToClosestPanel = closestPanelRect.y - closestPanelRect.height / 2 - (blockRectModel.y + blockRectModel.height / 2)
+    const absoluteDistance = Math.abs(distanceToClosestPanel)
+    this.ctx.fillText(`${absoluteDistance}px`, blockRectModel.x - 50, blockRectModel.y + blockRectModel.height / 2 + 50)
+    return
   }
 
   private drawLineForAboveBlock(blockRectModel: BlockRectModel) {
@@ -514,7 +283,8 @@ export class NoGridLayoutDirective implements OnInit {
       const panelRectsToCheck = this.cachedPanels.filter(rect => blockRectModel.x >= rect.x - rect.width / 2 && blockRectModel.x <= rect.x + rect.width / 2 && blockRectModel.y > rect.y)
       if (panelRectsToCheck.length) {
         const panelRectsToCheckWithDistance = panelRectsToCheck.map(rect => {
-          const distance = Math.sqrt(Math.pow(rect.x - blockRectModel.x, 2) + Math.pow(rect.y - blockRectModel.y, 2))
+          // const distance = Math.sqrt(Math.pow(rect.x - blockRectModel.x, 2) + Math.pow(rect.y - blockRectModel.y, 2))
+          const distance = Math.abs(rect.y - blockRectModel.y)
 
           return { ...rect, distance }
         })
@@ -556,6 +326,158 @@ export class NoGridLayoutDirective implements OnInit {
       this.ctx.fillText(`${distanceToTopOfPage}px`, blockRectModel.x - 50, 50)
     }
   }
+
+  private drawLineForAboveBlockV2(blockRectModel: BlockRectModel) {
+    const printDefault = () => {
+      this.ctx.beginPath()
+      this.ctx.moveTo(blockRectModel.x, blockRectModel.y - blockRectModel.height / 2)
+      this.ctx.lineTo(blockRectModel.x, 0)
+      this.ctx.stroke()
+
+      const distanceToTopOfPage = blockRectModel.y - blockRectModel.height / 2
+      const absoluteDistance = Math.abs(distanceToTopOfPage)
+      this.ctx.fillStyle = 'red'
+      this.ctx.font = '15px Arial'
+      this.ctx.fillText(`${absoluteDistance}px`, blockRectModel.x - 50, 50)
+      return
+      /*      return this.drawLinesAndTextBetweenTwoLocationsV2(
+       {
+       x: blockRectModel.x,
+       y: blockRectModel.y - blockRectModel.height / 2,
+       },
+       {
+       x: blockRectModel.x,
+       y: 0,
+       },
+       )*/
+    }
+    if (!this.cachedPanels) {
+      return printDefault()
+    }
+    const panelRectsToCheck = this.cachedPanels.filter(rect => blockRectModel.x >= rect.x - rect.width / 2 && blockRectModel.x <= rect.x + rect.width / 2 && blockRectModel.y > rect.y)
+    if (!panelRectsToCheck.length) {
+      return printDefault()
+    }
+    const panelRectsToCheckWithDistance = panelRectsToCheck.map(rect => {
+      const distance = Math.abs(rect.y - blockRectModel.y)
+      return { ...rect, distance }
+    })
+    const panelRectsToCheckWithDistanceSorted = panelRectsToCheckWithDistance.sort((a, b) => a.distance - b.distance)
+    const closestPanelRect = panelRectsToCheckWithDistanceSorted[0]
+    if (!closestPanelRect) return printDefault()
+
+    this.ctx.beginPath()
+    this.ctx.moveTo(blockRectModel.x, blockRectModel.y - blockRectModel.height / 2)
+    this.ctx.lineTo(blockRectModel.x, closestPanelRect.y + closestPanelRect.height / 2)
+    this.ctx.stroke()
+
+    const distanceToClosestPanel = closestPanelRect.y + closestPanelRect.height / 2 - (blockRectModel.y - blockRectModel.height / 2)
+    this.ctx.fillStyle = 'red'
+    this.ctx.font = '15px Arial'
+    const absoluteDistance = Math.abs(distanceToClosestPanel)
+    this.ctx.fillText(`${absoluteDistance}px`, blockRectModel.x - 50, blockRectModel.y - blockRectModel.height / 2 - 50)
+    /*      const distanceToClosestPanel = closestPanelRect.y - closestPanelRect.height / 2 - (blockRectModel.y + blockRectModel.height / 2)
+     this.ctx.fillStyle = 'red'
+     this.ctx.font = '15px Arial'
+     this.ctx.fillText(`${distanceToClosestPanel}px`, blockRectModel.x - 50, blockRectModel.y + blockRectModel.height / 2 + 50)*/
+    /*      return this.drawLinesAndTextBetweenTwoLocationsV2(
+     {
+     x: blockRectModel.x,
+     y: closestPanelRect.y + closestPanelRect.height / 2,
+
+     },
+     {
+     x: blockRectModel.x,
+     y: blockRectModel.y - blockRectModel.height / 2,
+     },
+     )*/
+
+  }
+
+  private getClosedPanelRect(panelRectsToCheck: BlockRectModel[], distanceCalc: number) {
+    const panelRectsToCheckWithDistance = panelRectsToCheck.map(rect => {
+      const distance = Math.abs(distanceCalc)
+      return { ...rect, distance }
+    })
+    const panelRectsToCheckWithDistanceSorted = panelRectsToCheckWithDistance.sort((a, b) => a.distance - b.distance)
+    return panelRectsToCheckWithDistanceSorted[0]
+  }
+
+  private drawLinesAndTextBetweenTwoLocations(x1: number, y1: number, x2: number, y2: number) {
+    this.ctx.beginPath()
+    this.ctx.moveTo(x1, y1)
+    this.ctx.lineTo(x2, y2)
+    this.ctx.stroke()
+
+    // const distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))
+    const distance = Math.abs(y2 - y1)
+    this.ctx.fillStyle = 'red'
+    this.ctx.font = '15px Arial'
+    this.ctx.fillText(`${distance}px`, x1, y1)
+  }
+
+  private drawLinesAndTextBetweenTwoLocationsV2(moveTo: { x: number, y: number }, lineTo: { x: number, y: number }) {
+    this.ctx.beginPath()
+    this.ctx.moveTo(moveTo.x, moveTo.y)
+    this.ctx.lineTo(lineTo.x, lineTo.y)
+    // this.ctx.lineTo(lineTo, y2)
+    this.ctx.stroke()
+
+    let distance = null
+    if (moveTo.x === lineTo.x) {
+      distance = Math.abs(lineTo.y - moveTo.y)
+    }
+    if (moveTo.y === lineTo.y) {
+      distance = Math.abs(lineTo.x - moveTo.x)
+    }
+    if (!distance) {
+      return
+    }
+    this.ctx.fillStyle = 'red'
+    this.ctx.font = '15px Arial'
+    const textX = moveTo.x < lineTo.x ? moveTo.x - 25 : lineTo.x + 25
+    const textY = moveTo.y < lineTo.y ? lineTo.y - 25 : moveTo.y + 25
+    this.ctx.fillText(`${distance}px`, textX, textY)
+
+    /*    if (moveTo.x === lineTo.x) {
+     const distance = Math.abs(lineTo.y - moveTo.y)
+     this.ctx.fillStyle = 'red'
+     this.ctx.font = '15px Arial'
+     this.ctx.fillText(`${distance}px`, moveTo.x, moveTo.y)
+     } else if (moveTo.y === lineTo.y) {
+     const distance = Math.abs(lineTo.x - moveTo.x)
+     this.ctx.fillStyle = 'red'
+     this.ctx.font = '15px Arial'
+     this.ctx.fillText(`${distance}px`, moveTo.x, moveTo.y)
+     }*/
+
+    // const distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))
+    /*    const distance = Math.abs(y2 - y1)
+     this.ctx.fillStyle = 'red'
+     this.ctx.font = '15px Arial'
+     this.ctx.fillText(`${distance}px`, x1, y1)*/
+  }
+
+  /*  private getClosedPanelRect(directionValue: number, otherDirectionValue: number, xAxis: boolean, axisIncrease: boolean) {
+   const rectDimensionForCalc = xAxis ? 'width' : 'height'
+   const rectAxisForCalc = xAxis ? 'x' : 'y'
+   const endRectAxisForCalc = xAxis ? 'y' : 'x'
+   const axisCalc = (a: number, b: number) => axisIncrease ? a > b : a < b
+   // const axisCalc = axisIncrease ?
+   const panelRectsToCheck = this.cachedPanels.filter(rect => directionValue >= rect[rectAxisForCalc] - rect[rectDimensionForCalc] / 2 && directionValue <= rect[rectAxisForCalc] + rect[rectDimensionForCalc] / 2 && otherDirectionValue > rect[endRectAxisForCalc])
+   // const panelRectsToCheck = this.cachedPanels.filter(rect => blockRectModel.y >= rect.y - rect.height / 2 && blockRectModel.y <= rect.y + rect.height / 2 && blockRectModel.x > rect.x)
+   if (panelRectsToCheck.length) {
+   const panelRectsToCheckWithDistance = panelRectsToCheck.map(rect => {
+   const distance = Math.sqrt(Math.pow(rect.x - blockRectModel.x, 2) + Math.pow(rect.y - blockRectModel.y, 2))
+
+   return { ...rect, distance }
+   })
+   const panelRectsToCheckWithDistanceSorted = panelRectsToCheckWithDistance.sort((a, b) => a.distance - b.distance)
+   const closestPanelRect = panelRectsToCheckWithDistanceSorted[0]
+   return closestPanelRect
+   }
+   return null
+   }*/
 
   private drawLineForLeftBlock(blockRectModel: BlockRectModel) {
     if (this.cachedPanels) {
@@ -603,6 +525,51 @@ export class NoGridLayoutDirective implements OnInit {
     }
   }
 
+  private drawLineForLeftBlockV2(blockRectModel: BlockRectModel) {
+    const printDefault = () => {
+      this.ctx.beginPath()
+      this.ctx.moveTo(blockRectModel.x - blockRectModel.width / 2, blockRectModel.y)
+      this.ctx.lineTo(0, blockRectModel.y)
+      this.ctx.stroke()
+
+      const distanceToLeftOfPage = blockRectModel.x - blockRectModel.width / 2
+      const absoluteDistance = Math.abs(distanceToLeftOfPage)
+      this.ctx.fillStyle = 'red'
+      this.ctx.font = '15px Arial'
+      this.ctx.fillText(`${absoluteDistance}px`, 50, blockRectModel.y - 50)
+      return
+    }
+    if (!this.cachedPanels) {
+      return printDefault()
+    }
+    const panelRectsToCheck = this.cachedPanels.filter(rect => blockRectModel.y >= rect.y - rect.height / 2 && blockRectModel.y <= rect.y + rect.height / 2 && blockRectModel.x > rect.x)
+    if (!panelRectsToCheck.length) {
+      return printDefault()
+    }
+
+    const panelRectsToCheckWithDistance = panelRectsToCheck.map(rect => {
+      // const distance = Math.sqrt(Math.pow(rect.x - blockRectModel.x, 2) + Math.pow(rect.y - blockRectModel.y, 2))
+      const distance = Math.abs(rect.x - blockRectModel.x)
+
+      return { ...rect, distance }
+    })
+    const panelRectsToCheckWithDistanceSorted = panelRectsToCheckWithDistance.sort((a, b) => a.distance - b.distance)
+    const closestPanelRect = panelRectsToCheckWithDistanceSorted[0]
+    if (closestPanelRect) {
+      this.ctx.beginPath()
+      this.ctx.moveTo(blockRectModel.x - blockRectModel.width / 2, blockRectModel.y)
+      this.ctx.lineTo(closestPanelRect.x + closestPanelRect.width / 2, blockRectModel.y)
+      this.ctx.stroke()
+
+      const distanceToClosestPanel = closestPanelRect.x + closestPanelRect.width / 2 - (blockRectModel.x - blockRectModel.width / 2)
+      const absoluteDistance = Math.abs(distanceToClosestPanel)
+      this.ctx.fillStyle = 'red'
+      this.ctx.font = '15px Arial'
+      this.ctx.fillText(`${absoluteDistance}px`, blockRectModel.x - blockRectModel.width / 2 - 50, blockRectModel.y - 50)
+    }
+
+  }
+
   private drawLineForRightBlock(blockRectModel: BlockRectModel) {
     if (this.cachedPanels) {
       const panelRectsToCheck = this.cachedPanels.filter(rect => blockRectModel.y >= rect.y - rect.height / 2 && blockRectModel.y <= rect.y + rect.height / 2 && blockRectModel.x < rect.x)
@@ -642,6 +609,49 @@ export class NoGridLayoutDirective implements OnInit {
       this.ctx.lineTo(this.canvas.width, blockRectModel.y)
       this.ctx.stroke()
 
+    }
+  }
+
+  private drawLineForRightBlockV2(blockRectModel: BlockRectModel) {
+    const printDefault = () => {
+      this.ctx.beginPath()
+      this.ctx.moveTo(blockRectModel.x + blockRectModel.width / 2, blockRectModel.y)
+      this.ctx.lineTo(this.canvas.width, blockRectModel.y)
+      this.ctx.stroke()
+
+      const distanceToRightOfPage = this.canvas.width - (blockRectModel.x + blockRectModel.width / 2)
+      const absoluteDistance = Math.abs(distanceToRightOfPage)
+      this.ctx.fillStyle = 'red'
+      this.ctx.font = '15px Arial'
+      this.ctx.fillText(`${absoluteDistance}px`, this.canvas.width - 50, blockRectModel.y - 50)
+      return
+    }
+    if (!this.cachedPanels) {
+      return printDefault()
+    }
+    const panelRectsToCheck = this.cachedPanels.filter(rect => blockRectModel.y >= rect.y - rect.height / 2 && blockRectModel.y <= rect.y + rect.height / 2 && blockRectModel.x < rect.x)
+    if (!panelRectsToCheck.length) {
+      return printDefault()
+    }
+
+    const panelRectsToCheckWithDistance = panelRectsToCheck.map(rect => {
+      const distance = Math.sqrt(Math.pow(rect.x - blockRectModel.x, 2) + Math.pow(rect.y - blockRectModel.y, 2))
+
+      return { ...rect, distance }
+    })
+    const panelRectsToCheckWithDistanceSorted = panelRectsToCheckWithDistance.sort((a, b) => a.distance - b.distance)
+    const closestPanelRect = panelRectsToCheckWithDistanceSorted[0]
+    if (closestPanelRect) {
+      this.ctx.beginPath()
+      this.ctx.moveTo(blockRectModel.x + blockRectModel.width / 2, blockRectModel.y)
+      this.ctx.lineTo(closestPanelRect.x - closestPanelRect.width / 2, blockRectModel.y)
+      this.ctx.stroke()
+
+      const distanceToClosestPanel = closestPanelRect.x - closestPanelRect.width / 2 - (blockRectModel.x + blockRectModel.width / 2)
+      const absoluteDistance = Math.abs(distanceToClosestPanel)
+      // this.ctx.fillStyle = 'red'
+      // this.ctx.font = '15px Arial'
+      this.ctx.fillText(`${absoluteDistance}px`, blockRectModel.x + blockRectModel.width / 2 + 50, blockRectModel.y - 50)
     }
   }
 

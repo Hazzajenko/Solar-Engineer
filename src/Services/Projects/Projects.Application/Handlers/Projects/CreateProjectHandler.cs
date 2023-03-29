@@ -47,6 +47,12 @@ public class CreateProjectHandler : ICommandHandler<CreateProjectCommand, Guid>
         // await _unitOfWork.ProjectsRepository.AddAndSaveChangesAsync(project);
 
         var response = appUserProject.Project.ToDto();
+        
+        var newId = new ProjectId(Guid.NewGuid());
+        var val = newId.Value;
+
+        /*var newId = ProjectId.Create(Guid.NewGuid());
+        var val = newId.Value;*/
 
         await _hubContext.Clients.User(appUserId.ToString()).ProjectCreated(response);
         _logger.LogInformation(

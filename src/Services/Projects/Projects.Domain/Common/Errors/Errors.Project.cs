@@ -2,7 +2,7 @@
 
 namespace Projects.Domain.Common.Errors;
 
-public static class Errors
+public static partial class Errors
 {
     public static class Project
     {

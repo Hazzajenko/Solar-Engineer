@@ -1,7 +1,9 @@
-import { BlockRectModel } from '@grid-layout/data-access'
+import { BlockRectModel } from '@grid-layout/data-access';
 
-class LineDrawer {
-  private readonly canvas: HTMLCanvasElement
+
+// @Injectable()
+export class LineDrawerService {
+  protected readonly canvas: HTMLCanvasElement
   private readonly ctx: CanvasRenderingContext2D
   private readonly lineWidth = 2
   private readonly lineColor = 'red'
@@ -19,6 +21,16 @@ class LineDrawer {
 
     this.ctx = ctx
   }
+
+  /*  setCanvas(canvas: HTMLCanvasElement) {
+   this.canvas = canvas
+   const ctx = canvas.getContext('2d')
+   if (!ctx) {
+   throw new Error('No canvas context found')
+   }
+
+   this.ctx = ctx
+   }*/
 
   animateLinesFromBlock(blockRectModel: BlockRectModel) {
     this.clearCanvas()
@@ -38,6 +50,57 @@ class LineDrawer {
     this.drawLineForBelowBlock(blockRectModel)
     this.drawLineForLeftBlock(blockRectModel)
     this.drawLineForRightBlock(blockRectModel)
+  }
+
+  drawLineForAboveBlockV2(blockRectModel: BlockRectModel) {
+    const printDefault = () => {
+      this.ctx.beginPath()
+      this.ctx.moveTo(blockRectModel.x, blockRectModel.y - blockRectModel.height / 2)
+      this.ctx.lineTo(blockRectModel.x, 0)
+      this.ctx.stroke()
+
+      const distanceToTopOfPage = blockRectModel.y - blockRectModel.height / 2
+      const absoluteDistance = Math.abs(distanceToTopOfPage)
+      this.ctx.fillText(`${absoluteDistance}px`, blockRectModel.x - 50, 50)
+      return
+    }
+    if (!this.cachedPanels) {
+      return printDefault()
+    }
+    const panelRectsToCheck = this.cachedPanels.filter(
+      (rect) =>
+        blockRectModel.x >= rect.x - rect.width / 2 &&
+        blockRectModel.x <= rect.x + rect.width / 2 &&
+        blockRectModel.y > rect.y,
+    )
+    if (!panelRectsToCheck.length) {
+      return printDefault()
+    }
+    const panelRectsToCheckWithDistance = panelRectsToCheck.map((rect) => {
+      const distance = Math.abs(rect.y - blockRectModel.y)
+      return { ...rect, distance }
+    })
+    const panelRectsToCheckWithDistanceSorted = panelRectsToCheckWithDistance.sort(
+      (a, b) => a.distance - b.distance,
+    )
+    const closestPanelRect = panelRectsToCheckWithDistanceSorted[0]
+    if (!closestPanelRect) return printDefault()
+
+    this.ctx.beginPath()
+    this.ctx.moveTo(blockRectModel.x, blockRectModel.y - blockRectModel.height / 2)
+    this.ctx.lineTo(blockRectModel.x, closestPanelRect.y + closestPanelRect.height / 2)
+    this.ctx.stroke()
+
+    const distanceToClosestPanel =
+      closestPanelRect.y +
+      closestPanelRect.height / 2 -
+      (blockRectModel.y - blockRectModel.height / 2)
+    const absoluteDistance = Math.abs(distanceToClosestPanel)
+    this.ctx.fillText(
+      `${absoluteDistance}px`,
+      blockRectModel.x - 50,
+      blockRectModel.y - blockRectModel.height / 2 - 50,
+    )
   }
 
   private drawLineForBelowBlock(blockRectModel: BlockRectModel) {
