@@ -20,6 +20,17 @@ export class FreePanelComponent implements OnInit, AfterViewInit {
   private freePanelRef = inject(ElementRef<FreePanelComponent>)
   pageX = 0
   pageY = 0
+  private _classes = ''
+  get classes() {
+    return this._classes
+  }
+
+  set classes(value: string) {
+    console.log('classes', value)
+    this._classes = value
+  }
+
+  // classes = ''
 
   /*  private _freePanel!: FreePanelModel
    @Input() set freePanel(value: FreePanelModel) {
