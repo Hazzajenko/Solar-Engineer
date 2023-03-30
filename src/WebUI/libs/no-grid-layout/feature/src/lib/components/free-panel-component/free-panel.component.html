@@ -1,11 +1,11 @@
-<ng-container *ngIf="freePanel">
+<ng-container *ngIf="freePanel$ | async as freePanel">
   <!--  style="width: 32px; height: 32px"-->
   <div class="absolute flex content-center items-center justify-center whitespace-pre-wrap">
     <ng-container>
       <!--      [id]="freePanel.id"-->
       <div
         #panelMarker
-        [panelId]="freePanel.id"
+        [borderColor]="freePanel.borderColorAndWidth"
         id="{{ freePanel.id }}"
         bind-attr.panelId="freePanel.id"
         bind-attr.location="freePanel.location"
@@ -19,11 +19,13 @@
           height: rotation === 0 ? '18px' : '23px',
           width: rotation === 0 ? '23px' : '18px'
         }"
-        class="panel absolute flex content-center items-center justify-center border border-black hover:bg-red-500 dark:border-gray-400"
+        class="panel absolute flex content-center items-center justify-center border hover:bg-red-500"
       ></div>
     </ng-container>
   </div>
 </ng-container>
+<!--dark:border-gray-400-->
+<!--border border-black-->
 <!--
    cdkDrag
 [cdkDragData]="freePanel"

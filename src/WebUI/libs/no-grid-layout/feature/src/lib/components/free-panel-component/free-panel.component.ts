@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common'
 import { CdkDrag, CdkDragDrop, CdkDragMove } from '@angular/cdk/drag-drop'
 import { FreePanelModel } from '../../free-panel.model'
 import { FreePanelDirective } from './free-panel.directive'
+import { NoGridLayoutService } from '../../no-grid-layout.service'
+import { Observable, tap } from 'rxjs'
 
 @Component({
   selector: 'app-free-panel',
@@ -18,9 +20,13 @@ import { FreePanelDirective } from './free-panel.directive'
 })
 export class FreePanelComponent implements OnInit, AfterViewInit {
   private freePanelRef = inject(ElementRef<FreePanelComponent>)
+  private noGridLayoutService = inject(NoGridLayoutService)
+  // freePanel$ = of({} as FreePanelModel)
+  freePanel$!: Observable<FreePanelModel | undefined>
   pageX = 0
   pageY = 0
   private _classes = ''
+
   get classes() {
     return this._classes
   }
@@ -42,7 +48,23 @@ export class FreePanelComponent implements OnInit, AfterViewInit {
    return this._freePanel
    }*/
 
-  @Input() freePanel!: FreePanelModel
+  // @Input() freePanel!: FreePanelModel
+  @Input() set panelId(value: string) {
+    console.log('panelId', value)
+    this.freePanel$ = this.noGridLayoutService.getPanelById(value).pipe(
+      tap((freePanel) => {
+          console.log('freePanel', freePanel)
+          // this.dragPosition = freePanel?.location
+          // this.classes = freePanel?.border
+        },
+      ),
+    )
+    console.log('freePanel', this.freePanel$)
+  }
+
+  @Input() set location(value: { x: number; y: number }) {
+    this.dragPosition = value
+  }
 
   savedPosition: { x: number, y: number } = { x: 0, y: 0 }
   rotation = 0
@@ -57,7 +79,8 @@ export class FreePanelComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    this.dragPosition = this.freePanel.location
+    // console.log('freePanel', this.freePanel)
+    // this.dragPosition = this.freePanel.location
     // this.dragPosition = { x: this.freePanel.x, y: this.freePanel.y }
     // console.log('freePanel', this.freePanel)
     console.log('dragPosition', this.dragPosition)

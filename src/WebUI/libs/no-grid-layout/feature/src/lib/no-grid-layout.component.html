@@ -34,8 +34,10 @@
   <app-free-panel
     [style.height]="blockHeight"
     [style.width]="blockWidth"
-    [freePanel]="panel"
+    [panelId]="panel.id"
+    [location]="panel.location"
     *ngFor="let panel of freePanels$ | async"
   />
+  <!--  [freePanel]="panel"-->
   <!--  </div>-->
 </div>

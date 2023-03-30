@@ -68,36 +68,36 @@ export class NoGridLayoutComponent implements OnInit {
     this.screenHasBeenSet = true
   }
 
-  createFreePanel(event: MouseEvent) {
-    event.preventDefault()
-    const rect = this.elementRef.nativeElement.getBoundingClientRect()
-    console.log('rect', rect)
-    // this.dragPosition = { x: this.freePanel.x, y: this.freePanel.y }
-    // const mouseX = this.pageX - rect.left
-    // const mouseY = this.pageY - rect.top
-    // this.pageX = event.pageX
-    // this.pageY = event.pageY
-    // const rect = this.canvas.nativeElement.getBoundingClientRect()
+  /*createFreePanel(event: MouseEvent) {
+   event.preventDefault()
+   const rect = this.elementRef.nativeElement.getBoundingClientRect()
+   console.log('rect', rect)
+   // this.dragPosition = { x: this.freePanel.x, y: this.freePanel.y }
+   // const mouseX = this.pageX - rect.left
+   // const mouseY = this.pageY - rect.top
+   // this.pageX = event.pageX
+   // this.pageY = event.pageY
+   // const rect = this.canvas.nativeElement.getBoundingClientRect()
 
-    const mouseX = event.pageX - rect.left
-    const mouseY = event.pageY - rect.top
-    // this.startX = event.clientX - rect.left
-    // this.startY = event.clientY - rect.top
-    const freePanel: FreePanelModel = {
-      id: this.freePanels.length.toString(),
-      location: {
-        x: mouseX,
-        y: mouseY,
-      },
-      /*      x: mouseX,
-       y: mouseY,*/
-    }
-    /*    this.freePanels.push(freePanel,
-     )*/
-    this.noGridLayoutService.addFreePanel(freePanel)
-    console.log('freePanel', freePanel)
+   const mouseX = event.pageX - rect.left
+   const mouseY = event.pageY - rect.top
+   // this.startX = event.clientX - rect.left
+   // this.startY = event.clientY - rect.top
+   const freePanel: FreePanelModel = {
+   id: this.freePanels.length.toString(),
+   location: {
+   x: mouseX,
+   y: mouseY,
+   },
+   /!*      x: mouseX,
+   y: mouseY,*!/
+   }
+   /!*    this.freePanels.push(freePanel,
+   )*!/
+   this.noGridLayoutService.addFreePanel(freePanel)
+   console.log('freePanel', freePanel)
 
-  }
+   }*/
 
   dragDropped(event: CdkDragDrop<FreePanelModel>) {
     // event.preventDefault()

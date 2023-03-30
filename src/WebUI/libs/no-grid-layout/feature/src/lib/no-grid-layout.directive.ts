@@ -190,6 +190,8 @@ export class NoGridLayoutDirective implements OnInit {
         x: mouseX,
         y: mouseY,
       },
+      border: 'black',
+      borderColorAndWidth: 'border border-black',
     }
 
     console.log('clickEvent', event)
@@ -437,10 +439,49 @@ export class NoGridLayoutDirective implements OnInit {
        arr.splice(index, 1)
        }*/
     }
+    const handleCanvas = (arr: string[], blockRectModel: FreeBlockRectModel) => {
+      if (!arr.includes(blockRectModel.id)) {
+        arr.push(blockRectModel.id)
+      }
+
+      // this.ctx.globalAlpha = 0.6
+
+      // this.ctx.fillStyle = this.fillStyle
+      /*      const startX = blockRectModel.x - blockRectModel.width / 2
+       const startY = blockRectModel.y - blockRectModel.height / 2*/
+      const width = blockRectModel.width + 2
+      const height = blockRectModel.height + 2
+      const startX = blockRectModel.x - (width) / 2
+      const startY = blockRectModel.y - (height) / 2
+      // this.ctx.fillStyle = '#7585d8'
+      /*   this.ctx.strokeStyle = '#cf46ff'
+       this.ctx.lineWidth = 2
+       this.ctx.strokeRect(startX, startY, width, height)
+       this.ctx.strokeStyle = 'red'*/
+
+      const panel = this.noGridLayoutService.getPanelById2(blockRectModel.id)
+      if (!panel) {
+        return
+      }
+      if (panel.borderColorAndWidth === 'border border-blue-500 border-2') return
+
+      panel.borderColorAndWidth = 'border border-blue-500 border-2'
+      // panel.borderColorAndWidth = 'border border-indigo-500 border-2'
+      /*      if (panel.border === 'indigo') {
+       return
+       }*/
+      // panel.border = 'white'
+      // panel.border = 'indigo'
+      // panel.border = '2px solid #cf46ff'
+      this.noGridLayoutService.updateFreePanel(panel)
+      // this.ctx.globalAlpha = 1
+      // this.ctx.fillRect(startX, startY, blockRectModel.width, blockRectModel.height)
+    }
     switch (direction) {
       case LineDirectionEnum.Top:
         // console.log('top', panelDiv)
-        handleArray(this.panelsInLineToTop, blockRectModel.id)
+        // handleArray(this.panelsInLineToTop, blockRectModel.id)
+        handleCanvas(this.panelsInLineToTop, blockRectModel)
         /*        if (this.panelsInLineToTop.includes(blockRectModel.id)) {
          return
          }
@@ -490,11 +531,11 @@ export class NoGridLayoutDirective implements OnInit {
      }
      comp.classes = 'bg-blue-200'*/
 
-    const directives = this.freePanelDirectives.find(p => p.panelId === blockRectModel.id)
-    if (!directives) {
-      return
-    }
-    directives.elRef.nativeElement.classList.add('bg-blue-200')
+    /*    const directives = this.freePanelDirectives.find(p => p.panelId === blockRectModel.id)
+     if (!directives) {
+     return
+     }
+     directives.elRef.nativeElement.classList.add('bg-blue-200')*/
     // directives.setStyle()
 
     /*
@@ -574,9 +615,24 @@ export class NoGridLayoutDirective implements OnInit {
       })
       arr = []
     }
+    const handleCanvas = (arr: string[]) => {
+      arr.forEach(id => {
+          const panel = this.noGridLayoutService.getPanelById2(id)
+          if (!panel) return
+          // if (panel.border === 'black') return
+          // panel.border = 'black'
+          // if (panel.borderColorAndWidth === 'border border-indigo-500 border-2') return
+          // panel.borderColorAndWidth = 'border border-indigo-500 border-2'
+          if (panel.borderColorAndWidth === 'border border-black') return
+          panel.borderColorAndWidth = 'border border-black'
+          this.noGridLayoutService.updateFreePanel(panel)
+        },
+      )
+    }
     switch (directionEnum) {
       case LineDirectionEnum.Top:
-        handleArray(this.panelsInLineToTop)
+        handleCanvas(this.panelsInLineToTop)
+        // handleArray(this.panelsInLineToTop)
         /*        this.panelsInLineToTop.forEach(id => {
          const panel = this.getElementById(id)
          if (panel) {

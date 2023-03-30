@@ -39,7 +39,19 @@ export class NoGridLayoutService {
     return this._freePanels$
   }
 
+  getPanelById(id: string) {
+    return this._freePanels$.pipe(
+      map((freePanels) => freePanels.find((fp) => fp.id === id)),
+    )
+  }
+
+  getPanelById2(id: string) {
+    return this._freePanels.value.find((fp) => fp.id === id)
+  }
+
   addFreePanel(freePanel: FreePanelModel) {
+    // freePanel.border = 'border border-black'
+    // freePanel.border = '1px solid #95c2fa'
     this._freePanels.next([...this._freePanels.value, freePanel])
   }
 
