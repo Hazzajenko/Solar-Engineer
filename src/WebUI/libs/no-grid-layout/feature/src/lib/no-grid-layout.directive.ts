@@ -9,7 +9,7 @@ import {
   Renderer2,
   ViewChildren,
 } from '@angular/core'
-import { FreePanelComponent, FreePanelModel } from '@no-grid-layout/feature'
+import { BgColorBuilder, FreePanelComponent, FreePanelModel } from '@no-grid-layout/feature'
 import { NoGridLayoutService } from './no-grid-layout.service'
 import { getGuid } from '@shared/utils'
 import { BlockRectModel } from '@grid-layout/data-access'
@@ -192,6 +192,7 @@ export class NoGridLayoutDirective implements OnInit {
       },
       border: 'black',
       borderColorAndWidth: 'border border-black',
+      backgroundColor: BgColorBuilder('orange').toString(),
     }
 
     console.log('clickEvent', event)
@@ -463,9 +464,15 @@ export class NoGridLayoutDirective implements OnInit {
       if (!panel) {
         return
       }
-      if (panel.borderColorAndWidth === 'border border-blue-500 border-2') return
+      /*      if (panel.borderColorAndWidth === 'border border-blue-500 border-2') return
 
-      panel.borderColorAndWidth = 'border border-blue-500 border-2'
+       panel.borderColorAndWidth = 'border border-blue-500 border-2'*/
+      const bgBlue = BgColorBuilder('blue').toString()
+
+      // const bgBlue = BgColorBuilder.create().blue().build()
+      if (panel.backgroundColor === bgBlue) return
+      panel.backgroundColor = bgBlue
+
       // panel.borderColorAndWidth = 'border border-indigo-500 border-2'
       /*      if (panel.border === 'indigo') {
        return
@@ -623,8 +630,11 @@ export class NoGridLayoutDirective implements OnInit {
           // panel.border = 'black'
           // if (panel.borderColorAndWidth === 'border border-indigo-500 border-2') return
           // panel.borderColorAndWidth = 'border border-indigo-500 border-2'
-          if (panel.borderColorAndWidth === 'border border-black') return
-          panel.borderColorAndWidth = 'border border-black'
+          // if (panel.borderColorAndWidth === 'border border-black') return
+          // panel.borderColorAndWidth = 'border border-black'
+          const orangeBg = BgColorBuilder('orange').toString()
+          if (panel.backgroundColor === orangeBg) return
+          panel.backgroundColor = orangeBg
           this.noGridLayoutService.updateFreePanel(panel)
         },
       )

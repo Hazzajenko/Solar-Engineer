@@ -3,6 +3,7 @@ import { Directive, ElementRef, inject, Input, NgZone, OnInit } from '@angular/c
 import { SoftColor } from '@shared/data-access/models'
 import tippy from 'tippy.js'
 import { NoGridLayoutService } from '../../no-grid-layout.service'
+import { BackgroundColor } from '@no-grid-layout/feature'
 
 @Directive({
   selector: '[appFreePanelDirective]',
@@ -14,6 +15,7 @@ export class FreePanelDirective implements OnInit {
   private _panelId = ''
   cachedClass = ''
   cachedBorder = ''
+  cachedBackgroundColor = ''
   /*  border$ = this.noGridLayoutService.getPanelById(this._panelId).pipe(
    map((panel) => panel?.borderColorAndWidth),
    tap((borderColorAndWidth) => {
@@ -44,6 +46,24 @@ export class FreePanelDirective implements OnInit {
    this.elRef.nativeElement.classList.add(...panel.borderColorAndWidth.split(' '))
    // this.elRef.nativeElement.classList.add(panel.borderColorAndWidth)
    }*/
+
+  @Input() set backgroundColor(backgroundColor: BackgroundColor) {
+    console.log('backgroundColor', backgroundColor)
+    if (backgroundColor === this.cachedBackgroundColor) {
+      return
+    }
+    this.cachedBackgroundColor.split(' ').forEach((c) => {
+        const alreadyContains = this.elRef.nativeElement.classList.contains(c)
+        if (!alreadyContains) return
+        this.elRef.nativeElement.classList.remove(c)
+      },
+    )
+    // check if a class is already applied
+    // this.elRef.nativeElement.classList.remove(...this.cachedBorder.split(' '))
+    this.cachedBackgroundColor = backgroundColor
+    // const classes = 'border border-black border-2'
+    this.elRef.nativeElement.classList.add(...backgroundColor.split(' '))
+  }
 
   @Input() set borderColor(borderColorAndWidth: string) {
     console.log('border', borderColorAndWidth)
@@ -108,6 +128,7 @@ export class FreePanelDirective implements OnInit {
   private setupTooltip() {
     tippy(this.elRef.nativeElement, {
       // content: 'Bazinga!',
+
     })
   }
 }
