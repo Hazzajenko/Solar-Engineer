@@ -11,15 +11,12 @@ import {
 } from '@angular/core'
 import { NoGridLayoutService } from './no-grid-layout.service'
 import { getGuid } from '@shared/utils'
-import { BlockRectModel } from '@grid-layout/data-access'
-import { LineDrawerService } from './line-drawer.service'
 import { FreeBlockRectModel } from './free-block-rect.model'
-import { LineDirectionEnum } from './line-direction.enum'
 import { FreePanelDirective } from './components/free-panel-component/free-panel.directive'
-import { BgColorBuilder } from './bg-color.builder'
 import { PanelStylerService } from './panel-styler.service'
 import { CanvasService } from './canvas.service'
 import { FreePanelComponent, FreePanelModel } from '@no-grid-layout/feature'
+import { FreePanelBgStates } from './color-config'
 
 // import Record from '$GLOBAL$'
 
@@ -39,7 +36,7 @@ export class NoGridLayoutDirective implements OnInit {
   private canvasService = inject(CanvasService)
   // private ngZone = inject(NgZone)
   // private lineDrawerService = new LineDrawerService(can)
-  private lineDrawerService!: LineDrawerService
+  // private lineDrawerService!: LineDrawerService
   // private freePanelsFacade = inject(FreePanelsFacade)
   @ViewChildren(FreePanelComponent) myDivs!: QueryList<FreePanelComponent>
   @ViewChildren('panelMarker') panelMarkers!: QueryList<any>
@@ -55,6 +52,9 @@ export class NoGridLayoutDirective implements OnInit {
   fpsInterval = 1000 / 60
   startTime = Date.now()
   cachedPanels: FreeBlockRectModel[] = []
+  scale = 1
+  posX = 0
+  posY = 0
   /*  interface hello{
    hello: string
    }*/
@@ -65,6 +65,16 @@ export class NoGridLayoutDirective implements OnInit {
   panelsInLineToLeft: string[] = []
   panelsInLineToTop: string[] = []
   panelsInLineToBottom: string[] = []
+  startX?: number
+  startY?: number
+  height!: number
+  negativeHeight!: number
+
+  width!: number
+  negativeWidth!: number
+  maxScale = 2
+  minScale = 1
+  speed = 0.1
 
   // lightUpPanels: Record<string, LineDirectionEnum> = {}
 
@@ -89,6 +99,13 @@ export class NoGridLayoutDirective implements OnInit {
     this.setupCanvas()
   }
 
+  private setupElements() {
+    this.height = Number(this.elementRef.nativeElement.style.height.split('p')[0])
+    this.negativeHeight = Number(this.elementRef.nativeElement.style.height.split('p')[0]) * -1
+    this.width = Number(this.elementRef.nativeElement.style.width.split('p')[0])
+    this.negativeWidth = Number(this.elementRef.nativeElement.style.width.split('p')[0]) * -1
+  }
+
   private setupCanvas() {
     this.canvas = this.renderer.createElement('canvas')
     this.renderer.appendChild(this.elementRef.nativeElement, this.canvas)
@@ -106,7 +123,6 @@ export class NoGridLayoutDirective implements OnInit {
     this.canvas.height = this.elementRef.nativeElement.offsetHeight
     this.ctx.fillStyle = 'rgba(0, 0, 0, 0.1)'
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height)
-    this.lineDrawerService = new LineDrawerService(this.canvas)
     this.canvasService.setCanvas(this.canvas, this.ctx)
   }
 
@@ -125,6 +141,12 @@ export class NoGridLayoutDirective implements OnInit {
       event.stopPropagation()
       event.preventDefault()
       this.onMouseMoveHandler(event)
+    })
+    this.renderer.listen(this.elementRef.nativeElement, 'wheel', (event: WheelEvent) => {
+      // console.log('scroll', event)
+      event.stopPropagation()
+      event.preventDefault()
+      this.onScrollHandler(event)
     })
     /*   this.renderer.listen(this.elementRef.nativeElement, 'dblclick', (event: MouseEvent) => {
      event.stopPropagation()
@@ -159,6 +181,16 @@ export class NoGridLayoutDirective implements OnInit {
     event.preventDefault()
     console.log('mousedown', event)
     this.isDragging = true
+    if (event.ctrlKey || event.button === 1) {
+      const rect = this.elementRef.nativeElement.getBoundingClientRect()
+      this.startX = event.clientX - rect.left
+      this.startY = event.clientY - rect.top
+      this.isDragging = true
+      /*     if (event.button === 1) {
+       this.middleClickDown = true
+       }*/
+      return
+    }
 
     const panelId = (event.composedPath()[0] as HTMLDivElement).getAttribute('panelId')
     if (panelId) {
@@ -197,19 +229,20 @@ export class NoGridLayoutDirective implements OnInit {
         x: mouseX,
         y: mouseY,
       },
-      border: 'black',
-      borderColorAndWidth: 'border border-black',
-      backgroundColor: BgColorBuilder('pink').toString(),
+      backgroundColor: FreePanelBgStates.Default,
+      // backgroundColor: BgColorBuilder('pink').toString(),
     }
 
     console.log('clickEvent', event)
     this.noGridLayoutService.addFreePanel(freePanel)
-    // this.freePanelsFacade.addFreePanel(freePanel)
     return
   }
 
   private onMouseMoveHandler(event: MouseEvent) {
     if (this.isDragging) {
+      if (event.ctrlKey) {
+        return this.handleCtrlMouseMove(event)
+      }
       const panelId = (event.composedPath()[0] as HTMLDivElement).getAttribute('panelId')
       if (panelId) {
         this.selectedPanelId = panelId
@@ -223,8 +256,88 @@ export class NoGridLayoutDirective implements OnInit {
     return
   }
 
+  private handleCtrlMouseMove(event: MouseEvent) {
+    if (!this.startX || !this.startY) return
+    // const height = this.elementRef.nativeElement.offsetHeight
+    // const width = this.elementRef.nativeElement.offsetWidth
+    const parentRect = this.elementRef.nativeElement.parentNode.getBoundingClientRect()
+    const mouseX =
+      event.pageX -
+      (parentRect.width - this.width) / 2 -
+      this.elementRef.nativeElement.parentNode.offsetLeft
+
+    const mouseY =
+      event.pageY -
+      (parentRect.height - this.height) / 2 -
+      this.elementRef.nativeElement.parentNode.offsetTop
+
+    const newStartY = this.startY
+    const newStartX = this.startX
+
+    const top = mouseY - newStartY
+    const left = mouseX - newStartX
+
+    if (
+      top > (this.height * this.scale) / 2 ||
+      top < this.negativeHeight / 2 - this.scale * 200 + this.height / 4.485
+    ) {
+      return
+    }
+
+    if (
+      left > (this.width * this.scale) / 2 ||
+      left < this.negativeWidth / 2 - this.scale * 200 + this.width / 5.925
+    ) {
+      return
+    }
+
+    this.elementRef.nativeElement.style.top = top + 'px'
+    this.elementRef.nativeElement.style.left = left + 'px'
+    this.elementRef.nativeElement.style.cursor = 'grab'
+    return
+  }
+
+  private onScrollHandler(event: WheelEvent) {
+
+    console.log(event)
+    // event.preventDefault()
+
+    const sizeH = this.elementRef.nativeElement.offsetHeight
+    const sizeW = this.elementRef.nativeElement.offsetWidth
+
+    const pointerX = event.pageX - this.elementRef.nativeElement.offsetLeft
+    const pointerY = event.pageY - this.elementRef.nativeElement.offsetTop
+    const targetX = (pointerX - this.posX) / this.scale
+    const targetY = (pointerY - this.posY) / this.scale
+
+    this.scale += -1 * Math.max(-1, Math.min(1, event.deltaY)) * this.speed * this.scale
+
+    this.scale = Math.max(this.minScale, Math.min(this.maxScale, this.scale))
+
+    this.posX = -targetX * this.scale + pointerX
+    this.posY = -targetY * this.scale + pointerY
+
+    if (this.posX > 0) this.posX = 0
+    if (this.posX + sizeW * this.scale < sizeW) this.posX = -sizeW * (this.scale - 1)
+    if (this.posY > 0) this.posY = 0
+    if (this.posY + sizeH * this.scale < sizeH) this.posY = -sizeH * (this.scale - 1)
+
+    /*    this.uiRepository.setPosXY({
+     posX: this.posX,
+     posY: this.posY,
+     })*/
+
+    // this.outputScale.emit(this.scale)
+    // this.uiStore.dispatch.setScale(this.scale)
+
+    this.renderer.setStyle(
+      this.elementRef.nativeElement,
+      'transform',
+      `translate(${this.posX}px,${this.posY}px) scale(${this.scale})`,
+    )
+  }
+
   animateLinesFromBlockMoving() {
-    // const startTime = performance.now()
     if (!this.pageX || !this.pageY) {
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
       console.error('no pageX or pageY')
@@ -238,7 +351,6 @@ export class NoGridLayoutDirective implements OnInit {
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
       return
     }
-    // const panelDimensions = this.getBlockRect(this.selectedPanelId)
     const panelDimensions = this.canvasService.getBlockRect(this.selectedPanelId)
     if (!panelDimensions) {
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
@@ -247,7 +359,6 @@ export class NoGridLayoutDirective implements OnInit {
     }
     this.drawLinesAllDirectionsForBlock(panelDimensions)
     this.animationId = requestAnimationFrame(() => this.animateLinesFromBlockMoving())
-
   }
 
   drawLinesAllDirectionsForBlock(blockRectModel: FreeBlockRectModel) {
@@ -258,420 +369,9 @@ export class NoGridLayoutDirective implements OnInit {
     this.ctx.fillStyle = 'red'
     this.ctx.font = '15px Arial'
 
-    // drawLineForAboveBlock(blockRectModel, this.cachedPanels, this.ctx, this.panelStylerService)
-    // this.canvasService.drawLineForAboveBlock(blockRectModel, this.cachedPanels, this.ctx, this.panelStylerService)
-    /*    this.canvasService.drawLineForAboveBlock(blockRectModel, this.cachedPanels)
-     this.canvasService.drawLineForBelowBlock(blockRectModel, this.cachedPanels)
-     this.canvasService.drawLineForLeftBlock(blockRectModel, this.cachedPanels)
-     this.canvasService.drawLineForRightBlock(blockRectModel, this.cachedPanels)*/
-    // this.drawLineForAboveBlock(blockRectModel)
     this.canvasService.drawLineForAboveBlock(blockRectModel)
     this.canvasService.drawLineForBelowBlock(blockRectModel)
     this.canvasService.drawLineForLeftBlock(blockRectModel)
     this.canvasService.drawLineForRightBlock(blockRectModel)
-    /*    this.drawLineForAboveBlock(blockRectModel)
-     this.drawLineForBelowBlock(blockRectModel)
-     this.drawLineForLeftBlock(blockRectModel)
-     this.drawLineForRightBlock(blockRectModel)*/
-  }
-
-  private drawLineForBelowBlock(blockRectModel: BlockRectModel) {
-    const printDefault = () => {
-      this.ctx.beginPath()
-      this.ctx.moveTo(blockRectModel.x, blockRectModel.y + blockRectModel.height / 2)
-      this.ctx.lineTo(blockRectModel.x, this.canvas.height)
-      this.ctx.stroke()
-
-      const distanceToBottomOfPage = this.canvas.height - (blockRectModel.y + blockRectModel.height / 2)
-      const absoluteDistance = Math.abs(distanceToBottomOfPage)
-      this.ctx.fillText(`${absoluteDistance}px`, blockRectModel.x - 50, this.canvas.height - 50)
-      this.removePanelClassForLightUpPanels(LineDirectionEnum.Bottom)
-      return
-    }
-    if (!this.cachedPanels) {
-      return printDefault()
-    }
-    const panelRectsToCheck = this.cachedPanels.filter(rect => blockRectModel.x >= rect.x - rect.width / 2 && blockRectModel.x <= rect.x + rect.width / 2 && blockRectModel.y < rect.y)
-    if (!panelRectsToCheck.length) {
-      return printDefault()
-    }
-
-    const panelRectsToCheckWithDistance = panelRectsToCheck.map(rect => {
-      const distance = Math.abs(rect.y - blockRectModel.y)
-
-      return { ...rect, distance }
-    })
-    const panelRectsToCheckWithDistanceSorted = panelRectsToCheckWithDistance.sort((a, b) => a.distance - b.distance)
-    const closestPanelRect = panelRectsToCheckWithDistanceSorted[0]
-    if (!closestPanelRect) return printDefault()
-    this.ctx.beginPath()
-    this.ctx.moveTo(blockRectModel.x, blockRectModel.y + blockRectModel.height / 2)
-    this.ctx.lineTo(blockRectModel.x, closestPanelRect.y - closestPanelRect.height / 2)
-    this.ctx.stroke()
-
-    const distanceToClosestPanel = closestPanelRect.y - closestPanelRect.height / 2 - (blockRectModel.y + blockRectModel.height / 2)
-    const absoluteDistance = Math.abs(distanceToClosestPanel)
-    this.ctx.fillText(`${absoluteDistance}px`, blockRectModel.x - 50, blockRectModel.y + blockRectModel.height / 2 + 50)
-    this.lightUpClosestPanel(closestPanelRect, LineDirectionEnum.Bottom)
-    // return
-  }
-
-  private drawLineForAboveBlock(blockRectModel: FreeBlockRectModel) {
-    const printDefault = () => {
-      this.ctx.beginPath()
-      this.ctx.moveTo(blockRectModel.x, blockRectModel.y - blockRectModel.height / 2)
-      this.ctx.lineTo(blockRectModel.x, 0)
-      this.ctx.stroke()
-
-      const distanceToTopOfPage = blockRectModel.y - blockRectModel.height / 2
-      const absoluteDistance = Math.abs(distanceToTopOfPage)
-      this.ctx.fillText(`${absoluteDistance}px`, blockRectModel.x - 50, 50)
-      this.removePanelClassForLightUpPanels(LineDirectionEnum.Top)
-      // this.panelStylerService.removePanelClassForLightUpPanels(LineDirectionEnum.Top)
-      return
-    }
-    if (!this.canvasService.cachedPanels) {
-      // if (!this.cachedPanels) {
-      return printDefault()
-    }
-    const panelRectsToCheck = this.canvasService.cachedPanels.filter(rect => blockRectModel.x >= rect.x - rect.width / 2 && blockRectModel.x <= rect.x + rect.width / 2 && blockRectModel.y > rect.y)
-    if (!panelRectsToCheck.length) {
-      return printDefault()
-    }
-    const panelRectsToCheckWithDistance = panelRectsToCheck.map(rect => {
-      const distance = Math.abs(rect.y - blockRectModel.y)
-      return { ...rect, distance }
-    })
-    const panelRectsToCheckWithDistanceSorted = panelRectsToCheckWithDistance.sort((a, b) => a.distance - b.distance)
-    const closestPanelRect = panelRectsToCheckWithDistanceSorted[0]
-    if (!closestPanelRect) return printDefault()
-
-    this.ctx.beginPath()
-    this.ctx.moveTo(blockRectModel.x, blockRectModel.y - blockRectModel.height / 2)
-    this.ctx.lineTo(blockRectModel.x, closestPanelRect.y + closestPanelRect.height / 2)
-    this.ctx.stroke()
-
-    const distanceToClosestPanel = closestPanelRect.y + closestPanelRect.height / 2 - (blockRectModel.y - blockRectModel.height / 2)
-    const absoluteDistance = Math.abs(distanceToClosestPanel)
-    this.ctx.fillText(`${absoluteDistance}px`, blockRectModel.x - 50, blockRectModel.y - blockRectModel.height / 2 - 50)
-
-    const panels = document.querySelectorAll('[panelId]')
-    if (!panels) {
-      return
-    }
-    const panelDiv = Array.from(panels).find(p => p.getAttribute('panelId') === closestPanelRect.id)
-    if (!panelDiv) {
-      console.log('no panelDiv')
-      return
-    }
-    console.log('panelDiv', panelDiv)
-    // this.renderer.removeClass(panelDiv, 'bg-pink-500')
-    // this.renderer.addClass(panelDiv, 'bg-blue-500')
-    this.lightUpClosestPanel(closestPanelRect, LineDirectionEnum.Top)
-    // this.panelStylerService.lightUpClosestPanel(closestPanelRect, LineDirectionEnum.Top)
-  }
-
-  private drawLineForLeftBlock(blockRectModel: BlockRectModel) {
-    const printDefault = () => {
-      this.ctx.beginPath()
-      this.ctx.moveTo(blockRectModel.x - blockRectModel.width / 2, blockRectModel.y)
-      this.ctx.lineTo(0, blockRectModel.y)
-      this.ctx.stroke()
-
-      const distanceToLeftOfPage = blockRectModel.x - blockRectModel.width / 2
-      const absoluteDistance = Math.abs(distanceToLeftOfPage)
-      this.ctx.fillText(`${absoluteDistance}px`, 50, blockRectModel.y - 50)
-      this.removePanelClassForLightUpPanels(LineDirectionEnum.Left)
-      return
-    }
-    if (!this.cachedPanels) {
-      return printDefault()
-    }
-    const panelRectsToCheck = this.cachedPanels.filter(rect => blockRectModel.y >= rect.y - rect.height / 2 && blockRectModel.y <= rect.y + rect.height / 2 && blockRectModel.x > rect.x)
-    if (!panelRectsToCheck.length) {
-      return printDefault()
-    }
-
-    const panelRectsToCheckWithDistance = panelRectsToCheck.map(rect => {
-      const distance = Math.abs(rect.x - blockRectModel.x)
-      return { ...rect, distance }
-    })
-    const panelRectsToCheckWithDistanceSorted = panelRectsToCheckWithDistance.sort((a, b) => a.distance - b.distance)
-    const closestPanelRect = panelRectsToCheckWithDistanceSorted[0]
-    if (!closestPanelRect) return printDefault()
-    this.ctx.beginPath()
-    this.ctx.moveTo(blockRectModel.x - blockRectModel.width / 2, blockRectModel.y)
-    this.ctx.lineTo(closestPanelRect.x + closestPanelRect.width / 2, blockRectModel.y)
-    this.ctx.stroke()
-
-    const distanceToClosestPanel = closestPanelRect.x + closestPanelRect.width / 2 - (blockRectModel.x - blockRectModel.width / 2)
-    const absoluteDistance = Math.abs(distanceToClosestPanel)
-    this.ctx.fillText(`${absoluteDistance}px`, blockRectModel.x - blockRectModel.width / 2 - 50, blockRectModel.y - 50)
-
-    this.lightUpClosestPanel(closestPanelRect, LineDirectionEnum.Left)
-
-  }
-
-  private drawLineForRightBlock(blockRectModel: BlockRectModel) {
-    // this.lightUpPanels map to array
-    // this.lightUpPanels.map(rect => rect.x)
-    // this.lightUpPanels to array from Record
-    // Object.values(this.lightUpPanels)
-    // this.lightUpPanels = []
-
-    const printDefault = () => {
-      this.ctx.beginPath()
-      this.ctx.moveTo(blockRectModel.x + blockRectModel.width / 2, blockRectModel.y)
-      this.ctx.lineTo(this.canvas.width, blockRectModel.y)
-      this.ctx.stroke()
-
-      const distanceToRightOfPage = this.canvas.width - (blockRectModel.x + blockRectModel.width / 2)
-      const absoluteDistance = Math.abs(distanceToRightOfPage)
-      this.ctx.fillText(`${absoluteDistance}px`, this.canvas.width - 50, blockRectModel.y - 50)
-      this.removePanelClassForLightUpPanels(LineDirectionEnum.Right)
-      return
-    }
-    if (!this.cachedPanels) return printDefault()
-    const panelRectsToCheck = this.cachedPanels.filter(rect => blockRectModel.y >= rect.y - rect.height / 2 && blockRectModel.y <= rect.y + rect.height / 2 && blockRectModel.x < rect.x)
-    if (!panelRectsToCheck.length) return printDefault()
-
-    const panelRectsToCheckWithDistance = panelRectsToCheck.map(rect => {
-      const distance = Math.abs(rect.x - blockRectModel.x)
-      return { ...rect, distance }
-    })
-    const panelRectsToCheckWithDistanceSorted = panelRectsToCheckWithDistance.sort((a, b) => a.distance - b.distance)
-    const closestPanelRect = panelRectsToCheckWithDistanceSorted[0]
-    if (!closestPanelRect) return printDefault()
-    this.ctx.beginPath()
-    this.ctx.moveTo(blockRectModel.x + blockRectModel.width / 2, blockRectModel.y)
-    this.ctx.lineTo(closestPanelRect.x - closestPanelRect.width / 2, blockRectModel.y)
-    this.ctx.stroke()
-
-    const distanceToClosestPanel = closestPanelRect.x - closestPanelRect.width / 2 - (blockRectModel.x + blockRectModel.width / 2)
-    const absoluteDistance = Math.abs(distanceToClosestPanel)
-    this.ctx.fillText(`${absoluteDistance}px`, blockRectModel.x + blockRectModel.width / 2 + 50, blockRectModel.y - 50)
-
-    this.lightUpClosestPanel(closestPanelRect, LineDirectionEnum.Right)
-// this.panelStylerService.lightUpClosestPanel(closestPanelRect, LineDirectionEnum.Right)
-  }
-
-  private lightUpClosestPanel(blockRectModel: FreeBlockRectModel, direction: LineDirectionEnum) {
-    const panels = document.querySelectorAll('[panelId]')
-    if (!panels) {
-      return
-    }
-    const panelDiv = Array.from(panels).find(p => p.getAttribute('panelId') === blockRectModel.id)
-    if (!panelDiv) {
-      return
-    }
-    // panelDiv.classList.add('panel-light-up')
-    /*    const handleArray = (arr: string[], id: string) => {
-     if (arr.includes(id)) {
-     return
-     }
-     arr.push(id)
-     /!*      const index = arr.indexOf(id)
-     if (index > -1) {
-     arr.splice(index, 1)
-     }*!/
-     }*/
-    const handleCanvas = (arr: string[], blockRectModelId: string) => {
-      if (!arr.includes(blockRectModelId)) {
-        arr.push(blockRectModelId)
-      }
-
-      // this.ctx.globalAlpha = 0.6
-
-      // this.ctx.fillStyle = this.fillStyle
-      /*      const startX = blockRectModel.x - blockRectModel.width / 2
-       const startY = blockRectModel.y - blockRectModel.height / 2*/
-      const width = blockRectModel.width + 2
-      const height = blockRectModel.height + 2
-      const startX = blockRectModel.x - (width) / 2
-      const startY = blockRectModel.y - (height) / 2
-      // this.ctx.fillStyle = '#7585d8'
-      /*   this.ctx.strokeStyle = '#cf46ff'
-       this.ctx.lineWidth = 2
-       this.ctx.strokeRect(startX, startY, width, height)
-       this.ctx.strokeStyle = 'red'*/
-
-      const panel = this.noGridLayoutService.getPanelById2(blockRectModelId)
-      if (!panel) {
-        return
-      }
-      /*      if (panel.borderColorAndWidth === 'border border-blue-500 border-2') return
-
-       panel.borderColorAndWidth = 'border border-blue-500 border-2'*/
-      const bgBlue = BgColorBuilder('blue').toString()
-
-      // const bgBlue = BgColorBuilder.create().blue().build()
-      if (panel.backgroundColor === bgBlue) return
-      panel.backgroundColor = bgBlue
-
-      // panel.borderColorAndWidth = 'border border-indigo-500 border-2'
-      /*      if (panel.border === 'indigo') {
-       return
-       }*/
-      // panel.border = 'white'
-      // panel.border = 'indigo'
-      // panel.border = '2px solid #cf46ff'
-      this.noGridLayoutService.updateFreePanel(panel)
-      // this.ctx.globalAlpha = 1
-      // this.ctx.fillRect(startX, startY, blockRectModel.width, blockRectModel.height)
-    }
-    switch (direction) {
-      case LineDirectionEnum.Top:
-        // console.log('top', panelDiv)
-        // handleArray(this.panelsInLineToTop, blockRectModel.id)
-        handleCanvas(this.panelsInLineToTop, blockRectModel.id)
-        /*        if (this.panelsInLineToTop.includes(blockRectModel.id)) {
-         return
-         }
-         this.panelsInLineToTop.push(blockRectModel.id)*/
-        break
-      case LineDirectionEnum.Bottom:
-        handleCanvas(this.panelsInLineToBottom, blockRectModel.id)
-        /*        if (this.panelsInLineToBottom.includes(blockRectModel.id)) {
-         return
-         }
-         this.panelsInLineToBottom.push(blockRectModel.id)*/
-        break
-      case LineDirectionEnum.Left:
-        handleCanvas(this.panelsInLineToLeft, blockRectModel.id)
-        /*        if (this.panelsInLineToLeft.includes(blockRectModel.id)) {
-         return
-         }
-         this.panelsInLineToLeft.push(blockRectModel.id)*/
-        break
-      case LineDirectionEnum.Right:
-        handleCanvas(this.panelsInLineToRight, blockRectModel.id)
-        /*        if (this.panelsInLineToRight.includes(blockRectModel.id)) {
-         return
-         }
-         this.panelsInLineToRight.push(blockRectModel.id)*/
-        break
-      default:
-        break
-    }
-    // this.noGridLayoutService.setClassForPanel(blockRectModel.id, 'bg-blue-200')
-    // panelDiv.
-    // /*    panelDiv.classList.add('bg-blue-200')
-    // check if it already had a class
-    /*    const doesItHaveBgBlue = panelDiv.classList.contains('bg-blue-200') /!*&& panelDiv.classList.remove('border-4')*!/
-     if (doesItHaveBgBlue) {
-     console.log('already has bg-blue-200', panelDiv)
-     return
-     }
-     // panelDiv.classList.add('bg-blue-200')
-     // panelDiv.style.backgroundColor = 'blue'
-     const doesItHaveBgBlue2 = panelDiv.classList.contains('bg-blue-200')
-     console.log('doesItHaveBgBlue2', doesItHaveBgBlue2)*/
-
-    /*    const comp = this.freePanelComponents.find(p => p.freePanel.id === blockRectModel.id)
-     if (!comp) {
-     return
-     }
-     comp.classes = 'bg-blue-200'*/
-
-    /*    const directives = this.freePanelDirectives.find(p => p.panelId === blockRectModel.id)
-     if (!directives) {
-     return
-     }
-     directives.elRef.nativeElement.classList.add('bg-blue-200')*/
-    // directives.setStyle()
-
-    /*
-     panelDiv.classList.add('border-4')
-     panelDiv.classList.add('border-sky-500')
-     panelDiv.classList.add('border-dashed')
-     panelDiv.classList.add('border-opacity-50')*/
-    // panelDiv.classList.add('border-2')*/
-    /*    if (direction === LineDirectionEnum.Top) {
-     // panelDiv.classList.add('border-t-0')
-     // console.log('top', panelDiv)
-     }*/
-
-    /* if (this.panelsInLineToRight.includes(blockRectModel.id)) {
-     return
-     }
-
-     this.panelsInLineToRight.push(blockRectModel.id)*/
-    // this.lightUpPanels[blockRectModel.id] = direction
-
-    // this.lightUpPanels.add(blockRectModel.id)
-    // panelDiv.classList.add('bg-blue-200')
-
-  }
-
-  private getElementById(id: string): Element | undefined {
-    const panels = document.querySelectorAll('[panelId]')
-    if (!panels) {
-      return undefined
-    }
-    return Array.from(panels).find(p => p.getAttribute('panelId') === id)
-  }
-
-  private removePanelClassForLightUpPanels(directionEnum: LineDirectionEnum) {
-    const handleCanvas = (arr: string[]) => {
-      arr.forEach(id => {
-          const panel = this.noGridLayoutService.getPanelById2(id)
-          if (!panel) return
-          const orangeBg = BgColorBuilder('pink').toString()
-          if (panel.backgroundColor === orangeBg) return
-          panel.backgroundColor = orangeBg
-          this.noGridLayoutService.updateFreePanel(panel)
-        },
-      )
-    }
-    switch (directionEnum) {
-      case LineDirectionEnum.Top:
-        handleCanvas(this.panelsInLineToTop)
-        break
-      case LineDirectionEnum.Bottom:
-        handleCanvas(this.panelsInLineToBottom)
-        break
-      case LineDirectionEnum.Left:
-        handleCanvas(this.panelsInLineToLeft)
-        break
-      case LineDirectionEnum.Right:
-        handleCanvas(this.panelsInLineToRight)
-        break
-      default:
-        break
-    }
-  }
-
-  private getBlockRect(panelId: string): FreeBlockRectModel | undefined {
-    const panels = document.querySelectorAll('[panelId]')
-
-    if (!panels) {
-      return undefined
-    }
-
-    this.cachedPanels = Array.from(panels).map(panel => this.getBlockRectFromElement(panel))
-
-    const panelDiv = Array.from(panels).find(p => p.getAttribute('panelId') === panelId)
-
-    if (!panelDiv) {
-      return undefined
-    }
-    const panelRect = panelDiv.getBoundingClientRect()
-    const canvasRect = this.canvas.getBoundingClientRect()
-    const x = panelRect.left - canvasRect.left + panelRect.width / 2
-    const y = panelRect.top - canvasRect.top + panelRect.height / 2
-    return { id: panelId, x, y, height: panelRect.height, width: panelRect.width }
-  }
-
-  private getBlockRectFromElement(element: Element): FreeBlockRectModel {
-    const panelId = element.getAttribute('panelId')
-    if (!panelId) {
-      throw new Error('panelId not found')
-    }
-    const panelRect = element.getBoundingClientRect()
-    const canvasRect = this.canvas.getBoundingClientRect()
-    const x = panelRect.left - canvasRect.left + panelRect.width / 2
-    const y = panelRect.top - canvasRect.top + panelRect.height / 2
-
-    return { id: panelId, x, y, height: panelRect.height, width: panelRect.width }
   }
 }
