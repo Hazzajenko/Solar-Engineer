@@ -130,6 +130,9 @@ export class FreePanelDirective implements OnInit {
     // const defaultBg = BgColorBuilder('pink').toString()
     // const defaultBg = BgColorBuilder('blue').toString()
     console.log('defaultBg', this.defaultBgColor)
+    const border = 'border border-black'
+    this.elRef.nativeElement.classList.add(...border.split(' '))
+
     // this.cachedBackgroundColor = this.manageClasses(this.defaultBgColor, this.cachedBackgroundColor)
     // this.elRef.nativeElement.style.backgroundColor = SoftColor.SoftGreen
     // this.elRef.nativeElement.style.backgroundColor = SoftColor.SoftBrown

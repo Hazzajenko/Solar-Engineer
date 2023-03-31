@@ -4,7 +4,6 @@
 <ng-container *ngIf="freePanel$ | async as freePanel">
   <!--      [id]="freePanel.id"-->
   <div
-    [borderColor]="freePanel.borderColorAndWidth"
     [backgroundColor]="freePanel.backgroundColor"
     id="{{ freePanel.id }}"
     bind-attr.panelId="freePanel.id"

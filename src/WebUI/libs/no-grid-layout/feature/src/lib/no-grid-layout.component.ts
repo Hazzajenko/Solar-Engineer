@@ -6,6 +6,9 @@ import { NoGridLayoutDirective } from './no-grid-layout.directive'
 import { NoGridLayoutService } from './no-grid-layout.service'
 import { CdkDrag, CdkDragDrop, CdkDragMove } from '@angular/cdk/drag-drop'
 import { DynamicComponentDirective } from './directives/dynamic-free-panel.directive'
+import {
+  GridBackgroundComponent,
+} from '../../../../grid-layout/feature/src/lib/ui/grid-background/grid-background.component'
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -16,6 +19,7 @@ import { DynamicComponentDirective } from './directives/dynamic-free-panel.direc
     NoGridLayoutDirective,
     DynamicComponentDirective,
     DynamicComponentDirective,
+    GridBackgroundComponent,
   ],
   selector: 'app-no-grid-layout',
   standalone: true,
@@ -29,7 +33,7 @@ export class NoGridLayoutComponent implements OnInit {
   // private freePanelsFacade = inject(FreePanelsFacade)
 
   // freePanels$ = this.freePanelsFacade.allFreePanels$
-  freePanels$ = this.noGridLayoutService.getFreePanels()
+  freePanels$ = this.noGridLayoutService.getFreePanels$()
   freePanels: FreePanelModel[] = []
   getScreenWidth!: number
   getScreenHeight!: number
@@ -52,6 +56,14 @@ export class NoGridLayoutComponent implements OnInit {
   }
 
   initScreenSize() {
+    this.rows = Math.floor((window.innerHeight - 100) / this.blockHeight)
+    this.cols = Math.floor((window.innerWidth - 100) / this.blockWidth)
+    this.layoutHeight = this.rows * this.blockHeight
+    this.layoutWidth = this.cols * this.blockWidth
+    this.layoutWidthString = `${this.layoutWidth}px`
+    this.layoutHeightString = `${this.layoutHeight}px`
+    this.backgroundHeight = `${this.layoutHeight + 1}px`
+    this.backgroundWidth = `${this.layoutWidth + 1}px`
     this.getScreenWidth = window.innerWidth
     this.getScreenHeight = window.innerHeight
     console.log('window.innerWidth', window.innerWidth)

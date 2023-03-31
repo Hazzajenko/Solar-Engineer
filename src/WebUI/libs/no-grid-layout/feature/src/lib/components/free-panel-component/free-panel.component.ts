@@ -46,7 +46,7 @@ export class FreePanelComponent implements OnInit {
   // @Input() freePanel!: FreePanelModel
   @Input() set panelId(value: string) {
     this._panelId = value
-    this.freePanel$ = this.noGridLayoutService.getPanelById(value).pipe(
+    this.freePanel$ = this.noGridLayoutService.getPanelById$(value).pipe(
       // distinctUntilChanged(),
       tap((freePanel) => {
           console.log('freePanel', freePanel)

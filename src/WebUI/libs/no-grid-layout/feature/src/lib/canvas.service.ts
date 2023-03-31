@@ -74,17 +74,6 @@ export class CanvasService {
       blockRectModel.y - blockRectModel.height / 2 - 50,
     )
 
-    const panels = document.querySelectorAll('[panelId]')
-    if (!panels) {
-      return
-    }
-    const panelDiv = Array.from(panels).find(p => p.getAttribute('panelId') === blockRectModel.id)
-    if (!panelDiv) {
-      return
-    }
-
-    // this.renderer.addClass(panelDiv, 'bg-blue-500')
-
     this.panelStylerService.lightUpClosestPanel(closestPanelRect, LineDirectionEnum.Top)
   }
 
@@ -129,7 +118,6 @@ export class CanvasService {
   }
 
   drawLineForLeftBlock(blockRectModel: BlockRectModel) {
-
     const printDefault = () => {
       this.ctx.beginPath()
       this.ctx.moveTo(blockRectModel.x - blockRectModel.width / 2, blockRectModel.y)
@@ -237,6 +225,6 @@ export class CanvasService {
     const x = panelRect.left - canvasRect.left + panelRect.width / 2
     const y = panelRect.top - canvasRect.top + panelRect.height / 2
 
-    return { id: panelId, x, y, height: panelRect.height, width: panelRect.width }
+    return { id: panelId, x, y, height: panelRect.height, width: panelRect.width, element }
   }
 }

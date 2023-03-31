@@ -32,6 +32,12 @@
       class="appWrapper relative flex flex-col items-center"
     >-->
   <ng-container *ngIf="freePanels$ | async as freePanels">
+    <app-grid-background
+      [style.height]="backgroundHeight"
+      [style.width]="backgroundWidth"
+      class="pointer-events-none absolute flex flex-col items-center"
+    />
+
     <ng-container *ngFor="let panel of freePanels">
       <ng-template
         appDynamicFreePanel

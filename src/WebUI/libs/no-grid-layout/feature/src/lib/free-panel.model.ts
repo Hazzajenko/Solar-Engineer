@@ -99,8 +99,8 @@ export type BorderColorAndWidth = (typeof BorderColorAndWidth)[keyof typeof Bord
 export interface FreePanelModel {
   id: string
   location: { x: number; y: number }
-  border: string
-  borderColorAndWidth: BorderColorAndWidth
+  /*  border: string
+   borderColorAndWidth: BorderColorAndWidth*/
   backgroundColor: BackgroundColor
 }
 
