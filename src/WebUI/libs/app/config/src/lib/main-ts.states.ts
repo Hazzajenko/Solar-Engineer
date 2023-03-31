@@ -1,21 +1,16 @@
-import { FRIENDS_FEATURE_KEY, friendsReducer } from '@app/data-access/friends'
+import { CONNECTIONS_FEATURE_KEY, connectionsReducer } from '@app/data-access/connections';
+import { FRIENDS_FEATURE_KEY, friendsReducer } from '@app/data-access/friends';
+import { GROUP_CHAT_MEMBERS_FEATURE_KEY, GROUP_CHAT_MESSAGES_FEATURE_KEY, GROUP_CHATS_FEATURE_KEY, groupChatMembersReducer, groupChatMessagesReducer, groupChatsReducer, USER_MESSAGES_FEATURE_KEY, userMessagesReducer } from '@app/data-access/messages';
+import { NOTIFICATIONS_FEATURE_KEY, notificationsReducer } from '@app/data-access/notifications';
+import { USERS_FEATURE_KEY, usersReducer } from '@app/data-access/users';
+import { AUTH_FEATURE_KEY, authReducer } from '@auth/data-access';
+import { UI_FEATURE_KEY, uiReducer } from '@grid-layout/data-access';
+import { provideState } from '@ngrx/store';
+import { FREE_PANELS_FEATURE_KEY, freePanelsReducer } from '@no-grid-layout/feature';
+import { PROJECTS_FEATURE_KEY, projectsReducer } from '@projects/data-access';
 
-import {
-  USER_MESSAGES_FEATURE_KEY, userMessagesReducer,
-  GROUP_CHAT_MEMBERS_FEATURE_KEY,
-  GROUP_CHAT_MESSAGES_FEATURE_KEY,
-  GROUP_CHATS_FEATURE_KEY,
-  groupChatMembersReducer,
-  groupChatMessagesReducer,
-  groupChatsReducer,
-} from '@app/data-access/messages'
-import { AUTH_FEATURE_KEY, authReducer } from '@auth/data-access'
-import { provideState } from '@ngrx/store'
-import { UI_FEATURE_KEY, uiReducer } from '@grid-layout/data-access'
-import { PROJECTS_FEATURE_KEY, projectsReducer } from '@projects/data-access'
-import { CONNECTIONS_FEATURE_KEY, connectionsReducer } from '@app/data-access/connections'
-import { NOTIFICATIONS_FEATURE_KEY, notificationsReducer } from '@app/data-access/notifications'
-import { USERS_FEATURE_KEY, usersReducer } from '@app/data-access/users'
+
+// import * as fromFreePanels from '../../../../no-grid-layout/feature/src/lib/state/free-panels.reducer'
 // import { CHAT_ROOMS_FEATURE_KEY, chatRoomsReducer } from '../../../feature/chatrooms/src/lib/store'
 
 export const mainTsStates = [
@@ -30,5 +25,6 @@ export const mainTsStates = [
   provideState(GROUP_CHAT_MEMBERS_FEATURE_KEY, groupChatMembersReducer),
   provideState(GROUP_CHAT_MESSAGES_FEATURE_KEY, groupChatMessagesReducer),
   provideState(USERS_FEATURE_KEY, usersReducer),
+  provideState(FREE_PANELS_FEATURE_KEY, freePanelsReducer),
   // provideState(CHAT_ROOMS_FEATURE_KEY, chatRoomsReducer),
 ]

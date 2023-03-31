@@ -3,7 +3,15 @@ import { Directive, ElementRef, inject, Input, NgZone, OnInit } from '@angular/c
 import { SoftColor } from '@shared/data-access/models'
 import tippy from 'tippy.js'
 import { NoGridLayoutService } from '../../no-grid-layout.service'
-import { BackgroundColor } from '@no-grid-layout/feature'
+import { BackgroundColor, BgColorBuilder } from '../../bg-color.builder'
+
+// import { BackgroundColor } from '@no-grid-layout/feature'
+
+/*export const cleanVar = <T extends string | undefined>(v: T) =>
+ v?.replace(searchValue, replaceValue) as T extends string ? string : undefined*/
+
+/*declare const cleanVar: <T extends string | undefined>(v: T) =>
+ T extends string ? string : undefined*/
 
 @Directive({
   selector: '[appFreePanelDirective]',
@@ -16,6 +24,8 @@ export class FreePanelDirective implements OnInit {
   cachedClass = ''
   cachedBorder = ''
   cachedBackgroundColor = ''
+  defaultBgColor = BgColorBuilder('pink').toString()
+  lineThroughBgColor = BgColorBuilder('blue').toString()
   /*  border$ = this.noGridLayoutService.getPanelById(this._panelId).pipe(
    map((panel) => panel?.borderColorAndWidth),
    tap((borderColorAndWidth) => {
@@ -49,20 +59,30 @@ export class FreePanelDirective implements OnInit {
 
   @Input() set backgroundColor(backgroundColor: BackgroundColor) {
     console.log('backgroundColor', backgroundColor)
-    if (backgroundColor === this.cachedBackgroundColor) {
-      return
-    }
-    this.cachedBackgroundColor.split(' ').forEach((c) => {
-        const alreadyContains = this.elRef.nativeElement.classList.contains(c)
-        if (!alreadyContains) return
-        this.elRef.nativeElement.classList.remove(c)
-      },
-    )
-    // check if a class is already applied
-    // this.elRef.nativeElement.classList.remove(...this.cachedBorder.split(' '))
-    this.cachedBackgroundColor = backgroundColor
-    // const classes = 'border border-black border-2'
-    this.elRef.nativeElement.classList.add(...backgroundColor.split(' '))
+    /*    if (backgroundColor === this.cachedBackgroundColor) {
+     return
+     }*/
+    this.zone.runOutsideAngular(() => {
+      this.cachedBackgroundColor = this.manageClasses(backgroundColor, this.cachedBackgroundColor)
+    })
+    // this.cachedBackgroundColor = this.manageClasses(this.defaultBgColor, this.cachedBackgroundColor)
+    //
+    // this.elRef.nativeElement.classList.remove(this.defaultBgColor)
+    // this.elRef.nativeElement.classList.remove('bg-blue-500')
+    // 'bg-blue-500'.split()
+    // this.elRef.nativeElement.classList.add(this.lineThroughBgColor)
+    // this.cachedBackgroundColor = this.manageClasses(backgroundColor, this.cachedBackgroundColor)
+    /*    this.cachedBackgroundColor.split(' ').forEach((c) => {
+     const alreadyContains = this.elRef.nativeElement.classList.contains(c)
+     if (!alreadyContains) return
+     this.elRef.nativeElement.classList.remove(c)
+     },
+     )
+     // check if a class is already applied
+     // this.elRef.nativeElement.classList.remove(...this.cachedBorder.split(' '))
+     this.cachedBackgroundColor = backgroundColor
+     // const classes = 'border border-black border-2'
+     this.elRef.nativeElement.classList.add(...backgroundColor.split(' '))*/
   }
 
   @Input() set borderColor(borderColorAndWidth: string) {
@@ -107,7 +127,12 @@ export class FreePanelDirective implements OnInit {
 
   ngOnInit() {
     console.log('FreePanelDirective.ngOnInit()')
-    this.elRef.nativeElement.style.backgroundColor = SoftColor.SoftBrown
+    // const defaultBg = BgColorBuilder('pink').toString()
+    // const defaultBg = BgColorBuilder('blue').toString()
+    console.log('defaultBg', this.defaultBgColor)
+    // this.cachedBackgroundColor = this.manageClasses(this.defaultBgColor, this.cachedBackgroundColor)
+    // this.elRef.nativeElement.style.backgroundColor = SoftColor.SoftGreen
+    // this.elRef.nativeElement.style.backgroundColor = SoftColor.SoftBrown
     // this.border$.subscribe()
 
     // this.elRef.nativeElement.style.backgroundColor = SoftColor.SoftBrown
@@ -125,9 +150,28 @@ export class FreePanelDirective implements OnInit {
     this.elRef.nativeElement.classList.add('border-2')
   }
 
+  private manageClasses(input: string, cached: string) {
+    /*    if (input === cached) {
+     return
+     }*/
+    cached.split(' ').forEach((c) => {
+        const alreadyContains = this.elRef.nativeElement.classList.contains(c)
+        if (!alreadyContains) return
+        this.elRef.nativeElement.classList.remove(c)
+      },
+    )
+    cached = input
+    this.elRef.nativeElement.classList.add(...input.split(' '))
+    // cleanVar(cached)
+    return cached
+    // return cached as string
+  }
+
   private setupTooltip() {
+    const panelId = this.elRef.nativeElement.id
+    console.log('setupTooltip panelId', panelId)
     tippy(this.elRef.nativeElement, {
-      // content: 'Bazinga!',
+      content: panelId,
 
     })
   }

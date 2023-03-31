@@ -1,3 +1,5 @@
+import { BackgroundColor } from './bg-color.builder'
+
 export const BorderColor = {
   black: 'border border-black',
   blue: 'border border-blue-500',
@@ -55,98 +57,78 @@ export const BorderColorAndWidth = {
 
 export type BorderColorAndWidth = (typeof BorderColorAndWidth)[keyof typeof BorderColorAndWidth]
 
-export class BackgroundColorBuilder {
-  private readonly color: BackgroundColorWithoutOpacity
-  private opacity: number | null = null
-
-  constructor(color: BackgroundColorWithoutOpacity, opacity?: number) {
-    this.color = color
-    if (opacity) this.opacity = opacity
-  }
-
-  addOpacity(opacity: number): BackgroundColorBuilder {
-    this.opacity = opacity
-    return this
-  }
-
-  toString(): BackgroundColor {
-    if (!this.opacity) return this.color
-    return `${this.color} bg-opacity-${this.opacity}`
-  }
-}
-
 /*export const BackgroundColorBuilderV = {
  bgBuilder: (color: BackgroundColor, opacity?: number) =>
  new BackgroundColorBuilder(color, opacity),
  }*/
 
-export const BgColorBuilder = (
-  color:
-    | 'blue'
-    | 'red'
-    | 'green'
-    | 'yellow'
-    | 'orange'
-    | 'indigo'
-    | 'purple'
-    | 'pink'
-    | 'gray'
-    | 'white',
-  lightness?: 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900,
-) => {
-  const addOpacity = (opacity: number): BackgroundColorWithOpacity => {
-    if (lightness) return `bg-${color}-${lightness} bg-opacity-${opacity}`
-    return `bg-${color}-500 bg-opacity-${opacity}`
-  }
+/*
+ export const BgColorBuilder = (
+ color:
+ | 'blue'
+ | 'red'
+ | 'green'
+ | 'yellow'
+ | 'orange'
+ | 'indigo'
+ | 'purple'
+ | 'pink'
+ | 'gray'
+ | 'white',
+ lightness?: 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900,
+ ) => {
+ const addOpacity = (opacity: number): BackgroundColorWithOpacity => {
+ if (lightness) return `bg-${color}-${lightness} bg-opacity-${opacity}`
+ return `bg-${color}-500 bg-opacity-${opacity}`
+ }
 
-  if (lightness)
-    return {
-      toString: (): BackgroundColorWithoutOpacity => `bg-${color}-${lightness}`,
-      addOpacity,
-    }
-  return {
-    toString: (): BackgroundColorWithoutOpacity => `bg-${color}-500`,
-    addOpacity,
-  }
-}
-export type BackgroundColor = BackgroundColorWithoutOpacity | BackgroundColorWithOpacity
-export type BackgroundColorWithoutOpacity = `bg-${string}-${number}`
-export type BackgroundColorWithOpacity = `${BackgroundColorWithoutOpacity} bg-opacity-${number}`
+ if (lightness)
+ return {
+ toString: (): BackgroundColorWithoutOpacity => `bg-${color}-${lightness}`,
+ addOpacity,
+ }
+ return {
+ toString: (): BackgroundColorWithoutOpacity => `bg-${color}-500`,
+ addOpacity,
+ }
+ }
+ export type BackgroundColor = BackgroundColorWithoutOpacity | BackgroundColorWithOpacity
+ export type BackgroundColorWithoutOpacity = `bg-${string}-${number}`
+ export type BackgroundColorWithOpacity = `${BackgroundColorWithoutOpacity} bg-opacity-${number}`*/
 
 export interface FreePanelModel {
   id: string
-  /*  x: number
-   y: number*/
   location: { x: number; y: number }
   border: string
   borderColorAndWidth: BorderColorAndWidth
   backgroundColor: BackgroundColor
 }
 
-export const FreePanelModel = {
-  create: (id: string, location: { x: number; y: number }): FreePanelModel => ({
-    id,
-    location,
-    border: BorderColorAndWidth.BlackThin,
-    borderColorAndWidth: BorderColorAndWidth.BlackThin,
-    backgroundColor: BgColorBuilder('blue', 500).toString(),
-  }),
+/*export const FreePanelModel = {
+ create: (id: string, location: { x: number; y: number }): FreePanelModel => ({
+ id,
+ location,
+ border: BorderColorAndWidth.BlackThin,
+ borderColorAndWidth: BorderColorAndWidth.BlackThin,
+ backgroundColor: BgColorBuilder('blue', 500).toString(),
+ }),
 
-  update: (model: FreePanelModel, changes: Partial<FreePanelModel>): FreePanelModel => ({
-    ...model,
-    ...changes,
-  }),
+ update: (model: FreePanelModel, changes: Partial<FreePanelModel>): FreePanelModel => ({
+ ...model,
+ ...changes,
+ }),
 
-  serialize: (model: FreePanelModel): string => JSON.stringify(model),
+ serialize: (model: FreePanelModel): string => JSON.stringify(model),
 
-  deserialize: (serialized: string): FreePanelModel => JSON.parse(serialized),
+ deserialize: (serialized: string): FreePanelModel => JSON.parse(serialized),
 
-  // fromSerialized: (serialized: string): FreePanelModel => JSON.parse(serialized),
-}
+ // fromSerialized: (serialized: string): FreePanelModel => JSON.parse(serialized),
+ }*/
 
-const hello = () => {
-  console.log('hello')
-  const newPanel = FreePanelModel.create('1', { x: 0, y: 0 })
-  console.log(newPanel)
-  const updatedPanel = FreePanelModel.update(newPanel, { border: BorderColorAndWidth.BlackThick })
-}
+/*
+ const hello = () => {
+ console.log('hello')
+ const newPanel = FreePanelModel.create('1', { x: 0, y: 0 })
+ console.log(newPanel)
+ const updatedPanel = FreePanelModel.update(newPanel, { border: BorderColorAndWidth.BlackThick })
+ }*/

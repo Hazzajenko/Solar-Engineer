@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core'
 import { BehaviorSubject, map } from 'rxjs'
-import { FreePanelModel } from '@no-grid-layout/feature'
+import { FreePanelModel } from './free-panel.model'
+// import { FreePanelModel } from '@no-grid-layout/feature'
 
 // import { map } from 'zod'
 
@@ -64,9 +65,35 @@ export class NoGridLayoutService {
   }
 
   updateFreePanel(freePanel: FreePanelModel) {
+    // freePanel.
+    console.log('updateFreePanel', freePanel)
     const freePanels = this._freePanels.value
     const index = freePanels.findIndex((fp) => fp.id === freePanel.id)
+    if (index === -1) {
+      console.log('freePanel not found', freePanel)
+      return
+    }
+    console.log('compare', freePanels[index].backgroundColor, freePanel.backgroundColor)
+    if (freePanels[index].backgroundColor === freePanel.backgroundColor) {
+      console.log('freePanel is the same', freePanels[index], freePanel)
+      return
+    } else {
+      console.log('freePanel is different', freePanels[index], freePanel)
+
+    }
+
     freePanels[index] = freePanel
+    this._freePanels.next(freePanels)
+  }
+
+  updateFreePanelById(id: string, freePanel: Partial<FreePanelModel>) {
+    // freePanel.
+    console.log('updateFreePanel', freePanel)
+    const freePanels = this._freePanels.value
+    const index = freePanels.findIndex((fp) => fp.id === id)
+    freePanels[index] = {
+      ...freePanels[index],
+    }
     this._freePanels.next(freePanels)
   }
 

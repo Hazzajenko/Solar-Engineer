@@ -1,1 +1,6 @@
+export * from './lib/state/free-panels.facade'
+export * from './lib/state/free-panels.models'
+export * as FreePanelsSelectors from './lib/state/free-panels.selectors'
+export * from './lib/state/free-panels.reducer'
+export * from './lib/state/free-panels.actions'
 export * from './lib/index'

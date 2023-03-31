@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common'
 import { NoGridLayoutDirective } from './no-grid-layout.directive'
 import { NoGridLayoutService } from './no-grid-layout.service'
 import { CdkDrag, CdkDragDrop, CdkDragMove } from '@angular/cdk/drag-drop'
+import { DynamicComponentDirective } from './directives/dynamic-free-panel.directive'
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -13,6 +14,8 @@ import { CdkDrag, CdkDragDrop, CdkDragMove } from '@angular/cdk/drag-drop'
     CdkDrag,
     CommonModule,
     NoGridLayoutDirective,
+    DynamicComponentDirective,
+    DynamicComponentDirective,
   ],
   selector: 'app-no-grid-layout',
   standalone: true,
@@ -23,6 +26,9 @@ import { CdkDrag, CdkDragDrop, CdkDragMove } from '@angular/cdk/drag-drop'
 export class NoGridLayoutComponent implements OnInit {
   private elementRef = inject(ElementRef<NoGridLayoutComponent>)
   private noGridLayoutService = inject(NoGridLayoutService)
+  // private freePanelsFacade = inject(FreePanelsFacade)
+
+  // freePanels$ = this.freePanelsFacade.allFreePanels$
   freePanels$ = this.noGridLayoutService.getFreePanels()
   freePanels: FreePanelModel[] = []
   getScreenWidth!: number

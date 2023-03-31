@@ -31,13 +31,21 @@
       [style.width]="gridContainerWidth"
       class="appWrapper relative flex flex-col items-center"
     >-->
-  <app-free-panel
-    [style.height]="blockHeight"
-    [style.width]="blockWidth"
-    [panelId]="panel.id"
-    [location]="panel.location"
-    *ngFor="let panel of freePanels$ | async"
-  />
+  <ng-container *ngIf="freePanels$ | async as freePanels">
+    <ng-container *ngFor="let panel of freePanels">
+      <ng-template
+        appDynamicFreePanel
+        [freePanel]="{ id: panel.id, location: panel.location }"
+      ></ng-template>
+    </ng-container>
+    <!--    <app-free-panel
+          [style.height]="blockHeight"
+          [style.width]="blockWidth"
+          [panelId]="panel.id"
+          [location]="panel.location"
+          *ngFor="let panel of freePanels"
+        />-->
+  </ng-container>
   <!--  [freePanel]="panel"-->
   <!--  </div>-->
 </div>

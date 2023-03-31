@@ -81,6 +81,11 @@ ne11w:
 g:
 	nx generate @nrwl/angular:library ${name} --style=none --directory=${dir} --importPath=@${dir}/${name} --skipModule --tags=${tags} --no-interactive
 
+	#nx generate @nrwl/angular:ngrx ${name} --directory=${dir} --barrels --facade --skipImport --no-interactive
+ngrx:
+	nx g @nrwl/angular:ngrx free-panels --parent=libs/no-grid-layout/feature/src/lib/lib.routes.ts --route=''
+
+
 remove:
 	nx generate @nrwl/workspace:remove --project project-id-utils --forceRemove
 

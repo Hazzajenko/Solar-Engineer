@@ -25,6 +25,11 @@ export const appRoutes: Route[] = [
   {
     path: 'free',
     loadComponent: () => import('@no-grid-layout/feature').then((m) => m.NoGridLayoutComponent),
+    /*    providers: [
+     // FreePanelsFacade,
+     provideState(fromFreePanels.FREE_PANELS_FEATURE_KEY, fromFreePanels.freePanelsReducer),
+     provideEffects(FreePanelsEffects),
+     ],*/
   },
   {
     path: 'projects',

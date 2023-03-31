@@ -9,7 +9,6 @@ import {
   Renderer2,
   ViewChildren,
 } from '@angular/core'
-import { BgColorBuilder, FreePanelComponent, FreePanelModel } from '@no-grid-layout/feature'
 import { NoGridLayoutService } from './no-grid-layout.service'
 import { getGuid } from '@shared/utils'
 import { BlockRectModel } from '@grid-layout/data-access'
@@ -17,6 +16,10 @@ import { LineDrawerService } from './line-drawer.service'
 import { FreeBlockRectModel } from './free-block-rect.model'
 import { LineDirectionEnum } from './line-direction.enum'
 import { FreePanelDirective } from './components/free-panel-component/free-panel.directive'
+import { BgColorBuilder } from './bg-color.builder'
+import { PanelStylerService } from './panel-styler.service'
+import { CanvasService } from './canvas.service'
+import { FreePanelComponent, FreePanelModel } from '@no-grid-layout/feature'
 
 // import Record from '$GLOBAL$'
 
@@ -32,9 +35,12 @@ export class NoGridLayoutDirective implements OnInit {
   private clickTimeout: NodeJS.Timeout | undefined
   private canvas!: HTMLCanvasElement
   private ctx!: CanvasRenderingContext2D
+  private panelStylerService = inject(PanelStylerService)
+  private canvasService = inject(CanvasService)
   // private ngZone = inject(NgZone)
   // private lineDrawerService = new LineDrawerService(can)
   private lineDrawerService!: LineDrawerService
+  // private freePanelsFacade = inject(FreePanelsFacade)
   @ViewChildren(FreePanelComponent) myDivs!: QueryList<FreePanelComponent>
   @ViewChildren('panelMarker') panelMarkers!: QueryList<any>
   @ContentChildren(FreePanelComponent) freePanelComponents!: QueryList<FreePanelComponent>
@@ -101,6 +107,7 @@ export class NoGridLayoutDirective implements OnInit {
     this.ctx.fillStyle = 'rgba(0, 0, 0, 0.1)'
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height)
     this.lineDrawerService = new LineDrawerService(this.canvas)
+    this.canvasService.setCanvas(this.canvas, this.ctx)
   }
 
   private setupMouseEventListeners() {
@@ -155,7 +162,7 @@ export class NoGridLayoutDirective implements OnInit {
 
     const panelId = (event.composedPath()[0] as HTMLDivElement).getAttribute('panelId')
     if (panelId) {
-      console.log('panelId', panelId)
+      // console.log('panelId', panelId)
       this.selectedPanelId = panelId
 
     }
@@ -192,11 +199,12 @@ export class NoGridLayoutDirective implements OnInit {
       },
       border: 'black',
       borderColorAndWidth: 'border border-black',
-      backgroundColor: BgColorBuilder('orange').toString(),
+      backgroundColor: BgColorBuilder('pink').toString(),
     }
 
     console.log('clickEvent', event)
     this.noGridLayoutService.addFreePanel(freePanel)
+    // this.freePanelsFacade.addFreePanel(freePanel)
     return
   }
 
@@ -230,7 +238,8 @@ export class NoGridLayoutDirective implements OnInit {
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
       return
     }
-    const panelDimensions = this.getBlockRect(this.selectedPanelId)
+    // const panelDimensions = this.getBlockRect(this.selectedPanelId)
+    const panelDimensions = this.canvasService.getBlockRect(this.selectedPanelId)
     if (!panelDimensions) {
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
       console.error('no panelDimensions')
@@ -241,7 +250,7 @@ export class NoGridLayoutDirective implements OnInit {
 
   }
 
-  drawLinesAllDirectionsForBlock(blockRectModel: BlockRectModel) {
+  drawLinesAllDirectionsForBlock(blockRectModel: FreeBlockRectModel) {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
 
     this.ctx.lineWidth = 2
@@ -249,10 +258,21 @@ export class NoGridLayoutDirective implements OnInit {
     this.ctx.fillStyle = 'red'
     this.ctx.font = '15px Arial'
 
-    this.drawLineForAboveBlock(blockRectModel)
-    this.drawLineForBelowBlock(blockRectModel)
-    this.drawLineForLeftBlock(blockRectModel)
-    this.drawLineForRightBlock(blockRectModel)
+    // drawLineForAboveBlock(blockRectModel, this.cachedPanels, this.ctx, this.panelStylerService)
+    // this.canvasService.drawLineForAboveBlock(blockRectModel, this.cachedPanels, this.ctx, this.panelStylerService)
+    /*    this.canvasService.drawLineForAboveBlock(blockRectModel, this.cachedPanels)
+     this.canvasService.drawLineForBelowBlock(blockRectModel, this.cachedPanels)
+     this.canvasService.drawLineForLeftBlock(blockRectModel, this.cachedPanels)
+     this.canvasService.drawLineForRightBlock(blockRectModel, this.cachedPanels)*/
+    // this.drawLineForAboveBlock(blockRectModel)
+    this.canvasService.drawLineForAboveBlock(blockRectModel)
+    this.canvasService.drawLineForBelowBlock(blockRectModel)
+    this.canvasService.drawLineForLeftBlock(blockRectModel)
+    this.canvasService.drawLineForRightBlock(blockRectModel)
+    /*    this.drawLineForAboveBlock(blockRectModel)
+     this.drawLineForBelowBlock(blockRectModel)
+     this.drawLineForLeftBlock(blockRectModel)
+     this.drawLineForRightBlock(blockRectModel)*/
   }
 
   private drawLineForBelowBlock(blockRectModel: BlockRectModel) {
@@ -296,7 +316,7 @@ export class NoGridLayoutDirective implements OnInit {
     // return
   }
 
-  private drawLineForAboveBlock(blockRectModel: BlockRectModel) {
+  private drawLineForAboveBlock(blockRectModel: FreeBlockRectModel) {
     const printDefault = () => {
       this.ctx.beginPath()
       this.ctx.moveTo(blockRectModel.x, blockRectModel.y - blockRectModel.height / 2)
@@ -307,12 +327,14 @@ export class NoGridLayoutDirective implements OnInit {
       const absoluteDistance = Math.abs(distanceToTopOfPage)
       this.ctx.fillText(`${absoluteDistance}px`, blockRectModel.x - 50, 50)
       this.removePanelClassForLightUpPanels(LineDirectionEnum.Top)
+      // this.panelStylerService.removePanelClassForLightUpPanels(LineDirectionEnum.Top)
       return
     }
-    if (!this.cachedPanels) {
+    if (!this.canvasService.cachedPanels) {
+      // if (!this.cachedPanels) {
       return printDefault()
     }
-    const panelRectsToCheck = this.cachedPanels.filter(rect => blockRectModel.x >= rect.x - rect.width / 2 && blockRectModel.x <= rect.x + rect.width / 2 && blockRectModel.y > rect.y)
+    const panelRectsToCheck = this.canvasService.cachedPanels.filter(rect => blockRectModel.x >= rect.x - rect.width / 2 && blockRectModel.x <= rect.x + rect.width / 2 && blockRectModel.y > rect.y)
     if (!panelRectsToCheck.length) {
       return printDefault()
     }
@@ -333,7 +355,20 @@ export class NoGridLayoutDirective implements OnInit {
     const absoluteDistance = Math.abs(distanceToClosestPanel)
     this.ctx.fillText(`${absoluteDistance}px`, blockRectModel.x - 50, blockRectModel.y - blockRectModel.height / 2 - 50)
 
+    const panels = document.querySelectorAll('[panelId]')
+    if (!panels) {
+      return
+    }
+    const panelDiv = Array.from(panels).find(p => p.getAttribute('panelId') === closestPanelRect.id)
+    if (!panelDiv) {
+      console.log('no panelDiv')
+      return
+    }
+    console.log('panelDiv', panelDiv)
+    // this.renderer.removeClass(panelDiv, 'bg-pink-500')
+    // this.renderer.addClass(panelDiv, 'bg-blue-500')
     this.lightUpClosestPanel(closestPanelRect, LineDirectionEnum.Top)
+    // this.panelStylerService.lightUpClosestPanel(closestPanelRect, LineDirectionEnum.Top)
   }
 
   private drawLineForLeftBlock(blockRectModel: BlockRectModel) {
@@ -417,7 +452,7 @@ export class NoGridLayoutDirective implements OnInit {
     this.ctx.fillText(`${absoluteDistance}px`, blockRectModel.x + blockRectModel.width / 2 + 50, blockRectModel.y - 50)
 
     this.lightUpClosestPanel(closestPanelRect, LineDirectionEnum.Right)
-
+// this.panelStylerService.lightUpClosestPanel(closestPanelRect, LineDirectionEnum.Right)
   }
 
   private lightUpClosestPanel(blockRectModel: FreeBlockRectModel, direction: LineDirectionEnum) {
@@ -430,19 +465,19 @@ export class NoGridLayoutDirective implements OnInit {
       return
     }
     // panelDiv.classList.add('panel-light-up')
-    const handleArray = (arr: string[], id: string) => {
-      if (arr.includes(id)) {
-        return
-      }
-      arr.push(id)
-      /*      const index = arr.indexOf(id)
-       if (index > -1) {
-       arr.splice(index, 1)
-       }*/
-    }
-    const handleCanvas = (arr: string[], blockRectModel: FreeBlockRectModel) => {
-      if (!arr.includes(blockRectModel.id)) {
-        arr.push(blockRectModel.id)
+    /*    const handleArray = (arr: string[], id: string) => {
+     if (arr.includes(id)) {
+     return
+     }
+     arr.push(id)
+     /!*      const index = arr.indexOf(id)
+     if (index > -1) {
+     arr.splice(index, 1)
+     }*!/
+     }*/
+    const handleCanvas = (arr: string[], blockRectModelId: string) => {
+      if (!arr.includes(blockRectModelId)) {
+        arr.push(blockRectModelId)
       }
 
       // this.ctx.globalAlpha = 0.6
@@ -460,7 +495,7 @@ export class NoGridLayoutDirective implements OnInit {
        this.ctx.strokeRect(startX, startY, width, height)
        this.ctx.strokeStyle = 'red'*/
 
-      const panel = this.noGridLayoutService.getPanelById2(blockRectModel.id)
+      const panel = this.noGridLayoutService.getPanelById2(blockRectModelId)
       if (!panel) {
         return
       }
@@ -488,28 +523,28 @@ export class NoGridLayoutDirective implements OnInit {
       case LineDirectionEnum.Top:
         // console.log('top', panelDiv)
         // handleArray(this.panelsInLineToTop, blockRectModel.id)
-        handleCanvas(this.panelsInLineToTop, blockRectModel)
+        handleCanvas(this.panelsInLineToTop, blockRectModel.id)
         /*        if (this.panelsInLineToTop.includes(blockRectModel.id)) {
          return
          }
          this.panelsInLineToTop.push(blockRectModel.id)*/
         break
       case LineDirectionEnum.Bottom:
-        handleArray(this.panelsInLineToBottom, blockRectModel.id)
+        handleCanvas(this.panelsInLineToBottom, blockRectModel.id)
         /*        if (this.panelsInLineToBottom.includes(blockRectModel.id)) {
          return
          }
          this.panelsInLineToBottom.push(blockRectModel.id)*/
         break
       case LineDirectionEnum.Left:
-        handleArray(this.panelsInLineToLeft, blockRectModel.id)
+        handleCanvas(this.panelsInLineToLeft, blockRectModel.id)
         /*        if (this.panelsInLineToLeft.includes(blockRectModel.id)) {
          return
          }
          this.panelsInLineToLeft.push(blockRectModel.id)*/
         break
       case LineDirectionEnum.Right:
-        handleArray(this.panelsInLineToRight, blockRectModel.id)
+        handleCanvas(this.panelsInLineToRight, blockRectModel.id)
         /*        if (this.panelsInLineToRight.includes(blockRectModel.id)) {
          return
          }
@@ -577,62 +612,11 @@ export class NoGridLayoutDirective implements OnInit {
   }
 
   private removePanelClassForLightUpPanels(directionEnum: LineDirectionEnum) {
-    /*    const panels = document.querySelectorAll('[panelId]')
-     if (!panels) {
-     return
-     }*/
-    const handleArray = (arr: string[]) => {
-      arr.forEach(id => {
-        const panel = this.getElementById(id)
-        if (panel) {
-          // panel.closest('.panel')?.classList.remove('border-4')
-          // panel.innerHTML = '<button (click)="console.log(1)" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Button</button>'
-          // panel.innerHTML = '<script>console.log("hello")</script>'
-          // panel.innerHTML = '<div class="panel">HELLO</div>'
-          /*          panel.innerHTML = `
-           <a href="javascript:alert(\\'Crash Landing on You stinks!\\')">Click to win a free prize!</a>
-           <img ngSrc='1' onerror="alert('Doh!')" alt=''/>*/
-          // `
-          // panel.innerHTML = '<iframe src="javascript:alert(\'Boo!\')" />'
-          /*          const doesPanelHaveClass = panel.classList.contains('bg-blue-200')
-           if (doesPanelHaveClass) {
-           panel.classList.remove('bg-blue-200')
-
-           }*/
-
-          /*  const comp = this.freePanelComponents.find(p => p.freePanel.id === panel.id)
-           if (!comp) {
-           return
-           }
-           comp.classes = ''*/
-
-          const directive = this.freePanelDirectives.find(p => p.panelId === panel.id)
-          if (!directive) {
-            return
-          }
-          directive.elRef.nativeElement.classList.remove('bg-blue-200')
-          // directive.setStyle()
-          // directive.ngOnInit() = ''
-          // panel.classList.remove('border-4')
-          // panel.classList.remove('border-sky-500')
-
-        }
-        // this.noGridLayoutService.setClassForPanel(id, '')
-        // this.noGridLayoutService.clearClassesForPanel()
-      })
-      arr = []
-    }
     const handleCanvas = (arr: string[]) => {
       arr.forEach(id => {
           const panel = this.noGridLayoutService.getPanelById2(id)
           if (!panel) return
-          // if (panel.border === 'black') return
-          // panel.border = 'black'
-          // if (panel.borderColorAndWidth === 'border border-indigo-500 border-2') return
-          // panel.borderColorAndWidth = 'border border-indigo-500 border-2'
-          // if (panel.borderColorAndWidth === 'border border-black') return
-          // panel.borderColorAndWidth = 'border border-black'
-          const orangeBg = BgColorBuilder('orange').toString()
+          const orangeBg = BgColorBuilder('pink').toString()
           if (panel.backgroundColor === orangeBg) return
           panel.backgroundColor = orangeBg
           this.noGridLayoutService.updateFreePanel(panel)
@@ -642,30 +626,19 @@ export class NoGridLayoutDirective implements OnInit {
     switch (directionEnum) {
       case LineDirectionEnum.Top:
         handleCanvas(this.panelsInLineToTop)
-        // handleArray(this.panelsInLineToTop)
-        /*        this.panelsInLineToTop.forEach(id => {
-         const panel = this.getElementById(id)
-         if (panel) {
-         panel.classList.remove('bg-blue-200')
-         }
-         }
-         )
-         this.panelsInLineToTop = []*/
         break
       case LineDirectionEnum.Bottom:
-        handleArray(this.panelsInLineToBottom)
+        handleCanvas(this.panelsInLineToBottom)
         break
       case LineDirectionEnum.Left:
-        handleArray(this.panelsInLineToLeft)
+        handleCanvas(this.panelsInLineToLeft)
         break
       case LineDirectionEnum.Right:
-        handleArray(this.panelsInLineToRight)
+        handleCanvas(this.panelsInLineToRight)
         break
       default:
         break
     }
-    /*    Array.from(panels).forEach(panel => panel.classList.remove('bg-blue-200'))
-     this.panelsInLineToRight = []*/
   }
 
   private getBlockRect(panelId: string): FreeBlockRectModel | undefined {
