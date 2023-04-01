@@ -334,8 +334,8 @@ export class CanvasService {
   }
 
   private strokeTwoPoints(moveToPoint: Point, lineToPoint: Point) {
-    const { x: moveToX, y: moveToY } = this.mousePositionService.convertPointToGrid(moveToPoint)
-    const { x: lineToX, y: lineToY } = this.mousePositionService.convertPointToGrid(lineToPoint)
+    const { x: moveToX, y: moveToY } = this.mousePositionService.applyScaleToPoint(moveToPoint)
+    const { x: lineToX, y: lineToY } = this.mousePositionService.applyScaleToPoint(lineToPoint)
     this.ctx.beginPath()
     this.ctx.moveTo(moveToX, moveToY)
     this.ctx.lineTo(lineToX, lineToY)
@@ -345,7 +345,7 @@ export class CanvasService {
   private fillText(text: string, x: number, y: number) {
     // this.ctx.fillStyle = 'black'
     this.ctx.font = '20px Arial'
-    const { x: fillTextX, y: fillTextY } = this.mousePositionService.convertPointToGrid({ x, y })
+    const { x: fillTextX, y: fillTextY } = this.mousePositionService.applyScaleToPoint({ x, y })
     this.ctx.fillText(text, fillTextX, fillTextY)
   }
 }

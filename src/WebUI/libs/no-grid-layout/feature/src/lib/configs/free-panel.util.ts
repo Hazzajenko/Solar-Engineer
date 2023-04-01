@@ -1,9 +1,19 @@
-export const FreePanelBlockConfig = {
+export const FreePanelUtil = {
   /*  width: 23,
    height: 18,*/
   /*  width: 32,
    height: 32,*/
   // rotation: () =>
+  oppositeRotation: (rotation: PanelRotationConfig) => {
+    switch (rotation) {
+      case PanelRotationConfig.Portrait:
+        return PanelRotationConfig.Landscape
+      case PanelRotationConfig.Landscape:
+        return PanelRotationConfig.Portrait
+      default:
+        return PanelRotationConfig.Portrait
+    }
+  },
   size: (rotation: PanelRotationConfig) => {
     switch (rotation) {
       case PanelRotationConfig.Portrait:

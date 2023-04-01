@@ -1,4 +1,14 @@
-import { ChangeDetectionStrategy, Component, ElementRef, inject, Input, NgZone, OnInit, Renderer2 } from '@angular/core'
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  inject,
+  Input,
+  NgZone,
+  OnInit,
+  Renderer2,
+  ViewChild,
+} from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { CdkDrag, CdkDragDrop, CdkDragEnd, CdkDragMove, CdkDragStart, DragRef, Point } from '@angular/cdk/drag-drop'
 import { FreePanelModel } from '../../free-panel.model'
@@ -9,9 +19,14 @@ import { Store } from '@ngrx/store'
 import { throwIfNull$ } from '../../../../../../shared/utils/src/lib/observables/throw-if-null-$'
 import { Logger } from 'tslog'
 import { BaseService } from '@shared/logger'
-import { FreePanelBlockConfig, PanelRotationConfig } from '../../configs/free-panel-block.config'
+import { FreePanelUtil, PanelRotationConfig } from '../../configs/free-panel.util'
 import { DelayedLogger } from '../../delayed-logger'
 import { MousePositionService } from '../../mouse-position.service'
+import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
+import {
+  PanelMenuComponent,
+} from '../../../../../../grid-layout/feature/src/lib/feature/block-panel/menu/panel-menu.component'
+import { MenuBuilderModelV2, MenuItemModelV2 } from '@shared/ui'
 
 @Component({
   selector: 'app-free-panel',
@@ -21,6 +36,8 @@ import { MousePositionService } from '../../mouse-position.service'
     CommonModule,
     CdkDrag,
     FreePanelDirective,
+    MatMenuModule,
+    PanelMenuComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
@@ -37,11 +54,35 @@ export class FreePanelComponent extends BaseService implements OnInit {
   delayedLogger = new DelayedLogger()
   private _location!: Point
   private mousePositionService = inject(MousePositionService)
+
+  menuTopLeftPosition = { x: '0', y: '0' }
+  @ViewChild(MatMenuTrigger, { static: true })
+  matMenuTrigger!: MatMenuTrigger
   _panelId!: string
   // freePanel$ = of({} as FreePanelModel)
   freePanel$!: Observable<FreePanelModel | undefined>
   pageX = 0
   pageY = 0
+  freePanelMenu: MenuBuilderModelV2 = {
+    menuItems: [
+      /*      {
+       name: 'Profile', icon: 'person', route: 'profile', click: async () => {
+       this.logDebug('profileMenuItems click')
+       await this.routerService.navigateToProfile()
+       },
+       },*/
+      {
+        name: 'Rotate', click: (freePanel: FreePanelModel, ...args: any[]) => {
+          this.rotatePanel(freePanel)
+        },
+      } as MenuItemModelV2<FreePanelModel>,
+      {
+        name: 'Delete', click: () => {
+          // this.r
+        },
+      },
+    ],
+  }
 
   @Input() set panelId(value: string) {
     this._panelId = value
@@ -148,7 +189,9 @@ export class FreePanelComponent extends BaseService implements OnInit {
   dragMoved(event: CdkDragMove<FreePanelModel>) {
     this.delayedLogger.log('dragMoved', event)
     // event.source.data.rotation
-    const size = FreePanelBlockConfig.size(event.source.data.rotation)
+    /* const arr = [0, 1, 2]
+     arr.arrayChain((x) => x * 2)*/
+    const size = FreePanelUtil.size(event.source.data.rotation)
     this.location = this.mousePositionService.getMousePosition(event.event as MouseEvent, size)
     // this.delayedLogger.log('getFreeDragPosition', event.source.getFreeDragPosition())
     // this.location = { x: this.location.x + event.delta.x, y: this.location.y + event.delta.y }
@@ -183,37 +226,6 @@ export class FreePanelComponent extends BaseService implements OnInit {
 
   startDragging(event: CdkDragStart) {
     console.log('startDragging', event)
-    /*    const position = {
-     x: this.dragPosition.x * this.mousePositionService.scale,
-     y: this.dragPosition.y * this.mousePositionService.scale,
-     }
-     event.source._dragRef.setFreeDragPosition(position);
-     (event.source._dragRef as any)._activeTransform = this.dragPosition;
-     (event.source._dragRef as any)._applyRootElementTransform(this.dragPosition.x, this.dragPosition.y)*/
-    /*    event.source._dragRef.setFreeDragPosition(this.location);
-     (event.source._dragRef as any)._activeTransform = this.location;
-     (event.source._dragRef as any)._applyRootElementTransform(this.location.x, this.location.y)*/
-  }
-
-  /*  ngAfterViewInit(): void {
-   /!*    const rect = this.freePanelRef.nativeElement.getBoundingClientRect()
-   console.log('rect', rect)
-   // this.dragPosition = { x: this.freePanel.x, y: this.freePanel.y }
-   const mouseX = this.pageX - rect.left
-   const mouseY = this.pageY - rect.top
-   this.dragPosition = { x: this.freePanel.x + mouseX, y: this.freePanel.y + mouseY }*!/
-
-   }*/
-
-  constrainPosition(userPointerPosition: Point, dragRef: DragRef, dimensions: ClientRect, pickupPositionInElement: Point): Point {
-    // const newLoggable = this.log.withPrefix('constrainPosition')
-    const newLoggy = new Logger({ name: 'constrainPosition', stylePrettyLogs: true })
-    newLoggy.debug('constrainPosition', userPointerPosition, dragRef, dimensions, pickupPositionInElement)
-    // this.log.debug('constrainPosition', userPointerPosition, dragRef, dimensions, pickupPositionInElement)
-    return userPointerPosition
-    // console.log('constrainPosition', event)
-
-    // return undefined
   }
 
   dragExited(event: CdkDragEnd) {
@@ -221,4 +233,22 @@ export class FreePanelComponent extends BaseService implements OnInit {
     // dragPosition
     this.dragPosition = { x: this.location.x, y: this.location.y }
   }
+
+  onRightClick(event: MouseEvent, freePanel: FreePanelModel) {
+    event.preventDefault()
+    const { x, y } = this.mousePositionService.getMousePosition(event)
+    this.menuTopLeftPosition.x = x + 10 + 'px'
+    this.menuTopLeftPosition.y = y + 10 + 'px'
+    /*    this.menuTopLeftPosition.x = event.clientX + 10 + 'px'
+     this.menuTopLeftPosition.y = event.clientY + 10 + 'px'*/
+    this.matMenuTrigger.menuData = { freePanel }
+    this.matMenuTrigger.openMenu()
+  }
+
+  rotatePanel(freePanel: FreePanelModel) {
+    // freePanel.rotation = (freePanel.rotation + 90) % 360
+    freePanel.rotation = FreePanelUtil.oppositeRotation(freePanel.rotation)
+    this.noGridLayoutService.updateFreePanel(freePanel)
+  }
+
 }

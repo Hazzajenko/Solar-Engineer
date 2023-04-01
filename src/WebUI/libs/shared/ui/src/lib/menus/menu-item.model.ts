@@ -9,3 +9,9 @@ export interface MenuItemModel {
 
   children?: MenuItemModel[]
 }
+
+export interface MenuItemModelV2<T> {
+  name: string
+  click?: () => void | ((data: T, ...args: any[]) => void)
+  children?: MenuItemModel[]
+}

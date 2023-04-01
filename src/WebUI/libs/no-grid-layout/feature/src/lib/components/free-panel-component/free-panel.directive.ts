@@ -4,7 +4,7 @@ import { SoftColor } from '@shared/data-access/models'
 import tippy from 'tippy.js'
 import { NoGridLayoutService } from '../../no-grid-layout.service'
 import { BackgroundColor, BgColorBuilder } from '../../bg-color.builder'
-import { FreePanelBlockConfig, PanelRotationConfig } from '../../configs/free-panel-block.config'
+import { FreePanelUtil, PanelRotationConfig } from '../../configs/free-panel.util'
 
 // import { BackgroundColor } from '@no-grid-layout/feature'
 
@@ -73,7 +73,7 @@ export class FreePanelDirective implements OnInit {
     console.log('rotation', rotation)
     // this.elRef.nativeElement.style.transform = `rotate(${rotation.degrees}deg)`
     // this.elRef.nativeElement.s
-    const { width, height } = FreePanelBlockConfig.size(rotation)
+    const { width, height } = FreePanelUtil.size(rotation)
     this.renderer.setStyle(this.elRef.nativeElement, 'height', `${height}px`)
     this.renderer.setStyle(this.elRef.nativeElement, 'width', `${width}px`)
   }

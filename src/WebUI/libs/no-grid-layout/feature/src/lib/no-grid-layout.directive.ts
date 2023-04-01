@@ -18,7 +18,7 @@ import { CanvasService } from './canvas.service'
 import { FreePanelComponent, FreePanelModel } from '@no-grid-layout/feature'
 import { FreePanelBgStates } from './color-config'
 import { Logger } from 'tslog'
-import { FreePanelBlockConfig } from './configs/free-panel-block.config'
+import { FreePanelUtil } from './configs/free-panel.util'
 import { MousePositionService } from './mouse-position.service'
 
 // import Record from '$GLOBAL$'
@@ -209,9 +209,12 @@ export class NoGridLayoutDirective implements OnInit {
     console.log('mousedown', event)
     this.isDragging = true
     if (event.ctrlKey || event.button === 1) {
-      const rect = this.elementRef.nativeElement.getBoundingClientRect()
-      this.startX = event.clientX - rect.left
-      this.startY = event.clientY - rect.top
+      /*      const rect = this.elementRef.nativeElement.getBoundingClientRect()
+       this.startX = event.clientX - rect.left
+       this.startY = event.clientY - rect.top*/
+      const { x, y } = this.mousePositionService.getMousePosition(event)
+      this.startX = x
+      this.startY = y
       // this.isDragging = true
       this.isDragging = false
       this.isCtrlDragging = true
@@ -277,7 +280,7 @@ export class NoGridLayoutDirective implements OnInit {
 
     const { x, y } = this.mousePositionService.getMousePosition(event)
 
-    const size = FreePanelBlockConfig.size('portrait')
+    const size = FreePanelUtil.size('portrait')
     this.logger.debug({
         size,
       },
@@ -336,16 +339,22 @@ export class NoGridLayoutDirective implements OnInit {
     // console.log('handleCtrlMouseMove', event)
     // const height = this.elementRef.nativeElement.offsetHeight
     // const width = this.elementRef.nativeElement.offsetWidth
-    const parentRect = this.elementRef.nativeElement.parentNode.getBoundingClientRect()
-    const mouseX =
-      event.pageX -
-      (parentRect.width - this.width) / 2 -
-      this.elementRef.nativeElement.parentNode.offsetLeft
 
-    const mouseY =
-      event.pageY -
-      (parentRect.height - this.height) / 2 -
-      this.elementRef.nativeElement.parentNode.offsetTop
+    /*    const parentRect = this.elementRef.nativeElement.parentElement.getBoundingClientRect()
+     console.log('parentRect', parentRect, this.width)
+     console.log('offsetLeft', this.elementRef.nativeElement.parentElement.offsetLeft)
+     console.log('offsetTop', this.elementRef.nativeElement.parentElement.offsetTop)
+     console.log('parentElement', this.elementRef.nativeElement.parentElement)
+     const mouseX =
+     event.pageX -
+     (parentRect.width - this.width) / 2 -
+     this.elementRef.nativeElement.parentElement.offsetLeft
+
+     const mouseY =
+     event.pageY -
+     (parentRect.height - this.height) / 2 -
+     this.elementRef.nativeElement.parentElement.offsetTop*/
+    const { x, y } = this.mousePositionService.getMousePosition(event)
 
     /*    const parentRect = this.elementRef.nativeElement.getBoundingClientRect()
      const mouseX =
@@ -360,9 +369,13 @@ export class NoGridLayoutDirective implements OnInit {
 
     const newStartY = this.startY
     const newStartX = this.startX
+    console.log('newStartX', newStartX)
+    console.log('newStartY', newStartY)
 
-    const top = mouseY - newStartY
-    const left = mouseX - newStartX
+    const top = y - newStartY
+    const left = x - newStartX
+    console.log('top', top)
+    console.log('left', left)
 
     if (
       top > (this.height * this.scale) / 2 ||
@@ -378,9 +391,12 @@ export class NoGridLayoutDirective implements OnInit {
       return
     }
 
-    this.elementRef.nativeElement.style.top = top + 'px'
-    this.elementRef.nativeElement.style.left = left + 'px'
-    this.elementRef.nativeElement.style.cursor = 'grab'
+    this.renderer.setStyle(this.elementRef.nativeElement, 'top', top + 'px')
+    this.renderer.setStyle(this.elementRef.nativeElement, 'left', left + 'px')
+
+    /*    this.elementRef.nativeElement.style.top = top + 'px'
+     this.elementRef.nativeElement.style.left = left + 'px'
+     this.elementRef.nativeElement.style.cursor = 'grab'*/
     return
   }
 

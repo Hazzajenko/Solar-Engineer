@@ -38,11 +38,11 @@ export class MousePositionService {
   }
 
   getMousePosition(event: MouseEvent, size?: { height: number, width: number }): Point {
-    this._mousePosition = {
-      x: event.pageX - this._gridLayoutElementRef.offsetLeft,
-      y: event.pageY - this._gridLayoutElementRef.offsetTop,
-    }
-    this._mousePosition$.next(this._mousePosition)
+    /*    this._mousePosition = {
+     x: event.pageX - this._gridLayoutElementRef.offsetLeft,
+     y: event.pageY - this._gridLayoutElementRef.offsetTop,
+     }
+     this._mousePosition$.next(this._mousePosition)*/
     const rect = this._gridLayoutElementRef.getBoundingClientRect()
     let x = (event.pageX - rect.left) / this._scale
     let y = (event.pageY - rect.top) / this._scale
@@ -53,7 +53,7 @@ export class MousePositionService {
     return { x, y }
   }
 
-  convertPointToGrid(point: Point): Point {
+  applyScaleToPoint(point: Point): Point {
     const x = point.x / this._scale
     const y = point.y / this._scale
     return { x, y }
