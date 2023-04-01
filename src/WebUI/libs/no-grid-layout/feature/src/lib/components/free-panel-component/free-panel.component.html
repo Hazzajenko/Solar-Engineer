@@ -37,13 +37,6 @@
     <div
       class="z-10 w-44 divide-y divide-gray-100 rounded-lg bg-white dark:divide-gray-600 dark:bg-gray-700"
     >
-      <!--     <div *ngIf="freePanel" class="py-2">
-             <a
-               href="#"
-               class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"
-             >{{ menuBuilder.header }}</a
-             >
-           </div>-->
       <ul
         class="py-2 text-sm text-gray-700 dark:text-gray-200"
         aria-labelledby="dropdownMenuIconButton"
@@ -54,44 +47,14 @@
           </a>
         </li>
         <li>
-          <a class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+          <a
+            (click)="deletePanel(freePanel)"
+            class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+          >
             Delete
           </a>
         </li>
       </ul>
     </div>
-    <!-- <div class="bg-white">
-       <button
-         class="cursor-pointer p-1 text-xs hover:bg-[#545bff]"
-         style="border-radius: inherit"
-         mat-menu-item
-       >
-         Edit Panel
-       </button>
-       <button
-         (click)="rotatePanel(freePanel)"
-         class="cursor-pointer p-1 text-xs hover:bg-[#545bff]"
-         mat-menu-item
-       >
-         Rotate
-       </button>
-       <button class="cursor-pointer p-1 text-xs hover:bg-[#545bff]" mat-menu-item>Delete</button>
-     </div>-->
   </ng-template>
 </mat-menu>
-
-<!--[cdkDragConstrainPosition]="dragConstrainPoint"-->
-<!--[ngStyle]="{
-height: freePanel.rotation === PanelRotationConfig.Landscape ? '18px' : '23px',
-width: freePanel.rotation === PanelRotationConfig.Portrait ? '23px' : '18px'
-}"-->
-<!--  </div>-->
-<!--</ng-container>-->
-<!--dark:border-gray-400-->
-<!--border border-black-->
-<!--
-   cdkDrag
-[cdkDragData]="freePanel"
-[cdkDragFreeDragPosition]="dragPosition"
-(cdkDragDropped)="dragDropped($event)"
-(cdkDragMoved)="dragMoved($event)"-->

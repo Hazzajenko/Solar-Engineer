@@ -37,7 +37,7 @@ export class MousePositionService {
     // this.renderer.setStyle(this._gridLayoutElementRef, 'transform', `scale(${scale})`)
   }
 
-  getMousePosition(event: MouseEvent, size?: { height: number, width: number }): Point {
+  getMousePositionFromPageXY(event: MouseEvent, size?: { height: number, width: number }): Point {
     /*    this._mousePosition = {
      x: event.pageX - this._gridLayoutElementRef.offsetLeft,
      y: event.pageY - this._gridLayoutElementRef.offsetTop,
@@ -50,6 +50,13 @@ export class MousePositionService {
       x = x - size.width / 2
       y = y - size.height / 2
     }
+    return { x, y }
+  }
+
+  getMousePositionFromClientXY(event: MouseEvent): Point {
+    const rect = this._gridLayoutElementRef.getBoundingClientRect()
+    const x = (event.clientX - rect.left) / this._scale
+    const y = (event.clientY - rect.top) / this._scale
     return { x, y }
   }
 

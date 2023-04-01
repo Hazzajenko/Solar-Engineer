@@ -20,6 +20,7 @@ import { FreePanelBgStates } from './color-config'
 import { Logger } from 'tslog'
 import { FreePanelUtil } from './configs/free-panel.util'
 import { MousePositionService } from './mouse-position.service'
+import { Point } from '@angular/cdk/drag-drop'
 
 // import Record from '$GLOBAL$'
 
@@ -53,11 +54,14 @@ export class NoGridLayoutDirective implements OnInit {
   runEventsOutsideAngular = false
   isDragging = false
   isCtrlDragging = false
+  isShiftDragging = false
+  isAltDragging = false
   animationId?: number
   pathMapAnimating = false
   fpsInterval = 1000 / 60
   startTime = Date.now()
   cachedPanels: FreeBlockRectModel[] = []
+  fillStyle = '#7585d8'
   private _scale = 1
 
   // #scale = 1
@@ -86,6 +90,7 @@ export class NoGridLayoutDirective implements OnInit {
   panelsInLineToBottom: string[] = []
   startX?: number
   startY?: number
+  canvasStartPoint?: Point
   height!: number
   negativeHeight!: number
 
@@ -184,8 +189,6 @@ export class NoGridLayoutDirective implements OnInit {
   }
 
   private onMouseUpHandler(event: MouseEvent) {
-    event.stopPropagation()
-    event.preventDefault()
     console.log('mouseup', event)
     if (this.animationId) {
       cancelAnimationFrame(this.animationId)
@@ -209,13 +212,9 @@ export class NoGridLayoutDirective implements OnInit {
     console.log('mousedown', event)
     this.isDragging = true
     if (event.ctrlKey || event.button === 1) {
-      /*      const rect = this.elementRef.nativeElement.getBoundingClientRect()
-       this.startX = event.clientX - rect.left
-       this.startY = event.clientY - rect.top*/
-      const { x, y } = this.mousePositionService.getMousePosition(event)
+      const { x, y } = this.mousePositionService.getMousePositionFromPageXY(event)
       this.startX = x
       this.startY = y
-      // this.isDragging = true
       this.isDragging = false
       this.isCtrlDragging = true
       /*     if (event.button === 1) {
@@ -223,12 +222,30 @@ export class NoGridLayoutDirective implements OnInit {
        }*/
       return
     }
+    if (event.altKey) {
+      /*      const rect = this.canvas.getBoundingClientRect()
+       const mouseX = this.pageX - rect.left
+       const mouseY = this.pageY - rect.top
+       const { x, y } = this.mousePositionService.applyScaleToPoint({ x: mouseX, y: mouseY })*/
+      /*   this.startX = x
+       this.startY = y*/
+      const { x, y } = this.mousePositionService.getMousePositionFromClientXY(event)
+      this.canvasStartPoint = { x, y }
+      /*      const { x, y } = this.mousePositionService.getMousePositionFromClientXY(event)
+       this.startX = x
+       this.startY = y*/
+      /*   this.startX = event.clientX
+       this.startY = event.clientY*/
+
+      this.logger.debug(this.canvasStartPoint)
+      this.isDragging = false
+      this.isAltDragging = true
+      return
+    }
 
     const panelId = (event.composedPath()[0] as HTMLDivElement).getAttribute('panelId')
     if (panelId) {
-      // console.log('panelId', panelId)
       this.selectedPanelId = panelId
-
     }
     this.clickTimeout = setTimeout(() => {
       this.clickTimeout = undefined
@@ -240,45 +257,11 @@ export class NoGridLayoutDirective implements OnInit {
     const location = (event.composedPath()[0] as HTMLDivElement).getAttribute('location')
     console.log('location', location)
     if (location) return
-    /*    // check if it is a middle click
-     if (event.button === 1) return
-     // check if it is a right click
-     if (event.button === 2) return
-     // check if it is a ctrl click
-     if (event.ctrlKey) return
-     // check if it is a alt click
-     if (event.altKey) return*/
 
     console.log('click')
     if (event.ctrlKey) return
-    /*    const parentRect = this.elementRef.nativeElement.parentNode.getBoundingClientRect()
-     const mouseX =
-     event.pageX -
-     (parentRect.width - this.width) / 2 -
-     this.elementRef.nativeElement.parentNode.offsetLeft
 
-     const mouseY =
-     event.pageY -
-     (parentRect.height - this.height) / 2 -
-     this.elementRef.nativeElement.parentNode.offsetTop*/
-    /*    const rect = this.elementRef.nativeElement.getBoundingClientRect()
-     /!*    const mouseX = event.pageX - rect.left / this.scale
-     const mouseY = event.pageY - rect.top / this.scale*!/
-     const mouseX = (event.pageX - rect.left) / this.scale
-     const mouseY = (event.pageY - rect.top) / this.scale
-     console.log('scale', this.scale)*/
-
-    /*
-     this.logger.debug({
-     scale: this.scale,
-     // rect,
-     left: rect.left,
-     top: rect.top,
-     posX: this.posX,
-     posY: this.posY,
-     })*/
-
-    const { x, y } = this.mousePositionService.getMousePosition(event)
+    const { x, y } = this.mousePositionService.getMousePositionFromPageXY(event)
 
     const size = FreePanelUtil.size('portrait')
     this.logger.debug({
@@ -293,15 +276,11 @@ export class NoGridLayoutDirective implements OnInit {
       location: {
         x: locationX,
         y: locationY,
-        /*        x: mouseX,
-         y: mouseY,*/
       },
       rotation: 'portrait',
       backgroundColor: FreePanelBgStates.Default,
-      // backgroundColor: BgColorBuilder('pink').toString(),
     }
 
-    console.log('clickEvent', event)
     this.noGridLayoutService.addFreePanel(freePanel)
     return
   }
@@ -317,10 +296,28 @@ export class NoGridLayoutDirective implements OnInit {
       this.handleCtrlMouseMove(event)
       return
     }
-    if (this.isDragging) {
-      /*      if (event.ctrlKey) {
-       return this.handleCtrlMouseMove(event)
-       }*/
+    if (this.isAltDragging) {
+      if (!event.altKey) {
+        this.isAltDragging = false
+        this.startX = undefined
+        this.startY = undefined
+        this.canvasStartPoint = undefined
+        return
+      }
+      console.log('altKey', event)
+      if (/*!this.startX || !this.startY*/!this.canvasStartPoint || !event.altKey) {
+        console.error('animateSelectionBox', this.startX, this.startY, this.pageX, this.pageY)
+        return
+      } else {
+        this.pageX = event.pageX
+        this.pageY = event.pageY
+      }
+      this.ngZone.runOutsideAngular(() => {
+        this.animateSelectionBox()
+      })
+      return
+    }
+    if (this.isDragging && !event.altKey) {
       const panelId = (event.composedPath()[0] as HTMLDivElement).getAttribute('panelId')
       if (panelId) {
         this.selectedPanelId = panelId
@@ -334,38 +331,45 @@ export class NoGridLayoutDirective implements OnInit {
     return
   }
 
+  private animateSelectionBox() {
+    if (/*!this.startX || !this.startY*/!this.canvasStartPoint || !this.pageX || !this.pageY) {
+      console.error('animateSelectionBox', this.canvasStartPoint, this.pageX, this.pageY)
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+      return
+    }
+    console.log('animateSelectionBox', this.startX, this.startY, this.pageX, this.pageY)
+    const rect = this.canvas.getBoundingClientRect()
+
+    // const { x, y } = this.mousePositionService.applyScaleToPoint({ x: this.pageX, y: this.pageY })
+
+    /*   const mouseX = x - rect.left
+     const mouseY = y - rect.top*/
+    const mouseX = this.pageX - rect.left
+    const mouseY = this.pageY - rect.top
+    const { x, y } = this.mousePositionService.applyScaleToPoint({ x: mouseX, y: mouseY })
+
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+
+    const width = x - this.canvasStartPoint.x
+    const height = y - this.canvasStartPoint.y
+    /*    const width = mouseX - this.startX
+     const height = mouseY - this.startY*/
+
+    this.ctx.globalAlpha = 0.4
+
+    this.ctx.fillStyle = this.fillStyle
+
+    this.ctx.fillRect(this.canvasStartPoint.x, this.canvasStartPoint.y, width, height)
+    // this.ctx.fillRect(this.startX, this.startY, width, height)
+
+    this.ctx.globalAlpha = 1.0
+
+    requestAnimationFrame(() => this.animateSelectionBox())
+  }
+
   private handleCtrlMouseMove(event: MouseEvent) {
     if (!this.startX || !this.startY) return
-    // console.log('handleCtrlMouseMove', event)
-    // const height = this.elementRef.nativeElement.offsetHeight
-    // const width = this.elementRef.nativeElement.offsetWidth
-
-    /*    const parentRect = this.elementRef.nativeElement.parentElement.getBoundingClientRect()
-     console.log('parentRect', parentRect, this.width)
-     console.log('offsetLeft', this.elementRef.nativeElement.parentElement.offsetLeft)
-     console.log('offsetTop', this.elementRef.nativeElement.parentElement.offsetTop)
-     console.log('parentElement', this.elementRef.nativeElement.parentElement)
-     const mouseX =
-     event.pageX -
-     (parentRect.width - this.width) / 2 -
-     this.elementRef.nativeElement.parentElement.offsetLeft
-
-     const mouseY =
-     event.pageY -
-     (parentRect.height - this.height) / 2 -
-     this.elementRef.nativeElement.parentElement.offsetTop*/
-    const { x, y } = this.mousePositionService.getMousePosition(event)
-
-    /*    const parentRect = this.elementRef.nativeElement.getBoundingClientRect()
-     const mouseX =
-     event.pageX -
-     (parentRect.width - this.width) / 2 -
-     this.elementRef.nativeElement.offsetLeft
-
-     const mouseY =
-     event.pageY -
-     (parentRect.height - this.height) / 2 -
-     this.elementRef.nativeElement.offsetTop*/
+    const { x, y } = this.mousePositionService.getMousePositionFromPageXY(event)
 
     const newStartY = this.startY
     const newStartX = this.startX
@@ -429,7 +433,7 @@ export class NoGridLayoutDirective implements OnInit {
     )
   }
 
-  animateLinesFromBlockMoving() {
+  private animateLinesFromBlockMoving() {
     if (!this.pageX || !this.pageY) {
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
       console.error('no pageX or pageY')
@@ -453,7 +457,7 @@ export class NoGridLayoutDirective implements OnInit {
     this.animationId = requestAnimationFrame(() => this.animateLinesFromBlockMoving())
   }
 
-  drawLinesAllDirectionsForBlock(blockRectModel: FreeBlockRectModel) {
+  private drawLinesAllDirectionsForBlock(blockRectModel: FreeBlockRectModel) {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
 
     this.ctx.lineWidth = 2

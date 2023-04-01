@@ -27,7 +27,7 @@ export class NoGridLayoutService {
     this._freePanels.next([...this._freePanels.value, freePanel])
   }
 
-  removeFreePanel(freePanel: FreePanelModel) {
+  deleteFreePanel(freePanel: FreePanelModel) {
     this._freePanels.next(this._freePanels.value.filter((fp) => fp.id !== freePanel.id))
   }
 
