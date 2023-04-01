@@ -4,6 +4,7 @@
 <ng-container *ngIf="freePanel$ | async as freePanel">
   <!--      [id]="freePanel.id"-->
   <div
+    #panel
     [backgroundColor]="freePanel.backgroundColor"
     [rotation]="freePanel.rotation"
     id="{{ freePanel.id }}"

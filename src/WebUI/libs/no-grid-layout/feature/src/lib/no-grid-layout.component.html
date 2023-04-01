@@ -67,12 +67,20 @@
             top: 50%;
             transform: translate(-50%,-50%);-->
 
-    <ng-container *ngFor="let panel of freePanels$ | async">
-      <ng-template
-        appDynamicFreePanel
-        [freePanel]="{ id: panel.id, location: panel.location }"
-      ></ng-template>
-    </ng-container>
+    <!--    <app-free-panel
+          *ngFor="let panel of freePanels$ | async"
+          [style.height]="blockHeight"
+          [style.width]="blockWidth"
+          [panelId]="panel.id"
+          [location]="panel.location"
+        />-->
+    <ng-template
+      #dynamic
+      *ngFor="let panel of freePanels$ | async"
+      appDynamicFreePanel
+      [freePanel]="{ id: panel.id, location: panel.location }"
+    ></ng-template>
+
     <!--    <app-free-panel
           [style.height]="blockHeight"
           [style.width]="blockWidth"

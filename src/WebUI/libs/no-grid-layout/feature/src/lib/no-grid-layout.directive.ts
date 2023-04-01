@@ -7,12 +7,12 @@ import {
   OnInit,
   QueryList,
   Renderer2,
+  TemplateRef,
   ViewChildren,
 } from '@angular/core'
 import { NoGridLayoutService } from './no-grid-layout.service'
 import { getGuid } from '@shared/utils'
 import { FreeBlockRectModel } from './free-block-rect.model'
-import { FreePanelDirective } from './components/free-panel-component/free-panel.directive'
 import { PanelStylerService } from './panel-styler.service'
 import { CanvasService } from './canvas.service'
 import { FreePanelComponent, FreePanelModel } from '@no-grid-layout/feature'
@@ -21,6 +21,8 @@ import { Logger } from 'tslog'
 import { FreePanelUtil } from './configs/free-panel.util'
 import { MousePositionService } from './mouse-position.service'
 import { Point } from '@angular/cdk/drag-drop'
+import { ComponentElementService } from './component-element.service'
+import { DynamicComponentDirective } from './directives/dynamic-free-panel.directive'
 
 // import Record from '$GLOBAL$'
 
@@ -30,6 +32,13 @@ import { Point } from '@angular/cdk/drag-drop'
   // providers
 })
 export class NoGridLayoutDirective implements OnInit {
+  @ContentChildren(FreePanelComponent) freePanelComponents!: QueryList<FreePanelComponent>
+  @ContentChildren('dynamic') panelComponents!: QueryList<TemplateRef<any>>
+
+  @ViewChildren(FreePanelComponent) myDivs!: QueryList<FreePanelComponent>
+  @ViewChildren('dynamic') panelMarkers!: QueryList<TemplateRef<any>>
+  // @ContentChildren(FreePanelComponent) freePanelComponents!: QueryList<FreePanelComponent>
+  @ContentChildren(DynamicComponentDirective) freePanelDirectives!: QueryList<DynamicComponentDirective>
   private elementRef = inject(ElementRef<HTMLDivElement>)
   private renderer = inject(Renderer2)
   private noGridLayoutService = inject(NoGridLayoutService)
@@ -40,14 +49,27 @@ export class NoGridLayoutDirective implements OnInit {
   private canvasService = inject(CanvasService)
   private logger = new Logger({ name: 'no-grid-layout.directive' })
   private mousePositionService = inject(MousePositionService)
+  private componentElementService = inject(ComponentElementService)
   // private ngZone = inject(NgZone)
   // private lineDrawerService = new LineDrawerService(can)
   // private lineDrawerService!: LineDrawerService
   // private freePanelsFacade = inject(FreePanelsFacade)
-  @ViewChildren(FreePanelComponent) myDivs!: QueryList<FreePanelComponent>
-  @ViewChildren('panelMarker') panelMarkers!: QueryList<any>
-  @ContentChildren(FreePanelComponent) freePanelComponents!: QueryList<FreePanelComponent>
-  @ContentChildren(FreePanelDirective) freePanelDirectives!: QueryList<FreePanelDirective>
+  private _freePanelComponents!: QueryList<FreePanelComponent>
+
+  /*
+   @ContentChildren(FreePanelComponent) set freePanelComponents(value: QueryList<FreePanelComponent>) {
+   this.componentElementService.freePanelComponents = value
+   this._freePanelComponents = value
+   // console.log('freePanelComponents', value)
+   // this.freePanelComponents$.next(value)
+   // this.componentElementService.setFreePanelComponents(value)
+   }
+   */
+
+  /*  get freePanelComponents() {
+   return this._freePanelComponents
+   }*/
+
   selectedPanelId?: string
   pageX = 0
   pageY = 0
@@ -123,6 +145,10 @@ export class NoGridLayoutDirective implements OnInit {
     this.setupCanvas()
     this.setupElements()
     this.mousePositionService.initGridLayoutElementRef(this.elementRef.nativeElement)
+    // this.componentElementService.freePanelComponents = this._freePanelComponents
+    // console.log('this.componentElementService.freePanelComponents', this.componentElementService.freePanelComponents)
+    /*    console.log('.freePanelComponents', this.freePanelComponents.toArray())*/
+
   }
 
   private setupElements() {
@@ -282,6 +308,20 @@ export class NoGridLayoutDirective implements OnInit {
     }
 
     this.noGridLayoutService.addFreePanel(freePanel)
+    /*    console.log('.freePanelComponents', this.freePanelComponents.toArray())
+     console.log('.freePanelComponents', this.freePanelDirectives.toArray())
+     console.log('.freePanelComponents', this.freePanelDirectives)
+     console.log('.freePanelComponents', this.freePanelDirectives)
+     console.log('.myDivs', this.myDivs)
+     console.log('.myDivs', this.myDivs.toArray())*/
+    console.log('.panelComponents', this.panelComponents)
+    console.log('.panelComponents', this.panelComponents.toArray())
+    /*    console.log('.panelMarkers', this.panelMarkers)
+     console.log('.panelMarkers', this.panelMarkers.toArray())*/
+    console.log('.freePanelDirectives', this.freePanelDirectives)
+    console.log('.freePanelDirectives', this.freePanelDirectives.toArray())
+    console.log('.freePanelDirectives', this.freePanelDirectives.toArray()[0].freePanelComponentComponentRef?.location.nativeElement)
+    console.log('.freePanelDirectives', this.freePanelDirectives.toArray()[0].freePanelComponentComponentRef?.location.nativeElement)
     return
   }
 
@@ -447,6 +487,12 @@ export class NoGridLayoutDirective implements OnInit {
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
       return
     }
+    const panelComponent = this.componentElementService.getFreePanelComponentsById(this.selectedPanelId)
+    console.log('panelComponent', panelComponent)
+
+    const panelComponentElement = this.componentElementService.getFreePanelComponentElementById(this.selectedPanelId)
+    console.log('panelComponentElement', panelComponentElement)
+
     const panelDimensions = this.canvasService.getBlockRect(this.selectedPanelId)
     if (!panelDimensions) {
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)

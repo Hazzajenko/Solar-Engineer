@@ -1,21 +1,10 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  ElementRef,
-  inject,
-  Input,
-  NgZone,
-  OnInit,
-  Renderer2,
-  ViewChild,
-} from '@angular/core'
+import { ChangeDetectionStrategy, Component, ElementRef, inject, Input, OnInit, ViewChild } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { CdkDrag, CdkDragDrop, CdkDragEnd, CdkDragMove, CdkDragStart, Point } from '@angular/cdk/drag-drop'
 import { FreePanelModel } from '../../free-panel.model'
 import { FreePanelDirective } from './free-panel.directive'
 import { NoGridLayoutService } from '../../no-grid-layout.service'
 import { distinctUntilKeyChanged, map, Observable, tap } from 'rxjs'
-import { Store } from '@ngrx/store'
 import { throwIfNull$ } from '../../../../../../shared/utils/src/lib/observables/throw-if-null-$'
 import { Logger } from 'tslog'
 import { BaseService } from '@shared/logger'
@@ -38,11 +27,8 @@ import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
   standalone: true,
 })
 export class FreePanelComponent extends BaseService implements OnInit {
-  private elementRef = inject(ElementRef)
+  public elementRef = inject(ElementRef)
   private noGridLayoutService = inject(NoGridLayoutService)
-  private store = inject(Store)
-  private ngZone = inject(NgZone)
-  private renderer = inject(Renderer2)
   protected readonly PanelRotationConfig = PanelRotationConfig
   private log = new Logger({ name: 'free-panel.component' })
   delayedLogger = new DelayedLogger()
@@ -52,8 +38,12 @@ export class FreePanelComponent extends BaseService implements OnInit {
   menuTopLeftPosition = { x: '0', y: '0' }
   @ViewChild(MatMenuTrigger, { static: true })
   matMenuTrigger!: MatMenuTrigger
-  _panelId!: string
+  private _panelId!: string
   freePanel$!: Observable<FreePanelModel | undefined>
+
+  get panelId() {
+    return this._panelId
+  }
 
   @Input() set panelId(value: string) {
     this._panelId = value
