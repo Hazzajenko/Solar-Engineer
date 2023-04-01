@@ -3,6 +3,8 @@ import { BlockRectModel } from '@grid-layout/data-access'
 import { FreeBlockRectModel } from './free-block-rect.model'
 import { PanelStylerService } from './panel-styler.service'
 import { LineDirectionEnum } from './line-direction.enum'
+import { MousePositionService } from './mouse-position.service'
+import { Point } from '@angular/cdk/drag-drop'
 
 @Injectable({
   providedIn: 'root',
@@ -11,9 +13,16 @@ export class CanvasService {
   private canvas!: HTMLCanvasElement
   private ctx!: CanvasRenderingContext2D
   private panelStylerService = inject(PanelStylerService)
+  private mousePositionService = inject(MousePositionService)
   // private renderer = inject(Renderer2)
   canvasHasBeenSet = false
   cachedPanels: FreeBlockRectModel[] = []
+
+  get canvasSize() {
+    const width = this.canvas.width * this.mousePositionService.scale
+    const height = this.canvas.height * this.mousePositionService.scale
+    return { width, height }
+  }
 
   setCanvas(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
     this.canvas = canvas
@@ -25,14 +34,25 @@ export class CanvasService {
     blockRectModel: FreeBlockRectModel,
   ) {
     const printDefault = () => {
-      this.ctx.beginPath()
-      this.ctx.moveTo(blockRectModel.x, blockRectModel.y - blockRectModel.height / 2)
-      this.ctx.lineTo(blockRectModel.x, 0)
-      this.ctx.stroke()
+      const moveToPoint: Point = { x: blockRectModel.x, y: blockRectModel.y - blockRectModel.height / 2 }
+      // const { x: moveToX, y: moveToY } = this.mousePositionService.convertPointToGrid(moveToPoint)
+      const lineToPoint: Point = { x: blockRectModel.x, y: 0 }
+      // const { x: lineToX, y: lineToY } = this.mousePositionService.convertPointToGrid(lineToPoint)
+      this.strokeTwoPoints(moveToPoint, lineToPoint)
+
+      /*this.ctx.beginPath()
+       this.ctx.moveTo(moveToX, moveToY)
+       this.ctx.lineTo(lineToX, lineToY)
+       this.ctx.stroke()*/
 
       const distanceToTopOfPage = blockRectModel.y - blockRectModel.height / 2
       const absoluteDistance = Math.abs(distanceToTopOfPage)
-      this.ctx.fillText(`${absoluteDistance}px`, blockRectModel.x - 50, 50)
+      const fillTextX = blockRectModel.x - 50
+      const fillTextY = 50
+      this.fillText(`${absoluteDistance}px`, fillTextX, fillTextY)
+      /*      const fillTextPoint: Point = { x: blockRectModel.x - 50, y: 50 }
+       const { x: fillTextX, y: fillTextY } = this.mousePositionService.convertPointToGrid(fillTextPoint)
+       this.ctx.fillText(`${absoluteDistance}px`, fillTextX, fillTextY)*/
       this.panelStylerService.removePanelClassForLightUpPanels(LineDirectionEnum.Top)
       return
     }
@@ -58,35 +78,59 @@ export class CanvasService {
     const closestPanelRect = panelRectsToCheckWithDistanceSorted[0]
     if (!closestPanelRect) return printDefault()
 
-    this.ctx.beginPath()
-    this.ctx.moveTo(blockRectModel.x, blockRectModel.y - blockRectModel.height / 2)
-    this.ctx.lineTo(blockRectModel.x, closestPanelRect.y + closestPanelRect.height / 2)
-    this.ctx.stroke()
+    const moveToPoint: Point = { x: blockRectModel.x, y: blockRectModel.y - blockRectModel.height / 2 }
+    // const { x: moveToX, y: moveToY } = this.mousePositionService.convertPointToGrid(moveToPoint)
+    const lineToPoint: Point = { x: blockRectModel.x, y: closestPanelRect.y + closestPanelRect.height / 2 }
+    // const { x: lineToX, y: lineToY } = this.mousePositionService.convertPointToGrid(lineToPoint)
+
+    this.strokeTwoPoints(moveToPoint, lineToPoint)
+    /*    this.ctx.beginPath()
+     this.ctx.moveTo(moveToX, moveToY)
+     this.ctx.lineTo(lineToX, lineToY)
+     /!*    this.ctx.moveTo(blockRectModel.x, blockRectModel.y - blockRectModel.height / 2)
+     this.ctx.lineTo(blockRectModel.x, closestPanelRect.y + closestPanelRect.height / 2)*!/
+     this.ctx.stroke()*/
 
     const distanceToClosestPanel =
       closestPanelRect.y +
       closestPanelRect.height / 2 -
       (blockRectModel.y - blockRectModel.height / 2)
     const absoluteDistance = Math.abs(distanceToClosestPanel)
-    this.ctx.fillText(
-      `${absoluteDistance}px`,
-      blockRectModel.x - 50,
-      blockRectModel.y - blockRectModel.height / 2 - 50,
-    )
+    const fillTextX = blockRectModel.x - 50
+    const fillTextY = blockRectModel.y - blockRectModel.height / 2 - 50
+    this.fillText(`${absoluteDistance}px`, fillTextX, fillTextY)
+    /*    const fillTextPoint: Point = { x: blockRectModel.x - 50, y: blockRectModel.y - blockRectModel.height / 2 - 50 }
+     const { x: fillTextX, y: fillTextY } = this.mousePositionService.convertPointToGrid(fillTextPoint)
+     this.ctx.fillText(
+     `${absoluteDistance}px`,
+     fillTextX,
+     fillTextY,
+     )*/
 
     this.panelStylerService.lightUpClosestPanel(closestPanelRect, LineDirectionEnum.Top)
   }
 
   drawLineForBelowBlock(blockRectModel: BlockRectModel) {
     const printDefault = () => {
-      this.ctx.beginPath()
-      this.ctx.moveTo(blockRectModel.x, blockRectModel.y + blockRectModel.height / 2)
-      this.ctx.lineTo(blockRectModel.x, this.canvas.height)
-      this.ctx.stroke()
+      const moveToPoint: Point = { x: blockRectModel.x, y: blockRectModel.y + blockRectModel.height / 2 }
+      // const { x: moveToX, y: moveToY } = this.mousePositionService.convertPointToGrid(moveToPoint)
+      const lineToPoint: Point = { x: blockRectModel.x, y: this.canvasSize.height }
+      // const { x: lineToX, y: lineToY } = this.mousePositionService.convertPointToGrid(lineToPoint)
 
-      const distanceToBottomOfPage = this.canvas.height - (blockRectModel.y + blockRectModel.height / 2)
+      this.strokeTwoPoints(moveToPoint, lineToPoint)
+      /*     this.ctx.beginPath()
+       this.ctx.moveTo(moveToX, moveToY)
+       this.ctx.lineTo(lineToX, lineToY)
+       /!*      this.ctx.moveTo(blockRectModel.x, blockRectModel.y + blockRectModel.height / 2)
+       this.ctx.lineTo(blockRectModel.x, this.canvas.height)*!/
+       this.ctx.stroke()*/
+
+      const distanceToBottomOfPage = this.canvasSize.height - (blockRectModel.y + blockRectModel.height / 2)
       const absoluteDistance = Math.abs(distanceToBottomOfPage)
-      this.ctx.fillText(`${absoluteDistance}px`, blockRectModel.x - 50, this.canvas.height - 50)
+      const fillTextX = blockRectModel.x - 50
+      const fillTextY = this.canvasSize.height - 50
+      this.fillText(`${absoluteDistance}px`, fillTextX, fillTextY)
+      // this.ctx.fillText(`${absoluteDistance}px`, blockRectModel.x - 50, this.canvas.height - 50)
       this.panelStylerService.removePanelClassForLightUpPanels(LineDirectionEnum.Bottom)
       return
     }
@@ -106,27 +150,50 @@ export class CanvasService {
     const panelRectsToCheckWithDistanceSorted = panelRectsToCheckWithDistance.sort((a, b) => a.distance - b.distance)
     const closestPanelRect = panelRectsToCheckWithDistanceSorted[0]
     if (!closestPanelRect) return printDefault()
-    this.ctx.beginPath()
-    this.ctx.moveTo(blockRectModel.x, blockRectModel.y + blockRectModel.height / 2)
-    this.ctx.lineTo(blockRectModel.x, closestPanelRect.y - closestPanelRect.height / 2)
-    this.ctx.stroke()
+
+    const moveToPoint: Point = { x: blockRectModel.x, y: blockRectModel.y + blockRectModel.height / 2 }
+    // const { x: moveToX, y: moveToY } = this.mousePositionService.convertPointToGrid(moveToPoint)
+    const lineToPoint: Point = { x: blockRectModel.x, y: closestPanelRect.y - closestPanelRect.height / 2 }
+    // const { x: lineToX, y: lineToY } = this.mousePositionService.convertPointToGrid(lineToPoint)
+
+    this.strokeTwoPoints(moveToPoint, lineToPoint)
+    /*    this.ctx.beginPath()
+     this.ctx.moveTo(moveToX, moveToY)
+     this.ctx.lineTo(lineToX, lineToY)
+     /!*    this.ctx.moveTo(blockRectModel.x, blockRectModel.y + blockRectModel.height / 2)
+     this.ctx.lineTo(blockRectModel.x, closestPanelRect.y - closestPanelRect.height / 2)*!/
+     this.ctx.stroke()*/
 
     const distanceToClosestPanel = closestPanelRect.y - closestPanelRect.height / 2 - (blockRectModel.y + blockRectModel.height / 2)
     const absoluteDistance = Math.abs(distanceToClosestPanel)
-    this.ctx.fillText(`${absoluteDistance}px`, blockRectModel.x - 50, blockRectModel.y + blockRectModel.height / 2 + 50)
+    const fillTextX = blockRectModel.x - 50
+    const fillTextY = blockRectModel.y + blockRectModel.height / 2 + 50
+    this.fillText(`${absoluteDistance}px`, fillTextX, fillTextY)
+    // this.ctx.fillText(`${absoluteDistance}px`, blockRectModel.x - 50, blockRectModel.y + blockRectModel.height / 2 + 50)
     this.panelStylerService.lightUpClosestPanel(closestPanelRect, LineDirectionEnum.Bottom)
   }
 
   drawLineForLeftBlock(blockRectModel: BlockRectModel) {
     const printDefault = () => {
-      this.ctx.beginPath()
-      this.ctx.moveTo(blockRectModel.x - blockRectModel.width / 2, blockRectModel.y)
-      this.ctx.lineTo(0, blockRectModel.y)
-      this.ctx.stroke()
+      const moveToPoint: Point = { x: blockRectModel.x - blockRectModel.width / 2, y: blockRectModel.y }
+      // const { x: moveToX, y: moveToY } = this.mousePositionService.convertPointToGrid(moveToPoint)
+      const lineToPoint: Point = { x: 0, y: blockRectModel.y }
+      // const { x: lineToX, y: lineToY } = this.mousePositionService.convertPointToGrid(lineToPoint)
+
+      this.strokeTwoPoints(moveToPoint, lineToPoint)
+      /*      this.ctx.beginPath()
+       this.ctx.moveTo(moveToX, moveToY)
+       this.ctx.lineTo(lineToX, lineToY)
+       /!*      this.ctx.moveTo(blockRectModel.x - blockRectModel.width / 2, blockRectModel.y)
+       this.ctx.lineTo(0, blockRectModel.y)*!/
+       this.ctx.stroke()*/
 
       const distanceToLeftOfPage = blockRectModel.x - blockRectModel.width / 2
       const absoluteDistance = Math.abs(distanceToLeftOfPage)
-      this.ctx.fillText(`${absoluteDistance}px`, 50, blockRectModel.y - 50)
+      const fillTextX = 50
+      const fillTextY = blockRectModel.y - 50
+      this.fillText(`${absoluteDistance}px`, fillTextX, fillTextY)
+      // this.ctx.fillText(`${absoluteDistance}px`, 50, blockRectModel.y - 50)
       this.panelStylerService.removePanelClassForLightUpPanels(LineDirectionEnum.Left)
       return
     }
@@ -145,14 +212,26 @@ export class CanvasService {
     const panelRectsToCheckWithDistanceSorted = panelRectsToCheckWithDistance.sort((a, b) => a.distance - b.distance)
     const closestPanelRect = panelRectsToCheckWithDistanceSorted[0]
     if (!closestPanelRect) return printDefault()
-    this.ctx.beginPath()
-    this.ctx.moveTo(blockRectModel.x - blockRectModel.width / 2, blockRectModel.y)
-    this.ctx.lineTo(closestPanelRect.x + closestPanelRect.width / 2, blockRectModel.y)
-    this.ctx.stroke()
+
+    const moveToPoint: Point = { x: blockRectModel.x - blockRectModel.width / 2, y: blockRectModel.y }
+    // const { x: moveToX, y: moveToY } = this.mousePositionService.convertPointToGrid(moveToPoint)
+    const lineToPoint: Point = { x: closestPanelRect.x + closestPanelRect.width / 2, y: blockRectModel.y }
+    // const { x: lineToX, y: lineToY } = this.mousePositionService.convertPointToGrid(lineToPoint)
+
+    this.strokeTwoPoints(moveToPoint, lineToPoint)
+    /*    this.ctx.beginPath()
+     this.ctx.moveTo(moveToX, moveToY)
+     this.ctx.lineTo(lineToX, lineToY)
+     /!*    this.ctx.moveTo(blockRectModel.x - blockRectModel.width / 2, blockRectModel.y)
+     this.ctx.lineTo(closestPanelRect.x + closestPanelRect.width / 2, blockRectModel.y)*!/
+     this.ctx.stroke()*/
 
     const distanceToClosestPanel = closestPanelRect.x + closestPanelRect.width / 2 - (blockRectModel.x - blockRectModel.width / 2)
     const absoluteDistance = Math.abs(distanceToClosestPanel)
-    this.ctx.fillText(`${absoluteDistance}px`, blockRectModel.x - blockRectModel.width / 2 - 50, blockRectModel.y - 50)
+    const fillTextX = blockRectModel.x - blockRectModel.width / 2 - 50
+    const fillTextY = blockRectModel.y - 50
+    this.fillText(`${absoluteDistance}px`, fillTextX, fillTextY)
+    // this.ctx.fillText(`${absoluteDistance}px`, blockRectModel.x - blockRectModel.width / 2 - 50, blockRectModel.y - 50)
 
     this.panelStylerService.lightUpClosestPanel(closestPanelRect, LineDirectionEnum.Left)
 
@@ -160,14 +239,28 @@ export class CanvasService {
 
   drawLineForRightBlock(blockRectModel: BlockRectModel) {
     const printDefault = () => {
-      this.ctx.beginPath()
-      this.ctx.moveTo(blockRectModel.x + blockRectModel.width / 2, blockRectModel.y)
-      this.ctx.lineTo(this.canvas.width, blockRectModel.y)
-      this.ctx.stroke()
+      // const canvasWidthToScale = this.canvas.width * this.mousePositionService.scale
+      const moveToPoint: Point = { x: blockRectModel.x + blockRectModel.width / 2, y: blockRectModel.y }
+      // const { x: moveToX, y: moveToY } = this.mousePositionService.convertPointToGrid(moveToPoint)
+      const lineToPoint: Point = { x: this.canvasSize.width, y: blockRectModel.y }
+      // const lineToPoint: Point = { x: this.canvas.width, y: blockRectModel.y }
+      // const { x: lineToX, y: lineToY } = this.mousePositionService.convertPointToGrid(lineToPoint)
 
-      const distanceToRightOfPage = this.canvas.width - (blockRectModel.x + blockRectModel.width / 2)
+      this.strokeTwoPoints(moveToPoint, lineToPoint)
+      /*     this.ctx.beginPath()
+       this.ctx.moveTo(moveToX, moveToY)
+       this.ctx.lineTo(lineToX, lineToY)
+       /!*      this.ctx.moveTo(blockRectModel.x + blockRectModel.width / 2, blockRectModel.y)
+       this.ctx.lineTo(this.canvas.width, blockRectModel.y)*!/
+       this.ctx.stroke()*/
+
+      const distanceToRightOfPage = this.canvasSize.width - (blockRectModel.x + blockRectModel.width / 2)
+      // const distanceToRightOfPage = this.canvas.width - (blockRectModel.x + blockRectModel.width / 2)
       const absoluteDistance = Math.abs(distanceToRightOfPage)
-      this.ctx.fillText(`${absoluteDistance}px`, this.canvas.width - 50, blockRectModel.y - 50)
+      const fillTextX = this.canvasSize.width - 50
+      const fillTextY = blockRectModel.y - 50
+      this.fillText(`${absoluteDistance}px`, fillTextX, fillTextY)
+      // this.ctx.fillText(`${absoluteDistance}px`, this.canvas.width - 50, blockRectModel.y - 50)
       this.panelStylerService.removePanelClassForLightUpPanels(LineDirectionEnum.Right)
       return
     }
@@ -182,14 +275,26 @@ export class CanvasService {
     const panelRectsToCheckWithDistanceSorted = panelRectsToCheckWithDistance.sort((a, b) => a.distance - b.distance)
     const closestPanelRect = panelRectsToCheckWithDistanceSorted[0]
     if (!closestPanelRect) return printDefault()
-    this.ctx.beginPath()
-    this.ctx.moveTo(blockRectModel.x + blockRectModel.width / 2, blockRectModel.y)
-    this.ctx.lineTo(closestPanelRect.x - closestPanelRect.width / 2, blockRectModel.y)
-    this.ctx.stroke()
+
+    const moveToPoint: Point = { x: blockRectModel.x + blockRectModel.width / 2, y: blockRectModel.y }
+    // const { x: moveToX, y: moveToY } = this.mousePositionService.convertPointToGrid(moveToPoint)
+    const lineToPoint: Point = { x: closestPanelRect.x - closestPanelRect.width / 2, y: blockRectModel.y }
+    // const { x: lineToX, y: lineToY } = this.mousePositionService.convertPointToGrid(lineToPoint)
+    this.strokeTwoPoints(moveToPoint, lineToPoint)
+    /*
+     this.ctx.beginPath()
+     this.ctx.moveTo(moveToX, moveToY)
+     this.ctx.lineTo(lineToX, lineToY)
+     /!*    this.ctx.moveTo(blockRectModel.x + blockRectModel.width / 2, blockRectModel.y)
+     this.ctx.lineTo(closestPanelRect.x - closestPanelRect.width / 2, blockRectModel.y)*!/
+     this.ctx.stroke()*/
 
     const distanceToClosestPanel = closestPanelRect.x - closestPanelRect.width / 2 - (blockRectModel.x + blockRectModel.width / 2)
     const absoluteDistance = Math.abs(distanceToClosestPanel)
-    this.ctx.fillText(`${absoluteDistance}px`, blockRectModel.x + blockRectModel.width / 2 + 50, blockRectModel.y - 50)
+    const fillTextX = blockRectModel.x + blockRectModel.width / 2 + 50
+    const fillTextY = blockRectModel.y - 50
+    this.fillText(`${absoluteDistance}px`, fillTextX, fillTextY)
+    // this.ctx.fillText(`${absoluteDistance}px`, blockRectModel.x + blockRectModel.width / 2 + 50, blockRectModel.y - 50)
 
     this.panelStylerService.lightUpClosestPanel(closestPanelRect, LineDirectionEnum.Right)
   }
@@ -226,5 +331,21 @@ export class CanvasService {
     const y = panelRect.top - canvasRect.top + panelRect.height / 2
 
     return { id: panelId, x, y, height: panelRect.height, width: panelRect.width, element }
+  }
+
+  private strokeTwoPoints(moveToPoint: Point, lineToPoint: Point) {
+    const { x: moveToX, y: moveToY } = this.mousePositionService.convertPointToGrid(moveToPoint)
+    const { x: lineToX, y: lineToY } = this.mousePositionService.convertPointToGrid(lineToPoint)
+    this.ctx.beginPath()
+    this.ctx.moveTo(moveToX, moveToY)
+    this.ctx.lineTo(lineToX, lineToY)
+    this.ctx.stroke()
+  }
+
+  private fillText(text: string, x: number, y: number) {
+    // this.ctx.fillStyle = 'black'
+    this.ctx.font = '20px Arial'
+    const { x: fillTextX, y: fillTextY } = this.mousePositionService.convertPointToGrid({ x, y })
+    this.ctx.fillText(text, fillTextX, fillTextY)
   }
 }

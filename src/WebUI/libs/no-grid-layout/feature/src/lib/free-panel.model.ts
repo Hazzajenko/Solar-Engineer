@@ -1,4 +1,5 @@
 import { BackgroundColor } from './bg-color.builder'
+import { PanelRotationConfig } from './configs/free-panel-block.config'
 
 export const BorderColor = {
   black: 'border border-black',
@@ -102,6 +103,7 @@ export interface FreePanelModel {
   /*  border: string
    borderColorAndWidth: BorderColorAndWidth*/
   backgroundColor: BackgroundColor
+  rotation: PanelRotationConfig
 }
 
 /*export const FreePanelModel = {

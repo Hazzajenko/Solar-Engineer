@@ -5,22 +5,26 @@
   <!--      [id]="freePanel.id"-->
   <div
     [backgroundColor]="freePanel.backgroundColor"
+    [rotation]="freePanel.rotation"
     id="{{ freePanel.id }}"
     bind-attr.panelId="freePanel.id"
     bind-attr.location="freePanel.location"
     cdkDrag
     [cdkDragData]="freePanel"
-    [cdkDragFreeDragPosition]="dragPosition"
+    [cdkDragFreeDragPosition]="location"
     (cdkDragDropped)="dragDropped($event)"
+    (cdkDragEnded)="dragExited($event)"
     (cdkDragMoved)="dragMoved($event)"
+    (cdkDragStarted)="startDragging($event)"
     appFreePanelDirective
-    [ngStyle]="{
-      height: rotation === 0 ? '18px' : '23px',
-      width: rotation === 0 ? '23px' : '18px'
-    }"
     class="panel absolute flex content-center items-center justify-center border hover:bg-red-500"
   ></div>
 </ng-container>
+<!--[cdkDragConstrainPosition]="dragConstrainPoint"-->
+<!--[ngStyle]="{
+height: freePanel.rotation === PanelRotationConfig.Landscape ? '18px' : '23px',
+width: freePanel.rotation === PanelRotationConfig.Portrait ? '23px' : '18px'
+}"-->
 <!--  </div>-->
 <!--</ng-container>-->
 <!--dark:border-gray-400-->

@@ -9,6 +9,10 @@ import { DynamicComponentDirective } from './directives/dynamic-free-panel.direc
 import {
   GridBackgroundComponent,
 } from '../../../../grid-layout/feature/src/lib/ui/grid-background/grid-background.component'
+import { GridMoveDirective } from './grid-move.directive'
+import { KeyMapDirective } from '../../../../grid-layout/feature/src/lib/directives/key-map.directive'
+import { WrapperDirective } from '../../../../grid-layout/feature/src/lib/directives/wrapper.directive'
+import { AppGridBackgroundDirective } from './app-grid-background.directive'
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -20,10 +24,25 @@ import {
     DynamicComponentDirective,
     DynamicComponentDirective,
     GridBackgroundComponent,
+    GridMoveDirective,
+    KeyMapDirective,
+    WrapperDirective,
+    AppGridBackgroundDirective,
   ],
   selector: 'app-no-grid-layout',
   standalone: true,
-  styles: [],
+  styles: [`
+    .grid-container {
+      /*      position: relative;
+            width: 100%;
+            height: 100%;*/
+      /*background-color: #000;*/
+      /*overflow: hidden;*/
+      -webkit-font-smoothing: subpixel-antialiased;
+      transform: translate3d(-50%, -50%, 0) scale(2, 2);
+      /*zoom: 0.5;*/
+    }
+  `],
 
   templateUrl: './no-grid-layout.component.html',
 })

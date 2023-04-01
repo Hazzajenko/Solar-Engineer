@@ -63,6 +63,19 @@ export class PanelStylerService {
   }
 
   private replaceClassForPanelById(panelId: string, oldClass: string, newClass: string) {
+    /*    try {
+     const panelDiv = document.querySelector(`[panelId=${panelId}]`)
+     if (!panelDiv) {
+     console.error('panelDiv not found', panelId)
+     return
+     }
+     if (panelDiv.classList.contains(newClass)) return
+     this.renderer.removeClass(panelDiv, oldClass)
+     this.renderer.addClass(panelDiv, newClass)
+     } catch (e) {
+     console.error('panelDiv not found', panelId, e)
+     }*/
+
     const panels = document.querySelectorAll('[panelId]')
     if (!panels) {
       return

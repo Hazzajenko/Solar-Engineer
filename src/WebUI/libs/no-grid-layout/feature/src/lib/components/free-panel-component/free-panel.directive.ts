@@ -1,9 +1,10 @@
-import { Directive, ElementRef, inject, Input, NgZone, OnInit } from '@angular/core'
+import { Directive, ElementRef, inject, Input, NgZone, OnInit, Renderer2 } from '@angular/core'
 
 import { SoftColor } from '@shared/data-access/models'
 import tippy from 'tippy.js'
 import { NoGridLayoutService } from '../../no-grid-layout.service'
 import { BackgroundColor, BgColorBuilder } from '../../bg-color.builder'
+import { FreePanelBlockConfig, PanelRotationConfig } from '../../configs/free-panel-block.config'
 
 // import { BackgroundColor } from '@no-grid-layout/feature'
 
@@ -21,6 +22,7 @@ export class FreePanelDirective implements OnInit {
   elRef = inject(ElementRef)
   private noGridLayoutService = inject(NoGridLayoutService)
   private _panelId = ''
+  private renderer = inject(Renderer2)
   cachedClass = ''
   cachedBorder = ''
   cachedBackgroundColor = ''
@@ -65,24 +67,15 @@ export class FreePanelDirective implements OnInit {
     this.zone.runOutsideAngular(() => {
       this.cachedBackgroundColor = this.manageClasses(backgroundColor, this.cachedBackgroundColor)
     })
-    // this.cachedBackgroundColor = this.manageClasses(this.defaultBgColor, this.cachedBackgroundColor)
-    //
-    // this.elRef.nativeElement.classList.remove(this.defaultBgColor)
-    // this.elRef.nativeElement.classList.remove('bg-blue-500')
-    // 'bg-blue-500'.split()
-    // this.elRef.nativeElement.classList.add(this.lineThroughBgColor)
-    // this.cachedBackgroundColor = this.manageClasses(backgroundColor, this.cachedBackgroundColor)
-    /*    this.cachedBackgroundColor.split(' ').forEach((c) => {
-     const alreadyContains = this.elRef.nativeElement.classList.contains(c)
-     if (!alreadyContains) return
-     this.elRef.nativeElement.classList.remove(c)
-     },
-     )
-     // check if a class is already applied
-     // this.elRef.nativeElement.classList.remove(...this.cachedBorder.split(' '))
-     this.cachedBackgroundColor = backgroundColor
-     // const classes = 'border border-black border-2'
-     this.elRef.nativeElement.classList.add(...backgroundColor.split(' '))*/
+  }
+
+  @Input() set rotation(rotation: PanelRotationConfig) {
+    console.log('rotation', rotation)
+    // this.elRef.nativeElement.style.transform = `rotate(${rotation.degrees}deg)`
+    // this.elRef.nativeElement.s
+    const { width, height } = FreePanelBlockConfig.size(rotation)
+    this.renderer.setStyle(this.elRef.nativeElement, 'height', `${height}px`)
+    this.renderer.setStyle(this.elRef.nativeElement, 'width', `${width}px`)
   }
 
   @Input() set borderColor(borderColorAndWidth: string) {
@@ -141,9 +134,9 @@ export class FreePanelDirective implements OnInit {
     // this.elRef.nativeElement.style.backgroundColor = SoftColor.SoftBrown
     // this.elRef.nativeElement.style.backgroundColor = '#95c2fa'
     // this.elRef.nativeElement.style.boxShadow = ``
-    this.zone.runOutsideAngular(() => {
-      this.setupTooltip()
-    })
+    /*    this.zone.runOutsideAngular(() => {
+     this.setupTooltip()
+     })*/
     // this.noGridLayoutService.panelsHaveClass
   }
 

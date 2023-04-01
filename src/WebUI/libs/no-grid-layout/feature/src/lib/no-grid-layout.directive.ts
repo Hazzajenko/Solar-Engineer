@@ -17,6 +17,9 @@ import { PanelStylerService } from './panel-styler.service'
 import { CanvasService } from './canvas.service'
 import { FreePanelComponent, FreePanelModel } from '@no-grid-layout/feature'
 import { FreePanelBgStates } from './color-config'
+import { Logger } from 'tslog'
+import { FreePanelBlockConfig } from './configs/free-panel-block.config'
+import { MousePositionService } from './mouse-position.service'
 
 // import Record from '$GLOBAL$'
 
@@ -34,6 +37,8 @@ export class NoGridLayoutDirective implements OnInit {
   private ctx!: CanvasRenderingContext2D
   private panelStylerService = inject(PanelStylerService)
   private canvasService = inject(CanvasService)
+  private logger = new Logger({ name: 'no-grid-layout.directive' })
+  private mousePositionService = inject(MousePositionService)
   // private ngZone = inject(NgZone)
   // private lineDrawerService = new LineDrawerService(can)
   // private lineDrawerService!: LineDrawerService
@@ -47,12 +52,26 @@ export class NoGridLayoutDirective implements OnInit {
   pageY = 0
   runEventsOutsideAngular = false
   isDragging = false
+  isCtrlDragging = false
   animationId?: number
   pathMapAnimating = false
   fpsInterval = 1000 / 60
   startTime = Date.now()
   cachedPanels: FreeBlockRectModel[] = []
-  scale = 1
+  private _scale = 1
+
+  // #scale = 1
+  get scale() {
+    return this._scale
+  }
+
+  set scale(value) {
+    this._scale = value
+    this.mousePositionService.setScale(value)
+    // this.elementRef.nativeElement.style.transform = `scale(${value})`
+  }
+
+  // scale = 1
   posX = 0
   posY = 0
   /*  interface hello{
@@ -97,6 +116,8 @@ export class NoGridLayoutDirective implements OnInit {
       this.setupMouseEventListeners()
     }
     this.setupCanvas()
+    this.setupElements()
+    this.mousePositionService.initGridLayoutElementRef(this.elementRef.nativeElement)
   }
 
   private setupElements() {
@@ -121,6 +142,12 @@ export class NoGridLayoutDirective implements OnInit {
     this.canvas.style.pointerEvents = 'none'
     this.canvas.width = this.elementRef.nativeElement.offsetWidth
     this.canvas.height = this.elementRef.nativeElement.offsetHeight
+    const offsetWidth = this.elementRef.nativeElement.offsetWidth
+    const offsetHeight = this.elementRef.nativeElement.offsetHeight
+    const left = (window.innerWidth - offsetWidth) / 2
+    this.renderer.setStyle(this.canvas, 'left', `${left}px`)
+    const top = (window.innerHeight - offsetHeight) / 2
+    this.renderer.setStyle(this.canvas, 'top', `${top}px`)
     this.ctx.fillStyle = 'rgba(0, 0, 0, 0.1)'
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height)
     this.canvasService.setCanvas(this.canvas, this.ctx)
@@ -185,7 +212,9 @@ export class NoGridLayoutDirective implements OnInit {
       const rect = this.elementRef.nativeElement.getBoundingClientRect()
       this.startX = event.clientX - rect.left
       this.startY = event.clientY - rect.top
-      this.isDragging = true
+      // this.isDragging = true
+      this.isDragging = false
+      this.isCtrlDragging = true
       /*     if (event.button === 1) {
        this.middleClickDown = true
        }*/
@@ -219,16 +248,52 @@ export class NoGridLayoutDirective implements OnInit {
 
     console.log('click')
     if (event.ctrlKey) return
-    const rect = this.elementRef.nativeElement.getBoundingClientRect()
-    const mouseX = event.pageX - rect.left
-    const mouseY = event.pageY - rect.top
+    /*    const parentRect = this.elementRef.nativeElement.parentNode.getBoundingClientRect()
+     const mouseX =
+     event.pageX -
+     (parentRect.width - this.width) / 2 -
+     this.elementRef.nativeElement.parentNode.offsetLeft
+
+     const mouseY =
+     event.pageY -
+     (parentRect.height - this.height) / 2 -
+     this.elementRef.nativeElement.parentNode.offsetTop*/
+    /*    const rect = this.elementRef.nativeElement.getBoundingClientRect()
+     /!*    const mouseX = event.pageX - rect.left / this.scale
+     const mouseY = event.pageY - rect.top / this.scale*!/
+     const mouseX = (event.pageX - rect.left) / this.scale
+     const mouseY = (event.pageY - rect.top) / this.scale
+     console.log('scale', this.scale)*/
+
+    /*
+     this.logger.debug({
+     scale: this.scale,
+     // rect,
+     left: rect.left,
+     top: rect.top,
+     posX: this.posX,
+     posY: this.posY,
+     })*/
+
+    const { x, y } = this.mousePositionService.getMousePosition(event)
+
+    const size = FreePanelBlockConfig.size('portrait')
+    this.logger.debug({
+        size,
+      },
+    )
+    const locationX = x - size.width / 2
+    const locationY = y - size.height / 2
 
     const freePanel: FreePanelModel = {
       id: getGuid(),
       location: {
-        x: mouseX,
-        y: mouseY,
+        x: locationX,
+        y: locationY,
+        /*        x: mouseX,
+         y: mouseY,*/
       },
+      rotation: 'portrait',
       backgroundColor: FreePanelBgStates.Default,
       // backgroundColor: BgColorBuilder('pink').toString(),
     }
@@ -239,10 +304,20 @@ export class NoGridLayoutDirective implements OnInit {
   }
 
   private onMouseMoveHandler(event: MouseEvent) {
-    if (this.isDragging) {
-      if (event.ctrlKey) {
-        return this.handleCtrlMouseMove(event)
+    if (this.isCtrlDragging) {
+      if (!event.ctrlKey) {
+        this.isCtrlDragging = false
+        this.startX = undefined
+        this.startY = undefined
+        return
       }
+      this.handleCtrlMouseMove(event)
+      return
+    }
+    if (this.isDragging) {
+      /*      if (event.ctrlKey) {
+       return this.handleCtrlMouseMove(event)
+       }*/
       const panelId = (event.composedPath()[0] as HTMLDivElement).getAttribute('panelId')
       if (panelId) {
         this.selectedPanelId = panelId
@@ -258,6 +333,7 @@ export class NoGridLayoutDirective implements OnInit {
 
   private handleCtrlMouseMove(event: MouseEvent) {
     if (!this.startX || !this.startY) return
+    // console.log('handleCtrlMouseMove', event)
     // const height = this.elementRef.nativeElement.offsetHeight
     // const width = this.elementRef.nativeElement.offsetWidth
     const parentRect = this.elementRef.nativeElement.parentNode.getBoundingClientRect()
@@ -270,6 +346,17 @@ export class NoGridLayoutDirective implements OnInit {
       event.pageY -
       (parentRect.height - this.height) / 2 -
       this.elementRef.nativeElement.parentNode.offsetTop
+
+    /*    const parentRect = this.elementRef.nativeElement.getBoundingClientRect()
+     const mouseX =
+     event.pageX -
+     (parentRect.width - this.width) / 2 -
+     this.elementRef.nativeElement.offsetLeft
+
+     const mouseY =
+     event.pageY -
+     (parentRect.height - this.height) / 2 -
+     this.elementRef.nativeElement.offsetTop*/
 
     const newStartY = this.startY
     const newStartX = this.startX
@@ -299,9 +386,6 @@ export class NoGridLayoutDirective implements OnInit {
 
   private onScrollHandler(event: WheelEvent) {
 
-    console.log(event)
-    // event.preventDefault()
-
     const sizeH = this.elementRef.nativeElement.offsetHeight
     const sizeW = this.elementRef.nativeElement.offsetWidth
 
@@ -321,14 +405,6 @@ export class NoGridLayoutDirective implements OnInit {
     if (this.posX + sizeW * this.scale < sizeW) this.posX = -sizeW * (this.scale - 1)
     if (this.posY > 0) this.posY = 0
     if (this.posY + sizeH * this.scale < sizeH) this.posY = -sizeH * (this.scale - 1)
-
-    /*    this.uiRepository.setPosXY({
-     posX: this.posX,
-     posY: this.posY,
-     })*/
-
-    // this.outputScale.emit(this.scale)
-    // this.uiStore.dispatch.setScale(this.scale)
 
     this.renderer.setStyle(
       this.elementRef.nativeElement,
