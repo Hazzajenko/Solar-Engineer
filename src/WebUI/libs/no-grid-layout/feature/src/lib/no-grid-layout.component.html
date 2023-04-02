@@ -1,45 +1,4 @@
-<!-- class='w-fit h-fit' -->
-<!--<div
-  appNoGridLayoutDirective
-  class="absolute left-0 top-0 right-0 bottom-0 h-full w-full flex-col overflow-hidden"
-  [style.min-width]="gridContainerWidth"
-  [style.min-height]="gridContainerHeight"
-    [style.min-width]="gridContainerWidth"
-  [style.min-height]="gridContainerHeight"
-  [style.height]="gridContainerHeight"
-  [style.width]="gridContainerWidth"
-  [style.max-height]="gridContainerHeight"
-  [style.max-width]="gridContainerWidth"
->-->
 <div class="relative flex h-full w-full flex-col overflow-hidden">
-  <!--  class="h-full w-full flex-col overflow-hidden"-->
-  <!--  class="absolute left-0 top-0 right-0 bottom-0 h-full w-full flex-col overflow-hidden"-->
-  <!--  <canvas
-      [style.min-height]="gridContainerHeight"
-      [style.min-width]="gridContainerWidth"
-      class="pointer-events-none absolute z-10"
-      style="overflow: hidden; z-index: 10"
-    >
-    </canvas>-->
-  <!--  (click)="createFreePanel($event)"-->
-  <!--  <canvas
-      [style.min-height]="gridContainerHeight"
-      [style.min-width]="gridContainerWidth"
-      class="pointer-events-none absolute z-10"
-      style="overflow: hidden; z-index: 10"
-    >
-    </canvas>
-    <div
-      [style.height]="gridContainerHeight"
-      [style.width]="gridContainerWidth"
-      class="appWrapper relative flex flex-col items-center"
-
-    >-->
-  <!--  <div
-      appNoGridLayoutDirective
-      [style.height]="layoutHeightString"
-      [style.width]="layoutWidthString"
-    >-->
   <div
     appNoGridLayoutDirective
     appGridMove
@@ -48,49 +7,24 @@
     [style.height]="layoutHeightString"
     [style.width]="layoutWidthString"
   >
-    <!--    <ng-container *ngIf="freePanels$ | async as freePanels">-->
-    <!--       <div
-             [style.height]="backgroundHeight"
-             [style.width]="backgroundWidth"
-             class="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform"
-           >-->
-    <app-grid-background
+    <!--    <app-grid-background
+          appGridBackground
+          class="pointer-events-none absolute"
+          *ngIf="backgroundWidth"
+          [style.height]="backgroundHeight"
+          [style.width]="backgroundWidth"
+        />-->
+    <app-no-grid-background
       appGridBackground
       class="pointer-events-none absolute"
       *ngIf="backgroundWidth"
       [style.height]="backgroundHeight"
       [style.width]="backgroundWidth"
     />
-    <!--        </div>-->
-    <!--        class="pointer-events-none absolute bottom-0 left-[50%] right-0 top-[50%] ml-auto mr-auto flex h-full w-full flex-col items-center justify-center"-->
-    <!--        left: 50%;
-            top: 50%;
-            transform: translate(-50%,-50%);-->
-
-    <!--    <app-free-panel
-          *ngFor="let panel of freePanels$ | async"
-          [style.height]="blockHeight"
-          [style.width]="blockWidth"
-          [panelId]="panel.id"
-          [location]="panel.location"
-        />-->
     <ng-template
-      #dynamic
-      *ngFor="let panel of freePanels$ | async"
+      *ngFor="let panel of (freePanels$ | async)!; trackBy: trackByPanelId"
       appDynamicFreePanel
-      [freePanel]="{ id: panel.id, location: panel.location }"
+      [entity]="{ id: panel.id, type: panel.type }"
     ></ng-template>
-
-    <!--    <app-free-panel
-          [style.height]="blockHeight"
-          [style.width]="blockWidth"
-          [panelId]="panel.id"
-          [location]="panel.location"
-          *ngFor="let panel of freePanels"
-        />-->
-    <!--    </ng-container>-->
   </div>
-  <!--  </div>-->
-  <!--  [freePanel]="panel"-->
-  <!--  </div>-->
 </div>

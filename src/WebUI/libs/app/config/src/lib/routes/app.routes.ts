@@ -6,30 +6,20 @@ import { SimpleNotFoundComponent } from '@shared/ui/not-found'
 
 
 export const appRoutes: Route[] = [
+  /*  {
+   path: '',
+   loadComponent: () => import('@home/feature').then((m) => m.HomeComponent),
+   canActivate: [emptyRouteAuthGuard],
+   pathMatch: 'full',
+   providers: [homeProviders],
+   },*/
   {
     path: '',
-    loadComponent: () => import('@home/feature').then((m) => m.HomeComponent),
-    // loadComponent: () => import('@home/feature').then((m) => m.HomeComponent),
-    canActivate: [emptyRouteAuthGuard],
-    pathMatch: 'full',
-    providers: [homeProviders],
-    // canMatch: [notLoggedInGuard],
-
-    /*    children: [
-     {
-     path: 'projects',
-     loadComponent: () => import('@projects/feature').then((m) => m.ProjectsHomePageComponent),
-     },
-     ],*/
+    loadComponent: () => import('@no-grid-layout/feature').then((m) => m.NoGridLayoutComponent),
   },
   {
     path: 'free',
     loadComponent: () => import('@no-grid-layout/feature').then((m) => m.NoGridLayoutComponent),
-    /*    providers: [
-     // FreePanelsFacade,
-     provideState(fromFreePanels.FREE_PANELS_FEATURE_KEY, fromFreePanels.freePanelsReducer),
-     provideEffects(FreePanelsEffects),
-     ],*/
   },
   {
     path: 'projects',

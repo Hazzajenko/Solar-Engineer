@@ -1,11 +1,21 @@
 import { bootstrapApplication } from '@angular/platform-browser'
-// import { AppV2Component } from '@app/index'
-import { mainTsProviders } from '@app/config'
 import { AppComponent } from '@app/app-component'
+import { mainTsProviders } from '@app/config'
+import { environment } from '@shared/environment'
 
-/*bootstrapApplication(AppComponent, {
- providers: [...mainTsProviders],
- }).catch((err) => console.error(err))*/
+
+if (environment.production) {
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  window.console.log = () => {}
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  window.console.debug = () => {}
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  window.console.info = () => {}
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  window.console.warn = () => {}
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  window.console.error = () => {}
+}
 
 bootstrapApplication(AppComponent, {
   providers: [...mainTsProviders],

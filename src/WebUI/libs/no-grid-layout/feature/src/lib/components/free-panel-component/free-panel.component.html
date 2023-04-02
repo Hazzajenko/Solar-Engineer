@@ -1,10 +1,5 @@
-<!--<ng-container *ngIf="freePanel$ | async as freePanel">-->
-<!--  style="width: 32px; height: 32px"-->
-<!--  <div class="absolute flex content-center items-center justify-center whitespace-pre-wrap">-->
 <ng-container *ngIf="freePanel$ | async as freePanel">
-  <!--      [id]="freePanel.id"-->
   <div
-    #panel="freePanel"
     [backgroundColor]="freePanel.backgroundColor"
     [rotation]="freePanel.rotation"
     id="{{ freePanel.id }}"

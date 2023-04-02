@@ -62,7 +62,10 @@
       "@home/data-access": ["libs/home/data-access/src/index.ts"],
       "@home/feature": ["libs/home/feature/src/index.ts"],
       "@home/ui": ["libs/home/ui/src/index.ts"],
+      "@no-grid-layout/data-access": ["libs/no-grid-layout/data-access/src/index.ts"],
       "@no-grid-layout/feature": ["libs/no-grid-layout/feature/src/index.ts"],
+      "@no-grid-layout/shared": ["libs/no-grid-layout/shared/src/index.ts"],
+      "@no-grid-layout/utils": ["libs/no-grid-layout/utils/src/index.ts"],
       "@project-id/data-access/services": ["libs/project-id/data-access/services/src/index.ts"],
       "@projects/data-access": ["libs/projects/data-access/src/index.ts"],
       "@projects/feature": ["libs/projects/feature/src/index.ts"],
@@ -99,7 +102,8 @@
       "@shared/utils": ["libs/shared/utils/src/index.ts"],
       "@undefined/core-components": ["dist/libs/core-components"],
       "@undefined/core-components/*": ["dist/libs/core-components/dist/components/*"],
-      "@undefined/core-components/loader": ["dist/libs/core-components/loader"]
+      "@undefined/core-components/loader": ["dist/libs/core-components/loader"],
+      "my-plugin": ["libs/my-plugin/src/index.ts"]
     },
     "rootDir": ".",
     "emitDecoratorMetadata": true

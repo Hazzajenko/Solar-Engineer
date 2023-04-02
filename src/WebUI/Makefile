@@ -31,8 +31,8 @@ lib:
 newlib:
 	npx nx generate @nrwl/angular:library api --style=none --directory=projects/data-access --importPath=@projects/data-access/api --skipModule --strict --no-interactive
 
-ngrx:
-	nx generate @nrwl/angular:ngrx --name=blocks --directory=libs/project-id/data-access/store/src/lib/blocks --barrels --facade --skipImport
+#ngrx:
+#	nx generate @nrwl/angular:ngrx --name=blocks --directory=libs/project-id/data-access/store/src/lib/blocks --barrels --facade --skipImport
 
 
 
@@ -58,7 +58,6 @@ storybook:
 story:
 	npx nx generate @nrwl/angular:stories design --no-interactive
 
-#libs/project-id/data-access
 cache:
 	nx clear-cache
 
@@ -81,9 +80,8 @@ ne11w:
 g:
 	nx generate @nrwl/angular:library ${name} --style=none --directory=${dir} --importPath=@${dir}/${name} --skipModule --tags=${tags} --no-interactive
 
-	#nx generate @nrwl/angular:ngrx ${name} --directory=${dir} --barrels --facade --skipImport --no-interactive
-ngrx:
-	nx g @nrwl/angular:ngrx free-panels --parent=libs/no-grid-layout/feature/src/lib/lib.routes.ts --route=''
+#ngrx:
+#	nx g @nrwl/angular:ngrx free-panels --parent=libs/no-grid-layout/feature/src/lib/lib.routes.ts --route=''
 
 
 remove:
@@ -97,3 +95,9 @@ build-nocache2:
 
 docker-build-client2:
 	docker build . -t angularclient:1.0.1
+
+plugin:
+	nx g @nrwl/nx-plugin:plugin ${name}
+
+generator:
+	nx generate @nrwl/nx-plugin:generator ${name} --project=${project}

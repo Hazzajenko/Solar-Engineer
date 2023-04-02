@@ -1,59 +1,47 @@
-import { ChangeDetectionStrategy, Component, ElementRef, inject, OnInit } from '@angular/core'
-import { IFreePanelModel } from './free-panel.model'
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core'
 import { FreePanelComponent } from './components/free-panel-component/free-panel.component'
 import { CommonModule } from '@angular/common'
-import { NoGridLayoutDirective } from './no-grid-layout.directive'
-import { NoGridLayoutService } from './no-grid-layout.service'
-import { CdkDrag, CdkDragDrop, CdkDragMove } from '@angular/cdk/drag-drop'
+import { NoGridLayoutDirective } from './directives/no-grid-layout.directive'
+import { CdkDrag } from '@angular/cdk/drag-drop'
 import { DynamicComponentDirective } from './directives/dynamic-free-panel.directive'
-import {
-  GridBackgroundComponent,
-} from '../../../../grid-layout/feature/src/lib/ui/grid-background/grid-background.component'
-import { GridMoveDirective } from './grid-move.directive'
-import { KeyMapDirective } from '../../../../grid-layout/feature/src/lib/directives/key-map.directive'
-import { WrapperDirective } from '../../../../grid-layout/feature/src/lib/directives/wrapper.directive'
-import { AppGridBackgroundDirective } from './app-grid-background.directive'
+import { AppGridBackgroundDirective } from './directives/app-grid-background.directive'
+import { NoGridLayoutService } from '@no-grid-layout/data-access'
+import { NoGridBackgroundComponent } from './ui/no-grid-background.component'
+import { map } from 'rxjs'
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
+  imports:         [
     FreePanelComponent,
     CdkDrag,
     CommonModule,
     NoGridLayoutDirective,
     DynamicComponentDirective,
     DynamicComponentDirective,
-    GridBackgroundComponent,
-    GridMoveDirective,
-    KeyMapDirective,
-    WrapperDirective,
     AppGridBackgroundDirective,
+    NoGridBackgroundComponent,
   ],
-  selector: 'app-no-grid-layout',
-  standalone: true,
-  styles: [`
-    .grid-container {
-      /*      position: relative;
-            width: 100%;
-            height: 100%;*/
-      /*background-color: #000;*/
-      /*overflow: hidden;*/
-      -webkit-font-smoothing: subpixel-antialiased;
-      transform: translate3d(-50%, -50%, 0) scale(2, 2);
-      /*zoom: 0.5;*/
-    }
-  `],
-
-  templateUrl: './no-grid-layout.component.html',
+  selector:        'app-no-grid-layout',
+  standalone:      true,
+  styles:          [],
+  templateUrl:     './no-grid-layout.component.html',
 })
-export class NoGridLayoutComponent implements OnInit {
-  private elementRef = inject(ElementRef<NoGridLayoutComponent>)
+export class NoGridLayoutComponent
+  implements OnInit {
   private noGridLayoutService = inject(NoGridLayoutService)
-  // private freePanelsFacade = inject(FreePanelsFacade)
-
-  // freePanels$ = this.freePanelsFacade.allFreePanels$
+  panels$ = this.noGridLayoutService.getFreePanels$()
   freePanels$ = this.noGridLayoutService.getFreePanels$()
-  freePanels: IFreePanelModel[] = []
+    .pipe(
+      map((freePanels) => {
+          console.log('freePanels', freePanels)
+          return freePanels.map((freePanel) => {
+            return {
+              id:   freePanel.id,
+              type: freePanel.type,
+            }
+          })
+        },
+      ))
   getScreenWidth!: number
   getScreenHeight!: number
   gridContainerWidth!: string
@@ -70,8 +58,17 @@ export class NoGridLayoutComponent implements OnInit {
   cols!: number
   screenHasBeenSet = false
 
+  // trackByPanelId: any
+
   ngOnInit() {
+    console.log(this.constructor.name, 'ngOnInit')
     this.initScreenSize()
+  }
+
+  trackByPanelId(index: any, panel: {
+    id: string
+  }) {
+    return panel.id
   }
 
   initScreenSize() {
@@ -79,73 +76,28 @@ export class NoGridLayoutComponent implements OnInit {
     this.cols = Math.floor((window.innerWidth - 100) / this.blockWidth)
     this.layoutHeight = this.rows * this.blockHeight
     this.layoutWidth = this.cols * this.blockWidth
-    this.layoutWidthString = `${this.layoutWidth}px`
-    this.layoutHeightString = `${this.layoutHeight}px`
-    this.backgroundHeight = `${this.layoutHeight + 1}px`
-    this.backgroundWidth = `${this.layoutWidth + 1}px`
-    this.getScreenWidth = window.innerWidth
-    this.getScreenHeight = window.innerHeight
-    console.log('window.innerWidth', window.innerWidth)
-    console.log('window.innerHeight', window.innerHeight)
-    this.gridContainerWidth = `${window.innerWidth - 100}px`
-    this.gridContainerHeight = `${window.innerHeight - 100}px`
-    // this.gridContainerWidth = `${window.innerWidth - 400}px`
-    // this.gridContainerHeight = `${window.innerHeight - 400}px`
-    console.log('this.gridContainerWidth', this.gridContainerWidth)
-    console.log('this.gridContainerHeight', this.gridContainerHeight)
-
-    /*    this.rows = Math.floor((this.getScreenHeight - 100) / this.blockHeight)
-     this.cols = Math.floor((this.getScreenWidth - 100) / this.blockWidth)
-     this.layoutHeight = this.rows * this.blockHeight
-     this.layoutWidth = this.cols * this.blockWidth
-     this.layoutWidthString = `${this.layoutWidth}px`
+    /*    this.layoutWidthString = `${this.layoutWidth}px`
      this.layoutHeightString = `${this.layoutHeight}px`
      this.backgroundHeight = `${this.layoutHeight + 1}px`
      this.backgroundWidth = `${this.layoutWidth + 1}px`*/
+    this.layoutWidthString = this.screenSizeToPxString(this.layoutWidth)
+    this.layoutHeightString = this.screenSizeToPxString(this.layoutHeight)
+    this.backgroundHeight = this.screenSizeToPxString(this.layoutHeight + 1)
+    this.backgroundWidth = this.screenSizeToPxString(this.layoutWidth + 1)
+    this.getScreenWidth = window.innerWidth
+    this.getScreenHeight = window.innerHeight
+    /*    this.gridContainerWidth = `${window.innerWidth - 100}px`
+     this.gridContainerHeight = `${window.innerHeight - 100}px`*/
+    this.gridContainerWidth = this.screenSizeToPxString(window.innerWidth - 100)
+    this.gridContainerHeight = this.screenSizeToPxString(window.innerHeight - 100)
     this.screenHasBeenSet = true
   }
 
-  /*createFreePanel(event: MouseEvent) {
-   event.preventDefault()
-   const rect = this.elementRef.nativeElement.getBoundingClientRect()
-   console.log('rect', rect)
-   // this.dragPosition = { x: this.freePanel.x, y: this.freePanel.y }
-   // const mouseX = this.pageX - rect.left
-   // const mouseY = this.pageY - rect.top
-   // this.pageX = event.pageX
-   // this.pageY = event.pageY
-   // const rect = this.canvas.nativeElement.getBoundingClientRect()
-
-   const mouseX = event.pageX - rect.left
-   const mouseY = event.pageY - rect.top
-   // this.startX = event.clientX - rect.left
-   // this.startY = event.clientY - rect.top
-   const freePanel: FreePanelModel = {
-   id: this.freePanels.length.toString(),
-   location: {
-   x: mouseX,
-   y: mouseY,
-   },
-   /!*      x: mouseX,
-   y: mouseY,*!/
-   }
-   /!*    this.freePanels.push(freePanel,
-   )*!/
-   this.noGridLayoutService.addFreePanel(freePanel)
-   console.log('freePanel', freePanel)
-
-   }*/
-
-  dragDropped(event: CdkDragDrop<IFreePanelModel>) {
-    // event.preventDefault()
-    console.log('dragDropped', event)
-
+  onResize(event: any) {
+    this.initScreenSize()
   }
 
-  dragMoved(event: CdkDragMove<IFreePanelModel>) {
-    // event.preventDefault()
-    // console.log('dragMoved', event)
-    // this.savedPosition = { x: event.source.getFreeDragPosition().x, y: event.source.getFreeDragPosition().y }
-    // console.log('savedPosition', this.savedPosition)
+  private screenSizeToPxString(size: number) {
+    return `${size}px`
   }
 }
