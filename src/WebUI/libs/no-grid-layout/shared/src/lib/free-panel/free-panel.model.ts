@@ -5,12 +5,10 @@ import { newGuid } from '@shared/utils'
 
 export interface IFreePanelModel {
   id: string
-  location: {
-    x: number
-    y: number
-  }
+  location: Point
   backgroundColor: BackgroundColor
   rotation: PanelRotationConfig
+  isSelected: boolean
   type: FreeBlockType
 }
 
@@ -37,6 +35,31 @@ export class FreePanelModel implements IFreePanelModel {
    return Object.assign(this, changes)
    }*/
 }
+
+/*
+ export type PanelModel = {
+ id: string
+ location: Point
+ backgroundColor: BackgroundColor
+ rotation: PanelRotationConfig
+ type: FreeBlockType
+ }
+
+ export const PanelModel = {
+ create: (
+ location: Point,
+ backgroundColor: BackgroundColor = PanelColorState.Default,
+ rotation: PanelRotationConfig = PanelRotationConfig.Portrait,
+ ): PanelModel => ({
+ id: newGuid(),
+ location,
+ backgroundColor,
+ rotation,
+ type: FreeBlockType.Panel,
+ }),
+ } as const*/
+
+// const newPanel = Panel.create({ x: 0, y: 0 })
 
 export const FreeBlockType = {
   Panel: 'panel',

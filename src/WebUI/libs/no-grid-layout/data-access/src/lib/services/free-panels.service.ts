@@ -1,15 +1,13 @@
 import { Injectable } from '@angular/core'
 import { BehaviorSubject, map, shareReplay } from 'rxjs'
 import { FreePanelModel } from '@no-grid-layout/shared'
-import { Logger } from 'tslog'
 
 @Injectable({
   providedIn: 'root',
 })
-export class NoGridLayoutService {
+export class FreePanelsService {
   private _freePanels: BehaviorSubject<FreePanelModel[]> = new BehaviorSubject<FreePanelModel[]>([])
   private _freePanels$ = this._freePanels.asObservable()
-  private _logger = new Logger({ name: 'no-grid-layout.service' })
 
   getFreePanels$() {
     return this._freePanels$.pipe(
@@ -39,19 +37,23 @@ export class NoGridLayoutService {
     const freePanels = this._freePanels.value
     const index = freePanels.findIndex((fp) => fp.id === freePanel.id)
     if (index === -1) {
-      this._logger.warn('freePanel not found', freePanel)
+      console.error('freePanel not found', freePanel)
+      // this._logger.warn('freePanel not found', freePanel)
       return
     }
     freePanels[index] = freePanel
     this._freePanels.next(freePanels)
-    this._logger.debug('updateFreePanel', freePanel)
+    console.log('updateFreePanel', freePanel)
+
+    // this._logger.debug('updateFreePanel', freePanel)
   }
 
   updatePanelById(id: string, update: Partial<FreePanelModel>) {
     const freePanels = this._freePanels.value
     const index = freePanels.findIndex((fp) => fp.id === id)
     if (index === -1) {
-      this._logger.warn('freePanel not found', id)
+      console.error('freePanel not found', id)
+      // this._logger.warn('freePanel not found', id)
       return
     }
     freePanels[index] = { ...freePanels[index], ...update }

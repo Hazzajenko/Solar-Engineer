@@ -5,7 +5,7 @@ import { NoGridLayoutDirective } from './directives/no-grid-layout.directive'
 import { CdkDrag } from '@angular/cdk/drag-drop'
 import { DynamicComponentDirective } from './directives/dynamic-free-panel.directive'
 import { AppGridBackgroundDirective } from './directives/app-grid-background.directive'
-import { NoGridLayoutService } from '@no-grid-layout/data-access'
+import { FreePanelsService } from '@no-grid-layout/data-access'
 import { NoGridBackgroundComponent } from './ui/no-grid-background.component'
 import { map } from 'rxjs'
 
@@ -28,9 +28,9 @@ import { map } from 'rxjs'
 })
 export class NoGridLayoutComponent
   implements OnInit {
-  private noGridLayoutService = inject(NoGridLayoutService)
-  panels$ = this.noGridLayoutService.getFreePanels$()
-  freePanels$ = this.noGridLayoutService.getFreePanels$()
+  private _freePanelsService = inject(FreePanelsService)
+  panels$ = this._freePanelsService.getFreePanels$()
+  freePanels$ = this._freePanelsService.getFreePanels$()
     .pipe(
       map((freePanels) => {
           console.log('freePanels', freePanels)

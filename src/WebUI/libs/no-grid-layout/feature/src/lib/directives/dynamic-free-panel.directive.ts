@@ -1,5 +1,6 @@
 import { ComponentRef, Directive, Input, NgZone, OnDestroy, OnInit, ViewContainerRef } from '@angular/core'
-import { FreeBlockType, FreePanelComponent } from '@no-grid-layout/feature'
+import { FreePanelComponent } from '@no-grid-layout/feature'
+import { FreeBlockType } from '@no-grid-layout/shared'
 
 @Directive({
   selector:   '[appDynamicFreePanel]',

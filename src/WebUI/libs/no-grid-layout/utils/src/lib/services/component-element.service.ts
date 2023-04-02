@@ -1,12 +1,6 @@
-import {
-  ElementRef,
-  Injectable,
-  QueryList,
-} from '@angular/core'
-import {
-  FreeBlockType,
-  FreePanelComponent,
-} from '@no-grid-layout/feature'
+import { ElementRef, Injectable, QueryList } from '@angular/core'
+import { FreePanelComponent } from '@no-grid-layout/feature'
+import { FreeBlockType } from '@no-grid-layout/shared'
 
 @Injectable({
   providedIn: 'root',

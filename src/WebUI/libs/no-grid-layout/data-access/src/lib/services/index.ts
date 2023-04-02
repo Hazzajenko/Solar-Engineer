@@ -1,2 +1,2 @@
-export * from './no-grid-layout.service'
+export * from './free-panels.service'
 export * from './selected/index'

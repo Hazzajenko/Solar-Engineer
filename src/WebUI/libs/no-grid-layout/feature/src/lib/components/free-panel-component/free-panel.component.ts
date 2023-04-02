@@ -8,7 +8,7 @@ import { distinctUntilKeyChanged, map, Observable, tap } from 'rxjs'
 import { BaseService } from '@shared/logger'
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
 import { throwIfNull$Extended } from '@shared/utils'
-import { NoGridLayoutService, SelectedService } from '@no-grid-layout/data-access'
+import { FreePanelsService, SelectedService } from '@no-grid-layout/data-access'
 
 @Component({
   selector:        'app-free-panel',
@@ -27,7 +27,7 @@ export class FreePanelComponent
   extends BaseService
   implements OnInit,
              OnChanges {
-  private _noGridLayoutService = inject(NoGridLayoutService)
+  private _freePanelsService = inject(FreePanelsService)
   private _mousePositionService = inject(MousePositionService)
   private _selectedService = inject(SelectedService)
   private _panelId!: string
@@ -47,7 +47,7 @@ export class FreePanelComponent
 
   @Input() set panelId(value: string) {
     this._panelId = value
-    this.freePanel$ = this._noGridLayoutService.getFreePanels$()
+    this.freePanel$ = this._freePanelsService.getFreePanels$()
       .pipe(
         map((freePanels) => freePanels.find((freePanel) => freePanel.id === value)),
         throwIfNull$Extended('free-panel.component', 'freePanel$'),
@@ -83,7 +83,7 @@ export class FreePanelComponent
 
   dragExited(event: CdkDragEnd) {
     console.log('dragExited', event)
-    this._noGridLayoutService.updatePanelById(this.panelId, { location: this.location })
+    this._freePanelsService.updatePanelById(this.panelId, { location: this.location })
   }
 
   onRightClick(event: MouseEvent, freePanel: FreePanelModel) {
@@ -98,10 +98,10 @@ export class FreePanelComponent
   rotatePanel(freePanel: FreePanelModel) {
     // freePanel.rotation = (freePanel.rotation + 90) % 360
     freePanel.rotation = FreePanelUtil.oppositeRotation(freePanel.rotation)
-    this._noGridLayoutService.updateFreePanel(freePanel)
+    this._freePanelsService.updateFreePanel(freePanel)
   }
 
   deletePanel(freePanel: FreePanelModel) {
-    this._noGridLayoutService.deleteFreePanel(freePanel)
+    this._freePanelsService.deleteFreePanel(freePanel)
   }
 }
