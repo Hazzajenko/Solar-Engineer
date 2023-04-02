@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, ElementRef, inject, OnInit } from '@angular/core'
-import { FreePanelModel } from './free-panel.model'
+import { IFreePanelModel } from './free-panel.model'
 import { FreePanelComponent } from './components/free-panel-component/free-panel.component'
 import { CommonModule } from '@angular/common'
 import { NoGridLayoutDirective } from './no-grid-layout.directive'
@@ -53,7 +53,7 @@ export class NoGridLayoutComponent implements OnInit {
 
   // freePanels$ = this.freePanelsFacade.allFreePanels$
   freePanels$ = this.noGridLayoutService.getFreePanels$()
-  freePanels: FreePanelModel[] = []
+  freePanels: IFreePanelModel[] = []
   getScreenWidth!: number
   getScreenHeight!: number
   gridContainerWidth!: string
@@ -136,13 +136,13 @@ export class NoGridLayoutComponent implements OnInit {
 
    }*/
 
-  dragDropped(event: CdkDragDrop<FreePanelModel>) {
+  dragDropped(event: CdkDragDrop<IFreePanelModel>) {
     // event.preventDefault()
     console.log('dragDropped', event)
 
   }
 
-  dragMoved(event: CdkDragMove<FreePanelModel>) {
+  dragMoved(event: CdkDragMove<IFreePanelModel>) {
     // event.preventDefault()
     // console.log('dragMoved', event)
     // this.savedPosition = { x: event.source.getFreeDragPosition().x, y: event.source.getFreeDragPosition().y }

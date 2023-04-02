@@ -1,5 +1,5 @@
-import { getGuid } from '@shared/utils'
 import { ProjectModelType } from '../model'
+import { newGuid } from '@shared/utils'
 
 export interface BlockOptions {
   projectId: string
@@ -20,14 +20,14 @@ export const BLOCK_TYPE = {
 export type BlockType = (typeof BLOCK_TYPE)[keyof typeof BLOCK_TYPE]
 
 /*export enum BlockType {
-  UNDEFINED,
-  INVERTER,
-  PANEL,
-  CABLE,
-  DISCONNECTIONPOINT,
-  TRAY,
-  RAIL,
-}*/
+ UNDEFINED,
+ INVERTER,
+ PANEL,
+ CABLE,
+ DISCONNECTIONPOINT,
+ TRAY,
+ RAIL,
+ }*/
 
 export class BlockModel {
   id: string
@@ -38,18 +38,18 @@ export class BlockModel {
   // type: BlockType = BLOCK_TYPE.UNDEFINED
 
   constructor(options: BlockOptions, id?: string) {
-    this.id = id ? id : getGuid()
+    this.id = id ? id : newGuid()
     this.projectId = options.projectId
     this.location = options.location
     // this.type = options.type
   }
 
   /*  static fromSerialized(serialized: string) {
-      const user: ReturnType<User["toObject"]> = JSON.parse(serialized);
+   const user: ReturnType<User["toObject"]> = JSON.parse(serialized);
 
-      return new User(
-        user.id,
-        new Email(user.email)
-      );
-    }*/
+   return new User(
+   user.id,
+   new Email(user.email)
+   );
+   }*/
 }

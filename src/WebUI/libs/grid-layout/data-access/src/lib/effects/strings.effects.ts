@@ -5,7 +5,7 @@ import { EntitiesActions, ProjectsHubService, StringsActions, StringsService } f
 import { ProjectsActions, ProjectsStoreService, SignalrEventsService } from '@projects/data-access'
 import { combineLatestWith, map, tap } from 'rxjs'
 import { StringsSignalrService } from '../api/strings/strings-signalr.service'
-import { getGuid } from '@shared/utils'
+import { newGuid } from '@shared/utils'
 import {
   PROJECT_ITEM_TYPE,
   PROJECT_SIGNALR_TYPE,
@@ -31,28 +31,28 @@ export class StringsEffects extends BaseService {
   private signalrEventsService = inject(SignalrEventsService)
 
   /*  constructor(logger: LoggerService) {
-      super(logger)
-    }*/
+   super(logger)
+   }*/
 
   /*  initStrings$ = createEffect(() =>
-      this.actions$.pipe(
-        ofType(ProjectsActions.initSelectProject),
-        switchMap(({ projectId }) =>
-          this.stringsService.getStringsByProjectId(projectId).pipe(
-            map((string) => StringsActions.loadStringsSuccess({ string })),
-            catchError((error) => of(StringsActions.loadStringsFailure({ error: error.message }))),
-          ),
-        ),
-      ),
-    )*/
+   this.actions$.pipe(
+   ofType(ProjectsActions.initSelectProject),
+   switchMap(({ projectId }) =>
+   this.stringsService.getStringsByProjectId(projectId).pipe(
+   map((string) => StringsActions.loadStringsSuccess({ string })),
+   catchError((error) => of(StringsActions.loadStringsFailure({ error: error.message }))),
+   ),
+   ),
+   ),
+   )*/
 
   /* loadStringsSuccess$ = createEffect(() =>
-     this.actions$.pipe(
-       ofType(StringsActions.loadStringsSuccess),
-       map(({ string }) => EntitiesActions.addManyEntitiesForGrid({ entities: string })),
-     ),
+   this.actions$.pipe(
+   ofType(StringsActions.loadStringsSuccess),
+   map(({ string }) => EntitiesActions.addManyEntitiesForGrid({ entities: string })),
+   ),
    )
- */
+   */
   initLocalStrings$ = createEffect(() =>
     this.actions$.pipe(
       ofType(ProjectsActions.initLocalProject),
@@ -82,7 +82,7 @@ export class StringsEffects extends BaseService {
             action,
             model,
             projectId: project.id,
-            requestId: getGuid(),
+            requestId: newGuid(),
             data: JSON.stringify(string),
           }
           return projectSignalrEvent
@@ -110,7 +110,7 @@ export class StringsEffects extends BaseService {
             action,
             model,
             projectId: project.id,
-            requestId: getGuid(),
+            requestId: newGuid(),
             data: JSON.stringify(createStringRequest),
           }
           return projectSignalrEvent
@@ -138,7 +138,7 @@ export class StringsEffects extends BaseService {
             action,
             model,
             projectId: project.id,
-            requestId: getGuid(),
+            requestId: newGuid(),
             data: JSON.stringify(deleteRequest),
           }
           return projectSignalrEvent
@@ -149,41 +149,41 @@ export class StringsEffects extends BaseService {
   )
 
   /* addStringHttp$ = createEffect(
-     () =>
-       this.actions$.pipe(
-         ofType(StringsActions.addString),
-         switchMap(({ string }) =>
-           this.projectsStore.select.selectIsWebProject$.pipe(
-             switchMap((isWeb) => {
-               if (isWeb) {
-                 return this.stringsService.addString(string)
-               }
-               // update local state
-               return of(undefined)
-             }),
-           ),
-         ),
-       ),
-     { dispatch: false },
+   () =>
+   this.actions$.pipe(
+   ofType(StringsActions.addString),
+   switchMap(({ string }) =>
+   this.projectsStore.select.selectIsWebProject$.pipe(
+   switchMap((isWeb) => {
+   if (isWeb) {
+   return this.stringsService.addString(string)
+   }
+   // update local state
+   return of(undefined)
+   }),
+   ),
+   ),
+   ),
+   { dispatch: false },
    )*/
 
   /*  deleteStringHttp$ = createEffect(
-      () =>
-        this.actions$.pipe(
-          ofType(StringsActions.deleteString),
-          switchMap(({ stringId }) =>
-            this.projectsStore.select.isWebWithProject$.pipe(
-              switchMap(([isWeb, project]) => {
-                if (!project) return of(undefined)
-                if (isWeb) {
-                  return this.stringsService.deleteString(stringId, project.id)
-                }
-                // update local state
-                return of(undefined)
-              }),
-            ),
-          ),
-        ),
-      { dispatch: false },
-    )*/
+   () =>
+   this.actions$.pipe(
+   ofType(StringsActions.deleteString),
+   switchMap(({ stringId }) =>
+   this.projectsStore.select.isWebWithProject$.pipe(
+   switchMap(([isWeb, project]) => {
+   if (!project) return of(undefined)
+   if (isWeb) {
+   return this.stringsService.deleteString(stringId, project.id)
+   }
+   // update local state
+   return of(undefined)
+   }),
+   ),
+   ),
+   ),
+   { dispatch: false },
+   )*/
 }

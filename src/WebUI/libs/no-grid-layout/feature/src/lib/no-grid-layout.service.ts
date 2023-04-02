@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core'
 import { BehaviorSubject, map } from 'rxjs'
-import { FreePanelModel } from './free-panel.model'
+import { IFreePanelModel } from './free-panel.model'
 
 @Injectable({
   providedIn: 'root',
 })
 export class NoGridLayoutService {
-  private _freePanels: BehaviorSubject<FreePanelModel[]> = new BehaviorSubject<FreePanelModel[]>([])
+  private _freePanels: BehaviorSubject<IFreePanelModel[]> = new BehaviorSubject<IFreePanelModel[]>([])
   private _freePanels$ = this._freePanels.asObservable()
 
   getFreePanels$() {
@@ -23,15 +23,15 @@ export class NoGridLayoutService {
     return this._freePanels.value.find((fp) => fp.id === id)
   }
 
-  addFreePanel(freePanel: FreePanelModel) {
+  addFreePanel(freePanel: IFreePanelModel) {
     this._freePanels.next([...this._freePanels.value, freePanel])
   }
 
-  deleteFreePanel(freePanel: FreePanelModel) {
+  deleteFreePanel(freePanel: IFreePanelModel) {
     this._freePanels.next(this._freePanels.value.filter((fp) => fp.id !== freePanel.id))
   }
 
-  updateFreePanel(freePanel: FreePanelModel) {
+  updateFreePanel(freePanel: IFreePanelModel) {
     console.log('updateFreePanel', freePanel)
     const freePanels = this._freePanels.value
     const index = freePanels.findIndex((fp) => fp.id === freePanel.id)
@@ -43,7 +43,7 @@ export class NoGridLayoutService {
     this._freePanels.next(freePanels)
   }
 
-  updateFreePanels(freePanels: FreePanelModel[]) {
+  updateFreePanels(freePanels: IFreePanelModel[]) {
     this._freePanels.next(freePanels)
   }
 

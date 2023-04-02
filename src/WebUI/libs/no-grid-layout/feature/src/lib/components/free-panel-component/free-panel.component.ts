@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, ElementRef, inject, Input, OnInit, ViewChild } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { CdkDrag, CdkDragDrop, CdkDragEnd, CdkDragMove, CdkDragStart, Point } from '@angular/cdk/drag-drop'
-import { FreePanelModel } from '../../free-panel.model'
+import { IFreePanelModel } from '../../free-panel.model'
 import { FreePanelDirective } from './free-panel.directive'
 import { NoGridLayoutService } from '../../no-grid-layout.service'
 import { distinctUntilKeyChanged, map, Observable, tap } from 'rxjs'
@@ -39,7 +39,7 @@ export class FreePanelComponent extends BaseService implements OnInit {
   @ViewChild(MatMenuTrigger, { static: true })
   matMenuTrigger!: MatMenuTrigger
   private _panelId!: string
-  freePanel$!: Observable<FreePanelModel | undefined>
+  freePanel$!: Observable<IFreePanelModel | undefined>
 
   get panelId() {
     return this._panelId
@@ -71,11 +71,11 @@ export class FreePanelComponent extends BaseService implements OnInit {
     console.log('ngOnInit', this)
   }
 
-  dragDropped(event: CdkDragDrop<FreePanelModel>) {
+  dragDropped(event: CdkDragDrop<IFreePanelModel>) {
     console.log('dragDropped', event)
   }
 
-  dragMoved(event: CdkDragMove<FreePanelModel>) {
+  dragMoved(event: CdkDragMove<IFreePanelModel>) {
     this.delayedLogger.log('dragMoved', event)
     const size = FreePanelUtil.size(event.source.data.rotation)
     this.location = this.mousePositionService.getMousePositionFromPageXY(event.event as MouseEvent, size)
@@ -89,7 +89,7 @@ export class FreePanelComponent extends BaseService implements OnInit {
     console.log('dragDropped', event)
   }
 
-  onRightClick(event: MouseEvent, freePanel: FreePanelModel) {
+  onRightClick(event: MouseEvent, freePanel: IFreePanelModel) {
     event.preventDefault()
     const { x, y } = this.mousePositionService.getMousePositionFromPageXY(event)
     this.menuTopLeftPosition.x = x + 10 + 'px'
@@ -98,13 +98,13 @@ export class FreePanelComponent extends BaseService implements OnInit {
     this.matMenuTrigger.openMenu()
   }
 
-  rotatePanel(freePanel: FreePanelModel) {
+  rotatePanel(freePanel: IFreePanelModel) {
     // freePanel.rotation = (freePanel.rotation + 90) % 360
     freePanel.rotation = FreePanelUtil.oppositeRotation(freePanel.rotation)
     this.noGridLayoutService.updateFreePanel(freePanel)
   }
 
-  deletePanel(freePanel: FreePanelModel) {
+  deletePanel(freePanel: IFreePanelModel) {
     this.noGridLayoutService.deleteFreePanel(freePanel)
   }
 }

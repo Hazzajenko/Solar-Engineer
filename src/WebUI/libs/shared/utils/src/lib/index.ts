@@ -1,4 +1,4 @@
-export * from './get-guid'
+export * from './new-guid'
 export * from './color-generator'
 export * from './not-empty'
 export * from './random-number'

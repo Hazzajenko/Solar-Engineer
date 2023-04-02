@@ -1,10 +1,11 @@
 import { BlockModel } from '../block/block.model'
-import { PanelOptions } from './panel.options'
 import { IEntity } from '../interfaces'
 import { IUserObject } from '../interfaces/i-user-object.interface'
-import { IPanel } from './i-panel.interface'
-import { getGuid } from '@shared/utils'
 import { ProjectModelType } from '../model'
+import { IPanel } from './i-panel.interface'
+import { PanelOptions } from './panel.options'
+import { newGuid } from '@shared/utils'
+
 
 export class PanelModel extends BlockModel implements IEntity, IUserObject, IPanel {
   /*, IBlockJson<PanelModel>*/
@@ -19,7 +20,7 @@ export class PanelModel extends BlockModel implements IEntity, IUserObject, IPan
 
   constructor(options: PanelOptions) {
     super(options)
-    this.id = getGuid()
+    this.id = newGuid()
     this.rotation = options.rotation
     this.projectId = options.projectId
     this.location = options.location
@@ -31,42 +32,42 @@ export class PanelModel extends BlockModel implements IEntity, IUserObject, IPan
   }
 
   /* static fromSerialized<PanelModel>(serialized: string) {
-     // const user: ReturnType<PanelModel.toObject> = JSON.parse(serialized)
-     // const user: ReturnType<PanelModel['toObject']> = JSON.parse(serialized)
-     const panel: PanelModel = JSON.parse(serialized)
+   // const user: ReturnType<PanelModel.toObject> = JSON.parse(serialized)
+   // const user: ReturnType<PanelModel['toObject']> = JSON.parse(serialized)
+   const panel: PanelModel = JSON.parse(serialized)
 
-     /!*   return new PanelModel({
-          // id: user.id,
-          stringId: panel.stringId,
-          rotation: panel.rotation,
-          panelConfigId: panel.panelConfigId,
-          projectId: panel.projectId,
-          location: panel.location,
-          createdById: panel.createdById,
-          // createdTime: user.createdTime,
-          // lastModifiedTime: user.lastModifiedTime,
-        })*!/
+   /!*   return new PanelModel({
+   // id: user.id,
+   stringId: panel.stringId,
+   rotation: panel.rotation,
+   panelConfigId: panel.panelConfigId,
+   projectId: panel.projectId,
+   location: panel.location,
+   createdById: panel.createdById,
+   // createdTime: user.createdTime,
+   // lastModifiedTime: user.lastModifiedTime,
+   })*!/
    }
 
    private toObject() {
-     return {
-       id: this.id,
-       stringId: this.stringId,
-       rotation: this.rotation,
-       panelConfigId: this.panelConfigId,
-       projectId: this.projectId,
-       location: this.location,
-       createdById: this.createdById,
-       createdTime: this.createdTime,
-       lastModifiedTime: this.lastModifiedTime,
-     }
+   return {
+   id: this.id,
+   stringId: this.stringId,
+   rotation: this.rotation,
+   panelConfigId: this.panelConfigId,
+   projectId: this.projectId,
+   location: this.location,
+   createdById: this.createdById,
+   createdTime: this.createdTime,
+   lastModifiedTime: this.lastModifiedTime,
+   }
    }
 
    serialize() {
-     return JSON.stringify(this.toObject())
+   return JSON.stringify(this.toObject())
    }*/
 
   /*  fromSerialized<PanelModel>(serialized: string): PanelModel {
-      // return undefined
-    }*/
+   // return undefined
+   }*/
 }

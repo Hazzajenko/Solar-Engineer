@@ -4,12 +4,14 @@
 <ng-container *ngIf="freePanel$ | async as freePanel">
   <!--      [id]="freePanel.id"-->
   <div
-    #panel
+    #panel="freePanel"
     [backgroundColor]="freePanel.backgroundColor"
     [rotation]="freePanel.rotation"
     id="{{ freePanel.id }}"
     bind-attr.panelId="freePanel.id"
     bind-attr.location="freePanel.location"
+    bind-attr.rotation="freePanel.rotation"
+    bind-attr.type="freePanel.type"
     (contextmenu)="onRightClick($event, freePanel)"
     cdkDrag
     [cdkDragData]="freePanel"

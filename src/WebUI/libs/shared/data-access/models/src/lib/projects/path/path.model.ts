@@ -1,5 +1,5 @@
-import { getGuid } from '@shared/utils'
 import { PathOptions } from '@shared/data-access/models'
+import { newGuid } from '@shared/utils'
 
 export class PathModel {
   id: string
@@ -11,7 +11,7 @@ export class PathModel {
   color: string
 
   constructor(options: PathOptions) {
-    this.id = options.id ? options.id : getGuid().toString()
+    this.id = options.id ? options.id : newGuid().toString()
     this.projectId = options.projectId
     this.stringId = options.stringId
     this.panelId = options.panelId

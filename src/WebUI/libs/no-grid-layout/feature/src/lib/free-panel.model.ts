@@ -1,5 +1,7 @@
 import { BackgroundColor } from './bg-color.builder'
+import { FreePanelBgStates } from './color-config'
 import { PanelRotationConfig } from './configs/free-panel.util'
+import { newGuid } from '@shared/utils'
 
 export const BorderColor = {
   black: 'border border-black',
@@ -97,15 +99,73 @@ export type BorderColorAndWidth = (typeof BorderColorAndWidth)[keyof typeof Bord
  export type BackgroundColorWithoutOpacity = `bg-${string}-${number}`
  export type BackgroundColorWithOpacity = `${BackgroundColorWithoutOpacity} bg-opacity-${number}`*/
 
-export interface FreePanelModel {
+/*export type FreePanelModel = {
+ id: string
+ location: { x: number; y: number }
+ backgroundColor: BackgroundColor
+ rotation: PanelRotationConfig
+ type: FreeBlockType
+ }*/
+export interface IFreePanelModel {
   id: string
   location: { x: number; y: number }
-  /*  border: string
-   borderColorAndWidth: BorderColorAndWidth*/
   backgroundColor: BackgroundColor
   rotation: PanelRotationConfig
+  type: FreeBlockType
 }
 
+export class FreePanelModel implements IFreePanelModel {
+  id: string
+  location: { x: number; y: number }
+  backgroundColor: BackgroundColor
+  rotation: PanelRotationConfig
+  type: FreeBlockType = FreeBlockType.Panel
+
+  constructor(
+    location: { x: number; y: number },
+    backgroundColor: BackgroundColor = FreePanelBgStates.Default,
+    rotation: PanelRotationConfig = PanelRotationConfig.Portrait,
+  ) {
+    this.id = newGuid()
+    this.location = location
+    this.backgroundColor = backgroundColor
+    this.rotation = rotation
+  }
+
+  update(changes: Partial<FreePanelModel>): FreePanelModel {
+    return Object.assign(this, changes)
+  }
+}
+
+// const pann = new FreePanelModel({ x: 0, y: 0 })
+// pann.update({ backgroundColor: FreePanelBgStates.Active })
+
+// pann.
+// const pann2 = FreePanelModel.update(pann, { backgroundColor: FreePanelBgStates.Active })
+
+// export const FreePanelModel = {
+
+// const panny = new FreePanelModel({ x: 0, y: 0})
+// panny.
+// FreePanelModel.update(panny, { backgroundColor: FreePanelBgStates.Active })
+// panny.update({ backgroundColor: FreePanelBgStates.Active })
+// panny.
+// const panny2 = FreePanelModel.create('1', { x: 0, y: 0 })
+export const FreeBlockType = {
+  Panel: 'panel',
+} as const
+
+export type FreeBlockType = (typeof FreeBlockType)[keyof typeof FreeBlockType]
+
+/*export const FreePanelModel = {
+ create: (id: string, location: { x: number; y: number }): FreePanelModel => ({
+ id,
+ location,
+ backgroundColor: BgGen.Pink(),
+ rotation: PanelRotationConfig.Portrait,
+ })
+ }
+ const pan = FreePanelModel.create('1', { x: 0, y: 0 })*/
 /*export const FreePanelModel = {
  create: (id: string, location: { x: number; y: number }): FreePanelModel => ({
  id,

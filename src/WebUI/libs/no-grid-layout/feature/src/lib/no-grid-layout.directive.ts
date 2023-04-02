@@ -11,12 +11,10 @@ import {
   ViewChildren,
 } from '@angular/core'
 import { NoGridLayoutService } from './no-grid-layout.service'
-import { getGuid } from '@shared/utils'
 import { FreeBlockRectModel } from './free-block-rect.model'
 import { PanelStylerService } from './panel-styler.service'
 import { CanvasService } from './canvas.service'
 import { FreePanelComponent, FreePanelModel } from '@no-grid-layout/feature'
-import { FreePanelBgStates } from './color-config'
 import { Logger } from 'tslog'
 import { FreePanelUtil } from './configs/free-panel.util'
 import { MousePositionService } from './mouse-position.service'
@@ -39,6 +37,19 @@ export class NoGridLayoutDirective implements OnInit {
   @ViewChildren('dynamic') panelMarkers!: QueryList<TemplateRef<any>>
   // @ContentChildren(FreePanelComponent) freePanelComponents!: QueryList<FreePanelComponent>
   @ContentChildren(DynamicComponentDirective) freePanelDirectives!: QueryList<DynamicComponentDirective>
+
+  @ContentChildren(DynamicComponentDirective) set dynamicComponents(value: QueryList<DynamicComponentDirective>) {
+    const componentElements: Element[] =
+      value
+        .toArray()
+        .map((item) =>
+          item.freePanelComponentComponentRef?.location.nativeElement as HTMLElement,
+        )
+        .map((item) => item.children[0])
+    console.log('componentElements', componentElements)
+    this.componentElementService.elements = componentElements
+  }
+
   private elementRef = inject(ElementRef<HTMLDivElement>)
   private renderer = inject(Renderer2)
   private noGridLayoutService = inject(NoGridLayoutService)
@@ -297,15 +308,16 @@ export class NoGridLayoutDirective implements OnInit {
     const locationX = x - size.width / 2
     const locationY = y - size.height / 2
 
-    const freePanel: FreePanelModel = {
-      id: getGuid(),
-      location: {
-        x: locationX,
-        y: locationY,
-      },
-      rotation: 'portrait',
-      backgroundColor: FreePanelBgStates.Default,
-    }
+    /*    const freePanel: IFreePanelModel = {
+     id: newGuid(),
+     location: {
+     x: locationX,
+     y: locationY,
+     },
+     rotation: 'portrait',
+     backgroundColor: FreePanelBgStates.Default,
+     }*/
+    const freePanel = new FreePanelModel({ x: locationX, y: locationY })
 
     this.noGridLayoutService.addFreePanel(freePanel)
     /*    console.log('.freePanelComponents', this.freePanelComponents.toArray())
@@ -314,14 +326,32 @@ export class NoGridLayoutDirective implements OnInit {
      console.log('.freePanelComponents', this.freePanelDirectives)
      console.log('.myDivs', this.myDivs)
      console.log('.myDivs', this.myDivs.toArray())*/
-    console.log('.panelComponents', this.panelComponents)
-    console.log('.panelComponents', this.panelComponents.toArray())
-    /*    console.log('.panelMarkers', this.panelMarkers)
-     console.log('.panelMarkers', this.panelMarkers.toArray())*/
-    console.log('.freePanelDirectives', this.freePanelDirectives)
-    console.log('.freePanelDirectives', this.freePanelDirectives.toArray())
-    console.log('.freePanelDirectives', this.freePanelDirectives.toArray()[0].freePanelComponentComponentRef?.location.nativeElement)
-    console.log('.freePanelDirectives', this.freePanelDirectives.toArray()[0].freePanelComponentComponentRef?.location.nativeElement)
+    /*    console.log('.panelComponents', this.panelComponents)
+     console.log('.panelComponents', this.panelComponents.toArray())
+     /!*    console.log('.panelMarkers', this.panelMarkers)
+     console.log('.panelMarkers', this.panelMarkers.toArray())*!/
+     console.log('.freePanelDirectives', this.freePanelDirectives)
+     console.log('.freePanelDirectives', this.freePanelDirectives.toArray())*/
+
+    // console.log('.freePanelDirectives', this.freePanelDirectives.toArray()[0].freePanelComponentComponentRef?.location.nativeElement)
+    const componentElements: HTMLElement[] = this.freePanelDirectives.toArray().map((item) => item.freePanelComponentComponentRef?.location.nativeElement)
+    console.log('componentElements', componentElements)
+    console.log('typeof componentElements', typeof componentElements)
+    // componentElements
+    const divElements = componentElements.map((item) => item.children[0])
+    console.log('divElements', divElements)
+    console.log('typeof divElements', typeof divElements)
+    const divElement = divElements.find((item) => item.getAttribute('panelId') === freePanel.id)
+    const divElement2 = divElements.find((item) => item.id === freePanel.id)
+    console.log('divElement', divElement)
+    console.log('divElement2', divElement2)
+    divElement?.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' })
+    console.log('typeof divElement', typeof divElement)
+    /*    console.log('.freePanelDirectives', this.freePanelDirectives.toArray()[0].freePanelComponentComponentRef?.location.nativeElement.children)
+     const htmlCollectionArray: HTMLCollection[] = Array.from(this.freePanelDirectives.toArray()[0].freePanelComponentComponentRef?.location.nativeElement.children)
+     console.log('.freePanelDirectives', htmlCollectionArray)
+     console.log('.freePanelDirectives', htmlCollectionArray[0])
+     console.log('.freePanelDirectives', htmlCollectionArray.find((item) => item.item(0)?.nodeName === 'DIV'))*/
     return
   }
 
@@ -487,11 +517,11 @@ export class NoGridLayoutDirective implements OnInit {
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
       return
     }
-    const panelComponent = this.componentElementService.getFreePanelComponentsById(this.selectedPanelId)
-    console.log('panelComponent', panelComponent)
+    /*    const panelComponent = this.componentElementService.getFreePanelComponentsById(this.selectedPanelId)
+     console.log('panelComponent', panelComponent)*/
 
-    const panelComponentElement = this.componentElementService.getFreePanelComponentElementById(this.selectedPanelId)
-    console.log('panelComponentElement', panelComponentElement)
+    /*    const panelComponentElement = this.componentElementService.getFreePanelComponentElementById(this.selectedPanelId)
+     console.log('panelComponentElement', panelComponentElement)*/
 
     const panelDimensions = this.canvasService.getBlockRect(this.selectedPanelId)
     if (!panelDimensions) {
@@ -511,9 +541,11 @@ export class NoGridLayoutDirective implements OnInit {
     this.ctx.fillStyle = 'red'
     this.ctx.font = '15px Arial'
 
-    this.canvasService.drawLineForAboveBlock(blockRectModel)
-    this.canvasService.drawLineForBelowBlock(blockRectModel)
-    this.canvasService.drawLineForLeftBlock(blockRectModel)
-    this.canvasService.drawLineForRightBlock(blockRectModel)
+    this.canvasService.drawLinesForBlocks(blockRectModel)
+
+    /*    this.canvasService.drawLineForAboveBlock(blockRectModel)
+     this.canvasService.drawLineForBelowBlock(blockRectModel)
+     this.canvasService.drawLineForLeftBlock(blockRectModel)
+     this.canvasService.drawLineForRightBlock(blockRectModel)*/
   }
 }

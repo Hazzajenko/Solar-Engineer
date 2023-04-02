@@ -13,7 +13,7 @@ import {
   ProjectItemType,
   ProjectSignalrJsonRequest,
 } from '@shared/data-access/models'
-import { getGuid } from '@shared/utils'
+import { newGuid } from '@shared/utils'
 import { BaseService } from '@shared/logger'
 
 @Injectable()
@@ -25,8 +25,8 @@ export class LinksEffects extends BaseService {
   private signalrEventsService = inject(SignalrEventsService)
 
   /*  constructor(logger: LoggerService) {
-      super(logger)
-    }*/
+   super(logger)
+   }*/
 
   loadLinksSuccess$ = createEffect(() =>
     this.actions$.pipe(
@@ -35,17 +35,17 @@ export class LinksEffects extends BaseService {
     ),
   )
   /*
-    initLinks$ = createEffect(() =>
-      this.actions$.pipe(
-        ofType(ProjectsActions.initSelectProject),
-        switchMap(({ projectId }) =>
-          this.linksService.getLinksByProjectId(projectId).pipe(
-            map((links) => LinksActions.loadLinksSuccess({ links })),
-            catchError((error) => of(LinksActions.loadLinksFailure({ error: error.message }))),
-          ),
-        ),
-      ),
-    )*/
+   initLinks$ = createEffect(() =>
+   this.actions$.pipe(
+   ofType(ProjectsActions.initSelectProject),
+   switchMap(({ projectId }) =>
+   this.linksService.getLinksByProjectId(projectId).pipe(
+   map((links) => LinksActions.loadLinksSuccess({ links })),
+   catchError((error) => of(LinksActions.loadLinksFailure({ error: error.message }))),
+   ),
+   ),
+   ),
+   )*/
   initLocalLinks$ = createEffect(() =>
     this.actions$.pipe(
       ofType(ProjectsActions.initLocalProject),
@@ -74,7 +74,7 @@ export class LinksEffects extends BaseService {
             action,
             model,
             projectId: project.id,
-            requestId: getGuid(),
+            requestId: newGuid(),
             data: JSON.stringify(link),
           }
           return projectSignalrEvent
@@ -85,25 +85,25 @@ export class LinksEffects extends BaseService {
   )
 
   /*
-    addLinkHttp$ = createEffect(
-      () =>
-        this.actions$.pipe(
-          ofType(LinksActions.addLink),
-          switchMap(({ link }) =>
-            this.projectsStore.select.selectIsWebProject$.pipe(
-              switchMap((isWeb) => {
-                if (isWeb) {
-                  return this.linksService.addLink(link)
-                }
-                // update local state
-                return of(undefined)
-              }),
-            ),
-          ),
-        ),
-      { dispatch: false },
-    )
-  */
+   addLinkHttp$ = createEffect(
+   () =>
+   this.actions$.pipe(
+   ofType(LinksActions.addLink),
+   switchMap(({ link }) =>
+   this.projectsStore.select.selectIsWebProject$.pipe(
+   switchMap((isWeb) => {
+   if (isWeb) {
+   return this.linksService.addLink(link)
+   }
+   // update local state
+   return of(undefined)
+   }),
+   ),
+   ),
+   ),
+   { dispatch: false },
+   )
+   */
 
   private linksPathService = inject(LinksPathService)
 

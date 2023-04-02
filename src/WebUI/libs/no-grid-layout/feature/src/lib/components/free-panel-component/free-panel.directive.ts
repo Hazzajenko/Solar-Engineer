@@ -16,6 +16,7 @@ import { FreePanelUtil, PanelRotationConfig } from '../../configs/free-panel.uti
 
 @Directive({
   selector: '[appFreePanelDirective]',
+  exportAs: 'freePanel',
   standalone: true,
 })
 export class FreePanelDirective implements OnInit {

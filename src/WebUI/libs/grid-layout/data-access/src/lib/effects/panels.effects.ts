@@ -7,7 +7,7 @@ import { ProjectsActions, ProjectsStoreService, SignalrEventsService } from '@pr
 import { combineLatestWith, of, switchMap, tap } from 'rxjs'
 import { map } from 'rxjs/operators'
 import { BaseService } from '@shared/logger'
-import { getGuid } from '@shared/utils'
+import { newGuid } from '@shared/utils'
 import {
   PROJECT_ITEM_TYPE,
   PROJECT_SIGNALR_TYPE,
@@ -37,26 +37,26 @@ export class PanelsEffects extends BaseService {
   private signalrEventsService = inject(SignalrEventsService)
 
   /*  constructor(logger: LoggerService) {
-      super(logger)
-    }*/
+   super(logger)
+   }*/
 
   /*  initPanels$ = createEffect(
-      () =>
-        this.actions$.pipe(
-          ofType(ProjectsActions.initSelectProject),
-          switchMap(({ projectId }) =>
-            this.panelsService.getPanelsByProjectId(projectId).pipe(
-              tapResponse(
-                (panels: PanelModel[]) =>
-                  this.store.dispatch(PanelsActions.loadPanelsSuccess({ panels })),
-                (error: Error) =>
-                  this.store.dispatch(PanelsActions.loadPanelsFailure({ error: error.message })),
-              ),
-            ),
-          ),
-        ),
-      { dispatch: false },
-    )*/
+   () =>
+   this.actions$.pipe(
+   ofType(ProjectsActions.initSelectProject),
+   switchMap(({ projectId }) =>
+   this.panelsService.getPanelsByProjectId(projectId).pipe(
+   tapResponse(
+   (panels: PanelModel[]) =>
+   this.store.dispatch(PanelsActions.loadPanelsSuccess({ panels })),
+   (error: Error) =>
+   this.store.dispatch(PanelsActions.loadPanelsFailure({ error: error.message })),
+   ),
+   ),
+   ),
+   ),
+   { dispatch: false },
+   )*/
   loadPanelsSuccess$ = createEffect(() =>
     this.actions$.pipe(
       ofType(PanelsActions.loadPanelsSuccess),
@@ -92,7 +92,7 @@ export class PanelsEffects extends BaseService {
             action,
             model,
             projectId: project.id,
-            requestId: getGuid(),
+            requestId: newGuid(),
             data: JSON.stringify(panel),
           }
           return projectSignalrEvent
@@ -103,38 +103,38 @@ export class PanelsEffects extends BaseService {
   )
 
   /*  addPanelBackend$ = createEffect(
-      () =>
-        this.actions$.pipe(
-          ofType(PanelsActions.addPanel),
-          switchMap(({ panel }) =>
-            this.projectsStore.select.selectIsWebProject$.pipe(
-              switchMap((isWeb) => {
-                const isSignalr = true
-                if (isSignalr) {
-                  // const panelConfigId = panel.panelConfigId ? panel.panelConfigId : undefined
-                  const request: CreatePanelRequest = {
-                    id: panel.id,
-                    projectId: panel.projectId,
-                    stringId: panel.stringId,
-                    location: panel.location,
-                    panelConfigId: 'undefined',
-                    rotation: panel.rotation,
-                  }
-                  console.log(request)
-                  this.panelsSignalrService.addPanelSignalr(request)
-                  return of(undefined)
-                }
-                if (isWeb) {
-                  return this.panelsService.addPanel(panel)
-                }
-                // update local state
-                return of(undefined)
-              }),
-            ),
-          ),
-        ),
-      { dispatch: false },
-    )*/
+   () =>
+   this.actions$.pipe(
+   ofType(PanelsActions.addPanel),
+   switchMap(({ panel }) =>
+   this.projectsStore.select.selectIsWebProject$.pipe(
+   switchMap((isWeb) => {
+   const isSignalr = true
+   if (isSignalr) {
+   // const panelConfigId = panel.panelConfigId ? panel.panelConfigId : undefined
+   const request: CreatePanelRequest = {
+   id: panel.id,
+   projectId: panel.projectId,
+   stringId: panel.stringId,
+   location: panel.location,
+   panelConfigId: 'undefined',
+   rotation: panel.rotation,
+   }
+   console.log(request)
+   this.panelsSignalrService.addPanelSignalr(request)
+   return of(undefined)
+   }
+   if (isWeb) {
+   return this.panelsService.addPanel(panel)
+   }
+   // update local state
+   return of(undefined)
+   }),
+   ),
+   ),
+   ),
+   { dispatch: false },
+   )*/
 
   addManyPanels$ = createEffect(() =>
     this.actions$.pipe(
@@ -164,7 +164,7 @@ export class PanelsEffects extends BaseService {
             action,
             model,
             projectId: project.id,
-            requestId: getGuid(),
+            requestId: newGuid(),
             data: JSON.stringify(createManyPanelsRequest),
           }
           return projectSignalrEvent
@@ -175,24 +175,24 @@ export class PanelsEffects extends BaseService {
   )
 
   /*  addManyPanelsHttp$ = createEffect(
-      () =>
-        this.actions$.pipe(
-          ofType(PanelsActions.addManyPanels),
-          switchMap(({ panels }) =>
-            this.projectsStore.select.isWebWithProject$.pipe(
-              switchMap(([isWeb, project]) => {
-                if (!project) return of(undefined)
-                if (isWeb) {
-                  return this.panelsService.addManyPanels(panels, project.id)
-                }
-                // update local state
-                return of(undefined)
-              }),
-            ),
-          ),
-        ),
-      { dispatch: false },
-    )*/
+   () =>
+   this.actions$.pipe(
+   ofType(PanelsActions.addManyPanels),
+   switchMap(({ panels }) =>
+   this.projectsStore.select.isWebWithProject$.pipe(
+   switchMap(([isWeb, project]) => {
+   if (!project) return of(undefined)
+   if (isWeb) {
+   return this.panelsService.addManyPanels(panels, project.id)
+   }
+   // update local state
+   return of(undefined)
+   }),
+   ),
+   ),
+   ),
+   { dispatch: false },
+   )*/
 
   updateOnePanel$ = createEffect(() =>
     this.actions$.pipe(
@@ -218,7 +218,7 @@ export class PanelsEffects extends BaseService {
             action,
             model,
             projectId: project.id,
-            requestId: getGuid(),
+            requestId: newGuid(),
             data: JSON.stringify(update),
           }
           return projectSignalrEvent
@@ -229,24 +229,24 @@ export class PanelsEffects extends BaseService {
   )
 
   /*  updatePanelHttp$ = createEffect(
-      () =>
-        this.actions$.pipe(
-          ofType(PanelsActions.updatePanel),
-          switchMap(({ update }) =>
-            this.projectsStore.select.isWebWithProject$.pipe(
-              switchMap(([isWeb, project]) => {
-                if (!project) return of(undefined)
-                if (isWeb) {
-                  return this.panelsService.updatePanel(update, project.id)
-                }
-                // update local state
-                return of(undefined)
-              }),
-            ),
-          ),
-        ),
-      { dispatch: false },
-    )*/
+   () =>
+   this.actions$.pipe(
+   ofType(PanelsActions.updatePanel),
+   switchMap(({ update }) =>
+   this.projectsStore.select.isWebWithProject$.pipe(
+   switchMap(([isWeb, project]) => {
+   if (!project) return of(undefined)
+   if (isWeb) {
+   return this.panelsService.updatePanel(update, project.id)
+   }
+   // update local state
+   return of(undefined)
+   }),
+   ),
+   ),
+   ),
+   { dispatch: false },
+   )*/
 
   updateManyPanels$ = createEffect(() =>
     this.actions$.pipe(
@@ -280,40 +280,40 @@ export class PanelsEffects extends BaseService {
           return PanelsActions.updateManyPanelsWithoutSignalr({ updates })
           // project = this.throwIfNull(project, 'project is null')
           /*      const action: ProjectEventAction = PROJECT_SIGNALR_TYPE.UPDATE_MANY
-                  const model: ProjectItemType = PROJECT_ITEM_TYPE.PANEL
-                  const projectSignalrEvent: ProjectSignalrJsonRequest = {
-                    action,
-                    model,
-                    projectId: project.id,
-                    requestId: getGuid(),
-                    data: JSON.stringify(updates),
-                  }
-                  return projectSignalrEvent*/
+           const model: ProjectItemType = PROJECT_ITEM_TYPE.PANEL
+           const projectSignalrEvent: ProjectSignalrJsonRequest = {
+           action,
+           model,
+           projectId: project.id,
+           requestId: getGuid(),
+           data: JSON.stringify(updates),
+           }
+           return projectSignalrEvent*/
         }),
       ),
     { dispatch: false },
   )
 
   /*  updateManyPanelsHttp$ = createEffect(
-      () =>
-        this.actions$.pipe(
-          ofType(PanelsActions.updateManyPanels),
-          switchMap(({ updates }) =>
-            this.projectsStore.select.selectIsWebProject$.pipe(
-              combineLatestWith(this.projectsStore.select.projectFromRoute$),
-              switchMap(([isWeb, project]) => {
-                if (!project) return of(undefined)
-                if (isWeb) {
-                  return this.panelsService.updateManyPanels(updates, project.id)
-                }
-                // update local state
-                return of(undefined)
-              }),
-            ),
-          ),
-        ),
-      { dispatch: false },
-    )*/
+   () =>
+   this.actions$.pipe(
+   ofType(PanelsActions.updateManyPanels),
+   switchMap(({ updates }) =>
+   this.projectsStore.select.selectIsWebProject$.pipe(
+   combineLatestWith(this.projectsStore.select.projectFromRoute$),
+   switchMap(([isWeb, project]) => {
+   if (!project) return of(undefined)
+   if (isWeb) {
+   return this.panelsService.updateManyPanels(updates, project.id)
+   }
+   // update local state
+   return of(undefined)
+   }),
+   ),
+   ),
+   ),
+   { dispatch: false },
+   )*/
 
   deletePanel$ = createEffect(() =>
     this.actions$.pipe(
@@ -346,7 +346,7 @@ export class PanelsEffects extends BaseService {
             action,
             model,
             projectId: project.id,
-            requestId: getGuid(),
+            requestId: newGuid(),
             data: JSON.stringify(deleteRequest),
           }
           return projectSignalrEvent
@@ -357,24 +357,24 @@ export class PanelsEffects extends BaseService {
   )
 
   /*  deletePanelHttp$ = createEffect(
-      () =>
-        this.actions$.pipe(
-          ofType(PanelsActions.deletePanel),
-          switchMap(({ panelId }) =>
-            this.projectsStore.select.isWebWithProject$.pipe(
-              switchMap(([isWeb, project]) => {
-                if (!project) return of(undefined)
-                if (isWeb) {
-                  return this.panelsService.deletePanel(panelId, project.id)
-                }
-                // update local state
-                return of(undefined)
-              }),
-            ),
-          ),
-        ),
-      { dispatch: false },
-    )*/
+   () =>
+   this.actions$.pipe(
+   ofType(PanelsActions.deletePanel),
+   switchMap(({ panelId }) =>
+   this.projectsStore.select.isWebWithProject$.pipe(
+   switchMap(([isWeb, project]) => {
+   if (!project) return of(undefined)
+   if (isWeb) {
+   return this.panelsService.deletePanel(panelId, project.id)
+   }
+   // update local state
+   return of(undefined)
+   }),
+   ),
+   ),
+   ),
+   { dispatch: false },
+   )*/
 
   deleteManyPanels$ = createEffect(() =>
     this.actions$.pipe(
@@ -410,7 +410,7 @@ export class PanelsEffects extends BaseService {
             action,
             model,
             projectId: project.id,
-            requestId: getGuid(),
+            requestId: newGuid(),
             data: JSON.stringify(deleteManyRequest),
           }
           return projectSignalrEvent
@@ -421,22 +421,22 @@ export class PanelsEffects extends BaseService {
   )
 
   /* deleteManyPanelsHttp$ = createEffect(
-     () =>
-       this.actions$.pipe(
-         ofType(PanelsActions.deleteManyPanels),
-         switchMap(({ panelIds }) =>
-           this.projectsStore.select.isWebWithProject$.pipe(
-             switchMap(([isWeb, project]) => {
-               if (!project) return of(undefined)
-               if (isWeb) {
-                 return this.panelsService.deleteManyPanels(panelIds, project.id)
-               }
-               // update local state
-               return of(undefined)
-             }),
-           ),
-         ),
-       ),
-     { dispatch: false },
+   () =>
+   this.actions$.pipe(
+   ofType(PanelsActions.deleteManyPanels),
+   switchMap(({ panelIds }) =>
+   this.projectsStore.select.isWebWithProject$.pipe(
+   switchMap(([isWeb, project]) => {
+   if (!project) return of(undefined)
+   if (isWeb) {
+   return this.panelsService.deleteManyPanels(panelIds, project.id)
+   }
+   // update local state
+   return of(undefined)
+   }),
+   ),
+   ),
+   ),
+   { dispatch: false },
    )*/
 }

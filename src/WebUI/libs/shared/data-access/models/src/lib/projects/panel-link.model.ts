@@ -1,6 +1,6 @@
-import { getGuid } from '@shared/utils'
 import { EntityModel, EntityOptions } from './entity.model'
 import { ProjectModelType } from './model'
+import { newGuid } from '@shared/utils'
 
 export interface LinkOptions extends EntityOptions {
   stringId: string
@@ -16,7 +16,7 @@ export class PanelLinkModel extends EntityModel {
 
   constructor(options: LinkOptions) {
     super(options)
-    this.id = getGuid().toString()
+    this.id = newGuid().toString()
     this.projectId = options.projectId
     this.type = ProjectModelType.PanelLink
     // this.type = ENTITY_TYPE.PANEL_LINK

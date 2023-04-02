@@ -1,9 +1,9 @@
-import { getGuid } from '@shared/utils'
 import {
   ProjectEventAction,
   ProjectItemType,
   ProjectsSignalrRequest,
 } from '@shared/data-access/models'
+import { newGuid } from '@shared/utils'
 
 export class SignalrRequest<TRequest extends ProjectsSignalrRequest> {
   requestId: string
@@ -13,7 +13,7 @@ export class SignalrRequest<TRequest extends ProjectsSignalrRequest> {
   request: TRequest
 
   constructor(model: ProjectItemType, event: ProjectEventAction, request: TRequest) {
-    this.requestId = getGuid()
+    this.requestId = newGuid()
     this.model = model
     this.event = event
     this.request = request
