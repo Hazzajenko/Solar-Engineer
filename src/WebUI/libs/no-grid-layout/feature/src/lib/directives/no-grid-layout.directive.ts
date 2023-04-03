@@ -1,136 +1,129 @@
-import { ContentChildren, Directive, ElementRef, inject, NgZone, OnInit, QueryList, Renderer2 } from '@angular/core'
-import { CanvasService, ClickService, ComponentElementService, MousePositionService, ScreenMoveService } from '@no-grid-layout/utils'
-import { FreeBlockRectModel, FreeBlockType, FreePanelModel, FreePanelUtil, isFreeBlockType } from '@no-grid-layout/shared'
-import { Point } from '@angular/cdk/drag-drop'
+import { ContentChildren, Directive, ElementRef, inject, OnInit, QueryList } from '@angular/core'
+import { CANVAS, FreeBlockRectModel } from '@no-grid-layout/shared'
 import { DynamicComponentDirective } from './dynamic-free-panel.directive'
-import { FreePanelsService, SelectedService } from '@no-grid-layout/data-access'
-import { MouseDownEvent, MouseMoveEvent, MouseUpEvent, ScrollWheelEvent } from '@shared/data-access/models'
+import { MouseDownEvent, MouseMoveEvent, MouseUpEvent } from '@shared/data-access/models'
+import { InitCanvas } from './canvas.config'
+import { NoGridLayoutService } from './no-grid-layout.service'
 
 @Directive({
   selector:   '[appNoGridLayoutDirective]',
   standalone: true,
 })
 export class NoGridLayoutDirective
+  extends NoGridLayoutService
   implements OnInit {
+
   private _element = inject(ElementRef<HTMLDivElement>).nativeElement
-  private _screenMoveService = inject(ScreenMoveService)
-  private _renderer = inject(Renderer2)
-  private _freePanelsService = inject(FreePanelsService)
-  private _clickService = inject(ClickService)
-  private clickTimeout: NodeJS.Timeout | undefined
-  private canvas!: HTMLCanvasElement
-  private ctx!: CanvasRenderingContext2D
-  private canvasService = inject(CanvasService)
-  private _mousePositionService = inject(MousePositionService)
-  private componentElementService = inject(ComponentElementService)
-  private _selectedService = inject(SelectedService)
-  private ngZone: NgZone = inject(NgZone)
+  private _childElement!: HTMLDivElement
 
-  // private _freePanelsService = inject(NoGridLayoutService)
+  height = 0
+  width = 0
+  negativeHeight = 0
+  negativeWidth = 0
+  toggleCheck = false
 
-  private _dynamicComponents!: QueryList<DynamicComponentDirective>
   @ContentChildren(DynamicComponentDirective) set dynamicComponents(value: QueryList<DynamicComponentDirective>) {
-    this.componentElementService.elements =
+    this._componentElementService.elements =
       value
         .toArray()
         .map((item) =>
           item.freePanelComponentComponentRef?.location.nativeElement as HTMLElement,
         )
         .map((item) => item.children[0])
-    this._dynamicComponents = value
   }
-
-  get dynamicComponents() {
-    return this._dynamicComponents
-  }
-
-  get scaleOptions() {
-    return {
-      posX:  this.posX,
-      posY:  this.posY,
-      scale: this.scale,
-    }
-  }
-
-  set scaleOptions(options: {
-    posX: number;
-    posY: number;
-    scale: number
-  }) {
-    this.posX = options.posX
-    this.posY = options.posY
-    this.scale = options.scale
-  }
-
-  selectedPanelId?: string
-  clickedPanelId?: string
-  pageX = 0
-  pageY = 0
-
-  get pagePoint() {
-    return {
-      x: this.pageX,
-      y: this.pageY,
-    }
-  }
-
-  runEventsOutsideAngular = false
-  isDragging = false
-  isCtrlDragging = false
-  isShiftDragging = false
-  isAltDragging = false
-  animationId?: number
-  fillStyle = '#7585d8'
-  private _scale = 1
-  get scale() {
-    return this._scale
-  }
-
-  set scale(value) {
-    this._scale = value
-    this._mousePositionService.scale = value
-  }
-
-  get size() {
-    return {
-      width:  this.width,
-      height: this.height,
-    }
-  }
-
-  posX = 0
-  posY = 0
-  startPoint?: Point
-  canvasStartPoint?: Point
-  height!: number
-  negativeHeight!: number
-  width!: number
-  negativeWidth!: number
-  maxScale = 2
-  minScale = 1
-  speed = 0.1
 
   ngOnInit() {
     if (this.runEventsOutsideAngular) {
-      this.ngZone.runOutsideAngular(() => {
+      this._ngZone.runOutsideAngular(() => {
         this.setupMouseEventListeners()
       })
     } else {
       this.setupMouseEventListeners()
     }
     this.setupCanvas()
+    this.distributeElement()
     this.setupElements()
+    const childDiv = this._element.children[0]
+    console.log('this._element', this._element)
+    console.log('this._element.children', this._element.children)
+    console.log('this._canvas', this.canvas)
+    console.log('childDiv', childDiv)
+    this._childElement = childDiv
+    this.setupChildElement()
+    /*    this._renderer.setStyle(childDiv, 'position', 'absolute')
+     this._renderer.setStyle(childDiv, 'width', '100%')
+     this._renderer.setStyle(childDiv, 'height', '100%')*/
+  }
+
+  private distributeElement() {
     this._mousePositionService.gridLayoutElementRef = this._element
     this._screenMoveService.gridLayoutElement = this._element
-    // this._screenMoveService.initElementRef(this._element)
+  }
 
-    console.log('grid', this._element)
-    console.log('canvas', this.canvas)
-    // this._mousePositionService.initGridLayoutElementRef(this._element)
-    // this.componentElementService.freePanelComponents = this._freePanelComponents
-    // console.log('this.componentElementService.freePanelComponents', this.componentElementService.freePanelComponents)
-    /*    console.log('.freePanelComponents', this.freePanelComponents.toArray())*/
+  private setupCanvas() {
+    const canvasEle = this._renderer.createElement(CANVAS)
+    this._renderer.appendChild(this._element, canvasEle)
+    const { canvas, ctx, left, top } = InitCanvas(canvasEle)
+    this.canvas = canvas
+    this.ctx = ctx
+    this._renderer.setStyle(this.canvas, 'left', `${left}px`)
+    this._renderer.setStyle(this.canvas, 'top', `${top}px`)
+    // this._canvasService.setCanvas(this._canvas, this.ctx)
+  }
 
+  private setupChildElement() {
+    // this._renderer.setStyle(this._childElement, 'position', 'absolute')
+    // this._renderer.setStyle(this._childElement, 'left', '0px')
+    // this._renderer.setStyle(this._childElement, 'top', '0px')
+    // this._renderer.setStyle(this._childElement, 'width', `${window.innerWidth}px`)
+    // this._renderer.setStyle(this._childElement, 'height', `${window.innerHeight}px`)
+    /*    this._renderer.setStyle(this._childElement, 'width', '100%')
+     this._renderer.setStyle(this._childElement, 'height', '100%')*/
+    // canvas.width = window.innerWidth
+    // canvas.height = window.innerHeight
+
+    // this._renderer.setStyle(this._childElement, 'width', '100%')
+    // this._renderer.setStyle(this._childElement, 'height', '100%')
+    const blockHeight = 32
+    const blockWidth = 32
+    const rows = Math.floor((window.innerHeight - 100) / blockHeight)
+    const cols = Math.floor((window.innerWidth - 100) / blockWidth)
+    const layoutHeight = rows * blockHeight
+    const layoutWidth = cols * blockWidth
+    /*    console.log('layoutHeight', layoutHeight)
+     console.log('layoutWidth', layoutWidth)*/
+    this._renderer.setStyle(this._childElement, 'width', `${layoutWidth}px`)
+    this._renderer.setStyle(this._childElement, 'height', `${layoutHeight}px`)
+    /*    this.layoutWidthString = `${this.layoutWidth}px`
+     this.layoutHeightString = `${this.layoutHeight}px`
+     this.backgroundHeight = `${this.layoutHeight + 1}px`
+     this.backgroundWidth = `${this.layoutWidth + 1}px`*/
+    /*    this.layoutWidthString = this.screenSizeToPxString(this.layoutWidth)
+     this.layoutHeightString = this.screenSizeToPxString(this.layoutHeight)*/
+    /*    const boundingRect = this._childElement.getBoundingClientRect()
+     console.log('boundingRect', boundingRect)
+     const offsetWidth = this._childElement.style.width
+     console.log('offsetWidth', offsetWidth)
+     const widthToNumber = Number(offsetWidth.split('p')[0])
+     console.log('widthToNumber', widthToNumber)
+     const offsetHeight = this._childElement.style.height
+     console.log('offsetHeight', offsetHeight)
+     const heightToNumber = Number(offsetHeight.split('p')[0])
+     console.log('heightToNumber', heightToNumber)*/
+    // const left = (window.innerWidth - layoutWidth) / 2
+    // const top = (window.innerHeight - layoutHeight) / 2
+    // const left = window.innerWidth - (layoutWidth / 2)
+    // const top = window.innerHeight - (layoutHeight / 2)
+    // const innerWidth = window.innerWidth
+    /*    console.log('innerWidth', innerWidth)
+     console.log('layoutWidth', layoutWidth)
+     console.log('difference', innerWidth - layoutWidth)*/
+    const left = (window.innerWidth - layoutWidth) / 2
+    const top = (window.innerHeight - layoutHeight) / 2
+    /*    console.log('left', left)
+     console.log('top', top)*/
+    this._renderer.setStyle(this._childElement, 'left', `${left}px`)
+    this._renderer.setStyle(this._childElement, 'top', `${top}px`)
   }
 
   private setupElements() {
@@ -138,33 +131,6 @@ export class NoGridLayoutDirective
     this.negativeHeight = Number(this._element.style.height.split('p')[0]) * -1
     this.width = Number(this._element.style.width.split('p')[0])
     this.negativeWidth = Number(this._element.style.width.split('p')[0]) * -1
-  }
-
-  private setupCanvas() {
-    this.canvas = this._renderer.createElement('canvas')
-    this._renderer.appendChild(this._element, this.canvas)
-    const ctx = this.canvas.getContext('2d')
-    if (!ctx) {
-      throw new Error('Could not get canvas context')
-    }
-    this.ctx = ctx
-    this.canvas.style.position = 'absolute'
-    this.canvas.style.top = '0'
-    this.canvas.style.left = '0'
-    this.canvas.style.zIndex = '100'
-    this.canvas.style.pointerEvents = 'none'
-    this.canvas.width = this._element.offsetWidth
-    this.canvas.height = this._element.offsetHeight
-    const offsetWidth = this._element.offsetWidth
-    const offsetHeight = this._element.offsetHeight
-    const left = (window.innerWidth - offsetWidth) / 2
-    this._renderer.setStyle(this.canvas, 'left', `${left}px`)
-    const top = (window.innerHeight - offsetHeight) / 2
-    this._renderer.setStyle(this.canvas, 'top', `${top}px`)
-    this.ctx.fillStyle = 'rgba(0, 0, 0, 0.1)'
-    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height)
-    // this.canvasService.setCanvas(this.canvas, this.ctx)
-    this.canvasService.setCanvas(this.canvas, this.ctx)
   }
 
   private setupMouseEventListeners() {
@@ -183,38 +149,49 @@ export class NoGridLayoutDirective
       event.preventDefault()
       this.onMouseMoveHandler(event)
     })
-    this._renderer.listen(this._element, ScrollWheelEvent, (event: WheelEvent) => {
-      event.stopPropagation()
-      event.preventDefault()
-      this.onScrollHandler(event)
-    })
+    /*    this._renderer.listen(this._element, ScrollWheelEvent, (event: WheelEvent) => {
+     event.stopPropagation()
+     event.preventDefault()
+     this.onScrollHandler(event)
+     })*/
   }
 
   private onMouseUpHandler(event: MouseEvent) {
-    // console.log('mouseup', event)
     if (this.animationId) {
       cancelAnimationFrame(this.animationId)
     }
     this.selectedPanelId = undefined
     this.isDragging = false
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+    // this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+    this.clearCtxRect()
     if (this.clickTimeout) {
       clearTimeout(this.clickTimeout)
-      // console.log('Button clicked')
       this._clickService.handleClickEvent(event)
-      // this.handleClickEvent(event)
-    } else {
-      console.log('Button dragged')
     }
     return
   }
 
   private onMouseDownHandler(event: MouseEvent) {
     this.isDragging = true
+    /**
+     * If the user is holding down the ctrl key, then we want to start a drag
+     */
     if (event.ctrlKey || event.button === 1) {
-      this.startPoint = this._mousePositionService.getMousePositionFromPageXY(event)
+      // this.startPoint = this._mousePositionService.getMousePositionFromPageXYV2(event)
+      const rect = this._childElement.getBoundingClientRect()
+      const x = (event.pageX - rect.left) / this.scale
+      const y = (event.pageY - rect.top) / this.scale
+      this.startPoint = { x, y }
+      this.toggleCheck = true
+      /*
+       this.startPoint = {
+       x: event.pageX,
+       y: event.pageY,
+       }*/
       this.isDragging = false
       this.isCtrlDragging = true
+      // TODO add middle click
+
       /*     if (event.button === 1) {
        this.middleClickDown = true
        }*/
@@ -222,8 +199,8 @@ export class NoGridLayoutDirective
     }
     if (event.altKey) {
       const rect = this.canvas.getBoundingClientRect()
-      const x = (event.pageX - rect.left) / this._scale
-      const y = (event.pageY - rect.top) / this._scale
+      const x = (event.pageX - rect.left) / this.scale
+      const y = (event.pageY - rect.top) / this.scale
       this.canvasStartPoint = { x, y }
       this.isDragging = false
       this.isAltDragging = true
@@ -240,48 +217,6 @@ export class NoGridLayoutDirective
     return
   }
 
-  private handleClickEvent(event: MouseEvent) {
-    const type = (event.composedPath()[0] as HTMLDivElement).getAttribute('type') as FreeBlockType | undefined
-    if (type && isFreeBlockType(type)) {
-      switch (type) {
-        case FreeBlockType.Panel:
-          this.handleClickPanelEvent(event)
-          break
-        default:
-          console.error('unknown type', type)
-          break
-      }
-      return
-    }
-
-    if (event.ctrlKey) return
-
-    const mouse = this._mousePositionService.getMousePositionFromPageXY(event)
-
-    const size = FreePanelUtil.size('portrait')
-    const locationX = mouse.x - size.width / 2
-    const locationY = mouse.y - size.height / 2
-
-    const freePanel = new FreePanelModel({
-      x: locationX,
-      y: locationY,
-    })
-
-    this._freePanelsService.addFreePanel(freePanel)
-    return
-  }
-
-  private handleClickPanelEvent(event: MouseEvent) {
-    const panelId = (event.composedPath()[0] as HTMLDivElement).getAttribute('panelId')
-    if (!panelId) {
-      console.error('panelId not found')
-      return
-    }
-    this.clickedPanelId = panelId
-    this._selectedService.setSelected(panelId)
-    return
-  }
-
   private onMouseMoveHandler(event: MouseEvent) {
     if (this.isCtrlDragging) {
       if (!event.ctrlKey) {
@@ -289,102 +224,182 @@ export class NoGridLayoutDirective
         this.startPoint = undefined
         return
       }
+      // this.pagePoint = this._mousePositionService.getMousePositionFromPageXY(event)
+      // const {}
+      /*      const childRect = this._childElement.getBoundingClientRect()
+       const x = event.pageX - childRect.left
+       const y = event.pageY - childRect.top*/
+      // this.startPoint = { x, y }
+      /*     this.pagePoint = {
+       x: event.pageX / this.scale,
+       y: event.pageY / this.scale,
+       }*/
+
       this.handleCtrlMouseMove(event)
       return
     }
     if (this.isAltDragging) {
-      if (!event.altKey) {
+      if (!event.altKey || !this.canvasStartPoint) {
         this.isAltDragging = false
-        this.startPoint = undefined
+        // this.startPoint = undefined
         this.canvasStartPoint = undefined
         return
-      }
-      console.log('altKey', event)
-      if (!this.canvasStartPoint || !event.altKey) {
-        console.error('animateSelectionBox', this.startPoint, this.pageX, this.pageY)
-        return
       } else {
-        this.pageX = event.pageX
-        this.pageY = event.pageY
+        // this.pageX = event.pageX
+        // this.pageY = event.pageY
+        this.pagePoint = {
+          x: event.pageX,
+          y: event.pageY,
+        }
       }
-      this.ngZone.runOutsideAngular(() => {
+      this._ngZone.runOutsideAngular(() => {
         this.animateSelectionBox()
       })
       return
     }
-    if (this.isDragging && !event.altKey) {
-      const panelId = (
-        event.composedPath()[0] as HTMLDivElement
-      ).getAttribute('panelId')
-      if (panelId) {
-        this.selectedPanelId = panelId
-        this.pageX = event.pageX
-        this.pageY = event.pageY
-        this.ngZone.runOutsideAngular(() => {
-          this.animateLinesFromBlockMoving()
-        })
-      }
+    if (!this.isDragging || !this.selectedPanelId) {
+      return
     }
+    const panelId = (event.composedPath()[0] as HTMLDivElement).getAttribute('panelId')
+    if (!panelId) return
+
+    this.selectedPanelId = panelId
+    this.pagePoint = {
+      x: event.pageX,
+      y: event.pageY,
+    }
+    this._ngZone.runOutsideAngular(() => {
+      this.animateLinesFromBlockMoving()
+    })
+
+    /*    if (this.isDragging && !event.altKey) {
+     const panelId = (event.composedPath()[0] as HTMLDivElement).getAttribute('panelId')
+     if (panelId) {
+     this.selectedPanelId = panelId
+     this.pagePoint = {
+     x: event.pageX,
+     y: event.pageY,
+     }
+     this._ngZone.runOutsideAngular(() => {
+     this.animateLinesFromBlockMoving()
+     })
+     }
+     }*/
     return
   }
 
   private animateSelectionBox() {
-    if (!this.canvasStartPoint || !this.pageX || !this.pageY) {
-      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+    this.clearCtxRect()
+    if (!this.canvasStartPoint || !this.pagePoint) {
       return
     }
+
     const rect = this.canvas.getBoundingClientRect()
 
-    const mouseX = this.pageX - rect.left
-    const mouseY = this.pageY - rect.top
+    const mouseX = this.pagePoint.x - rect.left
+    const mouseY = this.pagePoint.y - rect.top
     const mousePoint = { x: mouseX, y: mouseY }
     const mousePointToScale = this._mousePositionService.applyScaleToPoint(mousePoint)
-
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
 
     const width = mousePointToScale.x - this.canvasStartPoint.x
     const height = mousePointToScale.y - this.canvasStartPoint.y
 
     this.ctx.globalAlpha = 0.4
-
     this.ctx.fillStyle = this.fillStyle
-
     this.ctx.fillRect(this.canvasStartPoint.x, this.canvasStartPoint.y, width, height)
-
     this.ctx.globalAlpha = 1.0
 
     requestAnimationFrame(() => this.animateSelectionBox())
   }
 
   private handleCtrlMouseMove(event: MouseEvent) {
-    if (!this.startPoint) return
+    // if (!this.startPoint) return
 
-    const res = this._screenMoveService.handleCtrlMouseMove(event, this.startPoint, this._scale, this.size)
+    this.onCtrlMouseMoveHelper(event)
+    /*    this._ngZone.runOutsideAngular(() => {
+     })*/
+
+    /*    const res = this._screenMoveService.onCtrlMouseMoveHelper(event, this.startPoint, this.scale)
+     if (!res) return
+     const { top, left } = res
+
+     this._renderer.setStyle(this._element, 'top', top + 'px')
+     this._renderer.setStyle(this._element, 'left', left + 'px')*/
+  }
+
+  private animateCtrlMouseMove(event: MouseEvent) {
+    if (!this.startPoint) return
+    const res = this._screenMoveService.onCtrlMouseMoveHelper(event, this.startPoint, this.scale)
     if (!res) return
     const { top, left } = res
 
     this._renderer.setStyle(this._element, 'top', top + 'px')
     this._renderer.setStyle(this._element, 'left', left + 'px')
+    requestAnimationFrame(() => this.animateCtrlMouseMove(event))
+  }
+
+  private onCtrlMouseMoveHelper(event: MouseEvent) {
+    if (!this.startPoint) return
+    // console.log('startPoint', this.startPoint)
+    const parentRect = this._element.parentNode.getBoundingClientRect()
+    const mouseX =
+            event.pageX -
+            (parentRect.width - this.width) / 2 -
+            this._element.parentNode.offsetLeft
+
+    const mouseY =
+            event.pageY -
+            (parentRect.height - this.height) / 2 -
+            this._element.parentNode.offsetTop
+    const newStartY = this.startPoint.y
+    const newStartX = this.startPoint.x
+    let top = mouseY - newStartY
+    let left = mouseX - newStartX
+    if (this.toggleCheck) {
+      top = 0
+      left = 0
+      this.startPoint = {
+        x: mouseX,
+        y: mouseY,
+      }
+
+      // top = this.screenPosition.y + top
+      // left = this.screenPosition.x + left
+      /*      const toLog = {
+       top,
+       left,
+       }*/
+      // console.log('toLog', toLog)
+      this.toggleCheck = false
+    }
+
+    this._renderer.setStyle(this._element, 'top', top + 'px')
+    this._renderer.setStyle(this._element, 'left', left + 'px')
+    // return { top, left }
   }
 
   private onScrollHandler(event: WheelEvent) {
-    this.scaleOptions = this._screenMoveService.onScrollHelper(event, this.posX, this.posY, this.scale)
+    this.screenProperties = this._screenMoveService.onScrollHelper(event, this.screenPosition, this.scale)
     this._renderer.setStyle(
-      this._element,
+      this._childElement,
       'transform',
-      `translate(${this.posX}px,${this.posY}px) scale(${this.scale})`,
+      `translate(${this.screenPosition.x}px,${this.screenPosition.y}px) scale(${this.scale})`,
     )
+    /*    this._renderer.setStyle(
+     this._element,
+     'transform',
+     `translate(${this.screenPosition.x}px,${this.screenPosition.y}px) scale(${this.scale})`,
+     )*/
   }
 
   private animateLinesFromBlockMoving() {
-    if (!this.pageX || !this.pageY || !this.isDragging || !this.selectedPanelId) {
-      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+    this.clearCtxRect()
+    if (!this.isDragging || !this.selectedPanelId) {
       return
     }
 
-    const panelDimensions = this.canvasService.getBlockRect(this.selectedPanelId)
+    const panelDimensions = this._canvasService.getBlockRect(this.selectedPanelId)
     if (!panelDimensions) {
-      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
       console.error('no panelDimensions')
       return
     }
@@ -393,13 +408,15 @@ export class NoGridLayoutDirective
   }
 
   private drawLinesAllDirectionsForBlock(blockRectModel: FreeBlockRectModel) {
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
-
     this.ctx.lineWidth = 2
     this.ctx.strokeStyle = 'red'
     this.ctx.fillStyle = 'red'
     this.ctx.font = '15px Arial'
 
-    this.canvasService.drawLinesForBlocks(blockRectModel)
+    this._canvasService.drawLinesForBlocks(blockRectModel)
+  }
+
+  private clearCtxRect() {
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
   }
 }

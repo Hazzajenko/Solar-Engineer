@@ -1,16 +1,10 @@
-import {
-  inject,
-  Injectable,
-} from '@angular/core'
+import { inject, Injectable } from '@angular/core'
 import { BlockRectModel } from '@grid-layout/data-access'
-import {
-  FreeBlockRectModel,
-  LineDirectionEnum,
-} from '@no-grid-layout/shared'
+import { FreeBlockRectModel, LineDirectionEnum } from '@no-grid-layout/shared'
 import { PanelStylerService } from './panel-styler.service'
 import { MousePositionService } from './mouse-position.service'
 import { ComponentElementService } from './component-element.service'
-import { Point } from '@shared/data-access/models'
+import { XyLocation } from '@shared/data-access/models'
 
 @Injectable({
   providedIn: 'root',
@@ -56,10 +50,10 @@ export class CanvasService {
     }
   }
 
-  setCanvas(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
-    this.canvas = canvas
-    this.ctx = ctx
-  }
+  /*  setCanvas(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
+   this.canvas = canvas
+   this.ctx = ctx
+   }*/
 
   drawLinesForBlocks(blockRectModel: FreeBlockRectModel) {
     const gridBlockRects = this.componentElementService.elements.map((e) => this.getBlockRectFromElement(e))
@@ -75,11 +69,11 @@ export class CanvasService {
     gridBlockRects: FreeBlockRectModel[],
   ) {
     const printDefault = () => {
-      const moveToPoint: Point = {
+      const moveToPoint: XyLocation = {
         x: blockRectModel.x,
         y: blockRectModel.y - blockRectModel.height / 2,
       }
-      const lineToPoint: Point = {
+      const lineToPoint: XyLocation = {
         x: blockRectModel.x,
         y: 0,
       }
@@ -118,11 +112,11 @@ export class CanvasService {
     const closestPanelRect = panelRectsToCheckWithDistanceSorted[0]
     if (!closestPanelRect) return printDefault()
 
-    const moveToPoint: Point = {
+    const moveToPoint: XyLocation = {
       x: blockRectModel.x,
       y: blockRectModel.y - blockRectModel.height / 2,
     }
-    const lineToPoint: Point = {
+    const lineToPoint: XyLocation = {
       x: blockRectModel.x,
       y: closestPanelRect.y + closestPanelRect.height / 2,
     }
@@ -145,11 +139,11 @@ export class CanvasService {
 
   drawLineForBelowBlock(blockRectModel: BlockRectModel, gridBlockRects: FreeBlockRectModel[]) {
     const printDefault = () => {
-      const moveToPoint: Point = {
+      const moveToPoint: XyLocation = {
         x: blockRectModel.x,
         y: blockRectModel.y + blockRectModel.height / 2,
       }
-      const lineToPoint: Point = {
+      const lineToPoint: XyLocation = {
         x: blockRectModel.x,
         y: this.canvasSize.height,
       }
@@ -189,11 +183,11 @@ export class CanvasService {
     const closestPanelRect = panelRectsToCheckWithDistanceSorted[0]
     if (!closestPanelRect) return printDefault()
 
-    const moveToPoint: Point = {
+    const moveToPoint: XyLocation = {
       x: blockRectModel.x,
       y: blockRectModel.y + blockRectModel.height / 2,
     }
-    const lineToPoint: Point = {
+    const lineToPoint: XyLocation = {
       x: blockRectModel.x,
       y: closestPanelRect.y - closestPanelRect.height / 2,
     }
@@ -213,11 +207,11 @@ export class CanvasService {
 
   drawLineForLeftBlock(blockRectModel: BlockRectModel, gridBlockRects: FreeBlockRectModel[]) {
     const printDefault = () => {
-      const moveToPoint: Point = {
+      const moveToPoint: XyLocation = {
         x: blockRectModel.x - blockRectModel.width / 2,
         y: blockRectModel.y,
       }
-      const lineToPoint: Point = {
+      const lineToPoint: XyLocation = {
         x: 0,
         y: blockRectModel.y,
       }
@@ -253,11 +247,11 @@ export class CanvasService {
     const closestPanelRect = panelRectsToCheckWithDistanceSorted[0]
     if (!closestPanelRect) return printDefault()
 
-    const moveToPoint: Point = {
+    const moveToPoint: XyLocation = {
       x: blockRectModel.x - blockRectModel.width / 2,
       y: blockRectModel.y,
     }
-    const lineToPoint: Point = {
+    const lineToPoint: XyLocation = {
       x: closestPanelRect.x + closestPanelRect.width / 2,
       y: blockRectModel.y,
     }
@@ -278,11 +272,11 @@ export class CanvasService {
 
   drawLineForRightBlock(blockRectModel: BlockRectModel, gridBlockRects: FreeBlockRectModel[]) {
     const printDefault = () => {
-      const moveToPoint: Point = {
+      const moveToPoint: XyLocation = {
         x: blockRectModel.x + blockRectModel.width / 2,
         y: blockRectModel.y,
       }
-      const lineToPoint: Point = {
+      const lineToPoint: XyLocation = {
         x: this.canvasSize.width,
         y: blockRectModel.y,
       }
@@ -317,11 +311,11 @@ export class CanvasService {
     const closestPanelRect = panelRectsToCheckWithDistanceSorted[0]
     if (!closestPanelRect) return printDefault()
 
-    const moveToPoint: Point = {
+    const moveToPoint: XyLocation = {
       x: blockRectModel.x + blockRectModel.width / 2,
       y: blockRectModel.y,
     }
-    const lineToPoint: Point = {
+    const lineToPoint: XyLocation = {
       x: closestPanelRect.x - closestPanelRect.width / 2,
       y: blockRectModel.y,
     }
@@ -377,7 +371,7 @@ export class CanvasService {
     }
   }
 
-  private strokeTwoPoints(moveToPoint: Point, lineToPoint: Point) {
+  private strokeTwoPoints(moveToPoint: XyLocation, lineToPoint: XyLocation) {
     const {
             x: moveToX,
             y: moveToY,

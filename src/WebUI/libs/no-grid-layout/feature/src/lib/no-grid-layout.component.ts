@@ -8,6 +8,7 @@ import { AppGridBackgroundDirective } from './directives/app-grid-background.dir
 import { FreePanelsService } from '@no-grid-layout/data-access'
 import { NoGridBackgroundComponent } from './ui/no-grid-background.component'
 import { map } from 'rxjs'
+import { ScrollDirective } from './directives/scroll.directive'
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -20,6 +21,7 @@ import { map } from 'rxjs'
     DynamicComponentDirective,
     AppGridBackgroundDirective,
     NoGridBackgroundComponent,
+    ScrollDirective,
   ],
   selector:        'app-no-grid-layout',
   standalone:      true,

@@ -28,24 +28,6 @@ export class MousePositionService {
     this._scale = value
   }
 
-  /*  get scale() {
-   return this._scale
-   }
-
-   set scale(scale: number) {
-   this._scale = scale
-   }*/
-
-  /*  initGridLayoutElementRef(gridLayoutElementRef: HTMLElement) {
-   this._gridLayoutElementRef = gridLayoutElementRef
-   this._gridLayoutElementRef$.next(gridLayoutElementRef)
-   }*/
-
-  /*  setScale(scale: number) {
-   this._scale = scale
-   // this.renderer.setStyle(this._gridLayoutElementRef, 'transform', `scale(${scale})`)
-   }*/
-
   getMousePositionFromPageXY(event: MouseEvent, size?: {
     height: number,
     width: number
@@ -56,12 +38,43 @@ export class MousePositionService {
      }
      this._mousePosition$.next(this._mousePosition)*/
     const rect = this._gridLayoutElementRef.getBoundingClientRect()
-    let x = (event.pageX - rect.left) / this._scale
-    let y = (event.pageY - rect.top) / this._scale
+    const childRect = this._gridLayoutElementRef.children[0].getBoundingClientRect()
+    console.log('childRect', childRect)
+    console.log('rect', rect)
+    console.log('event.pageX', event.pageX)
+    console.log('event.pageY', event.pageY)
+    let x = (event.pageX - childRect.left) / this.scale
+    let y = (event.pageY - childRect.top) / this.scale
+    /*    let x = (event.pageX - rect.left) / this._scale
+     let y = (event.pageY - rect.top) / this._scale*/
     if (size) {
       x = x - size.width / 2
       y = y - size.height / 2
     }
+    return { x, y }
+  }
+
+  getMousePositionFromPageXYV2(event: MouseEvent): Point {
+    /*    this._mousePosition = {
+     x: event.pageX - this._gridLayoutElementRef.offsetLeft,
+     y: event.pageY - this._gridLayoutElementRef.offsetTop,
+     }
+     this._mousePosition$.next(this._mousePosition)*/
+    // const rect = this._gridLayoutElementRef.getBoundingClientRect()
+    const childRect = this._gridLayoutElementRef.children[0].getBoundingClientRect()
+    console.log('childRect', childRect)
+    /*    const widthDifference = (window.innerWidth - childRect.width) / 2
+     console.log('widthDifference', widthDifference)
+     const heightDifference = (window.innerHeight - childRect.height) / 2
+     console.log('heightDifference', heightDifference)*/
+    const screenDiffX = window.innerWidth - childRect.right
+    const screenDiffY = window.innerHeight - childRect.bottom
+    console.log('screenDiffX', screenDiffX)
+    console.log('screenDiffY', screenDiffY)
+
+    const x = (event.pageX - childRect.left) / this.scale
+    const y = (event.pageY - childRect.top) / this.scale
+
     return { x, y }
   }
 

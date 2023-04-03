@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core'
 import { GridConfig } from '@no-grid-layout/shared'
 import { MousePositionService } from './mouse-position.service'
-import { Point, Size } from '@shared/data-access/models'
+import { XyLocation } from '@shared/data-access/models'
 
 @Injectable({
   providedIn: 'root',
@@ -21,34 +21,50 @@ export class ScreenMoveService {
 
   onScrollHelper(
     event: WheelEvent,
-    posX: number,
-    posY: number,
+    screenPosition: XyLocation,
+    /*    posX: number,
+     posY: number,*/
     scale: number,
   ) {
     const speed = GridConfig.Speed
-    const sizeH = this.gridLayoutElement.offsetHeight
-    const sizeW = this.gridLayoutElement.offsetWidth
+    const childRect = this.gridLayoutElement.children[0].getBoundingClientRect()
+    console.log('childRect', childRect)
+    // childRect.
 
-    const pointerX = event.pageX - this.gridLayoutElement.offsetLeft
-    const pointerY = event.pageY - this.gridLayoutElement.offsetTop
-    const targetX = (pointerX - posX) / scale
-    const targetY = (pointerY - posY) / scale
+    const sizeH = childRect.height
+    const sizeW = childRect.width
+    // const sizeH = this.gridLayoutElement.offsetHeight
+    // const sizeW = this.gridLayoutElement.offsetWidth
+    // console.log(this.gridLayoutElement.offsetLeft)
+    // console.log(this.gridLayoutElement.offsetTop)
+
+    /*    const pointerX = event.pageX - this.gridLayoutElement.offsetLeft
+     const pointerY = event.pageY - this.gridLayoutElement.offsetTop*/
+    const pointerX = event.pageX - childRect.left
+    const pointerY = event.pageY - childRect.top
+    const targetX = (pointerX - screenPosition.x) / scale
+    const targetY = (pointerY - screenPosition.y) / scale
 
     scale += -1 * Math.max(-1, Math.min(1, event.deltaY)) * speed * scale
     scale = Math.max(1, Math.min(2, scale))
 
-    posX = -targetX * scale + pointerX
-    posY = -targetY * scale + pointerY
+    screenPosition.x = -targetX * scale + pointerX
+    screenPosition.y = -targetY * scale + pointerY
 
-    if (posX > 0) posX = 0
-    if (posX + sizeW * scale < sizeW) posX = -sizeW * (scale - 1)
-    if (posY > 0) posY = 0
-    if (posY + sizeH * scale < sizeH) posY = -sizeH * (scale - 1)
-    return { posX, posY, scale }
+    if (screenPosition.x > 0) screenPosition.x = 0
+    if (screenPosition.x + sizeW * scale < sizeW) screenPosition.x = -sizeW * (scale - 1)
+    if (screenPosition.y > 0) screenPosition.y = 0
+    if (screenPosition.y + sizeH * scale < sizeH) screenPosition.y = -sizeH * (scale - 1)
+    return { screenPosition, scale }
   }
 
-  handleCtrlMouseMove(event: MouseEvent, startPoint: Point, scale: number, size: Size) {
+  onCtrlMouseMoveHelper(event: MouseEvent, startPoint: XyLocation, scale: number) {
     const { x, y } = this._mousePositionService.getMousePositionFromPageXY(event)
+
+    const size = {
+      width:  Number(this.gridLayoutElement.style.width),
+      height: Number(this.gridLayoutElement.style.height),
+    }
 
     const newStartY = startPoint.y
     const newStartX = startPoint.x

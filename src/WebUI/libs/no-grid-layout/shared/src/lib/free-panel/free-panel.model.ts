@@ -1,11 +1,11 @@
 import { BackgroundColor } from '../colors'
 import { PanelColorState, PanelRotationConfig } from './free-panel.config'
-import { Point } from '@shared/data-access/models'
+import { XyLocation } from '@shared/data-access/models'
 import { newGuid } from '@shared/utils'
 
 export interface IFreePanelModel {
   id: string
-  location: Point
+  location: XyLocation
   backgroundColor: BackgroundColor
   rotation: PanelRotationConfig
   isSelected: boolean
@@ -14,14 +14,14 @@ export interface IFreePanelModel {
 
 export class FreePanelModel implements IFreePanelModel {
   id: string
-  location: Point
+  location: XyLocation
   backgroundColor: BackgroundColor
   isSelected = false
   rotation: PanelRotationConfig
   type: FreeBlockType = FreeBlockType.Panel
 
   constructor(
-    location: Point,
+    location: XyLocation,
     backgroundColor: BackgroundColor = PanelColorState.Default,
     rotation: PanelRotationConfig = PanelRotationConfig.Portrait,
   ) {

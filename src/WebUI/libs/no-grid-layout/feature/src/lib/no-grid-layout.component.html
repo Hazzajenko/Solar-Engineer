@@ -3,7 +3,6 @@
     appNoGridLayoutDirective
     appGridMove
     class="relative"
-    style="transition: transform 0.1s; transform-origin: 0 0"
     [style.height]="layoutHeightString"
     [style.width]="layoutWidthString"
   >
@@ -14,17 +13,28 @@
           [style.height]="backgroundHeight"
           [style.width]="backgroundWidth"
         />-->
-    <app-no-grid-background
-      appGridBackground
-      class="pointer-events-none absolute"
-      *ngIf="backgroundWidth"
-      [style.height]="backgroundHeight"
-      [style.width]="backgroundWidth"
-    />
-    <ng-template
-      *ngFor="let panel of (freePanels$ | async)!; trackBy: trackByPanelId"
-      appDynamicFreePanel
-      [entity]="{ id: panel.id, type: panel.type }"
-    ></ng-template>
+    <!--    [style.height]="layoutHeightString"-->
+    <!--    [style.height]="layoutHeightString"-->
+    <!--    [style.width]="layoutWidthString"-->
+    <!--    [style.width]="layoutWidthString"-->
+    <div
+      id="no-grid"
+      appScrollDirective
+      class="relative"
+      style="transition: transform 0.1s; transform-origin: 0 0"
+    >
+      <app-no-grid-background
+        appGridBackground
+        class="pointer-events-none absolute"
+        *ngIf="backgroundWidth"
+        [style.height]="backgroundHeight"
+        [style.width]="backgroundWidth"
+      />
+      <ng-template
+        *ngFor="let panel of (freePanels$ | async)!; trackBy: trackByPanelId"
+        appDynamicFreePanel
+        [entity]="{ id: panel.id, type: panel.type }"
+      ></ng-template>
+    </div>
   </div>
 </div>

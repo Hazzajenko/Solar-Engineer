@@ -1,4 +1,4 @@
-export type Point = {
+export type XyLocation = {
   x: number
   y: number
 }
