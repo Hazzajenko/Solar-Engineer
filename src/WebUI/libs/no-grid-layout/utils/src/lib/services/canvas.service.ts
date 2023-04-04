@@ -62,8 +62,10 @@ export class CanvasService {
 
   drawLinesForBlocks(blockRectModel: FreeBlockRectModel) {
     const gridBlockRects = this._componentElementService.elements.map((e) => this.getBlockRectFromElement(e))
-
     const scrollRect = this._componentElementService.scrollElement.getBoundingClientRect()
+
+    // TODO fix mouseXY when gridElement has been moved
+
     this.drawLineForAboveBlock(blockRectModel, gridBlockRects, scrollRect.top)
     this.drawLineForBelowBlock(blockRectModel, gridBlockRects, scrollRect.bottom)
     this.drawLineForLeftBlock(blockRectModel, gridBlockRects, scrollRect.left)
