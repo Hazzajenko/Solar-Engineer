@@ -1,6 +1,6 @@
 import { inject, Injectable, RendererFactory2 } from '@angular/core'
 import { FreeBlockRectModel, LineDirectionEnum, PanelColorState } from '@no-grid-layout/shared'
-import { ComponentElementService } from './component-element.service'
+import { ComponentElementsService } from './component-elements.service'
 import { Logger } from 'tslog'
 
 const DirectionArrayMap: { [key in LineDirectionEnum]: DirectionArray } = {
@@ -17,7 +17,7 @@ type DirectionArray = 'panelsInLineToTop' | 'panelsInLineToBottom' | 'panelsInLi
 export class PanelStylerService {
   private renderer = inject(RendererFactory2)
     .createRenderer(null, null)
-  private _componentElementService = inject(ComponentElementService)
+  private _componentElementService = inject(ComponentElementsService)
   private _logger = new Logger({ name: 'PanelStylerService' })
   private panelsInLineToRight: string[] = []
   private panelsInLineToLeft: string[] = []

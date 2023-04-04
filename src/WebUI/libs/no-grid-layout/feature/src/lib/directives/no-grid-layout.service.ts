@@ -5,7 +5,7 @@ import { FreePanelsService } from '@no-grid-layout/data-access'
 import {
   CanvasService,
   ClickService,
-  ComponentElementService,
+  ComponentElementsService,
   MousePositionService,
   ScreenMoveService,
 } from '@no-grid-layout/utils'
@@ -19,7 +19,7 @@ export class NoGridLayoutService {
   protected _clickService = inject(ClickService)
   protected _canvasService = inject(CanvasService)
   protected _mousePositionService = inject(MousePositionService)
-  protected _componentElementService = inject(ComponentElementService)
+  protected _componentElementService = inject(ComponentElementsService)
   protected _ngZone: NgZone = inject(NgZone)
   private _canvas!: HTMLCanvasElement
   private _ctx!: CanvasRenderingContext2D
@@ -69,7 +69,7 @@ export class NoGridLayoutService {
 
   protected set pagePoint(value: XyLocation | undefined) {
     this._pagePoint = value
-    console.log('set pagePoint', value)
+    // console.log('set pagePoint', value)
   }
 
   protected get scale() {

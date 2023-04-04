@@ -3,12 +3,13 @@ import { FreePanelComponent } from './components/free-panel-component/free-panel
 import { CommonModule } from '@angular/common'
 import { NoGridLayoutDirective } from './directives/no-grid-layout.directive'
 import { CdkDrag } from '@angular/cdk/drag-drop'
-import { DynamicComponentDirective } from './directives/dynamic-free-panel.directive'
+import { DynamicComponentDirective } from './directives/dynamic-component.directive'
 import { AppGridBackgroundDirective } from './directives/app-grid-background.directive'
 import { FreePanelsService } from '@no-grid-layout/data-access'
 import { NoGridBackgroundComponent } from './ui/no-grid-background.component'
 import { map } from 'rxjs'
 import { ScrollDirective } from './directives/scroll.directive'
+import { KeyUpDirective } from './directives/key-up.directive'
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -22,6 +23,7 @@ import { ScrollDirective } from './directives/scroll.directive'
     AppGridBackgroundDirective,
     NoGridBackgroundComponent,
     ScrollDirective,
+    KeyUpDirective,
   ],
   selector:        'app-no-grid-layout',
   standalone:      true,
@@ -99,7 +101,12 @@ export class NoGridLayoutComponent
     this.initScreenSize()
   }
 
+  log(log: string) {
+    console.log(log)
+  }
+
   private screenSizeToPxString(size: number) {
     return `${size}px`
   }
+
 }

@@ -4,6 +4,7 @@ import { BackgroundColor, FreePanelUtil, PanelColorState, PanelRotationConfig } 
 import { SelectedService } from '@no-grid-layout/data-access'
 import { OnDestroyDirective } from '@shared/utils'
 import { map, takeUntil, tap } from 'rxjs'
+import { ComponentElementsService } from '@no-grid-layout/utils'
 
 @Directive({
   selector:       '[appFreePanelDirective]',
@@ -14,10 +15,13 @@ import { map, takeUntil, tap } from 'rxjs'
 export class FreePanelDirective
   implements OnInit {
   private destroy$ = inject(OnDestroyDirective).destroy$
-  elRef = inject(ElementRef)
+  private _element = inject(ElementRef).nativeElement
+  // elRef = inject(ElementRef)
   private _panelId = ''
   private renderer = inject(Renderer2)
   private _selectedService = inject(SelectedService)
+  // private _tippy: tippy.Instance | null = null
+  private _componentElementsService = inject(ComponentElementsService)
   private readonly zone: NgZone = inject(NgZone)
   cachedClass = ''
   cachedBorder = ''
@@ -31,8 +35,8 @@ export class FreePanelDirective
 
   @Input() set rotation(rotation: PanelRotationConfig) {
     const { width, height } = FreePanelUtil.size(rotation)
-    this.renderer.setStyle(this.elRef.nativeElement, 'height', `${height}px`)
-    this.renderer.setStyle(this.elRef.nativeElement, 'width', `${width}px`)
+    this.renderer.setStyle(this._element, 'height', `${height}px`)
+    this.renderer.setStyle(this._element, 'width', `${width}px`)
   }
 
   @Input() set borderColor(borderColorAndWidth: string) {
@@ -42,13 +46,13 @@ export class FreePanelDirective
     }
     this.cachedBorder.split(' ')
       .forEach((c) => {
-          const alreadyContains = this.elRef.nativeElement.classList.contains(c)
+          const alreadyContains = this._element.classList.contains(c)
           if (!alreadyContains) return
-          this.elRef.nativeElement.classList.remove(c)
+          this._element.classList.remove(c)
         },
       )
     this.cachedBorder = borderColorAndWidth
-    this.elRef.nativeElement.classList.add(...borderColorAndWidth.split(' '))
+    this._element.classList.add(...borderColorAndWidth.split(' '))
   }
 
   get panelId() {
@@ -56,9 +60,10 @@ export class FreePanelDirective
   }
 
   ngOnInit() {
-    this._panelId = this.elRef.nativeElement.id
+    this._panelId = this._element.id
     const border = 'border border-black'
-    this.elRef.nativeElement.classList.add(...border.split(' '))
+    this._element.classList.add(...border.split(' '))
+    this._componentElementsService.addToElements(this._element)
     this._selectedService.selected$
       .pipe(
         takeUntil(this.destroy$),
@@ -78,29 +83,29 @@ export class FreePanelDirective
   }
 
   private replaceClassForPanel(oldClass: string, newClass: string) {
-    if (this.elRef.nativeElement.classList.contains(newClass)) return newClass
-    this.renderer.removeClass(this.elRef.nativeElement, oldClass)
-    this.renderer.addClass(this.elRef.nativeElement, newClass)
+    if (this._element.classList.contains(newClass)) return newClass
+    this.renderer.removeClass(this._element, oldClass)
+    this.renderer.addClass(this._element, newClass)
     return newClass
   }
 
   private manageClasses(input: string, cached: string) {
     cached.split(' ')
       .forEach((c) => {
-          const alreadyContains = this.elRef.nativeElement.classList.contains(c)
+          const alreadyContains = this._element.classList.contains(c)
           if (!alreadyContains) return
-          this.elRef.nativeElement.classList.remove(c)
+          this._element.classList.remove(c)
         },
       )
     cached = input
-    this.elRef.nativeElement.classList.add(...input.split(' '))
+    this._element.classList.add(...input.split(' '))
     return cached
   }
 
   private setupTooltip() {
-    const panelId = this.elRef.nativeElement.id
+    const panelId = this._element.id
     console.log('setupTooltip panelId', panelId)
-    tippy(this.elRef.nativeElement, {
+    tippy(this._element, {
       content: panelId,
 
     })

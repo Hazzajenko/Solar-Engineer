@@ -1,5 +1,6 @@
 import { inject, Injectable, RendererFactory2 } from '@angular/core'
 import { Point } from '@angular/cdk/drag-drop'
+import { XyLocation } from '@shared/data-access/models'
 
 @Injectable({
   providedIn: 'root',
@@ -25,9 +26,18 @@ export class MousePositionService {
     .createRenderer(null, null)
   private _mousePosition = { x: 0, y: 0 }
   private _mousePositionOnDragStart = { x: 0, y: 0 }
+  private _screenPosition = { x: 0, y: 0 }
   private _gridLayoutElement!: HTMLDivElement
   private _scrollElement!: HTMLDivElement
   private _scale = 1
+
+  get screenPosition() {
+    return this._screenPosition
+  }
+
+  set screenPosition(value: XyLocation) {
+    this._screenPosition = value
+  }
 
   get scale() {
     return this._scale
@@ -41,24 +51,9 @@ export class MousePositionService {
     height: number,
     width: number
   }): Point {
-    /*    this._mousePosition = {
-     x: event.pageX - this._gridLayoutElementRef.offsetLeft,
-     y: event.pageY - this._gridLayoutElementRef.offsetTop,
-     }
-     this._mousePosition$.next(this._mousePosition)*/
-    /*    const rect = this._gridLayoutElementRef.getBoundingClientRect()
-     const childRect = this._gridLayoutElementRef.children[0].getBoundingClientRect()
-     console.log('childRect', childRect)
-     console.log('rect', rect)
-     console.log('event.pageX', event.pageX)
-     console.log('event.pageY', event.pageY)*/
-    // const scrollRect = this.gridLayoutElement.getBoundingClientRect()
     const scrollRect = this._scrollElement.getBoundingClientRect()
-    console.log('scrollRect', scrollRect)
     let x = (event.pageX - scrollRect.left) / this.scale
     let y = (event.pageY - scrollRect.top) / this.scale
-    /*    let x = (event.pageX - rect.left) / this._scale
-     let y = (event.pageY - rect.top) / this._scale*/
     if (size) {
       x = x - size.width / 2
       y = y - size.height / 2
@@ -67,25 +62,24 @@ export class MousePositionService {
   }
 
   getMousePositionFromPageXY(event: MouseEvent): Point {
-    /*    this._mousePosition = {
-     x: event.pageX - this._gridLayoutElementRef.offsetLeft,
-     y: event.pageY - this._gridLayoutElementRef.offsetTop,
-     }
-     this._mousePosition$.next(this._mousePosition)*/
-    /*    const rect = this._gridLayoutElementRef.getBoundingClientRect()
-     const childRect = this._gridLayoutElementRef.children[0].getBoundingClientRect()
-     console.log('childRect', childRect)
-     console.log('rect', rect)
-     console.log('event.pageX', event.pageX)
-     console.log('event.pageY', event.pageY)*/
-    // const scrollRect = this.gridLayoutElement.getBoundingClientRect()
     const scrollRect = this._scrollElement.getBoundingClientRect()
     console.log('scrollRect', scrollRect)
     const x = (event.pageX - scrollRect.left) / this.scale
     const y = (event.pageY - scrollRect.top) / this.scale
-    /*    let x = (event.pageX - rect.left) / this._scale
-     let y = (event.pageY - rect.top) / this._scale*/
+    return { x, y }
+  }
 
+  getMousePositionFromXYForCanvas(xy: XyLocation): Point {
+    const rect = this._gridLayoutElement.getBoundingClientRect()
+    const x = (xy.x - this._gridLayoutElement.offsetLeft + rect.left) * this.scale
+    const y = (xy.y - this._gridLayoutElement.offsetTop + rect.top) * this.scale
+    return { x, y }
+  }
+
+  getMousePositionFromXYForCanvasWithScreenPosition(xy: XyLocation): Point {
+    const rect = this._gridLayoutElement.getBoundingClientRect()
+    const x = (xy.x - this._gridLayoutElement.offsetLeft + rect.left) * this.scale
+    const y = (xy.y - this._gridLayoutElement.offsetTop + rect.top) * this.scale
     return { x, y }
   }
 
@@ -121,8 +115,8 @@ export class MousePositionService {
   }
 
   applyScaleToPoint(point: Point): Point {
-    const x = point.x / this._scale
-    const y = point.y / this._scale
+    const x = point.x / this.scale
+    const y = point.y / this.scale
     return { x, y }
   }
 

@@ -63,7 +63,7 @@ export class ScrollDirective
     this._renderer.listen(this._element, ScrollWheelEvent, (event: WheelEvent) => {
       event.stopPropagation()
       event.preventDefault()
-      this.onScrollHandler(event)
+      this._screenMoveService.onScrollHandler(event)
     })
   }
 
@@ -77,6 +77,16 @@ export class ScrollDirective
     this.elementOffsets.emit(offsets)
   }
 
+  private onKeyUpHandler(event: KeyboardEvent) {
+    console.log('onKeyUpHandler', event.key)
+    switch (event.key) {
+      case 'r': {
+        console.log('onKeyUpHandler', event.key)
+        this._screenMoveService.resetScreenPosition()
+      }
+    }
+  }
+
   /*  @HostListener('window:resize', ['$event'])
    onResize(event: Event) {
    console.log(event)
@@ -88,13 +98,4 @@ export class ScrollDirective
    }
    this.elementOffsets.emit(offsets)
    }*/
-
-  private onScrollHandler(event: WheelEvent) {
-    this.screenProperties = this._screenMoveService.onScrollHelper(event, this.screenPosition)
-    this._renderer.setStyle(
-      this._element,
-      'transform',
-      `translate(${this.screenPosition.x}px,${this.screenPosition.y}px) scale(${this.scale})`,
-    )
-  }
 }

@@ -1,5 +1,5 @@
 export * from './canvas.service'
-export * from './component-element.service'
+export * from './component-elements.service'
 export * from './panel-styler.service'
 export * from './mouse-position.service'
 export * from './screen-move.service'
