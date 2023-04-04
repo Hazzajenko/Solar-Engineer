@@ -1,4 +1,4 @@
-import { AfterViewInit, Directive, ElementRef, EventEmitter, HostListener, inject, Input, OnInit, Output, Renderer2 } from '@angular/core'
+import { AfterViewInit, Directive, ElementRef, EventEmitter, inject, Input, OnInit, Output, Renderer2 } from '@angular/core'
 import { ElementOffsets } from '@grid-layout/data-access'
 import { ScrollWheelEvent, XyLocation } from '@shared/data-access/models'
 import { ScreenMoveService } from '@no-grid-layout/utils'
@@ -77,20 +77,20 @@ export class ScrollDirective
     this.elementOffsets.emit(offsets)
   }
 
-  @HostListener('window:resize', ['$event'])
-  onResize(event: Event) {
-    console.log(event)
-    const offsets: ElementOffsets = {
-      offsetHeight: this._element.offsetHeight,
-      offsetWidth:  this._element.offsetWidth,
-      offsetLeft:   this._element.offsetLeft,
-      offsetTop:    this._element.offsetTop,
-    }
-    this.elementOffsets.emit(offsets)
-  }
+  /*  @HostListener('window:resize', ['$event'])
+   onResize(event: Event) {
+   console.log(event)
+   const offsets: ElementOffsets = {
+   offsetHeight: this._element.offsetHeight,
+   offsetWidth:  this._element.offsetWidth,
+   offsetLeft:   this._element.offsetLeft,
+   offsetTop:    this._element.offsetTop,
+   }
+   this.elementOffsets.emit(offsets)
+   }*/
 
   private onScrollHandler(event: WheelEvent) {
-    this.screenProperties = this._screenMoveService.onScrollHelper(event, this.screenPosition, this.scale)
+    this.screenProperties = this._screenMoveService.onScrollHelper(event, this.screenPosition)
     this._renderer.setStyle(
       this._element,
       'transform',

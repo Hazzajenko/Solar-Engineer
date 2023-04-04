@@ -74,7 +74,7 @@ export class FreePanelComponent
 
   dragMoved(event: CdkDragMove<FreePanelModel>) {
     const size = FreePanelUtil.size(event.source.data.rotation)
-    this.location = this._mousePositionService.getMousePositionFromPageXY(event.event as MouseEvent, size)
+    this.location = this._mousePositionService.getMousePositionFromPageXYWithSize(event.event as MouseEvent, size)
   }
 
   startDragging(event: CdkDragStart) {
@@ -88,7 +88,7 @@ export class FreePanelComponent
 
   onRightClick(event: MouseEvent, freePanel: FreePanelModel) {
     event.preventDefault()
-    const { x, y } = this._mousePositionService.getMousePositionFromPageXY(event)
+    const { x, y } = this._mousePositionService.getMousePositionFromPageXYWithSize(event)
     this.menuTopLeftPosition.x = x + 10 + 'px'
     this.menuTopLeftPosition.y = y + 10 + 'px'
     this.matMenuTrigger.menuData = { freePanel }

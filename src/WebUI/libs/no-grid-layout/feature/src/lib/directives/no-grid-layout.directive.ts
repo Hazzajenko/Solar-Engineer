@@ -14,7 +14,8 @@ export class NoGridLayoutDirective
   implements OnInit {
 
   private _element = inject(ElementRef<HTMLDivElement>).nativeElement
-  private _childElement!: HTMLDivElement
+  private _parentElement: HTMLDivElement = this._element.parentElement as HTMLDivElement
+  private _scrollElement: HTMLDivElement = this._element.children[0] as HTMLDivElement
 
   height = 0
   width = 0
@@ -33,6 +34,7 @@ export class NoGridLayoutDirective
   }
 
   ngOnInit() {
+    // console.log(this._parentElement)
     if (this.runEventsOutsideAngular) {
       this._ngZone.runOutsideAngular(() => {
         this.setupMouseEventListeners()
@@ -40,90 +42,124 @@ export class NoGridLayoutDirective
     } else {
       this.setupMouseEventListeners()
     }
-    this.setupCanvas()
-    this.distributeElement()
-    this.setupElements()
-    const childDiv = this._element.children[0]
-    console.log('this._element', this._element)
-    console.log('this._element.children', this._element.children)
-    console.log('this._canvas', this.canvas)
-    console.log('childDiv', childDiv)
-    this._childElement = childDiv
-    this.setupChildElement()
+    this.initElements()
+    /*    this.setupParentElement()
+     this.setupGridElement()
+     this.setupCanvas()
+     this.distributeElement()
+     this.setupElements()
+     this.setupChildElement()*/
+    /*    const childDiv = this._element.children[0]
+     console.log('this._element', this._element)
+     console.log('this._element.children', this._element.children)
+     console.log('this._canvas', this.canvas)
+     console.log('childDiv', childDiv)
+     this._scrollElement = childDiv*/
     /*    this._renderer.setStyle(childDiv, 'position', 'absolute')
      this._renderer.setStyle(childDiv, 'width', '100%')
      this._renderer.setStyle(childDiv, 'height', '100%')*/
   }
 
-  private distributeElement() {
-    this._mousePositionService.gridLayoutElementRef = this._element
-    this._screenMoveService.gridLayoutElement = this._element
+  private initElements() {
+    const { layoutHeight, layoutWidth } = this.calculateStandardGridSize()
+    this.setupParentElement()
+    this.setupGridElement(layoutWidth, layoutHeight)
+    this.setupCanvas()
+    this.setupElements()
+    // console.log(this._scrollElement)
+    this.setupChildElement(layoutWidth, layoutHeight)
+    this.distributeElement()
   }
 
-  private setupCanvas() {
-    const canvasEle = this._renderer.createElement(CANVAS)
-    this._renderer.appendChild(this._element, canvasEle)
-    const { canvas, ctx, left, top } = InitCanvas(canvasEle)
-    this.canvas = canvas
-    this.ctx = ctx
-    this._renderer.setStyle(this.canvas, 'left', `${left}px`)
-    this._renderer.setStyle(this.canvas, 'top', `${top}px`)
-    // this._canvasService.setCanvas(this._canvas, this.ctx)
-  }
-
-  private setupChildElement() {
-    // this._renderer.setStyle(this._childElement, 'position', 'absolute')
-    // this._renderer.setStyle(this._childElement, 'left', '0px')
-    // this._renderer.setStyle(this._childElement, 'top', '0px')
-    // this._renderer.setStyle(this._childElement, 'width', `${window.innerWidth}px`)
-    // this._renderer.setStyle(this._childElement, 'height', `${window.innerHeight}px`)
-    /*    this._renderer.setStyle(this._childElement, 'width', '100%')
-     this._renderer.setStyle(this._childElement, 'height', '100%')*/
-    // canvas.width = window.innerWidth
-    // canvas.height = window.innerHeight
-
-    // this._renderer.setStyle(this._childElement, 'width', '100%')
-    // this._renderer.setStyle(this._childElement, 'height', '100%')
+  private calculateStandardGridSize() {
     const blockHeight = 32
     const blockWidth = 32
     const rows = Math.floor((window.innerHeight - 100) / blockHeight)
     const cols = Math.floor((window.innerWidth - 100) / blockWidth)
     const layoutHeight = rows * blockHeight
     const layoutWidth = cols * blockWidth
-    /*    console.log('layoutHeight', layoutHeight)
-     console.log('layoutWidth', layoutWidth)*/
-    this._renderer.setStyle(this._childElement, 'width', `${layoutWidth}px`)
-    this._renderer.setStyle(this._childElement, 'height', `${layoutHeight}px`)
-    /*    this.layoutWidthString = `${this.layoutWidth}px`
-     this.layoutHeightString = `${this.layoutHeight}px`
-     this.backgroundHeight = `${this.layoutHeight + 1}px`
-     this.backgroundWidth = `${this.layoutWidth + 1}px`*/
-    /*    this.layoutWidthString = this.screenSizeToPxString(this.layoutWidth)
-     this.layoutHeightString = this.screenSizeToPxString(this.layoutHeight)*/
-    /*    const boundingRect = this._childElement.getBoundingClientRect()
-     console.log('boundingRect', boundingRect)
-     const offsetWidth = this._childElement.style.width
-     console.log('offsetWidth', offsetWidth)
-     const widthToNumber = Number(offsetWidth.split('p')[0])
-     console.log('widthToNumber', widthToNumber)
-     const offsetHeight = this._childElement.style.height
-     console.log('offsetHeight', offsetHeight)
-     const heightToNumber = Number(offsetHeight.split('p')[0])
-     console.log('heightToNumber', heightToNumber)*/
-    // const left = (window.innerWidth - layoutWidth) / 2
-    // const top = (window.innerHeight - layoutHeight) / 2
-    // const left = window.innerWidth - (layoutWidth / 2)
-    // const top = window.innerHeight - (layoutHeight / 2)
-    // const innerWidth = window.innerWidth
-    /*    console.log('innerWidth', innerWidth)
-     console.log('layoutWidth', layoutWidth)
-     console.log('difference', innerWidth - layoutWidth)*/
+    return { layoutHeight, layoutWidth }
+  }
+
+  private setupParentElement() {
+    // this._renderer.setStyle(this._element, 'position', 'absolute')
+    // this._renderer.setStyle(this._element.parentElement, 'width', '90%')
+    // this._renderer.setStyle(this._element.parentElement, 'height', '90%')
+    // this._renderer.setStyle(this._element.parentElement, 'position', 'relative')
+    // this._renderer.setStyle(this._element.parentElement, 'zIndex', 10)
+    /*    this._renderer.setStyle(this._element.parentElement, 'height', window.innerHeight)
+     this._renderer.setStyle(this._element.parentElement, 'minHeight', window.innerHeight)
+     this._renderer.setStyle(this._element.parentElement, 'width', window.innerWidth)
+     this._renderer.setStyle(this._element.parentElement, 'minWidth', window.innerWidth)*/
+    this._renderer.setStyle(this._element.parentElement, 'height', '100%')
+    this._renderer.setStyle(this._element.parentElement, 'minHeight', '100%')
+    this._renderer.setStyle(this._element.parentElement, 'width', '100%')
+    this._renderer.setStyle(this._element.parentElement, 'minWidth', '100%')
+    this._renderer.setStyle(this._element.parentElement, 'top', 0)
+    this._renderer.setStyle(this._element.parentElement, 'left', 0)
+    this._renderer.setStyle(this._element.parentElement, 'bottom', 0)
+    this._renderer.setStyle(this._element.parentElement, 'right', 0)
+    this._renderer.setStyle(this._element.parentElement, 'position', 'absolute')
+
+    console.log('parentElement', this._element.parentElement)
+  }
+
+  private setupGridElement(layoutWidth: number, layoutHeight: number) {
+    // this._renderer.setStyle(this._element, 'position', 'absolute')
+    // this._renderer.setStyle(this._element, 'width', '100%')
+    // this._renderer.setStyle(this._element, 'height', '100%')
+    /*    const blockHeight = 32
+     const blockWidth = 32
+     const rows = Math.floor((window.innerHeight - 100) / blockHeight)
+     const cols = Math.floor((window.innerWidth - 100) / blockWidth)
+     const layoutHeight = rows * blockHeight
+     const layoutWidth = cols * blockWidth*/
+    this._renderer.setStyle(this._element, 'width', `${layoutWidth}px`)
+    this._renderer.setStyle(this._element, 'height', `${layoutHeight}px`)
+    /*    const left = (window.innerWidth - layoutWidth) / 2
+     const top = (window.innerHeight - layoutHeight) / 2
+     this._renderer.setStyle(this._element, 'left', `${left}px`)
+     this._renderer.setStyle(this._element, 'top', `${top}px`)
+     this._renderer.setStyle(this._element, 'position', 'absolute')
+     this._renderer.setStyle(this._element, 'zIndex', 10)*/
+
+  }
+
+  private distributeElement() {
+    this._mousePositionService.gridLayoutElement = this._element
+    this._screenMoveService.gridLayoutElement = this._element
+    this._screenMoveService.scrollElement = this._scrollElement
+    this._mousePositionService.scrollElement = this._scrollElement
+    this._componentElementService.parentElement = this._parentElement
+    this._componentElementService.gridLayoutElement = this._element
+    this._componentElementService.scrollElement = this._scrollElement
+  }
+
+  private setupCanvas() {
+    const canvasEle = this._renderer.createElement(CANVAS)
+    this._renderer.appendChild(this._element, canvasEle)
+    const { canvas, ctx } = InitCanvas(canvasEle, this._element.style.width, this._element.style.height)
+    this.canvas = canvas
+    this.ctx = ctx
+    // this._renderer.setStyle(this.canvas, 'left', `${left}px`)
+    // this._renderer.setStyle(this.canvas, 'top', `${top}px`)
+    // this._canvasService.setCanvas(this._canvas, this.ctx)
+  }
+
+  private setupChildElement(layoutWidth: number, layoutHeight: number) {
+    /*    const blockHeight = 32
+     const blockWidth = 32
+     const rows = Math.floor((window.innerHeight - 100) / blockHeight)
+     const cols = Math.floor((window.innerWidth - 100) / blockWidth)
+     const layoutHeight = rows * blockHeight
+     const layoutWidth = cols * blockWidth*/
+    this._scrollElement = this._element.children[0]
+    this._renderer.setStyle(this._scrollElement, 'width', `${layoutWidth}px`)
+    this._renderer.setStyle(this._scrollElement, 'height', `${layoutHeight}px`)
     const left = (window.innerWidth - layoutWidth) / 2
     const top = (window.innerHeight - layoutHeight) / 2
-    /*    console.log('left', left)
-     console.log('top', top)*/
-    this._renderer.setStyle(this._childElement, 'left', `${left}px`)
-    this._renderer.setStyle(this._childElement, 'top', `${top}px`)
+    this._renderer.setStyle(this._scrollElement, 'left', `${left}px`)
+    this._renderer.setStyle(this._scrollElement, 'top', `${top}px`)
   }
 
   private setupElements() {
@@ -162,11 +198,14 @@ export class NoGridLayoutDirective
     }
     this.selectedPanelId = undefined
     this.isDragging = false
+
     // this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
     this.clearCtxRect()
     if (this.clickTimeout) {
       clearTimeout(this.clickTimeout)
       this._clickService.handleClickEvent(event)
+    } else {
+      this._screenMoveService.ctrlMouseDownStartPoint = undefined
     }
     return
   }
@@ -178,10 +217,11 @@ export class NoGridLayoutDirective
      */
     if (event.ctrlKey || event.button === 1) {
       // this.startPoint = this._mousePositionService.getMousePositionFromPageXYV2(event)
-      const rect = this._childElement.getBoundingClientRect()
-      const x = (event.pageX - rect.left) / this.scale
-      const y = (event.pageY - rect.top) / this.scale
-      this.startPoint = { x, y }
+      /*      const rect = this._scrollElement.getBoundingClientRect()
+       const x = (event.pageX - rect.left) / this.scale
+       const y = (event.pageY - rect.top) / this.scale
+       this.startPoint = { x, y }*/
+      this._screenMoveService.onMouseDownHelper(event)
       this.toggleCheck = true
       /*
        this.startPoint = {
@@ -226,7 +266,7 @@ export class NoGridLayoutDirective
       }
       // this.pagePoint = this._mousePositionService.getMousePositionFromPageXY(event)
       // const {}
-      /*      const childRect = this._childElement.getBoundingClientRect()
+      /*      const childRect = this._scrollElement.getBoundingClientRect()
        const x = event.pageX - childRect.left
        const y = event.pageY - childRect.top*/
       // this.startPoint = { x, y }
@@ -314,28 +354,28 @@ export class NoGridLayoutDirective
 
   private handleCtrlMouseMove(event: MouseEvent) {
     // if (!this.startPoint) return
-
-    this.onCtrlMouseMoveHelper(event)
+    // this.startPoint = { x: 0, y: 0 }
+    // this.onCtrlMouseMoveHelper(event)
     /*    this._ngZone.runOutsideAngular(() => {
      })*/
 
-    /*    const res = this._screenMoveService.onCtrlMouseMoveHelper(event, this.startPoint, this.scale)
-     if (!res) return
-     const { top, left } = res
+    const res = this._screenMoveService.onCtrlMouseMoveHelper(event)
+    // if (!res) return
+    // const { top, left } = res
 
-     this._renderer.setStyle(this._element, 'top', top + 'px')
+    /*    this._renderer.setStyle(this._element, 'top', top + 'px')
      this._renderer.setStyle(this._element, 'left', left + 'px')*/
   }
 
   private animateCtrlMouseMove(event: MouseEvent) {
     if (!this.startPoint) return
-    const res = this._screenMoveService.onCtrlMouseMoveHelper(event, this.startPoint, this.scale)
-    if (!res) return
-    const { top, left } = res
+    // const res = this._screenMoveService.onCtrlMouseMoveHelper(event, this.startPoint)
+    // if (!res) return
+    // const { top, left } = res
 
-    this._renderer.setStyle(this._element, 'top', top + 'px')
-    this._renderer.setStyle(this._element, 'left', left + 'px')
-    requestAnimationFrame(() => this.animateCtrlMouseMove(event))
+    // this._renderer.setStyle(this._element, 'top', top + 'px')
+    // this._renderer.setStyle(this._element, 'left', left + 'px')
+    // requestAnimationFrame(() => this.animateCtrlMouseMove(event))
   }
 
   private onCtrlMouseMoveHelper(event: MouseEvent) {
@@ -379,9 +419,9 @@ export class NoGridLayoutDirective
   }
 
   private onScrollHandler(event: WheelEvent) {
-    this.screenProperties = this._screenMoveService.onScrollHelper(event, this.screenPosition, this.scale)
+    this.screenProperties = this._screenMoveService.onScrollHelper(event, this.screenPosition)
     this._renderer.setStyle(
-      this._childElement,
+      this._scrollElement,
       'transform',
       `translate(${this.screenPosition.x}px,${this.screenPosition.y}px) scale(${this.scale})`,
     )

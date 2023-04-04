@@ -1,21 +1,21 @@
 <!--<router-outlet />-->
-<ng-container *ngIf="url$ | async as url">
+<!--<ng-container *ngIf="url$ | async as url">
   <ng-container *ngIf="url !== '/free'; else freeMode">
     <div class="min-h-full bg-white dark:bg-slate-800">
       <div class="flex flex-col">
         <header class="pb-32">
           <app-home-header />
         </header>
-        <!--    border-t-2 border-indigo-500-->
+        &lt;!&ndash;    border-t-2 border-indigo-500&ndash;&gt;
         <main class="-mt-32 border-t-2 border-gray-300 dark:border-gray-500">
           <div class="mx-auto px-4 pb-12 sm:px-6 lg:px-8">
             <router-outlet />
-            <!--        <ng-template
+            &lt;!&ndash;        <ng-template
                       appHomeComponent
                       [homeNavRoute]="homeNavRoute$ | async"
                       [tab]="tab$ | async"
                       [state]="routeState$ | async"
-                    ></ng-template>-->
+                    ></ng-template>&ndash;&gt;
           </div>
         </main>
       </div>
@@ -25,4 +25,8 @@
   <ng-template #freeMode>
     <router-outlet></router-outlet>
   </ng-template>
-</ng-container>
+</ng-container>-->
+
+<div class="h-full min-h-full w-full min-w-full">
+  <router-outlet></router-outlet>
+</div>

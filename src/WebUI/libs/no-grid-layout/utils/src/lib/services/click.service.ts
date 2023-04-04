@@ -28,7 +28,7 @@ export class ClickService {
 
     if (event.ctrlKey) return
 
-    const mouse = this._mousePositionService.getMousePositionFromPageXY(event)
+    const mouse = this._mousePositionService.getMousePositionFromPageXYWithSize(event)
 
     const size = FreePanelUtil.size(PanelRotationConfig.Default)
     const locationX = mouse.x - size.width / 2

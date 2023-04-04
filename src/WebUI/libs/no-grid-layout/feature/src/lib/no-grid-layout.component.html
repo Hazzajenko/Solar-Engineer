@@ -1,11 +1,7 @@
-<div class="relative flex h-full w-full flex-col overflow-hidden">
-  <div
-    appNoGridLayoutDirective
-    appGridMove
-    class="relative"
-    [style.height]="layoutHeightString"
-    [style.width]="layoutWidthString"
-  >
+<div id="grid-directive" class="relative flex flex-col overflow-hidden">
+  <div id="move-directive" appNoGridLayoutDirective appGridMove class="relative">
+    <!--    [style.height]="layoutHeightString"-->
+    <!--    [style.width]="layoutWidthString"-->
     <!--    <app-grid-background
           appGridBackground
           class="pointer-events-none absolute"
@@ -18,7 +14,7 @@
     <!--    [style.width]="layoutWidthString"-->
     <!--    [style.width]="layoutWidthString"-->
     <div
-      id="no-grid"
+      id="scroll-directive"
       appScrollDirective
       class="relative"
       style="transition: transform 0.1s; transform-origin: 0 0"
