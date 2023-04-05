@@ -142,10 +142,12 @@ export class NoGridLayoutDirective
 
   private setupCanvas(layoutWidth: number, layoutHeight: number) {
     const canvasEle = this._renderer.createElement(CANVAS)
-    this._renderer.appendChild(this._element, canvasEle)
+    this._renderer.appendChild(this._element.parentElement, canvasEle)
     const { canvas, ctx } = InitCanvas(canvasEle, layoutWidth, layoutHeight)
     this.canvas = canvas
     this.ctx = ctx
+    // this._renderer.setStyle(this.canvas, 'height', '100%')
+    // this._renderer.setStyle(this.canvas, 'width', '100%')
     this._renderer.setStyle(this.canvas, 'height', `${window.innerHeight}px`)
     this._renderer.setStyle(this.canvas, 'width', `${window.innerWidth}px`)
     this._renderer.setStyle(this.canvas, 'position', 'absolute')

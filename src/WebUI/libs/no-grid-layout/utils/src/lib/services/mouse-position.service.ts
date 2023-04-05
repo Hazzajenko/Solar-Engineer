@@ -71,8 +71,12 @@ export class MousePositionService {
 
   getMousePositionFromXYForCanvas(xy: XyLocation): Point {
     const rect = this._gridLayoutElement.getBoundingClientRect()
+    // console.log('offLeftDiff', this._gridLayoutElement.offsetLeft - rect.left)
+    // console.log('offTopDiff', this._gridLayoutElement.offsetTop - rect.top)
     const x = (xy.x - this._gridLayoutElement.offsetLeft + rect.left) * this.scale
     const y = (xy.y - this._gridLayoutElement.offsetTop + rect.top) * this.scale
+    // const x = (xy.x - this._gridLayoutElement.offsetLeft) * this.scale
+    // const y = (xy.y - this._gridLayoutElement.offsetTop) * this.scale
     return { x, y }
   }
 

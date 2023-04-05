@@ -18,6 +18,8 @@ export const InitCanvas = (
   // canvas.height = Number(height.split('p')[0])
   canvas.width = window.innerWidth
   canvas.height = window.innerHeight
+  // canvas.width = "100%"
+  // canvas.height = "100%"
   // canvas.width = layoutWidth
   // canvas.height = layoutHeight
   // this._renderer.setStyle(this._scrollElement, 'width', `${layoutWidth}px`)

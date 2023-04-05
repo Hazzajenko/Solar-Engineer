@@ -21,6 +21,7 @@ export class ScreenMoveService {
 
   private _ctrlMouseDownStartPoint: XyLocation | undefined
   private _screenPosition: XyLocation = { x: 0, y: 0 }
+  private _modifiedScreenPosition: XyLocation = { x: 1000, y: 1000 }
 
   get ctrlMouseDownStartPoint(): XyLocation | undefined {
     return this._ctrlMouseDownStartPoint
@@ -77,6 +78,9 @@ export class ScreenMoveService {
     event: WheelEvent,
   ) {
     const speed = GridConfig.Speed
+    const minScale = 0.5
+    // const minScale = GridConfig.MinScale
+    const maxScale = GridConfig.MaxScale
     const childRect = this.gridLayoutElement.children[0].getBoundingClientRect()
     console.log('childRect', childRect)
     // childRect.
@@ -96,7 +100,7 @@ export class ScreenMoveService {
     const targetY = (pointerY - this.screenPosition.y) / this.scale
 
     this.scale += -1 * Math.max(-1, Math.min(1, event.deltaY)) * speed * this.scale
-    this.scale = Math.max(1, Math.min(2, this.scale))
+    this.scale = Math.max(minScale, Math.min(maxScale, this.scale))
     this.screenPosition = {
       x: -targetX * this.scale + pointerX,
       y: -targetY * this.scale + pointerY,
@@ -113,11 +117,11 @@ export class ScreenMoveService {
       'transform',
       `translate(${this.screenPosition.x}px,${this.screenPosition.y}px) scale(${this.scale})`,
     )
-    /*    console.log('this._componentElementsService.canvasElement', this._componentElementsService.canvasElement)
-     this._renderer.setStyle(
+    // console.log('this._componentElementsService.canvasElement', this._componentElementsService.canvasElement)
+    /*    this._renderer.setStyle(
      this._componentElementsService.canvasElement,
      'transform',
-     `translate(${this._screenPosition.x}px,${this._screenPosition.y}px) scale(${this.scale})`,
+     `translate(${this.screenPosition.x}px,${this.screenPosition.y}px) scale(${this.scale})`,
      )*/
     /*    this._renderer.setStyle(
      this._element,
@@ -133,7 +137,7 @@ export class ScreenMoveService {
     this._renderer.setStyle(
       this.scrollElement,
       'transform',
-      `translate(${this._screenPosition.x}px,${this._screenPosition.y}px) scale(${this.scale})`,
+      `translate(${this.screenPosition.x}px,${this.screenPosition.y}px) scale(${this.scale})`,
     )
   }
 
@@ -171,6 +175,18 @@ export class ScreenMoveService {
 
     this._renderer.setStyle(this.gridLayoutElement, 'top', top + 'px')
     this._renderer.setStyle(this.gridLayoutElement, 'left', left + 'px')
+
+    const canvasTop = top + this._componentElementsService.canvasElement.offsetTop
+    const canvasLeft = left + this._componentElementsService.canvasElement.offsetLeft
+
+    console.log('canvasTop', canvasTop)
+    console.log('canvasLeft', canvasLeft)
+
+    // this._renderer.setStyle(this._componentElementsService.canvasElement, 'top', canvasTop + 'px')
+    // this._renderer.setStyle(this._componentElementsService.canvasElement, 'left', canvasLeft + 'px')
+    /*    this._renderer.setStyle(this._componentElementsService.canvasElement, 'top', '50%')
+     this._renderer.setStyle(this._componentElementsService.canvasElement, 'left', '50%')
+     this._renderer.setStyle(this._componentElementsService.canvasElement, 'transform', `translate(-50%, -50%)`)*/
   }
 
   getOffset(element: HTMLDivElement) {

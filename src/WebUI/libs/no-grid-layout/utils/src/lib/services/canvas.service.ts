@@ -5,6 +5,7 @@ import { PanelStylerService } from './panel-styler.service'
 import { MousePositionService } from './mouse-position.service'
 import { ComponentElementsService } from './component-elements.service'
 import { XyLocation } from '@shared/data-access/models'
+import { ScreenMoveService } from './screen-move.service'
 
 @Injectable({
   providedIn: 'root',
@@ -13,7 +14,7 @@ export class CanvasService {
   private _panelStylerService = inject(PanelStylerService)
   private _mousePositionService = inject(MousePositionService)
   private _componentElementService = inject(ComponentElementsService)
-
+  private _screenMoveService = inject(ScreenMoveService)
   private _canvas: HTMLCanvasElement | undefined
   private _ctx: CanvasRenderingContext2D | undefined
 
@@ -63,6 +64,16 @@ export class CanvasService {
   drawLinesForBlocks(blockRectModel: FreeBlockRectModel) {
     const gridBlockRects = this._componentElementService.elements.map((e) => this.getBlockRectFromElement(e))
     const scrollRect = this._componentElementService.scrollElement.getBoundingClientRect()
+    /*    console.log('scrollRect', scrollRect)
+     console.log('scrollTop', scrollRect.top)
+     console.log('scrollOffsetTop', this._componentElementService.scrollElement.offsetTop)
+     const gridRect = this._componentElementService.gridLayoutElement.getBoundingClientRect()
+     console.log('gridTop', gridRect.top)
+     console.log('gridOffsetTop', this._componentElementService.gridLayoutElement.offsetTop)
+     const canvasRect = this.canvas.getBoundingClientRect()
+     console.log('canvasTop', canvasRect.top)
+     console.log('canvasOffsetTop', this.canvas.offsetTop)*/
+    // console.log()
 
     // TODO fix mouseXY when gridElement has been moved
 
@@ -77,21 +88,81 @@ export class CanvasService {
     gridBlockRects: FreeBlockRectModel[],
     scrollRectTop: number,
   ) {
+
     const printDefault = () => {
+      // const canvasRect = this.canvas.getBoundingClientRect()
+      // console.log('canvasTop', canvasRect.top)
+      // console.log('canvasLeft', canvasRect.left)
+
+      // console.log('canvasOffsetTop', this.canvas.offsetTop)
+      // // const canvasOffsetTop = this.canvas.offsetTop
+      // const canvasOffsetLeft = this.canvas.offsetLeft
+
       let moveToPoint: XyLocation = {
         x: blockRectModel.x,
         y: blockRectModel.y - blockRectModel.height / 2,
       }
+      /*      moveToPoint = {
+       x: moveToPoint.x - canvasRect.left,
+       y: moveToPoint.y - canvasRect.top,
+       }*/
       moveToPoint = this._mousePositionService.getMousePositionFromXYForCanvas(moveToPoint)
       // moveToPoint = this._mousePositionService.getMousePositionFromXYForCanvas(moveToPoint)
       // const scrollRectTop = this._componentElementService.scrollElement.getBoundingClientRect().top
+      // const scrollOffsetTop = this._componentElementService.scrollElement.offsetTop
+      /*      var offset = $div.offset();
+       var zoomFactor = $div.parent().width() / $(window).width(); // Assuming the parent container is the full width of the window
+       var left = offset.left * zoomFactor;
+       var top = offset.top * zoomFactor;*/
+      /*      const offset = this._componentElementService.scrollElement.getBoundingClientRect()
+       const zoomFactor = offset.width / window.innerWidth
+       const left = offset.left * zoomFactor
+       const top = offset.top * zoomFactor
+       console.log('offset', offset)
+       console.log('zoomFactor', zoomFactor)
+       console.log('left', left)
+       console.log('top', top)*/
+      /*      let lineToPoint: XyLocation = {
+       x: blockRectModel.x,
+       y: 0,
+       }*/
+
+      // const zoomFactor = this._componentElementService.scrollElement.parentElement.clientWidth / window.innerWidth
       let lineToPoint: XyLocation = {
         x: blockRectModel.x,
-        y: scrollRectTop,
+        // y: top,
+        // y: 0 - this._componentElementService.gridLayoutElement.offsetTop,
+        y: 0,
+        // y: (scrollRectTop),
+        // y: (scrollRectTop),
       }
+      /*      lineToPoint = {
+       x: lineToPoint.x - canvasRect.left,
+       y: lineToPoint.y - canvasRect.top,
+       }*/
+      // lineToPoint.x = lineToPoint.x * this._screenMoveService.scale
+      // lineToPoint.y = lineToPoint.y * this._screenMoveService.scale
+      /*      lineToPoint = {
+       x: lineToPoint.x * this._screenMoveService.scale,
+       // y: lineToPoint.y - (this._componentElementService.gridLayoutElement.offsetTop * this._screenMoveService.scale),
+       y: (this._componentElementService.gridLayoutElement.offsetTop - lineToPoint.y)
+       // y: (lineToPoint.y - this._componentElementService.gridLayoutElement.offsetTop)
+       * this._screenMoveService.scale,
+       }*/
+      // const mathString = `lineToPoint.y [${lineToPoint.y}] = scrollRectTop:${scrollRectTop} - gridOffsetTop:${this._componentElementService.gridLayoutElement.offsetTop} * scale:${this._screenMoveService.scale}`
+      // console.log(mathString)
+      /*
+       lineToPoint = {
+       x: lineToPoint.x,
+       y: Math.abs(lineToPoint.y),
+       }*/
+      // const x = (xy.x - this._gridLayoutElement.offsetLeft + rect.left) * this.scale
+      // const y = (xy.y - this._gridLayoutElement.offsetTop + rect.top) * this.scale
+      // console.log('offSetTop', this._componentElementService.gridLayoutElement.offsetTop)
       lineToPoint = this._mousePositionService.getMousePositionFromXYForCanvas(lineToPoint)
       // lineToPoint = this._mousePositionService.getMousePositionFromXYForCanvas(lineToPoint)
       this.strokeTwoPoints(moveToPoint, lineToPoint)
+      // console.log(lineToPoint)
 
       const distanceToTopOfPage = (blockRectModel.y - blockRectModel.height / 2) - scrollRectTop
       const absoluteDistance = Math.abs(distanceToTopOfPage)
@@ -164,7 +235,9 @@ export class CanvasService {
       // const scrollRectBottom = this._componentElementService.scrollElement.getBoundingClientRect().bottom
       let lineToPoint: XyLocation = {
         x: blockRectModel.x,
-        y: scrollRectBottom,
+        y: window.innerHeight,
+        // y: this.canvasSize.height,
+        // y: scrollRectBottom - this._componentElementService.gridLayoutElement.offsetTop,
       }
       lineToPoint = this._mousePositionService.getMousePositionFromXYForCanvas(lineToPoint)
 
@@ -175,7 +248,8 @@ export class CanvasService {
       )
       const absoluteDistance = Math.abs(distanceToBottomOfPage)
       const fillTextX = blockRectModel.x - 50
-      const fillTextY = this.canvasSize.height - 50
+      const fillTextY = window.innerHeight - 50
+      // const fillTextY = this.canvasSize.height - 50
       this.fillText(`${absoluteDistance}px`, fillTextX, fillTextY)
       this._panelStylerService.removePanelClassForLightUpPanels(LineDirectionEnum.Bottom)
       return
@@ -234,16 +308,18 @@ export class CanvasService {
         y: blockRectModel.y,
       }
       moveToPoint = this._mousePositionService.getMousePositionFromXYForCanvas(moveToPoint)
-      const offsetLeft = this._componentElementService.gridLayoutElement.offsetLeft
+      // const offsetLeft = this._componentElementService.gridLayoutElement.offsetLeft
       let lineToPoint: XyLocation = {
-        x: (scrollRectLeft - offsetLeft) * this._mousePositionService.scale,
+        x: 0,
+        // x: (scrollRectLeft - offsetLeft) * this._mousePositionService.scale,
         y: blockRectModel.y,
       }
       lineToPoint = this._mousePositionService.getMousePositionFromXYForCanvas(lineToPoint)
 
       this.strokeTwoPoints(moveToPoint, lineToPoint)
 
-      const distanceToLeftOfPage = (blockRectModel.x - blockRectModel.width / 2) - scrollRectLeft
+      const distanceToLeftOfPage = (blockRectModel.x - blockRectModel.width / 2)
+      // const distanceToLeftOfPage = (blockRectModel.x - blockRectModel.width / 2) - scrollRectLeft
       const absoluteDistance = Math.abs(distanceToLeftOfPage)
       const fillTextX = 50
       const fillTextY = blockRectModel.y - 50
@@ -305,9 +381,11 @@ export class CanvasService {
       }
       moveToPoint = this._mousePositionService.getMousePositionFromXYForCanvas(moveToPoint)
       // const scrollRectRight = this._componentElementService.scrollElement.getBoundingClientRect().right
-      const offsetLeft = this._componentElementService.gridLayoutElement.offsetLeft
+      // const offsetLeft = this._componentElementService.gridLayoutElement.offsetLeft
       let lineToPoint: XyLocation = {
-        x: scrollRectRight - offsetLeft,
+        x: window.innerWidth,
+        // x: this.canvasSize.width,
+        // x: scrollRectRight - offsetLeft,
         y: blockRectModel.y,
       }
       lineToPoint = this._mousePositionService.getMousePositionFromXYForCanvas(lineToPoint)
@@ -318,7 +396,8 @@ export class CanvasService {
         blockRectModel.x + blockRectModel.width / 2
       )
       const absoluteDistance = Math.abs(distanceToRightOfPage)
-      const fillTextX = this.canvasSize.width - 50
+      const fillTextX = window.innerWidth - 50
+      // const fillTextX = this.canvasSize.width - 50
       const fillTextY = blockRectModel.y - 50
       this.fillText(`${absoluteDistance}px`, fillTextX, fillTextY)
       this._panelStylerService.removePanelClassForLightUpPanels(LineDirectionEnum.Right)
