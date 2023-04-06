@@ -41,17 +41,18 @@ export class SelectedService {
   }
 
   setSelected(selectedId: string) {
-    const existingSelectedId = this._selected$.value
-    if (existingSelectedId && existingSelectedId === selectedId) {
-      this._selected$.next(undefined)
-      return
-    }
-    if (existingSelectedId) {
-      this._selected$.next(undefined)
-      // this._panelStylerService.disableSelectedPanelClass(existingSelectedId)
-    }
+    /*    const existingSelectedId = this._selected$.value
+     if (existingSelectedId && existingSelectedId === selectedId) {
+     this._selected$.next(undefined)
+     return
+     }
+     if (existingSelectedId) {
+     this._selected$.next(undefined)
+     // this._panelStylerService.disableSelectedPanelClass(existingSelectedId)
+     }*/
     this._selected$.next(selectedId)
-    this.logSelected()
+    console.log('selected', this.selected)
+    // this.logSelected()
   }
 
   clearSelected() {

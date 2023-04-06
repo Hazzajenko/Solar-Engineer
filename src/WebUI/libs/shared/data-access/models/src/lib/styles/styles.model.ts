@@ -1,5 +1,6 @@
 export const StyleName = {
   BackgroundColor: 'background-color',
+  Border: 'border',
   // BorderColor: 'border-color',
 }
 

@@ -1,4 +1,4 @@
-export const MouseEvent = {
+export const EventName = {
   MouseDown: 'mousedown',
   MouseUp: 'mouseup',
   MouseMove: 'mousemove',
@@ -29,21 +29,21 @@ export const MouseEvent = {
    DragStart: 'dragstart',*/
 } as const
 
-export type MouseEvent = (typeof MouseEvent)[keyof typeof MouseEvent]
+export type MouseEvent = (typeof EventName)[keyof typeof EventName]
 
 export type MouseEvents = {
   [key in MouseEvent]: MouseEvent
 }
 
-export const MouseDownEvent = MouseEvent.MouseDown
-export const MouseUpEvent = MouseEvent.MouseUp
-export const MouseMoveEvent = MouseEvent.MouseMove
-export const MouseEnterEvent = MouseEvent.MouseEnter
-export const MouseLeaveEvent = MouseEvent.MouseLeave
-export const MouseOverEvent = MouseEvent.MouseOver
-export const MouseOutEvent = MouseEvent.MouseOut
-export const ClickEvent = MouseEvent.Click
-export const ContextMenuEvent = MouseEvent.ContextMenu
-export const DoubleClickEvent = MouseEvent.DoubleClick
-export const ScrollWheelEvent = MouseEvent.Wheel
-export const MouseWheelEvent = MouseEvent.MouseWheel
+export const MouseDownEvent = EventName.MouseDown
+export const MouseUpEvent = EventName.MouseUp
+export const MouseMoveEvent = EventName.MouseMove
+export const MouseEnterEvent = EventName.MouseEnter
+export const MouseLeaveEvent = EventName.MouseLeave
+export const MouseOverEvent = EventName.MouseOver
+export const MouseOutEvent = EventName.MouseOut
+export const ClickEvent = EventName.Click
+export const ContextMenuEvent = EventName.ContextMenu
+export const DoubleClickEvent = EventName.DoubleClick
+export const ScrollWheelEvent = EventName.Wheel
+export const MouseWheelEvent = EventName.MouseWheel

@@ -1,4 +1,4 @@
-export * from './canvas.service'
+export * from './canvas/index'
 export * from './component-elements.service'
 export * from './panel-styler/index'
 export * from './mouse-position.service'

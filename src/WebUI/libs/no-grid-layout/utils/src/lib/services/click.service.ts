@@ -40,6 +40,7 @@ export class ClickService {
     })
 
     this._freePanelsService.addFreePanel(freePanel)
+    this._selectedService.clearSelected()
   }
 
   private isBlockInThisLocation(event: MouseEvent) {

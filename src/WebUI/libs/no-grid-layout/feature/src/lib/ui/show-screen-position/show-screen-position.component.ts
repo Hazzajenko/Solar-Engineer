@@ -4,7 +4,7 @@ import { ScreenMoveService } from '@no-grid-layout/utils'
 import { ShowScreenPositionMode } from '@no-grid-layout/shared'
 import { BehaviorSubject, tap } from 'rxjs'
 import { LetModule } from '@ngrx/component'
-import { UiOverlayService } from '@no-grid-layout/data-access'
+import { UiConfigService } from '@no-grid-layout/data-access'
 
 @Component({
   selector:        'app-show-screen-position',
@@ -19,11 +19,11 @@ import { UiOverlayService } from '@no-grid-layout/data-access'
 })
 export class ShowScreenPositionComponent {
   private _screenMoveService = inject(ScreenMoveService)
-  private _uiOverlayService = inject(UiOverlayService)
+  private _uiOverlayService = inject(UiConfigService)
 
   scale$ = this._screenMoveService.scale$.pipe(
     tap(() => {
-      switch (this._uiOverlayService.showScreenPositionMode.mode) {
+      switch (this._uiOverlayService.showScreenPositionConfig.mode) {
         case ShowScreenPositionMode.ShowOnlyOnChanges:
           this.handleOnChangesTimer()
           break
@@ -47,7 +47,7 @@ export class ShowScreenPositionComponent {
     this._canShow.next(true)
     setTimeout(() => {
       this._canShow.next(false)
-    }, this._uiOverlayService.showScreenPositionMode.onChangesTimer)
+    }, this._uiOverlayService.showScreenPositionConfig.onChangesTimer)
 
   }
 

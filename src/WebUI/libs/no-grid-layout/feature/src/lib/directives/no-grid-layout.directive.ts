@@ -399,10 +399,10 @@ export class NoGridLayoutDirective
   }
 
   private drawLinesAllDirectionsForBlock(blockRectModel: FreeBlockRectModel) {
-    this.ctx.lineWidth = 2
-    this.ctx.strokeStyle = 'red'
-    this.ctx.fillStyle = 'red'
-    this.ctx.font = '15px Arial'
+    /*    this.ctx.lineWidth = 2
+     this.ctx.strokeStyle = 'red'
+     this.ctx.fillStyle = 'red'
+     this.ctx.font = '15px Arial'*/
 
     this._canvasService.drawLinesForBlocks(blockRectModel)
   }

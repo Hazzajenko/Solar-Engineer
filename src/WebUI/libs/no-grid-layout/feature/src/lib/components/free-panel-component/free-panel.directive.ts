@@ -4,8 +4,8 @@ import { BackgroundColor, FreePanelUtil, PanelRotationConfig } from '@no-grid-la
 import { SelectedService } from '@no-grid-layout/data-access'
 import { OnDestroyDirective } from '@shared/utils'
 import { map, takeUntil, tap } from 'rxjs'
-import { ComponentElementsService, PanelBackgroundColor, PanelStylerService } from '@no-grid-layout/utils'
-import { SoftColor, VibrantColor } from '@shared/data-access/models'
+import { ComponentElementsService, PanelBackgroundColor, PanelBorder, PanelStylerService } from '@no-grid-layout/utils'
+import { SoftColor, StyleName, VibrantColor } from '@shared/data-access/models'
 
 @Directive({
   selector:       '[appFreePanelDirective]',
@@ -17,25 +17,27 @@ export class FreePanelDirective
   implements OnInit {
   private destroy$ = inject(OnDestroyDirective).destroy$
   private _element = inject(ElementRef).nativeElement
-  // elRef = inject(ElementRef)
+  private _renderer = inject(Renderer2)
+  private _ngZone = inject(NgZone)
   private _panelId = ''
   private renderer = inject(Renderer2)
   private _selectedService = inject(SelectedService)
-  // private _tippy: tippy.Instance | null = null
   private _componentElementsService = inject(ComponentElementsService)
   private _panelStylerService = inject(PanelStylerService)
   private readonly zone: NgZone = inject(NgZone)
+  isSelected = false
+  isMultiSelected = false
   cachedClass = ''
   cachedBorder = ''
   cachedBackgroundColor = ''
 
   backgroundColorStyles = {
-    Default: SoftColor.SoftBrown,
-    Red:     VibrantColor.VibrantRed,
-    Green:   VibrantColor.VibrantGreen,
-    Yellow:  VibrantColor.VibrantYellow,
-    Orange:  VibrantColor.VibrantOrange,
-    Nearby:  VibrantColor.VibrantPurple,
+    Default:       SoftColor.SoftBrown,
+    Red:           VibrantColor.VibrantRed,
+    Green:         VibrantColor.VibrantGreen,
+    MultiSelected: VibrantColor.VibrantYellow,
+    Orange:        VibrantColor.VibrantOrange,
+    Nearby:        VibrantColor.VibrantPurple,
   }
 
   @Input() set backgroundColor(backgroundColor: BackgroundColor) {
@@ -79,6 +81,7 @@ export class FreePanelDirective
     this.setStyle('background-color', PanelBackgroundColor.Default)
     this._componentElementsService.addToElements(this._element)
     this._panelStylerService.initPanelStyleState(this._element.id)
+    this.setupMouseEventListeners()
 
     this._selectedService.selected$
       .pipe(
@@ -87,12 +90,16 @@ export class FreePanelDirective
         tap((isSelected) => {
             this.zone.runOutsideAngular(() => {
               if (isSelected) {
-                this.setStyle('background-color', PanelBackgroundColor.Red)
+                this.setStyle(StyleName.Border, PanelBorder.Selected)
+                this.setStyle(StyleName.BackgroundColor, SoftColor.SoftCyan)
+                // this.setStyle(StyleName.BackgroundColor, PanelBackgroundColor.Red)
+                // this.setStyle('background-color', PanelBackgroundColor.Red)
                 /*               this.cachedBackgroundColor =
                  this.replaceClassForPanel(this.cachedBackgroundColor, PanelColorState.Selected)*/
                 return
               }
               this.setStyle('background-color', PanelBackgroundColor.Default)
+              this.setStyle(StyleName.Border, PanelBorder.Default)
               // this.cachedBackgroundColor = this.replaceClassForPanel(this.cachedBackgroundColor, PanelColorState.Default)
             })
           },
@@ -107,7 +114,8 @@ export class FreePanelDirective
         tap((isSelected) => {
             this.zone.runOutsideAngular(() => {
               if (isSelected) {
-                this.setStyle('background-color', PanelBackgroundColor.Yellow)
+                this.setStyle('background-color', SoftColor.SoftCyan)
+                // this.setStyle('background-color', PanelBackgroundColor.MultiSelected)
                 /*                this.cachedBackgroundColor =
                  this.replaceClassForPanel(this.cachedBackgroundColor, PanelColorState.MultiSelected)*/
                 return
@@ -122,6 +130,50 @@ export class FreePanelDirective
       .subscribe()
 
   }
+
+  private setupMouseEventListeners() {
+    /*    this._ngZone.runOutsideAngular(() => {
+     this._renderer.listen(this._element, EventName.MouseOver, (event: MouseEvent) => {
+     event.stopPropagation()
+     event.preventDefault()
+     this.onMouseOverHandler(event)
+     })
+     this._renderer.listen(this._element, EventName.MouseLeave, (event: MouseEvent) => {
+     event.stopPropagation()
+     event.preventDefault()
+     this.onMouseLeaveHandler(event)
+     })
+     /!*      this._renderer.listen(this._element, EventName.Click, (event: PointerEvent) => {
+     event.stopPropagation()
+     event.preventDefault()
+     this.onMouseClickHandler(event)
+     })*!/
+     })*/
+  }
+
+  private onMouseOverHandler(event: MouseEvent) {
+    // console.log('over', event)
+    this.setStyle(StyleName.BackgroundColor, PanelBackgroundColor.Hover)
+  }
+
+  private onMouseLeaveHandler(event: MouseEvent) {
+    // console.log('leave', event)
+    if (this.isSelected) {
+      this.setStyle(StyleName.BackgroundColor, PanelBackgroundColor.Selected)
+      return
+    }
+    if (this.isMultiSelected) {
+      this.setStyle(StyleName.BackgroundColor, PanelBackgroundColor.MultiSelected)
+      return
+    }
+    this.setStyle(StyleName.BackgroundColor, PanelBackgroundColor.Default)
+  }
+
+  /*
+   private onMouseClickHandler(event: PointerEvent) {
+   console.log('click', event)
+   this.setStyle(StyleName.BackgroundColor, PanelBackgroundColor.Selected)
+   }*/
 
   private replaceClassForPanel(oldClass: string, newClass: string) {
     if (this._element.classList.contains(newClass)) return newClass

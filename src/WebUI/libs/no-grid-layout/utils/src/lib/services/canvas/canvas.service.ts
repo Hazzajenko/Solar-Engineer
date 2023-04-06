@@ -1,23 +1,30 @@
 import { inject, Injectable } from '@angular/core'
 import { BlockRectModel } from '@grid-layout/data-access'
 import { FreeBlockRectModel, LineDirection, LineDirectionEnum } from '@no-grid-layout/shared'
-import { PanelStylerService } from './panel-styler/panel-styler.service'
-import { MousePositionService } from './mouse-position.service'
-import { ComponentElementsService } from './component-elements.service'
+import { PanelBackgroundColor, PanelStylerService } from '../panel-styler'
+import { MousePositionService } from '../mouse-position.service'
+import { ComponentElementsService } from '../component-elements.service'
 import { XyLocation } from '@shared/data-access/models'
-import { ScreenMoveService } from './screen-move.service'
-import { PanelBackgroundColor } from './panel-styler'
+import { ScreenMoveService } from '../screen-move.service'
+import { UiConfigService } from '@no-grid-layout/data-access'
+import { BlockRectHelpers } from './block-rect.helpers'
 
 @Injectable({
   providedIn: 'root',
 })
-export class CanvasService {
-  private _panelStylerService = inject(PanelStylerService)
-  private _mousePositionService = inject(MousePositionService)
+export class CanvasService
+  extends BlockRectHelpers {
+  protected _panelStylerService = inject(PanelStylerService)
+  protected _mousePositionService = inject(MousePositionService)
   private _componentElementService = inject(ComponentElementsService)
   private _screenMoveService = inject(ScreenMoveService)
-  private _canvas: HTMLCanvasElement | undefined
-  private _ctx: CanvasRenderingContext2D | undefined
+  protected _canvas: HTMLCanvasElement | undefined
+  protected _ctx: CanvasRenderingContext2D | undefined
+  private _uiConfigService = inject(UiConfigService)
+
+  get canvasConfig() {
+    return this._uiConfigService.canvasConfig
+  }
 
   get ctx(): CanvasRenderingContext2D {
     if (!this._ctx) {
@@ -28,6 +35,11 @@ export class CanvasService {
 
   set ctx(value: CanvasRenderingContext2D) {
     this._ctx = value
+    this._ctx.font = this._uiConfigService.canvasConfig.font
+    this._ctx.fillStyle = this._uiConfigService.canvasConfig.fillStyle
+    this._ctx.strokeStyle = this._uiConfigService.canvasConfig.strokeStyle
+    this._ctx.globalAlpha = this._uiConfigService.canvasConfig.globalAlpha
+    this._ctx.lineWidth = this._uiConfigService.canvasConfig.lineWidth
   }
 
   get canvas(): HTMLCanvasElement {
@@ -44,17 +56,21 @@ export class CanvasService {
   // cachedPanels: FreeBlockRectModel[] = []
 
   get canvasSize() {
-    const scrollRect = this._componentElementService.scrollElement.getBoundingClientRect()
-
-    let width = scrollRect.width
-    let height = scrollRect.height
-    width = Math.round(width)
-    height = Math.round(height)
-
     return {
-      width,
-      height,
+      width:  this.canvas.width,
+      height: this.canvas.height,
     }
+    /*    const scrollRect = this._componentElementService.scrollElement.getBoundingClientRect()
+
+     let width = scrollRect.width
+     let height = scrollRect.height
+     width = Math.round(width)
+     height = Math.round(height)
+
+     return {
+     width,
+     height,
+     }*/
   }
 
   /*  setCanvas(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
@@ -65,18 +81,6 @@ export class CanvasService {
   drawLinesForBlocks(blockRectModel: FreeBlockRectModel) {
     const gridBlockRects = this._componentElementService.elements.map((e) => this.getBlockRectFromElement(e))
     const scrollRect = this._componentElementService.scrollElement.getBoundingClientRect()
-    /*    console.log('scrollRect', scrollRect)
-     console.log('scrollTop', scrollRect.top)
-     console.log('scrollOffsetTop', this._componentElementService.scrollElement.offsetTop)
-     const gridRect = this._componentElementService.gridLayoutElement.getBoundingClientRect()
-     console.log('gridTop', gridRect.top)
-     console.log('gridOffsetTop', this._componentElementService.gridLayoutElement.offsetTop)
-     const canvasRect = this.canvas.getBoundingClientRect()
-     console.log('canvasTop', canvasRect.top)
-     console.log('canvasOffsetTop', this.canvas.offsetTop)*/
-    // console.log()
-
-    // TODO fix mouseXY when gridElement has been moved
 
     this.drawLineForAboveBlock(blockRectModel, gridBlockRects, scrollRect.top)
     this.drawLineForBelowBlock(blockRectModel, gridBlockRects, scrollRect.bottom)
@@ -90,33 +94,9 @@ export class CanvasService {
     scrollRectTop: number,
   ) {
 
-    const printDefault = () => {
-
-      let moveToPoint: XyLocation = {
-        x: blockRectModel.x,
-        y: blockRectModel.y - blockRectModel.height / 2,
-      }
-      moveToPoint = this._mousePositionService.getMousePositionFromXYForCanvas(moveToPoint)
-
-      let lineToPoint: XyLocation = {
-        x: blockRectModel.x,
-        y: 0,
-      }
-      lineToPoint = this._mousePositionService.getMousePositionFromXYForCanvas(lineToPoint)
-
-      this.strokeTwoPoints(moveToPoint, lineToPoint)
-
-      const distanceToTopOfPage = (blockRectModel.y - blockRectModel.height / 2) - scrollRectTop
-      const absoluteDistance = Math.abs(distanceToTopOfPage)
-      const fillTextX = blockRectModel.x - 50
-      const fillTextY = 50
-      this.fillText(`${absoluteDistance}px`, fillTextX, fillTextY)
-      // this._panelStylerService.removePanelClassForLightUpPanels(LineDirectionEnum.Top)
-      this._panelStylerService.removeFromNearbyPanelsByDirection(LineDirection.Top)
-      return
-    }
     if (!gridBlockRects) {
-      return printDefault()
+      // return printDefault()
+      return this.printDefault(blockRectModel, LineDirection.Top)
     }
     const panelRectsToCheck = gridBlockRects.filter(
       (rect) =>
@@ -125,7 +105,8 @@ export class CanvasService {
         blockRectModel.y > rect.y,
     )
     if (!panelRectsToCheck.length) {
-      return printDefault()
+      // return printDefault()
+      return this.printDefault(blockRectModel, LineDirection.Top)
     }
     const panelRectsToCheckWithDistance = panelRectsToCheck.map((rect) => {
       const distance = Math.abs(rect.y - blockRectModel.y)
@@ -138,7 +119,10 @@ export class CanvasService {
       (a, b) => a.distance - b.distance,
     )
     const closestPanelRect = panelRectsToCheckWithDistanceSorted[0]
-    if (!closestPanelRect) return printDefault()
+    if (!closestPanelRect) {
+      // return printDefault()
+      return this.printDefault(blockRectModel, LineDirection.Top)
+    }
 
     let moveToPoint: XyLocation = {
       x: blockRectModel.x,
@@ -161,9 +145,6 @@ export class CanvasService {
             blockRectModel.y - blockRectModel.height / 2
             )
     const absoluteDistance = Math.abs(distanceToClosestPanel)
-    const fillTextX = blockRectModel.x - 50
-    const fillTextY = blockRectModel.y - blockRectModel.height / 2 - 50
-    this.fillText(`${absoluteDistance}px`, fillTextX, fillTextY)
 
     // this._panelStylerService.lightUpClosestPanel(closestPanelRect, LineDirectionEnum.Top)
 
@@ -178,46 +159,28 @@ export class CanvasService {
       this._panelStylerService.setBackgroundColorForPanelById(closestPanelRect.id, PanelBackgroundColor.LineThrough, LineDirection.Top)
       // this._panelStylerService.removeFromNearbyPanelsByDirection(LineDirection.Top)
     }
+
+    if (!this.canvasConfig.showLineDistance) {
+      return
+    }
+
+    const fillTextX = blockRectModel.x - 50
+    const fillTextY = blockRectModel.y - blockRectModel.height / 2 - 50
+    this.fillText(`${absoluteDistance}px`, fillTextX, fillTextY)
   }
 
   drawLineForBelowBlock(blockRectModel: BlockRectModel, gridBlockRects: FreeBlockRectModel[], scrollRectBottom: number) {
-    const printDefault = () => {
-      let moveToPoint: XyLocation = {
-        x: blockRectModel.x,
-        y: blockRectModel.y + blockRectModel.height / 2,
-      }
-      moveToPoint = this._mousePositionService.getMousePositionFromXYForCanvas(moveToPoint)
-      // const scrollRectBottom = this._componentElementService.scrollElement.getBoundingClientRect().bottom
-      let lineToPoint: XyLocation = {
-        x: blockRectModel.x,
-        y: window.innerHeight,
-        // y: this.canvasSize.height,
-        // y: scrollRectBottom - this._componentElementService.gridLayoutElement.offsetTop,
-      }
-      lineToPoint = this._mousePositionService.getMousePositionFromXYForCanvas(lineToPoint)
-
-      this.strokeTwoPoints(moveToPoint, lineToPoint)
-
-      const distanceToBottomOfPage = scrollRectBottom - (
-        blockRectModel.y + blockRectModel.height / 2
-      )
-      const absoluteDistance = Math.abs(distanceToBottomOfPage)
-      const fillTextX = blockRectModel.x - 50
-      const fillTextY = window.innerHeight - 50
-      // const fillTextY = this.canvasSize.height - 50
-      this.fillText(`${absoluteDistance}px`, fillTextX, fillTextY)
-      this._panelStylerService.removePanelClassForLightUpPanels(LineDirectionEnum.Bottom)
-      return
-    }
     if (!gridBlockRects) {
-      return printDefault()
+      // return printDefault()
+      return this.printDefault(blockRectModel, LineDirection.Bottom)
     }
     const panelRectsToCheck = gridBlockRects.filter(
       rect => blockRectModel.x >= rect.x - rect.width / 2
               && blockRectModel.x <= rect.x + rect.width / 2
               && blockRectModel.y < rect.y)
     if (!panelRectsToCheck.length) {
-      return printDefault()
+      // return printDefault()
+      return this.printDefault(blockRectModel, LineDirection.Bottom)
     }
 
     const panelRectsToCheckWithDistance = panelRectsToCheck.map(rect => {
@@ -230,7 +193,10 @@ export class CanvasService {
     })
     const panelRectsToCheckWithDistanceSorted = panelRectsToCheckWithDistance.sort((a, b) => a.distance - b.distance)
     const closestPanelRect = panelRectsToCheckWithDistanceSorted[0]
-    if (!closestPanelRect) return printDefault()
+    if (!closestPanelRect) {
+      // return printDefault()
+      return this.printDefault(blockRectModel, LineDirection.Bottom)
+    }
 
     let moveToPoint: XyLocation = {
       x: blockRectModel.x,
@@ -257,39 +223,17 @@ export class CanvasService {
   }
 
   drawLineForLeftBlock(blockRectModel: BlockRectModel, gridBlockRects: FreeBlockRectModel[], scrollRectLeft: number) {
-    const printDefault = () => {
-      let moveToPoint: XyLocation = {
-        x: blockRectModel.x - blockRectModel.width / 2,
-        y: blockRectModel.y,
-      }
-      moveToPoint = this._mousePositionService.getMousePositionFromXYForCanvas(moveToPoint)
-      // const offsetLeft = this._componentElementService.gridLayoutElement.offsetLeft
-      let lineToPoint: XyLocation = {
-        x: 0,
-        // x: (scrollRectLeft - offsetLeft) * this._mousePositionService.scale,
-        y: blockRectModel.y,
-      }
-      lineToPoint = this._mousePositionService.getMousePositionFromXYForCanvas(lineToPoint)
 
-      this.strokeTwoPoints(moveToPoint, lineToPoint)
-
-      const distanceToLeftOfPage = (blockRectModel.x - blockRectModel.width / 2)
-      // const distanceToLeftOfPage = (blockRectModel.x - blockRectModel.width / 2) - scrollRectLeft
-      const absoluteDistance = Math.abs(distanceToLeftOfPage)
-      const fillTextX = 50
-      const fillTextY = blockRectModel.y - 50
-      this.fillText(`${absoluteDistance}px`, fillTextX, fillTextY)
-      this._panelStylerService.removePanelClassForLightUpPanels(LineDirectionEnum.Left)
-      return
-    }
     if (!gridBlockRects) {
-      return printDefault()
+      // return printDefault()
+      return this.printDefault(blockRectModel, LineDirection.Left)
     }
     const panelRectsToCheck = gridBlockRects.filter(
       rect => blockRectModel.y >= rect.y - rect.height / 2 && blockRectModel.y <= rect.y + rect.height / 2
               && blockRectModel.x > rect.x)
     if (!panelRectsToCheck.length) {
-      return printDefault()
+      // return printDefault()
+      return this.printDefault(blockRectModel, LineDirection.Left)
     }
 
     const panelRectsToCheckWithDistance = panelRectsToCheck.map(rect => {
@@ -301,7 +245,10 @@ export class CanvasService {
     })
     const panelRectsToCheckWithDistanceSorted = panelRectsToCheckWithDistance.sort((a, b) => a.distance - b.distance)
     const closestPanelRect = panelRectsToCheckWithDistanceSorted[0]
-    if (!closestPanelRect) return printDefault()
+    if (!closestPanelRect) {
+      // return printDefault()
+      return this.printDefault(blockRectModel, LineDirection.Left)
+    }
 
     let moveToPoint: XyLocation = {
       x: blockRectModel.x - blockRectModel.width / 2,
@@ -329,41 +276,19 @@ export class CanvasService {
   }
 
   drawLineForRightBlock(blockRectModel: BlockRectModel, gridBlockRects: FreeBlockRectModel[], scrollRectRight: number) {
-    const printDefault = () => {
-      let moveToPoint: XyLocation = {
-        x: blockRectModel.x + blockRectModel.width / 2,
-        y: blockRectModel.y,
-      }
-      moveToPoint = this._mousePositionService.getMousePositionFromXYForCanvas(moveToPoint)
-      // const scrollRectRight = this._componentElementService.scrollElement.getBoundingClientRect().right
-      // const offsetLeft = this._componentElementService.gridLayoutElement.offsetLeft
-      let lineToPoint: XyLocation = {
-        x: window.innerWidth,
-        // x: this.canvasSize.width,
-        // x: scrollRectRight - offsetLeft,
-        y: blockRectModel.y,
-      }
-      lineToPoint = this._mousePositionService.getMousePositionFromXYForCanvas(lineToPoint)
 
-      this.strokeTwoPoints(moveToPoint, lineToPoint)
-
-      const distanceToRightOfPage = scrollRectRight - (
-        blockRectModel.x + blockRectModel.width / 2
-      )
-      const absoluteDistance = Math.abs(distanceToRightOfPage)
-      const fillTextX = window.innerWidth - 50
-      // const fillTextX = this.canvasSize.width - 50
-      const fillTextY = blockRectModel.y - 50
-      this.fillText(`${absoluteDistance}px`, fillTextX, fillTextY)
-      this._panelStylerService.removePanelClassForLightUpPanels(LineDirectionEnum.Right)
-      return
+    if (!gridBlockRects) {
+      // return printDefault()
+      return this.printDefault(blockRectModel, LineDirection.Right)
     }
-    if (!gridBlockRects) return printDefault()
     const panelRectsToCheck = gridBlockRects.filter(
       rect => blockRectModel.y >= rect.y - rect.height / 2
               && blockRectModel.y <= rect.y + rect.height / 2
               && blockRectModel.x < rect.x)
-    if (!panelRectsToCheck.length) return printDefault()
+    if (!panelRectsToCheck.length) {
+      // return printDefault()
+      return this.printDefault(blockRectModel, LineDirection.Right)
+    }
 
     const panelRectsToCheckWithDistance = panelRectsToCheck.map(rect => {
       const distance = Math.abs(rect.x - blockRectModel.x)
@@ -374,7 +299,10 @@ export class CanvasService {
     })
     const panelRectsToCheckWithDistanceSorted = panelRectsToCheckWithDistance.sort((a, b) => a.distance - b.distance)
     const closestPanelRect = panelRectsToCheckWithDistanceSorted[0]
-    if (!closestPanelRect) return printDefault()
+    if (!closestPanelRect) {
+      // return printDefault()
+      return this.printDefault(blockRectModel, LineDirection.Right)
+    }
 
     let moveToPoint: XyLocation = {
       x: blockRectModel.x + blockRectModel.width / 2,
@@ -418,6 +346,129 @@ export class CanvasService {
     }
   }
 
+  /*
+
+   private printDefault(blockRectModel: BlockRectModel, direction: LineDirection) {
+   let moveToPoint: XyLocation = this.getDefaultMoveToPoint(blockRectModel, direction)
+
+   moveToPoint = this._mousePositionService.getMousePositionFromXYForCanvas(moveToPoint)
+
+   let lineToPoint: XyLocation = this.getDefaultLineToPoint(blockRectModel, direction)
+   lineToPoint = this._mousePositionService.getMousePositionFromXYForCanvas(lineToPoint)
+
+   this.strokeTwoPoints(moveToPoint, lineToPoint)
+   this._panelStylerService.removeFromNearbyPanelsByDirection(direction)
+   if (!this.canvasConfig.showLineDistance) {
+   return
+   }
+
+   const distanceToEndOfLine = this.getDistanceToEndOfLine(blockRectModel, direction)
+   const absoluteDistance = Math.abs(distanceToEndOfLine)
+   /!*    const fillTextX = blockRectModel.x - 50
+   const fillTextY = 50*!/
+   const fillTextPosition = this.getFillTextDistancePosition(blockRectModel, direction)
+   this.fillText(`${absoluteDistance}px`, fillTextPosition.x, fillTextPosition.y)
+
+   return
+   }
+   */
+
+  /*private getDefaultMoveToPoint(blockRectModel: BlockRectModel, direction: LineDirection): XyLocation {
+   switch (direction) {
+   case LineDirection.Top:
+   return {
+   x: blockRectModel.x,
+   y: blockRectModel.y - blockRectModel.height / 2,
+   }
+   case LineDirection.Bottom:
+   return {
+   x: blockRectModel.x,
+   y: blockRectModel.y + blockRectModel.height / 2,
+   }
+   case LineDirection.Left:
+   return {
+   x: blockRectModel.x - blockRectModel.width / 2,
+   y: blockRectModel.y,
+   }
+   case LineDirection.Right:
+   return {
+   x: blockRectModel.x + blockRectModel.width / 2,
+   y: blockRectModel.y,
+   }
+   default:
+   throw new Error('invalid direction')
+   }
+   }
+
+   private getDefaultLineToPoint(blockRectModel: BlockRectModel, direction: LineDirection): XyLocation {
+   switch (direction) {
+   case LineDirection.Top:
+   return {
+   x: blockRectModel.x,
+   y: 0,
+   }
+   case LineDirection.Bottom:
+   return {
+   x: blockRectModel.x,
+   y: this.canvasSize.height,
+   }
+   case LineDirection.Left:
+   return {
+   x: 0,
+   y: blockRectModel.y,
+   }
+   case LineDirection.Right:
+   return {
+   x: this.canvasSize.width,
+   y: blockRectModel.y,
+   }
+   default:
+   throw new Error('invalid direction')
+   }
+   }
+
+   private getDistanceToEndOfLine(blockRectModel: BlockRectModel, direction: LineDirection): number {
+   switch (direction) {
+   case LineDirection.Top:
+   return blockRectModel.y - blockRectModel.height / 2
+   case LineDirection.Bottom:
+   return this.canvasSize.height - (blockRectModel.y + blockRectModel.height / 2)
+   case LineDirection.Left:
+   return blockRectModel.x - blockRectModel.width / 2
+   case LineDirection.Right:
+   return this.canvasSize.width - (blockRectModel.x + blockRectModel.width / 2)
+   default:
+   throw new Error('invalid direction')
+   }
+   }
+
+   private getFillTextDistancePosition(blockRectModel: BlockRectModel, direction: LineDirection): XyLocation {
+   switch (direction) {
+   case LineDirection.Top:
+   return {
+   x: blockRectModel.x - 50,
+   y: 50,
+   }
+   case LineDirection.Bottom:
+   return {
+   x: blockRectModel.x - 50,
+   y: this.canvasSize.height - 50,
+   }
+   case LineDirection.Left:
+   return {
+   x: 50,
+   y: blockRectModel.y - 50,
+   }
+   case LineDirection.Right:
+   return {
+   x: this.canvasSize.width - 50,
+   y: blockRectModel.y - 50,
+   }
+   default:
+   throw new Error('invalid direction')
+   }
+   }*/
+
   private getBlockRectFromElement(element: Element): FreeBlockRectModel {
     const id = element.getAttribute('id')
     if (!id) {
@@ -438,7 +489,7 @@ export class CanvasService {
     }
   }
 
-  private strokeTwoPoints(moveToPoint: XyLocation, lineToPoint: XyLocation) {
+  protected strokeTwoPoints(moveToPoint: XyLocation, lineToPoint: XyLocation) {
     const {
             x: moveToX,
             y: moveToY,
@@ -451,9 +502,10 @@ export class CanvasService {
     this.ctx.moveTo(moveToX, moveToY)
     this.ctx.lineTo(lineToX, lineToY)
     this.ctx.stroke()
+    this.ctx.strokeStyle
   }
 
-  private fillText(text: string, x: number, y: number) {
+  protected fillText(text: string, x: number, y: number) {
     // this.ctx.fillStyle = 'black'
     this.ctx.font = '20px Arial'
     const {

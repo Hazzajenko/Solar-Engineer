@@ -16,9 +16,10 @@
     (cdkDragMoved)="dragMoved($event)"
     (cdkDragStarted)="startDragging($event)"
     appFreePanelDirective
-    class="panel absolute flex content-center items-center justify-center border hover:bg-red-500"
+    class="panel absolute flex content-center items-center justify-center border hover:bg-blue-400 active:bg-blue-500 active:shadow-lg"
   ></div>
 </ng-container>
+<!--hover:bg-red-500 active:bg-blue-400-->
 
 <div
   [matMenuTriggerFor]="rightMenu"
