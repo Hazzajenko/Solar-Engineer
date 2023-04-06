@@ -1,7 +1,12 @@
 import { MousePositionService } from '../mouse-position.service'
 import { PanelStylerService } from '../panel-styler'
 import { BlockRectModel } from '@grid-layout/data-access'
-import { CanvasConfig, LineDirection } from '@no-grid-layout/shared'
+import {
+  CanvasConfig,
+  FreeBlockRectModel,
+  FreeBlockRectModelWithDistance,
+  LineDirection,
+} from '@no-grid-layout/shared'
 import { XyLocation } from '@shared/data-access/models'
 
 
@@ -17,6 +22,111 @@ export abstract class BlockRectHelpers {
   protected abstract strokeTwoPoints(moveToPoint: XyLocation, lineToPoint: XyLocation): void
 
   protected abstract fillText(text: string, x: number, y: number): void
+
+  protected getClosestPanelToLine(
+    blockRectModel: FreeBlockRectModel,
+    gridBlockRects: FreeBlockRectModel[],
+    direction: LineDirection,
+  ): FreeBlockRectModelWithDistance {
+    const panelRectsToCheck = this.getPanelRectsToCheckByDirection(
+      blockRectModel,
+      gridBlockRects,
+      direction,
+    )
+    const panelRectsToCheckWithDistance = panelRectsToCheck.map((rect) => {
+      const distance = this.getDistance(blockRectModel, rect, direction)
+      return {
+        ...rect,
+        distance,
+      }
+    })
+    const panelRectsToCheckWithDistanceSorted = panelRectsToCheckWithDistance.sort(
+      (a, b) => a.distance - b.distance,
+    )
+    return panelRectsToCheckWithDistanceSorted[0]
+  }
+
+  private getClosedPanelToTopLine(
+    blockRectModel: FreeBlockRectModel,
+    gridBlockRects: BlockRectModel[],
+  ) {
+    const panelRectsToCheck = gridBlockRects.filter(
+      (rect) =>
+        blockRectModel.x >= rect.x - rect.width / 2 &&
+        blockRectModel.x <= rect.x + rect.width / 2 &&
+        blockRectModel.y > rect.y,
+    )
+    const panelRectsToCheckWithDistance = panelRectsToCheck.map((rect) => {
+      const distance = Math.abs(rect.y - blockRectModel.y)
+      return {
+        ...rect,
+        distance,
+      }
+    })
+    const panelRectsToCheckWithDistanceSorted = panelRectsToCheckWithDistance.sort(
+      (a, b) => a.distance - b.distance,
+    )
+    return panelRectsToCheckWithDistanceSorted[0]
+  }
+
+  private getPanelRectsToCheckByDirection(
+    blockRectModel: FreeBlockRectModel,
+    gridBlockRects: FreeBlockRectModel[],
+    direction: LineDirection,
+  ) {
+    switch (direction) {
+      case LineDirection.Top:
+        return gridBlockRects.filter(
+          (rect) =>
+            blockRectModel.x >= rect.x - rect.width / 2 &&
+            blockRectModel.x <= rect.x + rect.width / 2 &&
+            blockRectModel.y > rect.y,
+        )
+      case LineDirection.Bottom: {
+        return gridBlockRects.filter(
+          (rect) =>
+            blockRectModel.x >= rect.x - rect.width / 2 &&
+            blockRectModel.x <= rect.x + rect.width / 2 &&
+            blockRectModel.y < rect.y,
+        )
+      }
+      case LineDirection.Left: {
+        return gridBlockRects.filter(
+          (rect) =>
+            blockRectModel.y >= rect.y - rect.height / 2 &&
+            blockRectModel.y <= rect.y + rect.height / 2 &&
+            blockRectModel.x > rect.x,
+        )
+      }
+      case LineDirection.Right: {
+        return gridBlockRects.filter(
+          (rect) =>
+            blockRectModel.y >= rect.y - rect.height / 2 &&
+            blockRectModel.y <= rect.y + rect.height / 2 &&
+            blockRectModel.x < rect.x,
+        )
+      }
+      default:
+        throw new Error('Invalid direction')
+    }
+  }
+
+  private getDistance(
+    blockRectModel: FreeBlockRectModel,
+    rect: BlockRectModel,
+    direction: LineDirection,
+  ) {
+    switch (direction) {
+      case LineDirection.Top:
+      case LineDirection.Bottom:
+        return Math.abs(rect.y - blockRectModel.y)
+      case LineDirection.Left:
+      case LineDirection.Right:
+        return Math.abs(rect.x - blockRectModel.x)
+      default:
+        throw new Error('Invalid direction')
+    }
+  }
 
   protected printDefault(blockRectModel: BlockRectModel, direction: LineDirection) {
     let moveToPoint: XyLocation = this.getDefaultMoveToPoint(blockRectModel, direction)
@@ -40,7 +150,7 @@ export abstract class BlockRectHelpers {
     return
   }
 
-  private getDefaultMoveToPoint(
+  protected getDefaultMoveToPoint(
     blockRectModel: BlockRectModel,
     direction: LineDirection,
   ): XyLocation {
@@ -67,6 +177,55 @@ export abstract class BlockRectHelpers {
         }
       default:
         throw new Error('invalid direction')
+    }
+  }
+
+  protected getLineToPointOfClosestPanel(
+    blockRectModel: FreeBlockRectModel,
+    closestBlockRect: FreeBlockRectModel,
+    direction: LineDirection,
+  ) {
+    switch (direction) {
+      case LineDirection.Top:
+        return {
+          x: blockRectModel.x,
+          y: closestBlockRect.y + closestBlockRect.height / 2,
+        }
+      case LineDirection.Bottom:
+        return {
+          x: blockRectModel.x,
+          y: closestBlockRect.y - closestBlockRect.height / 2,
+        }
+      case LineDirection.Left:
+        return {
+          x: closestBlockRect.x + closestBlockRect.width / 2,
+          y: blockRectModel.y,
+        }
+      case LineDirection.Right:
+        return {
+          x: closestBlockRect.x - closestBlockRect.width / 2,
+          y: blockRectModel.y,
+        }
+
+      default:
+        throw new Error('Invalid direction')
+    }
+  }
+
+  protected getDistanceToClosestPanel(
+    blockRectModel: FreeBlockRectModel,
+    closestBlockRect: FreeBlockRectModel,
+    direction: LineDirection,
+  ) {
+    switch (direction) {
+      case LineDirection.Top:
+      case LineDirection.Bottom:
+        return Math.abs(closestBlockRect.y - blockRectModel.y)
+      case LineDirection.Left:
+      case LineDirection.Right:
+        return Math.abs(closestBlockRect.x - blockRectModel.x)
+      default:
+        throw new Error('Invalid direction')
     }
   }
 
@@ -115,7 +274,7 @@ export abstract class BlockRectHelpers {
     }
   }
 
-  private getFillTextDistancePosition(
+  protected getFillTextDistancePosition(
     blockRectModel: BlockRectModel,
     direction: LineDirection,
   ): XyLocation {

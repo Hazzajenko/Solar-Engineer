@@ -60,104 +60,88 @@ export class CanvasService
       width:  this.canvas.width,
       height: this.canvas.height,
     }
-    /*    const scrollRect = this._componentElementService.scrollElement.getBoundingClientRect()
-
-     let width = scrollRect.width
-     let height = scrollRect.height
-     width = Math.round(width)
-     height = Math.round(height)
-
-     return {
-     width,
-     height,
-     }*/
   }
-
-  /*  setCanvas(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
-   this.canvas = canvas
-   this.ctx = ctx
-   }*/
 
   drawLinesForBlocks(blockRectModel: FreeBlockRectModel) {
     const gridBlockRects = this._componentElementService.elements.map((e) => this.getBlockRectFromElement(e))
-    const scrollRect = this._componentElementService.scrollElement.getBoundingClientRect()
 
-    this.drawLineForAboveBlock(blockRectModel, gridBlockRects, scrollRect.top)
-    this.drawLineForBelowBlock(blockRectModel, gridBlockRects, scrollRect.bottom)
-    this.drawLineForLeftBlock(blockRectModel, gridBlockRects, scrollRect.left)
-    this.drawLineForRightBlock(blockRectModel, gridBlockRects, scrollRect.right)
+    this.drawLineForDirection(blockRectModel, gridBlockRects, LineDirection.Top)
+    this.drawLineForDirection(blockRectModel, gridBlockRects, LineDirection.Bottom)
+    this.drawLineForDirection(blockRectModel, gridBlockRects, LineDirection.Left)
+    this.drawLineForDirection(blockRectModel, gridBlockRects, LineDirection.Right)
+    // this.drawLineForAboveBlock(blockRectModel, gridBlockRects)
+    // this.drawLineForBelowBlock(blockRectModel, gridBlockRects)
+    // this.drawLineForLeftBlock(blockRectModel, gridBlockRects)
+    // this.drawLineForRightBlock(blockRectModel, gridBlockRects)
+  }
+
+  drawLineForDirection(
+    blockRectModel: FreeBlockRectModel,
+    gridBlockRects: FreeBlockRectModel[],
+    lineDirection: LineDirection,
+  ) {
+
+    if (!gridBlockRects) {
+      return this.printDefault(blockRectModel, lineDirection)
+    }
+
+    const closestPanelRect = this.getClosestPanelToLine(blockRectModel, gridBlockRects, lineDirection)
+    if (!closestPanelRect) {
+      return this.printDefault(blockRectModel, lineDirection)
+    }
+
+    let moveToPoint: XyLocation = this.getDefaultMoveToPoint(blockRectModel, lineDirection)
+    moveToPoint = this._mousePositionService.getMousePositionFromXYForCanvas(moveToPoint)
+
+    let lineToPoint: XyLocation = this.getLineToPointOfClosestPanel(blockRectModel, closestPanelRect, lineDirection)
+    lineToPoint = this._mousePositionService.getMousePositionFromXYForCanvas(lineToPoint)
+
+    this.strokeTwoPoints(moveToPoint, lineToPoint)
+
+    const distanceToClosestPanel = this.getDistanceToClosestPanel(blockRectModel, closestPanelRect, lineDirection)
+
+    if ((distanceToClosestPanel / this._screenMoveService.scale) < 100) {
+      this._panelStylerService.setBackgroundColorForPanelById(closestPanelRect.id, PanelBackgroundColor.Nearby, lineDirection)
+    } else {
+      this._panelStylerService.setBackgroundColorForPanelById(closestPanelRect.id, PanelBackgroundColor.LineThrough, lineDirection)
+    }
+
+    if (!this.canvasConfig.showLineDistance) {
+      return
+    }
+
+    const fillTextPoint = this.getFillTextDistancePosition(blockRectModel, lineDirection)
+    this.fillText(`${distanceToClosestPanel}px`, fillTextPoint.x, fillTextPoint.y)
   }
 
   drawLineForAboveBlock(
     blockRectModel: FreeBlockRectModel,
     gridBlockRects: FreeBlockRectModel[],
-    scrollRectTop: number,
   ) {
 
     if (!gridBlockRects) {
-      // return printDefault()
-      return this.printDefault(blockRectModel, LineDirection.Top)
-    }
-    const panelRectsToCheck = gridBlockRects.filter(
-      (rect) =>
-        blockRectModel.x >= rect.x - rect.width / 2 &&
-        blockRectModel.x <= rect.x + rect.width / 2 &&
-        blockRectModel.y > rect.y,
-    )
-    if (!panelRectsToCheck.length) {
-      // return printDefault()
-      return this.printDefault(blockRectModel, LineDirection.Top)
-    }
-    const panelRectsToCheckWithDistance = panelRectsToCheck.map((rect) => {
-      const distance = Math.abs(rect.y - blockRectModel.y)
-      return {
-        ...rect,
-        distance,
-      }
-    })
-    const panelRectsToCheckWithDistanceSorted = panelRectsToCheckWithDistance.sort(
-      (a, b) => a.distance - b.distance,
-    )
-    const closestPanelRect = panelRectsToCheckWithDistanceSorted[0]
-    if (!closestPanelRect) {
-      // return printDefault()
       return this.printDefault(blockRectModel, LineDirection.Top)
     }
 
-    let moveToPoint: XyLocation = {
-      x: blockRectModel.x,
-      y: blockRectModel.y - blockRectModel.height / 2,
+    const closestPanelRect = this.getClosestPanelToLine(blockRectModel, gridBlockRects, LineDirection.Top)
+    if (!closestPanelRect) {
+      return this.printDefault(blockRectModel, LineDirection.Top)
     }
+
+    let moveToPoint: XyLocation = this.getDefaultMoveToPoint(blockRectModel, LineDirection.Top)
     moveToPoint = this._mousePositionService.getMousePositionFromXYForCanvas(moveToPoint)
 
-    let lineToPoint: XyLocation = {
-      x: blockRectModel.x,
-      y: closestPanelRect.y + closestPanelRect.height / 2,
-    }
+    let lineToPoint: XyLocation = this.getLineToPointOfClosestPanel(blockRectModel, closestPanelRect, LineDirection.Top)
     lineToPoint = this._mousePositionService.getMousePositionFromXYForCanvas(lineToPoint)
 
     this.strokeTwoPoints(moveToPoint, lineToPoint)
 
-    const distanceToClosestPanel =
-            closestPanelRect.y +
-            closestPanelRect.height / 2 -
-            (
-            blockRectModel.y - blockRectModel.height / 2
-            )
-    const absoluteDistance = Math.abs(distanceToClosestPanel)
+    const distanceToClosestPanel = this.getDistanceToClosestPanel(blockRectModel, closestPanelRect, LineDirection.Top)
 
-    // this._panelStylerService.lightUpClosestPanel(closestPanelRect, LineDirectionEnum.Top)
-
-    if ((absoluteDistance / this._screenMoveService.scale) < 100) {
-      // console.log('absoluteDistance', absoluteDistance)
+    if ((distanceToClosestPanel / this._screenMoveService.scale) < 100) {
       this._panelStylerService.setBackgroundColorForPanelById(closestPanelRect.id, PanelBackgroundColor.Nearby, LineDirection.Top)
-      // this._panelStylerService.addNearbyPanel(closestPanelRect, LineDirection.Top)
-      // this._panelStylerService.setStyleForPanelById(closestPanelRect.id, 'border', '2px solid blue')
     } else {
-      // this._panelStylerService.nearbyPanels.filter((p) => p.direction === LineDirectionEnum.Top)
-      // this._panelStylerService.lightUpClosestPanel(closestPanelRect, LineDirectionEnum.Top)
       this._panelStylerService.setBackgroundColorForPanelById(closestPanelRect.id, PanelBackgroundColor.LineThrough, LineDirection.Top)
-      // this._panelStylerService.removeFromNearbyPanelsByDirection(LineDirection.Top)
     }
 
     if (!this.canvasConfig.showLineDistance) {
@@ -166,10 +150,10 @@ export class CanvasService
 
     const fillTextX = blockRectModel.x - 50
     const fillTextY = blockRectModel.y - blockRectModel.height / 2 - 50
-    this.fillText(`${absoluteDistance}px`, fillTextX, fillTextY)
+    this.fillText(`${distanceToClosestPanel}px`, fillTextX, fillTextY)
   }
 
-  drawLineForBelowBlock(blockRectModel: BlockRectModel, gridBlockRects: FreeBlockRectModel[], scrollRectBottom: number) {
+  drawLineForBelowBlock(blockRectModel: BlockRectModel, gridBlockRects: FreeBlockRectModel[]) {
     if (!gridBlockRects) {
       // return printDefault()
       return this.printDefault(blockRectModel, LineDirection.Bottom)
@@ -222,7 +206,7 @@ export class CanvasService
 
   }
 
-  drawLineForLeftBlock(blockRectModel: BlockRectModel, gridBlockRects: FreeBlockRectModel[], scrollRectLeft: number) {
+  drawLineForLeftBlock(blockRectModel: BlockRectModel, gridBlockRects: FreeBlockRectModel[]) {
 
     if (!gridBlockRects) {
       // return printDefault()
@@ -275,7 +259,7 @@ export class CanvasService
 
   }
 
-  drawLineForRightBlock(blockRectModel: BlockRectModel, gridBlockRects: FreeBlockRectModel[], scrollRectRight: number) {
+  drawLineForRightBlock(blockRectModel: BlockRectModel, gridBlockRects: FreeBlockRectModel[]) {
 
     if (!gridBlockRects) {
       // return printDefault()

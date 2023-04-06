@@ -4,7 +4,7 @@ export interface FreeBlockRectModel {
   y: number
   width: number
   height: number
-  element?: Element
+  // element?: Element
 }
 
 export interface FreeBlockRectModelWithDistance extends FreeBlockRectModel {
