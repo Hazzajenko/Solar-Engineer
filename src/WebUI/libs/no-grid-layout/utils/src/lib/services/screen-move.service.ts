@@ -16,11 +16,12 @@ export class ScreenMoveService {
   private _componentElementsService = inject(ComponentElementsService)
   // private _scale$
   private _scale = new BehaviorSubject(1)
+  private _screenPosition = new BehaviorSubject({ x: 0, y: 0 })
   private _renderer = inject(RendererFactory2)
     .createRenderer(null, null)
 
   private _ctrlMouseDownStartPoint: XyLocation | undefined
-  private _screenPosition: XyLocation = { x: 0, y: 0 }
+  // private _screenPosition: XyLocation = { x: 0, y: 0 }
   private _modifiedScreenPosition: XyLocation = { x: 1000, y: 1000 }
 
   get ctrlMouseDownStartPoint(): XyLocation | undefined {
@@ -41,19 +42,29 @@ export class ScreenMoveService {
   }
 
   set scale(value: number) {
-    this._scale.next(value)
-    this._mousePositionService.scale = value
-    console.log('set scale', value)
+    const scale = Math.round((value + Number.EPSILON) * 100) / 100
+    this._scale.next(scale)
+    this._mousePositionService.scale = scale
+    console.log('set scale', scale)
+  }
+
+  get screenPosition$() {
+    return this._screenPosition.asObservable()
   }
 
   get screenPosition() {
-    return this._screenPosition
+    return this._screenPosition.value
   }
 
   set screenPosition(value: XyLocation) {
-    this._screenPosition = value
-    this._mousePositionService.screenPosition = value
-    console.log('set this._screenPosition', value)
+    const screenPosition: XyLocation = {
+      x: Math.round((value.x + Number.EPSILON) * 100) / 100,
+      y: Math.round((value.y + Number.EPSILON) * 100) / 100,
+    }
+    // this._screenPosition = value
+    this._screenPosition.next(screenPosition)
+    this._mousePositionService.screenPosition = screenPosition
+    console.log('set this._screenPosition', screenPosition)
   }
 
   set gridLayoutElement(value: HTMLDivElement) {
@@ -117,6 +128,10 @@ export class ScreenMoveService {
       'transform',
       `translate(${this.screenPosition.x}px,${this.screenPosition.y}px) scale(${this.scale})`,
     )
+
+    // this._componentElementsService.canvasCtx.fillText(`Scale: ${this.scale}`, 10, 50)
+    // const showScaleChangeEle = this._renderer.createElement('div')
+    // this._renderer.setStyle()
     // console.log('this._componentElementsService.canvasElement', this._componentElementsService.canvasElement)
     /*    this._renderer.setStyle(
      this._componentElementsService.canvasElement,

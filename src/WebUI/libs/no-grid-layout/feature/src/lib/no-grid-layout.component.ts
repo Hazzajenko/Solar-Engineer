@@ -10,6 +10,7 @@ import { NoGridBackgroundComponent } from './ui/no-grid-background.component'
 import { map } from 'rxjs'
 import { ScrollDirective } from './directives/scroll.directive'
 import { KeyUpDirective } from './directives/key-up.directive'
+import { ShowScreenPositionComponent } from './ui/show-screen-position/show-screen-position.component'
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -24,6 +25,7 @@ import { KeyUpDirective } from './directives/key-up.directive'
     NoGridBackgroundComponent,
     ScrollDirective,
     KeyUpDirective,
+    ShowScreenPositionComponent,
   ],
   selector:        'app-no-grid-layout',
   standalone:      true,

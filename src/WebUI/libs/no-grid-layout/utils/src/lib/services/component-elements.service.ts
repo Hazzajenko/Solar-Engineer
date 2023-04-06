@@ -1,6 +1,6 @@
 import { ElementRef, Injectable, QueryList } from '@angular/core'
 import { FreePanelComponent } from '@no-grid-layout/feature'
-import { FreeBlockType } from '@no-grid-layout/shared'
+import { FreeBlockRectModel, FreeBlockType } from '@no-grid-layout/shared'
 
 @Injectable({
   providedIn: 'root',
@@ -18,6 +18,7 @@ export class ComponentElementsService {
   public gridLayoutElement!: HTMLDivElement
   public scrollElement!: HTMLDivElement
   public canvasElement!: HTMLCanvasElement
+  public canvasCtx!: CanvasRenderingContext2D
   initialGridLayoutElementOffset!: {
     left: number,
     top: number
@@ -32,34 +33,6 @@ export class ComponentElementsService {
     console.log('set elements', this._elements)
   }
 
-  /*get parentElement(): HTMLDivElement {
-   return this._parentElement
-   }
-
-   set parentElement(value: HTMLDivElement) {
-   this._parentElement = value
-   console.log('set parentElement', this._parentElement)
-   }
-
-   get gridLayoutElement(): HTMLDivElement {
-   return this._gridLayoutElement
-   }
-
-   set gridLayoutElement(value: HTMLDivElement) {
-   this._gridLayoutElement = value
-   console.log('set gridLayoutElement', this._gridLayoutElement)
-   this.initialGridLayoutElementOffset = this.getOffset(this._gridLayoutElement)
-   }
-
-   get scrollElement(): HTMLDivElement {
-   return this._scrollElement
-   }
-
-   set scrollElement(value: HTMLDivElement) {
-   this._scrollElement = value
-   console.log('set scrollElement', this._scrollElement)
-   }*/
-
   addToElements(element: Element) {
     this._elements.push(element)
     console.log('addToElements', this._elements)
@@ -71,6 +44,39 @@ export class ComponentElementsService {
 
   public getComponentElementById(id: string) {
     return this._elements.find((fp) => fp.id === id)
+  }
+
+  public getComponentElementRectsWithId() {
+    return this._elements.map(element => {
+      // return this.getBlockRectFromElement(element)
+      const rect = element.getBoundingClientRect()
+      return {
+        id:     element.id,
+        left:   rect.left,
+        top:    rect.top,
+        width:  rect.width,
+        height: rect.height,
+        x:      rect.x,
+        y:      rect.y,
+      }
+    })
+
+  }
+
+  getComponentElementRectById(id: string) {
+    const element = this.getComponentElementById(id)
+    if (!element) return null
+    // return this.getBlockRectFromElement(element)
+    const rect = element.getBoundingClientRect()
+    return {
+      id:     element.id,
+      left:   rect.left,
+      top:    rect.top,
+      width:  rect.width,
+      height: rect.height,
+      x:      rect.x,
+      y:      rect.y,
+    }
   }
 
   getOffset(gridLayoutElement: HTMLDivElement) {
@@ -95,6 +101,26 @@ export class ComponentElementsService {
      left: rect.left + window.scrollX,
      top:  rect.top + window.scrollY,
      }*/
+  }
+
+  private getBlockRectFromElement(element: Element): FreeBlockRectModel {
+    const id = element.getAttribute('id')
+    if (!id) {
+      throw new Error('id not found')
+    }
+    const panelRect = element.getBoundingClientRect()
+    const canvasRect = this.canvasElement.getBoundingClientRect()
+    const x = panelRect.left - canvasRect.left + panelRect.width / 2
+    const y = panelRect.top - canvasRect.top + panelRect.height / 2
+
+    return {
+      id,
+      x,
+      y,
+      height: panelRect.height,
+      width:  panelRect.width,
+      // element,
+    }
   }
 
 }

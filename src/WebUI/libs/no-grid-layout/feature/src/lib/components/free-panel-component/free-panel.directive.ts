@@ -1,10 +1,11 @@
 import { Directive, ElementRef, inject, Input, NgZone, OnInit, Renderer2 } from '@angular/core'
 import tippy from 'tippy.js'
-import { BackgroundColor, FreePanelUtil, PanelColorState, PanelRotationConfig } from '@no-grid-layout/shared'
+import { BackgroundColor, FreePanelUtil, PanelRotationConfig } from '@no-grid-layout/shared'
 import { SelectedService } from '@no-grid-layout/data-access'
 import { OnDestroyDirective } from '@shared/utils'
 import { map, takeUntil, tap } from 'rxjs'
-import { ComponentElementsService } from '@no-grid-layout/utils'
+import { ComponentElementsService, PanelBackgroundColor, PanelStylerService } from '@no-grid-layout/utils'
+import { SoftColor, VibrantColor } from '@shared/data-access/models'
 
 @Directive({
   selector:       '[appFreePanelDirective]',
@@ -22,15 +23,25 @@ export class FreePanelDirective
   private _selectedService = inject(SelectedService)
   // private _tippy: tippy.Instance | null = null
   private _componentElementsService = inject(ComponentElementsService)
+  private _panelStylerService = inject(PanelStylerService)
   private readonly zone: NgZone = inject(NgZone)
   cachedClass = ''
   cachedBorder = ''
   cachedBackgroundColor = ''
 
+  backgroundColorStyles = {
+    Default: SoftColor.SoftBrown,
+    Red:     VibrantColor.VibrantRed,
+    Green:   VibrantColor.VibrantGreen,
+    Yellow:  VibrantColor.VibrantYellow,
+    Orange:  VibrantColor.VibrantOrange,
+    Nearby:  VibrantColor.VibrantPurple,
+  }
+
   @Input() set backgroundColor(backgroundColor: BackgroundColor) {
-    this.zone.runOutsideAngular(() => {
-      this.cachedBackgroundColor = this.manageClasses(backgroundColor, this.cachedBackgroundColor)
-    })
+    /*    this.zone.runOutsideAngular(() => {
+     this.cachedBackgroundColor = this.manageClasses(backgroundColor, this.cachedBackgroundColor)
+     })*/
   }
 
   @Input() set rotation(rotation: PanelRotationConfig) {
@@ -61,9 +72,14 @@ export class FreePanelDirective
 
   ngOnInit() {
     this._panelId = this._element.id
-    const border = 'border border-black'
-    this._element.classList.add(...border.split(' '))
+    // const border = 'border border-black'
+    // this._element.classList.add(...border.split(' '))
+    const borderStyle = '1px solid black'
+    this.setStyle('border', borderStyle)
+    this.setStyle('background-color', PanelBackgroundColor.Default)
     this._componentElementsService.addToElements(this._element)
+    this._panelStylerService.initPanelStyleState(this._element.id)
+
     this._selectedService.selected$
       .pipe(
         takeUntil(this.destroy$),
@@ -71,15 +87,40 @@ export class FreePanelDirective
         tap((isSelected) => {
             this.zone.runOutsideAngular(() => {
               if (isSelected) {
-                this.cachedBackgroundColor = this.replaceClassForPanel(PanelColorState.Default, PanelColorState.Selected)
+                this.setStyle('background-color', PanelBackgroundColor.Red)
+                /*               this.cachedBackgroundColor =
+                 this.replaceClassForPanel(this.cachedBackgroundColor, PanelColorState.Selected)*/
                 return
               }
-              this.cachedBackgroundColor = this.replaceClassForPanel(PanelColorState.Selected, PanelColorState.Default)
+              this.setStyle('background-color', PanelBackgroundColor.Default)
+              // this.cachedBackgroundColor = this.replaceClassForPanel(this.cachedBackgroundColor, PanelColorState.Default)
             })
           },
         ),
       )
       .subscribe()
+
+    this._selectedService.multiSelected$
+      .pipe(
+        takeUntil(this.destroy$),
+        map((selected) => selected.includes(this.panelId)),
+        tap((isSelected) => {
+            this.zone.runOutsideAngular(() => {
+              if (isSelected) {
+                this.setStyle('background-color', PanelBackgroundColor.Yellow)
+                /*                this.cachedBackgroundColor =
+                 this.replaceClassForPanel(this.cachedBackgroundColor, PanelColorState.MultiSelected)*/
+                return
+              }
+              this.setStyle('background-color', PanelBackgroundColor.Default)
+              /*         this.cachedBackgroundColor =
+               this.replaceClassForPanel(this.cachedBackgroundColor, PanelColorState.Default)*/
+            })
+          },
+        ),
+      )
+      .subscribe()
+
   }
 
   private replaceClassForPanel(oldClass: string, newClass: string) {
@@ -87,6 +128,10 @@ export class FreePanelDirective
     this.renderer.removeClass(this._element, oldClass)
     this.renderer.addClass(this._element, newClass)
     return newClass
+  }
+
+  private setStyle(style: string, value: string) {
+    this.renderer.setStyle(this._element, style, value)
   }
 
   private manageClasses(input: string, cached: string) {

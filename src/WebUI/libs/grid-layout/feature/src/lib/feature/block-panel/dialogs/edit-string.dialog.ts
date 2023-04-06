@@ -1,7 +1,7 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
 import { ChangeDetectionStrategy, Component, inject, Inject } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
-import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog'
 
 import { ScrollingModule } from '@angular/cdk/scrolling'
 import { AsyncPipe, NgForOf, NgIf, NgStyle } from '@angular/common'
@@ -20,49 +20,57 @@ import { StringTotalsAsyncPipe } from '../pipes/string-totals-async.pipe'
 import { StringsEventService, StringsFacade } from '@grid-layout/data-access'
 
 @Component({
-  selector: 'app-edit-string-dialog',
-  template: `
-    <ng-container *ngIf="string$ | async as string">
-      <div class="container">
-        <h1 mat-dialog-title>Edit String {{ string.name }}</h1>
-      </div>
-      <form ngForm class="example-form">
-        <label for="name">Name: </label>
-        <input id="name" type="text" [placeholder]="string.name" [formControl]="name" />
-        <mat-selection-list [multiple]="false" #colorSelection [formControl]="color">
-          <mat-list-option
-            [ngStyle]="{ 'background-color': color }"
-            [value]="color"
-            *ngFor="let color of colors"
-          >
-            {{ color }}
-          </mat-list-option>
-        </mat-selection-list>
-      </form>
-      <p>
-        Name: {{ name.value }} Color selected:
-        {{
-          colorSelection.selectedOptions.hasValue()
-            ? colorSelection.selectedOptions.selected[0].value.toString()
-            : 'None'
-        }}
-      </p>
-      <mat-dialog-actions align="end">
-        <button mat-button mat-dialog-close="true">Cancel</button>
-        <button
-          (click)="updateString(string.id)"
-          [mat-dialog-close]="true"
-          cdkFocusInitial
-          mat-button
-        >
-          Edit {{ name.value }}
-        </button>
-      </mat-dialog-actions>
-    </ng-container>
-  `,
-  styles: [],
+  selector:        'app-edit-string-dialog',
+  template:        `
+                     <ng-container *ngIf='string$ | async as string'>
+                       <div class='container'>
+                         <h1 mat-dialog-title>Edit String {{ string.name }}</h1>
+                       </div>
+                       <form ngForm
+                             class='example-form'>
+                         <label for='name'>Name: </label>
+                         <input id='name'
+                                type='text'
+                                [placeholder]='string.name'
+                                [formControl]='name' />
+                         <mat-selection-list [multiple]='false'
+                                             #colorSelection
+                                             [formControl]='color'>
+                           <mat-list-option
+                             [ngStyle]="{ 'background-color': color }"
+                             [value]='color'
+                             *ngFor='let color of colors'
+                           >
+                             {{ color }}
+                           </mat-list-option>
+                         </mat-selection-list>
+                       </form>
+                       <p>
+                         Name: {{ name.value }} Color selected:
+                         {{
+                         colorSelection.selectedOptions.hasValue()
+                           ? colorSelection.selectedOptions.selected[0].value.toString()
+                           : 'None'
+                         }}
+                       </p>
+                       <mat-dialog-actions align='end'>
+                         <button mat-button
+                                 mat-dialog-close='true'>Cancel
+                         </button>
+                         <button
+                           (click)='updateString(string.id)'
+                           [mat-dialog-close]='true'
+                           cdkFocusInitial
+                           mat-button
+                         >
+                           Edit {{ name.value }}
+                         </button>
+                       </mat-dialog-actions>
+                     </ng-container>
+                   `,
+  styles:          [],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
+  imports:         [
     MatDialogModule,
     MatButtonModule,
     AsyncPipe,
@@ -78,7 +86,7 @@ import { StringsEventService, StringsFacade } from '@grid-layout/data-access'
     FormsModule,
     ReactiveFormsModule,
   ],
-  standalone: true,
+  standalone:      true,
 })
 export class EditStringDialog {
   colors: WarmColor[] = [
@@ -119,8 +127,12 @@ export class EditStringDialog {
 
   async updateString(stringId: string) {
     this.stringsFactory.updateString(stringId, {
-      name: this.name.value ? this.name.value : undefined,
-      color: this.color.value ? this.color.value : undefined,
+      name:  this.name.value
+               ? this.name.value
+               : undefined,
+      color: this.color.value
+               ? this.color.value
+               : undefined,
     })
 
     this.dialogRef.close()

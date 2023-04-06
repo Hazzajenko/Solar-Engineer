@@ -19,13 +19,15 @@
       class="relative"
       style="transition: transform 0.1s; transform-origin: 0 0"
     >
-      <app-no-grid-background
-        appGridBackground
-        class="pointer-events-none absolute"
-        *ngIf="backgroundWidth"
-        [style.height]="backgroundHeight"
-        [style.width]="backgroundWidth"
-      />
+      <!--      <app-no-grid-background
+              appGridBackground
+              class="pointer-events-none absolute"
+              *ngIf="backgroundWidth"
+              [style.height]="layoutHeightString"
+              [style.width]="layoutWidthString"
+            />-->
+      <!--      [style.height]="backgroundHeight"-->
+      <!--      [style.width]="backgroundWidth"-->
       <ng-template
         *ngFor="let panel of (freePanels$ | async)!; trackBy: trackByPanelId"
         appDynamicFreePanel
@@ -34,3 +36,4 @@
     </div>
   </div>
 </div>
+<app-show-screen-position />

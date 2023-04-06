@@ -7,6 +7,7 @@ import {
   ClickService,
   ComponentElementsService,
   MousePositionService,
+  MultiSelectService,
   ScreenMoveService,
 } from '@no-grid-layout/utils'
 import { XyLocation } from '@shared/data-access/models'
@@ -20,6 +21,7 @@ export class NoGridLayoutService {
   protected _canvasService = inject(CanvasService)
   protected _mousePositionService = inject(MousePositionService)
   protected _componentElementService = inject(ComponentElementsService)
+  protected _multiSelectService = inject(MultiSelectService)
   protected _ngZone: NgZone = inject(NgZone)
   private _canvas!: HTMLCanvasElement
   private _ctx!: CanvasRenderingContext2D
@@ -28,7 +30,7 @@ export class NoGridLayoutService {
   private _scale = 1
   private _screenPosition: XyLocation = { x: 0, y: 0 }
   private _isDragging = false
-  private _isCtrlDragging = false
+  private _isScreenDragging = false
   private _isShiftDragging = false
   private _isAltDragging = false
   private _animationId?: number
@@ -103,12 +105,12 @@ export class NoGridLayoutService {
     this._isDragging = value
   }
 
-  protected get isCtrlDragging() {
-    return this._isCtrlDragging
+  protected get isScreenDragging() {
+    return this._isScreenDragging
   }
 
-  protected set isCtrlDragging(value) {
-    this._isCtrlDragging = value
+  protected set isScreenDragging(value) {
+    this._isScreenDragging = value
   }
 
   protected get isShiftDragging() {

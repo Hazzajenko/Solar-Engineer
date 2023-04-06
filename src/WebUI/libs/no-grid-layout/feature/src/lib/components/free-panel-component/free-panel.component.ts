@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common'
 import { CdkDrag, CdkDragDrop, CdkDragEnd, CdkDragMove, CdkDragStart, Point } from '@angular/cdk/drag-drop'
 import { FreePanelModel, FreePanelUtil, PanelRotationConfig } from '@no-grid-layout/shared'
 import { FreePanelDirective } from './free-panel.directive'
-import { MousePositionService } from '@no-grid-layout/utils'
+import { MousePositionService, ObjectPositioningService, PanelStylerService } from '@no-grid-layout/utils'
 import { distinctUntilKeyChanged, map, Observable, tap } from 'rxjs'
 import { BaseService } from '@shared/logger'
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
@@ -29,6 +29,8 @@ export class FreePanelComponent
              OnChanges {
   private _freePanelsService = inject(FreePanelsService)
   private _mousePositionService = inject(MousePositionService)
+  private _objectPositioningService = inject(ObjectPositioningService)
+  private _panelStylerService = inject(PanelStylerService)
   private _selectedService = inject(SelectedService)
   private _panelId!: string
   location!: Point
@@ -74,6 +76,16 @@ export class FreePanelComponent
 
   dragMoved(event: CdkDragMove<FreePanelModel>) {
     const size = FreePanelUtil.size(event.source.data.rotation)
+    /*    const isOtherPanelInLine = this._objectPositioningService.isOtherObjectInLine(event.source.data.id)
+     if (isOtherPanelInLine.length > 0) {
+     console.log('isOtherPanelInLine', isOtherPanelInLine)
+     this._panelStylerService.setStyleForPanelById(isOtherPanelInLine[0].id, 'border', '5px solid red')
+     // this._panelStylerService.setStyleForPanelById(isOtherPanelInLine[0].id, 'backgroundColor', 'red')
+     }
+     const isOtherObjectNearby = this._objectPositioningService.isOtherObjectNearby(event.source.data.id)
+     if (isOtherObjectNearby.length > 0) {
+     console.log('isOtherObjectNearby', isOtherObjectNearby)
+     }*/
     this.location = this._mousePositionService.getMousePositionFromPageXYWithSize(event.event as MouseEvent, size)
   }
 

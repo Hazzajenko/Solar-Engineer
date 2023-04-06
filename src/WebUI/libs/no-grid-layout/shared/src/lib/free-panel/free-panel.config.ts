@@ -3,6 +3,7 @@ export const PanelColorState = {
   Hover: 'bg-pink-600',
   Active: 'bg-pink-700',
   Selected: 'bg-indigo-500',
+  MultiSelected: 'bg-green-500',
   // Selected: 'bg-red-500',
   LineThrough: 'bg-blue-500',
 } as const

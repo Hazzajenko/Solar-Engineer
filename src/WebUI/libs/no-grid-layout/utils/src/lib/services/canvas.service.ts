@@ -1,11 +1,12 @@
 import { inject, Injectable } from '@angular/core'
 import { BlockRectModel } from '@grid-layout/data-access'
-import { FreeBlockRectModel, LineDirectionEnum } from '@no-grid-layout/shared'
-import { PanelStylerService } from './panel-styler.service'
+import { FreeBlockRectModel, LineDirection, LineDirectionEnum } from '@no-grid-layout/shared'
+import { PanelStylerService } from './panel-styler/panel-styler.service'
 import { MousePositionService } from './mouse-position.service'
 import { ComponentElementsService } from './component-elements.service'
 import { XyLocation } from '@shared/data-access/models'
 import { ScreenMoveService } from './screen-move.service'
+import { PanelBackgroundColor } from './panel-styler'
 
 @Injectable({
   providedIn: 'root',
@@ -90,86 +91,28 @@ export class CanvasService {
   ) {
 
     const printDefault = () => {
-      // const canvasRect = this.canvas.getBoundingClientRect()
-      // console.log('canvasTop', canvasRect.top)
-      // console.log('canvasLeft', canvasRect.left)
-
-      // console.log('canvasOffsetTop', this.canvas.offsetTop)
-      // // const canvasOffsetTop = this.canvas.offsetTop
-      // const canvasOffsetLeft = this.canvas.offsetLeft
 
       let moveToPoint: XyLocation = {
         x: blockRectModel.x,
         y: blockRectModel.y - blockRectModel.height / 2,
       }
-      /*      moveToPoint = {
-       x: moveToPoint.x - canvasRect.left,
-       y: moveToPoint.y - canvasRect.top,
-       }*/
       moveToPoint = this._mousePositionService.getMousePositionFromXYForCanvas(moveToPoint)
-      // moveToPoint = this._mousePositionService.getMousePositionFromXYForCanvas(moveToPoint)
-      // const scrollRectTop = this._componentElementService.scrollElement.getBoundingClientRect().top
-      // const scrollOffsetTop = this._componentElementService.scrollElement.offsetTop
-      /*      var offset = $div.offset();
-       var zoomFactor = $div.parent().width() / $(window).width(); // Assuming the parent container is the full width of the window
-       var left = offset.left * zoomFactor;
-       var top = offset.top * zoomFactor;*/
-      /*      const offset = this._componentElementService.scrollElement.getBoundingClientRect()
-       const zoomFactor = offset.width / window.innerWidth
-       const left = offset.left * zoomFactor
-       const top = offset.top * zoomFactor
-       console.log('offset', offset)
-       console.log('zoomFactor', zoomFactor)
-       console.log('left', left)
-       console.log('top', top)*/
-      /*      let lineToPoint: XyLocation = {
-       x: blockRectModel.x,
-       y: 0,
-       }*/
 
-      // const zoomFactor = this._componentElementService.scrollElement.parentElement.clientWidth / window.innerWidth
       let lineToPoint: XyLocation = {
         x: blockRectModel.x,
-        // y: top,
-        // y: 0 - this._componentElementService.gridLayoutElement.offsetTop,
         y: 0,
-        // y: (scrollRectTop),
-        // y: (scrollRectTop),
       }
-      /*      lineToPoint = {
-       x: lineToPoint.x - canvasRect.left,
-       y: lineToPoint.y - canvasRect.top,
-       }*/
-      // lineToPoint.x = lineToPoint.x * this._screenMoveService.scale
-      // lineToPoint.y = lineToPoint.y * this._screenMoveService.scale
-      /*      lineToPoint = {
-       x: lineToPoint.x * this._screenMoveService.scale,
-       // y: lineToPoint.y - (this._componentElementService.gridLayoutElement.offsetTop * this._screenMoveService.scale),
-       y: (this._componentElementService.gridLayoutElement.offsetTop - lineToPoint.y)
-       // y: (lineToPoint.y - this._componentElementService.gridLayoutElement.offsetTop)
-       * this._screenMoveService.scale,
-       }*/
-      // const mathString = `lineToPoint.y [${lineToPoint.y}] = scrollRectTop:${scrollRectTop} - gridOffsetTop:${this._componentElementService.gridLayoutElement.offsetTop} * scale:${this._screenMoveService.scale}`
-      // console.log(mathString)
-      /*
-       lineToPoint = {
-       x: lineToPoint.x,
-       y: Math.abs(lineToPoint.y),
-       }*/
-      // const x = (xy.x - this._gridLayoutElement.offsetLeft + rect.left) * this.scale
-      // const y = (xy.y - this._gridLayoutElement.offsetTop + rect.top) * this.scale
-      // console.log('offSetTop', this._componentElementService.gridLayoutElement.offsetTop)
       lineToPoint = this._mousePositionService.getMousePositionFromXYForCanvas(lineToPoint)
-      // lineToPoint = this._mousePositionService.getMousePositionFromXYForCanvas(lineToPoint)
+
       this.strokeTwoPoints(moveToPoint, lineToPoint)
-      // console.log(lineToPoint)
 
       const distanceToTopOfPage = (blockRectModel.y - blockRectModel.height / 2) - scrollRectTop
       const absoluteDistance = Math.abs(distanceToTopOfPage)
       const fillTextX = blockRectModel.x - 50
       const fillTextY = 50
       this.fillText(`${absoluteDistance}px`, fillTextX, fillTextY)
-      this._panelStylerService.removePanelClassForLightUpPanels(LineDirectionEnum.Top)
+      // this._panelStylerService.removePanelClassForLightUpPanels(LineDirectionEnum.Top)
+      this._panelStylerService.removeFromNearbyPanelsByDirection(LineDirection.Top)
       return
     }
     if (!gridBlockRects) {
@@ -222,7 +165,19 @@ export class CanvasService {
     const fillTextY = blockRectModel.y - blockRectModel.height / 2 - 50
     this.fillText(`${absoluteDistance}px`, fillTextX, fillTextY)
 
-    this._panelStylerService.lightUpClosestPanel(closestPanelRect, LineDirectionEnum.Top)
+    // this._panelStylerService.lightUpClosestPanel(closestPanelRect, LineDirectionEnum.Top)
+
+    if ((absoluteDistance / this._screenMoveService.scale) < 100) {
+      // console.log('absoluteDistance', absoluteDistance)
+      this._panelStylerService.setBackgroundColorForPanelById(closestPanelRect.id, PanelBackgroundColor.Nearby, LineDirection.Top)
+      // this._panelStylerService.addNearbyPanel(closestPanelRect, LineDirection.Top)
+      // this._panelStylerService.setStyleForPanelById(closestPanelRect.id, 'border', '2px solid blue')
+    } else {
+      // this._panelStylerService.nearbyPanels.filter((p) => p.direction === LineDirectionEnum.Top)
+      // this._panelStylerService.lightUpClosestPanel(closestPanelRect, LineDirectionEnum.Top)
+      this._panelStylerService.setBackgroundColorForPanelById(closestPanelRect.id, PanelBackgroundColor.LineThrough, LineDirection.Top)
+      // this._panelStylerService.removeFromNearbyPanelsByDirection(LineDirection.Top)
+    }
   }
 
   drawLineForBelowBlock(blockRectModel: BlockRectModel, gridBlockRects: FreeBlockRectModel[], scrollRectBottom: number) {
@@ -479,7 +434,7 @@ export class CanvasService {
       y,
       height: panelRect.height,
       width:  panelRect.width,
-      element,
+      // element,
     }
   }
 
