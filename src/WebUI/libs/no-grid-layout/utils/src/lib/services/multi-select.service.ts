@@ -39,7 +39,7 @@ export class MultiSelectService {
   stopMultiSelectionBox(location: XyLocation) {
     if (!this.multiSelectStartPoint) return
     const elementsInArea = this._objectPositioningService.getAllElementsBetweenTwoPoints(this.multiSelectStartPoint, location)
-    console.log('elementsInArea', elementsInArea)
+    // console.log('elementsInArea', elementsInArea)
     this.multiSelectStartPoint = undefined
     this._selectedService.multiSelected = elementsInArea
 

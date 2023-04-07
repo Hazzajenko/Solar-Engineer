@@ -42,6 +42,7 @@ export const mainTsProviders = [
   provideRouterStore(),
   provideEffects(...mainTsEffects),
   ...mainTsStates,
+  // ...noGridLayoutProviders,
   ...storeDevtoolsModule,
   jwtInterceptorProvider,
 ]

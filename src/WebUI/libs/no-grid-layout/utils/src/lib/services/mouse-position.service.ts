@@ -62,8 +62,9 @@ export class MousePositionService {
   }
 
   getMousePositionFromPageXY(event: MouseEvent): Point {
-    const scrollRect = this._scrollElement.getBoundingClientRect()
-    console.log('scrollRect', scrollRect)
+    const scrollRect = this._gridLayoutElement.getBoundingClientRect()
+    // const scrollRect = this._scrollElement.getBoundingClientRect()
+    // console.log('scrollRect', scrollRect)
     const x = (event.pageX - scrollRect.left) / this.scale
     const y = (event.pageY - scrollRect.top) / this.scale
     return { x, y }
@@ -77,6 +78,15 @@ export class MousePositionService {
     const y = (xy.y - this._gridLayoutElement.offsetTop + rect.top) * this.scale
     // const x = (xy.x - this._gridLayoutElement.offsetLeft) * this.scale
     // const y = (xy.y - this._gridLayoutElement.offsetTop) * this.scale
+    return { x, y }
+  }
+
+  getMousePositionV2(event: MouseEvent): Point {
+    // const rect = this._gridLayoutElement.getBoundingClientRect()
+    const x = event.pageX - this._gridLayoutElement.offsetLeft * this.scale
+    const y = event.pageY - this._gridLayoutElement.offsetTop * this.scale
+    // const x = (event.pageX - rect.left) / this.scale
+    // const y = (event.pageY - rect.top) / this.scale
     return { x, y }
   }
 

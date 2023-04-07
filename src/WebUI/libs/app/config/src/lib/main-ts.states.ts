@@ -6,6 +6,7 @@ import { USERS_FEATURE_KEY, usersReducer } from '@app/data-access/users';
 import { AUTH_FEATURE_KEY, authReducer } from '@auth/data-access';
 import { UI_FEATURE_KEY, uiReducer } from '@grid-layout/data-access';
 import { provideState } from '@ngrx/store';
+import { freePanelsReducer, NO_GRID_FREE_PANELS_FEATURE_KEY } from '@no-grid-layout/data-access';
 import { PROJECTS_FEATURE_KEY, projectsReducer } from '@projects/data-access';
 
 
@@ -24,5 +25,6 @@ export const mainTsStates = [
   provideState(GROUP_CHAT_MEMBERS_FEATURE_KEY, groupChatMembersReducer),
   provideState(GROUP_CHAT_MESSAGES_FEATURE_KEY, groupChatMessagesReducer),
   provideState(USERS_FEATURE_KEY, usersReducer),
+  provideState(NO_GRID_FREE_PANELS_FEATURE_KEY, freePanelsReducer),
   // provideState(CHAT_ROOMS_FEATURE_KEY, chatRoomsReducer),
 ]

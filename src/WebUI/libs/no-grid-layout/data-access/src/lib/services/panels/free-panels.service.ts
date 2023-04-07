@@ -1,6 +1,7 @@
-import { Injectable } from '@angular/core'
+import { inject, Injectable } from '@angular/core'
 import { BehaviorSubject, map, shareReplay } from 'rxjs'
 import { FreePanelModel } from '@no-grid-layout/shared'
+import { PanelsStore } from './panels.store'
 
 @Injectable({
   providedIn: 'root',
@@ -8,6 +9,7 @@ import { FreePanelModel } from '@no-grid-layout/shared'
 export class FreePanelsService {
   private _freePanels: BehaviorSubject<FreePanelModel[]> = new BehaviorSubject<FreePanelModel[]>([])
   private _freePanels$ = this._freePanels.asObservable()
+  private _panelsStore = inject(PanelsStore)
 
   getFreePanels$() {
     return this._freePanels$.pipe(
@@ -26,14 +28,17 @@ export class FreePanelsService {
   }
 
   addFreePanel(freePanel: FreePanelModel) {
+    // this._panelsStore.addPanel(freePanel)
     this._freePanels.next([...this._freePanels.value, freePanel])
   }
 
   deleteFreePanel(freePanel: FreePanelModel) {
+    // this._panelsStore.removePanel(freePanel)
     this._freePanels.next(this._freePanels.value.filter((fp) => fp.id !== freePanel.id))
   }
 
   updateFreePanel(freePanel: FreePanelModel) {
+    // this._panelsStore.updatePanel(freePanel)
     const freePanels = this._freePanels.value
     const index = freePanels.findIndex((fp) => fp.id === freePanel.id)
     if (index === -1) {
@@ -49,6 +54,11 @@ export class FreePanelsService {
   }
 
   updatePanelById(id: string, update: Partial<FreePanelModel>) {
+    // this._panelsStore.updatePanelById(id, update)
+    /*    const newy {
+     ...this._panelsStore.panelById$(id),
+     }*/
+
     const freePanels = this._freePanels.value
     const index = freePanels.findIndex((fp) => fp.id === id)
     if (index === -1) {

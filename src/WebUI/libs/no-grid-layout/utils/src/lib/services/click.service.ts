@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core'
 import { FreeBlockType, FreePanelModel, FreePanelUtil, isFreeBlockType, PanelRotationConfig } from '@no-grid-layout/shared'
 import { MousePositionService } from './mouse-position.service'
-import { FreePanelsService, SelectedService } from '@no-grid-layout/data-access'
+import { FreePanelsFacade, FreePanelsService, PanelsStore, SelectedService } from '@no-grid-layout/data-access'
 
 @Injectable({
   providedIn: 'root',
@@ -11,6 +11,8 @@ export class ClickService {
   private _mousePositionService = inject(MousePositionService)
   private _selectedService = inject(SelectedService)
   private _freePanelsService = inject(FreePanelsService)
+  private _panelsStore = inject(PanelsStore)
+  private _freePanelsRepository = inject(FreePanelsFacade)
   clickedPanelId: string | undefined
 
   set gridLayoutElement(value: HTMLDivElement) {
@@ -39,6 +41,8 @@ export class ClickService {
       y: locationY,
     })
 
+    // this._panelsStore.addPanel(freePanel)
+    this._freePanelsRepository.addFreePanel(freePanel)
     this._freePanelsService.addFreePanel(freePanel)
     this._selectedService.clearSelected()
   }

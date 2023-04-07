@@ -1,11 +1,21 @@
-import { ElementRef, Injectable, QueryList } from '@angular/core'
+import { ElementRef, inject, Injectable, QueryList } from '@angular/core'
 import { FreePanelComponent } from '@no-grid-layout/feature'
 import { FreeBlockRectModel, FreeBlockType } from '@no-grid-layout/shared'
+import { MousePositionService } from './mouse-position.service'
 
 @Injectable({
   providedIn: 'root',
 })
 export class ComponentElementsService {
+  get scrollElement(): HTMLDivElement {
+    return this._scrollElement
+  }
+
+  set scrollElement(value: HTMLDivElement) {
+    this._scrollElement = value
+    const scrollRect = this.scrollElement.getBoundingClientRect()
+    console.log('set scrollElement', scrollRect)
+  }
 
   private _parentElement!: HTMLDivElement
   private _gridLayoutElement!: HTMLDivElement
@@ -14,9 +24,10 @@ export class ComponentElementsService {
   public freePanelComponents!: QueryList<FreePanelComponent>
 
   private _elements: Element[] = []
+  private _mousePositionService = inject(MousePositionService)
   public parentElement!: HTMLDivElement
   public gridLayoutElement!: HTMLDivElement
-  public scrollElement!: HTMLDivElement
+  // private _scrollElement!: HTMLDivElement
   public canvasElement!: HTMLCanvasElement
   public canvasCtx!: CanvasRenderingContext2D
   initialGridLayoutElementOffset!: {
@@ -103,6 +114,12 @@ export class ComponentElementsService {
      }*/
   }
 
+  getBlockRectById(id: string) {
+    const element = this.getComponentElementById(id)
+    if (!element) return null
+    return this.getBlockRectFromElementV2(element)
+  }
+
   private getBlockRectFromElement(element: Element): FreeBlockRectModel {
     const id = element.getAttribute('id')
     if (!id) {
@@ -120,6 +137,26 @@ export class ComponentElementsService {
       height: panelRect.height,
       width:  panelRect.width,
       // element,
+    }
+  }
+
+  private getBlockRectFromElementV2(element: Element): FreeBlockRectModel {
+    const id = element.getAttribute('id')
+    if (!id) {
+      throw new Error('id not found')
+    }
+    const panelRect = element.getBoundingClientRect()
+    const scrollRect = this._scrollElement.getBoundingClientRect()
+
+    const x = (panelRect.left - scrollRect.left + (panelRect.width)) / this._mousePositionService.scale
+    const y = (panelRect.top - scrollRect.top + (panelRect.height)) / this._mousePositionService.scale
+
+    return {
+      id,
+      x,
+      y,
+      height: panelRect.height,
+      width:  panelRect.width,
     }
   }
 

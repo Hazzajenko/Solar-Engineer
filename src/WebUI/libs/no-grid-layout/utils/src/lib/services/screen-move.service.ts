@@ -78,11 +78,32 @@ export class ScreenMoveService {
 
   set scrollElement(value: HTMLDivElement) {
     this._scrollElement = value
+    this.scale = 1
+    this.screenPosition = { x: 0, y: 0 }
+    this.initScroll()
+
   }
 
   get scrollElement(): HTMLDivElement {
     if (!this._scrollElement) throw new Error('scrollElement is undefined')
     return this._scrollElement
+  }
+
+  initScroll() {
+    this.scale = 0.9
+    this.screenPosition = { x: 50, y: 50 }
+    this._renderer.setStyle(
+      this.scrollElement,
+      'transform',
+      `translate(${this.screenPosition.x}px,${this.screenPosition.y}px) scale(${this.scale})`,
+    )
+    this.scale = 1
+    this.screenPosition = { x: 0, y: 0 }
+    this._renderer.setStyle(
+      this.scrollElement,
+      'transform',
+      `translate(${this.screenPosition.x}px,${this.screenPosition.y}px) scale(${this.scale})`,
+    )
   }
 
   onScrollHandler(
@@ -92,21 +113,19 @@ export class ScreenMoveService {
     const minScale = 0.5
     // const minScale = GridConfig.MinScale
     const maxScale = GridConfig.MaxScale
-    const childRect = this.gridLayoutElement.children[0].getBoundingClientRect()
+    // const childRect = this.gridLayoutElement.children[0].getBoundingClientRect()
+    const childRect = this.scrollElement.getBoundingClientRect()
     console.log('childRect', childRect)
-    // childRect.
-
     const sizeH = childRect.height
     const sizeW = childRect.width
-    // const sizeH = this.gridLayoutElement.offsetHeight
-    // const sizeW = this.gridLayoutElement.offsetWidth
-    // console.log(this.gridLayoutElement.offsetLeft)
-    // console.log(this.gridLayoutElement.offsetTop)
 
-    /*    const pointerX = event.pageX - this.gridLayoutElement.offsetLeft
-     const pointerY = event.pageY - this.gridLayoutElement.offsetTop*/
     const pointerX = event.pageX - childRect.left
     const pointerY = event.pageY - childRect.top
+
+    console.log('event.pageX', event.pageX)
+    console.log('event.pageY', event.pageY)
+    console.log('pointerX', pointerX)
+    console.log('pointerY', pointerY)
     const targetX = (pointerX - this.screenPosition.x) / this.scale
     const targetY = (pointerY - this.screenPosition.y) / this.scale
 
@@ -116,8 +135,6 @@ export class ScreenMoveService {
       x: -targetX * this.scale + pointerX,
       y: -targetY * this.scale + pointerY,
     }
-    // this.screenPosition.x = -targetX * this.scale + pointerX
-    // this.screenPosition.y = -targetY * this.scale + pointerY
 
     if (this.screenPosition.x > 0) this.screenPosition.x = 0
     if (this.screenPosition.x + sizeW * this.scale < sizeW) this.screenPosition.x = -sizeW * (this.scale - 1)
@@ -128,22 +145,6 @@ export class ScreenMoveService {
       'transform',
       `translate(${this.screenPosition.x}px,${this.screenPosition.y}px) scale(${this.scale})`,
     )
-
-    // this._componentElementsService.canvasCtx.fillText(`Scale: ${this.scale}`, 10, 50)
-    // const showScaleChangeEle = this._renderer.createElement('div')
-    // this._renderer.setStyle()
-    // console.log('this._componentElementsService.canvasElement', this._componentElementsService.canvasElement)
-    /*    this._renderer.setStyle(
-     this._componentElementsService.canvasElement,
-     'transform',
-     `translate(${this.screenPosition.x}px,${this.screenPosition.y}px) scale(${this.scale})`,
-     )*/
-    /*    this._renderer.setStyle(
-     this._element,
-     'transform',
-     `translate(${this.this._screenPosition.x}px,${this.this._screenPosition.y}px) scale(${this.scale})`,
-     )*/
-    // return { this._screenPosition, scale: this.scale }
   }
 
   resetScreenPosition() {

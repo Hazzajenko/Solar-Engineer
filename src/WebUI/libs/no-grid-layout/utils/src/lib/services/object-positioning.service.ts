@@ -1,7 +1,8 @@
 import { inject, Injectable } from '@angular/core'
 import { ComponentElementsService, ScreenMoveService } from '@no-grid-layout/utils'
+import { FreeBlockRectModel, LineDirection } from '@no-grid-layout/shared'
 import { XyLocation } from '@shared/data-access/models'
-import { FreeBlockRectModel } from '@no-grid-layout/shared'
+import { FreePanelsFacade, FreePanelsService } from '@no-grid-layout/data-access'
 
 @Injectable({
   providedIn: 'root',
@@ -9,75 +10,80 @@ import { FreeBlockRectModel } from '@no-grid-layout/shared'
 export class ObjectPositioningService {
   private _componentElementsService = inject(ComponentElementsService)
   private _screenMoveService = inject(ScreenMoveService)
+  private _freePanelsService = inject(FreePanelsService)
+  private _freePanelsFacade = inject(FreePanelsFacade)
 
-  isOtherObjectInLine(objectId: string) {
-    const element = this._componentElementsService.getComponentElementRectById(objectId)
-    if (!element) return []
-    /*    const objectRects = this._componentElementsService.getComponentElementRectsWithId()
-     .filter(rect => rect.id !== objectId)*/
-    const objectRects = this._componentElementsService.elements.filter(ele => ele.id !== objectId)
-
-    const elementsInLine = objectRects
-      /*      .map(objectRect => {
-       const rect = this._componentElementsService.gridLayoutElement.getBoundingClientRect()
-       // console.log('offLeftDiff', this._gridLayoutElement.offsetLeft - rect.left)
-       // console.log('offTopDiff', this._gridLayoutElement.offsetTop - rect.top)
-       const left = (objectRect.x - this._componentElementsService.gridLayoutElement.offsetLeft + rect.left)
-       * this._screenMoveService.scale
-       const top = (objectRect.y - this._componentElementsService.gridLayoutElement.offsetTop + rect.top)
-       * this._screenMoveService.scale
-       return {
-       id:   objectRect.id,
-       left: left,
-       top:  top,
-       }
-       })*/
-      .map(objectRect => this.getBlockRectFromElement(objectRect))
-      .filter(rect => {
-        // const rect = objectRect.getBoundingClientRect()
-        // const panelRectsToCheck = gridBlockRects.filter(
-        //   (rect) =>
-        return element.x >= rect.x - rect.width / 2 &&
-               element.x <= rect.x + rect.width / 2 &&
-               element.y > rect.y
-        // )
-        // return (element.top <= objectRect.top + 2 && element.top >= objectRect.top - 2)
-        /*      return (element.top < objectRect.top
-         && element.top + element.height > objectRect.top)
-         || (element.top > objectRect.top
-         && element.top < objectRect.top + objectRect.height)*/
-        /*      return (element.top + element.height + 2 > objectRect.top
-         && element.top - 2 < objectRect.top + objectRect.height)
-         || (element.left + element.width + 2 > objectRect.left
-         && element.left - 2 < objectRect.left + objectRect.width)*/
-
-        /*      return element.left + element.width + 50 > objectRect.left
-         && element.left < objectRect.left + objectRect.width + 50
-         && element.top + element.height + 50 > objectRect.top
-         && element.top < objectRect.top + objectRect.height + 50*/
-      })
-    if (elementsInLine.length > 0) {
-      console.log('elementsInLine', elementsInLine[0], element)
-    }
-    // console.log('elementsInLine', elementsInLine)
-    return elementsInLine
+  public moveGroupOfPanelsToSameAxisPosition(ids: string[], axis: 'x' | 'y') {
+    const rects = ids.map(id => this.getBlockRectFromId(id))
+    const min = Math.min(...rects.map(r => r[axis]))
+    const max = Math.max(...rects.map(r => r[axis]))
+    const middle = (min + max) / 2
+    const offset = middle - rects[0][axis]
+    // this._screenMoveService.moveScreenByOffset(axis, offset)
   }
 
-  isOtherObjectNearby(objectId: string) {
-    const element = this._componentElementsService.getComponentElementRectById(objectId)
-    if (!element) return []
-    const objectRects = this._componentElementsService.getComponentElementRectsWithId()
-      .filter(rect => rect.id !== objectId)
-    const elementsNearby = objectRects.filter(objectRect => {
-      /*    return element.top + element.height + 20 > objectRect.top
-       && element.top - 20 < objectRect.top + objectRect.height*/
-      return element.left + element.width + 20 > objectRect.left
-             && element.left - 20 < objectRect.left + objectRect.width
-             && element.top + element.height + 20 > objectRect.top
-             && element.top - 20 < objectRect.top + objectRect.height
+  public moveGroupOfPanelsToSameAxisPositionV2(ids: string[], direction: LineDirection) {
+    const rects = ids.map(id => this.getBlockRectFromId(id))
+    const axis = direction === 'left' || direction === 'right'
+      ? 'x'
+      : 'y'
+    const min = Math.min(...rects.map(r => r[axis]))
+    const max = Math.max(...rects.map(r => r[axis]))
+    const middle = (min + max) / 2
+    const offset = middle - rects[0][axis]
+    console.log('moveGroupOfPanelsToSameAxisPositionV2', { ids, direction, rects, axis, min, max, middle, offset })
+    ids.forEach(id => {
+      const panel = this._freePanelsService.getPanelById(id)
+      if (!panel) {
+        throw new Error('panel not found')
+      }
+      const location = {
+        x: panel.location.x,
+        y: panel.location.y,
+      }
+      if (direction === 'left') {
+        location.x = middle
+      } else if (direction === 'right') {
+        location.x = middle
+      } else if (direction === 'top') {
+        location.y = middle
+      } else if (direction === 'bottom') {
+        location.y = middle
+      }
+      this._freePanelsFacade.updateFreePanel(id, { location })
+      this._freePanelsService.updatePanelById(id, { location })
     })
-    // console.log('elementsNearby', elementsNearby)
-    return elementsNearby
+    // this._freePanelsService.updatePanelById()
+
+    // this._screenMoveService.moveScreenByOffset(axis, offset)
+  }
+
+  public getBlockRectFromId(id: string): FreeBlockRectModel {
+    const element = this._componentElementsService.getComponentElementById(id)
+    if (!element) {
+      throw new Error('element not found')
+    }
+    return this.getBlockRectFromElement(element)
+  }
+
+  private getBlockRectFromElement(element: Element): FreeBlockRectModel {
+    const id = element.getAttribute('id')
+    if (!id) {
+      throw new Error('id not found')
+    }
+    const panelRect = element.getBoundingClientRect()
+    const canvasRect = this._componentElementsService.canvasElement.getBoundingClientRect()
+    const x = panelRect.left - canvasRect.left + panelRect.width / 2
+    const y = panelRect.top - canvasRect.top + panelRect.height / 2
+
+    return {
+      id,
+      x,
+      y,
+      height: panelRect.height,
+      width:  panelRect.width,
+      // element,
+    }
   }
 
   getAllElementsBetweenTwoPoints(point1: XyLocation, point2: XyLocation) {
@@ -134,25 +140,5 @@ export class ObjectPositioningService {
     })
     console.log('elementsBetweenPoints', elementsBetweenPoints)
     return elementsBetweenPoints.map(element => element.id)
-  }
-
-  private getBlockRectFromElement(element: Element): FreeBlockRectModel {
-    const id = element.getAttribute('id')
-    if (!id) {
-      throw new Error('id not found')
-    }
-    const panelRect = element.getBoundingClientRect()
-    const canvasRect = this._componentElementsService.canvasElement.getBoundingClientRect()
-    const x = panelRect.left - canvasRect.left + panelRect.width / 2
-    const y = panelRect.top - canvasRect.top + panelRect.height / 2
-
-    return {
-      id,
-      x,
-      y,
-      height: panelRect.height,
-      width:  panelRect.width,
-      // element,
-    }
   }
 }

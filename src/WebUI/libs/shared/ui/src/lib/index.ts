@@ -1,5 +1,7 @@
 export * from './buttons/button-builder.component'
 export * from './menus/index'
+export * from './svgs/index'
+
 /*export * from './menus/menu-builder.component'
  export * from './menus/menu-item.model'
  export * from './menus/menu-builder.directive'*/

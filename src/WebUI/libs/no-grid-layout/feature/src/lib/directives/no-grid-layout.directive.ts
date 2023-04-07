@@ -284,6 +284,7 @@ export class NoGridLayoutDirective
   private onMouseUpHandler(event: MouseEvent) {
     if (this.animationId) {
       cancelAnimationFrame(this.animationId)
+      // this._canvasService.stopAnimation()
     }
     if (this.isScreenDragging) {
       this.isScreenDragging = false
@@ -350,7 +351,14 @@ export class NoGridLayoutDirective
       y: event.pageY,
     }
     this._ngZone.runOutsideAngular(() => {
-      this.animateLinesFromBlockMoving()
+      this._canvasService.drawLinesForBlocks(panelId)
+      /*     const panelDimensions = this._canvasService.getBlockRect(panelId)
+       if (!panelDimensions) {
+       console.error('no panelDimensions')
+       return
+       }
+       this.drawLinesAllDirectionsForBlock(panelDimensions)*/
+      // this.animateLinesFromBlockMoving()
     })
 
     return
@@ -404,7 +412,7 @@ export class NoGridLayoutDirective
      this.ctx.fillStyle = 'red'
      this.ctx.font = '15px Arial'*/
 
-    this._canvasService.drawLinesForBlocks(blockRectModel)
+    // this._canvasService.drawLinesForBlocks(blockRectModel)
   }
 
   private clearCtxRect() {

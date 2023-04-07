@@ -77,11 +77,21 @@ export class PanelStylerService
     this.panelStyleStates = this.panelStyleStates.map((p) => {
       if (p.direction === direction) {
         p.direction = undefined
-        p.backgroundColor = PanelBackgroundColor.Default
-        this.setBackgroundColorForPanelById(p.id, PanelBackgroundColor.Default)
+        if (p.backgroundColor === PanelBackgroundColor.Nearby) {
+          p.backgroundColor = PanelBackgroundColor.Default
+          this.setBackgroundColorForPanelById(p.id, PanelBackgroundColor.Default)
+        }
+        /*        p.backgroundColor = PanelBackgroundColor.Default
+         this.setBackgroundColorForPanelById(p.id, PanelBackgroundColor.Default)*/
       }
       return p
     })
+  }
+
+  public doesPanelHaveNearbyPanelsStyle(id: string) {
+    return this.panelStyleStates
+             .find(p => p.id === id)
+             ?.backgroundColor === PanelBackgroundColor.Nearby
   }
 
   /*  public clearNearbyPanels(direction: LineDirection) {

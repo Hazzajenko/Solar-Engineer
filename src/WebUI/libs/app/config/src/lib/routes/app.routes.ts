@@ -16,6 +16,7 @@ export const appRoutes: Route[] = [
   {
     path: '',
     loadComponent: () => import('@no-grid-layout/feature').then((m) => m.NoGridLayoutComponent),
+    // providers: [noGridLayoutProviders],
   },
   {
     path: 'free',

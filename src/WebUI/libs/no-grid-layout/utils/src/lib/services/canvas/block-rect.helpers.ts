@@ -23,6 +23,8 @@ export abstract class BlockRectHelpers {
 
   protected abstract fillText(text: string, x: number, y: number): void
 
+  protected abstract scale: number
+
   protected getClosestPanelToLine(
     blockRectModel: FreeBlockRectModel,
     gridBlockRects: FreeBlockRectModel[],
@@ -46,27 +48,24 @@ export abstract class BlockRectHelpers {
     return panelRectsToCheckWithDistanceSorted[0]
   }
 
-  private getClosedPanelToTopLine(
+  protected getClosestPanelsToLine(
     blockRectModel: FreeBlockRectModel,
-    gridBlockRects: BlockRectModel[],
+    gridBlockRects: FreeBlockRectModel[],
+    direction: LineDirection,
   ) {
-    const panelRectsToCheck = gridBlockRects.filter(
-      (rect) =>
-        blockRectModel.x >= rect.x - rect.width / 2 &&
-        blockRectModel.x <= rect.x + rect.width / 2 &&
-        blockRectModel.y > rect.y,
+    const panelRectsToCheck = this.getPanelRectsToCheckByDirection(
+      blockRectModel,
+      gridBlockRects,
+      direction,
     )
     const panelRectsToCheckWithDistance = panelRectsToCheck.map((rect) => {
-      const distance = Math.abs(rect.y - blockRectModel.y)
+      const distance = this.getDistance(blockRectModel, rect, direction)
       return {
         ...rect,
         distance,
       }
     })
-    const panelRectsToCheckWithDistanceSorted = panelRectsToCheckWithDistance.sort(
-      (a, b) => a.distance - b.distance,
-    )
-    return panelRectsToCheckWithDistanceSorted[0]
+    return panelRectsToCheckWithDistance.sort((a, b) => a.distance - b.distance)
   }
 
   private getPanelRectsToCheckByDirection(
@@ -136,16 +135,17 @@ export abstract class BlockRectHelpers {
     let lineToPoint: XyLocation = this.getDefaultLineToPoint(blockRectModel, direction)
     lineToPoint = this._mousePositionService.getMousePositionFromXYForCanvas(lineToPoint)
 
-    this.strokeTwoPoints(moveToPoint, lineToPoint)
-    this._panelStylerService.removeFromNearbyPanelsByDirection(direction)
-    if (!this.canvasConfig.showLineDistance) {
-      return
+    if (this.canvasConfig.showDirectionLines) {
+      this.strokeTwoPoints(moveToPoint, lineToPoint)
     }
+    this._panelStylerService.removeFromNearbyPanelsByDirection(direction)
 
-    const distanceToEndOfLine = this.getDistanceToEndOfLine(blockRectModel, direction)
-    const absoluteDistance = Math.abs(distanceToEndOfLine)
-    const fillTextPosition = this.getFillTextDistancePosition(blockRectModel, direction)
-    this.fillText(`${absoluteDistance}px`, fillTextPosition.x, fillTextPosition.y)
+    if (this.canvasConfig.showLineDistance) {
+      const distanceToEndOfLine = this.getDistanceToEndOfLine(blockRectModel, direction)
+      const absoluteDistance = Math.abs(distanceToEndOfLine)
+      const fillTextPosition = this.getFillTextDistancePosition(blockRectModel, direction)
+      this.fillText(`${absoluteDistance}px`, fillTextPosition.x, fillTextPosition.y)
+    }
 
     return
   }
@@ -175,6 +175,129 @@ export abstract class BlockRectHelpers {
           x: blockRectModel.x + blockRectModel.width / 2,
           y: blockRectModel.y,
         }
+      default:
+        throw new Error('invalid direction')
+    }
+  }
+
+  protected getTopAndBottomGridLinesMoveToPoint(
+    blockRectModel: BlockRectModel,
+    direction: LineDirection,
+  ): {
+    moveToPointTop: XyLocation
+    moveToPointBottom: XyLocation
+  } {
+    switch (direction) {
+      case LineDirection.Top:
+        return {
+          moveToPointTop: {
+            x: blockRectModel.x - blockRectModel.width / 2,
+            y: blockRectModel.y - blockRectModel.height / 2,
+          },
+          moveToPointBottom: {
+            x: blockRectModel.x + blockRectModel.width / 2,
+            y: blockRectModel.y - blockRectModel.height / 2,
+          },
+        }
+      case LineDirection.Bottom:
+        return {
+          moveToPointTop: {
+            x: blockRectModel.x - blockRectModel.width / 2,
+            y: blockRectModel.y + blockRectModel.height / 2,
+          },
+          moveToPointBottom: {
+            x: blockRectModel.x + blockRectModel.width / 2,
+            y: blockRectModel.y + blockRectModel.height / 2,
+          },
+        }
+      case LineDirection.Left:
+        return {
+          moveToPointTop: {
+            x: blockRectModel.x - blockRectModel.width / 2,
+            y: blockRectModel.y - blockRectModel.height / 2,
+          },
+          moveToPointBottom: {
+            x: blockRectModel.x - blockRectModel.width / 2,
+            y: blockRectModel.y + blockRectModel.height / 2,
+          },
+        }
+      case LineDirection.Right:
+        return {
+          moveToPointTop: {
+            x: blockRectModel.x + blockRectModel.width / 2,
+            y: blockRectModel.y - blockRectModel.height / 2,
+          },
+          moveToPointBottom: {
+            x: blockRectModel.x + blockRectModel.width / 2,
+            y: blockRectModel.y + blockRectModel.height / 2,
+          },
+        }
+
+      default:
+        throw new Error('invalid direction')
+    }
+  }
+
+  /*  protected getTopAndBottomGridLinesLineToPoint(
+   blockRectModel: BlockRectModel,
+   direction: LineDirection,
+   ): {
+   lineToPointTop: XyLocation
+   lineToPointBottom: XyLocation
+   }*/
+  protected getTopAndBottomGridLinesLineToPoint(
+    blockRectModel: BlockRectModel,
+    direction: LineDirection,
+  ): {
+    lineToPointTop: XyLocation
+    lineToPointBottom: XyLocation
+  } {
+    switch (direction) {
+      case LineDirection.Top:
+        return {
+          lineToPointTop: {
+            x: blockRectModel.x - blockRectModel.width / 2,
+            y: 0,
+          },
+          lineToPointBottom: {
+            x: blockRectModel.x + blockRectModel.width / 2,
+            y: 0,
+          },
+        }
+      case LineDirection.Bottom:
+        return {
+          lineToPointTop: {
+            x: blockRectModel.x - blockRectModel.width / 2,
+            y: this.canvasSize.height,
+          },
+          lineToPointBottom: {
+            x: blockRectModel.x + blockRectModel.width / 2,
+            y: this.canvasSize.height,
+          },
+        }
+      case LineDirection.Left:
+        return {
+          lineToPointTop: {
+            x: 0,
+            y: blockRectModel.y - blockRectModel.height / 2,
+          },
+          lineToPointBottom: {
+            x: 0,
+            y: blockRectModel.y + blockRectModel.height / 2,
+          },
+        }
+      case LineDirection.Right:
+        return {
+          lineToPointTop: {
+            x: this.canvasSize.width,
+            y: blockRectModel.y - blockRectModel.height / 2,
+          },
+          lineToPointBottom: {
+            x: this.canvasSize.width,
+            y: blockRectModel.y + blockRectModel.height / 2,
+          },
+        }
+
       default:
         throw new Error('invalid direction')
     }
@@ -229,7 +352,7 @@ export abstract class BlockRectHelpers {
     }
   }
 
-  private getDefaultLineToPoint(
+  protected getDefaultLineToPoint(
     blockRectModel: BlockRectModel,
     direction: LineDirection,
   ): XyLocation {

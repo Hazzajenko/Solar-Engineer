@@ -3,12 +3,13 @@ import { CommonModule } from '@angular/common'
 import { CdkDrag, CdkDragDrop, CdkDragEnd, CdkDragMove, CdkDragStart, Point } from '@angular/cdk/drag-drop'
 import { FreePanelModel, FreePanelUtil, PanelRotationConfig } from '@no-grid-layout/shared'
 import { FreePanelDirective } from './free-panel.directive'
-import { MousePositionService, ObjectPositioningService, PanelStylerService } from '@no-grid-layout/utils'
-import { distinctUntilKeyChanged, map, Observable, tap } from 'rxjs'
+import { ComponentElementsService, MousePositionService, ObjectPositioningService, PanelStylerService } from '@no-grid-layout/utils'
+import { map, Observable, tap } from 'rxjs'
 import { BaseService } from '@shared/logger'
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
-import { throwIfNull$Extended } from '@shared/utils'
 import { FreePanelsService, SelectedService } from '@no-grid-layout/data-access'
+import { ShowSvgComponent } from '@shared/ui'
+import { FreePanelsStore } from './free-panels.store'
 
 @Component({
   selector:        'app-free-panel',
@@ -19,8 +20,12 @@ import { FreePanelsService, SelectedService } from '@no-grid-layout/data-access'
     CdkDrag,
     FreePanelDirective,
     MatMenuModule,
+    ShowSvgComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers:       [
+    FreePanelsStore,
+  ],
   standalone:      true,
 })
 export class FreePanelComponent
@@ -32,6 +37,8 @@ export class FreePanelComponent
   private _objectPositioningService = inject(ObjectPositioningService)
   private _panelStylerService = inject(PanelStylerService)
   private _selectedService = inject(SelectedService)
+  private _componentElementsService = inject(ComponentElementsService)
+  private _freePanelsStore = inject(FreePanelsStore)
   private _panelId!: string
   location!: Point
   menuTopLeftPosition = {
@@ -41,6 +48,20 @@ export class FreePanelComponent
   @ViewChild(MatMenuTrigger, { static: true })
   matMenuTrigger!: MatMenuTrigger
   freePanel$!: Observable<FreePanelModel>
+  /*  panelLocation$ = this._freePanelsService.getFreePanels$()
+   .pipe(
+   map((freePanels) => freePanels.find((freePanel) => freePanel.id === this._panelId)),
+   map((freePanel) => freePanel?.location),
+   retry(3),
+   tap((location) => {
+   console.log('location', location)
+   if (!location) return
+   this.location = location
+   }),
+   )*/
+  selected$ = this._selectedService.multiSelected$.pipe(
+    map((multiSelected) => !!multiSelected.find((selected) => selected.includes(this._panelId))),
+  )
   protected readonly PanelRotationConfig = PanelRotationConfig
 
   get panelId() {
@@ -49,17 +70,16 @@ export class FreePanelComponent
 
   @Input() set panelId(value: string) {
     this._panelId = value
-    this.freePanel$ = this._freePanelsService.getFreePanels$()
-      .pipe(
-        map((freePanels) => freePanels.find((freePanel) => freePanel.id === value)),
-        throwIfNull$Extended('free-panel.component', 'freePanel$'),
-        distinctUntilKeyChanged('id'),
-        tap((freePanel) => {
-            console.log('freePanel', freePanel)
-            this.location = freePanel.location
-          },
-        ),
-      )
+    // this.
+    console.log('set panelId', value)
+    this._freePanelsStore.initPanel({ panelId: value })
+    this.freePanel$ = this._freePanelsStore.panel$.pipe(
+      tap((freePanel) => {
+          console.log('freePanel', freePanel)
+          this.location = freePanel.location
+        },
+      ),
+    )
   }
 
   ngOnInit() {
@@ -95,14 +115,21 @@ export class FreePanelComponent
 
   dragExited(event: CdkDragEnd) {
     console.log('dragExited', event)
-    this._freePanelsService.updatePanelById(this.panelId, { location: this.location })
+    this._freePanelsStore.updatePanel({ location: this.location })
+    // this._freePanelsService.updatePanelById(this.panelId, { location: this.location })
+
   }
 
   onRightClick(event: MouseEvent, freePanel: FreePanelModel) {
     event.preventDefault()
-    const { x, y } = this._mousePositionService.getMousePositionFromPageXYWithSize(event)
-    this.menuTopLeftPosition.x = x + 10 + 'px'
-    this.menuTopLeftPosition.y = y + 10 + 'px'
+    // const { x, y } = this._mousePositionService.getMousePositionV2(event)
+    const blockRect = this._componentElementsService.getBlockRectById(freePanel.id)
+    if (!blockRect) {
+      return
+    }
+
+    this.menuTopLeftPosition.x = blockRect.x + 'px'
+    this.menuTopLeftPosition.y = blockRect.y + 'px'
     this.matMenuTrigger.menuData = { freePanel }
     this.matMenuTrigger.openMenu()
   }
