@@ -1,19 +1,19 @@
 import { Directive, ElementRef, inject, Input, NgZone, OnInit, Renderer2 } from '@angular/core'
 import tippy from 'tippy.js'
-import { BackgroundColor, FreePanelUtil, PanelRotationConfig } from '@no-grid-layout/shared'
+import { BackgroundColor } from '@no-grid-layout/shared'
 import { SelectedService } from '@no-grid-layout/data-access'
 import { OnDestroyDirective } from '@shared/utils'
-import { map, takeUntil, tap } from 'rxjs'
-import { ComponentElementsService, PanelBackgroundColor, PanelBorder, PanelStylerService } from '@no-grid-layout/utils'
+import { ComponentElementsService } from '@no-grid-layout/utils'
 import { SoftColor, StyleName, VibrantColor } from '@shared/data-access/models'
+import { DesignPanelFactory, PanelBackgroundColor, PanelBorder, PanelRotation, SelectedPanelState } from '../types'
+import { PanelStylerService } from '../services'
 
 @Directive({
-  selector:       '[appFreePanelDirective]',
-  exportAs:       'freePanel',
+  selector:       '[appDesignPanel]',
   hostDirectives: [OnDestroyDirective],
   standalone:     true,
 })
-export class FreePanelDirective
+export class DesignPanelDirective
   implements OnInit {
   private destroy$ = inject(OnDestroyDirective).destroy$
   private _element = inject(ElementRef).nativeElement
@@ -46,8 +46,8 @@ export class FreePanelDirective
      })*/
   }
 
-  @Input() set rotation(rotation: PanelRotationConfig) {
-    const { width, height } = FreePanelUtil.size(rotation)
+  @Input() set rotation(rotation: PanelRotation) {
+    const { width, height } = DesignPanelFactory.size(rotation)
     this.renderer.setStyle(this._element, 'height', `${height}px`)
     this.renderer.setStyle(this._element, 'width', `${width}px`)
   }
@@ -68,6 +68,29 @@ export class FreePanelDirective
     this._element.classList.add(...borderColorAndWidth.split(' '))
   }
 
+  @Input() set selected(selected: SelectedPanelState) {
+    if (!selected) return
+    this.zone.runOutsideAngular(() => {
+      this.isSelected = selected === this.panelId
+      this.isMultiSelected = selected.includes(this.panelId)
+      if (selected === SelectedPanelState.SingleSelected) {
+        this.setStyle(StyleName.Border, PanelBorder.Selected)
+        this.setStyle(StyleName.BackgroundColor, SoftColor.SoftCyan)
+      }
+      if (selected === SelectedPanelState.MultiSelected) {
+        this.setStyle(StyleName.Border, PanelBorder.Selected)
+        this.setStyle(StyleName.BackgroundColor, SoftColor.SoftCyan)
+      }
+      if (selected === SelectedPanelState.NoneSelected) {
+        this.setStyle(StyleName.Border, PanelBorder.Default)
+        this.setStyle(StyleName.BackgroundColor, PanelBackgroundColor.Default)
+      }
+
+      // this.setStyle('background-color', this.isSelected ? SoftColor.SoftCyan : PanelBackgroundColor.Default)
+      // this.setStyle('border', this.isSelected ? PanelBorder.Selected : PanelBorder.Default)
+    })
+  }
+
   get panelId() {
     return this._panelId
   }
@@ -83,51 +106,51 @@ export class FreePanelDirective
     this._panelStylerService.initPanelStyleState(this._element.id)
     this.setupMouseEventListeners()
 
-    this._selectedService.selected$
-      .pipe(
-        takeUntil(this.destroy$),
-        map((selected) => selected === this.panelId),
-        tap((isSelected) => {
-            this.zone.runOutsideAngular(() => {
-              if (isSelected) {
-                this.setStyle(StyleName.Border, PanelBorder.Selected)
-                this.setStyle(StyleName.BackgroundColor, SoftColor.SoftCyan)
-                // this.setStyle(StyleName.BackgroundColor, PanelBackgroundColor.Red)
-                // this.setStyle('background-color', PanelBackgroundColor.Red)
-                /*               this.cachedBackgroundColor =
-                 this.replaceClassForPanel(this.cachedBackgroundColor, PanelColorState.Selected)*/
-                return
-              }
-              this.setStyle('background-color', PanelBackgroundColor.Default)
-              this.setStyle(StyleName.Border, PanelBorder.Default)
-              // this.cachedBackgroundColor = this.replaceClassForPanel(this.cachedBackgroundColor, PanelColorState.Default)
-            })
-          },
-        ),
-      )
-      .subscribe()
+    /*this._selectedService.selected$
+     .pipe(
+     takeUntil(this.destroy$),
+     map((selected) => selected === this.panelId),
+     tap((isSelected) => {
+     this.zone.runOutsideAngular(() => {
+     if (isSelected) {
+     this.setStyle(StyleName.Border, PanelBorder.Selected)
+     this.setStyle(StyleName.BackgroundColor, SoftColor.SoftCyan)
+     // this.setStyle(StyleName.BackgroundColor, PanelBackgroundColor.Red)
+     // this.setStyle('background-color', PanelBackgroundColor.Red)
+     /!*               this.cachedBackgroundColor =
+     this.replaceClassForPanel(this.cachedBackgroundColor, PanelColorState.Selected)*!/
+     return
+     }
+     this.setStyle('background-color', PanelBackgroundColor.Default)
+     this.setStyle(StyleName.Border, PanelBorder.Default)
+     // this.cachedBackgroundColor = this.replaceClassForPanel(this.cachedBackgroundColor, PanelColorState.Default)
+     })
+     },
+     ),
+     )
+     .subscribe()
 
-    this._selectedService.multiSelected$
-      .pipe(
-        takeUntil(this.destroy$),
-        map((selected) => selected.includes(this.panelId)),
-        tap((isSelected) => {
-            this.zone.runOutsideAngular(() => {
-              if (isSelected) {
-                this.setStyle('background-color', SoftColor.SoftCyan)
-                // this.setStyle('background-color', PanelBackgroundColor.MultiSelected)
-                /*                this.cachedBackgroundColor =
-                 this.replaceClassForPanel(this.cachedBackgroundColor, PanelColorState.MultiSelected)*/
-                return
-              }
-              this.setStyle('background-color', PanelBackgroundColor.Default)
-              /*         this.cachedBackgroundColor =
-               this.replaceClassForPanel(this.cachedBackgroundColor, PanelColorState.Default)*/
-            })
-          },
-        ),
-      )
-      .subscribe()
+     this._selectedService.multiSelected$
+     .pipe(
+     takeUntil(this.destroy$),
+     map((selected) => selected.includes(this.panelId)),
+     tap((isSelected) => {
+     this.zone.runOutsideAngular(() => {
+     if (isSelected) {
+     this.setStyle('background-color', SoftColor.SoftCyan)
+     // this.setStyle('background-color', PanelBackgroundColor.MultiSelected)
+     /!*                this.cachedBackgroundColor =
+     this.replaceClassForPanel(this.cachedBackgroundColor, PanelColorState.MultiSelected)*!/
+     return
+     }
+     this.setStyle('background-color', PanelBackgroundColor.Default)
+     /!*         this.cachedBackgroundColor =
+     this.replaceClassForPanel(this.cachedBackgroundColor, PanelColorState.Default)*!/
+     })
+     },
+     ),
+     )
+     .subscribe()*/
 
   }
 

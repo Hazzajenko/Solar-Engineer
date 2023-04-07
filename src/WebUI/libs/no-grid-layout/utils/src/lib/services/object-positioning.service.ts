@@ -1,8 +1,9 @@
 import { inject, Injectable } from '@angular/core'
 import { ComponentElementsService, ScreenMoveService } from '@no-grid-layout/utils'
-import { FreeBlockRectModel, LineDirection } from '@no-grid-layout/shared'
+import { DesignRectModel, LineDirection } from '@no-grid-layout/shared'
 import { XyLocation } from '@shared/data-access/models'
-import { FreePanelsFacade, FreePanelsService } from '@no-grid-layout/data-access'
+import { DesignPanelModel, DesignPanelsFacade } from '@design-app/feature-panel'
+import { UpdateStr } from '@ngrx/entity/src/models'
 
 @Injectable({
   providedIn: 'root',
@@ -10,8 +11,7 @@ import { FreePanelsFacade, FreePanelsService } from '@no-grid-layout/data-access
 export class ObjectPositioningService {
   private _componentElementsService = inject(ComponentElementsService)
   private _screenMoveService = inject(ScreenMoveService)
-  private _freePanelsService = inject(FreePanelsService)
-  private _freePanelsFacade = inject(FreePanelsFacade)
+  private _designPanelsFacade = inject(DesignPanelsFacade)
 
   public moveGroupOfPanelsToSameAxisPosition(ids: string[], axis: 'x' | 'y') {
     const rects = ids.map(id => this.getBlockRectFromId(id))
@@ -22,7 +22,7 @@ export class ObjectPositioningService {
     // this._screenMoveService.moveScreenByOffset(axis, offset)
   }
 
-  public moveGroupOfPanelsToSameAxisPositionV2(ids: string[], direction: LineDirection) {
+  public async moveGroupOfPanelsToSameAxisPositionV2(ids: string[], direction: LineDirection) {
     const rects = ids.map(id => this.getBlockRectFromId(id))
     const axis = direction === 'left' || direction === 'right'
       ? 'x'
@@ -32,33 +32,69 @@ export class ObjectPositioningService {
     const middle = (min + max) / 2
     const offset = middle - rects[0][axis]
     console.log('moveGroupOfPanelsToSameAxisPositionV2', { ids, direction, rects, axis, min, max, middle, offset })
-    ids.forEach(id => {
-      const panel = this._freePanelsService.getPanelById(id)
-      if (!panel) {
-        throw new Error('panel not found')
-      }
-      const location = {
-        x: panel.location.x,
-        y: panel.location.y,
-      }
-      if (direction === 'left') {
-        location.x = middle
-      } else if (direction === 'right') {
-        location.x = middle
-      } else if (direction === 'top') {
-        location.y = middle
-      } else if (direction === 'bottom') {
-        location.y = middle
-      }
-      this._freePanelsFacade.updateFreePanel(id, { location })
-      this._freePanelsService.updatePanelById(id, { location })
-    })
-    // this._freePanelsService.updatePanelById()
+    const panels = await this._designPanelsFacade.panelsByIdArray(ids)
+    const updates = panels.map(panel => {
+        const location: XyLocation = {
+          x: panel.location.x,
+          y: panel.location.y,
+        }
+        if (direction === 'left') {
+          location.x = middle
+        } else if (direction === 'right') {
+          location.x = middle
+        } else if (direction === 'top') {
+          location.y = middle
+        } else if (direction === 'bottom') {
+          location.y = middle
+        }
+        return {
+          id:      panel.id,
+          changes: {
+            location,
+          },
+        } as UpdateStr<DesignPanelModel>
+      },
+    )
+    console.log('moveGroupOfPanelsToSameAxisPositionV2', { updates })
+    return this._designPanelsFacade.updateManyPanels(updates)
 
-    // this._screenMoveService.moveScreenByOffset(axis, offset)
+    /*
+     const updatePanels = async () => {
+     const panels = await this._designPanelsFacade.panelsByIdArray(ids)
+     return panels.map(panel => {
+     const location: XyLocation = {
+     x: panel.location.x,
+     y: panel.location.y,
+     }
+     if (direction === 'left') {
+     location.x = middle
+     } else if (direction === 'right') {
+     location.x = middle
+     } else if (direction === 'top') {
+     location.y = middle
+     } else if (direction === 'bottom') {
+     location.y = middle
+     }
+     return {
+     id:      panel.id,
+     changes: {
+     location,
+     },
+     } as UpdateStr<DesignPanelModel>
+     },
+     )
+     }
+
+     return updatePanels()
+     .then(updates => {
+     return this._designPanelsFacade.updateManyPanels(updates)
+     })
+     .catch(e => console.error('updatePanels', e))
+     */
+
   }
 
-  public getBlockRectFromId(id: string): FreeBlockRectModel {
+  public getBlockRectFromId(id: string): DesignRectModel {
     const element = this._componentElementsService.getComponentElementById(id)
     if (!element) {
       throw new Error('element not found')
@@ -66,7 +102,7 @@ export class ObjectPositioningService {
     return this.getBlockRectFromElement(element)
   }
 
-  private getBlockRectFromElement(element: Element): FreeBlockRectModel {
+  private getBlockRectFromElement(element: Element): DesignRectModel {
     const id = element.getAttribute('id')
     if (!id) {
       throw new Error('id not found')

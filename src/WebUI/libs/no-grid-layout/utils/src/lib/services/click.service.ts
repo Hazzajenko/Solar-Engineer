@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core'
-import { FreeBlockType, FreePanelModel, FreePanelUtil, isFreeBlockType, PanelRotationConfig } from '@no-grid-layout/shared'
 import { MousePositionService } from './mouse-position.service'
-import { FreePanelsFacade, FreePanelsService, PanelsStore, SelectedService } from '@no-grid-layout/data-access'
+import { SelectedService } from '@no-grid-layout/data-access'
+import { DesignEntityType, DesignPanelFactory, DesignPanelsFacade, isDesignEntityType, PanelRotation } from '@design-app/feature-panel'
 
 @Injectable({
   providedIn: 'root',
@@ -10,9 +10,7 @@ export class ClickService {
   private _gridLayoutElement: HTMLDivElement | undefined
   private _mousePositionService = inject(MousePositionService)
   private _selectedService = inject(SelectedService)
-  private _freePanelsService = inject(FreePanelsService)
-  private _panelsStore = inject(PanelsStore)
-  private _freePanelsRepository = inject(FreePanelsFacade)
+  private _designPanelsFacade = inject(DesignPanelsFacade)
   clickedPanelId: string | undefined
 
   set gridLayoutElement(value: HTMLDivElement) {
@@ -25,34 +23,39 @@ export class ClickService {
   }
 
   handleClickEvent(event: MouseEvent) {
-    const isBlockInThisLocation = this.isBlockInThisLocation(event)
-    if (isBlockInThisLocation) return
+    const isEntityInThisLocation = this.isEntityInThisLocation(event)
+    if (isEntityInThisLocation) return
 
     if (event.ctrlKey) return
 
     const mouse = this._mousePositionService.getMousePositionFromPageXYWithSize(event)
 
-    const size = FreePanelUtil.size(PanelRotationConfig.Default)
+    const size = DesignPanelFactory.size(PanelRotation.Default)
     const locationX = mouse.x - size.width / 2
     const locationY = mouse.y - size.height / 2
 
-    const freePanel = new FreePanelModel({
+    /*    const freePanel = new FreePanelModel({
+     x: locationX,
+     y: locationY,
+     })*/
+
+    const panel = DesignPanelFactory.create({
       x: locationX,
       y: locationY,
     })
 
     // this._panelsStore.addPanel(freePanel)
-    this._freePanelsRepository.addFreePanel(freePanel)
-    this._freePanelsService.addFreePanel(freePanel)
+    this._designPanelsFacade.addPanel(panel)
+    // this._freePanelsService.addFreePanel(freePanel)
     this._selectedService.clearSelected()
   }
 
-  private isBlockInThisLocation(event: MouseEvent) {
-    const type = (event.composedPath()[0] as HTMLDivElement).getAttribute('type') as FreeBlockType | undefined
-    if (!type || !isFreeBlockType(type)) return false
+  private isEntityInThisLocation(event: MouseEvent) {
+    const type = (event.composedPath()[0] as HTMLDivElement).getAttribute('type') as DesignEntityType | undefined
+    if (!type || !isDesignEntityType(type)) return false
 
     switch (type) {
-      case FreeBlockType.Panel:
+      case DesignEntityType.Panel:
         this.handleClickPanelEvent(event)
         break
       default:

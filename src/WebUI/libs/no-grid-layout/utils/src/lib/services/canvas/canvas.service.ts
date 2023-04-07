@@ -1,12 +1,12 @@
 import { inject, Injectable } from '@angular/core'
-import { FreeBlockRectModel, LineDirection } from '@no-grid-layout/shared'
-import { PanelBackgroundColor, PanelStylerService } from '../panel-styler'
+import { DesignRectModel, LineDirection } from '@no-grid-layout/shared'
 import { MousePositionService } from '../mouse-position.service'
 import { ComponentElementsService } from '../component-elements.service'
 import { XyLocation } from '@shared/data-access/models'
 import { ScreenMoveService } from '../screen-move.service'
 import { SelectedService, UiConfigService } from '@no-grid-layout/data-access'
 import { BlockRectHelpers } from './block-rect.helpers'
+import { PanelBackgroundColor, PanelStylerService } from '@design-app/feature-panel'
 
 @Injectable({
   providedIn: 'root',
@@ -83,8 +83,8 @@ export class CanvasService
   }
 
   drawLineForDirection(
-    blockRect: FreeBlockRectModel,
-    gridBlockRects: FreeBlockRectModel[],
+    blockRect: DesignRectModel,
+    gridBlockRects: DesignRectModel[],
     lineDirection: LineDirection,
   ) {
 
@@ -127,8 +127,8 @@ export class CanvasService
   }
 
   drawLineForDirectionV2(
-    blockRect: FreeBlockRectModel,
-    gridBlockRects: FreeBlockRectModel[],
+    blockRect: DesignRectModel,
+    gridBlockRects: DesignRectModel[],
     lineDirection: LineDirection,
   ) {
 
@@ -227,7 +227,7 @@ export class CanvasService
     }
   }
 
-  getBlockRect(panelId: string): FreeBlockRectModel | undefined {
+  getBlockRect(panelId: string): DesignRectModel | undefined {
     const panelDiv = this._componentElementService.getComponentElementById(panelId)
 
     if (!panelDiv) {
@@ -269,7 +269,7 @@ export class CanvasService
     this.ctx.fillText(text, fillTextX, fillTextY)
   }
 
-  private getBlockRectFromElement(element: Element): FreeBlockRectModel {
+  private getBlockRectFromElement(element: Element): DesignRectModel {
     const id = element.getAttribute('id')
     if (!id) {
       throw new Error('id not found')

@@ -1,5 +1,5 @@
 import { Directive, ElementRef, inject, OnInit } from '@angular/core'
-import { CANVAS, FreeBlockRectModel } from '@no-grid-layout/shared'
+import { CANVAS } from '@no-grid-layout/shared'
 import { MouseDownEvent, MouseMoveEvent, MouseUpEvent } from '@shared/data-access/models'
 import { NoGridLayoutService } from './no-grid-layout.service'
 
@@ -389,30 +389,6 @@ export class NoGridLayoutDirective
     this.ctx.globalAlpha = 1.0
 
     requestAnimationFrame(() => this.animateSelectionBox(event))
-  }
-
-  private animateLinesFromBlockMoving() {
-    this.clearCtxRect()
-    if (!this.isDragging || !this.selectedPanelId) {
-      return
-    }
-
-    const panelDimensions = this._canvasService.getBlockRect(this.selectedPanelId)
-    if (!panelDimensions) {
-      console.error('no panelDimensions')
-      return
-    }
-    this.drawLinesAllDirectionsForBlock(panelDimensions)
-    this.animationId = requestAnimationFrame(() => this.animateLinesFromBlockMoving())
-  }
-
-  private drawLinesAllDirectionsForBlock(blockRectModel: FreeBlockRectModel) {
-    /*    this.ctx.lineWidth = 2
-     this.ctx.strokeStyle = 'red'
-     this.ctx.fillStyle = 'red'
-     this.ctx.font = '15px Arial'*/
-
-    // this._canvasService.drawLinesForBlocks(blockRectModel)
   }
 
   private clearCtxRect() {

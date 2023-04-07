@@ -1,21 +1,19 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core'
-import { FreePanelComponent } from './components/free-panel-component/free-panel.component'
 import { CommonModule } from '@angular/common'
 import { NoGridLayoutDirective } from './directives/no-grid-layout.directive'
 import { CdkDrag } from '@angular/cdk/drag-drop'
 import { DynamicComponentDirective } from './directives/dynamic-component.directive'
 import { AppGridBackgroundDirective } from './directives/app-grid-background.directive'
-import { FreePanelsService } from '@no-grid-layout/data-access'
 import { NoGridBackgroundComponent } from './ui/no-grid-background.component'
 import { map } from 'rxjs'
 import { ScrollDirective } from './directives/scroll.directive'
 import { KeyUpDirective } from './directives/key-up.directive'
 import { ShowScreenPositionComponent } from './ui/show-screen-position/show-screen-position.component'
+import { DesignPanelsFacade } from '@design-app/feature-panel'
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports:         [
-    FreePanelComponent,
     CdkDrag,
     CommonModule,
     NoGridLayoutDirective,
@@ -34,20 +32,43 @@ import { ShowScreenPositionComponent } from './ui/show-screen-position/show-scre
 })
 export class NoGridLayoutComponent
   implements OnInit {
-  private _freePanelsService = inject(FreePanelsService)
-  panels$ = this._freePanelsService.getFreePanels$()
-  freePanels$ = this._freePanelsService.getFreePanels$()
-    .pipe(
-      map((freePanels) => {
-          console.log('freePanels', freePanels)
-          return freePanels.map((freePanel) => {
+  // private _freePanelsService = inject(FreePanelsService)
+  private _designPanelsFacade = inject(DesignPanelsFacade)
+  // panels$ = this._freePanelsService.getFreePanels$()
+  panels$ = this._designPanelsFacade.panels$.pipe(
+    map((panels) => {
+        console.log('panels', panels)
+        return panels.map((panel) => {
             return {
-              id:   freePanel.id,
-              type: freePanel.type,
+              id:   panel.id,
+              type: panel.type,
             }
-          })
-        },
-      ))
+          },
+        )
+        /*      for (const panel of Object.entries(panels)) {
+         console.log('panel', panel)
+         }*/
+        /*    return panels.map((panel) => {
+         return {
+         id:   panel.id,
+         type: panel.type,
+         }
+         }*/
+      },
+    ),
+  )
+  /*  panels$ = this._freePanelsService.getFreePanels$()
+   .pipe(
+   map((freePanels) => {
+   console.log('freePanels', freePanels)
+   return freePanels.map((freePanel) => {
+   return {
+   id:   freePanel.id,
+   type: freePanel.type,
+   }
+   })
+   },
+   ))*/
   getScreenWidth!: number
   getScreenHeight!: number
   gridContainerWidth!: string

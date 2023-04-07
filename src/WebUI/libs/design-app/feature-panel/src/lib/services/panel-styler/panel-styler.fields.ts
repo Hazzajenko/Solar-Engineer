@@ -1,5 +1,5 @@
+import { PanelStyleState } from '../../types'
 import { NearbyPanel } from './nearby-panel.model'
-import { PanelStyleState } from '@no-grid-layout/utils'
 
 export abstract class PanelStylerFields {
   private _nearbyPanels: NearbyPanel[] = []

@@ -1,7 +1,6 @@
 // import { Logger } from '@ngrx/data'
 import { Point } from '@angular/cdk/drag-drop'
 import { inject, NgZone, Renderer2 } from '@angular/core'
-import { FreePanelsService } from '@no-grid-layout/data-access'
 import {
   CanvasService,
   ClickService,
@@ -12,11 +11,9 @@ import {
 } from '@no-grid-layout/utils'
 import { XyLocation } from '@shared/data-access/models'
 
-
 export class NoGridLayoutService {
   protected _screenMoveService = inject(ScreenMoveService)
   protected _renderer = inject(Renderer2)
-  protected _freePanelsService = inject(FreePanelsService)
   protected _clickService = inject(ClickService)
   protected _canvasService = inject(CanvasService)
   protected _mousePositionService = inject(MousePositionService)

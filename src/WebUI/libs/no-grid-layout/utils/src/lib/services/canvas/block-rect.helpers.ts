@@ -1,10 +1,10 @@
 import { MousePositionService } from '../mouse-position.service'
-import { PanelStylerService } from '../panel-styler'
+import { PanelStylerService } from '@design-app/feature-panel'
 import { BlockRectModel } from '@grid-layout/data-access'
 import {
   CanvasConfig,
-  FreeBlockRectModel,
-  FreeBlockRectModelWithDistance,
+  DesignRectModel,
+  DesignRectModelWithDistance,
   LineDirection,
 } from '@no-grid-layout/shared'
 import { XyLocation } from '@shared/data-access/models'
@@ -26,10 +26,10 @@ export abstract class BlockRectHelpers {
   protected abstract scale: number
 
   protected getClosestPanelToLine(
-    blockRectModel: FreeBlockRectModel,
-    gridBlockRects: FreeBlockRectModel[],
+    blockRectModel: DesignRectModel,
+    gridBlockRects: DesignRectModel[],
     direction: LineDirection,
-  ): FreeBlockRectModelWithDistance {
+  ): DesignRectModelWithDistance {
     const panelRectsToCheck = this.getPanelRectsToCheckByDirection(
       blockRectModel,
       gridBlockRects,
@@ -49,8 +49,8 @@ export abstract class BlockRectHelpers {
   }
 
   protected getClosestPanelsToLine(
-    blockRectModel: FreeBlockRectModel,
-    gridBlockRects: FreeBlockRectModel[],
+    blockRectModel: DesignRectModel,
+    gridBlockRects: DesignRectModel[],
     direction: LineDirection,
   ) {
     const panelRectsToCheck = this.getPanelRectsToCheckByDirection(
@@ -69,8 +69,8 @@ export abstract class BlockRectHelpers {
   }
 
   private getPanelRectsToCheckByDirection(
-    blockRectModel: FreeBlockRectModel,
-    gridBlockRects: FreeBlockRectModel[],
+    blockRectModel: DesignRectModel,
+    gridBlockRects: DesignRectModel[],
     direction: LineDirection,
   ) {
     switch (direction) {
@@ -111,7 +111,7 @@ export abstract class BlockRectHelpers {
   }
 
   private getDistance(
-    blockRectModel: FreeBlockRectModel,
+    blockRectModel: DesignRectModel,
     rect: BlockRectModel,
     direction: LineDirection,
   ) {
@@ -304,8 +304,8 @@ export abstract class BlockRectHelpers {
   }
 
   protected getLineToPointOfClosestPanel(
-    blockRectModel: FreeBlockRectModel,
-    closestBlockRect: FreeBlockRectModel,
+    blockRectModel: DesignRectModel,
+    closestBlockRect: DesignRectModel,
     direction: LineDirection,
   ) {
     switch (direction) {
@@ -336,8 +336,8 @@ export abstract class BlockRectHelpers {
   }
 
   protected getDistanceToClosestPanel(
-    blockRectModel: FreeBlockRectModel,
-    closestBlockRect: FreeBlockRectModel,
+    blockRectModel: DesignRectModel,
+    closestBlockRect: DesignRectModel,
     direction: LineDirection,
   ) {
     switch (direction) {

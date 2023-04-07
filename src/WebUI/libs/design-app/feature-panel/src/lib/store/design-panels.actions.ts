@@ -1,30 +1,30 @@
+import { DesignPanelModel } from '../types'
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
-import { FreePanelModel } from '@no-grid-layout/shared'
 
-export const FreePanelsActions = createActionGroup({
-  source: 'Free Panels Store',
+export const DesignPanelsActions = createActionGroup({
+  source: 'Design Panels Store',
   events: {
     'Init Panels': props<{
       projectId: number
     }>(),
     'Load Panels Success': props<{
-      panels: FreePanelModel[]
+      panels: DesignPanelModel[]
     }>(),
     'Load Panels Failure': props<{
       error: string | null
     }>(),
     'Add Panel': props<{
-      panel: FreePanelModel
+      panel: DesignPanelModel
     }>(),
     'Add Many Panels': props<{
-      panels: FreePanelModel[]
+      panels: DesignPanelModel[]
     }>(),
     'Update Panel': props<{
-      update: UpdateStr<FreePanelModel>
+      update: UpdateStr<DesignPanelModel>
     }>(),
     'Update Many Panels': props<{
-      updates: UpdateStr<FreePanelModel>[]
+      updates: UpdateStr<DesignPanelModel>[]
     }>(),
     'Delete Panel': props<{
       panelId: string

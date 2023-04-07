@@ -57,6 +57,7 @@
       "@auth/shared/models": ["libs/auth/shared/models/src/index.ts"],
       "@auth/utils": ["libs/auth/utils/src/index.ts"],
       "@blog/feature": ["libs/blog/feature/src/index.ts"],
+      "@design-app/feature-panel": ["libs/design-app/feature-panel/src/index.ts"],
       "@grid-layout/data-access": ["libs/grid-layout/data-access/src/index.ts"],
       "@grid-layout/feature": ["libs/grid-layout/feature/src/index.ts"],
       "@home/data-access": ["libs/home/data-access/src/index.ts"],

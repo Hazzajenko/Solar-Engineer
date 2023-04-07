@@ -29,8 +29,8 @@
       <!--      [style.height]="backgroundHeight"-->
       <!--      [style.width]="backgroundWidth"-->
       <ng-template
-        *ngFor="let panel of (freePanels$ | async)!; trackBy: trackByPanelId"
-        appDynamicFreePanel
+        *ngFor="let panel of (panels$ | async)!; trackBy: trackByPanelId"
+        appDynamicEntity
         [entity]="{ id: panel.id, type: panel.type }"
       ></ng-template>
     </div>

@@ -1,10 +1,3 @@
-export enum LineDirectionEnum {
-  Top,
-  Bottom,
-  Left,
-  Right,
-}
-
 export const LineDirection = {
   Top: 'top',
   Bottom: 'bottom',

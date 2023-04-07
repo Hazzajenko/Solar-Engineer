@@ -4,9 +4,9 @@ import { GROUP_CHAT_MEMBERS_FEATURE_KEY, GROUP_CHAT_MESSAGES_FEATURE_KEY, GROUP_
 import { NOTIFICATIONS_FEATURE_KEY, notificationsReducer } from '@app/data-access/notifications';
 import { USERS_FEATURE_KEY, usersReducer } from '@app/data-access/users';
 import { AUTH_FEATURE_KEY, authReducer } from '@auth/data-access';
+import { DESIGN_PANELS_FEATURE_KEY, designPanelsReducer } from '@design-app/feature-panel';
 import { UI_FEATURE_KEY, uiReducer } from '@grid-layout/data-access';
 import { provideState } from '@ngrx/store';
-import { freePanelsReducer, NO_GRID_FREE_PANELS_FEATURE_KEY } from '@no-grid-layout/data-access';
 import { PROJECTS_FEATURE_KEY, projectsReducer } from '@projects/data-access';
 
 
@@ -25,6 +25,6 @@ export const mainTsStates = [
   provideState(GROUP_CHAT_MEMBERS_FEATURE_KEY, groupChatMembersReducer),
   provideState(GROUP_CHAT_MESSAGES_FEATURE_KEY, groupChatMessagesReducer),
   provideState(USERS_FEATURE_KEY, usersReducer),
-  provideState(NO_GRID_FREE_PANELS_FEATURE_KEY, freePanelsReducer),
+  provideState(DESIGN_PANELS_FEATURE_KEY, designPanelsReducer),
   // provideState(CHAT_ROOMS_FEATURE_KEY, chatRoomsReducer),
 ]

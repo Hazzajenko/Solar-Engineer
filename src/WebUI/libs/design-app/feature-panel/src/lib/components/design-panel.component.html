@@ -1,21 +1,20 @@
-<ng-container *ngIf="freePanel$ | async as freePanel">
+<ng-container *ngIf="panel$ | async as panel">
   <div
-    [backgroundColor]="freePanel.backgroundColor"
-    [rotation]="freePanel.rotation"
-    id="{{ freePanel.id }}"
-    bind-attr.panelId="freePanel.id"
-    bind-attr.location="freePanel.location"
-    bind-attr.rotation="freePanel.rotation"
-    bind-attr.type="freePanel.type"
-    (contextmenu)="onRightClick($event, freePanel)"
+    [rotation]="panel.rotation"
+    [selected]="(selected$ | async)!"
+    id="{{ panel.id }}"
+    bind-attr.panelId="panel.id"
+    bind-attr.location="panel.location"
+    bind-attr.rotation="panel.rotation"
+    bind-attr.type="panel.type"
+    (contextmenu)="onRightClick($event, panel)"
     cdkDrag
-    [cdkDragData]="freePanel"
+    [cdkDragData]="panel"
     [cdkDragFreeDragPosition]="location"
     (cdkDragDropped)="dragDropped($event)"
     (cdkDragEnded)="dragExited($event)"
     (cdkDragMoved)="dragMoved($event)"
-    (cdkDragStarted)="startDragging($event)"
-    appFreePanelDirective
+    appDesignPanel
     class="panel absolute flex content-center items-center justify-center border hover:bg-blue-400 active:bg-blue-500 active:shadow-lg"
   ></div>
   <!--  <ng-container *ngIf='panelLocation$ | async' />-->
@@ -62,7 +61,8 @@
                     >Rotate
                   </a>
                 </li>-->
-        <li (click)="rotatePanel(freePanel)">
+        <!--        <li (click)="rotatePanel(freePanel)">-->
+        <li (click)="store.rotatePanel()">
           <a
             role="menuitem"
             tabindex="-1"
@@ -76,20 +76,40 @@
             Rotate
           </a>
         </li>
-        <li *ngIf="selected$ | async as selected" (click)="rotatePanel(freePanel)">
-          <a
-            role="menuitem"
-            tabindex="-1"
-            class="group block flex items-center px-4 px-4 py-2 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-          >
-            Selected
-          </a>
-        </li>
+        <ng-container *ngIf="selected$ | async as selected">
+          <li *ngIf="selected === SelectedPanelState.MultiSelected">
+            <a
+              role="menuitem"
+              tabindex="-1"
+              class="group block flex items-center px-4 px-4 py-2 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+            >
+              Multi Selected
+            </a>
+          </li>
+          <li *ngIf="selected === SelectedPanelState.SingleSelected">
+            <a
+              role="menuitem"
+              tabindex="-1"
+              class="group block flex items-center px-4 px-4 py-2 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+            >
+              Selected
+            </a>
+          </li>
+          <li *ngIf="selected === SelectedPanelState.NoneSelected">
+            <a
+              role="menuitem"
+              tabindex="-1"
+              class="group block flex items-center px-4 px-4 py-2 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+            >
+              Not Selected
+            </a>
+          </li>
+        </ng-container>
         <li>
           <a
             role="menuitem"
             tabindex="-1"
-            (click)="deletePanel(freePanel)"
+            (click)="store.deletePanel()"
             class="group block flex items-center px-4 px-4 py-2 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
           >
             <app-show-svg

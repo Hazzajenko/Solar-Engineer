@@ -1,7 +1,7 @@
-import { ElementRef, inject, Injectable, QueryList } from '@angular/core'
-import { FreePanelComponent } from '@no-grid-layout/feature'
-import { FreeBlockRectModel, FreeBlockType } from '@no-grid-layout/shared'
+import { inject, Injectable } from '@angular/core'
 import { MousePositionService } from './mouse-position.service'
+import { DesignEntityType } from '@design-app/feature-panel'
+import { DesignRectModel } from '@no-grid-layout/shared'
 
 @Injectable({
   providedIn: 'root',
@@ -20,8 +20,6 @@ export class ComponentElementsService {
   private _parentElement!: HTMLDivElement
   private _gridLayoutElement!: HTMLDivElement
   private _scrollElement!: HTMLDivElement
-  public divs!: QueryList<ElementRef<HTMLDivElement>>
-  public freePanelComponents!: QueryList<FreePanelComponent>
 
   private _elements: Element[] = []
   private _mousePositionService = inject(MousePositionService)
@@ -49,8 +47,8 @@ export class ComponentElementsService {
     console.log('addToElements', this._elements)
   }
 
-  public getComponentElementsByType(freeBlockType: FreeBlockType) {
-    return this._elements.filter((e) => e.getAttribute('type') === freeBlockType)
+  public getComponentElementsByType(entityType: DesignEntityType) {
+    return this._elements.filter((e) => e.getAttribute('type') === entityType)
   }
 
   public getComponentElementById(id: string) {
@@ -120,7 +118,7 @@ export class ComponentElementsService {
     return this.getBlockRectFromElementV2(element)
   }
 
-  private getBlockRectFromElement(element: Element): FreeBlockRectModel {
+  private getBlockRectFromElement(element: Element): DesignRectModel {
     const id = element.getAttribute('id')
     if (!id) {
       throw new Error('id not found')
@@ -140,7 +138,7 @@ export class ComponentElementsService {
     }
   }
 
-  private getBlockRectFromElementV2(element: Element): FreeBlockRectModel {
+  private getBlockRectFromElementV2(element: Element): DesignRectModel {
     const id = element.getAttribute('id')
     if (!id) {
       throw new Error('id not found')
