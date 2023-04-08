@@ -1,0 +1,17 @@
+<div id="design-container" class="relative flex flex-col overflow-hidden bg-slate-100">
+  <div id="design-layout" appDesignLayout class="relative">
+    <div
+      id="design-scroll-view"
+      appScrollView
+      class="relative"
+      style="transition: transform 0.1s; transform-origin: 0 0"
+    >
+      <ng-template
+        *ngFor="let panel of (panels$ | async)!; trackBy: trackByPanelId"
+        appDynamicEntity
+        [entity]="{ id: panel.id, type: panel.type }"
+      ></ng-template>
+    </div>
+  </div>
+</div>
+<app-show-screen-position />

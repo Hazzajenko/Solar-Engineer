@@ -1,9 +1,11 @@
 import { inject, Injectable } from '@angular/core'
 import { ComponentStore } from '@ngrx/component-store'
-import { SelectedService } from '@no-grid-layout/data-access'
-import { combineLatest, map, Observable, switchMap, tap } from 'rxjs'
-import { DesignPanelsFacade } from '../store'
-import { DesignPanelFactory, DesignPanelModel, PanelRotation, SelectedPanelState } from '../types'
+import { Observable, tap } from 'rxjs'
+import { DesignPanelFactory, DesignPanelModel, PanelRotation } from '../types'
+import { SelectedStoreService } from '@design-app/feature-selected'
+import { throwIfNull$ } from '@shared/utils'
+import { XyLocation } from '@shared/data-access/models'
+import { PanelsStoreService } from '../services'
 
 interface DesignPanelComponentState {
   panel: DesignPanelModel
@@ -12,76 +14,48 @@ interface DesignPanelComponentState {
 @Injectable()
 export class DesignPanelStore
   extends ComponentStore<DesignPanelComponentState> {
-  private _designPanelsFacade = inject(DesignPanelsFacade)
-  private _selectedService = inject(SelectedService)
+  private _panelsStore = inject(PanelsStoreService)
+  // private _designPanelsFacade = inject(DesignPanelsFacade)
+  private _selectedFacade = inject(SelectedStoreService)
   private _panelId!: string
   private _rotation!: PanelRotation
+  private _location!: XyLocation
 
-  panel$ = this.select((state) => state.panel)
-  initPanel = this.effect<{
-    panelId: string
-  }>((params$) => {
-    return params$.pipe(
-      tap((params) => {
-        this._panelId = params.panelId
-      }),
-      switchMap((params) => {
-        return this._designPanelsFacade.panelById$(params.panelId)
-          .pipe(
-            tap(
-              (panel) => {
-                if (!panel) {
-                  throw new Error(`Panel with id ${params.panelId} not found`)
-                }
-                console.log('initPanel panel', panel)
-                this.patchState({
-                  panel,
-                })
-                this._rotation = panel.rotation
-              },
-            ),
-          )
-      }),
-    )
+  rotatePanel$ = this.effect((rotation$: Observable<PanelRotation>) => {
+      return rotation$.pipe(
+        tap((rotation) => {
+          this._rotation = rotation
+          this.updatePanel({ rotation })
+        }),
+      )
+    },
+  )
+
+  public vm$ = (panelId: string) => this.select({
+    panel:    this._panel$(panelId),
+    selected: this._selectedFacade.select.selectedPanelState$(panelId),
   })
 
-  selected$: Observable<SelectedPanelState> = this.select((state) => state)
+  private _panel$ = (panelId: string) => this._panelsStore.select.panelById$(panelId)
     .pipe(
-      switchMap(() => {
-          return combineLatest([
-            this._selectedService.selected$,
-            this._selectedService.multiSelected$,
-          ])
-            .pipe(
-              map(([selected, multiSelected]) => {
-                if (selected === this._panelId) {
-                  return SelectedPanelState.SingleSelected
-                }
-                if (multiSelected.find((selected) => selected.includes(this._panelId))) {
-                  return SelectedPanelState.MultiSelected
-                }
-                return SelectedPanelState.NoneSelected
-              }),
-            )
-        },
-      ),
-      tap((selected) => {
-          console.log('initSelected selected', selected)
-        },
-      ),
+      throwIfNull$(),
+      tap((panel) => {
+        this._rotation = panel.rotation
+        this._location = panel.location
+      }),
     )
 
-  updatePanel = (changes: Partial<DesignPanelModel>) => this._designPanelsFacade.updatePanel({
+  updatePanel = (changes: Partial<DesignPanelModel>) => this._panelsStore.dispatch.updatePanel({
     id: this._panelId,
     changes,
   })
 
   rotatePanel = () => {
     const rotation = DesignPanelFactory.oppositeRotation(this._rotation)
-    this._designPanelsFacade.updatePanel({ id: this._panelId, changes: { rotation } })
+    this._panelsStore.dispatch.updatePanel({ id: this._panelId, changes: { rotation } })
   }
 
-  deletePanel = () => this._designPanelsFacade.deletePanel(this._panelId)
+  deletePanel = () => this._panelsStore.dispatch.deletePanel(this._panelId)
 
   constructor() {
     super(<DesignPanelComponentState>{})

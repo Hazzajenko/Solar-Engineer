@@ -1,7 +1,8 @@
-<ng-container *ngIf="panel$ | async as panel">
+<ng-container *ngIf="vm$ | async as vm">
   <div
+    *ngIf="vm.panel as panel"
     [rotation]="panel.rotation"
-    [selected]="(selected$ | async)!"
+    [selected]="vm.selected"
     id="{{ panel.id }}"
     bind-attr.panelId="panel.id"
     bind-attr.location="panel.location"
@@ -17,7 +18,6 @@
     appDesignPanel
     class="panel absolute flex content-center items-center justify-center border hover:bg-blue-400 active:bg-blue-500 active:shadow-lg"
   ></div>
-  <!--  <ng-container *ngIf='panelLocation$ | async' />-->
 </ng-container>
 <!--hover:bg-red-500 active:bg-blue-400-->
 
@@ -28,98 +28,13 @@
   style="visibility: hidden; position: fixed"
 ></div>
 
-<!--<mat-menu
-  class="z-10 w-44 divide-y divide-gray-100 rounded-lg bg-white dark:divide-gray-600 dark:bg-gray-700"
-  #rightMenu="matMenu"
->-->
 <mat-menu
   class="z-10 mt-1 w-32 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
   #rightMenu="matMenu"
 >
-  <ng-template matMenuContent let-freePanel="freePanel">
-    <!--    <div
-          class="z-10 w-44 divide-y divide-gray-100 rounded-lg bg-white dark:divide-gray-600 dark:bg-gray-700"
-        >-->
-    <div role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
-      <!--      >-->
-      <!--     <div class="absolute right-0 z-10 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
-     -->
-      <!--      <div class="px-4 py-3" role="none">
-              <p class="text-sm" role="none">Panel Menu</p>
-              <p class="truncate text-sm font-medium text-gray-900" role="none">{{ freePanel.id }}</p>
-            </div>-->
-      <!--      <div class="px-4 py-3">
-              <p class="text-sm text-gray-700 dark:text-gray-200">Panel Options</p>
-            </div>-->
-      <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
-        <!--        <li (click)="rotatePanel(freePanel)">
-                  <a
-                    class="block px-4 py-2 text-sm text-gray-700"
-                    role="menuitem"
-                    tabindex="-1"
-                    id="menu-item-0"
-                    >Rotate
-                  </a>
-                </li>-->
-        <!--        <li (click)="rotatePanel(freePanel)">-->
-        <li (click)="store.rotatePanel()">
-          <a
-            role="menuitem"
-            tabindex="-1"
-            class="group block flex items-center px-4 px-4 py-2 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-          >
-            <app-show-svg
-              class="mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500"
-              svgPath="rotate"
-            />
-            <!--            <app-show-svg [svgName]="'rotate'" [svgClass]="'w-5 h-5'" [svgTitle]="'Rotate'"></app-show-svg>-->
-            Rotate
-          </a>
-        </li>
-        <ng-container *ngIf="selected$ | async as selected">
-          <li *ngIf="selected === SelectedPanelState.MultiSelected">
-            <a
-              role="menuitem"
-              tabindex="-1"
-              class="group block flex items-center px-4 px-4 py-2 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-            >
-              Multi Selected
-            </a>
-          </li>
-          <li *ngIf="selected === SelectedPanelState.SingleSelected">
-            <a
-              role="menuitem"
-              tabindex="-1"
-              class="group block flex items-center px-4 px-4 py-2 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-            >
-              Selected
-            </a>
-          </li>
-          <li *ngIf="selected === SelectedPanelState.NoneSelected">
-            <a
-              role="menuitem"
-              tabindex="-1"
-              class="group block flex items-center px-4 px-4 py-2 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-            >
-              Not Selected
-            </a>
-          </li>
-        </ng-container>
-        <li>
-          <a
-            role="menuitem"
-            tabindex="-1"
-            (click)="store.deletePanel()"
-            class="group block flex items-center px-4 px-4 py-2 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-          >
-            <app-show-svg
-              class="mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500"
-              svgPath="bin"
-            />
-            Delete
-          </a>
-        </li>
-      </ul>
-    </div>
-  </ng-template>
+  <ng-container *ngIf="vm$ | async as vm">
+    <ng-template matMenuContent>
+      <app-design-panel-menu [panelId]="vm.panel.id" [selected]="vm.selected" />
+    </ng-template>
+  </ng-container>
 </mat-menu>

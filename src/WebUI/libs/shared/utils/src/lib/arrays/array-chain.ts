@@ -23,8 +23,8 @@ Array.prototype.arrayChain = function <T, U>(
   return output
 }
 
-const inputArray: number[] = [1, 2, 3]
+/*const inputArray: number[] = [1, 2, 3]
 
-const outputArray = inputArray.arrayChain((x) => x * 2)
+ const outputArray = inputArray.arrayChain((x) => x * 2)
 
-console.log(outputArray) // [2, 4, 6]
+ console.log(outputArray) // [2, 4, 6]*/

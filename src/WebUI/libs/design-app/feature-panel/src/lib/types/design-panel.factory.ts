@@ -1,13 +1,16 @@
-import { DesignEntityType, DesignPanelModel, PanelRotation } from '.'
-import { XyLocation } from '@shared/data-access/models'
+import { DesignPanelModel, PanelRotation } from '.'
+import { DesignEntityType } from '@design-app/shared'
+import { UndefinedString, XyLocation } from '@shared/data-access/models'
 import { newGuid } from '@shared/utils'
 
 export const DesignPanelFactory = {
   create: (
     location: XyLocation,
+    stringId: string = UndefinedString,
     rotation: PanelRotation = PanelRotation.Portrait,
   ): DesignPanelModel => ({
     id: newGuid(),
+    stringId,
     location,
     rotation,
     type: DesignEntityType.Panel,

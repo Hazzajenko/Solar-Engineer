@@ -23,7 +23,7 @@ export function tokenGetter() {
 }
 
 export const mainTsProviders = [
-  provideRouter(appRoutes, withEnabledBlockingInitialNavigation()),
+  provideRouter(appRoutes, withEnabledBlockingInitialNavigation() /*, withDebugTracing()*/),
   importProvidersFrom(
     HttpClientModule,
     BrowserAnimationsModule,

@@ -1,5 +1,5 @@
 export * from './design-panel.model'
 export * from './design-panel.factory'
-export * from './panel-rotation.type'
-export * from './panel-style-state.model'
+export * from './design-panel.styles'
 export * from './selected-panel-state'
+export * from './design-panel.validation'

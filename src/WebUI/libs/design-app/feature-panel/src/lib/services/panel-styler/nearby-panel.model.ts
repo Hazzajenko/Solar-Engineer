@@ -1,4 +1,4 @@
-import { LineDirection } from '@no-grid-layout/shared'
+import { LineDirection } from '@design-app/canvas'
 
 export type NearbyPanel = {
   id: string

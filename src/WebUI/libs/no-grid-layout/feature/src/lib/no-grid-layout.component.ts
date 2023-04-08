@@ -9,7 +9,7 @@ import { map } from 'rxjs'
 import { ScrollDirective } from './directives/scroll.directive'
 import { KeyUpDirective } from './directives/key-up.directive'
 import { ShowScreenPositionComponent } from './ui/show-screen-position/show-screen-position.component'
-import { DesignPanelsFacade } from '@design-app/feature-panel'
+import { PanelsStoreService } from '@design-app/feature-panel'
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -33,9 +33,10 @@ import { DesignPanelsFacade } from '@design-app/feature-panel'
 export class NoGridLayoutComponent
   implements OnInit {
   // private _freePanelsService = inject(FreePanelsService)
-  private _designPanelsFacade = inject(DesignPanelsFacade)
+  private _panelsStore = inject(PanelsStoreService)
+  // private _designPanelsFacade = inject(DesignPanelsFacade)
   // panels$ = this._freePanelsService.getFreePanels$()
-  panels$ = this._designPanelsFacade.panels$.pipe(
+  panels$ = this._panelsStore.select.panels$.pipe(
     map((panels) => {
         console.log('panels', panels)
         return panels.map((panel) => {

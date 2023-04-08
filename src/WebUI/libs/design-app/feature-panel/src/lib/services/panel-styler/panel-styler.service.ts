@@ -1,11 +1,11 @@
 import { inject, Injectable, NgZone, RendererFactory2 } from '@angular/core'
-import { DesignRectModel, LineDirection } from '@no-grid-layout/shared'
 
 import { assertNotNull } from '@shared/utils'
 import { PanelStylerFields } from './panel-styler.fields'
 import { PanelBackgroundColor, PanelStyleState } from '../../types'
 import { StyleName } from '@shared/data-access/models'
-import { ComponentElementsService } from '@no-grid-layout/utils'
+import { ComponentElementsService, DesignRectModel } from 'design-app/utils'
+import { LineDirection } from '@design-app/canvas'
 
 @Injectable({
   providedIn: 'root',

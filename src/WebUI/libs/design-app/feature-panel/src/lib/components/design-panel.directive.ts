@@ -1,12 +1,10 @@
 import { Directive, ElementRef, inject, Input, NgZone, OnInit, Renderer2 } from '@angular/core'
 import tippy from 'tippy.js'
-import { BackgroundColor } from '@no-grid-layout/shared'
-import { SelectedService } from '@no-grid-layout/data-access'
 import { OnDestroyDirective } from '@shared/utils'
-import { ComponentElementsService } from '@no-grid-layout/utils'
 import { SoftColor, StyleName, VibrantColor } from '@shared/data-access/models'
 import { DesignPanelFactory, PanelBackgroundColor, PanelBorder, PanelRotation, SelectedPanelState } from '../types'
 import { PanelStylerService } from '../services'
+import { ComponentElementsService } from 'design-app/utils'
 
 @Directive({
   selector:       '[appDesignPanel]',
@@ -21,7 +19,6 @@ export class DesignPanelDirective
   private _ngZone = inject(NgZone)
   private _panelId = ''
   private renderer = inject(Renderer2)
-  private _selectedService = inject(SelectedService)
   private _componentElementsService = inject(ComponentElementsService)
   private _panelStylerService = inject(PanelStylerService)
   private readonly zone: NgZone = inject(NgZone)
@@ -38,12 +35,6 @@ export class DesignPanelDirective
     MultiSelected: VibrantColor.VibrantYellow,
     Orange:        VibrantColor.VibrantOrange,
     Nearby:        VibrantColor.VibrantPurple,
-  }
-
-  @Input() set backgroundColor(backgroundColor: BackgroundColor) {
-    /*    this.zone.runOutsideAngular(() => {
-     this.cachedBackgroundColor = this.manageClasses(backgroundColor, this.cachedBackgroundColor)
-     })*/
   }
 
   @Input() set rotation(rotation: PanelRotation) {

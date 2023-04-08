@@ -10,10 +10,10 @@
 
  export type PanelColorState = (typeof PanelColorState)[keyof typeof PanelColorState]*/
 
-export const PanelRotation = {
-  Default: 'portrait',
-  Portrait: 'portrait',
-  Landscape: 'landscape',
-} as const
+/*export const PanelRotation = {
+ Default: 'portrait',
+ Portrait: 'portrait',
+ Landscape: 'landscape',
+ } as const
 
-export type PanelRotation = (typeof PanelRotation)[keyof typeof PanelRotation]
+ export type PanelRotation = (typeof PanelRotation)[keyof typeof PanelRotation]*/

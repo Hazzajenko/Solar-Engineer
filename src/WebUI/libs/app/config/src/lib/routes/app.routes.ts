@@ -15,12 +15,14 @@ export const appRoutes: Route[] = [
    },*/
   {
     path: '',
-    loadComponent: () => import('@no-grid-layout/feature').then((m) => m.NoGridLayoutComponent),
+    loadComponent: () =>
+      import('@design-app/feature-design-layout').then((m) => m.DesignLayoutComponent),
     // providers: [noGridLayoutProviders],
   },
   {
     path: 'free',
-    loadComponent: () => import('@no-grid-layout/feature').then((m) => m.NoGridLayoutComponent),
+    loadComponent: () =>
+      import('@design-app/feature-design-layout').then((m) => m.DesignLayoutComponent),
   },
   {
     path: 'projects',
