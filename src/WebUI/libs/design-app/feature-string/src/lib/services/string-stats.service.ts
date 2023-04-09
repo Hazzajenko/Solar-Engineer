@@ -1,6 +1,6 @@
-import { PanelModel } from '@shared/data-access/models'
+import { GridPanelModel } from '@shared/data-access/models'
 import { inject, Injectable } from '@angular/core'
-import { PanelsFacade } from '@grid-layout/data-access'
+import { GridPanelsFacade } from '@grid-layout/data-access'
 
 export interface TotalModel {
   totalVoc: number
@@ -14,9 +14,9 @@ export interface TotalModel {
   providedIn: 'root',
 })
 export class StatsService {
-  private panelsFacade = inject(PanelsFacade)
+  private panelsFacade = inject(GridPanelsFacade)
 
-  calculateStringTotals(panels: PanelModel[]) {
+  calculateStringTotals(panels: GridPanelModel[]) {
     let totalVoc = 0
     let totalVmp = 0
     let totalPmax = 0

@@ -1,13 +1,5 @@
 import { DragDropModule } from '@angular/cdk/drag-drop'
-import {
-  AsyncPipe,
-  NgClass,
-  NgIf,
-  NgStyle,
-  NgSwitch,
-  NgSwitchCase,
-  NgTemplateOutlet,
-} from '@angular/common'
+import { AsyncPipe, NgClass, NgIf, NgStyle, NgSwitch, NgSwitchCase, NgTemplateOutlet } from '@angular/common'
 import { ChangeDetectionStrategy, Component, inject, Input, ViewChild } from '@angular/core'
 
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog'
@@ -15,31 +7,23 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog'
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { MatTooltipModule } from '@angular/material/tooltip'
-import {
-  LinksFacade,
-  LinksFactory,
-  PanelsEventService,
-  PanelsFacade,
-  SelectedFacade,
-  StringsEventService,
-  StringsFacade,
-} from '@grid-layout/data-access'
+import { GridPanelsEventService, GridPanelsFacade, GridSelectedFacade, GridStringsEventService, GridStringsFacade, LinksFacade, LinksFactory } from '@grid-layout/data-access'
 
 import { PanelLinkComponent } from '../../shared-ui/panel-link/panel-link.component'
 
 import { LetModule } from '@ngrx/component'
-import { PanelModel, StringModel } from '@shared/data-access/models'
+import { GridPanelModel, GridStringModel } from '@shared/data-access/models'
 import { EditStringDialog, ExistingStringsDialog } from '../dialogs'
 
 import { firstValueFrom, Observable } from 'rxjs'
 import { PanelComponentState } from '../models/panel-component.state'
 
 @Component({
-  selector: 'app-panel-menu',
-  templateUrl: './panel-menu.component.html',
-  styles: [],
+  selector:        'app-panel-menu',
+  templateUrl:     './panel-menu.component.html',
+  styles:          [],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
+  imports:         [
     DragDropModule,
     MatTooltipModule,
     NgStyle,
@@ -53,31 +37,31 @@ import { PanelComponentState } from '../models/panel-component.state'
     NgSwitchCase,
     PanelLinkComponent,
   ],
-  standalone: true,
+  standalone:      true,
 })
 export class PanelMenuComponent {
   //region Services
-  public stringsFactory = inject(StringsEventService)
-  public panelsFactory = inject(PanelsEventService)
+  public stringsFactory = inject(GridStringsEventService)
+  public panelsFactory = inject(GridPanelsEventService)
   // @Input() panel!: PanelModel
   // @Input() panelNg!: PanelNgModel
   @Input() panelComponentState!: PanelComponentState
-  panel$!: Observable<PanelModel | undefined>
+  panel$!: Observable<GridPanelModel | undefined>
   color$!: Observable<string | undefined>
   menuTopLeftPosition = { x: '0', y: '0' }
   @ViewChild(MatMenuTrigger, { static: true })
   matMenuTrigger!: MatMenuTrigger
-  private panelsFacade = inject(PanelsFacade)
-  private stringsFacade = inject(StringsFacade)
+  private panelsFacade = inject(GridPanelsFacade)
+  private stringsFacade = inject(GridStringsFacade)
   private linksFacade = inject(LinksFacade)
   private linksFactory = inject(LinksFactory)
-  private selectedFacade = inject(SelectedFacade)
+  private selectedFacade = inject(GridSelectedFacade)
   private snackBar = inject(MatSnackBar)
   private dialog = inject(MatDialog)
   private _id!: string
 
   //region Component Functions
-  async selectString(panel: PanelModel) {
+  async selectString(panel: GridPanelModel) {
     await this.stringsFactory.select(panel.stringId)
   }
 
@@ -94,7 +78,7 @@ export class PanelMenuComponent {
 
     const dialog = this.dialog.open(EditStringDialog, dialogConfig)
     const result = await firstValueFrom(dialog.afterClosed())
-    if (result instanceof StringModel) {
+    if (result instanceof GridStringModel) {
       this.snack(`Edited string ${result.name}`)
     }
   }
@@ -105,19 +89,19 @@ export class PanelMenuComponent {
 
   async createNewStringWithSelected() {
     /*    const dialog = this.dialog.open(NewStringDialog, {
-          height: '250',
-          width: '250',
-        })
+     height: '250',
+     width: '250',
+     })
 
-        const result = await firstValueFrom(dialog.afterClosed())
-        if (result instanceof StringModel) {
-          this.snack(`Created and selected new string ${result.name}`)
-        }*/
+     const result = await firstValueFrom(dialog.afterClosed())
+     if (result instanceof StringModel) {
+     this.snack(`Created and selected new string ${result.name}`)
+     }*/
     //TODO change this back to dialog
     const amountOfStrings = await this.stringsFacade.totalStrings()
     const newStringName = `STRING_${amountOfStrings + 1}`
     const result = await this.stringsFactory.addSelectedToNew(newStringName)
-    if (result instanceof StringModel) {
+    if (result instanceof GridStringModel) {
       this.snack(`Created and selected new string ${result.name}`)
     }
   }
@@ -126,7 +110,7 @@ export class PanelMenuComponent {
     const dialog = this.dialog.open(ExistingStringsDialog)
     //TODO edit this for func
     const result = await firstValueFrom(dialog.afterClosed())
-    if (result instanceof StringModel) {
+    if (result instanceof GridStringModel) {
       this.snack(`Created and selected new string ${result.name}`)
     }
   }
@@ -138,7 +122,9 @@ export class PanelMenuComponent {
 
   async rotatePanel(panelId: string, panelRotation: number) {
     // async rotatePanel(panel: PanelModel) {
-    const rotation = panelRotation === 0 ? 1 : 0
+    const rotation = panelRotation === 0
+      ? 1
+      : 0
     await this.panelsFactory.updatePanel(panelId, { rotation })
   }
 
@@ -150,7 +136,7 @@ export class PanelMenuComponent {
     await this.panelsFactory.rotateSelectedPanels(rotation)
   }
 
-  async removeFromString(panel: PanelModel) {
+  async removeFromString(panel: GridPanelModel) {
     await this.panelsFactory.updatePanel(panel.id, { stringId: 'undefined' })
   }
 

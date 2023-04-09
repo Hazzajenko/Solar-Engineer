@@ -1,9 +1,10 @@
-<div id="design-container" class="relative flex flex-col overflow-hidden bg-slate-100">
-  <div id="design-layout" appDesignLayout class="relative">
+<div class="relative overflow-hidden bg-slate-100">
+  <div #app appDesignLayout>
     <div
-      id="design-scroll-view"
+      id="scroll-view"
+      #appScrollView
+      class="appScrollView bg-slate-200"
       appScrollView
-      class="relative"
       style="transition: transform 0.1s; transform-origin: 0 0"
     >
       <ng-template
@@ -15,3 +16,4 @@
   </div>
 </div>
 <app-show-screen-position />
+<!--class="absolute inset-0"-->

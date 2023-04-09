@@ -1,11 +1,11 @@
 import { inject, Injectable } from '@angular/core'
 // import { GridEventResult } from '@grid-layout/data-access/actions'
-import { BlocksStoreService, PanelsStoreService } from '../..'
+import { BlocksStoreService, GridPanelsStoreService } from '../..'
 import { BLOCK_TYPE, BlockModel } from '@shared/data-access/models'
-import { SelectedEventService } from '../selected'
-import { StringsEventService } from '../strings'
+import { GridSelectedEventService } from '../selected'
+import { GridStringsEventService } from '../strings'
 import { GridEventService } from '../grid'
-import { PanelsEventService } from '../panels'
+import { GridPanelsEventService } from '../panels'
 import { LinksEventService } from '../links'
 import { MouseEventRequest } from '../../models'
 import { BaseService } from '@shared/logger'
@@ -13,20 +13,21 @@ import { BaseService } from '@shared/logger'
 @Injectable({
   providedIn: 'root',
 })
-export class DoubleClickService extends BaseService {
+export class DoubleClickService
+  extends BaseService {
   private blocksStore = inject(BlocksStoreService)
-  private panelsStore = inject(PanelsStoreService)
-  private selectedFactory = inject(SelectedEventService)
-  private stringsFactory = inject(StringsEventService)
+  private panelsStore = inject(GridPanelsStoreService)
+  private selectedFactory = inject(GridSelectedEventService)
+  private stringsFactory = inject(GridStringsEventService)
   private gridFactory = inject(GridEventService)
-  private panelsFactory = inject(PanelsEventService)
+  private panelsFactory = inject(GridPanelsEventService)
   private linksService = inject(LinksEventService)
 
   // private logger = inject(LoggerService)
 
   /*  constructor(logger: LoggerService) {
-      super(logger)
-    }*/
+   super(logger)
+   }*/
 
   async doubleCLick(doubleClick: MouseEventRequest) {
     if (doubleClick.event.type !== 'dblclick') {
@@ -67,9 +68,9 @@ export class DoubleClickService extends BaseService {
     if (panel.stringId === 'undefined') {
       return this.logError('panel needs to have a string to double click')
       /*      return this.logger.debug({
-              source: 'DoubleClickService',
-              objects: ['panel needs to have a string to double click'],
-            })*/
+       source: 'DoubleClickService',
+       objects: ['panel needs to have a string to double click'],
+       })*/
       // return console.error('panel needs to have a string to double click')
     }
     return this.stringsFactory.select(panel.stringId)

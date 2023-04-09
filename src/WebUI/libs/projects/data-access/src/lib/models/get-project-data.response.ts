@@ -1,4 +1,4 @@
-import { PanelLinkModel, PanelModel, StringModel } from '@shared/data-access/models'
+import { GridPanelModel, GridStringModel, PanelLinkModel } from '@shared/data-access/models'
 
 export interface GetProjectDataResponse {
   id: string
@@ -6,13 +6,13 @@ export interface GetProjectDataResponse {
   createdTime: string
   createdById: string
   lastModifiedTime: string
-  panels: PanelModel[]
+  panels: GridPanelModel[]
   panelLinks: PanelLinkModel[]
-  strings: StringModel[]
+  strings: GridStringModel[]
 }
 
 /*
 
-public string Id { get; set; } = default!;
-public DateTime CreatedTime { get; set; }
-public DateTime LastModifiedTime { get; set; }*/
+ public string Id { get; set; } = default!;
+ public DateTime CreatedTime { get; set; }
+ public DateTime LastModifiedTime { get; set; }*/

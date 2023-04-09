@@ -1,12 +1,12 @@
 import { TypeOfEntity } from '../../types'
 import { NearbyEntityOnAxis } from '../../types/nearby-entity-on-axis'
 import { inject, Injectable } from '@angular/core'
-import { selectMultiSelectedEntities, selectMultiSelectedEntitiesOfType, selectNearbyEntitiesOnAxis, selectSelectedPanelState, selectSingleSelectedEntity } from '@design-app/feature-selected'
+import { selectMultiSelectedEntities, selectMultiSelectedEntitiesOfType, selectNearbyEntitiesOnAxis, selectSelectedPanelState, selectSingleAndMultiSelectedEntities, selectSingleSelectedEntity } from '@design-app/feature-selected'
 import { select, Store } from '@ngrx/store'
 import { firstValueFrom, Observable } from 'rxjs'
 import { SelectedPanelState } from '@design-app/feature-panel'
 import { selectSelectedId } from '@projects/data-access'
-import { DesignEntityType } from '@design-app/shared'
+import { EntityType } from '@design-app/shared'
 
 @Injectable({
   providedIn: 'root',
@@ -18,6 +18,12 @@ export class SelectedQueries {
   )
   private readonly _multiSelected$: Observable<TypeOfEntity[]> = this._store.pipe(
     select(selectMultiSelectedEntities),
+  )
+  private readonly _singleAndMultiSelected$: Observable<{
+    singleSelected: TypeOfEntity | undefined
+    multiSelected: TypeOfEntity[]
+  }> = this._store.pipe(
+    select(selectSingleAndMultiSelectedEntities),
   )
   private readonly _selectedStringId$: Observable<string | undefined> = this._store.pipe(
     select(selectSelectedId),
@@ -58,15 +64,23 @@ export class SelectedQueries {
     return firstValueFrom(this._multiSelected$)
   }
 
+  public get singleAndMultiSelected$() {
+    return this._singleAndMultiSelected$
+  }
+
+  public get singleAndMultiSelected() {
+    return firstValueFrom(this._singleAndMultiSelected$)
+  }
+
   public selectedPanelState$(id: string): Observable<SelectedPanelState> {
     return this._store.pipe(select(selectSelectedPanelState({ id })))
   }
 
-  public multiSelectedEntitiesByType$(type: DesignEntityType): Observable<TypeOfEntity[]> {
+  public multiSelectedEntitiesByType$(type: EntityType): Observable<TypeOfEntity[]> {
     return this._store.pipe(select(selectMultiSelectedEntitiesOfType(type)))
   }
 
-  public multiSelectedEntitiesByType(type: DesignEntityType) {
+  public multiSelectedEntitiesByType(type: EntityType) {
     return firstValueFrom(this.multiSelectedEntitiesByType$(type))
   }
 }

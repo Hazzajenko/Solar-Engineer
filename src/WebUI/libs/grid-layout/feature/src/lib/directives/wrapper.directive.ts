@@ -1,45 +1,17 @@
-import {
-  Directive,
-  ElementRef,
-  EventEmitter,
-  inject,
-  Input,
-  NgZone,
-  OnInit,
-  Output,
-  Renderer2,
-} from '@angular/core'
+import { Directive, ElementRef, EventEmitter, inject, Input, NgZone, OnInit, Output, Renderer2 } from '@angular/core'
 
-import {
-  BlockRectModel,
-  ClickService,
-  DoubleClickService,
-  ElementOffsets,
-  MouseService,
-  MultiStoreService,
-  PanelsStoreService,
-} from '@grid-layout/data-access'
+import { BlockRectModel, ClickService, DoubleClickService, ElementOffsets, GridPanelsStoreService, MouseService, MultiStoreService } from '@grid-layout/data-access'
 import { BaseService } from '@shared/logger'
-import {
-  GridMode,
-  SelectedPanelLinkPathModel,
-  SelectedPathModel,
-  VibrantColor,
-} from '@shared/data-access/models'
-import {
-  downAndLeft,
-  downAndRight,
-  handleXAxisSame,
-  handleYAxisSame,
-  upAndLeft,
-  upAndRight,
-} from './utils/handle-axis'
+import { GridMode, SelectedPanelLinkPathModel, SelectedPathModel, VibrantColor } from '@shared/data-access/models'
+import { downAndLeft, downAndRight, handleXAxisSame, handleYAxisSame, upAndLeft, upAndRight } from './utils/handle-axis'
 
 @Directive({
-  selector: '[appWrapper]',
+  selector:   '[appWrapper]',
   standalone: true,
 })
-export class WrapperDirective extends BaseService implements OnInit {
+export class WrapperDirective
+  extends BaseService
+  implements OnInit {
   private multiStore = inject(MultiStoreService)
 
   private elementRef = inject(ElementRef<HTMLDivElement>)
@@ -47,7 +19,7 @@ export class WrapperDirective extends BaseService implements OnInit {
   private mouseService = inject(MouseService)
   private clickService = inject(ClickService)
   private doubleClickService = inject(DoubleClickService)
-  private panelsStore = inject(PanelsStoreService)
+  private panelsStore = inject(GridPanelsStoreService)
   currentGridMode = GridMode.UNDEFINED
   canvas!: HTMLCanvasElement
   ctx!: CanvasRenderingContext2D
@@ -75,7 +47,10 @@ export class WrapperDirective extends BaseService implements OnInit {
   fpsInterval = 1000 / 60
   startTime = Date.now()
 
-  lines: { x: number; y: number }[] = []
+  lines: {
+    x: number;
+    y: number
+  }[] = []
   parentHeight?: number
   parentWidth?: number
   private directiveInitialized = false
@@ -89,13 +64,13 @@ export class WrapperDirective extends BaseService implements OnInit {
   @Output() resetKeyUp: EventEmitter<string> = new EventEmitter<string>()
 
   /*  @Input() set setScale(scale: number | null) {
-      if (!scale) return
-      /!*if (scale < this.scale) {
-        this.elementRef.nativeElement.style.top = '0px'
-        this.elementRef.nativeElement.style.left = '0px'
-      }
-      this.scale = scale*!/
-    }*/
+   if (!scale) return
+   /!*if (scale < this.scale) {
+   this.elementRef.nativeElement.style.top = '0px'
+   this.elementRef.nativeElement.style.left = '0px'
+   }
+   this.scale = scale*!/
+   }*/
 
   @Input() set keyUp(keyUp: string | null) {
     if (!keyUp) return
@@ -171,7 +146,8 @@ export class WrapperDirective extends BaseService implements OnInit {
     this.selectedPaths = selectedPaths
     this.pathMapAnimating = true
 
-    this.animateSelectedPathMap().then((r) => console.log(r))
+    this.animateSelectedPathMap()
+      .then((r) => console.log(r))
   }
 
   async animateSelectedPathMap() {
@@ -265,7 +241,10 @@ export class WrapperDirective extends BaseService implements OnInit {
     this.ctx.stroke()
   }
 
-  private getValuesFromTwoBlocks(twoBlocks: { first: BlockRectModel; second: BlockRectModel }) {
+  private getValuesFromTwoBlocks(twoBlocks: {
+    first: BlockRectModel;
+    second: BlockRectModel
+  }) {
     const first = twoBlocks.first
     const second = twoBlocks.second
 
@@ -275,15 +254,19 @@ export class WrapperDirective extends BaseService implements OnInit {
     const xAxisSame = first.x === second.x
     const yAxisSame = first.y === second.y
     let xDifference = Math.floor(first.x - second.x)
-    xDifference = xDifference > 0 ? xDifference : xDifference * -1
+    xDifference = xDifference > 0
+      ? xDifference
+      : xDifference * -1
     let yDifference = Math.floor(first.y - second.y)
-    yDifference = yDifference > 0 ? yDifference : yDifference * -1
+    yDifference = yDifference > 0
+      ? yDifference
+      : yDifference * -1
 
     if (xAxisSame) {
       const yRes = handleXAxisSame(drawingUp, first.y, first.height, second.y, second.height)
       return {
-        firstResultX: first.x,
-        firstResultY: yRes.firstResultY,
+        firstResultX:  first.x,
+        firstResultY:  yRes.firstResultY,
         secondResultX: second.x,
         secondResultY: yRes.secondResultY,
       }
@@ -291,8 +274,8 @@ export class WrapperDirective extends BaseService implements OnInit {
     if (yAxisSame) {
       const xRes = handleYAxisSame(drawingLeft, first.x, first.width, second.x, second.width)
       return {
-        firstResultX: xRes.firstResultX,
-        firstResultY: first.y,
+        firstResultX:  xRes.firstResultX,
+        firstResultY:  first.y,
         secondResultX: xRes.secondResultX,
         secondResultY: second.y,
       }
@@ -506,7 +489,7 @@ export class WrapperDirective extends BaseService implements OnInit {
       const secondDiv = (event.composedPath()[1] as HTMLDivElement).getAttribute('location')
       if (!secondDiv) return
       return this.doubleClickService.doubleCLick({
-        event: event as MouseEvent,
+        event:    event as MouseEvent,
         location: secondDiv,
       })
     }
@@ -538,14 +521,14 @@ export class WrapperDirective extends BaseService implements OnInit {
 
     const parentRect = this.elementRef.nativeElement.parentNode.getBoundingClientRect()
     const mouseX =
-      event.pageX -
-      (parentRect.width - this.width) / 2 -
-      this.elementRef.nativeElement.parentNode.offsetLeft
+            event.pageX -
+            (parentRect.width - this.width) / 2 -
+            this.elementRef.nativeElement.parentNode.offsetLeft
 
     const mouseY =
-      event.pageY -
-      (parentRect.height - this.height) / 2 -
-      this.elementRef.nativeElement.parentNode.offsetTop
+            event.pageY -
+            (parentRect.height - this.height) / 2 -
+            this.elementRef.nativeElement.parentNode.offsetTop
 
     const newStartY = this.startY
     const newStartX = this.startX

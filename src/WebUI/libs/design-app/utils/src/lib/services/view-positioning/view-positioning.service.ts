@@ -4,6 +4,7 @@ import { XyLocation } from '@shared/data-access/models'
 import { BehaviorSubject } from 'rxjs'
 import { ComponentElementsService } from '../component-elements'
 import { GridConfig } from './grid.config'
+import { extractEntityDiv } from '@design-app/shared'
 
 @Injectable({
   providedIn: 'root',
@@ -81,10 +82,29 @@ export class ViewPositioningService {
     this.scale = 1
     this.screenPosition = { x: 0, y: 0 }
     this.initScroll()
+    this._renderer.listen(this._scrollElement, 'wheel', (event: WheelEvent) => {
+      event.stopPropagation()
+      event.preventDefault()
+      this.onScrollHandler(event)
+    })
+
+    /*    this._renderer.listen(this._scrollElement, 'mousedown', (event: MouseEvent) => {
+     event.stopPropagation()
+     event.preventDefault()
+     console.log('mousedown', event)
+     console.log('mousedown', event.clientX, event.clientY)
+     },
+     )*/
+    /*    this._renderer.listen(this._scrollElement, 'mouseout', (event: MouseEvent) => {
+     event.stopPropagation()
+     event.preventDefault()
+     this.mouseOutHandler(event)
+     })*/
 
   }
 
   get scrollElement(): HTMLDivElement {
+    // return this._componentElementsService.scrollElement
     if (!this._scrollElement) throw new Error('scrollElement is undefined')
     return this._scrollElement
   }
@@ -109,23 +129,83 @@ export class ViewPositioningService {
   onScrollHandler(
     event: WheelEvent,
   ) {
-    const speed = GridConfig.Speed
+
+    const speed = GridConfig.Speed // 0.05
     const minScale = 0.5
-    // const minScale = GridConfig.MinScale
-    const maxScale = GridConfig.MaxScale
-    // const childRect = this.gridLayoutElement.children[0].getBoundingClientRect()
-    const childRect = this.scrollElement.getBoundingClientRect()
-    console.log('childRect', childRect)
+    const maxScale = GridConfig.MaxScale // 2
+
     const sizeH = childRect.height
     const sizeW = childRect.width
-
+    // const delta = event.deltaY
+    // const scale = this.scale
+    const childRect = this.scrollElement.getBoundingClientRect()
     const pointerX = event.pageX - childRect.left
     const pointerY = event.pageY - childRect.top
+    // const screenWidth = window.innerWidth
+    // const screenHeight = window.innerHeight
+    /*    const targetX = pointerX / this.scales
+     const targetY = pointerY / this.scale*/
+    /*    pointerX = screenWidth / 2 - targetX
+     pointerY = screenHeight / 2 - targetY*/
+    // const elementCenterX = pointerX - this.screenPosition.x
+    // const elementCenterY = pointerY - this.screenPosition.y
+    /*    const targetX = elementCenterX / this.scale
+     const targetY = elementCenterY / this.scale
+     const screenWidth = window.innerWidth
+     const screenHeight = window.innerHeight
+     const newScreenX = screenWidth / 2 - targetX
+     const newScreenY = screenHeight / 2 - targetY*/
 
-    console.log('event.pageX', event.pageX)
-    console.log('event.pageY', event.pageY)
-    console.log('pointerX', pointerX)
-    console.log('pointerY', pointerY)
+    if (event.target) {
+      const target = event.target as HTMLElement
+      console.log('target', target)
+      const element = target.closest('.panel')
+      // if (!element) return
+      console.log('element', element)
+      const extract = extractEntityDiv(event)
+      console.log('extract', extract)
+
+      const divElement = this._componentElementsService.getElementRectById(target.id)
+      console.log('divElement', divElement)
+      if (divElement) {
+        const halfOfHeight = sizeH / 2
+        const halfOfWidth = sizeW / 2
+        /*        pointerX = event.pageX - divElement.x
+         pointerY = event.pageY - divElement.y*/
+        /*        pointerX = divElement.x
+         pointerY = divElement.y
+         // const targetX = elementCenterX / this.scale;
+         // const targetY = elementCenterY / this.scale;
+         const screenWidth = window.innerWidth
+         const screenHeight = window.innerHeight
+         const newScreenX = screenWidth / 2 - pointerX
+         const newScreenY = screenHeight / 2 - pointerY
+         this.screenPosition = { x: newScreenX, y: newScreenY }
+         this.scale += -1 * Math.max(-1, Math.min(1, event.deltaY)) * speed * this.scale
+         this.scale = Math.max(minScale, Math.min(maxScale, this.scale))
+         this._renderer.setStyle(
+         // this.gridLayoutElement,
+         this.scrollElement,
+         'transform',
+         `translate(${this.screenPosition.x}px,${this.screenPosition.y}px) scale(${this.scale})`,
+         )
+         return*/
+      }
+
+    }
+
+    console.log('childRect', childRect.left, childRect.top)
+    console.log('offsets', this.scrollElement.offsetLeft, this.scrollElement.offsetTop)
+
+    /*    const sizeH = this.scrollElement.offsetHeight
+     const sizeW = this.scrollElement.offsetWidth*/
+
+    /*    const pointerX = event.pageX - this.scrollElement.offsetLeft
+     const pointerY = event.pageY - this.scrollElement.offsetTop*/
+    // const pointerX = event.pageX - childRect.left
+    // const pointerY = event.pageY - childRect.top
+    /*    const pointerX = event.offsetX
+     const pointerY = event.offsetY*/
     const targetX = (pointerX - this.screenPosition.x) / this.scale
     const targetY = (pointerY - this.screenPosition.y) / this.scale
 
@@ -136,14 +216,32 @@ export class ViewPositioningService {
       y: -targetY * this.scale + pointerY,
     }
 
+    console.log('this.screenPosition.x', this.screenPosition.x)
+    console.log('this.screenPosition.y', this.screenPosition.y)
+
     if (this.screenPosition.x > 0) this.screenPosition.x = 0
     if (this.screenPosition.x + sizeW * this.scale < sizeW) this.screenPosition.x = -sizeW * (this.scale - 1)
     if (this.screenPosition.y > 0) this.screenPosition.y = 0
     if (this.screenPosition.y + sizeH * this.scale < sizeH) this.screenPosition.y = -sizeH * (this.scale - 1)
+    // if (this.screenPosition.x )
+    /*
+     console.log('this.screenPosition.x', this.screenPosition.x)
+     console.log('this.screenPosition.y', this.screenPosition.y)*/
+
     this._renderer.setStyle(
+      // this.gridLayoutElement,
       this.scrollElement,
       'transform',
       `translate(${this.screenPosition.x}px,${this.screenPosition.y}px) scale(${this.scale})`,
+    )
+  }
+
+  mouseOutHandler(event: MouseEvent) {
+    console.log('mouseOutHandler')
+    this._renderer.setStyle(
+      this.scrollElement,
+      'transform',
+      `translate(-50%, -50%) scale(${this.scale}) translate(0, 0)`,
     )
   }
 
@@ -176,7 +274,8 @@ export class ViewPositioningService {
 
   onCtrlMouseMoveHelper(event: MouseEvent) {
     if (!this._ctrlMouseDownStartPoint) return
-    const rect = this.gridLayoutElement.getBoundingClientRect()
+    // const rect = this.gridLayoutElement.getBoundingClientRect()
+    const rect = this._componentElementsService.gridLayoutElement.getBoundingClientRect()
     const parentRect = this._componentElementsService.parentElement.getBoundingClientRect()
     const x =
             event.pageX -
@@ -186,17 +285,53 @@ export class ViewPositioningService {
             event.pageY -
             (parentRect.height - rect.height) / 2
 
-    const top = y - this._ctrlMouseDownStartPoint.y
-    const left = x - this._ctrlMouseDownStartPoint.x
+    let top = y - this._ctrlMouseDownStartPoint.y
+    let left = x - this._ctrlMouseDownStartPoint.x
 
-    this._renderer.setStyle(this.gridLayoutElement, 'top', top + 'px')
-    this._renderer.setStyle(this.gridLayoutElement, 'left', left + 'px')
+    // check if top is negative
+    if (left < 0) {
+      const positiveLeft = Math.abs(left)
+      if (positiveLeft > window.innerWidth / 2) {
+        console.log('top is negative and too big')
+        left = -window.innerWidth / 2
+      }
+    }
 
-    const canvasTop = top + this._componentElementsService.canvasElement.offsetTop
-    const canvasLeft = left + this._componentElementsService.canvasElement.offsetLeft
+    // check if top is positive
+    if (left > 0) {
+      if (left > window.innerWidth / 2) {
+        console.log('top is positive and too big')
+        left = window.innerWidth / 2
+      }
+    }
 
-    console.log('canvasTop', canvasTop)
-    console.log('canvasLeft', canvasLeft)
+    // check if left is negative
+    if (top < 0) {
+      const positiveTop = Math.abs(top)
+      if (positiveTop > window.innerHeight / 2) {
+        console.log('left is negative and too big')
+        top = -window.innerHeight / 2
+      }
+    }
+
+    // check if left is positive
+    if (top > 0) {
+      if (top > window.innerHeight / 2) {
+        console.log('left is positive and too big')
+        top = window.innerHeight / 2
+      }
+    }
+
+    this._renderer.setStyle(this._componentElementsService.gridLayoutElement, 'top', top + 'px')
+    this._renderer.setStyle(this._componentElementsService.gridLayoutElement, 'left', left + 'px')
+    console.log('top', top)
+    console.log('left', left)
+    /*
+     const canvasTop = top + this._componentElementsService.canvasElement.offsetTop
+     const canvasLeft = left + this._componentElementsService.canvasElement.offsetLeft
+
+     console.log('canvasTop', canvasTop)
+     console.log('canvasLeft', canvasLeft)*/
 
     // this._renderer.setStyle(this._componentElementsService.canvasElement, 'top', canvasTop + 'px')
     // this._renderer.setStyle(this._componentElementsService.canvasElement, 'left', canvasLeft + 'px')

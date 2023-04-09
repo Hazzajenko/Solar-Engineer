@@ -2,10 +2,10 @@ import { inject, Injectable, NgZone, RendererFactory2 } from '@angular/core'
 
 import { assertNotNull } from '@shared/utils'
 import { PanelStylerFields } from './panel-styler.fields'
-import { PanelBackgroundColor, PanelStyleState } from '../../types'
 import { StyleName } from '@shared/data-access/models'
 import { ComponentElementsService, DesignRectModel } from 'design-app/utils'
 import { LineDirection } from '@design-app/canvas'
+import { PanelBackgroundColor, PanelStyleState } from '../../types/panel.styles'
 
 @Injectable({
   providedIn: 'root',

@@ -1,28 +1,18 @@
 import { inject, Injectable } from '@angular/core'
 
-import {
-  BlocksFacade,
-  BlocksStoreService,
-  GridEventService,
-  GridFacade,
-  GridStoreService,
-  LinksEventService,
-  MouseEventRequest,
-  PanelsEventService,
-  PanelsFacade,
-  PanelsStoreService,
-} from '../..'
+import { BlocksFacade, BlocksStoreService, GridEventService, GridFacade, GridPanelsEventService, GridPanelsFacade, GridPanelsStoreService, GridStoreService, LinksEventService, MouseEventRequest } from '../..'
 import { BLOCK_TYPE, BlockModel, GridMode } from '@shared/data-access/models'
 import { BaseService } from '@shared/logger'
 
 @Injectable({
   providedIn: 'root',
 })
-export class ClickService extends BaseService {
+export class ClickService
+  extends BaseService {
   private gridFacade = inject(GridFacade)
   private blocksFacade = inject(BlocksFacade)
-  private panelsFacade = inject(PanelsFacade)
-  private panelsStore = inject(PanelsStoreService)
+  private panelsFacade = inject(GridPanelsFacade)
+  private panelsStore = inject(GridPanelsStoreService)
   private blocksStore = inject(BlocksStoreService)
   private gridStore = inject(GridStoreService)
   // private logger = inject(LoggerService)
@@ -30,12 +20,12 @@ export class ClickService extends BaseService {
   // private facade = inject(GridLayoutStoreService)
 
   private gridFactory = inject(GridEventService)
-  private panelsFactory = inject(PanelsEventService)
+  private panelsFactory = inject(GridPanelsEventService)
   private linksService = inject(LinksEventService)
 
   /*  constructor(logger: LoggerService) {
-      super(logger)
-    }*/
+   super(logger)
+   }*/
 
   async click(click: MouseEventRequest) {
     if (click.event.altKey) {
@@ -77,28 +67,28 @@ export class ClickService extends BaseService {
       return this.linksService.addPanelToLink(click, panel)
     } /*
 
-    const selectedStringId = await this.facade.selected.selectedStringId
-    if (selectedStringId === panel.stringId) {
+     const selectedStringId = await this.facade.selected.selectedStringId
+     if (selectedStringId === panel.stringId) {
 
-    }*/
+     }*/
     return await this.panelsFactory.selectPanel(panel, click.event.shiftKey)
 
     /*
 
 
-        switch (gridMode) {
-          // case GridMode.CREATE: return this.result.action({ action: 'SELECT_PANEL', data: { panelId: panel.id } })
-          case GridMode.CREATE:
-            return this.panelFactory.select(panel, click.event.shiftKey)
-          case GridMode.LINK:
-            return this.linksService.addPanelToLink(click, panel)
-          case GridMode.SELECT:
-            return this.panelFactory.select(panel, click.event.shiftKey)
-    /!*      case GridMode.DELETE:
-            return this.panelFactory.delete(panel.id)*!/
-          default:
-            return this.eventFactory.error('clickPanelSwitch, default')
-        }*/
+     switch (gridMode) {
+     // case GridMode.CREATE: return this.result.action({ action: 'SELECT_PANEL', data: { panelId: panel.id } })
+     case GridMode.CREATE:
+     return this.panelFactory.select(panel, click.event.shiftKey)
+     case GridMode.LINK:
+     return this.linksService.addPanelToLink(click, panel)
+     case GridMode.SELECT:
+     return this.panelFactory.select(panel, click.event.shiftKey)
+     /!*      case GridMode.DELETE:
+     return this.panelFactory.delete(panel.id)*!/
+     default:
+     return this.eventFactory.error('clickPanelSwitch, default')
+     }*/
   }
 
   async gridModeSwitch(location: string) {
@@ -125,8 +115,8 @@ export class ClickService extends BaseService {
   private async createSwitch(location: string) {
     // const isStringSelected = await this.facade.selected.selectedStringId
     /*    if (isStringSelected) {
-          await this.factory.selected.clearState()
-        }*/
+     await this.factory.selected.clearState()
+     }*/
     const createMode = await this.gridFacade.createMode
     switch (createMode) {
       case BLOCK_TYPE.PANEL:

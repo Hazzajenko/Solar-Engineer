@@ -1,4 +1,4 @@
-import { DesignStringModel } from '../types'
+import { StringModel } from '../types'
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
 
@@ -9,33 +9,33 @@ export const StringsActions = createActionGroup({
       projectId: number
     }>(),
     'Load Strings Success': props<{
-      strings: DesignStringModel[]
+      strings: StringModel[]
     }>(),
     'Load Strings Failure': props<{
       error: string | null
     }>(),
     'Add String': props<{
-      string: DesignStringModel
+      string: StringModel
     }>(),
     'Create String With Panels': props<{
-      string: DesignStringModel
+      string: StringModel
       panelIds: string[]
     }>(),
     'Add String Without Signalr': props<{
-      string: DesignStringModel
+      string: StringModel
     }>(),
     'Add Many Strings': props<{
-      strings: DesignStringModel[]
+      strings: StringModel[]
     }>(),
     'Update String': props<{
-      update: UpdateStr<DesignStringModel>
+      update: UpdateStr<StringModel>
     }>(),
     'Update String Without Signalr': props<{
-      update: UpdateStr<DesignStringModel>
+      update: UpdateStr<StringModel>
     }>(),
     // 'Update String': props<{ update: Update<StringModel> }>(),
     'Update Many Strings': props<{
-      updates: UpdateStr<DesignStringModel>[]
+      updates: UpdateStr<StringModel>[]
     }>(),
     'Delete String': props<{
       stringId: string

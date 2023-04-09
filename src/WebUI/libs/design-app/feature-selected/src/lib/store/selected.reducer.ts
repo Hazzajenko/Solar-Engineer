@@ -5,7 +5,7 @@ import { Action, createReducer, on } from '@ngrx/store'
 import { XyLocation } from '@shared/data-access/models'
 
 
-export const SELECTED_FEATURE_KEY = 'design-selected'
+export const SELECTED_FEATURE_KEY = 'selected'
 
 export interface SelectedState {
   singleSelectedEntity: TypeOfEntity | undefined

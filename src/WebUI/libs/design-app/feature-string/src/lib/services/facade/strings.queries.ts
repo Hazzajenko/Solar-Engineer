@@ -12,7 +12,7 @@ export class StringsQueries {
 
   // stringsFromRoute$ = this._store.select(StringsSelectors.selectStringsByRouteParams)
 
-  public totalStrings() {
+  public get totalStrings() {
     return firstValueFrom(this._allStrings$.pipe(map((strings) => strings.length)))
   }
 

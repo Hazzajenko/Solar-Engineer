@@ -26,7 +26,13 @@ import { ShowScreenPositionComponent } from './show-screen-position/show-screen-
   ],
   selector:        'app-design-layout',
   standalone:      true,
-  styles:          [],
+  styles:          [
+    `
+      .appScrollView {
+        -webkit-transform-origin: 0 0;
+      }
+    `,
+  ],
   templateUrl:     './design-layout.component.html',
 })
 export class DesignLayoutComponent

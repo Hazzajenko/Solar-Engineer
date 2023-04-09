@@ -1,34 +1,28 @@
 import { inject, Injectable } from '@angular/core'
-import { PathsStoreService, SelectedFacade, SelectedStoreService } from '../'
+import { GridSelectedFacade, GridSelectedStoreService, PathsStoreService } from '../'
 
 import { ProjectsFacade } from '@projects/data-access'
-import {
-  PanelIdPath,
-  PanelPathModel,
-  PanelPathModelV2,
-  PathModel,
-  SelectedPanelLinkPathModel,
-  SelectedPathModel,
-} from '@shared/data-access/models'
+import { PanelIdPath, PanelPathModel, PanelPathModelV2, PathModel, SelectedPanelLinkPathModel, SelectedPathModel } from '@shared/data-access/models'
 import { LinksPathService } from '../links'
 import { BaseService } from '@shared/logger'
 
 @Injectable({
   providedIn: 'root',
 })
-export class PathsEventService extends BaseService {
+export class PathsEventService
+  extends BaseService {
   private projectsFacade = inject(ProjectsFacade)
-  private selectedFacade = inject(SelectedFacade)
+  private selectedFacade = inject(GridSelectedFacade)
 
   private linksPathService = inject(LinksPathService)
   private pathsStore = inject(PathsStoreService)
-  private selectedStore = inject(SelectedStoreService)
+  private selectedStore = inject(GridSelectedStoreService)
 
   // private logger = inject(LoggerService)
 
   /*  constructor(logger: LoggerService) {
-      super(logger)
-    }*/
+   super(logger)
+   }*/
 
   async createPath(panelId: string, panelPath: PanelPathModel) {
     const project = await this.projectsFacade.projectFromRoute
@@ -42,11 +36,11 @@ export class PathsEventService extends BaseService {
     }
     const path = new PathModel({
       projectId: project.id,
-      stringId: selectedStringId,
+      stringId:  selectedStringId,
       panelId,
-      count: panelPath.count,
-      color: panelPath.color,
-      link: panelPath.link,
+      count:     panelPath.count,
+      color:     panelPath.color,
+      link:      panelPath.link,
       // panelPath,
     })
     // this.pathsFacade.
@@ -66,20 +60,20 @@ export class PathsEventService extends BaseService {
     const paths = panelIdPaths.map((panelIdPath) => {
       return new PathModel({
         projectId: project.id,
-        stringId: selectedStringId,
-        panelId: panelIdPath.panelId,
-        count: panelIdPath.path.count,
-        color: panelIdPath.path.color,
-        link: panelIdPath.path.link,
+        stringId:  selectedStringId,
+        panelId:   panelIdPath.panelId,
+        count:     panelIdPath.path.count,
+        color:     panelIdPath.path.color,
+        link:      panelIdPath.path.link,
         // panelPath: panelIdPath.path,
       })
     })
     /*    const path = new PanelLinkPathModel({
-          projectId: project.id,
-          stringId: selectedStringId,
-          panelId,
-          panelPath,
-        })*/
+     projectId: project.id,
+     stringId: selectedStringId,
+     panelId,
+     panelPath,
+     })*/
     // this.pathsFacade.
     this.pathsStore.dispatch.createManyPaths(paths)
     // return this.eventFactory.action({ action: 'CREATE_PANEL', data: { panel } })
@@ -110,13 +104,13 @@ export class PathsEventService extends BaseService {
     const panelPaths = panelIdPaths.map((panelIdPath) => {
       const panelPath: SelectedPathModel = {
         panelId: panelIdPath.panelId,
-        count: panelIdPath.path.count,
+        count:   panelIdPath.path.count,
       }
       const panelPath2: PanelPathModelV2 = {
         panelId: panelIdPath.panelId,
-        count: panelIdPath.path.count,
-        color: panelIdPath.path.color,
-        link: panelIdPath.path.link,
+        count:   panelIdPath.path.count,
+        color:   panelIdPath.path.color,
+        link:    panelIdPath.path.link,
       }
       return panelPath
     })
@@ -125,11 +119,11 @@ export class PathsEventService extends BaseService {
       panelPaths,
     }
     /*    const path = new PanelLinkPathModel({
-          projectId: project.id,
-          stringId: selectedStringId,
-          panelId,
-          panelPath,
-        })*/
+     projectId: project.id,
+     stringId: selectedStringId,
+     panelId,
+     panelPath,
+     })*/
     // this.pathsFacade.
 
     // await this.pathsFactory.createManyPaths(res)

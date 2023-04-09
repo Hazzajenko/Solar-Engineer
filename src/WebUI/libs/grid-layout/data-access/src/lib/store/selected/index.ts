@@ -1,6 +1,4 @@
-export * from './selected.actions'
-export * from './selected.reducer'
-export * as SelectedSelectors from './selected.selectors'
-export * from './selected.helpers'
-
-
+export * from './grid-selected.actions'
+export * from './grid-selected.reducer'
+export * as SelectedSelectors from './grid-selected.selectors'
+export * from './grid-selected.helpers'

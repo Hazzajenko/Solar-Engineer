@@ -2,27 +2,13 @@ import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop'
 import { CommonModule } from '@angular/common'
 import { ChangeDetectionStrategy, Component, inject, Input, OnInit } from '@angular/core'
 import { MatSnackBar } from '@angular/material/snack-bar'
-import {
-  ClickService,
-  ClientXY,
-  DoubleClickService,
-  DropService,
-  ElementOffsets,
-  GridFacade,
-  MouseEventRequest,
-  PathsStoreService,
-  SelectedFacade,
-  SelectedStoreService,
-  StringsFacade,
-  UiStoreService,
-  XYModel,
-} from '@grid-layout/data-access'
+import { ClickService, ClientXY, DoubleClickService, DropService, ElementOffsets, GridFacade, GridSelectedFacade, GridSelectedStoreService, GridStringsFacade, MouseEventRequest, PathsStoreService, UiStoreService, XYModel } from '@grid-layout/data-access'
 
 import { KeymapOverlayComponent } from './ui/keymap/keymap.component'
 import { StringTotalsOverlayComponent } from './ui/string-stats/string-stats.component'
 
 import { LetModule } from '@ngrx/component'
-import { BlockModel, SelectedPanelLinkPathModel, StringModel } from '@shared/data-access/models'
+import { BlockModel, GridStringModel, SelectedPanelLinkPathModel } from '@shared/data-access/models'
 import { combineLatest, map, Observable, of, switchMap } from 'rxjs'
 import { combineLatestWith } from 'rxjs/operators'
 
@@ -37,9 +23,9 @@ import { GetLocationPipe } from './pipes/get-location.pipe'
 import { GridBackgroundComponent } from './ui/grid-background/grid-background.component'
 
 @Component({
-  selector: 'app-grid-layout',
-  standalone: true,
-  imports: [
+  selector:        'app-grid-layout',
+  standalone:      true,
+  imports:         [
     CommonModule,
     DragDropModule,
     LetModule,
@@ -54,18 +40,19 @@ import { GridBackgroundComponent } from './ui/grid-background/grid-background.co
     WrapperDirective,
     KeyMapDirective,
   ],
-  templateUrl: './grid-layout.component.html',
+  templateUrl:     './grid-layout.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  styles: [],
+  styles:          [],
 })
-export class GridLayoutComponent implements OnInit {
+export class GridLayoutComponent
+  implements OnInit {
   public clickService = inject(ClickService)
   public dropService = inject(DropService)
   public doubleClickService = inject(DoubleClickService)
   private uiStore = inject(UiStoreService)
   private snackBar = inject(MatSnackBar)
-  private selectedFacade = inject(SelectedFacade)
-  private stringsFacade = inject(StringsFacade)
+  private selectedFacade = inject(GridSelectedFacade)
+  private stringsFacade = inject(GridStringsFacade)
   private gridFacade = inject(GridFacade)
   // private gridLayoutService = inject(GridLayoutService)
 
@@ -105,28 +92,30 @@ export class GridLayoutComponent implements OnInit {
   }> = combineLatest([
     this.uiStore.select.isKeyMapEnabled$,
     this.uiStore.select.isStringStatsEnabled$,
-  ]).pipe(
-    map(([keyMap, stringStats]) => {
-      return {
-        keyMap,
-        stringStats,
-      }
-    }),
-  )
+  ])
+    .pipe(
+      map(([keyMap, stringStats]) => {
+        return {
+          keyMap,
+          stringStats,
+        }
+      }),
+    )
   rows!: number
   cols!: number
 
   offsets: ElementOffsets = {
     offsetHeight: undefined,
-    offsetWidth: undefined,
+    offsetWidth:  undefined,
   }
   screenHasBeenSet = false
   gridMode$ = this.gridFacade.gridMode$
 
-  selectedString$: Observable<StringModel | undefined> = this.selectedFacade.selectedStringId$.pipe(
+  selectedString$: Observable<GridStringModel | undefined> = this.selectedFacade.selectedStringId$.pipe(
     switchMap((stringId) =>
       stringId
-        ? this.stringsFacade.stringById$(stringId).pipe(
+        ? this.stringsFacade.stringById$(stringId)
+          .pipe(
             map((string) => {
               if (!string) return undefined
               return string
@@ -139,7 +128,7 @@ export class GridLayoutComponent implements OnInit {
   keyPressed$ = this.uiStore.select.keyPressed$
   scale$ = this.uiStore.select.scale$
   private pathsStore = inject(PathsStoreService)
-  private selectedStore = inject(SelectedStoreService)
+  private selectedStore = inject(GridSelectedStoreService)
   panelLinkPath$: Observable<SelectedPanelLinkPathModel | undefined> =
     this.pathsStore.select.selectedPanelLinkPath$.pipe(
       combineLatestWith(this.selectedStore.select.selectedId$),
@@ -152,9 +141,9 @@ export class GridLayoutComponent implements OnInit {
   ngOnInit() {
     // this.gridLayoutService.initContainerSize()
     /*    this.containerSizes = this.gridLayoutService.initContainerSize(
-          window.innerHeight,
-          window.innerWidth,
-        )*/
+     window.innerHeight,
+     window.innerWidth,
+     )*/
     // this.containerSizes = this.initContainerSize()
     this.getScreenWidth = window.innerWidth
     this.getScreenHeight = window.innerHeight

@@ -1,26 +1,26 @@
-import { StatsService } from '@grid-layout/data-access'
+import { GridPanelsFacade, StatsService } from '@grid-layout/data-access'
 import { inject, Pipe, PipeTransform } from '@angular/core'
 import { Observable, of } from 'rxjs'
 import { map } from 'rxjs/operators'
-import { PanelsFacade } from '@grid-layout/data-access'
-import { StringModel, TotalModel } from '@shared/data-access/models'
+import { GridStringModel, TotalModel } from '@shared/data-access/models'
 
 @Pipe({
-  name: 'stringTotalsAsync',
+  name:       'stringTotalsAsync',
   standalone: true,
 })
-export class StringTotalsAsyncPipe implements PipeTransform {
+export class StringTotalsAsyncPipe
+  implements PipeTransform {
   private statsService = inject(StatsService)
-  private panelsFacade = inject(PanelsFacade)
+  private panelsFacade = inject(GridPanelsFacade)
 
-  transform(string: StringModel): Observable<TotalModel> {
+  transform(string: GridStringModel): Observable<TotalModel> {
     if (!string) {
       const totals: TotalModel = {
-        totalImp: 0,
-        totalIsc: 0,
+        totalImp:  0,
+        totalIsc:  0,
         totalPmax: 0,
-        totalVmp: 0,
-        totalVoc: 0,
+        totalVmp:  0,
+        totalVoc:  0,
       }
       return of(totals)
     }

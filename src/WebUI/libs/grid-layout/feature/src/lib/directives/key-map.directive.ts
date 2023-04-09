@@ -1,47 +1,33 @@
 import { Directive, EventEmitter, inject, NgZone, OnInit, Output, Renderer2 } from '@angular/core'
 import { MatSnackBar } from '@angular/material/snack-bar'
-import {
-  GridEventService,
-  GridFacade,
-  GridStoreService,
-  LinksStoreService,
-  MultiEventService,
-  MultiFacade,
-  MultiStoreService,
-  PanelsFacade,
-  PanelsStoreService,
-  SelectedEventService,
-  SelectedFacade,
-  SelectedStoreService,
-  StringsEventService,
-  StringsFacade,
-  UiStoreService,
-} from '@grid-layout/data-access'
+import { GridEventService, GridFacade, GridPanelsFacade, GridPanelsStoreService, GridSelectedEventService, GridSelectedFacade, GridSelectedStoreService, GridStoreService, GridStringsEventService, GridStringsFacade, LinksStoreService, MultiEventService, MultiFacade, MultiStoreService, UiStoreService } from '@grid-layout/data-access'
 
 import { GridMode } from '@shared/data-access/models'
 import { firstValueFrom } from 'rxjs'
 import { BaseService } from '@shared/logger'
 
 @Directive({
-  selector: '[appKeyMap]',
+  selector:   '[appKeyMap]',
   standalone: true,
 })
-export class KeyMapDirective extends BaseService implements OnInit {
+export class KeyMapDirective
+  extends BaseService
+  implements OnInit {
   private gridFacade = inject(GridFacade)
 
   private multiFacade = inject(MultiFacade)
-  private selectedFacade = inject(SelectedFacade)
-  private panelsFacade = inject(PanelsFacade)
+  private selectedFacade = inject(GridSelectedFacade)
+  private panelsFacade = inject(GridPanelsFacade)
   private gridFactory = inject(GridEventService)
-  private selectedFactory = inject(SelectedEventService)
+  private selectedFactory = inject(GridSelectedEventService)
   private multiFactory = inject(MultiEventService)
   private multiStore = inject(MultiStoreService)
   private gridStore = inject(GridStoreService)
   private linksStore = inject(LinksStoreService)
-  private selectedStore = inject(SelectedStoreService)
-  private panelsStore = inject(PanelsStoreService)
-  private stringsFacade = inject(StringsFacade)
-  private stringFactory = inject(StringsEventService)
+  private selectedStore = inject(GridSelectedStoreService)
+  private panelsStore = inject(GridPanelsStoreService)
+  private stringsFacade = inject(GridStringsFacade)
+  private stringFactory = inject(GridStringsEventService)
   private uiStore = inject(UiStoreService)
   private snackBar = inject(MatSnackBar)
   private renderer = inject(Renderer2)
@@ -61,7 +47,8 @@ export class KeyMapDirective extends BaseService implements OnInit {
       this.renderer.listen(window, 'keyup', (event: KeyboardEvent) => {
         event.stopPropagation()
         event.preventDefault()
-        this.onKeyUpHandler(event).catch((err) => console.error(err))
+        this.onKeyUpHandler(event)
+          .catch((err) => console.error(err))
       })
     })
   }
@@ -69,13 +56,12 @@ export class KeyMapDirective extends BaseService implements OnInit {
   private async onKeyUpHandler(event: KeyboardEvent) {
     // this.logDebug('onKeyUpHandler', event.key)
     switch (event.key) {
-      case 'Alt':
-        {
-          const multiState = await firstValueFrom(this.multiFacade.state$)
-          if (multiState.locationStart && event.key === 'Alt') {
-            this.multiStore.dispatch.clearMultiState()
-          }
+      case 'Alt': {
+        const multiState = await firstValueFrom(this.multiFacade.state$)
+        if (multiState.locationStart && event.key === 'Alt') {
+          this.multiStore.dispatch.clearMultiState()
         }
+      }
         break
       case 's': {
         const selectedId = await this.selectedFacade.selectedId
@@ -87,9 +73,9 @@ export class KeyMapDirective extends BaseService implements OnInit {
         await this.gridFactory.select(GridMode.SELECT)
         await this.selectedFactory.selectString(panel.stringId)
         this.snackBar.open('String Selected', 'OK', {
-          duration: 5000,
+          duration:           5000,
           horizontalPosition: 'start',
-          verticalPosition: 'bottom',
+          verticalPosition:   'bottom',
         })
 
         break
@@ -100,9 +86,9 @@ export class KeyMapDirective extends BaseService implements OnInit {
           this.gridStore.dispatch.selectGridMode(GridMode.SELECT)
           this.linksStore.dispatch.clearLinkState()
           this.snackBar.open('Link Mode Off', 'OK', {
-            duration: 5000,
+            duration:           5000,
             horizontalPosition: 'start',
-            verticalPosition: 'bottom',
+            verticalPosition:   'bottom',
           })
           break
         }
@@ -111,9 +97,9 @@ export class KeyMapDirective extends BaseService implements OnInit {
         this.gridStore.dispatch.selectGridMode(GridMode.LINK)
         this.selectedStore.dispatch.clearSingleSelected()
         this.snackBar.open('Link Mode On', 'OK', {
-          duration: 5000,
+          duration:           5000,
           horizontalPosition: 'start',
-          verticalPosition: 'bottom',
+          verticalPosition:   'bottom',
         })
 
         break
@@ -130,9 +116,9 @@ export class KeyMapDirective extends BaseService implements OnInit {
         const result = await this.stringFactory.addSelectedToNew(newStringName)
         if (!result) break
         this.snackBar.open(`Created String ${result?.name}`, 'OK', {
-          duration: 5000,
+          duration:           5000,
           horizontalPosition: 'start',
-          verticalPosition: 'bottom',
+          verticalPosition:   'bottom',
         })
         break
       }

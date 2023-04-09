@@ -1,6 +1,5 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
-import { inject } from '@angular/core'
-import { ChangeDetectionStrategy, Component } from '@angular/core'
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog'
 
@@ -13,30 +12,37 @@ import { MatIconModule } from '@angular/material/icon'
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatInputModule } from '@angular/material/input'
-import { StringsEventService } from '@grid-layout/data-access'
+import { GridStringsEventService } from '@grid-layout/data-access'
 
-import { StringModel } from '@shared/data-access/models'
+import { GridStringModel } from '@shared/data-access/models'
 
 @Component({
-  selector: 'app-new-string-dialog',
-  template: `
-    <div class="flex flex-col items-center content-center">
-      <h1 mat-dialog-title>Create String</h1>
-    </div>
-    <form ngForm class="example-form">
-      <label for="name">Name: </label>
-      <input id="name" type="text" [formControl]="name" />
-    </form>
-    <mat-dialog-actions align="end">
-      <button mat-button mat-dialog-close="true">Cancel</button>
-      <button (click)="addSelectedToNew()" cdkFocusInitial mat-button>
-        Create {{ name.value }}
-      </button>
-    </mat-dialog-actions>
-  `,
-  styles: [],
+  selector:        'app-new-string-dialog',
+  template:        `
+                     <div class='flex flex-col items-center content-center'>
+                       <h1 mat-dialog-title>Create String</h1>
+                     </div>
+                     <form ngForm
+                           class='example-form'>
+                       <label for='name'>Name: </label>
+                       <input id='name'
+                              type='text'
+                              [formControl]='name' />
+                     </form>
+                     <mat-dialog-actions align='end'>
+                       <button mat-button
+                               mat-dialog-close='true'>Cancel
+                       </button>
+                       <button (click)='addSelectedToNew()'
+                               cdkFocusInitial
+                               mat-button>
+                         Create {{ name.value }}
+                       </button>
+                     </mat-dialog-actions>
+                   `,
+  styles:          [],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
+  imports:         [
     MatDialogModule,
     MatButtonModule,
     AsyncPipe,
@@ -51,17 +57,17 @@ import { StringModel } from '@shared/data-access/models'
     FormsModule,
     ReactiveFormsModule,
   ],
-  standalone: true,
+  standalone:      true,
 })
 export class NewStringDialog {
   name = new FormControl('')
-  private stringsFactory = inject(StringsEventService)
+  private stringsFactory = inject(GridStringsEventService)
   private dialogRef = inject(MatDialogRef<NewStringDialog>)
 
   async addSelectedToNew() {
     if (!this.name.value) return console.error('!this.name.value')
     const result = await this.stringsFactory.addSelectedToNew(this.name.value)
-    if (result instanceof StringModel) {
+    if (result instanceof GridStringModel) {
       this.dialogRef.close(result)
       return
     }

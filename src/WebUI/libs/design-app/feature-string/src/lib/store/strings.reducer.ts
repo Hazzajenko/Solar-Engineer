@@ -1,21 +1,20 @@
-import { DesignStringModel } from '../types'
+import { StringModel } from '../types'
 import { StringsActions } from './strings.actions'
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity'
 import { Action, createReducer, on } from '@ngrx/store'
 
-export const DESIGN_STRINGS_FEATURE_KEY = 'designStrings'
+export const STRINGS_FEATURE_KEY = 'strings'
 
-export interface DesignStringsState extends EntityState<DesignStringModel> {
+export interface StringsState extends EntityState<StringModel> {
   loaded: boolean
   error?: string | null
 }
 
-export const designStringsAdapter: EntityAdapter<DesignStringModel> =
-  createEntityAdapter<DesignStringModel>({
-    selectId: (string) => string.id,
-  })
+export const designStringsAdapter: EntityAdapter<StringModel> = createEntityAdapter<StringModel>({
+  selectId: (string) => string.id,
+})
 
-export const initialDesignStringsState: DesignStringsState = designStringsAdapter.getInitialState({
+export const initialDesignStringsState: StringsState = designStringsAdapter.getInitialState({
   loaded: false,
   error: null,
 })
@@ -42,6 +41,6 @@ const reducer = createReducer(
   ),
 )
 
-export function stringsReducer(state: DesignStringsState | undefined, action: Action) {
+export function stringsReducer(state: StringsState | undefined, action: Action) {
   return reducer(state, action)
 }

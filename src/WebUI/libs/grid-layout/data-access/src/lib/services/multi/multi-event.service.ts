@@ -1,12 +1,5 @@
 import { inject, Injectable } from '@angular/core'
-import {
-  BlocksStoreService,
-  getLocationsInBox,
-  locationArrayMap,
-  MultiStoreService,
-  PanelsStoreService,
-  SelectedStoreService,
-} from '../'
+import { BlocksStoreService, getLocationsInBox, GridPanelsStoreService, GridSelectedStoreService, locationArrayMap, MultiStoreService } from '../'
 import { ProjectsFacade } from '@projects/data-access'
 
 import { BlockType } from '@shared/data-access/models'
@@ -18,9 +11,9 @@ import { throwExpression } from '@shared/utils'
 })
 export class MultiEventService {
   private readonly projectsFacade = inject(ProjectsFacade)
-  private selectedStore = inject(SelectedStoreService)
+  private selectedStore = inject(GridSelectedStoreService)
   private multiStore = inject(MultiStoreService)
-  private panelsStore = inject(PanelsStoreService)
+  private panelsStore = inject(GridPanelsStoreService)
   private blocksStore = inject(BlocksStoreService)
   private authStore = inject(AuthStoreService)
 
@@ -33,8 +26,8 @@ export class MultiEventService {
     // const project = await this.projectsFacade.projectFromRoute
     const project = await this.projectsFacade.selectedProject()
     /*    if (!project) {
-          return
-        }*/
+     return
+     }*/
     const userId = (await this.authStore.select.userId) ?? throwExpression('User not logged in')
 
     const selectedStringId = await this.selectedStore.select.selectedStringId

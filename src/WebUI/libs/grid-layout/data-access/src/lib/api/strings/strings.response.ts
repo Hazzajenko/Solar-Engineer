@@ -1,14 +1,12 @@
-import { StringModel } from '@shared/data-access/models'
-
+import { GridStringModel } from '@shared/data-access/models'
 
 export interface StringResponse {
-  string: StringModel
+  string: GridStringModel
 }
 
 export interface ManyStringsResponse {
-  strings: StringModel[]
+  strings: GridStringModel[]
 }
-
 
 export interface UpdateManyStringsResponse {
   successfulUpdates: number

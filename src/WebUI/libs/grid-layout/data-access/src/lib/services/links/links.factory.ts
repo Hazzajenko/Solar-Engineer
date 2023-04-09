@@ -1,10 +1,10 @@
 import { inject, Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
-import { LinksFacade, LinksStoreService, PanelsFacade, SelectedFacade } from '../../services'
+import { GridPanelsFacade, GridSelectedFacade, LinksFacade, LinksStoreService } from '../../services'
 import { LinksPathService } from './links-path.service'
 import { ProjectsFacade } from '@projects/data-access'
-import { PanelLinkModel, PanelModel, ProjectModel } from '@shared/data-access/models'
-import { StringsEventService } from '../strings'
+import { GridPanelModel, PanelLinkModel, ProjectModel } from '@shared/data-access/models'
+import { GridStringsEventService } from '../strings'
 import { PathsEventService } from '../paths'
 // import { PathsEventService } from 'libs/grid-layout/data-access/services/src/lib/entitites/paths/paths.service'
 // import { StringsEventService } from 'libs/grid-layout/data-access/services/src/lib/entitites/string/string.service'
@@ -17,15 +17,15 @@ export class LinksFactory {
   private linksPathService = inject(LinksPathService)
   private store = inject(Store)
   private projectsFacade = inject(ProjectsFacade)
-  private selectedFacade = inject(SelectedFacade)
+  private selectedFacade = inject(GridSelectedFacade)
   private linksFacade = inject(LinksFacade)
   // private linksFacade = inject(LinksFacade)
   private linksStore = inject(LinksStoreService)
-  private panelsFacade = inject(PanelsFacade)
-  private stringsFactory = inject(StringsEventService)
+  private panelsFacade = inject(GridPanelsFacade)
+  private stringsFactory = inject(GridStringsEventService)
   private pathsFactory = inject(PathsEventService /**/)
 
-  async create(panel: PanelModel, panelToLinkId: string | undefined, shiftKey: boolean) {
+  async create(panel: GridPanelModel, panelToLinkId: string | undefined, shiftKey: boolean) {
     const errorChecks = await this.errorChecks(panel, panelToLinkId)
     if (!errorChecks) return
     if (!('project' in errorChecks)) {
@@ -34,8 +34,8 @@ export class LinksFactory {
     const { project, panelToLink, selectedStringId } = errorChecks
 
     const link = new PanelLinkModel({
-      projectId: project.id,
-      stringId: selectedStringId,
+      projectId:    project.id,
+      stringId:     selectedStringId,
       positiveToId: panelToLink.id,
       negativeToId: panel.id,
     })
@@ -83,15 +83,15 @@ export class LinksFactory {
   }
 
   private async errorChecks(
-    panel: PanelModel,
+    panel: GridPanelModel,
     panelToLinkId: string | undefined,
   ): Promise<
     | undefined
     | {
-        project: ProjectModel
-        panelToLink: PanelModel
-        selectedStringId: string
-      }
+    project: ProjectModel
+    panelToLink: GridPanelModel
+    selectedStringId: string
+  }
   > {
     const project = await this.projectsFacade.projectFromRoute
     if (!project) {

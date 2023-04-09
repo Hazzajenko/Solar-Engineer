@@ -1,5 +1,5 @@
+import { SelectedState } from '../selected/grid-selected.reducer'
 import { TypeModel } from '@shared/data-access/models'
-import { SelectedState } from '../selected/selected.reducer'
 
 export function addPanelToMultiselect(panelId: string, state: SelectedState) {
   if (!state.multiSelect) {

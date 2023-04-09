@@ -1,116 +1,86 @@
 import { inject, Injectable } from '@angular/core'
-import {
-  getSelectedLinks,
-  LinksStoreService,
-  PanelsStoreService,
-  PathsStoreService,
-  SelectedStoreService,
-  toUpdatePanelArray,
-} from '../'
-import { ProjectsFacade } from '@projects/data-access'
-import { PanelModel } from '@shared/data-access/models'
-import { combineLatest, firstValueFrom, map } from 'rxjs'
-import { PathsEventService } from '../paths'
-import { AuthStoreService } from '@auth/data-access'
-import { ProjectItemUpdate, throwExpression } from '@shared/utils'
+import { PanelsStoreService } from '../'
+import { UndefinedString, XyLocation } from '@shared/data-access/models'
+import { SelectedStoreService } from '@design-app/feature-selected'
+import { PanelFactory, PanelRotation } from '../../types'
 
 @Injectable({
   providedIn: 'root',
 })
 export class PanelsEventService {
-  private projectsFacade = inject(ProjectsFacade)
-  private pathsFactory = inject(PathsEventService)
-  private linksStore = inject(LinksStoreService)
-  private panelsStore = inject(PanelsStoreService)
-  private selectedStore = inject(SelectedStoreService)
-  private pathsStore = inject(PathsStoreService)
-  private authStore = inject(AuthStoreService)
+  // private projectsFacade = inject(ProjectsFacade)
+  private _panelsStore = inject(PanelsStoreService)
+  private _selectedStore = inject(SelectedStoreService)
 
-  async createPanel(location: string, rotation: number) {
-    // const project = await this.projectsFacade.projectFromRoute
-    const project = await this.projectsFacade.selectedProject()
-    const selectedStringId = await this.selectedStore.select.selectedStringId
-    /*
-        if (!project) {
-          return
-        }*/
+  // private authStore = inject(AuthStoreService)
 
-    const userId = (await this.authStore.select.userId) ?? throwExpression('User not logged in')
-    // if
-    // TODO give panel a default config
-
-    const panel = new PanelModel({
-      projectId: project.id,
-      stringId: selectedStringId ? selectedStringId : 'undefined',
-      location,
-      rotation,
-      createdById: userId,
-      panelConfigId: 'undefined',
-    })
-    this.panelsStore.dispatch.createPanel(panel)
-    this.selectedStore.dispatch.clearSingleSelected()
-    this.pathsStore.dispatch.clearSelectedPanelPaths()
+  async createPanel(location: XyLocation, stringId: string = UndefinedString, rotation: PanelRotation = PanelRotation.Default) {
+    const panel = PanelFactory.create(location, stringId, rotation)
+    this._panelsStore.dispatch.addPanel(panel)
+    this._selectedStore.dispatch.clearSelectedState()
     return
   }
 
-  async selectPanel(panel: PanelModel, shiftKey: boolean) {
-    const selectedStringId = await this.selectedStore.select.selectedStringId
+  /*async selectPanel(panel: GridPanelModel, shiftKey: boolean) {
+   const selectedStringId = await this._selectedStore.select.selectedStringId
 
-    const links = await this.linksStore.select.allLinks
-    const panelLink = getSelectedLinks(links, panel.id)
+   const links = await this.linksStore.select.allLinks
+   const panelLink = getSelectedLinks(links, panel.id)
 
-    if (selectedStringId && selectedStringId === panel.stringId) {
-      await this.selectedStore.dispatch.selectPanelWhenStringSelected(panel.id, panelLink)
-      await this.pathsFactory.setSelectedPanelPaths(panel.id)
-      // await this.pathsFactory.clearSelectedPanelPaths()
-      return
-    }
+   if (selectedStringId && selectedStringId === panel.stringId) {
+   await this._selectedStore.dispatch.selectPanelWhenStringSelected(panel.id, panelLink)
+   await this.pathsFactory.setSelectedPanelPaths(panel.id)
+   // await this.pathsFactory.clearSelectedPanelPaths()
+   return
+   }
 
-    if (shiftKey) {
-      this.selectedStore.dispatch.addPanelToMultiSelect(panel.id)
-      await this.pathsFactory.setSelectedPanelPaths(panel.id)
-      await this.pathsStore.dispatch.clearSelectedPanelPaths()
-      return
-    }
+   if (shiftKey) {
+   this._selectedStore.dispatch.addPanelToMultiSelect(panel.id)
+   await this.pathsFactory.setSelectedPanelPaths(panel.id)
+   await this.pathsStore.dispatch.clearSelectedPanelPaths()
+   return
+   }
 
-    await this.selectedStore.dispatch.selectPanel(panel.id, panelLink)
-    await this.pathsFactory.setSelectedPanelPaths(panel.id)
-    await this.pathsStore.dispatch.clearSelectedPanelPaths()
-    return
-  }
+   await this._selectedStore.dispatch.selectPanel(panel.id, panelLink)
+   await this.pathsFactory.setSelectedPanelPaths(panel.id)
+   await this.pathsStore.dispatch.clearSelectedPanelPaths()
+   return
+   }
 
-  async updatePanel(panelId: string, changes: Partial<PanelModel>) {
-    const project = await this.projectsFacade.selectedProject()
-    const update: ProjectItemUpdate<PanelModel> = {
-      id: panelId,
-      projectId: project.id,
-      changes,
-    }
-    this.panelsStore.dispatch.updatePanel(update)
+   async updatePanel(panelId: string, changes: Partial<GridPanelModel>) {
+   const project = await this.projectsFacade.selectedProject()
+   const update: ProjectItemUpdate<GridPanelModel> = {
+   id:        panelId,
+   projectId: project.id,
+   changes,
+   }
+   this._panelsStore.dispatch.updatePanel(update)
 
-    return
-  }
+   return
+   }
 
-  async rotateSelectedPanels(rotation: number) {
-    const selectedPanelIds = await firstValueFrom(
-      combineLatest([
-        this.selectedStore.select.multiSelectIds$,
-        this.panelsStore.select.allPanels$,
-      ]).pipe(
-        map(([multiSelectIds, panels]) =>
-          panels.filter((p) => multiSelectIds?.includes(p.id)).map((panels) => panels.id),
-        ),
-      ),
-    )
-    const updates = toUpdatePanelArray(selectedPanelIds, { rotation })
+   async rotateSelectedPanels(rotation: number) {
+   const selectedPanelIds = await firstValueFrom(
+   combineLatest([
+   this._selectedStore.select.multiSelectIds$,
+   this._panelsStore.select.allPanels$,
+   ])
+   .pipe(
+   map(([multiSelectIds, panels]) =>
+   panels.filter((p) => multiSelectIds?.includes(p.id))
+   .map((panels) => panels.id),
+   ),
+   ),
+   )
+   const updates = toUpdatePanelArray(selectedPanelIds, { rotation })
 
-    this.panelsStore.dispatch.updateManyPanels(updates)
+   this._panelsStore.dispatch.updateManyPanels(updates)
 
-    // return this.eventFactory.action({ action: 'UPDATE_PANEL', data: { update } })
-  }
+   // return this.eventFactory.action({ action: 'UPDATE_PANEL', data: { update } })
+   }
 
-  async deletePanel(panelId: string) {
-    this.panelsStore.dispatch.deletePanel(panelId)
-    return
-  }
+   async deletePanel(panelId: string) {
+   this._panelsStore.dispatch.deletePanel(panelId)
+   return
+   }*/
 }

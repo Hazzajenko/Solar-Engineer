@@ -1,3 +1,3 @@
-export * from './design-panels.actions'
-export * from './design-panels.reducer'
-export * as DesignPanelsSelectors from './design-panels.selectors'
+export * from './panels.actions'
+export * from './panels.reducer'
+export * from './panels.selectors'

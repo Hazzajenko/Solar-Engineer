@@ -1,15 +1,17 @@
-import { ProjectsEffects, SignalrEventsEffects } from '@projects/data-access'
-import { LinksEffects, PanelsEffects, PathsEffects, SelectedEffects, StringsEffects } from '@grid-layout/data-access'
+import { GridPanelsEffects, GridSelectedEffects, GridStringsEffects, LinksEffects, PathsEffects } from '@grid-layout/data-access';
+import { ProjectsEffects, SignalrEventsEffects } from '@projects/data-access';
+
+
 // import { SignalrEventsEffects } from '@app/data-access/signalr'
 
 export const projectsEffects = [
   ProjectsEffects,
-  PanelsEffects,
-  StringsEffects,
+  GridPanelsEffects,
+  GridStringsEffects,
   LinksEffects /*
-    BlocksEffects,
-    EntitiesEffects,*/,
-  SelectedEffects,
+   BlocksEffects,
+   EntitiesEffects,*/,
+  GridSelectedEffects,
   PathsEffects,
   SignalrEventsEffects,
   // ProjectsHubsEffects,

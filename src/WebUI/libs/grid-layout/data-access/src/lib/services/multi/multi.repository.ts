@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
-import { BLOCK_TYPE, BlockType, PanelModel } from '@shared/data-access/models'
-import { MultiActions, PanelsActions, SelectedActions } from '../../store'
+import { BLOCK_TYPE, BlockType, GridPanelModel } from '@shared/data-access/models'
+import { GridPanelsActions, GridSelectedActions, MultiActions } from '../../store'
 
 @Injectable({
   providedIn: 'root',
@@ -15,7 +15,7 @@ export class MultiRepository {
 
   finishMultiSelect(location: string, ids: string[]) {
     this.store.dispatch(MultiActions.finishMultiSelect({ location }))
-    this.store.dispatch(SelectedActions.selectMultiIds({ ids }))
+    this.store.dispatch(GridSelectedActions.selectMultiIds({ ids }))
   }
 
   startMultiCreate(location: string, type: BlockType) {
@@ -25,11 +25,11 @@ export class MultiRepository {
     }
   }
 
-  finishMultiCreate(location: string, type: BlockType, panels: PanelModel[]) {
+  finishMultiCreate(location: string, type: BlockType, panels: GridPanelModel[]) {
     switch (type) {
       case BLOCK_TYPE.PANEL:
         this.store.dispatch(MultiActions.finishMultiCreatePanel({ location }))
-        this.store.dispatch(PanelsActions.addManyPanels({ panels }))
+        this.store.dispatch(GridPanelsActions.addManyPanels({ panels }))
     }
   }
 

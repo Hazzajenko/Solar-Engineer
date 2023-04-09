@@ -1,26 +1,26 @@
 import { inject, Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
-import { StringsActions } from '../../../index'
+import { StringsActions } from '../../store'
 import { UpdateStr } from '@ngrx/entity/src/models'
-import { DesignStringModel } from '../../types'
+import { StringModel } from '../../types'
 
 @Injectable({ providedIn: 'root' })
 export class StringsRepository {
   private _store = inject(Store)
 
-  public createString(string: DesignStringModel) {
+  public createString(string: StringModel) {
     this._store.dispatch(StringsActions.addString({ string }))
   }
 
-  public createStringWithPanels(string: DesignStringModel, panelIds: string[]) {
+  public createStringWithPanels(string: StringModel, panelIds: string[]) {
     this._store.dispatch(StringsActions.createStringWithPanels({ string, panelIds }))
   }
 
-  public updateString(update: UpdateStr<DesignStringModel>) {
+  public updateString(update: UpdateStr<StringModel>) {
     this._store.dispatch(StringsActions.updateString({ update }))
   }
 
-  public loadStringsSuccess(strings: DesignStringModel[]) {
+  public loadStringsSuccess(strings: StringModel[]) {
     this._store.dispatch(StringsActions.loadStringsSuccess({ strings }))
   }
 

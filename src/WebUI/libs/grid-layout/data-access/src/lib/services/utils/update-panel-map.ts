@@ -1,14 +1,12 @@
 import { Update } from '@ngrx/entity'
-import { PanelModel } from '@shared/data-access/models'
+import { GridPanelModel } from '@shared/data-access/models'
 
-export function toUpdatePanelArray(selectedPanelIds: string[], changes: Partial<PanelModel>) {
+export function toUpdatePanelArray(selectedPanelIds: string[], changes: Partial<GridPanelModel>) {
   return selectedPanelIds.map((panelId) => {
-    const update: Update<PanelModel> = {
+    const update: Update<GridPanelModel> = {
       id: panelId,
-      changes
+      changes,
     }
     return update
   })
 }
-
-

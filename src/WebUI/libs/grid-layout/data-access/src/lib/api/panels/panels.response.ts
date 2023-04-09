@@ -1,11 +1,11 @@
-import { PanelModel } from '@shared/data-access/models'
+import { GridPanelModel } from '@shared/data-access/models'
 
 export interface ManyPanelsResponse {
-  panels: PanelModel[]
+  panels: GridPanelModel[]
 }
 
 export interface PanelResponse {
-  panel: PanelModel
+  panel: GridPanelModel
 }
 
 export interface UpdateManyPanelsResponse {
@@ -16,7 +16,6 @@ export interface UpdateManyPanelsResponse {
 export interface DeletePanelResponse {
   panelId: string
 }
-
 
 export interface DeleteManyPanelsResponse {
   // stringIds: string[]

@@ -1,3 +1,3 @@
-export * from './panels.actions'
-export * from './panels.reducer'
-export * as PanelsSelectors from './panels.selectors'
+export * from './grid-panels.actions'
+export * from './grid-panels.reducer'
+export * as PanelsSelectors from './grid-panels.selectors'

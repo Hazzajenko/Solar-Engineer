@@ -1,8 +1,7 @@
-import { PanelLinkModel, PanelModel } from '@shared/data-access/models'
-import { createFeatureSelector, createSelector } from '@ngrx/store'
-import { RouterSelectors } from '@shared/data-access/router'
-
 import { LINKS_FEATURE_KEY, linksAdapter, LinksState } from './links.reducer'
+import { createFeatureSelector, createSelector } from '@ngrx/store'
+import { GridPanelModel, PanelLinkModel } from '@shared/data-access/models'
+import { RouterSelectors } from '@shared/data-access/router'
 
 export const selectLinksState = createFeatureSelector<LinksState>(LINKS_FEATURE_KEY)
 
@@ -30,7 +29,7 @@ export const selectLinksByRouteParams = createSelector(
     links.filter((link) => link.projectId === projectId /*Number(projectId)*/),
 )
 
-export const selectLinksByPanels = (props: { panels: PanelModel[] }) =>
+export const selectLinksByPanels = (props: { panels: GridPanelModel[] }) =>
   createSelector(selectAllLinks, (links: PanelLinkModel[]) =>
     links.filter((link) => props.panels.map((panel) => panel.id).includes(link.panelPositiveToId)),
   )

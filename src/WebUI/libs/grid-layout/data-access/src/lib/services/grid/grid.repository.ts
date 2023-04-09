@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core'
 import { ClientXY } from '../..'
 import { Store } from '@ngrx/store'
-import { GridActions, LinksActions, MultiActions, SelectedActions } from '../../store'
+import { GridActions, GridSelectedActions, LinksActions, MultiActions } from '../../store'
 import { BlockType, GridMode } from '@shared/data-access/models'
 
 @Injectable({
@@ -51,7 +51,7 @@ export class GridRepository {
 
   clearEntireGridState() {
     this.store.dispatch(LinksActions.clearLinksState())
-    this.store.dispatch(SelectedActions.clearSelectedState())
+    this.store.dispatch(GridSelectedActions.clearSelectedState())
     this.store.dispatch(MultiActions.clearMultiState())
     this.store.dispatch(GridActions.selectGridmodeSelect())
   }

@@ -1,3 +1,5 @@
+import { PANEL_SELECTED } from '../models/panel-selected'
+import { STRING_SELECTED } from '../models/string-selected'
 import {
   LinksSelectors,
   LinksState,
@@ -7,17 +9,21 @@ import {
   StringsSelectors,
 } from '@grid-layout/data-access'
 import { createSelector } from '@ngrx/store'
-import { BlockPanelModel, PanelModel, PathModel, StringModel } from '@shared/data-access/models'
-import { PANEL_SELECTED } from '../models/panel-selected'
-import { STRING_SELECTED } from '../models/string-selected'
+import {
+  BlockPanelModel,
+  GridPanelModel,
+  GridStringModel,
+  PathModel,
+} from '@shared/data-access/models'
+
 
 export const selectPanelById = (props: { id: string }) =>
-  createSelector(PanelsSelectors.selectAllPanels, (panels: PanelModel[]) =>
+  createSelector(PanelsSelectors.selectAllPanels, (panels: GridPanelModel[]) =>
     panels.find((panel) => panel.id === props.id),
   )
 
 export const selectBlockPanelById = (props: { id: string }) =>
-  createSelector(PanelsSelectors.selectAllPanels, (panels: PanelModel[]) => {
+  createSelector(PanelsSelectors.selectAllPanels, (panels: GridPanelModel[]) => {
     const panel = panels.find((panel) => panel.id === props.id)
     if (!panel) return undefined
     return {
@@ -32,13 +38,13 @@ export const selectStringByPanelId = (props: { id: string }) =>
   createSelector(
     StringsSelectors.selectAllStrings,
     selectPanelById({ id: props.id }),
-    (strings: StringModel[], panel?: PanelModel) => {
+    (strings: GridStringModel[], panel?: GridPanelModel) => {
       if (!panel) return undefined
       return strings.find((string) => string.id === panel.stringId)
     },
   )
 export const selectStringNameAndColorById = (props: { id: string }) =>
-  createSelector(selectStringByPanelId({ id: props.id }), (string?: StringModel) => {
+  createSelector(selectStringByPanelId({ id: props.id }), (string?: GridStringModel) => {
     if (!string) return undefined
     return { stringName: string.name, stringColor: string.color }
   })

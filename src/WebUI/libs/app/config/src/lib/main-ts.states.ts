@@ -1,5 +1,5 @@
 import { AUTH_FEATURE_KEY, authReducer } from '@auth/data-access';
-import { DESIGN_PANELS_FEATURE_KEY, designPanelsReducer } from '@design-app/feature-panel';
+import { PANELS_FEATURE_KEY, panelsReducer } from '@design-app/feature-panel';
 import { SELECTED_FEATURE_KEY, selectedReducer } from '@design-app/feature-selected';
 import { provideState } from '@ngrx/store';
 
@@ -20,7 +20,7 @@ export const mainTsStates = [
    provideState(GROUP_CHAT_MESSAGES_FEATURE_KEY, groupChatMessagesReducer),
    provideState(USERS_FEATURE_KEY, usersReducer),*/
   provideState(AUTH_FEATURE_KEY, authReducer),
-  provideState(DESIGN_PANELS_FEATURE_KEY, designPanelsReducer),
+  provideState(PANELS_FEATURE_KEY, panelsReducer),
   provideState(SELECTED_FEATURE_KEY, selectedReducer),
 
   // provideState(CHAT_ROOMS_FEATURE_KEY, chatRoomsReducer),

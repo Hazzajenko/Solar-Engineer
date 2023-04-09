@@ -1,17 +1,18 @@
 import { inject, Pipe, PipeTransform } from '@angular/core'
-import { PanelsFacade } from '@grid-layout/data-access'
-import { StringModel } from '@shared/data-access/models'
+import { GridPanelsFacade } from '@grid-layout/data-access'
+import { GridStringModel } from '@shared/data-access/models'
 import { Observable, of } from 'rxjs'
 import { map } from 'rxjs/operators'
 
 @Pipe({
-  name: 'stringPanelsAsync',
+  name:       'stringPanelsAsync',
   standalone: true,
 })
-export class StringPanelsAsyncPipe implements PipeTransform {
-  private panelsFacade = inject(PanelsFacade)
+export class StringPanelsAsyncPipe
+  implements PipeTransform {
+  private panelsFacade = inject(GridPanelsFacade)
 
-  transform(string: StringModel): Observable<number> {
+  transform(string: GridStringModel): Observable<number> {
     if (!string) {
       return of(0)
     }

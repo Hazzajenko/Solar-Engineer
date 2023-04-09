@@ -19,7 +19,7 @@ export class DesignLayoutService {
   protected _clickService = inject(DesignLayoutClickService)
   protected _canvasService = inject(CanvasService)
   protected _mousePositioningService = inject(MousePositioningService)
-  protected _componentElementService = inject(ComponentElementsService)
+  protected _componentElementsService = inject(ComponentElementsService)
   protected _objectPositioningService = inject(ObjectPositioningService)
   // protected _multiSelectService = inject(MultiSelectService)
   protected _selectedFacade = inject(SelectedStoreService)

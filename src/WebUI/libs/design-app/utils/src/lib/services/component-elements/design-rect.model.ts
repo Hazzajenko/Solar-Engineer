@@ -1,8 +1,8 @@
-import { DesignEntityType } from '@design-app/shared'
+import { EntityType } from '@design-app/shared'
 
 export type DesignRectModel = {
   id: string
-  type: DesignEntityType
+  type: EntityType
   x: number
   y: number
   width: number

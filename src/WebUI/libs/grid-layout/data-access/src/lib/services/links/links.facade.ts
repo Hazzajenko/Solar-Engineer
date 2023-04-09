@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
 import { LinksActions, LinksSelectors } from '../../store'
-import { PanelModel } from '@shared/data-access/models'
+import { GridPanelModel } from '@shared/data-access/models'
 import { firstValueFrom } from 'rxjs'
 
 @Injectable({
@@ -46,11 +46,11 @@ export class LinksFacade {
     return this.store.select(LinksSelectors.selectLinkById({ linkId }))
   }
 
-  linksByPanels$(panels: PanelModel[]) {
+  linksByPanels$(panels: GridPanelModel[]) {
     return this.store.select(LinksSelectors.selectLinksByPanels({ panels }))
   }
 
-  linksByPanels(panels: PanelModel[]) {
+  linksByPanels(panels: GridPanelModel[]) {
     return firstValueFrom(this.store.select(LinksSelectors.selectLinksByPanels({ panels })))
   }
 

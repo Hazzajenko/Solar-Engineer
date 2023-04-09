@@ -1,4 +1,4 @@
-import { PanelModel } from '@shared/data-access/models'
+import { GridPanelModel } from '@shared/data-access/models'
 
 export interface PanelCreatedResponse {
   projectId: string
@@ -6,5 +6,5 @@ export interface PanelCreatedResponse {
   byAppUserId: string
   isSuccess: boolean
   error: string | null
-  panel: PanelModel
+  panel: GridPanelModel
 }

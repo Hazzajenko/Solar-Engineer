@@ -2,16 +2,16 @@ import { inject, Injectable } from '@angular/core'
 import { select, Store } from '@ngrx/store'
 import { firstValueFrom, Observable } from 'rxjs'
 import { Dictionary } from '@ngrx/entity'
-import { DesignPanelModel } from '@design-app/feature-panel'
-import { selectAllDesignPanels, selectDesignPanelEntityById, selectDesignPanelsByIdArray, selectDesignPanelsEntities } from '../../store/design-panels.selectors'
+import { PanelModel } from '@design-app/feature-panel'
+import { selectAllPanels, selectPanelEntityById, selectPanelsByIdArray, selectPanelsEntities } from '../../store/panels.selectors'
 
 @Injectable({
   providedIn: 'root',
 })
 export class PanelsQueries {
   private readonly _store = inject(Store)
-  private readonly _panelEntities$: Observable<Dictionary<DesignPanelModel>> = this._store.pipe(select((selectDesignPanelsEntities)))
-  private readonly _panels$: Observable<DesignPanelModel[]> = this._store.pipe(select((selectAllDesignPanels)))
+  private readonly _panelEntities$: Observable<Dictionary<PanelModel>> = this._store.pipe(select((selectPanelsEntities)))
+  private readonly _panels$: Observable<PanelModel[]> = this._store.pipe(select((selectAllPanels)))
 
   public get panelEntities$() {
     return this._panelEntities$
@@ -22,7 +22,7 @@ export class PanelsQueries {
   }
 
   public panelById$(id: string) {
-    return this._store.pipe(select(selectDesignPanelEntityById({ id })))
+    return this._store.pipe(select(selectPanelEntityById({ id })))
   }
 
   public panelById(id: string) {
@@ -30,11 +30,11 @@ export class PanelsQueries {
   }
 
   public panelsByIdArray$(ids: string[]) {
-    return this._store.pipe(select(selectDesignPanelsByIdArray({ ids })))
+    return this._store.pipe(select(selectPanelsByIdArray({ ids })))
   }
 
   public panelsByIdArray(ids: string[]) {
-    return firstValueFrom(this._store.pipe(select(selectDesignPanelsByIdArray({ ids }))))
+    return firstValueFrom(this._store.pipe(select(selectPanelsByIdArray({ ids }))))
   }
 
   /*  public panelsByStringId$(stringId: string) {

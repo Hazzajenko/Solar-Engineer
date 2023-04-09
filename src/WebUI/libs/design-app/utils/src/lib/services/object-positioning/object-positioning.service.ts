@@ -1,12 +1,12 @@
 import { inject, Injectable } from '@angular/core'
 import { XyLocation } from '@shared/data-access/models'
-import { DesignPanelModel, PanelsStoreService } from '@design-app/feature-panel'
+import { PanelModel, PanelsStoreService } from '@design-app/feature-panel'
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { ComponentElementsService, DesignRectModel } from '../component-elements'
 import { ViewPositioningService } from '../view-positioning'
 import { LineDirection } from '@design-app/canvas'
 import { TypeOfEntity } from '@design-app/feature-selected'
-import { DesignEntityType, isDesignEntityType } from '@design-app/shared'
+import { EntityType, isEntityType } from '@design-app/shared'
 import { MousePositioningService } from '../mouse-positioning'
 
 @Injectable({
@@ -18,7 +18,7 @@ export class ObjectPositioningService {
   private _mousePositioningService = inject(MousePositioningService)
   private _panelsStore = inject(PanelsStoreService)
   // private _designPanelsFacade = inject(DesignPanelsFacade)
-  private _nearByEntitiesOnAxis: { [key in DesignEntityType]: { [key in LineDirection]: string[] } } = {
+  private _nearByEntitiesOnAxis: { [key in EntityType]: { [key in LineDirection]: string[] } } = {
     panel:  {
       left:   [],
       right:  [],
@@ -42,7 +42,7 @@ export class ObjectPositioningService {
     return this._nearByEntitiesOnAxis[entity.type][direction]
   }
 
-  public selectBiggestNearByEntityArray(type: DesignEntityType) {
+  public selectBiggestNearByEntityArray(type: EntityType) {
     const { left, right, top, bottom } = this._nearByEntitiesOnAxis[type]
     const result = [left, right, top, bottom].sort((a, b) => b.length - a.length)[0]
     switch (result) {
@@ -72,7 +72,7 @@ export class ObjectPositioningService {
     }
   }
 
-  public clearNearByEntitiesOnAxis(type: DesignEntityType, direction: LineDirection) {
+  public clearNearByEntitiesOnAxis(type: EntityType, direction: LineDirection) {
     this._nearByEntitiesOnAxis[type][direction] = []
   }
 
@@ -118,7 +118,7 @@ export class ObjectPositioningService {
           changes: {
             location,
           },
-        } as UpdateStr<DesignPanelModel>
+        } as UpdateStr<PanelModel>
       },
     )
     console.log('moveGroupOfPanelsToSameAxisPositionV2', { updates })
@@ -198,7 +198,7 @@ export class ObjectPositioningService {
       throw new Error('id not found')
     }
     const type = element.getAttribute('type')
-    if (!type || !isDesignEntityType(type)) {
+    if (!type || !isEntityType(type)) {
       throw new Error('type not found')
     }
     const panelRect = element.getBoundingClientRect()

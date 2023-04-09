@@ -1,6 +1,6 @@
 import { SELECTED_FEATURE_KEY, SelectedState } from './selected.reducer'
 import { SelectedPanelState } from '@design-app/feature-panel'
-import { DesignEntityType } from '@design-app/shared'
+import { EntityType } from '@design-app/shared'
 import { createFeatureSelector, createSelector } from '@ngrx/store'
 
 export const selectSelectedState = createFeatureSelector<SelectedState>(SELECTED_FEATURE_KEY)
@@ -15,6 +15,15 @@ export const selectMultiSelectedEntities = createSelector(
   (state: SelectedState) => state.multiSelectedEntities,
 )
 
+export const selectSingleAndMultiSelectedEntities = createSelector(
+  selectSingleSelectedEntity,
+  selectMultiSelectedEntities,
+  (singleSelected, multiSelected) => ({
+    singleSelected,
+    multiSelected,
+  }),
+)
+
 export const selectSelectedStringId = createSelector(
   selectSelectedState,
   (state: SelectedState) => state.selectedStringId,
@@ -23,16 +32,6 @@ export const selectSelectedStringId = createSelector(
 export const selectNearbyEntitiesOnAxis = createSelector(
   selectSelectedState,
   (state: SelectedState) => state.nearbyEntitiesOnAxis,
-)
-export const selectSingleAndMultiSelectedEntities = createSelector(
-  selectSingleSelectedEntity,
-  selectMultiSelectedEntities,
-  (singleSelectedEntity, multiSelectedEntities) => {
-    if (singleSelectedEntity) {
-      return [singleSelectedEntity, ...multiSelectedEntities]
-    }
-    return multiSelectedEntities
-  },
 )
 
 export const selectSelectedPanelState = (props: { id: string }) =>
@@ -73,13 +72,13 @@ export const selectIsEntityMultiSelected = (props: { id: string }) =>
  return SelectedPanelState.NoneSelected
  }),*/
 
-export const selectMultiSelectedEntitiesOfType = (type: DesignEntityType) =>
+export const selectMultiSelectedEntitiesOfType = (type: EntityType) =>
   createSelector(selectMultiSelectedEntities, (entities) =>
     entities.filter((entity) => entity.type === type),
   )
 
-export const selectMultiSelectedEntitiesOfTypeCount = (type: DesignEntityType) =>
+export const selectMultiSelectedEntitiesOfTypeCount = (type: EntityType) =>
   createSelector(selectMultiSelectedEntitiesOfType(type), (entities) => entities.length)
 
-export const selectMultiSelectedEntitiesOfTypeIds = (type: DesignEntityType) =>
+export const selectMultiSelectedEntitiesOfTypeIds = (type: EntityType) =>
   createSelector(selectMultiSelectedEntitiesOfType(type), (entities) => entities.map((e) => e.id))

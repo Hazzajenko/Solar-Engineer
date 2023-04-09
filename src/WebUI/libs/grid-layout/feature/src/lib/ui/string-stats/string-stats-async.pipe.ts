@@ -1,7 +1,6 @@
 import { inject, Pipe, PipeTransform } from '@angular/core'
-import { StatsService } from '@grid-layout/data-access'
-import { LinksStoreService, PanelsStoreService } from '@grid-layout/data-access'
-import { StringModel, TotalModel } from '@shared/data-access/models'
+import { GridPanelsStoreService, LinksStoreService, StatsService } from '@grid-layout/data-access'
+import { GridStringModel, TotalModel } from '@shared/data-access/models'
 import { Observable, of, switchMap } from 'rxjs'
 import { map } from 'rxjs/operators'
 
@@ -13,26 +12,27 @@ export interface StringStatsModel {
 }
 
 @Pipe({
-  name: 'stringStatsAsync',
+  name:       'stringStatsAsync',
   standalone: true,
 })
-export class StringStatsAsyncPipe implements PipeTransform {
+export class StringStatsAsyncPipe
+  implements PipeTransform {
   private statsService = inject(StatsService)
-  private panelsStore = inject(PanelsStoreService)
+  private panelsStore = inject(GridPanelsStoreService)
   private linksStore = inject(LinksStoreService)
 
-  transform(string: StringModel): Observable<StringStatsModel> {
+  transform(string: GridStringModel): Observable<StringStatsModel> {
     if (!string) {
       const stringStats: StringStatsModel = {
-        amountOfPanels: 0,
+        amountOfPanels:  0,
         panelsNotInLink: 0,
-        amountOfLinks: 0,
-        totals: {
-          totalImp: 0,
-          totalIsc: 0,
+        amountOfLinks:   0,
+        totals:          {
+          totalImp:  0,
+          totalIsc:  0,
           totalPmax: 0,
-          totalVmp: 0,
-          totalVoc: 0,
+          totalVmp:  0,
+          totalVoc:  0,
         },
       }
       return of(stringStats)
@@ -50,10 +50,10 @@ export class StringStatsAsyncPipe implements PipeTransform {
       .pipe(
         map((r) => {
           const stringStats: StringStatsModel = {
-            amountOfPanels: r.stringPanels.length,
-            amountOfLinks: r.stringLinks.length,
+            amountOfPanels:  r.stringPanels.length,
+            amountOfLinks:   r.stringLinks.length,
             panelsNotInLink: r.stringLinks.length - r.stringPanels.length,
-            totals: this.statsService.calculateStringTotals(r.stringPanels),
+            totals:          this.statsService.calculateStringTotals(r.stringPanels),
           }
           return stringStats
         }),

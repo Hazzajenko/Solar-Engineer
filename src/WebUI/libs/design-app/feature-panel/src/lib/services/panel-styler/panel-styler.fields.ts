@@ -1,4 +1,4 @@
-import { PanelStyleState } from '../../types'
+import { PanelStyleState } from '../../types/panel.styles'
 import { NearbyPanel } from './nearby-panel.model'
 
 export abstract class PanelStylerFields {

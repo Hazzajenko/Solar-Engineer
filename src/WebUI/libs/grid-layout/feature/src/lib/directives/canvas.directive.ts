@@ -1,33 +1,18 @@
 import { Directive, ElementRef, inject, Input, NgZone, OnInit, Renderer2 } from '@angular/core'
-import {
-  BlockRectModel,
-  ElementOffsets,
-  PanelsStoreService,
-  XYModel,
-} from '@grid-layout/data-access'
-import {
-  GridMode,
-  SelectedPanelLinkPathModel,
-  SelectedPathModel,
-  VibrantColor,
-} from '@shared/data-access/models'
-import {
-  downAndLeft,
-  downAndRight,
-  handleXAxisSame,
-  handleYAxisSame,
-  upAndLeft,
-  upAndRight,
-} from './utils/handle-axis'
+import { BlockRectModel, ElementOffsets, GridPanelsStoreService, XYModel } from '@grid-layout/data-access'
+import { GridMode, SelectedPanelLinkPathModel, SelectedPathModel, VibrantColor } from '@shared/data-access/models'
+import { downAndLeft, downAndRight, handleXAxisSame, handleYAxisSame, upAndLeft, upAndRight } from './utils/handle-axis'
 import { BaseService } from '@shared/logger'
 
 @Directive({
-  selector: '[appCanvas]',
+  selector:   '[appCanvas]',
   standalone: true,
 })
-export class CanvasDirective extends BaseService implements OnInit {
+export class CanvasDirective
+  extends BaseService
+  implements OnInit {
   private canvas = inject(ElementRef<HTMLCanvasElement>)
-  private panelsStore = inject(PanelsStoreService)
+  private panelsStore = inject(GridPanelsStoreService)
   private ctx: CanvasRenderingContext2D = this.canvas.nativeElement.getContext('2d')
   private renderer = inject(Renderer2)
 
@@ -50,7 +35,10 @@ export class CanvasDirective extends BaseService implements OnInit {
   offsetY?: number
   currentGridMode = GridMode.UNDEFINED
   fillStyle = '#7585d8'
-  pathMap?: void | Map<number, { x: number; y: number }>
+  pathMap?: void | Map<number, {
+    x: number;
+    y: number
+  }>
   pathMapAnimationId?: number
   pathMapAnimating = false
 
@@ -105,20 +93,20 @@ export class CanvasDirective extends BaseService implements OnInit {
 
   @Input() set setStringPaths(selectedPaths: SelectedPanelLinkPathModel | undefined | null) {
     /*    if (!selectedPaths || selectedPaths.panelPaths.length < 1) {
-          // console.log('undefined')
-          if (this.pathMapAnimationId) {
-            cancelAnimationFrame(this.pathMapAnimationId)
-          }
-          this.ctx.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height)
-          this.pathMapAnimating = false
-          return
-        }
+     // console.log('undefined')
+     if (this.pathMapAnimationId) {
+     cancelAnimationFrame(this.pathMapAnimationId)
+     }
+     this.ctx.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height)
+     this.pathMapAnimating = false
+     return
+     }
 
-        // console.log(selectedPaths)
-        this.selectedPaths = selectedPaths
-        this.pathMapAnimating = true
+     // console.log(selectedPaths)
+     this.selectedPaths = selectedPaths
+     this.pathMapAnimating = true
 
-        this.animateSelectedPathMap().then((r) => console.log(r))*/
+     this.animateSelectedPathMap().then((r) => console.log(r))*/
   }
 
   @Input() set setScale(scale: number | null) {
@@ -136,21 +124,24 @@ export class CanvasDirective extends BaseService implements OnInit {
   fpsInterval = 1000 / 60
   startTime = Date.now()
 
-  lines: { x: number; y: number }[] = []
+  lines: {
+    x: number;
+    y: number
+  }[] = []
   parentHeight?: number
   parentWidth?: number
 
   /*  @HostListener('document:mouseup', ['$event'])
-    mouseUp(event: MouseEvent) {
-      event.preventDefault()
-      event.stopPropagation()
-      // mouseUp(_: MouseEvent) {
-      // console.log(event.clientX, event.clientY)
-      this.ctx.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height)
-      this.startX = undefined
-      this.startY = undefined
-      return
-    }*/
+   mouseUp(event: MouseEvent) {
+   event.preventDefault()
+   event.stopPropagation()
+   // mouseUp(_: MouseEvent) {
+   // console.log(event.clientX, event.clientY)
+   this.ctx.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height)
+   this.startX = undefined
+   this.startY = undefined
+   return
+   }*/
 
   private onMouseUpHandler(event: MouseEvent) {
     event.preventDefault()
@@ -164,20 +155,20 @@ export class CanvasDirective extends BaseService implements OnInit {
   }
 
   /*  @HostListener('document:mousemove', ['$event'])
-    onDragging(event: MouseEvent) {
-      this.logDebug('onDragging', event.clientX, event.clientY)
-      if (!this.startX || !this.startY || !event.altKey) {
-        return
-      } else {
-        this.pageX = event.pageX
-        this.pageY = event.pageY
-      }
-      this.ngZone.runOutsideAngular(() => {
-        this.animate()
-      })
-      event.preventDefault()
-      event.stopPropagation()
-    }*/
+   onDragging(event: MouseEvent) {
+   this.logDebug('onDragging', event.clientX, event.clientY)
+   if (!this.startX || !this.startY || !event.altKey) {
+   return
+   } else {
+   this.pageX = event.pageX
+   this.pageY = event.pageY
+   }
+   this.ngZone.runOutsideAngular(() => {
+   this.animate()
+   })
+   event.preventDefault()
+   event.stopPropagation()
+   }*/
 
   private onMouseMoveHandler(event: MouseEvent) {
     event.preventDefault()
@@ -198,20 +189,20 @@ export class CanvasDirective extends BaseService implements OnInit {
   private setUpMouseEvents() {
     this.ngZone.runOutsideAngular(() => {
       /*      this.renderer.listen(this.canvas.nativeElement, 'mousedown', (event: MouseEvent) => {
-              this.onMouseDownHandler(event)
-              event.stopPropagation()
-              event.preventDefault()
-            })*/
+       this.onMouseDownHandler(event)
+       event.stopPropagation()
+       event.preventDefault()
+       })*/
       /*      this.renderer.listen(this.canvas.nativeElement, 'mouseup', (event: MouseEvent) => {
-              event.stopPropagation()
-              event.preventDefault()
-              this.onMouseUpHandler(event)
-            })
-            this.renderer.listen(this.ctx, 'mousemove', (event: MouseEvent) => {
-              event.stopPropagation()
-              event.preventDefault()
-              this.onMouseMoveHandler(event)
-            })*/
+       event.stopPropagation()
+       event.preventDefault()
+       this.onMouseUpHandler(event)
+       })
+       this.renderer.listen(this.ctx, 'mousemove', (event: MouseEvent) => {
+       event.stopPropagation()
+       event.preventDefault()
+       this.onMouseMoveHandler(event)
+       })*/
     })
   }
 
@@ -404,7 +395,10 @@ export class CanvasDirective extends BaseService implements OnInit {
     this.ctx.stroke()
   }
 
-  private getValuesFromTwoBlocks(twoBlocks: { first: BlockRectModel; second: BlockRectModel }) {
+  private getValuesFromTwoBlocks(twoBlocks: {
+    first: BlockRectModel;
+    second: BlockRectModel
+  }) {
     const first = twoBlocks.first
     const second = twoBlocks.second
 
@@ -414,15 +408,19 @@ export class CanvasDirective extends BaseService implements OnInit {
     const xAxisSame = first.x === second.x
     const yAxisSame = first.y === second.y
     let xDifference = Math.floor(first.x - second.x)
-    xDifference = xDifference > 0 ? xDifference : xDifference * -1
+    xDifference = xDifference > 0
+      ? xDifference
+      : xDifference * -1
     let yDifference = Math.floor(first.y - second.y)
-    yDifference = yDifference > 0 ? yDifference : yDifference * -1
+    yDifference = yDifference > 0
+      ? yDifference
+      : yDifference * -1
 
     if (xAxisSame) {
       const yRes = handleXAxisSame(drawingUp, first.y, first.height, second.y, second.height)
       return {
-        firstResultX: first.x,
-        firstResultY: yRes.firstResultY,
+        firstResultX:  first.x,
+        firstResultY:  yRes.firstResultY,
         secondResultX: second.x,
         secondResultY: yRes.secondResultY,
       }
@@ -430,8 +428,8 @@ export class CanvasDirective extends BaseService implements OnInit {
     if (yAxisSame) {
       const xRes = handleYAxisSame(drawingLeft, first.x, first.width, second.x, second.width)
       return {
-        firstResultX: xRes.firstResultX,
-        firstResultY: first.y,
+        firstResultX:  xRes.firstResultX,
+        firstResultY:  first.y,
         secondResultX: xRes.secondResultX,
         secondResultY: second.y,
       }
@@ -456,10 +454,10 @@ export class CanvasDirective extends BaseService implements OnInit {
       // console.error('(!this.parentHeight || !this.parentHeight)')
       this.logError('Canvas-directive', '(!this.parentHeight || !this.parentHeight)')
       /*      this.logger.error(
-              {
-                source: 'Canvas-directive',
-                objects: ['(!this.parentHeight || !this.parentHeight)'],
-              })*/
+       {
+       source: 'Canvas-directive',
+       objects: ['(!this.parentHeight || !this.parentHeight)'],
+       })*/
       return undefined
     }
     const panel = await this.panelsStore.select.panelById(panelId)
@@ -467,10 +465,10 @@ export class CanvasDirective extends BaseService implements OnInit {
       // console.error('panel')
       this.logError('Canvas-directive', '!panel')
       /*      this.logger.error(
-              {
-                source: 'Canvas-directive',
-                objects: ['panel'],
-              })*/
+       {
+       source: 'Canvas-directive',
+       objects: ['panel'],
+       })*/
       return undefined
     }
     const panelDiv = document.querySelector(`[blockLocation=${panel.location}]`)
@@ -478,10 +476,10 @@ export class CanvasDirective extends BaseService implements OnInit {
       // console.error('!firstPanelDiv')
       this.logError('Canvas-directive', '!panelDiv')
       /*      this.logger.error(
-              {
-                source: 'Canvas-directive',
-                objects: ['firstPanelDiv'],
-              })*/
+       {
+       source: 'Canvas-directive',
+       objects: ['firstPanelDiv'],
+       })*/
       return undefined
     }
 

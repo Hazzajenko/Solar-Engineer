@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core'
 import { MousePositioningService } from '../mouse-positioning'
-import { DesignEntityType, isDesignEntityType } from '@design-app/shared'
+import { EntityType, isEntityType } from '@design-app/shared'
 import { DesignRectModel } from './design-rect.model'
 
 @Injectable({
@@ -47,7 +47,7 @@ export class ComponentElementsService {
     console.log('addToElements', this._elements)
   }
 
-  public getComponentElementsByType(entityType: DesignEntityType) {
+  public getComponentElementsByType(entityType: EntityType) {
     return this._elements.filter((e) => e.getAttribute('type') === entityType)
   }
 
@@ -70,7 +70,7 @@ export class ComponentElementsService {
     return this._elements.map(element => {
       // return this.getBlockRectFromElement(element)
       const type = element.getAttribute('type')
-      if (!type || !isDesignEntityType(type)) {
+      if (!type || !isEntityType(type)) {
         throw new Error('type not found')
       }
       const rect = element.getBoundingClientRect()
@@ -139,7 +139,7 @@ export class ComponentElementsService {
       throw new Error('id not found')
     }
     const type = element.getAttribute('type')
-    if (!type || !isDesignEntityType(type)) {
+    if (!type || !isEntityType(type)) {
       throw new Error('type not found')
     }
     const panelRect = element.getBoundingClientRect()
@@ -158,13 +158,13 @@ export class ComponentElementsService {
     }
   }
 
-  private getBlockRectFromElementV2(element: Element): DesignRectModel {
+  public getBlockRectFromElementV2(element: Element): DesignRectModel {
     const id = element.getAttribute('id')
     if (!id) {
       throw new Error('id not found')
     }
     const type = element.getAttribute('type')
-    if (!type || !isDesignEntityType(type)) {
+    if (!type || !isEntityType(type)) {
       throw new Error('type not found')
     }
     const panelRect = element.getBoundingClientRect()

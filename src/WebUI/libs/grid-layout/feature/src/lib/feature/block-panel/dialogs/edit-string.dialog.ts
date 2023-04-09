@@ -17,7 +17,7 @@ import { MatInputModule } from '@angular/material/input'
 
 import { WarmColor } from '@shared/data-access/models'
 import { StringTotalsAsyncPipe } from '../pipes/string-totals-async.pipe'
-import { StringsEventService, StringsFacade } from '@grid-layout/data-access'
+import { GridStringsEventService, GridStringsFacade } from '@grid-layout/data-access'
 
 @Component({
   selector:        'app-edit-string-dialog',
@@ -103,8 +103,8 @@ export class EditStringDialog {
   name = new FormControl('')
   color = new FormControl('')
   form!: FormGroup
-  private stringsFacade = inject(StringsFacade)
-  private stringsFactory = inject(StringsEventService)
+  private stringsFacade = inject(GridStringsFacade)
+  private stringsFactory = inject(GridStringsEventService)
 
   constructor(
     private dialogRef: MatDialogRef<EditStringDialog>,

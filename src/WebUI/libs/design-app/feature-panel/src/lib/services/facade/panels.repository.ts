@@ -1,8 +1,8 @@
 import { inject, Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
-import { DesignPanelsActions } from '../../store'
+import { PanelsActions } from '../../store'
 import { UpdateStr } from '@ngrx/entity/src/models'
-import { DesignPanelModel } from '@design-app/feature-panel'
+import { PanelModel } from '@design-app/feature-panel'
 
 @Injectable({
   providedIn: 'root',
@@ -10,27 +10,27 @@ import { DesignPanelModel } from '@design-app/feature-panel'
 export class PanelsRepository {
   private _store = inject(Store)
 
-  public addPanel(freePanel: DesignPanelModel) {
-    this._store.dispatch(DesignPanelsActions.addPanel({ panel: freePanel }))
+  public addPanel(freePanel: PanelModel) {
+    this._store.dispatch(PanelsActions.addPanel({ panel: freePanel }))
   }
 
-  public addManyPanels(panels: DesignPanelModel[]) {
-    this._store.dispatch(DesignPanelsActions.addManyPanels({ panels }))
+  public addManyPanels(panels: PanelModel[]) {
+    this._store.dispatch(PanelsActions.addManyPanels({ panels }))
   }
 
-  public updatePanel(update: UpdateStr<DesignPanelModel>) {
-    this._store.dispatch(DesignPanelsActions.updatePanel({ update }))
+  public updatePanel(update: UpdateStr<PanelModel>) {
+    this._store.dispatch(PanelsActions.updatePanel({ update }))
   }
 
-  public updateManyPanels(updates: UpdateStr<DesignPanelModel>[]) {
-    this._store.dispatch(DesignPanelsActions.updateManyPanels({ updates }))
+  public updateManyPanels(updates: UpdateStr<PanelModel>[]) {
+    this._store.dispatch(PanelsActions.updateManyPanels({ updates }))
   }
 
   public deletePanel(id: string) {
-    this._store.dispatch(DesignPanelsActions.deletePanel({ panelId: id }))
+    this._store.dispatch(PanelsActions.deletePanel({ panelId: id }))
   }
 
   public deleteManyPanels(ids: string[]) {
-    this._store.dispatch(DesignPanelsActions.deleteManyPanels({ panelIds: ids }))
+    this._store.dispatch(PanelsActions.deleteManyPanels({ panelIds: ids }))
   }
 }

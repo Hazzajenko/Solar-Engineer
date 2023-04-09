@@ -1,5 +1,5 @@
 import { ContentChildren, Directive, ElementRef, inject, OnInit } from '@angular/core'
-import { MouseDownEvent, MouseMoveEvent, MouseUpEvent } from '@shared/data-access/models'
+import { ContextMenuEvent, MouseDownEvent, MouseMoveEvent, MouseUpEvent } from '@shared/data-access/models'
 import { DesignLayoutService } from './design-layout.service'
 import { DynamicComponentDirective } from '../../directives/dynamic-component.directive'
 import { CANVAS } from '@design-app/canvas'
@@ -63,15 +63,18 @@ export class DesignLayoutDirective
   }
 
   private setupParentElement() {
-    this._renderer.setStyle(this._element.parentElement, 'height', '100%')
-    this._renderer.setStyle(this._element.parentElement, 'minHeight', '100%')
-    this._renderer.setStyle(this._element.parentElement, 'width', '100%')
-    this._renderer.setStyle(this._element.parentElement, 'minWidth', '100%')
+    this._renderer.setStyle(this._element.parentElement, 'height', `${window.innerHeight}px`)
+    this._renderer.setStyle(this._element.parentElement, 'width', `${window.innerWidth}px`)
+    /*    this._renderer.setStyle(this._element.parentElement, 'height', '100%')
+     this._renderer.setStyle(this._element.parentElement, 'minHeight', '100%')
+     this._renderer.setStyle(this._element.parentElement, 'width', '100%')
+     this._renderer.setStyle(this._element.parentElement, 'minWidth', '100%')*/
     this._renderer.setStyle(this._element.parentElement, 'top', 0)
     this._renderer.setStyle(this._element.parentElement, 'left', 0)
     this._renderer.setStyle(this._element.parentElement, 'bottom', 0)
     this._renderer.setStyle(this._element.parentElement, 'right', 0)
     this._renderer.setStyle(this._element.parentElement, 'position', 'absolute')
+    this._renderer.setStyle(this._element.parentElement, 'overflow', 'hidden')
 
     console.log('parentElement', this._element.parentElement)
   }
@@ -79,6 +82,12 @@ export class DesignLayoutDirective
   private setupGridElement(layoutWidth: number, layoutHeight: number) {
     this._renderer.setStyle(this._element, 'width', `${layoutWidth}px`)
     this._renderer.setStyle(this._element, 'height', `${layoutHeight}px`)
+    this._renderer.setStyle(this._element, 'position', 'relative')
+
+    /*    const left = (window.innerWidth - layoutWidth) / 2
+     const top = (window.innerHeight - layoutHeight) / 2
+     this._renderer.setStyle(this._scrollElement, 'left', `${left}px`)
+     this._renderer.setStyle(this._scrollElement, 'top', `${top}px`)*/
   }
 
   private distributeElement() {
@@ -86,11 +95,11 @@ export class DesignLayoutDirective
     this._viewPositioningService.gridLayoutElement = this._element
     this._viewPositioningService.scrollElement = this._scrollElement
     this._mousePositioningService.scrollElement = this._scrollElement
-    this._componentElementService.parentElement = this._parentElement
-    this._componentElementService.gridLayoutElement = this._element
-    this._componentElementService.scrollElement = this._scrollElement
-    this._componentElementService.canvasElement = this.canvas
-    this._componentElementService.canvasCtx = this.ctx
+    this._componentElementsService.parentElement = this._parentElement
+    this._componentElementsService.gridLayoutElement = this._element
+    // this._componentElementsService.scrollElement = this._scrollElement
+    this._componentElementsService.canvasElement = this.canvas
+    this._componentElementsService.canvasCtx = this.ctx
   }
 
   private setupCanvas() {
@@ -120,6 +129,12 @@ export class DesignLayoutDirective
 
   private setupChildElement(layoutWidth: number, layoutHeight: number) {
     this._scrollElement = this._element.children[0]
+    // this._renderer.setStyle(this._scrollElement, 'position', 'relative')
+    this._renderer.setStyle(this._scrollElement, 'position', 'absolute')
+    this._renderer.setStyle(this._scrollElement, 'overflow', 'hidden')
+    // this._renderer.setStyle(this._scrollElement, 'zIndex', 1)
+    layoutWidth = layoutWidth * 1.5
+    layoutHeight = layoutHeight * 1.5
     this._renderer.setStyle(this._scrollElement, 'width', `${layoutWidth}px`)
     this._renderer.setStyle(this._scrollElement, 'height', `${layoutHeight}px`)
     const left = (window.innerWidth - layoutWidth) / 2
@@ -151,9 +166,26 @@ export class DesignLayoutDirective
       event.preventDefault()
       this.onMouseMoveHandler(event)
     })
+    this._renderer.listen(this._element, ContextMenuEvent, (event: PointerEvent) => {
+      event.stopPropagation()
+      event.preventDefault()
+      return
+    })
+    /*    this._renderer.listen(this._element, ContextMenuEvent, (event: PointerEvent) => {
+     event.stopPropagation()
+     event.preventDefault()
+     console.log('context menu', event)
+     this._clickService.handleContextMenuEvent(event)
+     })*/
+    /*    this._renderer.listen(this._element, 'wheel', (event: WheelEvent) => {
+     event.stopPropagation()
+     event.preventDefault()
+     this._viewPositioningService.onScrollHandler(event)
+     })*/
   }
 
   private onMouseDownHandler(event: MouseEvent) {
+    // this._clickService.handleOpenMenus(event)
     this.isDragging = true
     /**
      * If the user is holding down the ctrl key, then we want to start a drag
@@ -215,6 +247,8 @@ export class DesignLayoutDirective
     this.clearCtxRect()
     if (this.clickTimeout) {
       clearTimeout(this.clickTimeout)
+      // cancel right click
+      if (event.button === 2) return
       this._clickService.handleClickEvent(event)
     } else {
       this._viewPositioningService.ctrlMouseDownStartPoint = undefined
@@ -224,7 +258,7 @@ export class DesignLayoutDirective
 
   private onMouseMoveHandler(event: MouseEvent) {
     if (this.isScreenDragging) {
-      console.log(event)
+      // console.log(event)
       if (event.ctrlKey || event.buttons === 4) {
         this._viewPositioningService.onCtrlMouseMoveHelper(event)
         return
@@ -290,4 +324,36 @@ export class DesignLayoutDirective
   private clearCtxRect() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
   }
+
+  /*  onCtrlMouseMoveHelper(event: MouseEvent) {
+   // if (!this._ctrlMouseDownStartPoint) return
+   // const rect = this.gridLayoutElement.getBoundingClientRect()
+   const rect = this._element.getBoundingClientRect()
+   const parentRect = this._componentElementsService.parentElement.getBoundingClientRect()
+   const x =
+   event.pageX -
+   (parentRect.width - rect.width) / 2
+
+   const y =
+   event.pageY -
+   (parentRect.height - rect.height) / 2
+
+   const top = y - this._ctrlMouseDownStartPoint.y
+   const left = x - this._ctrlMouseDownStartPoint.x
+
+   this._renderer.setStyle(this._componentElementsService.gridLayoutElement, 'top', top + 'px')
+   this._renderer.setStyle(this._componentElementsService.gridLayoutElement, 'left', left + 'px')
+
+   const canvasTop = top + this._componentElementsService.canvasElement.offsetTop
+   const canvasLeft = left + this._componentElementsService.canvasElement.offsetLeft
+
+   console.log('canvasTop', canvasTop)
+   console.log('canvasLeft', canvasLeft)
+
+   // this._renderer.setStyle(this._componentElementsService.canvasElement, 'top', canvasTop + 'px')
+   // this._renderer.setStyle(this._componentElementsService.canvasElement, 'left', canvasLeft + 'px')
+   /!*    this._renderer.setStyle(this._componentElementsService.canvasElement, 'top', '50%')
+   this._renderer.setStyle(this._componentElementsService.canvasElement, 'left', '50%')
+   this._renderer.setStyle(this._componentElementsService.canvasElement, 'transform', `translate(-50%, -50%)`)*!/
+   }*/
 }

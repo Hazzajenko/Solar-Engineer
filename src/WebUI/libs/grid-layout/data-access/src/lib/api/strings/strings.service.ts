@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http'
 import { inject, Injectable } from '@angular/core'
 import { Update } from '@ngrx/entity'
-import { StringModel } from '@shared/data-access/models'
+import { GridStringModel } from '@shared/data-access/models'
 import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
 import { DeleteStringResponse, ManyStringsResponse, StringResponse } from './strings.response'
@@ -12,7 +12,7 @@ import { DeleteStringResponse, ManyStringsResponse, StringResponse } from './str
 export class StringsService {
   private http = inject(HttpClient)
 
-  addString(string: StringModel): Observable<StringModel> {
+  addString(string: GridStringModel): Observable<GridStringModel> {
     return this.http
       .post<StringResponse>(`/api/projects/${string.projectId}/string`, {
         ...string,
@@ -21,13 +21,13 @@ export class StringsService {
       .pipe(map((res: StringResponse) => res.string))
   }
 
-  getStringsByProjectId(projectId: string): Observable<StringModel[]> {
+  getStringsByProjectId(projectId: string): Observable<GridStringModel[]> {
     return this.http
       .get<ManyStringsResponse>(`/api/projects/${projectId}/strings`)
       .pipe(map((res: ManyStringsResponse) => res.strings))
   }
 
-  updateString(update: Update<StringModel>, projectId: string) {
+  updateString(update: Update<GridStringModel>, projectId: string) {
     return this.http
       .put<StringResponse>(`/api/projects/${projectId}/string/${update.id}`, {
         ...update,

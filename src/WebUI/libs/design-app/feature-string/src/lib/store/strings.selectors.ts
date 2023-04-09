@@ -1,34 +1,27 @@
-import { DesignStringModel } from '../types'
-import {
-  DESIGN_STRINGS_FEATURE_KEY,
-  designStringsAdapter,
-  DesignStringsState,
-} from './strings.reducer'
+import { StringModel } from '../types'
+import { designStringsAdapter, STRINGS_FEATURE_KEY, StringsState } from './strings.reducer'
 import { createFeatureSelector, createSelector } from '@ngrx/store'
 
-export const selectStringsState = createFeatureSelector<DesignStringsState>(
-  DESIGN_STRINGS_FEATURE_KEY,
-)
+export const selectStringsState = createFeatureSelector<StringsState>(STRINGS_FEATURE_KEY)
 
 const { selectAll, selectEntities } = designStringsAdapter.getSelectors()
 
 export const selectStringsLoaded = createSelector(
   selectStringsState,
-  (state: DesignStringsState) => state.loaded,
+  (state: StringsState) => state.loaded,
 )
 
 export const selectStringsError = createSelector(
   selectStringsState,
-  (state: DesignStringsState) => state.error,
+  (state: StringsState) => state.error,
 )
 
-export const selectAllStrings = createSelector(selectStringsState, (state: DesignStringsState) =>
+export const selectAllStrings = createSelector(selectStringsState, (state: StringsState) =>
   selectAll(state),
 )
 
-export const selectStringsEntities = createSelector(
-  selectStringsState,
-  (state: DesignStringsState) => selectEntities(state),
+export const selectStringsEntities = createSelector(selectStringsState, (state: StringsState) =>
+  selectEntities(state),
 )
 
 export const selectAllDefinedStrings = createSelector(selectAllStrings, (strings) =>
@@ -45,7 +38,7 @@ export const selectAllDefinedStrings = createSelector(selectAllStrings, (strings
  */
 
 export const selectStringById = (props: { id: string }) =>
-  createSelector(selectAllStrings, (strings: DesignStringModel[]) =>
+  createSelector(selectAllStrings, (strings: StringModel[]) =>
     strings.find((string) => string.id === props.id),
   )
 

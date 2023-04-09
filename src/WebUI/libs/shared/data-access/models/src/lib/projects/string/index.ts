@@ -1,2 +1,2 @@
-export * from './string.model'
+export * from './grid-string.model'
 export * from './undefined-string'

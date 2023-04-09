@@ -6,7 +6,7 @@ import { ComponentElementsService, DesignRectModel, MousePositioningService, Obj
 import { SelectedStoreService } from '@design-app/feature-selected'
 import { UiConfigService } from '@design-app/config'
 import { LineDirection } from '../types'
-import { isDesignEntityType } from '@design-app/shared'
+import { isEntityType } from '@design-app/shared'
 
 @Injectable({
   providedIn: 'root',
@@ -245,7 +245,7 @@ export class CanvasService
       // return undefined
     }
     const type = panelDiv.getAttribute('type')
-    if (!type || !isDesignEntityType(type)) {
+    if (!type || !isEntityType(type)) {
       throw new Error('panelDiv has no type')
       // return undefined
     }
@@ -292,7 +292,7 @@ export class CanvasService
       throw new Error('id not found')
     }
     const type = element.getAttribute('type')
-    if (!type || !isDesignEntityType(type)) {
+    if (!type || !isEntityType(type)) {
       throw new Error('type not found')
     }
     const panelRect = element.getBoundingClientRect()

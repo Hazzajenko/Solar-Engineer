@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core'
 
 import { GridStoreService, LinksFacade } from '../'
 
-import { BLOCK_TYPE, PanelModel } from '@shared/data-access/models'
+import { BLOCK_TYPE, GridPanelModel } from '@shared/data-access/models'
 // import { GridService } from 'libs/grid-layout/data-access/services/src/lib/entitites/grid/grid.service'
 import { LinksFactory } from './links.factory'
 // import { GridService } from '@grid-layout/data-access/services'
@@ -14,7 +14,8 @@ import { BaseService } from '@shared/logger'
 @Injectable({
   providedIn: 'root',
 })
-export class LinksEventService extends BaseService {
+export class LinksEventService
+  extends BaseService {
   private linksFactory = inject(LinksFactory)
   // private gridFactory = inject(GridService)
   private gridStore = inject(GridStoreService)
@@ -23,10 +24,10 @@ export class LinksEventService extends BaseService {
   // private logger = inject(LoggerService)
 
   /*  constructor(logger: LoggerService) {
-      super(logger)
-    }*/
+   super(logger)
+   }*/
 
-  async addPanelToLink(click: MouseEventRequest, panel: PanelModel) {
+  async addPanelToLink(click: MouseEventRequest, panel: GridPanelModel) {
     const linksState = await this.linksFacade.state
     if (panel.stringId === 'undefined') {
       // console.log('panel needs to be apart of a string')
@@ -53,7 +54,7 @@ export class LinksEventService extends BaseService {
   private async typeToLink(
     linksState: LinksStateModel,
     click: MouseEventRequest,
-    panel: PanelModel,
+    panel: GridPanelModel,
   ) {
     switch (linksState.typeToLink) {
       case BLOCK_TYPE.PANEL:

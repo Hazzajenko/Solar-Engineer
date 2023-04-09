@@ -2,7 +2,7 @@ import { CdkDragDrop } from '@angular/cdk/drag-drop'
 import { inject, Injectable } from '@angular/core'
 import { BlocksFacade, BlocksStoreService } from '../..'
 import { BLOCK_TYPE, BlockModel } from '@shared/data-access/models'
-import { PanelsEventService } from '../panels'
+import { GridPanelsEventService } from '../panels'
 import { BaseService } from '@shared/logger'
 
 // import { PanelsService } from 'libs/grid-layout/data-access/services/src/lib/entitites/panels'
@@ -10,16 +10,17 @@ import { BaseService } from '@shared/logger'
 @Injectable({
   providedIn: 'root',
 })
-export class DropService extends BaseService {
+export class DropService
+  extends BaseService {
   private blocksFacade = inject(BlocksFacade)
   private blocksStore = inject(BlocksStoreService)
-  private panelsFactory = inject(PanelsEventService)
+  private panelsFactory = inject(GridPanelsEventService)
 
   // private logger = inject(LoggerService)
 
   /*  constructor(logger: LoggerService) {
-      super(logger)
-    }*/
+   super(logger)
+   }*/
 
   async drop(drop: CdkDragDrop<BlockModel[]>) {
     drop.event.preventDefault()

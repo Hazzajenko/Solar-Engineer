@@ -1,11 +1,11 @@
 import { inject, Injectable } from '@angular/core'
 import { UndefinedString } from '@shared/data-access/models'
 import { UpdateStr } from '@ngrx/entity/src/models'
-import { DesignStringFactory, DesignStringModel } from '../types'
+import { StringFactory, StringModel } from '../types'
 import { StringsStoreService } from '@design-app/feature-string'
 import { SelectedStoreService } from '@design-app/feature-selected'
-import { DesignEntityType } from '@design-app/shared'
-import { DesignPanelModel, PanelsStoreService } from '@design-app/feature-panel'
+import { EntityType } from '@design-app/shared'
+import { PanelModel, PanelsStoreService } from '@design-app/feature-panel'
 
 @Injectable({
   providedIn: 'root',
@@ -16,13 +16,13 @@ export class StringsFactoryService {
   private _selectedStore = inject(SelectedStoreService)
 
   async create(stringName: string) {
-    const string = DesignStringFactory.create(stringName)
+    const string = StringFactory.create(stringName)
     this._stringsStore.dispatch.createString(string)
     return string
   }
 
   createWithPanels(stringName: string, panelIds: string[]) {
-    const string = DesignStringFactory.create(stringName)
+    const string = StringFactory.create(stringName)
     this._stringsStore.dispatch.createStringWithPanels(string, panelIds)
     return string
   }
@@ -40,15 +40,19 @@ export class StringsFactoryService {
     // orderPanelsInLinkOrderWithLinkAsync
   }
 
-  async addSelectedToNew(stringName: string) {
-    const selectedPanels = await this._selectedStore.select.multiSelectedEntitiesByType(DesignEntityType.Panel)
+  async addSelectedToNew(stringName?: string) {
+    const selectedPanels = await this._selectedStore.select.multiSelectedEntitiesByType(EntityType.Panel)
     if (!selectedPanels) {
       return
     }
+    const amountOfStrings = await this._stringsStore.select.totalStrings
+    if (!stringName) stringName = `String ${amountOfStrings + 1}`
     const selectedPanelIds = selectedPanels.map((p) => p.id)
-    const string = this.createWithPanels(stringName, selectedPanelIds)
+    const string = StringFactory.create(stringName)
+    this._stringsStore.dispatch.createStringWithPanels(string, selectedPanelIds)
     this._selectedStore.dispatch.clearSelectedState()
     return string
+
   }
 
   async addSelectedToExisting(stringId: string) {
@@ -70,14 +74,14 @@ export class StringsFactoryService {
      ),
      )*/
 
-    const selectedPanels = await this._selectedStore.select.multiSelectedEntitiesByType(DesignEntityType.Panel)
+    const selectedPanels = await this._selectedStore.select.multiSelectedEntitiesByType(EntityType.Panel)
     if (!selectedPanels) {
       return
     }
     const selectedPanelIds = selectedPanels.map((p) => p.id)
 
     const selectedPanelUpdates = selectedPanelIds.map((panelId) => {
-      const update: UpdateStr<DesignPanelModel> = {
+      const update: UpdateStr<PanelModel> = {
         id:      panelId,
         changes: {
           stringId,
@@ -89,9 +93,9 @@ export class StringsFactoryService {
     return
   }
 
-  async updateString(stringId: string, changes: Partial<DesignStringModel>) {
+  async updateString(stringId: string, changes: Partial<StringModel>) {
     // const project = await this.projectsFacade.selectedProject()
-    const update: UpdateStr<DesignStringModel> = {
+    const update: UpdateStr<StringModel> = {
       id: stringId,
       changes,
     }

@@ -1,38 +1,24 @@
 import { inject, Injectable } from '@angular/core'
 import { BaseService } from '@shared/logger'
-import {
-  PanelModel,
-  ProjectModelType,
-  ProjectSignalrEvent,
-  StringModel,
-} from '@shared/data-access/models'
-import {
-  JsonSchema,
-  PanelArraySchema,
-  PanelArraySchemaModel,
-  PanelLinkJsonModel,
-  PanelLinkSchemaModel,
-  PanelSchema,
-  PanelSchemaModel,
-  StringSchema,
-  StringSchemaModel,
-} from '@shared/utils'
+import { GridPanelModel, GridStringModel, ProjectModelType, ProjectSignalrEvent } from '@shared/data-access/models'
+import { JsonSchema, PanelArraySchema, PanelArraySchemaModel, PanelLinkJsonModel, PanelLinkSchemaModel, PanelSchema, PanelSchemaModel, StringSchema, StringSchemaModel } from '@shared/utils'
 import { UpdateStr } from '@ngrx/entity/src/models'
-import { PanelsActions, StringsActions } from '@grid-layout/data-access'
+import { GridPanelsActions, GridStringsActions } from '@grid-layout/data-access'
 import { SignalrEventsFacade, SignalrEventsRepository } from '../services'
 import { Store } from '@ngrx/store'
 
 @Injectable({
   providedIn: 'root',
 })
-export class HandleEventsService extends BaseService {
+export class HandleEventsService
+  extends BaseService {
   private signalrEventsRepository = inject(SignalrEventsRepository)
   private store = inject(Store)
   private signalrEventsFacade = inject(SignalrEventsFacade)
 
   /*  constructor(logger: LoggerService) {
-      super(logger)
-    }*/
+   super(logger)
+   }*/
 
   handleEvent(newEvent: ProjectSignalrEvent, existing?: ProjectSignalrEvent) {
     this.logDebug('handleEvent', newEvent)
@@ -65,18 +51,18 @@ export class HandleEventsService extends BaseService {
     const containsMany = event.action.includes('Many')
     if (containsMany) {
       const panelArrayJsonModel: PanelArraySchemaModel = JSON.parse(json)
-      const panels: PanelModel[] = PanelArraySchema.parse(panelArrayJsonModel)
+      const panels: GridPanelModel[] = PanelArraySchema.parse(panelArrayJsonModel)
       this.logDebug('onReceiveSignalrEvent', 'update panel array validate', panels)
 
-      const updates: UpdateStr<PanelModel>[] = panels.map(
+      const updates: UpdateStr<GridPanelModel>[] = panels.map(
         (panel) =>
           ({
-            id: panel.id,
+            id:      panel.id,
             changes: panel,
-          } as UpdateStr<PanelModel>),
+          } as UpdateStr<GridPanelModel>),
       )
       this.logDebug('onReceiveSignalrEvent', 'update panel array updates', updates)
-      this.store.dispatch(PanelsActions.updateManyPanelsWithoutSignalr({ updates }))
+      this.store.dispatch(GridPanelsActions.updateManyPanelsWithoutSignalr({ updates }))
       return
     }
 
@@ -84,11 +70,11 @@ export class HandleEventsService extends BaseService {
     const panel = PanelSchema.parse(panelJson)
     this.logDebug('onReceiveSignalrEvent', 'update panel validate', panel)
 
-    const update: UpdateStr<PanelModel> = {
-      id: panel.id,
+    const update: UpdateStr<GridPanelModel> = {
+      id:      panel.id,
       changes: panel,
     }
-    this.store.dispatch(PanelsActions.updatePanelWithoutSignalr({ update }))
+    this.store.dispatch(GridPanelsActions.updatePanelWithoutSignalr({ update }))
     return
   }
 
@@ -96,15 +82,15 @@ export class HandleEventsService extends BaseService {
     const stringJson: StringSchemaModel = JSON.parse(json)
     const validate = StringSchema.parse(stringJson)
     this.logDebug('onReceiveSignalrEvent', 'update string validate', validate)
-    const string: StringModel = {
+    const string: GridStringModel = {
       ...validate,
       type: ProjectModelType.String,
     }
-    const update: UpdateStr<StringModel> = {
-      id: string.id,
+    const update: UpdateStr<GridStringModel> = {
+      id:      string.id,
       changes: string,
     }
-    this.store.dispatch(StringsActions.updateStringWithoutSignalr({ update }))
+    this.store.dispatch(GridStringsActions.updateStringWithoutSignalr({ update }))
   }
 
   private handlePanelLinkEvent(event: ProjectSignalrEvent, json: string) {
@@ -117,18 +103,18 @@ export class HandleEventsService extends BaseService {
     this.signalrEventsRepository.addSignalrEvent(event)
     if (event.model == ProjectModelType.Panel) {
       const panelJson: PanelSchemaModel = JSON.parse(json)
-      const panel: PanelModel = PanelSchema.parse(panelJson)
+      const panel: GridPanelModel = PanelSchema.parse(panelJson)
       this.logDebug('onReceiveSignalrEvent', 'add panel validate', panel)
 
-      this.store.dispatch(PanelsActions.addPanelWithoutSignalr({ panel }))
+      this.store.dispatch(GridPanelsActions.addPanelWithoutSignalr({ panel }))
       return
     }
     if (event.model == ProjectModelType.String) {
       const stringJson: StringSchemaModel = JSON.parse(json)
-      const string: StringModel = StringSchema.parse(stringJson)
+      const string: GridStringModel = StringSchema.parse(stringJson)
       this.logDebug('onReceiveSignalrEvent', 'add string validate', string)
 
-      this.store.dispatch(StringsActions.addStringWithoutSignalr({ string }))
+      this.store.dispatch(GridStringsActions.addStringWithoutSignalr({ string }))
       return
     }
     return

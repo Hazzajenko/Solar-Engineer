@@ -1,12 +1,12 @@
+import { GridPanelModel } from './panel'
 import { PanelLinkModel } from './panel-link.model'
-import { PanelModel } from './panel'
-// import { ProjectModel } from './project.model'
-import { StringModel } from './string'
 import { ProjectModel } from './project'
+// import { ProjectModel } from './project.model'
+import { GridStringModel } from './string'
 
 export interface LocalProjectModel {
   project: ProjectModel
-  panels: PanelModel[]
+  panels: GridPanelModel[]
   links: PanelLinkModel[]
-  strings: StringModel[]
+  strings: GridStringModel[]
 }

@@ -1,51 +1,34 @@
 import { inject, Injectable } from '@angular/core'
 import { HubConnection } from '@microsoft/signalr'
-import {
-  ProjectModel,
-  ProjectSignalrEvent,
-  ProjectSignalrJsonRequest,
-} from '@shared/data-access/models'
+import { ProjectModel, ProjectSignalrEvent, ProjectSignalrJsonRequest } from '@shared/data-access/models'
 import { ProjectsStoreService, SignalrEventsRepository } from '../services'
 import { GetManyProjects, GetProject, SendProjectEvent } from './projects.methods'
 import { GetProjectDataResponse } from '../models/get-project-data.response'
 import { BaseService } from '@shared/logger'
-import {
-  LinksStoreService,
-  PanelsStoreService,
-  StringsStoreService,
-} from '@grid-layout/data-access'
+import { GridPanelsStoreService, GridStringsStoreService, LinksStoreService } from '@grid-layout/data-access'
 import { SignalrService } from '@app/data-access/signalr'
-import {
-  CreateProject,
-  DeleteProject,
-  GetProjectById,
-  GetUserProjects,
-} from './projects-signalr.invoke-methods'
-import {
-  ProjectCreated,
-  ProjectDeleted,
-  ReceiveProjectEvent,
-  ReceiveProjectEvents,
-} from './projects-signalr.handlers'
+import { CreateProject, DeleteProject, GetProjectById, GetUserProjects } from './projects-signalr.invoke-methods'
+import { ProjectCreated, ProjectDeleted, ReceiveProjectEvent, ReceiveProjectEvents } from './projects-signalr.handlers'
 import { ProjectDeletedResponse } from '../contracts'
 
 @Injectable({
   providedIn: 'root',
 })
-export class ProjectsSignalrService extends BaseService {
+export class ProjectsSignalrService
+  extends BaseService {
   public projectsHubConnection?: HubConnection
   private projectsStore = inject(ProjectsStoreService)
-  private panelsStore = inject(PanelsStoreService)
+  private panelsStore = inject(GridPanelsStoreService)
   private signalrService = inject(SignalrService)
-  private stringsStore = inject(StringsStoreService)
+  private stringsStore = inject(GridStringsStoreService)
   private panelLinksStore = inject(LinksStoreService)
   // private signalrEventsService = inject(SignalrEventsService)
 
   private signalrEventsRepository = inject(SignalrEventsRepository)
 
   /*  constructor(logger: LoggerService) {
-      super(logger)
-    }*/
+   super(logger)
+   }*/
 
   createProjectsHubConnection(token: string) {
     if (this.projectsHubConnection) return this.projectsHubConnection
@@ -141,6 +124,7 @@ export class ProjectsSignalrService extends BaseService {
 
   stopHubConnection() {
     if (!this.projectsHubConnection) return
-    this.projectsHubConnection.stop().catch((err) => this.logError('StopHubConnection', err))
+    this.projectsHubConnection.stop()
+      .catch((err) => this.logError('StopHubConnection', err))
   }
 }
