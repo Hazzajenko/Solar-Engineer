@@ -1,9 +1,8 @@
 import { inject, Injectable } from '@angular/core'
 import { ComponentStore } from '@ngrx/component-store'
-import { PanelModel, PanelsStoreService, selectAllPanels } from '@design-app/feature-panel'
+import { PanelModel, PanelsStoreService } from '@design-app/feature-panel'
 import { map, tap } from 'rxjs'
 import { TypeOfEntity } from '@design-app/feature-selected'
-import { createSelector } from '@ngrx/store'
 
 export type DesignLayoutViewModel = {
   entities: TypeOfEntity[]
@@ -11,14 +10,15 @@ export type DesignLayoutViewModel = {
 /*export const selectAllPanels = createSelector(selectPanelsState, (state: PanelsState) =>
  selectAll(state),
  )*/
-const selectAllPanelsMapToTypeOfEntity = createSelector(selectAllPanels, (panels: PanelModel[]) =>
-  panels.map((panel) => {
-      return {
-        id:   panel.id,
-        type: panel.type,
-      } as TypeOfEntity
-    },
-  ))
+
+/*const selectAllPanelsMapToTypeOfEntity = createSelector(selectAllPanels, (panels: PanelModel[]) =>
+ panels.map((panel) => {
+ return {
+ id:   panel.id,
+ type: panel.type,
+ } as TypeOfEntity
+ },
+ ))*/
 
 interface DesignLayoutComponentState {
   panels: PanelModel[]

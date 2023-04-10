@@ -11,6 +11,16 @@ export const EventName = {
   DoubleClick: 'dblclick',
   Wheel: 'wheel',
   MouseWheel: 'mousewheel',
+  KeyUp: 'keyup',
+  /*  KeyDown: 'keydown',
+   KeyUp: 'keyup',
+   KeyPress: 'keypress',
+   Focus: 'focus',
+   Blur: 'blur',
+   FocusIn: 'focusin',
+   FocusOut: 'focusout',
+
+   */
   /*  TouchStart: 'touchstart',
    TouchEnd: 'touchend',
    TouchMove: 'touchmove',

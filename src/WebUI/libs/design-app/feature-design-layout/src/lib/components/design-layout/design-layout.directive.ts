@@ -131,10 +131,12 @@ export class DesignLayoutDirective
     this._scrollElement = this._element.children[0]
     // this._renderer.setStyle(this._scrollElement, 'position', 'relative')
     this._renderer.setStyle(this._scrollElement, 'position', 'absolute')
-    this._renderer.setStyle(this._scrollElement, 'overflow', 'hidden')
+    // this._renderer.setStyle(this._scrollElement, 'overflow', 'hidden')
     // this._renderer.setStyle(this._scrollElement, 'zIndex', 1)
-    layoutWidth = layoutWidth * 1.5
-    layoutHeight = layoutHeight * 1.5
+    /*    layoutWidth = layoutWidth * 1.5
+     layoutHeight = layoutHeight * 1.5*/
+    layoutWidth = layoutWidth * 2
+    layoutHeight = layoutHeight * 2
     this._renderer.setStyle(this._scrollElement, 'width', `${layoutWidth}px`)
     this._renderer.setStyle(this._scrollElement, 'height', `${layoutHeight}px`)
     const left = (window.innerWidth - layoutWidth) / 2

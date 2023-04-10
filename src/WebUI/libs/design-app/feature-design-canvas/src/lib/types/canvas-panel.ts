@@ -46,6 +46,10 @@ export const CanvasPanel = {
     height: 23,
     rotation: 0,
   }),
+  updateLocation: (panel: CanvasPanel, location: XyLocation): CanvasPanel => ({
+    ...panel,
+    location,
+  }),
   updateLocationFromEvent: (panel: CanvasPanel, event: MouseEvent): CanvasPanel => ({
     ...panel,
     location: { x: event.pageX - 18 / 2, y: event.pageY - 23 / 2 },

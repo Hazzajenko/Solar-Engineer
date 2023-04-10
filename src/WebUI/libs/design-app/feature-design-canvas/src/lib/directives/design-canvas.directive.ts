@@ -1,7 +1,6 @@
 import { Directive, ElementRef, inject, NgZone, OnInit, Renderer2 } from '@angular/core'
-import { ContextMenuEvent, KEYS, MouseDownEvent, MouseMoveEvent, MouseUpEvent, XyLocation } from '@shared/data-access/models'
+import { ContextMenuEvent, EventName, KEYS, MouseDownEvent, MouseMoveEvent, MouseUpEvent, POINTER_BUTTON, XyLocation } from '@shared/data-access/models'
 import { CanvasPanel } from '../types/canvas-panel'
-import { getXyPointFromEvent } from '../functions'
 
 @Directive({
   selector:   '[appDesignCanvas]',
@@ -76,6 +75,9 @@ export class DesignCanvasDirective
   width = this._canvas.width
   image: HTMLImageElement | undefined
 
+  isHoveringEntity = false
+  hoveringEntityId?: string
+
   public ngOnInit() {
     this.setupCanvas()
     this._ngZone.runOutsideAngular(() => {
@@ -131,13 +133,13 @@ export class DesignCanvasDirective
       event.preventDefault()
       console.log('context menu', event)
     })
-    this._renderer.listen(this._canvas, 'wheel', (event: WheelEvent) => {
+    this._renderer.listen(this._canvas, EventName.Wheel, (event: WheelEvent) => {
       event.stopPropagation()
       event.preventDefault()
       this.onScrollHandler(event)
       // console.log('wheel', event)
     })
-    this._renderer.listen(window, 'keyup', (event: KeyboardEvent) => {
+    this._renderer.listen(window, EventName.KeyUp, (event: KeyboardEvent) => {
       event.stopPropagation()
       event.preventDefault()
       console.log('keyup menu', event)
@@ -163,9 +165,16 @@ export class DesignCanvasDirective
       .transformPoint(originalPoint)
   }
 
+  getTransformedPointToMiddleOfObject(x: number, y: number, width: number, height: number) {
+    const originalPoint = new DOMPoint(x - width / 2, y - height / 2)
+    return this._ctx.getTransform()
+      .invertSelf()
+      .transformPoint(originalPoint)
+  }
+
   private onMouseDownHandler(event: MouseEvent) {
     console.log('mouse down', event)
-    if (event.ctrlKey) {
+    if (event.ctrlKey || event.button === POINTER_BUTTON.WHEEL) {
       this.isDraggingScreen = true
       console.log('dragging screen')
       this.screenDragStartPoint = this.getTransformedPoint(event.offsetX, event.offsetY)
@@ -185,6 +194,7 @@ export class DesignCanvasDirective
   }
 
   private onMouseUpHandler(event: MouseEvent) {
+    if (event.button === POINTER_BUTTON.SECONDARY) return
     console.log('mouse up', event)
     if (this.isDraggingScreen) {
       this.isDraggingScreen = false
@@ -199,7 +209,9 @@ export class DesignCanvasDirective
       this.isDraggingEntity = false
       console.log('entityOnMouseDown', this.entityOnMouseDown)
       if (this.entityOnMouseDown) {
-        this.entityOnMouseDown = CanvasPanel.updateLocationFromEventToScale(this.entityOnMouseDown, event, this.screenPosition, this.scale)
+        const location = this.getTransformedPointToMiddleOfObject(event.offsetX, event.offsetY, this.entityOnMouseDown.width, this.entityOnMouseDown.height)
+        this.entityOnMouseDown = CanvasPanel.updateLocation(this.entityOnMouseDown, location)
+        // this.entityOnMouseDown = CanvasPanel.updateLocationFromEventToScale(this.entityOnMouseDown, event, this.screenPosition, this.scale)
         this.updatePanel(this.entityOnMouseDown)
         this.entityOnMouseDown = undefined
       }
@@ -232,7 +244,6 @@ export class DesignCanvasDirective
   }
 
   private onScrollHandler(event: WheelEvent) {
-    console.log(event)
     const currentTransformedCursor = this.getTransformedPoint(event.offsetX, event.offsetY)
 
     const zoom = event.deltaY < 0
@@ -259,16 +270,40 @@ export class DesignCanvasDirective
     this.mousePos.innerText = `Original X: ${event.offsetX}, Y: ${event.offsetY}`
     this.transformedMousePos.innerText = `Transformed X: ${this.currentTransformedCursor.x}, Y: ${this.currentTransformedCursor.y}`
     if (this.isDraggingScreen) {
-      this._ctx.translate(this.currentTransformedCursor.x - this.screenDragStartPoint.x, this.currentTransformedCursor.y - this.screenDragStartPoint.y)
-      this.drawPanels()
+      if (event.ctrlKey || event.buttons === 4) {
+        this._ctx.translate(this.currentTransformedCursor.x - this.screenDragStartPoint.x, this.currentTransformedCursor.y - this.screenDragStartPoint.y)
+        this.drawPanels()
+      }
       return
     }
     if (this.entityOnMouseDown) {
       this.isDraggingEntity = true
       this._ctx.clearRect(0, 0, this._canvas.width, this._canvas.height)
-      console.log('dragging', this.entityOnMouseDown)
-      this.entityOnMouseDown = CanvasPanel.updateLocationFromEventToScale(this.entityOnMouseDown, event, this.screenPosition, this.scale)
+      const location = this.getTransformedPointToMiddleOfObject(event.offsetX, event.offsetY, this.entityOnMouseDown.width, this.entityOnMouseDown.height)
+      this.entityOnMouseDown = {
+        ...this.entityOnMouseDown,
+        location: {
+          x: location.x,
+          y: location.y,
+        },
+      }
       this.updatePanel(this.entityOnMouseDown)
+    }
+
+    const isPanel = this._panels.find(panel => this.isMouseOverPanel(event, panel))
+    if (isPanel) {
+
+      this._canvas.style.cursor = 'pointer'
+      this.hoveringEntityId = isPanel.id
+      this.drawPanels()
+      return
+    } else {
+      if (this.hoveringEntityId) {
+        this.hoveringEntityId = undefined
+        this.drawPanels()
+      }
+      this._canvas.style.cursor = 'default'
+
     }
 
   }
@@ -279,12 +314,19 @@ export class DesignCanvasDirective
   }
 
   private isMouseOverPanel(event: MouseEvent, panel: CanvasPanel) {
-    const { x, y } = getXyPointFromEvent(event, this.screenPosition, this.scale)
+    // const { x, y } = getXyPointFromEvent(event, this.screenPosition, this.scale)
+    const { x, y } = this.getTransformedPoint(event.offsetX, event.offsetY)
     const { location, width, height } = panel
     return x >= location.x && x <= location.x + width && y >= location.y && y <= location.y + height
   }
 
   private drawPanel(panel: CanvasPanel) {
+
+    if (this.hoveringEntityId === panel.id) {
+      this._ctx.closePath()
+      this._ctx.fillStyle = '#17fff3'
+    }
+
     if (this._selectedPanel && this._selectedPanel.id === panel.id) {
       this._ctx.closePath()
       this._ctx.fillStyle = '#ff6e78'

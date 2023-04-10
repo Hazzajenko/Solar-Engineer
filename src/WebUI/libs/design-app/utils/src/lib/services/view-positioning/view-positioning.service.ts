@@ -3,11 +3,10 @@ import { MousePositioningService } from '../mouse-positioning'
 import { XyLocation } from '@shared/data-access/models'
 import { BehaviorSubject } from 'rxjs'
 import { ComponentElementsService } from '../component-elements'
-import { GridConfig } from './grid.config'
 import { EntityElement } from '@design-app/shared'
 import { calculateLeftRightPositionForScene } from '../../functions/scene/scene-size'
 import { ObjectPositioningService } from '../object-positioning'
-import { extractEntityRectFromTarget } from '../../functions'
+import { GridConfig } from './grid.config'
 
 @Injectable({
   providedIn: 'root',
@@ -136,59 +135,140 @@ export class ViewPositioningService {
   onScrollHandler(
     event: WheelEvent,
   ) {
-    if (event.target) {
-      // const isEntity = this._objectPositioningService.getElementRectPositionOffScroll(event.target as HTMLDivElement)
-      const isEntity = extractEntityRectFromTarget(event.target as HTMLDivElement)
-      if (isEntity) {
-        this.handleScrollOnElement(event, isEntity)
-        return
-      }
-    }
-    const childRect = this.scrollElement.getBoundingClientRect()
+    // const currentTransformedCursor = this.getTransformedPoint(event.offsetX, event.offsetY)
+
     const speed = GridConfig.Speed // 0.05
-    const minScale = 0.5
+    const minScale = 0.8
+    // const minScale = 0.5
     const maxScale = GridConfig.MaxScale // 2
+    const zoom = event.deltaY < 0
+      ? 1.1
+      : 0.9
+    /*    const childRect = this.scrollElement.getBoundingClientRect()
+     const sizeH = childRect.height
+     const sizeW = childRect.width
+     const pointerX = event.pageX - childRect.left
+     const pointerY = event.pageY - childRect.top
 
-    console.log('childRect', childRect)
-    const sizeH = childRect.height
-    const sizeW = childRect.width
-    const pointerX = event.pageX - childRect.left
-    const pointerY = event.pageY - childRect.top
+     const targetX = (pointerX - this.screenPosition.x) / this.scale
+     const targetY = (pointerY - this.screenPosition.y) / this.scale
 
-    const targetX = (pointerX - this.screenPosition.x) / this.scale
-    const targetY = (pointerY - this.screenPosition.y) / this.scale
+     this.scale += -1 * Math.max(-1, Math.min(1, event.deltaY)) * speed * this.scale
+     this.scale = Math.max(minScale, Math.min(maxScale, this.scale))
+     this.screenPosition = {
+     x: -targetX * this.scale + pointerX,
+     y: -targetY * this.scale + pointerY,
+     }
 
-    this.scale += -1 * Math.max(-1, Math.min(1, event.deltaY)) * speed * this.scale
-    this.scale = Math.max(minScale, Math.min(maxScale, this.scale))
-    this.screenPosition = {
-      x: -targetX * this.scale + pointerX,
-      y: -targetY * this.scale + pointerY,
-    }
+     if (this.screenPosition.x > 0) this.screenPosition.x = 0
+     if (this.screenPosition.x + sizeW * this.scale < sizeW) this.screenPosition.x = -sizeW * (this.scale - 1)
+     if (this.screenPosition.y > 0) this.screenPosition.y = 0
+     if (this.screenPosition.y + sizeH * this.scale < sizeH) this.screenPosition.y = -sizeH * (this.scale - 1)*/
 
-    if (this.screenPosition.x > 0) this.screenPosition.x = 0
-    if (this.screenPosition.x + sizeW * this.scale < sizeW) this.screenPosition.x = -sizeW * (this.scale - 1)
-    if (this.screenPosition.y > 0) this.screenPosition.y = 0
-    if (this.screenPosition.y + sizeH * this.scale < sizeH) this.screenPosition.y = -sizeH * (this.scale - 1)
-
-    console.log('this.screenPosition.x', this.screenPosition.x)
-    console.log('this.screenPosition.y', this.screenPosition.y)
-
+    /*    this._renderer.setStyle(
+     this.scrollElement,
+     'transform-origin',
+     `${event.offsetX}px ${event.offsetY}px`,
+     )*/
+    if (this.scale * zoom < minScale) return
+    if (this.scale * zoom > maxScale) return
+    if (event.target !== this.scrollElement) return
+    const x = event.offsetX
+    const y = event.offsetY
+    // const { x, y } = this.getCorrectMousePositionOffEvent(event)
     this._renderer.setStyle(
       this.scrollElement,
-      'translate',
-      `${this.screenPosition.x}px,${this.screenPosition.y}px`,
+      'transform-origin',
+      `${x}px ${y}px`,
+      // `${event.offsetX}px ${event.offsetY}px`,
+      // `${event.offsetX}px ${event.offsetY}px`,
     )
+    /*    this._renderer.setStyle(
+     this.scrollElement,
+     'transform',
+     `translate(${this.screenPosition.x}px,${this.screenPosition.y}px) scale(${this.scale * zoom})`,
+     )*/
     this._renderer.setStyle(
       this.scrollElement,
-      'scale',
-      this.scale,
+      'transform',
+      `scale(${this.scale * zoom})`,
     )
+    /*    this._renderer.setStyle(
+     this.scrollElement,
+     'scale',
+     this.scale * zoom,
+     )*/
+    /*    this._renderer.setStyle(
+     this.scrollElement,
+     'transform',
+     `translate(${event.offsetX}px,${event.offsetY}px) scale(${this.scale * zoom})`,
+     )*/
 
+    this.scale = this.scale * zoom
+
+    // this._ctx.translate(event.offsetX, event.offsetY)
+    // this._ctx.scale(zoom, zoom)
+    // this._ctx.translate(-event.offsetX, -event.offsetY)
+    /* if (event.target) {
+     // const isEntity = this._objectPositioningService.getElementRectPositionOffScroll(event.target as HTMLDivElement)
+     const isEntity = extractEntityRectFromTarget(event.target as HTMLDivElement)
+     if (isEntity) {
+     this.handleScrollOnElement(event, isEntity)
+     return
+     }
+     }
+     const childRect = this.scrollElement.getBoundingClientRect()
+     const speed = GridConfig.Speed // 0.05
+     const minScale = 0.5
+     const maxScale = GridConfig.MaxScale // 2
+
+     console.log('childRect', childRect)
+     const sizeH = childRect.height
+     const sizeW = childRect.width
+     const pointerX = event.pageX - childRect.left
+     const pointerY = event.pageY - childRect.top
+
+     const targetX = (pointerX - this.screenPosition.x) / this.scale
+     const targetY = (pointerY - this.screenPosition.y) / this.scale
+
+     this.scale += -1 * Math.max(-1, Math.min(1, event.deltaY)) * speed * this.scale
+     this.scale = Math.max(minScale, Math.min(maxScale, this.scale))
+     this.screenPosition = {
+     x: -targetX * this.scale + pointerX,
+     y: -targetY * this.scale + pointerY,
+     }
+
+     if (this.screenPosition.x > 0) this.screenPosition.x = 0
+     if (this.screenPosition.x + sizeW * this.scale < sizeW) this.screenPosition.x = -sizeW * (this.scale - 1)
+     if (this.screenPosition.y > 0) this.screenPosition.y = 0
+     if (this.screenPosition.y + sizeH * this.scale < sizeH) this.screenPosition.y = -sizeH * (this.scale - 1)
+
+     console.log('this.screenPosition.x', this.screenPosition.x)
+     console.log('this.screenPosition.y', this.screenPosition.y)
+
+     this._renderer.setStyle(
+     this.scrollElement,
+     'translate',
+     `${this.screenPosition.x}px,${this.screenPosition.y}px`,
+     )
+     this._renderer.setStyle(
+     this.scrollElement,
+     'scale',
+     this.scale,
+     )
+     */
     /*    this._renderer.setStyle(
      this.scrollElement,
      'transform',
      `translate(${this.screenPosition.x}px,${this.screenPosition.y}px) scale(${this.scale})`,
      )*/
+  }
+
+  getCorrectMousePositionOffEvent(event: WheelEvent) {
+    const rect = this.scrollElement.getBoundingClientRect()
+    const x = event.offsetX - rect.left
+    const y = event.offsetY - rect.top
+    return { x, y }
   }
 
   handleScrollOnElement(event: WheelEvent, element: EntityElement) {
