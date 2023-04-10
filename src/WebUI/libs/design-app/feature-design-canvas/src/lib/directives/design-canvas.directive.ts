@@ -1,8 +1,7 @@
 import { Directive, ElementRef, inject, NgZone, OnInit, Renderer2 } from '@angular/core'
 import { ContextMenuEvent, KEYS, MouseDownEvent, MouseMoveEvent, MouseUpEvent, XyLocation } from '@shared/data-access/models'
 import { CanvasPanel } from '../types/canvas-panel'
-import { getXyPointFromEvent, getXyPointFromLocationV2 } from '../functions'
-import { GridConfig } from 'design-app/utils'
+import { getXyPointFromEvent } from '../functions'
 
 @Directive({
   selector:   '[appDesignCanvas]',
@@ -21,6 +20,11 @@ export class DesignCanvasDirective
   private _panels: CanvasPanel[] = []
   private _selectedPanel?: CanvasPanel
   private _animateScreenMoveId?: number
+
+  mousePos!: HTMLDivElement
+  transformedMousePos!: HTMLDivElement
+  currentTransformedCursor: DOMPoint | undefined
+
   public get animateScreenMoveId(): number | undefined {
     return this._animateScreenMoveId
   }
@@ -48,14 +52,38 @@ export class DesignCanvasDirective
   entityOnMouseDown?: CanvasPanel
 
   screenDragStartPoint: XyLocation = { x: 0, y: 0 }
-  scale = 1
-  screenPosition: XyLocation = { x: 0, y: 0 }
+  _scale = 1
+  get scale(): number {
+    return this._scale
+  }
+
+  set scale(value: number) {
+    this._scale = value
+    console.log('set scale', value)
+  }
+
+  _screenPosition: XyLocation = { x: 0, y: 0 }
+  get screenPosition(): XyLocation {
+    return this._screenPosition
+  }
+
+  set screenPosition(value: XyLocation) {
+    this._screenPosition = value
+    console.log('set screenPosition', value)
+  }
+
+  height = this._canvas.height
+  width = this._canvas.width
+  image: HTMLImageElement | undefined
 
   public ngOnInit() {
     this.setupCanvas()
     this._ngZone.runOutsideAngular(() => {
       this.setupMouseEventListeners()
     })
+    this.mousePos = document.getElementById('mouse-pos') as HTMLDivElement
+    this.transformedMousePos = document.getElementById('transformed-mouse-pos') as HTMLDivElement
+    console.log(this.mousePos, this.transformedMousePos)
   }
 
   private setupCanvas() {
@@ -107,7 +135,7 @@ export class DesignCanvasDirective
       event.stopPropagation()
       event.preventDefault()
       this.onScrollHandler(event)
-      console.log('wheel', event)
+      // console.log('wheel', event)
     })
     this._renderer.listen(window, 'keyup', (event: KeyboardEvent) => {
       event.stopPropagation()
@@ -126,17 +154,13 @@ export class DesignCanvasDirective
         this.drawPanels()
       }
     })
-    /*    this._renderer.listen(this._element, ContextMenuEvent, (event: PointerEvent) => {
-     event.stopPropagation()
-     event.preventDefault()
-     console.log('context menu', event)
-     this._clickService.handleContextMenuEvent(event)
-     })*/
-    /*    this._renderer.listen(this._element, 'wheel', (event: WheelEvent) => {
-     event.stopPropagation()
-     event.preventDefault()
-     this._viewPositioningService.onScrollHandler(event)
-     })*/
+  }
+
+  getTransformedPoint(x: number, y: number) {
+    const originalPoint = new DOMPoint(x, y)
+    return this._ctx.getTransform()
+      .invertSelf()
+      .transformPoint(originalPoint)
   }
 
   private onMouseDownHandler(event: MouseEvent) {
@@ -144,21 +168,12 @@ export class DesignCanvasDirective
     if (event.ctrlKey) {
       this.isDraggingScreen = true
       console.log('dragging screen')
-      // const canvasRect = this._canvas.getBoundingClientRect()
-      // console.log('canvasRect', canvasRect)
-      console.log('event', event.pageX, event.pageY)
-      this.screenDragStartPoint = {
-        x: event.pageX / this.scale - this.screenPosition.x,
-        y: event.pageY / this.scale - this.screenPosition.y,
-      }
-      // this.screenDragStartPoint = { x: event.clientX, y: event.clientY }
+      this.screenDragStartPoint = this.getTransformedPoint(event.offsetX, event.offsetY)
       return
     }
-    // this.isDraggingEntity = true
     const clickedOnEntity = this._panels.find(panel => this.isMouseOverPanel(event, panel))
     if (clickedOnEntity) {
       console.log('clicked on entity', clickedOnEntity)
-      // this.isDraggingEntity = true
       this.entityOnMouseDown = clickedOnEntity
       if (this._selectedPanel?.id !== clickedOnEntity.id) {
         this._selectedPanel = undefined
@@ -208,7 +223,8 @@ export class DesignCanvasDirective
       return
     }
     this._selectedPanel = undefined
-    const panel = CanvasPanel.createFromEventToScale(event, this.screenPosition, this.scale)
+    const location = this.getTransformedPoint(event.offsetX, event.offsetY)
+    const panel = CanvasPanel.create(location)
 
     this.panels = [...this.panels, panel]
 
@@ -216,48 +232,20 @@ export class DesignCanvasDirective
   }
 
   private onScrollHandler(event: WheelEvent) {
-    // event.stopPropagation()
-    // event.preventDefault()
-    const speed = GridConfig.Speed // 0.05
-    const minScale = 0.5
-    const maxScale = GridConfig.MaxScale // 2
-    console.log('onScrollHandsler', event)
-    const pointer = getXyPointFromEvent(event, this.screenPosition, this.scale)
-    const pointerX = pointer.x
-    const pointerY = pointer.y
-    // const pointerX = event.pageX
-    // const pointerY = event.pageY
-    const targetX = (pointerX - this.screenPosition.x) / this.scale
-    const targetY = (pointerY - this.screenPosition.y) / this.scale
-    const sizeW = this._canvas.width
-    const sizeH = this._canvas.height
+    console.log(event)
+    const currentTransformedCursor = this.getTransformedPoint(event.offsetX, event.offsetY)
 
-    this.scale += -1 * Math.max(-1, Math.min(1, event.deltaY)) * speed * this.scale
-    this.scale = Math.max(minScale, Math.min(maxScale, this.scale))
-    this.screenPosition = {
-      x: -targetX * this.scale + pointerX,
-      y: -targetY * this.scale + pointerY,
-    }
+    const zoom = event.deltaY < 0
+      ? 1.1
+      : 0.9
 
-    if (this.screenPosition.x > 0) this.screenPosition.x = 0
-    if (this.screenPosition.x + sizeW * this.scale < sizeW) this.screenPosition.x = -sizeW * (this.scale - 1)
-    if (this.screenPosition.y > 0) this.screenPosition.y = 0
-    if (this.screenPosition.y + sizeH * this.scale < sizeH) this.screenPosition.y = -sizeH * (this.scale - 1)
-    // if (event.ctrlKey) {
-    /*    this.scale += event.deltaY * 0.001
-     this.scale = Math.max(this.scale, 0.1)
-     this.scale = Math.min(this.scale, 10)
-     console.log('scale', this.scale)
-     this.screenPosition = {
-     x: event.pageX / this.scale - this.screenPosition.x,
-     y: event.pageY / this.scale - this.screenPosition.y,
-     }*/
-    this._ctx.setTransform()
-    this._ctx.translate(this.screenPosition.x, this.screenPosition.y)
-    this._ctx.scale(this.scale, this.scale)
+    this._ctx.translate(currentTransformedCursor.x, currentTransformedCursor.y)
+    this._ctx.scale(zoom, zoom)
+    this._ctx.translate(-currentTransformedCursor.x, -currentTransformedCursor.y)
 
     this.drawPanels()
-    // }
+
+    event.preventDefault()
   }
 
   private selectPanel(panel: CanvasPanel) {
@@ -267,46 +255,20 @@ export class DesignCanvasDirective
   }
 
   private onMouseMoveHandler(event: MouseEvent) {
+    this.currentTransformedCursor = this.getTransformedPoint(event.offsetX, event.offsetY)
+    this.mousePos.innerText = `Original X: ${event.offsetX}, Y: ${event.offsetY}`
+    this.transformedMousePos.innerText = `Transformed X: ${this.currentTransformedCursor.x}, Y: ${this.currentTransformedCursor.y}`
     if (this.isDraggingScreen) {
-      this.screenPosition = {
-        x: event.pageX / this.scale - this.screenDragStartPoint.x,
-        y: event.pageY / this.scale - this.screenDragStartPoint.y,
-      }
-      if (this._animateScreenMoveId) return
-      this.animateScreenMove()
+      this._ctx.translate(this.currentTransformedCursor.x - this.screenDragStartPoint.x, this.currentTransformedCursor.y - this.screenDragStartPoint.y)
+      this.drawPanels()
       return
-
-      // console.log('screenPosition', this.screenPosition)
-      // this._ctx.setTransform()
-      // const transform = this._ctx.getTransform()
-      // this._ctx.get
-      // console.log('transform', transform)
-
-      // this._ctx.translate(this.screenPosition.x, this.screenPosition.y)
-      // this._ctx.scale(this.scale, this.scale)
-      // this.drawPanels()
-
     }
-    /*    if (!this.isDraggingEntity) {
-     return
-     }*/
     if (this.entityOnMouseDown) {
       this.isDraggingEntity = true
       this._ctx.clearRect(0, 0, this._canvas.width, this._canvas.height)
       console.log('dragging', this.entityOnMouseDown)
-      // const { x, y } = event
-      // const { location } = this.entityOnMouseDown
-      // const deltaX = x - location.x
-      // const deltaY = y - location.y
-      // this.entityOnMouseDown.location = { x, y }
       this.entityOnMouseDown = CanvasPanel.updateLocationFromEventToScale(this.entityOnMouseDown, event, this.screenPosition, this.scale)
       this.updatePanel(this.entityOnMouseDown)
-      // this.animateMove.animate()
-
-      /*      this._ctx.clearRect(0, 0, this._canvas.width, this._canvas.height)
-       this._panels.forEach(panel => {
-       this.drawPanel(panel)
-       })*/
     }
 
   }
@@ -327,16 +289,23 @@ export class DesignCanvasDirective
       this._ctx.closePath()
       this._ctx.fillStyle = '#ff6e78'
     }
-    const { x, y } = getXyPointFromLocationV2(panel.location, this.screenPosition, this.scale)
-    this._ctx.rect(x, y, panel.width * this.scale, panel.height * this.scale)
+
+    // const { x, y } = getXyPointFromLocationV2(panel.location, this.screenPosition, this.scale)
+    // this._ctx.rect(x, y, panel.width * this.scale, panel.height * this.scale)
+    this._ctx.rect(panel.location.x, panel.location.y, panel.width, panel.height)
+
     this._ctx.fill()
     this._ctx.stroke()
     this._ctx.beginPath()
     this._ctx.fillStyle = '#8ED6FF'
+
   }
 
   private drawPanels() {
+    this._ctx.save()
+    this._ctx.setTransform(1, 0, 0, 1, 0, 0)
     this._ctx.clearRect(0, 0, this._canvas.width, this._canvas.height)
+    this._ctx.restore()
     this._ctx.beginPath()
     this._panels.forEach(panel => {
       this.drawPanel(panel)
@@ -348,97 +317,5 @@ export class DesignCanvasDirective
     const findIndex = this._panels.findIndex(p => p.id === panel.id)
     this._panels[findIndex] = panel
     this.drawPanels()
-    /*    this._ctx.clearRect(0, 0, this._canvas.width, this._canvas.height)
-     this.drawPanel(panel)*/
   }
-
-  /*
-
-   public ngAfterViewInit() {
-   this._ngZone.runOutsideAngular(() => {
-   this.drawPanels()
-   })
-   }
-
-   public ngAfterViewChecked() {
-   this._ngZone.runOutsideAngular(() => {
-   this.drawPanels()
-   })
-   }
-   */
-
-  /*  public ngOnDestroy() {
-   this._renderer.removeChild(this._element, this._canvas)
-   }*/
-
-  /*trackTransforms(ctx: CanvasRenderingContext2D) {
-   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-   const xform = svg.createSVGMatrix();
-   ctx.getTransform = function () {
-   return xform;
-   };
-
-   const savedTransforms = [];
-   const save = ctx.save;
-   ctx.save = function () {
-   savedTransforms.push(xform.translate(0, 0));
-   return save.call(ctx);
-   };
-
-   const restore = ctx.restore;
-   ctx.restore = function () {
-   xform = savedTransforms.pop();
-   return restore.call(ctx);
-   };
-
-   const scale = ctx.scale;
-   ctx.scale = function (sx, sy) {
-   xform = xform.scaleNonUniform(sx, sy);
-   return scale.call(ctx, sx, sy);
-   };
-
-   const rotate = ctx.rotate;
-   ctx.rotate = function (radians) {
-   xform = xform.rotate((radians * 180) / Math.PI);
-   return rotate.call(ctx, radians);
-   };
-
-   const translate = ctx.translate;
-   ctx.translate = function (dx, dy) {
-   xform = xform.translate(dx, dy);
-   return translate.call(ctx, dx, dy);
-   };
-
-   const transform = ctx.transform;
-   ctx.transform = function (a, b, c, d, e, f) {
-   const m2 = svg.createSVGMatrix();
-   m2.a = a;
-   m2.b = b;
-   m2.c = c;
-   m2.d = d;
-   m2.e = e;
-   m2.f = f;
-   xform = xform.multiply(m2);
-   return transform.call(ctx, a, b, c, d, e, f);
-   };
-
-   const setTransform = ctx.setTransform;
-   ctx.setTransform = function (a, b, c, d, e, f) {
-   xform.a = a;
-   xform.b = b;
-   xform.c = c;
-   xform.d = d;
-   xform.e = e;
-   xform.f = f;
-   return setTransform.call(ctx, a, b, c, d, e, f);
-   };
-
-   const pt = svg.createSVGPoint();
-   ctx.transformedPoint = function (x, y) {
-   pt.x = x;
-   pt.y = y;
-   return pt.matrixTransform(xform.inverse());
-   };
-   }*/
-
 }

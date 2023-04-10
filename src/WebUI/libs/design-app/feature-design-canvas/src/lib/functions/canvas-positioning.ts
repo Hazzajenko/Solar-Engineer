@@ -32,3 +32,11 @@ export function getXyPointFromLocationV2(
     y: location.y / scale + screenPosition.y,
   }
 }
+
+export function scaleAt(point: XyLocation, scaleBy: number) {
+  // at pixel coords x, y scale by scaleBy
+  const scale = 1 / scaleBy
+  const origin = { x: 0, y: 0 }
+  origin.x = point.x - (point.x - origin.x) * scaleBy
+  origin.y = point.y - (point.y - origin.y) * scaleBy
+}
