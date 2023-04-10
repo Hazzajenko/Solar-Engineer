@@ -2,8 +2,8 @@ import { inject, Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
 import { ProjectsSelectors } from '../../store'
 import { combineLatest, firstValueFrom } from 'rxjs'
-import { throwExpression } from '@shared/utils'
 import { map } from 'rxjs/operators'
+import { ProjectModel } from '@shared/data-access/models'
 
 @Injectable({ providedIn: 'root' })
 export class ProjectsFacade {
@@ -29,16 +29,24 @@ export class ProjectsFacade {
 
   selectedProjectNoNull$() {
     /*    return this.selectedProject$.pipe(
-          map((project) => project ?? throwError(() => new Error('No project selected'))),
-          catchError((err) => EMPTY),
-        )*/
+     map((project) => project ?? throwError(() => new Error('No project selected'))),
+     catchError((err) => EMPTY),
+     )*/
     // return this.selectedProject$.pipe(filter((project): project is ProjectModel => !!project))
     // return this.selectedProject$.pipe(filter((project) => project is ProjectModel => !!project))
     return this.selectedProject$.pipe(map((project) => project))
   }
 
   async selectedProject() {
-    return (await firstValueFrom(this.selectedProjects$)) ?? throwExpression('No project selected')
+    return (await firstValueFrom(this.selectedProjects$)) ?? new ProjectModel({
+      name:             'No project selected',
+      createdById:      '1',
+      createdTime:      Date.now()
+                          .toString(),
+      lastModifiedTime: Date.now()
+                          .toString(),
+    })
+    // return (await firstValueFrom(this.selectedProjects$)) ?? throwExpression('No project selected')
     // return (await firstValueFrom(this.selectedProjects$)) ?? throwExpression('No project selected')
   }
 

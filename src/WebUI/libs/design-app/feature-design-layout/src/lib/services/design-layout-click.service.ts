@@ -1,8 +1,8 @@
 import { inject, Injectable, RendererFactory2 } from '@angular/core'
 import { PanelFactory, PanelRotation, PanelsStoreService } from '@design-app/feature-panel'
-import { EntityDivElement, EntityType, extractEntityDiv, extractHtmlDivElement, findParentContextMenuElement, findParentContextMenuElementV2 } from '@design-app/shared'
+import { EntityDivElement, EntityType } from '@design-app/shared'
 import { SelectedStoreService } from '@design-app/feature-selected'
-import { ComponentElementsService, MousePositioningService, ObjectPositioningService } from 'design-app/utils'
+import { ComponentElementsService, extractEntityDiv, extractHtmlDivElement, findParentContextMenuElement, findParentContextMenuElementV2, MousePositioningService, ObjectPositioningService } from 'design-app/utils'
 
 @Injectable({
   providedIn: 'root',

@@ -141,6 +141,7 @@ export class DesignLayoutDirective
     const top = (window.innerHeight - layoutHeight) / 2
     this._renderer.setStyle(this._scrollElement, 'left', `${left}px`)
     this._renderer.setStyle(this._scrollElement, 'top', `${top}px`)
+    this._renderer.setStyle(this._scrollElement, 'display', 'block')
   }
 
   private setupElements() {

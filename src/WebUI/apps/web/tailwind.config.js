@@ -9,6 +9,7 @@ module.exports = {
     join(__dirname, 'src/**/*.{ts,html}'),
     join('libs/design-app/feature-design-layout/src/lib/**/*.{ts,html}'),
     join('libs/design-app/feature-panel/src/lib/**/*.{ts,html}'),
+    join('libs/grid-layout/feature/src/lib/**/*.{ts,html}'),
     ...createGlobPatternsForDependencies(__dirname),
   ],
   /*  darkMode: 'class',

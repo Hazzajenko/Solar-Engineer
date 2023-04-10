@@ -3,18 +3,17 @@ import { XyLocation } from '@shared/data-access/models'
 import { PanelModel, PanelsStoreService } from '@design-app/feature-panel'
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { ComponentElementsService, DesignRectModel } from '../component-elements'
-import { ViewPositioningService } from '../view-positioning'
 import { LineDirection } from '@design-app/canvas'
 import { TypeOfEntity } from '@design-app/feature-selected'
-import { EntityType, isEntityType } from '@design-app/shared'
+import { EntityElement, EntityType, isEntityType } from '@design-app/shared'
 import { MousePositioningService } from '../mouse-positioning'
+import { extractEntityRectFromTarget } from '../../functions'
 
 @Injectable({
   providedIn: 'root',
 })
 export class ObjectPositioningService {
   private _componentElementsService = inject(ComponentElementsService)
-  private _viewPositioningService = inject(ViewPositioningService)
   private _mousePositioningService = inject(MousePositioningService)
   private _panelsStore = inject(PanelsStoreService)
   // private _designPanelsFacade = inject(DesignPanelsFacade)
@@ -31,6 +30,45 @@ export class ObjectPositioningService {
       top:    [],
       bottom: [],
     },
+  }
+
+  public getElementRectPositionOffScrollById(elementId: string) {
+    const entityRect = this._componentElementsService.getElementRectById(elementId)
+    // const entityRect = extractEntityRectFromTarget(element)
+    if (!entityRect) return
+    const { id, type } = entityRect
+    const scrollRect = this._componentElementsService.scrollElement.getBoundingClientRect()
+    const x = (entityRect.x - scrollRect.left + (entityRect.width)) / this._mousePositioningService.scale
+    const y = (entityRect.y - scrollRect.top + (entityRect.height)) / this._mousePositioningService.scale
+
+    return {
+      id,
+      type,
+      x,
+      y,
+      height: entityRect.height,
+      width:  entityRect.width,
+    }
+
+  }
+
+  public getElementRectPositionOffScroll(element: HTMLDivElement): EntityElement | undefined {
+    const entityRect = extractEntityRectFromTarget(element)
+    if (!entityRect) return
+    const { id, type } = entityRect
+    const scrollRect = this._componentElementsService.scrollElement.getBoundingClientRect()
+    const x = (entityRect.x - scrollRect.left + (entityRect.width)) / this._mousePositioningService.scale
+    const y = (entityRect.y - scrollRect.top + (entityRect.height)) / this._mousePositioningService.scale
+
+    return {
+      id,
+      type,
+      x,
+      y,
+      height: entityRect.height,
+      width:  entityRect.width,
+    }
+
   }
 
   public pushEntityToNearByEntitiesOnAxis(entity: TypeOfEntity, direction: LineDirection) {

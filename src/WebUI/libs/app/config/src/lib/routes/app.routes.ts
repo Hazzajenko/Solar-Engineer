@@ -16,8 +16,20 @@ export const appRoutes: Route[] = [
   {
     path: '',
     loadComponent: () =>
+      import('@design-app/feature-design-canvas').then((m) => m.DesignCanvasComponent),
+    // providers: [noGridLayoutProviders],
+  },
+  {
+    path: 'design',
+    loadComponent: () =>
       import('@design-app/feature-design-layout').then((m) => m.DesignLayoutComponent),
     // providers: [noGridLayoutProviders],
+  },
+  {
+    path: 'grid',
+    loadComponent: () => import('@grid-layout/feature').then((m) => m.GridLayoutComponent),
+    data: { tab: 'projects', state: 'projects' },
+    providers: [projectsProviders],
   },
   {
     path: 'free',

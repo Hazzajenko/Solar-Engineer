@@ -2,7 +2,7 @@ import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop'
 import { CommonModule } from '@angular/common'
 import { ChangeDetectionStrategy, Component, inject, Input, OnInit } from '@angular/core'
 import { MatSnackBar } from '@angular/material/snack-bar'
-import { ClickService, ClientXY, DoubleClickService, DropService, ElementOffsets, GridFacade, GridSelectedFacade, GridSelectedStoreService, GridStringsFacade, MouseEventRequest, PathsStoreService, UiStoreService, XYModel } from '@grid-layout/data-access'
+import { BlocksStoreService, ClickService, ClientXY, DoubleClickService, DropService, ElementOffsets, GridFacade, GridSelectedFacade, GridSelectedStoreService, GridStringsFacade, MouseEventRequest, PathsStoreService, UiStoreService, XYModel } from '@grid-layout/data-access'
 
 import { KeymapOverlayComponent } from './ui/keymap/keymap.component'
 import { StringTotalsOverlayComponent } from './ui/string-stats/string-stats.component'
@@ -54,9 +54,11 @@ export class GridLayoutComponent
   private selectedFacade = inject(GridSelectedFacade)
   private stringsFacade = inject(GridStringsFacade)
   private gridFacade = inject(GridFacade)
+  private blocksStore = inject(BlocksStoreService)
   // private gridLayoutService = inject(GridLayoutService)
 
   @Input() blocks$!: Observable<BlockModel[]>
+  newBlocks$: Observable<BlockModel[]> = this.blocksStore.select.blocksFromProject$()
   // containerSizes: ContainerSizes = this.initContainerSize()
   // containerSizes: ContainerSizes = this.gridLayoutService.initContainerSize()
   // containerSizes: ContainerSizes | undefined

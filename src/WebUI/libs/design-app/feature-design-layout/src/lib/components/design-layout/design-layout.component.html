@@ -7,10 +7,18 @@
       appScrollView
       style="transition: transform 0.1s; transform-origin: 0 0"
     >
+      <!--      <ng-container *ngIf="vm$ | async as vm">
+              <ng-container *ngFor="let panel of vm.entities; trackBy: trackByPanelId">
+                <app-panel
+                  *ngIf="panel.type === 'panel'"
+                  [panel]="panel"
+                  [entities]="entities"
+                ></app-panel>
+              </ng-container>-->
       <ng-template
-        *ngFor="let panel of (panels$ | async)!; trackBy: trackByPanelId"
+        *ngFor="let entity of (vm$ | async)!.entities; trackBy: trackByEntityId"
         appDynamicEntity
-        [entity]="{ id: panel.id, type: panel.type }"
+        [entity]="{ id: entity.id, type: entity.type }"
       ></ng-template>
     </div>
   </div>

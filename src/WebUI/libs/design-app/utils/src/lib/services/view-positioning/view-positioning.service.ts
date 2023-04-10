@@ -4,7 +4,10 @@ import { XyLocation } from '@shared/data-access/models'
 import { BehaviorSubject } from 'rxjs'
 import { ComponentElementsService } from '../component-elements'
 import { GridConfig } from './grid.config'
-import { extractEntityDiv } from '@design-app/shared'
+import { EntityElement } from '@design-app/shared'
+import { calculateLeftRightPositionForScene } from '../../functions/scene/scene-size'
+import { ObjectPositioningService } from '../object-positioning'
+import { extractEntityRectFromTarget } from '../../functions'
 
 @Injectable({
   providedIn: 'root',
@@ -15,6 +18,7 @@ export class ViewPositioningService {
   private _scrollElement: HTMLDivElement | undefined
   private _mousePositionService = inject(MousePositioningService)
   private _componentElementsService = inject(ComponentElementsService)
+  private _objectPositioningService = inject(ObjectPositioningService)
   // private _scale$
   private _scale = new BehaviorSubject(1)
   private _screenPosition = new BehaviorSubject({ x: 0, y: 0 })
@@ -24,6 +28,9 @@ export class ViewPositioningService {
   private _ctrlMouseDownStartPoint: XyLocation | undefined
   // private _screenPosition: XyLocation = { x: 0, y: 0 }
   private _modifiedScreenPosition: XyLocation = { x: 1000, y: 1000 }
+  matrix = [1, 0, 0, 1, 0, 0]
+  dirty = false
+  pos: XyLocation = { x: 0, y: 0 }
 
   get ctrlMouseDownStartPoint(): XyLocation | undefined {
     return this._ctrlMouseDownStartPoint
@@ -129,83 +136,25 @@ export class ViewPositioningService {
   onScrollHandler(
     event: WheelEvent,
   ) {
-
+    if (event.target) {
+      // const isEntity = this._objectPositioningService.getElementRectPositionOffScroll(event.target as HTMLDivElement)
+      const isEntity = extractEntityRectFromTarget(event.target as HTMLDivElement)
+      if (isEntity) {
+        this.handleScrollOnElement(event, isEntity)
+        return
+      }
+    }
+    const childRect = this.scrollElement.getBoundingClientRect()
     const speed = GridConfig.Speed // 0.05
     const minScale = 0.5
     const maxScale = GridConfig.MaxScale // 2
 
+    console.log('childRect', childRect)
     const sizeH = childRect.height
     const sizeW = childRect.width
-    // const delta = event.deltaY
-    // const scale = this.scale
-    const childRect = this.scrollElement.getBoundingClientRect()
     const pointerX = event.pageX - childRect.left
     const pointerY = event.pageY - childRect.top
-    // const screenWidth = window.innerWidth
-    // const screenHeight = window.innerHeight
-    /*    const targetX = pointerX / this.scales
-     const targetY = pointerY / this.scale*/
-    /*    pointerX = screenWidth / 2 - targetX
-     pointerY = screenHeight / 2 - targetY*/
-    // const elementCenterX = pointerX - this.screenPosition.x
-    // const elementCenterY = pointerY - this.screenPosition.y
-    /*    const targetX = elementCenterX / this.scale
-     const targetY = elementCenterY / this.scale
-     const screenWidth = window.innerWidth
-     const screenHeight = window.innerHeight
-     const newScreenX = screenWidth / 2 - targetX
-     const newScreenY = screenHeight / 2 - targetY*/
 
-    if (event.target) {
-      const target = event.target as HTMLElement
-      console.log('target', target)
-      const element = target.closest('.panel')
-      // if (!element) return
-      console.log('element', element)
-      const extract = extractEntityDiv(event)
-      console.log('extract', extract)
-
-      const divElement = this._componentElementsService.getElementRectById(target.id)
-      console.log('divElement', divElement)
-      if (divElement) {
-        const halfOfHeight = sizeH / 2
-        const halfOfWidth = sizeW / 2
-        /*        pointerX = event.pageX - divElement.x
-         pointerY = event.pageY - divElement.y*/
-        /*        pointerX = divElement.x
-         pointerY = divElement.y
-         // const targetX = elementCenterX / this.scale;
-         // const targetY = elementCenterY / this.scale;
-         const screenWidth = window.innerWidth
-         const screenHeight = window.innerHeight
-         const newScreenX = screenWidth / 2 - pointerX
-         const newScreenY = screenHeight / 2 - pointerY
-         this.screenPosition = { x: newScreenX, y: newScreenY }
-         this.scale += -1 * Math.max(-1, Math.min(1, event.deltaY)) * speed * this.scale
-         this.scale = Math.max(minScale, Math.min(maxScale, this.scale))
-         this._renderer.setStyle(
-         // this.gridLayoutElement,
-         this.scrollElement,
-         'transform',
-         `translate(${this.screenPosition.x}px,${this.screenPosition.y}px) scale(${this.scale})`,
-         )
-         return*/
-      }
-
-    }
-
-    console.log('childRect', childRect.left, childRect.top)
-    console.log('offsets', this.scrollElement.offsetLeft, this.scrollElement.offsetTop)
-
-    /*    const sizeH = this.scrollElement.offsetHeight
-     const sizeW = this.scrollElement.offsetWidth*/
-
-    /*    const pointerX = event.pageX - this.scrollElement.offsetLeft
-     const pointerY = event.pageY - this.scrollElement.offsetTop*/
-    // const pointerX = event.pageX - childRect.left
-    // const pointerY = event.pageY - childRect.top
-    /*    const pointerX = event.offsetX
-     const pointerY = event.offsetY*/
     const targetX = (pointerX - this.screenPosition.x) / this.scale
     const targetY = (pointerY - this.screenPosition.y) / this.scale
 
@@ -216,36 +165,114 @@ export class ViewPositioningService {
       y: -targetY * this.scale + pointerY,
     }
 
-    console.log('this.screenPosition.x', this.screenPosition.x)
-    console.log('this.screenPosition.y', this.screenPosition.y)
-
     if (this.screenPosition.x > 0) this.screenPosition.x = 0
     if (this.screenPosition.x + sizeW * this.scale < sizeW) this.screenPosition.x = -sizeW * (this.scale - 1)
     if (this.screenPosition.y > 0) this.screenPosition.y = 0
     if (this.screenPosition.y + sizeH * this.scale < sizeH) this.screenPosition.y = -sizeH * (this.scale - 1)
-    // if (this.screenPosition.x )
-    /*
-     console.log('this.screenPosition.x', this.screenPosition.x)
-     console.log('this.screenPosition.y', this.screenPosition.y)*/
+
+    console.log('this.screenPosition.x', this.screenPosition.x)
+    console.log('this.screenPosition.y', this.screenPosition.y)
 
     this._renderer.setStyle(
-      // this.gridLayoutElement,
       this.scrollElement,
-      'transform',
-      `translate(${this.screenPosition.x}px,${this.screenPosition.y}px) scale(${this.scale})`,
+      'translate',
+      `${this.screenPosition.x}px,${this.screenPosition.y}px`,
     )
+    this._renderer.setStyle(
+      this.scrollElement,
+      'scale',
+      this.scale,
+    )
+
+    /*    this._renderer.setStyle(
+     this.scrollElement,
+     'transform',
+     `translate(${this.screenPosition.x}px,${this.screenPosition.y}px) scale(${this.scale})`,
+     )*/
   }
 
-  mouseOutHandler(event: MouseEvent) {
-    console.log('mouseOutHandler')
-    this._renderer.setStyle(
-      this.scrollElement,
-      'transform',
-      `translate(-50%, -50%) scale(${this.scale}) translate(0, 0)`,
-    )
+  handleScrollOnElement(event: WheelEvent, element: EntityElement) {
+    console.log('handleScrollOnElement', element)
+    const scrollRect = this.scrollElement.getBoundingClientRect()
+    console.log('scrollRect', scrollRect)
+    // const ele = this._componentElementsService.getElementRectById(isEntity.id)
+    // const ele = this._objectPositioningService.getElementRectPositionOffScrollById(isEntity.id)
+    console.log('ele', element)
+    // if (!ele) return
+    const differenceX = element.x - scrollRect.x
+    const differenceY = element.y - scrollRect.y
+    console.log('differenceX', differenceX)
+    console.log('differenceY', differenceY)
+    const differenceOffScrollMiddleX = differenceX - scrollRect.width / 2
+    const differenceOffScrollMiddleY = differenceY - scrollRect.height / 2
+    console.log('differenceOffScrollMiddleX', differenceOffScrollMiddleX)
+    console.log('differenceOffScrollMiddleY', differenceOffScrollMiddleY)
+
+    const scrollTopStyle = this.scrollElement.style.top
+    const scrollLeftStyle = this.scrollElement.style.left
+    console.log('scrollTopStyle', scrollTopStyle)
+    console.log('scrollLeftStyle', scrollLeftStyle)
+    const differenceOffScreenMiddleX = differenceX - window.innerWidth / 2 - parseInt(scrollLeftStyle, 10)
+    const differenceOffScreenMiddleY = differenceY - window.innerHeight / 2 - parseInt(scrollTopStyle, 10)
+    console.log('differenceOffScreenMiddleX', differenceOffScreenMiddleX)
+    console.log('differenceOffScreenMiddleY', differenceOffScreenMiddleY)
+    // const speed = GridConfig.Speed // 0.05
   }
 
   resetScreenPosition() {
+    // this.screenPosition = { x: 0, y: 0 }
+    // this.scale = 1
+    const scrollRect = this.scrollElement.getBoundingClientRect()
+    const sizeH = scrollRect.height
+    const sizeW = scrollRect.width
+    console.log('rectWidth', scrollRect.width)
+    console.log('rectHeight', scrollRect.height)
+    console.log('elementStyleWidth', this.scrollElement.style.width)
+    console.log('elementStyleHeight', this.scrollElement.style.height)
+    console.log('elementOffsetWidth', this.scrollElement.offsetWidth)
+    console.log('elementOffsetHeight', this.scrollElement.offsetHeight)
+    console.log(`
+    scrollRect.width: ${scrollRect.width} * this.scale: ${this.scale}
+    = ${scrollRect.width * this.scale}
+    / 2 = ${(scrollRect.width * this.scale) / 2}`)
+    console.log(`
+    scrollRect.height: ${scrollRect.height} * this.scale: ${this.scale}
+    = ${scrollRect.height * this.scale}
+     / 2 = ${(scrollRect.height * this.scale) / 2}`)
+
+    console.log(`
+    elementOffsetWidth: ${this.scrollElement.offsetWidth} * this.scale: ${this.scale}
+    = ${this.scrollElement.offsetWidth * this.scale}
+    / 2 = ${(this.scrollElement.offsetWidth * this.scale) / 2}`)
+
+    console.log(`
+    elementOffsetHeight: ${this.scrollElement.offsetHeight} * this.scale: ${this.scale}
+    = ${this.scrollElement.offsetHeight * this.scale}
+    / 2 = ${this.scrollElement.offsetHeight * this.scale / 2}`)
+
+    this.screenPosition = {
+      x: (scrollRect.width * this.scale) * this.scale,
+      y: (scrollRect.height * this.scale) * this.scale,
+    }
+    this.screenPosition.x = -sizeW * (this.scale - 1)
+    this.screenPosition.y = -sizeH * (this.scale - 1)
+    /*    const centerX = (window.innerWidth - scrollRect.width * this.scale) / 2
+     const centerY = (window.innerHeight - scrollRect.height * this.scale) / 2
+     this.screenPosition = { x: centerX, y: centerY }*/
+    this.scale = 0.75
+
+    const scrollRectWidth = scrollRect.width / this.scale
+    const scrollRectHeight = scrollRect.height / this.scale
+
+    const centerX = (scrollRectWidth * this.scale - scrollRectWidth * this.scale) / 2
+    const centerY = (scrollRectHeight * this.scale - scrollRectHeight * this.scale) / 2
+
+    /*    const screenPosition = {
+     x: this.screenPosition.x + centerX,
+     y: this.screenPosition.y + centerY
+     };*/
+    // this.screenPosition = { x: centerX, y: centerY }
+    // const screenPosition = { x: centerX, y: centerY };
     this.screenPosition = { x: 0, y: 0 }
     this.scale = 1
     this._renderer.setStyle(
@@ -253,21 +280,43 @@ export class ViewPositioningService {
       'transform',
       `translate(${this.screenPosition.x}px,${this.screenPosition.y}px) scale(${this.scale})`,
     )
+    // const {sceneWidth, sceneHeight} = calculateSceneLayoutSize()
+    const { top, left } = calculateLeftRightPositionForScene()
+    this._renderer.setStyle(
+      this.scrollElement,
+      'top',
+      `${top}px`,
+    )
+    this._renderer.setStyle(
+      this.scrollElement,
+      'left',
+      `${left}px`,
+    )
+    /*    this._renderer.setStyle(
+     this.scrollElement,
+     'transform-origin',
+     '0 0',
+     )*/
   }
 
   onMouseDownHelper(event: MouseEvent) {
-    const rect = this.gridLayoutElement.getBoundingClientRect()
-    const parentRect = this._componentElementsService.parentElement.getBoundingClientRect()
+    /*    const rect = this.gridLayoutElement.getBoundingClientRect()
+     const parentRect = this._componentElementsService.parentElement.getBoundingClientRect()*/
+    const rect = this.scrollElement.getBoundingClientRect()
+    const parentRect = this.gridLayoutElement.getBoundingClientRect()
+    // const parentRect = this._componentElementsService.parentElement.getBoundingClientRect()
+    const offsetLeft = this.scrollElement.offsetLeft
+    const offsetTop = this.scrollElement.offsetTop
 
     const x =
             event.pageX -
             (parentRect.width - rect.width) / 2
-            - this.gridLayoutElement.offsetLeft
+            - offsetLeft
 
     const y =
             event.pageY -
             (parentRect.height - rect.height) / 2
-            - this.gridLayoutElement.offsetTop
+            - offsetTop
 
     this._ctrlMouseDownStartPoint = { x, y }
   }
@@ -275,8 +324,10 @@ export class ViewPositioningService {
   onCtrlMouseMoveHelper(event: MouseEvent) {
     if (!this._ctrlMouseDownStartPoint) return
     // const rect = this.gridLayoutElement.getBoundingClientRect()
-    const rect = this._componentElementsService.gridLayoutElement.getBoundingClientRect()
-    const parentRect = this._componentElementsService.parentElement.getBoundingClientRect()
+    /*    const rect = this._componentElementsService.gridLayoutElement.getBoundingClientRect()
+     const parentRect = this._componentElementsService.parentElement.getBoundingClientRect()*/
+    const rect = this.scrollElement.getBoundingClientRect()
+    const parentRect = this.gridLayoutElement.getBoundingClientRect()
     const x =
             event.pageX -
             (parentRect.width - rect.width) / 2
@@ -321,11 +372,25 @@ export class ViewPositioningService {
         top = window.innerHeight / 2
       }
     }
-
-    this._renderer.setStyle(this._componentElementsService.gridLayoutElement, 'top', top + 'px')
-    this._renderer.setStyle(this._componentElementsService.gridLayoutElement, 'left', left + 'px')
+    /*    this.screenPosition = {
+     x: this.screenPosition.x + left,
+     y: this.screenPosition.y + top,
+     }
+     // this.screenPosition = { x: left, y: top }
+     this._renderer.setStyle(
+     this.scrollElement,
+     'transform',
+     `translate(${this.screenPosition.x}px,${this.screenPosition.y}px) scale(${this.scale})`,
+     )*/
+    this._renderer.setStyle(this.scrollElement, 'top', top + 'px')
+    this._renderer.setStyle(this.scrollElement, 'left', left + 'px')
     console.log('top', top)
     console.log('left', left)
+
+    /*    this._renderer.setStyle(this._componentElementsService.gridLayoutElement, 'top', top + 'px')
+     this._renderer.setStyle(this._componentElementsService.gridLayoutElement, 'left', left + 'px')*/
+    // console.log('top', top)
+    // console.log('left', left)
     /*
      const canvasTop = top + this._componentElementsService.canvasElement.offsetTop
      const canvasLeft = left + this._componentElementsService.canvasElement.offsetLeft

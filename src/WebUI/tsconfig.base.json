@@ -59,6 +59,7 @@
       "@blog/feature": ["libs/blog/feature/src/index.ts"],
       "@design-app/canvas": ["libs/design-app/canvas/src/index.ts"],
       "@design-app/config": ["libs/design-app/config/src/index.ts"],
+      "@design-app/feature-design-canvas": ["libs/design-app/feature-design-canvas/src/index.ts"],
       "@design-app/feature-design-layout": ["libs/design-app/feature-design-layout/src/index.ts"],
       "@design-app/feature-panel": ["libs/design-app/feature-panel/src/index.ts"],
       "@design-app/feature-selected": ["libs/design-app/feature-selected/src/index.ts"],

@@ -1,6 +1,25 @@
 import { EntityElement } from '@design-app/shared'
 import { MIN_ZOOM, ZOOM_STEP } from 'design-app/utils'
 
+const getTransform = (
+  width: number,
+  height: number,
+  angle: number,
+  scale: number,
+  maxWidth: number,
+  maxHeight: number,
+) => {
+  const degree = (180 * angle) / Math.PI
+  let translateX = (width * (scale - 1)) / 2
+  let translateY = (height * (scale - 1)) / 2
+  if (width > maxWidth && scale !== 1) {
+    translateX = (maxWidth * (scale - 1)) / 2
+  }
+  if (height > maxHeight && scale !== 1) {
+    translateY = (maxHeight * (scale - 1)) / 2
+  }
+  return `translate(${translateX}px, ${translateY}px) scale(${scale}) rotate(${degree}deg)`
+}
 const zoomValueToFitBoundsOnViewport = (
   bounds: [number, number, number, number],
   viewportDimensions: {

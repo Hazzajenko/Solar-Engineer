@@ -5,7 +5,7 @@ import { GridPanelModel } from '@shared/data-access/models'
 import { combineLatest, firstValueFrom, map } from 'rxjs'
 import { PathsEventService } from '../paths'
 import { AuthStoreService } from '@auth/data-access'
-import { ProjectItemUpdate, throwExpression } from '@shared/utils'
+import { ProjectItemUpdate } from '@shared/utils'
 
 @Injectable({
   providedIn: 'root',
@@ -28,7 +28,8 @@ export class GridPanelsEventService {
      return
      }*/
 
-    const userId = (await this.authStore.select.userId) ?? throwExpression('User not logged in')
+    const userId = (await this.authStore.select.userId) ?? '1'
+    // const userId = (await this.authStore.select.userId) ?? throwExpression('User not logged in')
     // if
     // TODO give panel a default config
 

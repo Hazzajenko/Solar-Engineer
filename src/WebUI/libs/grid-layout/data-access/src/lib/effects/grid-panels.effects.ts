@@ -73,29 +73,32 @@ export class GridPanelsEffects
     ),
   )
 
-  addPanelSignalR$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(GridPanelsActions.addPanel),
-        combineLatestWith(this.projectsStore.select.selectedProject$),
-        map(([{ panel }, project]) => {
-          // map(({ panel }) => {
-          project = this.throwIfNull(project, 'project is null')
-          const action: ProjectEventAction = PROJECT_SIGNALR_TYPE.CREATE
-          const model: ProjectItemType = PROJECT_ITEM_TYPE.PANEL
-          const projectSignalrEvent: ProjectSignalrJsonRequest = {
-            action,
-            model,
-            projectId: project.id,
-            requestId: newGuid(),
-            data:      JSON.stringify(panel),
-          }
-          return projectSignalrEvent
-        }),
-        tap((signalrRequest) => this.signalrEventsService.sendProjectSignalrEvent(signalrRequest)),
-      ),
-    { dispatch: false },
-  )
+  /**
+   * ! Removed for debugging
+   */
+  /*  addPanelSignalR$ = createEffect(
+   () =>
+   this.actions$.pipe(
+   ofType(GridPanelsActions.addPanel),
+   combineLatestWith(this.projectsStore.select.selectedProject$),
+   map(([{ panel }, project]) => {
+   // map(({ panel }) => {
+   project = this.throwIfNull(project, 'project is null')
+   const action: ProjectEventAction = PROJECT_SIGNALR_TYPE.CREATE
+   const model: ProjectItemType = PROJECT_ITEM_TYPE.PANEL
+   const projectSignalrEvent: ProjectSignalrJsonRequest = {
+   action,
+   model,
+   projectId: project.id,
+   requestId: newGuid(),
+   data:      JSON.stringify(panel),
+   }
+   return projectSignalrEvent
+   }),
+   tap((signalrRequest) => this.signalrEventsService.sendProjectSignalrEvent(signalrRequest)),
+   ),
+   { dispatch: false },
+   )*/
 
   /*  addPanelBackend$ = createEffect(
    () =>

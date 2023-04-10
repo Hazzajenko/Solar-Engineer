@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core'
 import { MousePositioningService } from '../mouse-positioning'
-import { EntityType, isEntityType } from '@design-app/shared'
+import { EntityElement, EntityType, isEntityType } from '@design-app/shared'
 import { DesignRectModel } from './design-rect.model'
 
 @Injectable({
@@ -158,7 +158,7 @@ export class ComponentElementsService {
     }
   }
 
-  public getBlockRectFromElementV2(element: Element): DesignRectModel {
+  public getBlockRectFromElementV2(element: Element): EntityElement {
     const id = element.getAttribute('id')
     if (!id) {
       throw new Error('id not found')
