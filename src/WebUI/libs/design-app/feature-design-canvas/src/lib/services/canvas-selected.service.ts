@@ -2,20 +2,33 @@ import { TypeOfEntity } from '@design-app/feature-selected'
 import { inject, Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
 import { CanvasActions } from '../store'
+import { CanvasPanel } from '../types'
 
 @Injectable({
   providedIn: 'root',
 })
 export class CanvasSelectedService {
   private _store = inject(Store)
-
   private _selected: TypeOfEntity | undefined
+  private _multiSelected: CanvasPanel[] = []
+  public isMultiSelectDragging = false
+  public offsetsFromMultiSelectCenter: {
+    id: string
+    x: number
+    y: number
+  }[] = []
+  public multiSelectCenter: {
+    x: number;
+    y: number
+  } | undefined
+  multiSelectStart: {
+    x: number;
+    y: number
+  } | undefined
 
   get selected() {
     return this._selected
   }
-
-  private _multiSelected: TypeOfEntity[] = []
 
   get multiSelected() {
     return this._multiSelected
@@ -36,17 +49,17 @@ export class CanvasSelectedService {
     // this.emit(CanvasEvent.Draw)
   }
 
-  setMultiSelected(multiSelected: TypeOfEntity[]) {
+  setMultiSelected(multiSelected: CanvasPanel[]) {
     this._multiSelected = multiSelected
     console.log('set multiSelected', multiSelected)
   }
 
-  addToMultiSelected(selected: TypeOfEntity) {
+  addToMultiSelected(selected: CanvasPanel) {
     this._multiSelected.push(selected)
     console.log('add to multiSelected', selected)
   }
 
-  removeFromMultiSelected(selected: TypeOfEntity) {
+  removeFromMultiSelected(selected: CanvasPanel) {
     const index = this._multiSelected.indexOf(selected)
     if (index > -1) {
       this._multiSelected.splice(index, 1)
