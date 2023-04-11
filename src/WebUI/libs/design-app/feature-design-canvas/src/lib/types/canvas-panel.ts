@@ -1,3 +1,4 @@
+import { ObjectSize } from './sizing'
 import { EntityType } from '@design-app/shared'
 import { XyLocation } from '@shared/data-access/models'
 import { newGuid } from '@shared/utils'
@@ -88,4 +89,5 @@ export const CanvasPanel = {
       return { x, y }
     },
   }),
+  defaultSize: { width: 18, height: 23 } as ObjectSize,
 } as const

@@ -1,7 +1,9 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core'
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { CdkDrag } from '@angular/cdk/drag-drop'
 import { DesignCanvasDirective } from '../../directives'
+import { select, Store } from '@ngrx/store'
+import { selectDrawTime } from '../../store'
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -17,6 +19,8 @@ import { DesignCanvasDirective } from '../../directives'
 })
 export class DesignCanvasComponent
   implements OnInit {
+  private _store = inject(Store)
+  public drawTime$ = this._store.pipe(select(selectDrawTime))
 
   ngOnInit() {
     console.log(this.constructor.name, 'ngOnInit')

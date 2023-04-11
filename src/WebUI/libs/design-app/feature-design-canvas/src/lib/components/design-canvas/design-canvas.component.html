@@ -1,4 +1,10 @@
-<canvas #canvas id="canvas" class="absolute inset-0" appDesignCanvas></canvas>
+<canvas
+  #canvas
+  id="canvas"
+  class="absolute inset-0"
+  appDesignCanvas
+  [drawTime]="(drawTime$ | async)!"
+></canvas>
 
 <div id="mouse-pos"></div>
 <div id="transformed-mouse-pos"></div>

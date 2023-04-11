@@ -1,3 +1,6 @@
 export * from './components/index'
 export * from './directives/index'
 export * from './functions/index'
+export * from './services/index'
+export * from './types/index'
+export * from './store/index'

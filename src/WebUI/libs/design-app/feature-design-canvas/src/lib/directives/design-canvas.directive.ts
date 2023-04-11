@@ -1,6 +1,12 @@
-import { Directive, ElementRef, inject, NgZone, OnInit, Renderer2 } from '@angular/core'
+import { Directive, ElementRef, inject, Input, NgZone, OnInit, Renderer2 } from '@angular/core'
 import { ContextMenuEvent, EventName, KEYS, MouseDownEvent, MouseMoveEvent, MouseUpEvent, POINTER_BUTTON, XyLocation } from '@shared/data-access/models'
 import { CanvasPanel } from '../types/canvas-panel'
+import { adjustEventToMiddleOfObjectByType, adjustLocationToMiddleOfObjectByType, eventToXyLocation, getTransformedPointFromEvent } from '../functions'
+import { EntityType } from '@design-app/shared'
+import { getEntitySizeOffset } from '../functions/object-sizing'
+import { TransformedPoint, TransformedPointToDragOffset } from '../types/location'
+import { getAllElementsBetweenTwoPoints } from '../functions/object-positioning'
+import { CanvasSelectedService } from '../services/canvas-selected.service'
 
 @Directive({
   selector:   '[appDesignCanvas]',
@@ -13,6 +19,8 @@ export class DesignCanvasDirective
   private _ctx!: CanvasRenderingContext2D
   private _ngZone = inject(NgZone)
   private _renderer = inject(Renderer2)
+  // private _selected = new CanvasSelectedService()
+  private _selected = inject(CanvasSelectedService)
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   private clickTimeout?: NodeJS.Timeout | undefined
@@ -71,12 +79,22 @@ export class DesignCanvasDirective
     console.log('set screenPosition', value)
   }
 
+  @Input() set drawTime(value: string) {
+    console.log('set drawTime', value)
+    this.drawPanels()
+  }
+
   height = this._canvas.height
   width = this._canvas.width
   image: HTMLImageElement | undefined
 
   isHoveringEntity = false
   hoveringEntityId?: string
+  entityDragOffset: XyLocation = { x: 0, y: 0 }
+  selectionBoxStartPoint?: TransformedPoint
+  isSelectionBoxDragging = false
+  selectionBoxFillStyle = '#7585d8'
+  defaultPanelFillStyle = '#8ED6FF'
 
   public ngOnInit() {
     this.setupCanvas()
@@ -86,6 +104,12 @@ export class DesignCanvasDirective
     this.mousePos = document.getElementById('mouse-pos') as HTMLDivElement
     this.transformedMousePos = document.getElementById('transformed-mouse-pos') as HTMLDivElement
     console.log(this.mousePos, this.transformedMousePos)
+    // this._selected.draw = this.drawPanels.bind(this)
+    // this._selected.
+    // this._selected.
+    /*    this._selected.on(CanvasEvent.Draw, () => {
+     this.drawPanels()
+     })*/
   }
 
   private setupCanvas() {
@@ -139,6 +163,13 @@ export class DesignCanvasDirective
       this.onScrollHandler(event)
       // console.log('wheel', event)
     })
+    this._renderer.listen(window, 'resize', (event: Event) => {
+      event.stopPropagation()
+      event.preventDefault()
+      console.log('resize', event)
+      this._canvas.style.width = window.innerWidth
+      this._canvas.style.height = window.innerHeight
+    })
     this._renderer.listen(window, EventName.KeyUp, (event: KeyboardEvent) => {
       event.stopPropagation()
       event.preventDefault()
@@ -165,8 +196,50 @@ export class DesignCanvasDirective
       .transformPoint(originalPoint)
   }
 
+  getTransformedPointFromXy(point: XyLocation) {
+    const originalPoint = new DOMPoint(point.x, point.y)
+    return this._ctx.getTransform()
+      .invertSelf()
+      .transformPoint(originalPoint) as TransformedPoint
+  }
+
+  getTransformedPointFromEvent(event: MouseEvent) {
+    const point = eventToXyLocation(event)
+    const originalPoint = new DOMPoint(point.x, point.y)
+    return this._ctx.getTransform()
+      .invertSelf()
+      .transformPoint(originalPoint) as TransformedPoint
+  }
+
+  getTransformedPointFromXyToDragOffset(point: XyLocation) {
+    /*    const x = point.x + this.entityDragOffset.x
+     const y = point.y + this.entityDragOffset.y*/
+    const x = point.x
+    const y = point.y
+    const originalPoint = new DOMPoint(x, y)
+    const res = this._ctx.getTransform()
+      .invertSelf()
+      .transformPoint(originalPoint) as TransformedPointToDragOffset
+    console.log('getTransformedPointFromXyToDragOffset', point)
+    res.x += this.entityDragOffset.x
+    res.y += this.entityDragOffset.y
+
+    console.log('getTransformedPointFromXyToDragOffset', this.entityDragOffset)
+    return res
+
+  }
+
   getTransformedPointToMiddleOfObject(x: number, y: number, width: number, height: number) {
     const originalPoint = new DOMPoint(x - width / 2, y - height / 2)
+    return this._ctx.getTransform()
+      .invertSelf()
+      .transformPoint(originalPoint)
+  }
+
+  getTransformedPointToMiddleOfObjectFromEvent(event: MouseEvent, type: EntityType) {
+    const { x, y } = eventToXyLocation(event)
+    const middlePoint = adjustLocationToMiddleOfObjectByType({ x, y }, type)
+    const originalPoint = new DOMPoint(middlePoint.middleX, middlePoint.middleY)
     return this._ctx.getTransform()
       .invertSelf()
       .transformPoint(originalPoint)
@@ -180,13 +253,51 @@ export class DesignCanvasDirective
       this.screenDragStartPoint = this.getTransformedPoint(event.offsetX, event.offsetY)
       return
     }
-    const clickedOnEntity = this._panels.find(panel => this.isMouseOverPanel(event, panel))
+    if (event.altKey) {
+      this.isSelectionBoxDragging = true
+      this.selectionBoxStartPoint = getTransformedPointFromEvent(this._ctx, event)
+    }
+    // const clickedOnEntity = this._panels.find(panel => this.isMouseOverPanel(event, panel))
+    const clickedOnEntity = this.getMouseOverPanel(event)
     if (clickedOnEntity) {
       console.log('clicked on entity', clickedOnEntity)
       this.entityOnMouseDown = clickedOnEntity
-      if (this._selectedPanel?.id !== clickedOnEntity.id) {
-        this._selectedPanel = undefined
+      // get the position of the panel that was clicked on
+      /*      const panelPosition = this.getTransformedPointFromXy(clickedOnEntity.location)
+       // get the position of the mouse
+       const mousePosition = this.getTransformedPoint(event.offsetX, event.offsetY)*/
+      // const panelPosition = clickedOnEntity.location
+      // get the position of the mouse
+      // const mousePosition = eventToXyLocation(event)
+      // get the difference between the two
+      /*      const panelPosition = this.getTransformedPointFromXy(clickedOnEntity.location)
+       const mousePosition = this.getTransformedPointFromEvent(event)
+       // handle negative values
+       const size = CanvasPanel.defaultSize
+       let x = panelPosition.x - mousePosition.x
+       if (x < 0) {
+       if (Math.abs(x) > size.width) x = -size.width
+       }
+       if (x > size.width) x = size.width
+
+       let y = panelPosition.y - mousePosition.y
+       if (y < 0) {
+       if (Math.abs(y) > size.height) y = -size.height
+       }
+
+       if (y > size.height) y = size.height
+
+       this.entityDragOffset = {
+       x,
+       y,
+       }*/
+      if (this._selected.selected?.id !== clickedOnEntity.id) {
+        this._selected.clearSelected()
       }
+
+      /*      if (this._selectedPanel?.id !== clickedOnEntity.id) {
+       this._selectedPanel = undefined
+       }*/
     }
     this.clickTimeout = setTimeout(() => {
       this.clickTimeout = undefined
@@ -205,11 +316,25 @@ export class DesignCanvasDirective
       console.log('screenPosition', this.screenPosition)
       return
     }
+    if (this.isSelectionBoxDragging) {
+      this.isSelectionBoxDragging = false
+      if (
+        this.selectionBoxStartPoint) {
+        // const panelsInArea = this.areAnyPanelsInArea(getTransformedPointFromEvent(this._ctx, event))
+        const panelsInArea = getAllElementsBetweenTwoPoints(this.panels, this.selectionBoxStartPoint, this.getTransformedPointFromEvent(event))
+        console.log('panelsInArea', panelsInArea)
+
+      }
+      this.selectionBoxStartPoint = undefined
+      this.drawPanels()
+      return
+    }
     if (this.isDraggingEntity) {
       this.isDraggingEntity = false
       console.log('entityOnMouseDown', this.entityOnMouseDown)
       if (this.entityOnMouseDown) {
-        const location = this.getTransformedPointToMiddleOfObject(event.offsetX, event.offsetY, this.entityOnMouseDown.width, this.entityOnMouseDown.height)
+        // const location = this.getTransformedPointToMiddleOfObject(event.offsetX, event.offsetY, this.entityOnMouseDown.width, this.entityOnMouseDown.height)
+        const location = this.getTransformedPointToMiddleOfObjectFromEvent(event, this.entityOnMouseDown.type)
         this.entityOnMouseDown = CanvasPanel.updateLocation(this.entityOnMouseDown, location)
         // this.entityOnMouseDown = CanvasPanel.updateLocationFromEventToScale(this.entityOnMouseDown, event, this.screenPosition, this.scale)
         this.updatePanel(this.entityOnMouseDown)
@@ -229,18 +354,66 @@ export class DesignCanvasDirective
 
   private handleClick(event: MouseEvent) {
     console.log('click', event)
-    const isPanel = this._panels.find(panel => this.isMouseOverPanel(event, panel))
+    const isPanel = this.getMouseOverPanel(event)
+    // const isPanel = this._panels.find(panel => this.isMouseOverPanel(event, panel))
     if (isPanel) {
-      this.selectPanel(isPanel)
+      // this.selectPanel(isPanel)
+      this._selected.setSelected(isPanel)
       return
     }
-    this._selectedPanel = undefined
-    const location = this.getTransformedPoint(event.offsetX, event.offsetY)
+    this._selected.clearSelected()
+    // this._selectedPanel = undefined
+    /*
+     if (areAnyEntitiesNearClick(this._ctx, this._panels, eventToXyLocation(event))) {
+     console.log('near click')
+     return
+     }*/
+    if (this.areAnyPanelRectsNearClick(eventToXyLocation(event))) {
+      console.log('near click')
+      return
+    }
+    const adjustedPoint = adjustEventToMiddleOfObjectByType(event, EntityType.Panel)
+    const location = this.getTransformedPointFromXy(adjustedPoint)
     const panel = CanvasPanel.create(location)
 
     this.panels = [...this.panels, panel]
 
     this.drawPanels()
+  }
+
+  private areAnyPanelRectsNearClick(point: XyLocation) {
+    const panelsNearClick = this.panels.filter(panel => {
+      const transformedPoint = this.getTransformedPointFromXy(point)
+      const transformedEntityLocation = this.getTransformedPointFromXy(panel.location)
+      const { middleX, middleY } = adjustLocationToMiddleOfObjectByType(transformedEntityLocation, EntityType.Panel)
+      const { heightOffset, widthOffset } = getEntitySizeOffset(panel)
+      const nearLeft = middleX - widthOffset <= transformedPoint.x + 10
+      const nearRight = middleX + widthOffset >= transformedPoint.x - 10
+      const nearTop = middleY - heightOffset <= transformedPoint.y + 10
+      const nearBottom = middleY + heightOffset >= transformedPoint.y - 10
+      return nearLeft && nearRight && nearTop && nearBottom
+    })
+    return panelsNearClick.length > 0
+  }
+
+  private animateSelectionBox(event: MouseEvent) {
+    if (!this.selectionBoxStartPoint || !this.isSelectionBoxDragging || !event.altKey) {
+      throw new Error('selection box not started')
+    }
+    const mousePointToScale = this.getTransformedPointFromXy(eventToXyLocation(event))
+    const width = mousePointToScale.x - this.selectionBoxStartPoint.x
+    const height = mousePointToScale.y - this.selectionBoxStartPoint.y
+
+    this.drawPanels()
+    this._ctx.beginPath()
+    this._ctx.globalAlpha = 0.4
+    this._ctx.fillStyle = this.selectionBoxFillStyle
+    this._ctx.rect(this.selectionBoxStartPoint.x, this.selectionBoxStartPoint.y, width, height)
+    this._ctx.fill()
+    this._ctx.stroke()
+    this._ctx.closePath()
+    this._ctx.globalAlpha = 1.0
+    this._ctx.fillStyle = this.defaultPanelFillStyle
   }
 
   private onScrollHandler(event: WheelEvent) {
@@ -276,24 +449,39 @@ export class DesignCanvasDirective
       }
       return
     }
+    if (this.isSelectionBoxDragging) {
+      if (!event.altKey) {
+        this.isSelectionBoxDragging = false
+        this.selectionBoxStartPoint = undefined
+        this.drawPanels()
+        return
+      }
+      this.animateSelectionBox(event)
+      return
+    }
     if (this.entityOnMouseDown) {
       this.isDraggingEntity = true
       this._ctx.clearRect(0, 0, this._canvas.width, this._canvas.height)
-      const location = this.getTransformedPointToMiddleOfObject(event.offsetX, event.offsetY, this.entityOnMouseDown.width, this.entityOnMouseDown.height)
+      // const transformedLocation = this.getTransformedPointFromXyToDragOffset(eventToXyLocation(event))
+      // const location = this.getTransformedPointFromXyToDragOffset(eventToXyLocation(event))
+      // const location = this.getTransformedPointToMiddleOfObject(event.offsetX, event.offsetY, this.entityOnMouseDown.width, this.entityOnMouseDown.height)
+      const location = this.getTransformedPointToMiddleOfObjectFromEvent(event, this.entityOnMouseDown.type)
       this.entityOnMouseDown = {
         ...this.entityOnMouseDown,
-        location: {
-          x: location.x,
-          y: location.y,
-        },
+        location,
       }
+
+      this.pushObjectToEndOfArray(this.entityOnMouseDown)
       this.updatePanel(this.entityOnMouseDown)
+      return
     }
 
-    const isPanel = this._panels.find(panel => this.isMouseOverPanel(event, panel))
+    const isPanel = this.getMouseOverPanel(event)
+    // const isPanel = this._panels.find(panel => this.isMouseOverPanel(event, panel))
     if (isPanel) {
 
       this._canvas.style.cursor = 'pointer'
+      if (this.hoveringEntityId === isPanel.id) return
       this.hoveringEntityId = isPanel.id
       this.drawPanels()
       return
@@ -308,9 +496,19 @@ export class DesignCanvasDirective
 
   }
 
+  private pushObjectToEndOfArray(object: CanvasPanel) {
+    // this._panels.push(this._panels.splice(this._panels.indexOf(object), 1)[0])
+    this._panels = [...this._panels.filter(panel => panel.id !== object.id), object]
+  }
+
   private animateScreenMove() {
     this.drawPanels()
     this.animateScreenMoveId = requestAnimationFrame(() => this.animateScreenMove())
+  }
+
+  private getMouseOverPanel(event: MouseEvent) {
+    const mouseOverPanels = this._panels.filter(panel => this.isMouseOverPanel(event, panel))
+    return mouseOverPanels[mouseOverPanels.length - 1]
   }
 
   private isMouseOverPanel(event: MouseEvent, panel: CanvasPanel) {
@@ -327,10 +525,16 @@ export class DesignCanvasDirective
       this._ctx.fillStyle = '#17fff3'
     }
 
-    if (this._selectedPanel && this._selectedPanel.id === panel.id) {
+    /*    if (this._selectedPanel && this._selectedPanel.id === panel.id) {
+     this._ctx.closePath()
+     this._ctx.fillStyle = '#ff6e78'
+     }*/
+    if (this._selected.selected && this._selected.selected.id === panel.id) {
       this._ctx.closePath()
       this._ctx.fillStyle = '#ff6e78'
     }
+
+    // this._ctx.
 
     // const { x, y } = getXyPointFromLocationV2(panel.location, this.screenPosition, this.scale)
     // this._ctx.rect(x, y, panel.width * this.scale, panel.height * this.scale)
@@ -344,10 +548,24 @@ export class DesignCanvasDirective
   }
 
   private drawPanels() {
+    console.log('draw panels')
+    this.resetCanvas()
+    this._ctx.beginPath()
+    this._panels.forEach(panel => {
+      this.drawPanel(panel)
+    })
+    this._ctx.closePath()
+  }
+
+  private resetCanvas() {
     this._ctx.save()
     this._ctx.setTransform(1, 0, 0, 1, 0, 0)
     this._ctx.clearRect(0, 0, this._canvas.width, this._canvas.height)
     this._ctx.restore()
+  }
+
+  private drawPanelsNoClear() {
+    console.log('draw panels no clear')
     this._ctx.beginPath()
     this._panels.forEach(panel => {
       this.drawPanel(panel)
@@ -356,8 +574,9 @@ export class DesignCanvasDirective
   }
 
   private updatePanel(panel: CanvasPanel) {
-    const findIndex = this._panels.findIndex(p => p.id === panel.id)
-    this._panels[findIndex] = panel
+    /*    const findIndex = this._panels.findIndex(p => p.id === panel.id)
+     this._panels[findIndex] = panel*/
+    this._panels = [...this._panels.filter(p => p.id !== panel.id), panel]
     this.drawPanels()
   }
 }
