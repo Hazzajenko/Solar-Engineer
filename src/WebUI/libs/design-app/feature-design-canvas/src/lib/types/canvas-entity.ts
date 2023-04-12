@@ -1,9 +1,11 @@
 import { ObjectSize } from './sizing'
 import { EntityType } from '@design-app/shared'
+import { UpdateStr } from '@ngrx/entity/src/models'
 import { XyLocation } from '@shared/data-access/models'
 import { newGuid } from '@shared/utils'
 
-export type CanvasPanel = {
+
+export type CanvasEntity = {
   id: string
   type: EntityType
   location: XyLocation
@@ -12,8 +14,8 @@ export type CanvasPanel = {
   rotation: number
 }
 
-export const CanvasPanel = {
-  create: (location: XyLocation): CanvasPanel => ({
+export const CanvasEntity = {
+  create: (location: XyLocation): CanvasEntity => ({
     id: newGuid(),
     type: EntityType.Panel,
     location,
@@ -21,46 +23,27 @@ export const CanvasPanel = {
     height: 23,
     rotation: 0,
   }),
-  createFromEvent: (event: MouseEvent): CanvasPanel => ({
-    id: newGuid(),
-    type: EntityType.Panel,
-    location: { x: event.pageX - 18 / 2, y: event.pageY - 23 / 2 },
-    width: 18,
-    height: 23,
-    rotation: 0,
-  }),
-  createFromEventToScale: (
-    event: MouseEvent,
-    screenPos: XyLocation,
-    scale: number,
-  ): CanvasPanel => ({
-    id: newGuid(),
-    type: EntityType.Panel,
-    get location() {
-      const centerX = event.pageX - 18 / 2
-      const centerY = event.pageY - 23 / 2
-      const x = centerX / scale - screenPos.x
-      const y = centerY / scale - screenPos.y
-      return { x, y }
-    },
-    width: 18,
-    height: 23,
-    rotation: 0,
-  }),
-  updateLocation: (panel: CanvasPanel, location: XyLocation): CanvasPanel => ({
+  updateLocation: (panel: CanvasEntity, location: XyLocation): CanvasEntity => ({
     ...panel,
     location,
   }),
-  updateLocationFromEvent: (panel: CanvasPanel, event: MouseEvent): CanvasPanel => ({
+  updateForStore: (
+    entity: CanvasEntity,
+    changes: Partial<CanvasEntity>,
+  ): UpdateStr<CanvasEntity> => ({
+    id: entity.id,
+    changes,
+  }),
+  updateLocationFromEvent: (panel: CanvasEntity, event: MouseEvent): CanvasEntity => ({
     ...panel,
     location: { x: event.pageX - 18 / 2, y: event.pageY - 23 / 2 },
   }),
   updateLocationFromEventToScale: (
-    panel: CanvasPanel,
+    panel: CanvasEntity,
     event: MouseEvent,
     screenPos: XyLocation,
     scale: number,
-  ): CanvasPanel => ({
+  ): CanvasEntity => ({
     ...panel,
     get location() {
       const centerX = event.pageX - 18 / 2
@@ -70,16 +53,16 @@ export const CanvasPanel = {
       return { x, y }
     },
   }),
-  updateLocationFromLocation: (panel: CanvasPanel, location: XyLocation): CanvasPanel => ({
+  updateLocationFromLocation: (panel: CanvasEntity, location: XyLocation): CanvasEntity => ({
     ...panel,
     location,
   }),
   updateLocationFromLocationToScale: (
-    panel: CanvasPanel,
+    panel: CanvasEntity,
     location: XyLocation,
     screenPos: XyLocation,
     scale: number,
-  ): CanvasPanel => ({
+  ): CanvasEntity => ({
     ...panel,
     get location() {
       const centerX = location.x

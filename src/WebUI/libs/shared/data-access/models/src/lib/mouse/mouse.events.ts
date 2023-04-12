@@ -39,10 +39,10 @@ export const EventName = {
    DragStart: 'dragstart',*/
 } as const
 
-export type MouseEvent = (typeof EventName)[keyof typeof EventName]
+export type TypeOfEvent = (typeof EventName)[keyof typeof EventName]
 
 export type MouseEvents = {
-  [key in MouseEvent]: MouseEvent
+  [key in TypeOfEvent]: TypeOfEvent
 }
 
 export const MouseDownEvent = EventName.MouseDown

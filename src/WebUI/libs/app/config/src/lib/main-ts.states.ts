@@ -1,5 +1,5 @@
 import { AUTH_FEATURE_KEY, authReducer } from '@auth/data-access';
-import { CANVAS_FEATURE_KEY, canvasReducer } from '@design-app/feature-design-canvas';
+import { CANVAS_ENTITIES_FEATURE_KEY, CANVAS_FEATURE_KEY, canvasEntitiesReducer, canvasReducer } from '@design-app/feature-design-canvas';
 import { PANELS_FEATURE_KEY, panelsReducer } from '@design-app/feature-panel';
 import { SELECTED_FEATURE_KEY, selectedReducer } from '@design-app/feature-selected';
 import { provideState } from '@ngrx/store';
@@ -24,6 +24,7 @@ export const mainTsStates = [
   provideState(PANELS_FEATURE_KEY, panelsReducer),
   provideState(SELECTED_FEATURE_KEY, selectedReducer),
   provideState(CANVAS_FEATURE_KEY, canvasReducer),
+  provideState(CANVAS_ENTITIES_FEATURE_KEY, canvasEntitiesReducer),
 
   // provideState(CHAT_ROOMS_FEATURE_KEY, chatRoomsReducer),
 ]

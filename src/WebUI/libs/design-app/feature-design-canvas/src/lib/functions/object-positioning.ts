@@ -1,9 +1,9 @@
-import { CanvasPanel } from '../types/canvas-panel'
+import { CanvasEntity } from '../types/canvas-entity'
 import { TransformedPoint } from '../types/location'
 import { getEntitySizeOffset } from './object-sizing'
 
 export function getAllElementsBetweenTwoPoints(
-  array: CanvasPanel[],
+  array: CanvasEntity[],
   point1: TransformedPoint,
   point2: TransformedPoint,
 ) {

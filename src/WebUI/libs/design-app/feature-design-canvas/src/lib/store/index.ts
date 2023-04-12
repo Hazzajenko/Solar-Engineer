@@ -1,3 +1,2 @@
-export * from './canvas.actions'
-export * from './canvas.reducer'
-export * from './canvas.selectors'
+export * from './canvas/index'
+export * from './canvas-entities/index'

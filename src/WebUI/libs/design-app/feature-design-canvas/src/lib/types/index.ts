@@ -1,4 +1,4 @@
 export * from './canvas-event'
-export * from './canvas-panel'
+export * from './canvas-entity'
 export * from './location'
 export * from './sizing'
