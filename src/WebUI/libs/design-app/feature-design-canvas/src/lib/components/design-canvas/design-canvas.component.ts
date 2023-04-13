@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common'
 import { CdkDrag } from '@angular/cdk/drag-drop'
 import { DesignCanvasDirective } from '../../directives'
 import { select, Store } from '@ngrx/store'
-import { selectDrawTime } from '../../store/canvas'
+import { selectDrawTime } from '../../store'
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

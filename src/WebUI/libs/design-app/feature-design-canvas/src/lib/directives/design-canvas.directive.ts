@@ -11,6 +11,7 @@ import { roundToTwoDecimals } from 'design-app/utils'
 import { Store } from '@ngrx/store'
 import { takeUntil, tap } from 'rxjs'
 import { DelayedLogger } from '@shared/logger'
+import { CanvasScale } from '../models/scale'
 
 @Directive({
   selector:   '[appDesignCanvas]',
@@ -85,6 +86,8 @@ export class DesignCanvasDirective
     console.log('set scale', this._scale)
     this.scaleElement.innerText = `Scale: ${this._scale}`
   }
+
+  canvasScale = new CanvasScale(1, 1)
 
   _screenPosition: XyLocation = { x: 0, y: 0 }
   get screenPosition(): XyLocation {
@@ -235,7 +238,7 @@ export class DesignCanvasDirective
     }
     if (event.shiftKey) {
       if (this._selected.multiSelected.length > 0) {
-        this._selected.startMultiSelectDragging(event)
+        this._selected.startMultiSelectDragging(event, this.canvasScale.x)
         /*   this._selected.multiSelected.forEach(entity => {
          entity.isMultiSelectDragging = true
          })*/
@@ -329,38 +332,43 @@ export class DesignCanvasDirective
       return
     }
     if (this._selected.isMultiSelectDragging) {
-      this._selected.isMultiSelectDragging = false
-      if (this._selected.multiSelectStart) {
-        const location = this._domPointService.getTransformedPointFromEvent(event)
-        // const transformedMultiSelectStart = this._domPointService.getTransformedPointFromXy(this._selected.multiSelectStart)
-        const offset = {
-          x: location.x - this._selected.multiSelectStart.x,
-          y: location.y - this._selected.multiSelectStart.y,
-        }
-        /*        const offset = {
-         x: location.x - transformedMultiSelectStart.x,
-         y: location.y - transformedMultiSelectStart.y,
-         }*/
-        const multiSelectedUpdated = this._selected.multiSelected.map(entity => {
-          const location = this._domPointService.getTransformedPointFromXy(entity.location)
-          const newLocation = {
-            x: location.x + offset.x,
-            y: location.y + offset.y,
-          }
-          // const updatedEntity = CanvasEntity.updateLocation(entity, newLocation)
-          // this.updatePanel(updatedEntity)
-          const updatedEntity = CanvasEntity.updateForStore(entity, { location: newLocation })
-          this._entitiesStore.dispatch.updateCanvasEntity(updatedEntity)
-          entity.location = newLocation
-          return entity
-          // return updatedEntity
-        })
-        this._selected.setMultiSelected(multiSelectedUpdated)
-      }
-      // this._selected.startMultiSelectDragging(event)
-      this._selected.multiSelectStart = undefined
-      this._selected.offsetsFromMultiSelectCenter = []
+      this._selected.stopMultiSelectDragging(event)
       return
+      /*this._selected.isMultiSelectDragging = false
+       if (this._selected.multiSelectStart) {
+       const location = this._domPointService.getTransformedPointFromEvent(event)
+       // const transformedMultiSelectStart = this._domPointService.getTransformedPointFromXy(this._selected.multiSelectStart)
+       const offset = {
+       x: location.x - this._selected.multiSelectStart.x,
+       y: location.y - this._selected.multiSelectStart.y,
+       }
+       /!*        const offset = {
+       x: location.x - transformedMultiSelectStart.x,
+       y: location.y - transformedMultiSelectStart.y,
+       }*!/
+       const multiSelectedUpdated = this._selected.multiSelected.map(entity => {
+       const location = this._domPointService.getTransformedPointFromXy(entity.location)
+       const newLocation = {
+       x: location.x + offset.x,
+       y: location.y + offset.y,
+       }
+       // const updatedEntity = CanvasEntity.updateLocation(entity, newLocation)
+       // this.updatePanel(updatedEntity)
+       const updatedEntity = CanvasEntity.updateForStore(entity, { location: newLocation })
+       this._entitiesStore.dispatch.updateCanvasEntity(updatedEntity)
+       // entity.location = newLocation
+       return {
+       ...entity,
+       location: newLocation,
+       }
+       // return updatedEntity
+       })
+       this._selected.setMultiSelected(multiSelectedUpdated)
+       }
+       // this._selected.startMultiSelectDragging(event)
+       this._selected.multiSelectStart = undefined
+       this._selected.offsetsFromMultiSelectCenter = []
+       return*/
     }
     this.isDraggingEntity = false
     this.isDraggingScreen = false
@@ -439,24 +447,57 @@ export class DesignCanvasDirective
       return
     }
     if (this._selected.isMultiSelectDragging) {
-      assertNotNull(this._selected.multiSelectStart)
+      this._selected.onMultiDragging(event)
+      this.drawPanels()
+      /* assertNotNull(this._selected.multiSelectStart)
 
-      // if (this._selected.multiSelectStart) {
-      const location = this._domPointService.getTransformedPointFromEvent(event)
-      const offset = {
-        x: location.x - this._selected.multiSelectStart.x,
-        y: location.y - this._selected.multiSelectStart.y,
-      }
-      this._selected.multiSelected.forEach(entity => {
-        const location = this._domPointService.getTransformedPointFromXy(entity.location)
-        const newLocation = {
-          x: location.x + offset.x,
-          y: location.y + offset.y,
-        }
-        const entityUpdate = CanvasEntity.updateForStore(entity, { location: newLocation })
-        this._entitiesStore.dispatch.updateCanvasEntity(entityUpdate)
-        // this.updatePanel(CanvasEntity.updateLocation(entity, newLocation))
-      })
+       // if (this._selected.multiSelectStart) {
+
+       // const eventLocation = this._domPointService.getTransformedPointFromEvent(event)
+       const eventLocation = eventToXyLocation(event)
+       const scale = this._ctx.getTransform().a
+       const offset = {
+       x: eventLocation.x - this._selected.multiSelectStart.x,
+       y: eventLocation.y - this._selected.multiSelectStart.y,
+       }
+       console.log('offset', offset)
+       offset.x = offset.x / scale
+       offset.y = offset.y / scale
+       console.log('offset', offset)
+
+       /!*
+       const transform = this._ctx.getTransform() // Get the current transformation matrix
+       const inverseTransform = transform.invertSelf() // Get the inverse of the current transformation matrix
+       const scaledDeltaX = offset.x / transform.a // Adjust the delta values based on the current scale
+       const scaledDeltaY = offset.y / transform.d
+
+       const transformedOffset = inverseTransform.transformPoint(new DOMPoint(scaledDeltaX, scaledDeltaY)) // Transform the delta values back to the unscaled coordinates
+       *!/
+
+       // console.log('offset', offset)
+       this._selected.multiSelected.forEach(entity => {
+       // const location = entity.location
+       // const location = this._domPointService.getScaledTransformedPoint(entity.location.x, entity.location.y)
+       const location = this._domPointService.getTransformedPointFromXy(entity.location)
+       const entityOffsetToMouse = this._selected.offsetsFromMultiSelectCenter.find(offset => offset.id === entity.id)
+       assertNotNull(entityOffsetToMouse)
+       assertNotNull(this._selected.multiSelectStart)
+
+       /!*       const newLocation = {
+       x: this._selected.multiSelectStart.x + offset.x + entityOffsetToMouse.x,
+       y: this._selected.multiSelectStart.y + offset.y + entityOffsetToMouse.y,
+       }*!/
+
+       const newLocation = {
+       x: location.x + offset.x,
+       y: location.y + offset.y,
+       }
+
+       const entityUpdate = CanvasEntity.updateForStore(entity, { location: newLocation })
+       this._entitiesStore.dispatch.updateCanvasEntity(entityUpdate)
+
+       // this.updatePanel(CanvasEntity.updateLocation(entity, newLocation))
+       })*/
       if (!event.shiftKey) {
         this._selected.isMultiSelectDragging = false
         this._selected.multiSelectStart = undefined
@@ -526,29 +567,66 @@ export class DesignCanvasDirective
    */
 
   private wheelScrollHandler(event: WheelEvent) {
-    if (this.scale <= 0.1 && event.deltaY > 0) {
-      this.scale = 0.1
-      return
-    }
-
-    if (this.scale >= 2 && event.deltaY < 0) {
-      this.scale = 2
-      return
-    }
-
-    const currentTransformedCursor = this._domPointService.getTransformedPoint(event.offsetX, event.offsetY)
+    const currentTransform = this._ctx.getTransform()
+    const currentScaleX = currentTransform.a
+    const currentScaleY = currentTransform.d
+    console.log('currentScaleX', currentScaleX)
+    console.log('currentScaleY', currentScaleY)
+    console.log('currentTransform', currentTransform)
+    // this.canvasScale.handleWheelEvent(event)
+    this.canvasScale.setScale(currentScaleX)
+    console.log('this.canvasScale', this.canvasScale)
 
     const zoom = event.deltaY < 0
       ? 1.1
       : 0.9
 
+    const currentTransformedCursor = this._domPointService.getTransformedPointFromEvent(event)
     this._ctx.translate(currentTransformedCursor.x, currentTransformedCursor.y)
+    // this._ctx.setTransform(zoom, 0, 0, zoom, 0, 0)
     this._ctx.scale(zoom, zoom)
     this._ctx.translate(-currentTransformedCursor.x, -currentTransformedCursor.y)
+    this.scaleElement.innerText = `Scale: ${currentScaleX}`
 
-    this.scale = zoom === 1.1
-      ? this.scale + 0.1
-      : this.scale - 0.1
+    /* if (currentScaleX !== currentScaleY) {
+     console.log('currentScaleX !== currentScaleY')
+     return
+     }
+
+     if (currentScaleX <= 0.3 || currentScaleY <= 0.3) {
+     console.log('currentScaleX <= 0.3 || currentScaleY <= 0.3')
+     const currentTransformedCursor = this._domPointService.getTransformedPoint(event.offsetX, event.offsetY)
+
+     /!*      this._ctx.translate(currentTransformedCursor.x, currentTransformedCursor.y)
+     this._ctx.scale(0.3, 0.3)
+     // this._ctx.translate(-currentTransformedCursor.x, -currentTransformedCursor.y)*!/
+     this._ctx.setTransform(0.3, 0, 0, 0.3, currentTransformedCursor.x, currentTransformedCursor.y)
+     return
+     }
+
+     if (this.scale <= 0.1 && event.deltaY > 0) {
+     this.scale = 0.1
+     return
+     }
+
+     if (this.scale >= 2 && event.deltaY < 0) {
+     this.scale = 2
+     return
+     }
+
+     const currentTransformedCursor = this._domPointService.getTransformedPoint(event.offsetX, event.offsetY)
+
+     const zoom = event.deltaY < 0
+     ? 1.1
+     : 0.9
+
+     this._ctx.translate(currentTransformedCursor.x, currentTransformedCursor.y)
+     this._ctx.scale(zoom, zoom)
+     this._ctx.translate(-currentTransformedCursor.x, -currentTransformedCursor.y)
+
+     this.scale = zoom === 1.1
+     ? this.scale + 0.1
+     : this.scale - 0.1*/
 
     this.drawPanels()
 
@@ -606,6 +684,17 @@ export class DesignCanvasDirective
   }
 
   private drawPanel(panel: CanvasEntity) {
+    let location: XyLocation
+    if (this._selected.draggingEntityLocationsMap.has(panel.id)) {
+      const entityLocation = this._selected.draggingEntityLocationsMap.get(panel.id)
+      assertNotNull(entityLocation, 'location')
+      location = entityLocation
+      console.log('location: ', location)
+      // panel.location = location
+    } else {
+      location = panel.location
+    }
+
     if (this.hoveringEntityId === panel.id) {
       this._ctx.closePath()
       this._ctx.fillStyle = '#17fff3'
@@ -624,7 +713,7 @@ export class DesignCanvasDirective
       this._ctx.fillStyle = '#ff6e78'
     }
 
-    this._ctx.rect(panel.location.x, panel.location.y, panel.width, panel.height)
+    this._ctx.rect(location.x, location.y, panel.width, panel.height)
 
     this._ctx.fill()
     this._ctx.stroke()

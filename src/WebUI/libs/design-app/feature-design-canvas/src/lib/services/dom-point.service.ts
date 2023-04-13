@@ -14,11 +14,23 @@ export class DomPointService {
     return this._canvasElementService.ctx
   }
 
+  get scale() {
+    return this.ctx.getTransform().a
+  }
+
   getTransformedPoint(x: number, y: number) {
     const originalPoint = new DOMPoint(x, y)
     return this.ctx.getTransform()
       .invertSelf()
       .transformPoint(originalPoint)
+  }
+
+  getScaledTransformedPoint(x: number, y: number) {
+    const originalPoint = new DOMPoint(x, y)
+    const inverseTransform = this.ctx.getTransform()
+      .invertSelf()
+    const scaledPoint = originalPoint.matrixTransform(inverseTransform)
+    return new DOMPoint(scaledPoint.x, scaledPoint.y)
   }
 
   getTransformedPointFromXy(point: XyLocation) {
