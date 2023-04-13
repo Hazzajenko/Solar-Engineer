@@ -7,7 +7,7 @@ export interface EntityOptions {
   id?: string
 }
 
-export const ENTITY_TYPE = {
+export const ENTITY_TYPE_DEPRECATED = {
   UNDEFINED: 'UNDEFINED',
   TRACKER: 'TRACKER',
   STRING: 'STRING',
@@ -15,7 +15,8 @@ export const ENTITY_TYPE = {
   PANEL_CONFIG: 'PANEL_CONFIG',
 } as const
 
-export type EntityType = (typeof ENTITY_TYPE)[keyof typeof ENTITY_TYPE]
+export type EntityTypeDeprecated =
+  (typeof ENTITY_TYPE_DEPRECATED)[keyof typeof ENTITY_TYPE_DEPRECATED]
 // const hi : EntityType = 'UNDEFINED'
 /*export enum EntityType {
  UNDEFINED,

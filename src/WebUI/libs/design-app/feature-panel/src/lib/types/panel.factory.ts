@@ -1,5 +1,5 @@
 import { PanelModel, PanelRotation } from '.'
-import { EntityType } from '@design-app/shared'
+import { ENTITY_TYPE } from '@design-app/shared'
 import { UndefinedString, XyLocation } from '@shared/data-access/models'
 import { newGuid } from '@shared/utils'
 
@@ -13,7 +13,7 @@ export const PanelFactory = {
     stringId,
     location,
     rotation,
-    type: EntityType.Panel,
+    type: ENTITY_TYPE.Panel,
   }),
   oppositeRotation: (rotation: PanelRotation) => {
     switch (rotation) {

@@ -1,5 +1,5 @@
-import { CanvasEntity, eventToXyLocation, MiddlePoint, ObjectSize, TransformedPoint } from '@design-app/feature-design-canvas'
-import { EntityType } from '@design-app/shared'
+import { eventToXyLocation, MiddlePoint, ObjectSize, SizeByType, TransformedPoint } from '@design-app/feature-design-canvas'
+import { ENTITY_TYPE, EntityType } from '@design-app/shared'
 import { XyLocation } from '@shared/data-access/models'
 import { inject, Injectable } from '@angular/core'
 import { CanvasElementService } from './canvas-element.service'
@@ -81,8 +81,8 @@ export class DomPointService {
 
   adjustLocationToMiddleOfObjectByType(point: XyLocation, type: EntityType): MiddlePoint {
     switch (type) {
-      case EntityType.Panel:
-        return this.adjustLocationToMiddleOfObject(point, CanvasEntity.defaultSize)
+      case ENTITY_TYPE.Panel:
+        return this.adjustLocationToMiddleOfObject(point, SizeByType[type])
       default:
         throw new Error('adjustLocationToMiddleOfObjectByType: unknown type')
     }

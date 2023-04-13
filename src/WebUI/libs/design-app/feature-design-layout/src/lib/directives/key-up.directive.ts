@@ -2,7 +2,7 @@ import { Directive, ElementRef, inject, OnInit, Renderer2 } from '@angular/core'
 import { KEYS, UndefinedString } from '@shared/data-access/models'
 import { ObjectPositioningService, ViewPositioningService } from 'design-app/utils'
 import { SelectedStoreService } from '@design-app/feature-selected'
-import { EntityType } from '@design-app/shared'
+import { ENTITY_TYPE } from '@design-app/shared'
 import { StringsFactoryService } from '@design-app/feature-string'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { PanelsStoreService } from '@design-app/feature-panel'
@@ -47,7 +47,7 @@ export class KeyUpDirective
          const nearbyPanelIds = nearbyPanels.map(p => p.id)
          return this._objectPositioningService.moveGroupOfPanelsToSameAxisPositionV2(nearbyPanelIds, LineDirection.Right)
          }*/
-        const biggestNearByEntityArray = await this._objectPositioningService.selectBiggestNearByEntityArray(EntityType.Panel)
+        const biggestNearByEntityArray = await this._objectPositioningService.selectBiggestNearByEntityArray(ENTITY_TYPE.Panel)
         if (biggestNearByEntityArray.ids.length > 1) {
           return this._objectPositioningService.moveGroupOfPanelsToSameAxisPositionV2(biggestNearByEntityArray.ids, biggestNearByEntityArray.direction)
         }
@@ -71,14 +71,14 @@ export class KeyUpDirective
       case KEYS.DELETE: {
         const singleAndMultiIds = await this._selectedStore.select.singleAndMultiSelected
         if (singleAndMultiIds.multiSelected && singleAndMultiIds.multiSelected.length > 0) {
-          const panels = singleAndMultiIds.multiSelected.filter(s => s.type === EntityType.Panel)
+          const panels = singleAndMultiIds.multiSelected.filter(s => s.type === ENTITY_TYPE.Panel)
           const panelIds = panels.map(p => p.id)
           this._panelsStore.dispatch.deleteManyPanels(panelIds)
           break
         }
         if (singleAndMultiIds.singleSelected) {
           switch (singleAndMultiIds.singleSelected.type) {
-            case EntityType.Panel:
+            case ENTITY_TYPE.Panel:
               await this._panelsStore.dispatch.deletePanel(singleAndMultiIds.singleSelected.id)
           }
           // await this.panelsStore.dispatch.deletePanel(singleAndMultiIds.singleId)

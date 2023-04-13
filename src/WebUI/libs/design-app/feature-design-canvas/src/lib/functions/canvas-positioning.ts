@@ -1,9 +1,5 @@
-import { CanvasEntity } from '../types/canvas-entity'
-import { MiddlePoint, TransformedPoint } from '../types/location'
-import { ObjectSize } from '../types/sizing'
-import { EntityType } from '@design-app/shared'
+import { CanvasEntity, MiddlePoint, ObjectSize, TransformedPoint } from '../types'
 import { XyLocation } from '@shared/data-access/models'
-
 
 export function getXyPointFromEvent(
   event: MouseEvent,
@@ -57,24 +53,26 @@ export function adjustClickToMiddleOfObject(point: XyLocation, size: ObjectSize)
   }
 }
 
-export function adjustClickToMiddleOfObjectByType(point: XyLocation, type: EntityType): XyLocation {
-  switch (type) {
-    case EntityType.Panel:
-      return adjustClickToMiddleOfObject(point, CanvasEntity.defaultSize)
-    default:
-      throw new Error('adjustClickToMiddleOfObjectByType: unknown type')
-  }
-}
+/*export function adjustClickToMiddleOfObjectByType(point: XyLocation, type: EntityType): XyLocation {
+ switch (type) {
+ case EntityType.Panel:
+ return adjustClickToMiddleOfObject(point, CanvasEntity.defaultSize)
+ default:
+ throw new Error('adjustClickToMiddleOfObjectByType: unknown type')
+ }
+ }*/
 
-export function adjustEventToMiddleOfObjectByType(event: MouseEvent, type: EntityType): XyLocation {
-  const point = { x: event.offsetX, y: event.offsetY }
-  switch (type) {
-    case EntityType.Panel:
-      return adjustClickToMiddleOfObject(point, CanvasEntity.defaultSize)
-    default:
-      throw new Error('adjustClickToMiddleOfObjectByType: unknown type')
-  }
-}
+/*
+ export function adjustEventToMiddleOfObjectByType(event: MouseEvent, type: EntityType): XyLocation {
+ const point = { x: event.offsetX, y: event.offsetY }
+ switch (type) {
+ case EntityType.Panel:
+ return adjustClickToMiddleOfObject(point, CanvasEntity.defaultSize)
+ default:
+ throw new Error('adjustClickToMiddleOfObjectByType: unknown type')
+ }
+ }
+ */
 
 export function getPanelRect(ctx: CanvasRenderingContext2D, panel: CanvasEntity) {
   const panelLocation = getTransformedPointFromXy(ctx, panel.location)
@@ -93,17 +91,19 @@ export function adjustLocationToMiddleOfObject(point: XyLocation, size: ObjectSi
   }
 }
 
-export function adjustLocationToMiddleOfObjectByType(
-  point: XyLocation,
-  type: EntityType,
-): MiddlePoint {
-  switch (type) {
-    case EntityType.Panel:
-      return adjustLocationToMiddleOfObject(point, CanvasEntity.defaultSize)
-    default:
-      throw new Error('adjustLocationToMiddleOfObjectByType: unknown type')
-  }
-}
+/*
+ export function adjustLocationToMiddleOfObjectByType(
+ point: XyLocation,
+ type: EntityType,
+ ): MiddlePoint {
+ switch (type) {
+ case EntityType.Panel:
+ return adjustLocationToMiddleOfObject(point, CanvasEntity.defaultSize)
+ default:
+ throw new Error('adjustLocationToMiddleOfObjectByType: unknown type')
+ }
+ }
+ */
 
 export function getTransformedPointFromXy(ctx: CanvasRenderingContext2D, point: XyLocation) {
   const originalPoint = new DOMPoint(point.x, point.y)

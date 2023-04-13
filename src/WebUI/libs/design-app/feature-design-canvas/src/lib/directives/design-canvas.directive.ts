@@ -1,17 +1,17 @@
 import { Directive, ElementRef, inject, Input, NgZone, OnInit, Renderer2 } from '@angular/core'
-import { ContextMenuEvent, EventName, KEYS, MouseDownEvent, MouseMoveEvent, MouseUpEvent, POINTER_BUTTON, XyLocation } from '@shared/data-access/models'
-import { CanvasEntity, TransformedPoint } from '../types'
-import { eventToXyLocation, getDifference, getTransformedPointFromEvent } from '../functions'
-import { EntityType } from '@design-app/shared'
-import { getAllElementsBetweenTwoPoints } from '../functions/object-positioning'
-import { CanvasElementService, CanvasEntitiesService, CanvasSelectedService, DomPointService } from '../services'
+import { ClickEvent, ContextMenuEvent, CURSOR_TYPE, EventName, KEYS, MouseDownEvent, MouseMoveEvent, MouseUpEvent, POINTER_BUTTON, XyLocation } from '@shared/data-access/models'
+import { CanvasEntity, EntityFactory, TransformedPoint } from '../types'
+import { eventToXyLocation, getDifference } from '../functions'
+import { ENTITY_TYPE } from '@design-app/shared'
+import { CanvasElementService, CanvasEntitiesService, CanvasSelectedService, CanvasStringsService, DomPointService } from '../services'
 import { setupCanvas } from '../functions/setup-canvas'
-import { assertNotNull, OnDestroyDirective } from '@shared/utils'
+import { OnDestroyDirective } from '@shared/utils'
 import { roundToTwoDecimals } from 'design-app/utils'
 import { Store } from '@ngrx/store'
 import { takeUntil, tap } from 'rxjs'
 import { DelayedLogger } from '@shared/logger'
 import { CanvasScale } from '../models/scale'
+import { getEntitySizeOffset } from '../functions/object-sizing'
 
 @Directive({
   selector:   '[appDesignCanvas]',
@@ -24,6 +24,7 @@ export class DesignCanvasDirective
   private _store = inject(Store)
   private _onDestroy = inject(OnDestroyDirective)
   private _entitiesStore = inject(CanvasEntitiesService)
+  private _stringsStore = inject(CanvasStringsService)
   private _canvas = inject(ElementRef<HTMLCanvasElement>).nativeElement
   private _ctx!: CanvasRenderingContext2D
   private _ngZone = inject(NgZone)
@@ -37,7 +38,10 @@ export class DesignCanvasDirective
   // private _domPointService!: DomPointService
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  private clickTimeout?: NodeJS.Timeout | undefined
+  private mouseDownTimeOut: ReturnType<typeof setTimeout> | undefined
+  private mouseUpTimeOut: ReturnType<typeof setTimeout> | undefined
+
+  // private clickTimeout?: NodeJS.Timeout | undefined
   private _panels: CanvasEntity[] = []
   private _selectedPanel?: CanvasEntity
   private _animateScreenMoveId?: number
@@ -123,10 +127,8 @@ export class DesignCanvasDirective
       const difference = getDifference(entities, this.panels)
       if (difference.length > 0) {
         this._delayedLogger.log('entities$ difference', difference)
-        this.panels = entities.filter(entity => entity.type === EntityType.Panel)
-
+        this.panels = entities.filter(entity => entity.type === ENTITY_TYPE.Panel)
       }
-
     }),
   )
 
@@ -140,56 +142,62 @@ export class DesignCanvasDirective
     this.scaleElement = document.getElementById('scale-element') as HTMLDivElement
     console.log(this.mousePos, this.transformedMousePos)
     this.entities$.subscribe()
-    // this._selected.draw = this.drawPanels.bind(this)
-    // this._selected.
-    // this._selected.
-    /*    this._selected.on(CanvasEvent.Draw, () => {
-     this.drawPanels()
-     })*/
   }
 
   private setupCanvas() {
     const { canvas, ctx } = setupCanvas(this._canvas)
     this._canvas = canvas
     this._ctx = ctx
-    // this._domPointService = new DomPointService(this._ctx)
     this._canvasElementService.init(this._canvas, this._ctx)
   }
 
   private setupMouseEventListeners() {
     this._renderer.listen(this._canvas, MouseUpEvent, (event: MouseEvent) => {
-      event.stopPropagation()
-      event.preventDefault()
+
       this.onMouseUpHandler(event)
       console.log('mouse up', event)
+      event.stopPropagation()
+      event.preventDefault()
     })
     this._renderer.listen(this._canvas, MouseDownEvent, (event: MouseEvent) => {
-      event.stopPropagation()
-      event.preventDefault()
+
       this.onMouseDownHandler(event)
       console.log('mouse down', event)
+      event.stopPropagation()
+      event.preventDefault()
     })
     this._renderer.listen(this._canvas, MouseMoveEvent, (event: MouseEvent) => {
+
+      this.onMouseMoveHandler(event)
       event.stopPropagation()
       event.preventDefault()
-      this.onMouseMoveHandler(event)
     })
     this._renderer.listen(this._canvas, ContextMenuEvent, (event: PointerEvent) => {
+
+      console.log('context menu', event)
       event.stopPropagation()
       event.preventDefault()
-      console.log('context menu', event)
+    })
+    this._renderer.listen(this._canvas, ClickEvent, (event: PointerEvent) => {
+
+      this.mouseClickHandler(event)
+      event.stopPropagation()
+      event.preventDefault()
+      // console.log('context menu', event)
     })
     this._renderer.listen(this._canvas, EventName.Wheel, (event: WheelEvent) => {
+
+      this.wheelScrollHandler(event)
       event.stopPropagation()
       event.preventDefault()
-      this.wheelScrollHandler(event)
     })
     this._renderer.listen(window, 'resize', (event: Event) => {
-      event.stopPropagation()
-      event.preventDefault()
+
       console.log('resize', event)
       this._canvas.style.width = window.innerWidth
       this._canvas.style.height = window.innerHeight
+      event.stopPropagation()
+      event.preventDefault()
     })
     this._renderer.listen(window, EventName.KeyUp, (event: KeyboardEvent) => {
       event.stopPropagation()
@@ -200,9 +208,6 @@ export class DesignCanvasDirective
       }
       if (event.key === 'Escape') {
         this.panels = []
-      }
-      if (event.key === 'Enter') {
-        this.panels = [...this.panels, CanvasEntity.create({ x: 100, y: 100 })]
       }
       if (event.shiftKey) {
         console.log('shift key up')
@@ -226,63 +231,31 @@ export class DesignCanvasDirective
 
   private onMouseDownHandler(event: MouseEvent) {
     console.log('mouse down', event)
-    if (event.ctrlKey || event.button === POINTER_BUTTON.WHEEL) {
+    if ((event.ctrlKey || event.button === POINTER_BUTTON.WHEEL) && !event.shiftKey) {
       this.isDraggingScreen = true
       console.log('dragging screen')
-      this.screenDragStartPoint = this._domPointService.getTransformedPoint(event.offsetX, event.offsetY)
+      this.screenDragStartPoint = this._domPointService.getTransformedPointFromEvent(event)
       return
     }
     if (event.altKey) {
       this.isSelectionBoxDragging = true
-      this.selectionBoxStartPoint = getTransformedPointFromEvent(this._ctx, event)
+      this.selectionBoxStartPoint = this._domPointService.getTransformedPointFromEvent(event)
     }
-    if (event.shiftKey) {
-      if (this._selected.multiSelected.length > 0) {
-        this._selected.startMultiSelectDragging(event, this.canvasScale.x)
-        /*   this._selected.multiSelected.forEach(entity => {
-         entity.isMultiSelectDragging = true
-         })*/
-        /*        this._selected.isMultiSelectDragging = true
-         // this._selected.multiSelectStart = getTransformedPointFromEvent(this._ctx, event)
-         this._selected.multiSelectStart = this._domPointService.getTransformedPointFromEvent(event)
-         /!*       this._selected.multiSelected.forEach(entity => {
-         entity.isMultiSelectDragging = true
-         })*!/
-         this._selected.offsetsFromMultiSelectCenter = this._selected.multiSelected.map(entity => {
-         assertNotNull(this._selected.multiSelectStart)
-         const location = this._domPointService.getTransformedPointFromXy(entity.location)
-         // const location = this._domPointService.getTransformedPointFromXy(entity.location)
-         const xDistance = Math.abs(this._selected.multiSelectStart.x - (location.x + entity.width / 2))
-         const yDistance = Math.abs(this._selected.multiSelectStart.y - (location.y + entity.height / 2))
-         // const distance = Math.sqrt(xDistance ** 2 + yDistance ** 2)
-         return {
-         id: entity.id,
-         x:  xDistance,
-         y:  yDistance,
-         }
-         /!*        return {
-         id: entity.id,
-         x:  location.x - this._selected.multiSelectStart.x,
-         y:  location.y - this._selected.multiSelectStart.y,
-         }*!/
-         })*/
-        return
-
-      }
-
+    if (event.shiftKey && event.ctrlKey && this._selected.multiSelected.length > 0) {
+      this._selected.startMultiSelectDragging(event)
+      return
     }
-    // const clickedOnEntity = this._panels.find(panel => this.isMouseOverPanel(event, panel))
     const clickedOnEntity = this.getMouseOverPanel(event)
     if (clickedOnEntity) {
       console.log('clicked on entity', clickedOnEntity)
       this.entityOnMouseDown = clickedOnEntity
       if (this._selected.selected?.id !== clickedOnEntity.id) {
-        this._selected.clearSelected()
+        this._selected.clearSingleSelected()
       }
     }
-    this.clickTimeout = setTimeout(() => {
-      this.clickTimeout = undefined
-    }, 300)
+    this.mouseDownTimeOut = setTimeout(() => {
+      this.mouseDownTimeOut = undefined
+    }, 100)
   }
 
   /**
@@ -292,6 +265,15 @@ export class DesignCanvasDirective
    */
 
   private onMouseUpHandler(event: MouseEvent) {
+    if (this.mouseDownTimeOut) {
+      clearTimeout(this.mouseDownTimeOut)
+      this.mouseDownTimeOut = undefined
+      this.entityOnMouseDown = undefined
+      return
+    }
+    this.mouseUpTimeOut = setTimeout(() => {
+      this.mouseUpTimeOut = undefined
+    }, 100)
     if (event.button === POINTER_BUTTON.SECONDARY) return
     console.log('mouse up', event)
     if (this.isDraggingScreen) {
@@ -303,13 +285,12 @@ export class DesignCanvasDirective
       if (
         this.selectionBoxStartPoint) {
         // const panelsInArea = this.areAnyPanelsInArea(getTransformedPointFromEvent(this._ctx, event))
-        const panelsInArea = getAllElementsBetweenTwoPoints(this.panels, this.selectionBoxStartPoint, this._domPointService.getTransformedPointFromEvent(event))
+        const panelsInArea = this.getAllElementsBetweenTwoPoints(this.selectionBoxStartPoint, this._domPointService.getTransformedPointFromEvent(event))
+        // const panelsInArea = getAllElementsBetweenTwoPoints(this.panels, this.selectionBoxStartPoint, this._domPointService.getTransformedPointFromEvent(event))
         if (panelsInArea) {
           this._selected.setMultiSelected(panelsInArea)
           console.log('panelsInArea', panelsInArea)
-
         }
-
       }
       this.selectionBoxStartPoint = undefined
       this.drawPanels()
@@ -319,14 +300,9 @@ export class DesignCanvasDirective
       this.isDraggingEntity = false
       console.log('entityOnMouseDown', this.entityOnMouseDown)
       if (this.entityOnMouseDown) {
-        // const location = this.getTransformedPointToMiddleOfObject(event.offsetX, event.offsetY, this.entityOnMouseDown.width, this.entityOnMouseDown.height)
         const location = this._domPointService.getTransformedPointToMiddleOfObjectFromEvent(event, this.entityOnMouseDown.type)
-        this.entityOnMouseDown = CanvasEntity.updateLocation(this.entityOnMouseDown, location)
-        const updatedEntity = CanvasEntity.updateForStore(this.entityOnMouseDown, { location })
+        const updatedEntity = EntityFactory.updateForStore(this.entityOnMouseDown, { location })
         this._entitiesStore.dispatch.updateCanvasEntity(updatedEntity)
-        // this.entityOnMouseDown = CanvasPanel.updateLocationFromEventToScale(this.entityOnMouseDown, event, this.screenPosition, this.scale)
-        // this.updatePanel(this.entityOnMouseDown)
-
         this.entityOnMouseDown = undefined
       }
       return
@@ -334,50 +310,15 @@ export class DesignCanvasDirective
     if (this._selected.isMultiSelectDragging) {
       this._selected.stopMultiSelectDragging(event)
       return
-      /*this._selected.isMultiSelectDragging = false
-       if (this._selected.multiSelectStart) {
-       const location = this._domPointService.getTransformedPointFromEvent(event)
-       // const transformedMultiSelectStart = this._domPointService.getTransformedPointFromXy(this._selected.multiSelectStart)
-       const offset = {
-       x: location.x - this._selected.multiSelectStart.x,
-       y: location.y - this._selected.multiSelectStart.y,
-       }
-       /!*        const offset = {
-       x: location.x - transformedMultiSelectStart.x,
-       y: location.y - transformedMultiSelectStart.y,
-       }*!/
-       const multiSelectedUpdated = this._selected.multiSelected.map(entity => {
-       const location = this._domPointService.getTransformedPointFromXy(entity.location)
-       const newLocation = {
-       x: location.x + offset.x,
-       y: location.y + offset.y,
-       }
-       // const updatedEntity = CanvasEntity.updateLocation(entity, newLocation)
-       // this.updatePanel(updatedEntity)
-       const updatedEntity = CanvasEntity.updateForStore(entity, { location: newLocation })
-       this._entitiesStore.dispatch.updateCanvasEntity(updatedEntity)
-       // entity.location = newLocation
-       return {
-       ...entity,
-       location: newLocation,
-       }
-       // return updatedEntity
-       })
-       this._selected.setMultiSelected(multiSelectedUpdated)
-       }
-       // this._selected.startMultiSelectDragging(event)
-       this._selected.multiSelectStart = undefined
-       this._selected.offsetsFromMultiSelectCenter = []
-       return*/
     }
     this.isDraggingEntity = false
     this.isDraggingScreen = false
     this.entityOnMouseDown = undefined
-    if (this.clickTimeout) {
-      clearTimeout(this.clickTimeout)
-      this.clickTimeout = undefined
-      this.mouseClickHandler(event)
-    }
+    /*    if (this.clickTimeout) {
+     clearTimeout(this.clickTimeout)
+     this.clickTimeout = undefined
+     this.mouseClickHandler(event)
+     }*/
   }
 
   /**
@@ -386,36 +327,30 @@ export class DesignCanvasDirective
    * @private
    */
 
-  private mouseClickHandler(event: MouseEvent) {
+  private mouseClickHandler(event: PointerEvent) {
+    if (this.mouseUpTimeOut) {
+      clearTimeout(this.mouseUpTimeOut)
+      this.mouseUpTimeOut = undefined
+      return
+    }
     console.log('click', event)
-    event.preventDefault()
-    event.stopPropagation()
     const isPanel = this.getMouseOverPanel(event)
-    // const isPanel = this._panels.find(panel => this.isMouseOverPanel(event, panel))
     if (isPanel) {
-      // this.selectPanel(isPanel)
+      if (event.shiftKey) {
+        this._selected.addToMultiSelected(isPanel)
+        return
+      }
       this._selected.setSelected(isPanel)
       return
     }
     this._selected.clearSelected()
-    // this._selectedPanel = undefined
-    /*
-     if (areAnyEntitiesNearClick(this._ctx, this._panels, eventToXyLocation(event))) {
-     console.log('near click')
-     return
-     }*/
     if (this.areAnyPanelRectsNearClick(eventToXyLocation(event))) {
-      // console.log('near click')
       return
     }
-    /*    const adjustedPoint = adjustEventToMiddleOfObjectByType(event, EntityType.Panel)
-     const location = this._domPointService.getTransformedPointFromXy(adjustedPoint)*/
-    const location = this._domPointService.getTransformedPointToMiddleOfObjectFromEvent(event, EntityType.Panel)
-    const panel = CanvasEntity.create(location)
+    const location = this._domPointService.getTransformedPointToMiddleOfObjectFromEvent(event, ENTITY_TYPE.Panel)
+    const entity = EntityFactory.create(ENTITY_TYPE.Panel, location)
 
-    this._entitiesStore.dispatch.addCanvasEntity(panel)
-    // this.panels = [...this.panels, panel]
-
+    this._entitiesStore.dispatch.addCanvasEntity(entity)
     this.drawPanels()
   }
 
@@ -431,7 +366,10 @@ export class DesignCanvasDirective
     this.transformedMousePos.innerText = `Transformed X: ${this.currentTransformedCursor.x}, Y: ${this.currentTransformedCursor.y}`
     if (this.isDraggingScreen) {
       if (event.ctrlKey || event.buttons === 4) {
-        this._ctx.translate(this.currentTransformedCursor.x - this.screenDragStartPoint.x, this.currentTransformedCursor.y - this.screenDragStartPoint.y)
+        this._canvas.style.cursor = CURSOR_TYPE.MOVE
+        const transformX = this.currentTransformedCursor.x - this.screenDragStartPoint.x
+        const transformY = this.currentTransformedCursor.y - this.screenDragStartPoint.y
+        this._ctx.translate(transformX, transformY)
         this.drawPanels()
       }
       return
@@ -446,105 +384,36 @@ export class DesignCanvasDirective
       this.animateSelectionBox(event)
       return
     }
+    const isReadyToMultiDrag = this._selected.multiSelected.length > 0 && event.shiftKey && event.ctrlKey && !this._selected.isMultiSelectDragging
+    if (isReadyToMultiDrag) {
+      this._canvas.style.cursor = CURSOR_TYPE.GRAB
+      return
+    }
     if (this._selected.isMultiSelectDragging) {
-      this._selected.onMultiDragging(event)
-      this.drawPanels()
-      /* assertNotNull(this._selected.multiSelectStart)
-
-       // if (this._selected.multiSelectStart) {
-
-       // const eventLocation = this._domPointService.getTransformedPointFromEvent(event)
-       const eventLocation = eventToXyLocation(event)
-       const scale = this._ctx.getTransform().a
-       const offset = {
-       x: eventLocation.x - this._selected.multiSelectStart.x,
-       y: eventLocation.y - this._selected.multiSelectStart.y,
-       }
-       console.log('offset', offset)
-       offset.x = offset.x / scale
-       offset.y = offset.y / scale
-       console.log('offset', offset)
-
-       /!*
-       const transform = this._ctx.getTransform() // Get the current transformation matrix
-       const inverseTransform = transform.invertSelf() // Get the inverse of the current transformation matrix
-       const scaledDeltaX = offset.x / transform.a // Adjust the delta values based on the current scale
-       const scaledDeltaY = offset.y / transform.d
-
-       const transformedOffset = inverseTransform.transformPoint(new DOMPoint(scaledDeltaX, scaledDeltaY)) // Transform the delta values back to the unscaled coordinates
-       *!/
-
-       // console.log('offset', offset)
-       this._selected.multiSelected.forEach(entity => {
-       // const location = entity.location
-       // const location = this._domPointService.getScaledTransformedPoint(entity.location.x, entity.location.y)
-       const location = this._domPointService.getTransformedPointFromXy(entity.location)
-       const entityOffsetToMouse = this._selected.offsetsFromMultiSelectCenter.find(offset => offset.id === entity.id)
-       assertNotNull(entityOffsetToMouse)
-       assertNotNull(this._selected.multiSelectStart)
-
-       /!*       const newLocation = {
-       x: this._selected.multiSelectStart.x + offset.x + entityOffsetToMouse.x,
-       y: this._selected.multiSelectStart.y + offset.y + entityOffsetToMouse.y,
-       }*!/
-
-       const newLocation = {
-       x: location.x + offset.x,
-       y: location.y + offset.y,
-       }
-
-       const entityUpdate = CanvasEntity.updateForStore(entity, { location: newLocation })
-       this._entitiesStore.dispatch.updateCanvasEntity(entityUpdate)
-
-       // this.updatePanel(CanvasEntity.updateLocation(entity, newLocation))
-       })*/
-      if (!event.shiftKey) {
-        this._selected.isMultiSelectDragging = false
-        this._selected.multiSelectStart = undefined
-        this._selected.offsetsFromMultiSelectCenter = []
-        this.drawPanels()
+      if (!event.shiftKey || !event.ctrlKey) {
+        this._selected.stopMultiSelectDragging(event)
         return
       }
-      // }
+      this._canvas.style.cursor = CURSOR_TYPE.GRABBING
+      this._selected.onMultiDragging(event)
+      this.drawPanels()
+      return
     }
     if (this.entityOnMouseDown) {
+      this._canvas.style.cursor = CURSOR_TYPE.GRABBING
       this.isDraggingEntity = true
       this._ctx.clearRect(0, 0, this._canvas.width, this._canvas.height)
-      // const transformedLocation = this.getTransformedPointFromXyToDragOffset(eventToXyLocation(event))
-      // const location = this.getTransformedPointFromXyToDragOffset(eventToXyLocation(event))
-      // const location = this.getTransformedPointToMiddleOfObject(event.offsetX, event.offsetY, this.entityOnMouseDown.width, this.entityOnMouseDown.height)
       const location = this._domPointService.getTransformedPointToMiddleOfObjectFromEvent(event, this.entityOnMouseDown.type)
-      // location.x = location.x - this.scale
-      // location.y = location.y - this.scale
-      /*      if (this.scale > 1) {
-       location.x = location.x - this.scale
-       location.y = location.y - this.scale
-       }
-       if (this.scale < 1) {
-       location.x = location.x + (this.scale * 2)
-       location.y = location.y + (this.scale * 2)
-       }*/
-      /* else {
-       location.x = location.x + this.scale
-       location.y = location.y + this.scale
-       }*/
-      this.entityOnMouseDown = {
-        ...this.entityOnMouseDown,
-        location,
-      }
-
-      const entityUpdate = CanvasEntity.updateForStore(this.entityOnMouseDown, { location })
+      this.entityOnMouseDown = EntityFactory.update(this.entityOnMouseDown, { location })
+      const entityUpdate = EntityFactory.updateForStore(this.entityOnMouseDown, { location })
       this._entitiesStore.dispatch.updateCanvasEntity(entityUpdate)
-      // this.pushObjectToEndOfArray(this.entityOnMouseDown)
-      // this.updatePanel(this.entityOnMouseDown)
       return
     }
 
     const isPanel = this.getMouseOverPanel(event)
-    // const isPanel = this._panels.find(panel => this.isMouseOverPanel(event, panel))
     if (isPanel) {
 
-      this._canvas.style.cursor = 'pointer'
+      this._canvas.style.cursor = CURSOR_TYPE.POINTER
       if (this.hoveringEntityId === isPanel.id) return
       this.hoveringEntityId = isPanel.id
       this.drawPanels()
@@ -554,10 +423,8 @@ export class DesignCanvasDirective
         this.hoveringEntityId = undefined
         this.drawPanels()
       }
-      this._canvas.style.cursor = 'default'
-
+      this._canvas.style.cursor = CURSOR_TYPE.AUTO
     }
-
   }
 
   /**
@@ -570,12 +437,7 @@ export class DesignCanvasDirective
     const currentTransform = this._ctx.getTransform()
     const currentScaleX = currentTransform.a
     const currentScaleY = currentTransform.d
-    console.log('currentScaleX', currentScaleX)
-    console.log('currentScaleY', currentScaleY)
-    console.log('currentTransform', currentTransform)
-    // this.canvasScale.handleWheelEvent(event)
     this.canvasScale.setScale(currentScaleX)
-    console.log('this.canvasScale', this.canvasScale)
 
     const zoom = event.deltaY < 0
       ? 1.1
@@ -583,53 +445,11 @@ export class DesignCanvasDirective
 
     const currentTransformedCursor = this._domPointService.getTransformedPointFromEvent(event)
     this._ctx.translate(currentTransformedCursor.x, currentTransformedCursor.y)
-    // this._ctx.setTransform(zoom, 0, 0, zoom, 0, 0)
     this._ctx.scale(zoom, zoom)
     this._ctx.translate(-currentTransformedCursor.x, -currentTransformedCursor.y)
     this.scaleElement.innerText = `Scale: ${currentScaleX}`
 
-    /* if (currentScaleX !== currentScaleY) {
-     console.log('currentScaleX !== currentScaleY')
-     return
-     }
-
-     if (currentScaleX <= 0.3 || currentScaleY <= 0.3) {
-     console.log('currentScaleX <= 0.3 || currentScaleY <= 0.3')
-     const currentTransformedCursor = this._domPointService.getTransformedPoint(event.offsetX, event.offsetY)
-
-     /!*      this._ctx.translate(currentTransformedCursor.x, currentTransformedCursor.y)
-     this._ctx.scale(0.3, 0.3)
-     // this._ctx.translate(-currentTransformedCursor.x, -currentTransformedCursor.y)*!/
-     this._ctx.setTransform(0.3, 0, 0, 0.3, currentTransformedCursor.x, currentTransformedCursor.y)
-     return
-     }
-
-     if (this.scale <= 0.1 && event.deltaY > 0) {
-     this.scale = 0.1
-     return
-     }
-
-     if (this.scale >= 2 && event.deltaY < 0) {
-     this.scale = 2
-     return
-     }
-
-     const currentTransformedCursor = this._domPointService.getTransformedPoint(event.offsetX, event.offsetY)
-
-     const zoom = event.deltaY < 0
-     ? 1.1
-     : 0.9
-
-     this._ctx.translate(currentTransformedCursor.x, currentTransformedCursor.y)
-     this._ctx.scale(zoom, zoom)
-     this._ctx.translate(-currentTransformedCursor.x, -currentTransformedCursor.y)
-
-     this.scale = zoom === 1.1
-     ? this.scale + 0.1
-     : this.scale - 0.1*/
-
     this.drawPanels()
-
     event.preventDefault()
   }
 
@@ -684,17 +504,6 @@ export class DesignCanvasDirective
   }
 
   private drawPanel(panel: CanvasEntity) {
-    let location: XyLocation
-    if (this._selected.draggingEntityLocationsMap.has(panel.id)) {
-      const entityLocation = this._selected.draggingEntityLocationsMap.get(panel.id)
-      assertNotNull(entityLocation, 'location')
-      location = entityLocation
-      console.log('location: ', location)
-      // panel.location = location
-    } else {
-      location = panel.location
-    }
-
     if (this.hoveringEntityId === panel.id) {
       this._ctx.closePath()
       this._ctx.fillStyle = '#17fff3'
@@ -713,7 +522,7 @@ export class DesignCanvasDirective
       this._ctx.fillStyle = '#ff6e78'
     }
 
-    this._ctx.rect(location.x, location.y, panel.width, panel.height)
+    this._ctx.rect(panel.location.x, panel.location.y, panel.width, panel.height)
 
     this._ctx.fill()
     this._ctx.stroke()
@@ -754,5 +563,70 @@ export class DesignCanvasDirective
     // this.panels = [...this.panels.filter(p => p.id !== panel.id), panel]
     // this._entitiesStore.dispatch.updateCanvasEntity()
     this.drawPanels()
+  }
+
+  getAllElementsBetweenTwoPoints(
+    point1: TransformedPoint,
+    point2: TransformedPoint,
+  ) {
+    // const objectRects = this._componentElementsService.getComponentElementRectsWithId()
+    const elementsBetweenPoints = this.panels.filter((objectRect) => {
+      // const widthOffset
+      const { widthOffset, heightOffset } = getEntitySizeOffset(objectRect)
+      // Bottom Left To Top Right
+      if (point1.x < point2.x && point1.y > point2.y) {
+        // Left To Right
+        if (point1.x < objectRect.location.x && point2.x > objectRect.location.x + widthOffset) {
+          // Bottom To Top
+          if (point2.y < objectRect.location.y && point1.y > objectRect.location.y + heightOffset) {
+            console.log('Bottom Left To Top Right')
+            return true
+          }
+        }
+      }
+      // Top Left To Bottom Right
+      if (point1.x < point2.x && point1.y < point2.y) {
+        // Left To Right
+        if (point1.x < objectRect.location.x && point2.x > objectRect.location.x + widthOffset) {
+          // Top To Bottom
+          if (point1.y < objectRect.location.y && point2.y > objectRect.location.y + heightOffset) {
+            console.log('Top Left To Bottom Right')
+            return true
+          }
+        }
+      }
+
+      // Top Right To Bottom Left
+      if (point1.x > point2.x && point1.y < point2.y) {
+        // Right To Left
+        if (point1.x > objectRect.location.x + widthOffset && point2.x < objectRect.location.x) {
+          // Top To Bottom
+          if (point1.y < objectRect.location.y + heightOffset && point2.y > objectRect.location.y) {
+            console.log('Top Right To Bottom Left')
+            return true
+          }
+        }
+      }
+
+      // Bottom Right To Top Left
+      if (point1.x > point2.x && point1.y > point2.y) {
+        // Right To Left
+        if (point1.x > objectRect.location.x + widthOffset && point2.x < objectRect.location.x) {
+          // Bottom To Top
+          if (point2.y < objectRect.location.y + heightOffset && point1.y > objectRect.location.y) {
+            console.log('Bottom Right To Top Left')
+            return true
+          }
+        }
+      }
+
+      return false
+    })
+    console.log('elementsBetweenPoints', elementsBetweenPoints)
+    return elementsBetweenPoints
+    /*  return elementsBetweenPoints.map((element) => ({
+     id: element.id,
+     type: element.type,
+     }))*/
   }
 }

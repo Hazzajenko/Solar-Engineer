@@ -1,9 +1,7 @@
 import { StringModel } from './string.model'
 import { StringColor } from './string.styles'
-import { EntityType } from '@design-app/shared'
 import { UndefinedString } from '@shared/data-access/models'
 import { newGuid } from '@shared/utils'
-
 
 export const StringFactory = {
   create: (
@@ -16,7 +14,7 @@ export const StringFactory = {
       name,
       color,
       parallel,
-      type: EntityType.String,
+      // type: ENTITY_TYPE.String,
     }
   },
 } as const

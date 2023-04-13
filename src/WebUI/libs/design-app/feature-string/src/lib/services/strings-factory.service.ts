@@ -4,7 +4,7 @@ import { UpdateStr } from '@ngrx/entity/src/models'
 import { StringFactory, StringModel } from '../types'
 import { StringsStoreService } from '@design-app/feature-string'
 import { SelectedStoreService } from '@design-app/feature-selected'
-import { EntityType } from '@design-app/shared'
+import { ENTITY_TYPE } from '@design-app/shared'
 import { PanelModel, PanelsStoreService } from '@design-app/feature-panel'
 
 @Injectable({
@@ -41,7 +41,7 @@ export class StringsFactoryService {
   }
 
   async addSelectedToNew(stringName?: string) {
-    const selectedPanels = await this._selectedStore.select.multiSelectedEntitiesByType(EntityType.Panel)
+    const selectedPanels = await this._selectedStore.select.multiSelectedEntitiesByType(ENTITY_TYPE.Panel)
     if (!selectedPanels) {
       return
     }
@@ -74,7 +74,7 @@ export class StringsFactoryService {
      ),
      )*/
 
-    const selectedPanels = await this._selectedStore.select.multiSelectedEntitiesByType(EntityType.Panel)
+    const selectedPanels = await this._selectedStore.select.multiSelectedEntitiesByType(ENTITY_TYPE.Panel)
     if (!selectedPanels) {
       return
     }

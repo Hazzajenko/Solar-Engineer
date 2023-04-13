@@ -18,18 +18,18 @@ export class ObjectPositioningService {
   private _panelsStore = inject(PanelsStoreService)
   // private _designPanelsFacade = inject(DesignPanelsFacade)
   private _nearByEntitiesOnAxis: { [key in EntityType]: { [key in LineDirection]: string[] } } = {
-    panel:  {
+    panel: {
       left:   [],
       right:  [],
       top:    [],
       bottom: [],
     },
-    string: {
-      left:   [],
-      right:  [],
-      top:    [],
-      bottom: [],
-    },
+    /*    string: {
+     left:   [],
+     right:  [],
+     top:    [],
+     bottom: [],
+     },*/
   }
 
   public getElementRectPositionOffScrollById(elementId: string) {

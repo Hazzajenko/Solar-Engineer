@@ -1,6 +1,6 @@
 import { ComponentRef, Directive, inject, Input, NgZone, OnDestroy, OnInit, ViewContainerRef } from '@angular/core'
 import { PanelComponent } from '@design-app/feature-panel'
-import { EntityType } from '@design-app/shared'
+import { ENTITY_TYPE, EntityType } from '@design-app/shared'
 
 @Directive({
   selector:   '[appDynamicEntity]',
@@ -21,7 +21,7 @@ export class DynamicComponentDirective
     console.log('entity', entity)
     this._ngZone.runOutsideAngular(() => {
       switch (entity.type) {
-        case EntityType.Panel:
+        case ENTITY_TYPE.Panel:
           this.createPanelComponent(entity.id)
           break
       }

@@ -1,6 +1,6 @@
 import { inject, Injectable, RendererFactory2 } from '@angular/core'
 import { PanelFactory, PanelRotation, PanelsStoreService } from '@design-app/feature-panel'
-import { EntityDivElement, EntityType } from '@design-app/shared'
+import { ENTITY_TYPE, EntityDivElement } from '@design-app/shared'
 import { SelectedStoreService } from '@design-app/feature-selected'
 import { ComponentElementsService, extractEntityDiv, extractHtmlDivElement, findParentContextMenuElement, findParentContextMenuElementV2, MousePositioningService, ObjectPositioningService } from 'design-app/utils'
 
@@ -102,7 +102,7 @@ export class DesignLayoutClickService {
      if (!type || !isDesignEntityType(type)) return false*/
 
     switch (entityDiv.type) {
-      case EntityType.Panel:
+      case ENTITY_TYPE.Panel:
         this.handleClickPanelEvent(entityDiv)
         break
       default:
@@ -117,7 +117,7 @@ export class DesignLayoutClickService {
 
     this.clickedPanelId = entityDiv.id
     // this._selectedService.setSelected(panelId)
-    this._selectedFacade.dispatch.selectEntity({ id: entityDiv.id, type: EntityType.Panel })
+    this._selectedFacade.dispatch.selectEntity({ id: entityDiv.id, type: ENTITY_TYPE.Panel })
   }
 
   private isEntityInThisLocationForRightClick(event: PointerEvent) {
@@ -125,7 +125,7 @@ export class DesignLayoutClickService {
     if (!entityDiv) return false
 
     switch (entityDiv.type) {
-      case EntityType.Panel:
+      case ENTITY_TYPE.Panel:
         this.handleRightClickPanel(entityDiv)
         break
       default:
