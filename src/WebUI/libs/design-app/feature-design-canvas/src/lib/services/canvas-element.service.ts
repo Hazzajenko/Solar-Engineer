@@ -7,6 +7,14 @@ export class CanvasElementService {
   private _canvas!: HTMLCanvasElement
   private _ctx!: CanvasRenderingContext2D
 
+  get canvas() {
+    return this._canvas
+  }
+
+  get rect() {
+    return this._canvas.getBoundingClientRect()
+  }
+
   get ctx() {
     return this._ctx
   }

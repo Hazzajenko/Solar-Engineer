@@ -18,6 +18,10 @@ export class DomPointService {
     return this.ctx.getTransform().a
   }
 
+  get rect() {
+    return this._canvasElementService.rect
+  }
+
   getTransformedPoint(x: number, y: number) {
     const originalPoint = new DOMPoint(x, y)
     return this.ctx.getTransform()

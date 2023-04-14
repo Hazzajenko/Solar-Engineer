@@ -1,11 +1,21 @@
 import { inject, Injectable } from '@angular/core'
-import { CanvasStringsQueries } from './canvas-strings.queries'
-import { CanvasStringsRepository } from './canvas-strings.repository'
+import { CanvasStringsStore } from './canvas-strings.store'
+import { CanvasPanel, CanvasString, CanvasStringFactory, genStringName } from '../../types'
+import { CanvasEntitiesStore } from '../canvas-entities'
+import { mapToUpdateArr } from '../../utils'
 
 @Injectable({
   providedIn: 'root',
 })
 export class CanvasStringsService {
-  public select = inject(CanvasStringsQueries)
-  public dispatch = inject(CanvasStringsRepository)
+  private _stringsStore = inject(CanvasStringsStore)
+  private _panelsStore = inject(CanvasEntitiesStore)
+
+  public createStringWithPanels(selectedPanels: CanvasPanel[], currentStrings: CanvasString[]) {
+    const stringName = genStringName(currentStrings)
+    const newString = CanvasStringFactory.create(stringName)
+    this._stringsStore.dispatch.addCanvasString(newString)
+    const updates = mapToUpdateArr(selectedPanels, { stringId: newString.id })
+    this._panelsStore.dispatch.updateManyCanvasEntities(updates)
+  }
 }

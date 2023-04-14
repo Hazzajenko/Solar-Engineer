@@ -1,22 +1,23 @@
-import { TypeOfEntity } from '@design-app/feature-selected'
 import { inject, Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
 import { CanvasActions } from '../store'
-import { CanvasEntity, EntityFactory } from '../types'
+import { CanvasEntity, CanvasPanel, CanvasString, EntityFactory, SELECTED_TYPE, SelectedType } from '../types'
 import { assertNotNull } from '@shared/utils'
 import { DomPointService } from './dom-point.service'
-import { CanvasEntitiesService } from './canvas-entities'
+import { CanvasEntitiesStore } from './canvas-entities'
 import { eventToXyLocation } from '../functions'
 
 @Injectable({
   providedIn: 'root',
 })
 export class CanvasSelectedService {
-  private _entitiesStore = inject(CanvasEntitiesService)
+  private _entitiesStore = inject(CanvasEntitiesStore)
   private _store = inject(Store)
   private _domPointService = inject(DomPointService)
-  private _canvasEntitiesService = inject(CanvasEntitiesService)
-  private _selected: TypeOfEntity | undefined
+  private _canvasEntitiesService = inject(CanvasEntitiesStore)
+  private _selected: CanvasEntity | undefined
+  private _selectedType: SelectedType | undefined
+  private _selectedStringId: CanvasString['id'] | undefined
   private _multiSelected: CanvasEntity[] = []
   public isMultiSelectDragging = false
 
@@ -33,7 +34,19 @@ export class CanvasSelectedService {
     return this._multiSelected
   }
 
+  get selectedType() {
+    return this._selectedType
+  }
+
+  get selectedStringId() {
+    return this._selectedStringId
+  }
+
   emitDraw = () => this._store.dispatch(CanvasActions.drawCanvas())
+
+  getMultiSelectedByType<T extends CanvasPanel>(type: T['type']): T[] {
+    return this._multiSelected.filter(entity => entity.type === type) as T[]
+  }
 
   startMultiSelectDragging(event: MouseEvent) {
     if (this._multiSelected.length === 0) return
@@ -98,17 +111,24 @@ export class CanvasSelectedService {
     return
   }
 
-  setSelected(selected: TypeOfEntity) {
+  setSelected(selected: CanvasEntity) {
     if (this._selected?.id === selected.id) {
       this._selected = undefined
       console.log('set selected', undefined)
       return
     }
     this._selected = selected
+    this._selectedType = selected.type
     console.log('set selected', selected)
     this.emitDraw()
     // this.
     // this.emit(CanvasEvent.Draw)
+  }
+
+  setSelectedStringId(id: CanvasString['id']) {
+    this._selectedStringId = id
+    this._selectedType = SELECTED_TYPE.String
+    console.log('set selected string id', id)
   }
 
   setMultiSelected(multiSelected: CanvasEntity[]) {
@@ -121,6 +141,13 @@ export class CanvasSelectedService {
      this.removeFromMultiSelected(selected)
      return
      }*/
+
+    if (this._selected) {
+      this._multiSelected.push(this._selected)
+      // this._multiSelected = [this._selected, selected]
+      this._selected = undefined
+      // return
+    }
 
     this._multiSelected.push(selected)
     console.log('add to multiSelected', this._multiSelected)
@@ -143,10 +170,11 @@ export class CanvasSelectedService {
     }
   }
 
-  clearSelected() {
-    if (this._selected || this._multiSelected.length) {
+  clearSelectedState() {
+    if (this._selected || this._multiSelected.length || this._selectedStringId) {
       this._selected = undefined
       this._multiSelected = []
+      this._selectedStringId = undefined
       console.log('clear selected')
       this.emitDraw()
       return

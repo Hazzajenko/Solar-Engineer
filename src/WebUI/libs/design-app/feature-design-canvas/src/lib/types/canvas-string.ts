@@ -2,11 +2,17 @@ import { UpdateStr } from '@ngrx/entity/src/models'
 import { newGuid } from '@shared/utils'
 
 export type CanvasString = {
-  id: string
+  id: StringId
   color: string
   name: string
   parallel: boolean
 }
+
+export type StringId = string & {
+  readonly _type: 'stringId'
+}
+
+export const UndefinedStringId = 'undefinedStringId' as StringId
 
 export const CanvasStringFactory = {
   create: (
@@ -15,7 +21,7 @@ export const CanvasStringFactory = {
     parallel: boolean = false,
   ): CanvasString => {
     return {
-      id: newGuid(),
+      id: newGuid() as StringId,
       name,
       color,
       parallel,
@@ -38,7 +44,7 @@ export const CanvasStringFactory = {
   },
 } as const
 
-export const GenStringName = (strings: CanvasString[]): string => {
+export const genStringName = (strings: CanvasString[]): string => {
   const name = 'String'
   const count = strings.filter((s) => s.name === name).length
   return count > 0 ? `${name} ${count}` : name

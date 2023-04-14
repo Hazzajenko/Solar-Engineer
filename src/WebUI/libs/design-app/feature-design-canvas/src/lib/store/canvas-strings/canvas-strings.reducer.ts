@@ -1,4 +1,4 @@
-import { CanvasString } from '../../types/canvas-string'
+import { CanvasString } from '../../types'
 import { CanvasStringsActions } from './canvas-strings.actions'
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity'
 import { Action, createReducer, on } from '@ngrx/store'

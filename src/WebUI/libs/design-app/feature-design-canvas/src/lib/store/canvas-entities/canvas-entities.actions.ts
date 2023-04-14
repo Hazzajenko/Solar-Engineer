@@ -17,6 +17,14 @@ export const CanvasEntitiesActions = createActionGroup({
     'Update Many Entities': props<{
       updates: UpdateStr<CanvasEntity>[]
     }>(),
+    'Set Entity Rotation': props<{
+      entityId: string
+      angle: number
+    }>(),
+    'Rotate Entity': props<{
+      entityId: string
+      rotateBy: number
+    }>(),
     'Delete Entity': props<{
       entityId: string
     }>(),

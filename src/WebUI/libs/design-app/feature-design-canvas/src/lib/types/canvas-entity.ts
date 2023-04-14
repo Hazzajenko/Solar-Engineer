@@ -9,7 +9,7 @@ export type CanvasEntity = {
   location: XyLocation
   width: number
   height: number
-  rotation: number
+  angle: number
 }
 
 export const EntityFactory = {
@@ -21,7 +21,7 @@ export const EntityFactory = {
       location,
       width,
       height,
-      rotation: 0,
+      angle: 0,
     }
   },
   update: (entity: CanvasEntity, changes: Partial<CanvasEntity>): CanvasEntity => {
