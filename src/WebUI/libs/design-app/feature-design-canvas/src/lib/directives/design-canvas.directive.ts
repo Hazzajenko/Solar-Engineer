@@ -470,28 +470,47 @@ export class DesignCanvasDirective
     this.currentTransformedCursor = this._domPointService.getTransformedPointFromEvent(event)
     this.mousePos.innerText = `Original X: ${event.offsetX}, Y: ${event.offsetY}`
     this.transformedMousePos.innerText = `Transformed X: ${this.currentTransformedCursor.x}, Y: ${this.currentTransformedCursor.y}`
-    if (this._objectPositioning.areAnyEntitiesInRotate) {
-      if (this._objectPositioning.entityToRotateId) {
-        const entityToRotate = this.getLiveSelectedPanelById(this._objectPositioning.entityToRotateId)
-        assertNotNull(entityToRotate, 'entity to rotate not found')
-        const transformedPoint = this._domPointService.getTransformedPointFromXy(entityToRotate.location)
-        this._objectPositioning.rotateEntitiesViaMouse(event, transformedPoint)
-        this.drawPanels()
-        return
-      }
-      if (this._objectPositioning.multipleToRotateIds.length) {
-        /*        const transformedPoints = this._objectPositioning.multipleToRotateIds.map(id => {
-         const entityToRotate = this.getLiveSelectedPanelById(id)
-         assertNotNull(entityToRotate, 'entity to rotate not found')
-         const transformedLocation = this._domPointService.getTransformedPointFromXy(entityToRotate.location)
-         return { id }
-         })*/
-        this._objectPositioning.rotateMultipleEntitiesViaMouse(event)
-        // this.drawPanels()
-        return
+    if (event.altKey && event.ctrlKey) {
+      if (!this._objectPositioning.areAnyEntitiesInRotate) {
+        const selected = this._selected.multiSelected
+        if (selected.length) {
+          const transformedPoint = this._domPointService.getTransformedPointFromEvent(event)
+          this._objectPositioning.setMultipleToRotate(this._selected.multiSelected, transformedPoint)
+          // this.drawPanels()
+          return
+        }
+      } else {
+        if (this._objectPositioning.multipleToRotateIds.length) {
+          // const transformedPoint = this._domPointService.getTransformedPointFromEvent(event)
+          this._objectPositioning.rotateMultipleEntitiesViaMouse(event)
+          this.drawPanels()
+          return
+        }
       }
 
     }
+    /*    if (this._objectPositioning.areAnyEntitiesInRotate) {
+     if (this._objectPositioning.entityToRotateId) {
+     const entityToRotate = this.getLiveSelectedPanelById(this._objectPositioning.entityToRotateId)
+     assertNotNull(entityToRotate, 'entity to rotate not found')
+     const transformedPoint = this._domPointService.getTransformedPointFromXy(entityToRotate.location)
+     this._objectPositioning.rotateEntitiesViaMouse(event, transformedPoint)
+     this.drawPanels()
+     return
+     }
+     if (this._objectPositioning.multipleToRotateIds.length) {
+     /!*        const transformedPoints = this._objectPositioning.multipleToRotateIds.map(id => {
+     const entityToRotate = this.getLiveSelectedPanelById(id)
+     assertNotNull(entityToRotate, 'entity to rotate not found')
+     const transformedLocation = this._domPointService.getTransformedPointFromXy(entityToRotate.location)
+     return { id }
+     })*!/
+     this._objectPositioning.rotateMultipleEntitiesViaMouse(event)
+     // this.drawPanels()
+     return
+     }
+
+     }*/
     /*       if (this._objectPositioning.entityToRotateId) {
      const entityToRotate = this.getLiveSelectedPanelById(this._objectPositioning.entityToRotateId)
      if (!entityToRotate) return
@@ -844,6 +863,46 @@ export class DesignCanvasDirective
     }
   }
 
+  drawWithUpdated() {
+    // this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+    const multipleToRotateIds = this._objectPositioning.multipleToRotateIds
+    const entities = this._panels.filter(panel => multipleToRotateIds.includes(panel.id))
+    this._ctx.save()
+    // this._
+    entities.forEach(entity => {
+
+      this._ctx.save()
+      const angle = this._objectPositioning.multipleToRotateAdjustedAngle.get(entity.id)
+      const location = this._objectPositioning.multipleToRotateAdjustedLocation.get(entity.id)
+      assertNotNull(angle)
+      assertNotNull(location)
+      /*  location = {
+       x: location.x - entity.width / 2,
+       y: location.y - entity.height / 2,
+       }*/
+
+      // const panelX = location.x + entity.
+      this._ctx.translate(location.x, location.y)
+      // this._ctx.rotate(entity.radians)
+      // console.log('angle', angle)
+      this._ctx.rotate(angle)
+
+      this._ctx.beginPath()
+      if (entity.id === entities[0].id) {
+        this._ctx.fillStyle = '#17fff3'
+      }
+      this._ctx.rect(-entity.width / 2, -entity.height / 2, entity.width, entity.height)
+      this._ctx.fill()
+      // this.dotsToPush.push(location)
+      // this._ctx.arc(location.x, location.y, 3, 0, Math.PI * 2, true)
+      this._ctx.stroke()
+      this._ctx.restore()
+    })
+
+    this._ctx.restore()
+    // this.ctx.closePath()
+  }
+
   private drawPivotPoint() {
     if (!this._objectPositioning.pivotPoint) return
     this._ctx.save()
@@ -867,8 +926,9 @@ export class DesignCanvasDirective
     this._panels.forEach(panel => {
       this.drawPanel(panel)
     })
+    this.drawWithUpdated()
     // this.handleMultiRotateDrawDifferently()
-    this.handleMultiRotateDrawV2()
+    // this.handleMultiRotateDrawV2()
     this._ctx.closePath()
   }
 

@@ -6,7 +6,7 @@ import { roundToTwoDecimals } from 'design-app/utils'
 import { CanvasElementService } from './canvas-element.service'
 import { Point } from '@shared/data-access/models'
 import { assertNotNull } from '@shared/utils'
-import { Angle, angleToRadians, getAngleBetweenTwoPoints, getAngleInRadiansBetweenTwoPoints, getCommonBounds, getElementAbsoluteCoords, normalizeAngle, Radian, radiansToAngle, radianToProperAngle, rotatePointOffPivot, rotateRadian } from '../utils'
+import { getAngleBetweenTwoPoints, getAngleInRadiansBetweenTwoPoints, getCommonBounds, getElementAbsoluteCoords, normalizeAngle, Radian, radianToProperAngle, rotatePointOffPivot, rotateRadian } from '../utils'
 
 @Injectable({
   providedIn: 'root',
@@ -128,7 +128,9 @@ export class CanvasObjectPositioningService {
     this.startPointToCurrentPointAngleInRadians = getAngleInRadiansBetweenTwoPoints(startPoint, this.currentCenterPoint)
 
     entities.forEach(entity => {
-      this.startPointAnglesInRadians.set(entity.id, getAngleInRadiansBetweenTwoPoints(startPoint, entity.location))
+      assertNotNull(this.pivotPoint)
+      this.startPointAnglesInRadians.set(entity.id, getAngleInRadiansBetweenTwoPoints(this.pivotPoint, entity.location))
+      // this.startPointAnglesInRadians.set(entity.id, getAngleInRadiansBetweenTwoPoints(startPoint, entity.location))
     })
     // this._startRotateAngleToMouse = getAngleBetweenTwoPoints(startPoint, this.pivotPoint)
     // this._startRotateRadiansToMouse = getRadiansBetweenTwoPoints(startPoint, this.pivotPoint)
@@ -269,134 +271,149 @@ export class CanvasObjectPositioningService {
      this.ctx.fill()
      this.ctx.closePath()*/
     // this.drawDots()
-    this.ctx.save()
-    this.ctx.translate(this.pivotPoint.x, this.pivotPoint.y)
+    // this.ctx.save()
+    // this.ctx.translate(this.pivotPoint.x, this.pivotPoint.y)
     this.multipleToRotateAngle = degrees - this._startRotateAngleToMouse
     this.multipleToRotateRadian = angleInRadians - this._startRotateRadiansToMouse
     this.multipleToRotateRadianLocal = this.multipleToRotateRadianLocal + this.multipleToRotateRadian
     this.multipleToRotateAngleLocal = radianToProperAngle(this.multipleToRotateRadianLocal)
-    const toRotate = this.multipleToRotateAngle
-    this.ctx.rotate(toRotate * Math.PI / 180)
+    // const toRotate = this.multipleToRotateAngle
+    // this.ctx.rotate(toRotate * Math.PI / 180)
     const canvasEntities = this.multipleToRotateIds.map(id => this._entitiesStore.select.entityById(id))
-    this.multipleToRotateIds.forEach((id, index) => {
+    canvasEntities.forEach(entity => {
       assertNotNull(this.pivotPoint)
-      const panel = this._entitiesStore.select.entityById(id)
-      // const angleToPivot = Math.atan2(entity.location.y - this.pivotPoint.y, entity.location.x - this.pivotPoint.x)
-      const angleToPivot = getAngleInRadiansBetweenTwoPoints(panel.location, this.pivotPoint)
-      const newAngle = angleToPivot + angleInRadians
-      const newPanelRadians = panel.radians + adjustedAngleInRadians as Radian
-
-      // const newPanelRadians = angleToPivot + adjustedAngleInRadians as Radian
-      // const newPanelRadians = angleToPivot + angleInRadians as Radian
-      const newDegrees = radiansToAngle(newAngle)
-      const entityRadians = angleToRadians(panel.angle as Angle) + newAngle as Radian
-      // const entityRadians = angleToRadians(entity.angle as Angle)
-      // const updatedEntityAngle = radiansToAngle(newAngle + entityRadians)
-      /*      const initialEntityAngle = entity.angle as Angle
-       const updatedEntityAngle = addAngles(initialEntityAngle, newDegrees)*/
-
-      // const newDegrees = newAngle * 180 / Math.PI
-      // console.log(index)
-
-      // const adjustedAngle = getAngleBetweenTwoPoints(getPos, this.pivotPoint)
-      // const getAdjustedAngle = this.multipleToRotateAdjustedAngle.get(id)
-      // assertNotNull(getAdjustedAngle)
-      // console.log('multipleToRotateAngle', this.multipleToRotateAngle)
-      // console.log('getAdjustedAngle', getAdjustedAngle)
-
-      this.multipleToRotateAdjustedRadians.set(id, newPanelRadians)
-      assertNotNull(this.multipleToRotateAngle)
-      // const newAdjustedAngle = toProperAngle(addAngles(getAdjustedAngle, this.multipleToRotateAngle))
-      // console.log('newAdjustedAngle', newAdjustedAngle)
-      // console.log('newDegrees', newDegrees)
-      // console.log('updatedEntityAngle', updatedEntityAngle)
-      // const originalEntityAngle = entity.angle
-      // const toRadians = angleToRadians(updatedEntityAngle)
-      assertNotNull(this.multipleToRotateRadianLocal)
-      // tryThisRadians
-      // const entityRadiansLocal =
-      // entityRadians
-      // const getPos = rotateWithAngle(this.pivotPoint, panel.location, this.multipleToRotateAngleLocal as Angle)
-      const correctLocation = {
-        x: panel.location.x + panel.width / 2,
-        y: panel.location.y + panel.height / 2,
-      }
-
-      const startPointRadians = this.startPointAnglesInRadians.get(id)
-      assertNotNull(startPointRadians)
-      const tryThisRadians = angleInRadians - startPointRadians as Radian
-
-      const currentStartRadians = this.startPointToCurrentPointAngleInRadians
-      assertNotNull(currentStartRadians)
-      const tryThisRadians2 = angleInRadians - currentStartRadians as Radian
       assertNotNull(this.startPointToPivotPointAngleInRadians)
       const tryThisRadians3 = angleInRadians - this.startPointToPivotPointAngleInRadians as Radian
-      // const getPos = rotateRadian(correctLocation, this.pivotPoint, adjustedAngleInRadians as Radian)
-      const getPos = rotatePointOffPivot(correctLocation, this.pivotPoint, tryThisRadians3 as Radian)
-      // const getPos = rotatePointOffPivot(correctLocation, this.pivotPoint, tryThisRadians2 as Radian)
-      // const getPos = rotatePointOffPivot(correctLocation, this.pivotPoint, tryThisRadians as Radian)
-      // const getPos = rotatePointOffPivot(correctLocation, this.pivotPoint, angleInRadians as Radian)
-      // const getPos = rotatePointOffPivot(correctLocation, this.pivotPoint, newPanelRadians as Radian)
-      // const getPos = rotatePointOffPivot(correctLocation, this.pivotPoint, adjustedAngleInRadians as Radian)
-      // const getPos = rotatePointOffPivot(correctLocation, this.pivotPoint, newPanelRadians as Radian)
-      // const getPos = rotatePointOffPivot(correctLocation, this.pivotPoint, adjustedAngleInRadians as Radian)
-      // const getPos = rotatePointOffPivot(this.pivotPoint, correctLocation, newPanelRadians as Radian)
-      // const getPos = rotatePointOffPivot(this.pivotPoint, correctLocation, adjustedAngleInRadians as Radian)
-      // const getPos = rotateRadian(this.pivotPoint, correctLocation, this.multipleToRotateRadianLocal as Radisan)
-      // const getPos = rotatePointOffPivot(this.pivotPoint, panel.location, this.multipleToRotateRadianLocal as Radian)
-      // const getPos = rotatePointOffPivot(this.pivotPoint, entity.location, toRadians)
-      // const getPos = rotatePointOffPivot(entity.location, this.pivotPoint, toRadians)
-      // console.log('angleInRadians', angleInRadians)
-      // console.log('newPanelRadians', newPanelRadians)
-      // console.log('radians diff', newPanelRadians - angleInRadians)
-      this.multipleToRotateAdjustedAngle.set(id, tryThisRadians3)
-      // this.multipleToRotateAdjustedAngle.set(id, tryThisRadians2)
-      // this.multipleToRotateAdjustedAngle.set(id, tryThisRadians)
-      // this.multipleToRotateAdjustedAngle.set(id, angleInRadians)
-      // this.multipleToRotateAdjustedAngle.set(id, adjustedAngleInRadians)
-      // this.multipleToRotateAdjustedAngle.set(id, angleInRadians)
-      this.multipleToRotateAdjustedLocation.set(id, getPos)
-
-      /*      const panel = this._entitiesStore.select.entityById(id)*/
-      const panelLocationX = panel.location.x + panel.width / 2
-      // const panelLocationX = entity.location.x + (getPos.x - entity.location.x)
-      const panelLocationY = panel.location.y + panel.height / 2
-      const panelX = panelLocationX - this.pivotPoint.x
-      const panelY = panelLocationY - this.pivotPoint.y
-      this.multipleToRotateAdjustedLocationV2.set(id, {
-        x: panelX,
-        y: panelY,
-      })
-      this.ctx.save()
-      this.ctx.translate(panelX, panelY)
-      const entityRotate = panel.radians
-      this.ctx.rotate(entityRotate)
-      this.ctx.beginPath()
-      if (panel.id === this.multipleToRotateIds[0]) {
-        this.ctx.fillStyle = '#17fff3'
+      const correctLocation = {
+        x: entity.location.x + entity.width / 2,
+        y: entity.location.y + entity.height / 2,
       }
-      this.ctx.rect(-panel.width / 2, -panel.height / 2, panel.width, panel.height)
-      this.ctx.fill()
-      this.ctx.stroke()
-      // this.ctx.closePath()
-      // this.ctx.translate(-panelX, -panelY)
-      // this.ctx.rotate(-entityRotate)
-      this.ctx.restore()
-
-      // this.ctx.save()
-
-      rotateStatsArray.push(`${index}:
-      x:${roundToTwoDecimals(getPos.x)},
-      y:${roundToTwoDecimals(getPos.y)},
-      panelX:${roundToTwoDecimals(panelX)},
-      panelY:${roundToTwoDecimals(panelY)},
-      angle:${roundToTwoDecimals(newDegrees)},
-      radian:${roundToTwoDecimals(entityRadians)},`)
+      const getPos = rotatePointOffPivot(correctLocation, this.pivotPoint, tryThisRadians3 as Radian)
+      this.multipleToRotateAdjustedAngle.set(entity.id, tryThisRadians3)
+      this.multipleToRotateAdjustedLocation.set(entity.id, getPos)
     })
+    /* this.multipleToRotateIds.forEach((id, index) => {
+     assertNotNull(this.pivotPoint)
+     const panel = this._entitiesStore.select.entityById(id)
+     // const angleToPivot = Math.atan2(entity.location.y - this.pivotPoint.y, entity.location.x - this.pivotPoint.x)
+     const angleToPivot = getAngleInRadiansBetweenTwoPoints(panel.location, this.pivotPoint)
+     const newAngle = angleToPivot + angleInRadians
+     const newPanelRadians = panel.radians + adjustedAngleInRadians as Radian
 
-    this.ctx.restore()
+     // const newPanelRadians = angleToPivot + adjustedAngleInRadians as Radian
+     // const newPanelRadians = angleToPivot + angleInRadians as Radian
+     const newDegrees = radiansToAngle(newAngle)
+     const entityRadians = angleToRadians(panel.angle as Angle) + newAngle as Radian
+     // const entityRadians = angleToRadians(entity.angle as Angle)
+     // const updatedEntityAngle = radiansToAngle(newAngle + entityRadians)
+     /!*      const initialEntityAngle = entity.angle as Angle
+     const updatedEntityAngle = addAngles(initialEntityAngle, newDegrees)*!/
 
-    this.drawWithUpdated(canvasEntities)
+     // const newDegrees = newAngle * 180 / Math.PI
+     // console.log(index)
+
+     // const adjustedAngle = getAngleBetweenTwoPoints(getPos, this.pivotPoint)
+     // const getAdjustedAngle = this.multipleToRotateAdjustedAngle.get(id)
+     // assertNotNull(getAdjustedAngle)
+     // console.log('multipleToRotateAngle', this.multipleToRotateAngle)
+     // console.log('getAdjustedAngle', getAdjustedAngle)
+
+     this.multipleToRotateAdjustedRadians.set(id, diff as Radian)
+     // this.multipleToRotateAdjustedRadians.set(id, newPanelRadians)
+     assertNotNull(this.multipleToRotateAngle)
+     // const newAdjustedAngle = toProperAngle(addAngles(getAdjustedAngle, this.multipleToRotateAngle))
+     // console.log('newAdjustedAngle', newAdjustedAngle)
+     // console.log('newDegrees', newDegrees)
+     // console.log('updatedEntityAngle', updatedEntityAngle)
+     // const originalEntityAngle = entity.angle
+     // const toRadians = angleToRadians(updatedEntityAngle)
+     assertNotNull(this.multipleToRotateRadianLocal)
+     // tryThisRadians
+     // const entityRadiansLocal =
+     // entityRadians
+     // const getPos = rotateWithAngle(this.pivotPoint, panel.location, this.multipleToRotateAngleLocal as Angle)
+     const correctLocation = {
+     x: panel.location.x + panel.width / 2,
+     y: panel.location.y + panel.height / 2,
+     }
+
+     const startPointRadians = this.startPointAnglesInRadians.get(id)
+     assertNotNull(startPointRadians)
+     const tryThisRadians = angleInRadians - startPointRadians as Radian
+
+     const currentStartRadians = this.startPointToCurrentPointAngleInRadians
+     assertNotNull(currentStartRadians)
+     const tryThisRadians2 = angleInRadians - currentStartRadians as Radian
+     assertNotNull(this.startPointToPivotPointAngleInRadians)
+     const tryThisRadians3 = angleInRadians - this.startPointToPivotPointAngleInRadians as Radian
+     // const getPos = rotateRadian(correctLocation, this.pivotPoint, adjustedAngleInRadians as Radian)
+     // const getPos = rotatePointOffPivot(correctLocation, this.pivotPoint, diff as Radian)
+     const getPos = rotatePointOffPivot(correctLocation, this.pivotPoint, tryThisRadians3 as Radian)
+     // const getPos = rotatePointOffPivot(correctLocation, this.pivotPoint, tryThisRadians2 as Radian)
+     // const getPos = rotatePointOffPivot(correctLocation, this.pivotPoint, tryThisRadians as Radian)
+     // const getPos = rotatePointOffPivot(correctLocation, this.pivotPoint, angleInRadians as Radian)
+     // const getPos = rotatePointOffPivot(correctLocation, this.pivotPoint, newPanelRadians as Radian)
+     // const getPos = rotatePointOffPivot(correctLocation, this.pivotPoint, adjustedAngleInRadians as Radian)
+     // const getPos = rotatePointOffPivot(correctLocation, this.pivotPoint, newPanelRadians as Radian)
+     // const getPos = rotatePointOffPivot(correctLocation, this.pivotPoint, adjustedAngleInRadians as Radian)
+     // const getPos = rotatePointOffPivot(this.pivotPoint, correctLocation, newPanelRadians as Radian)
+     // const getPos = rotatePointOffPivot(this.pivotPoint, correctLocation, adjustedAngleInRadians as Radian)
+     // const getPos = rotateRadian(this.pivotPoint, correctLocation, this.multipleToRotateRadianLocal as Radisan)
+     // const getPos = rotatePointOffPivot(this.pivotPoint, panel.location, this.multipleToRotateRadianLocal as Radian)
+     // const getPos = rotatePointOffPivot(this.pivotPoint, entity.location, toRadians)
+     // const getPos = rotatePointOffPivot(entity.location, this.pivotPoint, toRadians)
+     // console.log('angleInRadians', angleInRadians)
+     // console.log('newPanelRadians', newPanelRadians)
+     // console.log('radians diff', newPanelRadians - angleInRadians)
+     // this.multipleToRotateAdjustedAngle.set(id, diff)
+     this.multipleToRotateAdjustedAngle.set(id, tryThisRadians3)
+     // this.multipleToRotateAdjustedAngle.set(id, tryThisRadians2)
+     // this.multipleToRotateAdjustedAngle.set(id, tryThisRadians)
+     // this.multipleToRotateAdjustedAngle.set(id, angleInRadians)
+     // this.multipleToRotateAdjustedAngle.set(id, adjustedAngleInRadians)
+     // this.multipleToRotateAdjustedAngle.set(id, angleInRadians)
+     this.multipleToRotateAdjustedLocation.set(id, getPos)
+
+     /!*      const panel = this._entitiesStore.select.entityById(id)*!/
+     const panelLocationX = panel.location.x + panel.width / 2
+     // const panelLocationX = entity.location.x + (getPos.x - entity.location.x)
+     const panelLocationY = panel.location.y + panel.height / 2
+     const panelX = panelLocationX - this.pivotPoint.x
+     const panelY = panelLocationY - this.pivotPoint.y
+     this.multipleToRotateAdjustedLocationV2.set(id, {
+     x: panelX,
+     y: panelY,
+     })
+     this.ctx.save()
+     this.ctx.translate(panelX, panelY)
+     const entityRotate = panel.radians
+     this.ctx.rotate(entityRotate)
+     this.ctx.beginPath()
+     if (panel.id === this.multipleToRotateIds[0]) {
+     this.ctx.fillStyle = '#17fff3'
+     }
+     this.ctx.rect(-panel.width / 2, -panel.height / 2, panel.width, panel.height)
+     this.ctx.fill()
+     this.ctx.stroke()
+     // this.ctx.closePath()
+     // this.ctx.translate(-panelX, -panelY)
+     // this.ctx.rotate(-entityRotate)
+     this.ctx.restore()
+
+     // this.ctx.save()
+
+     rotateStatsArray.push(`${index}:
+     x:${roundToTwoDecimals(getPos.x)},
+     y:${roundToTwoDecimals(getPos.y)},
+     panelX:${roundToTwoDecimals(panelX)},
+     panelY:${roundToTwoDecimals(panelY)},
+     angle:${roundToTwoDecimals(newDegrees)},
+     radian:${roundToTwoDecimals(entityRadians)},`)
+     })*/
+
+    // this.ctx.restore()
+
+    // this.drawWithUpdated(canvasEntities)
 
     /*    const rotatingEntities = entities.map(entity => {
 
