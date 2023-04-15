@@ -1,9 +1,9 @@
 import { EntityType } from '@design-app/shared'
-import { XyLocation } from '@shared/data-access/models'
+import { Point } from '@shared/data-access/models'
 
 export type PanelModel = {
   id: string
-  location: XyLocation
+  location: Point
   rotation: PanelRotation
   stringId: string
   type: EntityType

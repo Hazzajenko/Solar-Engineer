@@ -1,12 +1,13 @@
 import { LineDirection } from '../types'
 import { PanelStylerService } from '@design-app/feature-panel'
 import { BlockRectModel } from '@grid-layout/data-access'
-import { XyLocation } from '@shared/data-access/models'
+import { Point } from '@shared/data-access/models'
 import {
   DesignRectModel,
   DesignRectModelWithDistance,
   MousePositioningService,
 } from 'design-app/utils'
+
 
 export abstract class BlockRectHelpers {
   protected abstract _panelStylerService: PanelStylerService
@@ -17,7 +18,7 @@ export abstract class BlockRectHelpers {
     height: number
   }
 
-  protected abstract strokeTwoPoints(moveToPoint: XyLocation, lineToPoint: XyLocation): void
+  protected abstract strokeTwoPoints(moveToPoint: Point, lineToPoint: Point): void
 
   protected abstract fillText(text: string, x: number, y: number): void
 
@@ -126,11 +127,11 @@ export abstract class BlockRectHelpers {
   }
 
   protected printDefault(blockRectModel: BlockRectModel, direction: LineDirection) {
-    let moveToPoint: XyLocation = this.getDefaultMoveToPoint(blockRectModel, direction)
+    let moveToPoint: Point = this.getDefaultMoveToPoint(blockRectModel, direction)
 
     moveToPoint = this._mousePositioningService.getMousePositionFromXYForCanvas(moveToPoint)
 
-    let lineToPoint: XyLocation = this.getDefaultLineToPoint(blockRectModel, direction)
+    let lineToPoint: Point = this.getDefaultLineToPoint(blockRectModel, direction)
     lineToPoint = this._mousePositioningService.getMousePositionFromXYForCanvas(lineToPoint)
 
     if (this.canvasConfig.showDirectionLines) {
@@ -148,10 +149,7 @@ export abstract class BlockRectHelpers {
     return
   }
 
-  protected getDefaultMoveToPoint(
-    blockRectModel: BlockRectModel,
-    direction: LineDirection,
-  ): XyLocation {
+  protected getDefaultMoveToPoint(blockRectModel: BlockRectModel, direction: LineDirection): Point {
     switch (direction) {
       case LineDirection.Top:
         return {
@@ -182,8 +180,8 @@ export abstract class BlockRectHelpers {
     blockRectModel: BlockRectModel,
     direction: LineDirection,
   ): {
-    moveToPointTop: XyLocation
-    moveToPointBottom: XyLocation
+    moveToPointTop: Point
+    moveToPointBottom: Point
   } {
     switch (direction) {
       case LineDirection.Top:
@@ -247,8 +245,8 @@ export abstract class BlockRectHelpers {
     blockRectModel: BlockRectModel,
     direction: LineDirection,
   ): {
-    lineToPointTop: XyLocation
-    lineToPointBottom: XyLocation
+    lineToPointTop: Point
+    lineToPointBottom: Point
   } {
     switch (direction) {
       case LineDirection.Top:
@@ -350,10 +348,7 @@ export abstract class BlockRectHelpers {
     }
   }
 
-  protected getDefaultLineToPoint(
-    blockRectModel: BlockRectModel,
-    direction: LineDirection,
-  ): XyLocation {
+  protected getDefaultLineToPoint(blockRectModel: BlockRectModel, direction: LineDirection): Point {
     switch (direction) {
       case LineDirection.Top:
         return {
@@ -398,7 +393,7 @@ export abstract class BlockRectHelpers {
   protected getFillTextDistancePosition(
     blockRectModel: BlockRectModel,
     direction: LineDirection,
-  ): XyLocation {
+  ): Point {
     switch (direction) {
       case LineDirection.Top:
         return {

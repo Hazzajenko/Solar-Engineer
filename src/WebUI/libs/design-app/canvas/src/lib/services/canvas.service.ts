@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core'
-import { XyLocation } from '@shared/data-access/models'
+import { Point } from '@shared/data-access/models'
 import { BlockRectHelpers } from './block-rect.helpers'
 import { PanelBackgroundColor, PanelStylerService } from '@design-app/feature-panel'
 import { ComponentElementsService, DesignRectModel, MousePositioningService, ObjectPositioningService, ViewPositioningService } from 'design-app/utils'
@@ -99,10 +99,10 @@ export class CanvasService
       return this.printDefault(blockRect, lineDirection)
     }
 
-    let moveToPoint: XyLocation = this.getDefaultMoveToPoint(blockRect, lineDirection)
+    let moveToPoint: Point = this.getDefaultMoveToPoint(blockRect, lineDirection)
     moveToPoint = this._mousePositioningService.getMousePositionFromXYForCanvas(moveToPoint)
 
-    let lineToPoint: XyLocation
+    let lineToPoint: Point
     if (this.canvasConfig.stopLineAtPanel) {
       lineToPoint = this.getLineToPointOfClosestPanel(blockRect, closestPanelRect, lineDirection)
     } else {
@@ -143,10 +143,10 @@ export class CanvasService
       return this.printDefault(blockRect, lineDirection)
     }
     if (this.canvasConfig.showDirectionLines) {
-      let moveToPoint: XyLocation = this.getDefaultMoveToPoint(blockRect, lineDirection)
+      let moveToPoint: Point = this.getDefaultMoveToPoint(blockRect, lineDirection)
       moveToPoint = this._mousePositioningService.getMousePositionFromXYForCanvas(moveToPoint)
 
-      let lineToPoint: XyLocation
+      let lineToPoint: Point
       lineToPoint = this.canvasConfig.stopLineAtPanel
         ? this.getLineToPointOfClosestPanel(blockRect, closestPanelsRect[0], lineDirection)
         : this.getDefaultLineToPoint(blockRect, lineDirection)
@@ -263,7 +263,7 @@ export class CanvasService
     }
   }
 
-  protected strokeTwoPoints(moveToPoint: XyLocation, lineToPoint: XyLocation) {
+  protected strokeTwoPoints(moveToPoint: Point, lineToPoint: Point) {
     const {
             x: moveToX,
             y: moveToY,

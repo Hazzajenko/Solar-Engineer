@@ -1,6 +1,5 @@
 import { inject, Injectable, RendererFactory2 } from '@angular/core'
-import { Point } from '@angular/cdk/drag-drop'
-import { XyLocation } from '@shared/data-access/models'
+import { Point } from '@shared/data-access/models'
 
 @Injectable({
   providedIn: 'root',
@@ -35,7 +34,7 @@ export class MousePositioningService {
     return this._screenPosition
   }
 
-  set screenPosition(value: XyLocation) {
+  set screenPosition(value: Point) {
     this._screenPosition = value
   }
 
@@ -61,7 +60,7 @@ export class MousePositioningService {
     return { x, y }
   }
 
-  getMousePositionFromXYWithSize(point: XyLocation, size?: {
+  getMousePositionFromXYWithSize(point: Point, size?: {
     height: number,
     width: number
   }): Point {
@@ -84,7 +83,7 @@ export class MousePositioningService {
     return { x, y }
   }
 
-  getMousePositionFromXYForCanvas(xy: XyLocation): Point {
+  getMousePositionFromXYForCanvas(xy: Point): Point {
     const rect = this._gridLayoutElement.getBoundingClientRect()
     // console.log('offLeftDiff', this._gridLayoutElement.offsetLeft - rect.left)
     // console.log('offTopDiff', this._gridLayoutElement.offsetTop - rect.top)
@@ -104,7 +103,7 @@ export class MousePositioningService {
     return { x, y }
   }
 
-  getMousePositionFromXYForCanvasWithScreenPosition(xy: XyLocation): Point {
+  getMousePositionFromXYForCanvasWithScreenPosition(xy: Point): Point {
     const rect = this._gridLayoutElement.getBoundingClientRect()
     const x = (xy.x - this._gridLayoutElement.offsetLeft + rect.left) * this.scale
     const y = (xy.y - this._gridLayoutElement.offsetTop + rect.top) * this.scale

@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core'
 import { PanelsStoreService } from '../'
-import { UndefinedString, XyLocation } from '@shared/data-access/models'
+import { Point, UndefinedString } from '@shared/data-access/models'
 import { SelectedStoreService } from '@design-app/feature-selected'
 import { PanelFactory, PanelRotation } from '../../types'
 
@@ -14,7 +14,7 @@ export class PanelsEventService {
 
   // private authStore = inject(AuthStoreService)
 
-  async createPanel(location: XyLocation, stringId: string = UndefinedString, rotation: PanelRotation = PanelRotation.Default) {
+  async createPanel(location: Point, stringId: string = UndefinedString, rotation: PanelRotation = PanelRotation.Default) {
     const panel = PanelFactory.create(location, stringId, rotation)
     this._panelsStore.dispatch.addPanel(panel)
     this._selectedStore.dispatch.clearSelectedState()

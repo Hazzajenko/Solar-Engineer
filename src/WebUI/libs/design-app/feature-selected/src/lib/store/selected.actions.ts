@@ -1,7 +1,7 @@
 import { TypeOfEntity } from '../types'
 import { NearbyEntityOnAxis } from '../types/nearby-entity-on-axis'
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
-import { XyLocation } from '@shared/data-access/models'
+import { Point } from '@shared/data-access/models'
 
 export const SelectedActions = createActionGroup({
   source: 'Selected Store',
@@ -29,7 +29,7 @@ export const SelectedActions = createActionGroup({
     }>(),
     'Clear Nearby Entities On Axis': emptyProps(),
     'Start Multi Selection Box': props<{
-      point: XyLocation
+      point: Point
     }>(),
     'Stop Multi Selection Box': props<{
       entities: TypeOfEntity[]

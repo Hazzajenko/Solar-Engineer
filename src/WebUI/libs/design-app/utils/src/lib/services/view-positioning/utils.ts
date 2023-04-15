@@ -37,28 +37,30 @@ const zoomValueToFitBoundsOnViewport = (
   return Math.min(Math.max(zoomAdjustedToSteps, MIN_ZOOM), 1)
 }
 
-export const getCommonBounds = (
-  elements: readonly EntityElement[],
-): [number, number, number, number] => {
-  if (!elements.length) {
-    return [0, 0, 0, 0]
-  }
+/*
+ export const getCommonBounds = (
+ elements: readonly EntityElement[],
+ ): [number, number, number, number] => {
+ if (!elements.length) {
+ return [0, 0, 0, 0]
+ }
 
-  let minX = Infinity
-  let maxX = -Infinity
-  let minY = Infinity
-  let maxY = -Infinity
+ let minX = Infinity
+ let maxX = -Infinity
+ let minY = Infinity
+ let maxY = -Infinity
 
-  elements.forEach((element) => {
-    const [x1, y1, x2, y2] = getElementAbsoluteCoords(element)
-    minX = Math.min(minX, x1)
-    minY = Math.min(minY, y1)
-    maxX = Math.max(maxX, x2)
-    maxY = Math.max(maxY, y2)
-  })
+ elements.forEach((element) => {
+ const [x1, y1, x2, y2] = getElementAbsoluteCoords(element)
+ minX = Math.min(minX, x1)
+ minY = Math.min(minY, y1)
+ maxX = Math.max(maxX, x2)
+ maxY = Math.max(maxY, y2)
+ })
 
-  return [minX, minY, maxX, maxY]
-}
+ return [minX, minY, maxX, maxY]
+ }
+ */
 
 export const getElementAbsoluteCoords = (
   element: EntityElement,

@@ -2,7 +2,7 @@ import { SelectedActions } from '../../store'
 import { TypeOfEntity } from '../../types'
 import { NearbyEntityOnAxis } from '../../types/nearby-entity-on-axis'
 import { Store } from '@ngrx/store'
-import { XyLocation } from '@shared/data-access/models'
+import { Point } from '@shared/data-access/models'
 import { inject, Injectable } from '@angular/core'
 
 @Injectable({
@@ -23,7 +23,7 @@ export class SelectedRepository {
     this._store.dispatch(SelectedActions.clearNearbyEntitiesOnAxis())
   }
 
-  public startMultiSelectionBox(point: XyLocation) {
+  public startMultiSelectionBox(point: Point) {
     this._store.dispatch(SelectedActions.startMultiSelectionBox({ point }))
   }
 

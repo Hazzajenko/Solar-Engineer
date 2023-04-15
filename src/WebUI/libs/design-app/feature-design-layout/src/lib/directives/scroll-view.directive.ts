@@ -1,6 +1,6 @@
 import { AfterViewInit, Directive, ElementRef, EventEmitter, inject, NgZone, OnInit, Output, Renderer2 } from '@angular/core'
 import { ElementOffsets } from '@grid-layout/data-access'
-import { XyLocation } from '@shared/data-access/models'
+import { Point } from '@shared/data-access/models'
 import { ComponentElementsService, ViewPositioningService } from 'design-app/utils'
 
 @Directive({
@@ -13,7 +13,7 @@ export class ScrollViewDirective
   private _scrollElement = inject(ElementRef<HTMLDivElement>).nativeElement
   private _renderer = inject(Renderer2)
   private _ngZone = inject(NgZone)
-  private _screenPosition: XyLocation = { x: 0, y: 0 }
+  private _screenPosition: Point = { x: 0, y: 0 }
   private _viewPositioningService = inject(ViewPositioningService)
   private _componentElementsService = inject(ComponentElementsService)
 
@@ -30,13 +30,13 @@ export class ScrollViewDirective
 
   protected set screenProperties(options: {
     scale: number;
-    screenPosition: XyLocation
+    screenPosition: Point
   }) {
     this.scale = options.scale
     this._screenPosition = options.screenPosition
   }
 
-  protected get screenPosition(): XyLocation {
+  protected get screenPosition(): Point {
     return this._screenPosition
   }
 

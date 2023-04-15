@@ -1,4 +1,4 @@
-import { XyLocation } from '@shared/data-access/models'
+import { Point } from '@shared/data-access/models'
 
 const view = (() => {
   // current view transform
@@ -22,7 +22,7 @@ const view = (() => {
       m[4] = pos.x
       m[5] = pos.y
     },
-    pan(amount: XyLocation) {
+    pan(amount: Point) {
       if (dirty) {
         this.update()
       }
@@ -30,7 +30,7 @@ const view = (() => {
       pos.y += amount.y
       dirty = true
     },
-    scaleAt(at: XyLocation, amount: number) {
+    scaleAt(at: Point, amount: number) {
       // at in screen coords
       if (dirty) {
         this.update()

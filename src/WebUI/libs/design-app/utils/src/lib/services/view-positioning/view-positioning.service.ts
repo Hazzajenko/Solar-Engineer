@@ -1,6 +1,6 @@
 import { inject, Injectable, RendererFactory2 } from '@angular/core'
 import { MousePositioningService } from '../mouse-positioning'
-import { XyLocation } from '@shared/data-access/models'
+import { Point } from '@shared/data-access/models'
 import { BehaviorSubject } from 'rxjs'
 import { ComponentElementsService } from '../component-elements'
 import { EntityElement } from '@design-app/shared'
@@ -24,18 +24,18 @@ export class ViewPositioningService {
   private _renderer = inject(RendererFactory2)
     .createRenderer(null, null)
 
-  private _ctrlMouseDownStartPoint: XyLocation | undefined
+  private _ctrlMouseDownStartPoint: Point | undefined
   // private _screenPosition: XyLocation = { x: 0, y: 0 }
-  private _modifiedScreenPosition: XyLocation = { x: 1000, y: 1000 }
+  private _modifiedScreenPosition: Point = { x: 1000, y: 1000 }
   matrix = [1, 0, 0, 1, 0, 0]
   dirty = false
-  pos: XyLocation = { x: 0, y: 0 }
+  pos: Point = { x: 0, y: 0 }
 
-  get ctrlMouseDownStartPoint(): XyLocation | undefined {
+  get ctrlMouseDownStartPoint(): Point | undefined {
     return this._ctrlMouseDownStartPoint
   }
 
-  set ctrlMouseDownStartPoint(value: XyLocation | undefined) {
+  set ctrlMouseDownStartPoint(value: Point | undefined) {
     this._ctrlMouseDownStartPoint = value
     console.log('set ctrlMouseDownStartPoint', value)
   }
@@ -63,8 +63,8 @@ export class ViewPositioningService {
     return this._screenPosition.value
   }
 
-  set screenPosition(value: XyLocation) {
-    const screenPosition: XyLocation = {
+  set screenPosition(value: Point) {
+    const screenPosition: Point = {
       x: Math.round((value.x + Number.EPSILON) * 100) / 100,
       y: Math.round((value.y + Number.EPSILON) * 100) / 100,
     }

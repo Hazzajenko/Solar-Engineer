@@ -1,10 +1,9 @@
 // import { Logger } from '@ngrx/data'
 import { DesignLayoutClickService } from '../../services/design-layout-click.service'
-import { Point } from '@angular/cdk/drag-drop'
 import { inject, NgZone, Renderer2 } from '@angular/core'
 import { CanvasService } from '@design-app/canvas'
 import { SelectedStoreService } from '@design-app/feature-selected'
-import { XyLocation } from '@shared/data-access/models'
+import { Point } from '@shared/data-access/models'
 import {
   ComponentElementsService,
   MousePositioningService,
@@ -27,9 +26,9 @@ export class DesignLayoutService {
   private _canvas!: HTMLCanvasElement
   private _ctx!: CanvasRenderingContext2D
   private _clickTimeout: NodeJS.Timeout | undefined
-  private _pagePoint: XyLocation | undefined
+  private _pagePoint: Point | undefined
   private _scale = 1
-  private _screenPosition: XyLocation = { x: 0, y: 0 }
+  private _screenPosition: Point = { x: 0, y: 0 }
   private _isDragging = false
   private _isScreenDragging = false
   private _isShiftDragging = false
@@ -66,11 +65,11 @@ export class DesignLayoutService {
     this._clickTimeout = value
   }
 
-  protected get pagePoint(): XyLocation | undefined {
+  protected get pagePoint(): Point | undefined {
     return this._pagePoint
   }
 
-  protected set pagePoint(value: XyLocation | undefined) {
+  protected set pagePoint(value: Point | undefined) {
     this._pagePoint = value
     // console.log('set pagePoint', value)
   }
@@ -84,16 +83,16 @@ export class DesignLayoutService {
     this._mousePositioningService.scale = value
   }
 
-  protected set screenProperties(options: { scale: number; screenPosition: XyLocation }) {
+  protected set screenProperties(options: { scale: number; screenPosition: Point }) {
     this.scale = options.scale
     this.screenPosition = options.screenPosition
   }
 
-  protected get screenPosition(): XyLocation {
+  protected get screenPosition(): Point {
     return this._screenPosition
   }
 
-  protected set screenPosition(value: XyLocation) {
+  protected set screenPosition(value: Point) {
     this._screenPosition = value
     // this._mousePositionService.screenPosition = value
   }

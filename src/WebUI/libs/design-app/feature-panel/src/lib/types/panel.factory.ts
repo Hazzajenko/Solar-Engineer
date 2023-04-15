@@ -1,11 +1,11 @@
 import { PanelModel, PanelRotation } from '.'
 import { ENTITY_TYPE } from '@design-app/shared'
-import { UndefinedString, XyLocation } from '@shared/data-access/models'
+import { Point, UndefinedString } from '@shared/data-access/models'
 import { newGuid } from '@shared/utils'
 
 export const PanelFactory = {
   create: (
-    location: XyLocation,
+    location: Point,
     stringId: string = UndefinedString,
     rotation: PanelRotation = PanelRotation.Portrait,
   ): PanelModel => ({

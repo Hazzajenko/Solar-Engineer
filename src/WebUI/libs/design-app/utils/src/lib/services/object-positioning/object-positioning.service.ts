@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core'
-import { XyLocation } from '@shared/data-access/models'
+import { Point } from '@shared/data-access/models'
 import { PanelModel, PanelsStoreService } from '@design-app/feature-panel'
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { ComponentElementsService, DesignRectModel } from '../component-elements'
@@ -137,7 +137,7 @@ export class ObjectPositioningService {
     // const panels = await this._designPanelsFacade.panelsByIdArray(ids)
     // const panels = this._componentElementsService.getElementRectsByIdArray(ids)
     const updates = rects.map(panel => {
-        const location: XyLocation = {
+        const location: Point = {
           x: panel.x,
           y: panel.y,
         }
@@ -255,7 +255,7 @@ export class ObjectPositioningService {
     }
   }
 
-  getAllElementsBetweenTwoPoints(point1: XyLocation, point2: XyLocation): TypeOfEntity[] {
+  getAllElementsBetweenTwoPoints(point1: Point, point2: Point): TypeOfEntity[] {
     const objectRects = this._componentElementsService.getComponentElementRectsWithId()
     const elementsBetweenPoints = objectRects.filter(objectRect => {
       // Bottom Left To Top Right

@@ -1,19 +1,22 @@
+import { Radian } from '../utils'
 import { ENTITY_TYPE, EntityType } from '@design-app/shared'
 import { UpdateStr } from '@ngrx/entity/src/models'
-import { XyLocation } from '@shared/data-access/models'
+import { Point } from '@shared/data-access/models'
 import { newGuid } from '@shared/utils'
+
 
 export type CanvasEntity = {
   id: string
   type: EntityType
-  location: XyLocation
+  location: Point
   width: number
   height: number
   angle: number
+  radians: Radian
 }
 
 export const EntityFactory = {
-  create: (type: EntityType, location: XyLocation): CanvasEntity => {
+  create: (type: EntityType, location: Point): CanvasEntity => {
     const { width, height } = SizeByType[type]
     return {
       id: newGuid(),
@@ -22,6 +25,7 @@ export const EntityFactory = {
       width,
       height,
       angle: 0,
+      radians: 0 as Radian,
     }
   },
   update: (entity: CanvasEntity, changes: Partial<CanvasEntity>): CanvasEntity => {

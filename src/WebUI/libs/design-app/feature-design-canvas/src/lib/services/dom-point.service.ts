@@ -1,6 +1,6 @@
 import { eventToXyLocation, MiddlePoint, ObjectSize, SizeByType, TransformedPoint } from '@design-app/feature-design-canvas'
 import { ENTITY_TYPE, EntityType } from '@design-app/shared'
-import { XyLocation } from '@shared/data-access/models'
+import { Point } from '@shared/data-access/models'
 import { inject, Injectable } from '@angular/core'
 import { CanvasElementService } from './canvas-element.service'
 
@@ -37,7 +37,7 @@ export class DomPointService {
     return new DOMPoint(scaledPoint.x, scaledPoint.y)
   }
 
-  getTransformedPointFromXy(point: XyLocation) {
+  getTransformedPointFromXy(point: Point) {
     const originalPoint = new DOMPoint(point.x, point.y)
     return this.ctx.getTransform()
       .invertSelf()
@@ -76,14 +76,14 @@ export class DomPointService {
     } as TransformedPoint
   }
 
-  adjustLocationToMiddleOfObject(point: XyLocation, size: ObjectSize): MiddlePoint {
+  adjustLocationToMiddleOfObject(point: Point, size: ObjectSize): MiddlePoint {
     return {
       middleX: point.x - size.width / 2,
       middleY: point.y - size.height / 2,
     }
   }
 
-  adjustLocationToMiddleOfObjectByType(point: XyLocation, type: EntityType): MiddlePoint {
+  adjustLocationToMiddleOfObjectByType(point: Point, type: EntityType): MiddlePoint {
     switch (type) {
       case ENTITY_TYPE.Panel:
         return this.adjustLocationToMiddleOfObject(point, SizeByType[type])

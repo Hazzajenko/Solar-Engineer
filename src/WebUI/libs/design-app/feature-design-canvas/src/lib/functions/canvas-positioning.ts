@@ -1,11 +1,11 @@
 import { CanvasEntity, MiddlePoint, ObjectSize, TransformedPoint } from '../types'
-import { XyLocation } from '@shared/data-access/models'
+import { Point } from '@shared/data-access/models'
 
 export function getXyPointFromEvent(
   event: MouseEvent,
-  screenPosition: XyLocation,
+  screenPosition: Point,
   scale: number,
-): XyLocation {
+): Point {
   return {
     x: event.pageX / scale - screenPosition.x,
     y: event.pageY / scale - screenPosition.y,
@@ -13,10 +13,10 @@ export function getXyPointFromEvent(
 }
 
 export function getXyPointFromLocation(
-  location: XyLocation,
-  screenPosition: XyLocation,
+  location: Point,
+  screenPosition: Point,
   scale: number,
-): XyLocation {
+): Point {
   return {
     x: location.x / scale - screenPosition.x,
     y: location.y / scale - screenPosition.y,
@@ -24,17 +24,17 @@ export function getXyPointFromLocation(
 }
 
 export function getXyPointFromLocationV2(
-  location: XyLocation,
-  screenPosition: XyLocation,
+  location: Point,
+  screenPosition: Point,
   scale: number,
-): XyLocation {
+): Point {
   return {
     x: location.x / scale + screenPosition.x,
     y: location.y / scale + screenPosition.y,
   }
 }
 
-export function scaleAt(point: XyLocation, scaleBy: number) {
+export function scaleAt(point: Point, scaleBy: number) {
   // at pixel coords x, y scale by scaleBy
   const scale = 1 / scaleBy
   const origin = { x: 0, y: 0 }
@@ -42,11 +42,11 @@ export function scaleAt(point: XyLocation, scaleBy: number) {
   origin.y = point.y - (point.y - origin.y) * scaleBy
 }
 
-export function eventToXyLocation(event: MouseEvent): XyLocation {
+export function eventToXyLocation(event: MouseEvent): Point {
   return { x: event.offsetX, y: event.offsetY }
 }
 
-export function adjustClickToMiddleOfObject(point: XyLocation, size: ObjectSize): XyLocation {
+export function adjustClickToMiddleOfObject(point: Point, size: ObjectSize): Point {
   return {
     x: point.x - size.width / 2,
     y: point.y - size.height / 2,
@@ -84,7 +84,7 @@ export function getPanelRect(ctx: CanvasRenderingContext2D, panel: CanvasEntity)
   }
 }
 
-export function adjustLocationToMiddleOfObject(point: XyLocation, size: ObjectSize): MiddlePoint {
+export function adjustLocationToMiddleOfObject(point: Point, size: ObjectSize): MiddlePoint {
   return {
     middleX: point.x - size.width / 2,
     middleY: point.y - size.height / 2,
@@ -105,7 +105,7 @@ export function adjustLocationToMiddleOfObject(point: XyLocation, size: ObjectSi
  }
  */
 
-export function getTransformedPointFromXy(ctx: CanvasRenderingContext2D, point: XyLocation) {
+export function getTransformedPointFromXy(ctx: CanvasRenderingContext2D, point: Point) {
   const originalPoint = new DOMPoint(point.x, point.y)
   return ctx.getTransform().invertSelf().transformPoint(originalPoint) as TransformedPoint
 }
@@ -119,7 +119,7 @@ export function getTransformedPointFromEvent(ctx: CanvasRenderingContext2D, even
 export function areAnyEntitiesNearClick(
   ctx: CanvasRenderingContext2D,
   entities: CanvasEntity[],
-  point: XyLocation,
+  point: Point,
 ) {
   const panelsNearClick = entities.filter((panel) => {
     const panelRect = getPanelRect(ctx, panel)

@@ -2,7 +2,7 @@ import { TypeOfEntity } from '../types'
 import { NearbyEntityOnAxis } from '../types/nearby-entity-on-axis'
 import { SelectedActions } from './selected.actions'
 import { Action, createReducer, on } from '@ngrx/store'
-import { XyLocation } from '@shared/data-access/models'
+import { Point } from '@shared/data-access/models'
 
 
 export const SELECTED_FEATURE_KEY = 'selected'
@@ -12,7 +12,7 @@ export interface SelectedState {
   multiSelectedEntities: TypeOfEntity[]
   selectedStringId: string | undefined
   nearbyEntitiesOnAxis: NearbyEntityOnAxis[]
-  multiSelectionBoxStart: XyLocation | undefined
+  multiSelectionBoxStart: Point | undefined
 }
 
 export const initialSelectedState: SelectedState = {

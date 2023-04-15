@@ -1,4 +1,4 @@
-import { XyLocation } from '@shared/data-access/models'
+import { Point } from '@shared/data-access/models'
 
 export type MiddlePoint = {
   middleX: number
@@ -13,14 +13,14 @@ export type TransformedPointToDragOffset = Omit<TransformedPoint, '_type'> & {
   _type: 'TransformedPointToDragOffset'
 }
 
-export type XyOrTransformedPoint = XyLocation | TransformedPoint
+export type XyOrTransformedPoint = Point | TransformedPoint
 
 export function isTransformedPoint(point: { x: number; y: number }): point is TransformedPoint {
   return (point as TransformedPoint)._type === 'TransformedPoint'
 }
 
 export function isTransformedPointToDragOffset(
-  point: XyLocation,
+  point: Point,
 ): point is TransformedPointToDragOffset {
   return (point as TransformedPointToDragOffset)._type === 'TransformedPointToDragOffset'
 }

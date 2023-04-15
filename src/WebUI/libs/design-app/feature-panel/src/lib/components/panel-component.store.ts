@@ -4,7 +4,7 @@ import { Observable, tap } from 'rxjs'
 import { PanelFactory, PanelModel, PanelRotation } from '../types'
 import { SelectedStoreService } from '@design-app/feature-selected'
 import { throwIfNull$ } from '@shared/utils'
-import { XyLocation } from '@shared/data-access/models'
+import { Point } from '@shared/data-access/models'
 import { PanelsStoreService } from '../services'
 
 interface PanelComponentState {
@@ -19,7 +19,7 @@ export class PanelComponentStore
   private _selectedStore = inject(SelectedStoreService)
   private _panelId!: string
   private _rotation!: PanelRotation
-  private _location!: XyLocation
+  private _location!: Point
 
   rotatePanel$ = this.effect((rotation$: Observable<PanelRotation>) => {
       return rotation$.pipe(
