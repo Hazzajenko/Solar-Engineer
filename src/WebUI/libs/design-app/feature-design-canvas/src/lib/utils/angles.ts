@@ -90,7 +90,7 @@ export const rotate = (
   return [nx, ny]
 }
 
-export function rotateRadian(pivotPointer: Point, location: Point, radians: Radian) {
+export function rotateRadian(location: Point, pivotPointer: Point, radians: Radian) {
   // var radians = (Math.PI / 180) * angle,
   const cx = pivotPointer.x
   const cy = pivotPointer.y
