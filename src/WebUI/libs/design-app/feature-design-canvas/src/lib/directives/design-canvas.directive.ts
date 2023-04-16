@@ -12,7 +12,6 @@ import { takeUntil, tap } from 'rxjs'
 import { DelayedLogger } from '@shared/logger'
 import { CanvasScale } from '../models/scale'
 import { getEntitySizeOffset } from '../functions/object-sizing'
-import { Angle, angleToRadians } from '../utils'
 
 @Directive({
   selector:   '[appDesignCanvas]',
@@ -359,6 +358,7 @@ export class DesignCanvasDirective
       this.isDraggingScreen = false
       return
     }
+
     if (this.isSelectionBoxDragging) {
       this.isSelectionBoxDragging = false
       if (
@@ -472,22 +472,34 @@ export class DesignCanvasDirective
     this.transformedMousePos.innerText = `Transformed X: ${this.currentTransformedCursor.x}, Y: ${this.currentTransformedCursor.y}`
     if (event.altKey && event.ctrlKey) {
       if (!this._objectPositioning.areAnyEntitiesInRotate) {
-        const selected = this._selected.multiSelected
-        if (selected.length) {
+
+        const multiSelected = this._selected.multiSelected
+        if (multiSelected.length > 1) {
           const transformedPoint = this._domPointService.getTransformedPointFromEvent(event)
-          this._objectPositioning.setMultipleToRotate(this._selected.multiSelected, transformedPoint)
-          // this.drawPanels()
+          this._objectPositioning.setMultipleToRotate(multiSelected, transformedPoint)
+          return
+        }
+        const selected = this._selected.selected
+        if (selected) {
+          const transformedPoint = this._domPointService.getTransformedPointFromEvent(event)
+          this._objectPositioning.setEntityToRotate(selected, transformedPoint)
           return
         }
       } else {
-        if (this._objectPositioning.multipleToRotateIds.length) {
-          // const transformedPoint = this._domPointService.getTransformedPointFromEvent(event)
+        if (this._objectPositioning.multipleToRotateIds.length > 1) {
           this._objectPositioning.rotateMultipleEntitiesViaMouse(event)
           this.drawPanels()
           return
         }
+        if (this._objectPositioning.entityToRotateId) {
+          this._objectPositioning.rotateEntityViaMouse(event)
+        }
       }
 
+    }
+    if (this._objectPositioning.areAnyEntitiesInRotate && (!event.altKey || !event.ctrlKey)) {
+      this._objectPositioning.clearEntityToRotate()
+      return
     }
     /*    if (this._objectPositioning.areAnyEntitiesInRotate) {
      if (this._objectPositioning.entityToRotateId) {
@@ -757,8 +769,8 @@ export class DesignCanvasDirective
     this._ctx.save()
     this._ctx.fillStyle = fillStyle
     this._ctx.translate(panel.location.x + panel.width / 2, panel.location.y + panel.height / 2)
-    // this._ctx.rotate(panel.radians)
-    this._ctx.rotate(panel.angle * Math.PI / 180)
+    this._ctx.rotate(panel.radians)
+    // this._ctx.rotate(panel.angle * Math.PI / 180)
     this._ctx.beginPath()
     this._ctx.rect(-panel.width / 2, -panel.height / 2, panel.width, panel.height)
     this._ctx.fill()
@@ -812,58 +824,8 @@ export class DesignCanvasDirective
      this._ctx.restore()*/
   }
 
-  private handleMultiRotateDrawV2() {
-    if (this._objectPositioning.multipleToRotateIds.length > 0) {
-      const pivotPoint = this._objectPositioning.pivotPoint
-      assertNotNull(pivotPoint, 'pivotPoint should not be null')
-      this._ctx.save()
-      this._ctx.translate(pivotPoint.x, pivotPoint.y)
-      // this._ctx.translate(panel.location.x + panel.width / 2, panel.location.y + panel.height / 2)
-      const toRotate = this._objectPositioning.multipleToRotateAngle
-      // const toRotate = this._objectPositioning.multipleToRotateMap.get(panel.id)
-      assertNotNull(toRotate, 'toRotate should not be null')
-      const toRotateRadians = angleToRadians(toRotate as Angle)
-      this._ctx.rotate(toRotateRadians)
-      const multipleToRotateIds = this._objectPositioning.multipleToRotateIds
-      multipleToRotateIds.forEach(id => {
-        this._ctx.save()
-        // const panel = this.getLiveSelectedPanelById(id)
-        const panel = this._entitiesStore.select.entityById(id)
-        assertNotNull(panel, 'panel should not be null')
-        /*        const panelLocationX = panel.location.x + panel.width / 2
-         const panelLocationY = panel.location.y + panel.height / 2
-         const panelX = panelLocationX - pivotPoint.x
-         const panelY = panelLocationY - pivotPoint.y*/
-        const entityPoint = this._objectPositioning.multipleToRotateAdjustedLocationV2.get(id)
-        assertNotNull(entityPoint, 'entityPoint should not be null')
-        const panelX = entityPoint.x
-        const panelY = entityPoint.y
-        this._ctx.translate(panelX, panelY)
-        // const panelRadians = panel.radians
-        const panelRadians = angleToRadians(panel.angle as Angle)
-        this._ctx.rotate(panelRadians)
-        /*       const toRotate = this._objectPositioning.multipleToRotateAdjustedAngle.get(id)
-         assertNotNull(toRotate, 'toRotate should not be null')
-         console.log('toRotate', toRotate)
-         this._ctx.rotate(toRotate)*/
-        // this._ctx.rotate(toRotate * Math.PI / 180)
-        // this._ctx.translate(-panelX, -panelY)
-        // this._ctx.rotate(-toRotate * Math.PI / 180)
-        // this._ctx.translate(panel.location.x + panel.width / 2, panel.location.y + panel.height / 2)
-        this._ctx.beginPath()
-        this._ctx.rect(-panel.width / 2, -panel.height / 2, panel.width, panel.height)
-        this._ctx.fill()
-        this._ctx.stroke()
-        // this._ctx.closePath()
-        this._ctx.restore()
-      })
-
-      // this._ctx.closePath()
-      this._ctx.restore()
-    }
-  }
-
   drawWithUpdated() {
+    if (!this._objectPositioning.areAnyEntitiesInRotate) return
     // this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
     const multipleToRotateIds = this._objectPositioning.multipleToRotateIds
     const entities = this._panels.filter(panel => multipleToRotateIds.includes(panel.id))
@@ -874,6 +836,11 @@ export class DesignCanvasDirective
       this._ctx.save()
       const angle = this._objectPositioning.multipleToRotateAdjustedAngle.get(entity.id)
       const location = this._objectPositioning.multipleToRotateAdjustedLocation.get(entity.id)
+      /*   if (!angle || !location) {
+       console.log(this._objectPositioning.multipleToRotateAdjustedAngle)
+       console.log(this._objectPositioning.multipleToRotateAdjustedLocation)
+       return
+       }*/
       assertNotNull(angle)
       assertNotNull(location)
       /*  location = {
@@ -882,7 +849,8 @@ export class DesignCanvasDirective
        }*/
 
       // const panelX = location.x + entity.
-      this._ctx.translate(location.x, location.y)
+      this._ctx.translate(location.x + entity.width / 2, location.y + entity.height / 2)
+      // this._ctx.translate(location.x, location.y)
       // this._ctx.rotate(entity.radians)
       // console.log('angle', angle)
       this._ctx.rotate(angle)

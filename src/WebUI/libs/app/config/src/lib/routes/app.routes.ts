@@ -19,6 +19,11 @@ export const appRoutes: Route[] = [
       import('@design-app/feature-design-canvas').then((m) => m.DesignCanvasComponent),
     // providers: [noGridLayoutProviders],
   },
+  /*  {
+   path: 'imagery',
+   loadComponent: () =>
+   import('@imagery/feature/azure-maps').then((m) => m.MapsQuickStartComponent),
+   },*/
   {
     path: 'design',
     loadComponent: () =>

@@ -1,0 +1,22 @@
+diff --git a/node_modules/azure-maps-control/typings/index.d.ts b/node_modules/azure-maps-control/typings/index.d.ts
+index 207caed..828f439 100644
+--- a/node_modules/azure-maps-control/typings/index.d.ts
++++ b/node_modules/azure-maps-control/typings/index.d.ts
+@@ -602,7 +602,7 @@ declare namespace atlas {
+         /**
+          * Implements control interface and provides support for automatic styling based on the map style.
+          */
+-        export abstract class ControlBase<T = any> extends internal.EventEmitter<T> implements Control {
++        export abstract class ControlBase extends internal.EventEmitter<StyleControlEvents> implements Control {
+             /**
+              * Initialization method for the control which is called when added to the map.
+              * @param map The map that the control will be added to.
+@@ -676,7 +676,7 @@ declare namespace atlas {
+         /**
+          * A control for changing the style of the map.
+          */
+-        export class StyleControl extends ControlBase<StyleControlEvents> {
++        export class StyleControl extends ControlBase {
+             private static readonly InvertOrderPositions;
+             private static readonly Css;
+             private map;

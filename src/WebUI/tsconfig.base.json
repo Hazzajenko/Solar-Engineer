@@ -70,6 +70,7 @@
       "@home/data-access": ["libs/home/data-access/src/index.ts"],
       "@home/feature": ["libs/home/feature/src/index.ts"],
       "@home/ui": ["libs/home/ui/src/index.ts"],
+      "@imagery/feature/azure-maps": ["libs/imagery/feature/azure-maps/src/index.ts"],
       "@no-grid-layout/data-access": ["libs/no-grid-layout/data-access/src/index.ts"],
       "@no-grid-layout/shared": ["libs/no-grid-layout/shared/src/index.ts"],
       "@no-grid-layout/utils": ["libs/no-grid-layout/utils/src/index.ts"],
