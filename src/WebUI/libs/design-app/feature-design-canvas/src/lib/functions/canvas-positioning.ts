@@ -42,7 +42,7 @@ export function scaleAt(point: Point, scaleBy: number) {
   origin.y = point.y - (point.y - origin.y) * scaleBy
 }
 
-export function eventToXyLocation(event: MouseEvent): Point {
+export function eventToPointLocation(event: MouseEvent): Point {
   return { x: event.offsetX, y: event.offsetY }
 }
 

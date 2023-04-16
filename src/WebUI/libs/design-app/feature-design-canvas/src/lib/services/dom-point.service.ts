@@ -1,4 +1,4 @@
-import { eventToXyLocation, MiddlePoint, ObjectSize, SizeByType, TransformedPoint } from '@design-app/feature-design-canvas'
+import { eventToPointLocation, MiddlePoint, ObjectSize, SizeByType, TransformedPoint } from '@design-app/feature-design-canvas'
 import { ENTITY_TYPE, EntityType } from '@design-app/shared'
 import { Point } from '@shared/data-access/models'
 import { inject, Injectable } from '@angular/core'
@@ -45,7 +45,7 @@ export class DomPointService {
   }
 
   getTransformedPointFromEvent(event: MouseEvent) {
-    const point = eventToXyLocation(event)
+    const point = eventToPointLocation(event)
     const originalPoint = new DOMPoint(point.x, point.y)
     return this.ctx.getTransform()
       .invertSelf()
@@ -60,7 +60,7 @@ export class DomPointService {
   }
 
   getTransformedPointToMiddleOfObjectFromEvent(event: MouseEvent, type: EntityType) {
-    const { x, y } = eventToXyLocation(event)
+    const { x, y } = eventToPointLocation(event)
     const originalPoint = new DOMPoint(x, y)
     const transformFormedPoint = this.ctx.getTransform()
       .invertSelf()

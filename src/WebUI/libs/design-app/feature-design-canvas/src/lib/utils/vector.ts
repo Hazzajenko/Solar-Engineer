@@ -1,4 +1,5 @@
 import { CanvasEntity } from '../types'
+import { Size } from '@shared/data-access/models'
 
 const isNumber = (a: any): a is number => typeof a === 'number'
 
@@ -142,6 +143,74 @@ export const getCommonBounds = (
     maxX = Math.max(maxX, x2)
     maxY = Math.max(maxY, y2)
   })
+
+  return [minX, minY, maxX, maxY]
+}
+
+export const getCommonBoundsWithPoints = (
+  elements: readonly CanvasEntity[],
+  points: readonly APoint[],
+): [number, number, number, number] => {
+  if (!elements.length) {
+    return [0, 0, 0, 0]
+  }
+
+  let minX = Infinity
+  let maxX = -Infinity
+  let minY = Infinity
+  let maxY = -Infinity
+
+  elements.forEach((element) => {
+    const [x1, y1, x2, y2] = getElementAbsoluteCoords(element)
+    minX = Math.min(minX, x1)
+    minY = Math.min(minY, y1)
+    maxX = Math.max(maxX, x2)
+    maxY = Math.max(maxY, y2)
+  })
+
+  points.forEach((point) => {
+    minX = Math.min(minX, point[0])
+    minY = Math.min(minY, point[1])
+    maxX = Math.max(maxX, point[0])
+    maxY = Math.max(maxY, point[1])
+  })
+
+  return [minX, minY, maxX, maxY]
+}
+
+export const getCommonBoundsWithPointsAndSize = (
+  elements: readonly CanvasEntity[],
+  points: readonly APoint[],
+  size: Size,
+): [number, number, number, number] => {
+  if (!elements.length) {
+    return [0, 0, 0, 0]
+  }
+
+  let minX = Infinity
+  let maxX = -Infinity
+  let minY = Infinity
+  let maxY = -Infinity
+
+  elements.forEach((element) => {
+    const [x1, y1, x2, y2] = getElementAbsoluteCoords(element)
+    minX = Math.min(minX, x1)
+    minY = Math.min(minY, y1)
+    maxX = Math.max(maxX, x2)
+    maxY = Math.max(maxY, y2)
+  })
+
+  points.forEach((point) => {
+    minX = Math.min(minX, point[0])
+    minY = Math.min(minY, point[1])
+    maxX = Math.max(maxX, point[0])
+    maxY = Math.max(maxY, point[1])
+  })
+
+  minX = Math.min(minX, size.width)
+  minY = Math.min(minY, size.height)
+  maxX = Math.max(maxX, size.width)
+  maxY = Math.max(maxY, size.height)
 
   return [minX, minY, maxX, maxY]
 }

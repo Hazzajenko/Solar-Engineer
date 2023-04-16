@@ -41,6 +41,12 @@ export const createPanel = (
   }
 }
 
+export const createManyPanels = (locations: Point[], stringIds: StringId[] = []): CanvasPanel[] => {
+  return locations.map((location, index) => {
+    return createPanel(location, stringIds[index])
+  })
+}
+
 export const PanelFactory = {
   create: (stringId: StringId, location: Point): CanvasPanel => {
     return {

@@ -5,7 +5,8 @@ import { CanvasEntity, CanvasPanel, CanvasString, EntityFactory, SELECTED_TYPE, 
 import { assertNotNull } from '@shared/utils'
 import { DomPointService } from './dom-point.service'
 import { CanvasEntitiesStore } from './canvas-entities'
-import { eventToXyLocation } from '../functions'
+import { eventToPointLocation } from '../functions'
+import { CanvasAppStateStore } from './canvas-app-state'
 
 @Injectable({
   providedIn: 'root',
@@ -15,10 +16,13 @@ export class CanvasSelectedService {
   private _store = inject(Store)
   private _domPointService = inject(DomPointService)
   private _canvasEntitiesService = inject(CanvasEntitiesStore)
+  private _entityStore = inject(CanvasAppStateStore)
   private _selected: CanvasEntity | undefined
+  private _selectedId: string | undefined
   private _selectedType: SelectedType | undefined
   private _selectedStringId: CanvasString['id'] | undefined
   private _multiSelected: CanvasEntity[] = []
+  private _multiSelectedIds: string[] = []
   public isMultiSelectDragging = false
 
   multiSelectStart: {
@@ -30,8 +34,16 @@ export class CanvasSelectedService {
     return this._selected
   }
 
+  get selectedId() {
+    return this._selectedId
+  }
+
   get multiSelected() {
     return this._multiSelected
+  }
+
+  get multiSelectedIds() {
+    return this._multiSelectedIds
   }
 
   get selectedType() {
@@ -52,12 +64,13 @@ export class CanvasSelectedService {
     if (this._multiSelected.length === 0) return
     if (!event.shiftKey) return
     this.isMultiSelectDragging = true
-    this.multiSelectStart = eventToXyLocation(event)
+    this.multiSelectStart = eventToPointLocation(event)
+    // this._entityStore.dispatch.setDraggingEntityIds()
   }
 
   onMultiDragging(event: MouseEvent) {
     assertNotNull(this.multiSelectStart)
-    const eventLocation = eventToXyLocation(event)
+    const eventLocation = eventToPointLocation(event)
     const scale = this._domPointService.scale
     const offset = {
       x: eventLocation.x - this.multiSelectStart.x,
@@ -65,7 +78,9 @@ export class CanvasSelectedService {
     }
     offset.x = offset.x / scale
     offset.y = offset.y / scale
-    this.multiSelected.forEach(entity => {
+    const multiSelectedEntities = this._multiSelectedIds.map(id => this._entitiesStore.select.entityById(id))
+
+    multiSelectedEntities.forEach(entity => {
       const location = entity.location
 
       const newLocation = {
@@ -81,7 +96,7 @@ export class CanvasSelectedService {
   stopMultiSelectDragging(event: MouseEvent) {
     this.isMultiSelectDragging = false
     if (this.multiSelectStart) {
-      const eventLocation = eventToXyLocation(event)
+      const eventLocation = eventToPointLocation(event)
       const scale = this._domPointService.scale
       const offset = {
         x: eventLocation.x - this.multiSelectStart.x,
@@ -89,7 +104,8 @@ export class CanvasSelectedService {
       }
       offset.x = offset.x / scale
       offset.y = offset.y / scale
-      const multiSelectedUpdated = this.multiSelected.map(entity => {
+      const multiSelectedEntities = this._multiSelectedIds.map(id => this._entitiesStore.select.entityById(id))
+      const multiSelectedUpdated = multiSelectedEntities.map(entity => {
         const location = entity.location
         const newLocation = {
           x: location.x + offset.x,
@@ -103,7 +119,8 @@ export class CanvasSelectedService {
         this._entitiesStore.dispatch.updateCanvasEntity(updatedEntity)
         return newEntityInstance
       })
-      this.setMultiSelected(multiSelectedUpdated)
+      const multiSelectedIds = multiSelectedUpdated.map(entity => entity.id)
+      this.setMultiSelected(multiSelectedIds)
     }
     this.multiSelectStart = undefined
     // this.offsetsFromMultiSelectCenter = []
@@ -111,15 +128,25 @@ export class CanvasSelectedService {
     return
   }
 
-  setSelected(selected: CanvasEntity) {
-    if (this._selected?.id === selected.id) {
+  setSelected(selectedId: string) {
+    /*    if (this._selected?.id === selected.id) {
+     this._selected = undefined
+     console.log('set selected', undefined)
+     return
+     }*/
+    if (this._selectedId === selectedId) {
       this._selected = undefined
+      this._selectedId = undefined
+      this._selectedType = undefined
       console.log('set selected', undefined)
+      this._entityStore.dispatch.setSelectedId(undefined)
       return
     }
-    this._selected = selected
-    this._selectedType = selected.type
-    console.log('set selected', selected)
+    // this._selected = selected
+    // this._selectedType = selected.type
+    this._selectedId = selectedId
+    this._entityStore.dispatch.setSelectedId(selectedId)
+    console.log('set selected', selectedId)
     this.emitDraw()
     // this.
     // this.emit(CanvasEvent.Draw)
@@ -128,29 +155,36 @@ export class CanvasSelectedService {
   setSelectedStringId(id: CanvasString['id']) {
     this._selectedStringId = id
     this._selectedType = SELECTED_TYPE.String
+    this._entityStore.dispatch.setSelectedStringId(id)
     console.log('set selected string id', id)
   }
 
-  setMultiSelected(multiSelected: CanvasEntity[]) {
-    this._multiSelected = multiSelected
-    console.log('set multiSelected', multiSelected)
+  setMultiSelected(multiSelectedIds: string[]) {
+    // this._multiSelected = multiSelected
+    this._multiSelectedIds = multiSelectedIds
+    this._entityStore.dispatch.setSelectedIds(multiSelectedIds)
+    console.log('set multiSelected', multiSelectedIds)
   }
 
-  addToMultiSelected(selected: CanvasEntity) {
+  addToMultiSelected(selectedId: string) {
     /*    if (this._multiSelected.find(entity => entity.id === selected.id)) {
      this.removeFromMultiSelected(selected)
      return
      }*/
 
-    if (this._selected) {
-      this._multiSelected.push(this._selected)
+    if (this._selectedId) {
+      this._multiSelectedIds.push(this._selectedId)
+      // this._multiSelected.push(this._selected)
+      this._entityStore.dispatch.setSelectedId(undefined)
+      this._entityStore.dispatch.addToSelectedIds([this._selectedId])
       // this._multiSelected = [this._selected, selected]
-      this._selected = undefined
+      this._selectedId = undefined
       // return
     }
 
-    this._multiSelected.push(selected)
-    console.log('add to multiSelected', this._multiSelected)
+    this._entityStore.dispatch.addToSelectedIds([selectedId])
+    this._multiSelectedIds.push(selectedId)
+    console.log('add to multiSelected', this._multiSelectedIds)
   }
 
   removeFromMultiSelected(selected: CanvasEntity) {
@@ -159,11 +193,25 @@ export class CanvasSelectedService {
       this._multiSelected.splice(index, 1)
     }
     console.log('remove from multiSelected', selected)
+    this._entityStore.dispatch.removeFromSelectedIds([selected.id])
+  }
+
+  checkSelectedState(event: MouseEvent, clickedOnEntityId: string) {
+    /*    if (this.selected?.id !== clickedOnEntityId && !event.shiftKey) {
+     this.clearSingleSelected()
+
+     }*/
+    if (this._selectedId !== clickedOnEntityId && !event.shiftKey) {
+      // this.clearSelectedState()
+      this.clearSingleSelected()
+      // this._entityStore.dispatch.clearState()
+    }
   }
 
   clearSingleSelected() {
-    if (this._selected) {
-      this._selected = undefined
+    if (this._selectedId) {
+      this._selectedId = undefined
+      this._entityStore.dispatch.setSelectedId(undefined)
       console.log('clear selected')
       this.emitDraw()
       return
@@ -171,11 +219,15 @@ export class CanvasSelectedService {
   }
 
   clearSelectedState() {
-    if (this._selected || this._multiSelected.length || this._selectedStringId) {
-      this._selected = undefined
-      this._multiSelected = []
+    if (this._selectedId || this._multiSelectedIds.length || this._selectedStringId) {
+      // this._selected = undefined
+      this._selectedId = undefined
+      // this._multiSelected = []
+      this._multiSelectedIds = []
       this._selectedStringId = undefined
+      this._entityStore.dispatch.clearState()
       console.log('clear selected')
+
       this.emitDraw()
       return
     }

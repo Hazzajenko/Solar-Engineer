@@ -1,11 +1,11 @@
 import { inject, Injectable } from '@angular/core'
-import { SizeByType, TransformedPoint, updateObjectByIdForStore } from '../types'
+import { CanvasEntity, SizeByType, TransformedPoint, updateObjectByIdForStore } from '../types'
 import { DomPointService } from './dom-point.service'
 import { CanvasEntitiesStore } from './canvas-entities'
 import { CanvasElementService } from './canvas-element.service'
 import { Point } from '@shared/data-access/models'
 import { assertNotNull } from '@shared/utils'
-import { AngleRadians, getAngleInRadiansBetweenTwoPoints, rotatePointOffPivot } from '../utils'
+import { AngleRadians, DIAGONAL_DIRECTION, DiagonalDirection, filterEntitiesInsideBounds, getAngleInRadiansBetweenTwoPoints, getBoundsFromTwoPoints, getDiagonalDirectionFromTwoPoints, getEntityBounds, getStartingSpotForCreationBox, isEntityInsideTwoPoints, rotatePointOffPivot, SpotInBox } from '../utils'
 import { getEntitySizeOffset } from '../functions/object-sizing'
 import { ENTITY_TYPE } from '@design-app/shared'
 
@@ -39,6 +39,10 @@ export class CanvasObjectPositioningService {
   startPointToPivotPointAngleInRadians: AngleRadians | undefined = undefined
 
   singleRotateMode = false
+
+  private get entities() {
+    return this._entitiesStore.select.entities
+  }
 
   get ctx() {
     return this._canvasElementsService.ctx
@@ -151,48 +155,115 @@ export class CanvasObjectPositioningService {
     point1: TransformedPoint,
     point2: TransformedPoint,
   ) {
-    /*    const distanceX = Math.abs(point1.x - point2.x)
-     const distanceY = Math.abs(point1.y - point2.y)*/
     const distanceX = point1.x - point2.x
     const distanceY = point1.y - point2.y
-    // const distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY)
-    const { width, height } = SizeByType[ENTITY_TYPE.Panel]
-    const widthWithMidSpacing = width + 2
-    const heightWithMidSpacing = height + 2
-    /*    const entitiesInX = Math.floor(distanceX / widthWithMidSpacing)
-     const entitiesInY = Math.floor(distanceY / heightWithMidSpacing)*/
+    const entitySize = SizeByType[ENTITY_TYPE.Panel]
+    const widthWithMidSpacing = entitySize.width + 2
+    const heightWithMidSpacing = entitySize.height + 2
     const entitiesInX = Math.floor(distanceX / widthWithMidSpacing)
     const entitiesInY = Math.floor(distanceY / heightWithMidSpacing)
-    const entitiesInXAndY = entitiesInX * entitiesInY
-    /*    console.log('distanceX', distanceX)
-     console.log('distanceY', distanceY)
-     /!*    console.log('entitiesInX', entitiesInX)
-     console.log('entitiesInY', entitiesInY)*!/
-     console.log('entitiesInXAndY', entitiesInXAndY)*/
-    /*    const entitiesBetweenPoints = this.getAllElementsBetweenTwoPoints(point1, point2)
-     if (entitiesBetweenPoints.length) {
-     console.log('entitiesBetweenPoints', entitiesBetweenPoints)
-     }*/
-    return {
-      entitiesInX,
-      entitiesInY,
+    const diagonalDirection = getDiagonalDirectionFromTwoPoints(point1, point2)
+    if (!diagonalDirection) return
+
+    const startingPoint = getStartingSpotForCreationBox(diagonalDirection, entitySize)
+    const twoPointBounds = getBoundsFromTwoPoints(point1, point2)
+
+    const existingEntities = filterEntitiesInsideBounds(twoPointBounds, this.entities)
+    const widthIsPositive = entitiesInX > 0
+    const adjustedWidth = widthIsPositive
+      ? -widthWithMidSpacing
+      : widthWithMidSpacing
+
+    const heightIsPositive = entitiesInY > 0
+    const adjustedHeight = heightIsPositive
+      ? -heightWithMidSpacing
+      : heightWithMidSpacing
+    const spots: SpotInBox[] = []
+    for (let i = 0; i < Math.abs(entitiesInX); i++) {
+
+      for (let a = 0; a < Math.abs(entitiesInY); a++) {
+        const spot: SpotInBox = {
+          vacant: true,
+          x:      point1.x + startingPoint.x + i * adjustedWidth,
+          y:      point1.y + startingPoint.y + a * adjustedHeight,
+        }
+        existingEntities.forEach((entity) => {
+          const firstSpot = {
+            x: spot.x - entity.width / 2,
+            y: spot.y - entity.height / 2,
+          }
+          const secondSpot = {
+            x: spot.x + entity.width + entity.width / 2,
+            y: spot.y + entity.width + entity.height / 2,
+          }
+          if (isEntityInsideTwoPoints(entity, firstSpot, secondSpot)) {
+            spot.vacant = false
+          }
+        })
+        spots.push(spot)
+      }
     }
 
-    // const entities = this._entitiesStore.select.entities
-    // const entitiesBetweenPoints = this.getAllElementsBetweenTwoPoints(point1, point2)
-    // const entityWidth = entitySize.width
-    // const entityHeight = entitySize.height
+    return spots
+  }
 
-    /*    const angle = Math.atan2(distanceY, distanceX)
-     const angleInDegrees = angle * 180 / Math.PI
-     const angleInRadians = angleInDegrees * (Math.PI / 180)*/
+  isEntityInsideByDirection(
+    entity: CanvasEntity,
+    direction: DiagonalDirection,
+    point1: TransformedPoint,
+    point2: TransformedPoint,
+  ) {
+    // const start
 
+    switch (direction) {
+      case DIAGONAL_DIRECTION.BottomLeftToTopRight:
+        return entity.location.x > point1.x && entity.location.x < point2.x && entity.location.y < point1.y && entity.location.y > point2.y
+      case DIAGONAL_DIRECTION.TopLeftToBottomRight:
+        return entity.location.x > point1.x && entity.location.x < point2.x && entity.location.y > point1.y && entity.location.y < point2.y
+      case DIAGONAL_DIRECTION.TopRightToBottomLeft:
+        return entity.location.x < point1.x && entity.location.x > point2.x && entity.location.y > point1.y && entity.location.y < point2.y
+      case DIAGONAL_DIRECTION.BottomRightToTopLeft:
+        return entity.location.x < point1.x && entity.location.x > point2.x && entity.location.y < point1.y && entity.location.y > point2.y
+    }
+
+  }
+
+  isEntityInsideTwoPoints(
+    entity: CanvasEntity,
+    point1: Point,
+    point2: Point,
+  ) {
+    const bounds = getEntityBounds(entity)
+    const box = getBoundsFromTwoPoints(point1, point2)
+
+    return !(
+      box.right < bounds.left ||
+      box.left > bounds.right ||
+      box.bottom < bounds.top ||
+      box.top > bounds.bottom
+    )
+  }
+
+  getInsideCheckPointsByDirection(
+    direction: DiagonalDirection,
+  ) {
+    switch (direction) {
+      case DIAGONAL_DIRECTION.BottomLeftToTopRight:
+        return {}
+      case DIAGONAL_DIRECTION.TopLeftToBottomRight:
+        return {}
+      case DIAGONAL_DIRECTION.TopRightToBottomLeft:
+        return {}
+      case DIAGONAL_DIRECTION.BottomRightToTopLeft:
+        return {}
+    }
   }
 
   getAllElementsBetweenTwoPoints(
     point1: TransformedPoint,
     point2: TransformedPoint,
   ) {
+    // const test = this._entitiesStore.select.entities.filter((entity) => filterAllEntityBetweenTwoPoints(point1, point2, entity, DIAGONAL_DIRECTION.BottomLeftToTopRight))
     return this._entitiesStore.select.entities.filter((objectRect) => {
       // const widthOffset
       const { widthOffset, heightOffset } = getEntitySizeOffset(objectRect)
