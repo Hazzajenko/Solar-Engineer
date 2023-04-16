@@ -27,6 +27,10 @@ export class CanvasEntitiesQueries {
       ))
   }
 
+  public get entities() {
+    return this._entities
+  }
+
   public entityById$(id: string) {
     return this._store.pipe(select(selectCanvasEntityById({ id })))
   }

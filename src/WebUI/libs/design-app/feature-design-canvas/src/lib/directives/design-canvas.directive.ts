@@ -1,9 +1,9 @@
 import { Directive, ElementRef, inject, Input, NgZone, OnInit, Renderer2 } from '@angular/core'
 import { ClickEvent, ContextMenuEvent, CURSOR_TYPE, DoubleClickEvent, EVENT_TYPE, KEYS, MouseDownEvent, MouseMoveEvent, MouseUpEvent, Point, POINTER_BUTTON } from '@shared/data-access/models'
-import { assertIsPanel, CanvasEntity, CanvasPanel, CanvasString, createPanel, EntityFactory, isPanel, TransformedPoint, UndefinedStringId } from '../types'
+import { assertIsPanel, CANVAS_MODE, CanvasEntity, CanvasPanel, CanvasString, createPanel, EntityFactory, isPanel, ObjectSize, SizeByType, TransformedPoint, UndefinedStringId } from '../types'
 import { compareArrays, eventToXyLocation } from '../functions'
 import { ENTITY_TYPE } from '@design-app/shared'
-import { CanvasElementService, CanvasEntitiesStore, CanvasObjectPositioningService, CanvasSelectedService, CanvasStringsService, CanvasStringsStore, DomPointService } from '../services'
+import { CanvasElementService, CanvasEntitiesStore, CanvasModeService, CanvasObjectPositioningService, CanvasSelectedService, CanvasStringsService, CanvasStringsStore, DomPointService } from '../services'
 import { setupCanvas } from '../functions/setup-canvas'
 import { assertNotNull, OnDestroyDirective } from '@shared/utils'
 import { roundToTwoDecimals } from 'design-app/utils'
@@ -11,7 +11,7 @@ import { Store } from '@ngrx/store'
 import { takeUntil, tap } from 'rxjs'
 import { DelayedLogger } from '@shared/logger'
 import { CanvasScale } from '../models/scale'
-import { getEntitySizeOffset } from '../functions/object-sizing'
+import { DIAGONAL_DIRECTION, DiagonalDirection, getDiagonalDirectionFromTwoPoints } from '../utils'
 
 @Directive({
   selector:   '[appDesignCanvas]',
@@ -32,6 +32,7 @@ export class DesignCanvasDirective
   private _renderer = inject(Renderer2)
   private _canvasElementService = inject(CanvasElementService)
   private _objectPositioning = inject(CanvasObjectPositioningService)
+  private _mode = inject(CanvasModeService)
   // private _selected = new CanvasSelectedService()
   private _selected = inject(CanvasSelectedService)
   private _domPointService = inject(DomPointService)
@@ -138,6 +139,7 @@ export class DesignCanvasDirective
   selectionBoxStartPoint?: TransformedPoint
   isSelectionBoxDragging = false
   selectionBoxFillStyle = '#7585d8'
+  creationBoxFillStyle = '#ee80f9'
   defaultPanelFillStyle = '#8ED6FF'
   multiSelectionDragging = false
 
@@ -268,12 +270,13 @@ export class DesignCanvasDirective
           return
         }
         if (this._selected.selected && !this._objectPositioning.entityToRotateId) {
-          this._objectPositioning.setEntityToRotate(this.getLiveSelectedPanel(), this.currentTransformedCursor)
+          this._objectPositioning.setEntityToRotate(this._selected.selected.id, this.currentTransformedCursor)
           return
         }
 
         if (this._selected.multiSelected.length > 0) {
-          this._objectPositioning.setMultipleToRotate(this._selected.multiSelected, this.currentTransformedCursor)
+          const multiSelectedIds = this._selected.multiSelected.map(entity => entity.id)
+          this._objectPositioning.setMultipleToRotate(multiSelectedIds, this.currentTransformedCursor)
           return
         }
 
@@ -287,6 +290,13 @@ export class DesignCanvasDirective
 
         }
         // this.drawPanels()
+      }
+      if (event.key === KEYS.C) {
+        if (this._mode.mode === CANVAS_MODE.CREATE) {
+          this._mode.setMode(CANVAS_MODE.SELECT)
+          return
+        }
+        this._mode.setMode(CANVAS_MODE.CREATE)
       }
     })
   }
@@ -363,13 +373,26 @@ export class DesignCanvasDirective
       this.isSelectionBoxDragging = false
       if (
         this.selectionBoxStartPoint) {
-        // const panelsInArea = this.areAnyPanelsInArea(getTransformedPointFromEvent(this._ctx, event))
-        const panelsInArea = this.getAllElementsBetweenTwoPoints(this.selectionBoxStartPoint, this._domPointService.getTransformedPointFromEvent(event))
-        // const panelsInArea = getAllElementsBetweenTwoPoints(this.panels, this.selectionBoxStartPoint, this._domPointService.getTransformedPointFromEvent(event))
-        if (panelsInArea) {
-          this._selected.setMultiSelected(panelsInArea)
-          console.log('panelsInArea', panelsInArea)
+        if (this._mode.mode === CANVAS_MODE.CREATE) {
+          const spareSpots = this._objectPositioning.getAllAvailableEntitySpotsBetweenTwoPoints(this.selectionBoxStartPoint, this._domPointService.getTransformedPointFromEvent(event))
+          // const panelsInArea = this.getAllElementsBetweenTwoPoints(this.selectionBoxStartPoint, this._domPointService.getTransformedPointFromEvent(event))
+          // const panelsInArea = getAllElementsBetweenTwoPoints(this.panels, this.selectionBoxStartPoint, this._domPointService.getTransformedPointFromEvent(event))
+          /*  if (panelsInArea) {
+           this._selected.setMultiSelected(panelsInArea)
+           // console.log('panelsInArea', panelsInArea)
+           }*/
         }
+        if (this._mode.mode === CANVAS_MODE.SELECT) {
+          const panelsInArea = this._objectPositioning.getAllElementsBetweenTwoPoints(this.selectionBoxStartPoint, this._domPointService.getTransformedPointFromEvent(event))
+          // const panelsInArea = this.getAllElementsBetweenTwoPoints(this.selectionBoxStartPoint, this._domPointService.getTransformedPointFromEvent(event))
+          // const panelsInArea = getAllElementsBetweenTwoPoints(this.panels, this.selectionBoxStartPoint, this._domPointService.getTransformedPointFromEvent(event))
+          if (panelsInArea) {
+            this._selected.setMultiSelected(panelsInArea)
+            // console.log('panelsInArea', panelsInArea)
+          }
+        }
+        // const panelsInArea = this.areAnyPanelsInArea(getTransformedPointFromEvent(this._ctx, event))
+
       }
       this.selectionBoxStartPoint = undefined
       this.drawPanels()
@@ -411,7 +434,13 @@ export class DesignCanvasDirective
       this.mouseUpTimeOut = undefined
       return
     }
-    console.log('click', event)
+    if (this._objectPositioning.singleRotateMode) {
+      // this._objectPositioning.singleRotateMode = false
+      this._objectPositioning.clearEntityToRotate()
+      return
+    }
+
+    // console.log('click', event)
     const isPanel = this.getMouseOverPanel(event)
     if (isPanel) {
       if (event.shiftKey) {
@@ -470,19 +499,25 @@ export class DesignCanvasDirective
     this.currentTransformedCursor = this._domPointService.getTransformedPointFromEvent(event)
     this.mousePos.innerText = `Original X: ${event.offsetX}, Y: ${event.offsetY}`
     this.transformedMousePos.innerText = `Transformed X: ${this.currentTransformedCursor.x}, Y: ${this.currentTransformedCursor.y}`
+    if (this._objectPositioning.singleRotateMode && this._objectPositioning.entityToRotateId) {
+      this._objectPositioning.rotateEntityViaMouse(event)
+      this.drawPanels()
+      return
+    }
     if (event.altKey && event.ctrlKey) {
       if (!this._objectPositioning.areAnyEntitiesInRotate) {
 
         const multiSelected = this._selected.multiSelected
         if (multiSelected.length > 1) {
+          const multiSelectedIds = multiSelected.map(entity => entity.id)
           const transformedPoint = this._domPointService.getTransformedPointFromEvent(event)
-          this._objectPositioning.setMultipleToRotate(multiSelected, transformedPoint)
+          this._objectPositioning.setMultipleToRotate(multiSelectedIds, transformedPoint)
           return
         }
         const selected = this._selected.selected
         if (selected) {
           const transformedPoint = this._domPointService.getTransformedPointFromEvent(event)
-          this._objectPositioning.setEntityToRotate(selected, transformedPoint)
+          this._objectPositioning.setEntityToRotate(selected.id, transformedPoint)
           return
         }
       } else {
@@ -493,6 +528,7 @@ export class DesignCanvasDirective
         }
         if (this._objectPositioning.entityToRotateId) {
           this._objectPositioning.rotateEntityViaMouse(event)
+          this.drawPanels()
         }
       }
 
@@ -501,36 +537,6 @@ export class DesignCanvasDirective
       this._objectPositioning.clearEntityToRotate()
       return
     }
-    /*    if (this._objectPositioning.areAnyEntitiesInRotate) {
-     if (this._objectPositioning.entityToRotateId) {
-     const entityToRotate = this.getLiveSelectedPanelById(this._objectPositioning.entityToRotateId)
-     assertNotNull(entityToRotate, 'entity to rotate not found')
-     const transformedPoint = this._domPointService.getTransformedPointFromXy(entityToRotate.location)
-     this._objectPositioning.rotateEntitiesViaMouse(event, transformedPoint)
-     this.drawPanels()
-     return
-     }
-     if (this._objectPositioning.multipleToRotateIds.length) {
-     /!*        const transformedPoints = this._objectPositioning.multipleToRotateIds.map(id => {
-     const entityToRotate = this.getLiveSelectedPanelById(id)
-     assertNotNull(entityToRotate, 'entity to rotate not found')
-     const transformedLocation = this._domPointService.getTransformedPointFromXy(entityToRotate.location)
-     return { id }
-     })*!/
-     this._objectPositioning.rotateMultipleEntitiesViaMouse(event)
-     // this.drawPanels()
-     return
-     }
-
-     }*/
-    /*       if (this._objectPositioning.entityToRotateId) {
-     const entityToRotate = this.getLiveSelectedPanelById(this._objectPositioning.entityToRotateId)
-     if (!entityToRotate) return
-     const transformedPoint = this._domPointService.getTransformedPointFromXy(entityToRotate.location)
-     this._objectPositioning.rotateEntityViaMouse(event, transformedPoint)
-     this.drawPanels()
-     return
-     }*/
     if (this.isDraggingScreen) {
       if (event.ctrlKey || event.buttons === 4) {
         this._canvas.style.cursor = CURSOR_TYPE.MOVE
@@ -548,7 +554,14 @@ export class DesignCanvasDirective
         this.drawPanels()
         return
       }
-      this.animateSelectionBox(event)
+      if (this._mode.mode === CANVAS_MODE.SELECT) {
+        this.animateSelectionBox(event)
+        return
+      }
+      if (this._mode.mode === CANVAS_MODE.CREATE) {
+        this.animateCreationBox(event)
+        return
+      }
       return
     }
     const isReadyToMultiDrag = this._selected.multiSelected.length > 0 && event.shiftKey && event.ctrlKey && !this._selected.isMultiSelectDragging
@@ -693,7 +706,7 @@ export class DesignCanvasDirective
     if (!this.selectionBoxStartPoint || !this.isSelectionBoxDragging || !event.altKey) {
       throw new Error('selection box not started')
     }
-    const mousePointToScale = this._domPointService.getTransformedPointFromXy(eventToXyLocation(event))
+    const mousePointToScale = this._domPointService.getTransformedPointFromEvent(event)
     const width = mousePointToScale.x - this.selectionBoxStartPoint.x
     const height = mousePointToScale.y - this.selectionBoxStartPoint.y
 
@@ -707,6 +720,100 @@ export class DesignCanvasDirective
     this._ctx.closePath()
     this._ctx.globalAlpha = 1.0
     this._ctx.fillStyle = this.defaultPanelFillStyle
+  }
+
+  private animateCreationBox(event: MouseEvent) {
+    /*    if (!this.creationBoxStartPoint || !this.isCreationBoxDragging || !event.altKey) {
+     throw new Error('creation box not started')
+     }*/
+    if (!this.selectionBoxStartPoint || !this.isSelectionBoxDragging || !event.altKey) {
+      throw new Error('selection box not started')
+    }
+    const mousePointToScale = this._domPointService.getTransformedPointFromEvent(event)
+    const spareSpots = this._objectPositioning.getAllAvailableEntitySpotsBetweenTwoPoints(this.selectionBoxStartPoint, mousePointToScale)
+    console.log('spareSpots: ', spareSpots.entitiesInX)
+    const diagonalDirection = getDiagonalDirectionFromTwoPoints(this.selectionBoxStartPoint, mousePointToScale)
+    if (!diagonalDirection) return
+    console.log('diagonalDirection: ', diagonalDirection)
+    const entitySize = SizeByType[ENTITY_TYPE.Panel]
+    const widthWithMidSpacing = entitySize.width + 2
+    const heightWithMidSpacing = entitySize.height + 2
+    const startingPoint = this.getStartingSpotForCreationBox(diagonalDirection, entitySize)
+    // const spareSpots = this._objectPositioning.getAllAvailableEntitySpotsBetweenTwoPoints()
+
+    const width = mousePointToScale.x - this.selectionBoxStartPoint.x
+    const height = mousePointToScale.y - this.selectionBoxStartPoint.y
+    /*    const width = mousePointToScale.x - this.creationBoxStartPoint.x
+     const height = mousePointToScale.y - this.creationBoxStartPoint.y*/
+
+    this.drawPanels()
+    this._ctx.save()
+    this._ctx.beginPath()
+    this._ctx.globalAlpha = 0.4
+    this._ctx.fillStyle = this.creationBoxFillStyle
+    this._ctx.rect(this.selectionBoxStartPoint.x, this.selectionBoxStartPoint.y, width, height)
+    // this._ctx.rect(this.creationBoxStartPoint.x, this.creationBoxStartPoint.y, width, height)
+    this._ctx.fill()
+    this._ctx.stroke()
+    this._ctx.restore()
+    this._ctx.save()
+
+    for (let i = 0; i < Math.abs(spareSpots.entitiesInX); i++) {
+      // this._ctx.save()
+      const widthIsPositive = spareSpots.entitiesInX > 0
+      const adjustedWidth = widthIsPositive
+        ? -widthWithMidSpacing
+        : widthWithMidSpacing
+
+      const heightIsPositive = spareSpots.entitiesInY > 0
+      const adjustedHeight = heightIsPositive
+        ? -heightWithMidSpacing
+        : heightWithMidSpacing
+
+      for (let a = 0; a < Math.abs(spareSpots.entitiesInY); a++) {
+        this._ctx.save()
+        const spot = {
+          x: this.selectionBoxStartPoint.x + i * adjustedWidth,
+          y: this.selectionBoxStartPoint.y + a * adjustedHeight,
+        }
+        spot.x += startingPoint.x
+        spot.y += startingPoint.y
+        console.log('spot', spot.x)
+        this._ctx.beginPath()
+        this._ctx.globalAlpha = 0.4
+        this._ctx.fillStyle = this.creationBoxFillStyle
+        this._ctx.rect(spot.x, spot.y, entitySize.width, entitySize.height)
+        this._ctx.fill()
+        this._ctx.stroke()
+        this._ctx.restore()
+      }
+    }
+    this._ctx.restore()
+  }
+
+  private getStartingSpotForCreationBox(direction: DiagonalDirection, size: ObjectSize) {
+    switch (direction) {
+      case DIAGONAL_DIRECTION.TopLeftToBottomRight:
+        return {
+          x: 0,
+          y: 0,
+        }
+      case DIAGONAL_DIRECTION.TopRightToBottomLeft:
+        return {
+          x: -size.width,
+          y: 0,
+        }
+      case DIAGONAL_DIRECTION.BottomLeftToTopRight:
+        return {
+          x: 0,
+          y: -size.height,
+        }
+      case DIAGONAL_DIRECTION.BottomRightToTopLeft:
+        return {
+          x: -size.width,
+          y: -size.height,
+        }
+    }
   }
 
   private getMouseOverPanel(event: MouseEvent) {
@@ -763,13 +870,14 @@ export class DesignCanvasDirective
       return
     }
     if (isInSingleRotate) {
-      return this.handleSingleRotateDraw(panel)
+      return
+      // return this.handleSingleRotateDraw(panel)
     }
 
     this._ctx.save()
     this._ctx.fillStyle = fillStyle
     this._ctx.translate(panel.location.x + panel.width / 2, panel.location.y + panel.height / 2)
-    this._ctx.rotate(panel.radians)
+    this._ctx.rotate(panel.angle)
     // this._ctx.rotate(panel.angle * Math.PI / 180)
     this._ctx.beginPath()
     this._ctx.rect(-panel.width / 2, -panel.height / 2, panel.width, panel.height)
@@ -783,76 +891,35 @@ export class DesignCanvasDirective
     this._ctx.save()
     this._ctx.translate(panel.location.x + panel.width / 2, panel.location.y + panel.height / 2)
     assertNotNull(this._objectPositioning.entityToRotateAngle, 'entityToRotateAngle should not be null')
-    this._ctx.rotate(this._objectPositioning.entityToRotateAngle * Math.PI / 180)
+    this._ctx.rotate(this._objectPositioning.entityToRotateAngle)
+    // this._ctx.rotate(this._objectPositioning.entityToRotateAngle * Math.PI / 180)
     this._ctx.beginPath()
     this._ctx.rect(-panel.width / 2, -panel.height / 2, panel.width, panel.height)
     this._ctx.fill()
     this._ctx.stroke()
-    this._ctx.closePath()
+    // this._ctx.closePath()
     this._ctx.restore()
   }
 
-  private handleMultiRotateDrawDifferently() {
-    const entities = this._panels.filter(panel => this._objectPositioning.multipleToRotateIds.includes(panel.id))
-    entities.forEach(entity => {
-      this._ctx.save()
-      const rotatedLocation = this._objectPositioning.multipleToRotateAdjustedLocation.get(entity.id)
-      assertNotNull(rotatedLocation, 'rotatedLocation should not be null')
-      this._ctx.translate(rotatedLocation.x, rotatedLocation.y)
-      /*   const rotatedAngle = this._objectPositioning.multipleToRotateAngle
-       assertNotNull(rotatedAngle, 'rotatedAngle should not be null')
-       this._ctx.rotate(rotatedAngle * Math.PI / 180)*/
-      const rotatedAngle = this._objectPositioning.multipleToRotateAdjustedAngle.get(entity.id)
-      assertNotNull(rotatedAngle, 'rotatedAngle should not be null')
-      this._ctx.rotate(rotatedAngle * Math.PI / 180)
-      this._ctx.beginPath()
-      this._ctx.rect(-entity.width / 2, -entity.height / 2, entity.width, entity.height)
-      this._ctx.fill()
-      this._ctx.stroke()
-      this._ctx.closePath()
-      this._ctx.restore()
-    })
-    /*    this._ctx.save()
-     this._ctx.translate(panel.location.x + panel.width / 2, panel.location.y + panel.height / 2)
-     assertNotNull(this._objectPositioning.entityToRotateAngle, 'entityToRotateAngle should not be null')
-     this._ctx.rotate(this._objectPositioning.entityToRotateAngle * Math.PI / 180)
-     this._ctx.beginPath()
-     this._ctx.rect(-panel.width / 2, -panel.height / 2, panel.width, panel.height)
-     this._ctx.fill()
-     this._ctx.stroke()
-     this._ctx.closePath()
-     this._ctx.restore()*/
-  }
-
   drawWithUpdated() {
+    if (this._objectPositioning.singleRotateMode && this._objectPositioning.entityToRotateId) {
+      const panel = this._panels.find(panel => panel.id === this._objectPositioning.entityToRotateId)
+      assertNotNull(panel, 'panel should not be null')
+      this.handleSingleRotateDraw(panel)
+      return
+    }
+
     if (!this._objectPositioning.areAnyEntitiesInRotate) return
-    // this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
     const multipleToRotateIds = this._objectPositioning.multipleToRotateIds
     const entities = this._panels.filter(panel => multipleToRotateIds.includes(panel.id))
     this._ctx.save()
-    // this._
     entities.forEach(entity => {
-
       this._ctx.save()
       const angle = this._objectPositioning.multipleToRotateAdjustedAngle.get(entity.id)
       const location = this._objectPositioning.multipleToRotateAdjustedLocation.get(entity.id)
-      /*   if (!angle || !location) {
-       console.log(this._objectPositioning.multipleToRotateAdjustedAngle)
-       console.log(this._objectPositioning.multipleToRotateAdjustedLocation)
-       return
-       }*/
       assertNotNull(angle)
       assertNotNull(location)
-      /*  location = {
-       x: location.x - entity.width / 2,
-       y: location.y - entity.height / 2,
-       }*/
-
-      // const panelX = location.x + entity.
       this._ctx.translate(location.x + entity.width / 2, location.y + entity.height / 2)
-      // this._ctx.translate(location.x, location.y)
-      // this._ctx.rotate(entity.radians)
-      // console.log('angle', angle)
       this._ctx.rotate(angle)
 
       this._ctx.beginPath()
@@ -861,14 +928,11 @@ export class DesignCanvasDirective
       }
       this._ctx.rect(-entity.width / 2, -entity.height / 2, entity.width, entity.height)
       this._ctx.fill()
-      // this.dotsToPush.push(location)
-      // this._ctx.arc(location.x, location.y, 3, 0, Math.PI * 2, true)
       this._ctx.stroke()
       this._ctx.restore()
     })
 
     this._ctx.restore()
-    // this.ctx.closePath()
   }
 
   private drawPivotPoint() {
@@ -916,70 +980,70 @@ export class DesignCanvasDirective
     this._ctx.closePath()
   }
 
-  getAllElementsBetweenTwoPoints(
-    point1: TransformedPoint,
-    point2: TransformedPoint,
-  ) {
-    // const objectRects = this._componentElementsService.getComponentElementRectsWithId()
-    const elementsBetweenPoints = this.panels.filter((objectRect) => {
-      // const widthOffset
-      const { widthOffset, heightOffset } = getEntitySizeOffset(objectRect)
-      // Bottom Left To Top Right
-      if (point1.x < point2.x && point1.y > point2.y) {
-        // Left To Right
-        if (point1.x < objectRect.location.x && point2.x > objectRect.location.x + widthOffset) {
-          // Bottom To Top
-          if (point2.y < objectRect.location.y && point1.y > objectRect.location.y + heightOffset) {
-            console.log('Bottom Left To Top Right')
-            return true
-          }
-        }
-      }
-      // Top Left To Bottom Right
-      if (point1.x < point2.x && point1.y < point2.y) {
-        // Left To Right
-        if (point1.x < objectRect.location.x && point2.x > objectRect.location.x + widthOffset) {
-          // Top To Bottom
-          if (point1.y < objectRect.location.y && point2.y > objectRect.location.y + heightOffset) {
-            console.log('Top Left To Bottom Right')
-            return true
-          }
-        }
-      }
+  /*getAllElementsBetweenTwoPoints(
+   point1: TransformedPoint,
+   point2: TransformedPoint,
+   ) {
+   // const objectRects = this._componentElementsService.getComponentElementRectsWithId()
+   const elementsBetweenPoints = this.panels.filter((objectRect) => {
+   // const widthOffset
+   const { widthOffset, heightOffset } = getEntitySizeOffset(objectRect)
+   // Bottom Left To Top Right
+   if (point1.x < point2.x && point1.y > point2.y) {
+   // Left To Right
+   if (point1.x < objectRect.location.x && point2.x > objectRect.location.x + widthOffset) {
+   // Bottom To Top
+   if (point2.y < objectRect.location.y && point1.y > objectRect.location.y + heightOffset) {
+   console.log('Bottom Left To Top Right')
+   return true
+   }
+   }
+   }
+   // Top Left To Bottom Right
+   if (point1.x < point2.x && point1.y < point2.y) {
+   // Left To Right
+   if (point1.x < objectRect.location.x && point2.x > objectRect.location.x + widthOffset) {
+   // Top To Bottom
+   if (point1.y < objectRect.location.y && point2.y > objectRect.location.y + heightOffset) {
+   console.log('Top Left To Bottom Right')
+   return true
+   }
+   }
+   }
 
-      // Top Right To Bottom Left
-      if (point1.x > point2.x && point1.y < point2.y) {
-        // Right To Left
-        if (point1.x > objectRect.location.x + widthOffset && point2.x < objectRect.location.x) {
-          // Top To Bottom
-          if (point1.y < objectRect.location.y + heightOffset && point2.y > objectRect.location.y) {
-            console.log('Top Right To Bottom Left')
-            return true
-          }
-        }
-      }
+   // Top Right To Bottom Left
+   if (point1.x > point2.x && point1.y < point2.y) {
+   // Right To Left
+   if (point1.x > objectRect.location.x + widthOffset && point2.x < objectRect.location.x) {
+   // Top To Bottom
+   if (point1.y < objectRect.location.y + heightOffset && point2.y > objectRect.location.y) {
+   console.log('Top Right To Bottom Left')
+   return true
+   }
+   }
+   }
 
-      // Bottom Right To Top Left
-      if (point1.x > point2.x && point1.y > point2.y) {
-        // Right To Left
-        if (point1.x > objectRect.location.x + widthOffset && point2.x < objectRect.location.x) {
-          // Bottom To Top
-          if (point2.y < objectRect.location.y + heightOffset && point1.y > objectRect.location.y) {
-            console.log('Bottom Right To Top Left')
-            return true
-          }
-        }
-      }
+   // Bottom Right To Top Left
+   if (point1.x > point2.x && point1.y > point2.y) {
+   // Right To Left
+   if (point1.x > objectRect.location.x + widthOffset && point2.x < objectRect.location.x) {
+   // Bottom To Top
+   if (point2.y < objectRect.location.y + heightOffset && point1.y > objectRect.location.y) {
+   console.log('Bottom Right To Top Left')
+   return true
+   }
+   }
+   }
 
-      return false
-    })
-    console.log('elementsBetweenPoints', elementsBetweenPoints)
-    return elementsBetweenPoints
-    /*  return elementsBetweenPoints.map((element) => ({
-     id: element.id,
-     type: element.type,
-     }))*/
-  }
+   return false
+   })
+   console.log('elementsBetweenPoints', elementsBetweenPoints)
+   return elementsBetweenPoints
+   /!*  return elementsBetweenPoints.map((element) => ({
+   id: element.id,
+   type: element.type,
+   }))*!/
+   }*/
 
   private updateToBackOfArray(entity: CanvasEntity, changes: Partial<CanvasEntity>) {
     const index = this._panels.findIndex((panel) => panel.id === entity.id)

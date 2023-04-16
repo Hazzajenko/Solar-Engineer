@@ -1,12 +1,13 @@
 import { inject, Injectable } from '@angular/core'
-import { CanvasEntity, TransformedPoint, updateObjectByIdForStore } from '../types'
+import { SizeByType, TransformedPoint, updateObjectByIdForStore } from '../types'
 import { DomPointService } from './dom-point.service'
 import { CanvasEntitiesStore } from './canvas-entities'
-import { roundToTwoDecimals } from 'design-app/utils'
 import { CanvasElementService } from './canvas-element.service'
 import { Point } from '@shared/data-access/models'
 import { assertNotNull } from '@shared/utils'
-import { getAngleInRadiansBetweenTwoPoints, Radian, rotatePointOffPivot } from '../utils'
+import { AngleRadians, getAngleInRadiansBetweenTwoPoints, rotatePointOffPivot } from '../utils'
+import { getEntitySizeOffset } from '../functions/object-sizing'
+import { ENTITY_TYPE } from '@design-app/shared'
 
 @Injectable({
   providedIn: 'root',
@@ -19,11 +20,11 @@ export class CanvasObjectPositioningService {
   rotateStats: HTMLDivElement | undefined = undefined
 
   entityToRotateId: string | undefined = undefined
-  entityToRotateAngle: number | undefined = undefined
+  entityToRotateAngle: AngleRadians | undefined = undefined
 
   multipleToRotateIds: string[] = []
   multipleToRotateAngle: number | undefined = undefined
-  multipleToRotateAdjustedAngle: Map<string, number> = new Map()
+  multipleToRotateAdjustedAngle: Map<string, AngleRadians> = new Map()
   multipleToRotateAdjustedLocation: Map<string, Point> = new Map()
 
   pivotPoint: Point | undefined = undefined
@@ -31,11 +32,13 @@ export class CanvasObjectPositioningService {
   currentMousePoint!: Point
 
   private _startPoint: Point | undefined = undefined
-  private _startRotateAngleToMouse: number | undefined = undefined
+  private _startRotateAngleToMouse: AngleRadians | undefined = undefined
   private _startRotateRadiansToMouse: number | undefined = undefined
 
-  startPointToCurrentPointAngleInRadians: Radian | undefined = undefined
-  startPointToPivotPointAngleInRadians: Radian | undefined = undefined
+  startPointToCurrentPointAngleInRadians: AngleRadians | undefined = undefined
+  startPointToPivotPointAngleInRadians: AngleRadians | undefined = undefined
+
+  singleRotateMode = false
 
   get ctx() {
     return this._canvasElementsService.ctx
@@ -49,16 +52,19 @@ export class CanvasObjectPositioningService {
     return !!this.entityToRotateId || !!this.multipleToRotateIds.length
   }
 
-  setEntityToRotate(entity: CanvasEntity, startPoint: TransformedPoint) {
-    this.entityToRotateId = entity.id
+  setEntityToRotate(entityId: string, startPoint: TransformedPoint) {
+    this.entityToRotateId = entityId
     this._startPoint = startPoint
-    this._startRotateAngleToMouse = roundToTwoDecimals(
-      Math.atan2(startPoint.y - entity.location.y, startPoint.x - entity.location.x) * (180 / Math.PI),
-    )
+    const location = this._entitiesStore.select.entityById(entityId).location
+    this._startRotateAngleToMouse = getAngleInRadiansBetweenTwoPoints(startPoint, location)
+    this.singleRotateMode = true
+    /*    this._startRotateAngleToMouse = roundToTwoDecimals(
+     Math.atan2(startPoint.y - entity.location.y, startPoint.x - entity.location.x) * (180 / Math.PI),
+     )*/
   }
 
-  setMultipleToRotate(entities: CanvasEntity[], startPoint: TransformedPoint) {
-    this.multipleToRotateIds = entities.map(entity => entity.id)
+  setMultipleToRotate(entityIds: string[], startPoint: TransformedPoint) {
+    this.multipleToRotateIds = entityIds
     this._startPoint = startPoint
     this.multipleToRotateAdjustedAngle = new Map()
     this.multipleToRotateAdjustedLocation = new Map()
@@ -76,9 +82,12 @@ export class CanvasObjectPositioningService {
     if (!this._startRotateAngleToMouse) return
     const currentPoint = this._domPointService.getTransformedPointFromEvent(event)
     const entityLocation = this._entitiesStore.select.entityById(this.entityToRotateId).location
-    const radians = Math.atan2(currentPoint.y - entityLocation.y, currentPoint.x - entityLocation.x)
-    const degrees = radians * 180 / Math.PI
-    this.entityToRotateAngle = degrees - this._startRotateAngleToMouse
+    const radians = getAngleInRadiansBetweenTwoPoints(currentPoint, entityLocation)
+    // const radians = Math.atan2(currentPoint.y - entityLocation.y, currentPoint.x - entityLocation.x)
+    // const degrees = radians * 180 / Math.PI
+    this.entityToRotateAngle = radians - this._startRotateAngleToMouse as AngleRadians
+    // this.entityToRotateAngle = degrees - this._startRotateAngleToMouse
+
     this._startPoint = currentPoint
   }
 
@@ -92,56 +101,13 @@ export class CanvasObjectPositioningService {
     const angleInRadians = getAngleInRadiansBetweenTwoPoints(currentPoint, pivotPoint)
     const canvasEntities = this.multipleToRotateIds.map(id => this._entitiesStore.select.entityById(id))
     assertNotNull(this.startPointToPivotPointAngleInRadians)
-    const adjustedAngleRadians = angleInRadians - this.startPointToPivotPointAngleInRadians as Radian
+    const adjustedAngleRadians = angleInRadians - this.startPointToPivotPointAngleInRadians as AngleRadians
     canvasEntities.forEach(entity => {
-      /*      const correctLocation = {
-       x: entity.location.x + entity.width / 2,
-       y: entity.location.y + entity.height / 2,
-       }*/
-      const getPos = rotatePointOffPivot(entity.location, pivotPoint, adjustedAngleRadians as Radian)
-      // const getPos = rotatePointOffPivot(correctLocation, pivotPoint, adjustedAngleRadians as Radian)
+      const getPos = rotatePointOffPivot(entity.location, pivotPoint, adjustedAngleRadians)
       this.multipleToRotateAdjustedAngle.set(entity.id, adjustedAngleRadians)
       this.multipleToRotateAdjustedLocation.set(entity.id, getPos)
     })
   }
-
-  /* drawWithUpdated(entities: CanvasEntity[]) {
-   // this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
-   this.ctx.save()
-   // this._
-   entities.forEach(entity => {
-
-   this.ctx.save()
-   const angle = this.multipleToRotateAdjustedAngle.get(entity.id)
-   const location = this.multipleToRotateAdjustedLocation.get(entity.id)
-   assertNotNull(angle)
-   assertNotNull(location)
-   /!*  location = {
-   x: location.x - entity.width / 2,
-   y: location.y - entity.height / 2,
-   }*!/
-
-   // const panelX = location.x + entity.
-   this.ctx.translate(location.x, location.y)
-   // this.ctx.rotate(entity.radians)
-   // console.log('angle', angle)
-   this.ctx.rotate(angle)
-
-   this.ctx.beginPath()
-   if (entity.id === entities[0].id) {
-   this.ctx.fillStyle = '#17fff3'
-   }
-   this.ctx.rect(-entity.width / 2, -entity.height / 2, entity.width, entity.height)
-   this.ctx.fill()
-   this.dotsToPush.push(location)
-   // this.ctx.arc(location.x, location.y, 3, 0, Math.PI * 2, true)
-   this.ctx.stroke()
-   this.ctx.restore()
-   })
-
-   this.ctx.restore()
-   // this.ctx.closePath()
-   }*/
 
   calculatePivotPointPosition() {
     const entities = this.multipleToRotateIds.map(id => this._entitiesStore.select.entityById(id))
@@ -165,7 +131,7 @@ export class CanvasObjectPositioningService {
         assertNotNull(angle)
         assertNotNull(location)
 
-        return updateObjectByIdForStore(id, { location, angle, radians: angle as Radian })
+        return updateObjectByIdForStore(id, { location, angle })
       })
       this._entitiesStore.dispatch.updateManyCanvasEntities(storeUpdates)
     }
@@ -174,64 +140,111 @@ export class CanvasObjectPositioningService {
     this._startRotateAngleToMouse = undefined
     this.entityToRotateAngle = undefined
     this.multipleToRotateIds = []
-    this.multipleToRotateAngle = undefined
+    this.singleRotateMode = false
+    this.multipleToRotateAdjustedAngle = new Map()
+    this.multipleToRotateAdjustedLocation = new Map()
+    this.pivotPoint = undefined
+    this.startPointToPivotPointAngleInRadians = undefined
   }
 
-  /*  constructor() {
-   this._store.dispatch(CanvasActions['Start Rotate']({ x: 0, y: 0 }))
-   }
+  getAllAvailableEntitySpotsBetweenTwoPoints(
+    point1: TransformedPoint,
+    point2: TransformedPoint,
+  ) {
+    /*    const distanceX = Math.abs(point1.x - point2.x)
+     const distanceY = Math.abs(point1.y - point2.y)*/
+    const distanceX = point1.x - point2.x
+    const distanceY = point1.y - point2.y
+    // const distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY)
+    const { width, height } = SizeByType[ENTITY_TYPE.Panel]
+    const widthWithMidSpacing = width + 2
+    const heightWithMidSpacing = height + 2
+    /*    const entitiesInX = Math.floor(distanceX / widthWithMidSpacing)
+     const entitiesInY = Math.floor(distanceY / heightWithMidSpacing)*/
+    const entitiesInX = Math.floor(distanceX / widthWithMidSpacing)
+    const entitiesInY = Math.floor(distanceY / heightWithMidSpacing)
+    const entitiesInXAndY = entitiesInX * entitiesInY
+    /*    console.log('distanceX', distanceX)
+     console.log('distanceY', distanceY)
+     /!*    console.log('entitiesInX', entitiesInX)
+     console.log('entitiesInY', entitiesInY)*!/
+     console.log('entitiesInXAndY', entitiesInXAndY)*/
+    /*    const entitiesBetweenPoints = this.getAllElementsBetweenTwoPoints(point1, point2)
+     if (entitiesBetweenPoints.length) {
+     console.log('entitiesBetweenPoints', entitiesBetweenPoints)
+     }*/
+    return {
+      entitiesInX,
+      entitiesInY,
+    }
 
-   public startRotate(event: MouseEvent) {
-   const { x, y } = eventToXyLocation(event)
-   this._store.dispatch(CanvasActions['Start Rotate']({ x, y }))
-   }
+    // const entities = this._entitiesStore.select.entities
+    // const entitiesBetweenPoints = this.getAllElementsBetweenTwoPoints(point1, point2)
+    // const entityWidth = entitySize.width
+    // const entityHeight = entitySize.height
 
-   public rotate(event: MouseEvent) {
-   const { x, y } = eventToXyLocation(event)
-   this._store.dispatch(CanvasActions['Rotate']({ x, y }))
-   }
+    /*    const angle = Math.atan2(distanceY, distanceX)
+     const angleInDegrees = angle * 180 / Math.PI
+     const angleInRadians = angleInDegrees * (Math.PI / 180)*/
 
-   public startMove(event: MouseEvent) {
-   const { x, y } = eventToXyLocation(event)
-   this._store.dispatch(CanvasActions['Start Move']({ x, y }))
-   }
+  }
 
-   public move(event: MouseEvent) {
-   const { x, y } = eventToXyLocation(event)
-   this._store.dispatch(CanvasActions['Move']({ x, y }))
-   }
+  getAllElementsBetweenTwoPoints(
+    point1: TransformedPoint,
+    point2: TransformedPoint,
+  ) {
+    return this._entitiesStore.select.entities.filter((objectRect) => {
+      // const widthOffset
+      const { widthOffset, heightOffset } = getEntitySizeOffset(objectRect)
+      // Bottom Left To Top Right
+      if (point1.x < point2.x && point1.y > point2.y) {
+        // Left To Right
+        if (point1.x < objectRect.location.x && point2.x > objectRect.location.x + widthOffset) {
+          // Bottom To Top
+          if (point2.y < objectRect.location.y && point1.y > objectRect.location.y + heightOffset) {
+            console.log('Bottom Left To Top Right')
+            return true
+          }
+        }
+      }
+      // Top Left To Bottom Right
+      if (point1.x < point2.x && point1.y < point2.y) {
+        // Left To Right
+        if (point1.x < objectRect.location.x && point2.x > objectRect.location.x + widthOffset) {
+          // Top To Bottom
+          if (point1.y < objectRect.location.y && point2.y > objectRect.location.y + heightOffset) {
+            console.log('Top Left To Bottom Right')
+            return true
+          }
+        }
+      }
 
-   public startResize(event: MouseEvent) {
-   const { x, y } = eventToXyLocation(event)
-   this._store.dispatch(CanvasActions['Start Resize']({ x, y }))
-   }
+      // Top Right To Bottom Left
+      if (point1.x > point2.x && point1.y < point2.y) {
+        // Right To Left
+        if (point1.x > objectRect.location.x + widthOffset && point2.x < objectRect.location.x) {
+          // Top To Bottom
+          if (point1.y < objectRect.location.y + heightOffset && point2.y > objectRect.location.y) {
+            console.log('Top Right To Bottom Left')
+            return true
+          }
+        }
+      }
 
-   public resize(event: MouseEvent) {
-   const { x, y } = eventToXyLocation(event)
-   this._store.dispatch(CanvasActions['Resize']({ x, y }))
-   }
+      // Bottom Right To Top Left
+      if (point1.x > point2.x && point1.y > point2.y) {
+        // Right To Left
+        if (point1.x > objectRect.location.x + widthOffset && point2.x < objectRect.location.x) {
+          // Bottom To Top
+          if (point2.y < objectRect.location.y + heightOffset && point1.y > objectRect.location.y) {
+            console.log('Bottom Right To Top Left')
+            return true
+          }
+        }
+      }
 
-   public startMoveText(event: MouseEvent) {
-   const { x, y } = eventToXyLocation(event)
-   this._store.dispatch(CanvasActions['Start Move Text']({ x, y }))
-   }
-
-   public moveText(event: MouseEvent) {
-   const { x, y } = eventToXyLocation(event)
-   this._store.dispatch(CanvasActions['Move Text']({ x, y }))
-   }
-
-   public startResizeText(event: MouseEvent) {
-   const { x, y } = eventToXyLocation(event)
-   this._store.dispatch(CanvasActions['Start Resize Text']({ x, y }))
-   }
-
-   public resizeText(event: MouseEvent) {
-   const { x, y } = eventToXyLocation(event)
-   this._store.dispatch(CanvasActions['Resize Text']({
-   x,
-   y,
-   }))
-   }*/
+      return false
+    })
+  }
 
 }

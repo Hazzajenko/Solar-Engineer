@@ -5,8 +5,8 @@ import { DesignCanvasDirective } from '../../directives'
 import { select, Store } from '@ngrx/store'
 import { selectDrawTime } from '../../store'
 import { ShowSvgComponent } from '@shared/ui'
-import { CanvasEntitiesStore } from '../../services'
-import { Factory, MenuDataset } from '../../types'
+import { CanvasEntitiesStore, CanvasObjectPositioningService, DomPointService } from '../../services'
+import { MenuDataset } from '../../types'
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -24,6 +24,8 @@ import { Factory, MenuDataset } from '../../types'
 export class DesignCanvasComponent
   implements OnInit {
   private _store = inject(Store)
+  private _objectPositioning = inject(CanvasObjectPositioningService)
+  private _domPoint = inject(DomPointService)
   public entitiesStore = inject(CanvasEntitiesStore)
   public drawTime$ = this._store.pipe(select(selectDrawTime))
   @ViewChild(DesignCanvasDirective, { static: true }) canvas!: DesignCanvasDirective
@@ -34,13 +36,16 @@ export class DesignCanvasComponent
     console.log(this.constructor.name, 'ngOnInit')
   }
 
-  rotate() {
+  rotate(event: MouseEvent) {
     const dataSet = this.getMenuDataSet()
     console.log(dataSet)
 
-    const angle = parseInt(dataSet.angle, 10) + 45
-    const update = Factory.Panel.updateForStore(dataSet.id, { angle })
-    this.entitiesStore.dispatch.updateCanvasEntity(update)
+    const startPoint = this._domPoint.getTransformedPointFromEvent(event)
+
+    this._objectPositioning.setEntityToRotate(dataSet.id, startPoint)
+    /*    const angle = parseInt(dataSet.angle, 10) + 45
+     const update = Factory.Panel.updateForStore(dataSet.id, { angle })
+     this.entitiesStore.dispatch.updateCanvasEntity(update)*/
     this.closeMenu()
   }
 

@@ -1,9 +1,7 @@
 import { CanvasEntitiesActions } from './canvas-entities.actions'
-import { CanvasEntity, Factory } from '@design-app/feature-design-canvas'
+import { CanvasEntity } from '@design-app/feature-design-canvas'
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity'
 import { Action, createReducer, on } from '@ngrx/store'
-import { assertNotNull } from '@shared/utils'
-
 
 export const CANVAS_ENTITIES_FEATURE_KEY = 'canvas-entities'
 
@@ -41,25 +39,25 @@ const reducer = createReducer(
   on(CanvasEntitiesActions.updateManyEntities, (state, { updates }) =>
     canvasEntitiesAdapter.updateMany(updates, state),
   ),
-  on(CanvasEntitiesActions.setEntityRotation, (state, { entityId, angle }) =>
-    canvasEntitiesAdapter.updateOne(
-      {
-        id: entityId,
-        changes: {
-          angle,
-        },
-      },
-      state,
-    ),
-  ),
-  on(CanvasEntitiesActions.rotateEntity, (state, { entityId, rotateBy }) => {
-    const entity = state.entities[entityId]
-    assertNotNull(entity, 'entity')
-    let angle = entity.angle + rotateBy
-    angle = ((angle % 360) + 360) % 360
-    const update = Factory.Panel.updateForStore(entityId, { angle })
-    return canvasEntitiesAdapter.updateOne(update, state)
-  }),
+  /*  on(CanvasEntitiesActions.setEntityRotation, (state, { entityId, angle }) =>
+   canvasEntitiesAdapter.updateOne(
+   {
+   id: entityId,
+   changes: {
+   angle,
+   },
+   },
+   state,
+   ),
+   ),
+   on(CanvasEntitiesActions.rotateEntity, (state, { entityId, rotateBy }) => {
+   const entity = state.entities[entityId]
+   assertNotNull(entity, 'entity')
+   let angle = entity.angle + rotateBy
+   angle = ((angle % 360) + 360) % 360
+   const update = Factory.Panel.updateForStore(entityId, { angle })
+   return canvasEntitiesAdapter.updateOne(update, state)
+   }),*/
   on(CanvasEntitiesActions.deleteEntity, (state, { entityId }) =>
     canvasEntitiesAdapter.removeOne(entityId, state),
   ),

@@ -1,26 +1,16 @@
 import { Point } from '@shared/data-access/models'
 
-export type Angle = number & {
+export type Degree = number & {
   readonly _type: 'angle'
 }
 
-export type Radian = number & {
+export type AngleRadians = number & {
   readonly _type: 'radian'
 }
-export const addAngles = (angle1: Angle, angle2: Angle): Angle => {
+export const addAngles = (angle1: Degree, angle2: Degree): Degree => {
   const sum = angle1 + angle2
-  return normalizeAngle(sum) as Angle
+  return normalizeAngle(sum) as Degree
 }
-
-/*const normalizeAngle = (angle: number): number => {
- if (angle < 0) {
- return angle + 2 * Math.PI
- }
- if (angle >= 2 * Math.PI) {
- return angle - 2 * Math.PI
- }
- return angle
- }*/
 export const normalizeAngle = (angle: number): number => {
   if (angle >= 2 * Math.PI) {
     return angle - 2 * Math.PI
@@ -38,8 +28,8 @@ export const radianToProperAngle = (radian: number): number => {
 export const toDegrees = (angle: number): number => {
   return (angle * 180) / Math.PI
 }
-export const toAngle = (x: number, y: number): Angle => {
-  return ((Math.atan2(y, x) * 180) / Math.PI) as Angle
+export const toAngle = (x: number, y: number): Degree => {
+  return ((Math.atan2(y, x) * 180) / Math.PI) as Degree
 }
 
 /*export const normalizeAngle = (angle: number): number => {
@@ -49,30 +39,30 @@ export const toAngle = (x: number, y: number): Angle => {
  return angle
  }*/
 
-export const getAngleBetweenTwoPoints = (point1: Point, point2: Point): Angle => {
-  return toAngle(point2.x - point1.x, point2.y - point1.y) as Angle
+export const getAngleBetweenTwoPoints = (point1: Point, point2: Point): Degree => {
+  return toAngle(point2.x - point1.x, point2.y - point1.y) as Degree
   // const angle = toAngle(x2 - x1, y2 - y1)
   // return toProperAngle(angle)
 }
 
-export const getAngleInRadiansBetweenTwoPoints = (point1: Point, point2: Point): Radian => {
-  return Math.atan2(point2.y - point1.y, point2.x - point1.x) as Radian
+export const getAngleInRadiansBetweenTwoPoints = (point1: Point, point2: Point): AngleRadians => {
+  return Math.atan2(point2.y - point1.y, point2.x - point1.x) as AngleRadians
 }
 
-export const radiansToAngle = (radians: number): Angle => {
-  return ((radians * 180) / Math.PI) as Angle
+export const radiansToAngle = (radians: number): Degree => {
+  return ((radians * 180) / Math.PI) as Degree
 }
 
 export const radiansToProperAngle = (radians: number) => {
   // return toProperAngle(radiansToAngle(radians))
 }
 
-export const angleToRadians = (angle: Angle): Radian => {
-  return ((angle * Math.PI) / 180) as Radian
+export const angleToRadians = (angle: Degree): AngleRadians => {
+  return ((angle * Math.PI) / 180) as AngleRadians
 }
 
-export const toRadians = (angle: Angle): Radian => {
-  return ((angle * Math.PI) / 180) as Radian
+export const toRadians = (angle: Degree): AngleRadians => {
+  return ((angle * Math.PI) / 180) as AngleRadians
 }
 
 export const rotate = (
@@ -80,7 +70,7 @@ export const rotate = (
   y: number,
   cx: number,
   cy: number,
-  angle: Angle,
+  angle: Degree,
 ): [number, number] => {
   const radians = toRadians(angle)
   const cos = Math.cos(radians)
@@ -90,7 +80,7 @@ export const rotate = (
   return [nx, ny]
 }
 
-export function rotateRadian(location: Point, pivotPointer: Point, radians: Radian) {
+export function rotateRadian(location: Point, pivotPointer: Point, radians: AngleRadians) {
   // var radians = (Math.PI / 180) * angle,
   const cx = pivotPointer.x
   const cy = pivotPointer.y
@@ -106,7 +96,7 @@ export function rotateRadian(location: Point, pivotPointer: Point, radians: Radi
   // return [nx, ny]
 }
 
-export function rotateWithAngle(pivotPointer: Point, location: Point, angle: Angle) {
+export function rotateWithAngle(pivotPointer: Point, location: Point, angle: Degree) {
   const radians = (Math.PI / 180) * angle
   const cx = pivotPointer.x
   const cy = pivotPointer.y
@@ -120,7 +110,7 @@ export function rotateWithAngle(pivotPointer: Point, location: Point, angle: Ang
   // return [nx, ny]
 }
 
-export const rotatePoint = (point: Point, center: Point, angle: Angle): Point => {
+export const rotatePoint = (point: Point, center: Point, angle: Degree): Point => {
   const [x, y] = rotate(point.x, point.y, center.x, center.y, angle)
   return { x, y }
 }
@@ -146,7 +136,7 @@ export const rotateOffPivot = (
   y1: number,
   pivotX: number,
   pivotY: number,
-  angle: Radian,
+  angle: AngleRadians,
 ): {
   x: number
   y: number
@@ -157,7 +147,7 @@ export const rotateOffPivot = (
 export const rotatePointOffPivot = (
   point: Point,
   pivot: Point,
-  angle: Radian,
+  angle: AngleRadians,
 ): {
   x: number
   y: number

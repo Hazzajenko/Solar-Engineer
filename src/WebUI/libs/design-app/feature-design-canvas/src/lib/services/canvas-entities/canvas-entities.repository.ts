@@ -22,13 +22,13 @@ export class CanvasEntitiesRepository {
     this._store.dispatch(CanvasEntitiesActions.updateEntity({ update }))
   }
 
-  public setCanvasEntityRotation(entityId: string, angle: number) {
-    this._store.dispatch(CanvasEntitiesActions.setEntityRotation({ entityId, angle }))
-  }
+  /*  public setCanvasEntityRotation(entityId: string, angle: number) {
+   this._store.dispatch(CanvasEntitiesActions.setEntityRotation({ entityId, angle }))
+   }
 
-  public rotateCanvasEntity(entityId: string, rotateBy: number) {
-    this._store.dispatch(CanvasEntitiesActions.rotateEntity({ entityId, rotateBy }))
-  }
+   public rotateCanvasEntity(entityId: string, rotateBy: number) {
+   this._store.dispatch(CanvasEntitiesActions.rotateEntity({ entityId, rotateBy }))
+   }*/
 
   public updateManyCanvasEntities(updates: UpdateStr<CanvasEntity>[]) {
     this._store.dispatch(CanvasEntitiesActions.updateManyEntities({ updates }))
