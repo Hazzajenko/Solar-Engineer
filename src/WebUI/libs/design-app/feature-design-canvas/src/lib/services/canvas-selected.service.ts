@@ -1,12 +1,14 @@
 import { inject, Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
 import { CanvasActions } from '../store'
-import { CanvasEntity, CanvasPanel, CanvasString, EntityFactory, SELECTED_TYPE, SelectedType } from '../types'
+import { CanvasEntity, CanvasPanel, CanvasString, EntityFactory, isPanel, SELECTED_TYPE, SelectedType, UndefinedStringId } from '../types'
 import { assertNotNull } from '@shared/utils'
 import { DomPointService } from './dom-point.service'
 import { CanvasEntitiesStore } from './canvas-entities'
 import { eventToPointLocation } from '../functions'
 import { CanvasAppStateStore } from './canvas-app-state'
+import { CURSOR_TYPE } from '@shared/data-access/models'
+import { changeCanvasCursor } from '../utils'
 
 @Injectable({
   providedIn: 'root',
@@ -60,12 +62,27 @@ export class CanvasSelectedService {
     return this._multiSelected.filter(entity => entity.type === type) as T[]
   }
 
-  startMultiSelectDragging(event: MouseEvent) {
+  multiSelectDraggingMouseDown(event: MouseEvent) {
     if (this._multiSelected.length === 0) return
     if (!event.shiftKey) return
     this.isMultiSelectDragging = true
     this.multiSelectStart = eventToPointLocation(event)
     // this._entityStore.dispatch.setDraggingEntityIds()
+  }
+
+  multiSelectDraggingMouseMove(event: MouseEvent, canvas: HTMLCanvasElement, drawCanvas: () => void) {
+    if (!event.shiftKey || !event.ctrlKey) {
+      this.stopMultiSelectDragging(event)
+      // this.drawPanels()
+      return
+    }
+    changeCanvasCursor(canvas, CURSOR_TYPE.GRABBING)
+    // this.canvas.style.cursor = CURSOR_TYPE.GRABBING
+    this.onMultiDragging(event)
+
+    // drawCanvas
+    drawCanvas()
+    return
   }
 
   onMultiDragging(event: MouseEvent) {
@@ -128,6 +145,32 @@ export class CanvasSelectedService {
     return
   }
 
+  handleEntityUnderMouse(event: MouseEvent, entityUnderMouse: CanvasEntity) {
+    if (event.shiftKey) {
+      this.addToMultiSelected(entityUnderMouse.id)
+      return
+    }
+    this.setSelected(entityUnderMouse.id)
+    return
+  }
+
+  handleEntityDoubleClick(event: MouseEvent, entityUnderMouse: CanvasEntity, strings: CanvasString[]) {
+    if (!isPanel(entityUnderMouse)) {
+      this.setSelectedStringId(undefined)
+      console.log('implement double click for non panel')
+      return
+    }
+    if (entityUnderMouse.stringId === UndefinedStringId) {
+      console.log('implement double click for undefined string')
+      return
+    }
+
+    const belongsToString = strings.find(string => string.id === entityUnderMouse.stringId)
+    assertNotNull(belongsToString, 'string not found')
+    this.setSelectedStringId(belongsToString.id)
+    return
+  }
+
   setSelected(selectedId: string) {
     /*    if (this._selected?.id === selected.id) {
      this._selected = undefined
@@ -152,7 +195,7 @@ export class CanvasSelectedService {
     // this.emit(CanvasEvent.Draw)
   }
 
-  setSelectedStringId(id: CanvasString['id']) {
+  setSelectedStringId(id: CanvasString['id'] | undefined) {
     this._selectedStringId = id
     this._selectedType = SELECTED_TYPE.String
     this._entityStore.dispatch.setSelectedStringId(id)

@@ -79,6 +79,14 @@ export const isEntityInsideBounds = (entity: CanvasEntity, bounds: EntityBounds)
   )
 }
 
+export const isEntityOverlappingWithBounds = (
+  entity: CanvasEntity,
+  bounds: EntityBounds,
+): boolean => {
+  const entityBounds = getEntityBounds(entity)
+  return checkOverlapBetweenTwoBounds(entityBounds, bounds)
+}
+
 export const getBoundsFromPoints = (points: Point[]): EntityBounds => {
   let minX = Infinity
   let maxX = -Infinity

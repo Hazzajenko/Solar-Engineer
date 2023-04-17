@@ -1,19 +1,10 @@
-import { Directive, ElementRef, inject, Input, NgZone, OnInit, Renderer2 } from '@angular/core'
-import { ClickEvent, ContextMenuEvent, CURSOR_TYPE, DoubleClickEvent, EVENT_TYPE, KEYS, MouseDownEvent, MouseMoveEvent, MouseUpEvent, Point, POINTER_BUTTON } from '@shared/data-access/models'
-import { assertIsPanel, CANVAS_MODE, CanvasEntity, CanvasPanel, CanvasString, createPanel, EntityFactory, isPanel, ObjectSize, SizeByType, TransformedPoint, UndefinedStringId } from '../types'
-import { compareArrays, eventToPointLocation } from '../functions'
+import { Directive, OnInit } from '@angular/core'
+import { CURSOR_TYPE, KEYS } from '@shared/data-access/models'
+import { CANVAS_MODE, createPanel, isPanel, SizeByType } from '../types'
 import { ENTITY_TYPE } from '@design-app/shared'
-import { CanvasAppStateStore, CanvasElementService, CanvasEntitiesStore, CanvasModeService, CanvasObjectPositioningService, CanvasSelectedService, CanvasStringsService, CanvasStringsStore, DomPointService, DragBoxService, DrawService } from '../services'
-import { setupCanvas } from '../functions/setup-canvas'
 import { assertNotNull, OnDestroyDirective } from '@shared/utils'
-import { roundToTwoDecimals } from 'design-app/utils'
-import { Store } from '@ngrx/store'
-import { takeUntil, tap } from 'rxjs'
-import { DelayedLogger } from '@shared/logger'
-import { CanvasScale } from '../models/scale'
-import { DIAGONAL_DIRECTION, DiagonalDirection, getDiagonalDirectionFromTwoPoints, getEntityBounds, getTopLeftPointFromTransformedPoint, isPointInsideBounds, isStartingSelectionBox } from '../utils'
-import { CanvasAppState, initialCanvasAppState } from '../store'
-import { drawEntities, RotateState } from '../utils/draw'
+import { changeCanvasCursor, dragBoxKeysDown, draggingScreenKeysDown, getTopLeftPointFromTransformedPoint, isContextMenu, isDraggingEntity, isMenuOpen, isMultiSelectDragging, isReadyToMultiDrag, multiSelectDraggingKeysDown, rotatingKeysDown } from '../utils'
+import { DesignCanvasDirectiveExtension } from './design-canvas-directive.extension'
 
 @Directive({
   selector:   '[appDesignCanvas]',
@@ -21,169 +12,8 @@ import { drawEntities, RotateState } from '../utils/draw'
   standalone: true,
 })
 export class DesignCanvasDirective
+  extends DesignCanvasDirectiveExtension
   implements OnInit {
-
-  private _store = inject(Store)
-  private _onDestroy = inject(OnDestroyDirective)
-  private _entitiesStore = inject(CanvasEntitiesStore)
-  private _stringsStore = inject(CanvasStringsStore)
-  private _stringsService = inject(CanvasStringsService)
-  private _canvas = inject(ElementRef<HTMLCanvasElement>).nativeElement
-  private _ctx!: CanvasRenderingContext2D
-  private _ngZone = inject(NgZone)
-  private _renderer = inject(Renderer2)
-  private _canvasElementService = inject(CanvasElementService)
-  private _objectPositioning = inject(CanvasObjectPositioningService)
-  private _mode = inject(CanvasModeService)
-  private _drag = inject(DragBoxService)
-  private _draw = inject(DrawService)
-  // private _selected = new CanvasSelectedService()
-  private _selected = inject(CanvasSelectedService)
-  private _domPointService = inject(DomPointService)
-  private _delayedLogger = new DelayedLogger()
-  // private _logger = new Logger
-  // private _domPointService!: DomPointService
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  private mouseDownTimeOut: ReturnType<typeof setTimeout> | undefined
-  private mouseUpTimeOut: ReturnType<typeof setTimeout> | undefined
-
-  // private clickTimeout?: NodeJS.Timeout | undefined
-  private _panels: CanvasPanel[] = []
-  private _strings: CanvasString[] = []
-  private _selectedPanel?: CanvasEntity
-  private _animateScreenMoveId?: number
-
-  mousePos!: HTMLDivElement
-  transformedMousePos!: HTMLDivElement
-  scaleElement!: HTMLDivElement
-  stringStats!: HTMLDivElement
-  panelStats!: HTMLDivElement
-  menu!: HTMLDivElement
-
-  currentTransformedCursor!: TransformedPoint
-  currentCursor!: Point
-  currentCenter!: Point
-
-  private _appState = inject(CanvasAppStateStore)
-
-  appState: CanvasAppState = initialCanvasAppState
-
-  public get animateScreenMoveId(): number | undefined {
-    return this._animateScreenMoveId
-  }
-
-  public set animateScreenMoveId(value: number | undefined) {
-    this._animateScreenMoveId = value
-    if (value) {
-      console.log('set animateScreenMoveId', value)
-    } else {
-      console.log('animateScreenMoveId cancelled')
-    }
-  }
-
-  get strings(): CanvasString[] {
-    return this._strings
-  }
-
-  set strings(value: CanvasString[]) {
-    this._strings = value
-    this._delayedLogger.log('set strings', value)
-    this.stringStats.innerText = `Strings: ${this._strings.length}`
-    this.drawPanels()
-  }
-
-  public set panels(value: CanvasEntity[]) {
-    this._panels = value as CanvasPanel[]
-    this._delayedLogger.log('set panels', value)
-    this.panelStats.innerText = `Panels: ${this._panels.length}`
-    this.drawPanels()
-  }
-
-  public get panels(): CanvasEntity[] {
-    return this._panels
-  }
-
-  isDraggingEntity = false
-  isDraggingScreen = false
-  entityOnMouseDown?: CanvasEntity
-
-  screenDragStartPoint: Point = { x: 0, y: 0 }
-  _scale = 1
-  get scale(): number {
-    return this._scale
-  }
-
-  set scale(value: number) {
-    this._scale = roundToTwoDecimals(value)
-    console.log('set scale', this._scale)
-    this.scaleElement.innerText = `Scale: ${this._scale}`
-  }
-
-  canvasScale = new CanvasScale(1, 1)
-
-  _screenPosition: Point = { x: 0, y: 0 }
-  get screenPosition(): Point {
-    return this._screenPosition
-  }
-
-  set screenPosition(value: Point) {
-    this._screenPosition = value
-    console.log('set screenPosition', value)
-  }
-
-  @Input() set drawTime(value: string) {
-    console.log('set drawTime', value)
-    this.drawPanels()
-  }
-
-  height = this._canvas.height
-  width = this._canvas.width
-  image: HTMLImageElement | undefined
-
-  isHoveringEntity = false
-  hoveringEntityId?: string
-  entityDragOffset: Point = { x: 0, y: 0 }
-  selectionBoxStartPoint?: TransformedPoint
-  isSelectionBoxDragging = false
-  selectionBoxFillStyle = '#7585d8'
-  creationBoxFillStyle = '#ee80f9'
-  defaultPanelFillStyle = '#8ED6FF'
-  previewPanelFillStyle = '#ff649b'
-  takenSpotFillStyle = '#ff0000'
-  multiSelectionDragging = false
-
-  appState$ = this._appState.select.state$.pipe(
-    takeUntil(this._onDestroy.destroy$),
-    tap((state) => {
-        this.appState = state
-        console.log('appState$', state)
-      },
-    ),
-  )
-
-  entities$ = this._entitiesStore.select.entities$.pipe(
-    takeUntil(this._onDestroy.destroy$),
-    tap(entities => {
-      const theSame = compareArrays(entities, this.panels)
-      if (!theSame) {
-        this._delayedLogger.log('entities$ difference', theSame)
-        this.panels = entities.filter(entity => entity.type === ENTITY_TYPE.Panel)
-      }
-    }),
-  )
-
-  strings$ = this._stringsStore.select.allStrings$.pipe(
-    takeUntil(this._onDestroy.destroy$),
-    tap(strings => {
-        const theSame = compareArrays(strings, this.strings)
-        if (!theSame) {
-          this._delayedLogger.log('strings$ difference', strings)
-          this.strings = strings
-        }
-      },
-    ),
-  )
 
   public ngOnInit() {
     this.setupCanvas()
@@ -196,129 +26,9 @@ export class DesignCanvasDirective
     this.stringStats = document.getElementById('string-stats') as HTMLDivElement
     this.panelStats = document.getElementById('panel-stats') as HTMLDivElement
     this.menu = document.getElementById('menu') as HTMLDivElement
-    console.log(this.mousePos, this.transformedMousePos)
     this.appState$.subscribe()
     this.entities$.subscribe()
     this.strings$.subscribe()
-  }
-
-  private setupCanvas() {
-    const { canvas, ctx } = setupCanvas(this._canvas)
-    this._canvas = canvas
-    this._ctx = ctx
-    this._canvasElementService.init(this._canvas, this._ctx)
-  }
-
-  private setupMouseEventListeners() {
-    this._renderer.listen(this._canvas, MouseUpEvent, (event: MouseEvent) => {
-
-      console.log('mouse up', event)
-      this.onMouseUpHandler(event)
-      event.stopPropagation()
-      event.preventDefault()
-    })
-    this._renderer.listen(this._canvas, MouseDownEvent, (event: MouseEvent) => {
-
-      console.log('mouse down', event)
-      this.onMouseDownHandler(event)
-      event.stopPropagation()
-      event.preventDefault()
-    })
-    this._renderer.listen(this._canvas, MouseMoveEvent, (event: MouseEvent) => {
-
-      this.onMouseMoveHandler(event)
-      event.stopPropagation()
-      event.preventDefault()
-    })
-    this._renderer.listen(this._canvas, ContextMenuEvent, (event: PointerEvent) => {
-
-      console.log('context menu', event)
-      this.contextMenuHandler(event)
-      event.stopPropagation()
-      event.preventDefault()
-    })
-    this._renderer.listen(this._canvas, ClickEvent, (event: PointerEvent) => {
-
-      this.mouseClickHandler(event)
-      event.stopPropagation()
-      event.preventDefault()
-      // console.log('context menu', event)
-    })
-    this._renderer.listen(this._canvas, DoubleClickEvent, (event: PointerEvent) => {
-
-      this.doubleClickHandler(event)
-      event.stopPropagation()
-      event.preventDefault()
-      // console.log('context menu', event)
-    })
-    this._renderer.listen(this._canvas, EVENT_TYPE.WHEEL, (event: WheelEvent) => {
-
-      this.wheelScrollHandler(event)
-      event.stopPropagation()
-      event.preventDefault()
-    })
-    this._renderer.listen(window, 'resize', (event: Event) => {
-
-      console.log('resize', event)
-      this._canvas.style.width = window.innerWidth
-      this._canvas.style.height = window.innerHeight
-      event.stopPropagation()
-      event.preventDefault()
-    })
-    this._renderer.listen(window, EVENT_TYPE.KEY_UP, (event: KeyboardEvent) => {
-      event.stopPropagation()
-      event.preventDefault()
-      console.log('keyup menu', event)
-      if (event.key === 'Delete') {
-        this.panels = this.panels.filter(panel => panel !== this.entityOnMouseDown)
-      }
-      if (event.key === 'Escape') {
-        this._selected.clearSelectedState()
-      }
-      if (event.shiftKey) {
-        console.log('shift key up')
-        // this._selected.isMultiSelectDragging = false
-      }
-      if (event.key === KEYS.R) {
-        console.log('r key up')
-        if (this._objectPositioning.entityToRotateId) {
-          this._objectPositioning.clearEntityToRotate()
-          return
-        }
-        if (this._objectPositioning.multipleToRotateIds.length > 0 && !this._objectPositioning.entityToRotateId) {
-          this._objectPositioning.clearEntityToRotate()
-          return
-        }
-        if (this._selected.selected && !this._objectPositioning.entityToRotateId) {
-          this._objectPositioning.setEntityToRotate(this._selected.selected.id, this.currentTransformedCursor)
-          return
-        }
-
-        if (this._selected.multiSelected.length > 0) {
-          const multiSelectedIds = this._selected.multiSelected.map(entity => entity.id)
-          this._objectPositioning.setMultipleToRotate(multiSelectedIds, this.currentTransformedCursor)
-          return
-        }
-
-      }
-      if (event.key === KEYS.G) {
-        this.drawPanels()
-      }
-      if (event.key === KEYS.X) {
-        if (this._selected.multiSelected.length > 0) {
-          this._stringsService.createStringWithPanels(this._selected.getMultiSelectedByType(ENTITY_TYPE.Panel), this.strings)
-
-        }
-        // this.drawPanels()
-      }
-      if (event.key === KEYS.C) {
-        if (this._mode.mode === CANVAS_MODE.CREATE) {
-          this._mode.setMode(CANVAS_MODE.SELECT)
-          return
-        }
-        this._mode.setMode(CANVAS_MODE.CREATE)
-      }
-    })
   }
 
   /**
@@ -331,37 +41,49 @@ export class DesignCanvasDirective
    * @private
    */
 
-  private onMouseDownHandler(event: MouseEvent) {
-    if (event.button === POINTER_BUTTON.SECONDARY) {
+  onMouseDownHandler(event: MouseEvent) {
+    if (isContextMenu(event)) {
       return
     }
+    /*    if (event.button === POINTER_BUTTON.SECONDARY) {
+     return
+     }*/
     this.mouseDownTimeOut = setTimeout(() => {
       this.mouseDownTimeOut = undefined
     }, 100)
-    const isDraggingScreen = (event.ctrlKey || event.button === POINTER_BUTTON.WHEEL) && !event.shiftKey
-    if (isDraggingScreen) {
-      this.isDraggingScreen = true
-      this.screenDragStartPoint = this._domPointService.getTransformedPointFromEvent(event)
+    if (draggingScreenKeysDown(event)) {
+      this._view.handleDragScreenMouseDown(event)
       return
     }
-    if (isStartingSelectionBox(event)) {
-      this._drag.selectionBoxStartPoint = this._domPointService.getTransformedPointFromEvent(event)
+    /*    const isDraggingScreen = (event.ctrlKey || event.button === POINTER_BUTTON.WHEEL) && !event.shiftKey
+     if (isDraggingScreen) {
+     this.isDraggingScreen = true
+     this.screenDragStartPoint = this._domPointService.getTransformedPointFromEvent(event)
+     return
+     }*/
+    if (dragBoxKeysDown(event)) {
+      this._drag.handleDragBoxMouseDown(event)
+      // this._drag.selectionBoxStartPoint = this._domPointService.getTransformedPointFromEvent(event)
       // this.selectionBoxStartPoint = this._domPointService.getTransformedPointFromEvent(event)
       return
     }
-    if (event.altKey) {
-      this.isSelectionBoxDragging = true
-      this.selectionBoxStartPoint = this._domPointService.getTransformedPointFromEvent(event)
-    }
-    const isMultiSelectDragging = event.shiftKey && event.ctrlKey && this._selected.multiSelected.length > 0
-    if (isMultiSelectDragging) {
-      this._selected.startMultiSelectDragging(event)
+    /*    if (event.altKey) {
+     this.isSelectionBoxDragging = true
+     this.selectionBoxStartPoint = this._domPointService.getTransformedPointFromEvent(event)
+     }*/
+    if (multiSelectDraggingKeysDown(event, this._selected.multiSelectedIds)) {
+      this._selected.multiSelectDraggingMouseDown(event)
       return
     }
-    const clickedOnEntity = this.getEntityUnderMouse(event)
-    if (clickedOnEntity) {
-      this.entityOnMouseDown = clickedOnEntity
-      this._selected.checkSelectedState(event, clickedOnEntity.id)
+    /*    const isMultiSelectDragging = event.shiftKey && event.ctrlKey && this._selected.multiSelected.length > 0
+     if (isMultiSelectDragging) {
+     this._selected.startMultiSelectDragging(event)
+     return
+     }*/
+    const entityUnderMouse = this.getEntityUnderMouse(event)
+    if (entityUnderMouse) {
+      this.entityOnMouseDownId = entityUnderMouse.id
+      this._selected.checkSelectedState(event, entityUnderMouse.id)
     }
 
   }
@@ -372,78 +94,99 @@ export class DesignCanvasDirective
    * @private
    */
 
-  private onMouseUpHandler(event: MouseEvent) {
-    if (event.button === POINTER_BUTTON.SECONDARY) return
+  onMouseUpHandler(event: MouseEvent) {
+    if (isContextMenu(event)) return
     if (this.mouseDownTimeOut) {
       clearTimeout(this.mouseDownTimeOut)
       this.mouseDownTimeOut = undefined
-      this.entityOnMouseDown = undefined
+      this.entityOnMouseDownId = undefined
       return
     }
     this.mouseUpTimeOut = setTimeout(() => {
       this.mouseUpTimeOut = undefined
     }, 100)
-    if (event.button === POINTER_BUTTON.SECONDARY) return
-    console.log('mouse up', event)
-    if (this.isDraggingScreen) {
-      this.isDraggingScreen = false
-      return
+    if (this._view.screenDragStartPoint) {
+      this._view.handleDragScreenMouseUp(event)
     }
+    // if (event.button === POINTER_BUTTON.SECONDARY) return
+    // console.log('mouse up', event)
+    // TODO - fix this
+    /*   if (this.isDraggingScreen) {
+     this.isDraggingScreen = false
+     return
+     }*/
+    /*
+     if (this._drag.selectionBoxStartPoint) {
+     this._drag.selectionBoxStartPoint = undefined
+
+     return
+     }*/
 
     if (this._drag.selectionBoxStartPoint) {
-      this._drag.selectionBoxStartPoint = undefined
+      this._drag.selectionBoxMouseUp(event)
+      this.drawCanvas()
+      // this._drag.selectionBoxStartPoint = undefined
       return
     }
 
-    if (this.isSelectionBoxDragging) {
-      this.isSelectionBoxDragging = false
-      if (
-        this.selectionBoxStartPoint) {
-        if (this._mode.mode === CANVAS_MODE.CREATE) {
+    if (this._drag.creationBoxStartPoint) {
+      this._drag.creationBoxMouseUp(event)
+      this.drawCanvas()
+      return
+    }
 
-          const spots = this._objectPositioning.getAllAvailableEntitySpotsBetweenTwoPoints(this.selectionBoxStartPoint, this._domPointService.getTransformedPointFromEvent(event))
-          if (!spots || !spots.length) return
-          const takenSpots = spots.filter(spot => !spot.vacant)
-          if (takenSpots.length) {
-            console.log('taken spots', takenSpots)
-            return
-          }
-          const newPanels = spots.map(spot =>
-            createPanel({ x: spot.x, y: spot.y }),
-          )
-          this._entitiesStore.dispatch.addManyCanvasEntities(newPanels)
-          return
-        }
-        if (this._mode.mode === CANVAS_MODE.SELECT) {
-          const panelsInArea = this._objectPositioning.getAllElementsBetweenTwoPoints(this.selectionBoxStartPoint, this._domPointService.getTransformedPointFromEvent(event))
-          if (panelsInArea) {
-            const entitiesInAreaIds = panelsInArea.map(panel => panel.id)
-            this._selected.setMultiSelected(entitiesInAreaIds)
-          }
-        }
-      }
-      this.selectionBoxStartPoint = undefined
-      this.drawPanels()
-      return
+    /*    if (this.isSelectionBoxDragging) {
+     this.isSelectionBoxDragging = false
+     if (
+     this.selectionBoxStartPoint) {
+     if (this._mode.mode === CANVAS_MODE.CREATE) {
+
+     const spots = this._objectPositioning.getAllAvailableEntitySpotsBetweenTwoPoints(this.selectionBoxStartPoint, this._domPointService.getTransformedPointFromEvent(event))
+     if (!spots || !spots.length) return
+     const takenSpots = spots.filter(spot => !spot.vacant)
+     if (takenSpots.length) {
+     console.log('taken spots', takenSpots)
+     return
+     }
+     const newPanels = spots.map(spot =>
+     createPanel({ x: spot.x, y: spot.y }),
+     )
+     this._entitiesStore.dispatch.addManyCanvasEntities(newPanels)
+     return
+     }
+     if (this._mode.mode === CANVAS_MODE.SELECT) {
+     const panelsInArea = this._objectPositioning.getAllElementsBetweenTwoPoints(this.selectionBoxStartPoint, this._domPointService.getTransformedPointFromEvent(event))
+     if (panelsInArea) {
+     const entitiesInAreaIds = panelsInArea.map(panel => panel.id)
+     this._selected.setMultiSelected(entitiesInAreaIds)
+     }
+     }
+     }
+     this.selectionBoxStartPoint = undefined
+     this.drawPanels()
+     return
+     }*/
+    if (this._objectPositioning.singleToMoveId) {
+      this._objectPositioning.singleToMoveMouseUp(event)
     }
-    if (this.isDraggingEntity) {
-      this.isDraggingEntity = false
-      console.log('entityOnMouseDown', this.entityOnMouseDown)
-      if (this.entityOnMouseDown) {
-        const location = this._domPointService.getTransformedPointToMiddleOfObjectFromEvent(event, this.entityOnMouseDown.type)
-        const updatedEntity = EntityFactory.updateForStore(this.entityOnMouseDown, { location })
-        this._entitiesStore.dispatch.updateCanvasEntity(updatedEntity)
-        this.entityOnMouseDown = undefined
-      }
-      return
-    }
-    if (this._selected.isMultiSelectDragging) {
-      this._selected.stopMultiSelectDragging(event)
-      return
-    }
-    this.isDraggingEntity = false
-    this.isDraggingScreen = false
-    this.entityOnMouseDown = undefined
+    /*    if (this.isDraggingEntity) {
+     this.isDraggingEntity = false
+     console.log('entityOnMouseDown', this.entityOnMouseDown)
+     if (this.entityOnMouseDown) {
+     const location = this._domPointService.getTransformedPointToMiddleOfObjectFromEvent(event, this.entityOnMouseDown.type)
+     const updatedEntity = EntityFactory.updateForStore(this.entityOnMouseDown, { location })
+     this._entitiesStore.dispatch.updateCanvasEntity(updatedEntity)
+     this.entityOnMouseDown = undefined
+     }
+     return
+     }
+     if (this._selected.isMultiSelectDragging) {
+     this._selected.stopMultiSelectDragging(event)
+     return
+     }
+     this.isDraggingEntity = false
+     this.isDraggingScreen = false
+     this.entityOnMouseDown = undefined*/
   }
 
   /**
@@ -452,11 +195,15 @@ export class DesignCanvasDirective
    * @private
    */
 
-  private mouseClickHandler(event: PointerEvent) {
-    if (this.menu.style.display === 'initial') {
+  mouseClickHandler(event: PointerEvent) {
+    if (isMenuOpen(this.menu)) {
       this.menu.style.display = 'none'
       return
     }
+    /*    if (this.menu.style.display === 'initial') {
+     this.menu.style.display = 'none'
+     return
+     }*/
     if (this.mouseUpTimeOut) {
       clearTimeout(this.mouseUpTimeOut)
       this.mouseUpTimeOut = undefined
@@ -469,18 +216,20 @@ export class DesignCanvasDirective
     }
 
     // console.log('click', event)
-    const isPanel = this.getMouseOverPanel(event)
-    if (isPanel) {
-      if (event.shiftKey) {
-        this._selected.addToMultiSelected(isPanel.id)
-        return
-      }
-      this._selected.setSelected(isPanel.id)
-      return
+    const entityUnderMouse = this.getEntityUnderMouse(event)
+    // const isPanel = this.getMouseOverPanel(event)
+    if (entityUnderMouse) {
+      this._selected.handleEntityUnderMouse(event, entityUnderMouse)
+      return/*      if (event.shiftKey) {
+       this._selected.addToMultiSelected(entityUnderMouse.id)
+       return
+       }
+       this._selected.setSelected(entityUnderMouse.id)
+       return*/
     }
     this._selected.clearSelectedState()
     // this._selected.clearSingleSelected()
-    if (this.areAnyPanelRectsNearClick(eventToPointLocation(event))) {
+    if (this.anyEntitiesNearAreaOfClick(event)) {
       return
     }
     const location = this._domPointService.getTransformedPointToMiddleOfObjectFromEvent(event, ENTITY_TYPE.Panel)
@@ -496,7 +245,8 @@ export class DesignCanvasDirective
      this._entitiesStore.dispatch.addCanvasEntity(entity)
      }*/
 
-    this.drawPanels()
+    this.drawCanvas()
+    // this.drawPanels()
   }
 
   /**
@@ -505,16 +255,26 @@ export class DesignCanvasDirective
    * @private
    */
 
-  private doubleClickHandler(event: PointerEvent) {
+  doubleClickHandler(event: PointerEvent) {
     console.log('double click', event)
-    const mouseOverPanel = this.getMouseOverPanel(event)
-    if (mouseOverPanel) {
-      if (!isPanel(mouseOverPanel)) return
-      if (mouseOverPanel.stringId === UndefinedStringId) return
-      const belongsToString = this.strings.find(string => string.id === mouseOverPanel.stringId)
-      assertNotNull(belongsToString, 'string not found')
-      this._selected.setSelectedStringId(belongsToString.id)
+    const entityUnderMouse = this.getEntityUnderMouse(event)
+    // const isPanel = this.getMouseOverPanel(event)
+    if (entityUnderMouse) {
+      this._selected.handleEntityDoubleClick(event, entityUnderMouse, this.strings)
+      /*      if (!isPanel(entityUnderMouse)) return
+       if (entityUnderMouse.stringId === UndefinedStringId) return
+       const belongsToString = this.strings.find(string => string.id === entityUnderMouse.stringId)
+       assertNotNull(belongsToString, 'string not found')
+       this._selected.setSelectedStringId(belongsToString.id)*/
     }
+    /*    const mouseOverPanel = this.getMouseOverPanel(event)
+     if (mouseOverPanel) {
+     if (!isPanel(mouseOverPanel)) return
+     if (mouseOverPanel.stringId === UndefinedStringId) return
+     const belongsToString = this.strings.find(string => string.id === mouseOverPanel.stringId)
+     assertNotNull(belongsToString, 'string not found')
+     this._selected.setSelectedStringId(belongsToString.id)
+     }*/
   }
 
   /**
@@ -523,7 +283,7 @@ export class DesignCanvasDirective
    * @private
    */
 
-  private onMouseMoveHandler(event: MouseEvent) {
+  onMouseMoveHandler(event: MouseEvent) {
     this.currentTransformedCursor = this._domPointService.getTransformedPointFromEvent(event)
     this.mousePos.innerText = `Original X: ${event.offsetX}, Y: ${event.offsetY}`
     this.transformedMousePos.innerText = `Transformed X: ${this.currentTransformedCursor.x}, Y: ${this.currentTransformedCursor.y}`
@@ -532,39 +292,48 @@ export class DesignCanvasDirective
      this.drawPanels()
      return
      }*/
-    if (this._objectPositioning.singleRotateMode && this._objectPositioning.entityToRotateId) {
+
+    if (this._objectPositioning.isInSingleRotateMode) {
+      // if (this._objectPositioning.singleRotateMode && this._objectPositioning.entityToRotateId) {
       this._objectPositioning.rotateEntityViaMouse(event)
-      this.drawPanels()
+      // this.drawPanels()
+      this.drawCanvas()
       return
     }
 
-    const rotateKeys = event.altKey && event.ctrlKey
-    if (this._objectPositioning.entityToRotateId && rotateKeys) {
+    // const rotateKeys = event.altKey && event.ctrlKey
+    if (this._objectPositioning.entityToRotateId && rotatingKeysDown(event)) {
       this._objectPositioning.rotateEntityViaMouse(event)
-      this.drawPanels()
+      // this.drawPanels()
+      this.drawCanvas()
       return
 
     }
 
-    if (this._objectPositioning.multipleToRotateIds.length > 1 && rotateKeys) {
+    if (this._objectPositioning.multipleToRotateIds.length > 1 && rotatingKeysDown(event)) {
+      // if (this._objectPositioning.multipleToRotateIds.length > 1 && rotateKeys) {
       this._objectPositioning.rotateMultipleEntitiesViaMouse(event)
-      this.drawPanels()
+      // this.drawPanels()
+      this.drawCanvas()
       return
     }
 
-    if (!this._objectPositioning.areAnyEntitiesInRotate && rotateKeys) {
-      const selectedId = this._selected.selectedId
-      if (selectedId) {
-        const transformedPoint = this._domPointService.getTransformedPointFromEvent(event)
-        this._objectPositioning.setEntityToRotate(selectedId, transformedPoint)
-        return
-      }
-      const multiSelectIds = this._selected.multiSelectedIds
-      if (multiSelectIds.length > 1) {
-        const transformedPoint = this._domPointService.getTransformedPointFromEvent(event)
-        this._objectPositioning.setMultipleToRotate(multiSelectIds, transformedPoint)
-        return
-      }
+    if (!this._objectPositioning.areAnyEntitiesInRotate && rotatingKeysDown(event)) {
+      this._objectPositioning.handleSetEntitiesToRotate(event)
+      // this._objectPositioning.handleSetEntitiesToRotate(event, this._selected.selectedId, this._selected.multiSelectedIds)
+      // if (!this._objectPositioning.areAnyEntitiesInRotate && rotateKeys) {
+      /*      const selectedId = this._selected.selectedId
+       if (selectedId) {
+       const transformedPoint = this._domPointService.getTransformedPointFromEvent(event)
+       this._objectPositioning.setEntityToRotate(selectedId, transformedPoint)
+       return
+       }
+       const multiSelectIds = this._selected.multiSelectedIds
+       if (multiSelectIds.length > 1) {
+       const transformedPoint = this._domPointService.getTransformedPointFromEvent(event)
+       this._objectPositioning.setMultipleToRotate(multiSelectIds, transformedPoint)
+       return
+       }*/
     }
 
     /*if (event.altKey && event.ctrlKey) {
@@ -596,100 +365,178 @@ export class DesignCanvasDirective
      }
 
      }*/
-    if (this._objectPositioning.areAnyEntitiesInRotate && (!event.altKey || !event.ctrlKey)) {
+    if (this._objectPositioning.areAnyEntitiesInRotate && !rotatingKeysDown(event)) {
+      // if (this._objectPositioning.areAnyEntitiesInRotate && (!event.altKey || !event.ctrlKey)) {
       this._objectPositioning.clearEntityToRotate()
+      this.drawCanvas()
       return
     }
-    if (this.isDraggingScreen) {
-      if (event.ctrlKey || event.buttons === 4) {
-        this._canvas.style.cursor = CURSOR_TYPE.MOVE
-        const transformX = this.currentTransformedCursor.x - this.screenDragStartPoint.x
-        const transformY = this.currentTransformedCursor.y - this.screenDragStartPoint.y
-        this._ctx.translate(transformX, transformY)
-        this.drawPanels()
-      }
+    if (this._view.screenDragStartPoint) {
+      this._view.handleDragScreenMouseMove(event)
+      this.drawCanvas()
       return
     }
-    if (this._drag.selectionBoxStartPoint) {
-      if (event.altKey) {
-        this._canvas.style.cursor = CURSOR_TYPE.CROSSHAIR
-        this.animateSelectionBox(event)
+    /*    if (this.isDraggingScreen) {
+     if (event.ctrlKey || event.buttons === 4) {
+     this.canvas.style.cursor = CURSOR_TYPE.MOVE
+     const transformX = this.currentTransformedCursor.x - this.screenDragStartPoint.x
+     const transformY = this.currentTransformedCursor.y - this.screenDragStartPoint.y
+     this.ctx.translate(transformX, transformY)
+     this.drawPanels()
+     }
+     return
+     }*/
+    if (this._drag.dragBoxStartPoint) {
+      if (dragBoxKeysDown(event)) {
+        // this.canvas.style.cursor = CURSOR_TYPE.CROSSHAIR
+        changeCanvasCursor(this.canvas, CURSOR_TYPE.CROSSHAIR)
+        this._drag.dragBoxMouseMove(event, this._mode.mode, this.drawCanvasCallback)
+        // this.animateDragBox(event)
         return
       }
-      this._drag.selectionBoxStartPoint = undefined
-      this._canvas.style.cursor = CURSOR_TYPE.AUTO
+      this._drag.dragBoxStartPoint = undefined
+      changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
+      // this.canvas.style.cursor = CURSOR_TYPE.AUTO
+      // this.canvas.style.cursor = CURSOR_TYPE.AUTO
       return
     }
-    if (this.isSelectionBoxDragging) {
-      if (!event.altKey) {
-        this.isSelectionBoxDragging = false
-        this.selectionBoxStartPoint = undefined
-        this.drawPanels()
-        return
-      }
-      if (this._mode.mode === CANVAS_MODE.SELECT) {
-        this.animateSelectionBox(event)
-        return
-      }
-      if (this._mode.mode === CANVAS_MODE.CREATE) {
-        this.animateCreationBox(event)
-        return
-      }
+    /*    if (this._drag.selectionBoxStartPoint) {
+     if (dragBoxKeysDown(event)) {
+     // this.canvas.style.cursor = CURSOR_TYPE.CROSSHAIR
+     changeCanvasCursor(this.canvas, CURSOR_TYPE.CROSSHAIR)
+     // this.animateSelectionBox(event)
+     this._drag.
+     return
+     }
+     this._drag.selectionBoxStartPoint = undefined
+     this.canvas.style.cursor = CURSOR_TYPE.AUTO
+     return
+     }
+     if (this._drag.creationBoxStartPoint) {
+     if (dragBoxKeysDown(event)) {
+     // this.canvas.style.cursor = CURSOR_TYPE.CROSSHAIR
+     changeCanvasCursor(this.canvas, CURSOR_TYPE.CROSSHAIR)
+     this.animateCreationBox(event)
+     return
+     }
+     this._drag.creationBoxStartPoint = undefined
+     this.canvas.style.cursor = CURSOR_TYPE.AUTO
+     return
+     }*/
+    /*    if (this.isSelectionBoxDragging) {
+     if (!event.altKey) {
+     this.isSelectionBoxDragging = false
+     this.selectionBoxStartPoint = undefined
+     this.drawPanels()
+     return
+     }
+     if (this._mode.mode === CANVAS_MODE.SELECT) {
+     this.animateSelectionBox(event)
+     return
+     }
+     if (this._mode.mode === CANVAS_MODE.CREATE) {
+     this.animateCreationBox(event)
+     return
+     }
+     return
+     }*/
+    if (isReadyToMultiDrag(event, this._selected.multiSelectedIds)) {
+      changeCanvasCursor(this.canvas, CURSOR_TYPE.GRAB)
+      // this._selected.startMultiSelectDragging(event)
+      // this.drawPanels()
       return
     }
-    const isReadyToMultiDrag = this._selected.multiSelected.length > 0 && event.shiftKey && event.ctrlKey && !this._selected.isMultiSelectDragging
-    if (isReadyToMultiDrag) {
-      this._canvas.style.cursor = CURSOR_TYPE.GRAB
-      return
+    /*   const isReadyToMultiDrag = this._selected.multiSelected.length > 0 && event.shiftKey && event.ctrlKey && !this._selected.isMultiSelectDragging
+     if (isReadyToMultiDrag) {
+     this.canvas.style.cursor = CURSOR_TYPE.GRAB
+     return
+     }*/
+    if (isMultiSelectDragging(event, this._selected.multiSelectedIds)) {
+      // const callback = () => this.drawCanvas()
+      this._selected.multiSelectDraggingMouseMove(event, this.canvas, this.drawCanvasCallback)
     }
-    if (this._selected.isMultiSelectDragging) {
-      if (!event.shiftKey || !event.ctrlKey) {
-        this._selected.stopMultiSelectDragging(event)
-        this.drawPanels()
-        return
-      }
-      this._canvas.style.cursor = CURSOR_TYPE.GRABBING
-      this._selected.onMultiDragging(event)
-      this.drawPanels()
-      return
-    }
-    if (this.entityOnMouseDown) {
-      this._canvas.style.cursor = CURSOR_TYPE.GRABBING
-      this.isDraggingEntity = true
-      this._ctx.clearRect(0, 0, this._canvas.width, this._canvas.height)
+    /*    if (this._selected.isMultiSelectDragging) {
+     if (!event.shiftKey || !event.ctrlKey) {
+     this._selected.stopMultiSelectDragging(event)
+     this.drawPanels()
+     return
+     }
+     this.canvas.style.cursor = CURSOR_TYPE.GRABBING
+     this._selected.onMultiDragging(event)
+     this.drawPanels()
+     return
+     }*/
+    if (isDraggingEntity(event, this.entityOnMouseDown)) {
+      assertNotNull(this.entityOnMouseDown)
+      // this.canvas.style.cursor = CURSOR_TYPE.GRABBING
+      changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
+      // this.isDraggingEntity = true
+      // this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
       // const location = this._domPointService.getTransformedPointToMiddleOfObjectFromEvent(event, this.entityOnMouseDown.type)
       const eventPoint = this._domPointService.getTransformedPointFromEvent(event)
-      const isSpotTaken = this.anyObjectsNearLocationExcludingGrabbed(eventPoint, this.entityOnMouseDown)
+      const isSpotTaken = this.anyObjectsNearLocationExcludingGrabbed(eventPoint, this.entityOnMouseDown.id)
       if (isSpotTaken) {
-        this._canvas.style.cursor = CURSOR_TYPE.CROSSHAIR
+        // this.canvas.style.cursor = CURSOR_TYPE.CROSSHAIR
+        changeCanvasCursor(this.canvas, CURSOR_TYPE.CROSSHAIR)
         // return
       }
       // const entityOnMouseDownBounds = getEntityBounds(this.entityOnMouseDown)
       const location = getTopLeftPointFromTransformedPoint(eventPoint, SizeByType[this.entityOnMouseDown.type])
-
-      this.entityOnMouseDown = EntityFactory.update(this.entityOnMouseDown, { location })
-      this.updateToBackOfArray(this.entityOnMouseDown, { location })
-      /*    const entityUpdate = EntityFactory.updateForStore(this.entityOnMouseDown, { location })
-       this._entitiesStore.dispatch.updateCanvasEntity(entityUpdate)*/
-      // this.
-      return
+      this.updateToEndOfLocalArray(this.entityOnMouseDown.id, { location })
+      // updateObjectByIdForStore()
+      // this.entityOnMouseDown = EntityFactory.update(this.entityOnMouseDown, { location })
+      // this.updateToBackOfArray(this.entityOnMouseDown, { location })
     }
+    /*    if (this.entityOnMouseDown) {
+     this.canvas.style.cursor = CURSOR_TYPE.GRABBING
+     this.isDraggingEntity = true
+     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+     // const location = this._domPointService.getTransformedPointToMiddleOfObjectFromEvent(event, this.entityOnMouseDown.type)
+     const eventPoint = this._domPointService.getTransformedPointFromEvent(event)
+     const isSpotTaken = this.anyObjectsNearLocationExcludingGrabbed(eventPoint, this.entityOnMouseDown)
+     if (isSpotTaken) {
+     this.canvas.style.cursor = CURSOR_TYPE.CROSSHAIR
+     // return
+     }
+     // const entityOnMouseDownBounds = getEntityBounds(this.entityOnMouseDown)
+     const location = getTopLeftPointFromTransformedPoint(eventPoint, SizeByType[this.entityOnMouseDown.type])
 
-    const isPanel = this.getMouseOverPanel(event)
-    if (isPanel) {
+     this.entityOnMouseDown = EntityFactory.update(this.entityOnMouseDown, { location })
+     this.updateToBackOfArray(this.entityOnMouseDown, { location })
+     /!*    const entityUpdate = EntityFactory.updateForStore(this.entityOnMouseDown, { location })
+     this._entitiesStore.dispatch.updateCanvasEntity(entityUpdate)*!/
+     // this.
+     return
+     }*/
 
-      this._canvas.style.cursor = CURSOR_TYPE.POINTER
-      if (this.hoveringEntityId === isPanel.id) return
-      this.hoveringEntityId = isPanel.id
-      this.drawPanels()
-      return
+    const entityUnderMouse = this.getEntityUnderMouse(event)
+    if (entityUnderMouse) {
+      changeCanvasCursor(this.canvas, CURSOR_TYPE.POINTER)
+      if (this.appState.hoveringEntityId === entityUnderMouse.id) return
+      this.appState.hoveringEntityId = entityUnderMouse.id
+      this.drawCanvas()
     } else {
-      if (this.hoveringEntityId) {
-        this.hoveringEntityId = undefined
-        this.drawPanels()
+      if (this.appState.hoveringEntityId) {
+        this.appState.hoveringEntityId = undefined
+        this.drawCanvas()
       }
-      this._canvas.style.cursor = CURSOR_TYPE.AUTO
+      changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
     }
+    /*    const isPanel = this.getMouseOverPanel(event)
+     if (isPanel) {
+
+     this.canvas.style.cursor = CURSOR_TYPE.POINTER
+     if (this.hoveringEntityId === isPanel.id) return
+     this.hoveringEntityId = isPanel.id
+     this.drawPanels()
+     return
+     } else {
+     if (this.hoveringEntityId) {
+     this.hoveringEntityId = undefined
+     this.drawPanels()
+     }
+     this.canvas.style.cursor = CURSOR_TYPE.AUTO
+     }*/
   }
 
   /**
@@ -698,23 +545,21 @@ export class DesignCanvasDirective
    * @private
    */
 
-  private wheelScrollHandler(event: WheelEvent) {
-    const currentTransform = this._ctx.getTransform()
-    const currentScaleX = currentTransform.a
-    // const currentScaleY = currentTransform.d
-    this.canvasScale.setScale(currentScaleX)
+  wheelScrollHandler(event: WheelEvent) {
+    const currentScaleX = this.ctx.getTransform().a
 
     const zoom = event.deltaY < 0
       ? 1.1
       : 0.9
 
     const currentTransformedCursor = this._domPointService.getTransformedPointFromEvent(event)
-    this._ctx.translate(currentTransformedCursor.x, currentTransformedCursor.y)
-    this._ctx.scale(zoom, zoom)
-    this._ctx.translate(-currentTransformedCursor.x, -currentTransformedCursor.y)
+    this.ctx.translate(currentTransformedCursor.x, currentTransformedCursor.y)
+    this.ctx.scale(zoom, zoom)
+    this.ctx.translate(-currentTransformedCursor.x, -currentTransformedCursor.y)
     this.scaleElement.innerText = `Scale: ${currentScaleX}`
 
-    this.drawPanels()
+    // this.drawPanels()
+    this.drawCanvas()
     event.preventDefault()
   }
 
@@ -724,346 +569,444 @@ export class DesignCanvasDirective
    * @private
    */
 
-  private contextMenuHandler(event: PointerEvent) {
-    const mouseOverPanel = this.getMouseOverPanel(event)
-    if (mouseOverPanel) {
-      if (!isPanel(mouseOverPanel)) return
-      const panel = mouseOverPanel
+  contextMenuHandler(event: PointerEvent) {
+    const entityUnderMouse = this.getEntityUnderMouse(event)
+    // const mouseOverPanel = this.getMouseOverPanel(event)
+    if (entityUnderMouse) {
+      // if (!isPanel(mouseOverPanel)) return
+      // const panel = mouseOverPanel
       this._renderer.setStyle(this.menu, 'display', 'initial')
-      this._renderer.setStyle(this.menu, 'top', `${event.offsetY + panel.height / 2}px`)
-      this._renderer.setStyle(this.menu, 'left', `${event.offsetX + panel.width / 2}px`)
-      this._renderer.setAttribute(this.menu, 'data-id', panel.id)
-      this._renderer.setAttribute(this.menu, 'data-type', panel.type)
-      this._renderer.setAttribute(this.menu, 'data-stringId', panel.stringId)
-      this._renderer.setAttribute(this.menu, 'data-angle', panel.angle.toString())
+      this._renderer.setStyle(this.menu, 'top', `${event.offsetY + entityUnderMouse.height / 2}px`)
+      this._renderer.setStyle(this.menu, 'left', `${event.offsetX + entityUnderMouse.width / 2}px`)
+      this._renderer.setAttribute(this.menu, 'data-id', entityUnderMouse.id)
+      this._renderer.setAttribute(this.menu, 'data-type', entityUnderMouse.type)
+      this._renderer.setAttribute(this.menu, 'data-angle', entityUnderMouse.angle.toString())
+      if (!isPanel(entityUnderMouse)) return
+      this._renderer.setAttribute(this.menu, 'data-stringId', entityUnderMouse.stringId)
     }
   }
 
-  private areAnyPanelRectsNearClick(point: Point) {
-    const transformedPoint = this._domPointService.getTransformedPointFromXy(point)
-    for (const object of this.panels) {
-      const { location, width, height } = object
-      const { x, y } = location
-      const xDistance = Math.abs(transformedPoint.x - (x + width / 2))
-      const yDistance = Math.abs(transformedPoint.y - (y + height / 2))
-      const distance = Math.sqrt(xDistance ** 2 + yDistance ** 2)
-      const threshold = xDistance > yDistance
-        ? object.width
-        : object.height
-      if (distance <= threshold) {
-        console.log('isNearClick: ____ near click')
-        return true
+  /**
+   * Key Up handler
+   * @private
+   * @param event
+   */
+  keyUpHandler(event: KeyboardEvent) {
+    switch (event.key) {
+      case KEYS.ESCAPE:
+        this._selected.clearSelectedState()
+        break
+      case KEYS.X: {
+        if (this._selected.multiSelected.length > 0) {
+          this._stringsService.createStringWithPanels(this._selected.getMultiSelectedByType(ENTITY_TYPE.Panel), this.strings)
+
+        }
       }
-    }
-    return false
-  }
-
-  private anyObjectsNearLocationExcludingGrabbed(point: TransformedPoint, grabbed: CanvasEntity) {
-    // const transformedPoint = this._domPointService.getTransformedPointFromXy(point)
-    // const scale = this._domPointService.scale
-    for (const entity of this.panels) {
-      if (entity.id === grabbed.id) continue
-      const entityBounds = getEntityBounds(entity)
-      return isPointInsideBounds(point, entityBounds)
-      // return
-      /*     const { location, width, height } = object
-       const transformedLocation = this._domPointService.getTransformedPointFromXy(location)
-       const { x, y } = transformedLocation
-       const xDistance = Math.abs(transformedPoint.x - (x + width / 2) + 10)
-       const yDistance = Math.abs(transformedPoint.y - (y + height / 2) + 10)
-       const distance = Math.sqrt(xDistance ** 2 + yDistance ** 2)
-       const threshold = xDistance > yDistance
-       ? object.width
-       : object.height
-       if (distance <= threshold) {
-       console.log('isNearClick: ____ near click')
-       return true
-       }*/
-    }
-    return false
-  }
-
-  private animateSelectionBox(event: MouseEvent) {
-    if (!this.selectionBoxStartPoint || !this.isSelectionBoxDragging || !event.altKey) {
-      throw new Error('selection box not started')
-    }
-    const mousePointToScale = this._domPointService.getTransformedPointFromEvent(event)
-    const width = mousePointToScale.x - this.selectionBoxStartPoint.x
-    const height = mousePointToScale.y - this.selectionBoxStartPoint.y
-
-    this.drawPanels()
-    this._ctx.beginPath()
-    this._ctx.globalAlpha = 0.4
-    this._ctx.fillStyle = this.selectionBoxFillStyle
-    this._ctx.rect(this.selectionBoxStartPoint.x, this.selectionBoxStartPoint.y, width, height)
-    this._ctx.fill()
-    this._ctx.stroke()
-    this._ctx.closePath()
-    this._ctx.globalAlpha = 1.0
-    this._ctx.fillStyle = this.defaultPanelFillStyle
-  }
-
-  private animateCreationBox(event: MouseEvent) {
-    if (!this.selectionBoxStartPoint || !this.isSelectionBoxDragging || !event.altKey) {
-      throw new Error('selection box not started')
-    }
-    const mousePointToScale = this._domPointService.getTransformedPointFromEvent(event)
-    const spots = this._objectPositioning.getAllAvailableEntitySpotsBetweenTwoPoints(this.selectionBoxStartPoint, mousePointToScale)
-    if (!spots) return
-    const diagonalDirection = getDiagonalDirectionFromTwoPoints(this.selectionBoxStartPoint, mousePointToScale)
-    if (!diagonalDirection) return
-    const entitySize = SizeByType[ENTITY_TYPE.Panel]
-
-    const width = mousePointToScale.x - this.selectionBoxStartPoint.x
-    const height = mousePointToScale.y - this.selectionBoxStartPoint.y
-
-    this.drawPanels()
-    this._ctx.save()
-    this._ctx.beginPath()
-    this._ctx.globalAlpha = 0.4
-    this._ctx.fillStyle = this.creationBoxFillStyle
-    this._ctx.rect(this.selectionBoxStartPoint.x, this.selectionBoxStartPoint.y, width, height)
-    // this._ctx.rect(this.creationBoxStartPoint.x, this.creationBoxStartPoint.y, width, height)
-    this._ctx.fill()
-    this._ctx.stroke()
-    this._ctx.restore()
-    this._ctx.save()
-
-    spots.forEach(spot => {
-      this._ctx.beginPath()
-      this._ctx.save()
-      this._ctx.beginPath()
-      this._ctx.globalAlpha = 0.4
-      this._ctx.fillStyle = spot.vacant
-        ? this.previewPanelFillStyle
-        : this.takenSpotFillStyle
-      this._ctx.rect(spot.x, spot.y, entitySize.width, entitySize.height)
-      this._ctx.fill()
-      this._ctx.stroke()
-      this._ctx.restore()
-    })
-    this._ctx.restore()
-  }
-
-  private getStartingSpotForCreationBox(direction: DiagonalDirection, size: ObjectSize) {
-    switch (direction) {
-      case DIAGONAL_DIRECTION.TopLeftToBottomRight:
-        return {
-          x: 0,
-          y: 0,
+        break
+      case KEYS.R: {
+        console.log('r key up')
+        if (this._objectPositioning.entityToRotateId) {
+          this._objectPositioning.clearEntityToRotate()
+          return
         }
-      case DIAGONAL_DIRECTION.TopRightToBottomLeft:
-        return {
-          x: -size.width,
-          y: 0,
+        if (this._objectPositioning.multipleToRotateIds.length > 0 && !this._objectPositioning.entityToRotateId) {
+          this._objectPositioning.clearEntityToRotate()
+          return
         }
-      case DIAGONAL_DIRECTION.BottomLeftToTopRight:
-        return {
-          x: 0,
-          y: -size.height,
+        if (this._selected.selected && !this._objectPositioning.entityToRotateId) {
+          this._objectPositioning.setEntityToRotate(this._selected.selected.id, this.currentTransformedCursor)
+          return
         }
-      case DIAGONAL_DIRECTION.BottomRightToTopLeft:
-        return {
-          x: -size.width,
-          y: -size.height,
+
+        if (this._selected.multiSelected.length > 0) {
+          const multiSelectedIds = this._selected.multiSelected.map(entity => entity.id)
+          this._objectPositioning.setMultipleToRotate(multiSelectedIds, this.currentTransformedCursor)
+          return
         }
-    }
-  }
-
-  private getMouseOverPanel(event: MouseEvent) {
-    const mouseOverPanels = this._panels.filter(panel => this.isMouseOverPanel(event, panel))
-    return mouseOverPanels[mouseOverPanels.length - 1]
-  }
-
-  private isMouseOverPanel(event: MouseEvent, panel: CanvasEntity) {
-    const { x, y } = this._domPointService.getTransformedPointFromEvent(event)
-    const { location, width, height } = panel
-    return x >= location.x && x <= location.x + width && y >= location.y && y <= location.y + height
-  }
-
-  private getEntitiesUnderMouse(event: MouseEvent) {
-    return this.panels.filter(entity => this.isMouseOverEntityBounds(event, entity))
-  }
-
-  private getEntityUnderMouse(event: MouseEvent) {
-    const entitiesUnderMouse = this.panels.filter(entity => this.isMouseOverEntityBounds(event, entity))
-    return entitiesUnderMouse[entitiesUnderMouse.length - 1]
-  }
-
-  private isMouseOverEntityBounds(event: MouseEvent, entity: CanvasEntity) {
-    const point = this._domPointService.getTransformedPointFromEvent(event)
-    const entityBounds = getEntityBounds(entity)
-    return isPointInsideBounds(point, entityBounds)
-  }
-
-  private drawPanel(panel: CanvasEntity) {
-    assertIsPanel(panel)
-
-    let fillStyle = this.defaultPanelFillStyle
-
-    const isBeingHovered = this.hoveringEntityId === panel.id
-    if (isBeingHovered) {
-      fillStyle = '#17fff3'
-    }
-
-    const isSingleSelected = this._selected.selected && this._selected.selected.id === panel.id
-    const isMultiSelected = this._selected.multiSelected && this._selected.multiSelected.find(selected => selected.id === panel.id)
-
-    if (isSingleSelected) {
-      fillStyle = '#ff6e78'
-    }
-
-    if (isMultiSelected) {
-      fillStyle = '#ff6e78'
-    }
-
-    const stringIsSelected = !!this._selected.selectedStringId
-    const panelStringIsSelected = this._selected.selectedStringId === panel.stringId
-    if (panelStringIsSelected) {
-      const panelString = this._strings.find(string => string.id === panel.stringId)
-      assertNotNull(panelString, 'panelString should not be null')
-      if (this._selected.selectedStringId === panelString.id) {
-        fillStyle = panelString.color
       }
-    }
-    const otherPanelStringIsSelected = stringIsSelected && !panelStringIsSelected
-    if (otherPanelStringIsSelected) {
-      fillStyle = '#afb8d8'
-    }
-
-    const isInMultiRotate = this._objectPositioning.multipleToRotateIds.includes(panel.id)
-    const isInSingleRotate = this._objectPositioning.entityToRotateId === panel.id
-
-    if (isInMultiRotate) {
-      // this.handleMultiRotateDrawDifferently()
-      return
-    }
-    if (isInSingleRotate) {
-      return
-      // return this.handleSingleRotateDraw(panel)
-    }
-
-    this._ctx.save()
-    this._ctx.fillStyle = fillStyle
-    this._ctx.translate(panel.location.x + panel.width / 2, panel.location.y + panel.height / 2)
-    this._ctx.rotate(panel.angle)
-    // this._ctx.rotate(panel.angle * Math.PI / 180)
-    this._ctx.beginPath()
-    this._ctx.rect(-panel.width / 2, -panel.height / 2, panel.width, panel.height)
-    this._ctx.fill()
-    this._ctx.stroke()
-
-    this._ctx.restore()
-  }
-
-  private handleSingleRotateDraw(panel: CanvasPanel) {
-    this._ctx.save()
-    this._ctx.translate(panel.location.x + panel.width / 2, panel.location.y + panel.height / 2)
-    assertNotNull(this._objectPositioning.entityToRotateAngle, 'entityToRotateAngle should not be null')
-    this._ctx.rotate(this._objectPositioning.entityToRotateAngle)
-    // this._ctx.rotate(this._objectPositioning.entityToRotateAngle * Math.PI / 180)
-    this._ctx.beginPath()
-    this._ctx.rect(-panel.width / 2, -panel.height / 2, panel.width, panel.height)
-    this._ctx.fill()
-    this._ctx.stroke()
-    // this._ctx.closePath()
-    this._ctx.restore()
-  }
-
-  drawWithUpdated() {
-    if (this._objectPositioning.singleRotateMode && this._objectPositioning.entityToRotateId) {
-      const panel = this._panels.find(panel => panel.id === this._objectPositioning.entityToRotateId)
-      assertNotNull(panel, 'panel should not be null')
-      this.handleSingleRotateDraw(panel)
-      return
-    }
-
-    if (!this._objectPositioning.areAnyEntitiesInRotate) return
-    const multipleToRotateIds = this._objectPositioning.multipleToRotateIds
-    const entities = this._panels.filter(panel => multipleToRotateIds.includes(panel.id))
-    this._ctx.save()
-    entities.forEach(entity => {
-      this._ctx.save()
-      const angle = this._objectPositioning.multipleToRotateAdjustedAngle.get(entity.id)
-      const location = this._objectPositioning.multipleToRotateAdjustedLocation.get(entity.id)
-      assertNotNull(angle)
-      assertNotNull(location)
-      this._ctx.translate(location.x + entity.width / 2, location.y + entity.height / 2)
-      this._ctx.rotate(angle)
-
-      this._ctx.beginPath()
-      if (entity.id === entities[0].id) {
-        this._ctx.fillStyle = '#17fff3'
+        break
+      case KEYS.C: {
+        if (this._mode.mode === CANVAS_MODE.CREATE) {
+          this._mode.setMode(CANVAS_MODE.SELECT)
+          return
+        }
+        this._mode.setMode(CANVAS_MODE.CREATE)
       }
-      this._ctx.rect(-entity.width / 2, -entity.height / 2, entity.width, entity.height)
-      this._ctx.fill()
-      this._ctx.stroke()
-      this._ctx.restore()
-    })
+        break
 
-    this._ctx.restore()
-  }
-
-  private drawPivotPoint() {
-    if (!this._objectPositioning.pivotPoint) return
-    this._ctx.save()
-    this._ctx.beginPath()
-    this._ctx.strokeStyle = '#ff6e78'
-    this._ctx.fillStyle = '#ff6e78'
-    this._ctx.lineWidth = 1
-    // assertNotNull(this._objectPositioning.pivotPoint)
-    this._ctx.arc(this._objectPositioning.pivotPoint.x, this._objectPositioning.pivotPoint.y, 5, 0, 2 * Math.PI)
-    this._ctx.closePath()
-    this._ctx.fill()
-    this._ctx.stroke()
-    this._ctx.restore()
-  }
-
-  private drawPanels() {
-    this._delayedLogger.log('draw panels')
-    const rotateState: RotateState = {
-      singleToRotateId:            this._objectPositioning.entityToRotateId,
-      singleToRotateAngle:         this._objectPositioning.entityToRotateAngle,
-      multipleToRotateIds:         this._objectPositioning.multipleToRotateIds,
-      multipleToRotateAngleMap:    this._objectPositioning.multipleToRotateAdjustedAngle,
-      multipleToRotateLocationMap: this._objectPositioning.multipleToRotateAdjustedLocation,
     }
-    drawEntities(
-      this._ctx,
-      this._canvas,
-      this._panels,
-      this.appState,
-      rotateState,
-    )
-    // this._draw.drawEntities()
-    /*    this.resetCanvas()
-     this.drawPivotPoint()
-     this._ctx.beginPath()
-     this._panels.forEach(panel => {
-     this.drawPanel(panel)
-     })
-     this.drawWithUpdated()
-     // this.handleMultiRotateDrawDifferently()
-     // this.handleMultiRotateDrawV2()
-     this._ctx.closePath()*/
+    /*    if (event.key === 'Escape') {
+     this._selected.clearSelectedState()
+     }
+     /   if (event.shiftKey) {
+     console.log('shift key up')
+     // this._selected.isMultiSelectDragging = false
+     }*!/
+     if (event.key === KEYS.R) {
+     console.log('r key up')
+     if (this._objectPositioning.entityToRotateId) {
+     this._objectPositioning.clearEntityToRotate()
+     return
+     }
+     if (this._objectPositioning.multipleToRotateIds.length > 0 && !this._objectPositioning.entityToRotateId) {
+     this._objectPositioning.clearEntityToRotate()
+     return
+     }
+     if (this._selected.selected && !this._objectPositioning.entityToRotateId) {
+     this._objectPositioning.setEntityToRotate(this._selected.selected.id, this.currentTransformedCursor)
+     return
+     }
+
+     if (this._selected.multiSelected.length > 0) {
+     const multiSelectedIds = this._selected.multiSelected.map(entity => entity.id)
+     this._objectPositioning.setMultipleToRotate(multiSelectedIds, this.currentTransformedCursor)
+     return
+     }
+
+     }*/
+    /*  if (event.key === KEYS.G) {
+     this.drawPanels()
+     }
+     if (event.key === KEYS.X) {
+     if (this._selected.multiSelected.length > 0) {
+     this._stringsService.createStringWithPanels(this._selected.getMultiSelectedByType(ENTITY_TYPE.Panel), this.strings)
+
+     }
+     }
+     if (event.key === KEYS.C) {
+     if (this._mode.mode === CANVAS_MODE.CREATE) {
+     this._mode.setMode(CANVAS_MODE.SELECT)
+     return
+     }
+     this._mode.setMode(CANVAS_MODE.CREATE)
+     }*/
   }
 
-  private resetCanvas() {
-    this._ctx.save()
-    this._ctx.setTransform(1, 0, 0, 1, 0, 0)
-    this._ctx.clearRect(0, 0, this._canvas.width, this._canvas.height)
-    this._ctx.restore()
-  }
+  /*  private areAnyPanelRectsNearClick(point: Point) {
+   const transformedPoint = this._domPointService.getTransformedPointFromXy(point)
+   for (const object of this.entities) {
+   const { location, width, height } = object
+   const { x, y } = location
+   const xDistance = Math.abs(transformedPoint.x - (x + width / 2))
+   const yDistance = Math.abs(transformedPoint.y - (y + height / 2))
+   const distance = Math.sqrt(xDistance ** 2 + yDistance ** 2)
+   const threshold = xDistance > yDistance
+   ? object.width
+   : object.height
+   if (distance <= threshold) {
+   console.log('isNearClick: ____ near click')
+   return true
+   }
+   }
+   return false
+   }*/
 
-  private drawPanelsNoClear() {
-    console.log('draw panels no clear')
-    this._ctx.beginPath()
-    this._panels.forEach(panel => {
-      this.drawPanel(panel)
-    })
-    this._ctx.closePath()
-  }
+  /*  private anyObjectsNearLocationExcludingGrabbed(point: TransformedPoint, grabbed: CanvasEntity) {
+   // const transformedPoint = this._domPointService.getTransformedPointFromXy(point)
+   // const scale = this._domPointService.scale
+   for (const entity of this.entities) {
+   if (entity.id === grabbed.id) continue
+   const entityBounds = getEntityBounds(entity)
+   return isPointInsideBounds(point, entityBounds)
+   // return
+   /!*     const { location, width, height } = object
+   const transformedLocation = this._domPointService.getTransformedPointFromXy(location)
+   const { x, y } = transformedLocation
+   const xDistance = Math.abs(transformedPoint.x - (x + width / 2) + 10)
+   const yDistance = Math.abs(transformedPoint.y - (y + height / 2) + 10)
+   const distance = Math.sqrt(xDistance ** 2 + yDistance ** 2)
+   const threshold = xDistance > yDistance
+   ? object.width
+   : object.height
+   if (distance <= threshold) {
+   console.log('isNearClick: ____ near click')
+   return true
+   }*!/
+   }
+   return false
+   }*/
 
+  /*  private animateSelectionBox(event: MouseEvent) {
+   if (!this.selectionBoxStartPoint || !this.isSelectionBoxDragging || !event.altKey) {
+   throw new Error('selection box not started')
+   }
+   const mousePointToScale = this._domPointService.getTransformedPointFromEvent(event)
+   const width = mousePointToScale.x - this.selectionBoxStartPoint.x
+   const height = mousePointToScale.y - this.selectionBoxStartPoint.y
+
+   this.drawPanels()
+   this.ctx.beginPath()
+   this.ctx.globalAlpha = 0.4
+   this.ctx.fillStyle = this.selectionBoxFillStyle
+   this.ctx.rect(this.selectionBoxStartPoint.x, this.selectionBoxStartPoint.y, width, height)
+   this.ctx.fill()
+   this.ctx.stroke()
+   this.ctx.closePath()
+   this.ctx.globalAlpha = 1.0
+   this.ctx.fillStyle = this.defaultPanelFillStyle
+   }*/
+
+  /* private animateCreationBox(event: MouseEvent) {
+   if (!this.selectionBoxStartPoint || !this.isSelectionBoxDragging || !event.altKey) {
+   throw new Error('selection box not started')
+   }
+   const mousePointToScale = this._domPointService.getTransformedPointFromEvent(event)
+   const spots = this._objectPositioning.getAllAvailableEntitySpotsBetweenTwoPoints(this.selectionBoxStartPoint, mousePointToScale)
+   if (!spots) return
+   const diagonalDirection = getDiagonalDirectionFromTwoPoints(this.selectionBoxStartPoint, mousePointToScale)
+   if (!diagonalDirection) return
+   const entitySize = SizeByType[ENTITY_TYPE.Panel]
+
+   const width = mousePointToScale.x - this.selectionBoxStartPoint.x
+   const height = mousePointToScale.y - this.selectionBoxStartPoint.y
+
+   this.drawPanels()
+   this.ctx.save()
+   this.ctx.beginPath()
+   this.ctx.globalAlpha = 0.4
+   this.ctx.fillStyle = this.creationBoxFillStyle
+   this.ctx.rect(this.selectionBoxStartPoint.x, this.selectionBoxStartPoint.y, width, height)
+   // this._ctx.rect(this.creationBoxStartPoint.x, this.creationBoxStartPoint.y, width, height)
+   this.ctx.fill()
+   this.ctx.stroke()
+   this.ctx.restore()
+   this.ctx.save()
+
+   spots.forEach(spot => {
+   this.ctx.beginPath()
+   this.ctx.save()
+   this.ctx.beginPath()
+   this.ctx.globalAlpha = 0.4
+   this.ctx.fillStyle = spot.vacant
+   ? this.previewPanelFillStyle
+   : this.takenSpotFillStyle
+   this.ctx.rect(spot.x, spot.y, entitySize.width, entitySize.height)
+   this.ctx.fill()
+   this.ctx.stroke()
+   this.ctx.restore()
+   })
+   this.ctx.restore()
+   }*/
+
+  /*  private getStartingSpotForCreationBox(direction: DiagonalDirection, size: ObjectSize) {
+   switch (direction) {
+   case DIAGONAL_DIRECTION.TopLeftToBottomRight:
+   return {
+   x: 0,
+   y: 0,
+   }
+   case DIAGONAL_DIRECTION.TopRightToBottomLeft:
+   return {
+   x: -size.width,
+   y: 0,
+   }
+   case DIAGONAL_DIRECTION.BottomLeftToTopRight:
+   return {
+   x: 0,
+   y: -size.height,
+   }
+   case DIAGONAL_DIRECTION.BottomRightToTopLeft:
+   return {
+   x: -size.width,
+   y: -size.height,
+   }
+   }
+   }*/
+
+  /*  private getMouseOverPanel(event: MouseEvent) {
+   const mouseOverPanels = this._entities.filter(panel => this.isMouseOverPanel(event, panel))
+   return mouseOverPanels[mouseOverPanels.length - 1]
+   }
+
+   private isMouseOverPanel(event: MouseEvent, panel: CanvasEntity) {
+   const { x, y } = this._domPointService.getTransformedPointFromEvent(event)
+   const { location, width, height } = panel
+   return x >= location.x && x <= location.x + width && y >= location.y && y <= location.y + height
+   }
+
+   private getEntitiesUnderMouse(event: MouseEvent) {
+   return this.entities.filter(entity => this.isMouseOverEntityBounds(event, entity))
+   }*/
+
+  /*  private getEntityUnderMouse(event: MouseEvent) {
+   const entitiesUnderMouse = this.entities.filter(entity => this.isMouseOverEntityBounds(event, entity))
+   return entitiesUnderMouse[entitiesUnderMouse.length - 1]
+   }
+
+   private isMouseOverEntityBounds(event: MouseEvent, entity: CanvasEntity) {
+   const point = this._domPointService.getTransformedPointFromEvent(event)
+   const entityBounds = getEntityBounds(entity)
+   return isPointInsideBounds(point, entityBounds)
+   }*/
+
+  /* private drawPanel(panel: CanvasEntity) {
+   assertIsPanel(panel)
+
+   let fillStyle = this.defaultPanelFillStyle
+
+   const isBeingHovered = this.hoveringEntityId === panel.id
+   if (isBeingHovered) {
+   fillStyle = '#17fff3'
+   }
+
+   const isSingleSelected = this._selected.selected && this._selected.selected.id === panel.id
+   const isMultiSelected = this._selected.multiSelected && this._selected.multiSelected.find(selected => selected.id === panel.id)
+
+   if (isSingleSelected) {
+   fillStyle = '#ff6e78'
+   }
+
+   if (isMultiSelected) {
+   fillStyle = '#ff6e78'
+   }
+
+   const stringIsSelected = !!this._selected.selectedStringId
+   const panelStringIsSelected = this._selected.selectedStringId === panel.stringId
+   if (panelStringIsSelected) {
+   const panelString = this._strings.find(string => string.id === panel.stringId)
+   assertNotNull(panelString, 'panelString should not be null')
+   if (this._selected.selectedStringId === panelString.id) {
+   fillStyle = panelString.color
+   }
+   }
+   const otherPanelStringIsSelected = stringIsSelected && !panelStringIsSelected
+   if (otherPanelStringIsSelected) {
+   fillStyle = '#afb8d8'
+   }
+
+   const isInMultiRotate = this._objectPositioning.multipleToRotateIds.includes(panel.id)
+   const isInSingleRotate = this._objectPositioning.entityToRotateId === panel.id
+
+   if (isInMultiRotate) {
+   // this.handleMultiRotateDrawDifferently()
+   return
+   }
+   if (isInSingleRotate) {
+   return
+   // return this.handleSingleRotateDraw(panel)
+   }
+
+   this.ctx.save()
+   this.ctx.fillStyle = fillStyle
+   this.ctx.translate(panel.location.x + panel.width / 2, panel.location.y + panel.height / 2)
+   this.ctx.rotate(panel.angle)
+   // this._ctx.rotate(panel.angle * Math.PI / 180)
+   this.ctx.beginPath()
+   this.ctx.rect(-panel.width / 2, -panel.height / 2, panel.width, panel.height)
+   this.ctx.fill()
+   this.ctx.stroke()
+
+   this.ctx.restore()
+   }
+
+   private handleSingleRotateDraw(panel: CanvasPanel) {
+   this.ctx.save()
+   this.ctx.translate(panel.location.x + panel.width / 2, panel.location.y + panel.height / 2)
+   assertNotNull(this._objectPositioning.entityToRotateAngle, 'entityToRotateAngle should not be null')
+   this.ctx.rotate(this._objectPositioning.entityToRotateAngle)
+   // this._ctx.rotate(this._objectPositioning.entityToRotateAngle * Math.PI / 180)
+   this.ctx.beginPath()
+   this.ctx.rect(-panel.width / 2, -panel.height / 2, panel.width, panel.height)
+   this.ctx.fill()
+   this.ctx.stroke()
+   // this._ctx.closePath()
+   this.ctx.restore()
+   }
+
+   drawWithUpdated() {
+   if (this._objectPositioning.singleRotateMode && this._objectPositioning.entityToRotateId) {
+   const panel = this._entities.find(panel => panel.id === this._objectPositioning.entityToRotateId)
+   assertNotNull(panel, 'panel should not be null')
+   this.handleSingleRotateDraw(panel)
+   return
+   }
+
+   if (!this._objectPositioning.areAnyEntitiesInRotate) return
+   const multipleToRotateIds = this._objectPositioning.multipleToRotateIds
+   const entities = this._entities.filter(panel => multipleToRotateIds.includes(panel.id))
+   this.ctx.save()
+   entities.forEach(entity => {
+   this.ctx.save()
+   const angle = this._objectPositioning.multipleToRotateAdjustedAngle.get(entity.id)
+   const location = this._objectPositioning.multipleToRotateAdjustedLocation.get(entity.id)
+   assertNotNull(angle)
+   assertNotNull(location)
+   this.ctx.translate(location.x + entity.width / 2, location.y + entity.height / 2)
+   this.ctx.rotate(angle)
+
+   this.ctx.beginPath()
+   if (entity.id === entities[0].id) {
+   this.ctx.fillStyle = '#17fff3'
+   }
+   this.ctx.rect(-entity.width / 2, -entity.height / 2, entity.width, entity.height)
+   this.ctx.fill()
+   this.ctx.stroke()
+   this.ctx.restore()
+   })
+
+   this.ctx.restore()
+   }
+
+   private drawPivotPoint() {
+   if (!this._objectPositioning.pivotPoint) return
+   this.ctx.save()
+   this.ctx.beginPath()
+   this.ctx.strokeStyle = '#ff6e78'
+   this.ctx.fillStyle = '#ff6e78'
+   this.ctx.lineWidth = 1
+   // assertNotNull(this._objectPositioning.pivotPoint)
+   this.ctx.arc(this._objectPositioning.pivotPoint.x, this._objectPositioning.pivotPoint.y, 5, 0, 2 * Math.PI)
+   this.ctx.closePath()
+   this.ctx.fill()
+   this.ctx.stroke()
+   this.ctx.restore()
+   }
+
+   private drawPanels() {
+   this.delayedLogger.log('draw panels')
+   const rotateState: RotateState = {
+   singleToRotateId:            this._objectPositioning.entityToRotateId,
+   singleToRotateAngle:         this._objectPositioning.entityToRotateAngle,
+   multipleToRotateIds:         this._objectPositioning.multipleToRotateIds,
+   multipleToRotateAngleMap:    this._objectPositioning.multipleToRotateAdjustedAngle,
+   multipleToRotateLocationMap: this._objectPositioning.multipleToRotateAdjustedLocation,
+   }
+   drawEntities(
+   this.ctx,
+   this.canvas,
+   this._entities,
+   this.appState,
+   rotateState,
+   )
+   // this._draw.drawEntities()
+   /!*    this.resetCanvas()
+   this.drawPivotPoint()
+   this._ctx.beginPath()
+   this._panels.forEach(panel => {
+   this.drawPanel(panel)
+   })
+   this.drawWithUpdated()
+   // this.handleMultiRotateDrawDifferently()
+   // this.handleMultiRotateDrawV2()
+   this._ctx.closePath()*!/
+   }
+
+   private resetCanvas() {
+   this.ctx.save()
+   this.ctx.setTransform(1, 0, 0, 1, 0, 0)
+   this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+   this.ctx.restore()
+   }
+
+   private drawPanelsNoClear() {
+   console.log('draw panels no clear')
+   this.ctx.beginPath()
+   this._entities.forEach(panel => {
+   this.drawPanel(panel)
+   })
+   this.ctx.closePath()
+   }
+   */
   /*getAllElementsBetweenTwoPoints(
    point1: TransformedPoint,
    point2: TransformedPoint,
@@ -1129,38 +1072,38 @@ export class DesignCanvasDirective
    }))*!/
    }*/
 
-  private updateToBackOfArray(entity: CanvasEntity, changes: Partial<CanvasEntity>) {
-    const index = this._panels.findIndex((panel) => panel.id === entity.id)
-    const newPanel = { ...entity, ...changes }
-    this._panels.splice(index, 1)
-    this._panels.push(newPanel as CanvasPanel)
-    this.drawPanels()
-  }
+  /*  private updateToBackOfArray(entity: CanvasEntity, changes: Partial<CanvasEntity>) {
+   const index = this._entities.findIndex((panel) => panel.id === entity.id)
+   const newPanel = { ...entity, ...changes }
+   this._entities.splice(index, 1)
+   this._entities.push(newPanel as CanvasPanel)
+   this.drawPanels()
+   }
 
-  private updateToLocalArray(entityId: string, changes: Partial<CanvasPanel>) {
-    const panel = this._panels.find((panel) => panel.id === entityId)
-    const index = this._panels.findIndex((panel) => panel.id === panel.id)
-    const newPanel = { ...panel, ...changes }
-    this._panels.splice(index, 1)
-    this._panels.push(newPanel as CanvasPanel)
-    console.log('updated local array', newPanel)
-    this.drawPanels()
-    /*    const panel = this._panels.find((panel) => panel.id === entityId)
-     const index = this._panels.findIndex((panel) => panel.id === panel.id)
-     const newPanel = { ...panel, ...changes }
-     // update at current index
-     this._panels.splice(index, 1, newPanel as CanvasPanel)
-     // this._panels.splice(index, 1, newPanel as CanvasPanel)
-     this.drawPanels()*/
-  }
+   private updateToLocalArray(entityId: string, changes: Partial<CanvasPanel>) {
+   const panel = this._entities.find((panel) => panel.id === entityId)
+   const index = this._entities.findIndex((panel) => panel.id === panel.id)
+   const newPanel = { ...panel, ...changes }
+   this._entities.splice(index, 1)
+   this._entities.push(newPanel as CanvasPanel)
+   console.log('updated local array', newPanel)
+   this.drawPanels()
+   /!*    const panel = this._panels.find((panel) => panel.id === entityId)
+   const index = this._panels.findIndex((panel) => panel.id === panel.id)
+   const newPanel = { ...panel, ...changes }
+   // update at current index
+   this._panels.splice(index, 1, newPanel as CanvasPanel)
+   // this._panels.splice(index, 1, newPanel as CanvasPanel)
+   this.drawPanels()*!/
+   }*/
+  /*
+   private getLiveSelectedPanel() {
+   const selectedId = this._selected.selected?.id
+   assertNotNull(selectedId)
+   return this._entities.find((panel) => panel.id === selectedId) as CanvasEntity
+   }
 
-  private getLiveSelectedPanel() {
-    const selectedId = this._selected.selected?.id
-    assertNotNull(selectedId)
-    return this._panels.find((panel) => panel.id === selectedId) as CanvasEntity
-  }
-
-  private getLiveSelectedPanelById(id: string) {
-    return this._panels.find((panel) => panel.id === id) as CanvasEntity
-  }
+   private getLiveSelectedPanelById(id: string) {
+   return this._entities.find((panel) => panel.id === id) as CanvasEntity
+   }*/
 }

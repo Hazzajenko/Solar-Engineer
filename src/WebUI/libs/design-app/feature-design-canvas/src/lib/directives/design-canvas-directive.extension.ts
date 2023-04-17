@@ -9,16 +9,29 @@ import {
   CanvasSelectedService,
   CanvasStringsService,
   CanvasStringsStore,
+  CanvasViewPositioningService,
   DomPointService,
   DragBoxService,
   DrawService,
 } from '../services'
 import { CanvasAppState, initialCanvasAppState } from '../store'
-import { CANVAS_COLORS, CanvasEntity, CanvasPanel, CanvasString, TransformedPoint } from '../types'
-import { getEntityBounds, isPointInsideBounds } from '../utils'
+import {
+  CANVAS_COLORS,
+  CanvasEntity,
+  CanvasPanel,
+  CanvasString,
+  SizeByType,
+  TransformedPoint,
+} from '../types'
+import {
+  getBoundsFromMouseEvent,
+  getEntityBounds,
+  isEntityOverlappingWithBounds,
+  isPointInsideBounds,
+} from '../utils'
 import { RotateState } from '../utils/draw'
 import { ElementRef, inject, NgZone, Renderer2 } from '@angular/core'
-import { ENTITY_TYPE } from '@design-app/shared'
+import { ENTITY_TYPE, EntityType } from '@design-app/shared'
 import {
   ClickEvent,
   ContextMenuEvent,
@@ -27,6 +40,7 @@ import {
   MouseDownEvent,
   MouseMoveEvent,
   MouseUpEvent,
+  Point,
 } from '@shared/data-access/models'
 import { DelayedLogger } from '@shared/logger'
 import { assertNotNull, OnDestroyDirective } from '@shared/utils'
@@ -44,13 +58,13 @@ export abstract class DesignCanvasDirectiveExtension {
   protected _renderer = inject(Renderer2)
   protected _canvasElementService = inject(CanvasElementService)
   protected _objectPositioning = inject(CanvasObjectPositioningService)
+  protected _view = inject(CanvasViewPositioningService)
   protected _mode = inject(CanvasModeService)
   protected _drag = inject(DragBoxService)
   protected _draw = inject(DrawService)
-  // private _selected = new CanvasSelectedService()
   protected _selected = inject(CanvasSelectedService)
   protected _domPointService = inject(DomPointService)
-  protected _delayedLogger = new DelayedLogger()
+  protected delayedLogger = new DelayedLogger()
   protected mouseDownTimeOut: ReturnType<typeof setTimeout> | undefined
   protected mouseUpTimeOut: ReturnType<typeof setTimeout> | undefined
 
@@ -60,6 +74,13 @@ export abstract class DesignCanvasDirectiveExtension {
   protected stringStats!: HTMLDivElement
   protected panelStats!: HTMLDivElement
   protected menu!: HTMLDivElement
+  protected entityOnMouseDownId?: string
+  protected entityOnMouseDown?: {
+    id: string
+    type: EntityType
+  }
+  // protected entityOnMouseDownType?: Ent
+  protected entityOnMouseDownLocation?: Point
   protected currentTransformedCursor!: TransformedPoint
   protected _appStateStore = inject(CanvasAppStateStore)
   private _appState: CanvasAppState = initialCanvasAppState
@@ -86,14 +107,14 @@ export abstract class DesignCanvasDirectiveExtension {
 
   protected set strings(value: CanvasString[]) {
     this._strings = value
-    this._delayedLogger.log('set strings', value)
+    this.delayedLogger.log('set strings', value)
     this.stringStats.innerText = `Strings: ${this._strings.length}`
     this.drawCanvas()
   }
 
   protected set entities(value: CanvasEntity[]) {
     this._entities = value as CanvasPanel[]
-    this._delayedLogger.log('set panels', value)
+    this.delayedLogger.log('set panels', value)
     this.panelStats.innerText = `Panels: ${this._entities.length}`
     this.drawCanvas()
   }
@@ -105,7 +126,7 @@ export abstract class DesignCanvasDirectiveExtension {
   protected height = this.canvas.height
   protected width = this.canvas.width
 
-  private appState$ = this._appStateStore.select.state$.pipe(
+  protected appState$ = this._appStateStore.select.state$.pipe(
     takeUntil(this._onDestroy.destroy$),
     tap((state) => {
       this._appState = state
@@ -113,23 +134,23 @@ export abstract class DesignCanvasDirectiveExtension {
     }),
   )
 
-  private entities$ = this._entitiesStore.select.entities$.pipe(
+  protected entities$ = this._entitiesStore.select.entities$.pipe(
     takeUntil(this._onDestroy.destroy$),
     tap((entities) => {
       const theSame = compareArrays(entities, this.entities)
       if (!theSame) {
-        this._delayedLogger.log('entities$ difference', theSame)
+        this.delayedLogger.log('entities$ difference', theSame)
         this.entities = entities.filter((entity) => entity.type === ENTITY_TYPE.Panel)
       }
     }),
   )
 
-  private strings$ = this._stringsStore.select.allStrings$.pipe(
+  protected strings$ = this._stringsStore.select.allStrings$.pipe(
     takeUntil(this._onDestroy.destroy$),
     tap((strings) => {
       const theSame = compareArrays(strings, this.strings)
       if (!theSame) {
-        this._delayedLogger.log('strings$ difference', strings)
+        this.delayedLogger.log('strings$ difference', strings)
         this.strings = strings
       }
     }),
@@ -212,13 +233,19 @@ export abstract class DesignCanvasDirectiveExtension {
 
   abstract keyUpHandler(event: KeyboardEvent): void
 
-  private anyObjectsNearLocationExcludingGrabbed(point: TransformedPoint, grabbed: CanvasEntity) {
+  protected anyObjectsNearLocationExcludingGrabbed(point: TransformedPoint, grabbedId: string) {
     for (const entity of this.entities) {
-      if (entity.id === grabbed.id) continue
+      if (entity.id === grabbedId) continue
       const entityBounds = getEntityBounds(entity)
       return isPointInsideBounds(point, entityBounds)
     }
     return false
+  }
+
+  protected anyEntitiesNearAreaOfClick(event: MouseEvent) {
+    const size = SizeByType[ENTITY_TYPE.Panel]
+    const mouseBoxBounds = getBoundsFromMouseEvent(event, size)
+    return !!this.entities.find((entity) => isEntityOverlappingWithBounds(entity, mouseBoxBounds))
   }
 
   protected getEntityUnderMouse(event: MouseEvent) {
@@ -241,6 +268,12 @@ export abstract class DesignCanvasDirectiveExtension {
       this.drawEntity(entity)
     })
     this.ctx.closePath()
+  }
+
+  protected drawCanvasCallback() {
+    return () => {
+      this.drawCanvas()
+    }
   }
 
   private drawEntity(entity: CanvasEntity) {
@@ -324,5 +357,11 @@ export abstract class DesignCanvasDirectiveExtension {
     this.ctx.setTransform(1, 0, 0, 1, 0, 0)
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
     this.ctx.restore()
+  }
+
+  protected updateToEndOfLocalArray(entityId: string, changes: Partial<CanvasEntity>) {
+    const panel = this.entities.find((panel) => panel.id === entityId)
+    const newPanel = { ...panel, ...changes } as CanvasEntity
+    this.entities = [...this.entities.filter((panel) => panel.id !== entityId), newPanel]
   }
 }

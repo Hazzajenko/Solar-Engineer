@@ -1,4 +1,4 @@
-import { eventToPointLocation, MiddlePoint, ObjectSize, SizeByType, TransformedPoint } from '@design-app/feature-design-canvas'
+import { eventToPointLocation, getTopLeftPointFromTransformedPoint, MiddlePoint, ObjectSize, SizeByType, TransformedPoint } from '@design-app/feature-design-canvas'
 import { ENTITY_TYPE, EntityType } from '@design-app/shared'
 import { Point } from '@shared/data-access/models'
 import { inject, Injectable } from '@angular/core'
@@ -64,15 +64,17 @@ export class DomPointService {
     const originalPoint = new DOMPoint(x, y)
     const transformFormedPoint = this.ctx.getTransform()
       .invertSelf()
-      .transformPoint(originalPoint)
-    const adjustedTransformed = this.adjustLocationToMiddleOfObjectByType(
-      transformFormedPoint,
-      type,
-    )
+      .transformPoint(originalPoint) as TransformedPoint
+
+    const topLeft = getTopLeftPointFromTransformedPoint(transformFormedPoint, SizeByType[type])
+    /*    const adjustedTransformed = this.adjustLocationToMiddleOfObjectByType(
+     transformFormedPoint,
+     type,
+     )*/
     return {
       ...transformFormedPoint,
-      x: adjustedTransformed.middleX,
-      y: adjustedTransformed.middleY,
+      x: topLeft.x,
+      y: topLeft.y,
     } as TransformedPoint
   }
 

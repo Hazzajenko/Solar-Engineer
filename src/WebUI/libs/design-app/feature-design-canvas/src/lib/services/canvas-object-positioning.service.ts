@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core'
-import { CanvasEntity, SizeByType, TransformedPoint, updateObjectByIdForStore } from '../types'
+import { CanvasEntity, EntityFactory, SizeByType, TransformedPoint, updateObjectByIdForStore } from '../types'
 import { DomPointService } from './dom-point.service'
 import { CanvasEntitiesStore } from './canvas-entities'
 import { CanvasElementService } from './canvas-element.service'
@@ -8,6 +8,7 @@ import { assertNotNull } from '@shared/utils'
 import { AngleRadians, DIAGONAL_DIRECTION, DiagonalDirection, filterEntitiesInsideBounds, getAngleInRadiansBetweenTwoPoints, getBoundsFromTwoPoints, getDiagonalDirectionFromTwoPoints, getEntityBounds, getStartingSpotForCreationBox, isEntityInsideTwoPoints, rotatePointOffPivot, SpotInBox } from '../utils'
 import { getEntitySizeOffset } from '../functions/object-sizing'
 import { ENTITY_TYPE } from '@design-app/shared'
+import { CanvasSelectedService } from './canvas-selected.service'
 
 @Injectable({
   providedIn: 'root',
@@ -16,6 +17,7 @@ export class CanvasObjectPositioningService {
   private _entitiesStore = inject(CanvasEntitiesStore)
   private _domPointService = inject(DomPointService)
   private _canvasElementsService = inject(CanvasElementService)
+  private _selected = inject(CanvasSelectedService)
 
   rotateStats: HTMLDivElement | undefined = undefined
 
@@ -40,6 +42,13 @@ export class CanvasObjectPositioningService {
 
   singleRotateMode = false
 
+  singleToMoveId: string | undefined = undefined
+  multipleToMoveIds: string[] = []
+
+  get isInSingleRotateMode() {
+    return !!this.entityToRotateId && this.singleRotateMode
+  }
+
   private get entities() {
     return this._entitiesStore.select.entities
   }
@@ -54,6 +63,39 @@ export class CanvasObjectPositioningService {
 
   get areAnyEntitiesInRotate() {
     return !!this.entityToRotateId || !!this.multipleToRotateIds.length
+  }
+
+  singleToMoveMouseUp(event: MouseEvent) {
+    // this.isDraggingEntity = false
+    assertNotNull(this.singleToMoveId)
+    const entityToMove = this._entitiesStore.select.entityById(this.singleToMoveId)
+    const location = this._domPointService.getTransformedPointToMiddleOfObjectFromEvent(event, entityToMove.type)
+    const updatedEntity = EntityFactory.updateForStore(entityToMove, { location })
+    this._entitiesStore.dispatch.updateCanvasEntity(updatedEntity)
+    this.singleToMoveId = undefined
+    console.log('entityOnMouseDown', updatedEntity)
+    /*    if (this.entityOnMouseDown) {
+     const location = this._domPointService.getTransformedPointToMiddleOfObjectFromEvent(event, this.entityOnMouseDown.type)
+     const updatedEntity = EntityFactory.updateForStore(this.entityOnMouseDown, { location })
+     this._entitiesStore.dispatch.updateCanvasEntity(updatedEntity)
+     this.entityOnMouseDown = undefined
+     }*/
+    return
+  }
+
+  handleSetEntitiesToRotate(event: MouseEvent) {
+    const selectedId = this._selected.selectedId
+    if (selectedId) {
+      const transformedPoint = this._domPointService.getTransformedPointFromEvent(event)
+      this.setEntityToRotate(selectedId, transformedPoint)
+      return
+    }
+    const multiSelectIds = this._selected.multiSelectedIds
+    if (multiSelectIds.length > 1) {
+      const transformedPoint = this._domPointService.getTransformedPointFromEvent(event)
+      this.setMultipleToRotate(multiSelectIds, transformedPoint)
+      return
+    }
   }
 
   setEntityToRotate(entityId: string, startPoint: TransformedPoint) {
