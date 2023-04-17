@@ -1,4 +1,5 @@
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
+import { Point } from '@shared/data-access/models'
 
 export const CanvasAppStateActions = createActionGroup({
   source: 'Canvas App State Store',
@@ -29,6 +30,9 @@ export const CanvasAppStateActions = createActionGroup({
     }>(),
     'Set Dragging Entity Id': props<{
       draggingEntityId: string | undefined
+    }>(),
+    'Set Dragging Entity Location': props<{
+      draggingEntityLocation: Point | undefined
     }>(),
     'Set Dragging Entity Ids': props<{
       draggingEntityIds: string[]

@@ -1,9 +1,9 @@
 import { Directive, OnInit } from '@angular/core'
 import { CURSOR_TYPE, KEYS } from '@shared/data-access/models'
-import { CANVAS_MODE, createPanel, isPanel, SizeByType } from '../types'
+import { CANVAS_MODE, createPanel, isPanel } from '../types'
 import { ENTITY_TYPE } from '@design-app/shared'
 import { assertNotNull, OnDestroyDirective } from '@shared/utils'
-import { changeCanvasCursor, dragBoxKeysDown, draggingScreenKeysDown, getTopLeftPointFromTransformedPoint, isContextMenu, isDraggingEntity, isMenuOpen, isMultiSelectDragging, isReadyToMultiDrag, multiSelectDraggingKeysDown, rotatingKeysDown } from '../utils'
+import { changeCanvasCursor, dragBoxKeysDown, draggingScreenKeysDown, isContextMenu, isDraggingEntity, isMenuOpen, isMultiSelectDragging, isReadyToMultiDrag, multiSelectDraggingKeysDown, rotatingKeysDown } from '../utils'
 import { DesignCanvasDirectiveExtension } from './design-canvas-directive.extension'
 
 @Directive({
@@ -82,7 +82,12 @@ export class DesignCanvasDirective
      }*/
     const entityUnderMouse = this.getEntityUnderMouse(event)
     if (entityUnderMouse) {
+      this.entityOnMouseDown = {
+        id:   entityUnderMouse.id,
+        type: entityUnderMouse.type,
+      }
       this.entityOnMouseDownId = entityUnderMouse.id
+      // this._appStateStore.dispatch.set
       this._selected.checkSelectedState(event, entityUnderMouse.id)
     }
 
@@ -166,9 +171,14 @@ export class DesignCanvasDirective
      this.drawPanels()
      return
      }*/
-    if (this._objectPositioning.singleToMoveId) {
-      this._objectPositioning.singleToMoveMouseUp(event)
+    if (this.entityOnMouseDown) {
+      this._objectPositioning.singleToMoveMouseUp(event, this.entityOnMouseDown, this.updateClientStateCallback())
+      this.entityOnMouseDown = undefined
     }
+    /*    if (this._objectPositioning.singleToMoveId) {
+     this._objectPositioning.singleToMoveMouseUp(event)
+     }*/
+
     /*    if (this.isDraggingEntity) {
      this.isDraggingEntity = false
      console.log('entityOnMouseDown', this.entityOnMouseDown)
@@ -466,27 +476,37 @@ export class DesignCanvasDirective
      this.drawPanels()
      return
      }*/
-    if (isDraggingEntity(event, this.entityOnMouseDown)) {
+
+    if (isDraggingEntity(event, this.entityOnMouseDown?.id)) {
       assertNotNull(this.entityOnMouseDown)
-      // this.canvas.style.cursor = CURSOR_TYPE.GRABBING
-      changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
-      // this.isDraggingEntity = true
-      // this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
-      // const location = this._domPointService.getTransformedPointToMiddleOfObjectFromEvent(event, this.entityOnMouseDown.type)
-      const eventPoint = this._domPointService.getTransformedPointFromEvent(event)
-      const isSpotTaken = this.anyObjectsNearLocationExcludingGrabbed(eventPoint, this.entityOnMouseDown.id)
-      if (isSpotTaken) {
-        // this.canvas.style.cursor = CURSOR_TYPE.CROSSHAIR
-        changeCanvasCursor(this.canvas, CURSOR_TYPE.CROSSHAIR)
-        // return
-      }
-      // const entityOnMouseDownBounds = getEntityBounds(this.entityOnMouseDown)
-      const location = getTopLeftPointFromTransformedPoint(eventPoint, SizeByType[this.entityOnMouseDown.type])
-      this.updateToEndOfLocalArray(this.entityOnMouseDown.id, { location })
-      // updateObjectByIdForStore()
-      // this.entityOnMouseDown = EntityFactory.update(this.entityOnMouseDown, { location })
-      // this.updateToBackOfArray(this.entityOnMouseDown, { location })
+      // changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
+      this._objectPositioning.singleToMoveMouseMove(event, this.entityOnMouseDown, this.drawCanvasCallback(), this.updateClientStateCallback())
+      return
+      // TODO remove
+      // this.drawCanvas()
+      // this
     }
+    /*    if (isDraggingEntity(event, this.entityOnMouseDown)) {
+     assertNotNull(this.entityOnMouseDown)
+     // this.canvas.style.cursor = CURSOR_TYPE.GRABBING
+     changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
+     // this.isDraggingEntity = true
+     // this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+     // const location = this._domPointService.getTransformedPointToMiddleOfObjectFromEvent(event, this.entityOnMouseDown.type)
+     const eventPoint = this._domPointService.getTransformedPointFromEvent(event)
+     const isSpotTaken = this.anyObjectsNearLocationExcludingGrabbed(eventPoint, this.entityOnMouseDown.id)
+     if (isSpotTaken) {
+     // this.canvas.style.cursor = CURSOR_TYPE.CROSSHAIR
+     changeCanvasCursor(this.canvas, CURSOR_TYPE.CROSSHAIR)
+     // return
+     }
+     // const entityOnMouseDownBounds = getEntityBounds(this.entityOnMouseDown)
+     const location = getTopLeftPointFromTransformedPoint(eventPoint, SizeByType[this.entityOnMouseDown.type])
+     this.updateToEndOfLocalArray(this.entityOnMouseDown.id, { location })
+     // updateObjectByIdForStore()
+     // this.entityOnMouseDown = EntityFactory.update(this.entityOnMouseDown, { location })
+     // this.updateToBackOfArray(this.entityOnMouseDown, { location })
+     }*/
     /*    if (this.entityOnMouseDown) {
      this.canvas.style.cursor = CURSOR_TYPE.GRABBING
      this.isDraggingEntity = true
@@ -513,11 +533,13 @@ export class DesignCanvasDirective
     if (entityUnderMouse) {
       changeCanvasCursor(this.canvas, CURSOR_TYPE.POINTER)
       if (this.appState.hoveringEntityId === entityUnderMouse.id) return
-      this.appState.hoveringEntityId = entityUnderMouse.id
+      this._appStateStore.dispatch.setHoveringEntityId(entityUnderMouse.id)
+      // this.appState.hoveringEntityId = entityUnderMouse.id
       this.drawCanvas()
     } else {
       if (this.appState.hoveringEntityId) {
-        this.appState.hoveringEntityId = undefined
+        // this.appState.hoveringEntityId = undefined
+        this._appStateStore.dispatch.setHoveringEntityId(undefined)
         this.drawCanvas()
       }
       changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)

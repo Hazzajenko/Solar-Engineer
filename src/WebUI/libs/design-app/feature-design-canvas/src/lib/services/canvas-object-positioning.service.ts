@@ -1,20 +1,24 @@
 import { inject, Injectable } from '@angular/core'
-import { CanvasEntity, EntityFactory, SizeByType, TransformedPoint, updateObjectByIdForStore } from '../types'
+import { CanvasEntity, EntityLocation, SizeByType, TransformedPoint, updateObjectByIdForStore } from '../types'
 import { DomPointService } from './dom-point.service'
 import { CanvasEntitiesStore } from './canvas-entities'
 import { CanvasElementService } from './canvas-element.service'
-import { Point } from '@shared/data-access/models'
+import { CURSOR_TYPE, Point } from '@shared/data-access/models'
 import { assertNotNull } from '@shared/utils'
-import { AngleRadians, DIAGONAL_DIRECTION, DiagonalDirection, filterEntitiesInsideBounds, getAngleInRadiansBetweenTwoPoints, getBoundsFromTwoPoints, getDiagonalDirectionFromTwoPoints, getEntityBounds, getStartingSpotForCreationBox, isEntityInsideTwoPoints, rotatePointOffPivot, SpotInBox } from '../utils'
+import { AngleRadians, changeCanvasCursor, DIAGONAL_DIRECTION, DiagonalDirection, filterEntitiesInsideBounds, getAngleInRadiansBetweenTwoPoints, getBoundsFromTwoPoints, getDiagonalDirectionFromTwoPoints, getEntityBounds, getStartingSpotForCreationBox, getTopLeftPointFromTransformedPoint, isEntityInsideTwoPoints, isPointInsideBounds, rotatePointOffPivot, SpotInBox } from '../utils'
 import { getEntitySizeOffset } from '../functions/object-sizing'
 import { ENTITY_TYPE } from '@design-app/shared'
 import { CanvasSelectedService } from './canvas-selected.service'
+import { TypeOfEntity } from '@design-app/feature-selected'
+import { CanvasAppStateStore } from './canvas-app-state'
+import { CanvasClientState } from './canvas-client-state.service'
 
 @Injectable({
   providedIn: 'root',
 })
 export class CanvasObjectPositioningService {
   private _entitiesStore = inject(CanvasEntitiesStore)
+  private _appStore = inject(CanvasAppStateStore)
   private _domPointService = inject(DomPointService)
   private _canvasElementsService = inject(CanvasElementService)
   private _selected = inject(CanvasSelectedService)
@@ -43,7 +47,22 @@ export class CanvasObjectPositioningService {
   singleRotateMode = false
 
   singleToMoveId: string | undefined = undefined
+  singleToMoveLocation: Point | undefined = undefined
+  singleToMove: EntityLocation | undefined = undefined
+
+  singleToMoveAnimationId: number | undefined = undefined
+  transformedMousePoint: TransformedPoint | undefined = undefined
+
   multipleToMoveIds: string[] = []
+
+  performanceStart: {
+    time: number
+    location: Point
+  }[] = []
+  performanceEnd: {
+    time: number
+    location: Point
+  }[] = []
 
   get isInSingleRotateMode() {
     return !!this.entityToRotateId && this.singleRotateMode
@@ -65,15 +84,64 @@ export class CanvasObjectPositioningService {
     return !!this.entityToRotateId || !!this.multipleToRotateIds.length
   }
 
-  singleToMoveMouseUp(event: MouseEvent) {
+  /*  singleToMoveMouseDown(singleToMove: TypeOfEntity) {
+   this.singleToMoveId = singleToMove.id
+   this.singleToMove = singleToMove
+   }*/
+
+  singleToMoveMouseMove(event: MouseEvent, entityOnMouseDown: TypeOfEntity, drawCanvasCallback: () => void, updateClientStateCallback: (changes: Partial<CanvasClientState>) => void) {
+    // assertNotNull(this.singleToMove)
+    changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
+    // console.log('singleToMoveMouseMove', this.canvas)
+    // this.canvas.style.cursor = CURSOR_TYPE.MOVE
+    const eventPoint = this._domPointService.getTransformedPointFromEvent(event)
+    const isSpotTaken = this.areAnyEntitiesNearbyExcludingGrabbed(eventPoint, entityOnMouseDown.id)
+    if (isSpotTaken) {
+      // TODO - change cursor to not allowed
+      // this.canvas.style.cursor = CURSOR_TYPE.CROSSHAIR
+      // changeCanvasCursor(this.canvas, CURSOR_TYPE.CROSSHAIR)
+      // return
+    }
+    const location = getTopLeftPointFromTransformedPoint(eventPoint, SizeByType[entityOnMouseDown.type])
+    // const update = updateObjectByIdForStore(entityOnMouseDown.id, { location })
+    // this._entitiesStore.dispatch.updateCanvasEntity(update)
+    // this.performanceStart.push({ time: performance.now(), location })
+    this.singleToMoveId = entityOnMouseDown.id
+    this.singleToMoveLocation = location
+    this.singleToMove = {
+      id:   entityOnMouseDown.id,
+      type: entityOnMouseDown.type,
+      location,
+    }
+    updateClientStateCallback({
+      singleToMoveEntity: {
+        id:   entityOnMouseDown.id,
+        type: entityOnMouseDown.type,
+        location,
+      },
+    })
+    drawCanvasCallback()
+  }
+
+  setPerformanceEnd(location: Point) {
+    const start = this.performanceStart.find((p) => p.location.x === location.x && p.location.y === location.y)
+    if (!start) return
+    console.log('performance', performance.now() - start.time)
+  }
+
+  singleToMoveMouseUp(event: MouseEvent, entityOnMouseDown: TypeOfEntity, updateClientStateCallback: (changes: Partial<CanvasClientState>) => void) {
     // this.isDraggingEntity = false
-    assertNotNull(this.singleToMoveId)
-    const entityToMove = this._entitiesStore.select.entityById(this.singleToMoveId)
-    const location = this._domPointService.getTransformedPointToMiddleOfObjectFromEvent(event, entityToMove.type)
-    const updatedEntity = EntityFactory.updateForStore(entityToMove, { location })
-    this._entitiesStore.dispatch.updateCanvasEntity(updatedEntity)
+    // assertNotNull(this.singleToMoveId)
+    // const entityToMove = this._entitiesStore.select.entityById(entityOnMouseDown.id)
+    const location = this._domPointService.getTransformedPointToMiddleOfObjectFromEvent(event, entityOnMouseDown.type)
+    // const updatedEntity = EntityFactory.updateForStore(entityToMove, { location })
+    const update = updateObjectByIdForStore(entityOnMouseDown.id, { location })
+    this._entitiesStore.dispatch.updateCanvasEntity(update)
     this.singleToMoveId = undefined
-    console.log('entityOnMouseDown', updatedEntity)
+    this.singleToMoveLocation = undefined
+    this.singleToMove = undefined
+    console.log('entityOnMouseDown', update)
+    updateClientStateCallback({ singleToMoveEntity: undefined })
     /*    if (this.entityOnMouseDown) {
      const location = this._domPointService.getTransformedPointToMiddleOfObjectFromEvent(event, this.entityOnMouseDown.type)
      const updatedEntity = EntityFactory.updateForStore(this.entityOnMouseDown, { location })
@@ -81,6 +149,18 @@ export class CanvasObjectPositioningService {
      this.entityOnMouseDown = undefined
      }*/
     return
+  }
+
+  multipleToMoveMouseDown(multipleToMoveIds: string[]) {
+    this.multipleToMoveIds = multipleToMoveIds
+  }
+
+  multipleToMoveMouseUp(event: MouseEvent) {
+    /*    const entitiesToMove = this._entitiesStore.select.entitiesByIds(this.multipleToMoveIds)
+     const location = this._domPointService.getTransformedPointToMiddleOfObjectFromEvent(event, ENTITY_TYPE.RECTANGLE)
+     const updatedEntities = entitiesToMove.map(entity => EntityFactory.updateForStore(entity, { location }))
+     this._entitiesStore.dispatch.updateCanvasEntities(updatedEntities)*/
+    this.multipleToMoveIds = []
   }
 
   handleSetEntitiesToRotate(event: MouseEvent) {
@@ -360,4 +440,10 @@ export class CanvasObjectPositioningService {
     })
   }
 
+  areAnyEntitiesNearbyExcludingGrabbed(
+    point: TransformedPoint,
+    grabbedId: string,
+  ) {
+    return !!this.entities.find((entity) => entity.id !== grabbedId && isPointInsideBounds(point, getEntityBounds(entity)))
+  }
 }

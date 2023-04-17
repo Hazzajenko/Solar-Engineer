@@ -44,6 +44,7 @@ export const isDraggingEntity = (
         id: string
         type: EntityType
       }
+    | string
     | undefined,
 ): boolean => {
   return event.button === 0 && !event.shiftKey && !event.ctrlKey && !!entityOnMouseDown

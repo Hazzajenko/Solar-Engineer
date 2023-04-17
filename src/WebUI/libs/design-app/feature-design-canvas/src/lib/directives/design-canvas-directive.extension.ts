@@ -2,6 +2,8 @@ import { compareArrays } from '../functions'
 import { setupCanvas } from '../functions/setup-canvas'
 import {
   CanvasAppStateStore,
+  CanvasClientState,
+  CanvasClientStateService,
   CanvasElementService,
   CanvasEntitiesStore,
   CanvasModeService,
@@ -20,6 +22,7 @@ import {
   CanvasEntity,
   CanvasPanel,
   CanvasString,
+  EntityLocation,
   SizeByType,
   TransformedPoint,
 } from '../types'
@@ -62,6 +65,7 @@ export abstract class DesignCanvasDirectiveExtension {
   protected _mode = inject(CanvasModeService)
   protected _drag = inject(DragBoxService)
   protected _draw = inject(DrawService)
+  protected _clientState = inject(CanvasClientStateService)
   protected _selected = inject(CanvasSelectedService)
   protected _domPointService = inject(DomPointService)
   protected delayedLogger = new DelayedLogger()
@@ -113,9 +117,15 @@ export abstract class DesignCanvasDirectiveExtension {
   }
 
   protected set entities(value: CanvasEntity[]) {
+    /*    const diff = compareArraysGetNew(value, this._entities)
+     if (diff) {
+     this._objectPositioning.setPerformanceEnd(diff[0].location)
+     // this.delayedLogger.log('set entities', diff)
+     }*/
     this._entities = value as CanvasPanel[]
     this.delayedLogger.log('set panels', value)
     this.panelStats.innerText = `Panels: ${this._entities.length}`
+    // this._objectPositioning.setPerformanceEnd()
     this.drawCanvas()
   }
 
@@ -137,10 +147,13 @@ export abstract class DesignCanvasDirectiveExtension {
   protected entities$ = this._entitiesStore.select.entities$.pipe(
     takeUntil(this._onDestroy.destroy$),
     tap((entities) => {
+      // this.entities = entities
+      // this.delayedLogger.log('entities$ difference', theSame)
       const theSame = compareArrays(entities, this.entities)
       if (!theSame) {
         this.delayedLogger.log('entities$ difference', theSame)
         this.entities = entities.filter((entity) => entity.type === ENTITY_TYPE.Panel)
+        // this._objectPositioning.setPerformanceEnd()
       }
     }),
   )
@@ -309,10 +322,48 @@ export abstract class DesignCanvasDirectiveExtension {
       return
     }
 
+    /*    const isDragging =
+     this._objectPositioning.singleToMoveId === entity.id &&
+     !!this._objectPositioning.singleToMoveLocation*/
+    const isDragging2 =
+      !!this._clientState.singleToMoveEntity &&
+      this._clientState.singleToMoveEntity.id === entity.id
+    if (isDragging2) {
+      assertNotNull(this._clientState.singleToMoveEntity)
+      this.handleDraggingEntityDraw(entity, this._clientState.singleToMoveEntity)
+      return
+    }
+    /*    const isDragging =
+     !!this._objectPositioning.singleToMove &&
+     this._objectPositioning.singleToMove.id === entity.id
+     if (isDragging) {
+     assertNotNull(this._objectPositioning.singleToMove)
+     this.handleDraggingEntityDraw(entity, this._objectPositioning.singleToMove)
+     return
+     }*/
+
     this.ctx.save()
     this.ctx.fillStyle = fillStyle
     this.ctx.translate(entity.location.x + entity.width / 2, entity.location.y + entity.height / 2)
     this.ctx.rotate(entity.angle)
+    this.ctx.beginPath()
+    this.ctx.rect(-entity.width / 2, -entity.height / 2, entity.width, entity.height)
+    this.ctx.fill()
+    this.ctx.stroke()
+    this.ctx.restore()
+  }
+
+  private handleDraggingEntityDraw(entity: CanvasEntity, singleToMove: EntityLocation) {
+    // const { singleToMoveId, singleToMoveLocation } = this._objectPositioning
+    // assertNotNull(singleToMoveLocation)
+    // if (singleToMoveId !== entity.id) return
+    this.ctx.save()
+    this.ctx.translate(
+      singleToMove.location.x + entity.width / 2,
+      singleToMove.location.y + entity.height / 2,
+    )
+    this.ctx.rotate(entity.angle)
+
     this.ctx.beginPath()
     this.ctx.rect(-entity.width / 2, -entity.height / 2, entity.width, entity.height)
     this.ctx.fill()
@@ -363,5 +414,22 @@ export abstract class DesignCanvasDirectiveExtension {
     const panel = this.entities.find((panel) => panel.id === entityId)
     const newPanel = { ...panel, ...changes } as CanvasEntity
     this.entities = [...this.entities.filter((panel) => panel.id !== entityId), newPanel]
+    // this._objectPositioning.setPerformanceEnd()
+  }
+
+  protected updateLocalArrayCallback() {
+    return (entityId: string, changes: Partial<CanvasEntity>) => {
+      this.updateToEndOfLocalArray(entityId, changes)
+    }
+  }
+
+  protected updateClientState(changes: Partial<CanvasClientState>) {
+    this._clientState.updateState(changes)
+  }
+
+  protected updateClientStateCallback() {
+    return (changes: Partial<CanvasClientState>) => {
+      this.updateClientState(changes)
+    }
   }
 }

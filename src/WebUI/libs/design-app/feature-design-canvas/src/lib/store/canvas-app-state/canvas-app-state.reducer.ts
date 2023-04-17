@@ -1,6 +1,7 @@
 import { pushItemsIfNotExist } from '../../utils'
 import { CanvasAppStateActions } from './canvas-app-state.actions'
 import { Action, createReducer, on } from '@ngrx/store'
+import { Point } from '@shared/data-access/models'
 
 export const CANVAS_APP_STATE_FEATURE_KEY = 'canvas-app-state'
 
@@ -12,6 +13,7 @@ export type CanvasAppState = {
   rotatingEntityId: string | undefined
   rotatingEntityIds: string[]
   draggingEntityId: string | undefined
+  draggingEntityLocation: Point | undefined
   draggingEntityIds: string[]
 }
 
@@ -23,6 +25,7 @@ export const initialCanvasAppState: CanvasAppState = {
   rotatingEntityId: undefined,
   rotatingEntityIds: [],
   draggingEntityId: undefined,
+  draggingEntityLocation: undefined,
   draggingEntityIds: [],
 }
 
@@ -63,6 +66,10 @@ const reducer = createReducer(
   on(CanvasAppStateActions.setDraggingEntityId, (state, { draggingEntityId }) => ({
     ...state,
     draggingEntityId,
+  })),
+  on(CanvasAppStateActions.setDraggingEntityLocation, (state, { draggingEntityLocation }) => ({
+    ...state,
+    draggingEntityLocation,
   })),
   on(CanvasAppStateActions.clearState, () => initialCanvasAppState),
 )

@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
 import { CanvasAppStateActions } from '@design-app/feature-design-canvas'
+import { Point } from '@shared/data-access/models'
 
 @Injectable({
   providedIn: 'root',
@@ -8,7 +9,7 @@ import { CanvasAppStateActions } from '@design-app/feature-design-canvas'
 export class CanvasAppStateRepository {
   private _store = inject(Store)
 
-  setHoveringEntityId(hoveringEntityId: string) {
+  setHoveringEntityId(hoveringEntityId: string | undefined) {
     this._store.dispatch(CanvasAppStateActions.setHoveringEntityId({ hoveringEntityId }))
   }
 
@@ -42,6 +43,10 @@ export class CanvasAppStateRepository {
 
   setDraggingEntityId(draggingEntityId: string | undefined) {
     this._store.dispatch(CanvasAppStateActions.setDraggingEntityId({ draggingEntityId }))
+  }
+
+  setDraggingEntityLocation(draggingEntityLocation: Point | undefined) {
+    this._store.dispatch(CanvasAppStateActions.setDraggingEntityLocation({ draggingEntityLocation }))
   }
 
   setDraggingEntityIds(draggingEntityIds: string[]) {
