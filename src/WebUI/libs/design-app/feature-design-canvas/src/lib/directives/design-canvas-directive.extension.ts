@@ -8,13 +8,13 @@ import {
   CanvasEntitiesStore,
   CanvasModeService,
   CanvasObjectPositioningService,
+  CanvasRenderService,
   CanvasSelectedService,
   CanvasStringsService,
   CanvasStringsStore,
   CanvasViewPositioningService,
   DomPointService,
   DragBoxService,
-  DrawService,
 } from '../services'
 import { CanvasAppState, initialCanvasAppState } from '../store'
 import {
@@ -64,7 +64,7 @@ export abstract class DesignCanvasDirectiveExtension {
   protected _view = inject(CanvasViewPositioningService)
   protected _mode = inject(CanvasModeService)
   protected _drag = inject(DragBoxService)
-  protected _draw = inject(DrawService)
+  protected _draw = inject(CanvasRenderService)
   protected _clientState = inject(CanvasClientStateService)
   protected _selected = inject(CanvasSelectedService)
   protected _domPointService = inject(DomPointService)

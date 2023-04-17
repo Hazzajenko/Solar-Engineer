@@ -11,7 +11,8 @@ import { ENTITY_TYPE } from '@design-app/shared'
 import { CanvasSelectedService } from './canvas-selected.service'
 import { TypeOfEntity } from '@design-app/feature-selected'
 import { CanvasAppStateStore } from './canvas-app-state'
-import { CanvasClientState } from './canvas-client-state.service'
+import { CanvasClientState, CanvasClientStateService } from './canvas-client-state/canvas-client-state.service'
+import { CanvasRenderService } from './canvas-render.service'
 
 @Injectable({
   providedIn: 'root',
@@ -22,6 +23,8 @@ export class CanvasObjectPositioningService {
   private _domPointService = inject(DomPointService)
   private _canvasElementsService = inject(CanvasElementService)
   private _selected = inject(CanvasSelectedService)
+  private _clientState = inject(CanvasClientStateService)
+  private _render = inject(CanvasRenderService)
 
   rotateStats: HTMLDivElement | undefined = undefined
 
@@ -113,14 +116,32 @@ export class CanvasObjectPositioningService {
       type: entityOnMouseDown.type,
       location,
     }
-    updateClientStateCallback({
+    this._clientState.updater.toMove({
+      singleToMoveEntity: {
+        id:    entityOnMouseDown.id,
+        type:  entityOnMouseDown.type,
+        location,
+        angle: entityOnMouseDown.angle,
+      },
+      // ids: [entityOnMouseDown.id],
+      // entities: [entityOnMouseDown],
+    })
+    this._clientState.updateState({
       singleToMoveEntity: {
         id:   entityOnMouseDown.id,
         type: entityOnMouseDown.type,
         location,
       },
     })
-    drawCanvasCallback()
+    /*  updateClientStateCallback({
+     singleToMoveEntity: {
+     id:   entityOnMouseDown.id,
+     type: entityOnMouseDown.type,
+     location,
+     },
+     })*/
+    this._render.drawCanvas()
+    // drawCanvasCallback()
   }
 
   setPerformanceEnd(location: Point) {
