@@ -75,7 +75,7 @@ export class DragBoxService {
    }*/
 
   selectionBoxMouseUp(event: MouseEvent) {
-    const start = this._state.select.dragBox().start
+    const start = this._state.dragBox.start
     assertNotNull(start)
     const currentPoint = this._domPointService.getTransformedPointFromEvent(event)
     const panelsInArea = this._objectPositioning.getAllElementsBetweenTwoPoints(
@@ -114,7 +114,7 @@ export class DragBoxService {
 
   creationBoxMouseUp(event: MouseEvent) {
     // assertNotNull(this.creationBoxStartPoint)
-    const { start } = this._state.select.dragBox()
+    const { start } = this._state.dragBox
     assertNotNull(start)
     const currentPoint = this._domPointService.getTransformedPointFromEvent(event)
     const spots = this._objectPositioning.getAllAvailableEntitySpotsBetweenTwoPoints(start, currentPoint)
@@ -163,7 +163,7 @@ export class DragBoxService {
       this._render.drawCanvas()
       return
     }
-    const { start } = this._state.select.dragBox()
+    const { start } = this._state.dragBox
     if (!start) {
       // console.log('drag box mouse move', start, event.altKey)
       // throw new Error('drag box not started')
@@ -230,7 +230,7 @@ export class DragBoxService {
      this._render.drawCanvas()
      return
      }*/
-    const { mode } = this._state.select.mode()
+    const { mode } = this._state.mode
     switch (mode) {
       case CANVAS_MODE.CREATE:
         this.creationBoxMouseUp(event)

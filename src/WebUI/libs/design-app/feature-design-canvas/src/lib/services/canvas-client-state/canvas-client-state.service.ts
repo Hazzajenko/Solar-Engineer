@@ -1,7 +1,8 @@
-import { Injectable } from '@angular/core'
+import { inject, Injectable } from '@angular/core'
 import { CanvasClientState, CanvasClientStateUpdatePartial, DragBoxState, HoveringEntityState, InitialDragBoxState, InitialHoveringEntityState, InitialSelectedState, InitialToMoveState, InitialToRotateState, SelectedState, ToMoveState, ToRotateState } from './types'
 import { InitialModeState, ModeState } from './types/mode'
 import { InitialViewState, ViewState } from './types/view'
+import { CanvasEntityState } from './canvas-entity-state'
 
 @Injectable({
   providedIn: 'root',
@@ -15,6 +16,14 @@ export class CanvasClientStateService
   private _dragBox: DragBoxState = InitialDragBoxState
   private _mode: ModeState = InitialModeState
   private _view: ViewState = InitialViewState
+  // private _render = inject(CanvasRenderService)
+  private _entity = inject(CanvasEntityState)
+
+  // private _entity: CanvasEntityState = new CanvasEntityState()
+
+  get entity(): CanvasEntityState {
+    return this._entity
+  }
 
   get state(): CanvasClientState {
     return {

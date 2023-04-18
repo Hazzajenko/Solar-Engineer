@@ -75,6 +75,7 @@ export class DesignCanvasDirective
      }*/
     const { selected } = this._state.getState()
     if (isMultiSelectDragging(event, selected.ids)) {
+
       // if (multiSelectDraggingKeysDown(event, this._selected.multiSelectedIds)) {
       // if (multiSelectDraggingKeysDown(event, this._selected.multiSelectedIds)) {
       this._selected.multiSelectDraggingMouseDown(event)
@@ -85,12 +86,18 @@ export class DesignCanvasDirective
      this._selected.startMultiSelectDragging(event)
      return
      }*/
-    const entityUnderMouse = this.getEntityUnderMouse(event)
+    const entityUnderMouse = this.getEntityUnderMouseV2(event)
+    // const entityUnderMouse = this.getEntityUnderMouse(event)
     if (entityUnderMouse) {
       /*      this.entityOnMouseDown = {
        id:   entityUnderMouse.id,
        type: entityUnderMouse.type,
        }*/
+      this._state.updateState({
+        hover: {
+          onMouseDownEntity: entityUnderMouse,
+        },
+      })
       this.entityOnMouseDown = entityUnderMouse
       this.entityOnMouseDownId = entityUnderMouse.id
       // this._appStateStore.dispatch.set
@@ -111,6 +118,12 @@ export class DesignCanvasDirective
       clearTimeout(this.mouseDownTimeOut)
       this.mouseDownTimeOut = undefined
       this.entityOnMouseDownId = undefined
+      this.entityOnMouseDown = undefined
+      this._state.updateState({
+        hover: {
+          onMouseDownEntity: undefined,
+        },
+      })
       return
     }
     this.mouseUpTimeOut = setTimeout(() => {
@@ -133,7 +146,7 @@ export class DesignCanvasDirective
      return
      }*/
 
-    const dragStart = this._state.select.dragBox().start
+    const dragStart = this._state.dragBox.start
     if (dragStart) {
       this._drag.dragBoxMouseUp(event)
       return
@@ -182,10 +195,15 @@ export class DesignCanvasDirective
      this.drawPanels()
      return
      }*/
-    if (this.entityOnMouseDown) {
-      this._objectPositioning.singleToMoveMouseUp(event, this.entityOnMouseDown)
+    const onMouseDownEntity = this._state.hover.onMouseDownEntity
+    if (onMouseDownEntity) {
+      this._objectPositioning.singleToMoveMouseUp(event, onMouseDownEntity)
       this.entityOnMouseDown = undefined
     }
+    /*    if (this.entityOnMouseDown) {
+     this._objectPositioning.singleToMoveMouseUp(event, this.entityOnMouseDown)
+     this.entityOnMouseDown = undefined
+     }*/
     /*    if (this._objectPositioning.singleToMoveId) {
      this._objectPositioning.singleToMoveMouseUp(event)
      }*/
@@ -258,7 +276,9 @@ export class DesignCanvasDirective
     const entity = isStringSelected
       ? createPanel(location, this._selected.selectedStringId)
       : createPanel(location)
-    this._entitiesStore.dispatch.addCanvasEntity(entity)
+    // TODO - fix this
+    // this._entitiesStore.dispatch.addCanvasEntity(entity)
+    this._state.entity.addEntity(entity)
     /*  let entity: CanvasEntity
 
      if (!isStringSelected) {
@@ -407,7 +427,7 @@ export class DesignCanvasDirective
      }
      return
      }*/
-    if (this._state.select.dragBox().start) {
+    if (this._state.dragBox.start) {
       this._drag.dragBoxMouseMove(event)
       return
       /*    if (this._drag.dragBoxStartPoint) {
@@ -492,10 +512,14 @@ export class DesignCanvasDirective
      return
      }*/
 
-    if (isDraggingEntity(event, this.entityOnMouseDown?.id)) {
-      assertNotNull(this.entityOnMouseDown)
+    const mouseDownEntity = this._state.hover.onMouseDownEntity
+    if (isDraggingEntity(event, mouseDownEntity?.id)) {
+      // if (isDraggingEntity(event, this.entityOnMouseDown?.id)) {
+      assertNotNull(mouseDownEntity)
+      // assertNotNull(this.entityOnMouseDown)
       // changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
-      this._objectPositioning.singleToMoveMouseMove(event, this.entityOnMouseDown)
+      this._objectPositioning.singleToMoveMouseMove(event, mouseDownEntity)
+      // this._objectPositioning.singleToMoveMouseMove(event, this.entityOnMouseDown)
       return
       // TODO remove
       // this.drawCanvas()
@@ -547,14 +571,26 @@ export class DesignCanvasDirective
     const entityUnderMouse = this.getEntityUnderMouse(event)
     if (entityUnderMouse) {
       changeCanvasCursor(this.canvas, CURSOR_TYPE.POINTER)
-      if (this.appState.hoveringEntityId === entityUnderMouse.id) return
-      this._appStateStore.dispatch.setHoveringEntityId(entityUnderMouse.id)
+      // if (this.appState.hoveringEntityId === entityUnderMouse.id) return
+      if (this._state.hover.hoveringEntity?.id === entityUnderMouse.id) return
+      // this._appStateStore.dispatch.setHoveringEntityId(entityUnderMouse.id)
+      this._state.updateState({
+        hover: {
+          hoveringEntity: entityUnderMouse,
+        },
+      })
       // this.appState.hoveringEntityId = entityUnderMouse.id
       this.drawCanvas()
     } else {
-      if (this.appState.hoveringEntityId) {
+      if (this._state.hover.hoveringEntity) {
+        // if (this.appState.hoveringEntityId) {
         // this.appState.hoveringEntityId = undefined
-        this._appStateStore.dispatch.setHoveringEntityId(undefined)
+        // this._appStateStore.dispatch.setHoveringEntityId(undefined)
+        this._state.updateState({
+          hover: {
+            hoveringEntity: undefined,
+          },
+        })
         this.drawCanvas()
       }
       changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)

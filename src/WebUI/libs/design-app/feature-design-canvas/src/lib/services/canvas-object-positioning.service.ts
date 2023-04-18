@@ -12,6 +12,7 @@ import { CanvasSelectedService } from './canvas-selected.service'
 import { CanvasAppStateStore } from './canvas-app-state'
 import { CanvasClientStateService } from './canvas-client-state'
 import { CanvasRenderService } from './canvas-render.service'
+import { TypeOfEntity } from '@design-app/feature-selected'
 
 @Injectable({
   providedIn: 'root',
@@ -22,7 +23,7 @@ export class CanvasObjectPositioningService {
   private _domPointService = inject(DomPointService)
   private _canvasElementsService = inject(CanvasElementService)
   private _selected = inject(CanvasSelectedService)
-  private _clientState = inject(CanvasClientStateService)
+  private _state = inject(CanvasClientStateService)
   private _render = inject(CanvasRenderService)
 
   rotateStats: HTMLDivElement | undefined = undefined
@@ -91,7 +92,7 @@ export class CanvasObjectPositioningService {
    this.singleToMove = singleToMove
    }*/
 
-  singleToMoveMouseMove(event: MouseEvent, entityOnMouseDown: CanvasEntity) {
+  singleToMoveMouseMove(event: MouseEvent, entityOnMouseDown: TypeOfEntity) {
     // assertNotNull(this.singleToMove)
     changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
     // console.log('singleToMoveMouseMove', this.canvas)
@@ -105,6 +106,7 @@ export class CanvasObjectPositioningService {
       // return
     }
     const location = getTopLeftPointFromTransformedPoint(eventPoint, SizeByType[entityOnMouseDown.type])
+    const angle = this._state.entity.getEntity(entityOnMouseDown.id).angle
     // const update = updateObjectByIdForStore(entityOnMouseDown.id, { location })
     // this._entitiesStore.dispatch.updateCanvasEntity(update)
     // this.performanceStart.push({ time: performance.now(), location })
@@ -115,16 +117,27 @@ export class CanvasObjectPositioningService {
      type: entityOnMouseDown.type,
      location,
      }*/
-    this._clientState.updater.toMove({
-      singleToMoveEntity: {
-        id:    entityOnMouseDown.id,
-        type:  entityOnMouseDown.type,
-        location,
-        angle: entityOnMouseDown.angle,
+    this._state.updateState({
+      toMove: {
+        singleToMoveEntity: {
+          id:   entityOnMouseDown.id,
+          type: entityOnMouseDown.type,
+          location,
+          angle,
+          // angle: entityOnMouseDown.angle,
+        },
       },
-      // ids: [entityOnMouseDown.id],
-      // entities: [entityOnMouseDown],
     })
+    /*    this._state.updater.toMove({
+     singleToMoveEntity: {
+     id:    entityOnMouseDown.id,
+     type:  entityOnMouseDown.type,
+     location,
+     angle: entityOnMouseDown.angle,
+     },
+     // ids: [entityOnMouseDown.id],
+     // entities: [entityOnMouseDown],
+     })*/
     /*    this._clientState.updateState({
      singleToMoveEntity: {
      id:   entityOnMouseDown.id,
@@ -149,7 +162,7 @@ export class CanvasObjectPositioningService {
     console.log('performance', performance.now() - start.time)
   }
 
-  singleToMoveMouseUp(event: MouseEvent, entityOnMouseDown: CanvasEntity) {
+  singleToMoveMouseUp(event: MouseEvent, entityOnMouseDown: TypeOfEntity) {
     // this.isDraggingEntity = false
     // assertNotNull(this.singleToMoveId)
     // const entityToMove = this._entitiesStore.select.entityById(entityOnMouseDown.id)
@@ -162,8 +175,13 @@ export class CanvasObjectPositioningService {
     this.singleToMove = undefined
     console.log('entityOnMouseDown', update)
     // updateClientStateCallback({ singleToMoveEntity: undefined })
-    this._clientState.updater.toMove({
-      singleToMoveEntity: undefined,
+    /*    this._clientState.updater.toMove({
+     singleToMoveEntity: undefined,
+     })*/
+    this._state.updateState({
+      toMove: {
+        singleToMoveEntity: undefined,
+      },
     })
     // */
     /*    if (this.entityOnMouseDown) {

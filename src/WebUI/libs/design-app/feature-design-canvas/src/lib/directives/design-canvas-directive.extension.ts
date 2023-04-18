@@ -265,6 +265,13 @@ export abstract class DesignCanvasDirectiveExtension {
     return entitiesUnderMouse[entitiesUnderMouse.length - 1]
   }
 
+  protected getEntityUnderMouseV2(event: MouseEvent) {
+    const entitiesUnderMouse = this._state.entity
+      .getEntities()
+      .filter((entity) => this.isMouseOverEntityBounds(event, entity))
+    return entitiesUnderMouse[entitiesUnderMouse.length - 1]
+  }
+
   protected isMouseOverEntityBounds(event: MouseEvent, entity: CanvasEntity) {
     const point = this._domPointService.getTransformedPointFromEvent(event)
     const entityBounds = getEntityBounds(entity)
@@ -274,9 +281,12 @@ export abstract class DesignCanvasDirectiveExtension {
   protected drawCanvas() {
     this.resetCanvas()
     this.ctx.beginPath()
-    this.entities.forEach((entity) => {
+    this._state.entity.getEntities().forEach((entity) => {
       this.drawEntity(entity)
     })
+    /*    this.entities.forEach((entity) => {
+     this.drawEntity(entity)
+     })*/
     this.ctx.closePath()
   }
 
@@ -325,7 +335,7 @@ export abstract class DesignCanvasDirectiveExtension {
     /*    const isDragging2 =
      !!this._clientState.singleToMoveEntity &&
      this._clientState.singleToMoveEntity.id === entity.id*/
-    const singleToMoveEntity = this._state.select.toMove().singleToMoveEntity
+    const singleToMoveEntity = this._state.toMove.singleToMoveEntity
     const isDragging2 = !!singleToMoveEntity && singleToMoveEntity.id === entity.id
     if (isDragging2) {
       assertNotNull(singleToMoveEntity)

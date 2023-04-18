@@ -1,7 +1,14 @@
 import { CanvasEntity } from '@design-app/feature-design-canvas'
 import { UpdateStr } from '@ngrx/entity/src/models'
+import { Injectable } from '@angular/core'
 
+@Injectable({
+  providedIn: 'root',
+})
 export class CanvasEntityState {
+  // private _render = inject(CanvasRenderService)
+  // constructor(public readonly canvasRenderService: CanvasRenderService) {}
+
   ids: string[] = []
   entities: {
     [id: string]: CanvasEntity
@@ -27,9 +34,9 @@ export class CanvasEntityState {
   removeManyEntities(entityIds: string[]) {
     this.ids = this.ids.filter((id) => !entityIds.includes(id))
     const didMutate =
-      entityIds
-        .filter((key: string) => key in this.entities)
-        .map((key: string) => delete this.entities[key]).length > 0
+            entityIds
+              .filter((key: string) => key in this.entities)
+              .map((key: string) => delete this.entities[key]).length > 0
 
     if (didMutate) {
       this.ids = this.ids.filter((id: string) => id in this.entities)
@@ -58,4 +65,8 @@ export class CanvasEntityState {
   getEntityIds() {
     return this.ids
   }
+
+  /*  private render() {
+   return this._render.drawCanvas()
+   }*/
 }

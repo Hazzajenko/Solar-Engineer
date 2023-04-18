@@ -58,7 +58,7 @@ export class CanvasRenderService {
       return
     }
 
-    const { mode } = this._state.select.mode()
+    const { mode } = this._state.mode
     // console.log('drawDragBox MODE', mode)
     const currentPoint = this._domPointService.getTransformedPointFromEvent(event)
     // const { start } = dragBox
@@ -89,7 +89,7 @@ export class CanvasRenderService {
     // const spots = this._objectPositioning.getAllAvailableEntitySpotsBetweenTwoPoints(start, currentPoint)
     if (!spots) return
 
-    const { type } = this._state.select.mode()
+    const { type } = this._state.mode
     const entitySize = SizeByType[type]
 
     this.ctx.save()
@@ -122,7 +122,7 @@ export class CanvasRenderService {
     // const { hoveringEntityId, selectedId, selectedIds } = this.appState
     // const { singleToRotateId, multipleToRotateIds } = this.rotateState
     // const { hoveringEntityId, singleSelectedId, multiSelectedIds, multiToRotateEntities, singleToRotateEntity } = this._clientState.state
-    const { toMove, toRotate, selected, hover } = this._state.select.state()
+    const { toMove, toRotate, selected, hover } = this._state.state
     const isBeingHovered = !!hover.hoveringEntity && hover.hoveringEntity.id === entity.id
     // const isBeingHovered = hoveringEntityId === entity.id
     if (isBeingHovered) {
