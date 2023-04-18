@@ -1,11 +1,13 @@
 import { inject, Injectable } from '@angular/core'
 import { CanvasElementService } from './canvas-element.service'
-import { CANVAS_COLORS, CanvasEntity, EntityLocation } from '../types'
+import { CANVAS_COLORS, CanvasEntity, EntityLocation, SizeByType } from '../types'
 import { DomPointService } from './dom-point.service'
 import { CanvasAppStateStore } from './canvas-app-state'
 import { CanvasEntitiesStore } from './canvas-entities'
 import { assertNotNull } from '@shared/utils'
-import { CanvasClientStateService } from './canvas-client-state/canvas-client-state.service'
+import { CanvasClientStateService } from './canvas-client-state'
+import { CANVAS_MODE } from './canvas-client-state/types/mode'
+import { getAllAvailableEntitySpotsBetweenTwoPoints } from '../utils'
 
 @Injectable({
   providedIn: 'root',
@@ -15,7 +17,7 @@ export class CanvasRenderService {
   private _domPointService = inject(DomPointService)
   private _appState = inject(CanvasAppStateStore)
   private _entitiesStore = inject(CanvasEntitiesStore)
-  private _clientState = inject(CanvasClientStateService)
+  private _state = inject(CanvasClientStateService)
 
   get ctx() {
     return this._canvasElementService.ctx
@@ -38,27 +40,103 @@ export class CanvasRenderService {
     this.ctx.setTransform(1, 0, 0, 1, 0, 0)
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
     this.ctx.restore()
+    this.ctx.save()
     this.ctx.beginPath()
     this.entities.forEach((entity) => {
       this.drawEntity(entity)
     })
+    // this.ctx.closePath()
+    this.ctx.restore()
+  }
+
+  drawDragBox(event: MouseEvent) {
+    // const start = this._clientState.select.dragBox().start
+    const start = this._state.state.dragBox.start
+    // console.log('drawDragBox', start)
+    if (!start) {
+      console.log('drawDragBox', 'no start')
+      return
+    }
+
+    const { mode } = this._state.select.mode()
+    // console.log('drawDragBox MODE', mode)
+    const currentPoint = this._domPointService.getTransformedPointFromEvent(event)
+    // const { start } = dragBox
+    // const { x: startX, y: startY } = start
+    // const { x: endX, y: endY } = end
+    const width = currentPoint.x - start.x
+    const height = currentPoint.y - start.y
+    this.drawCanvas()
+    this.ctx.save()
+    this.ctx.beginPath()
+    // this.ctx.setTransform(1, 0, 0, 1, 0, 0)
+    // this.ctx.strokeStyle = CANVAS_COLORS.DragBoxStrokeStyle
+    this.ctx.globalAlpha = 0.4
+    this.ctx.strokeStyle = mode === CANVAS_MODE.SELECT
+      ? CANVAS_COLORS.SelectionBoxFillStyle
+      : CANVAS_COLORS.CreationBoxFillStyle
+    /*      ? CANVAS_COLORS.PreviewPanelFillStyle
+     : CANVAS_COLORS.TakenSpotFillStyle*/
+    this.ctx.lineWidth = 1
+    this.ctx.rect(start.x, start.y, width, height)
+    this.ctx.fill()
+    this.ctx.stroke()
     this.ctx.closePath()
-    // this.ctx.restore()
+    this.ctx.restore()
+
+    if (mode !== CANVAS_MODE.CREATE) return
+    const spots = getAllAvailableEntitySpotsBetweenTwoPoints(start, currentPoint, this.entities)
+    // const spots = this._objectPositioning.getAllAvailableEntitySpotsBetweenTwoPoints(start, currentPoint)
+    if (!spots) return
+
+    const { type } = this._state.select.mode()
+    const entitySize = SizeByType[type]
+
+    this.ctx.save()
+    spots.forEach(spot => {
+      this.ctx.beginPath()
+      this.ctx.save()
+      this.ctx.beginPath()
+      this.ctx.globalAlpha = 0.4
+      this.ctx.fillStyle = spot.vacant
+        ? CANVAS_COLORS.PreviewPanelFillStyle
+        : CANVAS_COLORS.TakenSpotFillStyle
+      this.ctx.rect(spot.x, spot.y, entitySize.width, entitySize.height)
+      this.ctx.fill()
+      this.ctx.stroke()
+      this.ctx.restore()
+    })
+    this.ctx.restore()
+    /*    this.ctx.save()
+     this.ctx.beginPath()
+     this.ctx.globalAlpha = 0.4
+     this.ctx.fillStyle = CANVAS_COLORS.SelectionBoxFillStyle
+     this.ctx.rect(this.selectionBoxStartPoint.x, this.selectionBoxStartPoint.y, width, height)
+     this.ctx.fill()
+     this.ctx.stroke()
+     this.ctx.restore()*/
   }
 
   private drawEntity(entity: CanvasEntity) {
     let fillStyle: string = CANVAS_COLORS.DefaultPanelFillStyle
     // const { hoveringEntityId, selectedId, selectedIds } = this.appState
     // const { singleToRotateId, multipleToRotateIds } = this.rotateState
-    const { hoveringEntityId, singleSelectedId, multiSelectedIds, multiToRotateEntities, singleToRotateEntity } = this._clientState.state
-
-    const isBeingHovered = hoveringEntityId === entity.id
+    // const { hoveringEntityId, singleSelectedId, multiSelectedIds, multiToRotateEntities, singleToRotateEntity } = this._clientState.state
+    const { toMove, toRotate, selected, hover } = this._state.select.state()
+    const isBeingHovered = !!hover.hoveringEntity && hover.hoveringEntity.id === entity.id
+    // const isBeingHovered = hoveringEntityId === entity.id
     if (isBeingHovered) {
       fillStyle = '#17fff3'
     }
 
-    const isSingleSelected = singleSelectedId === entity.id
-    const isMultiSelected = multiSelectedIds && multiSelectedIds.find((id) => id === entity.id)
+    const isSingleSelected = !!selected.singleSelected && selected.singleSelected.id === entity.id
+    const isMultiSelected = selected.ids.includes(entity.id)
+    // const isMultiSelected = multiSelectedIds && multiSelectedIds.find((id) => id === entity.id)
+
+    /*
+     const isSingleSelected = singleSelectedId === entity.id
+     const isMultiSelected = multiSelectedIds && multiSelectedIds.find((id) => id === entity.id)
+     */
 
     if (isSingleSelected) {
       fillStyle = '#ff6e78'
@@ -68,9 +146,11 @@ export class CanvasRenderService {
       fillStyle = '#ff6e78'
     }
 
-    const isInMultiRotate = multiToRotateEntities.find((e) => e.id === entity.id)
+    const isInMultiRotate = toRotate.ids.includes(entity.id)
+    const isInSingleRotate = !!toRotate.singleToRotateEntity && toRotate.singleToRotateEntity.id === entity.id
+    // const isInMultiRotate = multiToRotateEntities.find((e) => e.id === entity.id)
     // const isInMultiRotate = multiToRotateEntities.includes(entity.id)
-    const isInSingleRotate = !!singleToRotateEntity && singleToRotateEntity.id === entity.id
+    // const isInSingleRotate = !!singleToRotateEntity && singleToRotateEntity.id === entity.id
     // const isInSingleRotate = singleToRotateId === entity.id
 
     if (isInMultiRotate) {
@@ -85,12 +165,13 @@ export class CanvasRenderService {
     /*    const isDragging =
      this._objectPositioning.singleToMoveId === entity.id &&
      !!this._objectPositioning.singleToMoveLocation*/
-    const isDragging2 =
-            !!this._clientState.singleToMoveEntity &&
-            this._clientState.singleToMoveEntity.id === entity.id
+    /*    const isDragging2 =
+     !!this._clientState.singleToMoveEntity &&
+     this._clientState.singleToMoveEntity.id === entity.id*/
+    const isDragging2 = !!toMove.singleToMoveEntity && toMove.singleToMoveEntity.id === entity.id
     if (isDragging2) {
-      assertNotNull(this._clientState.singleToMoveEntity)
-      this.handleDraggingEntityDraw(entity, this._clientState.singleToMoveEntity)
+      assertNotNull(toMove.singleToMoveEntity)
+      this.handleDraggingEntityDraw(entity, toMove.singleToMoveEntity)
       return
     }
     /*    const isDragging =

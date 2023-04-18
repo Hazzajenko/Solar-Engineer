@@ -2,7 +2,8 @@ import { EntityType } from '@design-app/shared'
 import { POINTER_BUTTON } from '@shared/data-access/models'
 
 export const dragBoxKeysDown = (event: MouseEvent): boolean => {
-  return event.shiftKey && event.button === 0
+  return event.altKey && event.button === 0
+  // return event.shiftKey && event.button === 0
 }
 
 export const draggingScreenKeysDown = (event: MouseEvent): boolean => {

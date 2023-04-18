@@ -1,10 +1,14 @@
 import {
-  CanvasEntitiesStore,
   CanvasEntity,
   DIAGONAL_DIRECTION,
   DiagonalDirection,
+  getDiagonalDirectionFromTwoPoints,
+  getStartingSpotForCreationBox,
+  SizeByType,
+  SpotInBox,
   TransformedPoint,
 } from '@design-app/feature-design-canvas'
+import { ENTITY_TYPE } from '@design-app/shared'
 import { Point, Size } from '@shared/data-access/models'
 
 export type EntityBounds = {
@@ -169,10 +173,10 @@ export const filterAllEntityBetweenTwoPoints = (
 export const getAllEntitiesBetweenTwoPoints = (
   point1: TransformedPoint,
   point2: TransformedPoint,
-  entitiesStore: CanvasEntitiesStore,
+  entities: CanvasEntity[],
   direction: DiagonalDirection,
 ) => {
-  return entitiesStore.select.entities.filter((entity) => {
+  return entities.filter((entity) => {
     const { left, top, right, bottom } = getEntityBounds(entity)
 
     switch (direction) {
@@ -215,6 +219,58 @@ export const getAllEntitiesBetweenTwoPoints = (
     }
     return false
   })
+}
+
+export const getAllAvailableEntitySpotsBetweenTwoPoints = (
+  point1: TransformedPoint,
+  point2: TransformedPoint,
+  entities: CanvasEntity[],
+): SpotInBox[] => {
+  const distanceX = point1.x - point2.x
+  const distanceY = point1.y - point2.y
+  const entitySize = SizeByType[ENTITY_TYPE.Panel]
+  const widthWithMidSpacing = entitySize.width + 2
+  const heightWithMidSpacing = entitySize.height + 2
+  const entitiesInX = Math.floor(distanceX / widthWithMidSpacing)
+  const entitiesInY = Math.floor(distanceY / heightWithMidSpacing)
+  const diagonalDirection = getDiagonalDirectionFromTwoPoints(point1, point2)
+  if (!diagonalDirection) return []
+
+  const startingPoint = getStartingSpotForCreationBox(diagonalDirection, entitySize)
+  const twoPointBounds = getBoundsFromTwoPoints(point1, point2)
+
+  const existingEntities = filterEntitiesInsideBounds(twoPointBounds, entities)
+  const widthIsPositive = entitiesInX > 0
+  const adjustedWidth = widthIsPositive ? -widthWithMidSpacing : widthWithMidSpacing
+
+  const heightIsPositive = entitiesInY > 0
+  const adjustedHeight = heightIsPositive ? -heightWithMidSpacing : heightWithMidSpacing
+  const spots: SpotInBox[] = []
+  for (let i = 0; i < Math.abs(entitiesInX); i++) {
+    for (let a = 0; a < Math.abs(entitiesInY); a++) {
+      const spot: SpotInBox = {
+        vacant: true,
+        x: point1.x + startingPoint.x + i * adjustedWidth,
+        y: point1.y + startingPoint.y + a * adjustedHeight,
+      }
+      existingEntities.forEach((entity) => {
+        const firstSpot = {
+          x: spot.x - entity.width / 2,
+          y: spot.y - entity.height / 2,
+        }
+        const secondSpot = {
+          x: spot.x + entity.width + entity.width / 2,
+          y: spot.y + entity.width + entity.height / 2,
+        }
+        if (isEntityInsideTwoPoints(entity, firstSpot, secondSpot)) {
+          spot.vacant = false
+        }
+      })
+      spots.push(spot)
+    }
+  }
+
+  return spots
 }
 
 export const getCommonBoundsFromMultipleEntities = (

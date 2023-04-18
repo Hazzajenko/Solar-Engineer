@@ -1,7 +1,7 @@
-export type SelectedEntity = {
-  id: string
-  type: SelectedType
-}
+/*export type SelectedEntity = {
+ id: string
+ type: SelectedType
+ }*/
 
 export const SELECTED_TYPE = {
   Panel: 'panel',

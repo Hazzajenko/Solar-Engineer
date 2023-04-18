@@ -34,7 +34,7 @@ import {
 } from '../utils'
 import { RotateState } from '../utils/draw'
 import { ElementRef, inject, NgZone, Renderer2 } from '@angular/core'
-import { ENTITY_TYPE, EntityType } from '@design-app/shared'
+import { ENTITY_TYPE } from '@design-app/shared'
 import {
   ClickEvent,
   ContextMenuEvent,
@@ -65,7 +65,7 @@ export abstract class DesignCanvasDirectiveExtension {
   protected _mode = inject(CanvasModeService)
   protected _drag = inject(DragBoxService)
   protected _draw = inject(CanvasRenderService)
-  protected _clientState = inject(CanvasClientStateService)
+  protected _state = inject(CanvasClientStateService)
   protected _selected = inject(CanvasSelectedService)
   protected _domPointService = inject(DomPointService)
   protected delayedLogger = new DelayedLogger()
@@ -79,10 +79,7 @@ export abstract class DesignCanvasDirectiveExtension {
   protected panelStats!: HTMLDivElement
   protected menu!: HTMLDivElement
   protected entityOnMouseDownId?: string
-  protected entityOnMouseDown?: {
-    id: string
-    type: EntityType
-  }
+  protected entityOnMouseDown?: CanvasEntity
   // protected entityOnMouseDownType?: Ent
   protected entityOnMouseDownLocation?: Point
   protected currentTransformedCursor!: TransformedPoint
@@ -325,12 +322,14 @@ export abstract class DesignCanvasDirectiveExtension {
     /*    const isDragging =
      this._objectPositioning.singleToMoveId === entity.id &&
      !!this._objectPositioning.singleToMoveLocation*/
-    const isDragging2 =
-      !!this._clientState.singleToMoveEntity &&
-      this._clientState.singleToMoveEntity.id === entity.id
+    /*    const isDragging2 =
+     !!this._clientState.singleToMoveEntity &&
+     this._clientState.singleToMoveEntity.id === entity.id*/
+    const singleToMoveEntity = this._state.select.toMove().singleToMoveEntity
+    const isDragging2 = !!singleToMoveEntity && singleToMoveEntity.id === entity.id
     if (isDragging2) {
-      assertNotNull(this._clientState.singleToMoveEntity)
-      this.handleDraggingEntityDraw(entity, this._clientState.singleToMoveEntity)
+      assertNotNull(singleToMoveEntity)
+      this.handleDraggingEntityDraw(entity, singleToMoveEntity)
       return
     }
     /*    const isDragging =
@@ -424,7 +423,7 @@ export abstract class DesignCanvasDirectiveExtension {
   }
 
   protected updateClientState(changes: Partial<CanvasClientState>) {
-    this._clientState.updateState(changes)
+    this._state.updateState(changes)
   }
 
   protected updateClientStateCallback() {

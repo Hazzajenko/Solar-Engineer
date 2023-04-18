@@ -1,46 +1,20 @@
 import { Injectable } from '@angular/core'
-import { CanvasClientState, HoveringEntityState, SelectedState, ToMoveState, ToRotateState } from './canvas-client-state'
+import { CanvasClientState, CanvasClientStateUpdatePartial, DragBoxState, HoveringEntityState, InitialDragBoxState, InitialHoveringEntityState, InitialSelectedState, InitialToMoveState, InitialToRotateState, SelectedState, ToMoveState, ToRotateState } from './types'
+import { InitialModeState, ModeState } from './types/mode'
+import { InitialViewState, ViewState } from './types/view'
 
 @Injectable({
   providedIn: 'root',
 })
 export class CanvasClientStateService
   implements CanvasClientState {
-  private _hover: HoveringEntityState = undefined
-  private _selected: SelectedState = {
-    ids:              [],
-    entities:         {},
-    selectedStringId: undefined,
-    singleSelectedId: undefined,
-  }
-
-  private _toRotate: ToRotateState = {
-    ids:                  [],
-    entities:             {},
-    singleToRotateEntity: undefined,
-  }
-
-  private _toMove: ToMoveState = {
-    ids:                [],
-    entities:           {},
-    singleToMoveEntity: undefined,
-  }
-
-  updater: {
-    hover: (hover: HoveringEntityState) => void
-    selected: (selected: Partial<SelectedState>) => void
-    toRotate: (toRotate: Partial<ToRotateState>) => void
-    toMove: (toMove: Partial<ToMoveState>) => void
-    // toRotate: (toRotate: ToRotateState) => void
-    // toMove:   (toMove: ToMoveState) => void
-  } = {
-    hover:    (hover: HoveringEntityState) => this.updateState({ hover }),
-    selected: (selected: Partial<SelectedState>) => this.updateSelected({ ...selected }),
-    toRotate: (toRotate: Partial<ToRotateState>) => this.updateToRotate({ ...toRotate }),
-    toMove:   (toMove: Partial<ToMoveState>) => this.updateToMove({ ...toMove }),
-    // toRotate: (toRotate: ToRotateState) => this.updateState({ toRotate }),
-    // toMove:   (toMove: ToMoveState) => this.updateState({ toMove }),
-  }
+  private _hover: HoveringEntityState = InitialHoveringEntityState
+  private _selected: SelectedState = InitialSelectedState
+  private _toRotate: ToRotateState = InitialToRotateState
+  private _toMove: ToMoveState = InitialToMoveState
+  private _dragBox: DragBoxState = InitialDragBoxState
+  private _mode: ModeState = InitialModeState
+  private _view: ViewState = InitialViewState
 
   get state(): CanvasClientState {
     return {
@@ -48,52 +22,9 @@ export class CanvasClientStateService
       selected: this.selected,
       toRotate: this.toRotate,
       toMove:   this.toMove,
-    }
-  }
-
-  /*  get updater(): (changes: Partial<CanvasClientState>) => void {
-   return (changes: Partial<CanvasClientState>) => {
-   this.updateState(changes)
-   }
-   }*/
-
-  updateState(changes: Partial<CanvasClientState>) {
-    if (changes.hover !== undefined) {
-      this.hover = changes.hover
-    }
-    if (changes.selected !== undefined) {
-      this.selected = changes.selected
-    }
-    if (changes.toRotate !== undefined) {
-      this.toRotate = changes.toRotate
-    }
-    if (changes.toMove !== undefined) {
-      this.toMove = changes.toMove
-    }
-  }
-
-  updateHover(changes: HoveringEntityState) {
-    this.hover = changes
-  }
-
-  updateSelected(changes: Partial<SelectedState>) {
-    this.selected = {
-      ...this.selected,
-      ...changes,
-    }
-  }
-
-  updateToRotate(changes: Partial<ToRotateState>) {
-    this.toRotate = {
-      ...this.toRotate,
-      ...changes,
-    }
-  }
-
-  updateToMove(changes: Partial<ToMoveState>) {
-    this.toMove = {
-      ...this.toMove,
-      ...changes,
+      dragBox:  this.dragBox,
+      mode:     this.mode,
+      view:     this.view,
     }
   }
 
@@ -129,4 +60,67 @@ export class CanvasClientStateService
     this._toMove = value
   }
 
+  get dragBox(): DragBoxState {
+    return this._dragBox
+  }
+
+  get mode(): ModeState {
+    return this._mode
+  }
+
+  get view(): ViewState {
+    return this._view
+  }
+
+  updateState(changes: CanvasClientStateUpdatePartial) {
+    if (changes.hover !== undefined) {
+      this._hover = {
+        ...this.hover,
+        ...changes.hover,
+      }
+    }
+    if (changes.selected !== undefined) {
+      this._selected = {
+        ...this.selected,
+        ...changes.selected,
+      }
+      console.log('selected', changes.selected)
+    }
+
+    if (changes.toRotate !== undefined) {
+      this._toRotate = {
+        ...this.toRotate,
+        ...changes.toRotate,
+      }
+    }
+    if (changes.toMove !== undefined) {
+      this._toMove = {
+        ...this.toMove,
+        ...changes.toMove,
+      }
+    }
+    if (changes.dragBox !== undefined) {
+      this._dragBox = {
+        ...this.dragBox,
+        ...changes.dragBox,
+      }
+      console.log('dragBox', this.dragBox)
+    }
+    if (changes.mode !== undefined) {
+      this._mode = {
+        ...this.mode,
+        ...changes.mode,
+      }
+    }
+    if (changes.view !== undefined) {
+      this._view = {
+        ...this.view,
+        ...changes.view,
+      }
+    }
+  }
+
+  getState(): CanvasClientState {
+    return this.state
+  }
 }

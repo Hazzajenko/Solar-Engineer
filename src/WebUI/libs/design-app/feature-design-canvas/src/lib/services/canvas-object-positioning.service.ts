@@ -9,9 +9,8 @@ import { AngleRadians, changeCanvasCursor, DIAGONAL_DIRECTION, DiagonalDirection
 import { getEntitySizeOffset } from '../functions/object-sizing'
 import { ENTITY_TYPE } from '@design-app/shared'
 import { CanvasSelectedService } from './canvas-selected.service'
-import { TypeOfEntity } from '@design-app/feature-selected'
 import { CanvasAppStateStore } from './canvas-app-state'
-import { CanvasClientState, CanvasClientStateService } from './canvas-client-state/canvas-client-state.service'
+import { CanvasClientStateService } from './canvas-client-state'
 import { CanvasRenderService } from './canvas-render.service'
 
 @Injectable({
@@ -92,7 +91,7 @@ export class CanvasObjectPositioningService {
    this.singleToMove = singleToMove
    }*/
 
-  singleToMoveMouseMove(event: MouseEvent, entityOnMouseDown: TypeOfEntity, drawCanvasCallback: () => void, updateClientStateCallback: (changes: Partial<CanvasClientState>) => void) {
+  singleToMoveMouseMove(event: MouseEvent, entityOnMouseDown: CanvasEntity) {
     // assertNotNull(this.singleToMove)
     changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
     // console.log('singleToMoveMouseMove', this.canvas)
@@ -109,13 +108,13 @@ export class CanvasObjectPositioningService {
     // const update = updateObjectByIdForStore(entityOnMouseDown.id, { location })
     // this._entitiesStore.dispatch.updateCanvasEntity(update)
     // this.performanceStart.push({ time: performance.now(), location })
-    this.singleToMoveId = entityOnMouseDown.id
-    this.singleToMoveLocation = location
-    this.singleToMove = {
-      id:   entityOnMouseDown.id,
-      type: entityOnMouseDown.type,
-      location,
-    }
+    /*    this.singleToMoveId = entityOnMouseDown.id
+     this.singleToMoveLocation = location
+     this.singleToMove = {
+     id:   entityOnMouseDown.id,
+     type: entityOnMouseDown.type,
+     location,
+     }*/
     this._clientState.updater.toMove({
       singleToMoveEntity: {
         id:    entityOnMouseDown.id,
@@ -126,13 +125,13 @@ export class CanvasObjectPositioningService {
       // ids: [entityOnMouseDown.id],
       // entities: [entityOnMouseDown],
     })
-    this._clientState.updateState({
-      singleToMoveEntity: {
-        id:   entityOnMouseDown.id,
-        type: entityOnMouseDown.type,
-        location,
-      },
-    })
+    /*    this._clientState.updateState({
+     singleToMoveEntity: {
+     id:   entityOnMouseDown.id,
+     type: entityOnMouseDown.type,
+     location,
+     },
+     })*/
     /*  updateClientStateCallback({
      singleToMoveEntity: {
      id:   entityOnMouseDown.id,
@@ -150,7 +149,7 @@ export class CanvasObjectPositioningService {
     console.log('performance', performance.now() - start.time)
   }
 
-  singleToMoveMouseUp(event: MouseEvent, entityOnMouseDown: TypeOfEntity, updateClientStateCallback: (changes: Partial<CanvasClientState>) => void) {
+  singleToMoveMouseUp(event: MouseEvent, entityOnMouseDown: CanvasEntity) {
     // this.isDraggingEntity = false
     // assertNotNull(this.singleToMoveId)
     // const entityToMove = this._entitiesStore.select.entityById(entityOnMouseDown.id)
@@ -162,7 +161,11 @@ export class CanvasObjectPositioningService {
     this.singleToMoveLocation = undefined
     this.singleToMove = undefined
     console.log('entityOnMouseDown', update)
-    updateClientStateCallback({ singleToMoveEntity: undefined })
+    // updateClientStateCallback({ singleToMoveEntity: undefined })
+    this._clientState.updater.toMove({
+      singleToMoveEntity: undefined,
+    })
+    // */
     /*    if (this.entityOnMouseDown) {
      const location = this._domPointService.getTransformedPointToMiddleOfObjectFromEvent(event, this.entityOnMouseDown.type)
      const updatedEntity = EntityFactory.updateForStore(this.entityOnMouseDown, { location })

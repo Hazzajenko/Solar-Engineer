@@ -6,6 +6,7 @@ import { CanvasElementService } from './canvas-element.service'
 import { CURSOR_TYPE } from '@shared/data-access/models'
 import { assertNotNull } from '@shared/utils'
 import { draggingScreenKeysDown } from '../utils'
+import { CanvasClientStateService } from './canvas-client-state'
 
 @Injectable({
   providedIn: 'root',
@@ -14,6 +15,7 @@ export class CanvasViewPositioningService {
   private _entitiesStore = inject(CanvasEntitiesStore)
   private _domPointService = inject(DomPointService)
   private _canvasElementsService = inject(CanvasElementService)
+  private _state = inject(CanvasClientStateService)
 
   screenDragStartPoint?: TransformedPoint
 
@@ -26,11 +28,21 @@ export class CanvasViewPositioningService {
   }
 
   handleDragScreenMouseDown(event: MouseEvent) {
+    this._state.updateState({
+      view: {
+        dragStart: this._domPointService.getTransformedPointFromEvent(event),
+      },
+    })
     this.screenDragStartPoint = this._domPointService.getTransformedPointFromEvent(event)
   }
 
   handleDragScreenMouseMove(event: MouseEvent) {
     if (!draggingScreenKeysDown(event)) {
+      this._state.updateState({
+        view: {
+          dragStart: undefined,
+        },
+      })
       this.screenDragStartPoint = undefined
       return
     }
@@ -45,5 +57,10 @@ export class CanvasViewPositioningService {
 
   handleDragScreenMouseUp(event: MouseEvent) {
     this.screenDragStartPoint = undefined
+    this._state.updateState({
+      view: {
+        dragStart: undefined,
+      },
+    })
   }
 }

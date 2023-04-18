@@ -1,10 +1,11 @@
 import { Directive, OnInit } from '@angular/core'
 import { CURSOR_TYPE, KEYS } from '@shared/data-access/models'
-import { CANVAS_MODE, createPanel, isPanel } from '../types'
+import { createPanel, isPanel } from '../types'
 import { ENTITY_TYPE } from '@design-app/shared'
 import { assertNotNull, OnDestroyDirective } from '@shared/utils'
-import { changeCanvasCursor, dragBoxKeysDown, draggingScreenKeysDown, isContextMenu, isDraggingEntity, isMenuOpen, isMultiSelectDragging, isReadyToMultiDrag, multiSelectDraggingKeysDown, rotatingKeysDown } from '../utils'
+import { changeCanvasCursor, dragBoxKeysDown, draggingScreenKeysDown, isContextMenu, isDraggingEntity, isMenuOpen, isMultiSelectDragging, isReadyToMultiDrag, rotatingKeysDown } from '../utils'
 import { DesignCanvasDirectiveExtension } from './design-canvas-directive.extension'
+import { CANVAS_MODE } from '../services/canvas-client-state/types/mode'
 
 @Directive({
   selector:   '[appDesignCanvas]',
@@ -62,6 +63,7 @@ export class DesignCanvasDirective
      return
      }*/
     if (dragBoxKeysDown(event)) {
+      console.log('drag box keys down')
       this._drag.handleDragBoxMouseDown(event)
       // this._drag.selectionBoxStartPoint = this._domPointService.getTransformedPointFromEvent(event)
       // this.selectionBoxStartPoint = this._domPointService.getTransformedPointFromEvent(event)
@@ -71,7 +73,10 @@ export class DesignCanvasDirective
      this.isSelectionBoxDragging = true
      this.selectionBoxStartPoint = this._domPointService.getTransformedPointFromEvent(event)
      }*/
-    if (multiSelectDraggingKeysDown(event, this._selected.multiSelectedIds)) {
+    const { selected } = this._state.getState()
+    if (isMultiSelectDragging(event, selected.ids)) {
+      // if (multiSelectDraggingKeysDown(event, this._selected.multiSelectedIds)) {
+      // if (multiSelectDraggingKeysDown(event, this._selected.multiSelectedIds)) {
       this._selected.multiSelectDraggingMouseDown(event)
       return
     }
@@ -82,10 +87,11 @@ export class DesignCanvasDirective
      }*/
     const entityUnderMouse = this.getEntityUnderMouse(event)
     if (entityUnderMouse) {
-      this.entityOnMouseDown = {
-        id:   entityUnderMouse.id,
-        type: entityUnderMouse.type,
-      }
+      /*      this.entityOnMouseDown = {
+       id:   entityUnderMouse.id,
+       type: entityUnderMouse.type,
+       }*/
+      this.entityOnMouseDown = entityUnderMouse
       this.entityOnMouseDownId = entityUnderMouse.id
       // this._appStateStore.dispatch.set
       this._selected.checkSelectedState(event, entityUnderMouse.id)
@@ -127,18 +133,23 @@ export class DesignCanvasDirective
      return
      }*/
 
-    if (this._drag.selectionBoxStartPoint) {
-      this._drag.selectionBoxMouseUp(event)
-      this.drawCanvas()
-      // this._drag.selectionBoxStartPoint = undefined
+    const dragStart = this._state.select.dragBox().start
+    if (dragStart) {
+      this._drag.dragBoxMouseUp(event)
       return
     }
+    /*    if (this._drag.selectionBoxStartPoint) {
+     this._drag.selectionBoxMouseUp(event)
+     this.drawCanvas()
+     // this._drag.selectionBoxStartPoint = undefined
+     return
+     }
 
-    if (this._drag.creationBoxStartPoint) {
-      this._drag.creationBoxMouseUp(event)
-      this.drawCanvas()
-      return
-    }
+     if (this._drag.creationBoxStartPoint) {
+     this._drag.creationBoxMouseUp(event)
+     this.drawCanvas()
+     return
+     }*/
 
     /*    if (this.isSelectionBoxDragging) {
      this.isSelectionBoxDragging = false
@@ -172,7 +183,7 @@ export class DesignCanvasDirective
      return
      }*/
     if (this.entityOnMouseDown) {
-      this._objectPositioning.singleToMoveMouseUp(event, this.entityOnMouseDown, this.updateClientStateCallback())
+      this._objectPositioning.singleToMoveMouseUp(event, this.entityOnMouseDown)
       this.entityOnMouseDown = undefined
     }
     /*    if (this._objectPositioning.singleToMoveId) {
@@ -396,19 +407,23 @@ export class DesignCanvasDirective
      }
      return
      }*/
-    if (this._drag.dragBoxStartPoint) {
-      if (dragBoxKeysDown(event)) {
-        // this.canvas.style.cursor = CURSOR_TYPE.CROSSHAIR
-        changeCanvasCursor(this.canvas, CURSOR_TYPE.CROSSHAIR)
-        this._drag.dragBoxMouseMove(event, this._mode.mode, this.drawCanvasCallback)
-        // this.animateDragBox(event)
-        return
-      }
-      this._drag.dragBoxStartPoint = undefined
-      changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
-      // this.canvas.style.cursor = CURSOR_TYPE.AUTO
-      // this.canvas.style.cursor = CURSOR_TYPE.AUTO
+    if (this._state.select.dragBox().start) {
+      this._drag.dragBoxMouseMove(event)
       return
+      /*    if (this._drag.dragBoxStartPoint) {
+       this._drag.dragBoxMouseMove(event)*/
+      /*      if (dragBoxKeysDown(event)) {
+       // this.canvas.style.cursor = CURSOR_TYPE.CROSSHAIR
+       changeCanvasCursor(this.canvas, CURSOR_TYPE.CROSSHAIR)
+       this._drag.dragBoxMouseMove(event)
+       // this.animateDragBox(event)
+       return
+       }
+       this._drag.dragBoxStartPoint = undefined
+       changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
+       // this.canvas.style.cursor = CURSOR_TYPE.AUTO
+       // this.canvas.style.cursor = CURSOR_TYPE.AUTO
+       return*/
     }
     /*    if (this._drag.selectionBoxStartPoint) {
      if (dragBoxKeysDown(event)) {
@@ -480,7 +495,7 @@ export class DesignCanvasDirective
     if (isDraggingEntity(event, this.entityOnMouseDown?.id)) {
       assertNotNull(this.entityOnMouseDown)
       // changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
-      this._objectPositioning.singleToMoveMouseMove(event, this.entityOnMouseDown, this.drawCanvasCallback(), this.updateClientStateCallback())
+      this._objectPositioning.singleToMoveMouseMove(event, this.entityOnMouseDown)
       return
       // TODO remove
       // this.drawCanvas()

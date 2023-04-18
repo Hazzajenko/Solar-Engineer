@@ -1,6 +1,5 @@
 import { inject, Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
-import { CanvasActions } from '../store'
 import { CanvasEntity, CanvasPanel, CanvasString, EntityFactory, isPanel, SELECTED_TYPE, SelectedType, UndefinedStringId } from '../types'
 import { assertNotNull } from '@shared/utils'
 import { DomPointService } from './dom-point.service'
@@ -9,6 +8,7 @@ import { eventToPointLocation } from '../functions'
 import { CanvasAppStateStore } from './canvas-app-state'
 import { CURSOR_TYPE } from '@shared/data-access/models'
 import { changeCanvasCursor } from '../utils'
+import { InjectClientState } from './canvas-client-state'
 
 @Injectable({
   providedIn: 'root',
@@ -19,6 +19,7 @@ export class CanvasSelectedService {
   private _domPointService = inject(DomPointService)
   private _canvasEntitiesService = inject(CanvasEntitiesStore)
   private _entityStore = inject(CanvasAppStateStore)
+  private _state = InjectClientState()
   private _selected: CanvasEntity | undefined
   private _selectedId: string | undefined
   private _selectedType: SelectedType | undefined
@@ -56,17 +57,26 @@ export class CanvasSelectedService {
     return this._selectedStringId
   }
 
-  emitDraw = () => this._store.dispatch(CanvasActions.drawCanvas())
+  // emitDraw = () => this._store.dispatch(CanvasActions.drawCanvas())
 
   getMultiSelectedByType<T extends CanvasPanel>(type: T['type']): T[] {
     return this._multiSelected.filter(entity => entity.type === type) as T[]
   }
 
   multiSelectDraggingMouseDown(event: MouseEvent) {
-    if (this._multiSelected.length === 0) return
-    if (!event.shiftKey) return
+    // if (this._multiSelected.length === 0) return
+    const selectedIds = this._state.selected.ids
+    if (selectedIds.length <= 0) return
+    if (!event.shiftKey || !event.ctrlKey) return
+    // if (!event.shiftKey) return
     this.isMultiSelectDragging = true
     this.multiSelectStart = eventToPointLocation(event)
+    this._state.updateState({
+      toMove: {
+        multiToMoveStart: this.multiSelectStart,
+      },
+    })
+
     // this._entityStore.dispatch.setDraggingEntityIds()
   }
 
@@ -112,34 +122,65 @@ export class CanvasSelectedService {
 
   stopMultiSelectDragging(event: MouseEvent) {
     this.isMultiSelectDragging = false
-    if (this.multiSelectStart) {
-      const eventLocation = eventToPointLocation(event)
-      const scale = this._domPointService.scale
-      const offset = {
-        x: eventLocation.x - this.multiSelectStart.x,
-        y: eventLocation.y - this.multiSelectStart.y,
-      }
-      offset.x = offset.x / scale
-      offset.y = offset.y / scale
-      const multiSelectedEntities = this._multiSelectedIds.map(id => this._entitiesStore.select.entityById(id))
-      const multiSelectedUpdated = multiSelectedEntities.map(entity => {
-        const location = entity.location
-        const newLocation = {
-          x: location.x + offset.x,
-          y: location.y + offset.y,
-        }
-
-        // const newEntityInstance = entity.updateWithNewInstance(entity)
-        const updatedEntity = EntityFactory.updateForStore(entity, { location: newLocation })
-        // const updatedEntity = entity.updateForStore({ location: newLocation })
-        const newEntityInstance = EntityFactory.update(entity, { location: newLocation })
-        this._entitiesStore.dispatch.updateCanvasEntity(updatedEntity)
-        return newEntityInstance
-      })
-      const multiSelectedIds = multiSelectedUpdated.map(entity => entity.id)
-      this.setMultiSelected(multiSelectedIds)
+    const multiToMoveStart = this._state.toMove.multiToMoveStart
+    if (!multiToMoveStart) return
+    const eventLocation = eventToPointLocation(event)
+    const scale = this._domPointService.scale
+    const offset = {
+      x: eventLocation.x - multiToMoveStart.x,
+      y: eventLocation.y - multiToMoveStart.y,
     }
-    this.multiSelectStart = undefined
+    offset.x = offset.x / scale
+    offset.y = offset.y / scale
+    const multiSelectedIds = this._state.selected.ids
+    const multiSelectedEntities = this._state.selected.entities
+    const allTasks = Object.keys(multiSelectedEntities)
+      .map(id => multiSelectedEntities[id])
+    // const multiSelectedEntities = this._multiSelectedIds.map(id => this._entitiesStore.select.entityById(id))
+    const multiSelectedUpdated = multiSelectedEntities.map(entity => {
+      const location = entity.location
+      const newLocation = {
+        x: location.x + offset.x,
+        y: location.y + offset.y,
+      }
+
+      // const newEntityInstance = entity.updateWithNewInstance(entity)
+      const updatedEntity = EntityFactory.updateForStore(entity, { location: newLocation })
+      // const updatedEntity = entity.updateForStore({ location: newLocation })
+      const newEntityInstance = EntityFactory.update(entity, { location: newLocation })
+      this._entitiesStore.dispatch.updateCanvasEntity(updatedEntity)
+      return newEntityInstance
+    })
+    // const multiSelectedIds = multiSelectedUpdated.map(entity => entity.id)
+    this.setMultiSelected(multiSelectedIds)
+    /*    if (this.multiSelectStart) {
+     const eventLocation = eventToPointLocation(event)
+     const scale = this._domPointService.scale
+     const offset = {
+     x: eventLocation.x - this.multiSelectStart.x,
+     y: eventLocation.y - this.multiSelectStart.y,
+     }
+     offset.x = offset.x / scale
+     offset.y = offset.y / scale
+     const multiSelectedEntities = this._multiSelectedIds.map(id => this._entitiesStore.select.entityById(id))
+     const multiSelectedUpdated = multiSelectedEntities.map(entity => {
+     const location = entity.location
+     const newLocation = {
+     x: location.x + offset.x,
+     y: location.y + offset.y,
+     }
+
+     // const newEntityInstance = entity.updateWithNewInstance(entity)
+     const updatedEntity = EntityFactory.updateForStore(entity, { location: newLocation })
+     // const updatedEntity = entity.updateForStore({ location: newLocation })
+     const newEntityInstance = EntityFactory.update(entity, { location: newLocation })
+     this._entitiesStore.dispatch.updateCanvasEntity(updatedEntity)
+     return newEntityInstance
+     })
+     const multiSelectedIds = multiSelectedUpdated.map(entity => entity.id)
+     this.setMultiSelected(multiSelectedIds)
+     }
+     this.multiSelectStart = undefined*/
     // this.offsetsFromMultiSelectCenter = []
     // this.draggingEntityLocationsMap.clear()
     return

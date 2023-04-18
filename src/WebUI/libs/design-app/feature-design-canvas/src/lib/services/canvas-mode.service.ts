@@ -1,11 +1,13 @@
-import { Injectable } from '@angular/core'
-import { CanvasMode } from '../types'
+import { inject, Injectable } from '@angular/core'
+import { CanvasMode } from './canvas-client-state/types/mode'
+import { CanvasClientStateService } from './canvas-client-state'
 
 @Injectable({
   providedIn: 'root',
 })
 export class CanvasModeService {
   private _mode: CanvasMode = 'select'
+  private _state = inject(CanvasClientStateService)
 
   get mode() {
     return this._mode
@@ -14,6 +16,8 @@ export class CanvasModeService {
   setMode(mode: CanvasMode) {
     console.log('CanvasModeService.setMode', mode)
     this._mode = mode
+    this._state.updateState({ mode: { mode } })
+
   }
 
 }
