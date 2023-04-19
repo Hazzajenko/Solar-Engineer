@@ -168,12 +168,22 @@ export abstract class DesignCanvasDirectiveExtension {
   protected setupMouseEventListeners() {
     this._renderer.listen(this.canvas, MouseUpEvent, (event: MouseEvent) => {
       console.log('mouse up', event)
+      this._state.updateState({
+        mouse: {
+          mouseDown: false,
+        },
+      })
       this.onMouseUpHandler(event)
       event.stopPropagation()
       event.preventDefault()
     })
     this._renderer.listen(this.canvas, MouseDownEvent, (event: MouseEvent) => {
       console.log('mouse down', event)
+      this._state.updateState({
+        mouse: {
+          mouseDown: true,
+        },
+      })
       this.onMouseDownHandler(event)
       event.stopPropagation()
       event.preventDefault()

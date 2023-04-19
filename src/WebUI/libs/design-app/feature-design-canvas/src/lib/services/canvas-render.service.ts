@@ -136,7 +136,8 @@ export class CanvasRenderService {
     }
 
     const isSingleSelected = !!selected.singleSelectedId && selected.singleSelectedId === entity.id
-    const isMultiSelected = selected.ids.includes(entity.id)
+    const isMultiSelected = selected.multipleSelectedIds.includes(entity.id)
+    // const isMultiSelected = selected.ids.includes(entity.id)
     // const isMultiSelected = multiSelectedIds && multiSelectedIds.find((id) => id === entity.id)
 
     /*
@@ -152,7 +153,10 @@ export class CanvasRenderService {
       fillStyle = '#ff6e78'
     }
 
-    const isInMultiRotate = toRotate.ids.includes(entity.id)
+    const multipleToRotate = toRotate.multipleToRotate
+
+    const isInMultiRotate = !!multipleToRotate && multipleToRotate.ids.includes(entity.id)
+    // const isInMultiRotate = toRotate.ids.includes(entity.id)
     const isInSingleRotate = !!toRotate.singleToRotate && toRotate.singleToRotate.id === entity.id
     // const isInMultiRotate = multiToRotateEntities.find((e) => e.id === entity.id)
     // const isInMultiRotate = multiToRotateEntities.includes(entity.id)
@@ -222,36 +226,42 @@ export class CanvasRenderService {
   }
 
   private handleSingleRotationDraw(entity: CanvasEntity) {
-    /*    const rotateState = this.rotateState
-     const angle = rotateState.singleToRotateAngle
-     assertNotNull(angle, 'angle should not be null')
+    const singleToRotate = this._state.toRotate.singleToRotate
+    assertNotNull(singleToRotate)
+    const angle = singleToRotate.adjustedAngle
 
-     this.ctx.save()
-     this.ctx.translate(entity.location.x + entity.width / 2, entity.location.y + entity.height / 2)
-     this.ctx.rotate(angle)
-     this.ctx.beginPath()
-     this.ctx.rect(-entity.width / 2, -entity.height / 2, entity.width, entity.height)
-     this.ctx.fill()
-     this.ctx.stroke()
-     this.ctx.restore()*/
+    assertNotNull(angle, 'angle should not be null')
+
+    this.ctx.save()
+    this.ctx.translate(entity.location.x + entity.width / 2, entity.location.y + entity.height / 2)
+    this.ctx.rotate(angle)
+    this.ctx.beginPath()
+    this.ctx.rect(-entity.width / 2, -entity.height / 2, entity.width, entity.height)
+    this.ctx.fill()
+    this.ctx.stroke()
+    this.ctx.restore()
   }
 
   private handleMultipleRotationDraw(entity: CanvasEntity) {
-    /*    // const rotateState = this.rotateState
-     const angle = rotateState.multipleToRotateAngleMap.get(entity.id)
-     const location = rotateState.multipleToRotateLocationMap.get(entity.id)
-     assertNotNull(angle)
-     assertNotNull(location)
+    // const rotateState = this.rotateState
+    const multipleToRotateAngleMap = this._state.toRotate.multipleToRotate
+    assertNotNull(multipleToRotateAngleMap)
+    const angle = multipleToRotateAngleMap.adjustedAngle
+    const location = multipleToRotateAngleMap.entities.find((e) => e.id === entity.id)?.adjustedLocation
+    // const angle = rotateState.multipleToRotateAngleMap.get(entity.id)
+    // const location = rotateState.multipleToRotateLocationMap.get(entity.id)
+    assertNotNull(angle)
+    assertNotNull(location)
 
-     this.ctx.save()
-     this.ctx.translate(location.x + entity.width / 2, location.y + entity.height / 2)
-     this.ctx.rotate(angle)
+    this.ctx.save()
+    this.ctx.translate(location.x + entity.width / 2, location.y + entity.height / 2)
+    this.ctx.rotate(angle)
 
-     this.ctx.beginPath()
-     this.ctx.rect(-entity.width / 2, -entity.height / 2, entity.width, entity.height)
-     this.ctx.fill()
-     this.ctx.stroke()
-     this.ctx.restore()*/
+    this.ctx.beginPath()
+    this.ctx.rect(-entity.width / 2, -entity.height / 2, entity.width, entity.height)
+    this.ctx.fill()
+    this.ctx.stroke()
+    this.ctx.restore()
   }
 
 }

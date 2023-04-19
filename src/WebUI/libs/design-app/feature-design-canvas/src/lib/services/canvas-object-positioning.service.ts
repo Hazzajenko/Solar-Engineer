@@ -3,8 +3,8 @@ import { CanvasEntity, SizeByType, TransformedPoint, updateObjectByIdForStore } 
 import { DomPointService } from './dom-point.service'
 import { CanvasElementService } from './canvas-element.service'
 import { CURSOR_TYPE, Point } from '@shared/data-access/models'
-import { assertNotNull, mapToDictionary } from '@shared/utils'
-import { AngleRadians, changeCanvasCursor, DIAGONAL_DIRECTION, DiagonalDirection, filterEntitiesInsideBounds, getAngleInRadiansBetweenTwoPoints, getBoundsFromTwoPoints, getDiagonalDirectionFromTwoPoints, getEntityBounds, getStartingSpotForCreationBox, getTopLeftPointFromTransformedPoint, isEntityInsideTwoPoints, isHoldingClick, isPointInsideBounds, rotatePointOffPivot, SpotInBox } from '../utils'
+import { assertNotNull } from '@shared/utils'
+import { AngleRadians, changeCanvasCursor, DIAGONAL_DIRECTION, DiagonalDirection, filterEntitiesInsideBounds, getAngleInRadiansBetweenTwoPoints, getBoundsFromTwoPoints, getDiagonalDirectionFromTwoPoints, getEntityBounds, getStartingSpotForCreationBox, getTopLeftPointFromTransformedPoint, isEntityInsideTwoPoints, isPointInsideBounds, rotatePointOffPivot, rotatingKeysDown, SpotInBox } from '../utils'
 import { getEntitySizeOffset } from '../functions/object-sizing'
 import { ENTITY_TYPE } from '@design-app/shared'
 import { CanvasSelectedService } from './canvas-selected.service'
@@ -96,7 +96,9 @@ export class CanvasObjectPositioningService {
    }*/
 
   singleToMoveMouseMove(event: MouseEvent, entityOnMouseDown: TypeOfEntity) {
-    if (!isHoldingClick(event)) {
+    if (!this._state.mouse.mouseDown) {
+      // if (!isHoldingClick(event)) {
+      // console.log('singleToMoveMouseMove - not holding click')
       this._state.updateState({
         toMove: {
           singleToMove: undefined,
@@ -104,6 +106,7 @@ export class CanvasObjectPositioningService {
       })
       return
     }
+    // console.log('singleToMoveMouseMove', event)
     // assertNotNull(this.singleToMove)
     changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
     // console.log('singleToMoveMouseMove', this.canvas)
@@ -219,11 +222,14 @@ export class CanvasObjectPositioningService {
   }
 
   multipleToMoveMouseDown(multipleToMoveIds: string[]) {
-    this._state.updateState({
-      toMove: {
-        ids: multipleToMoveIds,
-      },
-    })
+    /*    this._state.updateState({
+     toMove: {
+     multiToMove: {
+     ids: multipleToMoveIds,
+
+     },
+     },
+     })*/
     // this.multipleToMoveIds = multipleToMoveIds
   }
 
@@ -235,19 +241,21 @@ export class CanvasObjectPositioningService {
     // this.multipleToMoveIds = []
     this._state.updateState({
       toMove: {
-        ids: [],
+        multiToMove: undefined,
       },
     })
   }
 
   handleSetEntitiesToRotate(event: MouseEvent) {
-    const selectedId = this._selected.selectedId
+    // const selectedId = this._selected.selectedId
+    const selectedId = this._state.selected.singleSelectedId
     if (selectedId) {
       const transformedPoint = this._domPointService.getTransformedPointFromEvent(event)
       this.setEntityToRotate(selectedId, transformedPoint)
       return
     }
-    const multiSelectIds = this._selected.multiSelectedIds
+    // const multiSelectIds = this._selected.multiSelectedIds
+    const multiSelectIds = this._state.selected.multipleSelectedIds
     if (multiSelectIds.length > 1) {
       const transformedPoint = this._domPointService.getTransformedPointFromEvent(event)
       this.setMultipleToRotate(multiSelectIds, transformedPoint)
@@ -292,7 +300,7 @@ export class CanvasObjectPositioningService {
       toRotate: {
         multipleToRotate: {
           ids:      multipleToRotateIds,
-          entities: {},
+          entities: [],
           pivotPoint,
           startToPivotAngle,
         },
@@ -328,8 +336,8 @@ export class CanvasObjectPositioningService {
       toRotate: {
         singleToRotate: {
           ...singleToRotate,
-          startPoint: currentPoint,
-          startAngle: angle,
+          startPoint:    currentPoint,
+          adjustedAngle: angle,
         },
       },
     })
@@ -339,10 +347,17 @@ export class CanvasObjectPositioningService {
   rotateMultipleEntitiesViaMouse(event: MouseEvent, multipleToRotateIds: string[]) {
     // const multipleToRotateIds = this.multipleToRotateIds
     if (!multipleToRotateIds.length) return
-    const pivotPoint = this._state.toRotate.multipleToRotate.pivotPoint
+    if (!rotatingKeysDown(event)) {
+      this.clearEntityToRotate()
+      return
+    }
+    const multipleToRotate = this._state.toRotate.multipleToRotate
+    assertNotNull(multipleToRotate)
+    const pivotPoint = multipleToRotate.pivotPoint
     assertNotNull(pivotPoint)
     // if (!pivotPoint) return
     // const pivotPoint = this.pivotPoint
+    // console.log('pivotPoint', pivotPoint)
 
     const currentPoint = this._domPointService.getTransformedPointFromEvent(event)
     this.currentMousePoint = currentPoint
@@ -353,23 +368,23 @@ export class CanvasObjectPositioningService {
     /*    const canvasEntities = this.multipleToRotateIds.map(id => this._state.entity.getEntity(id))
      .filter(isNotNull)*/
     // const canvasEntities = this.multipleToRotateIds.map(id => this._entitiesStore.select.entityById(id))
-    const startToPivotAngle = this._state.toRotate.multipleToRotate.startToPivotAngle
+    const startToPivotAngle = multipleToRotate.startToPivotAngle
     assertNotNull(startToPivotAngle)
     // assertNotNull(this.startPointToPivotPointAngleInRadians)
     const adjustedAngle = angleInRadians - startToPivotAngle as AngleRadians
     // const adjustedAngleRadians = angleInRadians - this.startPointToPivotPointAngleInRadians as AngleRadians
-    const entityMap = canvasEntities.map(entity => {
+    const entities = canvasEntities.map(entity => {
       const getPos = rotatePointOffPivot(entity.location, pivotPoint, adjustedAngle)
       return {
         id:               entity.id,
         adjustedLocation: getPos,
       } as MultipleToRotateEntity
     })
-    const entities = mapToDictionary(entityMap)
+    // const entities = mapToDictionary(entityMap)
     this._state.updateState({
       toRotate: {
         multipleToRotate: {
-          ...this._state.toRotate.multipleToRotate,
+          ...multipleToRotate,
           adjustedAngle,
           entities,
         },
@@ -397,21 +412,26 @@ export class CanvasObjectPositioningService {
   }
 
   clearEntityToRotate() {
-    const toRotate = this._state.toRotate
-    if (toRotate.singleToRotate) {
-      this._state.updateState({
-        toRotate: {
-          singleToRotate: undefined,
-        },
-      })
-    }
-    if (toRotate.ids.length) {
-      const storeUpdates = toRotate.ids.map(id => {
+    // const toRotate = this._state.toRotate
+    const multipleToRotate = this._state.toRotate.multipleToRotate
+    assertNotNull(multipleToRotate)
+    /*    if (toRotate.singleToRotate) {
+     this._state.updateState({
+     toRotate: {
+     singleToRotate: undefined,
+     },
+     })
+     }*/
+    if (multipleToRotate.ids.length) {
+      const storeUpdates = multipleToRotate.ids.map(id => {
         const entity = this._state.entity.getEntity(id)
         assertNotNull(entity)
         // const entity = this._entitiesStore.select.entityById(id)
-        const angle = this._state.toRotate.multipleToRotate.adjustedAngle
-        const location = this._state.toRotate.multipleToRotate.entities[id]?.adjustedLocation
+        /*     const multipleToRotate = this._state.toRotate.multipleToRotate
+         assertNotNull(multipleToRotate)*/
+        const angle = multipleToRotate.adjustedAngle
+        const location = multipleToRotate.entities.find(e => e.id === id)?.adjustedLocation
+        // const location = this._state.toRotate.multipleToRotate.entities[id]?.adjustedLocation
         // const angle = this.multipleToRotateAdjustedAngle.get(entity.id)
         // const location = this.multipleToRotateAdjustedLocation.get(entity.id)
         assertNotNull(angle)
@@ -422,7 +442,8 @@ export class CanvasObjectPositioningService {
       this._state.entity.updateManyEntities(storeUpdates)
       this._state.updateState({
         toRotate: {
-          ids: [],
+          ids:              [],
+          multipleToRotate: undefined,
         },
       })
       // this._state.entity.
@@ -434,7 +455,8 @@ export class CanvasObjectPositioningService {
       // this._entitiesStore.dispatch.updateCanvasEntity(storeUpdate)
       this._state.updateState({
         toRotate: {
-          singleToRotate: undefined,
+          singleToRotate:   undefined,
+          singleRotateMode: false,
         },
       })
     }

@@ -1,11 +1,11 @@
 import { AngleRadians } from '../../../utils'
-import { ClientState, ToRepositionEntity } from './canvas-client-state'
 import { EntityType } from '@design-app/shared'
 import { Point } from '@shared/data-access/models'
 
-export type ToMoveState = ClientState<ToRepositionEntity> & {
+export type ToMoveState = {
   singleToMove: SingleToMove | undefined
-  multiToMoveStart: Point | undefined
+  // multiToMoveStart: Point | undefined
+  multiToMove: MultiToMove | undefined
 }
 
 export type SingleToMove = {
@@ -15,9 +15,14 @@ export type SingleToMove = {
   angle: AngleRadians
 }
 
+export type MultiToMove = {
+  ids: string[]
+  startPoint: Point
+}
 export const InitialToMoveState: ToMoveState = {
-  ids: [],
-  entities: {},
+  // ids: [],
+  // entities: {},
   singleToMove: undefined,
-  multiToMoveStart: undefined,
+  multiToMove: undefined,
+  // multiToMoveStart: undefined,
 }

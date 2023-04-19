@@ -1,9 +1,4 @@
-import {
-  CanvasEntity,
-  EntityFactory,
-  StringId,
-  UndefinedStringId,
-} from '@design-app/feature-design-canvas'
+import { CanvasEntity, EntityFactory, StringId } from '@design-app/feature-design-canvas'
 import { ENTITY_TYPE } from '@design-app/shared'
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { Point } from '@shared/data-access/models'
@@ -28,10 +23,7 @@ export function assertIsPanel(entity: CanvasEntity): asserts entity is CanvasPan
   }
 }
 
-export const createPanel = (
-  location: Point,
-  stringId: StringId = UndefinedStringId,
-): CanvasPanel => {
+export const createPanel = (location: Point, stringId?: string): CanvasPanel => {
   return {
     ...EntityFactory.create(ENTITY_TYPE.Panel, location),
     stringId,

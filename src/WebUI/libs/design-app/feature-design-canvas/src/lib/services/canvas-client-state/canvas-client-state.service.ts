@@ -3,6 +3,7 @@ import { CanvasClientState, CanvasClientStateUpdatePartial, DragBoxState, Hoveri
 import { InitialModeState, ModeState } from './types/mode'
 import { InitialViewState, ViewState } from './types/view'
 import { CanvasEntityState } from './canvas-entity-state'
+import { InitialMouseState, MouseState } from './types/mouse'
 
 @Injectable({
   providedIn: 'root',
@@ -16,6 +17,7 @@ export class CanvasClientStateService
   private _dragBox: DragBoxState = InitialDragBoxState
   private _mode: ModeState = InitialModeState
   private _view: ViewState = InitialViewState
+  private _mouse: MouseState = InitialMouseState
   // private _render = inject(CanvasRenderService)
   private _entity = inject(CanvasEntityState)
 
@@ -34,6 +36,7 @@ export class CanvasClientStateService
       dragBox:  this.dragBox,
       mode:     this.mode,
       view:     this.view,
+      mouse:    this.mouse,
     }
   }
 
@@ -81,6 +84,10 @@ export class CanvasClientStateService
     return this._view
   }
 
+  get mouse(): MouseState {
+    return this._mouse
+  }
+
   updateState(changes: CanvasClientStateUpdatePartial) {
     if (changes.hover !== undefined) {
       this._hover = {
@@ -126,6 +133,13 @@ export class CanvasClientStateService
         ...this.view,
         ...changes.view,
       }
+    }
+    if (changes.mouse !== undefined) {
+      this._mouse = {
+        ...this.mouse,
+        ...changes.mouse,
+      }
+      console.log('mouse', this.mouse)
     }
   }
 

@@ -106,8 +106,8 @@ export class DragBoxService {
          start: undefined,
          },*/
         selected: {
-          ids: entitiesInAreaIds,
-          entities,
+          multipleSelectedIds: entitiesInAreaIds,
+          singleSelectedId:    undefined,
         },
       })
     }

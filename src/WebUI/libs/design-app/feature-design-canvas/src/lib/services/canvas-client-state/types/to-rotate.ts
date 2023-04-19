@@ -1,11 +1,10 @@
 import { AngleRadians, ClientState, ToRepositionEntity } from '@design-app/feature-design-canvas'
-import { Dictionary } from '@ngrx/entity'
 import { Point } from '@shared/data-access/models'
 
 export type ToRotateState = ClientState<ToRepositionEntity> & {
   singleToRotate: SingleToRotate | undefined
   singleRotateMode: boolean
-  multipleToRotate: MultipleToRotate
+  multipleToRotate: MultipleToRotate | undefined
 }
 
 export type SingleToRotate = {
@@ -20,7 +19,8 @@ export type MultipleToRotate = {
   adjustedAngle?: AngleRadians
   pivotPoint?: Point
   startToPivotAngle?: AngleRadians
-  entities: Dictionary<MultipleToRotateEntity>
+  entities: MultipleToRotateEntity[]
+  // entities: Dictionary<MultipleToRotateEntity>
 }
 
 export type MultipleToRotateEntity = {
@@ -33,9 +33,6 @@ export const InitialToRotateState: ToRotateState = {
   entities: {},
   singleToRotate: undefined,
   singleRotateMode: false,
-  multipleToRotate: {
-    ids: [],
-    entities: {},
-  },
+  multipleToRotate: undefined,
   // },
 }

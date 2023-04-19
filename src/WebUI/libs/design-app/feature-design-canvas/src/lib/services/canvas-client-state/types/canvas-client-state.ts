@@ -2,6 +2,7 @@ import { AngleRadians } from '../../../utils'
 import { DragBoxState } from './drag-box'
 import { HoveringEntityState } from './hovering'
 import { ModeState } from './mode'
+import { MouseState } from './mouse'
 import { SelectedState } from './selected'
 import { ToMoveState } from './to-move'
 import { ToRotateState } from './to-rotate'
@@ -18,6 +19,7 @@ export type CanvasClientState = {
   dragBox: DragBoxState
   mode: ModeState
   view: ViewState
+  mouse: MouseState
 }
 
 export type CanvasClientStateUpdate = {
