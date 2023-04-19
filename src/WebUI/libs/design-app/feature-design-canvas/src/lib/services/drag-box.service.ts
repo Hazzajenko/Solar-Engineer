@@ -7,7 +7,7 @@ import { CanvasObjectPositioningService } from './canvas-object-positioning.serv
 import { assertNotNull, mapToObject } from '@shared/utils'
 import { CanvasSelectedService } from './canvas-selected.service'
 import { CanvasEntitiesStore } from './canvas-entities'
-import { changeCanvasCursor, dragBoxKeysDown } from '../utils'
+import { changeCanvasCursor, dragBoxKeysDown, getAllEntitiesBetweenTwoPoints } from '../utils'
 import { CanvasClientStateService } from './canvas-client-state'
 import { CANVAS_MODE } from './canvas-client-state/types/mode'
 import { CanvasRenderService } from './canvas-render.service'
@@ -78,10 +78,11 @@ export class DragBoxService {
     const start = this._state.dragBox.start
     assertNotNull(start)
     const currentPoint = this._domPointService.getTransformedPointFromEvent(event)
-    const panelsInArea = this._objectPositioning.getAllElementsBetweenTwoPoints(
-      start,
-      currentPoint,
-    )
+    /*    const panelsInArea = this._objectPositioning.getAllElementsBetweenTwoPoints(
+     start,
+     currentPoint,
+     )*/
+    const panelsInArea = getAllEntitiesBetweenTwoPoints(start, currentPoint, this._state.entity.getEntities())
 
     // const { dragBox } = this._state.getState()
     /*    assertNotNull(this.selectionBoxStartPoint)
@@ -128,7 +129,13 @@ export class DragBoxService {
     const newPanels = spots.map(spot =>
       createPanel({ x: spot.x, y: spot.y }),
     )
-    this._entities.dispatch.addManyCanvasEntities(newPanels)
+    // this._entities.dispatch.addManyCanvasEntities(newPanels)
+    this._state.updateState({
+      dragBox: {
+        start: undefined,
+      },
+    })
+    this._state.entity.addManyEntities(newPanels)
     /*    this._state.updateState({
      dragBox: {
      start: undefined,

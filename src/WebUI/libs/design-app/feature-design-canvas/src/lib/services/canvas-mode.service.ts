@@ -10,7 +10,8 @@ export class CanvasModeService {
   private _state = inject(CanvasClientStateService)
 
   get mode() {
-    return this._mode
+    // return this._mode
+    return this._state.mode.mode
   }
 
   setMode(mode: CanvasMode) {

@@ -1,6 +1,9 @@
 import { EntityType } from '@design-app/shared'
 import { POINTER_BUTTON } from '@shared/data-access/models'
 
+export const isHoldingClick = (event: MouseEvent): boolean => {
+  return event.button === POINTER_BUTTON.MAIN
+}
 export const dragBoxKeysDown = (event: MouseEvent): boolean => {
   return event.altKey && event.button === 0
   // return event.shiftKey && event.button === 0

@@ -5,12 +5,12 @@ export type SelectedEntity = TypeOfEntity
 
 export type SelectedState = ClientState<SelectedEntity> & {
   selectedStringId: string | undefined
-  singleSelected: TypeOfEntity | undefined
+  singleSelectedId: string | undefined
 }
 
 export const InitialSelectedState: SelectedState = {
   ids: [],
   entities: {},
   selectedStringId: undefined,
-  singleSelected: undefined,
+  singleSelectedId: undefined,
 }

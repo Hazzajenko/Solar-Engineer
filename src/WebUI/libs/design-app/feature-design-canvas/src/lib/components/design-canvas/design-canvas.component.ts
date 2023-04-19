@@ -5,7 +5,7 @@ import { DesignCanvasDirective } from '../../directives'
 import { select, Store } from '@ngrx/store'
 import { selectDrawTime } from '../../store'
 import { ShowSvgComponent } from '@shared/ui'
-import { CanvasEntitiesStore, CanvasObjectPositioningService, DomPointService } from '../../services'
+import { CanvasClientStateService, CanvasEntitiesStore, CanvasObjectPositioningService, DomPointService } from '../../services'
 import { MenuDataset } from '../../types'
 
 @Component({
@@ -26,6 +26,7 @@ export class DesignCanvasComponent
   private _store = inject(Store)
   private _objectPositioning = inject(CanvasObjectPositioningService)
   private _domPoint = inject(DomPointService)
+  private _state = inject(CanvasClientStateService)
   public entitiesStore = inject(CanvasEntitiesStore)
   public drawTime$ = this._store.pipe(select(selectDrawTime))
   @ViewChild(DesignCanvasDirective, { static: true }) canvas!: DesignCanvasDirective
@@ -52,7 +53,8 @@ export class DesignCanvasComponent
   delete() {
     const dataSet = this.getMenuDataSet()
     console.log(dataSet)
-    this.entitiesStore.dispatch.deleteCanvasEntity(dataSet.id)
+    this._state.entity.removeEntity(dataSet.id)
+    // this.entitiesStore.dispatch.deleteCanvasEntity(dataSet.id)
     this.closeMenu()
   }
 

@@ -7,6 +7,7 @@ import { CURSOR_TYPE } from '@shared/data-access/models'
 import { assertNotNull } from '@shared/utils'
 import { draggingScreenKeysDown } from '../utils'
 import { CanvasClientStateService } from './canvas-client-state'
+import { CanvasRenderService } from './canvas-render.service'
 
 @Injectable({
   providedIn: 'root',
@@ -16,6 +17,7 @@ export class CanvasViewPositioningService {
   private _domPointService = inject(DomPointService)
   private _canvasElementsService = inject(CanvasElementService)
   private _state = inject(CanvasClientStateService)
+  private _render = inject(CanvasRenderService)
 
   screenDragStartPoint?: TransformedPoint
 
@@ -52,6 +54,7 @@ export class CanvasViewPositioningService {
     const transformX = currentTransformedCursor.x - this.screenDragStartPoint.x
     const transformY = currentTransformedCursor.y - this.screenDragStartPoint.y
     this.ctx.translate(transformX, transformY)
+    this._render.drawCanvas()
     // this.drawPanels()
   }
 

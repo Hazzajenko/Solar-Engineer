@@ -16,6 +16,8 @@ export class CanvasStringsService {
     const newString = CanvasStringFactory.create(stringName)
     this._stringsStore.dispatch.addCanvasString(newString)
     const updates = mapToUpdateArr(selectedPanels, { stringId: newString.id })
-    this._panelsStore.dispatch.updateManyCanvasEntities(updates)
+    // this._panelsStore.dispatch.updateManyCanvasEntities(updates)
+    // this._
+    // TODO update panels with new stringId
   }
 }

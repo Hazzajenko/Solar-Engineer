@@ -32,17 +32,22 @@ export class CanvasRenderService {
   }
 
   get entities() {
-    return this._entitiesStore.select.entities
+    return this._state.entity.getEntities()
+    // return this._entitiesStore.select.entities
   }
 
   drawCanvas() {
+    // console.log('drawCanvas')
     this.ctx.save()
     this.ctx.setTransform(1, 0, 0, 1, 0, 0)
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
     this.ctx.restore()
     this.ctx.save()
     this.ctx.beginPath()
-    this.entities.forEach((entity) => {
+    const entities = this._state.entity.getEntities()
+    entities.forEach((entity) => {
+      // this.entities.forEach((entity) => {
+      // console.log('drawCanvas', entity)
       this.drawEntity(entity)
     })
     // this.ctx.closePath()
@@ -118,18 +123,19 @@ export class CanvasRenderService {
   }
 
   private drawEntity(entity: CanvasEntity) {
+    // console.log('drawEntity', entity)
     let fillStyle: string = CANVAS_COLORS.DefaultPanelFillStyle
     // const { hoveringEntityId, selectedId, selectedIds } = this.appState
     // const { singleToRotateId, multipleToRotateIds } = this.rotateState
     // const { hoveringEntityId, singleSelectedId, multiSelectedIds, multiToRotateEntities, singleToRotateEntity } = this._clientState.state
     const { toMove, toRotate, selected, hover } = this._state.state
-    const isBeingHovered = !!hover.hoveringEntity && hover.hoveringEntity.id === entity.id
+    const isBeingHovered = !!hover.hoveringEntityId && hover.hoveringEntityId === entity.id
     // const isBeingHovered = hoveringEntityId === entity.id
     if (isBeingHovered) {
       fillStyle = '#17fff3'
     }
 
-    const isSingleSelected = !!selected.singleSelected && selected.singleSelected.id === entity.id
+    const isSingleSelected = !!selected.singleSelectedId && selected.singleSelectedId === entity.id
     const isMultiSelected = selected.ids.includes(entity.id)
     // const isMultiSelected = multiSelectedIds && multiSelectedIds.find((id) => id === entity.id)
 
@@ -147,7 +153,7 @@ export class CanvasRenderService {
     }
 
     const isInMultiRotate = toRotate.ids.includes(entity.id)
-    const isInSingleRotate = !!toRotate.singleToRotateEntity && toRotate.singleToRotateEntity.id === entity.id
+    const isInSingleRotate = !!toRotate.singleToRotate && toRotate.singleToRotate.id === entity.id
     // const isInMultiRotate = multiToRotateEntities.find((e) => e.id === entity.id)
     // const isInMultiRotate = multiToRotateEntities.includes(entity.id)
     // const isInSingleRotate = !!singleToRotateEntity && singleToRotateEntity.id === entity.id
@@ -168,10 +174,12 @@ export class CanvasRenderService {
     /*    const isDragging2 =
      !!this._clientState.singleToMoveEntity &&
      this._clientState.singleToMoveEntity.id === entity.id*/
-    const isDragging2 = !!toMove.singleToMoveEntity && toMove.singleToMoveEntity.id === entity.id
+    // console.log('toMove', toMove)
+    const isDragging2 = !!toMove.singleToMove && toMove.singleToMove.id === entity.id
     if (isDragging2) {
-      assertNotNull(toMove.singleToMoveEntity)
-      this.handleDraggingEntityDraw(entity, toMove.singleToMoveEntity)
+      // console.log('isDragging2')
+      assertNotNull(toMove.singleToMove)
+      this.handleDraggingEntityDraw(entity, toMove.singleToMove)
       return
     }
     /*    const isDragging =
@@ -198,6 +206,7 @@ export class CanvasRenderService {
     // const { singleToMoveId, singleToMoveLocation } = this._objectPositioning
     // assertNotNull(singleToMoveLocation)
     // if (singleToMoveId !== entity.id) return
+    // console.log('handleDraggingEntityDraw', singleToMove)
     this.ctx.save()
     this.ctx.translate(
       singleToMove.location.x + entity.width / 2,

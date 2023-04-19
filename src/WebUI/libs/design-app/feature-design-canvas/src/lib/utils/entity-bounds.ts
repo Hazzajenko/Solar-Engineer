@@ -174,8 +174,10 @@ export const getAllEntitiesBetweenTwoPoints = (
   point1: TransformedPoint,
   point2: TransformedPoint,
   entities: CanvasEntity[],
-  direction: DiagonalDirection,
+  // direction: DiagonalDirection,
 ) => {
+  const direction = getDiagonalDirectionFromTwoPoints(point1, point2)
+  if (!direction) return []
   return entities.filter((entity) => {
     const { left, top, right, bottom } = getEntityBounds(entity)
 
@@ -304,11 +306,14 @@ export const getTopLeftPointFromBounds = (bounds: EntityBounds): Point => {
   }
 }
 
-export const getTopLeftPointFromTransformedPoint = (point: TransformedPoint, size: Size): Point => {
+export const getTopLeftPointFromTransformedPoint = (
+  point: TransformedPoint,
+  size: Size,
+): TransformedPoint => {
   return {
     x: point.x - size.width / 2,
     y: point.y - size.height / 2,
-  }
+  } as TransformedPoint
 }
 
 export const getTopLeftPointFromEvent = (event: MouseEvent, size: Size): Point => {

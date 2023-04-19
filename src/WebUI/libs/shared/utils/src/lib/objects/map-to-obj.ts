@@ -10,6 +10,8 @@
  );
 
  */
+import { Dictionary } from '@ngrx/entity';
+
 
 export const mapToObject = <
   T extends {
@@ -19,6 +21,16 @@ export const mapToObject = <
   array: T[],
 ): Record<string, T> => {
   return array.reduce((acc, item) => ((acc[item['id']] = item), acc), {} as Record<string, T>)
+}
+
+export const mapToDictionary = <
+  T extends {
+    id: string
+  },
+>(
+  array: T[],
+): Dictionary<T> => {
+  return array.reduce((acc, item) => ((acc[item['id']] = item), acc), {} as Dictionary<T>)
 }
 
 /*
