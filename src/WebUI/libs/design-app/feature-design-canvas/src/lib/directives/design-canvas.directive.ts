@@ -55,9 +55,10 @@ export class DesignCanvasDirective
       this._drag.handleDragBoxMouseDown(event)
       return
     }
-    const { selected } = this._state.getState()
-    if (isMultiSelectDragging(event, selected.multipleSelectedIds)) {
-      this._selected.multiSelectDraggingMouseDown(event)
+    // const { selected } = this._state.getState()
+    const multipleSelectedIds = this._state.state.selected.multipleSelectedIds
+    if (isMultiSelectDragging(event, multipleSelectedIds)) {
+      this._objPositioning.multiSelectDraggingMouseDown(event, multipleSelectedIds)
       return
     }
     const entityUnderMouse = this.getEntityUnderMouseV2(event)
@@ -105,7 +106,7 @@ export class DesignCanvasDirective
 
     const singleToMove = this._state.toMove.singleToMove
     if (singleToMove) {
-      this._objectPos.singleToMoveMouseUp(event, singleToMove)
+      this._objPositioning.singleToMoveMouseUp(event, singleToMove)
       return
     }
   }
@@ -128,7 +129,7 @@ export class DesignCanvasDirective
     }
     const singleRotateMode = this._state.toRotate.singleRotateMode
     if (singleRotateMode) {
-      this._objectPos.clearEntityToRotate()
+      this._objRotating.clearEntityToRotate()
       return
     }
 
@@ -196,26 +197,26 @@ export class DesignCanvasDirective
     const singleToRotate = this._state.toRotate.singleToRotate
     const singleRotateMode = this._state.toRotate.singleRotateMode
     if (singleToRotate && singleRotateMode) {
-      this._objectPos.rotateEntityViaMouse(event, singleToRotate)
+      this._objRotating.rotateEntityViaMouse(event, singleToRotate)
+      // this._objectPos.rotateEntityViaMouse(event, singleToRotate)
       return
     }
     if (singleToRotate && rotatingKeysDown(event)) {
-      this._objectPos.rotateEntityViaMouse(event, singleToRotate)
+      this._objRotating.rotateEntityViaMouse(event, singleToRotate)
       return
     }
 
     const multipleToRotate = this._state.toRotate.multipleToRotate
     if (multipleToRotate && multipleToRotate.ids.length > 1) {
-      this._objectPos.rotateMultipleEntitiesViaMouse(event, multipleToRotate.ids)
+      this._objRotating.rotateMultipleEntitiesViaMouse(event, multipleToRotate.ids)
       return
     }
-
-    if (!this._objectPos.areAnyEntitiesInRotate && rotatingKeysDown(event)) {
-      this._objectPos.handleSetEntitiesToRotate(event)
+    if (!this._objRotating.areAnyEntitiesInRotate && rotatingKeysDown(event)) {
+      this._objRotating.handleSetEntitiesToRotate(event)
     }
 
-    if (this._objectPos.areAnyEntitiesInRotate && !rotatingKeysDown(event)) {
-      this._objectPos.clearEntityToRotate()
+    if (this._objRotating.areAnyEntitiesInRotate && !rotatingKeysDown(event)) {
+      this._objRotating.clearEntityToRotate()
       return
     }
     if (this._view.screenDragStartPoint) {
@@ -228,13 +229,21 @@ export class DesignCanvasDirective
       return
     }
 
+    // const multipleSelectedIds = this._state.selected.multipleSelectedIds
     const multipleSelectedIds = this._state.selected.multipleSelectedIds
+    const multipleToMove = this._state.toMove.multipleToMove
+
+    if (isMultiSelectDragging(event, multipleSelectedIds)) {
+      if (!multipleToMove) {
+        this._objPositioning.setMultiSelectDraggingMouseMove(event, multipleSelectedIds)
+      }
+      // changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
+      return this._objPositioning.multiSelectDraggingMouseMove(event)
+      // return this._selected.multiSelectDraggingMouseMove(event)
+    }
     if (isReadyToMultiDrag(event, multipleSelectedIds)) {
       changeCanvasCursor(this.canvas, CURSOR_TYPE.GRAB)
       return
-    }
-    if (isMultiSelectDragging(event, multipleSelectedIds)) {
-      return this._selected.multiSelectDraggingMouseMove(event)
     }
 
     const onMouseDownEntityId = this._state.hover.onMouseDownEntityId
@@ -264,12 +273,14 @@ export class DesignCanvasDirective
       assertNotNull(singleToMove)
       const type = this._state.entity.getEntity(singleToMove.id)?.type
       assertNotNull(type)
-      this._objectPos.singleToMoveMouseMove(event, {
+      this._objPositioning.singleToMoveMouseMove(event, {
         id: singleToMove.id,
         type,
       })
       return
     }
+
+    // const multipleToMove = this._state.toMove.multipleToMove
 
     const entityUnderMouse = this.getEntityUnderMouse(event)
     if (entityUnderMouse) {
@@ -370,7 +381,7 @@ export class DesignCanvasDirective
            })
            this._render.drawCanvas()*/
 
-          this._objectPos.clearEntityToRotate()
+          this._objRotating.clearEntityToRotate()
           console.log('clear single to rotate')
           return
         }
@@ -383,7 +394,7 @@ export class DesignCanvasDirective
            },
            })
            this._render.drawCanvas()*/
-          this._objectPos.clearEntityToRotate()
+          this._objRotating.clearEntityToRotate()
           console.log('clear multiple to rotate')
           return
         }
@@ -400,7 +411,7 @@ export class DesignCanvasDirective
         const singleSelectedId = this._state.selected.singleSelectedId
         if (singleSelectedId && !entityToRotate) {
           // if (this._selected.selected && !this._objectPos.entityToRotateId) {
-          this._objectPos.setEntityToRotate(singleSelectedId, this.currentTransformedCursor)
+          this._objRotating.setEntityToRotate(singleSelectedId, this.currentTransformedCursor)
           console.log('set single to rotate')
           return
         }

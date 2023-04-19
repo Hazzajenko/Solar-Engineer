@@ -5,7 +5,7 @@ import { Point } from '@shared/data-access/models'
 export type ToMoveState = {
   singleToMove: SingleToMove | undefined
   // multiToMoveStart: Point | undefined
-  multiToMove: MultiToMove | undefined
+  multipleToMove: MultiToMove | undefined
 }
 
 export type SingleToMove = {
@@ -18,11 +18,20 @@ export type SingleToMove = {
 export type MultiToMove = {
   ids: string[]
   startPoint: Point
+  offset: Point
+  entities: MultiToMoveEntity[]
+}
+
+export type MultiToMoveEntity = {
+  id: string
+  type: EntityType
+  location: Point
+  angle: AngleRadians
 }
 export const InitialToMoveState: ToMoveState = {
   // ids: [],
   // entities: {},
   singleToMove: undefined,
-  multiToMove: undefined,
+  multipleToMove: undefined,
   // multiToMoveStart: undefined,
 }

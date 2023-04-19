@@ -5,13 +5,14 @@ import {
   CanvasClientStateService,
   CanvasElementService,
   CanvasModeService,
-  CanvasObjectPositioningService,
   CanvasRenderService,
   CanvasSelectedService,
   CanvasViewPositioningService,
   DomPointService,
   DragBoxService,
+  ObjectRotatingService,
 } from '../services'
+import { ObjectPositioningService } from '../services/object-positioning/object-positioning.service'
 import { CanvasAppState, initialCanvasAppState } from '../store'
 import { CanvasEntity, SizeByType, TransformedPoint } from '../types'
 import {
@@ -45,7 +46,9 @@ export abstract class DesignCanvasDirectiveExtension {
   protected _ngZone = inject(NgZone)
   protected _renderer = inject(Renderer2)
   protected _canvasEl = inject(CanvasElementService)
-  protected _objectPos = inject(CanvasObjectPositioningService)
+  // protected _objectPos = inject(CanvasObjectPositioningService)
+  protected _objRotating = inject(ObjectRotatingService)
+  protected _objPositioning = inject(ObjectPositioningService)
   protected _view = inject(CanvasViewPositioningService)
   protected _mode = inject(CanvasModeService)
   protected _drag = inject(DragBoxService)

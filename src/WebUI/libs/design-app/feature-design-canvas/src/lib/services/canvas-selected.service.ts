@@ -67,27 +67,27 @@ export class CanvasSelectedService {
    return this._multiSelected.filter(entity => entity.type === type) as T[]
    }*/
 
-  multiSelectDraggingMouseDown(event: MouseEvent) {
-    // if (this._multiSelected.length === 0) return
-    const selectedIds = this._state.selected.multipleSelectedIds
-    if (selectedIds.length <= 0) return
-    if (!event.shiftKey || !event.ctrlKey) return
-    // if (!event.shiftKey) return
-    // this.isMultiSelectDragging = true
-    // this.multiSelectStart = eventToPointLocation(event)
-    const multiSelectStart = this._domPointService.getTransformedPointFromEvent(event)
-    this._state.updateState({
-      toMove: {
-        multiToMove: {
-          ids:        selectedIds,
-          startPoint: multiSelectStart,
-        },
-        // multiToMoveStart: multiSelectStart,
-      },
-    })
+  /*  multiSelectDraggingMouseDown(event: MouseEvent) {
+   // if (this._multiSelected.length === 0) return
+   const selectedIds = this._state.selected.multipleSelectedIds
+   if (selectedIds.length <= 0) return
+   if (!event.shiftKey || !event.ctrlKey) return
+   // if (!event.shiftKey) return
+   // this.isMultiSelectDragging = true
+   // this.multiSelectStart = eventToPointLocation(event)
+   const multiSelectStart = this._domPointService.getTransformedPointFromEvent(event)
+   this._state.updateState({
+   toMove: {
+   multipleToMove: {
+   ids:        selectedIds,
+   startPoint: multiSelectStart,
+   },
+   // multiToMoveStart: multiSelectStart,
+   },
+   })
 
-    // this._entityStore.dispatch.setDraggingEntityIds()
-  }
+   // this._entityStore.dispatch.setDraggingEntityIds()
+   }*/
 
   multiSelectDraggingMouseMove(event: MouseEvent) {
     if (!event.shiftKey || !event.ctrlKey) {
@@ -105,7 +105,7 @@ export class CanvasSelectedService {
   }
 
   onMultiDragging(event: MouseEvent) {
-    const multiToMove = this._state.toMove.multiToMove
+    const multiToMove = this._state.toMove.multipleToMove
     assertNotNull(multiToMove)
     const multiToMoveStart = multiToMove.startPoint
     // const multiToMoveStart = this._state.toMove.multiToMove?.startPoint
@@ -150,7 +150,7 @@ export class CanvasSelectedService {
 
   stopMultiSelectDragging(event: MouseEvent) {
     this.isMultiSelectDragging = false
-    const multiToMove = this._state.toMove.multiToMove
+    const multiToMove = this._state.toMove.multipleToMove
     assertNotNull(multiToMove)
     const multiToMoveStart = multiToMove.startPoint
     // const multiToMoveStart = this._state.toMove.multiToMoveStart
@@ -200,7 +200,7 @@ export class CanvasSelectedService {
     // const multiSelectedUpdateObj = mapToObject(multiSelectedUpdated)
     this._state.updateState({
       toMove: {
-        multiToMove: undefined,
+        multipleToMove: undefined,
       },
     })
     this._render.drawCanvas()

@@ -186,6 +186,12 @@ export class CanvasRenderService {
       this.handleDraggingEntityDraw(entity, toMove.singleToMove)
       return
     }
+
+    const isInMultiMove = !!toMove.multipleToMove && toMove.multipleToMove.ids.includes(entity.id)
+    if (isInMultiMove) {
+      this.handleMultipleMoveDraw(entity)
+      return
+    }
     /*    const isDragging =
      !!this._objectPositioning.singleToMove &&
      this._objectPositioning.singleToMove.id === entity.id
@@ -225,6 +231,35 @@ export class CanvasRenderService {
     this.ctx.restore()
   }
 
+  private handleMultipleMoveDraw(entity: CanvasEntity) {
+    // const { singleToMoveId, singleToMoveLocation } = this._objectPositioning
+    // assertNotNull(singleToMoveLocation)
+    // if (singleToMoveId !== entity.id) return
+    // console.log('handleDraggingEntityDraw', singleToMove)
+    const multipleToMove = this._state.toMove.multipleToMove
+    assertNotNull(multipleToMove)
+    // const entityToMove = multipleToMove.entities.find((e) => e.id === entity.id)
+    // assertNotNull(entityToMove)
+    const offset = multipleToMove.offset
+    // entityToMove.
+    this.ctx.save()
+    this.ctx.translate(
+      entity.location.x + entity.width / 2 + offset.x,
+      entity.location.y + entity.height / 2 + offset.y,
+    )
+    /*    this.ctx.translate(
+     singleToMove.location.x + entity.width / 2,
+     singleToMove.location.y + entity.height / 2,
+     )*/
+    this.ctx.rotate(entity.angle)
+
+    this.ctx.beginPath()
+    this.ctx.rect(-entity.width / 2, -entity.height / 2, entity.width, entity.height)
+    this.ctx.fill()
+    this.ctx.stroke()
+    this.ctx.restore()
+  }
+
   private handleSingleRotationDraw(entity: CanvasEntity) {
     const singleToRotate = this._state.toRotate.singleToRotate
     assertNotNull(singleToRotate)
@@ -244,10 +279,14 @@ export class CanvasRenderService {
 
   private handleMultipleRotationDraw(entity: CanvasEntity) {
     // const rotateState = this.rotateState
-    const multipleToRotateAngleMap = this._state.toRotate.multipleToRotate
-    assertNotNull(multipleToRotateAngleMap)
-    const angle = multipleToRotateAngleMap.adjustedAngle
-    const location = multipleToRotateAngleMap.entities.find((e) => e.id === entity.id)?.adjustedLocation
+    const multipleToRotate = this._state.toRotate.multipleToRotate
+    assertNotNull(multipleToRotate)
+    const angle = multipleToRotate.adjustedAngle
+    const location = multipleToRotate.entities.find((e) => e.id === entity.id)?.adjustedLocation
+    /*    const multipleToRotateAngleMap = this._state.toRotate.multipleToRotate
+     assertNotNull(multipleToRotateAngleMap)
+     const angle = multipleToRotateAngleMap.adjustedAngle
+     const location = multipleToRotateAngleMap.entities.find((e) => e.id === entity.id)?.adjustedLocation*/
     // const angle = rotateState.multipleToRotateAngleMap.get(entity.id)
     // const location = rotateState.multipleToRotateLocationMap.get(entity.id)
     assertNotNull(angle)
