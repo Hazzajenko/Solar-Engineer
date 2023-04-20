@@ -1,49 +1,42 @@
-import { CanvasEntity } from '@design-app/feature-design-canvas'
-import { UpdateStr } from '@ngrx/entity/src/models'
-import { Injectable } from '@angular/core'
 import { createEntityAdapter, Dictionary, EntityAdapter, EntityState } from '@ngrx/entity'
+import { UpdateStr } from '@ngrx/entity/src/models'
 import { mapToDictionary } from '@shared/utils'
 
-export type EntityDataState = {
-  ids: string[]
-  entities: Dictionary<CanvasEntity>
-}
-
-@Injectable({
-  providedIn: 'root',
-})
-export class CanvasEntityState
-  implements EntityState<CanvasEntity> {
+export class EntityStateTemplate<
+  T extends {
+    id: string
+  },
+> implements EntityState<T>
+{
   // private _render = inject(CanvasRenderService)
   // constructor(public readonly canvasRenderService: CanvasRenderService) {}
 
-  private adapter: EntityAdapter<CanvasEntity> = createEntityAdapter<CanvasEntity>(
-    {
-      selectId: (entity) => entity.id,
-    },
-  )
+  private adapter: EntityAdapter<T> = createEntityAdapter<T>({
+    selectId: (entity) => entity.id,
+  })
 
   ids: string[] = []
   /*    entities: {
    [id: string]: CanvasEntity
    } = {}*/
-  entities: Dictionary<CanvasEntity> = {}
+  entities: Dictionary<T> = {}
 
-  // temp = new EntityStateTemplate<CanvasEntity>()
-
-  private set state(state: EntityDataState) {
+  private set state(state: { ids: string[]; entities: Dictionary<T> }) {
     this.ids = state.ids
     this.entities = state.entities
   }
 
-  private get state(): EntityDataState {
+  private get state(): {
+    ids: string[]
+    entities: Dictionary<T>
+  } {
     return {
-      ids:      this.ids,
+      ids: this.ids,
       entities: this.entities,
     }
   }
 
-  addEntity(entity: CanvasEntity) {
+  addEntity(entity: T) {
     /*    if (this.entities[entity.id] || this.ids.includes(entity.id)) {
      return
      }
@@ -54,7 +47,7 @@ export class CanvasEntityState
     // this.adapter.
   }
 
-  addManyEntities(entities: CanvasEntity[]) {
+  addManyEntities(entities: T[]) {
     // entities.forEach((entity) => this.addEntity(entity))
     // this.adapter.addMany(entities, this)
     this.state = this.adapter.addMany(entities, this.state)
@@ -83,7 +76,7 @@ export class CanvasEntityState
      }*/
   }
 
-  updateEntity(id: string, changes: Partial<CanvasEntity>) {
+  updateEntity(id: string, changes: Partial<T>) {
     this.state = this.adapter.updateOne({ id, changes }, this.state)
     // this.adapter.updateOne({ id, changes }, this)
     /*    this.entities[id] = {
@@ -92,7 +85,7 @@ export class CanvasEntityState
      }*/
   }
 
-  updateManyEntities(updates: UpdateStr<CanvasEntity>[]) {
+  updateManyEntities(updates: UpdateStr<T>[]) {
     this.state = this.adapter.updateMany(updates, this.state)
     // this.adapter.updateMany(updates, this)
     // updates.forEach((update) => this.updateEntity(update.id, update.changes))
@@ -103,13 +96,13 @@ export class CanvasEntityState
   }
 
   getEntities() {
-    return this.adapter.getSelectors()
-      .selectAll(this)
+    return this.adapter.getSelectors().selectAll(this)
     // return this.ids.map((id) => this.entities[id])
   }
 
   getEntitiesByIds(ids: string[]) {
-    return this.adapter.getSelectors()
+    return this.adapter
+      .getSelectors()
       .selectAll(this)
       .filter((entity) => ids.includes(entity.id))
   }

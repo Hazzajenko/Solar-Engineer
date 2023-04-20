@@ -1,0 +1,90 @@
+{
+  "name": "svelte-design-app",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/svelte-design-app/src",
+  "projectType": "application",
+  "tags": [
+    "svelte-design-app:project"
+  ],
+  "targets": {
+    "build": {
+      "executor": "@nrwl/vite:build",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "frameworkConfigFile": "apps/svelte-design-app/vite.config.ts",
+        "outputPath": "dist/apps/svelte-design-app",
+        "svelteConfig": "apps/svelte-design-app/svelte.config.cjs",
+        "assets": [
+          {
+            "glob": "/*",
+            "input": "./public/**",
+            "output": "./"
+          }
+        ],
+        "tsConfig": "apps/svelte-design-app/tsconfig.app.json"
+      },
+      "configurations": {
+        "production": {}
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/vite:dev-server",
+      "options": {
+        "buildTarget": "svelte-design-app:build",
+        "port": 4200,
+        "svelteConfig": "apps/svelte-design-app/svelte.config.cjs",
+        "frameworkConfigFile": "apps/svelte-design-app/vite.config.ts",
+        "outputPath": "dist/apps/svelte-design-app",
+        "assets": [
+          {
+            "glob": "/*",
+            "input": "./public/**",
+            "output": "./"
+          }
+        ],
+        "tsConfig": "apps/svelte-design-app/tsconfig.app.json"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": [
+        "{options.outputFile}"
+      ],
+      "options": {
+        "lintFilePatterns": [
+          "apps/svelte-design-app/**/*.{ts,svelte,spec.ts}"
+        ]
+      }
+    },
+    "check": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "svelte-check",
+        "cwd": "apps/svelte-design-app"
+      }
+    },
+    "test": {
+      "executor": "@nxext/vitest:vitest",
+      "options": {
+        "vitestConfig": "apps/svelte-design-app/vitest.config.ts"
+      }
+    },
+    "preview": {
+      "executor": "@nrwl/vite:preview-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "svelte-design-app:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "svelte-design-app:build:development"
+        },
+        "production": {
+          "buildTarget": "svelte-design-app:build:production"
+        }
+      }
+    }
+  }
+}
