@@ -1,0 +1,29 @@
+{
+  "name": "svelte-canvas",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/svelte-canvas/src",
+  "projectType": "library",
+  "tags": ["svelte-canvas:feature"],
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/svelte-canvas/**/*.{ts,svelte,spec.ts}"]
+      }
+    },
+    "check": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "svelte-check",
+        "cwd": "libs/svelte-canvas"
+      }
+    },
+    "test": {
+      "executor": "@nxext/vitest:vitest",
+      "options": {
+        "vitestConfig": "libs/svelte-canvas/vitest.config.ts"
+      }
+    }
+  }
+}

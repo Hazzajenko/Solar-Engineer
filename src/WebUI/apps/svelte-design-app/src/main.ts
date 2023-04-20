@@ -1,27 +1,10 @@
-import App from './app/Canvas.svelte';
+// import App from '@svelte-canvas/App.svelte'
+import { App } from '@svelte-canvas';
 
 
-/*
- const app = new App({
- target: document.body,
- props: {
- name: 'svelte-design-app',
- },
- })
+// import App from './app/App.svelte'
 
- const two = new Two({
- target: document.body,
- props: {
- name: 'svelte-design-app',
- },
- })*/
-
-/*const app = new App({
- target: document.body,
- props: {
- name: 'svelte-design-app',
- },
- })*/
+// import App from './app/App.svelte'
 
 const app = new App({
   target: document.body,

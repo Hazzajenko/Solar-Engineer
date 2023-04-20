@@ -1,13 +1,13 @@
 <script>
   import Text from './Text.svelte'
-  import { renderable } from './game.js'
+  import { renderer } from './canvas-state'
 
   let text = ''
 
   let elapsed = 0
   let frames = 0
   let prevTime = performance.now()
-  renderable((state, dt) => {
+  renderer((state, dt) => {
     let time = performance.now()
     frames++
     if (time >= prevTime + 1000) {

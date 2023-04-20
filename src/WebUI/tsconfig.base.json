@@ -108,6 +108,7 @@
       "@shared/ui/spinner": ["libs/shared/ui/spinner/src/index.ts"],
       "@shared/ui/statistics": ["libs/shared/ui/statistics/src/index.ts"],
       "@shared/utils": ["libs/shared/utils/src/index.ts"],
+      "@svelte-canvas": ["libs/svelte-canvas/src/index.ts"],
       "@undefined/core-components": ["dist/libs/core-components"],
       "@undefined/core-components/*": ["dist/libs/core-components/dist/components/*"],
       "@undefined/core-components/loader": ["dist/libs/core-components/loader"],

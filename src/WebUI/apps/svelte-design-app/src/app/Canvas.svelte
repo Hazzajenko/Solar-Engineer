@@ -1,16 +1,16 @@
 <script>
 	import { onMount, onDestroy, setContext } from 'svelte';
 
-	import {
-		key,
-		width,
-		height,
-		canvas as canvasStore,
-		context as contextStore,
-		pixelRatio,
-		props,
-		time
-	} from './canvas';
+  import {
+    key,
+    width,
+    height,
+    canvas as canvasStore,
+    context as contextStore,
+    pixelRatio,
+    props,
+    time,
+  } from './canvas-state'
 
 	export let killLoopOnError = true;
 	export let attributes = {};
@@ -21,8 +21,9 @@
 	let frame;
 
 	onMount(() => {
-		// prepare canvas stores
+		// prepare canvasState stores
 		context = canvas.getContext('2d', attributes);
+    console.log('context', context)
 		canvasStore.set(canvas);
 		contextStore.set(context);
 
