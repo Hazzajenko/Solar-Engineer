@@ -18,8 +18,10 @@ export class DesignCanvasDirective
 
   public ngOnInit() {
     this.setupCanvas()
+    this.fpsEl = document.getElementById('fps') as HTMLDivElement
     this._ngZone.runOutsideAngular(() => {
       this.setupMouseEventListeners()
+      this.animate60Fps()
     })
     this.mousePos = document.getElementById('mouse-pos') as HTMLDivElement
     this.transformedMousePos = document.getElementById('transformed-mouse-pos') as HTMLDivElement

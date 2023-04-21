@@ -61,10 +61,11 @@ export const getState = () => {
  }
  })
  }*/
-export const renderer = (render: (...props: any) => void) => {
+export const renderer = (render: (props: any) => void) => {
+  // console.log('renderer', render)
   console.log('renderer', render)
   const api = getContext<any>(key)
-  console.log('api', api)
+  // console.log('api', api)
   const element = {
     ready: false,
     mounted: false,

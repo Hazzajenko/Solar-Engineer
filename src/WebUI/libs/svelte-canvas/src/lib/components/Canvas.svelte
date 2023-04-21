@@ -12,7 +12,7 @@
     time, renderer,
   } from './canvas-state'
 
-  import { createSveltePanel, createSveltePanelArray, panels } from './entity-state'
+  import { createSveltePanel, createSveltePanelArray, panels, SveltePanel } from './entity-state'
 
 
 	export let killLoopOnError = true;
@@ -88,6 +88,10 @@
 			render(dt);
 		});
 	});
+
+  setContext('canvas', {
+    getCanvas: () => canvas,
+  })
 
 	setContext(key, {
 		add (fn) {
@@ -189,6 +193,29 @@
   function handleMouseMove(e) {
     // console.log('mousemove', e)
   }
+
+
+  function addToPanels(event: MouseEvent, incomingPanels: SveltePanel[]) {
+    // c
+    console.log('incomingPanels', incomingPanels)
+    const location = {
+      x: event.clientX,
+      y: event.clientY,
+    }
+    console.log('location', location)
+    const panel = createSveltePanel(location)
+    console.log('panel', panel)
+    const updatedPanels = [...incomingPanels, { ...panel }]
+
+    panels.set(updatedPanels)
+    /*    if (!inCart) {
+     let updatedCart = [...$cart, { ...product, quantity: 1 }]
+
+     cart.set(updatedCart)
+     } else {
+     alert('Item already added to Cart')
+     }*/
+  }
 </script>
 
 <canvas
@@ -198,11 +225,13 @@
 	style="width: {$width}px; height: {$height}px;"></canvas>
 <svelte:window
   on:resize|passive={handleResize}
-  on:mousedown={handleMouseDown}
-  on:mouseup={handleMouseUp}
-  on:mousemove={handleMouseMove}
+  on:click={(e) => addToPanels(e, $panels)}
+
 />
-<!--<svelte:window
+<!--on:mousedown={handleMouseDown}-->
+<!--on:mouseup={handleMouseUp}-->
+<!--on:mousemove={handleMouseMove}-->
+<!--<svelte:windows
   on:mousedown={handleMouseDown}
   on:mouseup={handleMouseUp}
   on:mousemove={handleMouseMove} />-->

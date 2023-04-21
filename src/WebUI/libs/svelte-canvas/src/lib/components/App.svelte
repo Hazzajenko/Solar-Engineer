@@ -14,23 +14,52 @@
   const localPanels: SveltePanel[] = []
   /*  const panelsss = createSveltePanelArray()
    panels.set(panelsss)*/
-  panels.subscribe(panels => {
-    console.log('panels', panels)
-    localPanels.push(...panels)
-  })
+  /*  panels.subscribe(panels => {
+   console.log('panels', panels)
+   localPanels.push(...panels)
+   })*/
+
+  $ : {
+    // $panels
+  }
+  /*
+   function addToPanels(event: MouseEvent, incomingPanels: SveltePanel[]) {
+   // c
+   console.log('incomingPanels', incomingPanels)
+   const location = {
+   x: event.clientX,
+   y: event.clientY,
+   }
+   console.log('location', location)
+   const panel = createSveltePanel(location)
+   console.log('panel', panel)
+   const updatedPanels = [...incomingPanels, { ...panel }]
+
+   panels.set(updatedPanels)
+   /!*    if (!inCart) {
+   let updatedCart = [...$cart, { ...product, quantity: 1 }]
+
+   cart.set(updatedCart)
+   } else {
+   alert('Item already added to Cart')
+   }*!/
+   }*/
 
 </script>
-
+<!--on:click={(e) => addToPanels(e, $panels)}
+width={$width}
+height={$height}-->
 <Canvas>
   <Background color='hsl(0, 0%, 10%)'>
     <DotGrid divisions={30}
              color='hsla(0, 0%, 100%, 0.5)' />
   </Background>
-  {#each localPanels as panel}
-    <script>console.log(panel)
-    </script>
-    <Panel x={20}
-           y={20} />
+  {#each $panels as panel}
+    <!--{#each localPanels as panel}-->
+    <!--    <script>console.log(panel)
+        </script>-->
+    <Panel x={panel.location.x}
+           y={panel.location.y} />
     <!--    <script>
           console.log('panel', panel)
         </script>-->

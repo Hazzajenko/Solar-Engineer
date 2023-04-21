@@ -60,6 +60,7 @@ export abstract class DesignCanvasDirectiveExtension {
   protected mouseDownTimeOut: ReturnType<typeof setTimeout> | undefined
   protected mouseUpTimeOut: ReturnType<typeof setTimeout> | undefined
 
+  protected fpsEl!: HTMLDivElement
   protected mousePos!: HTMLDivElement
   protected transformedMousePos!: HTMLDivElement
   protected scaleElement!: HTMLDivElement
@@ -117,6 +118,7 @@ export abstract class DesignCanvasDirectiveExtension {
    protected get entities(): CanvasEntity[] {
    return this._entities
    }*/
+
   protected get entities(): CanvasEntity[] {
     // return this._entities
     return this._state.entity.getEntities()
@@ -124,6 +126,8 @@ export abstract class DesignCanvasDirectiveExtension {
 
   protected height = this.canvas.height
   protected width = this.canvas.width
+
+  protected mouse: TransformedPoint = { x: 0, y: 0 } as TransformedPoint
   /*
    protected appState$ = this._appStateStore.select.state$.pipe(
    takeUntil(this._onDestroy.destroy$),
@@ -168,6 +172,58 @@ export abstract class DesignCanvasDirectiveExtension {
     this._canvasEl.init(this.canvas, this.ctx)
   }
 
+  protected animate60Fps() {
+    let text = ''
+
+    // const elapsed = 0
+    let frames = 0
+    let prevTime = performance.now()
+    const fpsRender = () => {
+      const time = performance.now()
+      frames++
+      if (time >= prevTime + 1000) {
+        const fps = (frames * 1000) / (time - prevTime)
+        text = `${fps.toFixed(1)} FPS`
+        prevTime = time
+        frames = 0
+      }
+      this.fpsEl.innerText = text
+      this._render.drawCanvas()
+      if (this._state.dragBox.start) {
+        this._render.drawIndependentDragBoxWithMouse(this.mouse)
+      }
+      requestAnimationFrame(fpsRender)
+    }
+    requestAnimationFrame(fpsRender)
+    /*    renderer(() => {
+     const time = performance.now()
+     frames++
+     if (time >= prevTime + 1000) {
+     const fps = (frames * 1000) / (time - prevTime)
+     text = `${fps.toFixed(1)} FPS`
+     prevTime = time
+     frames = 0
+     }
+     this.fpsEl.innerText = text
+     })*/
+    /*    const fps = 60
+     const interval = 1000 / fps
+     let then = Date.now()
+     let now = then
+     const delta = now - then
+     const step = () => {
+     requestAnimationFrame(step)
+     now = Date.now()
+     const delta = now - then
+     if (delta > interval) {
+     then = now - (delta % interval)
+     // this.draw()
+     this._render.drawCanvas()
+     }
+     }
+     requestAnimationFrame(step)*/
+  }
+
   protected setupMouseEventListeners() {
     this._renderer.listen(this.canvas, MouseUpEvent, (event: MouseEvent) => {
       console.log('mouse up', event)
@@ -192,6 +248,12 @@ export abstract class DesignCanvasDirectiveExtension {
       event.preventDefault()
     })
     this._renderer.listen(this.canvas, MouseMoveEvent, (event: MouseEvent) => {
+      this.mouse = this._domPoint.getTransformedPointFromEvent(event)
+      this._state.updateState({
+        mouse: {
+          point: this._domPoint.getTransformedPointFromEvent(event),
+        },
+      })
       this.onMouseMoveHandler(event)
       event.stopPropagation()
       event.preventDefault()

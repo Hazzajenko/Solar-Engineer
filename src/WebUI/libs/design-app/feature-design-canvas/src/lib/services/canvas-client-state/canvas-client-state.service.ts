@@ -139,7 +139,7 @@ export class CanvasClientStateService
         ...this.mouse,
         ...changes.mouse,
       }
-      console.log('mouse', this.mouse)
+      // console.log('mouse', this.mouse)
     }
   }
 

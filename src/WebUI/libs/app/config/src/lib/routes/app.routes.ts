@@ -16,9 +16,15 @@ export const appRoutes: Route[] = [
   {
     path: '',
     loadComponent: () =>
-      import('@design-app/feature-design-canvas').then((m) => m.DesignCanvasComponent),
+      import('@design-app/feature-design-canvas').then((m) => m.DesignCanvasBusComponent),
     // providers: [noGridLayoutProviders],
   },
+  /*  {
+   path: '',
+   loadComponent: () =>
+   import('@design-app/feature-design-canvas').then((m) => m.DesignCanvasComponent),
+   // providers: [noGridLayoutProviders],
+   },*/
   /*  {
    path: 'imagery',
    loadComponent: () =>
