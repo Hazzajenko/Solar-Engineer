@@ -53,7 +53,7 @@ export class DesignCanvasComponent
   delete() {
     const dataSet = this.getMenuDataSet()
     console.log(dataSet)
-    this._state.entity.removeEntity(dataSet.id)
+    this._state.entities.canvasEntities.removeEntity(dataSet.id)
     // this.entitiesStore.dispatch.deleteCanvasEntity(dataSet.id)
     this.closeMenu()
   }

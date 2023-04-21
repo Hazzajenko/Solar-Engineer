@@ -1,9 +1,9 @@
 import { inject, Injectable } from '@angular/core'
 import { CanvasElementService } from './canvas-element.service'
-import { CANVAS_COLORS, CanvasEntity, EntityLocation, SizeByType, TransformedPoint } from '../types'
+import { CANVAS_COLORS, CanvasEntity, EntityLocation, isPanel, SizeByType } from '../types'
 import { DomPointService } from './dom-point.service'
 import { CanvasAppStateStore } from './canvas-app-state'
-import { CanvasEntitiesStore } from './canvas-entities'
+// import { CanvasEntitiesStore } from './canvas-entities'
 import { assertNotNull } from '@shared/utils'
 import { CanvasClientStateService } from './canvas-client-state'
 import { CANVAS_MODE } from './canvas-client-state/types/mode'
@@ -16,7 +16,7 @@ export class CanvasRenderService {
   private _canvasElementService = inject(CanvasElementService)
   private _domPointService = inject(DomPointService)
   private _appState = inject(CanvasAppStateStore)
-  private _entitiesStore = inject(CanvasEntitiesStore)
+  // private _entitiesStore = inject(CanvasEntitiesStore)
   private _state = inject(CanvasClientStateService)
 
   get ctx() {
@@ -32,42 +32,32 @@ export class CanvasRenderService {
   }
 
   get entities() {
-    return this._state.entity.getEntities()
-    // return this._entitiesStore.select.entities
+    return this._state.entities.canvasEntities.getEntities()
   }
 
   drawCanvas() {
-    // console.log('drawCanvas')
     this.ctx.save()
     this.ctx.setTransform(1, 0, 0, 1, 0, 0)
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
     this.ctx.restore()
     this.ctx.save()
     this.ctx.beginPath()
-    const entities = this._state.entity.getEntities()
+    const entities = this._state.entities.canvasEntities.getEntities()
     entities.forEach((entity) => {
-      // this.entities.forEach((entity) => {
-      // console.log('drawCanvas', entity)
       this.drawEntity(entity)
     })
-    // window.x
-    // this.ctx.closePath()
     this.ctx.restore()
-
-    /*    const dragBoxStart = this._state.state.dragBox.start
-     if (!dragBoxStart) return
-     // if (this._state.state.dragBox.start) {
-     this.drawIndependentDragBox(dragBoxStart)*/
-    // }
-
-    // this.drawIndependentDragBox()
-
   }
 
-  drawIndependentDragBoxWithMouse(mouse: TransformedPoint) {
-    // const start = this._clientState.select.dragBox().start
+  drawCanvasWithFunction(fn: (ctx: CanvasRenderingContext2D) => void) {
+    this.drawCanvas()
+    this.ctx.save()
+    fn(this.ctx)
+    this.ctx.restore()
+  }
+
+  drawDragBox(event: MouseEvent) {
     const start = this._state.state.dragBox.start
-    // console.log('drawDragBox', start)
     if (!start) {
       console.log('drawDragBox', 'no start')
       return
@@ -75,15 +65,13 @@ export class CanvasRenderService {
 
     const { mode } = this._state.mode
     // console.log('drawDragBox MODE', mode)
-    // const currentPoint = point
-    const currentPoint = mouse
-    assertNotNull(currentPoint, 'currentPoint is null')
-    // const currentPoint = this._domPointService.getTransformedPointFromEvent(event)
+    const currentPoint = this._domPointService.getTransformedPointFromEvent(event)
     // const { start } = dragBox
     // const { x: startX, y: startY } = start
     // const { x: endX, y: endY } = end
     const width = currentPoint.x - start.x
     const height = currentPoint.y - start.y
+    this.drawCanvas()
     this.ctx.save()
     this.ctx.beginPath()
     // this.ctx.setTransform(1, 0, 0, 1, 0, 0)
@@ -111,7 +99,6 @@ export class CanvasRenderService {
 
     this.ctx.save()
     spots.forEach(spot => {
-      this.ctx.beginPath()
       this.ctx.save()
       this.ctx.beginPath()
       this.ctx.globalAlpha = 0.4
@@ -124,144 +111,6 @@ export class CanvasRenderService {
       this.ctx.restore()
     })
     this.ctx.restore()
-    /*    this.ctx.save()
-     this.ctx.beginPath()
-     this.ctx.globalAlpha = 0.4
-     this.ctx.fillStyle = CANVAS_COLORS.SelectionBoxFillStyle
-     this.ctx.rect(this.selectionBoxStartPoint.x, this.selectionBoxStartPoint.y, width, height)
-     this.ctx.fill()
-     this.ctx.stroke()
-     this.ctx.restore()*/
-  }
-
-  drawIndependentDragBox(start: TransformedPoint) {
-    // const start = this._clientState.select.dragBox().start
-    /*    const start = this._state.state.dragBox.start
-     // console.log('drawDragBox', start)
-     if (!start) {
-     console.log('drawDragBox', 'no start')
-     return
-     }*/
-
-    const { mode } = this._state.mode
-    // console.log('drawDragBox MODE', mode)
-    // const currentPoint = point
-    const currentPoint = this._state.mouse.point
-    assertNotNull(currentPoint, 'currentPoint is null')
-    // const currentPoint = this._domPointService.getTransformedPointFromEvent(event)
-    // const { start } = dragBox
-    // const { x: startX, y: startY } = start
-    // const { x: endX, y: endY } = end
-    const width = currentPoint.x - start.x
-    const height = currentPoint.y - start.y
-    this.ctx.save()
-    this.ctx.beginPath()
-    // this.ctx.setTransform(1, 0, 0, 1, 0, 0)
-    // this.ctx.strokeStyle = CANVAS_COLORS.DragBoxStrokeStyle
-    this.ctx.globalAlpha = 0.4
-    this.ctx.strokeStyle = mode === CANVAS_MODE.SELECT
-      ? CANVAS_COLORS.SelectionBoxFillStyle
-      : CANVAS_COLORS.CreationBoxFillStyle
-    /*      ? CANVAS_COLORS.PreviewPanelFillStyle
-     : CANVAS_COLORS.TakenSpotFillStyle*/
-    this.ctx.lineWidth = 1
-    this.ctx.rect(start.x, start.y, width, height)
-    this.ctx.fill()
-    this.ctx.stroke()
-    this.ctx.closePath()
-    this.ctx.restore()
-
-    if (mode !== CANVAS_MODE.CREATE) return
-    const spots = getAllAvailableEntitySpotsBetweenTwoPoints(start, currentPoint, this.entities)
-    // const spots = this._objectPositioning.getAllAvailableEntitySpotsBetweenTwoPoints(start, currentPoint)
-    if (!spots) return
-
-    const { type } = this._state.mode
-    const entitySize = SizeByType[type]
-
-    this.ctx.save()
-    spots.forEach(spot => {
-      this.ctx.beginPath()
-      this.ctx.save()
-      this.ctx.beginPath()
-      this.ctx.globalAlpha = 0.4
-      this.ctx.fillStyle = spot.vacant
-        ? CANVAS_COLORS.PreviewPanelFillStyle
-        : CANVAS_COLORS.TakenSpotFillStyle
-      this.ctx.rect(spot.x, spot.y, entitySize.width, entitySize.height)
-      this.ctx.fill()
-      this.ctx.stroke()
-      this.ctx.restore()
-    })
-    this.ctx.restore()
-    /*    this.ctx.save()
-     this.ctx.beginPath()
-     this.ctx.globalAlpha = 0.4
-     this.ctx.fillStyle = CANVAS_COLORS.SelectionBoxFillStyle
-     this.ctx.rect(this.selectionBoxStartPoint.x, this.selectionBoxStartPoint.y, width, height)
-     this.ctx.fill()
-     this.ctx.stroke()
-     this.ctx.restore()*/
-  }
-
-  drawDragBox(event: MouseEvent) {
-    // const start = this._clientState.select.dragBox().start
-    /* const start = this._state.state.dragBox.start
-     // console.log('drawDragBox', start)
-     if (!start) {
-     console.log('drawDragBox', 'no start')
-     return
-     }
-
-     const { mode } = this._state.mode
-     // console.log('drawDragBox MODE', mode)
-     const currentPoint = this._domPointService.getTransformedPointFromEvent(event)
-     // const { start } = dragBox
-     // const { x: startX, y: startY } = start
-     // const { x: endX, y: endY } = end
-     const width = currentPoint.x - start.x
-     const height = currentPoint.y - start.y
-     this.drawCanvas()
-     this.ctx.save()
-     this.ctx.beginPath()
-     // this.ctx.setTransform(1, 0, 0, 1, 0, 0)
-     // this.ctx.strokeStyle = CANVAS_COLORS.DragBoxStrokeStyle
-     this.ctx.globalAlpha = 0.4
-     this.ctx.strokeStyle = mode === CANVAS_MODE.SELECT
-     ? CANVAS_COLORS.SelectionBoxFillStyle
-     : CANVAS_COLORS.CreationBoxFillStyle
-     /!*      ? CANVAS_COLORS.PreviewPanelFillStyle
-     : CANVAS_COLORS.TakenSpotFillStyle*!/
-     this.ctx.lineWidth = 1
-     this.ctx.rect(start.x, start.y, width, height)
-     this.ctx.fill()
-     this.ctx.stroke()
-     this.ctx.closePath()
-     this.ctx.restore()
-
-     if (mode !== CANVAS_MODE.CREATE) return
-     const spots = getAllAvailableEntitySpotsBetweenTwoPoints(start, currentPoint, this.entities)
-     // const spots = this._objectPositioning.getAllAvailableEntitySpotsBetweenTwoPoints(start, currentPoint)
-     if (!spots) return
-
-     const { type } = this._state.mode
-     const entitySize = SizeByType[type]
-
-     this.ctx.save()
-     spots.forEach(spot => {
-     this.ctx.beginPath()
-     this.ctx.save()
-     this.ctx.beginPath()
-     this.ctx.globalAlpha = 0.4
-     this.ctx.fillStyle = spot.vacant
-     ? CANVAS_COLORS.PreviewPanelFillStyle
-     : CANVAS_COLORS.TakenSpotFillStyle
-     this.ctx.rect(spot.x, spot.y, entitySize.width, entitySize.height)
-     this.ctx.fill()
-     this.ctx.stroke()
-     this.ctx.restore()
-     })
-     this.ctx.restore()*/
     /*    this.ctx.save()
      this.ctx.beginPath()
      this.ctx.globalAlpha = 0.4
@@ -286,6 +135,11 @@ export class CanvasRenderService {
     }
 
     const isSingleSelected = !!selected.singleSelectedId && selected.singleSelectedId === entity.id
+
+    if (isSingleSelected) {
+      fillStyle = '#ff6e78'
+    }
+
     const isMultiSelected = selected.multipleSelectedIds.includes(entity.id)
     // const isMultiSelected = selected.ids.includes(entity.id)
     // const isMultiSelected = multiSelectedIds && multiSelectedIds.find((id) => id === entity.id)
@@ -295,12 +149,16 @@ export class CanvasRenderService {
      const isMultiSelected = multiSelectedIds && multiSelectedIds.find((id) => id === entity.id)
      */
 
-    if (isSingleSelected) {
+    if (isMultiSelected) {
       fillStyle = '#ff6e78'
     }
 
-    if (isMultiSelected) {
-      fillStyle = '#ff6e78'
+    if (isPanel(entity)) {
+      const isStringSelected = selected.selectedStringId === entity.stringId
+      if (isStringSelected && selected.selectedStringId && entity.stringId) {
+        fillStyle = '#d323ff'
+        // console.log('drawEntity', 'isStringSelected', entity, selected.selectedStringId, entity.stringId)
+      }
     }
 
     const multipleToRotate = toRotate.multipleToRotate

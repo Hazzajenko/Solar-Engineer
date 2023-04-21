@@ -14,6 +14,27 @@ export type StringId = string & {
 
 export const UndefinedStringId = 'undefinedStringId' as StringId
 
+export const isStringId = (id: string): id is StringId => {
+  return id === UndefinedStringId || id.startsWith('stringId')
+}
+
+export const isString = (string: CanvasString | undefined): string is CanvasString => {
+  return string !== undefined && isStringId(string.id)
+}
+
+export const createString = (
+  name: string = 'New String',
+  color: string = '#cf46ff',
+  parallel: boolean = false,
+): CanvasString => {
+  return {
+    id: newGuid() as StringId,
+    name,
+    color,
+    parallel,
+  }
+}
+
 export const CanvasStringFactory = {
   create: (
     name: string = 'New String',

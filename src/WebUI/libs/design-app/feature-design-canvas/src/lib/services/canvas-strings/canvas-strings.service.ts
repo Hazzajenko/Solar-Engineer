@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core'
 import { CanvasStringsStore } from './canvas-strings.store'
 import { CanvasPanel, CanvasString, CanvasStringFactory, genStringName } from '../../types'
-import { CanvasEntitiesStore } from '../canvas-entities'
+// import { CanvasEntitiesStore } from '../canvas-entities'
 import { mapToUpdateArr } from '../../utils'
 
 @Injectable({
@@ -9,7 +9,8 @@ import { mapToUpdateArr } from '../../utils'
 })
 export class CanvasStringsService {
   private _stringsStore = inject(CanvasStringsStore)
-  private _panelsStore = inject(CanvasEntitiesStore)
+
+  // private _panelsStore = inject(CanvasEntitiesStore)
 
   public createStringWithPanels(selectedPanels: CanvasPanel[], currentStrings: CanvasString[]) {
     const stringName = genStringName(currentStrings)

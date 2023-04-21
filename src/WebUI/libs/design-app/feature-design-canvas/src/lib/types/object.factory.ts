@@ -1,5 +1,6 @@
 import { CanvasEntity } from './canvas-entity'
 import { PanelFactory } from './canvas-panel'
+import { CanvasString } from './canvas-string'
 import { UpdateStr } from '@ngrx/entity/src/models'
 
 export const updateObject = <T>(object: T, changes: Partial<T>): T => {
@@ -19,7 +20,7 @@ export const updateObjectForStore = <T extends CanvasEntity>(
   }
 }
 
-export const updateObjectByIdForStore = <T extends CanvasEntity>(
+export const updateObjectByIdForStore = <T extends CanvasEntity | CanvasString>(
   id: T['id'],
   changes: Partial<T>,
 ): UpdateStr<T> => {

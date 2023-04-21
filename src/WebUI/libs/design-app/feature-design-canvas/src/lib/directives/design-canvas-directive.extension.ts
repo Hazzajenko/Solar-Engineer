@@ -14,9 +14,9 @@ import {
 } from '../services'
 import { ObjectPositioningService } from '../services/object-positioning/object-positioning.service'
 import { CanvasAppState, initialCanvasAppState } from '../store'
-import { CanvasEntity, SizeByType, TransformedPoint } from '../types'
+import { CANVAS_COLORS, CanvasEntity, SizeByType, TransformedPoint } from '../types'
 import {
-  getBoundsFromMouseEvent,
+  getBoundsFromCenterPoint,
   getEntityBounds,
   isEntityOverlappingWithBounds,
   isPointInsideBounds,
@@ -60,7 +60,12 @@ export abstract class DesignCanvasDirectiveExtension {
   protected mouseDownTimeOut: ReturnType<typeof setTimeout> | undefined
   protected mouseUpTimeOut: ReturnType<typeof setTimeout> | undefined
 
+  /*  protected mouseUpTimeOutFn = setTimeout(() => {
+   this.mouseUpTimeOut = undefined
+   }, 50)*/
+
   protected fpsEl!: HTMLDivElement
+  protected canvasMenu!: HTMLDivElement
   protected mousePos!: HTMLDivElement
   protected transformedMousePos!: HTMLDivElement
   protected scaleElement!: HTMLDivElement
@@ -121,7 +126,7 @@ export abstract class DesignCanvasDirectiveExtension {
 
   protected get entities(): CanvasEntity[] {
     // return this._entities
-    return this._state.entity.getEntities()
+    return this._state.entities.canvasEntities.getEntities()
   }
 
   protected height = this.canvas.height
@@ -165,6 +170,12 @@ export abstract class DesignCanvasDirectiveExtension {
    )
    */
 
+  protected mouseUpTimeOutFn = () => {
+    this.mouseUpTimeOut = setTimeout(() => {
+      this.mouseUpTimeOut = undefined
+    }, 1000)
+  }
+
   protected setupCanvas() {
     const { canvas, ctx } = setupCanvas(this.canvas)
     this.canvas = canvas
@@ -188,11 +199,11 @@ export abstract class DesignCanvasDirectiveExtension {
         frames = 0
       }
       this.fpsEl.innerText = text
-      this._render.drawCanvas()
-      if (this._state.dragBox.start) {
-        this._render.drawIndependentDragBoxWithMouse(this.mouse)
-      }
-      requestAnimationFrame(fpsRender)
+      /*      this._render.drawCanvas()
+       if (this._state.dragBox.start) {
+       this._render.drawIndependentDragBoxWithMouse(this.mouse)
+       }*/
+      // requestAnimationFrame(fpsRender)
     }
     requestAnimationFrame(fpsRender)
     /*    renderer(() => {
@@ -265,6 +276,7 @@ export abstract class DesignCanvasDirectiveExtension {
       event.preventDefault()
     })
     this._renderer.listen(this.canvas, ClickEvent, (event: PointerEvent) => {
+      console.log('mouseClickHandler', event)
       this.mouseClickHandler(event)
       event.stopPropagation()
       event.preventDefault()
@@ -320,9 +332,82 @@ export abstract class DesignCanvasDirectiveExtension {
   }
 
   protected anyEntitiesNearAreaOfClick(event: MouseEvent) {
-    const size = SizeByType[ENTITY_TYPE.Panel]
-    const mouseBoxBounds = getBoundsFromMouseEvent(event, size)
-    return !!this.entities.find((entity) => isEntityOverlappingWithBounds(entity, mouseBoxBounds))
+    let size = SizeByType[ENTITY_TYPE.Panel]
+    const midSpacing = 2
+    size = {
+      width: size.width + midSpacing,
+      height: size.height + midSpacing,
+    }
+
+    const center = this._domPoint.getTransformedPointFromEvent(event)
+    const mouseBoxBounds = getBoundsFromCenterPoint(center, size)
+    // return !!this.entities.find((entity) => isEntityOverlappingWithBounds(entity, mouseBoxBounds))
+    // const mouseBoxBounds = getBoundsFromMouseEvent(event, size)
+    const anyNearClick = !!this.entities.find((entity) =>
+      isEntityOverlappingWithBounds(entity, mouseBoxBounds),
+    )
+    if (anyNearClick) {
+      /*      requestAnimationFrame(() => {
+       this._render.drawCanvas()
+       })*/
+
+      const drawFunction = (ctx: CanvasRenderingContext2D) => {
+        ctx.save()
+        ctx.beginPath()
+        ctx.globalAlpha = 0.4
+        ctx.fillStyle = CANVAS_COLORS.TakenSpotFillStyle
+        ctx.rect(mouseBoxBounds.left, mouseBoxBounds.top, size.width, size.height)
+        ctx.fill()
+        ctx.stroke()
+        ctx.restore()
+      }
+
+      // const fn = this._render.drawCanvasWithFunction(drawFunction)
+
+      let animationId: number
+      const reply = () => {
+        this._render.drawCanvasWithFunction(drawFunction)
+        animationId = requestAnimationFrame(reply)
+      }
+
+      reply()
+      /*
+       const animationId = requestAnimationFrame((fn) => {
+       this._render.drawCanvasWithFunction(drawFunction)
+       // fn
+       console.log('requestAnimationFrame', animationId)
+       })*/
+
+      const interval = setInterval(() => {
+        cancelAnimationFrame(animationId)
+        this._render.drawCanvas()
+        clearInterval(interval)
+        console.log('cancelAnimationFrame', animationId)
+      }, 1000)
+
+      // clearInterval(interval)
+
+      // animationId.
+
+      /*  setInterval(() => {
+
+       }*/
+      // this.canvas.style.cursor = 'not-allowed'
+      /*      this._render.drawCanvasWithFunction((ctx: CanvasRenderingContext2D) => {
+       ctx.save()
+       ctx.beginPath()
+       ctx.globalAlpha = 0.4
+       ctx.fillStyle = CANVAS_COLORS.TakenSpotFillStyle
+       ctx.rect(mouseBoxBounds.left, mouseBoxBounds.top, size.width, size.height)
+       ctx.fill()
+       ctx.stroke()
+       ctx.restore()
+       })*/
+      return true
+    }
+    // this.canvas.style.cursor = 'default'
+    this._render.drawCanvas()
+    return false
   }
 
   protected getEntityUnderMouse(event: MouseEvent) {
@@ -332,8 +417,52 @@ export abstract class DesignCanvasDirectiveExtension {
     return entitiesUnderMouse[entitiesUnderMouse.length - 1]
   }
 
+  protected seeClashesFromMouse(event: MouseEvent) {
+    const size = SizeByType[ENTITY_TYPE.Panel]
+    const center = this._domPoint.getTransformedPointFromEvent(event)
+    const mouseBoxBounds = getBoundsFromCenterPoint(center, size)
+    // const mouseBoxBounds = getBoundsFromMouseEvent(event, size)
+    const anyNearClick = !!this.entities.find((entity) =>
+      isEntityOverlappingWithBounds(entity, mouseBoxBounds),
+    )
+    // const anyNearClick = this.anyEntitiesNearAreaOfClick(event)
+    if (anyNearClick) {
+      // const bounds = getBoundsFromMouseEvent(event, size)
+      this.canvas.style.cursor = 'not-allowed'
+      // this.ctx.
+      /*      this.ctx.save()
+       this.ctx.beginPath()
+       this.ctx.globalAlpha = 0.4
+       this.ctx.fillStyle = CANVAS_COLORS.TakenSpotFillStyle
+       this.ctx.rect(bounds.left, bounds.top, size.width, size.height)
+       this.ctx.fill()
+       this.ctx.stroke()
+       this.ctx.restore()*/
+
+      this._render.drawCanvasWithFunction((ctx: CanvasRenderingContext2D) => {
+        ctx.save()
+        ctx.beginPath()
+        ctx.globalAlpha = 0.4
+        ctx.fillStyle = CANVAS_COLORS.TakenSpotFillStyle
+        ctx.rect(mouseBoxBounds.left, mouseBoxBounds.top, size.width, size.height)
+        ctx.fill()
+        ctx.stroke()
+        ctx.restore()
+      })
+      return true
+    }
+    this.canvas.style.cursor = 'default'
+    this._render.drawCanvas()
+    return false
+    /*    const entitiesUnderMouse = this.entities.filter((entity) =>
+     this.isMouseOverEntityBounds(event, entity),
+     )
+
+     return entitiesUnderMouse*/
+  }
+
   protected getEntityUnderMouseV2(event: MouseEvent) {
-    const entitiesUnderMouse = this._state.entity
+    const entitiesUnderMouse = this._state.entities.canvasEntities
       .getEntities()
       .filter((entity) => this.isMouseOverEntityBounds(event, entity))
     return entitiesUnderMouse[entitiesUnderMouse.length - 1]

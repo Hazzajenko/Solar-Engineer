@@ -3,7 +3,7 @@ import { Store } from '@ngrx/store'
 import { CanvasEntity, CanvasString, EntityFactory, isPanel, UndefinedStringId } from '../types'
 import { assertNotNull, mapToObject } from '@shared/utils'
 import { DomPointService } from './dom-point.service'
-import { CanvasEntitiesStore } from './canvas-entities'
+// import { CanvasEntitiesStore } from './canvas-entities'
 import { eventToPointLocation } from '../functions'
 import { CanvasAppStateStore } from './canvas-app-state'
 import { CURSOR_TYPE } from '@shared/data-access/models'
@@ -16,10 +16,10 @@ import { CanvasRenderService } from './canvas-render.service'
   providedIn: 'root',
 })
 export class CanvasSelectedService {
-  private _entitiesStore = inject(CanvasEntitiesStore)
+  // private _entitiesStore = inject(CanvasEntitiesStore)
   private _store = inject(Store)
   private _domPointService = inject(DomPointService)
-  private _canvasEntitiesService = inject(CanvasEntitiesStore)
+  // private _canvasEntitiesService = inject(CanvasEntitiesStore)
   private _entityStore = inject(CanvasAppStateStore)
   private _canvasEl = inject(CanvasElementService)
   private _render = inject(CanvasRenderService)
@@ -123,7 +123,7 @@ export class CanvasSelectedService {
 
     // const multiSelectedIds = this._state.selected.ids
     const multiSelectedIds = this._state.selected.multipleSelectedIds
-    const multiSelectedEntities = this._state.entity.getEntitiesByIds(multiSelectedIds)
+    const multiSelectedEntities = this._state.entities.canvasEntities.getEntitiesByIds(multiSelectedIds)
     /*    const multiSelectedEntities = multiSelectedIds.map(id => this._state.entity.getEntity(id))
      .filter(entity => entity !== undefined) as CanvasEntity[]*/
     // const multiSelectedEntities = multiSelectedIds.map(id => this._entitiesStore.select.entityById(id))
@@ -138,7 +138,7 @@ export class CanvasSelectedService {
 
       // this.draggingEntityLocationsMap.set(entity.id, newLocation)
       // this._canvasEntitiesService.dispatch.updateCanvasEntity({ id: entity.id, changes: { location: newLocation } })
-      this._state.entity.updateEntity(entity.id, { location: newLocation })
+      this._state.entities.canvasEntities.updateEntity(entity.id, { location: newLocation })
     })
     this._render.drawCanvas()
     /* this._state.updateState({
@@ -168,7 +168,7 @@ export class CanvasSelectedService {
     /* const multiSelected = Object.keys(multiSelectedEntities)
      .map(id => this._entitiesStore.select.entityById(id))*/
     const multiSelected = multiSelectedIds
-      .map(id => this._state.entity.getEntity(id))
+      .map(id => this._state.entities.canvasEntities.getEntity(id))
       .filter(entity => entity !== undefined) as CanvasEntity[]
 
     /*    const multiSelected = multiSelectedIds
@@ -186,7 +186,7 @@ export class CanvasSelectedService {
       // const updatedEntity = entity.updateForStore({ location: newLocation })
       const newEntityInstance = EntityFactory.update(entity, { location: newLocation })
       // this._entitiesStore.dispatch.updateCanvasEntity(updatedEntity)
-      this._state.entity.updateEntity(updatedEntity.id, updatedEntity.changes)
+      this._state.entities.canvasEntities.updateEntity(updatedEntity.id, updatedEntity.changes)
       // return updatedEntity
       return newEntityInstance
     })
@@ -194,7 +194,7 @@ export class CanvasSelectedService {
     const storeUpdates = multiSelectedUpdated.map(entity => {
       return EntityFactory.updateForStore(entity, { location: entity.location })
     })
-    this._state.entity.updateManyEntities(storeUpdates)
+    this._state.entities.canvasEntities.updateManyEntities(storeUpdates)
 
     // const multiSelectedIdsUpdated = multiSelectedUpdated.map(entity => entity.id)
     // const multiSelectedUpdateObj = mapToObject(multiSelectedUpdated)
@@ -336,7 +336,7 @@ export class CanvasSelectedService {
 
   setMultiSelected(multiSelectedIds: string[]) {
     // this._multiSelected = multiSelected
-    const multiSelected = mapToObject(multiSelectedIds.map(id => this._state.entity.getEntity(id))
+    const multiSelected = mapToObject(multiSelectedIds.map(id => this._state.entities.canvasEntities.getEntity(id))
       .filter(isNotNull))
     // const multiSelected = mapToObject(multiSelectedIds.map(id => this._entitiesStore.select.entityById(id)))
     // this._multiSelectedIds = multiSelectedIds
@@ -387,7 +387,7 @@ export class CanvasSelectedService {
 
     // if (selectedId) {
     // this._entityStore.dispatch.addToSelectedIds([selectedId])
-    const selectedEntity = this._state.entity.getEntity(selectedId)
+    const selectedEntity = this._state.entities.canvasEntities.getEntity(selectedId)
     assertNotNull(selectedEntity, 'selected entity not found')
     /*    const selectedTypeOf = {
      id:  selectedId,

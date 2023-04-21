@@ -1,5 +1,5 @@
 import { AUTH_FEATURE_KEY, authReducer } from '@auth/data-access';
-import { CANVAS_APP_STATE_FEATURE_KEY, CANVAS_ENTITIES_FEATURE_KEY, CANVAS_FEATURE_KEY, CANVAS_STRINGS_FEATURE_KEY, canvasAppStateReducer, canvasEntitiesReducer, canvasReducer, canvasStringsReducer } from '@design-app/feature-design-canvas';
+import { CANVAS_APP_STATE_FEATURE_KEY, CANVAS_FEATURE_KEY, CANVAS_STRINGS_FEATURE_KEY, canvasAppStateReducer, canvasReducer, canvasStringsReducer } from '@design-app/feature-design-canvas';
 import { PANELS_FEATURE_KEY, panelsReducer } from '@design-app/feature-panel';
 import { SELECTED_FEATURE_KEY, selectedReducer } from '@design-app/feature-selected';
 import { provideState } from '@ngrx/store';
@@ -24,7 +24,7 @@ export const mainTsStates = [
   provideState(PANELS_FEATURE_KEY, panelsReducer),
   provideState(SELECTED_FEATURE_KEY, selectedReducer),
   provideState(CANVAS_FEATURE_KEY, canvasReducer),
-  provideState(CANVAS_ENTITIES_FEATURE_KEY, canvasEntitiesReducer),
+  // provideState(CANVAS_ENTITIES_FEATURE_KEY, canvasEntitiesReducer),
   provideState(CANVAS_STRINGS_FEATURE_KEY, canvasStringsReducer),
   provideState(CANVAS_APP_STATE_FEATURE_KEY, canvasAppStateReducer),
 

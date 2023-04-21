@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core'
 import { TransformedPoint } from '../types'
 import { DomPointService } from './dom-point.service'
-import { CanvasEntitiesStore } from './canvas-entities'
+// import { CanvasEntitiesStore } from './canvas-entities'
 import { CanvasElementService } from './canvas-element.service'
 import { CURSOR_TYPE } from '@shared/data-access/models'
 import { assertNotNull } from '@shared/utils'
@@ -13,7 +13,7 @@ import { CanvasRenderService } from './canvas-render.service'
   providedIn: 'root',
 })
 export class CanvasViewPositioningService {
-  private _entitiesStore = inject(CanvasEntitiesStore)
+  // private _entitiesStore = inject(CanvasEntitiesStore)
   private _domPointService = inject(DomPointService)
   private _canvasElementsService = inject(CanvasElementService)
   private _state = inject(CanvasClientStateService)

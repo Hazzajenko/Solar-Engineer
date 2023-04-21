@@ -17,17 +17,20 @@ export const isReadyToMultiDrag = (event: MouseEvent, multiSelectedIds: string[]
   return event.shiftKey && event.ctrlKey && multiSelectedIds.length > 0
 }
 
-export const isMultiSelectDragging = (event: MouseEvent, multiSelectedIds: string[]): boolean => {
-  return event.button === 0 && event.shiftKey && event.ctrlKey && multiSelectedIds.length > 0
-}
-// this._selected.multiSelected.length > 0 && event.shiftKey && event.ctrlKey && !this._selected.isMultiSelectDragging
-
 export const multiSelectDraggingKeysDown = (
   event: MouseEvent,
   multiSelectedIds: string[],
 ): boolean => {
-  return event.shiftKey && event.ctrlKey && multiSelectedIds.length > 0
+  return event.button === 0 && event.shiftKey && event.ctrlKey && multiSelectedIds.length > 0
 }
+// this._selected.multiSelected.length > 0 && event.shiftKey && event.ctrlKey && !this._selected.isMultiSelectDragging
+
+/*export const multiSelectDraggingKeysDown = (
+ event: MouseEvent,
+ multiSelectedIds: string[],
+ ): boolean => {
+ return event.shiftKey && event.ctrlKey && multiSelectedIds.length > 0
+ }*/
 
 /*export const isDraggingEntity = (event: MouseEvent): boolean => {
  return event.button === 0 && !event.shiftKey && !event.ctrlKey

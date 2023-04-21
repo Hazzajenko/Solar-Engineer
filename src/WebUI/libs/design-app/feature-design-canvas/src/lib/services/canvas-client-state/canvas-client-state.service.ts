@@ -19,12 +19,12 @@ export class CanvasClientStateService
   private _view: ViewState = InitialViewState
   private _mouse: MouseState = InitialMouseState
   // private _render = inject(CanvasRenderService)
-  private _entity = inject(CanvasEntityState)
+  private _entities = inject(CanvasEntityState)
 
   // private _entity: CanvasEntityState = new CanvasEntityState()
 
-  get entity(): CanvasEntityState {
-    return this._entity
+  get entities(): CanvasEntityState {
+    return this._entities
   }
 
   get state(): CanvasClientState {

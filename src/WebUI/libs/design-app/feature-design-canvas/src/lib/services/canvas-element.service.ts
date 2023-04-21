@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core'
+import { CursorType } from '@shared/data-access/models'
 
 @Injectable({
   providedIn: 'root',
@@ -23,5 +24,9 @@ export class CanvasElementService {
     this._canvas = canvas
     this._ctx = ctx
     console.log('CanvasElementService.init', this._canvas, this._ctx)
+  }
+
+  changeCursor(cursor: CursorType) {
+    this._canvas.style.cursor = cursor
   }
 }

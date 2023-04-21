@@ -73,7 +73,7 @@ export class CanvasObjectPositioningService {
   }
 
   private get entities() {
-    return this._state.entity.getEntities()
+    return this._state.entities.canvasEntities.getEntities()
     // return this._entitiesStore.select.entities
   }
 
@@ -121,7 +121,7 @@ export class CanvasObjectPositioningService {
       // return
     }
     const location = getTopLeftPointFromTransformedPoint(eventPoint, SizeByType[entityOnMouseDown.type])
-    const ent = this._state.entity.getEntity(entityOnMouseDown.id)
+    const ent = this._state.entities.canvasEntities.getEntity(entityOnMouseDown.id)
     assertNotNull(ent)
     const angle = ent.angle
     // const update = updateObjectByIdForStore(entityOnMouseDown.id, { location })
@@ -195,7 +195,7 @@ export class CanvasObjectPositioningService {
     // const updatedEntity = EntityFactory.updateForStore(entityToMove, { location })
     const update = updateObjectByIdForStore(singleToMove.id, { location })
     // this._entitiesStore.dispatch.updateCanvasEntity(update)
-    this._state.entity.updateEntity(singleToMove.id, { location })
+    this._state.entities.canvasEntities.updateEntity(singleToMove.id, { location })
     // this.singleToMoveId = undefined
     // this.singleToMoveLocation = undefined
     // this.singleToMove = undefined
@@ -237,7 +237,7 @@ export class CanvasObjectPositioningService {
           ids:        multipleSelectedIds,
           startPoint: multiSelectStart,
           offset:     { x: 0, y: 0 },
-          entities:   this._state.entity.getEntitiesByIds(multipleSelectedIds),
+          entities:   this._state.entities.canvasEntities.getEntitiesByIds(multipleSelectedIds),
         },
         // multiToMoveStart: multiSelectStart,
       },
@@ -261,7 +261,7 @@ export class CanvasObjectPositioningService {
     const multiToMoveStart = this._domPointService.getTransformedPointFromEvent(event)
     // const multiSelectedIds = this._state.selected.multipleSelectedIds
     if (multipleSelectedIds.length <= 0) return
-    const entities = this._state.entity.getEntitiesByIds(multipleSelectedIds)
+    const entities = this._state.entities.canvasEntities.getEntitiesByIds(multipleSelectedIds)
     // const multiToMoveStart = this._state.toMove.multiToMove?.startPoint
     // if (!multiToMoveStart) return
     // const multiSelectStart = this._domPointService.getTransformedPointFromEvent(event)
@@ -411,7 +411,7 @@ export class CanvasObjectPositioningService {
     /* const multiSelected = Object.keys(multiSelectedEntities)
      .map(id => this._entitiesStore.select.entityById(id))*/
     const multiSelected = multiSelectedIds
-      .map(id => this._state.entity.getEntity(id))
+      .map(id => this._state.entities.canvasEntities.getEntity(id))
       .filter(entity => entity !== undefined) as CanvasEntity[]
 
     /*    const multiSelected = multiSelectedIds
@@ -429,7 +429,7 @@ export class CanvasObjectPositioningService {
       // const updatedEntity = entity.updateForStore({ location: newLocation })
       const newEntityInstance = EntityFactory.update(entity, { location: newLocation })
       // this._entitiesStore.dispatch.updateCanvasEntity(updatedEntity)
-      this._state.entity.updateEntity(updatedEntity.id, updatedEntity.changes)
+      this._state.entities.canvasEntities.updateEntity(updatedEntity.id, updatedEntity.changes)
       // return updatedEntity
       return newEntityInstance
     })
@@ -437,7 +437,7 @@ export class CanvasObjectPositioningService {
     const storeUpdates = multiSelectedUpdated.map(entity => {
       return EntityFactory.updateForStore(entity, { location: entity.location })
     })
-    this._state.entity.updateManyEntities(storeUpdates)
+    this._state.entities.canvasEntities.updateManyEntities(storeUpdates)
 
     this._state.updateState({
       toMove: {
@@ -502,7 +502,7 @@ export class CanvasObjectPositioningService {
   setEntityToRotate(entityId: string, startPoint: TransformedPoint) {
     // this.entityToRotateId = entityId
     // this._startPoint = startPoint
-    const location = this._state.entity.getEntity(entityId)?.location
+    const location = this._state.entities.canvasEntities.getEntity(entityId)?.location
     assertNotNull(location)
     // const location = this._entitiesStore.select.entityById(entityId).location
     const startAngle = getAngleInRadiansBetweenTwoPoints(startPoint, location)
@@ -556,7 +556,7 @@ export class CanvasObjectPositioningService {
     // if (!this._startPoint) return
     // if (!this._startRotateAngleToMouse) return
     const currentPoint = this._domPointService.getTransformedPointFromEvent(event)
-    const entityLocation = this._state.entity.getEntity(singleToRotate.id)?.location
+    const entityLocation = this._state.entities.canvasEntities.getEntity(singleToRotate.id)?.location
     assertNotNull(entityLocation)
     // const entityLocation = this._entitiesStore.select.entityById(this.entityToRotateId).location
     const previousAngle = singleToRotate.startAngle
@@ -599,7 +599,7 @@ export class CanvasObjectPositioningService {
     const currentPoint = this._domPointService.getTransformedPointFromEvent(event)
     this.currentMousePoint = currentPoint
     const angleInRadians = getAngleInRadiansBetweenTwoPoints(currentPoint, pivotPoint)
-    const canvasEntities = this._state.entity.getEntitiesByIds(multipleToRotateIds)
+    const canvasEntities = this._state.entities.canvasEntities.getEntitiesByIds(multipleToRotateIds)
     /*    const canvasEntities = multipleToRotateIds.map(id => this._state.entity.getEntity(id))
      .filter(isNotNull)*/
     /*    const canvasEntities = this.multipleToRotateIds.map(id => this._state.entity.getEntity(id))
@@ -636,7 +636,7 @@ export class CanvasObjectPositioningService {
   }
 
   calculatePivotPointPosition(multipleToRotateIds: string[]) {
-    const entities = this._state.entity.getEntitiesByIds(multipleToRotateIds)
+    const entities = this._state.entities.canvasEntities.getEntitiesByIds(multipleToRotateIds)
     /*    const entities = this.multipleToRotateIds.map(id => this._state.entity.getEntity(id))
      .filter(isNotNull)*/
     assertNotNull(entities)
@@ -661,7 +661,7 @@ export class CanvasObjectPositioningService {
      }*/
     if (multipleToRotate.ids.length) {
       const storeUpdates = multipleToRotate.ids.map(id => {
-        const entity = this._state.entity.getEntity(id)
+        const entity = this._state.entities.canvasEntities.getEntity(id)
         assertNotNull(entity)
         // const entity = this._entitiesStore.select.entityById(id)
         /*     const multipleToRotate = this._state.toRotate.multipleToRotate
@@ -676,7 +676,7 @@ export class CanvasObjectPositioningService {
 
         return updateObjectByIdForStore(id, { location, angle })
       })
-      this._state.entity.updateManyEntities(storeUpdates)
+      this._state.entities.canvasEntities.updateManyEntities(storeUpdates)
       this._state.updateState({
         toRotate: {
           ids:              [],
@@ -688,7 +688,7 @@ export class CanvasObjectPositioningService {
     const singleToRotate = this._state.toRotate.singleToRotate
     if (singleToRotate) {
       // const storeUpdate = updateObjectByIdForStore(singleToRotate.id, { angle: singleToRotate.adjustedAngle })
-      this._state.entity.updateEntity(singleToRotate.id, { angle: singleToRotate.adjustedAngle })
+      this._state.entities.canvasEntities.updateEntity(singleToRotate.id, { angle: singleToRotate.adjustedAngle })
       // this._entitiesStore.dispatch.updateCanvasEntity(storeUpdate)
       this._state.updateState({
         toRotate: {
@@ -851,7 +851,7 @@ export class CanvasObjectPositioningService {
     point2: TransformedPoint,
   ) {
     // const test = this._entitiesStore.select.entities.filter((entity) => filterAllEntityBetweenTwoPoints(point1, point2, entity, DIAGONAL_DIRECTION.BottomLeftToTopRight))
-    return this._state.entity.getEntities()
+    return this._state.entities.canvasEntities.getEntities()
       .filter((objectRect) => {
         // return this._entitiesStore.select.entities.filter((objectRect) => {
         // const widthOffset

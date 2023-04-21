@@ -43,7 +43,7 @@ export class ObjectPositioningService {
       // return
     }
     const location = getTopLeftPointFromTransformedPoint(eventPoint, SizeByType[entityOnMouseDown.type])
-    const ent = this._state.entity.getEntity(entityOnMouseDown.id)
+    const ent = this._state.entities.canvasEntities.getEntity(entityOnMouseDown.id)
     assertNotNull(ent)
     const angle = ent.angle
     // const update = updateObjectByIdForStore(entityOnMouseDown.id, { location })
@@ -111,7 +111,7 @@ export class ObjectPositioningService {
     // const updatedEntity = EntityFactory.updateForStore(entityToMove, { location })
     const update = updateObjectByIdForStore(singleToMove.id, { location })
     // this._entitiesStore.dispatch.updateCanvasEntity(update)
-    this._state.entity.updateEntity(singleToMove.id, { location })
+    this._state.entities.canvasEntities.updateEntity(singleToMove.id, { location })
     // this.singleToMoveId = undefined
     // this.singleToMoveLocation = undefined
     // this.singleToMove = undefined
@@ -153,7 +153,7 @@ export class ObjectPositioningService {
           ids:        multipleSelectedIds,
           startPoint: multiSelectStart,
           offset:     { x: 0, y: 0 },
-          entities:   this._state.entity.getEntitiesByIds(multipleSelectedIds),
+          entities:   this._state.entities.canvasEntities.getEntitiesByIds(multipleSelectedIds),
         },
         // multiToMoveStart: multiSelectStart,
       },
@@ -177,7 +177,7 @@ export class ObjectPositioningService {
     const multiToMoveStart = this._domPoint.getTransformedPointFromEvent(event)
     // const multiSelectedIds = this._state.selected.multipleSelectedIds
     if (multipleSelectedIds.length <= 0) return
-    const entities = this._state.entity.getEntitiesByIds(multipleSelectedIds)
+    const entities = this._state.entities.canvasEntities.getEntitiesByIds(multipleSelectedIds)
     // const multiToMoveStart = this._state.toMove.multiToMove?.startPoint
     // if (!multiToMoveStart) return
     // const multiSelectStart = this._domPoint.getTransformedPointFromEvent(event)
@@ -327,7 +327,7 @@ export class ObjectPositioningService {
     /* const multiSelected = Object.keys(multiSelectedEntities)
      .map(id => this._entitiesStore.select.entityById(id))*/
     const multiSelected = multiSelectedIds
-      .map(id => this._state.entity.getEntity(id))
+      .map(id => this._state.entities.canvasEntities.getEntity(id))
       .filter(entity => entity !== undefined) as CanvasEntity[]
 
     /*    const multiSelected = multiSelectedIds
@@ -345,7 +345,7 @@ export class ObjectPositioningService {
       // const updatedEntity = entity.updateForStore({ location: newLocation })
       const newEntityInstance = EntityFactory.update(entity, { location: newLocation })
       // this._entitiesStore.dispatch.updateCanvasEntity(updatedEntity)
-      this._state.entity.updateEntity(updatedEntity.id, updatedEntity.changes)
+      this._state.entities.canvasEntities.updateEntity(updatedEntity.id, updatedEntity.changes)
       // return updatedEntity
       return newEntityInstance
     })
@@ -353,13 +353,15 @@ export class ObjectPositioningService {
     const storeUpdates = multiSelectedUpdated.map(entity => {
       return EntityFactory.updateForStore(entity, { location: entity.location })
     })
-    this._state.entity.updateManyEntities(storeUpdates)
+    this._state.entities.canvasEntities.updateManyEntities(storeUpdates)
 
     this._state.updateState({
       toMove: {
         multipleToMove: undefined,
       },
     })
+
+    this._canvasElement.changeCursor('')
     this._render.drawCanvas()
     return
   }
@@ -368,7 +370,7 @@ export class ObjectPositioningService {
     point: TransformedPoint,
     grabbedId: string,
   ) {
-    return !!this._state.entity.getEntities()
+    return !!this._state.entities.canvasEntities.getEntities()
       .find((entity) => entity.id !== grabbedId && isPointInsideBounds(point, getEntityBounds(entity)))
     // return !!this.entities.find((entity) => entity.id !== grabbedId && isPointInsideBounds(point, getEntityBounds(entity)))
   }
