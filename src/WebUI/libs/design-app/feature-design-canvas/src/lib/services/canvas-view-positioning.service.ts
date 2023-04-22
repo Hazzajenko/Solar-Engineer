@@ -7,7 +7,7 @@ import { CURSOR_TYPE } from '@shared/data-access/models'
 import { assertNotNull } from '@shared/utils'
 import { draggingScreenKeysDown } from '../utils'
 import { CanvasClientStateService } from './canvas-client-state'
-import { CanvasRenderService } from './canvas-render.service'
+import { CanvasRenderService } from './canvas-render/canvas-render.service'
 
 @Injectable({
   providedIn: 'root',

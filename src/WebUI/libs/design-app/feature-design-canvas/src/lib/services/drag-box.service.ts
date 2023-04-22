@@ -10,7 +10,7 @@ import { CanvasSelectedService } from './canvas-selected.service'
 import { changeCanvasCursor, dragBoxKeysDown, getAllEntitiesBetweenTwoPoints } from '../utils'
 import { CanvasClientStateService } from './canvas-client-state'
 import { CANVAS_MODE } from './canvas-client-state/types/mode'
-import { CanvasRenderService } from './canvas-render.service'
+import { CanvasRenderService } from './canvas-render/canvas-render.service'
 
 @Injectable({
   providedIn: 'root',

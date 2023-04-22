@@ -1,12 +1,13 @@
 import { Directive, OnInit } from '@angular/core'
 import { CURSOR_TYPE, KEYS } from '@shared/data-access/models'
-import { createPanel, isPanel, UndefinedStringId } from '../types'
+import { createPanel, isPanel, SizeByType, UndefinedStringId } from '../types'
 import { ENTITY_TYPE } from '@design-app/shared'
 import { assertNotNull, OnDestroyDirective } from '@shared/utils'
 import { changeCanvasCursor, dragBoxKeysDown, draggingScreenKeysDown, isContextMenu, isDraggingEntity, isMenuOpen, isReadyToMultiDrag, multiSelectDraggingKeysDown, rotatingKeysDown } from '../utils'
 import { DesignCanvasDirectiveExtension } from './design-canvas-directive.extension'
 import { CANVAS_MODE } from '../services/canvas-client-state/types/mode'
 import { createStringWithPanels } from '../utils/string-fns'
+import { getDrawPreviewEntityFnV2 } from '../services/canvas-render/render-fns/draw-preview-entity'
 
 @Directive({
   selector:   '[appDesignCanvas]',
@@ -72,9 +73,10 @@ export class DesignCanvasDirective
           onMouseDownEntityId: entityUnderMouse.id,
         },
       })
-      this._selected.checkSelectedState(event, entityUnderMouse.id)
+      // this._selected.checkSelectedState(event, entityUnderMouse.id)
     }
 
+    // increment()
   }
 
   /**
@@ -84,7 +86,8 @@ export class DesignCanvasDirective
    */
 
   onMouseMoveHandler(event: MouseEvent) {
-    this.currentTransformedCursor = this._domPoint.getTransformedPointFromEvent(event)
+    const currentPoint = this._domPoint.getTransformedPointFromEvent(event)
+    this.currentTransformedCursor = currentPoint
     this.mousePos.innerText = `Original X: ${event.offsetX}, Y: ${event.offsetY}`
     this.transformedMousePos.innerText = `Transformed X: ${this.currentTransformedCursor.x}, Y: ${this.currentTransformedCursor.y}`
 
@@ -210,6 +213,31 @@ export class DesignCanvasDirective
       }
       // changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
     }
+
+    const { menu } = this._state.getState()
+
+    if (menu.createPreview) {
+      const size = SizeByType[ENTITY_TYPE.Panel]
+      const fnReturns = getDrawPreviewEntityFnV2(currentPoint, size, this._state)
+      if (fnReturns) {
+        if (fnReturns.changes) {
+          this._state.updateState(fnReturns.changes)
+        }
+        // const drawPreviewEntityFn = getDrawPreviewEntityFn(currentPoint, size, this.entities)
+        // const center = this._domPoint.getTransformedPointFromEvent(event)
+        // const mouseBoxBounds = getBoundsFromCenterPoint(currentPoint, size)
+
+        this._render.drawCanvasWithFunction(fnReturns.ctxFn)
+        return
+      }
+    }
+
+    /*    const size = SizeByType[ENTITY_TYPE.Panel]
+     const drawPreviewEntityFn = getDrawPreviewEntityFn(currentPoint, size)
+     // const center = this._domPoint.getTransformedPointFromEvent(event)
+     // const mouseBoxBounds = getBoundsFromCenterPoint(currentPoint, size)
+
+     this._render.drawCanvasWithFunction(drawPreviewEntityFn)*/
     // const nearClashes = this.seeClashesFromMouse(event)
 
   }
@@ -484,12 +512,23 @@ export class DesignCanvasDirective
       }
         break
       case KEYS.M: {
-        if (this.canvasMenu.style.display === 'initial') {
-          this._renderer.setStyle(this.canvasMenu, 'display', 'none')
+        const newMenuState = !this._state.menu.optionsMenu
+        this._state.updateState({
+          menu: {
+            optionsMenu: newMenuState,
+          },
+        })
+        if (newMenuState) {
+          this._renderer.setStyle(this.canvasMenu, 'display', 'initial')
           return
         }
-        this._renderer.setStyle(this.canvasMenu, 'display', 'initial')
-        // this.canvasMenu.toggleMenu()
+        this._renderer.setStyle(this.canvasMenu, 'display', 'none')
+        /*        if (this.canvasMenu.style.display === 'initial') {
+         this._renderer.setStyle(this.canvasMenu, 'display', 'none')
+         return
+         }
+         this._renderer.setStyle(this.canvasMenu, 'display', 'initial')
+         // this.canvasMenu.toggleMenu()*/
       }
         break
 

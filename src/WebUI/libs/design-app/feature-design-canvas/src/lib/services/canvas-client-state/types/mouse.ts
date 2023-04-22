@@ -1,4 +1,4 @@
-import { TransformedPoint } from '@design-app/feature-design-canvas'
+import { TransformedPoint } from '../../../types'
 
 export type MouseState = {
   mouseDown: boolean

@@ -16,44 +16,31 @@
 <!--<div class="relative h-32 w-32">
   <div class="absolute right-0 top-0 h-16 w-16">03</div>
 </div>-->
-<div #canvasMenu id="canvas-menu" class="absolute right-5 top-5 z-10" style="display: none">
-  <!--  <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
-      <div class="relative flex items-start">
-        <div class="flex h-6 items-center">
-          <input
-            id="comments"
-            aria-describedby="comments-description"
-            name="comments"
-            type="checkbox"
-            class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-          />
-        </div>
-        <div class="ml-3 text-sm leading-6">
-          <label for="comments" class="font-medium text-gray-900">Comments</label>
-          <p id="comments-description" class="text-gray-500">
-            Get notified when someones posts a comment on a posting.
-          </p>
-        </div>
-      </div>
-    </ul>-->
+<div
+  #canvasMenu
+  id="canvas-menu"
+  class="absolute right-5 top-5 z-10"
+  [style.display]="state.menu.optionsMenu ? 'initial' : 'none'"
+>
   <fieldset>
-    <legend class="sr-only">Notifications</legend>
+    <legend class="sr-only">Menu</legend>
     <div class="space-y-5">
-      <div class="relative flex items-start">
+      <div
+        *ngFor="let item of canvasMenuArr"
+        (click)="item.action()"
+        class="relative flex items-start"
+      >
         <div class="flex h-6 items-center">
           <input
-            id="comments"
-            aria-describedby="comments-description"
-            name="comments"
+            id="create-preview"
+            name="create-preview"
+            [checked]="state.menu.createPreview"
             type="checkbox"
             class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
           />
         </div>
         <div class="ml-3 text-sm leading-6">
-          <label for="comments" class="font-medium text-gray-900">New comments</label>
-          <span id="comments-description" class="text-gray-500"
-            ><span class="sr-only">New comments </span> so you always know what's happening.</span
-          >
+          <label for="create-preview" class="font-medium text-gray-900">Create Preview</label>
         </div>
       </div>
     </div>

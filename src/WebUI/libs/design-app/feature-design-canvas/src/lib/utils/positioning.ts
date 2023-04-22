@@ -1,112 +1,114 @@
+import { Axis } from '../types'
+import { EntityBounds } from './entity-bounds'
+
+export const SAME_AXIS_POSITION = {
+  TOP: 'top' as const,
+  BOTTOM: 'bottom' as const,
+  LEFT: 'left' as const,
+  RIGHT: 'right' as const,
+} as const
+
+export type SameAxisPosition = (typeof SAME_AXIS_POSITION)[keyof typeof SAME_AXIS_POSITION]
+export const isObjectAboveOrBelow = (obj1: EntityBounds, obj2: EntityBounds, axis: Axis) => {
+  if (axis === 'x') {
+    return obj1.top > obj2.bottom || obj1.bottom < obj2.top
+  }
+  return obj1.left > obj2.right || obj1.right < obj2.left
+}
+
+export const getSameAxisPosition = (
+  start: EntityBounds,
+  end: EntityBounds,
+  axis: Axis,
+): SameAxisPosition | undefined => {
+  if (axis === 'x') {
+    if (start.centerY > end.centerY) {
+      return SAME_AXIS_POSITION.TOP
+    }
+    if (start.centerY < end.centerY) {
+      return SAME_AXIS_POSITION.BOTTOM
+    }
+    /*    if (start.centerX > end.centerX) {
+     return SAME_AXIS_POSITION.LEFT
+     }
+     if (start.centerX < end.centerX) {
+     return SAME_AXIS_POSITION.RIGHT
+     }*/
+    /*    if (start.top > end.bottom) {
+     return SAME_AXIS_POSITION.TOP
+     }
+     if (start.bottom < end.top) {
+     return SAME_AXIS_POSITION.BOTTOM
+     }*/
+  }
+  if (axis === 'y') {
+    if (start.centerX > end.centerX) {
+      return SAME_AXIS_POSITION.LEFT
+    }
+    if (start.centerX < end.centerX) {
+      return SAME_AXIS_POSITION.RIGHT
+    }
+    /*    if (start.centerY > end.centerY) {
+     return SAME_AXIS_POSITION.TOP
+     }
+     if (start.centerY < end.centerY) {
+     return SAME_AXIS_POSITION.BOTTOM
+     }*/
+    /*    if (start.left > end.right) {
+     return SAME_AXIS_POSITION.LEFT
+     }
+     if (start.right < end.left) {
+     return SAME_AXIS_POSITION.RIGHT
+     }*/
+  }
+  return undefined
+  // throw new Error('getSameAxisPosition: invalid axis')
+  // return SAME_AXIS_POSITION.TOP
+}
+
+export const getOppositeSameAxisPosition = (axisPos: SameAxisPosition): SameAxisPosition => {
+  switch (axisPos) {
+    case SAME_AXIS_POSITION.TOP:
+      return SAME_AXIS_POSITION.BOTTOM
+    case SAME_AXIS_POSITION.BOTTOM:
+      return SAME_AXIS_POSITION.TOP
+    case SAME_AXIS_POSITION.LEFT:
+      return SAME_AXIS_POSITION.RIGHT
+    case SAME_AXIS_POSITION.RIGHT:
+      return SAME_AXIS_POSITION.LEFT
+  }
+}
+
 /*
- import { CanvasEntity } from '@design-app/feature-design-canvas'
- import { EntityElement } from '@design-app/shared'
- import { adjustXYWithRotation } from '@shared/utils'
-
- const getAdjustedDimensions = (
- element: CanvasEntity,
- nextText: string,
- ): {
- x: number
- y: number
- width: number
- height: number
- // baseline: number
- } => {
- // let maxWidth = null;
- /!*  const container = getContainerElement(element);
- if (container) {
- maxWidth = getMaxContainerWidth(container);
- }
- const {
- width: nextWidth,
- height: nextHeight,
- baseline: nextBaseline,
- } = measureText(nextText, getFontString(element), maxWidth);
- const { textAlign, verticalAlign } = element;*!/
- // let x: number;
- // let y: number;
- // const [x1, y1, x2, y2] = getElementAbsoluteCoords(element)
-
- const [nextX1, nextY1, nextX2, nextY2] = getResizedElementAbsoluteCoords(
- element,
- element.width,
- element.height,
- false,
- )
- const deltaX1 = (x1 - nextX1) / 2
- const deltaY1 = (y1 - nextY1) / 2
- const deltaX2 = (x2 - nextX2) / 2
- const deltaY2 = (y2 - nextY2) / 2
-
- const [x, y] = adjustXYWithRotation(
- {
- s: true,
- // e: textAlign === "center" || textAlign === "left",
- // w: textAlign === "center" || textAlign === "right",
- },
- element.location.x,
- element.location.y,
- element.angle,
- deltaX1,
- deltaY1,
- deltaX2,
- deltaY2,
- )
-
- /!*  // make sure container dimensions are set properly when
- // text editor overflows beyond viewport dimensions
- if (container) {
- const boundTextElementPadding = getBoundTextElementOffset(element);
-
- const containerDims = getContainerDims(container);
- let height = containerDims.height;
- let width = containerDims.width;
- if (nextHeight > height - boundTextElementPadding * 2) {
- height = nextHeight + boundTextElementPadding * 2;
- }
- if (nextWidth > width - boundTextElementPadding * 2) {
- width = nextWidth + boundTextElementPadding * 2;
- }
- if (
- !isArrowElement(container) &&
- (height !== containerDims.height || width !== containerDims.width)
- ) {
- mutateElement(container, { height, width });
- }
- }*!/
+ export const getCornerPointsFromAxisPosition = (
+ axisPos: SameAxisPosition,
+ bounds: EntityBounds,
+ ): { a: { x: number; y: number }; b: { x: number; y: number } } => {
+ const { left, right, top, bottom } = bounds
+ switch (axisPos) {
+ case SAME_AXIS_POSITION.TOP: {
  return {
- width: element.width,
- height: element.height,
- x: Number.isFinite(x) ? x : element.location.x,
- y: Number.isFinite(y) ? y : element.location.y,
- // baseline: nextBaseline,
+ a: { x: left, y: top },
+ b: { x: right, y: top },
  }
  }
-
- const getResizedElementAbsoluteCoords = (
- element: CanvasEntity,
- nextWidth: number,
- nextHeight: number,
- normalizePoints: boolean,
- ): [number, number, number, number] => {
- return [
- element.location.x,
- element.location.y,
- element.location.x + nextWidth,
- element.location.y + nextHeight,
- ]
+ case SAME_AXIS_POSITION.BOTTOM: {
+ return {
+ a: { x: left, y: bottom },
+ b: { x: right, y: bottom },
  }
-
- const getElementAbsoluteCoords = (
- element: EntityElement,
- ): [number, number, number, number, number, number] => {
- return [
- element.x,
- element.y,
- element.x + element.width,
- element.y + element.height,
- element.x + element.width / 2,
- element.y + element.height / 2,
- ]
+ }
+ case SAME_AXIS_POSITION.LEFT: {
+ return {
+ a: { x: left, y: top },
+ b: { x: left, y: bottom },
+ }
+ }
+ case SAME_AXIS_POSITION.RIGHT: {
+ return {
+ a: { x: right, y: top },
+ b: { x: right, y: bottom },
+ }
+ }
+ }
  }*/

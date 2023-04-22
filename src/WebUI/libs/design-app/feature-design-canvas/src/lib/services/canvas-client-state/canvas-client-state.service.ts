@@ -1,9 +1,6 @@
 import { inject, Injectable } from '@angular/core'
-import { CanvasClientState, CanvasClientStateUpdatePartial, DragBoxState, HoveringEntityState, InitialDragBoxState, InitialHoveringEntityState, InitialSelectedState, InitialToMoveState, InitialToRotateState, SelectedState, ToMoveState, ToRotateState } from './types'
-import { InitialModeState, ModeState } from './types/mode'
-import { InitialViewState, ViewState } from './types/view'
+import { CanvasClientState, DragBoxState, HoveringEntityState, InitialDragBoxState, InitialHoveringEntityState, InitialMenuState, InitialModeState, InitialMouseState, InitialNearbyState, InitialSelectedState, InitialToMoveState, InitialToRotateState, InitialViewState, MenuState, ModeState, MouseState, NearbyState, SelectedState, StateUpdate, ToMoveState, ToRotateState, updateStateV3, ViewState } from './types'
 import { CanvasEntityState } from './canvas-entity-state'
-import { InitialMouseState, MouseState } from './types/mouse'
 
 @Injectable({
   providedIn: 'root',
@@ -18,10 +15,9 @@ export class CanvasClientStateService
   private _mode: ModeState = InitialModeState
   private _view: ViewState = InitialViewState
   private _mouse: MouseState = InitialMouseState
-  // private _render = inject(CanvasRenderService)
+  private _menu: MenuState = InitialMenuState
+  private _nearby: NearbyState = InitialNearbyState
   private _entities = inject(CanvasEntityState)
-
-  // private _entity: CanvasEntityState = new CanvasEntityState()
 
   get entities(): CanvasEntityState {
     return this._entities
@@ -37,7 +33,22 @@ export class CanvasClientStateService
       mode:     this.mode,
       view:     this.view,
       mouse:    this.mouse,
+      menu:     this.menu,
+      nearby:   this.nearby,
     }
+  }
+
+  private set state(value: CanvasClientState) {
+    this._hover = value.hover
+    this._selected = value.selected
+    this._toRotate = value.toRotate
+    this._toMove = value.toMove
+    this._dragBox = value.dragBox
+    this._mode = value.mode
+    this._view = value.view
+    this._mouse = value.mouse
+    this._menu = value.menu
+    this._nearby = value.nearby
   }
 
   get hover(): HoveringEntityState {
@@ -88,62 +99,34 @@ export class CanvasClientStateService
     return this._mouse
   }
 
-  updateState(changes: CanvasClientStateUpdatePartial) {
-    if (changes.hover !== undefined) {
-      this._hover = {
-        ...this.hover,
-        ...changes.hover,
-      }
-    }
-    if (changes.selected !== undefined) {
-      this._selected = {
-        ...this.selected,
-        ...changes.selected,
-      }
-      console.log('selected', changes.selected)
-    }
-
-    if (changes.toRotate !== undefined) {
-      this._toRotate = {
-        ...this.toRotate,
-        ...changes.toRotate,
-      }
-    }
-    if (changes.toMove !== undefined) {
-      this._toMove = {
-        ...this.toMove,
-        ...changes.toMove,
-      }
-    }
-    if (changes.dragBox !== undefined) {
-      this._dragBox = {
-        ...this.dragBox,
-        ...changes.dragBox,
-      }
-      console.log('dragBox', this.dragBox)
-    }
-    if (changes.mode !== undefined) {
-      this._mode = {
-        ...this.mode,
-        ...changes.mode,
-      }
-    }
-    if (changes.view !== undefined) {
-      this._view = {
-        ...this.view,
-        ...changes.view,
-      }
-    }
-    if (changes.mouse !== undefined) {
-      this._mouse = {
-        ...this.mouse,
-        ...changes.mouse,
-      }
-      // console.log('mouse', this.mouse)
-    }
+  get menu(): MenuState {
+    return this._menu
   }
+
+  get nearby(): NearbyState {
+    return this._nearby
+  }
+
+  updateState(changes: StateUpdate) {
+    if (changes.menu !== undefined) {
+      console.log('menu', changes.menu)
+    }
+    if (changes.nearby !== undefined) {
+      // console.log('nearby', changes.nearby)
+    }
+    this.state = updateStateV3(this.state, changes)
+    return
+  }
+
+  /*  updateStateV2(fn: (changes: CanvasClientStateUpdatePartial) => CanvasClientStateUpdatePartial)  {
+   this.updateState(fn({}))
+   }*/
 
   getState(): CanvasClientState {
     return this.state
+  }
+
+  getSpecificState<TState>(state: keyof CanvasClientState): TState {
+    return this.state[state] as TState
   }
 }

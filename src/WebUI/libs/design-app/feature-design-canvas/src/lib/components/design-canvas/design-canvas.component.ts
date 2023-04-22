@@ -5,8 +5,9 @@ import { DesignCanvasDirective } from '../../directives'
 import { select, Store } from '@ngrx/store'
 import { selectDrawTime } from '../../store'
 import { ShowSvgComponent } from '@shared/ui'
-import { CanvasClientStateService, CanvasEntitiesStore, CanvasObjectPositioningService, DomPointService } from '../../services'
+import { CanvasClientStateService, CanvasEntitiesStore, CanvasObjectPositioningService, CanvasRenderService, DomPointService } from '../../services'
 import { MenuDataset } from '../../types'
+import { LetModule } from '@ngrx/component'
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -15,6 +16,7 @@ import { MenuDataset } from '../../types'
     CommonModule,
     DesignCanvasDirective,
     ShowSvgComponent,
+    LetModule,
   ],
   selector:        'app-design-canvas',
   standalone:      true,
@@ -27,11 +29,26 @@ export class DesignCanvasComponent
   private _objectPositioning = inject(CanvasObjectPositioningService)
   private _domPoint = inject(DomPointService)
   private _state = inject(CanvasClientStateService)
+  private _render = inject(CanvasRenderService)
   public entitiesStore = inject(CanvasEntitiesStore)
   public drawTime$ = this._store.pipe(select(selectDrawTime))
   @ViewChild(DesignCanvasDirective, { static: true }) canvas!: DesignCanvasDirective
   @ViewChild(CdkDrag, { static: true }) drag!: CdkDrag
   @ViewChild('menu', { static: true }) menu!: ElementRef<HTMLDivElement>
+
+  state = inject(CanvasClientStateService)
+
+  rightClickMenu = [
+    { label: 'Rotate', action: this.rotate.bind(this) },
+    { label: 'Delete', action: this.delete.bind(this) },
+  ]
+
+  canvasMenuArr = [
+    {
+      label:  'Create Preview',
+      action: this.toggleCreatePreview.bind(this),
+    },
+  ]
 
   ngOnInit() {
     console.log(this.constructor.name, 'ngOnInit')
@@ -65,5 +82,14 @@ export class DesignCanvasComponent
 
   private closeMenu() {
     this.menu.nativeElement.style.display = 'none'
+  }
+
+  toggleCreatePreview() {
+    this._state.updateState({
+      menu: {
+        createPreview: !this._state.menu.createPreview,
+      },
+    })
+    this._render.drawCanvas()
   }
 }

@@ -1,13 +1,13 @@
 import { inject, Injectable } from '@angular/core'
-import { CanvasElementService } from './canvas-element.service'
-import { CANVAS_COLORS, CanvasEntity, EntityLocation, isPanel, SizeByType } from '../types'
-import { DomPointService } from './dom-point.service'
-import { CanvasAppStateStore } from './canvas-app-state'
+import { CanvasElementService } from '../canvas-element.service'
+import { CANVAS_COLORS, CanvasEntity, EntityLocation, isPanel, SizeByType } from '../../types'
+import { DomPointService } from '../dom-point.service'
+import { CanvasAppStateStore } from '../canvas-app-state'
 // import { CanvasEntitiesStore } from './canvas-entities'
 import { assertNotNull } from '@shared/utils'
-import { CanvasClientStateService } from './canvas-client-state'
-import { CANVAS_MODE } from './canvas-client-state/types/mode'
-import { getAllAvailableEntitySpotsBetweenTwoPoints } from '../utils'
+import { CanvasClientStateService, MultipleToMove, SingleToMove } from '../canvas-client-state'
+import { CANVAS_MODE } from '../canvas-client-state/types/mode'
+import { getAllAvailableEntitySpotsBetweenTwoPoints } from '../../utils'
 
 @Injectable({
   providedIn: 'root',
@@ -137,7 +137,8 @@ export class CanvasRenderService {
     const isSingleSelected = !!selected.singleSelectedId && selected.singleSelectedId === entity.id
 
     if (isSingleSelected) {
-      fillStyle = '#ff6e78'
+      // fillStyle = '#ff6e78'
+      fillStyle = CANVAS_COLORS.SelectedPanelFillStyle
     }
 
     const isMultiSelected = selected.multipleSelectedIds.includes(entity.id)
@@ -150,31 +151,33 @@ export class CanvasRenderService {
      */
 
     if (isMultiSelected) {
-      fillStyle = '#ff6e78'
+      fillStyle = CANVAS_COLORS.MultiSelectedPanelFillStyle
+      // fillStyle = '#ff6e78'
     }
 
     if (isPanel(entity)) {
       const isStringSelected = selected.selectedStringId === entity.stringId
       if (isStringSelected && selected.selectedStringId && entity.stringId) {
-        fillStyle = '#d323ff'
+        fillStyle = CANVAS_COLORS.StringSelectedPanelFillStyle
+        // fillStyle = '#d323ff'
         // console.log('drawEntity', 'isStringSelected', entity, selected.selectedStringId, entity.stringId)
       }
     }
 
-    const multipleToRotate = toRotate.multipleToRotate
-
-    const isInMultiRotate = !!multipleToRotate && multipleToRotate.ids.includes(entity.id)
     // const isInMultiRotate = toRotate.ids.includes(entity.id)
-    const isInSingleRotate = !!toRotate.singleToRotate && toRotate.singleToRotate.id === entity.id
+
     // const isInMultiRotate = multiToRotateEntities.find((e) => e.id === entity.id)
     // const isInMultiRotate = multiToRotateEntities.includes(entity.id)
     // const isInSingleRotate = !!singleToRotateEntity && singleToRotateEntity.id === entity.id
     // const isInSingleRotate = singleToRotateId === entity.id
-
+    const multipleToRotate = toRotate.multipleToRotate
+    const isInMultiRotate = !!multipleToRotate && multipleToRotate.ids.includes(entity.id)
     if (isInMultiRotate) {
       this.handleMultipleRotationDraw(entity)
       return
     }
+
+    const isInSingleRotate = !!toRotate.singleToRotate && toRotate.singleToRotate.id === entity.id
     if (isInSingleRotate) {
       this.handleSingleRotationDraw(entity)
       return
@@ -187,19 +190,43 @@ export class CanvasRenderService {
      !!this._clientState.singleToMoveEntity &&
      this._clientState.singleToMoveEntity.id === entity.id*/
     // console.log('toMove', toMove)
-    const isDragging2 = !!toMove.singleToMove && toMove.singleToMove.id === entity.id
-    if (isDragging2) {
-      // console.log('isDragging2')
-      assertNotNull(toMove.singleToMove)
+
+    if (isSingleDragging(entity, toMove.singleToMove)) {
+      // console.log('isDragging')
+      // assertNotNull(toMove.singleToMove)
       this.handleDraggingEntityDraw(entity, toMove.singleToMove)
       return
     }
 
-    const isInMultiMove = !!toMove.multipleToMove && toMove.multipleToMove.ids.includes(entity.id)
-    if (isInMultiMove) {
-      this.handleMultipleMoveDraw(entity)
+    /*    const isDragging2 = !!toMove.singleToMove && toMove.singleToMove.id === entity.id
+     if (isDragging2) {
+     // console.log('isDragging2')
+     assertNotNull(toMove.singleToMove)
+     this.handleDraggingEntityDraw(entity, toMove.singleToMove)
+     return
+     }*/
+
+    if (isMultipleDragging(entity, toMove.multipleToMove)) {
+      // console.log('isDragging')
+      // assertNotNull(toMove.singleToMove)
+      this.handleMultipleMoveDraw(entity, toMove.multipleToMove)
       return
     }
+
+    const nearbyEntityIds = this._state.nearby.ids
+    const isNearby = nearbyEntityIds.includes(entity.id)
+    // const findNearby = nearbyEntityIds.find((id) => id === entity.id)
+    // console.log('isNearby', entity.id, nearbyEntityIds)
+    if (isNearby) {
+      // console.log('isNearby', entity.id)
+      fillStyle = CANVAS_COLORS.NearbyPanelFillStyle
+    }
+
+    /*    const isInMultiMove = !!toMove.multipleToMove && toMove.multipleToMove.ids.includes(entity.id)
+     if (isInMultiMove) {
+     this.handleMultipleMoveDraw(entity)
+     return
+     }*/
     /*    const isDragging =
      !!this._objectPositioning.singleToMove &&
      this._objectPositioning.singleToMove.id === entity.id
@@ -226,6 +253,7 @@ export class CanvasRenderService {
     // if (singleToMoveId !== entity.id) return
     // console.log('handleDraggingEntityDraw', singleToMove)
     this.ctx.save()
+    this.ctx.fillStyle = CANVAS_COLORS.HoveredPanelFillStyle
     this.ctx.translate(
       singleToMove.location.x + entity.width / 2,
       singleToMove.location.y + entity.height / 2,
@@ -239,13 +267,14 @@ export class CanvasRenderService {
     this.ctx.restore()
   }
 
-  private handleMultipleMoveDraw(entity: CanvasEntity) {
+  private handleMultipleMoveDraw(entity: CanvasEntity, multipleToMove: MultipleToMove) {
     // const { singleToMoveId, singleToMoveLocation } = this._objectPositioning
     // assertNotNull(singleToMoveLocation)
     // if (singleToMoveId !== entity.id) return
     // console.log('handleDraggingEntityDraw', singleToMove)
-    const multipleToMove = this._state.toMove.multipleToMove
-    assertNotNull(multipleToMove)
+    // const multipleToMove = this._state.toMove.multipleToMove
+    // assertNotNull(multipleToMove)
+    // const multiType = typeof mult/**/ipleToMove
     // const entityToMove = multipleToMove.entities.find((e) => e.id === entity.id)
     // assertNotNull(entityToMove)
     const offset = multipleToMove.offset
@@ -312,3 +341,24 @@ export class CanvasRenderService {
   }
 
 }
+
+// const isDragging2 = !!toMove.singleToMove && toMove.singleToMove.id === entity.id
+const isSingleDragging = (entity: CanvasEntity, singleToMove: SingleToMove | undefined): singleToMove is SingleToMove => {
+  return !!singleToMove && singleToMove.id === entity.id
+}
+
+const isMultipleDragging = (entity: CanvasEntity, multipleToMove: MultipleToMove | undefined): multipleToMove is MultipleToMove => {
+  return !!multipleToMove && multipleToMove.entities.find((e) => e.id === entity.id) !== undefined
+}
+
+/*
+ export function isPanel(entity: CanvasEntity): entity is CanvasPanel {
+ return entity.type === ENTITY_TYPE.Panel
+ }
+
+ export function assertIsPanel(entity: CanvasEntity): asserts entity is CanvasPanel {
+ if (!isPanel(entity)) {
+ throw new Error(`Expected entity to be a panel, but was ${entity.type}`)
+ }
+ }
+ */

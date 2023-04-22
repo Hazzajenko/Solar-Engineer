@@ -173,7 +173,7 @@ export abstract class DesignCanvasDirectiveExtension {
   protected mouseUpTimeOutFn = () => {
     this.mouseUpTimeOut = setTimeout(() => {
       this.mouseUpTimeOut = undefined
-    }, 1000)
+    }, 50)
   }
 
   protected setupCanvas() {

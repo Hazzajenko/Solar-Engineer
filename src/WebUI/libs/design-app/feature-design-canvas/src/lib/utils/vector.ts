@@ -1,5 +1,5 @@
 import { CanvasEntity } from '../types'
-import { Size } from '@shared/data-access/models'
+import { Point, Size } from '@shared/data-access/models'
 
 const isNumber = (a: any): a is number => typeof a === 'number'
 
@@ -56,6 +56,14 @@ export const distance2d = (x1: number, y1: number, x2: number, y2: number) => {
   const xd = x2 - x1
   const yd = y2 - y1
   return Math.hypot(xd, yd)
+}
+
+export const distance2dPoint = (a: APoint, b: APoint) => {
+  return distance2d(a[0], a[1], b[0], b[1])
+}
+
+export const getDistanceBetweenTwoPoints = (point1: Point, point2: Point) => {
+  return distance2d(point1.x, point1.y, point2.x, point2.y)
 }
 
 export const rotation = (pivot: VPoint, angle: number): Transform =>

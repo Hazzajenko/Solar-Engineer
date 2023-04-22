@@ -4,6 +4,8 @@ import {
   DiagonalDirection,
   getDiagonalDirectionFromTwoPoints,
   getStartingSpotForCreationBox,
+  SAME_AXIS_POSITION,
+  SameAxisPosition,
   SizeByType,
   SpotInBox,
   TransformedPoint,
@@ -320,5 +322,104 @@ export const getTopLeftPointFromEvent = (event: MouseEvent, size: Size): Point =
   return {
     x: event.offsetX - size.width / 2,
     y: event.offsetY - size.height / 2,
+  }
+}
+
+export const getTopLeftPointFromEntity = (entity: CanvasEntity): Point => {
+  return {
+    x: entity.location.x - entity.width / 2,
+    y: entity.location.y - entity.height / 2,
+  }
+}
+
+export const getTopLeftFromBounds = (bounds: EntityBounds): Point => {
+  return {
+    x: bounds.left,
+    y: bounds.top,
+  }
+}
+
+export const BOUNDS_CORNER = {
+  TOP_LEFT: 'topLeft',
+  TOP_RIGHT: 'topRight',
+  BOTTOM_LEFT: 'bottomLeft',
+  BOTTOM_RIGHT: 'bottomRight',
+} as const
+
+export type BoundsCorner = (typeof BOUNDS_CORNER)[keyof typeof BOUNDS_CORNER]
+
+export const getBoundsCornerFromPoint = (
+  point: Point,
+  bounds: EntityBounds,
+): BoundsCorner | undefined => {
+  const { left, top, right, bottom } = bounds
+  if (point.x === left && point.y === top) {
+    return BOUNDS_CORNER.TOP_LEFT
+  }
+  if (point.x === right && point.y === top) {
+    return BOUNDS_CORNER.TOP_RIGHT
+  }
+  if (point.x === left && point.y === bottom) {
+    return BOUNDS_CORNER.BOTTOM_LEFT
+  }
+  if (point.x === right && point.y === bottom) {
+    return BOUNDS_CORNER.BOTTOM_RIGHT
+  }
+  return undefined
+}
+
+export const getOppositeCorner = (corner: BoundsCorner): BoundsCorner => {
+  switch (corner) {
+    case BOUNDS_CORNER.TOP_LEFT:
+      return BOUNDS_CORNER.BOTTOM_RIGHT
+    case BOUNDS_CORNER.TOP_RIGHT:
+      return BOUNDS_CORNER.BOTTOM_LEFT
+    case BOUNDS_CORNER.BOTTOM_LEFT:
+      return BOUNDS_CORNER.TOP_RIGHT
+    case BOUNDS_CORNER.BOTTOM_RIGHT:
+      return BOUNDS_CORNER.TOP_LEFT
+  }
+}
+
+export const getBoundsPointByCorner = (corner: BoundsCorner, bounds: EntityBounds): Point => {
+  const { left, top, right, bottom } = bounds
+  switch (corner) {
+    case BOUNDS_CORNER.TOP_LEFT:
+      return { x: left, y: top }
+    case BOUNDS_CORNER.TOP_RIGHT:
+      return { x: right, y: top }
+    case BOUNDS_CORNER.BOTTOM_LEFT:
+      return { x: left, y: bottom }
+    case BOUNDS_CORNER.BOTTOM_RIGHT:
+      return { x: right, y: bottom }
+  }
+}
+
+export const getCornerPointsFromAxisPosition = (
+  axisPosition: SameAxisPosition,
+  bounds: EntityBounds,
+): Point[] => {
+  const { left, top, right, bottom } = bounds
+  switch (axisPosition) {
+    case SAME_AXIS_POSITION.TOP:
+      return [
+        { x: left, y: top },
+        { x: right, y: top },
+      ]
+    case SAME_AXIS_POSITION.BOTTOM:
+      return [
+        { x: left, y: bottom },
+        { x: right, y: bottom },
+      ]
+    case SAME_AXIS_POSITION.LEFT:
+      return [
+        { x: left, y: top },
+        { x: left, y: bottom },
+      ]
+    case SAME_AXIS_POSITION.RIGHT:
+      return [
+        { x: right, y: top },
+        { x: right, y: bottom },
+      ]
   }
 }

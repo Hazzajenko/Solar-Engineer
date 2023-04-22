@@ -10,7 +10,7 @@ import { CURSOR_TYPE } from '@shared/data-access/models'
 import { changeCanvasCursor } from '../utils'
 import { InjectClientState } from './canvas-client-state'
 import { CanvasElementService } from './canvas-element.service'
-import { CanvasRenderService } from './canvas-render.service'
+import { CanvasRenderService } from './canvas-render/canvas-render.service'
 
 @Injectable({
   providedIn: 'root',

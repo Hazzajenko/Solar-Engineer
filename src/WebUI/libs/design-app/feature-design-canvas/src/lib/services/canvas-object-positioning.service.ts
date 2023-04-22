@@ -9,7 +9,7 @@ import { getEntitySizeOffset } from '../functions/object-sizing'
 import { ENTITY_TYPE } from '@design-app/shared'
 import { CanvasSelectedService } from './canvas-selected.service'
 import { CanvasClientStateService, MultipleToRotateEntity, SingleToRotate } from './canvas-client-state'
-import { CanvasRenderService } from './canvas-render.service'
+import { CanvasRenderService } from './canvas-render/canvas-render.service'
 import { TypeOfEntity } from '@design-app/feature-selected'
 import { eventToPointLocation } from '../functions'
 
