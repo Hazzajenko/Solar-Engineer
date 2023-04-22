@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core'
-import { CanvasClientState, DragBoxState, HoveringEntityState, InitialDragBoxState, InitialHoveringEntityState, InitialMenuState, InitialModeState, InitialMouseState, InitialNearbyState, InitialSelectedState, InitialToMoveState, InitialToRotateState, InitialViewState, MenuState, ModeState, MouseState, NearbyState, SelectedState, StateUpdate, ToMoveState, ToRotateState, updateStateV3, ViewState } from './types'
+import { CanvasClientState, DragBoxState, GridState, HoveringEntityState, InitialDragBoxState, InitialGridState, InitialHoveringEntityState, InitialMenuState, InitialModeState, InitialMouseState, InitialNearbyState, InitialSelectedState, InitialToMoveState, InitialToRotateState, InitialViewState, MenuState, ModeState, MouseState, NearbyState, SelectedState, StateUpdate, ToMoveState, ToRotateState, updateStateV3, ViewState } from './types'
 import { CanvasEntityState } from './canvas-entity-state'
 
 @Injectable({
@@ -17,6 +17,7 @@ export class CanvasClientStateService
   private _mouse: MouseState = InitialMouseState
   private _menu: MenuState = InitialMenuState
   private _nearby: NearbyState = InitialNearbyState
+  private _grid: GridState = InitialGridState
   private _entities = inject(CanvasEntityState)
 
   get entities(): CanvasEntityState {
@@ -35,6 +36,7 @@ export class CanvasClientStateService
       mouse:    this.mouse,
       menu:     this.menu,
       nearby:   this.nearby,
+      grid:     this.grid,
     }
   }
 
@@ -49,6 +51,7 @@ export class CanvasClientStateService
     this._mouse = value.mouse
     this._menu = value.menu
     this._nearby = value.nearby
+    this._grid = value.grid
   }
 
   get hover(): HoveringEntityState {
@@ -105,6 +108,10 @@ export class CanvasClientStateService
 
   get nearby(): NearbyState {
     return this._nearby
+  }
+
+  get grid(): GridState {
+    return this._grid
   }
 
   updateState(changes: StateUpdate) {

@@ -1,13 +1,15 @@
 import { findNearbyBoundOverlapOnBothAxis } from '../../object-positioning/utils'
 import {
+  Axis,
   AXIS,
   CANVAS_COLORS,
   CanvasClientStateService,
-  CanvasEntity,
-  drawAxisGridLines,
+  drawEntityGridLines,
   EntityBounds,
+  getBoundsFromArrPoints,
   getBoundsFromCenterPoint,
   getCornerPointsFromAxisPosition,
+  getEntityAxisGridLinesByAxisV2,
   getOppositeSameAxisPosition,
   getSameAxisPosition,
   isEntityOverlappingWithBounds,
@@ -19,51 +21,11 @@ import {
 import { groupInto2dArray, mapToDictionary } from '@shared/utils'
 import { sortBy } from 'lodash'
 
-export const getDrawPreviewEntityFn = (
-  point: TransformedPoint,
-  size: ObjectSize,
-  entities: CanvasEntity[],
-) => {
-  const mouseBoxBounds = getBoundsFromCenterPoint(point, size)
-  const anyNearClick = !!entities.find((entity) =>
-    isEntityOverlappingWithBounds(entity, mouseBoxBounds),
-  )
-
-  const nearbyEntitiesOnAxis = findNearbyBoundOverlapOnBothAxis(mouseBoxBounds, entities)
-  if (nearbyEntitiesOnAxis.length) {
-    /*    const nearbyX = nearbyEntitiesOnAxis.filter((entity) => entity.axis === 'x')
-     if (nearbyX.length) {
-     console.log('nearbyX', nearbyX)
-     }
-     const nearbyY = nearbyEntitiesOnAxis.filter((entity) => entity.axis === 'y')
-     if (nearbyY.length) {
-     console.log('nearbyY', nearbyY)
-     }*/
-  }
-
-  // const nearbyEntitiesOnAxis = findNearbyAxisBounds(mouseBoxBounds, entities)
-  // console.log('nearbyEntitiesOnAxis', nearbyEntitiesOnAxis)
-
-  const fillStyle = anyNearClick
-    ? CANVAS_COLORS.TakenSpotFillStyle
-    : CANVAS_COLORS.PreviewPanelFillStyle
-  return (ctx: CanvasRenderingContext2D) => {
-    ctx.save()
-    ctx.beginPath()
-    ctx.globalAlpha = 0.4
-    ctx.fillStyle = fillStyle
-    // ctx.fillStyle = CANVAS_COLORS.TakenSpotFillStyle
-    ctx.rect(mouseBoxBounds.left, mouseBoxBounds.top, size.width, size.height)
-    ctx.fill()
-    ctx.stroke()
-    ctx.restore()
-  }
-}
-
 export const getDrawPreviewEntityFnV2 = (
   point: TransformedPoint,
   size: ObjectSize,
   state: CanvasClientStateService,
+  event: MouseEvent,
 ) => {
   const mouseBoxBounds = getBoundsFromCenterPoint(point, size)
   const entities = state.entities.canvasEntities.getEntities()
@@ -94,7 +56,7 @@ export const getDrawPreviewEntityFnV2 = (
       },
     }
   }
-  const changes: StateUpdate = {
+  let changes: StateUpdate = {
     nearby: {
       ids: nearbyEntitiesOnAxis.map((entity) => entity.id),
       entities: mapToDictionary(nearbyEntitiesOnAxis),
@@ -105,110 +67,121 @@ export const getDrawPreviewEntityFnV2 = (
     ? CANVAS_COLORS.TakenSpotFillStyle
     : CANVAS_COLORS.PreviewPanelFillStyle
 
-  // const nearbyChain = chain(nearbyEntitiesOnAxis)
-  /*  const nearbySortedByDistance2 = chain(nearbyEntitiesOnAxis)
-   .sortBy((entity) => Math.abs(entity.distance))
-   .groupBy('axis')
-   .value()*/
+  const nearbyAxisLinesEnabled = state.menu.nearbyAxisLines
+  if (!nearbyAxisLinesEnabled) {
+    const ctxFn = (ctx: CanvasRenderingContext2D) => {
+      ctx.save()
+      ctx.beginPath()
+      ctx.globalAlpha = 0.4
+      ctx.fillStyle = fillStyle
+      ctx.rect(mouseBoxBounds.left, mouseBoxBounds.top, size.width, size.height)
+      ctx.fill()
+      ctx.stroke()
+      ctx.restore()
+    }
+    return {
+      ctxFn,
+      changes,
+    }
+  }
 
+  const ctxFns: ((ctx: CanvasRenderingContext2D) => void)[] = []
   const nearbySortedByDistance = sortBy(nearbyEntitiesOnAxis, (entity) => Math.abs(entity.distance))
-
   const nearby2dArray = groupInto2dArray(nearbySortedByDistance, 'axis')
-  const axisGridLineCtxFns = drawAxisGridLines(nearby2dArray)
-  // axisGridLineCtxFns.ctxFn
-  /* const nearbyMap = groupIntoMap(nearbySortedByDistance, 'axis')
-   const nearbyX = nearbyMap.get(AXIS.X)
-   const nearbyY = nearbyMap.get(AXIS.Y)
+  /*  nearby2dArray.forEach((arr) => {
+   // getBoundsFromPoints
+   const closestEnt = arr[0]
 
-   const splitAxis = groupBy(nearbySortedByDistance, 'axis')
-   const yAxis = splitAxis[AXIS.Y]
-   const xAxis = splitAxis[AXIS.X]
-
-   const ctxFns: ((ctx: CanvasRenderingContext2D) => void)[] = []
-
-   const axisArray = [xAxis, yAxis]
-
-   axisArray.forEach((axisEntities) => {
-   if (axisEntities && axisEntities.length) {
-   const closestEnt = axisEntities[0]
-   if (closestEnt) {
    const gridLines = getEntityAxisGridLinesByAxisV2(closestEnt.bounds, closestEnt.axis)
-   ctxFns.push((ctx: CanvasRenderingContext2D) => {
-   ctx.save()
-   ctx.beginPath()
-   ctx.globalAlpha = 0.4
-   ctx.strokeStyle = CANVAS_COLORS.NearbyPanelStrokeStyle
-   ctx.fillStyle = CANVAS_COLORS.NearbyPanelFillStyle
-   ctx.moveTo(gridLines[0][0], gridLines[0][1])
-   ctx.lineTo(gridLines[0][2], gridLines[0][3])
-   ctx.moveTo(gridLines[1][0], gridLines[1][1])
-   ctx.lineTo(gridLines[1][2], gridLines[1][3])
-   ctx.stroke()
-   ctx.restore()
-   })
-   }
-   }
-   })
+   const gridLineBounds = getBoundsFromArrPoints(gridLines)
 
-   const entityGridLineCtxFns = drawManyEntityGridLines(nearbyEntitiesOnAxis)
-
-   const axisGridLinesCtxFn = axisArray.map((axisEntities) => {
-   if (!axisEntities || !axisEntities.length) return
-   const closestEnt = axisEntities[0]
-   if (!closestEnt) return
-   const gridLines = getEntityAxisGridLinesByAxisV2(closestEnt.bounds, closestEnt.axis)
-   return (ctx: CanvasRenderingContext2D) => {
-   ctx.save()
-   ctx.beginPath()
-   ctx.globalAlpha = 0.4
-   ctx.strokeStyle = CANVAS_COLORS.NearbyPanelStrokeStyle
-   ctx.fillStyle = CANVAS_COLORS.NearbyPanelFillStyle
-   ctx.moveTo(gridLines[0][0], gridLines[0][1])
-   ctx.lineTo(gridLines[0][2], gridLines[0][3])
-   ctx.moveTo(gridLines[1][0], gridLines[1][1])
-   ctx.lineTo(gridLines[1][2], gridLines[1][3])
-   ctx.stroke()
-   ctx.restore()
+   /!*type GridLineChanges = {
+   [key: string]: EntityBounds
+   }*!/
+   changes = {
+   ...changes,
+   grid: {
+   ...changes.grid,
+   [`${closestEnt.axis}AxisLineBounds`]: gridLineBounds,
+   },
    }
    })*/
+  // const axisGridLineCtxFns = drawAxisGridLines(nearby2dArray)
+
+  // const sortedClosedstNearby2dArray = sortBy(nearby2dArray, (arr) => arr[0].distance)
+  const closestNearby2dArray = nearby2dArray.map((arr) => arr[0])
+  // console.log('closest', closestNearby2dArray)
+  // console.log('sortedClosedstNearby2dArray', closestNearby2dArray[0])
+  const closestEnt = closestNearby2dArray[0]
+  const entGridLineCtxFn = drawEntityGridLines(closestEnt)
+
+  const gridLines = getEntityAxisGridLinesByAxisV2(closestEnt.bounds, closestEnt.axis)
+  const gridLineBounds = getBoundsFromArrPoints(gridLines)
+
+  /*type GridLineChanges = {
+   [key: string]: EntityBounds
+   }*/
+  changes = {
+    ...changes,
+    grid: {
+      ...changes.grid,
+      [`${closestEnt.axis}AxisLineBounds`]: gridLineBounds,
+    },
+  }
+  /*  nearby2dArray.forEach((arr) => {
+   // getBoundsFromPoints
+   const closestEnt = arr[0]
+
+   const gridLines = getEntityAxisGridLinesByAxisV2(closestEnt.bounds, closestEnt.axis)
+   const gridLineBounds = getBoundsFromArrPoints(gridLines)
+
+   /!*type GridLineChanges = {
+   [key: string]: EntityBounds
+   }*!/
+   changes = {
+   ...changes,
+   grid: {
+   ...changes.grid,
+   [`${closestEnt.axis}AxisLineBounds`]: gridLineBounds,
+   },
+   }
+   })*/
+
+  // console.log('changes', changes)
+
   const ctxFn = (ctx: CanvasRenderingContext2D) => {
     ctx.save()
     ctx.beginPath()
     ctx.globalAlpha = 0.4
     ctx.fillStyle = fillStyle
-    ctx.rect(mouseBoxBounds.left, mouseBoxBounds.top, size.width, size.height)
+
+    const altKey = event.altKey
+    // const isOverlapping = isPointInsideBounds(point, mouseBoxBounds)
+    // const isOverlapping = isBoundsInsideBounds(closestEnt.bounds, mouseBoxBounds)
+    // const isOverlapping = checkOverlapBetweenTwoBounds(gridLineBounds, mouseBoxBounds)
+    if (altKey) {
+      ctx.globalAlpha = 0.6
+      const axisPos = getCtxRectBoundsByAxis(closestEnt.bounds, closestEnt.axis, mouseBoxBounds)
+      ctx.rect(axisPos.x, axisPos.y, axisPos.width, axisPos.height)
+    } else {
+      ctx.rect(mouseBoxBounds.left, mouseBoxBounds.top, size.width, size.height)
+    }
+    // const axisPos = getCtxRectBoundsByAxis(closestEnt.bounds, closestEnt.axis, mouseBoxBounds)
+    // ctx.rect(axisPos.x, axisPos.y, axisPos.width, axisPos.height)
+
+    // ctx.rect(mouseBoxBounds.left, mouseBoxBounds.top, size.width, size.height)
+    // ctx.rect(mouseBoxBounds.left, mouseBoxBounds.top, size.width, size.height)
     ctx.fill()
     ctx.stroke()
     ctx.restore()
-    axisGridLineCtxFns.forEach((fn) => fn(ctx))
+    entGridLineCtxFn(ctx)
+    // axisGridLineCtxFns.forEach((fn) => fn(ctx))
   }
 
   return {
     ctxFn,
     changes,
   }
-}
-
-export const drawEntityGridLinesByAxis = (
-  ctx: CanvasRenderingContext2D,
-  nearbyEntity: NearbyEntity,
-) => {
-  const axis = nearbyEntity.axis
-
-  ctx.save()
-  ctx.beginPath()
-  ctx.globalAlpha = 0.4
-  ctx.strokeStyle = CANVAS_COLORS.NearbyPanelStrokeStyle
-  ctx.fillStyle = CANVAS_COLORS.NearbyPanelFillStyle
-
-  ctx.moveTo(nearbyEntity.bounds.left, nearbyEntity.bounds.top)
-  /*  ctx.moveTo(nearbyEntity.bounds.left, nearbyEntity.bounds.top)
-   ctx.lineTo(nearbyEntity.bounds.left + nearbyEntity.bounds.width, nearbyEntity.bounds.top)
-   ctx.lineTo(nearbyEntity.bounds.left + nearbyEntity.bounds.width, nearbyEntity.bounds.top + nearbyEntity.bounds.height)
-   ctx.lineTo(nearbyEntity.bounds.left, nearbyEntity.bounds.top + nearbyEntity.bounds.height)*/
-  ctx.fill()
-  ctx.stroke()
-  ctx.restore()
 }
 
 export const drawEntityGridLinesDeprecated = (
@@ -239,3 +212,61 @@ export const drawEntityGridLinesDeprecated = (
   })
   return ctxFns
 }
+
+export const getCtxRectBoundsByAxis = (
+  bounds: EntityBounds,
+  axis: Axis,
+  mouseBoxBounds: EntityBounds,
+) => {
+  const { left, top } = bounds
+  const width = bounds.right - bounds.left
+  const height = bounds.bottom - bounds.top
+  let x = 0
+  let y = 0
+  if (axis === AXIS.X) {
+    x = left
+    y = mouseBoxBounds.top
+  }
+  if (axis === AXIS.Y) {
+    x = mouseBoxBounds.left
+    y = top
+  }
+  // const w = width
+  // const h = height
+  return {
+    x,
+    y,
+    width,
+    height,
+  }
+}
+
+export const getAxisRectBoundsByAxis = (bounds: EntityBounds, axis: Axis) => {
+  const { left, top } = bounds
+  const width = bounds.right - bounds.left
+  const height = bounds.bottom - bounds.top
+  const x = axis === AXIS.X ? left : left + width / 2
+  const y = axis === AXIS.Y ? top : top + height / 2
+  const w = axis === AXIS.X ? width : 0
+  const h = axis === AXIS.Y ? height : 0
+  return {
+    x,
+    y,
+    w,
+    h,
+  }
+}
+
+/*
+ export const getCtxRectFn = (bounds: EntityBounds, fillStyle: string) => {
+ return (ctx: CanvasRenderingContext2D) => {
+ ctx.save()
+ ctx.beginPath()
+ ctx.globalAlpha = 0.4
+ ctx.fillStyle = fillStyle
+ ctx.rect(bounds.left, bounds.top, bounds.width, bounds.height)
+ ctx.fill()
+ ctx.stroke()
+ ctx.restore()
+ }
+ }*/

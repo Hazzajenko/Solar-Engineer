@@ -218,27 +218,16 @@ export class DesignCanvasDirective
 
     if (menu.createPreview) {
       const size = SizeByType[ENTITY_TYPE.Panel]
-      const fnReturns = getDrawPreviewEntityFnV2(currentPoint, size, this._state)
+      const fnReturns = getDrawPreviewEntityFnV2(currentPoint, size, this._state, event)
       if (fnReturns) {
         if (fnReturns.changes) {
           this._state.updateState(fnReturns.changes)
         }
-        // const drawPreviewEntityFn = getDrawPreviewEntityFn(currentPoint, size, this.entities)
-        // const center = this._domPoint.getTransformedPointFromEvent(event)
-        // const mouseBoxBounds = getBoundsFromCenterPoint(currentPoint, size)
 
         this._render.drawCanvasWithFunction(fnReturns.ctxFn)
         return
       }
     }
-
-    /*    const size = SizeByType[ENTITY_TYPE.Panel]
-     const drawPreviewEntityFn = getDrawPreviewEntityFn(currentPoint, size)
-     // const center = this._domPoint.getTransformedPointFromEvent(event)
-     // const mouseBoxBounds = getBoundsFromCenterPoint(currentPoint, size)
-
-     this._render.drawCanvasWithFunction(drawPreviewEntityFn)*/
-    // const nearClashes = this.seeClashesFromMouse(event)
 
   }
 

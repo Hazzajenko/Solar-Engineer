@@ -45,8 +45,14 @@ export class DesignCanvasComponent
 
   canvasMenuArr = [
     {
-      label:  'Create Preview',
-      action: this.toggleCreatePreview.bind(this),
+      label:   'Create Preview',
+      action:  this.toggleCreatePreview.bind(this),
+      checked: this._state.menu.createPreview,
+    },
+    {
+      label:   'Nearby Axis Lines',
+      action:  this.toggleNearbyAxisLines.bind(this),
+      checked: this._state.menu.nearbyAxisLines,
     },
   ]
 
@@ -88,6 +94,15 @@ export class DesignCanvasComponent
     this._state.updateState({
       menu: {
         createPreview: !this._state.menu.createPreview,
+      },
+    })
+    this._render.drawCanvas()
+  }
+
+  toggleNearbyAxisLines() {
+    this._state.updateState({
+      menu: {
+        nearbyAxisLines: !this._state.menu.nearbyAxisLines,
       },
     })
     this._render.drawCanvas()

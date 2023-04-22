@@ -1,5 +1,6 @@
 import { AngleRadians } from '../../../utils'
 import { DragBoxState } from './drag-box'
+import { GridState } from './grid'
 import { HoveringEntityState } from './hovering'
 import { MenuState } from './menu'
 import { ModeState } from './mode'
@@ -25,6 +26,7 @@ export type CanvasClientState = {
   mouse: MouseState
   menu: MenuState
   nearby: NearbyState
+  grid: GridState
 }
 export type StateUpdate = {
   [P in keyof CanvasClientState]?: Partial<CanvasClientState[P]>

@@ -116,6 +116,45 @@ export const getBoundsFromPoints = (points: Point[]): EntityBounds => {
   }
 }
 
+export const getBoundsFromArrPoints = (points: number[][]): EntityBounds => {
+  let minX = Infinity
+  let maxX = -Infinity
+  let minY = Infinity
+  let maxY = -Infinity
+
+  points.forEach((point) => {
+    minX = Math.min(minX, point[0])
+    minY = Math.min(minY, point[1])
+    maxX = Math.max(maxX, point[0])
+    maxY = Math.max(maxY, point[1])
+  })
+
+  return {
+    left: minX,
+    top: minY,
+    right: maxX,
+    bottom: maxY,
+    centerX: (minX + maxX) / 2,
+    centerY: (minY + maxY) / 2,
+  }
+}
+
+export const getCommonBoundsFromBounds = (bounds1: EntityBounds, bounds2: EntityBounds) => {
+  const left = Math.max(bounds1.left, bounds2.left)
+  const top = Math.max(bounds1.top, bounds2.top)
+  const right = Math.min(bounds1.right, bounds2.right)
+  const bottom = Math.min(bounds1.bottom, bounds2.bottom)
+
+  return {
+    left,
+    top,
+    right,
+    bottom,
+    centerX: (left + right) / 2,
+    centerY: (top + bottom) / 2,
+  }
+}
+
 export const filterEntitiesInsideBounds = (
   bounds: EntityBounds,
   entities: CanvasEntity[],
@@ -423,3 +462,25 @@ export const getCornerPointsFromAxisPosition = (
       ]
   }
 }
+
+export const isBoundsInsideBounds = (
+  bounds: EntityBounds,
+  boundsToCheck: EntityBounds,
+): boolean => {
+  const { left, top, right, bottom } = bounds
+  const {
+    left: leftToCheck,
+    top: topToCheck,
+    right: rightToCheck,
+    bottom: bottomToCheck,
+  } = boundsToCheck
+  return (
+    left >= leftToCheck && top >= topToCheck && right <= rightToCheck && bottom <= bottomToCheck
+  )
+}
+
+/*
+ export const isPointInsideBounds = (point: Point, bounds: EntityBounds): boolean => {
+ const { left, top, right, bottom } = bounds
+ return point.x >= left && point.x <= right && point.y >= top && point.y <= bottom
+ }*/

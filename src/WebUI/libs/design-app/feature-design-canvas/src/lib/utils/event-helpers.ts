@@ -10,7 +10,8 @@ export const dragBoxKeysDown = (event: MouseEvent): boolean => {
 }
 
 export const draggingScreenKeysDown = (event: MouseEvent): boolean => {
-  return (event.ctrlKey || event.button === POINTER_BUTTON.WHEEL) && !event.shiftKey
+  return (event.ctrlKey || event.buttons === 4) && !event.shiftKey
+  // return (event.ctrlKey || event.button === POINTER_BUTTON.WHEEL) && !event.shiftKey
 }
 
 export const isReadyToMultiDrag = (event: MouseEvent, multiSelectedIds: string[]): boolean => {

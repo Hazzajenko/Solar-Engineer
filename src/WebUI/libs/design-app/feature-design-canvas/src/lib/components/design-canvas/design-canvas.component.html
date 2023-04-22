@@ -34,13 +34,13 @@
           <input
             id="create-preview"
             name="create-preview"
-            [checked]="state.menu.createPreview"
+            [checked]="item.checked"
             type="checkbox"
             class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
           />
         </div>
         <div class="ml-3 text-sm leading-6">
-          <label for="create-preview" class="font-medium text-gray-900">Create Preview</label>
+          <label for="create-preview" class="font-medium text-gray-900">{{ item.label }}</label>
         </div>
       </div>
     </div>
