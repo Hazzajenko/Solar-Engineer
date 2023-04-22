@@ -10,9 +10,9 @@ import {
   CanvasViewPositioningService,
   DomPointService,
   DragBoxService,
+  ObjectPositioningService,
   ObjectRotatingService,
 } from '../services'
-import { ObjectPositioningService } from '../services/object-positioning/object-positioning.service'
 import { CanvasAppState, initialCanvasAppState } from '../store'
 import { CANVAS_COLORS, CanvasEntity, SizeByType, TransformedPoint } from '../types'
 import {

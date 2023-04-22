@@ -8,6 +8,7 @@ import { ShowSvgComponent } from '@shared/ui'
 import { CanvasClientStateService, CanvasEntitiesStore, CanvasObjectPositioningService, CanvasRenderService, DomPointService } from '../../services'
 import { MenuDataset } from '../../types'
 import { LetModule } from '@ngrx/component'
+import { KeyMapComponent } from './menus/key-map.component'
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -17,6 +18,7 @@ import { LetModule } from '@ngrx/component'
     DesignCanvasDirective,
     ShowSvgComponent,
     LetModule,
+    KeyMapComponent,
   ],
   selector:        'app-design-canvas',
   standalone:      true,

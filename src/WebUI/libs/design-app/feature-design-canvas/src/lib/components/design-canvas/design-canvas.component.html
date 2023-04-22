@@ -16,6 +16,16 @@
 <!--<div class="relative h-32 w-32">
   <div class="absolute right-0 top-0 h-16 w-16">03</div>
 </div>-->
+
+<div
+  #keyMap
+  id="key-map"
+  class="absolute left-5 top-28 z-10"
+  [style.display]="state.menu.keyMap ? 'initial' : 'none'"
+>
+  <app-key-map-component />
+</div>
+
 <div
   #canvasMenu
   id="canvas-menu"

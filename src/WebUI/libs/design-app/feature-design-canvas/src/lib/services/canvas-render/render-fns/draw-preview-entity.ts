@@ -85,42 +85,17 @@ export const getDrawPreviewEntityFnV2 = (
     }
   }
 
-  const ctxFns: ((ctx: CanvasRenderingContext2D) => void)[] = []
+  // const ctxFns: ((ctx: CanvasRenderingContext2D) => void)[] = []
   const nearbySortedByDistance = sortBy(nearbyEntitiesOnAxis, (entity) => Math.abs(entity.distance))
   const nearby2dArray = groupInto2dArray(nearbySortedByDistance, 'axis')
-  /*  nearby2dArray.forEach((arr) => {
-   // getBoundsFromPoints
-   const closestEnt = arr[0]
 
-   const gridLines = getEntityAxisGridLinesByAxisV2(closestEnt.bounds, closestEnt.axis)
-   const gridLineBounds = getBoundsFromArrPoints(gridLines)
-
-   /!*type GridLineChanges = {
-   [key: string]: EntityBounds
-   }*!/
-   changes = {
-   ...changes,
-   grid: {
-   ...changes.grid,
-   [`${closestEnt.axis}AxisLineBounds`]: gridLineBounds,
-   },
-   }
-   })*/
-  // const axisGridLineCtxFns = drawAxisGridLines(nearby2dArray)
-
-  // const sortedClosedstNearby2dArray = sortBy(nearby2dArray, (arr) => arr[0].distance)
   const closestNearby2dArray = nearby2dArray.map((arr) => arr[0])
-  // console.log('closest', closestNearby2dArray)
-  // console.log('sortedClosedstNearby2dArray', closestNearby2dArray[0])
   const closestEnt = closestNearby2dArray[0]
   const entGridLineCtxFn = drawEntityGridLines(closestEnt)
 
   const gridLines = getEntityAxisGridLinesByAxisV2(closestEnt.bounds, closestEnt.axis)
   const gridLineBounds = getBoundsFromArrPoints(gridLines)
 
-  /*type GridLineChanges = {
-   [key: string]: EntityBounds
-   }*/
   changes = {
     ...changes,
     grid: {
@@ -128,27 +103,6 @@ export const getDrawPreviewEntityFnV2 = (
       [`${closestEnt.axis}AxisLineBounds`]: gridLineBounds,
     },
   }
-  /*  nearby2dArray.forEach((arr) => {
-   // getBoundsFromPoints
-   const closestEnt = arr[0]
-
-   const gridLines = getEntityAxisGridLinesByAxisV2(closestEnt.bounds, closestEnt.axis)
-   const gridLineBounds = getBoundsFromArrPoints(gridLines)
-
-   /!*type GridLineChanges = {
-   [key: string]: EntityBounds
-   }*!/
-   changes = {
-   ...changes,
-   grid: {
-   ...changes.grid,
-   [`${closestEnt.axis}AxisLineBounds`]: gridLineBounds,
-   },
-   }
-   })*/
-
-  // console.log('changes', changes)
-
   const ctxFn = (ctx: CanvasRenderingContext2D) => {
     ctx.save()
     ctx.beginPath()
@@ -156,9 +110,6 @@ export const getDrawPreviewEntityFnV2 = (
     ctx.fillStyle = fillStyle
 
     const altKey = event.altKey
-    // const isOverlapping = isPointInsideBounds(point, mouseBoxBounds)
-    // const isOverlapping = isBoundsInsideBounds(closestEnt.bounds, mouseBoxBounds)
-    // const isOverlapping = checkOverlapBetweenTwoBounds(gridLineBounds, mouseBoxBounds)
     if (altKey) {
       ctx.globalAlpha = 0.6
       const axisPos = getCtxRectBoundsByAxis(closestEnt.bounds, closestEnt.axis, mouseBoxBounds)
@@ -166,16 +117,10 @@ export const getDrawPreviewEntityFnV2 = (
     } else {
       ctx.rect(mouseBoxBounds.left, mouseBoxBounds.top, size.width, size.height)
     }
-    // const axisPos = getCtxRectBoundsByAxis(closestEnt.bounds, closestEnt.axis, mouseBoxBounds)
-    // ctx.rect(axisPos.x, axisPos.y, axisPos.width, axisPos.height)
-
-    // ctx.rect(mouseBoxBounds.left, mouseBoxBounds.top, size.width, size.height)
-    // ctx.rect(mouseBoxBounds.left, mouseBoxBounds.top, size.width, size.height)
     ctx.fill()
     ctx.stroke()
     ctx.restore()
     entGridLineCtxFn(ctx)
-    // axisGridLineCtxFns.forEach((fn) => fn(ctx))
   }
 
   return {
