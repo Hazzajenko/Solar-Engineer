@@ -1,11 +1,12 @@
-import { createEntityAdapter, Dictionary, EntityAdapter, EntityState } from '@ngrx/entity'
+import { EntityStateStr } from './types'
+import { createEntityAdapter, Dictionary, EntityAdapter } from '@ngrx/entity'
 import { UpdateStr } from '@ngrx/entity/src/models'
 
 export abstract class EntityStateTemplate<
   T extends {
     id: string
   },
-> implements EntityState<T>
+> implements EntityStateStr<T>
 {
   protected adapter: EntityAdapter<T> = createEntityAdapter<T>({
     selectId: (entity) => entity.id,
@@ -13,6 +14,8 @@ export abstract class EntityStateTemplate<
 
   ids: string[] = []
   entities: Dictionary<T> = {}
+
+  private selectors = this.adapter.getSelectors()
 
   private set state(state: { ids: string[]; entities: Dictionary<T> }) {
     this.ids = state.ids
@@ -53,12 +56,15 @@ export abstract class EntityStateTemplate<
     this.state = this.adapter.updateMany(updates, this.state)
   }
 
-  getEntity(id: string) {
+  getEntityById(id: string) {
     return this.entities[id]
   }
 
   getEntities() {
-    return this.adapter.getSelectors().selectAll(this)
+    return this.selectors.selectAll(this.state)
+    // return this._selectAll
+    // return this.selectAll
+    // return this.adapter.getSelectors().selectAll(this)
   }
 
   getEntityIds() {

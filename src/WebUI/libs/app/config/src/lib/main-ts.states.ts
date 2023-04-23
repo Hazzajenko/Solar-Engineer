@@ -1,4 +1,3 @@
-import { AUTH_FEATURE_KEY, authReducer } from '@auth/data-access';
 import { CANVAS_APP_STATE_FEATURE_KEY, CANVAS_FEATURE_KEY, CANVAS_STRINGS_FEATURE_KEY, canvasAppStateReducer, canvasReducer, canvasStringsReducer } from '@design-app/feature-design-canvas';
 import { PANELS_FEATURE_KEY, panelsReducer } from '@design-app/feature-panel';
 import { SELECTED_FEATURE_KEY, selectedReducer } from '@design-app/feature-selected';
@@ -20,7 +19,7 @@ export const mainTsStates = [
    provideState(GROUP_CHAT_MEMBERS_FEATURE_KEY, groupChatMembersReducer),
    provideState(GROUP_CHAT_MESSAGES_FEATURE_KEY, groupChatMessagesReducer),
    provideState(USERS_FEATURE_KEY, usersReducer),*/
-  provideState(AUTH_FEATURE_KEY, authReducer),
+  // provideState(AUTH_FEATURE_KEY, authReducer),
   provideState(PANELS_FEATURE_KEY, panelsReducer),
   provideState(SELECTED_FEATURE_KEY, selectedReducer),
   provideState(CANVAS_FEATURE_KEY, canvasReducer),

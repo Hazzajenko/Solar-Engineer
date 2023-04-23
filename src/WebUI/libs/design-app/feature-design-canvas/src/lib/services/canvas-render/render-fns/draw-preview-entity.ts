@@ -4,6 +4,7 @@ import {
   AXIS,
   CANVAS_COLORS,
   CanvasClientStateService,
+  CompleteEntityBounds,
   drawEntityGridLines,
   EntityBounds,
   getBoundsFromArrPoints,
@@ -53,6 +54,12 @@ export const getDrawPreviewEntityFnV2 = (
           ids: [],
           entities: {},
         },
+        grid: {
+          currentAxis: undefined,
+          axisPreviewRect: undefined,
+          xAxisLineBounds: undefined,
+          yAxisLineBounds: undefined,
+        },
       },
     }
   }
@@ -96,13 +103,22 @@ export const getDrawPreviewEntityFnV2 = (
   const gridLines = getEntityAxisGridLinesByAxisV2(closestEnt.bounds, closestEnt.axis)
   const gridLineBounds = getBoundsFromArrPoints(gridLines)
 
+  const axisPreviewRect = getCtxRectBoundsByAxisV2(
+    closestEnt.bounds,
+    closestEnt.axis,
+    mouseBoxBounds,
+  )
+  // const axisPreviewRect = getCtxRectBoundsByAxis(closestEnt.bounds, closestEnt.axis, mouseBoxBounds)
   changes = {
     ...changes,
     grid: {
       ...changes.grid,
+      currentAxis: closestEnt.axis,
+      axisPreviewRect,
       [`${closestEnt.axis}AxisLineBounds`]: gridLineBounds,
     },
   }
+
   const ctxFn = (ctx: CanvasRenderingContext2D) => {
     ctx.save()
     ctx.beginPath()
@@ -112,8 +128,13 @@ export const getDrawPreviewEntityFnV2 = (
     const altKey = event.altKey
     if (altKey) {
       ctx.globalAlpha = 0.6
-      const axisPos = getCtxRectBoundsByAxis(closestEnt.bounds, closestEnt.axis, mouseBoxBounds)
-      ctx.rect(axisPos.x, axisPos.y, axisPos.width, axisPos.height)
+      // const axisPos = getCtxRectBoundsByAxis(closestEnt.bounds, closestEnt.axis, mouseBoxBounds)
+      ctx.rect(
+        axisPreviewRect.left,
+        axisPreviewRect.top,
+        axisPreviewRect.width,
+        axisPreviewRect.height,
+      )
     } else {
       ctx.rect(mouseBoxBounds.left, mouseBoxBounds.top, size.width, size.height)
     }
@@ -186,6 +207,37 @@ export const getCtxRectBoundsByAxis = (
   }
 }
 
+export const getCtxRectBoundsByAxisV2 = (
+  bounds: EntityBounds,
+  axis: Axis,
+  mouseBoxBounds: EntityBounds,
+): CompleteEntityBounds => {
+  const { left, top } = bounds
+  const width = bounds.right - bounds.left
+  const height = bounds.bottom - bounds.top
+  let x = 0
+  let y = 0
+  if (axis === AXIS.X) {
+    x = left
+    y = mouseBoxBounds.top
+  }
+  if (axis === AXIS.Y) {
+    x = mouseBoxBounds.left
+    y = top
+  }
+  // const w = width
+  // const h = height
+  return {
+    left: x,
+    top: y,
+    right: x + width,
+    bottom: y + height,
+    centerX: x + width / 2,
+    centerY: y + height / 2,
+    width,
+    height,
+  }
+}
 export const getAxisRectBoundsByAxis = (bounds: EntityBounds, axis: Axis) => {
   const { left, top } = bounds
   const width = bounds.right - bounds.left

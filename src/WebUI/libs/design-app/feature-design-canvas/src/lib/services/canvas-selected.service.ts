@@ -168,7 +168,7 @@ export class CanvasSelectedService {
     /* const multiSelected = Object.keys(multiSelectedEntities)
      .map(id => this._entitiesStore.select.entityById(id))*/
     const multiSelected = multiSelectedIds
-      .map(id => this._state.entities.canvasEntities.getEntity(id))
+      .map(id => this._state.entities.canvasEntities.getEntityById(id))
       .filter(entity => entity !== undefined) as CanvasEntity[]
 
     /*    const multiSelected = multiSelectedIds
@@ -336,7 +336,7 @@ export class CanvasSelectedService {
 
   setMultiSelected(multiSelectedIds: string[]) {
     // this._multiSelected = multiSelected
-    const multiSelected = mapToObject(multiSelectedIds.map(id => this._state.entities.canvasEntities.getEntity(id))
+    const multiSelected = mapToObject(multiSelectedIds.map(id => this._state.entities.canvasEntities.getEntityById(id))
       .filter(isNotNull))
     // const multiSelected = mapToObject(multiSelectedIds.map(id => this._entitiesStore.select.entityById(id)))
     // this._multiSelectedIds = multiSelectedIds
@@ -387,7 +387,7 @@ export class CanvasSelectedService {
 
     // if (selectedId) {
     // this._entityStore.dispatch.addToSelectedIds([selectedId])
-    const selectedEntity = this._state.entities.canvasEntities.getEntity(selectedId)
+    const selectedEntity = this._state.entities.canvasEntities.getEntityById(selectedId)
     assertNotNull(selectedEntity, 'selected entity not found')
     /*    const selectedTypeOf = {
      id:  selectedId,

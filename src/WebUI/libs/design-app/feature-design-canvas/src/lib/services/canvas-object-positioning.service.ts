@@ -121,7 +121,7 @@ export class CanvasObjectPositioningService {
       // return
     }
     const location = getTopLeftPointFromTransformedPoint(eventPoint, SizeByType[entityOnMouseDown.type])
-    const ent = this._state.entities.canvasEntities.getEntity(entityOnMouseDown.id)
+    const ent = this._state.entities.canvasEntities.getEntityById(entityOnMouseDown.id)
     assertNotNull(ent)
     const angle = ent.angle
     // const update = updateObjectByIdForStore(entityOnMouseDown.id, { location })
@@ -411,7 +411,7 @@ export class CanvasObjectPositioningService {
     /* const multiSelected = Object.keys(multiSelectedEntities)
      .map(id => this._entitiesStore.select.entityById(id))*/
     const multiSelected = multiSelectedIds
-      .map(id => this._state.entities.canvasEntities.getEntity(id))
+      .map(id => this._state.entities.canvasEntities.getEntityById(id))
       .filter(entity => entity !== undefined) as CanvasEntity[]
 
     /*    const multiSelected = multiSelectedIds
@@ -502,7 +502,7 @@ export class CanvasObjectPositioningService {
   setEntityToRotate(entityId: string, startPoint: TransformedPoint) {
     // this.entityToRotateId = entityId
     // this._startPoint = startPoint
-    const location = this._state.entities.canvasEntities.getEntity(entityId)?.location
+    const location = this._state.entities.canvasEntities.getEntityById(entityId)?.location
     assertNotNull(location)
     // const location = this._entitiesStore.select.entityById(entityId).location
     const startAngle = getAngleInRadiansBetweenTwoPoints(startPoint, location)
@@ -556,7 +556,7 @@ export class CanvasObjectPositioningService {
     // if (!this._startPoint) return
     // if (!this._startRotateAngleToMouse) return
     const currentPoint = this._domPointService.getTransformedPointFromEvent(event)
-    const entityLocation = this._state.entities.canvasEntities.getEntity(singleToRotate.id)?.location
+    const entityLocation = this._state.entities.canvasEntities.getEntityById(singleToRotate.id)?.location
     assertNotNull(entityLocation)
     // const entityLocation = this._entitiesStore.select.entityById(this.entityToRotateId).location
     const previousAngle = singleToRotate.startAngle
@@ -661,7 +661,7 @@ export class CanvasObjectPositioningService {
      }*/
     if (multipleToRotate.ids.length) {
       const storeUpdates = multipleToRotate.ids.map(id => {
-        const entity = this._state.entities.canvasEntities.getEntity(id)
+        const entity = this._state.entities.canvasEntities.getEntityById(id)
         assertNotNull(entity)
         // const entity = this._entitiesStore.select.entityById(id)
         /*     const multipleToRotate = this._state.toRotate.multipleToRotate

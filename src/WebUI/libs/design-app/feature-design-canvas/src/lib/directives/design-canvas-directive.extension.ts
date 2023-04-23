@@ -28,9 +28,6 @@ import {
   ContextMenuEvent,
   DoubleClickEvent,
   EVENT_TYPE,
-  MouseDownEvent,
-  MouseMoveEvent,
-  MouseUpEvent,
 } from '@shared/data-access/models'
 import { DelayedLogger } from '@shared/logger'
 import { OnDestroyDirective } from '@shared/utils'
@@ -72,6 +69,7 @@ export abstract class DesignCanvasDirectiveExtension {
   protected stringStats!: HTMLDivElement
   protected panelStats!: HTMLDivElement
   protected menu!: HTMLDivElement
+  protected keyMap!: HTMLDivElement
   // protected entityOnMouseDownId?: string
   // protected entityOnMouseDown?: CanvasEntity
   // protected entityOnMouseDownType?: Ent
@@ -79,6 +77,15 @@ export abstract class DesignCanvasDirectiveExtension {
   protected currentTransformedCursor!: TransformedPoint
   protected _appStateStore = inject(CanvasAppStateStore)
   private _appState: CanvasAppState = initialCanvasAppState
+
+  amountOfMouseEventFires = 0
+  mouseEventFiresTimeOut: ReturnType<typeof setTimeout> | undefined
+  /*  mouseEventFiresTimeOutFn = () => {
+   this.amountOfMouseEventFires = 0
+   this.mouseEventFiresTimeOut = undefined
+   }*/
+  mouseEventFireStartTime = 0
+  // mouseEventFireEndTime = 0
   // private _entities: CanvasEntity[] = []
   // private _strings: CanvasString[] = []
 
@@ -170,6 +177,12 @@ export abstract class DesignCanvasDirectiveExtension {
    )
    */
 
+  protected mouseDownTimeOutFn = () => {
+    this.mouseDownTimeOut = setTimeout(() => {
+      this.mouseDownTimeOut = undefined
+    }, 300)
+  }
+
   protected mouseUpTimeOutFn = () => {
     this.mouseUpTimeOut = setTimeout(() => {
       this.mouseUpTimeOut = undefined
@@ -236,7 +249,8 @@ export abstract class DesignCanvasDirectiveExtension {
   }
 
   protected setupMouseEventListeners() {
-    this._renderer.listen(this.canvas, MouseUpEvent, (event: MouseEvent) => {
+    this._renderer.listen(this.canvas, EVENT_TYPE.POINTER_UP, (event: PointerEvent) => {
+      // this._renderer.listen(this.canvas, MouseUpEvent, (event: MouseEvent) => {
       console.log('mouse up', event)
       this._state.updateState({
         mouse: {
@@ -247,7 +261,8 @@ export abstract class DesignCanvasDirectiveExtension {
       event.stopPropagation()
       event.preventDefault()
     })
-    this._renderer.listen(this.canvas, MouseDownEvent, (event: MouseEvent) => {
+    this._renderer.listen(this.canvas, EVENT_TYPE.POINTER_DOWN, (event: PointerEvent) => {
+      // this._renderer.listen(this.canvas, MouseDownEvent, (event: MouseEvent) => {
       console.log('mouse down', event)
       this._state.updateState({
         mouse: {
@@ -258,7 +273,17 @@ export abstract class DesignCanvasDirectiveExtension {
       event.stopPropagation()
       event.preventDefault()
     })
-    this._renderer.listen(this.canvas, MouseMoveEvent, (event: MouseEvent) => {
+    this._renderer.listen(this.canvas, EVENT_TYPE.POINTER_MOVE, (event: PointerEvent) => {
+      /*      if (!this.mouseEventFiresTimeOut) {
+       this.mouseEventFiresTimeOut = setTimeout(() => {
+       const fps = this.amountOfMouseEventFires
+       this.fpsEl.innerText = `${fps.toFixed(1)} FPS`
+
+       this.mouseEventFiresTimeOut = undefined
+       this.amountOfMouseEventFires = 0
+       }, 1000)
+       }
+       this.amountOfMouseEventFires++*/
       this.mouse = this._domPoint.getTransformedPointFromEvent(event)
       this._state.updateState({
         mouse: {
@@ -269,6 +294,17 @@ export abstract class DesignCanvasDirectiveExtension {
       event.stopPropagation()
       event.preventDefault()
     })
+    /*    this._renderer.listen(this.canvas, MouseMoveEvent, (event: MouseEvent) => {
+     this.mouse = this._domPoint.getTransformedPointFromEvent(event)
+     this._state.updateState({
+     mouse: {
+     point: this._domPoint.getTransformedPointFromEvent(event),
+     },
+     })
+     this.onMouseMoveHandler(event)
+     event.stopPropagation()
+     event.preventDefault()
+     })*/
     this._renderer.listen(this.canvas, ContextMenuEvent, (event: PointerEvent) => {
       console.log('context menu', event)
       this.contextMenuHandler(event)
@@ -277,7 +313,7 @@ export abstract class DesignCanvasDirectiveExtension {
     })
     this._renderer.listen(this.canvas, ClickEvent, (event: PointerEvent) => {
       console.log('mouseClickHandler', event)
-      this.mouseClickHandler(event)
+      // this.mouseClickHandler(event)
       event.stopPropagation()
       event.preventDefault()
     })

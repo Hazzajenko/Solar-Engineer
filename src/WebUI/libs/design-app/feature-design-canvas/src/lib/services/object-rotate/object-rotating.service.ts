@@ -38,7 +38,7 @@ export class ObjectRotatingService {
   }
 
   setEntityToRotate(entityId: string, startPoint: TransformedPoint) {
-    const location = this._state.entities.canvasEntities.getEntity(entityId)?.location
+    const location = this._state.entities.canvasEntities.getEntityById(entityId)?.location
     assertNotNull(location)
     const startAngle = getAngleInRadiansBetweenTwoPoints(startPoint, location)
     this._state.updateState({
@@ -69,7 +69,7 @@ export class ObjectRotatingService {
 
   rotateEntityViaMouse(event: MouseEvent, singleToRotate: SingleToRotate) {
     const currentPoint = this._domPoint.getTransformedPointFromEvent(event)
-    const entityLocation = this._state.entities.canvasEntities.getEntity(singleToRotate.id)?.location
+    const entityLocation = this._state.entities.canvasEntities.getEntityById(singleToRotate.id)?.location
     assertNotNull(entityLocation)
     const previousAngle = singleToRotate.startAngle
     const radians = getAngleInRadiansBetweenTwoPoints(currentPoint, entityLocation)
@@ -140,7 +140,7 @@ export class ObjectRotatingService {
     // assertNotNull(multipleToRotate)
     if (multipleToRotate && multipleToRotate.ids.length) {
       const storeUpdates = multipleToRotate.ids.map(id => {
-        const entity = this._state.entities.canvasEntities.getEntity(id)
+        const entity = this._state.entities.canvasEntities.getEntityById(id)
         assertNotNull(entity)
         const angle = multipleToRotate.adjustedAngle
         const location = multipleToRotate.entities.find(e => e.id === id)?.adjustedLocation

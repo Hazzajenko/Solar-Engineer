@@ -2,12 +2,12 @@ import { KEY_CATEGORY } from '../key-category'
 
 export const ViewPositionKeys = [
   {
-    key: 'CTRL OR WHEEL-BUTTON',
+    key: 'Ctrl Or Wheel',
     label: 'Move View',
     category: KEY_CATEGORY.VIEW_POSITION,
   },
   {
-    key: 'WHEEL',
+    key: 'Wheel',
     label: 'Zoom View',
     category: KEY_CATEGORY.VIEW_POSITION,
   },

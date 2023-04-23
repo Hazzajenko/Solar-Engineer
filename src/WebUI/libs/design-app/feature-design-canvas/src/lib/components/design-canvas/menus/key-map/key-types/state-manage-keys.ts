@@ -7,7 +7,7 @@ export const StateManageKeys = [
     category: KEY_CATEGORY.STATE_MANAGE,
   },
   {
-    key: 'ESCAPE',
+    key: 'Esc',
     label: 'Clear Selection',
     category: KEY_CATEGORY.STATE_MANAGE,
   },

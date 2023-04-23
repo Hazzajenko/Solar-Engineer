@@ -43,7 +43,7 @@ export class ObjectPositioningService {
       // return
     }
     const location = getTopLeftPointFromTransformedPoint(eventPoint, SizeByType[entityOnMouseDown.type])
-    const ent = this._state.entities.canvasEntities.getEntity(entityOnMouseDown.id)
+    const ent = this._state.entities.canvasEntities.getEntityById(entityOnMouseDown.id)
     assertNotNull(ent)
     const angle = ent.angle
     // const update = updateObjectByIdForStore(entityOnMouseDown.id, { location })
@@ -327,7 +327,7 @@ export class ObjectPositioningService {
     /* const multiSelected = Object.keys(multiSelectedEntities)
      .map(id => this._entitiesStore.select.entityById(id))*/
     const multiSelected = multiSelectedIds
-      .map(id => this._state.entities.canvasEntities.getEntity(id))
+      .map(id => this._state.entities.canvasEntities.getEntityById(id))
       .filter(entity => entity !== undefined) as CanvasEntity[]
 
     /*    const multiSelected = multiSelectedIds

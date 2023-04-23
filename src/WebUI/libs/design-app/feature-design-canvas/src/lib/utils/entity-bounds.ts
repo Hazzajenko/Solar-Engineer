@@ -1,17 +1,15 @@
+import { CanvasEntity, SizeByType, TransformedPoint } from '../types'
 import {
-  CanvasEntity,
   DIAGONAL_DIRECTION,
   DiagonalDirection,
   getDiagonalDirectionFromTwoPoints,
   getStartingSpotForCreationBox,
-  SAME_AXIS_POSITION,
-  SameAxisPosition,
-  SizeByType,
   SpotInBox,
-  TransformedPoint,
-} from '@design-app/feature-design-canvas'
+} from './directions'
+import { SAME_AXIS_POSITION, SameAxisPosition } from './positioning'
 import { ENTITY_TYPE } from '@design-app/shared'
 import { Point, Size } from '@shared/data-access/models'
+
 
 export type EntityBounds = {
   left: number
@@ -20,6 +18,11 @@ export type EntityBounds = {
   bottom: number
   centerX: number
   centerY: number
+}
+
+export type CompleteEntityBounds = EntityBounds & {
+  width: number
+  height: number
 }
 
 export const getEntityBounds = (entity: CanvasEntity): EntityBounds => {
@@ -316,6 +319,8 @@ export const getAllAvailableEntitySpotsBetweenTwoPoints = (
   return spots
 }
 
+// export const getAllAvailableEntitySpotsBetweenTwoPoints
+
 export const getCommonBoundsFromMultipleEntities = (
   entities: CanvasEntity[],
 ): EntityBounds | null => {
@@ -477,6 +482,17 @@ export const isBoundsInsideBounds = (
   return (
     left >= leftToCheck && top >= topToCheck && right <= rightToCheck && bottom <= bottomToCheck
   )
+}
+
+export const domRectToBounds = (domRect: DOMRect): EntityBounds => {
+  return {
+    left: domRect.left,
+    top: domRect.top,
+    right: domRect.right,
+    bottom: domRect.bottom,
+    centerX: domRect.x + domRect.width / 2,
+    centerY: domRect.y + domRect.height / 2,
+  }
 }
 
 /*

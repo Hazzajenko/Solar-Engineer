@@ -5,9 +5,8 @@ import { ENTITY_TYPE } from '@design-app/shared'
 import { assertNotNull, OnDestroyDirective } from '@shared/utils'
 import { changeCanvasCursor, dragBoxKeysDown, draggingScreenKeysDown, isContextMenu, isDraggingEntity, isMenuOpen, isReadyToMultiDrag, multiSelectDraggingKeysDown, rotatingKeysDown } from '../utils'
 import { DesignCanvasDirectiveExtension } from './design-canvas-directive.extension'
-import { CANVAS_MODE } from '../services/canvas-client-state/types/mode'
+import { CANVAS_MODE, getDrawPreviewEntityFnV2 } from '../services'
 import { createStringWithPanels } from '../utils/string-fns'
-import { getDrawPreviewEntityFnV2 } from '../services/canvas-render/render-fns/draw-preview-entity'
 
 @Directive({
   selector:   '[appDesignCanvas]',
@@ -32,6 +31,7 @@ export class DesignCanvasDirective
     this.stringStats = document.getElementById('string-stats') as HTMLDivElement
     this.panelStats = document.getElementById('panel-stats') as HTMLDivElement
     this.menu = document.getElementById('menu') as HTMLDivElement
+    this.keyMap = document.getElementById('key-map') as HTMLDivElement
   }
 
   /**
@@ -44,23 +44,39 @@ export class DesignCanvasDirective
    * @private
    */
 
-  onMouseDownHandler(event: MouseEvent) {
+  onMouseDownHandler(event: PointerEvent) {
+    const currentPoint = this._domPoint.getTransformedPointFromEvent(event)
+
     if (isContextMenu(event)) {
       return
     }
-    this.mouseDownTimeOut = setTimeout(() => {
-      this.mouseDownTimeOut = undefined
-    }, 100)
+    this.mouseDownTimeOutFn()
     if (draggingScreenKeysDown(event)) {
       this._view.handleDragScreenMouseDown(event)
       return
     }
+
     if (dragBoxKeysDown(event)) {
+      const { xAxisLineBounds, yAxisLineBounds } = this._state.grid
+      if (xAxisLineBounds || yAxisLineBounds) {
+        console.log('cannot drag box when axisLineBounds is visible', xAxisLineBounds, yAxisLineBounds)
+        this._state.updateState({
+          dragBox: {
+            axisLineStart: currentPoint,
+          },
+        })
+        return
+      }
+      const axisPreviewRect = this._state.grid.axisPreviewRect
+      if (axisPreviewRect) {
+        console.log('cannot drag box when axisPreviewRect is visible')
+        return
+      }
       console.log('drag box keys down')
       this._drag.handleDragBoxMouseDown(event)
       return
     }
-    // const { selected } = this._state.getState()
+
     const multipleSelectedIds = this._state.state.selected.multipleSelectedIds
     if (multiSelectDraggingKeysDown(event, multipleSelectedIds)) {
       this._objPositioning.multiSelectDraggingMouseDown(event, multipleSelectedIds)
@@ -73,10 +89,7 @@ export class DesignCanvasDirective
           onMouseDownEntityId: entityUnderMouse.id,
         },
       })
-      // this._selected.checkSelectedState(event, entityUnderMouse.id)
     }
-
-    // increment()
   }
 
   /**
@@ -85,7 +98,7 @@ export class DesignCanvasDirective
    * @private
    */
 
-  onMouseMoveHandler(event: MouseEvent) {
+  onMouseMoveHandler(event: PointerEvent) {
     const currentPoint = this._domPoint.getTransformedPointFromEvent(event)
     this.currentTransformedCursor = currentPoint
     this.mousePos.innerText = `Original X: ${event.offsetX}, Y: ${event.offsetY}`
@@ -121,9 +134,15 @@ export class DesignCanvasDirective
       return
     }
 
-    if (this._state.dragBox.start) {
+    const dragBoxStart = this._state.dragBox.start
+    if (dragBoxStart) {
       this._drag.dragBoxMouseMove(event)
       return
+    }
+
+    const dragBoxAxisLineStart = this._state.dragBox.axisLineStart
+    if (dragBoxAxisLineStart) {
+      this._drag.dragAxisLineMouseMove(event, currentPoint, dragBoxAxisLineStart)
     }
 
     // const multipleSelectedIds = this._state.selected.multipleSelectedIds
@@ -155,7 +174,7 @@ export class DesignCanvasDirective
 
     if (isDraggingEntity(event, onMouseDownEntityId)) {
       assertNotNull(onMouseDownEntityId)
-      const entity = this._state.entities.canvasEntities.getEntity(onMouseDownEntityId)
+      const entity = this._state.entities.canvasEntities.getEntityById(onMouseDownEntityId)
       assertNotNull(entity)
       this._state.updateState({
         hover: {
@@ -176,7 +195,7 @@ export class DesignCanvasDirective
     const singleToMove = this._state.toMove.singleToMove
     if (isDraggingEntity(event, singleToMove?.id)) {
       assertNotNull(singleToMove)
-      const type = this._state.entities.canvasEntities.getEntity(singleToMove.id)?.type
+      const type = this._state.entities.canvasEntities.getEntityById(singleToMove.id)?.type
       assertNotNull(type)
       this._objPositioning.singleToMoveMouseMove(event, {
         id: singleToMove.id,
@@ -214,6 +233,19 @@ export class DesignCanvasDirective
       // changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
     }
 
+    /*    const keyMapRect = this.keyMap.getBoundingClientRect()
+     const keyMapBounds = domRectToBounds(keyMapRect)
+
+     const nonTransformedCursor = eventToPointLocation(event)
+     console.log('nonTransformedCursor', nonTransformedCursor)
+     console.log('keyMapBounds', keyMapBounds)
+     if (isPointInsideBounds(nonTransformedCursor, keyMapBounds)) {
+     changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
+     this._render.drawCanvas()
+     console.log('inside keymap')
+     return
+     }*/
+
     const { menu } = this._state.getState()
 
     if (menu.createPreview) {
@@ -228,6 +260,7 @@ export class DesignCanvasDirective
         return
       }
     }
+    // isPointInsideBounds(currentPoint, keyMapRect) ? changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO) : changeCanvasCursor(this.canvas, CURSOR_TYPE.GRAB
 
   }
 
@@ -237,9 +270,10 @@ export class DesignCanvasDirective
    * @private
    */
 
-  onMouseUpHandler(event: MouseEvent) {
+  onMouseUpHandler(event: PointerEvent) {
     if (isContextMenu(event)) return
     if (this.mouseDownTimeOut) {
+      console.log('mouseDownTimeOut', this.mouseDownTimeOut)
       clearTimeout(this.mouseDownTimeOut)
       this.mouseDownTimeOut = undefined
       this._state.updateState({
@@ -247,12 +281,13 @@ export class DesignCanvasDirective
           onMouseDownEntityId: undefined,
         },
       })
+      this.mouseClickHandler(event as any)
       return
     }
     /*    this.mouseUpTimeOut = setTimeout(() => {
      this.mouseUpTimeOut = undefined
      }, 50)*/
-    this.mouseUpTimeOutFn()
+    // this.mouseUpTimeOutFn()
 
     if (this._view.screenDragStartPoint) {
       this._view.handleDragScreenMouseUp(event)
@@ -276,6 +311,8 @@ export class DesignCanvasDirective
       return
     }
 
+    this._render.drawCanvas()
+
     // this.mouseUpTimeOutFn()
   }
 
@@ -290,13 +327,13 @@ export class DesignCanvasDirective
       this.menu.style.display = 'none'
       return
     }
-    if (this.mouseUpTimeOut) {
-      console.log('mouseUpTimeOut', this.mouseUpTimeOut)
-      clearTimeout(this.mouseUpTimeOut)
+    /*    if (this.mouseUpTimeOut) {
+     console.log('mouseUpTimeOut', this.mouseUpTimeOut)
+     clearTimeout(this.mouseUpTimeOut)
 
-      this.mouseUpTimeOut = undefined
-      return
-    }
+     this.mouseUpTimeOut = undefined
+     return
+     }*/
     const singleRotateMode = this._state.toRotate.singleRotateMode
     if (singleRotateMode) {
       this._objRotating.clearEntityToRotate()
@@ -315,6 +352,26 @@ export class DesignCanvasDirective
     }
     const location = this._domPoint.getTransformedPointToMiddleOfObjectFromEvent(event, ENTITY_TYPE.Panel)
 
+    const axisPreviewRect = this._state.grid.axisPreviewRect
+    if (axisPreviewRect && event.altKey) {
+      // const entity = this._state.selected.selectedStringId
+      const previewRectLocation = { x: axisPreviewRect.left, y: axisPreviewRect.top }
+      const entity = this._state.selected.selectedStringId
+        ? createPanel(previewRectLocation, this._state.selected.selectedStringId)
+        : createPanel(previewRectLocation)
+      this._state.entities.canvasEntities.addEntity(entity)
+      /*      const axisPreviewRectBounds = domRectToBounds(axisPreviewRect)
+       if (isPointInsideBounds(location, axisPreviewRectBounds)) {*/
+      this._state.updateState({
+        grid: {
+          axisPreviewRect: undefined,
+        },
+      })
+      this._render.drawCanvas()
+      return
+      /*      return
+       }*/
+    }
     // const isStringSelected = !!this._state.selected.selectedStringId
     // const isStringSelected = !!this._selected.selectedStringId
     const entity = this._state.selected.selectedStringId
