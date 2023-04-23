@@ -143,6 +143,7 @@ export class DesignCanvasDirective
     const dragBoxAxisLineStart = this._state.dragBox.axisLineStart
     if (dragBoxAxisLineStart) {
       this._drag.dragAxisLineMouseMove(event, currentPoint, dragBoxAxisLineStart)
+      return
     }
 
     // const multipleSelectedIds = this._state.selected.multipleSelectedIds

@@ -10,6 +10,7 @@ import { changeCanvasCursor, dragBoxKeysDown, EntityBounds, getAllAvailableEntit
 import { CANVAS_MODE, CanvasClientStateService } from '../canvas-client-state'
 import { CanvasRenderService } from '../canvas-render'
 import { ENTITY_TYPE } from '@design-app/shared'
+import { DragBoxMachineService } from './drag-box.xstate'
 
 @Injectable({
   providedIn: 'root',
@@ -43,6 +44,7 @@ export class DragBoxService {
         start: this._domPointService.getTransformedPointFromEvent(event),
       },
     })
+    DragBoxMachineService.send('Start Drag Box')
   }
 
   selectionBoxMouseUp(event: PointerEvent) {
@@ -144,38 +146,31 @@ export class DragBoxService {
       throw new Error('dragAxisLineMouseMove: currentAxis is undefined')
     }
 
-    /*    const xAxisLineBounds = this._state.grid.xAxisLineBounds
-     const yAxisLineBounds = this._state.grid.yAxisLineBounds
-     if (xAxisLineBounds && yAxisLineBounds) {
-     throw new Error('dragAxisLineMouseMove: both xAxisLineBounds and yAxisLineBounds are defined')
-     }*/
-
     const axisLineBounds = currentAxis === AXIS.X
       ? this._state.grid.xAxisLineBounds
       : this._state.grid.yAxisLineBounds
     if (!axisLineBounds) {
       throw new Error('dragAxisLineMouseMove: axisLineBounds is undefined')
     }
-    const start = adjustPointToGridByAxisLine(dragBoxAxisLineStart, currentAxis, axisLineBounds) as TransformedPoint
-    const end = adjustPointToGridByAxisLine(currentPoint, currentAxis, axisLineBounds) as TransformedPoint
     const entitySize = SizeByType[ENTITY_TYPE.Panel]
-    const sizeByAxis = currentAxis === AXIS.X
-      ? entitySize.width
-      : entitySize.height
-    start[currentAxis] = start[currentAxis] - sizeByAxis
-    end[currentAxis] = end[currentAxis] + (sizeByAxis * 2)
+    const [startX, startY, endX, endY] = getStartAndEndForAxisLineDragBox(dragBoxAxisLineStart, currentPoint, currentAxis, axisLineBounds)
 
-    // const { mode } = this._state.mode
+    const start = { x: startX, y: startY } as TransformedPoint
+    const end = { x: endX, y: endY } as TransformedPoint
     const spots = getAllAvailableEntitySpotsBetweenTwoPoints(start, end, this._state.entities.canvasEntities.getEntities())
     console.log('spots', spots)
-    if (!spots || !spots.length) return
+    if (!spots || !spots.length) {
+      console.log('start', start)
+      console.log('end', end)
+      return
+    }
 
     const axisLineDragBoxCtxFn = (ctx: CanvasRenderingContext2D) => {
       ctx.save()
       spots.forEach(spot => {
         ctx.save()
         ctx.beginPath()
-        ctx.globalAlpha = 0.4
+        ctx.globalAlpha = 0.6
         ctx.fillStyle = spot.vacant
           ? CANVAS_COLORS.PreviewPanelFillStyle
           : CANVAS_COLORS.TakenSpotFillStyle
@@ -185,31 +180,28 @@ export class DragBoxService {
         ctx.restore()
       })
       ctx.restore()
-      console.log('axisLineDragBoxCtxFn')
     }
-    console.log('axisLineDragBoxCtxFn')
 
     this._render.drawCanvasWithFunction(axisLineDragBoxCtxFn)
+  }
+}
 
-    /*    this.ctx.save()
-     spots.forEach(spot => {
-     this.ctx.save()
-     this.ctx.beginPath()
-     this.ctx.globalAlpha = 0.4
-     this.ctx.fillStyle = spot.vacant
-     ? CANVAS_COLORS.PreviewPanelFillStyle
-     : CANVAS_COLORS.TakenSpotFillStyle
-     this.ctx.rect(spot.x, spot.y, entitySize.width, entitySize.height)
-     this.ctx.fill()
-     this.ctx.stroke()
-     this.ctx.restore()
-     })
-     this.ctx.restore()*/
-    // const takenSpots = spots.filter(spot => !spot.vacant)
-    /*    if (takenSpots.length) {
-
-     }*/
-
+export const getStartAndEndForAxisLineDragBox = (start: TransformedPoint, end: TransformedPoint, axis: Axis, axisLineBounds: EntityBounds) => {
+  switch (axis) {
+    case AXIS.X:
+      return [
+        axisLineBounds.left,
+        start.y,
+        axisLineBounds.right,
+        end.y,
+      ]
+    case AXIS.Y:
+      return [
+        axisLineBounds.left,
+        start.y,
+        axisLineBounds.right,
+        end.y,
+      ]
   }
 }
 

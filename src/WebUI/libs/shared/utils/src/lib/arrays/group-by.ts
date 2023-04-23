@@ -53,10 +53,10 @@ const groupByCategory = groupByFunc(products, (product) => {
 console.log(groupByCategory)
 const apples = groupByCategory['apples']
 
-type MapValuesToKeysIfAllowed<T> = {
+export type MapValuesToKeysIfAllowed<T> = {
   [K in keyof T]: T[K] extends PropertyKey ? K : never
 }
-type Filter<T> = MapValuesToKeysIfAllowed<T>[keyof T]
+export type Filter<T> = MapValuesToKeysIfAllowed<T>[keyof T]
 
 interface Foo {
   num: number

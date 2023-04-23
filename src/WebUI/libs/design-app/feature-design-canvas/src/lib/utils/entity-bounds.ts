@@ -25,6 +25,14 @@ export type CompleteEntityBounds = EntityBounds & {
   height: number
 }
 
+export const getCompleteEntityBounds = (bounds: EntityBounds): CompleteEntityBounds => {
+  return {
+    ...bounds,
+    width: bounds.right - bounds.left,
+    height: bounds.bottom - bounds.top,
+  }
+}
+
 export const getEntityBounds = (entity: CanvasEntity): EntityBounds => {
   return {
     left: entity.location.x,

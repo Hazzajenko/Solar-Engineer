@@ -8,9 +8,9 @@ import { eventToPointLocation } from '../functions'
 import { CanvasAppStateStore } from './canvas-app-state'
 import { CURSOR_TYPE } from '@shared/data-access/models'
 import { changeCanvasCursor } from '../utils'
-import { InjectClientState } from './canvas-client-state'
+import { canvasAppXStateService, InjectClientState } from './canvas-client-state'
 import { CanvasElementService } from './canvas-element.service'
-import { CanvasRenderService } from './canvas-render/canvas-render.service'
+import { CanvasRenderService } from './canvas-render'
 
 @Injectable({
   providedIn: 'root',
@@ -290,36 +290,15 @@ export class CanvasSelectedService {
   }
 
   setSelected(selectedId: string) {
-    /*    if (this._selected?.id === selected.id) {
-     this._selected = undefined
-     console.log('set selected', undefined)
-     return
-     }*/
-    /*    if (this._selectedId === selectedId) {
-     this._selected = undefined
-     this._selectedId = undefined
-     this._selectedType = undefined
-     console.log('set selected', undefined)
-     this._entityStore.dispatch.setSelectedId(undefined)
-     return
-     }*/
-    // this._selected = selected
-    // this._selectedType = selected.type
-    // this._selectedId = selectedId
-    // this._entityStore.dispatch.setSelectedId(selectedId)
     this._state.updateState({
       selected: {
         singleSelectedId: selectedId,
-        /*        singleSelected: {
-         id:   selectedId,
-         type: ENTITY_TYPE.Panel,
-         },*/
       },
     })
     console.log('set selected', selectedId)
-    // this.emitDraw()
-    // this.
-    // this.emit(CanvasEvent.Draw)
+    canvasAppXStateService.send({
+      type: 'Click On Entity',
+    })
   }
 
   setSelectedStringId(id: CanvasString['id'] | undefined) {
