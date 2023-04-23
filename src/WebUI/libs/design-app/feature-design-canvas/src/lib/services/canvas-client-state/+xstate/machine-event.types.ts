@@ -1,6 +1,6 @@
-import { TransformedPoint } from '../../../types'
+import { TransformedPoint } from '@design-app/feature-design-canvas'
 
-export type CanvasAppMachineEvent =
+export type XStateEvent =
   | {
       type: 'Click Elsewhere'
       payload: {}
@@ -10,7 +10,7 @@ export type CanvasAppMachineEvent =
       payload: {}
     }
   | {
-      type: 'Click On Entity'
+      type: 'ClickOnEntity'
       payload: {
         id: string
       }
@@ -43,6 +43,52 @@ export type CanvasAppMachineEvent =
         id: string
       }
     }
+/*
+
+ export type CanvasAppMachineEvent =
+ | {
+ type: 'Click Elsewhere'
+ payload: {}
+ }
+ | {
+ type: 'Cancel Selected'
+ payload: {}
+ }
+ | {
+ type: 'Click On Entity'
+ payload: {
+ id: string
+ }
+ }
+ | {
+ type: 'Start Selection Box'
+ payload: {
+ point: TransformedPoint
+ }
+ }
+ | {
+ type: 'Selected Multiple Entities'
+ payload: {
+ ids: string[]
+ }
+ }
+ | {
+ type: 'Selection Box Cancelled'
+ payload: {}
+ }
+ | {
+ type: 'Clicked On Different Entity'
+ payload: {
+ id: string
+ }
+ }
+ | {
+ type: 'Add Entity To Multiple Selected'
+ payload: {
+ id: string
+ }
+ }
+ */
 
 /*
  import { TransformedPoint } from '../../../types';

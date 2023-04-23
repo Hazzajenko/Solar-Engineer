@@ -297,7 +297,10 @@ export class CanvasSelectedService {
     })
     console.log('set selected', selectedId)
     canvasAppXStateService.send({
-      type: 'Click On Entity',
+      type:    'Click On Entity',
+      payload: {
+        id: selectedId,
+      },
     })
   }
 

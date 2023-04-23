@@ -20,8 +20,9 @@
 "Clear Selected": "Cancel Selected" | "Click Elsewhere";
 "Clear Selection Box Start": "Selection Box Cancelled";
 "Set Multiple Selected Entities": "Selected Multiple Entities";
-"Set Selected Entity": "Click On Entity" | "Clicked On Different Entity";
+"Set Selected Entity": "Clicked On Different Entity";
 "Set Selection Box Start": "Start Selection Box";
+"SetSelectedEntity": "Click On Entity";
         };
         eventsCausingDelays: {
 
