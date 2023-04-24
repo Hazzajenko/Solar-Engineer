@@ -1,23 +1,22 @@
 import { inject, Injectable } from '@angular/core'
 import { CanvasElementService } from '../canvas-element.service'
-import { CANVAS_COLORS, CanvasEntity, isPanel, SizeByType } from '../../types'
+import { CANVAS_COLORS, CanvasEntity, EntityLocation, isPanel, SizeByType } from '../../types'
 import { DomPointService } from '../dom-point.service'
 import { CanvasAppStateStore } from '../canvas-app-state'
 import { assertNotNull } from '@shared/utils'
-import { AdjustedMultipleToMove, AdjustedSingleToMove, CANVAS_MODE, canvasAppXStateService, CanvasClientStateService, MachineService } from '../canvas-client-state'
+import { CANVAS_MODE, canvasAppXStateService, CanvasClientStateService, MultipleToMove, SingleToMove } from '../canvas-client-state'
 import { getAllAvailableEntitySpotsBetweenTwoPoints } from '../../utils'
 import { DIV_ELEMENT, DivElementsService } from '../div-elements'
 
 @Injectable({
 	providedIn: 'root',
 })
-export class CanvasRenderService {
+export class CanvasRenderBackupService {
 	private _canvasElementService = inject(CanvasElementService)
 	private _domPointService = inject(DomPointService)
 	private _appState = inject(CanvasAppStateStore)
 	private _divElements = inject(DivElementsService)
 	private _state = inject(CanvasClientStateService)
-	private _machine = inject(MachineService)
 
 	private lastRenderTime = performance.now()
 
@@ -96,32 +95,6 @@ export class CanvasRenderService {
 		})
 	}
 
-	drawCanvasExcludeIdsWithFn(ids: string[], fn: (ctx: CanvasRenderingContext2D) => void) {
-		this.render((ctx) => {
-			ctx.save()
-			this.drawCanvasExcludeIds(ids)
-			fn(ctx)
-			ctx.restore()
-		})
-	}
-
-	drawCanvasExcludeIds(ids: string[]) {
-		this.render((ctx) => {
-			ctx.save()
-			ctx.setTransform(1, 0, 0, 1, 0, 0)
-			ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
-			ctx.restore()
-			ctx.save()
-			ctx.beginPath()
-			const entities = this._state.entities.canvasEntities.getEntities()
-				.filter((entity) => !ids.includes(entity.id))
-			entities.forEach((entity) => {
-				this.drawEntity(entity)
-			})
-			ctx.restore()
-		})
-	}
-
 	drawCanvasWithFunction(fn: (ctx: CanvasRenderingContext2D) => void) {
 		this.render((ctx) => {
 			ctx.save()
@@ -132,8 +105,7 @@ export class CanvasRenderService {
 	}
 
 	drawDragBox(event: MouseEvent) {
-		const start = this._machine.ctx.dragBox.selectionBoxStart
-		// const start = this._state.state.dragBox.dragBoxStart
+		const start = this._state.state.dragBox.dragBoxStart
 		if (!start) {
 			console.log('drawDragBox', 'no start')
 			return
@@ -182,19 +154,17 @@ export class CanvasRenderService {
 
 	private drawEntity(entity: CanvasEntity) {
 		let fillStyle: string = CANVAS_COLORS.DefaultPanelFillStyle
-		const { toRotate } = this._state.state
-		const { toMove, selected, pointer } = this._machine.ctx
+		const { toMove, toRotate, selected, hover } = this._state.state
 		// const isBeingHovered = canvasAppXStateService.getSnapshot().context.selected
 		// const isBeingHovered = canvasAppXStateService.getSnapshot().matches('DragBoxState.DragBoxInProgress')
-		const isBeingHovered = !!pointer.hoveringEntityId && pointer.hoveringEntityId === entity.id
-		// const isBeingHovered = !!hover.hoveringEntityId && hover.hoveringEntityId === entity.id
+		const isBeingHovered = !!hover.hoveringEntityId && hover.hoveringEntityId === entity.id
 		if (isBeingHovered) {
 			fillStyle = '#17fff3'
 		}
 
 		const inSingleSelectedState = canvasAppXStateService.getSnapshot()
 			.matches('SelectedState.EntitySelected')
-		const isSingleSelected = selected.singleSelectedId === entity.id
+		const isSingleSelected = canvasAppXStateService.getSnapshot().context.selected.singleSelectedId === entity.id
 
 		// const isSingleSelected = !!selected.singleSelectedId && selected.singleSelectedId === entity.id
 
@@ -255,8 +225,7 @@ export class CanvasRenderService {
 		this.ctx.restore()
 	}
 
-	private handleDraggingEntityDraw(entity: CanvasEntity, singleToMove: AdjustedSingleToMove) {
-		// private handleDraggingEntityDraw(entity: CanvasEntity, singleToMove: EntityLocation) {
+	private handleDraggingEntityDraw(entity: CanvasEntity, singleToMove: EntityLocation) {
 		this.ctx.save()
 		this.ctx.fillStyle = CANVAS_COLORS.HoveredPanelFillStyle
 		this.ctx.translate(singleToMove.location.x + entity.width / 2, singleToMove.location.y + entity.height / 2)
@@ -269,7 +238,7 @@ export class CanvasRenderService {
 		this.ctx.restore()
 	}
 
-	private handleMultipleMoveDraw(entity: CanvasEntity, multipleToMove: AdjustedMultipleToMove) {
+	private handleMultipleMoveDraw(entity: CanvasEntity, multipleToMove: MultipleToMove) {
 		const offset = multipleToMove.offset
 		this.ctx.save()
 		this.ctx.translate(entity.location.x + entity.width / 2 + offset.x, entity.location.y + entity.height / 2 + offset.y)
@@ -320,17 +289,10 @@ export class CanvasRenderService {
 
 }
 
-const isSingleDragging = (entity: CanvasEntity, singleToMove: AdjustedSingleToMove | undefined): singleToMove is AdjustedSingleToMove => {
+const isSingleDragging = (entity: CanvasEntity, singleToMove: SingleToMove | undefined): singleToMove is SingleToMove => {
 	return !!singleToMove && singleToMove.id === entity.id
 }
 
-const isMultipleDragging = (entity: CanvasEntity, multipleToMove: AdjustedMultipleToMove | undefined): multipleToMove is AdjustedMultipleToMove => {
+const isMultipleDragging = (entity: CanvasEntity, multipleToMove: MultipleToMove | undefined): multipleToMove is MultipleToMove => {
 	return !!multipleToMove && multipleToMove.entities.find((e) => e.id === entity.id) !== undefined
 }
-/*const isSingleDragging = (entity: CanvasEntity, singleToMove: SingleToMove | undefined): singleToMove is SingleToMove => {
- return !!singleToMove && singleToMove.id === entity.id
- }
-
- const isMultipleDragging = (entity: CanvasEntity, multipleToMove: MultipleToMove | undefined): multipleToMove is MultipleToMove => {
- return !!multipleToMove && multipleToMove.entities.find((e) => e.id === entity.id) !== undefined
- }*/

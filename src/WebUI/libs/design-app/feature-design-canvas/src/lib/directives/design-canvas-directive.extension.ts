@@ -145,7 +145,7 @@ export abstract class DesignCanvasDirectiveExtension {
 
 	protected mouse: TransformedPoint = { x: 0, y: 0 } as TransformedPoint
 
-	protected machine = inject(MachineService)
+	protected _machine = inject(MachineService)
 	/*
 	 protected get appStateCtx() {
 	 return this.appState.getSnapshot().context

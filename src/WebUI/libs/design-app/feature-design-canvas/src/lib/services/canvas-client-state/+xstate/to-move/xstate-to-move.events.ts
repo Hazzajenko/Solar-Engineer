@@ -15,17 +15,17 @@ export class StartSingleMove {
 	) {}
 }
 
-export class MoveSingleEntity {
-	readonly type = 'MoveSingleEntity'
+/*export class MoveSingleEntity {
+ readonly type = 'MoveSingleEntity'
 
-	constructor(
-		public readonly payload: {
-			id: string
-			location: Point
-			angle: AngleRadians
-		},
-	) {}
-}
+ constructor(
+ public readonly payload: {
+ id: string
+ location: Point
+ angle: AngleRadians
+ },
+ ) {}
+ }*/
 
 export class StopSingleMove {
 	readonly type = 'StopSingleMove'
@@ -50,8 +50,24 @@ export class StartMultipleMove {
 	) {}
 }
 
-export class MoveMultipleEntities {
-	readonly type = 'MoveMultipleEntities'
+/*export class UpdateMultipleMove {
+ readonly type = 'UpdateMultipleMove'
+
+ constructor(
+ public readonly payload: {
+ offset: Point
+ entities: AdjustedMultipleToMoveEntity[]
+ },
+ ) {}
+ }
+
+ export class MoveMultipleEntities {
+ readonly type = 'MoveMultipleEntities'
+ readonly payload = null
+ }*/
+
+export class StopMultipleMove {
+	readonly type = 'StopMultipleMove'
 	readonly payload = null
 }
 
@@ -63,8 +79,10 @@ export class CancelMultipleMove {
 export type XStateToMoveEvent =
 	| StartSingleMove
 	| StopSingleMove
-	| MoveSingleEntity
+	// | MoveSingleEntity
 	| CancelSingleMove
 	| StartMultipleMove
-	| MoveMultipleEntities
+	// | UpdateMultipleMove
+	// | MoveMultipleEntities
+	| StopMultipleMove
 	| CancelMultipleMove

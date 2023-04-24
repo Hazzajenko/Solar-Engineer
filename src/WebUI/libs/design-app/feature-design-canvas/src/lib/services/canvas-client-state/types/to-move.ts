@@ -36,8 +36,10 @@ export const InitialToMoveState: ToMoveState = {
 }
 
 export type AdjustedToMoveState = {
-	singleToMove: AdjustedSingleToMove | undefined
-	multipleToMove: AdjustedMultipleToMove | undefined
+	singleToMove: boolean
+	// singleToMove: AdjustedSingleToMove | undefined
+	multipleToMove: boolean
+	// multipleToMove: AdjustedMultipleToMove | undefined
 }
 
 export type AdjustedSingleToMove = {
@@ -62,6 +64,6 @@ export type AdjustedMultipleToMoveEntity = {
 export const InitialAdjustedToMoveState: AdjustedToMoveState = {
 	// ids: [],
 	// entities: {},
-	singleToMove: undefined,
-	multipleToMove: undefined, // multiToMoveStart: undefined,
+	singleToMove: false, // singleToMove: undefined,
+	multipleToMove: false, // multipleToMove: undefined, // multiToMoveStart: undefined,
 }

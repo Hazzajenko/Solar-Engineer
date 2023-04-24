@@ -218,29 +218,17 @@ export const canvasAppMachine = createMachine(
 					},
 					SingleMoveInProgress: {
 						on: {
-							MoveSingleEntity: {
-								target: 'SingleMoveInProgress',
-								actions: 'MoveSingleEntity',
-							},
 							StopSingleMove: {
 								target: 'NoMove',
-								actions: 'CancelSingleMove',
-							},
-							CancelSingleMove: {
-								target: 'NoMove',
-								actions: 'CancelSingleMove',
+								actions: 'StopSingleMove',
 							},
 						},
 					},
 					MultipleMoveInProgress: {
 						on: {
-							MoveMultipleEntities: {
+							StopMultipleMove: {
 								target: 'NoMove',
-								actions: 'MoveMultipleEntities',
-							},
-							CancelMultipleMove: {
-								target: 'NoMove',
-								actions: 'CancelMultipleMove',
+								actions: 'StopMultipleMove',
 							},
 						},
 					},
@@ -351,12 +339,8 @@ export const canvasAppMachine = createMachine(
 			SetSingleMove: (ctx, event) => {
 				return (ctx.toMove = {
 					...ctx.toMove,
-					multipleToMove: undefined,
-					singleToMove: {
-						id: event.payload.id,
-						location: event.payload.startPoint,
-						angle: event.payload.angle,
-					},
+					multipleToMove: false,
+					singleToMove: true,
 				})
 			},
 
@@ -373,20 +357,47 @@ export const canvasAppMachine = createMachine(
 				})
 			},
 
-			MoveSingleEntity: (ctx, event) => {
+			/*			MoveSingleEntity: (ctx, event) => {
+		 return (ctx.toMove = {
+		 ...ctx.toMove,
+		 multipleToMove: undefined,
+		 singleToMove: {
+		 ...ctx.toMove.singleToMove,
+		 id: event.payload.id,
+		 location: event.payload.location,
+		 angle: event.payload.angle,
+		 },
+		 })
+		 },*/
+
+			StopSingleMove: (ctx, event) => {
 				return (ctx.toMove = {
 					...ctx.toMove,
 					multipleToMove: undefined,
-					singleToMove: {
-						...ctx.toMove.singleToMove,
-						id: event.payload.id,
-						location: event.payload.location,
-						angle: event.payload.angle,
-					},
+					singleToMove: undefined,
 				})
-			},
+			} /*
+		 MoveMultipleEntities: (ctx, event) => {
+		 return (ctx.toMove = {
+		 ...ctx.toMove,
+		 multipleToMove: undefined,
+		 singleToMove: undefined,
+		 })
+		 },
 
-			MoveMultipleEntities: (ctx, event) => {
+		 UpdateMultipleMove: (ctx, event) => {
+		 if (!ctx.toMove.multipleToMove) return
+		 return (ctx.toMove = {
+		 ...ctx.toMove,
+		 multipleToMove: {
+		 ...ctx.toMove.multipleToMove,
+		 offset: event.payload.offset,
+		 entities: event.payload.entities,
+		 },
+		 })
+		 },*/,
+
+			StopMultipleMove: (ctx, event) => {
 				return (ctx.toMove = {
 					...ctx.toMove,
 					multipleToMove: undefined,

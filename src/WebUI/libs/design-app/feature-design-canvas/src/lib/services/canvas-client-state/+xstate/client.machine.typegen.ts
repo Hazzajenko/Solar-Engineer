@@ -14,13 +14,9 @@ export interface Typegen0 {
   }
   eventsCausingActions: {
     AddEntitiesToMultipleSelected: 'AddEntitiesToMultipleSelected'
-    CancelMultipleMove: 'CancelMultipleMove'
-    CancelSingleMove: 'CancelSingleMove' | 'StopSingleMove'
     ClearHoveredEntity: 'PointerLeaveEntity'
     ClearSelected: 'CancelSelected' | 'ClearEntitySelected'
     ClearSelectionBoxStart: 'SelectionBoxCancelled' | 'SelectionBoxCompleted'
-    MoveMultipleEntities: 'MoveMultipleEntities'
-    MoveSingleEntity: 'MoveSingleEntity'
     RemoveEntitiesFromMultipleSelected: 'RemoveEntitiesFromMultipleSelected'
     SetHoveredEntity: 'PointerHoverOverEntity'
     SetMultipleMove: 'StartMultipleMove'
@@ -30,6 +26,8 @@ export interface Typegen0 {
     SetSelectedEntity: 'SelectedDifferentEntity' | 'SelectedSingleEntity'
     SetSelectionBoxStart: 'StartSelectionBox'
     SetSingleMove: 'StartSingleMove'
+    StopMultipleMove: 'StopMultipleMove'
+    StopSingleMove: 'StopSingleMove'
   }
   eventsCausingDelays: {}
   eventsCausingGuards: {

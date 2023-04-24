@@ -5,9 +5,8 @@ import { ENTITY_TYPE } from '@design-app/shared'
 import { assertNotNull, OnDestroyDirective } from '@shared/utils'
 import { changeCanvasCursor, dragBoxKeysDown, draggingScreenKeysDown, isContextMenu, isDraggingEntity, isMenuOpen, isReadyToMultiDrag, multiSelectDraggingKeysDown, rotatingKeysDown } from '../utils'
 import { DesignCanvasDirectiveExtension } from './design-canvas-directive.extension'
-import { CANVAS_MODE, getDrawPreviewEntityFnV2, getStateCtx, PointerLeaveEntity, sendStateEvent, StartSingleMove } from '../services'
+import { CANVAS_MODE, getDrawPreviewEntityFnV2, getStateCtx, PointerHoverOverEntity, PointerLeaveEntity, sendStateEvent, StartSingleMove } from '../services'
 import { createStringWithPanels } from '../utils/string-fns'
-import { PointerHoverOverEntity } from '../services'
 
 @Directive({
 	selector: '[appDesignCanvas]', providers: [OnDestroyDirective], standalone: true,
@@ -178,7 +177,7 @@ export class DesignCanvasDirective
 				// if (hoveringOverEntityId && !singleToMove1) {
 				// const entity = this._state.entities.canvasEntities.getEntityById(hoveringOverEntityId)
 				// assertNotNull(entity)
-				this.machine.sendEvent(new StartSingleMove({ id: entityUnderMouse.id, startPoint: currentPoint, angle: entityUnderMouse.angle }))
+				this._machine.sendEvent(new StartSingleMove({ id: entityUnderMouse.id, startPoint: currentPoint, angle: entityUnderMouse.angle }))
 				// sendStateEvent(new StartSingleMove({ id: entityUnderMouse.id, startPoint: currentPoint, angle: entityUnderMouse.angle }))
 				return
 			}
@@ -212,7 +211,7 @@ export class DesignCanvasDirective
 		 // 	sendStateEvent(new PointerUpOnEntity({ point: currentPoint }))
 		 }*/
 
-		const singleToMove2 = this.machine.ctx.toMove.singleToMove
+		const singleToMove2 = this._machine.ctx.toMove.singleToMove
 		// const singleToMove2 = getStateCtx().toMove.singleToMove
 		if (singleToMove2) {
 			const entity = this._state.entities.canvasEntities.getEntityById(singleToMove2.id)
@@ -245,9 +244,9 @@ export class DesignCanvasDirective
 			changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
 			return
 		}
-		if (this.machine.snapshot.matches('PointerState.HoveringOverEntity')) {
+		if (this._machine.snapshot.matches('PointerState.HoveringOverEntity')) {
 			changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
-			this.machine.sendEvent(new PointerLeaveEntity({ point: currentPoint }))
+			this._machine.sendEvent(new PointerLeaveEntity({ point: currentPoint }))
 			// sendStateEvent(new PointerLeaveEntity({ point: currentPoint }))
 			return
 		}

@@ -1,43 +1,35 @@
 import { inject, Injectable } from '@angular/core'
-import { AdjustedSingleToMove, CancelSingleMove, CanvasClientStateService, CanvasElementService, CanvasRenderService, DomPointService, MachineService, StartMultipleMove, StopMultipleMove, StopSingleMove } from '..'
+import { CancelSingleMove, CanvasClientStateService, CanvasElementService, CanvasRenderService, DomPointService, sendStateEvent, StopSingleMove } from '..'
 import { TypeOfEntity } from '@design-app/feature-selected'
-import { CURSOR_TYPE, Point } from '@shared/data-access/models'
-import { CANVAS_COLORS, CanvasEntity, changeCanvasCursor, EntityFactory, eventToPointLocation, getEntityBounds, getTopLeftPointFromTransformedPoint, isHoldingClick, isPointInsideBounds, SizeByType, TransformedPoint, updateObjectByIdForStore } from '@design-app/feature-design-canvas'
+import { CURSOR_TYPE } from '@shared/data-access/models'
+import { CanvasEntity, changeCanvasCursor, EntityFactory, eventToPointLocation, getEntityBounds, getTopLeftPointFromTransformedPoint, isPointInsideBounds, SizeByType, TransformedPoint, updateObjectByIdForStore } from '@design-app/feature-design-canvas'
 import { assertNotNull } from '@shared/utils'
-import { ENTITY_TYPE } from '@design-app/shared'
 
 @Injectable({
 	providedIn: 'root',
 })
-export class ObjectPositioningService {
+export class ObjectPositioningBackupService {
 	private _state = inject(CanvasClientStateService)
 	private _domPoint = inject(DomPointService)
 	private _render = inject(CanvasRenderService)
 	private _canvasElement = inject(CanvasElementService)
-	private _machine = inject(MachineService)
-	multiToMoveStart: Point | undefined
 
 	get canvas() {
 		return this._canvasElement.canvas
 	}
 
 	singleToMoveMouseMove(event: MouseEvent, entityOnMouseDown: TypeOfEntity) {
-		if (!isHoldingClick(event)) {
-			this._machine.sendEvent(new CancelSingleMove())
-			// sendStateEvent(new CancelSingleMove())
+		if (!this._state.mouse.mouseDown) {
+			// if (!isHoldingClick(event)) {
+			// console.log('singleToMoveMouseMove - not holding click')
+			this._state.updateState({
+				toMove: {
+					singleToMove: undefined,
+				},
+			})
+			sendStateEvent(new CancelSingleMove())
 			return
 		}
-		/*		if (!this._state.mouse.mouseDown) {
-		 // if (!isHoldingClick(event)) {
-		 // console.log('singleToMoveMouseMove - not holding click')
-		 this._state.updateState({
-		 toMove: {
-		 singleToMove: undefined,
-		 },
-		 })
-		 sendStateEvent(new CancelSingleMove())
-		 return
-		 }*/
 		// console.log('singleToMoveMouseMove', event)
 		// assertNotNull(this.singleToMove)
 		changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
@@ -55,31 +47,66 @@ export class ObjectPositioningService {
 		const ent = this._state.entities.canvasEntities.getEntityById(entityOnMouseDown.id)
 		assertNotNull(ent)
 		const angle = ent.angle
-		// this._machine.sendEvent(new MoveSingleEntity({ id: entityOnMouseDown.id, location, angle }))
+		// const update = updateObjectByIdForStore(entityOnMouseDown.id, { location })
+		// this._entitiesStore.dispatch.updateCanvasEntity(update)
+		// this.performanceStart.push({ time: performance.now(), location })
+		/*    this.singleToMoveId = entityOnMouseDown.id
+		 this.singleToMoveLocation = location
+		 this.singleToMove = {
+		 id:   entityOnMouseDown.id,
+		 type: entityOnMouseDown.type,
+		 location,
+		 }*/
+		this._state.updateState({
+			toMove: {
+				singleToMove: {
+					id: entityOnMouseDown.id, type: entityOnMouseDown.type, location, angle,
+				}, // singleToMoveEntityId: entityOnMouseDown.id,
+				/*        singleToMoveEntity: {
+				 id:   entityOnMouseDown.id,
+				 type: entityOnMouseDown.type,
+				 location,
+				 angle,
+				 // angle: entityOnMouseDown.angle,
+				 },*/
+			},
+		})
 
-		const drawSingleToMove = (ctx: CanvasRenderingContext2D) => {
-			ctx.save()
-			ctx.fillStyle = CANVAS_COLORS.HoveredPanelFillStyle
-			ctx.translate(location.x + ent.width / 2, location.y + ent.height / 2)
-			ctx.rotate(ent.angle)
-
-			ctx.beginPath()
-			ctx.rect(-ent.width / 2, -ent.height / 2, ent.width, ent.height)
-			ctx.fill()
-			ctx.stroke()
-			ctx.restore()
-		}
-
-		this._render.drawCanvasExcludeIdsWithFn([entityOnMouseDown.id], drawSingleToMove)
-
+		// sendStateEvent(new MoveSingleEntity({ id: entityOnMouseDown.id, location, angle }))
 		// this._render.drawCanvas()
+		/*    this._state.updater.toMove({
+		 singleToMoveEntity: {
+		 id:    entityOnMouseDown.id,
+		 type:  entityOnMouseDown.type,
+		 location,
+		 angle: entityOnMouseDown.angle,
+		 },
+		 // ids: [entityOnMouseDown.id],
+		 // entities: [entityOnMouseDown],
+		 })*/
+		/*    this._clientState.updateState({
+		 singleToMoveEntity: {
+		 id:   entityOnMouseDown.id,
+		 type: entityOnMouseDown.type,
+		 location,
+		 },
+		 })*/
+		/*  updateClientStateCallback({
+		 singleToMoveEntity: {
+		 id:   entityOnMouseDown.id,
+		 type: entityOnMouseDown.type,
+		 location,
+		 },
+		 })*/
+		this._render.drawCanvas()
+		// drawCanvasCallback()
 	}
 
-	singleToMoveMouseUp(event: MouseEvent, singleToMove: AdjustedSingleToMove) {
+	singleToMoveMouseUp(event: MouseEvent, singleToMove: TypeOfEntity) {
 		// this.isDraggingEntity = false
 		// assertNotNull(this.singleToMoveId)
 		// const entityToMove = this._entitiesStore.select.entityById(entityOnMouseDown.id)
-		const location = this._domPoint.getTransformedPointToMiddleOfObjectFromEvent(event, ENTITY_TYPE.Panel)
+		const location = this._domPoint.getTransformedPointToMiddleOfObjectFromEvent(event, singleToMove.type)
 		// const updatedEntity = EntityFactory.updateForStore(entityToMove, { location })
 		const update = updateObjectByIdForStore(singleToMove.id, { location })
 		// this._entitiesStore.dispatch.updateCanvasEntity(update)
@@ -93,13 +120,12 @@ export class ObjectPositioningService {
 		/*    this._clientState.updater.toMove({
 		 singleToMoveEntity: undefined,
 		 })*/
-		/*		this._state.updateState({
-		 toMove: {
-		 singleToMove: undefined, // singleToMoveEntity: undefined,
-		 },
-		 })*/
-		this._machine.sendEvent(new StopSingleMove())
-		// sendStateEvent(new StopSingleMove())
+		this._state.updateState({
+			toMove: {
+				singleToMove: undefined, // singleToMoveEntity: undefined,
+			},
+		})
+		sendStateEvent(new StopSingleMove())
 		this._render.drawCanvas()
 		// */
 		/*    if (this.entityOnMouseDown) {
@@ -120,17 +146,13 @@ export class ObjectPositioningService {
 		// this.isMultiSelectDragging = true
 		// this.multiSelectStart = eventToPointLocation(event)
 		const multiSelectStart = this._domPoint.getTransformedPointFromEvent(event)
-		/*		this._state.updateState({
-		 toMove: {
-		 multipleToMove: {
-		 ids: multipleSelectedIds, startPoint: multiSelectStart, offset: { x: 0, y: 0 }, entities: this._state.entities.canvasEntities.getEntitiesByIds(multipleSelectedIds),
-		 }, // multiToMoveStart: multiSelectStart,
-		 },
-		 })*/
-		this._machine.sendEvent(new StartMultipleMove({
-			ids: multipleSelectedIds, startPoint: multiSelectStart, offset: { x: 0, y: 0 }, entities: this._state.entities.canvasEntities.getEntitiesByIds(multipleSelectedIds),
-		}))
-		this.multiToMoveStart = multiSelectStart
+		this._state.updateState({
+			toMove: {
+				multipleToMove: {
+					ids: multipleSelectedIds, startPoint: multiSelectStart, offset: { x: 0, y: 0 }, entities: this._state.entities.canvasEntities.getEntitiesByIds(multipleSelectedIds),
+				}, // multiToMoveStart: multiSelectStart,
+			},
+		})
 
 		// this._entityStore.dispatch.setDraggingEntityIds()
 	}
@@ -141,8 +163,7 @@ export class ObjectPositioningService {
 			// this.drawPanels()
 			return
 		}
-		const multiToMove = this._machine.ctx.toMove.multipleToMove
-		// const multiToMove = this._state.toMove.multipleToMove
+		const multiToMove = this._state.toMove.multipleToMove
 		if (multiToMove) return
 		// changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
 		// this.canvas.style.cursor = CURSOR_TYPE.GRABBING
@@ -171,19 +192,13 @@ export class ObjectPositioningService {
 		 },
 		 }
 		 })*/
-		/*		this._state.updateState({
-		 toMove: {
-		 multipleToMove: {
-		 ids: multipleSelectedIds, entities, offset: { x: 0, y: 0 }, startPoint: multiToMoveStart,
-		 },
-		 },
-		 })*/
-		this._machine.sendEvent(new StartMultipleMove({
-			ids: multipleSelectedIds, entities, offset: { x: 0, y: 0 }, startPoint: multiToMoveStart,
-		}))
-		this.multiToMoveStart = multiToMoveStart
-
-		// }
+		this._state.updateState({
+			toMove: {
+				multipleToMove: {
+					ids: multipleSelectedIds, entities, offset: { x: 0, y: 0 }, startPoint: multiToMoveStart,
+				},
+			},
+		})
 		// this._render.drawCanvas()
 		// this.drawPanels()
 	}
@@ -191,36 +206,36 @@ export class ObjectPositioningService {
 	multiSelectDraggingMouseMove(event: MouseEvent) {
 		if (!event.shiftKey || !event.ctrlKey) {
 			this.stopMultiSelectDragging(event)
+			// this.drawPanels()
 			return
 		}
 		changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
-		// const multiToMove = this._machine.ctx.toMove.multipleToMove
-		// assertNotNull(multiToMove)
-		// const multiToMoveStart = multiToMove.startPoint
-		const multiToMoveStart = this.multiToMoveStart
-		assertNotNull(multiToMoveStart)
+		// this.canvas.style.cursor = CURSOR_TYPE.GRABBING
+		const multiToMove = this._state.toMove.multipleToMove
+		assertNotNull(multiToMove)
+		const multiToMoveStart = multiToMove.startPoint
+		// const multiToMoveStart = this._state.toMove.multiToMove?.startPoint
 		// if (!multiToMoveStart) return
-		const eventLocation = eventToPointLocation(event)
-		// const eventLocation = this._domPoint.getTransformedPointFromEvent(event)
+
+		// assertNotNull(this.multiSelectStart)
+		// const eventLocation = eventToPointLocation(event)
+		const eventLocation = this._domPoint.getTransformedPointFromEvent(event)
 		const scale = this._domPoint.scale
 		const offset = {
 			x: eventLocation.x - multiToMoveStart.x, y: eventLocation.y - multiToMoveStart.y,
 		}
-		offset.x = offset.x / scale
-		offset.y = offset.y / scale
-		const multiSelectedIds = this._machine.ctx.selected.multipleSelectedIds
-		const multiSelected = multiSelectedIds
-			.map(id => this._state.entities.canvasEntities.getEntityById(id))
-			.filter(entity => entity !== undefined) as CanvasEntity[]
-		// const multiToMoveIds = multiToMove.ids
-		// const multiToMoveEntities = multiToMove.entities
-		const updates = multiSelected.map((entity) => {
+		// offset.x = offset.x / scale
+		// offset.y = offset.y / scale
+
+		// const multiSelectedIds = this._state.selected.ids
+		// const multiSelectedIds = this._state.selected.multipleSelectedIds
+		const multiToMoveIds = multiToMove.ids
+		const multiToMoveEntities = multiToMove.entities
+		const updates = multiToMoveEntities.map((entity) => {
 			const location = entity.location
 			const newLocation = {
 				x: location.x + offset.x, y: location.y + offset.y,
 			}
-
-			// const { width, height } = SizeByType[ENTITY_TYPE.Panel]
 			return {
 				...entity, location: newLocation,
 			}
@@ -236,33 +251,54 @@ export class ObjectPositioningService {
 			 })*/
 			// this._state.entity.updateEntity(entity.id, { location: newLocation })
 		})
+		this._state.updateState({
+			toMove: {
+				multipleToMove: {
+					ids: multiToMoveIds, startPoint: multiToMoveStart, offset, entities: updates,
+				},
+			},
+		})
+		// const multiSelectedEntities = this._state.entity.getEntitiesByIds(multiSelectedIds)
+		/*    const multiSelectedEntities = multiSelectedIds.map(id => this._state.entity.getEntity(id))
+		 .filter(entity => entity !== undefined) as CanvasEntity[]*/
+		// const multiSelectedEntities = multiSelectedIds.map(id => this._entitiesStore.select.entityById(id))
 
-		// const width
+		/*    const updates = multiSelectedIds.map((id) => {
+		 const entity = this._state.entity.getEntity(id)
+		 assertNotNull(entity)
+		 const location = entity.location
+		 const newLocation = {
+		 x: location.x + offset.x,
+		 y: location.y + offset.y,
+		 }
+		 return updateObjectByIdForStore(id, { location: newLocation })
+		 })
+		 this._state.entity.updateManyEntities(updates)*/
+		/*    multiSelectedEntities.forEach(entity => {
+		 const location = entity.location
 
-		const drawMultipleToMove = (ctx: CanvasRenderingContext2D) => {
-			ctx.save()
-			updates.forEach((entity) => {
-				ctx.save()
-				ctx.translate(entity.location.x + entity.width / 2, entity.location.y + entity.height / 2)
-				ctx.rotate(entity.angle)
+		 const newLocation = {
+		 x: location.x + offset.x,
+		 y: location.y + offset.y,
+		 }
 
-				ctx.beginPath()
-				ctx.rect(-entity.width / 2, -entity.height / 2, entity.width, entity.height)
-				ctx.fill()
-				ctx.stroke()
-				ctx.restore()
-			})
-			ctx.restore()
-		}
+		 // this.draggingEntityLocationsMap.set(entity.id, newLocation)
+		 // this._canvasEntitiesService.dispatch.updateCanvasEntity({ id: entity.id, changes: { location: newLocation } })
+		 this._state.entity.updateEntity(entity.id, { location: newLocation })
+		 })*/
+		this._render.drawCanvas()
 
-		this._render.drawCanvasExcludeIdsWithFn(multiSelectedIds, drawMultipleToMove)
+		// drawCanvas
+		// drawCanvas()
 		return
 	}
 
 	stopMultiSelectDragging(event: MouseEvent) {
-		const multiToMove = this._machine.ctx.toMove.multipleToMove
+		// this.isMultiSelectDragging = false
+		const multiToMove = this._state.toMove.multipleToMove
 		assertNotNull(multiToMove)
 		const multiToMoveStart = multiToMove.startPoint
+		// const multiToMoveStart = this._state.toMove.multiToMoveStart
 		if (!multiToMoveStart) return
 		const eventLocation = eventToPointLocation(event)
 		const scale = this._domPoint.scale
@@ -271,8 +307,7 @@ export class ObjectPositioningService {
 		}
 		offset.x = offset.x / scale
 		offset.y = offset.y / scale
-		const multiSelectedIds = this._machine.ctx.selected.multipleSelectedIds
-		// const multiSelectedIds = this._state.selected.multipleSelectedIds
+		const multiSelectedIds = this._state.selected.multipleSelectedIds
 		// const multiSelectedEntities = this._state.selected.entities
 		/* const multiSelected = Object.keys(multiSelectedEntities)
 		 .map(id => this._entitiesStore.select.entityById(id))*/
@@ -304,12 +339,11 @@ export class ObjectPositioningService {
 		})
 		this._state.entities.canvasEntities.updateManyEntities(storeUpdates)
 
-		/*	this._state.updateState({
-		 toMove: {
-		 multipleToMove: undefined,
-		 },
-		 })*/
-		this._machine.sendEvent(new StopMultipleMove())
+		this._state.updateState({
+			toMove: {
+				multipleToMove: undefined,
+			},
+		})
 
 		this._canvasElement.changeCursor('')
 		this._render.drawCanvas()

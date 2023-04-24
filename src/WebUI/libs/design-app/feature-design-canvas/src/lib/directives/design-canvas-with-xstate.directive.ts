@@ -5,7 +5,7 @@ import { ENTITY_TYPE } from '@design-app/shared'
 import { assertNotNull, OnDestroyDirective } from '@shared/utils'
 import { changeCanvasCursor, dragBoxKeysDown, draggingScreenKeysDown, isContextMenu, isDraggingEntity, isMenuOpen, isReadyToMultiDrag, multiSelectDraggingKeysDown, rotatingKeysDown } from '../utils'
 import { DesignCanvasDirectiveExtension } from './design-canvas-directive.extension'
-import { CANVAS_MODE, CanvasSelectedXstateService, getDrawPreviewEntityFnV2, getStateCtx, PointerHoverOverEntity, PointerLeaveEntity, sendStateEvent, StartSingleMove } from '../services'
+import { CANVAS_MODE, CanvasSelectedXstateService, DragBoxXstateService, getDrawPreviewEntityFnV2, getStateCtx, PointerHoverOverEntity, PointerLeaveEntity, StartSingleMove } from '../services'
 import { createStringWithPanels } from '../utils/string-fns'
 
 @Directive({
@@ -16,6 +16,7 @@ export class DesignCanvasWithXstateDirective
 	implements OnInit {
 
 	_selectedV2 = inject(CanvasSelectedXstateService)
+	_dragV2 = inject(DragBoxXstateService)
 
 	public ngOnInit() {
 		this.setupCanvas()
@@ -73,24 +74,25 @@ export class DesignCanvasWithXstateDirective
 				return
 			}
 			console.log('drag box keys down')
-			this._drag.handleDragBoxMouseDown(event)
+			this._dragV2.handleDragBoxMouseDown(event)
 			return
 		}
 
-		const multipleSelectedIds = this._state.state.selected.multipleSelectedIds
+		const multipleSelectedIds = this._machine.ctx.selected.multipleSelectedIds
+		// const multipleSelectedIds = this._state.state.selected.multipleSelectedIds
 		if (multiSelectDraggingKeysDown(event, multipleSelectedIds)) {
 			this._objPositioning.multiSelectDraggingMouseDown(event, multipleSelectedIds)
 			return
 		}
-		const entityUnderMouse = this.getEntityUnderMouseV2(event)
-		if (entityUnderMouse) {
-			this._state.updateState({
-				hover: {
-					onMouseDownEntityId: entityUnderMouse.id,
-				},
-			})
-			// sendStateEvent(new PointerDownOnEntity({ id: entityUnderMouse.id, point: currentPoint }))
-		}
+		/*		const entityUnderMouse = this.getEntityUnderMouseV2(event)
+		 if (entityUnderMouse) {
+		 this._state.updateState({
+		 hover: {
+		 onMouseDownEntityId: entityUnderMouse.id,
+		 },
+		 })
+		 // sendStateEvent(new PointerDownOnEntity({ id: entityUnderMouse.id, point: currentPoint }))
+		 }*/
 	}
 
 	/**
@@ -136,21 +138,25 @@ export class DesignCanvasWithXstateDirective
 			return
 		}
 
-		const dragBoxStart = this._state.dragBox.dragBoxStart
+		const dragBoxStart = this._machine.ctx.dragBox.selectionBoxStart
+		// const dragBoxStart = this._state.dragBox.dragBoxStart
 		if (dragBoxStart) {
-			this._drag.dragBoxMouseMove(event)
+			this._dragV2.dragBoxMouseMove(event)
 			return
 		}
 
-		const dragBoxAxisLineStart = this._state.dragBox.axisLineStart
+		const dragBoxAxisLineStart = this._machine.ctx.dragBox.axisLineBoxStart
+		// const dragBoxAxisLineStart = this._state.dragBox.axisLineStart
 		if (dragBoxAxisLineStart) {
-			this._drag.dragAxisLineMouseMove(event, currentPoint, dragBoxAxisLineStart)
+			this._dragV2.dragAxisLineMouseMove(event, currentPoint, dragBoxAxisLineStart)
 			return
 		}
 
 		// const multipleSelectedIds = this._state.selected.multipleSelectedIds
-		const multipleSelectedIds = this._state.selected.multipleSelectedIds
-		const multipleToMove = this._state.toMove.multipleToMove
+		const multipleSelectedIds = this._machine.ctx.selected.multipleSelectedIds
+		// const multipleSelectedIds = this._state.selected.multipleSelectedIds
+		const multipleToMove = this._machine.ctx.toMove.multipleToMove
+		// const multipleToMove = this._state.toMove.multipleToMove
 		const multiSelectDraggingKeys = multiSelectDraggingKeysDown(event, multipleSelectedIds)
 
 		if (multipleToMove) {
@@ -179,7 +185,7 @@ export class DesignCanvasWithXstateDirective
 				// if (hoveringOverEntityId && !singleToMove1) {
 				// const entity = this._state.entities.canvasEntities.getEntityById(hoveringOverEntityId)
 				// assertNotNull(entity)
-				this.machine.sendEvent(new StartSingleMove({ id: entityUnderMouse.id, startPoint: currentPoint, angle: entityUnderMouse.angle }))
+				this._machine.sendEvent(new StartSingleMove({ id: entityUnderMouse.id, startPoint: currentPoint, angle: entityUnderMouse.angle }))
 				// sendStateEvent(new StartSingleMove({ id: entityUnderMouse.id, startPoint: currentPoint, angle: entityUnderMouse.angle }))
 				return
 			}
@@ -213,7 +219,7 @@ export class DesignCanvasWithXstateDirective
 		 // 	sendStateEvent(new PointerUpOnEntity({ point: currentPoint }))
 		 }*/
 
-		const singleToMove2 = this.machine.ctx.toMove.singleToMove
+		const singleToMove2 = this._machine.ctx.toMove.singleToMove
 		// const singleToMove2 = getStateCtx().toMove.singleToMove
 		if (singleToMove2) {
 			const entity = this._state.entities.canvasEntities.getEntityById(singleToMove2.id)
@@ -241,14 +247,16 @@ export class DesignCanvasWithXstateDirective
 			changeCanvasCursor(this.canvas, CURSOR_TYPE.POINTER)
 			const hoveringEntityId = getStateCtx().pointer.hoveringEntityId
 			if (hoveringEntityId === entityUnderMouse.id) return
-			sendStateEvent(new PointerHoverOverEntity({ id: entityUnderMouse.id, point: currentPoint }))
+			this._machine.sendEvent(new PointerHoverOverEntity({ id: entityUnderMouse.id, point: currentPoint }))
+			// sendStateEvent(new PointerHoverOverEntity({ id: entityUnderMouse.id, point: currentPoint }))
 			this._render.drawCanvas()
 			changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
 			return
 		}
-		if (this.machine.snapshot.matches('PointerState.HoveringOverEntity')) {
+		if (this._machine.snapshot.matches('PointerState.HoveringOverEntity')) {
 			changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
-			this.machine.sendEvent(new PointerLeaveEntity({ point: currentPoint }))
+			this._machine.sendEvent(new PointerLeaveEntity({ point: currentPoint }))
+			this._render.drawCanvas()
 			// sendStateEvent(new PointerLeaveEntity({ point: currentPoint }))
 			return
 		}
@@ -351,19 +359,22 @@ export class DesignCanvasWithXstateDirective
 			this._view.handleDragScreenMouseUp(event)
 		}
 
-		const dragStart = this._state.dragBox.dragBoxStart
+		const dragStart = this._machine.ctx.dragBox.selectionBoxStart
+		// const dragStart = this._state.dragBox.dragBoxStart
 		if (dragStart) {
-			this._drag.dragBoxMouseUp(event)
+			this._dragV2.dragBoxMouseUp(event)
 			return
 		}
 
-		const singleToMove = this._state.toMove.singleToMove
+		const singleToMove = this._machine.ctx.toMove.singleToMove
+		// const singleToMove = this._state.toMove.singleToMove
 		if (singleToMove) {
 			this._objPositioning.singleToMoveMouseUp(event, singleToMove)
 			return
 		}
 
-		const multipleToMove = this._state.toMove.multipleToMove
+		const multipleToMove = this._machine.ctx.toMove.multipleToMove
+		// const multipleToMove = this._state.toMove.multipleToMove
 		if (multipleToMove) {
 			this._objPositioning.stopMultiSelectDragging(event)
 			return
@@ -432,8 +443,9 @@ export class DesignCanvasWithXstateDirective
 		}
 		// const isStringSelected = !!this._state.selected.selectedStringId
 		// const isStringSelected = !!this._selectedV2.selectedStringId
-		const entity = this._state.selected.selectedStringId
-			? createPanel(location, this._state.selected.selectedStringId)
+		const entity = this._machine.ctx.selected.selectedStringId
+			// const entity = this._state.selected.selectedStringId
+			? createPanel(location, this._machine.ctx.selected.selectedStringId)
 			: createPanel(location)
 		this._state.entities.canvasEntities.addEntity(entity)
 
