@@ -2,7 +2,7 @@ import { AngleRadians } from '../../../utils'
 import { EntityType } from '@design-app/shared'
 import { Point } from '@shared/data-access/models'
 
-export type ToMoveState = {
+export type ToMoveStateDeprecated = {
 	singleToMove: SingleToMove | undefined
 	// multiToMoveStart: Point | undefined
 	multipleToMove: MultipleToMove | undefined
@@ -28,19 +28,19 @@ export type MultipleToMoveEntity = {
 	location: Point
 	angle: AngleRadians
 }
-export const InitialToMoveState: ToMoveState = {
+export const InitialToMoveState: ToMoveStateDeprecated = {
 	// ids: [],
 	// entities: {},
 	singleToMove: undefined,
 	multipleToMove: undefined, // multiToMoveStart: undefined,
 }
-
-export type AdjustedToMoveState = {
-	singleToMove: boolean
-	// singleToMove: AdjustedSingleToMove | undefined
-	multipleToMove: boolean
-	// multipleToMove: AdjustedMultipleToMove | undefined
-}
+/*
+ export type AdjustedToMoveState = {
+ singleToMove: boolean
+ // singleToMove: AdjustedSingleToMove | undefined
+ multipleToMove: boolean
+ // multipleToMove: AdjustedMultipleToMove | undefined
+ }*/
 
 export type AdjustedSingleToMove = {
 	id: string
@@ -61,9 +61,10 @@ export type AdjustedMultipleToMoveEntity = {
 	angle: AngleRadians
 }
 
-export const InitialAdjustedToMoveState: AdjustedToMoveState = {
-	// ids: [],
-	// entities: {},
-	singleToMove: false, // singleToMove: undefined,
-	multipleToMove: false, // multipleToMove: undefined, // multiToMoveStart: undefined,
-}
+/*
+ export const InitialAdjustedToMoveState: AdjustedToMoveState = {
+ // ids: [],
+ // entities: {},
+ singleToMove: false, // singleToMove: undefined,
+ multipleToMove: false, // multipleToMove: undefined, // multiToMoveStart: undefined,
+ }*/

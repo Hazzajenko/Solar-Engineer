@@ -5,7 +5,7 @@ import { ENTITY_TYPE } from '@design-app/shared'
 import { assertNotNull, OnDestroyDirective } from '@shared/utils'
 import { changeCanvasCursor, dragBoxKeysDown, draggingScreenKeysDown, isContextMenu, isDraggingEntity, isMenuOpen, isReadyToMultiDrag, multiSelectDraggingKeysDown, rotatingKeysDown } from '../utils'
 import { DesignCanvasDirectiveExtension } from './design-canvas-directive.extension'
-import { CANVAS_MODE, CanvasSelectedXstateService, DragBoxXstateService, getDrawPreviewEntityFnV2, getStateCtx, PointerHoverOverEntity, PointerLeaveEntity, StartSingleMove } from '../services'
+import { CANVAS_MODE, CanvasSelectedXstateService, DragBoxXstateService, getDrawPreviewEntityFnV2, getStateCtx, PointerHoverOverEntity, PointerLeaveEntity, TO_ROTATE_STATE } from '../services'
 import { createStringWithPanels } from '../utils/string-fns'
 
 @Directive({
@@ -107,24 +107,54 @@ export class DesignCanvasWithXstateDirective
 		this.mousePos.innerText = `Original X: ${event.offsetX}, Y: ${event.offsetY}`
 		this.transformedMousePos.innerText = `Transformed X: ${this.currentTransformedCursor.x}, Y: ${this.currentTransformedCursor.y}`
 
-		const singleToRotate = this._state.toRotate.singleToRotate
-		const singleRotateMode = this._state.toRotate.singleRotateMode
-		if (singleToRotate && singleRotateMode) {
-			this._objRotating.rotateEntityViaMouse(event, singleToRotate)
-			// this._objectPos.rotateEntityViaMouse(event, singleToRotate)
+		/*		const currentState = this._machine.snapshot.value as {
+		 SelectedState: string
+		 }
+		 console.log('currentState', currentState)
+		 const selectedState = currentState.SelectedState
+		 console.log('selectedState', selectedState)*/
+		const machineState = this._machine.state
+		console.log('selectedState', machineState)
+
+		const singleToRotateMode = machineState.ToRotateState === TO_ROTATE_STATE.SINGLE_ROTATE_MODE_IN_PROGRESS
+		if (singleToRotateMode) {
+			this._objRotating.rotateEntityViaMouse(event)
 			return
 		}
 
+		const singleToRotate = machineState.ToRotateState === TO_ROTATE_STATE.SINGLE_ROTATE_IN_PROGRESS
 		if (singleToRotate && rotatingKeysDown(event)) {
-			this._objRotating.rotateEntityViaMouse(event, singleToRotate)
+			this._objRotating.rotateEntityViaMouse(event)
 			return
 		}
 
-		const multipleToRotate = this._state.toRotate.multipleToRotate
-		if (multipleToRotate && multipleToRotate.ids.length > 1) {
-			this._objRotating.rotateMultipleEntitiesViaMouse(event, multipleToRotate.ids)
+		const multipleToRotate = machineState.ToRotateState === TO_ROTATE_STATE.MULTIPLE_ROTATE_IN_PROGRESS
+		if (multipleToRotate) {
+			this._objRotating.rotateMultipleEntitiesViaMouse(event)
 			return
 		}
+
+		// const singleToRotateMode = machineState.ToRotateState === 'ToRotateState.SingleRotateInProgress'
+		// if (currentState === '')
+
+		/*		const singleToRotate = this._state.toRotate.singleToRotate
+		 const singleRotateMode = this._state.toRotate.singleRotateMode
+		 if (singleToRotate && singleRotateMode) {
+		 this._objRotating.rotateEntityViaMouse(event)
+		 // this._objectPos.rotateEntityViaMouse(event, singleToRotate)
+		 return
+		 }
+
+		 if (singleToRotate && rotatingKeysDown(event)) {
+		 this._objRotating.rotateEntityViaMouse(event)
+		 return
+		 }*/
+
+		/*		const multipleToRotate = this._state.toRotate.multipleToRotate
+		 if (multipleToRotate && multipleToRotate.ids.length > 1) {
+		 this._objRotating.rotateMultipleEntitiesViaMouse(event)
+		 return
+		 }*/
 		if (!this._objRotating.areAnyEntitiesInRotate && rotatingKeysDown(event)) {
 			this._objRotating.handleSetEntitiesToRotate(event)
 		}
@@ -185,7 +215,8 @@ export class DesignCanvasWithXstateDirective
 				// if (hoveringOverEntityId && !singleToMove1) {
 				// const entity = this._state.entities.canvasEntities.getEntityById(hoveringOverEntityId)
 				// assertNotNull(entity)
-				this._machine.sendEvent(new StartSingleMove({ id: entityUnderMouse.id, startPoint: currentPoint, angle: entityUnderMouse.angle }))
+				this._objPositioning.singleToMoveMouseDown(event, entityUnderMouse.id)
+				// this._machine.sendEvent(new StartSingleMove({ id: entityUnderMouse.id, startPoint: currentPoint, angle: entityUnderMouse.angle }))
 				// sendStateEvent(new StartSingleMove({ id: entityUnderMouse.id, startPoint: currentPoint, angle: entityUnderMouse.angle }))
 				return
 			}
@@ -219,14 +250,14 @@ export class DesignCanvasWithXstateDirective
 		 // 	sendStateEvent(new PointerUpOnEntity({ point: currentPoint }))
 		 }*/
 
-		const singleToMove2 = this._machine.ctx.toMove.singleToMove
+		// const singleToMove2 = this._machine.ctx.toMove.singleToMove
+
 		// const singleToMove2 = getStateCtx().toMove.singleToMove
-		if (singleToMove2) {
-			const entity = this._state.entities.canvasEntities.getEntityById(singleToMove2.id)
-			assertNotNull(entity)
-			this._objPositioning.singleToMoveMouseMove(event, {
-				id: singleToMove2.id, type: entity.type,
-			})
+		if (this._machine.snapshot.matches('ToMoveState.SingleMoveInProgress')) {
+			// if (singleToMove2) {
+			/*			const entity = this._state.entities.canvasEntities.getEntityById(singleToMove2.id)
+			 assertNotNull(entity)*/
+			this._objPositioning.singleToMoveMouseMove(event)
 			return
 		}
 
@@ -366,12 +397,16 @@ export class DesignCanvasWithXstateDirective
 			return
 		}
 
-		const singleToMove = this._machine.ctx.toMove.singleToMove
+		// const singleToMove = this._machine.ctx.toMove.singleToMove
 		// const singleToMove = this._state.toMove.singleToMove
-		if (singleToMove) {
-			this._objPositioning.singleToMoveMouseUp(event, singleToMove)
+		if (this._machine.snapshot.matches('ToMoveState.SingleMoveInProgress')) {
+			this._objPositioning.singleToMoveMouseUp(event)
 			return
 		}
+		/*		if (singleToMove) {
+		 this._objPositioning.singleToMoveMouseUp(event, singleToMove)
+		 return
+		 }*/
 
 		const multipleToMove = this._machine.ctx.toMove.multipleToMove
 		// const multipleToMove = this._state.toMove.multipleToMove

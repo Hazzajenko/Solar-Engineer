@@ -25,4 +25,13 @@ export class SelectionBoxCancelled {
 	readonly payload = null
 }
 
-export type XStateDragBoxEvent = StartSelectionBox | SelectionBoxCompleted | SelectionBoxCancelled
+export class StopDragBox {
+	readonly type = 'StopDragBox'
+	readonly payload = null
+}
+
+export type XStateDragBoxEvent =
+	| StartSelectionBox
+	| SelectionBoxCompleted
+	| SelectionBoxCancelled
+	| StopDragBox

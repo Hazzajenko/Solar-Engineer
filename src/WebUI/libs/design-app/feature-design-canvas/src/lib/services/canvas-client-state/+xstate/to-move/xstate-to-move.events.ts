@@ -1,18 +1,6 @@
-import { TransformedPoint } from '../../../../types'
-import { AngleRadians } from '../../../../utils'
-import { AdjustedMultipleToMoveEntity } from '../../types'
-import { Point } from '@shared/data-access/models'
-
 export class StartSingleMove {
 	readonly type = 'StartSingleMove'
-
-	constructor(
-		public readonly payload: {
-			id: string
-			startPoint: TransformedPoint
-			angle: AngleRadians
-		},
-	) {}
+	readonly payload = null
 }
 
 /*export class MoveSingleEntity {
@@ -32,22 +20,14 @@ export class StopSingleMove {
 	readonly payload = null
 }
 
-export class CancelSingleMove {
-	readonly type = 'CancelSingleMove'
-	readonly payload = null
-}
+/*export class CancelSingleMove {
+ readonly type = 'CancelSingleMove'
+ readonly payload = null
+ }*/
 
 export class StartMultipleMove {
 	readonly type = 'StartMultipleMove'
-
-	constructor(
-		public readonly payload: {
-			ids: string[]
-			startPoint: Point
-			offset: Point
-			entities: AdjustedMultipleToMoveEntity[]
-		},
-	) {}
+	readonly payload = null
 }
 
 /*export class UpdateMultipleMove {
@@ -71,18 +51,18 @@ export class StopMultipleMove {
 	readonly payload = null
 }
 
-export class CancelMultipleMove {
-	readonly type = 'CancelMultipleMove'
-	readonly payload = null
-}
+/*export class CancelMultipleMove {
+ readonly type = 'CancelMultipleMove'
+ readonly payload = null
+ }*/
 
 export type XStateToMoveEvent =
 	| StartSingleMove
 	| StopSingleMove
 	// | MoveSingleEntity
-	| CancelSingleMove
+	// | CancelSingleMove
 	| StartMultipleMove
 	// | UpdateMultipleMove
 	// | MoveMultipleEntities
 	| StopMultipleMove
-	| CancelMultipleMove
+// | CancelMultipleMove

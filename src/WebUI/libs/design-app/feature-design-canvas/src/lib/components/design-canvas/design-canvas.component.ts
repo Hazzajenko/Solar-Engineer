@@ -1,20 +1,18 @@
 import { ChangeDetectionStrategy, Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { CdkDrag } from '@angular/cdk/drag-drop'
-import { DesignCanvasDirective } from '../../directives'
 import { select, Store } from '@ngrx/store'
 import { selectDrawTime } from '../../store'
 import { ShowSvgComponent } from '@shared/ui'
 import { CanvasClientStateService, CanvasEntitiesStore, CanvasObjectPositioningService, CanvasRenderService, DomPointService } from '../../services'
 import { MenuDataset } from '../../types'
 import { LetModule } from '@ngrx/component'
-import { KeyMapComponent } from './menus/key-map/key-map.component'
-import { CanvasAppSettingsComponent, RightClickMenuComponent } from './menus'
-import { DesignCanvasWithXstateDirective } from '../../directives/design-canvas-with-xstate.directive'
+import { CanvasAppSettingsComponent, KeyMapComponent, RightClickMenuComponent } from './menus'
+import { DesignCanvasWithXstateDirective } from '../../directives'
 
 @Component({
 	changeDetection: ChangeDetectionStrategy.OnPush, imports: [
-		CdkDrag, CommonModule, DesignCanvasDirective, ShowSvgComponent, LetModule, KeyMapComponent, CanvasAppSettingsComponent, RightClickMenuComponent, DesignCanvasWithXstateDirective,
+		CdkDrag, CommonModule, ShowSvgComponent, LetModule, KeyMapComponent, CanvasAppSettingsComponent, RightClickMenuComponent, DesignCanvasWithXstateDirective,
 	], selector:     'app-design-canvas', standalone: true, styles: [], templateUrl: './design-canvas.component.html',
 })
 export class DesignCanvasComponent
@@ -26,7 +24,7 @@ export class DesignCanvasComponent
 	private _render = inject(CanvasRenderService)
 	public entitiesStore = inject(CanvasEntitiesStore)
 	public drawTime$ = this._store.pipe(select(selectDrawTime))
-	@ViewChild(DesignCanvasDirective, { static: true }) canvas!: DesignCanvasDirective
+	// @ViewChild(DesignCanvasDirective, { static: true }) canvas!: DesignCanvasDirective
 	@ViewChild(CdkDrag, { static: true }) drag!: CdkDrag
 	@ViewChild('menu', { static: true }) menu!: ElementRef<HTMLDivElement>
 

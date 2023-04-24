@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core'
-import { CanvasClientState, DragBoxState, GridState, HoveringEntityState, InitialDragBoxState, InitialGridState, InitialHoveringEntityState, InitialMenuState, InitialModeState, InitialMouseState, InitialNearbyState, InitialSelectedState, InitialToMoveState, InitialToRotateState, InitialViewState, MenuState, ModeState, MouseState, NearbyState, SelectedState, StateUpdate, ToMoveState, ToRotateState, updateStateV3, ViewState } from './types'
+import { CanvasClientState, DragBoxStateDeprecated, GridState, HoveringEntityState, InitialDragBoxState, InitialGridState, InitialHoveringEntityState, InitialMenuState, InitialModeState, InitialMouseState, InitialNearbyState, InitialSelectedState, InitialToMoveState, InitialToRotateState, InitialViewState, MenuState, ModeState, MouseState, NearbyState, SelectedStateDeprecated, StateUpdate, ToMoveStateDeprecated, ToRotateStateDeprecated, updateStateV3, ViewState } from './types'
 import { CanvasEntityState } from './canvas-entity-state'
 import { ClearEntitySelected, SelectedSingleEntity, sendStateEvent } from './+xstate'
 
@@ -9,10 +9,10 @@ import { ClearEntitySelected, SelectedSingleEntity, sendStateEvent } from './+xs
 export class CanvasClientStateService
 	implements CanvasClientState {
 	private _hover: HoveringEntityState = InitialHoveringEntityState
-	private _selected: SelectedState = InitialSelectedState
-	private _toRotate: ToRotateState = InitialToRotateState
-	private _toMove: ToMoveState = InitialToMoveState
-	private _dragBox: DragBoxState = InitialDragBoxState
+	private _selected: SelectedStateDeprecated = InitialSelectedState
+	private _toRotate: ToRotateStateDeprecated = InitialToRotateState
+	private _toMove: ToMoveStateDeprecated = InitialToMoveState
+	private _dragBox: DragBoxStateDeprecated = InitialDragBoxState
 	private _mode: ModeState = InitialModeState
 	private _view: ViewState = InitialViewState
 	private _mouse: MouseState = InitialMouseState
@@ -53,31 +53,31 @@ export class CanvasClientStateService
 		this._hover = value
 	}
 
-	get selected(): SelectedState {
+	get selected(): SelectedStateDeprecated {
 		return this._selected
 	}
 
-	set selected(value: SelectedState) {
+	set selected(value: SelectedStateDeprecated) {
 		this._selected = value
 	}
 
-	get toRotate(): ToRotateState {
+	get toRotate(): ToRotateStateDeprecated {
 		return this._toRotate
 	}
 
-	set toRotate(value: ToRotateState) {
+	set toRotate(value: ToRotateStateDeprecated) {
 		this._toRotate = value
 	}
 
-	get toMove(): ToMoveState {
+	get toMove(): ToMoveStateDeprecated {
 		return this._toMove
 	}
 
-	set toMove(value: ToMoveState) {
+	set toMove(value: ToMoveStateDeprecated) {
 		this._toMove = value
 	}
 
-	get dragBox(): DragBoxState {
+	get dragBox(): DragBoxStateDeprecated {
 		return this._dragBox
 	}
 

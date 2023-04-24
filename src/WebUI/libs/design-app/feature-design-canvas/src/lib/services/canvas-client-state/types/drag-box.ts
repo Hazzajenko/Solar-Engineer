@@ -1,11 +1,11 @@
 import { TransformedPoint } from '../../../types'
 
-export type DragBoxState = {
-  dragBoxStart: TransformedPoint | undefined
-  axisLineStart: TransformedPoint | undefined
+export type DragBoxStateDeprecated = {
+	dragBoxStart: TransformedPoint | undefined
+	axisLineStart: TransformedPoint | undefined
 }
 
-export const InitialDragBoxState: DragBoxState = {
-  dragBoxStart: undefined,
-  axisLineStart: undefined,
+export const InitialDragBoxState: DragBoxStateDeprecated = {
+	dragBoxStart: undefined,
+	axisLineStart: undefined,
 }

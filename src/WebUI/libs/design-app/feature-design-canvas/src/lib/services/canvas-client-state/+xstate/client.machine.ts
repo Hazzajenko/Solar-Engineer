@@ -1,21 +1,21 @@
-import { TransformedPoint } from '../../../types'
 import {
-	AdjustedToMoveState,
-	DragBoxState,
+	DragBoxStateDeprecated,
 	GridState,
 	HoveringEntityState,
-	InitialAdjustedToMoveState,
 	InitialSelectedState,
 	MenuState,
 	ModeState,
 	MouseState,
 	NearbyState,
-	SelectedState,
-	ToMoveState,
-	ToRotateState,
+	SelectedStateDeprecated,
+	ToMoveStateDeprecated,
+	ToRotateStateDeprecated,
 	ViewState,
 } from '../types'
-import { SetMultipleSelectedEntities } from './selected'
+import { AdjustedDragBoxState, InitialAdjustedDragBoxState } from './drag-box'
+import { AdjustedPointerState, InitialAdjustedPointerState } from './pointer'
+import { AdjustedToMoveState, InitialAdjustedToMoveState } from './to-move'
+import { AdjustedToRotateState, InitialAdjustedToRotateState } from './to-rotate'
 import { XStateEvent } from './xstate-app-events.types'
 // import { ActionByType } from './selected/machine-actions.types'
 import { inspect } from '@xstate/inspect'
@@ -24,10 +24,10 @@ import { createMachine } from 'xstate'
 
 export type CanvasAppMachineContext = {
 	hover: HoveringEntityState
-	selected: SelectedState
-	toRotate: ToRotateState
-	toMove: ToMoveState
-	dragBox: DragBoxState
+	selected: SelectedStateDeprecated
+	toRotate: ToRotateStateDeprecated
+	toMove: ToMoveStateDeprecated
+	dragBox: DragBoxStateDeprecated
 	mode: ModeState
 	view: ViewState
 	mouse: MouseState
@@ -36,44 +36,35 @@ export type CanvasAppMachineContext = {
 	grid: GridState
 }
 
-export const CURRENT_DRAG_BOX = {
-	SELECTION: 'selection',
-	CREATION: 'creation',
-	AXIS_LINE: 'axis-line',
-} as const
+/*
+ export const CURRENT_DRAG_BOX = {
+ SELECTION: 'selection',
+ CREATION: 'creation',
+ AXIS_LINE: 'axis-line',
+ } as const
 
-export type CurrentDragBox = (typeof CURRENT_DRAG_BOX)[keyof typeof CURRENT_DRAG_BOX]
+ export type CurrentDragBox = (typeof CURRENT_DRAG_BOX)[keyof typeof CURRENT_DRAG_BOX]
 
-export type AdjustedDragBoxState = {
-	currentDragBox: CurrentDragBox
-	selectionBoxStart: TransformedPoint | undefined
-	creationBoxStart: TransformedPoint | undefined
-	axisLineBoxStart: TransformedPoint | undefined
-}
+ export type AdjustedDragBoxState = {
+ currentDragBox: CurrentDragBox
+ selectionBoxStart: TransformedPoint | undefined
+ creationBoxStart: TransformedPoint | undefined
+ axisLineBoxStart: TransformedPoint | undefined
+ }
 
-export const InitialAdjustedDragBoxState: AdjustedDragBoxState = {
-	currentDragBox: CURRENT_DRAG_BOX.SELECTION,
-	selectionBoxStart: undefined,
-	creationBoxStart: undefined,
-	axisLineBoxStart: undefined,
-}
-
-export type AdjustedPointerState = {
-	pointerDown: boolean
-	currentTransformedPoint: TransformedPoint | undefined
-	hoveringEntityId: string | undefined
-}
-
-export const InitialAdjustedPointerState: AdjustedPointerState = {
-	pointerDown: false,
-	currentTransformedPoint: undefined,
-	hoveringEntityId: undefined,
-}
+ export const InitialAdjustedDragBoxState: AdjustedDragBoxState = {
+ currentDragBox: CURRENT_DRAG_BOX.SELECTION,
+ selectionBoxStart: undefined,
+ creationBoxStart: undefined,
+ axisLineBoxStart: undefined,
+ }
+ */
 
 export type PickedCanvasAppMachineContext = Pick<CanvasAppMachineContext, 'selected'> & {
 	dragBox: AdjustedDragBoxState
 	pointer: AdjustedPointerState
 	toMove: AdjustedToMoveState
+	toRotate: AdjustedToRotateState
 }
 
 inspect({
@@ -95,6 +86,7 @@ export const canvasAppMachine = createMachine(
 			dragBox: InitialAdjustedDragBoxState,
 			pointer: InitialAdjustedPointerState,
 			toMove: InitialAdjustedToMoveState,
+			toRotate: InitialAdjustedToRotateState,
 		},
 		states: {
 			SelectedState: {
@@ -156,13 +148,17 @@ export const canvasAppMachine = createMachine(
 					},
 					DragBoxInProgress: {
 						on: {
+							SelectionBoxCompleted: {
+								target: 'NoDragBox',
+								actions: ['SetMultipleSelectedEntities', 'ClearSelectionBoxStart'],
+							},
 							SelectionBoxCancelled: {
 								target: 'NoDragBox',
 								actions: 'ClearSelectionBoxStart',
 							},
-							SelectionBoxCompleted: {
+							StopDragBox: {
 								target: 'NoDragBox',
-								actions: ['SetMultipleSelectedEntities', 'ClearSelectionBoxStart'],
+								actions: 'ClearDragBox',
 							},
 						},
 					},
@@ -234,6 +230,55 @@ export const canvasAppMachine = createMachine(
 					},
 				},
 			},
+			ToRotateState: {
+				initial: 'NoRotate',
+				states: {
+					NoRotate: {
+						on: {
+							StartSingleRotate: {
+								target: 'SingleRotateInProgress',
+								actions: 'SetSingleRotate',
+							},
+							StartSingleRotateMode: {
+								target: 'SingleRotateModeInProgress',
+								actions: 'SetSingleRotateMode',
+							},
+							StartMultipleRotate: {
+								target: 'MultipleRotateInProgress',
+								actions: 'SetMultipleRotate',
+							},
+						},
+					},
+					SingleRotateInProgress: {
+						on: {
+							StopSingleRotate: {
+								target: 'NoRotate',
+								actions: 'StopSingleRotate',
+							},
+						},
+					},
+					SingleRotateModeInProgress: {
+						on: {
+							StopSingleRotateMode: {
+								target: 'NoRotate',
+								actions: 'StopSingleRotateMode',
+							},
+							StopSingleRotate: {
+								target: 'NoRotate',
+								actions: 'StopSingleRotateMode',
+							},
+						},
+					},
+					MultipleRotateInProgress: {
+						on: {
+							StopMultipleRotate: {
+								target: 'NoRotate',
+								actions: 'StopMultipleRotate',
+							},
+						},
+					},
+				},
+			},
 		},
 		predictableActionArguments: true,
 		preserveActionOrder: true,
@@ -299,6 +344,13 @@ export const canvasAppMachine = createMachine(
 					selectionBoxStart: undefined,
 				})
 			},
+			ClearDragBox: (ctx) => {
+				return (ctx.dragBox = {
+					...ctx.dragBox,
+					selectionBoxStart: undefined,
+					creationBoxStart: undefined,
+				})
+			},
 
 			/**
 			 * Pointer State Actions
@@ -336,7 +388,7 @@ export const canvasAppMachine = createMachine(
 			/**
 			 * To Move State Actions
 			 */
-			SetSingleMove: (ctx, event) => {
+			SetSingleMove: (ctx) => {
 				return (ctx.toMove = {
 					...ctx.toMove,
 					multipleToMove: false,
@@ -344,85 +396,82 @@ export const canvasAppMachine = createMachine(
 				})
 			},
 
-			SetMultipleMove: (ctx, event) => {
+			SetMultipleMove: (ctx) => {
 				return (ctx.toMove = {
 					...ctx.toMove,
-					singleToMove: undefined,
-					multipleToMove: {
-						ids: event.payload.ids,
-						startPoint: event.payload.startPoint,
-						offset: event.payload.offset,
-						entities: event.payload.entities,
-					},
+					singleToMove: false,
+					multipleToMove: true,
 				})
 			},
 
-			/*			MoveSingleEntity: (ctx, event) => {
-		 return (ctx.toMove = {
-		 ...ctx.toMove,
-		 multipleToMove: undefined,
-		 singleToMove: {
-		 ...ctx.toMove.singleToMove,
-		 id: event.payload.id,
-		 location: event.payload.location,
-		 angle: event.payload.angle,
-		 },
-		 })
-		 },*/
-
-			StopSingleMove: (ctx, event) => {
+			StopSingleMove: (ctx) => {
 				return (ctx.toMove = {
 					...ctx.toMove,
-					multipleToMove: undefined,
-					singleToMove: undefined,
-				})
-			} /*
-		 MoveMultipleEntities: (ctx, event) => {
-		 return (ctx.toMove = {
-		 ...ctx.toMove,
-		 multipleToMove: undefined,
-		 singleToMove: undefined,
-		 })
-		 },
-
-		 UpdateMultipleMove: (ctx, event) => {
-		 if (!ctx.toMove.multipleToMove) return
-		 return (ctx.toMove = {
-		 ...ctx.toMove,
-		 multipleToMove: {
-		 ...ctx.toMove.multipleToMove,
-		 offset: event.payload.offset,
-		 entities: event.payload.entities,
-		 },
-		 })
-		 },*/,
-
-			StopMultipleMove: (ctx, event) => {
-				return (ctx.toMove = {
-					...ctx.toMove,
-					multipleToMove: undefined,
-					singleToMove: undefined,
+					multipleToMove: false,
+					singleToMove: false,
 				})
 			},
 
-			CancelSingleMove: (ctx, event) => {
+			StopMultipleMove: (ctx) => {
 				return (ctx.toMove = {
 					...ctx.toMove,
-					multipleToMove: undefined,
-					singleToMove: undefined,
+					multipleToMove: false,
+					singleToMove: false,
 				})
 			},
 
-			CancelMultipleMove: (ctx, event) => {
-				return (ctx.toMove = {
-					...ctx.toMove,
-					multipleToMove: undefined,
-					singleToMove: undefined,
+			/**
+			 * To Rotate State Actions
+			 */
+			SetSingleRotate: (ctx) => {
+				return (ctx.toRotate = {
+					...ctx.toRotate,
+					multipleToRotate: false,
+					singleToRotate: true,
 				})
 			},
 
-			// }
-			// }
+			SetSingleRotateMode: (ctx) => {
+				return (ctx.toRotate = {
+					...ctx.toRotate,
+					multipleToRotate: false,
+					singleToRotate: true,
+					singleRotateMode: true,
+				})
+			},
+
+			StopSingleRotateMode: (ctx) => {
+				return (ctx.toRotate = {
+					...ctx.toRotate,
+					multipleToRotate: false,
+					singleToRotate: false,
+					singleRotateMode: false,
+				})
+			},
+
+			StopSingleRotate: (ctx) => {
+				return (ctx.toRotate = {
+					...ctx.toRotate,
+					multipleToRotate: false,
+					singleToRotate: false,
+				})
+			},
+
+			SetMultipleRotate: (ctx) => {
+				return (ctx.toRotate = {
+					...ctx.toRotate,
+					singleToRotate: false,
+					multipleToRotate: true,
+				})
+			},
+
+			StopMultipleRotate: (ctx) => {
+				return (ctx.toRotate = {
+					...ctx.toRotate,
+					multipleToRotate: false,
+					singleToRotate: false,
+				})
+			},
 		},
 		guards: {
 			SelectedIsDefined: (ctx) => {

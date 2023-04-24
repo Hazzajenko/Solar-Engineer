@@ -228,15 +228,26 @@ export class CanvasRenderService {
 			return
 		}
 
-		if (isSingleDragging(entity, toMove.singleToMove)) {
-			this.handleDraggingEntityDraw(entity, toMove.singleToMove)
-			return
-		}
+		// const currentState = this._machine.snapshot.value
 
-		if (isMultipleDragging(entity, toMove.multipleToMove)) {
-			this.handleMultipleMoveDraw(entity, toMove.multipleToMove)
-			return
-		}
+		/*		if (isSingleDragging(entity, toMove.singleToMove)) {
+		 this.handleDraggingEntityDraw(entity, toMove.singleToMove)
+		 return
+		 }
+
+		 if (this._machine.snapshot.matches('ToMoveState.SingleMoveInProgress')) {
+		 this.handleDraggingEntityDraw(entity, toMove.singleToMove)
+		 return
+		 }*/
+		/*		if (currentState === 'DragBoxState.DragBoxInProgress') {
+		 this.handleMultipleMoveDraw(entity, toMove.multipleToMove)
+		 return
+		 }*/
+
+		/*		if (isMultipleDragging(entity, toMove.multipleToMove)) {
+		 this.handleMultipleMoveDraw(entity, toMove.multipleToMove)
+		 return
+		 }*/
 
 		const nearbyEntityIds = this._state.nearby.ids
 		const isNearby = nearbyEntityIds.includes(entity.id)
