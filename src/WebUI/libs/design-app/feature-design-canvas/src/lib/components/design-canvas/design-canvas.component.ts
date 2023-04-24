@@ -10,106 +10,89 @@ import { MenuDataset } from '../../types'
 import { LetModule } from '@ngrx/component'
 import { KeyMapComponent } from './menus/key-map/key-map.component'
 import { CanvasAppSettingsComponent, RightClickMenuComponent } from './menus'
+import { DesignCanvasWithXstateDirective } from '../../directives/design-canvas-with-xstate.directive'
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports:         [
-    CdkDrag,
-    CommonModule,
-    DesignCanvasDirective,
-    ShowSvgComponent,
-    LetModule,
-    KeyMapComponent,
-    CanvasAppSettingsComponent,
-    RightClickMenuComponent,
-  ],
-  selector:        'app-design-canvas',
-  standalone:      true,
-  styles:          [],
-  templateUrl:     './design-canvas.component.html',
+	changeDetection: ChangeDetectionStrategy.OnPush, imports: [
+		CdkDrag, CommonModule, DesignCanvasDirective, ShowSvgComponent, LetModule, KeyMapComponent, CanvasAppSettingsComponent, RightClickMenuComponent, DesignCanvasWithXstateDirective,
+	], selector:     'app-design-canvas', standalone: true, styles: [], templateUrl: './design-canvas.component.html',
 })
 export class DesignCanvasComponent
-  implements OnInit {
-  private _store = inject(Store)
-  private _objectPositioning = inject(CanvasObjectPositioningService)
-  private _domPoint = inject(DomPointService)
-  private _state = inject(CanvasClientStateService)
-  private _render = inject(CanvasRenderService)
-  public entitiesStore = inject(CanvasEntitiesStore)
-  public drawTime$ = this._store.pipe(select(selectDrawTime))
-  @ViewChild(DesignCanvasDirective, { static: true }) canvas!: DesignCanvasDirective
-  @ViewChild(CdkDrag, { static: true }) drag!: CdkDrag
-  @ViewChild('menu', { static: true }) menu!: ElementRef<HTMLDivElement>
+	implements OnInit {
+	private _store = inject(Store)
+	private _objectPositioning = inject(CanvasObjectPositioningService)
+	private _domPoint = inject(DomPointService)
+	private _state = inject(CanvasClientStateService)
+	private _render = inject(CanvasRenderService)
+	public entitiesStore = inject(CanvasEntitiesStore)
+	public drawTime$ = this._store.pipe(select(selectDrawTime))
+	@ViewChild(DesignCanvasDirective, { static: true }) canvas!: DesignCanvasDirective
+	@ViewChild(CdkDrag, { static: true }) drag!: CdkDrag
+	@ViewChild('menu', { static: true }) menu!: ElementRef<HTMLDivElement>
 
-  state = inject(CanvasClientStateService)
+	state = inject(CanvasClientStateService)
 
-  rightClickMenu = [
-    { label: 'Rotate', action: this.rotate.bind(this) },
-    { label: 'Delete', action: this.delete.bind(this) },
-  ]
+	rightClickMenu = [
+		{ label: 'Rotate', action: this.rotate.bind(this) }, { label: 'Delete', action: this.delete.bind(this) },
+	]
 
-  canvasMenuArr = [
-    {
-      label:   'Create Preview',
-      action:  this.toggleCreatePreview.bind(this),
-      checked: this._state.menu.createPreview,
-    },
-    {
-      label:   'Nearby Axis Lines',
-      action:  this.toggleNearbyAxisLines.bind(this),
-      checked: this._state.menu.nearbyAxisLines,
-    },
-  ]
+	canvasMenuArr = [
+		{
+			label: 'Create Preview', action: this.toggleCreatePreview.bind(this), checked: this._state.menu.createPreview,
+		}, {
+			label: 'Nearby Axis Lines', action: this.toggleNearbyAxisLines.bind(this), checked: this._state.menu.nearbyAxisLines,
+		},
+	]
 
-  ngOnInit() {
-    console.log(this.constructor.name, 'ngOnInit')
-  }
+	ngOnInit() {
+		console.log(this.constructor.name, 'ngOnInit')
+	}
 
-  rotate(event: MouseEvent) {
-    const dataSet = this.getMenuDataSet()
-    console.log(dataSet)
+	rotate(event: MouseEvent) {
+		const dataSet = this.getMenuDataSet()
+		console.log(dataSet)
 
-    const startPoint = this._domPoint.getTransformedPointFromEvent(event)
+		const startPoint = this._domPoint.getTransformedPointFromEvent(event)
 
-    this._objectPositioning.setEntityToRotate(dataSet.id, startPoint)
-    /*    const angle = parseInt(dataSet.angle, 10) + 45
-     const update = Factory.Panel.updateForStore(dataSet.id, { angle })
-     this.entitiesStore.dispatch.updateCanvasEntity(update)*/
-    this.closeMenu()
-  }
+		this._objectPositioning.setEntityToRotate(dataSet.id, startPoint)
+		/*    const angle = parseInt(dataSet.angle, 10) + 45
+		 const update = Factory.Panel.updateForStore(dataSet.id, { angle })
+		 this.entitiesStore.dispatch.updateCanvasEntity(update)*/
+		this.closeMenu()
+	}
 
-  delete() {
-    const dataSet = this.getMenuDataSet()
-    console.log(dataSet)
-    this._state.entities.canvasEntities.removeEntity(dataSet.id)
-    // this.entitiesStore.dispatch.deleteCanvasEntity(dataSet.id)
-    this.closeMenu()
-  }
+	delete() {
+		const dataSet = this.getMenuDataSet()
+		console.log(dataSet)
+		this._state.entities.canvasEntities.removeEntity(dataSet.id)
+		// this.entitiesStore.dispatch.deleteCanvasEntity(dataSet.id)
+		this.closeMenu()
+	}
 
-  private getMenuDataSet() {
-    const ref = this.menu.nativeElement
-    return ref.dataset as MenuDataset
-  }
+	private getMenuDataSet() {
+		const ref = this.menu.nativeElement
+		return ref.dataset as MenuDataset
+	}
 
-  private closeMenu() {
-    this.menu.nativeElement.style.display = 'none'
-  }
+	private closeMenu() {
+		this.menu.nativeElement.style.display = 'none'
+	}
 
-  toggleCreatePreview() {
-    this._state.updateState({
-      menu: {
-        createPreview: !this._state.menu.createPreview,
-      },
-    })
-    this._render.drawCanvas()
-  }
+	toggleCreatePreview() {
+		this._state.updateState({
+			menu: {
+				createPreview: !this._state.menu.createPreview,
+			},
+		})
+		this._render.drawCanvas()
+	}
 
-  toggleNearbyAxisLines() {
-    this._state.updateState({
-      menu: {
-        nearbyAxisLines: !this._state.menu.nearbyAxisLines,
-      },
-    })
-    this._render.drawCanvas()
-  }
+	toggleNearbyAxisLines() {
+		this._state.updateState({
+			menu: {
+				nearbyAxisLines: !this._state.menu.nearbyAxisLines,
+			},
+		})
+		this._render.drawCanvas()
+	}
 }

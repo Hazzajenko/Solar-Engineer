@@ -56,12 +56,12 @@ export type CanvasAppActionByType<T extends CanvasAppActionType> = Extract<
     type: T
   }
 >
-const asdsa: CanvasAppActionByType<'ClearSelected'> = {
-  type: 'ClearSelected',
-  payload: {
-    id: '123',
-  },
-}
+/*const asdsa: CanvasAppActionByType<'ClearSelected'> = {
+ type: 'ClearSelected',
+ payload: {
+ id: '123',
+ },
+ }*/
 export type CanvasAppActionPayload = CanvasAppSelectedActions['payload']
 
 export const CanvasAppActionType = {

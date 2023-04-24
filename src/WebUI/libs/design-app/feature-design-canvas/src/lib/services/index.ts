@@ -1,4 +1,4 @@
-export * from './canvas-selected.service'
+export * from './canvas-selected/index'
 // export * from './canvas-entities/index'
 // export * from './canvas-strings/index'
 export * from './dom-point.service'

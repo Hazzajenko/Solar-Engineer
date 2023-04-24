@@ -1,20 +1,21 @@
-import { Directive, OnInit } from '@angular/core'
+import { Directive, inject, OnInit } from '@angular/core'
 import { CURSOR_TYPE, KEYS } from '@shared/data-access/models'
 import { createPanel, isPanel, SizeByType, UndefinedStringId } from '../types'
 import { ENTITY_TYPE } from '@design-app/shared'
 import { assertNotNull, OnDestroyDirective } from '@shared/utils'
 import { changeCanvasCursor, dragBoxKeysDown, draggingScreenKeysDown, isContextMenu, isDraggingEntity, isMenuOpen, isReadyToMultiDrag, multiSelectDraggingKeysDown, rotatingKeysDown } from '../utils'
 import { DesignCanvasDirectiveExtension } from './design-canvas-directive.extension'
-import { CANVAS_MODE, getDrawPreviewEntityFnV2, getStateCtx, PointerLeaveEntity, sendStateEvent, StartSingleMove } from '../services'
+import { CANVAS_MODE, CanvasSelectedXstateService, getDrawPreviewEntityFnV2, getStateCtx, PointerHoverOverEntity, PointerLeaveEntity, sendStateEvent, StartSingleMove } from '../services'
 import { createStringWithPanels } from '../utils/string-fns'
-import { PointerHoverOverEntity } from '../services'
 
 @Directive({
-	selector: '[appDesignCanvas]', providers: [OnDestroyDirective], standalone: true,
+	selector: '[appDesignCanvasXState]', providers: [OnDestroyDirective], standalone: true,
 })
-export class DesignCanvasDirective
+export class DesignCanvasWithXstateDirective
 	extends DesignCanvasDirectiveExtension
 	implements OnInit {
+
+	_selectedV2 = inject(CanvasSelectedXstateService)
 
 	public ngOnInit() {
 		this.setupCanvas()
@@ -399,11 +400,11 @@ export class DesignCanvasDirective
 
 		const entityUnderMouse = this.getEntityUnderMouse(event)
 		if (entityUnderMouse) {
-			this._selected.handleEntityUnderMouse(event, entityUnderMouse)
+			this._selectedV2.handleEntityUnderMouse(event, entityUnderMouse)
 			console.log('entityUnderMouse', entityUnderMouse)
 			return
 		}
-		this._selected.clearSelectedState()
+		this._selectedV2.clearSelectedState()
 		if (this.anyEntitiesNearAreaOfClick(event)) {
 			return
 		}
@@ -430,7 +431,7 @@ export class DesignCanvasDirective
 			 }*/
 		}
 		// const isStringSelected = !!this._state.selected.selectedStringId
-		// const isStringSelected = !!this._selected.selectedStringId
+		// const isStringSelected = !!this._selectedV2.selectedStringId
 		const entity = this._state.selected.selectedStringId
 			? createPanel(location, this._state.selected.selectedStringId)
 			: createPanel(location)
@@ -461,14 +462,14 @@ export class DesignCanvasDirective
 					selectedStringId: belongsToString.id,
 				},
 			})
-			// this._selected.setSelectedStringId(belongsToString.id)
+			// this._selectedV2.setSelectedStringId(belongsToString.id)
 
-			// this._selected.handleEntityDoubleClick(event, entityUnderMouse, this.strings)
+			// this._selectedV2.handleEntityDoubleClick(event, entityUnderMouse, this.strings)
 			/*      if (!isPanel(entityUnderMouse)) return
 			 if (entityUnderMouse.stringId === UndefinedStringId) return
 			 const belongsToString = this.strings.find(string => string.id === entityUnderMouse.stringId)
 			 assertNotNull(belongsToString, 'string not found')
-			 this._selected.setSelectedStringId(belongsToString.id)*/
+			 this._selectedV2.setSelectedStringId(belongsToString.id)*/
 		}
 		/*    const mouseOverPanel = this.getMouseOverPanel(event)
 		 if (mouseOverPanel) {
@@ -476,7 +477,7 @@ export class DesignCanvasDirective
 		 if (mouseOverPanel.stringId === UndefinedStringId) return
 		 const belongsToString = this.strings.find(string => string.id === mouseOverPanel.stringId)
 		 assertNotNull(belongsToString, 'string not found')
-		 this._selected.setSelectedStringId(belongsToString.id)
+		 this._selectedV2.setSelectedStringId(belongsToString.id)
 		 }*/
 	}
 
@@ -533,7 +534,7 @@ export class DesignCanvasDirective
 	keyUpHandler(event: KeyboardEvent) {
 		switch (event.key) {
 			case KEYS.ESCAPE:
-				this._selected.clearSelectedState()
+				this._selectedV2.clearSelectedState()
 				break
 			case KEYS.X: {
 				const multipleSelectedIds = this._state.selected.multipleSelectedIds
@@ -542,8 +543,8 @@ export class DesignCanvasDirective
 				createStringWithPanels(this._state, multipleSelectedIds)
 
 				// TODO: move to local store
-				/*     if (this._selected.multiSelected.length > 0) {
-				 this._stringsService.createStringWithPanels(this._selected.getMultiSelectedByType(ENTITY_TYPE.Panel), this.strings)
+				/*     if (this._selectedV2.multiSelected.length > 0) {
+				 this._stringsService.createStringWithPanels(this._selectedV2.getMultiSelectedByType(ENTITY_TYPE.Panel), this.strings)
 
 				 }*/
 			}
@@ -589,7 +590,7 @@ export class DesignCanvasDirective
 				const entityToRotate = this._state.toRotate.singleToRotate
 				const singleSelectedId = this._state.selected.singleSelectedId
 				if (singleSelectedId && !entityToRotate) {
-					// if (this._selected.selected && !this._objectPos.entityToRotateId) {
+					// if (this._selectedV2.selected && !this._objectPos.entityToRotateId) {
 					this._objRotating.setEntityToRotate(singleSelectedId, this.currentTransformedCursor)
 					console.log('set single to rotate')
 					return
@@ -599,7 +600,7 @@ export class DesignCanvasDirective
 				// const multipleSelectedIds = this._state.toRotate.multipleToRotate.ids
 
 				/*   if (multipleToRotate && multipleToRotate.ids.length > 0) {
-				 // const multiSelectedIds = this._selected.multiSelected.map(entity => entity.id)
+				 // const multiSelectedIds = this._selectedV2.multiSelected.map(entity => entity.id)
 				 this._objectPos.setMultipleToRotate(multipleSelectedIds, this.currentTransformedCursor)
 				 console.log('set multiple to rotate')
 				 return

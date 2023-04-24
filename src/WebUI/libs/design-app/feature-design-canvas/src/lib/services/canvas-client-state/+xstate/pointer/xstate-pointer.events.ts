@@ -41,84 +41,91 @@
  ids: string[]
  }
  }*/
+import { TransformedPoint } from '@design-app/feature-design-canvas';
 
-export class ClearEntitySelected {
-	readonly type = 'ClearEntitySelected'
-	readonly payload = null
-}
 
-export class CancelSelected {
-	readonly type = 'CancelSelected'
-	readonly payload = null
-}
-
-export class SelectedSingleEntity {
-	readonly type = 'SelectedSingleEntity'
+export class PointerHoverOverEntity {
+	readonly type = 'PointerHoverOverEntity'
 
 	constructor(
 		public readonly payload: {
 			id: string
+			point: TransformedPoint
 		},
 	) {}
 }
 
-export class SetMultipleSelectedEntities {
-	readonly type = 'SetMultipleSelectedEntities'
+export class PointerLeaveEntity {
+	readonly type = 'PointerLeaveEntity'
 
 	constructor(
 		public readonly payload: {
-			ids: string[]
+			point: TransformedPoint
 		},
 	) {}
 }
 
-export class SelectedDifferentEntity {
-	readonly type = 'SelectedDifferentEntity'
+export class PointerDown {
+	readonly type = 'PointerDown'
+
+	constructor(
+		public readonly payload: {
+			point: TransformedPoint
+		},
+	) {}
+}
+
+export class PointerUp {
+	readonly type = 'PointerUp'
+
+	constructor(
+		public readonly payload: {
+			point: TransformedPoint
+		},
+	) {}
+}
+
+export class PointerDownOnEntity {
+	readonly type = 'PointerDownOnEntity'
 
 	constructor(
 		public readonly payload: {
 			id: string
+			point: TransformedPoint
 		},
 	) {}
 }
 
-export class AddEntitiesToMultipleSelected {
-	readonly type = 'AddEntitiesToMultipleSelected'
+export class PointerUpOnEntity {
+	readonly type = 'PointerUpOnEntity'
 
 	constructor(
 		public readonly payload: {
-			ids: string[]
+			point: TransformedPoint
 		},
 	) {}
 }
 
-export class RemoveEntitiesFromMultipleSelected {
-	readonly type = 'RemoveEntitiesFromMultipleSelected'
+export class PointerMove {
+	readonly type = 'PointerMove'
 
 	constructor(
 		public readonly payload: {
-			ids: string[]
+			event: PointerEvent
+			point: TransformedPoint
 		},
 	) {}
 }
 
-// const yo = function SelectEntitiesInSelectionBox(     ctx,     event): {payload: {ids: any[]}, type: string}
+export type XStatePointerEvent =
+	| PointerHoverOverEntity
+	| PointerLeaveEntity
+	| PointerDown
+	| PointerUp
+	| PointerDownOnEntity
+	| PointerUpOnEntity
+	| PointerMove
 
-/*export type EntitiesFoundInSelectionBox = {
- type: 'EntitiesFoundInSelectionBox'
- payload: {
- ids: string[]
- }
- }*/
-
-export type XStateSelectedEvent =
-	| ClearEntitySelected
-	| CancelSelected
-	| SelectedSingleEntity
-	| SetMultipleSelectedEntities
-	| SelectedDifferentEntity
-	| AddEntitiesToMultipleSelected
-	| RemoveEntitiesFromMultipleSelected
 // | EntitiesFoundInSelectionBox
 // RemoveEntitiesFromMultipleSelected
 /*
