@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core'
-import { CanvasClientState, DragBoxStateDeprecated, GridState, HoveringEntityState, InitialDragBoxState, InitialGridState, InitialHoveringEntityState, InitialMenuState, InitialModeState, InitialMouseState, InitialNearbyState, InitialSelectedState, InitialToMoveState, InitialToRotateState, InitialViewState, MenuState, ModeState, MouseState, NearbyState, SelectedStateDeprecated, StateUpdate, ToMoveStateDeprecated, ToRotateStateDeprecated, updateStateV3, ViewState } from './types'
+import { CanvasClientState, DragBoxStateDeprecated, GridStateDeprecated, HoveringEntityState, InitialDragBoxState, InitialGridStateDeprecated, InitialHoveringEntityState, InitialMenuState, InitialModeState, InitialMouseState, InitialNearbyState, InitialSelectedState, InitialToMoveState, InitialToRotateState, InitialViewState, MenuState, ModeState, MouseState, NearbyState, SelectedStateDeprecated, StateUpdate, ToMoveStateDeprecated, ToRotateStateDeprecated, updateStateV3, ViewStateDeprecated } from './types'
 import { CanvasEntityState } from './canvas-entity-state'
 import { ClearEntitySelected, SelectedSingleEntity, sendStateEvent } from './+xstate'
 
@@ -14,11 +14,11 @@ export class CanvasClientStateService
 	private _toMove: ToMoveStateDeprecated = InitialToMoveState
 	private _dragBox: DragBoxStateDeprecated = InitialDragBoxState
 	private _mode: ModeState = InitialModeState
-	private _view: ViewState = InitialViewState
+	private _view: ViewStateDeprecated = InitialViewState
 	private _mouse: MouseState = InitialMouseState
 	private _menu: MenuState = InitialMenuState
 	private _nearby: NearbyState = InitialNearbyState
-	private _grid: GridState = InitialGridState
+	private _grid: GridStateDeprecated = InitialGridStateDeprecated
 	private _entities = inject(CanvasEntityState)
 
 	get entities(): CanvasEntityState {
@@ -85,7 +85,7 @@ export class CanvasClientStateService
 		return this._mode
 	}
 
-	get view(): ViewState {
+	get view(): ViewStateDeprecated {
 		return this._view
 	}
 
@@ -101,7 +101,7 @@ export class CanvasClientStateService
 		return this._nearby
 	}
 
-	get grid(): GridState {
+	get grid(): GridStateDeprecated {
 		return this._grid
 	}
 

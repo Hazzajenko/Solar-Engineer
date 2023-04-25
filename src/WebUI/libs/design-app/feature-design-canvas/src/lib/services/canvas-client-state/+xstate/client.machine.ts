@@ -1,6 +1,6 @@
 import {
 	DragBoxStateDeprecated,
-	GridState,
+	GridStateDeprecated,
 	HoveringEntityState,
 	InitialSelectedState,
 	MenuState,
@@ -10,12 +10,13 @@ import {
 	SelectedStateDeprecated,
 	ToMoveStateDeprecated,
 	ToRotateStateDeprecated,
-	ViewState,
+	ViewStateDeprecated,
 } from '../types'
 import { AdjustedDragBoxState, InitialAdjustedDragBoxState } from './drag-box'
 import { AdjustedPointerState, InitialAdjustedPointerState } from './pointer'
 import { AdjustedToMoveState, InitialAdjustedToMoveState } from './to-move'
 import { AdjustedToRotateState, InitialAdjustedToRotateState } from './to-rotate'
+import { InitialViewContext, ViewContext } from './view'
 import { XStateEvent } from './xstate-app-events.types'
 // import { ActionByType } from './selected/machine-actions.types'
 import { inspect } from '@xstate/inspect'
@@ -29,11 +30,11 @@ export type CanvasAppMachineContext = {
 	toMove: ToMoveStateDeprecated
 	dragBox: DragBoxStateDeprecated
 	mode: ModeState
-	view: ViewState
+	view: ViewStateDeprecated
 	mouse: MouseState
 	menu: MenuState
 	nearby: NearbyState
-	grid: GridState
+	grid: GridStateDeprecated
 }
 
 /*
@@ -65,6 +66,7 @@ export type PickedCanvasAppMachineContext = Pick<CanvasAppMachineContext, 'selec
 	pointer: AdjustedPointerState
 	toMove: AdjustedToMoveState
 	toRotate: AdjustedToRotateState
+	view: ViewContext
 }
 
 inspect({
@@ -87,6 +89,7 @@ export const canvasAppMachine = createMachine(
 			pointer: InitialAdjustedPointerState,
 			toMove: InitialAdjustedToMoveState,
 			toRotate: InitialAdjustedToRotateState,
+			view: InitialViewContext,
 		},
 		states: {
 			SelectedState: {
@@ -274,6 +277,27 @@ export const canvasAppMachine = createMachine(
 							StopMultipleRotate: {
 								target: 'NoRotate',
 								actions: 'StopMultipleRotate',
+							},
+						},
+					},
+				},
+			},
+			ViewState: {
+				initial: 'ViewNotMoving',
+				states: {
+					ViewNotMoving: {
+						on: {
+							StartViewDragging: {
+								target: 'ViewDraggingInProgress',
+								actions: 'SetViewDragging',
+							},
+						},
+					},
+					ViewDraggingInProgress: {
+						on: {
+							StopViewDragging: {
+								target: 'ViewNotMoving',
+								actions: 'StopViewDragging',
 							},
 						},
 					},
@@ -470,6 +494,23 @@ export const canvasAppMachine = createMachine(
 					...ctx.toRotate,
 					multipleToRotate: false,
 					singleToRotate: false,
+				})
+			},
+
+			/**
+			 * View State Actions
+			 */
+			SetViewDragging: (ctx) => {
+				return (ctx.view = {
+					...ctx.view,
+					draggingScreen: true,
+				})
+			},
+
+			StopViewDragging: (ctx) => {
+				return (ctx.view = {
+					...ctx.view,
+					draggingScreen: false,
 				})
 			},
 		},

@@ -3,13 +3,12 @@ import { CanvasElementService } from '../canvas-element.service'
 import { AXIS, CANVAS_COLORS, createPanel, SizeByType, TransformedPoint } from '../../types'
 import { CURSOR_TYPE } from '@shared/data-access/models'
 import { DomPointService } from '../dom-point.service'
-import { CanvasObjectPositioningService } from '../canvas-object-positioning.service'
 import { assertNotNull } from '@shared/utils'
 import { changeCanvasCursor, dragBoxKeysDown, getAllAvailableEntitySpotsBetweenTwoPoints, getAllEntitiesBetweenTwoPoints } from '../../utils'
 import { CANVAS_MODE, CanvasClientStateService, CURRENT_DRAG_BOX, MachineService, SelectionBoxCompleted, StartSelectionBox, StopDragBox } from '../canvas-client-state'
 import { CanvasRenderService } from '../canvas-render'
 import { ENTITY_TYPE } from '@design-app/shared'
-import { getStartAndEndForAxisLineDragBox } from './drag-box.service'
+import { getStartAndEndForAxisLineDragBox } from './utils'
 
 @Injectable({
 	providedIn: 'root',
@@ -17,7 +16,6 @@ import { getStartAndEndForAxisLineDragBox } from './drag-box.service'
 export class DragBoxXstateService {
 	private _canvasElementService = inject(CanvasElementService)
 	private _domPointService = inject(DomPointService)
-	private _objectPositioning = inject(CanvasObjectPositioningService)
 	private _state = inject(CanvasClientStateService)
 	private _render = inject(CanvasRenderService)
 	private _machine = inject(MachineService)
@@ -64,7 +62,8 @@ export class DragBoxXstateService {
 		const dragBoxStart = this.dragBoxStart
 		assertNotNull(dragBoxStart)
 		const currentPoint = this._domPointService.getTransformedPointFromEvent(event)
-		const spots = this._objectPositioning.getAllAvailableEntitySpotsBetweenTwoPoints(dragBoxStart, currentPoint)
+		const spots = getAllAvailableEntitySpotsBetweenTwoPoints(dragBoxStart, currentPoint, this._state.entities.canvasEntities.getEntities())
+		// const spots = this._objectPositioning.getAllAvailableEntitySpotsBetweenTwoPoints(dragBoxStart, currentPoint)
 		if (!spots || !spots.length) return
 		const takenSpots = spots.filter(spot => !spot.vacant)
 		if (takenSpots.length) {

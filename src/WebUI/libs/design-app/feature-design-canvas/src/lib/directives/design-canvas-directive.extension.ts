@@ -6,16 +6,15 @@ import {
 	CanvasElementService,
 	CanvasModeService,
 	CanvasRenderService,
-	CanvasSelectedService,
+	CanvasSelectedXstateService,
 	CanvasViewPositioningService,
 	DomPointService,
-	DragBoxService,
+	DragBoxXstateService,
 	MachineService,
 	ObjectPositioningService,
 	ObjectRotatingService,
 	PointerDown,
 	PointerUp,
-	sendStateEvent,
 } from '../services'
 import { CanvasAppState, initialCanvasAppState } from '../store'
 import { CANVAS_COLORS, CanvasEntity, SizeByType, TransformedPoint } from '../types'
@@ -27,43 +26,32 @@ import {
 } from '../utils'
 import { ElementRef, inject, NgZone, Renderer2 } from '@angular/core'
 import { ENTITY_TYPE } from '@design-app/shared'
-import {
-	ClickEvent,
-	ContextMenuEvent,
-	DoubleClickEvent,
-	EVENT_TYPE,
-} from '@shared/data-access/models'
+import { ContextMenuEvent, DoubleClickEvent, EVENT_TYPE } from '@shared/data-access/models'
 import { DelayedLogger } from '@shared/logger'
 import { OnDestroyDirective } from '@shared/utils'
 
 
 export abstract class DesignCanvasDirectiveExtension {
 	protected _onDestroy = inject(OnDestroyDirective)
-	// protected _entitiesStore = inject(CanvasEntitiesStore)
-	// protected _stringsStore = inject(CanvasStringsStore)
-	// protected _stringsService = inject(CanvasStringsService)
 	protected canvas = inject(ElementRef<HTMLCanvasElement>).nativeElement
 	protected ctx!: CanvasRenderingContext2D
 	protected _ngZone = inject(NgZone)
 	protected _renderer = inject(Renderer2)
 	protected _canvasEl = inject(CanvasElementService)
-	// protected _objectPos = inject(CanvasObjectPositioningService)
 	protected _objRotating = inject(ObjectRotatingService)
 	protected _objPositioning = inject(ObjectPositioningService)
 	protected _view = inject(CanvasViewPositioningService)
 	protected _mode = inject(CanvasModeService)
-	protected _drag = inject(DragBoxService)
+	protected _drag = inject(DragBoxXstateService)
+	// protected _drag = inject(DragBoxService)
 	protected _render = inject(CanvasRenderService)
 	protected _state = inject(CanvasClientStateService)
-	protected _selected = inject(CanvasSelectedService)
+	protected _selected = inject(CanvasSelectedXstateService)
+	// protected _selected = inject(CanvasSelectedService)
 	protected _domPoint = inject(DomPointService)
 	protected delayedLogger = new DelayedLogger()
 	protected mouseDownTimeOut: ReturnType<typeof setTimeout> | undefined
 	protected mouseUpTimeOut: ReturnType<typeof setTimeout> | undefined
-
-	/*  protected mouseUpTimeOutFn = setTimeout(() => {
-	 this.mouseUpTimeOut = undefined
-	 }, 50)*/
 
 	protected fpsEl!: HTMLDivElement
 	protected canvasMenu!: HTMLDivElement
@@ -74,125 +62,24 @@ export abstract class DesignCanvasDirectiveExtension {
 	protected panelStats!: HTMLDivElement
 	protected menu!: HTMLDivElement
 	protected keyMap!: HTMLDivElement
-	// protected entityOnMouseDownId?: string
-	// protected entityOnMouseDown?: CanvasEntity
-	// protected entityOnMouseDownType?: Ent
-	// protected entityOnMouseDownLocation?: Point
 	protected currentTransformedCursor!: TransformedPoint
 	protected _appStateStore = inject(CanvasAppStateStore)
 	private _appState: CanvasAppState = initialCanvasAppState
 
 	amountOfMouseEventFires = 0
 	mouseEventFiresTimeOut: ReturnType<typeof setTimeout> | undefined
-	/*  mouseEventFiresTimeOutFn = () => {
-	 this.amountOfMouseEventFires = 0
-	 this.mouseEventFiresTimeOut = undefined
-	 }*/
 	mouseEventFireStartTime = 0
-	// mouseEventFireEndTime = 0
-	// private _entities: CanvasEntity[] = []
-	// private _strings: CanvasString[] = []
-
-	/*  protected get appState(): CanvasAppState {
-	 return this._appState
-	 }
-
-	 protected get rotateState() {
-	 return {
-	 singleToRotateId: this._objectPos.entityToRotateId,
-	 singleToRotateAngle: this._objectPos.entityToRotateAngle,
-	 multipleToRotateIds: this._objectPos.multipleToRotateIds,
-	 multipleToRotateAngleMap: this._objectPos.multipleToRotateAdjustedAngle,
-	 multipleToRotateLocationMap: this._objectPos.multipleToRotateAdjustedLocation,
-	 } as RotateState
-	 }*/
-
-	/*  protected get strings(): CanvasString[] {
-	 return this._strings
-	 }
-
-	 protected set strings(value: CanvasString[]) {
-	 this._strings = value
-	 this.delayedLogger.log('set strings', value)
-	 this.stringStats.innerText = `Strings: ${this._strings.length}`
-	 this.drawCanvas()
-	 }
-
-	 protected set entities(value: CanvasEntity[]) {
-	 /!*    const diff = compareArraysGetNew(value, this._entities)
-	 if (diff) {
-	 this._objectPositioning.setPerformanceEnd(diff[0].location)
-	 // this.delayedLogger.log('set entities', diff)
-	 }*!/
-	 this._entities = value as CanvasPanel[]
-	 this.delayedLogger.log('set panels', value)
-	 this.panelStats.innerText = `Panels: ${this._entities.length}`
-	 // this._objectPositioning.setPerformanceEnd()
-	 this.drawCanvas()
-	 }
-
-	 protected get entities(): CanvasEntity[] {
-	 return this._entities
-	 }*/
 
 	protected get entities(): CanvasEntity[] {
-		// return this._entities
 		return this._state.entities.canvasEntities.getEntities()
 	}
 
 	protected height = this.canvas.height
 	protected width = this.canvas.width
 
-	protected mouse: TransformedPoint = { x: 0, y: 0 } as TransformedPoint
+	protected currentPoint: TransformedPoint = { x: 0, y: 0 } as TransformedPoint
 
 	protected _machine = inject(MachineService)
-	/*
-	 protected get appStateCtx() {
-	 return this.appState.getSnapshot().context
-	 }
-
-	 protected get appStateSnapshot() {
-	 return this.appState.getSnapshot()
-	 }*/
-
-	// } {
-
-	/*
-	 protected appState$ = this._appStateStore.select.state$.pipe(
-	 takeUntil(this._onDestroy.destroy$),
-	 tap((state) => {
-	 this._appState = state
-	 console.log('appState$', state)
-	 }),
-	 )*/
-
-	/*
-
-	 protected entities$ = this._entitiesStore.select.entities$.pipe(
-	 takeUntil(this._onDestroy.destroy$),
-	 tap((entities) => {
-	 // this.entities = entities
-	 // this.delayedLogger.log('entities$ difference', theSame)
-	 const theSame = compareArrays(entities, this.entities)
-	 if (!theSame) {
-	 this.delayedLogger.log('entities$ difference', theSame)
-	 this.entities = entities.filter((entity) => entity.type === ENTITY_TYPE.Panel)
-	 // this._objectPositioning.setPerformanceEnd()
-	 }
-	 }),
-	 )
-
-	 protected strings$ = this._stringsStore.select.allStrings$.pipe(
-	 takeUntil(this._onDestroy.destroy$),
-	 tap((strings) => {
-	 const theSame = compareArrays(strings, this.strings)
-	 if (!theSame) {
-	 this.delayedLogger.log('strings$ difference', strings)
-	 this.strings = strings
-	 }
-	 }),
-	 )
-	 */
 
 	protected mouseDownTimeOutFn = () => {
 		this.mouseDownTimeOut = setTimeout(() => {
@@ -216,7 +103,6 @@ export abstract class DesignCanvasDirectiveExtension {
 	protected animate60Fps() {
 		let text = ''
 
-		// const elapsed = 0
 		let frames = 0
 		let prevTime = performance.now()
 		const fpsRender = () => {
@@ -229,125 +115,53 @@ export abstract class DesignCanvasDirectiveExtension {
 				frames = 0
 			}
 			this.fpsEl.innerText = text
-			/*      this._render.drawCanvas()
-			 if (this._state.dragBox.start) {
-			 this._render.drawIndependentDragBoxWithMouse(this.mouse)
-			 }*/
-			// requestAnimationFrame(fpsRender)
 		}
 		requestAnimationFrame(fpsRender)
-		/*    renderer(() => {
-		 const time = performance.now()
-		 frames++
-		 if (time >= prevTime + 1000) {
-		 const fps = (frames * 1000) / (time - prevTime)
-		 text = `${fps.toFixed(1)} FPS`
-		 prevTime = time
-		 frames = 0
-		 }
-		 this.fpsEl.innerText = text
-		 })*/
-		/*    const fps = 60
-		 const interval = 1000 / fps
-		 let then = Date.now()
-		 let now = then
-		 const delta = now - then
-		 const step = () => {
-		 requestAnimationFrame(step)
-		 now = Date.now()
-		 const delta = now - then
-		 if (delta > interval) {
-		 then = now - (delta % interval)
-		 // this.draw()
-		 this._render.drawCanvas()
-		 }
-		 }
-		 requestAnimationFrame(step)*/
 	}
 
 	protected setupMouseEventListeners() {
 		this._renderer.listen(this.canvas, EVENT_TYPE.POINTER_UP, (event: PointerEvent) => {
-			// this._renderer.listen(this.canvas, MouseUpEvent, (event: MouseEvent) => {
 			console.log('mouse up', event)
-			sendStateEvent(new PointerUp({ point: this._domPoint.getTransformedPointFromEvent(event) }))
-			this._state.updateState({
-				mouse: {
-					mouseDown: false,
-				},
-			})
-			this.onMouseUpHandler(event)
+			this.currentPoint = this._domPoint.getTransformedPointFromEvent(event)
+			this._machine.sendEvent(
+				new PointerUp({ point: this._domPoint.getTransformedPointFromEvent(event) }),
+			)
+			this.onMouseUpHandler(event, this.currentPoint)
 			event.stopPropagation()
 			event.preventDefault()
 		})
 		this._renderer.listen(this.canvas, EVENT_TYPE.POINTER_DOWN, (event: PointerEvent) => {
-			// this._renderer.listen(this.canvas, MouseDownEvent, (event: MouseEvent) => {
 			console.log('mouse down', event)
-			sendStateEvent(new PointerDown({ point: this._domPoint.getTransformedPointFromEvent(event) }))
-			this._state.updateState({
-				mouse: {
-					mouseDown: true,
-				},
-			})
-			this.onMouseDownHandler(event)
+			this.currentPoint = this._domPoint.getTransformedPointFromEvent(event)
+			this._machine.sendEvent(
+				new PointerDown({ point: this._domPoint.getTransformedPointFromEvent(event) }),
+			)
+			this.onMouseDownHandler(event, this.currentPoint)
 			event.stopPropagation()
 			event.preventDefault()
 		})
 		this._renderer.listen(this.canvas, EVENT_TYPE.POINTER_MOVE, (event: PointerEvent) => {
-			/*	if (!getState().matches('PointerState.PointerMoving')) {
-			 sendStateEvent(
-			 new PointerMove({ event, point: this._domPoint.getTransformedPointFromEvent(event) }),
-			 )
-			 }*/
-			/*      if (!this.mouseEventFiresTimeOut) {
-			 this.mouseEventFiresTimeOut = setTimeout(() => {
-			 const fps = this.amountOfMouseEventFires
-			 this.fpsEl.innerText = `${fps.toFixed(1)} FPS`
-
-			 this.mouseEventFiresTimeOut = undefined
-			 this.amountOfMouseEventFires = 0
-			 }, 1000)
-			 }
-			 this.amountOfMouseEventFires++*/
-			this.mouse = this._domPoint.getTransformedPointFromEvent(event)
-			this._state.updateState({
-				mouse: {
-					point: this._domPoint.getTransformedPointFromEvent(event),
-				},
-			})
-			this.onMouseMoveHandler(event)
-			/*			if (!getState().matches('PointerState.PointerMoving')) {
-			 sendStateEvent(
-			 new PointerMove({ event, point: this._domPoint.getTransformedPointFromEvent(event) }),
-			 )
-			 }*/
+			this.currentPoint = this._domPoint.getTransformedPointFromEvent(event)
+			this.onMouseMoveHandler(event, this.currentPoint)
 			event.stopPropagation()
 			event.preventDefault()
 		})
-		/*    this._renderer.listen(this.canvas, MouseMoveEvent, (event: MouseEvent) => {
-		 this.mouse = this._domPoint.getTransformedPointFromEvent(event)
-		 this._state.updateState({
-		 mouse: {
-		 point: this._domPoint.getTransformedPointFromEvent(event),
-		 },
-		 })
-		 this.onMouseMoveHandler(event)
+		this._renderer.listen(this.canvas, ContextMenuEvent, (event: PointerEvent) => {
+			console.log('context menu', event)
+			this.currentPoint = this._domPoint.getTransformedPointFromEvent(event)
+			this.contextMenuHandler(event, this.currentPoint)
+			event.stopPropagation()
+			event.preventDefault()
+		})
+		/*		this._renderer.listen(this.canvas, ClickEvent, (event: PointerEvent) => {
+		 console.log('mouseClickHandler', event)
+		 // this.mouseClickHandler(event)
 		 event.stopPropagation()
 		 event.preventDefault()
 		 })*/
-		this._renderer.listen(this.canvas, ContextMenuEvent, (event: PointerEvent) => {
-			console.log('context menu', event)
-			this.contextMenuHandler(event)
-			event.stopPropagation()
-			event.preventDefault()
-		})
-		this._renderer.listen(this.canvas, ClickEvent, (event: PointerEvent) => {
-			console.log('mouseClickHandler', event)
-			// this.mouseClickHandler(event)
-			event.stopPropagation()
-			event.preventDefault()
-		})
 		this._renderer.listen(this.canvas, DoubleClickEvent, (event: PointerEvent) => {
-			this.doubleClickHandler(event)
+			this.currentPoint = this._domPoint.getTransformedPointFromEvent(event)
+			this.doubleClickHandler(event, this.currentPoint)
 			event.stopPropagation()
 			event.preventDefault()
 		})
@@ -358,8 +172,10 @@ export abstract class DesignCanvasDirectiveExtension {
 		})
 		this._renderer.listen(window, 'resize', (event: Event) => {
 			console.log('resize', event)
-			this.canvas.style.width = window.innerWidth
-			this.canvas.style.height = window.innerHeight
+			this.ctx.canvas.width = window.innerWidth
+			this.ctx.canvas.height = window.innerHeight
+			this._renderer.setStyle(this.canvas, 'width', '100%')
+			this._renderer.setStyle(this.canvas, 'height', '100%')
 			event.stopPropagation()
 			event.preventDefault()
 		})
@@ -371,17 +187,17 @@ export abstract class DesignCanvasDirectiveExtension {
 		})
 	}
 
-	abstract onMouseUpHandler(event: MouseEvent): void
+	abstract onMouseUpHandler(event: PointerEvent, currentPoint: TransformedPoint): void
 
-	abstract onMouseDownHandler(event: MouseEvent): void
+	abstract onMouseDownHandler(event: PointerEvent, currentPoint: TransformedPoint): void
 
-	abstract onMouseMoveHandler(event: MouseEvent): void
+	abstract onMouseMoveHandler(event: PointerEvent, currentPoint: TransformedPoint): void
 
-	abstract contextMenuHandler(event: PointerEvent): void
+	abstract contextMenuHandler(event: PointerEvent, currentPoint: TransformedPoint): void
 
-	abstract mouseClickHandler(event: PointerEvent): void
+	abstract mouseClickHandler(event: PointerEvent, currentPoint: TransformedPoint): void
 
-	abstract doubleClickHandler(event: PointerEvent): void
+	abstract doubleClickHandler(event: PointerEvent, currentPoint: TransformedPoint): void
 
 	abstract wheelScrollHandler(event: WheelEvent): void
 
@@ -396,7 +212,7 @@ export abstract class DesignCanvasDirectiveExtension {
 		return false
 	}
 
-	protected anyEntitiesNearAreaOfClick(event: MouseEvent) {
+	protected anyEntitiesNearAreaOfClick(event: PointerEvent) {
 		let size = SizeByType[ENTITY_TYPE.Panel]
 		const midSpacing = 2
 		size = {
@@ -475,14 +291,21 @@ export abstract class DesignCanvasDirectiveExtension {
 		return false
 	}
 
-	protected getEntityUnderMouse(event: MouseEvent) {
+	protected getEntityUnderMouse(event: PointerEvent) {
 		const entitiesUnderMouse = this.entities.filter((entity) =>
 			this.isMouseOverEntityBounds(event, entity),
 		)
 		return entitiesUnderMouse[entitiesUnderMouse.length - 1] as CanvasEntity | undefined
 	}
 
-	protected seeClashesFromMouse(event: MouseEvent) {
+	protected getEntityUnderTransformedPoint(point: TransformedPoint) {
+		const entitiesUnderMouse = this.entities.filter((entity) =>
+			this.isTransformedPointOverEntityBounds(point, entity),
+		)
+		return entitiesUnderMouse[entitiesUnderMouse.length - 1] as CanvasEntity | undefined
+	}
+
+	protected seeClashesFromMouse(event: PointerEvent) {
 		const size = SizeByType[ENTITY_TYPE.Panel]
 		const center = this._domPoint.getTransformedPointFromEvent(event)
 		const mouseBoxBounds = getBoundsFromCenterPoint(center, size)
@@ -526,15 +349,20 @@ export abstract class DesignCanvasDirectiveExtension {
 		 return entitiesUnderMouse*/
 	}
 
-	protected getEntityUnderMouseV2(event: MouseEvent) {
+	protected getEntityUnderMouseV2(event: PointerEvent) {
 		const entitiesUnderMouse = this._state.entities.canvasEntities
 			.getEntities()
 			.filter((entity) => this.isMouseOverEntityBounds(event, entity))
 		return entitiesUnderMouse[entitiesUnderMouse.length - 1]
 	}
 
-	protected isMouseOverEntityBounds(event: MouseEvent, entity: CanvasEntity) {
+	protected isMouseOverEntityBounds(event: PointerEvent, entity: CanvasEntity) {
 		const point = this._domPoint.getTransformedPointFromEvent(event)
+		const entityBounds = getEntityBounds(entity)
+		return isPointInsideBounds(point, entityBounds)
+	}
+
+	protected isTransformedPointOverEntityBounds(point: TransformedPoint, entity: CanvasEntity) {
 		const entityBounds = getEntityBounds(entity)
 		return isPointInsideBounds(point, entityBounds)
 	}

@@ -4,7 +4,7 @@ import { CdkDrag } from '@angular/cdk/drag-drop'
 import { select, Store } from '@ngrx/store'
 import { selectDrawTime } from '../../store'
 import { ShowSvgComponent } from '@shared/ui'
-import { CanvasClientStateService, CanvasEntitiesStore, CanvasObjectPositioningService, CanvasRenderService, DomPointService } from '../../services'
+import { CanvasClientStateService, CanvasEntitiesStore, CanvasRenderService, DomPointService, ObjectPositioningService } from '../../services'
 import { MenuDataset } from '../../types'
 import { LetModule } from '@ngrx/component'
 import { CanvasAppSettingsComponent, KeyMapComponent, RightClickMenuComponent } from './menus'
@@ -18,7 +18,8 @@ import { DesignCanvasWithXstateDirective } from '../../directives'
 export class DesignCanvasComponent
 	implements OnInit {
 	private _store = inject(Store)
-	private _objectPositioning = inject(CanvasObjectPositioningService)
+	private _objectPositioning = inject(ObjectPositioningService)
+	// private _objectPositioning = inject(CanvasObjectPositioningService)
 	private _domPoint = inject(DomPointService)
 	private _state = inject(CanvasClientStateService)
 	private _render = inject(CanvasRenderService)
@@ -46,13 +47,14 @@ export class DesignCanvasComponent
 		console.log(this.constructor.name, 'ngOnInit')
 	}
 
-	rotate(event: MouseEvent) {
+	rotate(event: PointerEvent) {
 		const dataSet = this.getMenuDataSet()
 		console.log(dataSet)
 
 		const startPoint = this._domPoint.getTransformedPointFromEvent(event)
 
-		this._objectPositioning.setEntityToRotate(dataSet.id, startPoint)
+		// TODO set entity to rotate
+		// this._objectPositioning.setEntityToRotate(dataSet.id, startPoint)
 		/*    const angle = parseInt(dataSet.angle, 10) + 45
 		 const update = Factory.Panel.updateForStore(dataSet.id, { angle })
 		 this.entitiesStore.dispatch.updateCanvasEntity(update)*/

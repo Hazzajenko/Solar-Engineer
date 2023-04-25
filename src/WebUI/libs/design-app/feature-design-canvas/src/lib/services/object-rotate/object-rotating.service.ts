@@ -52,7 +52,7 @@ export class ObjectRotatingService {
 	 // return !!this.entityToRotateId || !!this.multipleToRotateIds.length
 	 }*/
 
-	handleSetEntitiesToRotate(event: MouseEvent) {
+	handleSetEntitiesToRotate(event: PointerEvent) {
 		const selectedId = this._machine.ctx.selected.singleSelectedId
 		// const selectedId = this._state.selected.singleSelectedId
 		if (selectedId) {
@@ -102,8 +102,10 @@ export class ObjectRotatingService {
 		 })*/
 	}
 
-	rotateEntityViaMouse(event: MouseEvent) {
-		if (!rotatingKeysDown(event)) {
+	rotateEntityViaMouse(event: PointerEvent, rotateMode: boolean) {
+		if (!rotatingKeysDown(event) && !rotateMode) {
+			// return
+			this.clearEntityToRotate()
 			return
 		}
 		const singleToRotateId = this.singleToRotateId
@@ -137,7 +139,7 @@ export class ObjectRotatingService {
 		this._render.drawCanvasExcludeIdsWithFn([singleToRotateId], singleRotateDrawFn)
 	}
 
-	rotateMultipleEntitiesViaMouse(event: MouseEvent) {
+	rotateMultipleEntitiesViaMouse(event: PointerEvent) {
 		if (!rotatingKeysDown(event)) {
 			this.clearEntityToRotate()
 			return
@@ -197,6 +199,47 @@ export class ObjectRotatingService {
 		const pivotX = totalX / entities.length
 		const pivotY = totalY / entities.length
 		return { x: pivotX, y: pivotY } as Point
+	}
+
+	clearSingleToRotate() {
+		const singleToRotateId = this.singleToRotateId
+		if (singleToRotateId) {
+			const angle = this.singleToRotateRecentAngle
+			assertNotNull(angle)
+			this._state.entities.canvasEntities.updateEntity(singleToRotateId, { angle })
+			this._machine.sendEvent(new StopSingleRotate())
+		}
+
+		this.singleToRotateId = undefined
+		this.singleToRotateStartAngle = undefined
+		this.singleToRotateStartPoint = undefined
+		this.singleToRotateRecentAngle = undefined
+
+		this._render.drawCanvas()
+	}
+
+	clearMultipleToRotate() {
+		const multipleToRotateIds = this.multipleToRotateIds
+		if (multipleToRotateIds.length) {
+			const storeUpdates = multipleToRotateIds.map(id => {
+				const location = this.multipleToRotateLocationDictionary[id]
+				const angle = this.multipleToRotateAngleDictionary[id]
+				assertNotNull(location)
+				assertNotNull(angle)
+
+				return updateObjectByIdForStore(id, { location, angle })
+			})
+			this._state.entities.canvasEntities.updateManyEntities(storeUpdates)
+			this._machine.sendEvent(new StopMultipleRotate())
+		}
+
+		this.multipleToRotateIds = []
+		this.multipleToRotatePivotPoint = undefined
+		this.multipleToRotateStartToPivotAngle = undefined
+		this.multipleToRotateLocationDictionary = {}
+		this.multipleToRotateAngleDictionary = {}
+
+		this._render.drawCanvas()
 	}
 
 	clearEntityToRotate() {

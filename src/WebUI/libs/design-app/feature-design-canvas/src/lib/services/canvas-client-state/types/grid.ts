@@ -1,7 +1,7 @@
 import { Axis } from '../../../types'
 import { CompleteEntityBounds, EntityBounds } from '../../../utils'
 
-export type GridState = {
+export type GridStateDeprecated = {
 	showGrid: boolean
 	showAxis: boolean
 	showRuler: boolean
@@ -11,7 +11,7 @@ export type GridState = {
 	axisPreviewRect: CompleteEntityBounds | undefined
 }
 
-export const InitialGridState: GridState = {
+export const InitialGridStateDeprecated: GridStateDeprecated = {
 	showGrid: true,
 	showAxis: true,
 	showRuler: true,

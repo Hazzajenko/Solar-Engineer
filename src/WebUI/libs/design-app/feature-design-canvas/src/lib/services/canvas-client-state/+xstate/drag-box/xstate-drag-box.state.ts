@@ -22,13 +22,19 @@ export const InitialAdjustedDragBoxState: AdjustedDragBoxState = {
 	axisLineBoxStart: undefined,
 }
 
+export const DRAG_BOX_STATE_KEY = 'DragBoxState'
+
 export const DRAG_BOX_STATE = {
+	NO_DRAG_BOX: 'NoDragBox',
+	DRAG_BOX_IN_PROGRESS: 'DragBoxInProgress',
+} as const
+
+export type DragBoxState = (typeof DRAG_BOX_STATE)[keyof typeof DRAG_BOX_STATE]
+export const MATCHES_DRAG_BOX_STATE = {
 	STATE: 'DragBoxState',
 	NO_DRAG_BOX: 'DragBoxState.NoDragBox',
 	DRAG_BOX_IN_PROGRESS: 'DragBoxState.DragBoxInProgress',
 } as const
-
-export type DragBoxState = (typeof DRAG_BOX_STATE)[keyof typeof DRAG_BOX_STATE]
 
 // NoDragBox
 // DragBoxInProgress

@@ -1,22 +1,40 @@
-import { Directive, inject, OnInit } from '@angular/core'
+import { Directive, OnInit } from '@angular/core'
 import { CURSOR_TYPE, KEYS } from '@shared/data-access/models'
-import { createPanel, isPanel, SizeByType, UndefinedStringId } from '../types'
+import { CanvasEntity, createPanel, isPanel, SizeByType, TransformedPoint, UndefinedStringId } from '../types'
 import { ENTITY_TYPE } from '@design-app/shared'
 import { assertNotNull, OnDestroyDirective } from '@shared/utils'
 import { changeCanvasCursor, dragBoxKeysDown, draggingScreenKeysDown, isContextMenu, isDraggingEntity, isMenuOpen, isReadyToMultiDrag, multiSelectDraggingKeysDown, rotatingKeysDown } from '../utils'
 import { DesignCanvasDirectiveExtension } from './design-canvas-directive.extension'
-import { CANVAS_MODE, CanvasSelectedXstateService, DragBoxXstateService, getDrawPreviewEntityFnV2, getStateCtx, PointerHoverOverEntity, PointerLeaveEntity, TO_ROTATE_STATE } from '../services'
+import { CANVAS_MODE, DRAG_BOX_STATE, DRAG_BOX_STATE_KEY, getDrawPreviewEntityFnV2, POINTER_STATE, POINTER_STATE_KEY, PointerHoverOverEntity, PointerLeaveEntity, TO_MOVE_STATE, TO_MOVE_STATE_KEY, TO_ROTATE_STATE, TO_ROTATE_STATE_KEY, VIEW_STATE, VIEW_STATE_KEY } from '../services'
 import { createStringWithPanels } from '../utils/string-fns'
+
+interface DesignCanvasEventHandlers {
+	onMouseDownHandler(event: PointerEvent, currentPoint: TransformedPoint): void
+
+	onMouseMoveHandler(event: PointerEvent, currentPoint: TransformedPoint): void
+
+	onMouseUpHandler(event: PointerEvent, currentPoint: TransformedPoint): void
+
+	mouseClickHandler(event: PointerEvent, currentPoint: TransformedPoint): void
+
+	doubleClickHandler(event: PointerEvent, currentPoint: TransformedPoint): void
+
+	contextMenuHandler(event: PointerEvent, currentPoint: TransformedPoint): void
+
+	wheelScrollHandler(event: WheelEvent): void
+
+	keyUpHandler(event: KeyboardEvent): void
+}
 
 @Directive({
 	selector: '[appDesignCanvasXState]', providers: [OnDestroyDirective], standalone: true,
 })
 export class DesignCanvasWithXstateDirective
 	extends DesignCanvasDirectiveExtension
-	implements OnInit {
+	implements OnInit,
+						 DesignCanvasEventHandlers {
 
-	_selectedV2 = inject(CanvasSelectedXstateService)
-	_dragV2 = inject(DragBoxXstateService)
+	entityPressed: CanvasEntity | undefined
 
 	public ngOnInit() {
 		this.setupCanvas()
@@ -42,11 +60,12 @@ export class DesignCanvasWithXstateDirective
 	/**
 	 * Mouse Down handler
 	 * @param event
+	 * @param currentPoint
 	 * @private
 	 */
 
-	onMouseDownHandler(event: PointerEvent) {
-		const currentPoint = this._domPoint.getTransformedPointFromEvent(event)
+	onMouseDownHandler(event: PointerEvent, currentPoint: TransformedPoint) {
+		// const currentPoint = this._domPoint.getTransformedPointFromEvent(event)
 
 		if (isContextMenu(event)) {
 			return
@@ -74,113 +93,101 @@ export class DesignCanvasWithXstateDirective
 				return
 			}
 			console.log('drag box keys down')
-			this._dragV2.handleDragBoxMouseDown(event)
+			this._drag.handleDragBoxMouseDown(event)
 			return
 		}
 
 		const multipleSelectedIds = this._machine.ctx.selected.multipleSelectedIds
-		// const multipleSelectedIds = this._state.state.selected.multipleSelectedIds
 		if (multiSelectDraggingKeysDown(event, multipleSelectedIds)) {
 			this._objPositioning.multiSelectDraggingMouseDown(event, multipleSelectedIds)
 			return
 		}
-		/*		const entityUnderMouse = this.getEntityUnderMouseV2(event)
-		 if (entityUnderMouse) {
-		 this._state.updateState({
-		 hover: {
-		 onMouseDownEntityId: entityUnderMouse.id,
-		 },
-		 })
-		 // sendStateEvent(new PointerDownOnEntity({ id: entityUnderMouse.id, point: currentPoint }))
-		 }*/
+
+		this.entityPressed = this.getEntityUnderMouse(event)
 	}
 
 	/**
 	 * Mouse Move handler
 	 * @param event
+	 * @param currentPoint
 	 * @private
 	 */
 
-	onMouseMoveHandler(event: PointerEvent) {
-		const currentPoint = this._domPoint.getTransformedPointFromEvent(event)
+	onMouseMoveHandler(event: PointerEvent, currentPoint: TransformedPoint) {
 		this.currentTransformedCursor = currentPoint
 		this.mousePos.innerText = `Original X: ${event.offsetX}, Y: ${event.offsetY}`
 		this.transformedMousePos.innerText = `Transformed X: ${this.currentTransformedCursor.x}, Y: ${this.currentTransformedCursor.y}`
 
-		/*		const currentState = this._machine.snapshot.value as {
-		 SelectedState: string
-		 }
-		 console.log('currentState', currentState)
-		 const selectedState = currentState.SelectedState
-		 console.log('selectedState', selectedState)*/
+		const { ToRotateState, SelectedState, ToMoveState, DragBoxState, ViewState, PointerState } = this._machine.state
+
 		const machineState = this._machine.state
-		console.log('selectedState', machineState)
 
-		const singleToRotateMode = machineState.ToRotateState === TO_ROTATE_STATE.SINGLE_ROTATE_MODE_IN_PROGRESS
-		if (singleToRotateMode) {
-			this._objRotating.rotateEntityViaMouse(event)
+		if (ToRotateState === TO_ROTATE_STATE.SINGLE_ROTATE_MODE_IN_PROGRESS) {
+			this._objRotating.rotateEntityViaMouse(event, true)
 			return
 		}
 
-		const singleToRotate = machineState.ToRotateState === TO_ROTATE_STATE.SINGLE_ROTATE_IN_PROGRESS
-		if (singleToRotate && rotatingKeysDown(event)) {
-			this._objRotating.rotateEntityViaMouse(event)
+		if (ToRotateState === TO_ROTATE_STATE.SINGLE_ROTATE_IN_PROGRESS) {
+			this._objRotating.rotateEntityViaMouse(event, false)
 			return
 		}
 
-		const multipleToRotate = machineState.ToRotateState === TO_ROTATE_STATE.MULTIPLE_ROTATE_IN_PROGRESS
-		if (multipleToRotate) {
+		if (ToRotateState === TO_ROTATE_STATE.MULTIPLE_ROTATE_IN_PROGRESS) {
 			this._objRotating.rotateMultipleEntitiesViaMouse(event)
 			return
 		}
 
-		// const singleToRotateMode = machineState.ToRotateState === 'ToRotateState.SingleRotateInProgress'
-		// if (currentState === '')
-
-		/*		const singleToRotate = this._state.toRotate.singleToRotate
-		 const singleRotateMode = this._state.toRotate.singleRotateMode
-		 if (singleToRotate && singleRotateMode) {
-		 this._objRotating.rotateEntityViaMouse(event)
-		 // this._objectPos.rotateEntityViaMouse(event, singleToRotate)
-		 return
-		 }
-
-		 if (singleToRotate && rotatingKeysDown(event)) {
-		 this._objRotating.rotateEntityViaMouse(event)
-		 return
-		 }*/
-
-		/*		const multipleToRotate = this._state.toRotate.multipleToRotate
-		 if (multipleToRotate && multipleToRotate.ids.length > 1) {
-		 this._objRotating.rotateMultipleEntitiesViaMouse(event)
-		 return
-		 }*/
-		if (!this._objRotating.areAnyEntitiesInRotate && rotatingKeysDown(event)) {
+		// const inNoRotateState = machineState.ToRotateState === TO_ROTATE_STATE.NO_ROTATE
+		// const anyToRotate = machineState.ToRotateState !== TO_ROTATE_STATE.NO_ROTATE
+		if (ToRotateState === TO_ROTATE_STATE.NO_ROTATE && rotatingKeysDown(event)) {
+			// if (inNoRotateState && rotatingKeysDown(event)) {
 			this._objRotating.handleSetEntitiesToRotate(event)
-		}
-
-		if (this._objRotating.areAnyEntitiesInRotate && !rotatingKeysDown(event)) {
-			this._objRotating.clearEntityToRotate()
 			return
 		}
-		if (this._view.screenDragStartPoint) {
+		/*		if (!this._objRotating.areAnyEntitiesInRotate && rotatingKeysDown(event)) {
+		 this._objRotating.handleSetEntitiesToRotate(event)
+		 return
+		 }*/
+
+		/*		if (this._objRotating.areAnyEntitiesInRotate && !rotatingKeysDown(event)) {
+		 this._objRotating.clearEntityToRotate()
+		 return
+		 }*/
+		const inViewDraggingState = machineState[VIEW_STATE_KEY] === VIEW_STATE.VIEW_DRAGGING_IN_PROGRESS
+		if (ViewState === VIEW_STATE.VIEW_DRAGGING_IN_PROGRESS) {
+			// if (inViewDraggingState) {
 			this._view.handleDragScreenMouseMove(event)
 			return
 		}
+		/*		if (this._view.screenDragStartPoint) {
+		 this._view.handleDragScreenMouseMove(event)
+		 return
+		 }*/
 
 		const dragBoxStart = this._machine.ctx.dragBox.selectionBoxStart
 		// const dragBoxStart = this._state.dragBox.dragBoxStart
-		if (dragBoxStart) {
-			this._dragV2.dragBoxMouseMove(event)
+		if (DragBoxState === DRAG_BOX_STATE.DRAG_BOX_IN_PROGRESS) {
+			// if (dragBoxStart) {
+			this._drag.dragBoxMouseMove(event)
 			return
 		}
 
 		const dragBoxAxisLineStart = this._machine.ctx.dragBox.axisLineBoxStart
 		// const dragBoxAxisLineStart = this._state.dragBox.axisLineStart
 		if (dragBoxAxisLineStart) {
-			this._dragV2.dragAxisLineMouseMove(event, currentPoint, dragBoxAxisLineStart)
+			this._drag.dragAxisLineMouseMove(event, currentPoint, dragBoxAxisLineStart)
 			return
 		}
+
+		/*		const singleToMoveState = machineState[TO_MOVE_STATE_KEY] === TO_MOVE_STATE.SINGLE_MOVE_IN_PROGRESS
+
+		 if (singleToMoveState) {
+		 this._objPositioning.singleSelectDraggingMouseMove(event)
+		 return
+		 }*/
+
+		const multipleToMoveState = machineState[TO_MOVE_STATE_KEY] === TO_MOVE_STATE.MULTIPLE_MOVE_IN_PROGRESS
+		// const singleToMoveState = machineState.ToMoveState === TO_MOVE_STATE.SINGLE_MOVE_IN_PROGRESS
 
 		// const multipleSelectedIds = this._state.selected.multipleSelectedIds
 		const multipleSelectedIds = this._machine.ctx.selected.multipleSelectedIds
@@ -209,18 +216,78 @@ export class DesignCanvasWithXstateDirective
 			return
 		}
 
+		const singleToMoveState = machineState[TO_MOVE_STATE_KEY] === TO_MOVE_STATE.SINGLE_MOVE_IN_PROGRESS
+
+		if (singleToMoveState) {
+			this._objPositioning.singleToMoveMouseMove(event)
+			return
+		}
+
+		if (this.entityPressed && isDraggingEntity(event, this.entityPressed.id)) {
+			this._objPositioning.singleToMoveMouseDown(event, this.entityPressed.id)
+			this.entityPressed = undefined
+			return
+		}
+
 		const entityUnderMouse = this.getEntityUnderMouse(event)
 		if (entityUnderMouse) {
-			if (isDraggingEntity(event, entityUnderMouse.id)) {
-				// if (hoveringOverEntityId && !singleToMove1) {
-				// const entity = this._state.entities.canvasEntities.getEntityById(hoveringOverEntityId)
-				// assertNotNull(entity)
-				this._objPositioning.singleToMoveMouseDown(event, entityUnderMouse.id)
-				// this._machine.sendEvent(new StartSingleMove({ id: entityUnderMouse.id, startPoint: currentPoint, angle: entityUnderMouse.angle }))
-				// sendStateEvent(new StartSingleMove({ id: entityUnderMouse.id, startPoint: currentPoint, angle: entityUnderMouse.angle }))
-				return
-			}
+			const hoveringEntityId = this._machine.ctx.pointer.hoveringEntityId
+			if (hoveringEntityId === entityUnderMouse.id) return
+			this._machine.sendEvent(new PointerHoverOverEntity({ id: entityUnderMouse.id, point: currentPoint }))
+			this._render.drawCanvas()
+			return
 		}
+
+		const hoveringOverEntityState = machineState[POINTER_STATE_KEY] === POINTER_STATE.HOVERING_OVER_ENTITY
+		if (hoveringOverEntityState) {
+			changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
+			this._machine.sendEvent(new PointerLeaveEntity({ point: currentPoint }))
+			this._render.drawCanvas()
+			return
+		}
+
+		/*		if (this.entityPressed) {
+		 if (isDraggingEntity(event, this.entityPressed.id)) {
+		 this._objPositioning.singleToMoveMouseDown(event, this.entityPressed.id)
+		 this.entityPressed = undefined
+		 return
+		 }
+		 const hoveringEntityId = this._machine.ctx.pointer.hoveringEntityId
+		 if (hoveringEntityId === this.entityPressed.id) return
+		 this._machine.sendEvent(new PointerHoverOverEntity({ id: this.entityPressed.id, point: currentPoint }))
+		 this._render.drawCanvas()
+		 this.entityPressed = undefined
+		 // changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
+		 return
+		 }*/
+
+		/*	// const entityUnderMouse = this.getEntityUnderMouse(event)
+		 if (this.entityUnderMouse && isDraggingEntity(event, this.entityUnderMouse.id)) {
+		 this._objPositioning.singleToMoveMouseDown(event, this.entityUnderMouse.id)
+		 return
+		 }
+
+		 if (this.entityUnderMouse) {
+		 // changeCanvasCursor(this.canvas, CURSOR_TYPE.POINTER)
+		 const hoveringEntityId = this._machine.ctx.pointer.hoveringEntityId
+		 if (hoveringEntityId === this.entityUnderMouse.id) return
+		 this._machine.sendEvent(new PointerHoverOverEntity({ id: this.entityUnderMouse.id, point: currentPoint }))
+		 this._render.drawCanvas()
+		 // changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
+		 return
+		 }*/
+
+		/*		if (entityUnderMouse) {
+		 if (isDraggingEntity(event, entityUnderMouse.id)) {
+		 // if (hoveringOverEntityId && !singleToMove1) {
+		 // const entity = this._state.entities.canvasEntities.getEntityById(hoveringOverEntityId)
+		 // assertNotNull(entity)
+		 this._objPositioning.singleToMoveMouseDown(event, entityUnderMouse.id)
+		 // this._machine.sendEvent(new StartSingleMove({ id: entityUnderMouse.id, startPoint: currentPoint, angle: entityUnderMouse.angle }))
+		 // sendStateEvent(new StartSingleMove({ id: entityUnderMouse.id, startPoint: currentPoint, angle: entityUnderMouse.angle }))
+		 return
+		 }
+		 }*/
 		/*		const singleToMove1 = getStateCtx().toMove.singleToMove
 		 const hoveringOverEntityId = getStateCtx().pointer.hoveringEntityId
 		 if (isDraggingEntity(event, entityUnderMouse.id)) {
@@ -253,13 +320,13 @@ export class DesignCanvasWithXstateDirective
 		// const singleToMove2 = this._machine.ctx.toMove.singleToMove
 
 		// const singleToMove2 = getStateCtx().toMove.singleToMove
-		if (this._machine.snapshot.matches('ToMoveState.SingleMoveInProgress')) {
-			// if (singleToMove2) {
-			/*			const entity = this._state.entities.canvasEntities.getEntityById(singleToMove2.id)
-			 assertNotNull(entity)*/
-			this._objPositioning.singleToMoveMouseMove(event)
-			return
-		}
+		/*		if (this._machine.snapshot.matches('ToMoveState.SingleMoveInProgress')) {
+		 // if (singleToMove2) {
+		 /!*			const entity = this._state.entities.canvasEntities.getEntityById(singleToMove2.id)
+		 assertNotNull(entity)*!/
+		 this._objPositioning.singleToMoveMouseMove(event)
+		 return
+		 }*/
 
 		/*	const singleToMove = this._state.toMove.singleToMove
 		 if (isDraggingEntity(event, singleToMove?.id)) {
@@ -274,23 +341,40 @@ export class DesignCanvasWithXstateDirective
 
 		// const multipleToMove = this._state.toMove.multipleToMove
 		// const entityUnderMouse = this.getEntityUnderMouse(event)
-		if (entityUnderMouse) {
-			changeCanvasCursor(this.canvas, CURSOR_TYPE.POINTER)
-			const hoveringEntityId = getStateCtx().pointer.hoveringEntityId
-			if (hoveringEntityId === entityUnderMouse.id) return
-			this._machine.sendEvent(new PointerHoverOverEntity({ id: entityUnderMouse.id, point: currentPoint }))
-			// sendStateEvent(new PointerHoverOverEntity({ id: entityUnderMouse.id, point: currentPoint }))
-			this._render.drawCanvas()
-			changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
-			return
-		}
-		if (this._machine.snapshot.matches('PointerState.HoveringOverEntity')) {
-			changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
-			this._machine.sendEvent(new PointerLeaveEntity({ point: currentPoint }))
-			this._render.drawCanvas()
-			// sendStateEvent(new PointerLeaveEntity({ point: currentPoint }))
-			return
-		}
+		/*		if (this.entityUnderMouse) {
+		 // changeCanvasCursor(this.canvas, CURSOR_TYPE.POINTER)
+		 const hoveringEntityId = this._machine.ctx.pointer.hoveringEntityId
+		 if (hoveringEntityId === this.entityUnderMouse.id) return
+		 this._machine.sendEvent(new PointerHoverOverEntity({ id: this.entityUnderMouse.id, point: currentPoint }))
+		 this._render.drawCanvas()
+		 // changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
+		 return
+		 }
+
+		 const hoveringOverEntityState = machineState[POINTER_STATE_KEY] === POINTER_STATE.HOVERING_OVER_ENTITY
+		 if (hoveringOverEntityState) {
+		 changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
+		 this._machine.sendEvent(new PointerLeaveEntity({ point: currentPoint }))
+		 this._render.drawCanvas()
+		 return
+		 }*/
+		/*		if (entityUnderMouse) {
+		 changeCanvasCursor(this.canvas, CURSOR_TYPE.POINTER)
+		 const hoveringEntityId = getStateCtx().pointer.hoveringEntityId
+		 if (hoveringEntityId === entityUnderMouse.id) return
+		 this._machine.sendEvent(new PointerHoverOverEntity({ id: entityUnderMouse.id, point: currentPoint }))
+		 // sendStateEvent(new PointerHoverOverEntity({ id: entityUnderMouse.id, point: currentPoint }))
+		 this._render.drawCanvas()
+		 changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
+		 return
+		 }
+		 if (this._machine.snapshot.matches('PointerState.HoveringOverEntity')) {
+		 changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
+		 this._machine.sendEvent(new PointerLeaveEntity({ point: currentPoint }))
+		 this._render.drawCanvas()
+		 // sendStateEvent(new PointerLeaveEntity({ point: currentPoint }))
+		 return
+		 }*/
 		/*		if (getState()
 		 .matches('PointerState.HoveringOverEntity')) {
 		 changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
@@ -364,23 +448,26 @@ export class DesignCanvasWithXstateDirective
 	/**
 	 * Mouse Up handler
 	 * @param event
+	 * @param currentPoint
 	 * @private
 	 */
 
-	onMouseUpHandler(event: PointerEvent) {
+	onMouseUpHandler(event: PointerEvent, currentPoint: TransformedPoint) {
 		if (isContextMenu(event)) return
 		if (this.mouseDownTimeOut) {
 			console.log('mouseDownTimeOut', this.mouseDownTimeOut)
 			clearTimeout(this.mouseDownTimeOut)
 			this.mouseDownTimeOut = undefined
-			this._state.updateState({
-				hover: {
-					onMouseDownEntityId: undefined,
-				},
-			})
-			this.mouseClickHandler(event)
+			/*			this._state.updateState({
+			 hover: {
+			 onMouseDownEntityId: undefined,
+			 },
+			 })*/
+			this.mouseClickHandler(event, currentPoint)
 			return
 		}
+
+		const machineState = this._machine.state
 		/*    this.mouseUpTimeOut = setTimeout(() => {
 		 this.mouseUpTimeOut = undefined
 		 }, 50)*/
@@ -390,30 +477,49 @@ export class DesignCanvasWithXstateDirective
 			this._view.handleDragScreenMouseUp(event)
 		}
 
-		const dragStart = this._machine.ctx.dragBox.selectionBoxStart
-		// const dragStart = this._state.dragBox.dragBoxStart
-		if (dragStart) {
-			this._dragV2.dragBoxMouseUp(event)
+		const dragBoxState = machineState[DRAG_BOX_STATE_KEY]
+
+		if (dragBoxState === DRAG_BOX_STATE.DRAG_BOX_IN_PROGRESS) {
+			this._drag.dragBoxMouseUp(event)
+			return
+		}
+
+		/*		const dragStart = this._machine.ctx.dragBox.selectionBoxStart
+		 // const dragStart = this._state.dragBox.dragBoxStart
+		 if (dragStart) {
+		 this._drag.dragBoxMouseUp(event)
+		 return
+		 }*/
+
+		const toMoveState = machineState[TO_MOVE_STATE_KEY]
+
+		if (toMoveState === TO_MOVE_STATE.SINGLE_MOVE_IN_PROGRESS) {
+			this._objPositioning.singleToMoveMouseUp(event)
+			return
+		}
+
+		if (toMoveState === TO_MOVE_STATE.MULTIPLE_MOVE_IN_PROGRESS) {
+			this._objPositioning.stopMultiSelectDragging(event)
 			return
 		}
 
 		// const singleToMove = this._machine.ctx.toMove.singleToMove
 		// const singleToMove = this._state.toMove.singleToMove
-		if (this._machine.snapshot.matches('ToMoveState.SingleMoveInProgress')) {
-			this._objPositioning.singleToMoveMouseUp(event)
-			return
-		}
+		/*		if (this._machine.snapshot.matches('ToMoveState.SingleMoveInProgress')) {
+		 this._objPositioning.singleToMoveMouseUp(event)
+		 return
+		 }*/
 		/*		if (singleToMove) {
 		 this._objPositioning.singleToMoveMouseUp(event, singleToMove)
 		 return
 		 }*/
 
-		const multipleToMove = this._machine.ctx.toMove.multipleToMove
-		// const multipleToMove = this._state.toMove.multipleToMove
-		if (multipleToMove) {
-			this._objPositioning.stopMultiSelectDragging(event)
-			return
-		}
+		/*		const multipleToMove = this._machine.ctx.toMove.multipleToMove
+		 // const multipleToMove = this._state.toMove.multipleToMove
+		 if (multipleToMove) {
+		 this._objPositioning.stopMultiSelectDragging(event)
+		 return
+		 }*/
 
 		this._render.drawCanvas()
 
@@ -423,14 +529,20 @@ export class DesignCanvasWithXstateDirective
 	/**
 	 * Mouse Click handler
 	 * @param event
+	 * @param currentPoint
 	 * @private
 	 */
 
-	mouseClickHandler(event: PointerEvent) {
+	mouseClickHandler(event: PointerEvent, currentPoint: TransformedPoint) {
 		if (isMenuOpen(this.menu)) {
 			this.menu.style.display = 'none'
 			return
 		}
+
+		const machineState = this._machine.state
+
+		const isMoving = machineState[TO_MOVE_STATE_KEY] !== TO_MOVE_STATE.NO_MOVE
+		const isRotating = machineState[TO_ROTATE_STATE_KEY] !== TO_ROTATE_STATE.NO_ROTATE
 		/*    if (this.mouseUpTimeOut) {
 		 console.log('mouseUpTimeOut', this.mouseUpTimeOut)
 		 clearTimeout(this.mouseUpTimeOut)
@@ -438,19 +550,30 @@ export class DesignCanvasWithXstateDirective
 		 this.mouseUpTimeOut = undefined
 		 return
 		 }*/
-		const singleRotateMode = this._state.toRotate.singleRotateMode
-		if (singleRotateMode) {
+
+		if (isRotating) {
 			this._objRotating.clearEntityToRotate()
 			return
 		}
 
-		const entityUnderMouse = this.getEntityUnderMouse(event)
+		if (isMoving) {
+			this._objPositioning.resetObjectPositioning(event)
+			return
+		}
+		/*		const singleRotateMode = this._state.toRotate.singleRotateMode
+		 if (singleRotateMode) {
+		 this._objRotating.clearEntityToRotate()
+		 return
+		 }*/
+
+		const entityUnderMouse = this.getEntityUnderTransformedPoint(currentPoint)
+		// const entityUnderMouse = this.getEntityUnderMouse(event)
 		if (entityUnderMouse) {
-			this._selectedV2.handleEntityUnderMouse(event, entityUnderMouse)
+			this._selected.handleEntityUnderMouse(event, entityUnderMouse)
 			console.log('entityUnderMouse', entityUnderMouse)
 			return
 		}
-		this._selectedV2.clearSelectedState()
+		this._selected.clearSelectedState()
 		if (this.anyEntitiesNearAreaOfClick(event)) {
 			return
 		}
@@ -477,7 +600,7 @@ export class DesignCanvasWithXstateDirective
 			 }*/
 		}
 		// const isStringSelected = !!this._state.selected.selectedStringId
-		// const isStringSelected = !!this._selectedV2.selectedStringId
+		// const isStringSelected = !!this._selected.selectedStringId
 		const entity = this._machine.ctx.selected.selectedStringId
 			// const entity = this._state.selected.selectedStringId
 			? createPanel(location, this._machine.ctx.selected.selectedStringId)
@@ -490,10 +613,11 @@ export class DesignCanvasWithXstateDirective
 	/**
 	 * Double Click handler
 	 * @param event
+	 * @param currentPoint
 	 * @private
 	 */
 
-	doubleClickHandler(event: PointerEvent) {
+	doubleClickHandler(event: PointerEvent, currentPoint: TransformedPoint) {
 		console.log('double click', event)
 		const entityUnderMouse = this.getEntityUnderMouse(event)
 		// const isPanel = this.getMouseOverPanel(event)
@@ -509,14 +633,14 @@ export class DesignCanvasWithXstateDirective
 					selectedStringId: belongsToString.id,
 				},
 			})
-			// this._selectedV2.setSelectedStringId(belongsToString.id)
+			// this._selected.setSelectedStringId(belongsToString.id)
 
-			// this._selectedV2.handleEntityDoubleClick(event, entityUnderMouse, this.strings)
+			// this._selected.handleEntityDoubleClick(event, entityUnderMouse, this.strings)
 			/*      if (!isPanel(entityUnderMouse)) return
 			 if (entityUnderMouse.stringId === UndefinedStringId) return
 			 const belongsToString = this.strings.find(string => string.id === entityUnderMouse.stringId)
 			 assertNotNull(belongsToString, 'string not found')
-			 this._selectedV2.setSelectedStringId(belongsToString.id)*/
+			 this._selected.setSelectedStringId(belongsToString.id)*/
 		}
 		/*    const mouseOverPanel = this.getMouseOverPanel(event)
 		 if (mouseOverPanel) {
@@ -524,7 +648,7 @@ export class DesignCanvasWithXstateDirective
 		 if (mouseOverPanel.stringId === UndefinedStringId) return
 		 const belongsToString = this.strings.find(string => string.id === mouseOverPanel.stringId)
 		 assertNotNull(belongsToString, 'string not found')
-		 this._selectedV2.setSelectedStringId(belongsToString.id)
+		 this._selected.setSelectedStringId(belongsToString.id)
 		 }*/
 	}
 
@@ -541,7 +665,7 @@ export class DesignCanvasWithXstateDirective
 			? 1.1
 			: 0.9
 
-		const currentTransformedCursor = this._domPoint.getTransformedPointFromEvent(event)
+		const currentTransformedCursor = this._domPoint.getTransformedPointFromEventOffsets(event)
 		this.ctx.translate(currentTransformedCursor.x, currentTransformedCursor.y)
 		this.ctx.scale(zoom, zoom)
 		this.ctx.translate(-currentTransformedCursor.x, -currentTransformedCursor.y)
@@ -581,7 +705,7 @@ export class DesignCanvasWithXstateDirective
 	keyUpHandler(event: KeyboardEvent) {
 		switch (event.key) {
 			case KEYS.ESCAPE:
-				this._selectedV2.clearSelectedState()
+				this._selected.clearSelectedState()
 				break
 			case KEYS.X: {
 				const multipleSelectedIds = this._state.selected.multipleSelectedIds
@@ -590,8 +714,8 @@ export class DesignCanvasWithXstateDirective
 				createStringWithPanels(this._state, multipleSelectedIds)
 
 				// TODO: move to local store
-				/*     if (this._selectedV2.multiSelected.length > 0) {
-				 this._stringsService.createStringWithPanels(this._selectedV2.getMultiSelectedByType(ENTITY_TYPE.Panel), this.strings)
+				/*     if (this._selected.multiSelected.length > 0) {
+				 this._stringsService.createStringWithPanels(this._selected.getMultiSelectedByType(ENTITY_TYPE.Panel), this.strings)
 
 				 }*/
 			}
@@ -637,7 +761,7 @@ export class DesignCanvasWithXstateDirective
 				const entityToRotate = this._state.toRotate.singleToRotate
 				const singleSelectedId = this._state.selected.singleSelectedId
 				if (singleSelectedId && !entityToRotate) {
-					// if (this._selectedV2.selected && !this._objectPos.entityToRotateId) {
+					// if (this._selected.selected && !this._objectPos.entityToRotateId) {
 					this._objRotating.setEntityToRotate(singleSelectedId, this.currentTransformedCursor)
 					console.log('set single to rotate')
 					return
@@ -647,7 +771,7 @@ export class DesignCanvasWithXstateDirective
 				// const multipleSelectedIds = this._state.toRotate.multipleToRotate.ids
 
 				/*   if (multipleToRotate && multipleToRotate.ids.length > 0) {
-				 // const multiSelectedIds = this._selectedV2.multiSelected.map(entity => entity.id)
+				 // const multiSelectedIds = this._selected.multiSelected.map(entity => entity.id)
 				 this._objectPos.setMultipleToRotate(multipleSelectedIds, this.currentTransformedCursor)
 				 console.log('set multiple to rotate')
 				 return

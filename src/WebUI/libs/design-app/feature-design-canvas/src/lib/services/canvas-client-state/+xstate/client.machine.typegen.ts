@@ -30,11 +30,13 @@ export interface Typegen0 {
     SetSingleMove: 'StartSingleMove'
     SetSingleRotate: 'StartSingleRotate'
     SetSingleRotateMode: 'StartSingleRotateMode'
+    SetViewDragging: 'StartViewDragging'
     StopMultipleMove: 'StopMultipleMove'
     StopMultipleRotate: 'StopMultipleRotate'
     StopSingleMove: 'StopSingleMove'
     StopSingleRotate: 'StopSingleRotate'
     StopSingleRotateMode: 'StopSingleRotate' | 'StopSingleRotateMode'
+    StopViewDragging: 'StopViewDragging'
   }
   eventsCausingDelays: {}
   eventsCausingGuards: {
@@ -62,6 +64,9 @@ export interface Typegen0 {
     | 'ToRotateState.NoRotate'
     | 'ToRotateState.SingleRotateInProgress'
     | 'ToRotateState.SingleRotateModeInProgress'
+    | 'ViewState'
+    | 'ViewState.ViewDraggingInProgress'
+    | 'ViewState.ViewNotMoving'
     | {
         DragBoxState?: 'DragBoxInProgress' | 'NoDragBox'
         PointerState?: 'HoveringOverEntity' | 'PointerIsDown' | 'PointerUp'
@@ -72,6 +77,7 @@ export interface Typegen0 {
           | 'NoRotate'
           | 'SingleRotateInProgress'
           | 'SingleRotateModeInProgress'
+        ViewState?: 'ViewDraggingInProgress' | 'ViewNotMoving'
       }
   tags: never
 }

@@ -1,6 +1,6 @@
 import { AngleRadians } from '../../../utils'
 import { DragBoxStateDeprecated } from './drag-box'
-import { GridState } from './grid'
+import { GridStateDeprecated } from './grid'
 import { HoveringEntityState } from './hovering'
 import { MenuState } from './menu'
 import { ModeState } from './mode'
@@ -9,7 +9,7 @@ import { NearbyState } from './nearby-entites'
 import { SelectedStateDeprecated } from './selected'
 import { ToMoveStateDeprecated } from './to-move'
 import { ToRotateStateDeprecated } from './to-rotate'
-import { ViewState } from './view'
+import { ViewStateDeprecated } from './view'
 import { TypeOfEntity } from '@design-app/feature-selected'
 import { Dictionary } from '@ngrx/entity/src/models'
 import { Point } from '@shared/data-access/models'
@@ -22,11 +22,11 @@ export type CanvasClientState = {
 	toMove: ToMoveStateDeprecated
 	dragBox: DragBoxStateDeprecated
 	mode: ModeState
-	view: ViewState
+	view: ViewStateDeprecated
 	mouse: MouseState
 	menu: MenuState
 	nearby: NearbyState
-	grid: GridState
+	grid: GridStateDeprecated
 }
 export type StateUpdate = {
 	[P in keyof CanvasClientState]?: Partial<CanvasClientState[P]>

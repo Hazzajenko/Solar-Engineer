@@ -3,6 +3,7 @@ import { XStatePointerEvent } from './pointer'
 import { XStateSelectedEvent } from './selected'
 import { XStateToMoveEvent } from './to-move'
 import { XStateToRotateEvent } from './to-rotate'
+import { XStateViewEvent } from './view'
 
 
 export type XStateEvent =
@@ -11,3 +12,4 @@ export type XStateEvent =
 	| XStatePointerEvent
 	| XStateToMoveEvent
 	| XStateToRotateEvent
+	| XStateViewEvent

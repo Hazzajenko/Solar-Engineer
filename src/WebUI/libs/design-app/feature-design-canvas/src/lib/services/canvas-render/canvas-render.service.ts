@@ -131,7 +131,7 @@ export class CanvasRenderService {
 		})
 	}
 
-	drawDragBox(event: MouseEvent) {
+	drawDragBox(event: PointerEvent) {
 		const start = this._machine.ctx.dragBox.selectionBoxStart
 		// const start = this._state.state.dragBox.dragBoxStart
 		if (!start) {

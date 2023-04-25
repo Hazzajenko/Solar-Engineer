@@ -1,33 +1,70 @@
-import { canvasAppMachine } from './client.machine'
-import { XStateEvent } from './xstate-app-events.types'
-import { interpret } from 'xstate'
+import { canvasAppMachine } from './client.machine';
+import { XStateEvent } from './xstate-app-events.types';
+import { AppStateValue } from './xstate-app.states';
+import { getDifferenceInTwoObjects3, getNewStateFromTwoObjects } from '@shared/utils';
+import { interpret } from 'xstate';
 
-const consoleLogTransition = () => {
-	console.log('transition')
-	// const state = canvasAppMachine.initialState;
-	// const state = canvasAppMachine.snapshot;
-	const state = canvasAppXStateService.getSnapshot()
-	console.log(state.value)
-	console.log(state.actions)
-	console.log(state.context)
-	console.log(state.event)
-	console.log(state.history)
-	const newState = canvasAppMachine.transition(state, state.event.type)
-	console.log(newState.value)
-	/*  const newState = canvasAppMachine.transition(state, 'Add Entity To Multiple Selected')
 
-	 console.log(newState.actions)
-	 console.log(newState.event)
-	 console.log(newState.nextEvents)
-	 console.log(newState.transitions)
+/*function xstateLogger<TContext, TEvents extends EventObject>(
+ s: State<
+ TContext,
+ TEvents,
+ any,
+ {
+ value: any
+ context: TContext
+ }
+ >,
+ ) {
+ console.groupCollapsed('%c event', 'color: gray; font-weight: lighter;', s.event.type)
+ console.log('%c prev state', 'color: #9E9E9E; font-weight: bold;', s.history)
+ console.log('%c event', 'color: #03A9F4; font-weight: bold;', s.event)
+ console.log('%c next state', 'color: #4CAF50; font-weight: bold;', s)
+ console.groupEnd()
+ }*/
 
-	 console.log(newState)*/
+export const stateDifferenceLogger = (state: any) => {
+	const currentState = state.value as AppStateValue
+	const historyState = state.history?.historyValue?.current as AppStateValue
+	const stateDifference = historyState
+		? getDifferenceInTwoObjects3(historyState, currentState)
+		: null
+	if (stateDifference) {
+		if (!stateDifference[0].PointerState) {
+			for (const key in stateDifference[0]) {
+				if (Object.prototype.hasOwnProperty.call(stateDifference[0], key)) {
+					const element = (stateDifference[0] as never)[key]
+					console.log(
+						'%c state',
+						'color: #03A9F4; font-weight: bold;',
+						`${key}: ${element} => ${(stateDifference[1] as never)[key]}`,
+					)
+				}
+			}
+		}
+	}
 }
+
+export const stateEventLoggerExcludePointerState = (state: any) => {
+	const currentState = state.value as AppStateValue
+	const historyState = state.history?.historyValue?.current as AppStateValue
+	const stateDifference = historyState
+		? getNewStateFromTwoObjects(historyState, currentState)
+		: null
+	if (stateDifference && Object.keys(stateDifference).length > 0) {
+		if (!stateDifference.PointerState) {
+			console.log('%c event', 'color: #03A9F4; font-weight: bold;', stateDifference)
+		}
+	}
+}
+
+// const stateLogger = new StaticLogger('state')
 
 export const canvasAppXStateService = interpret(canvasAppMachine, { devTools: true }).onTransition(
 	(state) => {
-		console.log(state.value)
-		consoleLogTransition()
+		// stateDifferenceLogger(state)
+		stateEventLoggerExcludePointerState(state)
+		// console.log('%c state', 'color: #03A9F4; font-weight: bold;', state.event)
 	},
 )
 

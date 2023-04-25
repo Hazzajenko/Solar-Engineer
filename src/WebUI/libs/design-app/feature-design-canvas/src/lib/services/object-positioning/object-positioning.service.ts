@@ -1,9 +1,11 @@
 import { inject, Injectable } from '@angular/core'
 import { CanvasClientStateService, CanvasElementService, CanvasRenderService, DomPointService, MachineService, StartMultipleMove, StartSingleMove, StopMultipleMove, StopSingleMove } from '..'
 import { CURSOR_TYPE, Point } from '@shared/data-access/models'
-import { CANVAS_COLORS, changeCanvasCursor, EntityFactory, eventToPointLocation, getEntityBounds, getTopLeftPointFromTransformedPoint, isHoldingClick, isPointInsideBounds, SizeByType, TransformedPoint } from '@design-app/feature-design-canvas'
 import { assertNotNull } from '@shared/utils'
 import { ENTITY_TYPE } from '@design-app/shared'
+import { changeCanvasCursor, getEntityBounds, getTopLeftPointFromTransformedPoint, isHoldingClick, isPointInsideBounds } from '../../utils'
+import { CANVAS_COLORS, EntityFactory, SizeByType, TransformedPoint } from '../../types'
+import { eventToPointLocation } from '../../functions'
 
 @Injectable({
 	providedIn: 'root',
@@ -22,12 +24,12 @@ export class ObjectPositioningService {
 		return this._canvasElement.canvas
 	}
 
-	singleToMoveMouseDown(event: MouseEvent, singleToMoveId: string) {
+	singleToMoveMouseDown(event: PointerEvent, singleToMoveId: string) {
 		this.singleToMoveId = singleToMoveId
 		this._machine.sendEvent(new StartSingleMove())
 	}
 
-	singleToMoveMouseMove(event: MouseEvent) {
+	singleToMoveMouseMove(event: PointerEvent) {
 		if (!isHoldingClick(event)) {
 			this._machine.sendEvent(new StopSingleMove())
 			this.singleToMoveId = undefined
@@ -63,7 +65,7 @@ export class ObjectPositioningService {
 		this._render.drawCanvasExcludeIdsWithFn([this.singleToMoveId], drawSingleToMove)
 	}
 
-	singleToMoveMouseUp(event: MouseEvent) {
+	singleToMoveMouseUp(event: PointerEvent) {
 		assertNotNull(this.singleToMoveId)
 
 		const location = this._domPoint.getTransformedPointToMiddleOfObjectFromEvent(event, ENTITY_TYPE.Panel)
@@ -77,14 +79,14 @@ export class ObjectPositioningService {
 		return
 	}
 
-	multiSelectDraggingMouseDown(event: MouseEvent, multipleSelectedIds: string[]) {
+	multiSelectDraggingMouseDown(event: PointerEvent, multipleSelectedIds: string[]) {
 		if (!event.shiftKey || !event.ctrlKey) return
 		this.multipleToMoveIds = multipleSelectedIds
 		this.multiToMoveStart = this._domPoint.getTransformedPointFromEvent(event)
 		this._machine.sendEvent(new StartMultipleMove())
 	}
 
-	setMultiSelectDraggingMouseMove(event: MouseEvent, multipleSelectedIds: string[]) {
+	setMultiSelectDraggingMouseMove(event: PointerEvent, multipleSelectedIds: string[]) {
 		if (!event.shiftKey || !event.ctrlKey) {
 			this.stopMultiSelectDragging(event)
 			return
@@ -94,7 +96,7 @@ export class ObjectPositioningService {
 		this._machine.sendEvent(new StartMultipleMove())
 	}
 
-	multiSelectDraggingMouseMove(event: MouseEvent) {
+	multiSelectDraggingMouseMove(event: PointerEvent) {
 		if (!event.shiftKey || !event.ctrlKey) {
 			this.stopMultiSelectDragging(event)
 			return
@@ -178,6 +180,22 @@ export class ObjectPositioningService {
 
 		this._render.drawCanvas()
 		return
+	}
+
+	resetObjectPositioning(event: PointerEvent) {
+		if (this.multiToMoveStart) {
+			this.stopMultiSelectDragging(event)
+			this._machine.sendEvent(new StopMultipleMove())
+		}
+		if (this.singleToMoveId) {
+			this.singleToMoveMouseUp(event)
+			this._machine.sendEvent(new StopSingleMove())
+		}
+
+		this._canvasElement.changeCursor(CURSOR_TYPE.AUTO)
+		this.singleToMoveId = undefined
+		this.multipleToMoveIds = []
+		this.multiToMoveStart = undefined
 	}
 
 	areAnyEntitiesNearbyExcludingGrabbed(point: TransformedPoint, grabbedId: string) {
