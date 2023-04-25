@@ -4,7 +4,7 @@ import {
 	HoveringEntityState,
 	InitialSelectedState,
 	MenuState,
-	ModeState,
+	ModeStateDeprecated,
 	MouseState,
 	NearbyStateDeprecated,
 	SelectedStateDeprecated,
@@ -29,7 +29,7 @@ export type CanvasAppMachineContext = {
 	toRotate: ToRotateStateDeprecated
 	toMove: ToMoveStateDeprecated
 	dragBox: DragBoxStateDeprecated
-	mode: ModeState
+	mode: ModeStateDeprecated
 	view: ViewStateDeprecated
 	mouse: MouseState
 	menu: MenuState
@@ -335,22 +335,46 @@ export const canvasAppMachine = createMachine(
 				},
 			},
 			GridState: {
-				initial: 'SelectMode',
+				type: 'parallel',
 				states: {
-					SelectMode: {
-						on: {
-							StartClickCreateMode: {
-								target: 'CreateMode',
+					PreviewAxisState: {
+						initial: 'PreviewAxisDrawEnabled',
+						states: {
+							PreviewAxisDrawEnabled: {
+								on: {
+									TogglePreviewAxisDraw: {
+										target: 'PreviewAxisDrawDisabled',
+									},
+								},
+							},
+							PreviewAxisDrawDisabled: {
+								on: {
+									TogglePreviewAxisDraw: {
+										target: 'PreviewAxisDrawEnabled',
+									},
+								},
 							},
 						},
 					},
-					CreateMode: {
-						on: {
-							StartClickSelectMode: {
-								target: 'SelectMode',
+					ModeState: {
+						initial: 'SelectMode',
+						states: {
+							SelectMode: {
+								on: {
+									StartClickCreateMode: {
+										target: 'CreateMode',
+									},
+								},
 							},
-							ResetGridClickMode: {
-								target: 'SelectMode',
+							CreateMode: {
+								on: {
+									StartClickSelectMode: {
+										target: 'SelectMode',
+									},
+									ResetGridClickMode: {
+										target: 'SelectMode',
+									},
+								},
 							},
 						},
 					},

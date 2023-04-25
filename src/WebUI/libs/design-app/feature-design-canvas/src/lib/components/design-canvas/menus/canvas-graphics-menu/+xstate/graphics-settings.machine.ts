@@ -7,6 +7,7 @@ import { createMachine } from 'xstate'
 
 export const graphicsSettingsMachine = createMachine(
 	{
+		tsTypes: {} as import("./graphics-settings.machine.typegen").Typegen0,
 		type: 'parallel',
 		schema: {
 			context: {} as GraphicsSettingsContext,

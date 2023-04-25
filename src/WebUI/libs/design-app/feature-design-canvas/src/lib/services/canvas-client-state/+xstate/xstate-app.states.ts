@@ -1,5 +1,5 @@
 import { DRAG_BOX_STATE, DRAG_BOX_STATE_KEY, DragBoxState } from './drag-box'
-import { GRID_STATE, GRID_STATE_KEY, GridState } from './grid'
+import { GRID_STATE_KEY, GridState, InitialGridState } from './grid'
 import { POINTER_STATE, POINTER_STATE_KEY, PointerState } from './pointer'
 import {
 	AdjustedSelectedState,
@@ -51,9 +51,28 @@ export const InitialAppState: AppStateValue = {
 	[TO_MOVE_STATE_KEY]: TO_MOVE_STATE.NO_MOVE,
 	[TO_ROTATE_STATE_KEY]: TO_ROTATE_STATE.NO_ROTATE,
 	[VIEW_STATE_KEY]: VIEW_STATE.VIEW_NOT_MOVING,
-	[GRID_STATE_KEY]: GRID_STATE.IN_SELECT_MODE,
+	[GRID_STATE_KEY]: InitialGridState,
 }
 
+export type AppStateValueV2 = {
+	DragBoxState: DragBoxState
+	PointerState: PointerState
+	SelectedState: SelectedState
+	ToMoveState: ToMoveState
+	ToRotateState: ToRotateState
+	ViewState: ViewState
+	GridState: GridState
+}
+
+export const InitialAppStateV2: AppStateValueV2 = {
+	DragBoxState: DRAG_BOX_STATE.NO_DRAG_BOX,
+	PointerState: POINTER_STATE.POINTER_UP,
+	SelectedState: SELECTED_STATE.NONE_SELECTED,
+	ToMoveState: TO_MOVE_STATE.NO_MOVE,
+	ToRotateState: TO_ROTATE_STATE.NO_ROTATE,
+	ViewState: VIEW_STATE.VIEW_NOT_MOVING,
+	GridState: InitialGridState,
+}
 /*	[APP_STATE.DRAG_BOX.STATE]: APP_STATE.DRAG_BOX.NO_DRAG_BOX,
  [APP_STATE.POINTER.STATE]: APP_STATE.POINTER.POINTER_UP,
  [APP_STATE.SELECTED.STATE]: APP_STATE.SELECTED.NONE_SELECTED,

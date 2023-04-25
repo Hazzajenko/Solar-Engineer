@@ -55,12 +55,66 @@ export type NearbyGraphicsEvent =
 // CenterLineScreenSize
 // TwoSideAxisLines
 
-export const NEARBY_GRAPHICS_STATE = {
-	NEARBY_LINES_ENABLED: 'NearbyLinesEnabled',
-	NEARBY_LINES_DISABLED: 'NearbyLinesDisabled',
+export const NEARBY_GRAPHICS_STATE_MODE = {
 	CENTER_LINE_BETWEEN_TWO_ENTITIES: 'CenterLineBetweenTwoEntities',
 	CENTER_LINE_SCREEN_SIZE: 'CenterLineScreenSize',
 	TWO_SIDE_AXIS_LINES: 'TwoSideAxisLines',
 } as const
+export type NearbyGraphicsStateMode =
+	(typeof NEARBY_GRAPHICS_STATE_MODE)[keyof typeof NEARBY_GRAPHICS_STATE_MODE]
 
-export type NearbyGraphicsState = (typeof NEARBY_GRAPHICS_STATE)[keyof typeof NEARBY_GRAPHICS_STATE]
+export const isNearbyLinesEnabled = (state: NearbyGraphicsState): boolean => {
+	if (typeof state === 'string') return false
+	return 'NearbyLinesEnabled' in state
+}
+export const NEARBY_GRAPHICS_STATE = {
+	NEARBY_LINES_ENABLED: 'NearbyLinesEnabled',
+	NEARBY_LINES_DISABLED: 'NearbyLinesDisabled',
+	CHILDREN: NEARBY_GRAPHICS_STATE_MODE,
+} as const
+
+// | 'NearbyLinesState'
+// | 'NearbyLinesState.NearbyLinesDisabled'
+// | 'NearbyLinesState.NearbyLinesEnabled'
+// | 'NearbyLinesState.NearbyLinesEnabled.CenterLineBetweenTwoEntities'
+// | 'NearbyLinesState.NearbyLinesEnabled.CenterLineScreenSize'
+// | 'NearbyLinesState.NearbyLinesEnabled.TwoSideAxisLines'
+
+export type NearbyGraphicsState =
+	| {
+			NearbyLinesEnabled: NearbyGraphicsStateMode
+	  }
+	| 'NearbyLinesDisabled'
+
+export const NEARBY_LINES_STATE_KEY = 'NearbyLinesState'
+
+/*const asdasdsa: NearbyGraphicsState = 'NearbyLinesDisabled'
+ const asasdasdasdsa: NearbyGraphicsState = {
+ NearbyLinesEnabled: 'CenterLineBetweenTwoEntities',
+ }*/
+/*
+ const what: NearbyGraphicsState = {
+ value: 'NearbyLinesDisabled',
+ context: {
+ value: 'NearbyLinesDisabled',
+ }
+
+ }
+ */
+
+/*export type NearbyGraphicsState =
+ | 'NearbyLinesEnabled'
+ | 'NearbyLinesDisabled'
+ | NearbyGraphicsStateChildren*/
+// const dasdsa: NearbyGraphicsState = 'CenterLineBetweenTwdoEntities'
+/*export type NearbyGraphicsState =
+ | (typeof NEARBY_GRAPHICS_STATE)[keyof typeof NEARBY_GRAPHICS_STATE]
+ | {
+ [key in NearbyGraphicsStateChildren]: NearbyGraphicsStateChildren[keyof NearbyGraphicsStateChildren]
+ }*/
+
+/*		const dsadas: NearbyGraphicsState = {
+ 'CENTER_LINE_BETWEEN_TWO_ENTITIES': 'CENTER_LINE_BETWEEN_TWO_ENTITIES',
+ }*/
+
+// const asdas: NearbyGraphicsState = 'TwoSideAxisLines'

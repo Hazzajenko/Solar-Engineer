@@ -1,3 +1,4 @@
+import { GraphicsSettingsMachineService } from '../components'
 import { setupCanvas } from '../functions/setup-canvas'
 import {
 	AppStateValue,
@@ -51,6 +52,8 @@ export abstract class DesignCanvasDirectiveExtension {
 	protected _state = inject(CanvasClientStateService)
 	protected _selected = inject(CanvasSelectedXstateService)
 	protected _nearby = inject(CanvasNearbyService)
+	protected _machine = inject(MachineService)
+	protected _graphics = inject(GraphicsSettingsMachineService)
 	// protected _selected = inject(CanvasSelectedService)
 	protected _domPoint = inject(DomPointService)
 	protected delayedLogger = new DelayedLogger()
@@ -82,8 +85,6 @@ export abstract class DesignCanvasDirectiveExtension {
 	protected width = this.canvas.width
 
 	protected currentPoint: TransformedPoint = { x: 0, y: 0 } as TransformedPoint
-
-	protected _machine = inject(MachineService)
 
 	protected mouseDownTimeOutFn = () => {
 		this.mouseDownTimeOut = setTimeout(() => {

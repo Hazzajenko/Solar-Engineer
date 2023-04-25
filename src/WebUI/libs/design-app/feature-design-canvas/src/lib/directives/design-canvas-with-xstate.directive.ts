@@ -5,26 +5,10 @@ import { ENTITY_TYPE } from '@design-app/shared'
 import { assertNotNull, OnDestroyDirective } from '@shared/utils'
 import { changeCanvasCursor, dragBoxKeysDown, draggingScreenKeysDown, getTopLeftPointFromTransformedPoint, isContextMenu, isDraggingEntity, isMenuOpen, isReadyToMultiDrag, multiSelectDraggingKeysDown, rotatingKeysDown } from '../utils'
 import { DesignCanvasDirectiveExtension } from './design-canvas-directive.extension'
-import { AppStateValue, DRAG_BOX_STATE, GRID_STATE, POINTER_STATE, PointerHoverOverEntity, PointerLeaveEntity, StartClickCreateMode, StartClickSelectMode, TO_MOVE_STATE, TO_ROTATE_STATE, VIEW_STATE } from '../services'
+import { AppStateValue, DRAG_BOX_STATE, MODE_STATE, POINTER_STATE, PointerHoverOverEntity, PointerLeaveEntity, StartClickCreateMode, StartClickSelectMode, TO_MOVE_STATE, TO_ROTATE_STATE, VIEW_STATE } from '../services'
 import { createStringWithPanels } from '../utils/string-fns'
-
-interface DesignCanvasEventHandlers {
-	onMouseDownHandler(event: PointerEvent, currentPoint: TransformedPoint): void
-
-	onMouseMoveHandler(event: PointerEvent, currentPoint: TransformedPoint): void
-
-	onMouseUpHandler(event: PointerEvent, currentPoint: TransformedPoint): void
-
-	mouseClickHandler(event: PointerEvent, currentPoint: TransformedPoint, state: AppStateValue): void
-
-	doubleClickHandler(event: PointerEvent, currentPoint: TransformedPoint): void
-
-	contextMenuHandler(event: PointerEvent, currentPoint: TransformedPoint): void
-
-	wheelScrollHandler(event: WheelEvent): void
-
-	keyUpHandler(event: KeyboardEvent): void
-}
+import { DesignCanvasEventHandlers } from './canvas-event-handlers'
+import { CREATE_PREVIEW_STATE } from '../components'
 
 @Directive({
 	selector: '[appDesignCanvasXState]', providers: [OnDestroyDirective], standalone: true,
@@ -119,6 +103,7 @@ export class DesignCanvasWithXstateDirective
 		this.transformedMousePos.innerText = `Transformed X: ${this.currentTransformedCursor.x}, Y: ${this.currentTransformedCursor.y}`
 
 		const { ToRotateState, SelectedState, ToMoveState, DragBoxState, ViewState, PointerState } = this._machine.state
+		const { NearbyLinesState, CreatePreviewState } = this._graphics.state
 
 		// const machineState = this._machine.state
 
@@ -238,23 +223,34 @@ export class DesignCanvasWithXstateDirective
 			return
 		}
 
-		const { menu } = this._state.getState()
-		if (menu.createPreview) {
-			// const size = SizeByType[ENTITY_TYPE.Panel]
-			// const fnReturns = getDrawPreviewEntityFnV2(currentPoint, size, this._state, event)
-			this._nearby.getDrawEntityPreview(event, currentPoint)
+		// if (NearbyLinesState ===)
+		if (CreatePreviewState === CREATE_PREVIEW_STATE.CREATE_PREVIEW_ENABLED) {
+			// const nearbyLinesEnabled = isNearbyLinesEnabled(NearbyLinesState)
+			this._nearby.getDrawEntityPreview(event, currentPoint, NearbyLinesState)
 			return
-
-			/*			const fnReturns = getDrawPreviewEntityFnV2(currentPoint, size, this._state, event)
-			 if (fnReturns) {
-			 if (fnReturns.changes) {
-			 this._state.updateState(fnReturns.changes)
-			 }
-
-			 this._render.drawCanvasWithFunction(fnReturns.ctxFn)
-			 return
-			 }*/
 		}
+
+		/*		if (isNearbyLinesEnabled(NearbyLinesState)) {
+		 this._nearby.getDrawEntityPreview(event, currentPoint)
+		 return
+		 }*/
+		/*	const { menu } = this._state.getState()
+		 if (menu.createPreview) {
+		 // const size = SizeByType[ENTITY_TYPE.Panel]
+		 // const fnReturns = getDrawPreviewEntityFnV2(currentPoint, size, this._state, event)
+		 this._nearby.getDrawEntityPreview(event, currentPoint)
+		 return
+
+		 /!*			const fnReturns = getDrawPreviewEntityFnV2(currentPoint, size, this._state, event)
+		 if (fnReturns) {
+		 if (fnReturns.changes) {
+		 this._state.updateState(fnReturns.changes)
+		 }
+
+		 this._render.drawCanvasWithFunction(fnReturns.ctxFn)
+		 return
+		 }*!/
+		 }*/
 		// isPointInsideBounds(currentPoint, keyMapRect) ? changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO) : changeCanvasCursor(this.canvas, CURSOR_TYPE.GRAB
 
 	}
@@ -520,11 +516,11 @@ export class DesignCanvasWithXstateDirective
 				break
 			case KEYS.C: {
 				const { GridState } = this._machine.state
-				switch (GridState) {
-					case GRID_STATE.IN_SELECT_MODE:
+				switch (GridState.ModeState) {
+					case MODE_STATE.IN_SELECT_MODE:
 						this._machine.sendEvent(new StartClickCreateMode())
 						break
-					case GRID_STATE.IN_CREATE_MODE:
+					case MODE_STATE.IN_CREATE_MODE:
 						this._machine.sendEvent(new StartClickSelectMode())
 						break
 					default:

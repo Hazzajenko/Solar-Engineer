@@ -1,31 +1,48 @@
 <ng-container *ngIf="graphicsState$ | async as state">
   <div class="rounded bg-slate-100 p-2">
-    <div
-      *ngFor="let item of canvasMenuArr"
-      (click)="item.action()"
-      class="relative flex items-start p-2 hover:bg-gray-200"
-    >
-      <div class="flex h-6 items-center">
-        <input
-          id="create-preview"
-          name="create-preview"
-          [checked]="item.selected"
-          type="checkbox"
-          class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-        />
-      </div>
-      <div class="ml-3 text-sm leading-6">
-        <label for="create-preview" class="font-medium text-gray-900">{{ item.label }}</label>
-      </div>
-    </div>
-    <div>
-      <label for="location" class="block text-sm font-medium leading-6 text-gray-900"
-        >Nearby Axis Line</label
+    <ng-container *ngrxLet="state.CreatePreviewState as createPreviewState">
+      <div
+        (click)="graphicsMachine.sendEvent(CREATE_PREVIEW_EVENT.CREATE_PREVIEW_TOGGLE)"
+        class="relative flex items-start p-2 hover:bg-gray-200"
       >
+        <div class="flex h-6 items-center">
+          <input
+            id="toggle-create-preview"
+            [checked]="createPreviewState === CREATE_PREVIEW_STATE.CREATE_PREVIEW_ENABLED"
+            type="checkbox"
+            class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+          />
+        </div>
+        <div class="pointer-events-none ml-3 text-sm leading-6">
+          <label for="toggle-nearby-lines" class="font-medium text-gray-900">Create Preview</label>
+        </div>
+      </div>
+    </ng-container>
+    <ng-container *ngrxLet="state.NearbyLinesState as nearbyState">
+      <div
+        (click)="graphicsMachine.sendEvent(NEARBY_GRAPHICS_EVENT.NEARBY_LINES_TOGGLE)"
+        class="relative flex items-start p-2 hover:bg-gray-200"
+      >
+        <div class="flex h-6 items-center">
+          <input
+            id="toggle-nearby-lines"
+            [checked]="nearbyState | isNearbyLinesEnabled"
+            type="checkbox"
+            class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+          />
+        </div>
+        <div class="pointer-events-none ml-3 text-sm leading-6">
+          <label for="toggle-nearby-lines" class="font-medium text-gray-900">Nearby Lines</label>
+        </div>
+      </div>
+      <label for="nearby-graphics" class="text-xs font-medium text-gray-900">
+        <span>Nearby Lines</span>
+      </label>
       <select
+        [disabled]="!(nearbyState | isNearbyLinesEnabled)"
         (change)="changeNearbyGraphics($event)"
-        id="location"
-        name="location"
+        id="nearby-graphics"
+        name="nearby-graphics"
         class="mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
       >
         <option
@@ -36,6 +53,6 @@
           {{ option.label }}
         </option>
       </select>
-    </div>
+    </ng-container>
   </div>
 </ng-container>

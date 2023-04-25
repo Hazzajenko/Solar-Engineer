@@ -3,7 +3,7 @@ import { DragBoxStateDeprecated } from './drag-box'
 import { GridStateDeprecated } from './grid'
 import { HoveringEntityState } from './hovering'
 import { MenuState } from './menu'
-import { ModeState } from './mode'
+import { ModeStateDeprecated } from './mode'
 import { MouseState } from './mouse'
 import { NearbyStateDeprecated } from './nearby-entites'
 import { SelectedStateDeprecated } from './selected'
@@ -21,7 +21,7 @@ export type CanvasClientState = {
 	toRotate: ToRotateStateDeprecated
 	toMove: ToMoveStateDeprecated
 	dragBox: DragBoxStateDeprecated
-	mode: ModeState
+	mode: ModeStateDeprecated
 	view: ViewStateDeprecated
 	mouse: MouseState
 	menu: MenuState

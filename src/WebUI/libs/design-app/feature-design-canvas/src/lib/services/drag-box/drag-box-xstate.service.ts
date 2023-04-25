@@ -5,7 +5,7 @@ import { CURSOR_TYPE } from '@shared/data-access/models'
 import { DomPointService } from '../dom-point.service'
 import { assertNotNull } from '@shared/utils'
 import { changeCanvasCursor, dragBoxKeysDown, getAllAvailableEntitySpotsBetweenTwoPoints, getAllEntitiesBetweenTwoPoints } from '../../utils'
-import { CANVAS_MODE, CanvasClientStateService, CreationBoxStarted, CURRENT_DRAG_BOX, GRID_STATE, MachineService, SelectionBoxCompleted, SelectionBoxStarted, StopDragBox } from '../canvas-client-state'
+import { CANVAS_MODE, CanvasClientStateService, CreationBoxStarted, CURRENT_DRAG_BOX, GridState, MachineService, MODE_STATE, SelectionBoxCompleted, SelectionBoxStarted, StopDragBox } from '../canvas-client-state'
 import { CanvasRenderService } from '../canvas-render'
 import { ENTITY_TYPE } from '@design-app/shared'
 import { getStartAndEndForAxisLineDragBox } from './utils'
@@ -34,14 +34,14 @@ export class DragBoxXstateService {
 		return this.ctx.getTransform().a
 	}
 
-	handleDragBoxMouseDown(event: PointerEvent, currentPoint: TransformedPoint, GridState: 'CreateMode' | 'SelectMode') {
+	handleDragBoxMouseDown(event: PointerEvent, currentPoint: TransformedPoint, GridState: GridState) {
 		// const clickMode = this._machine.state[GRID_STATE_KEY]
 
-		switch (GridState) {
-			case GRID_STATE.IN_SELECT_MODE:
+		switch (GridState.ModeState) {
+			case MODE_STATE.IN_SELECT_MODE:
 				this._machine.sendEvent(new SelectionBoxStarted({ point: currentPoint }))
 				break
-			case GRID_STATE.IN_CREATE_MODE:
+			case MODE_STATE.IN_CREATE_MODE:
 				this._machine.sendEvent(new CreationBoxStarted())
 				break
 			default:

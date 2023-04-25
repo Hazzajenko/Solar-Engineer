@@ -2,12 +2,14 @@ import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, inject, 
 import { AsyncPipe, NgForOf, NgIf } from '@angular/common'
 import { CanvasClientStateService, CanvasRenderService } from '../../../../services'
 import { EVENT_TYPE } from '@shared/data-access/models'
-import { GraphicsSettingsMachineService, NEARBY_GRAPHICS_EVENT, NEARBY_GRAPHICS_EVENT_TYPE, NEARBY_GRAPHICS_STATE, NearbyGraphicsEventType } from './+xstate'
+import { CREATE_PREVIEW_EVENT, CREATE_PREVIEW_STATE, GraphicsSettingsMachineService, NEARBY_GRAPHICS_EVENT, NEARBY_GRAPHICS_EVENT_TYPE, NEARBY_GRAPHICS_STATE, NearbyGraphicsEventType } from './+xstate'
 import { ReactiveFormsModule } from '@angular/forms'
+import { LetModule } from '@ngrx/component'
+import { IsNearbyLinesEnabledPipe } from './pipes'
 
 @Component({
 	selector:       'app-canvas-graphics-menu', standalone: true, imports: [
-		NgForOf, NgIf, AsyncPipe, ReactiveFormsModule,
+		NgForOf, NgIf, AsyncPipe, ReactiveFormsModule, LetModule, IsNearbyLinesEnabledPipe,
 	], templateUrl: './canvas-graphics-menu.component.html', styles: [], changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CanvasGraphicsMenuComponent
@@ -20,7 +22,9 @@ export class CanvasGraphicsMenuComponent
 
 	// protected readonly SelectCenterLineScreenSize = SelectCenterLineScreenSize
 	protected readonly NEARBY_GRAPHICS_STATE = NEARBY_GRAPHICS_STATE
-
+	protected readonly NEARBY_GRAPHICS_EVENT = NEARBY_GRAPHICS_EVENT
+	protected readonly CREATE_PREVIEW_STATE = CREATE_PREVIEW_STATE
+	protected readonly CREATE_PREVIEW_EVENT = CREATE_PREVIEW_EVENT
 	private _state = inject(CanvasClientStateService)
 	private _render = inject(CanvasRenderService)
 	private _renderer = inject(Renderer2)
@@ -41,11 +45,13 @@ export class CanvasGraphicsMenuComponent
 
 	nearbyGraphicsSelectMenuArray = [
 		{
-			label: 'Center Line Between Two Entities', value: NEARBY_GRAPHICS_EVENT_TYPE.SELECT_CENTER_LINE_BETWEEN_TWO_ENTITIES, selected: this.graphicsMachine.state.NearbyLinesState === NEARBY_GRAPHICS_STATE.CENTER_LINE_BETWEEN_TWO_ENTITIES,
+			label: 'Center Line Between Two Entities', value: NEARBY_GRAPHICS_EVENT_TYPE.SELECT_CENTER_LINE_BETWEEN_TWO_ENTITIES, selected: true, // selected: this.graphicsMachine.state.NearbyLinesState === NEARBY_GRAPHICS_STATE.CHILDREN.CENTER_LINE_BETWEEN_TWO_ENTITIES,
 		}, {
-			label: 'Center Line Screen Size', value: NEARBY_GRAPHICS_EVENT_TYPE.SELECT_CENTER_LINE_SCREEN_SIZE, selected: this.graphicsMachine.state.NearbyLinesState === NEARBY_GRAPHICS_STATE.CENTER_LINE_SCREEN_SIZE,
+			label: 'Center Line Screen Size', value: NEARBY_GRAPHICS_EVENT_TYPE.SELECT_CENTER_LINE_SCREEN_SIZE, selected: true,
+
+			// selected: this.graphicsMachine.state.NearbyLinesState === NEARBY_GRAPHICS_STATE.CENTER_LINE_SCREEN_SIZE,
 		}, {
-			label: 'Two Side Axis Lines', value: NEARBY_GRAPHICS_EVENT_TYPE.SELECT_TWO_SIDE_AXIS_LINES, selected: this.graphicsMachine.state.NearbyLinesState === NEARBY_GRAPHICS_STATE.TWO_SIDE_AXIS_LINES,
+			label: 'Two Side Axis Lines', value: NEARBY_GRAPHICS_EVENT_TYPE.SELECT_TWO_SIDE_AXIS_LINES, selected: false, // selected: this.graphicsMachine.state.NearbyLinesState === NEARBY_GRAPHICS_STATE.TWO_SIDE_AXIS_LINES,
 		},
 	]
 
@@ -101,4 +107,8 @@ export class CanvasGraphicsMenuComponent
 				throw new Error(`Unknown nearby graphics state: ${newState}`)
 		}
 	}
+
+	// protected readonly IsNearbyLinesEnabled = IsNearbyLinesEnabled
+
+	// protected readonly CREATE_PREVIEW_STATE = CREATE_PREVIEW_STATE
 }

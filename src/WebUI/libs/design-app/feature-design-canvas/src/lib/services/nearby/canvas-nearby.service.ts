@@ -10,6 +10,7 @@ import { ENTITY_TYPE } from '@design-app/shared'
 import { NearbyEntity } from './nearby-entity'
 import { getCenterLineBetweenTwoEntitiesWithPreviewFn, getDefaultDrawPreviewCtxFn, getEntityAxisCenterWithEntityPreviewFn, getEntityGridLineWithEntityPreviewFn } from './ctx-fns'
 import { NEARBY_DRAW_MODE, NearbyDrawMode } from './nearby-draw-mode'
+import { isNearbyLinesEnabled, NEARBY_GRAPHICS_STATE_MODE, NearbyGraphicsState } from '../../components'
 
 @Injectable({
 	providedIn: 'root',
@@ -29,7 +30,7 @@ export class CanvasNearbyService {
 	yAxisLineBounds: EntityBounds | undefined
 	axisPreviewRect: CompleteEntityBounds | undefined
 
-	getDrawEntityPreview(event: PointerEvent, currentPoint: TransformedPoint) {
+	getDrawEntityPreview(event: PointerEvent, currentPoint: TransformedPoint, NearbyLinesState: NearbyGraphicsState) {
 		const size = SizeByType[ENTITY_TYPE.Panel]
 		const mouseBoxBounds = getCompleteBoundsFromCenterTransformedPoint(currentPoint, size)
 		const entities = this._state.entities.canvasEntities.getEntities()
@@ -49,13 +50,21 @@ export class CanvasNearbyService {
 
 		const anyNearClick = !!entities.find((entity) => isEntityOverlappingWithBounds(entity, mouseBoxBounds))
 
-		const nearbyAxisLinesEnabled = this._state.menu.nearbyAxisLines
-		if (!nearbyAxisLinesEnabled) {
+		const nearbyLinesEnabled = isNearbyLinesEnabled(NearbyLinesState)
+		// const nearbyAxisLinesEnabled = this._state.menu.nearbyAxisLines
+		if (!nearbyLinesEnabled) {
 			console.log('no nearbyAxisLinesEnabled')
 			const drawPreviewFn = getDefaultDrawPreviewCtxFn(mouseBoxBounds)
 			this._render.drawCanvasWithFunction(drawPreviewFn)
 			return
 		}
+		// assertIsObject(NearbyLinesState)
+		if (typeof NearbyLinesState === 'string') {
+			throw new Error('NearbyLinesState is a string')
+		}
+		// assertNotNull()
+		// NearbyLinesState.
+		// const nearbyEnabledMode
 
 		const nearbySortedByDistance = sortBy(nearbyEntitiesOnAxis, (entity) => Math.abs(entity.distance))
 		const nearby2dArray = groupInto2dArray(nearbySortedByDistance, 'axis')
@@ -84,20 +93,20 @@ export class CanvasNearbyService {
 			? CANVAS_COLORS.TakenSpotFillStyle
 			: CANVAS_COLORS.PreviewPanelFillStyle
 
-		switch (this.nearbyDrawMode) {
-			case NEARBY_DRAW_MODE.TWO_SIDE_AXIS_LINES: {
+		switch (NearbyLinesState.NearbyLinesEnabled) {
+			case NEARBY_GRAPHICS_STATE_MODE.TWO_SIDE_AXIS_LINES: {
 				const drawGridLinesWithEntityPreview = getEntityGridLineWithEntityPreviewFn(event, axisPreviewRect, mouseBoxBounds, closestEnt, fillStyle, this.holdAltToSnapToGrid)
 				this._render.drawCanvasWithFunction(drawGridLinesWithEntityPreview)
 				return
 			}
-			case NEARBY_DRAW_MODE.CENTER_LINE_SCREEN_SIZE: {
+			case NEARBY_GRAPHICS_STATE_MODE.CENTER_LINE_SCREEN_SIZE: {
 				const drawCenterLinesScreenSizeWithEntityPreview = getEntityAxisCenterWithEntityPreviewFn(event, axisPreviewRect, mouseBoxBounds, closestEnt, fillStyle, this.holdAltToSnapToGrid)
 				this._render.drawCanvasWithFunction(drawCenterLinesScreenSizeWithEntityPreview)
 				return
 			}
-			case NEARBY_DRAW_MODE.CENTER_LINE_BETWEEN_TWO_ENTITIES: {
-				const drawSameAxisCenterLinesWithEntityPreview = getCenterLineBetweenTwoEntitiesWithPreviewFn(event, axisPreviewRect, mouseBoxBounds, closestEnt, fillStyle, this.holdAltToSnapToGrid)
-				this._render.drawCanvasWithFunction(drawSameAxisCenterLinesWithEntityPreview)
+			case NEARBY_GRAPHICS_STATE_MODE.CENTER_LINE_BETWEEN_TWO_ENTITIES: {
+				const drawSameAxisCenterLineBetweenTwoEntitiesWithPreview = getCenterLineBetweenTwoEntitiesWithPreviewFn(event, axisPreviewRect, mouseBoxBounds, closestEnt, fillStyle, this.holdAltToSnapToGrid)
+				this._render.drawCanvasWithFunction(drawSameAxisCenterLineBetweenTwoEntitiesWithPreview)
 				return
 			}
 			default:

@@ -13,4 +13,12 @@ export class ResetGridClickMode {
 	readonly payload = null
 }
 
-export type XStateGridEvent = StartClickSelectMode | StartClickCreateMode | ResetGridClickMode
+export type TogglePreviewAxisDraw = {
+	type: 'TogglePreviewAxisDraw'
+}
+
+export type XStateGridEvent =
+	| StartClickSelectMode
+	| StartClickCreateMode
+	| ResetGridClickMode
+	| TogglePreviewAxisDraw
