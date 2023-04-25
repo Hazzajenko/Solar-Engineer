@@ -1,10 +1,12 @@
 import { setupCanvas } from '../functions/setup-canvas'
 import {
+	AppStateValue,
 	CanvasAppStateStore,
 	CanvasClientState,
 	CanvasClientStateService,
 	CanvasElementService,
 	CanvasModeService,
+	CanvasNearbyService,
 	CanvasRenderService,
 	CanvasSelectedXstateService,
 	CanvasViewPositioningService,
@@ -48,6 +50,7 @@ export abstract class DesignCanvasDirectiveExtension {
 	protected _render = inject(CanvasRenderService)
 	protected _state = inject(CanvasClientStateService)
 	protected _selected = inject(CanvasSelectedXstateService)
+	protected _nearby = inject(CanvasNearbyService)
 	// protected _selected = inject(CanvasSelectedService)
 	protected _domPoint = inject(DomPointService)
 	protected delayedLogger = new DelayedLogger()
@@ -197,7 +200,11 @@ export abstract class DesignCanvasDirectiveExtension {
 
 	abstract contextMenuHandler(event: PointerEvent, currentPoint: TransformedPoint): void
 
-	abstract mouseClickHandler(event: PointerEvent, currentPoint: TransformedPoint): void
+	abstract mouseClickHandler(
+		event: PointerEvent,
+		currentPoint: TransformedPoint,
+		state: AppStateValue,
+	): void
 
 	abstract doubleClickHandler(event: PointerEvent, currentPoint: TransformedPoint): void
 

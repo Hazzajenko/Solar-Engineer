@@ -1,11 +1,11 @@
 import { inject, Injectable } from '@angular/core'
 import { CanvasClientStateService, CanvasElementService, CanvasRenderService, DomPointService, MachineService, StartMultipleMove, StartSingleMove, StopMultipleMove, StopSingleMove } from '..'
-import { CURSOR_TYPE, Point } from '@shared/data-access/models'
+import { CURSOR_TYPE } from '@shared/data-access/models'
 import { assertNotNull } from '@shared/utils'
 import { ENTITY_TYPE } from '@design-app/shared'
 import { changeCanvasCursor, getEntityBounds, getTopLeftPointFromTransformedPoint, isHoldingClick, isPointInsideBounds } from '../../utils'
-import { CANVAS_COLORS, EntityFactory, SizeByType, TransformedPoint } from '../../types'
-import { eventToPointLocation } from '../../functions'
+import { CANVAS_COLORS, EntityFactory, EventPoint, SizeByType, TransformedPoint } from '../../types'
+import { eventToEventPoint, eventToPointLocation } from '../../functions'
 
 @Injectable({
 	providedIn: 'root',
@@ -17,14 +17,15 @@ export class ObjectPositioningService {
 	private _canvasElement = inject(CanvasElementService)
 	private _machine = inject(MachineService)
 	singleToMoveId: string | undefined
-	multiToMoveStart: Point | undefined
+	// multiToMoveStart: TransformedPoint | undefined
+	multiToMoveStart: EventPoint | undefined
 	multipleToMoveIds: string[] = []
 
 	get canvas() {
 		return this._canvasElement.canvas
 	}
 
-	singleToMoveMouseDown(event: PointerEvent, singleToMoveId: string) {
+	setSingleToMoveEntity(event: PointerEvent, singleToMoveId: string) {
 		this.singleToMoveId = singleToMoveId
 		this._machine.sendEvent(new StartSingleMove())
 	}
@@ -82,21 +83,23 @@ export class ObjectPositioningService {
 		return
 	}
 
-	multiSelectDraggingMouseDown(event: PointerEvent, multipleSelectedIds: string[], currentPoint: TransformedPoint) {
+	multiSelectDraggingMouseDown(event: PointerEvent, multipleSelectedIds: string[]) {
 		if (!event.shiftKey || !event.ctrlKey) return
 		this.multipleToMoveIds = multipleSelectedIds
-		this.multiToMoveStart = currentPoint
+		this.multiToMoveStart = eventToEventPoint(event)
+		// this.multiToMoveStart = currentPoint
 		// this.multiToMoveStart = this._domPoint.getTransformedPointFromEvent(event)
 		this._machine.sendEvent(new StartMultipleMove())
 	}
 
-	setMultiSelectDraggingMouseMove(event: PointerEvent, multipleSelectedIds: string[], currentPoint: TransformedPoint) {
+	setMultiSelectDraggingMouseMove(event: PointerEvent, multipleSelectedIds: string[]) {
 		if (!event.shiftKey || !event.ctrlKey) {
 			this.stopMultiSelectDragging(event)
 			return
 		}
 		this.multipleToMoveIds = multipleSelectedIds
-		this.multiToMoveStart = currentPoint
+		this.multiToMoveStart = eventToEventPoint(event)
+		// this.multiToMoveStart = currentPoint
 		// this.multiToMoveStart = this._domPoint.getTransformedPointFromEvent(event)
 		this._machine.sendEvent(new StartMultipleMove())
 	}
@@ -109,6 +112,7 @@ export class ObjectPositioningService {
 		changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
 		const multiToMoveStart = this.multiToMoveStart
 		assertNotNull(multiToMoveStart)
+		// const eventLocation = this._domPoint.getTransformedPointFromEvent(event)
 		const eventLocation = eventToPointLocation(event)
 		const scale = this._domPoint.scale
 		const offset = {

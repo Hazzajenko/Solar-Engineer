@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core'
-import { CanvasClientState, DragBoxStateDeprecated, GridStateDeprecated, HoveringEntityState, InitialDragBoxState, InitialGridStateDeprecated, InitialHoveringEntityState, InitialMenuState, InitialModeState, InitialMouseState, InitialNearbyState, InitialSelectedState, InitialToMoveState, InitialToRotateState, InitialViewState, MenuState, ModeState, MouseState, NearbyState, SelectedStateDeprecated, StateUpdate, ToMoveStateDeprecated, ToRotateStateDeprecated, updateStateV3, ViewStateDeprecated } from './types'
+import { CanvasClientState, DragBoxStateDeprecated, GridStateDeprecated, HoveringEntityState, InitialDragBoxState, InitialGridStateDeprecated, InitialHoveringEntityState, InitialMenuState, InitialModeState, InitialMouseState, InitialNearbyStateDeprecated, InitialSelectedState, InitialToMoveState, InitialToRotateState, InitialViewState, MenuState, ModeState, MouseState, NearbyStateDeprecated, SelectedStateDeprecated, StateUpdate, ToMoveStateDeprecated, ToRotateStateDeprecated, updateStateV3, ViewStateDeprecated } from './types'
 import { CanvasEntityState } from './canvas-entity-state'
 import { ClearEntitySelected, SelectedSingleEntity, sendStateEvent } from './+xstate'
 
@@ -17,7 +17,7 @@ export class CanvasClientStateService
 	private _view: ViewStateDeprecated = InitialViewState
 	private _mouse: MouseState = InitialMouseState
 	private _menu: MenuState = InitialMenuState
-	private _nearby: NearbyState = InitialNearbyState
+	private _nearby: NearbyStateDeprecated = InitialNearbyStateDeprecated
 	private _grid: GridStateDeprecated = InitialGridStateDeprecated
 	private _entities = inject(CanvasEntityState)
 
@@ -97,7 +97,7 @@ export class CanvasClientStateService
 		return this._menu
 	}
 
-	get nearby(): NearbyState {
+	get nearby(): NearbyStateDeprecated {
 		return this._nearby
 	}
 

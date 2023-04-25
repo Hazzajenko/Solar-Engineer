@@ -6,7 +6,7 @@ import {
 	MenuState,
 	ModeState,
 	MouseState,
-	NearbyState,
+	NearbyStateDeprecated,
 	SelectedStateDeprecated,
 	ToMoveStateDeprecated,
 	ToRotateStateDeprecated,
@@ -33,7 +33,7 @@ export type CanvasAppMachineContext = {
 	view: ViewStateDeprecated
 	mouse: MouseState
 	menu: MenuState
-	nearby: NearbyState
+	nearby: NearbyStateDeprecated
 	grid: GridStateDeprecated
 }
 

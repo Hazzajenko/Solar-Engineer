@@ -1,4 +1,4 @@
-import { CanvasEntity, MiddlePoint, ObjectSize, TransformedPoint } from '../types'
+import { CanvasEntity, EventPoint, MiddlePoint, ObjectSize, TransformedPoint } from '../types'
 import { Point } from '@shared/data-access/models'
 
 export function getXyPointFromEvent(
@@ -45,6 +45,12 @@ export function scaleAt(point: Point, scaleBy: number) {
 export function eventToPointLocation(event: MouseEvent): Point {
 	return { x: event.offsetX, y: event.offsetY }
 }
+
+export const eventToEventPoint = (event: MouseEvent | PointerEvent): EventPoint => ({
+	x: event.offsetX,
+	y: event.offsetY,
+	_type: 'EventPoint',
+})
 
 /*export function eventOffsetsToPointLocation<
  TEvent extends {

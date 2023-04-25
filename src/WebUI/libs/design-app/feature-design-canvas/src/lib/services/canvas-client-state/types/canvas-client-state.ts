@@ -5,7 +5,7 @@ import { HoveringEntityState } from './hovering'
 import { MenuState } from './menu'
 import { ModeState } from './mode'
 import { MouseState } from './mouse'
-import { NearbyState } from './nearby-entites'
+import { NearbyStateDeprecated } from './nearby-entites'
 import { SelectedStateDeprecated } from './selected'
 import { ToMoveStateDeprecated } from './to-move'
 import { ToRotateStateDeprecated } from './to-rotate'
@@ -25,7 +25,7 @@ export type CanvasClientState = {
 	view: ViewStateDeprecated
 	mouse: MouseState
 	menu: MenuState
-	nearby: NearbyState
+	nearby: NearbyStateDeprecated
 	grid: GridStateDeprecated
 }
 export type StateUpdate = {

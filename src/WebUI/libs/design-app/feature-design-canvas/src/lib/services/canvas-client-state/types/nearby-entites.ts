@@ -2,16 +2,16 @@ import { Axis } from '../../../types'
 import { EntityBounds } from '../../../utils'
 import { EntityStateStr } from './canvas-client-state'
 
-export type NearbyState = EntityStateStr<NearbyEntity>
+export type NearbyStateDeprecated = EntityStateStr<NearbyEntityDeprecated>
 
-export type NearbyEntity = {
-  id: string
-  axis: Axis
-  bounds: EntityBounds
-  distance: number
+export type NearbyEntityDeprecated = {
+	id: string
+	axis: Axis
+	bounds: EntityBounds
+	distance: number
 }
 
-export const InitialNearbyState: NearbyState = {
-  ids: [],
-  entities: {},
+export const InitialNearbyStateDeprecated: NearbyStateDeprecated = {
+	ids: [],
+	entities: {},
 }
