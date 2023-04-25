@@ -1,23 +1,23 @@
-export type AdjustedToMoveState = {
-	singleToMove: boolean
-	multipleToMove: boolean
-}
-export const InitialAdjustedToMoveState: AdjustedToMoveState = {
-	singleToMove: false,
-	multipleToMove: false,
-}
-export const TO_MOVE_STATE_KEY = 'ToMoveState'
-export const TO_MOVE_STATE = {
-	NO_MOVE: 'NoMove',
-	SINGLE_MOVE_IN_PROGRESS: 'SingleMoveInProgress',
-	MULTIPLE_MOVE_IN_PROGRESS: 'MultipleMoveInProgress',
+export const CLICK_MODE = {
+	SELECT: 'Select',
+	CREATE: 'Create',
 } as const
 
-export type ToMoveState = (typeof TO_MOVE_STATE)[keyof typeof TO_MOVE_STATE]
+export type ClickMode = (typeof CLICK_MODE)[keyof typeof CLICK_MODE]
 
-export const MATCHES_TO_MOVE_STATE = {
-	STATE: 'ToMoveState',
-	NO_MOVE: 'ToMoveState.NoMove',
-	SINGLE_MOVE_IN_PROGRESS: 'ToMoveState.SingleMoveInProgress',
-	MULTIPLE_MOVE_IN_PROGRESS: 'ToMoveState.MultipleMoveInProgress',
+export type GridStateContext = {
+	clickMode: ClickMode
+	inAxisPreview: boolean
+}
+
+export const InitialGridStateContext: GridStateContext = {
+	clickMode: CLICK_MODE.SELECT,
+	inAxisPreview: false,
+}
+export const GRID_STATE_KEY = 'GridState'
+export const GRID_STATE = {
+	IN_SELECT_MODE: 'SelectMode',
+	IN_CREATE_MODE: 'CreateMode',
 } as const
+
+export type GridState = (typeof GRID_STATE)[keyof typeof GRID_STATE]

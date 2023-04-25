@@ -1,7 +1,7 @@
 import { TransformedPoint } from '../../../../types'
 
-export class StartSelectionBox {
-	readonly type = 'StartSelectionBox'
+export class SelectionBoxStarted {
+	readonly type = 'SelectionBoxStarted'
 
 	constructor(
 		public readonly payload: {
@@ -25,13 +25,31 @@ export class SelectionBoxCancelled {
 	readonly payload = null
 }
 
+export class CreationBoxStarted {
+	readonly type = 'CreationBoxStarted'
+	readonly payload = null
+}
+
+export class CreationBoxCompleted {
+	readonly type = 'CreationBoxCompleted'
+	readonly payload = null
+}
+
+export class CreationBoxCancelled {
+	readonly type = 'CreationBoxCancelled'
+	readonly payload = null
+}
+
 export class StopDragBox {
 	readonly type = 'StopDragBox'
 	readonly payload = null
 }
 
 export type XStateDragBoxEvent =
-	| StartSelectionBox
+	| SelectionBoxStarted
 	| SelectionBoxCompleted
 	| SelectionBoxCancelled
+	| CreationBoxStarted
+	| CreationBoxCompleted
+	| CreationBoxCancelled
 	| StopDragBox

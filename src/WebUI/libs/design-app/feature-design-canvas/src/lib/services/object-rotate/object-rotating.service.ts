@@ -25,46 +25,19 @@ export class ObjectRotatingService {
 	multipleToRotatePivotPoint: Point | undefined = undefined
 	multipleToRotateStartToPivotAngle: AngleRadians | undefined = undefined
 
-	get isInSingleRotateMode() {
-		const { singleToRotate, singleRotateMode } = this._state.toRotate
-		return !!singleToRotate && singleRotateMode
-		// return !!this.entityToRotateId && this.singleRotateMode
-	}
-
-	get areAnyEntitiesInRotate() {
-
-		// const { singleToRotate, ids } = this._state.toRotate
-		return !!this.singleToRotateId || !!this.multipleToRotateIds.length
-		// return !!this.entityToRotateId || !!this.multipleToRotateIds.length
-	}
-
-	// multipleToRotateIds, entities: [], pivotPoint, startToPivotAngle,
-	/*
-	 get isInSingleRotateMode() {
-	 const { singleToRotate, singleRotateMode } = this._state.toRotate
-	 return !!singleToRotate && singleRotateMode
-	 // return !!this.entityToRotateId && this.singleRotateMode
-	 }
-
-	 get areAnyEntitiesInRotate() {
-	 const { singleToRotate, ids } = this._state.toRotate
-	 return !!singleToRotate || !!ids.length
-	 // return !!this.entityToRotateId || !!this.multipleToRotateIds.length
-	 }*/
-
-	handleSetEntitiesToRotate(event: PointerEvent) {
+	handleSetEntitiesToRotate(event: PointerEvent, currentPoint: TransformedPoint) {
 		const selectedId = this._machine.ctx.selected.singleSelectedId
 		// const selectedId = this._state.selected.singleSelectedId
 		if (selectedId) {
-			const transformedPoint = this._domPoint.getTransformedPointFromEvent(event)
-			this.setEntityToRotate(selectedId, transformedPoint)
+			// const transformedPoint = this._domPoint.getTransformedPointFromEvent(event)
+			this.setEntityToRotate(selectedId, currentPoint)
 			return
 		}
 		const multiSelectIds = this._machine.ctx.selected.multipleSelectedIds
 		// const multiSelectIds = this._state.selected.multipleSelectedIds
 		if (multiSelectIds.length > 1) {
-			const transformedPoint = this._domPoint.getTransformedPointFromEvent(event)
-			this.setMultipleToRotate(multiSelectIds, transformedPoint)
+			// const transformedPoint = this._domPoint.getTransformedPointFromEvent(event)
+			this.setMultipleToRotate(multiSelectIds, currentPoint)
 			return
 		}
 	}
@@ -102,7 +75,7 @@ export class ObjectRotatingService {
 		 })*/
 	}
 
-	rotateEntityViaMouse(event: PointerEvent, rotateMode: boolean) {
+	rotateEntityViaMouse(event: PointerEvent, rotateMode: boolean, currentPoint: TransformedPoint) {
 		if (!rotatingKeysDown(event) && !rotateMode) {
 			// return
 			this.clearEntityToRotate()
@@ -114,7 +87,7 @@ export class ObjectRotatingService {
 		if (!singleToRotateId || !singleToRotateStartPoint || !singleToRotateStartAngle) {
 			throw new Error('No entity to rotate')
 		}
-		const currentPoint = this._domPoint.getTransformedPointFromEvent(event)
+		// const currentPoint = this._domPoint.getTransformedPointFromEvent(event)
 		const entityLocation = this._state.entities.canvasEntities.getEntityById(singleToRotateId)?.location
 		assertNotNull(entityLocation)
 		const previousAngle = singleToRotateStartAngle
@@ -139,7 +112,7 @@ export class ObjectRotatingService {
 		this._render.drawCanvasExcludeIdsWithFn([singleToRotateId], singleRotateDrawFn)
 	}
 
-	rotateMultipleEntitiesViaMouse(event: PointerEvent) {
+	rotateMultipleEntitiesViaMouse(event: PointerEvent, currentPoint: TransformedPoint) {
 		if (!rotatingKeysDown(event)) {
 			this.clearEntityToRotate()
 			return
@@ -152,7 +125,7 @@ export class ObjectRotatingService {
 
 		if (!pivotPoint || !startToPivotAngle) throw new Error('No pivot point or start to pivot angle')
 
-		const currentPoint = this._domPoint.getTransformedPointFromEvent(event)
+		// const currentPoint = this._domPoint.getTransformedPointFromEvent(event)
 		const angleInRadians = getAngleInRadiansBetweenTwoPoints(currentPoint, pivotPoint)
 		const canvasEntities = this._state.entities.canvasEntities.getEntitiesByIds(multipleToRotateIds)
 		assertNotNull(startToPivotAngle)

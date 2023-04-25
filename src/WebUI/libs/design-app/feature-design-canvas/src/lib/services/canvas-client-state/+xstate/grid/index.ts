@@ -1,2 +1,2 @@
-export * from './xstate-to-move.events'
-export * from './xstate-to-move.state'
+export * from './xstate-grid.state'
+export * from './xstate-grid.events'

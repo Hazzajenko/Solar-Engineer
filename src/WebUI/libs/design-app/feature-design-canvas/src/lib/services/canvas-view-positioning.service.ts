@@ -30,17 +30,18 @@ export class CanvasViewPositioningService {
 		return this._canvasElementsService.canvas
 	}
 
-	handleDragScreenMouseDown(event: PointerEvent) {
+	handleDragScreenMouseDown(event: PointerEvent, currentPoint: TransformedPoint) {
 		/*    this._state.updateState({
 		 view: {
 		 dragStart: this._domPointService.getTransformedPointFromEvent(event),
 		 },
 		 })*/
 		this._machine.sendEvent(new StartViewDragging())
-		this.screenDragStartPoint = this._domPointService.getTransformedPointFromEvent(event)
+		this.screenDragStartPoint = currentPoint
+		// this.screenDragStartPoint = this._domPointService.getTransformedPointFromEvent(event)
 	}
 
-	handleDragScreenMouseMove(event: PointerEvent) {
+	handleDragScreenMouseMove(event: PointerEvent, currentPoint: TransformedPoint) {
 		if (!draggingScreenKeysDown(event)) {
 			/*      this._state.updateState({
 			 view: {
@@ -53,9 +54,9 @@ export class CanvasViewPositioningService {
 		}
 		assertNotNull(this.screenDragStartPoint)
 		this.canvas.style.cursor = CURSOR_TYPE.MOVE
-		const currentTransformedCursor = this._domPointService.getTransformedPointFromEvent(event)
-		const transformX = currentTransformedCursor.x - this.screenDragStartPoint.x
-		const transformY = currentTransformedCursor.y - this.screenDragStartPoint.y
+		// const currentTransformedCursor = this._domPointService.getTransformedPointFromEvent(event)
+		const transformX = currentPoint.x - this.screenDragStartPoint.x
+		const transformY = currentPoint.y - this.screenDragStartPoint.y
 		this.ctx.translate(transformX, transformY)
 		this._render.drawCanvas()
 		// this.drawPanels()

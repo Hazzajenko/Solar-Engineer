@@ -26,7 +26,7 @@ export interface Typegen0 {
     SetPointerDown: 'PointerDown'
     SetPointerUp: 'PointerUp'
     SetSelectedEntity: 'SelectedDifferentEntity' | 'SelectedSingleEntity'
-    SetSelectionBoxStart: 'StartSelectionBox'
+    SetSelectionBoxStart: 'SelectionBoxStarted'
     SetSingleMove: 'StartSingleMove'
     SetSingleRotate: 'StartSingleRotate'
     SetSingleRotateMode: 'StartSingleRotateMode'
@@ -45,8 +45,12 @@ export interface Typegen0 {
   eventsCausingServices: {}
   matchesStates:
     | 'DragBoxState'
-    | 'DragBoxState.DragBoxInProgress'
+    | 'DragBoxState.CreationBoxInProgress'
     | 'DragBoxState.NoDragBox'
+    | 'DragBoxState.SelectionBoxInProgress'
+    | 'GridState'
+    | 'GridState.CreateMode'
+    | 'GridState.SelectMode'
     | 'PointerState'
     | 'PointerState.HoveringOverEntity'
     | 'PointerState.PointerIsDown'
@@ -68,7 +72,8 @@ export interface Typegen0 {
     | 'ViewState.ViewDraggingInProgress'
     | 'ViewState.ViewNotMoving'
     | {
-        DragBoxState?: 'DragBoxInProgress' | 'NoDragBox'
+        DragBoxState?: 'CreationBoxInProgress' | 'NoDragBox' | 'SelectionBoxInProgress'
+        GridState?: 'CreateMode' | 'SelectMode'
         PointerState?: 'HoveringOverEntity' | 'PointerIsDown' | 'PointerUp'
         SelectedState?: 'EntitySelected' | 'MultipleEntitiesSelected' | 'NoneSelected'
         ToMoveState?: 'MultipleMoveInProgress' | 'NoMove' | 'SingleMoveInProgress'

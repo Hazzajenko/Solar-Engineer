@@ -21,6 +21,7 @@ import { CANVAS_COLORS, CanvasEntity, SizeByType, TransformedPoint } from '../ty
 import {
 	getBoundsFromCenterPoint,
 	getEntityBounds,
+	isContextMenu,
 	isEntityOverlappingWithBounds,
 	isPointInsideBounds,
 } from '../utils'
@@ -123,6 +124,7 @@ export abstract class DesignCanvasDirectiveExtension {
 		this._renderer.listen(this.canvas, EVENT_TYPE.POINTER_UP, (event: PointerEvent) => {
 			console.log('mouse up', event)
 			this.currentPoint = this._domPoint.getTransformedPointFromEvent(event)
+			if (isContextMenu(event)) return
 			this._machine.sendEvent(
 				new PointerUp({ point: this._domPoint.getTransformedPointFromEvent(event) }),
 			)

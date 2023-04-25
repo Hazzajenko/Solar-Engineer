@@ -143,13 +143,16 @@ export const canvasAppMachine = createMachine(
 				states: {
 					NoDragBox: {
 						on: {
-							StartSelectionBox: {
-								target: 'DragBoxInProgress',
+							SelectionBoxStarted: {
+								target: 'SelectionBoxInProgress',
 								actions: 'SetSelectionBoxStart',
+							},
+							CreationBoxStarted: {
+								target: 'CreationBoxInProgress',
 							},
 						},
 					},
-					DragBoxInProgress: {
+					SelectionBoxInProgress: {
 						on: {
 							SelectionBoxCompleted: {
 								target: 'NoDragBox',
@@ -165,6 +168,34 @@ export const canvasAppMachine = createMachine(
 							},
 						},
 					},
+					CreationBoxInProgress: {
+						on: {
+							CreationBoxCompleted: {
+								target: 'NoDragBox',
+							},
+							CreationBoxCancelled: {
+								target: 'NoDragBox',
+							},
+							StopDragBox: {
+								target: 'NoDragBox',
+							},
+						},
+					} /*					DragBoxInProgress: {
+				 on: {
+				 SelectionBoxCompleted: {
+				 target: 'NoDragBox',
+				 actions: ['SetMultipleSelectedEntities', 'ClearSelectionBoxStart'],
+				 },
+				 SelectionBoxCancelled: {
+				 target: 'NoDragBox',
+				 actions: 'ClearSelectionBoxStart',
+				 },
+				 StopDragBox: {
+				 target: 'NoDragBox',
+				 actions: 'ClearDragBox',
+				 },
+				 },
+				 },*/,
 				},
 			},
 			PointerState: {
@@ -298,6 +329,28 @@ export const canvasAppMachine = createMachine(
 							StopViewDragging: {
 								target: 'ViewNotMoving',
 								actions: 'StopViewDragging',
+							},
+						},
+					},
+				},
+			},
+			GridState: {
+				initial: 'SelectMode',
+				states: {
+					SelectMode: {
+						on: {
+							StartClickCreateMode: {
+								target: 'CreateMode',
+							},
+						},
+					},
+					CreateMode: {
+						on: {
+							StartClickSelectMode: {
+								target: 'SelectMode',
+							},
+							ResetGridClickMode: {
+								target: 'SelectMode',
 							},
 						},
 					},

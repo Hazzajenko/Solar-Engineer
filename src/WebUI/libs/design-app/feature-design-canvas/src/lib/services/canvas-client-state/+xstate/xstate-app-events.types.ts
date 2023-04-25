@@ -1,4 +1,5 @@
 import { XStateDragBoxEvent } from './drag-box'
+import { XStateGridEvent } from './grid'
 import { XStatePointerEvent } from './pointer'
 import { XStateSelectedEvent } from './selected'
 import { XStateToMoveEvent } from './to-move'
@@ -13,3 +14,4 @@ export type XStateEvent =
 	| XStateToMoveEvent
 	| XStateToRotateEvent
 	| XStateViewEvent
+	| XStateGridEvent

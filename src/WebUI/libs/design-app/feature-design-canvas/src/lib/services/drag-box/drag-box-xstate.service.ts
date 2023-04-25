@@ -5,7 +5,7 @@ import { CURSOR_TYPE } from '@shared/data-access/models'
 import { DomPointService } from '../dom-point.service'
 import { assertNotNull } from '@shared/utils'
 import { changeCanvasCursor, dragBoxKeysDown, getAllAvailableEntitySpotsBetweenTwoPoints, getAllEntitiesBetweenTwoPoints } from '../../utils'
-import { CANVAS_MODE, CanvasClientStateService, CURRENT_DRAG_BOX, MachineService, SelectionBoxCompleted, StartSelectionBox, StopDragBox } from '../canvas-client-state'
+import { CANVAS_MODE, CanvasClientStateService, CreationBoxStarted, CURRENT_DRAG_BOX, GRID_STATE, MachineService, SelectionBoxCompleted, SelectionBoxStarted, StopDragBox } from '../canvas-client-state'
 import { CanvasRenderService } from '../canvas-render'
 import { ENTITY_TYPE } from '@design-app/shared'
 import { getStartAndEndForAxisLineDragBox } from './utils'
@@ -34,18 +34,39 @@ export class DragBoxXstateService {
 		return this.ctx.getTransform().a
 	}
 
-	handleDragBoxMouseDown(event: PointerEvent) {
-		const currentDragBox = this._machine.ctx.dragBox.currentDragBox
-		if (currentDragBox === CURRENT_DRAG_BOX.SELECTION) {
-			this._machine.sendEvent(new StartSelectionBox({ point: this._domPointService.getTransformedPointFromEvent(event) }))
+	handleDragBoxMouseDown(event: PointerEvent, currentPoint: TransformedPoint, GridState: 'CreateMode' | 'SelectMode') {
+		// const clickMode = this._machine.state[GRID_STATE_KEY]
+
+		switch (GridState) {
+			case GRID_STATE.IN_SELECT_MODE:
+				this._machine.sendEvent(new SelectionBoxStarted({ point: currentPoint }))
+				break
+			case GRID_STATE.IN_CREATE_MODE:
+				this._machine.sendEvent(new CreationBoxStarted())
+				break
+			default:
+				throw new Error(`GridState ${GridState} not handled`)
 		}
-		this.dragBoxStart = this._domPointService.getTransformedPointFromEvent(event)
+		this.dragBoxStart = currentPoint
+		/*
+
+		 if (GridState === GRID_STATE.IN_SELECT_MODE) {
+		 this._machine.sendEvent(new SelectionBoxStarted({ point: currentPoint }))
+		 }
+		 if (GridState === 'CreateMode') {
+		 this._machine.sendEvent(new CreationBoxStarted())
+		 }
+		 const currentDragBox = this._machine.ctx.dragBox.currentDragBox
+		 if (currentDragBox === CURRENT_DRAG_BOX.SELECTION) {
+		 this._machine.sendEvent(new SelectionBoxStarted({ point: this._domPointService.getTransformedPointFromEvent(event) }))
+		 }
+		 this.dragBoxStart = this._domPointService.getTransformedPointFromEvent(event)*/
 	}
 
-	selectionBoxMouseUp(event: PointerEvent) {
+	selectionBoxMouseUp(event: PointerEvent, currentPoint: TransformedPoint) {
 		const start = this.dragBoxStart
 		assertNotNull(start)
-		const currentPoint = this._domPointService.getTransformedPointFromEvent(event)
+		// const currentPoint = this._domPointService.getTransformedPointFromEvent(event)
 		const panelsInArea = getAllEntitiesBetweenTwoPoints(start, currentPoint, this._state.entities.canvasEntities.getEntities())
 		if (panelsInArea) {
 			const entitiesInAreaIds = panelsInArea.map(panel => panel.id)
@@ -56,12 +77,12 @@ export class DragBoxXstateService {
 		this.dragBoxStart = undefined
 	}
 
-	creationBoxMouseUp(event: PointerEvent) {
+	creationBoxMouseUp(event: PointerEvent, currentPoint: TransformedPoint) {
 		// const { dragBoxStart } = this._state.dragBox
 		// assertNotNull(dragBoxStart)
 		const dragBoxStart = this.dragBoxStart
 		assertNotNull(dragBoxStart)
-		const currentPoint = this._domPointService.getTransformedPointFromEvent(event)
+		// const currentPoint = this._domPointService.getTransformedPointFromEvent(event)
 		const spots = getAllAvailableEntitySpotsBetweenTwoPoints(dragBoxStart, currentPoint, this._state.entities.canvasEntities.getEntities())
 		// const spots = this._objectPositioning.getAllAvailableEntitySpotsBetweenTwoPoints(dragBoxStart, currentPoint)
 		if (!spots || !spots.length) return
@@ -80,7 +101,84 @@ export class DragBoxXstateService {
 		this._machine.sendEvent(new StopDragBox())
 	}
 
-	dragBoxMouseMove(event: PointerEvent) {
+	selectionBoxMouseMove(event: PointerEvent, currentPoint: TransformedPoint) {
+		if (!dragBoxKeysDown(event)) {
+			this._machine.sendEvent(new StopDragBox())
+			changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
+			this._render.drawCanvas()
+			return
+		}
+		const dragBoxStart = this.dragBoxStart
+		assertNotNull(dragBoxStart)
+
+		const drawDragBox = (ctx: CanvasRenderingContext2D) => {
+			const width = currentPoint.x - dragBoxStart.x
+			const height = currentPoint.y - dragBoxStart.y
+			ctx.save()
+			ctx.beginPath()
+			ctx.globalAlpha = 0.4
+			ctx.strokeStyle = CANVAS_COLORS.SelectionBoxFillStyle
+			ctx.lineWidth = 1
+			ctx.rect(dragBoxStart.x, dragBoxStart.y, width, height)
+			ctx.fill()
+			ctx.stroke()
+			ctx.closePath()
+			ctx.restore()
+		}
+
+		this._render.drawCanvasWithFunction(drawDragBox)
+	}
+
+	creationBoxMouseMove(event: PointerEvent, currentPoint: TransformedPoint) {
+		if (!dragBoxKeysDown(event)) {
+			this._machine.sendEvent(new StopDragBox())
+			changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
+			this._render.drawCanvas()
+			return
+		}
+		const dragBoxStart = this.dragBoxStart
+		assertNotNull(dragBoxStart)
+
+		const drawCreationBox = (ctx: CanvasRenderingContext2D) => {
+			const width = currentPoint.x - dragBoxStart.x
+			const height = currentPoint.y - dragBoxStart.y
+			ctx.save()
+			ctx.beginPath()
+			ctx.globalAlpha = 0.4
+			ctx.strokeStyle = CANVAS_COLORS.CreationBoxFillStyle
+			ctx.lineWidth = 1
+			ctx.rect(dragBoxStart.x, dragBoxStart.y, width, height)
+			ctx.fill()
+			ctx.stroke()
+			ctx.closePath()
+			ctx.restore()
+
+			const spots = getAllAvailableEntitySpotsBetweenTwoPoints(dragBoxStart, currentPoint, this._state.entities.canvasEntities.getEntities())
+			if (!spots) return
+
+			const { type } = this._state.mode
+			const entitySize = SizeByType[type]
+
+			ctx.save()
+			spots.forEach(spot => {
+				ctx.save()
+				ctx.beginPath()
+				ctx.globalAlpha = 0.4
+				ctx.fillStyle = spot.vacant
+					? CANVAS_COLORS.PreviewPanelFillStyle
+					: CANVAS_COLORS.TakenSpotFillStyle
+				ctx.rect(spot.x, spot.y, entitySize.width, entitySize.height)
+				ctx.fill()
+				ctx.stroke()
+				ctx.restore()
+			})
+			ctx.restore()
+		}
+
+		this._render.drawCanvasWithFunction(drawCreationBox)
+	}
+
+	dragBoxMouseMove(event: PointerEvent, currentPoint: TransformedPoint) {
 		if (!dragBoxKeysDown(event)) {
 			this._machine.sendEvent(new StopDragBox())
 			changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
@@ -96,7 +194,7 @@ export class DragBoxXstateService {
 		const drawDragBox = (ctx: CanvasRenderingContext2D) => {
 			const currentDragBox = this._machine.ctx.dragBox.currentDragBox
 
-			const currentPoint = this._domPointService.getTransformedPointFromEvent(event)
+			// const currentPoint = this._domPointService.getTransformedPointFromEvent(event)
 			const width = currentPoint.x - dragBoxStart.x
 			const height = currentPoint.y - dragBoxStart.y
 			ctx.save()
@@ -138,14 +236,14 @@ export class DragBoxXstateService {
 		this._render.drawCanvasWithFunction(drawDragBox)
 	}
 
-	dragBoxMouseUp(event: PointerEvent) {
+	dragBoxMouseUp(event: PointerEvent, currentPoint: TransformedPoint) {
 		const { mode } = this._state.mode
 		switch (mode) {
 			case CANVAS_MODE.CREATE:
-				this.creationBoxMouseUp(event)
+				this.creationBoxMouseUp(event, currentPoint)
 				break
 			case CANVAS_MODE.SELECT:
-				this.selectionBoxMouseUp(event)
+				this.selectionBoxMouseUp(event, currentPoint)
 				break
 		}
 

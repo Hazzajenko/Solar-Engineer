@@ -26,7 +26,8 @@ export const DRAG_BOX_STATE_KEY = 'DragBoxState'
 
 export const DRAG_BOX_STATE = {
 	NO_DRAG_BOX: 'NoDragBox',
-	DRAG_BOX_IN_PROGRESS: 'DragBoxInProgress',
+	SELECTION_BOX_IN_PROGRESS: 'SelectionBoxInProgress',
+	CREATION_BOX_IN_PROGRESS: 'CreationBoxInProgress',
 } as const
 
 export type DragBoxState = (typeof DRAG_BOX_STATE)[keyof typeof DRAG_BOX_STATE]

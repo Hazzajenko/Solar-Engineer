@@ -29,7 +29,7 @@ export class ObjectPositioningService {
 		this._machine.sendEvent(new StartSingleMove())
 	}
 
-	singleToMoveMouseMove(event: PointerEvent) {
+	singleToMoveMouseMove(event: PointerEvent, currentPoint: TransformedPoint) {
 		if (!isHoldingClick(event)) {
 			this._machine.sendEvent(new StopSingleMove())
 			this.singleToMoveId = undefined
@@ -37,15 +37,16 @@ export class ObjectPositioningService {
 		}
 		assertNotNull(this.singleToMoveId)
 		changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
-		const eventPoint = this._domPoint.getTransformedPointFromEvent(event)
-		const isSpotTaken = this.areAnyEntitiesNearbyExcludingGrabbed(eventPoint, this.singleToMoveId)
+		// const eventPoint = this._domPoint.getTransformedPointFromEvent(event)
+		// const currentPoint = this._domPoint.getTransformedPointFromEvent(event)
+		const isSpotTaken = this.areAnyEntitiesNearbyExcludingGrabbed(currentPoint, this.singleToMoveId)
 		if (isSpotTaken) {
 			// TODO - change cursor to not allowed
 			// this.canvas.style.cursor = CURSOR_TYPE.CROSSHAIR
 			// changeCanvasCursor(this.canvas, CURSOR_TYPE.CROSSHAIR)
 			// return
 		}
-		const location = getTopLeftPointFromTransformedPoint(eventPoint, SizeByType[ENTITY_TYPE.Panel])
+		const location = getTopLeftPointFromTransformedPoint(currentPoint, SizeByType[ENTITY_TYPE.Panel])
 		const entity = this._state.entities.canvasEntities.getEntityById(this.singleToMoveId)
 		assertNotNull(entity)
 
@@ -65,10 +66,12 @@ export class ObjectPositioningService {
 		this._render.drawCanvasExcludeIdsWithFn([this.singleToMoveId], drawSingleToMove)
 	}
 
-	singleToMoveMouseUp(event: PointerEvent) {
+	singleToMoveMouseUp(event: PointerEvent, currentPoint: TransformedPoint) {
 		assertNotNull(this.singleToMoveId)
 
-		const location = this._domPoint.getTransformedPointToMiddleOfObjectFromEvent(event, ENTITY_TYPE.Panel)
+		// const middleOf = getMiddleOfObjectFromEvent(event, ENTITY_TYPE.Panel)
+		const location = getTopLeftPointFromTransformedPoint(currentPoint, SizeByType[ENTITY_TYPE.Panel])
+		// const location = this._domPoint.getTransformedPointToMiddleOfObjectFromEvent(event, ENTITY_TYPE.Panel)
 		this._state.entities.canvasEntities.updateEntity(this.singleToMoveId, { location })
 
 		changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
@@ -79,20 +82,22 @@ export class ObjectPositioningService {
 		return
 	}
 
-	multiSelectDraggingMouseDown(event: PointerEvent, multipleSelectedIds: string[]) {
+	multiSelectDraggingMouseDown(event: PointerEvent, multipleSelectedIds: string[], currentPoint: TransformedPoint) {
 		if (!event.shiftKey || !event.ctrlKey) return
 		this.multipleToMoveIds = multipleSelectedIds
-		this.multiToMoveStart = this._domPoint.getTransformedPointFromEvent(event)
+		this.multiToMoveStart = currentPoint
+		// this.multiToMoveStart = this._domPoint.getTransformedPointFromEvent(event)
 		this._machine.sendEvent(new StartMultipleMove())
 	}
 
-	setMultiSelectDraggingMouseMove(event: PointerEvent, multipleSelectedIds: string[]) {
+	setMultiSelectDraggingMouseMove(event: PointerEvent, multipleSelectedIds: string[], currentPoint: TransformedPoint) {
 		if (!event.shiftKey || !event.ctrlKey) {
 			this.stopMultiSelectDragging(event)
 			return
 		}
 		this.multipleToMoveIds = multipleSelectedIds
-		this.multiToMoveStart = this._domPoint.getTransformedPointFromEvent(event)
+		this.multiToMoveStart = currentPoint
+		// this.multiToMoveStart = this._domPoint.getTransformedPointFromEvent(event)
 		this._machine.sendEvent(new StartMultipleMove())
 	}
 
@@ -182,13 +187,13 @@ export class ObjectPositioningService {
 		return
 	}
 
-	resetObjectPositioning(event: PointerEvent) {
+	resetObjectPositioning(event: PointerEvent, currentPoint: TransformedPoint) {
 		if (this.multiToMoveStart) {
 			this.stopMultiSelectDragging(event)
 			this._machine.sendEvent(new StopMultipleMove())
 		}
 		if (this.singleToMoveId) {
-			this.singleToMoveMouseUp(event)
+			this.singleToMoveMouseUp(event, currentPoint)
 			this._machine.sendEvent(new StopSingleMove())
 		}
 

@@ -5,7 +5,7 @@ import { ENTITY_TYPE } from '@design-app/shared'
 import { assertNotNull, OnDestroyDirective } from '@shared/utils'
 import { changeCanvasCursor, dragBoxKeysDown, draggingScreenKeysDown, isContextMenu, isDraggingEntity, isMenuOpen, isReadyToMultiDrag, multiSelectDraggingKeysDown, rotatingKeysDown } from '../utils'
 import { DesignCanvasDirectiveExtension } from './design-canvas-directive.extension'
-import { CANVAS_MODE, DRAG_BOX_STATE, DRAG_BOX_STATE_KEY, getDrawPreviewEntityFnV2, POINTER_STATE, POINTER_STATE_KEY, PointerHoverOverEntity, PointerLeaveEntity, TO_MOVE_STATE, TO_MOVE_STATE_KEY, TO_ROTATE_STATE, TO_ROTATE_STATE_KEY, VIEW_STATE, VIEW_STATE_KEY } from '../services'
+import { DRAG_BOX_STATE, getDrawPreviewEntityFnV2, GRID_STATE, POINTER_STATE, POINTER_STATE_KEY, PointerHoverOverEntity, PointerLeaveEntity, StartClickCreateMode, StartClickSelectMode, TO_MOVE_STATE, TO_MOVE_STATE_KEY, TO_ROTATE_STATE, TO_ROTATE_STATE_KEY, VIEW_STATE } from '../services'
 import { createStringWithPanels } from '../utils/string-fns'
 
 interface DesignCanvasEventHandlers {
@@ -67,12 +67,14 @@ export class DesignCanvasWithXstateDirective
 	onMouseDownHandler(event: PointerEvent, currentPoint: TransformedPoint) {
 		// const currentPoint = this._domPoint.getTransformedPointFromEvent(event)
 
+		const { GridState } = this._machine.state
+
 		if (isContextMenu(event)) {
 			return
 		}
 		this.mouseDownTimeOutFn()
 		if (draggingScreenKeysDown(event)) {
-			this._view.handleDragScreenMouseDown(event)
+			this._view.handleDragScreenMouseDown(event, currentPoint)
 			return
 		}
 
@@ -93,13 +95,13 @@ export class DesignCanvasWithXstateDirective
 				return
 			}
 			console.log('drag box keys down')
-			this._drag.handleDragBoxMouseDown(event)
+			this._drag.handleDragBoxMouseDown(event, currentPoint, GridState)
 			return
 		}
 
 		const multipleSelectedIds = this._machine.ctx.selected.multipleSelectedIds
 		if (multiSelectDraggingKeysDown(event, multipleSelectedIds)) {
-			this._objPositioning.multiSelectDraggingMouseDown(event, multipleSelectedIds)
+			this._objPositioning.multiSelectDraggingMouseDown(event, multipleSelectedIds, currentPoint)
 			return
 		}
 
@@ -123,25 +125,22 @@ export class DesignCanvasWithXstateDirective
 		const machineState = this._machine.state
 
 		if (ToRotateState === TO_ROTATE_STATE.SINGLE_ROTATE_MODE_IN_PROGRESS) {
-			this._objRotating.rotateEntityViaMouse(event, true)
+			this._objRotating.rotateEntityViaMouse(event, true, currentPoint)
 			return
 		}
 
 		if (ToRotateState === TO_ROTATE_STATE.SINGLE_ROTATE_IN_PROGRESS) {
-			this._objRotating.rotateEntityViaMouse(event, false)
+			this._objRotating.rotateEntityViaMouse(event, false, currentPoint)
 			return
 		}
 
 		if (ToRotateState === TO_ROTATE_STATE.MULTIPLE_ROTATE_IN_PROGRESS) {
-			this._objRotating.rotateMultipleEntitiesViaMouse(event)
+			this._objRotating.rotateMultipleEntitiesViaMouse(event, currentPoint)
 			return
 		}
 
-		// const inNoRotateState = machineState.ToRotateState === TO_ROTATE_STATE.NO_ROTATE
-		// const anyToRotate = machineState.ToRotateState !== TO_ROTATE_STATE.NO_ROTATE
 		if (ToRotateState === TO_ROTATE_STATE.NO_ROTATE && rotatingKeysDown(event)) {
-			// if (inNoRotateState && rotatingKeysDown(event)) {
-			this._objRotating.handleSetEntitiesToRotate(event)
+			this._objRotating.handleSetEntitiesToRotate(event, currentPoint)
 			return
 		}
 		/*		if (!this._objRotating.areAnyEntitiesInRotate && rotatingKeysDown(event)) {
@@ -153,10 +152,10 @@ export class DesignCanvasWithXstateDirective
 		 this._objRotating.clearEntityToRotate()
 		 return
 		 }*/
-		const inViewDraggingState = machineState[VIEW_STATE_KEY] === VIEW_STATE.VIEW_DRAGGING_IN_PROGRESS
+		// const inViewDraggingState = machineState[VIEW_STATE_KEY] === VIEW_STATE.VIEW_DRAGGING_IN_PROGRESS
 		if (ViewState === VIEW_STATE.VIEW_DRAGGING_IN_PROGRESS) {
 			// if (inViewDraggingState) {
-			this._view.handleDragScreenMouseMove(event)
+			this._view.handleDragScreenMouseMove(event, currentPoint)
 			return
 		}
 		/*		if (this._view.screenDragStartPoint) {
@@ -164,13 +163,23 @@ export class DesignCanvasWithXstateDirective
 		 return
 		 }*/
 
-		const dragBoxStart = this._machine.ctx.dragBox.selectionBoxStart
+		// const dragBoxStart = this._machine.ctx.dragBox.selectionBoxStart
 		// const dragBoxStart = this._state.dragBox.dragBoxStart
-		if (DragBoxState === DRAG_BOX_STATE.DRAG_BOX_IN_PROGRESS) {
-			// if (dragBoxStart) {
-			this._drag.dragBoxMouseMove(event)
+		if (DragBoxState === DRAG_BOX_STATE.SELECTION_BOX_IN_PROGRESS) {
+			this._drag.selectionBoxMouseMove(event, currentPoint)
 			return
 		}
+
+		if (DragBoxState === DRAG_BOX_STATE.CREATION_BOX_IN_PROGRESS) {
+			this._drag.creationBoxMouseMove(event, currentPoint)
+			return
+		}
+
+		/*		if (DragBoxState === DRAG_BOX_STATE.SELECTION_BOX_IN_PROGRESS || DragBoxState === DRAG_BOX_STATE.CREATION_BOX_IN_PROGRESS) {
+		 // if (dragBoxStart) {
+		 this._drag.dragBoxMouseMove(event)
+		 return
+		 }*/
 
 		const dragBoxAxisLineStart = this._machine.ctx.dragBox.axisLineBoxStart
 		// const dragBoxAxisLineStart = this._state.dragBox.axisLineStart
@@ -207,7 +216,7 @@ export class DesignCanvasWithXstateDirective
 
 		if (multiSelectDraggingKeys && !multipleToMove) {
 
-			this._objPositioning.setMultiSelectDraggingMouseMove(event, multipleSelectedIds)
+			this._objPositioning.setMultiSelectDraggingMouseMove(event, multipleSelectedIds, currentPoint)
 
 			return
 		}
@@ -219,7 +228,7 @@ export class DesignCanvasWithXstateDirective
 		const singleToMoveState = machineState[TO_MOVE_STATE_KEY] === TO_MOVE_STATE.SINGLE_MOVE_IN_PROGRESS
 
 		if (singleToMoveState) {
-			this._objPositioning.singleToMoveMouseMove(event)
+			this._objPositioning.singleToMoveMouseMove(event, currentPoint)
 			return
 		}
 
@@ -453,7 +462,8 @@ export class DesignCanvasWithXstateDirective
 	 */
 
 	onMouseUpHandler(event: PointerEvent, currentPoint: TransformedPoint) {
-		if (isContextMenu(event)) return
+		const { DragBoxState, ToMoveState, ViewState } = this._machine.state
+		// if (isContextMenu(event)) return
 		if (this.mouseDownTimeOut) {
 			console.log('mouseDownTimeOut', this.mouseDownTimeOut)
 			clearTimeout(this.mouseDownTimeOut)
@@ -467,22 +477,42 @@ export class DesignCanvasWithXstateDirective
 			return
 		}
 
-		const machineState = this._machine.state
+		// const machineState = this._machine.state
 		/*    this.mouseUpTimeOut = setTimeout(() => {
 		 this.mouseUpTimeOut = undefined
 		 }, 50)*/
 		// this.mouseUpTimeOutFn()
 
-		if (this._view.screenDragStartPoint) {
+		if (ViewState === VIEW_STATE.VIEW_DRAGGING_IN_PROGRESS) {
 			this._view.handleDragScreenMouseUp(event)
-		}
-
-		const dragBoxState = machineState[DRAG_BOX_STATE_KEY]
-
-		if (dragBoxState === DRAG_BOX_STATE.DRAG_BOX_IN_PROGRESS) {
-			this._drag.dragBoxMouseUp(event)
 			return
 		}
+		/*
+		 if (this._view.screenDragStartPoint) {
+		 this._view.handleDragScreenMouseUp(event)
+		 }*/
+
+		if (DragBoxState === DRAG_BOX_STATE.SELECTION_BOX_IN_PROGRESS) {
+			this._drag.selectionBoxMouseUp(event, currentPoint)
+			return
+		}
+
+		if (DragBoxState === DRAG_BOX_STATE.CREATION_BOX_IN_PROGRESS) {
+			this._drag.creationBoxMouseUp(event, currentPoint)
+			return
+		}
+		/*
+		 const dragBoxState = machineState[DRAG_BOX_STATE_KEY]
+		 /!*	case CANVAS_MODE.CREATE:
+		 this.creationBoxMouseUp(event)
+		 break
+		 case CANVAS_MODE.SELECT:
+		 this.selectionBoxMouseUp(event)
+		 break*!/
+		 if (dragBoxState === DRAG_BOX_STATE.DRAG_BOX_IN_PROGRESS) {
+		 this._drag.dragBoxMouseUp(event)
+		 return
+		 }*/
 
 		/*		const dragStart = this._machine.ctx.dragBox.selectionBoxStart
 		 // const dragStart = this._state.dragBox.dragBoxStart
@@ -491,17 +521,27 @@ export class DesignCanvasWithXstateDirective
 		 return
 		 }*/
 
-		const toMoveState = machineState[TO_MOVE_STATE_KEY]
-
-		if (toMoveState === TO_MOVE_STATE.SINGLE_MOVE_IN_PROGRESS) {
-			this._objPositioning.singleToMoveMouseUp(event)
+		if (ToMoveState === TO_MOVE_STATE.SINGLE_MOVE_IN_PROGRESS) {
+			this._objPositioning.singleToMoveMouseUp(event, currentPoint)
 			return
 		}
 
-		if (toMoveState === TO_MOVE_STATE.MULTIPLE_MOVE_IN_PROGRESS) {
+		if (ToMoveState === TO_MOVE_STATE.MULTIPLE_MOVE_IN_PROGRESS) {
 			this._objPositioning.stopMultiSelectDragging(event)
 			return
 		}
+
+		/*		const toMoveState = machineState[TO_MOVE_STATE_KEY]
+
+		 if (toMoveState === TO_MOVE_STATE.SINGLE_MOVE_IN_PROGRESS) {
+		 this._objPositioning.singleToMoveMouseUp(event)
+		 return
+		 }
+
+		 if (toMoveState === TO_MOVE_STATE.MULTIPLE_MOVE_IN_PROGRESS) {
+		 this._objPositioning.stopMultiSelectDragging(event)
+		 return
+		 }*/
 
 		// const singleToMove = this._machine.ctx.toMove.singleToMove
 		// const singleToMove = this._state.toMove.singleToMove
@@ -557,7 +597,7 @@ export class DesignCanvasWithXstateDirective
 		}
 
 		if (isMoving) {
-			this._objPositioning.resetObjectPositioning(event)
+			this._objPositioning.resetObjectPositioning(event, currentPoint)
 			return
 		}
 		/*		const singleRotateMode = this._state.toRotate.singleRotateMode
@@ -779,13 +819,28 @@ export class DesignCanvasWithXstateDirective
 			}
 				break
 			case KEYS.C: {
-				if (this._mode.mode === CANVAS_MODE.CREATE) {
-					this._mode.setMode(CANVAS_MODE.SELECT)
-					return
+				const { GridState } = this._machine.state
+				switch (GridState) {
+					case GRID_STATE.IN_SELECT_MODE:
+						this._machine.sendEvent(new StartClickCreateMode())
+						break
+					case GRID_STATE.IN_CREATE_MODE:
+						this._machine.sendEvent(new StartClickSelectMode())
+						break
+					default:
+						throw new Error('Unknown grid state')
+					// this._machine.transition(GRID_STATE.IN_CREATE_MODE)
+
 				}
-				this._mode.setMode(CANVAS_MODE.CREATE)
+				return
+
+				/*				if (this._mode.mode === CANVAS_MODE.CREATE) {
+				 this._mode.setMode(CANVAS_MODE.SELECT)
+				 return
+				 }
+				 this._mode.setMode(CANVAS_MODE.CREATE)*/
 			}
-				break
+			// break
 			case KEYS.M: {
 				const newMenuState = !this._state.menu.optionsMenu
 				this._state.updateState({
