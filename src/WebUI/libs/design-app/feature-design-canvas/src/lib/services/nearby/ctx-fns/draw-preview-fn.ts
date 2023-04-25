@@ -1,9 +1,7 @@
 import { CANVAS_COLORS } from '../../../types'
 import { CompleteEntityBounds } from '../../../utils'
 
-export const getDrawPreviewCtxFn = (
-	completeBounds: CompleteEntityBounds,
-) => {
+export const getDefaultDrawPreviewCtxFn = (completeBounds: CompleteEntityBounds) => {
 	return (ctx: CanvasRenderingContext2D) => {
 		ctx.save()
 		ctx.beginPath()

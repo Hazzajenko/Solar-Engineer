@@ -7,12 +7,12 @@ import { ShowSvgComponent } from '@shared/ui'
 import { CanvasClientStateService, CanvasEntitiesStore, CanvasRenderService, DomPointService, ObjectPositioningService } from '../../services'
 import { MenuDataset } from '../../types'
 import { LetModule } from '@ngrx/component'
-import { CanvasAppSettingsComponent, KeyMapComponent, RightClickMenuComponent } from './menus'
+import { CanvasAppSettingsComponent, CanvasGraphicsMenuComponent, KeyMapComponent, RightClickMenuComponent } from './menus'
 import { DesignCanvasWithXstateDirective } from '../../directives'
 
 @Component({
 	changeDetection: ChangeDetectionStrategy.OnPush, imports: [
-		CdkDrag, CommonModule, ShowSvgComponent, LetModule, KeyMapComponent, CanvasAppSettingsComponent, RightClickMenuComponent, DesignCanvasWithXstateDirective,
+		CdkDrag, CommonModule, ShowSvgComponent, LetModule, KeyMapComponent, CanvasAppSettingsComponent, RightClickMenuComponent, DesignCanvasWithXstateDirective, CanvasGraphicsMenuComponent,
 	], selector:     'app-design-canvas', standalone: true, styles: [], templateUrl: './design-canvas.component.html',
 })
 export class DesignCanvasComponent
@@ -37,9 +37,9 @@ export class DesignCanvasComponent
 
 	canvasMenuArr = [
 		{
-			label: 'Create Preview', action: this.toggleCreatePreview.bind(this), checked: this._state.menu.createPreview,
+			label: 'Create Preview', action: this.toggleCreatePreview.bind(this), selected: this._state.menu.createPreview,
 		}, {
-			label: 'Nearby Axis Lines', action: this.toggleNearbyAxisLines.bind(this), checked: this._state.menu.nearbyAxisLines,
+			label: 'Nearby Axis Lines', action: this.toggleNearbyAxisLines.bind(this), selected: this._state.menu.nearbyAxisLines,
 		},
 	]
 

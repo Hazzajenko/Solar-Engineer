@@ -15,7 +15,6 @@ import {
 	NearbyEntityDeprecated,
 	StateUpdate,
 } from '../../canvas-client-state'
-import { drawEntityGridLines } from '../../nearby'
 import { findNearbyBoundOverlapOnBothAxis } from '../../object-positioning/utils'
 import { groupInto2dArray, mapToDictionary } from '@shared/utils'
 import { sortBy } from 'lodash'
@@ -97,7 +96,10 @@ export const getDrawPreviewEntityFnV2 = (
 
 	const closestNearby2dArray = nearby2dArray.map((arr) => arr[0])
 	const closestEnt = closestNearby2dArray[0]
-	const entGridLineCtxFn = drawEntityGridLines(closestEnt)
+	// const entGridLineCtxFn = drawMiddleOfEntityAxisLine(closestEnt, snapToGridBool)
+	const entGridLineCtxFn = (ctx: CanvasRenderingContext2D) => {
+		ctx.save()
+	}
 
 	const gridLines = getEntityAxisGridLinesByAxisV2(closestEnt.bounds, closestEnt.axis)
 	const gridLineBounds = getBoundsFromArrPoints(gridLines)

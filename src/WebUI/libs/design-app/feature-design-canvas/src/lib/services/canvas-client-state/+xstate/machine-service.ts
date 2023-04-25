@@ -55,7 +55,9 @@ export const stateEventLoggerExcludePointerState = (state: any) => {
 		if (!stateDifference.PointerState) {
 			console.log('%c event', 'color: #03A9F4; font-weight: bold;', stateDifference)
 		}
+		return
 	}
+	console.log('%c event', 'color: #03A9F4; font-weight: bold;', state.event)
 }
 
 // const stateLogger = new StaticLogger('state')

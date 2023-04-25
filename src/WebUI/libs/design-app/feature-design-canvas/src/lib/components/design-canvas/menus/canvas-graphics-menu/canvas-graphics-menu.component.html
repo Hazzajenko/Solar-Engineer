@@ -1,0 +1,41 @@
+<ng-container *ngIf="graphicsState$ | async as state">
+  <div class="rounded bg-slate-100 p-2">
+    <div
+      *ngFor="let item of canvasMenuArr"
+      (click)="item.action()"
+      class="relative flex items-start p-2 hover:bg-gray-200"
+    >
+      <div class="flex h-6 items-center">
+        <input
+          id="create-preview"
+          name="create-preview"
+          [checked]="item.selected"
+          type="checkbox"
+          class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+        />
+      </div>
+      <div class="ml-3 text-sm leading-6">
+        <label for="create-preview" class="font-medium text-gray-900">{{ item.label }}</label>
+      </div>
+    </div>
+    <div>
+      <label for="location" class="block text-sm font-medium leading-6 text-gray-900"
+        >Nearby Axis Line</label
+      >
+      <select
+        (change)="changeNearbyGraphics($event)"
+        id="location"
+        name="location"
+        class="mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
+      >
+        <option
+          *ngFor="let option of nearbyGraphicsSelectMenuArray"
+          [selected]="option.selected"
+          [value]="option.value"
+        >
+          {{ option.label }}
+        </option>
+      </select>
+    </div>
+  </div>
+</ng-container>

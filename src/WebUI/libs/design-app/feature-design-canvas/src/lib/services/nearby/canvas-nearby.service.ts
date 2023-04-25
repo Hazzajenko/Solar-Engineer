@@ -8,7 +8,8 @@ import { sortBy } from 'lodash'
 import { CanvasRenderService, getCtxRectBoundsByAxisV2 } from '../canvas-render'
 import { ENTITY_TYPE } from '@design-app/shared'
 import { NearbyEntity } from './nearby-entity'
-import { getDrawPreviewCtxFn, getEntityGridLineWithEntityPreviewFn } from './ctx-fns'
+import { getCenterLineBetweenTwoEntitiesWithPreviewFn, getDefaultDrawPreviewCtxFn, getEntityAxisCenterWithEntityPreviewFn, getEntityGridLineWithEntityPreviewFn } from './ctx-fns'
+import { NEARBY_DRAW_MODE, NearbyDrawMode } from './nearby-draw-mode'
 
 @Injectable({
 	providedIn: 'root',
@@ -16,6 +17,10 @@ import { getDrawPreviewCtxFn, getEntityGridLineWithEntityPreviewFn } from './ctx
 export class CanvasNearbyService {
 	private _render = inject(CanvasRenderService)
 	private _state = inject(CanvasClientStateService)
+
+	// nearbyDrawMode: NearbyDrawMode = NEARBY_DRAW_MODE.CENTER_LINE_SCREEN_SIZE
+	nearbyDrawMode: NearbyDrawMode = NEARBY_DRAW_MODE.CENTER_LINE_BETWEEN_TWO_ENTITIES
+	holdAltToSnapToGrid = true
 
 	nearbyIds: string[] = []
 	nearbyEntities: NearbyEntity[] = []
@@ -31,8 +36,8 @@ export class CanvasNearbyService {
 		const nearbyEntitiesOnAxis = findNearbyBoundOverlapOnBothAxis(mouseBoxBounds, entities)
 
 		if (!nearbyEntitiesOnAxis.length) {
-			console.log('no nearbyEntities')
-			const drawPreviewFn = getDrawPreviewCtxFn(mouseBoxBounds)
+			// console.log('no nearbyEntities')
+			const drawPreviewFn = getDefaultDrawPreviewCtxFn(mouseBoxBounds)
 
 			this.clearNearbyState()
 
@@ -47,7 +52,7 @@ export class CanvasNearbyService {
 		const nearbyAxisLinesEnabled = this._state.menu.nearbyAxisLines
 		if (!nearbyAxisLinesEnabled) {
 			console.log('no nearbyAxisLinesEnabled')
-			const drawPreviewFn = getDrawPreviewCtxFn(mouseBoxBounds)
+			const drawPreviewFn = getDefaultDrawPreviewCtxFn(mouseBoxBounds)
 			this._render.drawCanvasWithFunction(drawPreviewFn)
 			return
 		}
@@ -79,8 +84,25 @@ export class CanvasNearbyService {
 			? CANVAS_COLORS.TakenSpotFillStyle
 			: CANVAS_COLORS.PreviewPanelFillStyle
 
-		const drawGridLinesWithEntityPreview = getEntityGridLineWithEntityPreviewFn(event, axisPreviewRect, mouseBoxBounds, closestEnt, fillStyle)
-		this._render.drawCanvasWithFunction(drawGridLinesWithEntityPreview)
+		switch (this.nearbyDrawMode) {
+			case NEARBY_DRAW_MODE.TWO_SIDE_AXIS_LINES: {
+				const drawGridLinesWithEntityPreview = getEntityGridLineWithEntityPreviewFn(event, axisPreviewRect, mouseBoxBounds, closestEnt, fillStyle, this.holdAltToSnapToGrid)
+				this._render.drawCanvasWithFunction(drawGridLinesWithEntityPreview)
+				return
+			}
+			case NEARBY_DRAW_MODE.CENTER_LINE_SCREEN_SIZE: {
+				const drawCenterLinesScreenSizeWithEntityPreview = getEntityAxisCenterWithEntityPreviewFn(event, axisPreviewRect, mouseBoxBounds, closestEnt, fillStyle, this.holdAltToSnapToGrid)
+				this._render.drawCanvasWithFunction(drawCenterLinesScreenSizeWithEntityPreview)
+				return
+			}
+			case NEARBY_DRAW_MODE.CENTER_LINE_BETWEEN_TWO_ENTITIES: {
+				const drawSameAxisCenterLinesWithEntityPreview = getCenterLineBetweenTwoEntitiesWithPreviewFn(event, axisPreviewRect, mouseBoxBounds, closestEnt, fillStyle, this.holdAltToSnapToGrid)
+				this._render.drawCanvasWithFunction(drawSameAxisCenterLinesWithEntityPreview)
+				return
+			}
+			default:
+				throw new Error(`${this.nearbyDrawMode} is not implemented`)
+		}
 	}
 
 	clearNearbyState() {
