@@ -287,6 +287,18 @@ export class DesignCanvasWithXstateDirective
 		const state = this._machine.state
 		const { DragBoxState, ToMoveState, ViewState } = state
 		const snapshot = this._machine.snapshot
+		const matches = snapshot.matches
+		// const matches = this._machine.matches
+
+		/*		if (matches('ToMoveState')) {
+
+		 }*/
+		// const matches = snapshot.matches
+
+		/*		if (matches('GridState.PreviewAxisState.None.ViewDraggingInProgress')) {
+
+		 }*/
+
 		if (this.mouseDownTimeOut) {
 			console.log('mouseDownTimeOut', this.mouseDownTimeOut)
 			clearTimeout(this.mouseDownTimeOut)
@@ -322,10 +334,15 @@ export class DesignCanvasWithXstateDirective
 			return
 		}
 
-		if (ToMoveState === TO_MOVE_STATE.SINGLE_MOVE_IN_PROGRESS) {
+		if (matches('ToMoveState.SingleMoveInProgress')) {
 			this._objPositioning.singleToMoveMouseUp(event, currentPoint)
 			return
 		}
+
+		/*		if (ToMoveState === TO_MOVE_STATE.SINGLE_MOVE_IN_PROGRESS) {
+		 this._objPositioning.singleToMoveMouseUp(event, currentPoint)
+		 return
+		 }*/
 
 		if (ToMoveState === TO_MOVE_STATE.MULTIPLE_MOVE_IN_PROGRESS) {
 			this._objPositioning.stopMultiSelectDragging(event)
@@ -381,15 +398,10 @@ export class DesignCanvasWithXstateDirective
 
 		// const location = this._domPoint.getTransformedPointToMiddleOfObjectFromEvent(event, ENTITY_TYPE.Panel)
 
-		if (appSnapshot.matches('GridState.PreviewAxisState.PreviewAxisDrawEnabled')) {
-			if (!event.altKey) {
-				this._machine.sendEvent({ type: 'TogglePreviewAxisDraw' })
+		if (appSnapshot.matches('GridState.PreviewAxisState.AxisCreatePreviewInProgress')) {
+			if (!event.altKey || !this._nearby.axisPreviewRect) {
+				this._machine.sendEvent({ type: 'StopAxisPreview' })
 				this._nearby.axisPreviewRect = undefined
-				this._render.drawCanvas()
-				return
-			}
-			if (!this._nearby.axisPreviewRect) {
-				this._machine.sendEvent({ type: 'TogglePreviewAxisDraw' })
 				this._render.drawCanvas()
 				return
 			}
@@ -404,7 +416,7 @@ export class DesignCanvasWithXstateDirective
 				: createPanel(previewRectLocation)
 			this._state.entities.canvasEntities.addEntity(entity)
 			this._nearby.axisPreviewRect = undefined
-			this._machine.sendEvent({ type: 'TogglePreviewAxisDraw' })
+			this._machine.sendEvent({ type: 'StopAxisPreview' })
 			/*      const axisPreviewRectBounds = domRectToBounds(axisPreviewRect)
 			 if (isPointInsideBounds(location, axisPreviewRectBounds)) {*/
 			/*			this._state.updateState({
@@ -416,26 +428,26 @@ export class DesignCanvasWithXstateDirective
 			return
 		}
 
-		const axisPreviewRect = this._state.grid.axisPreviewRect
-		if (axisPreviewRect && event.altKey) {
-			// const entity = this._state.selected.selectedStringId
-			const previewRectLocation = { x: axisPreviewRect.left, y: axisPreviewRect.top }
-			const entity = this._state.selected.selectedStringId
-				? createPanel(previewRectLocation, this._state.selected.selectedStringId)
-				: createPanel(previewRectLocation)
-			this._state.entities.canvasEntities.addEntity(entity)
-			/*      const axisPreviewRectBounds = domRectToBounds(axisPreviewRect)
-			 if (isPointInsideBounds(location, axisPreviewRectBounds)) {*/
-			/*			this._state.updateState({
-			 grid: {
-			 axisPreviewRect: undefined,
-			 },
-			 })*/
-			this._render.drawCanvas()
-			return
-			/*      return
-			 }*/
-		}
+		/*		const axisPreviewRect = this._state.grid.axisPreviewRect
+		 if (axisPreviewRect && event.altKey) {
+		 // const entity = this._state.selected.selectedStringId
+		 const previewRectLocation = { x: axisPreviewRect.left, y: axisPreviewRect.top }
+		 const entity = this._state.selected.selectedStringId
+		 ? createPanel(previewRectLocation, this._state.selected.selectedStringId)
+		 : createPanel(previewRectLocation)
+		 this._state.entities.canvasEntities.addEntity(entity)
+		 /!*      const axisPreviewRectBounds = domRectToBounds(axisPreviewRect)
+		 if (isPointInsideBounds(location, axisPreviewRectBounds)) {*!/
+		 /!*			this._state.updateState({
+		 grid: {
+		 axisPreviewRect: undefined,
+		 },
+		 })*!/
+		 this._render.drawCanvas()
+		 return
+		 /!*      return
+		 }*!/
+		 }*/
 
 		const location = getTopLeftPointFromTransformedPoint(
 			currentPoint,

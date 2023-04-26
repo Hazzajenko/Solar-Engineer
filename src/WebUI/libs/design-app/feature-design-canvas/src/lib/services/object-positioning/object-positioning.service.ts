@@ -27,13 +27,17 @@ import {
 	CompleteEntityBounds,
 	getBoundsFromArrPoints,
 	getCompleteBoundsFromCenterTransformedPoint,
+	getCompleteBoundsFromMultipleEntitiesWithPadding,
 	getEntityAxisGridLinesByAxisV2,
 	getEntityBounds,
 	getTopLeftPointFromTransformedPoint,
 	isHoldingClick,
 	isPointInsideBounds,
 } from '../../utils'
-import { getNearbyLineDrawCtxFnFromGraphicsSnapshot } from '../../utils-ctx'
+import {
+	drawSelectionBoxBoundsCtxFn,
+	getNearbyLineDrawCtxFnFromGraphicsSnapshot,
+} from '../../utils-ctx'
 import { inject, Injectable } from '@angular/core'
 import { ENTITY_TYPE } from '@design-app/shared'
 import { CURSOR_TYPE } from '@shared/data-access/models'
@@ -56,7 +60,9 @@ export class ObjectPositioningService {
 	multipleToMoveIds: string[] = []
 
 	currentAxis: Axis | undefined
-	axisPreviewRect: CompleteEntityBounds | undefined
+	axisRepositionPreviewRect: CompleteEntityBounds | undefined
+
+	// axisPreviewRect: CompleteEntityBounds | undefined
 
 	get canvas() {
 		return this._canvasElement.canvas
@@ -150,7 +156,7 @@ export class ObjectPositioningService {
 			mouseBoxBounds,
 		)
 		this.currentAxis = closestEnt.axis
-		this.axisPreviewRect = axisPreviewRect
+		this.axisRepositionPreviewRect = axisPreviewRect
 
 		const holdAltToSnapToGrid = GraphicsSettings.HoldAltToSnapToGrid
 		const altKey = event.altKey
@@ -174,10 +180,22 @@ export class ObjectPositioningService {
 		assertNotNull(this.singleToMoveId)
 
 		// const middleOf = getMiddleOfObjectFromEvent(event, ENTITY_TYPE.Panel)
-		const location = getTopLeftPointFromTransformedPoint(
-			currentPoint,
-			SizeByType[ENTITY_TYPE.Panel],
-		)
+		let location: {
+			x: number
+			y: number
+		}
+		if (this.axisRepositionPreviewRect && event.altKey) {
+			location = {
+				x: this.axisRepositionPreviewRect.left,
+				y: this.axisRepositionPreviewRect.top,
+			}
+		} else {
+			location = getTopLeftPointFromTransformedPoint(currentPoint, SizeByType[ENTITY_TYPE.Panel])
+		}
+		/*		const location = getTopLeftPointFromTransformedPoint(
+		 currentPoint,
+		 SizeByType[ENTITY_TYPE.Panel],
+		 )*/
 		// const location = this._domPoint.getTransformedPointToMiddleOfObjectFromEvent(event, ENTITY_TYPE.Panel)
 		this._state.entities.canvasEntities.updateEntity(this.singleToMoveId, { location })
 
@@ -243,6 +261,11 @@ export class ObjectPositioningService {
 			}
 		})
 
+		/*		const panelsInArea = this._state.entities.canvasEntities.getEntitiesByIds(
+		 this._machine.ctx.selected.multipleSelectedIds,
+		 )*/
+		const selectionBoxBounds = getCompleteBoundsFromMultipleEntitiesWithPadding(updates, 10)
+
 		const drawMultipleToMove = (ctx: CanvasRenderingContext2D) => {
 			ctx.save()
 			updates.forEach((entity) => {
@@ -250,6 +273,7 @@ export class ObjectPositioningService {
 				ctx.translate(entity.location.x + entity.width / 2, entity.location.y + entity.height / 2)
 				ctx.rotate(entity.angle)
 
+				ctx.fillStyle = CANVAS_COLORS.MultiSelectedPanelFillStyle
 				ctx.beginPath()
 				ctx.rect(-entity.width / 2, -entity.height / 2, entity.width, entity.height)
 				ctx.fill()
@@ -257,9 +281,22 @@ export class ObjectPositioningService {
 				ctx.restore()
 			})
 			ctx.restore()
+
+			/** Draw selection box */
+
+			drawSelectionBoxBoundsCtxFn(selectionBoxBounds)(ctx)
+			/*			ctx.save()
+			 const { left, top, width, height } = selectionBoxBounds
+			 ctx.strokeStyle = CANVAS_COLORS.MultiSelectedPanelFillStyle
+			 ctx.lineWidth = 1
+			 ctx.strokeRect(left, top, width, height)
+			 ctx.restore()*/
 		}
 
-		this._render.drawCanvasExcludeIdsWithFn(multipleToMoveIds, drawMultipleToMove)
+		// if (selectionBoxBounds) {
+
+		this._render.drawCanvasExcludeIdsWithFnEditSelectBox(multipleToMoveIds, drawMultipleToMove)
+		// this._render.drawCanvasExcludeIdsWithFn(multipleToMoveIds, drawMultipleToMove)
 		return
 	}
 

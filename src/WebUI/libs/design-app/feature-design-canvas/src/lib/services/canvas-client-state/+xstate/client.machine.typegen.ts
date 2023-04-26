@@ -53,8 +53,9 @@ export interface Typegen0 {
     | 'GridState.ModeState.CreateMode'
     | 'GridState.ModeState.SelectMode'
     | 'GridState.PreviewAxisState'
-    | 'GridState.PreviewAxisState.PreviewAxisDrawDisabled'
-    | 'GridState.PreviewAxisState.PreviewAxisDrawEnabled'
+    | 'GridState.PreviewAxisState.AxisCreatePreviewInProgress'
+    | 'GridState.PreviewAxisState.AxisRepositionPreviewInProgress'
+    | 'GridState.PreviewAxisState.None'
     | 'PointerState'
     | 'PointerState.HoveringOverEntity'
     | 'PointerState.PointerIsDown'
@@ -82,7 +83,10 @@ export interface Typegen0 {
           | 'PreviewAxisState'
           | {
               ModeState?: 'CreateMode' | 'SelectMode'
-              PreviewAxisState?: 'PreviewAxisDrawDisabled' | 'PreviewAxisDrawEnabled'
+              PreviewAxisState?:
+                | 'AxisCreatePreviewInProgress'
+                | 'AxisRepositionPreviewInProgress'
+                | 'None'
             }
         PointerState?: 'HoveringOverEntity' | 'PointerIsDown' | 'PointerUp'
         SelectedState?: 'EntitySelected' | 'MultipleEntitiesSelected' | 'NoneSelected'

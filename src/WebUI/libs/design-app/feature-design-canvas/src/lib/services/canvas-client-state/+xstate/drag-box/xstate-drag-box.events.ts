@@ -1,4 +1,5 @@
 import { TransformedPoint } from '../../../../types'
+import { CompleteEntityBounds } from '../../../../utils'
 
 export class SelectionBoxStarted {
 	readonly type = 'SelectionBoxStarted'
@@ -16,6 +17,7 @@ export class SelectionBoxCompleted {
 	constructor(
 		public readonly payload: {
 			ids: string[]
+			selectionBoxBounds: CompleteEntityBounds
 		},
 	) {}
 }

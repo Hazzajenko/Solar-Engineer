@@ -338,19 +338,29 @@ export const canvasAppMachine = createMachine(
 				type: 'parallel',
 				states: {
 					PreviewAxisState: {
-						initial: 'PreviewAxisDrawDisabled',
+						initial: 'None',
 						states: {
-							PreviewAxisDrawEnabled: {
+							None: {
 								on: {
-									TogglePreviewAxisDraw: {
-										target: 'PreviewAxisDrawDisabled',
+									StartAxisRepositionPreview: {
+										target: 'AxisRepositionPreviewInProgress',
+									},
+									StartAxisCreatePreview: {
+										target: 'AxisCreatePreviewInProgress',
 									},
 								},
 							},
-							PreviewAxisDrawDisabled: {
+							AxisRepositionPreviewInProgress: {
 								on: {
-									TogglePreviewAxisDraw: {
-										target: 'PreviewAxisDrawEnabled',
+									StopAxisPreview: {
+										target: 'None',
+									},
+								},
+							},
+							AxisCreatePreviewInProgress: {
+								on: {
+									StopAxisPreview: {
+										target: 'None',
 									},
 								},
 							},
@@ -406,12 +416,14 @@ export const canvasAppMachine = createMachine(
 					return (ctx.selected = {
 						...ctx.selected,
 						multipleSelectedIds: [ctx.selected.singleSelectedId, ...ids],
+						selectionBoxBounds: event.payload.selectionBoxBounds,
 						singleSelectedId: undefined,
 					})
 				}
 				return (ctx.selected = {
 					...ctx.selected,
 					multipleSelectedIds: ids,
+					selectionBoxBounds: event.payload.selectionBoxBounds,
 					singleSelectedId: undefined,
 				})
 			},

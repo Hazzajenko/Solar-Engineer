@@ -1,8 +1,36 @@
+import {
+	get_polygon_centroid,
+	getPolygonCentroid,
+	getPolygonCentroidV32,
+} from '../../utils/centroid'
 import { inject, Injectable } from '@angular/core'
-import { AngleRadians, CanvasClientStateService, CanvasRenderService, DomPointService, getAngleInRadiansBetweenTwoPoints, MachineService, MultipleToRotateEntity, rotatePointOffPivot, rotatingKeysDown, SizeByType, StartMultipleRotate, StartSingleRotate, StopMultipleRotate, StopSingleRotate, TransformedPoint, updateObjectByIdForStore } from '@design-app/feature-design-canvas'
-import { assertNotNull } from '@shared/utils'
-import { Point } from '@shared/data-access/models'
+import {
+	AngleRadians,
+	calculatePivotPointForEntitiesAndReturnDistanceFromEntityToPivotPoint,
+	calculatePivotPositionV7,
+	CANVAS_COLORS,
+	CanvasClientStateService,
+	CanvasRenderService,
+	DomPointService,
+	drawSelectionBoxBoundsCtxFnWithTranslateRotate,
+	getAngleInRadiansBetweenTwoPoints,
+	getCompleteBoundsFromMultipleEntitiesWithPaddingWithAngle,
+	MachineService,
+	rotatePointOffPivot,
+	rotatingKeysDown,
+	SizeByType,
+	StartMultipleRotate,
+	StartSingleRotate,
+	StopMultipleRotate,
+	StopSingleRotate,
+	TransformedPoint,
+	TrigonometricBounds,
+	updateObjectByIdForStore,
+} from '@design-app/feature-design-canvas'
 import { Dictionary } from '@ngrx/entity'
+import { Point } from '@shared/data-access/models'
+import { assertNotNull } from '@shared/utils'
+
 
 @Injectable({
 	providedIn: 'root',
@@ -19,11 +47,12 @@ export class ObjectRotatingService {
 	singleToRotateRecentAngle: AngleRadians | undefined = undefined
 
 	multipleToRotateIds: string[] = []
-	multipleToRotateEntities: MultipleToRotateEntity[] = []
 	multipleToRotateLocationDictionary: Dictionary<Point> = {}
 	multipleToRotateAngleDictionary: Dictionary<AngleRadians> = {}
 	multipleToRotatePivotPoint: Point | undefined = undefined
 	multipleToRotateStartToPivotAngle: AngleRadians | undefined = undefined
+
+	initialSelectionBoxBounds: TrigonometricBounds | undefined
 
 	handleSetEntitiesToRotate(event: PointerEvent, currentPoint: TransformedPoint) {
 		const selectedId = this._machine.ctx.selected.singleSelectedId
@@ -60,9 +89,61 @@ export class ObjectRotatingService {
 	}
 
 	setMultipleToRotate(multipleToRotateIds: string[], startPoint: TransformedPoint) {
-		const pivotPoint = this.calculatePivotPointPosition(multipleToRotateIds)
+		const { pivotPoint, distancesAwayFromPivot } =
+			calculatePivotPointForEntitiesAndReturnDistanceFromEntityToPivotPoint(
+				this._state.entities.canvasEntities.getEntitiesByIds(multipleToRotateIds),
+			)
+		const centroid = getPolygonCentroid(
+			this._state.entities.canvasEntities
+				.getEntitiesByIds(multipleToRotateIds)
+				.map((e) => e.location),
+		)
+
+		const centroid2 = get_polygon_centroid(
+			this._state.entities.canvasEntities
+				.getEntitiesByIds(multipleToRotateIds)
+				.map((e) => e.location),
+		)
+		const centroid3 = getPolygonCentroidV32(
+			this._state.entities.canvasEntities
+				.getEntitiesByIds(multipleToRotateIds)
+				.map((e) => e.location),
+		)
+
+		const centroid4 = calculatePivotPositionV7(
+			this._state.entities.canvasEntities
+				.getEntitiesByIds(multipleToRotateIds)
+				.map((e) => e.location),
+		)
+
+		// calculatePivotPositionV7
+		console.log('pivotPoint', pivotPoint)
+		console.log('centroid', centroid)
+		console.log('centroid2', centroid2)
+		console.log('centroid3', centroid3)
+		console.log('centroid4', centroid4)
+		console.log('distancesAwayFromPivot', distancesAwayFromPivot)
+
+		// const pivotPoint = this.calculatePivotPointPosition(multipleToRotateIds)
+		// const entities = this._state.entities.canvasEntities.getEntitiesByIds(multipleToRotateIds)
 		const startToPivotAngle = getAngleInRadiansBetweenTwoPoints(startPoint, pivotPoint)
+		/*		const selectionBoxBounds = getCompleteBoundsFromMultipleEntitiesWithPaddingWithAngle(
+		 entities,
+		 0, // 10,
+		 startToPivotAngle,
+		 )*/
+		// this.initialSelectionBoxBounds = selectionBoxBounds
+		// const selectionBoxBounds = getCompleteBoundsFromMultipleEntitiesWithPadding(entities, 10)
+		/*		if (!this.initialSelectionBoxBounds) {
+		 this.initialSelectionBoxBounds = selectionBoxBounds
+		 }*/
+		// const pivotPoint = this.calculatePivotPointPosition(multipleToRotateIds)
+
 		this.multipleToRotateIds = multipleToRotateIds
+		/*		this.multipleToRotatePivotPoint = {
+		 x: selectionBoxBounds.centerX,
+		 y: selectionBoxBounds.centerY,
+		 }*/
 		this.multipleToRotatePivotPoint = pivotPoint
 		this.multipleToRotateStartToPivotAngle = startToPivotAngle
 		this._machine.sendEvent(new StartMultipleRotate())
@@ -88,11 +169,12 @@ export class ObjectRotatingService {
 			throw new Error('No entity to rotate')
 		}
 		// const currentPoint = this._domPoint.getTransformedPointFromEvent(event)
-		const entityLocation = this._state.entities.canvasEntities.getEntityById(singleToRotateId)?.location
+		const entityLocation =
+			this._state.entities.canvasEntities.getEntityById(singleToRotateId)?.location
 		assertNotNull(entityLocation)
 		const previousAngle = singleToRotateStartAngle
 		const radians = getAngleInRadiansBetweenTwoPoints(currentPoint, entityLocation)
-		const angle = radians - previousAngle as AngleRadians
+		const angle = (radians - previousAngle) as AngleRadians
 		this.singleToRotateRecentAngle = angle
 
 		const entity = this._state.entities.canvasEntities.getEntityById(singleToRotateId)
@@ -102,6 +184,7 @@ export class ObjectRotatingService {
 			ctx.save()
 			ctx.translate(entity.location.x + entity.width / 2, entity.location.y + entity.height / 2)
 			ctx.rotate(angle)
+			ctx.fillStyle = CANVAS_COLORS.MultiSelectedPanelFillStyle
 			ctx.beginPath()
 			ctx.rect(-entity.width / 2, -entity.height / 2, entity.width, entity.height)
 			ctx.fill()
@@ -129,22 +212,45 @@ export class ObjectRotatingService {
 		const angleInRadians = getAngleInRadiansBetweenTwoPoints(currentPoint, pivotPoint)
 		const canvasEntities = this._state.entities.canvasEntities.getEntitiesByIds(multipleToRotateIds)
 		assertNotNull(startToPivotAngle)
-		const adjustedAngle = angleInRadians - startToPivotAngle as AngleRadians
-		const entities = canvasEntities.map(entity => {
+		const adjustedAngle = (angleInRadians - startToPivotAngle) as AngleRadians
+		const entities = canvasEntities.map((entity) => {
+			const entityAdjustedAngle = (entity.angle + adjustedAngle) as AngleRadians
 			const getPos = rotatePointOffPivot(entity.location, pivotPoint, adjustedAngle)
+			// const getPos = rotatePointOffPivot(entity.location, pivotPoint, adjustedAngle)
 			this.multipleToRotateLocationDictionary[entity.id] = getPos
-			this.multipleToRotateAngleDictionary[entity.id] = adjustedAngle
+			this.multipleToRotateAngleDictionary[entity.id] = entityAdjustedAngle
+			// this.multipleToRotateAngleDictionary[entity.id] = adjustedAngle
 			const { width, height } = SizeByType[entity.type]
 			return {
-				id: entity.id, adjustedLocation: getPos, adjustedAngle, width, height,
+				...entity,
+				id: entity.id,
+				location: getPos,
+				angle: entityAdjustedAngle, // angle: adjustedAngle,
+				width,
+				height,
 			}
+			/*			return {
+			 id: entity.id,
+			 adjustedLocation: getPos,
+			 adjustedAngle,
+			 width,
+			 height,
+			 }*/
 		})
-
+		const selectionBoxBounds = getCompleteBoundsFromMultipleEntitiesWithPaddingWithAngle(
+			entities,
+			10,
+			adjustedAngle,
+		)
+		// const selectionBoxBounds = getCompleteBoundsFromMultipleEntitiesWithPadding(entities, 10)
+		if (!this.initialSelectionBoxBounds) {
+			this.initialSelectionBoxBounds = selectionBoxBounds
+		}
 		const multipleRotateDrawFn = (ctx: CanvasRenderingContext2D) => {
 			ctx.save()
-			entities.forEach(entity => {
-				const angle = entity.adjustedAngle
-				const location = entity.adjustedLocation
+			entities.forEach((entity) => {
+				const angle = entity.angle
+				const location = entity.location
 				assertNotNull(angle)
 				assertNotNull(location)
 
@@ -159,9 +265,31 @@ export class ObjectRotatingService {
 				ctx.restore()
 			})
 			ctx.restore()
+
+			// const correctedBoxBounds =
+			if (this.initialSelectionBoxBounds) {
+				this.initialSelectionBoxBounds.angle = adjustedAngle
+				/*				const adjustedBoxPos = rotatePointOffPivot(
+				 {
+				 x: this.initialSelectionBoxBounds.left,
+				 y: this.initialSelectionBoxBounds.top,
+				 },
+				 pivotPoint,
+				 adjustedAngle,
+				 )
+				 this.initialSelectionBoxBounds.left = adjustedBoxPos.x
+				 this.initialSelectionBoxBounds.top = adjustedBoxPos.y*/
+				drawSelectionBoxBoundsCtxFnWithTranslateRotate(this.initialSelectionBoxBounds)(ctx)
+			} else {
+				drawSelectionBoxBoundsCtxFnWithTranslateRotate(selectionBoxBounds)(ctx)
+			}
+
+			// drawSelectionBoxBoundsCtxFnWithTranslateRotate(selectionBoxBounds)(ctx)
+			// drawSelectionBoxBoundsCtxFn(selectionBoxBounds)(ctx)
 		}
 
-		this._render.drawCanvasExcludeIdsWithFn(multipleToRotateIds, multipleRotateDrawFn)
+		this._render.drawCanvasExcludeIdsWithFnEditSelectBox(multipleToRotateIds, multipleRotateDrawFn)
+		// this._render.drawCanvasExcludeIdsWithFn(multipleToRotateIds, multipleRotateDrawFn)
 	}
 
 	calculatePivotPointPosition(multipleToRotateIds: string[]) {
@@ -194,7 +322,7 @@ export class ObjectRotatingService {
 	clearMultipleToRotate() {
 		const multipleToRotateIds = this.multipleToRotateIds
 		if (multipleToRotateIds.length) {
-			const storeUpdates = multipleToRotateIds.map(id => {
+			const storeUpdates = multipleToRotateIds.map((id) => {
 				const location = this.multipleToRotateLocationDictionary[id]
 				const angle = this.multipleToRotateAngleDictionary[id]
 				assertNotNull(location)
@@ -226,7 +354,7 @@ export class ObjectRotatingService {
 
 		const multipleToRotateIds = this.multipleToRotateIds
 		if (multipleToRotateIds.length) {
-			const storeUpdates = multipleToRotateIds.map(id => {
+			const storeUpdates = multipleToRotateIds.map((id) => {
 				const location = this.multipleToRotateLocationDictionary[id]
 				const angle = this.multipleToRotateAngleDictionary[id]
 				assertNotNull(location)
@@ -249,7 +377,8 @@ export class ObjectRotatingService {
 		this.multipleToRotateLocationDictionary = {}
 		this.multipleToRotateAngleDictionary = {}
 
+		this.initialSelectionBoxBounds = undefined
+
 		this._render.drawCanvas()
 	}
-
 }

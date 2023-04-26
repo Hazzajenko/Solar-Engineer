@@ -125,13 +125,13 @@ export class CanvasNearbyService {
 
 		const altKey = event.altKey
 
-		if (altKey && appSnapshot.matches('GridState.PreviewAxisState.PreviewAxisDrawDisabled')) {
-			this._machine.sendEvent({ type: 'TogglePreviewAxisDraw' })
+		if (altKey && appSnapshot.matches('GridState.PreviewAxisState.None')) {
+			this._machine.sendEvent({ type: 'StartAxisCreatePreview' })
 		} else if (
 			!altKey &&
-			appSnapshot.matches('GridState.PreviewAxisState.PreviewAxisDrawEnabled')
+			appSnapshot.matches('GridState.PreviewAxisState.AxisCreatePreviewInProgress')
 		) {
-			this._machine.sendEvent({ type: 'TogglePreviewAxisDraw' })
+			this._machine.sendEvent({ type: 'StopAxisPreview' })
 		}
 
 		const drawGridLinesWithEntityPreview = getNearbyLineDrawCtxFnFromGraphicsSnapshot(

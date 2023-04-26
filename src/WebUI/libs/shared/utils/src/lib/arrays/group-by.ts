@@ -50,7 +50,7 @@ const groupByCategory = groupByFunc(products, (product) => {
   return product.category
 })
 
-console.log(groupByCategory)
+// console.log(groupByCategory)
 const apples = groupByCategory['apples']
 
 export type MapValuesToKeysIfAllowed<T> = {

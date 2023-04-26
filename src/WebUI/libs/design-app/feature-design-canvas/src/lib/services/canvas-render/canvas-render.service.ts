@@ -1,12 +1,24 @@
-import { inject, Injectable } from '@angular/core'
-import { CanvasElementService } from '../canvas-element.service'
 import { CANVAS_COLORS, CanvasEntity, isPanel, SizeByType } from '../../types'
-import { DomPointService } from '../dom-point.service'
+import {
+	getAllAvailableEntitySpotsBetweenTwoPoints,
+	getCompleteBoundsFromMultipleEntitiesWithPadding,
+} from '../../utils'
 import { CanvasAppStateStore } from '../canvas-app-state'
-import { assertNotNull } from '@shared/utils'
-import { AdjustedMultipleToMove, AdjustedSingleToMove, CANVAS_MODE, canvasAppXStateService, CanvasClientStateService, MachineService } from '../canvas-client-state'
-import { getAllAvailableEntitySpotsBetweenTwoPoints } from '../../utils'
+import {
+	AdjustedMultipleToMove,
+	AdjustedSingleToMove,
+	CANVAS_MODE,
+	canvasAppXStateService,
+	CanvasClientStateService,
+	MachineService,
+} from '../canvas-client-state'
+import { CanvasElementService } from '../canvas-element.service'
 import { DIV_ELEMENT, DivElementsService } from '../div-elements'
+import { DomPointService } from '../dom-point.service'
+import { CtxTask } from './types'
+import { inject, Injectable } from '@angular/core'
+import { assertNotNull } from '@shared/utils'
+
 
 @Injectable({
 	providedIn: 'root',
@@ -80,7 +92,7 @@ export class CanvasRenderService {
 		this.ctx.restore()
 	}
 
-	drawCanvas() {
+	drawCanvas(entities?: CanvasEntity[]) {
 		this.render((ctx) => {
 			ctx.save()
 			ctx.setTransform(1, 0, 0, 1, 0, 0)
@@ -88,38 +100,94 @@ export class CanvasRenderService {
 			ctx.restore()
 			ctx.save()
 			ctx.beginPath()
-			const entities = this._state.entities.canvasEntities.getEntities()
+			entities = entities || this._state.entities.canvasEntities.getEntities()
+			// const entities = this._state.entities.canvasEntities.getEntities()
 			entities.forEach((entity) => {
 				this.drawEntity(entity)
 			})
 			ctx.restore()
+			if (this._machine.matches('SelectedState.MultipleEntitiesSelected')) {
+				this.drawSelectedBox()
+			}
 		})
+	}
+
+	drawSelectedBox() {
+		/*		const selectionBoxBounds = this._machine.ctx.selected.selectionBoxBounds
+		 if (!selectionBoxBounds) {
+		 this._machine.sendEvent({ type: 'CancelSelected', payload: null })
+		 console.log('selectionBoxBounds is null')
+		 return
+		 }*/
+
+		const panelsInArea = this._state.entities.canvasEntities.getEntitiesByIds(
+			this._machine.ctx.selected.multipleSelectedIds,
+		)
+		const selectionBoxBounds = getCompleteBoundsFromMultipleEntitiesWithPadding(panelsInArea, 10)
+
+		// if (selectionBoxBounds) {
+		this.ctx.save()
+		const { left, top, width, height } = selectionBoxBounds
+		this.ctx.strokeStyle = CANVAS_COLORS.MultiSelectedPanelFillStyle
+		this.ctx.lineWidth = 1
+		this.ctx.strokeRect(left, top, width, height)
+		this.ctx.restore()
+
+		// }
 	}
 
 	drawCanvasExcludeIdsWithFn(ids: string[], fn: (ctx: CanvasRenderingContext2D) => void) {
 		this.render((ctx) => {
 			ctx.save()
-			this.drawCanvasExcludeIds(ids)
+			this.drawCanvasExcludeIds(ids)(ctx)
+			fn(ctx)
+			ctx.restore()
+		})
+	}
+
+	drawCanvasExcludeIdsWithFnEditSelectBox(
+		ids: string[],
+		fn: (ctx: CanvasRenderingContext2D) => void,
+	) {
+		const entities = this._state.entities.canvasEntities
+			.getEntities()
+			.filter((entity) => !ids.includes(entity.id))
+		this.render((ctx) => {
+			ctx.save()
+			// this.drawCanvasExcludeIds(ids)
+			this.defaultDrawCanvasFnNoSelectBox(entities)(ctx)
+
+			fn(ctx)
+			ctx.restore()
+		})
+	}
+
+	drawCanvasExcludeIdsWithFnExcludeCtxTask(
+		ids: string[],
+		fn: (ctx: CanvasRenderingContext2D) => void,
+		tasks?: CtxTask[],
+	) {
+		const entities = this._state.entities.canvasEntities
+			.getEntities()
+			.filter((entity) => !ids.includes(entity.id))
+		this.render((ctx) => {
+			ctx.save()
+			// this.drawCanvasExcludeIds(ids)
+			this.defaultDrawCanvasFnNoSelectBox(entities)(ctx)
+
 			fn(ctx)
 			ctx.restore()
 		})
 	}
 
 	drawCanvasExcludeIds(ids: string[]) {
-		this.render((ctx) => {
-			ctx.save()
-			ctx.setTransform(1, 0, 0, 1, 0, 0)
-			ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
-			ctx.restore()
-			ctx.save()
-			ctx.beginPath()
-			const entities = this._state.entities.canvasEntities.getEntities()
-				.filter((entity) => !ids.includes(entity.id))
-			entities.forEach((entity) => {
-				this.drawEntity(entity)
-			})
-			ctx.restore()
-		})
+		const entities = this._state.entities.canvasEntities
+			.getEntities()
+			.filter((entity) => !ids.includes(entity.id))
+		return this.defaultDrawCanvasFn(entities)
+		// const excludeIdsFn = this.defaultDrawCanvasFn(entities)
+		// excludeIdsFn(this.ctx)
+		// this.render(excludeIdsFn)
 	}
 
 	drawCanvasWithFunction(fn: (ctx: CanvasRenderingContext2D) => void) {
@@ -128,6 +196,24 @@ export class CanvasRenderService {
 			this.drawCanvas()
 			fn(ctx)
 			ctx.restore()
+		})
+	}
+
+	drawCanvasWithFunctionInATimerLoop(fn: (ctx: CanvasRenderingContext2D) => void, time: number) {
+		setInterval(() => {
+			this.drawCanvasWithFunction(fn)
+		}, time)
+	}
+
+	drawCanvasWithFunctionInAForLoop(fn: (ctx: CanvasRenderingContext2D) => void, times: number) {
+		for (let i = 0; i < times; i++) {
+			this.drawCanvasWithFunction(fn)
+		}
+	}
+
+	drawCanvasWithFunctionInAnimationFrame(fn: (ctx: CanvasRenderingContext2D) => void) {
+		requestAnimationFrame(() => {
+			this.drawCanvasWithFunction(fn)
 		})
 	}
 
@@ -147,9 +233,10 @@ export class CanvasRenderService {
 		this.ctx.save()
 		this.ctx.beginPath()
 		this.ctx.globalAlpha = 0.4
-		this.ctx.strokeStyle = mode === CANVAS_MODE.SELECT
-			? CANVAS_COLORS.SelectionBoxFillStyle
-			: CANVAS_COLORS.CreationBoxFillStyle
+		this.ctx.strokeStyle =
+			mode === CANVAS_MODE.SELECT
+				? CANVAS_COLORS.SelectionBoxFillStyle
+				: CANVAS_COLORS.CreationBoxFillStyle
 		this.ctx.lineWidth = 1
 		this.ctx.rect(start.x, start.y, width, height)
 		this.ctx.fill()
@@ -165,7 +252,7 @@ export class CanvasRenderService {
 		const entitySize = SizeByType[type]
 
 		this.ctx.save()
-		spots.forEach(spot => {
+		spots.forEach((spot) => {
 			this.ctx.save()
 			this.ctx.beginPath()
 			this.ctx.globalAlpha = 0.4
@@ -192,7 +279,8 @@ export class CanvasRenderService {
 			fillStyle = '#17fff3'
 		}
 
-		const inSingleSelectedState = canvasAppXStateService.getSnapshot()
+		const inSingleSelectedState = canvasAppXStateService
+			.getSnapshot()
 			.matches('SelectedState.EntitySelected')
 		const isSingleSelected = selected.singleSelectedId === entity.id
 
@@ -270,7 +358,10 @@ export class CanvasRenderService {
 		// private handleDraggingEntityDraw(entity: CanvasEntity, singleToMove: EntityLocation) {
 		this.ctx.save()
 		this.ctx.fillStyle = CANVAS_COLORS.HoveredPanelFillStyle
-		this.ctx.translate(singleToMove.location.x + entity.width / 2, singleToMove.location.y + entity.height / 2)
+		this.ctx.translate(
+			singleToMove.location.x + entity.width / 2,
+			singleToMove.location.y + entity.height / 2,
+		)
 		this.ctx.rotate(entity.angle)
 
 		this.ctx.beginPath()
@@ -283,7 +374,10 @@ export class CanvasRenderService {
 	private handleMultipleMoveDraw(entity: CanvasEntity, multipleToMove: AdjustedMultipleToMove) {
 		const offset = multipleToMove.offset
 		this.ctx.save()
-		this.ctx.translate(entity.location.x + entity.width / 2 + offset.x, entity.location.y + entity.height / 2 + offset.y)
+		this.ctx.translate(
+			entity.location.x + entity.width / 2 + offset.x,
+			entity.location.y + entity.height / 2 + offset.y,
+		)
 		this.ctx.rotate(entity.angle)
 
 		this.ctx.beginPath()
@@ -329,13 +423,56 @@ export class CanvasRenderService {
 		this.ctx.restore()
 	}
 
+	private defaultDrawCanvasFn(entities?: CanvasEntity[]) {
+		return (ctx: CanvasRenderingContext2D) => {
+			ctx.save()
+			ctx.setTransform(1, 0, 0, 1, 0, 0)
+			ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+			ctx.restore()
+			ctx.save()
+			ctx.beginPath()
+			entities = entities || this._state.entities.canvasEntities.getEntities()
+			entities.forEach((entity) => {
+				this.drawEntity(entity)
+			})
+			ctx.restore()
+			ctx.save()
+			if (this._machine.matches('SelectedState.MultipleEntitiesSelected')) {
+				console.log('multiple entities selected')
+				this.drawSelectedBox()
+			}
+			ctx.restore()
+		}
+	}
+
+	private defaultDrawCanvasFnNoSelectBox(entities?: CanvasEntity[]) {
+		return (ctx: CanvasRenderingContext2D) => {
+			ctx.save()
+			ctx.setTransform(1, 0, 0, 1, 0, 0)
+			ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+			ctx.restore()
+			ctx.save()
+			ctx.beginPath()
+			entities = entities || this._state.entities.canvasEntities.getEntities()
+			entities.forEach((entity) => {
+				this.drawEntity(entity)
+			})
+			ctx.restore()
+		}
+	}
 }
 
-const isSingleDragging = (entity: CanvasEntity, singleToMove: AdjustedSingleToMove | undefined): singleToMove is AdjustedSingleToMove => {
+const isSingleDragging = (
+	entity: CanvasEntity,
+	singleToMove: AdjustedSingleToMove | undefined,
+): singleToMove is AdjustedSingleToMove => {
 	return !!singleToMove && singleToMove.id === entity.id
 }
 
-const isMultipleDragging = (entity: CanvasEntity, multipleToMove: AdjustedMultipleToMove | undefined): multipleToMove is AdjustedMultipleToMove => {
+const isMultipleDragging = (
+	entity: CanvasEntity,
+	multipleToMove: AdjustedMultipleToMove | undefined,
+): multipleToMove is AdjustedMultipleToMove => {
 	return !!multipleToMove && multipleToMove.entities.find((e) => e.id === entity.id) !== undefined
 }
 /*const isSingleDragging = (entity: CanvasEntity, singleToMove: SingleToMove | undefined): singleToMove is SingleToMove => {

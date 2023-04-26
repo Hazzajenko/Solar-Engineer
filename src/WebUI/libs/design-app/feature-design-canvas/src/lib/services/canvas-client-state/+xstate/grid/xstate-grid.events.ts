@@ -13,12 +13,28 @@ export class ResetGridClickMode {
 	readonly payload = null
 }
 
-export type TogglePreviewAxisDraw = {
-	type: 'TogglePreviewAxisDraw'
+// StartAxisRepositionPreview
+// StartAxisCreatePreview
+// StopAxisPreview
+// StopAxisPreview
+//
+
+export type StartAxisRepositionPreview = {
+	type: 'StartAxisRepositionPreview'
+}
+
+export type StartAxisCreatePreview = {
+	type: 'StartAxisCreatePreview'
+}
+
+export type StopAxisPreview = {
+	type: 'StopAxisPreview'
 }
 
 export type XStateGridEvent =
 	| StartClickSelectMode
 	| StartClickCreateMode
 	| ResetGridClickMode
-	| TogglePreviewAxisDraw
+	| StartAxisRepositionPreview
+	| StartAxisCreatePreview
+	| StopAxisPreview
