@@ -1,4 +1,5 @@
 import { CreatePreviewGraphicsState } from './create-preview'
+import { Typegen0 } from './graphics-settings.machine.typegen'
 import { NEARBY_LINES_STATE_KEY, NearbyGraphicsState } from './nearby-graphics'
 
 export type GraphicsSettingsState = NearbyGraphicsState | CreatePreviewGraphicsState
@@ -18,3 +19,7 @@ const sadasdas: GraphicsStateValue = {
 const asdsa: GraphicsSettingsState = {
 	NearbyLinesEnabled: 'CenterLineBetweenTwoEntities',
 }
+
+export type GraphicsStateMatches = Typegen0['matchesStates']
+
+// const hello: GraphicsStateMatches = 'NearbyLinesState.NearbyLinesDisabled'

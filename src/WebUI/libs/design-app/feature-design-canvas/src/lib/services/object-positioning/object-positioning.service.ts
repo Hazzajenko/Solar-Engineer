@@ -1,11 +1,45 @@
-import { inject, Injectable } from '@angular/core'
-import { CanvasClientStateService, CanvasElementService, CanvasRenderService, DomPointService, MachineService, StartMultipleMove, StartSingleMove, StopMultipleMove, StopSingleMove } from '..'
-import { CURSOR_TYPE } from '@shared/data-access/models'
-import { assertNotNull } from '@shared/utils'
-import { ENTITY_TYPE } from '@design-app/shared'
-import { changeCanvasCursor, getEntityBounds, getTopLeftPointFromTransformedPoint, isHoldingClick, isPointInsideBounds } from '../../utils'
-import { CANVAS_COLORS, EntityFactory, EventPoint, SizeByType, TransformedPoint } from '../../types'
+import {
+	AppStateSnapshot,
+	CanvasClientStateService,
+	CanvasElementService,
+	CanvasRenderService,
+	DomPointService,
+	findNearbyBoundOverlapOnBothAxisExcludingIds,
+	getCtxRectBoundsByAxisV2,
+	MachineService,
+	StartMultipleMove,
+	StartSingleMove,
+	StopMultipleMove,
+	StopSingleMove,
+} from '..'
+import { GraphicsSettings, GraphicsStateSnapshot } from '../../components'
 import { eventToEventPoint, eventToPointLocation } from '../../functions'
+import {
+	Axis,
+	CANVAS_COLORS,
+	EntityFactory,
+	EventPoint,
+	SizeByType,
+	TransformedPoint,
+} from '../../types'
+import {
+	changeCanvasCursor,
+	CompleteEntityBounds,
+	getBoundsFromArrPoints,
+	getCompleteBoundsFromCenterTransformedPoint,
+	getEntityAxisGridLinesByAxisV2,
+	getEntityBounds,
+	getTopLeftPointFromTransformedPoint,
+	isHoldingClick,
+	isPointInsideBounds,
+} from '../../utils'
+import { getNearbyLineDrawCtxFnFromGraphicsSnapshot } from '../../utils-ctx'
+import { inject, Injectable } from '@angular/core'
+import { ENTITY_TYPE } from '@design-app/shared'
+import { CURSOR_TYPE } from '@shared/data-access/models'
+import { assertNotNull, groupInto2dArray } from '@shared/utils'
+import { sortBy } from 'lodash'
+
 
 @Injectable({
 	providedIn: 'root',
@@ -21,6 +55,9 @@ export class ObjectPositioningService {
 	multiToMoveStart: EventPoint | undefined
 	multipleToMoveIds: string[] = []
 
+	currentAxis: Axis | undefined
+	axisPreviewRect: CompleteEntityBounds | undefined
+
 	get canvas() {
 		return this._canvasElement.canvas
 	}
@@ -30,7 +67,12 @@ export class ObjectPositioningService {
 		this._machine.sendEvent(new StartSingleMove())
 	}
 
-	singleToMoveMouseMove(event: PointerEvent, currentPoint: TransformedPoint) {
+	singleToMoveMouseMove(
+		event: PointerEvent,
+		currentPoint: TransformedPoint,
+		appSnapshot: AppStateSnapshot,
+		graphicsSnapshot: GraphicsStateSnapshot,
+	) {
 		if (!isHoldingClick(event)) {
 			this._machine.sendEvent(new StopSingleMove())
 			this.singleToMoveId = undefined
@@ -42,36 +84,100 @@ export class ObjectPositioningService {
 		// const currentPoint = this._domPoint.getTransformedPointFromEvent(event)
 		const isSpotTaken = this.areAnyEntitiesNearbyExcludingGrabbed(currentPoint, this.singleToMoveId)
 		if (isSpotTaken) {
-			// TODO - change cursor to not allowed
+			changeCanvasCursor(this.canvas, CURSOR_TYPE.CROSSHAIR)
+			// TODO - implement red box
 			// this.canvas.style.cursor = CURSOR_TYPE.CROSSHAIR
 			// changeCanvasCursor(this.canvas, CURSOR_TYPE.CROSSHAIR)
 			// return
+		} else {
+			changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
 		}
-		const location = getTopLeftPointFromTransformedPoint(currentPoint, SizeByType[ENTITY_TYPE.Panel])
+		const location = getTopLeftPointFromTransformedPoint(
+			currentPoint,
+			SizeByType[ENTITY_TYPE.Panel],
+		)
 		const entity = this._state.entities.canvasEntities.getEntityById(this.singleToMoveId)
 		assertNotNull(entity)
 
-		const drawSingleToMove = (ctx: CanvasRenderingContext2D) => {
-			ctx.save()
-			ctx.fillStyle = CANVAS_COLORS.HoveredPanelFillStyle
-			ctx.translate(location.x + entity.width / 2, location.y + entity.height / 2)
-			ctx.rotate(entity.angle)
+		const size = SizeByType[ENTITY_TYPE.Panel]
+		const mouseBoxBounds = getCompleteBoundsFromCenterTransformedPoint(currentPoint, size)
+		const entities = this._state.entities.canvasEntities.getEntities()
+		const nearbyEntitiesOnAxis = findNearbyBoundOverlapOnBothAxisExcludingIds(
+			mouseBoxBounds,
+			entities,
+			[this.singleToMoveId],
+		)
+		// const nearbyEntitiesOnAxis = findNearbyBoundOverlapOnBothAxis(mouseBoxBounds, entities)
 
-			ctx.beginPath()
-			ctx.rect(-entity.width / 2, -entity.height / 2, entity.width, entity.height)
-			ctx.fill()
-			ctx.stroke()
-			ctx.restore()
+		if (!nearbyEntitiesOnAxis.length) {
+			const drawSingleToMove = (ctx: CanvasRenderingContext2D) => {
+				ctx.save()
+				ctx.fillStyle = CANVAS_COLORS.HoveredPanelFillStyle
+				ctx.translate(location.x + entity.width / 2, location.y + entity.height / 2)
+				ctx.rotate(entity.angle)
+
+				ctx.beginPath()
+				ctx.rect(-entity.width / 2, -entity.height / 2, entity.width, entity.height)
+				ctx.fill()
+				ctx.stroke()
+				ctx.restore()
+				// console.log('no nearbyEntities')
+				// const drawPreviewFn = getDefaultDrawPreviewCtxFn(mouseBoxBounds)
+
+				// this.clearNearbyState()
+			}
+			this._render.drawCanvasExcludeIdsWithFn([this.singleToMoveId], drawSingleToMove)
+			// this._render.drawCanvasWithFunction(drawSingleToMove)
+			return
 		}
 
-		this._render.drawCanvasExcludeIdsWithFn([this.singleToMoveId], drawSingleToMove)
+		// const anyNearClick = !!entities.find((entity) => isEntityOverlappingWithBounds(entity, mouseBoxBounds))
+
+		const nearbySortedByDistance = sortBy(nearbyEntitiesOnAxis, (entity) =>
+			Math.abs(entity.distance),
+		)
+		const nearby2dArray = groupInto2dArray(nearbySortedByDistance, 'axis')
+
+		const closestNearby2dArray = nearby2dArray.map((arr) => arr[0])
+		const closestEnt = closestNearby2dArray[0]
+
+		const gridLines = getEntityAxisGridLinesByAxisV2(closestEnt.bounds, closestEnt.axis)
+		const gridLineBounds = getBoundsFromArrPoints(gridLines)
+
+		const axisPreviewRect = getCtxRectBoundsByAxisV2(
+			closestEnt.bounds,
+			closestEnt.axis,
+			mouseBoxBounds,
+		)
+		this.currentAxis = closestEnt.axis
+		this.axisPreviewRect = axisPreviewRect
+
+		const holdAltToSnapToGrid = GraphicsSettings.HoldAltToSnapToGrid
+		const altKey = event.altKey
+		const isMovingExistingEntity = true
+
+		const ctxFn = getNearbyLineDrawCtxFnFromGraphicsSnapshot(
+			graphicsSnapshot,
+			axisPreviewRect,
+			mouseBoxBounds,
+			closestEnt,
+			CANVAS_COLORS.HoveredPanelFillStyle,
+			altKey,
+			holdAltToSnapToGrid,
+			isMovingExistingEntity,
+		)
+
+		this._render.drawCanvasExcludeIdsWithFn([this.singleToMoveId], ctxFn)
 	}
 
 	singleToMoveMouseUp(event: PointerEvent, currentPoint: TransformedPoint) {
 		assertNotNull(this.singleToMoveId)
 
 		// const middleOf = getMiddleOfObjectFromEvent(event, ENTITY_TYPE.Panel)
-		const location = getTopLeftPointFromTransformedPoint(currentPoint, SizeByType[ENTITY_TYPE.Panel])
+		const location = getTopLeftPointFromTransformedPoint(
+			currentPoint,
+			SizeByType[ENTITY_TYPE.Panel],
+		)
 		// const location = this._domPoint.getTransformedPointToMiddleOfObjectFromEvent(event, ENTITY_TYPE.Panel)
 		this._state.entities.canvasEntities.updateEntity(this.singleToMoveId, { location })
 
@@ -116,7 +222,8 @@ export class ObjectPositioningService {
 		const eventLocation = eventToPointLocation(event)
 		const scale = this._domPoint.scale
 		const offset = {
-			x: eventLocation.x - multiToMoveStart.x, y: eventLocation.y - multiToMoveStart.y,
+			x: eventLocation.x - multiToMoveStart.x,
+			y: eventLocation.y - multiToMoveStart.y,
 		}
 		offset.x = offset.x / scale
 		offset.y = offset.y / scale
@@ -127,10 +234,12 @@ export class ObjectPositioningService {
 		const updates = entities.map((entity) => {
 			const location = entity.location
 			const newLocation = {
-				x: location.x + offset.x, y: location.y + offset.y,
+				x: location.x + offset.x,
+				y: location.y + offset.y,
 			}
 			return {
-				...entity, location: newLocation,
+				...entity,
+				location: newLocation,
 			}
 		})
 
@@ -160,22 +269,24 @@ export class ObjectPositioningService {
 		const eventLocation = eventToPointLocation(event)
 		const scale = this._domPoint.scale
 		const offset = {
-			x: eventLocation.x - multiToMoveStart.x, y: eventLocation.y - multiToMoveStart.y,
+			x: eventLocation.x - multiToMoveStart.x,
+			y: eventLocation.y - multiToMoveStart.y,
 		}
 		offset.x = offset.x / scale
 		offset.y = offset.y / scale
 		const multipleToMoveIds = this.multipleToMoveIds
 		const entities = this._state.entities.canvasEntities.getEntitiesByIds(multipleToMoveIds)
 
-		const multiSelectedUpdated = entities.map(entity => {
+		const multiSelectedUpdated = entities.map((entity) => {
 			const location = entity.location
 			const newLocation = {
-				x: location.x + offset.x, y: location.y + offset.y,
+				x: location.x + offset.x,
+				y: location.y + offset.y,
 			}
 			return EntityFactory.update(entity, { location: newLocation })
 		})
 
-		const storeUpdates = multiSelectedUpdated.map(entity => {
+		const storeUpdates = multiSelectedUpdated.map((entity) => {
 			return EntityFactory.updateForStore(entity, { location: entity.location })
 		})
 		this._state.entities.canvasEntities.updateManyEntities(storeUpdates)
@@ -208,7 +319,10 @@ export class ObjectPositioningService {
 	}
 
 	areAnyEntitiesNearbyExcludingGrabbed(point: TransformedPoint, grabbedId: string) {
-		return !!this._state.entities.canvasEntities.getEntities()
-			.find((entity) => entity.id !== grabbedId && isPointInsideBounds(point, getEntityBounds(entity)))
+		return !!this._state.entities.canvasEntities
+			.getEntities()
+			.find(
+				(entity) => entity.id !== grabbedId && isPointInsideBounds(point, getEntityBounds(entity)),
+			)
 	}
 }

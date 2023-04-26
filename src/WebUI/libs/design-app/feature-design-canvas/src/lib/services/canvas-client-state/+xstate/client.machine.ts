@@ -338,7 +338,7 @@ export const canvasAppMachine = createMachine(
 				type: 'parallel',
 				states: {
 					PreviewAxisState: {
-						initial: 'PreviewAxisDrawEnabled',
+						initial: 'PreviewAxisDrawDisabled',
 						states: {
 							PreviewAxisDrawEnabled: {
 								on: {

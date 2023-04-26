@@ -10,7 +10,6 @@ export const handleSnapToGridWhenNearby = (
 ) => {
 	if (snapToGridBool) {
 		ctx.save()
-		ctx.globalAlpha = 0.6
 		ctx.rect(
 			axisPreviewRect.left,
 			axisPreviewRect.top,

@@ -70,9 +70,13 @@ export const canvasAppXStateService = interpret(canvasAppMachine, { devTools: tr
 	},
 )
 
+export type AppStateSnapshot = ReturnType<typeof canvasAppXStateService.getSnapshot>
+
+// const asdas: AppStateSnapshot = canvasAppXStateService.getSnapshot()
+
 // service.getSnapshot()
 
-canvasAppXStateService.start()
+// canvasAppXStateService.start()
 /*const send = canvasAppXStateService.send({
  type: 'AddEntitiesToMultipleSelected',
  payload: {

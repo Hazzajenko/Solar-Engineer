@@ -1,3 +1,4 @@
+import { Typegen0 } from './client.machine.typegen'
 import { DRAG_BOX_STATE, DRAG_BOX_STATE_KEY, DragBoxState } from './drag-box'
 import { GRID_STATE_KEY, GridState, InitialGridState } from './grid'
 import { POINTER_STATE, POINTER_STATE_KEY, PointerState } from './pointer'
@@ -34,7 +35,7 @@ export const APP_STATE = {
 	TO_ROTATE: TO_ROTATE_STATE,
 } as const
 
-export type AppStateValue = {
+export type AppStateValueDeprecated = {
 	[DRAG_BOX_STATE_KEY]: DragBoxState
 	[POINTER_STATE_KEY]: PointerState
 	[SELECTED_STATE_KEY]: SelectedState
@@ -44,7 +45,7 @@ export type AppStateValue = {
 	[GRID_STATE_KEY]: GridState
 }
 
-export const InitialAppState: AppStateValue = {
+export const InitialAppState: AppStateValueDeprecated = {
 	[DRAG_BOX_STATE_KEY]: DRAG_BOX_STATE.NO_DRAG_BOX,
 	[POINTER_STATE_KEY]: POINTER_STATE.POINTER_UP,
 	[SELECTED_STATE_KEY]: SELECTED_STATE.NONE_SELECTED,
@@ -54,7 +55,7 @@ export const InitialAppState: AppStateValue = {
 	[GRID_STATE_KEY]: InitialGridState,
 }
 
-export type AppStateValueV2 = {
+export type AppStateValue = {
 	DragBoxState: DragBoxState
 	PointerState: PointerState
 	SelectedState: SelectedState
@@ -64,7 +65,7 @@ export type AppStateValueV2 = {
 	GridState: GridState
 }
 
-export const InitialAppStateV2: AppStateValueV2 = {
+export const InitialAppStateV2: AppStateValue = {
 	DragBoxState: DRAG_BOX_STATE.NO_DRAG_BOX,
 	PointerState: POINTER_STATE.POINTER_UP,
 	SelectedState: SELECTED_STATE.NONE_SELECTED,
@@ -73,6 +74,30 @@ export const InitialAppStateV2: AppStateValueV2 = {
 	ViewState: VIEW_STATE.VIEW_NOT_MOVING,
 	GridState: InitialGridState,
 }
+
+export type AppStateMatches = Typegen0['matchesStates']
+
+/*export type GraphicsStateMatches = {
+ [key in keyof AppStateMatches]: AppStateMatches[key]
+ }
+
+ const sadas: GraphicsStateMatches = ''*/
+// const asdsas :AppStateMatches
+/*export type AppStateMatchesInConst = {
+ [keyof in AppStateMatches]: AppStateMatches[keyof]
+ }*/
+/*type AppStateMatchesInConst = {
+ [DRAG_BOX_STATE_KEY]: Typegen0['matchesStates'][DRAG_BOX_STATE_KEY]
+ }*/
+
+/*const state: AppStateMatchesInConst = {
+ [DRAG_BOX_STATE_KEY]: DRAG_BOX_STATE.NO_DRAG_BOX,
+
+ }*/
+
+// | 'GridState.PreviewAxisState.PreviewAxisDrawEnabled'
+// const state = GridState.PreviewAxisState.PreviewAxisDrawEnabled
+// const hello: GraphicsStateMatches = 'ToMoveState.SingleMoveInProgress'
 /*	[APP_STATE.DRAG_BOX.STATE]: APP_STATE.DRAG_BOX.NO_DRAG_BOX,
  [APP_STATE.POINTER.STATE]: APP_STATE.POINTER.POINTER_UP,
  [APP_STATE.SELECTED.STATE]: APP_STATE.SELECTED.NONE_SELECTED,

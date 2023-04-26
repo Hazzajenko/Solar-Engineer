@@ -1,23 +1,56 @@
-import { Directive, OnInit } from '@angular/core'
-import { CURSOR_TYPE, KEYS } from '@shared/data-access/models'
-import { CanvasEntity, createPanel, isPanel, SizeByType, TransformedPoint, UndefinedStringId } from '../types'
-import { ENTITY_TYPE } from '@design-app/shared'
-import { assertNotNull, OnDestroyDirective } from '@shared/utils'
-import { changeCanvasCursor, dragBoxKeysDown, draggingScreenKeysDown, getTopLeftPointFromTransformedPoint, isContextMenu, isDraggingEntity, isMenuOpen, isReadyToMultiDrag, multiSelectDraggingKeysDown, rotatingKeysDown } from '../utils'
-import { DesignCanvasDirectiveExtension } from './design-canvas-directive.extension'
-import { AppStateValue, DRAG_BOX_STATE, MODE_STATE, POINTER_STATE, PointerHoverOverEntity, PointerLeaveEntity, StartClickCreateMode, StartClickSelectMode, TO_MOVE_STATE, TO_ROTATE_STATE, VIEW_STATE } from '../services'
-import { createStringWithPanels } from '../utils/string-fns'
-import { DesignCanvasEventHandlers } from './canvas-event-handlers'
 import { CREATE_PREVIEW_STATE } from '../components'
+import {
+	AppStateSnapshot,
+	AppStateValue,
+	DRAG_BOX_STATE,
+	MODE_STATE,
+	POINTER_STATE,
+	PointerHoverOverEntity,
+	PointerLeaveEntity,
+	StartClickCreateMode,
+	StartClickSelectMode,
+	TO_MOVE_STATE,
+	TO_ROTATE_STATE,
+	VIEW_STATE,
+} from '../services'
+import {
+	CanvasEntity,
+	createPanel,
+	isPanel,
+	SizeByType,
+	TransformedPoint,
+	UndefinedStringId,
+} from '../types'
+import {
+	changeCanvasCursor,
+	dragBoxKeysDown,
+	draggingScreenKeysDown,
+	getTopLeftPointFromTransformedPoint,
+	isContextMenu,
+	isDraggingEntity,
+	isMenuOpen,
+	isReadyToMultiDrag,
+	multiSelectDraggingKeysDown,
+	rotatingKeysDown,
+} from '../utils'
+import { createStringWithPanels } from '../utils/string-fns'
+import { DesignCanvasDirectiveExtension } from './design-canvas-directive.extension'
+import { Directive, OnInit } from '@angular/core'
+import { ENTITY_TYPE } from '@design-app/shared'
+import { CURSOR_TYPE, KEYS } from '@shared/data-access/models'
+import { assertNotNull, OnDestroyDirective } from '@shared/utils'
+
 
 @Directive({
-	selector: '[appDesignCanvasXState]', providers: [OnDestroyDirective], standalone: true,
+	selector: '[appDesignCanvasXState]',
+	providers: [OnDestroyDirective],
+	standalone: true,
 })
 export class DesignCanvasWithXstateDirective
 	extends DesignCanvasDirectiveExtension
-	implements OnInit,
-						 DesignCanvasEventHandlers {
-
+	implements OnInit /*,
+ DesignCanvasEventHandlers */
+{
 	entityPressed: CanvasEntity | undefined
 
 	public ngOnInit() {
@@ -64,7 +97,11 @@ export class DesignCanvasWithXstateDirective
 		if (dragBoxKeysDown(event)) {
 			const { xAxisLineBounds, yAxisLineBounds } = this._state.grid
 			if (xAxisLineBounds || yAxisLineBounds) {
-				console.log('cannot drag box when axisLineBounds is visible', xAxisLineBounds, yAxisLineBounds)
+				console.log(
+					'cannot drag box when axisLineBounds is visible',
+					xAxisLineBounds,
+					yAxisLineBounds,
+				)
 				this._state.updateState({
 					dragBox: {
 						axisLineStart: currentPoint,
@@ -102,8 +139,11 @@ export class DesignCanvasWithXstateDirective
 		this.mousePos.innerText = `Original X: ${event.offsetX}, Y: ${event.offsetY}`
 		this.transformedMousePos.innerText = `Transformed X: ${this.currentTransformedCursor.x}, Y: ${this.currentTransformedCursor.y}`
 
-		const { ToRotateState, SelectedState, ToMoveState, DragBoxState, ViewState, PointerState } = this._machine.state
+		const { ToRotateState, SelectedState, ToMoveState, DragBoxState, ViewState, PointerState } =
+			this._machine.state
 		const { NearbyLinesState, CreatePreviewState } = this._graphics.state
+		const appSnapshot = this._machine.snapshot
+		const graphicsSnapshot = this._graphics.snapshot
 
 		// const machineState = this._machine.state
 
@@ -190,7 +230,7 @@ export class DesignCanvasWithXstateDirective
 		}
 
 		if (ToMoveState === TO_MOVE_STATE.SINGLE_MOVE_IN_PROGRESS) {
-			this._objPositioning.singleToMoveMouseMove(event, currentPoint)
+			this._objPositioning.singleToMoveMouseMove(event, currentPoint, appSnapshot, graphicsSnapshot)
 			return
 		}
 
@@ -211,7 +251,9 @@ export class DesignCanvasWithXstateDirective
 		if (entityUnderMouse) {
 			const hoveringEntityId = this._machine.ctx.pointer.hoveringEntityId
 			if (hoveringEntityId === entityUnderMouse.id) return
-			this._machine.sendEvent(new PointerHoverOverEntity({ id: entityUnderMouse.id, point: currentPoint }))
+			this._machine.sendEvent(
+				new PointerHoverOverEntity({ id: entityUnderMouse.id, point: currentPoint }),
+			)
 			this._render.drawCanvas()
 			return
 		}
@@ -223,60 +265,52 @@ export class DesignCanvasWithXstateDirective
 			return
 		}
 
-		// if (NearbyLinesState ===)
 		if (CreatePreviewState === CREATE_PREVIEW_STATE.CREATE_PREVIEW_ENABLED) {
-			// const nearbyLinesEnabled = isNearbyLinesEnabled(NearbyLinesState)
-			this._nearby.getDrawEntityPreview(event, currentPoint, NearbyLinesState)
+			this._nearby.getDrawEntityPreview(
+				event,
+				currentPoint,
+				NearbyLinesState,
+				appSnapshot,
+				graphicsSnapshot,
+			)
 			return
 		}
-
-		/*		if (isNearbyLinesEnabled(NearbyLinesState)) {
-		 this._nearby.getDrawEntityPreview(event, currentPoint)
-		 return
-		 }*/
-		/*	const { menu } = this._state.getState()
-		 if (menu.createPreview) {
-		 // const size = SizeByType[ENTITY_TYPE.Panel]
-		 // const fnReturns = getDrawPreviewEntityFnV2(currentPoint, size, this._state, event)
-		 this._nearby.getDrawEntityPreview(event, currentPoint)
-		 return
-
-		 /!*			const fnReturns = getDrawPreviewEntityFnV2(currentPoint, size, this._state, event)
-		 if (fnReturns) {
-		 if (fnReturns.changes) {
-		 this._state.updateState(fnReturns.changes)
-		 }
-
-		 this._render.drawCanvasWithFunction(fnReturns.ctxFn)
-		 return
-		 }*!/
-		 }*/
-		// isPointInsideBounds(currentPoint, keyMapRect) ? changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO) : changeCanvasCursor(this.canvas, CURSOR_TYPE.GRAB
-
 	}
 
 	/**
 	 * Mouse Up handler
 	 * @param event
 	 * @param currentPoint
-	 * @private
 	 */
 
 	onMouseUpHandler(event: PointerEvent, currentPoint: TransformedPoint) {
 		const state = this._machine.state
 		const { DragBoxState, ToMoveState, ViewState } = state
+		const snapshot = this._machine.snapshot
 		if (this.mouseDownTimeOut) {
 			console.log('mouseDownTimeOut', this.mouseDownTimeOut)
 			clearTimeout(this.mouseDownTimeOut)
 			this.mouseDownTimeOut = undefined
-			this.mouseClickHandler(event, currentPoint, state)
+			this.mouseClickHandler(event, currentPoint, state, snapshot)
 			return
 		}
 
-		if (ViewState === VIEW_STATE.VIEW_DRAGGING_IN_PROGRESS) {
+		// if (snapshot.matches(VIEW_STATE.VIEW_DRAGGING_IN_PROGRESS)) {
+		if (snapshot.matches('ViewState.ViewDraggingInProgress')) {
+			console.log('snapshot.matches(ViewState.ViewDraggingInProgress)')
 			this._view.handleDragScreenMouseUp(event)
 			return
 		}
+		/*
+		 if (this._machine.matches('ViewState.ViewDraggingInProgress')) {
+		 this._view.handleDragScreenMouseUp(event)
+		 return
+		 }*/
+		/*
+		 if (ViewState === VIEW_STATE.VIEW_DRAGGING_IN_PROGRESS) {
+		 this._view.handleDragScreenMouseUp(event)
+		 return
+		 }*/
 
 		if (DragBoxState === DRAG_BOX_STATE.SELECTION_BOX_IN_PROGRESS) {
 			this._drag.selectionBoxMouseUp(event, currentPoint)
@@ -306,10 +340,16 @@ export class DesignCanvasWithXstateDirective
 	 * @param event
 	 * @param currentPoint
 	 * @param state
+	 * @param appSnapshot
 	 * @private
 	 */
 
-	mouseClickHandler(event: PointerEvent, currentPoint: TransformedPoint, state: AppStateValue) {
+	mouseClickHandler(
+		event: PointerEvent,
+		currentPoint: TransformedPoint,
+		state: AppStateValue,
+		appSnapshot: AppStateSnapshot,
+	) {
 		if (isMenuOpen(this.menu)) {
 			this.menu.style.display = 'none'
 			return
@@ -341,6 +381,41 @@ export class DesignCanvasWithXstateDirective
 
 		// const location = this._domPoint.getTransformedPointToMiddleOfObjectFromEvent(event, ENTITY_TYPE.Panel)
 
+		if (appSnapshot.matches('GridState.PreviewAxisState.PreviewAxisDrawEnabled')) {
+			if (!event.altKey) {
+				this._machine.sendEvent({ type: 'TogglePreviewAxisDraw' })
+				this._nearby.axisPreviewRect = undefined
+				this._render.drawCanvas()
+				return
+			}
+			if (!this._nearby.axisPreviewRect) {
+				this._machine.sendEvent({ type: 'TogglePreviewAxisDraw' })
+				this._render.drawCanvas()
+				return
+			}
+
+			const previewRectLocation = {
+				x: this._nearby.axisPreviewRect.left,
+				y: this._nearby.axisPreviewRect.top,
+			}
+			// const previewRectLocation = { x: axisPreviewRect.left, y: axisPreviewRect.top }
+			const entity = this._state.selected.selectedStringId
+				? createPanel(previewRectLocation, this._state.selected.selectedStringId)
+				: createPanel(previewRectLocation)
+			this._state.entities.canvasEntities.addEntity(entity)
+			this._nearby.axisPreviewRect = undefined
+			this._machine.sendEvent({ type: 'TogglePreviewAxisDraw' })
+			/*      const axisPreviewRectBounds = domRectToBounds(axisPreviewRect)
+			 if (isPointInsideBounds(location, axisPreviewRectBounds)) {*/
+			/*			this._state.updateState({
+			 grid: {
+			 axisPreviewRect: undefined,
+			 },
+			 })*/
+			this._render.drawCanvas()
+			return
+		}
+
 		const axisPreviewRect = this._state.grid.axisPreviewRect
 		if (axisPreviewRect && event.altKey) {
 			// const entity = this._state.selected.selectedStringId
@@ -351,23 +426,26 @@ export class DesignCanvasWithXstateDirective
 			this._state.entities.canvasEntities.addEntity(entity)
 			/*      const axisPreviewRectBounds = domRectToBounds(axisPreviewRect)
 			 if (isPointInsideBounds(location, axisPreviewRectBounds)) {*/
-			this._state.updateState({
-				grid: {
-					axisPreviewRect: undefined,
-				},
-			})
+			/*			this._state.updateState({
+			 grid: {
+			 axisPreviewRect: undefined,
+			 },
+			 })*/
 			this._render.drawCanvas()
 			return
 			/*      return
 			 }*/
 		}
 
-		const location = getTopLeftPointFromTransformedPoint(currentPoint, SizeByType[ENTITY_TYPE.Panel])
+		const location = getTopLeftPointFromTransformedPoint(
+			currentPoint,
+			SizeByType[ENTITY_TYPE.Panel],
+		)
 		// const isStringSelected = !!this._state.selected.selectedStringId
 		// const isStringSelected = !!this._selected.selectedStringId
 		const entity = this._machine.ctx.selected.selectedStringId
-			// const entity = this._state.selected.selectedStringId
-			? createPanel(location, this._machine.ctx.selected.selectedStringId)
+			? // const entity = this._state.selected.selectedStringId
+			  createPanel(location, this._machine.ctx.selected.selectedStringId)
 			: createPanel(location)
 		this._state.entities.canvasEntities.addEntity(entity)
 
@@ -388,8 +466,9 @@ export class DesignCanvasWithXstateDirective
 		if (entityUnderMouse) {
 			if (!isPanel(entityUnderMouse)) return
 			if (entityUnderMouse.stringId === UndefinedStringId) return
-			const belongsToString = this._state.entities.canvasStrings.getEntities()
-				.find(string => string.id === entityUnderMouse.stringId)
+			const belongsToString = this._state.entities.canvasStrings
+				.getEntities()
+				.find((string) => string.id === entityUnderMouse.stringId)
 
 			assertNotNull(belongsToString, 'string not found')
 			this._state.updateState({
@@ -432,9 +511,7 @@ export class DesignCanvasWithXstateDirective
 	wheelScrollHandler(event: WheelEvent) {
 		const currentScaleX = this.ctx.getTransform().a
 
-		const zoom = event.deltaY < 0
-			? 1.1
-			: 0.9
+		const zoom = event.deltaY < 0 ? 1.1 : 0.9
 
 		const currentTransformedCursor = this._domPoint.getTransformedPointFromEventOffsets(event)
 		this.ctx.translate(currentTransformedCursor.x, currentTransformedCursor.y)
@@ -476,43 +553,44 @@ export class DesignCanvasWithXstateDirective
 			case KEYS.ESCAPE:
 				this._selected.clearSelectedState()
 				break
-			case KEYS.X: {
-				const multipleSelectedIds = this._state.selected.multipleSelectedIds
-				if (multipleSelectedIds.length <= 1) return
-				createStringWithPanels(this._state, multipleSelectedIds)
+			case KEYS.X:
+				{
+					const multipleSelectedIds = this._state.selected.multipleSelectedIds
+					if (multipleSelectedIds.length <= 1) return
+					createStringWithPanels(this._state, multipleSelectedIds)
 
-				// TODO: move to local store
-				/*     if (this._selected.multiSelected.length > 0) {
+					// TODO: move to local store
+					/*     if (this._selected.multiSelected.length > 0) {
 				 this._stringsService.createStringWithPanels(this._selected.getMultiSelectedByType(ENTITY_TYPE.Panel), this.strings)
 
 				 }*/
-			}
+				}
 				break
-			case KEYS.R: {
-				console.log('r key up')
-				const singleToRotate = this._state.toRotate.singleToRotate
+			case KEYS.R:
+				{
+					console.log('r key up')
+					const singleToRotate = this._state.toRotate.singleToRotate
 
-				if (singleToRotate) {
+					if (singleToRotate) {
+						this._objRotating.clearEntityToRotate()
+						console.log('clear single to rotate')
+						return
+					}
+					const multipleToRotate = this._state.toRotate.multipleToRotate
 
-					this._objRotating.clearEntityToRotate()
-					console.log('clear single to rotate')
-					return
+					if (multipleToRotate && multipleToRotate.ids.length > 0) {
+						this._objRotating.clearEntityToRotate()
+						console.log('clear multiple to rotate')
+						return
+					}
+					const entityToRotate = this._state.toRotate.singleToRotate
+					const singleSelectedId = this._state.selected.singleSelectedId
+					if (singleSelectedId && !entityToRotate) {
+						this._objRotating.setEntityToRotate(singleSelectedId, this.currentTransformedCursor)
+						console.log('set single to rotate')
+						return
+					}
 				}
-				const multipleToRotate = this._state.toRotate.multipleToRotate
-
-				if (multipleToRotate && multipleToRotate.ids.length > 0) {
-					this._objRotating.clearEntityToRotate()
-					console.log('clear multiple to rotate')
-					return
-				}
-				const entityToRotate = this._state.toRotate.singleToRotate
-				const singleSelectedId = this._state.selected.singleSelectedId
-				if (singleSelectedId && !entityToRotate) {
-					this._objRotating.setEntityToRotate(singleSelectedId, this.currentTransformedCursor)
-					console.log('set single to rotate')
-					return
-				}
-			}
 				break
 			case KEYS.C: {
 				const { GridState } = this._machine.state
@@ -528,21 +606,21 @@ export class DesignCanvasWithXstateDirective
 				}
 				return
 			}
-			case KEYS.M: {
-				const newMenuState = !this._state.menu.optionsMenu
-				this._state.updateState({
-					menu: {
-						optionsMenu: newMenuState,
-					},
-				})
-				if (newMenuState) {
-					this._renderer.setStyle(this.canvasMenu, 'display', 'initial')
-					return
+			case KEYS.M:
+				{
+					const newMenuState = !this._state.menu.optionsMenu
+					this._state.updateState({
+						menu: {
+							optionsMenu: newMenuState,
+						},
+					})
+					if (newMenuState) {
+						this._renderer.setStyle(this.canvasMenu, 'display', 'initial')
+						return
+					}
+					this._renderer.setStyle(this.canvasMenu, 'display', 'none')
 				}
-				this._renderer.setStyle(this.canvasMenu, 'display', 'none')
-			}
 				break
-
 		}
 	}
 }

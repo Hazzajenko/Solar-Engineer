@@ -2,10 +2,11 @@ import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, inject, 
 import { AsyncPipe, NgForOf, NgIf } from '@angular/common'
 import { CanvasClientStateService, CanvasRenderService } from '../../../../services'
 import { EVENT_TYPE } from '@shared/data-access/models'
-import { CREATE_PREVIEW_EVENT, CREATE_PREVIEW_STATE, GraphicsSettingsMachineService, NEARBY_GRAPHICS_EVENT, NEARBY_GRAPHICS_EVENT_TYPE, NEARBY_GRAPHICS_STATE, NearbyGraphicsEventType } from './+xstate'
+import { CREATE_PREVIEW_EVENT, CREATE_PREVIEW_STATE, GraphicsSettingsMachineService, NEARBY_GRAPHICS_EVENT, NEARBY_GRAPHICS_STATE, NEARBY_GRAPHICS_STATE_MODE, NearbyGraphicsStateMode } from './+xstate'
 import { ReactiveFormsModule } from '@angular/forms'
 import { LetModule } from '@ngrx/component'
 import { IsNearbyLinesEnabledPipe } from './pipes'
+import { NearbyGraphicsMenuOptions } from './nearby-graphics-menu-options'
 
 @Component({
 	selector:       'app-canvas-graphics-menu', standalone: true, imports: [
@@ -17,6 +18,7 @@ export class CanvasGraphicsMenuComponent
 	implements AfterViewInit {
 
 	graphicsMachine = inject(GraphicsSettingsMachineService)
+	// snapshot = this.graphicsMachine.getSnapshot()
 
 	graphicsState$ = this.graphicsMachine.subscribe()
 
@@ -30,30 +32,8 @@ export class CanvasGraphicsMenuComponent
 	private _renderer = inject(Renderer2)
 	private _ngZone = inject(NgZone)
 	private _elementRef = inject(ElementRef)
-	canvasMenuArr = [
-		{
-			label: 'Create Preview', action: this.toggleCreatePreview.bind(this), selected: this._state.menu.createPreview,
-		}, {
-			label: 'Nearby Axis Lines', action: this.toggleNearbyAxisLines.bind(this), selected: this._state.menu.nearbyAxisLines,
-		},
-	]
 
-	nearbyGraphicsSelectMenu = {
-		label: 'Nearby Axis Lines', action: this.toggleNearbyAxisLines.bind(this), selected: this._state.menu.nearbyAxisLines,
-
-	}
-
-	nearbyGraphicsSelectMenuArray = [
-		{
-			label: 'Center Line Between Two Entities', value: NEARBY_GRAPHICS_EVENT_TYPE.SELECT_CENTER_LINE_BETWEEN_TWO_ENTITIES, selected: true, // selected: this.graphicsMachine.state.NearbyLinesState === NEARBY_GRAPHICS_STATE.CHILDREN.CENTER_LINE_BETWEEN_TWO_ENTITIES,
-		}, {
-			label: 'Center Line Screen Size', value: NEARBY_GRAPHICS_EVENT_TYPE.SELECT_CENTER_LINE_SCREEN_SIZE, selected: true,
-
-			// selected: this.graphicsMachine.state.NearbyLinesState === NEARBY_GRAPHICS_STATE.CENTER_LINE_SCREEN_SIZE,
-		}, {
-			label: 'Two Side Axis Lines', value: NEARBY_GRAPHICS_EVENT_TYPE.SELECT_TWO_SIDE_AXIS_LINES, selected: false, // selected: this.graphicsMachine.state.NearbyLinesState === NEARBY_GRAPHICS_STATE.TWO_SIDE_AXIS_LINES,
-		},
-	]
+	nearbyGraphicsSelectMenuArray = NearbyGraphicsMenuOptions
 
 	public ngAfterViewInit() {
 		this._ngZone.runOutsideAngular(() => {
@@ -72,35 +52,29 @@ export class CanvasGraphicsMenuComponent
 	 */
 
 	toggleCreatePreview() {
-		this._state.updateState({
-			menu: {
-				createPreview: !this._state.menu.createPreview,
-			},
-		})
+		this.graphicsMachine.sendEvent(CREATE_PREVIEW_EVENT.CREATE_PREVIEW_TOGGLE)
 		this._render.drawCanvas()
 	}
 
 	toggleNearbyAxisLines() {
-		this._state.updateState({
-			menu: {
-				nearbyAxisLines: !this._state.menu.nearbyAxisLines,
-			},
-		})
 		this.graphicsMachine.sendEvent(NEARBY_GRAPHICS_EVENT.NEARBY_LINES_TOGGLE)
 		this._render.drawCanvas()
 	}
 
 	changeNearbyGraphics(event: Event) {
 		const target = event.target as HTMLInputElement
-		const newState = target.value as NearbyGraphicsEventType
+		const newState = target.value as NearbyGraphicsStateMode
+		// console.log('changeNearbyGraphics', newState)
+		// this.graphicsMachine.sendEvent(NEARBY_GRAPHsICS_EVENT[''])
+
 		switch (newState) {
-			case NEARBY_GRAPHICS_EVENT_TYPE.SELECT_TWO_SIDE_AXIS_LINES:
+			case NEARBY_GRAPHICS_STATE_MODE.TWO_SIDE_AXIS_LINES:
 				this.graphicsMachine.sendEvent(NEARBY_GRAPHICS_EVENT.SELECT_TWO_SIDE_AXIS_LINES)
 				break
-			case NEARBY_GRAPHICS_EVENT_TYPE.SELECT_CENTER_LINE_SCREEN_SIZE:
+			case NEARBY_GRAPHICS_STATE_MODE.CENTER_LINE_SCREEN_SIZE:
 				this.graphicsMachine.sendEvent(NEARBY_GRAPHICS_EVENT.SELECT_CENTER_LINE_SCREEN_SIZE)
 				break
-			case NEARBY_GRAPHICS_EVENT_TYPE.SELECT_CENTER_LINE_BETWEEN_TWO_ENTITIES:
+			case NEARBY_GRAPHICS_STATE_MODE.CENTER_LINE_BETWEEN_TWO_ENTITIES:
 				this.graphicsMachine.sendEvent(NEARBY_GRAPHICS_EVENT.SELECT_CENTER_LINE_BETWEEN_TWO_ENTITIES)
 				break
 			default:
@@ -108,7 +82,5 @@ export class CanvasGraphicsMenuComponent
 		}
 	}
 
-	// protected readonly IsNearbyLinesEnabled = IsNearbyLinesEnabled
-
-	// protected readonly CREATE_PREVIEW_STATE = CREATE_PREVIEW_STATE
+	// protected readonly event = event
 }

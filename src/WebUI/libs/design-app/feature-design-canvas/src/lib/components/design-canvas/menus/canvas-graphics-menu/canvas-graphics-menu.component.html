@@ -18,6 +18,7 @@
         </div>
       </div>
     </ng-container>
+    <!--    {{state.}}-->
     <ng-container *ngrxLet="state.NearbyLinesState as nearbyState">
       <div
         (click)="graphicsMachine.sendEvent(NEARBY_GRAPHICS_EVENT.NEARBY_LINES_TOGGLE)"
@@ -38,6 +39,8 @@
       <label for="nearby-graphics" class="text-xs font-medium text-gray-900">
         <span>Nearby Lines</span>
       </label>
+      <!--      (change)="changeNearbyGraphics($event)"-->
+      <!--      (change)="graphicsMachine.sendEvent($any($event).target.value)"-->
       <select
         [disabled]="!(nearbyState | isNearbyLinesEnabled)"
         (change)="changeNearbyGraphics($event)"
@@ -47,7 +50,7 @@
       >
         <option
           *ngFor="let option of nearbyGraphicsSelectMenuArray"
-          [selected]="option.selected"
+          [selected]="state.NearbyLinesState === { NearbyLinesEnabled: option.value }"
           [value]="option.value"
         >
           {{ option.label }}

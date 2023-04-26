@@ -43,4 +43,4 @@ Thumbs.db
 
 .angular
 /ssl/
-libs/core-components-angular/**/generated
+#libs/core-components-angular/**/generated

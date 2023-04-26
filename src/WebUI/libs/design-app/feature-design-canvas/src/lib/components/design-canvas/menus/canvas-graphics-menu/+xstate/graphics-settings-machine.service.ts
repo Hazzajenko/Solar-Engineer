@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core'
-import { graphicsSettingsInterpreter } from './graphics-settings.interpreter'
+import { graphicsSettingsInterpreter, GraphicsStateSnapshot } from './graphics-settings.interpreter'
 import { GraphicsSettingsEvent } from './graphics-settings.event'
 import { BehaviorSubject } from 'rxjs'
-import { GraphicsStateValue } from './graphics-settings.states'
+import { GraphicsStateMatches, GraphicsStateValue } from './graphics-settings.states'
 
 @Injectable({
 	providedIn: 'root',
@@ -12,6 +12,7 @@ export class GraphicsSettingsMachineService {
 	private _state$ = new BehaviorSubject<GraphicsStateValue>(this.state)
 
 	constructor() {
+		this._machine.start()
 		this._machine.onTransition((state) => {
 			this._state$.next(state.value as GraphicsStateValue)
 		})
@@ -25,6 +26,10 @@ export class GraphicsSettingsMachineService {
 		return this._machine.getSnapshot().value as GraphicsStateValue
 	}
 
+	get snapshot(): GraphicsStateSnapshot {
+		return this._machine.getSnapshot()
+	}
+
 	subscribe() {
 		return this._state$.asObservable()
 	}
@@ -33,7 +38,8 @@ export class GraphicsSettingsMachineService {
 		return this._machine.send(event)
 	}
 
-	/*	sendEventNoPayload(event: GraphicsSettingsEvents) {
-	 return this._machine.send({ type: event })
-	 }*/
+	matches(matches: GraphicsStateMatches) {
+		return this._machine.getSnapshot()
+			.matches(matches)
+	}
 }

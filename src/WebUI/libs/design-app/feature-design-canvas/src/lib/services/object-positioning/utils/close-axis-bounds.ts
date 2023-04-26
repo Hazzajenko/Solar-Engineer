@@ -1,11 +1,6 @@
-import {
-	Axis,
-	CanvasEntity,
-	EntityBounds,
-	getDistanceBetweenTwoPoints,
-	getEntityBounds,
-	NearbyEntity,
-} from '@design-app/feature-design-canvas'
+import { Axis, CanvasEntity } from '../../../types'
+import { EntityBounds, getDistanceBetweenTwoPoints, getEntityBounds } from '../../../utils'
+import { NearbyEntity } from '../../nearby'
 
 export const findNearbyAxisBounds = (bounds: EntityBounds, entities: CanvasEntity[]) => {
 	const { left, right, top, bottom } = bounds
@@ -22,23 +17,9 @@ export const findNearbyAxisBounds = (bounds: EntityBounds, entities: CanvasEntit
 			(entityTop >= top && entityTop <= bottom) ||
 			(entityBottom >= top && entityBottom <= bottom)
 		)
-	}) /*.map((entity) => {
-	 return {
-	 ...entity,
-
-	 bounds: getEntityBounds(entity),
-	 }
-	 })*/
-	// return nearbyEntities
-	// const nearbyBounds = nearbyEntities.map((entity) => entity.bounds)
-	// return nearbyBounds
+	})
 }
 
-/*export type NearbyAxisEntity = CanvasEntity & {
- axis: Axis
- bounds: EntityBounds
- }*/
-// NearbyEntity
 export const findNearbyBoundOverlapOnBothAxis = (
 	bounds: EntityBounds,
 	entities: CanvasEntity[],
@@ -52,13 +33,6 @@ export const findNearbyBoundOverlapOnBothAxis = (
 	})
 	return ['x', 'y']
 		.map((axis) => {
-			/*      const { left, right, top, bottom } = bounds*/
-			/*      const entitiesWithBounds = entities.map((entity) => {
-			 return {
-			 ...entity,
-			 bounds: getEntityBounds(entity),
-			 }
-			 })*/
 			const nearbyEntities = entitiesWithBounds.filter((entity) => {
 				const {
 					left: entityLeft,
@@ -75,25 +49,7 @@ export const findNearbyBoundOverlapOnBothAxis = (
 							(entityBottom >= top && entityBottom <= bottom)))
 				)
 			})
-			/*      const nearbyEntities = entities.filter((entity) => {
-			 const {
-			 left: entityLeft,
-			 right: entityRight,
-			 top: entityTop,
-			 bottom: entityBottom,
-			 } = getEntityBounds(entity)
-			 return (
-			 (axis === 'x' &&
-			 ((entityLeft >= left && entityLeft <= right) ||
-			 (entityRight >= left && entityRight <= right))) ||
-			 (axis === 'y' &&
-			 ((entityTop >= top && entityTop <= bottom) ||
-			 (entityBottom >= top && entityBottom <= bottom)))
-			 )
-			 })*/
 			return nearbyEntities.map((entity) => {
-				// const { left: entityLeft, right: entityRight, top: entityTop, bottom: entityBottom } = getEntityBounds(entity)
-				// const distance = axis === 'x' ? Math.abs(entityLeft - left) : Math.abs(entityTop - top)
 				const distance = getDistanceBetweenTwoPoints(
 					{ x: entity.bounds.left, y: entity.bounds.top },
 					{ x: left, y: top },
@@ -108,7 +64,54 @@ export const findNearbyBoundOverlapOnBothAxis = (
 		})
 		.reduce((accumulator, value) => accumulator.concat(value), [])
 }
-// a.reduce((accumulator, value) => accumulator.concat(value), []);
+
+export const findNearbyBoundOverlapOnBothAxisExcludingIds = (
+	bounds: EntityBounds,
+	entities: CanvasEntity[],
+	excludedIds: string[],
+): NearbyEntity[] => {
+	const { left, right, top, bottom } = bounds
+	const entitiesWithBounds = entities.map((entity) => {
+		return {
+			...entity,
+			bounds: getEntityBounds(entity),
+		}
+	})
+	return ['x', 'y']
+		.map((axis) => {
+			const nearbyEntities = entitiesWithBounds.filter((entity) => {
+				const {
+					left: entityLeft,
+					right: entityRight,
+					top: entityTop,
+					bottom: entityBottom,
+				} = entity.bounds
+				return (
+					(axis === 'x' &&
+						((entityLeft >= left && entityLeft <= right) ||
+							(entityRight >= left && entityRight <= right))) ||
+					(axis === 'y' &&
+						((entityTop >= top && entityTop <= bottom) ||
+							(entityBottom >= top && entityBottom <= bottom)))
+				)
+			})
+			return nearbyEntities
+				.filter((entity) => !excludedIds.includes(entity.id))
+				.map((entity) => {
+					const distance = getDistanceBetweenTwoPoints(
+						{ x: entity.bounds.left, y: entity.bounds.top },
+						{ x: left, y: top },
+					)
+					return {
+						...entity,
+						axis: axis as Axis,
+						bounds: getEntityBounds(entity),
+						distance,
+					}
+				})
+		})
+		.reduce((accumulator, value) => accumulator.concat(value), [])
+}
 
 export const findNearbyAxisBoundsByAxis = (
 	bounds: EntityBounds,

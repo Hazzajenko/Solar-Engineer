@@ -4,21 +4,22 @@ import { NearbyEntity } from '../nearby-entity'
 import { getSnapToGridBoolean, handleSnapToGridWhenNearby } from '../utils'
 
 export const getEntityGridLineWithEntityPreviewFn = (
-	event: PointerEvent,
+	altKey: boolean,
 	axisPreviewRect: CompleteEntityBounds,
 	mouseBounds: CompleteEntityBounds,
 	closestEntity: NearbyEntity,
 	fillStyle: CanvasColor,
 	holdAltToSnapToGrid: boolean,
+	isMovingExistingEntity: boolean,
 ) => {
 	return (ctx: CanvasRenderingContext2D) => {
 		ctx.save()
 		ctx.beginPath()
-		ctx.globalAlpha = 0.4
+		isMovingExistingEntity ? (ctx.globalAlpha = 1) : (ctx.globalAlpha = 0.6)
 		ctx.fillStyle = fillStyle
 
 		const snapToGridBool = getSnapToGridBoolean(
-			event.altKey,
+			altKey,
 			mouseBounds,
 			closestEntity.axis,
 			axisPreviewRect,
@@ -40,6 +41,11 @@ export const drawEntityGridLines = (nearbyEntity: NearbyEntity, snapToGridBool: 
 	return (ctx: CanvasRenderingContext2D) => {
 		ctx.save()
 		ctx.beginPath()
+		/*		if (isMovingExistingEntity) {
+		 ctx.globalAlpha = 1
+		 } else {
+		 ctx.globalAlpha = snapToGridBool ? 0.6 : 0.4
+		 }*/
 		ctx.globalAlpha = snapToGridBool ? 0.6 : 0.4
 		ctx.strokeStyle = CANVAS_COLORS.NearbyPanelStrokeStyle
 		ctx.fillStyle = CANVAS_COLORS.NearbyPanelFillStyle

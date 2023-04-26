@@ -1,7 +1,6 @@
 import { GraphicsSettingsMachineService } from '../components'
 import { setupCanvas } from '../functions/setup-canvas'
 import {
-	AppStateValue,
 	CanvasAppStateStore,
 	CanvasClientState,
 	CanvasClientStateService,
@@ -201,11 +200,11 @@ export abstract class DesignCanvasDirectiveExtension {
 
 	abstract contextMenuHandler(event: PointerEvent, currentPoint: TransformedPoint): void
 
-	abstract mouseClickHandler(
-		event: PointerEvent,
-		currentPoint: TransformedPoint,
-		state: AppStateValue,
-	): void
+	/*	abstract mouseClickHandler(
+	 event: PointerEvent,
+	 currentPoint: TransformedPoint,
+	 state: AppStateValue,
+	 ): void*/
 
 	abstract doubleClickHandler(event: PointerEvent, currentPoint: TransformedPoint): void
 
