@@ -1,26 +1,37 @@
-<canvas #canvasState id="canvas" class="absolute inset-0" appDesignCanvasXState></canvas>
+<canvas #canvasState
+        id='canvas'
+        class='absolute inset-0'
+        appDesignCanvasXState></canvas>
 <!--<canvas #canvasState id="canvas" class="absolute inset-0" appDesignCanvas></canvas>-->
 
-<div class="absolute">
-  <div id="fps"></div>
-  <div id="mouse-pos"></div>
-  <div id="transformed-mouse-pos"></div>
-  <div id="scale-element"></div>
-  <div id="string-stats"></div>
-  <div id="panel-stats"></div>
-  <div id="rotate-stats"></div>
+<div class='absolute'>
+  <div id='fps'></div>
+  <div id='mouse-pos'></div>
+  <div id='transformed-mouse-pos'></div>
+  <div id='scale-element'></div>
+  <div id='string-stats'></div>
+  <div id='panel-stats'></div>
+  <div id='rotate-stats'></div>
 </div>
 
 <div
   #keyMap
-  id="key-map"
-  class="absolute left-5 top-28 z-10"
+  id='key-map'
+  class='absolute left-5 top-28 z-10'
   [style.display]="state.menu.keyMap ? 'initial' : 'none'"
 >
   <app-key-map-component />
 </div>
 
-<div #graphicsMenu id="graphics-menu" class="absolute right-5 top-5 z-10">
+<div #stateValues
+     id='state-values'
+     class='absolute left-1/4 top-5 z-10'>
+  <app-state-values />
+</div>
+
+<div #graphicsMenu
+     id='graphics-menu'
+     class='absolute right-5 top-5 z-10'>
   <app-canvas-graphics-menu />
 </div>
 
@@ -43,13 +54,14 @@
 
 <div
   #menu
-  id="menu"
-  class="absolute z-10"
-  style="display: none"
-  role="menu"
-  aria-orientation="vertical"
-  aria-labelledby="menu-button"
-  tabindex="-1"
+  id='menu'
+  class='absolute z-10'
+  style='display: none'
+  role='menu'
+  aria-orientation='vertical'
+  aria-labelledby='menu-button'
+  tabindex='-1'
 >
-  <app-right-click-menu [dataSet]="menu.dataset" (closeMenu)="menu.style.display = 'none'" />
+  <app-right-click-menu [dataSet]='menu.dataset'
+                        (closeMenu)="menu.style.display = 'none'" />
 </div>

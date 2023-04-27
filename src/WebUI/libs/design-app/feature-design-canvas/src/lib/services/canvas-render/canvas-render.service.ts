@@ -139,14 +139,10 @@ export class CanvasRenderService {
 	}
 
 	drawSelectedStringBox() {
-		/*		const selectionBoxBounds = this._machine.ctx.selected.selectionBoxBounds
-		 if (!selectionBoxBounds) {
-		 this._machine.sendEvent({ type: 'CancelSelected', payload: null })
-		 console.log('selectionBoxBounds is null')
-		 return
-		 }*/
-
 		const selectedStringId = this._machine.ctx.selected.selectedStringId
+		assertNotNull(selectedStringId)
+		const string = this._state.entities.canvasStrings.getEntityById(selectedStringId)
+		assertNotNull(string)
 
 		const selectedStringPanels = this._state.entities.canvasEntities
 			.getEntities()
@@ -156,15 +152,21 @@ export class CanvasRenderService {
 			10,
 		)
 
-		// if (selectionBoxBounds) {
 		this.ctx.save()
-		const { left, top, width, height } = selectionBoxBounds
+		const { left, top, width, height, right } = selectionBoxBounds
 		this.ctx.strokeStyle = CANVAS_COLORS.StringSelectedPanelFillStyle
 		this.ctx.lineWidth = 1
 		this.ctx.strokeRect(left, top, width, height)
+		// this.ctx.font = '10px Roboto, sans-serif'
+		// this.ctx.font = '10px Helvetica, sans-serif'
+		// this.ctx.font = '10px Cascadia Code, sans-serif'
+		this.ctx.font = '10px Consolas, sans-serif'
+		const text = `String ${string.name} || ${selectedStringPanels.length} panels`
+		// const measure = this.ctx.measureText(text)
+		// console.log(measure)
+		this.ctx.fillStyle = 'black'
+		this.ctx.fillText(text, left, top - 2)
 		this.ctx.restore()
-
-		// }
 	}
 
 	drawCanvasExcludeIdsWithFn(ids: string[], fn: (ctx: CanvasRenderingContext2D) => void) {
@@ -504,19 +506,19 @@ export class CanvasRenderService {
 	}
 }
 
-const isSingleDragging = (
-	entity: CanvasEntity,
-	singleToMove: AdjustedSingleToMove | undefined,
-): singleToMove is AdjustedSingleToMove => {
-	return !!singleToMove && singleToMove.id === entity.id
-}
+/*const isSingleDragging = (
+ entity: CanvasEntity,
+ singleToMove: AdjustedSingleToMove | undefined,
+ ): singleToMove is AdjustedSingleToMove => {
+ return !!singleToMove && singleToMove.id === entity.id
+ }
 
-const isMultipleDragging = (
-	entity: CanvasEntity,
-	multipleToMove: AdjustedMultipleToMove | undefined,
-): multipleToMove is AdjustedMultipleToMove => {
-	return !!multipleToMove && multipleToMove.entities.find((e) => e.id === entity.id) !== undefined
-}
+ const isMultipleDragging = (
+ entity: CanvasEntity,
+ multipleToMove: AdjustedMultipleToMove | undefined,
+ ): multipleToMove is AdjustedMultipleToMove => {
+ return !!multipleToMove && multipleToMove.entities.find((e) => e.id === entity.id) !== undefined
+ }*/
 /*const isSingleDragging = (entity: CanvasEntity, singleToMove: SingleToMove | undefined): singleToMove is SingleToMove => {
  return !!singleToMove && singleToMove.id === entity.id
  }

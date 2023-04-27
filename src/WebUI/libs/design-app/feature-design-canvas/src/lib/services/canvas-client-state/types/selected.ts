@@ -18,3 +18,11 @@ export const InitialSelectedState: SelectedStateDeprecated = {
 	multipleSelectedIds: [],
 	selectionBoxBounds: undefined,
 }
+
+export type SelectedHistory = {
+	previous: SelectedStateDeprecated
+}
+
+export const InitialSelectedHistory: SelectedHistory = {
+	previous: InitialSelectedState,
+}

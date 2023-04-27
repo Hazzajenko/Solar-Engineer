@@ -82,4 +82,38 @@ export class CanvasSelectedXstateService {
 	clearSelectedState() {
 		this._machine.sendEvent(new CancelSelected())
 	}
+
+	clearSelectedInOrder() {
+		const snapshot = this._machine.snapshot
+
+		if (snapshot.matches('SelectedState.StringSelected')) {
+			this._machine.sendEvent({
+				type: 'SelectedRollback',
+			})
+			return
+		}
+
+		/*		if (snapshot.matches('SelectedState.StringSelected')) {
+		 this._machine.sendEvent({
+		 type: 'ClearStringSelected',
+		 })
+		 return
+		 }
+
+		 if (snapshot.matches('SelectedState.MultipleEntitiesSelected')) {
+		 this._machine.sendEvent({
+		 type: 'CancelSelected',
+		 payload: null,
+		 })
+		 return
+		 }
+
+		 if (snapshot.matches('SelectedState.EntitySelected')) {
+		 this._machine.sendEvent({
+		 type: 'ClearEntitySelected',
+		 payload: null,
+		 })
+		 return
+		 }*/
+	}
 }

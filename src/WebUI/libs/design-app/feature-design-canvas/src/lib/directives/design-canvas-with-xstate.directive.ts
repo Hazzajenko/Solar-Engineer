@@ -511,7 +511,8 @@ export class DesignCanvasWithXstateDirective
 	keyUpHandler(event: KeyboardEvent) {
 		switch (event.key) {
 			case KEYS.ESCAPE:
-				this._selected.clearSelectedState()
+				this._selected.clearSelectedInOrder()
+				// this._selected.clearSelectedState()
 				break
 			case KEYS.X:
 				{
@@ -529,11 +530,9 @@ export class DesignCanvasWithXstateDirective
 					this._state.entities.canvasStrings.addEntity(string)
 					this._state.entities.canvasEntities.updateManyEntities(panelUpdates)
 
-					// TODO: move to local store
-					/*     if (this._selected.multiSelected.length > 0) {
-				 this._stringsService.createStringWithPanels(this._selected.getMultiSelectedByType(ENTITY_TYPE.Panel), this.strings)
-
-				 }*/
+					this._machine.sendEvent({ type: 'ClearSelectedState' })
+					this._machine.sendEvent({ type: 'SetSelectedString', payload: { stringId: string.id } })
+					this._render.drawCanvas()
 				}
 				break
 			case KEYS.R:

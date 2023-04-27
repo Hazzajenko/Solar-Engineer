@@ -1,8 +1,9 @@
-import { Injectable } from '@angular/core'
 import { canvasAppXStateService } from './machine-service'
 import { XStateEvent } from './xstate-app-events.types'
 import { AppStateMatches, AppStateValue } from './xstate-app.states'
+import { Injectable } from '@angular/core'
 import { BehaviorSubject } from 'rxjs'
+
 
 @Injectable({
 	providedIn: 'root',
@@ -32,6 +33,10 @@ export class MachineService {
 
 	sendEvent(event: XStateEvent) {
 		return this._machine.send(event)
+	}
+
+	subscribe() {
+		return this._state$.asObservable()
 	}
 
 	matches(matches: AppStateMatches) {

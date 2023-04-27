@@ -117,6 +117,10 @@ export type ClearStringSelected = {
 	type: 'ClearStringSelected'
 }
 
+export type SelectedRollback = {
+	type: 'SelectedRollback'
+}
+
 // const yo = function SelectEntitiesInSelectionBox(     ctx,     event): {payload: {ids: any[]}, type: string}
 
 /*export type EntitiesFoundInSelectionBox = {
@@ -137,6 +141,7 @@ export type XStateSelectedEvent =
 	| SetSelectedString
 	| ClearStringSelected
 	| ClearSelectedState
+	| SelectedRollback
 // | EntitiesFoundInSelectionBox
 // RemoveEntitiesFromMultipleSelected
 /*

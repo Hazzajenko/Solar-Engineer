@@ -62,6 +62,7 @@ export type CanvasAppMachineContext = {
  */
 
 export type PickedCanvasAppMachineContext = Pick<CanvasAppMachineContext, 'selected'> & {
+	selectedHistory: SelectedStateDeprecated[]
 	dragBox: AdjustedDragBoxState
 	pointer: AdjustedPointerState
 	toMove: AdjustedToMoveState
@@ -85,6 +86,7 @@ export const canvasAppMachine = createMachine(
 		id: 'CanvasApp',
 		context: {
 			selected: InitialSelectedState,
+			selectedHistory: [],
 			dragBox: InitialAdjustedDragBoxState,
 			pointer: InitialAdjustedPointerState,
 			toMove: InitialAdjustedToMoveState,
@@ -106,11 +108,16 @@ export const canvasAppMachine = createMachine(
 							},
 							SetSelectedString: {
 								target: 'StringSelected',
-								actions: (ctx, event) =>
-									(ctx.selected = {
+								actions: (ctx, event) => {
+									ctx.selectedHistory.push(ctx.selected)
+									ctx.selected = {
 										...ctx.selected,
 										selectedStringId: event.payload.stringId,
-									}),
+									}
+									/*				(ctx.selected = {
+								 ...ctx.selected, selectedStringId: event.payload.stringId,
+								 }, ctx.selectedHistory.push(ctx.selected)),*/
+								},
 							},
 						},
 					},
@@ -119,6 +126,14 @@ export const canvasAppMachine = createMachine(
 							SelectedSingleEntity: {
 								target: 'EntitySelected',
 								actions: 'SetSelectedEntity',
+							},
+							SetSelectedString: {
+								target: 'StringSelected',
+								actions: (ctx, event) =>
+									(ctx.selected = {
+										...ctx.selected,
+										selectedStringId: event.payload.stringId,
+									}),
 							},
 							SelectionBoxCompleted: {
 								target: 'MultipleEntitiesSelected',
@@ -150,7 +165,9 @@ export const canvasAppMachine = createMachine(
 										...ctx.selected,
 										selectedStringId: undefined,
 									}),
-							},
+							} /*			SelectedRollback: {
+						 target: ,
+						 },*/,
 							ClearSelectedState: {
 								target: 'NoneSelected',
 								actions: (ctx) => (ctx.selected = InitialSelectedState),

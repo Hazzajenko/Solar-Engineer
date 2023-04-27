@@ -64,13 +64,31 @@ export const stateEventLoggerExcludePointerState = (state: any) => {
 
 export const canvasAppXStateService = interpret(canvasAppMachine, { devTools: true }).onTransition(
 	(state) => {
+		// state.historyValue
 		// stateDifferenceLogger(state)
 		stateEventLoggerExcludePointerState(state)
+
+		if (state.event.type === 'SelectedRollback') {
+			const history = state.history?.historyValue?.current as AppStateValue
+			console.log('%c rollback', 'color: #03A9F4; font-weight: bold;', history)
+			const rollback = state.context.selectedHistory[state.context.selectedHistory.length - 1]
+
+			canvasAppMachine.transition(state, 'SetMultipleSelectedEntities', {
+				...state.context,
+				selected: rollback,
+			})
+		}
 		// console.log('%c state', 'color: #03A9F4; font-weight: bold;', state.event)
 	},
 )
 
 export type AppStateSnapshot = ReturnType<typeof canvasAppXStateService.getSnapshot>
+/*
+ canvasAppMachine.transition('SelectedState.StringS', '')*/
+
+// const transition = canvasAppXStateService)
+
+// export type AppStateTransition = ReturnType<typeof canvasAppXStateService.>
 
 // const asdas: AppStateSnapshot = canvasAppXStateService.getSnapshot()
 

@@ -1,22 +1,55 @@
-import { ChangeDetectionStrategy, Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core'
-import { CommonModule } from '@angular/common'
-import { CdkDrag } from '@angular/cdk/drag-drop'
-import { select, Store } from '@ngrx/store'
-import { selectDrawTime } from '../../store'
-import { ShowSvgComponent } from '@shared/ui'
-import { CanvasClientStateService, CanvasEntitiesStore, CanvasRenderService, DomPointService, ObjectPositioningService } from '../../services'
-import { MenuDataset } from '../../types'
-import { LetModule } from '@ngrx/component'
-import { CanvasAppSettingsComponent, CanvasGraphicsMenuComponent, KeyMapComponent, RightClickMenuComponent } from './menus'
 import { DesignCanvasWithXstateDirective } from '../../directives'
+import {
+	CanvasClientStateService,
+	CanvasEntitiesStore,
+	CanvasRenderService,
+	DomPointService,
+	ObjectPositioningService,
+} from '../../services'
+import { selectDrawTime } from '../../store'
+import { MenuDataset } from '../../types'
+import {
+	CanvasAppSettingsComponent,
+	CanvasGraphicsMenuComponent,
+	KeyMapComponent,
+	RightClickMenuComponent,
+	StateValuesComponent,
+} from './menus'
+import { CdkDrag } from '@angular/cdk/drag-drop'
+import { CommonModule } from '@angular/common'
+import {
+	ChangeDetectionStrategy,
+	Component,
+	ElementRef,
+	inject,
+	OnInit,
+	ViewChild,
+} from '@angular/core'
+import { LetModule } from '@ngrx/component'
+import { select, Store } from '@ngrx/store'
+import { ShowSvgComponent } from '@shared/ui'
+
 
 @Component({
-	changeDetection: ChangeDetectionStrategy.OnPush, imports: [
-		CdkDrag, CommonModule, ShowSvgComponent, LetModule, KeyMapComponent, CanvasAppSettingsComponent, RightClickMenuComponent, DesignCanvasWithXstateDirective, CanvasGraphicsMenuComponent,
-	], selector:     'app-design-canvas', standalone: true, styles: [], templateUrl: './design-canvas.component.html',
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	imports: [
+		CdkDrag,
+		CommonModule,
+		ShowSvgComponent,
+		LetModule,
+		KeyMapComponent,
+		CanvasAppSettingsComponent,
+		RightClickMenuComponent,
+		DesignCanvasWithXstateDirective,
+		CanvasGraphicsMenuComponent,
+		StateValuesComponent,
+	],
+	selector: 'app-design-canvas',
+	standalone: true,
+	styles: [],
+	templateUrl: './design-canvas.component.html',
 })
-export class DesignCanvasComponent
-	implements OnInit {
+export class DesignCanvasComponent implements OnInit {
 	private _store = inject(Store)
 	private _objectPositioning = inject(ObjectPositioningService)
 	// private _objectPositioning = inject(CanvasObjectPositioningService)
@@ -32,14 +65,20 @@ export class DesignCanvasComponent
 	state = inject(CanvasClientStateService)
 
 	rightClickMenu = [
-		{ label: 'Rotate', action: this.rotate.bind(this) }, { label: 'Delete', action: this.delete.bind(this) },
+		{ label: 'Rotate', action: this.rotate.bind(this) },
+		{ label: 'Delete', action: this.delete.bind(this) },
 	]
 
 	canvasMenuArr = [
 		{
-			label: 'Create Preview', action: this.toggleCreatePreview.bind(this), selected: this._state.menu.createPreview,
-		}, {
-			label: 'Nearby Axis Lines', action: this.toggleNearbyAxisLines.bind(this), selected: this._state.menu.nearbyAxisLines,
+			label: 'Create Preview',
+			action: this.toggleCreatePreview.bind(this),
+			selected: this._state.menu.createPreview,
+		},
+		{
+			label: 'Nearby Axis Lines',
+			action: this.toggleNearbyAxisLines.bind(this),
+			selected: this._state.menu.nearbyAxisLines,
 		},
 	]
 
