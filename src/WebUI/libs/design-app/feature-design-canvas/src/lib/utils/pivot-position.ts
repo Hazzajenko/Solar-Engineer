@@ -111,6 +111,14 @@ export const calculatePivotPointForEntitiesAndReturnDistanceFromEntityToPivotPoi
 	return { pivotPoint, distancesAwayFromPivot }
 }
 
+export const calculatePivotPointPositionFromPoints = (points: Point[]) => {
+	const totalX = points.reduce((acc, point) => acc + point.x, 0)
+	const totalY = points.reduce((acc, point) => acc + point.y, 0)
+	const pivotX = totalX / points.length
+	const pivotY = totalY / points.length
+	return { x: pivotX, y: pivotY } as Point
+}
+
 export function calculatePivotPositionV7(objects: Point[]) {
 	// Find the centroid of the objects
 	const centroid = { x: 0, y: 0 }

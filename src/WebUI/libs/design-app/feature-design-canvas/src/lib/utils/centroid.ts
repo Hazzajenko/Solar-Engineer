@@ -1,4 +1,15 @@
-import { Point } from '@shared/data-access/models'
+import { Point } from '@shared/data-access/models';
+
+
+/*
+ export const getCentroidFromBounds = (bounds: {
+ x: number
+ y: number
+ width: number
+ height: number
+ }): Point => {
+
+ }*/
 
 export const getPolygonCentroid = (vertices: Point[]): Point => {
 	const centroid: {

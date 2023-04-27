@@ -11,3 +11,9 @@ export const getAverageDistanceBetweenPointAndPoints = (point: Point, points: Po
 	const sum = distances.reduce((acc, distance) => acc + distance, 0)
 	return sum / distances.length
 }
+
+export const getXAndYDistanceBetweenPoints = (p1: Point, p2: Point) => {
+	const x = p1.x - p2.x
+	const y = p1.y - p2.y
+	return { x, y }
+}

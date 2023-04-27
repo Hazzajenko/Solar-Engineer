@@ -8,6 +8,7 @@ import {
 	SpotInBox,
 } from './directions'
 import { SAME_AXIS_POSITION, SameAxisPosition } from './positioning'
+import { rotate } from './rotate'
 import { ENTITY_TYPE } from '@design-app/shared'
 import { Point, Size } from '@shared/data-access/models'
 
@@ -47,6 +48,113 @@ export const getEntityBounds = (entity: CanvasEntity): EntityBounds => {
 		centerX: entity.location.x + entity.width / 2,
 		centerY: entity.location.y + entity.height / 2,
 	}
+}
+
+/**
+ * @description
+ * [minX, minY, maxX, maxY]
+ * [left, top, right, bottom]
+ */
+export type TrigonometricBoundsTuple = [number, number, number, number]
+
+export const getEntityTrigonometricBoundsTuple = (
+	entity: CanvasEntity,
+): TrigonometricBoundsTuple => {
+	const { left, top, right, bottom, centerX, centerY } = getEntityBounds(entity)
+	const [x11, y11] = rotate(left, top, centerX, centerY, entity.angle)
+	const [x12, y12] = rotate(left, bottom, centerX, centerY, entity.angle)
+	const [x21, y21] = rotate(right, bottom, centerX, centerY, entity.angle)
+	const [x22, y22] = rotate(right, top, centerX, centerY, entity.angle)
+	const minX = Math.min(x11, x12, x22, x21)
+	const minY = Math.min(y11, y12, y22, y21)
+	const maxX = Math.max(x11, x12, x22, x21)
+	const maxY = Math.max(y11, y12, y22, y21)
+	return [minX, minY, maxX, maxY]
+}
+
+/*export const getEntityTrigonometricBoundsTupleWithAngle = (
+ entity: CanvasEntity,
+ angle: AngleRadians,
+ ): TrigonometricBoundsTuple => {
+ const { left, top, right, bottom, centerX, centerY } = getEntityBounds(entity)
+ // const angle = entity.angle * (Math.PI / 180); // convert degrees to radians
+ const cos = Math.cos(angle)
+ const sin = Math.sin(angle)
+ // angle = -angle
+
+ const [x11, y11] = rotate(left, top, centerX, centerY, angle)
+ const [x12, y12] = rotate(left, bottom, centerX, centerY, angle, sin, cos)
+ const [x21, y21] = rotate(right, bottom, centerX, centerY, angle, sin, cos)
+ const [x22, y22] = rotate(right, top, centerX, centerY, angle, sin, cos)
+
+ const minX = Math.min(x11, x12, x22, x21)
+ const minY = Math.min(y11, y12, y22, y21)
+ const maxX = Math.max(x11, x12, x22, x21)
+ const maxY = Math.max(y11, y12, y22, y21)
+
+ return [minX, minY, maxX, maxY]
+ }*/
+export const getEntityTrigonometricBoundsTupleFromUnknown = (
+	entity: CanvasEntity,
+): TrigonometricBoundsTuple => {
+	const { left, top, right, bottom, centerX, centerY } = getEntityBounds(entity)
+	const [x11, y11] = rotate(left, top, centerX, centerY, entity.angle)
+	const [x12, y12] = rotate(left, bottom, centerX, centerY, entity.angle)
+	const [x21, y21] = rotate(right, bottom, centerX, centerY, entity.angle)
+	const [x22, y22] = rotate(right, top, centerX, centerY, entity.angle)
+	/*
+	 const [x11, y11] = rotate(x1, y1, cx, cy, element.angle);
+	 const [x12, y12] = rotate(x1, y2, cx, cy, element.angle);
+	 const [x22, y22] = rotate(x2, y2, cx, cy, element.angle);
+	 const [x21, y21] = rotate(x2, y1, cx, cy, element.angle);*/
+	const minX = Math.min(x11, x12, x22, x21)
+	const minY = Math.min(y11, y12, y22, y21)
+	const maxX = Math.max(x11, x12, x22, x21)
+	const maxY = Math.max(y11, y12, y22, y21)
+	return [minX, minY, maxX, maxY]
+
+	/*	return {
+	 ...bounds,
+	 angle: entity.angle,
+	 }*/
+}
+// {id: string, location: {x: number, y: number}, angle: AngleRadians, width: number, height: number, type: "panel"}[]
+
+export const getCommonEntityTrigonometricBounds = (
+	entities: CanvasEntity[],
+): TrigonometricBoundsTuple => {
+	let minX = Infinity
+	let maxX = -Infinity
+	let minY = Infinity
+	let maxY = -Infinity
+
+	entities.forEach((entity) => {
+		const [x1, y1, x2, y2] = getEntityTrigonometricBoundsTuple(entity)
+		minX = Math.min(minX, x1)
+		minY = Math.min(minY, y1)
+		maxX = Math.max(maxX, x2)
+		maxY = Math.max(maxY, y2)
+	})
+
+	return [minX, minY, maxX, maxY]
+}
+
+export const getCommonTrigonometricBoundsFromPoints = (
+	points: Point[],
+): TrigonometricBoundsTuple => {
+	let minX = Infinity
+	let maxX = -Infinity
+	let minY = Infinity
+	let maxY = -Infinity
+
+	points.forEach((point) => {
+		minX = Math.min(minX, point.x)
+		minY = Math.min(minY, point.y)
+		maxX = Math.max(maxX, point.x)
+		maxY = Math.max(maxY, point.y)
+	})
+
+	return [minX, minY, maxX, maxY]
 }
 
 export const getBoundsFromTwoPoints = (point1: Point, point2: Point): EntityBounds => {
@@ -457,6 +565,29 @@ export const getCompleteBoundsFromMultipleEntitiesWithPaddingWithAngle = (
 		width: right - left,
 		height: bottom - top,
 		angle,
+	}
+}
+
+export const getTrigonometricBoundsFromMultipleEntitiesMakeCentrePivotPoint = (
+	entities: CanvasEntity[],
+	pivotPoint: Point,
+): TrigonometricBounds => {
+	const bounds = entities.map(getEntityBounds)
+	const left = Math.min(...bounds.map((b) => b.left))
+	const top = Math.min(...bounds.map((b) => b.top))
+	const right = Math.max(...bounds.map((b) => b.right))
+	const bottom = Math.max(...bounds.map((b) => b.bottom))
+
+	return {
+		left,
+		top,
+		right,
+		bottom,
+		centerX: pivotPoint.x,
+		centerY: pivotPoint.y,
+		width: right - left,
+		height: bottom - top,
+		angle: 0 as AngleRadians,
 	}
 }
 
