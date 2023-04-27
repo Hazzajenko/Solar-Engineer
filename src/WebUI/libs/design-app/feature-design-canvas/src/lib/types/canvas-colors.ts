@@ -14,6 +14,18 @@ export const CANVAS_COLORS = {
 
 export type CanvasColor = (typeof CANVAS_COLORS)[keyof typeof CANVAS_COLORS]
 
+export const PANEL_STROKE_STYLE = {
+	DEFAULT: '#000000',
+	HOVERED: '#000000',
+	SINGLE_SELECTED: '#000000',
+	MULTI_SELECTED: '#000000',
+	STRING_SELECTED: '#000000',
+	SINGLE_SELECTED_STRING_SELECTED: '#00d0d4',
+	NEARBY: '#000000',
+} as const
+
+export type PanelStrokeStyle = (typeof PANEL_STROKE_STYLE)[keyof typeof PANEL_STROKE_STYLE]
+
 /*export const CANVAS_COLORS_ARRAY = Object.values(CANVAS_COLORS) as string[]
 
  export const CANVAS_COLORS_KEYS = Object.keys(CANVAS_COLORS) as (keyof typeof CANVAS_COLORS)[]

@@ -6,11 +6,8 @@ import {
 	CanvasRenderService,
 	DomPointService,
 	drawSelectionBoxBoundsCtxFnWithTranslateRotate,
-	drawSelectionBoxBoundsFromTupleCtxFnWithAngle,
 	getAngleInRadiansBetweenTwoPoints,
 	getCommonEntityTrigonometricBounds,
-	getCornersOfRectWhenRotated,
-	getXAndYDistanceBetweenPoints,
 	MachineService,
 	rotatePointOffPivot,
 	rotatingKeysDown,
@@ -235,7 +232,7 @@ export class ObjectRotatingService {
 				ctx.restore()
 			})
 
-			const boxBounds = getCommonEntityTrigonometricBounds(entities)
+			// const boxBounds = getCommonEntityTrigonometricBounds(entities)
 
 			/*		const selectionBoxBounds = getCompleteBoundsFromMultipleEntitiesWithPaddingWithAngle(
 			 entities,
@@ -244,38 +241,38 @@ export class ObjectRotatingService {
 			 )*/
 			// drawSelectionBoxBoundsFromTupleCtxFnWithAngle(boxBounds, adjustedAngle)(ctx)
 			// drawSelectionBoxBoundsCtxFnWithTranslateRotate(selectionBoxBounds)(ctx)
+			/*
+			 const corners = entities.map((entity) => {
+			 const angle = entity.angle
+			 const location = entity.location
+			 assertNotNull(angle)
+			 assertNotNull(location)
+			 const { width, height } = SizeByType[entity.type]
+			 return getCornersOfRectWhenRotated(location.x, location.y, width, height, angle)
+			 })
 
-			const corners = entities.map((entity) => {
-				const angle = entity.angle
-				const location = entity.location
-				assertNotNull(angle)
-				assertNotNull(location)
-				const { width, height } = SizeByType[entity.type]
-				return getCornersOfRectWhenRotated(location.x, location.y, width, height, angle)
-			})
+			 corners.forEach((corner) => {
+			 corner.forEach((cornerPoint) => {
+			 const [x, y] = cornerPoint
+			 ctx.beginPath()
+			 ctx.arc(x, y, 5, 0, 2 * Math.PI)
+			 ctx.fill()
+			 })
+			 })
 
-			corners.forEach((corner) => {
-				corner.forEach((cornerPoint) => {
-					const [x, y] = cornerPoint
-					ctx.beginPath()
-					ctx.arc(x, y, 5, 0, 2 * Math.PI)
-					ctx.fill()
-				})
-			})
+			 const points = corners.flat().map((c) => ({ x: c[0], y: c[1] }))
 
-			const points = corners.flat().map((c) => ({ x: c[0], y: c[1] }))
+			 const boundsFromPoints = getCommonEntityTrigonometricBounds(entities)
+			 const [x, y] = boundsFromPoints
+			 const distanceFromCenter = getXAndYDistanceBetweenPoints({ x, y }, pivotPoint)
+			 // const distanceFromCenter = getDistanceBetweenTwoPoints({ x, y }, pivotPoint)
+			 console.log('distanceFromCenter', distanceFromCenter)
+			 // this.initialDistanceFromCenter = distanceFromCenter
 
-			const boundsFromPoints = getCommonEntityTrigonometricBounds(entities)
-			const [x, y] = boundsFromPoints
-			const distanceFromCenter = getXAndYDistanceBetweenPoints({ x, y }, pivotPoint)
-			// const distanceFromCenter = getDistanceBetweenTwoPoints({ x, y }, pivotPoint)
-			console.log('distanceFromCenter', distanceFromCenter)
-			// this.initialDistanceFromCenter = distanceFromCenter
-
-			// const boundsFromPoints = getCommonTrigonometricBoundsFromPoints(points)
-			// const boundsFromPoints = getBoundsFromPoints(points)
-			// drawSelectionBoxBoundsByDrawingLines(boundsFromPoints, adjustedAngle)(ctx)
-			drawSelectionBoxBoundsFromTupleCtxFnWithAngle(boundsFromPoints, adjustedAngle)(ctx)
+			 // const boundsFromPoints = getCommonTrigonometricBoundsFromPoints(points)
+			 // const boundsFromPoints = getBoundsFromPoints(points)
+			 // drawSelectionBoxBoundsByDrawingLines(boundsFromPoints, adjustedAngle)(ctx)
+			 drawSelectionBoxBoundsFromTupleCtxFnWithAngle(boundsFromPoints, adjustedAngle)(ctx)*/
 			/*			drawSelectionBoxBoundsCtxFnWithTranslateRotateFromEntityBoundsWithAngle(
 			 boundsFromPoints,
 			 adjustedAngle,

@@ -1,4 +1,4 @@
-import { CANVAS_COLORS, CanvasEntity, isPanel, SizeByType } from '../../types'
+import { CANVAS_COLORS, CanvasEntity, isPanel, PANEL_STROKE_STYLE, SizeByType } from '../../types'
 import {
 	getAllAvailableEntitySpotsBetweenTwoPoints,
 	getCompleteBoundsFromMultipleEntitiesWithPadding,
@@ -8,7 +8,6 @@ import {
 	AdjustedMultipleToMove,
 	AdjustedSingleToMove,
 	CANVAS_MODE,
-	canvasAppXStateService,
 	CanvasClientStateService,
 	MachineService,
 } from '../canvas-client-state'
@@ -17,7 +16,7 @@ import { DIV_ELEMENT, DivElementsService } from '../div-elements'
 import { DomPointService } from '../dom-point.service'
 import { CtxTask } from './types'
 import { inject, Injectable } from '@angular/core'
-import { assertNotNull } from '@shared/utils'
+import { assertNotNull, shadeColor } from '@shared/utils'
 
 
 @Injectable({
@@ -109,6 +108,9 @@ export class CanvasRenderService {
 			if (this._machine.matches('SelectedState.MultipleEntitiesSelected')) {
 				this.drawSelectedBox()
 			}
+			if (this._machine.matches('SelectedState.StringSelected')) {
+				this.drawSelectedStringBox()
+			}
 		})
 	}
 
@@ -129,6 +131,35 @@ export class CanvasRenderService {
 		this.ctx.save()
 		const { left, top, width, height } = selectionBoxBounds
 		this.ctx.strokeStyle = CANVAS_COLORS.MultiSelectedPanelFillStyle
+		this.ctx.lineWidth = 1
+		this.ctx.strokeRect(left, top, width, height)
+		this.ctx.restore()
+
+		// }
+	}
+
+	drawSelectedStringBox() {
+		/*		const selectionBoxBounds = this._machine.ctx.selected.selectionBoxBounds
+		 if (!selectionBoxBounds) {
+		 this._machine.sendEvent({ type: 'CancelSelected', payload: null })
+		 console.log('selectionBoxBounds is null')
+		 return
+		 }*/
+
+		const selectedStringId = this._machine.ctx.selected.selectedStringId
+
+		const selectedStringPanels = this._state.entities.canvasEntities
+			.getEntities()
+			.filter((entity) => isPanel(entity) && entity.stringId === selectedStringId)
+		const selectionBoxBounds = getCompleteBoundsFromMultipleEntitiesWithPadding(
+			selectedStringPanels,
+			10,
+		)
+
+		// if (selectionBoxBounds) {
+		this.ctx.save()
+		const { left, top, width, height } = selectionBoxBounds
+		this.ctx.strokeStyle = CANVAS_COLORS.StringSelectedPanelFillStyle
 		this.ctx.lineWidth = 1
 		this.ctx.strokeRect(left, top, width, height)
 		this.ctx.restore()
@@ -268,25 +299,23 @@ export class CanvasRenderService {
 	}
 
 	private drawEntity(entity: CanvasEntity) {
+		if (!isPanel(entity)) return
 		let fillStyle: string = CANVAS_COLORS.DefaultPanelFillStyle
+		let strokeStyle: string = PANEL_STROKE_STYLE.DEFAULT
 		const { toRotate } = this._state.state
 		const { toMove, selected, pointer } = this._machine.ctx
 		// const isBeingHovered = canvasAppXStateService.getSnapshot().context.selected
 		// const isBeingHovered = canvasAppXStateService.getSnapshot().matches('DragBoxState.DragBoxInProgress')
-		const isBeingHovered = !!pointer.hoveringEntityId && pointer.hoveringEntityId === entity.id
-		// const isBeingHovered = !!hover.hoveringEntityId && hover.hoveringEntityId === entity.id
-		if (isBeingHovered) {
-			fillStyle = '#17fff3'
-		}
 
-		const inSingleSelectedState = canvasAppXStateService
-			.getSnapshot()
-			.matches('SelectedState.EntitySelected')
+		/*			const inSingleSelectedState = canvasAppXStateService
+		 .getSnapshot()
+		 .matches('SelectedState.EntitySelected')*/
 		const isSingleSelected = selected.singleSelectedId === entity.id
 
 		// const isSingleSelected = !!selected.singleSelectedId && selected.singleSelectedId === entity.id
 
-		if (isSingleSelected && inSingleSelectedState) {
+		// if (isSingleSelected) {
+		if (isSingleSelected) {
 			fillStyle = CANVAS_COLORS.SelectedPanelFillStyle
 		}
 
@@ -296,12 +325,15 @@ export class CanvasRenderService {
 			fillStyle = CANVAS_COLORS.MultiSelectedPanelFillStyle
 		}
 
-		if (isPanel(entity)) {
-			const isStringSelected = selected.selectedStringId === entity.stringId
-			if (isStringSelected && selected.selectedStringId && entity.stringId) {
-				fillStyle = CANVAS_COLORS.StringSelectedPanelFillStyle
+		// if (isPanel(entity)) {
+		const isStringSelected = selected.selectedStringId === entity.stringId
+		if (isStringSelected && selected.selectedStringId && entity.stringId) {
+			fillStyle = CANVAS_COLORS.StringSelectedPanelFillStyle
+			if (isSingleSelected) {
+				strokeStyle = PANEL_STROKE_STYLE.SINGLE_SELECTED_STRING_SELECTED
 			}
 		}
+		// }
 
 		const multipleToRotate = toRotate.multipleToRotate
 		const isInMultiRotate = !!multipleToRotate && multipleToRotate.ids.includes(entity.id)
@@ -337,14 +369,24 @@ export class CanvasRenderService {
 		 return
 		 }*/
 
-		const nearbyEntityIds = this._state.nearby.ids
-		const isNearby = nearbyEntityIds.includes(entity.id)
-		if (isNearby) {
-			fillStyle = CANVAS_COLORS.NearbyPanelFillStyle
+		const isBeingHovered = !!pointer.hoveringEntityId && pointer.hoveringEntityId === entity.id
+		// const isBeingHovered = !!hover.hoveringEntityId && hover.hoveringEntityId === entity.id
+		if (isBeingHovered) {
+			fillStyle = '#17fff3'
+			if (isStringSelected) {
+				fillStyle = shadeColor(CANVAS_COLORS.StringSelectedPanelFillStyle, 50)
+			}
 		}
+
+		/*		const nearbyEntityIds = this._state.nearby.ids
+		 const isNearby = nearbyEntityIds.includes(entity.id)
+		 if (isNearby) {
+		 fillStyle = CANVAS_COLORS.NearbyPanelFillStyle
+		 }*/
 
 		this.ctx.save()
 		this.ctx.fillStyle = fillStyle
+		this.ctx.strokeStyle = strokeStyle
 		this.ctx.translate(entity.location.x + entity.width / 2, entity.location.y + entity.height / 2)
 		this.ctx.rotate(entity.angle)
 		this.ctx.beginPath()

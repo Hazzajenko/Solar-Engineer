@@ -64,6 +64,7 @@ export interface Typegen0 {
     | 'SelectedState.EntitySelected'
     | 'SelectedState.MultipleEntitiesSelected'
     | 'SelectedState.NoneSelected'
+    | 'SelectedState.StringSelected'
     | 'ToMoveState'
     | 'ToMoveState.MultipleMoveInProgress'
     | 'ToMoveState.NoMove'
@@ -89,7 +90,11 @@ export interface Typegen0 {
                 | 'None'
             }
         PointerState?: 'HoveringOverEntity' | 'PointerIsDown' | 'PointerUp'
-        SelectedState?: 'EntitySelected' | 'MultipleEntitiesSelected' | 'NoneSelected'
+        SelectedState?:
+          | 'EntitySelected'
+          | 'MultipleEntitiesSelected'
+          | 'NoneSelected'
+          | 'StringSelected'
         ToMoveState?: 'MultipleMoveInProgress' | 'NoMove' | 'SingleMoveInProgress'
         ToRotateState?:
           | 'MultipleRotateInProgress'

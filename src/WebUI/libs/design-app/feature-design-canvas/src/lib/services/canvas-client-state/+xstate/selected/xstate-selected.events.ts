@@ -102,6 +102,21 @@ export class RemoveEntitiesFromMultipleSelected {
 	) {}
 }
 
+export type ClearSelectedState = {
+	type: 'ClearSelectedState'
+}
+
+export type SetSelectedString = {
+	type: 'SetSelectedString'
+	payload: {
+		stringId: string
+	}
+}
+
+export type ClearStringSelected = {
+	type: 'ClearStringSelected'
+}
+
 // const yo = function SelectEntitiesInSelectionBox(     ctx,     event): {payload: {ids: any[]}, type: string}
 
 /*export type EntitiesFoundInSelectionBox = {
@@ -119,6 +134,9 @@ export type XStateSelectedEvent =
 	| SelectedDifferentEntity
 	| AddEntitiesToMultipleSelected
 	| RemoveEntitiesFromMultipleSelected
+	| SetSelectedString
+	| ClearStringSelected
+	| ClearSelectedState
 // | EntitiesFoundInSelectionBox
 // RemoveEntitiesFromMultipleSelected
 /*

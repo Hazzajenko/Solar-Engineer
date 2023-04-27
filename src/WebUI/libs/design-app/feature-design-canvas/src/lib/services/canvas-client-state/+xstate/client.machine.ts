@@ -104,6 +104,14 @@ export const canvasAppMachine = createMachine(
 							SelectedDifferentEntity: {
 								actions: 'SetSelectedEntity',
 							},
+							SetSelectedString: {
+								target: 'StringSelected',
+								actions: (ctx, event) =>
+									(ctx.selected = {
+										...ctx.selected,
+										selectedStringId: event.payload.stringId,
+									}),
+							},
 						},
 					},
 					NoneSelected: {
@@ -126,6 +134,26 @@ export const canvasAppMachine = createMachine(
 							RemoveEntitiesFromMultipleSelected: {
 								actions: 'RemoveEntitiesFromMultipleSelected',
 								target: 'MultipleEntitiesSelected',
+							},
+							ClearSelectedState: {
+								target: 'NoneSelected',
+								actions: (ctx) => (ctx.selected = InitialSelectedState),
+							},
+						},
+					},
+					StringSelected: {
+						on: {
+							ClearStringSelected: {
+								target: 'NoneSelected',
+								actions: (ctx) =>
+									(ctx.selected = {
+										...ctx.selected,
+										selectedStringId: undefined,
+									}),
+							},
+							ClearSelectedState: {
+								target: 'NoneSelected',
+								actions: (ctx) => (ctx.selected = InitialSelectedState),
 							},
 						},
 					},

@@ -15,11 +15,14 @@ import {
 } from '../services'
 import {
 	CanvasEntity,
+	CanvasPanel,
 	createPanel,
+	createString,
 	isPanel,
 	SizeByType,
 	TransformedPoint,
 	UndefinedStringId,
+	updateObjectByIdForStore,
 } from '../types'
 import {
 	changeCanvasCursor,
@@ -33,7 +36,6 @@ import {
 	multiSelectDraggingKeysDown,
 	rotatingKeysDown,
 } from '../utils'
-import { createStringWithPanels } from '../utils/string-fns'
 import { DesignCanvasDirectiveExtension } from './design-canvas-directive.extension'
 import { Directive, OnInit } from '@angular/core'
 import { ENTITY_TYPE } from '@design-app/shared'
@@ -396,8 +398,6 @@ export class DesignCanvasWithXstateDirective
 			return
 		}
 
-		// const location = this._domPoint.getTransformedPointToMiddleOfObjectFromEvent(event, ENTITY_TYPE.Panel)
-
 		if (appSnapshot.matches('GridState.PreviewAxisState.AxisCreatePreviewInProgress')) {
 			if (!event.altKey || !this._nearby.axisPreviewRect) {
 				this._machine.sendEvent({ type: 'StopAxisPreview' })
@@ -410,44 +410,17 @@ export class DesignCanvasWithXstateDirective
 				x: this._nearby.axisPreviewRect.left,
 				y: this._nearby.axisPreviewRect.top,
 			}
-			// const previewRectLocation = { x: axisPreviewRect.left, y: axisPreviewRect.top }
+
 			const entity = this._state.selected.selectedStringId
 				? createPanel(previewRectLocation, this._state.selected.selectedStringId)
 				: createPanel(previewRectLocation)
 			this._state.entities.canvasEntities.addEntity(entity)
 			this._nearby.axisPreviewRect = undefined
 			this._machine.sendEvent({ type: 'StopAxisPreview' })
-			/*      const axisPreviewRectBounds = domRectToBounds(axisPreviewRect)
-			 if (isPointInsideBounds(location, axisPreviewRectBounds)) {*/
-			/*			this._state.updateState({
-			 grid: {
-			 axisPreviewRect: undefined,
-			 },
-			 })*/
+
 			this._render.drawCanvas()
 			return
 		}
-
-		/*		const axisPreviewRect = this._state.grid.axisPreviewRect
-		 if (axisPreviewRect && event.altKey) {
-		 // const entity = this._state.selected.selectedStringId
-		 const previewRectLocation = { x: axisPreviewRect.left, y: axisPreviewRect.top }
-		 const entity = this._state.selected.selectedStringId
-		 ? createPanel(previewRectLocation, this._state.selected.selectedStringId)
-		 : createPanel(previewRectLocation)
-		 this._state.entities.canvasEntities.addEntity(entity)
-		 /!*      const axisPreviewRectBounds = domRectToBounds(axisPreviewRect)
-		 if (isPointInsideBounds(location, axisPreviewRectBounds)) {*!/
-		 /!*			this._state.updateState({
-		 grid: {
-		 axisPreviewRect: undefined,
-		 },
-		 })*!/
-		 this._render.drawCanvas()
-		 return
-		 /!*      return
-		 }*!/
-		 }*/
 
 		const location = getTopLeftPointFromTransformedPoint(
 			currentPoint,
@@ -474,7 +447,6 @@ export class DesignCanvasWithXstateDirective
 	doubleClickHandler(event: PointerEvent, currentPoint: TransformedPoint) {
 		console.log('double click', event)
 		const entityUnderMouse = this.getEntityUnderTransformedPoint(currentPoint)
-		// const isPanel = this.getMouseOverPanel(event)
 		if (entityUnderMouse) {
 			if (!isPanel(entityUnderMouse)) return
 			if (entityUnderMouse.stringId === UndefinedStringId) return
@@ -483,35 +455,11 @@ export class DesignCanvasWithXstateDirective
 				.find((string) => string.id === entityUnderMouse.stringId)
 
 			assertNotNull(belongsToString, 'string not found')
-			this._state.updateState({
-				selected: {
-					selectedStringId: belongsToString.id,
-				},
+			this._machine.sendEvent({
+				type: 'SetSelectedString',
+				payload: { stringId: belongsToString.id },
 			})
-			// this._selected.setSelectedStringId(belongsToString.id)
-
-			// this._selected.handleEntityDoubleClick(event, entityUnderMouse, this.strings)
-			/*      if (!isPanel(entityUnderMouse)) return
-			 if (entityUnderMouse.stringId === UndefinedStringId) return
-			 const belongsToString = this.strings.find(string => string.id === entityUnderMouse.stringId)
-			 assertNotNull(belongsToString, 'string not found')
-			 this._selected.setSelectedStringId(belongsToString.id)*/
 		}
-		// TODO add double click on panel
-
-		// const entityUnderMouse = this.getEntityUnderTransformedPoint(currentPoint)
-		/*		if (entityUnderMouse) {
-		 console.log('entityUnderMouse', entityUnderMouse)
-		 }*/
-
-		/*    const mouseOverPanel = this.getMouseOverPanel(event)
-		 if (mouseOverPanel) {
-		 if (!isPanel(mouseOverPanel)) return
-		 if (mouseOverPanel.stringId === UndefinedStringId) return
-		 const belongsToString = this.strings.find(string => string.id === mouseOverPanel.stringId)
-		 assertNotNull(belongsToString, 'string not found')
-		 this._selected.setSelectedStringId(belongsToString.id)
-		 }*/
 	}
 
 	/**
@@ -567,9 +515,19 @@ export class DesignCanvasWithXstateDirective
 				break
 			case KEYS.X:
 				{
-					const multipleSelectedIds = this._state.selected.multipleSelectedIds
+					const multipleSelectedIds = this._machine.ctx.selected.multipleSelectedIds
+					// const multipleSelectedIds = this._state.selected.multipleSelectedIds
 					if (multipleSelectedIds.length <= 1) return
-					createStringWithPanels(this._state, multipleSelectedIds)
+					const string = createString()
+
+					const entities = this._state.entities.canvasEntities.getEntitiesByIds(multipleSelectedIds)
+					const panels = entities.filter((entity) => entity.type === 'panel') as CanvasPanel[]
+					const panelUpdates = panels.map((panel) =>
+						updateObjectByIdForStore<CanvasPanel>(panel.id, { stringId: string.id }),
+					)
+					// const { string, panelUpdates } = createStringWithPanels(this._state, multipleSelectedIds)
+					this._state.entities.canvasStrings.addEntity(string)
+					this._state.entities.canvasEntities.updateManyEntities(panelUpdates)
 
 					// TODO: move to local store
 					/*     if (this._selected.multiSelected.length > 0) {
