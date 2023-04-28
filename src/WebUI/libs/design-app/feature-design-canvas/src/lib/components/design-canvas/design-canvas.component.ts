@@ -15,6 +15,7 @@ import {
 	RightClickMenuComponent,
 	StateValuesComponent,
 } from './menus'
+import { RightClickMenuV2Component } from './menus/right-click-menu-v2'
 import { CdkDrag } from '@angular/cdk/drag-drop'
 import { CommonModule } from '@angular/common'
 import {
@@ -43,6 +44,7 @@ import { ShowSvgComponent } from '@shared/ui'
 		DesignCanvasWithXstateDirective,
 		CanvasGraphicsMenuComponent,
 		StateValuesComponent,
+		RightClickMenuV2Component,
 	],
 	selector: 'app-design-canvas',
 	standalone: true,

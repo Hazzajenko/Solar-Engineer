@@ -1,13 +1,19 @@
-import { inject, Injectable } from '@angular/core'
 import { TransformedPoint } from '../types'
-import { DomPointService } from './dom-point.service'
+import { draggingScreenKeysDown } from '../utils'
+import {
+	CanvasClientStateService,
+	MachineService,
+	StartViewDragging,
+	StopViewDragging,
+} from './canvas-client-state'
 // import { CanvasEntitiesStore } from './canvas-entities'
 import { CanvasElementService } from './canvas-element.service'
+import { CanvasRenderService } from './canvas-render'
+import { DomPointService } from './dom-point.service'
+import { inject, Injectable } from '@angular/core'
 import { CURSOR_TYPE } from '@shared/data-access/models'
 import { assertNotNull } from '@shared/utils'
-import { draggingScreenKeysDown } from '../utils'
-import { CanvasClientStateService, MachineService, StartViewDragging, StopViewDragging } from './canvas-client-state'
-import { CanvasRenderService } from './canvas-render'
+
 
 @Injectable({
 	providedIn: 'root',
@@ -36,7 +42,8 @@ export class CanvasViewPositioningService {
 		 dragStart: this._domPointService.getTransformedPointFromEvent(event),
 		 },
 		 })*/
-		this._machine.sendEvent(new StartViewDragging())
+		this._machine.sendEvent({ type: 'StartViewDragging' })
+		// this._machine.sendEvent(new StartViewDragging())
 		this.screenDragStartPoint = currentPoint
 		// this.screenDragStartPoint = this._domPointService.getTransformedPointFromEvent(event)
 	}
@@ -48,7 +55,8 @@ export class CanvasViewPositioningService {
 			 dragStart: undefined,
 			 },
 			 })*/
-			this._machine.sendEvent(new StopViewDragging())
+			this._machine.sendEvent({ type: 'StopViewDragging' })
+			// this._machine.sendEvent(new StopViewDragging())
 			this.screenDragStartPoint = undefined
 			return
 		}
@@ -64,7 +72,8 @@ export class CanvasViewPositioningService {
 
 	handleDragScreenMouseUp(event: PointerEvent) {
 		this.screenDragStartPoint = undefined
-		this._machine.sendEvent(new StopViewDragging())
+		this._machine.sendEvent({ type: 'StopViewDragging' })
+		// this._machine.sendEvent(new StopViewDragging())
 		/*		this._state.updateState({
 		 view: {
 		 dragStart: undefined,

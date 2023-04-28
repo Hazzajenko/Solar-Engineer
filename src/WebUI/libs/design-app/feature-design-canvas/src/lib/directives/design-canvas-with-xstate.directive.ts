@@ -1,17 +1,13 @@
 import { CREATE_PREVIEW_STATE } from '../components'
 import {
+	AppStateMatchesModel,
 	AppStateSnapshot,
-	AppStateValue,
 	DRAG_BOX_STATE,
-	MODE_STATE,
 	POINTER_STATE,
 	PointerHoverOverEntity,
 	PointerLeaveEntity,
-	StartClickCreateMode,
-	StartClickSelectMode,
 	TO_MOVE_STATE,
 	TO_ROTATE_STATE,
-	VIEW_STATE,
 } from '../services'
 import {
 	CanvasEntity,
@@ -48,11 +44,11 @@ import { assertNotNull, OnDestroyDirective } from '@shared/utils'
 	selector: '[appDesignCanvasXState]',
 	providers: [OnDestroyDirective],
 	standalone: true,
-})
+}) /*,
+ DesignCanvasEventHandlers */
 export class DesignCanvasWithXstateDirective
 	extends DesignCanvasDirectiveExtension
-	implements OnInit /*,
- DesignCanvasEventHandlers */
+	implements OnInit
 {
 	entityPressed: CanvasEntity | undefined
 
@@ -87,6 +83,7 @@ export class DesignCanvasWithXstateDirective
 		// const currentPoint = this._domPoint.getTransformedPointFromEvent(event)
 
 		const { GridState } = this._machine.state
+		const appSnapshot = this._machine.snapshot
 
 		if (isContextMenu(event)) {
 			return
@@ -118,7 +115,7 @@ export class DesignCanvasWithXstateDirective
 				return
 			}
 			console.log('drag box keys down')
-			this._drag.handleDragBoxMouseDown(event, currentPoint, GridState)
+			this._drag.handleDragBoxMouseDown(event, currentPoint, appSnapshot)
 			return
 		}
 
@@ -170,7 +167,8 @@ export class DesignCanvasWithXstateDirective
 			return
 		}
 
-		if (ViewState === VIEW_STATE.VIEW_DRAGGING_IN_PROGRESS) {
+		if (appSnapshot.matches('ViewState.ViewPositioningState.ViewDraggingInProgress')) {
+			// if (ViewState === VIEW_STATE.VIEW_DRAGGING_IN_PROGRESS) {
 			this._view.handleDragScreenMouseMove(event, currentPoint)
 			return
 		}
@@ -316,7 +314,8 @@ export class DesignCanvasWithXstateDirective
 		}
 
 		// if (snapshot.matches(VIEW_STATE.VIEW_DRAGGING_IN_PROGRESS)) {
-		if (snapshot.matches('ViewState.ViewDraggingInProgress')) {
+		if (snapshot.matches('ViewState.ViewPositioningState.ViewDraggingInProgress')) {
+			// if (snapshot.matches('ViewState.ViewDraggingInProgress')) {
 			console.log('snapshot.matches(ViewState.ViewDraggingInProgress)')
 			this._view.handleDragScreenMouseUp(event)
 			return
@@ -372,11 +371,16 @@ export class DesignCanvasWithXstateDirective
 	mouseClickHandler(
 		event: PointerEvent,
 		currentPoint: TransformedPoint,
-		state: AppStateValue,
+		state: AppStateMatchesModel,
 		appSnapshot: AppStateSnapshot,
 	) {
-		console.log('mouseClickHandler', event)
+		// console.log('mouseClickHandler', event)
 		if (isWheelButton(event)) return
+
+		if (appSnapshot.matches('ViewState.ContextMenuState.ContextMenuOpen')) {
+			this._machine.sendEvent({ type: 'CloseContextMenu' })
+			return
+		}
 
 		if (isMenuOpen(this.menu)) {
 			this.menu.style.display = 'none'
@@ -501,14 +505,17 @@ export class DesignCanvasWithXstateDirective
 	contextMenuHandler(event: PointerEvent) {
 		const entityUnderMouse = this.getEntityUnderMouse(event)
 		if (entityUnderMouse) {
-			this._renderer.setStyle(this.menu, 'display', 'initial')
-			this._renderer.setStyle(this.menu, 'top', `${event.offsetY + entityUnderMouse.height / 2}px`)
-			this._renderer.setStyle(this.menu, 'left', `${event.offsetX + entityUnderMouse.width / 2}px`)
-			this._renderer.setAttribute(this.menu, 'data-id', entityUnderMouse.id)
-			this._renderer.setAttribute(this.menu, 'data-type', entityUnderMouse.type)
-			this._renderer.setAttribute(this.menu, 'data-angle', entityUnderMouse.angle.toString())
-			if (!isPanel(entityUnderMouse)) return
-			this._renderer.setAttribute(this.menu, 'data-stringId', entityUnderMouse.stringId)
+			const x = event.offsetX + entityUnderMouse.width / 2
+			const y = event.offsetY + entityUnderMouse.height / 2
+			this._machine.sendEvent({
+				type: 'OpenContextMenu',
+				payload: {
+					id: entityUnderMouse.id,
+					type: entityUnderMouse.type,
+					x,
+					y,
+				},
+			})
 		}
 	}
 
@@ -572,17 +579,19 @@ export class DesignCanvasWithXstateDirective
 				}
 				break
 			case KEYS.C: {
-				const { GridState } = this._machine.state
-				switch (GridState.ModeState) {
-					case MODE_STATE.IN_SELECT_MODE:
-						this._machine.sendEvent(new StartClickCreateMode())
-						break
-					case MODE_STATE.IN_CREATE_MODE:
-						this._machine.sendEvent(new StartClickSelectMode())
-						break
-					default:
-						throw new Error('Unknown grid state')
-				}
+				// const { GridState } = this._machine.state
+				// GridState
+				this._machine.sendEvent({ type: 'ToggleClickMode' })
+				/*				switch (GridState.ModeState) {
+				 case MODE_STATE.IN_SELECT_MODE:
+				 this._machine.sendEvent(new StartClickCreateMode())
+				 break
+				 case MODE_STATE.IN_CREATE_MODE:
+				 this._machine.sendEvent(new StartClickSelectMode())
+				 break
+				 default:
+				 throw new Error('Unknown grid state')
+				 }*/
 				return
 			}
 			case KEYS.M:

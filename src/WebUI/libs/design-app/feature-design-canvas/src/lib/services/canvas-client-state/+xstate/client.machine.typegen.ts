@@ -75,8 +75,12 @@ export interface Typegen0 {
     | 'ToRotateState.SingleRotateInProgress'
     | 'ToRotateState.SingleRotateModeInProgress'
     | 'ViewState'
-    | 'ViewState.ViewDraggingInProgress'
-    | 'ViewState.ViewNotMoving'
+    | 'ViewState.ContextMenuState'
+    | 'ViewState.ContextMenuState.ContextMenuOpen'
+    | 'ViewState.ContextMenuState.NoContextMenu'
+    | 'ViewState.ViewPositioningState'
+    | 'ViewState.ViewPositioningState.ViewDraggingInProgress'
+    | 'ViewState.ViewPositioningState.ViewNotMoving'
     | {
         DragBoxState?: 'CreationBoxInProgress' | 'NoDragBox' | 'SelectionBoxInProgress'
         GridState?:
@@ -101,7 +105,13 @@ export interface Typegen0 {
           | 'NoRotate'
           | 'SingleRotateInProgress'
           | 'SingleRotateModeInProgress'
-        ViewState?: 'ViewDraggingInProgress' | 'ViewNotMoving'
+        ViewState?:
+          | 'ContextMenuState'
+          | 'ViewPositioningState'
+          | {
+              ContextMenuState?: 'ContextMenuOpen' | 'NoContextMenu'
+              ViewPositioningState?: 'ViewDraggingInProgress' | 'ViewNotMoving'
+            }
       }
   tags: never
 }

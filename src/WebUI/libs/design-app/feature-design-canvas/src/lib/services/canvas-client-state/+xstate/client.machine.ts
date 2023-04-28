@@ -434,21 +434,70 @@ export const canvasAppMachine = createMachine(
 				},
 			},
 			ViewState: {
-				initial: 'ViewNotMoving',
+				// initial: 'ViewNotMoving',
+				type: 'parallel',
 				states: {
-					ViewNotMoving: {
-						on: {
-							StartViewDragging: {
-								target: 'ViewDraggingInProgress',
-								actions: 'SetViewDragging',
+					ContextMenuState: {
+						initial: 'NoContextMenu',
+						states: {
+							NoContextMenu: {
+								on: {
+									OpenContextMenu: {
+										target: 'ContextMenuOpen',
+										actions: (ctx, event) => {
+											ctx.view.contextMenu = {
+												x: event.payload.x,
+												y: event.payload.y,
+												open: true,
+												type: event.payload.type,
+												id: event.payload.id,
+											}
+										},
+									},
+								},
+							},
+							ContextMenuOpen: {
+								on: {
+									OpenContextMenu: {
+										target: 'ContextMenuOpen',
+										actions: (ctx, event) => {
+											ctx.view.contextMenu = {
+												x: event.payload.x,
+												y: event.payload.y,
+												open: true,
+												type: event.payload.type,
+												id: event.payload.id,
+											}
+										},
+									},
+									CloseContextMenu: {
+										target: 'NoContextMenu',
+										actions: (ctx) => {
+											ctx.view.contextMenu = undefined
+										},
+									},
+								},
 							},
 						},
 					},
-					ViewDraggingInProgress: {
-						on: {
-							StopViewDragging: {
-								target: 'ViewNotMoving',
-								actions: 'StopViewDragging',
+					ViewPositioningState: {
+						initial: 'ViewNotMoving',
+						states: {
+							ViewNotMoving: {
+								on: {
+									StartViewDragging: {
+										target: 'ViewDraggingInProgress',
+										actions: 'SetViewDragging',
+									},
+								},
+							},
+							ViewDraggingInProgress: {
+								on: {
+									StopViewDragging: {
+										target: 'ViewNotMoving',
+										actions: 'StopViewDragging',
+									},
+								},
 							},
 						},
 					},
@@ -494,6 +543,9 @@ export const canvasAppMachine = createMachine(
 									StartClickCreateMode: {
 										target: 'CreateMode',
 									},
+									ToggleClickMode: {
+										target: 'CreateMode',
+									},
 								},
 							},
 							CreateMode: {
@@ -502,6 +554,9 @@ export const canvasAppMachine = createMachine(
 										target: 'SelectMode',
 									},
 									ResetGridClickMode: {
+										target: 'SelectMode',
+									},
+									ToggleClickMode: {
 										target: 'SelectMode',
 									},
 								},

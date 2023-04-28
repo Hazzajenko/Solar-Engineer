@@ -31,6 +31,10 @@ export type StopAxisPreview = {
 	type: 'StopAxisPreview'
 }
 
+export type ToggleClickMode = {
+	type: 'ToggleClickMode'
+}
+
 export type XStateGridEvent =
 	| StartClickSelectMode
 	| StartClickCreateMode
@@ -38,3 +42,4 @@ export type XStateGridEvent =
 	| StartAxisRepositionPreview
 	| StartAxisCreatePreview
 	| StopAxisPreview
+	| ToggleClickMode

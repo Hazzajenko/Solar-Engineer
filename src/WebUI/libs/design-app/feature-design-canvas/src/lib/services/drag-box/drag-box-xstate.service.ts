@@ -7,13 +7,12 @@ import {
 	getCompleteBoundsFromMultipleEntitiesWithPadding,
 } from '../../utils'
 import {
+	AppStateSnapshot,
 	CANVAS_MODE,
 	CanvasClientStateService,
 	CreationBoxStarted,
 	CURRENT_DRAG_BOX,
-	GridState,
 	MachineService,
-	MODE_STATE,
 	SelectionBoxCompleted,
 	SelectionBoxStarted,
 	StopDragBox,
@@ -55,20 +54,35 @@ export class DragBoxXstateService {
 	handleDragBoxMouseDown(
 		event: PointerEvent,
 		currentPoint: TransformedPoint,
-		GridState: GridState,
+		appStateSnapshot: AppStateSnapshot,
 	) {
 		// const clickMode = this._machine.state[GRID_STATE_KEY]
 
-		switch (GridState.ModeState) {
-			case MODE_STATE.IN_SELECT_MODE:
+		switch (true) {
+			case appStateSnapshot.matches('GridState.ModeState.SelectMode'):
 				this._machine.sendEvent(new SelectionBoxStarted({ point: currentPoint }))
 				break
-			case MODE_STATE.IN_CREATE_MODE:
+			case appStateSnapshot.matches('GridState.ModeState.CreateMode'):
 				this._machine.sendEvent(new CreationBoxStarted())
 				break
-			default:
-				throw new Error(`GridState ${GridState} not handled`)
 		}
+		/*		if (appStateSnapshot.matches('GridState.ModeState.CreateMode')) {
+		 this._machine.sendEvent(new CreationBoxStarted())
+		 }
+
+		 if (appStateSnapshot.matches('GridState.ModeState.SelectMode')) {
+		 this._machine.sendEvent(new SelectionBoxStarted({ point: currentPoint }))
+		 }*/
+		/*		switch (GridState.ModeState) {
+		 case MODE_STATE.IN_SELECT_MODE:
+		 this._machine.sendEvent(new SelectionBoxStarted({ point: currentPoint }))
+		 break
+		 case MODE_STATE.IN_CREATE_MODE:
+		 this._machine.sendEvent(new CreationBoxStarted())
+		 break
+		 default:
+		 throw new Error(`GridState ${GridState} not handled`)
+		 }*/
 		this.dragBoxStart = currentPoint
 		/*
 

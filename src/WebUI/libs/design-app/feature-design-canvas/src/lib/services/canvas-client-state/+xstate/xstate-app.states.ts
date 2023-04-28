@@ -1,6 +1,6 @@
 import { Typegen0 } from './client.machine.typegen'
 import { DRAG_BOX_STATE, DRAG_BOX_STATE_KEY, DragBoxState } from './drag-box'
-import { GRID_STATE_KEY, GridState, InitialGridState } from './grid'
+import { GRID_STATE_KEY, GridState } from './grid'
 import { POINTER_STATE, POINTER_STATE_KEY, PointerState } from './pointer'
 import {
 	AdjustedSelectedState,
@@ -15,7 +15,7 @@ import {
 	TO_ROTATE_STATE_KEY,
 	ToRotateState,
 } from './to-rotate'
-import { VIEW_STATE, VIEW_STATE_KEY, ViewState } from './view'
+import { VIEW_STATE_KEY, ViewState } from './view'
 
 
 export type AppState =
@@ -45,15 +45,15 @@ export type AppStateValueDeprecated = {
 	[GRID_STATE_KEY]: GridState
 }
 
-export const InitialAppState: AppStateValueDeprecated = {
-	[DRAG_BOX_STATE_KEY]: DRAG_BOX_STATE.NO_DRAG_BOX,
-	[POINTER_STATE_KEY]: POINTER_STATE.POINTER_UP,
-	[SELECTED_STATE_KEY]: SELECTED_STATE.NONE_SELECTED,
-	[TO_MOVE_STATE_KEY]: TO_MOVE_STATE.NO_MOVE,
-	[TO_ROTATE_STATE_KEY]: TO_ROTATE_STATE.NO_ROTATE,
-	[VIEW_STATE_KEY]: VIEW_STATE.VIEW_NOT_MOVING,
-	[GRID_STATE_KEY]: InitialGridState,
-}
+/*export const InitialAppState: AppStateValueDeprecated = {
+ [DRAG_BOX_STATE_KEY]: DRAG_BOX_STATE.NO_DRAG_BOX,
+ [POINTER_STATE_KEY]: POINTER_STATE.POINTER_UP,
+ [SELECTED_STATE_KEY]: SELECTED_STATE.NONE_SELECTED,
+ [TO_MOVE_STATE_KEY]: TO_MOVE_STATE.NO_MOVE,
+ [TO_ROTATE_STATE_KEY]: TO_ROTATE_STATE.NO_ROTATE,
+ [VIEW_STATE_KEY]: VIEW_STATE.VIEW_NOT_MOVING,
+ [GRID_STATE_KEY]: InitialGridState,
+ }*/
 
 export type AppStateValue = {
 	DragBoxState: DragBoxState
@@ -65,27 +65,27 @@ export type AppStateValue = {
 	GridState: GridState
 }
 
-export const InitialAppStateV2: AppStateValue = {
-	DragBoxState: DRAG_BOX_STATE.NO_DRAG_BOX,
-	PointerState: POINTER_STATE.POINTER_UP,
-	SelectedState: SELECTED_STATE.NONE_SELECTED,
-	ToMoveState: TO_MOVE_STATE.NO_MOVE,
-	ToRotateState: TO_ROTATE_STATE.NO_ROTATE,
-	ViewState: VIEW_STATE.VIEW_NOT_MOVING,
-	GridState: InitialGridState,
-}
+/*export const InitialAppStateV2: AppStateValue = {
+ DragBoxState: DRAG_BOX_STATE.NO_DRAG_BOX,
+ PointerState: POINTER_STATE.POINTER_UP,
+ SelectedState: SELECTED_STATE.NONE_SELECTED,
+ ToMoveState: TO_MOVE_STATE.NO_MOVE,
+ ToRotateState: TO_ROTATE_STATE.NO_ROTATE,
+ ViewState: VIEW_STATE.VIEW_NOT_MOVING,
+ GridState: InitialGridState,
+ }*/
 
 export type AppStateMatches = Typegen0['matchesStates']
 
-export const InitialAppStateMatches: AppStateMatches = {
-	DragBoxState: DRAG_BOX_STATE.NO_DRAG_BOX,
-	PointerState: POINTER_STATE.POINTER_UP,
-	SelectedState: SELECTED_STATE.NONE_SELECTED,
-	ToMoveState: TO_MOVE_STATE.NO_MOVE,
-	ToRotateState: TO_ROTATE_STATE.NO_ROTATE,
-	ViewState: VIEW_STATE.VIEW_NOT_MOVING,
-	GridState: 'ModeState',
-}
+/*export const InitialAppStateMatches: AppStateMatches = {
+ DragBoxState: DRAG_BOX_STATE.NO_DRAG_BOX,
+ PointerState: POINTER_STATE.POINTER_UP,
+ SelectedState: SELECTED_STATE.NONE_SELECTED,
+ ToMoveState: TO_MOVE_STATE.NO_MOVE,
+ ToRotateState: TO_ROTATE_STATE.NO_ROTATE,
+ ViewState: VIEW_STATE.VIEW_NOT_MOVING,
+ GridState: 'ModeState',
+ }*/
 
 export type AppStateMatchesModel = {
 	DragBoxState?: 'CreationBoxInProgress' | 'NoDragBox' | 'SelectionBoxInProgress'
@@ -107,7 +107,13 @@ export type AppStateMatchesModel = {
 		| 'NoRotate'
 		| 'SingleRotateInProgress'
 		| 'SingleRotateModeInProgress'
-	ViewState?: 'ViewDraggingInProgress' | 'ViewNotMoving'
+	ViewState?:
+		| 'ContextMenuState'
+		| 'ViewPositioningState'
+		| {
+				ContextMenuState?: 'ContextMenuOpen' | 'NoContextMenu'
+				ViewPositioningState?: 'ViewDraggingInProgress' | 'ViewNotMoving'
+		  }
 }
 /*export const InitialAppStateMatches: AppStateMatches = {
  DragBoxState: DRAG_BOX_STATE.NO_DRAG_BOX,
