@@ -6,26 +6,41 @@
 
 <div class='absolute'>
   <div id='fps'></div>
-  <div id='mouse-pos'></div>
-  <div id='transformed-mouse-pos'></div>
-  <div id='scale-element'></div>
-  <div id='string-stats'></div>
-  <div id='panel-stats'></div>
-  <div id='rotate-stats'></div>
+  <div style='display: none'
+       id='mouse-pos'></div>
+  <div style='display: none'
+       id='transformed-mouse-pos'></div>
+  <div style='display: none'
+       id='scale-element'></div>
+  <div style='display: none'
+       id='string-stats'></div>
+  <div style='display: none'
+       id='panel-stats'></div>
+  <div style='display: none'
+       id='rotate-stats'></div>
 </div>
 
 <div
+  #keyMap
+  id='key-map'
+  class='absolute left-5 top-5 z-10'
+  [style.display]="state.menu.keyMap ? 'initial' : 'none'"
+>
+  <app-key-map-component />
+</div>
+
+<!--<div
   #keyMap
   id='key-map'
   class='absolute left-5 top-28 z-10'
   [style.display]="state.menu.keyMap ? 'initial' : 'none'"
 >
   <app-key-map-component />
-</div>
+</div>-->
 
 <div #stateValues
      id='state-values'
-     class='absolute left-1/4 top-5 z-10'>
+     class='absolute left-72 top-5 z-10'>
   <app-state-values />
 </div>
 

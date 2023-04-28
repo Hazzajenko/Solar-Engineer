@@ -1,105 +1,108 @@
-/*export type ClearEntitySelected = {
- type: 'ClearEntitySelected'
- payload: null
+/*
+ export class ClearEntitySelected {
+ readonly type = 'ClearEntitySelected'
+ readonly payload = null
  }
 
- export type CancelSelected = {
- type: 'CancelSelected'
- payload: null
+ export class CancelSelected {
+ readonly type = 'CancelSelected'
+ readonly payload = null
  }
+ */
 
- export type ClickOnEntity = {
- type: 'ClickOnEntity'
- payload: {
+export type ClearEntitySelected = {
+	type: 'ClearEntitySelected'
+}
+
+export type CancelSelected = {
+	type: 'CancelSelected'
+}
+
+/*export class SelectedSingleEntity {
+ readonly type = 'SelectedSingleEntity'
+
+ constructor(
+ public readonly payload: {
  id: string
- }
- }
-
- export type MultipleEntitiesSelected = {
- type: 'MultipleEntitiesSelected'
- payload: null
- }
- // MultipleEntitiesSelected
-
- export type ClickedOnDifferentEntity = {
- type: 'ClickedOnDifferentEntity'
- payload: {
- id: string
- }
- }
-
- export type AddEntitiesToMultipleSelected = {
- type: 'AddEntitiesToMultipleSelected'
- payload: {
- ids: string[]
- }
- }
-
- export type RemoveEntitiesFromMultipleSelected = {
- type: 'RemoveEntitiesFromMultipleSelected'
- payload: {
- ids: string[]
- }
+ },
+ ) {}
  }*/
 
-export class ClearEntitySelected {
-	readonly type = 'ClearEntitySelected'
-	readonly payload = null
+export type SelectedSingleEntity = {
+	type: 'SelectedSingleEntity'
+	payload: {
+		id: string
+	}
 }
 
-export class CancelSelected {
-	readonly type = 'CancelSelected'
-	readonly payload = null
+/*export class SetMultipleSelectedEntities {
+ readonly type = 'SetMultipleSelectedEntities'
+
+ constructor(
+ public readonly payload: {
+ ids: string[]
+ },
+ ) {}
+ }*/
+
+export type SetMultipleSelectedEntities = {
+	type: 'SetMultipleSelectedEntities'
+	payload: {
+		ids: string[]
+	}
 }
 
-export class SelectedSingleEntity {
-	readonly type = 'SelectedSingleEntity'
+/*export class SelectedDifferentEntity {
+ readonly type = 'SelectedDifferentEntity'
 
-	constructor(
-		public readonly payload: {
-			id: string
-		},
-	) {}
+ constructor(
+ public readonly payload: {
+ id: string
+ },
+ ) {}
+ }*/
+
+export type SelectedDifferentEntity = {
+	type: 'SelectedDifferentEntity'
+	payload: {
+		id: string
+	}
 }
 
-export class SetMultipleSelectedEntities {
-	readonly type = 'SetMultipleSelectedEntities'
+/*
+ export class AddEntitiesToMultipleSelected {
+ readonly type = 'AddEntitiesToMultipleSelected'
 
-	constructor(
-		public readonly payload: {
-			ids: string[]
-		},
-	) {}
+ constructor(
+ public readonly payload: {
+ ids: string[]
+ },
+ ) {}
+ }
+ */
+
+export type AddEntitiesToMultipleSelected = {
+	type: 'AddEntitiesToMultipleSelected'
+	payload: {
+		ids: string[]
+	}
 }
 
-export class SelectedDifferentEntity {
-	readonly type = 'SelectedDifferentEntity'
+/*export class RemoveEntitiesFromMultipleSelected {
+ readonly type = 'RemoveEntitiesFromMultipleSelected'
 
-	constructor(
-		public readonly payload: {
-			id: string
-		},
-	) {}
-}
+ constructor(
+ public readonly payload: {
+ ids: string[]
+ },
+ ) {}
+ }*/
 
-export class AddEntitiesToMultipleSelected {
-	readonly type = 'AddEntitiesToMultipleSelected'
-
-	constructor(
-		public readonly payload: {
-			ids: string[]
-		},
-	) {}
-}
-
-export class RemoveEntitiesFromMultipleSelected {
-	readonly type = 'RemoveEntitiesFromMultipleSelected'
-
-	constructor(
-		public readonly payload: {
-			ids: string[]
-		},
-	) {}
+export type RemoveEntitiesFromMultipleSelected = {
+	type: 'RemoveEntitiesFromMultipleSelected'
+	payload: {
+		ids: string[]
+	}
 }
 
 export type ClearSelectedState = {
@@ -115,6 +118,14 @@ export type SetSelectedString = {
 
 export type ClearStringSelected = {
 	type: 'ClearStringSelected'
+}
+
+export type SelectedStringRollbackToSingle = {
+	type: 'SelectedStringRollbackToSingle'
+}
+
+export type SelectedStringRollbackToMultiple = {
+	type: 'SelectedStringRollbackToMultiple'
 }
 
 export type SelectedRollback = {
@@ -142,6 +153,8 @@ export type XStateSelectedEvent =
 	| ClearStringSelected
 	| ClearSelectedState
 	| SelectedRollback
+	| SelectedStringRollbackToSingle
+	| SelectedStringRollbackToMultiple
 // | EntitiesFoundInSelectionBox
 // RemoveEntitiesFromMultipleSelected
 /*

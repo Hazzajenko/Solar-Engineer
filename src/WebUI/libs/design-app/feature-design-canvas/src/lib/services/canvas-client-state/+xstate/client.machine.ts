@@ -14,9 +14,25 @@ import {
 } from '../types'
 import { AdjustedDragBoxState, InitialAdjustedDragBoxState } from './drag-box'
 import { AdjustedPointerState, InitialAdjustedPointerState } from './pointer'
-import { AdjustedToMoveState, InitialAdjustedToMoveState } from './to-move'
-import { AdjustedToRotateState, InitialAdjustedToRotateState } from './to-rotate'
-import { InitialViewContext, ViewContext } from './view'
+import {
+	AddEntitiesToMultipleSelected,
+	RemoveEntitiesFromMultipleSelected,
+	SetMultipleSelectedEntities,
+} from './selected'
+import {
+	AdjustedToMoveState,
+	InitialAdjustedToMoveState,
+	StopMultipleMove,
+	StopSingleMove,
+} from './to-move'
+import {
+	AdjustedToRotateState,
+	InitialAdjustedToRotateState,
+	StopMultipleRotate,
+	StopSingleRotate,
+	StopSingleRotateMode,
+} from './to-rotate'
+import { InitialViewContext, StopViewDragging, ViewContext } from './view'
 import { XStateEvent } from './xstate-app-events.types'
 // import { ActionByType } from './selected/machine-actions.types'
 import { inspect } from '@xstate/inspect'
@@ -61,8 +77,15 @@ export type CanvasAppMachineContext = {
  }
  */
 
+export type SelectedStateType =
+	| 'EntitySelected'
+	| 'MultipleEntitiesSelected'
+	| 'StringSelected'
+	| 'NoneSelected'
+
 export type PickedCanvasAppMachineContext = Pick<CanvasAppMachineContext, 'selected'> & {
-	selectedHistory: SelectedStateDeprecated[]
+	selectedHistoryCtx: SelectedStateDeprecated[]
+	selectedHistoryState: SelectedStateType[]
 	dragBox: AdjustedDragBoxState
 	pointer: AdjustedPointerState
 	toMove: AdjustedToMoveState
@@ -86,7 +109,8 @@ export const canvasAppMachine = createMachine(
 		id: 'CanvasApp',
 		context: {
 			selected: InitialSelectedState,
-			selectedHistory: [],
+			selectedHistoryCtx: [],
+			selectedHistoryState: [],
 			dragBox: InitialAdjustedDragBoxState,
 			pointer: InitialAdjustedPointerState,
 			toMove: InitialAdjustedToMoveState,
@@ -98,6 +122,10 @@ export const canvasAppMachine = createMachine(
 				initial: 'NoneSelected',
 				states: {
 					EntitySelected: {
+						entry: (ctx) => {
+							ctx.selectedHistoryCtx.push(ctx.selected)
+							ctx.selectedHistoryState.push('EntitySelected')
+						},
 						on: {
 							ClearEntitySelected: {
 								target: 'NoneSelected',
@@ -109,19 +137,19 @@ export const canvasAppMachine = createMachine(
 							SetSelectedString: {
 								target: 'StringSelected',
 								actions: (ctx, event) => {
-									ctx.selectedHistory.push(ctx.selected)
 									ctx.selected = {
 										...ctx.selected,
 										selectedStringId: event.payload.stringId,
 									}
-									/*				(ctx.selected = {
-								 ...ctx.selected, selectedStringId: event.payload.stringId,
-								 }, ctx.selectedHistory.push(ctx.selected)),*/
 								},
 							},
 						},
 					},
 					NoneSelected: {
+						entry: (ctx) => {
+							ctx.selectedHistoryCtx.push(ctx.selected)
+							ctx.selectedHistoryState.push('NoneSelected')
+						},
 						on: {
 							SelectedSingleEntity: {
 								target: 'EntitySelected',
@@ -141,6 +169,10 @@ export const canvasAppMachine = createMachine(
 						},
 					},
 					MultipleEntitiesSelected: {
+						entry: (ctx) => {
+							ctx.selectedHistoryCtx.push(ctx.selected)
+							ctx.selectedHistoryState.push('MultipleEntitiesSelected')
+						},
 						on: {
 							AddEntitiesToMultipleSelected: {
 								actions: 'AddEntitiesToMultipleSelected',
@@ -150,6 +182,15 @@ export const canvasAppMachine = createMachine(
 								actions: 'RemoveEntitiesFromMultipleSelected',
 								target: 'MultipleEntitiesSelected',
 							},
+							SetSelectedString: {
+								target: 'StringSelected',
+								actions: (ctx, event) => {
+									ctx.selected = {
+										...ctx.selected,
+										selectedStringId: event.payload.stringId,
+									}
+								},
+							},
 							ClearSelectedState: {
 								target: 'NoneSelected',
 								actions: (ctx) => (ctx.selected = InitialSelectedState),
@@ -157,6 +198,10 @@ export const canvasAppMachine = createMachine(
 						},
 					},
 					StringSelected: {
+						entry: (ctx) => {
+							ctx.selectedHistoryCtx.push(ctx.selected)
+							ctx.selectedHistoryState.push('StringSelected')
+						},
 						on: {
 							ClearStringSelected: {
 								target: 'NoneSelected',
@@ -165,10 +210,40 @@ export const canvasAppMachine = createMachine(
 										...ctx.selected,
 										selectedStringId: undefined,
 									}),
-							} /*			SelectedRollback: {
+							},
+							SelectedStringRollbackToSingle: {
+								target: 'EntitySelected',
+								actions: (ctx) =>
+									(ctx.selected = {
+										...ctx.selected,
+										selectedStringId: undefined,
+									}),
+							},
+							SelectedStringRollbackToMultiple: {
+								target: 'MultipleEntitiesSelected',
+								actions: (ctx) =>
+									(ctx.selected = {
+										...ctx.selected,
+										selectedStringId: undefined,
+									}),
+							},
+							SelectedRollback: {
+								/*				target: (ctx) => {
+							 ctx.selectedHistory
+							 },*/
+								target: 'MultipleEntitiesSelected',
+								actions: (ctx) => {
+									console.log('HISTORY_BEFORE_ROLLBACK', ctx.selectedHistoryCtx)
+									const history = ctx.selectedHistoryCtx.pop()
+									// if (history) ctx.selected = history
+									ctx.selected = ctx.selectedHistoryCtx[ctx.selectedHistoryCtx.length - 1]
+									console.log('HISTORY_AFTER_ROLLBACK', history)
+								},
+							},
+
+							/*			SelectedRollback: {
 						 target: ,
-						 },*/,
-							ClearSelectedState: {
+						 },*/ ClearSelectedState: {
 								target: 'NoneSelected',
 								actions: (ctx) => (ctx.selected = InitialSelectedState),
 							},

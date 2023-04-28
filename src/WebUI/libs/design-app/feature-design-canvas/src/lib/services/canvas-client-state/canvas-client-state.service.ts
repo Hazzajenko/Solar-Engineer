@@ -1,13 +1,38 @@
-import { inject, Injectable } from '@angular/core'
-import { CanvasClientState, DragBoxStateDeprecated, GridStateDeprecated, HoveringEntityState, InitialDragBoxState, InitialGridStateDeprecated, InitialHoveringEntityState, InitialMenuState, InitialModeState, InitialMouseState, InitialNearbyStateDeprecated, InitialSelectedState, InitialToMoveState, InitialToRotateState, InitialViewState, MenuState, ModeStateDeprecated, MouseState, NearbyStateDeprecated, SelectedStateDeprecated, StateUpdate, ToMoveStateDeprecated, ToRotateStateDeprecated, updateStateV3, ViewStateDeprecated } from './types'
 import { CanvasEntityState } from './canvas-entity-state'
-import { ClearEntitySelected, SelectedSingleEntity, sendStateEvent } from './+xstate'
+import {
+	CanvasClientState,
+	DragBoxStateDeprecated,
+	GridStateDeprecated,
+	HoveringEntityState,
+	InitialDragBoxState,
+	InitialGridStateDeprecated,
+	InitialHoveringEntityState,
+	InitialMenuState,
+	InitialModeState,
+	InitialMouseState,
+	InitialNearbyStateDeprecated,
+	InitialSelectedState,
+	InitialToMoveState,
+	InitialToRotateState,
+	InitialViewState,
+	MenuState,
+	ModeStateDeprecated,
+	MouseState,
+	NearbyStateDeprecated,
+	SelectedStateDeprecated,
+	StateUpdate,
+	ToMoveStateDeprecated,
+	ToRotateStateDeprecated,
+	updateStateV3,
+	ViewStateDeprecated,
+} from './types'
+import { inject, Injectable } from '@angular/core'
+
 
 @Injectable({
 	providedIn: 'root',
 })
-export class CanvasClientStateService
-	implements CanvasClientState {
+export class CanvasClientStateService implements CanvasClientState {
 	private _hover: HoveringEntityState = InitialHoveringEntityState
 	private _selected: SelectedStateDeprecated = InitialSelectedState
 	private _toRotate: ToRotateStateDeprecated = InitialToRotateState
@@ -27,7 +52,17 @@ export class CanvasClientStateService
 
 	get state(): CanvasClientState {
 		return {
-			hover: this.hover, selected: this.selected, toRotate: this.toRotate, toMove: this.toMove, dragBox: this.dragBox, mode: this.mode, view: this.view, mouse: this.mouse, menu: this.menu, nearby: this.nearby, grid: this.grid,
+			hover: this.hover,
+			selected: this.selected,
+			toRotate: this.toRotate,
+			toMove: this.toMove,
+			dragBox: this.dragBox,
+			mode: this.mode,
+			view: this.view,
+			mouse: this.mouse,
+			menu: this.menu,
+			nearby: this.nearby,
+			grid: this.grid,
 		}
 	}
 
@@ -120,10 +155,10 @@ export class CanvasClientStateService
 				 id: changes.selected.singleSelectedId,
 				 },
 				 })*/
-				sendStateEvent(new SelectedSingleEntity({ id: changes.selected.singleSelectedId }))
+				// sendStateEvent(new SelectedSingleEntity({ id: changes.selected.singleSelectedId }))
 				// canvasAppXStateService.send(new ClickOnEntity({ id: changes.selected.singleSelectedId }))
 			} else {
-				sendStateEvent(new ClearEntitySelected())
+				// sendStateEvent(new ClearEntitySelected())
 				/*        canvasAppXStateService.send({
 				 type:    'ClearEntitySelected',
 				 payload: null,

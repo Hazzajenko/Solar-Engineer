@@ -33,6 +33,7 @@ import {
 	isDraggingEntity,
 	isMenuOpen,
 	isReadyToMultiDrag,
+	isWheelButton,
 	multiSelectDraggingKeysDown,
 	rotatingKeysDown,
 } from '../utils'
@@ -287,6 +288,11 @@ export class DesignCanvasWithXstateDirective
 
 	onMouseUpHandler(event: PointerEvent, currentPoint: TransformedPoint) {
 		const state = this._machine.state
+		/*		state = {
+		 DragBoxState: 'CreationBoxInProgress',
+		 }*/
+		// const state = state
+		// state
 		const { DragBoxState, ToMoveState, ViewState } = state
 		const snapshot = this._machine.snapshot
 		const matches = snapshot.matches
@@ -369,6 +375,9 @@ export class DesignCanvasWithXstateDirective
 		state: AppStateValue,
 		appSnapshot: AppStateSnapshot,
 	) {
+		console.log('mouseClickHandler', event)
+		if (isWheelButton(event)) return
+
 		if (isMenuOpen(this.menu)) {
 			this.menu.style.display = 'none'
 			return
@@ -512,6 +521,7 @@ export class DesignCanvasWithXstateDirective
 		switch (event.key) {
 			case KEYS.ESCAPE:
 				this._selected.clearSelectedInOrder()
+				this._render.drawCanvas()
 				// this._selected.clearSelectedState()
 				break
 			case KEYS.X:
@@ -530,7 +540,7 @@ export class DesignCanvasWithXstateDirective
 					this._state.entities.canvasStrings.addEntity(string)
 					this._state.entities.canvasEntities.updateManyEntities(panelUpdates)
 
-					this._machine.sendEvent({ type: 'ClearSelectedState' })
+					// this._machine.sendEvent({ type: 'ClearSelectedState' })
 					this._machine.sendEvent({ type: 'SetSelectedString', payload: { stringId: string.id } })
 					this._render.drawCanvas()
 				}

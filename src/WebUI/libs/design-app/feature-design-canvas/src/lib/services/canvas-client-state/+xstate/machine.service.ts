@@ -10,12 +10,15 @@ import { BehaviorSubject } from 'rxjs'
 })
 export class MachineService {
 	private _machine = canvasAppXStateService
-	private _state$ = new BehaviorSubject<AppStateValue>(this.state)
+	private _state$ = new BehaviorSubject<AppStateMatches>(this.snapshot.value as AppStateMatches)
+
+	// private _state$ = new BehaviorSubject<AppStateValue>(this.state)
 
 	constructor() {
 		this._machine.start()
 		this._machine.onTransition((state) => {
-			this._state$.next(state.value as AppStateValue)
+			this._state$.next(state.value as AppStateMatches)
+			// this._state$.next(state.value as AppStateValue)
 		})
 	}
 
@@ -34,6 +37,10 @@ export class MachineService {
 	sendEvent(event: XStateEvent) {
 		return this._machine.send(event)
 	}
+
+	/*	transition() {
+	 return this._machine.getSnapshot().machine?.transition()
+	 }*/
 
 	subscribe() {
 		return this._state$.asObservable()

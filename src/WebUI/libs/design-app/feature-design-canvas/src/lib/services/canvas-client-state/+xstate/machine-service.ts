@@ -1,6 +1,7 @@
-import { canvasAppMachine } from './client.machine';
+import { canvasAppMachine, PickedCanvasAppMachineContext } from './client.machine';
+import { XStateSelectedEvent } from './selected';
 import { XStateEvent } from './xstate-app-events.types';
-import { AppStateValue } from './xstate-app.states';
+import { AppStateMatchesModel, AppStateValue } from './xstate-app.states';
 import { getDifferenceInTwoObjects3, getNewStateFromTwoObjects } from '@shared/utils';
 import { interpret } from 'xstate';
 
@@ -46,14 +47,23 @@ export const stateDifferenceLogger = (state: any) => {
 }
 
 export const stateEventLoggerExcludePointerState = (state: any) => {
-	const currentState = state.value as AppStateValue
-	const historyState = state.history?.historyValue?.current as AppStateValue
+	const currentState = state.value as AppStateMatchesModel
+	const historyState = state.history?.historyValue?.current as AppStateMatchesModel
 	const stateDifference = historyState
 		? getNewStateFromTwoObjects(historyState, currentState)
 		: null
 	if (stateDifference && Object.keys(stateDifference).length > 0) {
 		if (!stateDifference.PointerState) {
 			console.log('%c event', 'color: #03A9F4; font-weight: bold;', stateDifference)
+		}
+		if (stateDifference.SelectedState) {
+			// console.log('%c event', 'color: #03A9F4; font-weight: bold;', stateDifference.SelectedState)
+			selectedHistory.push({
+				state: stateDifference.SelectedState,
+				event: state.event,
+				ctx: state.context.selected,
+			})
+			// console.log('selectedHistory', selectedHistory)
 		}
 		return
 	}
@@ -62,27 +72,236 @@ export const stateEventLoggerExcludePointerState = (state: any) => {
 
 // const stateLogger = new StaticLogger('state')
 
+const selectedHistory: {
+	state: AppStateMatchesModel['SelectedState']
+	event: XStateSelectedEvent
+	ctx: PickedCanvasAppMachineContext['selected']
+}[] = []
+
+/*const history: (
+ | StateValue
+ | State<
+ PickedCanvasAppMachineContext,
+ | ClearEntitySelected
+ | CancelSelected
+ | SelectedSingleEntity
+ | SetMultipleSelectedEntities
+ | SelectedDifferentEntity
+ | AddEntitiesToMultipleSelected
+ | RemoveEntitiesFromMultipleSelected
+ | SetSelectedString
+ | ClearStringSelected
+ | ClearSelectedState
+ | SelectedRollback
+ | SelectionBoxStarted
+ | SelectionBoxCompleted
+ | SelectionBoxCancelled
+ | CreationBoxStarted
+ | CreationBoxCompleted
+ | CreationBoxCancelled
+ | StopDragBox
+ | PointerHoverOverEntity
+ | PointerLeaveEntity
+ | PointerDown
+ | PointerUp
+ | PointerDownOnEntity
+ | PointerUpOnEntity
+ | PointerMove
+ | StartSingleMove
+ | StopSingleMove
+ | StartMultipleMove
+ | StopMultipleMove
+ | StartSingleRotateMode
+ | StopSingleRotateMode
+ | StartSingleRotate
+ | StopSingleRotate
+ | StartMultipleRotate
+ | StopMultipleRotate
+ | StartViewDragging
+ | StopViewDragging
+ | StartClickSelectMode
+ | StartClickCreateMode
+ | ResetGridClickMode
+ | StartAxisRepositionPreview
+ | StartAxisCreatePreview
+ | StopAxisPreview,
+ any,
+ {
+ value: any
+ context: PickedCanvasAppMachineContext
+ },
+ ResolveTypegenMeta<
+ Typegen0,
+ | ClearEntitySelected
+ | CancelSelected
+ | SelectedSingleEntity
+ | SetMultipleSelectedEntities
+ | SelectedDifferentEntity
+ | AddEntitiesToMultipleSelected
+ | RemoveEntitiesFromMultipleSelected
+ | SetSelectedString
+ | ClearStringSelected
+ | ClearSelectedState
+ | SelectedRollback
+ | SelectionBoxStarted
+ | SelectionBoxCompleted
+ | SelectionBoxCancelled
+ | CreationBoxStarted
+ | CreationBoxCompleted
+ | CreationBoxCancelled
+ | StopDragBox
+ | PointerHoverOverEntity
+ | PointerLeaveEntity
+ | PointerDown
+ | PointerUp
+ | PointerDownOnEntity
+ | PointerUpOnEntity
+ | PointerMove
+ | StartSingleMove
+ | StopSingleMove
+ | StartMultipleMove
+ | StopMultipleMove
+ | StartSingleRotateMode
+ | StopSingleRotateMode
+ | StartSingleRotate
+ | StopSingleRotate
+ | StartMultipleRotate
+ | StopMultipleRotate
+ | StartViewDragging
+ | StopViewDragging
+ | StartClickSelectMode
+ | StartClickCreateMode
+ | ResetGridClickMode
+ | StartAxisRepositionPreview
+ | StartAxisCreatePreview
+ | StopAxisPreview,
+ BaseActionObject,
+ ServiceMap
+ >
+ >
+ | StateConfig<
+ PickedCanvasAppMachineContext,
+ | ClearEntitySelected
+ | CancelSelected
+ | SelectedSingleEntity
+ | SetMultipleSelectedEntities
+ | SelectedDifferentEntity
+ | AddEntitiesToMultipleSelected
+ | RemoveEntitiesFromMultipleSelected
+ | SetSelectedString
+ | ClearStringSelected
+ | ClearSelectedState
+ | SelectedRollback
+ | SelectionBoxStarted
+ | SelectionBoxCompleted
+ | SelectionBoxCancelled
+ | CreationBoxStarted
+ | CreationBoxCompleted
+ | CreationBoxCancelled
+ | StopDragBox
+ | PointerHoverOverEntity
+ | PointerLeaveEntity
+ | PointerDown
+ | PointerUp
+ | PointerDownOnEntity
+ | PointerUpOnEntity
+ | PointerMove
+ | StartSingleMove
+ | StopSingleMove
+ | StartMultipleMove
+ | StopMultipleMove
+ | StartSingleRotateMode
+ | StopSingleRotateMode
+ | StartSingleRotate
+ | StopSingleRotate
+ | StartMultipleRotate
+ | StopMultipleRotate
+ | StartViewDragging
+ | StopViewDragging
+ | StartClickSelectMode
+ | StartClickCreateMode
+ | ResetGridClickMode
+ | StartAxisRepositionPreview
+ | StartAxisCreatePreview
+ | StopAxisPreview
+ >
+ | undefined
+ )[] = []*/
+
 export const canvasAppXStateService = interpret(canvasAppMachine, { devTools: true }).onTransition(
 	(state) => {
+		// state.
 		// state.historyValue
 		// stateDifferenceLogger(state)
 		stateEventLoggerExcludePointerState(state)
+		// history.push(state)
 
-		if (state.event.type === 'SelectedRollback') {
-			const history = state.history?.historyValue?.current as AppStateValue
-			console.log('%c rollback', 'color: #03A9F4; font-weight: bold;', history)
-			const rollback = state.context.selectedHistory[state.context.selectedHistory.length - 1]
+		// console.log('%c state', 'color: #03A9F4; font-weight: bold;', state)
 
-			canvasAppMachine.transition(state, 'SetMultipleSelectedEntities', {
-				...state.context,
-				selected: rollback,
-			})
-		}
-		// console.log('%c state', 'color: #03A9F4; font-weight: bold;', state.event)
+		/*		// state.value === 'SelectedState.StringS' && selectedHistory.push(state.context.selected)
+		 type stateValue = typeof state.value
+		 const asdsa: stateValue = 'ViewState'*/
+		// state.value === 'ViewState'
+		/*
+		 if (state.) {
+		 // if (state.event.type === '') {
+
+		 }*/
+
+		/*if (state.event.type === 'SelectedRollback') {
+		 // const history = state.history?.historyValue?.current as AppStateValue
+		 // console.log('%c rollback', 'color: #03A9F4; font-weight: bold;', history)
+		 const rollback = state.context.selectedHistory[state.context.selectedHistory.length - 1]
+		 // interpreter.init(history[history.length - 1]);
+		 /!*
+		 canvasAppMachine.transition(state, 'SetMultipleSelectedEntities', {
+		 ...state.context,
+		 selected: rollback,
+		 })*!/
+
+		 const stateRollback = selectedHistory[selectedHistory.length - 1]
+		 history.pop()
+		 canvasAppXStateService.init(history[history.length - 1])
+		 /!*			canvasAppMachine.transition(stateRollback.state, stateRollback.event, {
+		 // canvasAppMachine.transition(state, stateRollback.event, {
+		 ...state.context,
+		 selected: stateRollback.ctx,
+		 })*!/
+		 /!*			canvasAppMachine.ini(stateRollback.state, stateRollback.event, {
+		 // canvasAppMachine.transition(state, stateRollback.event, {
+		 ...state.context,
+		 selected: stateRollback.ctx,
+		 })*!/
+		 }
+		 // console.log('%c state', 'color: #03A9F4; font-weight: bold;', state.event)
+		 },*/
 	},
 )
+// canvasAppXStateService.init()
 
 export type AppStateSnapshot = ReturnType<typeof canvasAppXStateService.getSnapshot>
+// const snapshot = canvasAppXStateService.getSnapshot()
+// const initialState = canvasAppXStateService.initialState
+// export type AppInitialState = typeof initialState
+/*const asdasdas: AppInitialState = {
+ value: 'ViewState',
+ }*/
+/*
+ type AppInitialStatePick = Pick<AppInitialState, 'value'>
+ const asdasdasd: AppInitialStatePick = {
+ value: {
+ SelectedState: {
+ EntitySelected: {
+ singleSelectedId: '1',
+ },
+ },
+ },
+ }
+ export type AppStateSnapshotsadasd = typeof snapshot.value
+
+ const asdasd: AppStateSnapshotsadasd
+ */
+
 /*
  canvasAppMachine.transition('SelectedState.StringS', '')*/
 

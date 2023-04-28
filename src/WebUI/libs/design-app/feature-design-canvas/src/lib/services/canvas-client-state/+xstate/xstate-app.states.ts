@@ -77,6 +77,45 @@ export const InitialAppStateV2: AppStateValue = {
 
 export type AppStateMatches = Typegen0['matchesStates']
 
+export const InitialAppStateMatches: AppStateMatches = {
+	DragBoxState: DRAG_BOX_STATE.NO_DRAG_BOX,
+	PointerState: POINTER_STATE.POINTER_UP,
+	SelectedState: SELECTED_STATE.NONE_SELECTED,
+	ToMoveState: TO_MOVE_STATE.NO_MOVE,
+	ToRotateState: TO_ROTATE_STATE.NO_ROTATE,
+	ViewState: VIEW_STATE.VIEW_NOT_MOVING,
+	GridState: 'ModeState',
+}
+
+export type AppStateMatchesModel = {
+	DragBoxState?: 'CreationBoxInProgress' | 'NoDragBox' | 'SelectionBoxInProgress'
+	GridState?:
+		| 'ModeState'
+		| 'PreviewAxisState'
+		| {
+				ModeState?: 'CreateMode' | 'SelectMode'
+				PreviewAxisState?:
+					| 'AxisCreatePreviewInProgress'
+					| 'AxisRepositionPreviewInProgress'
+					| 'None'
+		  }
+	PointerState?: 'HoveringOverEntity' | 'PointerIsDown' | 'PointerUp'
+	SelectedState?: 'EntitySelected' | 'MultipleEntitiesSelected' | 'NoneSelected' | 'StringSelected'
+	ToMoveState?: 'MultipleMoveInProgress' | 'NoMove' | 'SingleMoveInProgress'
+	ToRotateState?:
+		| 'MultipleRotateInProgress'
+		| 'NoRotate'
+		| 'SingleRotateInProgress'
+		| 'SingleRotateModeInProgress'
+	ViewState?: 'ViewDraggingInProgress' | 'ViewNotMoving'
+}
+/*export const InitialAppStateMatches: AppStateMatches = {
+ DragBoxState: DRAG_BOX_STATE.NO_DRAG_BOX,
+ PointerState: POINTER_STATE.POINTER_UP,
+ SelectedState: SELECTED_STATE.NONE_SELECTED,
+ ToMoveState: TO_MOVE_STATE.NO_MOVE,
+ }*/
+
 /*export type GraphicsStateMatches = {
  [key in keyof AppStateMatches]: AppStateMatches[key]
  }
