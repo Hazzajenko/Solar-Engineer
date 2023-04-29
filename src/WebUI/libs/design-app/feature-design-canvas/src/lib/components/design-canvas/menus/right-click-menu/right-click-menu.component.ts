@@ -47,7 +47,7 @@ export class RightClickMenuComponent {
 	}
 
 	delete() {
-		this._state.entities.canvasEntities.removeEntity(this._dataSet.id)
+		this._state.entities.panels.removeEntity(this._dataSet.id)
 		console.log('delete', this._dataSet)
 		this.closeMenu.emit()
 	}

@@ -9,8 +9,8 @@ import { CanvasEntity } from '../../types'
 export class CanvasEntitiesStore
   extends EntityStateTemplate<CanvasEntity> {
 
-  getEntitiesByIds(ids: string[]) {
+/*  getEntitiesByIds(ids: string[]) {
     return this.getEntities()
       .filter((entity) => ids.includes(entity.id))
-  }
+  }*/
 }

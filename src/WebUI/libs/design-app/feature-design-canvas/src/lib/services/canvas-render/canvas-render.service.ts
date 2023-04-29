@@ -62,7 +62,7 @@ export class CanvasRenderService {
 	}
 
 	get entities() {
-		return this._state.entities.canvasEntities.getEntities()
+		return this._state.entities.panels.getEntities()
 	}
 
 	get fpsEl() {
@@ -101,7 +101,7 @@ export class CanvasRenderService {
 			ctx.restore()
 			ctx.save()
 			ctx.beginPath()
-			entities = entities || this._state.entities.canvasEntities.getEntities()
+			entities = entities || this._state.entities.panels.getEntities()
 			// const entities = this._state.entities.canvasEntities.getEntities()
 			entities.forEach((entity) => {
 				this.drawEntityV2(entity, selectedSnapshot)
@@ -133,7 +133,7 @@ export class CanvasRenderService {
 		 return
 		 }*/
 
-		const panelsInArea = this._state.entities.canvasEntities.getEntitiesByIds(
+		const panelsInArea = this._state.entities.panels.getEntitiesByIds(
 			this._machine.selectedCtx.multipleSelectedIds, // this._machine.appCtx.selected.multipleSelectedIds,
 		)
 		const selectionBoxBounds = getCompleteBoundsFromMultipleEntitiesWithPadding(panelsInArea, 10)
@@ -153,10 +153,10 @@ export class CanvasRenderService {
 		const selectedStringId = this._machine.selectedCtx.selectedStringId
 		// const selectedStringId = this._machine.appCtx.selected.selectedStringId
 		assertNotNull(selectedStringId)
-		const string = this._state.entities.canvasStrings.getEntityById(selectedStringId)
+		const string = this._state.entities.strings.getEntityById(selectedStringId)
 		assertNotNull(string)
 
-		const selectedStringPanels = this._state.entities.canvasEntities
+		const selectedStringPanels = this._state.entities.panels
 			.getEntities()
 			.filter((entity) => isPanel(entity) && entity.stringId === selectedStringId)
 		const selectionBoxBounds = getCompleteBoundsFromMultipleEntitiesWithPadding(
@@ -195,7 +195,7 @@ export class CanvasRenderService {
 		ids: string[],
 		fn: (ctx: CanvasRenderingContext2D) => void,
 	) {
-		const entities = this._state.entities.canvasEntities
+		const entities = this._state.entities.panels
 			.getEntities()
 			.filter((entity) => !ids.includes(entity.id))
 		this.render((ctx) => {
@@ -213,7 +213,7 @@ export class CanvasRenderService {
 		fn: (ctx: CanvasRenderingContext2D) => void,
 		tasks?: CtxTask[],
 	) {
-		const entities = this._state.entities.canvasEntities
+		const entities = this._state.entities.panels
 			.getEntities()
 			.filter((entity) => !ids.includes(entity.id))
 		this.render((ctx) => {
@@ -227,7 +227,7 @@ export class CanvasRenderService {
 	}
 
 	drawCanvasExcludeIds(ids: string[]) {
-		const entities = this._state.entities.canvasEntities
+		const entities = this._state.entities.panels
 			.getEntities()
 			.filter((entity) => !ids.includes(entity.id))
 		return this.defaultDrawCanvasFn(entities)
@@ -624,7 +624,7 @@ export class CanvasRenderService {
 			ctx.restore()
 			ctx.save()
 			ctx.beginPath()
-			entities = entities || this._state.entities.canvasEntities.getEntities()
+			entities = entities || this._state.entities.panels.getEntities()
 			entities.forEach((entity) => {
 				this.drawEntityV2(entity, selectedSnapshot)
 				// this.drawEntity(entity)
@@ -658,7 +658,7 @@ export class CanvasRenderService {
 			ctx.restore()
 			ctx.save()
 			ctx.beginPath()
-			entities = entities || this._state.entities.canvasEntities.getEntities()
+			entities = entities || this._state.entities.panels.getEntities()
 			entities.forEach((entity) => {
 				this.drawEntity(entity)
 			})

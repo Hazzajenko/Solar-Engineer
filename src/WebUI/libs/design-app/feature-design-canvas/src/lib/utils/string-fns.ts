@@ -11,7 +11,7 @@ export const createStringWithPanels = (
 ) => {
 	const string = createString()
 
-	const entities = state.entities.canvasEntities.getEntitiesByIds(selectedPanelIds)
+	const entities = state.entities.panels.getEntitiesByIds(selectedPanelIds)
 
 	const panels = entities.filter((entity) => entity.type === 'panel') as CanvasPanel[]
 	const panelUpdates = panels.map((panel) =>

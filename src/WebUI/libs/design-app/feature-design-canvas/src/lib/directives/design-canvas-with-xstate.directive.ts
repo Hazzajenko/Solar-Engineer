@@ -299,14 +299,16 @@ export class DesignCanvasWithXstateDirective
 			this._machine.sendEvent(
 				new PointerHoverOverEntity({ id: entityUnderMouse.id, point: currentPoint }),
 			)
-			this._render.drawCanvas()
+			this._render.renderCanvasApp()
+			// this._render.drawCanvas()
 			return
 		}
 
 		if (PointerState === POINTER_STATE.HOVERING_OVER_ENTITY) {
 			changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
 			this._machine.sendEvent(new PointerLeaveEntity({ point: currentPoint }))
-			this._render.drawCanvas()
+			this._render.renderCanvasApp()
+			// this._render.drawCanvas()
 			return
 		}
 
@@ -414,7 +416,8 @@ export class DesignCanvasWithXstateDirective
 		 return
 		 }*/
 
-		this._render.drawCanvas()
+		this._render.renderCanvasApp()
+		// this._render.drawCanvas()
 	}
 
 	/**
@@ -473,7 +476,8 @@ export class DesignCanvasWithXstateDirective
 			if (!event.altKey || !this._nearby.axisPreviewRect) {
 				this._machine.sendEvent({ type: 'StopAxisPreview' })
 				this._nearby.axisPreviewRect = undefined
-				this._render.drawCanvas()
+				this._render.renderCanvasApp()
+				// this._render.drawCanvas()
 				return
 			}
 
@@ -485,11 +489,12 @@ export class DesignCanvasWithXstateDirective
 			const entity = this._state.selected.selectedStringId
 				? createPanel(previewRectLocation, this._state.selected.selectedStringId)
 				: createPanel(previewRectLocation)
-			this._state.entities.canvasEntities.addEntity(entity)
+			this._state.entities.panels.addEntity(entity)
 			this._nearby.axisPreviewRect = undefined
 			this._machine.sendEvent({ type: 'StopAxisPreview' })
 
-			this._render.drawCanvas()
+			this._render.renderCanvasApp()
+			// this._render.drawCanvas()
 			return
 		}
 
@@ -505,9 +510,10 @@ export class DesignCanvasWithXstateDirective
 			  // const entity = this._state.selected.selectedStringId
 			  createPanel(location, selectedStringId)
 			: createPanel(location)
-		this._state.entities.canvasEntities.addEntity(entity)
+		this._state.entities.panels.addEntity(entity)
 
-		this._render.drawCanvas()
+		this._render.renderCanvasApp()
+		// this._render.drawCanvas()
 	}
 
 	/**
@@ -523,7 +529,7 @@ export class DesignCanvasWithXstateDirective
 		if (entityUnderMouse) {
 			if (!isPanel(entityUnderMouse)) return
 			if (entityUnderMouse.stringId === UndefinedStringId) return
-			const belongsToString = this._state.entities.canvasStrings
+			const belongsToString = this._state.entities.strings
 				.getEntities()
 				.find((string) => string.id === entityUnderMouse.stringId)
 
@@ -561,7 +567,8 @@ export class DesignCanvasWithXstateDirective
 		this.ctx.translate(-currentTransformedCursor.x, -currentTransformedCursor.y)
 		this.scaleElement.innerText = `Scale: ${currentScaleX}`
 
-		this._render.drawCanvas()
+		this._render.renderCanvasApp()
+		// this._render.drawCanvas()
 		event.preventDefault()
 	}
 
@@ -592,7 +599,7 @@ export class DesignCanvasWithXstateDirective
 		}
 
 		if (selectedSnapshot.matches('EntitySelectedState.EntitiesSelected')) {
-			const panelsInArea = this._state.entities.canvasEntities.getEntitiesByIds(
+			const panelsInArea = this._state.entities.panels.getEntitiesByIds(
 				this._machine.selectedCtx.multipleSelectedIds, // this._machine.appCtx.selected.multipleSelectedIds,
 			)
 			const selectionBoxBounds = getCompleteBoundsFromMultipleEntitiesWithPadding(panelsInArea, 10)
@@ -620,7 +627,8 @@ export class DesignCanvasWithXstateDirective
 		switch (event.key) {
 			case KEYS.ESCAPE:
 				this._selected.clearSelectedInOrder()
-				this._render.drawCanvas()
+				this._render.renderCanvasApp()
+				// this._render.drawCanvas()
 				// this._selected.clearSelectedState()
 				break
 			case KEYS.X:
@@ -629,21 +637,22 @@ export class DesignCanvasWithXstateDirective
 					// const multipleSelectedIds = this._machine.appCtx.selected.multipleSelectedIds
 					// const multipleSelectedIds = this._state.selected.multipleSelectedIds
 					if (multipleSelectedIds.length <= 1) return
-					const name = genStringNameV2(this._state.entities.canvasStrings.getEntities())
+					const name = genStringNameV2(this._state.entities.strings.getEntities())
 					const string = createString(name)
 
-					const entities = this._state.entities.canvasEntities.getEntitiesByIds(multipleSelectedIds)
+					const entities = this._state.entities.panels.getEntitiesByIds(multipleSelectedIds)
 					const panels = entities.filter((entity) => entity.type === 'panel') as CanvasPanel[]
 					const panelUpdates = panels.map((panel) =>
 						updateObjectByIdForStore<CanvasPanel>(panel.id, { stringId: string.id }),
 					)
 					// const { string, panelUpdates } = createStringWithPanels(this._state, multipleSelectedIds)
-					this._state.entities.canvasStrings.addEntity(string)
-					this._state.entities.canvasEntities.updateManyEntities(panelUpdates)
+					this._state.entities.strings.addEntity(string)
+					this._state.entities.panels.updateManyEntities(panelUpdates)
 
 					// this._machine.sendEvent({ type: 'ClearSelectedState' })
 					this._machine.sendEvent({ type: 'SetSelectedString', payload: { stringId: string.id } })
-					this._render.drawCanvas()
+					this._render.renderCanvasApp()
+					// this._render.drawCanvas()
 				}
 				break
 			case KEYS.R:

@@ -17,30 +17,36 @@ import { provideRouterStore } from '@ngrx/router-store'
 import { provideStore } from '@ngrx/store'
 import { storeDevtoolsModule } from '@shared/config'
 import { metaReducers, reducers } from '@shared/data-access/store'
+import { inspect } from '@xstate/inspect'
 
 
 bootstrapApplication(AppComponent, {
-  providers: [
-    provideRouter(appRoutes, withEnabledBlockingInitialNavigation() /*, withDebugTracing()*/),
-    importProvidersFrom(
-      HttpClientModule,
-      BrowserAnimationsModule,
-      BrowserModule,
-      MatDialogModule,
-      MatSnackBarModule,
-      MatSnackBarRef,
-      DatePipe,
-      JwtModule.forRoot({
-        config: {
-          tokenGetter: tokenGetter,
-        },
-      }),
-    ),
-    provideStore(reducers, { metaReducers }),
-    provideRouterStore(),
-    provideEffects(...mainTsEffects),
-    ...mainTsStates,
-    ...storeDevtoolsModule,
-    jwtInterceptorProvider,
-  ],
+	providers: [
+		provideRouter(appRoutes, withEnabledBlockingInitialNavigation() /*, withDebugTracing()*/),
+		importProvidersFrom(
+			HttpClientModule,
+			BrowserAnimationsModule,
+			BrowserModule,
+			MatDialogModule,
+			MatSnackBarModule,
+			MatSnackBarRef,
+			DatePipe,
+			JwtModule.forRoot({
+				config: {
+					tokenGetter: tokenGetter,
+				},
+			}),
+		),
+		provideStore(reducers, { metaReducers }),
+		provideRouterStore(),
+		provideEffects(...mainTsEffects),
+		...mainTsStates,
+		...storeDevtoolsModule,
+		jwtInterceptorProvider,
+	],
 }).catch((err) => console.error(err))
+
+inspect({
+	iframe: false,
+	url: 'https://statecharts.io/inspect',
+})

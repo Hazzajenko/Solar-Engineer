@@ -2,81 +2,55 @@ import { Axis } from '../types'
 import { EntityBounds } from './entity-bounds'
 
 export const SAME_AXIS_POSITION = {
-  TOP: 'top' as const,
-  BOTTOM: 'bottom' as const,
-  LEFT: 'left' as const,
-  RIGHT: 'right' as const,
+	TOP: 'top' as const,
+	BOTTOM: 'bottom' as const,
+	LEFT: 'left' as const,
+	RIGHT: 'right' as const,
 } as const
 
 export type SameAxisPosition = (typeof SAME_AXIS_POSITION)[keyof typeof SAME_AXIS_POSITION]
 export const isObjectAboveOrBelow = (obj1: EntityBounds, obj2: EntityBounds, axis: Axis) => {
-  if (axis === 'x') {
-    return obj1.top > obj2.bottom || obj1.bottom < obj2.top
-  }
-  return obj1.left > obj2.right || obj1.right < obj2.left
+	if (axis === 'x') {
+		return obj1.top > obj2.bottom || obj1.bottom < obj2.top
+	}
+	return obj1.left > obj2.right || obj1.right < obj2.left
 }
 
 export const getSameAxisPosition = (
-  start: EntityBounds,
-  end: EntityBounds,
-  axis: Axis,
+	start: EntityBounds,
+	end: EntityBounds,
+	axis: Axis,
 ): SameAxisPosition | undefined => {
-  if (axis === 'x') {
-    if (start.centerY > end.centerY) {
-      return SAME_AXIS_POSITION.TOP
-    }
-    if (start.centerY < end.centerY) {
-      return SAME_AXIS_POSITION.BOTTOM
-    }
-    /*    if (start.centerX > end.centerX) {
-     return SAME_AXIS_POSITION.LEFT
-     }
-     if (start.centerX < end.centerX) {
-     return SAME_AXIS_POSITION.RIGHT
-     }*/
-    /*    if (start.top > end.bottom) {
-     return SAME_AXIS_POSITION.TOP
-     }
-     if (start.bottom < end.top) {
-     return SAME_AXIS_POSITION.BOTTOM
-     }*/
-  }
-  if (axis === 'y') {
-    if (start.centerX > end.centerX) {
-      return SAME_AXIS_POSITION.LEFT
-    }
-    if (start.centerX < end.centerX) {
-      return SAME_AXIS_POSITION.RIGHT
-    }
-    /*    if (start.centerY > end.centerY) {
-     return SAME_AXIS_POSITION.TOP
-     }
-     if (start.centerY < end.centerY) {
-     return SAME_AXIS_POSITION.BOTTOM
-     }*/
-    /*    if (start.left > end.right) {
-     return SAME_AXIS_POSITION.LEFT
-     }
-     if (start.right < end.left) {
-     return SAME_AXIS_POSITION.RIGHT
-     }*/
-  }
-  return undefined
-  // throw new Error('getSameAxisPosition: invalid axis')
-  // return SAME_AXIS_POSITION.TOP
+	if (axis === 'x') {
+		if (start.centerY > end.centerY) {
+			return SAME_AXIS_POSITION.TOP
+		}
+		if (start.centerY < end.centerY) {
+			return SAME_AXIS_POSITION.BOTTOM
+		}
+	}
+	if (axis === 'y') {
+		if (start.centerX > end.centerX) {
+			return SAME_AXIS_POSITION.LEFT
+		}
+		if (start.centerX < end.centerX) {
+			return SAME_AXIS_POSITION.RIGHT
+		}
+	}
+	return undefined
 }
 
 export const getOppositeSameAxisPosition = (axisPos: SameAxisPosition): SameAxisPosition => {
-  switch (axisPos) {
-    case SAME_AXIS_POSITION.TOP:
-      return SAME_AXIS_POSITION.BOTTOM
-    case SAME_AXIS_POSITION.BOTTOM:
-      return SAME_AXIS_POSITION.TOP
-    case SAME_AXIS_POSITION.LEFT:
-      return SAME_AXIS_POSITION.RIGHT
-    case SAME_AXIS_POSITION.RIGHT:
-      return SAME_AXIS_POSITION.LEFT
-  }
+	switch (axisPos) {
+		case SAME_AXIS_POSITION.TOP:
+			return SAME_AXIS_POSITION.BOTTOM
+		case SAME_AXIS_POSITION.BOTTOM:
+			return SAME_AXIS_POSITION.TOP
+		case SAME_AXIS_POSITION.LEFT:
+			return SAME_AXIS_POSITION.RIGHT
+		case SAME_AXIS_POSITION.RIGHT:
+			return SAME_AXIS_POSITION.LEFT
+	}
 }
 
 /*

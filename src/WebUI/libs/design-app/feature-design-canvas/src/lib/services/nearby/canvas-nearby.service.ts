@@ -15,7 +15,7 @@ import {
 } from '../../utils'
 import { getNearbyLineDrawCtxFnFromGraphicsSnapshot } from '../../utils-ctx'
 import { AppStateSnapshot, CanvasClientStateService, MachineService } from '../canvas-client-state'
-import { CanvasRenderService, getCtxRectBoundsByAxisV2 } from '../canvas-render'
+import { CanvasRenderV2Service, getCtxRectBoundsByAxisV2 } from '../canvas-render'
 import { findNearbyBoundOverlapOnBothAxis } from '../object-positioning'
 import { getDefaultDrawPreviewCtxFn } from './ctx-fns'
 import { NEARBY_DRAW_MODE, NearbyDrawMode } from './nearby-draw-mode'
@@ -30,7 +30,8 @@ import { sortBy } from 'lodash'
 	providedIn: 'root',
 })
 export class CanvasNearbyService {
-	private _render = inject(CanvasRenderService)
+	private _render = inject(CanvasRenderV2Service)
+	// private _render = inject(CanvasRenderService)
 	private _state = inject(CanvasClientStateService)
 	private _machine = inject(MachineService)
 
@@ -54,7 +55,7 @@ export class CanvasNearbyService {
 	) {
 		const size = SizeByType[ENTITY_TYPE.Panel]
 		const mouseBoxBounds = getCompleteBoundsFromCenterTransformedPoint(currentPoint, size)
-		const entities = this._state.entities.canvasEntities.getEntities()
+		const entities = this._state.entities.panels.getEntities()
 		const nearbyEntitiesOnAxis = findNearbyBoundOverlapOnBothAxis(mouseBoxBounds, entities)
 
 		if (!nearbyEntitiesOnAxis.length) {
@@ -63,7 +64,10 @@ export class CanvasNearbyService {
 
 			this.clearNearbyState()
 
-			this._render.drawCanvasWithFunction(drawPreviewFn)
+			this._render.renderCanvasApp({
+				drawFns: [drawPreviewFn],
+			})
+			// this._render.drawCanvasWithFunction(drawPreviewFn)
 			return
 		}
 		this.nearbyIds = nearbyEntitiesOnAxis.map((entity) => entity.id)
@@ -78,7 +82,10 @@ export class CanvasNearbyService {
 		if (!nearbyLinesEnabled) {
 			console.log('no nearbyAxisLinesEnabled')
 			const drawPreviewFn = getDefaultDrawPreviewCtxFn(mouseBoxBounds)
-			this._render.drawCanvasWithFunction(drawPreviewFn)
+			this._render.renderCanvasApp({
+				drawFns: [drawPreviewFn],
+			})
+			// this._render.drawCanvasWithFunction(drawPreviewFn)
 			return
 		}
 		// assertIsObject(NearbyLinesState)
@@ -145,7 +152,10 @@ export class CanvasNearbyService {
 			false,
 		)
 
-		this._render.drawCanvasWithFunction(drawGridLinesWithEntityPreview)
+		this._render.renderCanvasApp({
+			drawFns: [drawGridLinesWithEntityPreview],
+		})
+		// this._render.drawCanvasWithFunction(drawGridLinesWithEntityPreview)
 
 		return
 	}

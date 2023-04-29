@@ -27,7 +27,7 @@ export const getDrawPreviewEntityFnV2 = (
 	event: MouseEvent,
 ) => {
 	const mouseBoxBounds = getBoundsFromCenterPoint(point, size)
-	const entities = state.entities.canvasEntities.getEntities()
+	const entities = state.entities.panels.getEntities()
 	const anyNearClick = !!entities.find((entity) =>
 		isEntityOverlappingWithBounds(entity, mouseBoxBounds),
 	)

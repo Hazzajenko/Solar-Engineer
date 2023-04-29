@@ -14,10 +14,10 @@ export class GetEntityByIdPipe implements PipeTransform {
 	private _state = inject(CanvasClientStateService)
 
 	transform(entityId: string): PanelWithString | undefined {
-		const entity = this._state.entities.canvasEntities.getEntityById(entityId)
+		const entity = this._state.entities.panels.getEntityById(entityId)
 		if (!entity) return
 		if (!isPanel(entity)) return
-		const string = this._state.entities.canvasStrings.getEntityById(entity.stringId)
+		const string = this._state.entities.strings.getEntityById(entity.stringId)
 		return {
 			...entity,
 			string,

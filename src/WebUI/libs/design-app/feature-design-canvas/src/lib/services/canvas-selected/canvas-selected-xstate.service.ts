@@ -1,14 +1,7 @@
 import { CanvasEntity } from '../../types'
 // import { CanvasEntitiesStore } from './canvas-entities'
 import { CanvasAppStateStore } from '../canvas-app-state'
-import {
-	AddEntitiesToMultipleSelected,
-	ClearEntitySelected,
-	InjectClientState,
-	MachineService,
-	RemoveEntitiesFromMultipleSelected,
-	STATE_MACHINE,
-} from '../canvas-client-state'
+import { InjectClientState, MachineService, STATE_MACHINE } from '../canvas-client-state'
 import { inject, Injectable } from '@angular/core'
 import { assertNotNull } from '@shared/utils'
 
@@ -71,7 +64,7 @@ export class CanvasSelectedXstateService {
 
 		if (!selectedId) return
 
-		const selectedEntity = this._state.entities.canvasEntities.getEntityById(selectedId)
+		const selectedEntity = this._state.entities.panels.getEntityById(selectedId)
 		assertNotNull(selectedEntity, 'selected entity not found')
 		// this._machine.sendEvent(
 		// 	{

@@ -70,6 +70,10 @@ export abstract class EntityStateTemplate<
 		// return this.adapter.getSelectors().selectAll(this)
 	}
 
+	getEntitiesByIds(ids: string[]) {
+		return this.getEntities().filter((entity) => ids.includes(entity.id))
+	}
+
 	getEntityIds() {
 		return this.ids
 	}

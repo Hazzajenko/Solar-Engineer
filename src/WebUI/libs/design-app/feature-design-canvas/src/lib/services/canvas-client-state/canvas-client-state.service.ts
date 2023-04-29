@@ -1,4 +1,4 @@
-import { CanvasEntityState } from './canvas-entity-state'
+import { CanvasEntityStore } from './canvas-entity-store.service'
 import {
 	CanvasClientState,
 	DragBoxStateDeprecated,
@@ -44,9 +44,9 @@ export class CanvasClientStateService implements CanvasClientState {
 	private _menu: MenuState = InitialMenuState
 	private _nearby: NearbyStateDeprecated = InitialNearbyStateDeprecated
 	private _grid: GridStateDeprecated = InitialGridStateDeprecated
-	private _entities = inject(CanvasEntityState)
+	private _entities = inject(CanvasEntityStore)
 
-	get entities(): CanvasEntityState {
+	get entities(): CanvasEntityStore {
 		return this._entities
 	}
 

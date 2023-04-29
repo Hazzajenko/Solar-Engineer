@@ -8,7 +8,7 @@ import {
 } from './canvas-client-state'
 // import { CanvasEntitiesStore } from './canvas-entities'
 import { CanvasElementService } from './canvas-element.service'
-import { CanvasRenderService } from './canvas-render'
+import { CanvasRenderV2Service } from './canvas-render'
 import { DomPointService } from './dom-point.service'
 import { inject, Injectable } from '@angular/core'
 import { CURSOR_TYPE } from '@shared/data-access/models'
@@ -23,7 +23,8 @@ export class CanvasViewPositioningService {
 	private _domPointService = inject(DomPointService)
 	private _canvasElementsService = inject(CanvasElementService)
 	private _state = inject(CanvasClientStateService)
-	private _render = inject(CanvasRenderService)
+	private _render = inject(CanvasRenderV2Service)
+	// private _render = inject(CanvasRenderService)
 	private _machine = inject(MachineService)
 
 	screenDragStartPoint?: TransformedPoint
@@ -66,7 +67,8 @@ export class CanvasViewPositioningService {
 		const transformX = currentPoint.x - this.screenDragStartPoint.x
 		const transformY = currentPoint.y - this.screenDragStartPoint.y
 		this.ctx.translate(transformX, transformY)
-		this._render.drawCanvas()
+		this._render.renderCanvasApp()
+		// this._render.drawCanvas()
 		// this.drawPanels()
 	}
 

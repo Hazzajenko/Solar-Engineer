@@ -5,9 +5,10 @@ import {
 	CanvasClientState,
 	CanvasClientStateService,
 	CanvasElementService,
+	CanvasEntityStore,
 	CanvasModeService,
 	CanvasNearbyService,
-	CanvasRenderService,
+	CanvasRenderV2Service,
 	CanvasSelectedXstateService,
 	CanvasViewPositioningService,
 	DomPointService,
@@ -47,12 +48,14 @@ export abstract class DesignCanvasDirectiveExtension {
 	protected _mode = inject(CanvasModeService)
 	protected _drag = inject(DragBoxXstateService)
 	// protected _drag = inject(DragBoxService)
-	protected _render = inject(CanvasRenderService)
+	protected _render = inject(CanvasRenderV2Service)
+	// protected _render = inject(CanvasRenderService)
 	protected _state = inject(CanvasClientStateService)
 	protected _selected = inject(CanvasSelectedXstateService)
 	protected _nearby = inject(CanvasNearbyService)
 	protected _machine = inject(MachineService)
 	protected _graphics = inject(GraphicsSettingsMachineService)
+	protected _entityStore = inject(CanvasEntityStore)
 	// protected _selected = inject(CanvasSelectedService)
 	protected _domPoint = inject(DomPointService)
 	protected delayedLogger = new DelayedLogger()
@@ -77,7 +80,7 @@ export abstract class DesignCanvasDirectiveExtension {
 	mouseEventFireStartTime = 0
 
 	protected get entities(): CanvasEntity[] {
-		return this._state.entities.canvasEntities.getEntities()
+		return this._state.entities.panels.getEntities()
 	}
 
 	protected height = this.canvas.height
@@ -254,13 +257,17 @@ export abstract class DesignCanvasDirectiveExtension {
 
 			// const fn = this._render.drawCanvasWithFunction(drawFunction)
 
-			let animationId: number
-			const reply = () => {
-				this._render.drawCanvasWithFunction(drawFunction)
-				animationId = requestAnimationFrame(reply)
-			}
+			// let animationId: number
+			/*	const reply = () => {
+			 this._render.drawCanvasWithFunction(drawFunction)
+			 animationId = requestAnimationFrame(reply)
+			 }*/
 
-			reply()
+			// reply()
+			this._render.renderCanvasApp({
+				drawFns: [drawFunction],
+			})
+			// renderCanvasApp
 			/*
 			 const animationId = requestAnimationFrame((fn) => {
 			 this._render.drawCanvasWithFunction(drawFunction)
@@ -269,10 +276,11 @@ export abstract class DesignCanvasDirectiveExtension {
 			 })*/
 
 			const interval = setInterval(() => {
-				cancelAnimationFrame(animationId)
-				this._render.drawCanvas()
+				// cancelAnimationFrame(animationId)
+				this._render.renderCanvasApp()
+				// this._render.drawCanvas()
 				clearInterval(interval)
-				console.log('cancelAnimationFrame', animationId)
+				// console.log('cancelAnimationFrame', animationId)
 			}, 1000)
 
 			// clearInterval(interval)
@@ -296,7 +304,8 @@ export abstract class DesignCanvasDirectiveExtension {
 			return true
 		}
 		// this.canvas.style.cursor = 'default'
-		this._render.drawCanvas()
+		this._render.renderCanvasApp()
+		// this._render.drawCanvas()
 		return false
 	}
 
@@ -336,20 +345,35 @@ export abstract class DesignCanvasDirectiveExtension {
 			 this.ctx.stroke()
 			 this.ctx.restore()*/
 
-			this._render.drawCanvasWithFunction((ctx: CanvasRenderingContext2D) => {
-				ctx.save()
-				ctx.beginPath()
-				ctx.globalAlpha = 0.4
-				ctx.fillStyle = CANVAS_COLORS.TakenSpotFillStyle
-				ctx.rect(mouseBoxBounds.left, mouseBoxBounds.top, size.width, size.height)
-				ctx.fill()
-				ctx.stroke()
-				ctx.restore()
+			/*			this._render.drawCanvasWithFunction((ctx: CanvasRenderingContext2D) => {
+			 ctx.save()
+			 ctx.beginPath()
+			 ctx.globalAlpha = 0.4
+			 ctx.fillStyle = CANVAS_COLORS.TakenSpotFillStyle
+			 ctx.rect(mouseBoxBounds.left, mouseBoxBounds.top, size.width, size.height)
+			 ctx.fill()
+			 ctx.stroke()
+			 ctx.restore()
+			 })*/
+			this._render.renderCanvasApp({
+				drawFns: [
+					(ctx: CanvasRenderingContext2D) => {
+						ctx.save()
+						ctx.beginPath()
+						ctx.globalAlpha = 0.4
+						ctx.fillStyle = CANVAS_COLORS.TakenSpotFillStyle
+						ctx.rect(mouseBoxBounds.left, mouseBoxBounds.top, size.width, size.height)
+						ctx.fill()
+						ctx.stroke()
+						ctx.restore()
+					},
+				],
 			})
 			return true
 		}
 		this.canvas.style.cursor = 'default'
-		this._render.drawCanvas()
+		this._render.renderCanvasApp()
+		// this._render.drawCanvas()
 		return false
 		/*    const entitiesUnderMouse = this.entities.filter((entity) =>
 		 this.isMouseOverEntityBounds(event, entity),
@@ -359,7 +383,7 @@ export abstract class DesignCanvasDirectiveExtension {
 	}
 
 	protected getEntityUnderMouseV2(event: PointerEvent) {
-		const entitiesUnderMouse = this._state.entities.canvasEntities
+		const entitiesUnderMouse = this._state.entities.panels
 			.getEntities()
 			.filter((entity) => this.isMouseOverEntityBounds(event, entity))
 		return entitiesUnderMouse[entitiesUnderMouse.length - 1]

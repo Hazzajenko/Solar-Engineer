@@ -81,7 +81,7 @@ export class RightClickMenuV2Component implements AfterViewInit {
 	}
 
 	delete() {
-		this._state.entities.canvasEntities.removeEntity(this.id)
+		this._state.entities.panels.removeEntity(this.id)
 		this._render.drawCanvas()
 		this._machine.sendEvent({ type: 'CloseContextMenu' })
 	}
