@@ -1,4 +1,4 @@
-import { CompleteEntityBounds } from '@design-app/feature-design-canvas'
+import { CompleteEntityBounds } from '@design-app/shared'
 
 export type SelectionBoxStarted = {
 	type: 'SelectionBoxStarted'

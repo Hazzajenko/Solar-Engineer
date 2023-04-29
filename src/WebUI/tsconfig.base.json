@@ -1,324 +1,327 @@
 {
-	"compileOnSave": false,
-	"compilerOptions": {
-		"baseUrl": ".",
-		"outDir": "./dist/out-tsc",
-		"forceConsistentCasingInFileNames": true,
-		"strict": true,
-		"noImplicitOverride": true,
-		"noPropertyAccessFromIndexSignature": true,
-		"noImplicitReturns": true,
-		"noFallthroughCasesInSwitch": true,
-		"sourceMap": true,
-		"declaration": false,
-		"downlevelIteration": true,
-		"experimentalDecorators": true,
-		"moduleResolution": "node",
-		"importHelpers": true,
-		"target": "ES2022",
-		"module": "es2020",
-		"lib": [
-			"es2020",
-			"dom"
-		],
-		"typeRoots": [
-			"node_modules/@types"
-		],
-		"types": [
-			"node"
-		],
-		"useDefineForClassFields": false,
-		"paths": {
-			"@app/app-component": [
-				"libs/app/app-component/src/index.ts"
-			],
-			"@app/config": [
-				"libs/app/config/src/index.ts"
-			],
-			"@app/data-access/connections": [
-				"libs/app/data-access/connections/src/index.ts"
-			],
-			"@app/data-access/friends": [
-				"libs/app/data-access/friends/src/index.ts"
-			],
-			"@app/data-access/group-chats": [
-				"libs/app/data-access/group-chats/src/index.ts"
-			],
-			"@app/data-access/images": [
-				"libs/app/data-access/images/src/index.ts"
-			],
-			"@app/data-access/messages": [
-				"libs/app/data-access/messages/src/index.ts"
-			],
-			"@app/data-access/notifications": [
-				"libs/app/data-access/notifications/src/index.ts"
-			],
-			"@app/data-access/signalr": [
-				"libs/app/data-access/signalr/src/index.ts"
-			],
-			"@app/data-access/users": [
-				"libs/app/data-access/users/src/index.ts"
-			],
-			"@app/feature/app-features": [
-				"libs/app/feature/app-features/src/index.ts"
-			],
-			"@app/feature/app-user-profile": [
-				"libs/app/feature/app-user-profile/src/index.ts"
-			],
-			"@app/feature/chatrooms": [
-				"libs/app/feature/chatrooms/src/index.ts"
-			],
-			"@app/feature/friends": [
-				"libs/app/feature/friends/src/index.ts"
-			],
-			"@app/feature/main-dialog": [
-				"libs/app/feature/main-dialog/src/index.ts"
-			],
-			"@app/feature/notifications": [
-				"libs/app/feature/notifications/src/index.ts"
-			],
-			"@app/feature/profile": [
-				"libs/app/feature/profile/src/index.ts"
-			],
-			"@app/feature/recipient-user-profile": [
-				"libs/app/feature/recipient-user-profile/src/index.ts"
-			],
-			"@app/feature/sidenav": [
-				"libs/app/feature/sidenav/src/index.ts"
-			],
-			"@app/feature/user-settings": [
-				"libs/app/feature/user-settings/src/index.ts"
-			],
-			"@app/feature/userName-profile": [
-				"libs/app/feature/userName-profile/src/index.ts"
-			],
-			"@app/feature/users-overlay": [
-				"libs/app/feature/users-overlay/src/index.ts"
-			],
-			"@app/index": [
-				"libs/app/index/src/index.ts"
-			],
-			"@app/routes": [
-				"libs/app/routes/src/index.ts"
-			],
-			"@app/shared": [
-				"libs/app/shared/src/index.ts"
-			],
-			"@app/utils": [
-				"libs/app/utils/src/index.ts"
-			],
-			"@auth/data-access": [
-				"libs/auth/data-access/src/index.ts"
-			],
-			"@auth/feature": [
-				"libs/auth/feature/src/index.ts"
-			],
-			"@auth/guards": [
-				"libs/auth/guards/src/index.ts"
-			],
-			"@auth/interceptors": [
-				"libs/auth/interceptors/src/index.ts"
-			],
-			"@auth/shared/models": [
-				"libs/auth/shared/models/src/index.ts"
-			],
-			"@auth/utils": [
-				"libs/auth/utils/src/index.ts"
-			],
-			"@blog/feature": [
-				"libs/blog/feature/src/index.ts"
-			],
-			"@design-app/canvas": [
-				"libs/design-app/canvas/src/index.ts"
-			],
-			"@design-app/config": [
-				"libs/design-app/config/src/index.ts"
-			],
-			"@design-app/data-access": [
-				"libs/design-app/data-access/src/index.ts"
-			],
-			"@design-app/feature-design-canvas": [
-				"libs/design-app/feature-design-canvas/src/index.ts"
-			],
-			"@design-app/feature-design-layout": [
-				"libs/design-app/feature-design-layout/src/index.ts"
-			],
-			"@design-app/feature-panel": [
-				"libs/design-app/feature-panel/src/index.ts"
-			],
-			"@design-app/feature-selected": [
-				"libs/design-app/feature-selected/src/index.ts"
-			],
-			"@design-app/feature-string": [
-				"libs/design-app/feature-string/src/index.ts"
-			],
-			"@design-app/shared": [
-				"libs/design-app/shared/src/index.ts"
-			],
-			"@design-app/utils": [
-				"libs/design-app/utils/src/index.ts"
-			],
-			"@grid-layout/data-access": [
-				"libs/grid-layout/data-access/src/index.ts"
-			],
-			"@grid-layout/feature": [
-				"libs/grid-layout/feature/src/index.ts"
-			],
-			"@home/data-access": [
-				"libs/home/data-access/src/index.ts"
-			],
-			"@home/feature": [
-				"libs/home/feature/src/index.ts"
-			],
-			"@home/ui": [
-				"libs/home/ui/src/index.ts"
-			],
-			"@imagery/feature/azure-maps": [
-				"libs/imagery/feature/azure-maps/src/index.ts"
-			],
-			"@no-grid-layout/data-access": [
-				"libs/no-grid-layout/data-access/src/index.ts"
-			],
-			"@no-grid-layout/shared": [
-				"libs/no-grid-layout/shared/src/index.ts"
-			],
-			"@no-grid-layout/utils": [
-				"libs/no-grid-layout/utils/src/index.ts"
-			],
-			"@project-id/data-access/services": [
-				"libs/project-id/data-access/services/src/index.ts"
-			],
-			"@projects/data-access": [
-				"libs/projects/data-access/src/index.ts"
-			],
-			"@projects/feature": [
-				"libs/projects/feature/src/index.ts"
-			],
-			"@shared/animations": [
-				"libs/shared/animations/src/index.ts"
-			],
-			"@shared/config": [
-				"libs/shared/config/src/index.ts"
-			],
-			"@shared/data-access/models": [
-				"libs/shared/data-access/models/src/index.ts"
-			],
-			"@shared/data-access/router": [
-				"libs/shared/data-access/router/src/index.ts"
-			],
-			"@shared/data-access/signalr": [
-				"libs/shared/data-access/signalr/src/index.ts"
-			],
-			"@shared/data-access/store": [
-				"libs/shared/data-access/store/src/index.ts"
-			],
-			"@shared/data-access/types": [
-				"libs/shared/data-access/types/src/index.ts"
-			],
-			"@shared/directives": [
-				"libs/shared/directives/src/index.ts"
-			],
-			"@shared/directives/on-destroy": [
-				"libs/shared/directives/on-destroy/src/index.ts"
-			],
-			"@shared/environment": [
-				"libs/shared/environment/src/index.ts"
-			],
-			"@shared/interceptors": [
-				"libs/shared/interceptors/src/index.ts"
-			],
-			"@shared/logger": [
-				"libs/shared/logger/src/index.ts"
-			],
-			"@shared/pipes": [
-				"libs/shared/pipes/src/index.ts"
-			],
-			"@shared/types": [
-				"libs/shared/types/src/index.ts"
-			],
-			"@shared/ui": [
-				"libs/shared/ui/src/index.ts"
-			],
-			"@shared/ui/app-bar": [
-				"libs/shared/ui/app-bar/src/index.ts"
-			],
-			"@shared/ui/footer": [
-				"libs/shared/ui/footer/src/index.ts"
-			],
-			"@shared/ui/google-login-button": [
-				"libs/shared/ui/google-login-button/src/index.ts"
-			],
-			"@shared/ui/header": [
-				"libs/shared/ui/header/src/index.ts"
-			],
-			"@shared/ui/logo": [
-				"libs/shared/ui/logo/src/index.ts"
-			],
-			"@shared/ui/modals": [
-				"libs/shared/ui/modals/src/index.ts"
-			],
-			"@shared/ui/models": [
-				"libs/shared/ui/models/src/index.ts"
-			],
-			"@shared/ui/nav-bars": [
-				"libs/shared/ui/nav-bars/src/index.ts"
-			],
-			"@shared/ui/not-found": [
-				"libs/shared/ui/not-found/src/index.ts"
-			],
-			"@shared/ui/notifications": [
-				"libs/shared/ui/notifications/src/index.ts"
-			],
-			"@shared/ui/route-breadcrumbs": [
-				"libs/shared/ui/route-breadcrumbs/src/index.ts"
-			],
-			"@shared/ui/show-hide": [
-				"libs/shared/ui/show-hide/src/index.ts"
-			],
-			"@shared/ui/sidebars": [
-				"libs/shared/ui/sidebars/src/index.ts"
-			],
-			"@shared/ui/sidenav": [
-				"libs/shared/ui/sidenav/src/index.ts"
-			],
-			"@shared/ui/spinner": [
-				"libs/shared/ui/spinner/src/index.ts"
-			],
-			"@shared/ui/statistics": [
-				"libs/shared/ui/statistics/src/index.ts"
-			],
-			"@shared/utils": [
-				"libs/shared/utils/src/index.ts"
-			],
-			"@svelte-canvas": [
-				"libs/svelte-canvas/src/index.ts"
-			],
-			"@undefined/core-components": [
-				"dist/libs/core-components"
-			],
-			"@undefined/core-components/*": [
-				"dist/libs/core-components/dist/components/*"
-			],
-			"@undefined/core-components/loader": [
-				"dist/libs/core-components/loader"
-			],
-			"my-plugin": [
-				"libs/my-plugin/src/index.ts"
-			]
-		},
-		"rootDir": ".",
-		"emitDecoratorMetadata": true
-	},
-	"angularCompilerOptions": {
-		"enableI18nLegacyMessageIdFormat": false,
-		"strictInjectionParameters": true,
-		"strictInputAccessModifiers": true,
-		"strictTemplates": true,
-		"emitDecoratorMetadata": true,
-		"experimentalDecorators": true
-	},
-	"exclude": [
-		"node_modules",
-		"tmp"
-	]
+  "compileOnSave": false,
+  "compilerOptions": {
+    "baseUrl": ".",
+    "outDir": "./dist/out-tsc",
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "sourceMap": true,
+    "declaration": false,
+    "downlevelIteration": true,
+    "experimentalDecorators": true,
+    "moduleResolution": "node",
+    "importHelpers": true,
+    "target": "ES2022",
+    "module": "es2020",
+    "lib": [
+      "es2020",
+      "dom"
+    ],
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "types": [
+      "node"
+    ],
+    "useDefineForClassFields": false,
+    "paths": {
+      "@app/app-component": [
+        "libs/app/app-component/src/index.ts"
+      ],
+      "@app/config": [
+        "libs/app/config/src/index.ts"
+      ],
+      "@app/data-access/connections": [
+        "libs/app/data-access/connections/src/index.ts"
+      ],
+      "@app/data-access/friends": [
+        "libs/app/data-access/friends/src/index.ts"
+      ],
+      "@app/data-access/group-chats": [
+        "libs/app/data-access/group-chats/src/index.ts"
+      ],
+      "@app/data-access/images": [
+        "libs/app/data-access/images/src/index.ts"
+      ],
+      "@app/data-access/messages": [
+        "libs/app/data-access/messages/src/index.ts"
+      ],
+      "@app/data-access/notifications": [
+        "libs/app/data-access/notifications/src/index.ts"
+      ],
+      "@app/data-access/signalr": [
+        "libs/app/data-access/signalr/src/index.ts"
+      ],
+      "@app/data-access/users": [
+        "libs/app/data-access/users/src/index.ts"
+      ],
+      "@app/feature/app-features": [
+        "libs/app/feature/app-features/src/index.ts"
+      ],
+      "@app/feature/app-user-profile": [
+        "libs/app/feature/app-user-profile/src/index.ts"
+      ],
+      "@app/feature/chatrooms": [
+        "libs/app/feature/chatrooms/src/index.ts"
+      ],
+      "@app/feature/friends": [
+        "libs/app/feature/friends/src/index.ts"
+      ],
+      "@app/feature/main-dialog": [
+        "libs/app/feature/main-dialog/src/index.ts"
+      ],
+      "@app/feature/notifications": [
+        "libs/app/feature/notifications/src/index.ts"
+      ],
+      "@app/feature/profile": [
+        "libs/app/feature/profile/src/index.ts"
+      ],
+      "@app/feature/recipient-user-profile": [
+        "libs/app/feature/recipient-user-profile/src/index.ts"
+      ],
+      "@app/feature/sidenav": [
+        "libs/app/feature/sidenav/src/index.ts"
+      ],
+      "@app/feature/user-settings": [
+        "libs/app/feature/user-settings/src/index.ts"
+      ],
+      "@app/feature/userName-profile": [
+        "libs/app/feature/userName-profile/src/index.ts"
+      ],
+      "@app/feature/users-overlay": [
+        "libs/app/feature/users-overlay/src/index.ts"
+      ],
+      "@app/index": [
+        "libs/app/index/src/index.ts"
+      ],
+      "@app/routes": [
+        "libs/app/routes/src/index.ts"
+      ],
+      "@app/shared": [
+        "libs/app/shared/src/index.ts"
+      ],
+      "@app/utils": [
+        "libs/app/utils/src/index.ts"
+      ],
+      "@auth/data-access": [
+        "libs/auth/data-access/src/index.ts"
+      ],
+      "@auth/feature": [
+        "libs/auth/feature/src/index.ts"
+      ],
+      "@auth/guards": [
+        "libs/auth/guards/src/index.ts"
+      ],
+      "@auth/interceptors": [
+        "libs/auth/interceptors/src/index.ts"
+      ],
+      "@auth/shared/models": [
+        "libs/auth/shared/models/src/index.ts"
+      ],
+      "@auth/utils": [
+        "libs/auth/utils/src/index.ts"
+      ],
+      "@blog/feature": [
+        "libs/blog/feature/src/index.ts"
+      ],
+      "@design-app/canvas": [
+        "libs/design-app/canvas/src/index.ts"
+      ],
+      "@design-app/config": [
+        "libs/design-app/config/src/index.ts"
+      ],
+      "@design-app/data-access": [
+        "libs/design-app/data-access/src/index.ts"
+      ],
+      "@design-app/feature": [
+        "libs/design-app/feature/src/index.ts"
+      ],
+      "@design-app/feature-design-canvas": [
+        "libs/design-app/feature-design-canvas/src/index.ts"
+      ],
+      "@design-app/feature-design-layout": [
+        "libs/design-app/feature-design-layout/src/index.ts"
+      ],
+      "@design-app/feature-panel": [
+        "libs/design-app/feature-panel/src/index.ts"
+      ],
+      "@design-app/feature-selected": [
+        "libs/design-app/feature-selected/src/index.ts"
+      ],
+      "@design-app/feature-string": [
+        "libs/design-app/feature-string/src/index.ts"
+      ],
+      "@design-app/shared": [
+        "libs/design-app/shared/src/index.ts"
+      ],
+      "@design-app/utils": [
+        "libs/design-app/utils/src/index.ts"
+      ],
+      "@grid-layout/data-access": [
+        "libs/grid-layout/data-access/src/index.ts"
+      ],
+      "@grid-layout/feature": [
+        "libs/grid-layout/feature/src/index.ts"
+      ],
+      "@home/data-access": [
+        "libs/home/data-access/src/index.ts"
+      ],
+      "@home/feature": [
+        "libs/home/feature/src/index.ts"
+      ],
+      "@home/ui": [
+        "libs/home/ui/src/index.ts"
+      ],
+      "@imagery/feature/azure-maps": [
+        "libs/imagery/feature/azure-maps/src/index.ts"
+      ],
+      "@no-grid-layout/data-access": [
+        "libs/no-grid-layout/data-access/src/index.ts"
+      ],
+      "@no-grid-layout/shared": [
+        "libs/no-grid-layout/shared/src/index.ts"
+      ],
+      "@no-grid-layout/utils": [
+        "libs/no-grid-layout/utils/src/index.ts"
+      ],
+      "@project-id/data-access/services": [
+        "libs/project-id/data-access/services/src/index.ts"
+      ],
+      "@projects/data-access": [
+        "libs/projects/data-access/src/index.ts"
+      ],
+      "@projects/feature": [
+        "libs/projects/feature/src/index.ts"
+      ],
+      "@shared/animations": [
+        "libs/shared/animations/src/index.ts"
+      ],
+      "@shared/config": [
+        "libs/shared/config/src/index.ts"
+      ],
+      "@shared/data-access/models": [
+        "libs/shared/data-access/models/src/index.ts"
+      ],
+      "@shared/data-access/router": [
+        "libs/shared/data-access/router/src/index.ts"
+      ],
+      "@shared/data-access/signalr": [
+        "libs/shared/data-access/signalr/src/index.ts"
+      ],
+      "@shared/data-access/store": [
+        "libs/shared/data-access/store/src/index.ts"
+      ],
+      "@shared/data-access/types": [
+        "libs/shared/data-access/types/src/index.ts"
+      ],
+      "@shared/directives": [
+        "libs/shared/directives/src/index.ts"
+      ],
+      "@shared/directives/on-destroy": [
+        "libs/shared/directives/on-destroy/src/index.ts"
+      ],
+      "@shared/environment": [
+        "libs/shared/environment/src/index.ts"
+      ],
+      "@shared/interceptors": [
+        "libs/shared/interceptors/src/index.ts"
+      ],
+      "@shared/logger": [
+        "libs/shared/logger/src/index.ts"
+      ],
+      "@shared/pipes": [
+        "libs/shared/pipes/src/index.ts"
+      ],
+      "@shared/types": [
+        "libs/shared/types/src/index.ts"
+      ],
+      "@shared/ui": [
+        "libs/shared/ui/src/index.ts"
+      ],
+      "@shared/ui/app-bar": [
+        "libs/shared/ui/app-bar/src/index.ts"
+      ],
+      "@shared/ui/footer": [
+        "libs/shared/ui/footer/src/index.ts"
+      ],
+      "@shared/ui/google-login-button": [
+        "libs/shared/ui/google-login-button/src/index.ts"
+      ],
+      "@shared/ui/header": [
+        "libs/shared/ui/header/src/index.ts"
+      ],
+      "@shared/ui/logo": [
+        "libs/shared/ui/logo/src/index.ts"
+      ],
+      "@shared/ui/modals": [
+        "libs/shared/ui/modals/src/index.ts"
+      ],
+      "@shared/ui/models": [
+        "libs/shared/ui/models/src/index.ts"
+      ],
+      "@shared/ui/nav-bars": [
+        "libs/shared/ui/nav-bars/src/index.ts"
+      ],
+      "@shared/ui/not-found": [
+        "libs/shared/ui/not-found/src/index.ts"
+      ],
+      "@shared/ui/notifications": [
+        "libs/shared/ui/notifications/src/index.ts"
+      ],
+      "@shared/ui/route-breadcrumbs": [
+        "libs/shared/ui/route-breadcrumbs/src/index.ts"
+      ],
+      "@shared/ui/show-hide": [
+        "libs/shared/ui/show-hide/src/index.ts"
+      ],
+      "@shared/ui/sidebars": [
+        "libs/shared/ui/sidebars/src/index.ts"
+      ],
+      "@shared/ui/sidenav": [
+        "libs/shared/ui/sidenav/src/index.ts"
+      ],
+      "@shared/ui/spinner": [
+        "libs/shared/ui/spinner/src/index.ts"
+      ],
+      "@shared/ui/statistics": [
+        "libs/shared/ui/statistics/src/index.ts"
+      ],
+      "@shared/utils": [
+        "libs/shared/utils/src/index.ts"
+      ],
+      "@svelte-canvas": [
+        "libs/svelte-canvas/src/index.ts"
+      ],
+      "@undefined/core-components": [
+        "dist/libs/core-components"
+      ],
+      "@undefined/core-components/*": [
+        "dist/libs/core-components/dist/components/*"
+      ],
+      "@undefined/core-components/loader": [
+        "dist/libs/core-components/loader"
+      ],
+      "my-plugin": [
+        "libs/my-plugin/src/index.ts"
+      ]
+    },
+    "rootDir": ".",
+    "emitDecoratorMetadata": true
+  },
+  "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "strictTemplates": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true
+  },
+  "exclude": [
+    "node_modules",
+    "tmp"
+  ]
 }

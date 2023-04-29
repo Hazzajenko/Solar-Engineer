@@ -1,6 +1,7 @@
-import { selectedStateMachine } from '../selected'
+import { SelectedStateEvent, selectedStateMachine } from '../selected'
 import { ContextMenuType } from '../view'
 import { appStateMachine } from './app-state.machine'
+import { AppStateEvent } from './app-state.types'
 import { Injectable } from '@angular/core'
 import {
 	AppStateMatches,
@@ -8,7 +9,6 @@ import {
 	STATE_MACHINE,
 	stateEventLoggerExcludePointerState,
 	StateMachine,
-	XStateEvent,
 } from '@design-app/feature-design-canvas'
 import { BehaviorSubject } from 'rxjs'
 import { interpret } from 'xstate'
@@ -84,25 +84,29 @@ export class AppStoreService {
 		return this.appSnapshot.value as AppStateMatchesModel
 	}
 
-	sendEvent(event: XStateEvent) {
+	sendEvent(event: AppStateEvent) {
 		const eventType = event.type
-		if (eventType === 'SetMultipleSelectedEntities') {
-			this._selectedMachine.send(event as any)
-		}
-		if (eventType.includes('Selected')) {
-			this._selectedMachine.send(event as any)
-		}
-		if (event.type.includes('Selected')) {
-			this._selectedMachine.send(event as any)
-		}
-		return this._appMachine.send(event as any)
+		/*		if (eventType === 'SetMultipleSelectedEntities') {
+		 this._selectedMachine.send(event as any)
+		 }
+		 if (eventType.includes('Selected')) {
+		 this._selectedMachine.send(event as any)
+		 }
+		 if (event.type.includes('Selected')) {
+		 this._selectedMachine.send(event as any)
+		 }*/
+		return this._appMachine.send(event)
 	}
 
-	sendStateEvent(machine: StateMachine, event: XStateEvent) {
+	sendStateEvent(machine: StateMachine, event: AppStateEvent) {
 		if (machine === STATE_MACHINE.SELECTED) {
 			return this._selectedMachine.send(event as any)
 		}
-		return this._appMachine.send(event as any)
+		return this._appMachine.send(event)
+	}
+
+	sendSelectedEvent(event: SelectedStateEvent) {
+		return this._selectedMachine.send(event)
 	}
 
 	/*	transition() {

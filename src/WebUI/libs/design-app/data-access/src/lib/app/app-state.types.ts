@@ -4,7 +4,9 @@ import { ToMoveStateContext, ToMoveStateEvent } from '../object-positioning'
 import { ToRotateStateContext, ToRotateStateEvent } from '../object-rotating'
 import { PointerStateContext, PointerStateEvent } from '../pointer'
 import { ViewStateContext, ViewStateEvent } from '../view'
+import { appStateMachine } from './app-state.machine'
 import { Typegen0 } from './app-state.machine.typegen'
+import { interpret } from 'xstate'
 
 
 export type AppStateMachineContext = {
@@ -22,6 +24,9 @@ export type AppStateEvent =
 	| ToRotateStateEvent
 	| ViewStateEvent
 	| GridStateEvent
+
+const getSnapshot = interpret(appStateMachine).getSnapshot
+export type AppSnapshot = ReturnType<typeof getSnapshot>
 
 export type AppStateMatches = Typegen0['matchesStates']
 

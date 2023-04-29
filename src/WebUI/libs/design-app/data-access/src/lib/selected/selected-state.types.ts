@@ -1,3 +1,6 @@
+import { selectedStateMachine } from './selected-state.machine'
+import { interpret } from 'xstate'
+
 export type SelectedStateContext = {
 	selectedStringId: string | undefined
 	singleSelectedId: string | undefined
@@ -25,3 +28,6 @@ export const MATCHES_SELECTED_STATE = {
 	SINGLE_SELECTION: 'SelectedState.SingleSelection',
 	MULTIPLE_SELECTION: 'SelectedState.MultipleSelection',
 } as const
+
+const getSnapshot = interpret(selectedStateMachine).getSnapshot
+export type SelectedSnapshot = ReturnType<typeof getSnapshot>

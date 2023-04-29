@@ -33,8 +33,3 @@ export type ViewState = {
 	ViewPositioningState: ViewPositioningState
 	ContextMenuState: ContextMenuState
 }
-
-/*const asdsa: ViewState = {
- value: VIEW_STATE.VIEW_DRAGGING_IN_PROGRESS,
- }*/
-// export type ViewState = (typeof VIEW_STATE)[keyof typeof VIEW_STATE]

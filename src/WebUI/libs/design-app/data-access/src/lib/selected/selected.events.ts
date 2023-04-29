@@ -154,16 +154,18 @@ export const SELECTED_EVENT = <T extends SelectedEventTypes>(
 	}
 }
 
-export const SELECTED_EVENT_V2 = <T extends SelectedEventTypes>(
-	type: T,
-	payload: SelectedEventPayloadOrNullByType<T>,
-) => {
-	return { type, payload }
-}
+/*
+ export const SELECTED_EVENT_V2 = <T extends SelectedEventTypes>(
+ type: T,
+ payload: SelectedEventPayloadOrNullByType<T>,
+ ) => {
+ return { type, payload }
+ }
 
-type SelectedEventReturn<T extends SelectedEventTypes> = ReturnType<typeof SELECTED_EVENT<T>>
-const hi: SelectedEventReturn<'SelectedSingleEntity'> = {
-	type: 'SelectedSingleEntity' /*	payload: {
-	 ids: '1'
-	 }*/,
-}
+ type SelectedEventReturn<T extends SelectedEventTypes> = ReturnType<typeof SELECTED_EVENT<T>>
+ const hi: SelectedEventReturn<'SelectedSingleEntity'> = {
+ type: 'SelectedSingleEntity' /!*	payload: {
+ ids: '1'
+ }*!/,
+ }
+ */

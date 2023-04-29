@@ -1,12 +1,10 @@
-import { CANVAS_COLORS, CanvasEntity, isPanel, PANEL_STROKE_STYLE } from '../../types'
-import { CanvasAppStateStore } from '../canvas-app-state'
-import { CanvasClientStateService, CanvasEntityStore, MachineService } from '../canvas-client-state'
-import { SelectedStateSnapshot } from '../canvas-client-state/+xstate/selected-state.machine'
-import { CanvasElementService } from '../canvas-element.service'
-import { DIV_ELEMENT, DivElementsService } from '../div-elements'
-import { DomPointService } from '../dom-point.service'
+import { AppStoreService } from '../app'
+import { CanvasElementService, DIV_ELEMENT, DivElementsService } from '../div-elements'
+import { EntityStoreService } from '../entities/entity-store.service'
+import { SelectedStateSnapshot } from '../selected'
 import { drawSelectedBox, drawSelectedStringBox } from './render-fns'
 import { inject, Injectable } from '@angular/core'
+import { CANVAS_COLORS, CanvasEntity, isPanel, PANEL_STROKE_STYLE } from '@design-app/shared'
 import { shadeColor } from '@shared/utils'
 
 
@@ -20,14 +18,11 @@ export type CanvasRenderOptions = {
 @Injectable({
 	providedIn: 'root',
 })
-export class CanvasRenderV2Service {
+export class RenderService {
 	private _canvasElementService = inject(CanvasElementService)
-	private _domPointService = inject(DomPointService)
-	private _appState = inject(CanvasAppStateStore)
 	private _divElements = inject(DivElementsService)
-	private _state = inject(CanvasClientStateService)
-	private _entityStore = inject(CanvasEntityStore)
-	private _machine = inject(MachineService)
+	private _entities = inject(EntityStoreService)
+	private _app = inject(AppStoreService)
 
 	private lastRenderTime = performance.now()
 
@@ -60,7 +55,7 @@ export class CanvasRenderV2Service {
 	}
 
 	get entities() {
-		return this._entityStore.panels.getEntities()
+		return this._entities.panels.getEntities()
 		// return this._state.entities.panels.getEntities()
 	}
 
@@ -92,7 +87,7 @@ export class CanvasRenderV2Service {
 	}
 
 	renderCanvasApp(options?: CanvasRenderOptions) {
-		const { selectedSnapshot } = this._machine.allSnapshots
+		const { selectedSnapshot } = this._app.allSnapshots
 		this.render((ctx) => {
 			ctx.save()
 			ctx.setTransform(1, 0, 0, 1, 0, 0)
@@ -114,7 +109,7 @@ export class CanvasRenderV2Service {
 				if (!isPanel(entity)) return
 				let fillStyle: string = CANVAS_COLORS.DefaultPanelFillStyle
 				const strokeStyle: string = PANEL_STROKE_STYLE.DEFAULT
-				const { pointer } = this._machine.appCtx
+				const { pointer } = this._app.appCtx
 
 				const isSelected =
 					selectedSnapshot.matches('EntitySelectedState.EntitiesSelected') &&
@@ -165,7 +160,7 @@ export class CanvasRenderV2Service {
 			) {
 				drawSelectedBox(
 					ctx,
-					this._entityStore.panels.getEntitiesByIds(this._machine.selectedCtx.multipleSelectedIds),
+					this._entities.panels.getEntitiesByIds(this._app.selectedCtx.multipleSelectedIds),
 				)
 			}
 
@@ -173,10 +168,10 @@ export class CanvasRenderV2Service {
 				shouldRenderSelectedStringBox &&
 				selectedSnapshot.matches('StringSelectedState.StringSelected')
 			) {
-				drawSelectedStringBox(ctx, selectedSnapshot, this._entityStore)
+				drawSelectedStringBox(ctx, selectedSnapshot, this._entities)
 				drawSelectedBox(
 					ctx,
-					this._entityStore.panels.getEntitiesByIds(this._machine.selectedCtx.multipleSelectedIds),
+					this._entities.panels.getEntitiesByIds(this._app.selectedCtx.multipleSelectedIds),
 				)
 			}
 
@@ -190,7 +185,7 @@ export class CanvasRenderV2Service {
 		if (!isPanel(entity)) return
 		let fillStyle: string = CANVAS_COLORS.DefaultPanelFillStyle
 		const strokeStyle: string = PANEL_STROKE_STYLE.DEFAULT
-		const { pointer } = this._machine.appCtx
+		const { pointer } = this._app.appCtx
 
 		const isSelected =
 			selectedSnapshot.matches('EntitySelectedState.EntitiesSelected') &&

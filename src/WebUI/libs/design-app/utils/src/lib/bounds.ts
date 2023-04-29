@@ -1,45 +1,20 @@
 import { rotate } from '../../../feature-design-canvas/src/lib/utils/rotate'
 import {
-	AngleRadians,
 	CanvasEntity,
+	CompleteEntityBounds,
+	EntityBounds,
 	SAME_AXIS_POSITION,
 	SameAxisPosition,
 	TransformedPoint,
-} from '@design-app/feature-design-canvas'
+	TrigonometricBoundsTuple,
+} from '@design-app/shared'
 import { Point, Size } from '@shared/data-access/models'
 
-export type EntityBounds = {
-	left: number
-	top: number
-	right: number
-	bottom: number
-	centerX: number
-	centerY: number
-}
-
-export type CompleteEntityBounds = EntityBounds & {
-	width: number
-	height: number
-}
-
-export type TrigonometricBounds = CompleteEntityBounds & {
-	angle: AngleRadians
-}
-
-/**
- * @description
- * [minX, minY, maxX, maxY]
- * [left, top, right, bottom]
- */
-export type TrigonometricBoundsTuple = [number, number, number, number]
-
-export const getCompleteEntityBounds = (bounds: EntityBounds): CompleteEntityBounds => {
-	return {
-		...bounds,
-		width: bounds.right - bounds.left,
-		height: bounds.bottom - bounds.top,
-	}
-}
+export const getCompleteEntityBounds = (bounds: EntityBounds): CompleteEntityBounds => ({
+	...bounds,
+	width: bounds.right - bounds.left,
+	height: bounds.bottom - bounds.top,
+})
 
 export const getEntityBounds = (entity: CanvasEntity): EntityBounds => {
 	return {

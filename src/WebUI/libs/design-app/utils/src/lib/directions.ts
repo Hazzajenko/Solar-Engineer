@@ -1,4 +1,4 @@
-import { TransformedPoint } from './point';
+import { TransformedPoint } from '@design-app/shared';
 import { Size } from '@shared/data-access/models';
 
 

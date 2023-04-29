@@ -1,12 +1,6 @@
+import { AngleDegrees, AngleRadians } from '@design-app/shared'
 import { Point } from '@shared/data-access/models'
 
-export type AngleDegrees = number & {
-	readonly _type: 'degrees'
-}
-
-export type AngleRadians = number & {
-	readonly _type: 'radians'
-}
 export const addAngles = (angle1: AngleDegrees, angle2: AngleDegrees): AngleDegrees => {
 	const sum = angle1 + angle2
 	return normalizeAngle(sum) as AngleDegrees

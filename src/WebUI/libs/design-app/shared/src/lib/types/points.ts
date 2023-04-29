@@ -1,4 +1,4 @@
-import { Point, Size } from '@shared/data-access/models'
+import { Point } from '@shared/data-access/models'
 
 export type MiddlePoint = {
 	middleX: number
@@ -16,12 +16,8 @@ export type TransformedPoint = DOMPoint & {
 export type TransformedPointToDragOffset = Omit<TransformedPoint, '_type'> & {
 	_type: 'TransformedPointToDragOffset'
 }
-export const getTopLeftPointFromTransformedPoint = (
-	point: TransformedPoint,
-	size: Size,
-): TransformedPoint => {
-	return {
-		x: point.x - size.width / 2,
-		y: point.y - size.height / 2,
-	} as TransformedPoint
+
+export type EventWithOffsets = {
+	offsetX: number
+	offsetY: number
 }

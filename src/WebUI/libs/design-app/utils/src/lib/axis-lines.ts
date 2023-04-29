@@ -1,10 +1,4 @@
-import {
-	AXIS,
-	Axis,
-	EntityBounds,
-	SAME_AXIS_POSITION,
-	SameAxisPosition,
-} from '@design-app/feature-design-canvas'
+import { AXIS, Axis, EntityBounds, SAME_AXIS_POSITION, SameAxisPosition } from '@design-app/shared'
 
 export const getEntityAxisGridLinesByAxisV2 = (bounds: EntityBounds, axis: Axis): number[][] => {
 	if (axis === AXIS.Y) {

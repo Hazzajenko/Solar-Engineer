@@ -1,27 +1,29 @@
+import { AppSnapshot, AppStoreService } from '../app'
+import { EntityStoreService } from '../entities/entity-store.service'
+import { GraphicsStateSnapshot, isNearbyLinesEnabled, NearbyGraphicsState } from '../graphics'
+import { GraphicsSettings } from '../graphics/graphics.settings'
+import { RenderService } from '../render'
+import { getDefaultDrawPreviewCtxFn } from './ctx-fns'
+import { getNearbyLineDrawCtxFnFromGraphicsSnapshot } from './utils'
+import { inject, Injectable } from '@angular/core'
 import {
-	GraphicsSettings,
-	GraphicsStateSnapshot,
-	isNearbyLinesEnabled,
-	NearbyGraphicsState,
-} from '../../components'
-import { Axis, CANVAS_COLORS, SizeByType, TransformedPoint } from '../../types'
-import {
+	Axis,
+	CANVAS_COLORS,
 	CompleteEntityBounds,
+	ENTITY_TYPE,
 	EntityBounds,
+	NearbyEntity,
+	SizeByType,
+	TransformedPoint,
+} from '@design-app/shared'
+import {
+	findNearbyBoundOverlapOnBothAxis,
 	getBoundsFromArrPoints,
 	getCompleteBoundsFromCenterTransformedPoint,
+	getCtxRectBoundsByAxisV2,
 	getEntityAxisGridLinesByAxisV2,
 	isEntityOverlappingWithBounds,
-} from '../../utils'
-import { getNearbyLineDrawCtxFnFromGraphicsSnapshot } from '../../utils-ctx'
-import { AppStateSnapshot, CanvasClientStateService, MachineService } from '../canvas-client-state'
-import { CanvasRenderV2Service, getCtxRectBoundsByAxisV2 } from '../canvas-render'
-import { findNearbyBoundOverlapOnBothAxis } from '../object-positioning'
-import { getDefaultDrawPreviewCtxFn } from './ctx-fns'
-import { NEARBY_DRAW_MODE, NearbyDrawMode } from './nearby-draw-mode'
-import { NearbyEntity } from './nearby-entity'
-import { inject, Injectable } from '@angular/core'
-import { ENTITY_TYPE } from '@design-app/shared'
+} from '@design-app/utils'
 import { groupInto2dArray } from '@shared/utils'
 import { sortBy } from 'lodash'
 
@@ -30,13 +32,13 @@ import { sortBy } from 'lodash'
 	providedIn: 'root',
 })
 export class NearbyService {
-	private _render = inject(CanvasRenderV2Service)
+	private _render = inject(RenderService)
 	// private _render = inject(CanvasRenderService)
-	private _state = inject(CanvasClientStateService)
-	private _machine = inject(MachineService)
+	private _entities = inject(EntityStoreService)
+	private _app = inject(AppStoreService)
 
 	// nearbyDrawMode: NearbyDrawMode = NEARBY_DRAW_MODE.CENTER_LINE_SCREEN_SIZE
-	nearbyDrawMode: NearbyDrawMode = NEARBY_DRAW_MODE.CENTER_LINE_BETWEEN_TWO_ENTITIES
+	// nearbyDrawMode: NearbyDrawMode = NEARBY_DRAW_MODE.CENTER_LINE_BETWEEN_TWO_ENTITIES
 	holdAltToSnapToGrid = GraphicsSettings.HoldAltToSnapToGrid
 
 	nearbyIds: string[] = []
@@ -50,12 +52,12 @@ export class NearbyService {
 		event: PointerEvent,
 		currentPoint: TransformedPoint,
 		NearbyLinesState: NearbyGraphicsState,
-		appSnapshot: AppStateSnapshot,
+		appSnapshot: AppSnapshot,
 		graphicsSnapshot: GraphicsStateSnapshot,
 	) {
 		const size = SizeByType[ENTITY_TYPE.Panel]
 		const mouseBoxBounds = getCompleteBoundsFromCenterTransformedPoint(currentPoint, size)
-		const entities = this._state.entities.panels.getEntities()
+		const entities = this._entities.panels.getEntities()
 		const nearbyEntitiesOnAxis = findNearbyBoundOverlapOnBothAxis(mouseBoxBounds, entities)
 
 		if (!nearbyEntitiesOnAxis.length) {
@@ -133,12 +135,12 @@ export class NearbyService {
 		const altKey = event.altKey
 
 		if (altKey && appSnapshot.matches('GridState.PreviewAxisState.None')) {
-			this._machine.sendEvent({ type: 'StartAxisCreatePreview' })
+			this._app.sendEvent({ type: 'StartAxisCreatePreview' })
 		} else if (
 			!altKey &&
 			appSnapshot.matches('GridState.PreviewAxisState.AxisCreatePreviewInProgress')
 		) {
-			this._machine.sendEvent({ type: 'StopAxisPreview' })
+			this._app.sendEvent({ type: 'StopAxisPreview' })
 		}
 
 		const drawGridLinesWithEntityPreview = getNearbyLineDrawCtxFnFromGraphicsSnapshot(

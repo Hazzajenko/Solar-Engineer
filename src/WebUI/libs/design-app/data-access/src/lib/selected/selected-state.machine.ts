@@ -1,38 +1,25 @@
-import { InitialSelectedState, SelectedStateDeprecated } from '../types';
-import { XStateSelectedEvent } from './selected';
-// import { ActionByType } from './selected/machine-actions.types'
-import { assign, createMachine, interpret } from 'xstate';
-
-
-// graphicsSettingsMachine
-/*inspect({
- iframe: false,
- url: 'https://statecharts.io/inspect',
- })*/
-
-// inspect()
-/*
- inspect({
- iframe: () => document.querySelector('iframe.some-xstate-iframe') as HTMLIFrameElement,
- })*/
-
-// export type SelectedHistoryState = {}
-
-// type events =
+import { SelectedStateEvent } from './selected.events'
+import { assign, createMachine, interpret } from 'xstate'
 
 export type SelectedStateMachineState = Required<{
 	EntitySelectedState?: 'EntitiesSelected' | 'NoneSelected'
 	StringSelectedState?: 'NoneSelected' | 'StringSelected'
 }>
 
-/*const asdsadas: SelectedStateMachineState = {
- EntitySelectedState: 'EntitiesSelected',
- StringSelectedState: 'NoneSelected',
- }*/
-
-export type SelectedStateMachineContext = SelectedStateDeprecated & {
-	selectedHistoryCtx: SelectedStateDeprecated[]
+export type SelectedStateMachineContext = {
+	selectedStringId: string | undefined
+	singleSelectedId: string | undefined
+	multipleSelectedIds: string[]
+	selectedHistoryCtx: SelectedStateMachineContext[]
 	selectedHistoryState: SelectedStateMachineState[]
+}
+
+export const InitialSelectedState: SelectedStateMachineContext = {
+	selectedStringId: undefined,
+	singleSelectedId: undefined,
+	multipleSelectedIds: [],
+	selectedHistoryCtx: [],
+	selectedHistoryState: [],
 }
 export const selectedStateMachine = createMachine(
 	{
@@ -41,21 +28,10 @@ export const selectedStateMachine = createMachine(
 		type: 'parallel',
 		schema: {
 			context: {} as SelectedStateMachineContext,
-			events: {} as XStateSelectedEvent,
+			events: {} as SelectedStateEvent,
 		},
 		id: 'SelectedState',
-		context: {
-			...InitialSelectedState,
-			selectedHistoryCtx: [],
-			selectedHistoryState: [],
-		},
-
-		/*		on: {
-	 ClearSelectedState: {
-	 target: '.NoneSelected',
-	 actions: 'ClearSelected',
-	 },
-	 },*/
+		context: InitialSelectedState,
 		states: {
 			EntitySelectedState: {
 				initial: 'NoneSelected',

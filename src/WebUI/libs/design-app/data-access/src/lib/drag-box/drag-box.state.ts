@@ -1,4 +1,4 @@
-import { TransformedPoint } from '../../../../types'
+import { TransformedPoint } from '@design-app/shared'
 
 export const CURRENT_DRAG_BOX = {
 	SELECTION: 'selection',
