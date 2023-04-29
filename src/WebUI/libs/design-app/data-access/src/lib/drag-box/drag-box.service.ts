@@ -21,10 +21,10 @@ import { assertNotNull } from '@shared/utils'
 @Injectable({
 	providedIn: 'root',
 })
-export class DragBoxXstateService {
+export class DragBoxService {
 	private _canvasElementService = inject(CanvasElementService)
 	private _domPointService = inject(DomPointService)
-	private _entityStore = inject(EntityStoreService)
+	private _entities = inject(EntityStoreService)
 	// private _state = inject(CanvasClientStateService)
 	private _render = inject(RenderService)
 	// private _render = inject(CanvasRenderService)
@@ -101,7 +101,7 @@ export class DragBoxXstateService {
 		const panelsInArea = getAllEntitiesBetweenTwoPoints(
 			start,
 			currentPoint,
-			this._entityStore.panels.getEntities(),
+			this._entities.panels.getEntities(),
 		)
 		if (panelsInArea) {
 			const entitiesInAreaIds = panelsInArea.map((panel) => panel.id)
@@ -153,7 +153,7 @@ export class DragBoxXstateService {
 		const spots = getAllAvailableEntitySpotsBetweenTwoPoints(
 			dragBoxStart,
 			currentPoint,
-			this._entityStore.panels.getEntities(), // this._state.entities.panels.getEntities(),
+			this._entities.panels.getEntities(), // this._state.entities.panels.getEntities(),
 		)
 		// const spots = this._objectPositioning.getAllAvailableEntitySpotsBetweenTwoPoints(dragBoxStart, currentPoint)
 		if (!spots || !spots.length) return
@@ -168,7 +168,7 @@ export class DragBoxXstateService {
 		 dragBoxStart: undefined,
 		 },
 		 })*/
-		this._entityStore.panels.addManyEntities(newPanels)
+		this._entities.panels.addManyEntities(newPanels)
 		// this._state.entities.panels.addManyEntities(newPanels)
 		this._app.sendEvent({ type: 'StopDragBox' })
 		// this._machine.sendEvent(new StopDragBox())
@@ -236,7 +236,7 @@ export class DragBoxXstateService {
 			const spots = getAllAvailableEntitySpotsBetweenTwoPoints(
 				dragBoxStart,
 				currentPoint,
-				this._entityStore.panels.getEntities(), // this._state.entities.panels.getEntities(),
+				this._entities.panels.getEntities(), // this._state.entities.panels.getEntities(),
 			)
 			if (!spots) return
 
@@ -304,7 +304,7 @@ export class DragBoxXstateService {
 			const spots = getAllAvailableEntitySpotsBetweenTwoPoints(
 				dragBoxStart,
 				currentPoint,
-				this._entityStore.panels.getEntities(), // this._state.entities.panels.getEntities(),
+				this._entities.panels.getEntities(), // this._state.entities.panels.getEntities(),
 			)
 			if (!spots) return
 
@@ -397,7 +397,7 @@ export class DragBoxXstateService {
 	 const spots = getAllAvailableEntitySpotsBetweenTwoPoints(
 	 start,
 	 end,
-	 this._state.entities.panels.getEntities(),
+	 this._entities.panels.getEntities(),
 	 )
 	 console.log('spots', spots)
 	 if (!spots || !spots.length) {
