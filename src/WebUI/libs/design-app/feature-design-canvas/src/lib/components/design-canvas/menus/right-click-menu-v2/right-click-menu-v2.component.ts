@@ -1,21 +1,25 @@
 import {
 	CanvasClientStateService,
 	CanvasRenderService,
+	ContextMenuType,
 	DomPointService,
 	MachineService,
 	ObjectRotatingService,
 } from '../../../../services'
+import { GetEntityByIdPipe } from './get-entity.pipe'
 import { AsyncPipe, JsonPipe, NgIf } from '@angular/common'
 import {
+	AfterViewInit,
 	ChangeDetectionStrategy,
 	Component,
 	ElementRef,
 	EventEmitter,
 	inject,
+	NgZone,
 	Output,
 	Renderer2,
 } from '@angular/core'
-import { EntityType } from '@design-app/shared'
+import { EVENT_TYPE, UndefinedString } from '@shared/data-access/models'
 import { ShowSvgComponent } from '@shared/ui'
 import { tap } from 'rxjs'
 
@@ -23,12 +27,13 @@ import { tap } from 'rxjs'
 @Component({
 	selector: 'app-right-click-menu-v2',
 	standalone: true,
-	imports: [ShowSvgComponent, NgIf, AsyncPipe, JsonPipe],
+	imports: [ShowSvgComponent, NgIf, AsyncPipe, JsonPipe, GetEntityByIdPipe],
 	templateUrl: './right-click-menu-v2.component.html',
 	styles: [],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RightClickMenuV2Component {
+export class RightClickMenuV2Component implements AfterViewInit {
+	private _ngZone = inject(NgZone)
 	private _domPoint = inject(DomPointService)
 	private _objRotating = inject(ObjectRotatingService)
 	private _state = inject(CanvasClientStateService)
@@ -37,7 +42,7 @@ export class RightClickMenuV2Component {
 	private _render = inject(CanvasRenderService)
 	private _elementRef = inject(ElementRef)
 	id!: string
-	type!: EntityType
+	type!: ContextMenuType
 	contextMenu$ = this._machine.subscribeContextMenu().pipe(
 		tap((contextMenu) => {
 			if (!contextMenu) return
@@ -47,6 +52,19 @@ export class RightClickMenuV2Component {
 		}),
 	)
 	@Output() closeMenu = new EventEmitter()
+
+	ngAfterViewInit() {
+		this._ngZone.runOutsideAngular(() => {
+			this._renderer.listen(
+				this._elementRef.nativeElement,
+				EVENT_TYPE.POINTER_ENTER,
+				(event: PointerEvent) => {
+					console.log(EVENT_TYPE.POINTER_ENTER, event)
+					this._render.drawCanvas()
+				},
+			)
+		})
+	}
 
 	initMenu(contextMenu: { x: number; y: number }) {
 		this._renderer.setStyle(this._elementRef.nativeElement, 'left', `${contextMenu.x}px`)
@@ -67,4 +85,9 @@ export class RightClickMenuV2Component {
 		this._render.drawCanvas()
 		this._machine.sendEvent({ type: 'CloseContextMenu' })
 	}
+
+	// protected readonly UndefinedStringId = UndefinedStringId
+	// protected readonly UndefinedString = UndefinedString
+	// protected readonly UndefinedString = UndefinedString
+	protected readonly UndefinedString = UndefinedString
 }

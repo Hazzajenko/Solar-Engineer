@@ -2,7 +2,6 @@ import {
 	DragBoxStateDeprecated,
 	GridStateDeprecated,
 	HoveringEntityState,
-	InitialSelectedState,
 	MenuState,
 	ModeStateDeprecated,
 	MouseState,
@@ -14,11 +13,7 @@ import {
 } from '../types'
 import { AdjustedDragBoxState, InitialAdjustedDragBoxState } from './drag-box'
 import { AdjustedPointerState, InitialAdjustedPointerState } from './pointer'
-import {
-	AddEntitiesToMultipleSelected,
-	RemoveEntitiesFromMultipleSelected,
-	SetMultipleSelectedEntities,
-} from './selected'
+import { SetMultipleSelectedEntities } from './selected'
 import {
 	AdjustedToMoveState,
 	InitialAdjustedToMoveState,
@@ -83,7 +78,8 @@ export type SelectedStateType =
 	| 'StringSelected'
 	| 'NoneSelected'
 
-export type PickedCanvasAppMachineContext = Pick<CanvasAppMachineContext, 'selected'> & {
+export type PickedCanvasAppMachineContext = {
+	// export type PickedCanvasAppMachineContext = Pick<CanvasAppMachineContext> & {
 	selectedHistoryCtx: SelectedStateDeprecated[]
 	selectedHistoryState: SelectedStateType[]
 	dragBox: AdjustedDragBoxState
@@ -91,12 +87,20 @@ export type PickedCanvasAppMachineContext = Pick<CanvasAppMachineContext, 'selec
 	toMove: AdjustedToMoveState
 	toRotate: AdjustedToRotateState
 	view: ViewContext
+	// childMachineRefs: ActorRefFrom<typeof graphicsSettingsMachine>[]
+	// graphics: ActorRefFrom<typeof graphicsSettingsMachine>
 }
-
+// graphicsSettingsMachine
 inspect({
 	iframe: false,
 	url: 'https://statecharts.io/inspect',
 })
+
+// inspect()
+/*
+ inspect({
+ iframe: () => document.querySelector('iframe.some-xstate-iframe') as HTMLIFrameElement,
+ })*/
 export const canvasAppMachine = createMachine(
 	{
 		/** @xstate-layout N4IgpgJg5mDOIC5QGECGA7Abq2BBADvgHQDKYANmAMYAukABCTanQMRrpUWMXV0QBtAAwBdRKHwB7WAEsaMyenEgAHogDsAJgA0IAJ6IAzAE4hRACybjANgAc6gKwBfJ7o7Y8hUr1oMmLMCIAUXR5Gj0eSl8IdnIZKgBreiDyWDAAdwALMAAnMGExJBApWXlFZTUEEwciIWNDR10DBE1zayJjB0MARk1nVxB3HAJiMij+RmY6YNC5CLG+SFj4hIYAeXR6ABEZADNd3LBQ5NnwguUSuQUlIsru83MiRv1EbutuonvDTSs363--sYXG4MB4Rt5xn4poEAHKKMCRRYxZBxRL0DYnMJ6c5FS5lG6gSrVWr1Z7NboObrAwag4ZeBbRSYBIhw9AIhn8Vj+HI0RG0a70ABCkhUOIk0iu5VuGgcZks3XsDiaiD66iIXWs5gctkMur1DWpQ08ox8E380w5DGFKiZPPoAAVJDJjmQaFzTQwALIAV3I8nwlExVzgYuKEvxFVerXalIc1j6ypalI6XV6-RBWDpJshECZFo9uettt5judvNd7vGAqLHC45EoglEF3D10jCEccs0CrJr3e6p1+sHhnMhtpxohSLzgR9fpkAYRITCMjgfM5uAgucXc3oABVJPQZ-7A5bG4VxaVW9KEPdTBYu4rEwqPuZ1NY430XAN0JIIHBlEaRmbC8pUJRAAFpWkTCCRwGAD6QLKcgMlAlVBVcxE2sQx1VHTNxxPKcZixVdICQiMr27DorDsHsWnjElMIccw-gBdQcLBeCcwI1l2QLUjL1AhBtRqBolReFotCIax1BsRU2KzCdGXNQJ8KLbkSydF0wBoPiQNQhBjFsWx1XUWw00TTRHE+aTqPTGlcPBfClKIQ850DLd5BXE8dJQu5KSw951G7UTmk0WxNDvGTHE-JwgA */
@@ -108,7 +112,7 @@ export const canvasAppMachine = createMachine(
 		},
 		id: 'CanvasApp',
 		context: {
-			selected: InitialSelectedState,
+			// selected: InitialSelectedState,
 			selectedHistoryCtx: [],
 			selectedHistoryState: [],
 			dragBox: InitialAdjustedDragBoxState,
@@ -118,154 +122,144 @@ export const canvasAppMachine = createMachine(
 			view: InitialViewContext,
 		},
 		states: {
-			SelectedState: {
-				initial: 'NoneSelected',
-				states: {
-					EntitySelected: {
-						entry: (ctx) => {
-							ctx.selectedHistoryCtx.push(ctx.selected)
-							ctx.selectedHistoryState.push('EntitySelected')
-						},
-						on: {
-							ClearEntitySelected: {
-								target: 'NoneSelected',
-								actions: 'ClearSelected',
-							},
-							SelectedDifferentEntity: {
-								actions: 'SetSelectedEntity',
-							},
-							SetSelectedString: {
-								target: 'StringSelected',
-								actions: (ctx, event) => {
-									ctx.selected = {
-										...ctx.selected,
-										selectedStringId: event.payload.stringId,
-									}
-								},
-							},
-						},
-					},
-					NoneSelected: {
-						entry: (ctx) => {
-							ctx.selectedHistoryCtx.push(ctx.selected)
-							ctx.selectedHistoryState.push('NoneSelected')
-						},
-						on: {
-							SelectedSingleEntity: {
-								target: 'EntitySelected',
-								actions: 'SetSelectedEntity',
-							},
-							SetSelectedString: {
-								target: 'StringSelected',
-								actions: (ctx, event) =>
-									(ctx.selected = {
-										...ctx.selected,
-										selectedStringId: event.payload.stringId,
-									}),
-							},
-							SelectionBoxCompleted: {
-								target: 'MultipleEntitiesSelected',
-							},
-						},
-					},
-					MultipleEntitiesSelected: {
-						entry: (ctx) => {
-							ctx.selectedHistoryCtx.push(ctx.selected)
-							ctx.selectedHistoryState.push('MultipleEntitiesSelected')
-						},
-						on: {
-							AddEntitiesToMultipleSelected: {
-								actions: 'AddEntitiesToMultipleSelected',
-								target: 'MultipleEntitiesSelected',
-							},
-							RemoveEntitiesFromMultipleSelected: {
-								actions: 'RemoveEntitiesFromMultipleSelected',
-								target: 'MultipleEntitiesSelected',
-							},
-							SetSelectedString: {
-								target: 'StringSelected',
-								actions: (ctx, event) => {
-									ctx.selected = {
-										...ctx.selected,
-										selectedStringId: event.payload.stringId,
-									}
-								},
-							},
-							ClearSelectedState: {
-								target: 'NoneSelected',
-								actions: (ctx) => (ctx.selected = InitialSelectedState),
-							},
-						},
-					},
-					StringSelected: {
-						entry: (ctx) => {
-							ctx.selectedHistoryCtx.push(ctx.selected)
-							ctx.selectedHistoryState.push('StringSelected')
-						},
-						on: {
-							ClearStringSelected: {
-								target: 'NoneSelected',
-								actions: (ctx) =>
-									(ctx.selected = {
-										...ctx.selected,
-										selectedStringId: undefined,
-									}),
-							},
-							SelectedStringRollbackToSingle: {
-								target: 'EntitySelected',
-								actions: (ctx) =>
-									(ctx.selected = {
-										...ctx.selected,
-										selectedStringId: undefined,
-									}),
-							},
-							SelectedStringRollbackToMultiple: {
-								target: 'MultipleEntitiesSelected',
-								actions: (ctx) =>
-									(ctx.selected = {
-										...ctx.selected,
-										selectedStringId: undefined,
-									}),
-							},
-							SelectedRollback: {
-								/*				target: (ctx) => {
-							 ctx.selectedHistory
-							 },*/
-								target: 'MultipleEntitiesSelected',
-								actions: (ctx) => {
-									console.log('HISTORY_BEFORE_ROLLBACK', ctx.selectedHistoryCtx)
-									const history = ctx.selectedHistoryCtx.pop()
-									// if (history) ctx.selected = history
-									ctx.selected = ctx.selectedHistoryCtx[ctx.selectedHistoryCtx.length - 1]
-									console.log('HISTORY_AFTER_ROLLBACK', history)
-								},
-							},
-
-							/*			SelectedRollback: {
-						 target: ,
-						 },*/ ClearSelectedState: {
-								target: 'NoneSelected',
-								actions: (ctx) => (ctx.selected = InitialSelectedState),
-							},
-						},
-					},
-				},
-				on: {
-					CancelSelected: {
-						target: '.NoneSelected',
-						cond: 'SelectedIsDefined',
-						actions: 'ClearSelected',
-					},
-				},
-			},
+			/*SelectedState: {
+		 initial: 'NoneSelected',
+		 on: {
+		 CancelSelected: {
+		 target: '.NoneSelected',
+		 cond: 'SelectedIsDefined',
+		 actions: 'ClearSelected',
+		 },
+		 },
+		 states: {
+		 EntitySelected: {
+		 entry: (ctx) => {
+		 ctx.selectedHistoryCtx.push(ctx.selected)
+		 ctx.selectedHistoryState.push('EntitySelected')
+		 },
+		 on: {
+		 ClearEntitySelected: {
+		 target: 'NoneSelected',
+		 actions: 'ClearSelected',
+		 },
+		 SelectedDifferentEntity: {
+		 actions: 'SetSelectedEntity',
+		 },
+		 SetSelectedString: {
+		 target: 'StringSelected',
+		 actions: (ctx, event) => {
+		 ctx.selected = {
+		 ...ctx.selected,
+		 selectedStringId: event.payload.stringId,
+		 }
+		 },
+		 },
+		 },
+		 },
+		 NoneSelected: {
+		 entry: (ctx) => {
+		 ctx.selectedHistoryCtx.push(ctx.selected)
+		 ctx.selectedHistoryState.push('NoneSelected')
+		 },
+		 on: {
+		 SelectedSingleEntity: {
+		 target: 'EntitySelected',
+		 actions: 'SetSelectedEntity',
+		 },
+		 SetSelectedString: {
+		 target: 'StringSelected',
+		 actions: (ctx, event) =>
+		 (ctx.selected = {
+		 ...ctx.selected,
+		 selectedStringId: event.payload.stringId,
+		 }),
+		 },
+		 SelectionBoxCompleted: {
+		 target: 'MultipleEntitiesSelected',
+		 },
+		 SetMultipleSelectedEntities: {
+		 target: 'MultipleEntitiesSelected',
+		 actions: 'SetMultipleSelectedEntities',
+		 },
+		 },
+		 },
+		 MultipleEntitiesSelected: {
+		 entry: (ctx) => {
+		 ctx.selectedHistoryCtx.push(ctx.selected)
+		 ctx.selectedHistoryState.push('MultipleEntitiesSelected')
+		 },
+		 on: {
+		 AddEntitiesToMultipleSelected: {
+		 actions: 'AddEntitiesToMultipleSelected',
+		 target: 'MultipleEntitiesSelected',
+		 },
+		 RemoveEntitiesFromMultipleSelected: {
+		 actions: 'RemoveEntitiesFromMultipleSelected',
+		 target: 'MultipleEntitiesSelected',
+		 },
+		 SetSelectedString: {
+		 target: 'StringSelected',
+		 actions: (ctx, event) => {
+		 ctx.selected = {
+		 ...ctx.selected,
+		 selectedStringId: event.payload.stringId,
+		 }
+		 },
+		 },
+		 ClearSelectedState: {
+		 target: 'NoneSelected',
+		 actions: (ctx) => (ctx.selected = InitialSelectedState),
+		 },
+		 },
+		 },
+		 StringSelected: {
+		 entry: (ctx) => {
+		 ctx.selectedHistoryCtx.push(ctx.selected)
+		 ctx.selectedHistoryState.push('StringSelected')
+		 },
+		 on: {
+		 SetMultipleSelectedEntities: {
+		 actions: 'SetMultipleSelectedEntities',
+		 },
+		 ClearStringSelected: {
+		 target: 'NoneSelected',
+		 actions: (ctx) =>
+		 (ctx.selected = {
+		 ...ctx.selected,
+		 selectedStringId: undefined,
+		 }),
+		 },
+		 SelectedStringRollbackToSingle: {
+		 target: 'EntitySelected',
+		 actions: (ctx) =>
+		 (ctx.selected = {
+		 ...ctx.selected,
+		 selectedStringId: undefined,
+		 }),
+		 },
+		 SelectedStringRollbackToMultiple: {
+		 target: 'MultipleEntitiesSelected',
+		 actions: (ctx) =>
+		 (ctx.selected = {
+		 ...ctx.selected,
+		 selectedStringId: undefined,
+		 }),
+		 },
+		 ClearSelectedState: {
+		 target: 'NoneSelected',
+		 actions: (ctx) => (ctx.selected = InitialSelectedState),
+		 },
+		 },
+		 },
+		 },
+		 },*/
 			DragBoxState: {
 				initial: 'NoDragBox',
 				states: {
 					NoDragBox: {
 						on: {
 							SelectionBoxStarted: {
-								target: 'SelectionBoxInProgress',
-								actions: 'SetSelectionBoxStart',
+								target: 'SelectionBoxInProgress', // actions: 'SetSelectionBoxStart',
 							},
 							CreationBoxStarted: {
 								target: 'CreationBoxInProgress',
@@ -574,58 +568,60 @@ export const canvasAppMachine = createMachine(
 			/**
 			 * Selected State Actions
 			 */
-			ClearSelected: (ctx) => {
-				return (ctx.selected = InitialSelectedState)
-			},
-			SetSelectedEntity: (ctx, event) => {
-				return (ctx.selected = {
-					...ctx.selected,
-					singleSelectedId: event.payload.id,
-					multipleSelectedIds: [],
-					selectedStringId: undefined,
-				})
-			},
+			/*ClearSelected: (ctx) => {
+		 return (ctx.selected = InitialSelectedState)
+		 },
+		 SetSelectedEntity: (ctx, event) => {
+		 return (ctx.selected = {
+		 ...ctx.selected,
+		 singleSelectedId: event.payload.id,
+		 multipleSelectedIds: [],
+		 selectedStringId: undefined,
+		 })
+		 },
+		 SetMultipleSelectedEntities: (ctx, event) => {
+		 const ids = event.payload.ids
+		 if (ctx.selected.singleSelectedId) {
+		 return (ctx.selected = {
+		 ...ctx.selected,
+		 multipleSelectedIds: [ctx.selected.singleSelectedId, ...ids], // selectionBoxBounds: event.payload.selectionBoxBounds,
+		 singleSelectedId: undefined,
+		 })
+		 }
+		 return (ctx.selected = {
+		 ...ctx.selected,
+		 multipleSelectedIds: ids, // selectionBoxBounds: event.payload.selectionBoxBounds,
+		 singleSelectedId: undefined,
+		 })
+		 },
+		 AddEntitiesToMultipleSelected: (ctx, event) => {
+		 return (ctx.selected = {
+		 ...ctx.selected,
+		 multipleSelectedIds: [...ctx.selected.multipleSelectedIds, ...event.payload.ids],
+		 })
+		 },
+		 RemoveEntitiesFromMultipleSelected: (ctx, { payload }) => {
+		 return (ctx.selected = {
+		 ...ctx.selected,
+		 multipleSelectedIds: ctx.selected.multipleSelectedIds.filter(
+		 (id) => !payload.ids.includes(id),
+		 ),
+		 })
+		 },*/
+
 			SetMultipleSelectedEntities: (ctx, event) => {
-				const ids = event.payload.ids
-				if (ctx.selected.singleSelectedId) {
-					return (ctx.selected = {
-						...ctx.selected,
-						multipleSelectedIds: [ctx.selected.singleSelectedId, ...ids],
-						selectionBoxBounds: event.payload.selectionBoxBounds,
-						singleSelectedId: undefined,
-					})
-				}
-				return (ctx.selected = {
-					...ctx.selected,
-					multipleSelectedIds: ids,
-					selectionBoxBounds: event.payload.selectionBoxBounds,
-					singleSelectedId: undefined,
-				})
-			},
-			AddEntitiesToMultipleSelected: (ctx, event) => {
-				return (ctx.selected = {
-					...ctx.selected,
-					multipleSelectedIds: [...ctx.selected.multipleSelectedIds, ...event.payload.ids],
-				})
-			},
-			RemoveEntitiesFromMultipleSelected: (ctx, { payload }) => {
-				return (ctx.selected = {
-					...ctx.selected,
-					multipleSelectedIds: ctx.selected.multipleSelectedIds.filter(
-						(id) => !payload.ids.includes(id),
-					),
-				})
+				throw new Error('SetMultipleSelectedEntities not implemented')
 			},
 
 			/**
 			 * Drag Box State Actions
 			 */
-			SetSelectionBoxStart: (ctx, event) => {
-				return (ctx.dragBox = {
-					...ctx.dragBox,
-					selectionBoxStart: event.payload.point,
-				})
-			},
+			/*			SetSelectionBoxStart: (ctx, event) => {
+		 return (ctx.dragBox = {
+		 ...ctx.dragBox,
+		 selectionBoxStart: event.payload.point,
+		 })
+		 },*/
 			ClearSelectionBoxStart: (ctx) => {
 				return (ctx.dragBox = {
 					...ctx.dragBox,
@@ -776,11 +772,6 @@ export const canvasAppMachine = createMachine(
 					...ctx.view,
 					draggingScreen: false,
 				})
-			},
-		},
-		guards: {
-			SelectedIsDefined: (ctx) => {
-				return !!ctx.selected.singleSelectedId || ctx.selected.multipleSelectedIds.length > 0
 			},
 		},
 	},

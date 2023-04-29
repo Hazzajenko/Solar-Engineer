@@ -2,10 +2,10 @@ import { CREATE_PREVIEW_STATE } from '../components'
 import {
 	AppStateMatchesModel,
 	AppStateSnapshot,
-	DRAG_BOX_STATE,
 	POINTER_STATE,
 	PointerHoverOverEntity,
 	PointerLeaveEntity,
+	STATE_MACHINE,
 	TO_MOVE_STATE,
 	TO_ROTATE_STATE,
 } from '../services'
@@ -14,6 +14,7 @@ import {
 	CanvasPanel,
 	createPanel,
 	createString,
+	genStringNameV2,
 	isPanel,
 	SizeByType,
 	TransformedPoint,
@@ -24,10 +25,11 @@ import {
 	changeCanvasCursor,
 	dragBoxKeysDown,
 	draggingScreenKeysDown,
+	getCompleteBoundsFromMultipleEntitiesWithPadding,
 	getTopLeftPointFromTransformedPoint,
 	isContextMenu,
 	isDraggingEntity,
-	isMenuOpen,
+	isPointInsideBounds,
 	isReadyToMultiDrag,
 	isWheelButton,
 	multiSelectDraggingKeysDown,
@@ -83,7 +85,7 @@ export class DesignCanvasWithXstateDirective
 		// const currentPoint = this._domPoint.getTransformedPointFromEvent(event)
 
 		const { GridState } = this._machine.state
-		const appSnapshot = this._machine.snapshot
+		const appSnapshot = this._machine.appSnapshot
 
 		if (isContextMenu(event)) {
 			return
@@ -119,7 +121,8 @@ export class DesignCanvasWithXstateDirective
 			return
 		}
 
-		const multipleSelectedIds = this._machine.ctx.selected.multipleSelectedIds
+		const multipleSelectedIds = this._machine.selectedCtx.multipleSelectedIds
+		// const multipleSelectedIds = this._machine.appCtx.selected.multipleSelectedIds
 		if (multiSelectDraggingKeysDown(event, multipleSelectedIds)) {
 			this._objPositioning.multiSelectDraggingMouseDown(event, multipleSelectedIds)
 			return
@@ -136,33 +139,53 @@ export class DesignCanvasWithXstateDirective
 
 	onMouseMoveHandler(event: PointerEvent, currentPoint: TransformedPoint) {
 		this.currentTransformedCursor = currentPoint
-		this.mousePos.innerText = `Original X: ${event.offsetX}, Y: ${event.offsetY}`
-		this.transformedMousePos.innerText = `Transformed X: ${this.currentTransformedCursor.x}, Y: ${this.currentTransformedCursor.y}`
+		// this.mousePos.innerText = `Original X: ${event.offsetX}, Y: ${event.offsetY}`
+		// this.transformedMousePos.innerText = `Transformed X: ${this.currentTransformedCursor.x}, Y: ${this.currentTransformedCursor.y}`
 
 		const { ToRotateState, SelectedState, ToMoveState, DragBoxState, ViewState, PointerState } =
 			this._machine.state
 		const { NearbyLinesState, CreatePreviewState } = this._graphics.state
-		const appSnapshot = this._machine.snapshot
+		const appSnapshot = this._machine.appSnapshot
 		const graphicsSnapshot = this._graphics.snapshot
 
 		// const machineState = this._machine.state
 
-		if (ToRotateState === TO_ROTATE_STATE.SINGLE_ROTATE_MODE_IN_PROGRESS) {
+		/*		if (ToRotateState === TO_ROTATE_STATE.SINGLE_ROTATE_MODE_IN_PROGRESS) {
+		 this._objRotating.rotateEntityViaMouse(event, true, currentPoint)
+		 return
+		 }*/
+
+		if (appSnapshot.matches('ToRotateState.SingleRotateModeInProgress')) {
 			this._objRotating.rotateEntityViaMouse(event, true, currentPoint)
 			return
 		}
 
-		if (ToRotateState === TO_ROTATE_STATE.SINGLE_ROTATE_IN_PROGRESS) {
+		/*		if (ToRotateState === TO_ROTATE_STATE.SINGLE_ROTATE_IN_PROGRESS) {
+		 this._objRotating.rotateEntityViaMouse(event, false, currentPoint)
+		 return
+		 }*/
+
+		if (appSnapshot.matches('ToRotateState.SingleRotateInProgress')) {
 			this._objRotating.rotateEntityViaMouse(event, false, currentPoint)
 			return
 		}
 
-		if (ToRotateState === TO_ROTATE_STATE.MULTIPLE_ROTATE_IN_PROGRESS) {
+		/*		if (ToRotateState === TO_ROTATE_STATE.MULTIPLE_ROTATE_IN_PROGRESS) {
+		 this._objRotating.rotateMultipleEntitiesViaMouse(event, currentPoint)
+		 return
+		 }*/
+
+		if (appSnapshot.matches('ToRotateState.MultipleRotateInProgress')) {
 			this._objRotating.rotateMultipleEntitiesViaMouse(event, currentPoint)
 			return
 		}
 
-		if (ToRotateState === TO_ROTATE_STATE.NO_ROTATE && rotatingKeysDown(event)) {
+		/*		if (ToRotateState === TO_ROTATE_STATE.NO_ROTATE && rotatingKeysDown(event)) {
+		 this._objRotating.handleSetEntitiesToRotate(event, currentPoint)
+		 return
+		 }*/
+
+		if (appSnapshot.matches('ToRotateState.NoRotate') && rotatingKeysDown(event)) {
 			this._objRotating.handleSetEntitiesToRotate(event, currentPoint)
 			return
 		}
@@ -173,28 +196,44 @@ export class DesignCanvasWithXstateDirective
 			return
 		}
 
-		if (DragBoxState === DRAG_BOX_STATE.SELECTION_BOX_IN_PROGRESS) {
+		if (appSnapshot.matches('DragBoxState.SelectionBoxInProgress')) {
 			this._drag.selectionBoxMouseMove(event, currentPoint)
 			return
 		}
 
-		if (DragBoxState === DRAG_BOX_STATE.CREATION_BOX_IN_PROGRESS) {
+		/*		if (DragBoxState === DRAG_BOX_STATE.SELECTION_BOX_IN_PROGRESS) {
+		 this._drag.selectionBoxMouseMove(event, currentPoint)
+		 return
+		 }*/
+
+		/*		if (DragBoxState === DRAG_BOX_STATE.CREATION_BOX_IN_PROGRESS) {
+		 this._drag.creationBoxMouseMove(event, currentPoint)
+		 return
+		 }*/
+
+		if (appSnapshot.matches('DragBoxState.CreationBoxInProgress')) {
 			this._drag.creationBoxMouseMove(event, currentPoint)
 			return
 		}
 
-		const dragBoxAxisLineStart = this._machine.ctx.dragBox.axisLineBoxStart
+		const dragBoxAxisLineStart = this._machine.appCtx.dragBox.axisLineBoxStart
 		if (dragBoxAxisLineStart) {
 			this._drag.dragAxisLineMouseMove(event, currentPoint, dragBoxAxisLineStart)
 			return
 		}
 
-		if (ToMoveState === TO_MOVE_STATE.MULTIPLE_MOVE_IN_PROGRESS) {
+		/*		if (ToMoveState === TO_MOVE_STATE.MULTIPLE_MOVE_IN_PROGRESS) {
+		 this._objPositioning.multiSelectDraggingMouseMove(event)
+		 return
+		 }*/
+
+		if (appSnapshot.matches('ToMoveState.MultipleMoveInProgress')) {
 			this._objPositioning.multiSelectDraggingMouseMove(event)
 			return
 		}
 
-		const multipleSelectedIds = this._machine.ctx.selected.multipleSelectedIds
+		const multipleSelectedIds = this._machine.selectedCtx.multipleSelectedIds
+		// const multipleSelectedIds = this._machine.appCtx.selected.multipleSelectedIds
 		if (multiSelectDraggingKeysDown(event, multipleSelectedIds)) {
 			this._objPositioning.setMultiSelectDraggingMouseMove(event, multipleSelectedIds)
 			return
@@ -230,7 +269,12 @@ export class DesignCanvasWithXstateDirective
 			return
 		}
 
-		if (ToMoveState === TO_MOVE_STATE.SINGLE_MOVE_IN_PROGRESS) {
+		/*		if (ToMoveState === TO_MOVE_STATE.SINGLE_MOVE_IN_PROGRESS) {
+		 this._objPositioning.singleToMoveMouseMove(event, currentPoint, appSnapshot, graphicsSnapshot)
+		 return
+		 }*/
+
+		if (appSnapshot.matches('ToMoveState.SingleMoveInProgress')) {
 			this._objPositioning.singleToMoveMouseMove(event, currentPoint, appSnapshot, graphicsSnapshot)
 			return
 		}
@@ -250,7 +294,7 @@ export class DesignCanvasWithXstateDirective
 
 		const entityUnderMouse = this.getEntityUnderMouse(event)
 		if (entityUnderMouse) {
-			const hoveringEntityId = this._machine.ctx.pointer.hoveringEntityId
+			const hoveringEntityId = this._machine.appCtx.pointer.hoveringEntityId
 			if (hoveringEntityId === entityUnderMouse.id) return
 			this._machine.sendEvent(
 				new PointerHoverOverEntity({ id: entityUnderMouse.id, point: currentPoint }),
@@ -292,7 +336,7 @@ export class DesignCanvasWithXstateDirective
 		// const state = state
 		// state
 		const { DragBoxState, ToMoveState, ViewState } = state
-		const snapshot = this._machine.snapshot
+		const snapshot = this._machine.appSnapshot
 		const matches = snapshot.matches
 		// const matches = this._machine.matches
 
@@ -331,17 +375,27 @@ export class DesignCanvasWithXstateDirective
 		 return
 		 }*/
 
-		if (DragBoxState === DRAG_BOX_STATE.SELECTION_BOX_IN_PROGRESS) {
+		if (snapshot.matches('DragBoxState.SelectionBoxInProgress')) {
 			this._drag.selectionBoxMouseUp(event, currentPoint)
 			return
 		}
 
-		if (DragBoxState === DRAG_BOX_STATE.CREATION_BOX_IN_PROGRESS) {
+		if (snapshot.matches('DragBoxState.CreationBoxInProgress')) {
 			this._drag.creationBoxMouseUp(event, currentPoint)
 			return
 		}
 
-		if (matches('ToMoveState.SingleMoveInProgress')) {
+		/*		if (DragBoxState === DRAG_BOX_STATE.SELECTION_BOX_IN_PROGRESS) {
+		 this._drag.selectionBoxMouseUp(event, currentPoint)
+		 return
+		 }
+
+		 if (DragBoxState === DRAG_BOX_STATE.CREATION_BOX_IN_PROGRESS) {
+		 this._drag.creationBoxMouseUp(event, currentPoint)
+		 return
+		 }*/
+
+		if (snapshot.matches('ToMoveState.SingleMoveInProgress')) {
 			this._objPositioning.singleToMoveMouseUp(event, currentPoint)
 			return
 		}
@@ -351,10 +405,14 @@ export class DesignCanvasWithXstateDirective
 		 return
 		 }*/
 
-		if (ToMoveState === TO_MOVE_STATE.MULTIPLE_MOVE_IN_PROGRESS) {
+		if (snapshot.matches('ToMoveState.MultipleMoveInProgress')) {
 			this._objPositioning.stopMultiSelectDragging(event)
 			return
 		}
+		/*		if (ToMoveState === TO_MOVE_STATE.MULTIPLE_MOVE_IN_PROGRESS) {
+		 this._objPositioning.stopMultiSelectDragging(event)
+		 return
+		 }*/
 
 		this._render.drawCanvas()
 	}
@@ -382,10 +440,10 @@ export class DesignCanvasWithXstateDirective
 			return
 		}
 
-		if (isMenuOpen(this.menu)) {
-			this.menu.style.display = 'none'
-			return
-		}
+		/*		if (isMenuOpen(this.menu)) {
+		 this.menu.style.display = 'none'
+		 return
+		 }*/
 
 		const { ToMoveState, ToRotateState } = state
 
@@ -441,9 +499,11 @@ export class DesignCanvasWithXstateDirective
 		)
 		// const isStringSelected = !!this._state.selected.selectedStringId
 		// const isStringSelected = !!this._selected.selectedStringId
-		const entity = this._machine.ctx.selected.selectedStringId
-			? // const entity = this._state.selected.selectedStringId
-			  createPanel(location, this._machine.ctx.selected.selectedStringId)
+		const selectedStringId = this._machine.selectedCtx.selectedStringId
+		const entity = selectedStringId
+			? // const entity = this._machine.appCtx.selected.selectedStringId
+			  // const entity = this._state.selected.selectedStringId
+			  createPanel(location, selectedStringId)
 			: createPanel(location)
 		this._state.entities.canvasEntities.addEntity(entity)
 
@@ -468,10 +528,14 @@ export class DesignCanvasWithXstateDirective
 				.find((string) => string.id === entityUnderMouse.stringId)
 
 			assertNotNull(belongsToString, 'string not found')
-			this._machine.sendEvent({
+			this._machine.sendStateEvent(STATE_MACHINE.SELECTED, {
 				type: 'SetSelectedString',
 				payload: { stringId: belongsToString.id },
 			})
+			/*			this._machine.sendEvent({
+			 type: 'SetSelectedString',
+			 payload: { stringId: belongsToString.id },
+			 })*/
 		}
 	}
 
@@ -482,6 +546,11 @@ export class DesignCanvasWithXstateDirective
 	 */
 
 	wheelScrollHandler(event: WheelEvent) {
+		const appSnapshot = this._machine.appSnapshot
+		if (appSnapshot.matches('ViewState.ContextMenuState.ContextMenuOpen')) {
+			this._machine.sendEvent({ type: 'CloseContextMenu' })
+		}
+
 		const currentScaleX = this.ctx.getTransform().a
 
 		const zoom = event.deltaY < 0 ? 1.1 : 0.9
@@ -499,10 +568,14 @@ export class DesignCanvasWithXstateDirective
 	/**
 	 * Context Menu handler
 	 * @param event
+	 * @param currentPoint
 	 * @private
 	 */
 
-	contextMenuHandler(event: PointerEvent) {
+	contextMenuHandler(event: PointerEvent, currentPoint: TransformedPoint) {
+		// const appSnapshot = this._machine.appSnapshot
+		const selectedSnapshot = this._machine.selectedSnapshot
+
 		const entityUnderMouse = this.getEntityUnderMouse(event)
 		if (entityUnderMouse) {
 			const x = event.offsetX + entityUnderMouse.width / 2
@@ -511,11 +584,30 @@ export class DesignCanvasWithXstateDirective
 				type: 'OpenContextMenu',
 				payload: {
 					id: entityUnderMouse.id,
-					type: entityUnderMouse.type,
+					type: 'SingleEntity',
 					x,
 					y,
 				},
 			})
+		}
+
+		if (selectedSnapshot.matches('EntitySelectedState.EntitiesSelected')) {
+			const panelsInArea = this._state.entities.canvasEntities.getEntitiesByIds(
+				this._machine.selectedCtx.multipleSelectedIds, // this._machine.appCtx.selected.multipleSelectedIds,
+			)
+			const selectionBoxBounds = getCompleteBoundsFromMultipleEntitiesWithPadding(panelsInArea, 10)
+			const clickInBounds = isPointInsideBounds(currentPoint, selectionBoxBounds)
+			if (clickInBounds) {
+				this._machine.sendEvent({
+					type: 'OpenContextMenu',
+					payload: {
+						id: 'multiple',
+						type: 'MultipleEntities',
+						x: event.offsetX,
+						y: event.offsetY,
+					},
+				})
+			}
 		}
 	}
 
@@ -533,10 +625,12 @@ export class DesignCanvasWithXstateDirective
 				break
 			case KEYS.X:
 				{
-					const multipleSelectedIds = this._machine.ctx.selected.multipleSelectedIds
+					const multipleSelectedIds = this._machine.selectedCtx.multipleSelectedIds
+					// const multipleSelectedIds = this._machine.appCtx.selected.multipleSelectedIds
 					// const multipleSelectedIds = this._state.selected.multipleSelectedIds
 					if (multipleSelectedIds.length <= 1) return
-					const string = createString()
+					const name = genStringNameV2(this._state.entities.canvasStrings.getEntities())
+					const string = createString(name)
 
 					const entities = this._state.entities.canvasEntities.getEntitiesByIds(multipleSelectedIds)
 					const panels = entities.filter((entity) => entity.type === 'panel') as CanvasPanel[]

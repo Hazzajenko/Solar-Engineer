@@ -115,6 +115,79 @@ export type AppStateMatchesModel = {
 				ViewPositioningState?: 'ViewDraggingInProgress' | 'ViewNotMoving'
 		  }
 }
+
+/*type ExtractRecord<T> = T extends Record<string, infer U> ? U : never
+ type AppRecords = ExtractRecord<AppStateMatchesModel>
+ type AppRecords2 = ExtractRecord<AppStateMatches>
+ const asdas2312: AppRecords2 = {
+ ViewPositioningState: 'ViewDraggingInProgress',
+ }
+ const asdas: AppRecords = {
+ ViewPositioningState: 'ViewDraggingInProgress',
+ }
+ type ExtendsRecord = AppStateMatchesModel extends Record<string, any> ? true : false
+
+ type test1 = {
+ DragBoxState?: 'CreationBoxInProgress' | 'NoDragBox' | 'SelectionBoxInProgress'
+ }
+
+ type test1extends = test1 extends Record<string, object> ? true : false
+ type ExtractRecordObjects<T> = T extends Record<string, object> ? T : never
+ const test2:  ExtractRecordObjects<AppStateMatches> = {
+ ViewState: 'ContextMenuState',
+ }
+
+ type AllSelectedEventsWithPayload = Extract<
+ AppStateMatches,
+ object | Record<string, object>
+ >
+ const test3: AllSelectedEventsWithPayload = {
+ ViewState: 'ContextMenuState',
+ GridState: 'ModeState',
+ }
+ const test4: Required<AllSelectedEventsWithPayload> = {
+ ViewState: 'ContextMenuState',
+ GridState: 'ModeState',
+ ToRotateState: 'NoRotate',
+ ToMoveState: 'NoMove',
+ PointerState: 'PointerUp',
+ DragBoxState: 'NoDragBox',
+ SelectedState: 'NoneSelected',
+ }
+ // const test6: Required<AllSelectedEventsWithPayload> = 'ViewState'
+ type AllSelectedEventsWithPayload2 = Extract<
+ AppStateMatches,
+ Record<string, object>
+ >
+
+ type testtyy = {
+ ViewState?:
+ | 'ContextMenuState'
+ | 'ViewPositioningState'
+ | {
+ ContextMenuState?: 'ContextMenuOpen' | 'NoContextMenu'
+ ViewPositioningState?: 'ViewDraggingInProgress' | 'ViewNotMoving'
+ }
+ }
+
+ type testtyy2 = testtyy extends Record<string, object> ? true : false
+ type testtyy3 = testtyy extends Record<string, any> ? true : false
+ type testtyy4 = testtyy extends Record<string, unknown> ? true : false
+ type testtyy5 = testtyy extends Record<string, never> ? true : false
+ type testtyy6 = Extract<testtyy, object>
+ const ttttt: testtyy6 = {
+ ViewState: {
+ ViewPositioningState: 'ViewDraggingInProgress',
+ ContextMenuState: 'ContextMenuOpen',
+ },
+ }
+ type testtyy7 = Extract<testtyy, Record<string, object>>
+
+ type testtyy8 = Extract<testtyy, Record<string, any>>
+ const tttttss: testtyy8 = {
+ ViewState: 'ViewPositioningState',
+ }*/
+// const test4: AllSelectedEventsWithPayload2 = '0CF19D'
 /*export const InitialAppStateMatches: AppStateMatches = {
  DragBoxState: DRAG_BOX_STATE.NO_DRAG_BOX,
  PointerState: POINTER_STATE.POINTER_UP,

@@ -22,4 +22,6 @@ const asdsa: GraphicsSettingsState = {
 
 export type GraphicsStateMatches = Typegen0['matchesStates']
 
+// type GraphicsStateMatches2 =
+
 // const hello: GraphicsStateMatches = 'NearbyLinesState.NearbyLinesDisabled'

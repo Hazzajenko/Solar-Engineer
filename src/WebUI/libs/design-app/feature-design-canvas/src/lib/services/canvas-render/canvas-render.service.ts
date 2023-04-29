@@ -11,6 +11,7 @@ import {
 	CanvasClientStateService,
 	MachineService,
 } from '../canvas-client-state'
+import { SelectedStateSnapshot } from '../canvas-client-state/+xstate/selected-state.machine'
 import { CanvasElementService } from '../canvas-element.service'
 import { DIV_ELEMENT, DivElementsService } from '../div-elements'
 import { DomPointService } from '../dom-point.service'
@@ -92,6 +93,7 @@ export class CanvasRenderService {
 	}
 
 	drawCanvas(entities?: CanvasEntity[]) {
+		const { selectedSnapshot } = this._machine.allSnapshots
 		this.render((ctx) => {
 			ctx.save()
 			ctx.setTransform(1, 0, 0, 1, 0, 0)
@@ -102,15 +104,24 @@ export class CanvasRenderService {
 			entities = entities || this._state.entities.canvasEntities.getEntities()
 			// const entities = this._state.entities.canvasEntities.getEntities()
 			entities.forEach((entity) => {
-				this.drawEntity(entity)
+				this.drawEntityV2(entity, selectedSnapshot)
 			})
 			ctx.restore()
-			if (this._machine.matches('SelectedState.MultipleEntitiesSelected')) {
+
+			if (selectedSnapshot.matches('EntitySelectedState.EntitiesSelected')) {
 				this.drawSelectedBox()
 			}
-			if (this._machine.matches('SelectedState.StringSelected')) {
+			if (selectedSnapshot.matches('StringSelectedState.StringSelected')) {
 				this.drawSelectedStringBox()
+				this.drawSelectedBox()
 			}
+			/*			if (this._machine.matches('SelectedState.MultipleEntitiesSelected')) {
+			 this.drawSelectedBox()
+			 }
+			 if (this._machine.matches('SelectedState.StringSelected')) {
+			 this.drawSelectedStringBox()
+			 this.drawSelectedBox()
+			 }*/
 		})
 	}
 
@@ -123,7 +134,7 @@ export class CanvasRenderService {
 		 }*/
 
 		const panelsInArea = this._state.entities.canvasEntities.getEntitiesByIds(
-			this._machine.ctx.selected.multipleSelectedIds,
+			this._machine.selectedCtx.multipleSelectedIds, // this._machine.appCtx.selected.multipleSelectedIds,
 		)
 		const selectionBoxBounds = getCompleteBoundsFromMultipleEntitiesWithPadding(panelsInArea, 10)
 
@@ -139,7 +150,8 @@ export class CanvasRenderService {
 	}
 
 	drawSelectedStringBox() {
-		const selectedStringId = this._machine.ctx.selected.selectedStringId
+		const selectedStringId = this._machine.selectedCtx.selectedStringId
+		// const selectedStringId = this._machine.appCtx.selected.selectedStringId
 		assertNotNull(selectedStringId)
 		const string = this._state.entities.canvasStrings.getEntityById(selectedStringId)
 		assertNotNull(string)
@@ -161,7 +173,8 @@ export class CanvasRenderService {
 		// this.ctx.font = '10px Helvetica, sans-serif'
 		// this.ctx.font = '10px Cascadia Code, sans-serif'
 		this.ctx.font = '10px Consolas, sans-serif'
-		const text = `String ${string.name} || ${selectedStringPanels.length} panels`
+		const text = `${string.name} || ${selectedStringPanels.length} panels`
+		// const text = `String ${string.name} || ${selectedStringPanels.length} panels`
 		// const measure = this.ctx.measureText(text)
 		// console.log(measure)
 		this.ctx.fillStyle = 'black'
@@ -251,7 +264,7 @@ export class CanvasRenderService {
 	}
 
 	drawDragBox(event: PointerEvent) {
-		const start = this._machine.ctx.dragBox.selectionBoxStart
+		const start = this._machine.appCtx.dragBox.selectionBoxStart
 		// const start = this._state.state.dragBox.dragBoxStart
 		if (!start) {
 			console.log('drawDragBox', 'no start')
@@ -301,40 +314,175 @@ export class CanvasRenderService {
 	}
 
 	private drawEntity(entity: CanvasEntity) {
+		/*if (!isPanel(entity)) return
+		 let fillStyle: string = CANVAS_COLORS.DefaultPanelFillStyle
+		 let strokeStyle: string = PANEL_STROKE_STYLE.DEFAULT
+		 const { toRotate } = this._state.state
+		 const { toMove, selected, pointer } = this._machine.appCtx
+		 // const isBeingHovered = canvasAppXStateService.getSnapshot().context.selected
+		 // const isBeingHovered = canvasAppXStateService.getSnapshot().matches('DragBoxState.DragBoxInProgress')
+
+		 /!*			const inSingleSelectedState = canvasAppXStateService
+		 .getSnapshot()
+		 .matches('SelectedState.EntitySelected')*!/
+		 const isSingleSelected = selected.singleSelectedId === entity.id
+
+		 // const isSingleSelected = !!selected.singleSelectedId && selected.singleSelectedId === entity.id
+
+		 // if (isSingleSelected) {
+		 if (isSingleSelected) {
+		 fillStyle = CANVAS_COLORS.SelectedPanelFillStyle
+		 }
+
+		 const isMultiSelected = selected.multipleSelectedIds.includes(entity.id)
+
+		 if (isMultiSelected) {
+		 fillStyle = CANVAS_COLORS.MultiSelectedPanelFillStyle
+		 }
+
+		 // if (isPanel(entity)) {
+		 const isStringSelected = selected.selectedStringId === entity.stringId
+		 if (isStringSelected && selected.selectedStringId && entity.stringId) {
+		 fillStyle = CANVAS_COLORS.StringSelectedPanelFillStyle
+		 if (isSingleSelected) {
+		 strokeStyle = PANEL_STROKE_STYLE.SINGLE_SELECTED_STRING_SELECTED
+		 }
+		 }
+		 // }
+
+		 const multipleToRotate = toRotate.multipleToRotate
+		 const isInMultiRotate = !!multipleToRotate && multipleToRotate.ids.includes(entity.id)
+		 if (isInMultiRotate) {
+		 this.handleMultipleRotationDraw(entity)
+		 return
+		 }
+
+		 const isInSingleRotate = !!toRotate.singleToRotate && toRotate.singleToRotate.id === entity.id
+		 if (isInSingleRotate) {
+		 this.handleSingleRotationDraw(entity)
+		 return
+		 }
+
+		 // const currentState = this._machine.snapshot.value
+
+		 /!*		if (isSingleDragging(entity, toMove.singleToMove)) {
+		 this.handleDraggingEntityDraw(entity, toMove.singleToMove)
+		 return
+		 }
+
+		 if (this._machine.snapshot.matches('ToMoveState.SingleMoveInProgress')) {
+		 this.handleDraggingEntityDraw(entity, toMove.singleToMove)
+		 return
+		 }*!/
+		 /!*		if (currentState === 'DragBoxState.DragBoxInProgress') {
+		 this.handleMultipleMoveDraw(entity, toMove.multipleToMove)
+		 return
+		 }*!/
+
+		 /!*		if (isMultipleDragging(entity, toMove.multipleToMove)) {
+		 this.handleMultipleMoveDraw(entity, toMove.multipleToMove)
+		 return
+		 }*!/
+
+		 const isBeingHovered = !!pointer.hoveringEntityId && pointer.hoveringEntityId === entity.id
+		 // const isBeingHovered = !!hover.hoveringEntityId && hover.hoveringEntityId === entity.id
+		 if (isBeingHovered) {
+		 fillStyle = '#17fff3'
+		 if (isStringSelected) {
+		 fillStyle = shadeColor(CANVAS_COLORS.StringSelectedPanelFillStyle, 50)
+		 }
+		 }
+
+		 /!*		const nearbyEntityIds = this._state.nearby.ids
+		 const isNearby = nearbyEntityIds.includes(entity.id)
+		 if (isNearby) {
+		 fillStyle = CANVAS_COLORS.NearbyPanelFillStyle
+		 }*!/
+
+		 this.ctx.save()
+		 this.ctx.fillStyle = fillStyle
+		 this.ctx.strokeStyle = strokeStyle
+		 this.ctx.translate(entity.location.x + entity.width / 2, entity.location.y + entity.height / 2)
+		 this.ctx.rotate(entity.angle)
+		 this.ctx.beginPath()
+		 this.ctx.rect(-entity.width / 2, -entity.height / 2, entity.width, entity.height)
+		 this.ctx.fill()
+		 this.ctx.stroke()
+		 this.ctx.restore()*/
+	}
+
+	private drawEntityV2(entity: CanvasEntity, selectedSnapshot: SelectedStateSnapshot) {
 		if (!isPanel(entity)) return
 		let fillStyle: string = CANVAS_COLORS.DefaultPanelFillStyle
-		let strokeStyle: string = PANEL_STROKE_STYLE.DEFAULT
+		const strokeStyle: string = PANEL_STROKE_STYLE.DEFAULT
 		const { toRotate } = this._state.state
-		const { toMove, selected, pointer } = this._machine.ctx
+		const { toMove, pointer } = this._machine.appCtx
 		// const isBeingHovered = canvasAppXStateService.getSnapshot().context.selected
 		// const isBeingHovered = canvasAppXStateService.getSnapshot().matches('DragBoxState.DragBoxInProgress')
 
 		/*			const inSingleSelectedState = canvasAppXStateService
 		 .getSnapshot()
 		 .matches('SelectedState.EntitySelected')*/
-		const isSingleSelected = selected.singleSelectedId === entity.id
+		/*		const isSingleSelected = selected.singleSelectedId === entity.id
 
-		// const isSingleSelected = !!selected.singleSelectedId && selected.singleSelectedId === entity.id
+		 // const isSingleSelected = !!selected.singleSelectedId && selected.singleSelectedId === entity.id
 
-		// if (isSingleSelected) {
-		if (isSingleSelected) {
+		 // if (isSingleSelected) {
+		 if (isSingleSelected) {
+		 fillStyle = CANVAS_COLORS.SelectedPanelFillStyle
+		 }*/
+
+		const isSelected =
+			selectedSnapshot.matches('EntitySelectedState.EntitiesSelected') &&
+			selectedSnapshot.context.multipleSelectedIds.includes(entity.id)
+		if (isSelected) {
 			fillStyle = CANVAS_COLORS.SelectedPanelFillStyle
 		}
+		/*		isSelected ? fillStyle = CANVAS_COLORS.SelectedPanelFillStyle : fillStyle = CANVAS_COLORS.DefaultPanelFillStyle
+		 if (selectedSnapshot.matches('EntitySelectedState.EntitiesSelected')) {
+		 const isSelected = selectedSnapshot.context.multipleSelectedIds.includes(entity.id)
+		 if (isSelected) {
+		 fillStyle = CANVAS_COLORS.SelectedPanelFillStyle
+		 }
+		 }*/ /* else if (selectedSnapshot.matches('EntitySelectedState.EntitySelected')) {
+		 if (selectedSnapshot.context.selectedId === entity.id) {
+		 fillStyle = CANVAS_COLORS.SelectedPanelFillStyle
+		 }
+		 }*/
 
-		const isMultiSelected = selected.multipleSelectedIds.includes(entity.id)
+		/*		const isMultiSelected = selected.multipleSelectedIds.includes(entity.id)
 
-		if (isMultiSelected) {
-			fillStyle = CANVAS_COLORS.MultiSelectedPanelFillStyle
-		}
+		 if (isMultiSelected) {
+		 fillStyle = CANVAS_COLORS.MultiSelectedPanelFillStyle
+		 }*/
 
 		// if (isPanel(entity)) {
-		const isStringSelected = selected.selectedStringId === entity.stringId
-		if (isStringSelected && selected.selectedStringId && entity.stringId) {
+		const isStringSelected =
+			selectedSnapshot.matches('StringSelectedState.StringSelected') &&
+			selectedSnapshot.context.selectedStringId === entity.stringId
+		if (isStringSelected) {
 			fillStyle = CANVAS_COLORS.StringSelectedPanelFillStyle
-			if (isSingleSelected) {
-				strokeStyle = PANEL_STROKE_STYLE.SINGLE_SELECTED_STRING_SELECTED
-			}
+			// TODO - looks weird
+			/*			if (isSelected) {
+			 strokeStyle = PANEL_STROKE_STYLE.SINGLE_SELECTED_STRING_SELECTED
+			 }*/
 		}
+		/*		if (selectedSnapshot.matches('StringSelectedState.StringSelected')) {
+		 const isStringSelected = selectedSnapshot.context.selectedStringId === entity.stringId
+		 if (isStringSelected && selectedSnapshot.context.selectedStringId && entity.stringId) {
+		 fillStyle = CANVAS_COLORS.StringSelectedPanelFillStyle
+		 if (isSelected) {
+		 strokeStyle = PANEL_STROKE_STYLE.SINGLE_SELECTED_STRING_SELECTED
+		 }
+		 }
+		 }*/
+		/*		const isStringSelected = selected.selectedStringId === entity.stringId
+		 if (isStringSelected && selected.selectedStringId && entity.stringId) {
+		 fillStyle = CANVAS_COLORS.StringSelectedPanelFillStyle
+		 if (isSingleSelected) {
+		 strokeStyle = PANEL_STROKE_STYLE.SINGLE_SELECTED_STRING_SELECTED
+		 }
+		 }*/
 		// }
 
 		const multipleToRotate = toRotate.multipleToRotate
@@ -468,6 +616,7 @@ export class CanvasRenderService {
 	}
 
 	private defaultDrawCanvasFn(entities?: CanvasEntity[]) {
+		const { selectedSnapshot } = this._machine.allSnapshots
 		return (ctx: CanvasRenderingContext2D) => {
 			ctx.save()
 			ctx.setTransform(1, 0, 0, 1, 0, 0)
@@ -477,14 +626,26 @@ export class CanvasRenderService {
 			ctx.beginPath()
 			entities = entities || this._state.entities.canvasEntities.getEntities()
 			entities.forEach((entity) => {
-				this.drawEntity(entity)
+				this.drawEntityV2(entity, selectedSnapshot)
+				// this.drawEntity(entity)
 			})
 			ctx.restore()
 			ctx.save()
-			if (this._machine.matches('SelectedState.MultipleEntitiesSelected')) {
-				console.log('multiple entities selected')
+			if (selectedSnapshot.matches('EntitySelectedState.EntitiesSelected')) {
 				this.drawSelectedBox()
 			}
+
+			if (selectedSnapshot.matches('StringSelectedState.StringSelected')) {
+				this.drawSelectedStringBox()
+				this.drawSelectedBox()
+			}
+			/*			if (this._machine.selectedSnapshot.matches('EntitySelectedState.EntitiesSelected')) {
+			 this.drawSelectedBox()
+			 }*/
+			/*			if (this._machine.matches('SelectedState.MultipleEntitiesSelected')) {
+			 console.log('multiple entities selected')
+			 this.drawSelectedBox()
+			 }*/
 			ctx.restore()
 		}
 	}

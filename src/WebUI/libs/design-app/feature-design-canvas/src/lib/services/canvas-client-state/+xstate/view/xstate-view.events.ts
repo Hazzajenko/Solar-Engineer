@@ -7,8 +7,8 @@
  readonly type = 'StopViewDragging'
  readonly payload = null
  }*/
-import { EntityType } from '@design-app/shared';
 
+import { ContextMenuType } from './xstate-view.state'
 
 export type StartViewDragging = {
 	type: 'StartViewDragging'
@@ -24,7 +24,7 @@ export type OpenContextMenu = {
 		x: number
 		y: number
 		id: string
-		type: EntityType
+		type: ContextMenuType
 	}
 }
 

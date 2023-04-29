@@ -60,10 +60,12 @@ export class DragBoxXstateService {
 
 		switch (true) {
 			case appStateSnapshot.matches('GridState.ModeState.SelectMode'):
-				this._machine.sendEvent(new SelectionBoxStarted({ point: currentPoint }))
+				this._machine.sendEvent({ type: 'SelectionBoxStarted' })
+				// this._machine.sendEvent(new SelectionBoxStarted({ point: currentPoint }))
 				break
 			case appStateSnapshot.matches('GridState.ModeState.CreateMode'):
-				this._machine.sendEvent(new CreationBoxStarted())
+				this._machine.sendEvent({ type: 'CreationBoxStarted' })
+				// this._machine.sendEvent(new CreationBoxStarted())
 				break
 		}
 		/*		if (appStateSnapshot.matches('GridState.ModeState.CreateMode')) {
@@ -119,7 +121,12 @@ export class DragBoxXstateService {
 			// const boundsFromPoints = getCompleteBoundsFromBoundsArray(panelPoints)
 			// const boundsFromPoints = getCompleteBoundsFromPoints(panelPoints)
 			this._machine.sendEvent(
-				new SelectionBoxCompleted({ ids: entitiesInAreaIds, selectionBoxBounds: boundsFromPoints }),
+				{
+					type: 'SelectionBoxCompleted',
+					payload: { ids: entitiesInAreaIds, selectionBoxBounds: boundsFromPoints },
+				},
+
+				// new SelectionBoxCompleted({ ids: entitiesInAreaIds, selectionBoxBounds: boundsFromPoints }),
 			)
 
 			/*			this._render.drawCanvasWithFunctionInAnimationFrame((ctx) => {
@@ -138,7 +145,8 @@ export class DragBoxXstateService {
 			 })*/
 			console.log('boundsFromPoints', boundsFromPoints)
 		} else {
-			this._machine.sendEvent(new StopDragBox())
+			this._machine.sendEvent({ type: 'StopDragBox' })
+			// this._machine.sendEvent(new StopDragBox())
 		}
 		this.dragBoxStart = undefined
 	}
@@ -168,12 +176,14 @@ export class DragBoxXstateService {
 		 },
 		 })*/
 		this._state.entities.canvasEntities.addManyEntities(newPanels)
-		this._machine.sendEvent(new StopDragBox())
+		this._machine.sendEvent({ type: 'StopDragBox' })
+		// this._machine.sendEvent(new StopDragBox())
 	}
 
 	selectionBoxMouseMove(event: PointerEvent, currentPoint: TransformedPoint) {
 		if (!dragBoxKeysDown(event)) {
-			this._machine.sendEvent(new StopDragBox())
+			this._machine.sendEvent({ type: 'StopDragBox' })
+			// this._machine.sendEvent(new StopDragBox())
 			changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
 			this._render.drawCanvas()
 			return
@@ -201,7 +211,8 @@ export class DragBoxXstateService {
 
 	creationBoxMouseMove(event: PointerEvent, currentPoint: TransformedPoint) {
 		if (!dragBoxKeysDown(event)) {
-			this._machine.sendEvent(new StopDragBox())
+			this._machine.sendEvent({ type: 'StopDragBox' })
+			// this._machine.sendEvent(new StopDragBox())
 			changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
 			this._render.drawCanvas()
 			return
@@ -254,7 +265,8 @@ export class DragBoxXstateService {
 
 	dragBoxMouseMove(event: PointerEvent, currentPoint: TransformedPoint) {
 		if (!dragBoxKeysDown(event)) {
-			this._machine.sendEvent(new StopDragBox())
+			this._machine.sendEvent({ type: 'StopDragBox' })
+			// this._machine.sendEvent(new StopDragBox())
 			changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
 			this._render.drawCanvas()
 			return
@@ -266,7 +278,7 @@ export class DragBoxXstateService {
 		}
 
 		const drawDragBox = (ctx: CanvasRenderingContext2D) => {
-			const currentDragBox = this._machine.ctx.dragBox.currentDragBox
+			const currentDragBox = this._machine.appCtx.dragBox.currentDragBox
 
 			// const currentPoint = this._domPointService.getTransformedPointFromEvent(event)
 			const width = currentPoint.x - dragBoxStart.x

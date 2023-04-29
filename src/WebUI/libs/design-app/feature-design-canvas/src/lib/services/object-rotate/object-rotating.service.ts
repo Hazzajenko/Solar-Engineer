@@ -57,14 +57,15 @@ export class ObjectRotatingService {
 		| undefined = undefined
 
 	handleSetEntitiesToRotate(event: PointerEvent, currentPoint: TransformedPoint) {
-		const selectedId = this._machine.ctx.selected.singleSelectedId
+		const multiSelectIds = this._machine.selectedCtx.multipleSelectedIds
+		// const selectedId = this._machine.appCtx.selected.singleSelectedId
 		// const selectedId = this._state.selected.singleSelectedId
-		if (selectedId) {
+		if (multiSelectIds.length === 1) {
 			// const transformedPoint = this._domPoint.getTransformedPointFromEvent(event)
-			this.setEntityToRotate(selectedId, currentPoint)
+			this.setEntityToRotate(multiSelectIds[0], currentPoint)
 			return
 		}
-		const multiSelectIds = this._machine.ctx.selected.multipleSelectedIds
+		// const multiSelectIds = this._machine.appCtx.selected.multipleSelectedIds
 		// const multiSelectIds = this._state.selected.multipleSelectedIds
 		if (multiSelectIds.length > 1) {
 			// const transformedPoint = this._domPoint.getTransformedPointFromEvent(event)

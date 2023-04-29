@@ -7,9 +7,8 @@ import {
 	InjectClientState,
 	MachineService,
 	RemoveEntitiesFromMultipleSelected,
-	SelectedSingleEntity,
+	STATE_MACHINE,
 } from '../canvas-client-state'
-import { handleSelectedStateRollback } from './selected-rollback'
 import { inject, Injectable } from '@angular/core'
 import { assertNotNull } from '@shared/utils'
 
@@ -32,26 +31,40 @@ export class CanvasSelectedXstateService {
 	}
 
 	setSelected(selectedId: string) {
-		this._machine.sendEvent({ type: 'SelectedSingleEntity', payload: { id: selectedId } })
+		// const ev = SELECTED_EVENT_V2('SetMultipleSelectedEntities', { ids: [selectedId] })
+		// this._machine.sendEvent(SELECTED_EVENT('SetMultipleSelectedEntities', { ids: [selectedId] }))
+		this._machine.sendStateEvent(STATE_MACHINE.SELECTED, {
+			type: 'SetMultipleSelectedEntities',
+			payload: { ids: [selectedId] },
+		})
+		// this._machine.sendEvent({ type: 'SetMultipleSelectedEntities', payload: { ids: [selectedId] } })
+		// this._machine.sendEvent({ type: 'SelectedSingleEntity', payload: { id: selectedId } })
 		// this._machine.sendEvent(new SelectedSingleEntity({ id: selectedId }))
 		console.log('set selected', selectedId)
 	}
 
 	addToMultiSelected(selectedId: string) {
-		const singleSelectedId = this._machine.ctx.selected.singleSelectedId
-		if (singleSelectedId && singleSelectedId === selectedId) {
-			this._machine.sendEvent({ type: 'ClearEntitySelected' })
-			// this._machine.sendEvent(new ClearEntitySelected())
-			return
-		}
+		/*		const singleSelectedId = this._machine.selectedCtx.singleSelectedId
+		 // const singleSelectedId = this._machine.appCtx.selected.singleSelectedId
+		 if (singleSelectedId && singleSelectedId === selectedId) {
+		 this._machine.sendEvent({ type: 'ClearEntitySelected' })
+		 // this._machine.sendEvent(new ClearEntitySelected())
+		 return
+		 }*/
 
-		const multipleSelectedIds = this._machine.ctx.selected.multipleSelectedIds
+		const multipleSelectedIds = this._machine.selectedCtx.multipleSelectedIds
+		// const multipleSelectedIds = this._machine.appCtx.selected.multipleSelectedIds
 		if (multipleSelectedIds.includes(selectedId)) {
-			this._machine.sendEvent(
-				{ type: 'RemoveEntitiesFromMultipleSelected', payload: { ids: [selectedId] } },
-				/*				new AddEntitiesToMultipleSelected({
-				 ids: multipleSelectedIds.filter((id) => id !== selectedId),
-				 }),*/
+			// this._machine.sendEvent(
+			// 	{
+			this._machine.sendStateEvent(
+				STATE_MACHINE.SELECTED,
+				{
+					type: 'RemoveEntitiesFromMultipleSelected',
+					payload: { ids: [selectedId] },
+				} /*				new AddEntitiesToMultipleSelected({
+			 ids: multipleSelectedIds.filter((id) => id !== selectedId),
+			 }),*/,
 			)
 			return
 		}
@@ -60,17 +73,20 @@ export class CanvasSelectedXstateService {
 
 		const selectedEntity = this._state.entities.canvasEntities.getEntityById(selectedId)
 		assertNotNull(selectedEntity, 'selected entity not found')
-		this._machine.sendEvent(
+		// this._machine.sendEvent(
+		// 	{
+		this._machine.sendStateEvent(
+			STATE_MACHINE.SELECTED,
 			{
 				type: 'AddEntitiesToMultipleSelected',
 				payload: { ids: [...multipleSelectedIds, selectedId] },
-			},
-			// new AddEntitiesToMultipleSelected({ ids: [...multipleSelectedIds, selectedId] }),
+			}, // new AddEntitiesToMultipleSelected({ ids: [...multipleSelectedIds, selectedId] }),
 		)
 	}
 
 	removeFromMultiSelected(selected: CanvasEntity) {
-		this._machine.sendEvent({
+		// this._machine.sendEvent({
+		this._machine.sendStateEvent(STATE_MACHINE.SELECTED, {
 			type: 'RemoveEntitiesFromMultipleSelected',
 			payload: { ids: [selected.id] },
 		})
@@ -78,30 +94,37 @@ export class CanvasSelectedXstateService {
 	}
 
 	checkSelectedState(event: MouseEvent, clickedOnEntityId: string) {
-		const singleSelectedId = this._machine.ctx.selected.singleSelectedId
-		if (!singleSelectedId || (singleSelectedId !== clickedOnEntityId && !event.shiftKey)) {
-			this.clearSingleSelected()
-		}
+		/*		const singleSelectedId = this._machine.appCtx.selected.singleSelectedId
+		 if (!singleSelectedId || (singleSelectedId !== clickedOnEntityId && !event.shiftKey)) {
+		 this.clearSingleSelected()
+		 }*/
 	}
 
 	clearSingleSelected() {
-		if (this._machine.ctx.selected.singleSelectedId) {
-			this._machine.sendEvent({ type: 'ClearEntitySelected' })
-			// this._machine.sendEvent(new ClearEntitySelected())
-		}
+		/*if (this._machine.appCtx.selected.singleSelectedId) {
+		 this._machine.sendStateEvent(STATE_MACHINE.SELECTED, {
+		 type: 'ClearEntitySelected',
+		 })
+		 // this._machine.sendEvent({ type: 'ClearEntitySelected' })
+		 // this._machine.sendEvent(new ClearEntitySelected())
+		 }*/
 	}
 
 	clearSelectedState() {
-		this._machine.sendEvent({ type: 'ClearSelectedState' })
+		this._machine.sendStateEvent(STATE_MACHINE.SELECTED, {
+			type: 'ClearEntitySelected',
+		})
+		// this._machine.sendEvent({ type: 'ClearSelectedState' })
 		// this._machine.sendEvent(new CancelSelected())
 	}
 
 	clearSelectedInOrder() {
-		const snapshot = this._machine.snapshot
+		const snapshot = this._machine.appSnapshot
+		console.log('clearSelectedInOrder, snapshot', snapshot)
 
-		const res = handleSelectedStateRollback(snapshot)
-		if (!res) return
-		this._machine.sendEvent(res)
+		/*		const res = handleSelectedStateRollback(snapshot)
+		 if (!res) return
+		 this._machine.sendEvent(res)*/
 		// res ? this._machine.sendEvent(res) : () => {}
 
 		/*if (snapshot.matches('SelectedState.StringSelected')) {

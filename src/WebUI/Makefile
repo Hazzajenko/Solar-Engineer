@@ -111,3 +111,6 @@ xstate-client:
 
 xstate-graphics:
 	xstate typegen "libs/design-app/feature-design-canvas/src/lib/components/design-canvas/menus/canvas-graphics-menu/+xstate/graphics-settings.machine.ts" --watch
+
+xstate-selected:
+	xstate typegen "libs/design-app/feature-design-canvas/src/lib/services/canvas-client-state/+xstate/selected-state.machine.ts" --watch

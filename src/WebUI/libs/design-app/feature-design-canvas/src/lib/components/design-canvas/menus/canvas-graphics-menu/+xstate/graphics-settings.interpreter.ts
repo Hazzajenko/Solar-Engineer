@@ -19,8 +19,16 @@ export const graphicsSettingsInterpreter = interpret(graphicsSettingsMachine, {
 }).onTransition((state) => {
 	stateEventLoggerExcludePointerState(state)
 })
-
 export type GraphicsStateSnapshot = ReturnType<typeof graphicsSettingsInterpreter.getSnapshot>
+/*
+ const spssawn = spawn(graphicsSettingsMachine)
+ type yooo = typeof spssawn
+ export type GraphicsMachineRef = typeof spssawn
+ export type GraphicsMachineRef2 = ActorRefFrom<typeof graphicsSettingsMachine>
+ export type GraphicsStateSnapshot = ReturnType<typeof graphicsSettingsInterpreter.getSnapshot>
+ export type GraphicsStateSnapshot2 = ReturnType<
+ typeof graphicsSettingsInterpreter.spawn<typeof graphicsSettingsMachine>
+ >*/
 // .start()
 
 // graphicsSettingsInterpreter.getSnapshot().matches('NearbyLinesState.NearbyLinesEnabled.CenterLineBetweenTwoEntities')

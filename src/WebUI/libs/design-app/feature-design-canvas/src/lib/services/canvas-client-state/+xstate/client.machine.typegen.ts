@@ -13,20 +13,15 @@ export interface Typegen0 {
     services: never
   }
   eventsCausingActions: {
-    AddEntitiesToMultipleSelected: 'AddEntitiesToMultipleSelected'
     ClearDragBox: 'StopDragBox'
     ClearHoveredEntity: 'PointerLeaveEntity'
-    ClearSelected: 'CancelSelected' | 'ClearEntitySelected'
     ClearSelectionBoxStart: 'SelectionBoxCancelled' | 'SelectionBoxCompleted'
-    RemoveEntitiesFromMultipleSelected: 'RemoveEntitiesFromMultipleSelected'
     SetHoveredEntity: 'PointerHoverOverEntity'
     SetMultipleMove: 'StartMultipleMove'
     SetMultipleRotate: 'StartMultipleRotate'
     SetMultipleSelectedEntities: 'SelectionBoxCompleted'
     SetPointerDown: 'PointerDown'
     SetPointerUp: 'PointerUp'
-    SetSelectedEntity: 'SelectedDifferentEntity' | 'SelectedSingleEntity'
-    SetSelectionBoxStart: 'SelectionBoxStarted'
     SetSingleMove: 'StartSingleMove'
     SetSingleRotate: 'StartSingleRotate'
     SetSingleRotateMode: 'StartSingleRotateMode'
@@ -39,9 +34,7 @@ export interface Typegen0 {
     StopViewDragging: 'StopViewDragging'
   }
   eventsCausingDelays: {}
-  eventsCausingGuards: {
-    SelectedIsDefined: 'CancelSelected'
-  }
+  eventsCausingGuards: {}
   eventsCausingServices: {}
   matchesStates:
     | 'DragBoxState'
@@ -60,11 +53,6 @@ export interface Typegen0 {
     | 'PointerState.HoveringOverEntity'
     | 'PointerState.PointerIsDown'
     | 'PointerState.PointerUp'
-    | 'SelectedState'
-    | 'SelectedState.EntitySelected'
-    | 'SelectedState.MultipleEntitiesSelected'
-    | 'SelectedState.NoneSelected'
-    | 'SelectedState.StringSelected'
     | 'ToMoveState'
     | 'ToMoveState.MultipleMoveInProgress'
     | 'ToMoveState.NoMove'
@@ -94,11 +82,6 @@ export interface Typegen0 {
                 | 'None'
             }
         PointerState?: 'HoveringOverEntity' | 'PointerIsDown' | 'PointerUp'
-        SelectedState?:
-          | 'EntitySelected'
-          | 'MultipleEntitiesSelected'
-          | 'NoneSelected'
-          | 'StringSelected'
         ToMoveState?: 'MultipleMoveInProgress' | 'NoMove' | 'SingleMoveInProgress'
         ToRotateState?:
           | 'MultipleRotateInProgress'

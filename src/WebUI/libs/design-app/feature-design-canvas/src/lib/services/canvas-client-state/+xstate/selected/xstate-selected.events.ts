@@ -1,15 +1,3 @@
-/*
- export class ClearEntitySelected {
- readonly type = 'ClearEntitySelected'
- readonly payload = null
- }
-
- export class CancelSelected {
- readonly type = 'CancelSelected'
- readonly payload = null
- }
- */
-
 export type ClearEntitySelected = {
 	type: 'ClearEntitySelected'
 }
@@ -18,32 +6,12 @@ export type CancelSelected = {
 	type: 'CancelSelected'
 }
 
-/*export class SelectedSingleEntity {
- readonly type = 'SelectedSingleEntity'
-
- constructor(
- public readonly payload: {
- id: string
- },
- ) {}
- }*/
-
 export type SelectedSingleEntity = {
 	type: 'SelectedSingleEntity'
 	payload: {
 		id: string
 	}
 }
-
-/*export class SetMultipleSelectedEntities {
- readonly type = 'SetMultipleSelectedEntities'
-
- constructor(
- public readonly payload: {
- ids: string[]
- },
- ) {}
- }*/
 
 export type SetMultipleSelectedEntities = {
 	type: 'SetMultipleSelectedEntities'
@@ -52,16 +20,6 @@ export type SetMultipleSelectedEntities = {
 	}
 }
 
-/*export class SelectedDifferentEntity {
- readonly type = 'SelectedDifferentEntity'
-
- constructor(
- public readonly payload: {
- id: string
- },
- ) {}
- }*/
-
 export type SelectedDifferentEntity = {
 	type: 'SelectedDifferentEntity'
 	payload: {
@@ -69,34 +27,12 @@ export type SelectedDifferentEntity = {
 	}
 }
 
-/*
- export class AddEntitiesToMultipleSelected {
- readonly type = 'AddEntitiesToMultipleSelected'
-
- constructor(
- public readonly payload: {
- ids: string[]
- },
- ) {}
- }
- */
-
 export type AddEntitiesToMultipleSelected = {
 	type: 'AddEntitiesToMultipleSelected'
 	payload: {
 		ids: string[]
 	}
 }
-
-/*export class RemoveEntitiesFromMultipleSelected {
- readonly type = 'RemoveEntitiesFromMultipleSelected'
-
- constructor(
- public readonly payload: {
- ids: string[]
- },
- ) {}
- }*/
 
 export type RemoveEntitiesFromMultipleSelected = {
 	type: 'RemoveEntitiesFromMultipleSelected'
@@ -132,15 +68,6 @@ export type SelectedRollback = {
 	type: 'SelectedRollback'
 }
 
-// const yo = function SelectEntitiesInSelectionBox(     ctx,     event): {payload: {ids: any[]}, type: string}
-
-/*export type EntitiesFoundInSelectionBox = {
- type: 'EntitiesFoundInSelectionBox'
- payload: {
- ids: string[]
- }
- }*/
-
 export type XStateSelectedEvent =
 	| ClearEntitySelected
 	| CancelSelected
@@ -155,56 +82,88 @@ export type XStateSelectedEvent =
 	| SelectedRollback
 	| SelectedStringRollbackToSingle
 	| SelectedStringRollbackToMultiple
-// | EntitiesFoundInSelectionBox
-// RemoveEntitiesFromMultipleSelected
-/*
 
- export type XStateSelectedEvent =
- | {
- type: 'ClickElsewhere'
- payload: null
- }
- | {
- type: 'CancelSelected'
- payload: null
- }
- | {
- type: 'ClickOnEntity'
- payload: {
- id: string
- }
- }
- | {
- type: 'SelectedMultipleEntities'
- payload: {
- ids: string[]
- }
- }
- | {
- type: 'ClickedOnDifferentEntity'
- payload: {
- id: string
- }
- }
- | {
- type: 'AddEntityToMultipleSelected'
- payload: {
- id: string
- }
- }*/
+type SelectedEventTypes = XStateSelectedEvent['type']
+type AllSelectedEventsWithPayload = Extract<
+	XStateSelectedEvent,
+	{
+		payload: object
+	}
+>
 
-/*export type ActionModule = typeof import('./events/events')
- export type Action = ActionModule[keyof ActionModule]
- const ac: Action = 'ClickOnEntity'*/
-// const fff : Action = id => {}
-/*const yyo: ActionModule = {
- ClickOnEntity: (id: string) => ({
- type: 'ClickOnEntity',
+type SelectedEventsWithPayloadByType<T extends SelectedEventTypes> = Extract<
+	AllSelectedEventsWithPayload,
+	{
+		type: T
+	}
+>
 
- }),
- }*/
-/*const yyo: ActionModule = ''
- }
+type SelectedEventByType<T extends SelectedEventTypes> = Extract<
+	XStateSelectedEvent,
+	{
+		type: T
+	}
+>
 
- export type Action = ActionModule[keyof ActionModule]*/
-// const yo : Action =
+type SelectedEventPayloadOrNullByType<T extends SelectedEventTypes> =
+	SelectedEventByType<T> extends {
+		type: T
+		payload: object
+	}
+		? SelectedEventsWithPayloadByType<T>['payload']
+		: null
+export const SELECTED_EVENT = <T extends SelectedEventTypes>(
+	type: T,
+	payload: SelectedEventPayloadOrNullByType<T>,
+) => {
+	switch (type) {
+		case 'ClearEntitySelected':
+			return { type }
+		case 'CancelSelected':
+			return { type }
+		case 'SelectedSingleEntity':
+			if (!payload) throw new Error('Payload is required')
+			return { type, payload }
+		case 'SetMultipleSelectedEntities':
+			if (!payload) throw new Error('Payload is required')
+			return { type, payload } as SetMultipleSelectedEntities
+		case 'SelectedDifferentEntity':
+			if (!payload) throw new Error('Payload is required')
+			return { type, payload }
+		case 'AddEntitiesToMultipleSelected':
+			if (!payload) throw new Error('Payload is required')
+			return { type, payload }
+		case 'RemoveEntitiesFromMultipleSelected':
+			if (!payload) throw new Error('Payload is required')
+			return { type, payload }
+		case 'ClearSelectedState':
+			return { type }
+		case 'SetSelectedString':
+			if (!payload) throw new Error('Payload is required')
+			return { type, payload }
+		case 'ClearStringSelected':
+			return { type }
+		case 'SelectedRollback':
+			return { type }
+		case 'SelectedStringRollbackToSingle':
+			return { type }
+		case 'SelectedStringRollbackToMultiple':
+			return { type }
+		default:
+			throw new Error('Unknown event type')
+	}
+}
+
+export const SELECTED_EVENT_V2 = <T extends SelectedEventTypes>(
+	type: T,
+	payload: SelectedEventPayloadOrNullByType<T>,
+) => {
+	return { type, payload }
+}
+
+type SelectedEventReturn<T extends SelectedEventTypes> = ReturnType<typeof SELECTED_EVENT<T>>
+const hi: SelectedEventReturn<'SelectedSingleEntity'> = {
+	type: 'SelectedSingleEntity' /*	payload: {
+	 ids: '1'
+	 }*/,
+}

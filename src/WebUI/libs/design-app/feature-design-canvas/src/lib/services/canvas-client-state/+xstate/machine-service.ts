@@ -1,6 +1,4 @@
-import { canvasAppMachine, PickedCanvasAppMachineContext } from './client.machine';
-import { XStateSelectedEvent } from './selected';
-import { XStateEvent } from './xstate-app-events.types';
+import { canvasAppMachine } from './client.machine';
 import { AppStateMatchesModel, AppStateValue } from './xstate-app.states';
 import { getDifferenceInTwoObjects3, getNewStateFromTwoObjects } from '@shared/utils';
 import { interpret } from 'xstate';
@@ -58,11 +56,11 @@ export const stateEventLoggerExcludePointerState = (state: any) => {
 		}
 		if (stateDifference.SelectedState) {
 			// console.log('%c event', 'color: #03A9F4; font-weight: bold;', stateDifference.SelectedState)
-			selectedHistory.push({
-				state: stateDifference.SelectedState,
-				event: state.event,
-				ctx: state.context.selected,
-			})
+			/*			selectedHistory.push({
+			 state: stateDifference.SelectedState,
+			 event: state.event,
+			 ctx: state.context.selected,
+			 })*/
 			// console.log('selectedHistory', selectedHistory)
 		}
 		return
@@ -72,11 +70,11 @@ export const stateEventLoggerExcludePointerState = (state: any) => {
 
 // const stateLogger = new StaticLogger('state')
 
-const selectedHistory: {
-	state: AppStateMatchesModel['SelectedState']
-	event: XStateSelectedEvent
-	ctx: PickedCanvasAppMachineContext['selected']
-}[] = []
+/*const selectedHistory: {
+ state: AppStateMatchesModel['SelectedState']
+ event: XStateSelectedEvent
+ ctx: PickedCanvasAppMachineContext['selected']
+ }[] = []*/
 
 /*const history: (
  | StateValue
@@ -228,58 +226,19 @@ const selectedHistory: {
  | undefined
  )[] = []*/
 
-export const canvasAppXStateService = interpret(canvasAppMachine, { devTools: true }).onTransition(
-	(state) => {
-		// state.
-		// state.historyValue
-		// stateDifferenceLogger(state)
-		stateEventLoggerExcludePointerState(state)
-		// history.push(state)
-
-		// console.log('%c state', 'color: #03A9F4; font-weight: bold;', state)
-
-		/*		// state.value === 'SelectedState.StringS' && selectedHistory.push(state.context.selected)
-		 type stateValue = typeof state.value
-		 const asdsa: stateValue = 'ViewState'*/
-		// state.value === 'ViewState'
-		/*
-		 if (state.) {
-		 // if (state.event.type === '') {
-
-		 }*/
-
-		/*if (state.event.type === 'SelectedRollback') {
-		 // const history = state.history?.historyValue?.current as AppStateValue
-		 // console.log('%c rollback', 'color: #03A9F4; font-weight: bold;', history)
-		 const rollback = state.context.selectedHistory[state.context.selectedHistory.length - 1]
-		 // interpreter.init(history[history.length - 1]);
-		 /!*
-		 canvasAppMachine.transition(state, 'SetMultipleSelectedEntities', {
-		 ...state.context,
-		 selected: rollback,
-		 })*!/
-
-		 const stateRollback = selectedHistory[selectedHistory.length - 1]
-		 history.pop()
-		 canvasAppXStateService.init(history[history.length - 1])
-		 /!*			canvasAppMachine.transition(stateRollback.state, stateRollback.event, {
-		 // canvasAppMachine.transition(state, stateRollback.event, {
-		 ...state.context,
-		 selected: stateRollback.ctx,
-		 })*!/
-		 /!*			canvasAppMachine.ini(stateRollback.state, stateRollback.event, {
-		 // canvasAppMachine.transition(state, stateRollback.event, {
-		 ...state.context,
-		 selected: stateRollback.ctx,
-		 })*!/
-		 }
-		 // console.log('%c state', 'color: #03A9F4; font-weight: bold;', state.event)
-		 },*/
-	},
-)
+/*export const canvasAppXStateService = interpret(canvasAppMachine, { devTools: true }).onTransition(
+ (state) => {
+ stateEventLoggerExcludePointerState(state)
+ },
+ )*/
 // canvasAppXStateService.init()
 
-export type AppStateSnapshot = ReturnType<typeof canvasAppXStateService.getSnapshot>
+const getSnapshot = interpret(canvasAppMachine).getSnapshot
+
+export type AppStateSnapshot = ReturnType<typeof getSnapshot>
+// const getSnapshot = interpret(canvasAppMachine).getSnapshot()
+//
+// export type AppStateSnapshot = ReturnType<getSnapshot>
 // const snapshot = canvasAppXStateService.getSnapshot()
 // const initialState = canvasAppXStateService.initialState
 // export type AppInitialState = typeof initialState
@@ -320,34 +279,38 @@ export type AppStateSnapshot = ReturnType<typeof canvasAppXStateService.getSnaps
  ids: ['1'],
  },
  })*/
+/*
+ export const sendStateEvent = (event: XStateEvent) => canvasAppXStateService.send(event)
 
-export const sendStateEvent = (event: XStateEvent) => canvasAppXStateService.send(event)
+ export const getState = () => canvasAppXStateService.getSnapshot()
 
-export const getState = () => canvasAppXStateService.getSnapshot()
-
-/*export const matchWithState = (parentStateValue: any) => {
+ /!*export const matchWithState = (parentStateValue: any) => {
  return canvasAppXStateService.getSnapshot().matches('SelectedState.EntitySelected')
- }*/
+ }*!/
 
-export const getStateCtx = () => canvasAppXStateService.getSnapshot().context
+ export const getStateCtx = () => canvasAppXStateService.getSnapshot().context*/
 
-export const getStateCtxSelected = () => canvasAppXStateService.getSnapshot().context.selected
+// export const getStateCtxSelected = () => canvasAppXStateService.getSnapshot().context.selected
 
-export const getStateCtxSelectedSingleSelectedId = () =>
-	canvasAppXStateService.getSnapshot().context.selected.singleSelectedId
+/*
+ export const getStateCtxSelectedSingleSelectedId = () =>
+ canvasAppXStateService.getSnapshot().context.selected.singleSelectedId
 
-export const getStateCtxSelectedMultipleSelectedIds = () =>
-	canvasAppXStateService.getSnapshot().context.selected.multipleSelectedIds
+ export const getStateCtxSelectedMultipleSelectedIds = () =>
+ canvasAppXStateService.getSnapshot().context.selected.multipleSelectedIds
+ */
 
-export const getStateValue = () => canvasAppXStateService.getSnapshot().value
+/*
+ export const getStateValue = () => canvasAppXStateService.getSnapshot().value
 
-export const getStateEvent = () => canvasAppXStateService.getSnapshot().event
+ export const getStateEvent = () => canvasAppXStateService.getSnapshot().event
 
-export const getStateActions = () => canvasAppXStateService.getSnapshot().actions
+ export const getStateActions = () => canvasAppXStateService.getSnapshot().actions
 
-export const getStateHistory = () => canvasAppXStateService.getSnapshot().history
+ export const getStateHistory = () => canvasAppXStateService.getSnapshot().history
 
-export const getStateNextEvents = () => canvasAppXStateService.getSnapshot().nextEvents
+ export const getStateNextEvents = () => canvasAppXStateService.getSnapshot().nextEvents
+ */
 
 /*sendFn({
  type: 'AddEntitiesToMultipleSelected',

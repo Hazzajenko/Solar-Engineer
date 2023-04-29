@@ -1,19 +1,14 @@
-import { ENTITY_TYPE, EntityType } from '@design-app/shared'
-
+export const CONTEXT_MENU_TYPE = {
+	SINGLE_ENTITY: 'SingleEntity',
+	MULTIPLE_ENTITIES: 'MultipleEntities',
+} as const
+export type ContextMenuType = (typeof CONTEXT_MENU_TYPE)[keyof typeof CONTEXT_MENU_TYPE]
 export type ContextMenuState = {
 	open: boolean
 	x: number
 	y: number
 	id: string
-	type: EntityType
-}
-
-export const InitialContextMenuState: ContextMenuState = {
-	open: false,
-	x: 0,
-	y: 0,
-	id: '',
-	type: ENTITY_TYPE.Panel,
+	type: ContextMenuType
 }
 
 export type ViewContext = {
