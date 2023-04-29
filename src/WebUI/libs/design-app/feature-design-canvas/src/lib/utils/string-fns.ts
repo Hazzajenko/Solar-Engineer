@@ -19,27 +19,4 @@ export const createStringWithPanels = (
 	)
 
 	return { string, panelUpdates }
-
-	/*  state.entities.canvasStrings.addEntity(string)
-	 state.entities.canvasEntities.updateManyEntities(panelUpdates)*/
-
-	// }
-
-	/*  const panelUpdates = panels.map((panel) => {
-	 return {
-	 id: panel.id,
-	 changes: {
-
-	 }
-	 }
-	 }*/
-
-	/*  const stringPanels = panels.map((panel) => {
-	 const stringPanel = {
-	 ...panel,
-	 id: panel.id + '-string',
-	 parent: string.id,
-	 }
-	 return stringPanel
-	 })*/
 }

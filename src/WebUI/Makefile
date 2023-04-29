@@ -102,6 +102,14 @@ plugin:
 generator:
 	nx generate @nrwl/nx-plugin:generator ${name} --project=${project}
 
+move:
+	nx generate @nrwl/workspace:move --projectName=${project} --destination=${destination}
+
+move-deprecated:
+	nx generate @nrwl/workspace:move --projectName=${project} --destination=${destination}
+
+
+
 xstate:
 	xstate typegen "libs/design-app/feature-design-canvas/src/lib/services/canvas-client-state/+xstate/client.machine.ts"  --watch
 	xstate typegen "libs/design-app/feature-design-canvas/src/lib/components/design-canvas/menus/canvas-graphics-menu/+xstate/graphics-settings.machine.ts" --watch

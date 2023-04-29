@@ -128,12 +128,6 @@
       "@blog/feature": [
         "libs/blog/feature/src/index.ts"
       ],
-      "@design-app/canvas": [
-        "libs/design-app/canvas/src/index.ts"
-      ],
-      "@design-app/config": [
-        "libs/design-app/config/src/index.ts"
-      ],
       "@design-app/data-access": [
         "libs/design-app/data-access/src/index.ts"
       ],
@@ -142,18 +136,6 @@
       ],
       "@design-app/feature-design-canvas": [
         "libs/design-app/feature-design-canvas/src/index.ts"
-      ],
-      "@design-app/feature-design-layout": [
-        "libs/design-app/feature-design-layout/src/index.ts"
-      ],
-      "@design-app/feature-panel": [
-        "libs/design-app/feature-panel/src/index.ts"
-      ],
-      "@design-app/feature-selected": [
-        "libs/design-app/feature-selected/src/index.ts"
-      ],
-      "@design-app/feature-string": [
-        "libs/design-app/feature-string/src/index.ts"
       ],
       "@design-app/shared": [
         "libs/design-app/shared/src/index.ts"
@@ -304,6 +286,24 @@
       ],
       "@undefined/core-components/loader": [
         "dist/libs/core-components/loader"
+      ],
+      "deprecated/design-app/canvas": [
+        "libs/deprecated/design-app/canvas/src/index.ts"
+      ],
+      "deprecated/design-app/config": [
+        "libs/deprecated/design-app/config/src/index.ts"
+      ],
+      "deprecated/design-app/feature-design-layout": [
+        "libs/deprecated/design-app/feature-design-layout/src/index.ts"
+      ],
+      "deprecated/design-app/feature-panel": [
+        "libs/deprecated/design-app/feature-panel/src/index.ts"
+      ],
+      "deprecated/design-app/feature-selected": [
+        "libs/deprecated/design-app/feature-selected/src/index.ts"
+      ],
+      "deprecated/design-app/feature-string": [
+        "libs/deprecated/design-app/feature-string/src/index.ts"
       ],
       "my-plugin": [
         "libs/my-plugin/src/index.ts"

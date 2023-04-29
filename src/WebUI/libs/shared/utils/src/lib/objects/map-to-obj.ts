@@ -14,23 +14,39 @@ import { Dictionary } from '@ngrx/entity';
 
 
 export const mapToObject = <
-  T extends {
-    id: string
-  },
+	T extends {
+		id: string
+	},
 >(
-  array: T[],
+	array: T[],
 ): Record<string, T> => {
-  return array.reduce((acc, item) => ((acc[item['id']] = item), acc), {} as Record<string, T>)
+	return array.reduce((acc, item) => ((acc[item['id']] = item), acc), {} as Record<string, T>)
 }
 
 export const mapToDictionary = <
-  T extends {
-    id: string
-  },
+	T extends {
+		id: string
+	},
 >(
-  array: T[],
+	array: T[],
 ): Dictionary<T> => {
-  return array.reduce((acc, item) => ((acc[item['id']] = item), acc), {} as Dictionary<T>)
+	return array.reduce((acc, item) => ((acc[item['id']] = item), acc), {} as Dictionary<T>)
+}
+
+export const toEntities = <
+	T extends {
+		id: string
+	},
+>(
+	collection: T[],
+) => {
+	return collection.reduce(
+		(prev, next) => ({
+			...prev,
+			[next.id]: next,
+		}),
+		{},
+	)
 }
 
 /*

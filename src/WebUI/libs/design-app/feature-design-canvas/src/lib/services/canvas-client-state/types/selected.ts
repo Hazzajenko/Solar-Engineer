@@ -1,5 +1,5 @@
 import { CompleteEntityBounds } from '../../../utils'
-import { TypeOfEntity } from '@design-app/feature-selected'
+import { TypeOfEntity } from 'deprecated/design-app/feature-selected'
 
 export type SelectedEntity = TypeOfEntity
 

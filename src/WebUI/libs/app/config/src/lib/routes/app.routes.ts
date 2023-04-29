@@ -4,54 +4,53 @@ import { Route } from '@angular/router'
 import { emptyRouteAuthGuard, notLoggedInGuard } from '@auth/guards'
 import { SimpleNotFoundComponent } from '@shared/ui/not-found'
 
-
 export const appRoutes: Route[] = [
-  /*  {
+	/*  {
    path: '',
    loadComponent: () => import('@home/feature').then((m) => m.HomeComponent),
    canActivate: [emptyRouteAuthGuard],
    pathMatch: 'full',
    providers: [homeProviders],
    },*/
-  {
-    path: '',
-    loadComponent: () =>
-      import('@design-app/feature-design-canvas').then((m) => m.DesignCanvasBusComponent),
-    // providers: [noGridLayoutProviders],
-  },
-  /*  {
+	{
+		path: '',
+		loadComponent: () =>
+			import('@design-app/feature-design-canvas').then((m) => m.DesignCanvasBusComponent),
+		// providers: [noGridLayoutProviders],
+	},
+	/*  {
    path: '',
    loadComponent: () =>
    import('@design-app/feature-design-canvas').then((m) => m.DesignCanvasComponent),
    // providers: [noGridLayoutProviders],
    },*/
-  /*  {
+	/*  {
    path: 'imagery',
    loadComponent: () =>
    import('@imagery/feature/azure-maps').then((m) => m.MapsQuickStartComponent),
    },*/
-  {
-    path: 'design',
-    loadComponent: () =>
-      import('@design-app/feature-design-layout').then((m) => m.DesignLayoutComponent),
-    // providers: [noGridLayoutProviders],
-  },
-  {
-    path: 'grid',
-    loadComponent: () => import('@grid-layout/feature').then((m) => m.GridLayoutComponent),
-    data: { tab: 'projects', state: 'projects' },
-    providers: [projectsProviders],
-  },
-  {
-    path: 'free',
-    loadComponent: () =>
-      import('@design-app/feature-design-layout').then((m) => m.DesignLayoutComponent),
-  },
-  {
-    path: 'projects',
-    loadComponent: () => import('@projects/feature').then((m) => m.ProjectsHomePageComponent),
-    canActivate: [emptyRouteAuthGuard],
-    /*    children: [
+	{
+		path: 'design',
+		loadComponent: () =>
+			import('deprecated/design-app/feature-design-layout').then((m) => m.DesignLayoutComponent),
+		// providers: [noGridLayoutProviders],
+	},
+	{
+		path: 'grid',
+		loadComponent: () => import('@grid-layout/feature').then((m) => m.GridLayoutComponent),
+		data: { tab: 'projects', state: 'projects' },
+		providers: [projectsProviders],
+	},
+	{
+		path: 'free',
+		loadComponent: () =>
+			import('deprecated/design-app/feature-design-layout').then((m) => m.DesignLayoutComponent),
+	},
+	{
+		path: 'projects',
+		loadComponent: () => import('@projects/feature').then((m) => m.ProjectsHomePageComponent),
+		canActivate: [emptyRouteAuthGuard],
+		/*    children: [
      {
      path: ':userName/:projectName',
      loadComponent: () => import('@projects/feature').then((m) => m.ProjectMembersDialogComponent),
@@ -62,58 +61,58 @@ export const appRoutes: Route[] = [
      // resolve: { project: SelectProjectResolver },
      },
      ],*/
-  },
+	},
 
-  {
-    path: 'social',
-    loadComponent: () => import('@home/feature').then((m) => m.HomeComponent),
-  },
-  {
-    path: 'blog/:blogPostName',
-    loadComponent: () => import('@blog/feature').then((m) => m.BlogPostComponent),
-    providers: [homeProviders],
-  },
-  {
-    path: 'sign-in',
-    loadComponent: () => import('@auth/feature').then((m) => m.SignInCenterComponent),
-    canActivate: [notLoggedInGuard],
-  },
-  {
-    path: ':userName/:projectName',
-    loadComponent: () => import('@projects/feature').then((m) => m.ProjectDashboardComponent),
-    data: { tab: 'projects', state: 'projects' },
-    // loadComponent: () => import('@projects/feature').then((m) => m.ProjectDashboardTimelineComponent),
-    // canActivate: [loggedInGuard],
-    providers: [projectsProviders],
-    // resolve: { project: SelectProjectResolver },
-  },
-  {
-    path: ':userName/:projectName/grid',
-    loadComponent: () => import('@projects/feature').then((m) => m.WebProjectComponent),
-    data: { tab: 'projects', state: 'projects' },
-    // loadComponent: () => import('@projects/feature').then((m) => m.ProjectDashboardTimelineComponent),
-    // canActivate: [loggedInGuard],
-    providers: [projectsProviders],
-    // resolve: { project: SelectProjectResolver },
-  },
-  {
-    path: ':userName/:projectName/invite',
-    data: { tab: 'projects', state: 'projects' },
-    providers: [projectsProviders],
-    loadComponent: () => import('@projects/feature').then((m) => m.AddProjectMembersComponent),
-  },
-  /*  {
+	{
+		path: 'social',
+		loadComponent: () => import('@home/feature').then((m) => m.HomeComponent),
+	},
+	{
+		path: 'blog/:blogPostName',
+		loadComponent: () => import('@blog/feature').then((m) => m.BlogPostComponent),
+		providers: [homeProviders],
+	},
+	{
+		path: 'sign-in',
+		loadComponent: () => import('@auth/feature').then((m) => m.SignInCenterComponent),
+		canActivate: [notLoggedInGuard],
+	},
+	{
+		path: ':userName/:projectName',
+		loadComponent: () => import('@projects/feature').then((m) => m.ProjectDashboardComponent),
+		data: { tab: 'projects', state: 'projects' },
+		// loadComponent: () => import('@projects/feature').then((m) => m.ProjectDashboardTimelineComponent),
+		// canActivate: [loggedInGuard],
+		providers: [projectsProviders],
+		// resolve: { project: SelectProjectResolver },
+	},
+	{
+		path: ':userName/:projectName/grid',
+		loadComponent: () => import('@projects/feature').then((m) => m.WebProjectComponent),
+		data: { tab: 'projects', state: 'projects' },
+		// loadComponent: () => import('@projects/feature').then((m) => m.ProjectDashboardTimelineComponent),
+		// canActivate: [loggedInGuard],
+		providers: [projectsProviders],
+		// resolve: { project: SelectProjectResolver },
+	},
+	{
+		path: ':userName/:projectName/invite',
+		data: { tab: 'projects', state: 'projects' },
+		providers: [projectsProviders],
+		loadComponent: () => import('@projects/feature').then((m) => m.AddProjectMembersComponent),
+	},
+	/*  {
    path: '',
    redirectTo: '',
    pathMatch: 'full',
    },*/
-  {
-    path: '**',
-    title: '404',
-    component: SimpleNotFoundComponent,
-  },
+	{
+		path: '**',
+		title: '404',
+		component: SimpleNotFoundComponent,
+	},
 
-  /*  {
+	/*  {
    path: ':userName/:projectName',
    loadComponent: () => import('@projects/feature').then((m) => m.ProjectDashboardComponent),
    data: { tab: 'projects', state: 'projects' },
@@ -145,8 +144,8 @@ export const appRoutes: Route[] = [
    path: ':userName/:projectName/cmd',
    loadComponent: () => import('@projects/feature').then((m) => m.ProjectsCommandPaletteComponent),
    },*/
-  // ProjectsCommandPaletteComponent
-  /* {
+	// ProjectsCommandPaletteComponent
+	/* {
    path: 'projects/:userName/:projectName',
    loadComponent: () => import('@projects/feature').then((m) => m.ProjectMembersDialogComponent),
    data: { tab: 'projects', state: 'projects' },
@@ -155,7 +154,7 @@ export const appRoutes: Route[] = [
    providers: [projectsProviders],
    // resolve: { project: SelectProjectResolver },
    },*/
-  /*  {
+	/*  {
    path: 'social',
    loadComponent: () => import('@home/feature').then((m) => m.HomeComponent),
    },
@@ -171,7 +170,7 @@ export const appRoutes: Route[] = [
    canActivate: [notLoggedInGuard],
    },*/
 
-  /*  {
+	/*  {
    path: ':userName/:projectName',
    loadComponent: () => import('@home/feature').then((m) => m.HomeComponent),
    data: { tab: 'projects', state: 'projects' },
@@ -181,7 +180,7 @@ export const appRoutes: Route[] = [
    // resolve: { project: SelectProjectResolver },
    },*/
 
-  /*{
+	/*{
    path: 'projects',
    loadComponent: () => import('@projects/feature').then((m) => m.ProjectsHomePageComponent),
    canActivate: [loggedInGuard],
@@ -220,7 +219,7 @@ export const appRoutes: Route[] = [
    // resolve: { project: SelectProjectResolver },
    },*/
 
-  /* {
+	/* {
    path: ':userName',
    // component: ProjectsHomePageComponent,
    loadComponent: () => import('@home/ui').then((m) => m.HomeV3Component),
@@ -234,7 +233,7 @@ export const appRoutes: Route[] = [
    // redirectTo: 'projects',
    providers: [homeProviders],
    },*/
-  /*  {
+	/*  {
    path: '',
    loadComponent: () => import('@projects/feature').then((m) => m.ProjectsHomePageComponent),
    // loadComponent: () => import('@home/ui').then((m) => m.HomeV2Component),
@@ -245,7 +244,7 @@ export const appRoutes: Route[] = [
    redirectTo: 'projects',
    providers: [homeProviders],
    },*/
-  /*  {
+	/*  {
    path: '',
    loadComponent: () => import('@home/ui').then((m) => m.HomeV3Component),
    // loadComponent: () => import('@home/ui').then((m) => m.HomeV2Component),
@@ -256,11 +255,11 @@ export const appRoutes: Route[] = [
    providers: [homeProviders],
    },*/
 
-  /*  {
+	/*  {
    path: 'signin-google',
    loadComponent: () => import('@auth/feature').then((m) => m.GoogleSignInComponent),
    },*/
-  /*  {
+	/*  {
    path: 'login/google',
    loadComponent: () => import('@auth/feature').then((m) => m.GoogleSignInComponent),
    resolve: { googleSignIn: GoogleSignInResolver },
@@ -269,7 +268,7 @@ export const appRoutes: Route[] = [
    // canActivate: [loggedInGuard],
    // providers: [homeProviders],
    },*/
-  /*  {
+	/*  {
    path: 'sign-in',
    loadComponent: () => import('@home/ui').then((m) => m.HomeAnonymousComponent),
    // loadComponent: () => import('@home/ui').then((m) => m.BlogPostComponent),
@@ -277,7 +276,7 @@ export const appRoutes: Route[] = [
    // canActivate: [loggedInGuard],
    providers: [homeProviders],
    },*/
-  /*  {
+	/*  {
    path: 'messages',
    loadComponent: () => import('@app/feature/chatrooms').then((m) => m.ChatroomsComponent),
    canActivate: [loggedInGuard],
@@ -309,21 +308,21 @@ export const appRoutes: Route[] = [
    providers: [projectsProviders],
    resolve: { localProject: LocalProjectResolver },
    },*/
-  /*  {
+	/*  {
    path: 'user/:userName',
    loadComponent: () =>
    import('@app/feature/userName-profile').then((m) => m.UsersOverlayComponent),
    canActivate: [loggedInGuard],
    resolve: { userNameProfile: UserNameProfileResolver },
    },*/
-  /*  {
+	/*  {
    path: 'projects/:projectId',
    loadComponent: () => import('@project-id/feature/web').then((m) => m.WebProjectComponent),
    canActivate: [loggedInGuard],
    providers: [projectsProviders],
    resolve: { project: SelectProjectResolver },
    },*/
-  /*  {
+	/*  {
    path: ':userName/:projectName',
    loadComponent: () => import('@project-id/feature/web').then((m) => m.WebProjectV2Component),
    canActivate: [loggedInGuard],
@@ -331,7 +330,7 @@ export const appRoutes: Route[] = [
    resolve: { project: SelectProjectResolver },
    },*/
 
-  /*  {
+	/*  {
    path: 'projects/dashboard',
    loadComponent: () => import('@projects/feature').then((m) => m.ProjectDashboardTimelineComponent),
    },
@@ -355,14 +354,14 @@ export const appRoutes: Route[] = [
    path: 'projects/settings',
    loadComponent: () => import('@projects/feature').then((m) => m.ProjectsSettingsComponent),
    },*/
-  /*  {
+	/*  {
    path: ':userName/:projectName/dashboard',
    loadComponent: () => import('@projects/feature').then((m) => m.ProjectDashboardTimelineComponent),
    canActivate: [loggedInGuard],
    providers: [projectsProviders],
    // resolve: { project: SelectProjectResolver },
    },*/
-  /* {
+	/* {
    path: ':userName/projects',
    loadComponent: () => import('@projects/feature').then((m) => m.ProjectsHomePageComponent),
    canActivate: [loggedInGuard],
@@ -397,14 +396,14 @@ export const appRoutes: Route[] = [
    providers: [projectsProviders],
    // resolve: { project: SelectProjectResolver },
    },*/
-  /*  {
+	/*  {
    path: 'projects/:projectName',
    loadComponent: () => import('@projects/feature').then((m) => m.WebProjectComponent),
    canActivate: [loggedInGuard],
    providers: [projectsProviders],
    // resolve: { project: SelectProjectResolver },
    },*/
-  /*  {
+	/*  {
    path: '',
    redirectTo: '',
    pathMatch: 'full',
@@ -415,5 +414,5 @@ export const appRoutes: Route[] = [
    title: '404',
    component: SimpleNotFoundComponent,
    },*/
-  // { path: '**', component: SplitImageNotFoundComponent },
+	// { path: '**', component: SplitImageNotFoundComponent },
 ]

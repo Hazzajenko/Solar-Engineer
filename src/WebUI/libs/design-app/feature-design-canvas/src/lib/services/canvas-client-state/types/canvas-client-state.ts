@@ -10,10 +10,9 @@ import { SelectedStateDeprecated } from './selected'
 import { ToMoveStateDeprecated } from './to-move'
 import { ToRotateStateDeprecated } from './to-rotate'
 import { ViewStateDeprecated } from './view'
-import { TypeOfEntity } from '@design-app/feature-selected'
 import { Dictionary } from '@ngrx/entity/src/models'
 import { Point } from '@shared/data-access/models'
-
+import { TypeOfEntity } from 'deprecated/design-app/feature-selected'
 
 export type CanvasClientState = {
 	hover: HoveringEntityState
@@ -145,7 +144,7 @@ export const updateStateV3 = (state: CanvasClientState, changes: StateUpdate) =>
 		}
 
 		if (value !== undefined) {
-			(newState as any)[key as keyof CanvasClientState] = {
+			;(newState as any)[key as keyof CanvasClientState] = {
 				...state[key as keyof CanvasClientState],
 				...changes[key as keyof StateUpdate],
 			}
@@ -194,7 +193,7 @@ export const updateStateObject = (
 				continue
 			}
 			// didChange = true;
-			(state as any)[key] = value
+			;(state as any)[key] = value
 		}
 	}
 

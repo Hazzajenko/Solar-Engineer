@@ -1,12 +1,10 @@
 import { AppStoreService } from '../app'
 import { DomPointService } from '../dom-point'
-import { EntityStoreService } from '../entities/entity-store.service'
+import { EntityStoreService } from '../entities'
 import { RenderService } from '../render'
 import { inject, Injectable } from '@angular/core'
 import {
 	drawSelectionBoxBoundsCtxFnWithTranslateRotate,
-	StartMultipleRotate,
-	StartSingleRotate,
 	StopMultipleRotate,
 	StopSingleRotate,
 	updateObjectByIdForStore,
@@ -88,7 +86,8 @@ export class ObjectRotatingService {
 		this.singleToRotateId = entityId
 		this.singleToRotateStartPoint = startPoint
 		this.singleToRotateStartAngle = startAngle
-		this._app.sendEvent(new StartSingleRotate())
+		this._app.sendEvent({ type: 'StartSingleRotate' })
+		// this._app.sendEvent(new StartSingleRotate())
 		/*		this._state.updateState({
 		 toRotate: {
 		 singleToRotate: {
@@ -159,7 +158,8 @@ export class ObjectRotatingService {
 		this.multipleToRotatePivotPoint = centerPoint
 		console.log('this.multipleToRotatePivotPoint', this.multipleToRotatePivotPoint)
 		this.multipleToRotateStartToPivotAngle = startToPivotAngle
-		this._app.sendEvent(new StartMultipleRotate())
+		this._app.sendEvent({ type: 'StartMultipleRotate' })
+		// this._app.sendEvent(new StartMultipleRotate())
 	}
 
 	rotateMultipleEntitiesViaMouse(event: PointerEvent, currentPoint: TransformedPoint) {

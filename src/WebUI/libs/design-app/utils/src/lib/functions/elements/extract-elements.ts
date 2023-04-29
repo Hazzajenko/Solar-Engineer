@@ -1,6 +1,6 @@
 import { roundToTwoDecimals } from '../math'
-import { isDesignEntityType } from '@design-app/feature-panel'
 import { EntityDivElement, EntityElement, EntityType } from '@design-app/shared'
+import { isDesignEntityType } from 'deprecated/design-app/feature-panel'
 
 export function extractHtmlDivElement(
 	event: MouseEvent | PointerEvent,
