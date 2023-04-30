@@ -1,5 +1,4 @@
 import { AppStoreService } from '../app'
-import { DomPointService } from '../dom-point'
 import { EntityStoreService } from '../entities'
 import { RenderService } from '../render'
 import { inject, Injectable } from '@angular/core'
@@ -30,8 +29,6 @@ import { assertNotNull } from '@shared/utils'
 export class ObjectRotatingService {
 	private _entities = inject(EntityStoreService)
 	private _render = inject(RenderService)
-	// private _render = inject(CanvasRenderService)
-	private _domPoint = inject(DomPointService)
 	private _app = inject(AppStoreService)
 
 	singleToRotateId: string | undefined = undefined
@@ -48,13 +45,6 @@ export class ObjectRotatingService {
 	initialSelectionBoxBounds: TrigonometricBounds | undefined
 
 	centerPoint: Point | undefined = undefined
-
-	initialDistanceFromCenter:
-		| {
-				x: number
-				y: number
-		  }
-		| undefined = undefined
 
 	handleSetEntitiesToRotate(event: PointerEvent, currentPoint: TransformedPoint) {
 		const multiSelectIds = this._app.selectedCtx.multipleSelectedIds

@@ -1,15 +1,54 @@
 export const CONTEXT_MENU_TYPE = {
 	SINGLE_ENTITY: 'SingleEntity',
 	MULTIPLE_ENTITIES: 'MultipleEntities',
+	STRING: 'String',
 } as const
 export type ContextMenuType = (typeof CONTEXT_MENU_TYPE)[keyof typeof CONTEXT_MENU_TYPE]
-export type ContextMenuState = {
-	open: boolean
+type ContextMenuTemplate = {
 	x: number
 	y: number
-	id: string
-	type: ContextMenuType
 }
+export type SingleEntityContextMenuTemplate = ContextMenuTemplate & {
+	id: string
+	type: typeof CONTEXT_MENU_TYPE.SINGLE_ENTITY
+}
+export type MultipleEntitiesContextMenuTemplate = ContextMenuTemplate & {
+	ids: string[]
+	type: typeof CONTEXT_MENU_TYPE.MULTIPLE_ENTITIES
+}
+export type StringContextMenuTemplate = ContextMenuTemplate & {
+	stringId: string
+	panelIds: string[]
+	type: typeof CONTEXT_MENU_TYPE.STRING
+}
+export type ContextMenuState =
+	| SingleEntityContextMenuTemplate
+	| MultipleEntitiesContextMenuTemplate
+	| StringContextMenuTemplate
+
+export const isSingleEntityContextMenuTemplate = (
+	template: ContextMenuTemplate,
+): template is SingleEntityContextMenuTemplate => {
+	return 'id' in template
+}
+
+export const isMultipleEntitiesContextMenuTemplate = (
+	template: ContextMenuTemplate,
+): template is MultipleEntitiesContextMenuTemplate => {
+	return 'ids' in template
+}
+
+export const isStringContextMenuTemplate = (
+	template: ContextMenuTemplate,
+): template is StringContextMenuTemplate => {
+	return 'stringId' in template
+}
+/*export type ContextMenuState = {
+ x: number
+ y: number
+ id: string
+ type: ContextMenuType
+ }*/
 
 export type ViewStateContext = {
 	draggingScreen: boolean

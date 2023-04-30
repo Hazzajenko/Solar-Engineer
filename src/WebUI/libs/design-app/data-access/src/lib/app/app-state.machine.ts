@@ -182,38 +182,36 @@ export const appStateMachine = createMachine(
 							NoContextMenu: {
 								on: {
 									OpenContextMenu: {
-										target: 'ContextMenuOpen',
-										actions: (ctx, event) => {
-											ctx.view.contextMenu = {
-												x: event.payload.x,
-												y: event.payload.y,
-												open: true,
-												type: event.payload.type,
-												id: event.payload.id,
-											}
-										},
+										target: 'ContextMenuOpen', // actions: (ctx, event) => {
+										// 	ctx.view.contextMenu = {
+										// 		x: event.payload.x,
+										// 		y: event.payload.y,
+										// 		open: true,
+										// 		type: event.payload.type,
+										// 		id: event.payload.id,
+										// 	}
+										// },
 									},
 								},
 							},
 							ContextMenuOpen: {
 								on: {
 									OpenContextMenu: {
-										target: 'ContextMenuOpen',
-										actions: (ctx, event) => {
-											ctx.view.contextMenu = {
-												x: event.payload.x,
-												y: event.payload.y,
-												open: true,
-												type: event.payload.type,
-												id: event.payload.id,
-											}
-										},
+										target: 'ContextMenuOpen', // actions: ['']
+										/*										actions: (ctx, event) => {
+									 ctx.view.contextMenu = {
+									 x: event.payload.x,
+									 y: event.payload.y,
+									 open: true,
+									 type: event.payload.type,
+									 id: event.payload.id,
+									 }
+									 },*/
 									},
 									CloseContextMenu: {
-										target: 'NoContextMenu',
-										actions: (ctx) => {
-											ctx.view.contextMenu = undefined
-										},
+										target: 'NoContextMenu', // actions: (ctx) => {
+										// 	ctx.view.contextMenu = undefined
+										// },
 									},
 								},
 							},

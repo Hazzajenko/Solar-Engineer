@@ -58,6 +58,10 @@ export const selectedStateMachine = createMachine(
 							RemoveEntitiesFromMultipleSelected: {
 								actions: 'RemoveEntitiesFromMultipleSelected',
 							},
+							ClearMultipleSelectedEntities: {
+								target: 'NoneSelected',
+								actions: 'ClearMultipleSelectedEntities',
+							},
 							ClearSelectedState: {
 								target: 'NoneSelected',
 								actions: 'ClearSelected',
@@ -125,13 +129,20 @@ export const selectedStateMachine = createMachine(
 			/**
 			 * Selected State Actions
 			 */
-			ClearSelected: (ctx) => {
-				return (ctx = {
-					...InitialSelectedState,
-					selectedHistoryCtx: ctx.selectedHistoryCtx,
-					selectedHistoryState: ctx.selectedHistoryState,
-				})
-			} /*			SetSelectedEntity: (ctx, event) => {
+
+			ClearSelected: assign({
+				singleSelectedId: undefined,
+				multipleSelectedIds: [],
+				selectedStringId: undefined,
+			}) /*		ClearSelected: (ctx) => {
+		 return (ctx = {
+		 ...InitialSelectedState,
+		 selectedHistoryCtx: ctx.selectedHistoryCtx,
+		 selectedHistoryState: ctx.selectedHistoryState,
+		 })
+		 },*/,
+
+			/*			SetSelectedEntity: (ctx, event) => {
 		 return (ctx = {
 		 ...ctx,
 		 singleSelectedId: event.payload.id,
@@ -152,7 +163,7 @@ export const selectedStateMachine = createMachine(
 		 multipleSelectedIds: ids, // selectionBoxBounds: event.payload.selectionBoxBounds,
 		 // singleSelectedId: undefined,
 		 })
-		 },*/,
+		 },*/
 			SetMultipleSelectedEntities: assign({
 				multipleSelectedIds: (_, event) => event.payload.ids,
 			}),
@@ -162,6 +173,10 @@ export const selectedStateMachine = createMachine(
 			RemoveEntitiesFromMultipleSelected: assign({
 				multipleSelectedIds: (ctx, { payload }) =>
 					ctx.multipleSelectedIds.filter((id) => !payload.ids.includes(id)),
+			}),
+			ClearMultipleSelectedEntities: assign({
+				singleSelectedId: undefined,
+				multipleSelectedIds: [],
 			}),
 
 			/*			RemoveEntitiesFromMultipleSelected: (ctx, { payload }) => {

@@ -149,7 +149,6 @@ export class RenderService {
 
 			const shouldRenderSelectedEntitiesBox = options?.shouldRenderSelectedEntitiesBox ?? true
 			const shouldRenderSelectedStringBox = options?.shouldRenderSelectedStringBox ?? true
-
 			/*		const { shouldRenderSelectedEntitiesBox, shouldRenderSelectedStringBox } =
 			 (options?.shouldRenderSelectedEntitiesBox !== undefined && options?.shouldRenderSelectedStringBox !== undefined)
 			 ? { shouldRenderSelectedEntitiesBox: options.shouldRenderSelectedEntitiesBox, shouldRenderSelectedStringBox: options.shouldRenderSelectedStringBox}

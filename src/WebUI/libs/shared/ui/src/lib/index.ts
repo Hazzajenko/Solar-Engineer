@@ -1,4 +1,5 @@
 export * from './buttons/button-builder.component'
+export * from './window/window.component'
 export * from './menus/index'
 export * from './svgs/index'
 

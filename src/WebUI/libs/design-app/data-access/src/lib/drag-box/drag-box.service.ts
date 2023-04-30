@@ -113,14 +113,19 @@ export class DragBoxService {
 			// const boundsFromPoints = getCompleteBoundsFromMultipleEntities(panelsInArea)
 			// const boundsFromPoints = getCompleteBoundsFromBoundsArray(panelPoints)
 			// const boundsFromPoints = getCompleteBoundsFromPoints(panelPoints)
-			this._app.sendEvent(
-				{
-					type: 'SelectionBoxCompleted',
-					payload: { ids: entitiesInAreaIds, selectionBoxBounds: boundsFromPoints },
-				},
+			this._app.sendEvent({ type: 'StopDragBox' })
+			this._app.sendSelectedEvent({
+				type: 'SetMultipleSelectedEntities',
+				payload: { ids: entitiesInAreaIds },
+			})
+			/*			this._app.sendEvent(
+			 {
+			 type: 'SelectionBoxCompleted',
+			 payload: { ids: entitiesInAreaIds, selectionBoxBounds: boundsFromPoints },
+			 },
 
-				// new SelectionBoxCompleted({ ids: entitiesInAreaIds, selectionBoxBounds: boundsFromPoints }),
-			)
+			 // new SelectionBoxCompleted({ ids: entitiesInAreaIds, selectionBoxBounds: boundsFromPoints }),
+			 )*/
 
 			/*			this._render.drawCanvasWithFunctionInAnimationFrame((ctx) => {
 			 // this._render.drawCanvasWithFunctionInAForLoop((ctx) => {

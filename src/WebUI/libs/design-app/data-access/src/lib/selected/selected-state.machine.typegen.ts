@@ -14,9 +14,11 @@ export interface Typegen0 {
   }
   eventsCausingActions: {
     AddEntitiesToMultipleSelected: 'AddEntitiesToMultipleSelected'
+    ClearMultipleSelectedEntities: 'ClearMultipleSelectedEntities'
     ClearSelected: 'ClearSelectedState'
     ClearSelectedString: 'ClearStringSelected'
     PushSelectedHistory:
+      | 'ClearMultipleSelectedEntities'
       | 'ClearSelectedState'
       | 'ClearStringSelected'
       | 'SetMultipleSelectedEntities'

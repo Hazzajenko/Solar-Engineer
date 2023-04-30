@@ -2,6 +2,10 @@ export type ClearEntitySelected = {
 	type: 'ClearEntitySelected'
 }
 
+export type ClearMultipleSelectedEntities = {
+	type: 'ClearMultipleSelectedEntities'
+}
+
 export type CancelSelected = {
 	type: 'CancelSelected'
 }
@@ -70,6 +74,7 @@ export type SelectedRollback = {
 
 export type SelectedStateEvent =
 	| ClearEntitySelected
+	| ClearMultipleSelectedEntities
 	| CancelSelected
 	| SelectedSingleEntity
 	| SetMultipleSelectedEntities

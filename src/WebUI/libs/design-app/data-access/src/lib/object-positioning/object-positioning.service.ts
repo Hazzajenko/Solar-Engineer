@@ -1,7 +1,7 @@
 import { AppSnapshot, AppStoreService } from '../app'
 import { CanvasElementService } from '../div-elements'
 import { DomPointService } from '../dom-point'
-import { EntityStoreService } from '../entities/entity-store.service'
+import { EntityStoreService } from '../entities'
 import { GraphicsStateSnapshot } from '../graphics'
 import { GraphicsSettings } from '../graphics/graphics.settings'
 import { getNearbyLineDrawCtxFnFromGraphicsSnapshot } from '../nearby'
@@ -14,13 +14,13 @@ import {
 	CanvasPanel,
 	CompleteEntityBounds,
 	ENTITY_TYPE,
-	EntityFactory,
 	EventPoint,
 	SizeByType,
 	TransformedPoint,
 } from '@design-app/shared'
 import {
 	changeCanvasCursor,
+	EntityFactory,
 	eventToEventPoint,
 	eventToPointLocation,
 	findNearbyBoundOverlapOnBothAxisExcludingIds,
@@ -33,6 +33,7 @@ import {
 	getTopLeftPointFromTransformedPoint,
 	isHoldingClick,
 	isPointInsideBounds,
+	updateObjectById,
 } from '@design-app/utils'
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { CURSOR_TYPE } from '@shared/data-access/models'
@@ -307,6 +308,7 @@ export class ObjectPositioningService {
 		this._render.renderCanvasApp({
 			excludedEntityIds: multipleToMoveIds,
 			drawFns: [drawMultipleToMove],
+			shouldRenderSelectedEntitiesBox: false,
 		})
 		// this._render.drawCanvasExcludeIdsWithFnEditSelectBox(multipleToMoveIds, drawMultipleToMove)
 		// this._render.drawCanvasExcludeIdsWithFn(multipleToMoveIds, drawMultipleToMove)
@@ -326,14 +328,13 @@ export class ObjectPositioningService {
 		offset.y = offset.y / scale
 		const multipleToMoveIds = this.multipleToMoveIds
 		const entities = this._entities.panels.getEntitiesByIds(multipleToMoveIds)
-
 		const multiSelectedUpdated = entities.map((entity) => {
 			const location = entity.location
 			const newLocation = {
 				x: location.x + offset.x,
 				y: location.y + offset.y,
 			}
-			return EntityFactory.update(entity, { location: newLocation })
+			return updateObjectById(entity, { location: newLocation })
 		})
 
 		const storeUpdates = multiSelectedUpdated.map((entity) => {
@@ -377,3 +378,5 @@ export class ObjectPositioningService {
 			)
 	}
 }
+
+// const entitiesNearPoint = (entity: CanvasPanel, grabbedId: string, point: TransformedPoint) => (entity:CanvasPanel) => entity.id !== grabbedId && isPointInsideBounds(point, getEntityBounds(entity))

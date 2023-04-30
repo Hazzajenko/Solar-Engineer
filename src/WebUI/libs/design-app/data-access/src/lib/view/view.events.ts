@@ -1,4 +1,4 @@
-import { ContextMenuType } from './view.state'
+import { ContextMenuState } from './view.state'
 
 export type StartViewDragging = {
 	type: 'StartViewDragging'
@@ -10,12 +10,13 @@ export type StopViewDragging = {
 
 export type OpenContextMenu = {
 	type: 'OpenContextMenu'
-	payload: {
-		x: number
-		y: number
-		id: string
-		type: ContextMenuType
-	}
+	payload: ContextMenuState
+	/*	payload: {
+	 x: number
+	 y: number
+	 id: string
+	 type: ContextMenuType
+	 }*/
 }
 
 export type CloseContextMenu = {

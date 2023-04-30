@@ -1,6 +1,10 @@
 import { DesignCanvasDirectiveExtension } from './design-canvas-directive.extension'
 import { Directive, OnInit } from '@angular/core'
-import { AppSnapshot, CREATE_PREVIEW_STATE, genStringNameV2 } from '@design-app/data-access'
+import {
+	AppSnapshot,
+	genStringNameV2,
+	isPointInsideSelectedStringPanels,
+} from '@design-app/data-access'
 import {
 	CanvasEntity,
 	CanvasPanel,
@@ -128,11 +132,13 @@ export class DesignCanvasDirective extends DesignCanvasDirectiveExtension implem
 		// this.mousePos.innerText = `Original X: ${event.offsetX}, Y: ${event.offsetY}`
 		// this.transformedMousePos.innerText = `Transformed X: ${this.currentTransformedCursor.x}, Y: ${this.currentTransformedCursor.y}`
 
-		const { ToRotateState, SelectedState, ToMoveState, DragBoxState, ViewState, PointerState } =
-			this._app.state
-		const { NearbyLinesState, CreatePreviewState } = this._graphics.state
-		const appSnapshot = this._app.appSnapshot
-		const graphicsSnapshot = this._graphics.snapshot
+		/*	const { ToRotateState, SelectedState, ToMoveState, DragBoxState, ViewState, PointerState } =
+		 this._app.state*/
+		// const { NearbyLinesState, CreatePreviewState } = this._graphics.state
+		// const appSnapshot = this._app.appSnapshot
+		// const graphicsSnapshot = this._app.graphicsSnapshot
+		const { appSnapshot, graphicsSnapshot } = this._app.allSnapshots
+		// const graphicsSnapshot = this._graphics.snapshot
 
 		// const machineState = this._machine.state
 
@@ -305,16 +311,20 @@ export class DesignCanvasDirective extends DesignCanvasDirectiveExtension implem
 		 return
 		 }*/
 
-		if (CreatePreviewState === CREATE_PREVIEW_STATE.CREATE_PREVIEW_ENABLED) {
-			this._nearby.getDrawEntityPreview(
-				event,
-				currentPoint,
-				NearbyLinesState,
-				appSnapshot,
-				graphicsSnapshot,
-			)
+		if (graphicsSnapshot.matches('CreatePreviewState.CreatePreviewEnabled')) {
+			this._nearby.getDrawEntityPreview(event, currentPoint, appSnapshot, graphicsSnapshot)
 			return
 		}
+		/*		if (CreatePreviewState === CREATE_PREVIEW_STATE.CREATE_PREVIEW_ENABLED) {
+		 this._nearby.getDrawEntityPreview(
+		 event,
+		 currentPoint,
+		 NearbyLinesState,
+		 appSnapshot,
+		 graphicsSnapshot,
+		 )
+		 return
+		 }*/
 	}
 
 	/**
@@ -324,15 +334,15 @@ export class DesignCanvasDirective extends DesignCanvasDirectiveExtension implem
 	 */
 
 	onMouseUpHandler(event: PointerEvent, currentPoint: TransformedPoint) {
-		const state = this._app.state
+		// const state = this._app.state
 		/*		state = {
 		 DragBoxState: 'CreationBoxInProgress',
 		 }*/
 		// const state = state
 		// state
-		const { DragBoxState, ToMoveState, ViewState } = state
-		const snapshot = this._app.appSnapshot
-		const matches = snapshot.matches
+		// const { DragBoxState, ToMoveState, ViewState } = state
+		const appSnapshot = this._app.appSnapshot
+		// const matches = snapshot.matches
 		// const matches = this._machine.matches
 
 		/*		if (matches('ToMoveState')) {
@@ -348,12 +358,12 @@ export class DesignCanvasDirective extends DesignCanvasDirectiveExtension implem
 			console.log('mouseDownTimeOut', this.mouseDownTimeOut)
 			clearTimeout(this.mouseDownTimeOut)
 			this.mouseDownTimeOut = undefined
-			this.mouseClickHandler(event, currentPoint, snapshot)
+			this.mouseClickHandler(event, currentPoint, appSnapshot)
 			return
 		}
 
 		// if (snapshot.matches(VIEW_STATE.VIEW_DRAGGING_IN_PROGRESS)) {
-		if (snapshot.matches('ViewState.ViewPositioningState.ViewDraggingInProgress')) {
+		if (appSnapshot.matches('ViewState.ViewPositioningState.ViewDraggingInProgress')) {
 			// if (snapshot.matches('ViewState.ViewDraggingInProgress')) {
 			console.log('snapshot.matches(ViewState.ViewDraggingInProgress)')
 			this._view.handleDragScreenMouseUp(event)
@@ -370,12 +380,12 @@ export class DesignCanvasDirective extends DesignCanvasDirectiveExtension implem
 		 return
 		 }*/
 
-		if (snapshot.matches('DragBoxState.SelectionBoxInProgress')) {
+		if (appSnapshot.matches('DragBoxState.SelectionBoxInProgress')) {
 			this._drag.selectionBoxMouseUp(event, currentPoint)
 			return
 		}
 
-		if (snapshot.matches('DragBoxState.CreationBoxInProgress')) {
+		if (appSnapshot.matches('DragBoxState.CreationBoxInProgress')) {
 			this._drag.creationBoxMouseUp(event, currentPoint)
 			return
 		}
@@ -390,7 +400,7 @@ export class DesignCanvasDirective extends DesignCanvasDirectiveExtension implem
 		 return
 		 }*/
 
-		if (snapshot.matches('ToMoveState.SingleMoveInProgress')) {
+		if (appSnapshot.matches('ToMoveState.SingleMoveInProgress')) {
 			this._objPositioning.singleToMoveMouseUp(event, currentPoint)
 			return
 		}
@@ -400,7 +410,7 @@ export class DesignCanvasDirective extends DesignCanvasDirectiveExtension implem
 		 return
 		 }*/
 
-		if (snapshot.matches('ToMoveState.MultipleMoveInProgress')) {
+		if (appSnapshot.matches('ToMoveState.MultipleMoveInProgress')) {
 			this._objPositioning.stopMultiSelectDragging(event)
 			return
 		}
@@ -417,9 +427,7 @@ export class DesignCanvasDirective extends DesignCanvasDirectiveExtension implem
 	 * Mouse Click handler
 	 * @param event
 	 * @param currentPoint
-	 * @param state
 	 * @param appSnapshot
-	 * @private
 	 */
 
 	mouseClickHandler(
@@ -468,7 +476,9 @@ export class DesignCanvasDirective extends DesignCanvasDirectiveExtension implem
 			console.log('entityUnderMouse', entityUnderMouse)
 			return
 		}
-		this._selected.clearSelectedState()
+		const selectedSnapshot = this._app.selectedSnapshot
+		this._selected.handleNotClickedOnEntity(selectedSnapshot)
+		// this._selected.clearSelectedState()
 		if (this.anyEntitiesNearAreaOfClick(event)) {
 			return
 		}
@@ -574,7 +584,6 @@ export class DesignCanvasDirective extends DesignCanvasDirectiveExtension implem
 		this.scaleElement.innerText = `Scale: ${currentScaleX}`
 
 		this._render.renderCanvasApp()
-		// this._render.drawCanvas()
 		event.preventDefault()
 	}
 
@@ -588,6 +597,7 @@ export class DesignCanvasDirective extends DesignCanvasDirectiveExtension implem
 	contextMenuHandler(event: PointerEvent, currentPoint: TransformedPoint) {
 		// const appSnapshot = this._machine.appSnapshot
 		const selectedSnapshot = this._app.selectedSnapshot
+		const selectedCtx = this._app.selectedCtx
 
 		const entityUnderMouse = this.getEntityUnderMouse(event)
 		if (entityUnderMouse) {
@@ -602,19 +612,50 @@ export class DesignCanvasDirective extends DesignCanvasDirectiveExtension implem
 					y,
 				},
 			})
+			return
 		}
 
-		if (selectedSnapshot.matches('EntitySelectedState.EntitiesSelected')) {
-			const panelsInArea = this._entities.panels.getEntitiesByIds(
-				this._app.selectedCtx.multipleSelectedIds, // this._machine.appCtx.selected.multipleSelectedIds,
+		if (selectedSnapshot.matches('StringSelectedState.StringSelected')) {
+			const pointInsideSelectedStringPanels = isPointInsideSelectedStringPanels(
+				this._entities,
+				selectedCtx,
+				currentPoint,
 			)
-			const selectionBoxBounds = getCompleteBoundsFromMultipleEntitiesWithPadding(panelsInArea, 10)
-			const clickInBounds = isPointInsideBounds(currentPoint, selectionBoxBounds)
-			if (clickInBounds) {
+
+			if (pointInsideSelectedStringPanels) {
+				const selectedStringId = selectedCtx.selectedStringId
+				assertNotNull(selectedStringId)
+				const stringPanels = this._entities.panels.getEntitiesByStringId(selectedStringId)
+				const stringPanelsIds = stringPanels.map((panel) => panel.id)
 				this._app.sendEvent({
 					type: 'OpenContextMenu',
 					payload: {
-						id: 'multiple',
+						stringId: selectedStringId,
+						panelIds: stringPanelsIds,
+						type: 'String',
+						x: event.offsetX,
+						y: event.offsetY,
+					},
+				})
+				return
+			}
+		}
+
+		if (selectedSnapshot.matches('EntitySelectedState.EntitiesSelected')) {
+			const selectedPanels = this._entities.panels.getEntitiesByIds(
+				this._app.selectedCtx.multipleSelectedIds,
+			)
+			const selectionBoxBounds = getCompleteBoundsFromMultipleEntitiesWithPadding(
+				selectedPanels,
+				10,
+			)
+			const clickInBounds = isPointInsideBounds(currentPoint, selectionBoxBounds)
+			if (clickInBounds) {
+				const selectedPanelIds = selectedPanels.map((panel) => panel.id)
+				this._app.sendEvent({
+					type: 'OpenContextMenu',
+					payload: {
+						ids: selectedPanelIds,
 						type: 'MultipleEntities',
 						x: event.offsetX,
 						y: event.offsetY,

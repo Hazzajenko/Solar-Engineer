@@ -1,6 +1,6 @@
 import { AppSnapshot, AppStoreService } from '../app'
 import { EntityStoreService } from '../entities'
-import { GraphicsStateSnapshot, isNearbyLinesEnabled, NearbyGraphicsState } from '../graphics'
+import { GraphicsStateSnapshot } from '../graphics'
 import { GraphicsSettings } from '../graphics/graphics.settings'
 import { RenderService } from '../render'
 import { getDefaultDrawPreviewCtxFn } from './ctx-fns'
@@ -51,7 +51,6 @@ export class NearbyService {
 	getDrawEntityPreview(
 		event: PointerEvent,
 		currentPoint: TransformedPoint,
-		NearbyLinesState: NearbyGraphicsState,
 		appSnapshot: AppSnapshot,
 		graphicsSnapshot: GraphicsStateSnapshot,
 	) {
@@ -79,9 +78,10 @@ export class NearbyService {
 			isEntityOverlappingWithBounds(entity, mouseBoxBounds),
 		)
 
-		const nearbyLinesEnabled = isNearbyLinesEnabled(NearbyLinesState)
+		// const nearbyLinesEnabled = isNearbyLinesEnabled(NearbyLinesState)
 		// const nearbyAxisLinesEnabled = this._state.menu.nearbyAxisLines
-		if (!nearbyLinesEnabled) {
+		if (graphicsSnapshot.matches('NearbyLinesState.NearbyLinesDisabled')) {
+			// if (!nearbyLinesEnabled) {
 			console.log('no nearbyAxisLinesEnabled')
 			const drawPreviewFn = getDefaultDrawPreviewCtxFn(mouseBoxBounds)
 			this._render.renderCanvasApp({
@@ -91,9 +91,9 @@ export class NearbyService {
 			return
 		}
 		// assertIsObject(NearbyLinesState)
-		if (typeof NearbyLinesState === 'string') {
-			throw new Error('NearbyLinesState is a string')
-		}
+		/*	if (typeof NearbyLinesState === 'string') {
+		 throw new Error('NearbyLinesState is a string')
+		 }*/
 		// assertNotNull()
 		// NearbyLinesStat
 		// e.

@@ -1,5 +1,6 @@
 import { AppStoreService } from '../app'
 import { EntityStoreService } from '../entities'
+import { SelectedSnapshot } from './selected-state.types'
 import { inject, Injectable } from '@angular/core'
 import { CanvasEntity } from '@design-app/shared'
 import { assertNotNull } from '@shared/utils'
@@ -104,18 +105,33 @@ export class SelectedService {
 		 }*/
 	}
 
-	clearSingleSelected() {
-		/*if (this._app.appCtx.selected.singleSelectedId) {
-		 this._app.sendStateEvent(STATE_MACHINE.SELECTED, {
-		 type: 'ClearEntitySelected',
-		 })
-		 // this._app.sendEvent({ type: 'ClearEntitySelected' })
-		 // this._app.sendEvent(new ClearEntitySelected())
+	/*	clearSingleSelected() {
+	 /!*if (this._app.appCtx.selected.singleSelectedId) {
+	 this._app.sendStateEvent(STATE_MACHINE.SELECTED, {
+	 type: 'ClearEntitySelected',
+	 })
+	 // this._app.sendEvent({ type: 'ClearEntitySelected' })
+	 // this._app.sendEvent(new ClearEntitySelected())
+	 }*!/
+	 }*/
+
+	handleNotClickedOnEntity(selectedSnapshot: SelectedSnapshot) {
+		/*		if (selectedSnapshot.matches('StringSelectedState.StringSelected')) {
+		 this.clearSelectedState()
+		 return
 		 }*/
+
+		if (selectedSnapshot.matches('EntitySelectedState.EntitiesSelected')) {
+			this._app.sendSelectedEvent({ type: 'ClearMultipleSelectedEntities' })
+			return
+		}
 	}
 
+	// clear
+
 	clearSelectedState() {
-		this._app.sendSelectedEvent({ type: 'ClearEntitySelected' })
+		this._app.sendSelectedEvent({ type: 'ClearSelectedState' })
+		// this._app.sendSelectedEvent({ type: 'ClearEntitySelected' })
 		/*	this._app.sendStateEvent(STATE_MACHINE.SELECTED, {
 		 type: 'ClearEntitySelected',
 		 })*/

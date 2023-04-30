@@ -6,7 +6,6 @@ import {
 	DomPointService,
 	DragBoxService,
 	EntityStoreService,
-	GraphicsSettingsMachineService,
 	NearbyService,
 	ObjectPositioningService,
 	ObjectRotatingService,
@@ -30,6 +29,7 @@ import {
 } from '@design-app/utils'
 import { ContextMenuEvent, DoubleClickEvent, EVENT_TYPE } from '@shared/data-access/models'
 import { OnDestroyDirective } from '@shared/utils'
+import { GraphicsSettingsMachineService } from 'deprecated/design-app/feature-design-canvas'
 
 
 export abstract class DesignCanvasDirectiveExtension {

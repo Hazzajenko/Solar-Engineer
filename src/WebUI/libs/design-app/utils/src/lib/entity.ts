@@ -1,8 +1,9 @@
-import { AngleRadians, CanvasEntity, EntityType, SizeByType } from '@design-app/shared'
+import { AngleRadians, CanvasEntity, CanvasPanel, EntityType, SizeByType } from '@design-app/shared'
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { Point } from '@shared/data-access/models'
 import { newGuid } from '@shared/utils'
 import { CanvasString } from 'deprecated/design-app/feature-design-canvas'
+
 
 export const EntityFactory = {
 	create: (type: EntityType, location: Point): CanvasEntity => {
@@ -32,6 +33,63 @@ export const EntityFactory = {
 		}
 	},
 } as const
+/*
+ type Predicate<T> = (value: T, index: number, array: T[]) => unknown
+ type PredicateV2<T, U> = (value: T, index: number, array: T[]) => U
+ // map<U>(callbackfn: (value: T, index: number, array: T[]) => U, thisArg?: any): U[];
+
+
+ export const updateObjectPredicate = <T>(entities: U[], predicate: Predicate<U>): T[] => {
+ return entities.map((entity, index) => {
+ if (predicate(entity, index, entities)) {
+ return entity
+ }
+ return entity
+ })
+ }
+ const updateObjectsWithPredicate = <T>(entities: T[], predicate: Predicate<T>, changes: Partial<T>): T[] => {
+ return entities.map((entity, index) => {
+ if (predicate(entity, index, entities)) {
+ return {
+ ...entity,
+ ...changes,
+ }
+ }
+ return entity
+ })
+ }*/
+
+export const updateObjects = <T>(entities: T[], changes: Partial<T>): T[] => {
+	return entities.map((entity) => {
+		return {
+			...entity,
+			...changes,
+		}
+	})
+}
+/*
+ const entities: CanvasEntity[] = []
+
+ updateObjects(entities)*/
+
+/*const multiSelectedUpdated = entities.map((entity) => {
+ const location = entity.location
+ const newLocation = {
+ x: location.x + offset.x,
+ y: location.y + offset.y,
+ }
+ return updateObjectById(entity, { location: newLocation })
+ })*/
+
+export const updateObjectById = <T extends CanvasPanel | CanvasString>(
+	entity: T,
+	changes: Partial<T>,
+): T => {
+	return {
+		...entity,
+		...changes,
+	}
+}
 
 export const updateObjectByIdForStore = <T extends CanvasEntity | CanvasString>(
 	id: T['id'],

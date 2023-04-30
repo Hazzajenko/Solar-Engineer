@@ -1,6 +1,6 @@
 import { GraphicsStateEvent, graphicsStateMachine, GraphicsStateMatchesModel } from '../graphics'
 import { SelectedStateEvent, selectedStateMachine, SelectedStateMatchesModel } from '../selected'
-import { ContextMenuType } from '../view'
+import { ContextMenuState } from '../view'
 import { appStateMachine } from './app-state.machine'
 import { AppStateEvent, AppStateMatches, AppStateMatchesModel } from './app-state.types'
 import { Injectable } from '@angular/core'
@@ -29,15 +29,21 @@ const graphicsInterpreter = interpret(graphicsStateMachine, {
 	providedIn: 'root',
 })
 export class AppStoreService {
-	/*	private _appInterpreter = interpret(appStateMachine, { devTools: true }).onTransition((state) => {
-	 stateEventLoggerExcludePointerState(state)
-	 })*/
-	/*	private _selectedMachine = interpret(selectedStateMachine, {
-	 devTools: true,
-	 })*/
-	private _appInterpreter = appInterpreter
-	private _selectedInterpreter = selectedInterpreter
-	private _graphicsInterpreter = graphicsInterpreter
+	private _appInterpreter = appInterpreter.onTransition((state) => {
+		if (state.event.type === 'OpenContextMenu') {
+			this._contextMenu$.next(state.event.payload)
+		}
+		if (state.event.type === 'CloseContextMenu') {
+			this._contextMenu$.next(undefined)
+		}
+		this._appState$.next(state.value as AppStateMatchesModel)
+	})
+	private _selectedInterpreter = selectedInterpreter.onTransition((state) => {
+		this._selectedState$.next(state.value as SelectedStateMatchesModel)
+	})
+	private _graphicsInterpreter = graphicsInterpreter.onTransition((state) => {
+		this._graphicsState$.next(state.value as GraphicsStateMatchesModel)
+	})
 	private _appState$ = new BehaviorSubject<AppStateMatchesModel>(
 		this.appSnapshot.value as AppStateMatchesModel,
 	)
@@ -47,18 +53,9 @@ export class AppStoreService {
 	private _graphicsState$ = new BehaviorSubject<GraphicsStateMatchesModel>(
 		this.graphicsSnapshot.value as GraphicsStateMatchesModel,
 	)
-	private _contextMenu$ = new BehaviorSubject<
-		| {
-				x: number
-				y: number
-				id: string
-				type: ContextMenuType
-				// eslint-disable-next-line no-mixed-spaces-and-tabs
-		  }
-		| undefined
-	>(this.appSnapshot.context.view.contextMenu)
-
-	// private _state$ = new BehaviorSubject<AppStateValue>(this.state)
+	private _contextMenu$ = new BehaviorSubject<ContextMenuState | undefined>(
+		this.appSnapshot.context.view.contextMenu,
+	)
 
 	constructor() {
 		this._appInterpreter.start()
