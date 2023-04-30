@@ -22,7 +22,9 @@ import {
 import { WindowsStore } from '@design-app/data-access'
 import { DraggableWindow } from '@design-app/shared'
 import { LetModule } from '@ngrx/component'
+import { getGuid } from '@ngrx/data'
 import { ButtonBuilderComponent, ShowSvgComponent } from '@shared/ui'
+import { updateObjectForStore } from 'deprecated/design-app/feature-design-canvas'
 
 
 @Component({
@@ -51,12 +53,14 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 	private _elementRef = inject(ElementRef)
 	private _windows = inject(WindowsStore)
 	windows$ = this._windows.select.allWindows$
+	openWindows$ = this._windows.select.openWindows$
+	closedWindows$ = this._windows.select.closedWindows$
 	@ViewChild('window', { static: true }) stringWindow!: WindowComponent
 	isDragging = false
 
 	windows: DraggableWindow[] = [
 		{
-			id: 'window1',
+			id: getGuid(),
 			title: 'Window 1',
 			location: { x: 100, y: 100 },
 			size: { width: 200, height: 200 },
@@ -73,7 +77,7 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 		console.log(this.stringWindow, 'stringWindow')
 
 		this._ngZone.runOutsideAngular(() => {
-			console.log('ngAfterViewInit', this.stringWindow.windowBar.nativeElement)
+			// console.log('ngAfterViewInit', this.stringWindow.windowBar.nativeElement)
 			/*	this._renderer.listen(
 			 this.stringWindow.windowBar.nativeElement,
 			 EVENT_TYPE.POINTER_DOWN,
@@ -114,7 +118,7 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 
 	pushWindow(event: MouseEvent) {
 		this._windows.dispatch.addWindow({
-			id: 'window2',
+			id: getGuid(),
 			title: 'Window 2',
 			location: { x: event.clientX, y: event.clientY },
 			size: { width: 200, height: 200 },
@@ -129,5 +133,12 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 		 })*/
 	}
 
-	// protected readonly state = state
+	openWindow(window: DraggableWindow) {
+		const update = updateObjectForStore(window, { isOpen: true })
+		this._windows.dispatch.updateWindow(update)
+	}
+
+	closeWindow(window: DraggableWindow) {
+		this._windows.dispatch.deleteWindow(window.id)
+	}
 }

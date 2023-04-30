@@ -48,9 +48,10 @@
 
 <app-right-click-menu />
 <!--(minimiseEvent)='minimisedWindow.style.display = "block"'-->
-<ng-container *ngFor='let window of windows$ | async'>
+<ng-container *ngFor='let window of openWindows$ | async'>
   <app-window
-    [draggableWindow]='window'
+    [windowId]='window.id'
+    [ngStyle]='{display: window.isOpen ? "block" : "none"}'
     #windowComponent />
 </ng-container>
 <!--<app-window
@@ -64,12 +65,13 @@
   #minimisedWindow>
 
   <div
-    *ngFor='let window of windows$ | async'
+    *ngFor='let window of closedWindows$ | async'
     class='flex justify-between  bg-gray-200  hover:bg-gray-300 rounded-t-lg cursor-pointer  p-2'>
     <div class='flex items-center text-xs text-gray-700 pr-2  font-consolas'>{{window.title}}</div>
     <div class='flex items-center'>
 
       <button
+        (click)='openWindow(window)'
         type='button'
         class='rounded-lg px-2 h-4 items-center justify-center text-xs text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-700'
       >
@@ -78,6 +80,7 @@
           svgPath='window/minimise' />
       </button>
       <button
+        (click)='closeWindow(window)'
         type='button'
         class='rounded-lg flex items-center p-2 h-4 text-xs text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-700'
       >

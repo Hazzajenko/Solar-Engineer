@@ -1,9 +1,14 @@
-import { selectAllWindows, selectWindowsEntities } from './windows.selectors'
+import {
+	selectAllClosedWindows,
+	selectAllOpenWindows,
+	selectAllWindows,
+	selectWindowById,
+	selectWindowsEntities,
+} from './windows.selectors'
 import { inject, Injectable } from '@angular/core'
 import { DraggableWindow } from '@design-app/shared'
 import { Dictionary } from '@ngrx/entity'
 import { select, Store } from '@ngrx/store'
-import { selectCanvasStringById } from 'deprecated/design-app/feature-design-canvas'
 import { firstValueFrom, Observable } from 'rxjs'
 
 
@@ -19,6 +24,14 @@ export class WindowsQueries {
 		select(selectAllWindows),
 	)
 
+	private readonly _openWindows$: Observable<DraggableWindow[]> = this._store.pipe(
+		select(selectAllOpenWindows),
+	)
+
+	private readonly _closedWindows$: Observable<DraggableWindow[]> = this._store.pipe(
+		select(selectAllClosedWindows),
+	)
+
 	get windowEntities$() {
 		return this._windowEntities$
 	}
@@ -27,8 +40,16 @@ export class WindowsQueries {
 		return this._allWindows$
 	}
 
+	get openWindows$() {
+		return this._openWindows$
+	}
+
+	get closedWindows$() {
+		return this._closedWindows$
+	}
+
 	windowById$(id: string) {
-		return this._store.pipe(select(selectCanvasStringById({ id })))
+		return this._store.pipe(select(selectWindowById({ id })))
 	}
 
 	windowById(id: string) {

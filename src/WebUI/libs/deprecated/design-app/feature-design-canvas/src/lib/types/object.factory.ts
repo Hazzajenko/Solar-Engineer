@@ -10,7 +10,21 @@ export const updateObject = <T>(object: T, changes: Partial<T>): T => {
 	}
 }
 
-export const updateObjectForStore = <T extends CanvasEntity>(
+export const updateObjectForStore = <
+	T extends {
+		id: string
+	},
+>(
+	object: T,
+	changes: Partial<T>,
+): UpdateStr<T> => {
+	return {
+		id: object.id,
+		changes,
+	}
+}
+
+export const updateCanvasEntityForStore = <T extends CanvasEntity>(
 	object: T,
 	changes: Partial<T>,
 ): UpdateStr<T> => {
