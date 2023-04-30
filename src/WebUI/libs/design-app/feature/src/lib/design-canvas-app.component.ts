@@ -5,7 +5,7 @@ import {
 	RightClickMenuComponent,
 	StateValuesComponent,
 } from './menus'
-import { StringWindowComponent } from './windows'
+import { WindowComponent } from './windows'
 import { CdkDrag } from '@angular/cdk/drag-drop'
 import { CommonModule } from '@angular/common'
 import {
@@ -19,9 +19,10 @@ import {
 	Renderer2,
 	ViewChild,
 } from '@angular/core'
+import { WindowsStore } from '@design-app/data-access'
+import { DraggableWindow } from '@design-app/shared'
 import { LetModule } from '@ngrx/component'
-import { EVENT_TYPE } from '@shared/data-access/models'
-import { ShowSvgComponent, WindowComponent } from '@shared/ui'
+import { ButtonBuilderComponent, ShowSvgComponent } from '@shared/ui'
 
 
 @Component({
@@ -37,7 +38,7 @@ import { ShowSvgComponent, WindowComponent } from '@shared/ui'
 		RightClickMenuComponent,
 		DesignCanvasDirective,
 		WindowComponent,
-		StringWindowComponent,
+		ButtonBuilderComponent,
 	],
 	selector: 'app-design-canvas-app',
 	standalone: true,
@@ -48,8 +49,20 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 	private _ngZone = inject(NgZone)
 	private _renderer = inject(Renderer2)
 	private _elementRef = inject(ElementRef)
-	@ViewChild('stringWindow', { static: true }) stringWindow!: StringWindowComponent
+	private _windows = inject(WindowsStore)
+	windows$ = this._windows.select.allWindows$
+	@ViewChild('window', { static: true }) stringWindow!: WindowComponent
 	isDragging = false
+
+	windows: DraggableWindow[] = [
+		{
+			id: 'window1',
+			title: 'Window 1',
+			location: { x: 100, y: 100 },
+			size: { width: 200, height: 200 },
+			isOpen: true,
+		},
+	]
 
 	ngOnInit() {
 		console.log(this.constructor.name, 'ngOnInit')
@@ -61,42 +74,59 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 
 		this._ngZone.runOutsideAngular(() => {
 			console.log('ngAfterViewInit', this.stringWindow.windowBar.nativeElement)
-			this._renderer.listen(
-				this.stringWindow.windowBar.nativeElement,
-				EVENT_TYPE.POINTER_DOWN,
-				(event: PointerEvent) => {
-					console.log('dragging', event)
-					this.isDragging = true
-					// if (this.isDragging) {
-					console.log('dragging', event)
-					this._renderer.setStyle(this.stringWindow.windowBar.nativeElement, 'top', `0px`)
-					this._renderer.setStyle(this.stringWindow.windowBar.nativeElement, 'left', `0px`)
-					// }
-				},
-			)
-			this._renderer.listen(
-				this.stringWindow.windowBar.nativeElement,
-				EVENT_TYPE.POINTER_UP,
-				(event: PointerEvent) => {
-					console.log('dragging', event)
-					this.isDragging = false
-				},
-			)
+			/*	this._renderer.listen(
+			 this.stringWindow.windowBar.nativeElement,
+			 EVENT_TYPE.POINTER_DOWN,
+			 (event: PointerEvent) => {
+			 console.log('dragging', event)
+			 this.isDragging = true
+			 // if (this.isDragging) {
+			 console.log('dragging', event)
+			 this._renderer.setStyle(this.stringWindow.windowBar.nativeElement, 'top', `0px`)
+			 this._renderer.setStyle(this.stringWindow.windowBar.nativeElement, 'left', `0px`)
+			 // }
+			 },
+			 )
+			 this._renderer.listen(
+			 this.stringWindow.windowBar.nativeElement,
+			 EVENT_TYPE.POINTER_UP,
+			 (event: PointerEvent) => {
+			 console.log('dragging', event)
+			 this.isDragging = false
+			 },
+			 )
 
-			this._renderer.listen(
-				this.stringWindow.windowBar.nativeElement,
-				EVENT_TYPE.POINTER_MOVE,
-				(event: PointerEvent) => {
-					/*			if (this.isDragging) {
-				 console.log('dragging', event)
-				 this._renderer.setStyle(this._elementRef.nativeElement, 'top', `${event.clientY}px`)
-				 this._renderer.setStyle(this._elementRef.nativeElement, 'left', `${event.clientX}px`)
-				 }*/
-				},
-			)
-			/*const svg = this._elementRef.nativeElement.querySelector('svg')
-			 this._renderer.setStyle(svg, 'background-color', 'red')*/
+			 this._renderer.listen(
+			 this.stringWindow.windowBar.nativeElement,
+			 EVENT_TYPE.POINTER_MOVE,
+			 (event: PointerEvent) => {
+			 /!*			if (this.isDragging) {
+			 console.log('dragging', event)
+			 this._renderer.setStyle(this._elementRef.nativeElement, 'top', `${event.clientY}px`)
+			 this._renderer.setStyle(this._elementRef.nativeElement, 'left', `${event.clientX}px`)
+			 }*!/
+			 },
+			 )
+			 /!*const svg = this._elementRef.nativeElement.querySelector('svg')
+			 this._renderer.setStyle(svg, 'background-color', 'red')*!/*/
 		})
+	}
+
+	pushWindow(event: MouseEvent) {
+		this._windows.dispatch.addWindow({
+			id: 'window2',
+			title: 'Window 2',
+			location: { x: event.clientX, y: event.clientY },
+			size: { width: 200, height: 200 },
+			isOpen: true,
+		})
+		/*		this.windows.push({
+		 id: 'window2',
+		 title: 'Window 2',
+		 location: { x: event.clientX, y: event.clientY },
+		 size: { width: 200, height: 200 },
+		 isOpen: true,
+		 })*/
 	}
 
 	// protected readonly state = state

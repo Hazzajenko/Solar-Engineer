@@ -1,1 +1,1 @@
-export * from './string-window.component'
+export * from './window.component'

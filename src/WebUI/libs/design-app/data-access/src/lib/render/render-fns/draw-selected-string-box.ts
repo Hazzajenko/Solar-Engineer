@@ -1,4 +1,4 @@
-import { EntityStoreService } from '../../entities/entity-store.service'
+import { EntityStoreService } from '../../entities'
 import { SelectedStateSnapshot } from '../../selected'
 import { CANVAS_COLORS } from '@design-app/shared'
 import { getCompleteBoundsFromMultipleEntitiesWithPadding } from '@design-app/utils'

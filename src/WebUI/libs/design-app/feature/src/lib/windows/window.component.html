@@ -11,12 +11,23 @@
 </div>-->
 
 <div cdkDrag
-     class='absolute left-1/2 top-1/2 z-50'>
+     [cdkDragFreeDragPosition]='draggableWindow.location'
+     class='absolute z-50'>
+  <!--  Consolas-->
+  <!--  // ctx.font = '10px Roboto, sans-serif'
+    // ctx.font = '10px Helvetica, sans-serif'
+    // ctx.font = '10px Cascadia Code, sans-serif'-->
+  <!--  roboto: ['"Roboto"'],
+    'cascadia-code': ['"Cascadia Code"'],
+    // 'cascadia-mono': ['"Cascadia Mono"'],
+    // 'cascadia-pl': ['"Cascadia PL"'],
+    // 'cascadia-mono-pl': ['"Cascadia Mono PL"'],
+    helvetica: ['"Helvetica"'],-->
   <div #windowBar
        cdkDragHandle
 
-       class='bg-slate-200 flex justify-between w-44 rounded-t-lg p-1 shadow'>
-    <div class='flex items-center'>Window</div>
+       class='bg-gray-200 hover:bg-gray-300 flex justify-between w-44 rounded-t-lg p-1 shadow'>
+    <div class='flex items-center text-2xs  text-gray-700 font-consolas'>Window</div>
     <!--    <div class='flex items-center'>Bar</div>-->
     <div class='flex items-center'>
 

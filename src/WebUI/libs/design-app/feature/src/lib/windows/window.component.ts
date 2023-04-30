@@ -6,32 +6,34 @@ import {
 	ElementRef,
 	EventEmitter,
 	inject,
+	Input,
 	NgZone,
 	Output,
 	Renderer2,
 	ViewChild,
 } from '@angular/core'
 import { RenderService } from '@design-app/data-access'
+import { DraggableWindow } from '@design-app/shared'
 import { EVENT_TYPE } from '@shared/data-access/models'
 import { ShowSvgComponent, ShowSvgV2Component } from '@shared/ui'
 
 
 @Component({
-	selector: 'app-string-window-component',
+	selector: 'app-window[draggableWindow]',
 	standalone: true,
-	templateUrl: 'string-window.component.html',
+	templateUrl: 'window.component.html',
 	imports: [ShowSvgComponent, CdkDrag, CdkDragHandle, NgIf, ShowSvgV2Component],
 })
-export class StringWindowComponent implements AfterViewInit {
+export class WindowComponent implements AfterViewInit {
 	private _ngZone = inject(NgZone)
 	private _renderer = inject(Renderer2)
 	private _render = inject(RenderService)
 	private _elementRef = inject(ElementRef)
 	@ViewChild('windowBar', { static: true }) windowBar!: ElementRef<HTMLDivElement>
-	isDragging = false
 	isOpen = true
 
-	@Output() windowTitle = 'String Window'
+	// @Input() location!: Point
+	@Input() draggableWindow!: DraggableWindow
 	@Output() minimiseEvent = new EventEmitter<boolean>()
 
 	ngAfterViewInit(): void {

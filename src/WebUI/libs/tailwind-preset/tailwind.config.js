@@ -2,6 +2,26 @@ module.exports = {
 	darkMode: 'class',
 	theme: {
 		extend: {
+			fontFamily: {
+				sans: ['ui-sans-serif', 'system-ui'],
+				serif: ['ui-serif', 'Georgia'],
+				mono: ['ui-monospace', 'SFMono-Regular'],
+				display: ['Oswald'],
+				body: ['"Open Sans"'],
+				consolas: ['"Consolas"'],
+				roboto: ['"Roboto"'],
+				'cascadia-code': ['"Cascadia Code"'],
+				// 'cascadia-mono': ['"Cascadia Mono"'],
+				// 'cascadia-pl': ['"Cascadia PL"'],
+				// 'cascadia-mono-pl': ['"Cascadia Mono PL"'],
+				helvetica: ['"Helvetica"'],
+				// 'helvetica-neue': ['"Helvetica Neue"'],
+				// 'helvetica-std': ['"Helvetica Std"'],
+
+				// ctx.font = '10px Roboto, sans-serif'
+				// ctx.font = '10px Helvetica, sans-serif'
+				// ctx.font = '10px Cascadia Code, sans-serif'
+			},
 			/*			spacing: {
 							px: '1px',
 							0: '0',
