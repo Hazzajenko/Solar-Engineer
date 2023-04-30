@@ -1,5 +1,4 @@
 import { getEntityBounds } from './bounds'
-import { getDistanceBetweenTwoPoints } from '@design-app/feature-design-canvas'
 import {
 	AXIS,
 	Axis,
@@ -8,6 +7,7 @@ import {
 	EntityBounds,
 	NearbyEntity,
 } from '@design-app/shared'
+import { getDistanceBetweenTwoPoints } from 'deprecated/design-app/feature-design-canvas'
 
 export const findNearbyBoundOverlapOnBothAxis = (
 	bounds: EntityBounds,

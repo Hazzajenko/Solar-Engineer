@@ -1,4 +1,4 @@
-import { TransformedPoint } from '@design-app/feature-design-canvas'
+import { TransformedPoint } from 'deprecated/design-app/feature-design-canvas'
 
 export type PointerStateContext = {
 	pointerDown: boolean

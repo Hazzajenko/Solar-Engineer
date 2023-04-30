@@ -15,7 +15,7 @@ export const appRoutes: Route[] = [
 	{
 		path: '',
 		loadComponent: () =>
-			import('@design-app/feature-design-canvas').then((m) => m.DesignCanvasBusComponent),
+			import('deprecated/design-app/feature-design-canvas').then((m) => m.DesignCanvasBusComponent),
 		// providers: [noGridLayoutProviders],
 	},
 	/*  {

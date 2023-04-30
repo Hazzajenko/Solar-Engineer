@@ -1,5 +1,5 @@
 import { AppSnapshot, AppStoreService } from '../app'
-import { EntityStoreService } from '../entities/entity-store.service'
+import { EntityStoreService } from '../entities'
 import { GraphicsStateSnapshot, isNearbyLinesEnabled, NearbyGraphicsState } from '../graphics'
 import { GraphicsSettings } from '../graphics/graphics.settings'
 import { RenderService } from '../render'

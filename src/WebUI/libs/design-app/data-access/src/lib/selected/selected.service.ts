@@ -1,5 +1,5 @@
 import { AppStoreService } from '../app'
-import { EntityStoreService } from '../entities/entity-store.service'
+import { EntityStoreService } from '../entities'
 import { inject, Injectable } from '@angular/core'
 import { CanvasEntity } from '@design-app/shared'
 import { assertNotNull } from '@shared/utils'

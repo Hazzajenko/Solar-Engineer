@@ -1,14 +1,14 @@
 import { AppSnapshot, AppStoreService } from '../app'
 import { CanvasElementService } from '../div-elements'
 import { DomPointService } from '../dom-point'
-import { EntityStoreService } from '../entities/entity-store.service'
+import { EntityStoreService } from '../entities'
 import { RenderService } from '../render'
 import { CURRENT_DRAG_BOX } from './drag-box.state'
 import { inject, Injectable } from '@angular/core'
-import { CANVAS_COLORS } from '@design-app/feature-design-canvas'
-import { createPanel, ENTITY_TYPE, SizeByType, TransformedPoint } from '@design-app/shared'
+import { CANVAS_COLORS, ENTITY_TYPE, SizeByType, TransformedPoint } from '@design-app/shared'
 import {
 	changeCanvasCursor,
+	createPanel,
 	dragBoxKeysDown,
 	getAllAvailableEntitySpotsBetweenTwoPoints,
 	getAllEntitiesBetweenTwoPoints,

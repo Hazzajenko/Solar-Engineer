@@ -1,0 +1,43 @@
+<canvas #canvas
+        id='canvas'
+        class='absolute inset-0'
+        appDesignCanvasApp></canvas>
+
+<div class='absolute'>
+  <div id='fps'></div>
+  <div style='display: none'
+       id='mouse-pos'></div>
+  <div style='display: none'
+       id='transformed-mouse-pos'></div>
+  <div style='display: none'
+       id='scale-element'></div>
+  <div style='display: none'
+       id='string-stats'></div>
+  <div style='display: none'
+       id='panel-stats'></div>
+  <div style='display: none'
+       id='rotate-stats'></div>
+</div>
+
+<div
+  #keyMap
+  id='key-map'
+  class='absolute left-5 top-5 z-10'
+>
+  <!--  [style.display]="state.menu.keyMap ? 'initial' : 'none'"-->
+  <app-key-map-component />
+</div>
+
+<div #stateValues
+     id='state-values'
+     class='absolute left-72 top-5 z-10'>
+  <app-state-values />
+</div>
+
+<div #graphicsMenu
+     id='graphics-menu'
+     class='absolute right-5 top-5 z-10'>
+  <app-canvas-graphics-menu />
+</div>
+
+<app-right-click-menu />

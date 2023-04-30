@@ -1,44 +1,38 @@
 import { DesignCanvasDirectiveExtension } from './design-canvas-directive.extension'
 import { Directive, OnInit } from '@angular/core'
-import { AppSnapshot } from '@design-app/data-access'
-import {
-	CREATE_PREVIEW_STATE,
-	PointerHoverOverEntity,
-	PointerLeaveEntity,
-	updateObjectByIdForStore,
-} from '@design-app/feature-design-canvas'
+import { AppSnapshot, CREATE_PREVIEW_STATE, genStringNameV2 } from '@design-app/data-access'
 import {
 	CanvasEntity,
 	CanvasPanel,
-	createPanel,
-	createString,
 	ENTITY_TYPE,
-	genStringNameV2,
-	isPanel,
 	SizeByType,
 	TransformedPoint,
 	UndefinedStringId,
 } from '@design-app/shared'
 import {
 	changeCanvasCursor,
+	createPanel,
+	createString,
 	dragBoxKeysDown,
 	draggingScreenKeysDown,
 	getCompleteBoundsFromMultipleEntitiesWithPadding,
 	getTopLeftPointFromTransformedPoint,
 	isContextMenu,
 	isDraggingEntity,
+	isPanel,
 	isPointInsideBounds,
 	isReadyToMultiDrag,
 	isWheelButton,
 	multiSelectDraggingKeysDown,
 	rotatingKeysDown,
+	updateObjectByIdForStore,
 } from '@design-app/utils'
 import { CURSOR_TYPE, KEYS } from '@shared/data-access/models'
 import { assertNotNull, OnDestroyDirective } from '@shared/utils'
 
 
 @Directive({
-	selector: '[appDesignCanvasXState]',
+	selector: '[appDesignCanvasApp]',
 	providers: [OnDestroyDirective],
 	standalone: true,
 }) /*,
@@ -289,9 +283,7 @@ export class DesignCanvasDirective extends DesignCanvasDirectiveExtension implem
 		if (entityUnderMouse) {
 			const hoveringEntityId = this._app.appCtx.pointer.hoveringEntityId
 			if (hoveringEntityId === entityUnderMouse.id) return
-			this._app.sendEvent(
-				new PointerHoverOverEntity({ id: entityUnderMouse.id, point: currentPoint }),
-			)
+			this._app.sendEvent({ type: 'PointerHoverOverEntity', payload: { id: entityUnderMouse.id } })
 			this._render.renderCanvasApp()
 			// this._render.drawCanvas()
 			return
@@ -299,7 +291,8 @@ export class DesignCanvasDirective extends DesignCanvasDirectiveExtension implem
 
 		if (appSnapshot.matches('PointerState.HoveringOverEntity')) {
 			changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
-			this._app.sendEvent(new PointerLeaveEntity({ point: currentPoint }))
+			this._app.sendEvent({ type: 'PointerLeaveEntity' })
+			// this._app.sendEvent(new PointerLeaveEntity({ point: currentPoint }))
 			this._render.renderCanvasApp()
 			// this._render.drawCanvas()
 			return

@@ -1,4 +1,4 @@
-import { rotate } from '../../../feature-design-canvas/src/lib/utils/rotate'
+import { rotate } from './rotate'
 import {
 	CanvasEntity,
 	CompleteEntityBounds,

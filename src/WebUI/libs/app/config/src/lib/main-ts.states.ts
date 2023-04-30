@@ -1,3 +1,4 @@
+import { provideState } from '@ngrx/store'
 import {
 	CANVAS_APP_STATE_FEATURE_KEY,
 	CANVAS_FEATURE_KEY,
@@ -5,8 +6,7 @@ import {
 	canvasAppStateReducer,
 	canvasReducer,
 	canvasStringsReducer,
-} from '@design-app/feature-design-canvas'
-import { provideState } from '@ngrx/store'
+} from 'deprecated/design-app/feature-design-canvas'
 import { PANELS_FEATURE_KEY, panelsReducer } from 'deprecated/design-app/feature-panel'
 import { SELECTED_FEATURE_KEY, selectedReducer } from 'deprecated/design-app/feature-selected'
 

@@ -1,30 +1,52 @@
-import { SelectedStateEvent, selectedStateMachine } from '../selected'
+import { GraphicsStateEvent, graphicsStateMachine, GraphicsStateMatchesModel } from '../graphics'
+import { SelectedStateEvent, selectedStateMachine, SelectedStateMatchesModel } from '../selected'
 import { ContextMenuType } from '../view'
 import { appStateMachine } from './app-state.machine'
-import { AppStateEvent } from './app-state.types'
+import { AppStateEvent, AppStateMatches, AppStateMatchesModel } from './app-state.types'
 import { Injectable } from '@angular/core'
-import {
-	AppStateMatches,
-	AppStateMatchesModel,
-	STATE_MACHINE,
-	stateEventLoggerExcludePointerState,
-	StateMachine,
-} from '@design-app/feature-design-canvas'
+import { xstateLogger } from '@design-app/utils'
 import { BehaviorSubject } from 'rxjs'
 import { interpret } from 'xstate'
 
+
+const appInterpreter = interpret(appStateMachine, { devTools: true }).onTransition((state) => {
+	xstateLogger(state)
+})
+
+const selectedInterpreter = interpret(selectedStateMachine, {
+	devTools: true,
+}).onTransition((state) => {
+	xstateLogger(state)
+})
+
+const graphicsInterpreter = interpret(graphicsStateMachine, {
+	devTools: true,
+}).onTransition((state) => {
+	xstateLogger(state)
+})
 
 @Injectable({
 	providedIn: 'root',
 })
 export class AppStoreService {
-	private _appMachine = interpret(appStateMachine, { devTools: true }).onTransition((state) => {
-		stateEventLoggerExcludePointerState(state)
-	})
-	private _selectedMachine = interpret(selectedStateMachine, {
-		devTools: true,
-	})
-	private _state$ = new BehaviorSubject<AppStateMatches>(this.appSnapshot.value as AppStateMatches)
+	/*	private _appInterpreter = interpret(appStateMachine, { devTools: true }).onTransition((state) => {
+	 stateEventLoggerExcludePointerState(state)
+	 })*/
+	/*	private _selectedMachine = interpret(selectedStateMachine, {
+	 devTools: true,
+	 })*/
+	private _appInterpreter = appInterpreter
+	private _selectedInterpreter = selectedInterpreter
+	private _graphicsInterpreter = graphicsInterpreter
+	private _appState$ = new BehaviorSubject<AppStateMatchesModel>(
+		this.appSnapshot.value as AppStateMatchesModel,
+	)
+	private _selectedState$ = new BehaviorSubject<SelectedStateMatchesModel>(
+		this.selectedSnapshot.value as SelectedStateMatchesModel,
+	)
+	private _graphicsState$ = new BehaviorSubject<GraphicsStateMatchesModel>(
+		this.graphicsSnapshot.value as GraphicsStateMatchesModel,
+	)
 	private _contextMenu$ = new BehaviorSubject<
 		| {
 				x: number
@@ -39,44 +61,48 @@ export class AppStoreService {
 	// private _state$ = new BehaviorSubject<AppStateValue>(this.state)
 
 	constructor() {
-		this._appMachine.start()
-		this._appMachine.onTransition((state) => {
-			this._state$.next(state.value as AppStateMatches)
-			this._contextMenu$.next(state.context.view.contextMenu)
-		})
-		this._selectedMachine.start()
-		this._selectedMachine.onTransition((state) => {
-			console.log('state', state)
-		})
+		this._appInterpreter.start()
+		this._selectedInterpreter.start()
+		this._graphicsInterpreter.start()
 	}
 
 	get appCtx() {
-		return this._appMachine.getSnapshot().context
+		return this._appInterpreter.getSnapshot().context
 	}
 
 	get selectedCtx() {
-		return this._selectedMachine.getSnapshot().context
+		return this._selectedInterpreter.getSnapshot().context
+	}
+
+	get graphicsCtx() {
+		return this._graphicsInterpreter.getSnapshot().context
 	}
 
 	get allCtx() {
 		return {
 			appCtx: this.appCtx,
 			selectedCtx: this.selectedCtx,
+			graphicsCtx: this.graphicsCtx,
 		}
 	}
 
 	get appSnapshot() {
-		return this._appMachine.getSnapshot()
+		return this._appInterpreter.getSnapshot()
 	}
 
 	get selectedSnapshot() {
-		return this._selectedMachine.getSnapshot()
+		return this._selectedInterpreter.getSnapshot()
+	}
+
+	get graphicsSnapshot() {
+		return this._graphicsInterpreter.getSnapshot()
 	}
 
 	get allSnapshots() {
 		return {
 			appSnapshot: this.appSnapshot,
 			selectedSnapshot: this.selectedSnapshot,
+			graphicsSnapshot: this.graphicsSnapshot,
 		}
 	}
 
@@ -85,40 +111,31 @@ export class AppStoreService {
 	}
 
 	sendEvent(event: AppStateEvent) {
-		const eventType = event.type
-		/*		if (eventType === 'SetMultipleSelectedEntities') {
-		 this._selectedMachine.send(event as any)
-		 }
-		 if (eventType.includes('Selected')) {
-		 this._selectedMachine.send(event as any)
-		 }
-		 if (event.type.includes('Selected')) {
-		 this._selectedMachine.send(event as any)
-		 }*/
-		return this._appMachine.send(event)
-	}
-
-	sendStateEvent(machine: StateMachine, event: AppStateEvent) {
-		if (machine === STATE_MACHINE.SELECTED) {
-			return this._selectedMachine.send(event as any)
-		}
-		return this._appMachine.send(event)
+		return this._appInterpreter.send(event)
 	}
 
 	sendSelectedEvent(event: SelectedStateEvent) {
-		return this._selectedMachine.send(event)
+		return this._selectedInterpreter.send(event)
 	}
 
-	/*	transition() {
-	 return this._machine.getSnapshot().machine?.transition()
-	 }*/
-
-	subscribe() {
-		return this._state$.asObservable()
+	sendGraphicsEvent(event: GraphicsStateEvent) {
+		return this._graphicsInterpreter.send(event)
 	}
 
-	subscribeContextMenu() {
+	subscribeApp$() {
+		return this._appState$.asObservable()
+	}
+
+	subscribeSelected$() {
+		return this._selectedState$.asObservable()
+	}
+
+	subscribeContextMenu$() {
 		return this._contextMenu$.asObservable()
+	}
+
+	subscribeGraphics$() {
+		return this._graphicsState$.asObservable()
 	}
 
 	matches(matches: AppStateMatches) {

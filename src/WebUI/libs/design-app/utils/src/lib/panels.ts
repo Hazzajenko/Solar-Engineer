@@ -1,11 +1,5 @@
-import {
-	CanvasEntity,
-	CanvasPanel,
-	ENTITY_TYPE,
-	EntityFactory,
-	PanelId,
-	StringId,
-} from '@design-app/shared'
+import { EntityFactory } from './entity'
+import { CanvasEntity, CanvasPanel, ENTITY_TYPE, PanelId, StringId } from '@design-app/shared'
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { Point } from '@shared/data-access/models'
 

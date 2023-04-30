@@ -1,10 +1,11 @@
 import { AppStoreService } from '../app'
 import { CanvasElementService, DIV_ELEMENT, DivElementsService } from '../div-elements'
-import { EntityStoreService } from '../entities/entity-store.service'
+import { EntityStoreService } from '../entities'
 import { SelectedStateSnapshot } from '../selected'
 import { drawSelectedBox, drawSelectedStringBox } from './render-fns'
 import { inject, Injectable } from '@angular/core'
-import { CANVAS_COLORS, CanvasEntity, isPanel, PANEL_STROKE_STYLE } from '@design-app/shared'
+import { CANVAS_COLORS, CanvasEntity, PANEL_STROKE_STYLE } from '@design-app/shared'
+import { isPanel } from '@design-app/utils'
 import { shadeColor } from '@shared/utils'
 
 
