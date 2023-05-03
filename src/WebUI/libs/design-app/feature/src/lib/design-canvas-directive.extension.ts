@@ -21,16 +21,16 @@ import {
 	TransformedPoint,
 } from '@design-app/shared'
 import {
+	eventToPointLocation,
 	getBoundsFromCenterPoint,
 	getEntityBounds,
 	isContextMenu,
 	isEntityOverlappingWithBounds,
 	isPointInsideBounds,
 } from '@design-app/utils'
-import { ContextMenuEvent, DoubleClickEvent, EVENT_TYPE } from '@shared/data-access/models'
+import { ContextMenuEvent, DoubleClickEvent, EVENT_TYPE, Point } from '@shared/data-access/models'
 import { OnDestroyDirective } from '@shared/utils'
 import { GraphicsSettingsMachineService } from 'deprecated/design-app/feature-design-canvas'
-
 
 export abstract class DesignCanvasDirectiveExtension {
 	protected _onDestroy = inject(OnDestroyDirective)
@@ -81,6 +81,7 @@ export abstract class DesignCanvasDirectiveExtension {
 	protected height = this.canvas.height
 	protected width = this.canvas.width
 
+	protected rawMousePos: Point = { x: 0, y: 0 }
 	protected currentPoint: TransformedPoint = { x: 0, y: 0 } as TransformedPoint
 
 	protected mouseDownTimeOutFn = () => {
@@ -124,6 +125,7 @@ export abstract class DesignCanvasDirectiveExtension {
 	protected setupMouseEventListeners() {
 		this._renderer.listen(this.canvas, EVENT_TYPE.POINTER_UP, (event: PointerEvent) => {
 			console.log('mouse up', event)
+			this.rawMousePos = eventToPointLocation(event)
 			this.currentPoint = this._domPoint.getTransformedPointFromEvent(event)
 			if (isContextMenu(event)) return
 			/*			this._app.sendEvent(
@@ -135,6 +137,7 @@ export abstract class DesignCanvasDirectiveExtension {
 		})
 		this._renderer.listen(this.canvas, EVENT_TYPE.POINTER_DOWN, (event: PointerEvent) => {
 			console.log('mouse down', event)
+			this.rawMousePos = eventToPointLocation(event)
 			this.currentPoint = this._domPoint.getTransformedPointFromEvent(event)
 			/*			this._app.sendEvent(
 			 new PointerDown({ point: this._domPoint.getTransformedPointFromEvent(event) }),
@@ -144,12 +147,14 @@ export abstract class DesignCanvasDirectiveExtension {
 			event.preventDefault()
 		})
 		this._renderer.listen(this.canvas, EVENT_TYPE.POINTER_MOVE, (event: PointerEvent) => {
+			this.rawMousePos = eventToPointLocation(event)
 			this.currentPoint = this._domPoint.getTransformedPointFromEvent(event)
 			this.onMouseMoveHandler(event, this.currentPoint)
 			event.stopPropagation()
 			event.preventDefault()
 		})
 		this._renderer.listen(this.canvas, ContextMenuEvent, (event: PointerEvent) => {
+			this.rawMousePos = eventToPointLocation(event)
 			console.log('context menu', event)
 			this.currentPoint = this._domPoint.getTransformedPointFromEvent(event)
 			this.contextMenuHandler(event, this.currentPoint)
@@ -163,6 +168,7 @@ export abstract class DesignCanvasDirectiveExtension {
 		 event.preventDefault()
 		 })*/
 		this._renderer.listen(this.canvas, DoubleClickEvent, (event: PointerEvent) => {
+			this.rawMousePos = eventToPointLocation(event)
 			this.currentPoint = this._domPoint.getTransformedPointFromEvent(event)
 			this.doubleClickHandler(event, this.currentPoint)
 			event.stopPropagation()

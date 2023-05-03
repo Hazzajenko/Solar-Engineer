@@ -1,7 +1,7 @@
-import { AppStoreService } from '../app'
-import { EntityStoreService } from '../entities'
-import { RenderService } from '../render'
-import { inject, Injectable } from '@angular/core'
+import {AppStoreService} from '../app'
+import {EntityStoreService} from '../entities'
+import {RenderService} from '../render'
+import {inject, Injectable} from '@angular/core'
 import {
 	AngleRadians,
 	CANVAS_COLORS,
@@ -17,10 +17,10 @@ import {
 	rotatingKeysDown,
 	updateObjectByIdForStore,
 } from '@design-app/utils'
-import { Dictionary } from '@ngrx/entity'
-import { UpdateStr } from '@ngrx/entity/src/models'
-import { Point } from '@shared/data-access/models'
-import { assertNotNull } from '@shared/utils'
+import {Dictionary} from '@ngrx/entity'
+import {UpdateStr} from '@ngrx/entity/src/models'
+import {Point} from '@shared/data-access/models'
+import {assertNotNull} from '@shared/utils'
 
 
 @Injectable({
@@ -212,6 +212,7 @@ export class ObjectRotatingService {
 			excludedEntityIds: multipleToRotateIds,
 			drawFns: [multipleRotateDrawFn],
 			shouldRenderSelectedEntitiesBox: false,
+			shouldRenderSelectedStringBox: false,
 		})
 	}
 

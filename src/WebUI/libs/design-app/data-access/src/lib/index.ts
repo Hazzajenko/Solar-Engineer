@@ -1,4 +1,5 @@
 export * from './view/index'
+export * from './dialogs/index'
 export * from './grid/index'
 export * from './selected/index'
 export * from './app/index'

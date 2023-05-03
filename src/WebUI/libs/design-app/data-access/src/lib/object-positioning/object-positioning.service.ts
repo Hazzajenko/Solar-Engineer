@@ -36,7 +36,7 @@ import {
 	updateObjectById,
 } from '@design-app/utils'
 import { UpdateStr } from '@ngrx/entity/src/models'
-import { CURSOR_TYPE } from '@shared/data-access/models'
+import { CURSOR_TYPE, Point } from '@shared/data-access/models'
 import { assertNotNull, groupInto2dArray } from '@shared/utils'
 import { sortBy } from 'lodash'
 
@@ -182,15 +182,15 @@ export class ObjectPositioningService {
 		// this._render.drawCanvasExcludeIdsWithFn([this.singleToMoveId], ctxFn)
 	}
 
-	singleToMoveMouseUp(event: PointerEvent, currentPoint: TransformedPoint) {
+	singleToMoveMouseUp(event: PointerEvent | boolean, currentPoint: TransformedPoint) {
 		assertNotNull(this.singleToMoveId)
-
+		const altKey = event instanceof PointerEvent ? event.altKey : false
 		// const middleOf = getMiddleOfObjectFromEvent(event, ENTITY_TYPE.Panel)
 		let location: {
 			x: number
 			y: number
 		}
-		if (this.axisRepositionPreviewRect && event.altKey) {
+		if (this.axisRepositionPreviewRect && altKey) {
 			location = {
 				x: this.axisRepositionPreviewRect.left,
 				y: this.axisRepositionPreviewRect.top,
@@ -315,14 +315,17 @@ export class ObjectPositioningService {
 		return
 	}
 
-	stopMultiSelectDragging(event: MouseEvent) {
+	stopMultiSelectDragging(event: MouseEvent | Point) {
 		const multiToMoveStart = this.multiToMoveStart
 		assertNotNull(multiToMoveStart)
-		const eventLocation = eventToPointLocation(event)
+		const dragStopPoint = event instanceof MouseEvent ? eventToPointLocation(event) : event
+		// if (event instanceof MouseEvent) {
+		// 	const eventLocation = eventToPointLocation(event)
+		// }
 		const scale = this._domPoint.scale
 		const offset = {
-			x: eventLocation.x - multiToMoveStart.x,
-			y: eventLocation.y - multiToMoveStart.y,
+			x: dragStopPoint.x - multiToMoveStart.x,
+			y: dragStopPoint.y - multiToMoveStart.y,
 		}
 		offset.x = offset.x / scale
 		offset.y = offset.y / scale

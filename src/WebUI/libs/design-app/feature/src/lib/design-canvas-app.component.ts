@@ -1,13 +1,8 @@
-import { DesignCanvasDirective } from './design-canvas.directive'
-import {
-	CanvasGraphicsMenuComponent,
-	KeyMapComponent,
-	RightClickMenuComponent,
-	StateValuesComponent,
-} from './menus'
-import { WindowComponent } from './windows'
-import { CdkDrag } from '@angular/cdk/drag-drop'
-import { CommonModule } from '@angular/common'
+import {DesignCanvasDirective} from './design-canvas.directive'
+import {CanvasGraphicsMenuComponent, KeyMapComponent, RightClickMenuComponent, StateValuesComponent,} from './menus'
+import {WindowComponent} from './windows'
+import {CdkDrag} from '@angular/cdk/drag-drop'
+import {CommonModule} from '@angular/common'
 import {
 	AfterViewInit,
 	ChangeDetectionStrategy,
@@ -19,12 +14,14 @@ import {
 	Renderer2,
 	ViewChild,
 } from '@angular/core'
-import { WindowsStore } from '@design-app/data-access'
-import { DraggableWindow } from '@design-app/shared'
-import { LetModule } from '@ngrx/component'
-import { getGuid } from '@ngrx/data'
-import { ButtonBuilderComponent, ShowSvgComponent } from '@shared/ui'
-import { updateObjectForStore } from 'deprecated/design-app/feature-design-canvas'
+import {DialogsService, WindowsStore} from '@design-app/data-access'
+import {CanvasString, DraggableWindow} from '@design-app/shared'
+import {LetModule} from '@ngrx/component'
+import {getGuid} from '@ngrx/data'
+import {ButtonBuilderComponent, ShowSvgComponent} from '@shared/ui'
+import {updateObjectForStore} from 'deprecated/design-app/feature-design-canvas'
+import {MatDialog} from "@angular/material/dialog";
+import {ViewStringComponent} from "./dialogs/view-string.component";
 
 
 @Component({
@@ -52,6 +49,8 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 	private _renderer = inject(Renderer2)
 	private _elementRef = inject(ElementRef)
 	private _windows = inject(WindowsStore)
+	private _matDialog = inject(MatDialog)
+	private _dialogs = inject(DialogsService)
 	windows$ = this._windows.select.allWindows$
 	openWindows$ = this._windows.select.openWindows$
 	closedWindows$ = this._windows.select.closedWindows$
@@ -70,6 +69,15 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 
 	ngOnInit() {
 		console.log(this.constructor.name, 'ngOnInit')
+		this._dialogs.open(ViewStringComponent,
+			{
+				string: {
+					id: getGuid(),
+					name: 'string',
+					color: 'red',
+					parallel: false,
+				} as CanvasString
+			})
 	}
 
 	ngAfterViewInit(): void {
