@@ -1,3 +1,4 @@
+import { WINDOW_RESIZER, WindowResizerDirective } from './window-resizer.directive'
 import { CdkDrag, CdkDragEnd, CdkDragHandle } from '@angular/cdk/drag-drop'
 import { AsyncPipe, NgIf } from '@angular/common'
 import {
@@ -25,7 +26,15 @@ import { map, Observable } from 'rxjs'
 	selector: 'app-window[windowId]',
 	standalone: true,
 	templateUrl: 'window.component.html',
-	imports: [ShowSvgComponent, CdkDrag, CdkDragHandle, NgIf, ShowSvgV2Component, AsyncPipe],
+	imports: [
+		ShowSvgComponent,
+		CdkDrag,
+		CdkDragHandle,
+		NgIf,
+		ShowSvgV2Component,
+		AsyncPipe,
+		WindowResizerDirective,
+	],
 })
 export class WindowComponent implements AfterViewInit {
 	private _ngZone = inject(NgZone)
@@ -33,6 +42,8 @@ export class WindowComponent implements AfterViewInit {
 	private _render = inject(RenderService)
 	private _windows = inject(WindowsStore)
 	private _elementRef = inject(ElementRef)
+
+	protected readonly WINDOW_RESIZER = WINDOW_RESIZER
 	@ViewChild('windowBar', { static: true }) windowBar!: ElementRef<HTMLDivElement>
 	isOpen = true
 

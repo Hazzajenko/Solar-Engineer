@@ -1,35 +1,33 @@
-<!--<div class='absolute'>
-  <div id='toolbar'
-       class='relative left-0 right-0'>
-    Toolbar
-  </div>
-  <div id='content'
-       class='relative left-0 right-0'>
-    Content
-  </div>
-
-</div>-->
 <ng-container *ngIf='window$ | async as window'>
   <div cdkDrag
        (cdkDragEnded)='dragExited($event, window)'
        [cdkDragFreeDragPosition]='location'
        class='absolute z-50'>
-    <!--  Consolas-->
-    <!--  // ctx.font = '10px Roboto, sans-serif'
-      // ctx.font = '10px Helvetica, sans-serif'
-      // ctx.font = '10px Cascadia Code, sans-serif'-->
-    <!--  roboto: ['"Roboto"'],
-      'cascadia-code': ['"Cascadia Code"'],
-      // 'cascadia-mono': ['"Cascadia Mono"'],
-      // 'cascadia-pl': ['"Cascadia PL"'],
-      // 'cascadia-mono-pl': ['"Cascadia Mono PL"'],
-      helvetica: ['"Helvetica"'],-->
+    <div id='resizer-top-left'
+         appWindowResizer
+         [windowResizer]='WINDOW_RESIZER.TOP_LEFT'
+         class='absolute top-0 left-0 bg-blue-200'>d
+    </div>
+    <div id='resizer-top-right'
+         appWindowResizer
+         [windowResizer]='WINDOW_RESIZER.TOP_RIGHT'
+         class='absolute top-0 right-0 bg-blue-200'>d
+    </div>
+    <div id='resizer-bottom-left'
+         appWindowResizer
+         [windowResizer]='WINDOW_RESIZER.BOTTOM_LEFT'
+         class='absolute bottom-0 left-0 bg-blue-200'>d
+    </div>
+    <div id='resizer-bottom-right'
+         appWindowResizer
+         [windowResizer]='WINDOW_RESIZER.BOTTOM_RIGHT'
+         class='absolute bottom-0 right-0 bg-blue-200'>d
+    </div>
     <div #windowBar
          cdkDragHandle
 
          class='bg-gray-200 hover:bg-gray-300 flex justify-between w-44 rounded-t-lg p-1 shadow'>
       <div class='flex items-center text-2xs  text-gray-700 font-consolas'>Window</div>
-      <!--    <div class='flex items-center'>Bar</div>-->
       <div class='flex items-center'>
 
         <button
@@ -55,13 +53,7 @@
     <div class='overflow-hidden rounded-b-lg bg-slate-100 shadow h-20'>
       <div class='px-4 py-5 sm:px-6'>
         Content
-        <!-- Content goes here -->
-        <!-- We use less vertical padding on card headers on desktop than on body sections -->
       </div>
-      <!--  <div class='px-4 py-5 sm:p-6'>
-          &lt;!&ndash; Content goes here &ndash;&gt;
-          Content
-        </div>-->
     </div>
   </div>
 
