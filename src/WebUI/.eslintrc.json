@@ -310,11 +310,6 @@
 		},
 		{
 			"files": [
-				"*.svelte"
-			]
-		},
-		{
-			"files": [
 				"*.spec.ts",
 				"*.spec.tsx",
 				"*.spec.js",
