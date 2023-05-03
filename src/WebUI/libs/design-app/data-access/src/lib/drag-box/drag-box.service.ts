@@ -17,7 +17,6 @@ import {
 import { CURSOR_TYPE } from '@shared/data-access/models'
 import { assertNotNull } from '@shared/utils'
 
-
 @Injectable({
 	providedIn: 'root',
 })
@@ -146,6 +145,7 @@ export class DragBoxService {
 			this._app.sendEvent({ type: 'StopDragBox' })
 			// this._machine.sendEvent(new StopDragBox())
 		}
+		this._render.renderCanvasApp()
 		this.dragBoxStart = undefined
 	}
 

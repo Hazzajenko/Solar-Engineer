@@ -37,7 +37,7 @@
 <div #graphicsMenu
      id='graphics-menu'
      class='absolute right-5 top-5 z-10'>
-  <app-canvas-graphics-menu />
+  <app-canvas-graphics-menu/>
   <app-button-builder [active]='true'
                       [size]='"xl"'
                       [text]='"push"'
@@ -58,7 +58,6 @@
   [location]='{x: 150, y: 150}'
   (minimiseEvent)='minimisedWindow.style.display = "block"'
   #window />-->
-
 <div
   id='minimised-window'
   class='absolute space-x-1  flex left-0 bottom-0 z-10  bg-white  transition-all duration-200 ease-in-out text-center overflow-hidden'
@@ -123,4 +122,3 @@
   </div>
 </div>
 -->
-

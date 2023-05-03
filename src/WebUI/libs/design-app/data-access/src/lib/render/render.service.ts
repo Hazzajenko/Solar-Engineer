@@ -8,7 +8,6 @@ import { CANVAS_COLORS, CanvasEntity, PANEL_STROKE_STYLE } from '@design-app/sha
 import { isPanel } from '@design-app/utils'
 import { shadeColor } from '@shared/utils'
 
-
 export type CanvasRenderOptions = {
 	drawFns?: ((ctx: CanvasRenderingContext2D) => void)[]
 	excludedEntityIds?: string[]
@@ -158,6 +157,7 @@ export class RenderService {
 				shouldRenderSelectedEntitiesBox &&
 				selectedSnapshot.matches('EntitySelectedState.EntitiesSelected')
 			) {
+				console.log('rendering selected box')
 				drawSelectedBox(
 					ctx,
 					this._entities.panels.getEntitiesByIds(this._app.selectedCtx.multipleSelectedIds),
@@ -169,10 +169,16 @@ export class RenderService {
 				selectedSnapshot.matches('StringSelectedState.StringSelected')
 			) {
 				drawSelectedStringBox(ctx, selectedSnapshot, this._entities)
-				drawSelectedBox(
-					ctx,
-					this._entities.panels.getEntitiesByIds(this._app.selectedCtx.multipleSelectedIds),
-				)
+				if (
+					shouldRenderSelectedEntitiesBox &&
+					selectedSnapshot.matches('EntitySelectedState.EntitiesSelected')
+				) {
+					console.log('rendering selected box')
+					drawSelectedBox(
+						ctx,
+						this._entities.panels.getEntitiesByIds(this._app.selectedCtx.multipleSelectedIds),
+					)
+				}
 			}
 
 			if (options?.drawFns) {

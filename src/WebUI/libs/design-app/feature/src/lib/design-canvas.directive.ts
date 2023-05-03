@@ -34,7 +34,6 @@ import {
 import { CURSOR_TYPE, KEYS } from '@shared/data-access/models'
 import { assertNotNull, OnDestroyDirective } from '@shared/utils'
 
-
 @Directive({
 	selector: '[appDesignCanvasApp]',
 	providers: [OnDestroyDirective],
@@ -777,6 +776,54 @@ export class DesignCanvasDirective extends DesignCanvasDirectiveExtension implem
 				 this._renderer.setStyle(this.canvasMenu, 'display', 'none')
 				 }*/
 				break
+			// case KEYS.CTRL_OR_CMD:
+			case KEYS.SHIFT: {
+				const { appSnapshot } = this._app.allSnapshots
+				if (appSnapshot.matches('ToMoveState.MultipleMoveInProgress')) {
+					this._app.sendEvent({ type: 'StopMultipleMove' })
+					return
+				}
+				if (appSnapshot.matches('ToMoveState.SingleMoveInProgress')) {
+					this._app.sendEvent({ type: 'StopSingleMove' })
+					return
+				}
+				break
+			}
+			// case KEYS.CTRL_OR_CMD:
+			case KEYS.ALT: {
+				const { appSnapshot } = this._app.allSnapshots
+				if (appSnapshot.matches('ToRotateState.MultipleRotateInProgress')) {
+					this._app.sendEvent({ type: 'StopMultipleRotate' })
+					return
+				}
+
+				if (appSnapshot.matches('ToRotateState.SingleRotateInProgress')) {
+					this._app.sendEvent({ type: 'StopSingleRotate' })
+					return
+				}
+				break
+			}
+			case KEYS.CTRL_OR_CMD: {
+				const { appSnapshot } = this._app.allSnapshots
+				if (appSnapshot.matches('ToMoveState.MultipleMoveInProgress')) {
+					this._app.sendEvent({ type: 'StopMultipleMove' })
+					return
+				}
+				if (appSnapshot.matches('ToMoveState.SingleMoveInProgress')) {
+					this._app.sendEvent({ type: 'StopSingleMove' })
+					return
+				}
+				if (appSnapshot.matches('ToRotateState.MultipleRotateInProgress')) {
+					this._app.sendEvent({ type: 'StopMultipleRotate' })
+					return
+				}
+
+				if (appSnapshot.matches('ToRotateState.SingleRotateInProgress')) {
+					this._app.sendEvent({ type: 'StopSingleRotate' })
+					return
+				}
+				break
+			}
 		}
 	}
 }

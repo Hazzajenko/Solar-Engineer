@@ -3,6 +3,9 @@
     "target": "es2022",
     "useDefineForClassFields": false
   },
+	// "plugins": [
+	// 	{"name": "@angular/language-service"}
+	// ],
   "files": [],
   "include": [],
   "references": [

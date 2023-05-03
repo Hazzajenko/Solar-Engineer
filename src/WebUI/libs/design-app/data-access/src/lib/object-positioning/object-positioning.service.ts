@@ -40,7 +40,6 @@ import { CURSOR_TYPE } from '@shared/data-access/models'
 import { assertNotNull, groupInto2dArray } from '@shared/utils'
 import { sortBy } from 'lodash'
 
-
 @Injectable({
 	providedIn: 'root',
 })
@@ -309,6 +308,7 @@ export class ObjectPositioningService {
 			excludedEntityIds: multipleToMoveIds,
 			drawFns: [drawMultipleToMove],
 			shouldRenderSelectedEntitiesBox: false,
+			shouldRenderSelectedStringBox: false,
 		})
 		// this._render.drawCanvasExcludeIdsWithFnEditSelectBox(multipleToMoveIds, drawMultipleToMove)
 		// this._render.drawCanvasExcludeIdsWithFn(multipleToMoveIds, drawMultipleToMove)
