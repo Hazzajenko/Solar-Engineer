@@ -2,37 +2,37 @@ create:
 	image-edit --change-detection OnPush --skip-tests true --standalone true --style scss
 
 gridlayout:
-	nx generate @nrwl/angular:library grid-layout/${dir} --skipModule --importPath=@${dir}
+	nx generate @nx/angular:library grid-layout/${dir} --skipModule --importPath=@${dir}
 
 auth:
-	nx generate @nrwl/angular:library auth/${dir} --skipModule --importPath=@${dir}
+	nx generate @nx/angular:library auth/${dir} --skipModule --importPath=@${dir}
 
 shared:
-	nx generate @nrwl/angular:library shared/${dir} --skipModule --importPath=@${dir}
+	nx generate @nx/angular:library shared/${dir} --skipModule --importPath=@${dir}
 
 component:
-	nx generate @nrwl/angular:component ${dir} --project solarengineer --standalone --importPath=@${dir}
+	nx generate @nx/angular:component ${dir} --project solarengineer --standalone --importPath=@${dir}
 
 page:
-	nx generate @nrwl/angular:component ${dir} --project=solarengineer --type=page --standalone --importPath=@${dir}
+	nx generate @nx/angular:component ${dir} --project=solarengineer --type=page --standalone --importPath=@${dir}
 
 v2page:
-	nx generate @nrwl/angular:component ${dir} --project=solarengineerv2 --type=page --standalone --importPath=@${dir}
+	nx generate @nx/angular:component ${dir} --project=solarengineerv2 --type=page --standalone --importPath=@${dir}
 
 v2component:
-	nx generate @nrwl/angular:component ${dir} --project solarengineerv2 --standalone --importPath=@${dir}
+	nx generate @nx/angular:component ${dir} --project solarengineerv2 --standalone --importPath=@${dir}
 
 comp:
-	nx generate @nrwl/angular:library --name=${name} --style=none --directory=${dir} --skipModule
+	nx generate @nx/angular:library --name=${name} --style=none --directory=${dir} --skipModule
 
 lib:
-	nx generate @nrwl/angular:library --name=blocks --style=none --directory=project-id/feature --importPath=@project-id/feature/blocks --skipModule
+	nx generate @nx/angular:library --name=blocks --style=none --directory=project-id/feature --importPath=@project-id/feature/blocks --skipModule
 
 newlib:
-	npx nx generate @nrwl/angular:library api --style=none --directory=projects/data-access --importPath=@projects/data-access/api --skipModule --strict --no-interactive
+	npx nx generate @nx/angular:library api --style=none --directory=projects/data-access --importPath=@projects/data-access/api --skipModule --strict --no-interactive
 
 #ngrx:
-#	nx generate @nrwl/angular:ngrx --name=blocks --directory=libs/project-id/data-access/store/src/lib/blocks --barrels --facade --skipImport
+#	nx generate @nx/angular:ngrx --name=blocks --directory=libs/project-id/data-access/store/src/lib/blocks --barrels --facade --skipImport
 
 
 
@@ -47,16 +47,16 @@ docker-run:
 	docker run --name design-container -it -p 8000:80 design
 
 cmon:
-	nx generate @nrwl/angular:library models --style=none --directory=project-id/shared --importPath=@project-id/shared/models --skipModule --tags=project-id:shared --no-interactive
+	nx generate @nx/angular:library models --style=none --directory=project-id/shared --importPath=@project-id/shared/models --skipModule --tags=project-id:shared --no-interactive
 
 newww:
-	nx generate @nrwl/angular:library show-hide --style=none --directory=shared/ui --importPath=@shared/ui/show-hide --skipModule --tags=shared:ui --no-interactive
+	nx generate @nx/angular:library show-hide --style=none --directory=shared/ui --importPath=@shared/ui/show-hide --skipModule --tags=shared:ui --no-interactive
 
 storybook:
-	nx g @nrwl/storybook/angular --project=design
+	nx g @nx/storybook/angular --project=design
 
 story:
-	npx nx generate @nrwl/angular:stories design --no-interactive
+	npx nx generate @nx/angular:stories design --no-interactive
 
 cache:
 	nx clear-cache
@@ -75,20 +75,20 @@ push:
 	docker image push hazzajenko/angularclient:1.0.0
 
 ne11w:
-	nx generate @nrwl/angular:library friends --style=none --directory=app/data-access --importPath=@app/data-access/friends --skipModule --tags=app:data-access --no-interactive
+	nx generate @nx/angular:library friends --style=none --directory=app/data-access --importPath=@app/data-access/friends --skipModule --tags=app:data-access --no-interactive
 
 g:
-	nx generate @nrwl/angular:library ${name} --style=none --directory=${dir} --importPath=@${dir}/${name} --skipModule --tags=${tags} --no-interactive
+	nx generate @nx/angular:library ${name} --style=none --directory=${dir} --importPath=@${dir}/${name} --skipModule --tags=${tags} --no-interactive
 
 #ngrx:
-#	nx g @nrwl/angular:ngrx free-panels --parent=libs/no-grid-layout/feature/src/lib/lib.routes.ts --route=''
+#	nx g @nx/angular:ngrx free-panels --parent=libs/no-grid-layout/feature/src/lib/lib.routes.ts --route=''
 
 
 remove:
-	nx generate @nrwl/workspace:remove --project project-id-utils --forceRemove
+	nx generate @nx/workspace:remove --project project-id-utils --forceRemove
 
 rm:
-	nx generate @nrwl/workspace:remove --project ${name} --forceRemove
+	nx generate @nx/workspace:remove --project ${name} --forceRemove
 
 build-nocache2:
 	docker build . -t angularclient:1.0.1  --no-cache --pull
@@ -97,16 +97,16 @@ docker-build-client2:
 	docker build . -t angularclient:1.0.1
 
 plugin:
-	nx g @nrwl/nx-plugin:plugin ${name}
+	nx g @nx/plugin:plugin ${name}
 
 generator:
-	nx generate @nrwl/nx-plugin:generator ${name} --project=${project}
+	nx generate @nx/plugin:generator ${name} --project=${project}
 
 move:
-	nx generate @nrwl/workspace:move --projectName=${project} --destination=${destination}
+	nx generate @nx/workspace:move --projectName=${project} --destination=${destination}
 
 move-deprecated:
-	nx generate @nrwl/workspace:move --projectName=${project} --destination=${destination}
+	nx generate @nx/workspace:move --projectName=${project} --destination=${destination}
 
 
 

@@ -29,7 +29,7 @@
         ]
       },
       "extends": [
-        "plugin:@nrwl/nx/angular",
+        "plugin:@nx/angular",
         "plugin:@angular-eslint/template/process-inline-templates",
         "eslint:recommended",
         "plugin:@typescript-eslint/eslint-recommended",
@@ -51,7 +51,7 @@
         "*.html"
       ],
       "extends": [
-        "plugin:@nrwl/nx/angular-template"
+        "plugin:@nx/angular-template"
       ],
       "rules": {}
     }

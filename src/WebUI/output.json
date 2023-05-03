@@ -12,7 +12,7 @@
           "prefix": "app",
           "targets": {
             "test": {
-              "executor": "@nrwl/jest:jest",
+              "executor": "@nx/jest:jest",
               "outputs": [
                 "{workspaceRoot}/coverage/{projectRoot}"
               ],
@@ -28,7 +28,7 @@
               ]
             },
             "lint": {
-              "executor": "@nrwl/linter:eslint",
+              "executor": "@nx/linter:eslint",
               "outputs": [
                 "{options.outputFile}"
               ],
@@ -113,7 +113,7 @@
           "prefix": "app",
           "targets": {
             "test": {
-              "executor": "@nrwl/jest:jest",
+              "executor": "@nx/jest:jest",
               "outputs": [
                 "{workspaceRoot}/coverage/{projectRoot}"
               ],
@@ -129,7 +129,7 @@
               ]
             },
             "lint": {
-              "executor": "@nrwl/linter:eslint",
+              "executor": "@nx/linter:eslint",
               "outputs": [
                 "{options.outputFile}"
               ],
@@ -212,7 +212,7 @@
           "prefix": "app",
           "targets": {
             "test": {
-              "executor": "@nrwl/jest:jest",
+              "executor": "@nx/jest:jest",
               "outputs": [
                 "{workspaceRoot}/coverage/{projectRoot}"
               ],
@@ -228,7 +228,7 @@
               ]
             },
             "lint": {
-              "executor": "@nrwl/linter:eslint",
+              "executor": "@nx/linter:eslint",
               "outputs": [
                 "{options.outputFile}"
               ],
@@ -361,7 +361,7 @@
           "prefix": "app",
           "targets": {
             "test": {
-              "executor": "@nrwl/jest:jest",
+              "executor": "@nx/jest:jest",
               "outputs": [
                 "{workspaceRoot}/coverage/{projectRoot}"
               ],
@@ -377,7 +377,7 @@
               ]
             },
             "lint": {
-              "executor": "@nrwl/linter:eslint",
+              "executor": "@nx/linter:eslint",
               "outputs": [
                 "{options.outputFile}"
               ],
@@ -472,7 +472,7 @@
           "prefix": "app",
           "targets": {
             "test": {
-              "executor": "@nrwl/jest:jest",
+              "executor": "@nx/jest:jest",
               "outputs": [
                 "{workspaceRoot}/coverage/{projectRoot}"
               ],
@@ -488,7 +488,7 @@
               ]
             },
             "lint": {
-              "executor": "@nrwl/linter:eslint",
+              "executor": "@nx/linter:eslint",
               "outputs": [
                 "{options.outputFile}"
               ],
@@ -874,7 +874,7 @@
           "prefix": "app",
           "targets": {
             "test": {
-              "executor": "@nrwl/jest:jest",
+              "executor": "@nx/jest:jest",
               "outputs": [
                 "{workspaceRoot}/coverage/{projectRoot}"
               ],
@@ -890,7 +890,7 @@
               ]
             },
             "lint": {
-              "executor": "@nrwl/linter:eslint",
+              "executor": "@nx/linter:eslint",
               "outputs": [
                 "{options.outputFile}"
               ],
@@ -970,7 +970,7 @@
           "prefix": "app",
           "targets": {
             "test": {
-              "executor": "@nrwl/jest:jest",
+              "executor": "@nx/jest:jest",
               "outputs": [
                 "{workspaceRoot}/coverage/{projectRoot}"
               ],
@@ -986,7 +986,7 @@
               ]
             },
             "lint": {
-              "executor": "@nrwl/linter:eslint",
+              "executor": "@nx/linter:eslint",
               "outputs": [
                 "{options.outputFile}"
               ],
@@ -1126,7 +1126,7 @@
           "prefix": "app",
           "targets": {
             "test": {
-              "executor": "@nrwl/jest:jest",
+              "executor": "@nx/jest:jest",
               "outputs": [
                 "{workspaceRoot}/coverage/{projectRoot}"
               ],
@@ -1142,7 +1142,7 @@
               ]
             },
             "lint": {
-              "executor": "@nrwl/linter:eslint",
+              "executor": "@nx/linter:eslint",
               "outputs": [
                 "{options.outputFile}"
               ],
@@ -1228,7 +1228,7 @@
           "prefix": "app",
           "targets": {
             "test": {
-              "executor": "@nrwl/jest:jest",
+              "executor": "@nx/jest:jest",
               "outputs": [
                 "{workspaceRoot}/coverage/{projectRoot}"
               ],
@@ -1244,7 +1244,7 @@
               ]
             },
             "lint": {
-              "executor": "@nrwl/linter:eslint",
+              "executor": "@nx/linter:eslint",
               "outputs": [
                 "{options.outputFile}"
               ],
@@ -1392,7 +1392,7 @@
           "prefix": "app",
           "targets": {
             "test": {
-              "executor": "@nrwl/jest:jest",
+              "executor": "@nx/jest:jest",
               "outputs": [
                 "{workspaceRoot}/coverage/{projectRoot}"
               ],
@@ -1408,7 +1408,7 @@
               ]
             },
             "lint": {
-              "executor": "@nrwl/linter:eslint",
+              "executor": "@nx/linter:eslint",
               "outputs": [
                 "{options.outputFile}"
               ],
@@ -1631,7 +1631,7 @@
           "prefix": "app",
           "targets": {
             "test": {
-              "executor": "@nrwl/jest:jest",
+              "executor": "@nx/jest:jest",
               "outputs": [
                 "{workspaceRoot}/coverage/{projectRoot}"
               ],
@@ -1647,7 +1647,7 @@
               ]
             },
             "lint": {
-              "executor": "@nrwl/linter:eslint",
+              "executor": "@nx/linter:eslint",
               "outputs": [
                 "{options.outputFile}"
               ],
@@ -1822,7 +1822,7 @@
           "prefix": "app",
           "targets": {
             "test": {
-              "executor": "@nrwl/jest:jest",
+              "executor": "@nx/jest:jest",
               "outputs": [
                 "{workspaceRoot}/coverage/{projectRoot}"
               ],
@@ -1838,7 +1838,7 @@
               ]
             },
             "lint": {
-              "executor": "@nrwl/linter:eslint",
+              "executor": "@nx/linter:eslint",
               "outputs": [
                 "{options.outputFile}"
               ],
@@ -1919,7 +1919,7 @@
           "prefix": "app",
           "targets": {
             "test": {
-              "executor": "@nrwl/jest:jest",
+              "executor": "@nx/jest:jest",
               "outputs": [
                 "{workspaceRoot}/coverage/{projectRoot}"
               ],
@@ -1935,7 +1935,7 @@
               ]
             },
             "lint": {
-              "executor": "@nrwl/linter:eslint",
+              "executor": "@nx/linter:eslint",
               "outputs": [
                 "{options.outputFile}"
               ],
@@ -2045,7 +2045,7 @@
           "prefix": "app",
           "targets": {
             "test": {
-              "executor": "@nrwl/jest:jest",
+              "executor": "@nx/jest:jest",
               "outputs": [
                 "{workspaceRoot}/coverage/{projectRoot}"
               ],
@@ -2061,7 +2061,7 @@
               ]
             },
             "lint": {
-              "executor": "@nrwl/linter:eslint",
+              "executor": "@nx/linter:eslint",
               "outputs": [
                 "{options.outputFile}"
               ],
@@ -2157,7 +2157,7 @@
           "prefix": "app",
           "targets": {
             "test": {
-              "executor": "@nrwl/jest:jest",
+              "executor": "@nx/jest:jest",
               "outputs": [
                 "{workspaceRoot}/coverage/{projectRoot}"
               ],
@@ -2173,7 +2173,7 @@
               ]
             },
             "lint": {
-              "executor": "@nrwl/linter:eslint",
+              "executor": "@nx/linter:eslint",
               "outputs": [
                 "{options.outputFile}"
               ],
@@ -2271,7 +2271,7 @@
               ]
             },
             "lint": {
-              "executor": "@nrwl/linter:eslint",
+              "executor": "@nx/linter:eslint",
               "outputs": [
                 "{options.outputFile}"
               ],
@@ -2348,7 +2348,7 @@
           "prefix": "app",
           "targets": {
             "test": {
-              "executor": "@nrwl/jest:jest",
+              "executor": "@nx/jest:jest",
               "outputs": [
                 "{workspaceRoot}/coverage/{projectRoot}"
               ],
@@ -2364,7 +2364,7 @@
               ]
             },
             "lint": {
-              "executor": "@nrwl/linter:eslint",
+              "executor": "@nx/linter:eslint",
               "outputs": [
                 "{options.outputFile}"
               ],
@@ -2489,7 +2489,7 @@
           "prefix": "app",
           "targets": {
             "test": {
-              "executor": "@nrwl/jest:jest",
+              "executor": "@nx/jest:jest",
               "outputs": [
                 "{workspaceRoot}/coverage/{projectRoot}"
               ],
@@ -2505,7 +2505,7 @@
               ]
             },
             "lint": {
-              "executor": "@nrwl/linter:eslint",
+              "executor": "@nx/linter:eslint",
               "outputs": [
                 "{options.outputFile}"
               ],
@@ -2604,7 +2604,7 @@
           "prefix": "app",
           "targets": {
             "test": {
-              "executor": "@nrwl/jest:jest",
+              "executor": "@nx/jest:jest",
               "outputs": [
                 "{workspaceRoot}/coverage/{projectRoot}"
               ],
@@ -2620,7 +2620,7 @@
               ]
             },
             "lint": {
-              "executor": "@nrwl/linter:eslint",
+              "executor": "@nx/linter:eslint",
               "outputs": [
                 "{options.outputFile}"
               ],
@@ -2703,7 +2703,7 @@
           "prefix": "app",
           "targets": {
             "test": {
-              "executor": "@nrwl/jest:jest",
+              "executor": "@nx/jest:jest",
               "outputs": [
                 "{workspaceRoot}/coverage/{projectRoot}"
               ],
@@ -2719,7 +2719,7 @@
               ]
             },
             "lint": {
-              "executor": "@nrwl/linter:eslint",
+              "executor": "@nx/linter:eslint",
               "outputs": [
                 "{options.outputFile}"
               ],
@@ -2801,7 +2801,7 @@
           "prefix": "app",
           "targets": {
             "test": {
-              "executor": "@nrwl/jest:jest",
+              "executor": "@nx/jest:jest",
               "outputs": [
                 "{workspaceRoot}/coverage/{projectRoot}"
               ],
@@ -2817,7 +2817,7 @@
               ]
             },
             "lint": {
-              "executor": "@nrwl/linter:eslint",
+              "executor": "@nx/linter:eslint",
               "outputs": [
                 "{options.outputFile}"
               ],
@@ -2896,7 +2896,7 @@
           "prefix": "app",
           "targets": {
             "test": {
-              "executor": "@nrwl/jest:jest",
+              "executor": "@nx/jest:jest",
               "outputs": [
                 "{workspaceRoot}/coverage/{projectRoot}"
               ],
@@ -2912,7 +2912,7 @@
               ]
             },
             "lint": {
-              "executor": "@nrwl/linter:eslint",
+              "executor": "@nx/linter:eslint",
               "outputs": [
                 "{options.outputFile}"
               ],
@@ -3008,7 +3008,7 @@
           "prefix": "app",
           "targets": {
             "test": {
-              "executor": "@nrwl/jest:jest",
+              "executor": "@nx/jest:jest",
               "outputs": [
                 "{workspaceRoot}/coverage/{projectRoot}"
               ],
@@ -3024,7 +3024,7 @@
               ]
             },
             "lint": {
-              "executor": "@nrwl/linter:eslint",
+              "executor": "@nx/linter:eslint",
               "outputs": [
                 "{options.outputFile}"
               ],
@@ -3107,7 +3107,7 @@
           "prefix": "app",
           "targets": {
             "test": {
-              "executor": "@nrwl/jest:jest",
+              "executor": "@nx/jest:jest",
               "outputs": [
                 "{workspaceRoot}/coverage/{projectRoot}"
               ],
@@ -3123,7 +3123,7 @@
               ]
             },
             "lint": {
-              "executor": "@nrwl/linter:eslint",
+              "executor": "@nx/linter:eslint",
               "outputs": [
                 "{options.outputFile}"
               ],
@@ -3203,7 +3203,7 @@
           "prefix": "app",
           "targets": {
             "test": {
-              "executor": "@nrwl/jest:jest",
+              "executor": "@nx/jest:jest",
               "outputs": [
                 "{workspaceRoot}/coverage/{projectRoot}"
               ],
@@ -3219,7 +3219,7 @@
               ]
             },
             "lint": {
-              "executor": "@nrwl/linter:eslint",
+              "executor": "@nx/linter:eslint",
               "outputs": [
                 "{options.outputFile}"
               ],
@@ -3380,7 +3380,7 @@
               }
             },
             "lint": {
-              "executor": "@nrwl/linter:eslint",
+              "executor": "@nx/linter:eslint",
               "outputs": [
                 "{options.outputFile}"
               ],
@@ -3396,7 +3396,7 @@
               ]
             },
             "test": {
-              "executor": "@nrwl/jest:jest",
+              "executor": "@nx/jest:jest",
               "outputs": [
                 "{workspaceRoot}/coverage/{projectRoot}"
               ],
@@ -3544,7 +3544,7 @@
               "file": "apps/design/tailwind.config.js",
               "hash": "9bc8b774ea0e9398e0432a00d2346a223875ca8e",
               "deps": [
-                "npm:@nrwl/angular"
+                "npm:@nx/angular"
               ]
             },
             {
