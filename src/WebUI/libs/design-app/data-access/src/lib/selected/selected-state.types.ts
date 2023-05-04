@@ -13,7 +13,7 @@ export const AdjustedInitialSelectedState: SelectedStateContext = {
 	multipleSelectedIds: [],
 }
 
-export const SELECTED_STATE_KEY = 'SelectedState'
+/*export const SELECTED_STATE_KEY = 'SelectedState'
 
 export const SELECTED_STATE = {
 	NONE_SELECTED: 'NoneSelected',
@@ -27,7 +27,7 @@ export const MATCHES_SELECTED_STATE = {
 	NONE_SELECTED: 'SelectedState.NoneSelected',
 	SINGLE_SELECTION: 'SelectedState.SingleSelection',
 	MULTIPLE_SELECTION: 'SelectedState.MultipleSelection',
-} as const
+} as const*/
 
 const getSnapshot = interpret(selectedStateMachine).getSnapshot
 export type SelectedSnapshot = ReturnType<typeof getSnapshot>

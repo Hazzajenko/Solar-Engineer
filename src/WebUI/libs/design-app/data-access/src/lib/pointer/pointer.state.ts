@@ -12,6 +12,7 @@ export const InitialPointerContext: PointerStateContext = {
 	hoveringEntityId: undefined,
 }
 
+/*
 export const POINTER_STATE_KEY = 'PointerState'
 
 export const POINTER_STATE = {
@@ -28,3 +29,4 @@ export const MATCHES_POINTER_STATE = {
 	POINTER_DOWN: 'PointerState.PointerDown',
 	HOVERING_OVER_ENTITY: 'PointerState.HoveringOverEntity',
 } as const
+*/

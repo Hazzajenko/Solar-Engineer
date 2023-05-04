@@ -1,6 +1,6 @@
 import { inject, Pipe, PipeTransform } from '@angular/core'
 import {
-	ContextMenuState,
+	ContextMenuType,
 	EntityStoreService,
 	isSingleEntityContextMenuTemplate,
 } from '@design-app/data-access'
@@ -18,7 +18,7 @@ export type PanelWithString = CanvasEntity & {
 export class GetPanelWithStringPipe implements PipeTransform {
 	private _entities = inject(EntityStoreService)
 
-	transform(menu: ContextMenuState): PanelWithString | undefined {
+	transform(menu: ContextMenuType): PanelWithString | undefined {
 		if (!isSingleEntityContextMenuTemplate(menu)) return
 		const entity = this._entities.panels.getEntityById(menu.id)
 		if (!entity) return

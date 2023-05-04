@@ -1,13 +1,12 @@
 import { GraphicsStateEvent, graphicsStateMachine, GraphicsStateMatchesModel } from '../graphics'
 import { SelectedStateEvent, selectedStateMachine, SelectedStateMatchesModel } from '../selected'
-import { ContextMenuState } from '../view'
+import { ContextMenuType } from '../view'
 import { appStateMachine } from './app-state.machine'
 import { AppStateEvent, AppStateMatches, AppStateMatchesModel } from './app-state.types'
 import { Injectable } from '@angular/core'
 import { xstateLogger } from '@design-app/utils'
 import { BehaviorSubject } from 'rxjs'
 import { interpret } from 'xstate'
-
 
 const appInterpreter = interpret(appStateMachine, { devTools: true }).onTransition((state) => {
 	xstateLogger(state)
@@ -53,7 +52,7 @@ export class AppStoreService {
 	private _graphicsState$ = new BehaviorSubject<GraphicsStateMatchesModel>(
 		this.graphicsSnapshot.value as GraphicsStateMatchesModel,
 	)
-	private _contextMenu$ = new BehaviorSubject<ContextMenuState | undefined>(
+	private _contextMenu$ = new BehaviorSubject<ContextMenuType | undefined>(
 		this.appSnapshot.context.view.contextMenu,
 	)
 

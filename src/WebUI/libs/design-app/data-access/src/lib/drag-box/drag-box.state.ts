@@ -22,20 +22,20 @@ export const InitialDragBoxContext: DragBoxStateContext = {
 	axisLineBoxStart: undefined,
 }
 
-export const DRAG_BOX_STATE_KEY = 'DragBoxState'
+// export const DRAG_BOX_STATE_KEY = 'DragBoxState'
 
-export const DRAG_BOX_STATE = {
+/*export const DRAG_BOX_STATE = {
 	NO_DRAG_BOX: 'NoDragBox',
 	SELECTION_BOX_IN_PROGRESS: 'SelectionBoxInProgress',
 	CREATION_BOX_IN_PROGRESS: 'CreationBoxInProgress',
-} as const
+} as const*/
 
-export type DragBoxState = (typeof DRAG_BOX_STATE)[keyof typeof DRAG_BOX_STATE]
+/*export type DragBoxState = (typeof DRAG_BOX_STATE)[keyof typeof DRAG_BOX_STATE]
 export const MATCHES_DRAG_BOX_STATE = {
 	STATE: 'DragBoxState',
 	NO_DRAG_BOX: 'DragBoxState.NoDragBox',
 	DRAG_BOX_IN_PROGRESS: 'DragBoxState.DragBoxInProgress',
-} as const
+} as const*/
 
 // NoDragBox
 // DragBoxInProgress

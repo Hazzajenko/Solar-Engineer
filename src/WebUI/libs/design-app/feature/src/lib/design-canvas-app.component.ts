@@ -1,28 +1,36 @@
-import {DesignCanvasDirective} from './design-canvas.directive'
-import {CanvasGraphicsMenuComponent, KeyMapComponent, RightClickMenuComponent, StateValuesComponent,} from './menus'
-import {WindowComponent} from './windows'
-import {CdkDrag} from '@angular/cdk/drag-drop'
-import {CommonModule} from '@angular/common'
+import { DesignCanvasDirective } from './design-canvas.directive'
+import { ViewStringComponent } from './dialogs/view-string.component'
+import {
+	CanvasGraphicsMenuComponent,
+	KeyMapComponent,
+	RightClickMenuComponent,
+	StateValuesComponent,
+} from './menus'
+import { WindowComponent } from './windows'
+import { CdkDrag } from '@angular/cdk/drag-drop'
+import { CommonModule } from '@angular/common'
 import {
 	AfterViewInit,
 	ChangeDetectionStrategy,
 	Component,
+	computed,
+	effect,
 	ElementRef,
 	inject,
 	NgZone,
 	OnInit,
 	Renderer2,
+	signal,
 	ViewChild,
 } from '@angular/core'
-import {DialogsService, WindowsStore} from '@design-app/data-access'
-import {CanvasString, DraggableWindow} from '@design-app/shared'
-import {LetModule} from '@ngrx/component'
-import {getGuid} from '@ngrx/data'
-import {ButtonBuilderComponent, ShowSvgComponent} from '@shared/ui'
-import {updateObjectForStore} from 'deprecated/design-app/feature-design-canvas'
-import {MatDialog} from "@angular/material/dialog";
-import {ViewStringComponent} from "./dialogs/view-string.component";
-
+import { toSignal } from '@angular/core/rxjs-interop'
+import { MatDialog } from '@angular/material/dialog'
+import { DialogsService, WindowsStore } from '@design-app/data-access'
+import { CanvasString, DraggableWindow } from '@design-app/shared'
+import { LetModule } from '@ngrx/component'
+import { getGuid } from '@ngrx/data'
+import { ButtonBuilderComponent, ShowSvgComponent } from '@shared/ui'
+import { updateObjectForStore } from 'deprecated/design-app/feature-design-canvas'
 
 @Component({
 	changeDetection: ChangeDetectionStrategy.OnPush,
@@ -51,8 +59,12 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 	private _windows = inject(WindowsStore)
 	private _matDialog = inject(MatDialog)
 	private _dialogs = inject(DialogsService)
+	firstName = signal('Jane')
+	lastName = signal('Doe')
+	fullName = computed(() => `${this.firstName()} ${this.lastName()}`)
 	windows$ = this._windows.select.allWindows$
 	openWindows$ = this._windows.select.openWindows$
+	openWindows = toSignal(this._windows.select.openWindows$)
 	closedWindows$ = this._windows.select.closedWindows$
 	@ViewChild('window', { static: true }) stringWindow!: WindowComponent
 	isDragging = false
@@ -67,17 +79,24 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 		},
 	]
 
+	constructor() {
+		effect(() => console.log('Name changed:', this.fullName()))
+	}
+
 	ngOnInit() {
 		console.log(this.constructor.name, 'ngOnInit')
-		this._dialogs.open(ViewStringComponent,
-			{
-				string: {
-					id: getGuid(),
-					name: 'string',
-					color: 'red',
-					parallel: false,
-				} as CanvasString
-			})
+		this._dialogs.open(ViewStringComponent, {
+			string: {
+				id: getGuid(),
+				name: 'string',
+				color: 'red',
+				parallel: false,
+			} as CanvasString,
+		})
+	}
+
+	setName(newName: string) {
+		this.firstName.set(newName)
 	}
 
 	ngAfterViewInit(): void {

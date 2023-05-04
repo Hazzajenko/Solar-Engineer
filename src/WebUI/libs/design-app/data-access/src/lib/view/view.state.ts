@@ -3,7 +3,7 @@ export const CONTEXT_MENU_TYPE = {
 	MULTIPLE_ENTITIES: 'MultipleEntities',
 	STRING: 'String',
 } as const
-export type ContextMenuType = (typeof CONTEXT_MENU_TYPE)[keyof typeof CONTEXT_MENU_TYPE]
+// export type ContextMenuType = (typeof CONTEXT_MENU_TYPE)[keyof typeof CONTEXT_MENU_TYPE]
 type ContextMenuTemplate = {
 	x: number
 	y: number
@@ -21,7 +21,7 @@ export type StringContextMenuTemplate = ContextMenuTemplate & {
 	panelIds: string[]
 	type: typeof CONTEXT_MENU_TYPE.STRING
 }
-export type ContextMenuState =
+export type ContextMenuType =
 	| SingleEntityContextMenuTemplate
 	| MultipleEntitiesContextMenuTemplate
 	| StringContextMenuTemplate
@@ -52,23 +52,25 @@ export const isStringContextMenuTemplate = (
 
 export type ViewStateContext = {
 	draggingScreen: boolean
-	contextMenu: ContextMenuState | undefined
+	contextMenu: ContextMenuType | undefined
 }
 
 export const InitialViewContext: ViewStateContext = {
 	draggingScreen: false,
 	contextMenu: undefined,
 }
-export const VIEW_STATE_KEY = 'ViewState'
+// export const VIEW_STATE_KEY = 'ViewState'
 
-export const VIEW_STATE = {
+/*export const VIEW_STATE = {
 	VIEW_NOT_MOVING: 'ViewNotMoving',
 	VIEW_DRAGGING_IN_PROGRESS: 'ViewDraggingInProgress',
 } as const
 
-export type ViewPositioningState = (typeof VIEW_STATE)[keyof typeof VIEW_STATE]
+export type ViewPositioningState = (typeof VIEW_STATE)[keyof typeof VIEW_STATE]*/
 
+/*
 export type ViewState = {
 	ViewPositioningState: ViewPositioningState
 	ContextMenuState: ContextMenuState
 }
+*/

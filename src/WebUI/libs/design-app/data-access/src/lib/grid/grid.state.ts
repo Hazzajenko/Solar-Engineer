@@ -21,23 +21,23 @@ export const GRID_STATE_PROPER = {
 	MODE_STATE: 'ModeState',
 } as const
 
-export const PREVIEW_AXIS_STATE = {
+/*export const PREVIEW_AXIS_STATE = {
 	PREVIEW_AXIS_DRAW_ENABLED: 'PreviewAxisDrawEnabled',
 	PREVIEW_AXIS_DRAW_DISABLED: 'PreviewAxisDrawDisabled',
 } as const
 
-export type PreviewAxisState = (typeof PREVIEW_AXIS_STATE)[keyof typeof PREVIEW_AXIS_STATE]
+export type PreviewAxisState = (typeof PREVIEW_AXIS_STATE)[keyof typeof PREVIEW_AXIS_STATE]*/
 
 /*export const MODE_STATE = {
  SELECT_MODE: 'SelectMode',
  CREATE_MODE: 'CreateMode',
  } as const*/
-export const MODE_STATE = {
+/*export const MODE_STATE = {
 	IN_SELECT_MODE: 'SelectMode',
 	IN_CREATE_MODE: 'CreateMode',
 } as const
 
-export type ModeState = (typeof MODE_STATE)[keyof typeof MODE_STATE]
+export type ModeState = (typeof MODE_STATE)[keyof typeof MODE_STATE]*/
 // SelectMode
 // CreateMode
 /*export const MODE_STATE = {
@@ -51,7 +51,7 @@ export type ModeState = (typeof MODE_STATE)[keyof typeof MODE_STATE]
  MODE_STATE: MODE_STATE,
  } as const*/
 
-export type GridState = {
+/*export type GridState = {
 	PreviewAxisState: PreviewAxisState
 	ModeState: ModeState
 }
@@ -64,7 +64,7 @@ export const GRID_STATE = {
 export const InitialGridState: GridState = {
 	PreviewAxisState: PREVIEW_AXIS_STATE.PREVIEW_AXIS_DRAW_ENABLED,
 	ModeState: MODE_STATE.IN_SELECT_MODE,
-}
+}*/
 // export type GridState = (typeof MODE_STATE)[keyof typeof MODE_STATE]
 
 // PreviewAxisDrawEnabled

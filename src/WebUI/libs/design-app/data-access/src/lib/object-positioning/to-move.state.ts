@@ -6,6 +6,7 @@ export const InitialToMoveContext: ToMoveStateContext = {
 	singleToMove: false,
 	multipleToMove: false,
 }
+/*
 export const TO_MOVE_STATE_KEY = 'ToMoveState'
 export const TO_MOVE_STATE = {
 	NO_MOVE: 'NoMove',
@@ -21,3 +22,4 @@ export const MATCHES_TO_MOVE_STATE = {
 	SINGLE_MOVE_IN_PROGRESS: 'ToMoveState.SingleMoveInProgress',
 	MULTIPLE_MOVE_IN_PROGRESS: 'ToMoveState.MultipleMoveInProgress',
 } as const
+*/

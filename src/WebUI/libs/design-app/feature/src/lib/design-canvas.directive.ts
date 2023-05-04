@@ -1,7 +1,8 @@
 import { DesignCanvasDirectiveExtension } from './design-canvas-directive.extension'
-import { Directive, OnInit } from '@angular/core'
+import { Directive, effect, inject, OnInit } from '@angular/core'
 import {
 	AppSnapshot,
+	AppStateStore,
 	genStringNameV2,
 	isPointInsideSelectedStringPanels,
 } from '@design-app/data-access'
@@ -42,6 +43,20 @@ import { assertNotNull, OnDestroyDirective } from '@shared/utils'
  DesignCanvasEventHandlers */
 export class DesignCanvasDirective extends DesignCanvasDirectiveExtension implements OnInit {
 	entityPressed: CanvasEntity | undefined
+
+	private _appState = inject(AppStateStore)
+	stateSignal = this._appState.select.state
+
+	constructor() {
+		super()
+		effect(() => {
+			console.log('stateSignal', this.stateSignal)
+		})
+	}
+
+	/**
+	 * ! Lifecycle Hooks
+	 */
 
 	public ngOnInit() {
 		this.setupCanvas()
