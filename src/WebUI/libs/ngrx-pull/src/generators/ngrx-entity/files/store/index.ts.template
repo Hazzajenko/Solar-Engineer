@@ -1,0 +1,3 @@
+export * from './<%= kebabCaseName %>.actions'
+export * from './<%= kebabCaseName %>.reducer'
+export * from './<%= kebabCaseName %>.selectors'

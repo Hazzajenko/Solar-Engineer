@@ -1,0 +1,28 @@
+import { UpdateStr } from '@ngrx/entity/src/models'
+import { createActionGroup, emptyProps, props } from '@ngrx/store'
+import { <%= modelName %> } from '<%= modelImportPath %>'
+
+export const  <%= pascalCaseName %>Actions = createActionGroup({
+	source: '<%= pascalCaseName %> Store',
+	events: {
+		'Add <%= pascalCaseName %>': props<{
+			<%= camelCaseName %>: <%= modelName %>
+		}>(),
+		'Add Many <%= pascalCasePluralName %>': props<{
+			<%= camelCasePluralName %>: <%= modelName %>[]
+		}>(),
+		'Update <%= pascalCaseName %>': props<{
+			update: UpdateStr<<%= modelName %>>
+		}>(),
+		'Update Many <%= pascalCasePluralName %>': props<{
+			updates: UpdateStr<<%= modelName %>>[]
+		}>(),
+		'Delete <%= pascalCaseName %>': props<{
+			<%= camelCaseName %>Id: string
+		}>(),
+		'Delete Many <%= pascalCasePluralName %>': props<{
+			<%= camelCaseName %>Ids: string[]
+		}>(),
+		'Clear <%= pascalCaseName %> State': emptyProps(),
+	},
+})

@@ -1,18 +1,50 @@
 {
-  "$schema": "http://json-schema.org/schema",
-  "$id": "NgrxEntity",
-  "title": "",
-  "type": "object",
-  "properties": {
-    "name": {
-      "type": "string",
-      "description": "",
-      "$default": {
-        "$source": "argv",
-        "index": 0
-      },
-      "x-prompt": "What name would you like to use?"
-    }
-  },
-  "required": ["name"]
+	"$schema": "http://json-schema.org/schema",
+	"$id": "NgrxEntity",
+	"title": "",
+	"type": "object",
+	"properties": {
+		"name": {
+			"type": "string",
+			"description": "",
+			"$default": {
+				"$source": "argv",
+				"index": 0
+			},
+			"x-prompt": "What name would you like to use?"
+		},
+		"pathFromRoot": {
+			"type": "string",
+			"description": "",
+			"$default": {
+				"$source": "argv",
+				"index": 1
+			},
+			"x-prompt": "Whats the path from the root?"
+		},
+		"modelName": {
+			"type": "string",
+			"description": "",
+			"$default": {
+				"$source": "argv",
+				"index": 2
+			},
+			"x-prompt": "Whats the name of the model?"
+		},
+		"modelPath": {
+			"type": "string",
+			"description": "",
+			"$default": {
+				"$source": "argv",
+				"index": 3
+			},
+			"x-prompt": "Whats the path to the model?"
+		}
+	},
+	"required": [
+		"name",
+		"pathFromRoot",
+		"modelName",
+		"modelPath"
+	]
 }

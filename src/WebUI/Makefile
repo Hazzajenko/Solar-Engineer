@@ -122,3 +122,12 @@ xstate-graphics:
 
 xstate-selected:
 	xstate typegen "libs/design-app/data-access/src/lib/selected/selected-state.machine.ts" --watch
+
+run-plugin:
+	nx generate ngrx-pull:ngrx-entity mylib
+
+run-plugin-none:
+	nx generate ngrx-pull:ngrx-entity
+
+run-plugin-dry:
+	nx generate ngrx-pull:ngrx-entity mylib --dry-run

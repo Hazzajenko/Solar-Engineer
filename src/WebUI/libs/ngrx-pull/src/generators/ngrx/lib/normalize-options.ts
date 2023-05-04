@@ -4,6 +4,7 @@ import { names, readJson, Tree } from '@nx/devkit'
 import { checkAndCleanWithSemver } from '@nx/devkit/src/utils/semver'
 import { dirname } from 'path'
 
+
 export type NormalizedNgRxGeneratorOptions = NgRxGeneratorOptions & {
 	parentDirectory: string
 	rxjsVersion: string
@@ -29,7 +30,7 @@ export function normalizeOptions(
 			? dirname(options.module)
 			: options.parent
 			? dirname(options.parent)
-			: undefined,
+			: (undefined as any),
 		route: options.route === '' ? `''` : options.route ?? `''`,
 		directory: names(options.directory).fileName,
 		rxjsVersion,

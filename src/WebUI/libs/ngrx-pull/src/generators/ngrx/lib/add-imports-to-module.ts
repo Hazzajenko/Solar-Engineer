@@ -11,6 +11,7 @@ import { insertImport } from '@nx/js'
 import { ensureTypescript } from '@nx/js/src/utils/typescript/ensure-typescript'
 import type { SourceFile } from 'typescript'
 
+
 let tsModule: typeof import('typescript')
 
 function addRootStoreImport(
@@ -23,7 +24,9 @@ function addRootStoreImport(
 	storeForRoot: string,
 ) {
 	if (isParentStandalone) {
-		if (tree.read(parentPath, 'utf-8').includes('ApplicationConfig')) {
+		const treeRead = tree.read(parentPath, 'utf-8')
+		if (treeRead && treeRead.includes('ApplicationConfig')) {
+			// if (tree.read(parentPath, 'utf-8').includes('ApplicationConfig')) {
 			addProviderToAppConfig(tree, parentPath, provideRootStore)
 		} else {
 			addProviderToRoute(tree, parentPath, route, provideRootStore)
@@ -44,7 +47,9 @@ function addRootEffectsImport(
 	effectsForEmptyRoot: string,
 ) {
 	if (isParentStandalone) {
-		if (tree.read(parentPath, 'utf-8').includes('ApplicationConfig')) {
+		const treeRead = tree.read(parentPath, 'utf-8')
+		if (treeRead && treeRead.includes('ApplicationConfig')) {
+			// if (tree.read(parentPath, 'utf-8').includes('ApplicationConfig')) {
 			addProviderToAppConfig(tree, parentPath, provideRootEffects)
 		} else {
 			addProviderToRoute(tree, parentPath, route, provideRootEffects)
@@ -74,7 +79,7 @@ function addRouterStoreImport(
 
 function addStoreForFeatureImport(
 	tree: Tree,
-	isParentStandalone,
+	isParentStandalone: boolean,
 	route: string,
 	sourceFile: SourceFile,
 	parentPath: string,
@@ -82,7 +87,9 @@ function addStoreForFeatureImport(
 	storeForFeature: string,
 ) {
 	if (isParentStandalone) {
-		if (tree.read(parentPath, 'utf-8').includes('ApplicationConfig')) {
+		const treeRead = tree.read(parentPath, 'utf-8')
+		if (treeRead && treeRead.includes('ApplicationConfig')) {
+			// if (tree.read(parentPath, 'utf-8').includes('ApplicationConfig')) {
 			addProviderToAppConfig(tree, parentPath, provideStoreForFeature)
 		} else {
 			addProviderToRoute(tree, parentPath, route, provideStoreForFeature)
@@ -95,7 +102,7 @@ function addStoreForFeatureImport(
 
 function addEffectsForFeatureImport(
 	tree: Tree,
-	isParentStandalone,
+	isParentStandalone: boolean,
 	route: string,
 	sourceFile: SourceFile,
 	parentPath: string,
@@ -103,7 +110,9 @@ function addEffectsForFeatureImport(
 	effectsForFeature: string,
 ) {
 	if (isParentStandalone) {
-		if (tree.read(parentPath, 'utf-8').includes('ApplicationConfig')) {
+		const treeRead = tree.read(parentPath, 'utf-8')
+		if (treeRead && treeRead.includes('ApplicationConfig')) {
+			// if (tree.read(parentPath, 'utf-8').includes('ApplicationConfig')) {
 			addProviderToAppConfig(tree, parentPath, provideEffectsForFeature)
 		} else {
 			addProviderToRoute(tree, parentPath, route, provideEffectsForFeature)
@@ -119,7 +128,14 @@ export function addImportsToModule(tree: Tree, options: NormalizedNgRxGeneratorO
 		tsModule = ensureTypescript()
 	}
 	const parentPath = options.module ?? options.parent
+	if (!parentPath) {
+		console.warn('No parent found for module. Skipping adding module imports.')
+		return
+	}
 	const sourceText = tree.read(parentPath, 'utf-8')
+	if (!sourceText) {
+		throw new Error(`Couldn't read the source file (${parentPath}). Please add it manually.`)
+	}
 	let sourceFile = tsModule.createSourceFile(
 		parentPath,
 		sourceText,
@@ -183,11 +199,12 @@ export function addImportsToModule(tree: Tree, options: NormalizedNgRxGeneratorO
 	// this is just a heuristic
 	const hasRouter = sourceText.indexOf('RouterModule') > -1
 
+	// if (options.minimal && options.root && options.route) {
 	if (options.minimal && options.root) {
 		sourceFile = addRootStoreImport(
 			tree,
 			isParentStandalone,
-			options.route,
+			options.route!,
 			sourceFile,
 			parentPath,
 			provideRootStore,
@@ -196,7 +213,7 @@ export function addImportsToModule(tree: Tree, options: NormalizedNgRxGeneratorO
 		sourceFile = addRootEffectsImport(
 			tree,
 			isParentStandalone,
-			options.route,
+			options.route!,
 			sourceFile,
 			parentPath,
 			provideRootEffects,
@@ -214,10 +231,12 @@ export function addImportsToModule(tree: Tree, options: NormalizedNgRxGeneratorO
 			if (options.facade) {
 				sourceFile = addImport(sourceFile, facadeName, facadePath)
 				if (isParentStandalone) {
-					if (tree.read(parentPath, 'utf-8').includes('ApplicationConfig')) {
+					const treeRead = tree.read(parentPath, 'utf-8')
+					if (treeRead && treeRead.includes('ApplicationConfig')) {
+						// if (tree.read(parentPath, 'utf-8').includes('ApplicationConfig')) {
 						addProviderToAppConfig(tree, parentPath, facadeName)
 					} else {
-						addProviderToRoute(tree, parentPath, options.route, facadeName)
+						addProviderToRoute(tree, parentPath, options.route!, facadeName)
 					}
 				} else {
 					sourceFile = addProviderToModule(tree, sourceFile, parentPath, facadeName)
@@ -233,7 +252,7 @@ export function addImportsToModule(tree: Tree, options: NormalizedNgRxGeneratorO
 			sourceFile = addRootStoreImport(
 				tree,
 				isParentStandalone,
-				options.route,
+				options.route!,
 				sourceFile,
 				parentPath,
 				provideRootStore,
@@ -243,7 +262,7 @@ export function addImportsToModule(tree: Tree, options: NormalizedNgRxGeneratorO
 			sourceFile = addRootEffectsImport(
 				tree,
 				isParentStandalone,
-				options.route,
+				options.route!,
 				sourceFile,
 				parentPath,
 				provideRootEffects,
@@ -263,7 +282,7 @@ export function addImportsToModule(tree: Tree, options: NormalizedNgRxGeneratorO
 			sourceFile = addStoreForFeatureImport(
 				tree,
 				isParentStandalone,
-				options.route,
+				options.route!,
 				sourceFile,
 				parentPath,
 				provideStoreForFeature,
@@ -274,7 +293,7 @@ export function addImportsToModule(tree: Tree, options: NormalizedNgRxGeneratorO
 				addEffectsForFeatureImport(
 					tree,
 					isParentStandalone,
-					options.route,
+					options.route!,
 					sourceFile,
 					parentPath,
 					provideEffectsForFeature,
@@ -287,7 +306,7 @@ export function addImportsToModule(tree: Tree, options: NormalizedNgRxGeneratorO
 			sourceFile = addStoreForFeatureImport(
 				tree,
 				isParentStandalone,
-				options.route,
+				options.route!,
 				sourceFile,
 				parentPath,
 				provideStoreForFeature,
@@ -296,7 +315,7 @@ export function addImportsToModule(tree: Tree, options: NormalizedNgRxGeneratorO
 			sourceFile = addEffectsForFeatureImport(
 				tree,
 				isParentStandalone,
-				options.route,
+				options.route!,
 				sourceFile,
 				parentPath,
 				provideEffectsForFeature,

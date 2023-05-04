@@ -26,11 +26,17 @@ export function validateOptions(tree: Tree, options: NgRxGeneratorOptions): void
 
 	const ngrxMajorVersion =
 		getInstalledPackageVersionInfo(tree, '@ngrx/store')?.major ??
-		major(coerce(intendedNgRxVersionForAngularMajor))
+		major(coerce(intendedNgRxVersionForAngularMajor)!)
 
 	if (lt(angularVersionInfo.version, '14.1.0') || ngrxMajorVersion < 15) {
 		const parentPath = options.parent ?? options.module
+		if (!parentPath) {
+			throw new Error(
+				'Please provide a value for "--parent" or "--module" when using Standalone API!',
+			)
+		}
 		const parentContent = tree.read(parentPath, 'utf-8')
+		// eslint-disable-next-line @typescript-eslint/no-var-requires
 		const { tsquery } = require('@phenomnomnominal/tsquery')
 		const ast = tsquery.ast(parentContent)
 
