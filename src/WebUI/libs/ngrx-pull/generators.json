@@ -1,0 +1,9 @@
+{
+  "generators": {
+    "ngrx-entity": {
+      "factory": "./src/generators/ngrx-entity/generator",
+      "schema": "./src/generators/ngrx-entity/schema.json",
+      "description": "ngrx-entity generator"
+    }
+  }
+}

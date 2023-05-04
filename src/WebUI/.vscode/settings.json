@@ -1,4 +1,6 @@
 {
   "html.format.indentHandlebars": true,
-  "eslint.validate": ["json"]
+  "eslint.validate": [
+    "json"
+  ]
 }

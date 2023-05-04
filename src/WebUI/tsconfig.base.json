@@ -301,6 +301,9 @@
       ],
       "deprecated/design-app/feature-string": [
         "libs/deprecated/design-app/feature-string/src/index.ts"
+      ],
+      "ngrx-pull": [
+        "libs/ngrx-pull/src/index.ts"
       ]
     },
     "rootDir": ".",

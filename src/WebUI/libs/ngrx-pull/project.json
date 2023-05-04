@@ -1,0 +1,72 @@
+{
+  "name": "ngrx-pull",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/ngrx-pull/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "outputPath": "dist/libs/ngrx-pull",
+        "main": "libs/ngrx-pull/src/index.ts",
+        "tsConfig": "libs/ngrx-pull/tsconfig.lib.json",
+        "assets": [
+          "libs/ngrx-pull/*.md",
+          {
+            "input": "./libs/ngrx-pull/src",
+            "glob": "**/!(*.ts)",
+            "output": "./src"
+          },
+          {
+            "input": "./libs/ngrx-pull/src",
+            "glob": "**/*.d.ts",
+            "output": "./src"
+          },
+          {
+            "input": "./libs/ngrx-pull",
+            "glob": "generators.json",
+            "output": "."
+          },
+          {
+            "input": "./libs/ngrx-pull",
+            "glob": "executors.json",
+            "output": "."
+          }
+        ]
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": [
+        "{options.outputFile}"
+      ],
+      "options": {
+        "lintFilePatterns": [
+          "libs/ngrx-pull/**/*.ts",
+          "libs/ngrx-pull/package.json",
+          "libs/ngrx-pull/generators.json"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/{projectRoot}"
+      ],
+      "options": {
+        "jestConfig": "libs/ngrx-pull/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    }
+  },
+  "tags": []
+}
