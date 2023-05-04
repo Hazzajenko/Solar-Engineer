@@ -1,4 +1,5 @@
 import { AppStoreService } from '../app'
+import { AppNgrxStateStore, SELECTED_STATE } from '../app-store'
 import { EntityStoreService } from '../entities'
 import { SelectedSnapshot } from './selected-state.types'
 import { inject, Injectable } from '@angular/core'
@@ -12,6 +13,8 @@ export class SelectedService {
 	// private _entities = inject(EntityStoreService)
 	private _entities = inject(EntityStoreService)
 	private _app = inject(AppStoreService)
+	private _appStore = inject(AppNgrxStateStore)
+	// private _appState = inject(AppSt)
 
 	handleEntityUnderMouse(event: MouseEvent, entityUnderMouse: CanvasEntity) {
 		if (event.shiftKey) {
@@ -29,6 +32,9 @@ export class SelectedService {
 			type: 'SetMultipleSelectedEntities',
 			payload: { ids: [selectedId] },
 		})
+		const currentSelected = this._appStore.select.state()
+		console.log('currentSelected', currentSelected)
+		this._appStore.dispatch.setSelectedState(SELECTED_STATE.MULTIPLE_ENTITIES_SELECTED)
 		// this._app.sendEvent({ type: 'SetMultipleSelectedEntities', payload: { ids: [selectedId] } })
 		// this._app.sendEvent({ type: 'SelectedSingleEntity', payload: { id: selectedId } })
 		// this._app.sendEvent(new SelectedSingleEntity({ id: selectedId }))

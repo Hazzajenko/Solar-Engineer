@@ -88,6 +88,20 @@ const reducer = createReducer(
 	on(AppStateActions.clearState, () => initialAppState),
 )
 
+/*nvuconst setDragBoxState = (state: AppState, dragBox: DragBoxState) => {
+	switch (dragBox) {
+		case DRAG_BOX_STATE.NO_DRAG_BOX:
+			return {
+				...state,
+				dragBox,
+			}
+		case DRAG_BOX_STATE.DRAG_BOX:
+			return {
+
+			}
+	}
+}*/
+
 export function appStateReducer(state: AppState | undefined, action: Action) {
 	return reducer(state, action)
 }

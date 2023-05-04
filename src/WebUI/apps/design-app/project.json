@@ -9,7 +9,7 @@
   ],
   "targets": {
     "build": {
-			"builder": "@angular-devkit/build-angular:browser-esbuild",
+      "executor": "@angular-devkit/build-angular:browser",
       "outputs": [
         "{options.outputPath}"
       ],

@@ -157,7 +157,7 @@ export class RenderService {
 				shouldRenderSelectedEntitiesBox &&
 				selectedSnapshot.matches('EntitySelectedState.EntitiesSelected')
 			) {
-				console.log('rendering selected box')
+				// console.log('rendering selected box')
 				drawSelectedBox(
 					ctx,
 					this._entities.panels.getEntitiesByIds(this._app.selectedCtx.multipleSelectedIds),
@@ -173,7 +173,7 @@ export class RenderService {
 					shouldRenderSelectedEntitiesBox &&
 					selectedSnapshot.matches('EntitySelectedState.EntitiesSelected')
 				) {
-					console.log('rendering selected box')
+					// console.log('rendering selected box')
 					drawSelectedBox(
 						ctx,
 						this._entities.panels.getEntitiesByIds(this._app.selectedCtx.multipleSelectedIds),

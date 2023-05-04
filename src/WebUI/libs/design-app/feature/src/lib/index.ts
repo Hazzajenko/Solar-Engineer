@@ -1,5 +1,6 @@
 export * from './design-canvas-directive.extension'
 export * from './design-canvas.directive'
+export * from './design-canvas-ngrx.directive'
 export * from './design-canvas-app.component'
 export * from './setup-canvas'
 export * from './windows/index'

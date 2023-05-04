@@ -45,6 +45,7 @@ export const selectSelectedState = createSelector(
 	(state: AppState) => state.selected,
 )
 
+/*
 export const APP_STATE_QUERIES = {
 	selectAppStateState,
 	selectDragBoxState,
@@ -59,6 +60,7 @@ export const APP_STATE_QUERIES = {
 } as const
 
 export type AppStateQueries = (typeof APP_STATE_QUERIES)[keyof typeof APP_STATE_QUERIES]
+*/
 
 // APP_STATE_QUERIES.selectDragBoxState({})
 

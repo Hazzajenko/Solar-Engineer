@@ -68,3 +68,14 @@ export const VIEW_POSITIONING_STATE = {
 
 export type ViewPositioningState =
 	(typeof VIEW_POSITIONING_STATE)[keyof typeof VIEW_POSITIONING_STATE]
+
+export type TypeOfAppState =
+	| DragBoxState
+	| ModeState
+	| PreviewAxisState
+	| PointerState
+	| SelectedState
+	| ToMoveState
+	| ToRotateState
+	| ContextMenuState
+	| ViewPositioningState

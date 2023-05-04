@@ -38,12 +38,12 @@ import { CURSOR_TYPE, KEYS } from '@shared/data-access/models'
 import { assertNotNull, OnDestroyDirective } from '@shared/utils'
 
 @Directive({
-	selector: '[appDesignCanvasApp]',
+	selector: '[appDesignCanvasNgrxApp]',
 	providers: [OnDestroyDirective],
 	standalone: true,
 }) /*,
  DesignCanvasEventHandlers */
-export class DesignCanvasDirective extends DesignCanvasDirectiveExtension implements OnInit {
+export class DesignCanvasNgrxDirective extends DesignCanvasDirectiveExtension implements OnInit {
 	entityPressed: CanvasEntity | undefined
 
 	private _appState = inject(AppNgrxStateStore)
@@ -97,9 +97,15 @@ export class DesignCanvasDirective extends DesignCanvasDirectiveExtension implem
 	onMouseDownHandler(event: PointerEvent, currentPoint: TransformedPoint) {
 		// const currentPoint = this._domPoint.getTransformedPointFromEvent(event)
 
-		// const stateSignal = this.stateSignal()
-		// const { GridState } = stateSignal
-		// stateSignal.dragBox
+		const stateSignal = this.stateSignal()
+		this._appState.matches.dragBox('CreationBoxInProgress')
+		const snap = this._appState.snapshot
+		// snap.matches.dragBox('CreationBoxInProgress')
+		const snap2 = this._appState.snapshotV2
+		snap2.matches.dragBox('CreationBoxInProgress')
+		const snap3 = this._appState.snapshotV3
+		snap3.matches.dragBox('CreationBoxInProgress')
+		// snap3.select('dragBox')
 		const { GridState } = this._app.state
 		const appSnapshot = this._app.appSnapshot
 

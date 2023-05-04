@@ -1,3 +1,4 @@
+import { DesignCanvasNgrxDirective } from './design-canvas-ngrx.directive'
 import { DesignCanvasDirective } from './design-canvas.directive'
 import { ViewStringComponent } from './dialogs/view-string.component'
 import {
@@ -46,6 +47,7 @@ import { updateObjectForStore } from 'deprecated/design-app/feature-design-canva
 		DesignCanvasDirective,
 		WindowComponent,
 		ButtonBuilderComponent,
+		DesignCanvasNgrxDirective,
 	],
 	selector: 'app-design-canvas-app',
 	standalone: true,
