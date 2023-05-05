@@ -1,6 +1,5 @@
 import { DesignCanvasNgrxDirective } from './design-canvas-ngrx.directive'
 import { DesignCanvasDirective } from './design-canvas.directive'
-import { ViewStringComponent } from './dialogs/view-string.component'
 import {
 	CanvasGraphicsMenuComponent,
 	KeyMapComponent,
@@ -27,11 +26,12 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop'
 import { MatDialog } from '@angular/material/dialog'
 import { DialogsService, WindowsStore } from '@design-app/data-access'
-import { CanvasString, DraggableWindow } from '@design-app/shared'
+import { DraggableWindow } from '@design-app/shared'
 import { LetModule } from '@ngrx/component'
 import { getGuid } from '@ngrx/data'
 import { ButtonBuilderComponent, ShowSvgComponent } from '@shared/ui'
 import { updateObjectForStore } from 'deprecated/design-app/feature-design-canvas'
+
 
 @Component({
 	changeDetection: ChangeDetectionStrategy.OnPush,
@@ -87,14 +87,14 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 
 	ngOnInit() {
 		console.log(this.constructor.name, 'ngOnInit')
-		this._dialogs.open(ViewStringComponent, {
-			string: {
-				id: getGuid(),
-				name: 'string',
-				color: 'red',
-				parallel: false,
-			} as CanvasString,
-		})
+		/*		this._dialogs.open(ViewStringComponent, {
+		 string: {
+		 id: getGuid(),
+		 name: 'string',
+		 color: 'red',
+		 parallel: false,
+		 } as CanvasString,
+		 })*/
 	}
 
 	setName(newName: string) {

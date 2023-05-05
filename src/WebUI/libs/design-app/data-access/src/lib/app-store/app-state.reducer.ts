@@ -10,8 +10,6 @@ import {
 	PointerState,
 	PREVIEW_AXIS_STATE,
 	PreviewAxisState,
-	SELECTED_STATE,
-	SelectedState,
 	TO_MOVE_STATE,
 	TO_ROTATE_STATE,
 	ToMoveState,
@@ -32,7 +30,7 @@ export type AppState = {
 	previewAxis: PreviewAxisState
 	mode: ModeState
 	contextMenu: ContextMenuState
-	selected: SelectedState
+	// selected: SelectedState
 }
 
 export const initialAppState: AppState = {
@@ -43,8 +41,7 @@ export const initialAppState: AppState = {
 	view: VIEW_POSITIONING_STATE.VIEW_NOT_MOVING,
 	previewAxis: PREVIEW_AXIS_STATE.NONE,
 	mode: MODE_STATE.SELECT_MODE,
-	contextMenu: CONTEXT_MENU_STATE.NO_CONTEXT_MENU,
-	selected: SELECTED_STATE.NONE_SELECTED,
+	contextMenu: CONTEXT_MENU_STATE.NO_CONTEXT_MENU, // selected: SELECTED_STATE.NONE_SELECTED,
 }
 
 const reducer = createReducer(
@@ -80,27 +77,26 @@ const reducer = createReducer(
 	on(AppStateActions.setContextMenuState, (state, { contextMenu }) => ({
 		...state,
 		contextMenu,
-	})),
-	on(AppStateActions.setSelectedState, (state, { selected }) => ({
-		...state,
-		selected,
-	})),
+	})) /*	on(AppStateActions.setSelectedState, (state, { selected }) => ({
+	 ...state,
+	 selected,
+	 })),*/,
 	on(AppStateActions.clearState, () => initialAppState),
 )
 
 /*nvuconst setDragBoxState = (state: AppState, dragBox: DragBoxState) => {
-	switch (dragBox) {
-		case DRAG_BOX_STATE.NO_DRAG_BOX:
-			return {
-				...state,
-				dragBox,
-			}
-		case DRAG_BOX_STATE.DRAG_BOX:
-			return {
+ switch (dragBox) {
+ case DRAG_BOX_STATE.NO_DRAG_BOX:
+ return {
+ ...state,
+ dragBox,
+ }
+ case DRAG_BOX_STATE.DRAG_BOX:
+ return {
 
-			}
-	}
-}*/
+ }
+ }
+ }*/
 
 export function appStateReducer(state: AppState | undefined, action: Action) {
 	return reducer(state, action)

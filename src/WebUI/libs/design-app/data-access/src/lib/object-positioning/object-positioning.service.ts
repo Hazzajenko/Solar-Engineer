@@ -2,9 +2,13 @@ import { AppSnapshot, AppStoreService } from '../app'
 import { CanvasElementService } from '../div-elements'
 import { DomPointService } from '../dom-point'
 import { EntityStoreService } from '../entities'
-import { GraphicsStateSnapshot } from '../graphics'
+import { GraphicsXStateSnapshot } from '../graphics'
+import { GraphicsStoreService } from '../graphics-store'
 import { GraphicsSettings } from '../graphics/graphics.settings'
-import { getNearbyLineDrawCtxFnFromGraphicsSnapshot } from '../nearby'
+import {
+	getNearbyLineDrawCtxFnFromAppNgrxStoreSnapshot,
+	getNearbyLineDrawCtxFnFromGraphicsSnapshot,
+} from '../nearby'
 import { RenderService } from '../render'
 import { drawSelectionBoxBoundsCtxFn } from './draw-selection-box'
 import { inject, Injectable } from '@angular/core'
@@ -40,6 +44,7 @@ import { CURSOR_TYPE, Point } from '@shared/data-access/models'
 import { assertNotNull, groupInto2dArray } from '@shared/utils'
 import { sortBy } from 'lodash'
 
+
 @Injectable({
 	providedIn: 'root',
 })
@@ -50,6 +55,7 @@ export class ObjectPositioningService {
 	// private _render = inject(CanvasRenderService)
 	private _canvasElement = inject(CanvasElementService)
 	private _app = inject(AppStoreService)
+	private _graphicsStore = inject(GraphicsStoreService)
 	singleToMoveId: string | undefined
 	// multiToMoveStart: TransformedPoint | undefined
 	multiToMoveStart: EventPoint | undefined
@@ -74,7 +80,7 @@ export class ObjectPositioningService {
 		event: PointerEvent,
 		currentPoint: TransformedPoint,
 		appSnapshot: AppSnapshot,
-		graphicsSnapshot: GraphicsStateSnapshot,
+		graphicsSnapshot: GraphicsXStateSnapshot,
 	) {
 		if (!isHoldingClick(event)) {
 			this._app.sendEvent({ type: 'StopSingleMove' })
@@ -165,6 +171,116 @@ export class ObjectPositioningService {
 		const isMovingExistingEntity = true
 
 		const ctxFn = getNearbyLineDrawCtxFnFromGraphicsSnapshot(
+			graphicsSnapshot,
+			axisPreviewRect,
+			mouseBoxBounds,
+			closestEnt,
+			CANVAS_COLORS.HoveredPanelFillStyle,
+			altKey,
+			holdAltToSnapToGrid,
+			isMovingExistingEntity,
+		)
+
+		this._render.renderCanvasApp({
+			excludedEntityIds: [this.singleToMoveId],
+			drawFns: [ctxFn],
+		})
+		// this._render.drawCanvasExcludeIdsWithFn([this.singleToMoveId], ctxFn)
+	}
+
+	singleToMoveMouseMoveV2Ngrx(event: PointerEvent, currentPoint: TransformedPoint) {
+		if (!isHoldingClick(event)) {
+			this._app.sendEvent({ type: 'StopSingleMove' })
+			// this._app.sendEvent(new StopSingleMove())
+			this.singleToMoveId = undefined
+			return
+		}
+		assertNotNull(this.singleToMoveId)
+		changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
+		// const eventPoint = this._domPoint.getTransformedPointFromEvent(event)
+		// const currentPoint = this._domPoint.getTransformedPointFromEvent(event)
+		const isSpotTaken = this.areAnyEntitiesNearbyExcludingGrabbed(currentPoint, this.singleToMoveId)
+		if (isSpotTaken) {
+			changeCanvasCursor(this.canvas, CURSOR_TYPE.CROSSHAIR)
+			// TODO - implement red box
+			// this.canvas.style.cursor = CURSOR_TYPE.CROSSHAIR
+			// changeCanvasCursor(this.canvas, CURSOR_TYPE.CROSSHAIR)
+			// return
+		} else {
+			changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
+		}
+		const location = getTopLeftPointFromTransformedPoint(
+			currentPoint,
+			SizeByType[ENTITY_TYPE.Panel],
+		)
+		const entity = this._entities.panels.getEntityById(this.singleToMoveId)
+		assertNotNull(entity)
+
+		const size = SizeByType[ENTITY_TYPE.Panel]
+		const mouseBoxBounds = getCompleteBoundsFromCenterTransformedPoint(currentPoint, size)
+		const entities = this._entities.panels.getEntities()
+		const nearbyEntitiesOnAxis = findNearbyBoundOverlapOnBothAxisExcludingIds(
+			mouseBoxBounds,
+			entities,
+			[this.singleToMoveId],
+		)
+		// const nearbyEntitiesOnAxis = findNearbyBoundOverlapOnBothAxis(mouseBoxBounds, entities)
+		const graphicsSnapshot = this._graphicsStore.snapshot
+		if (
+			!nearbyEntitiesOnAxis.length ||
+			graphicsSnapshot.matches.nearbyLines('NearbyLinesDisabled')
+		) {
+			const drawSingleToMove = (ctx: CanvasRenderingContext2D) => {
+				ctx.save()
+				ctx.fillStyle = CANVAS_COLORS.HoveredPanelFillStyle
+				ctx.translate(location.x + entity.width / 2, location.y + entity.height / 2)
+				ctx.rotate(entity.angle)
+
+				ctx.beginPath()
+				ctx.rect(-entity.width / 2, -entity.height / 2, entity.width, entity.height)
+				ctx.fill()
+				ctx.stroke()
+				ctx.restore()
+				// console.log('no nearbyEntities')
+				// const drawPreviewFn = getDefaultDrawPreviewCtxFn(mouseBoxBounds)
+
+				// this.clearNearbyState()
+			}
+			this._render.renderCanvasApp({
+				excludedEntityIds: [this.singleToMoveId],
+				drawFns: [drawSingleToMove],
+			})
+			// this._render.drawCanvasExcludeIdsWithFn([this.singleToMoveId], drawSingleToMove)
+			// this._render.drawCanvasWithFunction(drawSingleToMove)
+			return
+		}
+
+		// const anyNearClick = !!entities.find((entity) => isEntityOverlappingWithBounds(entity, mouseBoxBounds))
+
+		const nearbySortedByDistance = sortBy(nearbyEntitiesOnAxis, (entity) =>
+			Math.abs(entity.distance),
+		)
+		const nearby2dArray = groupInto2dArray(nearbySortedByDistance, 'axis')
+
+		const closestNearby2dArray = nearby2dArray.map((arr) => arr[0])
+		const closestEnt = closestNearby2dArray[0]
+
+		const gridLines = getEntityAxisGridLinesByAxisV2(closestEnt.bounds, closestEnt.axis)
+		const gridLineBounds = getBoundsFromArrPoints(gridLines)
+
+		const axisPreviewRect = getCtxRectBoundsByAxisV2(
+			closestEnt.bounds,
+			closestEnt.axis,
+			mouseBoxBounds,
+		)
+		this.currentAxis = closestEnt.axis
+		this.axisRepositionPreviewRect = axisPreviewRect
+
+		const holdAltToSnapToGrid = GraphicsSettings.HoldAltToSnapToGrid
+		const altKey = event.altKey
+		const isMovingExistingEntity = true
+
+		const ctxFn = getNearbyLineDrawCtxFnFromAppNgrxStoreSnapshot(
 			graphicsSnapshot,
 			axisPreviewRect,
 			mouseBoxBounds,

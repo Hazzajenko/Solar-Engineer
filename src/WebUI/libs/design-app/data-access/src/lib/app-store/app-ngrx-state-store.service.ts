@@ -3,6 +3,7 @@ import { AppState } from './app-state.reducer'
 import { AppStateRepository } from './app-state.repository'
 import { inject, Injectable } from '@angular/core'
 
+
 @Injectable({
 	providedIn: 'root',
 })
@@ -16,11 +17,11 @@ export class AppNgrxStateStore {
 
 	get matches() {
 		let res = {}
-		for (const key in this.state()) {
+		for (const key in this.state) {
 			const k = key as keyof AppState
 			res = {
 				...res,
-				[key]: (value: AppState[typeof k]) => this.state()[k] === value,
+				[key]: (value: AppState[typeof k]) => this.state[k] === value,
 			}
 		}
 		return res as {
@@ -28,30 +29,48 @@ export class AppNgrxStateStore {
 		}
 	}
 
+	/*	get snapshot() {
+	 return {
+	 ...this.state(),
+	 matches: this.matches,
+	 }
+	 }*/
+
+	/*	get snapshotV2() {
+	 return new AppNgrxSnapshot(this)
+	 }*/
+
 	get snapshot() {
 		return {
-			...this.state(),
+			state: this.state,
 			matches: this.matches,
 		}
 	}
-
-	get snapshotV2() {
-		return new AppNgrxSnapshot(this)
-	}
-
-	get snapshotV3() {
-		return this
-	}
 }
 
-class AppNgrxSnapshot {
-	constructor(private readonly _store: AppNgrxStateStore) {}
+// export type AppNgrxSnapshot = ReturnType<AppNgrxStateStore['snapshot']>
+// type AppNgrxSnapshotMatches = ReturnType<AppNgrxStateStore['matches']>
 
-	get state() {
-		return this._store.snapshot
-	}
-
-	get matches() {
-		return this._store.matches
-	}
+export type AppNgrxSnapshot = {
+	state: AppState
+	matches: AppNgrxMatches
 }
+
+type AppNgrxMatches = {
+	[key in keyof AppState]: (value: AppState[key]) => boolean
+}
+
+// type test = AppNgrxStateStore['snapshot']
+
+/*
+ class AppNgrxSnapshot {
+ constructor(private readonly _store: AppNgrxStateStore) {}
+
+ get state() {
+ return this._store.snapshot
+ }
+
+ get matches() {
+ return this._store.matches
+ }
+ }*/

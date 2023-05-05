@@ -13,4 +13,4 @@ export const graphicsSettingsInterpreter = interpret(graphicsStateMachine, {
 }).onTransition((state) => {
 	xstateLogger(state)
 })
-export type GraphicsStateSnapshot = ReturnType<typeof graphicsSettingsInterpreter.getSnapshot>
+export type GraphicsXStateSnapshot = ReturnType<typeof graphicsSettingsInterpreter.getSnapshot>

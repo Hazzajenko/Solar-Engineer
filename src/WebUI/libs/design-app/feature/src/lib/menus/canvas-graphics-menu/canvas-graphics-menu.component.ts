@@ -14,7 +14,7 @@ import { ReactiveFormsModule } from '@angular/forms'
 import {
 	AppStoreService,
 	CREATE_PREVIEW_EVENT,
-	CREATE_PREVIEW_STATE,
+	CREATE_PREVIEW_XSTATE,
 	GraphicsStateEvent,
 	NEARBY_GRAPHICS_EVENT,
 	NEARBY_GRAPHICS_STATE,
@@ -42,7 +42,7 @@ export class CanvasGraphicsMenuComponent implements AfterViewInit {
 	// protected readonly SelectCenterLineScreenSize = SelectCenterLineScreenSize
 	protected readonly NEARBY_GRAPHICS_STATE = NEARBY_GRAPHICS_STATE
 	protected readonly NEARBY_GRAPHICS_EVENT = NEARBY_GRAPHICS_EVENT
-	protected readonly CREATE_PREVIEW_STATE = CREATE_PREVIEW_STATE
+	protected readonly CREATE_PREVIEW_STATE = CREATE_PREVIEW_XSTATE
 	protected readonly CREATE_PREVIEW_EVENT = CREATE_PREVIEW_EVENT
 	private _render = inject(RenderService)
 	private _renderer = inject(Renderer2)

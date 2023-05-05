@@ -28,14 +28,16 @@ export const POINTER_STATE = {
 
 export type PointerState = (typeof POINTER_STATE)[keyof typeof POINTER_STATE]
 
-export const SELECTED_STATE = {
-	ENTITY_SELECTED: 'EntitySelected',
-	MULTIPLE_ENTITIES_SELECTED: 'MultipleEntitiesSelected',
-	NONE_SELECTED: 'NoneSelected',
-	STRING_SELECTED: 'StringSelected',
-} as const
+/*
+ export const SELECTED_STATE = {
+ ENTITY_SELECTED: 'EntitySelected',
+ MULTIPLE_ENTITIES_SELECTED: 'MultipleEntitiesSelected',
+ NONE_SELECTED: 'NoneSelected',
+ STRING_SELECTED: 'StringSelected',
+ } as const
 
-export type SelectedState = (typeof SELECTED_STATE)[keyof typeof SELECTED_STATE]
+ export type SelectedState = (typeof SELECTED_STATE)[keyof typeof SELECTED_STATE]
+ */
 
 export const TO_MOVE_STATE = {
 	MULTIPLE_MOVE_IN_PROGRESS: 'MultipleMoveInProgress',
@@ -74,7 +76,7 @@ export type TypeOfAppState =
 	| ModeState
 	| PreviewAxisState
 	| PointerState
-	| SelectedState
+	// | SelectedState
 	| ToMoveState
 	| ToRotateState
 	| ContextMenuState

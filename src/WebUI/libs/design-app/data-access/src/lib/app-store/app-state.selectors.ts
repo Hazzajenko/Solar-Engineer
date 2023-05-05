@@ -40,46 +40,48 @@ export const selectContextMenuState = createSelector(
 	(state: AppState) => state.contextMenu,
 )
 
-export const selectSelectedState = createSelector(
-	selectAppStateState,
-	(state: AppState) => state.selected,
-)
+/*
+ export const selectSelectedState = createSelector(
+ selectAppStateState,
+ (state: AppState) => state.selected,
+ )
+ */
 
 /*
-export const APP_STATE_QUERIES = {
-	selectAppStateState,
-	selectDragBoxState,
-	selectPointerState,
-	selectToMoveState,
-	selectToRotateState,
-	selectViewPositioningState,
-	selectPreviewAxisState,
-	selectModeState,
-	selectContextMenuState,
-	selectSelectedState,
-} as const
+ export const APP_STATE_QUERIES = {
+ selectAppStateState,
+ selectDragBoxState,
+ selectPointerState,
+ selectToMoveState,
+ selectToRotateState,
+ selectViewPositioningState,
+ selectPreviewAxisState,
+ selectModeState,
+ selectContextMenuState,
+ selectSelectedState,
+ } as const
 
-export type AppStateQueries = (typeof APP_STATE_QUERIES)[keyof typeof APP_STATE_QUERIES]
-*/
+ export type AppStateQueries = (typeof APP_STATE_QUERIES)[keyof typeof APP_STATE_QUERIES]
+ */
 
 // APP_STATE_QUERIES.selectDragBoxState({})
 
 /*
-type fns = (...args: any[]) => any
+ type fns = (...args: any[]) => any
 
-type stateFns = typeof selectDragBoxState | typeof selectPointerState | typeof selectToMoveState | typeof selectToRotateState | typeof selectViewPositioningState | typeof selectPreviewAxisState | typeof selectModeState | typeof selectContextMenuState | typeof selectSelectedState
-const what : stateFns = selectDragBoxState
+ type stateFns = typeof selectDragBoxState | typeof selectPointerState | typeof selectToMoveState | typeof selectToRotateState | typeof selectViewPositioningState | typeof selectPreviewAxisState | typeof selectModeState | typeof selectContextMenuState | typeof selectSelectedState
+ const what : stateFns = selectDragBoxState
 
-what({})
+ what({})
 
-const selectByFunc = (fn: fns) => createSelector(selectAppStateState, fn)
+ const selectByFunc = (fn: fns) => createSelector(selectAppStateState, fn)
 
-export const selectDragBox = selectByFunc(selectDragBoxState)
+ export const selectDragBox = selectByFunc(selectDragBoxState)
 
-const selectByFuncName = (fn: stateFns) => createSelector(selectAppStateState, fn)
+ const selectByFuncName = (fn: stateFns) => createSelector(selectAppStateState, fn)
 
-type StateFn = stateFns[keyof stateFns]
+ type StateFn = stateFns[keyof stateFns]
 
-export const selectDragBox2: StateFn = selectDragBoxState
+ export const selectDragBox2: StateFn = selectDragBoxState
 
-selectByFuncName(selectDragBoxState)*/
+ selectByFuncName(selectDragBoxState)*/

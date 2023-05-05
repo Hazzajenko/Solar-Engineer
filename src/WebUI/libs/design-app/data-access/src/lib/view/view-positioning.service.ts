@@ -1,4 +1,5 @@
 import { AppStoreService } from '../app'
+import { AppNgrxStateStore } from '../app-store'
 import { CanvasElementService } from '../div-elements'
 import { RenderService } from '../render'
 import { inject, Injectable } from '@angular/core'
@@ -15,6 +16,7 @@ export class ViewPositioningService {
 	private _canvasElementsService = inject(CanvasElementService)
 	private _render = inject(RenderService)
 	private _app = inject(AppStoreService)
+	private _appStore = inject(AppNgrxStateStore)
 
 	screenDragStartPoint?: TransformedPoint
 
@@ -33,6 +35,7 @@ export class ViewPositioningService {
 		 },
 		 })*/
 		this._app.sendEvent({ type: 'StartViewDragging' })
+		this._appStore.dispatch.setViewPositioningState('ViewDraggingInProgress')
 		// this._machine.sendEvent(new StartViewDragging())
 		this.screenDragStartPoint = currentPoint
 		// this.screenDragStartPoint = this._domPointService.getTransformedPointFromEvent(event)
@@ -46,6 +49,7 @@ export class ViewPositioningService {
 			 },
 			 })*/
 			this._app.sendEvent({ type: 'StopViewDragging' })
+			this._appStore.dispatch.setViewPositioningState('ViewNotMoving')
 			// this._machine.sendEvent(new StopViewDragging())
 			this.screenDragStartPoint = undefined
 			return
@@ -64,6 +68,7 @@ export class ViewPositioningService {
 	handleDragScreenMouseUp(event: PointerEvent) {
 		this.screenDragStartPoint = undefined
 		this._app.sendEvent({ type: 'StopViewDragging' })
+		this._appStore.dispatch.setViewPositioningState('ViewNotMoving')
 		// this._machine.sendEvent(new StopViewDragging())
 		/*		this._state.updateState({
 		 view: {

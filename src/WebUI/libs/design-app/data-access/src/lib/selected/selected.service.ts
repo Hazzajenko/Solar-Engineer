@@ -1,10 +1,12 @@
 import { AppStoreService } from '../app'
-import { AppNgrxStateStore, SELECTED_STATE } from '../app-store'
+import { AppNgrxStateStore } from '../app-store'
 import { EntityStoreService } from '../entities'
 import { SelectedSnapshot } from './selected-state.types'
+import { SelectedStoreService } from './selected-store.service'
 import { inject, Injectable } from '@angular/core'
 import { CanvasEntity } from '@design-app/shared'
 import { assertNotNull } from '@shared/utils'
+
 
 @Injectable({
 	providedIn: 'root',
@@ -14,6 +16,8 @@ export class SelectedService {
 	private _entities = inject(EntityStoreService)
 	private _app = inject(AppStoreService)
 	private _appStore = inject(AppNgrxStateStore)
+	private _selectedStore = inject(SelectedStoreService)
+
 	// private _appState = inject(AppSt)
 
 	handleEntityUnderMouse(event: MouseEvent, entityUnderMouse: CanvasEntity) {
@@ -28,13 +32,14 @@ export class SelectedService {
 	setSelected(selectedId: string) {
 		// const ev = SELECTED_EVENT_V2('SetMultipleSelectedEntities', { ids: [selectedId] })
 		// this._app.sendEvent(SELECTED_EVENT('SetMultipleSelectedEntities', payload: { ids: [selectedId] }))
-		this._app.sendSelectedEvent({
-			type: 'SetMultipleSelectedEntities',
-			payload: { ids: [selectedId] },
-		})
-		const currentSelected = this._appStore.select.state()
+		/*		this._app.sendSelectedEvent({
+		 type: 'SetMultipleSelectedEntities',
+		 payload: { ids: [selectedId] },
+		 })*/
+		const currentSelected = this._appStore.select.state
 		console.log('currentSelected', currentSelected)
-		this._appStore.dispatch.setSelectedState(SELECTED_STATE.MULTIPLE_ENTITIES_SELECTED)
+		this._selectedStore.dispatch.selectEntity(selectedId)
+		// this._appStore.dispatch.setSelectedState(SELECTED_STATE.MULTIPLE_ENTITIES_SELECTED)
 		// this._app.sendEvent({ type: 'SetMultipleSelectedEntities', payload: { ids: [selectedId] } })
 		// this._app.sendEvent({ type: 'SelectedSingleEntity', payload: { id: selectedId } })
 		// this._app.sendEvent(new SelectedSingleEntity({ id: selectedId }))
@@ -50,15 +55,18 @@ export class SelectedService {
 		 return
 		 }*/
 
-		const multipleSelectedIds = this._app.selectedCtx.multipleSelectedIds
+		const multipleSelectedIds = this._selectedStore.select.state.multipleSelectedEntityIds
+		// const multipleSelectedIds = this._app.selectedCtx.multipleSelectedIds
 		// const multipleSelectedIds = this._app.appCtx.selected.multipleSelectedIds
 		if (multipleSelectedIds.includes(selectedId)) {
+			this._selectedStore.dispatch.removeEntitiesFromMultiSelect([selectedId])
 			// this._app.sendEvent(
 			// 	{
-			this._app.sendSelectedEvent({
-				type: 'RemoveEntitiesFromMultipleSelected',
-				payload: { ids: [selectedId] },
-			})
+			/*			this._app.sendSelectedEvent({
+			 type: 'RemoveEntitiesFromMultipleSelected',
+			 payload: { ids: [selectedId] },
+			 })*/
+
 			/*			this._app.sendStateEvent(
 			 STATE_MACHINE.SELECTED,
 			 {
@@ -77,10 +85,11 @@ export class SelectedService {
 		assertNotNull(selectedEntity, 'selected entity not found')
 		// this._app.sendEvent(
 		// 	{
-		this._app.sendSelectedEvent({
-			type: 'AddEntitiesToMultipleSelected',
-			payload: { ids: [...multipleSelectedIds, selectedId] },
-		})
+		/*		this._app.sendSelectedEvent({
+		 type: 'AddEntitiesToMultipleSelected',
+		 payload: { ids: [...multipleSelectedIds, selectedId] },
+		 })*/
+		this._selectedStore.dispatch.addEntitiesToMultiSelect([...multipleSelectedIds, selectedId])
 		/*		this._app.sendStateEvent(
 		 STATE_MACHINE.SELECTED,
 		 {
@@ -104,13 +113,13 @@ export class SelectedService {
 	}
 
 	/*
-	checkSelectedState(event: MouseEvent, clickedOnEntityId: string) {
-		/!*		const singleSelectedId = this._app.appCtx.selected.singleSelectedId
-		 if (!singleSelectedId || (singleSelectedId !== clickedOnEntityId && !event.shiftKey)) {
-		 this.clearSingleSelected()
-		 }*!/
-	}
-*/
+	 checkSelectedState(event: MouseEvent, clickedOnEntityId: string) {
+	 /!*		const singleSelectedId = this._app.appCtx.selected.singleSelectedId
+	 if (!singleSelectedId || (singleSelectedId !== clickedOnEntityId && !event.shiftKey)) {
+	 this.clearSingleSelected()
+	 }*!/
+	 }
+	 */
 
 	handleNotClickedOnEntity(selectedSnapshot: SelectedSnapshot) {
 		/*		if (selectedSnapshot.matches('StringSelectedState.StringSelected')) {
@@ -119,10 +128,12 @@ export class SelectedService {
 		 }*/
 
 		if (selectedSnapshot.matches('EntitySelectedState.EntitiesSelected')) {
-			this._app.sendSelectedEvent({ type: 'ClearMultipleSelectedEntities' })
+			// this._app.sendSelectedEvent({ type: 'ClearMultipleSelectedEntities' })
+			this._selectedStore.dispatch.clearMultiSelected()
 			return
 		}
 	}
+
 	/*	clearSingleSelected() {
 	 /!*if (this._app.appCtx.selected.singleSelectedId) {
 	 this._app.sendStateEvent(STATE_MACHINE.SELECTED, {
@@ -137,7 +148,8 @@ export class SelectedService {
 	// clear
 
 	clearSelectedState() {
-		this._app.sendSelectedEvent({ type: 'ClearSelectedState' })
+		this._selectedStore.dispatch.clearSelectedState()
+		// this._app.sendSelectedEvent({ type: 'ClearSelectedState' })
 		// this._app.sendSelectedEvent({ type: 'ClearEntitySelected' })
 		/*	this._app.sendStateEvent(STATE_MACHINE.SELECTED, {
 		 type: 'ClearEntitySelected',
@@ -147,13 +159,17 @@ export class SelectedService {
 	}
 
 	clearSelectedInOrder() {
-		const appSnapshot = this._app.appSnapshot
-		const selectedSnapshot = this._app.selectedSnapshot
-		if (selectedSnapshot.matches('StringSelectedState.StringSelected')) {
-			this._app.sendSelectedEvent({ type: 'ClearStringSelected' })
+		/*		const appSnapshot = this._app.appSnapshot
+		 const selectedSnapshot = this._app.selectedSnapshot
+		 if (selectedSnapshot.matches('StringSelectedState.StringSelected')) {
+		 this._app.sendSelectedEvent({ type: 'ClearStringSelected' })
+		 }*/
+
+		if (this._selectedStore.select.state.selectedStringId) {
+			this._selectedStore.dispatch.clearSingleSelected()
 		}
 
-		console.log('clearSelectedInOrder, snapshot', appSnapshot)
+		// console.log('clearSelectedInOrder, snapshot', appSnapshot)
 
 		/*		const res = handleSelectedStateRollback(snapshot)
 		 if (!res) return

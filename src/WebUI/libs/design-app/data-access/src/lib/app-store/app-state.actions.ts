@@ -4,7 +4,6 @@ import {
 	ModeState,
 	PointerState,
 	PreviewAxisState,
-	SelectedState,
 	ToMoveState,
 	ToRotateState,
 	ViewPositioningState,
@@ -37,18 +36,17 @@ export const AppStateActions = createActionGroup({
 		}>(),
 		'Set Context Menu State': props<{
 			contextMenu: ContextMenuState
-		}>(),
-		'Set Selected State': props<{
-			selected: SelectedState
-		}>(),
+		}>() /*		'Set Selected State': props<{
+		 selected: SelectedState
+		 }>(),*/,
 		'Clear State': emptyProps(),
 	},
 })
 
 /*AppStateActions['setDragBoxState']({dragBox: {} as DragBoxState})
 
-export const APP_STATE_ACTIONS = AppStateActions
-export type AppStateActions = typeof AppStateActions*/
+ export const APP_STATE_ACTIONS = AppStateActions
+ export type AppStateActions = typeof AppStateActions*/
 // const sdads: AppStateActions = {
 // clearState: (): ActionCreator Typed => {},
 // }

@@ -5,13 +5,13 @@ import {
 	ModeState,
 	PointerState,
 	PreviewAxisState,
-	SelectedState,
 	ToMoveState,
 	ToRotateState,
 	ViewPositioningState,
 } from './app-state.types'
 import { inject, Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
+
 
 @Injectable({
 	providedIn: 'root',
@@ -51,9 +51,9 @@ export class AppStateRepository {
 		this._store.dispatch(AppStateActions.setContextMenuState({ contextMenu }))
 	}
 
-	setSelectedState(selected: SelectedState) {
-		this._store.dispatch(AppStateActions.setSelectedState({ selected }))
-	}
+	/*	setSelectedState(selected: SelectedState) {
+	 this._store.dispatch(AppStateActions.setSelectedState({ selected }))
+	 }*/
 
 	clearState() {
 		this._store.dispatch(AppStateActions.clearState())
