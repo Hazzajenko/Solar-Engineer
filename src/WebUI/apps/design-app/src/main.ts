@@ -15,7 +15,6 @@ import { provideRouterStore } from '@ngrx/router-store'
 import { provideStore } from '@ngrx/store'
 import { storeDevtoolsModule } from '@shared/config'
 import { metaReducers, reducers } from '@shared/data-access/store'
-import { inspect } from '@xstate/inspect'
 
 bootstrapApplication(AppComponent, {
 	providers: [
@@ -43,8 +42,10 @@ bootstrapApplication(AppComponent, {
 		jwtInterceptorProvider,
 	],
 }).catch((err) => console.error(err))
+/*
 
-inspect({
-	iframe: false,
-	url: 'https://statecharts.io/inspect',
-})
+ inspect({
+ iframe: false,
+ url: 'https://statecharts.io/inspect',
+ })
+ */

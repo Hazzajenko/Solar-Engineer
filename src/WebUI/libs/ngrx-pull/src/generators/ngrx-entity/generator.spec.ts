@@ -7,6 +7,7 @@ describe('ngrx-entity generator', () => {
 	let tree: Tree
 	const options: NgrxEntityGeneratorSchema = {
 		name: 'test',
+		project: 'test',
 		pathFromRoot: 'libs/test',
 		modelName: 'TestModel',
 		modelPath: '@libs/test/models/test-model',

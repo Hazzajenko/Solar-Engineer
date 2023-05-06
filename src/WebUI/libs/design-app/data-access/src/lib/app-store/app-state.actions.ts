@@ -2,10 +2,7 @@ import {
 	ContextMenuState,
 	DragBoxState,
 	ModeState,
-	PointerState,
 	PreviewAxisState,
-	ToMoveState,
-	ToRotateState,
 	ViewPositioningState,
 } from './app-state.types'
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
@@ -16,23 +13,18 @@ export const AppStateActions = createActionGroup({
 		'Set Drag Box State': props<{
 			dragBox: DragBoxState
 		}>(),
-		'Set Pointer State': props<{
-			pointer: PointerState
+		'Set Hovering Over Entity': props<{
+			hoveringOverEntityId: string
 		}>(),
-		'Set To Move State': props<{
-			toMove: ToMoveState
-		}>(),
-		'Set To Rotate State': props<{
-			toRotate: ToRotateState
-		}>(),
+		'Lift Hovering Over Entity': emptyProps(),
 		'Set View Positioning State': props<{
 			view: ViewPositioningState
 		}>(),
-		'Set Preview Axis State': props<{
-			previewAxis: PreviewAxisState
-		}>(),
 		'Set Mode State': props<{
 			mode: ModeState
+		}>(),
+		'Set Preview Axis State': props<{
+			previewAxis: PreviewAxisState
 		}>(),
 		'Set Context Menu State': props<{
 			contextMenu: ContextMenuState

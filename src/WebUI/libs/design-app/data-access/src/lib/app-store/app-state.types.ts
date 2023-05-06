@@ -21,12 +21,29 @@ export const PREVIEW_AXIS_STATE = {
 
 export type PreviewAxisState = (typeof PREVIEW_AXIS_STATE)[keyof typeof PREVIEW_AXIS_STATE]
 
-export const POINTER_STATE = {
+export type AxisPreviewState = {
+	previewAxis: PreviewAxisState
+}
+
+export const HOVERING_OVER_ENTITY_STATE = {
 	NO_HOVER: 'NoHover',
 	HOVERING_OVER_ENTITY: 'HoveringOverEntity',
 } as const
 
-export type PointerState = (typeof POINTER_STATE)[keyof typeof POINTER_STATE]
+// export type PreviewState
+
+export type HoveringOverEntityState =
+	(typeof HOVERING_OVER_ENTITY_STATE)[keyof typeof HOVERING_OVER_ENTITY_STATE]
+
+export type PointerState = {
+	hoverState: HoveringOverEntityState
+	hoveringOverEntityId: string | undefined
+}
+
+export const InitialPointerState: PointerState = {
+	hoverState: HOVERING_OVER_ENTITY_STATE.NO_HOVER,
+	hoveringOverEntityId: undefined,
+}
 
 /*
  export const SELECTED_STATE = {
@@ -75,7 +92,7 @@ export type TypeOfAppState =
 	| DragBoxState
 	| ModeState
 	| PreviewAxisState
-	| PointerState
+	| HoveringOverEntityState
 	// | SelectedState
 	| ToMoveState
 	| ToRotateState

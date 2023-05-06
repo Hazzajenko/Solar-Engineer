@@ -32,6 +32,7 @@ import { ContextMenuEvent, DoubleClickEvent, EVENT_TYPE, Point } from '@shared/d
 import { OnDestroyDirective } from '@shared/utils'
 import { GraphicsSettingsMachineService } from 'deprecated/design-app/feature-design-canvas'
 
+
 export abstract class DesignCanvasDirectiveExtension {
 	protected _onDestroy = inject(OnDestroyDirective)
 	protected canvas = inject(ElementRef<HTMLCanvasElement>).nativeElement
@@ -45,6 +46,7 @@ export abstract class DesignCanvasDirectiveExtension {
 	// protected _mode = inject(CanvasModeService)
 	protected _drag = inject(DragBoxService)
 	// protected _drag = inject(DragBoxService)
+	// protected _render = inject(RenderV2Service)
 	protected _render = inject(RenderService)
 	// protected _render = inject(CanvasRenderService)
 	protected _entities = inject(EntityStoreService)
@@ -180,7 +182,7 @@ export abstract class DesignCanvasDirectiveExtension {
 			event.preventDefault()
 		})
 		this._renderer.listen(window, 'resize', (event: Event) => {
-			console.log('resize', event)
+			// console.log('resize', event)
 			this.ctx.canvas.width = window.innerWidth
 			this.ctx.canvas.height = window.innerHeight
 			this._renderer.setStyle(this.canvas, 'width', '100%')

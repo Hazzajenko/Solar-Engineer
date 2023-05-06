@@ -1,11 +1,11 @@
-import { AppNgrxStateStore } from '../app-store'
+import { AppStoreService } from '../app'
 import { CanvasElementService, DIV_ELEMENT, DivElementsService } from '../div-elements'
 import { EntityStoreService } from '../entities'
-import { SelectedStoreService } from '../selected'
+import { SelectedStateSnapshot } from '../selected'
 import { CanvasRenderOptions } from './canvas-render-options'
-import { drawSelectedBox, drawSelectedStringBoxV2 } from './render-fns'
+import { drawSelectedBox, drawSelectedStringBox } from './render-fns'
 import { inject, Injectable } from '@angular/core'
-import { CANVAS_COLORS, PANEL_STROKE_STYLE } from '@design-app/shared'
+import { CANVAS_COLORS, CanvasEntity, PANEL_STROKE_STYLE } from '@design-app/shared'
 import { isPanel } from '@design-app/utils'
 import { shadeColor } from '@shared/utils'
 
@@ -13,13 +13,11 @@ import { shadeColor } from '@shared/utils'
 @Injectable({
 	providedIn: 'root',
 })
-export class RenderService {
+export class RenderXstateService {
 	private _canvasElementService = inject(CanvasElementService)
 	private _divElements = inject(DivElementsService)
 	private _entities = inject(EntityStoreService)
-	// private _app = inject(AppStoreService)
-	private _appStore = inject(AppNgrxStateStore)
-	private _selectedStore = inject(SelectedStoreService)
+	private _app = inject(AppStoreService)
 
 	private lastRenderTime = performance.now()
 
@@ -84,8 +82,7 @@ export class RenderService {
 	}
 
 	renderCanvasApp(options?: CanvasRenderOptions) {
-		// const { selectedSnapshot } = this._app.allSnapshots
-		// const appStoreSnapshot = this._appStore.snapshot
+		const { selectedSnapshot } = this._app.allSnapshots
 		this.render((ctx) => {
 			ctx.save()
 			ctx.setTransform(1, 0, 0, 1, 0, 0)
@@ -107,44 +104,23 @@ export class RenderService {
 				if (!isPanel(entity)) return
 				let fillStyle: string = CANVAS_COLORS.DefaultPanelFillStyle
 				const strokeStyle: string = PANEL_STROKE_STYLE.DEFAULT
-				// const { pointer } = this._app.appCtx
+				const { pointer } = this._app.appCtx
 
-				/*				const isSelected =
-				 selectedSnapshot.matches('EntitySelectedState.EntitiesSelected') &&
-				 selectedSnapshot.context.multipleSelectedIds.includes(entity.id)
-				 if (isSelected) {
-				 fillStyle = CANVAS_COLORS.SelectedPanelFillStyle
-				 }*/
-
-				const selectedState = this._selectedStore.select.state
-
-				const isSingleSelected =
-					selectedState.singleSelectedEntityId && selectedState.singleSelectedEntityId === entity.id
-				if (isSingleSelected) {
-					fillStyle = CANVAS_COLORS.SelectedPanelFillStyle
-				}
-
-				const isMultipleSelected =
-					selectedState.multipleSelectedEntityIds.length &&
-					selectedState.multipleSelectedEntityIds.includes(entity.id)
-				if (isMultipleSelected) {
+				const isSelected =
+					selectedSnapshot.matches('EntitySelectedState.EntitiesSelected') &&
+					selectedSnapshot.context.multipleSelectedIds.includes(entity.id)
+				if (isSelected) {
 					fillStyle = CANVAS_COLORS.SelectedPanelFillStyle
 				}
 
 				const isStringSelected =
-					selectedState.selectedStringId && selectedState.selectedStringId === entity.stringId
+					selectedSnapshot.matches('StringSelectedState.StringSelected') &&
+					selectedSnapshot.context.selectedStringId === entity.stringId
 				if (isStringSelected) {
 					fillStyle = CANVAS_COLORS.StringSelectedPanelFillStyle
 				}
 
-				const pointerState = this._appStore.select.state.pointer
-				const hoveringOverEntityId = pointerState.hoveringOverEntityId
-				const isBeingHovered = !!hoveringOverEntityId && hoveringOverEntityId === entity.id
-				// const isHoveringOverEntity = pointerState.hoveringOverEntityId === entity.id
-
-				// const hoveringOverEntityId = this._appStore.select.state.hoveringOverEntityId
-
-				// const isBeingHovered = !!hoveringOverEntityId && hoveringOverEntityId === entity.id
+				const isBeingHovered = !!pointer.hoveringEntityId && pointer.hoveringEntityId === entity.id
 				if (isBeingHovered) {
 					fillStyle = '#17fff3'
 					if (isStringSelected) {
@@ -172,27 +148,31 @@ export class RenderService {
 			 ? { shouldRenderSelectedEntitiesBox: options.shouldRenderSelectedEntitiesBox, shouldRenderSelectedStringBox: options.shouldRenderSelectedStringBox}
 			 : { shouldRenderSelectedEntitiesBox: true, shouldRenderSelectedStringBox: true }*/
 
-			const multipleSelectedEntityIds = this._selectedStore.select.state.multipleSelectedEntityIds
 			if (
 				shouldRenderSelectedEntitiesBox &&
-				multipleSelectedEntityIds.length
-				// selectedSnapshot.matches('EntitySelectedState.EntitiesSelected')
+				selectedSnapshot.matches('EntitySelectedState.EntitiesSelected')
 			) {
 				// console.log('rendering selected box')
-				drawSelectedBox(ctx, this._entities.panels.getEntitiesByIds(multipleSelectedEntityIds))
+				drawSelectedBox(
+					ctx,
+					this._entities.panels.getEntitiesByIds(this._app.selectedCtx.multipleSelectedIds),
+				)
 			}
-
-			const selectedStringId = this._selectedStore.select.state.selectedStringId
 
 			if (
 				shouldRenderSelectedStringBox &&
-				selectedStringId
-				// selectedSnapshot.matches('StringSelectedState.StringSelected')
+				selectedSnapshot.matches('StringSelectedState.StringSelected')
 			) {
-				drawSelectedStringBoxV2(ctx, selectedStringId, this._entities)
-				if (shouldRenderSelectedEntitiesBox && multipleSelectedEntityIds.length) {
+				drawSelectedStringBox(ctx, selectedSnapshot, this._entities)
+				if (
+					shouldRenderSelectedEntitiesBox &&
+					selectedSnapshot.matches('EntitySelectedState.EntitiesSelected')
+				) {
 					// console.log('rendering selected box')
-					drawSelectedBox(ctx, this._entities.panels.getEntitiesByIds(multipleSelectedEntityIds))
+					drawSelectedBox(
+						ctx,
+						this._entities.panels.getEntitiesByIds(this._app.selectedCtx.multipleSelectedIds),
+					)
 				}
 			}
 
@@ -200,5 +180,45 @@ export class RenderService {
 				options.drawFns.forEach((fn) => fn(ctx))
 			}
 		})
+	}
+
+	private drawEntity(entity: CanvasEntity, selectedSnapshot: SelectedStateSnapshot) {
+		if (!isPanel(entity)) return
+		let fillStyle: string = CANVAS_COLORS.DefaultPanelFillStyle
+		const strokeStyle: string = PANEL_STROKE_STYLE.DEFAULT
+		const { pointer } = this._app.appCtx
+
+		const isSelected =
+			selectedSnapshot.matches('EntitySelectedState.EntitiesSelected') &&
+			selectedSnapshot.context.multipleSelectedIds.includes(entity.id)
+		if (isSelected) {
+			fillStyle = CANVAS_COLORS.SelectedPanelFillStyle
+		}
+
+		const isStringSelected =
+			selectedSnapshot.matches('StringSelectedState.StringSelected') &&
+			selectedSnapshot.context.selectedStringId === entity.stringId
+		if (isStringSelected) {
+			fillStyle = CANVAS_COLORS.StringSelectedPanelFillStyle
+		}
+
+		const isBeingHovered = !!pointer.hoveringEntityId && pointer.hoveringEntityId === entity.id
+		if (isBeingHovered) {
+			fillStyle = '#17fff3'
+			if (isStringSelected) {
+				fillStyle = shadeColor(CANVAS_COLORS.StringSelectedPanelFillStyle, 50)
+			}
+		}
+
+		this.ctx.save()
+		this.ctx.fillStyle = fillStyle
+		this.ctx.strokeStyle = strokeStyle
+		this.ctx.translate(entity.location.x + entity.width / 2, entity.location.y + entity.height / 2)
+		this.ctx.rotate(entity.angle)
+		this.ctx.beginPath()
+		this.ctx.rect(-entity.width / 2, -entity.height / 2, entity.width, entity.height)
+		this.ctx.fill()
+		this.ctx.stroke()
+		this.ctx.restore()
 	}
 }

@@ -38,6 +38,6 @@ export class ButtonBuilderComponent implements OnInit {
     }
     // this.buttonStyles = `${buttonClass}${buttonSize}`
     // this.buttonStyles += activeButtonClasses[this.tone]
-    console.log(this.buttonStyles)
+    // console.log(this.buttonStyles)
   }
 }

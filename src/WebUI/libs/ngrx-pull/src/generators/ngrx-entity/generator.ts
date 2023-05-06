@@ -1,5 +1,6 @@
 import { NgrxEntityGeneratorSchema } from './schema'
 import { formatFiles, generateFiles, Tree } from '@nx/devkit'
+import { StringBuilder } from '@shared/utils'
 import * as path from 'path'
 
 export default async function (tree: Tree, options: NgrxEntityGeneratorSchema) {
@@ -45,6 +46,19 @@ export default async function (tree: Tree, options: NgrxEntityGeneratorSchema) {
 	const modelImportPath = options.modelPath
 	// const modelImportPath = `@${projectRoot}/models/${modelName}`
 
+	/*	const forLoop = `for (let i = 0; i < ${lowerCasePluralName}.length; i++) {
+	 const ${lowerCaseName} = ${lowerCasePluralName}[i]
+	 ${lowerCaseName}.id = i + 1
+	 ${lowerCasePluralName}[i] = ${lowerCaseName}
+	 }`*/
+
+	const forLoop = new StringBuilder()
+	forLoop.appendLine('for (let i = 0; i < ${lowerCasePluralName}.length; i++) {')
+	forLoop.appendLine('const ${lowerCaseName} = ${lowerCasePluralName}[i]')
+	forLoop.appendLine('${lowerCaseName}.id = i + 1')
+	forLoop.appendLine('${lowerCasePluralName}[i] = ${lowerCaseName}')
+	forLoop.appendLine('}')
+
 	const substitutions = {
 		name: options.name,
 		modelName,
@@ -57,6 +71,7 @@ export default async function (tree: Tree, options: NgrxEntityGeneratorSchema) {
 		kebabCaseName,
 		pascalCaseName,
 		pascalPluralName,
+		forLoop,
 	}
 
 	generateFiles(tree, path.join(__dirname, 'files'), projectRoot, substitutions)

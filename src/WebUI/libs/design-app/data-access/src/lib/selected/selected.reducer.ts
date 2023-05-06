@@ -34,6 +34,7 @@ const reducer = createReducer(
 	on(SelectedActions.selectEntity, (state, { entityId }) => ({
 		...state,
 		singleSelectedEntityId: entityId,
+		multipleSelectedEntityIds: [],
 		entityState: ENTITY_SELECTED_STATE.ENTITY_SELECTED,
 	})),
 

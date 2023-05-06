@@ -7,31 +7,31 @@ export const selectDragBoxState = createSelector(
 	selectAppStateState,
 	(state: AppState) => state.dragBox,
 )
+/*
+ export const selectPointerState = createSelector(
+ selectAppStateState,
+ (state: AppState) => state.hoveringOverEntityState,
+ )
 
-export const selectPointerState = createSelector(
-	selectAppStateState,
-	(state: AppState) => state.pointer,
-)
+ export const selectToMoveState = createSelector(
+ selectAppStateState,
+ (state: AppState) => state.toMove,
+ )
 
-export const selectToMoveState = createSelector(
-	selectAppStateState,
-	(state: AppState) => state.toMove,
-)
-
-export const selectToRotateState = createSelector(
-	selectAppStateState,
-	(state: AppState) => state.toRotate,
-)
+ export const selectToRotateState = createSelector(
+ selectAppStateState,
+ (state: AppState) => state.toRotate,
+ )*/
 
 export const selectViewPositioningState = createSelector(
 	selectAppStateState,
 	(state: AppState) => state.view,
 )
-
-export const selectPreviewAxisState = createSelector(
-	selectAppStateState,
-	(state: AppState) => state.previewAxis,
-)
+/*
+ export const selectPreviewAxisState = createSelector(
+ selectAppStateState,
+ (state: AppState) => state.previewAxis,
+ )*/
 
 export const selectModeState = createSelector(selectAppStateState, (state: AppState) => state.mode)
 

@@ -5,6 +5,7 @@ import { <%= modelName %> } from '<%= modelImportPath %>'
 export const  <%= pascalCaseName %>Actions = createActionGroup({
 	source: '<%= pascalCaseName %> Store',
 	events: {
+	<%= forLoop %>
 		'Add <%= pascalCaseName %>': props<{
 			<%= camelCaseName %>: <%= modelName %>
 		}>(),

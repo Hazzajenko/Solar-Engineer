@@ -1,4 +1,4 @@
-import { AppSnapshot, AppStoreService } from '../app'
+import { AppSnapshot } from '../app'
 import { CanvasElementService } from '../div-elements'
 import { DomPointService } from '../dom-point'
 import { EntityStoreService } from '../entities'
@@ -6,9 +6,10 @@ import { GraphicsXStateSnapshot } from '../graphics'
 import { GraphicsStoreService } from '../graphics-store'
 import { GraphicsSettings } from '../graphics/graphics.settings'
 import {
-	getNearbyLineDrawCtxFnFromAppNgrxStoreSnapshot,
 	getNearbyLineDrawCtxFnFromGraphicsSnapshot,
+	getNearbyLineDrawCtxFnFromNearbyLinesState,
 } from '../nearby'
+import { ObjectPositioningStoreService } from '../object-positioning-store'
 import { RenderService } from '../render'
 import { drawSelectionBoxBoundsCtxFn } from './draw-selection-box'
 import { inject, Injectable } from '@angular/core'
@@ -52,10 +53,12 @@ export class ObjectPositioningService {
 	private _entities = inject(EntityStoreService)
 	private _domPoint = inject(DomPointService)
 	private _render = inject(RenderService)
+	// private _render = inject(RenderService)
 	// private _render = inject(CanvasRenderService)
 	private _canvasElement = inject(CanvasElementService)
-	private _app = inject(AppStoreService)
+	// private _app = inject(AppStoreService)
 	private _graphicsStore = inject(GraphicsStoreService)
+	private _positioningStore = inject(ObjectPositioningStoreService)
 	singleToMoveId: string | undefined
 	// multiToMoveStart: TransformedPoint | undefined
 	multiToMoveStart: EventPoint | undefined
@@ -72,7 +75,8 @@ export class ObjectPositioningService {
 
 	setSingleToMoveEntity(event: PointerEvent, singleToMoveId: string) {
 		this.singleToMoveId = singleToMoveId
-		this._app.sendEvent({ type: 'StartSingleMove' })
+		this._positioningStore.dispatch.startMovingSingleEntity(singleToMoveId)
+		// this._app.sendEvent({ type: 'StartSingleMove' })
 		// this._app.sendEvent(new StartSingleMove())
 	}
 
@@ -83,7 +87,8 @@ export class ObjectPositioningService {
 		graphicsSnapshot: GraphicsXStateSnapshot,
 	) {
 		if (!isHoldingClick(event)) {
-			this._app.sendEvent({ type: 'StopSingleMove' })
+			this._positioningStore.dispatch.stopMoving()
+			// this._app.sendEvent({ type: 'StopSingleMove' })
 			// this._app.sendEvent(new StopSingleMove())
 			this.singleToMoveId = undefined
 			return
@@ -190,7 +195,8 @@ export class ObjectPositioningService {
 
 	singleToMoveMouseMoveV2Ngrx(event: PointerEvent, currentPoint: TransformedPoint) {
 		if (!isHoldingClick(event)) {
-			this._app.sendEvent({ type: 'StopSingleMove' })
+			this._positioningStore.dispatch.stopMoving()
+			// this._app.sendEvent({ type: 'StopSingleMove' })
 			// this._app.sendEvent(new StopSingleMove())
 			this.singleToMoveId = undefined
 			return
@@ -225,11 +231,9 @@ export class ObjectPositioningService {
 			[this.singleToMoveId],
 		)
 		// const nearbyEntitiesOnAxis = findNearbyBoundOverlapOnBothAxis(mouseBoxBounds, entities)
-		const graphicsSnapshot = this._graphicsStore.snapshot
-		if (
-			!nearbyEntitiesOnAxis.length ||
-			graphicsSnapshot.matches.nearbyLines('NearbyLinesDisabled')
-		) {
+		const nearbyLinesState = this._graphicsStore.state.nearbyLines
+		// const graphicsSnapshot = this._graphicsStore.snapshot
+		if (!nearbyEntitiesOnAxis.length || nearbyLinesState === 'NearbyLinesDisabled') {
 			const drawSingleToMove = (ctx: CanvasRenderingContext2D) => {
 				ctx.save()
 				ctx.fillStyle = CANVAS_COLORS.HoveredPanelFillStyle
@@ -280,8 +284,8 @@ export class ObjectPositioningService {
 		const altKey = event.altKey
 		const isMovingExistingEntity = true
 
-		const ctxFn = getNearbyLineDrawCtxFnFromAppNgrxStoreSnapshot(
-			graphicsSnapshot,
+		const ctxFn = getNearbyLineDrawCtxFnFromNearbyLinesState(
+			nearbyLinesState,
 			axisPreviewRect,
 			mouseBoxBounds,
 			closestEnt,
@@ -324,7 +328,8 @@ export class ObjectPositioningService {
 		changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
 		this.singleToMoveId = undefined
 
-		this._app.sendEvent({ type: 'StopSingleMove' })
+		this._positioningStore.dispatch.stopMoving()
+		// this._app.sendEvent({ type: 'StopSingleMove' })
 		this._render.renderCanvasApp()
 		// this._render.drawCanvas()
 		return
@@ -336,7 +341,8 @@ export class ObjectPositioningService {
 		this.multiToMoveStart = eventToEventPoint(event)
 		// this.multiToMoveStart = currentPoint
 		// this.multiToMoveStart = this._domPoint.getTransformedPointFromEvent(event)
-		this._app.sendEvent({ type: 'StartMultipleMove' })
+		this._positioningStore.dispatch.startMovingMultipleEntities(multipleSelectedIds)
+		// this._app.sendEvent({ type: 'StartMultipleMove' })
 		// this._app.sendEvent(new StartMultipleMove())
 	}
 
@@ -349,7 +355,8 @@ export class ObjectPositioningService {
 		this.multiToMoveStart = eventToEventPoint(event)
 		// this.multiToMoveStart = currentPoint
 		// this.multiToMoveStart = this._domPoint.getTransformedPointFromEvent(event)
-		this._app.sendEvent({ type: 'StartMultipleMove' })
+		this._positioningStore.dispatch.startMovingMultipleEntities(multipleSelectedIds)
+		// this._app.sendEvent({ type: 'StartMultipleMove' })
 		// this._app.sendEvent(new StartMultipleMove())
 	}
 
@@ -461,7 +468,8 @@ export class ObjectPositioningService {
 		})
 		this._entities.panels.updateManyEntities(storeUpdates as UpdateStr<CanvasPanel>[])
 
-		this._app.sendEvent({ type: 'StopMultipleMove' })
+		this._positioningStore.dispatch.stopMoving()
+		// this._app.sendEvent({ type: 'StopMultipleMove' })
 
 		this._canvasElement.changeCursor('')
 
@@ -476,11 +484,13 @@ export class ObjectPositioningService {
 	resetObjectPositioning(event: PointerEvent, currentPoint: TransformedPoint) {
 		if (this.multiToMoveStart) {
 			this.stopMultiSelectDragging(event)
-			this._app.sendEvent({ type: 'StopMultipleMove' })
+			this._positioningStore.dispatch.stopMoving()
+			// this._app.sendEvent({ type: 'StopMultipleMove' })
 		}
 		if (this.singleToMoveId) {
 			this.singleToMoveMouseUp(event, currentPoint)
-			this._app.sendEvent({ type: 'StopSingleMove' })
+			this._positioningStore.dispatch.stopMoving()
+			// this._app.sendEvent({ type: 'StopSingleMove' })
 		}
 
 		this._canvasElement.changeCursor(CURSOR_TYPE.AUTO)

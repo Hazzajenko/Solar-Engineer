@@ -37,6 +37,7 @@ import {
 import { CURSOR_TYPE, KEYS } from '@shared/data-access/models'
 import { assertNotNull, OnDestroyDirective } from '@shared/utils'
 
+
 @Directive({
 	selector: '[appDesignCanvasApp]',
 	providers: [OnDestroyDirective],
@@ -47,6 +48,7 @@ export class DesignCanvasDirective extends DesignCanvasDirectiveExtension implem
 	entityPressed: CanvasEntity | undefined
 
 	private _appState = inject(AppNgrxStateStore)
+
 	stateSignal = this._appState.select.state
 	stateSignalV2 = toSignal(this._appState.select.state$, { initialValue: initialAppState })
 
@@ -65,9 +67,9 @@ export class DesignCanvasDirective extends DesignCanvasDirectiveExtension implem
 	public ngOnInit() {
 		// this.stateSignalV2()
 		/*		this._appState.select.state$.subscribe((state) => {
-			// this._app.state = state
-			// state
-		})*/
+		 // this._app.state = state
+		 // state
+		 })*/
 		this.setupCanvas()
 		this.fpsEl = document.getElementById('fps') as HTMLDivElement
 		this._ngZone.runOutsideAngular(() => {
@@ -337,10 +339,11 @@ export class DesignCanvasDirective extends DesignCanvasDirectiveExtension implem
 		 return
 		 }*/
 
-		if (graphicsSnapshot.matches('CreatePreviewState.CreatePreviewEnabled')) {
-			this._nearby.getDrawEntityPreview(event, currentPoint, appSnapshot, graphicsSnapshot)
-			return
-		}
+		// TODO - fix
+		/*		if (graphicsSnapshot.matches('CreatePreviewState.CreatePreviewEnabled')) {
+		 this._nearby.getDrawEntityPreview(event, currentPoint, appSnapshot, graphicsSnapshot)
+		 return
+		 }*/
 		/*		if (CreatePreviewState === CREATE_PREVIEW_STATE.CREATE_PREVIEW_ENABLED) {
 		 this._nearby.getDrawEntityPreview(
 		 event,

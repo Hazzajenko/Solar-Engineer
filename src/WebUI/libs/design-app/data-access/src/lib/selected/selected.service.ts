@@ -1,4 +1,3 @@
-import { AppStoreService } from '../app'
 import { AppNgrxStateStore } from '../app-store'
 import { EntityStoreService } from '../entities'
 import { SelectedSnapshot } from './selected-state.types'
@@ -14,7 +13,7 @@ import { assertNotNull } from '@shared/utils'
 export class SelectedService {
 	// private _entities = inject(EntityStoreService)
 	private _entities = inject(EntityStoreService)
-	private _app = inject(AppStoreService)
+	// private _app = inject(AppStoreService)
 	private _appStore = inject(AppNgrxStateStore)
 	private _selectedStore = inject(SelectedStoreService)
 
@@ -101,10 +100,10 @@ export class SelectedService {
 
 	removeFromMultiSelected(selected: CanvasEntity) {
 		// this._app.sendEvent({
-		this._app.sendSelectedEvent({
-			type: 'RemoveEntitiesFromMultipleSelected',
-			payload: { ids: [selected.id] },
-		})
+		/*		this._app.sendSelectedEvent({
+		 type: 'RemoveEntitiesFromMultipleSelected',
+		 payload: { ids: [selected.id] },
+		 })*/
 		/*		this._app.sendStateEvent(STATE_MACHINE.SELECTED, {
 		 type: 'RemoveEntitiesFromMultipleSelected',
 		 payload: { ids: [selected.id] },

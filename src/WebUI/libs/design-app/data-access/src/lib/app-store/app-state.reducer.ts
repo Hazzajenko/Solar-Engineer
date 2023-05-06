@@ -4,16 +4,13 @@ import {
 	ContextMenuState,
 	DRAG_BOX_STATE,
 	DragBoxState,
+	HOVERING_OVER_ENTITY_STATE,
+	InitialPointerState,
 	MODE_STATE,
 	ModeState,
-	POINTER_STATE,
 	PointerState,
 	PREVIEW_AXIS_STATE,
 	PreviewAxisState,
-	TO_MOVE_STATE,
-	TO_ROTATE_STATE,
-	ToMoveState,
-	ToRotateState,
 	VIEW_POSITIONING_STATE,
 	ViewPositioningState,
 } from './app-state.types'
@@ -23,9 +20,11 @@ export const APP_STATE_FEATURE_KEY = 'app-state'
 
 export type AppState = {
 	dragBox: DragBoxState
+	// hoveringOverEntityState: HoveringOverEntityState
+	// hoveringOverEntityId: string | undefined
 	pointer: PointerState
-	toMove: ToMoveState
-	toRotate: ToRotateState
+	// toMove: ToMoveState
+	// toRotate: ToRotateState
 	view: ViewPositioningState
 	previewAxis: PreviewAxisState
 	mode: ModeState
@@ -34,10 +33,10 @@ export type AppState = {
 }
 
 export const initialAppState: AppState = {
-	dragBox: DRAG_BOX_STATE.NO_DRAG_BOX,
-	pointer: POINTER_STATE.NO_HOVER,
-	toMove: TO_MOVE_STATE.NO_MOVE,
-	toRotate: TO_ROTATE_STATE.NO_ROTATE,
+	dragBox: DRAG_BOX_STATE.NO_DRAG_BOX, // hoveringOverEntityState: HOVERING_OVER_ENTITY_STATE.NO_HOVER,
+	// hoveringOverEntityId:    undefined,
+	pointer: InitialPointerState, // toMove:               TO_MOVE_STATE.NO_MOVE,
+	// toRotate:             TO_ROTATE_STATE.NO_ROTATE,
 	view: VIEW_POSITIONING_STATE.VIEW_NOT_MOVING,
 	previewAxis: PREVIEW_AXIS_STATE.NONE,
 	mode: MODE_STATE.SELECT_MODE,
@@ -49,18 +48,25 @@ const reducer = createReducer(
 	on(AppStateActions.setDragBoxState, (state, { dragBox }) => ({
 		...state,
 		dragBox,
-	})),
-	on(AppStateActions.setPointerState, (state, { pointer }) => ({
+	})) /*	on(AppStateActions.setPointerState, (state, { pointer }) => ({
+ ...state,
+ pointer,
+ hoveringOverEntityId:
+ pointer === HOVERING_OVER_ENTITY_STATE.NO_HOVER ? undefined : state.hoveringOverEntityId,
+ })),*/,
+	on(AppStateActions.setHoveringOverEntity, (state, { hoveringOverEntityId }) => ({
 		...state,
-		pointer,
+		pointer: {
+			hoveringOverEntityId,
+			hoverState: HOVERING_OVER_ENTITY_STATE.HOVERING_OVER_ENTITY,
+		},
 	})),
-	on(AppStateActions.setToMoveState, (state, { toMove }) => ({
+	on(AppStateActions.liftHoveringOverEntity, (state) => ({
 		...state,
-		toMove,
-	})),
-	on(AppStateActions.setToRotateState, (state, { toRotate }) => ({
-		...state,
-		toRotate,
+		pointer: {
+			hoveringOverEntityId: undefined,
+			hoverState: HOVERING_OVER_ENTITY_STATE.NO_HOVER,
+		},
 	})),
 	on(AppStateActions.setViewPositioningState, (state, { view }) => ({
 		...state,
@@ -78,9 +84,9 @@ const reducer = createReducer(
 		...state,
 		contextMenu,
 	})) /*	on(AppStateActions.setSelectedState, (state, { selected }) => ({
-	 ...state,
-	 selected,
-	 })),*/,
+ ...state,
+ selected,
+ })),*/,
 	on(AppStateActions.clearState, () => initialAppState),
 )
 

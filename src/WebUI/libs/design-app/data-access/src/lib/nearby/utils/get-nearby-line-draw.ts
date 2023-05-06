@@ -1,5 +1,5 @@
 import { GraphicsXStateSnapshot } from '../../graphics'
-import { GraphicsStateSnapshot, NEARBY_LINES_STATE } from '../../graphics-store'
+import { GraphicsState, NEARBY_LINES_STATE } from '../../graphics-store'
 import {
 	getCenterLineBetweenTwoEntitiesWithPreviewFn,
 	getEntityAxisCenterWithEntityPreviewFn,
@@ -57,9 +57,55 @@ export const getNearbyLineDrawCtxFnFromGraphicsSnapshot = (
 			throw new Error(`${graphicsSnapshot.value} is not implemented`)
 	}
 }
+/*
+ export const getNearbyLineDrawCtxFnFromAppNgrxStoreSnapshot = (
+ graphicsStateSnapshot: GraphicsStateSnapshot,
+ axisPreviewRect: CompleteEntityBounds,
+ mouseBounds: CompleteEntityBounds,
+ closestEntity: NearbyEntity,
+ fillStyle: CanvasColor,
+ altKey: boolean,
+ holdAltToSnapToGrid: boolean,
+ isMovingExistingEntity: boolean,
+ ) => {
+ switch (graphicsStateSnapshot.state.nearbyLines) {
+ case NEARBY_LINES_STATE.TWO_SIDE_AXIS_LINES:
+ return getEntityGridLineWithEntityPreviewFn(
+ altKey,
+ axisPreviewRect,
+ mouseBounds,
+ closestEntity,
+ fillStyle,
+ holdAltToSnapToGrid,
+ isMovingExistingEntity,
+ )
+ case NEARBY_LINES_STATE.CENTER_LINE_SCREEN_SIZE:
+ return getEntityAxisCenterWithEntityPreviewFn(
+ altKey,
+ axisPreviewRect,
+ mouseBounds,
+ closestEntity,
+ fillStyle,
+ holdAltToSnapToGrid,
+ isMovingExistingEntity,
+ )
+ case NEARBY_LINES_STATE.CENTER_LINE_BETWEEN_TWO_ENTITIES:
+ return getCenterLineBetweenTwoEntitiesWithPreviewFn(
+ altKey,
+ axisPreviewRect,
+ mouseBounds,
+ closestEntity,
+ fillStyle,
+ holdAltToSnapToGrid,
+ isMovingExistingEntity,
+ )
+ default:
+ throw new Error(`${graphicsStateSnapshot.state.nearbyLines} is not implemented`)
+ }
+ }*/
 
-export const getNearbyLineDrawCtxFnFromAppNgrxStoreSnapshot = (
-	graphicsStateSnapshot: GraphicsStateSnapshot,
+export const getNearbyLineDrawCtxFnFromNearbyLinesState = (
+	nearbyLinesState: GraphicsState['nearbyLines'],
 	axisPreviewRect: CompleteEntityBounds,
 	mouseBounds: CompleteEntityBounds,
 	closestEntity: NearbyEntity,
@@ -68,7 +114,7 @@ export const getNearbyLineDrawCtxFnFromAppNgrxStoreSnapshot = (
 	holdAltToSnapToGrid: boolean,
 	isMovingExistingEntity: boolean,
 ) => {
-	switch (graphicsStateSnapshot.state.nearbyLines) {
+	switch (nearbyLinesState) {
 		case NEARBY_LINES_STATE.TWO_SIDE_AXIS_LINES:
 			return getEntityGridLineWithEntityPreviewFn(
 				altKey,
@@ -100,6 +146,6 @@ export const getNearbyLineDrawCtxFnFromAppNgrxStoreSnapshot = (
 				isMovingExistingEntity,
 			)
 		default:
-			throw new Error(`${graphicsStateSnapshot.state.nearbyLines} is not implemented`)
+			throw new Error(`${nearbyLinesState} is not implemented`)
 	}
 }

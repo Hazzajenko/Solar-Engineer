@@ -1,4 +1,5 @@
 export interface NgrxEntityGeneratorSchema {
+	project: string
 	name: string
 	pathFromRoot: string
 	modelName: string

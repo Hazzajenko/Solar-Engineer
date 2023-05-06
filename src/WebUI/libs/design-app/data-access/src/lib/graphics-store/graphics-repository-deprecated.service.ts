@@ -7,7 +7,7 @@ import { Store } from '@ngrx/store'
 @Injectable({
 	providedIn: 'root',
 })
-export class GraphicsRepository {
+export class GraphicsRepositoryDeprecated {
 	private _store = inject(Store)
 
 	setCreatePreview(createPreview: CreatePreviewState) {

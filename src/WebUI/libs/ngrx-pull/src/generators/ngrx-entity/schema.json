@@ -4,6 +4,15 @@
 	"title": "",
 	"type": "object",
 	"properties": {
+		"object": {
+			"type": "string",
+			"description": "",
+			"$default": {
+				"$source": "argv",
+				"index": -1
+			},
+			"x-prompt": "What object would you like to use?"
+		},
 		"name": {
 			"type": "string",
 			"description": "",
@@ -43,6 +52,7 @@
 	},
 	"required": [
 		"name",
+		"project",
 		"pathFromRoot",
 		"modelName",
 		"modelPath"

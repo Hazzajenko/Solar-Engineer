@@ -1,14 +1,5 @@
 import { AppStateActions } from './app-state.actions'
-import {
-	ContextMenuState,
-	DragBoxState,
-	ModeState,
-	PointerState,
-	PreviewAxisState,
-	ToMoveState,
-	ToRotateState,
-	ViewPositioningState,
-} from './app-state.types'
+import { ContextMenuState, DragBoxState, ModeState, ViewPositioningState } from './app-state.types'
 import { inject, Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
 
@@ -23,24 +14,8 @@ export class AppStateRepository {
 		this._store.dispatch(AppStateActions.setDragBoxState({ dragBox }))
 	}
 
-	setPointerState(pointer: PointerState) {
-		this._store.dispatch(AppStateActions.setPointerState({ pointer }))
-	}
-
-	setToMoveState(toMove: ToMoveState) {
-		this._store.dispatch(AppStateActions.setToMoveState({ toMove }))
-	}
-
-	setToRotateState(toRotate: ToRotateState) {
-		this._store.dispatch(AppStateActions.setToRotateState({ toRotate }))
-	}
-
 	setViewPositioningState(view: ViewPositioningState) {
 		this._store.dispatch(AppStateActions.setViewPositioningState({ view }))
-	}
-
-	setPreviewAxisState(previewAxis: PreviewAxisState) {
-		this._store.dispatch(AppStateActions.setPreviewAxisState({ previewAxis }))
 	}
 
 	setModeState(mode: ModeState) {
