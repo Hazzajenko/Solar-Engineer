@@ -106,3 +106,10 @@ export type TypeOfAppState =
 	| ToRotateState
 	| ContextMenuOpenState
 	| ViewPositioningState
+
+/*
+ export type DialogInput<T> = {
+ component: ComponentType<T>
+ data?: unknown
+ options?: DialogOptions
+ }*/

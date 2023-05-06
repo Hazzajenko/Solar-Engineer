@@ -3,9 +3,6 @@
     "target": "es2022",
     "useDefineForClassFields": false
   },
-	// "plugins": [
-	// 	{"name": "@angular/language-service"}
-	// ],
   "files": [],
   "include": [],
   "references": [
@@ -14,6 +11,9 @@
     },
     {
       "path": "./tsconfig.spec.json"
+    },
+    {
+      "path": "./.storybook/tsconfig.json"
     }
   ],
   "extends": "../../../tsconfig.base.json"

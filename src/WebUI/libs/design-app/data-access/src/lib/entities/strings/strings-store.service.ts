@@ -1,6 +1,10 @@
 import { StringsActions } from './strings.actions'
 import { initialStringsState, StringsState } from './strings.reducer'
-import { selectStringsState } from './strings.selectors'
+import {
+	selectAllStrings,
+	selectAllStringsWithPanels,
+	selectStringsState,
+} from './strings.selectors'
 import { inject, Injectable } from '@angular/core'
 import { toSignal } from '@angular/core/rxjs-interop'
 import { CanvasString } from '@design-app/shared'
@@ -18,6 +22,7 @@ export class StringsStoreService {
 	private readonly _state = toSignal(this._state$, {
 		initialValue: initialStringsState,
 	})
+	private readonly _strings$ = this._store.pipe(select(selectAllStrings))
 	readonly dispatch = new StringsRepository(this._store)
 
 	get state() {
@@ -34,6 +39,14 @@ export class StringsStoreService {
 
 	get allStrings() {
 		return this.state.ids.map((id) => this.entities[id]).filter(isNotNull)
+	}
+
+	get allStrings$() {
+		return this._strings$
+	}
+
+	get allStringsWithPanels$() {
+		return this._store.pipe(select(selectAllStringsWithPanels))
 	}
 
 	getById(id: string) {

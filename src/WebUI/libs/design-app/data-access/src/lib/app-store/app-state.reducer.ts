@@ -1,3 +1,4 @@
+import { DialogInput } from '../dialogs'
 import { AppStateActions } from './app-state.actions'
 import {
 	CONTEXT_MENU_OPEN_STATE,
@@ -30,7 +31,7 @@ export type AppState = {
 	mode: ModeState
 	contextMenu: ContextMenuState
 	dialog: boolean
-	// selected: SelectedState
+	dialogs: DialogInput<unknown>[]
 }
 
 export const initialAppState: AppState = {
@@ -46,8 +47,7 @@ export const initialAppState: AppState = {
 		type: undefined,
 	},
 	dialog: false,
-
-	// selected: SELECTED_STATE.NONE_SELECTED,
+	dialogs: [],
 }
 
 const reducer = createReducer(
@@ -106,6 +106,16 @@ const reducer = createReducer(
 	on(AppStateActions.toggleDialogState, (state) => ({
 		...state,
 		dialog: !state.dialog,
+	})),
+
+	on(AppStateActions.addDialog, (state, { dialog }) => ({
+		...state,
+		dialogs: [...state.dialogs, dialog],
+	})),
+
+	on(AppStateActions.removeDialog, (state, { dialogId }) => ({
+		...state,
+		dialogs: state.dialogs.filter((d) => d.id !== dialogId),
 	})),
 
 	on(AppStateActions.clearState, () => initialAppState),

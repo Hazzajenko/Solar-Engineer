@@ -1,7 +1,9 @@
+import { MovePanelsToStringV4Component } from '../../dialogs/move-panels-to-string-v4/move-panels-to-string-v4.component'
 import { inject, Pipe, PipeTransform } from '@angular/core'
 import {
 	AppNgrxStateStoreV2Service,
 	ContextMenuType,
+	DialogInput,
 	DialogsService,
 	EntityNgrxStoreService,
 	isMultipleEntitiesContextMenuTemplate,
@@ -28,7 +30,15 @@ export class GetSelectedPanelsPipe implements PipeTransform {
 				/*			this._dialogs.open(MovePanelsToStringComponent, {
 				 panelIds: menu.ids,
 				 })*/
-				this._appStore.dispatch.toggleDialog()
+				const dialogInput: DialogInput<MovePanelsToStringV4Component> = {
+					id: 'MovePanelsToStringV4Component',
+					component: MovePanelsToStringV4Component,
+					data: {
+						panelIds: menu.ids,
+					},
+				}
+				this._appStore.dispatch.addDialog(dialogInput)
+				// this._appStore.dispatch.toggleDialog()
 				this._render.renderCanvasApp()
 				this._appStore.dispatch.setContextMenuState('NoContextMenu')
 				return

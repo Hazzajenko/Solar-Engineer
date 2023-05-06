@@ -62,7 +62,8 @@
       "inputs": [
         "default",
         "^production",
-        "{workspaceRoot}/.storybook/**/*"
+        "{workspaceRoot}/.storybook/**/*",
+        "!{projectRoot}/.storybook/**/*"
       ]
     },
     "e2e": {

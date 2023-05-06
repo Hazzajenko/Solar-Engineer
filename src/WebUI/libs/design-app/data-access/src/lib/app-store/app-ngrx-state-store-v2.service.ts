@@ -1,7 +1,9 @@
+import { DialogInput } from '../dialogs'
 import { ContextMenuType } from '../view'
 import { AppStateActions } from './app-state.actions'
 import { initialAppState } from './app-state.reducer'
 import {
+	selectAllDialogs,
 	selectAppStateState,
 	selectContextMenuState,
 	selectDialogState,
@@ -48,6 +50,10 @@ export class AppNgrxStateStoreV2Service {
 	get dialog$() {
 		return this._dialog$
 	}
+
+	get allDialogs$() {
+		return this._store.pipe(select(selectAllDialogs))
+	}
 }
 
 class AppNgrxRepository {
@@ -91,6 +97,10 @@ class AppNgrxRepository {
 
 	toggleDialog() {
 		this._store.dispatch(AppStateActions.toggleDialogState())
+	}
+
+	addDialog<T>(dialog: DialogInput<T>) {
+		this._store.dispatch(AppStateActions.addDialog({ dialog }))
 	}
 
 	clearState() {

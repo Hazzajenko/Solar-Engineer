@@ -45,6 +45,11 @@ export const selectDialogState = createSelector(
 	(state: AppState) => state.dialog,
 )
 
+export const selectAllDialogs = createSelector(
+	selectAppStateState,
+	(state: AppState) => state.dialogs,
+)
+
 /*
  export const selectSelectedState = createSelector(
  selectAppStateState,

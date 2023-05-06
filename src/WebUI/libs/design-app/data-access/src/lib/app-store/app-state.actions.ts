@@ -1,3 +1,4 @@
+import { DialogInput } from '../dialogs'
 import { ContextMenuType } from '../view'
 import {
 	ContextMenuOpenState,
@@ -38,6 +39,12 @@ export const AppStateActions = createActionGroup({
 			dialog: boolean
 		}>(),
 		'Toggle Dialog State': emptyProps(),
+		'Add Dialog': props<{
+			dialog: DialogInput<unknown>
+		}>(),
+		'Remove Dialog': props<{
+			dialogId: string
+		}>(),
 		'Clear State': emptyProps(),
 	},
 })

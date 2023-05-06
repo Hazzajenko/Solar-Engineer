@@ -59,10 +59,10 @@
     #windowComponent />
 </ng-container>
 
-<ng-container *ngIf='dialog$ | async as dialog'>
+<ng-container *ngIf='allDialogs$ | async as dialogs'>
   <ng-template
     appDynamicDialog
-    [dialog]='dialog'
+    [dialogs]='dialogs'
   ></ng-template>
   <!--                      <ng-template appDynamic [block]='block'></ng-template>-->
 </ng-container>

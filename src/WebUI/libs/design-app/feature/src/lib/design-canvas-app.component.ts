@@ -71,6 +71,7 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 	private _dialogs = inject(DialogsService)
 	private _appStore = inject(AppNgrxStateStoreV2Service)
 	dialog$ = this._appStore.dialog$
+	allDialogs$ = this._appStore.allDialogs$
 	firstName = signal('Jane')
 	lastName = signal('Doe')
 	fullName = computed(() => `${this.firstName()} ${this.lastName()}`)
