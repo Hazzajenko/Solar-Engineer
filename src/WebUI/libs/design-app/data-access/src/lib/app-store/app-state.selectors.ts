@@ -40,6 +40,11 @@ export const selectContextMenuState = createSelector(
 	(state: AppState) => state.contextMenu,
 )
 
+export const selectDialogState = createSelector(
+	selectAppStateState,
+	(state: AppState) => state.dialog,
+)
+
 /*
  export const selectSelectedState = createSelector(
  selectAppStateState,

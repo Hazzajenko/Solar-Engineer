@@ -1,73 +1,48 @@
-<div *ngIf='vm$ | async as vm'>
-  <div role='list'
-       class='divide-y divide-gray-100'>
-    <div class='flex items-center justify-between gap-x-6 py-5'>
-      <div class='flex gap-x-4'>
-        <div class='min-w-0 flex-auto'>
-          <p class='text-sm font-semibold leading-6 text-gray-900'>State Values</p>
-        </div>
+<div role='list'
+     class='divide-y divide-gray-100'>
+  <div class='flex items-center justify-between gap-x-6 py-5'>
+    <div class='flex gap-x-4'>
+      <div class='min-w-0 flex-auto'>
+        <p class='text-sm font-semibold leading-6 text-gray-900'>State Values</p>
       </div>
-      <!--      <a
-              href='#'
-              class='rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50'
-            >Edit</a
-            >-->
     </div>
-    <div
+  </div>
+  <div
 
-      class='flex items-center justify-between gap-x-2 px-2 hover:bg-slate-100 hover:text-gray-700'
-    >
-      <ul>
-        <li class='flex gap-x-4'>
-          <div class='min-w-0 flex-auto'>
+    class='flex items-center justify-between gap-x-2 px-2 hover:bg-slate-100 hover:text-gray-700'
+  >
+    <ul>
+      <li class='flex gap-x-4'>
+        <div class='min-w-0 flex-auto'>
           <span class='text-sm font-semibold leading-6 text-gray-900'
-          >App State</span
+          >Selected State</span
           >
-            <!--      <br />
-                  <span class="mt-1 truncate text-xs leading-5 text-gray-500">{{ key.label }}</span>-->
-          </div>
-        </li>
-        <!--      <br />-->
+        </div>
+      </li>
 
-        <ng-container
-          *ngIf='selectedState$ | async as selected'
-        >
-          <li><span
+      <ng-container
+        *ngIf='selectedState() as selected'
+      >
+        <li><span
 
-            class='mt-1 truncate text-xs leading-5 text-gray-500'>
-        EntitySelectedState: {{  selected.EntitySelectedState
-          // {{  appState.SelectedState
-           // appState['SelectedState']
-           appState.SelectedState
-            }}</span></li>
+          class='mt-1 truncate text-xs leading-5 text-gray-500'>
+        Single Selected Id: {{  selected.singleSelectedEntityId
+          }}</span></li>
+        <li>
           <span
 
             class='mt-1 truncate text-xs leading-5 text-gray-500'>
-        StringSelectedState: {{  selected.StringSelectedState
-          // {{  appState.SelectedState
-           // appState['SelectedState']
-           appState.SelectedState
+        Multiple Selected Ids Length: {{  selected.multipleSelectedEntityIds.length
             }}</span>
-        </ng-container>
-        <!--      <span
-                *ngIf='vm.selected'
-                class='mt-1 truncate text-xs leading-5 text-gray-500'>
-                {{  vm.selected
-              // {{  appState.SelectedState
-               // appState['SelectedState']
-               appState.SelectedState
-                }}</span>-->
-        <!--      <span *ngIf='appState.SelectedState'
-                    class='mt-1 truncate text-xs leading-5 text-gray-500'>{{
-                appState.SelectedState
-                // appState.SelectedState
-                }}</span>-->
-        <!--      <a
-                href="#"
-                class="rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-                >Edit</a
-              >-->
-      </ul>
-    </div>
+        </li>
+        <li>
+          <span
+
+            class='mt-1 truncate text-xs leading-5 text-gray-500'>
+        Selected String Id: {{  selected.selectedStringId
+            }}</span>
+        </li>
+      </ng-container>
+    </ul>
   </div>
 </div>

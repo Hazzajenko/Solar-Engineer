@@ -1,24 +1,28 @@
-import { inject, Injectable } from '@angular/core'
-import { MatDialog } from '@angular/material/dialog'
-import { ComponentType } from '@angular/cdk/overlay'
+import { ComponentType } from '@angular/cdk/overlay';
+import { inject, Injectable } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 
-// export type DataWrapper<T> = (name: string) => { [name]: T }
-export type DataWrapper<T> = { [name: string]: T }
+
+// import { DataWrapper } from '@design-app/data-access'
+
+export type DataWrapper<T> = {
+	[name: string]: T
+}
 
 @Injectable({
-  providedIn: 'root',
+	providedIn: 'root',
 })
 export class DialogService {
-  private matDialog = inject(MatDialog)
+	private matDialog = inject(MatDialog)
 
-  open<T, X>(component: ComponentType<T>, data?: DataWrapper<X>) {
-    return this.matDialog.open(component, {
-      width: '600px',
-      data,
-    })
-  }
+	open<T, X>(component: ComponentType<T>, data?: DataWrapper<X>) {
+		return this.matDialog.open(component, {
+			width: '600px',
+			data,
+		})
+	}
 
-  close() {
-    this.matDialog.closeAll()
-  }
+	close() {
+		this.matDialog.closeAll()
+	}
 }

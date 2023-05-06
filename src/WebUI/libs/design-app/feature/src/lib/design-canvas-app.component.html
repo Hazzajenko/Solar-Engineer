@@ -7,7 +7,6 @@
         class='absolute inset-0'
         appDesignCanvasNgrxApp></canvas>
 
-
 <div class='absolute'>
   <div id='fps'></div>
   <div style='display: none'
@@ -42,7 +41,7 @@
 <div #graphicsMenu
      id='graphics-menu'
      class='absolute right-5 top-5 z-10'>
-  <app-canvas-graphics-menu/>
+  <app-canvas-graphics-menu />
   <app-button-builder [active]='true'
                       [size]='"xl"'
                       [text]='"push"'
@@ -59,6 +58,15 @@
     [ngStyle]='{display: window.isOpen ? "block" : "none"}'
     #windowComponent />
 </ng-container>
+
+<ng-container *ngIf='dialog$ | async as dialog'>
+  <ng-template
+    appDynamicDialog
+    [dialog]='dialog'
+  ></ng-template>
+  <!--                      <ng-template appDynamic [block]='block'></ng-template>-->
+</ng-container>
+<dialog-move-panels-to-string-v2 />
 <!--<app-window
   [location]='{x: 150, y: 150}'
   (minimiseEvent)='minimisedWindow.style.display = "block"'
@@ -95,10 +103,12 @@
     </div>
   </div>
 </div>
+<!--
 
 <div class="absolute top-1 left-5">
   <p>test</p>
 </div>
+-->
 
 <!--
 <div

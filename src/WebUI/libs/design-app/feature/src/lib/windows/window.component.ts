@@ -67,7 +67,6 @@ export class WindowComponent implements AfterViewInit {
 
 	ngAfterViewInit(): void {
 		this._ngZone.runOutsideAngular(() => {
-			// console.log('ngAfterViewInit', this.windowBar.nativeElement)
 			this._renderer.listen(this._elementRef.nativeElement, EVENT_TYPE.POINTER_ENTER, () => {
 				this._render.renderCanvasApp()
 			})
@@ -81,7 +80,6 @@ export class WindowComponent implements AfterViewInit {
 			y: event.source.getFreeDragPosition().y,
 		}
 		const update = updateObjectByIdForStore(draggableWindow.id, { location })
-		// const update = updateObjectByIdForStore(draggableWindow.id, { location: this.location })
 		this._windows.dispatch.updateWindow(update)
 	}
 
@@ -98,7 +96,6 @@ export class WindowComponent implements AfterViewInit {
 	minimiseWindow(draggableWindow: DraggableWindow) {
 		this.minimiseEvent.emit(true)
 		this.isOpen = false
-		// this._renderer.setStyle(this._elementRef.nativeElement, 'display', 'none')
 		const update = updateObjectForStore(draggableWindow, { isOpen: false })
 		this._windows.dispatch.updateWindow(update)
 	}

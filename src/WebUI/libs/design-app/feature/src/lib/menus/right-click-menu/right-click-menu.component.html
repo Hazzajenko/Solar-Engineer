@@ -1,7 +1,7 @@
-<ng-container *ngIf='contextMenu$ | async as menu'>
+<ng-container *ngIf='contextMenu() as menu'>
   <ul id='menu-list'
       class='py-1 text-sm text-gray-700 dark:text-gray-200 absolute z-10  mt-2 w-56 bg-gray-200 divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'>
-    <ng-container [ngSwitch]='menu.type'>
+    <ng-container [ngSwitch]='menu.type?.type'>
       <ng-container *ngSwitchCase='"SingleEntity"'>
         <ng-container *ngTemplateOutlet='SingleEntity' />
       </ng-container>
@@ -12,11 +12,11 @@
       <ng-container *ngSwitchCase='"String"'>
         <ng-container *ngTemplateOutlet='String' />
       </ng-container>
-      <ng-container *ngSwitchDefault>IMPLEMENT</ng-container>
+      <!--      <ng-container *ngSwitchDefault>IMPLEMENT</ng-container>-->
     </ng-container>
   </ul>
   <ng-template #SingleEntity>
-    <ng-container *ngIf='menu | getPanelWithString as panel'>
+    <ng-container *ngIf='menu.type | getPanelWithString as panel'>
       <div class='px-4 py-3'
            role='none'>
         <p class='truncate text-sm font-medium text-gray-900'
@@ -24,7 +24,7 @@
       </div>
       <li>
         <a
-          (click)='delete()'
+          (click)='panel.deletePanel()'
           role='menuitem'
           tabindex='-1'
           class='group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white'
@@ -34,6 +34,18 @@
           Delete
         </a>
       </li>
+      <!--      <li>
+              <a
+                (click)='delete(panel.id)'
+                role='menuitem'
+                tabindex='-1'
+                class='group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white'
+              >
+                <app-show-svg class='mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500'
+                              svgPath='bin' />
+                Delete
+              </a>
+            </li>-->
       <ng-container
         *ngIf='panel.string else noString'
       >
@@ -84,29 +96,42 @@
     </ng-template>
   </ng-template>
   <ng-template #MultipleEntities>
-    <ng-container *ngIf='menu | getSelectedPanels as panelIds'>
+    <ng-container *ngIf='menu.type | getSelectedPanels as selectedPanels'>
       <div class='px-4 py-3'
            role='none'>
         <p class='truncate text-sm font-medium text-gray-900'
-           role='none'>Selected {{panelIds.length}} Panels</p>
+           role='none'>Selected {{selectedPanels.panelIds.length}} Panels</p>
         <!--      <p>{{string.panelIds.length}} Panels</p>-->
       </div>
       <li>
         <a
+          (click)='selectedPanels.movePanelsToString()'
           role='menuitem'
           tabindex='-1'
           class='group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white'
         >
           <app-show-svg class='mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500'
                         svgPath='rotate' />
-          Multi Selected
+          Move Selected To String
+        </a>
+      </li>
+      <li>
+        <a
+          (click)='selectedPanels.deletePanels()'
+          role='menuitem'
+          tabindex='-1'
+          class='group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white'
+        >
+          <app-show-svg class='mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500'
+                        svgPath='bin' />
+          Delete Selected
         </a>
       </li>
     </ng-container>
   </ng-template>
 
   <ng-template #String>
-    <ng-container *ngIf='menu | getStringWithPanelIds as string'>
+    <ng-container *ngIf='menu.type | getStringWithPanelIds as string'>
       <div class='px-4 py-3'
            role='none'>
         <p class='truncate text-sm font-medium text-gray-900'

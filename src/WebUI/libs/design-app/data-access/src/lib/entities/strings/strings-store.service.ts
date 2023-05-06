@@ -35,6 +35,10 @@ export class StringsStoreService {
 	get allStrings() {
 		return this.state.ids.map((id) => this.entities[id]).filter(isNotNull)
 	}
+
+	getById(id: string) {
+		return this.entities[id]
+	}
 }
 
 class StringsRepository {

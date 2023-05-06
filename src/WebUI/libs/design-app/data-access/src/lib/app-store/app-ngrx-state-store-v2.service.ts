@@ -1,7 +1,11 @@
 import { ContextMenuType } from '../view'
 import { AppStateActions } from './app-state.actions'
 import { initialAppState } from './app-state.reducer'
-import { selectAppStateState } from './app-state.selectors'
+import {
+	selectAppStateState,
+	selectContextMenuState,
+	selectDialogState,
+} from './app-state.selectors'
 import {
 	ContextMenuOpenState,
 	DragBoxState,
@@ -20,12 +24,29 @@ import { select, Store } from '@ngrx/store'
 export class AppNgrxStateStoreV2Service {
 	private readonly _store = inject(Store)
 	private readonly _state$ = this._store.pipe(select(selectAppStateState))
+	private readonly _dialog$ = this._store.pipe(select(selectDialogState))
 	private readonly _state = toSignal(this._state$, { initialValue: initialAppState })
 	// public select = inject(AppStateQueries)
 	public dispatch = new AppNgrxRepository(this._store)
 
 	get state() {
 		return this._state()
+	}
+
+	get state$() {
+		return this._state$
+	}
+
+	get contextMenu$() {
+		return this._store.pipe(select(selectContextMenuState))
+	}
+
+	get contextMenu() {
+		return this.state.contextMenu
+	}
+
+	get dialog$() {
+		return this._dialog$
 	}
 }
 
@@ -67,6 +88,10 @@ class AppNgrxRepository {
 	/*	setSelectedState(selected: SelectedState) {
 	 this._store.dispatch(AppStateActions.setSelectedState({ selected }))
 	 }*/
+
+	toggleDialog() {
+		this._store.dispatch(AppStateActions.toggleDialogState())
+	}
 
 	clearState() {
 		this._store.dispatch(AppStateActions.clearState())

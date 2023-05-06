@@ -5,10 +5,10 @@ import { CanvasString } from "@design-app/shared";
 import { AsyncPipe, NgForOf, NgIf } from "@angular/common";
 
 @Component({
-	selector: "app-view-string-component",
+	selector:    "app-view-string-component",
 	templateUrl: "view-string.component.html",
-	standalone: true,
-	imports: [
+	standalone:  true,
+	imports:     [
 		AsyncPipe,
 		NgForOf,
 		NgIf,

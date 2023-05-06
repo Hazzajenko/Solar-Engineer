@@ -33,6 +33,11 @@ export const AppStateActions = createActionGroup({
 		'Open Context Menu': props<{
 			contextMenuType: ContextMenuType
 		}>(),
+		'Close Context Menu': emptyProps(),
+		'Set Dialog State': props<{
+			dialog: boolean
+		}>(),
+		'Toggle Dialog State': emptyProps(),
 		'Clear State': emptyProps(),
 	},
 })

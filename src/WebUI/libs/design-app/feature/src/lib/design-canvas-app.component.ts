@@ -1,5 +1,9 @@
+import { DynamicComponentDirective } from '../../../../grid-layout/feature/src/lib/directives/dynamic-component.directive'
+import { GetBlockPipe } from '../../../../grid-layout/feature/src/lib/pipes/get-block.pipe'
 import { DesignCanvasNgrxDirective } from './design-canvas-ngrx.directive'
 import { DesignCanvasDirective } from './design-canvas.directive'
+import { MovePanelsToStringV2Component } from './dialogs/move-panels-to-string-v2/move-panels-to-string-v2.component'
+import { DynamicDialogDirective } from './dynamic-dialog.directive'
 import {
 	CanvasGraphicsMenuComponent,
 	KeyMapComponent,
@@ -25,7 +29,7 @@ import {
 } from '@angular/core'
 import { toSignal } from '@angular/core/rxjs-interop'
 import { MatDialog } from '@angular/material/dialog'
-import { DialogsService, WindowsStore } from '@design-app/data-access'
+import { AppNgrxStateStoreV2Service, DialogsService, WindowsStore } from '@design-app/data-access'
 import { DraggableWindow } from '@design-app/shared'
 import { LetModule } from '@ngrx/component'
 import { getGuid } from '@ngrx/data'
@@ -48,6 +52,10 @@ import { updateObjectForStore } from 'deprecated/design-app/feature-design-canva
 		WindowComponent,
 		ButtonBuilderComponent,
 		DesignCanvasNgrxDirective,
+		DynamicComponentDirective,
+		GetBlockPipe,
+		DynamicDialogDirective,
+		MovePanelsToStringV2Component,
 	],
 	selector: 'app-design-canvas-app',
 	standalone: true,
@@ -61,6 +69,8 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 	private _windows = inject(WindowsStore)
 	private _matDialog = inject(MatDialog)
 	private _dialogs = inject(DialogsService)
+	private _appStore = inject(AppNgrxStateStoreV2Service)
+	dialog$ = this._appStore.dialog$
 	firstName = signal('Jane')
 	lastName = signal('Doe')
 	fullName = computed(() => `${this.firstName()} ${this.lastName()}`)

@@ -1,9 +1,9 @@
 import { AsyncPipe, JsonPipe, NgForOf, NgIf } from '@angular/common'
 import { AfterViewInit, Component, ElementRef, inject, NgZone, Renderer2 } from '@angular/core'
-import { AppStoreService, RenderService } from '@design-app/data-access'
+import { toSignal } from '@angular/core/rxjs-interop'
+import { initialSelectedState, RenderService, SelectedStoreService } from '@design-app/data-access'
 import { EVENT_TYPE } from '@shared/data-access/models'
 import { CastPipe } from '@shared/pipes'
-import { combineLatest, map, tap } from 'rxjs'
 
 
 @Component({
@@ -17,35 +17,11 @@ export class StateValuesComponent implements AfterViewInit {
 	private _renderer = inject(Renderer2)
 	private _ngZone = inject(NgZone)
 	private _elementRef = inject(ElementRef)
-	private _app = inject(AppStoreService)
+	private _selectedStore = inject(SelectedStoreService)
 
-	appState$ = this._app.subscribeApp$().pipe(
-		tap((state) => {
-			console.log('appState$', state)
-		}),
-	)
-	selectedState$ = this._app.subscribeSelected$().pipe(
-		tap((state) => {
-			console.log('selectedState$', state)
-		}),
-	)
-	graphicsState$ = this._app.subscribeGraphics$().pipe(
-		tap((state) => {
-			console.log('graphicsState$', state)
-		}),
-	)
+	selectedState = toSignal(this._selectedStore.state$, { initialValue: initialSelectedState })
 
-	vm$ = combineLatest([this.appState$, this.selectedState$, this.graphicsState$]).pipe(
-		map(([app, selected, graphics]) => {
-			return {
-				app,
-				selected,
-				graphics,
-			}
-		}),
-	)
-
-	public ngAfterViewInit() {
+	ngAfterViewInit() {
 		this._ngZone.runOutsideAngular(() => {
 			this._renderer.listen(this._elementRef.nativeElement, EVENT_TYPE.POINTER_ENTER, () => {
 				this._render.renderCanvasApp()

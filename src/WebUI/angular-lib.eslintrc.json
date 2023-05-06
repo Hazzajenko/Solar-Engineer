@@ -1,6 +1,6 @@
 {
 	"extends": [
-		"../../../.eslintrc.json"
+		"/.eslintrc.json"
 	],
 	"ignorePatterns": [
 		"!**/*"
@@ -23,9 +23,7 @@
 					"error",
 					{
 						"type": "element",
-						"prefix": [
-							"app", "dialog", "menu"
-						],
+						"prefix": "app",
 						"style": "kebab-case"
 					}
 				],

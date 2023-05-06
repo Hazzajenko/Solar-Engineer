@@ -27,6 +27,10 @@ export class SelectedStoreService {
 		return this._state()
 	}
 
+	get state$() {
+		return this._state$
+	}
+
 	get singleSelectedEntityId() {
 		return this.state.singleSelectedEntityId
 	}

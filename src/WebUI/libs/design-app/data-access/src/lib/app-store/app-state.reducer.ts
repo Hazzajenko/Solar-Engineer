@@ -29,6 +29,7 @@ export type AppState = {
 	previewAxis: PreviewAxisState
 	mode: ModeState
 	contextMenu: ContextMenuState
+	dialog: boolean
 	// selected: SelectedState
 }
 
@@ -43,7 +44,10 @@ export const initialAppState: AppState = {
 	contextMenu: {
 		state: CONTEXT_MENU_OPEN_STATE.NO_CONTEXT_MENU,
 		type: undefined,
-	}, // selected: SELECTED_STATE.NONE_SELECTED,
+	},
+	dialog: false,
+
+	// selected: SELECTED_STATE.NONE_SELECTED,
 }
 
 const reducer = createReducer(
@@ -52,11 +56,11 @@ const reducer = createReducer(
 		...state,
 		dragBox,
 	})) /*	on(AppStateActions.setPointerState, (state, { pointer }) => ({
- ...state,
- pointer,
- hoveringOverEntityId:
- pointer === HOVERING_OVER_ENTITY_STATE.NO_HOVER ? undefined : state.hoveringOverEntityId,
- })),*/,
+	 ...state,
+	 pointer,
+	 hoveringOverEntityId:
+	 pointer === HOVERING_OVER_ENTITY_STATE.NO_HOVER ? undefined : state.hoveringOverEntityId,
+	 })),*/,
 	on(AppStateActions.setHoveringOverEntity, (state, { hoveringOverEntityId }) => ({
 		...state,
 		pointer: {
@@ -98,6 +102,12 @@ const reducer = createReducer(
 			type: contextMenuType,
 		},
 	})),
+
+	on(AppStateActions.toggleDialogState, (state) => ({
+		...state,
+		dialog: !state.dialog,
+	})),
+
 	on(AppStateActions.clearState, () => initialAppState),
 )
 
