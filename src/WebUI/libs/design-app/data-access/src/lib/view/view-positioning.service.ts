@@ -65,7 +65,7 @@ export class ViewPositioningService {
 		// this.drawPanels()
 	}
 
-	handleDragScreenMouseUp(event: PointerEvent) {
+	handleDragScreenMouseUp() {
 		this.screenDragStartPoint = undefined
 		this._app.sendEvent({ type: 'StopViewDragging' })
 		this._appStore.dispatch.setViewPositioningState('ViewNotMoving')

@@ -7,6 +7,8 @@ export const GraphicsActions = createActionGroup({
 		'Set Create Preview': props<{
 			createPreview: CreatePreviewState
 		}>(),
+		'Toggle Create Preview': emptyProps(),
+		'Toggle Nearby Lines': emptyProps(),
 		'Set Nearby Lines': props<{
 			nearbyLines: NearbyLinesState
 		}>(),

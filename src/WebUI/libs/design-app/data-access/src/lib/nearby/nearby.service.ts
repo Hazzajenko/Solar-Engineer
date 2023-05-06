@@ -1,5 +1,5 @@
 import { AppNgrxStateStoreV2Service } from '../app-store'
-import { EntityStoreService } from '../entities'
+import { EntityNgrxStoreService } from '../entities'
 import { GraphicsStoreService } from '../graphics-store'
 import { GraphicsSettings } from '../graphics/graphics.settings'
 import { RenderService } from '../render'
@@ -34,7 +34,8 @@ import { sortBy } from 'lodash'
 export class NearbyService {
 	private _render = inject(RenderService)
 	// private _render = inject(CanvasRenderService)
-	private _entities = inject(EntityStoreService)
+	private _entities = inject(EntityNgrxStoreService)
+	// private _entities = inject(EntityStoreService)
 	// private _app = inject(AppStoreService)
 	// private _appStore = inject(AppNgrxStateStore)
 	private _graphicsStore = inject(GraphicsStoreService)
@@ -54,7 +55,7 @@ export class NearbyService {
 	getDrawEntityPreviewV2Ngrx(event: PointerEvent, currentPoint: TransformedPoint) {
 		const size = SizeByType[ENTITY_TYPE.Panel]
 		const mouseBoxBounds = getCompleteBoundsFromCenterTransformedPoint(currentPoint, size)
-		const entities = this._entities.panels.getEntities()
+		const entities = this._entities.panels.allPanels
 		const nearbyEntitiesOnAxis = findNearbyBoundOverlapOnBothAxis(mouseBoxBounds, entities)
 
 		if (!nearbyEntitiesOnAxis.length) {

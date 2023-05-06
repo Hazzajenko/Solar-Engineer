@@ -30,7 +30,7 @@ import {
 	isPointInsideBounds,
 	isReadyToMultiDrag,
 	isWheelButton,
-	multiSelectDraggingKeysDown,
+	multiSelectDraggingKeysDownAndIdsNotEmpty,
 	rotatingKeysDown,
 	updateObjectByIdForStore,
 } from '@design-app/utils'
@@ -141,7 +141,7 @@ export class DesignCanvasDirective extends DesignCanvasDirectiveExtension implem
 
 		const multipleSelectedIds = this._app.selectedCtx.multipleSelectedIds
 		// const multipleSelectedIds = this._machine.appCtx.selected.multipleSelectedIds
-		if (multiSelectDraggingKeysDown(event, multipleSelectedIds)) {
+		if (multiSelectDraggingKeysDownAndIdsNotEmpty(event, multipleSelectedIds)) {
 			this._objPositioning.multiSelectDraggingMouseDown(event, multipleSelectedIds)
 			return
 		}
@@ -255,7 +255,7 @@ export class DesignCanvasDirective extends DesignCanvasDirectiveExtension implem
 
 		const multipleSelectedIds = this._app.selectedCtx.multipleSelectedIds
 		// const multipleSelectedIds = this._machine.appCtx.selected.multipleSelectedIds
-		if (multiSelectDraggingKeysDown(event, multipleSelectedIds)) {
+		if (multiSelectDraggingKeysDownAndIdsNotEmpty(event, multipleSelectedIds)) {
 			this._objPositioning.setMultiSelectDraggingMouseMove(event, multipleSelectedIds)
 			return
 		}
@@ -296,7 +296,7 @@ export class DesignCanvasDirective extends DesignCanvasDirectiveExtension implem
 		 }*/
 
 		if (appSnapshot.matches('ToMoveState.SingleMoveInProgress')) {
-			this._objPositioning.singleToMoveMouseMove(event, currentPoint, appSnapshot, graphicsSnapshot)
+			// this._objPositioning.singleToMoveMouseMove(event, currentPoint, appSnapshot, graphicsSnapshot)
 			return
 		}
 
@@ -395,7 +395,7 @@ export class DesignCanvasDirective extends DesignCanvasDirectiveExtension implem
 		if (appSnapshot.matches('ViewState.ViewPositioningState.ViewDraggingInProgress')) {
 			// if (snapshot.matches('ViewState.ViewDraggingInProgress')) {
 			console.log('snapshot.matches(ViewState.ViewDraggingInProgress)')
-			this._view.handleDragScreenMouseUp(event)
+			this._view.handleDragScreenMouseUp()
 			return
 		}
 		/*

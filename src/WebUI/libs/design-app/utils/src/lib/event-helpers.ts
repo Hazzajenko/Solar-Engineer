@@ -13,7 +13,10 @@ export const dragBoxKeysDown = (event: MouseEvent): boolean => {
 }
 
 export const draggingScreenKeysDown = (event: MouseEvent): boolean => {
-	return (event.ctrlKey || event.buttons === EVENT_BUTTON.AUXILIARY) && !event.shiftKey
+	return (
+		((event.ctrlKey && isHoldingClick(event)) || event.buttons === EVENT_BUTTON.AUXILIARY) &&
+		!event.shiftKey
+	)
 	// return (event.ctrlKey || event.buttons === 4) && !event.shiftKey
 	// return (event.ctrlKey || event.buttons === 4) && !event.shiftKey
 	// return (event.ctrlKey || event.button === POINTER_BUTTON.WHEEL) && !event.shiftKey
@@ -23,7 +26,10 @@ export const isReadyToMultiDrag = (event: MouseEvent, multiSelectedIds: string[]
 	return event.shiftKey && event.ctrlKey && multiSelectedIds.length > 0
 }
 
-export const multiSelectDraggingKeysDown = (
+export const multiSelectDraggingKeysDown = (event: PointerEvent): boolean => {
+	return event.buttons === EVENT_BUTTON.PRIMARY && event.shiftKey && event.ctrlKey
+}
+export const multiSelectDraggingKeysDownAndIdsNotEmpty = (
 	event: MouseEvent,
 	multiSelectedIds: string[],
 ): boolean => {

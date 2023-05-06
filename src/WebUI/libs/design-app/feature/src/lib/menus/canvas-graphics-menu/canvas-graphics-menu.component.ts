@@ -10,16 +10,21 @@ import {
 	NgZone,
 	Renderer2,
 } from '@angular/core'
+import { toSignal } from '@angular/core/rxjs-interop'
 import { ReactiveFormsModule } from '@angular/forms'
 import {
 	AppStoreService,
 	CREATE_PREVIEW_EVENT,
 	CREATE_PREVIEW_XSTATE,
 	GraphicsStateEvent,
+	GraphicsStoreService,
+	initialGraphicsState,
 	NEARBY_GRAPHICS_EVENT,
 	NEARBY_GRAPHICS_STATE,
 	NEARBY_GRAPHICS_STATE_MODE,
+	NEARBY_LINES_STATE,
 	NearbyGraphicsStateMode,
+	NearbyLinesState,
 	RenderService,
 } from '@design-app/data-access'
 import { LetModule } from '@ngrx/component'
@@ -37,10 +42,16 @@ import { EVENT_TYPE } from '@shared/data-access/models'
 export class CanvasGraphicsMenuComponent implements AfterViewInit {
 	private _app = inject(AppStoreService)
 	graphicsState$ = this._app.subscribeGraphics$()
+	private _graphicsStore = inject(GraphicsStoreService)
+	graphicsState = toSignal(this._graphicsStore.state$, { initialValue: initialGraphicsState })
+	// graphicsState = this._graphicsStore.state
+
 	// graphicsState$ = this.graphicsMachine.subscribe()
 
 	// protected readonly SelectCenterLineScreenSize = SelectCenterLineScreenSize
 	protected readonly NEARBY_GRAPHICS_STATE = NEARBY_GRAPHICS_STATE
+	protected readonly NEARBY_LINES_STATE = NEARBY_LINES_STATE
+
 	protected readonly NEARBY_GRAPHICS_EVENT = NEARBY_GRAPHICS_EVENT
 	protected readonly CREATE_PREVIEW_STATE = CREATE_PREVIEW_XSTATE
 	protected readonly CREATE_PREVIEW_EVENT = CREATE_PREVIEW_EVENT
@@ -71,8 +82,12 @@ export class CanvasGraphicsMenuComponent implements AfterViewInit {
 		this._render.renderCanvasApp()
 	}
 
+	/*	sendGraphicsEventV2(event: GraphicsStateEvent) {
+	 this._graphicsStore.dispatch.this._render.renderCanvasApp()
+	 }*/
+
 	toggleCreatePreview() {
-		this._app.sendGraphicsEvent(CREATE_PREVIEW_EVENT.CREATE_PREVIEW_TOGGLE)
+		this._graphicsStore.dispatch.toggleCreatePreview()
 		this._render.renderCanvasApp()
 	}
 
@@ -84,8 +99,6 @@ export class CanvasGraphicsMenuComponent implements AfterViewInit {
 	changeNearbyGraphics(event: Event) {
 		const target = event.target as HTMLInputElement
 		const newState = target.value as NearbyGraphicsStateMode
-		// console.log('changeNearbyGraphics', newState)
-		// this.graphicsMachine.sendEvent(NEARBY_GRAPHsICS_EVENT[''])
 
 		switch (newState) {
 			case NEARBY_GRAPHICS_STATE_MODE.TWO_SIDE_AXIS_LINES:
@@ -100,6 +113,33 @@ export class CanvasGraphicsMenuComponent implements AfterViewInit {
 			default:
 				throw new Error(`Unknown nearby graphics state: ${newState}`)
 		}
+	}
+
+	toggleNearbyLineGraphics() {
+		this._graphicsStore.dispatch.toggleNearbyLines()
+		this._render.renderCanvasApp()
+	}
+
+	changeNearbyGraphicsV2(event: Event) {
+		const target = event.target as HTMLInputElement
+		const newState = target.value as NearbyLinesState
+
+		switch (newState) {
+			case NEARBY_LINES_STATE.TWO_SIDE_AXIS_LINES:
+				this._graphicsStore.dispatch.setNearbyLines(NEARBY_LINES_STATE.TWO_SIDE_AXIS_LINES)
+				break
+			case NEARBY_LINES_STATE.CENTER_LINE_SCREEN_SIZE:
+				this._graphicsStore.dispatch.setNearbyLines(NEARBY_LINES_STATE.CENTER_LINE_SCREEN_SIZE)
+				break
+			case NEARBY_LINES_STATE.CENTER_LINE_BETWEEN_TWO_ENTITIES:
+				this._graphicsStore.dispatch.setNearbyLines(
+					NEARBY_LINES_STATE.CENTER_LINE_BETWEEN_TWO_ENTITIES,
+				)
+				break
+			default:
+				throw new Error(`Unknown nearby graphics state: ${newState}`)
+		}
+		this._render.renderCanvasApp()
 	}
 
 	// protected readonly event = event

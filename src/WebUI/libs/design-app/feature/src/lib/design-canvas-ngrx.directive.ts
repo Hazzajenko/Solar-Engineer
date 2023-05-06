@@ -48,7 +48,7 @@ import {
 	isPointInsideEntity,
 	isReadyToMultiDrag,
 	isWheelButton,
-	multiSelectDraggingKeysDown,
+	multiSelectDraggingKeysDownAndIdsNotEmpty,
 	rotatingKeysDown,
 	updateObjectByIdForStoreV3,
 } from '@design-app/utils'
@@ -61,6 +61,7 @@ import {
 	Point,
 } from '@shared/data-access/models'
 import { assertNotNull, OnDestroyDirective } from '@shared/utils'
+import { VIEW_STATE } from 'deprecated/design-app/feature-design-canvas'
 
 
 @Directive({
@@ -183,7 +184,7 @@ export class DesignCanvasNgrxDirective implements OnInit {
 		}
 
 		const multipleSelectedIds = this._selectedStore.state.multipleSelectedEntityIds
-		if (multiSelectDraggingKeysDown(event, multipleSelectedIds)) {
+		if (multiSelectDraggingKeysDownAndIdsNotEmpty(event, multipleSelectedIds)) {
 			this._objPositioning.multiSelectDraggingMouseDown(event, multipleSelectedIds)
 			return
 		}
@@ -223,22 +224,30 @@ export class DesignCanvasNgrxDirective implements OnInit {
 		const moveEntityState = this._positioningStore.state.moveEntityState
 
 		if (moveEntityState === 'MovingMultipleEntities') {
+			changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
 			this._objPositioning.multiSelectDraggingMouseMove(event)
 			return
 		}
 
 		const multipleSelectedIds = this._selectedStore.state.multipleSelectedEntityIds
-		if (multiSelectDraggingKeysDown(event, multipleSelectedIds)) {
+		if (multiSelectDraggingKeysDownAndIdsNotEmpty(event, multipleSelectedIds)) {
 			this._objPositioning.setMultiSelectDraggingMouseMove(event, multipleSelectedIds)
+			this._objPositioning.multiSelectDraggingMouseMove(event)
 			return
 		}
 
 		if (isReadyToMultiDrag(event, multipleSelectedIds)) {
 			changeCanvasCursor(this.canvas, CURSOR_TYPE.GRAB)
+			this._render.renderCanvasApp()
+			return
+		} else if (this.canvas.style.cursor === CURSOR_TYPE.GRAB) {
+			changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
+			this._render.renderCanvasApp()
 			return
 		}
 
 		if (moveEntityState === 'MovingSingleEntity') {
+			changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
 			this._objPositioning.singleToMoveMouseMoveV2Ngrx(event, currentPoint)
 			return
 		}
@@ -334,7 +343,7 @@ export class DesignCanvasNgrxDirective implements OnInit {
 		 * ! View Positioning
 		 */
 		if (viewState === 'ViewDraggingInProgress') {
-			this._view.handleDragScreenMouseUp(event)
+			this._view.handleDragScreenMouseUp()
 			return
 		}
 
@@ -629,6 +638,7 @@ export class DesignCanvasNgrxDirective implements OnInit {
 				}
 				if (moveState === MOVE_ENTITY_STATE.MOVING_SINGLE_ENTITY) {
 					this._objPositioning.singleToMoveMouseUp(event.altKey, this.currentPoint)
+
 					return
 				}
 				break
@@ -649,21 +659,21 @@ export class DesignCanvasNgrxDirective implements OnInit {
 				const { moveEntityState, rotateEntityState } = this._positioningStore.state
 				if (moveEntityState === MOVE_ENTITY_STATE.MOVING_MULTIPLE_ENTITIES) {
 					this._objPositioning.stopMultiSelectDragging(this.rawMousePos)
-					return
 				}
 				if (moveEntityState === MOVE_ENTITY_STATE.MOVING_SINGLE_ENTITY) {
 					this._objPositioning.singleToMoveMouseUp(event.altKey, this.currentPoint)
-					return
 				}
 
 				if (rotateEntityState === ROTATE_ENTITY_STATE.ROTATING_SINGLE_ENTITY) {
 					this._objRotating.clearSingleToRotate()
-					return
 				}
 
 				if (rotateEntityState === ROTATE_ENTITY_STATE.ROTATING_MULTIPLE_ENTITIES) {
 					this._objRotating.clearMultipleToRotate()
-					return
+				}
+
+				if (this._appState.state.view === VIEW_STATE.VIEW_DRAGGING_IN_PROGRESS) {
+					this._view.handleDragScreenMouseUp()
 				}
 				break
 			}

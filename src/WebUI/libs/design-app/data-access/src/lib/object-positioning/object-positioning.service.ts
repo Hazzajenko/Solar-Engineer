@@ -1,14 +1,9 @@
-import { AppSnapshot } from '../app'
 import { CanvasElementService } from '../div-elements'
 import { DomPointService } from '../dom-point'
-import { EntityStoreService } from '../entities'
-import { GraphicsXStateSnapshot } from '../graphics'
+import { EntityNgrxStoreService } from '../entities'
 import { GraphicsStoreService } from '../graphics-store'
 import { GraphicsSettings } from '../graphics/graphics.settings'
-import {
-	getNearbyLineDrawCtxFnFromGraphicsSnapshot,
-	getNearbyLineDrawCtxFnFromNearbyLinesState,
-} from '../nearby'
+import { getNearbyLineDrawCtxFnFromNearbyLinesState } from '../nearby'
 import { ObjectPositioningStoreService } from '../object-positioning-store'
 import { RenderService } from '../render'
 import { drawSelectionBoxBoundsCtxFn } from './draw-selection-box'
@@ -29,15 +24,14 @@ import {
 	eventToEventPoint,
 	eventToPointLocation,
 	findNearbyBoundOverlapOnBothAxisExcludingIds,
-	getBoundsFromArrPoints,
 	getCompleteBoundsFromCenterTransformedPoint,
 	getCompleteBoundsFromMultipleEntitiesWithPadding,
 	getCtxRectBoundsByAxisV2,
-	getEntityAxisGridLinesByAxisV2,
 	getEntityBounds,
 	getTopLeftPointFromTransformedPoint,
 	isHoldingClick,
 	isPointInsideBounds,
+	multiSelectDraggingKeysDown,
 	updateObjectById,
 } from '@design-app/utils'
 import { UpdateStr } from '@ngrx/entity/src/models'
@@ -50,7 +44,8 @@ import { sortBy } from 'lodash'
 	providedIn: 'root',
 })
 export class ObjectPositioningService {
-	private _entities = inject(EntityStoreService)
+	private _entities = inject(EntityNgrxStoreService)
+	// private _entities = inject(EntityStoreService)
 	private _domPoint = inject(DomPointService)
 	private _render = inject(RenderService)
 	// private _render = inject(RenderService)
@@ -80,125 +75,9 @@ export class ObjectPositioningService {
 		// this._app.sendEvent(new StartSingleMove())
 	}
 
-	singleToMoveMouseMove(
-		event: PointerEvent,
-		currentPoint: TransformedPoint,
-		appSnapshot: AppSnapshot,
-		graphicsSnapshot: GraphicsXStateSnapshot,
-	) {
-		if (!isHoldingClick(event)) {
-			this._positioningStore.dispatch.stopMoving()
-			// this._app.sendEvent({ type: 'StopSingleMove' })
-			// this._app.sendEvent(new StopSingleMove())
-			this.singleToMoveId = undefined
-			return
-		}
-		assertNotNull(this.singleToMoveId)
-		changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
-		// const eventPoint = this._domPoint.getTransformedPointFromEvent(event)
-		// const currentPoint = this._domPoint.getTransformedPointFromEvent(event)
-		const isSpotTaken = this.areAnyEntitiesNearbyExcludingGrabbed(currentPoint, this.singleToMoveId)
-		if (isSpotTaken) {
-			changeCanvasCursor(this.canvas, CURSOR_TYPE.CROSSHAIR)
-			// TODO - implement red box
-			// this.canvas.style.cursor = CURSOR_TYPE.CROSSHAIR
-			// changeCanvasCursor(this.canvas, CURSOR_TYPE.CROSSHAIR)
-			// return
-		} else {
-			changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
-		}
-		const location = getTopLeftPointFromTransformedPoint(
-			currentPoint,
-			SizeByType[ENTITY_TYPE.Panel],
-		)
-		const entity = this._entities.panels.getEntityById(this.singleToMoveId)
-		assertNotNull(entity)
-
-		const size = SizeByType[ENTITY_TYPE.Panel]
-		const mouseBoxBounds = getCompleteBoundsFromCenterTransformedPoint(currentPoint, size)
-		const entities = this._entities.panels.getEntities()
-		const nearbyEntitiesOnAxis = findNearbyBoundOverlapOnBothAxisExcludingIds(
-			mouseBoxBounds,
-			entities,
-			[this.singleToMoveId],
-		)
-		// const nearbyEntitiesOnAxis = findNearbyBoundOverlapOnBothAxis(mouseBoxBounds, entities)
-
-		if (!nearbyEntitiesOnAxis.length) {
-			const drawSingleToMove = (ctx: CanvasRenderingContext2D) => {
-				ctx.save()
-				ctx.fillStyle = CANVAS_COLORS.HoveredPanelFillStyle
-				ctx.translate(location.x + entity.width / 2, location.y + entity.height / 2)
-				ctx.rotate(entity.angle)
-
-				ctx.beginPath()
-				ctx.rect(-entity.width / 2, -entity.height / 2, entity.width, entity.height)
-				ctx.fill()
-				ctx.stroke()
-				ctx.restore()
-				// console.log('no nearbyEntities')
-				// const drawPreviewFn = getDefaultDrawPreviewCtxFn(mouseBoxBounds)
-
-				// this.clearNearbyState()
-			}
-			this._render.renderCanvasApp({
-				excludedEntityIds: [this.singleToMoveId],
-				drawFns: [drawSingleToMove],
-			})
-			// this._render.drawCanvasExcludeIdsWithFn([this.singleToMoveId], drawSingleToMove)
-			// this._render.drawCanvasWithFunction(drawSingleToMove)
-			return
-		}
-
-		// const anyNearClick = !!entities.find((entity) => isEntityOverlappingWithBounds(entity, mouseBoxBounds))
-
-		const nearbySortedByDistance = sortBy(nearbyEntitiesOnAxis, (entity) =>
-			Math.abs(entity.distance),
-		)
-		const nearby2dArray = groupInto2dArray(nearbySortedByDistance, 'axis')
-
-		const closestNearby2dArray = nearby2dArray.map((arr) => arr[0])
-		const closestEnt = closestNearby2dArray[0]
-
-		const gridLines = getEntityAxisGridLinesByAxisV2(closestEnt.bounds, closestEnt.axis)
-		const gridLineBounds = getBoundsFromArrPoints(gridLines)
-
-		const axisPreviewRect = getCtxRectBoundsByAxisV2(
-			closestEnt.bounds,
-			closestEnt.axis,
-			mouseBoxBounds,
-		)
-		this.currentAxis = closestEnt.axis
-		this.axisRepositionPreviewRect = axisPreviewRect
-
-		const holdAltToSnapToGrid = GraphicsSettings.HoldAltToSnapToGrid
-		const altKey = event.altKey
-		const isMovingExistingEntity = true
-
-		const ctxFn = getNearbyLineDrawCtxFnFromGraphicsSnapshot(
-			graphicsSnapshot,
-			axisPreviewRect,
-			mouseBoxBounds,
-			closestEnt,
-			CANVAS_COLORS.HoveredPanelFillStyle,
-			altKey,
-			holdAltToSnapToGrid,
-			isMovingExistingEntity,
-		)
-
-		this._render.renderCanvasApp({
-			excludedEntityIds: [this.singleToMoveId],
-			drawFns: [ctxFn],
-		})
-		// this._render.drawCanvasExcludeIdsWithFn([this.singleToMoveId], ctxFn)
-	}
-
 	singleToMoveMouseMoveV2Ngrx(event: PointerEvent, currentPoint: TransformedPoint) {
 		if (!isHoldingClick(event)) {
-			this._positioningStore.dispatch.stopMoving()
-			// this._app.sendEvent({ type: 'StopSingleMove' })
-			// this._app.sendEvent(new StopSingleMove())
-			this.singleToMoveId = undefined
+			this.singleToMoveMouseUp(event, currentPoint)
 			return
 		}
 		assertNotNull(this.singleToMoveId)
@@ -206,25 +85,25 @@ export class ObjectPositioningService {
 		// const eventPoint = this._domPoint.getTransformedPointFromEvent(event)
 		// const currentPoint = this._domPoint.getTransformedPointFromEvent(event)
 		const isSpotTaken = this.areAnyEntitiesNearbyExcludingGrabbed(currentPoint, this.singleToMoveId)
-		if (isSpotTaken) {
-			changeCanvasCursor(this.canvas, CURSOR_TYPE.CROSSHAIR)
-			// TODO - implement red box
-			// this.canvas.style.cursor = CURSOR_TYPE.CROSSHAIR
-			// changeCanvasCursor(this.canvas, CURSOR_TYPE.CROSSHAIR)
-			// return
-		} else {
-			changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
-		}
+		/*		if (isSpotTaken) {
+		 changeCanvasCursor(this.canvas, CURSOR_TYPE.CROSSHAIR)
+		 // TODO - implement red box
+		 // this.canvas.style.cursor = CURSOR_TYPE.CROSSHAIR
+		 // changeCanvasCursor(this.canvas, CURSOR_TYPE.CROSSHAIR)
+		 // return
+		 } else {
+		 changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
+		 }*/
 		const location = getTopLeftPointFromTransformedPoint(
 			currentPoint,
 			SizeByType[ENTITY_TYPE.Panel],
 		)
-		const entity = this._entities.panels.getEntityById(this.singleToMoveId)
+		const entity = this._entities.panels.getById(this.singleToMoveId)
 		assertNotNull(entity)
 
 		const size = SizeByType[ENTITY_TYPE.Panel]
 		const mouseBoxBounds = getCompleteBoundsFromCenterTransformedPoint(currentPoint, size)
-		const entities = this._entities.panels.getEntities()
+		const entities = this._entities.panels.allPanels
 		const nearbyEntitiesOnAxis = findNearbyBoundOverlapOnBothAxisExcludingIds(
 			mouseBoxBounds,
 			entities,
@@ -269,8 +148,8 @@ export class ObjectPositioningService {
 		const closestNearby2dArray = nearby2dArray.map((arr) => arr[0])
 		const closestEnt = closestNearby2dArray[0]
 
-		const gridLines = getEntityAxisGridLinesByAxisV2(closestEnt.bounds, closestEnt.axis)
-		const gridLineBounds = getBoundsFromArrPoints(gridLines)
+		// const gridLines = getEntityAxisGridLinesByAxisV2(closestEnt.bounds, closestEnt.axis)
+		// const gridLineBounds = getBoundsFromArrPoints(gridLines)
 
 		const axisPreviewRect = getCtxRectBoundsByAxisV2(
 			closestEnt.bounds,
@@ -323,7 +202,12 @@ export class ObjectPositioningService {
 		 SizeByType[ENTITY_TYPE.Panel],
 		 )*/
 		// const location = this._domPoint.getTransformedPointToMiddleOfObjectFromEvent(event, ENTITY_TYPE.Panel)
-		this._entities.panels.updateEntity(this.singleToMoveId, { location })
+		this._entities.panels.dispatch.updatePanel({
+			id: this.singleToMoveId,
+			changes: {
+				location,
+			},
+		})
 
 		changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
 		this.singleToMoveId = undefined
@@ -347,10 +231,11 @@ export class ObjectPositioningService {
 	}
 
 	setMultiSelectDraggingMouseMove(event: PointerEvent, multipleSelectedIds: string[]) {
-		if (!event.shiftKey || !event.ctrlKey) {
-			this.stopMultiSelectDragging(event)
-			return
-		}
+		if (!multiSelectDraggingKeysDown(event)) return
+		/*		if (!event.shiftKey || !event.ctrlKey) {
+		 this.stopMultiSelectDragging(event)
+		 return
+		 }*/
 		this.multipleToMoveIds = multipleSelectedIds
 		this.multiToMoveStart = eventToEventPoint(event)
 		// this.multiToMoveStart = currentPoint
@@ -361,8 +246,9 @@ export class ObjectPositioningService {
 	}
 
 	multiSelectDraggingMouseMove(event: PointerEvent) {
-		if (!event.shiftKey || !event.ctrlKey) {
+		if (!multiSelectDraggingKeysDown(event)) {
 			this.stopMultiSelectDragging(event)
+			changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
 			return
 		}
 		changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
@@ -379,7 +265,7 @@ export class ObjectPositioningService {
 		offset.y = offset.y / scale
 
 		const multipleToMoveIds = this.multipleToMoveIds
-		const entities = this._entities.panels.getEntitiesByIds(multipleToMoveIds)
+		const entities = this._entities.panels.getByIds(multipleToMoveIds)
 
 		const updates = entities.map((entity) => {
 			const location = entity.location
@@ -453,7 +339,7 @@ export class ObjectPositioningService {
 		offset.x = offset.x / scale
 		offset.y = offset.y / scale
 		const multipleToMoveIds = this.multipleToMoveIds
-		const entities = this._entities.panels.getEntitiesByIds(multipleToMoveIds)
+		const entities = this._entities.panels.getByIds(multipleToMoveIds)
 		const multiSelectedUpdated = entities.map((entity) => {
 			const location = entity.location
 			const newLocation = {
@@ -466,12 +352,14 @@ export class ObjectPositioningService {
 		const storeUpdates = multiSelectedUpdated.map((entity) => {
 			return EntityFactory.updateForStore(entity, { location: entity.location })
 		})
-		this._entities.panels.updateManyEntities(storeUpdates as UpdateStr<CanvasPanel>[])
+		this._entities.panels.dispatch.updateManyPanels(storeUpdates as UpdateStr<CanvasPanel>[])
 
 		this._positioningStore.dispatch.stopMoving()
 		// this._app.sendEvent({ type: 'StopMultipleMove' })
 
-		this._canvasElement.changeCursor('')
+		// this._canvasElement.changeCursor('')
+		changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
+		console.log('stopMultiSelectDragging changeCanvasCursor')
 
 		this.multipleToMoveIds = []
 		this.multiToMoveStart = undefined
@@ -500,12 +388,12 @@ export class ObjectPositioningService {
 	}
 
 	areAnyEntitiesNearbyExcludingGrabbed(point: TransformedPoint, grabbedId: string) {
-		return !!this._entities.panels
-			.getEntities()
-			.find(
-				(entity) => entity.id !== grabbedId && isPointInsideBounds(point, getEntityBounds(entity)),
-			)
+		return !!this._entities.panels.allPanels.find(
+			(entity) => entity.id !== grabbedId && isPointInsideBounds(point, getEntityBounds(entity)),
+		)
 	}
 }
+
+// const isMultiDraggingKeysDown = (event: PointerEvent) => event.shiftKey && event.ctrlKey && event.altKey
 
 // const entitiesNearPoint = (entity: CanvasPanel, grabbedId: string, point: TransformedPoint) => (entity:CanvasPanel) => entity.id !== grabbedId && isPointInsideBounds(point, getEntityBounds(entity))

@@ -15,7 +15,7 @@ export class GraphicsStoreService {
 	private readonly _graphics$ = this._store.pipe(select(selectGraphicsState))
 	private readonly _graphics = toSignal(this._graphics$, { initialValue: initialGraphicsState })
 
-	repository = new GraphicsRepository(this._store)
+	dispatch = new GraphicsRepository(this._store)
 
 	get state$() {
 		return this._graphics$
@@ -29,8 +29,16 @@ export class GraphicsStoreService {
 class GraphicsRepository {
 	constructor(private _store: Store<GraphicsState>) {}
 
+	toggleCreatePreview() {
+		this._store.dispatch(GraphicsActions.toggleCreatePreview())
+	}
+
 	setCreatePreview(createPreview: CreatePreviewState) {
 		this._store.dispatch(GraphicsActions.setCreatePreview({ createPreview }))
+	}
+
+	toggleNearbyLines() {
+		this._store.dispatch(GraphicsActions.toggleNearbyLines())
 	}
 
 	setNearbyLines(nearbyLines: NearbyLinesState) {
