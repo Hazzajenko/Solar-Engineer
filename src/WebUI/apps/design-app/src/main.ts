@@ -1,5 +1,4 @@
 import { AppComponent } from './app/app.component'
-import { mainTsStates } from './main-ts.states'
 import { DatePipe } from '@angular/common'
 import { HttpClientModule } from '@angular/common/http'
 import { importProvidersFrom, provideZoneChangeDetection } from '@angular/core'
@@ -11,6 +10,7 @@ import { provideRouter, withEnabledBlockingInitialNavigation } from '@angular/ro
 import { appRoutes, tokenGetter } from '@app/config'
 import { JwtModule } from '@auth0/angular-jwt'
 import { jwtInterceptorProvider } from '@auth/interceptors'
+import { DesignAppNgrxStores } from '@design-app/data-access'
 import { provideRouterStore } from '@ngrx/router-store'
 import { provideStore } from '@ngrx/store'
 import { storeDevtoolsModule } from '@shared/config'
@@ -37,7 +37,8 @@ bootstrapApplication(AppComponent, {
 		provideStore(reducers, { metaReducers }),
 		provideRouterStore(),
 		// provideEffects(...mainTsEffects),
-		...mainTsStates,
+		// ...mainTsStates,
+		...DesignAppNgrxStores,
 		...storeDevtoolsModule,
 		jwtInterceptorProvider,
 	],

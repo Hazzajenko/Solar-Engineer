@@ -1,6 +1,6 @@
 import { AppStateActions } from './app-state.actions'
 import {
-	CONTEXT_MENU_STATE,
+	CONTEXT_MENU_OPEN_STATE,
 	ContextMenuState,
 	DRAG_BOX_STATE,
 	DragBoxState,
@@ -40,7 +40,10 @@ export const initialAppState: AppState = {
 	view: VIEW_POSITIONING_STATE.VIEW_NOT_MOVING,
 	previewAxis: PREVIEW_AXIS_STATE.NONE,
 	mode: MODE_STATE.SELECT_MODE,
-	contextMenu: CONTEXT_MENU_STATE.NO_CONTEXT_MENU, // selected: SELECTED_STATE.NONE_SELECTED,
+	contextMenu: {
+		state: CONTEXT_MENU_OPEN_STATE.NO_CONTEXT_MENU,
+		type: undefined,
+	}, // selected: SELECTED_STATE.NONE_SELECTED,
 }
 
 const reducer = createReducer(
@@ -82,11 +85,19 @@ const reducer = createReducer(
 	})),
 	on(AppStateActions.setContextMenuState, (state, { contextMenu }) => ({
 		...state,
-		contextMenu,
-	})) /*	on(AppStateActions.setSelectedState, (state, { selected }) => ({
- ...state,
- selected,
- })),*/,
+		contextMenu: {
+			...state.contextMenu,
+			state: contextMenu,
+		},
+	})),
+	on(AppStateActions.openContextMenu, (state, { contextMenuType }) => ({
+		...state,
+		contextMenu: {
+			...state.contextMenu,
+			state: CONTEXT_MENU_OPEN_STATE.CONTEXT_MENU_OPEN,
+			type: contextMenuType,
+		},
+	})),
 	on(AppStateActions.clearState, () => initialAppState),
 )
 

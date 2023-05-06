@@ -53,10 +53,10 @@ export abstract class DesignCanvasDirectiveExtension {
 	protected _selected = inject(SelectedService)
 	protected _nearby = inject(NearbyService)
 	protected _app = inject(AppStoreService)
+	protected _domPoint = inject(DomPointService)
 	protected _graphics = inject(GraphicsSettingsMachineService)
 	// protected _entityStore = inject(CanvasEntityStore)
 	// protected _selected = inject(CanvasSelectedService)
-	protected _domPoint = inject(DomPointService)
 	protected mouseDownTimeOut: ReturnType<typeof setTimeout> | undefined
 	protected mouseUpTimeOut: ReturnType<typeof setTimeout> | undefined
 

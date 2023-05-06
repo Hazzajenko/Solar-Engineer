@@ -113,3 +113,14 @@ export const updateObjectByIdForStore = <T extends CanvasEntity | CanvasString>(
 		changes,
 	}
 }
+
+export const updateObjectByIdForStoreV3 =
+	<T extends CanvasEntity | CanvasString>( // id: T['id'],
+		changes: Partial<T>,
+	) =>
+	(entity: T): UpdateStr<T> => {
+		return {
+			id: entity.id,
+			changes,
+		}
+	}

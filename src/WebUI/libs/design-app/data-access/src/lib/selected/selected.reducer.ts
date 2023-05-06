@@ -4,7 +4,7 @@ import { Action, createReducer, on } from '@ngrx/store'
 export const SELECTED_FEATURE_KEY = 'selected'
 
 export const ENTITY_SELECTED_STATE = {
-	ENTITY_SELECTED: 'EntitySelected',
+	SINGLE_ENTITY_SELECTED: 'SingleEntitySelected',
 	MULTIPLE_ENTITIES_SELECTED: 'MultipleEntitiesSelected',
 	NONE_SELECTED: 'NoneSelected',
 } as const
@@ -35,7 +35,7 @@ const reducer = createReducer(
 		...state,
 		singleSelectedEntityId: entityId,
 		multipleSelectedEntityIds: [],
-		entityState: ENTITY_SELECTED_STATE.ENTITY_SELECTED,
+		entityState: ENTITY_SELECTED_STATE.SINGLE_ENTITY_SELECTED,
 	})),
 
 	on(SelectedActions.clearSingleSelected, (state) => ({
@@ -71,7 +71,7 @@ const reducer = createReducer(
 			if (state.multipleSelectedEntityIds.length === 0) {
 				return ENTITY_SELECTED_STATE.NONE_SELECTED
 			} else if (state.multipleSelectedEntityIds.length === 1) {
-				return ENTITY_SELECTED_STATE.ENTITY_SELECTED
+				return ENTITY_SELECTED_STATE.SINGLE_ENTITY_SELECTED
 			} else {
 				return ENTITY_SELECTED_STATE.MULTIPLE_ENTITIES_SELECTED
 			}
@@ -80,8 +80,10 @@ const reducer = createReducer(
 
 	on(SelectedActions.clearMultiSelected, (state) => ({
 		...state,
-		entityState: ENTITY_SELECTED_STATE.ENTITY_SELECTED || ENTITY_SELECTED_STATE.NONE_SELECTED,
+		entityState:
+			ENTITY_SELECTED_STATE.SINGLE_ENTITY_SELECTED || ENTITY_SELECTED_STATE.NONE_SELECTED,
 		multipleSelectedEntityIds: [],
+		singleSelectedEntityId: undefined,
 	})),
 
 	/**

@@ -16,6 +16,7 @@
 				"*.svelte"
 			],
 			"rules": {
+				"no-mixed-spaces-and-tabs": 0,
 				"@angular-eslint/component-selector": "off",
 				"@nx/enforce-module-boundaries": [
 					"error",

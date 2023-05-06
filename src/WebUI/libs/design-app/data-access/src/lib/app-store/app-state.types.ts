@@ -1,3 +1,5 @@
+import { ContextMenuType } from '../view'
+
 export const DRAG_BOX_STATE = {
 	CREATION_BOX_IN_PROGRESS: 'CreationBoxInProgress',
 	NO_DRAG_BOX: 'NoDragBox',
@@ -73,12 +75,18 @@ export const TO_ROTATE_STATE = {
 
 export type ToRotateState = (typeof TO_ROTATE_STATE)[keyof typeof TO_ROTATE_STATE]
 
-export const CONTEXT_MENU_STATE = {
+export const CONTEXT_MENU_OPEN_STATE = {
 	CONTEXT_MENU_OPEN: 'ContextMenuOpen',
 	NO_CONTEXT_MENU: 'NoContextMenu',
 } as const
 
-export type ContextMenuState = (typeof CONTEXT_MENU_STATE)[keyof typeof CONTEXT_MENU_STATE]
+export type ContextMenuOpenState =
+	(typeof CONTEXT_MENU_OPEN_STATE)[keyof typeof CONTEXT_MENU_OPEN_STATE]
+
+export type ContextMenuState = {
+	state: ContextMenuOpenState
+	type: ContextMenuType | undefined
+}
 
 export const VIEW_POSITIONING_STATE = {
 	VIEW_DRAGGING_IN_PROGRESS: 'ViewDraggingInProgress',
@@ -96,5 +104,5 @@ export type TypeOfAppState =
 	// | SelectedState
 	| ToMoveState
 	| ToRotateState
-	| ContextMenuState
+	| ContextMenuOpenState
 	| ViewPositioningState

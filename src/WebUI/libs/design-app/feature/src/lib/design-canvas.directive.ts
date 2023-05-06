@@ -135,7 +135,7 @@ export class DesignCanvasDirective extends DesignCanvasDirectiveExtension implem
 			 return
 			 }*/
 			console.log('drag box keys down')
-			this._drag.handleDragBoxMouseDown(event, currentPoint, appSnapshot)
+			this._drag.handleDragBoxMouseDown(event, currentPoint)
 			return
 		}
 
@@ -506,7 +506,7 @@ export class DesignCanvasDirective extends DesignCanvasDirectiveExtension implem
 			return
 		}
 		const selectedSnapshot = this._app.selectedSnapshot
-		this._selected.handleNotClickedOnEntity(selectedSnapshot)
+		this._selected.handleNotClickedOnEntity()
 		// this._selected.clearSelectedState()
 		if (this.anyEntitiesNearAreaOfClick(event)) {
 			return

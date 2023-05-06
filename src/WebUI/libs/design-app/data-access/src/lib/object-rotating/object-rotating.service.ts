@@ -1,4 +1,4 @@
-import { EntityStoreService } from '../entities'
+import { EntityNgrxStoreService } from '../entities'
 import { ObjectPositioningStoreService } from '../object-positioning-store'
 import { RenderService } from '../render'
 import { SelectedStoreService } from '../selected'
@@ -28,7 +28,8 @@ import { assertNotNull } from '@shared/utils'
 	providedIn: 'root',
 })
 export class ObjectRotatingService {
-	private _entities = inject(EntityStoreService)
+	private _entities = inject(EntityNgrxStoreService)
+	// private _entities = inject(EntityStoreService)
 	private _render = inject(RenderService)
 	// private _app = inject(AppStoreService)
 	private _positioningStore = inject(ObjectPositioningStoreService)
@@ -50,7 +51,7 @@ export class ObjectRotatingService {
 	centerPoint: Point | undefined = undefined
 
 	handleSetEntitiesToRotate(event: PointerEvent, currentPoint: TransformedPoint) {
-		const multiSelectIds = this._selectedStore.select.state.multipleSelectedEntityIds
+		const multiSelectIds = this._selectedStore.state.multipleSelectedEntityIds
 		// const multiSelectIds = this._app.selectedCtx.multipleSelectedIds
 		// const selectedId = this._machine.appCtx.selected.singleSelectedId
 		// const selectedId = this._state.selected.singleSelectedId
@@ -69,7 +70,7 @@ export class ObjectRotatingService {
 	}
 
 	setEntityToRotate(entityId: string, startPoint: TransformedPoint) {
-		const location = this._entities.panels.getEntityById(entityId)?.location
+		const location = this._entities.panels.getById(entityId)?.location
 		assertNotNull(location)
 		const startAngle = getAngleInRadiansBetweenTwoPoints(startPoint, location)
 		this.singleToRotateId = entityId
@@ -100,14 +101,14 @@ export class ObjectRotatingService {
 			throw new Error('No entity to rotate')
 		}
 		// const currentPoint = this._domPoint.getTransformedPointFromEvent(event)
-		const entityLocation = this._entities.panels.getEntityById(singleToRotateId)?.location
+		const entityLocation = this._entities.panels.getById(singleToRotateId)?.location
 		assertNotNull(entityLocation)
 		const previousAngle = singleToRotateStartAngle
 		const radians = getAngleInRadiansBetweenTwoPoints(currentPoint, entityLocation)
 		const angle = (radians - previousAngle) as AngleRadians
 		this.singleToRotateRecentAngle = angle
 
-		const entity = this._entities.panels.getEntityById(singleToRotateId)
+		const entity = this._entities.panels.getById(singleToRotateId)
 		assertNotNull(entity)
 
 		const singleRotateDrawFn = (ctx: CanvasRenderingContext2D) => {
@@ -130,7 +131,7 @@ export class ObjectRotatingService {
 	}
 
 	setMultipleToRotate(multipleToRotateIds: string[], startPoint: TransformedPoint) {
-		const entities = this._entities.panels.getEntitiesByIds(multipleToRotateIds)
+		const entities = this._entities.panels.getByIds(multipleToRotateIds)
 		const entityLocations = entities.map((e) => e.location)
 		const [minX, minY, maxX, maxY] = getCommonEntityTrigonometricBounds(entities)
 		const centerX = (minX + maxX) / 2
@@ -170,7 +171,7 @@ export class ObjectRotatingService {
 		if (!pivotPoint || !startToPivotAngle) throw new Error('No pivot point or start to pivot angle')
 
 		const angleInRadians = getAngleInRadiansBetweenTwoPoints(currentPoint, pivotPoint)
-		const canvasEntities = this._entities.panels.getEntitiesByIds(multipleToRotateIds)
+		const canvasEntities = this._entities.panels.getByIds(multipleToRotateIds)
 		assertNotNull(startToPivotAngle)
 		const adjustedAngle = (angleInRadians - startToPivotAngle) as AngleRadians
 		const entities = canvasEntities.map((entity) => {
@@ -223,7 +224,7 @@ export class ObjectRotatingService {
 	}
 
 	calculatePivotPointPosition(multipleToRotateIds: string[]) {
-		const entities = this._entities.panels.getEntitiesByIds(multipleToRotateIds)
+		const entities = this._entities.panels.getByIds(multipleToRotateIds)
 		assertNotNull(entities)
 		const totalX = entities.reduce((acc, entity) => acc + entity.location.x, 0)
 		const totalY = entities.reduce((acc, entity) => acc + entity.location.y, 0)
@@ -237,7 +238,11 @@ export class ObjectRotatingService {
 		if (singleToRotateId) {
 			const angle = this.singleToRotateRecentAngle
 			assertNotNull(angle)
-			this._entities.panels.updateEntity(singleToRotateId, { angle })
+
+			this._entities.panels.dispatch.updatePanel({
+				id: singleToRotateId,
+				changes: { angle },
+			})
 			this._positioningStore.dispatch.stopRotating()
 			// this._app.sendEvent({ type: 'StopSingleRotate' })
 		}
@@ -262,7 +267,7 @@ export class ObjectRotatingService {
 
 				return updateObjectByIdForStore(id, { location, angle })
 			})
-			this._entities.panels.updateManyEntities(storeUpdates as UpdateStr<CanvasPanel>[])
+			this._entities.panels.dispatch.updateManyPanels(storeUpdates as UpdateStr<CanvasPanel>[])
 			this._positioningStore.dispatch.stopRotating()
 			// this._app.sendEvent({ type: 'StopMultipleRotate' })
 		}
@@ -282,7 +287,10 @@ export class ObjectRotatingService {
 		if (singleToRotateId) {
 			const angle = this.singleToRotateRecentAngle
 			assertNotNull(angle)
-			this._entities.panels.updateEntity(singleToRotateId, { angle })
+			this._entities.panels.dispatch.updatePanel({
+				id: singleToRotateId,
+				changes: { angle },
+			})
 			this._positioningStore.dispatch.stopRotating()
 			// this._app.sendEvent({ type: 'StopSingleRotate' })
 		}
@@ -297,7 +305,7 @@ export class ObjectRotatingService {
 
 				return updateObjectByIdForStore(id, { location, angle })
 			})
-			this._entities.panels.updateManyEntities(storeUpdates as UpdateStr<CanvasPanel>[])
+			this._entities.panels.dispatch.updateManyPanels(storeUpdates as UpdateStr<CanvasPanel>[])
 			this._positioningStore.dispatch.stopRotating()
 			// this._app.sendEvent({ type: 'StopMultipleRotate' })
 		}

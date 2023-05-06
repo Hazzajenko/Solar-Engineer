@@ -1,7 +1,7 @@
 import { AppNgrxStateStore } from '../app-store'
 import { EntityStoreService } from '../entities'
-import { SelectedSnapshot } from './selected-state.types'
 import { SelectedStoreService } from './selected-store.service'
+import { ENTITY_SELECTED_STATE } from './selected.reducer'
 import { inject, Injectable } from '@angular/core'
 import { CanvasEntity } from '@design-app/shared'
 import { assertNotNull } from '@shared/utils'
@@ -25,6 +25,11 @@ export class SelectedService {
 			return
 		}
 		this.setSelected(entityUnderMouse.id)
+		this._selectedStore.fetchByKey('selectedStringId')
+		// const yo = this._selectedStore.fetchByKeys(['selectedStringId', 'multipleSelectedEntityIds'])
+		// // yo
+		/*	const yo = this._selectedStore.fetchByKeysAsObject(['selectedStringId', 'multipleSelectedEntityIds'])
+		 yo*/
 		return
 	}
 
@@ -54,7 +59,7 @@ export class SelectedService {
 		 return
 		 }*/
 
-		const multipleSelectedIds = this._selectedStore.select.state.multipleSelectedEntityIds
+		const multipleSelectedIds = this._selectedStore.state.multipleSelectedEntityIds
 		// const multipleSelectedIds = this._app.selectedCtx.multipleSelectedIds
 		// const multipleSelectedIds = this._app.appCtx.selected.multipleSelectedIds
 		if (multipleSelectedIds.includes(selectedId)) {
@@ -120,17 +125,28 @@ export class SelectedService {
 	 }
 	 */
 
-	handleNotClickedOnEntity(selectedSnapshot: SelectedSnapshot) {
+	handleNotClickedOnEntity() {
 		/*		if (selectedSnapshot.matches('StringSelectedState.StringSelected')) {
 		 this.clearSelectedState()
 		 return
 		 }*/
 
-		if (selectedSnapshot.matches('EntitySelectedState.EntitiesSelected')) {
-			// this._app.sendSelectedEvent({ type: 'ClearMultipleSelectedEntities' })
+		const entitySelectedState = this._selectedStore.state.entityState
+		if (entitySelectedState === ENTITY_SELECTED_STATE.MULTIPLE_ENTITIES_SELECTED) {
 			this._selectedStore.dispatch.clearMultiSelected()
 			return
 		}
+
+		if (entitySelectedState === ENTITY_SELECTED_STATE.SINGLE_ENTITY_SELECTED) {
+			this._selectedStore.dispatch.clearSingleSelected()
+			return
+		}
+		/*
+		 if (selectedSnapshot.matches('EntitySelectedState.EntitiesSelected')) {
+		 // this._app.sendSelectedEvent({ type: 'ClearMultipleSelectedEntities' })
+		 this._selectedStore.dispatch.clearMultiSelected()
+		 return
+		 }*/
 	}
 
 	/*	clearSingleSelected() {
@@ -164,7 +180,7 @@ export class SelectedService {
 		 this._app.sendSelectedEvent({ type: 'ClearStringSelected' })
 		 }*/
 
-		if (this._selectedStore.select.state.selectedStringId) {
+		if (this._selectedStore.state.selectedStringId) {
 			this._selectedStore.dispatch.clearSingleSelected()
 		}
 

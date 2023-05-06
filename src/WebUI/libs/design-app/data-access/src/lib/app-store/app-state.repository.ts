@@ -1,5 +1,10 @@
 import { AppStateActions } from './app-state.actions'
-import { ContextMenuState, DragBoxState, ModeState, ViewPositioningState } from './app-state.types'
+import {
+	ContextMenuOpenState,
+	DragBoxState,
+	ModeState,
+	ViewPositioningState,
+} from './app-state.types'
 import { inject, Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
 
@@ -22,7 +27,7 @@ export class AppStateRepository {
 		this._store.dispatch(AppStateActions.setModeState({ mode }))
 	}
 
-	setContextMenuState(contextMenu: ContextMenuState) {
+	setContextMenuState(contextMenu: ContextMenuOpenState) {
 		this._store.dispatch(AppStateActions.setContextMenuState({ contextMenu }))
 	}
 

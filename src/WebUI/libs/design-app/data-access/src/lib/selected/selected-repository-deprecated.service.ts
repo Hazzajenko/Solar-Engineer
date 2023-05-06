@@ -6,7 +6,7 @@ import { Store } from '@ngrx/store'
 @Injectable({
 	providedIn: 'root',
 })
-export class SelectedRepository {
+export class SelectedRepositoryDeprecated {
 	private readonly _store = inject(Store)
 
 	selectString(stringId: string) {

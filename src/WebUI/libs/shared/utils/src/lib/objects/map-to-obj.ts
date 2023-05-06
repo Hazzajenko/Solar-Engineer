@@ -49,6 +49,36 @@ export const toEntities = <
 	)
 }
 
+export const entitiesToMap = <
+	T extends {
+		id: string
+	},
+>(
+	entities: T[],
+) => {
+	return entities.reduce((acc, element) => {
+		acc.set(element.id, element)
+		return acc
+	}, new Map())
+}
+
+export const entitiesToArray = <
+	T extends {
+		id: string
+	},
+>(
+	entities: T[],
+) => {
+	return Object.entries(entities)
+}
+
+const object = {
+	'1': { id: '1', name: 'John' },
+	'2': { id: '2', name: 'Jane' },
+}
+
+const arr = Object.values(object)
+
 /*
  const arr = [
  { id: '1', name: 'John' },

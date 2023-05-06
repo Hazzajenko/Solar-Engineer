@@ -1,5 +1,6 @@
+import { ContextMenuType } from '../view'
 import {
-	ContextMenuState,
+	ContextMenuOpenState,
 	DragBoxState,
 	ModeState,
 	PreviewAxisState,
@@ -27,10 +28,11 @@ export const AppStateActions = createActionGroup({
 			previewAxis: PreviewAxisState
 		}>(),
 		'Set Context Menu State': props<{
-			contextMenu: ContextMenuState
-		}>() /*		'Set Selected State': props<{
-		 selected: SelectedState
-		 }>(),*/,
+			contextMenu: ContextMenuOpenState
+		}>(),
+		'Open Context Menu': props<{
+			contextMenuType: ContextMenuType
+		}>(),
 		'Clear State': emptyProps(),
 	},
 })

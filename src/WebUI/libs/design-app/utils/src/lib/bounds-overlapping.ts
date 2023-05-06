@@ -59,3 +59,8 @@ export const isPointInsideBounds = (point: Point, bounds: EntityBounds): boolean
 		point.y <= bounds.bottom
 	)
 }
+
+export const isPointInsideEntity = (point: Point, entity: CanvasEntity): boolean => {
+	const bounds = getEntityBounds(entity)
+	return isPointInsideBounds(point, bounds)
+}

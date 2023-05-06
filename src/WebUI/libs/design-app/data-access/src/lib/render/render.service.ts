@@ -1,13 +1,13 @@
 import { AppNgrxStateStore } from '../app-store'
 import { CanvasElementService, DIV_ELEMENT, DivElementsService } from '../div-elements'
-import { EntityStoreService } from '../entities'
+import { EntityNgrxStoreService } from '../entities'
 import { SelectedStoreService } from '../selected'
 import { CanvasRenderOptions } from './canvas-render-options'
-import { drawSelectedBox, drawSelectedStringBoxV2 } from './render-fns'
+import { drawSelectedBox, drawSelectedStringBoxV3 } from './render-fns'
 import { inject, Injectable } from '@angular/core'
 import { CANVAS_COLORS, PANEL_STROKE_STYLE } from '@design-app/shared'
 import { isPanel } from '@design-app/utils'
-import { shadeColor } from '@shared/utils'
+import { assertNotNull, shadeColor } from '@shared/utils'
 
 
 @Injectable({
@@ -16,7 +16,8 @@ import { shadeColor } from '@shared/utils'
 export class RenderService {
 	private _canvasElementService = inject(CanvasElementService)
 	private _divElements = inject(DivElementsService)
-	private _entities = inject(EntityStoreService)
+	private _entities = inject(EntityNgrxStoreService)
+	// private _entities = inject(EntityStoreService)
 	// private _app = inject(AppStoreService)
 	private _appStore = inject(AppNgrxStateStore)
 	private _selectedStore = inject(SelectedStoreService)
@@ -51,8 +52,8 @@ export class RenderService {
 		return this._canvasElementService.canvas
 	}
 
-	get entities() {
-		return this._entities.panels.getEntities()
+	get allPanels() {
+		return this._entities.panels.allPanels
 		// return this._state.entities.panels.getEntities()
 	}
 
@@ -95,10 +96,10 @@ export class RenderService {
 			ctx.beginPath()
 			const excludedIds = options?.excludedEntityIds
 			const entities = excludedIds
-				? this.entities.filter((entity) => {
+				? this.allPanels.filter((entity) => {
 						return !excludedIds.includes(entity.id)
 				  })
-				: this.entities
+				: this.allPanels
 			entities.forEach((entity) => {
 				/**
 				 * Draw Entity
@@ -116,7 +117,7 @@ export class RenderService {
 				 fillStyle = CANVAS_COLORS.SelectedPanelFillStyle
 				 }*/
 
-				const selectedState = this._selectedStore.select.state
+				const selectedState = this._selectedStore.state
 
 				const isSingleSelected =
 					selectedState.singleSelectedEntityId && selectedState.singleSelectedEntityId === entity.id
@@ -172,27 +173,33 @@ export class RenderService {
 			 ? { shouldRenderSelectedEntitiesBox: options.shouldRenderSelectedEntitiesBox, shouldRenderSelectedStringBox: options.shouldRenderSelectedStringBox}
 			 : { shouldRenderSelectedEntitiesBox: true, shouldRenderSelectedStringBox: true }*/
 
-			const multipleSelectedEntityIds = this._selectedStore.select.state.multipleSelectedEntityIds
+			const multipleSelectedEntityIds = this._selectedStore.state.multipleSelectedEntityIds
 			if (
 				shouldRenderSelectedEntitiesBox &&
 				multipleSelectedEntityIds.length
 				// selectedSnapshot.matches('EntitySelectedState.EntitiesSelected')
 			) {
 				// console.log('rendering selected box')
-				drawSelectedBox(ctx, this._entities.panels.getEntitiesByIds(multipleSelectedEntityIds))
+				drawSelectedBox(ctx, this._entities.panels.getByIds(multipleSelectedEntityIds))
 			}
 
-			const selectedStringId = this._selectedStore.select.state.selectedStringId
+			const selectedStringId = this._selectedStore.state.selectedStringId
 
 			if (
 				shouldRenderSelectedStringBox &&
 				selectedStringId
 				// selectedSnapshot.matches('StringSelectedState.StringSelected')
 			) {
-				drawSelectedStringBoxV2(ctx, selectedStringId, this._entities)
+				// const selectedStringId = this._selectedStore.selectedStringId
+				const selectedString = this._entities.strings.entities[selectedStringId]
+				assertNotNull(selectedString, 'selectedString')
+				const selectedStringPanels = this._entities.panels.getByStringId(selectedString.id)
+
+				drawSelectedStringBoxV3(ctx, selectedString, selectedStringPanels)
+				// drawSelectedStringBoxV2(ctx, selectedStringId, this._entities)
 				if (shouldRenderSelectedEntitiesBox && multipleSelectedEntityIds.length) {
 					// console.log('rendering selected box')
-					drawSelectedBox(ctx, this._entities.panels.getEntitiesByIds(multipleSelectedEntityIds))
+					drawSelectedBox(ctx, this._entities.panels.getByIds(multipleSelectedEntityIds))
 				}
 			}
 

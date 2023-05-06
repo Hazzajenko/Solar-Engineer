@@ -1,8 +1,9 @@
+import { ContextMenuType } from '../view'
 import { AppStateActions } from './app-state.actions'
 import { initialAppState } from './app-state.reducer'
 import { selectAppStateState } from './app-state.selectors'
 import {
-	ContextMenuState,
+	ContextMenuOpenState,
 	DragBoxState,
 	ModeState,
 	PreviewAxisState,
@@ -51,8 +52,12 @@ class AppNgrxRepository {
 		this._store.dispatch(AppStateActions.setModeState({ mode }))
 	}
 
-	setContextMenuState(contextMenu: ContextMenuState) {
+	setContextMenuState(contextMenu: ContextMenuOpenState) {
 		this._store.dispatch(AppStateActions.setContextMenuState({ contextMenu }))
+	}
+
+	openContextMenu(contextMenuType: ContextMenuType) {
+		this._store.dispatch(AppStateActions.openContextMenu({ contextMenuType }))
 	}
 
 	setPreviewAxisState(previewAxis: PreviewAxisState) {

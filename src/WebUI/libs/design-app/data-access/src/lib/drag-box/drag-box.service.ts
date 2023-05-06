@@ -1,5 +1,4 @@
-import { AppSnapshot } from '../app'
-import { AppNgrxStateStoreV2Service } from '../app-store'
+import { AppNgrxStateStoreV2Service, MODE_STATE } from '../app-store'
 import { CanvasElementService } from '../div-elements'
 import { DomPointService } from '../dom-point'
 import { EntityStoreService } from '../entities'
@@ -47,25 +46,29 @@ export class DragBoxService {
 		return this.ctx.getTransform().a
 	}
 
-	handleDragBoxMouseDown(
-		event: PointerEvent,
-		currentPoint: TransformedPoint,
-		appStateSnapshot: AppSnapshot,
-	) {
+	handleDragBoxMouseDown(event: PointerEvent, currentPoint: TransformedPoint) {
+		const modeState = this._app.state.mode
+		if (modeState === MODE_STATE.SELECT_MODE) {
+			this._app.dispatch.setDragBoxState('SelectionBoxInProgress')
+		}
+		if (modeState === MODE_STATE.CREATE_MODE) {
+			this._app.dispatch.setDragBoxState('CreationBoxInProgress')
+		}
+		this.dragBoxStart = currentPoint
 		// const clickMode = this._machine.state[GRID_STATE_KEY]
 
-		switch (true) {
-			case appStateSnapshot.matches('GridState.ModeState.SelectMode'):
-				this._app.dispatch.setDragBoxState('SelectionBoxInProgress')
-				// this._app.sendEvent({ type: 'SelectionBoxStarted' })
-				// this._machine.sendEvent(new SelectionBoxStarted({ point: currentPoint }))
-				break
-			case appStateSnapshot.matches('GridState.ModeState.CreateMode'):
-				this._app.dispatch.setDragBoxState('CreationBoxInProgress')
-				// this._app.sendEvent({ type: 'CreationBoxStarted' })
-				// this._machine.sendEvent(new CreationBoxStarted())
-				break
-		}
+		/*		switch (true) {
+		 case appStateSnapshot.matches('GridState.ModeState.SelectMode'):
+		 this._app.dispatch.setDragBoxState('SelectionBoxInProgress')
+		 // this._app.sendEvent({ type: 'SelectionBoxStarted' })
+		 // this._machine.sendEvent(new SelectionBoxStarted({ point: currentPoint }))
+		 break
+		 case appStateSnapshot.matches('GridState.ModeState.CreateMode'):
+		 this._app.dispatch.setDragBoxState('CreationBoxInProgress')
+		 // this._app.sendEvent({ type: 'CreationBoxStarted' })
+		 // this._machine.sendEvent(new CreationBoxStarted())
+		 break
+		 }*/
 		/*		if (appStateSnapshot.matches('GridState.ModeState.CreateMode')) {
 		 this._machine.sendEvent(new CreationBoxStarted())
 		 }
@@ -83,7 +86,7 @@ export class DragBoxService {
 		 default:
 		 throw new Error(`GridState ${GridState} not handled`)
 		 }*/
-		this.dragBoxStart = currentPoint
+
 		/*
 
 		 if (GridState === GRID_STATE.IN_SELECT_MODE) {
