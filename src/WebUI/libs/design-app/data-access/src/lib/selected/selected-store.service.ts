@@ -80,15 +80,15 @@ class SelectedRepository {
 	}
 
 	startMultiSelect(entityId: string) {
-		this._store.dispatch(SelectedActions.startMultiselect({ entityId }))
+		this._store.dispatch(SelectedActions.startMultiSelect({ entityId }))
 	}
 
 	addEntitiesToMultiSelect(entityIds: string[]) {
-		this._store.dispatch(SelectedActions.addEntitiesToMultiselect({ entityIds }))
+		this._store.dispatch(SelectedActions.addEntitiesToMultiSelect({ entityIds }))
 	}
 
 	removeEntitiesFromMultiSelect(entityIds: string[]) {
-		this._store.dispatch(SelectedActions.removeEntitiesFromMultiselect({ entityIds }))
+		this._store.dispatch(SelectedActions.removeEntitiesFromMultiSelect({ entityIds }))
 	}
 
 	clearSelectedState() {

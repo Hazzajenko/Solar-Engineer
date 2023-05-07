@@ -132,6 +132,9 @@ run-plugin-none:
 run-plugin-dry:
 	nx generate ngrx-pull:ngrx-entity mylib --dry-run
 
-install-storybook:
-	nx g @nx/angular:storybook-configuration --storybook7Configuration --storybook7UiFramework=@storybook/angular --uiFramework=@storybook/angular --generateStories
+#install-storybook:
+	#nx g @nx/angular:storybook-configuration --storybook7Configuration --storybook7UiFramework=@storybook/angular --uiFramework=@storybook/angular --generateStories
 	#nx g @nx/angular:storybook-configuration --storybook7Configuration --storybook7UiFramework=@storybook/angular --uiFramework=@storybook/angular --configureCypress --generateStories --generateCypressSpecs --linter=eslint --cypressDirectory=.cypress --cypressProject=design-app-e2e --cypressBaseUrl=http://localhost:4200 --cypressSpecs=apps/design-app-e2e/src/integration/**/*.spec.ts --cypressPluginsFile=cypress/plugins/index.js --cypressSupportFile=cypress/support/index.ts --cypressTestFiles=apps/design-app-e2e/src/integration/**/*.spec.ts --cypressComponentTesting=true --cypressCodeCoverage=true --cypressWatch=false --cypressVideo=false --cypressViewportHeight=900 --cypressViewportWidth=1440 --cypressChromeWebSecurity=false --cypressChromeArgs=--disable-dev-shm-usage,--no-sandbox,--disable-setuid-sandbox,--disable-gpu,--disable-software-rasterizer,--disable-dev-shm-usage,--no-sandbox,--disable-setuid-sandbox,--disable-gpu,--disable-software-rasterizer --cypressEnv=CI=true --cypressEnv=STORYBOOK_BASE_HREF=/iframe.html --cypressEnv=STORYBOOK
+
+migrate-ngrx-next:
+	nx migrate @ngrx/data@next @ngrx/effects@next @ngrx/entity@next @ngrx/schematics@next @ngrx/store@next @ngrx/store-devtools@next

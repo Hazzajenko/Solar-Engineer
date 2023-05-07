@@ -4,6 +4,7 @@ import { SelectedActions } from './selected.actions'
 import { Action, createReducer, on } from '@ngrx/store'
 import { Point } from '@shared/data-access/models'
 
+
 export const SELECTED_FEATURE_KEY = 'selected'
 
 export interface SelectedState {
@@ -48,13 +49,13 @@ const reducer = createReducer(
 		singleSelectedEntity: undefined,
 	})),
 
-	on(SelectedActions.startMultiselect, (state, { entity }) => ({
+	on(SelectedActions.startMultiSelect, (state, { entity }) => ({
 		...state,
 		multiSelectedEntities: [entity],
 		singleSelectedEntity: undefined,
 	})),
 
-	on(SelectedActions.addEntityToMultiselect, (state, { entity }) => ({
+	on(SelectedActions.addEntityToMultiSelect, (state, { entity }) => ({
 		...state,
 		multiSelectedEntities: [...state.multiSelectedEntities, entity],
 		singleSelectedEntity: undefined,

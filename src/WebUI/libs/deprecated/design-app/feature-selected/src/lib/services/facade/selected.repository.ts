@@ -5,6 +5,7 @@ import { inject, Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
 import { Point } from '@shared/data-access/models'
 
+
 @Injectable({
 	providedIn: 'root',
 })
@@ -16,8 +17,8 @@ export class SelectedRepository {
 	}
 
 	/*  public addNearbyPanelsOnAxis(panels: TypeOfEntity[]) {
-   this._store.dispatch(SelectedActions.addNearbyPanelsOnAxis({ panels }))
-   }*/
+	 this._store.dispatch(SelectedActions.addNearbyPanelsOnAxis({ panels }))
+	 }*/
 
 	public clearNearbyEntitiesOnAxis() {
 		this._store.dispatch(SelectedActions.clearNearbyEntitiesOnAxis())
@@ -52,24 +53,24 @@ export class SelectedRepository {
 	}
 
 	public startMultiSelect(entity: TypeOfEntity) {
-		this._store.dispatch(SelectedActions.startMultiselect({ entity }))
+		this._store.dispatch(SelectedActions.startMultiSelect({ entity }))
 	}
 
 	public addEntityToMultiSelect(entity: TypeOfEntity) {
-		this._store.dispatch(SelectedActions.addEntityToMultiselect({ entity }))
+		this._store.dispatch(SelectedActions.addEntityToMultiSelect({ entity }))
 	}
 
 	/*  public removeEntityFromMultiSelect(entity: TypeOfEntity) {
-   this._store.dispatch(SelectedActions.removeEntityFromMultiselect({ entity }))
-   }*/
+	 this._store.dispatch(SelectedActions.removeEntityFromMultiselect({ entity }))
+	 }*/
 
 	public clearMultiSelect() {
 		this._store.dispatch(SelectedActions.clearMultiSelected())
 	}
 
 	/*  public deselectEntityById(id: string) {
-   // this._store.dispatch(SelectedActions.deselectEntityById({ id }))
-   }*/
+	 // this._store.dispatch(SelectedActions.deselectEntityById({ id }))
+	 }*/
 
 	public clearSelectedState() {
 		this._store.dispatch(SelectedActions.clearSelectedState())

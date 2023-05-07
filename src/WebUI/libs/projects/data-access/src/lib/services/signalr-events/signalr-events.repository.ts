@@ -1,36 +1,37 @@
+import { SignalrEventsActions } from '../../store'
 import { inject, Injectable } from '@angular/core'
+import { Update } from '@ngrx/entity'
 import { Store } from '@ngrx/store'
 import { ProjectSignalrEvent } from '@shared/data-access/models'
-import { Update } from '@ngrx/entity'
-import { SignalrEventsActions } from '../../store'
+
 
 @Injectable({
-  providedIn: 'root',
+	providedIn: 'root',
 })
 export class SignalrEventsRepository {
-  private store = inject(Store)
+	private store = inject(Store)
 
-  addSignalrEvent(projectSignalrEvent: ProjectSignalrEvent) {
-    this.store.dispatch(SignalrEventsActions.addSignalrEvent({ projectSignalrEvent }))
-  }
+	addSignalrEvent(projectSignalrEvent: ProjectSignalrEvent) {
+		this.store.dispatch(SignalrEventsActions.addSignalREvent({ projectSignalrEvent }))
+	}
 
-  addManySignalrEvents(projectSignalrEvents: ProjectSignalrEvent[]) {
-    this.store.dispatch(SignalrEventsActions.addManySignalrEvents({ projectSignalrEvents }))
-  }
+	addManySignalrEvents(projectSignalrEvents: ProjectSignalrEvent[]) {
+		this.store.dispatch(SignalrEventsActions.addManySignalREvents({ projectSignalrEvents }))
+	}
 
-  sendSignalrEvent(projectSignalrEvent: ProjectSignalrEvent) {
-    this.store.dispatch(SignalrEventsActions.sendSignalrEvent({ projectSignalrEvent }))
-  }
+	sendSignalrEvent(projectSignalrEvent: ProjectSignalrEvent) {
+		this.store.dispatch(SignalrEventsActions.sendSignalREvent({ projectSignalrEvent }))
+	}
 
-  updateSignalrEvent(update: Update<ProjectSignalrEvent>) {
-    this.store.dispatch(SignalrEventsActions.updateSignalrEvent({ update }))
-  }
+	updateSignalrEvent(update: Update<ProjectSignalrEvent>) {
+		this.store.dispatch(SignalrEventsActions.updateSignalREvent({ update }))
+	}
 
-  receiveProjectSignalrEvent(projectSignalrEvent: ProjectSignalrEvent) {
-    this.store.dispatch(SignalrEventsActions.receiveSignalrEvent({ projectSignalrEvent }))
-  }
+	receiveProjectSignalrEvent(projectSignalrEvent: ProjectSignalrEvent) {
+		this.store.dispatch(SignalrEventsActions.receiveSignalREvent({ projectSignalrEvent }))
+	}
 
-  receiveManyProjectSignalrEvents(projectSignalrEvents: ProjectSignalrEvent[]) {
-    this.store.dispatch(SignalrEventsActions.receiveManySignalrEvents({ projectSignalrEvents }))
-  }
+	receiveManyProjectSignalrEvents(projectSignalrEvents: ProjectSignalrEvent[]) {
+		this.store.dispatch(SignalrEventsActions.receiveManySignalREvents({ projectSignalrEvents }))
+	}
 }

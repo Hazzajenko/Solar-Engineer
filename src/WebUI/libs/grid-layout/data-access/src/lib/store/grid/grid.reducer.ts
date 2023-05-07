@@ -1,71 +1,71 @@
 import { ClientXY } from '../../models'
+import { GridActions } from './grid.actions'
 import { Action, createReducer, on } from '@ngrx/store'
 import { BLOCK_TYPE, BlockType, GridMode } from '@shared/data-access/models'
-import { GridActions } from './grid.actions'
 
 export const GRID_FEATURE_KEY = 'grid'
 
 export interface GridState {
-  createMode: BlockType
-  gridMode: GridMode
-  clientXY: ClientXY
+	createMode: BlockType
+	gridMode: GridMode
+	clientXY: ClientXY
 }
 
 export const initialGridState: GridState = {
-  createMode: BLOCK_TYPE.PANEL,
-  gridMode: GridMode.SELECT,
-  clientXY: {
-    clientX: undefined,
-    clientY: undefined,
-  },
+	createMode: BLOCK_TYPE.PANEL,
+	gridMode: GridMode.SELECT,
+	clientXY: {
+		clientX: undefined,
+		clientY: undefined,
+	},
 }
 
 export const reducer = createReducer(
-  initialGridState,
+	initialGridState,
 
-  on(GridActions.changeCreateType, (state, { createType }) => ({
-    ...state,
-    createMode: createType,
-  })),
+	on(GridActions.changeCreateType, (state, { createType }) => ({
+		...state,
+		createMode: createType,
+	})),
 
-  on(GridActions.clearGridState, (state) => ({
-    ...state,
-    gridMode: GridMode.SELECT,
-  })),
+	on(GridActions.clearGridState, (state) => ({
+		...state,
+		gridMode: GridMode.SELECT,
+	})),
 
-  on(GridActions.selectGridmodeCreate, (state) => ({
-    ...state,
-    gridMode: GridMode.CREATE,
-  })),
+	on(GridActions.selectGridModeCreate, (state) => ({
+		...state,
+		gridMode: GridMode.CREATE,
+	})),
 
-  on(GridActions.selectGridmodeDelete, (state) => ({
-    ...state,
-    gridMode: GridMode.DELETE,
-  })),
+	on(GridActions.selectGridModeDelete, (state) => ({
+		...state,
+		gridMode: GridMode.DELETE,
+	})),
 
-  on(GridActions.selectGridmodeLink, (state) => ({
-    ...state,
-    gridMode: GridMode.LINK,
-  })),
+	on(GridActions.selectGridModeLink, (state) => ({
+		...state,
+		gridMode: GridMode.LINK,
+	})),
 
-  on(GridActions.selectGridmodeSelect, (state) => ({
-    ...state,
-    gridMode: GridMode.SELECT,
-  })),
+	on(GridActions.selectGridModeSelect, (state) => ({
+		...state,
+		gridMode: GridMode.SELECT,
+	})),
 
-  on(GridActions.setClientxy, (state, { clientXY }) => ({
-    ...state,
-    clientXY,
-  })),
-  on(GridActions.clearClientxy, (state) => ({
-    ...state,
-    clientXY: {
-      clientX: undefined,
-      clientY: undefined,
-    },
-  })),
+	on(GridActions.setClientXY, (state, { clientXY }) => ({
+		...state,
+		clientXY,
+	})),
+	on(GridActions.clearClientXY, (state) => ({
+		...state,
+		clientXY: {
+			clientX: undefined,
+			clientY: undefined,
+		},
+	})),
 )
 
 export function gridReducer(state: GridState | undefined, action: Action) {
-  return reducer(state, action)
+	return reducer(state, action)
 }

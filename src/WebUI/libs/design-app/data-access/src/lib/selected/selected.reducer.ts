@@ -55,14 +55,14 @@ const reducer = createReducer(
 		entityState: ENTITY_SELECTED_STATE.MULTIPLE_ENTITIES_SELECTED,
 	})),
 
-	on(SelectedActions.addEntitiesToMultiselect, (state, { entityIds }) => ({
+	on(SelectedActions.addEntitiesToMultiSelect, (state, { entityIds }) => ({
 		...state,
 		multipleSelectedEntityIds: [...state.multipleSelectedEntityIds, ...entityIds],
 		entityState: ENTITY_SELECTED_STATE.MULTIPLE_ENTITIES_SELECTED,
 		singleSelectedEntityId: undefined,
 	})),
 
-	on(SelectedActions.removeEntitiesFromMultiselect, (state, { entityIds }) => ({
+	on(SelectedActions.removeEntitiesFromMultiSelect, (state, { entityIds }) => ({
 		...state,
 		multipleSelectedEntityIds: state.multipleSelectedEntityIds.filter(
 			(id) => !entityIds.includes(id),
