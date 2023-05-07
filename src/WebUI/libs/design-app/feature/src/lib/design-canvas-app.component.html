@@ -1,43 +1,28 @@
-<!--<canvas #canvas
-        id='canvas'
-        class='absolute inset-0'
-        appDesignCanvasApp></canvas>-->
 <canvas #canvas
         id='canvas'
         class='absolute inset-0'
-        appDesignCanvasNgrxApp></canvas>
+        appDesignCanvas></canvas>
 
 <div class='absolute'>
   <div id='fps'></div>
-  <div style='display: none'
-       id='mouse-pos'></div>
-  <div style='display: none'
-       id='transformed-mouse-pos'></div>
-  <div style='display: none'
-       id='scale-element'></div>
-  <div style='display: none'
-       id='string-stats'></div>
-  <div style='display: none'
-       id='panel-stats'></div>
-  <div style='display: none'
-       id='rotate-stats'></div>
+  <div id='scale-element'></div>
 </div>
 
-<div
+<!--<div
   #keyMap
   id='key-map'
   class='absolute left-5 top-5 z-10'
 >
-  <!--  [style.display]="state.menu.keyMap ? 'initial' : 'none'"-->
+  &lt;!&ndash;  [style.display]="state.menu.keyMap ? 'initial' : 'none'"&ndash;&gt;
   <app-key-map-component />
-</div>
-
+</div>-->
+<!--
 <div #stateValues
      id='state-values'
      class='absolute left-72 top-5 z-10'>
   <app-state-values />
-</div>
-
+</div>-->
+<!--
 <div #graphicsMenu
      id='graphics-menu'
      class='absolute right-5 top-5 z-10'>
@@ -47,8 +32,8 @@
                       [text]='"push"'
                       [tone]='"Primary"'
                       (clickEvent)='pushWindow($event)' />
-  <!--  <button (click)='windows.push({id: "23123", location: { x: $event.clientX, y: $event.clientY}})'></button>-->
-</div>
+  &lt;!&ndash;  <button (click)='windows.push({id: "23123", location: { x: $event.clientX, y: $event.clientY}})'></button>&ndash;&gt;
+</div>-->
 
 <app-right-click-menu />
 <!--(minimiseEvent)='minimisedWindow.style.display = "block"'-->
@@ -67,11 +52,20 @@
   ></ng-template>
   <!--                      <ng-template appDynamic [block]='block'></ng-template>-->
 </ng-container>
-<dialog-move-panels-to-string-v2 />
+<!--<dialog-move-panels-to-string-v2 />-->
 <!--<app-window
   [location]='{x: 150, y: 150}'
   (minimiseEvent)='minimisedWindow.style.display = "block"'
   #window />-->
+<!--<side-ui-move-panels-to-string-v3 />-->
+<!--<side-ui-move-panels-to-string-v2 />-->
+<!--<side-ui-move-panels-to-string-v5 />-->
+<!--<side-ui-move-panels-to-string-v4 />-->
+
+<!--<side-ui-move-panels-to-string />-->
+<side-ui-nav-bar />
+<overlay-tool-bar-component />
+<!--<dialog-app-settings />-->
 <div
   id='minimised-window'
   class='absolute space-x-1  flex left-0 bottom-0 z-10  bg-white  transition-all duration-200 ease-in-out text-center overflow-hidden'

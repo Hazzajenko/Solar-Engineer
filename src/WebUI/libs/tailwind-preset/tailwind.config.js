@@ -60,15 +60,27 @@ module.exports = {
 							96: '24rem',
 						},*/
 			colors: {
-				primary: {
+				primaryV2: {
 					light: '#5eead4',
 					DEFAULT: '#14b8a6',
 					dark: '#0f766e',
 				},
-				secondary: {
+				secondaryV2: {
 					light: '#bae6fd',
 					DEFAULT: '#0ea5e9',
 					dark: '#0369a1',
+				},
+				primary: {
+					'50': '#eff6ff',
+					'100': '#dbeafe',
+					'200': '#bfdbfe',
+					'300': '#93c5fd',
+					'400': '#60a5fa',
+					'500': '#3b82f6',
+					'600': '#2563eb',
+					'700': '#1d4ed8',
+					'800': '#1e40af',
+					'900': '#1e3a8a',
 				},
 				white: '#ffffff',
 				black: '#000000',
@@ -96,8 +108,39 @@ module.exports = {
 				'5/7': '71.4285714%',
 				'6/7': '85.7142857%',
 			},
+			animation: {
+				wiggle: 'wiggle 1s ease-in-out infinite',
+				enter: 'enter 1s ease-in-out',
+				leave: 'leave 1s ease-in-out',
+			},
+			keyframes: {
+				wiggle: {
+					'0%, 100%': { transform: 'rotate(-3deg)' },
+					'50%': { transform: 'rotate(3deg)' },
+				},
+				enter: {
+					'0%': { transform: 'translate-x-full' },
+					'100%': { transform: 'translate-x-0' },
+				},
+				leave: {
+					'0%': { transform: 'translate-x-0' },
+					'100%': { transform: 'translate-x-full' },
+				},
+			},
 		},
 	},
 	important: true,
-	plugins: [require('@tailwindcss/forms'), require('@tailwindcss/typography')],
+	plugins: [
+		require('@tailwindcss/forms'),
+		require('@tailwindcss/typography'),
+		require('flowbite/plugin'),
+	],
+	content: ['../../.node_modules/flowbite/**/*.js'],
 }
+//
+// Entering: "transform transition ease-in-out duration-500 sm:duration-700"
+// From: "translate-x-full"
+// To: "translate-x-0"
+// Leaving: "transform transition ease-in-out duration-500 sm:duration-700"
+// From: "translate-x-0"
+// To: "translate-x-full"

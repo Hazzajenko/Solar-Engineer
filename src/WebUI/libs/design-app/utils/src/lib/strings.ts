@@ -11,9 +11,9 @@ export const isString = (string: CanvasString | undefined): string is CanvasStri
 }
 
 export const createString = (
-	name: string = 'New String',
-	color: string = '#cf46ff',
-	parallel: boolean = false,
+	name = 'New String',
+	color = '#cf46ff',
+	parallel = false,
 ): CanvasString => {
 	return {
 		id: newGuid() as StringId,
@@ -24,11 +24,7 @@ export const createString = (
 }
 
 export const CanvasStringFactory = {
-	create: (
-		name: string = 'New String',
-		color: string = '#cf46ff',
-		parallel: boolean = false,
-	): CanvasString => {
+	create: (name = 'New String', color = '#cf46ff', parallel = false): CanvasString => {
 		return {
 			id: newGuid() as StringId,
 			name,

@@ -1,6 +1,3 @@
-import { DynamicComponentDirective } from '../../../../grid-layout/feature/src/lib/directives/dynamic-component.directive'
-import { GetBlockPipe } from '../../../../grid-layout/feature/src/lib/pipes/get-block.pipe'
-import { DesignCanvasNgrxDirective } from './design-canvas-ngrx.directive'
 import { DesignCanvasDirective } from './design-canvas.directive'
 import { MovePanelsToStringV2Component } from './dialogs/move-panels-to-string-v2/move-panels-to-string-v2.component'
 import { DynamicDialogDirective } from './dynamic-dialog.directive'
@@ -35,7 +32,16 @@ import { LetModule } from '@ngrx/component'
 import { getGuid } from '@ngrx/data'
 import { ButtonBuilderComponent, ShowSvgComponent } from '@shared/ui'
 import { updateObjectForStore } from 'deprecated/design-app/feature-design-canvas'
-
+import {
+	MovePanelsToStringSideUiComponent,
+	MovePanelsToStringSideUiV2Component,
+	MovePanelsToStringSideUiV3Component,
+	SideUiNavBarComponent,
+} from './side-uis'
+import { MovePanelsToStringSideUiV4Component } from './side-uis/move-panels-to-string-v4/move-panels-to-string-side-ui-v4.component'
+import { MovePanelsToStringSideUiV5Component } from './side-uis/move-panels-to-string-v5/move-panels-to-string-side-ui-v5.component'
+import { OverlayToolBarComponent } from './overlays'
+import { AppSettingsDialogComponent } from './dialogs'
 
 @Component({
 	changeDetection: ChangeDetectionStrategy.OnPush,
@@ -51,11 +57,17 @@ import { updateObjectForStore } from 'deprecated/design-app/feature-design-canva
 		DesignCanvasDirective,
 		WindowComponent,
 		ButtonBuilderComponent,
-		DesignCanvasNgrxDirective,
-		DynamicComponentDirective,
-		GetBlockPipe,
+		DesignCanvasDirective,
 		DynamicDialogDirective,
 		MovePanelsToStringV2Component,
+		MovePanelsToStringSideUiComponent,
+		MovePanelsToStringSideUiV2Component,
+		MovePanelsToStringSideUiV3Component,
+		MovePanelsToStringSideUiV4Component,
+		MovePanelsToStringSideUiV5Component,
+		SideUiNavBarComponent,
+		OverlayToolBarComponent,
+		AppSettingsDialogComponent,
 	],
 	selector: 'app-design-canvas-app',
 	standalone: true,

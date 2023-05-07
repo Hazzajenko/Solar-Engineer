@@ -18,7 +18,7 @@ import {
 import { inject, Injectable } from '@angular/core'
 import { toSignal } from '@angular/core/rxjs-interop'
 import { select, Store } from '@ngrx/store'
-
+import { UpdateStr } from '@ngrx/entity/src/models'
 
 @Injectable({
 	providedIn: 'root',
@@ -101,6 +101,10 @@ class AppNgrxRepository {
 
 	addDialog(dialog: DialogInput) {
 		this._store.dispatch(AppStateActions.addDialog({ dialog }))
+	}
+
+	updateDialog(update: UpdateStr<DialogInput>) {
+		this._store.dispatch(AppStateActions.updateDialog({ update }))
 	}
 
 	clearState() {

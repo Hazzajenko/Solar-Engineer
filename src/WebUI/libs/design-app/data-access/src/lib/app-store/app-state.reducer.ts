@@ -113,6 +113,18 @@ const reducer = createReducer(
 		dialogs: [...state.dialogs, dialog],
 	})),
 
+	on(AppStateActions.updateDialog, (state, { update }) => ({
+		...state,
+		dialogs: state.dialogs.map((dialog) =>
+			dialog.id === update.id
+				? {
+						...dialog,
+						...update.changes,
+				  }
+				: dialog,
+		),
+	})),
+
 	on(AppStateActions.removeDialog, (state, { dialogId }) => ({
 		...state,
 		dialogs: state.dialogs.filter((d) => d.id !== dialogId),

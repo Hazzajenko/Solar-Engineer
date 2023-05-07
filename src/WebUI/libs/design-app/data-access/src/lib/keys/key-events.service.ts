@@ -1,5 +1,5 @@
 import { AppNgrxStateStoreV2Service, MODE_STATE } from '../app-store'
-import { EntityNgrxStoreService, genStringNameV2 } from '../entities'
+import { createStringWithPanelsV2, EntityNgrxStoreService, genStringNameV2 } from '../entities'
 import { ObjectPositioningService } from '../object-positioning'
 import {
 	MOVE_ENTITY_STATE,
@@ -16,7 +16,6 @@ import { createString, updateObjectByIdForStoreV3 } from '@design-app/utils'
 import { KEYS, Point } from '@shared/data-access/models'
 import { VIEW_STATE } from 'deprecated/design-app/feature-design-canvas'
 
-
 @Injectable({
 	providedIn: 'root',
 })
@@ -32,90 +31,92 @@ export class KeyEventsService {
 	private _view = inject(ViewPositioningService)
 
 	keyUpHandlerV2 = (event: KeyboardEvent, rawMousePos: Point, currentPoint: TransformedPoint) => {
-		return {
-			[KEYS.ESCAPE]: () => {
-				this._selected.clearSelectedInOrder()
-				this._render.renderCanvasApp()
-			},
-			[KEYS.X]: () => {
-				const multipleSelectedIds = this._selectedStore.state.multipleSelectedEntityIds
-				if (multipleSelectedIds.length <= 1) return
-				const name = genStringNameV2(this._entities.strings.allStrings)
-				const string = createString(name)
+		return (
+			{
+				[KEYS.ESCAPE]: () => {
+					this._selected.clearSelectedInOrder()
+					this._render.renderCanvasApp()
+				},
+				[KEYS.X]: () => {
+					const multipleSelectedIds = this._selectedStore.state.multipleSelectedEntityIds
+					if (multipleSelectedIds.length <= 1) return
+					const amountOfStrings = this._entities.strings.allStrings.length
+					const { string, panelUpdates } = createStringWithPanelsV2(
+						multipleSelectedIds,
+						amountOfStrings,
+					)
+					this._entities.strings.dispatch.addString(string)
+					this._entities.panels.dispatch.updateManyPanels(panelUpdates)
 
-				const entities = this._entities.panels.getByIds(multipleSelectedIds)
-				const panels = entities.filter((entity) => entity.type === 'panel') as CanvasPanel[]
-				const panelUpdates = panels.map(
-					updateObjectByIdForStoreV3<CanvasPanel>({ stringId: string.id }),
-				)
-				this._entities.strings.dispatch.addString(string)
-				this._entities.panels.dispatch.updateManyPanels(panelUpdates)
+					this._selectedStore.dispatch.selectString(string.id)
+					this._render.renderCanvasApp()
+				},
+				[KEYS.R]: () => {
+					const rotateState = this._positioningStore.state.rotateEntityState
+					if (rotateState === ROTATE_ENTITY_STATE.ROTATING_SINGLE_ENTITY) {
+						this._objRotating.clearSingleToRotate()
+						return
+					}
+					if (rotateState === ROTATE_ENTITY_STATE.ROTATING_MULTIPLE_ENTITIES) {
+						this._objRotating.clearMultipleToRotate()
+						return
+					}
+				},
+				[KEYS.C]: () => {
+					const mode = this._appState.state.mode
+					const newMode =
+						mode === MODE_STATE.CREATE_MODE ? MODE_STATE.SELECT_MODE : MODE_STATE.CREATE_MODE
+					this._appState.dispatch.setModeState(newMode)
+				},
+				[KEYS.SHIFT]: () => {
+					const moveState = this._positioningStore.state.moveEntityState
+					if (moveState === MOVE_ENTITY_STATE.MOVING_MULTIPLE_ENTITIES) {
+						this._objPositioning.stopMultiSelectDragging(rawMousePos)
+						return
+					}
+					if (moveState === MOVE_ENTITY_STATE.MOVING_SINGLE_ENTITY) {
+						this._objPositioning.singleToMoveMouseUp(event.altKey, currentPoint)
 
-				this._selectedStore.dispatch.selectString(string.id)
-				this._render.renderCanvasApp()
-			},
-			[KEYS.R]: () => {
-				const rotateState = this._positioningStore.state.rotateEntityState
-				if (rotateState === ROTATE_ENTITY_STATE.ROTATING_SINGLE_ENTITY) {
-					this._objRotating.clearSingleToRotate()
-					return
-				}
-				if (rotateState === ROTATE_ENTITY_STATE.ROTATING_MULTIPLE_ENTITIES) {
-					this._objRotating.clearMultipleToRotate()
-					return
-				}
-			},
-			[KEYS.C]: () => {
-				const mode = this._appState.state.mode
-				const newMode =
-					mode === MODE_STATE.CREATE_MODE ? MODE_STATE.SELECT_MODE : MODE_STATE.CREATE_MODE
-				this._appState.dispatch.setModeState(newMode)
-			},
-			[KEYS.SHIFT]: () => {
-				const moveState = this._positioningStore.state.moveEntityState
-				if (moveState === MOVE_ENTITY_STATE.MOVING_MULTIPLE_ENTITIES) {
-					this._objPositioning.stopMultiSelectDragging(rawMousePos)
-					return
-				}
-				if (moveState === MOVE_ENTITY_STATE.MOVING_SINGLE_ENTITY) {
-					this._objPositioning.singleToMoveMouseUp(event.altKey, currentPoint)
+						return
+					}
+				},
+				[KEYS.ALT]: () => {
+					const rotateState = this._positioningStore.state.rotateEntityState
+					if (rotateState === ROTATE_ENTITY_STATE.ROTATING_SINGLE_ENTITY) {
+						this._objRotating.clearSingleToRotate()
+						return
+					}
+					if (rotateState === ROTATE_ENTITY_STATE.ROTATING_MULTIPLE_ENTITIES) {
+						this._objRotating.clearMultipleToRotate()
+						return
+					}
+				},
+				[KEYS.CTRL_OR_CMD]: () => {
+					const { moveEntityState, rotateEntityState } = this._positioningStore.state
+					if (moveEntityState === MOVE_ENTITY_STATE.MOVING_MULTIPLE_ENTITIES) {
+						this._objPositioning.stopMultiSelectDragging(rawMousePos)
+					}
+					if (moveEntityState === MOVE_ENTITY_STATE.MOVING_SINGLE_ENTITY) {
+						this._objPositioning.singleToMoveMouseUp(event.altKey, currentPoint)
+					}
 
-					return
-				}
-			},
-			[KEYS.ALT]: () => {
-				const rotateState = this._positioningStore.state.rotateEntityState
-				if (rotateState === ROTATE_ENTITY_STATE.ROTATING_SINGLE_ENTITY) {
-					this._objRotating.clearSingleToRotate()
-					return
-				}
-				if (rotateState === ROTATE_ENTITY_STATE.ROTATING_MULTIPLE_ENTITIES) {
-					this._objRotating.clearMultipleToRotate()
-					return
-				}
-			},
-			[KEYS.CTRL_OR_CMD]: () => {
-				const { moveEntityState, rotateEntityState } = this._positioningStore.state
-				if (moveEntityState === MOVE_ENTITY_STATE.MOVING_MULTIPLE_ENTITIES) {
-					this._objPositioning.stopMultiSelectDragging(rawMousePos)
-				}
-				if (moveEntityState === MOVE_ENTITY_STATE.MOVING_SINGLE_ENTITY) {
-					this._objPositioning.singleToMoveMouseUp(event.altKey, currentPoint)
-				}
+					if (rotateEntityState === ROTATE_ENTITY_STATE.ROTATING_SINGLE_ENTITY) {
+						this._objRotating.clearSingleToRotate()
+					}
 
-				if (rotateEntityState === ROTATE_ENTITY_STATE.ROTATING_SINGLE_ENTITY) {
-					this._objRotating.clearSingleToRotate()
-				}
+					if (rotateEntityState === ROTATE_ENTITY_STATE.ROTATING_MULTIPLE_ENTITIES) {
+						this._objRotating.clearMultipleToRotate()
+					}
 
-				if (rotateEntityState === ROTATE_ENTITY_STATE.ROTATING_MULTIPLE_ENTITIES) {
-					this._objRotating.clearMultipleToRotate()
-				}
-
-				if (this._appState.state.view === VIEW_STATE.VIEW_DRAGGING_IN_PROGRESS) {
-					this._view.handleDragScreenMouseUp()
-				}
-			},
-		}[event.key]()
+					if (this._appState.state.view === VIEW_STATE.VIEW_DRAGGING_IN_PROGRESS) {
+						this._view.handleDragScreenMouseUp()
+					}
+				},
+			}[event.key] ||
+			(() => {
+				console.log('unknown key', event)
+			})
+		)()
 	}
 
 	keyUpHandler(event: KeyboardEvent, rawMousePos: Point, currentPoint: TransformedPoint) {

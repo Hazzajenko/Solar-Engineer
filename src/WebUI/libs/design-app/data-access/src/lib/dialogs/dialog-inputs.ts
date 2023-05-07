@@ -3,12 +3,14 @@ import { DialogOptions } from './dialogs.service'
 export type DialogInput = {
 	id: string
 	component: DialogComponent
+	open: boolean
 	data?: unknown
 	options?: DialogOptions
 }
 
 export const DIALOG_COMPONENT = {
 	MOVE_PANELS_TO_STRING: 'MovePanelsToStringV4Component',
+	APP_SETTINGS: 'AppSettingsDialogComponent',
 } as const
 
 export type DialogComponent = (typeof DIALOG_COMPONENT)[keyof typeof DIALOG_COMPONENT]

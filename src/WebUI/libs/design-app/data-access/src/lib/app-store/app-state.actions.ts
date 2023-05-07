@@ -8,6 +8,7 @@ import {
 	ViewPositioningState,
 } from './app-state.types'
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
+import { UpdateStr } from '@ngrx/entity/src/models'
 
 export const AppStateActions = createActionGroup({
 	source: 'App State Store',
@@ -41,6 +42,9 @@ export const AppStateActions = createActionGroup({
 		'Toggle Dialog State': emptyProps(),
 		'Add Dialog': props<{
 			dialog: DialogInput
+		}>(),
+		'Update Dialog': props<{
+			update: UpdateStr<DialogInput>
 		}>(),
 		'Remove Dialog': props<{
 			dialogId: string

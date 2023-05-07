@@ -26,6 +26,8 @@
             "prefix": [
               "app",
               "dialog",
+							"side-ui",
+							"overlay",
               "menu"
             ],
             "style": "kebab-case"

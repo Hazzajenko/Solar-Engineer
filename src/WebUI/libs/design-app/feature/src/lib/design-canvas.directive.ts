@@ -1,14 +1,29 @@
-import { DesignCanvasDirectiveExtension } from './design-canvas-directive.extension'
-import { Directive, effect, inject, OnInit } from '@angular/core'
-import { toSignal } from '@angular/core/rxjs-interop'
+import { setupCanvas } from './setup-canvas'
+import { Directive, ElementRef, inject, NgZone, OnInit, Renderer2 } from '@angular/core'
 import {
-	AppNgrxStateStore,
-	AppSnapshot,
+	AppNgrxStateStoreV2Service,
+	CanvasElementService,
+	DomPointService,
+	DragBoxService,
+	EntityNgrxStoreService,
 	genStringNameV2,
-	initialAppState,
-	isPointInsideSelectedStringPanels,
+	GraphicsStoreService,
+	isPointInsideSelectedStringPanelsByStringIdNgrxWithPanels,
+	KeyEventsService,
+	MODE_STATE,
+	MOVE_ENTITY_STATE,
+	NearbyService,
+	ObjectPositioningService,
+	ObjectPositioningStoreService,
+	ObjectRotatingService,
+	RenderService,
+	ROTATE_ENTITY_STATE,
+	SelectedService,
+	SelectedStoreService,
+	ViewPositioningService,
 } from '@design-app/data-access'
 import {
+	CANVAS_COLORS,
 	CanvasEntity,
 	CanvasPanel,
 	ENTITY_TYPE,
@@ -22,59 +37,116 @@ import {
 	createString,
 	dragBoxKeysDown,
 	draggingScreenKeysDown,
+	eventToPointLocation,
+	getBoundsFromCenterPoint,
 	getCompleteBoundsFromMultipleEntitiesWithPadding,
 	getTopLeftPointFromTransformedPoint,
 	isContextMenu,
 	isDraggingEntity,
+	isEntityOverlappingWithBounds,
 	isPanel,
 	isPointInsideBounds,
+	isPointInsideEntity,
 	isReadyToMultiDrag,
 	isWheelButton,
 	multiSelectDraggingKeysDownAndIdsNotEmpty,
 	rotatingKeysDown,
-	updateObjectByIdForStore,
+	updateObjectByIdForStoreV3,
 } from '@design-app/utils'
-import { CURSOR_TYPE, KEYS } from '@shared/data-access/models'
+import {
+	ContextMenuEvent,
+	CURSOR_TYPE,
+	DoubleClickEvent,
+	EVENT_TYPE,
+	KEYS,
+	Point,
+} from '@shared/data-access/models'
 import { assertNotNull, OnDestroyDirective } from '@shared/utils'
-
+import { VIEW_STATE } from 'deprecated/design-app/feature-design-canvas'
 
 @Directive({
-	selector: '[appDesignCanvasApp]',
+	selector: '[appDesignCanvas]',
 	providers: [OnDestroyDirective],
 	standalone: true,
-}) /*,
- DesignCanvasEventHandlers */
-export class DesignCanvasDirective extends DesignCanvasDirectiveExtension implements OnInit {
+})
+export class DesignCanvasDirective implements OnInit {
+	private _appState = inject(AppNgrxStateStoreV2Service)
+	private _graphicsState = inject(GraphicsStoreService)
+	private _positioningStore = inject(ObjectPositioningStoreService)
+	private _selectedStore = inject(SelectedStoreService)
+	private canvas = inject(ElementRef<HTMLCanvasElement>).nativeElement
+	private ctx!: CanvasRenderingContext2D
+	private _ngZone = inject(NgZone)
+	private _renderer = inject(Renderer2)
+	private _canvasEl = inject(CanvasElementService)
+	private _objRotating = inject(ObjectRotatingService)
+	private _objPositioning = inject(ObjectPositioningService)
+	private _view = inject(ViewPositioningService)
+	private _drag = inject(DragBoxService)
+	private _render = inject(RenderService)
+	private _entities = inject(EntityNgrxStoreService)
+	// private _entities = inject(EntityStoreService)
+	private _selected = inject(SelectedService)
+	private _nearby = inject(NearbyService)
+	private _domPoint = inject(DomPointService)
+	private _keys = inject(KeyEventsService)
+
+	private mouseDownTimeOut: ReturnType<typeof setTimeout> | undefined
+	private mouseUpTimeOut: ReturnType<typeof setTimeout> | undefined
+
+	private fpsEl!: HTMLDivElement
+	private canvasMenu!: HTMLDivElement
+	private mousePos!: HTMLDivElement
+	private transformedMousePos!: HTMLDivElement
+	private scaleElement!: HTMLDivElement
+	private stringStats!: HTMLDivElement
+	private panelStats!: HTMLDivElement
+	private menu!: HTMLDivElement
+	private keyMap!: HTMLDivElement
+
+	currentTransformedCursor!: TransformedPoint
+	rawMousePos: Point = { x: 0, y: 0 }
+	currentPoint: TransformedPoint = { x: 0, y: 0 } as TransformedPoint
+
 	entityPressed: CanvasEntity | undefined
 
-	private _appState = inject(AppNgrxStateStore)
+	private mouseDownTimeOutFn = () => {
+		this.mouseDownTimeOut = setTimeout(() => {
+			this.mouseDownTimeOut = undefined
+		}, 300)
+	}
 
-	stateSignal = this._appState.select.state
-	stateSignalV2 = toSignal(this._appState.select.state$, { initialValue: initialAppState })
+	private mouseUpTimeOutFn = () => {
+		this.mouseUpTimeOut = setTimeout(() => {
+			this.mouseUpTimeOut = undefined
+		}, 50)
+	}
 
-	constructor() {
-		super()
-		effect(() => {
-			console.log('stateSignal', this.stateSignal)
-			console.log('stateSignalV2', this.stateSignalV2)
-		})
+	private get panelEntities() {
+		return this._entities.panels.entities
+	}
+
+	private get allPanels() {
+		return this._entities.panels.allPanels
+	}
+
+	private get stringEntities() {
+		return this._entities.strings.entities
+	}
+
+	private get allStrings() {
+		return this._entities.strings.allStrings
 	}
 
 	/**
 	 * ! Lifecycle Hooks
 	 */
 
-	public ngOnInit() {
-		// this.stateSignalV2()
-		/*		this._appState.select.state$.subscribe((state) => {
-		 // this._app.state = state
-		 // state
-		 })*/
+	ngOnInit() {
 		this.setupCanvas()
 		this.fpsEl = document.getElementById('fps') as HTMLDivElement
 		this._ngZone.runOutsideAngular(() => {
-			this.setupMouseEventListeners()
-			this.animate60Fps()
+			this.setupEventListeners()
 		})
 		this.canvasMenu = document.getElementById('canvas-menu') as HTMLDivElement
 		this.mousePos = document.getElementById('mouse-pos') as HTMLDivElement
@@ -97,14 +169,6 @@ export class DesignCanvasDirective extends DesignCanvasDirectiveExtension implem
 	 */
 
 	onMouseDownHandler(event: PointerEvent, currentPoint: TransformedPoint) {
-		// const currentPoint = this._domPoint.getTransformedPointFromEvent(event)
-
-		// const stateSignal = this.stateSignal()
-		// const { GridState } = stateSignal
-		// stateSignal.dragBox
-		const { GridState } = this._app.state
-		const appSnapshot = this._app.appSnapshot
-
 		if (isContextMenu(event)) {
 			return
 		}
@@ -115,32 +179,12 @@ export class DesignCanvasDirective extends DesignCanvasDirectiveExtension implem
 		}
 
 		if (dragBoxKeysDown(event)) {
-			/*			const { xAxisLineBounds, yAxisLineBounds } = this._entities.grid
-			 if (xAxisLineBounds || yAxisLineBounds) {
-			 console.log(
-			 'cannot drag box when axisLineBounds is visible',
-			 xAxisLineBounds,
-			 yAxisLineBounds,
-			 )
-			 /!*				this._entities.updateState({
-			 dragBox: {
-			 axisLineStart: currentPoint,
-			 },
-			 })*!/
-			 return
-			 }
-			 const axisPreviewRect = this._entities.grid.axisPreviewRect
-			 if (axisPreviewRect) {
-			 console.log('cannot drag box when axisPreviewRect is visible')
-			 return
-			 }*/
 			console.log('drag box keys down')
 			this._drag.handleDragBoxMouseDown(event, currentPoint)
 			return
 		}
 
-		const multipleSelectedIds = this._app.selectedCtx.multipleSelectedIds
-		// const multipleSelectedIds = this._machine.appCtx.selected.multipleSelectedIds
+		const multipleSelectedIds = this._selectedStore.state.multipleSelectedEntityIds
 		if (multiSelectDraggingKeysDownAndIdsNotEmpty(event, multipleSelectedIds)) {
 			this._objPositioning.multiSelectDraggingMouseDown(event, multipleSelectedIds)
 			return
@@ -157,81 +201,77 @@ export class DesignCanvasDirective extends DesignCanvasDirectiveExtension implem
 
 	onMouseMoveHandler(event: PointerEvent, currentPoint: TransformedPoint) {
 		this.currentTransformedCursor = currentPoint
-		// this.mousePos.innerText = `Original X: ${event.offsetX}, Y: ${event.offsetY}`
-		// this.transformedMousePos.innerText = `Transformed X: ${this.currentTransformedCursor.x}, Y: ${this.currentTransformedCursor.y}`
 
-		/*	const { ToRotateState, SelectedState, ToMoveState, DragBoxState, ViewState, PointerState } =
-		 this._app.state*/
-		// const { NearbyLinesState, CreatePreviewState } = this._graphics.state
-		// const appSnapshot = this._app.appSnapshot
-		// const graphicsSnapshot = this._app.graphicsSnapshot
-		const { appSnapshot, graphicsSnapshot } = this._app.allSnapshots
-		// const graphicsSnapshot = this._graphics.snapshot
+		/**
+		 * ! Object Positioning
+		 */
 
-		// const machineState = this._machine.state
+		const rotateEntityState = this._positioningStore.state.rotateEntityState
 
-		/*		if (ToRotateState === TO_ROTATE_STATE.SINGLE_ROTATE_MODE_IN_PROGRESS) {
-		 this._objRotating.rotateEntityViaMouse(event, true, currentPoint)
-		 return
-		 }*/
-
-		if (appSnapshot.matches('ToRotateState.SingleRotateModeInProgress')) {
+		if (rotateEntityState === 'RotatingSingleEntity') {
 			this._objRotating.rotateEntityViaMouse(event, true, currentPoint)
 			return
 		}
 
-		/*		if (ToRotateState === TO_ROTATE_STATE.SINGLE_ROTATE_IN_PROGRESS) {
-		 this._objRotating.rotateEntityViaMouse(event, false, currentPoint)
-		 return
-		 }*/
-
-		if (appSnapshot.matches('ToRotateState.SingleRotateInProgress')) {
-			this._objRotating.rotateEntityViaMouse(event, false, currentPoint)
-			return
-		}
-
-		/*		if (ToRotateState === TO_ROTATE_STATE.MULTIPLE_ROTATE_IN_PROGRESS) {
-		 this._objRotating.rotateMultipleEntitiesViaMouse(event, currentPoint)
-		 return
-		 }*/
-
-		if (appSnapshot.matches('ToRotateState.MultipleRotateInProgress')) {
+		if (rotateEntityState === 'RotatingMultipleEntities') {
 			this._objRotating.rotateMultipleEntitiesViaMouse(event, currentPoint)
 			return
 		}
-
-		/*		if (ToRotateState === TO_ROTATE_STATE.NO_ROTATE && rotatingKeysDown(event)) {
-		 this._objRotating.handleSetEntitiesToRotate(event, currentPoint)
-		 return
-		 }*/
-
-		if (appSnapshot.matches('ToRotateState.NoRotate') && rotatingKeysDown(event)) {
+		if (rotateEntityState === 'RotatingNone' && rotatingKeysDown(event)) {
 			this._objRotating.handleSetEntitiesToRotate(event, currentPoint)
 			return
 		}
 
-		if (appSnapshot.matches('ViewState.ViewPositioningState.ViewDraggingInProgress')) {
-			// if (ViewState === VIEW_STATE.VIEW_DRAGGING_IN_PROGRESS) {
+		const moveEntityState = this._positioningStore.state.moveEntityState
+
+		if (moveEntityState === 'MovingMultipleEntities') {
+			changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
+			this._objPositioning.multiSelectDraggingMouseMove(event)
+			return
+		}
+
+		const multipleSelectedIds = this._selectedStore.state.multipleSelectedEntityIds
+		if (multiSelectDraggingKeysDownAndIdsNotEmpty(event, multipleSelectedIds)) {
+			this._objPositioning.setMultiSelectDraggingMouseMove(event, multipleSelectedIds)
+			this._objPositioning.multiSelectDraggingMouseMove(event)
+			return
+		}
+
+		if (isReadyToMultiDrag(event, multipleSelectedIds)) {
+			changeCanvasCursor(this.canvas, CURSOR_TYPE.GRAB)
+			this._render.renderCanvasApp()
+			return
+		} else if (this.canvas.style.cursor === CURSOR_TYPE.GRAB) {
+			changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
+			this._render.renderCanvasApp()
+			return
+		}
+
+		if (moveEntityState === 'MovingSingleEntity') {
+			changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
+			this._objPositioning.singleToMoveMouseMoveV2Ngrx(event, currentPoint)
+			return
+		}
+
+		if (this.entityPressed && isDraggingEntity(event, this.entityPressed.id)) {
+			this._objPositioning.setSingleToMoveEntity(event, this.entityPressed.id)
+			this.entityPressed = undefined
+			return
+		}
+
+		const appState = this._appState.state
+
+		if (appState.view === 'ViewDraggingInProgress') {
 			this._view.handleDragScreenMouseMove(event, currentPoint)
 			return
 		}
 
-		if (appSnapshot.matches('DragBoxState.SelectionBoxInProgress')) {
+		if (appState.dragBox === 'SelectionBoxInProgress') {
 			this._drag.selectionBoxMouseMove(event, currentPoint)
 			return
 		}
 
-		/*		if (DragBoxState === DRAG_BOX_STATE.SELECTION_BOX_IN_PROGRESS) {
-		 this._drag.selectionBoxMouseMove(event, currentPoint)
-		 return
-		 }*/
-
-		/*		if (DragBoxState === DRAG_BOX_STATE.CREATION_BOX_IN_PROGRESS) {
-		 this._drag.creationBoxMouseMove(event, currentPoint)
-		 return
-		 }*/
-
-		if (appSnapshot.matches('DragBoxState.CreationBoxInProgress')) {
+		if (appState.dragBox === 'CreationBoxInProgress') {
 			this._drag.creationBoxMouseMove(event, currentPoint)
 			return
 		}
@@ -243,117 +283,28 @@ export class DesignCanvasDirective extends DesignCanvasDirectiveExtension implem
 		 return
 		 }*/
 
-		/*		if (ToMoveState === TO_MOVE_STATE.MULTIPLE_MOVE_IN_PROGRESS) {
-		 this._objPositioning.multiSelectDraggingMouseMove(event)
-		 return
-		 }*/
-
-		if (appSnapshot.matches('ToMoveState.MultipleMoveInProgress')) {
-			this._objPositioning.multiSelectDraggingMouseMove(event)
-			return
-		}
-
-		const multipleSelectedIds = this._app.selectedCtx.multipleSelectedIds
-		// const multipleSelectedIds = this._machine.appCtx.selected.multipleSelectedIds
-		if (multiSelectDraggingKeysDownAndIdsNotEmpty(event, multipleSelectedIds)) {
-			this._objPositioning.setMultiSelectDraggingMouseMove(event, multipleSelectedIds)
-			return
-		}
-
-		/*		const multipleToMoveState = machineState[TO_MOVE_STATE_KEY] === TO_MOVE_STATE.MULTIPLE_MOVE_IN_PROGRESS
-		 // const singleToMoveState = machineState.ToMoveState === TO_MOVE_STATE.SINGLE_MOVE_IN_PROGRESS
-
-		 // const multipleSelectedIds = this._state.selected.multipleSelectedIds
-
-		 // const multipleSelectedIds = this._state.selected.multipleSelectedIds
-		 const multipleToMove = this._machine.ctx.toMove.multipleToMove
-		 // const multipleToMove = this._state.toMove.multipleToMove
-		 const multiSelectDraggingKeys = multiSelectDraggingKeysDown(event, multipleSelectedIds)
-
-		 if (multipleToMove) {
-		 if (multiSelectDraggingKeys) {
-		 // changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
-		 return this._objPositioning.multiSelectDraggingMouseMove(event)
-		 }
-		 this._objPositioning.stopMultiSelectDragging(event)
-		 return
-		 }
-
-		 if (multiSelectDraggingKeys && !multipleToMove) {
-
-		 this._objPositioning.setMultiSelectDraggingMouseMove(event, multipleSelectedIds, currentPoint)
-
-		 return
-		 }*/
-		if (isReadyToMultiDrag(event, multipleSelectedIds)) {
-			changeCanvasCursor(this.canvas, CURSOR_TYPE.GRAB)
-			return
-		}
-
-		/*		if (ToMoveState === TO_MOVE_STATE.SINGLE_MOVE_IN_PROGRESS) {
-		 this._objPositioning.singleToMoveMouseMove(event, currentPoint, appSnapshot, graphicsSnapshot)
-		 return
-		 }*/
-
-		if (appSnapshot.matches('ToMoveState.SingleMoveInProgress')) {
-			// this._objPositioning.singleToMoveMouseMove(event, currentPoint, appSnapshot, graphicsSnapshot)
-			return
-		}
-
-		/*const singleToMoveState = machineState[TO_MOVE_STATE_KEY] === TO_MOVE_STATE.SINGLE_MOVE_IN_PROGRESS
-
-		 if (singleToMoveState) {
-		 this._objPositioning.singleToMoveMouseMove(event, currentPoint)
-		 return
-		 }*/
-
-		if (this.entityPressed && isDraggingEntity(event, this.entityPressed.id)) {
-			this._objPositioning.setSingleToMoveEntity(event, this.entityPressed.id)
-			this.entityPressed = undefined
-			return
-		}
-
 		const entityUnderMouse = this.getEntityUnderMouse(event)
 		if (entityUnderMouse) {
-			const hoveringEntityId = this._app.appCtx.pointer.hoveringEntityId
+			const hoveringEntityId = this._appState.state.pointer.hoveringOverEntityId
 			if (hoveringEntityId === entityUnderMouse.id) return
-			this._app.sendEvent({ type: 'PointerHoverOverEntity', payload: { id: entityUnderMouse.id } })
+			this._appState.dispatch.setHoveringOverEntityState(entityUnderMouse.id)
 			this._render.renderCanvasApp()
-			// this._render.drawCanvas()
 			return
 		}
 
-		if (appSnapshot.matches('PointerState.HoveringOverEntity')) {
+		if (appState.pointer.hoverState === 'HoveringOverEntity') {
 			changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
-			this._app.sendEvent({ type: 'PointerLeaveEntity' })
-			// this._app.sendEvent(new PointerLeaveEntity({ point: currentPoint }))
+			this._appState.dispatch.liftHoveringOverEntity()
 			this._render.renderCanvasApp()
-			// this._render.drawCanvas()
 			return
 		}
-		/*		if (PointerState === POINTER_STATE.HOVERING_OVER_ENTITY) {
-		 changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
-		 this._app.sendEvent(new PointerLeaveEntity({ point: currentPoint }))
-		 this._render.renderCanvasApp()
-		 // this._render.drawCanvas()
-		 return
-		 }*/
 
-		// TODO - fix
-		/*		if (graphicsSnapshot.matches('CreatePreviewState.CreatePreviewEnabled')) {
-		 this._nearby.getDrawEntityPreview(event, currentPoint, appSnapshot, graphicsSnapshot)
-		 return
-		 }*/
-		/*		if (CreatePreviewState === CREATE_PREVIEW_STATE.CREATE_PREVIEW_ENABLED) {
-		 this._nearby.getDrawEntityPreview(
-		 event,
-		 currentPoint,
-		 NearbyLinesState,
-		 appSnapshot,
-		 graphicsSnapshot,
-		 )
-		 return
-		 }*/
+		const graphicsState = this._graphicsState.state
+
+		if (graphicsState.createPreview === 'CreatePreviewEnabled') {
+			this._nearby.getDrawEntityPreviewV2Ngrx(event, currentPoint)
+			return
+		}
 	}
 
 	/**
@@ -363,161 +314,103 @@ export class DesignCanvasDirective extends DesignCanvasDirectiveExtension implem
 	 */
 
 	onMouseUpHandler(event: PointerEvent, currentPoint: TransformedPoint) {
-		// const state = this._app.state
-		/*		state = {
-		 DragBoxState: 'CreationBoxInProgress',
-		 }*/
-		// const state = state
-		// state
-		// const { DragBoxState, ToMoveState, ViewState } = state
-		const appSnapshot = this._app.appSnapshot
-		// const matches = snapshot.matches
-		// const matches = this._machine.matches
-
-		/*		if (matches('ToMoveState')) {
-
-		 }*/
-		// const matches = snapshot.matches
-
-		/*		if (matches('GridState.PreviewAxisState.None.ViewDraggingInProgress')) {
-
-		 }*/
-
 		if (this.mouseDownTimeOut) {
 			console.log('mouseDownTimeOut', this.mouseDownTimeOut)
 			clearTimeout(this.mouseDownTimeOut)
 			this.mouseDownTimeOut = undefined
-			this.mouseClickHandler(event, currentPoint, appSnapshot)
+			this.mouseClickHandler(event, currentPoint)
 			return
 		}
 
-		// if (snapshot.matches(VIEW_STATE.VIEW_DRAGGING_IN_PROGRESS)) {
-		if (appSnapshot.matches('ViewState.ViewPositioningState.ViewDraggingInProgress')) {
-			// if (snapshot.matches('ViewState.ViewDraggingInProgress')) {
-			console.log('snapshot.matches(ViewState.ViewDraggingInProgress)')
-			this._view.handleDragScreenMouseUp()
-			return
-		}
-		/*
-		 if (this._machine.matches('ViewState.ViewDraggingInProgress')) {
-		 this._view.handleDragScreenMouseUp(event)
-		 return
-		 }*/
-		/*
-		 if (ViewState === VIEW_STATE.VIEW_DRAGGING_IN_PROGRESS) {
-		 this._view.handleDragScreenMouseUp(event)
-		 return
-		 }*/
+		/**
+		 * ! Object Positioning
+		 */
 
-		if (appSnapshot.matches('DragBoxState.SelectionBoxInProgress')) {
-			this._drag.selectionBoxMouseUp(event, currentPoint)
-			return
-		}
+		const moveEntityState = this._positioningStore.state.moveEntityState
 
-		if (appSnapshot.matches('DragBoxState.CreationBoxInProgress')) {
-			this._drag.creationBoxMouseUp(event, currentPoint)
-			return
-		}
-
-		/*		if (DragBoxState === DRAG_BOX_STATE.SELECTION_BOX_IN_PROGRESS) {
-		 this._drag.selectionBoxMouseUp(event, currentPoint)
-		 return
-		 }
-
-		 if (DragBoxState === DRAG_BOX_STATE.CREATION_BOX_IN_PROGRESS) {
-		 this._drag.creationBoxMouseUp(event, currentPoint)
-		 return
-		 }*/
-
-		if (appSnapshot.matches('ToMoveState.SingleMoveInProgress')) {
+		if (moveEntityState === 'MovingSingleEntity') {
 			this._objPositioning.singleToMoveMouseUp(event, currentPoint)
 			return
 		}
 
-		/*		if (ToMoveState === TO_MOVE_STATE.SINGLE_MOVE_IN_PROGRESS) {
-		 this._objPositioning.singleToMoveMouseUp(event, currentPoint)
-		 return
-		 }*/
-
-		if (appSnapshot.matches('ToMoveState.MultipleMoveInProgress')) {
+		if (moveEntityState === 'MovingMultipleEntities') {
 			this._objPositioning.stopMultiSelectDragging(event)
 			return
 		}
-		/*		if (ToMoveState === TO_MOVE_STATE.MULTIPLE_MOVE_IN_PROGRESS) {
-		 this._objPositioning.stopMultiSelectDragging(event)
-		 return
-		 }*/
+
+		const viewState = this._appState.state.view
+
+		/**
+		 * ! View Positioning
+		 */
+		if (viewState === 'ViewDraggingInProgress') {
+			this._view.handleDragScreenMouseUp()
+			return
+		}
+
+		/**
+		 * ! Drag Box
+		 */
+
+		const dragBoxState = this._appState.state.dragBox
+
+		if (dragBoxState === 'SelectionBoxInProgress') {
+			this._drag.selectionBoxMouseUp(event, currentPoint)
+			return
+		}
+
+		if (dragBoxState === 'CreationBoxInProgress') {
+			this._drag.creationBoxMouseUp(event, currentPoint)
+			return
+		}
 
 		this._render.renderCanvasApp()
-		// this._render.drawCanvas()
 	}
 
 	/**
 	 * Mouse Click handler
 	 * @param event
 	 * @param currentPoint
-	 * @param appSnapshot
 	 */
 
-	mouseClickHandler(
-		event: PointerEvent,
-		currentPoint: TransformedPoint, // state: AppStateMatchesModel,
-		appSnapshot: AppSnapshot,
-	) {
-		// console.log('mouseClickHandler', event)
+	mouseClickHandler(event: PointerEvent, currentPoint: TransformedPoint) {
 		if (isWheelButton(event)) return
 
-		if (appSnapshot.matches('ViewState.ContextMenuState.ContextMenuOpen')) {
-			this._app.sendEvent({ type: 'CloseContextMenu' })
+		const contextMenuState = this._appState.state.contextMenu
+
+		if (contextMenuState.state === 'ContextMenuOpen') {
+			this._appState.dispatch.setContextMenuState('NoContextMenu')
 			return
 		}
 
-		/*		if (isMenuOpen(this.menu)) {
-		 this.menu.style.display = 'none'
-		 return
-		 }*/
-
-		// const { ToMoveState, ToRotateState } = state
-
-		if (!appSnapshot.matches('ToRotateState.NoRotate')) {
+		if (this._positioningStore.state.rotateEntityState !== 'RotatingNone') {
 			this._objRotating.clearEntityToRotate()
 			return
 		}
-		/*		if (ToRotateState !== TO_ROTATE_STATE.NO_ROTATE) {
-		 this._objRotating.clearEntityToRotate()
-		 return
-		 }*/
 
-		if (!appSnapshot.matches('ToMoveState.NoMove')) {
+		if (this._positioningStore.state.moveEntityState !== 'MovingNone') {
 			this._objPositioning.resetObjectPositioning(event, currentPoint)
 			return
 		}
 
-		/*		if (ToMoveState !== TO_MOVE_STATE.NO_MOVE) {
-		 this._objPositioning.resetObjectPositioning(event, currentPoint)
-		 return
-		 }*/
-
-		const entityUnderMouse = this.getEntityUnderTransformedPoint(currentPoint)
-		// const entityUnderMouse = this.getEntityUnderMouse(event)
+		const entityUnderMouse = this.getEntityUnderMouse(currentPoint)
 		if (entityUnderMouse) {
 			this._selected.handleEntityUnderMouse(event, entityUnderMouse)
 			console.log('entityUnderMouse', entityUnderMouse)
 			return
 		}
-		const selectedSnapshot = this._app.selectedSnapshot
+		// const selectedSnapshot = this._app.selectedSnapshot
 		this._selected.handleNotClickedOnEntity()
-		// this._selected.clearSelectedState()
 		if (this.anyEntitiesNearAreaOfClick(event)) {
 			return
 		}
 
-		if (appSnapshot.matches('GridState.PreviewAxisState.AxisCreatePreviewInProgress')) {
+		const previewAxisState = this._appState.state.previewAxis
+		if (previewAxisState === 'AxisCreatePreviewInProgress') {
 			if (!event.altKey || !this._nearby.axisPreviewRect) {
-				this._app.sendEvent({ type: 'StopAxisPreview' })
+				this._appState.dispatch.setPreviewAxisState('None')
 				this._nearby.axisPreviewRect = undefined
 				this._render.renderCanvasApp()
-				// this._render.drawCanvas()
 				return
 			}
 
@@ -526,16 +419,16 @@ export class DesignCanvasDirective extends DesignCanvasDirectiveExtension implem
 				y: this._nearby.axisPreviewRect.top,
 			}
 
-			const selectedStringId = this._app.selectedCtx.selectedStringId
+			const selectedStringId = this._selectedStore.state.selectedStringId
 			const entity = selectedStringId
 				? createPanel(previewRectLocation, selectedStringId)
 				: createPanel(previewRectLocation)
-			this._entities.panels.addEntity(entity)
+			this._entities.panels.dispatch.addPanel(entity)
+			// this._entities.panels.addEntity(entity)
 			this._nearby.axisPreviewRect = undefined
-			this._app.sendEvent({ type: 'StopAxisPreview' })
+			this._appState.dispatch.setPreviewAxisState('None')
 
 			this._render.renderCanvasApp()
-			// this._render.drawCanvas()
 			return
 		}
 
@@ -543,18 +436,14 @@ export class DesignCanvasDirective extends DesignCanvasDirectiveExtension implem
 			currentPoint,
 			SizeByType[ENTITY_TYPE.Panel],
 		)
-		// const isStringSelected = !!this._state.selected.selectedStringId
-		// const isStringSelected = !!this._selected.selectedStringId
-		const selectedStringId = this._app.selectedCtx.selectedStringId
+		const selectedStringId = this._selectedStore.state.selectedStringId
 		const entity = selectedStringId
-			? // const entity = this._machine.appCtx.selected.selectedStringId
-			  // const entity = this._state.selected.selectedStringId
-			  createPanel(location, selectedStringId)
+			? createPanel(location, selectedStringId)
 			: createPanel(location)
-		this._entities.panels.addEntity(entity)
+		this._entities.panels.dispatch.addPanel(entity)
+		// this._entities.panels.addEntity(entity)
 
 		this._render.renderCanvasApp()
-		// this._render.drawCanvas()
 	}
 
 	/**
@@ -566,27 +455,17 @@ export class DesignCanvasDirective extends DesignCanvasDirectiveExtension implem
 
 	doubleClickHandler(event: PointerEvent, currentPoint: TransformedPoint) {
 		console.log('double click', event)
-		const entityUnderMouse = this.getEntityUnderTransformedPoint(currentPoint)
+		const entityUnderMouse = this.getEntityUnderMouse(currentPoint)
 		if (entityUnderMouse) {
 			if (!isPanel(entityUnderMouse)) return
 			if (entityUnderMouse.stringId === UndefinedStringId) return
-			const belongsToString = this._entities.strings
-				.getEntities()
-				.find((string) => string.id === entityUnderMouse.stringId)
+			const belongsToString = this._entities.strings.entities[entityUnderMouse.stringId]
+			/*			const belongsToString = this._entities.strings
+			 .getEntities()
+			 .find((string) => string.id === entityUnderMouse.stringId)*/
 
-			assertNotNull(belongsToString, 'string not found')
-			this._app.sendSelectedEvent({
-				type: 'SetSelectedString',
-				payload: { stringId: belongsToString.id },
-			})
-			/*			this._app.sendStateEvent(STATE_MACHINE.SELECTED, {
-			 type: 'SetSelectedString',
-			 payload: { stringId: belongsToString.id },
-			 })*/
-			/*			this._machine.sendEvent({
-			 type: 'SetSelectedString',
-			 payload: { stringId: belongsToString.id },
-			 })*/
+			if (!belongsToString) return
+			this._selectedStore.dispatch.selectString(belongsToString.id)
 		}
 	}
 
@@ -597,9 +476,8 @@ export class DesignCanvasDirective extends DesignCanvasDirectiveExtension implem
 	 */
 
 	wheelScrollHandler(event: WheelEvent) {
-		const appSnapshot = this._app.appSnapshot
-		if (appSnapshot.matches('ViewState.ContextMenuState.ContextMenuOpen')) {
-			this._app.sendEvent({ type: 'CloseContextMenu' })
+		if (this._appState.state.contextMenu.state === 'ContextMenuOpen') {
+			this._appState.dispatch.setContextMenuState('NoContextMenu')
 		}
 
 		const currentScaleX = this.ctx.getTransform().a
@@ -625,54 +503,58 @@ export class DesignCanvasDirective extends DesignCanvasDirectiveExtension implem
 
 	contextMenuHandler(event: PointerEvent, currentPoint: TransformedPoint) {
 		// const appSnapshot = this._machine.appSnapshot
-		const selectedSnapshot = this._app.selectedSnapshot
-		const selectedCtx = this._app.selectedCtx
+		/*		const selectedSnapshot = this._app.selectedSnapshot
+		 const selectedCtx = this._app.selectedCtx*/
 
 		const entityUnderMouse = this.getEntityUnderMouse(event)
 		if (entityUnderMouse) {
 			const x = event.offsetX + entityUnderMouse.width / 2
 			const y = event.offsetY + entityUnderMouse.height / 2
-			this._app.sendEvent({
-				type: 'OpenContextMenu',
-				payload: {
-					id: entityUnderMouse.id,
-					type: 'SingleEntity',
-					x,
-					y,
-				},
+			this._appState.dispatch.openContextMenu({
+				type: 'SingleEntity',
+				id: entityUnderMouse.id,
+				x,
+				y,
 			})
 			return
 		}
 
-		if (selectedSnapshot.matches('StringSelectedState.StringSelected')) {
-			const pointInsideSelectedStringPanels = isPointInsideSelectedStringPanels(
-				this._entities,
-				selectedCtx,
-				currentPoint,
-			)
-
+		const selectedStringId = this._selectedStore.state.selectedStringId
+		if (selectedStringId) {
+			const selectedStringPanels =
+				this._entities.panels.panelsByStringIdMap().get(selectedStringId) ?? []
+			// const stringPanels = this._entities.panels.getEntitiesByStringId(selectedStringId)
+			const pointInsideSelectedStringPanels =
+				isPointInsideSelectedStringPanelsByStringIdNgrxWithPanels(
+					selectedStringPanels,
+					selectedStringId,
+					currentPoint,
+				)
+			/*			const pointInsideSelectedStringPanels = isPointInsideSelectedStringPanelsByStringId(
+			 this._entities,
+			 selectedStringId,
+			 currentPoint,
+			 )*/
 			if (pointInsideSelectedStringPanels) {
-				const selectedStringId = selectedCtx.selectedStringId
+				// const selectedStringId = selectedCtx.selectedStringId
 				assertNotNull(selectedStringId)
-				const stringPanels = this._entities.panels.getEntitiesByStringId(selectedStringId)
-				const stringPanelsIds = stringPanels.map((panel) => panel.id)
-				this._app.sendEvent({
-					type: 'OpenContextMenu',
-					payload: {
-						stringId: selectedStringId,
-						panelIds: stringPanelsIds,
-						type: 'String',
-						x: event.offsetX,
-						y: event.offsetY,
-					},
+				// const stringPanels = this._entities.panels.getEntitiesByStringId(selectedStringId)
+				// const stringPanels = this._entities.panels.getEntitiesByStringId(selectedStringId)
+				const stringPanelsIds = selectedStringPanels.map((panel) => panel.id)
+				this._appState.dispatch.openContextMenu({
+					type: 'String',
+					stringId: selectedStringId,
+					panelIds: stringPanelsIds,
+					x: event.offsetX,
+					y: event.offsetY,
 				})
 				return
 			}
 		}
 
-		if (selectedSnapshot.matches('EntitySelectedState.EntitiesSelected')) {
-			const selectedPanels = this._entities.panels.getEntitiesByIds(
-				this._app.selectedCtx.multipleSelectedIds,
+		if (this._selectedStore.state.multipleSelectedEntityIds.length > 0) {
+			const selectedPanels = this._entities.panels.getByIds(
+				this._selectedStore.state.multipleSelectedEntityIds,
 			)
 			const selectionBoxBounds = getCompleteBoundsFromMultipleEntitiesWithPadding(
 				selectedPanels,
@@ -681,16 +563,14 @@ export class DesignCanvasDirective extends DesignCanvasDirectiveExtension implem
 			const clickInBounds = isPointInsideBounds(currentPoint, selectionBoxBounds)
 			if (clickInBounds) {
 				const selectedPanelIds = selectedPanels.map((panel) => panel.id)
-				this._app.sendEvent({
-					type: 'OpenContextMenu',
-					payload: {
-						ids: selectedPanelIds,
-						type: 'MultipleEntities',
-						x: event.offsetX,
-						y: event.offsetY,
-					},
+				this._appState.dispatch.openContextMenu({
+					type: 'MultipleEntities',
+					ids: selectedPanelIds,
+					x: event.offsetX,
+					y: event.offsetY,
 				})
 			}
+			return
 		}
 	}
 
@@ -704,160 +584,216 @@ export class DesignCanvasDirective extends DesignCanvasDirectiveExtension implem
 			case KEYS.ESCAPE:
 				this._selected.clearSelectedInOrder()
 				this._render.renderCanvasApp()
-				// this._render.drawCanvas()
-				// this._selected.clearSelectedState()
 				break
 			case KEYS.X:
 				{
-					const multipleSelectedIds = this._app.selectedCtx.multipleSelectedIds
-					// const multipleSelectedIds = this._machine.appCtx.selected.multipleSelectedIds
-					// const multipleSelectedIds = this._state.selected.multipleSelectedIds
+					const multipleSelectedIds = this._selectedStore.state.multipleSelectedEntityIds
+					// const multipleSelectedIds = this._app.selectedCtx.multipleSelectedIds
+					// const multipleSelectedIds = this._app.selectedCtx.multipleSelectedIds
 					if (multipleSelectedIds.length <= 1) return
-					const name = genStringNameV2(this._entities.strings.getEntities())
+					const name = genStringNameV2(this._entities.strings.allStrings)
 					const string = createString(name)
 
-					const entities = this._entities.panels.getEntitiesByIds(multipleSelectedIds)
+					const entities = this._entities.panels.getByIds(multipleSelectedIds)
 					const panels = entities.filter((entity) => entity.type === 'panel') as CanvasPanel[]
-					const panelUpdates = panels.map((panel) =>
-						updateObjectByIdForStore<CanvasPanel>(panel.id, { stringId: string.id }),
+					/*				const panelUpdates = panels.map((panel) =>
+				 updateObjectByIdForStore<CanvasPanel>(panel.id, { stringId: string.id }),
+				 )*/
+					const panelUpdates = panels.map(
+						updateObjectByIdForStoreV3<CanvasPanel>({ stringId: string.id }),
 					)
-					// const { string, panelUpdates } = createStringWithPanels(this._state, multipleSelectedIds)
-					this._entities.strings.addEntity(string)
-					this._entities.panels.updateManyEntities(panelUpdates)
+					this._entities.strings.dispatch.addString(string)
+					this._entities.panels.dispatch.updateManyPanels(panelUpdates)
 
-					// this._machine.sendEvent({ type: 'ClearSelectedState' })
-					this._app.sendSelectedEvent({
-						type: 'SetSelectedString',
-						payload: { stringId: string.id },
-					})
-					// this._app.sendEvent({ type: 'SetSelectedString', payload: { stringId: string.id } })
+					this._selectedStore.dispatch.selectString(string.id)
 					this._render.renderCanvasApp()
-					// this._render.drawCanvas()
 				}
 				break
 			case KEYS.R:
 				{
-					console.log('r key up')
-					const { appSnapshot, selectedSnapshot } = this._app.allSnapshots
-
-					if (appSnapshot.matches('ToRotateState.SingleRotateModeInProgress')) {
-						// this._app.sendEvent({ type: 'ClearSingleToRotate' })
-						this._objRotating.clearEntityToRotate()
-						this._render.renderCanvasApp()
+					const rotateState = this._positioningStore.state.rotateEntityState
+					if (rotateState === ROTATE_ENTITY_STATE.ROTATING_SINGLE_ENTITY) {
+						this._objRotating.clearSingleToRotate()
 						return
 					}
-					/*					const singleToRotate = this._entities.toRotate.singleToRotate
-
-				 if (singleToRotate) {
-				 this._objRotating.clearEntityToRotate()
-				 console.log('clear single to rotate')
-				 return
-				 }*/
-					if (appSnapshot.matches('ToRotateState.MultipleRotateInProgress')) {
-						// this._app.sendEvent({ type: 'ClearMultipleToRotate' })
-						this._objRotating.clearEntityToRotate()
-						this._render.renderCanvasApp()
+					if (rotateState === ROTATE_ENTITY_STATE.ROTATING_MULTIPLE_ENTITIES) {
+						this._objRotating.clearMultipleToRotate()
 						return
 					}
-					/*					const multipleToRotate = this._entities.toRotate.multipleToRotate
-
-				 if (multipleToRotate && multipleToRotate.ids.length > 0) {
-				 this._objRotating.clearEntityToRotate()
-				 console.log('clear multiple to rotate')
-				 return
-				 }*/
-					/*				const entityToRotate = this._entities.toRotate.singleToRotate
-				 const singleSelectedId = this._entities.selected.singleSelectedId
-				 if (singleSelectedId && !entityToRotate) {
-				 this._objRotating.setEntityToRotate(singleSelectedId, this.currentTransformedCursor)
-				 console.log('set single to rotate')
-				 return
-				 }*/
 				}
 				break
 			case KEYS.C: {
-				// const { GridState } = this._machine.state
-				// GridState
-				this._app.sendEvent({ type: 'ToggleClickMode' })
-				/*				switch (GridState.ModeState) {
-				 case MODE_STATE.IN_SELECT_MODE:
-				 this._machine.sendEvent(new StartClickCreateMode())
-				 break
-				 case MODE_STATE.IN_CREATE_MODE:
-				 this._machine.sendEvent(new StartClickSelectMode())
-				 break
-				 default:
-				 throw new Error('Unknown grid state')
-				 }*/
+				const mode = this._appState.state.mode
+				const newMode =
+					mode === MODE_STATE.CREATE_MODE ? MODE_STATE.SELECT_MODE : MODE_STATE.CREATE_MODE
+				this._appState.dispatch.setModeState(newMode)
 				return
 			}
 			case KEYS.M:
-				/*				{
-				 const newMenuState = !this._entities.menu.optionsMenu
-				 /!*				this._entities.updateState({
-				 menu: {
-				 optionsMenu: newMenuState,
-				 },
-				 })*!/
-				 if (newMenuState) {
-				 this._renderer.setStyle(this.canvasMenu, 'display', 'initial')
-				 return
-				 }
-				 this._renderer.setStyle(this.canvasMenu, 'display', 'none')
-				 }*/
 				break
 			case KEYS.SHIFT: {
-				const { appSnapshot } = this._app.allSnapshots
-				if (appSnapshot.matches('ToMoveState.MultipleMoveInProgress')) {
+				const moveState = this._positioningStore.state.moveEntityState
+				if (moveState === MOVE_ENTITY_STATE.MOVING_MULTIPLE_ENTITIES) {
 					this._objPositioning.stopMultiSelectDragging(this.rawMousePos)
 					return
 				}
-				if (appSnapshot.matches('ToMoveState.SingleMoveInProgress')) {
+				if (moveState === MOVE_ENTITY_STATE.MOVING_SINGLE_ENTITY) {
 					this._objPositioning.singleToMoveMouseUp(event.altKey, this.currentPoint)
+
 					return
 				}
 				break
 			}
 			case KEYS.ALT: {
-				const { appSnapshot } = this._app.allSnapshots
-				if (appSnapshot.matches('ToRotateState.MultipleRotateInProgress')) {
-					// this._app.sendEvent({ type: 'StopMultipleRotate' })
-					this._objRotating.clearMultipleToRotate()
+				const rotateState = this._positioningStore.state.rotateEntityState
+				if (rotateState === ROTATE_ENTITY_STATE.ROTATING_SINGLE_ENTITY) {
+					this._objRotating.clearSingleToRotate()
 					return
 				}
-
-				if (appSnapshot.matches('ToRotateState.SingleRotateInProgress')) {
-					// this._app.sendEvent({ type: 'StopSingleRotate' })
-					this._objRotating.clearSingleToRotate()
+				if (rotateState === ROTATE_ENTITY_STATE.ROTATING_MULTIPLE_ENTITIES) {
+					this._objRotating.clearMultipleToRotate()
 					return
 				}
 				break
 			}
 			case KEYS.CTRL_OR_CMD: {
-				const { appSnapshot } = this._app.allSnapshots
-				if (appSnapshot.matches('ToMoveState.MultipleMoveInProgress')) {
-					// this._app.sendEvent({ type: 'StopMultipleMove' })
+				const { moveEntityState, rotateEntityState } = this._positioningStore.state
+				if (moveEntityState === MOVE_ENTITY_STATE.MOVING_MULTIPLE_ENTITIES) {
 					this._objPositioning.stopMultiSelectDragging(this.rawMousePos)
-					return
 				}
-				if (appSnapshot.matches('ToMoveState.SingleMoveInProgress')) {
+				if (moveEntityState === MOVE_ENTITY_STATE.MOVING_SINGLE_ENTITY) {
 					this._objPositioning.singleToMoveMouseUp(event.altKey, this.currentPoint)
-					// this._app.sendEvent({ type: 'StopSingleMove' })
-					return
-				}
-				if (appSnapshot.matches('ToRotateState.MultipleRotateInProgress')) {
-					this._objRotating.clearMultipleToRotate()
-					// this._app.sendEvent({ type: 'StopMultipleRotate' })
-					return
 				}
 
-				if (appSnapshot.matches('ToRotateState.SingleRotateInProgress')) {
+				if (rotateEntityState === ROTATE_ENTITY_STATE.ROTATING_SINGLE_ENTITY) {
 					this._objRotating.clearSingleToRotate()
-					// this._app.sendEvent({ type: 'StopSingleRotate' })
-					return
+				}
+
+				if (rotateEntityState === ROTATE_ENTITY_STATE.ROTATING_MULTIPLE_ENTITIES) {
+					this._objRotating.clearMultipleToRotate()
+				}
+
+				if (this._appState.state.view === VIEW_STATE.VIEW_DRAGGING_IN_PROGRESS) {
+					this._view.handleDragScreenMouseUp()
 				}
 				break
 			}
 		}
+	}
+
+	private setupCanvas() {
+		const { canvas, ctx } = setupCanvas(this.canvas)
+		this.canvas = canvas
+		this.ctx = ctx
+		this._canvasEl.init(this.canvas, this.ctx)
+	}
+
+	private setupEventListeners() {
+		this._renderer.listen(this.canvas, EVENT_TYPE.POINTER_UP, (event: PointerEvent) => {
+			console.log('mouse up', event)
+			this.rawMousePos = eventToPointLocation(event)
+			this.currentPoint = this._domPoint.getTransformedPointFromEvent(event)
+			if (isContextMenu(event)) return
+			this.onMouseUpHandler(event, this.currentPoint)
+			event.stopPropagation()
+			event.preventDefault()
+		})
+		this._renderer.listen(this.canvas, EVENT_TYPE.POINTER_DOWN, (event: PointerEvent) => {
+			console.log('mouse down', event)
+			this.rawMousePos = eventToPointLocation(event)
+			this.currentPoint = this._domPoint.getTransformedPointFromEvent(event)
+			this.onMouseDownHandler(event, this.currentPoint)
+			event.stopPropagation()
+			event.preventDefault()
+		})
+		this._renderer.listen(this.canvas, EVENT_TYPE.POINTER_MOVE, (event: PointerEvent) => {
+			this.rawMousePos = eventToPointLocation(event)
+			this.currentPoint = this._domPoint.getTransformedPointFromEvent(event)
+			this.onMouseMoveHandler(event, this.currentPoint)
+			event.stopPropagation()
+			event.preventDefault()
+		})
+		this._renderer.listen(this.canvas, ContextMenuEvent, (event: PointerEvent) => {
+			this.rawMousePos = eventToPointLocation(event)
+			console.log('context menu', event)
+			this.currentPoint = this._domPoint.getTransformedPointFromEvent(event)
+			this.contextMenuHandler(event, this.currentPoint)
+			event.stopPropagation()
+			event.preventDefault()
+		})
+		this._renderer.listen(this.canvas, DoubleClickEvent, (event: PointerEvent) => {
+			this.rawMousePos = eventToPointLocation(event)
+			this.currentPoint = this._domPoint.getTransformedPointFromEvent(event)
+			this.doubleClickHandler(event, this.currentPoint)
+			event.stopPropagation()
+			event.preventDefault()
+		})
+		this._renderer.listen(this.canvas, EVENT_TYPE.WHEEL, (event: WheelEvent) => {
+			this.wheelScrollHandler(event)
+			event.stopPropagation()
+			event.preventDefault()
+		})
+		this._renderer.listen(window, 'resize', (event: Event) => {
+			this.ctx.canvas.width = window.innerWidth
+			this.ctx.canvas.height = window.innerHeight
+			this._renderer.setStyle(this.canvas, 'width', '100%')
+			this._renderer.setStyle(this.canvas, 'height', '100%')
+			event.stopPropagation()
+			event.preventDefault()
+		})
+		this._renderer.listen(window, EVENT_TYPE.KEY_UP, (event: KeyboardEvent) => {
+			event.stopPropagation()
+			event.preventDefault()
+			console.log('keyup menu', event)
+			this._keys.keyUpHandlerV2(event, this.rawMousePos, this.currentPoint)
+			// this.keyUpHandler(event)
+		})
+	}
+
+	private getEntityUnderMouse(event: PointerEvent | TransformedPoint) {
+		const point =
+			event instanceof PointerEvent ? this._domPoint.getTransformedPointFromEvent(event) : event
+		const entitiesUnderMouse = this.allPanels.filter((entity) => isPointInsideEntity(point, entity))
+		return entitiesUnderMouse[entitiesUnderMouse.length - 1] as CanvasEntity | undefined
+	}
+
+	private anyEntitiesNearAreaOfClick(event: PointerEvent) {
+		let size = SizeByType[ENTITY_TYPE.Panel]
+		const midSpacing = 2
+		size = {
+			width: size.width + midSpacing,
+			height: size.height + midSpacing,
+		}
+
+		const center = this._domPoint.getTransformedPointFromEvent(event)
+		const mouseBoxBounds = getBoundsFromCenterPoint(center, size)
+		const anyNearClick = !!this.allPanels.find((entity) =>
+			isEntityOverlappingWithBounds(entity, mouseBoxBounds),
+		)
+		if (!anyNearClick) {
+			this._render.renderCanvasApp()
+			return false
+		}
+
+		const drawFunction = (ctx: CanvasRenderingContext2D) => {
+			ctx.save()
+			ctx.beginPath()
+			ctx.globalAlpha = 0.4
+			ctx.fillStyle = CANVAS_COLORS.TakenSpotFillStyle
+			ctx.rect(mouseBoxBounds.left, mouseBoxBounds.top, size.width, size.height)
+			ctx.fill()
+			ctx.stroke()
+			ctx.restore()
+		}
+
+		this._render.renderCanvasApp({
+			drawFns: [drawFunction],
+		})
+
+		const interval = setInterval(() => {
+			this._render.renderCanvasApp()
+			clearInterval(interval)
+		}, 1000)
+		return true
 	}
 }

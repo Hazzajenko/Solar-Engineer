@@ -1,11 +1,15 @@
 import { AppComponent } from './app/app.component'
 import { DatePipe } from '@angular/common'
-import { HttpClientModule } from '@angular/common/http'
+import { provideHttpClient } from '@angular/common/http'
 import { importProvidersFrom, provideZoneChangeDetection } from '@angular/core'
 import { MatDialogModule } from '@angular/material/dialog'
 import { MatSnackBarModule, MatSnackBarRef } from '@angular/material/snack-bar'
 import { bootstrapApplication, BrowserModule } from '@angular/platform-browser'
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
+import {
+	BrowserAnimationsModule,
+	provideAnimations,
+	provideNoopAnimations,
+} from '@angular/platform-browser/animations'
 import { provideRouter, withEnabledBlockingInitialNavigation } from '@angular/router'
 import { appRoutes, tokenGetter } from '@app/config'
 import { JwtModule } from '@auth0/angular-jwt'
@@ -20,8 +24,12 @@ bootstrapApplication(AppComponent, {
 	providers: [
 		provideZoneChangeDetection({ eventCoalescing: true }),
 		provideRouter(appRoutes, withEnabledBlockingInitialNavigation() /*, withDebugTracing()*/),
+		provideAnimations(),
+		provideNoopAnimations(),
+		provideHttpClient(),
+		// provideBrowser(),
 		importProvidersFrom(
-			HttpClientModule,
+			// HttpClientModule,
 			BrowserAnimationsModule,
 			BrowserModule,
 			MatDialogModule,
@@ -43,10 +51,3 @@ bootstrapApplication(AppComponent, {
 		jwtInterceptorProvider,
 	],
 }).catch((err) => console.error(err))
-/*
-
- inspect({
- iframe: false,
- url: 'https://statecharts.io/inspect',
- })
- */
