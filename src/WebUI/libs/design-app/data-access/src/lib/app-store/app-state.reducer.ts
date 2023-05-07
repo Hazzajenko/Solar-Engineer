@@ -31,7 +31,7 @@ export type AppState = {
 	mode: ModeState
 	contextMenu: ContextMenuState
 	dialog: boolean
-	dialogs: DialogInput<unknown>[]
+	dialogs: DialogInput[]
 }
 
 export const initialAppState: AppState = {

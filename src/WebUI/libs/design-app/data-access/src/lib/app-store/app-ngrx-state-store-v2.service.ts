@@ -99,7 +99,7 @@ class AppNgrxRepository {
 		this._store.dispatch(AppStateActions.toggleDialogState())
 	}
 
-	addDialog<T>(dialog: DialogInput<T>) {
+	addDialog(dialog: DialogInput) {
 		this._store.dispatch(AppStateActions.addDialog({ dialog }))
 	}
 

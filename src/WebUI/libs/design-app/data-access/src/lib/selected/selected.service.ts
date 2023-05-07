@@ -181,7 +181,20 @@ export class SelectedService {
 		 }*/
 
 		if (this._selectedStore.state.selectedStringId) {
+			this._selectedStore.dispatch.clearSelectedString()
+			return
+		}
+
+		if (
+			this._selectedStore.state.entityState === ENTITY_SELECTED_STATE.MULTIPLE_ENTITIES_SELECTED
+		) {
+			this._selectedStore.dispatch.clearMultiSelected()
+			return
+		}
+
+		if (this._selectedStore.state.entityState === ENTITY_SELECTED_STATE.SINGLE_ENTITY_SELECTED) {
 			this._selectedStore.dispatch.clearSingleSelected()
+			return
 		}
 
 		// console.log('clearSelectedInOrder, snapshot', appSnapshot)

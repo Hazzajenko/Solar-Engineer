@@ -14,13 +14,14 @@ import { toSignal } from '@angular/core/rxjs-interop'
 import { MatButtonModule } from '@angular/material/button'
 import { MatDialogModule } from '@angular/material/dialog'
 import { EntityNgrxStoreService } from '@design-app/data-access'
+import { LetModule } from '@ngrx/component'
 
 
 @Component({
 	selector: 'dialog-move-panels-to-string-v4',
 	templateUrl: 'move-panels-to-string-v4.component.html',
 	standalone: true,
-	imports: [AsyncPipe, NgForOf, NgIf, MatDialogModule, MatButtonModule],
+	imports: [AsyncPipe, NgForOf, NgIf, MatDialogModule, MatButtonModule, LetModule],
 })
 export class MovePanelsToStringV4Component implements OnInit, AfterViewInit {
 	private _elementRef = inject(ElementRef<HTMLDivElement>)
@@ -32,9 +33,9 @@ export class MovePanelsToStringV4Component implements OnInit, AfterViewInit {
 	strings = toSignal(this._entities.strings.allStringsWithPanels$)
 	private _panelIds: string[] = []
 
-	@Input({ required: true }) set data(panelIds: string[]) {
-		console.log('panelIds', panelIds)
-		this._panelIds = panelIds
+	@Input({ required: true }) set data(data: { panelIds: string[] }) {
+		console.log('panelIds', data)
+		this._panelIds = data.panelIds
 	}
 
 	get panelIds() {

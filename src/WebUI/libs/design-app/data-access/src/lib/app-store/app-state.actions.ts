@@ -40,7 +40,7 @@ export const AppStateActions = createActionGroup({
 		}>(),
 		'Toggle Dialog State': emptyProps(),
 		'Add Dialog': props<{
-			dialog: DialogInput<unknown>
+			dialog: DialogInput
 		}>(),
 		'Remove Dialog': props<{
 			dialogId: string

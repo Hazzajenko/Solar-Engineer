@@ -1,14 +1,15 @@
-import { MovePanelsToStringV4Component } from '../../dialogs/move-panels-to-string-v4/move-panels-to-string-v4.component'
 import { inject, Pipe, PipeTransform } from '@angular/core'
 import {
 	AppNgrxStateStoreV2Service,
 	ContextMenuType,
+	DIALOG_COMPONENT,
 	DialogInput,
 	DialogsService,
 	EntityNgrxStoreService,
 	isMultipleEntitiesContextMenuTemplate,
 	RenderService,
 } from '@design-app/data-access'
+import { getGuid } from '@ngrx/data'
 
 
 @Pipe({
@@ -30,9 +31,9 @@ export class GetSelectedPanelsPipe implements PipeTransform {
 				/*			this._dialogs.open(MovePanelsToStringComponent, {
 				 panelIds: menu.ids,
 				 })*/
-				const dialogInput: DialogInput<MovePanelsToStringV4Component> = {
-					id: 'MovePanelsToStringV4Component',
-					component: MovePanelsToStringV4Component,
+				const dialogInput: DialogInput = {
+					id: getGuid(),
+					component: DIALOG_COMPONENT.MOVE_PANELS_TO_STRING, // component: MovePanelsToStringV4Component,
 					data: {
 						panelIds: menu.ids,
 					},

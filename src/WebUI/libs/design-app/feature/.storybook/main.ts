@@ -16,6 +16,15 @@ const config: StorybookConfig = {
 		name: '@storybook/angular',
 		options: {},
 	},
+	core: {
+		builder: {
+			name: '@storybook/builder-webpack5',
+			options: {
+				fsCache: true,
+				lazyCompilation: true,
+			},
+		},
+	},
 }
 
 export default config

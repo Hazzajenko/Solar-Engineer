@@ -13,25 +13,13 @@ import {
 } from '../types'
 import { AdjustedDragBoxState, InitialAdjustedDragBoxState } from './drag-box'
 import { AdjustedPointerState, InitialAdjustedPointerState } from './pointer'
-import { SetMultipleSelectedEntities } from './selected'
-import {
-	AdjustedToMoveState,
-	InitialAdjustedToMoveState,
-	StopMultipleMove,
-	StopSingleMove,
-} from './to-move'
-import {
-	AdjustedToRotateState,
-	InitialAdjustedToRotateState,
-	StopMultipleRotate,
-	StopSingleRotate,
-	StopSingleRotateMode,
-} from './to-rotate'
-import { InitialViewContext, StopViewDragging, ViewContext } from './view'
+import { AdjustedToMoveState, InitialAdjustedToMoveState } from './to-move'
+import { AdjustedToRotateState, InitialAdjustedToRotateState } from './to-rotate'
+import { InitialViewContext, ViewContext } from './view'
 import { XStateEvent } from './xstate-app-events.types'
 // import { ActionByType } from './selected/machine-actions.types'
-import { inspect } from '@xstate/inspect'
 import { createMachine } from 'xstate'
+
 
 export type CanvasAppMachineContext = {
 	hover: HoveringEntityState
@@ -90,10 +78,10 @@ export type PickedCanvasAppMachineContext = {
 	// graphics: ActorRefFrom<typeof graphicsSettingsMachine>
 }
 // graphicsSettingsMachine
-inspect({
-	iframe: false,
-	url: 'https://statecharts.io/inspect',
-})
+/*inspect({
+ iframe: false,
+ url: 'https://statecharts.io/inspect',
+ })*/
 
 // inspect()
 /*

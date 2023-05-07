@@ -9,6 +9,7 @@ import {
 	genStringNameV2,
 	GraphicsStoreService,
 	isPointInsideSelectedStringPanelsByStringIdNgrxWithPanels,
+	KeyEventsService,
 	MODE_STATE,
 	MOVE_ENTITY_STATE,
 	NearbyService,
@@ -89,6 +90,7 @@ export class DesignCanvasNgrxDirective implements OnInit {
 	private _selected = inject(SelectedService)
 	private _nearby = inject(NearbyService)
 	private _domPoint = inject(DomPointService)
+	private _keys = inject(KeyEventsService)
 
 	private mouseDownTimeOut: ReturnType<typeof setTimeout> | undefined
 	private mouseUpTimeOut: ReturnType<typeof setTimeout> | undefined
@@ -744,7 +746,8 @@ export class DesignCanvasNgrxDirective implements OnInit {
 			event.stopPropagation()
 			event.preventDefault()
 			console.log('keyup menu', event)
-			this.keyUpHandler(event)
+			this._keys.keyUpHandlerV2(event, this.rawMousePos, this.currentPoint)
+			// this.keyUpHandler(event)
 		})
 	}
 

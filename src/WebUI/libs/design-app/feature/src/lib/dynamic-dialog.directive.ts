@@ -1,16 +1,6 @@
-import { MovePanelsToStringV2Component } from './dialogs/move-panels-to-string-v2/move-panels-to-string-v2.component'
-import { MovePanelsToStringV3Component } from './dialogs/move-panels-to-string-v3/move-panels-to-string-v3.component'
 import { MovePanelsToStringV4Component } from './dialogs/move-panels-to-string-v4/move-panels-to-string-v4.component'
-import {
-	ComponentRef,
-	Directive,
-	inject,
-	Input,
-	NgZone,
-	OnDestroy,
-	ViewContainerRef,
-} from '@angular/core'
-import { DialogInput } from '@design-app/data-access'
+import { ComponentRef, Directive, inject, Input, OnDestroy, ViewContainerRef } from '@angular/core'
+import { DIALOG_COMPONENT, DialogInput, isDialogMovePanelsToString } from '@design-app/data-access'
 
 
 @Directive({
@@ -19,64 +9,88 @@ import { DialogInput } from '@design-app/data-access'
 })
 export class DynamicDialogDirective implements OnDestroy {
 	private _viewContainerRef = inject(ViewContainerRef)
-	private _ngZone = inject(NgZone)
+	movePanelsToStringRef?: ComponentRef<MovePanelsToStringV4Component>
+	dialogRef?: ComponentRef<unknown>
 
-	private _dialogInputs: DialogInput<any>[] = []
-
-	testModelRef?: ComponentRef<MovePanelsToStringV2Component>
-	testModelRef2?: ComponentRef<MovePanelsToStringV3Component>
-	testModelRef3?: ComponentRef<MovePanelsToStringV4Component>
-
-	/*  ngAfterViewInit(): void {
-	 this.cdr.detach()
-	 }*/
-
-	/*	@Input() set dialog<T>(dialog: {
-	 component: ComponentType<T>
-	 data?: unknown
-	 options?: DialogOptions
-	 }) {*/
-	@Input() set dialogs(dialogs: DialogInput<any>[]) {
-		this._dialogInputs =
-			this._dialogInputs.length < 1 ? dialogs : [...this._dialogInputs, ...dialogs]
-		// this._dialogInputs = this._dialogInputs.length < 1 ? [dialogs] : [...this._dialogInputs, dialogs]
-		dialogs.forEach((dialog) => {
-			this._ngZone.run(() => {
-				const _viewContainerRef = this._viewContainerRef
-				_viewContainerRef.clear()
-				const ref = _viewContainerRef.createComponent(dialog.component)
-				ref.instance.data = dialog.data
-
-				/*				_viewContainerRef.createComponent<MovePanelsToStringV2Component>(
-				 MovePanelsToStringV2Component,
-				 )
-				 _viewContainerRef.createComponent<MovePanelsToStringV3Component>(
-				 MovePanelsToStringV3Component,
-				 )
-				 _viewContainerRef.createComponent<MovePanelsToStringV4Component>(
-				 MovePanelsToStringV4Component,
-				 )*/
-			})
-		})
+	@Input() set dialog(dialog: DialogInput) {
+		const _viewContainerRef = this._viewContainerRef
+		_viewContainerRef.clear()
+		this.dialogRef = this.componentSwitch(dialog, _viewContainerRef)()
 	}
 
-	@Input() set dialog(dialog: boolean) {
-		const _viewContainerRef = this._viewContainerRef
-
-		_viewContainerRef.clear()
-		/*		this.testModelRef = _viewContainerRef.createComponent<MovePanelsToStringV2Component>(
-		 MovePanelsToStringV2Component,
-		 )*/
-		/*		this.testModelRef2 = _viewContainerRef.createComponent<MovePanelsToStringV3Component>(
-		 MovePanelsToStringV3Component,
-		 )*/
-		this.testModelRef3 = _viewContainerRef.createComponent<MovePanelsToStringV4Component>(
-			MovePanelsToStringV4Component,
-		)
-		this.testModelRef3.setInput('panelIds', ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'])
+	private componentSwitch = (dialogInput: DialogInput, viewContainerRef: ViewContainerRef) => {
+		return {
+			[DIALOG_COMPONENT.MOVE_PANELS_TO_STRING]: () => {
+				const ref = viewContainerRef.createComponent<MovePanelsToStringV4Component>(
+					MovePanelsToStringV4Component,
+				)
+				if (!isDialogMovePanelsToString(dialogInput)) {
+					throw new Error('Invalid dialog data')
+				}
+				ref.instance.data = dialogInput.data
+				return ref
+			},
+		}[dialogInput.component]
 	}
 
 	ngOnDestroy(): void {
-		this.testModelRef?.destroy()
+		this.movePanelsToStringRef?.destroy()
+		this.dialogRef?.destroy()
 	}
 }
+
+/*
+ const componentSwitch = (dialogComponent: DialogComponent) => ({
+ [DIALOG_COMPONENT.MOVE_PANELS_TO_STRING]: {
+ this.movePanelsToStringRef =
+ this._viewContainerRef.createComponent<MovePanelsToStringV4Component>(
+ MovePanelsToStringV4Component,
+ )
+ if (!isDialogMovePanelsToString(dialog)) {
+ throw new Error('Invalid dialog data')
+ }
+ this.movePanelsToStringRef.instance.data = dialog.data
+
+
+ },
+ })[dialog.component]
+ }
+ }*/
+
+/*const hub = (dialogComponent: DialogComponent, viewContainerRef: ViewContainerRef) => ({
+ return (dialogComponent: DialogComponent) => ({
+ [DIALOG_COMPONENT.MOVE_PANELS_TO_STRING]: {
+ return 'movePanelsToStringRef'
+ },
+ })[dialogComponent]
+ // })
+ // }
+ // })
+ }*/
+/*const componentSwitch = (dialogInput: DialogInput, viewContainerRef: ViewContainerRef) => {
+ return {
+ [DIALOG_COMPONENT.MOVE_PANELS_TO_STRING]: () => {
+ const ref = viewContainerRef.createComponent<MovePanelsToStringV4Component>(
+ MovePanelsToStringV4Component,
+ )
+ if (!isDialogMovePanelsToString(dialogInput)) {
+ throw new Error('Invalid dialog data')
+ }
+ ref.instance.data = dialogInput.data
+ return ref
+ },
+ }[dialogInput.component]
+ }
+
+ const viewContainerRef = inject(ViewContainerRef)
+ const dialogInput: DialogInput = {
+ id: 'movePanelsToString',
+ component: DIALOG_COMPONENT.MOVE_PANELS_TO_STRING,
+ data: {
+ panelIds: [],
+ },
+ }
+ const result = componentSwitch(dialogInput, viewContainerRef)*/
+// result().
+
+// }

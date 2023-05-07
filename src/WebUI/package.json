@@ -53,7 +53,6 @@
     "@types/winbox": "^0.2.1",
     "@xstate/cli": "^0.4.2",
     "@xstate/inspect": "^0.8.0",
-    "azure-maps-rest": "^2.0.2",
     "flowbite": "^1.6.5",
     "guid-typescript": "^1.0.9",
     "jwt-decode": "^3.1.2",
@@ -99,7 +98,6 @@
     "@storybook/angular": "7.0.9",
     "@storybook/core-common": "^6.5.15",
     "@storybook/core-server": "7.0.9",
-    "@swc-node/register": "^1.4.2",
     "@swc/cli": "0.1.62",
     "@swc/core": "~1.3.51",
     "@trivago/prettier-plugin-sort-imports": "^4.1.1",
@@ -160,6 +158,7 @@
     "vite-tsconfig-paths": "^4.0.2",
     "vitest": "^0.25.8",
     "vitest-preview": "latest",
+    "webpack-cli": "^5.1.0",
     "xo": "^0.54.2"
   }
 }
