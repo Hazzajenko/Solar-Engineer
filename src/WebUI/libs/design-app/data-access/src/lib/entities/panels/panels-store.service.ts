@@ -20,6 +20,7 @@ export class PanelsStoreService {
 		initialValue: initialPanelsState,
 	})
 	readonly dispatch = new PanelsRepository(this._store)
+	panelSignals = this._store.selectSignal(selectPanelsState)
 	selectedStringId = toSignal(this._state$.pipe(select(selectSelectedStringId)))
 
 	panelsByStringId = computed(() => {

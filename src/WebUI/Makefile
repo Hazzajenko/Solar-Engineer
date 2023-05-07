@@ -138,3 +138,6 @@ run-plugin-dry:
 
 migrate-ngrx-next:
 	nx migrate @ngrx/data@next @ngrx/effects@next @ngrx/entity@next @ngrx/schematics@next @ngrx/store@next @ngrx/store-devtools@next
+
+pnpm-update:
+	pnpm update -L -i
