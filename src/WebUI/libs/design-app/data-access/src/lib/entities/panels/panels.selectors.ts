@@ -18,11 +18,6 @@ export const selectPanelsEntities = createSelector(selectPanelsState, (state: Pa
 export const selectPanelById = (props: { id: string }) =>
 	createSelector(selectPanelsEntities, (panels: Dictionary<CanvasPanel>) => panels[props.id])
 
-/*export const selectPanelById = (props: { id: string }) =>
- createSelector(selectAllPanels, (panels: CanvasPanel[]) =>
- panels.find((panel) => panel.id === props.id),
- )*/
-
 export const selectPanelsByStringId = (props: { stringId: string }) =>
 	createSelector(selectAllPanels, (panels: CanvasPanel[]) =>
 		panels.filter((panel) => panel.stringId === props.stringId),

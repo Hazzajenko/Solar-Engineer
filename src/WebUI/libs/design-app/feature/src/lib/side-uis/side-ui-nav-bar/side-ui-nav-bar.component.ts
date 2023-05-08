@@ -1,6 +1,8 @@
-import { Component, signal } from '@angular/core'
+import { Component, inject } from '@angular/core'
 import { NgIf } from '@angular/common'
 import { goRightWithConfig } from '@shared/animations'
+import { UiStoreService } from '@design-app/data-access'
+import { toSignal } from '@angular/core/rxjs-interop'
 
 @Component({
 	selector: 'side-ui-nav-bar',
@@ -10,13 +12,15 @@ import { goRightWithConfig } from '@shared/animations'
 	imports: [NgIf],
 })
 export class SideUiNavBarComponent {
-	isOpen = signal(true)
+	private _uiStore = inject(UiStoreService)
+	private _sideUiNavBarOpen = toSignal(this._uiStore.sideUiNav$, {
+		initialValue: this._uiStore.sideUiNav,
+	})
+	get sideUiNavBarOpen() {
+		return this._sideUiNavBarOpen()
+	}
 
 	toggle() {
-		this.isOpen.set(!this.isOpen())
-		setTimeout(() => {
-			this.isOpen.set(!this.isOpen())
-			console.log('toggle', this.isOpen())
-		}, 1000)
+		this._uiStore.dispatch.toggleSideUiNav()
 	}
 }

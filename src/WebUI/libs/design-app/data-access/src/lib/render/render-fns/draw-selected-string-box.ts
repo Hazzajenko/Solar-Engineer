@@ -4,7 +4,6 @@ import { CANVAS_COLORS, CanvasPanel, CanvasString } from '@design-app/shared'
 import { getCompleteBoundsFromMultipleEntitiesWithPadding } from '@design-app/utils'
 import { assertNotNull } from '@shared/utils'
 
-
 export const drawSelectedStringBox = (
 	ctx: CanvasRenderingContext2D,
 	selectedSnapshot: SelectedStateSnapshot,
@@ -12,9 +11,9 @@ export const drawSelectedStringBox = (
 ) => {
 	const selectedStringId = selectedSnapshot.context.selectedStringId
 	assertNotNull(selectedStringId)
-	const string = entityStore.strings.getEntityById(selectedStringId)
+	const string = entityStore.strings.getById(selectedStringId)
 	assertNotNull(string)
-	const selectedStringPanels = entityStore.panels.getEntitiesByStringId(selectedStringId)
+	const selectedStringPanels = entityStore.panels.getByStringId(selectedStringId)
 
 	const selectionBoxBounds = getCompleteBoundsFromMultipleEntitiesWithPadding(
 		selectedStringPanels,
@@ -42,9 +41,9 @@ export const drawSelectedStringBoxV2 = (
 	entityStore: EntityStoreService,
 ) => {
 	assertNotNull(selectedStringId)
-	const string = entityStore.strings.getEntityById(selectedStringId)
+	const string = entityStore.strings.getById(selectedStringId)
 	assertNotNull(string)
-	const selectedStringPanels = entityStore.panels.getEntitiesByStringId(selectedStringId)
+	const selectedStringPanels = entityStore.panels.getByStringId(selectedStringId)
 
 	const selectionBoxBounds = getCompleteBoundsFromMultipleEntitiesWithPadding(
 		selectedStringPanels,

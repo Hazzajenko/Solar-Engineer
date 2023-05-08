@@ -1,5 +1,5 @@
-import { AppNgrxStateStoreV2Service } from '../app-store'
-import { EntityNgrxStoreService } from '../entities'
+import { AppStateStoreService } from '../app-store'
+import { EntityStoreService } from '../entities'
 import { GraphicsStoreService } from '../graphics-store'
 import { GraphicsSettings } from '../graphics/graphics.settings'
 import { RenderService } from '../render'
@@ -27,19 +27,18 @@ import {
 import { groupInto2dArray } from '@shared/utils'
 import { sortBy } from 'lodash'
 
-
 @Injectable({
 	providedIn: 'root',
 })
 export class NearbyService {
 	private _render = inject(RenderService)
 	// private _render = inject(CanvasRenderService)
-	private _entities = inject(EntityNgrxStoreService)
+	private _entities = inject(EntityStoreService)
 	// private _entities = inject(EntityStoreService)
 	// private _app = inject(AppStoreService)
 	// private _appStore = inject(AppNgrxStateStore)
 	private _graphicsStore = inject(GraphicsStoreService)
-	private _appStore = inject(AppNgrxStateStoreV2Service)
+	private _appStore = inject(AppStateStoreService)
 
 	// nearbyDrawMode: NearbyDrawMode = NEARBY_DRAW_MODE.CENTER_LINE_SCREEN_SIZE
 	// nearbyDrawMode: NearbyDrawMode = NEARBY_DRAW_MODE.CENTER_LINE_BETWEEN_TWO_ENTITIES

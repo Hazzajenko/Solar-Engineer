@@ -1,8 +1,5 @@
-import { DialogInput } from '../dialogs'
 import { AppStateActions } from './app-state.actions'
 import {
-	CONTEXT_MENU_OPEN_STATE,
-	ContextMenuState,
 	DRAG_BOX_STATE,
 	DragBoxState,
 	HOVERING_OVER_ENTITY_STATE,
@@ -29,9 +26,9 @@ export type AppState = {
 	view: ViewPositioningState
 	previewAxis: PreviewAxisState
 	mode: ModeState
-	contextMenu: ContextMenuState
-	dialog: boolean
-	dialogs: DialogInput[]
+	// contextMenu: ContextMenuState
+	/*	dialog: boolean
+	 dialogs: DialogInput[]*/
 }
 
 export const initialAppState: AppState = {
@@ -41,13 +38,11 @@ export const initialAppState: AppState = {
 	// toRotate:             TO_ROTATE_STATE.NO_ROTATE,
 	view: VIEW_POSITIONING_STATE.VIEW_NOT_MOVING,
 	previewAxis: PREVIEW_AXIS_STATE.NONE,
-	mode: MODE_STATE.SELECT_MODE,
-	contextMenu: {
-		state: CONTEXT_MENU_OPEN_STATE.NO_CONTEXT_MENU,
-		type: undefined,
-	},
-	dialog: false,
-	dialogs: [],
+	mode: MODE_STATE.SELECT_MODE /*	contextMenu: {
+	 state: CONTEXT_MENU_OPEN_STATE.NO_CONTEXT_MENU,
+	 type: undefined,
+	 } */ /*	dialog: false,
+	 dialogs: [],*/,
 }
 
 const reducer = createReducer(
@@ -86,49 +81,48 @@ const reducer = createReducer(
 	on(AppStateActions.setModeState, (state, { mode }) => ({
 		...state,
 		mode,
-	})),
-	on(AppStateActions.setContextMenuState, (state, { contextMenu }) => ({
-		...state,
-		contextMenu: {
-			...state.contextMenu,
-			state: contextMenu,
-		},
-	})),
-	on(AppStateActions.openContextMenu, (state, { contextMenuType }) => ({
-		...state,
-		contextMenu: {
-			...state.contextMenu,
-			state: CONTEXT_MENU_OPEN_STATE.CONTEXT_MENU_OPEN,
-			type: contextMenuType,
-		},
-	})),
+	})) /*	on(AppStateActions.setContextMenuState, (state, { contextMenu }) => ({
+	 ...state,
+	 contextMenu: {
+	 ...state.contextMenu,
+	 state: contextMenu,
+	 },
+	 })),
+	 on(AppStateActions.openContextMenu, (state, { contextMenuType }) => ({
+	 ...state,
+	 contextMenu: {
+	 ...state.contextMenu,
+	 state: CONTEXT_MENU_OPEN_STATE.CONTEXT_MENU_OPEN,
+	 type: contextMenuType,
+	 },
+	 })),*/,
 
-	on(AppStateActions.toggleDialogState, (state) => ({
-		...state,
-		dialog: !state.dialog,
-	})),
+	/*	on(AppStateActions.toggleDialogState, (state) => ({
+	 ...state,
+	 dialog: !state.dialog,
+	 })),
 
-	on(AppStateActions.addDialog, (state, { dialog }) => ({
-		...state,
-		dialogs: [...state.dialogs, dialog],
-	})),
+	 on(AppStateActions.addDialog, (state, { dialog }) => ({
+	 ...state,
+	 dialogs: [...state.dialogs, dialog],
+	 })),
 
-	on(AppStateActions.updateDialog, (state, { update }) => ({
-		...state,
-		dialogs: state.dialogs.map((dialog) =>
-			dialog.id === update.id
-				? {
-						...dialog,
-						...update.changes,
-				  }
-				: dialog,
-		),
-	})),
+	 on(AppStateActions.updateDialog, (state, { update }) => ({
+	 ...state,
+	 dialogs: state.dialogs.map((dialog) =>
+	 dialog.id === update.id
+	 ? {
+	 ...dialog,
+	 ...update.changes,
+	 }
+	 : dialog,
+	 ),
+	 })),
 
-	on(AppStateActions.removeDialog, (state, { dialogId }) => ({
-		...state,
-		dialogs: state.dialogs.filter((d) => d.id !== dialogId),
-	})),
+	 on(AppStateActions.removeDialog, (state, { dialogId }) => ({
+	 ...state,
+	 dialogs: state.dialogs.filter((d) => d.id !== dialogId),
+	 })),*/
 
 	on(AppStateActions.clearState, () => initialAppState),
 )

@@ -1,5 +1,4 @@
 import { SelectedStateContext } from '../selected'
-import { EntityNgrxStoreService } from './entity-ngrx-store.service'
 import { EntityStoreService } from './entity-store.service'
 import { CanvasPanel, TransformedPoint } from '@design-app/shared'
 import {
@@ -8,14 +7,13 @@ import {
 } from '@design-app/utils'
 import { assertNotNull } from '@shared/utils'
 
-
 export const getSelectedStringPanelBounds = (
 	store: EntityStoreService,
 	selectedCtx: SelectedStateContext,
 ) => {
 	const selectedStringId = selectedCtx.selectedStringId
 	assertNotNull(selectedStringId)
-	const selectedStringPanels = store.panels.getEntitiesByStringId(selectedStringId)
+	const selectedStringPanels = store.panels.getByStringId(selectedStringId)
 	return getCompleteBoundsFromMultipleEntitiesWithPadding(selectedStringPanels, 10)
 }
 export const getSelectedStringPanelBoundsByStringId = (
@@ -23,7 +21,7 @@ export const getSelectedStringPanelBoundsByStringId = (
 	selectedStringId: string,
 ) => {
 	assertNotNull(selectedStringId)
-	const selectedStringPanels = store.panels.getEntitiesByStringId(selectedStringId)
+	const selectedStringPanels = store.panels.getByStringId(selectedStringId)
 	return getCompleteBoundsFromMultipleEntitiesWithPadding(selectedStringPanels, 10)
 }
 
@@ -37,7 +35,7 @@ export const isPointInsideSelectedStringPanelsByStringId = (
 }
 
 export const isPointInsideSelectedStringPanelsByStringIdNgrx = (
-	store: EntityNgrxStoreService,
+	store: EntityStoreService,
 	selectedStringId: string,
 	point: TransformedPoint,
 ) => {
@@ -54,7 +52,7 @@ export const isPointInsideSelectedStringPanelsByStringIdNgrxWithPanels = (
 	return isPointInsideBounds(point, selectedPanelBounds)
 }
 export const getSelectedStringPanelBoundsByStringIdNgrx = (
-	store: EntityNgrxStoreService,
+	store: EntityStoreService,
 	selectedStringId: string,
 ) => {
 	assertNotNull(selectedStringId)
@@ -74,7 +72,7 @@ export const getMultipleSelectedPanelBounds = (
 	selectedCtx: SelectedStateContext,
 ) => {
 	const multipleSelectedIds = selectedCtx.multipleSelectedIds
-	const selectedPanels = store.panels.getEntitiesByIds(multipleSelectedIds)
+	const selectedPanels = store.panels.getByIds(multipleSelectedIds)
 	return getCompleteBoundsFromMultipleEntitiesWithPadding(selectedPanels, 10)
 }
 

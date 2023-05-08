@@ -1,5 +1,5 @@
 import { AppStoreService } from '../app'
-import { AppNgrxStateStore } from '../app-store'
+import { AppStateStoreService } from '../app-store'
 import { CanvasElementService } from '../div-elements'
 import { RenderService } from '../render'
 import { inject, Injectable } from '@angular/core'
@@ -8,7 +8,6 @@ import { draggingScreenKeysDown } from '@design-app/utils'
 import { CURSOR_TYPE } from '@shared/data-access/models'
 import { assertNotNull } from '@shared/utils'
 
-
 @Injectable({
 	providedIn: 'root',
 })
@@ -16,7 +15,7 @@ export class ViewPositioningService {
 	private _canvasElementsService = inject(CanvasElementService)
 	private _render = inject(RenderService)
 	private _app = inject(AppStoreService)
-	private _appStore = inject(AppNgrxStateStore)
+	private _appStore = inject(AppStateStoreService)
 
 	screenDragStartPoint?: TransformedPoint
 

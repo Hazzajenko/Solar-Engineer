@@ -18,7 +18,7 @@ export const createStringWithPanels = (
 	selectedPanelIds: string[],
 ) => {
 	const string = createString()
-	const panels = entities.panels.getEntitiesByIds(selectedPanelIds)
+	const panels = entities.panels.getByIds(selectedPanelIds)
 	const panelUpdates = panels.map(updateObjectByIdForStoreV3<CanvasPanel>({ stringId: string.id }))
 
 	return { string, panelUpdates }

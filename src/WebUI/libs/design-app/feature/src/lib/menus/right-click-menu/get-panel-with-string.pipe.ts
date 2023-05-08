@@ -1,10 +1,10 @@
 import { inject, Pipe, PipeTransform } from '@angular/core'
 import {
-	AppNgrxStateStoreV2Service,
 	ContextMenuType,
-	EntityNgrxStoreService,
+	EntityStoreService,
 	isSingleEntityContextMenuTemplate,
 	RenderService,
+	UiStoreService,
 } from '@design-app/data-access'
 import { CanvasEntity, CanvasString } from '@design-app/shared'
 import { isPanel } from '@design-app/utils'
@@ -18,9 +18,10 @@ export type PanelWithString = CanvasEntity & {
 	standalone: true,
 })
 export class GetPanelWithStringPipe implements PipeTransform {
-	private _entities = inject(EntityNgrxStoreService)
+	private _entities = inject(EntityStoreService)
 	private _render = inject(RenderService)
-	private _appStore = inject(AppNgrxStateStoreV2Service)
+	// private _appStore = inject(AppStateStoreService)
+	private _uiStore = inject(UiStoreService)
 
 	// private _entities = inject(EntityStoreService)
 
@@ -38,7 +39,8 @@ export class GetPanelWithStringPipe implements PipeTransform {
 			deletePanel: () => {
 				this._entities.panels.dispatch.deletePanel(entity.id)
 				this._render.renderCanvasApp()
-				this._appStore.dispatch.setContextMenuState('NoContextMenu')
+				this._uiStore.dispatch.closeContextMenu()
+				// this._appStore.dispatch.setContextMenuState('NoContextMenu')
 				return
 			},
 		}

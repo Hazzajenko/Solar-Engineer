@@ -1,39 +1,36 @@
-import { AfterViewInit, Component, ElementRef, inject, Renderer2, ViewChild } from '@angular/core'
-import { assertNotNull, calculateTopLeft } from '@shared/utils'
+import { Component, ElementRef, inject, ViewChild } from '@angular/core'
+import { calculateTopLeft, ToSafeHtmlPipe } from '@shared/utils'
 import { NgClass } from '@angular/common'
-import { AppNgrxStateStoreV2Service } from '@design-app/data-access'
-import { getGuid } from '@ngrx/data'
+import { UiStoreService } from '@design-app/data-access'
+import { ZippyTooltipDirective } from '../../zippy-tooltip.directive'
+import { MatTooltipModule } from '@angular/material/tooltip'
+import { TooltipComponent } from '@shared/ui'
+import { ConvertTooltipPipe } from './convert-tooltip.pipe'
 
 @Component({
 	selector: 'overlay-tool-bar-component',
 	standalone: true,
 	templateUrl: 'overlay-tool-bar.component.html',
-	imports: [NgClass],
+	imports: [
+		NgClass,
+		ZippyTooltipDirective,
+		MatTooltipModule,
+		TooltipComponent,
+		ToSafeHtmlPipe,
+		ConvertTooltipPipe,
+	],
 })
-export class OverlayToolBarComponent implements AfterViewInit {
-	private _renderer = inject(Renderer2)
-	private _elementRef = inject(ElementRef)
-	private _appStore = inject(AppNgrxStateStoreV2Service)
+export class OverlayToolBarComponent {
+	private _uiStore = inject(UiStoreService)
 	showToolbar = true
 
 	@ViewChild('toolBar') toolBar: ElementRef<HTMLDivElement> | undefined
 
 	protected readonly WINDOW = window
 
-	ngAfterViewInit(): void {
-		console.log('toolBar', this.toolBar)
-		assertNotNull(this.toolBar)
-		const { left } = calculateTopLeft(this.toolBar.nativeElement)
-		// this._renderer.setStyle(this.toolBar.nativeElement, 'left', left)
-	}
-
-	// protected readonly calculateTopLeft = calculateTopLeft
-
 	openSettingsDialog() {
-		this._appStore.dispatch.addDialog({
-			id: getGuid(),
+		this._uiStore.dispatch.openDialog({
 			component: 'AppSettingsDialogComponent',
-			open: true,
 		})
 	}
 

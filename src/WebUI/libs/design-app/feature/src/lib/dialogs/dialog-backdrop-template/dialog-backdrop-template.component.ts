@@ -4,13 +4,12 @@ import {
 	ElementRef,
 	EventEmitter,
 	inject,
-	Input,
 	NgZone,
 	Output,
 	Renderer2,
 	ViewChild,
 } from '@angular/core'
-import { AppNgrxStateStoreV2Service } from '@design-app/data-access'
+import { AppStateStoreService, UiStoreService } from '@design-app/data-access'
 
 @Component({
 	selector: 'dialog-backdrop-template-component',
@@ -28,12 +27,14 @@ import { AppNgrxStateStoreV2Service } from '@design-app/data-access'
 export class DialogBackdropTemplateComponent implements AfterViewInit {
 	private _renderer = inject(Renderer2)
 	private _ngZone = inject(NgZone)
-	private _appStore = inject(AppNgrxStateStoreV2Service)
+	private _appStore = inject(AppStateStoreService)
+	private _uiStore = inject(UiStoreService)
 	private _dispose: ReturnType<typeof this._renderer.listen> | undefined = undefined
 	// private mouseDownTimeOut: ReturnType<typeof setTimeout> | undefined
 	@ViewChild('backdrop') backdrop!: ElementRef<HTMLDivElement>
 	@Output() backdropClick = new EventEmitter<void>()
-	@Input({ required: true }) dialogId!: string
+
+	// @Input({ required: true }) dialogId!: string
 
 	ngAfterViewInit(): void {
 		/*		const childElement = this.backdrop.nativeElement.children[0]
@@ -58,6 +59,7 @@ export class DialogBackdropTemplateComponent implements AfterViewInit {
 	closeDialog() {
 		console.log('closeDialog')
 		this._dispose?.()
-		this._appStore.dispatch.updateDialog({ id: this.dialogId, changes: { open: false } })
+		this._uiStore.dispatch.closeDialog()
+		// this._uiStore.dispatch.updateDialog({ id: this.dialogId, changes: { open: false } })
 	}
 }

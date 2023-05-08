@@ -24,15 +24,15 @@ import {
 } from '@angular/core'
 import { toSignal } from '@angular/core/rxjs-interop'
 import {
-	AppNgrxStateStoreV2Service,
+	AppStateStoreService,
 	DomPointService,
 	EntityStoreService,
 	ObjectRotatingService,
 	RenderService,
+	UiStoreService,
 } from '@design-app/data-access'
 import { EVENT_TYPE } from '@shared/data-access/models'
 import { ShowSvgComponent } from '@shared/ui'
-
 
 @Component({
 	selector: 'app-right-click-menu',
@@ -63,19 +63,21 @@ export class RightClickMenuComponent implements AfterViewInit {
 	private _renderer = inject(Renderer2)
 	private _render = inject(RenderService)
 	private _elementRef = inject(ElementRef)
-	private _appStore = inject(AppNgrxStateStoreV2Service)
-	contextMenu = toSignal(this._appStore.contextMenu$, { initialValue: this._appStore.contextMenu })
+	private _appStore = inject(AppStateStoreService)
+	private _uiStore = inject(UiStoreService)
+	contextMenu = toSignal(this._uiStore.contextMenu$, { initialValue: this._uiStore.contextMenu })
 
 	constructor() {
 		effect(() => {
 			const contextMenu = this.contextMenu()
-			if (contextMenu.state === 'NoContextMenu') {
+			if (!contextMenu.contextMenuOpen) {
+				// if (contextMenu.state === 'NoContextMenu') {
 				this.hideMenu()
 				return
 			}
 			if (!contextMenu) return
-			if (!contextMenu.type) return
-			this.initMenu(contextMenu.type)
+			if (!contextMenu.currentContextMenu) return
+			// this.initMenu(contextMenu.currentContextMenu)
 		})
 	}
 
@@ -115,14 +117,16 @@ export class RightClickMenuComponent implements AfterViewInit {
 
 		this._objRotating.setEntityToRotate(toRotateId, startPoint)
 		this._render.renderCanvasApp()
-		this._appStore.dispatch.setContextMenuState('NoContextMenu')
+		this._uiStore.dispatch.closeContextMenu()
+		// this._appStore.dispatch.setContextMenuState('NoContextMenu')
 		// this._app.sendEvent({ type: 'CloseContextMenu' })
 	}
 
 	delete(toDeleteId: string) {
-		this._entities.panels.removeEntity(toDeleteId)
+		// this._entities.panels.removeEntity(toDeleteId)
 		this._render.renderCanvasApp()
-		this._appStore.dispatch.setContextMenuState('NoContextMenu')
+		this._uiStore.dispatch.closeContextMenu()
+		// this._appStore.dispatch.setContextMenuState('NoContextMenu')
 		// this._app.sendEvent({ type: 'CloseContextMenu' })
 	}
 }

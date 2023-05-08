@@ -1,7 +1,7 @@
-import { AppNgrxStateStoreV2Service, MODE_STATE } from '../app-store'
+import { AppStateStoreService, MODE_STATE } from '../app-store'
 import { CanvasElementService } from '../div-elements'
 import { DomPointService } from '../dom-point'
-import { EntityNgrxStoreService } from '../entities'
+import { EntityStoreService } from '../entities'
 import { RenderService } from '../render'
 import { SelectedStoreService } from '../selected'
 import { inject, Injectable } from '@angular/core'
@@ -17,19 +17,18 @@ import {
 import { CURSOR_TYPE } from '@shared/data-access/models'
 import { assertNotNull } from '@shared/utils'
 
-
 @Injectable({
 	providedIn: 'root',
 })
 export class DragBoxService {
 	private _canvasElementService = inject(CanvasElementService)
 	private _domPointService = inject(DomPointService)
-	private _entities = inject(EntityNgrxStoreService)
+	private _entities = inject(EntityStoreService)
 	// private _entities = inject(EntityStoreService)
 	// private _state = inject(CanvasClientStateService)
 	private _render = inject(RenderService)
 	// private _render = inject(CanvasRenderService)
-	private _app = inject(AppNgrxStateStoreV2Service)
+	private _app = inject(AppStateStoreService)
 	private _selectedStore = inject(SelectedStoreService)
 	// private _app = inject(AppStoreService)
 

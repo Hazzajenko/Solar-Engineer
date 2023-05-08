@@ -1,12 +1,6 @@
 import { DesignCanvasDirective } from './design-canvas.directive'
-import { MovePanelsToStringV2Component } from './dialogs/move-panels-to-string-v2/move-panels-to-string-v2.component'
 import { DynamicDialogDirective } from './dynamic-dialog.directive'
-import {
-	CanvasGraphicsMenuComponent,
-	KeyMapComponent,
-	RightClickMenuComponent,
-	StateValuesComponent,
-} from './menus'
+import { KeyMapComponent, RightClickMenuComponent, StateValuesComponent } from './menus'
 import { WindowComponent } from './windows'
 import { CdkDrag } from '@angular/cdk/drag-drop'
 import { CommonModule } from '@angular/common'
@@ -26,7 +20,7 @@ import {
 } from '@angular/core'
 import { toSignal } from '@angular/core/rxjs-interop'
 import { MatDialog } from '@angular/material/dialog'
-import { AppNgrxStateStoreV2Service, DialogsService, WindowsStore } from '@design-app/data-access'
+import { AppStateStoreService, UiStoreService, WindowsStore } from '@design-app/data-access'
 import { DraggableWindow } from '@design-app/shared'
 import { LetModule } from '@ngrx/component'
 import { getGuid } from '@ngrx/data'
@@ -41,7 +35,9 @@ import {
 import { MovePanelsToStringSideUiV4Component } from './side-uis/move-panels-to-string-v4/move-panels-to-string-side-ui-v4.component'
 import { MovePanelsToStringSideUiV5Component } from './side-uis/move-panels-to-string-v5/move-panels-to-string-side-ui-v5.component'
 import { OverlayToolBarComponent } from './overlays'
-import { AppSettingsDialogComponent } from './dialogs'
+import { NgIfDirective } from './two-ngs.directive'
+import { DynamicContextMenuDirective } from './dynamic-context-menu.directive'
+import { AppSettingsDialogComponent } from './dialogs/app-settings-dialog/app-settings-dialog.component'
 
 @Component({
 	changeDetection: ChangeDetectionStrategy.OnPush,
@@ -51,7 +47,6 @@ import { AppSettingsDialogComponent } from './dialogs'
 		ShowSvgComponent,
 		LetModule,
 		KeyMapComponent,
-		CanvasGraphicsMenuComponent,
 		StateValuesComponent,
 		RightClickMenuComponent,
 		DesignCanvasDirective,
@@ -59,7 +54,6 @@ import { AppSettingsDialogComponent } from './dialogs'
 		ButtonBuilderComponent,
 		DesignCanvasDirective,
 		DynamicDialogDirective,
-		MovePanelsToStringV2Component,
 		MovePanelsToStringSideUiComponent,
 		MovePanelsToStringSideUiV2Component,
 		MovePanelsToStringSideUiV3Component,
@@ -68,6 +62,8 @@ import { AppSettingsDialogComponent } from './dialogs'
 		SideUiNavBarComponent,
 		OverlayToolBarComponent,
 		AppSettingsDialogComponent,
+		NgIfDirective,
+		DynamicContextMenuDirective,
 	],
 	selector: 'app-design-canvas-app',
 	standalone: true,
@@ -80,10 +76,15 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 	private _elementRef = inject(ElementRef)
 	private _windows = inject(WindowsStore)
 	private _matDialog = inject(MatDialog)
-	private _dialogs = inject(DialogsService)
-	private _appStore = inject(AppNgrxStateStoreV2Service)
-	dialog$ = this._appStore.dialog$
-	allDialogs$ = this._appStore.allDialogs$
+	private _appStore = inject(AppStateStoreService)
+	private _uiStore = inject(UiStoreService)
+	// dialog$ = this._dialogsStore.dialog$
+	dialog$ = this._uiStore.dialog$
+	private _dialog = toSignal(this._uiStore.dialog$, { initialValue: this._uiStore.dialog })
+	private _contextMenu = toSignal(this._uiStore.contextMenu$, {
+		initialValue: this._uiStore.contextMenu,
+	})
+	// dialog = this._uiStore.dialog
 	firstName = signal('Jane')
 	lastName = signal('Doe')
 	fullName = computed(() => `${this.firstName()} ${this.lastName()}`)
@@ -103,6 +104,14 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 			isOpen: true,
 		},
 	]
+
+	get dialog() {
+		return this._dialog()
+	}
+
+	get contextMenu() {
+		return this._contextMenu()
+	}
 
 	constructor() {
 		effect(() => console.log('Name changed:', this.fullName()))

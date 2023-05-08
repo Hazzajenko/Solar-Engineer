@@ -1,11 +1,12 @@
 import { setupCanvas } from './setup-canvas'
 import { Directive, ElementRef, inject, NgZone, OnInit, Renderer2 } from '@angular/core'
 import {
-	AppNgrxStateStoreV2Service,
+	AppStateStoreService,
 	CanvasElementService,
+	CONTEXT_MENU_COMPONENT,
 	DomPointService,
 	DragBoxService,
-	EntityNgrxStoreService,
+	EntityStoreService,
 	genStringNameV2,
 	GraphicsStoreService,
 	isPointInsideSelectedStringPanelsByStringIdNgrxWithPanels,
@@ -20,6 +21,7 @@ import {
 	ROTATE_ENTITY_STATE,
 	SelectedService,
 	SelectedStoreService,
+	UiStoreService,
 	ViewPositioningService,
 } from '@design-app/data-access'
 import {
@@ -70,7 +72,7 @@ import { VIEW_STATE } from 'deprecated/design-app/feature-design-canvas'
 	standalone: true,
 })
 export class DesignCanvasDirective implements OnInit {
-	private _appState = inject(AppNgrxStateStoreV2Service)
+	private _appState = inject(AppStateStoreService)
 	private _graphicsState = inject(GraphicsStoreService)
 	private _positioningStore = inject(ObjectPositioningStoreService)
 	private _selectedStore = inject(SelectedStoreService)
@@ -84,7 +86,8 @@ export class DesignCanvasDirective implements OnInit {
 	private _view = inject(ViewPositioningService)
 	private _drag = inject(DragBoxService)
 	private _render = inject(RenderService)
-	private _entities = inject(EntityNgrxStoreService)
+	private _entities = inject(EntityStoreService)
+	private _uiStore = inject(UiStoreService)
 	// private _entities = inject(EntityStoreService)
 	private _selected = inject(SelectedService)
 	private _nearby = inject(NearbyService)
@@ -376,12 +379,17 @@ export class DesignCanvasDirective implements OnInit {
 	mouseClickHandler(event: PointerEvent, currentPoint: TransformedPoint) {
 		if (isWheelButton(event)) return
 
-		const contextMenuState = this._appState.state.contextMenu
-
-		if (contextMenuState.state === 'ContextMenuOpen') {
-			this._appState.dispatch.setContextMenuState('NoContextMenu')
+		if (this._uiStore.contextMenu.contextMenuOpen) {
+			this._uiStore.dispatch.closeContextMenu()
 			return
 		}
+
+		/*		const contextMenuState = this._appState.state.contextMenu
+
+		 if (contextMenuState.state === 'ContextMenuOpen') {
+		 this._appState.dispatch.setContextMenuState('NoContextMenu')
+		 return
+		 }*/
 
 		if (this._positioningStore.state.rotateEntityState !== 'RotatingNone') {
 			this._objRotating.clearEntityToRotate()
@@ -476,9 +484,13 @@ export class DesignCanvasDirective implements OnInit {
 	 */
 
 	wheelScrollHandler(event: WheelEvent) {
-		if (this._appState.state.contextMenu.state === 'ContextMenuOpen') {
-			this._appState.dispatch.setContextMenuState('NoContextMenu')
+		if (this._uiStore.contextMenu.contextMenuOpen) {
+			this._uiStore.dispatch.closeContextMenu()
+			return
 		}
+		/*		if (this._appState.state.contextMenu.state === 'ContextMenuOpen') {
+		 this._appState.dispatch.setContextMenuState('NoContextMenu')
+		 }*/
 
 		const currentScaleX = this.ctx.getTransform().a
 
@@ -510,12 +522,19 @@ export class DesignCanvasDirective implements OnInit {
 		if (entityUnderMouse) {
 			const x = event.offsetX + entityUnderMouse.width / 2
 			const y = event.offsetY + entityUnderMouse.height / 2
-			this._appState.dispatch.openContextMenu({
-				type: 'SingleEntity',
-				id: entityUnderMouse.id,
-				x,
-				y,
+			this._uiStore.dispatch.openContextMenu({
+				component: CONTEXT_MENU_COMPONENT.SINGLE_PANEL_MENU,
+				location: { x, y },
+				data: {
+					panelId: entityUnderMouse.id,
+				},
 			})
+			/*			this._appState.dispatch.openContextMenu({
+			 type: 'SingleEntity',
+			 id: entityUnderMouse.id,
+			 x,
+			 y,
+			 })*/
 			return
 		}
 
@@ -540,13 +559,16 @@ export class DesignCanvasDirective implements OnInit {
 				assertNotNull(selectedStringId)
 				// const stringPanels = this._entities.panels.getEntitiesByStringId(selectedStringId)
 				// const stringPanels = this._entities.panels.getEntitiesByStringId(selectedStringId)
-				const stringPanelsIds = selectedStringPanels.map((panel) => panel.id)
-				this._appState.dispatch.openContextMenu({
-					type: 'String',
-					stringId: selectedStringId,
-					panelIds: stringPanelsIds,
-					x: event.offsetX,
-					y: event.offsetY,
+				// const stringPanelsIds = selectedStringPanels.map((panel) => panel.id)
+				this._uiStore.dispatch.openContextMenu({
+					component: CONTEXT_MENU_COMPONENT.STRING_MENU,
+					location: {
+						x: event.offsetX,
+						y: event.offsetY,
+					},
+					data: {
+						stringId: selectedStringId,
+					},
 				})
 				return
 			}
@@ -563,11 +585,15 @@ export class DesignCanvasDirective implements OnInit {
 			const clickInBounds = isPointInsideBounds(currentPoint, selectionBoxBounds)
 			if (clickInBounds) {
 				const selectedPanelIds = selectedPanels.map((panel) => panel.id)
-				this._appState.dispatch.openContextMenu({
-					type: 'MultipleEntities',
-					ids: selectedPanelIds,
-					x: event.offsetX,
-					y: event.offsetY,
+				this._uiStore.dispatch.openContextMenu({
+					component: CONTEXT_MENU_COMPONENT.MULTIPLE_PANELS_MENU,
+					location: {
+						x: event.offsetX,
+						y: event.offsetY,
+					},
+					data: {
+						panelIds: selectedPanelIds,
+					},
 				})
 			}
 			return

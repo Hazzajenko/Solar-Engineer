@@ -1,4 +1,4 @@
-import { EntityNgrxStoreService } from '../entities'
+import { EntityStoreService } from '../entities'
 import { ObjectPositioningStoreService } from '../object-positioning-store'
 import { RenderService } from '../render'
 import { SelectedStoreService } from '../selected'
@@ -23,12 +23,11 @@ import { UpdateStr } from '@ngrx/entity/src/models'
 import { Point } from '@shared/data-access/models'
 import { assertNotNull } from '@shared/utils'
 
-
 @Injectable({
 	providedIn: 'root',
 })
 export class ObjectRotatingService {
-	private _entities = inject(EntityNgrxStoreService)
+	private _entities = inject(EntityStoreService)
 	// private _entities = inject(EntityStoreService)
 	private _render = inject(RenderService)
 	// private _app = inject(AppStoreService)

@@ -1,7 +1,7 @@
 import { inject, Pipe, PipeTransform } from '@angular/core'
 import {
 	ContextMenuType,
-	EntityNgrxStoreService,
+	EntityStoreService,
 	isStringContextMenuTemplate,
 } from '@design-app/data-access'
 import { CanvasString } from '@design-app/shared'
@@ -15,7 +15,7 @@ export type StringWithPanelIds = CanvasString & {
 	standalone: true,
 })
 export class GetStringWithPanelIdsPipe implements PipeTransform {
-	private _entities = inject(EntityNgrxStoreService)
+	private _entities = inject(EntityStoreService)
 
 	transform(menu: ContextMenuType | undefined): StringWithPanelIds | undefined {
 		if (!menu) return

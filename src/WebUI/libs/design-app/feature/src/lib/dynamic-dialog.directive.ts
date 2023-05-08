@@ -1,7 +1,7 @@
-import { MovePanelsToStringV4Component } from './dialogs/move-panels-to-string-v4/move-panels-to-string-v4.component'
+import { MovePanelsToStringDialogComponent } from './dialogs'
 import { ComponentRef, Directive, inject, Input, OnDestroy, ViewContainerRef } from '@angular/core'
-import { DIALOG_COMPONENT, DialogInput, isDialogMovePanelsToString } from '@design-app/data-access'
-import { AppSettingsDialogComponent } from './dialogs'
+import { DIALOG_COMPONENT, DialogInput } from '@design-app/data-access'
+import { AppSettingsDialogComponent } from './dialogs/app-settings-dialog/app-settings-dialog.component'
 
 @Directive({
 	selector: '[appDynamicDialog]',
@@ -9,54 +9,41 @@ import { AppSettingsDialogComponent } from './dialogs'
 })
 export class DynamicDialogDirective implements OnDestroy {
 	private _viewContainerRef = inject(ViewContainerRef)
-	movePanelsToStringRef?: ComponentRef<MovePanelsToStringV4Component>
 	dialogRef?: ComponentRef<unknown>
 
 	@Input() set dialog(dialog: DialogInput) {
-		if (!dialog.open) {
-			this.movePanelsToStringRef?.destroy()
+		if (!dialog) {
 			this.dialogRef?.destroy()
 			return
 		}
-		const _viewContainerRef = this._viewContainerRef
-		_viewContainerRef.clear()
-		this.dialogRef = this.componentSwitch(dialog, _viewContainerRef)
+		this._viewContainerRef.clear()
+		this.dialogRef = this.componentSwitch(dialog)
 	}
 
-	private componentSwitch = (dialogInput: DialogInput, viewContainerRef: ViewContainerRef) => {
-		return (
-			{
-				[DIALOG_COMPONENT.MOVE_PANELS_TO_STRING]: () => {
-					const ref = viewContainerRef.createComponent<MovePanelsToStringV4Component>(
-						MovePanelsToStringV4Component,
+	private componentSwitch(dialog: DialogInput) {
+		switch (dialog.component) {
+			case DIALOG_COMPONENT.MOVE_PANELS_TO_STRING:
+				return (() => {
+					const ref = this._viewContainerRef.createComponent<MovePanelsToStringDialogComponent>(
+						MovePanelsToStringDialogComponent,
 					)
-					if (!isDialogMovePanelsToString(dialogInput)) {
-						throw new Error('Invalid dialog data')
-					}
-					ref.instance.data = {
-						dialogId: dialogInput.id,
-						panelIds: dialogInput.data.panelIds,
-					}
+					ref.instance.data = dialog.data
 					return ref
-				},
-				[DIALOG_COMPONENT.APP_SETTINGS]: () => {
-					const ref = viewContainerRef.createComponent<AppSettingsDialogComponent>(
+				})()
+			case DIALOG_COMPONENT.APP_SETTINGS:
+				return (() => {
+					return this._viewContainerRef.createComponent<AppSettingsDialogComponent>(
 						AppSettingsDialogComponent,
 					)
-					ref.instance.data = {
-						dialogId: dialogInput.id,
-					}
-					return ref
-				},
-			}[dialogInput.component] ||
-			(() => {
-				throw new Error('Invalid dialog component')
-			})
-		)()
+				})()
+			default:
+				return (() => {
+					throw new Error('Invalid dialog component')
+				})()
+		}
 	}
 
 	ngOnDestroy(): void {
-		this.movePanelsToStringRef?.destroy()
 		this.dialogRef?.destroy()
 	}
 }

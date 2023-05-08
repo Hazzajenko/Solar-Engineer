@@ -1,6 +1,6 @@
-import { AppNgrxStateStore } from '../app-store'
+import { AppStateStoreService } from '../app-store'
 import { CanvasElementService, DIV_ELEMENT, DivElementsService } from '../div-elements'
-import { EntityNgrxStoreService } from '../entities'
+import { EntityStoreService } from '../entities'
 import { SelectedStoreService } from '../selected'
 import { CanvasRenderOptions } from './canvas-render-options'
 import { drawSelectedBox, drawSelectedStringBoxV3 } from './render-fns'
@@ -9,17 +9,17 @@ import { CANVAS_COLORS, PANEL_STROKE_STYLE } from '@design-app/shared'
 import { isPanel } from '@design-app/utils'
 import { assertNotNull, shadeColor } from '@shared/utils'
 
-
 @Injectable({
 	providedIn: 'root',
 })
 export class RenderService {
 	private _canvasElementService = inject(CanvasElementService)
 	private _divElements = inject(DivElementsService)
-	private _entities = inject(EntityNgrxStoreService)
+	private _entities = inject(EntityStoreService)
 	// private _entities = inject(EntityStoreService)
 	// private _app = inject(AppStoreService)
-	private _appStore = inject(AppNgrxStateStore)
+	// private _appStore = inject(AppNgrxStateStore)
+	private _appStore = inject(AppStateStoreService)
 	private _selectedStore = inject(SelectedStoreService)
 
 	private lastRenderTime = performance.now()
@@ -138,7 +138,7 @@ export class RenderService {
 					fillStyle = CANVAS_COLORS.StringSelectedPanelFillStyle
 				}
 
-				const pointerState = this._appStore.select.state.pointer
+				const pointerState = this._appStore.state.pointer
 				const hoveringOverEntityId = pointerState.hoveringOverEntityId
 				const isBeingHovered = !!hoveringOverEntityId && hoveringOverEntityId === entity.id
 				// const isHoveringOverEntity = pointerState.hoveringOverEntityId === entity.id

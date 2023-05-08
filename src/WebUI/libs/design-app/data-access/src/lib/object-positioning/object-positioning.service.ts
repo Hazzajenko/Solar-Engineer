@@ -1,6 +1,6 @@
 import { CanvasElementService } from '../div-elements'
 import { DomPointService } from '../dom-point'
-import { EntityNgrxStoreService } from '../entities'
+import { EntityStoreService } from '../entities'
 import { GraphicsStoreService } from '../graphics-store'
 import { GraphicsSettings } from '../graphics/graphics.settings'
 import { getNearbyLineDrawCtxFnFromNearbyLinesState } from '../nearby'
@@ -39,12 +39,11 @@ import { CURSOR_TYPE, Point } from '@shared/data-access/models'
 import { assertNotNull, groupInto2dArray } from '@shared/utils'
 import { sortBy } from 'lodash'
 
-
 @Injectable({
 	providedIn: 'root',
 })
 export class ObjectPositioningService {
-	private _entities = inject(EntityNgrxStoreService)
+	private _entities = inject(EntityStoreService)
 	// private _entities = inject(EntityStoreService)
 	private _domPoint = inject(DomPointService)
 	private _render = inject(RenderService)

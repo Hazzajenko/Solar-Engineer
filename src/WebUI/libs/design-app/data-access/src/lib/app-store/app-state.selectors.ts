@@ -35,20 +35,22 @@ export const selectViewPositioningState = createSelector(
 
 export const selectModeState = createSelector(selectAppStateState, (state: AppState) => state.mode)
 
-export const selectContextMenuState = createSelector(
-	selectAppStateState,
-	(state: AppState) => state.contextMenu,
-)
+/*export const selectContextMenuState = createSelector(
+ selectAppStateState,
+ (state: AppState) => state.contextMenu,
+ )*/
 
-export const selectDialogState = createSelector(
-	selectAppStateState,
-	(state: AppState) => state.dialog,
-)
+/*
+ export const selectDialogState = createSelector(
+ selectAppStateState,
+ (state: AppState) => state.dialog,
+ )
 
-export const selectAllDialogs = createSelector(
-	selectAppStateState,
-	(state: AppState) => state.dialogs,
-)
+ export const selectAllDialogs = createSelector(
+ selectAppStateState,
+ (state: AppState) => state.dialogs,
+ )
+ */
 
 /*
  export const selectSelectedState = createSelector(

@@ -1,7 +1,8 @@
+<!--
 <ng-container *ngIf='contextMenu() as menu'>
   <ul id='menu-list'
       class='py-1 text-sm text-gray-700 dark:text-gray-200 absolute z-10  mt-2 w-56 bg-gray-200 divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'>
-    <ng-container [ngSwitch]='menu.type?.type'>
+    <ng-container [ngSwitch]='menu.currentContextMenu?.type'>
       <ng-container *ngSwitchCase='"SingleEntity"'>
         <ng-container *ngTemplateOutlet='SingleEntity' />
       </ng-container>
@@ -12,11 +13,11 @@
       <ng-container *ngSwitchCase='"String"'>
         <ng-container *ngTemplateOutlet='String' />
       </ng-container>
-      <!--      <ng-container *ngSwitchDefault>IMPLEMENT</ng-container>-->
+      &lt;!&ndash;      <ng-container *ngSwitchDefault>IMPLEMENT</ng-container>&ndash;&gt;
     </ng-container>
   </ul>
   <ng-template #SingleEntity>
-    <ng-container *ngIf='menu.type | getPanelWithString as panel'>
+    <ng-container *ngIf='menu.currentContextMenu | getPanelWithString as panel'>
       <div class='px-4 py-3'
            role='none'>
         <p class='truncate text-sm font-medium text-gray-900'
@@ -34,7 +35,7 @@
           Delete
         </a>
       </li>
-      <!--      <li>
+      &lt;!&ndash;      <li>
               <a
                 (click)='delete(panel.id)'
                 role='menuitem'
@@ -45,7 +46,7 @@
                               svgPath='bin' />
                 Delete
               </a>
-            </li>-->
+            </li>&ndash;&gt;
       <ng-container
         *ngIf='panel.string else noString'
       >
@@ -96,12 +97,12 @@
     </ng-template>
   </ng-template>
   <ng-template #MultipleEntities>
-    <ng-container *ngIf='menu.type | getSelectedPanels as selectedPanels'>
+    <ng-container *ngIf='menu.currentContextMenu | getSelectedPanels as selectedPanels'>
       <div class='px-4 py-3'
            role='none'>
         <p class='truncate text-sm font-medium text-gray-900'
            role='none'>Selected {{selectedPanels.panelIds.length}} Panels</p>
-        <!--      <p>{{string.panelIds.length}} Panels</p>-->
+        &lt;!&ndash;      <p>{{string.panelIds.length}} Panels</p>&ndash;&gt;
       </div>
       <li>
         <a
@@ -131,7 +132,7 @@
   </ng-template>
 
   <ng-template #String>
-    <ng-container *ngIf='menu.type | getStringWithPanelIds as string'>
+    <ng-container *ngIf='menu.currentContextMenu | getStringWithPanelIds as string'>
       <div class='px-4 py-3'
            role='none'>
         <p class='truncate text-sm font-medium text-gray-900'
@@ -166,3 +167,4 @@
   </ng-template>
 </ng-container>
 
+-->

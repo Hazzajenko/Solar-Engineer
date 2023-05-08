@@ -1,11 +1,10 @@
-import { AppNgrxStateStore } from '../app-store'
+import { AppStateStoreService } from '../app-store'
 import { EntityStoreService } from '../entities'
 import { SelectedStoreService } from './selected-store.service'
 import { ENTITY_SELECTED_STATE } from './selected.reducer'
 import { inject, Injectable } from '@angular/core'
 import { CanvasEntity } from '@design-app/shared'
 import { assertNotNull } from '@shared/utils'
-
 
 @Injectable({
 	providedIn: 'root',
@@ -14,7 +13,7 @@ export class SelectedService {
 	// private _entities = inject(EntityStoreService)
 	private _entities = inject(EntityStoreService)
 	// private _app = inject(AppStoreService)
-	private _appStore = inject(AppNgrxStateStore)
+	private _appStore = inject(AppStateStoreService)
 	private _selectedStore = inject(SelectedStoreService)
 
 	// private _appState = inject(AppSt)
@@ -40,7 +39,7 @@ export class SelectedService {
 		 type: 'SetMultipleSelectedEntities',
 		 payload: { ids: [selectedId] },
 		 })*/
-		const currentSelected = this._appStore.select.state
+		const currentSelected = this._appStore.state
 		console.log('currentSelected', currentSelected)
 		this._selectedStore.dispatch.selectEntity(selectedId)
 		// this._appStore.dispatch.setSelectedState(SELECTED_STATE.MULTIPLE_ENTITIES_SELECTED)
@@ -85,7 +84,7 @@ export class SelectedService {
 
 		if (!selectedId) return
 
-		const selectedEntity = this._entities.panels.getEntityById(selectedId)
+		const selectedEntity = this._entities.panels.getById(selectedId)
 		assertNotNull(selectedEntity, 'selected entity not found')
 		// this._app.sendEvent(
 		// 	{

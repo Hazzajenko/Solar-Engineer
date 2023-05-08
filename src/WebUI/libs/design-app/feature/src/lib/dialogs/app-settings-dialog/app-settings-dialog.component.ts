@@ -1,17 +1,13 @@
 import { AsyncPipe, NgForOf, NgIf, NgStyle } from '@angular/common'
-import { Component, ElementRef, inject, Input, NgZone, Renderer2, ViewChild } from '@angular/core'
+import { Component, ElementRef, inject, ViewChild } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatDialogModule } from '@angular/material/dialog'
-import {
-	AppNgrxStateStoreV2Service,
-	EntityNgrxStoreService,
-	RenderService,
-	SelectedStoreService,
-} from '@design-app/data-access'
+import { UiStoreService } from '@design-app/data-access'
 import { LetModule } from '@ngrx/component'
 import { DialogBackdropTemplateComponent } from '../dialog-backdrop-template/dialog-backdrop-template.component'
-import { CanvasGraphicsMenuComponent } from '../../menus'
+
 import { ShowSvgComponent, ShowSvgNoStylesComponent } from '@shared/ui'
+import { GraphicsMenuComponent } from './index'
 
 @Component({
 	selector: 'dialog-app-settings',
@@ -25,30 +21,17 @@ import { ShowSvgComponent, ShowSvgNoStylesComponent } from '@shared/ui'
 		MatButtonModule,
 		LetModule,
 		DialogBackdropTemplateComponent,
-		CanvasGraphicsMenuComponent,
+		GraphicsMenuComponent,
 		NgStyle,
 		ShowSvgComponent,
 		ShowSvgNoStylesComponent,
 	],
 })
 export class AppSettingsDialogComponent {
-	private _elementRef = inject(ElementRef<HTMLDivElement>)
-	private _entities = inject(EntityNgrxStoreService)
-	private _renderer = inject(Renderer2)
-	private _ngZone = inject(NgZone)
-	private _selectedStore = inject(SelectedStoreService)
-	private _render = inject(RenderService)
-	private _appStore = inject(AppNgrxStateStoreV2Service)
+	private _uiStore = inject(UiStoreService)
 	@ViewChild('dialog') dialog!: ElementRef<HTMLDivElement>
-	dialogId!: string
-
-	@Input({ required: true }) set data(data: { dialogId: string }) {
-		this.dialogId = data.dialogId
-	}
 
 	closeDialog() {
-		this._appStore.dispatch.updateDialog({ id: this.dialogId, changes: { open: false } })
+		this._uiStore.dispatch.closeDialog()
 	}
-
-	// protected readonly strings = strings
 }

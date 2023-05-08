@@ -1,5 +1,5 @@
-import { AppNgrxStateStoreV2Service, MODE_STATE } from '../app-store'
-import { createStringWithPanelsV2, EntityNgrxStoreService, genStringNameV2 } from '../entities'
+import { AppStateStoreService, MODE_STATE } from '../app-store'
+import { createStringWithPanelsV2, EntityStoreService, genStringNameV2 } from '../entities'
 import { ObjectPositioningService } from '../object-positioning'
 import {
 	MOVE_ENTITY_STATE,
@@ -22,10 +22,10 @@ import { VIEW_STATE } from 'deprecated/design-app/feature-design-canvas'
 export class KeyEventsService {
 	private _selected = inject(SelectedService)
 	private _selectedStore = inject(SelectedStoreService)
-	private _entities = inject(EntityNgrxStoreService)
+	private _entities = inject(EntityStoreService)
 	private _positioningStore = inject(ObjectPositioningStoreService)
 	private _objRotating = inject(ObjectRotatingService)
-	private _appState = inject(AppNgrxStateStoreV2Service)
+	private _appState = inject(AppStateStoreService)
 	private _render = inject(RenderService)
 	private _objPositioning = inject(ObjectPositioningService)
 	private _view = inject(ViewPositioningService)
