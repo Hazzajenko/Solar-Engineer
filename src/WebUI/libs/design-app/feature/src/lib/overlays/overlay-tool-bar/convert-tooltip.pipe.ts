@@ -10,6 +10,7 @@ export class ConvertTooltipPipe implements PipeTransform {
 		// const html = new HTMLDivElement()
 		// html.innerHTML = value.innerHTML
 		// html.style.display = 'block'
+
 		return value.innerHTML
 	}
 }

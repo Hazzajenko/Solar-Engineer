@@ -96,6 +96,8 @@
         </svg>
         <span class='sr-only'>Add list</span>
       </button>
+      <!--      [tooltip]='settings.innerHTML'-->
+      <!--      tooltip='Settings'-->
       <button
         appZippyTooltip
         [tooltip]='settings.innerHTML'
@@ -119,28 +121,10 @@
            style='display: none'
       >
         <div
-          class='absolute z-50 w-64 p-4 bg-white rounded shadow-xl'>
-          <div class='flex flex-col'>
-            <div class='flex flex-row justify-between'>
-              <div class='flex flex-col'>
-                <div class='text-sm font-semibold text-gray-800'>Settings</div>
-                <div class='text-xs text-gray-500'>Settings</div>
-              </div>
-            </div>
-          </div>
+          class='absolute z-50 min-w-fit p-1 bg-white rounded shadow-xl'>
+          <div class='text-xs text-gray-500'>Settings</div>
         </div>
       </div>
-      <!--      <div
-              id='settings-tooltip'
-              role='tooltip'
-              class='absolute z-[100] overflow-auto invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-500 rounded-lg shadow-sm opacity-0 tooltip'
-            >
-              Tooltip on top
-              <div class='tooltip-arrow'
-                   data-popper-arrow></div>
-            </div>-->
-      <!--      <app-tooltip
-              [tooltipText]='"setttinggsss"' />-->
       <button type='button'
               class='p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600'>
         <svg aria-hidden='true'
