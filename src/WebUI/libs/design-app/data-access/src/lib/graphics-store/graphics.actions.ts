@@ -12,6 +12,7 @@ export const GraphicsActions = createActionGroup({
 		'Set Nearby Lines': props<{
 			nearbyLines: NearbyLinesState
 		}>(),
+		'Toggle Coloured Strings': emptyProps(),
 		'Reset Graphics To Default': emptyProps(),
 	},
 })

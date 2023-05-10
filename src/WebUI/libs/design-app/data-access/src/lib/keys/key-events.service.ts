@@ -48,7 +48,7 @@ export class KeyEventsService {
 					this._entities.strings.dispatch.addString(string)
 					this._entities.panels.dispatch.updateManyPanels(panelUpdates)
 
-					this._selectedStore.dispatch.selectString(string.id)
+					// this._selectedStore.dispatch.selectString(string.id)
 					this._render.renderCanvasApp()
 				},
 				[KEYS.R]: () => {

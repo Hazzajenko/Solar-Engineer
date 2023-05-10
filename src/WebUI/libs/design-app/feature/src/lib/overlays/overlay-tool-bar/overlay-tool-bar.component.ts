@@ -1,7 +1,7 @@
 import { Component, ElementRef, inject, ViewChild } from '@angular/core'
-import { calculateTopLeft, ToSafeHtmlPipe } from '@shared/utils'
+import { ToSafeHtmlPipe } from '@shared/utils'
 import { NgClass, NgIf } from '@angular/common'
-import { UiStoreService } from '@design-app/data-access'
+import { GraphicsStoreService, UiStoreService } from '@design-app/data-access'
 import { ZippyTooltipDirective } from '../../zippy-tooltip.directive'
 import { MatTooltipModule } from '@angular/material/tooltip'
 import { ShowSvgNoStylesComponent, ToggleSvgNoStylesComponent, TooltipComponent } from '@shared/ui'
@@ -28,6 +28,7 @@ import { toSignal } from '@angular/core/rxjs-interop'
 })
 export class OverlayToolBarComponent {
 	private _uiStore = inject(UiStoreService)
+	private _graphicsStore = inject(GraphicsStoreService)
 	showToolbar = true
 	sideUiEnabled = toSignal(this._uiStore.sideUiNav$, { initialValue: this._uiStore.sideUiNav })
 
@@ -47,5 +48,7 @@ export class OverlayToolBarComponent {
 		this._uiStore.dispatch.toggleSideUiNav()
 	}
 
-	protected readonly calculateTopLeft = calculateTopLeft
+	toggleColouredStrings() {
+		this._graphicsStore.dispatch.toggleColouredStrings()
+	}
 }

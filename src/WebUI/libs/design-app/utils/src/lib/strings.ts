@@ -1,6 +1,6 @@
 import { CanvasString, StringId, UndefinedStringId } from '@design-app/shared'
 import { UpdateStr } from '@ngrx/entity/src/models'
-import { newGuid } from '@shared/utils'
+import { getRandomVibrantColorHex, newGuid } from '@shared/utils'
 
 export const isStringId = (id: string): id is StringId => {
 	return id === UndefinedStringId || id.startsWith('stringId')
@@ -12,7 +12,8 @@ export const isString = (string: CanvasString | undefined): string is CanvasStri
 
 export const createString = (
 	name = 'New String',
-	color = '#cf46ff',
+	color = getRandomVibrantColorHex(), // color = '#cf46ff',
+	// color = getRandomColourBasic(), // color = '#cf46ff',
 	parallel = false,
 ): CanvasString => {
 	return {

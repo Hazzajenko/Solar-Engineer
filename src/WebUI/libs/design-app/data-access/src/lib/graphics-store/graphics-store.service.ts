@@ -6,7 +6,6 @@ import { inject, Injectable } from '@angular/core'
 import { toSignal } from '@angular/core/rxjs-interop'
 import { select, Store } from '@ngrx/store'
 
-
 @Injectable({
 	providedIn: 'root',
 })
@@ -43,6 +42,10 @@ class GraphicsRepository {
 
 	setNearbyLines(nearbyLines: NearbyLinesState) {
 		this._store.dispatch(GraphicsActions.setNearbyLines({ nearbyLines }))
+	}
+
+	toggleColouredStrings() {
+		this._store.dispatch(GraphicsActions.toggleColouredStrings())
 	}
 
 	resetGraphicsToDefault() {

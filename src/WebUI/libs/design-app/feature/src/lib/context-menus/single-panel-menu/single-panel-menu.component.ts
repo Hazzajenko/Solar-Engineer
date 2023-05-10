@@ -24,6 +24,7 @@ export class SinglePanelMenuComponent {
 	menuPosition!: Point
 
 	@Input({ required: true }) set location(location: Point) {
+		console.log('location', location)
 		if (!location) {
 			this._render.renderCanvasApp()
 			this._uiStore.dispatch.closeContextMenu()
@@ -34,6 +35,7 @@ export class SinglePanelMenuComponent {
 	}
 
 	@Input({ required: true }) set data(data: { panelId: string }) {
+		console.log('data', data)
 		if (!data.panelId) {
 			this._render.renderCanvasApp()
 			this._uiStore.dispatch.closeContextMenu()
@@ -47,6 +49,8 @@ export class SinglePanelMenuComponent {
 		}
 		const string = this._entityStore.strings.getById(panel.stringId)
 		this.panel = panel
+		console.log('panel', panel)
+		console.log('string', string)
 		this.string = string
 	}
 

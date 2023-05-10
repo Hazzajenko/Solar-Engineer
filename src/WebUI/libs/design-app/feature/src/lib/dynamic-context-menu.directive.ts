@@ -36,6 +36,8 @@ export class DynamicContextMenuDirective implements OnDestroy {
 		return this._contextMenu()
 	}
 
+	cachedContextMenu?: ContextMenuInput
+
 	constructor() {
 		effect(() => {
 			if (
@@ -43,11 +45,16 @@ export class DynamicContextMenuDirective implements OnDestroy {
 				!this.contextMenu.currentContextMenu ||
 				!this.contextMenu.contextMenuOpen
 			) {
-				this.contextMenuRef?.destroy()
+				this.ngOnDestroy()
 				return
 			}
+
+			if (this.cachedContextMenu === this.contextMenu.currentContextMenu) return
+
 			this._viewContainerRef.clear()
 			this.contextMenuRef = this.switchFn(this.contextMenu.currentContextMenu)
+			this.cachedContextMenu = this.contextMenu.currentContextMenu
+			if (this._killEvent) this._killEvent()
 			this._ngZone.runOutsideAngular(() => {
 				this._killEvent = this.renderer.listen('document', 'click', (event: MouseEvent) => {
 					if (!this.contextMenuRef) {
@@ -62,15 +69,16 @@ export class DynamicContextMenuDirective implements OnDestroy {
 			})
 		})
 	}
+
 	/*
-	@Input() set contextMenu(contextMenu: ContextMenuInput) {
-		if (!contextMenu) {
-			this.contextMenuRef?.destroy()
-			return
-		}
-		this._viewContainerRef.clear()
-		this.contextMenuRef = this.switchFn(contextMenu)
-	}*/
+	 @Input() set contextMenu(contextMenu: ContextMenuInput) {
+	 if (!contextMenu) {
+	 this.contextMenuRef?.destroy()
+	 return
+	 }
+	 this._viewContainerRef.clear()
+	 this.contextMenuRef = this.switchFn(contextMenu)
+	 }*/
 
 	private switchFn(contextMenu: ContextMenuInput) {
 		switch (contextMenu.component) {
@@ -111,6 +119,6 @@ export class DynamicContextMenuDirective implements OnDestroy {
 	ngOnDestroy(): void {
 		this._killEvent?.()
 		this.contextMenuRef?.destroy()
-		this._uiStore.dispatch.closeContextMenu()
+		// this._uiStore.dispatch.closeContextMenu()
 	}
 }

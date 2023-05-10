@@ -12,12 +12,14 @@ export const GRAPHICS_FEATURE_KEY = 'graphics'
 export type GraphicsState = {
 	createPreview: CreatePreviewState
 	nearbyLines: NearbyLinesState
+	colouredStrings: boolean
 	history: Partial<GraphicsState>
 }
 
 export const initialGraphicsState: GraphicsState = {
 	createPreview: CREATE_PREVIEW_STATE.CREATE_PREVIEW_ENABLED,
 	nearbyLines: NEARBY_LINES_STATE.CENTER_LINE_BETWEEN_TWO_ENTITIES,
+	colouredStrings: true,
 	history: {},
 }
 
@@ -60,6 +62,10 @@ const reducer = createReducer(
 			...state.history,
 			nearbyLines: state.nearbyLines,
 		},
+	})),
+	on(GraphicsActions.toggleColouredStrings, (state) => ({
+		...state,
+		colouredStrings: !state.colouredStrings,
 	})),
 	on(GraphicsActions.resetGraphicsToDefault, () => initialGraphicsState),
 )

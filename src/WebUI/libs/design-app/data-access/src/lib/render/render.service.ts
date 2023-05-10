@@ -5,9 +5,10 @@ import { SelectedStoreService } from '../selected'
 import { CanvasRenderOptions } from './canvas-render-options'
 import { drawSelectedBox, drawSelectedStringBoxV3 } from './render-fns'
 import { inject, Injectable } from '@angular/core'
-import { CANVAS_COLORS, PANEL_STROKE_STYLE } from '@design-app/shared'
+import { CANVAS_COLORS, PANEL_STROKE_STYLE, UndefinedStringId } from '@design-app/shared'
 import { isPanel } from '@design-app/utils'
 import { assertNotNull, shadeColor } from '@shared/utils'
+import { GraphicsStoreService } from '../graphics-store'
 
 @Injectable({
 	providedIn: 'root',
@@ -21,6 +22,7 @@ export class RenderService {
 	// private _appStore = inject(AppNgrxStateStore)
 	private _appStore = inject(AppStateStoreService)
 	private _selectedStore = inject(SelectedStoreService)
+	private _graphicsStore = inject(GraphicsStoreService)
 
 	private lastRenderTime = performance.now()
 
@@ -106,6 +108,14 @@ export class RenderService {
 				if (!isPanel(entity)) return
 				let fillStyle: string = CANVAS_COLORS.DefaultPanelFillStyle
 				const strokeStyle: string = PANEL_STROKE_STYLE.DEFAULT
+
+				if (this._graphicsStore.state.colouredStrings) {
+					if (entity.stringId !== UndefinedStringId) {
+						const string = this._entities.strings.getById(entity.stringId)
+						assertNotNull(string)
+						fillStyle = string.color
+					}
+				}
 
 				const selectedState = this._selectedStore.state
 
