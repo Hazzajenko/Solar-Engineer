@@ -13,6 +13,7 @@ export const selectDialogState = createSelector(selectUiState, (state: UiState) 
 	currentDialog: state.currentDialog,
 }))
 
-export const selectSideUiNavState = createSelector(selectUiState, (state: UiState) => ({
-	sideUiNavOpen: state.sideUiNavOpen,
-}))
+export const selectSideUiNavState = createSelector(
+	selectUiState,
+	(state: UiState) => state.sideUiNavOpen,
+)

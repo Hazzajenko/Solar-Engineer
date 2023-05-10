@@ -144,3 +144,6 @@ pnpm-update:
 
 migrate-ngrx-latest:
 	nx migrate @ngrx/data@latest @ngrx/effects@latest @ngrx/entity@latest @ngrx/schematics@latest @ngrx/store@latest @ngrx/store-devtools@latest
+
+migrate-again:
+	nx migrate ng-packagr@latest  @schematics/angular@latest @storybook/core-common@latest

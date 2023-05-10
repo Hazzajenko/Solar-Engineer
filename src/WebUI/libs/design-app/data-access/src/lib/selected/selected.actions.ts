@@ -25,5 +25,6 @@ export const SelectedActions = createActionGroup({
 		'Clear Single Selected': emptyProps(),
 		'Clear Multi Selected': emptyProps(),
 		'Clear Selected State': emptyProps(),
+		Noop: emptyProps(),
 	},
 })

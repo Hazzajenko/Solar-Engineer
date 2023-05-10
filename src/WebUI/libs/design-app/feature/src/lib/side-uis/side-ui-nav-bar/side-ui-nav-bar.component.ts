@@ -35,7 +35,7 @@ export class SideUiNavBarComponent {
 	}
 
 	get sideUiNavBarOpen() {
-		return this._sideUiNavBarOpen().sideUiNavOpen
+		return this._sideUiNavBarOpen()
 	}
 
 	toggle() {

@@ -23,7 +23,9 @@ export class UiStoreService {
 	private readonly _dialog$ = this._store.select(selectDialogState)
 	private readonly _dialog = this._store.selectSignal(selectDialogState)
 	private readonly _sideUiNav$ = this._store.select(selectSideUiNavState)
+
 	private readonly _sideUiNav = this._store.selectSignal(selectSideUiNavState)
+	// private readonly _sideUiNav = toSignal(this._sideUiNav$, { initialValue: true })
 	public dispatch = new UiRepository(this._store)
 
 	get state() {

@@ -162,8 +162,9 @@ export class RenderService {
 				shouldRenderSelectedEntitiesBox &&
 				this._selectedStore.state.singleSelectedEntityId
 			) {
-				const selectedEntity =
-					this._entities.panels.entities[this._selectedStore.state.singleSelectedEntityId]
+				const selectedEntity = this._entities.panels.getById(
+					this._selectedStore.state.singleSelectedEntityId,
+				)
 				assertNotNull(selectedEntity, 'selectedEntity')
 				drawSelectedBox(ctx, [selectedEntity])
 			}

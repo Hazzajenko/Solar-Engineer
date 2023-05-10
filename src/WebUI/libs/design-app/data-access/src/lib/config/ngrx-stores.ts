@@ -9,6 +9,8 @@ import { SELECTED_FEATURE_KEY, selectedReducer } from '../selected'
 import { WINDOWS_FEATURE_KEY, windowsReducer } from '../windows'
 import { provideState } from '@ngrx/store'
 import { UI_FEATURE_KEY, uiReducer } from '../ui-store'
+import { provideEffects } from '@ngrx/effects'
+import * as panelsEffects from '../entities/panels/panels.effects'
 
 export const DesignAppNgrxStores = [
 	provideState(APP_STATE_FEATURE_KEY, appStateReducer),
@@ -19,4 +21,5 @@ export const DesignAppNgrxStores = [
 	provideState(OBJECT_POSITIONING_FEATURE_KEY, objectPositioningReducer),
 	provideState(GRAPHICS_FEATURE_KEY, graphicsReducer),
 	provideState(WINDOWS_FEATURE_KEY, windowsReducer),
+	provideEffects(panelsEffects),
 ] as const

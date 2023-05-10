@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, signal, ViewChild } from '@angular/core'
-import { DatePipe, JsonPipe, NgClass, NgForOf, NgIf, NgTemplateOutlet } from '@angular/common'
-import { MatListModule } from '@angular/material/list'
+import { NgClass, NgForOf, NgIf, NgTemplateOutlet } from '@angular/common'
 import {
 	EntityStoreService,
 	GetStringByIdPipe,
@@ -11,44 +10,29 @@ import {
 	UiStoreService,
 } from '@design-app/data-access'
 import { toSignal } from '@angular/core/rxjs-interop'
-import {
-	CdkFixedSizeVirtualScroll,
-	CdkVirtualForOf,
-	CdkVirtualScrollViewport,
-} from '@angular/cdk/scrolling'
 import { map } from 'rxjs'
 import { groupBy } from '@shared/utils'
 import { fadeInOutAnimation } from '@shared/animations'
-import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
+import { MatMenuTrigger } from '@angular/material/menu'
 import { ShowSvgComponent, ShowSvgNoStylesComponent } from '@shared/ui'
 import { LetDirective } from '@ngrx/component'
-import { InputContextMenuDirective } from '../../../input-context-menu.directive'
-import { CastPipe, TruncatePipe } from '@shared/pipes'
+import { TruncatePipe } from '@shared/pipes'
 import { PanelId, StringId } from '@design-app/shared'
 
 @Component({
 	selector: 'app-data-view-panels',
 	standalone: true,
 	imports: [
-		DatePipe,
-		MatListModule,
 		NgForOf,
-		JsonPipe,
-		NgIf, // CdkVirtualScrollViewport,
-		CdkVirtualForOf,
-		CdkFixedSizeVirtualScroll,
-		CdkVirtualScrollViewport,
-		MatMenuModule,
+		NgIf,
 		GetStringByIdPipe,
 		ShowSvgComponent,
 		GetStringWithPanelIdsPipe,
 		LetDirective,
-		InputContextMenuDirective,
 		ShowSvgNoStylesComponent,
 		TruncatePipe,
 		NgClass,
 		NgTemplateOutlet,
-		CastPipe,
 		IsTypeOfPanelPipe,
 	],
 	templateUrl: './data-view-panels.component.html',
