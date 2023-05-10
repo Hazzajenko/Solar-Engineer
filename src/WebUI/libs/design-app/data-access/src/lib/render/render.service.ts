@@ -85,8 +85,6 @@ export class RenderService {
 	}
 
 	renderCanvasApp(options?: CanvasRenderOptions) {
-		// const { selectedSnapshot } = this._app.allSnapshots
-		// const appStoreSnapshot = this._appStore.snapshot
 		this.render((ctx) => {
 			ctx.save()
 			ctx.setTransform(1, 0, 0, 1, 0, 0)
@@ -108,14 +106,6 @@ export class RenderService {
 				if (!isPanel(entity)) return
 				let fillStyle: string = CANVAS_COLORS.DefaultPanelFillStyle
 				const strokeStyle: string = PANEL_STROKE_STYLE.DEFAULT
-				// const { pointer } = this._app.appCtx
-
-				/*				const isSelected =
-				 selectedSnapshot.matches('EntitySelectedState.EntitiesSelected') &&
-				 selectedSnapshot.context.multipleSelectedIds.includes(entity.id)
-				 if (isSelected) {
-				 fillStyle = CANVAS_COLORS.SelectedPanelFillStyle
-				 }*/
 
 				const selectedState = this._selectedStore.state
 
@@ -141,11 +131,7 @@ export class RenderService {
 				const pointerState = this._appStore.state.pointer
 				const hoveringOverEntityId = pointerState.hoveringOverEntityId
 				const isBeingHovered = !!hoveringOverEntityId && hoveringOverEntityId === entity.id
-				// const isHoveringOverEntity = pointerState.hoveringOverEntityId === entity.id
 
-				// const hoveringOverEntityId = this._appStore.select.state.hoveringOverEntityId
-
-				// const isBeingHovered = !!hoveringOverEntityId && hoveringOverEntityId === entity.id
 				if (isBeingHovered) {
 					fillStyle = '#17fff3'
 					if (isStringSelected) {
@@ -168,37 +154,29 @@ export class RenderService {
 
 			const shouldRenderSelectedEntitiesBox = options?.shouldRenderSelectedEntitiesBox ?? true
 			const shouldRenderSelectedStringBox = options?.shouldRenderSelectedStringBox ?? true
-			/*		const { shouldRenderSelectedEntitiesBox, shouldRenderSelectedStringBox } =
-			 (options?.shouldRenderSelectedEntitiesBox !== undefined && options?.shouldRenderSelectedStringBox !== undefined)
-			 ? { shouldRenderSelectedEntitiesBox: options.shouldRenderSelectedEntitiesBox, shouldRenderSelectedStringBox: options.shouldRenderSelectedStringBox}
-			 : { shouldRenderSelectedEntitiesBox: true, shouldRenderSelectedStringBox: true }*/
 
 			const multipleSelectedEntityIds = this._selectedStore.state.multipleSelectedEntityIds
-			if (
-				shouldRenderSelectedEntitiesBox &&
-				multipleSelectedEntityIds.length
-				// selectedSnapshot.matches('EntitySelectedState.EntitiesSelected')
-			) {
-				// console.log('rendering selected box')
+			if (shouldRenderSelectedEntitiesBox && multipleSelectedEntityIds.length) {
 				drawSelectedBox(ctx, this._entities.panels.getByIds(multipleSelectedEntityIds))
+			} else if (
+				shouldRenderSelectedEntitiesBox &&
+				this._selectedStore.state.singleSelectedEntityId
+			) {
+				const selectedEntity =
+					this._entities.panels.entities[this._selectedStore.state.singleSelectedEntityId]
+				assertNotNull(selectedEntity, 'selectedEntity')
+				drawSelectedBox(ctx, [selectedEntity])
 			}
 
 			const selectedStringId = this._selectedStore.state.selectedStringId
 
-			if (
-				shouldRenderSelectedStringBox &&
-				selectedStringId
-				// selectedSnapshot.matches('StringSelectedState.StringSelected')
-			) {
-				// const selectedStringId = this._selectedStore.selectedStringId
+			if (shouldRenderSelectedStringBox && selectedStringId) {
 				const selectedString = this._entities.strings.entities[selectedStringId]
 				assertNotNull(selectedString, 'selectedString')
 				const selectedStringPanels = this._entities.panels.getByStringId(selectedString.id)
 
 				drawSelectedStringBoxV3(ctx, selectedString, selectedStringPanels)
-				// drawSelectedStringBoxV2(ctx, selectedStringId, this._entities)
 				if (shouldRenderSelectedEntitiesBox && multipleSelectedEntityIds.length) {
-					// console.log('rendering selected box')
 					drawSelectedBox(ctx, this._entities.panels.getByIds(multipleSelectedEntityIds))
 				}
 			}

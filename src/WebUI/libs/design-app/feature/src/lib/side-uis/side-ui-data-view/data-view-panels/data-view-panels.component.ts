@@ -1,10 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject, signal, ViewChild } from '@angular/core'
-import { DatePipe, JsonPipe, NgClass, NgForOf, NgIf } from '@angular/common'
+import { DatePipe, JsonPipe, NgClass, NgForOf, NgIf, NgTemplateOutlet } from '@angular/common'
 import { MatListModule } from '@angular/material/list'
 import {
 	EntityStoreService,
 	GetStringByIdPipe,
 	GetStringWithPanelIdsPipe,
+	IsTypeOfPanelPipe,
+	RenderService,
 	SelectedStoreService,
 	UiStoreService,
 } from '@design-app/data-access'
@@ -21,8 +23,8 @@ import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
 import { ShowSvgComponent, ShowSvgNoStylesComponent } from '@shared/ui'
 import { LetDirective } from '@ngrx/component'
 import { InputContextMenuDirective } from '../../../input-context-menu.directive'
-import { TruncatePipe } from '@shared/pipes'
-import { StringId } from '@design-app/shared'
+import { CastPipe, TruncatePipe } from '@shared/pipes'
+import { PanelId, StringId } from '@design-app/shared'
 
 @Component({
 	selector: 'app-data-view-panels',
@@ -45,6 +47,9 @@ import { StringId } from '@design-app/shared'
 		ShowSvgNoStylesComponent,
 		TruncatePipe,
 		NgClass,
+		NgTemplateOutlet,
+		CastPipe,
+		IsTypeOfPanelPipe,
 	],
 	templateUrl: './data-view-panels.component.html',
 	styles: [],
@@ -54,6 +59,7 @@ import { StringId } from '@design-app/shared'
 export class DataViewPanelsComponent {
 	private _entityStore = inject(EntityStoreService)
 	private _uiStore = inject(UiStoreService)
+	private _render = inject(RenderService)
 	private _selectedStore = inject(SelectedStoreService)
 	private _panels = toSignal(this._entityStore.panels.allPanels$, {
 		initialValue: this._entityStore.panels.allPanels,
@@ -93,19 +99,14 @@ export class DataViewPanelsComponent {
 			return map
 		})(),
 	)
-	// _openedStrings = signal<Record<string, boolean>>(this._entityStore.strings.allStrings.map((string) => ({ [string.id]: false })).reduce((a, b) => ({ ...a, ...b }), {}))
 	get openedStrings() {
 		return this._openedStrings()
 	}
 
 	menuTopLeftPosition = { x: '0', y: '0' }
-	@ViewChild(MatMenuTrigger, { static: true })
-	matMenuTrigger!: MatMenuTrigger
-
-	// protected readonly ContextMenuInput = ContextMenuInput
+	@ViewChild(MatMenuTrigger, { static: true }) matMenuTrigger!: MatMenuTrigger
 
 	private _panelsGroupedByStringId$ = this._entityStore.panels.allPanels$.pipe(
-		// groupBy((panel) => panel.map((panel) => panel.stringId))
 		map((panels) => {
 			const grouped = groupBy(panels, 'stringId')
 			const entries = Object.entries(grouped)
@@ -123,24 +124,6 @@ export class DataViewPanelsComponent {
 		return this._panelsGroupedByStringId()
 	}
 
-	idk() {
-		for (const stringId in this.panelsGroupedByStringId) {
-			console.log(stringId)
-		}
-	}
-
-	onOptionsClick(event: MouseEvent, stringId: string) {
-		event.preventDefault()
-		this.menuTopLeftPosition.x = event.clientX + 10 + 'px'
-		this.menuTopLeftPosition.y = event.clientY + 10 + 'px'
-		console.log('onOptionsClick()', stringId)
-		console.log('menuTopLeftPosition.x', this.menuTopLeftPosition.x)
-		console.log('menuTopLeftPosition.y', this.menuTopLeftPosition.y)
-
-		this.matMenuTrigger.menuData = { stringId }
-		this.matMenuTrigger.openMenu()
-	}
-
 	openStringContextMenu(event: MouseEvent, stringId: string) {
 		this._uiStore.dispatch.openContextMenu({
 			location: {
@@ -152,15 +135,12 @@ export class DataViewPanelsComponent {
 		})
 	}
 
-	/*		map((panels) => {
-			const grouped = groupBy(panels, (panel) => panel.stringId)
-			return Object.entries(grouped)
-		})*/
-	// protected readonly of = of
-
 	toggleStringView(id: StringId) {
-		// const openedStrings = this.openedStrings
-		// openedStrings[id] = !openedStrings[id]
 		this._openedStrings.set(new Map(this.openedStrings).set(id, !this.openedStrings.get(id)))
+	}
+
+	selectPanel(id: PanelId) {
+		this._selectedStore.dispatch.selectEntity(id)
+		this._render.renderCanvasApp()
 	}
 }

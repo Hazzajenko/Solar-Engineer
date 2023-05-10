@@ -1,4 +1,6 @@
 export * from './panels.actions'
 export * from './panels.reducer'
 export * from './panels.selectors'
+export * from './panels.utils'
+export * from './pipes/index'
 export * from './panels-store.service'

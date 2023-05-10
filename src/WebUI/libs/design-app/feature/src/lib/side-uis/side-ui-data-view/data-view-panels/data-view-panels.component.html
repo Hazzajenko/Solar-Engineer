@@ -1,91 +1,92 @@
-
-<nav class="h-full overflow-y-auto" aria-label="Directory">
-  <div class="relative">
+<nav class='h-full overflow-y-auto'
+     aria-label='Directory'>
+  <div class='relative'>
     <ul>
-    <ng-container *ngFor='let stringIdGroup of panelsGroupedByStringId'>
- <ng-container *ngIf='stringIdGroup.string else noString'>
-        <li
-[ngClass]='{
+      <ng-container *ngFor='let stringIdGroup of panelsGroupedByStringId'>
+        <ng-container *ngIf='stringIdGroup.string else noString'>
+          <li
+            [ngClass]='{
           "border-b-gray-200 border-t-gray-100": stringIdGroup.string.id !== selectedStringId,
           "border border-blue-200": stringIdGroup.string.id === selectedStringId
 }'
-          class='sticky top-0 z-10 border-y  bg-gray-50 px-3 py-1.5 text-sm font-semibold leading-6 text-gray-900'>
-    <div class='flex items-center justify-between gap-x-6 py-1'>
-            <div class='min-w-0 flex'>
-              <div class='flex items-start gap-x-3'>
-                <p class='text-sm font-semibold leading-6 text-gray-900'>{{stringIdGroup.string.name}}</p>
-             </div>
-            </div>
-<!--      (click)='dataList.style.display = dataList.style.display === "none" ? "block" : "none"'-->
-            <div class='flex flex-none items-center gap-x-4'>
-              <div class='relative flex-none'>
-                <button type='button'
-       (click)='toggleStringView(stringIdGroup.string.id)'
-                        class='flex items-center justify-between w-full font-medium text-left text-gray-500  dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
-                >
-                  <ng-container *ngIf='openedStrings.get(stringIdGroup.string.id) then contentOpen else contentClosed' />
-                </button>
+            class='sticky top-0 z-10 border-y  bg-gray-50 px-3 py-1.5 text-sm font-semibold leading-6 text-gray-900'>
+            <div class='flex items-center justify-between gap-x-6 py-1'>
+              <div class='min-w-0 flex'>
+                <div class='flex items-start gap-x-3'>
+                  <p class='text-sm font-semibold leading-6 text-gray-900'>{{stringIdGroup.string.name}}</p>
+                </div>
               </div>
-              <div class='relative flex-none'>
+              <div class='flex flex-none items-center gap-x-4'>
+                <div class='relative flex-none'>
+                  <button type='button'
+                          (click)='toggleStringView(stringIdGroup.string.id)'
+                          class='flex items-center justify-between w-full font-medium text-left text-gray-500  dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
+                  >
+                    <ng-container *ngIf='openedStrings.get(stringIdGroup.string.id) then contentOpen else contentClosed' />
+                  </button>
+                </div>
+                <div class='relative flex-none'>
 
-                <button type='button'
-                (click)='openStringContextMenu($event, stringIdGroup.string.id)'
-                        class='-m-2.5 block p-2.5 text-gray-500 hover:text-gray-900'
-                        id='options-menu-0-button'
-                        aria-expanded='false'
-                        aria-haspopup='true'>
-                  <span class='sr-only'>Open options</span>
-                  <app-show-svg-no-styles inputClass='h-5 w-5' svgPath='menus/ellipsis-vertical' />
-                </button>
+                  <button type='button'
+                          (click)='openStringContextMenu($event, stringIdGroup.string.id)'
+                          class='-m-2.5 block p-2.5 text-gray-500 hover:text-gray-900'
+                          id='options-menu-0-button'
+                          aria-expanded='false'
+                          aria-haspopup='true'>
+                    <span class='sr-only'>Open options</span>
+                    <app-show-svg-no-styles inputClass='h-5 w-5'
+                                            svgPath='menus/ellipsis-vertical' />
+                  </button>
+                </div>
               </div>
             </div>
+          </li>
+          <ul role='list'
+              *ngIf='openedStrings.get(stringIdGroup.string.id)'
+              class='divide-y divide-gray-300'>
+            <ng-container *ngFor='let panel of stringIdGroup.panels'>
+              <ng-container *ngTemplateOutlet='panelItem; context: {panel}'></ng-container>
+            </ng-container>
+          </ul>
+        </ng-container>
+        <ng-template #noString>
+          <div class='sticky top-0 z-10 border-y border-b-gray-200 border-t-gray-100 bg-gray-50 px-3 py-1.5 text-sm font-semibold leading-6 text-gray-900'>
+            <h3>No String</h3>
           </div>
-        </li>
-<!--   bg-gray-100 hover:bg-gray-300-->
-<!--#dataList-->
-<!--style='display: none'-->
-        <ul role='list'
-         *ngIf='openedStrings.get(stringIdGroup.string.id)'
-            class='divide-y divide-gray-300'>
-          <li
-            *ngFor='let panel of stringIdGroup.panels'
-            [ngClass]='{
-              "bg-gray-100 hover:bg-gray-300": panel.id !== singleSelectedPanelId || !multipleSelectedPanelIds.includes(panel.id),
-              "bg-indigo-100 hover:bg-indigo-300": panel.id === singleSelectedPanelId || multipleSelectedPanelIds.includes(panel.id)
-            }'
-            class='min-w-0 pl-1'>
-              <p class='text-sm text-gray-700 truncate'>ID: {{panel.id | truncate : 20}}</p>
-              <p class='mt-1 truncate text-xs text-gray-500'>X: {{panel.location.x}} Y: {{panel.location.y}}</p>
-              <p class='truncate text-xs text-gray-500'>Angle {{panel.angle}}</p>
-          </li>
-        </ul>
+          <ul role='list'
+              class='divide-y divide-gray-300'>
+            <ng-container *ngFor='let panel of stringIdGroup.panels'>
+              <ng-container
+                *ngTemplateOutlet='panelItem; context: {panel}'></ng-container>
+            </ng-container>
+          </ul>
+        </ng-template>
       </ng-container>
-      <ng-template #noString>
-        <div class='sticky top-0 z-10 border-y border-b-gray-200 border-t-gray-100 bg-gray-50 px-3 py-1.5 text-sm font-semibold leading-6 text-gray-900'>
-          <h3>No String</h3>
-        </div>
-        <ul role='list'
-            class='divide-y divide-gray-300'>
-          <li
-            *ngFor='let panel of stringIdGroup.panels'
-            class='bg-gray-100 hover:bg-gray-300 min-w-0 pl-1'>
-            <p class='text-sm text-gray-700 truncate'>ID: {{panel.id | truncate : 20}}</p>
-            <p class='mt-1 truncate text-xs text-gray-500'>X: {{panel.location.x}} Y: {{panel.location.y}}</p>
-            <p class='truncate text-xs text-gray-500'>Angle {{panel.angle}}</p>
-          </li>
-        </ul>
-      </ng-template>
-    </ng-container>
     </ul>
   </div>
 </nav>
 
+<ng-template #panelItem
+             let-panel='panel'>
+  <li
+    (click)='selectPanel(panel.id)'
+    *ngIf='panel | isTypeOfPanel as panel'
+    [ngClass]='{
+              "bg-gray-100 hover:bg-gray-300": panel.id !== singleSelectedPanelId || !multipleSelectedPanelIds.includes(panel.id),
+              "bg-indigo-100 hover:bg-indigo-300": panel.id === singleSelectedPanelId || multipleSelectedPanelIds.includes(panel.id)
+            }'
+    class='min-w-0 pl-1'>
+    <p class='text-sm text-gray-700 truncate'>ID: {{panel.id | truncate : 20}}</p>
+    <p class='mt-1 truncate text-xs text-gray-500'>X: {{panel.location.x}} Y: {{panel.location.y}}</p>
+    <p class='truncate text-xs text-gray-500'>Angle {{panel.angle}}</p>
+  </li>
+</ng-template>
 
 <ng-template #contentClosed>
-<!--  <app-show-svg svgPath='arrows/chevron-down' />-->
-  <app-show-svg-no-styles inputClass='h-5 w-5'  svgPath='arrows/chevron-down' />
+  <app-show-svg-no-styles inputClass='h-5 w-5'
+                          svgPath='arrows/chevron-down' />
 </ng-template>
 <ng-template #contentOpen>
-  <app-show-svg-no-styles inputClass='h-5 w-5' svgPath='arrows/chevron-up' />
-<!--  <app-show-svg-no-styles class='h-5 w-5' svgPath='arrows/chevron-up' />-->
+  <app-show-svg-no-styles inputClass='h-5 w-5'
+                          svgPath='arrows/chevron-up' />
 </ng-template>

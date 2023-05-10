@@ -1,5 +1,5 @@
-import { SelectedStateContext } from '../selected'
-import { EntityStoreService } from './entity-store.service'
+import { SelectedStateContext } from '../../selected'
+import { EntityStoreService } from '../entity-store.service'
 import { CanvasPanel, TransformedPoint } from '@design-app/shared'
 import {
 	getCompleteBoundsFromMultipleEntitiesWithPadding,
@@ -83,4 +83,9 @@ export const isPointInsideMultipleSelectedPanels = (
 ) => {
 	const multipleSelectedPanelBounds = getMultipleSelectedPanelBounds(store, selectedCtx)
 	return isPointInsideBounds(point, multipleSelectedPanelBounds)
+}
+
+export const isTypeOfPanel = (panel: unknown): panel is CanvasPanel => {
+	if (!panel) return false
+	return (panel as CanvasPanel).type === 'panel'
 }
