@@ -1,7 +1,7 @@
 import { DragDropModule } from '@angular/cdk/drag-drop'
 import { CommonModule } from '@angular/common'
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core'
-import { LetModule } from '@ngrx/component'
+import { LetDirective } from '@ngrx/component'
 
 @Component({
   selector: 'app-grid-background',
@@ -9,7 +9,7 @@ import { LetModule } from '@ngrx/component'
   imports: [
     CommonModule,
     DragDropModule,
-    LetModule,
+    LetDirective,
   ],
   template: `
     <!--    <div class='pointer-events-none absolute'>-->

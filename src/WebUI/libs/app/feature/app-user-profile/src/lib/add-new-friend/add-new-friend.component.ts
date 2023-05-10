@@ -23,7 +23,7 @@ import { map, Observable, tap } from 'rxjs'
 import { ActivatedRoute } from '@angular/router'
 import { GetCdnUrlStringPipe, GetFullUrlPipe, TimeDifferenceFromNowPipe } from '@shared/pipes'
 import { MatProgressBarModule } from '@angular/material/progress-bar'
-import { LetModule } from '@ngrx/component'
+import { LetDirective } from '@ngrx/component'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 import { UsersStoreService } from '@app/data-access/users'
 
@@ -59,7 +59,7 @@ import { UsersStoreService } from '@app/data-access/users'
     GetFullUrlPipe,
     GetCdnUrlStringPipe,
     MatProgressBarModule,
-    LetModule,
+    LetDirective,
     MatProgressSpinnerModule,
   ],
   standalone: true,

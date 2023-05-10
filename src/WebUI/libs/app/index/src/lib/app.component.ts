@@ -9,7 +9,7 @@ import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav'
 import { Router, RouterModule } from '@angular/router'
 import { FriendsStoreService } from '@app/data-access/friends'
 import { AuthStoreService } from '@auth/data-access'
-import { LetModule } from '@ngrx/component'
+import { LetDirective } from '@ngrx/component'
 import { UiStoreService } from '@grid-layout/data-access'
 import { ProjectsStoreService } from '@projects/data-access'
 import { NotificationsStoreService } from '@app/data-access/notifications'
@@ -40,7 +40,7 @@ import {
     MatButtonModule,
     NgIf,
     AsyncPipe,
-    LetModule,
+    LetDirective,
     MatListModule,
     MatExpansionModule,
     NgForOf,

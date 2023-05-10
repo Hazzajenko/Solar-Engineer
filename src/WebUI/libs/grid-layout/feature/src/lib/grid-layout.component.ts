@@ -7,7 +7,7 @@ import { BlocksStoreService, ClickService, ClientXY, DoubleClickService, DropSer
 import { KeymapOverlayComponent } from './ui/keymap/keymap.component'
 import { StringTotalsOverlayComponent } from './ui/string-stats/string-stats.component'
 
-import { LetModule } from '@ngrx/component'
+import { LetDirective } from '@ngrx/component'
 import { BlockModel, GridStringModel, SelectedPanelLinkPathModel } from '@shared/data-access/models'
 import { combineLatest, map, Observable, of, switchMap } from 'rxjs'
 import { combineLatestWith } from 'rxjs/operators'
@@ -28,7 +28,7 @@ import { GridBackgroundComponent } from './ui/grid-background/grid-background.co
   imports:         [
     CommonModule,
     DragDropModule,
-    LetModule,
+    LetDirective,
     GetLocationPipe,
     GetBlockPipe,
     CanvasDirective,

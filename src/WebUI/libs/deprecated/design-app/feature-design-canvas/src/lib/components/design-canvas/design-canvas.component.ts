@@ -26,7 +26,7 @@ import {
 	OnInit,
 	ViewChild,
 } from '@angular/core'
-import { LetModule } from '@ngrx/component'
+import { LetDirective } from '@ngrx/component'
 import { select, Store } from '@ngrx/store'
 import { ShowSvgComponent } from '@shared/ui'
 
@@ -36,7 +36,7 @@ import { ShowSvgComponent } from '@shared/ui'
 		CdkDrag,
 		CommonModule,
 		ShowSvgComponent,
-		LetModule,
+		LetDirective,
 		KeyMapComponent,
 		CanvasAppSettingsComponent,
 		RightClickMenuComponent,

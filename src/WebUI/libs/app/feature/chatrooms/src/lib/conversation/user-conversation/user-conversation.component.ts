@@ -27,7 +27,7 @@ import { ActivatedRoute, Router } from '@angular/router'
 // import { MessagesComponent } from '@app/messages'
 import { SendMessageRequest, UserMessagesStoreService } from '@app/data-access/messages'
 import { AuthStoreService } from '@auth/data-access'
-import { LetModule } from '@ngrx/component'
+import { LetDirective } from '@ngrx/component'
 
 import { AuthUserModel, MessageFrom, MessageWebUserModel, WebUserModel } from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
@@ -94,7 +94,7 @@ import { UsersStoreService } from '@app/data-access/users'
     DatePipe,
 
     MatCheckboxModule,
-    LetModule,
+    LetDirective,
     // MessagesComponent,
 
     ScrollViewportDirective,

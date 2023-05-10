@@ -16,7 +16,7 @@ import {
 } from '@angular/core'
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
 import { ComponentElementsService, MousePositioningService } from '@design-app/utils'
-import { LetModule } from '@ngrx/component'
+import { LetDirective } from '@ngrx/component'
 import { ShowSvgComponent } from '@shared/ui'
 import { Observable, tap } from 'rxjs'
 
@@ -31,7 +31,7 @@ import { Observable, tap } from 'rxjs'
 		MatMenuModule,
 		ShowSvgComponent,
 		PanelMenuComponent,
-		LetModule,
+		LetDirective,
 	],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	providers: [PanelComponentStore],

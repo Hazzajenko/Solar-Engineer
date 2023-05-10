@@ -1,0 +1,86 @@
+<!--;-->
+<ng-container>
+  <div
+    id="secondary-sidenav"
+    class="overflow-y-auto relative py-5 px-3 w-64 h-full bg-gray-100 border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700"
+  >
+    <ul class="space-y-2">
+      <li>
+        <a
+          href="#"
+          class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+        >
+          <span class="ml-3">Data</span>
+        </a>
+      </li>
+      <li>
+<!--        <h2 id='accordion-collapse-heading-3'>-->
+          <button type='button'
+                  (click)='graphicsContent.style.display = graphicsContent.style.display === "none" ? "block" : "none"'
+                  class='flex items-center justify-between w-full p-5 font-medium text-left text-gray-500  dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
+      >
+            <span>Graphics</span>
+            <ng-container *ngIf='graphicsContent.style.display === "none" then contentClosed else contentOpen' />
+          </button>
+<!--        </h2>-->
+        <div
+             style='display: none'
+             #graphicsContent>
+          <div class='p-5 border border-gray-200 dark:border-gray-700'>
+<!--            <app-canvas-graphics-menu />-->
+          </div>
+        </div>
+      </li>
+      <li>
+        <button
+          type="button"
+          (click)='otherContent.style.display = otherContent.style.display === "none" ? "block" : "none"'
+          class="flex items-center p-2 w-full text-base font-normal text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+        >
+          <span class="flex-1 ml-3 text-left whitespace-nowrap">Strings</span>
+          <ng-container *ngIf='otherContent.style.display === "none" then contentClosed else contentOpen' />
+        </button>
+        <div
+          style='display: none'
+          #otherContent>
+          <div class='p-5 border border-gray-200 dark:border-gray-700'>
+          <ng-container *ngIf='strings'>
+            {{strings.length}}
+          </ng-container>
+          </div>
+        </div>
+      </li>
+      <li>
+        <button
+          type="button"
+          (click)='panelsContent.style.display = panelsContent.style.display === "none" ? "block" : "none"'
+          class="flex items-center p-2 w-full text-base font-normal text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+        >
+          <span class="flex-1 ml-3 text-left whitespace-nowrap">Panels</span>
+          <ng-container *ngIf='panelsContent.style.display === "none" then contentClosed else contentOpen' />
+        </button>
+        <div
+          style='display: none'
+          #panelsContent>
+          <div class='p-5 border border-gray-200 dark:border-gray-700'>
+            <ng-container *ngIf='panels'>
+<!--              {{panels.length}}-->
+              <app-data-view-panels/>
+            </ng-container>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
+</ng-container>
+
+<ng-template #contentClosed>
+  <app-show-svg-no-styles svgPath='arrows/chevron-down' />
+<!--  <app-show-svg-no-styles svgPath='arrows/arrow-down-small' />-->
+<!--  <app-show-svg-no-styles svgPath='hero-icons/down' />-->
+</ng-template>
+<ng-template #contentOpen>
+  <app-show-svg-no-styles svgPath='arrows/chevron-up' />
+<!--  <app-show-svg-no-styles svgPath='arrows/arrow-up-small' />-->
+<!--  <app-show-svg-no-styles svgPath='hero-icons/up' />-->
+</ng-template>

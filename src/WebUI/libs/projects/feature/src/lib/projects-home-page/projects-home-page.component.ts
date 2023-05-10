@@ -14,7 +14,7 @@ import { ProjectsBreadcrumbBarComponent } from '../projects-breadcrumb-bar'
 import { MatDialog } from '@angular/material/dialog'
 import { CreateProjectDialogComponent } from '../create-project-dialog/create-project-dialog.component'
 import { PROJECTS_SORTS, ProjectSorts } from './project-sorts'
-import { LetModule } from '@ngrx/component'
+import { LetDirective } from '@ngrx/component'
 import { GenerateUserDataPipe, throwExpression } from '@shared/utils'
 import { AuthStoreService } from '@auth/data-access'
 import { FilterByJoinedAtAndLimitPipe, ShowAdditionalMembersPipe } from '@shared/pipes'
@@ -30,7 +30,7 @@ import { FilterByJoinedAtAndLimitPipe, ShowAdditionalMembersPipe } from '@shared
     RandomNumberPipe,
     MatIconModule,
     ProjectsBreadcrumbBarComponent,
-    LetModule,
+    LetDirective,
     RouterLink,
     GenerateUserDataPipe,
     FilterByJoinedAtAndLimitPipe,

@@ -15,7 +15,7 @@ import { MatListModule, MatSelectionListChange } from '@angular/material/list'
 import { ActivatedRoute, Router } from '@angular/router'
 // import { MessagesComponent } from '@app/messages'
 import { AuthStoreService } from '@auth/data-access'
-import { LetModule } from '@ngrx/component'
+import { LetDirective } from '@ngrx/component'
 
 import { AuthUserModel, WebUserModel } from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
@@ -53,7 +53,7 @@ import { GetCdnUrlStringPipe } from '@shared/pipes'
     NgSwitchCase,
     DatePipe,
     MatCheckboxModule,
-    LetModule,
+    LetDirective,
     // MessagesComponent,
     GroupChatMemberItemComponent,
     GetCdnUrlStringPipe,

@@ -14,7 +14,7 @@ import { MatInputModule } from '@angular/material/input'
 import { MatListModule } from '@angular/material/list'
 import { ActivatedRoute } from '@angular/router'
 import { AuthStoreService } from '@auth/data-access'
-import { LetModule } from '@ngrx/component'
+import { LetDirective } from '@ngrx/component'
 
 import {
   AuthUserModel,
@@ -105,7 +105,7 @@ import { MessageOptionsBarComponent } from '../options-bar/message-options-bar.c
     NgSwitchCase,
     DatePipe,
     MatCheckboxModule,
-    LetModule,
+    LetDirective,
     ExcludeUserFromSeenPipe,
     AnyGroupMessageSeenPipe,
     MessageBarComponent,

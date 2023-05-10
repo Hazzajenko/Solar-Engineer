@@ -6,7 +6,7 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 import { NavigationStart, Router, RouterEvent, RouterLink } from '@angular/router'
 import { AuthStoreService } from '@auth/data-access'
-import { LetModule } from '@ngrx/component'
+import { LetDirective } from '@ngrx/component'
 import { ProjectsFacade } from '@projects/data-access'
 import {
   CreateProjectOverlayComponent,
@@ -45,7 +45,7 @@ import { CancelModalComponent, SuccessModalComponent } from '@shared/ui/modals'
     MatProgressSpinnerModule,
     ProjectsListComponent,
     LogoNameBackgroundV2Component,
-    LetModule,
+    LetDirective,
     GoogleLoginButtonComponent,
     GoogleLoginSvgButtonComponent,
     ProjectsCardsComponent,

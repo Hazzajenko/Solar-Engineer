@@ -23,7 +23,7 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatInputModule } from '@angular/material/input'
 import { MatListModule } from '@angular/material/list'
 // import { MessagesComponent } from '@app/messages'
-import { LetModule } from '@ngrx/component'
+import { LetDirective } from '@ngrx/component'
 import { ShowHideComponent } from '@shared/ui/show-hide'
 
 @Component({
@@ -53,7 +53,7 @@ import { ShowHideComponent } from '@shared/ui/show-hide'
     DatePipe,
 
     MatCheckboxModule,
-    LetModule,
+    LetDirective,
     // MessagesComponent,
   ],
   standalone: true,

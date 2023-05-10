@@ -11,7 +11,7 @@ import {
 	SelectedStoreService,
 	UiStoreService,
 } from '@design-app/data-access'
-import { LetModule } from '@ngrx/component'
+import { LetDirective } from '@ngrx/component'
 import { DialogBackdropTemplateComponent } from '../dialog-backdrop-template/dialog-backdrop-template.component'
 
 @Component({
@@ -24,7 +24,7 @@ import { DialogBackdropTemplateComponent } from '../dialog-backdrop-template/dia
 		NgIf,
 		MatDialogModule,
 		MatButtonModule,
-		LetModule,
+		LetDirective,
 		DialogBackdropTemplateComponent,
 	],
 })

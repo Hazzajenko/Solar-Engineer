@@ -25,7 +25,7 @@ import { MatListModule, MatSelectionListChange } from '@angular/material/list'
 import { ActivatedRoute } from '@angular/router'
 // import { MessagesComponent } from '@app/messages'
 import { AuthStoreService } from '@auth/data-access'
-import { LetModule } from '@ngrx/component'
+import { LetDirective } from '@ngrx/component'
 
 import { MessageTimeSortModel } from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
@@ -66,7 +66,7 @@ import { ConversationMessageDirective, ScrollViewportDirective } from '@shared/d
     DatePipe,
 
     MatCheckboxModule,
-    LetModule,
+    LetDirective,
     // MessageDirective,
     // SortMessagesPipe,
     ScrollViewportDirective,

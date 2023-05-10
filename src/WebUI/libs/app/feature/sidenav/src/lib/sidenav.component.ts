@@ -23,7 +23,7 @@ import { MatListModule } from '@angular/material/list'
 import { RouterLink } from '@angular/router'
 import { FriendsService, FriendsStoreService } from '@app/data-access/friends'
 import { AuthStoreService } from '@auth/data-access'
-import { LetModule } from '@ngrx/component'
+import { LetDirective } from '@ngrx/component'
 import { ProjectsStoreService } from '@projects/data-access'
 
 import { AuthUserModel } from '@shared/data-access/models'
@@ -60,7 +60,7 @@ import { SharedSidenavComponent } from '@shared/ui/sidenav'
     NgSwitchCase,
     DatePipe,
     RouterLink,
-    LetModule,
+    LetDirective,
     OnlineFriendsPipe,
     SidenavComponent,
     SidenavComponent,

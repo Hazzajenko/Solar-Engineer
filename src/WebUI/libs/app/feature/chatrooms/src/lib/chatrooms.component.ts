@@ -14,7 +14,7 @@ import { MatInputModule } from '@angular/material/input'
 import { MatListModule } from '@angular/material/list'
 import { ActivatedRoute, Router } from '@angular/router'
 import { AuthStoreService } from '@auth/data-access'
-import { LetModule } from '@ngrx/component'
+import { LetDirective } from '@ngrx/component'
 
 import { AuthUserModel } from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
@@ -54,7 +54,7 @@ import { NewChatRoomComponent } from './new-chat-room/new-chat-room.component'
     NgSwitchCase,
     DatePipe,
     MatCheckboxModule,
-    LetModule,
+    LetDirective,
     ChatRoomListComponent,
     GroupChatConversationComponent,
     UserConversationComponent,

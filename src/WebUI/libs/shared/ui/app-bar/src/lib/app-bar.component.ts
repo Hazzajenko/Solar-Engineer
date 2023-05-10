@@ -7,7 +7,7 @@ import { MatToolbarModule } from '@angular/material/toolbar'
 import { Router } from '@angular/router'
 import { ChatroomsComponent } from '@app/feature/chatrooms'
 import { AuthStoreService } from '@auth/data-access'
-import { LetModule } from '@ngrx/component'
+import { LetDirective } from '@ngrx/component'
 import { AppUserProfileComponent } from '@app/feature/app-user-profile'
 import {
   DialogRouteType,
@@ -26,7 +26,7 @@ import { UiStoreService } from '@grid-layout/data-access'
     MatButtonModule,
     MatIconModule,
     AsyncPipe,
-    LetModule,
+    LetDirective,
     NgIf,
     MatCardModule,
     MatListModule,

@@ -22,7 +22,7 @@ import { toSignal } from '@angular/core/rxjs-interop'
 import { MatDialog } from '@angular/material/dialog'
 import { AppStateStoreService, UiStoreService, WindowsStore } from '@design-app/data-access'
 import { DraggableWindow } from '@design-app/shared'
-import { LetModule } from '@ngrx/component'
+import { LetDirective } from '@ngrx/component'
 import { getGuid } from '@ngrx/data'
 import { ButtonBuilderComponent, ShowSvgComponent } from '@shared/ui'
 import { updateObjectForStore } from 'deprecated/design-app/feature-design-canvas'
@@ -45,7 +45,7 @@ import { AppSettingsDialogComponent } from './dialogs/app-settings-dialog/app-se
 		CdkDrag,
 		CommonModule,
 		ShowSvgComponent,
-		LetModule,
+		LetDirective,
 		KeyMapComponent,
 		StateValuesComponent,
 		RightClickMenuComponent,

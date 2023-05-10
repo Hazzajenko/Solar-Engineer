@@ -4,7 +4,7 @@ import { HOME_PAGE, HomePage } from '../home-v2/home-pages'
 import { MatMenuModule } from '@angular/material/menu'
 import { RouteBreadcrumbsComponent } from '@shared/ui/route-breadcrumbs'
 import { BaseService } from '@shared/logger'
-import { LetModule } from '@ngrx/component'
+import { LetDirective } from '@ngrx/component'
 import { generateProfilePicture } from '@shared/utils'
 import { GenerateHomeFeedData, GenerateUserData } from '@shared/data-access/models'
 import { TimeDifferenceFromNowPipe } from '@shared/pipes'
@@ -17,7 +17,7 @@ import { map, of } from 'rxjs'
     CommonModule,
     MatMenuModule,
     RouteBreadcrumbsComponent,
-    LetModule,
+    LetDirective,
     TimeDifferenceFromNowPipe,
     NgOptimizedImage,
   ],

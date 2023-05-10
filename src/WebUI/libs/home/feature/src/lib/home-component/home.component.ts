@@ -10,7 +10,7 @@ import { HomeNavService } from '@home/data-access'
 import { RecentProjectsCardsComponent } from '@projects/feature'
 import { HomeAnnouncementsComponent } from '../../../../ui/src/lib/home-announcements/home-announcements.component'
 import { BaseService } from '@shared/logger'
-import { LetModule } from '@ngrx/component'
+import { LetDirective } from '@ngrx/component'
 import { ProjectsStoreService } from '@projects/data-access'
 import { NgIfForComponent } from '@shared/utils'
 
@@ -25,7 +25,7 @@ import { NgIfForComponent } from '@shared/utils'
     RecentProjectsCardsComponent,
     HomeFeedComponent,
     HomeAnnouncementsComponent,
-    LetModule,
+    LetDirective,
     NgIfForComponent,
   ],
   templateUrl: './home.component.html',

@@ -28,7 +28,7 @@ import { GetCdnUrlStringPipe, GetFullUrlPipe, TimeDifferenceFromNowPipe } from '
 import { ImagesService } from '@app/data-access/images'
 import { HttpClient } from '@angular/common/http'
 import { MatProgressBarModule } from '@angular/material/progress-bar'
-import { LetModule } from '@ngrx/component'
+import { LetDirective } from '@ngrx/component'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 
 @Component({
@@ -63,7 +63,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
     GetFullUrlPipe,
     GetCdnUrlStringPipe,
     MatProgressBarModule,
-    LetModule,
+    LetDirective,
     MatProgressSpinnerModule,
   ],
   standalone: true,

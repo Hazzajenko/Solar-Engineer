@@ -4,7 +4,7 @@ import { BaseService } from '@shared/logger'
 import { HomeHeaderComponent } from '@home/ui'
 import { RouterOutlet } from '@angular/router'
 import { FooterComponent } from '@shared/ui/footer'
-import { LetModule } from '@ngrx/component'
+import { LetDirective } from '@ngrx/component'
 import { CoreComponentsAngularModule } from 'core-components-angular'
 import { AppDynamicComponentDirective } from './app-dynamic-component.directive'
 import { RouterFacade } from '@shared/data-access/router'
@@ -16,7 +16,7 @@ import { RouterFacade } from '@shared/data-access/router'
     HomeHeaderComponent,
     RouterOutlet,
     FooterComponent,
-    LetModule,
+    LetDirective,
     CoreComponentsAngularModule,
     AppDynamicComponentDirective,
   ],

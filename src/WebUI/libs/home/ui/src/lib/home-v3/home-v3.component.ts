@@ -11,7 +11,7 @@ import {
 } from '@projects/feature'
 import { StatisticsComponent } from '@shared/ui/statistics'
 import { ProjectsStoreService } from '@projects/data-access'
-import { LetModule } from '@ngrx/component'
+import { LetDirective } from '@ngrx/component'
 import { HomeFeedComponent } from '../home-feed/home-feed.component'
 import { HomeAnnouncementsComponent } from '../home-announcements/home-announcements.component'
 import { UserDirective } from '@auth/utils'
@@ -29,7 +29,7 @@ import { NgIfForComponent } from '@shared/utils'
     ProjectsHomePageComponent,
     ProjectsCardsComponent,
     StatisticsComponent,
-    LetModule,
+    LetDirective,
     PinnedProjectsCardsComponent,
     RecentProjectsCardsComponent,
     HomeFeedComponent,

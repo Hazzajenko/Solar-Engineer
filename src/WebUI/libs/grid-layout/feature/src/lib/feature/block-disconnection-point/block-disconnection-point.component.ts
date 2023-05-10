@@ -4,7 +4,7 @@ import { Component, inject, Input, ViewChild } from '@angular/core'
 
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
 import { MatTooltipModule } from '@angular/material/tooltip'
-import { LetModule } from '@ngrx/component'
+import { LetDirective } from '@ngrx/component'
 import { LinksService } from '@grid-layout/data-access'
 
 import { Store } from '@ngrx/store'
@@ -23,7 +23,7 @@ import { PanelLinkComponent } from '../shared-ui/panel-link/panel-link.component
     NgStyle,
     NgIf,
     AsyncPipe,
-    LetModule,
+    LetDirective,
     MatMenuModule,
     PanelLinkComponent,
   ],

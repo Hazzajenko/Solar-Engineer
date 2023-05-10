@@ -4,7 +4,6 @@ import { Component, inject, Input } from '@angular/core'
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser'
 import { map, Observable } from 'rxjs'
 
-
 @Component({
 	selector: 'app-show-svg[svgPath]',
 	template: `
@@ -35,3 +34,7 @@ export class ShowSvgComponent {
 			.pipe(map((value) => this.sanitizer.bypassSecurityTrustHtml(value))))
 	}
 }
+
+// type Assets = typeof importType('../../../../../../apps/design-app/src/assets')
+// type Assets = typeof import('../../../../../../apps/design-app/src/assets')
+// type Assets = typeof import('@design-app/feature/src/assets/index')

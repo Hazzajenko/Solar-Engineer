@@ -14,7 +14,7 @@ import { MatInputModule } from '@angular/material/input'
 import { MatListModule, MatSelectionListChange } from '@angular/material/list'
 import { ActivatedRoute, Router } from '@angular/router'
 import { AuthStoreService } from '@auth/data-access'
-import { LetModule } from '@ngrx/component'
+import { LetDirective } from '@ngrx/component'
 
 import { AuthUserModel, GroupChatMemberModel, PermissionsModel, WebUserModel } from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
@@ -55,7 +55,7 @@ import { GroupChatMemberItemComponent } from '../../member-item/group-chat-membe
     NgSwitchCase,
     DatePipe,
     MatCheckboxModule,
-    LetModule,
+    LetDirective,
     GroupChatMemberItemComponent,
   ],
   standalone: true,

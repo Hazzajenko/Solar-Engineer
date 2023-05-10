@@ -1,14 +1,14 @@
 import { CommonModule } from '@angular/common'
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
 import { ShowScreenPositionMode, ViewPositioningService } from '@design-app/utils'
-import { LetModule } from '@ngrx/component'
+import { LetDirective } from '@ngrx/component'
 import { UiConfigService } from 'deprecated/design-app/config'
 import { BehaviorSubject, tap } from 'rxjs'
 
 @Component({
 	selector: 'app-show-screen-position',
 	standalone: true,
-	imports: [CommonModule, LetModule],
+	imports: [CommonModule, LetDirective],
 	templateUrl: './show-screen-position.component.html',
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	styles: [],

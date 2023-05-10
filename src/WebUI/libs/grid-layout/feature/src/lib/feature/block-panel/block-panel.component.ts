@@ -15,7 +15,7 @@ import { MatTooltipModule } from '@angular/material/tooltip'
 
 import { PanelLinkComponent } from '../shared-ui/panel-link/panel-link.component'
 
-import { LetModule } from '@ngrx/component'
+import { LetDirective } from '@ngrx/component'
 // import {  } from '@project-id/data-access/services'
 import { PanelMenuComponent } from './menu/panel-menu.component'
 // import {  } from '@project-id/data-access/services'
@@ -38,7 +38,7 @@ import { GridLayoutService } from '../../grid-layout.service'
     NgStyle,
     NgIf,
     AsyncPipe,
-    LetModule,
+    LetDirective,
     MatMenuModule,
     NgTemplateOutlet,
     NgClass,

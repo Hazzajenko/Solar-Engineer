@@ -14,7 +14,7 @@ import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
 import { MatTooltipModule } from '@angular/material/tooltip'
 
 // import { PanelLinkComponent } from '@grid-layout/feature/blocks/shared-ui'
-import { LetModule } from '@ngrx/component'
+import { LetDirective } from '@ngrx/component'
 import { GroupChatCombinedModel, WebUserModel } from '@shared/data-access/models'
 import { Router } from '@angular/router'
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog'
@@ -38,7 +38,7 @@ import { GetCdnUrlStringPipe } from '@shared/pipes'
     NgStyle,
     NgIf,
     AsyncPipe,
-    LetModule,
+    LetDirective,
     MatMenuModule,
     NgTemplateOutlet,
     NgClass,

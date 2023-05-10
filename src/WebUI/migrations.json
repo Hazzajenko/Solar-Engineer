@@ -1,11 +1,11 @@
 {
   "migrations": [
     {
-      "description": "The road to v16.0-beta",
-      "version": "16.0.0-beta",
-      "factory": "./16_0_0-beta/index",
-      "package": "@ngrx/store",
-      "name": "ngrx-store-migration-16-0-0-beta"
+      "description": "As of NgRx v16, `LetModule` and `PushModule` are deprecated in favor of standalone `LetDirective` and `PushPipe`.",
+      "version": "16.0.0",
+      "factory": "./16_0_0/index",
+      "package": "@ngrx/component",
+      "name": "ngrx-component-migration-16"
     }
   ]
 }

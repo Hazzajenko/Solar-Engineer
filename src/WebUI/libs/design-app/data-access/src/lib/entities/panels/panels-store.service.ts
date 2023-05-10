@@ -1,14 +1,13 @@
 import { selectSelectedStringId } from '../../selected'
 import { PanelsActions } from './panels.actions'
 import { initialPanelsState, PanelsState } from './panels.reducer'
-import { selectPanelsState } from './panels.selectors'
+import { selectAllPanels, selectPanelsState } from './panels.selectors'
 import { computed, inject, Injectable } from '@angular/core'
 import { toSignal } from '@angular/core/rxjs-interop'
 import { CanvasPanel } from '@design-app/shared'
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { select, Store } from '@ngrx/store'
 import { dictionaryToArray, filterObject, isNotNull } from '@shared/utils'
-
 
 @Injectable({
 	providedIn: 'root',
@@ -19,6 +18,7 @@ export class PanelsStoreService {
 	private readonly _state = toSignal(this._state$, {
 		initialValue: initialPanelsState,
 	})
+	private _allPanels$ = this._store.select(selectAllPanels)
 	readonly dispatch = new PanelsRepository(this._store)
 	panelSignals = this._store.selectSignal(selectPanelsState)
 	selectedStringId = toSignal(this._state$.pipe(select(selectSelectedStringId)))
@@ -58,6 +58,10 @@ export class PanelsStoreService {
 
 	get entities() {
 		return this.state.entities
+	}
+
+	get allPanels$() {
+		return this._allPanels$
 	}
 
 	get allPanels() {

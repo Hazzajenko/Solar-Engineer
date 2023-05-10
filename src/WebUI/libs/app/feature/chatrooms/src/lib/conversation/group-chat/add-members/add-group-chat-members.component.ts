@@ -13,7 +13,7 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatInputModule } from '@angular/material/input'
 import { MatListModule, MatSelectionListChange } from '@angular/material/list'
 import { AuthStoreService } from '@auth/data-access'
-import { LetModule } from '@ngrx/component'
+import { LetDirective } from '@ngrx/component'
 
 import { AuthUserModel, GroupChatMemberModel, WebUserModel } from '@shared/data-access/models'
 import { ShowHideComponent } from '@shared/ui/show-hide'
@@ -50,7 +50,7 @@ import { GroupChatMemberItemComponent } from '../../member-item/group-chat-membe
     NgSwitchCase,
     DatePipe,
     MatCheckboxModule,
-    LetModule,
+    LetDirective,
     GroupChatMemberItemComponent,
   ],
   providers: [DatePipe],

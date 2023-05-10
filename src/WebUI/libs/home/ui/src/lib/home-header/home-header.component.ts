@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common'
 import { MatMenuModule } from '@angular/material/menu'
 import { RouteBreadcrumbsComponent } from '@shared/ui/route-breadcrumbs'
 import { BaseService } from '@shared/logger'
-import { LetModule } from '@ngrx/component'
+import { LetDirective } from '@ngrx/component'
 import { ActivatedRoute, Params, Router, RouterLink, RouterLinkActive } from '@angular/router'
 import { SelectThemeComponent, ThemeToggleComponent } from '@app/utils'
 import { map } from 'rxjs'
@@ -19,7 +19,7 @@ import { AuthRepository } from '@auth/data-access'
     CommonModule,
     MatMenuModule,
     RouteBreadcrumbsComponent,
-    LetModule,
+    LetDirective,
     RouterLink,
     RouterLinkActive,
     SelectThemeComponent,

@@ -21,13 +21,13 @@ import {
 	Renderer2,
 } from '@angular/core'
 import { ReactiveFormsModule } from '@angular/forms'
-import { LetModule } from '@ngrx/component'
+import { LetDirective } from '@ngrx/component'
 import { EVENT_TYPE } from '@shared/data-access/models'
 
 @Component({
 	selector: 'app-canvas-graphics-menu',
 	standalone: true,
-	imports: [NgForOf, NgIf, AsyncPipe, ReactiveFormsModule, LetModule, IsNearbyLinesEnabledPipe],
+	imports: [NgForOf, NgIf, AsyncPipe, ReactiveFormsModule, LetDirective, IsNearbyLinesEnabledPipe],
 	templateUrl: './canvas-graphics-menu.component.html',
 	styles: [],
 	changeDetection: ChangeDetectionStrategy.OnPush,

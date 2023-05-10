@@ -13,7 +13,7 @@ import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core
 import { MatMenuModule } from '@angular/material/menu'
 import { MatTooltipModule } from '@angular/material/tooltip'
 
-import { LetModule } from '@ngrx/component'
+import { LetDirective } from '@ngrx/component'
 import { GroupChatMessageMemberModel, TypeOfUser } from '@shared/data-access/models'
 import { Router } from '@angular/router'
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog'
@@ -29,7 +29,7 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog'
     NgStyle,
     NgIf,
     AsyncPipe,
-    LetModule,
+    LetDirective,
     MatMenuModule,
     NgTemplateOutlet,
     NgClass,

@@ -4,7 +4,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop'
 import { AsyncPipe, NgClass, NgIf, NgStyle, NgTemplateOutlet } from '@angular/common'
 import { MatTooltipModule } from '@angular/material/tooltip'
 
-import { LetModule } from '@ngrx/component'
+import { LetDirective } from '@ngrx/component'
 
 import { Store } from '@ngrx/store'
 
@@ -29,7 +29,7 @@ import { TrayModel } from '@shared/data-access/models'
     NgStyle,
     NgIf,
     AsyncPipe,
-    LetModule,
+    LetDirective,
     MatMenuModule,
     NgTemplateOutlet,
     NgClass,

@@ -3,7 +3,7 @@ import { Component, ElementRef, inject, ViewChild } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatDialogModule } from '@angular/material/dialog'
 import { UiStoreService } from '@design-app/data-access'
-import { LetModule } from '@ngrx/component'
+import { LetDirective } from '@ngrx/component'
 import { DialogBackdropTemplateComponent } from '../dialog-backdrop-template/dialog-backdrop-template.component'
 
 import { ShowSvgComponent, ShowSvgNoStylesComponent } from '@shared/ui'
@@ -19,7 +19,7 @@ import { GraphicsMenuComponent } from './index'
 		NgIf,
 		MatDialogModule,
 		MatButtonModule,
-		LetModule,
+		LetDirective,
 		DialogBackdropTemplateComponent,
 		GraphicsMenuComponent,
 		NgStyle,

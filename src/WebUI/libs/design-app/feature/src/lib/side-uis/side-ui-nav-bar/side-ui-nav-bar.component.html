@@ -5,22 +5,27 @@
   class='flex z-40 fixed top-0 left-0 h-full transition-transform -translate-x-full sm:translate-x-0'
   aria-label='Sidebar'>
   <div class='overflow-y-auto z-30 py-5 px-3 w-16 h-full bg-gray-100 border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700'>
-    <a href='#'>
-      <img src='https://flowbite.com/docs/images/logo.svg'
-           class='pl-2 mb-6 h-7'
-           alt='Flowbite Logo' />
-    </a>
+    <app-show-svg svgPath='solar/solar-panels-colour' />
+    <!--    <a href='#'>
+          &lt;!&ndash;      <app-logo />&ndash;&gt;
+          &lt;!&ndash;   <img src='https://flowbite.com/docs/images/logo.svg'
+                  class='pl-2 mb-6 h-7'
+
+                  alt='Flowbite Logo' />&ndash;&gt;
+        </a>-->
     <ul class='space-y-2'>
       <li>
-        <a href='#'
-           class='flex items-center p-2 text-gray-400 rounded-lg transition duration-75 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700'>
-          <svg aria-hidden='true'
-               class='w-6 h-6'
-               fill='currentColor'
-               viewBox='0 0 20 20'
-               xmlns='http://www.w3.org/2000/svg'>
-            <path d='M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z'></path>
-          </svg>
+        <a
+          (click)='toggleDataView()'
+          class='flex items-center p-2 text-gray-400 rounded-lg transition duration-75 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700'>
+          <!--          <svg aria-hidden='true'
+                         class='w-6 h-6'
+                         fill='currentColor'
+                         viewBox='0 0 20 20'
+                         xmlns='http://www.w3.org/2000/svg'>
+                      <path d='M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z'></path>
+                    </svg>-->
+          <app-show-svg-no-styles svgPath='hero-icons/data' />
         </a>
       </li>
       <li>
@@ -75,6 +80,9 @@
       </li>
     </ul>
   </div>
+  <ng-container *ngIf='dataView'>
+    <side-ui-data-view @goRight />
+  </ng-container>
   <!--  <button id='hide-secondary-sidenav-button'
             aria-controls='secondary-sidenav'
             type='button'
@@ -88,4 +96,5 @@
               clip-rule='evenodd'></path>
       </svg>
     </button>-->
+
 </aside>

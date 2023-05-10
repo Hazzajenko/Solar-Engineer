@@ -11,7 +11,7 @@ import { GridPanelsEventService, GridPanelsFacade, GridSelectedFacade, GridStrin
 
 import { PanelLinkComponent } from '../../shared-ui/panel-link/panel-link.component'
 
-import { LetModule } from '@ngrx/component'
+import { LetDirective } from '@ngrx/component'
 import { GridPanelModel, GridStringModel } from '@shared/data-access/models'
 import { EditStringDialog, ExistingStringsDialog } from '../dialogs'
 
@@ -29,7 +29,7 @@ import { PanelComponentState } from '../models/panel-component.state'
     NgStyle,
     NgIf,
     AsyncPipe,
-    LetModule,
+    LetDirective,
     MatMenuModule,
     NgTemplateOutlet,
     NgClass,

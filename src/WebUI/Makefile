@@ -141,3 +141,6 @@ migrate-ngrx-next:
 
 pnpm-update:
 	pnpm update -L -i
+
+migrate-ngrx-latest:
+	nx migrate @ngrx/data@latest @ngrx/effects@latest @ngrx/entity@latest @ngrx/schematics@latest @ngrx/store@latest @ngrx/store-devtools@latest

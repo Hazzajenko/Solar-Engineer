@@ -1,4 +1,4 @@
-import { LetModule } from '@ngrx/component'
+import { LetDirective } from '@ngrx/component'
 import { GridFacade, GridSelectedFacade, GridStoreService, GridStringsFacade, UiFacade, UiStoreService } from '@grid-layout/data-access'
 import { map, Observable, switchMap } from 'rxjs'
 import { MatButtonModule } from '@angular/material/button'
@@ -19,7 +19,7 @@ import { GridMode } from '@shared/data-access/models'
     MatButtonModule,
     MatMenuModule,
     MatIconModule,
-    LetModule,
+    LetDirective,
   ],
   templateUrl: './toolbar.component.html',
   styles:      [],

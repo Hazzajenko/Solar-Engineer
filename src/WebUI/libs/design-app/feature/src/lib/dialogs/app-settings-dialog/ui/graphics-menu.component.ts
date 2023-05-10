@@ -19,13 +19,13 @@ import {
 	NearbyLinesState,
 	RenderService,
 } from '@design-app/data-access'
-import { LetModule } from '@ngrx/component'
+import { LetDirective } from '@ngrx/component'
 import { EVENT_TYPE } from '@shared/data-access/models'
 
 @Component({
 	selector: 'app-canvas-graphics-menu',
 	standalone: true,
-	imports: [NgForOf, NgIf, AsyncPipe, ReactiveFormsModule, LetModule],
+	imports: [NgForOf, NgIf, AsyncPipe, ReactiveFormsModule, LetDirective],
 	templateUrl: './graphics-menu.component.html',
 	styles: [],
 	changeDetection: ChangeDetectionStrategy.OnPush,

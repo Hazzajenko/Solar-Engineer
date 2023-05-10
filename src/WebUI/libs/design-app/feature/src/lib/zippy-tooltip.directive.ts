@@ -12,37 +12,50 @@ export class ZippyTooltipDirective {
 	private _element = inject(ElementRef).nativeElement
 	private _ngZone = inject(NgZone)
 
-	@Input({ required: true }) set tooltip(tooltip: string) {
-		if (!tooltip) return
-		/*		const content = `
-		 <div class='absolute z-50 w-64 p-4 bg-white rounded shadow-xl'>
-		 <div class='flex flex-col'>
-		 <div class='flex flex-row justify-between'>
-		 <div class='flex flex-col'>
-		 <div class='text-sm font-semibold text-gray-800'>${tooltip}</div>
-		 <div class='text-xs text-gray-500'>${tooltip}</div>
-
-		 </div>
-		 </div>
-		 </div>
-		 </div>
-		 `*/
-		// const content = createTooltipHtmlV2(tooltip)
-		// const content = createTooltipTemplate(tooltip)
+	@Input() set toolTipHtml(toolTipHtml: string) {
+		if (!toolTipHtml) return
 		this._ngZone.runOutsideAngular(() => {
 			tippy(this._element, {
-				content: tooltip, // content: tooltip, // animation: 'scale',
-				// content, // content: tooltip, // animation: 'scale',
+				content: toolTipHtml,
 				placement: 'top',
-				animateFill: true,
 				allowHTML: true,
-				theme: 'material', // theme: 'light-border',
-				followCursor: true /*			aria: {
-				 content: 'describedby',
-				 },*/,
-				arrow: true, // render,
+				theme: 'material',
+				arrow: true,
 			})
-			this._element.style.cursor = 'help'
 		})
+	}
+
+	@Input() set toolTipString(toolTipString: string) {
+		if (!toolTipString) return
+		this._ngZone.runOutsideAngular(() => {
+			tippy(this._element, {
+				content: this.toHtmlLight(toolTipString),
+				placement: 'top-end',
+				allowHTML: true, // theme: 'material',
+				arrow: true,
+			})
+		})
+	}
+
+	private toHtml(tooltip: string) {
+		return `<div class='absolute z-50 min-w-fit p-1 bg-white rounded shadow-xl text-xs text-gray-500'>${tooltip}</div>`
+	}
+
+	private toHtmlLight(tooltip: string) {
+		return `<div class='absolute z-50 inline-block px-3 py-2 text-sm font-medium text-gray-900 bg-white rounded-lg shadow-sm tooltip'>
+    ${tooltip}
+</div>`
+	}
+
+	private toHtmlDark(tooltip: string) {
+		return `<div class='absolute z-50 inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm tooltip'>
+    ${tooltip}
+</div>`
+	}
+
+	private toHtmlTheme(tooltip: string) {
+		return `<div class='absolute z-50 inline-block px-3 py-2 text-sm font-medium text-gray-900 bg-white rounded-lg shadow-sm tooltip dark:bg-gray-700 dark:text-gray-100'>
+    ${tooltip}
+</div>`
 	}
 }

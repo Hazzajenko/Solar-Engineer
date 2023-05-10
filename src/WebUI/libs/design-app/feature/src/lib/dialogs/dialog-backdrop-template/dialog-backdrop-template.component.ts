@@ -37,12 +37,6 @@ export class DialogBackdropTemplateComponent implements AfterViewInit {
 	// @Input({ required: true }) dialogId!: string
 
 	ngAfterViewInit(): void {
-		/*		const childElement = this.backdrop.nativeElement.children[0]
-		 const { width, height } = childElement.getBoundingClientRect()
-		 const top = (window.innerHeight - height) / 2 + 'px'
-		 const left = (window.innerWidth - width) / 2 + 'px'
-		 this._renderer.setStyle(childElement, 'top', top)
-		 this._renderer.setStyle(childElement, 'left', left)*/
 		this._ngZone.runOutsideAngular(() => {
 			this._dispose = this._renderer.listen(
 				this.backdrop.nativeElement,
