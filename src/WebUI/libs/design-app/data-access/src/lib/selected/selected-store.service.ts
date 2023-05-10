@@ -1,10 +1,14 @@
 import { SelectedActions } from './selected.actions'
 import { initialSelectedState, SelectedState } from './selected.reducer'
-import { selectSelectedState } from './selected.selectors'
+import {
+	selectMultiSelectedEntities,
+	selectSelectedState,
+	selectSelectedStringId,
+	selectSingleSelectedEntity,
+} from './selected.selectors'
 import { inject, Injectable } from '@angular/core'
 import { toSignal } from '@angular/core/rxjs-interop'
 import { select, Store } from '@ngrx/store'
-
 
 //
 //
@@ -35,12 +39,24 @@ export class SelectedStoreService {
 		return this.state.singleSelectedEntityId
 	}
 
+	get singleSelectedEntityId$() {
+		return this._store.select(selectSingleSelectedEntity)
+	}
+
 	get multipleSelectedEntityIds() {
 		return this.state.multipleSelectedEntityIds
 	}
 
+	get multipleSelectedEntityIds$() {
+		return this._store.select(selectMultiSelectedEntities)
+	}
+
 	get selectedStringId() {
 		return this.state.selectedStringId
+	}
+
+	get selectedStringId$() {
+		return this._store.select(selectSelectedStringId)
 	}
 
 	get entityState() {

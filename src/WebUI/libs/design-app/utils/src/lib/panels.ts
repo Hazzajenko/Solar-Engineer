@@ -1,5 +1,12 @@
 import { EntityFactory } from './entity'
-import { CanvasEntity, CanvasPanel, ENTITY_TYPE, PanelId, StringId } from '@design-app/shared'
+import {
+	CanvasEntity,
+	CanvasPanel,
+	ENTITY_TYPE,
+	PanelId,
+	StringId,
+	UndefinedStringId,
+} from '@design-app/shared'
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { Point } from '@shared/data-access/models'
 
@@ -13,7 +20,7 @@ export function assertIsPanel(entity: CanvasEntity): asserts entity is CanvasPan
 	}
 }
 
-export const createPanel = (location: Point, stringId?: string): CanvasPanel => {
+export const createPanel = (location: Point, stringId: string = UndefinedStringId): CanvasPanel => {
 	return {
 		...EntityFactory.create(ENTITY_TYPE.Panel, location),
 		stringId,

@@ -41,12 +41,17 @@
 <!--<ng-container *appNgIf='[dialog().dialogOpen, dialog().currentDialog] as dialog'></ng-container>-->
 
 <!--<ng-container *ngrxLet='_dialog() as dialog'>-->
-<ng-container *ngIf='contextMenu.currentContextMenu && contextMenu.contextMenuOpen'>
+<!--<ng-container *ngIf='contextMenu.currentContextMenu && contextMenu.contextMenuOpen'>
   <ng-template
     appDynamicContextMenu
     [contextMenu]='contextMenu.currentContextMenu'
   ></ng-template>
-</ng-container>
+</ng-container>-->
+
+<ng-template
+  #contextMenuTemplate = 'appDynamicContextMenu'
+  appDynamicContextMenu
+></ng-template>
 <ng-container *ngIf='dialog.currentDialog && dialog.dialogOpen'>
   <ng-template
     appDynamicDialog

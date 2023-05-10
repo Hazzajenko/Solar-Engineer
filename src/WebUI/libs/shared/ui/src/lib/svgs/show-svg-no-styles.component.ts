@@ -1,4 +1,4 @@
-import { AsyncPipe } from '@angular/common'
+import { AsyncPipe, NgClass } from '@angular/common'
 import { HttpClient } from '@angular/common/http'
 import { Component, inject, Input } from '@angular/core'
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser'
@@ -6,9 +6,11 @@ import { map, Observable } from 'rxjs'
 
 @Component({
 	selector: 'app-show-svg-no-styles',
-	template: ` <span [innerHTML]="svgIcon$ | async"></span> `,
+	template: `
+		<span [ngClass]="inputClass ? inputClass : ''" [innerHTML]="svgIcon$ | async"></span>
+	`,
 	standalone: true,
-	imports: [AsyncPipe],
+	imports: [AsyncPipe, NgClass],
 })
 export class ShowSvgNoStylesComponent {
 	private http = inject(HttpClient)
@@ -20,6 +22,8 @@ export class ShowSvgNoStylesComponent {
 		this._svgPath = value
 		this.svgIcon$ = this.initIcon(value)
 	}
+
+	@Input() inputClass?: string
 
 	initIcon(path: string) {
 		return (this.svgIcon$ = this.http
