@@ -16,6 +16,7 @@ import { map } from 'rxjs'
 import { groupBy } from '@shared/utils'
 import { LetDirective } from '@ngrx/component'
 import { TruncatePipe } from '@shared/pipes'
+import { RadiansToDegreesPipe } from '@design-app/utils'
 
 @Component({
 	selector: 'side-ui-data-view',
@@ -32,6 +33,7 @@ import { TruncatePipe } from '@shared/pipes'
 		NgClass,
 		NgTemplateOutlet,
 		IsTypeOfPanelPipe,
+		RadiansToDegreesPipe,
 	],
 	templateUrl: './side-ui-data-view.component.html',
 	styles: [],
@@ -93,7 +95,7 @@ export class SideUiDataViewComponent {
 		return this._selectedStringId()
 	}
 
-	_openedStrings = signal<Map<StringId, boolean>>(new Map())
+	_openedStrings = signal<Map<StringId, boolean>>(new Map().set(UndefinedStringId, true))
 
 	get openedStrings() {
 		return this._openedStrings()
@@ -122,12 +124,14 @@ export class SideUiDataViewComponent {
 			() => {
 				this._strings().forEach((string) => {
 					if (!this._openedStrings().has(string.id)) {
-						console.log('!this._openedStrings().has(string.id)', string.id)
 						const map = new Map<StringId, boolean>(this.openedStrings)
 						map.set(string.id, true)
 						this._openedStrings.set(map)
 					}
 				})
+				/*				if (!this._openedStrings().has(UndefinedStringId)) {
+			 map.set(UndefinedStringId, true)
+			 }*/
 			},
 			{ allowSignalWrites: true },
 		)

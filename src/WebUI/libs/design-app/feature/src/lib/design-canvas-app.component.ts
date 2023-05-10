@@ -26,14 +26,7 @@ import { LetDirective } from '@ngrx/component'
 import { getGuid } from '@ngrx/data'
 import { ButtonBuilderComponent, ShowSvgComponent } from '@shared/ui'
 import { updateObjectForStore } from 'deprecated/design-app/feature-design-canvas'
-import {
-	MovePanelsToStringSideUiComponent,
-	MovePanelsToStringSideUiV2Component,
-	MovePanelsToStringSideUiV3Component,
-	SideUiNavBarComponent,
-} from './side-uis'
-import { MovePanelsToStringSideUiV4Component } from './side-uis/move-panels-to-string-v4/move-panels-to-string-side-ui-v4.component'
-import { MovePanelsToStringSideUiV5Component } from './side-uis/move-panels-to-string-v5/move-panels-to-string-side-ui-v5.component'
+import { SideUiNavBarComponent } from './side-uis'
 import { OverlayToolBarComponent } from './overlays'
 import { NgIfDirective } from './two-ngs.directive'
 import { DynamicContextMenuDirective } from './dynamic-context-menu.directive'
@@ -54,11 +47,6 @@ import { AppSettingsDialogComponent } from './dialogs/app-settings-dialog/app-se
 		ButtonBuilderComponent,
 		DesignCanvasDirective,
 		DynamicDialogDirective,
-		MovePanelsToStringSideUiComponent,
-		MovePanelsToStringSideUiV2Component,
-		MovePanelsToStringSideUiV3Component,
-		MovePanelsToStringSideUiV4Component,
-		MovePanelsToStringSideUiV5Component,
 		SideUiNavBarComponent,
 		OverlayToolBarComponent,
 		AppSettingsDialogComponent,
