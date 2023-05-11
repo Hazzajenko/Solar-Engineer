@@ -12,3 +12,16 @@ export const selectNearbyLines = createSelector(
 	selectGraphicsState,
 	(state: GraphicsState) => state.nearbyLines,
 )
+
+export const selectColouredStrings = createSelector(
+	selectGraphicsState,
+	(state: GraphicsState) => state.colouredStrings,
+)
+
+export const selectSelectedPanelFill = createSelector(
+	selectGraphicsState,
+	(state: GraphicsState) => state.selectedPanelFill,
+)
+
+// export type GraphicsSelector = typeof selectGraphicsState | typeof selectCreatePreview
+// export type GraphicsSelector = typeof selectGraphicsState | typeof selectCreatePreview | typeof selectNearbyLines | typeof selectColouredStrings | typeof selectSelectedPanelFill

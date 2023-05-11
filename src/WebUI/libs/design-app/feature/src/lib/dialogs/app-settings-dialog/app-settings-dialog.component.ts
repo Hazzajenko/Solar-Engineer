@@ -8,6 +8,7 @@ import { DialogBackdropTemplateComponent } from '../dialog-backdrop-template/dia
 
 import { ShowSvgComponent, ShowSvgNoStylesComponent } from '@shared/ui'
 import { GraphicsMenuComponent } from './index'
+import { CdkDrag, CdkDragHandle } from '@angular/cdk/drag-drop'
 
 @Component({
 	selector: 'dialog-app-settings',
@@ -25,6 +26,8 @@ import { GraphicsMenuComponent } from './index'
 		NgStyle,
 		ShowSvgComponent,
 		ShowSvgNoStylesComponent,
+		CdkDrag,
+		CdkDragHandle,
 	],
 })
 export class AppSettingsDialogComponent {

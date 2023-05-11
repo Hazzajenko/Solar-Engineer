@@ -21,7 +21,7 @@ export class GraphicsStoreService {
 	}
 
 	get state() {
-		return this._graphics()
+		return this._store.selectSignal(selectGraphicsState)()
 	}
 }
 
@@ -46,6 +46,14 @@ class GraphicsRepository {
 
 	toggleColouredStrings() {
 		this._store.dispatch(GraphicsActions.toggleColouredStrings())
+	}
+
+	toggleSelectedPanelFill() {
+		this._store.dispatch(GraphicsActions.toggleSelectedPanelFill())
+	}
+
+	toggleSelectedStringPanelFill() {
+		this._store.dispatch(GraphicsActions.toggleSelectedStringPanelFill())
 	}
 
 	resetGraphicsToDefault() {

@@ -13,6 +13,8 @@ export type GraphicsState = {
 	createPreview: CreatePreviewState
 	nearbyLines: NearbyLinesState
 	colouredStrings: boolean
+	selectedPanelFill: boolean
+	selectedStringPanelFill: boolean
 	history: Partial<GraphicsState>
 }
 
@@ -20,6 +22,8 @@ export const initialGraphicsState: GraphicsState = {
 	createPreview: CREATE_PREVIEW_STATE.CREATE_PREVIEW_ENABLED,
 	nearbyLines: NEARBY_LINES_STATE.CENTER_LINE_BETWEEN_TWO_ENTITIES,
 	colouredStrings: true,
+	selectedPanelFill: false,
+	selectedStringPanelFill: false,
 	history: {},
 }
 
@@ -66,6 +70,14 @@ const reducer = createReducer(
 	on(GraphicsActions.toggleColouredStrings, (state) => ({
 		...state,
 		colouredStrings: !state.colouredStrings,
+	})),
+	on(GraphicsActions.toggleSelectedPanelFill, (state) => ({
+		...state,
+		selectedPanelFill: !state.selectedPanelFill,
+	})),
+	on(GraphicsActions.toggleSelectedStringPanelFill, (state) => ({
+		...state,
+		selectedStringPanelFill: !state.selectedStringPanelFill,
 	})),
 	on(GraphicsActions.resetGraphicsToDefault, () => initialGraphicsState),
 )

@@ -1,8 +1,5 @@
 import { Directive, ElementRef, inject, Input, NgZone } from '@angular/core'
 import tippy from 'tippy.js'
-// import 'tippy.js/animations/scale.css'
-
-// import 'tippy.js/themes/tomato.css'
 
 @Directive({
 	selector: '[appZippyTooltip]',
@@ -42,7 +39,7 @@ export class ZippyTooltipDirective {
 	}
 
 	private toHtmlLight(tooltip: string) {
-		return `<div class='absolute z-50 inline-block px-3 py-2 text-sm font-medium text-gray-900 bg-white rounded-lg shadow-sm tooltip'>
+		return `<div class='absolute z-50 inline-block px-3 py-2 text-xs font-medium text-gray-900 bg-white rounded-lg shadow-sm tooltip'>
     ${tooltip}
 </div>`
 	}

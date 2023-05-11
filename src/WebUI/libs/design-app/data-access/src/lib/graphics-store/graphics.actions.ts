@@ -13,6 +13,8 @@ export const GraphicsActions = createActionGroup({
 			nearbyLines: NearbyLinesState
 		}>(),
 		'Toggle Coloured Strings': emptyProps(),
+		'Toggle Selected Panel Fill': emptyProps(),
+		'Toggle Selected String Panel Fill': emptyProps(),
 		'Reset Graphics To Default': emptyProps(),
 	},
 })

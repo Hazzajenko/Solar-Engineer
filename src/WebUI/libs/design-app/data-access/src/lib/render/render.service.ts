@@ -109,7 +109,9 @@ export class RenderService {
 				let fillStyle: string = CANVAS_COLORS.DefaultPanelFillStyle
 				const strokeStyle: string = PANEL_STROKE_STYLE.DEFAULT
 
-				if (this._graphicsStore.state.colouredStrings) {
+				const graphicsState = this._graphicsStore.state
+
+				if (graphicsState.colouredStrings) {
 					if (entity.stringId !== UndefinedStringId) {
 						const string = this._entities.strings.getById(entity.stringId)
 						assertNotNull(string)
@@ -119,22 +121,26 @@ export class RenderService {
 
 				const selectedState = this._selectedStore.state
 
-				const isSingleSelected =
-					selectedState.singleSelectedEntityId && selectedState.singleSelectedEntityId === entity.id
-				if (isSingleSelected) {
-					fillStyle = CANVAS_COLORS.SelectedPanelFillStyle
-				}
+				if (graphicsState.selectedPanelFill) {
+					const isSingleSelected =
+						selectedState.singleSelectedEntityId &&
+						selectedState.singleSelectedEntityId === entity.id
+					if (isSingleSelected) {
+						fillStyle = CANVAS_COLORS.SelectedPanelFillStyle
+					}
 
-				const isMultipleSelected =
-					selectedState.multipleSelectedEntityIds.length &&
-					selectedState.multipleSelectedEntityIds.includes(entity.id)
-				if (isMultipleSelected) {
-					fillStyle = CANVAS_COLORS.SelectedPanelFillStyle
+					const isMultipleSelected =
+						selectedState.multipleSelectedEntityIds.length &&
+						selectedState.multipleSelectedEntityIds.includes(entity.id)
+					if (isMultipleSelected) {
+						fillStyle = CANVAS_COLORS.SelectedPanelFillStyle
+					}
 				}
 
 				const isStringSelected =
 					selectedState.selectedStringId && selectedState.selectedStringId === entity.stringId
-				if (isStringSelected) {
+
+				if (isStringSelected && graphicsState.selectedStringPanelFill) {
 					fillStyle = CANVAS_COLORS.StringSelectedPanelFillStyle
 				}
 
@@ -144,7 +150,7 @@ export class RenderService {
 
 				if (isBeingHovered) {
 					fillStyle = '#17fff3'
-					if (isStringSelected) {
+					if (isStringSelected && graphicsState.selectedStringPanelFill) {
 						fillStyle = shadeColor(CANVAS_COLORS.StringSelectedPanelFillStyle, 50)
 					}
 				}

@@ -1,5 +1,5 @@
 import { NearbyGraphicsMenuOptions } from './nearby-graphics-menu-options'
-import { AsyncPipe, NgForOf, NgIf } from '@angular/common'
+import { AsyncPipe, NgForOf, NgIf, NgTemplateOutlet } from '@angular/common'
 import {
 	AfterViewInit,
 	ChangeDetectionStrategy,
@@ -21,11 +21,12 @@ import {
 } from '@design-app/data-access'
 import { LetDirective } from '@ngrx/component'
 import { EVENT_TYPE } from '@shared/data-access/models'
+import { state } from '@angular/animations'
 
 @Component({
 	selector: 'app-canvas-graphics-menu',
 	standalone: true,
-	imports: [NgForOf, NgIf, AsyncPipe, ReactiveFormsModule, LetDirective],
+	imports: [NgForOf, NgIf, AsyncPipe, ReactiveFormsModule, LetDirective, NgTemplateOutlet],
 	templateUrl: './graphics-menu.component.html',
 	styles: [],
 	changeDetection: ChangeDetectionStrategy.OnPush,
@@ -61,6 +62,18 @@ export class GraphicsMenuComponent implements AfterViewInit {
 		this._render.renderCanvasApp()
 	}
 
+	toggleGraphics(
+		toToggle:
+			| 'toggleCreatePreview'
+			| 'toggleNearbyLines'
+			| 'toggleSelectedPanelFill'
+			| 'toggleSelectedStringPanelFill'
+			| 'toggleColouredStrings',
+	) {
+		this._graphicsStore.dispatch[toToggle]()
+		this._render.renderCanvasApp()
+	}
+
 	changeNearbyGraphics(event: Event) {
 		const target = event.target as HTMLInputElement
 		const newState = target.value as NearbyLinesState
@@ -82,4 +95,6 @@ export class GraphicsMenuComponent implements AfterViewInit {
 		}
 		this._render.renderCanvasApp()
 	}
+
+	protected readonly state = state
 }
