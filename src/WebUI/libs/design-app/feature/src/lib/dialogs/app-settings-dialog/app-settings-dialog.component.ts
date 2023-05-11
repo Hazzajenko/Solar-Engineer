@@ -1,14 +1,20 @@
-import { AsyncPipe, NgForOf, NgIf, NgStyle } from '@angular/common'
-import { Component, ElementRef, inject, ViewChild } from '@angular/core'
+import { AsyncPipe, NgForOf, NgIf, NgStyle, NgTemplateOutlet } from '@angular/common'
+import { Component, ElementRef, inject, signal, ViewChild } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatDialogModule } from '@angular/material/dialog'
-import { UiStoreService } from '@design-app/data-access'
+import { IsTypeOfPanelPipe, UiStoreService } from '@design-app/data-access'
 import { LetDirective } from '@ngrx/component'
 import { DialogBackdropTemplateComponent } from '../dialog-backdrop-template/dialog-backdrop-template.component'
 
-import { ShowSvgComponent, ShowSvgNoStylesComponent } from '@shared/ui'
-import { GraphicsMenuComponent } from './index'
+import { ShowSvgComponent, ShowSvgNoStylesComponent, ToggleSvgNoStylesComponent } from '@shared/ui'
+import { GraphicsSettingsComponent } from './index'
 import { CdkDrag, CdkDragHandle } from '@angular/cdk/drag-drop'
+import { RadiansToDegreesPipe } from '@design-app/utils'
+import { TruncatePipe } from '@shared/pipes'
+import { NgInitDirective } from '../../ng-on-init.directive'
+import { CreateComponentDirective } from '../../dynamic-component.directive'
+
+// import { addToMap } from '@grid-layout/data-access'
 
 @Component({
 	selector: 'dialog-app-settings',
@@ -22,19 +28,41 @@ import { CdkDrag, CdkDragHandle } from '@angular/cdk/drag-drop'
 		MatButtonModule,
 		LetDirective,
 		DialogBackdropTemplateComponent,
-		GraphicsMenuComponent,
+		GraphicsSettingsComponent,
 		NgStyle,
 		ShowSvgComponent,
 		ShowSvgNoStylesComponent,
 		CdkDrag,
 		CdkDragHandle,
+		IsTypeOfPanelPipe,
+		RadiansToDegreesPipe,
+		TruncatePipe,
+		NgInitDirective,
+		NgTemplateOutlet,
+		CreateComponentDirective,
+		ToggleSvgNoStylesComponent,
 	],
 })
 export class AppSettingsDialogComponent {
 	private _uiStore = inject(UiStoreService)
 	@ViewChild('dialog') dialog!: ElementRef<HTMLDivElement>
 
+	openedAccordions = signal(new Map<string, boolean>())
+
+	// openedAccordions = new Map<string, boolean>()
 	closeDialog() {
 		this._uiStore.dispatch.closeDialog()
 	}
+
+	toggleAccordionView(accordionName: string) {
+		this.openedAccordions.mutate((value) => value.set(accordionName, !value.get(accordionName)))
+	}
+
+	addToMap(accordionName: string) {
+		this.openedAccordions.mutate((value) => value.set(accordionName, true))
+	}
+
+	// protected readonly addToMap = addToMap
+	// protected readonly addToMap = addToMap
+	// protected readonly addToMap = addToMap
 }

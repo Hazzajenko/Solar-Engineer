@@ -1,6 +1,7 @@
 import { Action, createReducer, on } from '@ngrx/store'
-import { ContextMenuInput, DialogInput } from '@design-app/data-access'
 import { UiActions } from './ui.actions'
+import { ContextMenuInput } from './context-menu'
+import { DialogInput } from './dialog-inputs'
 
 export const UI_FEATURE_KEY = 'ui'
 

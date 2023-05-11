@@ -304,7 +304,8 @@ export class DesignCanvasDirective implements OnInit {
 
 		const graphicsState = this._graphicsState.state
 
-		if (graphicsState.createPreview === 'CreatePreviewEnabled') {
+		if (graphicsState.createPreview) {
+			// if (graphicsState.createPreview === 'CreatePreviewEnabled') {
 			this._nearby.getDrawEntityPreviewV2Ngrx(event, currentPoint)
 			return
 		}
@@ -772,7 +773,8 @@ export class DesignCanvasDirective implements OnInit {
 			event.stopPropagation()
 			event.preventDefault()
 			console.log('keyup menu', event)
-			this._keys.keyUpHandlerV2(event, this.rawMousePos, this.currentPoint)
+			this._keys.keyUpHandlerV4(event, this.rawMousePos, this.currentPoint)
+			// this._keys.keyUpHandlerV2(event, this.rawMousePos, this.currentPoint)
 			// this.keyUpHandler(event)
 		})
 	}

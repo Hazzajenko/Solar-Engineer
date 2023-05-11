@@ -1,7 +1,6 @@
 import { AppStateStoreService } from '../app-store'
 import { EntityStoreService } from '../entities'
 import { GraphicsStoreService } from '../graphics-store'
-import { GraphicsSettings } from '../graphics/graphics.settings'
 import { RenderService } from '../render'
 import { getDefaultDrawPreviewCtxFn } from './ctx-fns'
 import { getNearbyLineDrawCtxFnFromNearbyLinesState } from './utils'
@@ -26,6 +25,7 @@ import {
 } from '@design-app/utils'
 import { groupInto2dArray } from '@shared/utils'
 import { sortBy } from 'lodash'
+import { GraphicsSettings } from 'deprecated/design-app/feature-design-canvas'
 
 @Injectable({
 	providedIn: 'root',

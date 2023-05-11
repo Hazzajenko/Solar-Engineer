@@ -21,17 +21,16 @@ import {
 } from '@design-app/data-access'
 import { LetDirective } from '@ngrx/component'
 import { EVENT_TYPE } from '@shared/data-access/models'
-import { state } from '@angular/animations'
 
 @Component({
-	selector: 'app-canvas-graphics-menu',
+	selector: 'app-canvas-graphics-settings',
 	standalone: true,
 	imports: [NgForOf, NgIf, AsyncPipe, ReactiveFormsModule, LetDirective, NgTemplateOutlet],
-	templateUrl: './graphics-menu.component.html',
+	templateUrl: './graphics-settings.component.html',
 	styles: [],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class GraphicsMenuComponent implements AfterViewInit {
+export class GraphicsSettingsComponent implements AfterViewInit {
 	private _graphicsStore = inject(GraphicsStoreService)
 	graphicsState = toSignal(this._graphicsStore.state$, { initialValue: initialGraphicsState })
 
@@ -96,5 +95,5 @@ export class GraphicsMenuComponent implements AfterViewInit {
 		this._render.renderCanvasApp()
 	}
 
-	protected readonly state = state
+	// protected readonly state = state
 }

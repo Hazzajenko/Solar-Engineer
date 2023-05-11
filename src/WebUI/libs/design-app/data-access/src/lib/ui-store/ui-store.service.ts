@@ -8,8 +8,9 @@ import {
 	selectSideUiNavState,
 	selectUiState,
 } from './ui.selectors'
-import { ContextMenuInput, DialogInput } from '@design-app/data-access'
 import { UiActions } from './ui.actions'
+import { DialogInput } from './dialog-inputs'
+import { ContextMenuInput } from './context-menu'
 
 @Injectable({
 	providedIn: 'root',

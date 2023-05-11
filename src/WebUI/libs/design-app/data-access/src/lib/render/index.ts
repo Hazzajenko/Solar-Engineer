@@ -1,5 +1,4 @@
 export * from './render.service'
-// export * from './render-v2.service'
 export * from './canvas-render-options'
 export * from './utils/index'
 export * from './render-fns/index'

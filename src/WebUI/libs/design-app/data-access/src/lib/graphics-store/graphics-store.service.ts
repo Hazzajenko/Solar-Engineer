@@ -1,7 +1,7 @@
 import { GraphicsActions } from './graphics.actions'
 import { GraphicsState, initialGraphicsState } from './graphics.reducer'
 import { selectGraphicsState } from './graphics.selectors'
-import { CreatePreviewState, NearbyLinesState } from './graphics.types'
+import { NearbyLinesState } from './graphics.types'
 import { inject, Injectable } from '@angular/core'
 import { toSignal } from '@angular/core/rxjs-interop'
 import { select, Store } from '@ngrx/store'
@@ -32,9 +32,11 @@ class GraphicsRepository {
 		this._store.dispatch(GraphicsActions.toggleCreatePreview())
 	}
 
-	setCreatePreview(createPreview: CreatePreviewState) {
-		this._store.dispatch(GraphicsActions.setCreatePreview({ createPreview }))
-	}
+	/*
+	 setCreatePreview(createPreview: CreatePreviewState) {
+	 this._store.dispatch(GraphicsActions.setCreatePreview({ createPreview }))
+	 }
+	 */
 
 	toggleNearbyLines() {
 		this._store.dispatch(GraphicsActions.toggleNearbyLines())

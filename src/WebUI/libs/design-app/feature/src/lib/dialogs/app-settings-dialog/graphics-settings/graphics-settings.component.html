@@ -43,7 +43,7 @@
       *ngTemplateOutlet='checkbox;
       context: {
       toggle: "toggleCreatePreview",
-      checked: state.createPreview === CREATE_PREVIEW_STATE.CREATE_PREVIEW_ENABLED,
+      checked: state.createPreview,
       id: "toggle-create-preview",
       label: "Create Preview"}' />
     <ng-container
@@ -185,7 +185,7 @@
       />
     </div>
     <div class='pointer-events-none ml-3 text-sm leading-6'>
-      <label for='toggle-nearby-lines'
+      <label [for]='id'
              class='font-medium text-gray-900'>{{label}}</label>
     </div>
   </div>

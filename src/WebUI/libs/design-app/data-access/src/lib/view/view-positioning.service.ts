@@ -1,4 +1,3 @@
-import { AppStoreService } from '../app'
 import { AppStateStoreService } from '../app-store'
 import { CanvasElementService } from '../div-elements'
 import { RenderService } from '../render'
@@ -14,7 +13,6 @@ import { assertNotNull } from '@shared/utils'
 export class ViewPositioningService {
 	private _canvasElementsService = inject(CanvasElementService)
 	private _render = inject(RenderService)
-	private _app = inject(AppStoreService)
 	private _appStore = inject(AppStateStoreService)
 
 	screenDragStartPoint?: TransformedPoint
@@ -33,7 +31,7 @@ export class ViewPositioningService {
 		 dragStart: this._domPointService.getTransformedPointFromEvent(event),
 		 },
 		 })*/
-		this._app.sendEvent({ type: 'StartViewDragging' })
+		// this._app.sendEvent({ type: 'StartViewDragging' })
 		this._appStore.dispatch.setViewPositioningState('ViewDraggingInProgress')
 		// this._machine.sendEvent(new StartViewDragging())
 		this.screenDragStartPoint = currentPoint
@@ -47,7 +45,7 @@ export class ViewPositioningService {
 			 dragStart: undefined,
 			 },
 			 })*/
-			this._app.sendEvent({ type: 'StopViewDragging' })
+			// this._app.sendEvent({ type: 'StopViewDragging' })
 			this._appStore.dispatch.setViewPositioningState('ViewNotMoving')
 			// this._machine.sendEvent(new StopViewDragging())
 			this.screenDragStartPoint = undefined
@@ -66,7 +64,7 @@ export class ViewPositioningService {
 
 	handleDragScreenMouseUp() {
 		this.screenDragStartPoint = undefined
-		this._app.sendEvent({ type: 'StopViewDragging' })
+		// this._app.sendEvent({ type: 'StopViewDragging' })
 		this._appStore.dispatch.setViewPositioningState('ViewNotMoving')
 		// this._machine.sendEvent(new StopViewDragging())
 		/*		this._state.updateState({

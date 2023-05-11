@@ -35,10 +35,12 @@ export type ContextMenuInput =
 	| ContextMenuStringMenu
 
 // export const
-const uhm: ContextMenuInput = {
-	location: { x: 0, y: 0 },
-	component: CONTEXT_MENU_COMPONENT.SINGLE_PANEL_MENU,
-	data: {
-		panelId: '',
-	},
-}
+/*
+ const uhm: ContextMenuInput = {
+ location: { x: 0, y: 0 },
+ component: CONTEXT_MENU_COMPONENT.SINGLE_PANEL_MENU,
+ data: {
+ panelId: '',
+ },
+ }
+ */

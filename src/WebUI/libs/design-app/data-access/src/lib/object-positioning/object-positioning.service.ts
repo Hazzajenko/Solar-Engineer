@@ -2,7 +2,6 @@ import { CanvasElementService } from '../div-elements'
 import { DomPointService } from '../dom-point'
 import { EntityStoreService } from '../entities'
 import { GraphicsStoreService } from '../graphics-store'
-import { GraphicsSettings } from '../graphics/graphics.settings'
 import { getNearbyLineDrawCtxFnFromNearbyLinesState } from '../nearby'
 import { ObjectPositioningStoreService } from '../object-positioning-store'
 import { RenderService } from '../render'
@@ -38,6 +37,7 @@ import { UpdateStr } from '@ngrx/entity/src/models'
 import { CURSOR_TYPE, Point } from '@shared/data-access/models'
 import { assertNotNull, groupInto2dArray } from '@shared/utils'
 import { sortBy } from 'lodash'
+import { GraphicsSettings } from 'deprecated/design-app/feature-design-canvas'
 
 @Injectable({
 	providedIn: 'root',
