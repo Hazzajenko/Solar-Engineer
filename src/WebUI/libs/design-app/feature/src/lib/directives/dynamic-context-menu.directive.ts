@@ -13,7 +13,7 @@ import {
 	MultiplePanelsMenuComponent,
 	SinglePanelMenuComponent,
 	StringMenuComponent,
-} from './context-menus'
+} from '../context-menus'
 import { toSignal } from '@angular/core/rxjs-interop'
 
 @Directive({

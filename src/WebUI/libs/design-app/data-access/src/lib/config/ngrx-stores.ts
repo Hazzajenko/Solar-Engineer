@@ -11,13 +11,16 @@ import { provideState } from '@ngrx/store'
 import { UI_FEATURE_KEY, uiReducer } from '../ui-store'
 import { provideEffects } from '@ngrx/effects'
 import * as panelsEffects from '../entities/panels/panels.effects'
-import * as selectedEffects from '../selected/selected.effects'
+// import * as selectedEffects from '../selected/selected.effects'
+import * as globalEffects from '../global/global.effects'
 import { KEYS_FEATURE_KEY, keysReducer } from '../keys'
+import { PANEL_LINKS_FEATURE_KEY, panelLinksReducer } from '../panel-links'
 
 export const DesignAppNgrxStores = [
 	provideState(APP_STATE_FEATURE_KEY, appStateReducer),
 	provideState(PANELS_FEATURE_KEY, panelsReducer),
 	provideState(STRINGS_FEATURE_KEY, stringsReducer),
+	provideState(PANEL_LINKS_FEATURE_KEY, panelLinksReducer),
 	provideState(UI_FEATURE_KEY, uiReducer),
 	provideState(SELECTED_FEATURE_KEY, selectedReducer),
 	provideState(OBJECT_POSITIONING_FEATURE_KEY, objectPositioningReducer),
@@ -25,5 +28,6 @@ export const DesignAppNgrxStores = [
 	provideState(WINDOWS_FEATURE_KEY, windowsReducer),
 	provideState(KEYS_FEATURE_KEY, keysReducer),
 	provideEffects(panelsEffects),
-	provideEffects(selectedEffects),
+	provideEffects(globalEffects),
+	// provideEffects(selectedEffects),
 ] as const

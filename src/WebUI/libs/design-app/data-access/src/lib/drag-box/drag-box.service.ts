@@ -51,6 +51,9 @@ export class DragBoxService {
 		if (modeState === MODE_STATE.SELECT_MODE) {
 			this._app.dispatch.setDragBoxState('SelectionBoxInProgress')
 		}
+		if (modeState === MODE_STATE.LINK_MODE) {
+			this._app.dispatch.setDragBoxState('SelectionBoxInProgress')
+		}
 		if (modeState === MODE_STATE.CREATE_MODE) {
 			this._app.dispatch.setDragBoxState('CreationBoxInProgress')
 		}

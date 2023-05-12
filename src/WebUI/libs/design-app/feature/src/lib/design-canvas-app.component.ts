@@ -1,5 +1,5 @@
 import { DesignCanvasDirective } from './design-canvas.directive'
-import { DynamicDialogDirective } from './dynamic-dialog.directive'
+import { DynamicContextMenuDirective, DynamicDialogDirective } from './directives'
 import { KeyMapComponent, RightClickMenuComponent, StateValuesComponent } from './menus'
 import { WindowComponent } from './windows'
 import { CdkDrag } from '@angular/cdk/drag-drop'
@@ -28,9 +28,7 @@ import { ButtonBuilderComponent, ShowSvgComponent } from '@shared/ui'
 import { updateObjectForStore } from 'deprecated/design-app/feature-design-canvas'
 import { SideUiNavBarComponent } from './side-uis'
 import { OverlayToolBarComponent } from './overlays'
-import { NgIfDirective } from './two-ngs.directive'
-import { DynamicContextMenuDirective } from './dynamic-context-menu.directive'
-import { AppSettingsDialogComponent } from './dialogs/app-settings-dialog/app-settings-dialog.component'
+import { AppSettingsDialogComponent } from './dialogs'
 
 @Component({
 	changeDetection: ChangeDetectionStrategy.OnPush,
@@ -50,7 +48,6 @@ import { AppSettingsDialogComponent } from './dialogs/app-settings-dialog/app-se
 		SideUiNavBarComponent,
 		OverlayToolBarComponent,
 		AppSettingsDialogComponent,
-		NgIfDirective,
 		DynamicContextMenuDirective,
 	],
 	selector: 'app-design-canvas-app',

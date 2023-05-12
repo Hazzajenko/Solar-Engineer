@@ -11,8 +11,9 @@ import { GraphicsSettingsComponent } from './index'
 import { CdkDrag, CdkDragHandle } from '@angular/cdk/drag-drop'
 import { RadiansToDegreesPipe } from '@design-app/utils'
 import { TruncatePipe } from '@shared/pipes'
-import { NgInitDirective } from '../../ng-on-init.directive'
-import { CreateComponentDirective } from '../../dynamic-component.directive'
+import { NgInitDirective } from '../../directives/ng-on-init.directive'
+import { CreateComponentDirective } from '../../directives/dynamic-component.directive'
+import { heightInOut } from '@shared/animations'
 
 // import { addToMap } from '@grid-layout/data-access'
 
@@ -42,6 +43,7 @@ import { CreateComponentDirective } from '../../dynamic-component.directive'
 		CreateComponentDirective,
 		ToggleSvgNoStylesComponent,
 	],
+	animations: [heightInOut],
 })
 export class AppSettingsDialogComponent {
 	private _uiStore = inject(UiStoreService)

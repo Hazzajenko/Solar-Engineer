@@ -10,6 +10,7 @@ export const CANVAS_COLORS = {
 	TakenSpotFillStyle: '#ff0000',
 	NearbyPanelFillStyle: '#13ff67',
 	NearbyPanelStrokeStyle: '#1b5fff',
+	RequestingLinkPanelFillStyle: '#d4342f',
 } as const
 
 export type CanvasColor = (typeof CANVAS_COLORS)[keyof typeof CANVAS_COLORS]

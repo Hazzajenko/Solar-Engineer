@@ -33,12 +33,6 @@ export const allSelectedActions = Object.keys(SelectedActions).map(
 	(key) => SelectedActions[key as keyof typeof SelectedActions],
 )
 
-export type ActionGroup = ReturnType<typeof createActionGroup>
-
-export const getAllActions = (actionGroup: ActionGroup) => {
-	return Object.keys(actionGroup).map((key) => actionGroup[key as keyof typeof actionGroup])
-}
-
 // export type SelectedActions = typeof SelectedActions
 /*export type SelectedActions = typeof SelectedActions
 

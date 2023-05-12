@@ -2,11 +2,11 @@ import { Component, ElementRef, inject, ViewChild } from '@angular/core'
 import { ToSafeHtmlPipe } from '@shared/utils'
 import { NgClass, NgIf } from '@angular/common'
 import { GraphicsStoreService, UiStoreService } from '@design-app/data-access'
-import { ZippyTooltipDirective } from '../../zippy-tooltip.directive'
+import { ZippyTooltipDirective } from '../../directives/zippy-tooltip.directive'
 import { MatTooltipModule } from '@angular/material/tooltip'
 import { ShowSvgNoStylesComponent, ToggleSvgNoStylesComponent, TooltipComponent } from '@shared/ui'
 import { ConvertTooltipPipe } from './convert-tooltip.pipe'
-import { MouseOverRenderDirective } from '../../mouse-over-render.directive'
+import { MouseOverRenderDirective } from '../../directives/mouse-over-render.directive'
 import { toSignal } from '@angular/core/rxjs-interop'
 
 @Component({

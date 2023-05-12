@@ -52,7 +52,7 @@ export class GraphicsSettingsComponent implements AfterViewInit {
 	}
 
 	toggleCreatePreview() {
-		this._graphicsStore.dispatch.toggleCreatePreview()
+		this._graphicsStore.dispatch.toggleStringBoxes()
 		this._render.renderCanvasApp()
 	}
 

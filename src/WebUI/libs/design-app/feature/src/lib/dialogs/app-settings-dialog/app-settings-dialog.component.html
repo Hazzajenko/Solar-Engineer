@@ -90,8 +90,10 @@
     </button>
   </h2>
   <div
+    @heightInOut
     *ngIf='openedAccordions().get(name)'>
-    <div class='p-5 border border-gray-200 dark:border-gray-700'>
+    <div
+      class='p-5 border border-gray-200 dark:border-gray-700'>
       <ng-container appCreateComponent
                     [dynamicComponent]='component' />
     </div>

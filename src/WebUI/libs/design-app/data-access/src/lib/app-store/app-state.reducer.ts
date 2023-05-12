@@ -25,6 +25,7 @@ export type AppState = {
 	// toRotate: ToRotateState
 	view: ViewPositioningState
 	previewAxis: PreviewAxisState
+	// previewAxis: PreviewAxisState
 	mode: ModeState
 	// contextMenu: ContextMenuState
 	/*	dialog: boolean

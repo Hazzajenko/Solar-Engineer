@@ -5,7 +5,7 @@ import { UiStoreService } from '@design-app/data-access'
 import { toSignal } from '@angular/core/rxjs-interop'
 import { LogoComponent } from '@shared/ui/logo'
 import { ShowSvgComponent, ShowSvgNoStylesComponent } from '@shared/ui'
-import { MouseOverRenderDirective } from '../../mouse-over-render.directive'
+import { MouseOverRenderDirective } from '../../directives/mouse-over-render.directive'
 import { SideUiDataViewComponent } from '../side-ui-data-view/side-ui-data-view.component'
 
 @Component({

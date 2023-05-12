@@ -13,6 +13,7 @@ import { Key, KEYS, Point } from '@shared/data-access/models'
 import { VIEW_STATE } from 'deprecated/design-app/feature-design-canvas'
 import { KeysStoreService } from './keys-store.service'
 import { KEY_MAP_ACTION } from './key-map'
+import { toSignal } from '@angular/core/rxjs-interop'
 
 // const DEFAULT_UNCHANGEABLE_KEYS = [KEYS.ESCAPE, KEYS.SHIFT, KEYS.ALT, KEYS.CTRL_OR_CMD] as const
 const isDefaultUnchangeableKey = (key: KeyboardEvent['key']) =>
@@ -34,13 +35,21 @@ export class KeyEventsService {
 	private _objPositioning = inject(ObjectPositioningService)
 	private _view = inject(ViewPositioningService)
 	private _keyMapStore = inject(KeysStoreService)
-	keyMapValues = this._keyMapStore.keyMapValues
+	_keyMapValues = toSignal(this._keyMapStore.keyMapValues$, {
+		initialValue: this._keyMapStore.keyMapValues,
+	})
+	get keyMapValues() {
+		return this._keyMapValues()
+	}
+
+	// keyMapValues = this._keyMapStore.keyMapValues
 
 	keyUpHandlerV4(event: KeyboardEvent, rawMousePos: Point, currentPoint: TransformedPoint) {
 		if (isDefaultUnchangeableKey(event.key))
 			return this.keyUpHandlerV3(event, rawMousePos, currentPoint)
 		const key = event.key as Key
 		const action = this.keyMapValues[key]
+		console.log('keyUpHandlerV4: action: ', action)
 		if (!action) return
 		switch (action) {
 			case KEY_MAP_ACTION.CREATE_STRING_WITH_SELECTED:
@@ -49,6 +58,8 @@ export class KeyEventsService {
 				return this.startRotateMode()
 			case KEY_MAP_ACTION.TOGGLE_MODE:
 				return this.toggleMode()
+			case KEY_MAP_ACTION.START_LINK_MODE:
+				return this.startLinkMode()
 			default:
 				throw new Error(`KeyEventsService: keyUpHandlerV4: unknown action: ${action}`)
 		}
@@ -80,6 +91,10 @@ export class KeyEventsService {
 		const newMode =
 			mode === MODE_STATE.CREATE_MODE ? MODE_STATE.SELECT_MODE : MODE_STATE.CREATE_MODE
 		this._appState.dispatch.setModeState(newMode)
+	}
+
+	private startLinkMode() {
+		this._appState.dispatch.setModeState(MODE_STATE.LINK_MODE)
 	}
 
 	keyUpHandlerV3(event: KeyboardEvent, rawMousePos: Point, currentPoint: TransformedPoint) {

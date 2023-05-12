@@ -1,4 +1,4 @@
-import { AppStateStoreService } from '../app-store'
+import { AppStateStoreService, MODE_STATE } from '../app-store'
 import { CanvasElementService, DIV_ELEMENT, DivElementsService } from '../div-elements'
 import { EntityStoreService } from '../entities'
 import { SelectedStoreService } from '../selected'
@@ -9,6 +9,7 @@ import { CANVAS_COLORS, PANEL_STROKE_STYLE, UndefinedStringId } from '@design-ap
 import { isPanel } from '@design-app/utils'
 import { assertNotNull, shadeColor } from '@shared/utils'
 import { GraphicsStoreService } from '../graphics-store'
+import { PanelLinksService, PanelLinksStoreService } from '../panel-links'
 
 @Injectable({
 	providedIn: 'root',
@@ -23,6 +24,8 @@ export class RenderService {
 	private _appStore = inject(AppStateStoreService)
 	private _selectedStore = inject(SelectedStoreService)
 	private _graphicsStore = inject(GraphicsStoreService)
+	private _panelLinksStore = inject(PanelLinksStoreService)
+	private _panelLinks = inject(PanelLinksService)
 
 	private lastRenderTime = performance.now()
 
@@ -144,15 +147,47 @@ export class RenderService {
 					fillStyle = CANVAS_COLORS.StringSelectedPanelFillStyle
 				}
 
+				let panelLinkOrderDrawFn: ((ctx: CanvasRenderingContext2D) => void) | undefined = undefined
+				if (this._appStore.state.mode === MODE_STATE.LINK_MODE) {
+					if (this._panelLinksStore.requestingLink) {
+						if (this._panelLinksStore.requestingLink.panelId === entity.id) {
+							fillStyle = CANVAS_COLORS.RequestingLinkPanelFillStyle
+						}
+					}
+
+					if (isStringSelected) {
+						assertNotNull(selectedState.selectedStringId)
+						const linksInOrder = this._panelLinks.getPanelLinkOrderForString(
+							selectedState.selectedStringId,
+						)
+						const linkIndex = linksInOrder.findIndex((link) => link?.positivePanel.id === entity.id)
+						if (linkIndex !== -1) {
+							panelLinkOrderDrawFn = (ctx) => {
+								ctx.save()
+								const fontSize = 10
+								ctx.font = `${fontSize}px Consolas, sans-serif`
+								const text = `${linkIndex + 1}`
+								const metrics = ctx.measureText(text)
+								const x = 0 - metrics.width / 2
+								const y = fontSize / 4
+								ctx.fillStyle = 'black'
+								ctx.fillText(text, x, y)
+								ctx.restore()
+							}
+						}
+					}
+				}
+
 				const pointerState = this._appStore.state.pointer
 				const hoveringOverEntityId = pointerState.hoveringOverEntityId
 				const isBeingHovered = !!hoveringOverEntityId && hoveringOverEntityId === entity.id
 
 				if (isBeingHovered) {
-					fillStyle = '#17fff3'
+					// fillStyle = '#17fff3'
 					if (isStringSelected && graphicsState.selectedStringPanelFill) {
 						fillStyle = shadeColor(CANVAS_COLORS.StringSelectedPanelFillStyle, 50)
 					}
+					fillStyle = shadeColor(fillStyle, 50)
 				}
 
 				ctx.save()
@@ -164,6 +199,9 @@ export class RenderService {
 				ctx.rect(-entity.width / 2, -entity.height / 2, entity.width, entity.height)
 				ctx.fill()
 				ctx.stroke()
+				if (panelLinkOrderDrawFn) {
+					panelLinkOrderDrawFn(ctx)
+				}
 				ctx.restore()
 			})
 			ctx.restore()
@@ -196,6 +234,16 @@ export class RenderService {
 				if (shouldRenderSelectedEntitiesBox && multipleSelectedEntityIds.length) {
 					drawSelectedBox(ctx, this._entities.panels.getByIds(multipleSelectedEntityIds))
 				}
+			}
+
+			if (this._graphicsStore.state.stringBoxes) {
+				const stringsWithPanels = this._entities.strings.allStrings.map((string) => ({
+					string,
+					panels: this._entities.panels.getByStringId(string.id),
+				}))
+				stringsWithPanels.forEach(({ string, panels }) => {
+					drawSelectedStringBoxV3(ctx, string, panels)
+				})
 			}
 
 			if (options?.drawFns) {

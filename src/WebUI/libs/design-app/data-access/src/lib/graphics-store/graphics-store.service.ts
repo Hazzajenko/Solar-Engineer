@@ -58,6 +58,10 @@ class GraphicsRepository {
 		this._store.dispatch(GraphicsActions.toggleSelectedStringPanelFill())
 	}
 
+	toggleStringBoxes() {
+		this._store.dispatch(GraphicsActions.toggleStringBoxes())
+	}
+
 	resetGraphicsToDefault() {
 		this._store.dispatch(GraphicsActions.resetGraphicsToDefault())
 	}

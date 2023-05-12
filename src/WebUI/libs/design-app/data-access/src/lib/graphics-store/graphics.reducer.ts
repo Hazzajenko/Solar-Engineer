@@ -9,6 +9,7 @@ export type GraphicsState = {
 	createPreview: boolean
 	nearbyLines: NearbyLinesState
 	colouredStrings: boolean
+	stringBoxes: boolean
 	selectedPanelFill: boolean
 	selectedStringPanelFill: boolean
 	history: Partial<GraphicsState>
@@ -18,6 +19,7 @@ export const initialGraphicsState: GraphicsState = {
 	createPreview: true, // createPreview: CREATE_PREVIEW_STATE.CREATE_PREVIEW_ENABLED,
 	nearbyLines: NEARBY_LINES_STATE.CENTER_LINE_BETWEEN_TWO_ENTITIES,
 	colouredStrings: true,
+	stringBoxes: true,
 	selectedPanelFill: false,
 	selectedStringPanelFill: false,
 	history: {},
@@ -28,21 +30,21 @@ const reducer = createReducer(
 	on(GraphicsActions.toggleCreatePreview, (state) => ({
 		...state,
 		createPreview: !state.createPreview /*		createPreview:
-		 state.createPreview === CREATE_PREVIEW_STATE.CREATE_PREVIEW_ENABLED
-		 ? CREATE_PREVIEW_STATE.CREATE_PREVIEW_DISABLED
-		 : CREATE_PREVIEW_STATE.CREATE_PREVIEW_ENABLED,*/,
+	 state.createPreview === CREATE_PREVIEW_STATE.CREATE_PREVIEW_ENABLED
+	 ? CREATE_PREVIEW_STATE.CREATE_PREVIEW_DISABLED
+	 : CREATE_PREVIEW_STATE.CREATE_PREVIEW_ENABLED,*/,
 		history: {
 			...state.history,
 			createPreview: state.createPreview,
 		},
 	})) /*	on(GraphicsActions.setCreatePreview, (state, { createPreview }) => ({
-	 ...state,
-	 createPreview,
-	 history: {
-	 ...state.history,
-	 createPreview: state.createPreview,
-	 },
-	 })),*/,
+ ...state,
+ createPreview,
+ history: {
+ ...state.history,
+ createPreview: state.createPreview,
+ },
+ })),*/,
 	on(GraphicsActions.toggleNearbyLines, (state) => ({
 		...state,
 		nearbyLines:
@@ -73,6 +75,10 @@ const reducer = createReducer(
 	on(GraphicsActions.toggleSelectedStringPanelFill, (state) => ({
 		...state,
 		selectedStringPanelFill: !state.selectedStringPanelFill,
+	})),
+	on(GraphicsActions.toggleStringBoxes, (state) => ({
+		...state,
+		stringBoxes: !state.stringBoxes,
 	})),
 	on(GraphicsActions.resetGraphicsToDefault, () => initialGraphicsState),
 )

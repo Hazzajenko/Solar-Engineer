@@ -11,6 +11,7 @@ export type DragBoxState = (typeof DRAG_BOX_STATE)[keyof typeof DRAG_BOX_STATE]
 export const MODE_STATE = {
 	CREATE_MODE: 'CreateMode',
 	SELECT_MODE: 'SelectMode',
+	LINK_MODE: 'LinkMode',
 } as const
 
 export type ModeState = (typeof MODE_STATE)[keyof typeof MODE_STATE]

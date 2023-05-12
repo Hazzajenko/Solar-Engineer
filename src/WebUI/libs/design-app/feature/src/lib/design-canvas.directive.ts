@@ -7,18 +7,16 @@ import {
 	DomPointService,
 	DragBoxService,
 	EntityStoreService,
-	genStringNameV2,
 	GraphicsStoreService,
 	isPointInsideSelectedStringPanelsByStringIdNgrxWithPanels,
 	KeyEventsService,
-	MODE_STATE,
-	MOVE_ENTITY_STATE,
 	NearbyService,
 	ObjectPositioningService,
 	ObjectPositioningStoreService,
 	ObjectRotatingService,
+	PanelLinksService,
+	PanelLinksStoreService,
 	RenderService,
-	ROTATE_ENTITY_STATE,
 	SelectedService,
 	SelectedStoreService,
 	UiStoreService,
@@ -27,7 +25,6 @@ import {
 import {
 	CANVAS_COLORS,
 	CanvasEntity,
-	CanvasPanel,
 	ENTITY_TYPE,
 	SizeByType,
 	TransformedPoint,
@@ -36,7 +33,6 @@ import {
 import {
 	changeCanvasCursor,
 	createPanel,
-	createString,
 	dragBoxKeysDown,
 	draggingScreenKeysDown,
 	eventToPointLocation,
@@ -53,18 +49,15 @@ import {
 	isWheelButton,
 	multiSelectDraggingKeysDownAndIdsNotEmpty,
 	rotatingKeysDown,
-	updateObjectByIdForStoreV3,
 } from '@design-app/utils'
 import {
 	ContextMenuEvent,
 	CURSOR_TYPE,
 	DoubleClickEvent,
 	EVENT_TYPE,
-	KEYS,
 	Point,
 } from '@shared/data-access/models'
 import { assertNotNull, OnDestroyDirective } from '@shared/utils'
-import { VIEW_STATE } from 'deprecated/design-app/feature-design-canvas'
 
 @Directive({
 	selector: '[appDesignCanvas]',
@@ -81,6 +74,8 @@ export class DesignCanvasDirective implements OnInit {
 	private _ngZone = inject(NgZone)
 	private _renderer = inject(Renderer2)
 	private _canvasEl = inject(CanvasElementService)
+	private _panelLinks = inject(PanelLinksService)
+	private _panelLinksStore = inject(PanelLinksStoreService)
 	private _objRotating = inject(ObjectRotatingService)
 	private _objPositioning = inject(ObjectPositioningService)
 	private _view = inject(ViewPositioningService)
@@ -404,8 +399,35 @@ export class DesignCanvasDirective implements OnInit {
 
 		const entityUnderMouse = this.getEntityUnderMouse(currentPoint)
 		if (entityUnderMouse) {
-			this._selected.handleEntityUnderMouse(event, entityUnderMouse)
-			console.log('entityUnderMouse', entityUnderMouse)
+			const mode = this._appState.state.mode
+			if (mode === 'SelectMode') {
+				this._selected.handleEntityUnderMouse(event, entityUnderMouse)
+				return
+			}
+			if (mode == 'CreateMode') {
+				this._appState.dispatch.setModeState('SelectMode')
+				this._selected.handleEntityUnderMouse(event, entityUnderMouse)
+				return
+			}
+
+			if (mode === 'LinkMode') {
+				if (isPanel(entityUnderMouse)) {
+					this._panelLinks.handlePanelLinksClick(event, entityUnderMouse)
+					return
+				}
+				this._appState.dispatch.setModeState('SelectMode')
+				// this._panelLinks.clearPanelLinkRequest()
+				return
+			}
+
+			// }
+			/*			this._selected.handleEntityUnderMouse(event, entityUnderMouse)
+			 console.log('entityUnderMouse', entityUnderMouse)
+			 return*/
+		}
+
+		if (this._panelLinksStore.state.requestingLink) {
+			this._panelLinks.clearPanelLinkRequest()
 			return
 		}
 		// const selectedSnapshot = this._app.selectedSnapshot
@@ -450,7 +472,6 @@ export class DesignCanvasDirective implements OnInit {
 			? createPanel(location, selectedStringId)
 			: createPanel(location)
 		this._entities.panels.dispatch.addPanel(entity)
-		// this._entities.panels.addEntity(entity)
 
 		this._render.renderCanvasApp()
 	}
@@ -469,9 +490,6 @@ export class DesignCanvasDirective implements OnInit {
 			if (!isPanel(entityUnderMouse)) return
 			if (entityUnderMouse.stringId === UndefinedStringId) return
 			const belongsToString = this._entities.strings.getById(entityUnderMouse.stringId)
-			/*			const belongsToString = this._entities.strings
-			 .getEntities()
-			 .find((string) => string.id === entityUnderMouse.stringId)*/
 
 			if (!belongsToString) return
 			this._selectedStore.dispatch.selectString(belongsToString.id)
@@ -490,9 +508,6 @@ export class DesignCanvasDirective implements OnInit {
 			this._uiStore.dispatch.closeContextMenu()
 			return
 		}
-		/*		if (this._appState.state.contextMenu.state === 'ContextMenuOpen') {
-		 this._appState.dispatch.setContextMenuState('NoContextMenu')
-		 }*/
 
 		const currentScaleX = this.ctx.getTransform().a
 
@@ -516,10 +531,6 @@ export class DesignCanvasDirective implements OnInit {
 	 */
 
 	contextMenuHandler(event: PointerEvent, currentPoint: TransformedPoint) {
-		// const appSnapshot = this._machine.appSnapshot
-		/*		const selectedSnapshot = this._app.selectedSnapshot
-		 const selectedCtx = this._app.selectedCtx*/
-
 		const entityUnderMouse = this.getEntityUnderMouse(event)
 		if (entityUnderMouse) {
 			const x = event.offsetX + entityUnderMouse.width / 2
@@ -531,12 +542,6 @@ export class DesignCanvasDirective implements OnInit {
 					panelId: entityUnderMouse.id,
 				},
 			})
-			/*			this._appState.dispatch.openContextMenu({
-			 type: 'SingleEntity',
-			 id: entityUnderMouse.id,
-			 x,
-			 y,
-			 })*/
 			return
 		}
 
@@ -599,113 +604,6 @@ export class DesignCanvasDirective implements OnInit {
 				})
 			}
 			return
-		}
-	}
-
-	/**
-	 * Key Up handler
-	 * @private
-	 * @param event
-	 */
-	keyUpHandler(event: KeyboardEvent) {
-		switch (event.key) {
-			case KEYS.ESCAPE:
-				this._selected.clearSelectedInOrder()
-				this._render.renderCanvasApp()
-				break
-			case KEYS.X:
-				{
-					const multipleSelectedIds = this._selectedStore.state.multipleSelectedEntityIds
-					// const multipleSelectedIds = this._app.selectedCtx.multipleSelectedIds
-					// const multipleSelectedIds = this._app.selectedCtx.multipleSelectedIds
-					if (multipleSelectedIds.length <= 1) return
-					const name = genStringNameV2(this._entities.strings.allStrings)
-					const string = createString(name)
-
-					const entities = this._entities.panels.getByIds(multipleSelectedIds)
-					const panels = entities.filter((entity) => entity.type === 'panel') as CanvasPanel[]
-					/*				const panelUpdates = panels.map((panel) =>
-				 updateObjectByIdForStore<CanvasPanel>(panel.id, { stringId: string.id }),
-				 )*/
-					const panelUpdates = panels.map(
-						updateObjectByIdForStoreV3<CanvasPanel>({ stringId: string.id }),
-					)
-					this._entities.strings.dispatch.addString(string)
-					this._entities.panels.dispatch.updateManyPanels(panelUpdates)
-
-					this._selectedStore.dispatch.selectString(string.id)
-					this._render.renderCanvasApp()
-				}
-				break
-			case KEYS.R:
-				{
-					const rotateState = this._positioningStore.state.rotateEntityState
-					if (rotateState === ROTATE_ENTITY_STATE.ROTATING_SINGLE_ENTITY) {
-						this._objRotating.clearSingleToRotate()
-						return
-					}
-					if (rotateState === ROTATE_ENTITY_STATE.ROTATING_MULTIPLE_ENTITIES) {
-						this._objRotating.clearMultipleToRotate()
-						return
-					}
-				}
-				break
-			case KEYS.C: {
-				const mode = this._appState.state.mode
-				const newMode =
-					mode === MODE_STATE.CREATE_MODE ? MODE_STATE.SELECT_MODE : MODE_STATE.CREATE_MODE
-				this._appState.dispatch.setModeState(newMode)
-				return
-			}
-			case KEYS.M:
-				break
-			case KEYS.SHIFT: {
-				const moveState = this._positioningStore.state.moveEntityState
-				if (moveState === MOVE_ENTITY_STATE.MOVING_MULTIPLE_ENTITIES) {
-					this._objPositioning.stopMultiSelectDragging(this.rawMousePos)
-					return
-				}
-				if (moveState === MOVE_ENTITY_STATE.MOVING_SINGLE_ENTITY) {
-					this._objPositioning.singleToMoveMouseUp(event.altKey, this.currentPoint)
-
-					return
-				}
-				break
-			}
-			case KEYS.ALT: {
-				const rotateState = this._positioningStore.state.rotateEntityState
-				if (rotateState === ROTATE_ENTITY_STATE.ROTATING_SINGLE_ENTITY) {
-					this._objRotating.clearSingleToRotate()
-					return
-				}
-				if (rotateState === ROTATE_ENTITY_STATE.ROTATING_MULTIPLE_ENTITIES) {
-					this._objRotating.clearMultipleToRotate()
-					return
-				}
-				break
-			}
-			case KEYS.CTRL_OR_CMD: {
-				const { moveEntityState, rotateEntityState } = this._positioningStore.state
-				if (moveEntityState === MOVE_ENTITY_STATE.MOVING_MULTIPLE_ENTITIES) {
-					this._objPositioning.stopMultiSelectDragging(this.rawMousePos)
-				}
-				if (moveEntityState === MOVE_ENTITY_STATE.MOVING_SINGLE_ENTITY) {
-					this._objPositioning.singleToMoveMouseUp(event.altKey, this.currentPoint)
-				}
-
-				if (rotateEntityState === ROTATE_ENTITY_STATE.ROTATING_SINGLE_ENTITY) {
-					this._objRotating.clearSingleToRotate()
-				}
-
-				if (rotateEntityState === ROTATE_ENTITY_STATE.ROTATING_MULTIPLE_ENTITIES) {
-					this._objRotating.clearMultipleToRotate()
-				}
-
-				if (this._appState.state.view === VIEW_STATE.VIEW_DRAGGING_IN_PROGRESS) {
-					this._view.handleDragScreenMouseUp()
-				}
-				break
-			}
 		}
 	}
 

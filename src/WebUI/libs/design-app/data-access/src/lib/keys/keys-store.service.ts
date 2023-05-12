@@ -22,6 +22,10 @@ export class KeysStoreService {
 		return this._store.selectSignal(selectKeyMapValues)()
 	}
 
+	get keyMapValues$() {
+		return this._store.select(selectKeyMapValues)
+	}
+
 	get keyMap() {
 		return this._store.selectSignal(selectKeyMap)()
 	}

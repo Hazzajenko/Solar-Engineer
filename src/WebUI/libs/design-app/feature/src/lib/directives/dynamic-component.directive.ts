@@ -1,5 +1,5 @@
 import { ComponentRef, Directive, inject, Input, OnDestroy, ViewContainerRef } from '@angular/core'
-import { GraphicsSettingsComponent, KeyMapSettingsComponent } from './dialogs'
+import { GraphicsSettingsComponent, KeyMapSettingsComponent } from '../dialogs'
 
 export const DYNAMIC_COMPONENT_TYPE = {
 	APP_CANVAS_GRAPHICS_SETTINGS: 'app-canvas-graphics-settings',

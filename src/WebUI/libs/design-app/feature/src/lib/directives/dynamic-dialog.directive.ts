@@ -1,4 +1,4 @@
-import { MovePanelsToStringDialogComponent } from './dialogs'
+import { AppSettingsDialogComponent, MovePanelsToStringDialogComponent } from '../dialogs'
 import {
 	ComponentRef,
 	Directive,
@@ -10,7 +10,6 @@ import {
 	ViewContainerRef,
 } from '@angular/core'
 import { DIALOG_COMPONENT, DialogInput, UiStoreService } from '@design-app/data-access'
-import { AppSettingsDialogComponent } from './dialogs/app-settings-dialog/app-settings-dialog.component'
 import { toSignal } from '@angular/core/rxjs-interop'
 
 @Directive({
