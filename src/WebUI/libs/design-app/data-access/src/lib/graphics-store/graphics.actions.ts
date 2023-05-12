@@ -8,16 +8,17 @@ export const GraphicsActions = createActionGroup({
 		 createPreview: CreatePreviewState
 		 }>(),*/
 		'Toggle Create Preview': emptyProps(),
-		'Toggle Nearby Lines': emptyProps(),
 		'Set Nearby Lines': props<{
 			nearbyLines: NearbyLinesState
 		}>(),
+		toggleNearbyLines: emptyProps(),
 		'Toggle Coloured Strings': emptyProps(),
 		'Toggle Selected Panel Fill': emptyProps(),
 		'Toggle Selected String Panel Fill': emptyProps(),
 		toggleStringBoxes: emptyProps(),
 		toggleLinkModeSymbols: emptyProps(),
 		toggleLinkModeOrderNumbers: emptyProps(),
+		'Toggle Link Mode Path Lines': emptyProps(),
 		'Reset Graphics To Default': emptyProps(),
 	},
 })

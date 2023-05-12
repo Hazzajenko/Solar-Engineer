@@ -21,18 +21,33 @@ import {
 } from '@design-app/data-access'
 import { LetDirective } from '@ngrx/component'
 import { EVENT_TYPE } from '@shared/data-access/models'
+import { GetOptionCheckedPipe, GraphicsStateBooleansKeys } from './get-option-checked.pipe'
+import { StringManipulatePipe } from '@shared/pipes'
 
 @Component({
 	selector: 'app-canvas-graphics-settings',
 	standalone: true,
-	imports: [NgForOf, NgIf, AsyncPipe, ReactiveFormsModule, LetDirective, NgTemplateOutlet],
+	imports: [
+		NgForOf,
+		NgIf,
+		AsyncPipe,
+		ReactiveFormsModule,
+		LetDirective,
+		NgTemplateOutlet,
+		GetOptionCheckedPipe,
+		StringManipulatePipe,
+	],
 	templateUrl: './graphics-settings.component.html',
 	styles: [],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GraphicsSettingsComponent implements AfterViewInit {
 	private _graphicsStore = inject(GraphicsStoreService)
-	graphicsState = toSignal(this._graphicsStore.state$, { initialValue: initialGraphicsState })
+	_graphicsState = toSignal(this._graphicsStore.state$, { initialValue: initialGraphicsState })
+
+	get graphicsState() {
+		return this._graphicsState()
+	}
 
 	protected readonly NEARBY_LINES_STATE = NEARBY_LINES_STATE
 	protected readonly CREATE_PREVIEW_STATE = CREATE_PREVIEW_STATE
@@ -42,6 +57,53 @@ export class GraphicsSettingsComponent implements AfterViewInit {
 	private _elementRef = inject(ElementRef)
 
 	nearbyGraphicsSelectMenuArray = NearbyGraphicsMenuOptions
+
+	toggleOptions: {
+		toggle: () => void
+		name: GraphicsStateBooleansKeys
+		label: string
+	}[] = [
+		{
+			toggle: () => this._graphicsStore.dispatch.toggleSelectedPanelFill(),
+			name: 'selectedPanelFill',
+			label: 'Selected Panel Fill',
+		},
+		{
+			toggle: () => this._graphicsStore.dispatch.toggleSelectedStringPanelFill(),
+			name: 'selectedStringPanelFill',
+			label: 'Selected String Panel Fill',
+		},
+		{
+			toggle: () => this._graphicsStore.dispatch.toggleColouredStrings(),
+			name: 'colouredStrings',
+			label: 'Coloured Strings',
+		},
+		{
+			toggle: () => this._graphicsStore.dispatch.toggleStringBoxes(),
+			name: 'stringBoxes',
+			label: 'String Boxes',
+		},
+		{
+			toggle: () => this._graphicsStore.dispatch.toggleLinkModeSymbols(),
+			name: 'linkModeSymbols',
+			label: 'Link Mode Symbols',
+		},
+		{
+			toggle: () => this._graphicsStore.dispatch.toggleLinkModeOrderNumbers(),
+			name: 'linkModeOrderNumbers',
+			label: 'Link Mode Order Numbers',
+		},
+		{
+			toggle: () => this._graphicsStore.dispatch.toggleCreatePreview(),
+			name: 'createPreview',
+			label: 'Create Preview',
+		},
+		{
+			toggle: () => this._graphicsStore.dispatch.toggleNearbyLines(),
+			name: 'nearbyLines',
+			label: 'Nearby Lines',
+		},
+	]
 
 	ngAfterViewInit() {
 		this._ngZone.runOutsideAngular(() => {

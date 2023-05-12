@@ -7,25 +7,29 @@ export const GRAPHICS_FEATURE_KEY = 'graphics'
 export type GraphicsState = {
 	// createPreview: CreatePreviewState
 	createPreview: boolean
-	nearbyLines: NearbyLinesState
+	nearbyLinesState: NearbyLinesState
+	nearbyLines: boolean
 	colouredStrings: boolean
 	stringBoxes: boolean
 	selectedPanelFill: boolean
 	selectedStringPanelFill: boolean
 	linkModeSymbols: boolean
 	linkModeOrderNumbers: boolean
+	linkModePathLines: boolean
 	history: Partial<GraphicsState>
 }
 
 export const initialGraphicsState: GraphicsState = {
 	createPreview: true, // createPreview: CREATE_PREVIEW_STATE.CREATE_PREVIEW_ENABLED,
-	nearbyLines: NEARBY_LINES_STATE.CENTER_LINE_BETWEEN_TWO_ENTITIES,
+	nearbyLinesState: NEARBY_LINES_STATE.CENTER_LINE_BETWEEN_TWO_ENTITIES,
+	nearbyLines: true,
 	colouredStrings: true,
 	stringBoxes: true,
 	selectedPanelFill: false,
 	selectedStringPanelFill: false,
 	linkModeSymbols: true,
 	linkModeOrderNumbers: true,
+	linkModePathLines: true,
 	history: {},
 }
 
@@ -41,10 +45,11 @@ const reducer = createReducer(
 	})),
 	on(GraphicsActions.toggleNearbyLines, (state) => ({
 		...state,
-		nearbyLines:
-			state.nearbyLines === NEARBY_LINES_STATE.NEARBY_LINES_DISABLED
-				? state.history.nearbyLines ?? NEARBY_LINES_STATE.CENTER_LINE_BETWEEN_TWO_ENTITIES
+		nearbyLinesState:
+			state.nearbyLinesState === NEARBY_LINES_STATE.NEARBY_LINES_DISABLED
+				? state.history.nearbyLinesState ?? NEARBY_LINES_STATE.CENTER_LINE_BETWEEN_TWO_ENTITIES
 				: NEARBY_LINES_STATE.NEARBY_LINES_DISABLED,
+		nearbyLines: state.nearbyLinesState !== NEARBY_LINES_STATE.NEARBY_LINES_DISABLED,
 		history: {
 			...state.history,
 			nearbyLines: state.nearbyLines,
@@ -52,7 +57,7 @@ const reducer = createReducer(
 	})),
 	on(GraphicsActions.setNearbyLines, (state, { nearbyLines }) => ({
 		...state,
-		nearbyLines,
+		nearbyLinesState: nearbyLines,
 		history: {
 			...state.history,
 			nearbyLines: state.nearbyLines,
@@ -81,6 +86,10 @@ const reducer = createReducer(
 	on(GraphicsActions.toggleLinkModeOrderNumbers, (state) => ({
 		...state,
 		linkModeOrderNumbers: !state.linkModeOrderNumbers,
+	})),
+	on(GraphicsActions.toggleLinkModePathLines, (state) => ({
+		...state,
+		linkModePathLines: !state.linkModePathLines,
 	})),
 	on(GraphicsActions.resetGraphicsToDefault, () => initialGraphicsState),
 )

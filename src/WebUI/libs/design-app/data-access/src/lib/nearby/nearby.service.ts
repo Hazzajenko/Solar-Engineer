@@ -76,7 +76,7 @@ export class NearbyService {
 			isEntityOverlappingWithBounds(entity, mouseBoxBounds),
 		)
 
-		const nearbyLinesState = this._graphicsStore.state.nearbyLines
+		const nearbyLinesState = this._graphicsStore.state.nearbyLinesState
 		const nearbyLinesDisabled = nearbyLinesState === 'NearbyLinesDisabled'
 		if (nearbyLinesDisabled) {
 			const drawPreviewFn = getDefaultDrawPreviewCtxFn(mouseBoxBounds)
@@ -177,7 +177,7 @@ export class NearbyService {
 		 }*/
 
 		const drawGridLinesWithEntityPreview = getNearbyLineDrawCtxFnFromNearbyLinesState(
-			this._graphicsStore.state.nearbyLines,
+			this._graphicsStore.state.nearbyLinesState,
 			axisPreviewRect,
 			mouseBoxBounds,
 			closestEnt,

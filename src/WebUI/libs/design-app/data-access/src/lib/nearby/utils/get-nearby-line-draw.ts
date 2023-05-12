@@ -7,7 +7,7 @@ import {
 import { CanvasColor, CompleteEntityBounds, NearbyEntity } from '@design-app/shared'
 
 export const getNearbyLineDrawCtxFnFromNearbyLinesState = (
-	nearbyLinesState: GraphicsState['nearbyLines'],
+	nearbyLinesState: GraphicsState['nearbyLinesState'],
 	axisPreviewRect: CompleteEntityBounds,
 	mouseBounds: CompleteEntityBounds,
 	closestEntity: NearbyEntity,

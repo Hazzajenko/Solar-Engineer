@@ -104,6 +104,10 @@ export class PanelLinksService {
 	getPanelLinkOrderForSelectedString() {
 		const stringId = this._selectedStore.selectedStringId
 		assertNotNull(stringId)
+		/*		if (!stringId) {
+		 console.error('getPanelLinkOrderForSelectedString: !stringId')
+		 return []
+		 }*/
 		const panelLinks = this._panelLinksStore.getByStringId(stringId)
 		return panelLinks
 			.map((panelLink) => ({

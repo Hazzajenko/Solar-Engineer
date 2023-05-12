@@ -2,7 +2,7 @@ import { AppStateActions } from './app-state.actions'
 import { initialAppState } from './app-state.reducer'
 import { selectAppStateState } from './app-state.selectors'
 import { DragBoxState, ModeState, PreviewAxisState, ViewPositioningState } from './app-state.types'
-import { inject, Injectable } from '@angular/core'
+import { inject, Injectable, signal } from '@angular/core'
 import { toSignal } from '@angular/core/rxjs-interop'
 import { select, Store } from '@ngrx/store'
 
@@ -15,6 +15,15 @@ export class AppStateStoreService {
 	// private readonly _dialog$ = this._store.pipe(select(selectDialogState))
 	private readonly _state = toSignal(this._state$, { initialValue: initialAppState })
 	// public select = inject(AppStateQueries)
+	private _mousePos = signal({ x: 0, y: 0 })
+	get mousePos() {
+		return this._mousePos()
+	}
+
+	set mousePos(mousePos: { x: number; y: number }) {
+		this._mousePos.set(mousePos)
+	}
+
 	public dispatch = new AppNgrxRepository(this._store)
 
 	get state() {

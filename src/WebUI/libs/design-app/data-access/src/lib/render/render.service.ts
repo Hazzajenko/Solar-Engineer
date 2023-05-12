@@ -8,6 +8,7 @@ import { inject, Injectable } from '@angular/core'
 import {
 	AngleDegrees,
 	CANVAS_COLORS,
+	CanvasEntity,
 	CanvasPanel,
 	PANEL_STROKE_STYLE,
 	UndefinedStringId,
@@ -232,6 +233,13 @@ export class RenderService {
 			})
 			ctx.restore()
 
+			if (
+				this._graphicsStore.state.linkModePathLines &&
+				this._selectedStore.state.selectedStringId
+			) {
+				this.drawLinkModePathLines(ctx, options?.customEntities)
+			}
+
 			const shouldRenderSelectedEntitiesBox = options?.shouldRenderSelectedEntitiesBox ?? true
 			const shouldRenderSelectedStringBox = options?.shouldRenderSelectedStringBox ?? true
 
@@ -353,4 +361,70 @@ export class RenderService {
 			ctx.restore()
 		}
 	}
+
+	private drawLinkModePathLines(
+		ctx: CanvasRenderingContext2D,
+		customEntities: CanvasEntity[] | undefined,
+	) {
+		const customIds = customEntities?.map((entity) => entity.id) ?? []
+		const linksInOrder = this._panelLinks.getPanelLinkOrderForSelectedString().map((link) => ({
+			positivePanel: this._entities.panels.getById(link.positivePanelId),
+			negativePanel: this._entities.panels.getById(link.negativePanelId),
+		}))
+		if (!linksInOrder.length) {
+			return
+		}
+		ctx.save()
+		ctx.strokeStyle = 'black'
+		ctx.lineWidth = 1
+		ctx.beginPath()
+		const firstLink = linksInOrder[0]
+		const firstPanel = firstLink.positivePanel
+		assertNotNull(firstPanel, 'firstPanel')
+		const { x: firstX, y: firstY } = getPositiveSymbolLocation(firstPanel)
+		ctx.moveTo(firstX, firstY)
+		// ctx.moveTo(firstPanel.location.x, firstPanel.location.y)
+		linksInOrder.forEach((link) => {
+			const panel = link.positivePanel
+			assertNotNull(panel, 'panel')
+			const [p1, p2] = customIds.includes(panel.id)
+				? getSymbolLocations(
+						customEntities?.find((entity) => entity.id === panel.id) as CanvasPanel,
+				  )
+				: getSymbolLocations(panel)
+			ctx.lineTo(p1.x, p1.y)
+			ctx.moveTo(p2.x, p2.y)
+			/*		if (customIds.includes(panel.id)) {
+
+			 }*/
+			/*	const { x, y } = getNegativeSymbolLocation(panel)
+			 ctx.lineTo(x, y)
+			 const { x: x2, y: y2 } = getPositiveSymbolLocation(panel)
+			 ctx.moveTo(x2, y2)*/
+			// ctx.lineTo(panel.location.x, panel.location.y)
+		})
+		const lastPanel = linksInOrder[linksInOrder.length - 1].negativePanel
+		assertNotNull(lastPanel, 'lastPanel')
+		const { x: lastX, y: lastY } = getNegativeSymbolLocation(lastPanel)
+		ctx.lineTo(lastX, lastY)
+		// ctx.lineTo(lastPanel.location.x, lastPanel.location.y)
+		ctx.stroke()
+		ctx.restore()
+	}
+}
+
+const getSymbolLocations = (panel: CanvasPanel) => {
+	return [getNegativeSymbolLocation(panel), getPositiveSymbolLocation(panel)]
+}
+
+const getPositiveSymbolLocation = (panel: CanvasPanel) => {
+	const x = panel.location.x + panel.width
+	const y = panel.location.y + panel.height / 2
+	return { x, y }
+}
+
+const getNegativeSymbolLocation = (panel: CanvasPanel) => {
+	const x = panel.location.x
+	const y = panel.location.y + panel.height / 2
+	return { x, y }
 }

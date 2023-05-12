@@ -10,7 +10,7 @@ export const selectCreatePreview = createSelector(
 
 export const selectNearbyLines = createSelector(
 	selectGraphicsState,
-	(state: GraphicsState) => state.nearbyLines,
+	(state: GraphicsState) => state.nearbyLinesState,
 )
 
 export const selectColouredStrings = createSelector(

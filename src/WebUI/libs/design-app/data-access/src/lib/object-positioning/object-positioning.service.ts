@@ -10,6 +10,7 @@ import { inject, Injectable } from '@angular/core'
 import {
 	Axis,
 	CANVAS_COLORS,
+	CanvasEntity,
 	CanvasPanel,
 	CompleteEntityBounds,
 	ENTITY_TYPE,
@@ -109,7 +110,15 @@ export class ObjectPositioningService {
 			[this.singleToMoveId],
 		)
 		// const nearbyEntitiesOnAxis = findNearbyBoundOverlapOnBothAxis(mouseBoxBounds, entities)
-		const nearbyLinesState = this._graphicsStore.state.nearbyLines
+		const nearbyLinesState = this._graphicsStore.state.nearbyLinesState
+		const customEntity: CanvasEntity = {
+			id: this.singleToMoveId,
+			location: getTopLeftPointFromTransformedPoint(currentPoint, SizeByType[ENTITY_TYPE.Panel]),
+			angle: entity.angle,
+			type: ENTITY_TYPE.Panel,
+			width: entity.width,
+			height: entity.height,
+		}
 		// const graphicsSnapshot = this._graphicsStore.snapshot
 		if (!nearbyEntitiesOnAxis.length || nearbyLinesState === 'NearbyLinesDisabled') {
 			const drawSingleToMove = (ctx: CanvasRenderingContext2D) => {
@@ -131,6 +140,7 @@ export class ObjectPositioningService {
 			this._render.renderCanvasApp({
 				excludedEntityIds: [this.singleToMoveId],
 				drawFns: [drawSingleToMove],
+				customEntities: [customEntity],
 			})
 			// this._render.drawCanvasExcludeIdsWithFn([this.singleToMoveId], drawSingleToMove)
 			// this._render.drawCanvasWithFunction(drawSingleToMove)
@@ -176,6 +186,7 @@ export class ObjectPositioningService {
 		this._render.renderCanvasApp({
 			excludedEntityIds: [this.singleToMoveId],
 			drawFns: [ctxFn],
+			customEntities: [customEntity],
 		})
 		// this._render.drawCanvasExcludeIdsWithFn([this.singleToMoveId], ctxFn)
 	}

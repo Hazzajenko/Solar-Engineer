@@ -70,6 +70,10 @@ class GraphicsRepository {
 		this._store.dispatch(GraphicsActions.toggleLinkModeOrderNumbers())
 	}
 
+	toggleLinkModePathLines() {
+		this._store.dispatch(GraphicsActions.toggleLinkModePathLines())
+	}
+
 	resetGraphicsToDefault() {
 		this._store.dispatch(GraphicsActions.resetGraphicsToDefault())
 	}
