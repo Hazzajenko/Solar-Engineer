@@ -12,6 +12,8 @@ export type GraphicsState = {
 	stringBoxes: boolean
 	selectedPanelFill: boolean
 	selectedStringPanelFill: boolean
+	linkModeSymbols: boolean
+	linkModeOrderNumbers: boolean
 	history: Partial<GraphicsState>
 }
 
@@ -22,6 +24,8 @@ export const initialGraphicsState: GraphicsState = {
 	stringBoxes: true,
 	selectedPanelFill: false,
 	selectedStringPanelFill: false,
+	linkModeSymbols: true,
+	linkModeOrderNumbers: true,
 	history: {},
 }
 
@@ -29,22 +33,12 @@ const reducer = createReducer(
 	initialGraphicsState,
 	on(GraphicsActions.toggleCreatePreview, (state) => ({
 		...state,
-		createPreview: !state.createPreview /*		createPreview:
-	 state.createPreview === CREATE_PREVIEW_STATE.CREATE_PREVIEW_ENABLED
-	 ? CREATE_PREVIEW_STATE.CREATE_PREVIEW_DISABLED
-	 : CREATE_PREVIEW_STATE.CREATE_PREVIEW_ENABLED,*/,
+		createPreview: !state.createPreview,
 		history: {
 			...state.history,
 			createPreview: state.createPreview,
 		},
-	})) /*	on(GraphicsActions.setCreatePreview, (state, { createPreview }) => ({
- ...state,
- createPreview,
- history: {
- ...state.history,
- createPreview: state.createPreview,
- },
- })),*/,
+	})),
 	on(GraphicsActions.toggleNearbyLines, (state) => ({
 		...state,
 		nearbyLines:
@@ -79,6 +73,14 @@ const reducer = createReducer(
 	on(GraphicsActions.toggleStringBoxes, (state) => ({
 		...state,
 		stringBoxes: !state.stringBoxes,
+	})),
+	on(GraphicsActions.toggleLinkModeSymbols, (state) => ({
+		...state,
+		linkModeSymbols: !state.linkModeSymbols,
+	})),
+	on(GraphicsActions.toggleLinkModeOrderNumbers, (state) => ({
+		...state,
+		linkModeOrderNumbers: !state.linkModeOrderNumbers,
 	})),
 	on(GraphicsActions.resetGraphicsToDefault, () => initialGraphicsState),
 )

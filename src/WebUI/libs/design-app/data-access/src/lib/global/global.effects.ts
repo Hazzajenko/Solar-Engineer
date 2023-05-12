@@ -11,8 +11,10 @@ import { GraphicsActions } from '../graphics-store'
 import { KeysActions } from '../keys'
 import { RenderService } from '../render'
 import { PanelLinksActions } from '../panel-links'
+import { AppStateActions } from '../app-store'
 
 const allStateActions = [
+	...getAllActions(AppStateActions),
 	...getAllActions(StringsActions),
 	...getAllActions(PanelsActions),
 	...getAllActions(PanelLinksActions),

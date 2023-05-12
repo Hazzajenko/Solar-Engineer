@@ -9,7 +9,7 @@ import {
 	PanelLinkRequest,
 	PolarityDirection,
 } from './panel-link'
-import { newGuid } from '@shared/utils'
+import { assertNotNull, newGuid } from '@shared/utils'
 import { SelectedStoreService } from '../selected'
 
 @Injectable({
@@ -99,6 +99,23 @@ export class PanelLinksService {
 			}
 			return a.positivePanel.id === b.negativePanel.id ? 1 : -1
 		})
+	}
+
+	getPanelLinkOrderForSelectedString() {
+		const stringId = this._selectedStore.selectedStringId
+		assertNotNull(stringId)
+		const panelLinks = this._panelLinksStore.getByStringId(stringId)
+		return panelLinks
+			.map((panelLink) => ({
+				positivePanelId: panelLink.positivePanelId,
+				negativePanelId: panelLink.negativePanelId,
+			}))
+			.sort((a, b) => {
+				if (!a || !b) {
+					return 0
+				}
+				return a.positivePanelId === b.negativePanelId ? 1 : -1
+			})
 	}
 
 	clearPanelLinkRequest() {

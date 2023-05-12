@@ -5,8 +5,14 @@ import { SelectedStoreService } from '../selected'
 import { CanvasRenderOptions } from './canvas-render-options'
 import { drawSelectedBox, drawSelectedStringBoxV3 } from './render-fns'
 import { inject, Injectable } from '@angular/core'
-import { CANVAS_COLORS, PANEL_STROKE_STYLE, UndefinedStringId } from '@design-app/shared'
-import { isPanel } from '@design-app/utils'
+import {
+	AngleDegrees,
+	CANVAS_COLORS,
+	CanvasPanel,
+	PANEL_STROKE_STYLE,
+	UndefinedStringId,
+} from '@design-app/shared'
+import { isPanel, toRadians } from '@design-app/utils'
 import { assertNotNull, shadeColor } from '@shared/utils'
 import { GraphicsStoreService } from '../graphics-store'
 import { PanelLinksService, PanelLinksStoreService } from '../panel-links'
@@ -92,6 +98,7 @@ export class RenderService {
 	renderCanvasApp(options?: CanvasRenderOptions) {
 		this.render((ctx) => {
 			ctx.save()
+			ctx.strokeStyle = PANEL_STROKE_STYLE.DEFAULT
 			ctx.setTransform(1, 0, 0, 1, 0, 0)
 			ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
 			ctx.restore()
@@ -147,35 +154,36 @@ export class RenderService {
 					fillStyle = CANVAS_COLORS.StringSelectedPanelFillStyle
 				}
 
-				let panelLinkOrderDrawFn: ((ctx: CanvasRenderingContext2D) => void) | undefined = undefined
+				// let panelLinkOrderDrawFn: ((ctx: CanvasRenderingContext2D) => void) | undefined = undefined
 				if (this._appStore.state.mode === MODE_STATE.LINK_MODE) {
 					if (this._panelLinksStore.requestingLink) {
 						if (this._panelLinksStore.requestingLink.panelId === entity.id) {
 							fillStyle = CANVAS_COLORS.RequestingLinkPanelFillStyle
 						}
 					}
+					/*
+					 if (isStringSelected) {
+					 assertNotNull(selectedState.selectedStringId)
 
-					if (isStringSelected) {
-						assertNotNull(selectedState.selectedStringId)
-						const linksInOrder = this._panelLinks.getPanelLinkOrderForString(
-							selectedState.selectedStringId,
-						)
-						const linkIndex = linksInOrder.findIndex((link) => link?.positivePanel.id === entity.id)
-						if (linkIndex !== -1) {
-							panelLinkOrderDrawFn = (ctx) => {
-								ctx.save()
-								const fontSize = 10
-								ctx.font = `${fontSize}px Consolas, sans-serif`
-								const text = `${linkIndex + 1}`
-								const metrics = ctx.measureText(text)
-								const x = 0 - metrics.width / 2
-								const y = fontSize / 4
-								ctx.fillStyle = 'black'
-								ctx.fillText(text, x, y)
-								ctx.restore()
-							}
-						}
-					}
+					 const linksInOrder = this._panelLinks.getPanelLinkOrderForString(
+					 selectedState.selectedStringId,
+					 )
+					 const linkIndex = linksInOrder.findIndex((link) => link?.positivePanel.id === entity.id)
+					 if (linkIndex !== -1) {
+					 panelLinkOrderDrawFn = (ctx) => {
+					 ctx.save()
+					 const fontSize = 10
+					 ctx.font = `${fontSize}px Consolas, sans-serif`
+					 const text = `${linkIndex + 1}`
+					 const metrics = ctx.measureText(text)
+					 const x = 0 - metrics.width / 2
+					 const y = fontSize / 4
+					 ctx.fillStyle = 'black'
+					 ctx.fillText(text, x, y)
+					 ctx.restore()
+					 }
+					 }
+					 }*/
 				}
 
 				const pointerState = this._appStore.state.pointer
@@ -199,9 +207,27 @@ export class RenderService {
 				ctx.rect(-entity.width / 2, -entity.height / 2, entity.width, entity.height)
 				ctx.fill()
 				ctx.stroke()
-				if (panelLinkOrderDrawFn) {
-					panelLinkOrderDrawFn(ctx)
+				ctx.closePath()
+				/*			if (panelLinkOrderDrawFn) {
+				 panelLinkOrderDrawFn(ctx)
+				 }*/
+
+				// draw drawLinkModeGraphics
+				if (isStringSelected && this._appStore.state.mode === 'LinkMode') {
+					if (this._graphicsStore.state.linkModeSymbols) {
+						this.drawLinkModeSymbols(ctx, entity)
+					}
+					if (this._graphicsStore.state.linkModeOrderNumbers) {
+						this.drawLinkModeOrderNumbers(ctx, entity)
+					}
 				}
+				/*				if (
+				 isStringSelected &&
+				 this._graphicsStore.state.linkModeSymbols &&
+				 this._appStore.state.mode === 'LinkMode'
+				 ) {
+				 this.drawLinkModeSymbols(ctx, entity)
+				 }*/
 				ctx.restore()
 			})
 			ctx.restore()
@@ -250,5 +276,81 @@ export class RenderService {
 				options.drawFns.forEach((fn) => fn(ctx))
 			}
 		})
+	}
+
+	private drawLinkModeSymbols(ctx: CanvasRenderingContext2D, panel: CanvasPanel) {
+		const lineLength = 5
+		ctx.save()
+
+		// draw negative symbol
+		ctx.save()
+		ctx.translate(-panel.width / 2, 0)
+		ctx.save()
+		ctx.rotate(toRadians(45 as AngleDegrees))
+		ctx.strokeStyle = 'black'
+		ctx.strokeRect(-lineLength / 2, -lineLength / 2, lineLength, lineLength)
+		ctx.fillStyle = 'blue'
+		ctx.fillRect(-lineLength / 2, -lineLength / 2, lineLength, lineLength)
+		ctx.restore()
+
+		ctx.strokeStyle = 'white'
+		ctx.beginPath()
+		ctx.moveTo(-lineLength / 2, 0)
+		ctx.lineTo(lineLength / 2, 0)
+		ctx.stroke()
+		ctx.restore()
+
+		// draw positive symbol
+		ctx.save()
+		ctx.translate(panel.width / 2, 0)
+		ctx.save()
+		ctx.rotate(toRadians(45 as AngleDegrees))
+		ctx.strokeStyle = 'black'
+		ctx.strokeRect(-lineLength / 2, -lineLength / 2, lineLength, lineLength)
+		ctx.fillStyle = 'red'
+		ctx.fillRect(-lineLength / 2, -lineLength / 2, lineLength, lineLength)
+		ctx.restore()
+
+		ctx.strokeStyle = 'white'
+		ctx.beginPath()
+		ctx.moveTo(-lineLength / 2, 0)
+		ctx.lineTo(lineLength / 2, 0)
+		ctx.moveTo(0, -lineLength / 2)
+		ctx.lineTo(0, lineLength / 2)
+		ctx.stroke()
+		ctx.restore()
+
+		ctx.restore()
+	}
+
+	private drawLinkModeOrderNumbers(ctx: CanvasRenderingContext2D, panel: CanvasPanel) {
+		const linksInOrder = this._panelLinks.getPanelLinkOrderForSelectedString()
+		if (!linksInOrder.length) {
+			return
+		}
+		const linkIndex = linksInOrder.findIndex((link) => link?.positivePanelId === panel.id)
+		if (linkIndex !== -1) {
+			ctx.save()
+			const fontSize = 10
+			ctx.font = `${fontSize}px Consolas, sans-serif`
+			const text = `${linkIndex + 1}`
+			const metrics = ctx.measureText(text)
+			const x = 0 - metrics.width / 2
+			const y = fontSize / 4
+			ctx.fillStyle = 'black'
+			ctx.fillText(text, x, y)
+			ctx.restore()
+		} else if (linksInOrder[linksInOrder.length - 1].negativePanelId === panel.id) {
+			ctx.save()
+			const fontSize = 10
+			ctx.font = `${fontSize}px Consolas, sans-serif`
+			const text = `${linksInOrder.length + 1}`
+			const metrics = ctx.measureText(text)
+			const x = 0 - metrics.width / 2
+			const y = fontSize / 4
+			ctx.fillStyle = 'black'
+			ctx.fillText(text, x, y)
+			ctx.restore()
+		}
 	}
 }

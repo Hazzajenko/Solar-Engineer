@@ -62,6 +62,14 @@ class GraphicsRepository {
 		this._store.dispatch(GraphicsActions.toggleStringBoxes())
 	}
 
+	toggleLinkModeSymbols() {
+		this._store.dispatch(GraphicsActions.toggleLinkModeSymbols())
+	}
+
+	toggleLinkModeOrderNumbers() {
+		this._store.dispatch(GraphicsActions.toggleLinkModeOrderNumbers())
+	}
+
 	resetGraphicsToDefault() {
 		this._store.dispatch(GraphicsActions.resetGraphicsToDefault())
 	}

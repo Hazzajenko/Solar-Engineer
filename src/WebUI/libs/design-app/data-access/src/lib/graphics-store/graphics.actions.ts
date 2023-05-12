@@ -16,6 +16,8 @@ export const GraphicsActions = createActionGroup({
 		'Toggle Selected Panel Fill': emptyProps(),
 		'Toggle Selected String Panel Fill': emptyProps(),
 		toggleStringBoxes: emptyProps(),
+		toggleLinkModeSymbols: emptyProps(),
+		toggleLinkModeOrderNumbers: emptyProps(),
 		'Reset Graphics To Default': emptyProps(),
 	},
 })

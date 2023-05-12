@@ -94,7 +94,9 @@ export class KeyEventsService {
 	}
 
 	private startLinkMode() {
-		this._appState.dispatch.setModeState(MODE_STATE.LINK_MODE)
+		const mode = this._appState.state.mode
+		const newMode = mode !== MODE_STATE.LINK_MODE ? MODE_STATE.LINK_MODE : MODE_STATE.SELECT_MODE
+		this._appState.dispatch.setModeState(newMode)
 	}
 
 	keyUpHandlerV3(event: KeyboardEvent, rawMousePos: Point, currentPoint: TransformedPoint) {
