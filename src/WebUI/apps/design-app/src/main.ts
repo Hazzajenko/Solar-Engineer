@@ -20,6 +20,20 @@ import { provideStore } from '@ngrx/store'
 import { storeDevtoolsModule } from '@shared/config'
 import { metaReducers, reducers } from '@shared/data-access/store'
 import { provideToastr } from 'ngx-toastr'
+import { environment } from '@shared/environment'
+
+if (environment.production) {
+	// eslint-disable-next-line @typescript-eslint/no-empty-function
+	window.console.log = () => {}
+	// eslint-disable-next-line @typescript-eslint/no-empty-function
+	window.console.debug = () => {}
+	// eslint-disable-next-line @typescript-eslint/no-empty-function
+	window.console.info = () => {}
+	// eslint-disable-next-line @typescript-eslint/no-empty-function
+	window.console.warn = () => {}
+	// eslint-disable-next-line @typescript-eslint/no-empty-function
+	window.console.error = () => {}
+}
 
 bootstrapApplication(AppComponent, {
 	providers: [

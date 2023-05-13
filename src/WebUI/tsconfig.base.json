@@ -125,9 +125,6 @@
       "@auth/utils": [
         "libs/auth/utils/src/index.ts"
       ],
-      "@blog/feature": [
-        "libs/blog/feature/src/index.ts"
-      ],
       "@design-app/data-access": [
         "libs/design-app/data-access/src/index.ts"
       ],
@@ -158,23 +155,11 @@
       "@imagery/feature/azure-maps": [
         "libs/imagery/feature/azure-maps/src/index.ts"
       ],
-      "@no-grid-layout/data-access": [
-        "libs/no-grid-layout/data-access/src/index.ts"
-      ],
-      "@no-grid-layout/shared": [
-        "libs/no-grid-layout/shared/src/index.ts"
-      ],
-      "@no-grid-layout/utils": [
-        "libs/no-grid-layout/utils/src/index.ts"
-      ],
       "@project-id/data-access/services": [
         "libs/project-id/data-access/services/src/index.ts"
       ],
       "@projects/data-access": [
         "libs/projects/data-access/src/index.ts"
-      ],
-      "@projects/feature": [
-        "libs/projects/feature/src/index.ts"
       ],
       "@shared/animations": [
         "libs/shared/animations/src/index.ts"
@@ -280,27 +265,6 @@
       ],
       "@undefined/core-components/loader": [
         "dist/libs/core-components/loader"
-      ],
-      "deprecated/design-app/canvas": [
-        "libs/deprecated/design-app/canvas/src/index.ts"
-      ],
-      "deprecated/design-app/config": [
-        "libs/deprecated/design-app/config/src/index.ts"
-      ],
-      "deprecated/design-app/feature-design-canvas": [
-        "libs/deprecated/design-app/feature-design-canvas/src/index.ts"
-      ],
-      "deprecated/design-app/feature-design-layout": [
-        "libs/deprecated/design-app/feature-design-layout/src/index.ts"
-      ],
-      "deprecated/design-app/feature-panel": [
-        "libs/deprecated/design-app/feature-panel/src/index.ts"
-      ],
-      "deprecated/design-app/feature-selected": [
-        "libs/deprecated/design-app/feature-selected/src/index.ts"
-      ],
-      "deprecated/design-app/feature-string": [
-        "libs/deprecated/design-app/feature-string/src/index.ts"
       ],
       "ngrx-pull": [
         "libs/ngrx-pull/src/index.ts"
