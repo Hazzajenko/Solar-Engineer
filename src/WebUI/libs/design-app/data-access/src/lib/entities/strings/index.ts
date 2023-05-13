@@ -1,7 +1,0 @@
-export * from './strings.actions'
-export * from './strings.reducer'
-export * from './strings.selectors'
-export * from './strings.utils'
-export * from './strings.effects'
-export * from './pipes/index'
-export * from './strings-store.service'

@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core'
-import { CanvasPanel } from '@design-app/shared'
+import { CanvasPanel } from '@entities/panels/data-access'
 import { isTypeOfPanel } from '../utils'
 
 @Pipe({

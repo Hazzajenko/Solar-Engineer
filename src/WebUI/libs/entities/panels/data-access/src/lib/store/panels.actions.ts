@@ -1,4 +1,4 @@
-import { CanvasPanel } from '@design-app/shared'
+import { CanvasPanel } from '../types'
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
 

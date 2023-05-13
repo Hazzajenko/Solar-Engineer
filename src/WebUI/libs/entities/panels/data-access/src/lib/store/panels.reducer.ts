@@ -1,5 +1,4 @@
 import { PanelsActions } from './panels.actions'
-import { CanvasPanel } from '@design-app/shared'
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity'
 import { Action, createReducer, on, provideState, Store } from '@ngrx/store'
 import { inject, makeEnvironmentProviders } from '@angular/core'
@@ -8,6 +7,7 @@ import { removeSelectedIfDeleted$ } from './panels.effects'
 import { isNotNull } from '@shared/utils'
 import { selectAllPanels, selectPanelsEntities } from './panels.selectors'
 import { UpdateStr } from '@ngrx/entity/src/models'
+import { CanvasPanel } from '../types'
 
 export const PANELS_FEATURE_KEY = 'panels'
 
@@ -49,6 +49,12 @@ export function providePanelsFeature() {
 		provideEffects({ removeSelectedIfDeleted$ }),
 	])
 }
+
+/*export const usersFeature = createFeature({
+ name: PANELS_FEATURE_KEY,
+ reducer,
+ // extraSelectors: ({ selectPanelsState }) => panelsAdapter.getSelectors(selectPanelsState),
+ })*/
 
 export function injectPanelsFeature() {
 	const store = inject(Store)

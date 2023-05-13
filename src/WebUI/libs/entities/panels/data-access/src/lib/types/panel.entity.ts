@@ -1,7 +1,7 @@
 // import { CanvasEntity } from './canvas-entity'
 // import { StringId } from './canvas-string'
-import { PanelConfigId } from '@design-app/data-access'
-import { CanvasEntity } from '@design-app/shared'
+import { PanelConfigId } from '@entities/panel-configs/data-access'
+import { CanvasEntity } from '@shared/data-access/models'
 import { StringId } from '@entities/strings/data-access'
 
 export type CanvasPanel = Omit<CanvasEntity, 'id' | 'type'> & {

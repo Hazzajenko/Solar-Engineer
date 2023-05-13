@@ -14,7 +14,7 @@ import { provideRouter, withEnabledBlockingInitialNavigation } from '@angular/ro
 import { appRoutes, tokenGetter } from '@app/config'
 import { JwtModule } from '@auth0/angular-jwt'
 import { jwtInterceptorProvider } from '@auth/interceptors'
-import { DesignAppNgrxStores } from '@design-app/data-access'
+import { DesignAppNgrxStores } from '@canvas/app/data-access'
 import { provideRouterStore } from '@ngrx/router-store'
 import { provideStore } from '@ngrx/store'
 import { storeDevtoolsModule } from '@shared/config'

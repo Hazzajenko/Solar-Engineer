@@ -23,6 +23,7 @@ import { assertNotNull, shadeColor } from '@shared/utils'
 import { GraphicsStoreService } from '@canvas/graphics/data-access'
 import { PanelLinksService, PanelLinksStoreService } from '@entities/panel-links/data-access'
 import { EntityStoreService } from '@design-app/data-access'
+import { injectPanelsFeature } from '@entities/panels/data-access'
 
 @Injectable({
 	providedIn: 'root',
@@ -39,6 +40,7 @@ export class RenderService {
 	private _graphicsStore = inject(GraphicsStoreService)
 	private _panelLinksStore = inject(PanelLinksStoreService)
 	private _panelLinks = inject(PanelLinksService)
+	private _panelsStore = injectPanelsFeature()
 
 	private lastRenderTime = performance.now()
 

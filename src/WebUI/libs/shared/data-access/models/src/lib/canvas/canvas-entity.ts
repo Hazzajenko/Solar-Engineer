@@ -1,6 +1,7 @@
 import { AngleRadians } from './angles'
 import { ENTITY_TYPE, EntityType } from './entity.type'
-import { Point } from '@shared/data-access/models'
+import { Point } from '../location'
+// import { Point } from '@shared/data-access/models'
 
 export type CanvasEntity = {
 	id: string

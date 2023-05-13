@@ -1,5 +1,5 @@
 import { PANELS_FEATURE_KEY, panelsAdapter, PanelsState } from './panels.reducer'
-import { CanvasPanel } from '@design-app/shared'
+import { CanvasPanel } from '@entities/panels/data-access'
 import { Dictionary } from '@ngrx/entity'
 import { createFeatureSelector, createSelector } from '@ngrx/store'
 
