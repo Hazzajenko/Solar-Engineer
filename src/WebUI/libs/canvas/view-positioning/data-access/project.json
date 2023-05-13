@@ -1,0 +1,40 @@
+{
+  "name": "canvas-view-positioning-data-access",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/canvas/view-positioning/data-access/src",
+  "prefix": "app",
+  "tags": [
+    "view-positioning:data-access"
+  ],
+  "projectType": "library",
+  "targets": {
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/{projectRoot}"
+      ],
+      "options": {
+        "jestConfig": "libs/canvas/view-positioning/data-access/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": [
+        "{options.outputFile}"
+      ],
+      "options": {
+        "lintFilePatterns": [
+          "libs/canvas/view-positioning/data-access/**/*.ts",
+          "libs/canvas/view-positioning/data-access/**/*.html"
+        ]
+      }
+    }
+  }
+}

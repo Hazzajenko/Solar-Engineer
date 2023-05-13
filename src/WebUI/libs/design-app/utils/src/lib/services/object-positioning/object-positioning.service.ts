@@ -5,9 +5,9 @@ import { inject, Injectable } from '@angular/core'
 import { EntityElement, EntityType, isEntityType } from '@design-app/shared'
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { Point } from '@shared/data-access/models'
-import { LineDirection } from 'deprecated/design-app/canvas'
-import { PanelModel, PanelsStoreService } from 'deprecated/design-app/feature-panel'
-import { TypeOfEntity } from 'deprecated/design-app/feature-selected'
+import { LineDirection } from '@design-app/canvas'
+import { PanelModel, PanelsStoreService } from '@design-app/feature-panel'
+import { TypeOfEntity } from '@design-app/feature-selected'
 
 @Injectable({
 	providedIn: 'root',
@@ -23,13 +23,12 @@ export class ObjectPositioningService {
 			right: [],
 			top: [],
 			bottom: [],
-		},
-		/*    string: {
-     left:   [],
-     right:  [],
-     top:    [],
-     bottom: [],
-     },*/
+		} /*    string: {
+		 left:   [],
+		 right:  [],
+		 top:    [],
+		 bottom: [],
+		 },*/,
 	}
 
 	public getElementRectPositionOffScrollById(elementId: string) {
@@ -171,63 +170,63 @@ export class ObjectPositioningService {
 	}
 
 	/*
-   public moveGroupOfPanelsToSameAxisPositionV3(ids: string[]) {
-   // const rects = ids.map(id => this.getBlockRectFromId(id))
-   const rects = this._componentElementsService.getElementRectsByIdArray(ids)
-   const left = Math.min(...rects.map(r => r.x))
-   const right = Math.max(...rects.map(r => r.x))
-   const top = Math.min(...rects.map(r => r.y))
-   const bottom = Math.max(...rects.map(r => r.y))
-   const middleX = (left + right) / 2
-   const middleY = (top + bottom) / 2
-   // const offset = middleX - rects[0].x
-   //     const closestAxis = this.getClosestAxis(middleX, middleY)
+	 public moveGroupOfPanelsToSameAxisPositionV3(ids: string[]) {
+	 // const rects = ids.map(id => this.getBlockRectFromId(id))
+	 const rects = this._componentElementsService.getElementRectsByIdArray(ids)
+	 const left = Math.min(...rects.map(r => r.x))
+	 const right = Math.max(...rects.map(r => r.x))
+	 const top = Math.min(...rects.map(r => r.y))
+	 const bottom = Math.max(...rects.map(r => r.y))
+	 const middleX = (left + right) / 2
+	 const middleY = (top + bottom) / 2
+	 // const offset = middleX - rects[0].x
+	 //     const closestAxis = this.getClosestAxis(middleX, middleY)
 
-   // const offset = middleX - rects[0].x
+	 // const offset = middleX - rects[0].x
 
 
-   const axis = direction === LineDirection.Left || direction === LineDirection.Right
-   ? 'x'
-   : 'y'
-   const min = Math.min(...rects.map(r => r[axis]))
-   const max = Math.max(...rects.map(r => r[axis]))
-   const middle = (min + max) / 2
-   const offset = middle - rects[0][axis]
-   console.log('moveGroupOfPanelsToSameAxisPositionV2', { ids, direction, rects, axis, min, max, middle, offset })
-   // const panels = await this._designPanelsFacade.panelsByIdArray(ids)
-   // const panels = this._componentElementsService.getElementRectsByIdArray(ids)
-   const updates = rects.map(panel => {
-   const location: XyLocation = {
-   x: panel.x,
-   y: panel.y,
-   }
-   // location = this._mousePositioningService.getMousePositionFromXYWithSize(location)
-   if (direction === LineDirection.Left) {
-   location.x = middle
-   } else if (direction === LineDirection.Right) {
-   location.x = middle
-   } else if (direction === LineDirection.Top) {
-   location.y = middle
-   } else if (direction === LineDirection.Bottom) {
-   location.y = middle
-   }
-   return {
-   id:      panel.id,
-   changes: {
-   location,
-   },
-   } as UpdateStr<DesignPanelModel>
-   },
-   )
-   console.log('moveGroupOfPanelsToSameAxisPositionV2', { updates })
-   return this._designPanelsFacade.updateManyPanels(updates)
-   }*/
+	 const axis = direction === LineDirection.Left || direction === LineDirection.Right
+	 ? 'x'
+	 : 'y'
+	 const min = Math.min(...rects.map(r => r[axis]))
+	 const max = Math.max(...rects.map(r => r[axis]))
+	 const middle = (min + max) / 2
+	 const offset = middle - rects[0][axis]
+	 console.log('moveGroupOfPanelsToSameAxisPositionV2', { ids, direction, rects, axis, min, max, middle, offset })
+	 // const panels = await this._designPanelsFacade.panelsByIdArray(ids)
+	 // const panels = this._componentElementsService.getElementRectsByIdArray(ids)
+	 const updates = rects.map(panel => {
+	 const location: XyLocation = {
+	 x: panel.x,
+	 y: panel.y,
+	 }
+	 // location = this._mousePositioningService.getMousePositionFromXYWithSize(location)
+	 if (direction === LineDirection.Left) {
+	 location.x = middle
+	 } else if (direction === LineDirection.Right) {
+	 location.x = middle
+	 } else if (direction === LineDirection.Top) {
+	 location.y = middle
+	 } else if (direction === LineDirection.Bottom) {
+	 location.y = middle
+	 }
+	 return {
+	 id:      panel.id,
+	 changes: {
+	 location,
+	 },
+	 } as UpdateStr<DesignPanelModel>
+	 },
+	 )
+	 console.log('moveGroupOfPanelsToSameAxisPositionV2', { updates })
+	 return this._designPanelsFacade.updateManyPanels(updates)
+	 }*/
 
 	/*  private getClosestAxis(x: number, y: number): 'x' | 'y' {
-   const xDistance = Math.abs(x - this._designStateService.designState.center.x)
-   const yDistance = Math.abs(y - this._designStateService.designState.center.y)
-   return xDistance < yDistance ? 'x' : 'y'
-   }*/
+	 const xDistance = Math.abs(x - this._designStateService.designState.center.x)
+	 const yDistance = Math.abs(y - this._designStateService.designState.center.y)
+	 return xDistance < yDistance ? 'x' : 'y'
+	 }*/
 
 	public getBlockRectFromId(id: string): DesignRectModel {
 		const element = this._componentElementsService.getComponentElementById(id)
@@ -257,8 +256,7 @@ export class ObjectPositioningService {
 			x,
 			y,
 			height: panelRect.height,
-			width: panelRect.width,
-			// element,
+			width: panelRect.width, // element,
 		}
 	}
 

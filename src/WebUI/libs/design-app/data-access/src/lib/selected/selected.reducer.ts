@@ -112,3 +112,23 @@ const reducer = createReducer(
 export function selectedReducer(state: SelectedState | undefined, action: Action) {
 	return reducer(state, action)
 }
+
+/*
+ const feature = createFeature({
+ name: SELECTED_FEATURE_KEY,
+ reducer: createReducer(
+ initialSelectedState,
+ on(SelectedActions.selectEntity, (state, { entityId }) => ({
+ ...state,
+ singleSelectedEntityId: entityId,
+ multipleSelectedEntityIds: [],
+ entityState: ENTITY_SELECTED_STATE.SINGLE_ENTITY_SELECTED,
+ })),
+ ),
+ extraSelectors: ({ selectSelectedState }) => ({
+ selectSingleSelectedEntity: createSelector(
+ selectSelectedState,
+ (state: SelectedState) => state.singleSelectedEntityId,
+ ),
+ }),
+ })*/

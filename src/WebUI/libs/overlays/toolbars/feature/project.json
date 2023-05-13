@@ -1,0 +1,40 @@
+{
+  "name": "overlays-toolbars-feature",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/overlays/toolbars/feature/src",
+  "prefix": "app",
+  "tags": [
+    "toolbars:feature"
+  ],
+  "projectType": "library",
+  "targets": {
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/{projectRoot}"
+      ],
+      "options": {
+        "jestConfig": "libs/overlays/toolbars/feature/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": [
+        "{options.outputFile}"
+      ],
+      "options": {
+        "lintFilePatterns": [
+          "libs/overlays/toolbars/feature/**/*.ts",
+          "libs/overlays/toolbars/feature/**/*.html"
+        ]
+      }
+    }
+  }
+}

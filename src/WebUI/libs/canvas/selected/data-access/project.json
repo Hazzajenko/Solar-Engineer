@@ -1,0 +1,40 @@
+{
+  "name": "canvas-selected-data-access",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/canvas/selected/data-access/src",
+  "prefix": "app",
+  "tags": [
+    "selected:data-access"
+  ],
+  "projectType": "library",
+  "targets": {
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/{projectRoot}"
+      ],
+      "options": {
+        "jestConfig": "libs/canvas/selected/data-access/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": [
+        "{options.outputFile}"
+      ],
+      "options": {
+        "lintFilePatterns": [
+          "libs/canvas/selected/data-access/**/*.ts",
+          "libs/canvas/selected/data-access/**/*.html"
+        ]
+      }
+    }
+  }
+}

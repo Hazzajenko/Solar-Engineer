@@ -30,7 +30,7 @@ import {
 	ShowSvgComponent,
 	UndoActionNotificationComponent,
 } from '@shared/ui'
-import { updateObjectForStore } from 'deprecated/design-app/feature-design-canvas'
+import { updateObjectForStore } from '@design-app/feature-design-canvas'
 import { SideUiNavBarComponent } from './side-uis'
 import { OverlayToolBarComponent } from './overlays'
 import { AppSettingsDialogComponent } from './dialogs'

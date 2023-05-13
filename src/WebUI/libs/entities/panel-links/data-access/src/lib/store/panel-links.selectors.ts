@@ -1,0 +1,58 @@
+import { PANEL_LINKS_FEATURE_KEY, panelLinksAdapter, PanelLinksState } from './panel-links.reducer'
+import { PanelLinkModel, Polarity } from '../types'
+import { Dictionary } from '@ngrx/entity'
+import { createFeatureSelector, createSelector } from '@ngrx/store'
+
+export const selectPanelLinksState = createFeatureSelector<PanelLinksState>(PANEL_LINKS_FEATURE_KEY)
+
+const { selectAll, selectEntities } = panelLinksAdapter.getSelectors()
+
+export const selectAllPanelLinks = createSelector(selectPanelLinksState, (state: PanelLinksState) =>
+	selectAll(state),
+)
+
+export const selectPanelLinksEntities = createSelector(
+	selectPanelLinksState,
+	(state: PanelLinksState) => selectEntities(state),
+)
+
+export const selectPanelLinkById = (props: { id: string }) =>
+	createSelector(
+		selectPanelLinksEntities,
+		(panelLinks: Dictionary<PanelLinkModel>) => panelLinks[props.id],
+	)
+
+export const selectPanelLinksByPanelId = (props: { panelId: string }) =>
+	createSelector(selectAllPanelLinks, (panelLinks: PanelLinkModel[]) =>
+		panelLinks.filter(
+			(panelLink) =>
+				panelLink.positivePanelId === props.panelId || panelLink.negativePanelId === props.panelId,
+		),
+	)
+
+export const selectIsPanelLinkExisting = (props: { panelId: string; polarity: Polarity }) =>
+	createSelector(
+		selectAllPanelLinks,
+		(
+			panelLinks: PanelLinkModel[] /*		panelLinks.some(
+ (panelLink) =>
+ (panelLink.positivePanelId === props.panelId && props.polarity === 'positive') ||
+ (panelLink.negativePanelId === props.panelId && props.polarity === 'negative'),
+ ),*/,
+		) =>
+			!!panelLinks.find(
+				(panelLink) =>
+					(panelLink.positivePanelId === props.panelId && props.polarity === 'positive') ||
+					(panelLink.negativePanelId === props.panelId && props.polarity === 'negative'),
+			),
+	)
+
+export const selectPanelLinksByStringId = (props: { stringId: string }) =>
+	createSelector(selectAllPanelLinks, (panelLinks: PanelLinkModel[]) =>
+		panelLinks.filter((panelLink) => panelLink.stringId === props.stringId),
+	)
+
+export const selectPanelLinksByIdArray = (props: { ids: string[] }) =>
+	createSelector(selectAllPanelLinks, (panelLinks: PanelLinkModel[]) =>
+		panelLinks.filter((panelLink) => props.ids.includes(panelLink.id)),
+	)

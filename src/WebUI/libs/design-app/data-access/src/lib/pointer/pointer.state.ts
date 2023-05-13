@@ -1,4 +1,4 @@
-import { TransformedPoint } from 'deprecated/design-app/feature-design-canvas'
+import { TransformedPoint } from '@design-app/feature-design-canvas'
 
 export type PointerStateContext = {
 	pointerDown: boolean
@@ -13,20 +13,20 @@ export const InitialPointerContext: PointerStateContext = {
 }
 
 /*
-export const POINTER_STATE_KEY = 'PointerState'
+ export const POINTER_STATE_KEY = 'PointerState'
 
-export const POINTER_STATE = {
-	POINTER_UP: 'PointerUp',
-	POINTER_DOWN: 'PointerDown',
-	HOVERING_OVER_ENTITY: 'HoveringOverEntity',
-} as const
+ export const POINTER_STATE = {
+ POINTER_UP: 'PointerUp',
+ POINTER_DOWN: 'PointerDown',
+ HOVERING_OVER_ENTITY: 'HoveringOverEntity',
+ } as const
 
-export type PointerState = (typeof POINTER_STATE)[keyof typeof POINTER_STATE]
+ export type PointerState = (typeof POINTER_STATE)[keyof typeof POINTER_STATE]
 
-export const MATCHES_POINTER_STATE = {
-	STATE: 'PointerState',
-	POINTER_UP: 'PointerState.PointerUp',
-	POINTER_DOWN: 'PointerState.PointerDown',
-	HOVERING_OVER_ENTITY: 'PointerState.HoveringOverEntity',
-} as const
-*/
+ export const MATCHES_POINTER_STATE = {
+ STATE: 'PointerState',
+ POINTER_UP: 'PointerState.PointerUp',
+ POINTER_DOWN: 'PointerState.PointerDown',
+ HOVERING_OVER_ENTITY: 'PointerState.HoveringOverEntity',
+ } as const
+ */

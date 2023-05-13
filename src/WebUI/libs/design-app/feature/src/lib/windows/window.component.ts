@@ -18,9 +18,8 @@ import { DraggableWindow } from '@design-app/shared'
 import { updateObjectByIdForStore } from '@design-app/utils'
 import { EVENT_TYPE, Point } from '@shared/data-access/models'
 import { ShowSvgComponent, ShowSvgV2Component } from '@shared/ui'
-import { updateObjectForStore } from 'deprecated/design-app/feature-design-canvas'
+import { updateObjectForStore } from '@design-app/feature-design-canvas'
 import { map, Observable } from 'rxjs'
-
 
 @Component({
 	selector: 'app-window[windowId]',

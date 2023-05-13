@@ -1,4 +1,4 @@
-import { EntityBounds, getCompleteEntityBounds } from 'deprecated/design-app/feature-design-canvas'
+import { EntityBounds, getCompleteEntityBounds } from '@design-app/feature-design-canvas'
 
 export const drawRectFromBounds = (ctx: CanvasRenderingContext2D, bounds: EntityBounds) => {
 	const { left, top, width, height } = getCompleteEntityBounds(bounds)

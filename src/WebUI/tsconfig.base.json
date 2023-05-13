@@ -125,6 +125,33 @@
       "@auth/utils": [
         "libs/auth/utils/src/index.ts"
       ],
+      "@canvas/app/data-access": [
+        "libs/canvas/app/data-access/src/index.ts"
+      ],
+      "@canvas/app/feature": [
+        "libs/canvas/app/feature/src/index.ts"
+      ],
+      "@canvas/graphics/data-access": [
+        "libs/canvas/graphics/data-access/src/index.ts"
+      ],
+      "@canvas/keys/data-access": [
+        "libs/canvas/keys/data-access/src/index.ts"
+      ],
+      "@canvas/object-positioning/data-access": [
+        "libs/canvas/object-positioning/data-access/src/index.ts"
+      ],
+      "@canvas/rendering/data-access": [
+        "libs/canvas/rendering/data-access/src/index.ts"
+      ],
+      "@canvas/selected/data-access": [
+        "libs/canvas/selected/data-access/src/index.ts"
+      ],
+      "@canvas/utils": [
+        "libs/canvas/utils/src/index.ts"
+      ],
+      "@canvas/view-positioning/data-access": [
+        "libs/canvas/view-positioning/data-access/src/index.ts"
+      ],
       "@design-app/data-access": [
         "libs/design-app/data-access/src/index.ts"
       ],
@@ -136,6 +163,21 @@
       ],
       "@design-app/utils": [
         "libs/design-app/utils/src/index.ts"
+      ],
+      "@entities/common/data-access": [
+        "libs/entities/common/data-access/src/index.ts"
+      ],
+      "@entities/panel-configs/data-access": [
+        "libs/entities/panel-configs/data-access/src/index.ts"
+      ],
+      "@entities/panel-links/data-access": [
+        "libs/entities/panel-links/data-access/src/index.ts"
+      ],
+      "@entities/panels/data-access": [
+        "libs/entities/panels/data-access/src/index.ts"
+      ],
+      "@entities/strings/data-access": [
+        "libs/entities/strings/data-access/src/index.ts"
       ],
       "@grid-layout/data-access": [
         "libs/grid-layout/data-access/src/index.ts"
@@ -154,6 +196,33 @@
       ],
       "@imagery/feature/azure-maps": [
         "libs/imagery/feature/azure-maps/src/index.ts"
+      ],
+      "@overlays/context-menus/feature": [
+        "libs/overlays/context-menus/feature/src/index.ts"
+      ],
+      "@overlays/dialogs/feature": [
+        "libs/overlays/dialogs/feature/src/index.ts"
+      ],
+      "@overlays/notifications/data-access": [
+        "libs/overlays/notifications/data-access/src/index.ts"
+      ],
+      "@overlays/notifications/feature": [
+        "libs/overlays/notifications/feature/src/index.ts"
+      ],
+      "@overlays/side-uis/feature": [
+        "libs/overlays/side-uis/feature/src/index.ts"
+      ],
+      "@overlays/toolbars/feature": [
+        "libs/overlays/toolbars/feature/src/index.ts"
+      ],
+      "@overlays/ui-store/data-access": [
+        "libs/overlays/ui-store/data-access/src/index.ts"
+      ],
+      "@overlays/windows/data-access": [
+        "libs/overlays/windows/data-access/src/index.ts"
+      ],
+      "@overlays/windows/feature": [
+        "libs/overlays/windows/feature/src/index.ts"
       ],
       "@project-id/data-access/services": [
         "libs/project-id/data-access/services/src/index.ts"

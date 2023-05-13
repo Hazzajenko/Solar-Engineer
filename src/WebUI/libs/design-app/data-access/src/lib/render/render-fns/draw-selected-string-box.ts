@@ -2,7 +2,7 @@ import { EntityStoreService } from '../../entities'
 import { CANVAS_COLORS, CanvasPanel, CanvasString } from '@design-app/shared'
 import { getCompleteBoundsFromMultipleEntitiesWithPadding } from '@design-app/utils'
 import { assertNotNull } from '@shared/utils'
-// import { SelectedStateSnapshot } from '../../../../../../deprecated/design-app/feature-design-canvas/src/lib/services/canvas-client-state/+xstate/selected-state.machine'
+// import { SelectedStateSnapshot } from '../../../../../../@design-app/feature-design-canvas/src/lib/services/canvas-client-state/+xstate/selected-state.machine'
 
 /*export const drawSelectedStringBox = (
  ctx: CanvasRenderingContext2D,

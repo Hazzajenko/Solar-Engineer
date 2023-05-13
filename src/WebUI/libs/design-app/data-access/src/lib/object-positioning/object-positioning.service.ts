@@ -38,7 +38,7 @@ import { UpdateStr } from '@ngrx/entity/src/models'
 import { CURSOR_TYPE, Point } from '@shared/data-access/models'
 import { assertNotNull, groupInto2dArray } from '@shared/utils'
 import { sortBy } from 'lodash'
-import { GraphicsSettings } from 'deprecated/design-app/feature-design-canvas'
+import { GraphicsSettings } from '@design-app/feature-design-canvas'
 
 @Injectable({
 	providedIn: 'root',

@@ -4,10 +4,10 @@
  import { ENTITY_TYPE } from '@design-app/shared'
  import { UpdateStr } from '@ngrx/entity/src/models'
  import { UndefinedString } from '@shared/data-access/models'
- import { PanelModel, PanelsStoreService } from 'deprecated/design-app/feature-panel'
- import { SelectedStoreService } from 'deprecated/design-app/feature-selected'
- import { StringsStoreService } from 'deprecated/design-app/feature-string'
- import { StringFactory, StringModel } from '../../../../../deprecated/design-app/feature-string/src/lib/types'
+ import { PanelModel, PanelsStoreService } from '@design-app/feature-panel'
+ import { SelectedStoreService } from '@design-app/feature-selected'
+ import { StringsStoreService } from '@design-app/feature-string'
+ import { StringFactory, StringModel } from '../../../../../@design-app/feature-string/src/lib/types'
 
  @Injectable({
  providedIn: 'root',

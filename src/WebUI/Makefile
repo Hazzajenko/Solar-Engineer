@@ -80,6 +80,13 @@ ne11w:
 g:
 	nx generate @nx/angular:library ${name} --style=none --directory=${dir} --importPath=@${dir}/${name} --skipModule --tags=${tags} --no-interactive
 
+gv2:
+	nx generate @nx/angular:library --name=${name} --directory=${dir}  --importPath=@${dir}/${name} --tags=${tags} --changeDetection=OnPush --displayBlock --inlineStyle --inlineTemplate --skipModule --skipSelector --standalone --style=scss --no-interactive
+
+g-both:
+	nx generate @nx/angular:library --name=data-access --directory=${dir}  --importPath=@${dir}/data-access --tags=${name}:data-access --skipModule --skipSelector --no-interactive
+	nx generate @nx/angular:library --name=feature --directory=${dir}  --importPath=@${dir}/feature --tags=${name}:feature --changeDetection=OnPush --displayBlock --inlineStyle --inlineTemplate --skipModule --skipSelector --standalone --style=scss --no-interactive
+
 #ngrx:
 #	nx g @nx/angular:ngrx free-panels --parent=libs/no-grid-layout/feature/src/lib/lib.routes.ts --route=''
 
