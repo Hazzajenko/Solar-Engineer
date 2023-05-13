@@ -3,6 +3,7 @@ export * from './buttons/button-builder.component'
 export * from './menus/index'
 export * from './svgs/index'
 export * from './tooltip/tooltip.component'
+export * from './notifications/index'
 
 /*export * from './menus/menu-builder.component'
  export * from './menus/menu-item.model'

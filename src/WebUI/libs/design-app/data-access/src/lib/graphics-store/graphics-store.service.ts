@@ -74,6 +74,10 @@ class GraphicsRepository {
 		this._store.dispatch(GraphicsActions.toggleLinkModePathLines())
 	}
 
+	toggleNotifications() {
+		this._store.dispatch(GraphicsActions.toggleNotifications())
+	}
+
 	resetGraphicsToDefault() {
 		this._store.dispatch(GraphicsActions.resetGraphicsToDefault())
 	}

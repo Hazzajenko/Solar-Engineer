@@ -1,0 +1,43 @@
+<ng-container *ngIf='announcements$ | async as announcements'>
+  <div class='overflow-hidden rounded-lg bg-white shadow dark:bg-slate-700'>
+    <div class='p-6'>
+      <h2 class='text-base font-medium text-gray-900 dark:text-white'
+          id='announcements-title'>Announcements</h2>
+      <div class='mt-6 flow-root'>
+        <ul role='list'
+            class='-my-5 divide-y divide-gray-200 dark:divide-white'>
+          <li class='py-5'
+              *ngFor='let announcement of announcements'>
+            <div class='relative focus-within:ring-2 focus-within:ring-cyan-500'>
+              <h3 class='text-sm font-semibold text-gray-800 dark:text-white'>
+                <a
+
+                  (click)='routeToAnnouncement(announcement.title)'
+                  class='hover:underline focus:outline-none  hover:cursor-pointer'
+                >
+                  <span
+                    class='absolute inset-0'
+                    aria-hidden='true'></span>
+                  {{ announcement.title }}
+                </a>
+              </h3>
+              <p
+                [innerHTML]='announcement.content | truncate : 250 : true | lineBreaksToHtml'
+                class='mt-1 text-sm text-gray-600 line-clamp-2 dark:text-gray-300'
+              >
+              </p>
+            </div>
+          </li>
+
+        </ul>
+      </div>
+      <div class='mt-6'>
+        <a
+          href='#'
+          class='flex w-full items-center justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-slate-600 dark:text-white dark:hover:bg-slate-500 dark:ring-gray-700'
+        >View all</a
+        >
+      </div>
+    </div>
+  </div>
+</ng-container>

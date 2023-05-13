@@ -1,0 +1,6 @@
+export * from './canvas-render.service'
+export * from './canvas-render-v2.service'
+// export * from './canvas-render-backup.service'
+export * from './render-fns/index'
+export * from './utils/index'
+export * from './types/index'

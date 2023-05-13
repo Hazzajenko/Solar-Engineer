@@ -102,11 +102,11 @@ class PanelsRepository {
 	}
 
 	deletePanel(id: string) {
-		this._store.dispatch(PanelsActions.deletePanel({ panelId: id }))
+		this._store.dispatch(PanelsActions.deletePanel({ panelConfigId: id }))
 	}
 
 	deleteManyPanels(ids: string[]) {
-		this._store.dispatch(PanelsActions.deleteManyPanels({ panelIds: ids }))
+		this._store.dispatch(PanelsActions.deleteManyPanels({ panelConfigIds: ids }))
 	}
 
 	clearPanelsState() {

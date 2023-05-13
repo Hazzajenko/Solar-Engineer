@@ -1,0 +1,6 @@
+export const GetManyProjects = 'GetManyProjects'
+export const GetProject = 'GetProject'
+export const ProjectCreated = 'ProjectCreated'
+export const ProjectDeleted = 'ProjectDeleted'
+export const ReceiveProjectEvents = 'ReceiveProjectEvents'
+export const ReceiveProjectEvent = 'ReceiveProjectEvent'

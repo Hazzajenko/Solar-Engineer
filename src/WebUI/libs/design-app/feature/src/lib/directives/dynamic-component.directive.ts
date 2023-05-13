@@ -3,34 +3,11 @@ import { GraphicsSettingsComponent, KeyMapSettingsComponent } from '../dialogs'
 
 export const DYNAMIC_COMPONENT_TYPE = {
 	APP_CANVAS_GRAPHICS_SETTINGS: 'app-canvas-graphics-settings',
-	APP_KEY_MAP_SETTINGS: 'app-key-map-settings',
+	APP_KEY_MAP_SETTINGS: 'app-key-map-settings', // APP_DISPLAY_SETTINGS: 'app-display-settings',
 } as const
 
 export type DynamicComponentType =
 	(typeof DYNAMIC_COMPONENT_TYPE)[keyof typeof DYNAMIC_COMPONENT_TYPE]
-
-/*export const DYNAMIC_COMPONENT_TYPE = {
- APP_CANVAS_GRAPHICS_SETTINGS: 'app-canvas-graphics-settings',
- APP_KEY_MAP_SETTINGS: 'app-key-map-settings',
- } as const
-
- export type DynamicComponentType =
- (typeof DYNAMIC_COMPONENT_TYPE)[keyof typeof DYNAMIC_COMPONENT_TYPE]
-
- const componentStringToType = {
- [DYNAMIC_COMPONENT_TYPE.APP_CANVAS_GRAPHICS_SETTINGS]: () =>
- import('./dialogs/app-settings-dialog/graphics-settings/graphics-settings.component').then(
- (m) => m.GraphicsSettingsComponent,
- ),
- [DYNAMIC_COMPONENT_TYPE.APP_KEY_MAP_SETTINGS]: () =>
- import('./dialogs/app-settings-dialog/key-map-settings/key-map-settings.component').then(
- (m) => m.KeyMapSettingsComponent,
- ),
- }
- const componentStringToTypeV2 = {
- [DYNAMIC_COMPONENT_TYPE.APP_CANVAS_GRAPHICS_SETTINGS]: GraphicsSettingsComponent,
- [DYNAMIC_COMPONENT_TYPE.APP_KEY_MAP_SETTINGS]: KeyMapSettingsComponent,
- }*/
 
 @Directive({
 	// eslint-disable-next-line @angular-eslint/directive-selector
@@ -46,6 +23,11 @@ export class CreateComponentDirective implements OnDestroy {
 		this.componentRef = this.bigSwitch(input)
 	}
 
+	/*	@Input() set typeOfComponent(input: ComponentType<any>) {
+	 this._viewContainerRef.clear()
+	 this.componentRef = this._viewContainerRef.createComponent(input)
+	 }*/
+
 	bigSwitch(input: DynamicComponentType) {
 		switch (input) {
 			case DYNAMIC_COMPONENT_TYPE.APP_CANVAS_GRAPHICS_SETTINGS:
@@ -56,6 +38,10 @@ export class CreateComponentDirective implements OnDestroy {
 				return this._viewContainerRef.createComponent<KeyMapSettingsComponent>(
 					KeyMapSettingsComponent,
 				)
+			/*			case DYNAMIC_COMPONENT_TYPE.APP_DISPLAY_SETTINGS:
+			 return this._viewContainerRef.createComponent<DisplaySettingsComponent>(
+			 DisplaySettingsComponent,
+			 )*/
 			default:
 				throw new Error('Invalid component type')
 		}

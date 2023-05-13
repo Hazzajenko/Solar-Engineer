@@ -19,6 +19,7 @@ import { provideRouterStore } from '@ngrx/router-store'
 import { provideStore } from '@ngrx/store'
 import { storeDevtoolsModule } from '@shared/config'
 import { metaReducers, reducers } from '@shared/data-access/store'
+import { provideToastr } from 'ngx-toastr'
 
 bootstrapApplication(AppComponent, {
 	providers: [
@@ -27,6 +28,7 @@ bootstrapApplication(AppComponent, {
 		provideAnimations(),
 		provideNoopAnimations(),
 		provideHttpClient(),
+		provideToastr(),
 		// provideBrowser(),
 		importProvidersFrom(
 			// HttpClientModule,

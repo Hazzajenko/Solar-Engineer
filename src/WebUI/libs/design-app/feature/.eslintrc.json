@@ -28,7 +28,8 @@
 							"dialog",
 							"side-ui",
 							"overlay",
-							"menu"
+							"menu",
+							"notification"
 						],
 						"style": "kebab-case"
 					}

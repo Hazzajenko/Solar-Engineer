@@ -1,5 +1,12 @@
 import { APP_STATE_FEATURE_KEY, appStateReducer } from '../app-store'
-import { PANELS_FEATURE_KEY, panelsReducer, STRINGS_FEATURE_KEY, stringsReducer } from '../entities'
+import {
+	PANEL_CONFIGS_FEATURE_KEY,
+	panelConfigsReducer,
+	PANELS_FEATURE_KEY,
+	panelsReducer,
+	STRINGS_FEATURE_KEY,
+	stringsReducer,
+} from '../entities'
 import { GRAPHICS_FEATURE_KEY, graphicsReducer } from '../graphics-store'
 import {
 	OBJECT_POSITIONING_FEATURE_KEY,
@@ -11,14 +18,21 @@ import { provideState } from '@ngrx/store'
 import { UI_FEATURE_KEY, uiReducer } from '../ui-store'
 import { provideEffects } from '@ngrx/effects'
 import * as panelsEffects from '../entities/panels/panels.effects'
-// import * as selectedEffects from '../selected/selected.effects'
+import * as stringsEffects from '../entities/strings/strings.effects'
 import * as globalEffects from '../global/global.effects'
 import { KEYS_FEATURE_KEY, keysReducer } from '../keys'
 import { PANEL_LINKS_FEATURE_KEY, panelLinksReducer } from '../panel-links'
+import { NOTIFICATIONS_FEATURE_KEY, notificationsReducer } from '../notifications'
 
+const effectsProviders = [
+	provideEffects(panelsEffects),
+	provideEffects(globalEffects),
+	provideEffects(stringsEffects),
+] as const
 export const DesignAppNgrxStores = [
 	provideState(APP_STATE_FEATURE_KEY, appStateReducer),
 	provideState(PANELS_FEATURE_KEY, panelsReducer),
+	provideState(PANEL_CONFIGS_FEATURE_KEY, panelConfigsReducer),
 	provideState(STRINGS_FEATURE_KEY, stringsReducer),
 	provideState(PANEL_LINKS_FEATURE_KEY, panelLinksReducer),
 	provideState(UI_FEATURE_KEY, uiReducer),
@@ -27,7 +41,6 @@ export const DesignAppNgrxStores = [
 	provideState(GRAPHICS_FEATURE_KEY, graphicsReducer),
 	provideState(WINDOWS_FEATURE_KEY, windowsReducer),
 	provideState(KEYS_FEATURE_KEY, keysReducer),
-	provideEffects(panelsEffects),
-	provideEffects(globalEffects),
-	// provideEffects(selectedEffects),
+	provideState(NOTIFICATIONS_FEATURE_KEY, notificationsReducer),
+	...effectsProviders,
 ] as const

@@ -24,11 +24,19 @@ import { AppStateStoreService, UiStoreService, WindowsStore } from '@design-app/
 import { DraggableWindow } from '@design-app/shared'
 import { LetDirective } from '@ngrx/component'
 import { getGuid } from '@ngrx/data'
-import { ButtonBuilderComponent, ShowSvgComponent } from '@shared/ui'
+import {
+	ActionsNotificationComponent,
+	ButtonBuilderComponent,
+	ShowSvgComponent,
+	UndoActionNotificationComponent,
+} from '@shared/ui'
 import { updateObjectForStore } from 'deprecated/design-app/feature-design-canvas'
 import { SideUiNavBarComponent } from './side-uis'
 import { OverlayToolBarComponent } from './overlays'
 import { AppSettingsDialogComponent } from './dialogs'
+import { ToastrService } from 'ngx-toastr'
+import { ActionNotificationComponent } from './notifications/action-notification'
+import { ActionNotificationsDisplayComponent } from './notifications/action-notifications-display'
 
 @Component({
 	changeDetection: ChangeDetectionStrategy.OnPush,
@@ -49,6 +57,10 @@ import { AppSettingsDialogComponent } from './dialogs'
 		OverlayToolBarComponent,
 		AppSettingsDialogComponent,
 		DynamicContextMenuDirective,
+		ActionsNotificationComponent,
+		UndoActionNotificationComponent,
+		ActionNotificationComponent,
+		ActionNotificationsDisplayComponent,
 	],
 	selector: 'app-design-canvas-app',
 	standalone: true,
@@ -69,6 +81,7 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 	private _contextMenu = toSignal(this._uiStore.contextMenu$, {
 		initialValue: this._uiStore.contextMenu,
 	})
+	private _toastr = inject(ToastrService)
 	// dialog = this._uiStore.dialog
 	firstName = signal('Jane')
 	lastName = signal('Doe')
@@ -104,6 +117,26 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 
 	ngOnInit() {
 		console.log(this.constructor.name, 'ngOnInit')
+		/*	this._toastr.success('Hello world!', 'Toastr fun!', {
+		 timeOut: 5000,
+		 positionClass: 'toast-top-right', // preventDuplicates: true,
+		 progressBar: true,
+		 progressAnimation: 'increasing',
+		 tapToDismiss: true,
+		 closeButton: true,
+		 enableHtml: true,
+		 titleClass: 'toast-title',
+		 messageClass: 'toast-message',
+		 toastClass: 'ngx-toastr',
+		 easing: 'ease-in',
+		 easeTime: 300,
+		 extendedTimeOut: 1000,
+		 onActivateTick: false, // toastComponent: ActionsNotificationComponent,
+		 })
+		 this._toastr.show('Hello world!', 'Toastr fun!', {
+		 timeOut: 5000,
+		 positionClass: 'toast-top-right', // preventDuplicates: true,
+		 })*/
 		/*		this._dialogs.open(ViewStringComponent, {
 		 string: {
 		 id: getGuid(),
@@ -186,5 +219,24 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 
 	closeWindow(window: DraggableWindow) {
 		this._windows.dispatch.deleteWindow(window.id)
+	}
+
+	toast() {
+		this._toastr.success('Hello world!', 'Toastr fun!', {
+			timeOut: 5000,
+			positionClass: 'toast-top-right', // preventDuplicates: true,
+			progressBar: true,
+			progressAnimation: 'increasing',
+			tapToDismiss: true,
+			closeButton: true,
+			enableHtml: true,
+			titleClass: 'toast-title',
+			messageClass: 'toast-message',
+			toastClass: 'ngx-toastr',
+			easing: 'ease-in',
+			easeTime: 300,
+			extendedTimeOut: 1000,
+			onActivateTick: false, // toastComponent: ActionsNotificationComponent,
+		})
 	}
 }

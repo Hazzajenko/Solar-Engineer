@@ -25,7 +25,7 @@ import { GetOptionCheckedPipe, GraphicsStateBooleansKeys } from './get-option-ch
 import { StringManipulatePipe } from '@shared/pipes'
 
 @Component({
-	selector: 'app-canvas-graphics-settings',
+	selector: 'app-graphics-settings',
 	standalone: true,
 	imports: [
 		NgForOf,

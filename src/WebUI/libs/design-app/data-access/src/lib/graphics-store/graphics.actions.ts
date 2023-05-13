@@ -19,6 +19,7 @@ export const GraphicsActions = createActionGroup({
 		toggleLinkModeSymbols: emptyProps(),
 		toggleLinkModeOrderNumbers: emptyProps(),
 		'Toggle Link Mode Path Lines': emptyProps(),
+		'Toggle Notifications': emptyProps(),
 		'Reset Graphics To Default': emptyProps(),
 	},
 })

@@ -16,6 +16,7 @@ export type GraphicsState = {
 	linkModeSymbols: boolean
 	linkModeOrderNumbers: boolean
 	linkModePathLines: boolean
+	notifications: boolean
 	history: Partial<GraphicsState>
 }
 
@@ -30,6 +31,7 @@ export const initialGraphicsState: GraphicsState = {
 	linkModeSymbols: true,
 	linkModeOrderNumbers: true,
 	linkModePathLines: true,
+	notifications: true,
 	history: {},
 }
 
@@ -90,6 +92,10 @@ const reducer = createReducer(
 	on(GraphicsActions.toggleLinkModePathLines, (state) => ({
 		...state,
 		linkModePathLines: !state.linkModePathLines,
+	})),
+	on(GraphicsActions.toggleNotifications, (state) => ({
+		...state,
+		notifications: !state.notifications,
 	})),
 	on(GraphicsActions.resetGraphicsToDefault, () => initialGraphicsState),
 )

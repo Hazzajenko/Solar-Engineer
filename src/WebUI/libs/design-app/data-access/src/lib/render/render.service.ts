@@ -231,6 +231,7 @@ export class RenderService {
 				 }*/
 				ctx.restore()
 			})
+			// ctx.closePath()
 			ctx.restore()
 
 			if (
@@ -377,22 +378,29 @@ export class RenderService {
 		ctx.save()
 		ctx.strokeStyle = 'black'
 		ctx.lineWidth = 1
-		ctx.beginPath()
-		const firstLink = linksInOrder[0]
-		const firstPanel = firstLink.positivePanel
-		assertNotNull(firstPanel, 'firstPanel')
-		const { x: firstX, y: firstY } = getPositiveSymbolLocation(firstPanel)
-		ctx.moveTo(firstX, firstY)
+
+		/*		const firstLink = linksInOrder[0]
+		 const firstPanel = firstLink.positivePanel
+		 assertNotNull(firstPanel, 'firstPanel')
+		 const { x: firstX, y: firstY } = getPositiveSymbolLocation(firstPanel)
+		 ctx.beginPath()
+		 ctx.moveTo(firstX, firstY)*/
 		// ctx.moveTo(firstPanel.location.x, firstPanel.location.y)
+		let firstHasBeenSet = false
 		linksInOrder.forEach((link) => {
 			const panel = link.positivePanel
 			assertNotNull(panel, 'panel')
+
 			const [p1, p2] = customIds.includes(panel.id)
 				? getSymbolLocations(
 						customEntities?.find((entity) => entity.id === panel.id) as CanvasPanel,
 				  )
 				: getSymbolLocations(panel)
-			ctx.lineTo(p1.x, p1.y)
+			if (!firstHasBeenSet) {
+				firstHasBeenSet = true
+			} else {
+				ctx.lineTo(p1.x, p1.y)
+			}
 			ctx.moveTo(p2.x, p2.y)
 			/*		if (customIds.includes(panel.id)) {
 
@@ -405,7 +413,12 @@ export class RenderService {
 		})
 		const lastPanel = linksInOrder[linksInOrder.length - 1].negativePanel
 		assertNotNull(lastPanel, 'lastPanel')
-		const { x: lastX, y: lastY } = getNegativeSymbolLocation(lastPanel)
+		const { x: lastX, y: lastY } = customIds.includes(lastPanel.id)
+			? getNegativeSymbolLocation(
+					customEntities?.find((entity) => entity.id === lastPanel.id) as CanvasPanel,
+			  )
+			: getNegativeSymbolLocation(lastPanel)
+		// const { x: lastX, y: lastY } = getNegativeSymbolLocation(lastPanel)
 		ctx.lineTo(lastX, lastY)
 		// ctx.lineTo(lastPanel.location.x, lastPanel.location.y)
 		ctx.stroke()

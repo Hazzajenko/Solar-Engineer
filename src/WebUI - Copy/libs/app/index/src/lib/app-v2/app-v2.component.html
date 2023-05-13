@@ -1,0 +1,39 @@
+<!--<app-dark-nav-overlap-v2 />-->
+<!--<ng-container *ngIf="user$ | async as user; else notLoggedIn">-->
+<!--<my-component></my-component>-->
+<!--<my-comp first="dsadsa" />-->
+<!--<my-component first="hi" />-->
+<!--<app-light-icon />-->
+<!--<app-dark-icon />-->
+
+<!--<app-icon-theme />-->
+<!--<app-select-theme-component />-->
+<ng-container *ngrxLet='user$ | async as user'>
+  <div class='min-h-full bg-white dark:bg-slate-800'>
+    <div class='flex flex-col'>
+      <header class='pb-32'>
+        <app-home-header />
+      </header>
+
+      <main class='-mt-32 border-t-2 border-indigo-500'>
+        <div class='mx-auto px-4 pb-12 sm:px-6 lg:px-8'>
+
+          <!--          <router-outlet />-->
+          <ng-template
+            appDynamicComponent
+            [tab]='tab$ | async'
+          ></ng-template>
+
+        </div>
+      </main>
+    </div>
+  </div>
+</ng-container>
+<!--</ng-container>
+
+<ng-template #notLoggedIn>
+  <router-outlet />
+</ng-template>-->
+
+<!--<router-outlet></router-outlet>-->
+<app-footer-component class='relative bottom-0 left-0 right-0 z-10' />

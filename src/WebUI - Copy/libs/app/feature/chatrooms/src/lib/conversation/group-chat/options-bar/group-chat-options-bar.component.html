@@ -1,0 +1,125 @@
+<ng-container *ngIf="groupChat || webUser">
+  <nav class="p-3 border-gray-200 rounded bg-gray-50">
+    <div class="container flex flex-wrap items-center justify-between mx-auto">
+      <a href="#" class="flex items-center">
+        <img
+          *ngIf="groupChat.photoUrl"
+          [src]="groupChat.photoUrl"
+          class="h-6 mr-3 sm:h-10"
+          alt="GroupChat Logo"
+        />
+        <img
+          *ngIf="webUser.photoUrl"
+          [src]="webUser.photoUrl"
+          class="h-6 mr-3 sm:h-10"
+          alt="GroupChat Logo"
+        />
+        <span *ngIf="groupChat" class="self-center text-xl font-semibold whitespace-nowrap">{{
+          groupChat.name
+        }}</span>
+        <span *ngIf="webUser" class="self-center text-xl font-semibold whitespace-nowrap">{{
+          webUser.displayName
+        }}</span>
+      </a>
+      <button
+        data-collapse-toggle="navbar-solid-bg"
+        type="button"
+        class="inline-flex items-center p-2 ml-3 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+        aria-controls="navbar-solid-bg"
+        aria-expanded="false"
+      >
+        <span class="sr-only">Open main menu</span>
+        <svg
+          class="w-6 h-6"
+          aria-hidden="true"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+            clip-rule="evenodd"
+          ></path>
+        </svg>
+      </button>
+      <div class="hidden w-full md:block md:w-auto" id="navbar-solid-bg">
+        <ul
+          class="flex flex-col mt-4 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium"
+        >
+          <li *ngIf="groupChat">
+            <button (click)="addGroupChatMembers()" mat-icon-button>
+              <mat-icon>person_add</mat-icon>
+            </button>
+            <!--            <mat-icon>person_add</mat-icon>-->
+            <!--            <button mat-stroked-button>Members</button>-->
+            <!--            <a
+                          href="#"
+                          class="block py-2 pl-3 pr-4 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0"
+                          aria-current="page"
+                          >Members</a
+                        >-->
+          </li>
+          <li *ngIf="groupChat">
+            <button (click)="viewGroupChatMembers()" mat-icon-button>
+              <mat-icon>group</mat-icon>
+            </button>
+            <!--            <mat-icon>group</mat-icon>-->
+            <!--            <button mat-stroked-button>Members</button>-->
+            <!--            <a
+                          href="#"
+                          class="block py-2 pl-3 pr-4 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0"
+                          aria-current="page"
+                          >Members</a
+                        >-->
+          </li>
+          <li *ngIf="webUser">
+            <button (click)="startGroupChatWithUser(webUser)" mat-icon-button>
+              <mat-icon>person_add</mat-icon>
+            </button>
+          </li>
+          <li>
+            <button (click)="openSettings($event)" mat-icon-button>
+              <mat-icon>settings</mat-icon>
+            </button>
+            <!--            <mat-icon>settings</mat-icon>-->
+            <!--            <button mat-stroked-button>Settings</button>-->
+            <!--            <a
+                          href="#"
+                          class="block py-2 pl-3 pr-4 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-gray-400"
+                          >Settings</a
+                        >-->
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</ng-container>
+
+<div
+  [matMenuTriggerFor]="rightMenu"
+  [style.left]="menuTopLeftPosition.x"
+  [style.top]="menuTopLeftPosition.y"
+  style="visibility: hidden; position: fixed"
+></div>
+
+<mat-menu #rightMenu="matMenu">
+  <ng-template matMenuContent>
+    <div class="p-2">
+      <button
+        class="p-1 text-xs cursor-pointer hover:bg-[#545bff]"
+        style="border-radius: inherit"
+        mat-menu-item
+      >
+        Edit {{ groupChat.name }}
+      </button>
+      <button
+        class="p-1 text-xs cursor-pointer hover:bg-[#545bff]"
+        style="border-radius: inherit"
+        mat-menu-item
+      >
+        Leave {{ groupChat.name }}
+      </button>
+    </div>
+  </ng-template>
+</mat-menu>

@@ -106,6 +106,9 @@ importers:
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
+      ngx-toastr:
+        specifier: ^16.2.0
+        version: 16.2.0(@angular/common@16.0.0)(@angular/core@16.0.0)(@angular/platform-browser@16.0.0)
       patch-package:
         specifier: ^6.5.1
         version: 6.5.1
@@ -15705,6 +15708,19 @@ packages:
       esbuild: 0.17.18
     transitivePeerDependencies:
       - supports-color
+
+  /ngx-toastr@16.2.0(@angular/common@16.0.0)(@angular/core@16.0.0)(@angular/platform-browser@16.0.0):
+    resolution: {integrity: sha512-7X6UhOKiaUeC2eTOsUqctZH0ZWKG8VlzDxWJhdEF1N3kPod46SU/Vn2l0hbt8EDwTjxHKfKyevU2idkYDoZYog==}
+    peerDependencies:
+      '@angular/common': '>=14.0.0-0'
+      '@angular/core': '>=14.0.0-0'
+      '@angular/platform-browser': '>=14.0.0-0'
+    dependencies:
+      '@angular/common': 16.0.0(@angular/core@16.0.0)(rxjs@7.8.0)
+      '@angular/core': 16.0.0(rxjs@7.8.0)(zone.js@0.13.0)
+      '@angular/platform-browser': 16.0.0(@angular/animations@16.0.0)(@angular/common@16.0.0)(@angular/core@16.0.0)
+      tslib: 2.5.0
+    dev: false
 
   /nice-napi@1.0.2:
     resolution: {integrity: sha512-px/KnJAJZf5RuBGcfD+Sp2pAKq0ytz8j+1NehvgIGFkvtvFrDM3T8E4x/JJODXK9WZow8RRGrbA9QQ3hs+pDhA==}
