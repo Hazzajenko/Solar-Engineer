@@ -164,17 +164,44 @@
       "@entities/common/data-access": [
         "libs/entities/common/data-access/src/index.ts"
       ],
+      "@entities/data-access": [
+        "libs/entities/data-access/src/index.ts"
+      ],
       "@entities/panel-configs/data-access": [
         "libs/entities/panel-configs/data-access/src/index.ts"
+      ],
+      "@entities/panel-configs/shared": [
+        "libs/entities/panel-configs/shared/src/index.ts"
       ],
       "@entities/panel-links/data-access": [
         "libs/entities/panel-links/data-access/src/index.ts"
       ],
+      "@entities/panel-links/shared": [
+        "libs/entities/panel-links/shared/src/index.ts"
+      ],
       "@entities/panels/data-access": [
         "libs/entities/panels/data-access/src/index.ts"
       ],
+      "@entities/panels/shared": [
+        "libs/entities/panels/shared/src/index.ts"
+      ],
+      "@entities/panels/utils": [
+        "libs/entities/panels/utils/src/index.ts"
+      ],
+      "@entities/shared": [
+        "libs/entities/shared/src/index.ts"
+      ],
       "@entities/strings/data-access": [
         "libs/entities/strings/data-access/src/index.ts"
+      ],
+      "@entities/strings/shared": [
+        "libs/entities/strings/shared/src/index.ts"
+      ],
+      "@entities/strings/utils": [
+        "libs/entities/strings/utils/src/index.ts"
+      ],
+      "@entities/utils": [
+        "libs/entities/utils/src/index.ts"
       ],
       "@grid-layout/data-access": [
         "libs/grid-layout/data-access/src/index.ts"

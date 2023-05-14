@@ -9,7 +9,8 @@ import {
 	Renderer2,
 	ViewChild,
 } from '@angular/core'
-import { AppStateStoreService, UiStoreService } from '@design-app/data-access'
+import { UiStoreService } from '@overlays/ui-store/data-access'
+import { AppStateStoreService } from '@canvas/app/data-access'
 
 @Component({
 	selector: 'dialog-backdrop-template-component',

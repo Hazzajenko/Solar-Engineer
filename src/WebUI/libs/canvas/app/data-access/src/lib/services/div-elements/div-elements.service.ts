@@ -1,6 +1,6 @@
-import { DivElement, InitialDivElements } from './div-element'
+import { DivElement } from './div-element'
 import { Injectable } from '@angular/core'
-import { EntityStateFactory, getHtmlDivElementById } from '@shared/utils'
+import { EntityStateFactory } from '@shared/utils'
 
 @Injectable({
 	providedIn: 'root',
@@ -12,10 +12,10 @@ export class DivElementsService {
 
 	constructor() {
 		document.addEventListener('DOMContentLoaded', () => {
-			InitialDivElements.forEach((element) => {
-				this._elements.addEntity(getHtmlDivElementById(element))
-			})
-			this.elementsLoaded = true
+			/*			InitialDivElements.forEach((element) => {
+			 this._elements.addEntity(getHtmlDivElementById(element))
+			 })
+			 this.elementsLoaded = true*/
 		})
 	}
 

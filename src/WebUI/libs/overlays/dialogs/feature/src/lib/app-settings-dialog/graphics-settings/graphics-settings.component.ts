@@ -11,18 +11,18 @@ import {
 } from '@angular/core'
 import { toSignal } from '@angular/core/rxjs-interop'
 import { ReactiveFormsModule } from '@angular/forms'
+import { LetDirective } from '@ngrx/component'
+import { EVENT_TYPE } from '@shared/data-access/models'
+import { GetOptionCheckedPipe, GraphicsStateBooleansKeys } from './get-option-checked.pipe'
+import { StringManipulatePipe } from '@shared/pipes'
 import {
 	CREATE_PREVIEW_STATE,
 	GraphicsStoreService,
 	initialGraphicsState,
 	NEARBY_LINES_STATE,
 	NearbyLinesState,
-	RenderService,
-} from '@design-app/data-access'
-import { LetDirective } from '@ngrx/component'
-import { EVENT_TYPE } from '@shared/data-access/models'
-import { GetOptionCheckedPipe, GraphicsStateBooleansKeys } from './get-option-checked.pipe'
-import { StringManipulatePipe } from '@shared/pipes'
+} from '@canvas/graphics/data-access'
+import { RenderService } from '@canvas/rendering/data-access'
 
 @Component({
 	selector: 'app-graphics-settings',

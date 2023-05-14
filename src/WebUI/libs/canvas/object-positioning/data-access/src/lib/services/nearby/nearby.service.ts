@@ -6,7 +6,7 @@ import { getNearbyLineDrawCtxFnFromNearbyLinesState } from './utils'
 import { inject, Injectable } from '@angular/core'
 import { groupInto2dArray } from '@shared/utils'
 import { sortBy } from 'lodash'
-import { injectEntityStore } from '@entities/common/data-access'
+import { EntityStoreService } from '@entities/data-access'
 import {
 	Axis,
 	CANVAS_COLORS,
@@ -32,7 +32,7 @@ import {
 export class NearbyService {
 	private _render = inject(RenderService)
 	// private _render = inject(CanvasRenderService)
-	private _entities = injectEntityStore()
+	private _entities = inject(EntityStoreService)
 	// private _entities = inject(EntityStoreService)
 	// private _app = inject(AppStoreService)
 	// private _appStore = inject(AppNgrxStateStore)

@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
-import { KEY_MAP_ACTION, KeyMapAction, KeysStoreService } from '@design-app/data-access'
 import { AsyncPipe, NgForOf, UpperCasePipe } from '@angular/common'
 import { StringManipulatePipe } from '@shared/pipes'
 import { Key, KEYS } from '@shared/data-access/models'
 import { toSignal } from '@angular/core/rxjs-interop'
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { PushPipe } from '@ngrx/component'
+import { KEY_MAP_ACTION, KeyMapAction, KeysStoreService } from '@canvas/keys/data-access'
 
 @Component({
 	selector: 'app-key-map-settings',

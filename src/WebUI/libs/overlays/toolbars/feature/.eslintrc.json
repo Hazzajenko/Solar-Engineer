@@ -29,7 +29,8 @@
 						"type": "element",
 						"prefix": [
 							"app",
-							"toolbar"
+							"toolbar",
+							"overlay"
 						],
 						"style": "kebab-case"
 					}

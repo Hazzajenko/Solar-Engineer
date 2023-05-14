@@ -7,8 +7,7 @@ import {
 	SizeByType,
 } from '@shared/data-access/models'
 import { newGuid } from '@shared/utils'
-import { CanvasPanel } from '@entities/panels/data-access'
-import { CanvasString } from '@entities/strings/data-access'
+import { CanvasPanel, CanvasString } from '@entities/shared'
 
 export const EntityFactory = {
 	create: (type: EntityType, location: Point): CanvasEntity => {

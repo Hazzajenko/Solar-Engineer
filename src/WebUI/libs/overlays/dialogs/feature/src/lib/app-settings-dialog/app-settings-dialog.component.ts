@@ -1,18 +1,26 @@
 import { AsyncPipe, NgForOf, NgIf, NgStyle, NgTemplateOutlet } from '@angular/common'
-import { AfterViewInit, Component, ElementRef, inject, signal, ViewChild, ViewChildren } from '@angular/core'
-import { IsTypeOfPanelPipe, UiStoreService } from '@design-app/data-access'
+import {
+	AfterViewInit,
+	Component,
+	ElementRef,
+	inject,
+	signal,
+	ViewChild,
+	ViewChildren,
+} from '@angular/core'
 import { LetDirective } from '@ngrx/component'
 import { DialogBackdropTemplateComponent } from '../dialog-backdrop-template/dialog-backdrop-template.component'
-
 import { ShowSvgComponent, ShowSvgNoStylesComponent, ToggleSvgNoStylesComponent } from '@shared/ui'
-import { DisplaySettingsComponent, GraphicsSettingsComponent, KeyMapSettingsComponent } from './index'
+import {
+	DisplaySettingsComponent,
+	GraphicsSettingsComponent,
+	KeyMapSettingsComponent,
+} from './index'
 import { CdkDrag, CdkDragHandle } from '@angular/cdk/drag-drop'
-import { RadiansToDegreesPipe } from '@design-app/utils'
-import { TruncatePipe } from '@shared/pipes'
-// import { CreateComponentDirective, DynamicComponentType } from '../../directives'
+import { RadiansToDegreesPipe, TruncatePipe } from '@shared/pipes'
 import { heightInOut } from '@shared/animations'
-
-// import { addToMap } from '@grid-layout/data-access'
+import { UiStoreService } from '@overlays/ui-store/data-access'
+import { IsTypeOfPanelPipe } from '@entities/utils'
 
 @Component({
 	selector: 'dialog-app-settings',

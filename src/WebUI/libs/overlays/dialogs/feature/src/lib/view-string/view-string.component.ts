@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core'
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog'
-import { CanvasString } from '@design-app/shared'
 import { AsyncPipe, NgForOf, NgIf } from '@angular/common'
+import { CanvasString } from '@entities/shared'
 
 @Component({
 	selector: 'app-view-string-component',

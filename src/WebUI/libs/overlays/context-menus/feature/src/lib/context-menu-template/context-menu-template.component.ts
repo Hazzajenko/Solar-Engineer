@@ -10,7 +10,7 @@ import {
 	ViewChild,
 } from '@angular/core'
 import { EVENT_TYPE, Point } from '@shared/data-access/models'
-import { RenderService } from '@design-app/data-access'
+import { RenderService } from '@canvas/rendering/data-access'
 
 @Component({
 	selector: 'app-context-menu-template',

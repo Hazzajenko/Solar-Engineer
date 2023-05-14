@@ -1,5 +1,5 @@
 import { AppStateStoreService, MODE_STATE } from '@canvas/app/data-access'
-import { createString, createStringWithPanelsV2, genStringNameV2 } from '@entities/strings/data-access'
+import { createString, createStringWithPanelsV2, genStringNameV2 } from '@entities/utils'
 import { MOVE_ENTITY_STATE, ObjectPositioningService, ObjectPositioningStoreService, ObjectRotatingService, ROTATE_ENTITY_STATE } from '@canvas/object-positioning/data-access'
 import { RenderService } from '@canvas/rendering/data-access'
 import { SelectedService, SelectedStoreService } from '@canvas/selected/data-access'
@@ -10,8 +10,8 @@ import { KeysStoreService } from '../store'
 import { KEY_MAP_ACTION } from '../types'
 import { toSignal } from '@angular/core/rxjs-interop'
 import { updateObjectByIdForStoreV3 } from '@canvas/utils'
-import { injectEntityStore } from '@entities/common/data-access'
-import { CanvasPanel } from '@entities/panels/data-access'
+import { CanvasPanel } from '@entities/shared'
+import { EntityStoreService } from '@entities/data-access'
 
 // const DEFAULT_UNCHANGEABLE_KEYS = [KEYS.ESCAPE, KEYS.SHIFT, KEYS.ALT, KEYS.CTRL_OR_CMD] as const
 const isDefaultUnchangeableKey = (key: KeyboardEvent['key']) =>
@@ -25,7 +25,7 @@ const isDefaultUnchangeableKey = (key: KeyboardEvent['key']) =>
 export class KeyEventsService {
 	private _selected = inject(SelectedService)
 	private _selectedStore = inject(SelectedStoreService)
-	private _entities = injectEntityStore()
+	private _entities = inject(EntityStoreService)
 	private _positioningStore = inject(ObjectPositioningStoreService)
 	private _objRotating = inject(ObjectRotatingService)
 	private _appState = inject(AppStateStoreService)

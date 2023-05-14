@@ -1,14 +1,11 @@
 import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core'
 import { NgIf } from '@angular/common'
 import { ShowSvgComponent } from '@shared/ui'
-import {
-	DIALOG_COMPONENT,
-	EntityStoreService,
-	RenderService,
-	UiStoreService,
-} from '@design-app/data-access'
 import { Point } from '@shared/data-access/models'
 import { ContextMenuTemplateComponent } from '../context-menu-template/context-menu-template.component'
+import { EntityStoreService } from '@entities/data-access'
+import { RenderService } from '@canvas/rendering/data-access'
+import { DIALOG_COMPONENT, UiStoreService } from '@overlays/ui-store/data-access'
 
 @Component({
 	selector: 'app-multiple-panels-menu',
@@ -57,7 +54,7 @@ export class MultiplePanelsMenuComponent {
 	}
 
 	deletePanels() {
-		this._entityStore.panels.dispatch.deleteManyPanels(this.panelIds)
+		this._entityStore.panels.deleteManyPanels(this.panelIds)
 		this._render.renderCanvasApp()
 		this._uiStore.dispatch.closeContextMenu()
 	}

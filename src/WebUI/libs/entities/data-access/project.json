@@ -1,0 +1,40 @@
+{
+  "name": "entities-data-access",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/entities/data-access/src",
+  "prefix": "app",
+  "tags": [
+    "entities:data-access"
+  ],
+  "projectType": "library",
+  "targets": {
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/{projectRoot}"
+      ],
+      "options": {
+        "jestConfig": "libs/entities/data-access/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": [
+        "{options.outputFile}"
+      ],
+      "options": {
+        "lintFilePatterns": [
+          "libs/entities/data-access/**/*.ts",
+          "libs/entities/data-access/**/*.html"
+        ]
+      }
+    }
+  }
+}

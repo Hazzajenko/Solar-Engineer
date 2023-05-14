@@ -3,9 +3,8 @@
 import { assertNotNull } from '@shared/utils'
 import { getCompleteBoundsFromMultipleEntitiesWithPadding } from '@canvas/utils'
 import { CANVAS_COLORS } from '@shared/data-access/models'
-import { CanvasString } from '@entities/strings/data-access'
-import { CanvasPanel } from '@entities/panels/data-access'
-import { EntityStore } from '@entities/common/data-access'
+import { CanvasPanel, CanvasString } from '@entities/shared'
+import { EntityStoreService } from '@entities/data-access'
 // import { SelectedStateSnapshot } from '../../../../../../deprecated/design-app/feature-design-canvas/src/lib/services/canvas-client-state/+xstate/selected-state.machine'
 
 /*export const drawSelectedStringBox = (
@@ -42,7 +41,7 @@ import { EntityStore } from '@entities/common/data-access'
 export const drawSelectedStringBoxV2 = (
 	ctx: CanvasRenderingContext2D,
 	selectedStringId: string,
-	entityStore: EntityStore,
+	entityStore: EntityStoreService,
 ) => {
 	assertNotNull(selectedStringId)
 	const string = entityStore.strings.getById(selectedStringId)

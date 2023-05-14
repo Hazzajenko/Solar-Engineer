@@ -11,7 +11,7 @@ import {
 	TransformedPoint,
 } from '@shared/data-access/models'
 import { assertNotNull } from '@shared/utils'
-import { injectEntityStore } from '@entities/common/data-access'
+import { EntityStoreService } from '@entities/data-access'
 import {
 	changeCanvasCursor,
 	dragBoxKeysDown,
@@ -19,7 +19,7 @@ import {
 	getAllEntitiesBetweenTwoPoints,
 	getCompleteBoundsFromMultipleEntitiesWithPadding,
 } from '@canvas/utils'
-import { createPanel } from '@entities/panels/data-access'
+import { createPanel } from '@entities/utils'
 
 @Injectable({
 	providedIn: 'root',
@@ -27,7 +27,7 @@ import { createPanel } from '@entities/panels/data-access'
 export class DragBoxService {
 	private _canvasElementService = inject(CanvasElementService)
 	private _domPointService = inject(DomPointService)
-	private _entities = injectEntityStore()
+	private _entities = inject(EntityStoreService)
 	// private _entities = inject(EntityStoreService)
 	// private _state = inject(CanvasClientStateService)
 	private _render = inject(RenderService)

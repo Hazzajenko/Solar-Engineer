@@ -1,6 +1,6 @@
 import { AppComponent } from './app/app.component'
 import { bootstrapApplication, BrowserModule } from '@angular/platform-browser'
-import { appRoutes, tokenGetter } from '@app/config'
+import { appRoutes } from './app/routes'
 import { environment } from '@shared/environment'
 import {
 	importProvidersFrom,
@@ -20,20 +20,9 @@ import { provideToastr } from 'ngx-toastr'
 import { MatDialogModule } from '@angular/material/dialog'
 import { MatSnackBarModule, MatSnackBarRef } from '@angular/material/snack-bar'
 import { DatePipe } from '@angular/common'
-import { JwtModule } from '@auth0/angular-jwt'
 import { storeDevtoolsModule } from '@shared/config'
-import { jwtInterceptorProvider } from '@auth/interceptors'
-import { providePanelsFeature } from '@entities/panels/data-access'
-import { provideStringsFeature } from '@entities/strings/data-access'
-import { providePanelConfigsFeature } from '@entities/panel-configs/data-access'
-import { providePanelLinksFeature } from '@entities/panel-links/data-access'
-import { provideEffects } from '@ngrx/effects'
 import { metaReducers, reducers } from '@shared/data-access/store'
-import {
-	APP_STATE_FEATURE_KEY,
-	appStateReducer,
-	renderCanvasOnStateChanges$,
-} from '@canvas/app/data-access'
+import { APP_STATE_FEATURE_KEY, appStateReducer } from '@canvas/app/data-access'
 import { UI_FEATURE_KEY, uiReducer } from '@overlays/ui-store/data-access'
 import { SELECTED_FEATURE_KEY, selectedReducer } from '@canvas/selected/data-access'
 import {
@@ -47,6 +36,8 @@ import {
 	NOTIFICATIONS_FEATURE_KEY,
 	notificationsReducer,
 } from '@overlays/notifications/data-access'
+import { provideEntityStores } from '@entities/data-access'
+import { provideRenderingEffects } from './main.effects'
 
 if (environment.production) {
 	// eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -69,8 +60,8 @@ export function provideWebAppProviders() {
 	return makeEnvironmentProviders([
 		provideZoneChangeDetection({ eventCoalescing: true }),
 		provideRouter(appRoutes, withEnabledBlockingInitialNavigation() /*, withDebugTracing()*/),
-		provideStore(reducers, { metaReducers }),
 		provideCanvasAppStores(),
+		provideStore(reducers, { metaReducers }),
 		provideRouterStore(),
 		provideAnimations(),
 		provideNoopAnimations(),
@@ -82,24 +73,24 @@ export function provideWebAppProviders() {
 			MatDialogModule,
 			MatSnackBarModule,
 			MatSnackBarRef,
-			DatePipe,
-			JwtModule.forRoot({
-				config: {
-					tokenGetter: tokenGetter,
-				},
-			}),
+			DatePipe /*			JwtModule.forRoot({
+		 config: {
+		 tokenGetter: tokenGetter,
+		 },
+		 }),*/,
 		),
 		...storeDevtoolsModule,
-		jwtInterceptorProvider,
+		// jwtInterceptorProvider,
 	])
 }
 
 export function provideCanvasAppStores() {
 	return makeEnvironmentProviders([
-		providePanelsFeature(),
-		provideStringsFeature(),
-		providePanelConfigsFeature(),
-		providePanelLinksFeature(),
+		provideEntityStores(),
+		// providePanelsFeature(),
+		// provideStringsFeature(),
+		// providePanelConfigsFeature(),
+		// providePanelLinksFeature(),
 		provideState(APP_STATE_FEATURE_KEY, appStateReducer),
 		provideState(UI_FEATURE_KEY, uiReducer),
 		provideState(SELECTED_FEATURE_KEY, selectedReducer),
@@ -108,6 +99,7 @@ export function provideCanvasAppStores() {
 		provideState(WINDOWS_FEATURE_KEY, windowsReducer),
 		provideState(KEYS_FEATURE_KEY, keysReducer),
 		provideState(NOTIFICATIONS_FEATURE_KEY, notificationsReducer),
-		provideEffects({ renderCanvasOnStateChanges$ }),
+		// provideEffects({ renderCanvasOnStateChanges$ }),
+		provideRenderingEffects(),
 	])
 }

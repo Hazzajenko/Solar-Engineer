@@ -23,10 +23,13 @@ import {
 	ObjectRotatingService,
 } from '@canvas/object-positioning/data-access'
 import { SelectedService, SelectedStoreService } from '@canvas/selected/data-access'
-import { PanelLinksService, PanelLinksStoreService } from '@entities/panel-links/data-access'
+import {
+	EntityStoreService,
+	PanelLinksService,
+	PanelLinksStoreService,
+} from '@entities/data-access'
 import { ViewPositioningService } from '@canvas/view-positioning/data-access'
 import { DragBoxService, RenderService } from '@canvas/rendering/data-access'
-import { injectEntityStore } from '@entities/common/data-access'
 import { CONTEXT_MENU_COMPONENT, UiStoreService } from '@overlays/ui-store/data-access'
 import { KeyEventsService } from '@canvas/keys/data-access'
 import {
@@ -51,8 +54,8 @@ import {
 	createPanel,
 	isPanel,
 	isPointInsideSelectedStringPanelsByStringIdNgrxWithPanels,
-} from '@entities/panels/data-access'
-import { UndefinedStringId } from '@entities/strings/data-access'
+} from '@entities/utils'
+import { UndefinedStringId } from '@entities/shared'
 
 @Directive({
 	selector: '[appDesignCanvas]',
@@ -76,7 +79,7 @@ export class DesignCanvasDirective implements OnInit {
 	private _view = inject(ViewPositioningService)
 	private _drag = inject(DragBoxService)
 	private _render = inject(RenderService)
-	private _entities = injectEntityStore()
+	private _entities = inject(EntityStoreService)
 	private _uiStore = inject(UiStoreService)
 	// private _entities = inject(EntityStoreService)
 	private _selected = inject(SelectedService)

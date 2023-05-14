@@ -1,12 +1,12 @@
 import { Component, inject, signal } from '@angular/core'
 import { NgIf } from '@angular/common'
 import { goRightWithConfig } from '@shared/animations'
-import { UiStoreService } from '@design-app/data-access'
 import { toSignal } from '@angular/core/rxjs-interop'
 import { LogoComponent } from '@shared/ui/logo'
 import { ShowSvgComponent, ShowSvgNoStylesComponent } from '@shared/ui'
 import { MouseOverRenderDirective } from '@canvas/rendering/data-access'
 import { SideUiDataViewComponent } from '../side-ui-data-view/side-ui-data-view.component'
+import { UiStoreService } from '@overlays/ui-store/data-access'
 
 @Component({
 	selector: 'side-ui-nav-bar',

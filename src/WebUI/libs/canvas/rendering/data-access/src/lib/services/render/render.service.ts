@@ -12,9 +12,12 @@ import { drawSelectedBox, drawSelectedStringBoxV3 } from './render-fns'
 import { inject, Injectable } from '@angular/core'
 import { assertNotNull, shadeColor } from '@shared/utils'
 import { GraphicsStoreService } from '@canvas/graphics/data-access'
-import { PanelLinksService, PanelLinksStoreService } from '@entities/panel-links/data-access'
-import { isPanel } from '@entities/panels/data-access'
-import { injectEntityStore } from '@entities/common/data-access'
+import {
+	EntityStoreService,
+	PanelLinksService,
+	PanelLinksStoreService,
+} from '@entities/data-access'
+import { isPanel } from '@entities/utils'
 import {
 	AngleDegrees,
 	CANVAS_COLORS,
@@ -31,7 +34,7 @@ import { toRadians } from '@canvas/utils'
 export class RenderService {
 	private _canvasElementService = inject(CanvasElementService)
 	private _divElements = inject(DivElementsService)
-	private _entities = injectEntityStore()
+	private _entities = inject(EntityStoreService)
 	// private _entities = inject(EntityStoreService)
 	// private _entities = inject(EntityStoreService)
 	// private _app = inject(AppStoreService)

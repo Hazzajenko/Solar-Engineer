@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core'
-import { AngleDegrees, AngleRadians } from '@design-app/shared'
-import { roundToTwoDecimals } from '@design-app/utils'
+import { AngleDegrees, AngleRadians } from '@shared/data-access/models'
+import { roundToTwoDecimals } from '@shared/utils'
 
 @Pipe({
 	name: 'radiansToDegrees',

@@ -1,10 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core'
 import { NgIf } from '@angular/common'
 import { ShowSvgComponent } from '@shared/ui'
-import { CanvasPanel, CanvasString } from '@design-app/shared'
-import { EntityStoreService, RenderService, UiStoreService } from '@design-app/data-access'
 import { Point } from '@shared/data-access/models'
 import { ContextMenuTemplateComponent } from '../context-menu-template/context-menu-template.component'
+import { EntityStoreService } from '@entities/data-access'
+import { RenderService } from '@canvas/rendering/data-access'
+import { UiStoreService } from '@overlays/ui-store/data-access'
+import { CanvasPanel, CanvasString } from '@entities/shared'
 
 @Component({
 	selector: 'app-single-panel-menu',
@@ -55,7 +57,7 @@ export class SinglePanelMenuComponent {
 	}
 
 	deletePanel() {
-		this._entityStore.panels.dispatch.deletePanel(this.panel.id)
+		this._entityStore.panels.deletePanel(this.panel.id)
 		this._render.renderCanvasApp()
 		this._uiStore.dispatch.closeContextMenu()
 	}

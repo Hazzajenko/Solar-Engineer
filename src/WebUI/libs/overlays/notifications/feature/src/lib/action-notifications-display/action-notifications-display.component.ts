@@ -1,20 +1,19 @@
 import { ChangeDetectionStrategy, Component, inject, Renderer2, signal } from '@angular/core'
 import { NgForOf, NgIf } from '@angular/common'
 import { ActionNotificationComponent } from '../action-notification'
+import { toSignal } from '@angular/core/rxjs-interop'
+import { notificationAnimation } from '@shared/animations'
+import { LetDirective } from '@ngrx/component'
 import {
 	ActionNotificationModel,
 	DEFAULT_NOTIFICATION_DURATION,
 	NotificationsStoreService,
-} from '@design-app/data-access'
-import { toSignal } from '@angular/core/rxjs-interop'
-import { notificationAnimation } from '@shared/animations'
-import { LetDirective } from '@ngrx/component'
-import { NgOnInitV2Directive } from '@design-app/feature'
+} from '@overlays/notifications/data-access'
 
 @Component({
 	selector: 'app-action-notifications-display',
 	standalone: true,
-	imports: [NgForOf, ActionNotificationComponent, NgIf, LetDirective, NgOnInitV2Directive],
+	imports: [NgForOf, ActionNotificationComponent, NgIf, LetDirective],
 	templateUrl: './action-notifications-display.component.html',
 	styles: [],
 	changeDetection: ChangeDetectionStrategy.OnPush,

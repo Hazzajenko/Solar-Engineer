@@ -3,16 +3,14 @@ import { Component, ElementRef, inject, Input, NgZone, Renderer2, ViewChild } fr
 import { toSignal } from '@angular/core/rxjs-interop'
 import { MatButtonModule } from '@angular/material/button'
 import { MatDialogModule } from '@angular/material/dialog'
-import {
-	AppStateStoreService,
-	createStringWithPanelsV2,
-	EntityStoreService,
-	RenderService,
-	SelectedStoreService,
-	UiStoreService,
-} from '@design-app/data-access'
 import { LetDirective } from '@ngrx/component'
 import { DialogBackdropTemplateComponent } from '../dialog-backdrop-template/dialog-backdrop-template.component'
+import { EntityStoreService } from '@entities/data-access'
+import { SelectedStoreService } from '@canvas/selected/data-access'
+import { RenderService } from '@canvas/rendering/data-access'
+import { AppStateStoreService } from '@canvas/app/data-access'
+import { UiStoreService } from '@overlays/ui-store/data-access'
+import { createStringWithPanelsV2 } from '@entities/utils'
 
 @Component({
 	selector: 'dialog-move-panels-to-string-v4',
@@ -39,7 +37,8 @@ export class MovePanelsToStringDialogComponent {
 	private _uiStore = inject(UiStoreService)
 	@ViewChild('backdrop') backdrop!: ElementRef<HTMLDivElement>
 	@ViewChild('dialog') dialog!: ElementRef<HTMLDivElement>
-	strings = toSignal(this._entities.strings.allStringsWithPanels$)
+	strings = toSignal(this._entities.strings.allStrings$)
+	// strings = toSignal(this._entities.strings.allStringsWithPanels$)
 	// dialogId!: string
 	panelIds!: string[]
 
@@ -56,8 +55,8 @@ export class MovePanelsToStringDialogComponent {
 		}
 		const amountOfStrings = this._entities.strings.allStrings.length
 		const { string, panelUpdates } = createStringWithPanelsV2(multipleSelectedIds, amountOfStrings)
-		this._entities.strings.dispatch.addString(string)
-		this._entities.panels.dispatch.updateManyPanels(panelUpdates)
+		this._entities.strings.addString(string)
+		this._entities.panels.updateManyPanels(panelUpdates)
 		this._selectedStore.dispatch.selectString(string.id)
 		this._render.renderCanvasApp()
 		this._uiStore.dispatch.closeDialog()

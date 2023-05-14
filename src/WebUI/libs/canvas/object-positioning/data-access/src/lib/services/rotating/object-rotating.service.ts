@@ -13,7 +13,7 @@ import {
 	TrigonometricBounds,
 } from '@shared/data-access/models'
 import { assertNotNull } from '@shared/utils'
-import { injectEntityStore } from '@entities/common/data-access'
+import { EntityStoreService } from '@entities/data-access'
 import {
 	getAngleInRadiansBetweenTwoPoints,
 	getCommonEntityTrigonometricBounds,
@@ -21,13 +21,13 @@ import {
 	rotatingKeysDown,
 	updateObjectByIdForStore,
 } from '@canvas/utils'
-import { CanvasPanel } from '@entities/panels/data-access'
+import { CanvasPanel } from '@entities/shared'
 
 @Injectable({
 	providedIn: 'root',
 })
 export class ObjectRotatingService {
-	private _entities = injectEntityStore()
+	private _entities = inject(EntityStoreService)
 	// private _entities = inject(EntityStoreService)
 	private _render = inject(RenderService)
 	// private _app = inject(AppStoreService)

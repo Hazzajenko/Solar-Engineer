@@ -6,8 +6,8 @@ import {
 import { NgForOf } from '@angular/common'
 import { LetDirective } from '@ngrx/component'
 import { StringManipulatePipe } from '@shared/pipes'
-import { GraphicsStoreService } from '@design-app/data-access'
 import { toSignal } from '@angular/core/rxjs-interop'
+import { GraphicsStoreService } from '@canvas/graphics/data-access'
 
 @Component({
 	selector: 'app-display-settings',

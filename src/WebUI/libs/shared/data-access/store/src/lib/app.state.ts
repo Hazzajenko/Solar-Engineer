@@ -3,11 +3,11 @@ import { routerReducer, RouterReducerState } from '@ngrx/router-store'
 import { ActionReducer, ActionReducerMap, MetaReducer } from '@ngrx/store'
 import { environment } from '@shared/environment'
 
-export interface AppState {
+export interface GlobalAppState {
 	router: RouterReducerState<any>
 }
 
-export const reducers: ActionReducerMap<AppState> = {
+export const reducers: ActionReducerMap<GlobalAppState> = {
 	router: routerReducer,
 }
 
@@ -21,4 +21,4 @@ export const logger =
 		return reducer(state, action)
 	}
 
-export const metaReducers: MetaReducer<AppState>[] = !environment.production ? [logger] : []
+export const metaReducers: MetaReducer<GlobalAppState>[] = !environment.production ? [logger] : []

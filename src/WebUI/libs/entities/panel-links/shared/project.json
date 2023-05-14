@@ -1,0 +1,40 @@
+{
+  "name": "entities-panel-links-shared",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/entities/panel-links/shared/src",
+  "prefix": "app",
+  "tags": [
+    "panel-links:shared"
+  ],
+  "projectType": "library",
+  "targets": {
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/{projectRoot}"
+      ],
+      "options": {
+        "jestConfig": "libs/entities/panel-links/shared/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": [
+        "{options.outputFile}"
+      ],
+      "options": {
+        "lintFilePatterns": [
+          "libs/entities/panel-links/shared/**/*.ts",
+          "libs/entities/panel-links/shared/**/*.html"
+        ]
+      }
+    }
+  }
+}

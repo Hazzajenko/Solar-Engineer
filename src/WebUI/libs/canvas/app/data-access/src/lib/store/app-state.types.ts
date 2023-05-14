@@ -1,4 +1,4 @@
-import { ContextMenuType } from '@canvas/view-positioning/data-access'
+// import { ContextMenuType } from '@canvas/view-positioning/data-access'
 
 export const DRAG_BOX_STATE = {
 	CREATION_BOX_IN_PROGRESS: 'CreationBoxInProgress',
@@ -84,10 +84,10 @@ export const CONTEXT_MENU_OPEN_STATE = {
 export type ContextMenuOpenState =
 	(typeof CONTEXT_MENU_OPEN_STATE)[keyof typeof CONTEXT_MENU_OPEN_STATE]
 
-export type ContextMenuState = {
-	state: ContextMenuOpenState
-	type: ContextMenuType | undefined
-}
+/*export type ContextMenuState = {
+ state: ContextMenuOpenState
+ type: ContextMenuType | undefined
+ }*/
 
 export const VIEW_POSITIONING_STATE = {
 	VIEW_DRAGGING_IN_PROGRESS: 'ViewDraggingInProgress',

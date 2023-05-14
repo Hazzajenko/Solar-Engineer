@@ -4,14 +4,14 @@ import { ENTITY_SELECTED_STATE, SelectedStoreService } from '../store'
 import { inject, Injectable } from '@angular/core'
 import { CanvasEntity } from '@shared/data-access/models'
 import { assertNotNull } from '@shared/utils'
-import { injectEntityStore } from '@entities/common/data-access'
+import { EntityStoreService } from '@entities/data-access'
 
 @Injectable({
 	providedIn: 'root',
 })
 export class SelectedService {
 	// private _entities = inject(EntityStoreService)
-	private _entities = injectEntityStore()
+	private _entities = inject(EntityStoreService)
 	// private _app = inject(AppStoreService)
 	private _appStore = inject(AppStateStoreService)
 	private _selectedStore = inject(SelectedStoreService)

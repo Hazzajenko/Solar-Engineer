@@ -1,4 +1,4 @@
-import { NEARBY_LINES_STATE } from '@design-app/data-access'
+import { NEARBY_LINES_STATE } from '@canvas/graphics/data-access'
 
 export const NEARBY_GRAPHICS_EVENT = {
 	NEARBY_LINES_TOGGLE: { type: 'NearbyLinesToggle' },

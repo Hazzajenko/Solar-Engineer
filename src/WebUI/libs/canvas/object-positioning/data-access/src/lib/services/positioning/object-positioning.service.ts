@@ -21,7 +21,7 @@ import {
 } from '@shared/data-access/models'
 import { assertNotNull, groupInto2dArray } from '@shared/utils'
 import { sortBy } from 'lodash'
-import { injectEntityStore } from '@entities/common/data-access'
+import { EntityStoreService } from '@entities/data-access'
 import {
 	changeCanvasCursor,
 	EntityFactory,
@@ -38,13 +38,13 @@ import {
 	multiSelectDraggingKeysDown,
 	updateObjectById,
 } from '@canvas/utils'
-import { CanvasPanel } from '@entities/panels/data-access'
+import { CanvasPanel } from '@entities/shared'
 
 @Injectable({
 	providedIn: 'root',
 })
 export class ObjectPositioningService {
-	private _entities = injectEntityStore()
+	private _entities = inject(EntityStoreService)
 	// private _entities = inject(EntityStoreService)
 	private _domPoint = inject(DomPointService)
 	private _render = inject(RenderService)

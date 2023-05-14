@@ -1,11 +1,13 @@
 import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core'
-import { GetStringWithPanelIdsPipe } from '@design-app/feature'
 import { NgIf } from '@angular/common'
 import { ShowSvgComponent } from '@shared/ui'
-import { CanvasString } from '@design-app/shared'
-import { EntityStoreService, RenderService, UiStoreService } from '@design-app/data-access'
 import { ContextMenuTemplateComponent } from '../context-menu-template/context-menu-template.component'
 import { Point } from '@shared/data-access/models'
+import { GetStringWithPanelIdsPipe } from '@entities/utils'
+import { EntityStoreService } from '@entities/data-access'
+import { RenderService } from '@canvas/rendering/data-access'
+import { UiStoreService } from '@overlays/ui-store/data-access'
+import { CanvasString } from '@entities/shared'
 
 @Component({
 	selector: 'app-string-menu',
