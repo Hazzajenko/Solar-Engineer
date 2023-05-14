@@ -1,21 +1,25 @@
 import { AppStateStoreService, CanvasElementService, MODE_STATE } from '@canvas/app/data-access'
 import { DomPointService } from '@canvas/object-positioning/data-access'
-// import { EntityStoreService } from '../entities'
 import { RenderService } from '../render'
 import { SelectedStoreService } from '@canvas/selected/data-access'
 import { inject, Injectable } from '@angular/core'
-import { CANVAS_COLORS, ENTITY_TYPE, SizeByType, TransformedPoint } from '@design-app/shared'
+import {
+	CANVAS_COLORS,
+	CURSOR_TYPE,
+	ENTITY_TYPE,
+	SizeByType,
+	TransformedPoint,
+} from '@shared/data-access/models'
+import { assertNotNull } from '@shared/utils'
+import { injectEntityStore } from '@entities/common/data-access'
 import {
 	changeCanvasCursor,
-	createPanel,
 	dragBoxKeysDown,
 	getAllAvailableEntitySpotsBetweenTwoPoints,
 	getAllEntitiesBetweenTwoPoints,
 	getCompleteBoundsFromMultipleEntitiesWithPadding,
-} from '@design-app/utils'
-import { CURSOR_TYPE } from '@shared/data-access/models'
-import { assertNotNull } from '@shared/utils'
-import { EntityStoreService } from '@design-app/data-access'
+} from '@canvas/utils'
+import { createPanel } from '@entities/panels/data-access'
 
 @Injectable({
 	providedIn: 'root',
@@ -23,7 +27,7 @@ import { EntityStoreService } from '@design-app/data-access'
 export class DragBoxService {
 	private _canvasElementService = inject(CanvasElementService)
 	private _domPointService = inject(DomPointService)
-	private _entities = inject(EntityStoreService)
+	private _entities = injectEntityStore()
 	// private _entities = inject(EntityStoreService)
 	// private _state = inject(CanvasClientStateService)
 	private _render = inject(RenderService)
@@ -112,7 +116,7 @@ export class DragBoxService {
 		const panelsInArea = getAllEntitiesBetweenTwoPoints(
 			start,
 			currentPoint,
-			this._entities.panels.allPanels,
+			this._entities.panels.allPanels(),
 		)
 		if (panelsInArea) {
 			const entitiesInAreaIds = panelsInArea.map((panel) => panel.id)
@@ -174,7 +178,7 @@ export class DragBoxService {
 		const spots = getAllAvailableEntitySpotsBetweenTwoPoints(
 			dragBoxStart,
 			currentPoint,
-			this._entities.panels.allPanels, // this._state.entities.panels.getEntities(),
+			this._entities.panels.allPanels(), // this._state.entities.panels.getEntities(),
 		)
 		// const spots = this._objectPositioning.getAllAvailableEntitySpotsBetweenTwoPoints(dragBoxStart, currentPoint)
 		if (!spots || !spots.length) return
@@ -189,7 +193,7 @@ export class DragBoxService {
 		 dragBoxStart: undefined,
 		 },
 		 })*/
-		this._entities.panels.dispatch.addManyPanels(newPanels)
+		this._entities.panels.addManyPanels(newPanels)
 		// this._state.entities.panels.addManyEntities(newPanels)
 		this._app.dispatch.setDragBoxState('NoDragBox')
 		// this._app.sendEvent({ type: 'StopDragBox' })
@@ -261,7 +265,7 @@ export class DragBoxService {
 			const spots = getAllAvailableEntitySpotsBetweenTwoPoints(
 				dragBoxStart,
 				currentPoint,
-				this._entities.panels.allPanels, // this._state.entities.panels.getEntities(),
+				this._entities.panels.allPanels(), // this._state.entities.panels.getEntities(),
 			)
 			if (!spots) return
 

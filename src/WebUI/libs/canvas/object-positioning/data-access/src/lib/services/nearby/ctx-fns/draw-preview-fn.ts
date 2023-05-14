@@ -1,4 +1,4 @@
-import { CANVAS_COLORS, CompleteEntityBounds } from '@design-app/shared'
+import { CANVAS_COLORS, CompleteEntityBounds } from '@shared/data-access/models'
 
 export const getDefaultDrawPreviewCtxFn = (completeBounds: CompleteEntityBounds) => {
 	return (ctx: CanvasRenderingContext2D) => {

@@ -5,15 +5,16 @@ import {
 	EntityType,
 	EventWithOffsets,
 	MiddlePoint,
+	Point,
+	Size,
 	SizeByType,
 	TransformedPoint,
-} from '@design-app/shared'
+} from '@shared/data-access/models'
 import {
 	eventOffsetsToPointLocation,
 	eventToPointLocation,
 	getTopLeftPointFromTransformedPoint,
-} from '@design-app/utils'
-import { Point, Size } from '@shared/data-access/models'
+} from '@canvas/utils'
 
 @Injectable({
 	providedIn: 'root',

@@ -1,9 +1,8 @@
 import { WindowsActions } from './windows.actions'
 import { inject, Injectable } from '@angular/core'
-import { DraggableWindow } from '@design-app/shared'
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { Store } from '@ngrx/store'
-
+import { DraggableWindow } from '@shared/data-access/models'
 
 @Injectable({
 	providedIn: 'root',

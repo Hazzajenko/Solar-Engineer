@@ -10,6 +10,11 @@ import { SelectedStoreService } from '@canvas/selected/data-access'
 import { CanvasRenderOptions } from '../../types'
 import { drawSelectedBox, drawSelectedStringBoxV3 } from './render-fns'
 import { inject, Injectable } from '@angular/core'
+import { assertNotNull, shadeColor } from '@shared/utils'
+import { GraphicsStoreService } from '@canvas/graphics/data-access'
+import { PanelLinksService, PanelLinksStoreService } from '@entities/panel-links/data-access'
+import { isPanel } from '@entities/panels/data-access'
+import { injectEntityStore } from '@entities/common/data-access'
 import {
 	AngleDegrees,
 	CANVAS_COLORS,
@@ -17,13 +22,8 @@ import {
 	CanvasPanel,
 	PANEL_STROKE_STYLE,
 	UndefinedStringId,
-} from '@design-app/shared'
-import { isPanel, toRadians } from '@design-app/utils'
-import { assertNotNull, shadeColor } from '@shared/utils'
-import { GraphicsStoreService } from '@canvas/graphics/data-access'
-import { PanelLinksService, PanelLinksStoreService } from '@entities/panel-links/data-access'
-import { EntityStoreService } from '@design-app/data-access'
-import { injectPanelsFeature } from '@entities/panels/data-access'
+} from '@shared/data-access/models'
+import { toRadians } from '@canvas/utils'
 
 @Injectable({
 	providedIn: 'root',
@@ -31,7 +31,8 @@ import { injectPanelsFeature } from '@entities/panels/data-access'
 export class RenderService {
 	private _canvasElementService = inject(CanvasElementService)
 	private _divElements = inject(DivElementsService)
-	private _entities = inject(EntityStoreService)
+	private _entities = injectEntityStore()
+	// private _entities = inject(EntityStoreService)
 	// private _entities = inject(EntityStoreService)
 	// private _app = inject(AppStoreService)
 	// private _appStore = inject(AppNgrxStateStore)
@@ -40,7 +41,7 @@ export class RenderService {
 	private _graphicsStore = inject(GraphicsStoreService)
 	private _panelLinksStore = inject(PanelLinksStoreService)
 	private _panelLinks = inject(PanelLinksService)
-	private _panelsStore = injectPanelsFeature()
+	// private _panelsStore = injectPanelsFeature()
 
 	private lastRenderTime = performance.now()
 
@@ -73,7 +74,8 @@ export class RenderService {
 	}
 
 	get allPanels() {
-		return this._entities.panels.allPanels
+		return this._entities.panels.allPanels()
+		// return this._entities.panels.allPanels
 		// return this._state.entities.panels.getEntities()
 	}
 
@@ -269,7 +271,7 @@ export class RenderService {
 			const selectedStringId = this._selectedStore.state.selectedStringId
 
 			if (shouldRenderSelectedStringBox && selectedStringId) {
-				const selectedString = this._entities.strings.entities[selectedStringId]
+				const selectedString = this._entities.strings.getById(selectedStringId)
 				assertNotNull(selectedString, 'selectedString')
 				const selectedStringPanels = this._entities.panels.getByStringId(selectedString.id)
 
@@ -280,7 +282,7 @@ export class RenderService {
 			}
 
 			if (this._graphicsStore.state.stringBoxes) {
-				const stringsWithPanels = this._entities.strings.allStrings.map((string) => ({
+				const stringsWithPanels = this._entities.strings.allStrings().map((string) => ({
 					string,
 					panels: this._entities.panels.getByStringId(string.id),
 				}))

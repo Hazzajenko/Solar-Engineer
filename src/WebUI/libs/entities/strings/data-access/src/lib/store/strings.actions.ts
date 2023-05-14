@@ -1,6 +1,6 @@
-import { CanvasString } from '@design-app/shared'
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
+import { CanvasString } from '../types'
 
 export const StringsActions = createActionGroup({
 	source: 'Strings Store',

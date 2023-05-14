@@ -1,4 +1,8 @@
-import { importProvidersFrom, provideZoneChangeDetection } from '@angular/core'
+import {
+	importProvidersFrom,
+	makeEnvironmentProviders,
+	provideZoneChangeDetection,
+} from '@angular/core'
 import { provideRouter, withEnabledBlockingInitialNavigation } from '@angular/router'
 import { appRoutes, tokenGetter } from '@app/config'
 import {
@@ -16,9 +20,9 @@ import { JwtModule } from '@auth0/angular-jwt'
 import { provideStore } from '@ngrx/store'
 import { metaReducers, reducers } from '@shared/data-access/store'
 import { provideRouterStore } from '@ngrx/router-store'
-import { DesignAppNgrxStores } from '@design-app/data-access'
 import { storeDevtoolsModule } from '@shared/config'
 import { jwtInterceptorProvider } from '@auth/interceptors'
+import { DesignAppNgrxStores, provideCanvasAppStores } from '@canvas/app/data-access'
 
 export const webAppProviders = [
 	provideZoneChangeDetection({ eventCoalescing: true }),
@@ -46,3 +50,33 @@ export const webAppProviders = [
 	...storeDevtoolsModule,
 	jwtInterceptorProvider,
 ]
+
+export function provideWebAppProviders() {
+	return makeEnvironmentProviders([
+		provideZoneChangeDetection({ eventCoalescing: true }),
+		provideRouter(appRoutes, withEnabledBlockingInitialNavigation() /*, withDebugTracing()*/),
+		provideStore(reducers, { metaReducers }),
+		provideCanvasAppStores(),
+		provideRouterStore(),
+		provideAnimations(),
+		provideNoopAnimations(),
+		provideHttpClient(),
+		provideToastr(),
+		importProvidersFrom(
+			BrowserAnimationsModule,
+			BrowserModule,
+			MatDialogModule,
+			MatSnackBarModule,
+			MatSnackBarRef,
+			DatePipe,
+			JwtModule.forRoot({
+				config: {
+					tokenGetter: tokenGetter,
+				},
+			}),
+		),
+
+		...storeDevtoolsModule,
+		jwtInterceptorProvider,
+	])
+}

@@ -1,21 +1,19 @@
 import { inject, Pipe, PipeTransform } from '@angular/core'
+import { injectEntityStore } from '@entities/common/data-access'
+import { RenderService } from '@canvas/rendering/data-access'
+import { AppStateStoreService } from '@canvas/app/data-access'
+import { DIALOG_COMPONENT, DialogInput, UiStoreService } from '@overlays/ui-store/data-access'
 import {
-	AppStateStoreService,
 	ContextMenuType,
-	DIALOG_COMPONENT,
-	DialogInput,
-	EntityStoreService,
 	isMultipleEntitiesContextMenuTemplate,
-	RenderService,
-	UiStoreService,
-} from '@design-app/data-access'
+} from '@canvas/view-positioning/data-access'
 
 @Pipe({
 	name: 'getSelectedPanels',
 	standalone: true,
 })
 export class GetSelectedPanelsPipe implements PipeTransform {
-	private _entities = inject(EntityStoreService)
+	private _entities = injectEntityStore()
 	private _render = inject(RenderService)
 	private _appStore = inject(AppStateStoreService)
 	private _uiStore = inject(UiStoreService)
@@ -48,7 +46,8 @@ export class GetSelectedPanelsPipe implements PipeTransform {
 				return
 			},
 			deletePanels: () => {
-				this._entities.panels.dispatch.deleteManyPanels(menu.ids)
+				this._entities.panels.deleteManyPanels(menu.ids)
+				// this._entities.panels.dispatch.deleteManyPanels(menu.ids)
 				this._render.renderCanvasApp()
 				this._uiStore.dispatch.closeContextMenu()
 				// this._appStore.dispatch.setContextMenuState('NoContextMenu')

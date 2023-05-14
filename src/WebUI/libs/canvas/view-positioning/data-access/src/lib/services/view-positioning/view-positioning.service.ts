@@ -1,10 +1,9 @@
 import { AppStateStoreService, CanvasElementService } from '@canvas/app/data-access'
 import { RenderService } from '@canvas/rendering/data-access'
 import { inject, Injectable } from '@angular/core'
-import { TransformedPoint } from '@design-app/shared'
-import { draggingScreenKeysDown } from '@design-app/utils'
-import { CURSOR_TYPE } from '@shared/data-access/models'
+import { CURSOR_TYPE, TransformedPoint } from '@shared/data-access/models'
 import { assertNotNull } from '@shared/utils'
+import { draggingScreenKeysDown } from '@canvas/utils'
 
 @Injectable({
 	providedIn: 'root',

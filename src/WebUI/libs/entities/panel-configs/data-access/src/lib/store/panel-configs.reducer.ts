@@ -111,3 +111,5 @@ export function injectPanelConfigsFeature() {
 		},
 	}
 }
+
+export type PanelConfigsFeature = ReturnType<typeof injectPanelConfigsFeature>

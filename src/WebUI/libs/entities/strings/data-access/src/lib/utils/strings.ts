@@ -1,6 +1,7 @@
-import { CanvasString, StringId, UndefinedStringId } from '@design-app/shared'
+// import { CanvasString, StringId, UndefinedStringId } from '@design-app/shared'
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { getRandomVibrantColorHex, newGuid } from '@shared/utils'
+import { CanvasString, StringId, UndefinedStringId } from '../types'
 
 export const isStringId = (id: string): id is StringId => {
 	return id === UndefinedStringId || id.startsWith('stringId')

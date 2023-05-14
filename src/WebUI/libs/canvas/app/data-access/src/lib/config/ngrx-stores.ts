@@ -10,7 +10,6 @@ import { WINDOWS_FEATURE_KEY, windowsReducer } from '@overlays/windows/data-acce
 import { provideState } from '@ngrx/store'
 import { UI_FEATURE_KEY, uiReducer } from '@overlays/ui-store/data-access'
 import { provideEffects } from '@ngrx/effects'
-import { providePanelsFeature } from '@entities/panels/data-access'
 import { provideStringsFeature } from '@entities/strings/data-access'
 import * as globalEffects from '../global/global.effects'
 import { KEYS_FEATURE_KEY, keysReducer } from '@canvas/keys/data-access'
@@ -20,6 +19,8 @@ import {
 	notificationsReducer,
 } from '@overlays/notifications/data-access'
 import { providePanelConfigsFeature } from '@entities/panel-configs/data-access'
+import { providePanelsFeature } from '@entities/panels/data-access'
+import { makeEnvironmentProviders } from '@angular/core'
 
 const effectsProviders = [
 	// provideEffects(panelsEffects),
@@ -40,3 +41,21 @@ export const DesignAppNgrxStores = [
 	providePanelLinksFeature(),
 	...effectsProviders,
 ] as const
+
+export function provideCanvasAppStores() {
+	return makeEnvironmentProviders([
+		providePanelsFeature(),
+		provideStringsFeature(),
+		providePanelConfigsFeature(),
+		providePanelLinksFeature(),
+		provideState(APP_STATE_FEATURE_KEY, appStateReducer),
+		provideState(UI_FEATURE_KEY, uiReducer),
+		provideState(SELECTED_FEATURE_KEY, selectedReducer),
+		provideState(OBJECT_POSITIONING_FEATURE_KEY, objectPositioningReducer),
+		provideState(GRAPHICS_FEATURE_KEY, graphicsReducer),
+		provideState(WINDOWS_FEATURE_KEY, windowsReducer),
+		provideState(KEYS_FEATURE_KEY, keysReducer),
+		provideState(NOTIFICATIONS_FEATURE_KEY, notificationsReducer),
+		...effectsProviders,
+	])
+}

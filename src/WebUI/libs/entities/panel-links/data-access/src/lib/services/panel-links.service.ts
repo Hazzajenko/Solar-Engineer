@@ -1,7 +1,6 @@
 import { AppStateStoreService } from '@canvas/app/data-access'
 // import { EntityStoreService } from '../entities'
 import { inject, Injectable } from '@angular/core'
-import { CanvasPanel, UndefinedStringId } from '@design-app/shared'
 import { PanelLinksStoreService } from '../store'
 import {
 	getStarterPolarityFromDirection,
@@ -11,13 +10,16 @@ import {
 } from '../types'
 import { assertNotNull, newGuid } from '@shared/utils'
 import { SelectedStoreService } from '@canvas/selected/data-access'
-import { EntityStoreService } from '@design-app/data-access'
+import { injectEntityStore } from '@entities/common/data-access'
+import { CanvasPanel } from '@entities/panels/data-access'
+import { UndefinedStringId } from '@entities/strings/data-access'
 
 @Injectable({
 	providedIn: 'root',
 })
 export class PanelLinksService {
-	private _entities = inject(EntityStoreService)
+	private _entities = injectEntityStore()
+	// private _entities = inject(EntityStoreService)
 	private _appStore = inject(AppStateStoreService)
 	private _panelLinksStore = inject(PanelLinksStoreService)
 	private _selectedStore = inject(SelectedStoreService)

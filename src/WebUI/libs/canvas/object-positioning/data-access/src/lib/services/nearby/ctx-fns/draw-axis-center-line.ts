@@ -7,7 +7,7 @@ import {
 	CompleteEntityBounds,
 	EntityBounds,
 	NearbyEntity,
-} from '@design-app/shared'
+} from '@shared/data-access/models'
 
 export const getEntityAxisCenterWithEntityPreviewFn = (
 	altKey: boolean,

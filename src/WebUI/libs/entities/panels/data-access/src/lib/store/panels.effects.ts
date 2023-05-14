@@ -1,8 +1,8 @@
+import { SelectedActions, SelectedStoreService } from '@canvas/selected/data-access'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { inject } from '@angular/core'
-import { map } from 'rxjs'
 import { PanelsActions } from './panels.actions'
-import { SelectedActions, SelectedStoreService } from '@canvas/selected/data-access'
+import { map } from 'rxjs'
 
 export const removeSelectedIfDeleted$ = createEffect(
 	(actions$ = inject(Actions), selectedStore = inject(SelectedStoreService)) => {

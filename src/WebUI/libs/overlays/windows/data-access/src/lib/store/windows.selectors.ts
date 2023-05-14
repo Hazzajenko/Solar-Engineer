@@ -1,6 +1,6 @@
 import { WINDOWS_FEATURE_KEY, windowsAdapter, WindowsState } from './windows.reducer'
-import { DraggableWindow } from '@design-app/shared'
 import { createFeatureSelector, createSelector } from '@ngrx/store'
+import { DraggableWindow } from '@shared/data-access/models'
 
 export const selectWindowsState = createFeatureSelector<WindowsState>(WINDOWS_FEATURE_KEY)
 

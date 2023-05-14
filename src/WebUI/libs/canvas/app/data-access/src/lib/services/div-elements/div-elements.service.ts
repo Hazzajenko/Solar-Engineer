@@ -1,8 +1,6 @@
 import { DivElement, InitialDivElements } from './div-element'
 import { Injectable } from '@angular/core'
-import { EntityStateFactory } from '@design-app/utils'
-import { getHtmlDivElementById } from '@shared/utils'
-
+import { EntityStateFactory, getHtmlDivElementById } from '@shared/utils'
 
 @Injectable({
 	providedIn: 'root',

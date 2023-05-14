@@ -8,13 +8,17 @@ import {
 	Renderer2,
 	ViewContainerRef,
 } from '@angular/core'
-import { CONTEXT_MENU_COMPONENT, ContextMenuInput, UiStoreService } from '@design-app/data-access'
 import {
 	MultiplePanelsMenuComponent,
 	SinglePanelMenuComponent,
 	StringMenuComponent,
 } from '@overlays/context-menus/feature'
 import { toSignal } from '@angular/core/rxjs-interop'
+import {
+	CONTEXT_MENU_COMPONENT,
+	ContextMenuInput,
+	UiStoreService,
+} from '@overlays/ui-store/data-access'
 
 @Directive({
 	selector: '[appDynamicContextMenu]',

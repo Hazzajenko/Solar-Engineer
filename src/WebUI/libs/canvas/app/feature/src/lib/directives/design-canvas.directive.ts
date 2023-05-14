@@ -1,38 +1,36 @@
-import { setupCanvas } from '../utils/setup-canvas'
+import { setupCanvas } from '../utils'
 import { Directive, ElementRef, inject, NgZone, OnInit, Renderer2 } from '@angular/core'
 import {
-	AppStateStoreService,
-	CanvasElementService,
-	CONTEXT_MENU_COMPONENT,
+	CANVAS_COLORS,
+	CanvasEntity,
+	ContextMenuEvent,
+	CURSOR_TYPE,
+	DoubleClickEvent,
+	ENTITY_TYPE,
+	EVENT_TYPE,
+	Point,
+	SizeByType,
+	TransformedPoint,
+} from '@shared/data-access/models'
+import { assertNotNull, OnDestroyDirective } from '@shared/utils'
+import { AppStateStoreService, CanvasElementService } from '@canvas/app/data-access'
+import { GraphicsStoreService } from '@canvas/graphics/data-access'
+import {
 	DomPointService,
-	DragBoxService,
-	EntityStoreService,
-	GraphicsStoreService,
-	isPointInsideSelectedStringPanelsByStringIdNgrxWithPanels,
-	KeyEventsService,
 	NearbyService,
 	ObjectPositioningService,
 	ObjectPositioningStoreService,
 	ObjectRotatingService,
-	PanelLinksService,
-	PanelLinksStoreService,
-	RenderService,
-	SelectedService,
-	SelectedStoreService,
-	UiStoreService,
-	ViewPositioningService,
-} from '@design-app/data-access'
-import {
-	CANVAS_COLORS,
-	CanvasEntity,
-	ENTITY_TYPE,
-	SizeByType,
-	TransformedPoint,
-	UndefinedStringId,
-} from '@design-app/shared'
+} from '@canvas/object-positioning/data-access'
+import { SelectedService, SelectedStoreService } from '@canvas/selected/data-access'
+import { PanelLinksService, PanelLinksStoreService } from '@entities/panel-links/data-access'
+import { ViewPositioningService } from '@canvas/view-positioning/data-access'
+import { DragBoxService, RenderService } from '@canvas/rendering/data-access'
+import { injectEntityStore } from '@entities/common/data-access'
+import { CONTEXT_MENU_COMPONENT, UiStoreService } from '@overlays/ui-store/data-access'
+import { KeyEventsService } from '@canvas/keys/data-access'
 import {
 	changeCanvasCursor,
-	createPanel,
 	dragBoxKeysDown,
 	draggingScreenKeysDown,
 	eventToPointLocation,
@@ -42,22 +40,19 @@ import {
 	isContextMenu,
 	isDraggingEntity,
 	isEntityOverlappingWithBounds,
-	isPanel,
 	isPointInsideBounds,
 	isPointInsideEntity,
 	isReadyToMultiDrag,
 	isWheelButton,
 	multiSelectDraggingKeysDownAndIdsNotEmpty,
 	rotatingKeysDown,
-} from '@design-app/utils'
+} from '@canvas/utils'
 import {
-	ContextMenuEvent,
-	CURSOR_TYPE,
-	DoubleClickEvent,
-	EVENT_TYPE,
-	Point,
-} from '@shared/data-access/models'
-import { assertNotNull, OnDestroyDirective } from '@shared/utils'
+	createPanel,
+	isPanel,
+	isPointInsideSelectedStringPanelsByStringIdNgrxWithPanels,
+} from '@entities/panels/data-access'
+import { UndefinedStringId } from '@entities/strings/data-access'
 
 @Directive({
 	selector: '[appDesignCanvas]',
@@ -81,7 +76,7 @@ export class DesignCanvasDirective implements OnInit {
 	private _view = inject(ViewPositioningService)
 	private _drag = inject(DragBoxService)
 	private _render = inject(RenderService)
-	private _entities = inject(EntityStoreService)
+	private _entities = injectEntityStore()
 	private _uiStore = inject(UiStoreService)
 	// private _entities = inject(EntityStoreService)
 	private _selected = inject(SelectedService)
@@ -120,17 +115,20 @@ export class DesignCanvasDirective implements OnInit {
 		}, 50)
 	}
 
-	private get panelEntities() {
-		return this._entities.panels.entities
-	}
+	/*	private get panelEntities() {
+	 return this._entities.panels.entities
+	 }*/
 
 	private get allPanels() {
 		return this._entities.panels.allPanels
 	}
 
-	private get stringEntities() {
-		return this._entities.strings.entities
-	}
+	/*
+
+	 private get stringEntities() {
+	 return this._entities.strings.entities
+	 }
+	 */
 
 	private get allStrings() {
 		return this._entities.strings.allStrings
@@ -454,7 +452,7 @@ export class DesignCanvasDirective implements OnInit {
 			const entity = selectedStringId
 				? createPanel(previewRectLocation, selectedStringId)
 				: createPanel(previewRectLocation)
-			this._entities.panels.dispatch.addPanel(entity)
+			this._entities.panels.addPanel(entity)
 			// this._entities.panels.addEntity(entity)
 			this._nearby.axisPreviewRect = undefined
 			this._appState.dispatch.setPreviewAxisState('None')
@@ -471,7 +469,7 @@ export class DesignCanvasDirective implements OnInit {
 		const entity = selectedStringId
 			? createPanel(location, selectedStringId)
 			: createPanel(location)
-		this._entities.panels.dispatch.addPanel(entity)
+		this._entities.panels.addPanel(entity)
 
 		this._render.renderCanvasApp()
 	}
@@ -547,8 +545,7 @@ export class DesignCanvasDirective implements OnInit {
 
 		const selectedStringId = this._selectedStore.state.selectedStringId
 		if (selectedStringId) {
-			const selectedStringPanels =
-				this._entities.panels.panelsByStringIdMap().get(selectedStringId) ?? []
+			const selectedStringPanels = this._entities.panels.getByStringId(selectedStringId) ?? []
 			// const stringPanels = this._entities.panels.getEntitiesByStringId(selectedStringId)
 			const pointInsideSelectedStringPanels =
 				isPointInsideSelectedStringPanelsByStringIdNgrxWithPanels(
@@ -681,7 +678,9 @@ export class DesignCanvasDirective implements OnInit {
 	private getEntityUnderMouse(event: PointerEvent | TransformedPoint) {
 		const point =
 			event instanceof PointerEvent ? this._domPoint.getTransformedPointFromEvent(event) : event
-		const entitiesUnderMouse = this.allPanels.filter((entity) => isPointInsideEntity(point, entity))
+		const entitiesUnderMouse = this.allPanels().filter((entity) =>
+			isPointInsideEntity(point, entity),
+		)
 		return entitiesUnderMouse[entitiesUnderMouse.length - 1] as CanvasEntity | undefined
 	}
 
@@ -695,7 +694,7 @@ export class DesignCanvasDirective implements OnInit {
 
 		const center = this._domPoint.getTransformedPointFromEvent(event)
 		const mouseBoxBounds = getBoundsFromCenterPoint(center, size)
-		const anyNearClick = !!this.allPanels.find((entity) =>
+		const anyNearClick = !!this.allPanels().find((entity) =>
 			isEntityOverlappingWithBounds(entity, mouseBoxBounds),
 		)
 		if (!anyNearClick) {

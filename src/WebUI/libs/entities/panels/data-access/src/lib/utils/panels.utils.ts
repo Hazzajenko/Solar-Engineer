@@ -1,8 +1,8 @@
-// import { EntityStoreService } from '../entity-store.service'
-import { CanvasPanel, TransformedPoint } from '@design-app/shared'
-import { getCompleteBoundsFromMultipleEntitiesWithPadding, isPointInsideBounds } from '@design-app/utils'
 import { assertNotNull } from '@shared/utils'
-import { EntityStoreService } from '@design-app/data-access'
+import { getCompleteBoundsFromMultipleEntitiesWithPadding, isPointInsideBounds } from '@canvas/utils'
+import { TransformedPoint } from '@shared/data-access/models'
+import { EntityStore } from '@entities/common/data-access'
+import { CanvasPanel } from '../types'
 
 /*export const getSelectedStringPanelBounds = (
  store: EntityStoreService,
@@ -14,7 +14,7 @@ import { EntityStoreService } from '@design-app/data-access'
  return getCompleteBoundsFromMultipleEntitiesWithPadding(selectedStringPanels, 10)
  }*/
 export const getSelectedStringPanelBoundsByStringId = (
-	store: EntityStoreService,
+	store: EntityStore,
 	selectedStringId: string,
 ) => {
 	assertNotNull(selectedStringId)
@@ -23,7 +23,7 @@ export const getSelectedStringPanelBoundsByStringId = (
 }
 
 export const isPointInsideSelectedStringPanelsByStringId = (
-	store: EntityStoreService,
+	store: EntityStore,
 	selectedStringId: string,
 	point: TransformedPoint,
 ) => {
@@ -32,7 +32,7 @@ export const isPointInsideSelectedStringPanelsByStringId = (
 }
 
 export const isPointInsideSelectedStringPanelsByStringIdNgrx = (
-	store: EntityStoreService,
+	store: EntityStore,
 	selectedStringId: string,
 	point: TransformedPoint,
 ) => {
@@ -49,11 +49,11 @@ export const isPointInsideSelectedStringPanelsByStringIdNgrxWithPanels = (
 	return isPointInsideBounds(point, selectedPanelBounds)
 }
 export const getSelectedStringPanelBoundsByStringIdNgrx = (
-	store: EntityStoreService,
+	store: EntityStore,
 	selectedStringId: string,
 ) => {
 	assertNotNull(selectedStringId)
-	const selectedStringPanels = store.panels.panelsByStringIdMap().get(selectedStringId) ?? []
+	const selectedStringPanels = store.panels.getByStringId(selectedStringId) ?? []
 	return getCompleteBoundsFromMultipleEntitiesWithPadding(selectedStringPanels, 10)
 }
 /*export const isPointInsideSelectedStringPanels = (

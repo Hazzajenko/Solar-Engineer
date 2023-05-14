@@ -1,7 +1,7 @@
 import { WindowsActions } from './windows.actions'
-import { DraggableWindow } from '@design-app/shared'
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity'
 import { Action, createReducer, on } from '@ngrx/store'
+import { DraggableWindow } from '@shared/data-access/models'
 
 export const WINDOWS_FEATURE_KEY = 'windows'
 

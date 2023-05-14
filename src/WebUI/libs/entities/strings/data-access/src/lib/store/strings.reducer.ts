@@ -1,5 +1,4 @@
 import { StringsActions } from './strings.actions'
-import { CanvasString } from '@design-app/shared'
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity'
 import { Action, createReducer, on, provideState, Store } from '@ngrx/store'
 import { inject, makeEnvironmentProviders } from '@angular/core'
@@ -12,6 +11,7 @@ import {
 	selectAllStringsWithPanels,
 	selectStringsEntities,
 } from './strings.selectors'
+import { CanvasString } from '../types'
 
 export const STRINGS_FEATURE_KEY = 'strings'
 
@@ -97,3 +97,5 @@ export function injectStringsFeature() {
 		},
 	}
 }
+
+export type StringsFeature = ReturnType<typeof injectStringsFeature>

@@ -97,3 +97,5 @@ export function injectPanelsFeature() {
 		},
 	}
 }
+
+export type PanelsFeature = ReturnType<typeof injectPanelsFeature>

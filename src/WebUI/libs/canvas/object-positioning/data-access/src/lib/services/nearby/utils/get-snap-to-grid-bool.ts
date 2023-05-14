@@ -1,6 +1,6 @@
 import { makeBoundsSmallerByAxis } from '../ctx-fns'
-import { Axis, CompleteEntityBounds, EntityBounds } from '@design-app/shared'
-import { checkOverlapBetweenTwoBounds } from '@design-app/utils'
+import { Axis, CompleteEntityBounds, EntityBounds } from '@shared/data-access/models'
+import { checkOverlapBetweenTwoBounds } from '@canvas/utils'
 
 export const getSnapToGridBoolean = (
 	altKey: boolean,

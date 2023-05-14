@@ -103,3 +103,5 @@ export function injectPanelLinksFeature() {
 		},
 	}
 }
+
+export type PanelLinksFeature = ReturnType<typeof injectPanelLinksFeature>

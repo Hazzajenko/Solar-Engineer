@@ -1,6 +1,6 @@
-import { DraggableWindow } from '@design-app/shared'
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
+import { DraggableWindow } from '@shared/data-access/models'
 
 export const WindowsActions = createActionGroup({
 	source: 'Windows Store',

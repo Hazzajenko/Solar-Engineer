@@ -15,3 +15,5 @@ export function injectEntityStore() {
 		strings,
 	}
 }
+
+export type EntityStore = ReturnType<typeof injectEntityStore>

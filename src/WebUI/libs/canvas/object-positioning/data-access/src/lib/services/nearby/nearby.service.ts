@@ -4,6 +4,9 @@ import { RenderService } from '@canvas/rendering/data-access'
 import { getDefaultDrawPreviewCtxFn } from './ctx-fns'
 import { getNearbyLineDrawCtxFnFromNearbyLinesState } from './utils'
 import { inject, Injectable } from '@angular/core'
+import { groupInto2dArray } from '@shared/utils'
+import { sortBy } from 'lodash'
+import { injectEntityStore } from '@entities/common/data-access'
 import {
 	Axis,
 	CANVAS_COLORS,
@@ -13,7 +16,7 @@ import {
 	NearbyEntity,
 	SizeByType,
 	TransformedPoint,
-} from '@design-app/shared'
+} from '@shared/data-access/models'
 import {
 	findNearbyBoundOverlapOnBothAxis,
 	getBoundsFromArrPoints,
@@ -21,11 +24,7 @@ import {
 	getCtxRectBoundsByAxisV2,
 	getEntityAxisGridLinesByAxisV2,
 	isEntityOverlappingWithBounds,
-} from '@design-app/utils'
-import { groupInto2dArray } from '@shared/utils'
-import { sortBy } from 'lodash'
-// import { GraphicsSettings } from '@canvas/graphics/data-access'
-import { EntityStoreService } from '@design-app/data-access'
+} from '@canvas/utils'
 
 @Injectable({
 	providedIn: 'root',
@@ -33,7 +32,7 @@ import { EntityStoreService } from '@design-app/data-access'
 export class NearbyService {
 	private _render = inject(RenderService)
 	// private _render = inject(CanvasRenderService)
-	private _entities = inject(EntityStoreService)
+	private _entities = injectEntityStore()
 	// private _entities = inject(EntityStoreService)
 	// private _app = inject(AppStoreService)
 	// private _appStore = inject(AppNgrxStateStore)
@@ -55,7 +54,7 @@ export class NearbyService {
 	getDrawEntityPreviewV2Ngrx(event: PointerEvent, currentPoint: TransformedPoint) {
 		const size = SizeByType[ENTITY_TYPE.Panel]
 		const mouseBoxBounds = getCompleteBoundsFromCenterTransformedPoint(currentPoint, size)
-		const entities = this._entities.panels.allPanels
+		const entities = this._entities.panels.allPanels()
 		const nearbyEntitiesOnAxis = findNearbyBoundOverlapOnBothAxis(mouseBoxBounds, entities)
 
 		if (!nearbyEntitiesOnAxis.length) {

@@ -1,34 +1,33 @@
-// import { EntityStoreService } from '../entities'
 import { ObjectPositioningStoreService } from '../../store'
 import { RenderService } from '@canvas/rendering/data-access'
 import { SelectedStoreService } from '@canvas/selected/data-access'
 import { inject, Injectable } from '@angular/core'
+import { Dictionary } from '@ngrx/entity'
+import { UpdateStr } from '@ngrx/entity/src/models'
 import {
 	AngleRadians,
 	CANVAS_COLORS,
-	CanvasPanel,
+	Point,
 	SizeByType,
 	TransformedPoint,
 	TrigonometricBounds,
-} from '@design-app/shared'
+} from '@shared/data-access/models'
+import { assertNotNull } from '@shared/utils'
+import { injectEntityStore } from '@entities/common/data-access'
 import {
 	getAngleInRadiansBetweenTwoPoints,
 	getCommonEntityTrigonometricBounds,
 	rotatePointOffPivot,
 	rotatingKeysDown,
 	updateObjectByIdForStore,
-} from '@design-app/utils'
-import { Dictionary } from '@ngrx/entity'
-import { UpdateStr } from '@ngrx/entity/src/models'
-import { Point } from '@shared/data-access/models'
-import { assertNotNull } from '@shared/utils'
-import { EntityStoreService } from '@design-app/data-access'
+} from '@canvas/utils'
+import { CanvasPanel } from '@entities/panels/data-access'
 
 @Injectable({
 	providedIn: 'root',
 })
 export class ObjectRotatingService {
-	private _entities = inject(EntityStoreService)
+	private _entities = injectEntityStore()
 	// private _entities = inject(EntityStoreService)
 	private _render = inject(RenderService)
 	// private _app = inject(AppStoreService)
@@ -239,7 +238,8 @@ export class ObjectRotatingService {
 			const angle = this.singleToRotateRecentAngle
 			assertNotNull(angle)
 
-			this._entities.panels.dispatch.updatePanel({
+			this._entities.panels.updatePanel({
+				// this._entities.panels.dispatch.updatePanel({
 				id: singleToRotateId,
 				changes: { angle },
 			})
@@ -267,7 +267,7 @@ export class ObjectRotatingService {
 
 				return updateObjectByIdForStore(id, { location, angle })
 			})
-			this._entities.panels.dispatch.updateManyPanels(storeUpdates as UpdateStr<CanvasPanel>[])
+			this._entities.panels.updateManyPanels(storeUpdates as UpdateStr<CanvasPanel>[])
 			this._positioningStore.dispatch.stopRotating()
 			// this._app.sendEvent({ type: 'StopMultipleRotate' })
 		}
@@ -287,7 +287,7 @@ export class ObjectRotatingService {
 		if (singleToRotateId) {
 			const angle = this.singleToRotateRecentAngle
 			assertNotNull(angle)
-			this._entities.panels.dispatch.updatePanel({
+			this._entities.panels.updatePanel({
 				id: singleToRotateId,
 				changes: { angle },
 			})
@@ -305,7 +305,7 @@ export class ObjectRotatingService {
 
 				return updateObjectByIdForStore(id, { location, angle })
 			})
-			this._entities.panels.dispatch.updateManyPanels(storeUpdates as UpdateStr<CanvasPanel>[])
+			this._entities.panels.updateManyPanels(storeUpdates as UpdateStr<CanvasPanel>[])
 			this._positioningStore.dispatch.stopRotating()
 			// this._app.sendEvent({ type: 'StopMultipleRotate' })
 		}

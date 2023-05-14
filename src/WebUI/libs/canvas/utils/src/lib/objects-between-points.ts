@@ -1,14 +1,12 @@
 import { getBoundsFromTwoPoints, getEntityBounds } from './bounds'
 import { filterEntitiesInsideBounds, isEntityInsideTwoPoints } from './bounds-overlapping'
-import { getDiagonalDirectionFromTwoPoints, getStartingSpotForCreationBox } from './directions'
 import {
-	CanvasEntity,
 	DIAGONAL_DIRECTION,
-	ENTITY_TYPE,
-	SizeByType,
+	getDiagonalDirectionFromTwoPoints,
+	getStartingSpotForCreationBox,
 	SpotInBox,
-	TransformedPoint,
-} from '@design-app/shared'
+} from './directions'
+import { CanvasEntity, ENTITY_TYPE, SizeByType, TransformedPoint } from '@shared/data-access/models'
 
 export const getAllEntitiesBetweenTwoPoints = (
 	point1: TransformedPoint,

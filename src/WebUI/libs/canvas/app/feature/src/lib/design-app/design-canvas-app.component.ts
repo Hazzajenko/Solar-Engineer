@@ -1,5 +1,8 @@
-import { DesignCanvasDirective } from '../directives/design-canvas.directive'
-import { DynamicContextMenuDirective, DynamicDialogDirective } from '../directives'
+import {
+	DesignCanvasDirective,
+	DynamicContextMenuDirective,
+	DynamicDialogDirective,
+} from '../directives'
 import {
 	AfterViewInit,
 	ChangeDetectionStrategy,
@@ -15,8 +18,6 @@ import {
 } from '@angular/core'
 import { toSignal } from '@angular/core/rxjs-interop'
 import { MatDialog } from '@angular/material/dialog'
-import { AppStateStoreService, UiStoreService, WindowsStore } from '@design-app/data-access'
-import { DraggableWindow } from '@design-app/shared'
 import { LetDirective } from '@ngrx/component'
 import { getGuid } from '@ngrx/data'
 import {
@@ -28,10 +29,13 @@ import {
 
 import { CdkDrag } from '@angular/cdk/drag-drop'
 import { CommonModule } from '@angular/common'
-import { KeyMapComponent, RightClickMenuComponent, StateValuesComponent } from '@design-app/feature'
 import { ActionNotificationsDisplayComponent } from '@overlays/notifications/feature'
 import { SideUiNavBarComponent } from '@overlays/side-uis/feature'
 import { OverlayToolBarComponent } from '@overlays/toolbars/feature'
+import { WindowsStore } from '@overlays/windows/data-access'
+import { AppStateStoreService } from '@canvas/app/data-access'
+import { UiStoreService } from '@overlays/ui-store/data-access'
+import { DraggableWindow } from '@shared/data-access/models'
 
 @Component({
 	changeDetection: ChangeDetectionStrategy.OnPush,
@@ -40,9 +44,6 @@ import { OverlayToolBarComponent } from '@overlays/toolbars/feature'
 		CommonModule,
 		ShowSvgComponent,
 		LetDirective,
-		KeyMapComponent,
-		StateValuesComponent,
-		RightClickMenuComponent,
 		DesignCanvasDirective,
 		ButtonBuilderComponent,
 		DesignCanvasDirective,

@@ -1,4 +1,4 @@
-import { CompleteEntityBounds, NearbyEntity } from '@design-app/shared'
+import { CompleteEntityBounds, NearbyEntity } from '@shared/data-access/models'
 
 export const handleSnapToGridWhenNearby = (
 	ctx: CanvasRenderingContext2D,

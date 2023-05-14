@@ -1,23 +1,27 @@
 import { CanvasElementService } from '@canvas/app/data-access'
 import { DomPointService } from '../dom-point'
-// import { EntityStoreService } from '../entities'
 import { GraphicsStoreService } from '@canvas/graphics/data-access'
 import { getNearbyLineDrawCtxFnFromNearbyLinesState } from '../nearby'
 import { ObjectPositioningStoreService } from '../../store'
 import { RenderService } from '@canvas/rendering/data-access'
 import { drawSelectionBoxBoundsCtxFn } from './draw-selection-box'
 import { inject, Injectable } from '@angular/core'
+import { UpdateStr } from '@ngrx/entity/src/models'
 import {
 	Axis,
 	CANVAS_COLORS,
 	CanvasEntity,
-	CanvasPanel,
 	CompleteEntityBounds,
+	CURSOR_TYPE,
 	ENTITY_TYPE,
 	EventPoint,
+	Point,
 	SizeByType,
 	TransformedPoint,
-} from '@design-app/shared'
+} from '@shared/data-access/models'
+import { assertNotNull, groupInto2dArray } from '@shared/utils'
+import { sortBy } from 'lodash'
+import { injectEntityStore } from '@entities/common/data-access'
 import {
 	changeCanvasCursor,
 	EntityFactory,
@@ -33,19 +37,14 @@ import {
 	isPointInsideBounds,
 	multiSelectDraggingKeysDown,
 	updateObjectById,
-} from '@design-app/utils'
-import { UpdateStr } from '@ngrx/entity/src/models'
-import { CURSOR_TYPE, Point } from '@shared/data-access/models'
-import { assertNotNull, groupInto2dArray } from '@shared/utils'
-import { sortBy } from 'lodash'
-// import { GraphicsSettings } from 'deprecated/design-app/feature-design-canvas'
-import { EntityStoreService } from '@design-app/data-access'
+} from '@canvas/utils'
+import { CanvasPanel } from '@entities/panels/data-access'
 
 @Injectable({
 	providedIn: 'root',
 })
 export class ObjectPositioningService {
-	private _entities = inject(EntityStoreService)
+	private _entities = injectEntityStore()
 	// private _entities = inject(EntityStoreService)
 	private _domPoint = inject(DomPointService)
 	private _render = inject(RenderService)
@@ -104,7 +103,7 @@ export class ObjectPositioningService {
 
 		const size = SizeByType[ENTITY_TYPE.Panel]
 		const mouseBoxBounds = getCompleteBoundsFromCenterTransformedPoint(currentPoint, size)
-		const entities = this._entities.panels.allPanels
+		const entities = this._entities.panels.allPanels()
 		const nearbyEntitiesOnAxis = findNearbyBoundOverlapOnBothAxisExcludingIds(
 			mouseBoxBounds,
 			entities,
@@ -214,7 +213,7 @@ export class ObjectPositioningService {
 		 SizeByType[ENTITY_TYPE.Panel],
 		 )*/
 		// const location = this._domPoint.getTransformedPointToMiddleOfObjectFromEvent(event, ENTITY_TYPE.Panel)
-		this._entities.panels.dispatch.updatePanel({
+		this._entities.panels.updatePanel({
 			id: this.singleToMoveId,
 			changes: {
 				location,
@@ -364,7 +363,7 @@ export class ObjectPositioningService {
 		const storeUpdates = multiSelectedUpdated.map((entity) => {
 			return EntityFactory.updateForStore(entity, { location: entity.location })
 		})
-		this._entities.panels.dispatch.updateManyPanels(storeUpdates as UpdateStr<CanvasPanel>[])
+		this._entities.panels.updateManyPanels(storeUpdates as UpdateStr<CanvasPanel>[])
 
 		this._positioningStore.dispatch.stopMoving()
 		// this._app.sendEvent({ type: 'StopMultipleMove' })
@@ -400,9 +399,11 @@ export class ObjectPositioningService {
 	}
 
 	areAnyEntitiesNearbyExcludingGrabbed(point: TransformedPoint, grabbedId: string) {
-		return !!this._entities.panels.allPanels.find(
-			(entity) => entity.id !== grabbedId && isPointInsideBounds(point, getEntityBounds(entity)),
-		)
+		return !!this._entities.panels
+			.allPanels()
+			.find(
+				(entity) => entity.id !== grabbedId && isPointInsideBounds(point, getEntityBounds(entity)),
+			)
 	}
 }
 

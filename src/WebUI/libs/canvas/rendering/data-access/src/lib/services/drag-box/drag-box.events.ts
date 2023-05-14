@@ -1,4 +1,4 @@
-import { CompleteEntityBounds } from '@design-app/shared'
+import { CompleteEntityBounds } from '@shared/data-access/models'
 
 export type SelectionBoxStarted = {
 	type: 'SelectionBoxStarted'

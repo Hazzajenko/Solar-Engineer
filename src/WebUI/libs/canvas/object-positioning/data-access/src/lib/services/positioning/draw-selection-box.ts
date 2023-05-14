@@ -1,4 +1,4 @@
-import { CANVAS_COLORS } from '@design-app/shared'
+import { CANVAS_COLORS } from '@shared/data-access/models'
 
 export const drawSelectionBoxBoundsCtxFn = (selectionBoxBounds: {
 	left: number

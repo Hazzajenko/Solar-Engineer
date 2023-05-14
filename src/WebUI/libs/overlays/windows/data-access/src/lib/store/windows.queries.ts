@@ -6,11 +6,10 @@ import {
 	selectWindowsEntities,
 } from './windows.selectors'
 import { inject, Injectable } from '@angular/core'
-import { DraggableWindow } from '@design-app/shared'
 import { Dictionary } from '@ngrx/entity'
 import { select, Store } from '@ngrx/store'
 import { firstValueFrom, Observable } from 'rxjs'
-
+import { DraggableWindow } from '@shared/data-access/models'
 
 @Injectable({
 	providedIn: 'root',

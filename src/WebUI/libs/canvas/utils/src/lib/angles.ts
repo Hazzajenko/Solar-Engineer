@@ -1,5 +1,4 @@
-import { AngleDegrees, AngleRadians } from '@design-app/shared'
-import { Point } from '@shared/data-access/models'
+import { AngleDegrees, AngleRadians, Point } from '@shared/data-access/models'
 
 export const addAngles = (angle1: AngleDegrees, angle2: AngleDegrees): AngleDegrees => {
 	const sum = angle1 + angle2

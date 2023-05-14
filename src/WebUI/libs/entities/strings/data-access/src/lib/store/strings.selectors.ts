@@ -1,9 +1,9 @@
 // import { selectAllPanels } from '../panels'
 import { STRINGS_FEATURE_KEY, stringsAdapter, StringsState } from './strings.reducer'
-import { CanvasPanel, CanvasString } from '@design-app/shared'
 import { Dictionary } from '@ngrx/entity'
 import { createFeatureSelector, createSelector } from '@ngrx/store'
-import { selectAllPanels } from '@entities/panels/data-access'
+import { CanvasPanel, selectAllPanels } from '@entities/panels/data-access'
+import { CanvasString } from '../types'
 
 export const selectStringsState = createFeatureSelector<StringsState>(STRINGS_FEATURE_KEY)
 

@@ -1,6 +1,10 @@
-import { TransformedPoint } from '@design-app/shared'
-import { Point, Size } from '@shared/data-access/models'
-import { EventPoint, EventWithOffsets } from '@design-app/feature-design-canvas'
+import {
+	EventPoint,
+	EventWithOffsets,
+	Point,
+	Size,
+	TransformedPoint,
+} from '@shared/data-access/models'
 
 export const getTopLeftPointFromTransformedPoint = (
 	point: TransformedPoint,

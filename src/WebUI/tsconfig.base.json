@@ -41,9 +41,6 @@
       "@app/data-access/friends": [
         "libs/app/data-access/friends/src/index.ts"
       ],
-      "@app/data-access/group-chats": [
-        "libs/app/data-access/group-chats/src/index.ts"
-      ],
       "@app/data-access/images": [
         "libs/app/data-access/images/src/index.ts"
       ],
@@ -347,7 +344,7 @@
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
     "strictTemplates": true,
-    "emitDecoratorMetadata": true,
+    "emitDecoratorMetadata": false,
     "experimentalDecorators": true
   },
   "exclude": [

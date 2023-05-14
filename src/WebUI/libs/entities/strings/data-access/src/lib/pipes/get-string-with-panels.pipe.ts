@@ -1,7 +1,6 @@
-import { inject, Pipe, PipeTransform } from '@angular/core'
-
-import { CanvasString } from '@design-app/shared'
-import { EntityStoreService } from '@design-app/data-access'
+import { Pipe, PipeTransform } from '@angular/core'
+import { injectEntityStore } from '@entities/common/data-access'
+import { CanvasString } from '../types'
 // import { EntityStoreService } from '../../entity-store.service'
 
 export type StringWithPanelIds = CanvasString & {
@@ -13,7 +12,9 @@ export type StringWithPanelIds = CanvasString & {
 	standalone: true,
 })
 export class GetStringWithPanelIdsPipe implements PipeTransform {
-	private _entities = inject(EntityStoreService)
+	private _entities = injectEntityStore()
+
+	// private _entities = inject(EntityStoreService)
 
 	transform(stringId: string): StringWithPanelIds | undefined {
 		console.log('GetStringWithPanelIdsPipe.transform()', stringId)

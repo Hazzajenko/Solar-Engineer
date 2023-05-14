@@ -1,6 +1,5 @@
 import { getBoundsFromTwoPoints, getEntityBounds } from './bounds'
-import { CanvasEntity, EntityBounds } from '@design-app/shared'
-import { Point } from '@shared/data-access/models'
+import { CanvasEntity, EntityBounds, Point } from '@shared/data-access/models'
 
 export const isEntityInsideTwoPoints = (entity: CanvasEntity, point1: Point, point2: Point) => {
 	const bounds = getEntityBounds(entity)

@@ -7,11 +7,10 @@ import {
 } from './strings.selectors'
 import { inject, Injectable } from '@angular/core'
 import { toSignal } from '@angular/core/rxjs-interop'
-import { CanvasString } from '@design-app/shared'
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { select, Store } from '@ngrx/store'
 import { isNotNull } from '@shared/utils'
-
+import { CanvasString } from '../types'
 
 @Injectable({
 	providedIn: 'root',

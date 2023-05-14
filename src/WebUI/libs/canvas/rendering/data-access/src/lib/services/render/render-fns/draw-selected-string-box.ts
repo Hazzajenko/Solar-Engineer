@@ -1,8 +1,11 @@
 // import { EntityStoreService } from '../../entities'
-import { CANVAS_COLORS, CanvasPanel, CanvasString } from '@design-app/shared'
-import { getCompleteBoundsFromMultipleEntitiesWithPadding } from '@design-app/utils'
+
 import { assertNotNull } from '@shared/utils'
-import { EntityStoreService } from '@design-app/data-access'
+import { getCompleteBoundsFromMultipleEntitiesWithPadding } from '@canvas/utils'
+import { CANVAS_COLORS } from '@shared/data-access/models'
+import { CanvasString } from '@entities/strings/data-access'
+import { CanvasPanel } from '@entities/panels/data-access'
+import { EntityStore } from '@entities/common/data-access'
 // import { SelectedStateSnapshot } from '../../../../../../deprecated/design-app/feature-design-canvas/src/lib/services/canvas-client-state/+xstate/selected-state.machine'
 
 /*export const drawSelectedStringBox = (
@@ -39,7 +42,7 @@ import { EntityStoreService } from '@design-app/data-access'
 export const drawSelectedStringBoxV2 = (
 	ctx: CanvasRenderingContext2D,
 	selectedStringId: string,
-	entityStore: EntityStoreService,
+	entityStore: EntityStore,
 ) => {
 	assertNotNull(selectedStringId)
 	const string = entityStore.strings.getById(selectedStringId)

@@ -3,12 +3,13 @@ import {
 	CanvasEntity,
 	CompleteEntityBounds,
 	EntityBounds,
+	Point,
 	SAME_AXIS_POSITION,
 	SameAxisPosition,
+	Size,
 	TransformedPoint,
 	TrigonometricBoundsTuple,
-} from '@design-app/shared'
-import { Point, Size } from '@shared/data-access/models'
+} from '@shared/data-access/models'
 
 export const getCompleteEntityBounds = (bounds: EntityBounds): CompleteEntityBounds => ({
 	...bounds,

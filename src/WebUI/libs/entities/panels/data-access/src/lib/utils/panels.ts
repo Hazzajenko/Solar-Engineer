@@ -1,14 +1,8 @@
-import { EntityFactory } from './entity'
-import {
-	CanvasEntity,
-	CanvasPanel,
-	ENTITY_TYPE,
-	PanelId,
-	StringId,
-	UndefinedStringId,
-} from '@design-app/shared'
 import { UpdateStr } from '@ngrx/entity/src/models'
-import { Point } from '@shared/data-access/models'
+import { CanvasEntity, ENTITY_TYPE, Point } from '@shared/data-access/models'
+import { EntityFactory } from '@canvas/utils'
+import { CanvasPanel, PanelId } from '../types'
+import { StringId, UndefinedStringId } from '@entities/strings/data-access'
 
 export function isPanel(entity: CanvasEntity): entity is CanvasPanel {
 	return entity.type === ENTITY_TYPE.Panel
@@ -24,10 +18,7 @@ export const createPanel = (location: Point, stringId: string = UndefinedStringI
 	return {
 		...EntityFactory.create(ENTITY_TYPE.Panel, location),
 		stringId,
-	} as CanvasEntity & {
-		id: PanelId
-		stringId: StringId
-	}
+	} as CanvasPanel
 }
 
 export const createManyPanels = (locations: Point[], stringIds: StringId[] = []): CanvasPanel[] => {
@@ -41,19 +32,13 @@ export const PanelFactory = {
 		return {
 			...EntityFactory.create(ENTITY_TYPE.Panel, location),
 			stringId,
-		} as CanvasEntity & {
-			id: PanelId
-			stringId: StringId
-		}
+		} as CanvasPanel
 	},
 	update: (panel: CanvasPanel, changes: Partial<CanvasPanel>): CanvasPanel => {
 		return {
 			...EntityFactory.update(panel, changes),
 			...changes,
-		} as CanvasEntity & {
-			id: PanelId
-			stringId: StringId
-		}
+		} as CanvasPanel
 	},
 	updateForStore: (
 		panelId: PanelId | string,

@@ -4,7 +4,7 @@ import {
 	getEntityAxisCenterWithEntityPreviewFn,
 	getEntityGridLineWithEntityPreviewFn,
 } from '../ctx-fns'
-import { CanvasColor, CompleteEntityBounds, NearbyEntity } from '@design-app/shared'
+import { CanvasColor, CompleteEntityBounds, NearbyEntity } from '@shared/data-access/models'
 
 export const getNearbyLineDrawCtxFnFromNearbyLinesState = (
 	nearbyLinesState: GraphicsState['nearbyLinesState'],

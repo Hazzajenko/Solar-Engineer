@@ -1,4 +1,4 @@
-import { CanvasEntity, TransformedPoint } from '@design-app/shared'
+import { CanvasEntity, TransformedPoint } from '@shared/data-access/models'
 
 export type CanvasRenderOptions = {
 	drawFns?: ((ctx: CanvasRenderingContext2D) => void)[]

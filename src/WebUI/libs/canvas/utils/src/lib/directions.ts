@@ -1,6 +1,4 @@
-import { TransformedPoint } from '@design-app/shared';
-import { Size } from '@shared/data-access/models';
-
+import { Size, TransformedPoint } from '@shared/data-access/models'
 
 // import { ObjectSize } from '@design-app/feature-design-canvas'
 

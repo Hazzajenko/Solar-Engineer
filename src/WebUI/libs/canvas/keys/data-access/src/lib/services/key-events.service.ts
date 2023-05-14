@@ -1,19 +1,17 @@
 import { AppStateStoreService, MODE_STATE } from '@canvas/app/data-access'
-import { createStringWithPanelsV2, genStringNameV2 } from '@entities/strings/data-access'
-
+import { createString, createStringWithPanelsV2, genStringNameV2 } from '@entities/strings/data-access'
 import { MOVE_ENTITY_STATE, ObjectPositioningService, ObjectPositioningStoreService, ObjectRotatingService, ROTATE_ENTITY_STATE } from '@canvas/object-positioning/data-access'
 import { RenderService } from '@canvas/rendering/data-access'
 import { SelectedService, SelectedStoreService } from '@canvas/selected/data-access'
 import { VIEW_STATE, ViewPositioningService } from '@canvas/view-positioning/data-access'
 import { inject, Injectable } from '@angular/core'
-import { CanvasPanel, TransformedPoint } from '@design-app/shared'
-import { createString, updateObjectByIdForStoreV3 } from '@design-app/utils'
-import { Key, KEYS, Point } from '@shared/data-access/models'
-// import { VIEW_STATE } from '@canvas/view-positioning/data-access'
+import { Key, KEYS, Point, TransformedPoint } from '@shared/data-access/models'
 import { KeysStoreService } from '../store'
 import { KEY_MAP_ACTION } from '../types'
 import { toSignal } from '@angular/core/rxjs-interop'
-import { EntityStoreService } from '@design-app/data-access'
+import { updateObjectByIdForStoreV3 } from '@canvas/utils'
+import { injectEntityStore } from '@entities/common/data-access'
+import { CanvasPanel } from '@entities/panels/data-access'
 
 // const DEFAULT_UNCHANGEABLE_KEYS = [KEYS.ESCAPE, KEYS.SHIFT, KEYS.ALT, KEYS.CTRL_OR_CMD] as const
 const isDefaultUnchangeableKey = (key: KeyboardEvent['key']) =>
@@ -27,7 +25,7 @@ const isDefaultUnchangeableKey = (key: KeyboardEvent['key']) =>
 export class KeyEventsService {
 	private _selected = inject(SelectedService)
 	private _selectedStore = inject(SelectedStoreService)
-	private _entities = inject(EntityStoreService)
+	private _entities = injectEntityStore()
 	private _positioningStore = inject(ObjectPositioningStoreService)
 	private _objRotating = inject(ObjectRotatingService)
 	private _appState = inject(AppStateStoreService)
@@ -70,8 +68,8 @@ export class KeyEventsService {
 		if (multipleSelectedIds.length <= 1) return
 		const amountOfStrings = this._entities.strings.allStrings.length
 		const { string, panelUpdates } = createStringWithPanelsV2(multipleSelectedIds, amountOfStrings)
-		this._entities.strings.dispatch.addString(string)
-		this._entities.panels.dispatch.updateManyPanels(panelUpdates)
+		this._entities.strings.addString(string)
+		this._entities.panels.updateManyPanels(panelUpdates)
 	}
 
 	private startRotateMode() {
@@ -171,8 +169,8 @@ export class KeyEventsService {
 						multipleSelectedIds,
 						amountOfStrings,
 					)
-					this._entities.strings.dispatch.addString(string)
-					this._entities.panels.dispatch.updateManyPanels(panelUpdates)
+					this._entities.strings.addString(string)
+					this._entities.panels.updateManyPanels(panelUpdates)
 
 					// this._selectedStore.dispatch.selectString(string.id)
 					this._render.renderCanvasApp()
@@ -257,7 +255,7 @@ export class KeyEventsService {
 					// const multipleSelectedIds = this._app.selectedCtx.multipleSelectedIds
 					// const multipleSelectedIds = this._app.selectedCtx.multipleSelectedIds
 					if (multipleSelectedIds.length <= 1) return
-					const name = genStringNameV2(this._entities.strings.allStrings)
+					const name = genStringNameV2(this._entities.strings.allStrings())
 					const string = createString(name)
 
 					const entities = this._entities.panels.getByIds(multipleSelectedIds)
@@ -268,8 +266,8 @@ export class KeyEventsService {
 					const panelUpdates = panels.map(
 						updateObjectByIdForStoreV3<CanvasPanel>({ stringId: string.id }),
 					)
-					this._entities.strings.dispatch.addString(string)
-					this._entities.panels.dispatch.updateManyPanels(panelUpdates)
+					this._entities.strings.addString(string)
+					this._entities.panels.updateManyPanels(panelUpdates)
 
 					this._selectedStore.dispatch.selectString(string.id)
 					this._render.renderCanvasApp()

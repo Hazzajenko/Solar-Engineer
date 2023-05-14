@@ -12,8 +12,8 @@ import {
 	Renderer2,
 	ViewContainerRef,
 } from '@angular/core'
-import { DIALOG_COMPONENT, DialogInput, UiStoreService } from '@design-app/data-access'
 import { toSignal } from '@angular/core/rxjs-interop'
+import { DIALOG_COMPONENT, DialogInput, UiStoreService } from '@overlays/ui-store/data-access'
 
 @Directive({
 	selector: '[appDynamicDialog]',

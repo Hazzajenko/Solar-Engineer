@@ -1,6 +1,6 @@
 import { Directive, ElementRef, inject, NgZone, OnInit, Renderer2 } from '@angular/core'
 import { EVENT_TYPE } from '@shared/data-access/models'
-import { RenderService } from '@design-app/data-access'
+import { RenderService } from '../render.service'
 
 @Directive({
 	selector: '[appMouseOverRender]',

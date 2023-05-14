@@ -1,4 +1,4 @@
-import { ContextMenuType } from '@design-app/data-access'
+import { ContextMenuType } from '@canvas/view-positioning/data-access'
 
 export const DRAG_BOX_STATE = {
 	CREATION_BOX_IN_PROGRESS: 'CreationBoxInProgress',

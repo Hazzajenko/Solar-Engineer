@@ -1,6 +1,11 @@
 import { getSnapToGridBoolean, handleSnapToGridWhenNearby } from '../utils'
-import { CANVAS_COLORS, CanvasColor, CompleteEntityBounds, NearbyEntity } from '@design-app/shared'
-import { getEntityAxisGridLinesByAxisV2 } from '@design-app/utils'
+import {
+	CANVAS_COLORS,
+	CanvasColor,
+	CompleteEntityBounds,
+	NearbyEntity,
+} from '@shared/data-access/models'
+import { getEntityAxisGridLinesByAxisV2 } from '@canvas/utils'
 
 export const getEntityGridLineWithEntityPreviewFn = (
 	altKey: boolean,

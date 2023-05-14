@@ -1,7 +1,8 @@
-// import { EntityStoreService } from '../entity-store.service'
-import { CanvasPanel, CanvasString } from '@design-app/shared'
-import { createString, updateObjectByIdForStoreV3 } from '@design-app/utils'
-import { EntityStoreService } from '@design-app/data-access'
+import { CanvasString } from '../types'
+import { CanvasPanel } from '@entities/panels/data-access'
+import { EntityStore } from '@entities/common/data-access'
+import { createString } from './strings'
+import { updateObjectByIdForStoreV3 } from '@canvas/utils'
 
 export const genStringNameV2 = (strings: CanvasString[]): string => {
 	const name = 'String'
@@ -14,10 +15,7 @@ export const genStringNameV3 = (amountOfStrings: number): string => {
 	return `${name}_${amountOfStrings}`
 }
 
-export const createStringWithPanels = (
-	entities: EntityStoreService,
-	selectedPanelIds: string[],
-) => {
+export const createStringWithPanels = (entities: EntityStore, selectedPanelIds: string[]) => {
 	const string = createString()
 	const panels = entities.panels.getByIds(selectedPanelIds)
 	const panelUpdates = panels.map(updateObjectByIdForStoreV3<CanvasPanel>({ stringId: string.id }))

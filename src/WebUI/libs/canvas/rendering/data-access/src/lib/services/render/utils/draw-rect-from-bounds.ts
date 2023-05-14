@@ -1,5 +1,5 @@
-import { EntityBounds } from '@design-app/shared'
-import { getCompleteEntityBounds } from '@design-app/utils'
+import { EntityBounds } from '@shared/data-access/models'
+import { getCompleteEntityBounds } from '@canvas/utils'
 
 export const drawRectFromBounds = (ctx: CanvasRenderingContext2D, bounds: EntityBounds) => {
 	const { left, top, width, height } = getCompleteEntityBounds(bounds)
