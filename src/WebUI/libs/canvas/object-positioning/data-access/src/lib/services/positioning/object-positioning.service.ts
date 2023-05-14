@@ -9,14 +9,10 @@ import { inject, Injectable } from '@angular/core'
 import { UpdateStr } from '@ngrx/entity/src/models'
 import {
 	Axis,
-	CANVAS_COLORS,
-	CanvasEntity,
 	CompleteEntityBounds,
 	CURSOR_TYPE,
-	ENTITY_TYPE,
 	EventPoint,
 	Point,
-	SizeByType,
 	TransformedPoint,
 } from '@shared/data-access/models'
 import { assertNotNull, groupInto2dArray } from '@shared/utils'
@@ -38,7 +34,7 @@ import {
 	multiSelectDraggingKeysDown,
 	updateObjectById,
 } from '@canvas/utils'
-import { CanvasPanel } from '@entities/shared'
+import { CANVAS_COLORS, CanvasEntity, CanvasPanel, ENTITY_TYPE, SizeByType } from '@entities/shared'
 
 @Injectable({
 	providedIn: 'root',
@@ -103,7 +99,7 @@ export class ObjectPositioningService {
 
 		const size = SizeByType[ENTITY_TYPE.Panel]
 		const mouseBoxBounds = getCompleteBoundsFromCenterTransformedPoint(currentPoint, size)
-		const entities = this._entities.panels.allPanels()
+		const entities = this._entities.panels.allPanels
 		const nearbyEntitiesOnAxis = findNearbyBoundOverlapOnBothAxisExcludingIds(
 			mouseBoxBounds,
 			entities,
@@ -399,11 +395,9 @@ export class ObjectPositioningService {
 	}
 
 	areAnyEntitiesNearbyExcludingGrabbed(point: TransformedPoint, grabbedId: string) {
-		return !!this._entities.panels
-			.allPanels()
-			.find(
-				(entity) => entity.id !== grabbedId && isPointInsideBounds(point, getEntityBounds(entity)),
-			)
+		return !!this._entities.panels.allPanels.find(
+			(entity) => entity.id !== grabbedId && isPointInsideBounds(point, getEntityBounds(entity)),
+		)
 	}
 }
 

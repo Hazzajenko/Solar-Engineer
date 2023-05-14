@@ -1,4 +1,5 @@
-import { Point, Size } from '@shared/data-access/models'
+import { Point } from '../location'
+import { Size } from '../object'
 
 export type DraggableWindow = {
 	id: string

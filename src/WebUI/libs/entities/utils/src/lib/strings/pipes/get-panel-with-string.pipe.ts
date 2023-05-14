@@ -1,5 +1,4 @@
 import { inject, Pipe, PipeTransform } from '@angular/core'
-import { CanvasEntity } from '@shared/data-access/models'
 import { RenderService } from '@canvas/rendering/data-access'
 import { UiStoreService } from '@overlays/ui-store/data-access'
 import {
@@ -7,7 +6,7 @@ import {
 	isSingleEntityContextMenuTemplate,
 } from '@canvas/view-positioning/data-access'
 import { isPanel } from '../../panels'
-import { CanvasString } from '@entities/shared'
+import { CanvasEntity, CanvasString } from '@entities/shared'
 import { EntityStoreService } from '@entities/data-access'
 
 export type PanelWithString = CanvasEntity & {

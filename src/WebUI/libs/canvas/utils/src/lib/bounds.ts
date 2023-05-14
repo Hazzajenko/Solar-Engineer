@@ -1,6 +1,5 @@
 import { rotate } from './rotate'
 import {
-	CanvasEntity,
 	CompleteEntityBounds,
 	EntityBounds,
 	Point,
@@ -10,6 +9,7 @@ import {
 	TransformedPoint,
 	TrigonometricBoundsTuple,
 } from '@shared/data-access/models'
+import { CanvasEntity } from '@entities/shared'
 
 export const getCompleteEntityBounds = (bounds: EntityBounds): CompleteEntityBounds => ({
 	...bounds,

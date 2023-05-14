@@ -2,8 +2,7 @@
 
 import { assertNotNull } from '@shared/utils'
 import { getCompleteBoundsFromMultipleEntitiesWithPadding } from '@canvas/utils'
-import { CANVAS_COLORS } from '@shared/data-access/models'
-import { CanvasPanel, CanvasString } from '@entities/shared'
+import { CANVAS_COLORS, CanvasPanel, CanvasString } from '@entities/shared'
 import { EntityStoreService } from '@entities/data-access'
 // import { SelectedStateSnapshot } from '../../../../../../deprecated/design-app/feature-design-canvas/src/lib/services/canvas-client-state/+xstate/selected-state.machine'
 

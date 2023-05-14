@@ -19,3 +19,7 @@ export type PanelConfig = {
 export type PanelConfigId = string & {
 	readonly _type: 'panelConfigId'
 }
+
+export const UndefinedPanelConfigId = 'undefinedPanelConfigId' as PanelConfigId
+
+export const DefaultPanelConfigId = 'Longi-Himo555m' as PanelConfigId

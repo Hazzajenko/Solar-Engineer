@@ -3,13 +3,7 @@ import { DomPointService } from '@canvas/object-positioning/data-access'
 import { RenderService } from '../render'
 import { SelectedStoreService } from '@canvas/selected/data-access'
 import { inject, Injectable } from '@angular/core'
-import {
-	CANVAS_COLORS,
-	CURSOR_TYPE,
-	ENTITY_TYPE,
-	SizeByType,
-	TransformedPoint,
-} from '@shared/data-access/models'
+import { CURSOR_TYPE, TransformedPoint } from '@shared/data-access/models'
 import { assertNotNull } from '@shared/utils'
 import { EntityStoreService } from '@entities/data-access'
 import {
@@ -20,6 +14,7 @@ import {
 	getCompleteBoundsFromMultipleEntitiesWithPadding,
 } from '@canvas/utils'
 import { createPanel } from '@entities/utils'
+import { CANVAS_COLORS, ENTITY_TYPE, SizeByType } from '@entities/shared'
 
 @Injectable({
 	providedIn: 'root',
@@ -116,7 +111,7 @@ export class DragBoxService {
 		const panelsInArea = getAllEntitiesBetweenTwoPoints(
 			start,
 			currentPoint,
-			this._entities.panels.allPanels(),
+			this._entities.panels.allPanels,
 		)
 		if (panelsInArea) {
 			const entitiesInAreaIds = panelsInArea.map((panel) => panel.id)
@@ -178,7 +173,7 @@ export class DragBoxService {
 		const spots = getAllAvailableEntitySpotsBetweenTwoPoints(
 			dragBoxStart,
 			currentPoint,
-			this._entities.panels.allPanels(), // this._state.entities.panels.getEntities(),
+			this._entities.panels.allPanels, // this._state.entities.panels.getEntities(),
 		)
 		// const spots = this._objectPositioning.getAllAvailableEntitySpotsBetweenTwoPoints(dragBoxStart, currentPoint)
 		if (!spots || !spots.length) return
@@ -265,7 +260,7 @@ export class DragBoxService {
 			const spots = getAllAvailableEntitySpotsBetweenTwoPoints(
 				dragBoxStart,
 				currentPoint,
-				this._entities.panels.allPanels(), // this._state.entities.panels.getEntities(),
+				this._entities.panels.allPanels, // this._state.entities.panels.getEntities(),
 			)
 			if (!spots) return
 

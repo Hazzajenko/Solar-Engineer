@@ -17,16 +17,16 @@ import {
 	PanelLinksService,
 	PanelLinksStoreService,
 } from '@entities/data-access'
-import { isPanel } from '@entities/utils'
+import { getNegativeSymbolLocation, getSymbolLocations, isPanel } from '@entities/utils'
+import { AngleDegrees } from '@shared/data-access/models'
+import { toRadians } from '@canvas/utils'
 import {
-	AngleDegrees,
 	CANVAS_COLORS,
 	CanvasEntity,
 	CanvasPanel,
 	PANEL_STROKE_STYLE,
 	UndefinedStringId,
-} from '@shared/data-access/models'
-import { toRadians } from '@canvas/utils'
+} from '@entities/shared'
 
 @Injectable({
 	providedIn: 'root',
@@ -77,7 +77,7 @@ export class RenderService {
 	}
 
 	get allPanels() {
-		return this._entities.panels.allPanels()
+		return this._entities.panels.allPanels
 		// return this._entities.panels.allPanels
 		// return this._state.entities.panels.getEntities()
 	}
@@ -119,11 +119,11 @@ export class RenderService {
 			ctx.save()
 			ctx.beginPath()
 			const excludedIds = options?.excludedEntityIds
-			const entities = excludedIds
-				? this.allPanels.filter((entity) => {
+			const entities = !excludedIds
+				? this.allPanels
+				: this.allPanels.filter((entity) => {
 						return !excludedIds.includes(entity.id)
 				  })
-				: this.allPanels
 			entities.forEach((entity) => {
 				/**
 				 * Draw Entity
@@ -285,7 +285,7 @@ export class RenderService {
 			}
 
 			if (this._graphicsStore.state.stringBoxes) {
-				const stringsWithPanels = this._entities.strings.allStrings().map((string) => ({
+				const stringsWithPanels = this._entities.strings.allStrings.map((string) => ({
 					string,
 					panels: this._entities.panels.getByStringId(string.id),
 				}))
@@ -392,13 +392,6 @@ export class RenderService {
 		ctx.strokeStyle = 'black'
 		ctx.lineWidth = 1
 
-		/*		const firstLink = linksInOrder[0]
-		 const firstPanel = firstLink.positivePanel
-		 assertNotNull(firstPanel, 'firstPanel')
-		 const { x: firstX, y: firstY } = getPositiveSymbolLocation(firstPanel)
-		 ctx.beginPath()
-		 ctx.moveTo(firstX, firstY)*/
-		// ctx.moveTo(firstPanel.location.x, firstPanel.location.y)
 		let firstHasBeenSet = false
 		linksInOrder.forEach((link) => {
 			const panel = link.positivePanel
@@ -415,14 +408,6 @@ export class RenderService {
 				ctx.lineTo(p1.x, p1.y)
 			}
 			ctx.moveTo(p2.x, p2.y)
-			/*		if (customIds.includes(panel.id)) {
-
-			 }*/
-			/*	const { x, y } = getNegativeSymbolLocation(panel)
-			 ctx.lineTo(x, y)
-			 const { x: x2, y: y2 } = getPositiveSymbolLocation(panel)
-			 ctx.moveTo(x2, y2)*/
-			// ctx.lineTo(panel.location.x, panel.location.y)
 		})
 		const lastPanel = linksInOrder[linksInOrder.length - 1].negativePanel
 		assertNotNull(lastPanel, 'lastPanel')
@@ -431,26 +416,8 @@ export class RenderService {
 					customEntities?.find((entity) => entity.id === lastPanel.id) as CanvasPanel,
 			  )
 			: getNegativeSymbolLocation(lastPanel)
-		// const { x: lastX, y: lastY } = getNegativeSymbolLocation(lastPanel)
 		ctx.lineTo(lastX, lastY)
-		// ctx.lineTo(lastPanel.location.x, lastPanel.location.y)
 		ctx.stroke()
 		ctx.restore()
 	}
-}
-
-const getSymbolLocations = (panel: CanvasPanel) => {
-	return [getNegativeSymbolLocation(panel), getPositiveSymbolLocation(panel)]
-}
-
-const getPositiveSymbolLocation = (panel: CanvasPanel) => {
-	const x = panel.location.x + panel.width
-	const y = panel.location.y + panel.height / 2
-	return { x, y }
-}
-
-const getNegativeSymbolLocation = (panel: CanvasPanel) => {
-	const x = panel.location.x
-	const y = panel.location.y + panel.height / 2
-	return { x, y }
 }

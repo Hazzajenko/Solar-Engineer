@@ -1,13 +1,10 @@
 import { CanvasElementService } from '@canvas/app/data-access'
 import { inject, Injectable } from '@angular/core'
 import {
-	ENTITY_TYPE,
-	EntityType,
 	EventWithOffsets,
 	MiddlePoint,
 	Point,
 	Size,
-	SizeByType,
 	TransformedPoint,
 } from '@shared/data-access/models'
 import {
@@ -15,6 +12,7 @@ import {
 	eventToPointLocation,
 	getTopLeftPointFromTransformedPoint,
 } from '@canvas/utils'
+import { ENTITY_TYPE, EntityType, SizeByType } from '@entities/shared'
 
 @Injectable({
 	providedIn: 'root',

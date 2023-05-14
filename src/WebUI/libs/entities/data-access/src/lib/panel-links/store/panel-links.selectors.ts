@@ -56,3 +56,19 @@ export const selectPanelLinksByIdArray = (props: { ids: string[] }) =>
 	createSelector(selectAllPanelLinks, (panelLinks: PanelLinkModel[]) =>
 		panelLinks.filter((panelLink) => props.ids.includes(panelLink.id)),
 	)
+
+export const selectRequestingLink = createSelector(
+	selectPanelLinksState,
+	(state: PanelLinksState) => state.requestingLink,
+)
+
+/*
+ export const selectPanelLinksForSelectedString = createSelector(
+ selectAllPanelLinks,
+ selectSelectedString,
+ (panelLinks: PanelLinkModel[], selectedString: CanvasString | undefined) =>
+ selectedString
+ ? panelLinks.filter((panelLink) => panelLink.stringId === selectedString.id)
+ : undefined,
+ )
+ */

@@ -6,7 +6,7 @@ import { PanelsActions } from './panels.actions'
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { CanvasPanel } from '@entities/shared'
 
-export function injectPanelsFeature() {
+export function injectPanelsStore() {
 	const store = inject(Store)
 	const allPanels$ = store.select(selectAllPanels)
 	const allPanels = store.selectSignal(selectAllPanels)
@@ -17,7 +17,7 @@ export function injectPanelsFeature() {
 			return allPanels$
 		},
 		get allPanels() {
-			return store.selectSignal(selectAllPanels)
+			return store.selectSignal(selectAllPanels)()
 		},
 		getById(id: string) {
 			return entities()[id]
@@ -52,4 +52,4 @@ export function injectPanelsFeature() {
 	}
 }
 
-export type PanelsFeature = ReturnType<typeof injectPanelsFeature>
+export type PanelsStore = ReturnType<typeof injectPanelsStore>

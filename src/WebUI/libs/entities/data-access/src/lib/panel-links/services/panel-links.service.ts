@@ -12,6 +12,9 @@ import {
 import { assertNotNull, newGuid } from '@shared/utils'
 import { SelectedStoreService } from '@canvas/selected/data-access'
 import { EntityStoreService } from '../../shared'
+import { TransformedPoint } from '@shared/data-access/models'
+import { isPointInsideMiddleRightOfEntityWithRotationV2, isPointOnLine } from '@canvas/utils'
+import { calculateLinkLinesBetweenTwoPanels } from '@entities/utils'
 
 @Injectable({
 	providedIn: 'root',
@@ -64,6 +67,11 @@ export class PanelLinksService {
 			)
 			return
 		}
+		const requestingPanel = this._entities.panels.getById(requestingLink.panelId)
+		if (!requestingPanel) {
+			console.error('requestingPanel not found')
+			return
+		}
 		const panelLink: PanelLinkModel = {
 			id: newGuid(),
 			stringId: panel.stringId,
@@ -71,6 +79,7 @@ export class PanelLinksService {
 				requestingLink.direction === 'positive-to-negative' ? requestingLink.panelId : panel.id,
 			negativePanelId:
 				requestingLink.direction === 'positive-to-negative' ? panel.id : requestingLink.panelId,
+			linePoints: calculateLinkLinesBetweenTwoPanels(requestingPanel, panel),
 		}
 		this._panelLinksStore.addPanelLink(panelLink)
 		if (event.shiftKey) {
@@ -106,10 +115,6 @@ export class PanelLinksService {
 	getPanelLinkOrderForSelectedString() {
 		const stringId = this._selectedStore.selectedStringId
 		assertNotNull(stringId)
-		/*		if (!stringId) {
-		 console.error('getPanelLinkOrderForSelectedString: !stringId')
-		 return []
-		 }*/
 		const panelLinks = this._panelLinksStore.getByStringId(stringId)
 		return panelLinks
 			.map((panelLink) => ({
@@ -126,5 +131,46 @@ export class PanelLinksService {
 
 	clearPanelLinkRequest() {
 		this._panelLinksStore.endPanelLink()
+	}
+
+	handleMouseInLinkMode(event: PointerEvent, currentPoint: TransformedPoint) {
+		this.isMouseOverLinkPath(event, currentPoint)
+	}
+
+	isMouseOverLinkPath(event: PointerEvent, currentPoint: TransformedPoint) {
+		if (!this._selectedStore.selectedStringId) {
+			console.error('a string must be selected to be in link mode')
+			return
+		}
+
+		const panelLinks = this._entities.panelLinks.getByStringId(this._selectedStore.selectedStringId)
+		// const panelLinks = this._entities.panelLinks.panelLinksForSelectedString()
+		if (!panelLinks) {
+			console.error('panelLinks not found')
+			return
+		}
+
+		const panelLink = panelLinks.find((panelLink) => {
+			return isPointOnLine(currentPoint, panelLink.linePoints)
+		})
+
+		if (!panelLink) {
+			return
+		}
+
+		console.log('panelLink', panelLink)
+	}
+
+	isLinkSymbolUnderMouse(event: PointerEvent, currentPoint: TransformedPoint) {
+		// const entitiesUnderMouse = this._entities.panels.allPanels.filter((entity) =>
+		// 	isPointInsideEntity(currentPoint, entity),
+		// )
+		const entitiesUnderMouse = this._entities.panels.allPanels.find((entity) =>
+			isPointInsideMiddleRightOfEntityWithRotationV2(currentPoint, entity),
+		)
+
+		if (!entitiesUnderMouse) {
+			return
+		}
 	}
 }

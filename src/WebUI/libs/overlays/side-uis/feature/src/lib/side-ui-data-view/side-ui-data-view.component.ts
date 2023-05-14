@@ -48,11 +48,11 @@ export class SideUiDataViewComponent {
 	private _render = inject(RenderService)
 	private _selectedStore = inject(SelectedStoreService)
 	private _panels = toSignal(this._entityStore.panels.allPanels$, {
-		initialValue: this._entityStore.panels.allPanels(),
+		initialValue: this._entityStore.panels.allPanels,
 	})
 	// private _panels = this._entityStore.panels.allPanels
 	private _strings = toSignal(this._entityStore.strings.allStrings$, {
-		initialValue: this._entityStore.strings.allStrings(),
+		initialValue: this._entityStore.strings.allStrings,
 	})
 
 	protected readonly UndefinedStringId = UndefinedStringId
@@ -159,14 +159,14 @@ export class SideUiDataViewComponent {
 
 	openAllStrings() {
 		const map = new Map<StringId, boolean>()
-		this._entityStore.strings.allStrings().forEach((string) => map.set(string.id, true))
+		this._entityStore.strings.allStrings.forEach((string) => map.set(string.id, true))
 		map.set(UndefinedStringId, true)
 		this._openedStrings.set(map)
 	}
 
 	closeAllStrings() {
 		const map = new Map<StringId, boolean>()
-		this._entityStore.strings.allStrings().forEach((string) => map.set(string.id, false))
+		this._entityStore.strings.allStrings.forEach((string) => map.set(string.id, false))
 		map.set(UndefinedStringId, false)
 		this._openedStrings.set(map)
 	}

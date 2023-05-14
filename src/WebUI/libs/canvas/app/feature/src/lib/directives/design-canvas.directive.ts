@@ -1,19 +1,15 @@
 import { setupCanvas } from '../utils'
 import { Directive, ElementRef, inject, NgZone, OnInit, Renderer2 } from '@angular/core'
 import {
-	CANVAS_COLORS,
-	CanvasEntity,
 	ContextMenuEvent,
 	CURSOR_TYPE,
 	DoubleClickEvent,
-	ENTITY_TYPE,
 	EVENT_TYPE,
 	Point,
-	SizeByType,
 	TransformedPoint,
 } from '@shared/data-access/models'
 import { assertNotNull, OnDestroyDirective } from '@shared/utils'
-import { AppStateStoreService, CanvasElementService } from '@canvas/app/data-access'
+import { AppStateStoreService, CanvasElementService, MODE_STATE } from '@canvas/app/data-access'
 import { GraphicsStoreService } from '@canvas/graphics/data-access'
 import {
 	DomPointService,
@@ -55,7 +51,13 @@ import {
 	isPanel,
 	isPointInsideSelectedStringPanelsByStringIdNgrxWithPanels,
 } from '@entities/utils'
-import { UndefinedStringId } from '@entities/shared'
+import {
+	CANVAS_COLORS,
+	CanvasEntity,
+	ENTITY_TYPE,
+	SizeByType,
+	UndefinedStringId,
+} from '@entities/shared'
 
 @Directive({
 	selector: '[appDesignCanvas]',
@@ -118,20 +120,9 @@ export class DesignCanvasDirective implements OnInit {
 		}, 50)
 	}
 
-	/*	private get panelEntities() {
-	 return this._entities.panels.entities
-	 }*/
-
 	private get allPanels() {
 		return this._entities.panels.allPanels
 	}
-
-	/*
-
-	 private get stringEntities() {
-	 return this._entities.strings.entities
-	 }
-	 */
 
 	private get allStrings() {
 		return this._entities.strings.allStrings
@@ -281,6 +272,11 @@ export class DesignCanvasDirective implements OnInit {
 		 this._drag.dragAxisLineMouseMove(event, currentPoint, dragBoxAxisLineStart)
 		 return
 		 }*/
+
+		if (this._appState.state.mode === MODE_STATE.LINK_MODE) {
+			this._panelLinks.handleMouseInLinkMode(event, currentPoint)
+			return
+		}
 
 		const entityUnderMouse = this.getEntityUnderMouse(event)
 		if (entityUnderMouse) {
@@ -681,9 +677,7 @@ export class DesignCanvasDirective implements OnInit {
 	private getEntityUnderMouse(event: PointerEvent | TransformedPoint) {
 		const point =
 			event instanceof PointerEvent ? this._domPoint.getTransformedPointFromEvent(event) : event
-		const entitiesUnderMouse = this.allPanels().filter((entity) =>
-			isPointInsideEntity(point, entity),
-		)
+		const entitiesUnderMouse = this.allPanels.filter((entity) => isPointInsideEntity(point, entity))
 		return entitiesUnderMouse[entitiesUnderMouse.length - 1] as CanvasEntity | undefined
 	}
 
@@ -697,7 +691,7 @@ export class DesignCanvasDirective implements OnInit {
 
 		const center = this._domPoint.getTransformedPointFromEvent(event)
 		const mouseBoxBounds = getBoundsFromCenterPoint(center, size)
-		const anyNearClick = !!this.allPanels().find((entity) =>
+		const anyNearClick = !!this.allPanels.find((entity) =>
 			isEntityOverlappingWithBounds(entity, mouseBoxBounds),
 		)
 		if (!anyNearClick) {

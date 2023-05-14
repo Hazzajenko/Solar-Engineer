@@ -9,12 +9,9 @@ import { sortBy } from 'lodash'
 import { EntityStoreService } from '@entities/data-access'
 import {
 	Axis,
-	CANVAS_COLORS,
 	CompleteEntityBounds,
-	ENTITY_TYPE,
 	EntityBounds,
 	NearbyEntity,
-	SizeByType,
 	TransformedPoint,
 } from '@shared/data-access/models'
 import {
@@ -25,6 +22,7 @@ import {
 	getEntityAxisGridLinesByAxisV2,
 	isEntityOverlappingWithBounds,
 } from '@canvas/utils'
+import { CANVAS_COLORS, ENTITY_TYPE, SizeByType } from '@entities/shared'
 
 @Injectable({
 	providedIn: 'root',
@@ -54,7 +52,7 @@ export class NearbyService {
 	getDrawEntityPreviewV2Ngrx(event: PointerEvent, currentPoint: TransformedPoint) {
 		const size = SizeByType[ENTITY_TYPE.Panel]
 		const mouseBoxBounds = getCompleteBoundsFromCenterTransformedPoint(currentPoint, size)
-		const entities = this._entities.panels.allPanels()
+		const entities = this._entities.panels.allPanels
 		const nearbyEntitiesOnAxis = findNearbyBoundOverlapOnBothAxis(mouseBoxBounds, entities)
 
 		if (!nearbyEntitiesOnAxis.length) {

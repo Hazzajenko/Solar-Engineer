@@ -1,4 +1,5 @@
-import { EntityType, EVENT_BUTTON, POINTER_BUTTON } from '@shared/data-access/models'
+import { EVENT_BUTTON, POINTER_BUTTON } from '@shared/data-access/models'
+import { EntityType } from '@entities/shared'
 
 export const isHoldingClick = (event: MouseEvent): boolean => {
 	return event.buttons === EVENT_BUTTON.PRIMARY

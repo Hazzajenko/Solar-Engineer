@@ -4,6 +4,9 @@ import { PanelLinkModel, PanelLinkRequest } from '@entities/shared'
 import { PanelLinksActions } from './panel-links.actions'
 import { makeEnvironmentProviders } from '@angular/core'
 
+/*export type LinkPathLine = {
+
+ }*/
 export const PANEL_LINKS_FEATURE_KEY = 'panel-links'
 
 export interface PanelLinksState extends EntityState<PanelLinkModel> {

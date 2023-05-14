@@ -1,5 +1,6 @@
-import { getBoundsFromTwoPoints, getEntityBounds } from './bounds'
-import { CanvasEntity, EntityBounds, Point } from '@shared/data-access/models'
+import { getBoundsFromTwoPoints, getCompleteEntityBounds, getEntityBounds } from './bounds'
+import { EntityBounds, Point } from '@shared/data-access/models'
+import { CanvasEntity } from '@entities/shared'
 
 export const isEntityInsideTwoPoints = (entity: CanvasEntity, point1: Point, point2: Point) => {
 	const bounds = getEntityBounds(entity)
@@ -62,4 +63,60 @@ export const isPointInsideBounds = (point: Point, bounds: EntityBounds): boolean
 export const isPointInsideEntity = (point: Point, entity: CanvasEntity): boolean => {
 	const bounds = getEntityBounds(entity)
 	return isPointInsideBounds(point, bounds)
+}
+
+const ENTITY_LEFT_SIDE_THRESHOLD = 10
+const ENTITY_RIGHT_SIDE_THRESHOLD = 10
+
+export const isPointInsideLeftSideOfEntity = (point: Point, entity: CanvasEntity): boolean => {
+	const bounds = getEntityBounds(entity)
+	return point.x <= bounds.left + ENTITY_LEFT_SIDE_THRESHOLD && isPointInsideBounds(point, bounds)
+}
+
+export const isPointInsideRightSideOfEntity = (point: Point, entity: CanvasEntity): boolean => {
+	const bounds = getEntityBounds(entity)
+	return point.x >= bounds.right - ENTITY_RIGHT_SIDE_THRESHOLD && isPointInsideBounds(point, bounds)
+}
+
+export const isPointInsideRightSideOfEntityWithRotation = (
+	point: Point,
+	entity: CanvasEntity,
+): boolean => {
+	const bounds = getCompleteEntityBounds(getEntityBounds(entity))
+	// const bounds = getEntityBounds(entity)
+	const rotatedPoint = rotatePoint(point, entity.angle, { x: bounds.centerX, y: bounds.centerY })
+	const rotatedRightSide = bounds.centerX + bounds.height / 2 - ENTITY_RIGHT_SIDE_THRESHOLD
+	return rotatedPoint.x >= rotatedRightSide && isPointInsideBounds(rotatedPoint, bounds)
+}
+
+export const isPointInsideMiddleRightOfEntityWithRotationV2 = (
+	point: Point,
+	entity: CanvasEntity,
+): boolean => {
+	const bounds = getCompleteEntityBounds(getEntityBounds(entity))
+	const rotatedPoint = rotatePoint(point, entity.angle, { x: bounds.centerX, y: bounds.centerY })
+	const rotatedMiddleRight = bounds.centerX + bounds.height / 4 - ENTITY_RIGHT_SIDE_THRESHOLD
+	return (
+		rotatedPoint.x >= rotatedMiddleRight &&
+		rotatedPoint.y >= bounds.centerY - bounds.height / 4 &&
+		rotatedPoint.y <= bounds.centerY + bounds.height / 4
+	)
+}
+
+const rotatePoint = (point: Point, angle: number, center: Point): Point => {
+	const radians = (angle * Math.PI) / 180
+	const cos = Math.cos(radians)
+	const sin = Math.sin(radians)
+	const translatedPoint = {
+		x: point.x - center.x,
+		y: point.y - center.y,
+	}
+	const rotatedPoint = {
+		x: translatedPoint.x * cos - translatedPoint.y * sin,
+		y: translatedPoint.x * sin + translatedPoint.y * cos,
+	}
+	return {
+		x: rotatedPoint.x + center.x,
+		y: rotatedPoint.y + center.y,
+	}
 }

@@ -1,8 +1,11 @@
+import { Point } from '@shared/data-access/models'
+
 export type PanelLinkModel = {
 	id: string
 	stringId: string
 	negativePanelId: string
 	positivePanelId: string
+	linePoints: Point[]
 }
 
 export type PanelLinkRequest = {

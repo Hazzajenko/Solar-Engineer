@@ -6,7 +6,8 @@ import {
 	getStartingSpotForCreationBox,
 	SpotInBox,
 } from './directions'
-import { CanvasEntity, ENTITY_TYPE, SizeByType, TransformedPoint } from '@shared/data-access/models'
+import { TransformedPoint } from '@shared/data-access/models'
+import { CanvasEntity, ENTITY_TYPE, SizeByType } from '@entities/shared'
 
 export const getAllEntitiesBetweenTwoPoints = (
 	point1: TransformedPoint,

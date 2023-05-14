@@ -1,4 +1,15 @@
-import { ChangeDetectionStrategy, Component, inject, Renderer2, signal } from '@angular/core'
+import {
+	AfterViewInit,
+	ChangeDetectionStrategy,
+	Component,
+	effect,
+	ElementRef,
+	inject,
+	QueryList,
+	Renderer2,
+	signal,
+	ViewChildren,
+} from '@angular/core'
 import { NgForOf, NgIf } from '@angular/common'
 import { ActionNotificationComponent } from '../action-notification'
 import { toSignal } from '@angular/core/rxjs-interop'
@@ -19,12 +30,34 @@ import {
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	animations: [notificationAnimation],
 })
-export class ActionNotificationsDisplayComponent {
+export class ActionNotificationsDisplayComponent implements AfterViewInit {
 	private _renderer = inject(Renderer2)
 	private _notificationsStore = inject(NotificationsStoreService)
 	private _notifications = toSignal(this._notificationsStore.allNotifications$, {
 		initialValue: this._notificationsStore.allNotifications,
 	})
+	@ViewChildren('notificationEl') notificationEls!: QueryList<HTMLDivElement>
+	@ViewChildren('progressBar') progressBarEls!: QueryList<ElementRef<HTMLDivElement>>
+
+	constructor() {
+		effect(() => {
+			this._notifications().forEach((notification) => {
+				if (!notification) {
+					return
+				}
+				setTimeout(() => {
+					const progressBarEl = this.progressBarEls.find(
+						(p) => p.nativeElement.id === `progressBar-${notification.id}`,
+					)
+					console.log('progressBarEl', progressBarEl)
+					if (!progressBarEl) {
+						return
+					}
+					this.triggerNotificationTimer(notification, progressBarEl.nativeElement as HTMLDivElement)
+				}, 100)
+			})
+		})
+	}
 
 	get notifications() {
 		return this._notifications()
@@ -50,48 +83,26 @@ export class ActionNotificationsDisplayComponent {
 		this._notificationTimeLeftMap.set(value)
 	}
 
-	// /notificationTimeLeftMap = new Map<string, number>()
-
-	/*	notificationsToAdd: ActionNotificationModel[] = [
-	 {
-	 id: '1',
-	 title: 'Notification 1',
-	 isOpen: true,
-	 buttons: [
-	 {
-	 text: 'Ok',
-	 action: () => {
-	 console.log('Ok')
-	 },
-	 },
-	 {
-	 text: 'Cancel',
-	 action: () => {
-	 console.log('Cancel')
-	 },
-	 },
-	 ],
-	 },
-	 {
-	 id: '2',
-	 title: 'Notification 2',
-	 isOpen: true,
-	 buttons: [
-	 {
-	 text: 'Ok',
-	 action: () => {
-	 console.log('Ok')
-	 },
-	 },
-	 {
-	 text: 'Cancel',
-	 action: () => {
-	 console.log('Cancel')
-	 },
-	 },
-	 ],
-	 },
-	 ]*/
+	ngAfterViewInit() {
+		if (this.notificationEls) {
+			console.log('notificationEls', this.notificationEls)
+			this.notificationEls.forEach((notificationDiv) => {
+				if (!notificationDiv.id) {
+					return
+				}
+				const notification = this.notifications.find((n) => n.id === notificationDiv.id)
+				if (!notification) {
+					return
+				}
+				const progressBarEl = notificationDiv.querySelector('.progress-bar')
+				if (!progressBarEl) {
+					return
+				}
+				this.triggerNotificationTimer(notification, progressBarEl as HTMLDivElement)
+				// this.openedAccordions.mutate((value) => value.set(notification.nativeElement.id, true))
+			})
+		}
+	}
 
 	triggerNotificationTimer(notification: ActionNotificationModel, progressBar: HTMLDivElement) {
 		/*		this._renderer.setStyle(notificationEl, 'z-index', '1000')

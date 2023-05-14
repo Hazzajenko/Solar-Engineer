@@ -2,12 +2,12 @@ import { getEntityBounds } from './bounds'
 import {
 	AXIS,
 	Axis,
-	CanvasEntity,
 	CompleteEntityBounds,
 	EntityBounds,
 	NearbyEntity,
 } from '@shared/data-access/models'
 import { getDistanceBetweenTwoPoints } from './distance'
+import { CanvasEntity } from '@entities/shared'
 
 export const findNearbyBoundOverlapOnBothAxis = (
 	bounds: EntityBounds,

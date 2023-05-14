@@ -1,10 +1,9 @@
 import { AppStateStoreService } from '@canvas/app/data-access'
-// import { EntityStoreService } from '../entities'
 import { ENTITY_SELECTED_STATE, SelectedStoreService } from '../store'
 import { inject, Injectable } from '@angular/core'
-import { CanvasEntity } from '@shared/data-access/models'
 import { assertNotNull } from '@shared/utils'
 import { EntityStoreService } from '@entities/data-access'
+import { CanvasEntity } from '@entities/shared'
 
 @Injectable({
 	providedIn: 'root',

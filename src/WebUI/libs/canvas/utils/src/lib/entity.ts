@@ -1,13 +1,7 @@
 import { UpdateStr } from '@ngrx/entity/src/models'
-import {
-	AngleRadians,
-	CanvasEntity,
-	EntityType,
-	Point,
-	SizeByType,
-} from '@shared/data-access/models'
+import { AngleRadians, Point } from '@shared/data-access/models'
 import { newGuid } from '@shared/utils'
-import { CanvasPanel, CanvasString } from '@entities/shared'
+import { CanvasEntity, CanvasPanel, CanvasString, EntityType, SizeByType } from '@entities/shared'
 
 export const EntityFactory = {
 	create: (type: EntityType, location: Point): CanvasEntity => {

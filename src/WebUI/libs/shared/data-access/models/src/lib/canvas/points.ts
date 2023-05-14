@@ -1,4 +1,4 @@
-import { Point } from '@shared/data-access/models'
+import { Point } from '../location'
 
 export type MiddlePoint = {
 	middleX: number

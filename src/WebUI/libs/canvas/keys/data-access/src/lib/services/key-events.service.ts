@@ -255,7 +255,7 @@ export class KeyEventsService {
 					// const multipleSelectedIds = this._app.selectedCtx.multipleSelectedIds
 					// const multipleSelectedIds = this._app.selectedCtx.multipleSelectedIds
 					if (multipleSelectedIds.length <= 1) return
-					const name = genStringNameV2(this._entities.strings.allStrings())
+					const name = genStringNameV2(this._entities.strings.allStrings)
 					const string = createString(name)
 
 					const entities = this._entities.panels.getByIds(multipleSelectedIds)

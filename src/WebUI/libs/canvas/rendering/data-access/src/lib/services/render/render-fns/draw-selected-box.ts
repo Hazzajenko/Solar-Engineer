@@ -1,5 +1,5 @@
 import { getCompleteBoundsFromMultipleEntitiesWithPadding } from '@canvas/utils'
-import { CANVAS_COLORS, CanvasEntity } from '@shared/data-access/models'
+import { CANVAS_COLORS, CanvasEntity } from '@entities/shared'
 
 export const drawSelectedBox = (ctx: CanvasRenderingContext2D, panelsInArea: CanvasEntity[]) => {
 	const selectionBoxBounds = getCompleteBoundsFromMultipleEntitiesWithPadding(panelsInArea, 10)

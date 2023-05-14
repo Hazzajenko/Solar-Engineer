@@ -1,22 +1,36 @@
 import { UpdateStr } from '@ngrx/entity/src/models'
-import { CanvasEntity, ENTITY_TYPE, Point } from '@shared/data-access/models'
+import { Point } from '@shared/data-access/models'
 import { EntityFactory } from '@canvas/utils'
-import { CanvasPanel, PanelId, StringId, UndefinedStringId } from '@entities/shared'
+import {
+	CanvasEntity,
+	CanvasPanel,
+	DefaultPanelConfigId,
+	ENTITY_TYPE,
+	PanelConfigId,
+	PanelId,
+	StringId,
+	UndefinedStringId,
+} from '@entities/shared'
 
-export function isPanel(entity: CanvasEntity): entity is CanvasPanel {
+export function isPanel(entity: CanvasEntity | CanvasPanel): entity is CanvasPanel {
 	return entity.type === ENTITY_TYPE.Panel
 }
 
-export function assertIsPanel(entity: CanvasEntity): asserts entity is CanvasPanel {
+export function assertIsPanel(entity: CanvasEntity | CanvasPanel): asserts entity is CanvasPanel {
 	if (!isPanel(entity)) {
 		throw new Error(`Expected entity to be a panel, but was ${entity.type}`)
 	}
 }
 
-export const createPanel = (location: Point, stringId: string = UndefinedStringId): CanvasPanel => {
+export const createPanel = (
+	location: Point,
+	stringId: string = UndefinedStringId,
+	panelConfigId: PanelConfigId = DefaultPanelConfigId,
+): CanvasPanel => {
 	return {
 		...EntityFactory.create(ENTITY_TYPE.Panel, location),
 		stringId,
+		panelConfigId,
 	} as CanvasPanel
 }
 

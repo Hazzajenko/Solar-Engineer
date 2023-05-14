@@ -2,13 +2,12 @@ import { getSnapToGridBoolean, handleSnapToGridWhenNearby } from '../utils'
 import {
 	AXIS,
 	Axis,
-	CANVAS_COLORS,
-	CanvasColor,
 	CompleteEntityBounds,
 	EntityBounds,
 	NearbyEntity,
 } from '@shared/data-access/models'
 import { getCompleteEntityBounds } from '@canvas/utils'
+import { CANVAS_COLORS, CanvasColor } from '@entities/shared'
 
 export const getCenterLineBetweenTwoEntitiesWithPreviewFn = (
 	altKey: boolean,

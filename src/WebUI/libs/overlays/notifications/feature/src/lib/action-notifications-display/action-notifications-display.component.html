@@ -8,6 +8,7 @@
         *ngIf='notification.isOpen'
         @notificationAnimation
         #notificationEl
+        [id]='notification.id'
 
         class='pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5'>
         <div class='p-4'>
@@ -47,6 +48,7 @@
                 background-color: #000000;
                 opacity: 0.4;-->
         <div class='relative bottom-0 left-0 h-1 bg-gray-300'
+             [id]='"progressBar-" + notification.id'
              #progressBar
         ></div>
       </div>

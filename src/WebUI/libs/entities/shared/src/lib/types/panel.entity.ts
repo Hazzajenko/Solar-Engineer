@@ -1,5 +1,6 @@
-import { PanelConfigId, StringId } from '@entities/shared'
-import { CanvasEntity } from '@shared/data-access/models'
+import { CanvasEntity } from './canvas-entity'
+import { PanelConfigId } from './panel-config'
+import { StringId } from './string.entity'
 
 export type CanvasPanel = Omit<CanvasEntity, 'id' | 'type'> & {
 	id: PanelId

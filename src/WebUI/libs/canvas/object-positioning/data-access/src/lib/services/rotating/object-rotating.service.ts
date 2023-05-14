@@ -6,9 +6,7 @@ import { Dictionary } from '@ngrx/entity'
 import { UpdateStr } from '@ngrx/entity/src/models'
 import {
 	AngleRadians,
-	CANVAS_COLORS,
 	Point,
-	SizeByType,
 	TransformedPoint,
 	TrigonometricBounds,
 } from '@shared/data-access/models'
@@ -21,7 +19,7 @@ import {
 	rotatingKeysDown,
 	updateObjectByIdForStore,
 } from '@canvas/utils'
-import { CanvasPanel } from '@entities/shared'
+import { CANVAS_COLORS, CanvasPanel, SizeByType } from '@entities/shared'
 
 @Injectable({
 	providedIn: 'root',
