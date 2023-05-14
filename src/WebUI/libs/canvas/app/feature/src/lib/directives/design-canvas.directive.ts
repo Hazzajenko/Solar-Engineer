@@ -393,10 +393,9 @@ export class DesignCanvasDirective implements OnInit {
 			this._objPositioning.resetObjectPositioning(event, currentPoint)
 			return
 		}
-
+		const mode = this._appState.state.mode
 		const entityUnderMouse = this.getEntityUnderMouse(currentPoint)
 		if (entityUnderMouse) {
-			const mode = this._appState.state.mode
 			if (mode === 'SelectMode') {
 				this._selected.handleEntityUnderMouse(event, entityUnderMouse)
 				return
@@ -421,6 +420,15 @@ export class DesignCanvasDirective implements OnInit {
 			/*			this._selected.handleEntityUnderMouse(event, entityUnderMouse)
 			 console.log('entityUnderMouse', entityUnderMouse)
 			 return*/
+		}
+
+		if (mode === 'LinkMode') {
+			this._panelLinks.handleLinkModeClickOnCanvas(event, currentPoint)
+			/*			const isMouseOverLinkPath = this._panelLinks.isMouseOverLinkPath(event, currentPoint)
+			 if (isMouseOverLinkPath) {
+			 // this._panelLinks.handleLinkPathClick(event, currentPoint)
+			 return
+			 }*/
 		}
 
 		if (this._panelLinksStore.state.requestingLink) {

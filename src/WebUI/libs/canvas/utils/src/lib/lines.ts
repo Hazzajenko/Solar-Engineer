@@ -1,11 +1,12 @@
 import { Point } from '@shared/data-access/models'
 
+const DistanceToLineThreshold = 2
 export const isPointOnLine = (point: Point, linePoints: Point[]): boolean => {
 	for (let i = 0; i < linePoints.length - 1; i++) {
 		const p1 = linePoints[i]
 		const p2 = linePoints[i + 1]
 		const distanceToLine = getDistanceToLine(point, p1, p2)
-		if (distanceToLine <= 1) {
+		if (distanceToLine <= DistanceToLineThreshold) {
 			return true
 		}
 	}

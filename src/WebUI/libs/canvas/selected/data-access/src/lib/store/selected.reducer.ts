@@ -15,6 +15,7 @@ export interface SelectedState {
 	singleSelectedEntityId: string | undefined
 	multipleSelectedEntityIds: string[]
 	selectedStringId: string | undefined
+	selectedLinkId: string | undefined
 	entityState: EntitySelectedState
 }
 
@@ -22,6 +23,7 @@ export const initialSelectedState: SelectedState = {
 	singleSelectedEntityId: undefined,
 	multipleSelectedEntityIds: [],
 	selectedStringId: undefined,
+	selectedLinkId: undefined,
 	entityState: ENTITY_SELECTED_STATE.NONE_SELECTED,
 }
 
@@ -98,6 +100,20 @@ const reducer = createReducer(
 	on(SelectedActions.clearSelectedString, (state) => ({
 		...state,
 		selectedStringId: undefined,
+	})),
+
+	/**
+	 * * Selected Link Path
+	 */
+
+	on(SelectedActions.selectPanelLink, (state, { panelLinkId }) => ({
+		...state,
+		selectedLinkId: panelLinkId,
+	})),
+
+	on(SelectedActions.clearSelectedPanelLink, (state) => ({
+		...state,
+		selectedLinkId: undefined,
 	})),
 
 	/**

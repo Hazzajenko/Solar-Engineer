@@ -22,6 +22,10 @@ export const SelectedActions = createActionGroup({
 		'Remove Entities From MultiSelect': props<{
 			entityIds: string[]
 		}>(),
+		'Select Panel Link': props<{
+			panelLinkId: string
+		}>(),
+		'Clear Selected Panel Link': emptyProps(),
 		'Clear Single Selected': emptyProps(),
 		'Clear Multi Selected': emptyProps(),
 		'Clear Selected State': emptyProps(),

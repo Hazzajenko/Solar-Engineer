@@ -1,4 +1,4 @@
-import { AppStateStoreService } from '@canvas/app/data-access'
+import { AppStateStoreService, CanvasElementService } from '@canvas/app/data-access'
 import { inject, Injectable } from '@angular/core'
 import { PanelLinksStoreService } from '../store'
 import {
@@ -10,10 +10,15 @@ import {
 	UndefinedStringId,
 } from '@entities/shared'
 import { assertNotNull, newGuid } from '@shared/utils'
-import { SelectedStoreService } from '@canvas/selected/data-access'
+import { injectSelectedStore } from '@canvas/selected/data-access'
 import { EntityStoreService } from '../../shared'
 import { TransformedPoint } from '@shared/data-access/models'
-import { isPointInsideMiddleRightOfEntityWithRotationV2, isPointOnLine } from '@canvas/utils'
+import {
+	changeCanvasCursor,
+	isPointInsideMiddleRightOfEntityWithRotationV2,
+	isPointOnLine,
+	setCanvasCursorToAuto,
+} from '@canvas/utils'
 import { calculateLinkLinesBetweenTwoPanels } from '@entities/utils'
 
 @Injectable({
@@ -24,7 +29,9 @@ export class PanelLinksService {
 	// private _entities = inject(EntityStoreService)
 	private _appStore = inject(AppStateStoreService)
 	private _panelLinksStore = inject(PanelLinksStoreService)
-	private _selectedStore = inject(SelectedStoreService)
+	private _selectedStore = injectSelectedStore()
+	// private _selectedStore = inject(SelectedStoreService)
+	private _canvasElementStore = inject(CanvasElementService)
 
 	polarityDirection: PolarityDirection = 'positive-to-negative'
 
@@ -129,6 +136,24 @@ export class PanelLinksService {
 			})
 	}
 
+	getPanelLinkOrderForSelectedStringWithPoints() {
+		const stringId = this._selectedStore.selectedStringId
+		assertNotNull(stringId)
+		const panelLinks = this._panelLinksStore.getByStringId(stringId)
+		return panelLinks
+			.map((panelLink) => ({
+				positivePanelId: panelLink.positivePanelId,
+				negativePanelId: panelLink.negativePanelId,
+				linePoints: panelLink.linePoints,
+			}))
+			.sort((a, b) => {
+				if (!a || !b) {
+					return 0
+				}
+				return a.positivePanelId === b.negativePanelId ? 1 : -1
+			})
+	}
+
 	clearPanelLinkRequest() {
 		this._panelLinksStore.endPanelLink()
 	}
@@ -144,9 +169,7 @@ export class PanelLinksService {
 		}
 
 		const panelLinks = this._entities.panelLinks.getByStringId(this._selectedStore.selectedStringId)
-		// const panelLinks = this._entities.panelLinks.panelLinksForSelectedString()
-		if (!panelLinks) {
-			console.error('panelLinks not found')
+		if (!panelLinks.length) {
 			return
 		}
 
@@ -155,10 +178,35 @@ export class PanelLinksService {
 		})
 
 		if (!panelLink) {
+			setCanvasCursorToAuto(this._canvasElementStore.canvas)
 			return
 		}
 
+		if (this._canvasElementStore.canvas.style.cursor !== 'pointer') {
+			changeCanvasCursor(this._canvasElementStore.canvas, 'pointer')
+		}
+
 		console.log('panelLink', panelLink)
+		return panelLink
+	}
+
+	handleLinkModeClickOnCanvas(event: PointerEvent, currentPoint: TransformedPoint) {
+		/*		if (!this._selectedStore.selectedStringId) {
+		 console.error('a string must be selected to be in link mode')
+		 return
+		 }*/
+
+		const panelLink = this.isMouseOverLinkPath(event, currentPoint)
+		if (!panelLink) {
+			if (this._panelLinksStore.state.requestingLink) {
+				this.clearPanelLinkRequest()
+			}
+			return
+		}
+
+		this._selectedStore.selectPanelLink(panelLink.id)
+
+		// todo continue this
 	}
 
 	isLinkSymbolUnderMouse(event: PointerEvent, currentPoint: TransformedPoint) {

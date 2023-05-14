@@ -251,7 +251,8 @@ export class RenderService {
 				this._graphicsStore.state.linkModePathLines &&
 				this._selectedStore.state.selectedStringId
 			) {
-				this.drawLinkModePathLines(ctx, options?.customEntities)
+				this.drawLinkModePathLinesV2(ctx, options?.customEntities)
+				// this.drawLinkModePathLines(ctx, options?.customEntities)
 			}
 
 			const shouldRenderSelectedEntitiesBox = options?.shouldRenderSelectedEntitiesBox ?? true
@@ -418,6 +419,32 @@ export class RenderService {
 			: getNegativeSymbolLocation(lastPanel)
 		ctx.lineTo(lastX, lastY)
 		ctx.stroke()
+		ctx.restore()
+	}
+
+	private drawLinkModePathLinesV2(
+		ctx: CanvasRenderingContext2D,
+		customEntities: CanvasEntity[] | undefined,
+	) {
+		const customIds = customEntities?.map((entity) => entity.id) ?? []
+		const linksInOrder = this._panelLinks.getPanelLinkOrderForSelectedStringWithPoints()
+		if (!linksInOrder.length) {
+			return
+		}
+		ctx.save()
+		ctx.strokeStyle = 'black'
+		ctx.lineWidth = 1
+
+		linksInOrder.forEach((link) => {
+			link.linePoints.forEach((point, index) => {
+				if (index === 0) {
+					ctx.moveTo(point.x, point.y)
+				} else {
+					ctx.lineTo(point.x, point.y)
+					ctx.stroke()
+				}
+			})
+		})
 		ctx.restore()
 	}
 }
