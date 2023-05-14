@@ -28,5 +28,6 @@ export const PanelLinksActions = createActionGroup({
 			panelLinkIds: string[]
 		}>(),
 		clearPanelLinksState: emptyProps(),
+		Noop: emptyProps(),
 	},
 })

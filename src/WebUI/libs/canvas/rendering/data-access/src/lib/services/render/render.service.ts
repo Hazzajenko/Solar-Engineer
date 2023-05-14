@@ -6,7 +6,7 @@ import {
 	MODE_STATE,
 } from '@canvas/app/data-access'
 // import { EntityStoreService } from '../entities'
-import { SelectedStoreService } from '@canvas/selected/data-access'
+import { injectSelectedStore } from '@canvas/selected/data-access'
 import { CanvasRenderOptions } from '../../types'
 import { drawSelectedBox, drawSelectedStringBoxV3 } from './render-fns'
 import { inject, Injectable } from '@angular/core'
@@ -17,7 +17,12 @@ import {
 	PanelLinksService,
 	PanelLinksStoreService,
 } from '@entities/data-access'
-import { getNegativeSymbolLocation, getSymbolLocations, isPanel } from '@entities/utils'
+import {
+	getNegativeSymbolLocation,
+	getPositiveSymbolLocation,
+	getSymbolLocations,
+	isPanel,
+} from '@entities/utils'
 import { AngleDegrees } from '@shared/data-access/models'
 import { toRadians } from '@canvas/utils'
 import {
@@ -40,7 +45,8 @@ export class RenderService {
 	// private _app = inject(AppStoreService)
 	// private _appStore = inject(AppNgrxStateStore)
 	private _appStore = inject(AppStateStoreService)
-	private _selectedStore = inject(SelectedStoreService)
+	private _selectedStore = injectSelectedStore()
+	// private _selectedStore = inject(SelectedStoreService)
 	private _graphicsStore = inject(GraphicsStoreService)
 	private _panelLinksStore = inject(PanelLinksStoreService)
 	private _panelLinks = inject(PanelLinksService)
@@ -434,16 +440,48 @@ export class RenderService {
 		ctx.save()
 		ctx.strokeStyle = 'black'
 		ctx.lineWidth = 1
+		/*
+		 linksInOrder.forEach((link) => {
+		 link.linePoints.forEach((linePoint, index) => {
+		 if (index === 0) {
+		 const point = customIds.includes(link.positivePanelId)
+		 ? getPositiveSymbolLocation(
+		 customEntities?.find((entity) => entity.id === link.positivePanelId) as CanvasPanel,
+		 )
+		 : linePoint
+		 ctx.moveTo(point.x, point.y)
+		 } else {
+		 const point = customIds.includes(link.negativePanelId)
+		 ? getPositiveSymbolLocation(
+		 customEntities?.find((entity) => entity.id === link.negativePanelId) as CanvasPanel,
+		 )
+		 : linePoint
+		 ctx.lineTo(point.x, point.y)
+		 ctx.stroke()
+		 }
+		 })
+		 })*/
 
 		linksInOrder.forEach((link) => {
-			link.linePoints.forEach((point, index) => {
-				if (index === 0) {
-					ctx.moveTo(point.x, point.y)
-				} else {
-					ctx.lineTo(point.x, point.y)
-					ctx.stroke()
-				}
+			link.linePoints.forEach((linePoint, index) => {
+				const drawFn = index === 0 ? ctx.moveTo : ctx.lineTo
+				const currentPanelId = index === 0 ? link.positivePanelId : link.negativePanelId
+				const point = customIds.includes(currentPanelId)
+					? getPositiveSymbolLocation(
+							customEntities?.find((entity) => entity.id === currentPanelId) as CanvasPanel,
+					  )
+					: linePoint
+				drawFn.call(ctx, point.x, point.y)
 			})
+
+			ctx.save()
+			if (this._selectedStore.selectedPanelLinkId === link.id) {
+				ctx.strokeStyle = 'red'
+				ctx.lineWidth = 2
+			}
+
+			ctx.stroke()
+			ctx.restore()
 		})
 		ctx.restore()
 	}

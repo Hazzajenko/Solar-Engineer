@@ -3,6 +3,7 @@ import { Store } from '@ngrx/store'
 import { SelectedState } from './selected.reducer'
 import {
 	selectMultiSelectedEntities,
+	selectSelectedPanelLinkId,
 	selectSelectedState,
 	selectSelectedStringId,
 	selectSingleSelectedEntity,
@@ -36,6 +37,12 @@ export function injectSelectedStore() {
 		},
 		get selectedStringId$() {
 			return store.select(selectSelectedStringId)
+		},
+		get selectedPanelLinkId() {
+			return store.selectSignal(selectSelectedPanelLinkId)()
+		},
+		get selectedPanelLinkId$() {
+			return store.select(selectSelectedPanelLinkId)
 		},
 		selectString(stringId: string) {
 			store.dispatch(SelectedActions.selectString({ stringId }))

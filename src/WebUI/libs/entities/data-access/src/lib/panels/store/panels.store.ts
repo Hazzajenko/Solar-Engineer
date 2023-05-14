@@ -1,10 +1,20 @@
-import { inject } from '@angular/core'
-import { Store } from '@ngrx/store'
+import { inject, makeEnvironmentProviders } from '@angular/core'
+import { provideState, Store } from '@ngrx/store'
 import { selectAllPanels, selectPanelsEntities } from './panels.selectors'
 import { isNotNull } from '@shared/utils'
 import { PanelsActions } from './panels.actions'
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { CanvasPanel } from '@entities/shared'
+import { provideEffects } from '@ngrx/effects'
+import { removeSelectedIfDeleted$, updatePanelLinkPaths$ } from './panels.effects'
+import { PANELS_FEATURE_KEY, panelsReducer } from './panels.reducer'
+
+export function providePanelsFeature() {
+	return makeEnvironmentProviders([
+		provideState(PANELS_FEATURE_KEY, panelsReducer),
+		provideEffects({ removeSelectedIfDeleted$, updatePanelLinkPaths$ }),
+	])
+}
 
 export function injectPanelsStore() {
 	const store = inject(Store)

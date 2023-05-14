@@ -26,3 +26,8 @@ export const selectSelectedStringId = createSelector(
 	selectSelectedState,
 	(state: SelectedState) => state.selectedStringId,
 )
+
+export const selectSelectedPanelLinkId = createSelector(
+	selectSelectedState,
+	(state: SelectedState) => state.selectedPanelLinkId,
+)

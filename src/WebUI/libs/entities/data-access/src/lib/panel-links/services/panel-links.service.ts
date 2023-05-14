@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core'
 import { PanelLinksStoreService } from '../store'
 import {
 	CanvasPanel,
+	getEnderPolarityFromDirection,
 	getStarterPolarityFromDirection,
 	PanelLinkModel,
 	PanelLinkRequest,
@@ -74,6 +75,11 @@ export class PanelLinksService {
 			)
 			return
 		}
+		const polarity = getEnderPolarityFromDirection(this.polarityDirection)
+		if (this._panelLinksStore.isPanelLinkExisting(panel.id, polarity)) {
+			console.error('panel already has a negative link')
+			return
+		}
 		const requestingPanel = this._entities.panels.getById(requestingLink.panelId)
 		if (!requestingPanel) {
 			console.error('requestingPanel not found')
@@ -94,7 +100,7 @@ export class PanelLinksService {
 		} else {
 			this._panelLinksStore.endPanelLink()
 		}
-		this.getPanelLinkOrderForString(panel.stringId)
+		// this.getPanelLinkOrderForString(panel.stringId)
 	}
 
 	getPanelLinkOrderForString(stringId: string) {
@@ -140,18 +146,25 @@ export class PanelLinksService {
 		const stringId = this._selectedStore.selectedStringId
 		assertNotNull(stringId)
 		const panelLinks = this._panelLinksStore.getByStringId(stringId)
-		return panelLinks
-			.map((panelLink) => ({
-				positivePanelId: panelLink.positivePanelId,
-				negativePanelId: panelLink.negativePanelId,
-				linePoints: panelLink.linePoints,
-			}))
-			.sort((a, b) => {
-				if (!a || !b) {
-					return 0
-				}
-				return a.positivePanelId === b.negativePanelId ? 1 : -1
-			})
+		return panelLinks.sort((a, b) => {
+			if (!a || !b) {
+				return 0
+			}
+			return a.positivePanelId === b.negativePanelId ? 1 : -1
+		})
+		/*		return panelLinks
+		 .map((panelLink) => ({
+		 id: panelLink.id,
+		 positivePanelId: panelLink.positivePanelId,
+		 negativePanelId: panelLink.negativePanelId,
+		 linePoints: panelLink.linePoints,
+		 }))
+		 .sort((a, b) => {
+		 if (!a || !b) {
+		 return 0
+		 }
+		 return a.positivePanelId === b.negativePanelId ? 1 : -1
+		 })*/
 	}
 
 	clearPanelLinkRequest() {

@@ -32,6 +32,12 @@ export function injectPanelLinksStore() {
 		getByStringId(stringId: string) {
 			return allPanelLinks().filter((panelLink) => panelLink.stringId === stringId)
 		},
+		getByPanelId(panelId: string) {
+			return allPanelLinks().filter(
+				(panelLink) =>
+					panelLink.positivePanelId === panelId || panelLink.negativePanelId === panelId,
+			)
+		},
 		isPanelLinkExisting(panelId: string, polarity: Polarity) {
 			return !!allPanelLinks().find(
 				(panelLink) =>

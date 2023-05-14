@@ -19,6 +19,13 @@ export const getSymbolLocations = (panel: CanvasPanel) => {
 	return [getNegativeSymbolLocation(panel), getPositiveSymbolLocation(panel)]
 }
 
+export const getSymbolLocationPoints = (panel: CanvasPanel) => {
+	return {
+		negative: getNegativeSymbolLocation(panel),
+		positive: getPositiveSymbolLocation(panel),
+	}
+}
+
 export const getPositiveSymbolLocation = (panel: CanvasPanel) => {
 	const x = panel.location.x + panel.width
 	const y = panel.location.y + panel.height / 2
