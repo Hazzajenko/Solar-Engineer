@@ -1,4 +1,4 @@
-import { TransformedPoint } from '@shared/data-access/models'
+import { CompleteEntityBounds, NearbyEntity, TransformedPoint } from '@shared/data-access/models'
 import { CanvasEntity, CanvasPanel } from '@entities/shared'
 
 export type CanvasRenderOptions = {
@@ -12,6 +12,14 @@ export type CanvasRenderOptions = {
 	shouldRenderSelectedStringBox?: boolean
 	customPanels?: CanvasPanel[]
 	singleToMoveId?: string
+	nearby?: {
+		axisPreviewRect: CompleteEntityBounds
+		mouseBounds: CompleteEntityBounds
+		nearbyEntity: NearbyEntity
+		snapToGridBool: boolean
+		isMovingExistingEntity: boolean
+	}
+
 	// singleToMove
 }
 

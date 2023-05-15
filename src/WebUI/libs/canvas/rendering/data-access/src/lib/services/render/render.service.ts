@@ -8,7 +8,12 @@ import {
 // import { EntityStoreService } from '../entities'
 import { injectSelectedStore } from '@canvas/selected/data-access'
 import { CanvasRenderOptions } from '../../types'
-import { drawBoxWithOptionsCtx, drawSelectedBox, drawSelectedStringBoxV3 } from './render-fns'
+import {
+	drawBoxWithOptionsCtx,
+	drawNearbyLineDrawCtxFnFromNearbyLinesStateOptimised,
+	drawSelectedBox,
+	drawSelectedStringBoxV3,
+} from './render-fns'
 import { inject, Injectable } from '@angular/core'
 import { assertNotNull, shadeColor } from '@shared/utils'
 import { GraphicsStoreService } from '@canvas/graphics/data-access'
@@ -345,6 +350,38 @@ export class RenderService {
 					ctx.restore()
 				})
 			}
+
+			if (options?.nearby && this._graphicsStore.state.nearbyLines) {
+				console.log('drawing nearby lines')
+				const nearbyOpts = options.nearby
+				const nearbyLinesState = this._graphicsStore.state.nearbyLinesState
+				/*				const axisPreviewRect = nearbyOpts.axisPreviewRect
+				 const mouseBoxBounds = nearbyOpts.mouseBounds
+				 const closestEnt = nearbyOpts.nearbyEntity
+				 const altKey = nearbyOpts.snapToGridBool*/
+				// const holdAltToSnapToGrid = this._appStore.state.holdAltToSnapToGrid
+				// const isMovingExistingEntity = this._appStore.state.mode === 'MoveMode'
+				drawNearbyLineDrawCtxFnFromNearbyLinesStateOptimised(
+					ctx,
+					nearbyLinesState,
+					nearbyOpts,
+					CANVAS_COLORS.HoveredPanelFillStyle,
+				)
+
+				/*				const ctxFn = getNearbyLineDrawCtxFnFromNearbyLinesState(
+				 nearbyLinesState,
+				 axisPreviewRect,
+				 mouseBoxBounds,
+				 closestEnt,
+				 CANVAS_COLORS.HoveredPanelFillStyle,
+				 altKey,
+				 true,
+				 true,
+				 // holdAltToSnapToGrid,
+				 // isMovingExistingEntity,
+				 )*/
+				// ctxFn(ctx)
+			}
 			/*			if (options?.drawFns) {
 			 options.drawFns.forEach((fn) => fn(ctx))
 			 }*/
@@ -576,6 +613,32 @@ export class RenderService {
 					ctx.restore()
 				})
 			}
+			console.log('drawing nearby lines')
+			/*	if (options?.nearby && this._graphicsStore.state.nearbyLines) {
+			 console.log('drawing nearby lines')
+			 const nearbyOpts = options.nearby
+			 const nearbyLinesState = this._graphicsStore.state.nearbyLinesState
+			 const axisPreviewRect = nearbyOpts.axisPreviewRect
+			 const mouseBoxBounds = nearbyOpts.mouseBounds
+			 const closestEnt = nearbyOpts.nearbyEntity
+			 const altKey = nearbyOpts.snapToGridBool
+			 // const holdAltToSnapToGrid = this._appStore.state.holdAltToSnapToGrid
+			 // const isMovingExistingEntity = this._appStore.state.mode === 'MoveMode'
+
+			 const ctxFn = getNearbyLineDrawCtxFnFromNearbyLinesState(
+			 nearbyLinesState,
+			 axisPreviewRect,
+			 mouseBoxBounds,
+			 closestEnt,
+			 CANVAS_COLORS.HoveredPanelFillStyle,
+			 altKey,
+			 true,
+			 true,
+			 // holdAltToSnapToGrid,
+			 // isMovingExistingEntity,
+			 )
+			 ctxFn(ctx)
+			 }*/
 			/*			if (options?.drawFns) {
 			 options.drawFns.forEach((fn) => fn(ctx))
 			 }*/

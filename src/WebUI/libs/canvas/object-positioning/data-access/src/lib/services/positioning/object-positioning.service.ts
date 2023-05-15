@@ -202,10 +202,21 @@ export class ObjectPositioningService {
 		)
 
 		this._render.renderCanvasApp({
-			excludedEntityIds: [this.singleToMoveId], // drawFns: [ctxFn],
-			drawFnsAtMiddle: [ctxFn],
-			customEntities: [customEntity],
+			customPanels: [customEntity],
+			singleToMoveId: this.singleToMoveId,
+			nearby: {
+				axisPreviewRect,
+				mouseBounds: mouseBoxBounds,
+				nearbyEntity: closestEnt,
+				snapToGridBool: altKey,
+				isMovingExistingEntity,
+			},
 		})
+		/*		this._render.renderCanvasApp({
+		 excludedEntityIds: [this.singleToMoveId], // drawFns: [ctxFn],
+		 drawFnsAtMiddle: [ctxFn],
+		 customEntities: [customEntity],
+		 })*/
 		// this._render.drawCanvasExcludeIdsWithFn([this.singleToMoveId], ctxFn)
 	}
 
