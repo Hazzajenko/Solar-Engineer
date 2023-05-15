@@ -8,15 +8,16 @@ export const handleSnapToGridWhenNearby = (
 	snapToGridBool: boolean,
 ) => {
 	if (snapToGridBool) {
-		ctx.save()
+		// ctx.save()
 		ctx.rect(
 			axisPreviewRect.left,
 			axisPreviewRect.top,
 			axisPreviewRect.width,
 			axisPreviewRect.height,
 		)
-		ctx.restore()
+		// ctx.restore()
 		return
 	}
+	// ctx.save()
 	ctx.rect(mouseBounds.left, mouseBounds.top, mouseBounds.width, mouseBounds.height)
 }

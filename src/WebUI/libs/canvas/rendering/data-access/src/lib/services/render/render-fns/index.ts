@@ -3,6 +3,7 @@
 // export * from './draw-axis-grid-lines'
 export * from './draw-selected-box'
 export * from './draw-selected-string-box'
+export * from './draw-box-with-options.ctx'
 
 // export * from './draw-axis-grid-lines'
 // export * from './draw-preview-fn'

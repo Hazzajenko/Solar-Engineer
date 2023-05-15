@@ -4,6 +4,7 @@ export const CONTEXT_MENU_COMPONENT = {
 	MULTIPLE_PANELS_MENU: 'app-multiple-panels-menu',
 	STRING_MENU: 'app-string-menu',
 	SINGLE_PANEL_MENU: 'app-single-panel-menu',
+	PANEL_LINK_MENU: 'app-panel-link-menu',
 } as const
 export type ContextMenuComponent =
 	(typeof CONTEXT_MENU_COMPONENT)[keyof typeof CONTEXT_MENU_COMPONENT]
@@ -29,10 +30,18 @@ export type ContextMenuStringMenu = ContextMenuTemplate & {
 		stringId: string
 	}
 }
+export type ContextMenuPanelLinkMenu = ContextMenuTemplate & {
+	component: typeof CONTEXT_MENU_COMPONENT.PANEL_LINK_MENU
+	data: {
+		panelLinkId: string
+	}
+}
+
 export type ContextMenuInput =
 	| ContextMenuSinglePanelMenu
 	| ContextMenuMultiplePanelsMenu
 	| ContextMenuStringMenu
+	| ContextMenuPanelLinkMenu
 
 // export const
 /*

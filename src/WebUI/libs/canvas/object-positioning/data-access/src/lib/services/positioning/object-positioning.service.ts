@@ -34,7 +34,7 @@ import {
 	multiSelectDraggingKeysDown,
 	updateObjectById,
 } from '@canvas/utils'
-import { CANVAS_COLORS, CanvasEntity, CanvasPanel, ENTITY_TYPE, SizeByType } from '@entities/shared'
+import { CANVAS_COLORS, CanvasPanel, ENTITY_TYPE, PanelId, SizeByType } from '@entities/shared'
 
 @Injectable({
 	providedIn: 'root',
@@ -107,36 +107,57 @@ export class ObjectPositioningService {
 		)
 		// const nearbyEntitiesOnAxis = findNearbyBoundOverlapOnBothAxis(mouseBoxBounds, entities)
 		const nearbyLinesState = this._graphicsStore.state.nearbyLinesState
-		const customEntity: CanvasEntity = {
-			id: this.singleToMoveId,
-			location: getTopLeftPointFromTransformedPoint(currentPoint, SizeByType[ENTITY_TYPE.Panel]),
-			angle: entity.angle,
-			type: ENTITY_TYPE.Panel,
-			width: entity.width,
-			height: entity.height,
+		/*		const customEntity: CanvasEntity = {
+		 ...entity,
+		 id: this.singleToMoveId,
+		 location: getTopLeftPointFromTransformedPoint(
+		 currentPoint,
+		 SizeByType[ENTITY_TYPE.Panel],
+		 ) /!*			angle: entity.angle,
+		 type: ENTITY_TYPE.Panel,
+		 width: entity.width,
+		 height: entity.height,*!/,
+		 }*/
+		const customEntity: CanvasPanel = {
+			...entity,
+			id: this.singleToMoveId as PanelId,
+			location: getTopLeftPointFromTransformedPoint(
+				currentPoint,
+				SizeByType[ENTITY_TYPE.Panel],
+			) /*			angle: entity.angle,
+			 type: ENTITY_TYPE.Panel,
+			 width: entity.width,
+			 height: entity.height,*/,
 		}
 		// const graphicsSnapshot = this._graphicsStore.snapshot
 		if (!nearbyEntitiesOnAxis.length || nearbyLinesState === 'NearbyLinesDisabled') {
-			const drawSingleToMove = (ctx: CanvasRenderingContext2D) => {
-				ctx.save()
-				ctx.fillStyle = CANVAS_COLORS.HoveredPanelFillStyle
-				ctx.translate(location.x + entity.width / 2, location.y + entity.height / 2)
-				ctx.rotate(entity.angle)
+			/*		const drawSingleToMove = (ctx: CanvasRenderingContext2D) => {
+			 ctx.save()
+			 ctx.fillStyle = CANVAS_COLORS.HoveredPanelFillStyle
+			 ctx.translate(location.x + entity.width / 2, location.y + entity.height / 2)
+			 ctx.rotate(entity.angle)
 
-				ctx.beginPath()
-				ctx.rect(-entity.width / 2, -entity.height / 2, entity.width, entity.height)
-				ctx.fill()
-				ctx.stroke()
-				ctx.restore()
-				// console.log('no nearbyEntities')
-				// const drawPreviewFn = getDefaultDrawPreviewCtxFn(mouseBoxBounds)
+			 ctx.beginPath()
+			 ctx.rect(-entity.width / 2, -entity.height / 2, entity.width, entity.height)
+			 ctx.fill()
+			 ctx.stroke()
+			 ctx.restore()
+			 // console.log('no nearbyEntities')
+			 // const drawPreviewFn = getDefaultDrawPreviewCtxFn(mouseBoxBounds)
 
-				// this.clearNearbyState()
-			}
+			 // this.clearNearbyState()
+			 }
+			 this._render.renderCanvasApp({
+			 excludedEntityIds: [this.singleToMoveId], // drawFns: [drawSingleToMove],
+			 drawFnsAtMiddle: [drawSingleToMove],
+			 customEntities: [customEntity],
+			 })*/
 			this._render.renderCanvasApp({
-				excludedEntityIds: [this.singleToMoveId],
-				drawFns: [drawSingleToMove],
-				customEntities: [customEntity],
+				// excludedEntityIds: [this.singleToMoveId], // drawFns: [drawSingleToMove],
+				// drawFnsAtMiddle: [drawSingleToMove],
+				// customEntities: [customEntity],
+				customPanels: [customEntity],
+				singleToMoveId: this.singleToMoveId,
 			})
 			// this._render.drawCanvasExcludeIdsWithFn([this.singleToMoveId], drawSingleToMove)
 			// this._render.drawCanvasWithFunction(drawSingleToMove)
@@ -181,8 +202,8 @@ export class ObjectPositioningService {
 		)
 
 		this._render.renderCanvasApp({
-			excludedEntityIds: [this.singleToMoveId],
-			drawFns: [ctxFn],
+			excludedEntityIds: [this.singleToMoveId], // drawFns: [ctxFn],
+			drawFnsAtMiddle: [ctxFn],
 			customEntities: [customEntity],
 		})
 		// this._render.drawCanvasExcludeIdsWithFn([this.singleToMoveId], ctxFn)

@@ -199,7 +199,7 @@ export class PanelLinksService {
 			changeCanvasCursor(this._canvasElementStore.canvas, 'pointer')
 		}
 
-		console.log('panelLink', panelLink)
+		// console.log('panelLink', panelLink)
 		return panelLink
 	}
 

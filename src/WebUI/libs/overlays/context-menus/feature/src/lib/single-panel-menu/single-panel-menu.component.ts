@@ -36,6 +36,7 @@ export class SinglePanelMenuComponent implements OnInit {
 	ngOnInit() {
 		const panel = this._entityStore.panels.getById(this.contextMenu.data.panelId)
 		if (!panel) {
+			console.error('No panel')
 			this._render.renderCanvasApp()
 			this._uiStore.dispatch.closeContextMenu()
 			return

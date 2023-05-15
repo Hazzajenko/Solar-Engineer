@@ -16,6 +16,7 @@ import { NgComponentOutlet, NgIf } from '@angular/common'
 import { SinglePanelMenuComponent } from '../single-panel-menu/single-panel-menu.component'
 import { MultiplePanelsMenuComponent } from '../multiple-panels-menu/multiple-panels-menu.component'
 import { StringMenuComponent } from '../string-menu/string-menu.component'
+import { PanelLinkMenuComponent } from '../panel-link-menu'
 
 export const contextMenuInputInjectionToken = new InjectionToken<ContextMenuInput>('')
 /*export const createInjectorFn = () => {
@@ -100,6 +101,8 @@ export class ContextMenuRendererComponent {
 				return MultiplePanelsMenuComponent
 			case CONTEXT_MENU_COMPONENT.STRING_MENU:
 				return StringMenuComponent
+			case CONTEXT_MENU_COMPONENT.PANEL_LINK_MENU:
+				return PanelLinkMenuComponent
 			default:
 				throw new Error('Unknown context menu component')
 		}

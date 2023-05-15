@@ -557,6 +557,38 @@ export class DesignCanvasDirective implements OnInit {
 			return
 		}
 
+		const mode = this._appState.state.mode
+		if (mode === 'LinkMode') {
+			const panelLinkUnderMouse = this._panelLinks.isMouseOverLinkPath(event, currentPoint)
+			if (panelLinkUnderMouse) {
+				this._uiStore.dispatch.openContextMenu({
+					component: CONTEXT_MENU_COMPONENT.PANEL_LINK_MENU,
+					location: {
+						x: event.offsetX,
+						y: event.offsetY,
+					},
+					data: {
+						panelLinkId: panelLinkUnderMouse.id,
+					},
+				})
+				this._selected.clearSingleOrMultipleSelected()
+				return
+			}
+			/*
+			 this._uiStore.dispatch.openContextMenu({
+			 component: CONTEXT_MENU_COMPONENT.PANEL_LINK_MENU,
+			 location: {
+			 x: event.offsetX,
+			 y: event.offsetY,
+			 },
+			 data: {
+			 panelLinkId: selectedStringId,
+			 },
+			 })
+			 // this._panelLinks.handleLinkModeContextMenu(event, currentPoint)
+			 return*/
+		}
+
 		const selectedStringId = this._selectedStore.state.selectedStringId
 		if (selectedStringId) {
 			const selectedStringPanels = this._entities.panels.getByStringId(selectedStringId) ?? []

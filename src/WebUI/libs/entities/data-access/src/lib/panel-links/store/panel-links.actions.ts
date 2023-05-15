@@ -5,29 +5,33 @@ import { PanelLinkModel, PanelLinkRequest } from '@entities/shared'
 export const PanelLinksActions = createActionGroup({
 	source: 'PanelLinks Store',
 	events: {
-		startPanelLink: props<{
+		'Start Panel Link': props<{
 			panelLinkRequest: PanelLinkRequest
 		}>(),
-		endPanelLink: emptyProps(),
-		addPanelLink: props<{
+		'End Panel Link': emptyProps(),
+		'Add Panel Link': props<{
 			panelLink: PanelLinkModel
 		}>(),
-		addManyPanelLinks: props<{
+		'Add Many Panel Links': props<{
 			panelLinks: PanelLinkModel[]
 		}>(),
-		updatePanelLink: props<{
+		'Update Panel Link': props<{
 			update: UpdateStr<PanelLinkModel>
 		}>(),
-		updateManyPanelLinks: props<{
+		'Update Many Panel Links': props<{
 			updates: UpdateStr<PanelLinkModel>[]
 		}>(),
-		deletePanelLink: props<{
+		'Delete Panel Link': props<{
 			panelLinkId: string
 		}>(),
-		deleteManyPanelLinks: props<{
+		'Delete Many Panel Links': props<{
 			panelLinkIds: string[]
 		}>(),
-		clearPanelLinksState: emptyProps(),
+		'Set Hovering Over Panel In Link Menu Id': props<{
+			panelId: string
+		}>(),
+		'Clear Hovering Over Panel In Link Menu Id': emptyProps(),
+		'Clear Panel Links State': emptyProps(),
 		Noop: emptyProps(),
 	},
 })

@@ -11,6 +11,11 @@ export const CANVAS_COLORS = {
 	NearbyPanelFillStyle: '#13ff67',
 	NearbyPanelStrokeStyle: '#1b5fff',
 	RequestingLinkPanelFillStyle: '#d4342f',
+	LinkingPanelFillStyle: '#ff6ba1', // LinkingPanelStrokeStyle: '#ff6ba1',
+	// LinkingPanelFillStyle2: '#ff6ba1',
+	// HoveringOverPanelInLinkMenuFillStyle: '#3549ff',
+	// HoveringOverPanelInLinkMenuFillStyle: '#3549ff',
+	HoveringOverPanelInLinkMenuStrokeStyle: '#1b5fff', // HoveringOverPanelInLinkMenuStrokeStyle: '#ff6ba1',
 } as const
 
 export type CanvasColor = (typeof CANVAS_COLORS)[keyof typeof CANVAS_COLORS]

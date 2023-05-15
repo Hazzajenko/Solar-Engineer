@@ -1,0 +1,77 @@
+<div
+  *ngIf='panelLink'
+  appContextMenu
+  [location]='contextMenu.location'
+  class='absolute'>
+  <ul
+    id='menu-list'
+    class='py-1 text-sm text-gray-700 dark:text-gray-200 absolute z-50  mt-2 w-56 bg-gray-200 divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'
+  >
+    <div class='px-4 py-3'
+         role='none'>
+      <p class='truncate text-sm font-medium text-gray-900'
+         role='none'>Panel Link</p>
+    </div>
+    <!--    <div class='px-4 py-3'
+             role='none'>
+          <p class='truncate text-sm font-medium text-gray-900'
+             role='none'>{{panelLink.positivePanelId}}</p>
+        </div>
+        <div class='px-4 py-3'
+             role='none'>
+          <p class='truncate text-sm font-medium text-gray-900'
+             role='none'>{{panelLink.negativePanelId}}</p>
+        </div>-->
+    <li>
+      <a
+        (pointerenter)='enterPolarityPanel($event, panelLink.positivePanelId)'
+        (pointerleave)='leavePolarityPanel()'
+        role='menuitem'
+        tabindex='-1'
+        class='group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white'
+      >
+        <app-show-svg-no-styles
+          class='mr-4 text-gray-400 group-hover:text-gray-500'
+
+          svgPath='hero-icons/outline/plus-circle' />
+        <!--        <app-show-svg class='mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500'
+                              svgPath='hero-icons/outline/plus-circle' />-->
+        Positive Panel
+      </a>
+    </li>
+    <li>
+      <a
+        (pointerenter)='enterPolarityPanel($event, panelLink.negativePanelId)'
+        (pointerleave)='leavePolarityPanel()'
+        role='menuitem'
+        tabindex='-1'
+        class='group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white'
+      >
+        <!--        style='transform: scale(-0.8, 0.8)'-->
+        <app-show-svg-no-styles
+          class='mr-4 text-gray-400 group-hover:text-gray-500'
+
+          svgPath='hero-icons/outline/minus-circle' />
+        <!--  <app-show-svg class='mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500'
+                        svgPath='hero-icons/outline/minus-circle' />-->
+        Negative Panel
+      </a>
+    </li>
+    <li>
+      <a
+        (click)='deletePanelLink()'
+        role='menuitem'
+        tabindex='-1'
+        class='group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white'
+      >
+        <app-show-svg-no-styles
+          class='mr-4 text-gray-400 group-hover:text-gray-500'
+
+          svgPath='hero-icons/outline/trash' />
+        <!--        <app-show-svg class='mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500'
+                              svgPath='bin' />-->
+        Delete
+      </a>
+    </li>
+  </ul>
+</div>

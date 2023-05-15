@@ -2,6 +2,7 @@ import { inject } from '@angular/core'
 import { Store } from '@ngrx/store'
 import {
 	selectAllPanelLinks,
+	selectHoveringOverPanelInLinkMenuId,
 	selectPanelLinksEntities,
 	selectPanelLinksState,
 } from './panel-links.selectors'
@@ -19,6 +20,9 @@ export function injectPanelLinksStore() {
 	return {
 		get allPanelLinks() {
 			return allPanelLinks()
+		},
+		get hoveringOverPanelInLinkMenuId() {
+			return store.selectSignal(selectHoveringOverPanelInLinkMenuId)()
 		},
 		getById(id: string) {
 			return entities()[id]
@@ -67,6 +71,12 @@ export function injectPanelLinksStore() {
 		},
 		clearPanelLinksState() {
 			store.dispatch(PanelLinksActions.clearPanelLinksState())
+		},
+		setHoveringOverPanelInLinkMenuId(panelId: string) {
+			store.dispatch(PanelLinksActions.setHoveringOverPanelInLinkMenuId({ panelId }))
+		},
+		clearHoveringOverPanelInLinkMenuId() {
+			store.dispatch(PanelLinksActions.clearHoveringOverPanelInLinkMenuId())
 		},
 	}
 }

@@ -171,6 +171,11 @@ export class SelectedService {
 		// this._app.sendEvent(new CancelSelected())
 	}
 
+	clearSingleOrMultipleSelected() {
+		this._selectedStore.dispatch.clearSingleSelected()
+		this._selectedStore.dispatch.clearMultiSelected()
+	}
+
 	clearSelectedInOrder() {
 		/*		const appSnapshot = this._app.appSnapshot
 		 const selectedSnapshot = this._app.selectedSnapshot
