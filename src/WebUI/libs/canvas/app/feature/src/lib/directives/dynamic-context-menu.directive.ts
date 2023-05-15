@@ -1,7 +1,6 @@
 import {
 	ComponentRef,
 	Directive,
-	effect,
 	inject,
 	NgZone,
 	OnDestroy,
@@ -42,37 +41,37 @@ export class DynamicContextMenuDirective implements OnDestroy {
 
 	cachedContextMenu?: ContextMenuInput
 
-	constructor() {
-		effect(() => {
-			if (
-				!this.contextMenu ||
-				!this.contextMenu.currentContextMenu ||
-				!this.contextMenu.contextMenuOpen
-			) {
-				this.ngOnDestroy()
-				return
-			}
+	/*	constructor() {
+	 effect(() => {
+	 if (
+	 !this.contextMenu ||
+	 !this.contextMenu.currentContextMenu ||
+	 !this.contextMenu.contextMenuOpen
+	 ) {
+	 this.ngOnDestroy()
+	 return
+	 }
 
-			if (this.cachedContextMenu === this.contextMenu.currentContextMenu) return
+	 if (this.cachedContextMenu === this.contextMenu.currentContextMenu) return
 
-			this._viewContainerRef.clear()
-			this.contextMenuRef = this.switchFn(this.contextMenu.currentContextMenu)
-			this.cachedContextMenu = this.contextMenu.currentContextMenu
-			if (this._killEvent) this._killEvent()
-			this._ngZone.runOutsideAngular(() => {
-				this._killEvent = this.renderer.listen('document', 'click', (event: MouseEvent) => {
-					if (!this.contextMenuRef) {
-						this.ngOnDestroy()
-						return
-					}
-					if (event.target instanceof Node && this.contextMenuRef.location) {
-						if (this.contextMenuRef.location.nativeElement.contains(event.target)) return
-					}
-					this.ngOnDestroy()
-				})
-			})
-		})
-	}
+	 this._viewContainerRef.clear()
+	 this.contextMenuRef = this.switchFn(this.contextMenu.currentContextMenu)
+	 this.cachedContextMenu = this.contextMenu.currentContextMenu
+	 // if (this._killEvent) this._killEvent()
+	 this._ngZone.runOutsideAngular(() => {
+	 this._killEvent = this.renderer.listen('document', 'click', (event: MouseEvent) => {
+	 if (!this.contextMenuRef) {
+	 this.ngOnDestroy()
+	 return
+	 }
+	 if (event.target instanceof Node && this.contextMenuRef.location) {
+	 if (this.contextMenuRef.location.nativeElement.contains(event.target)) return
+	 }
+	 this.ngOnDestroy()
+	 })
+	 })
+	 })
+	 }*/
 
 	/*
 	 @Input() set contextMenu(contextMenu: ContextMenuInput) {
@@ -92,8 +91,8 @@ export class DynamicContextMenuDirective implements OnDestroy {
 						this._viewContainerRef.createComponent<SinglePanelMenuComponent>(
 							SinglePanelMenuComponent,
 						)
-					ref.instance.data = contextMenu.data
-					ref.instance.location = contextMenu.location
+					// ref.instance.data = contextMenu.data
+					// ref.instance.location = contextMenu.location
 					return ref
 				})()
 			case CONTEXT_MENU_COMPONENT.MULTIPLE_PANELS_MENU:
@@ -101,16 +100,16 @@ export class DynamicContextMenuDirective implements OnDestroy {
 					const ref = this._viewContainerRef.createComponent<MultiplePanelsMenuComponent>(
 						MultiplePanelsMenuComponent,
 					)
-					ref.instance.data = contextMenu.data
-					ref.instance.location = contextMenu.location
+					// ref.instance.data = contextMenu.data
+					// ref.instance.location = contextMenu.location
 					return ref
 				})()
 			case CONTEXT_MENU_COMPONENT.STRING_MENU:
 				return (() => {
 					const ref =
 						this._viewContainerRef.createComponent<StringMenuComponent>(StringMenuComponent)
-					ref.instance.data = contextMenu.data
-					ref.instance.location = contextMenu.location
+					// ref.instance.data = contextMenu.data
+					// ref.instance.location = contextMenu.location
 					return ref
 				})()
 			default:

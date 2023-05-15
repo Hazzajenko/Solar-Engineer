@@ -176,9 +176,6 @@
       "@entities/panel-links/data-access": [
         "libs/entities/panel-links/data-access/src/index.ts"
       ],
-      "@entities/panel-links/shared": [
-        "libs/entities/panel-links/shared/src/index.ts"
-      ],
       "@entities/panels/data-access": [
         "libs/entities/panels/data-access/src/index.ts"
       ],

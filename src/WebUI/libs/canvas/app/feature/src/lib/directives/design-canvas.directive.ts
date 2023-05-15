@@ -20,6 +20,7 @@ import {
 } from '@canvas/object-positioning/data-access'
 import { SelectedService, SelectedStoreService } from '@canvas/selected/data-access'
 import {
+	EntityFactoryService,
 	EntityStoreService,
 	PanelLinksService,
 	PanelLinksStoreService,
@@ -35,7 +36,6 @@ import {
 	eventToPointLocation,
 	getBoundsFromCenterPoint,
 	getCompleteBoundsFromMultipleEntitiesWithPadding,
-	getTopLeftPointFromTransformedPoint,
 	isContextMenu,
 	isDraggingEntity,
 	isEntityOverlappingWithBounds,
@@ -46,11 +46,7 @@ import {
 	multiSelectDraggingKeysDownAndIdsNotEmpty,
 	rotatingKeysDown,
 } from '@canvas/utils'
-import {
-	createPanel,
-	isPanel,
-	isPointInsideSelectedStringPanelsByStringIdNgrxWithPanels,
-} from '@entities/utils'
+import { isPanel, isPointInsideSelectedStringPanelsByStringIdNgrxWithPanels } from '@entities/utils'
 import {
 	CANVAS_COLORS,
 	CanvasEntity,
@@ -78,6 +74,7 @@ export class DesignCanvasDirective implements OnInit {
 	private _panelLinksStore = inject(PanelLinksStoreService)
 	private _objRotating = inject(ObjectRotatingService)
 	private _objPositioning = inject(ObjectPositioningService)
+	private _entityFactory = inject(EntityFactoryService)
 	private _view = inject(ViewPositioningService)
 	private _drag = inject(DragBoxService)
 	private _render = inject(RenderService)
@@ -424,6 +421,7 @@ export class DesignCanvasDirective implements OnInit {
 
 		if (mode === 'LinkMode') {
 			this._panelLinks.handleLinkModeClickOnCanvas(event, currentPoint)
+			return
 			/*			const isMouseOverLinkPath = this._panelLinks.isMouseOverLinkPath(event, currentPoint)
 			 if (isMouseOverLinkPath) {
 			 // this._panelLinks.handleLinkPathClick(event, currentPoint)
@@ -441,44 +439,45 @@ export class DesignCanvasDirective implements OnInit {
 			return
 		}
 
-		const previewAxisState = this._appState.state.previewAxis
-		if (previewAxisState === 'AxisCreatePreviewInProgress') {
-			if (!event.altKey || !this._nearby.axisPreviewRect) {
-				this._appState.dispatch.setPreviewAxisState('None')
-				this._nearby.axisPreviewRect = undefined
-				this._render.renderCanvasApp()
-				return
-			}
+		this._entityFactory.createEntity(event, currentPoint)
 
-			const previewRectLocation = {
-				x: this._nearby.axisPreviewRect.left,
-				y: this._nearby.axisPreviewRect.top,
-			}
+		/*	const previewAxisState = this._appState.state.previewAxis
+		 if (previewAxisState === 'AxisCreatePreviewInProgress') {
+		 if (!event.altKey || !this._nearby.axisPreviewRect) {
+		 this._appState.dispatch.setPreviewAxisState('None')
+		 this._nearby.axisPreviewRect = undefined
+		 this._render.renderCanvasApp()
+		 return
+		 }
 
-			const selectedStringId = this._selectedStore.state.selectedStringId
-			const entity = selectedStringId
-				? createPanel(previewRectLocation, selectedStringId)
-				: createPanel(previewRectLocation)
-			this._entities.panels.addPanel(entity)
-			// this._entities.panels.addEntity(entity)
-			this._nearby.axisPreviewRect = undefined
-			this._appState.dispatch.setPreviewAxisState('None')
+		 const previewRectLocation = {
+		 x: this._nearby.axisPreviewRect.left,
+		 y: this._nearby.axisPreviewRect.top,
+		 }
 
-			this._render.renderCanvasApp()
-			return
-		}
+		 const selectedStringId = this._selectedStore.state.selectedStringId
+		 const entity = selectedStringId
+		 ? createPanel(previewRectLocation, selectedStringId)
+		 : createPanel(previewRectLocation)
+		 this._entities.panels.addPanel(entity)
+		 this._nearby.axisPreviewRect = undefined
+		 this._appState.dispatch.setPreviewAxisState('None')
 
-		const location = getTopLeftPointFromTransformedPoint(
-			currentPoint,
-			SizeByType[ENTITY_TYPE.Panel],
-		)
-		const selectedStringId = this._selectedStore.state.selectedStringId
-		const entity = selectedStringId
-			? createPanel(location, selectedStringId)
-			: createPanel(location)
-		this._entities.panels.addPanel(entity)
+		 this._render.renderCanvasApp()
+		 return
+		 }
 
-		this._render.renderCanvasApp()
+		 const location = getTopLeftPointFromTransformedPoint(
+		 currentPoint,
+		 SizeByType[ENTITY_TYPE.Panel],
+		 )
+		 const selectedStringId = this._selectedStore.state.selectedStringId
+		 const entity = selectedStringId
+		 ? createPanel(location, selectedStringId)
+		 : createPanel(location)
+		 this._entities.panels.addPanel(entity)
+
+		 this._render.renderCanvasApp()*/
 	}
 
 	/**
@@ -547,6 +546,14 @@ export class DesignCanvasDirective implements OnInit {
 					panelId: entityUnderMouse.id,
 				},
 			})
+			/*			this._uiStore.dispatch.openContextMenu({
+			 location: {
+			 x: event.clientX,
+			 y: event.clientY,
+			 },
+			 component: 'app-single-panel-menu',
+			 data: { panelId },
+			 })*/
 			return
 		}
 
@@ -669,6 +676,7 @@ export class DesignCanvasDirective implements OnInit {
 			this.ctx.canvas.height = window.innerHeight
 			this._renderer.setStyle(this.canvas, 'width', '100%')
 			this._renderer.setStyle(this.canvas, 'height', '100%')
+			this._render.renderCanvasApp()
 			event.stopPropagation()
 			event.preventDefault()
 		})
@@ -680,6 +688,13 @@ export class DesignCanvasDirective implements OnInit {
 			// this._keys.keyUpHandlerV2(event, this.rawMousePos, this.currentPoint)
 			// this.keyUpHandler(event)
 		})
+	}
+
+	private getObjectUnderMouse(event: PointerEvent | TransformedPoint) {
+		const point =
+			event instanceof PointerEvent ? this._domPoint.getTransformedPointFromEvent(event) : event
+		const entitiesUnderMouse = this.allPanels.filter((entity) => isPointInsideEntity(point, entity))
+		return entitiesUnderMouse[entitiesUnderMouse.length - 1] as CanvasEntity | undefined
 	}
 
 	private getEntityUnderMouse(event: PointerEvent | TransformedPoint) {

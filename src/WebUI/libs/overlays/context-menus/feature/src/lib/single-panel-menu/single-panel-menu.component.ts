@@ -1,59 +1,47 @@
-import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core'
-import { NgIf } from '@angular/common'
+import { ChangeDetectionStrategy, Component, inject, Injector, OnInit } from '@angular/core'
+import { JsonPipe, NgIf } from '@angular/common'
 import { ShowSvgComponent } from '@shared/ui'
-import { Point } from '@shared/data-access/models'
 import { ContextMenuTemplateComponent } from '../context-menu-template/context-menu-template.component'
 import { EntityStoreService } from '@entities/data-access'
 import { RenderService } from '@canvas/rendering/data-access'
-import { UiStoreService } from '@overlays/ui-store/data-access'
+import { ContextMenuSinglePanelMenu, UiStoreService } from '@overlays/ui-store/data-access'
 import { CanvasPanel, CanvasString } from '@entities/shared'
+import { contextMenuInputInjectionToken } from '../context-menu-renderer'
+import { ContextMenuDirective } from '../directives'
 
 @Component({
 	selector: 'app-single-panel-menu',
 	standalone: true,
-	imports: [NgIf, ShowSvgComponent, ContextMenuTemplateComponent],
+	imports: [NgIf, ShowSvgComponent, ContextMenuTemplateComponent, ContextMenuDirective, JsonPipe],
 	templateUrl: './single-panel-menu.component.html',
-	styles: [],
+	styles: [
+		`
+			:host {
+				display: block;
+			}
+		`,
+	],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SinglePanelMenuComponent {
+export class SinglePanelMenuComponent implements OnInit {
 	private _entityStore = inject(EntityStoreService)
 	private _render = inject(RenderService)
 	private _uiStore = inject(UiStoreService)
 
+	contextMenu = inject(Injector).get(contextMenuInputInjectionToken) as ContextMenuSinglePanelMenu
+
 	panel!: CanvasPanel
 	string: CanvasString | undefined
-	menuPosition!: Point
 
-	@Input({ required: true }) set location(location: Point) {
-		console.log('location', location)
-		if (!location) {
-			this._render.renderCanvasApp()
-			this._uiStore.dispatch.closeContextMenu()
-			console.error('no location')
-			return
-		}
-		this.menuPosition = location
-	}
-
-	@Input({ required: true }) set data(data: { panelId: string }) {
-		console.log('data', data)
-		if (!data.panelId) {
-			this._render.renderCanvasApp()
-			this._uiStore.dispatch.closeContextMenu()
-			return
-		}
-		const panel = this._entityStore.panels.getById(data.panelId)
+	ngOnInit() {
+		const panel = this._entityStore.panels.getById(this.contextMenu.data.panelId)
 		if (!panel) {
 			this._render.renderCanvasApp()
 			this._uiStore.dispatch.closeContextMenu()
 			return
 		}
-		const string = this._entityStore.strings.getById(panel.stringId)
 		this.panel = panel
-		console.log('panel', panel)
-		console.log('string', string)
-		this.string = string
+		this.string = this._entityStore.strings.getById(panel.stringId)
 	}
 
 	deletePanel() {

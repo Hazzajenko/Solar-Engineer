@@ -1,68 +1,78 @@
-<app-context-menu-template [menuPosition]='menuPosition'>
-  <ng-container *ngIf='panel'>
-    <div class='px-4 py-3'
-         role='none'>
-      <p class='truncate text-sm font-medium text-gray-900'
-         role='none'>Panel</p>
-    </div>
-    <li>
-      <a
-        (click)='deletePanel()'
-        role='menuitem'
-        tabindex='-1'
-        class='group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white'
-      >
-        <app-show-svg class='mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500'
-                      svgPath='bin' />
-        Delete
-      </a>
-    </li>
-    <ng-container
-      *ngIf='string else noString'
-    >
+<div
+  appContextMenu
+  [location]='contextMenu.location'
+  class='absolute'>
+  <ul
+    id='menu-list'
+    class='py-1 text-sm text-gray-700 dark:text-gray-200 absolute z-50  mt-2 w-56 bg-gray-200 divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'
+  >
+    <!--<app-context-menu-template [menuPos]='menuPosition'>-->
+    <ng-container *ngIf='panel'>
       <div class='px-4 py-3'
            role='none'>
         <p class='truncate text-sm font-medium text-gray-900'
-           role='none'>String</p>
+           role='none'>Panel</p>
       </div>
-      <li
-      >
+      <li>
         <a
+          (click)='deletePanel()'
           role='menuitem'
           tabindex='-1'
           class='group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white'
         >
           <app-show-svg class='mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500'
-                        svgPath='editing' />
-          Edit String
+                        svgPath='bin' />
+          Delete
         </a>
       </li>
-      <li
+      <ng-container
+        *ngIf='string else noString'
       >
-        <a
-          role='menuitem'
-          tabindex='-1'
-          class='group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white'
+        <div class='px-4 py-3'
+             role='none'>
+          <p class='truncate text-sm font-medium text-gray-900'
+             role='none'>String</p>
+        </div>
+        <li
         >
-          <app-show-svg class='mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500'
-                        svgPath='apps-delete' />
-          Remove Panel From String
-        </a>
-      </li>
+          <a
+            role='menuitem'
+            tabindex='-1'
+            class='group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white'
+          >
+            <app-show-svg class='mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500'
+                          svgPath='editing' />
+            Edit String
+          </a>
+        </li>
+        <li
+        >
+          <a
+            role='menuitem'
+            tabindex='-1'
+            class='group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white'
+          >
+            <app-show-svg class='mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500'
+                          svgPath='apps-delete' />
+            Remove Panel From String
+          </a>
+        </li>
+      </ng-container>
+      <ng-template #noString>
+        <li
+        >
+          <a
+            role='menuitem'
+            tabindex='-1'
+            class='group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white'
+          >
+            <app-show-svg class='mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500'
+                          svgPath='add' />
+            Add To String
+          </a>
+        </li>
+      </ng-template>
     </ng-container>
-    <ng-template #noString>
-      <li
-      >
-        <a
-          role='menuitem'
-          tabindex='-1'
-          class='group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white'
-        >
-          <app-show-svg class='mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500'
-                        svgPath='add' />
-          Add To String
-        </a>
-      </li>
-    </ng-template>
-  </ng-container>
-</app-context-menu-template>
+  </ul>
+  <!--</app-context-menu-template>-->
+</div>

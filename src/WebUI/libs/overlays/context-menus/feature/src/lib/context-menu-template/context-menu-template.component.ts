@@ -17,16 +17,23 @@ import { RenderService } from '@canvas/rendering/data-access'
 	standalone: true,
 	imports: [],
 	template: `
-		<div #menu class="absolute">
-			<ul
-				id="menu-list"
-				class="py-1 text-sm text-gray-700 dark:text-gray-200 absolute z-50  mt-2 w-56 bg-gray-200 divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-			>
-				<ng-content />
-			</ul>
-		</div>
+		<!--		<div #menu class="absolute z-50">-->
+		<ul
+			#menu
+			id="menu-list"
+			class="py-1 text-sm text-gray-700 dark:text-gray-200 absolute z-50  mt-2 w-56 bg-gray-200 divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+		>
+			<ng-content />
+		</ul>
+		<!--		</div>-->
 	`,
-	styles: [],
+	styles: [
+		`
+			:host {
+				display: block;
+			}
+		`,
+	],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ContextMenuTemplateComponent implements AfterViewInit {
@@ -34,28 +41,32 @@ export class ContextMenuTemplateComponent implements AfterViewInit {
 	private _ngZone = inject(NgZone)
 	private _render = inject(RenderService)
 	private _elementRef = inject(ElementRef)
-	private _menuPosition!: Point
+	private _menuPos!: Point
 
 	@ViewChild('menu', { static: true }) menu!: ElementRef<HTMLDivElement>
 
-	@Input({ required: true }) set menuPosition(point: Point) {
+	@Input({ required: true }) set menuPos(point: Point) {
+		console.log('set menuPosition(point: Point)', point)
 		if (!point) {
 			console.error('no point')
 			return
 		}
-		this._menuPosition = point
+		console.log('set menuPosition(point: Point)', point)
+		this._menuPos = point
 	}
 
-	get menuPosition(): Point {
-		return this._menuPosition
+	get menuPos(): Point {
+		return this._menuPos
 	}
 
 	ngAfterViewInit(): void {
-		if (!this.menuPosition) {
+		if (!this.menuPos) {
 			console.error('no point')
 			return
 		}
-		const point = this.menuPosition
+		const point = this.menuPos
+		console.log('point', point)
+		console.log('this.menu.nativeElement', this.menu.nativeElement)
 		this._renderer.setStyle(this.menu.nativeElement, 'top', `${point.y}px`)
 		this._renderer.setStyle(this.menu.nativeElement, 'left', `${point.x}px`)
 		this._ngZone.runOutsideAngular(() => {

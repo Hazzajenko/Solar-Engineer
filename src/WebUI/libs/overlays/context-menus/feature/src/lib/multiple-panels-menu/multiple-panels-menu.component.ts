@@ -1,46 +1,66 @@
-import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core'
+import { ChangeDetectionStrategy, Component, inject, Injector, OnInit } from '@angular/core'
 import { NgIf } from '@angular/common'
 import { ShowSvgComponent } from '@shared/ui'
-import { Point } from '@shared/data-access/models'
 import { ContextMenuTemplateComponent } from '../context-menu-template/context-menu-template.component'
 import { EntityStoreService } from '@entities/data-access'
 import { RenderService } from '@canvas/rendering/data-access'
-import { DIALOG_COMPONENT, UiStoreService } from '@overlays/ui-store/data-access'
+import {
+	ContextMenuMultiplePanelsMenu,
+	DIALOG_COMPONENT,
+	UiStoreService,
+} from '@overlays/ui-store/data-access'
+import { contextMenuInputInjectionToken } from '../context-menu-renderer'
+import { ContextMenuDirective } from '../directives'
 
 @Component({
 	selector: 'app-multiple-panels-menu',
 	standalone: true,
-	imports: [NgIf, ShowSvgComponent, ContextMenuTemplateComponent],
+	imports: [NgIf, ShowSvgComponent, ContextMenuTemplateComponent, ContextMenuDirective],
 	templateUrl: './multiple-panels-menu.component.html',
 	styles: [],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MultiplePanelsMenuComponent {
+export class MultiplePanelsMenuComponent implements OnInit {
 	private _entityStore = inject(EntityStoreService)
 	private _render = inject(RenderService)
 	private _uiStore = inject(UiStoreService)
 
+	contextMenu = inject(Injector).get(
+		contextMenuInputInjectionToken,
+	) as ContextMenuMultiplePanelsMenu
+
 	panelIds: string[] = []
-	menuPosition!: Point
 
-	@Input({ required: true }) set location(location: Point) {
-		if (!location) {
-			this._render.renderCanvasApp()
-			this._uiStore.dispatch.closeContextMenu()
-			console.error('no location')
-			return
-		}
-		this.menuPosition = location
-	}
-
-	@Input({ required: true }) set data(data: { panelIds: string[] }) {
-		if (data.panelIds.length < 1) {
+	ngOnInit() {
+		if (this.contextMenu.data.panelIds.length < 1) {
+			console.error('No panel ids')
 			this._render.renderCanvasApp()
 			this._uiStore.dispatch.closeContextMenu()
 			return
 		}
-		this.panelIds = data.panelIds
+		this.panelIds = this.contextMenu.data.panelIds
 	}
+
+	// menuPosition!: Point
+
+	/*	@Input({ required: true }) set location(location: Point) {
+	 if (!location) {
+	 this._render.renderCanvasApp()
+	 this._uiStore.dispatch.closeContextMenu()
+	 console.error('no location')
+	 return
+	 }
+	 this.menuPosition = location
+	 }
+
+	 @Input({ required: true }) set data(data: { panelIds: string[] }) {
+	 if (data.panelIds.length < 1) {
+	 this._render.renderCanvasApp()
+	 this._uiStore.dispatch.closeContextMenu()
+	 return
+	 }
+	 this.panelIds = data.panelIds
+	 }*/
 
 	movePanelsToString() {
 		this._uiStore.dispatch.openDialog({

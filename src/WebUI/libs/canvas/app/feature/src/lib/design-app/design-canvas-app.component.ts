@@ -36,6 +36,7 @@ import { WindowsStore } from '@overlays/windows/data-access'
 import { AppStateStoreService } from '@canvas/app/data-access'
 import { UiStoreService } from '@overlays/ui-store/data-access'
 import { DraggableWindow } from '@shared/data-access/models'
+import { ContextMenuRendererComponent } from '@overlays/context-menus/feature'
 
 @Component({
 	changeDetection: ChangeDetectionStrategy.OnPush,
@@ -54,6 +55,7 @@ import { DraggableWindow } from '@shared/data-access/models'
 		ActionNotificationsDisplayComponent,
 		SideUiNavBarComponent,
 		OverlayToolBarComponent,
+		ContextMenuRendererComponent,
 	],
 	selector: 'app-design-canvas-app',
 	standalone: true,
