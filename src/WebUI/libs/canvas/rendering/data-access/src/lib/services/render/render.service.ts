@@ -35,6 +35,8 @@ import {
 	UndefinedStringId,
 } from '@entities/shared'
 import { getSymbolLocationBasedOnIndex } from './render-v2.service'
+import { injectSvgs, injectSvgsV2 } from './svg-injector'
+import { initSvgCursorImages, SvgCursorImageRecord } from '../../svgs/svg-init'
 
 @Injectable({
 	providedIn: 'root',
@@ -53,6 +55,11 @@ export class RenderService {
 	private _graphicsStore = inject(GraphicsStoreService)
 	private _panelLinksStore = inject(PanelLinksStoreService)
 	private _panelLinks = inject(PanelLinksService)
+
+	_svgs = injectSvgs()
+	_svgs2 = injectSvgsV2()
+	_imageElement: HTMLImageElement | undefined
+	_svgCursorImages: SvgCursorImageRecord | undefined
 	// private _panelsStore = injectPanelsFeature()
 
 	private lastRenderTime = performance.now()
@@ -64,6 +71,7 @@ export class RenderService {
 	private set fpsStats(value: number) {
 		this._previousFpsStats.shift()
 		this._previousFpsStats.push(value)
+		// this._svgs
 	}
 
 	private get averageFps() {
@@ -75,6 +83,11 @@ export class RenderService {
 
 	constructor() {
 		this.checkFps()
+		this._svgs2.then((data) => {
+			this._imageElement = data
+			console.log('data', data)
+		})
+		initSvgCursorImages().then((r) => (this._svgCursorImages = r))
 	}
 
 	get ctx() {
@@ -120,11 +133,18 @@ export class RenderService {
 
 	renderCanvasApp(options?: Partial<CanvasRenderOptions>) {
 		this.render((ctx) => {
+			if (options?.cursor) {
+				this.canvas.style.cursor = options.cursor
+			}
+
 			ctx.save()
 			ctx.strokeStyle = PANEL_STROKE_STYLE.DEFAULT
 			ctx.setTransform(1, 0, 0, 1, 0, 0)
 			ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
 			ctx.restore()
+			/*			if (options?.transformedPoint) {
+			 SVGIcons(options.transformedPoint)['cursor-arrow-rays.svg'].draw(ctx)
+			 }*/
 			ctx.save()
 			ctx.beginPath()
 			/*			const excludedIds = options?.excludedEntityIds
@@ -256,6 +276,56 @@ export class RenderService {
 				const creationBox = options.creationBox
 				drawCreationDragBox(ctx, creationBox)
 			}
+
+			/*	if (options?.transformedPoint) {
+			 SVGIcons(options.transformedPoint)['cursor-arrow-rays.svg'].draw(ctx)
+			 }*/
+
+			/*			if (options?.transformedPoint && this._imageElement) {
+			 ctx.save()
+			 ctx.resetTransform()
+			 ctx.drawImage(
+			 this._imageElement,
+			 options.transformedPoint.x,
+			 options.transformedPoint.y,
+			 20,
+			 20,
+			 )
+			 ctx.restore()
+			 }*/
+
+			if (options?.transformedPoint && this._svgCursorImages) {
+				const svgCursorImage = this._svgCursorImages['cursor']
+				// svgCursorImage.draw(ctx, options.transformedPoint.x, options.transformedPoint.y)
+				ctx.save()
+				ctx.resetTransform()
+				ctx.drawImage(
+					svgCursorImage,
+					options.transformedPoint.x,
+					options.transformedPoint.y,
+					20,
+					20,
+				)
+				ctx.restore()
+			}
+
+			// drawMouseSvg(ctx)
+
+			/*
+			 // SVG source code
+			 const svgSource = `<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'>
+			 <rect x='10' y='10' width='80' height='80' fill='red' />
+			 </svg>`
+			 */
+
+			/*			// Create an image element from the SVG source
+			 const image = new Image()
+			 image.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgSource)
+
+			 image.onload = function () {
+			 // Draw the SVG image onto the canvas
+			 ctx.drawImage(image, 0, 0)
+			 }*/
 		})
 	}
 
@@ -264,6 +334,7 @@ export class RenderService {
 			/**
 			 * Draw Entity
 			 */
+			// Custom cursor properties
 
 			if (!isPanel(entity)) return
 			let fillStyle: string = CANVAS_COLORS.DefaultPanelFillStyle
@@ -381,262 +452,262 @@ export class RenderService {
 		})
 	}
 
-	renderCanvasAppOld(options?: CanvasRenderOptions) {
-		this.render((ctx) => {
-			ctx.save()
-			ctx.strokeStyle = PANEL_STROKE_STYLE.DEFAULT
-			ctx.setTransform(1, 0, 0, 1, 0, 0)
-			ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
-			ctx.restore()
-			ctx.save()
-			ctx.beginPath()
-			const excludedIds = options?.excludedEntityIds
-			const entities = !excludedIds
-				? this.allPanels
-				: this.allPanels.filter((entity) => {
-						return !excludedIds.includes(entity.id)
-				  })
-			entities.forEach((entity) => {
-				/**
-				 * Draw Entity
-				 */
+	/*renderCanvasAppOld(options?: CanvasRenderOptions) {
+	 this.render((ctx) => {
+	 ctx.save()
+	 ctx.strokeStyle = PANEL_STROKE_STYLE.DEFAULT
+	 ctx.setTransform(1, 0, 0, 1, 0, 0)
+	 ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+	 ctx.restore()
+	 ctx.save()
+	 ctx.beginPath()
+	 const excludedIds = options?.excludedEntityIds
+	 const entities = !excludedIds
+	 ? this.allPanels
+	 : this.allPanels.filter((entity) => {
+	 return !excludedIds.includes(entity.id)
+	 })
+	 entities.forEach((entity) => {
+	 /!**
+	 * Draw Entity
+	 *!/
 
-				if (!isPanel(entity)) return
-				let fillStyle: string = CANVAS_COLORS.DefaultPanelFillStyle
-				const strokeStyle: string = PANEL_STROKE_STYLE.DEFAULT
+	 if (!isPanel(entity)) return
+	 let fillStyle: string = CANVAS_COLORS.DefaultPanelFillStyle
+	 const strokeStyle: string = PANEL_STROKE_STYLE.DEFAULT
 
-				const graphicsState = this._graphicsStore.state
+	 const graphicsState = this._graphicsStore.state
 
-				if (graphicsState.colouredStrings) {
-					if (entity.stringId !== UndefinedStringId) {
-						const string = this._entities.strings.getById(entity.stringId)
-						assertNotNull(string)
-						fillStyle = string.color
-					}
-				}
+	 if (graphicsState.colouredStrings) {
+	 if (entity.stringId !== UndefinedStringId) {
+	 const string = this._entities.strings.getById(entity.stringId)
+	 assertNotNull(string)
+	 fillStyle = string.color
+	 }
+	 }
 
-				const selectedState = this._selectedStore.state
+	 const selectedState = this._selectedStore.state
 
-				if (graphicsState.selectedPanelFill) {
-					const isSingleSelected =
-						selectedState.singleSelectedEntityId &&
-						selectedState.singleSelectedEntityId === entity.id
-					if (isSingleSelected) {
-						fillStyle = CANVAS_COLORS.SelectedPanelFillStyle
-					}
+	 if (graphicsState.selectedPanelFill) {
+	 const isSingleSelected =
+	 selectedState.singleSelectedEntityId &&
+	 selectedState.singleSelectedEntityId === entity.id
+	 if (isSingleSelected) {
+	 fillStyle = CANVAS_COLORS.SelectedPanelFillStyle
+	 }
 
-					const isMultipleSelected =
-						selectedState.multipleSelectedEntityIds.length &&
-						selectedState.multipleSelectedEntityIds.includes(entity.id)
-					if (isMultipleSelected) {
-						fillStyle = CANVAS_COLORS.SelectedPanelFillStyle
-					}
-				}
+	 const isMultipleSelected =
+	 selectedState.multipleSelectedEntityIds.length &&
+	 selectedState.multipleSelectedEntityIds.includes(entity.id)
+	 if (isMultipleSelected) {
+	 fillStyle = CANVAS_COLORS.SelectedPanelFillStyle
+	 }
+	 }
 
-				const isStringSelected =
-					selectedState.selectedStringId && selectedState.selectedStringId === entity.stringId
+	 const isStringSelected =
+	 selectedState.selectedStringId && selectedState.selectedStringId === entity.stringId
 
-				if (isStringSelected && graphicsState.selectedStringPanelFill) {
-					fillStyle = CANVAS_COLORS.StringSelectedPanelFillStyle
-				}
+	 if (isStringSelected && graphicsState.selectedStringPanelFill) {
+	 fillStyle = CANVAS_COLORS.StringSelectedPanelFillStyle
+	 }
 
-				// let panelLinkOrderDrawFn: ((ctx: CanvasRenderingContext2D) => void) | undefined = undefined
-				if (this._appStore.state.mode === MODE_STATE.LINK_MODE) {
-					if (this._panelLinksStore.requestingLink) {
-						if (this._panelLinksStore.requestingLink.panelId === entity.id) {
-							fillStyle = CANVAS_COLORS.RequestingLinkPanelFillStyle
-						}
-					}
-					/*
-					 if (isStringSelected) {
-					 assertNotNull(selectedState.selectedStringId)
+	 // let panelLinkOrderDrawFn: ((ctx: CanvasRenderingContext2D) => void) | undefined = undefined
+	 if (this._appStore.state.mode === MODE_STATE.LINK_MODE) {
+	 if (this._panelLinksStore.requestingLink) {
+	 if (this._panelLinksStore.requestingLink.panelId === entity.id) {
+	 fillStyle = CANVAS_COLORS.RequestingLinkPanelFillStyle
+	 }
+	 }
+	 /!*
+	 if (isStringSelected) {
+	 assertNotNull(selectedState.selectedStringId)
 
-					 const linksInOrder = this._panelLinks.getPanelLinkOrderForString(
-					 selectedState.selectedStringId,
-					 )
-					 const linkIndex = linksInOrder.findIndex((link) => link?.positivePanel.id === entity.id)
-					 if (linkIndex !== -1) {
-					 panelLinkOrderDrawFn = (ctx) => {
-					 ctx.save()
-					 const fontSize = 10
-					 ctx.font = `${fontSize}px Consolas, sans-serif`
-					 const text = `${linkIndex + 1}`
-					 const metrics = ctx.measureText(text)
-					 const x = 0 - metrics.width / 2
-					 const y = fontSize / 4
-					 ctx.fillStyle = 'black'
-					 ctx.fillText(text, x, y)
-					 ctx.restore()
-					 }
-					 }
-					 }*/
-				}
+	 const linksInOrder = this._panelLinks.getPanelLinkOrderForString(
+	 selectedState.selectedStringId,
+	 )
+	 const linkIndex = linksInOrder.findIndex((link) => link?.positivePanel.id === entity.id)
+	 if (linkIndex !== -1) {
+	 panelLinkOrderDrawFn = (ctx) => {
+	 ctx.save()
+	 const fontSize = 10
+	 ctx.font = `${fontSize}px Consolas, sans-serif`
+	 const text = `${linkIndex + 1}`
+	 const metrics = ctx.measureText(text)
+	 const x = 0 - metrics.width / 2
+	 const y = fontSize / 4
+	 ctx.fillStyle = 'black'
+	 ctx.fillText(text, x, y)
+	 ctx.restore()
+	 }
+	 }
+	 }*!/
+	 }
 
-				const pointerState = this._appStore.state.pointer
-				const hoveringOverEntityId = pointerState.hoveringOverEntityId
-				const isBeingHovered = !!hoveringOverEntityId && hoveringOverEntityId === entity.id
+	 const pointerState = this._appStore.state.pointer
+	 const hoveringOverEntityId = pointerState.hoveringOverEntityId
+	 const isBeingHovered = !!hoveringOverEntityId && hoveringOverEntityId === entity.id
 
-				if (isBeingHovered) {
-					// fillStyle = '#17fff3'
-					if (isStringSelected && graphicsState.selectedStringPanelFill) {
-						fillStyle = shadeColor(CANVAS_COLORS.StringSelectedPanelFillStyle, 50)
-					}
-					fillStyle = shadeColor(fillStyle, 50)
-				}
+	 if (isBeingHovered) {
+	 // fillStyle = '#17fff3'
+	 if (isStringSelected && graphicsState.selectedStringPanelFill) {
+	 fillStyle = shadeColor(CANVAS_COLORS.StringSelectedPanelFillStyle, 50)
+	 }
+	 fillStyle = shadeColor(fillStyle, 50)
+	 }
 
-				ctx.save()
-				ctx.fillStyle = fillStyle
-				ctx.strokeStyle = strokeStyle
-				ctx.translate(entity.location.x + entity.width / 2, entity.location.y + entity.height / 2)
-				ctx.rotate(entity.angle)
-				ctx.beginPath()
-				ctx.rect(-entity.width / 2, -entity.height / 2, entity.width, entity.height)
-				ctx.fill()
-				ctx.stroke()
-				ctx.closePath()
-				/*			if (panelLinkOrderDrawFn) {
-				 panelLinkOrderDrawFn(ctx)
-				 }*/
+	 ctx.save()
+	 ctx.fillStyle = fillStyle
+	 ctx.strokeStyle = strokeStyle
+	 ctx.translate(entity.location.x + entity.width / 2, entity.location.y + entity.height / 2)
+	 ctx.rotate(entity.angle)
+	 ctx.beginPath()
+	 ctx.rect(-entity.width / 2, -entity.height / 2, entity.width, entity.height)
+	 ctx.fill()
+	 ctx.stroke()
+	 ctx.closePath()
+	 /!*			if (panelLinkOrderDrawFn) {
+	 panelLinkOrderDrawFn(ctx)
+	 }*!/
 
-				// draw drawLinkModeGraphics
-				if (isStringSelected && this._appStore.state.mode === 'LinkMode') {
-					if (this._graphicsStore.state.linkModeSymbols) {
-						this.drawLinkModeSymbols(ctx, entity)
-					}
-					if (this._graphicsStore.state.linkModeOrderNumbers) {
-						this.drawLinkModeOrderNumbers(ctx, entity)
-					}
-				}
-				/*				if (
-				 isStringSelected &&
-				 this._graphicsStore.state.linkModeSymbols &&
-				 this._appStore.state.mode === 'LinkMode'
-				 ) {
-				 this.drawLinkModeSymbols(ctx, entity)
-				 }*/
-				ctx.restore()
-			})
-			// ctx.closePath()
-			ctx.restore()
+	 // draw drawLinkModeGraphics
+	 if (isStringSelected && this._appStore.state.mode === 'LinkMode') {
+	 if (this._graphicsStore.state.linkModeSymbols) {
+	 this.drawLinkModeSymbols(ctx, entity)
+	 }
+	 if (this._graphicsStore.state.linkModeOrderNumbers) {
+	 this.drawLinkModeOrderNumbers(ctx, entity)
+	 }
+	 }
+	 /!*				if (
+	 isStringSelected &&
+	 this._graphicsStore.state.linkModeSymbols &&
+	 this._appStore.state.mode === 'LinkMode'
+	 ) {
+	 this.drawLinkModeSymbols(ctx, entity)
+	 }*!/
+	 ctx.restore()
+	 })
+	 // ctx.closePath()
+	 ctx.restore()
 
-			if (options?.drawFnsAtMiddle) {
-				// ctx.save()
-				options?.drawFnsAtMiddle.forEach((fn) => {
-					ctx.save()
-					fn(ctx)
-					ctx.restore()
-				})
-			}
-			/*			if (options?.drawFns) {
-			 // ctx.save()
-			 options.drawFns.forEach((fn) => {
-			 ctx.save()
-			 fn(ctx)
-			 ctx.restore()
-			 })
-			 }*/
+	 if (options?.drawFnsAtMiddle) {
+	 // ctx.save()
+	 options?.drawFnsAtMiddle.forEach((fn) => {
+	 ctx.save()
+	 fn(ctx)
+	 ctx.restore()
+	 })
+	 }
+	 /!*			if (options?.drawFns) {
+	 // ctx.save()
+	 options.drawFns.forEach((fn) => {
+	 ctx.save()
+	 fn(ctx)
+	 ctx.restore()
+	 })
+	 }*!/
 
-			if (
-				this._graphicsStore.state.linkModePathLines &&
-				this._selectedStore.state.selectedStringId &&
-				this._appStore.state.mode === 'LinkMode'
-			) {
-				this.drawLinkModePathLinesV2(ctx, options?.customEntities)
-				// this.drawLinkModePathLines(ctx, options?.customEntities)
-			}
+	 if (
+	 this._graphicsStore.state.linkModePathLines &&
+	 this._selectedStore.state.selectedStringId &&
+	 this._appStore.state.mode === 'LinkMode'
+	 ) {
+	 this.drawLinkModePathLinesV2(ctx, options?.customEntities)
+	 // this.drawLinkModePathLines(ctx, options?.customEntities)
+	 }
 
-			if (this._entities.panelLinks.hoveringOverPanelInLinkMenuId) {
-				const panel = this._entities.panels.getById(
-					this._entities.panelLinks.hoveringOverPanelInLinkMenuId,
-				)
-				assertNotNull(panel, 'panel')
-				drawBoxWithOptionsCtx(ctx, [panel], {
-					color: CANVAS_COLORS.HoveringOverPanelInLinkMenuStrokeStyle,
-					lineWidth: 2,
-					padding: 5,
-				})
-				// drawSelectedBox(ctx, [panel])
-			}
+	 if (this._entities.panelLinks.hoveringOverPanelInLinkMenuId) {
+	 const panel = this._entities.panels.getById(
+	 this._entities.panelLinks.hoveringOverPanelInLinkMenuId,
+	 )
+	 assertNotNull(panel, 'panel')
+	 drawBoxWithOptionsCtx(ctx, [panel], {
+	 color: CANVAS_COLORS.HoveringOverPanelInLinkMenuStrokeStyle,
+	 lineWidth: 2,
+	 padding: 5,
+	 })
+	 // drawSelectedBox(ctx, [panel])
+	 }
 
-			const shouldRenderSelectedEntitiesBox = options?.shouldRenderSelectedEntitiesBox ?? true
-			const shouldRenderSelectedStringBox = options?.shouldRenderSelectedStringBox ?? true
+	 const shouldRenderSelectedEntitiesBox = options?.shouldRenderSelectedEntitiesBox ?? true
+	 const shouldRenderSelectedStringBox = options?.shouldRenderSelectedStringBox ?? true
 
-			const multipleSelectedEntityIds = this._selectedStore.state.multipleSelectedEntityIds
-			if (shouldRenderSelectedEntitiesBox && multipleSelectedEntityIds.length) {
-				drawSelectedBox(ctx, this._entities.panels.getByIds(multipleSelectedEntityIds))
-			} else if (
-				shouldRenderSelectedEntitiesBox &&
-				this._selectedStore.state.singleSelectedEntityId
-			) {
-				const selectedEntity = this._entities.panels.getById(
-					this._selectedStore.state.singleSelectedEntityId,
-				)
-				assertNotNull(selectedEntity, 'selectedEntity')
-				drawSelectedBox(ctx, [selectedEntity])
-			}
+	 const multipleSelectedEntityIds = this._selectedStore.state.multipleSelectedEntityIds
+	 if (shouldRenderSelectedEntitiesBox && multipleSelectedEntityIds.length) {
+	 drawSelectedBox(ctx, this._entities.panels.getByIds(multipleSelectedEntityIds))
+	 } else if (
+	 shouldRenderSelectedEntitiesBox &&
+	 this._selectedStore.state.singleSelectedEntityId
+	 ) {
+	 const selectedEntity = this._entities.panels.getById(
+	 this._selectedStore.state.singleSelectedEntityId,
+	 )
+	 assertNotNull(selectedEntity, 'selectedEntity')
+	 drawSelectedBox(ctx, [selectedEntity])
+	 }
 
-			const selectedStringId = this._selectedStore.state.selectedStringId
+	 const selectedStringId = this._selectedStore.state.selectedStringId
 
-			if (shouldRenderSelectedStringBox && selectedStringId) {
-				const selectedString = this._entities.strings.getById(selectedStringId)
-				assertNotNull(selectedString, 'selectedString')
-				const selectedStringPanels = this._entities.panels.getByStringId(selectedString.id)
+	 if (shouldRenderSelectedStringBox && selectedStringId) {
+	 const selectedString = this._entities.strings.getById(selectedStringId)
+	 assertNotNull(selectedString, 'selectedString')
+	 const selectedStringPanels = this._entities.panels.getByStringId(selectedString.id)
 
-				drawSelectedStringBoxV3(ctx, selectedString, selectedStringPanels)
-				if (shouldRenderSelectedEntitiesBox && multipleSelectedEntityIds.length) {
-					drawSelectedBox(ctx, this._entities.panels.getByIds(multipleSelectedEntityIds))
-				}
-			}
+	 drawSelectedStringBoxV3(ctx, selectedString, selectedStringPanels)
+	 if (shouldRenderSelectedEntitiesBox && multipleSelectedEntityIds.length) {
+	 drawSelectedBox(ctx, this._entities.panels.getByIds(multipleSelectedEntityIds))
+	 }
+	 }
 
-			if (this._graphicsStore.state.stringBoxes) {
-				const stringsWithPanels = this._entities.strings.allStrings.map((string) => ({
-					string,
-					panels: this._entities.panels.getByStringId(string.id),
-				}))
-				stringsWithPanels.forEach(({ string, panels }) => {
-					drawSelectedStringBoxV3(ctx, string, panels)
-				})
-			}
+	 if (this._graphicsStore.state.stringBoxes) {
+	 const stringsWithPanels = this._entities.strings.allStrings.map((string) => ({
+	 string,
+	 panels: this._entities.panels.getByStringId(string.id),
+	 }))
+	 stringsWithPanels.forEach(({ string, panels }) => {
+	 drawSelectedStringBoxV3(ctx, string, panels)
+	 })
+	 }
 
-			if (options?.drawFns) {
-				// ctx.save()
-				options.drawFns.forEach((fn) => {
-					ctx.save()
-					fn(ctx)
-					ctx.restore()
-				})
-			}
-			console.log('drawing nearby lines')
-			/*	if (options?.nearby && this._graphicsStore.state.nearbyLines) {
-			 console.log('drawing nearby lines')
-			 const nearbyOpts = options.nearby
-			 const nearbyLinesState = this._graphicsStore.state.nearbyLinesState
-			 const axisPreviewRect = nearbyOpts.axisPreviewRect
-			 const mouseBoxBounds = nearbyOpts.mouseBounds
-			 const closestEnt = nearbyOpts.nearbyEntity
-			 const altKey = nearbyOpts.snapToGridBool
-			 // const holdAltToSnapToGrid = this._appStore.state.holdAltToSnapToGrid
-			 // const isMovingExistingEntity = this._appStore.state.mode === 'MoveMode'
+	 if (options?.drawFns) {
+	 // ctx.save()
+	 options.drawFns.forEach((fn) => {
+	 ctx.save()
+	 fn(ctx)
+	 ctx.restore()
+	 })
+	 }
+	 console.log('drawing nearby lines')
+	 /!*	if (options?.nearby && this._graphicsStore.state.nearbyLines) {
+	 console.log('drawing nearby lines')
+	 const nearbyOpts = options.nearby
+	 const nearbyLinesState = this._graphicsStore.state.nearbyLinesState
+	 const axisPreviewRect = nearbyOpts.axisPreviewRect
+	 const mouseBoxBounds = nearbyOpts.mouseBounds
+	 const closestEnt = nearbyOpts.nearbyEntity
+	 const altKey = nearbyOpts.snapToGridBool
+	 // const holdAltToSnapToGrid = this._appStore.state.holdAltToSnapToGrid
+	 // const isMovingExistingEntity = this._appStore.state.mode === 'MoveMode'
 
-			 const ctxFn = getNearbyLineDrawCtxFnFromNearbyLinesState(
-			 nearbyLinesState,
-			 axisPreviewRect,
-			 mouseBoxBounds,
-			 closestEnt,
-			 CANVAS_COLORS.HoveredPanelFillStyle,
-			 altKey,
-			 true,
-			 true,
-			 // holdAltToSnapToGrid,
-			 // isMovingExistingEntity,
-			 )
-			 ctxFn(ctx)
-			 }*/
-			/*			if (options?.drawFns) {
-			 options.drawFns.forEach((fn) => fn(ctx))
-			 }*/
-		})
-	}
+	 const ctxFn = getNearbyLineDrawCtxFnFromNearbyLinesState(
+	 nearbyLinesState,
+	 axisPreviewRect,
+	 mouseBoxBounds,
+	 closestEnt,
+	 CANVAS_COLORS.HoveredPanelFillStyle,
+	 altKey,
+	 true,
+	 true,
+	 // holdAltToSnapToGrid,
+	 // isMovingExistingEntity,
+	 )
+	 ctxFn(ctx)
+	 }*!/
+	 /!*			if (options?.drawFns) {
+	 options.drawFns.forEach((fn) => fn(ctx))
+	 }*!/
+	 })
+	 }*/
 
 	private drawLinkModeSymbols(ctx: CanvasRenderingContext2D, panel: CanvasPanel) {
 		const lineLength = 5

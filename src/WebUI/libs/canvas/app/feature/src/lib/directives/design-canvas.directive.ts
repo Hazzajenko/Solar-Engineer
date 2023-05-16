@@ -188,6 +188,15 @@ export class DesignCanvasDirective implements OnInit {
 
 	onMouseMoveHandler(event: PointerEvent, currentPoint: TransformedPoint) {
 		this.currentTransformedCursor = currentPoint
+		changeCanvasCursor(this.canvas, CURSOR_TYPE.NONE)
+
+		/*		const cursorRadius = 100
+		 const cursorColor = 'red'
+		 const { x, y } = eventToPointLocation(event)
+		 this.ctx.beginPath()
+		 this.ctx.arc(x, y, cursorRadius, 0, 2 * Math.PI)
+		 this.ctx.fillStyle = cursorColor
+		 this.ctx.fill()*/
 
 		/**
 		 * ! Object Positioning
@@ -237,6 +246,8 @@ export class DesignCanvasDirective implements OnInit {
 		if (moveEntityState === 'MovingSingleEntity') {
 			changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
 			this._objPositioning.singleToMoveMouseMoveV2Ngrx(event, currentPoint)
+			this.canvas.getBoundingClientRect()
+			this.canvas.offsetWidth
 			return
 		}
 
@@ -290,6 +301,11 @@ export class DesignCanvasDirective implements OnInit {
 			this._render.renderCanvasApp()
 			return
 		}
+
+		this._render.renderCanvasApp({
+			transformedPoint: this.rawMousePos,
+		})
+		return
 
 		const graphicsState = this._graphicsState.state
 

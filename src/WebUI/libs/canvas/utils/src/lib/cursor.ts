@@ -5,6 +5,12 @@ export const changeCanvasCursor = (canvas: HTMLCanvasElement, cursor: CursorType
 	canvas.style.cursor = cursor
 }
 
+export const changeCanvasCursorIfNotSet = (canvas: HTMLCanvasElement, cursor: CursorType) => {
+	if (canvas.style.cursor !== cursor) {
+		canvas.style.cursor = cursor
+	}
+}
+
 export const setCanvasCursorToAuto = (canvas: HTMLCanvasElement) => {
 	canvas.style.cursor = CURSOR_TYPE.AUTO
 }

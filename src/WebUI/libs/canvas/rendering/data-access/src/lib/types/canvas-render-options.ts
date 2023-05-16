@@ -1,6 +1,8 @@
 import {
 	CompleteEntityBounds,
+	CursorType,
 	NearbyEntity,
+	Point,
 	SpotInBox,
 	TransformedPoint,
 } from '@shared/data-access/models'
@@ -38,6 +40,8 @@ export type CanvasRenderOptions = {
 		entityToMove: CanvasEntity
 		// isMovingExistingEntity: boolean
 	}
+	cursor: CursorType
+	transformedPoint: Point
 
 	// singleToMove
 }
