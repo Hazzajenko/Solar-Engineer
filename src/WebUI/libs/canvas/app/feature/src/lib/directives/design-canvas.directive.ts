@@ -54,6 +54,7 @@ import {
 	SizeByType,
 	UndefinedStringId,
 } from '@entities/shared'
+import { throttle } from 'lodash'
 
 @Directive({
 	selector: '[appDesignCanvas]',
@@ -188,7 +189,7 @@ export class DesignCanvasDirective implements OnInit {
 
 	onMouseMoveHandler(event: PointerEvent, currentPoint: TransformedPoint) {
 		this.currentTransformedCursor = currentPoint
-		changeCanvasCursor(this.canvas, CURSOR_TYPE.NONE)
+		// changeCanvasCursor(this.canvas, CURSOR_TYPE.NONE)
 
 		/*		const cursorRadius = 100
 		 const cursorColor = 'red'
@@ -244,10 +245,11 @@ export class DesignCanvasDirective implements OnInit {
 		}
 
 		if (moveEntityState === 'MovingSingleEntity') {
-			changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
+			// changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
+			// changeCanvasCursor(this.canvas, CURSOR_TYPE.NONE)
 			this._objPositioning.singleToMoveMouseMoveV2Ngrx(event, currentPoint)
-			this.canvas.getBoundingClientRect()
-			this.canvas.offsetWidth
+			// this.canvas.getBoundingClientRect()
+			// this.canvas.offsetWidth
 			return
 		}
 
@@ -691,14 +693,25 @@ export class DesignCanvasDirective implements OnInit {
 			event.stopPropagation()
 			event.preventDefault()
 		})
-		this._renderer.listen(this.canvas, EVENT_TYPE.POINTER_MOVE, (event: PointerEvent) => {
+		this._renderer.listen(this.canvas, EVENT_TYPE.POINTER_MOVE, (event: PointerEvent) =>
+			throttledPointerMove(event),
+		)
+		/*		this._renderer.listen(this.canvas, EVENT_TYPE.POINTER_MOVE, (event: PointerEvent) => {
+		 this.rawMousePos = eventToPointLocation(event)
+		 this.currentPoint = this._domPoint.getTransformedPointFromEvent(event)
+		 this._appState.mousePos = this.currentPoint
+		 this.onMouseMoveHandler(event, this.currentPoint)
+		 event.stopPropagation()
+		 event.preventDefault()
+		 })*/
+		const throttledPointerMove = throttle((event: PointerEvent) => {
 			this.rawMousePos = eventToPointLocation(event)
 			this.currentPoint = this._domPoint.getTransformedPointFromEvent(event)
 			this._appState.mousePos = this.currentPoint
 			this.onMouseMoveHandler(event, this.currentPoint)
 			event.stopPropagation()
 			event.preventDefault()
-		})
+		}, 1000 / 60)
 		this._renderer.listen(this.canvas, ContextMenuEvent, (event: PointerEvent) => {
 			this.rawMousePos = eventToPointLocation(event)
 			console.log('context menu', event)

@@ -36,7 +36,8 @@ import {
 } from '@entities/shared'
 import { getSymbolLocationBasedOnIndex } from './render-v2.service'
 import { injectSvgs, injectSvgsV2 } from './svg-injector'
-import { initSvgCursorImages, SvgCursorImageRecord } from '../../svgs/svg-init'
+import { SvgCursorImageRecord } from '../../svgs'
+import { throttle } from 'lodash'
 
 @Injectable({
 	providedIn: 'root',
@@ -62,7 +63,18 @@ export class RenderService {
 	_svgCursorImages: SvgCursorImageRecord | undefined
 	// private _panelsStore = injectPanelsFeature()
 
+	private _renderOptions: Partial<CanvasRenderOptions> = {}
+
+	get renderOptions() {
+		return this._renderOptions
+	}
+
+	set renderOptions(value: Partial<CanvasRenderOptions>) {
+		this._renderOptions = value
+	}
+
 	private lastRenderTime = performance.now()
+	private lastFrameTime = performance.now()
 
 	private framesThisSecond = 0
 
@@ -83,11 +95,13 @@ export class RenderService {
 
 	constructor() {
 		this.checkFps()
-		this._svgs2.then((data) => {
-			this._imageElement = data
-			console.log('data', data)
-		})
-		initSvgCursorImages().then((r) => (this._svgCursorImages = r))
+		/*		this._svgs2.then((data) => {
+		 this._imageElement = data
+		 // console.log('data', data)
+		 })
+		 initSvgCursorImages().then((r) => (this._svgCursorImages = r))*/
+		// this.renderAt60FPS()
+		// this.renderCanvasAppAt60FPS()
 	}
 
 	get ctx() {
@@ -104,8 +118,16 @@ export class RenderService {
 		// return this._state.entities.panels.getEntities()
 	}
 
+	// private _fpsElement: HTMLDivElement | undefined
+
+	// private _fpsElement = document.getElementById(DIV_ELEMENT.FPS)
+
 	get fpsEl() {
 		return this._divElements.getElementById(DIV_ELEMENT.FPS)
+		/*		if (!this._fpsElement) {
+		 this._fpsElement = document.getElementById(DIV_ELEMENT.FPS) as HTMLDivElement
+		 }
+		 return this._fpsElement*/
 	}
 
 	private checkFps() {
@@ -118,6 +140,7 @@ export class RenderService {
 
 		if (deltaTime >= 1000) {
 			this.fpsStats = this.framesThisSecond / (deltaTime / 1000)
+			console.log('fps', this.framesThisSecond / (deltaTime / 1000))
 			this.framesThisSecond = 0
 			this.lastRenderTime = currentTime
 		}
@@ -132,6 +155,181 @@ export class RenderService {
 	}
 
 	renderCanvasApp(options?: Partial<CanvasRenderOptions>) {
+		this.throttledRenderCanvasApp(options)
+	}
+
+	throttledRenderCanvasApp = throttle(this.renderFn, 1000 / 60)
+
+	// throttledRenderCanvasApp = throttle(this.renderFn, 1000 / 60)
+
+	renderFn(options?: Partial<CanvasRenderOptions>) {
+		this.render((ctx) => {
+			if (options?.cursor) {
+				ctx.canvas.style.cursor = options.cursor
+				// this.canvas.style.cursor = options.cursor
+			}
+			// ctx.canvas.style.cursor = CURSOR_TYPE.GRABBING
+			ctx.save()
+			ctx.strokeStyle = PANEL_STROKE_STYLE.DEFAULT
+			ctx.setTransform(1, 0, 0, 1, 0, 0)
+			ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+			ctx.restore()
+			/*			if (options?.transformedPoint) {
+			 SVGIcons(options.transformedPoint)['cursor-arrow-rays.svg'].draw(ctx)
+			 }*/
+			ctx.save()
+			ctx.beginPath()
+			/*			const excludedIds = options?.excludedEntityIds
+			 const entities = !excludedIds
+			 ? this.allPanels
+			 : this.allPanels.filter((entity) => {
+			 return !excludedIds.includes(entity.id)
+			 })*/
+			const customPanels = options?.customPanels
+			const entities = !customPanels
+				? this.allPanels
+				: this.allPanels
+						.filter((entity) => {
+							return !customPanels.map((panel) => panel.id).includes(entity.id)
+						})
+						.concat(customPanels)
+
+			this.drawEntities(ctx, entities)
+			// ctx.closePath()
+			ctx.restore()
+
+			if (options?.drawFnsAtMiddle) {
+				// ctx.save()
+				options?.drawFnsAtMiddle.forEach((fn) => {
+					ctx.save()
+					fn(ctx)
+					ctx.restore()
+				})
+			}
+			/*			if (options?.drawFns) {
+			 // ctx.save()
+			 options.drawFns.forEach((fn) => {
+			 ctx.save()
+			 fn(ctx)
+			 ctx.restore()
+			 })
+			 }*/
+
+			if (
+				this._graphicsStore.state.linkModePathLines &&
+				this._selectedStore.state.selectedStringId &&
+				this._appStore.state.mode === 'LinkMode'
+			) {
+				this.drawLinkModePathLinesV2(ctx, options?.customEntities)
+				// this.drawLinkModePathLines(ctx, options?.customEntities)
+			}
+
+			if (this._entities.panelLinks.hoveringOverPanelInLinkMenuId) {
+				const panel = this._entities.panels.getById(
+					this._entities.panelLinks.hoveringOverPanelInLinkMenuId,
+				)
+				assertNotNull(panel, 'panel')
+				drawBoxWithOptionsCtx(ctx, [panel], {
+					color: CANVAS_COLORS.HoveringOverPanelInLinkMenuStrokeStyle,
+					lineWidth: 2,
+					padding: 5,
+				})
+				// drawSelectedBox(ctx, [panel])
+			}
+
+			const shouldRenderSelectedEntitiesBox = options?.shouldRenderSelectedEntitiesBox ?? true
+			const shouldRenderSelectedStringBox = options?.shouldRenderSelectedStringBox ?? true
+
+			const multipleSelectedEntityIds = this._selectedStore.state.multipleSelectedEntityIds
+			if (shouldRenderSelectedEntitiesBox && multipleSelectedEntityIds.length) {
+				drawSelectedBox(ctx, this._entities.panels.getByIds(multipleSelectedEntityIds))
+			} else if (
+				shouldRenderSelectedEntitiesBox &&
+				this._selectedStore.state.singleSelectedEntityId
+			) {
+				const selectedEntity = this._entities.panels.getById(
+					this._selectedStore.state.singleSelectedEntityId,
+				)
+				assertNotNull(selectedEntity, 'selectedEntity')
+				drawSelectedBox(ctx, [selectedEntity])
+			}
+
+			const selectedStringId = this._selectedStore.state.selectedStringId
+
+			if (shouldRenderSelectedStringBox && selectedStringId) {
+				const selectedString = this._entities.strings.getById(selectedStringId)
+				assertNotNull(selectedString, 'selectedString')
+				const selectedStringPanels = this._entities.panels.getByStringId(selectedString.id)
+
+				drawSelectedStringBoxV3(ctx, selectedString, selectedStringPanels)
+				if (shouldRenderSelectedEntitiesBox && multipleSelectedEntityIds.length) {
+					drawSelectedBox(ctx, this._entities.panels.getByIds(multipleSelectedEntityIds))
+				}
+			}
+
+			if (this._graphicsStore.state.stringBoxes) {
+				const stringsWithPanels = this._entities.strings.allStrings.map((string) => ({
+					string,
+					panels: this._entities.panels.getByStringId(string.id),
+				}))
+				stringsWithPanels.forEach(({ string, panels }) => {
+					drawSelectedStringBoxV3(ctx, string, panels)
+				})
+			}
+
+			if (options?.drawFns) {
+				// ctx.save()
+				options.drawFns.forEach((fn) => {
+					ctx.save()
+					fn(ctx)
+					ctx.restore()
+				})
+			}
+
+			if (options?.nearby && this._graphicsStore.state.nearbyLines) {
+				console.log('drawing nearby lines')
+				const nearbyOpts = options.nearby
+				const nearbyLinesState = this._graphicsStore.state.nearbyLinesState
+
+				drawNearbyLineDrawCtxFnFromNearbyLinesStateOptimisedV2(
+					ctx,
+					nearbyLinesState,
+					nearbyOpts,
+					CANVAS_COLORS.HoveredPanelFillStyle,
+				)
+			}
+
+			if (options?.selectionBox) {
+				const selectionBox = options.selectionBox
+				drawSelectionDragBox(ctx, selectionBox)
+			}
+
+			if (options?.creationBox) {
+				const creationBox = options.creationBox
+				drawCreationDragBox(ctx, creationBox)
+			}
+
+			if (options?.transformedPoint && this._svgCursorImages) {
+				const svgCursorImage = this._svgCursorImages['cursor']
+				// svgCursorImage.draw(ctx, options.transformedPoint.x, options.transformedPoint.y)
+				ctx.save()
+				ctx.resetTransform()
+				ctx.drawImage(
+					svgCursorImage,
+					options.transformedPoint.x,
+					options.transformedPoint.y,
+					20,
+					20,
+				)
+				ctx.restore()
+			}
+		})
+	}
+
+	renderCanvasAppV2() {
+		const options = this.renderOptions
+
+		// renderCanvasAppV2(options?: Partial<CanvasRenderOptions>) {
 		this.render((ctx) => {
 			if (options?.cursor) {
 				this.canvas.style.cursor = options.cursor
@@ -277,23 +475,6 @@ export class RenderService {
 				drawCreationDragBox(ctx, creationBox)
 			}
 
-			/*	if (options?.transformedPoint) {
-			 SVGIcons(options.transformedPoint)['cursor-arrow-rays.svg'].draw(ctx)
-			 }*/
-
-			/*			if (options?.transformedPoint && this._imageElement) {
-			 ctx.save()
-			 ctx.resetTransform()
-			 ctx.drawImage(
-			 this._imageElement,
-			 options.transformedPoint.x,
-			 options.transformedPoint.y,
-			 20,
-			 20,
-			 )
-			 ctx.restore()
-			 }*/
-
 			if (options?.transformedPoint && this._svgCursorImages) {
 				const svgCursorImage = this._svgCursorImages['cursor']
 				// svgCursorImage.draw(ctx, options.transformedPoint.x, options.transformedPoint.y)
@@ -308,24 +489,6 @@ export class RenderService {
 				)
 				ctx.restore()
 			}
-
-			// drawMouseSvg(ctx)
-
-			/*
-			 // SVG source code
-			 const svgSource = `<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'>
-			 <rect x='10' y='10' width='80' height='80' fill='red' />
-			 </svg>`
-			 */
-
-			/*			// Create an image element from the SVG source
-			 const image = new Image()
-			 image.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgSource)
-
-			 image.onload = function () {
-			 // Draw the SVG image onto the canvas
-			 ctx.drawImage(image, 0, 0)
-			 }*/
 		})
 	}
 
@@ -865,3 +1028,7 @@ export class RenderService {
 		ctx.restore()
 	}
 }
+
+const FRAMES_PER_SECOND = 30 // Valid values are 60,30,20,15,10...
+// set the mim time to render the next frame
+const FRAME_MIN_TIME = (1000 / 60) * (60 / FRAMES_PER_SECOND) - (1000 / 60) * 0.5

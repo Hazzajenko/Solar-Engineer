@@ -59,7 +59,13 @@ import { ContextMenuRendererComponent } from '@overlays/context-menus/feature'
 	],
 	selector: 'app-design-canvas-app',
 	standalone: true,
-	styles: [],
+	styles: [
+		`
+			/*			canvas:active {
+							cursor: grabbing !important;
+						}*/
+		`,
+	],
 	templateUrl: './design-canvas-app.component.html',
 })
 export class DesignCanvasAppComponent implements OnInit, AfterViewInit {

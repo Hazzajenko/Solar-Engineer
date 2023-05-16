@@ -81,11 +81,11 @@ export class ObjectPositioningService {
 		if (isSpotTaken) {
 			// this.canvas.style.cursor = CURSOR_TYPE.CROSSHAIR
 			// changeCanvasCursor(this.canvas, CURSOR_TYPE.NO_DROP)
-			changeCanvasCursor(this.canvas, CURSOR_TYPE.NO_DROP)
+			// changeCanvasCursor(this.canvas, CURSOR_TYPE.NO_DROP)
 			// return
 		} else {
 			// changeCanvasCursorIfNotSet(this.canvas, CURSOR_TYPE.GRABBING)
-			changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
+			// changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
 			// console.log('singleToMoveMouseMoveV2Ngrx - else')
 			// this.canvas.getBoundingClientRect()
 			// this.canvas.style.cursor = CURSOR_TYPE.GRABBING
@@ -126,7 +126,7 @@ export class ObjectPositioningService {
 		if (!nearbyEntitiesOnAxis.length || nearbyLinesState === 'NearbyLinesDisabled') {
 			this._render.renderCanvasApp({
 				customPanels: [customEntity],
-				singleToMoveId: this.singleToMoveId,
+				singleToMoveId: this.singleToMoveId, // cursor: CURSOR_TYPE.GRABBING,
 			})
 			return
 		}
