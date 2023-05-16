@@ -6,6 +6,7 @@ export * from './draw-selected-string-box'
 export * from './draw-box-with-options.ctx'
 export * from './nearby/index'
 export * from './entities/index'
+export * from './drag-box/index'
 
 // export * from './draw-axis-grid-lines'
 // export * from './draw-preview-fn'

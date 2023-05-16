@@ -10,9 +10,11 @@ import { injectSelectedStore } from '@canvas/selected/data-access'
 import { CanvasRenderOptions } from '../../types'
 import {
 	drawBoxWithOptionsCtx,
+	drawCreationDragBox,
 	drawNearbyLineDrawCtxFnFromNearbyLinesStateOptimisedV2,
 	drawSelectedBox,
 	drawSelectedStringBoxV3,
+	drawSelectionDragBox,
 } from './render-fns'
 import { inject, Injectable } from '@angular/core'
 import { assertNotNull, shadeColor } from '@shared/utils'
@@ -116,7 +118,7 @@ export class RenderService {
 		this.ctx.restore()
 	}
 
-	renderCanvasApp(options?: CanvasRenderOptions) {
+	renderCanvasApp(options?: Partial<CanvasRenderOptions>) {
 		this.render((ctx) => {
 			ctx.save()
 			ctx.strokeStyle = PANEL_STROKE_STYLE.DEFAULT
@@ -243,6 +245,16 @@ export class RenderService {
 					nearbyOpts,
 					CANVAS_COLORS.HoveredPanelFillStyle,
 				)
+			}
+
+			if (options?.selectionBox) {
+				const selectionBox = options.selectionBox
+				drawSelectionDragBox(ctx, selectionBox)
+			}
+
+			if (options?.creationBox) {
+				const creationBox = options.creationBox
+				drawCreationDragBox(ctx, creationBox)
 			}
 		})
 	}

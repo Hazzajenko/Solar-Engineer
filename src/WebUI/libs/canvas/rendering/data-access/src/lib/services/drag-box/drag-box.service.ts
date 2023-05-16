@@ -14,7 +14,6 @@ import {
 	getCompleteBoundsFromMultipleEntitiesWithPadding,
 } from '@canvas/utils'
 import { createPanel } from '@entities/utils'
-import { CANVAS_COLORS, ENTITY_TYPE, SizeByType } from '@entities/shared'
 
 @Injectable({
 	providedIn: 'root',
@@ -209,24 +208,32 @@ export class DragBoxService {
 		const dragBoxStart = this.dragBoxStart
 		assertNotNull(dragBoxStart)
 
-		const drawDragBox = (ctx: CanvasRenderingContext2D) => {
-			const width = currentPoint.x - dragBoxStart.x
-			const height = currentPoint.y - dragBoxStart.y
-			ctx.save()
-			ctx.beginPath()
-			ctx.globalAlpha = 0.4
-			ctx.strokeStyle = CANVAS_COLORS.SelectionBoxFillStyle
-			ctx.lineWidth = 1
-			ctx.rect(dragBoxStart.x, dragBoxStart.y, width, height)
-			ctx.fill()
-			ctx.stroke()
-			ctx.closePath()
-			ctx.restore()
-		}
+		/*		const drawDragBox = (ctx: CanvasRenderingContext2D) => {
+		 const width = currentPoint.x - dragBoxStart.x
+		 const height = currentPoint.y - dragBoxStart.y
+		 ctx.save()
+		 ctx.beginPath()
+		 ctx.globalAlpha = 0.4
+		 ctx.strokeStyle = CANVAS_COLORS.SelectionBoxFillStyle
+		 ctx.lineWidth = 1
+		 ctx.rect(dragBoxStart.x, dragBoxStart.y, width, height)
+		 ctx.fill()
+		 ctx.stroke()
+		 ctx.closePath()
+		 ctx.restore()
+		 }*/
 
 		this._render.renderCanvasApp({
-			drawFns: [drawDragBox],
+			selectionBox: {
+				x: dragBoxStart.x,
+				y: dragBoxStart.y,
+				width: currentPoint.x - dragBoxStart.x,
+				height: currentPoint.y - dragBoxStart.y,
+			},
 		})
+		/*		this._render.renderCanvasApp({
+		 drawFns: [drawDragBox],
+		 })*/
 		// this._render.drawCanvasWithFunction(drawDragBox)
 	}
 
@@ -243,49 +250,62 @@ export class DragBoxService {
 		const dragBoxStart = this.dragBoxStart
 		assertNotNull(dragBoxStart)
 
-		const drawCreationBox = (ctx: CanvasRenderingContext2D) => {
-			const width = currentPoint.x - dragBoxStart.x
-			const height = currentPoint.y - dragBoxStart.y
-			ctx.save()
-			ctx.beginPath()
-			ctx.globalAlpha = 0.4
-			ctx.strokeStyle = CANVAS_COLORS.CreationBoxFillStyle
-			ctx.lineWidth = 1
-			ctx.rect(dragBoxStart.x, dragBoxStart.y, width, height)
-			ctx.fill()
-			ctx.stroke()
-			ctx.closePath()
-			ctx.restore()
+		/*		const drawCreationBox = (ctx: CanvasRenderingContext2D) => {
+		 const width = currentPoint.x - dragBoxStart.x
+		 const height = currentPoint.y - dragBoxStart.y
+		 ctx.save()
+		 ctx.beginPath()
+		 ctx.globalAlpha = 0.4
+		 ctx.strokeStyle = CANVAS_COLORS.CreationBoxFillStyle
+		 ctx.lineWidth = 1
+		 ctx.rect(dragBoxStart.x, dragBoxStart.y, width, height)
+		 ctx.fill()
+		 ctx.stroke()
+		 ctx.closePath()
+		 ctx.restore()
 
-			const spots = getAllAvailableEntitySpotsBetweenTwoPoints(
-				dragBoxStart,
-				currentPoint,
-				this._entities.panels.allPanels, // this._state.entities.panels.getEntities(),
-			)
-			if (!spots) return
+		 const spots = getAllAvailableEntitySpotsBetweenTwoPoints(
+		 dragBoxStart,
+		 currentPoint,
+		 this._entities.panels.allPanels, // this._state.entities.panels.getEntities(),
+		 )
+		 if (!spots) return
 
-			// const { type } = this._state.mode
-			const entitySize = SizeByType[ENTITY_TYPE.Panel]
+		 // const { type } = this._state.mode
+		 const entitySize = SizeByType[ENTITY_TYPE.Panel]
 
-			ctx.save()
-			spots.forEach((spot) => {
-				ctx.save()
-				ctx.beginPath()
-				ctx.globalAlpha = 0.4
-				ctx.fillStyle = spot.vacant
-					? CANVAS_COLORS.PreviewPanelFillStyle
-					: CANVAS_COLORS.TakenSpotFillStyle
-				ctx.rect(spot.x, spot.y, entitySize.width, entitySize.height)
-				ctx.fill()
-				ctx.stroke()
-				ctx.restore()
-			})
-			ctx.restore()
-		}
+		 ctx.save()
+		 spots.forEach((spot) => {
+		 ctx.save()
+		 ctx.beginPath()
+		 ctx.globalAlpha = 0.4
+		 ctx.fillStyle = spot.vacant
+		 ? CANVAS_COLORS.PreviewPanelFillStyle
+		 : CANVAS_COLORS.TakenSpotFillStyle
+		 ctx.rect(spot.x, spot.y, entitySize.width, entitySize.height)
+		 ctx.fill()
+		 ctx.stroke()
+		 ctx.restore()
+		 })
+		 ctx.restore()
+		 }*/
 
 		this._render.renderCanvasApp({
-			drawFns: [drawCreationBox],
+			creationBox: {
+				x: dragBoxStart.x,
+				y: dragBoxStart.y,
+				width: currentPoint.x - dragBoxStart.x,
+				height: currentPoint.y - dragBoxStart.y,
+				spots: getAllAvailableEntitySpotsBetweenTwoPoints(
+					dragBoxStart,
+					currentPoint,
+					this._entities.panels.allPanels, // this._state.entities.panels.getEntities(),
+				),
+			},
 		})
+		/*		this._render.renderCanvasApp({
+		 drawFns: [drawCreationBox],
+		 })*/
 		// this._render.drawCanvasWithFunction(drawCreationBox)
 	}
 
