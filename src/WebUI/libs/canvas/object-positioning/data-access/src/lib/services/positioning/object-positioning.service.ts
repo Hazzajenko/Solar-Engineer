@@ -1,7 +1,7 @@
 import { CanvasElementService } from '@canvas/app/data-access'
 import { DomPointService } from '../dom-point'
 import { GraphicsStoreService } from '@canvas/graphics/data-access'
-import { getNearbyLineDrawCtxFnFromNearbyLinesState } from '../nearby'
+import { getNearbyLineDrawCtxFnFromNearbyLinesState, getSnapToGridBoolean } from '../nearby'
 import { ObjectPositioningStoreService } from '../../store'
 import { RenderService } from '@canvas/rendering/data-access'
 import { drawSelectionBoxBoundsCtxFn } from './draw-selection-box'
@@ -98,10 +98,10 @@ export class ObjectPositioningService {
 		assertNotNull(entity)
 
 		const size = SizeByType[ENTITY_TYPE.Panel]
-		const mouseBoxBounds = getCompleteBoundsFromCenterTransformedPoint(currentPoint, size)
+		const mouseBounds = getCompleteBoundsFromCenterTransformedPoint(currentPoint, size)
 		const entities = this._entities.panels.allPanels
 		const nearbyEntitiesOnAxis = findNearbyBoundOverlapOnBothAxisExcludingIds(
-			mouseBoxBounds,
+			mouseBounds,
 			entities,
 			[this.singleToMoveId],
 		)
@@ -172,17 +172,17 @@ export class ObjectPositioningService {
 		const nearby2dArray = groupInto2dArray(nearbySortedByDistance, 'axis')
 
 		const closestNearby2dArray = nearby2dArray.map((arr) => arr[0])
-		const closestEnt = closestNearby2dArray[0]
+		const closestEntity = closestNearby2dArray[0]
 
 		// const gridLines = getEntityAxisGridLinesByAxisV2(closestEnt.bounds, closestEnt.axis)
 		// const gridLineBounds = getBoundsFromArrPoints(gridLines)
 
 		const axisPreviewRect = getCtxRectBoundsByAxisV2(
-			closestEnt.bounds,
-			closestEnt.axis,
-			mouseBoxBounds,
+			closestEntity.bounds,
+			closestEntity.axis,
+			mouseBounds,
 		)
-		this.currentAxis = closestEnt.axis
+		this.currentAxis = closestEntity.axis
 		this.axisRepositionPreviewRect = axisPreviewRect
 
 		const holdAltToSnapToGrid = true
@@ -193,23 +193,33 @@ export class ObjectPositioningService {
 		const ctxFn = getNearbyLineDrawCtxFnFromNearbyLinesState(
 			nearbyLinesState,
 			axisPreviewRect,
-			mouseBoxBounds,
-			closestEnt,
+			mouseBounds,
+			closestEntity,
 			CANVAS_COLORS.HoveredPanelFillStyle,
 			altKey,
 			holdAltToSnapToGrid,
 			isMovingExistingEntity,
 		)
 
+		const snapToGridBool = getSnapToGridBoolean(
+			altKey,
+			mouseBounds,
+			closestEntity.axis,
+			axisPreviewRect,
+			holdAltToSnapToGrid,
+		)
+
+		// handleSnapToGridWhenNearby(ctx, axisPreviewRect, mouseBounds, closestEntity, snapToGridBool)
+
 		this._render.renderCanvasApp({
 			customPanels: [customEntity],
 			singleToMoveId: this.singleToMoveId,
 			nearby: {
 				axisPreviewRect,
-				mouseBounds: mouseBoxBounds,
-				nearbyEntity: closestEnt,
-				snapToGridBool: altKey,
-				isMovingExistingEntity,
+				mouseBounds,
+				closestEntity: closestEntity,
+				snapToGridBool,
+				entityToMove: customEntity, // isMovingExistingEntity,
 			},
 		})
 		/*		this._render.renderCanvasApp({
@@ -297,26 +307,38 @@ export class ObjectPositioningService {
 		const eventLocation = eventToPointLocation(event)
 		const scale = this._domPoint.scale
 		const offset = {
-			x: eventLocation.x - multiToMoveStart.x,
-			y: eventLocation.y - multiToMoveStart.y,
+			x: (eventLocation.x - multiToMoveStart.x) / scale,
+			y: (eventLocation.y - multiToMoveStart.y) / scale,
 		}
-		offset.x = offset.x / scale
-		offset.y = offset.y / scale
+		/*		const offset = {
+		 x: eventLocation.x - multiToMoveStart.x,
+		 y: eventLocation.y - multiToMoveStart.y,
+		 }
+		 offset.x = offset.x / scale
+		 offset.y = offset.y / scale*/
 
 		const multipleToMoveIds = this.multipleToMoveIds
 		const entities = this._entities.panels.getByIds(multipleToMoveIds)
 
-		const updates = entities.map((entity) => {
-			const location = entity.location
-			const newLocation = {
-				x: location.x + offset.x,
-				y: location.y + offset.y,
-			}
-			return {
-				...entity,
-				location: newLocation,
-			}
-		})
+		const updates = entities.map((entity) => ({
+			...entity,
+			location: {
+				x: entity.location.x + offset.x,
+				y: entity.location.y + offset.y,
+			},
+		}))
+
+		/*		const updates = entities.map((entity) => {
+		 const location = entity.location
+		 const newLocation = {
+		 x: location.x + offset.x,
+		 y: location.y + offset.y,
+		 }
+		 return {
+		 ...entity,
+		 location: newLocation,
+		 }
+		 })*/
 
 		/*		const panelsInArea = this._state.entities.canvasEntities.getEntitiesByIds(
 		 this._machine.ctx.selected.multipleSelectedIds,
@@ -350,14 +372,23 @@ export class ObjectPositioningService {
 			 ctx.restore()*/
 		}
 
+		// const customPanels =
+
 		// if (selectionBoxBounds) {
 
 		this._render.renderCanvasApp({
-			excludedEntityIds: multipleToMoveIds,
-			drawFns: [drawMultipleToMove],
+			// excludedEntityIds: multipleToMoveIds,
+			// drawFns: [drawMultipleToMove],
+			customPanels: updates,
 			shouldRenderSelectedEntitiesBox: false,
 			shouldRenderSelectedStringBox: false,
 		})
+		/*		this._render.renderCanvasApp({
+		 excludedEntityIds: multipleToMoveIds,
+		 drawFns: [drawMultipleToMove],
+		 shouldRenderSelectedEntitiesBox: false,
+		 shouldRenderSelectedStringBox: false,
+		 })*/
 		// this._render.drawCanvasExcludeIdsWithFnEditSelectBox(multipleToMoveIds, drawMultipleToMove)
 		// this._render.drawCanvasExcludeIdsWithFn(multipleToMoveIds, drawMultipleToMove)
 		return

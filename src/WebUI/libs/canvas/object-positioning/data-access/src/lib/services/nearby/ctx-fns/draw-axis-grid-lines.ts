@@ -26,17 +26,24 @@ export const getEntityGridLineWithEntityPreviewFn = (
 			holdAltToSnapToGrid,
 		)
 
-		handleSnapToGridWhenNearby(ctx, axisPreviewRect, mouseBounds, closestEntity, snapToGridBool)
+		handleSnapToGridWhenNearby(
+			ctx,
+			axisPreviewRect,
+			mouseBounds,
+			closestEntity,
+			snapToGridBool,
+			undefined,
+		)
 
 		ctx.fill()
 		ctx.stroke()
 		ctx.restore()
 		ctx.save()
-		drawEntityGridLines(closestEntity, snapToGridBool).call(this, ctx)
+		getDrawEntityGridLines(closestEntity, snapToGridBool).call(this, ctx)
 		ctx.restore()
 	}
 }
-export const drawEntityGridLines = (nearbyEntity: NearbyEntity, snapToGridBool: boolean) => {
+export const getDrawEntityGridLines = (nearbyEntity: NearbyEntity, snapToGridBool: boolean) => {
 	const gridLines = getEntityAxisGridLinesByAxisV2(nearbyEntity.bounds, nearbyEntity.axis)
 	return (ctx: CanvasRenderingContext2D) => {
 		ctx.save()
@@ -56,4 +63,24 @@ export const drawEntityGridLines = (nearbyEntity: NearbyEntity, snapToGridBool: 
 		ctx.stroke()
 		ctx.restore()
 	}
+}
+
+export const drawEntityGridLines = (
+	ctx: CanvasRenderingContext2D,
+	nearbyEntity: NearbyEntity,
+	snapToGridBool: boolean,
+) => {
+	const gridLines = getEntityAxisGridLinesByAxisV2(nearbyEntity.bounds, nearbyEntity.axis)
+
+	ctx.save()
+	ctx.beginPath()
+	ctx.globalAlpha = snapToGridBool ? 0.6 : 0.4
+	ctx.strokeStyle = CANVAS_COLORS.NearbyPanelStrokeStyle
+	ctx.fillStyle = CANVAS_COLORS.NearbyPanelFillStyle
+	ctx.moveTo(gridLines[0][0], gridLines[0][1])
+	ctx.lineTo(gridLines[0][2], gridLines[0][3])
+	ctx.moveTo(gridLines[1][0], gridLines[1][1])
+	ctx.lineTo(gridLines[1][2], gridLines[1][3])
+	ctx.stroke()
+	ctx.restore()
 }

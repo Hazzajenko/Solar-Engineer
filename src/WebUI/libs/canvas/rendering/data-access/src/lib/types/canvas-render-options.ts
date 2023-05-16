@@ -15,9 +15,10 @@ export type CanvasRenderOptions = {
 	nearby?: {
 		axisPreviewRect: CompleteEntityBounds
 		mouseBounds: CompleteEntityBounds
-		nearbyEntity: NearbyEntity
+		closestEntity: NearbyEntity
 		snapToGridBool: boolean
-		isMovingExistingEntity: boolean
+		entityToMove: CanvasEntity
+		// isMovingExistingEntity: boolean
 	}
 
 	// singleToMove

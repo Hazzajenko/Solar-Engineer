@@ -3,8 +3,10 @@ import { GraphicsState, NEARBY_LINES_STATE } from '@canvas/graphics/data-access'
 import { CompleteEntityBounds, NearbyEntity } from '@shared/data-access/models'
 import { CANVAS_COLORS, CanvasColor } from '@entities/shared'
 import {
+	drawLineBetweenTwoEntitiesV2,
 	getLinePointsBetweenTwoEntitiesV2,
 	getMiddleOfEntityAxisLinePoints,
+	handleSnapToGridWhenNearby,
 } from '@canvas/object-positioning/data-access'
 import { getCompleteEntityBounds, getEntityAxisGridLinesByAxisV2 } from '@canvas/utils'
 import { CanvasRenderOptions } from '../../../../types'
@@ -77,10 +79,11 @@ export const drawNearbyLineDrawCtxFnFromNearbyLinesStateOptimised = (
 				ctx,
 				nearbyOptions.axisPreviewRect,
 				nearbyOptions.mouseBounds,
-				nearbyOptions.nearbyEntity,
+				nearbyOptions.closestEntity,
 				fillStyle,
 				nearbyOptions.snapToGridBool,
-				nearbyOptions.isMovingExistingEntity,
+				false,
+				// nearbyOptions.entityToMove,
 			)
 		case NEARBY_LINES_STATE.CENTER_LINE_BETWEEN_TWO_ENTITIES:
 			return drawCenterLineBetweenTwoEntitiesWithPreviewFnV2(ctx, nearbyOptions, fillStyle)
@@ -140,14 +143,14 @@ export const drawEntityGridLineWithEntityPreviewFnV2 = (
 	const {
 		axisPreviewRect,
 		mouseBounds,
-		nearbyEntity: closestEntity,
+		closestEntity: closestEntity,
 		snapToGridBool,
-		isMovingExistingEntity,
+		entityToMove,
 	} = nearbyOptions
 
 	ctx.save()
 	ctx.beginPath()
-	isMovingExistingEntity ? (ctx.globalAlpha = 1) : (ctx.globalAlpha = 0.6)
+	entityToMove ? (ctx.globalAlpha = 1) : (ctx.globalAlpha = 0.6)
 	ctx.fillStyle = fillStyle
 
 	if (snapToGridBool) {
@@ -227,51 +230,27 @@ export const drawCenterLineBetweenTwoEntitiesWithPreviewFnV2 = (
 	nearbyOptions: NonNullable<CanvasRenderOptions['nearby']>,
 	fillStyle: CanvasColor,
 ) => {
-	const {
-		axisPreviewRect,
-		mouseBounds,
-		nearbyEntity: closestEntity,
-		snapToGridBool,
-		isMovingExistingEntity,
-	} = nearbyOptions
+	const { axisPreviewRect, mouseBounds, closestEntity, snapToGridBool, entityToMove } =
+		nearbyOptions
 	ctx.save()
 	ctx.beginPath()
-	isMovingExistingEntity ? (ctx.globalAlpha = 1) : (ctx.globalAlpha = 0.6)
+	entityToMove ? (ctx.globalAlpha = 1) : (ctx.globalAlpha = 0.6)
 	ctx.fillStyle = fillStyle
 
-	if (snapToGridBool) {
-		ctx.rect(
-			axisPreviewRect.left,
-			axisPreviewRect.top,
-			axisPreviewRect.width,
-			axisPreviewRect.height,
-		)
-	} else {
-		ctx.rect(mouseBounds.left, mouseBounds.top, mouseBounds.width, mouseBounds.height)
-	}
+	handleSnapToGridWhenNearby(
+		ctx,
+		axisPreviewRect,
+		mouseBounds,
+		closestEntity,
+		snapToGridBool,
+		entityToMove,
+	)
 
 	ctx.fill()
 	ctx.stroke()
 	ctx.restore()
 	ctx.save()
-	const nearbyToComplete = getCompleteEntityBounds(closestEntity.bounds)
-	const gridLines = getLinePointsBetweenTwoEntitiesV2(
-		nearbyToComplete,
-		mouseBounds,
-		closestEntity.axis,
-	)
-
-	ctx.save()
-	ctx.beginPath()
-	ctx.globalAlpha = snapToGridBool ? 0.6 : 0.4
-	ctx.strokeStyle = CANVAS_COLORS.NearbyPanelStrokeStyle
-	ctx.fillStyle = CANVAS_COLORS.NearbyPanelFillStyle
-	ctx.moveTo(gridLines[0], gridLines[1])
-	ctx.lineTo(gridLines[2], gridLines[3])
-	ctx.stroke()
-	ctx.restore()
-
-	// drawLineBetweenTwoEntities(closestEntity, axisPreviewRect, snapToGridBool).call(this, ctx)
+	drawLineBetweenTwoEntitiesV2(ctx, closestEntity, axisPreviewRect, snapToGridBool)
 	ctx.restore()
 }
 

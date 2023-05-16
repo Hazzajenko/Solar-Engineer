@@ -120,10 +120,19 @@ export class ObjectRotatingService {
 			ctx.restore()
 		}
 
+		const customPanel = {
+			...entity,
+			angle,
+		} as CanvasPanel
+
 		this._render.renderCanvasApp({
-			excludedEntityIds: [singleToRotateId],
-			drawFns: [singleRotateDrawFn],
+			customPanels: [customPanel], // excludedEntityIds: [singleToRotateId],
+			// drawFns: [singleRotateDrawFn],
 		})
+		/*		this._render.renderCanvasApp({
+		 excludedEntityIds: [singleToRotateId],
+		 drawFns: [singleRotateDrawFn],
+		 })*/
 		// this._render.drawCanvasExcludeIdsWithFn([singleToRotateId], singleRotateDrawFn)
 	}
 
@@ -213,11 +222,17 @@ export class ObjectRotatingService {
 		}
 
 		this._render.renderCanvasApp({
-			excludedEntityIds: multipleToRotateIds,
-			drawFns: [multipleRotateDrawFn],
+			customPanels: entities,
 			shouldRenderSelectedEntitiesBox: false,
 			shouldRenderSelectedStringBox: false,
 		})
+
+		/*		this._render.renderCanvasApp({
+		 excludedEntityIds: multipleToRotateIds,
+		 drawFns: [multipleRotateDrawFn],
+		 shouldRenderSelectedEntitiesBox: false,
+		 shouldRenderSelectedStringBox: false,
+		 })*/
 	}
 
 	calculatePivotPointPosition(multipleToRotateIds: string[]) {

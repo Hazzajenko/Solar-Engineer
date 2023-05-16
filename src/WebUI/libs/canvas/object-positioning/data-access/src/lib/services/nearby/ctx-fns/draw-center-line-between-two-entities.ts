@@ -32,7 +32,14 @@ export const getCenterLineBetweenTwoEntitiesWithPreviewFn = (
 			holdAltToSnapToGrid,
 		)
 
-		handleSnapToGridWhenNearby(ctx, axisPreviewRect, mouseBounds, closestEntity, snapToGridBool)
+		handleSnapToGridWhenNearby(
+			ctx,
+			axisPreviewRect,
+			mouseBounds,
+			closestEntity,
+			snapToGridBool,
+			undefined,
+		)
 
 		ctx.fill()
 		ctx.stroke()
@@ -82,6 +89,29 @@ export const drawLineBetweenTwoEntities = (
 		ctx.stroke()
 		ctx.restore()
 	}
+}
+
+export const drawLineBetweenTwoEntitiesV2 = (
+	ctx: CanvasRenderingContext2D,
+	nearbyEntity: NearbyEntity,
+	mouseBounds: CompleteEntityBounds,
+	snapToGridBool: boolean,
+) => {
+	const nearbyToComplete = getCompleteEntityBounds(nearbyEntity.bounds)
+	const gridLines = getLinePointsBetweenTwoEntitiesV2(
+		nearbyToComplete,
+		mouseBounds,
+		nearbyEntity.axis,
+	)
+	ctx.save()
+	ctx.beginPath()
+	ctx.globalAlpha = snapToGridBool ? 0.6 : 0.4
+	ctx.strokeStyle = CANVAS_COLORS.NearbyPanelStrokeStyle
+	ctx.fillStyle = CANVAS_COLORS.NearbyPanelFillStyle
+	ctx.moveTo(gridLines[0], gridLines[1])
+	ctx.lineTo(gridLines[2], gridLines[3])
+	ctx.stroke()
+	ctx.restore()
 }
 
 export const getLinePointsBetweenTwoEntities = (

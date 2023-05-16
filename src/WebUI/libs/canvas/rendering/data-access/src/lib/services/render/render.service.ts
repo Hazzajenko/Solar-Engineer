@@ -10,7 +10,7 @@ import { injectSelectedStore } from '@canvas/selected/data-access'
 import { CanvasRenderOptions } from '../../types'
 import {
 	drawBoxWithOptionsCtx,
-	drawNearbyLineDrawCtxFnFromNearbyLinesStateOptimised,
+	drawNearbyLineDrawCtxFnFromNearbyLinesStateOptimisedV2,
 	drawSelectedBox,
 	drawSelectedStringBoxV3,
 } from './render-fns'
@@ -140,126 +140,7 @@ export class RenderService {
 						})
 						.concat(customPanels)
 
-			entities.forEach((entity) => {
-				/**
-				 * Draw Entity
-				 */
-
-				if (!isPanel(entity)) return
-				let fillStyle: string = CANVAS_COLORS.DefaultPanelFillStyle
-				const strokeStyle: string = PANEL_STROKE_STYLE.DEFAULT
-
-				const graphicsState = this._graphicsStore.state
-
-				if (graphicsState.colouredStrings) {
-					if (entity.stringId !== UndefinedStringId) {
-						const string = this._entities.strings.getById(entity.stringId)
-						assertNotNull(string)
-						fillStyle = string.color
-					}
-				}
-
-				const selectedState = this._selectedStore.state
-
-				if (graphicsState.selectedPanelFill) {
-					const isSingleSelected =
-						selectedState.singleSelectedEntityId &&
-						selectedState.singleSelectedEntityId === entity.id
-					if (isSingleSelected) {
-						fillStyle = CANVAS_COLORS.SelectedPanelFillStyle
-					}
-
-					const isMultipleSelected =
-						selectedState.multipleSelectedEntityIds.length &&
-						selectedState.multipleSelectedEntityIds.includes(entity.id)
-					if (isMultipleSelected) {
-						fillStyle = CANVAS_COLORS.SelectedPanelFillStyle
-					}
-				}
-
-				const isStringSelected =
-					selectedState.selectedStringId && selectedState.selectedStringId === entity.stringId
-
-				if (isStringSelected && graphicsState.selectedStringPanelFill) {
-					fillStyle = CANVAS_COLORS.StringSelectedPanelFillStyle
-				}
-
-				// let panelLinkOrderDrawFn: ((ctx: CanvasRenderingContext2D) => void) | undefined = undefined
-				if (this._appStore.state.mode === MODE_STATE.LINK_MODE) {
-					if (this._panelLinksStore.requestingLink) {
-						if (this._panelLinksStore.requestingLink.panelId === entity.id) {
-							fillStyle = CANVAS_COLORS.RequestingLinkPanelFillStyle
-						}
-					}
-					/*
-					 if (isStringSelected) {
-					 assertNotNull(selectedState.selectedStringId)
-
-					 const linksInOrder = this._panelLinks.getPanelLinkOrderForString(
-					 selectedState.selectedStringId,
-					 )
-					 const linkIndex = linksInOrder.findIndex((link) => link?.positivePanel.id === entity.id)
-					 if (linkIndex !== -1) {
-					 panelLinkOrderDrawFn = (ctx) => {
-					 ctx.save()
-					 const fontSize = 10
-					 ctx.font = `${fontSize}px Consolas, sans-serif`
-					 const text = `${linkIndex + 1}`
-					 const metrics = ctx.measureText(text)
-					 const x = 0 - metrics.width / 2
-					 const y = fontSize / 4
-					 ctx.fillStyle = 'black'
-					 ctx.fillText(text, x, y)
-					 ctx.restore()
-					 }
-					 }
-					 }*/
-				}
-
-				const pointerState = this._appStore.state.pointer
-				const hoveringOverEntityId = pointerState.hoveringOverEntityId
-				const isBeingHovered = !!hoveringOverEntityId && hoveringOverEntityId === entity.id
-
-				if (isBeingHovered) {
-					// fillStyle = '#17fff3'
-					if (isStringSelected && graphicsState.selectedStringPanelFill) {
-						fillStyle = shadeColor(CANVAS_COLORS.StringSelectedPanelFillStyle, 50)
-					}
-					fillStyle = shadeColor(fillStyle, 50)
-				}
-
-				ctx.save()
-				ctx.fillStyle = fillStyle
-				ctx.strokeStyle = strokeStyle
-				ctx.translate(entity.location.x + entity.width / 2, entity.location.y + entity.height / 2)
-				ctx.rotate(entity.angle)
-				ctx.beginPath()
-				ctx.rect(-entity.width / 2, -entity.height / 2, entity.width, entity.height)
-				ctx.fill()
-				ctx.stroke()
-				ctx.closePath()
-				/*			if (panelLinkOrderDrawFn) {
-				 panelLinkOrderDrawFn(ctx)
-				 }*/
-
-				// draw drawLinkModeGraphics
-				if (isStringSelected && this._appStore.state.mode === 'LinkMode') {
-					if (this._graphicsStore.state.linkModeSymbols) {
-						this.drawLinkModeSymbols(ctx, entity)
-					}
-					if (this._graphicsStore.state.linkModeOrderNumbers) {
-						this.drawLinkModeOrderNumbers(ctx, entity)
-					}
-				}
-				/*				if (
-				 isStringSelected &&
-				 this._graphicsStore.state.linkModeSymbols &&
-				 this._appStore.state.mode === 'LinkMode'
-				 ) {
-				 this.drawLinkModeSymbols(ctx, entity)
-				 }*/
-				ctx.restore()
-			})
+			this.drawEntities(ctx, entities)
 			// ctx.closePath()
 			ctx.restore()
 
@@ -355,36 +236,136 @@ export class RenderService {
 				console.log('drawing nearby lines')
 				const nearbyOpts = options.nearby
 				const nearbyLinesState = this._graphicsStore.state.nearbyLinesState
-				/*				const axisPreviewRect = nearbyOpts.axisPreviewRect
-				 const mouseBoxBounds = nearbyOpts.mouseBounds
-				 const closestEnt = nearbyOpts.nearbyEntity
-				 const altKey = nearbyOpts.snapToGridBool*/
-				// const holdAltToSnapToGrid = this._appStore.state.holdAltToSnapToGrid
-				// const isMovingExistingEntity = this._appStore.state.mode === 'MoveMode'
-				drawNearbyLineDrawCtxFnFromNearbyLinesStateOptimised(
+
+				drawNearbyLineDrawCtxFnFromNearbyLinesStateOptimisedV2(
 					ctx,
 					nearbyLinesState,
 					nearbyOpts,
 					CANVAS_COLORS.HoveredPanelFillStyle,
 				)
-
-				/*				const ctxFn = getNearbyLineDrawCtxFnFromNearbyLinesState(
-				 nearbyLinesState,
-				 axisPreviewRect,
-				 mouseBoxBounds,
-				 closestEnt,
-				 CANVAS_COLORS.HoveredPanelFillStyle,
-				 altKey,
-				 true,
-				 true,
-				 // holdAltToSnapToGrid,
-				 // isMovingExistingEntity,
-				 )*/
-				// ctxFn(ctx)
 			}
-			/*			if (options?.drawFns) {
-			 options.drawFns.forEach((fn) => fn(ctx))
+		})
+	}
+
+	private drawEntities(ctx: CanvasRenderingContext2D, entities: CanvasPanel[]) {
+		entities.forEach((entity) => {
+			/**
+			 * Draw Entity
+			 */
+
+			if (!isPanel(entity)) return
+			let fillStyle: string = CANVAS_COLORS.DefaultPanelFillStyle
+			const strokeStyle: string = PANEL_STROKE_STYLE.DEFAULT
+
+			const graphicsState = this._graphicsStore.state
+
+			if (graphicsState.colouredStrings) {
+				if (entity.stringId !== UndefinedStringId) {
+					const string = this._entities.strings.getById(entity.stringId)
+					assertNotNull(string)
+					fillStyle = string.color
+				}
+			}
+
+			const selectedState = this._selectedStore.state
+
+			if (graphicsState.selectedPanelFill) {
+				const isSingleSelected =
+					selectedState.singleSelectedEntityId && selectedState.singleSelectedEntityId === entity.id
+				if (isSingleSelected) {
+					fillStyle = CANVAS_COLORS.SelectedPanelFillStyle
+				}
+
+				const isMultipleSelected =
+					selectedState.multipleSelectedEntityIds.length &&
+					selectedState.multipleSelectedEntityIds.includes(entity.id)
+				if (isMultipleSelected) {
+					fillStyle = CANVAS_COLORS.SelectedPanelFillStyle
+				}
+			}
+
+			const isStringSelected =
+				selectedState.selectedStringId && selectedState.selectedStringId === entity.stringId
+
+			if (isStringSelected && graphicsState.selectedStringPanelFill) {
+				fillStyle = CANVAS_COLORS.StringSelectedPanelFillStyle
+			}
+
+			// let panelLinkOrderDrawFn: ((ctx: CanvasRenderingContext2D) => void) | undefined = undefined
+			if (this._appStore.state.mode === MODE_STATE.LINK_MODE) {
+				if (this._panelLinksStore.requestingLink) {
+					if (this._panelLinksStore.requestingLink.panelId === entity.id) {
+						fillStyle = CANVAS_COLORS.RequestingLinkPanelFillStyle
+					}
+				}
+				/*
+				 if (isStringSelected) {
+				 assertNotNull(selectedState.selectedStringId)
+
+				 const linksInOrder = this._panelLinks.getPanelLinkOrderForString(
+				 selectedState.selectedStringId,
+				 )
+				 const linkIndex = linksInOrder.findIndex((link) => link?.positivePanel.id === entity.id)
+				 if (linkIndex !== -1) {
+				 panelLinkOrderDrawFn = (ctx) => {
+				 ctx.save()
+				 const fontSize = 10
+				 ctx.font = `${fontSize}px Consolas, sans-serif`
+				 const text = `${linkIndex + 1}`
+				 const metrics = ctx.measureText(text)
+				 const x = 0 - metrics.width / 2
+				 const y = fontSize / 4
+				 ctx.fillStyle = 'black'
+				 ctx.fillText(text, x, y)
+				 ctx.restore()
+				 }
+				 }
+				 }*/
+			}
+
+			const pointerState = this._appStore.state.pointer
+			const hoveringOverEntityId = pointerState.hoveringOverEntityId
+			const isBeingHovered = !!hoveringOverEntityId && hoveringOverEntityId === entity.id
+
+			if (isBeingHovered) {
+				// fillStyle = '#17fff3'
+				if (isStringSelected && graphicsState.selectedStringPanelFill) {
+					fillStyle = shadeColor(CANVAS_COLORS.StringSelectedPanelFillStyle, 50)
+				}
+				fillStyle = shadeColor(fillStyle, 50)
+			}
+
+			ctx.save()
+			ctx.fillStyle = fillStyle
+			ctx.strokeStyle = strokeStyle
+			ctx.translate(entity.location.x + entity.width / 2, entity.location.y + entity.height / 2)
+			ctx.rotate(entity.angle)
+			ctx.beginPath()
+			ctx.rect(-entity.width / 2, -entity.height / 2, entity.width, entity.height)
+			ctx.fill()
+			ctx.stroke()
+			ctx.closePath()
+			/*			if (panelLinkOrderDrawFn) {
+			 panelLinkOrderDrawFn(ctx)
 			 }*/
+
+			// draw drawLinkModeGraphics
+			if (isStringSelected && this._appStore.state.mode === 'LinkMode') {
+				if (this._graphicsStore.state.linkModeSymbols) {
+					this.drawLinkModeSymbols(ctx, entity)
+				}
+				if (this._graphicsStore.state.linkModeOrderNumbers) {
+					this.drawLinkModeOrderNumbers(ctx, entity)
+				}
+			}
+			/*				if (
+			 isStringSelected &&
+			 this._graphicsStore.state.linkModeSymbols &&
+			 this._appStore.state.mode === 'LinkMode'
+			 ) {
+			 this.drawLinkModeSymbols(ctx, entity)
+			 }*/
+			ctx.restore()
 		})
 	}
 
