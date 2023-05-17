@@ -5,7 +5,6 @@ import { inject, Injectable } from '@angular/core'
 import { toSignal } from '@angular/core/rxjs-interop'
 import { select, Store } from '@ngrx/store'
 
-
 @Injectable({
 	providedIn: 'root',
 })
@@ -14,6 +13,10 @@ export class ObjectPositioningStoreService {
 	private readonly _state$ = this._store.pipe(select(selectObjectPositioningState))
 	private readonly _state = toSignal(this._state$, { initialValue: initialObjectPositioningState })
 	dispatch = new ObjectPositioningRepository(this._store)
+
+	get state$() {
+		return this._state$
+	}
 
 	get state() {
 		return this._state()

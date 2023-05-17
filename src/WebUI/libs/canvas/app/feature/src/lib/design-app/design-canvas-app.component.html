@@ -1,7 +1,11 @@
 <canvas #canvas
         id='canvas'
         class='absolute inset-0'
+        [ngStyle]='{
+cursor: cursorState()
+        }'
         appDesignCanvas></canvas>
+<!--cursor: toMoveState === "MovingSingleEntity" ? "grabbing" : "",-->
 
 <div class='absolute'>
   <div id='fps'></div>

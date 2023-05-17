@@ -37,6 +37,9 @@ import { AppStateStoreService } from '@canvas/app/data-access'
 import { UiStoreService } from '@overlays/ui-store/data-access'
 import { DraggableWindow } from '@shared/data-access/models'
 import { ContextMenuRendererComponent } from '@overlays/context-menus/feature'
+import { ObjectPositioningStoreService } from '@canvas/object-positioning/data-access'
+import { map } from 'rxjs'
+import { ViewPositioningService } from '@canvas/view-positioning/data-access'
 
 @Component({
 	changeDetection: ChangeDetectionStrategy.OnPush,
@@ -82,6 +85,38 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 	private _contextMenu = toSignal(this._uiStore.contextMenu$, {
 		initialValue: this._uiStore.contextMenu,
 	})
+
+	private _objectPositioningStore = inject(ObjectPositioningStoreService)
+	private _toMoveState$ = this._objectPositioningStore.state$.pipe(
+		map((state) => state.moveEntityState),
+	)
+
+	private _toMoveState = toSignal(this._toMoveState$, {
+		initialValue: this._objectPositioningStore.state.moveEntityState,
+	})
+	get toMoveState() {
+		return this._toMoveState()
+	}
+
+	private _objectPositioningState$ = this._objectPositioningStore.state$.pipe(
+		map((state) => ({
+			moveEntityState: state.moveEntityState,
+			rotateEntityState: state.rotateEntityState,
+		})),
+	)
+
+	private _objectPositioningState = toSignal(this._objectPositioningState$, {
+		initialValue: {
+			moveEntityState: this._objectPositioningStore.state.moveEntityState,
+			rotateEntityState: this._objectPositioningStore.state.rotateEntityState,
+		},
+	})
+	get objectPositioningState() {
+		return this._objectPositioningState()
+	}
+
+	private _viewPositioning = inject(ViewPositioningService)
+
 	// private _toastr = inject(ToastrService)
 	// dialog = this._uiStore.dialog
 	firstName = signal('Jane')
@@ -93,6 +128,28 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 	closedWindows$ = this._windows.select.closedWindows$
 	// @ViewChild('window', { static: true }) stringWindow!: WindowComponent
 	isDragging = false
+
+	cursorState = computed(() => {
+		const { moveEntityState, rotateEntityState } = this._objectPositioningState()
+		if (moveEntityState === 'MovingSingleEntity' || moveEntityState === 'MovingMultipleEntities') {
+			return 'grabbing'
+		}
+
+		if (
+			rotateEntityState === 'RotatingSingleEntity' ||
+			rotateEntityState === 'RotatingMultipleEntities'
+		) {
+			return 'ns-resize'
+		}
+
+		const viewPositioningState = this._appStore.state.view
+
+		if (viewPositioningState === 'ViewDraggingInProgress') {
+			return 'move'
+		}
+
+		return ''
+	})
 
 	windows: DraggableWindow[] = [
 		{

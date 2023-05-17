@@ -245,10 +245,19 @@ export class DesignCanvasDirective implements OnInit {
 		}
 
 		if (moveEntityState === 'MovingSingleEntity') {
-			// changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
 			// changeCanvasCursor(this.canvas, CURSOR_TYPE.NONE)
 			this._objPositioning.singleToMoveMouseMoveV2Ngrx(event, currentPoint)
-			// this.canvas.getBoundingClientRect()
+			this._renderer.removeStyle(this.canvas, 'cursor')
+			this._renderer.setStyle(this.canvas, 'cursor', CURSOR_TYPE.GRABBING)
+			// this._renderer.setStyle(document, 'cursor', CURSOR_TYPE.GRABBING)
+			/*			changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
+			 this.canvas.getBoundingClientRect()
+			 this.canvas.getBoundingClientRect()
+			 this.canvas.getBoundingClientRect()
+			 this.canvas.getBoundingClientRect()
+			 this.canvas.getBoundingClientRect()
+			 this.canvas.getBoundingClientRect()
+			 this.canvas.getBoundingClientRect()*/
 			// this.canvas.offsetWidth
 			return
 		}
@@ -705,6 +714,8 @@ export class DesignCanvasDirective implements OnInit {
 		 event.preventDefault()
 		 })*/
 		const throttledPointerMove = throttle((event: PointerEvent) => {
+			event.stopPropagation()
+			event.preventDefault()
 			this.rawMousePos = eventToPointLocation(event)
 			this.currentPoint = this._domPoint.getTransformedPointFromEvent(event)
 			this._appState.mousePos = this.currentPoint
