@@ -1,9 +1,6 @@
 import { StringsActions } from './strings.actions'
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity'
-import { Action, createReducer, on, provideState } from '@ngrx/store'
-import { makeEnvironmentProviders } from '@angular/core'
-import { provideEffects } from '@ngrx/effects'
-import { createStringNotification$ } from './strings.effects'
+import { Action, createReducer, on } from '@ngrx/store'
 import { CanvasString } from '@entities/shared'
 
 export const STRINGS_FEATURE_KEY = 'strings'
@@ -40,13 +37,6 @@ const reducer = createReducer(
 
 export function stringsReducer(state: StringsState | undefined, action: Action) {
 	return reducer(state, action)
-}
-
-export function provideStringsFeature() {
-	return makeEnvironmentProviders([
-		provideState(STRINGS_FEATURE_KEY, stringsReducer),
-		provideEffects({ createStringNotification$ }),
-	])
 }
 
 /*

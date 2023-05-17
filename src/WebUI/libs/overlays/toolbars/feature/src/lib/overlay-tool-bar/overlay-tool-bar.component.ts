@@ -8,9 +8,12 @@ import { MouseOverRenderDirective } from '@canvas/rendering/data-access'
 import { toSignal } from '@angular/core/rxjs-interop'
 import { UiStoreService } from '@overlays/ui-store/data-access'
 import { GraphicsStoreService } from '@canvas/graphics/data-access'
+import { NgIconComponent, provideIcons } from '@ng-icons/core'
+import { heroUsers } from '@ng-icons/heroicons/outline'
 
 // import { ZippyTooltipDirective } from '@canvas/app/feature'
-
+// NG_ICON_DIRECTIVES
+// heroAcademicCapSolid
 @Component({
 	selector: 'overlay-tool-bar-component',
 	standalone: true,
@@ -23,8 +26,10 @@ import { GraphicsStoreService } from '@canvas/graphics/data-access'
 		ConvertTooltipPipe,
 		ShowSvgNoStylesComponent,
 		NgIf,
-		ToggleSvgNoStylesComponent, // ZippyTooltipDirective,
+		ToggleSvgNoStylesComponent,
+		NgIconComponent, // ZippyTooltipDirective,
 	],
+	providers: [provideIcons({ heroUsers })],
 	hostDirectives: [MouseOverRenderDirective],
 })
 export class OverlayToolBarComponent {
@@ -32,17 +37,17 @@ export class OverlayToolBarComponent {
 	private _graphicsStore = inject(GraphicsStoreService)
 	showToolbar = true
 	sideUiEnabled = toSignal(this._uiStore.sideUiNav$, { initialValue: this._uiStore.sideUiNav })
+	@ViewChild('toolBar') toolBar: ElementRef<HTMLDivElement> | undefined
 
 	get sideUiNavOpen() {
 		return this.sideUiEnabled()
 	}
 
-	@ViewChild('toolBar') toolBar: ElementRef<HTMLDivElement> | undefined
-
 	openSettingsDialog() {
 		this._uiStore.dispatch.openDialog({
 			component: 'AppSettingsDialogComponent',
 		})
+		// heroAcademicCapSolid
 	}
 
 	toggleSideUi() {

@@ -2,7 +2,7 @@ import { STRINGS_FEATURE_KEY, stringsAdapter, StringsState } from './strings.red
 import { Dictionary } from '@ngrx/entity'
 import { createFeatureSelector, createSelector } from '@ngrx/store'
 import { CanvasPanel, CanvasString } from '@entities/shared'
-import { selectAllPanels } from '../../panels'
+import { selectAllPanels, selectPanelsByStringId } from '../../panels'
 
 export const selectStringsState = createFeatureSelector<StringsState>(STRINGS_FEATURE_KEY)
 
@@ -20,6 +20,21 @@ export const selectStringById = (props: { id: string }) =>
 	createSelector(selectStringsEntities, (strings: Dictionary<CanvasString>) => strings[props.id])
 
 /*export const selectSelectedString = createSelector(
+ selectSelectedState,
+ selectStringsEntities,
+ (state: SelectedState, strings: Dictionary<CanvasString>) => {
+ return state.selectedStringId ? strings[state.selectedStringId] : undefined
+ },
+ )*/
+/*export const selectSelectedString = createSelector(
+ selectedFeature.selectSelectedStringId,
+ selectStringsEntities,
+ (selectedStringId: string | undefined, strings: Dictionary<CanvasString>) => {
+ return selectedStringId ? strings[selectedStringId] : undefined
+ },
+ )*/
+// selectSelectedState
+/*export const selectSelectedString = createSelector(
  selectStringsEntities,
  selectSelectedStringId,
  (strings: Dictionary<CanvasString>, selectedStringId: string | undefined) =>
@@ -34,3 +49,16 @@ export const selectAllStringsWithPanels = createSelector(
 			panels: panels.filter((panel) => panel.stringId === string.id),
 		})),
 )
+
+export const selectStringByIdWithPanels = (props: { stringId: string }) =>
+	createSelector(
+		selectStringById({ id: props.stringId }),
+		selectPanelsByStringId({ stringId: props.stringId }),
+		(string: CanvasString | undefined, panels: CanvasPanel[]) => {
+			if (!string) return undefined
+			return {
+				string,
+				panels,
+			}
+		},
+	)

@@ -86,6 +86,7 @@ export function provideWebAppProviders() {
 
 export function provideCanvasAppStores() {
 	return makeEnvironmentProviders([
+		provideSelectedFeature(),
 		provideEntityStores(),
 		// providePanelsFeature(),
 		// provideStringsFeature(),
@@ -93,7 +94,6 @@ export function provideCanvasAppStores() {
 		// providePanelLinksFeature(),
 		provideState(APP_STATE_FEATURE_KEY, appStateReducer),
 		provideState(UI_FEATURE_KEY, uiReducer),
-		provideSelectedFeature(),
 		// provideState(SELECTED_FEATURE_KEY, selectedReducer),
 		provideState(OBJECT_POSITIONING_FEATURE_KEY, objectPositioningReducer),
 		provideState(GRAPHICS_FEATURE_KEY, graphicsReducer),

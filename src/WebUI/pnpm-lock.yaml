@@ -43,6 +43,12 @@ importers:
       '@microsoft/signalr':
         specifier: 7.0.4
         version: 7.0.4
+      '@ng-icons/core':
+        specifier: ^25.0.1
+        version: 25.0.1
+      '@ng-icons/heroicons':
+        specifier: ^25.0.1
+        version: 25.0.1
       '@ngrx/component':
         specifier: 16.0.0
         version: 16.0.0(@angular/common@16.0.0)(@angular/core@16.0.0)(rxjs@7.8.0)
@@ -4633,6 +4639,18 @@ packages:
       pump: 3.0.0
       tar-fs: 2.1.1
     dev: true
+
+  /@ng-icons/core@25.0.1:
+    resolution: {integrity: sha512-aVmdgXHJSnibnh0QJhD/x1CgwuxMmy7QrmleGsPxZBeRxWne8+K2k7URYbvBEQfw/pEVbkUbuPreu5FYfSCCYA==}
+    dependencies:
+      tslib: 2.5.0
+    dev: false
+
+  /@ng-icons/heroicons@25.0.1:
+    resolution: {integrity: sha512-iF5TLnwsquFXY4tmXxrz00kz8TJeWRhsiWxRxJS3oDu/lWFoeWyK1nRCydZOu/18pTOs3gWy/Etwo8ZnkzaPPA==}
+    dependencies:
+      tslib: 2.5.0
+    dev: false
 
   /@ngrx/component-store@16.0.0(@angular/core@16.0.0)(rxjs@7.8.0):
     resolution: {integrity: sha512-RVWxz1VB27TjZxH/DX/UMwIoQ+M0bSta2kANNRuHN5KY2hmhq+4ceHRUO4TFpmB5BoMAgVBaESXu6TWrttuYTg==}
@@ -9865,7 +9883,7 @@ packages:
       css-select: 4.3.0
       parse5: 6.0.1
       parse5-htmlparser2-tree-adapter: 6.0.1
-      postcss: 8.4.5
+      postcss: 8.4.23
       pretty-bytes: 5.6.0
 
   /cross-spawn@5.1.0:
@@ -18137,7 +18155,7 @@ packages:
       adjust-sourcemap-loader: 4.0.0
       convert-source-map: 1.9.0
       loader-utils: 2.0.4
-      postcss: 8.4.5
+      postcss: 8.4.23
       source-map: 0.6.1
 
   /resolve-url@0.2.1:

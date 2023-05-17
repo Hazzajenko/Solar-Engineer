@@ -1,14 +1,25 @@
-import { inject } from '@angular/core'
-import { Store } from '@ngrx/store'
+import { inject, makeEnvironmentProviders } from '@angular/core'
+import { provideState, Store } from '@ngrx/store'
 import { isNotNull } from '@shared/utils'
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { CanvasString } from '@entities/shared'
 import {
 	selectAllStrings,
 	selectAllStringsWithPanels,
+	selectStringByIdWithPanels,
 	selectStringsEntities,
 } from './strings.selectors'
 import { StringsActions } from './strings.actions'
+import { provideEffects } from '@ngrx/effects'
+import * as stringsEffects from './strings.effects'
+import { STRINGS_FEATURE_KEY, stringsReducer } from './strings.reducer'
+
+export function provideStringsFeature() {
+	return makeEnvironmentProviders([
+		provideState(STRINGS_FEATURE_KEY, stringsReducer),
+		provideEffects(stringsEffects),
+	])
+}
 
 export function injectStringsStore() {
 	const store = inject(Store)
@@ -32,6 +43,9 @@ export function injectStringsStore() {
 		},
 		allStringsWithPanels$() {
 			return store.select(selectAllStringsWithPanels)
+		},
+		getStringByIdWithPanels(stringId: string) {
+			return store.selectSignal(selectStringByIdWithPanels({ stringId }))()
 		},
 		addString(string: CanvasString) {
 			store.dispatch(StringsActions.addString({ string }))

@@ -4,6 +4,8 @@ import { map } from 'rxjs'
 import { StringsActions } from './strings.actions'
 import { getGuid } from '@ngrx/data'
 import { ActionNotificationModel, NotificationsActions } from '@overlays/notifications/data-access'
+import { SelectedActions } from '@canvas/selected/data-access'
+import { StringsStatsService } from '../services'
 
 export const createStringNotification$ = createEffect(
 	(actions$ = inject(Actions)) => {
@@ -31,4 +33,17 @@ export const createStringNotification$ = createEffect(
 		)
 	},
 	{ functional: true },
+)
+
+export const calculateSelectedStringTotals$ = createEffect(
+	(actions$ = inject(Actions), stringStats = inject(StringsStatsService)) => {
+		return actions$.pipe(
+			ofType(SelectedActions.selectString),
+			map(() => {
+				stringStats.calculateStringStatsForSelectedString()
+				// return NotificationsActions.addNotification({ notification })
+			}),
+		)
+	},
+	{ functional: true, dispatch: false },
 )

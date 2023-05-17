@@ -27,6 +27,12 @@ export const selectSelectedStringId = createSelector(
 	(state: SelectedState) => state.selectedStringId,
 )
 
+/*export const selectSelectedStringIdV2 = createSelector(
+ selectSelectedState,
+ (state: SelectedState | null | undefined) =>
+ state ? state.selectedStringId || undefined : undefined,
+ )*/
+
 export const selectSelectedPanelLinkId = createSelector(
 	selectSelectedState,
 	(state: SelectedState) => state.selectedPanelLinkId,
