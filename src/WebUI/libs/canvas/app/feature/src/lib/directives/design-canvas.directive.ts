@@ -54,7 +54,6 @@ import {
 	SizeByType,
 	UndefinedStringId,
 } from '@entities/shared'
-import { throttle } from 'lodash'
 
 @Directive({
 	selector: '[appDesignCanvas]',
@@ -86,6 +85,7 @@ export class DesignCanvasDirective implements OnInit {
 	private _nearby = inject(NearbyService)
 	private _domPoint = inject(DomPointService)
 	private _keys = inject(KeyEventsService)
+	// private _divElements = inject(DivElementsService)
 
 	private mouseDownTimeOut: ReturnType<typeof setTimeout> | undefined
 	private mouseUpTimeOut: ReturnType<typeof setTimeout> | undefined
@@ -99,19 +99,11 @@ export class DesignCanvasDirective implements OnInit {
 	private panelStats!: HTMLDivElement
 	private menu!: HTMLDivElement
 	private keyMap!: HTMLDivElement
-
-	currentTransformedCursor!: TransformedPoint
-	rawMousePos: Point = { x: 0, y: 0 }
-	currentPoint: TransformedPoint = { x: 0, y: 0 } as TransformedPoint
-
-	entityPressed: CanvasEntity | undefined
-
 	private mouseDownTimeOutFn = () => {
 		this.mouseDownTimeOut = setTimeout(() => {
 			this.mouseDownTimeOut = undefined
 		}, 300)
 	}
-
 	private mouseUpTimeOutFn = () => {
 		this.mouseUpTimeOut = setTimeout(() => {
 			this.mouseUpTimeOut = undefined
@@ -125,6 +117,11 @@ export class DesignCanvasDirective implements OnInit {
 	private get allStrings() {
 		return this._entities.strings.allStrings
 	}
+
+	currentTransformedCursor!: TransformedPoint
+	rawMousePos: Point = { x: 0, y: 0 }
+	currentPoint: TransformedPoint = { x: 0, y: 0 } as TransformedPoint
+	entityPressed: CanvasEntity | undefined
 
 	/**
 	 * ! Lifecycle Hooks
@@ -174,7 +171,7 @@ export class DesignCanvasDirective implements OnInit {
 
 		const multipleSelectedIds = this._selectedStore.state.multipleSelectedEntityIds
 		if (multiSelectDraggingKeysDownAndIdsNotEmpty(event, multipleSelectedIds)) {
-			this._objPositioning.multiSelectDraggingMouseDown(event, multipleSelectedIds)
+			this._objPositioning.multipleEntitiesToMoveMouseDown(event, multipleSelectedIds)
 			return
 		}
 
@@ -223,14 +220,14 @@ export class DesignCanvasDirective implements OnInit {
 
 		if (moveEntityState === 'MovingMultipleEntities') {
 			changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
-			this._objPositioning.multiSelectDraggingMouseMove(event)
+			this._objPositioning.multipleEntitiesToMoveMouseMove(event)
 			return
 		}
 
 		const multipleSelectedIds = this._selectedStore.state.multipleSelectedEntityIds
 		if (multiSelectDraggingKeysDownAndIdsNotEmpty(event, multipleSelectedIds)) {
-			this._objPositioning.setMultiSelectDraggingMouseMove(event, multipleSelectedIds)
-			this._objPositioning.multiSelectDraggingMouseMove(event)
+			this._objPositioning.setMultipleEntitiesToMove(event, multipleSelectedIds)
+			this._objPositioning.multipleEntitiesToMoveMouseMove(event)
 			return
 		}
 
@@ -246,19 +243,19 @@ export class DesignCanvasDirective implements OnInit {
 
 		if (moveEntityState === 'MovingSingleEntity') {
 			// changeCanvasCursor(this.canvas, CURSOR_TYPE.NONE)
-			this._objPositioning.singleToMoveMouseMoveV2Ngrx(event, currentPoint)
-			this._renderer.removeStyle(this.canvas, 'cursor')
-			this._renderer.setStyle(this.canvas, 'cursor', CURSOR_TYPE.GRABBING)
-			// this._renderer.setStyle(document, 'cursor', CURSOR_TYPE.GRABBING)
-			/*			changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
+			this._objPositioning.singleEntityToMoveMouseMove(event, currentPoint)
+			/*			this._renderer.removeStyle(this.canvas, 'cursor')
+			 this._renderer.setStyle(this.canvas, 'cursor', CURSOR_TYPE.GRABBING)
+			 // this._renderer.setStyle(document, 'cursor', CURSOR_TYPE.GRABBING)
+			 /!*			changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
 			 this.canvas.getBoundingClientRect()
 			 this.canvas.getBoundingClientRect()
 			 this.canvas.getBoundingClientRect()
 			 this.canvas.getBoundingClientRect()
 			 this.canvas.getBoundingClientRect()
 			 this.canvas.getBoundingClientRect()
-			 this.canvas.getBoundingClientRect()*/
-			// this.canvas.offsetWidth
+			 this.canvas.getBoundingClientRect()*!/
+			 // this.canvas.offsetWidth*/
 			return
 		}
 
@@ -312,11 +309,11 @@ export class DesignCanvasDirective implements OnInit {
 			this._render.renderCanvasApp()
 			return
 		}
-
-		this._render.renderCanvasApp({
-			transformedPoint: this.rawMousePos,
-		})
-		return
+		/*
+		 this._render.renderCanvasApp({
+		 transformedPoint: this.rawMousePos,
+		 })
+		 return*/
 
 		const graphicsState = this._graphicsState.state
 
@@ -349,12 +346,12 @@ export class DesignCanvasDirective implements OnInit {
 		const moveEntityState = this._positioningStore.state.moveEntityState
 
 		if (moveEntityState === 'MovingSingleEntity') {
-			this._objPositioning.singleToMoveMouseUp(event, currentPoint)
+			this._objPositioning.singleEntityToMoveMouseUp(event, currentPoint)
 			return
 		}
 
 		if (moveEntityState === 'MovingMultipleEntities') {
-			this._objPositioning.stopMultiSelectDragging(event)
+			this._objPositioning.stopMultipleEntitiesToMove(event)
 			return
 		}
 
@@ -548,7 +545,8 @@ export class DesignCanvasDirective implements OnInit {
 		this.ctx.translate(currentTransformedCursor.x, currentTransformedCursor.y)
 		this.ctx.scale(zoom, zoom)
 		this.ctx.translate(-currentTransformedCursor.x, -currentTransformedCursor.y)
-		this.scaleElement.innerText = `Scale: ${currentScaleX}`
+		this.scaleElement.innerText = `Scale: ${currentScaleX.toFixed(1)}`
+		// this.scaleElement.innerText = `Scale: ${currentScaleX}`
 
 		this._render.renderCanvasApp()
 		event.preventDefault()
@@ -702,27 +700,24 @@ export class DesignCanvasDirective implements OnInit {
 			event.stopPropagation()
 			event.preventDefault()
 		})
-		this._renderer.listen(this.canvas, EVENT_TYPE.POINTER_MOVE, (event: PointerEvent) =>
-			throttledPointerMove(event),
-		)
-		/*		this._renderer.listen(this.canvas, EVENT_TYPE.POINTER_MOVE, (event: PointerEvent) => {
-		 this.rawMousePos = eventToPointLocation(event)
-		 this.currentPoint = this._domPoint.getTransformedPointFromEvent(event)
-		 this._appState.mousePos = this.currentPoint
-		 this.onMouseMoveHandler(event, this.currentPoint)
-		 event.stopPropagation()
-		 event.preventDefault()
-		 })*/
-		const throttledPointerMove = throttle((event: PointerEvent) => {
-			event.stopPropagation()
-			event.preventDefault()
+		this._renderer.listen(this.canvas, EVENT_TYPE.POINTER_MOVE, (event: PointerEvent) => {
 			this.rawMousePos = eventToPointLocation(event)
 			this.currentPoint = this._domPoint.getTransformedPointFromEvent(event)
 			this._appState.mousePos = this.currentPoint
 			this.onMouseMoveHandler(event, this.currentPoint)
 			event.stopPropagation()
 			event.preventDefault()
-		}, 1000 / 60)
+		})
+		/*		const throttledPointerMove = throttle((event: PointerEvent) => {
+		 event.stopPropagation()
+		 event.preventDefault()
+		 this.rawMousePos = eventToPointLocation(event)
+		 this.currentPoint = this._domPoint.getTransformedPointFromEvent(event)
+		 this._appState.mousePos = this.currentPoint
+		 this.onMouseMoveHandler(event, this.currentPoint)
+		 event.stopPropagation()
+		 event.preventDefault()
+		 }, 1000 / 60)*/
 		this._renderer.listen(this.canvas, ContextMenuEvent, (event: PointerEvent) => {
 			this.rawMousePos = eventToPointLocation(event)
 			console.log('context menu', event)
@@ -805,14 +800,26 @@ export class DesignCanvasDirective implements OnInit {
 			ctx.restore()
 		}
 
-		this._render.renderCanvasApp({
-			drawFns: [drawFunction],
-		})
+		const clickNearEntityBounds = {
+			top: mouseBoxBounds.top,
+			left: mouseBoxBounds.left,
+			width: size.width,
+			height: size.height,
+		}
 
-		const interval = setInterval(() => {
-			this._render.renderCanvasApp()
-			clearInterval(interval)
-		}, 1000)
+		this._render.renderCanvasApp({
+			clickNearEntityBounds,
+		})
+		/*
+		 this._render.renderCanvasApp({
+		 clickNearEntityBounds,
+		 drawFns:               [drawFunction],
+		 })*/
+		/*
+		 const interval = setInterval(() => {
+		 this._render.renderCanvasApp()
+		 clearInterval(interval)
+		 }, 1000)*/
 		return true
 	}
 }

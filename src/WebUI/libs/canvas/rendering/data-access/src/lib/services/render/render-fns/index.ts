@@ -5,6 +5,7 @@ export * from './draw-selected-box'
 export * from './draw-selected-string-box'
 export * from './draw-box-with-options.ctx'
 export * from './nearby/index'
+export * from './preview/index'
 export * from './entities/index'
 export * from './drag-box/index'
 

@@ -34,6 +34,24 @@ class ObjectPositioningRepository {
 		this.store.dispatch(ObjectPositioningActions.startMovingMultipleEntities({ entityIds }))
 	}
 
+	setToMoveSpotTaken() {
+		this.store.dispatch(ObjectPositioningActions.setMovingSpotTaken())
+	}
+
+	setToMoveSpotFree() {
+		this.store.dispatch(ObjectPositioningActions.setMovingSpotFree())
+	}
+
+	setMultipleMovingSpotsTaken(toMoveMultipleSpotTakenIds: string[]) {
+		this.store.dispatch(
+			ObjectPositioningActions.setMultipleMovingSpotsTaken({ toMoveMultipleSpotTakenIds }),
+		)
+	}
+
+	clearMultipleMovingSpotsTaken() {
+		this.store.dispatch(ObjectPositioningActions.clearMultipleMovingSpotsTaken())
+	}
+
 	stopMoving() {
 		this.store.dispatch(ObjectPositioningActions.stopMoving())
 	}

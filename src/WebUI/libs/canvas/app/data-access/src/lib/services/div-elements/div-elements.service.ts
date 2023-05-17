@@ -12,10 +12,11 @@ export class DivElementsService {
 
 	constructor() {
 		document.addEventListener('DOMContentLoaded', () => {
-			/*			InitialDivElements.forEach((element) => {
+			/*	 InitialDivElements.forEach((element) => {
+			 console.log('element', element)
 			 this._elements.addEntity(getHtmlDivElementById(element))
-			 })
-			 this.elementsLoaded = true*/
+			 })*/
+			this.elementsLoaded = true
 		})
 	}
 
@@ -25,8 +26,21 @@ export class DivElementsService {
 		document.removeEventListener('DOMContentLoaded', () => {})
 	}
 
+	initElements() {
+		/*		InitialDivElements.forEach((element) => {
+		 this._elements.addEntity(getHtmlDivElementById(element))
+		 })
+		 console.log('elements loaded', this._elements.getAll())
+		 this.elementsLoaded = true*/
+	}
+
+	addElement(element: HTMLDivElement) {
+		this._elements.addEntity(element)
+	}
+
 	getElementById(id: DivElement) {
 		if (!this._elementsLoaded) {
+			// console.log('elements not loaded')
 			return {} as HTMLDivElement
 		}
 		const element = this._elements.getEntityById(id)
@@ -38,6 +52,26 @@ export class DivElementsService {
 			this._elements.addEntity(newElement as HTMLDivElement)
 			return newElement as HTMLDivElement
 		}
+		console.log('element', element)
+		return element as HTMLDivElement
+	}
+
+	getElementByIdOrUndefined(id: DivElement) {
+		/*		if (!this._elementsLoaded) {
+		 // console.log('elements not loaded')
+		 return {} as HTMLDivElement
+		 }*/
+		const element = this._elements.getEntityById(id)
+		if (!element) {
+			const newElement = document.getElementById(id)
+			if (!newElement) {
+				return undefined
+				// throw new Error('No element found')
+			}
+			this._elements.addEntity(newElement as HTMLDivElement)
+			return newElement as HTMLDivElement
+		}
+		// console.log('element', element)
 		return element as HTMLDivElement
 	}
 

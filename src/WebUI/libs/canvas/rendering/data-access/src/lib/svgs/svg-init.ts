@@ -76,8 +76,8 @@ const mapSvgCursorSourcesToImages = async (
 		return [key as SvgCursorKey, htmlImageElement] as const
 	})
 	const results = await Promise.all(promises)
-	console.log('results', results)
-	console.log('Object.fromEntries(results)', Object.fromEntries(results))
+	// console.log('results', results)
+	// console.log('Object.fromEntries(results)', Object.fromEntries(results))
 	return Object.fromEntries(results) as SvgCursorImageRecord
 }
 

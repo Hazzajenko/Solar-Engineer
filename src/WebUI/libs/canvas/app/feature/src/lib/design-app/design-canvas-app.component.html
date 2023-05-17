@@ -1,25 +1,23 @@
-<canvas #canvas
-        id='canvas'
-        class='absolute inset-0'
-        [ngStyle]='{
-cursor: cursorState()
-        }'
-        appDesignCanvas></canvas>
+<canvas
+	#canvas
+	[ngStyle]="{
+		cursor: cursorState()
+	}"
+	appDesignCanvas
+	class="absolute inset-0"
+	id="canvas"
+></canvas>
 <!--cursor: toMoveState === "MovingSingleEntity" ? "grabbing" : "",-->
 
-<div class='absolute'>
-  <div id='fps'></div>
-  <div id='scale-element'></div>
+<div #appStats class="absolute z-50">
+	<div id="fps"></div>
+	<div id="scale-element"></div>
 </div>
 
 <!--<app-action-notifications-display class='z-50 pointer-events-auto' />-->
 
-<ng-template
-  appDynamicContextMenu
-/>
-<ng-template
-  appDynamicDialog
-/>
+<!--<ng-template appDynamicContextMenu />-->
+<ng-template appDynamicDialog />
 
 <app-context-menu-renderer />
 

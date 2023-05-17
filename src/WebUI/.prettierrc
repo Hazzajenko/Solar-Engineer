@@ -16,10 +16,5 @@
 				"singleQuote": false
 			}
 		}
-	],
-	"parser": "typescript",
-	"importOrderParserPlugins": [
-		"typescript",
-		"decorators-legacy"
 	]
 }

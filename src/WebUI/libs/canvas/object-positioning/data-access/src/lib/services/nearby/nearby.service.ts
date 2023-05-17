@@ -2,7 +2,7 @@ import { AppStateStoreService } from '@canvas/app/data-access'
 import { GraphicsStoreService } from '@canvas/graphics/data-access'
 import { RenderService } from '@canvas/rendering/data-access'
 import { getDefaultDrawPreviewCtxFn } from './ctx-fns'
-import { getNearbyLineDrawCtxFnFromNearbyLinesState } from './utils'
+import { getNearbyLineDrawCtxFnFromNearbyLinesState, getSnapToGridBoolean } from './utils'
 import { inject, Injectable } from '@angular/core'
 import { groupInto2dArray } from '@shared/utils'
 import { sortBy } from 'lodash'
@@ -51,18 +51,18 @@ export class NearbyService {
 
 	getDrawEntityPreviewV2Ngrx(event: PointerEvent, currentPoint: TransformedPoint) {
 		const size = SizeByType[ENTITY_TYPE.Panel]
-		const mouseBoxBounds = getCompleteBoundsFromCenterTransformedPoint(currentPoint, size)
+		const mouseBounds = getCompleteBoundsFromCenterTransformedPoint(currentPoint, size)
 		const entities = this._entities.panels.allPanels
-		const nearbyEntitiesOnAxis = findNearbyBoundOverlapOnBothAxis(mouseBoxBounds, entities)
+		const nearbyEntitiesOnAxis = findNearbyBoundOverlapOnBothAxis(mouseBounds, entities)
 
 		if (!nearbyEntitiesOnAxis.length) {
 			// console.log('no nearbyEntities')
-			const drawPreviewFn = getDefaultDrawPreviewCtxFn(mouseBoxBounds)
+			const drawPreviewFn = getDefaultDrawPreviewCtxFn(mouseBounds)
 
 			this.clearNearbyState()
 
 			this._render.renderCanvasApp({
-				drawFns: [drawPreviewFn],
+				creationPreviewBounds: mouseBounds, // drawFns: [drawPreviewFn],
 			})
 			// this._render.drawCanvasWithFunction(drawPreviewFn)
 			return
@@ -71,16 +71,16 @@ export class NearbyService {
 		this.nearbyEntities = nearbyEntitiesOnAxis
 
 		const anyNearClick = !!entities.find((entity) =>
-			isEntityOverlappingWithBounds(entity, mouseBoxBounds),
+			isEntityOverlappingWithBounds(entity, mouseBounds),
 		)
 
 		const nearbyLinesState = this._graphicsStore.state.nearbyLinesState
 		const nearbyLinesDisabled = nearbyLinesState === 'NearbyLinesDisabled'
 		if (nearbyLinesDisabled) {
-			const drawPreviewFn = getDefaultDrawPreviewCtxFn(mouseBoxBounds)
+			const drawPreviewFn = getDefaultDrawPreviewCtxFn(mouseBounds)
 			this.clearNearbyState()
 			this._render.renderCanvasApp({
-				drawFns: [drawPreviewFn],
+				creationPreviewBounds: mouseBounds, // drawFns: [drawPreviewFn],
 			})
 			return
 		}
@@ -122,19 +122,19 @@ export class NearbyService {
 		const nearby2dArray = groupInto2dArray(nearbySortedByDistance, 'axis')
 
 		const closestNearby2dArray = nearby2dArray.map((arr) => arr[0])
-		const closestEnt = closestNearby2dArray[0]
+		const closestEntity = closestNearby2dArray[0]
 
-		const gridLines = getEntityAxisGridLinesByAxisV2(closestEnt.bounds, closestEnt.axis)
+		const gridLines = getEntityAxisGridLinesByAxisV2(closestEntity.bounds, closestEntity.axis)
 		const gridLineBounds = getBoundsFromArrPoints(gridLines)
 
 		const axisPreviewRect = getCtxRectBoundsByAxisV2(
-			closestEnt.bounds,
-			closestEnt.axis,
-			mouseBoxBounds,
+			closestEntity.bounds,
+			closestEntity.axis,
+			mouseBounds,
 		)
-		this.currentAxis = closestEnt.axis
+		this.currentAxis = closestEntity.axis
 		this.axisPreviewRect = axisPreviewRect
-		switch (closestEnt.axis) {
+		switch (closestEntity.axis) {
 			case 'x':
 				this.xAxisLineBounds = gridLineBounds
 				break
@@ -142,7 +142,7 @@ export class NearbyService {
 				this.yAxisLineBounds = gridLineBounds
 				break
 			default:
-				throw new Error(`${closestEnt.axis} is not an axis`)
+				throw new Error(`${closestEntity.axis} is not an axis`)
 		}
 
 		const fillStyle = anyNearClick
@@ -177,16 +177,31 @@ export class NearbyService {
 		const drawGridLinesWithEntityPreview = getNearbyLineDrawCtxFnFromNearbyLinesState(
 			this._graphicsStore.state.nearbyLinesState,
 			axisPreviewRect,
-			mouseBoxBounds,
-			closestEnt,
+			mouseBounds,
+			closestEntity,
 			fillStyle,
 			altKey,
 			this.holdAltToSnapToGrid,
 			false,
 		)
 
+		const holdAltToSnapToGrid = true
+
+		const snapToGridBool = getSnapToGridBoolean(
+			altKey,
+			mouseBounds,
+			closestEntity.axis,
+			axisPreviewRect,
+			holdAltToSnapToGrid,
+		)
+
 		this._render.renderCanvasApp({
-			drawFns: [drawGridLinesWithEntityPreview],
+			nearby: {
+				axisPreviewRect,
+				mouseBounds,
+				closestEntity,
+				snapToGridBool,
+			}, // drawFns: [drawGridLinesWithEntityPreview],
 		})
 		// this._render.drawCanvasWithFunction(drawGridLinesWithEntityPreview)
 

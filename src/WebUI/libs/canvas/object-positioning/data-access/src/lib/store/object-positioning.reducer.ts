@@ -22,6 +22,8 @@ export type RotateEntityState = (typeof ROTATE_ENTITY_STATE)[keyof typeof ROTATE
 export interface ObjectPositioningState {
 	toMoveSingleEntityId: string | undefined
 	toMoveMultipleEntityIds: string[]
+	toMoveSpotTaken: boolean
+	toMoveMultipleSpotTakenIds: string[]
 	toRotateSingleEntityId: string | undefined
 	toRotateMultipleEntityIds: string[]
 	moveEntityState: MoveEntityState
@@ -31,6 +33,8 @@ export interface ObjectPositioningState {
 export const initialObjectPositioningState: ObjectPositioningState = {
 	toMoveSingleEntityId: undefined,
 	toMoveMultipleEntityIds: [],
+	toMoveSpotTaken: false,
+	toMoveMultipleSpotTakenIds: [],
 	toRotateSingleEntityId: undefined,
 	toRotateMultipleEntityIds: [],
 	moveEntityState: MOVE_ENTITY_STATE.MOVING_NONE,
@@ -54,6 +58,29 @@ const reducer = createReducer(
 		toMoveSingleEntityId: undefined,
 		toMoveMultipleEntityIds: entityIds,
 		moveEntityState: MOVE_ENTITY_STATE.MOVING_MULTIPLE_ENTITIES,
+	})),
+
+	on(ObjectPositioningActions.setMovingSpotTaken, (state) => ({
+		...state,
+		toMoveSpotTaken: true,
+	})),
+
+	on(ObjectPositioningActions.setMovingSpotFree, (state) => ({
+		...state,
+		toMoveSpotTaken: false,
+	})),
+
+	on(
+		ObjectPositioningActions.setMultipleMovingSpotsTaken,
+		(state, { toMoveMultipleSpotTakenIds }) => ({
+			...state,
+			toMoveMultipleSpotTakenIds,
+		}),
+	),
+
+	on(ObjectPositioningActions.clearMultipleMovingSpotsTaken, (state) => ({
+		...state,
+		toMoveMultipleSpotTakenIds: [],
 	})),
 
 	on(ObjectPositioningActions.stopMoving, (state) => ({

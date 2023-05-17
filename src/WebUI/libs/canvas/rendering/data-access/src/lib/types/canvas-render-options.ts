@@ -9,9 +9,9 @@ import {
 import { CanvasEntity, CanvasPanel } from '@entities/shared'
 
 export type CanvasRenderOptions = {
-	drawFns: ((ctx: CanvasRenderingContext2D) => void)[]
-	drawFnsAtMiddle: ((ctx: CanvasRenderingContext2D) => void)[]
-	drawFnsAtEnd: ((ctx: CanvasRenderingContext2D) => void)[]
+	// drawFns: ((ctx: CanvasRenderingContext2D) => void)[]
+	// drawFnsAtMiddle: ((ctx: CanvasRenderingContext2D) => void)[]
+	// drawFnsAtEnd: ((ctx: CanvasRenderingContext2D) => void)[]
 	excludedEntityIds: string[]
 	customEntities: CanvasEntity[]
 	currentLocation: TransformedPoint
@@ -37,8 +37,21 @@ export type CanvasRenderOptions = {
 		mouseBounds: CompleteEntityBounds
 		closestEntity: NearbyEntity
 		snapToGridBool: boolean
-		entityToMove: CanvasEntity
+		entityToMove?: CanvasEntity
 		// isMovingExistingEntity: boolean
+	}
+	multipleToMoveSpotsTakenIds: string[]
+	clickNearEntityBounds: {
+		top: number
+		left: number
+		width: number
+		height: number
+	}
+	creationPreviewBounds: {
+		top: number
+		left: number
+		width: number
+		height: number
 	}
 	cursor: CursorType
 	transformedPoint: Point

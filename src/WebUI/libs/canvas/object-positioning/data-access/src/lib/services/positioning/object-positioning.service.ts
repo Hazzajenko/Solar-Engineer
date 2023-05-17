@@ -4,7 +4,6 @@ import { GraphicsStoreService } from '@canvas/graphics/data-access'
 import { getSnapToGridBoolean } from '../nearby'
 import { ObjectPositioningStoreService } from '../../store'
 import { RenderService } from '@canvas/rendering/data-access'
-import { drawSelectionBoxBoundsCtxFn } from './draw-selection-box'
 import { inject, Injectable } from '@angular/core'
 import { UpdateStr } from '@ngrx/entity/src/models'
 import {
@@ -16,7 +15,7 @@ import {
 	TransformedPoint,
 } from '@shared/data-access/models'
 import { assertNotNull, groupInto2dArray } from '@shared/utils'
-import { sortBy } from 'lodash'
+import { isEqual, sortBy } from 'lodash'
 import { EntityStoreService } from '@entities/data-access'
 import {
 	changeCanvasCursor,
@@ -25,16 +24,23 @@ import {
 	eventToPointLocation,
 	findNearbyBoundOverlapOnBothAxisExcludingIds,
 	getCompleteBoundsFromCenterTransformedPoint,
-	getCompleteBoundsFromMultipleEntitiesWithPadding,
 	getCtxRectBoundsByAxisV2,
 	getEntityBounds,
 	getTopLeftPointFromTransformedPoint,
+	isEntityOverlappingWithBounds,
 	isHoldingClick,
 	isPointInsideBounds,
 	multiSelectDraggingKeysDown,
 	updateObjectById,
 } from '@canvas/utils'
-import { CANVAS_COLORS, CanvasPanel, ENTITY_TYPE, PanelId, SizeByType } from '@entities/shared'
+import {
+	CanvasEntity,
+	CanvasPanel,
+	ENTITY_TYPE,
+	getEntitySize,
+	PanelId,
+	SizeByType,
+} from '@entities/shared'
 
 @Injectable({
 	providedIn: 'root',
@@ -67,48 +73,26 @@ export class ObjectPositioningService {
 		changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
 	}
 
-	singleToMoveMouseMoveV2Ngrx(event: PointerEvent, currentPoint: TransformedPoint) {
+	singleEntityToMoveMouseMove(event: PointerEvent, currentPoint: TransformedPoint) {
 		if (!isHoldingClick(event)) {
-			this.singleToMoveMouseUp(event, currentPoint)
+			this.singleEntityToMoveMouseUp(event, currentPoint)
 			return
 		}
 		assertNotNull(this.singleToMoveId)
-		console.log('singleToMoveMouseMoveV2Ngrx')
-		// changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
-		// const eventPoint = this._domPoint.getTransformedPointFromEvent(event)
-		// const currentPoint = this._domPoint.getTransformedPointFromEvent(event)
 		const isSpotTaken = this.areAnyEntitiesNearbyExcludingGrabbed(currentPoint, this.singleToMoveId)
 		if (isSpotTaken) {
-			// this.canvas.style.cursor = CURSOR_TYPE.CROSSHAIR
-			// changeCanvasCursor(this.canvas, CURSOR_TYPE.NO_DROP)
-			// changeCanvasCursor(this.canvas, CURSOR_TYPE.NO_DROP)
-			// return
+			if (!this._positioningStore.state.toMoveSpotTaken) {
+				this._positioningStore.dispatch.setToMoveSpotTaken()
+			}
 		} else {
-			// changeCanvasCursorIfNotSet(this.canvas, CURSOR_TYPE.GRABBING)
-			// changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
-			// console.log('singleToMoveMouseMoveV2Ngrx - else')
-			// this.canvas.getBoundingClientRect()
-			// this.canvas.style.cursor = CURSOR_TYPE.GRABBING
-			// changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
-			// changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
+			if (this._positioningStore.state.toMoveSpotTaken) {
+				this._positioningStore.dispatch.setToMoveSpotFree()
+			}
 		}
-		/*		if (isSpotTaken) {
-		 changeCanvasCursor(this.canvas, CURSOR_TYPE.CROSSHAIR)
-		 // TODO - implement red box
-		 // this.canvas.style.cursor = CURSOR_TYPE.CROSSHAIR
-		 // changeCanvasCursor(this.canvas, CURSOR_TYPE.CROSSHAIR)
-		 // return
-		 } else {
-		 changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
-		 }*/
-		/*		const location = getTopLeftPointFromTransformedPoint(
-		 currentPoint,
-		 SizeByType[ENTITY_TYPE.Panel],
-		 )*/
 		const entity = this._entities.panels.getById(this.singleToMoveId)
 		assertNotNull(entity)
 
-		const size = SizeByType[ENTITY_TYPE.Panel]
+		const size = getEntitySize(entity)
 		const mouseBounds = getCompleteBoundsFromCenterTransformedPoint(currentPoint, size)
 		const entities = this._entities.panels.allPanels
 		const nearbyEntitiesOnAxis = findNearbyBoundOverlapOnBothAxisExcludingIds(
@@ -116,7 +100,7 @@ export class ObjectPositioningService {
 			entities,
 			[this.singleToMoveId],
 		)
-		// const nearbyEntitiesOnAxis = findNearbyBoundOverlapOnBothAxis(mouseBoxBounds, entities)
+
 		const nearbyLinesState = this._graphicsStore.state.nearbyLinesState
 		const customEntity: CanvasPanel = {
 			...entity,
@@ -126,7 +110,7 @@ export class ObjectPositioningService {
 		if (!nearbyEntitiesOnAxis.length || nearbyLinesState === 'NearbyLinesDisabled') {
 			this._render.renderCanvasApp({
 				customPanels: [customEntity],
-				singleToMoveId: this.singleToMoveId, // cursor: CURSOR_TYPE.GRABBING,
+				singleToMoveId: this.singleToMoveId,
 			})
 			return
 		}
@@ -149,18 +133,6 @@ export class ObjectPositioningService {
 
 		const holdAltToSnapToGrid = true
 		const altKey = event.altKey
-		// const isMovingExistingEntity = true
-
-		/*		const ctxFn = getNearbyLineDrawCtxFnFromNearbyLinesState(
-		 nearbyLinesState,
-		 axisPreviewRect,
-		 mouseBounds,
-		 closestEntity,
-		 CANVAS_COLORS.HoveredPanelFillStyle,
-		 altKey,
-		 holdAltToSnapToGrid,
-		 isMovingExistingEntity,
-		 )*/
 
 		const snapToGridBool = getSnapToGridBoolean(
 			altKey,
@@ -170,31 +142,29 @@ export class ObjectPositioningService {
 			holdAltToSnapToGrid,
 		)
 
-		// handleSnapToGridWhenNearby(ctx, axisPreviewRect, mouseBounds, closestEntity, snapToGridBool)
-
 		this._render.renderCanvasApp({
-			customPanels: [customEntity], // cursor: CURSOR_TYPE.GRABBING,
+			customPanels: [customEntity],
 			singleToMoveId: this.singleToMoveId,
 			nearby: {
 				axisPreviewRect,
 				mouseBounds,
-				closestEntity: closestEntity,
+				closestEntity,
 				snapToGridBool,
-				entityToMove: customEntity, // isMovingExistingEntity,
+				entityToMove: customEntity,
 			},
 		})
-		/*		this._render.renderCanvasApp({
-		 excludedEntityIds: [this.singleToMoveId], // drawFns: [ctxFn],
-		 drawFnsAtMiddle: [ctxFn],
-		 customEntities: [customEntity],
-		 })*/
-		// this._render.drawCanvasExcludeIdsWithFn([this.singleToMoveId], ctxFn)
 	}
 
-	singleToMoveMouseUp(event: PointerEvent | boolean, currentPoint: TransformedPoint) {
+	singleEntityToMoveMouseUp(event: PointerEvent | boolean, currentPoint: TransformedPoint) {
 		assertNotNull(this.singleToMoveId)
+
+		if (this._positioningStore.state.toMoveSpotTaken) {
+			this._positioningStore.dispatch.stopMoving()
+			return
+		}
+
 		const altKey = event instanceof PointerEvent ? event.altKey : false
-		// const middleOf = getMiddleOfObjectFromEvent(event, ENTITY_TYPE.Panel)
+
 		let location: {
 			x: number
 			y: number
@@ -207,11 +177,7 @@ export class ObjectPositioningService {
 		} else {
 			location = getTopLeftPointFromTransformedPoint(currentPoint, SizeByType[ENTITY_TYPE.Panel])
 		}
-		/*		const location = getTopLeftPointFromTransformedPoint(
-		 currentPoint,
-		 SizeByType[ENTITY_TYPE.Panel],
-		 )*/
-		// const location = this._domPoint.getTransformedPointToMiddleOfObjectFromEvent(event, ENTITY_TYPE.Panel)
+
 		this._entities.panels.updatePanel({
 			id: this.singleToMoveId,
 			changes: {
@@ -223,60 +189,39 @@ export class ObjectPositioningService {
 		this.singleToMoveId = undefined
 
 		this._positioningStore.dispatch.stopMoving()
-		// this._app.sendEvent({ type: 'StopSingleMove' })
 		this._render.renderCanvasApp()
-		// this._render.drawCanvas()
 		return
 	}
 
-	multiSelectDraggingMouseDown(event: PointerEvent, multipleSelectedIds: string[]) {
+	multipleEntitiesToMoveMouseDown(event: PointerEvent, multipleSelectedIds: string[]) {
 		if (!event.shiftKey || !event.ctrlKey) return
 		this.multipleToMoveIds = multipleSelectedIds
 		this.multiToMoveStart = eventToEventPoint(event)
-		// this.multiToMoveStart = currentPoint
-		// this.multiToMoveStart = this._domPoint.getTransformedPointFromEvent(event)
 		this._positioningStore.dispatch.startMovingMultipleEntities(multipleSelectedIds)
-		// this._app.sendEvent({ type: 'StartMultipleMove' })
-		// this._app.sendEvent(new StartMultipleMove())
 	}
 
-	setMultiSelectDraggingMouseMove(event: PointerEvent, multipleSelectedIds: string[]) {
+	setMultipleEntitiesToMove(event: PointerEvent, multipleSelectedIds: string[]) {
 		if (!multiSelectDraggingKeysDown(event)) return
-		/*		if (!event.shiftKey || !event.ctrlKey) {
-		 this.stopMultiSelectDragging(event)
-		 return
-		 }*/
 		this.multipleToMoveIds = multipleSelectedIds
 		this.multiToMoveStart = eventToEventPoint(event)
-		// this.multiToMoveStart = currentPoint
-		// this.multiToMoveStart = this._domPoint.getTransformedPointFromEvent(event)
 		this._positioningStore.dispatch.startMovingMultipleEntities(multipleSelectedIds)
-		// this._app.sendEvent({ type: 'StartMultipleMove' })
-		// this._app.sendEvent(new StartMultipleMove())
 	}
 
-	multiSelectDraggingMouseMove(event: PointerEvent) {
+	multipleEntitiesToMoveMouseMove(event: PointerEvent) {
 		if (!multiSelectDraggingKeysDown(event)) {
-			this.stopMultiSelectDragging(event)
-			changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
+			this.stopMultipleEntitiesToMove(event)
+			// changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
 			return
 		}
-		changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
+		// changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
 		const multiToMoveStart = this.multiToMoveStart
 		assertNotNull(multiToMoveStart)
-		// const eventLocation = this._domPoint.getTransformedPointFromEvent(event)
 		const eventLocation = eventToPointLocation(event)
 		const scale = this._domPoint.scale
 		const offset = {
 			x: (eventLocation.x - multiToMoveStart.x) / scale,
 			y: (eventLocation.y - multiToMoveStart.y) / scale,
 		}
-		/*		const offset = {
-		 x: eventLocation.x - multiToMoveStart.x,
-		 y: eventLocation.y - multiToMoveStart.y,
-		 }
-		 offset.x = offset.x / scale
-		 offset.y = offset.y / scale*/
 
 		const multipleToMoveIds = this.multipleToMoveIds
 		const entities = this._entities.panels.getByIds(multipleToMoveIds)
@@ -289,79 +234,42 @@ export class ObjectPositioningService {
 			},
 		}))
 
-		/*		const updates = entities.map((entity) => {
-		 const location = entity.location
-		 const newLocation = {
-		 x: location.x + offset.x,
-		 y: location.y + offset.y,
-		 }
-		 return {
-		 ...entity,
-		 location: newLocation,
-		 }
-		 })*/
-
-		/*		const panelsInArea = this._state.entities.canvasEntities.getEntitiesByIds(
-		 this._machine.ctx.selected.multipleSelectedIds,
-		 )*/
-		const selectionBoxBounds = getCompleteBoundsFromMultipleEntitiesWithPadding(updates, 10)
-
-		const drawMultipleToMove = (ctx: CanvasRenderingContext2D) => {
-			ctx.save()
-			updates.forEach((entity) => {
-				ctx.save()
-				ctx.translate(entity.location.x + entity.width / 2, entity.location.y + entity.height / 2)
-				ctx.rotate(entity.angle)
-
-				ctx.fillStyle = CANVAS_COLORS.MultiSelectedPanelFillStyle
-				ctx.beginPath()
-				ctx.rect(-entity.width / 2, -entity.height / 2, entity.width, entity.height)
-				ctx.fill()
-				ctx.stroke()
-				ctx.restore()
-			})
-			ctx.restore()
-
-			/** Draw selection box */
-
-			drawSelectionBoxBoundsCtxFn(selectionBoxBounds)(ctx)
-			/*			ctx.save()
-			 const { left, top, width, height } = selectionBoxBounds
-			 ctx.strokeStyle = CANVAS_COLORS.MultiSelectedPanelFillStyle
-			 ctx.lineWidth = 1
-			 ctx.strokeRect(left, top, width, height)
-			 ctx.restore()*/
+		const isSpotTaken = this.areAnyEntitiesNearbyExcludingMultipleGrabbed(updates)
+		const spotTakenIds = isSpotTaken.map((entity) => entity.id)
+		if (spotTakenIds.length > 0) {
+			if (!this._positioningStore.state.toMoveSpotTaken) {
+				this._positioningStore.dispatch.setToMoveSpotTaken()
+			}
+			if (
+				this._positioningStore.state.toMoveMultipleSpotTakenIds.length === 0 ||
+				!isEqual(this._positioningStore.state.toMoveMultipleSpotTakenIds, spotTakenIds)
+			) {
+				this._positioningStore.dispatch.setMultipleMovingSpotsTaken(spotTakenIds)
+			}
+		} else {
+			if (this._positioningStore.state.toMoveSpotTaken) {
+				this._positioningStore.dispatch.setToMoveSpotFree()
+			}
+			if (this._positioningStore.state.toMoveMultipleSpotTakenIds.length > 0) {
+				this._positioningStore.dispatch.clearMultipleMovingSpotsTaken()
+			}
 		}
-
-		// const customPanels =
-
-		// if (selectionBoxBounds) {
 
 		this._render.renderCanvasApp({
 			// excludedEntityIds: multipleToMoveIds,
 			// drawFns: [drawMultipleToMove],
+			multipleToMoveSpotsTakenIds: spotTakenIds,
 			customPanels: updates,
 			shouldRenderSelectedEntitiesBox: false,
 			shouldRenderSelectedStringBox: false,
 		})
-		/*		this._render.renderCanvasApp({
-		 excludedEntityIds: multipleToMoveIds,
-		 drawFns: [drawMultipleToMove],
-		 shouldRenderSelectedEntitiesBox: false,
-		 shouldRenderSelectedStringBox: false,
-		 })*/
-		// this._render.drawCanvasExcludeIdsWithFnEditSelectBox(multipleToMoveIds, drawMultipleToMove)
-		// this._render.drawCanvasExcludeIdsWithFn(multipleToMoveIds, drawMultipleToMove)
 		return
 	}
 
-	stopMultiSelectDragging(event: MouseEvent | Point) {
+	stopMultipleEntitiesToMove(event: MouseEvent | Point) {
 		const multiToMoveStart = this.multiToMoveStart
 		assertNotNull(multiToMoveStart)
 		const dragStopPoint = event instanceof MouseEvent ? eventToPointLocation(event) : event
-		// if (event instanceof MouseEvent) {
-		// 	const eventLocation = eventToPointLocation(event)
-		// }
 		const scale = this._domPoint.scale
 		const offset = {
 			x: dragStopPoint.x - multiToMoveStart.x,
@@ -369,8 +277,8 @@ export class ObjectPositioningService {
 		}
 		offset.x = offset.x / scale
 		offset.y = offset.y / scale
-		const multipleToMoveIds = this.multipleToMoveIds
-		const entities = this._entities.panels.getByIds(multipleToMoveIds)
+		// const multipleToMoveIds = this.multipleToMoveIds
+		const entities = this._entities.panels.getByIds(this.multipleToMoveIds)
 		const multiSelectedUpdated = entities.map((entity) => {
 			const location = entity.location
 			const newLocation = {
@@ -386,9 +294,6 @@ export class ObjectPositioningService {
 		this._entities.panels.updateManyPanels(storeUpdates as UpdateStr<CanvasPanel>[])
 
 		this._positioningStore.dispatch.stopMoving()
-		// this._app.sendEvent({ type: 'StopMultipleMove' })
-
-		// this._canvasElement.changeCursor('')
 		changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
 		console.log('stopMultiSelectDragging changeCanvasCursor')
 
@@ -396,20 +301,17 @@ export class ObjectPositioningService {
 		this.multiToMoveStart = undefined
 
 		this._render.renderCanvasApp()
-		// this._render.drawCanvas()
 		return
 	}
 
 	resetObjectPositioning(event: PointerEvent, currentPoint: TransformedPoint) {
 		if (this.multiToMoveStart) {
-			this.stopMultiSelectDragging(event)
+			this.stopMultipleEntitiesToMove(event)
 			this._positioningStore.dispatch.stopMoving()
-			// this._app.sendEvent({ type: 'StopMultipleMove' })
 		}
 		if (this.singleToMoveId) {
-			this.singleToMoveMouseUp(event, currentPoint)
+			this.singleEntityToMoveMouseUp(event, currentPoint)
 			this._positioningStore.dispatch.stopMoving()
-			// this._app.sendEvent({ type: 'StopSingleMove' })
 		}
 
 		this._canvasElement.changeCursor(CURSOR_TYPE.AUTO)
@@ -423,8 +325,17 @@ export class ObjectPositioningService {
 			(entity) => entity.id !== grabbedId && isPointInsideBounds(point, getEntityBounds(entity)),
 		)
 	}
+
+	areAnyEntitiesNearbyExcludingMultipleGrabbed(updatedEntities: CanvasEntity[]) {
+		const grabbedIds = updatedEntities.map((entity) => entity.id)
+		const panelsExceptGrabbed = this._entities.panels.allPanels.filter(
+			(entity) => !grabbedIds.includes(entity.id),
+		)
+
+		return updatedEntities.filter((entity) =>
+			panelsExceptGrabbed.find((panel) =>
+				isEntityOverlappingWithBounds(entity, getEntityBounds(panel)),
+			),
+		)
+	}
 }
-
-// const isMultiDraggingKeysDown = (event: PointerEvent) => event.shiftKey && event.ctrlKey && event.altKey
-
-// const entitiesNearPoint = (entity: CanvasPanel, grabbedId: string, point: TransformedPoint) => (entity:CanvasPanel) => entity.id !== grabbedId && isPointInsideBounds(point, getEntityBounds(entity))

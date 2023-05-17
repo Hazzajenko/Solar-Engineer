@@ -45,7 +45,7 @@ export async function injectSvgsV2() {
 	const source = svgSource as string
 	const image = new Image()
 	image.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(source)
-	console.log('image', image)
+	// console.log('image', image)
 	return loadImageV2(image)
 	// return loadImage(image.src)
 }
