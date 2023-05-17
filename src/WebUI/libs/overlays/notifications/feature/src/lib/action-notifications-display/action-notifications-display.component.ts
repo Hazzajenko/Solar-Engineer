@@ -85,7 +85,7 @@ export class ActionNotificationsDisplayComponent implements AfterViewInit {
 
 	ngAfterViewInit() {
 		if (this.notificationEls) {
-			console.log('notificationEls', this.notificationEls)
+			// console.log('notificationEls', this.notificationEls)
 			this.notificationEls.forEach((notificationDiv) => {
 				if (!notificationDiv.id) {
 					return

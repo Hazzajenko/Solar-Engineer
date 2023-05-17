@@ -104,10 +104,10 @@ export const drawLineBetweenTwoEntitiesV2 = (
 		nearbyEntity.axis,
 	)
 	ctx.save()
-	ctx.beginPath()
+	// ctx.beginPath()
 	ctx.globalAlpha = snapToGridBool ? 0.6 : 0.4
 	ctx.strokeStyle = CANVAS_COLORS.NearbyPanelStrokeStyle
-	ctx.fillStyle = CANVAS_COLORS.NearbyPanelFillStyle
+	// ctx.fillStyle = CANVAS_COLORS.NearbyPanelFillStyle
 	ctx.moveTo(gridLines[0], gridLines[1])
 	ctx.lineTo(gridLines[2], gridLines[3])
 	ctx.stroke()

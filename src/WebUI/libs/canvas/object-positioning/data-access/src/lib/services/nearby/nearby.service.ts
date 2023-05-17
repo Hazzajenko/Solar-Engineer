@@ -1,11 +1,12 @@
 import { AppStateStoreService } from '@canvas/app/data-access'
 import { GraphicsStoreService } from '@canvas/graphics/data-access'
 import { RenderService } from '@canvas/rendering/data-access'
-import { getDefaultDrawPreviewCtxFn } from './ctx-fns'
-import { getNearbyLineDrawCtxFnFromNearbyLinesState, getSnapToGridBoolean } from './utils'
+import {
+	getClosedEntityOnAxis,
+	getNearbyLineDrawCtxFnFromNearbyLinesState,
+	getSnapToGridBoolean,
+} from './utils'
 import { inject, Injectable } from '@angular/core'
-import { groupInto2dArray } from '@shared/utils'
-import { sortBy } from 'lodash'
 import { EntityStoreService } from '@entities/data-access'
 import {
 	Axis,
@@ -56,15 +57,11 @@ export class NearbyService {
 		const nearbyEntitiesOnAxis = findNearbyBoundOverlapOnBothAxis(mouseBounds, entities)
 
 		if (!nearbyEntitiesOnAxis.length) {
-			// console.log('no nearbyEntities')
-			const drawPreviewFn = getDefaultDrawPreviewCtxFn(mouseBounds)
-
 			this.clearNearbyState()
 
 			this._render.renderCanvasApp({
-				creationPreviewBounds: mouseBounds, // drawFns: [drawPreviewFn],
+				creationPreviewBounds: mouseBounds,
 			})
-			// this._render.drawCanvasWithFunction(drawPreviewFn)
 			return
 		}
 		this.nearbyIds = nearbyEntitiesOnAxis.map((entity) => entity.id)
@@ -77,52 +74,14 @@ export class NearbyService {
 		const nearbyLinesState = this._graphicsStore.state.nearbyLinesState
 		const nearbyLinesDisabled = nearbyLinesState === 'NearbyLinesDisabled'
 		if (nearbyLinesDisabled) {
-			const drawPreviewFn = getDefaultDrawPreviewCtxFn(mouseBounds)
 			this.clearNearbyState()
 			this._render.renderCanvasApp({
-				creationPreviewBounds: mouseBounds, // drawFns: [drawPreviewFn],
+				creationPreviewBounds: mouseBounds,
 			})
 			return
 		}
 
-		// const nearbyLinesEnabled = isNearbyLinesEnabled(NearbyLinesState)
-		// const nearbyAxisLinesEnabled = this._state.menu.nearbyAxisLines
-		/*		if (this._graphicsStore.matches.nearbyLines('NearbyLinesDisabled')) {
-		 // if (!nearbyLinesEnabled) {
-		 console.log('no nearbyAxisLinesEnabled')
-		 const drawPreviewFn = getDefaultDrawPreviewCtxFn(mouseBoxBounds)
-		 this._render.renderCanvasApp({
-		 drawFns: [drawPreviewFn],
-		 })
-		 // this._render.drawCanvasWithFunction(drawPreviewFn)
-		 return
-		 }*/
-		/*		if (graphicsSnapshot.matches('NearbyLinesState.NearbyLinesDisabled')) {
-		 // if (!nearbyLinesEnabled) {
-		 console.log('no nearbyAxisLinesEnabled')
-		 const drawPreviewFn = getDefaultDrawPreviewCtxFn(mouseBoxBounds)
-		 this._render.renderCanvasApp({
-		 drawFns: [drawPreviewFn],
-		 })
-		 // this._render.drawCanvasWithFunction(drawPreviewFn)
-		 return
-		 }*/
-		// assertIsObject(NearbyLinesState)
-		/*	if (typeof NearbyLinesState === 'string') {
-		 throw new Error('NearbyLinesState is a string')
-		 }*/
-		// assertNotNull()
-		// NearbyLinesStat
-		// e.
-		// const nearbyEnabledMode
-
-		const nearbySortedByDistance = sortBy(nearbyEntitiesOnAxis, (entity) =>
-			Math.abs(entity.distance),
-		)
-		const nearby2dArray = groupInto2dArray(nearbySortedByDistance, 'axis')
-
-		const closestNearby2dArray = nearby2dArray.map((arr) => arr[0])
-		const closestEntity = closestNearby2dArray[0]
+		const closestEntity = getClosedEntityOnAxis(nearbyEntitiesOnAxis)
 
 		const gridLines = getEntityAxisGridLinesByAxisV2(closestEntity.bounds, closestEntity.axis)
 		const gridLineBounds = getBoundsFromArrPoints(gridLines)

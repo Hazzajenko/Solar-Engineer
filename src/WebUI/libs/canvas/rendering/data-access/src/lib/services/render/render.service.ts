@@ -12,6 +12,7 @@ import {
 	drawBoxWithOptionsCtx,
 	drawClickNearEntityBounds,
 	drawCreationDragBox,
+	drawEntityCreationPreview,
 	drawNearbyLineDrawCtxFnFromNearbyLinesStateOptimisedV2,
 	drawSelectedBox,
 	drawSelectedStringBoxV3,
@@ -37,12 +38,14 @@ import {
 	CANVAS_COLORS,
 	CanvasEntity,
 	CanvasPanel,
+	CanvasString,
 	PANEL_STROKE_STYLE,
 	UndefinedStringId,
 } from '@entities/shared'
 import { injectSvgs, injectSvgsV2 } from './svg-injector'
 import { SvgCursorImageRecord } from '../../svgs'
 import { throttle } from 'lodash'
+import { ObjectPositioningStoreService } from '@canvas/object-positioning/data-access'
 
 @Injectable({
 	providedIn: 'root',
@@ -61,6 +64,7 @@ export class RenderService {
 	private _graphicsStore = inject(GraphicsStoreService)
 	private _panelLinksStore = inject(PanelLinksStoreService)
 	private _panelLinks = inject(PanelLinksService)
+	private _objectPositioningStore = inject(ObjectPositioningStoreService)
 
 	private _throttleRender = false
 	private _renderOptions: Partial<CanvasRenderOptions> = {}
@@ -171,6 +175,15 @@ export class RenderService {
 							return !customPanels.map((panel) => panel.id).includes(entity.id)
 						})
 						.concat(customPanels)
+						.filter((entity) => {
+							if (!options?.nearby) return true
+
+							const { snapToGridBool, entityToMove } = options.nearby
+							if (snapToGridBool && entityToMove) {
+								return entity.id !== entityToMove.id
+							}
+							return true
+						})
 
 			this.drawEntities(ctx, entities)
 			ctx.restore()
@@ -180,7 +193,8 @@ export class RenderService {
 				this._selectedStore.state.selectedStringId &&
 				this._appStore.state.mode === 'LinkMode'
 			) {
-				this.drawLinkModePathLinesV2(ctx, options?.customEntities)
+				this.drawLinkModePathLinesV2(ctx, entities)
+				// this.drawLinkModePathLinesV2(ctx, options?.customEntities)
 			}
 
 			if (this._entities.panelLinks.hoveringOverPanelInLinkMenuId) {
@@ -217,19 +231,20 @@ export class RenderService {
 			if (shouldRenderSelectedStringBox && selectedStringId) {
 				const selectedString = this._entities.strings.getById(selectedStringId)
 				assertNotNull(selectedString, 'selectedString')
-				const selectedStringPanels = this._entities.panels.getByStringId(selectedString.id)
+				// const selectedStringPanels = this._entities.panels.getByStringId(selectedString.id)
 
-				drawSelectedStringBoxV3(ctx, selectedString, selectedStringPanels)
+				// drawSelectedStringBoxV3(ctx, selectedString, selectedStringPanels)
 				if (shouldRenderSelectedEntitiesBox && multipleSelectedEntityIds.length) {
 					drawSelectedBox(ctx, this._entities.panels.getByIds(multipleSelectedEntityIds))
 				}
 			}
 
 			if (this._graphicsStore.state.stringBoxes) {
-				const stringsWithPanels = this._entities.strings.allStrings.map((string) => ({
-					string,
-					panels: this._entities.panels.getByStringId(string.id),
-				}))
+				const stringsWithPanels = getStringsWithPanelsBasedOffSelectedString(
+					selectedStringId,
+					this._entities,
+				)
+
 				stringsWithPanels.forEach(({ string, panels }) => {
 					drawSelectedStringBoxV3(ctx, string, panels)
 				})
@@ -269,34 +284,28 @@ export class RenderService {
 				drawClickNearEntityBounds(ctx, this._clickNearEntityBounds)
 			}
 
-			/*	if (options?.transformedPoint && this._svgCursorImages) {
-			 const svgCursorImage = this._svgCursorImages['cursor']
-			 // svgCursorImage.draw(ctx, options.transformedPoint.x, options.transformedPoint.y)
-			 ctx.save()
-			 ctx.resetTransform()
-			 ctx.drawImage(
-			 svgCursorImage,
-			 options.transformedPoint.x,
-			 options.transformedPoint.y,
-			 20,
-			 20,
-			 )
-			 ctx.restore()
-			 }*/
+			if (this._objectPositioningStore.state.toMoveMultipleSpotTakenIds.length) {
+				const spotTakenIds = this._objectPositioningStore.state.toMoveMultipleSpotTakenIds
+				const spotTakenPanels = entities.filter((panel) => spotTakenIds.includes(panel.id))
+				drawBoxWithOptionsCtx(ctx, spotTakenPanels, {
+					color: CANVAS_COLORS.SpotTakenStrokeStyle,
+					lineWidth: 1,
+					padding: 5,
+				})
+			}
+
+			if (options?.creationPreviewBounds) {
+				drawEntityCreationPreview(ctx, options.creationPreviewBounds)
+			}
 		})
 	}
 
 	private checkFps() {
 		const currentTime = performance.now()
 		const deltaTime = currentTime - this.lastRenderTime
-		/*
-		 if (deltaTime && this.fpsEl) {
-		 this.fpsEl.innerText = `${this.averageFps.toFixed(1)} FPS`
-		 }*/
 
 		if (deltaTime >= 1000) {
 			this.fpsStats = this.framesThisSecond / (deltaTime / 1000)
-			console.log('fps', this.framesThisSecond / (deltaTime / 1000))
 			if (this.fpsEl) {
 				this.fpsEl.innerText = `${this.averageFps.toFixed(1)} FPS`
 			}
@@ -318,7 +327,6 @@ export class RenderService {
 			/**
 			 * Draw Entity
 			 */
-			// Custom cursor properties
 
 			if (!isPanel(entity)) return
 			let fillStyle: string = CANVAS_COLORS.DefaultPanelFillStyle
@@ -393,6 +401,12 @@ export class RenderService {
 			const pointerState = this._appStore.state.pointer
 			const hoveringOverEntityId = pointerState.hoveringOverEntityId
 			const isBeingHovered = !!hoveringOverEntityId && hoveringOverEntityId === entity.id
+
+			if (selectedState.selectedStringId) {
+				if (selectedState.selectedStringId !== entity.stringId || !isStringSelected) {
+					fillStyle = CANVAS_COLORS.UnselectedPanelFillStyle
+				}
+			}
 
 			if (isBeingHovered) {
 				// fillStyle = '#17fff3'
@@ -619,3 +633,26 @@ export const getSymbolLocationBasedOnIndex = (
  const p2 = { x: x + width / 2, y: y + height }
  return [p1, p2]
  }*/
+
+function getStringsWithPanelsBasedOffSelectedString(
+	selectedStringId: string | undefined,
+	entityStore: EntityStoreService,
+): {
+	string: CanvasString
+	panels: CanvasPanel[]
+}[] {
+	if (selectedStringId) {
+		const string = entityStore.strings.getById(selectedStringId)
+		assertNotNull(string, 'selectedString')
+		return [
+			{
+				string,
+				panels: entityStore.panels.getByStringId(string.id),
+			},
+		]
+	}
+	return entityStore.strings.allStrings.map((string) => ({
+		string,
+		panels: entityStore.panels.getByStringId(string.id),
+	}))
+}

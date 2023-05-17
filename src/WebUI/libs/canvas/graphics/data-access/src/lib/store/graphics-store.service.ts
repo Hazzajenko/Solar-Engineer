@@ -79,6 +79,10 @@ class GraphicsRepository {
 		this._store.dispatch(GraphicsActions.toggleNotifications())
 	}
 
+	toggleShowFPS() {
+		this._store.dispatch(GraphicsActions.toggleShowFPS())
+	}
+
 	resetGraphicsToDefault() {
 		this._store.dispatch(GraphicsActions.resetGraphicsToDefault())
 	}

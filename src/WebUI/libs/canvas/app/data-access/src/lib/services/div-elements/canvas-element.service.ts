@@ -23,7 +23,7 @@ export class CanvasElementService {
   init(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
     this._canvas = canvas
     this._ctx = ctx
-    console.log('CanvasElementService.init', this._canvas, this._ctx)
+    // console.log('CanvasElementService.init', this._canvas, this._ctx)
   }
 
   changeCursor(cursor: CursorType) {

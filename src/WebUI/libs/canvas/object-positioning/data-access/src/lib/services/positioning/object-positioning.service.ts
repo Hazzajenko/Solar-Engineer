@@ -1,7 +1,7 @@
 import { CanvasElementService } from '@canvas/app/data-access'
 import { DomPointService } from '../dom-point'
 import { GraphicsStoreService } from '@canvas/graphics/data-access'
-import { getSnapToGridBoolean } from '../nearby'
+import { getClosedEntityOnAxis, getSnapToGridBoolean } from '../nearby'
 import { ObjectPositioningStoreService } from '../../store'
 import { RenderService } from '@canvas/rendering/data-access'
 import { inject, Injectable } from '@angular/core'
@@ -14,12 +14,11 @@ import {
 	Point,
 	TransformedPoint,
 } from '@shared/data-access/models'
-import { assertNotNull, groupInto2dArray } from '@shared/utils'
-import { isEqual, sortBy } from 'lodash'
+import { assertNotNull, updateMany } from '@shared/utils'
+import { isEqual } from 'lodash'
 import { EntityStoreService } from '@entities/data-access'
 import {
 	changeCanvasCursor,
-	EntityFactory,
 	eventToEventPoint,
 	eventToPointLocation,
 	findNearbyBoundOverlapOnBothAxisExcludingIds,
@@ -31,7 +30,6 @@ import {
 	isHoldingClick,
 	isPointInsideBounds,
 	multiSelectDraggingKeysDown,
-	updateObjectById,
 } from '@canvas/utils'
 import {
 	CanvasEntity,
@@ -115,13 +113,14 @@ export class ObjectPositioningService {
 			return
 		}
 
-		const nearbySortedByDistance = sortBy(nearbyEntitiesOnAxis, (entity) =>
-			Math.abs(entity.distance),
-		)
-		const nearby2dArray = groupInto2dArray(nearbySortedByDistance, 'axis')
+		/*		const nearbySortedByDistance = sortBy(nearbyEntitiesOnAxis, (entity) =>
+		 Math.abs(entity.distance),
+		 )
+		 const nearby2dArray = groupInto2dArray(nearbySortedByDistance, 'axis')
 
-		const closestNearby2dArray = nearby2dArray.map((arr) => arr[0])
-		const closestEntity = closestNearby2dArray[0]
+		 const closestNearby2dArray = nearby2dArray.map((arr) => arr[0])*/
+		const closestEntity = getClosedEntityOnAxis(nearbyEntitiesOnAxis)
+		// const closestEntity = closestNearby2dArray[0]
 
 		const axisPreviewRect = getCtxRectBoundsByAxisV2(
 			closestEntity.bounds,
@@ -267,35 +266,31 @@ export class ObjectPositioningService {
 	}
 
 	stopMultipleEntitiesToMove(event: MouseEvent | Point) {
+		if (this._positioningStore.state.toMoveMultipleSpotTakenIds.length > 0) {
+			this._positioningStore.dispatch.stopMoving()
+			return
+		}
 		const multiToMoveStart = this.multiToMoveStart
 		assertNotNull(multiToMoveStart)
 		const dragStopPoint = event instanceof MouseEvent ? eventToPointLocation(event) : event
 		const scale = this._domPoint.scale
 		const offset = {
-			x: dragStopPoint.x - multiToMoveStart.x,
-			y: dragStopPoint.y - multiToMoveStart.y,
+			x: (dragStopPoint.x - multiToMoveStart.x) / scale,
+			y: (dragStopPoint.y - multiToMoveStart.y) / scale,
 		}
-		offset.x = offset.x / scale
-		offset.y = offset.y / scale
-		// const multipleToMoveIds = this.multipleToMoveIds
 		const entities = this._entities.panels.getByIds(this.multipleToMoveIds)
-		const multiSelectedUpdated = entities.map((entity) => {
-			const location = entity.location
-			const newLocation = {
-				x: location.x + offset.x,
-				y: location.y + offset.y,
-			}
-			return updateObjectById(entity, { location: newLocation })
-		})
+		const multiSelectedUpdated = entities.map((entity) => ({
+			...entity,
+			location: {
+				x: entity.location.x + offset.x,
+				y: entity.location.y + offset.y,
+			},
+		}))
 
-		const storeUpdates = multiSelectedUpdated.map((entity) => {
-			return EntityFactory.updateForStore(entity, { location: entity.location })
-		})
+		const storeUpdates = updateMany(multiSelectedUpdated, 'location')
 		this._entities.panels.updateManyPanels(storeUpdates as UpdateStr<CanvasPanel>[])
 
 		this._positioningStore.dispatch.stopMoving()
-		changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
-		console.log('stopMultiSelectDragging changeCanvasCursor')
 
 		this.multipleToMoveIds = []
 		this.multiToMoveStart = undefined

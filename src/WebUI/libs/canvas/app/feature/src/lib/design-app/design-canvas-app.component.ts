@@ -36,6 +36,7 @@ import { DraggableWindow } from '@shared/data-access/models'
 import { ContextMenuRendererComponent } from '@overlays/context-menus/feature'
 import { ObjectPositioningStoreService } from '@canvas/object-positioning/data-access'
 import { map } from 'rxjs'
+import { GraphicsStoreService } from '@canvas/graphics/data-access'
 
 @Component({
 	changeDetection: ChangeDetectionStrategy.OnPush,
@@ -75,6 +76,7 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 	private _element = inject(ElementRef).nativeElement
 	private _appStore = inject(AppStateStoreService)
 	private _uiStore = inject(UiStoreService)
+	private _graphicsStore = inject(GraphicsStoreService)
 	private _dialog = toSignal(this._uiStore.dialog$, { initialValue: this._uiStore.dialog })
 	// @ViewChildren('canvas') canvas: ElementRef<HTMLDivElement>
 	private _contextMenu = toSignal(this._uiStore.contextMenu$, {
@@ -100,6 +102,9 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 			toMoveSpotTaken: this._objectPositioningStore.state.toMoveSpotTaken,
 			rotateEntityState: this._objectPositioningStore.state.rotateEntityState,
 		},
+	})
+	showFpsState = toSignal(this._graphicsStore.state$.pipe(map((state) => state.showFps)), {
+		initialValue: this._graphicsStore.state.showFps,
 	})
 	@ViewChild('appStats', { static: true }) appStats!: ElementRef<HTMLDivElement>
 	cursorState = computed(() => {
@@ -150,17 +155,17 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 	}
 
 	ngOnInit() {
-		console.log(this.constructor.name, 'ngOnInit')
+		// console.log(this.constructor.name, 'ngOnInit')
 	}
 
 	ngAfterViewInit() {
-		console.log(this.constructor.name, 'ngAfterViewInit')
+		// console.log(this.constructor.name, 'ngAfterViewInit')
 		if (this.appStats) {
-			console.log(this.appStats.nativeElement)
+			// console.log(this.appStats.nativeElement)
 			const children = this.appStats.nativeElement.children
-			console.log(children)
+			// console.log(children)
 			for (let i = 0; i < children.length; i++) {
-				console.log(children[i])
+				// console.log(children[i])
 				this._divElements.addElement(children[i] as HTMLDivElement)
 			}
 		}

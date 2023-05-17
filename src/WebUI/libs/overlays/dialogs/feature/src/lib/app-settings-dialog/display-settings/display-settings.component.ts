@@ -22,10 +22,6 @@ export class DisplaySettingsComponent {
 	private _graphicsState = toSignal(this._graphicsStore.state$, {
 		initialValue: this._graphicsStore.state,
 	})
-	get graphicsState() {
-		return this._graphicsState()
-	}
-
 	toggleOptions: {
 		toggle: () => void
 		name: GraphicsStateBooleansKeys
@@ -36,5 +32,14 @@ export class DisplaySettingsComponent {
 			name: 'notifications',
 			label: 'Notifications',
 		},
+		{
+			toggle: () => this._graphicsStore.dispatch.toggleShowFPS(),
+			name: 'showFps',
+			label: 'FPS',
+		},
 	]
+
+	get graphicsState() {
+		return this._graphicsState()
+	}
 }

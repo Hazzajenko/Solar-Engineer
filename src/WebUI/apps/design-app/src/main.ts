@@ -24,7 +24,7 @@ import { storeDevtoolsModule } from '@shared/config'
 import { metaReducers, reducers } from '@shared/data-access/store'
 import { APP_STATE_FEATURE_KEY, appStateReducer } from '@canvas/app/data-access'
 import { UI_FEATURE_KEY, uiReducer } from '@overlays/ui-store/data-access'
-import { SELECTED_FEATURE_KEY, selectedReducer } from '@canvas/selected/data-access'
+import { provideSelectedFeature } from '@canvas/selected/data-access'
 import {
 	OBJECT_POSITIONING_FEATURE_KEY,
 	objectPositioningReducer,
@@ -93,7 +93,8 @@ export function provideCanvasAppStores() {
 		// providePanelLinksFeature(),
 		provideState(APP_STATE_FEATURE_KEY, appStateReducer),
 		provideState(UI_FEATURE_KEY, uiReducer),
-		provideState(SELECTED_FEATURE_KEY, selectedReducer),
+		provideSelectedFeature(),
+		// provideState(SELECTED_FEATURE_KEY, selectedReducer),
 		provideState(OBJECT_POSITIONING_FEATURE_KEY, objectPositioningReducer),
 		provideState(GRAPHICS_FEATURE_KEY, graphicsReducer),
 		provideState(WINDOWS_FEATURE_KEY, windowsReducer),

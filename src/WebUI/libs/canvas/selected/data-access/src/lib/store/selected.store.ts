@@ -1,6 +1,6 @@
-import { inject } from '@angular/core'
-import { Store } from '@ngrx/store'
-import { SelectedState } from './selected.reducer'
+import { inject, makeEnvironmentProviders } from '@angular/core'
+import { provideState, Store } from '@ngrx/store'
+import { SELECTED_FEATURE_KEY, selectedReducer, SelectedState } from './selected.reducer'
 import {
 	selectMultiSelectedEntities,
 	selectSelectedPanelLinkId,
@@ -9,6 +9,15 @@ import {
 	selectSingleSelectedEntity,
 } from './selected.selectors'
 import { SelectedActions } from './selected.actions'
+import { provideEffects } from '@ngrx/effects'
+import * as SelectedEffects from './selected.effects'
+
+export function provideSelectedFeature() {
+	return makeEnvironmentProviders([
+		provideState(SELECTED_FEATURE_KEY, selectedReducer),
+		provideEffects(SelectedEffects),
+	])
+}
 
 export function injectSelectedStore() {
 	const store = inject(Store<SelectedState>)

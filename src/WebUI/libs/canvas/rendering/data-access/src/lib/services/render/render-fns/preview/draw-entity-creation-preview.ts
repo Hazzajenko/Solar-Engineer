@@ -1,4 +1,4 @@
-import { CANVAS_COLORS } from '@entities/shared'
+import { CANVAS_COLORS, PANEL_STROKE_STYLE } from '@entities/shared'
 import { CanvasRenderOptions } from '../../../../types'
 
 export const drawEntityCreationPreview = (
@@ -9,10 +9,12 @@ export const drawEntityCreationPreview = (
 	ctx.beginPath()
 	ctx.globalAlpha = 0.4
 	ctx.fillStyle = CANVAS_COLORS.PreviewPanelFillStyle
+	ctx.strokeStyle = PANEL_STROKE_STYLE.DEFAULT
 	const { top, left, width, height } = creationPreviewBounds
-	ctx.rect(left, top, width, height)
-	// ctx.rect(completeBounds.left, completeBounds.top, completeBounds.width, completeBounds.height)
-	ctx.fill()
-	ctx.stroke()
+	ctx.fillRect(left, top, width, height)
+	ctx.strokeRect(left, top, width, height)
+	/*	ctx.rect(left, top, width, height)
+	 ctx.fill()
+	 ctx.stroke()*/
 	ctx.restore()
 }

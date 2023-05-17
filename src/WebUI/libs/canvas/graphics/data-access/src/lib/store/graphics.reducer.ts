@@ -17,6 +17,7 @@ export type GraphicsState = {
 	linkModeOrderNumbers: boolean
 	linkModePathLines: boolean
 	notifications: boolean
+	showFps: boolean
 	history: Partial<GraphicsState>
 }
 
@@ -32,6 +33,7 @@ export const initialGraphicsState: GraphicsState = {
 	linkModeOrderNumbers: true,
 	linkModePathLines: true,
 	notifications: true,
+	showFps: false,
 	history: {},
 }
 
@@ -96,6 +98,11 @@ const reducer = createReducer(
 	on(GraphicsActions.toggleNotifications, (state) => ({
 		...state,
 		notifications: !state.notifications,
+	})),
+
+	on(GraphicsActions.toggleShowFPS, (state) => ({
+		...state,
+		showFps: !state.showFps,
 	})),
 	on(GraphicsActions.resetGraphicsToDefault, () => initialGraphicsState),
 )

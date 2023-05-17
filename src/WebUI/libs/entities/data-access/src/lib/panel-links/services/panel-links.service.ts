@@ -214,6 +214,9 @@ export class PanelLinksService {
 			if (this._panelLinksStore.state.requestingLink) {
 				this.clearPanelLinkRequest()
 			}
+			if (this._selectedStore.state.selectedPanelLinkId) {
+				this._selectedStore.clearPanelLink()
+			}
 			return
 		}
 

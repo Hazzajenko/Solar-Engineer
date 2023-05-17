@@ -98,8 +98,8 @@ export const drawCenterLineBetweenTwoEntitiesWithPreviewFnV3 = (
 		nearbyOptions
 	ctx.save()
 	ctx.beginPath()
-	entityToMove ? (ctx.globalAlpha = 1) : (ctx.globalAlpha = 0.6)
-	ctx.fillStyle = fillStyle
+	// entityToMove ? (ctx.globalAlpha = 1) : (ctx.globalAlpha = 0.6)
+	// ctx.fillStyle = fillStyle
 
 	handleSnapToGridWhenNearby(
 		ctx,
@@ -110,8 +110,8 @@ export const drawCenterLineBetweenTwoEntitiesWithPreviewFnV3 = (
 		entityToMove,
 	)
 
-	ctx.fill()
-	ctx.stroke()
+	// ctx.fill()
+	// ctx.stroke()
 	ctx.restore()
 	ctx.save()
 	drawLineBetweenTwoEntitiesV2(ctx, closestEntity, axisPreviewRect, snapToGridBool)

@@ -10,8 +10,13 @@
 <!--cursor: toMoveState === "MovingSingleEntity" ? "grabbing" : "",-->
 
 <div #appStats class="absolute z-50">
-	<div id="fps"></div>
-	<div id="scale-element"></div>
+	<div
+		[ngStyle]="{
+			display: showFpsState() ? 'block' : 'none'
+		}"
+		id="fps"
+	></div>
+	<div id="scale-element" style="display: none"></div>
 </div>
 
 <!--<app-action-notifications-display class='z-50 pointer-events-auto' />-->
