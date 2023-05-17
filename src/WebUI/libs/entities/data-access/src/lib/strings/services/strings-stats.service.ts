@@ -4,6 +4,7 @@ import { injectStringsStore } from '../store'
 import { assertNotNull } from '@shared/utils'
 import { injectPanelConfigsStore } from '../../panel-configs'
 import { CanvasPanel, PanelConfig } from '@entities/shared'
+import { injectPanelsStore } from '../../panels'
 
 @Injectable({
 	providedIn: 'root',
@@ -11,19 +12,22 @@ import { CanvasPanel, PanelConfig } from '@entities/shared'
 export class StringsStatsService {
 	private _selectedStore = injectSelectedStore()
 	private _stringsStore = injectStringsStore()
+	private _panelsStore = injectPanelsStore()
 	private _panelConfigsStore = injectPanelConfigsStore()
 
-	calculateStringStatsForSelectedString() {
+	calculateStringStatsForSelectedString(): StringStatStrings {
 		const selectedStringId = this._selectedStore.selectedStringId
 		assertNotNull(selectedStringId)
-		// if (!selectedString) return
-		const stringWithPanels = this._stringsStore.getStringByIdWithPanels(selectedStringId)
-		assertNotNull(stringWithPanels)
-		const { string, panels } = stringWithPanels
+		const stringPanels = this._panelsStore.getByStringId(selectedStringId)
+		/*		const stringPanels = this._panelsStore.getByStringId(selectedStringId)
+		 // if (!selectedString) return
+		 const stringWithPanels = this._stringsStore.getStringByIdWithPanels(selectedStringId)
+		 assertNotNull(stringWithPanels)
+		 const { string, panels } = stringWithPanels*/
 		// const stringStats = this.calculateStringStats(string, panels)
 		// console.log('stringStats', string, panels)
 
-		const panelsWithSpecs = panels.map((panel) => {
+		const panelsWithSpecs = stringPanels.map((panel) => {
 			const panelConfig = this._panelConfigsStore.getById(panel.panelConfigId)
 			assertNotNull(panelConfig)
 			return mapPanelToPanelWithConfig(panel, panelConfig)
@@ -31,25 +35,29 @@ export class StringsStatsService {
 
 		const { totalVoc, totalVmp } = this.calculateStringVoltage(panelsWithSpecs)
 		const { totalIsc, totalImp } = this.calculateStringCurrent(panelsWithSpecs)
-		const { totalPower } = this.calculateStringPower(panelsWithSpecs)
+		const { totalPmax } = this.calculateStringPower(panelsWithSpecs)
 
 		const stringStats = {
 			totalVoc,
 			totalVmp,
 			totalIsc,
 			totalImp,
-			totalPower,
+			totalPmax,
 		}
 
-		console.log('stringStats', stringStats)
-		/*
-		 panels.forEach((panel) => {
-		 const panelConfig = this._panelConfigsStore.getById(panel.panelConfigId)
-		 assertNotNull(panelConfig)
+		// console.log('stringStats', stringStats)
 
-		 // const { brand: { dim } } = panelConfig
-		 // console.log('panelType', panelType)
-		 })*/
+		const stringStatStrings = {
+			totalVoc: `${totalVoc.toFixed(2)} V`,
+			totalVmp: `${totalVmp.toFixed(2)} V`,
+			totalIsc: `${totalIsc.toFixed(2)} A`,
+			totalImp: `${totalImp.toFixed(2)} A`,
+			totalPmax: `${totalPmax.toFixed(2)} W`,
+		}
+
+		// console.log('stringStatStrings', stringStatStrings)
+
+		return stringStatStrings
 	}
 
 	private calculateStringVoltage(panelsWithSpecs: PanelWithConfig[]) {
@@ -73,16 +81,32 @@ export class StringsStatsService {
 	}
 
 	private calculateStringPower(panelsWithSpecs: PanelWithConfig[]) {
-		let totalPower = 0
+		let totalPmax = 0
 		panelsWithSpecs.forEach((panel) => {
-			totalPower += panel.maximumPower
+			totalPmax += panel.maximumPower
 		})
-		return { totalPower }
+		return { totalPmax }
 	}
 }
 
 export type PanelWithConfig = Pick<CanvasPanel, 'id'> &
 	Omit<PanelConfig, 'name' | 'id' | 'brand' | 'model'>
+
+export type StringStats = {
+	totalVoc: number
+	totalVmp: number
+	totalIsc: number
+	totalImp: number
+	totalPmax: number
+}
+
+export type StringStatStrings = {
+	totalVoc: string
+	totalVmp: string
+	totalIsc: string
+	totalImp: string
+	totalPmax: string
+}
 
 function mapPanelToPanelWithConfig(panel: CanvasPanel, panelConfig: PanelConfig): PanelWithConfig {
 	const {
@@ -115,41 +139,3 @@ function mapPanelToPanelWithConfig(panel: CanvasPanel, panelConfig: PanelConfig)
 }
 
 const getSmallerNumberOutOfTwoNumbers = (a: number, b: number) => (a < b ? a : b)
-/*function getSmallerNumberOutOfTwoNumbers(a: number, b: number) {
- return a < b ? a : b
- }*/
-
-/*export type PanelWithConfig = {
- id: panel.id,
- maximumPowerTemp,
- openCircuitVoltage,
- openCircuitVoltageTemp,
- shortCircuitCurrentTemp,
- voltageAtMaximumPower,
- shortCircuitCurrent,
- currentAtMaximumPower,
- maximumPower,
- weight,
- panelLength,
- panelWidth,
- }*/
-
-// export type StringStats = {
-// 	stringVoltage: number
-// 	stringCurrent: number
-// 	stringPower: number
-// 	stringLength: number
-// 	stringWidth: number
-// 	stringWeight: number
-// 	stringPanels: {
-// 		panelId: string & {
-// 			readonly _type: 'panelId'
-// 		}
-// 		panelVoltage: number
-// 		panelCurrent: number
-// 		panelPower: number
-// 		panelLength: number
-// 		panelWidth: number
-// 		panelWeight: number
-// 	}[]
-// }

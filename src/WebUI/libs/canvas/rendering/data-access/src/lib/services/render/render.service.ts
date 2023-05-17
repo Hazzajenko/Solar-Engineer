@@ -16,6 +16,7 @@ import {
 	drawNearbyLineDrawCtxFnFromNearbyLinesStateOptimisedV2,
 	drawSelectedBox,
 	drawSelectedStringBoxV3,
+	drawSelectedStringBoxWithStats,
 	drawSelectionDragBox,
 } from './render-fns'
 import { inject, Injectable } from '@angular/core'
@@ -25,6 +26,7 @@ import {
 	EntityStoreService,
 	PanelLinksService,
 	PanelLinksStoreService,
+	StringsStatsService,
 } from '@entities/data-access'
 import {
 	getNegativeSymbolLocation,
@@ -65,6 +67,7 @@ export class RenderService {
 	private _panelLinksStore = inject(PanelLinksStoreService)
 	private _panelLinks = inject(PanelLinksService)
 	private _objectPositioningStore = inject(ObjectPositioningStoreService)
+	private _stringStats = inject(StringsStatsService)
 
 	private _throttleRender = false
 	private _renderOptions: Partial<CanvasRenderOptions> = {}
@@ -240,14 +243,25 @@ export class RenderService {
 			}
 
 			if (this._graphicsStore.state.stringBoxes) {
-				const stringsWithPanels = getStringsWithPanelsBasedOffSelectedString(
-					selectedStringId,
-					this._entities,
-				)
-
-				stringsWithPanels.forEach(({ string, panels }) => {
-					drawSelectedStringBoxV3(ctx, string, panels)
-				})
+				/*				const stringsWithPanels = getStringsWithPanelsBasedOffSelectedString(
+				 selectedStringId,
+				 this._entities,
+				 )*/
+				if (selectedStringId) {
+					const string = this._entities.strings.getById(selectedStringId)
+					assertNotNull(string, 'selectedString')
+					const panels = this._entities.panels.getByStringId(string.id)
+					const stringStats = this._stringStats.calculateStringStatsForSelectedString()
+					drawSelectedStringBoxWithStats(ctx, string, panels, stringStats)
+				} else {
+					const stringsWithPanels = this._entities.strings.allStrings.map((string) => ({
+						string,
+						panels: this._entities.panels.getByStringId(string.id),
+					}))
+					stringsWithPanels.forEach(({ string, panels }) => {
+						drawSelectedStringBoxV3(ctx, string, panels)
+					})
+				}
 			}
 
 			if (options?.nearby && this._graphicsStore.state.nearbyLines) {
