@@ -1,10 +1,11 @@
-import { Injectable } from '@angular/core'
+import { inject, Injectable } from '@angular/core'
 import { injectSelectedStore } from '@canvas/selected/data-access'
 import { injectStringsStore } from '../store'
 import { assertNotNull } from '@shared/utils'
 import { injectPanelConfigsStore } from '../../panel-configs'
 import { CanvasPanel, PanelConfig } from '@entities/shared'
 import { injectPanelsStore } from '../../panels'
+import { injectPanelLinksStore, PanelLinksService } from '../../panel-links'
 
 @Injectable({
 	providedIn: 'root',
@@ -14,18 +15,13 @@ export class StringsStatsService {
 	private _stringsStore = injectStringsStore()
 	private _panelsStore = injectPanelsStore()
 	private _panelConfigsStore = injectPanelConfigsStore()
+	private _panelLinks = inject(PanelLinksService)
+	private _panelLinksStore = injectPanelLinksStore()
 
 	calculateStringStatsForSelectedString(): StringStatStrings {
 		const selectedStringId = this._selectedStore.selectedStringId
 		assertNotNull(selectedStringId)
 		const stringPanels = this._panelsStore.getByStringId(selectedStringId)
-		/*		const stringPanels = this._panelsStore.getByStringId(selectedStringId)
-		 // if (!selectedString) return
-		 const stringWithPanels = this._stringsStore.getStringByIdWithPanels(selectedStringId)
-		 assertNotNull(stringWithPanels)
-		 const { string, panels } = stringWithPanels*/
-		// const stringStats = this.calculateStringStats(string, panels)
-		// console.log('stringStats', string, panels)
 
 		const panelsWithSpecs = stringPanels.map((panel) => {
 			const panelConfig = this._panelConfigsStore.getById(panel.panelConfigId)
@@ -37,27 +33,40 @@ export class StringsStatsService {
 		const { totalIsc, totalImp } = this.calculateStringCurrent(panelsWithSpecs)
 		const { totalPmax } = this.calculateStringPower(panelsWithSpecs)
 
-		const stringStats = {
-			totalVoc,
-			totalVmp,
-			totalIsc,
-			totalImp,
-			totalPmax,
+		return {
+			totalVoc: `VOC: ${totalVoc.toFixed(2)} V`,
+			totalVmp: `VMP: ${totalVmp.toFixed(2)} V`,
+			totalIsc: `ISC: ${totalIsc.toFixed(2)} A`,
+			totalImp: `IMP: ${totalImp.toFixed(2)} A`,
+			totalPmax: `PMAX: ${totalPmax.toFixed(2)} W`,
 		}
+		/*		return {
+		 totalVoc,
+		 totalVmp,
+		 totalIsc,
+		 totalImp,
+		 totalPmax,
+		 }*/
+		/*
+		 // console.log('stringStats', stringStats)
 
-		// console.log('stringStats', stringStats)
+		 const stringStatStrings = {
+		 totalVoc: `${totalVoc.toFixed(2)} V`,
+		 totalVmp: `${totalVmp.toFixed(2)} V`,
+		 totalIsc: `${totalIsc.toFixed(2)} A`,
+		 totalImp: `${totalImp.toFixed(2)} A`,
+		 totalPmax: `${totalPmax.toFixed(2)} W`,
+		 }
 
-		const stringStatStrings = {
-			totalVoc: `${totalVoc.toFixed(2)} V`,
-			totalVmp: `${totalVmp.toFixed(2)} V`,
-			totalIsc: `${totalIsc.toFixed(2)} A`,
-			totalImp: `${totalImp.toFixed(2)} A`,
-			totalPmax: `${totalPmax.toFixed(2)} W`,
-		}
+		 // console.log('stringStatStrings', stringStatStrings)
 
-		// console.log('stringStatStrings', stringStatStrings)
+		 return stringStatStrings*/
+	}
 
-		return stringStatStrings
+	calculateStringPanelLinkStatsForString(stringId: string) {
+		const panelLinks = this._panelLinksStore.getByStringId(stringId)
+		const panelLinksInJoinedOrder = this._panelLinks.getPanelLinkOrderForString(stringId)
+		// const panelLinksInJoinedOrder = this._panelLinksStore.getPanelLinksInJoinedOrder(panelLinks)
 	}
 
 	private calculateStringVoltage(panelsWithSpecs: PanelWithConfig[]) {

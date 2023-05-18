@@ -42,6 +42,7 @@ import {
 	CanvasPanel,
 	CanvasString,
 	PANEL_STROKE_STYLE,
+	PanelLinkModel,
 	UndefinedStringId,
 } from '@entities/shared'
 import { injectSvgs, injectSvgsV2 } from './svg-injector'
@@ -510,6 +511,59 @@ export class RenderService {
 	}
 
 	private drawLinkModeOrderNumbers(ctx: CanvasRenderingContext2D, panel: CanvasPanel) {
+		const linksInOrder = this._panelLinks.getPanelLinkOrderForSelectedStringV2()
+		if (!linksInOrder.length) {
+			return
+		}
+		linksInOrder.forEach((linkChain) => {
+			const chainSorted = getChainSorted(linkChain)
+			const isPanelInThisChain =
+				chainSorted.some((link) => link?.positivePanelId === panel.id) ||
+				chainSorted[chainSorted.length - 1]?.negativePanelId === panel.id
+			if (!isPanelInThisChain) {
+				return
+			}
+			const linkIndex = chainSorted.findIndex((link) => link?.positivePanelId === panel.id)
+			const chainIndex = linkIndex !== -1 ? linkIndex : chainSorted.length
+			ctx.save()
+			const fontSize = 10
+			ctx.font = `${fontSize}px Consolas, sans-serif`
+			const text = `${chainIndex + 1}`
+			const metrics = ctx.measureText(text)
+			const x = 0 - metrics.width / 2
+			const y = fontSize / 4
+
+			ctx.fillStyle = 'black'
+
+			ctx.fillText(text, x, y)
+			ctx.restore()
+			/*			if (linkIndex !== -1) {
+			 ctx.save()
+			 const fontSize = 10
+			 ctx.font = `${fontSize}px Consolas, sans-serif`
+			 const text = `${linkIndex + 1}`
+			 const metrics = ctx.measureText(text)
+			 const x = 0 - metrics.width / 2
+			 const y = fontSize / 4
+			 ctx.fillStyle = 'black'
+			 ctx.fillText(text, x, y)
+			 ctx.restore()
+			 } else if (chainSorted[chainSorted.length - 1]?.negativePanelId === panel.id) {
+			 ctx.save()
+			 const fontSize = 10
+			 ctx.font = `${fontSize}px Consolas, sans-serif`
+			 const text = `${chainSorted.length + 1}`
+			 const metrics = ctx.measureText(text)
+			 const x = 0 - metrics.width / 2
+			 const y = fontSize / 4
+			 ctx.fillStyle = 'black'
+			 ctx.fillText(text, x, y)
+			 ctx.restore()
+			 }*/
+		})
+	}
+
+	private drawLinkModeOrderNumbersOld(ctx: CanvasRenderingContext2D, panel: CanvasPanel) {
 		const linksInOrder = this._panelLinks.getPanelLinkOrderForSelectedString()
 		if (!linksInOrder.length) {
 			return
@@ -669,4 +723,13 @@ function getStringsWithPanelsBasedOffSelectedString(
 		string,
 		panels: entityStore.panels.getByStringId(string.id),
 	}))
+}
+
+function getChainSorted(linkChain: PanelLinkModel[]) {
+	return linkChain.sort((a, b) => {
+		if (!a || !b) {
+			return 0
+		}
+		return a.positivePanelId === b.negativePanelId ? 1 : -1
+	})
 }
