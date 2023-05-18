@@ -3,6 +3,7 @@ import { Store } from '@ngrx/store'
 import {
 	selectAllPanelLinks,
 	selectHoveringOverPanelInLinkMenuId,
+	selectHoveringOverPanelLinkInLinkMenu,
 	selectPanelLinksEntities,
 	selectPanelLinksState,
 } from './panel-links.selectors'
@@ -10,6 +11,7 @@ import { isNotNull } from '@shared/utils'
 import { PanelLinksActions } from './panel-links.actions'
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { PanelLinkModel, Polarity } from '@entities/shared'
+import { PanelLinksState } from './panel-links.reducer'
 
 export function injectPanelLinksStore() {
 	const store = inject(Store)
@@ -23,6 +25,9 @@ export function injectPanelLinksStore() {
 		},
 		get hoveringOverPanelInLinkMenuId() {
 			return store.selectSignal(selectHoveringOverPanelInLinkMenuId)()
+		},
+		get hoveringOverPanelLinkInLinkMenu() {
+			return store.selectSignal(selectHoveringOverPanelLinkInLinkMenu)()
 		},
 		getById(id: string) {
 			return entities()[id]
@@ -41,6 +46,12 @@ export function injectPanelLinksStore() {
 				(panelLink) =>
 					panelLink.positivePanelId === panelId || panelLink.negativePanelId === panelId,
 			)
+		},
+		getLinksMappedByPanelId(panelId: string) {
+			return {
+				positiveToLink: allPanelLinks().find((panelLink) => panelLink.positivePanelId === panelId),
+				negativeToLink: allPanelLinks().find((panelLink) => panelLink.negativePanelId === panelId),
+			}
 		},
 		isPanelLinkExisting(panelId: string, polarity: Polarity) {
 			return !!allPanelLinks().find(
@@ -69,14 +80,26 @@ export function injectPanelLinksStore() {
 		deleteManyPanelLinks(panelLinkIds: string[]) {
 			store.dispatch(PanelLinksActions.deleteManyPanelLinks({ panelLinkIds }))
 		},
-		clearPanelLinksState() {
-			store.dispatch(PanelLinksActions.clearPanelLinksState())
-		},
 		setHoveringOverPanelInLinkMenuId(panelId: string) {
 			store.dispatch(PanelLinksActions.setHoveringOverPanelInLinkMenuId({ panelId }))
 		},
 		clearHoveringOverPanelInLinkMenuId() {
 			store.dispatch(PanelLinksActions.clearHoveringOverPanelInLinkMenuId())
+		},
+		setHoveringOverPanelLinkInLinkMenu(
+			hoveringOverPanelLink: NonNullable<PanelLinksState['hoveringOverPanelLinkInLinkMenu']>,
+		) {
+			store.dispatch(
+				PanelLinksActions.setHoveringOverPanelLinkInLinkMenu({
+					hoveringOverPanelLink,
+				}),
+			)
+		},
+		clearHoveringOverPanelLinkInLinkMenu() {
+			store.dispatch(PanelLinksActions.clearHoveringOverPanelLinkInLinkMenu())
+		},
+		clearPanelLinksState() {
+			store.dispatch(PanelLinksActions.clearPanelLinksState())
 		},
 	}
 }

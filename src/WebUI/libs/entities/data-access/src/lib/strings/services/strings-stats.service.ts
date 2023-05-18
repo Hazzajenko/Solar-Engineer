@@ -18,7 +18,7 @@ export class StringsStatsService {
 	private _panelLinks = inject(PanelLinksService)
 	private _panelLinksStore = injectPanelLinksStore()
 
-	calculateStringStatsForSelectedString(): StringStatStrings {
+	calculateStringStatsForSelectedString() {
 		const selectedStringId = this._selectedStore.selectedStringId
 		assertNotNull(selectedStringId)
 		const stringPanels = this._panelsStore.getByStringId(selectedStringId)
@@ -33,40 +33,37 @@ export class StringsStatsService {
 		const { totalIsc, totalImp } = this.calculateStringCurrent(panelsWithSpecs)
 		const { totalPmax } = this.calculateStringPower(panelsWithSpecs)
 
+		const { amountOfChains, amountOfLinks, panelsWithoutLinks } =
+			this.calculateStringPanelLinkStatsForString(selectedStringId, stringPanels)
+
 		return {
 			totalVoc: `VOC: ${totalVoc.toFixed(2)} V`,
 			totalVmp: `VMP: ${totalVmp.toFixed(2)} V`,
 			totalIsc: `ISC: ${totalIsc.toFixed(2)} A`,
 			totalImp: `IMP: ${totalImp.toFixed(2)} A`,
 			totalPmax: `PMAX: ${totalPmax.toFixed(2)} W`,
+			amountOfChains: `Chains: ${amountOfChains}`,
+			amountOfLinks: `Links: ${amountOfLinks}`,
+			panelsWithoutLinks: `Panels without links: ${panelsWithoutLinks}`,
 		}
-		/*		return {
-		 totalVoc,
-		 totalVmp,
-		 totalIsc,
-		 totalImp,
-		 totalPmax,
-		 }*/
-		/*
-		 // console.log('stringStats', stringStats)
-
-		 const stringStatStrings = {
-		 totalVoc: `${totalVoc.toFixed(2)} V`,
-		 totalVmp: `${totalVmp.toFixed(2)} V`,
-		 totalIsc: `${totalIsc.toFixed(2)} A`,
-		 totalImp: `${totalImp.toFixed(2)} A`,
-		 totalPmax: `${totalPmax.toFixed(2)} W`,
-		 }
-
-		 // console.log('stringStatStrings', stringStatStrings)
-
-		 return stringStatStrings*/
 	}
 
-	calculateStringPanelLinkStatsForString(stringId: string) {
-		const panelLinks = this._panelLinksStore.getByStringId(stringId)
-		const panelLinksInJoinedOrder = this._panelLinks.getPanelLinkOrderForString(stringId)
-		// const panelLinksInJoinedOrder = this._panelLinksStore.getPanelLinksInJoinedOrder(panelLinks)
+	calculateStringPanelLinkStatsForString(stringId: string, stringPanels: CanvasPanel[]) {
+		const stringPanelLinkChains = this._panelLinks.getPanelLinkOrderForString(stringId)
+		const amountOfChains = stringPanelLinkChains.length
+		const amountOfLinks = stringPanelLinkChains.reduce((acc, chain) => acc + chain.length, 0)
+		const panelsWithoutLinks = stringPanels.filter((panel) => {
+			return !stringPanelLinkChains.some((chain) =>
+				chain.some(
+					(link) => link.positivePanelId === panel.id || link.negativePanelId === panel.id,
+				),
+			)
+		}).length
+		return {
+			amountOfChains,
+			amountOfLinks,
+			panelsWithoutLinks,
+		}
 	}
 
 	private calculateStringVoltage(panelsWithSpecs: PanelWithConfig[]) {

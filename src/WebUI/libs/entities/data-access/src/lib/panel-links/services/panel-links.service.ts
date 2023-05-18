@@ -106,17 +106,7 @@ export class PanelLinksService {
 
 	getPanelLinkOrderForString(stringId: string) {
 		const panelLinks = this._panelLinksStore.getByStringId(stringId)
-		return panelLinks
-			.map((panelLink) => ({
-				positivePanelId: panelLink.positivePanelId,
-				negativePanelId: panelLink.negativePanelId,
-			}))
-			.sort((a, b) => {
-				if (!a || !b) {
-					return 0
-				}
-				return a.positivePanelId === b.negativePanelId ? 1 : -1
-			})
+		return getPanelLinkOrderSeparateChains(panelLinks)
 	}
 
 	getPanelLinkOrderForSelectedStringV2() {

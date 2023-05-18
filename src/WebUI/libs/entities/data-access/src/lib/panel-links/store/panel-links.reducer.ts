@@ -14,6 +14,13 @@ export interface PanelLinksState extends EntityState<PanelLinkModel> {
 	error?: string | null
 	requestingLink: PanelLinkRequest | undefined
 	hoveringOverPanelInLinkMenuId: string | undefined
+	hoveringOverPanelLinkInLinkMenu:
+		| {
+				panelId: string
+				polarity: 'positive' | 'negative'
+				panelLinkId: string
+		  }
+		| undefined
 }
 
 export const panelLinksAdapter: EntityAdapter<PanelLinkModel> = createEntityAdapter<PanelLinkModel>(
@@ -26,6 +33,7 @@ export const initialPanelLinksState: PanelLinksState = panelLinksAdapter.getInit
 	loaded: false,
 	requestingLink: undefined,
 	hoveringOverPanelInLinkMenuId: undefined,
+	hoveringOverPanelLinkInLinkMenu: undefined,
 })
 
 const reducer = createReducer(
@@ -63,6 +71,14 @@ const reducer = createReducer(
 	on(PanelLinksActions.clearHoveringOverPanelInLinkMenuId, (state) => ({
 		...state,
 		hoveringOverPanelInLinkMenuId: undefined,
+	})),
+	on(PanelLinksActions.setHoveringOverPanelLinkInLinkMenu, (state, { hoveringOverPanelLink }) => ({
+		...state,
+		hoveringOverPanelLinkInLinkMenu: hoveringOverPanelLink,
+	})),
+	on(PanelLinksActions.clearHoveringOverPanelLinkInLinkMenu, (state) => ({
+		...state,
+		hoveringOverPanelLinkInLinkMenu: undefined,
 	})),
 	on(PanelLinksActions.clearPanelLinksState, () => initialPanelLinksState),
 )

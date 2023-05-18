@@ -7,6 +7,7 @@ export * from './draw-box-with-options.ctx'
 export * from './nearby/index'
 export * from './preview/index'
 export * from './entities/index'
+export * from './links/index'
 export * from './drag-box/index'
 
 // export * from './draw-axis-grid-lines'

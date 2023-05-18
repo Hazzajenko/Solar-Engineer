@@ -13,6 +13,7 @@ import {
 	drawClickNearEntityBounds,
 	drawCreationDragBox,
 	drawEntityCreationPreview,
+	drawLinkModePathLinesCurved,
 	drawNearbyLineDrawCtxFnFromNearbyLinesStateOptimisedV2,
 	drawSelectedBox,
 	drawSelectedStringBoxV3,
@@ -197,13 +198,41 @@ export class RenderService {
 				this._selectedStore.state.selectedStringId &&
 				this._appStore.state.mode === 'LinkMode'
 			) {
-				this.drawLinkModePathLinesV2(ctx, entities)
-				// this.drawLinkModePathLinesV2(ctx, options?.customEntities)
+				const linksInOrder = this._panelLinks.getPanelLinkOrderForSelectedStringWithPoints()
+				const selectedPanelLinkId = this._selectedStore.selectedPanelLinkId
+				const hoveringOverPanelLinkInLinkMenu =
+					this._entities.panelLinks.hoveringOverPanelLinkInLinkMenu
+				drawLinkModePathLinesCurved(
+					ctx,
+					entities,
+					linksInOrder,
+					selectedPanelLinkId,
+					hoveringOverPanelLinkInLinkMenu,
+				)
+				/*				drawLinkModePathLines(
+				 ctx,
+				 entities,
+				 linksInOrder,
+				 selectedPanelLinkId,
+				 hoveringOverPanelLinkInLinkMenu,
+				 )*/
 			}
 
 			if (this._entities.panelLinks.hoveringOverPanelInLinkMenuId) {
 				const panel = this._entities.panels.getById(
 					this._entities.panelLinks.hoveringOverPanelInLinkMenuId,
+				)
+				assertNotNull(panel, 'panel')
+				drawBoxWithOptionsCtx(ctx, [panel], {
+					color: CANVAS_COLORS.HoveringOverPanelInLinkMenuStrokeStyle,
+					lineWidth: 2,
+					padding: 5,
+				})
+			}
+
+			if (this._entities.panelLinks.hoveringOverPanelLinkInLinkMenu) {
+				const panel = this._entities.panels.getById(
+					this._entities.panelLinks.hoveringOverPanelLinkInLinkMenu.panelId,
 				)
 				assertNotNull(panel, 'panel')
 				drawBoxWithOptionsCtx(ctx, [panel], {
@@ -338,6 +367,10 @@ export class RenderService {
 	}
 
 	private drawEntities(ctx: CanvasRenderingContext2D, entities: CanvasPanel[]) {
+		const selectedStringId = this._selectedStore.state.selectedStringId
+		const linksInOrder = selectedStringId
+			? this._panelLinks.getPanelLinkOrderForSelectedStringV2()
+			: []
 		entities.forEach((entity) => {
 			/**
 			 * Draw Entity
@@ -374,8 +407,7 @@ export class RenderService {
 				}
 			}
 
-			const isStringSelected =
-				selectedState.selectedStringId && selectedState.selectedStringId === entity.stringId
+			const isStringSelected = selectedStringId && selectedStringId === entity.stringId
 
 			if (isStringSelected && graphicsState.selectedStringPanelFill) {
 				fillStyle = CANVAS_COLORS.StringSelectedPanelFillStyle
@@ -417,8 +449,8 @@ export class RenderService {
 			const hoveringOverEntityId = pointerState.hoveringOverEntityId
 			const isBeingHovered = !!hoveringOverEntityId && hoveringOverEntityId === entity.id
 
-			if (selectedState.selectedStringId) {
-				if (selectedState.selectedStringId !== entity.stringId || !isStringSelected) {
+			if (selectedStringId) {
+				if (selectedStringId !== entity.stringId || !isStringSelected) {
 					fillStyle = CANVAS_COLORS.UnselectedPanelFillStyle
 				}
 			}
@@ -451,7 +483,7 @@ export class RenderService {
 					this.drawLinkModeSymbols(ctx, entity)
 				}
 				if (this._graphicsStore.state.linkModeOrderNumbers) {
-					this.drawLinkModeOrderNumbers(ctx, entity)
+					this.drawLinkModeOrderNumbers(ctx, entity, linksInOrder)
 				}
 			}
 			/*				if (
@@ -510,57 +542,72 @@ export class RenderService {
 		ctx.restore()
 	}
 
-	private drawLinkModeOrderNumbers(ctx: CanvasRenderingContext2D, panel: CanvasPanel) {
-		const linksInOrder = this._panelLinks.getPanelLinkOrderForSelectedStringV2()
+	private drawLinkModeOrderNumbers(
+		ctx: CanvasRenderingContext2D,
+		panel: CanvasPanel,
+		linksInOrder: PanelLinkModel[][],
+	) {
 		if (!linksInOrder.length) {
 			return
 		}
-		linksInOrder.forEach((linkChain) => {
-			const chainSorted = getChainSorted(linkChain)
-			const isPanelInThisChain =
-				chainSorted.some((link) => link?.positivePanelId === panel.id) ||
-				chainSorted[chainSorted.length - 1]?.negativePanelId === panel.id
-			if (!isPanelInThisChain) {
-				return
-			}
-			const linkIndex = chainSorted.findIndex((link) => link?.positivePanelId === panel.id)
-			const chainIndex = linkIndex !== -1 ? linkIndex : chainSorted.length
-			ctx.save()
-			const fontSize = 10
-			ctx.font = `${fontSize}px Consolas, sans-serif`
-			const text = `${chainIndex + 1}`
-			const metrics = ctx.measureText(text)
-			const x = 0 - metrics.width / 2
-			const y = fontSize / 4
+		const chain = linksInOrder.findIndex((linkChain) =>
+			linkChain.some(
+				(link) => link?.positivePanelId === panel.id || link?.negativePanelId === panel.id,
+			),
+		)
 
-			ctx.fillStyle = 'black'
+		if (chain === -1) {
+			return
+		}
 
-			ctx.fillText(text, x, y)
-			ctx.restore()
-			/*			if (linkIndex !== -1) {
-			 ctx.save()
-			 const fontSize = 10
-			 ctx.font = `${fontSize}px Consolas, sans-serif`
-			 const text = `${linkIndex + 1}`
-			 const metrics = ctx.measureText(text)
-			 const x = 0 - metrics.width / 2
-			 const y = fontSize / 4
-			 ctx.fillStyle = 'black'
-			 ctx.fillText(text, x, y)
-			 ctx.restore()
-			 } else if (chainSorted[chainSorted.length - 1]?.negativePanelId === panel.id) {
-			 ctx.save()
-			 const fontSize = 10
-			 ctx.font = `${fontSize}px Consolas, sans-serif`
-			 const text = `${chainSorted.length + 1}`
-			 const metrics = ctx.measureText(text)
-			 const x = 0 - metrics.width / 2
-			 const y = fontSize / 4
-			 ctx.fillStyle = 'black'
-			 ctx.fillText(text, x, y)
-			 ctx.restore()
-			 }*/
-		})
+		const chainSorted = getChainSorted(linksInOrder[chain])
+		const linkIndex = chainSorted.findIndex((link) => link?.positivePanelId === panel.id)
+		const properIndex = linkIndex !== -1 ? linkIndex : chainSorted.length
+		ctx.save()
+		const fontSize = 10
+		ctx.font = `${fontSize}px Consolas, sans-serif`
+		const text = `${properIndex + 1}`
+		const metrics = ctx.measureText(text)
+		const x = -metrics.width / 2
+		const y = fontSize / 4
+		ctx.fillStyle = 'black'
+		ctx.fillText(text, x, y)
+		ctx.restore()
+
+		/*		const panelLinkChain = linksInOrder.find((linkChain) => {
+		 const chainSorted = getChainSorted(linkChain)
+		 return (
+		 chainSorted.some((link) => link?.positivePanelId === panel.id) ||
+		 chainSorted[chainSorted.length - 1]?.negativePanelId === panel.id
+		 )
+		 })
+		 if (!panelLinkChain) {
+		 return
+		 }*/
+
+		/*linksInOrder.forEach((linkChain) => {
+		 const chainSorted = getChainSorted(linkChain)
+		 const isPanelInThisChain =
+		 chainSorted.some((link) => link?.positivePanelId === panel.id) ||
+		 chainSorted[chainSorted.length - 1]?.negativePanelId === panel.id
+		 if (!isPanelInThisChain) {
+		 return
+		 }
+		 const linkIndex = chainSorted.findIndex((link) => link?.positivePanelId === panel.id)
+		 const chainIndex = linkIndex !== -1 ? linkIndex : chainSorted.length
+		 ctx.save()
+		 const fontSize = 10
+		 ctx.font = `${fontSize}px Consolas, sans-serif`
+		 const text = `${chainIndex + 1}`
+		 const metrics = ctx.measureText(text)
+		 const x = 0 - metrics.width / 2
+		 const y = fontSize / 4
+
+		 ctx.fillStyle = 'black'
+
+		 ctx.fillText(text, x, y)
+		 ctx.restore()
+		 })*/
 	}
 
 	private drawLinkModeOrderNumbersOld(ctx: CanvasRenderingContext2D, panel: CanvasPanel) {
@@ -653,6 +700,18 @@ export class RenderService {
 		ctx.lineWidth = 1
 
 		linksInOrder.forEach((link) => {
+			ctx.save()
+			ctx.beginPath()
+
+			if (this._selectedStore.selectedPanelLinkId === link.id) {
+				ctx.strokeStyle = 'red'
+				ctx.lineWidth = 2
+			}
+
+			if (this._entities.panelLinks.hoveringOverPanelLinkInLinkMenu?.panelLinkId === link.id) {
+				ctx.strokeStyle = 'red'
+				ctx.lineWidth = 2
+			}
 			link.linePoints.forEach((linePoint, index) => {
 				const drawFn = index === 0 ? ctx.moveTo : ctx.lineTo
 				const currentPanelId = index === 0 ? link.positivePanelId : link.negativePanelId
@@ -662,11 +721,15 @@ export class RenderService {
 				drawFn.call(ctx, point.x, point.y)
 			})
 
-			ctx.save()
-			if (this._selectedStore.selectedPanelLinkId === link.id) {
-				ctx.strokeStyle = 'red'
-				ctx.lineWidth = 2
-			}
+			/*			if (this._selectedStore.selectedPanelLinkId === link.id) {
+			 ctx.strokeStyle = 'red'
+			 ctx.lineWidth = 2
+			 }
+
+			 if (this._entities.panelLinks.hoveringOverPanelLinkInLinkMenu?.panelLinkId === link.id) {
+			 ctx.strokeStyle = 'red'
+			 ctx.lineWidth = 2
+			 }*/
 
 			ctx.stroke()
 			ctx.restore()

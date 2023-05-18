@@ -3,7 +3,7 @@
 import { assertNotNull } from '@shared/utils'
 import { getCompleteBoundsFromMultipleEntitiesWithPadding } from '@canvas/utils'
 import { CANVAS_COLORS, CanvasPanel, CanvasString } from '@entities/shared'
-import { EntityStoreService, StringStatStrings } from '@entities/data-access'
+import { EntityStoreService, StringsStatsService } from '@entities/data-access'
 // import { SelectedStateSnapshot } from '../../../../../../deprecated/design-app/feature-design-canvas/src/lib/services/canvas-client-state/+xstate/selected-state.machine'
 
 /*export const drawSelectedStringBox = (
@@ -96,7 +96,7 @@ export const drawSelectedStringBoxWithStats = (
 	ctx: CanvasRenderingContext2D,
 	selectedString: CanvasString,
 	selectedStringPanels: CanvasPanel[],
-	stringStats: StringStatStrings,
+	stringStats: ReturnType<StringsStatsService['calculateStringStatsForSelectedString']>, // stringStats: StringStatStrings,
 ) => {
 	const selectionBoxBounds = getCompleteBoundsFromMultipleEntitiesWithPadding(
 		selectedStringPanels,
@@ -122,12 +122,26 @@ export const drawSelectedStringBoxWithStats = (
 	 `IMP: ${stringStats.totalImp} A`,
 	 `PMAX: ${stringStats.totalPmax} W`,
 	 ]*/
+	const {
+		totalVoc,
+		totalVmp,
+		totalIsc,
+		totalImp,
+		totalPmax,
+		amountOfChains,
+		amountOfLinks,
+		panelsWithoutLinks,
+	} = stringStats
+
 	const statsTextLines = [
-		stringStats.totalVoc,
-		stringStats.totalVmp,
-		stringStats.totalIsc,
-		stringStats.totalImp,
-		stringStats.totalPmax,
+		totalVoc,
+		totalVmp,
+		totalIsc,
+		totalImp,
+		totalPmax,
+		amountOfChains,
+		amountOfLinks,
+		panelsWithoutLinks,
 	]
 	statsTextLines.forEach((line, index) => {
 		ctx.fillText(line, right + 10, top + index * 12 + stringNameTextHeight)

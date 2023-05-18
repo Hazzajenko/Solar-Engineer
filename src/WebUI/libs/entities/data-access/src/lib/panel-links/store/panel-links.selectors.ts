@@ -67,6 +67,11 @@ export const selectHoveringOverPanelInLinkMenuId = createSelector(
 	(state: PanelLinksState) => state.hoveringOverPanelInLinkMenuId,
 )
 
+export const selectHoveringOverPanelLinkInLinkMenu = createSelector(
+	selectPanelLinksState,
+	(state: PanelLinksState) => state.hoveringOverPanelLinkInLinkMenu,
+)
+
 /*
  export const selectPanelLinksForSelectedString = createSelector(
  selectAllPanelLinks,

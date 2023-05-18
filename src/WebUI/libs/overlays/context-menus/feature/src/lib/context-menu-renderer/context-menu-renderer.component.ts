@@ -19,25 +19,6 @@ import { StringMenuComponent } from '../string-menu/string-menu.component'
 import { PanelLinkMenuComponent } from '../panel-link-menu'
 
 export const contextMenuInputInjectionToken = new InjectionToken<ContextMenuInput>('')
-/*export const createInjectorFn = () => {
- const injector = inject(Injector);
-
- return (pokemon: FlattenPokemon) =>
- Injector.create({
- providers: [{ provide: POKEMON_TOKEN, useValue:pokemon }],
- parent: injector
- });
- }*/
-
-/*export const createPokemonInjectorFn = () => {
- const injector = inject(Injector);
-
- return (pokemon: FlattenPokemon) =>
- Injector.create({
- providers: [{ provide: POKEMON_TOKEN, useValue:pokemon }],
- parent: injector
- });
- }*/
 
 @Component({
 	selector: 'app-context-menu-renderer',

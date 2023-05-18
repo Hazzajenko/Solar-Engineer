@@ -130,17 +130,17 @@ export class DesignCanvasDirective implements OnInit {
 	ngOnInit() {
 		this.setupCanvas()
 		this.fpsEl = document.getElementById('fps') as HTMLDivElement
+		this.scaleElement = document.getElementById('scale-element') as HTMLDivElement
 		this._ngZone.runOutsideAngular(() => {
 			this.setupEventListeners()
 		})
-		this.canvasMenu = document.getElementById('canvas-menu') as HTMLDivElement
-		this.mousePos = document.getElementById('mouse-pos') as HTMLDivElement
-		this.transformedMousePos = document.getElementById('transformed-mouse-pos') as HTMLDivElement
-		this.scaleElement = document.getElementById('scale-element') as HTMLDivElement
-		this.stringStats = document.getElementById('string-stats') as HTMLDivElement
-		this.panelStats = document.getElementById('panel-stats') as HTMLDivElement
-		this.menu = document.getElementById('menu') as HTMLDivElement
-		this.keyMap = document.getElementById('key-map') as HTMLDivElement
+		/*		this.canvasMenu = document.getElementById('canvas-menu') as HTMLDivElement
+		 this.mousePos = document.getElementById('mouse-pos') as HTMLDivElement
+		 this.transformedMousePos = document.getElementById('transformed-mouse-pos') as HTMLDivElement
+		 this.stringStats = document.getElementById('string-stats') as HTMLDivElement
+		 this.panelStats = document.getElementById('panel-stats') as HTMLDivElement
+		 this.menu = document.getElementById('menu') as HTMLDivElement
+		 this.keyMap = document.getElementById('key-map') as HTMLDivElement*/
 	}
 
 	/**
@@ -186,15 +186,6 @@ export class DesignCanvasDirective implements OnInit {
 
 	onMouseMoveHandler(event: PointerEvent, currentPoint: TransformedPoint) {
 		this.currentTransformedCursor = currentPoint
-		// changeCanvasCursor(this.canvas, CURSOR_TYPE.NONE)
-
-		/*		const cursorRadius = 100
-		 const cursorColor = 'red'
-		 const { x, y } = eventToPointLocation(event)
-		 this.ctx.beginPath()
-		 this.ctx.arc(x, y, cursorRadius, 0, 2 * Math.PI)
-		 this.ctx.fillStyle = cursorColor
-		 this.ctx.fill()*/
 
 		/**
 		 * ! Object Positioning
@@ -571,14 +562,6 @@ export class DesignCanvasDirective implements OnInit {
 					panelId: entityUnderMouse.id,
 				},
 			})
-			/*			this._uiStore.dispatch.openContextMenu({
-			 location: {
-			 x: event.clientX,
-			 y: event.clientY,
-			 },
-			 component: 'app-single-panel-menu',
-			 data: { panelId },
-			 })*/
 			return
 		}
 
@@ -599,42 +582,19 @@ export class DesignCanvasDirective implements OnInit {
 				this._selected.clearSingleOrMultipleSelected()
 				return
 			}
-			/*
-			 this._uiStore.dispatch.openContextMenu({
-			 component: CONTEXT_MENU_COMPONENT.PANEL_LINK_MENU,
-			 location: {
-			 x: event.offsetX,
-			 y: event.offsetY,
-			 },
-			 data: {
-			 panelLinkId: selectedStringId,
-			 },
-			 })
-			 // this._panelLinks.handleLinkModeContextMenu(event, currentPoint)
-			 return*/
 		}
 
 		const selectedStringId = this._selectedStore.state.selectedStringId
 		if (selectedStringId) {
 			const selectedStringPanels = this._entities.panels.getByStringId(selectedStringId) ?? []
-			// const stringPanels = this._entities.panels.getEntitiesByStringId(selectedStringId)
 			const pointInsideSelectedStringPanels =
 				isPointInsideSelectedStringPanelsByStringIdNgrxWithPanels(
 					selectedStringPanels,
 					selectedStringId,
 					currentPoint,
 				)
-			/*			const pointInsideSelectedStringPanels = isPointInsideSelectedStringPanelsByStringId(
-			 this._entities,
-			 selectedStringId,
-			 currentPoint,
-			 )*/
 			if (pointInsideSelectedStringPanels) {
-				// const selectedStringId = selectedCtx.selectedStringId
 				assertNotNull(selectedStringId)
-				// const stringPanels = this._entities.panels.getEntitiesByStringId(selectedStringId)
-				// const stringPanels = this._entities.panels.getEntitiesByStringId(selectedStringId)
-				// const stringPanelsIds = selectedStringPanels.map((panel) => panel.id)
 				this._uiStore.dispatch.openContextMenu({
 					component: CONTEXT_MENU_COMPONENT.STRING_MENU,
 					location: {
