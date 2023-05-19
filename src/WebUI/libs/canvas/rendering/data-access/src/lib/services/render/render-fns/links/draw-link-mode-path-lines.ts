@@ -2,7 +2,7 @@ import { CanvasEntity, PanelLinkModel } from '@entities/shared'
 import { getSymbolLocationBasedOnIndex } from '../../render.service'
 import { PanelLinksStore } from '@entities/data-access'
 import { Point } from '@shared/data-access/models'
-import { drawSplines } from './draw-splines'
+import { drawSplinesRework } from './draw-splines-rework'
 
 export const drawLinkModePathLines = (
 	ctx: CanvasRenderingContext2D,
@@ -58,25 +58,65 @@ export const drawLinkModePathLinesCurved = (
 	if (!linksInOrder.length) {
 		return
 	}
+	if (linksInOrder.length < 2) {
+		return
+	}
 	ctx.save()
 	ctx.strokeStyle = 'black'
 	ctx.lineWidth = 1
 
-	const pointsMappedToCenter = linksInOrder.map((link) => {
-		const firstPoint = link.linePoints[0]
-		const lastPoint = link.linePoints[1]
-		const centerPoint = {
-			x: (firstPoint.x + lastPoint.x) / 2,
-			y: (firstPoint.y + lastPoint.y) / 2,
-		}
-		return centerPoint
-	})
+	/*	const pointsMappedToCenter = linksInOrder.map((link, index) => {
+	 /!*		const firstPoint = link.linePoints[0]
+	 const lastPoint = link.linePoints[1]*!/
+	 const firstPoint = link.linePoints[1]
+	 if (linksInOrder[index + 1]) {
+	 const lastPoint = linksInOrder[index + 1].linePoints[0]
+	 const centerPoint = {
+	 x: (firstPoint.x + lastPoint.x) / 2,
+	 y: (firstPoint.y + lastPoint.y) / 2,
+	 }
+	 return centerPoint
+	 }
+	 return firstPoint
+	 })
 
-	const flattenPointsToNumberArrayV2 = pointsMappedToCenter.reduce((acc, point) => {
-		return [...acc, point.x, point.y]
+	 const flattenPointsToNumberArrayV2 = pointsMappedToCenter.reduce((acc, point) => {
+	 return [...acc, point.x, point.y]
+	 }, [] as number[])*/
+
+	const flattenPointsToNumberArrayV2 = linksInOrder.reduce((acc, link, index) => {
+		const firstPoint = link.linePoints[1]
+		if (linksInOrder[index + 1]) {
+			const lastPoint = linksInOrder[index + 1].linePoints[0]
+			const centerPoint = {
+				x: (firstPoint.x + lastPoint.x) / 2,
+				y: (firstPoint.y + lastPoint.y) / 2,
+			}
+			return [...acc, centerPoint.x, centerPoint.y]
+		}
+		return [...acc, firstPoint.x, firstPoint.y]
 	}, [] as number[])
 
-	drawSplines(ctx, flattenPointsToNumberArrayV2)
+	// drawSplines(ctx, flattenPointsToNumberArrayV2)
+	drawSplinesRework(ctx, flattenPointsToNumberArrayV2)
+	// drawCurveV7(ctx, flattenPointsToNumberArrayV2)
+	/*	ctx.setLineDash([0])
+	 ctx.lineWidth = 2
+	 ctx.strokeStyle = 'green'
+	 bzCurve(ctx, pointsMappedToCenter)*/
+	for (let i = 0; i < flattenPointsToNumberArrayV2.length; i = i + 2) {
+		const point1 = flattenPointsToNumberArrayV2[i]
+		const point2 = flattenPointsToNumberArrayV2[i + 1]
+		ctx.beginPath()
+		ctx.arc(point1, point2, 5, 0, 2 * Math.PI)
+		ctx.stroke()
+	}
+	/*	for (let i = 0; i < pointsMappedToCenter.length; i++) {
+	 const point = pointsMappedToCenter[i]
+	 ctx.beginPath()
+	 ctx.arc(point.x, point.y, 5, 0, 2 * Math.PI)
+	 ctx.stroke()
+	 }*/
 
 	/*const flattenPointsToNumberArray = pointsMappedToCenter.reduce((acc, point) => {
 	 return Array.isArray(acc) ? [...acc, point.x, point.y] : [acc, point.x, point.y]

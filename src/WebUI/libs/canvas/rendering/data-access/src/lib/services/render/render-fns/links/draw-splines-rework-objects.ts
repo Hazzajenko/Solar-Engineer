@@ -1,22 +1,19 @@
-// import { t } from 'xstate'
+import { Point } from '@shared/data-access/models'
 
-// import { drawLine } from '@canvas/rendering/data-access'
-
-export function drawSplines(ctx: CanvasRenderingContext2D, points: number[]) {
-	// clear()
-	let cps: number[] = [] // There will be two control points for each "middle" point, 1 ... len-2e
-	// cps = [] // There will be two control points for each "middle" point, 1 ... len-2e
+export function drawSplinesReworkObjects(
+	ctx: CanvasRenderingContext2D,
+	points: { x: number; y: number }[],
+) {
+	let cps: number[] = []
 
 	for (let i = 0; i < points.length - 2; i += 1) {
+		const { x: x1, y: y1 } = points[i]
+		const { x: x2, y: y2 } = points[i + 1]
+		const { x: x3, y: y3 } = points[i + 2]
+
 		cps = cps.concat(
-			ctlpts(
-				points[2 * i],
-				points[2 * i + 1],
-				points[2 * i + 2],
-				points[2 * i + 3],
-				points[2 * i + 4],
-				points[2 * i + 5],
-			),
+			calculateControlPoints(points[i], points[i + 1], points[i + 2]),
+			// calculateControlPoints(x1, y1, x2, y2, x3, y3),
 		)
 	}
 
@@ -27,37 +24,32 @@ export function drawSplines(ctx: CanvasRenderingContext2D, points: number[]) {
 	drawCurvedPath(ctx, cps, points)
 }
 
-function ctlpts(x1: number, y1: number, x2: number, y2: number, x3: number, y3: number) {
-	// const t = $('tension').value
+function calculateControlPoints(p1: Point, p2: Point, p3: Point): [number, number, number, number] {
 	const t = 0.5
-	// const d01 = dist(x1, y1, x2, y2)
-
-	const args = [x1, y1, x2, y2, x3, y3]
-	const v = va(args, 0, 2)
-	const d01 = dista(args, 0, 1)
-	const d12 = dista(args, 1, 2)
+	const d01 = Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2))
+	const d12 = Math.sqrt(Math.pow(p3.x - p2.x, 2) + Math.pow(p3.y - p2.y, 2))
 	const d012 = d01 + d12
-	return [
-		x2 - (v[0] * t * d01) / d012,
-		y2 - (v[1] * t * d01) / d012,
-		x2 + (v[0] * t * d12) / d012,
-		y2 + (v[1] * t * d12) / d012,
-	]
+	const v = [(p3.x - p1.x) / d012, (p3.y - p1.y) / d012]
+	const c1 = [p2.x - v[0] * t * d01, p2.y - v[1] * t * d01]
+	const c2 = [p2.x + v[0] * t * d12, p2.y + v[1] * t * d12]
+	return [...c1, ...c2] as [number, number, number, number]
 }
 
-function va(arr: number[], i: number, j: number) {
-	return [arr[2 * j] - arr[2 * i], arr[2 * j + 1] - arr[2 * i + 1]]
+function calculateVector(arr: { x: number; y: number }[], i: number, j: number) {
+	const { x: xj, y: yj } = arr[j]
+	const { x: xi, y: yi } = arr[i]
+	return [xj - xi, yj - yi]
 }
 
 // given an array of x,y's, return distance between any two,
 // note that i and j are indexes to the points, not directly into the array.
-function dista(arr: number[], i: number, j: number) {
+function calculateDistance(arr: number[], i: number, j: number) {
 	return Math.sqrt(
 		Math.pow(arr[2 * i] - arr[2 * j], 2) + Math.pow(arr[2 * i + 1] - arr[2 * j + 1], 2),
 	)
 }
 
-export function drawCurvedPath(ctx: CanvasRenderingContext2D, cps: number[], pts: number[]) {
+function drawCurvedPath(ctx: CanvasRenderingContext2D, cps: number[], pts: number[]) {
 	const len = pts.length / 2 // number of points
 	if (len < 2) return
 	if (len == 2) {

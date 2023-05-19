@@ -1,3 +1,5 @@
+import { Point } from '@shared/data-access/models'
+
 const isNumber = (a: unknown): a is number => typeof a === 'number'
 
 export type APoint = readonly [number, number]
@@ -47,6 +49,13 @@ export const dot = <TVector extends VectorType>(a: TVector, b: TVector): NVector
 
 export const centerPoint = (a: APoint, b: APoint): APoint => {
 	return [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2]
+}
+
+export const centerPointXy = (a: Point, b: Point): Point => {
+	return {
+		x: (a.x + b.x) / 2,
+		y: (a.y + b.y) / 2,
+	}
 }
 
 export const distance2d = (x1: number, y1: number, x2: number, y2: number) => {

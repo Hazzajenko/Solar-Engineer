@@ -2,29 +2,90 @@
 
 // import { drawLine } from '@canvas/rendering/data-access'
 
-export function drawSplines(ctx: CanvasRenderingContext2D, points: number[]) {
-	// clear()
-	let cps: number[] = [] // There will be two control points for each "middle" point, 1 ... len-2e
-	// cps = [] // There will be two control points for each "middle" point, 1 ... len-2e
+import { APoint } from '@shared/utils'
+import { CanvasEntity, PanelLinkModel } from '@entities/shared'
+import { getPanelLinksChainContinuedLineInXyPoints } from '@entities/data-access'
+import { bzCurve } from './bz-curve'
 
-	for (let i = 0; i < points.length - 2; i += 1) {
-		cps = cps.concat(
-			ctlpts(
-				points[2 * i],
-				points[2 * i + 1],
-				points[2 * i + 2],
-				points[2 * i + 3],
-				points[2 * i + 4],
-				points[2 * i + 5],
-			),
-		)
+export const drawLinkModePathLinesCurvedV20 = (
+	ctx: CanvasRenderingContext2D,
+	customEntities: CanvasEntity[] | undefined,
+	linksInOrder: PanelLinkModel[],
+) => {
+	const customIds = customEntities?.map((entity) => entity.id) ?? []
+	if (!linksInOrder.length) {
+		return
 	}
 
-	console.log('cps', cps)
-	console.log('points', points)
-	drawControlPoints(ctx, cps)
-	drawPoints(ctx, cps)
-	drawCurvedPath(ctx, cps, points)
+	const xyPoints = getPanelLinksChainContinuedLineInXyPoints(linksInOrder)
+	ctx.save()
+	ctx.strokeStyle = 'black'
+	ctx.lineWidth = 1
+	const pointsToDraw = xyPoints[0]
+	console.log('pointsToDraw', pointsToDraw)
+
+	/*	const pointsMappedToCenter = linksInOrder.map((link) => {
+	 const firstPoint = link.linePoints[0]
+	 const lastPoint = link.linePoints[1]
+	 const centerPoint = {
+	 x: (firstPoint.x + lastPoint.x) / 2,
+	 y: (firstPoint.y + lastPoint.y) / 2,
+	 }
+	 return centerPoint
+	 })
+
+	 const flattenPointsToNumberArrayV2 = pointsMappedToCenter.reduce((acc, point) => {
+	 return [...acc, point.x, point.y]
+	 }, [] as number[])*/
+
+	// drawSplines(ctx, flattenPointsToNumberArrayV2)
+	// drawCurveV7(ctx, flattenPointsToNumberArrayV2)
+	ctx.setLineDash([0])
+	ctx.lineWidth = 2
+	ctx.strokeStyle = 'green'
+	bzCurve(ctx, pointsToDraw)
+	for (let i = 0; i < pointsToDraw.length; i++) {
+		const point = pointsToDraw[i]
+		ctx.beginPath()
+		ctx.arc(point.x, point.y, 5, 0, 2 * Math.PI)
+		ctx.stroke()
+	}
+	ctx.restore()
+}
+
+export function drawSplinesWithAPoints(ctx: CanvasRenderingContext2D, linePointChains: APoint[][]) {
+	// clear()
+	if (!linePointChains.length) {
+		return
+	}
+
+	linePointChains.forEach((chain) => {
+		const points = chain.flat()
+
+		let cps: number[] = [] // There will be two control points for each "middle" point, 1 ... len-2e
+		// cps = [] // There will be two control points for each "middle" point, 1 ... len-2e
+
+		for (let i = 0; i < points.length - 2; i += 1) {
+			cps = cps.concat(
+				ctlpts(
+					points[2 * i],
+					points[2 * i + 1],
+					points[2 * i + 2],
+					points[2 * i + 3],
+					points[2 * i + 4],
+					points[2 * i + 5],
+				),
+			)
+		}
+		// if ($('showControlLines').checked) drawControlPoints(cps)
+		// if ($('showPoints').checked) drawPoints(cps)
+
+		console.log('cps', cps)
+		console.log('points', points)
+		drawControlPoints(ctx, cps)
+		drawPoints(ctx, cps)
+		drawCurvedPath(ctx, cps, points)
+	})
 }
 
 function ctlpts(x1: number, y1: number, x2: number, y2: number, x3: number, y3: number) {

@@ -202,6 +202,9 @@ export class RenderService {
 				const selectedPanelLinkId = this._selectedStore.selectedPanelLinkId
 				const hoveringOverPanelLinkInLinkMenu =
 					this._entities.panelLinks.hoveringOverPanelLinkInLinkMenu
+				// drawLinkModePathLinesCurvedV20(ctx, entities, linksInOrder)
+				// const aPoints = getPanelLinksChainContinuedLineInAPoints(linksInOrder)
+				// drawSplinesWithAPoints(ctx, aPoints)
 				drawLinkModePathLinesCurved(
 					ctx,
 					entities,
