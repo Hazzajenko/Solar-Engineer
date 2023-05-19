@@ -20,8 +20,9 @@ import {
 	isPointOnLine,
 	setCanvasCursorToAuto,
 } from '@canvas/utils'
-import { calculateLinkLinesBetweenTwoPanels } from '@entities/utils'
-import { groupBy } from 'lodash'
+import { calculateLinkLinesBetweenTwoPanelCenters } from '@entities/utils'
+import { panelLinksToNumberArray } from './utils'
+import { isPointOnCurvedPathV2 } from '../../../../../../canvas/rendering/data-access/src/lib/services/render/render-fns/links/draw-splines-rework'
 
 @Injectable({
 	providedIn: 'root',
@@ -93,7 +94,7 @@ export class PanelLinksService {
 				requestingLink.direction === 'positive-to-negative' ? requestingLink.panelId : panel.id,
 			negativePanelId:
 				requestingLink.direction === 'positive-to-negative' ? panel.id : requestingLink.panelId,
-			linePoints: calculateLinkLinesBetweenTwoPanels(requestingPanel, panel),
+			linePoints: calculateLinkLinesBetweenTwoPanelCenters(requestingPanel, panel), // linePoints: calculateLinkLinesBetweenTwoPanels(requestingPanel, panel),
 		}
 		this._panelLinksStore.addPanelLink(panelLink)
 		if (event.shiftKey) {
@@ -120,105 +121,6 @@ export class PanelLinksService {
 		const stringId = this._selectedStore.selectedStringId
 		assertNotNull(stringId)
 		const panelLinks = this._panelLinksStore.getByStringId(stringId)
-		const panelLinksWithoutContinuations = panelLinks.filter(
-			(panelLink) =>
-				panelLinks
-					.filter((otherPanelLink) => otherPanelLink.id !== panelLink.id)
-					.find((pl) => pl.positivePanelId === panelLink.negativePanelId) === undefined,
-		)
-
-		console.log('panelLinksWithoutContinuations', panelLinksWithoutContinuations)
-
-		const sadas = getPanelLinkOrderSeparateChains(panelLinks)
-		console.log('sadas', sadas)
-
-		const panelLinksWithoutContinuationsMapped = panelLinks.map((panelLink) => {
-			const positiveToContinues = !!panelLinks.find(
-				(pl) => pl.positivePanelId === panelLink.negativePanelId,
-			)
-			const negativeToContinues = !!panelLinks.find(
-				(pl) => pl.negativePanelId === panelLink.positivePanelId,
-			)
-			return {
-				...panelLink,
-				positiveToContinues,
-				negativeToContinues,
-			}
-		})
-
-		console.log('panelLinksWithoutContinuationsMapped', panelLinksWithoutContinuationsMapped)
-
-		const panelLinksFilteredByStartOfLinkChain = panelLinksWithoutContinuationsMapped.filter(
-			(panelLink) => !panelLink.positiveToContinues,
-		)
-
-		console.log('panelLinksFilteredByStartOfLinkChain', panelLinksFilteredByStartOfLinkChain)
-
-		const panelLinksGroupedByStartOfLinkChain = groupBy(
-			panelLinksWithoutContinuationsMapped,
-			(panelLink) => panelLink.positiveToContinues,
-		)
-
-		console.log('panelLinksGroupedByStartOfLinkChain', panelLinksGroupedByStartOfLinkChain)
-
-		const panelLinksGroupedByEndOfLinkChain = groupBy(
-			panelLinksWithoutContinuationsMapped,
-			(panelLink) => panelLink.negativeToContinues,
-		)
-
-		console.log('panelLinksGroupedByEndOfLinkChain', panelLinksGroupedByEndOfLinkChain)
-
-		const panelLinksGroupedByStartAndEndOfLinkChain = groupBy(
-			panelLinksWithoutContinuationsMapped,
-			(panelLink) => panelLink.positiveToContinues && panelLink.negativeToContinues,
-		)
-
-		console.log(
-			'panelLinksGroupedByStartAndEndOfLinkChain',
-			panelLinksGroupedByStartAndEndOfLinkChain,
-		)
-
-		const group = groupBy(
-			panelLinks,
-			(panelLink) =>
-				panelLinks
-					.filter((otherPanelLink) => otherPanelLink.id !== panelLink.id)
-					.find((pl) => pl.positivePanelId === panelLink.negativePanelId) === undefined,
-		)
-		console.log('group', group)
-		const res = panelLinks
-			.map((panelLink) => ({
-				positivePanelId: panelLink.positivePanelId,
-				negativePanelId: panelLink.negativePanelId,
-			}))
-			.map((panelLink) => {
-				// const group = groupBy(panelLinksWithoutContinuations, (pl) => pl.positivePanelId)
-				return panelLink
-				// const group = groupBy(panelLinksWithoutContinuations, (pl) => pl.positivePanelId)
-				/*				const positivePanel = this._entities.panels.getById(panelLink.positivePanelId)
-				 const negativePanel = this._entities.panels.getById(panelLink.negativePanelId)
-				 if (!positivePanel || !negativePanel) {
-				 return undefined
-				 }
-				 const positivePanelIndex = panelLinksWithoutContinuations.findIndex(
-				 (pl) => pl.positivePanelId === positivePanel.id,
-				 )
-				 const negativePanelIndex = panelLinksWithoutContinuations.findIndex(
-				 (pl) => pl.negativePanelId === negativePanel.id,
-				 )
-				 return {
-				 positivePanelId: positivePanel.id,
-				 negativePanelId: negativePanel.id,
-				 positivePanelIndex,
-				 negativePanelIndex,
-				 }*/
-			})
-			.sort((a, b) => {
-				if (!a || !b) {
-					return 0
-				}
-				return a.positivePanelId === b.negativePanelId ? 1 : -1
-			})
 
 		return panelLinks
 			.map((panelLink) => ({
@@ -293,6 +195,12 @@ export class PanelLinksService {
 		if (!panelLinks.length) {
 			return
 		}
+
+		const selectedStringPanelLinks = this.getPanelLinkOrderForSelectedStringWithPoints()
+		const linkPathNumberArray = panelLinksToNumberArray(selectedStringPanelLinks)
+		const isPointOnPath = isPointOnCurvedPathV2(currentPoint)
+		// const isPointOnPath = isPointOnCurvedPath(currentPoint, linkPathNumberArray)
+		console.log('panelLink', isPointOnPath)
 
 		const panelLink = panelLinks.find((panelLink) => {
 			return isPointOnLine(currentPoint, panelLink.linePoints)

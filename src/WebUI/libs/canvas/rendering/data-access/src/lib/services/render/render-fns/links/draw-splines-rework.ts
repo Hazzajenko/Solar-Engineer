@@ -1,3 +1,6 @@
+import { Bezier } from 'bezier-js'
+import { Point } from '@shared/data-access/models'
+
 export function drawSplinesRework(ctx: CanvasRenderingContext2D, points: number[]) {
 	let controlPoints: number[] = []
 
@@ -14,9 +17,12 @@ export function drawSplinesRework(ctx: CanvasRenderingContext2D, points: number[
 		)
 	}
 
+	// console.log('controlPoints', controlPoints)
+
 	drawControlPoints(ctx, controlPoints)
 	drawPoints(ctx, controlPoints)
 	drawCurvedPath(ctx, controlPoints, points)
+	drawPointsForCurvedLine(ctx, points)
 }
 
 function calculateControlPoints(
@@ -52,6 +58,46 @@ function calculateDistance(arr: number[], i: number, j: number) {
 	)
 }
 
+/**
+ * @description draw control points
+ * [Control point 1 X, Control point 1 Y, Control point 2 X, Control point 2 Y, End point X, End point Y]
+ */
+export type BezierCurve = Readonly<[number, number, number, number, number, number]>
+
+const isBezierCurve = (curve: unknown): curve is BezierCurve => {
+	if (!Array.isArray(curve)) return false
+	if (curve.length !== 6) return false
+	return !curve.some((value) => typeof value !== 'number')
+}
+
+let cachedCurves: BezierCurve[] = []
+let cachedBeziers: Bezier[] = []
+
+function createCurvedPaths(points: number[]): BezierCurve[] {
+	const curves: BezierCurve[] = []
+	for (let i = 0; i < points.length - 2; i += 1) {
+		const curve: (number | undefined)[] = [
+			points[2 * i],
+			points[2 * i + 1],
+			points[2 * i + 2],
+			points[2 * i + 3],
+			points[2 * i + 4],
+			points[2 * i + 5],
+		]
+		if (!isBezierCurve(curve)) {
+			continue
+		}
+		// curve.inflections()
+		console.log('curve', curve)
+		curves.push(curve)
+	}
+	// console.log('curves', curves)
+	cachedCurves = curves
+	cachedBeziers = curves.map((curve) => new Bezier(...curve))
+	console.log('cachedBeziers', cachedBeziers)
+	return curves
+}
+
 function drawCurvedPath(ctx: CanvasRenderingContext2D, controlPoints: number[], points: number[]) {
 	const amountOfPoints = points.length / 2
 	if (amountOfPoints < 2) return
@@ -61,11 +107,48 @@ function drawCurvedPath(ctx: CanvasRenderingContext2D, controlPoints: number[], 
 		ctx.lineTo(points[2], points[3])
 		ctx.stroke()
 	} else {
+		/*	curve.moveTo(pathPoints[i], pathPoints[i + 1])
+		 curve.bezierCurveTo(
+		 controlPoints[0],
+		 controlPoints[1],
+		 controlPoints[2],
+		 controlPoints[3],
+		 pathPoints[i + 4],
+		 pathPoints[i + 5],
+		 )*/
 		ctx.beginPath()
+		// const curve = new Path2D()
+		// curve.addPath(ctx)
+		/*		curve.moveTo(points[0], points[1])
+		 // from point 0 to point 1 is a quadratic
+		 curve.quadraticCurveTo(controlPoints[0], controlPoints[1], points[2], points[3])
+		 // for all middle points, connect with bezier
+		 createCurvedPaths(points)
+		 let i = 2
+		 for (i = 2; i < amountOfPoints - 1; i += 1) {
+		 curve.bezierCurveTo(
+		 controlPoints[(2 * (i - 1) - 1) * 2],
+		 controlPoints[(2 * (i - 1) - 1) * 2 + 1],
+		 controlPoints[2 * (i - 1) * 2],
+		 controlPoints[2 * (i - 1) * 2 + 1],
+		 points[i * 2],
+		 points[i * 2 + 1],
+		 )
+		 }
+		 curve.quadraticCurveTo(
+		 controlPoints[(2 * (i - 1) - 1) * 2],
+		 controlPoints[(2 * (i - 1) - 1) * 2 + 1],
+		 points[i * 2],
+		 points[i * 2 + 1],
+		 )
+
+		 console.log('curve', curve)*/
+		// curve.
 		ctx.moveTo(points[0], points[1])
 		// from point 0 to point 1 is a quadratic
 		ctx.quadraticCurveTo(controlPoints[0], controlPoints[1], points[2], points[3])
 		// for all middle points, connect with bezier
+		createCurvedPaths(points)
 		let i = 2
 		for (i = 2; i < amountOfPoints - 1; i += 1) {
 			ctx.bezierCurveTo(
@@ -134,6 +217,94 @@ function drawLine(
 		ctx.stroke()
 		ctx.restore()
 	}
+}
+
+const drawPointsForCurvedLine = (ctx: CanvasRenderingContext2D, points: number[]) => {
+	for (let i = 0; i < points.length; i = i + 2) {
+		const point1 = points[i]
+		const point2 = points[i + 1]
+		ctx.beginPath()
+		ctx.arc(point1, point2, 5, 0, 2 * Math.PI)
+		ctx.stroke()
+	}
+}
+
+export function isPointOnCurvedPathV2(point: Point) {
+	const tolerance = 5 // adjust this value to change the tolerance for how close the point needs to be to the path
+	for (let i = 0; i < cachedBeziers.length; i += 1) {
+		const curve = cachedBeziers[i]
+
+		const distanceFromMouse = curve.project({ x: point.x, y: point.y }).d
+		if (!distanceFromMouse) return false
+		if (distanceFromMouse < tolerance) {
+			return true
+		}
+		// const bez = new Bezier(curve[0], curve[1], curve[2], curve[3], curve[4], curve[5])
+		// bez.getLUT()
+		/*		const curvePoints = curve.getLUT(100)
+		 for (let j = 0; j < curvePoints.length; j += 1) {
+		 const curvePoint = curvePoints[j]
+		 const distance = Math.sqrt(
+		 Math.pow(point.x - curvePoint.x, 2) + Math.pow(point.y - curvePoint.y, 2),
+		 )
+		 if (distance < tolerance) {
+		 return true
+		 }
+		 }*/
+	}
+	return false
+}
+
+export function isPointOnCurvedPath( // ctx: CanvasRenderingContext2D,
+	point: {
+		x: number
+		y: number
+	},
+	pathPoints: number[],
+): boolean {
+	const tolerance = 50 // adjust this value to change the tolerance for how close the point needs to be to the path
+	for (let i = 0; i < pathPoints.length - 6; i += 6) {
+		const controlPoints = calculateControlPoints(
+			pathPoints[i],
+			pathPoints[i + 1],
+			pathPoints[i + 2],
+			pathPoints[i + 3],
+			pathPoints[i + 4],
+			pathPoints[i + 5],
+		)
+		const curve = new Path2D()
+		curve.moveTo(pathPoints[i], pathPoints[i + 1])
+		curve.bezierCurveTo(
+			controlPoints[0],
+			controlPoints[1],
+			controlPoints[2],
+			controlPoints[3],
+			pathPoints[i + 4],
+			pathPoints[i + 5],
+		)
+		/*		if (
+		 ctx.isPointInStroke(curve, point.x, point.y) ||
+		 ctx.isPointInPath(curve, point.x, point.y)
+		 ) {
+		 return true
+		 }*/
+		const distance = calculateDistanceToCurve(point, pathPoints.slice(i, i + 6))
+		if (distance && distance < tolerance) {
+			return true
+		}
+	}
+	return false
+}
+
+function calculateDistanceToCurve(
+	point: {
+		x: number
+		y: number
+	},
+	curvePoints: number[],
+): number | undefined {
+	const curve = new Bezier(curvePoints)
+	return curve.project({ x: point.x, y: point.y }).d
 }
 
 /*

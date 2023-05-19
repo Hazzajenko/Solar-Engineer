@@ -1,4 +1,4 @@
-import { CanvasPanel } from '@entities/shared'
+import { CanvasPanel, getEntityCenter } from '@entities/shared'
 import { Point } from '@shared/data-access/models'
 
 /**
@@ -8,6 +8,18 @@ import { Point } from '@shared/data-access/models'
  * @returns The points for the link lines between the two panels.
  */
 export type LinkLinePoints = [Point, Point]
+
+export const calculateLinkLinesBetweenTwoPanelCenters = (
+	positivePanel: CanvasPanel,
+	negativePanel: CanvasPanel,
+): LinkLinePoints => {
+	return [getEntityCenter(positivePanel), getEntityCenter(negativePanel)]
+	/*	return [
+	 { x: positivePanel.location.x + positivePanel.width / 2, y: positivePanel.location.y + positivePanel.height / 2 },
+	 { x: negativePanel.location.x + negativePanel.width / 2, y: negativePanel.location.y + negativePanel.height / 2 },
+	 ]*/
+}
+// getEntityCenter()
 export const calculateLinkLinesBetweenTwoPanels = (
 	positivePanel: CanvasPanel,
 	negativePanel: CanvasPanel,
