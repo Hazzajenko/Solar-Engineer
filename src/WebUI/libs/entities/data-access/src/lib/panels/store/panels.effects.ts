@@ -3,7 +3,7 @@ import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { inject } from '@angular/core'
 import { PanelsActions } from './panels.actions'
 import { map } from 'rxjs'
-import { calculateLinkLinesBetweenTwoPanels } from '@entities/utils'
+import { calculateLinkLinesBetweenTwoPanelCenters } from '@entities/utils'
 import { injectPanelLinksStore, PanelLinksActions } from '../../panel-links'
 import { assertNotNull } from '@shared/utils'
 import { injectPanelsStore } from './panels.store'
@@ -69,7 +69,8 @@ export const updatePanelLinkPaths$ = createEffect(
 					assertNotNull(positivePanel)
 					const negativePanel = panelsStore.getById(panelLink.negativePanelId)
 					assertNotNull(negativePanel)
-					const linePoints = calculateLinkLinesBetweenTwoPanels(positivePanel, negativePanel)
+					const linePoints = calculateLinkLinesBetweenTwoPanelCenters(positivePanel, negativePanel)
+					// const linePoints = calculateLinkLinesBetweenTwoPanels(positivePanel, negativePanel)
 					return { id: panelLink.id, changes: { linePoints } }
 				})
 

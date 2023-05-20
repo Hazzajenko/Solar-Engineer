@@ -76,7 +76,7 @@ export const drawLinkModePathLinesCurvedAlreadyMappedV2 = (
 	const ignore = selectedPanelLinkId || hoveringOverPanelLinkInLinkMenu
 
 	// const customIds = customEntities?.map((entity) => entity.id) ?? []
-	if (!openCircuitChains.length) {
+	if (!openCircuitChains.length && !closedCircuitChains.length) {
 		return
 	}
 	ctx.save()
@@ -95,7 +95,7 @@ export const drawLinkModePathLinesCurvedAlreadyMappedV2 = (
 		reduceLinkPointsToNumberArrayOptimised(chain),
 	)
 
-	console.log('closedCircuitChainsFlat', closedCircuitChainsFlat)
+	// console.log('closedCircuitChainsFlat', closedCircuitChainsFlat)
 
 	closedCircuitChainsFlat.forEach((linkChain) => {
 		drawLinkChainCurvedPath(ctx, linkChain)
@@ -104,6 +104,29 @@ export const drawLinkModePathLinesCurvedAlreadyMappedV2 = (
 	/*	const groupedByLinkChainNumberArray = openCircuitChains.map((chain) =>
 	 reduceLinkPointsToNumberArrayOptimised(chain),
 	 )*/
+}
+
+export const drawLinkModePathLinesCurvedAlreadyMappedV3 = (
+	ctx: CanvasRenderingContext2D,
+	customEntities: CanvasEntity[] | undefined,
+	circuitCurvedLines: CurvedNumberLine[][],
+	selectedPanelLinkId: string | undefined,
+	hoveringOverPanelLinkInLinkMenu: PanelLinksStore['hoveringOverPanelLinkInLinkMenu'],
+) => {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const ignore = selectedPanelLinkId || hoveringOverPanelLinkInLinkMenu
+
+	// const customIds = customEntities?.map((entity) => entity.id) ?? []
+	if (!circuitCurvedLines.length) {
+		return
+	}
+	ctx.save()
+	ctx.strokeStyle = 'black'
+	ctx.lineWidth = 1
+
+	circuitCurvedLines.forEach((curvedLines) => {
+		drawCurvedNumberLines(ctx, curvedLines)
+	})
 }
 
 const drawLinkChainCurvedPath = (ctx: CanvasRenderingContext2D, points: number[]) => {

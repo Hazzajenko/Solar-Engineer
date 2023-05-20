@@ -10,6 +10,11 @@ export type PanelLinkModel = {
 
 export type PanelLinkChain = PanelLinkModel[]
 
+export type StringCircuitChains = {
+	openCircuitChains: OpenCircuitChain[]
+	closedCircuitChains: ClosedCircuitChain[]
+}
+
 export type OpenOrClosedCircuitChain = OpenCircuitChain | ClosedCircuitChain
 
 export type OpenCircuitChain = PanelLinkChain & {

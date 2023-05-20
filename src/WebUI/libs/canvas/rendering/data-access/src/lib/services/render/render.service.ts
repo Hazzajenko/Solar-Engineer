@@ -13,7 +13,7 @@ import {
 	drawClickNearEntityBounds,
 	drawCreationDragBox,
 	drawEntityCreationPreview,
-	drawLinkModePathLinesCurvedAlreadyMappedV2,
+	drawLinkModePathLinesCurvedAlreadyMappedV3,
 	drawNearbyLineDrawCtxFnFromNearbyLinesStateOptimisedV2,
 	drawSelectedBox,
 	drawSelectedStringBoxV3,
@@ -190,7 +190,7 @@ export class RenderService {
 							}
 							return true
 						})
-			const { openCircuitChains, closedCircuitChains } =
+			const { openCircuitChains, closedCircuitChains, circuitCurvedLines } =
 				this._panelLinks.getPanelLinkOrderIfStringIsSelected()
 			// const linksInOrder = this._panelLinks.getPanelLinkOrderIfStringIsSelected()
 			this.drawEntities(ctx, entities, openCircuitChains)
@@ -205,14 +205,21 @@ export class RenderService {
 				const selectedPanelLinkId = this._selectedStore.selectedPanelLinkId
 				const hoveringOverPanelLinkInLinkMenu =
 					this._entities.panelLinks.hoveringOverPanelLinkInLinkMenu
-				drawLinkModePathLinesCurvedAlreadyMappedV2(
+				drawLinkModePathLinesCurvedAlreadyMappedV3(
 					ctx,
 					entities,
-					openCircuitChains,
-					closedCircuitChains,
+					circuitCurvedLines,
 					selectedPanelLinkId,
 					hoveringOverPanelLinkInLinkMenu,
 				)
+				/*				drawLinkModePathLinesCurvedAlreadyMappedV2(
+				 ctx,
+				 entities,
+				 openCircuitChains,
+				 closedCircuitChains,
+				 selectedPanelLinkId,
+				 hoveringOverPanelLinkInLinkMenu,
+				 )*/
 				// drawLinkModePathLinesCurvedV20(ctx, entities, linksInOrder)
 				// const aPoints = getPanelLinksChainContinuedLineInAPoints(linksInOrder)
 				// drawSplinesWithAPoints(ctx, aPoints)
