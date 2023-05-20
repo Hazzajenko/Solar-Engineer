@@ -32,7 +32,7 @@ export type BezierXyPointLine = Readonly<[Point, Point, Point, Point]>
 
 export type QuadraticBezierXyPointLine = Readonly<[Point, Point, Point]>
 
-export type QuadraticBezierNumberLine = Readonly<
+export type QuadraticNumberLine = Readonly<
 	[DrawPointX, DrawPointY, ControlPointX, ControlPointY, DrawPointX, DrawPointY]
 >
 
@@ -44,4 +44,4 @@ export type LineToLineNumberLine = Readonly<[DrawPointX, DrawPointY, DrawPointX,
 
 export type CurvedLine = APointLineToLine | BezierAPointLine | QuadraticBezierAPointLine
 
-export type CurvedNumberLine = BezierNumberLine | QuadraticBezierNumberLine | LineToLineNumberLine
+export type CurvedNumberLine = BezierNumberLine | QuadraticNumberLine | LineToLineNumberLine

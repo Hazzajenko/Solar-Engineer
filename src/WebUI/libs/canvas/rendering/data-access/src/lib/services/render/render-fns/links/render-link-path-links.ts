@@ -1,7 +1,7 @@
 import { CanvasEntity, ClosedCircuitChain, OpenCircuitChain, PanelLinkModel } from '@entities/shared'
 import { PanelLinksStore } from '@entities/data-access'
 import { reduceLinkPointsToNumberArray, reduceLinkPointsToNumberArrayOptimised, separatePanelLinkChains, sortOpenCircuitPanelLinks } from '@entities/utils'
-import { BezierNumberLine, CurvedNumberLine, LineToLineNumberLine, QuadraticBezierNumberLine } from '@canvas/shared'
+import { BezierNumberLine, CurvedNumberLine, LineToLineNumberLine, QuadraticNumberLine } from '@canvas/shared'
 import { drawBezierLineNumbers, drawQuadraticLineNumbers, drawStraightLineNumbers } from '@canvas/utils'
 
 // type UpdateLinkPath = (linkId: string, path: string) => void
@@ -195,7 +195,7 @@ const createCurvedNumberLines = (points: number[], controlPoints: number[]) => {
 		lines.push(lineToLineStart)
 		return lines
 	}
-	const quadraticLineStart: QuadraticBezierNumberLine = [
+	const quadraticLineStart: QuadraticNumberLine = [
 		points[0],
 		points[1],
 		controlPoints[0],
@@ -243,7 +243,7 @@ const drawCurvedPath = (
 		drawStraightLineNumbers(ctx, lineToLineStart, true, true)
 		return
 	}
-	const quadraticLineStart: QuadraticBezierNumberLine = [
+	const quadraticLineStart: QuadraticNumberLine = [
 		points[0],
 		points[1],
 		controlPoints[0],
@@ -280,7 +280,7 @@ const createQuadraticNumberLine = (
 	points: number[],
 	controlPoints: number[],
 	i: number,
-): QuadraticBezierNumberLine => [
+): QuadraticNumberLine => [
 	points[i * 2 - 2],
 	points[i * 2 - 1],
 	controlPoints[(2 * (i - 1) - 1) * 2],

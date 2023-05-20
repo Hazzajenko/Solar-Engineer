@@ -283,7 +283,8 @@ export class DesignCanvasDirective implements OnInit {
 		if (this._appState.state.mode === MODE_STATE.LINK_MODE) {
 			// const isPointOnPath = isPointOnCurvedPath(currentPoint, linkPathNumberArray)
 			// this._panelLinks.isMouseOverLinkPathV3(event, currentPoint, this.ctx)
-			this._panelLinks.handleMouseInLinkMode(event, currentPoint)
+			this._panelLinks.isMouseOverLinkPath(event, currentPoint, this.ctx)
+			// this._panelLinks.handleMouseInLinkMode(event, currentPoint)
 			return
 		}
 
@@ -569,7 +570,11 @@ export class DesignCanvasDirective implements OnInit {
 
 		const mode = this._appState.state.mode
 		if (mode === 'LinkMode') {
-			const panelLinkUnderMouse = this._panelLinks.isMouseOverLinkPath(event, currentPoint)
+			const panelLinkUnderMouse = this._panelLinks.isMouseOverLinkPath(
+				event,
+				currentPoint,
+				this.ctx,
+			)
 			if (panelLinkUnderMouse) {
 				this._uiStore.dispatch.openContextMenu({
 					component: CONTEXT_MENU_COMPONENT.PANEL_LINK_MENU,

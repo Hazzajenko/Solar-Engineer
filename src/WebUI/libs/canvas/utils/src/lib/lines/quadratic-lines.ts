@@ -1,10 +1,11 @@
-import { QuadraticBezierAPointLine, QuadraticBezierNumberLine } from '@canvas/shared'
+import { QuadraticBezierAPointLine, QuadraticNumberLine } from '@canvas/shared'
+import { APoint } from '@shared/utils'
 
 export const createQuadraticNumberLine = (
 	points: number[],
 	controlPoints: number[],
 	i: number,
-): QuadraticBezierNumberLine => [
+): QuadraticNumberLine => [
 	points[i * 2 - 2],
 	points[i * 2 - 1],
 	controlPoints[(2 * (i - 1) - 1) * 2],
@@ -14,7 +15,7 @@ export const createQuadraticNumberLine = (
 ]
 export const drawQuadraticLineNumbers = (
 	ctx: CanvasRenderingContext2D,
-	line: QuadraticBezierNumberLine,
+	line: QuadraticNumberLine,
 	isStart = false,
 	isFinish = false,
 ) => {
@@ -25,6 +26,30 @@ export const drawQuadraticLineNumbers = (
 	}
 	ctx.quadraticCurveTo(controlX, controlY, endX, endY)
 	if (isFinish) ctx.stroke()
+}
+
+export const getQuadraticXYByTUsingNumberLine = (
+	quadraticLine: QuadraticNumberLine,
+	t: number,
+): APoint => {
+	const [p0x, p0y, p1x, p1y, p2x, p2y] = quadraticLine
+	const x = (1 - t) * (1 - t) * p2x + 2 * (1 - t) * t * p1x + t * t * p0x
+	const y = (1 - t) * (1 - t) * p2y + 2 * (1 - t) * t * p1y + t * t * p0y
+	return [x, y]
+	/*	return {
+	 x: (1 - t) * (1 - t) * sx + 2 * (1 - t) * t * cp1x + t * t * ex,
+	 y: (1 - t) * (1 - t) * sy + 2 * (1 - t) * t * cp1y + t * t * ey,
+	 }*/
+	/*	const equation = (t: number, p0: number, p1: number, p2: number) =>
+	 Math.pow(1 - t, 2) * p2 + 2 * (1 - t) * t * p1 + Math.pow(t, 2) * p0
+	 const tx = equation(t, p0x, p1x, p2x)
+	 const ty = equation(t, p0y, p1y, p2y)
+	 return [tx, ty]*/
+	/*	const equation = (t: number, idx: number) =>
+	 Math.pow(1 - t, 2) * p2[idx] + 2 * (1 - t) * t * p1[idx] + Math.pow(t, 2) * p0[idx]
+	 const tx = equation(t, 0)
+	 const ty = equation(t, 1)
+	 return [tx, ty]*/
 }
 
 export const drawQuadraticLine = (

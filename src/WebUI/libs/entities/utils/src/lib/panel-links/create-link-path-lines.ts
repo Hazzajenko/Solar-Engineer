@@ -1,4 +1,4 @@
-import { CurvedNumberLine, LineToLineNumberLine, QuadraticBezierNumberLine } from '@canvas/shared'
+import { CurvedNumberLine, LineToLineNumberLine, QuadraticNumberLine } from '@canvas/shared'
 import { createBezierNumberLine, createQuadraticNumberLine } from '@canvas/utils'
 
 export const createCurvedLinkPathLines = (points: number[]) => {
@@ -66,7 +66,7 @@ const createCurvedNumberLines = (points: number[], controlPoints: number[]) => {
 		lines.push(lineToLineStart)
 		return lines
 	}
-	const quadraticLineStart: QuadraticBezierNumberLine = [
+	const quadraticLineStart: QuadraticNumberLine = [
 		points[0],
 		points[1],
 		controlPoints[0],

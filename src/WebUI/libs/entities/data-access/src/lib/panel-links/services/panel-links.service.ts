@@ -13,7 +13,7 @@ import {
 	StringCircuitChains,
 	UndefinedStringId,
 } from '@entities/shared'
-import { assertNotNull, newGuid, selectSignalFromStore } from '@shared/utils'
+import { APoint, assertNotNull, newGuid, selectSignalFromStore } from '@shared/utils'
 import { injectSelectedStore, selectSelectedStringId } from '@canvas/selected/data-access'
 import { EntityStoreService } from '../../shared'
 import { TransformedPoint } from '@shared/data-access/models'
@@ -25,14 +25,12 @@ import {
 } from '@canvas/utils'
 import { calculateLinkLinesBetweenTwoPanelCenters } from '@entities/utils'
 import {
+	isPointOverCurvedLine,
 	panelLinksToNumberArray,
 	preparePanelLinksForRender,
 	prepareStringPanelLinkCircuitChain,
 } from './utils'
-import {
-	isPointOnCurvedPath,
-	isPointOnCurvedPathV4,
-} from '../../../../../../canvas/rendering/data-access/src/lib/services/render/render-fns/links/deprecated/draw-splines-rework'
+import { isPointOnCurvedPath } from '../../../../../../canvas/rendering/data-access/src/lib/services/render/render-fns/links/deprecated/draw-splines-rework'
 import { CurvedNumberLine } from '@canvas/shared'
 
 @Injectable({
@@ -59,6 +57,7 @@ export class PanelLinksService {
 	private _selectedStringLinkPaths = signal<number[][]>([])
 	// private _selectedStringLinkLines: CurvedNumberLine[][] = []
 	private _selectedStringLinkLines = signal<CurvedNumberLine[][]>([])
+	private _selectedStringMicroLinePoints = signal<APoint[][][]>([])
 	private _selectedStringCircuitChains = signal<StringCircuitChains>({
 		openCircuitChains: [],
 		closedCircuitChains: [],
@@ -93,8 +92,9 @@ export class PanelLinksService {
 		const panelLinks = this._panelLinksStore.getByStringId(selectedStringId)
 		const stringCircuitChains = prepareStringPanelLinkCircuitChain(panelLinks)
 		this._selectedStringCircuitChains.set(stringCircuitChains)
-		const stringCircuitCurvedLines = preparePanelLinksForRender(stringCircuitChains)
-		this._selectedStringLinkLines.set(stringCircuitCurvedLines)
+		const { curvedLinesCombined, microLinePoints } = preparePanelLinksForRender(stringCircuitChains)
+		this._selectedStringLinkLines.set(curvedLinesCombined)
+		this._selectedStringMicroLinePoints.set(microLinePoints)
 	}
 
 	handlePanelLinksClick(event: PointerEvent, panel: CanvasPanel) {
@@ -242,7 +242,7 @@ export class PanelLinksService {
 	}
 
 	handleMouseInLinkMode(event: PointerEvent, currentPoint: TransformedPoint) {
-		this.isMouseOverLinkPath(event, currentPoint)
+		// this.isMouseOverLinkPath(event, currentPoint)
 	}
 
 	isMouseOverLinkPathV3(
@@ -265,7 +265,11 @@ export class PanelLinksService {
 		const isPointOnPath = isPointOnCurvedPath(ctx, currentPoint, linkPathNumberArray)
 	}
 
-	isMouseOverLinkPath(event: PointerEvent, currentPoint: TransformedPoint) {
+	isMouseOverLinkPath(
+		event: PointerEvent,
+		currentPoint: TransformedPoint,
+		ctx: CanvasRenderingContext2D,
+	) {
 		if (!this._selectedStore.selectedStringId) {
 			console.error('a string must be selected to be in link mode')
 			return
@@ -275,13 +279,17 @@ export class PanelLinksService {
 		if (!panelLinks.length) {
 			return
 		}
-
-		const selectedStringPanelLinks = this.getPanelLinkOrderForSelectedStringWithPoints()
-		const linkPathNumberArray = panelLinksToNumberArray(selectedStringPanelLinks)
+		const microPoints = this._selectedStringMicroLinePoints()
+		if (!microPoints) {
+			return
+		}
+		const isPointOnPath = isPointOverCurvedLine(microPoints, currentPoint, ctx)
+		// const selectedStringPanelLinks = this.getPanelLinkOrderForSelectedStringWithPoints()
+		// const linkPathNumberArray = panelLinksToNumberArray(selectedStringPanelLinks)
 		// const isPointOnPath = isPointOnCurvedPath(currentPoint, linkPathNumberArray)
-		const isPointOnPath = isPointOnCurvedPathV4(currentPoint)
+		// const isPointOnPath = isPointOnCurvedPathV4(currentPoint)
 		// const isPointOnPath = isPointOnCurvedPathV3(currentPoint)
-		console.log('panelLink', isPointOnPath)
+		console.log('isPointOnPath!!', isPointOnPath)
 		// const isPointOnPath = isPointOnCurvedPathV2(currentPoint)
 		// const isPointOnPath = isPointOnCurvedPath(currentPoint, linkPathNumberArray)
 		// console.log('panelLink', isPointOnPath)
@@ -309,7 +317,7 @@ export class PanelLinksService {
 		 return
 		 }*/
 
-		const panelLink = this.isMouseOverLinkPath(event, currentPoint)
+		const panelLink = this.isMouseOverLinkPath(event, currentPoint, this._canvasElementStore.ctx)
 		if (!panelLink) {
 			if (this._panelLinksStore.state.requestingLink) {
 				this.clearPanelLinkRequest()
