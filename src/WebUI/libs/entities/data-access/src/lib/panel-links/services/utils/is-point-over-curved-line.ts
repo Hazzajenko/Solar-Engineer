@@ -1,6 +1,92 @@
 import { APoint } from '@shared/utils'
 import { isPointOnLineUsingAPoints } from '@canvas/utils'
-import { TransformedPoint } from '@shared/data-access/models'
+import { Point, TransformedPoint } from '@shared/data-access/models'
+import { CurvedNumberLine } from '@canvas/shared'
+import { Bezier } from 'bezier-js'
+
+export const isPointOverCurvedLineNoCtx = (
+	circuitCurvedLines: CurvedNumberLine[][],
+	currentPoint: TransformedPoint,
+) => {
+	for (let i = 0; i < circuitCurvedLines.length; i++) {
+		const curvedLines = circuitCurvedLines[i]
+		for (let j = 0; j < curvedLines.length; j++) {
+			const lines = curvedLines[j]
+			switch (lines.length) {
+				case 4: {
+					const d = getDistanceToLine(
+						currentPoint,
+						{ x: lines[0], y: lines[1] },
+						{ x: lines[2], y: lines[3] },
+					)
+					if (d < 10) {
+						return true
+					}
+					break
+				}
+				case 6: {
+					const bezier = new Bezier(lines[0], lines[1], lines[2], lines[3], lines[4], lines[5])
+					const project = bezier.project(currentPoint)
+					if (project.d && project.d < 10) {
+						return true
+					}
+					break
+				}
+				case 8: {
+					const bezier = new Bezier(
+						lines[0],
+						lines[1],
+						lines[2],
+						lines[3],
+						lines[4],
+						lines[5],
+						lines[6],
+						lines[7],
+					)
+					const project = bezier.project(currentPoint)
+					if (project.d && project.d < 10) {
+						return true
+					}
+					break
+				}
+			}
+			/*	if (lines.length === 4) {
+			 const d = getDistanceToLine(
+			 currentPoint,
+			 { x: lines[0], y: lines[1] },
+			 { x: lines[2], y: lines[3] },
+			 )
+			 if (d < 10) {
+			 return true
+			 }
+			 }
+			 if (lines.length === 6) {
+			 const bezier = new Bezier(lines[0], lines[1], lines[2], lines[3], lines[4], lines[5])
+			 const project = bezier.project(currentPoint)
+			 if (project.d && project.d < 10) {
+			 return true
+			 }
+			 }
+			 if (lines.length === 8) {
+			 const bezier = new Bezier(
+			 lines[0],
+			 lines[1],
+			 lines[2],
+			 lines[3],
+			 lines[4],
+			 lines[5],
+			 lines[6],
+			 lines[7],
+			 )
+			 const project = bezier.project(currentPoint)
+			 if (project.d && project.d < 10) {
+			 return true
+			 }
+			 }*/
+		}
+	}
+	return false
+}
 
 export const isPointOverCurvedLine = (
 	microPoints: APoint[][][],
@@ -20,6 +106,88 @@ export const isPointOverCurvedLine = (
 		}
 	}
 	return false
+}
+
+export const isPointOverCurvedLineV2 = (
+	circuitCurvedLines: CurvedNumberLine[][],
+	currentPoint: TransformedPoint,
+	ctx: CanvasRenderingContext2D,
+) => {
+	for (let i = 0; i < circuitCurvedLines.length; i++) {
+		const curvedLines = circuitCurvedLines[i]
+		for (let j = 0; j < curvedLines.length; j++) {
+			const lines = curvedLines[j]
+			if (lines.length === 4) {
+				const d = getDistanceToLine(
+					currentPoint,
+					{ x: lines[0], y: lines[1] },
+					{ x: lines[2], y: lines[3] },
+				)
+				if (d < 10) {
+					ctx.beginPath()
+					ctx.moveTo(lines[0], lines[1])
+					ctx.lineTo(currentPoint.x, currentPoint.y)
+					ctx.stroke()
+					return true
+				}
+				/*				isPointOnLineUsingAPoints(
+				 currentPoint,
+				 [
+				 [lines[0], lines[1]],
+				 [lines[2], lines[3]],
+				 ],
+				 ctx,
+				 )*/
+			}
+			if (lines.length === 6) {
+				const bezier = new Bezier(lines[0], lines[1], lines[2], lines[3], lines[4], lines[5])
+				const project = bezier.project(currentPoint)
+				if (project.d && project.d < 10) {
+					ctx.beginPath()
+					ctx.moveTo(project.x, project.y)
+					ctx.lineTo(currentPoint.x, currentPoint.y)
+					ctx.stroke()
+					return true
+				}
+			}
+			if (lines.length === 8) {
+				const bezier = new Bezier(
+					lines[0],
+					lines[1],
+					lines[2],
+					lines[3],
+					lines[4],
+					lines[5],
+					lines[6],
+					lines[7],
+				)
+				const project = bezier.project(currentPoint)
+				if (project.d && project.d < 10) {
+					ctx.beginPath()
+					ctx.moveTo(project.x, project.y)
+					ctx.lineTo(currentPoint.x, currentPoint.y)
+					ctx.stroke()
+					return true
+				}
+				// project.
+				/*		if (bezier.project(currentPoint)) {
+				 return true
+				 }*/
+			}
+		}
+	}
+	return false
+}
+
+const getDistanceToLine = (point: Point, lineStart: Point, lineEnd: Point): number => {
+	const numerator = Math.abs(
+		(lineEnd.y - lineStart.y) * point.x -
+			(lineEnd.x - lineStart.x) * point.y +
+			lineEnd.x * lineStart.y -
+			lineEnd.y * lineStart.x,
+	)
+	const denominator = Math.sqrt((lineEnd.y - lineStart.y) ** 2 + (lineEnd.x - lineStart.x) ** 2)
+	return numerator / denominator
 }
 
 const drawPathForMicroPoints = (microPoints: APoint[], ctx: CanvasRenderingContext2D) => {

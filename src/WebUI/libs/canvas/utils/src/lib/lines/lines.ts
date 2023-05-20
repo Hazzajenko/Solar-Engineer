@@ -1,13 +1,21 @@
 import { Point } from '@shared/data-access/models'
-import {
-	BezierNumberLine,
-	CurvedNumberLine,
-	LineToLineNumberLine,
-	QuadraticNumberLine,
-} from '@canvas/shared'
+import { BezierNumberLine, CurvedNumberLine, LineToLineNumberLine, QuadraticNumberLine } from '@canvas/shared'
 import { APoint, distance2dPoint } from '@shared/utils'
+// import { CubicBezier } from '../../../../rendering/data-access/src/lib/services/render/render-fns/links/deprecated/test.class2'
 
 const DistanceToLineThreshold = 2
+
+/*export const isPointOnLineWithThreshold = (point: Point, linePoints: number[], threshold: number): boolean => {
+ for (let i = 0; i < linePoints.length /2; i += 2) {
+ const p1 = linePoints[2*i]
+ const p2 = linePoints[2*i + 1]
+ const distanceToLine = getDistanceToLine(point, p1, p2)
+ if (distanceToLine <= threshold) {
+ return true
+ }
+ }
+ return false
+ }*/
 export const isPointOnLine = (point: Point, linePoints: Point[]): boolean => {
 	for (let i = 0; i < linePoints.length - 1; i++) {
 		const p1 = linePoints[i]
@@ -71,52 +79,78 @@ export const isPointOnLineUsingAPoints = (
 	linePoints: APoint[],
 	ctx: CanvasRenderingContext2D,
 ): boolean => {
-	for (let i = 0; i < linePoints.length; i++) {
-		const distanceToLine = distance2dPoint([point.x, point.y], linePoints[i])
+	// const bezzy = new Bezier().
+	for (let i = 0; i < linePoints.length / 2; i += 2) {
+		const newPoints = getLinePoints(linePoints[i], linePoints[i + 1], 5)
+		for (let j = 0; j < newPoints.length; j++) {
+			const p = newPoints[j]
+			const distanceToLine = distance2dPoint([point.x, point.y], p)
+			if (distanceToLine <= DistanceToLineThreshold) {
+				console.log('distanceToLine', distanceToLine)
+				ctx.save()
+				ctx.lineWidth = 2
+				ctx.strokeStyle = 'red'
+				ctx.beginPath()
+				ctx.moveTo(p[0], p[1])
+				ctx.lineTo(point.x, point.y)
+				ctx.stroke()
+				ctx.closePath()
+				ctx.restore()
+				// c
+				// ctx.strokeStyle = 'black'
+				/*			ctx.beginPath()
+				 ctx.arc(point.x, point.y, 5, 0, 2 * Math.PI)
+				 ctx.stroke()
+				 ctx.closePath()*/
+				return true
+			}
+		}
+		/*	const distanceToLine = distance2dPoint([point.x, point.y], linePoints[i])
 
-		/*
+
+		 /!*
 		 const p1 = linePoints[2 * i]
 		 const p2 = linePoints[2 * i + 1]
 		 // const distanceToLine = distance2dPoint(point, { x: p1[0], y: p1[1] }, { x: p2[0], y: p2[1] })
 		 // const distanceToLine = isPointNearLine(p1, p2, [point.x, point.y], 5)
-		 const distanceToLine = getDistanceToLine(point, { x: p1[0], y: p1[1] }, { x: p2[0], y: p2[1] })*/
-		// const distanceToLine = getDistanceToLineUsingAPoints(point, p1, p2)
-		// if (distanceToLine) {
-		if (distanceToLine <= DistanceToLineThreshold) {
-			console.log('distanceToLine', distanceToLine)
-			ctx.save()
-			ctx.lineWidth = 2
-			ctx.strokeStyle = 'red'
-			ctx.beginPath()
+		 const distanceToLine = getDistanceToLine(point, { x: p1[0], y: p1[1] }, { x: p2[0], y: p2[1] })*!/
+		 // const distanceToLine = getDistanceToLineUsingAPoints(point, p1, p2)
+		 // if (distanceToLine) {
+		 if (distanceToLine <= DistanceToLineThreshold) {
+		 console.log('distanceToLine', distanceToLine)
+		 ctx.save()
+		 ctx.lineWidth = 2
+		 ctx.strokeStyle = 'red'
+		 ctx.beginPath()
 
-			/*		ctx.moveTo(linePoints[0][0], linePoints[0][1])
-			 for (let i = 1; i < linePoints.length; i++) {
-			 ctx.lineTo(linePoints[i][0], linePoints[i][1])
-			 }*/
-			// const centerPointTT = centerPoint(p1, p2)
-			// ctx.moveTo(centerPointTT[0], centerPointTT[1])
-			ctx.moveTo(linePoints[i][0], linePoints[i][1])
+		 /!*		ctx.moveTo(linePoints[0][0], linePoints[0][1])
+		 for (let i = 1; i < linePoints.length; i++) {
+		 ctx.lineTo(linePoints[i][0], linePoints[i][1])
+		 }*!/
+		 // const centerPointTT = centerPoint(p1, p2)
+		 // ctx.moveTo(centerPointTT[0], centerPointTT[1])
+		 ctx.moveTo(linePoints[i][0], linePoints[i][1])
 
-			ctx.lineTo(point.x, point.y)
-			// ctx.moveTo(p1[0], p1[1])
-			// ctx.lineTo(p2[0], p2[1])
-			ctx.stroke()
-			ctx.closePath()
-			ctx.beginPath()
-			// ctx.moveTo(p2[0], p2[1])
-			ctx.lineTo(point.x, point.y)
-			ctx.stroke()
-			// ctx.arc(point.x, point.y, 5, 0, 2 * Math.PI)
-			// ctx.closePath()
-			ctx.restore()
-			// c
-			// ctx.strokeStyle = 'black'
-			/*			ctx.beginPath()
-			 ctx.arc(point.x, point.y, 5, 0, 2 * Math.PI)
-			 ctx.stroke()
-			 ctx.closePath()*/
-			return true
-		}
+		 ctx.lineTo(point.x, point.y)
+		 // ctx.moveTo(p1[0], p1[1])
+		 // ctx.lineTo(p2[0], p2[1])
+		 ctx.stroke()
+		 ctx.closePath()
+		 ctx.beginPath()
+		 // ctx.moveTo(p2[0], p2[1])
+		 ctx.lineTo(point.x, point.y)
+		 ctx.stroke()
+		 // ctx.arc(point.x, point.y, 5, 0, 2 * Math.PI)
+		 // ctx.closePath()
+		 ctx.restore()
+		 // c
+		 // ctx.strokeStyle = 'black'
+		 /!*			ctx.beginPath()
+		 ctx.arc(point.x, point.y, 5, 0, 2 * Math.PI)
+		 ctx.stroke()
+		 ctx.closePath()*!/
+		 return true
+		 }*/
 	}
 	return false
 }
@@ -206,3 +240,17 @@ const getLinePoints = (pointA: APoint, pointB: APoint, numPoints: number): APoin
 
 	return linePoints
 }
+
+/*
+ export const distanceToLine = (point: Point, line: Line): number =>
+ joinScalar(point, line);
+
+ export const joinScalar = (a: NVector, b: NVector): number =>
+ a[0] * b[7] +
+ a[1] * b[6] +
+ a[2] * b[5] +
+ a[3] * b[4] +
+ a[4] * b[3] +
+ a[5] * b[2] +
+ a[6] * b[1] +
+ a[7] * b[0];*/

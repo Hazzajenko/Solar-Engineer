@@ -25,7 +25,7 @@ import {
 } from '@canvas/utils'
 import { calculateLinkLinesBetweenTwoPanelCenters } from '@entities/utils'
 import {
-	isPointOverCurvedLine,
+	isPointOverCurvedLineNoCtx,
 	panelLinksToNumberArray,
 	preparePanelLinksForRender,
 	prepareStringPanelLinkCircuitChain,
@@ -283,7 +283,10 @@ export class PanelLinksService {
 		if (!microPoints) {
 			return
 		}
-		const isPointOnPath = isPointOverCurvedLine(microPoints, currentPoint, ctx)
+		const curvedLines = this._selectedStringLinkLines()
+		const isPointOnPath = isPointOverCurvedLineNoCtx(curvedLines, currentPoint)
+		// const isPointOnPath = isPointOverCurvedLineV2(curvedLines, currentPoint, ctx)
+		// const isPointOnPath = isPointOverCurvedLine(microPoints, currentPoint, ctx)
 		// const selectedStringPanelLinks = this.getPanelLinkOrderForSelectedStringWithPoints()
 		// const linkPathNumberArray = panelLinksToNumberArray(selectedStringPanelLinks)
 		// const isPointOnPath = isPointOnCurvedPath(currentPoint, linkPathNumberArray)
