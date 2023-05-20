@@ -1,17 +1,19 @@
 import { AppStateStoreService, CanvasElementService } from '@canvas/app/data-access'
-import { inject, Injectable } from '@angular/core'
+import { inject, Injectable, signal } from '@angular/core'
 import { PanelLinksStoreService } from '../store'
 import {
 	CanvasPanel,
+	ClosedCircuitChain,
 	getEnderPolarityFromDirection,
 	getStarterPolarityFromDirection,
+	OpenCircuitChain,
 	PanelLinkModel,
 	PanelLinkRequest,
 	PolarityDirection,
 	UndefinedStringId,
 } from '@entities/shared'
-import { assertNotNull, newGuid } from '@shared/utils'
-import { injectSelectedStore } from '@canvas/selected/data-access'
+import { assertNotNull, newGuid, selectSignalFromStore } from '@shared/utils'
+import { injectSelectedStore, selectSelectedStringId } from '@canvas/selected/data-access'
 import { EntityStoreService } from '../../shared'
 import { TransformedPoint } from '@shared/data-access/models'
 import {
@@ -20,26 +22,69 @@ import {
 	isPointOnLine,
 	setCanvasCursorToAuto,
 } from '@canvas/utils'
-import { calculateLinkLinesBetweenTwoPanelCenters } from '@entities/utils'
-import { panelLinksToNumberArray } from './utils'
+import { calculateLinkLinesBetweenTwoPanelCenters, sortPanelLinks } from '@entities/utils'
+import { panelLinksToNumberArray, preparePanelLinksForRender } from './utils'
 import {
 	isPointOnCurvedPath,
 	isPointOnCurvedPathV4,
-} from '../../../../../../canvas/rendering/data-access/src/lib/services/render/render-fns/links/draw-splines-rework'
+} from '../../../../../../canvas/rendering/data-access/src/lib/services/render/render-fns/links/deprecated/draw-splines-rework'
+import { CurvedNumberLine } from '@canvas/shared'
 
 @Injectable({
 	providedIn: 'root',
 })
 export class PanelLinksService {
 	private _entities = inject(EntityStoreService)
-	// private _entities = inject(EntityStoreService)
 	private _appStore = inject(AppStateStoreService)
 	private _panelLinksStore = inject(PanelLinksStoreService)
 	private _selectedStore = injectSelectedStore()
-	// private _selectedStore = inject(SelectedStoreService)
 	private _canvasElementStore = inject(CanvasElementService)
+	// private _selectedId = this._store.selectSignal(selectSelectedStringId)
+	// private _selectedStringId = selectSignalFromStore((state) => state.selected.selectedStringId)
+	private _selectedStringId = selectSignalFromStore(selectSelectedStringId)
+	/*	private _selectedStringLinkPaths = computed(() => {
+	 const stringId = this._selectedStringId()
+	 if (!stringId) {
+	 return []
+	 }
+	 console.log('PanelLinksService: selectedStringId', stringId)
+	 const panelLinks = this._panelLinksStore.getByStringId(stringId)
+	 return preparePanelLinksForRender(panelLinks)
+	 })*/
+	private _selectedStringLinkPaths = signal<number[][]>([])
+	// private _selectedStringLinkLines: CurvedNumberLine[][] = []
+	private _selectedStringLinkLines = signal<CurvedNumberLine[][]>([])
+	private _selectedStringLinkPathToPointMap = signal<Map<string, TransformedPoint>>(new Map())
+	/*	private _selectedStringIdV3 = selectSignalFromKnownStore<SelectedState, string | undefined>(
+	 (state) => state.selectedStringId,
+	 )
+	 private _selectedStringIdV4 = selectSignalFromKnownStore(selectSelectedStringId)*/
 
 	polarityDirection: PolarityDirection = 'positive-to-negative'
+
+	constructor() {
+		/*		effect(() => {
+		 const selectedStringId = this._selectedStringId()
+		 if (selectedStringId) {
+		 console.log('PanelLinksService: selectedStringId', selectedStringId)
+		 const panelLinks = this._panelLinksStore.getByStringId(selectedStringId)
+		 const curvedLines = preparePanelLinksForRender(panelLinks)
+		 console.log('PanelLinksService: curvedLines', curvedLines)
+		 this._selectedStringLinkLines = curvedLines
+		 // this._selectedStringLinkLines.set(curvedLines)
+		 }
+		 })*/
+	}
+
+	updateSelectedStringLinkLines() {
+		const selectedStringId = this._selectedStringId()
+		if (!selectedStringId) {
+			return
+		}
+		const panelLinks = this._panelLinksStore.getByStringId(selectedStringId)
+		const curvedLines = preparePanelLinksForRender(panelLinks)
+		this._selectedStringLinkLines.set(curvedLines)
+	}
 
 	handlePanelLinksClick(event: PointerEvent, panel: CanvasPanel) {
 		if (!this._selectedStore.selectedStringId) {
@@ -105,7 +150,6 @@ export class PanelLinksService {
 		} else {
 			this._panelLinksStore.endPanelLink()
 		}
-		// this.getPanelLinkOrderForString(panel.stringId)
 	}
 
 	getPanelLinkOrderForString(stringId: string) {
@@ -138,21 +182,38 @@ export class PanelLinksService {
 			})
 	}
 
-	getPanelLinkOrderForSelectedStringOld() {
+	getPanelLinkOrderIfStringIsSelected() {
 		const stringId = this._selectedStore.selectedStringId
-		assertNotNull(stringId)
+		if (!stringId) {
+			return {
+				openCircuitChains: [] as OpenCircuitChain[],
+				closedCircuitChains: [] as ClosedCircuitChain[],
+			}
+			// return []
+		}
 		const panelLinks = this._panelLinksStore.getByStringId(stringId)
-		return panelLinks
-			.map((panelLink) => ({
-				positivePanelId: panelLink.positivePanelId,
-				negativePanelId: panelLink.negativePanelId,
-			}))
-			.sort((a, b) => {
-				if (!a || !b) {
-					return 0
-				}
-				return a.positivePanelId === b.negativePanelId ? 1 : -1
-			})
+		const circuitChains = getPanelLinkOrderSeparateChainsV2(panelLinks) as {
+			openCircuitChains: OpenCircuitChain[]
+			closedCircuitChains: ClosedCircuitChain[]
+		}
+
+		const openCircuitChains = circuitChains.openCircuitChains.map((chain) => sortPanelLinks(chain))
+		const closedCircuitChains = circuitChains.closedCircuitChains.map((chain) =>
+			sortPanelLinks(chain),
+		)
+		// const openCircuitChains = circuitChains.openCircuitChains.map((chain) => sortPanelLinks(chain))
+
+		// const groupedByLinkChain = getPanelLinkOrderSeparateChainsV2(panelLinks)
+		// const groupedByLinkChain = getPanelLinkOrderSeparateChains(panelLinks)
+		// const groupedByLinkChain = separatePanelLinkChains(panelLinks)
+		// openCircuitChainsSorted = openCircuitChains.map((chain) => sortPanelLinks(chain as OpenCircuitChain))
+		/*return openCircuitChains
+		 .map((chain) => sortPanelLinks(chain as OpenCircuitChain))
+		 .concat(closedCircuitChains)*/
+		return {
+			openCircuitChains,
+			closedCircuitChains,
+		}
 	}
 
 	getPanelLinkOrderForSelectedStringWithPoints() {
@@ -165,19 +226,6 @@ export class PanelLinksService {
 			}
 			return a.positivePanelId === b.negativePanelId ? 1 : -1
 		})
-		/*		return panelLinks
-		 .map((panelLink) => ({
-		 id: panelLink.id,
-		 positivePanelId: panelLink.positivePanelId,
-		 negativePanelId: panelLink.negativePanelId,
-		 linePoints: panelLink.linePoints,
-		 }))
-		 .sort((a, b) => {
-		 if (!a || !b) {
-		 return 0
-		 }
-		 return a.positivePanelId === b.negativePanelId ? 1 : -1
-		 })*/
 	}
 
 	clearPanelLinkRequest() {
@@ -283,14 +331,18 @@ export class PanelLinksService {
 }
 
 export function getPanelLinkOrderSeparateChains(panelLinks: PanelLinkModel[]) {
-	const panelLinksFilteredByStartOfLinkChain = panelLinks.filter(
-		(panelLink) =>
-			panelLinks
-				.filter((otherPanelLink) => otherPanelLink.id !== panelLink.id)
-				.find((pl) => pl.positivePanelId === panelLink.negativePanelId) === undefined,
+	/*	const panelLinksFilteredByStartOfLinkChain = panelLinks.filter(
+	 (panelLink) =>
+	 panelLinks
+	 .filter((otherPanelLink) => otherPanelLink.id !== panelLink.id)
+	 .find((pl) => pl.positivePanelId === panelLink.negativePanelId) === undefined,
+	 )*/
+	const positivePanelIds = new Set(panelLinks.map((pl) => pl.positivePanelId))
+	const startOfChains = panelLinks.filter(
+		(panelLink) => !positivePanelIds.has(panelLink.negativePanelId),
 	)
 
-	return panelLinksFilteredByStartOfLinkChain.map((panelLink) => {
+	return startOfChains.map((panelLink) => {
 		const panelLinkChain = [panelLink]
 		let currentPanelLink = panelLink
 		let panelLinkChainOrderInProcess = true
@@ -299,18 +351,154 @@ export function getPanelLinkOrderSeparateChains(panelLinks: PanelLinkModel[]) {
 				(pl) => pl.negativePanelId === currentPanelLink.positivePanelId,
 			)
 			if (!nextPanelLink) {
-				// const finalPanel
 				panelLinkChainOrderInProcess = false
 				return panelLinkChain
 			}
 			panelLinkChain.push(nextPanelLink)
 			currentPanelLink = nextPanelLink
 		}
-		return panelLinkChain /*.sort((a, b) => {
-		 if (!a || !b) {
-		 return 0
-		 }
-		 return a.positivePanelId === b.negativePanelId ? 1 : -1
-		 })*/
+		return panelLinkChain
 	})
+}
+
+export function getPanelLinkOrderSeparateChainsV2(panelLinks: PanelLinkModel[]) {
+	const positivePanelIds = new Set(panelLinks.map((pl) => pl.positivePanelId))
+	const startOfChains = panelLinks.filter(
+		(panelLink) => !positivePanelIds.has(panelLink.negativePanelId),
+	)
+
+	const completeLinkIds: string[] = []
+
+	const openCircuitChains = startOfChains.map((panelLink) => {
+		const panelLinkChain = [panelLink]
+		completeLinkIds.push(panelLink.id)
+		let currentPanelLink = panelLink
+		let panelLinkChainOrderInProcess = true
+		while (panelLinkChainOrderInProcess) {
+			const nextPanelLink = panelLinks.find(
+				(pl) => pl.negativePanelId === currentPanelLink.positivePanelId,
+			)
+			if (!nextPanelLink) {
+				panelLinkChainOrderInProcess = false
+				return panelLinkChain
+			}
+			panelLinkChain.push(nextPanelLink)
+			currentPanelLink = nextPanelLink
+		}
+		return panelLinkChain
+	})
+	// .map((chain) => sortOpenCircuitPanelLinks(chain as OpenCircuitChain))
+
+	console.log('openCircuitChains', openCircuitChains)
+
+	const possibleClosedCircuitLinks = panelLinks.filter((pl) => !completeLinkIds.includes(pl.id))
+
+	console.log('possibleClosedCircuitLinks', possibleClosedCircuitLinks)
+
+	if (possibleClosedCircuitLinks.length === 0) {
+		return {
+			openCircuitChains,
+			closedCircuitChains: [],
+		}
+	}
+
+	const { closedCircuitChains, unknownCircuitChains } = handleClosedCircuitChains(
+		possibleClosedCircuitLinks,
+	)
+
+	console.log('closedCircuitChains', closedCircuitChains)
+	console.log('unknownCircuitChains', unknownCircuitChains)
+
+	return {
+		openCircuitChains,
+		closedCircuitChains,
+	}
+}
+
+export const handleClosedCircuitChains = (possibleClosedCircuitLinks: PanelLinkModel[]) => {
+	const closedCircuitChains: PanelLinkModel[][] = []
+	const visitedPanelLinks = new Set<PanelLinkModel['id']>()
+	// const completedPanelLinkIds: PanelLinkModel['id'][] = []
+
+	const unknownCircuitChains: PanelLinkModel[][] = []
+
+	// const separateClosedCircuits = possibleClosedCircuitLinks.f
+	/*	const findExcludingVisited = (id: string) => {
+	 return possibleClosedCircuitLinks
+	 .filter(panelLinks => !completedPanelLinkIds.includes(panelLinks.id))
+	 .find((panelLink) => panelLink.id === id)
+	 }*/
+
+	const findByNegativePanelIdExcludingVisited = (positivePanelId: string) => {
+		return possibleClosedCircuitLinks
+			.filter((panelLinks) => !visitedPanelLinks.has(panelLinks.id))
+			.find((panelLink) => panelLink.negativePanelId === positivePanelId)
+	}
+
+	possibleClosedCircuitLinks.forEach((panelLink) => {
+		if (visitedPanelLinks.has(panelLink.id)) {
+			return
+		}
+		visitedPanelLinks.add(panelLink.id)
+
+		const chain: PanelLinkModel[] = [panelLink]
+		const startingLinkForChain = panelLink
+		let currentPanelLink = panelLink
+		let panelLinkChainOrderInProcess = true
+
+		const endProcess = (nextPanelLink: PanelLinkModel) => {
+			panelLinkChainOrderInProcess = false
+			chain.push(nextPanelLink)
+			closedCircuitChains.push(chain)
+			console.log('closedCircuitChains', closedCircuitChains)
+			return
+		}
+
+		while (panelLinkChainOrderInProcess) {
+			const nextPanelLink = findByNegativePanelIdExcludingVisited(currentPanelLink.positivePanelId)
+			/*			const nextPanelLink = panelLinks.find(
+			 (pl) => pl.negativePanelId === currentPanelLink.positivePanelId,
+			 )*/
+			if (!nextPanelLink) {
+				panelLinkChainOrderInProcess = false
+				unknownCircuitChains.push(chain)
+				return
+			}
+			if (nextPanelLink.positivePanelId === startingLinkForChain.negativePanelId) {
+				/*				panelLinkChainOrderInProcess = false
+				 chain.push(nextPanelLink)
+				 closedCircuitChains.push(chain)*/
+				endProcess(nextPanelLink)
+				return
+			}
+			if (nextPanelLink.id === startingLinkForChain.id) {
+				/*				panelLinkChainOrderInProcess = false
+				 chain.push(nextPanelLink)
+				 closedCircuitChains.push(chain)*/
+				endProcess(nextPanelLink)
+				return
+			}
+
+			if (visitedPanelLinks.has(nextPanelLink.id)) {
+				/*				panelLinkChainOrderInProcess = false
+				 chain.push(nextPanelLink)
+				 closedCircuitChains.push(chain)*/
+				endProcess(nextPanelLink)
+				return
+			}
+			// const isItACompleteLoop = chain.find((pl) => pl.id === nextPanelLink.id)
+
+			chain.push(nextPanelLink)
+			currentPanelLink = nextPanelLink
+		}
+	})
+
+	/*	const closedSortedCircuitChains = closedCircuitChains.map((chain) =>
+	 sortClosedCircuitPanelLinks(chain as ClosedCircuitChain),
+	 )*/
+
+	return {
+		closedCircuitChains,
+		unknownCircuitChains,
+	}
 }

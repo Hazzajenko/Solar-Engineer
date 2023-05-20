@@ -13,7 +13,7 @@ import {
 	drawClickNearEntityBounds,
 	drawCreationDragBox,
 	drawEntityCreationPreview,
-	drawLinkModePathLinesCurved,
+	drawLinkModePathLinesCurvedAlreadyMappedV2,
 	drawNearbyLineDrawCtxFnFromNearbyLinesStateOptimisedV2,
 	drawSelectedBox,
 	drawSelectedStringBoxV3,
@@ -70,6 +70,7 @@ export class RenderService {
 	private _panelLinks = inject(PanelLinksService)
 	private _objectPositioningStore = inject(ObjectPositioningStoreService)
 	private _stringStats = inject(StringsStatsService)
+	// private _linkRender = new LinkPathRenderService()
 
 	private _throttleRender = false
 	private _renderOptions: Partial<CanvasRenderOptions> = {}
@@ -189,8 +190,10 @@ export class RenderService {
 							}
 							return true
 						})
-
-			this.drawEntities(ctx, entities)
+			const { openCircuitChains, closedCircuitChains } =
+				this._panelLinks.getPanelLinkOrderIfStringIsSelected()
+			// const linksInOrder = this._panelLinks.getPanelLinkOrderIfStringIsSelected()
+			this.drawEntities(ctx, entities, openCircuitChains)
 			ctx.restore()
 
 			if (
@@ -198,10 +201,18 @@ export class RenderService {
 				this._selectedStore.state.selectedStringId &&
 				this._appStore.state.mode === 'LinkMode'
 			) {
-				const linksInOrder = this._panelLinks.getPanelLinkOrderForSelectedStringWithPoints()
+				// const linksInOrder = this._panelLinks.getPanelLinkOrderForSelectedStringWithPoints()
 				const selectedPanelLinkId = this._selectedStore.selectedPanelLinkId
 				const hoveringOverPanelLinkInLinkMenu =
 					this._entities.panelLinks.hoveringOverPanelLinkInLinkMenu
+				drawLinkModePathLinesCurvedAlreadyMappedV2(
+					ctx,
+					entities,
+					openCircuitChains,
+					closedCircuitChains,
+					selectedPanelLinkId,
+					hoveringOverPanelLinkInLinkMenu,
+				)
 				// drawLinkModePathLinesCurvedV20(ctx, entities, linksInOrder)
 				// const aPoints = getPanelLinksChainContinuedLineInAPoints(linksInOrder)
 				// drawSplinesWithAPoints(ctx, aPoints)
@@ -212,13 +223,34 @@ export class RenderService {
 				 selectedPanelLinkId,
 				 hoveringOverPanelLinkInLinkMenu,
 				 )*/
-				drawLinkModePathLinesCurved(
-					ctx,
-					entities,
-					linksInOrder,
-					selectedPanelLinkId,
-					hoveringOverPanelLinkInLinkMenu,
-				)
+				/*				this._linkRender.drawLinkModePathLinesCurved(
+				 ctx,
+				 entities,
+				 linksInOrder,
+				 selectedPanelLinkId,
+				 hoveringOverPanelLinkInLinkMenu,
+				 )*/
+				/*				drawLinkModePathLinesCurvedAlreadyMapped(
+				 ctx,
+				 entities,
+				 linksInOrder,
+				 selectedPanelLinkId,
+				 hoveringOverPanelLinkInLinkMenu,
+				 )*/
+				/*				drawLinkModePathLinesCurved(
+				 ctx,
+				 entities,
+				 linksInOrder,
+				 selectedPanelLinkId,
+				 hoveringOverPanelLinkInLinkMenu,
+				 )*/
+				/*				drawLinkModePathLinesCurved(
+				 ctx,
+				 entities,
+				 linksInOrder,
+				 selectedPanelLinkId,
+				 hoveringOverPanelLinkInLinkMenu,
+				 )*/
 				/*				drawLinkModePathLines(
 				 ctx,
 				 entities,
@@ -376,11 +408,15 @@ export class RenderService {
 		this.ctx.restore()
 	}
 
-	private drawEntities(ctx: CanvasRenderingContext2D, entities: CanvasPanel[]) {
+	private drawEntities(
+		ctx: CanvasRenderingContext2D,
+		entities: CanvasPanel[],
+		linksInOrder: PanelLinkModel[][] = [],
+	) {
 		const selectedStringId = this._selectedStore.state.selectedStringId
-		const linksInOrder = selectedStringId
-			? this._panelLinks.getPanelLinkOrderForSelectedStringV2()
-			: []
+		/*		const linksInOrder = selectedStringId
+		 ? this._panelLinks.getPanelLinkOrderForSelectedStringV2()
+		 : []*/
 		entities.forEach((entity) => {
 			/**
 			 * Draw Entity
@@ -492,7 +528,7 @@ export class RenderService {
 				if (this._graphicsStore.state.linkModeSymbols) {
 					this.drawLinkModeSymbols(ctx, entity)
 				}
-				if (this._graphicsStore.state.linkModeOrderNumbers) {
+				if (this._graphicsStore.state.linkModeOrderNumbers && linksInOrder.length) {
 					this.drawLinkModeOrderNumbers(ctx, entity, linksInOrder)
 				}
 			}

@@ -43,3 +43,5 @@ export type APointLineToLine = [APointDrawPoint, APointDrawPoint]
 export type LineToLineNumberLine = Readonly<[DrawPointX, DrawPointY, DrawPointX, DrawPointY]>
 
 export type CurvedLine = APointLineToLine | BezierAPointLine | QuadraticBezierAPointLine
+
+export type CurvedNumberLine = BezierNumberLine | QuadraticBezierNumberLine | LineToLineNumberLine

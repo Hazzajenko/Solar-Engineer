@@ -8,6 +8,26 @@ export type PanelLinkModel = {
 	linePoints: Point[]
 }
 
+export type PanelLinkChain = PanelLinkModel[]
+
+export type OpenOrClosedCircuitChain = OpenCircuitChain | ClosedCircuitChain
+
+export type OpenCircuitChain = PanelLinkChain & {
+	__type: 'OpenCircuitChain'
+}
+
+export type OpenCircuitPanelLink = PanelLinkModel & {
+	__type: 'OpenCircuitPanelLink'
+}
+
+export type ClosedCircuitChain = PanelLinkChain & {
+	__type: 'ClosedCircuitChain'
+}
+
+export type ClosedCircuitPanelLink = PanelLinkModel & {
+	__type: 'ClosedCircuitPanelLink'
+}
+
 export type PanelLinkRequest = {
 	direction: PolarityDirection
 	stringId: string

@@ -1,10 +1,11 @@
 import { CanvasEntity, PanelLinkModel } from '@entities/shared'
-import { getSymbolLocationBasedOnIndex } from '../../render.service'
+import { getSymbolLocationBasedOnIndex } from '../../../render.service'
 import { PanelLinksStore } from '@entities/data-access'
 import { Point } from '@shared/data-access/models'
 import { APoint } from '@shared/utils'
 import { drawSplinesReworkWithAPoints } from './draw-splines-rework-apoints'
-import { drawSplinesReworkNumbers } from './draw-splines-rework-numbers'
+import { drawLinkChainCurvedPath } from './draw-link-chain-curved-path'
+import { reduceLinkPointsToNumberArray } from '@entities/utils'
 
 export const drawLinkModePathLines = (
 	ctx: CanvasRenderingContext2D,
@@ -56,7 +57,7 @@ export const drawLinkModePathLinesCurved = (
 	selectedPanelLinkId: string | undefined,
 	hoveringOverPanelLinkInLinkMenu: PanelLinksStore['hoveringOverPanelLinkInLinkMenu'],
 ) => {
-	const customIds = customEntities?.map((entity) => entity.id) ?? []
+	// const customIds = customEntities?.map((entity) => entity.id) ?? []
 	if (!linksInOrder.length) {
 		return
 	}
@@ -64,28 +65,9 @@ export const drawLinkModePathLinesCurved = (
 	ctx.strokeStyle = 'black'
 	ctx.lineWidth = 1
 
-	const pointsToNumberArray = linksInOrder.reduce((acc, link, index) => {
-		if (index === 0) {
-			return [
-				link.linePoints[0].x,
-				link.linePoints[0].y,
-				link.linePoints[1].x,
-				link.linePoints[1].y,
-			]
-		}
-		const firstPoint = link.linePoints[1]
-		if (linksInOrder[index + 1]) {
-			const lastPoint = linksInOrder[index + 1].linePoints[0]
-			const centerPoint = {
-				x: (firstPoint.x + lastPoint.x) / 2,
-				y: (firstPoint.y + lastPoint.y) / 2,
-			}
-			return [...acc, centerPoint.x, centerPoint.y]
-		}
-		return [...acc, firstPoint.x, firstPoint.y]
-	}, [] as number[])
+	const pointsToNumberArray = reduceLinkPointsToNumberArray(linksInOrder)
 
-	drawSplinesReworkNumbers(ctx, pointsToNumberArray)
+	drawLinkChainCurvedPath(ctx, pointsToNumberArray)
 	// drawSplinesRework(ctx, pointsToNumberArray)
 	ctx.restore()
 }

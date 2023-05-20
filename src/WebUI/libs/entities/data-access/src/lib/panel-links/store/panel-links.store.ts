@@ -1,5 +1,5 @@
-import { inject } from '@angular/core'
-import { Store } from '@ngrx/store'
+import { inject, makeEnvironmentProviders } from '@angular/core'
+import { provideState, Store } from '@ngrx/store'
 import {
 	selectAllPanelLinks,
 	selectHoveringOverPanelInLinkMenuId,
@@ -11,7 +11,16 @@ import { isNotNull } from '@shared/utils'
 import { PanelLinksActions } from './panel-links.actions'
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { PanelLinkModel, Polarity } from '@entities/shared'
-import { PanelLinksState } from './panel-links.reducer'
+import { PANEL_LINKS_FEATURE_KEY, panelLinksReducer, PanelLinksState } from './panel-links.reducer'
+import { provideEffects } from '@ngrx/effects'
+import * as panelLinksEffects from './panel-links.effects'
+
+export function providePanelLinksFeature() {
+	return makeEnvironmentProviders([
+		provideState(PANEL_LINKS_FEATURE_KEY, panelLinksReducer),
+		provideEffects(panelLinksEffects),
+	])
+}
 
 export function injectPanelLinksStore() {
 	const store = inject(Store)

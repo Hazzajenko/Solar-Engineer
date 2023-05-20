@@ -36,6 +36,7 @@ export const PanelLinksActions = createActionGroup({
 			hoveringOverPanelLink: NonNullable<PanelLinksState['hoveringOverPanelLinkInLinkMenu']>
 		}>(),
 		'Clear Hovering Over Panel Link In Link Menu': emptyProps(),
+		'Selected String Link Lines Updated': emptyProps(),
 		'Clear Panel Links State': emptyProps(),
 		Noop: emptyProps(),
 	},

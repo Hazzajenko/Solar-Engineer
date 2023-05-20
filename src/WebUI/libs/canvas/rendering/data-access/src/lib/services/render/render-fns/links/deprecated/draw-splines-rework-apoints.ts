@@ -6,7 +6,7 @@ import {
 	APointLineToLine,
 	BezierAPointLine,
 	QuadraticBezierAPointLine,
-} from '@canvas//shared'
+} from '@canvas/shared'
 
 export const drawSplinesReworkWithAPoints = (ctx: CanvasRenderingContext2D, points: APoint[]) => {
 	// let controlPoints: number[] = []

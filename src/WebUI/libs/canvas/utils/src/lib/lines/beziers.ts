@@ -7,7 +7,22 @@ import {
 	BezierNumberLine,
 	CurvedLine,
 	QuadraticBezierAPointLine,
-} from '@canvas//shared'
+} from '@canvas/shared'
+
+export const createBezierNumberLine = (
+	points: number[],
+	controlPoints: number[],
+	i: number,
+): BezierNumberLine => [
+	points[i * 2 - 2],
+	points[i * 2 - 1],
+	controlPoints[(2 * (i - 1) - 1) * 2],
+	controlPoints[(2 * (i - 1) - 1) * 2 + 1],
+	controlPoints[2 * (i - 1) * 2],
+	controlPoints[2 * (i - 1) * 2 + 1],
+	points[i * 2],
+	points[i * 2 + 1],
+]
 
 export const drawBezierLineNumbers = (
 	ctx: CanvasRenderingContext2D,

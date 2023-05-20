@@ -1,4 +1,4 @@
-import { APointLineToLine, LineToLineNumberLine } from '@canvas//shared'
+import { APointLineToLine, LineToLineNumberLine } from '@canvas/shared'
 
 export const drawStraightLineNumbers = (
 	ctx: CanvasRenderingContext2D,

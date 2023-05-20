@@ -1,11 +1,16 @@
-import { BezierNumberLine, LineToLineNumberLine, QuadraticBezierNumberLine } from '@canvas//shared'
+import {
+	BezierNumberLine,
+	CurvedNumberLine,
+	LineToLineNumberLine,
+	QuadraticBezierNumberLine,
+} from '@canvas//shared'
 import {
 	drawBezierLineNumbers,
 	drawQuadraticLineNumbers,
 	drawStraightLineNumbers,
 } from '@canvas/utils'
 
-export const drawSplinesReworkNumbers = (ctx: CanvasRenderingContext2D, points: number[]) => {
+export const drawLinkChainCurvedPath = (ctx: CanvasRenderingContext2D, points: number[]) => {
 	let controlPoints: number[] = []
 	for (let i = 0; i < points.length - 2; i += 1) {
 		controlPoints = controlPoints.concat(
@@ -19,7 +24,9 @@ export const drawSplinesReworkNumbers = (ctx: CanvasRenderingContext2D, points: 
 			),
 		)
 	}
-	drawCurvedPath(ctx, controlPoints, points)
+	// drawCurvedPath(ctx, controlPoints, points)
+	const curvedLines = createCurvedNumberLines(points, controlPoints)
+	drawCurvedNumberLines(ctx, curvedLines)
 }
 
 const calculateControlPoints = (
@@ -59,6 +66,51 @@ const calculateDistance = (arr: number[], i: number, j: number) => {
 	const dx = arr[2 * i] - arr[2 * j]
 	const dy = arr[2 * i + 1] - arr[2 * j + 1]
 	return Math.sqrt(dx * dx + dy * dy)
+}
+
+const createCurvedNumberLines = (points: number[], controlPoints: number[]) => {
+	const lines: CurvedNumberLine[] = []
+	const amountOfPoints = points.length / 2
+	if (amountOfPoints < 2) return []
+	if (amountOfPoints == 2) {
+		const lineToLineStart: LineToLineNumberLine = [points[0], points[1], points[2], points[3]]
+		lines.push(lineToLineStart)
+		return lines
+	}
+	const quadraticLineStart: QuadraticBezierNumberLine = [
+		points[0],
+		points[1],
+		controlPoints[0],
+		controlPoints[1],
+		points[2],
+		points[3],
+	]
+	lines.push(quadraticLineStart)
+	let i
+	for (i = 2; i < amountOfPoints - 1; i += 1) {
+		const bezierLine = createBezierNumberLine(points, controlPoints, i)
+		lines.push(bezierLine)
+	}
+	const quadraticLineEnd = createQuadraticNumberLine(points, controlPoints, i)
+	lines.push(quadraticLineEnd)
+	return lines
+}
+
+const drawCurvedNumberLines = (ctx: CanvasRenderingContext2D, lines: CurvedNumberLine[]) => {
+	for (let i = 0; i < lines.length; i += 1) {
+		const line = lines[i]
+		switch (line.length) {
+			case 4:
+				drawStraightLineNumbers(ctx, line, i === 0, i === 0)
+				break
+			case 6:
+				drawQuadraticLineNumbers(ctx, line, i === 0, i === lines.length - 1)
+				break
+			case 8:
+				drawBezierLineNumbers(ctx, line)
+				break
+		}
+	}
 }
 
 const drawCurvedPath = (

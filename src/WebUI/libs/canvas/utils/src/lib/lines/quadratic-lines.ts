@@ -1,5 +1,17 @@
-import { QuadraticBezierAPointLine, QuadraticBezierNumberLine } from '@canvas//shared'
+import { QuadraticBezierAPointLine, QuadraticBezierNumberLine } from '@canvas/shared'
 
+export const createQuadraticNumberLine = (
+	points: number[],
+	controlPoints: number[],
+	i: number,
+): QuadraticBezierNumberLine => [
+	points[i * 2 - 2],
+	points[i * 2 - 1],
+	controlPoints[(2 * (i - 1) - 1) * 2],
+	controlPoints[(2 * (i - 1) - 1) * 2 + 1],
+	points[i * 2],
+	points[i * 2 + 1],
+]
 export const drawQuadraticLineNumbers = (
 	ctx: CanvasRenderingContext2D,
 	line: QuadraticBezierNumberLine,

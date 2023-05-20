@@ -1,8 +1,7 @@
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity'
-import { Action, createReducer, on, provideState } from '@ngrx/store'
+import { Action, createReducer, on } from '@ngrx/store'
 import { PanelLinkModel, PanelLinkRequest } from '@entities/shared'
 import { PanelLinksActions } from './panel-links.actions'
-import { makeEnvironmentProviders } from '@angular/core'
 
 /*export type LinkPathLine = {
 
@@ -85,10 +84,6 @@ const reducer = createReducer(
 
 export function panelLinksReducer(state: PanelLinksState | undefined, action: Action) {
 	return reducer(state, action)
-}
-
-export function providePanelLinksFeature() {
-	return makeEnvironmentProviders([provideState(PANEL_LINKS_FEATURE_KEY, panelLinksReducer)])
 }
 
 /*
