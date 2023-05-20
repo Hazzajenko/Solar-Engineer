@@ -281,6 +281,8 @@ export class DesignCanvasDirective implements OnInit {
 		 }*/
 
 		if (this._appState.state.mode === MODE_STATE.LINK_MODE) {
+			// const isPointOnPath = isPointOnCurvedPath(currentPoint, linkPathNumberArray)
+			// this._panelLinks.isMouseOverLinkPathV3(event, currentPoint, this.ctx)
 			this._panelLinks.handleMouseInLinkMode(event, currentPoint)
 			return
 		}

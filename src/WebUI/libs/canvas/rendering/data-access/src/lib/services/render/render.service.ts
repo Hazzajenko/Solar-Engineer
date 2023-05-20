@@ -205,6 +205,13 @@ export class RenderService {
 				// drawLinkModePathLinesCurvedV20(ctx, entities, linksInOrder)
 				// const aPoints = getPanelLinksChainContinuedLineInAPoints(linksInOrder)
 				// drawSplinesWithAPoints(ctx, aPoints)
+				/*				drawLinkModePathLinesCurvedWithAPoints(
+				 ctx,
+				 entities,
+				 linksInOrder,
+				 selectedPanelLinkId,
+				 hoveringOverPanelLinkInLinkMenu,
+				 )*/
 				drawLinkModePathLinesCurved(
 					ctx,
 					entities,

@@ -22,7 +22,10 @@ import {
 } from '@canvas/utils'
 import { calculateLinkLinesBetweenTwoPanelCenters } from '@entities/utils'
 import { panelLinksToNumberArray } from './utils'
-import { isPointOnCurvedPathV2 } from '../../../../../../canvas/rendering/data-access/src/lib/services/render/render-fns/links/draw-splines-rework'
+import {
+	isPointOnCurvedPath,
+	isPointOnCurvedPathV4,
+} from '../../../../../../canvas/rendering/data-access/src/lib/services/render/render-fns/links/draw-splines-rework'
 
 @Injectable({
 	providedIn: 'root',
@@ -185,6 +188,26 @@ export class PanelLinksService {
 		this.isMouseOverLinkPath(event, currentPoint)
 	}
 
+	isMouseOverLinkPathV3(
+		event: PointerEvent,
+		currentPoint: TransformedPoint,
+		ctx: CanvasRenderingContext2D,
+	) {
+		if (!this._selectedStore.selectedStringId) {
+			console.error('a string must be selected to be in link mode')
+			return
+		}
+
+		const panelLinks = this._entities.panelLinks.getByStringId(this._selectedStore.selectedStringId)
+		if (!panelLinks.length) {
+			return
+		}
+
+		const selectedStringPanelLinks = this.getPanelLinkOrderForSelectedStringWithPoints()
+		const linkPathNumberArray = panelLinksToNumberArray(selectedStringPanelLinks)
+		const isPointOnPath = isPointOnCurvedPath(ctx, currentPoint, linkPathNumberArray)
+	}
+
 	isMouseOverLinkPath(event: PointerEvent, currentPoint: TransformedPoint) {
 		if (!this._selectedStore.selectedStringId) {
 			console.error('a string must be selected to be in link mode')
@@ -198,9 +221,13 @@ export class PanelLinksService {
 
 		const selectedStringPanelLinks = this.getPanelLinkOrderForSelectedStringWithPoints()
 		const linkPathNumberArray = panelLinksToNumberArray(selectedStringPanelLinks)
-		const isPointOnPath = isPointOnCurvedPathV2(currentPoint)
 		// const isPointOnPath = isPointOnCurvedPath(currentPoint, linkPathNumberArray)
+		const isPointOnPath = isPointOnCurvedPathV4(currentPoint)
+		// const isPointOnPath = isPointOnCurvedPathV3(currentPoint)
 		console.log('panelLink', isPointOnPath)
+		// const isPointOnPath = isPointOnCurvedPathV2(currentPoint)
+		// const isPointOnPath = isPointOnCurvedPath(currentPoint, linkPathNumberArray)
+		// console.log('panelLink', isPointOnPath)
 
 		const panelLink = panelLinks.find((panelLink) => {
 			return isPointOnLine(currentPoint, panelLink.linePoints)
