@@ -6,7 +6,7 @@ import {
 	SpotInBox,
 	TransformedPoint,
 } from '@shared/data-access/models'
-import { CanvasEntity, CanvasPanel } from '@entities/shared'
+import { CanvasEntity, CanvasPanel, PanelLinkModel } from '@entities/shared'
 
 export type CanvasRenderOptions = {
 	// drawFns: ((ctx: CanvasRenderingContext2D) => void)[]
@@ -55,6 +55,8 @@ export type CanvasRenderOptions = {
 	}
 	cursor: CursorType
 	transformedPoint: Point
+	panelUnderMouse: CanvasPanel
+	panelLinkUnderMouse: PanelLinkModel
 
 	// singleToMove
 }

@@ -15,6 +15,9 @@ export const CANVAS_COLORS = {
 	HoveringOverPanelInLinkMenuStrokeStyle: '#1b5fff',
 	SpotTakenStrokeStyle: '#d4342f',
 	UnselectedPanelFillStyle: '#a2a2a2',
+	TooltipFillStyle: '#ffffff',
+	TooltipStrokeStyle: '#000000',
+	TooltipTextFillStyle: '#000000',
 } as const
 
 export type CanvasColor = (typeof CANVAS_COLORS)[keyof typeof CANVAS_COLORS]

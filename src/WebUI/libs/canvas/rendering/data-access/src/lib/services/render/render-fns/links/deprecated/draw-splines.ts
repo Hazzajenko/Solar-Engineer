@@ -20,8 +20,8 @@ export function drawSplines(ctx: CanvasRenderingContext2D, points: number[]) {
 		)
 	}
 
-	console.log('cps', cps)
-	console.log('points', points)
+	// console.log('cps', cps)
+	// console.log('points', points)
 	drawControlPoints(ctx, cps)
 	drawPoints(ctx, cps)
 	drawCurvedPath(ctx, cps, points)

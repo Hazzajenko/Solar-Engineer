@@ -72,6 +72,23 @@ export const selectHoveringOverPanelLinkInLinkMenu = createSelector(
 	(state: PanelLinksState) => state.hoveringOverPanelLinkInLinkMenu,
 )
 
+export const selectHoveringOverPanelLinkIdInApp = createSelector(
+	selectPanelLinksState,
+	(state: PanelLinksState) => state.hoveringOverPanelLinkInApp,
+)
+
+export const selectHoveringOverPanelLinkInApp = createSelector(
+	selectHoveringOverPanelLinkIdInApp,
+	selectPanelLinksEntities,
+	(hoveringOverPanelLinkIdInApp: string | undefined, panelLinks: Dictionary<PanelLinkModel>) =>
+		hoveringOverPanelLinkIdInApp ? panelLinks[hoveringOverPanelLinkIdInApp] : undefined,
+)
+
+export const selectSelectedStringCircuit = createSelector(
+	selectPanelLinksState,
+	(state: PanelLinksState) => state.selectedStringCircuit,
+)
+
 /*
  export const selectPanelLinksForSelectedString = createSelector(
  selectAllPanelLinks,

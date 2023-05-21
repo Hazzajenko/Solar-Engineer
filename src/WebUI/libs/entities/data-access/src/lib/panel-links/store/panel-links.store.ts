@@ -3,17 +3,28 @@ import { provideState, Store } from '@ngrx/store'
 import {
 	selectAllPanelLinks,
 	selectHoveringOverPanelInLinkMenuId,
+	selectHoveringOverPanelLinkInApp,
 	selectHoveringOverPanelLinkInLinkMenu,
 	selectPanelLinksEntities,
 	selectPanelLinksState,
+	selectRequestingLink,
+	selectSelectedStringCircuit,
 } from './panel-links.selectors'
 import { isNotNull } from '@shared/utils'
 import { PanelLinksActions } from './panel-links.actions'
 import { UpdateStr } from '@ngrx/entity/src/models'
-import { PanelLinkModel, Polarity } from '@entities/shared'
+import {
+	ClosedCircuitChain,
+	OpenCircuitChain,
+	PanelLinkId,
+	PanelLinkModel,
+	PanelLinkRequest,
+	Polarity,
+} from '@entities/shared'
 import { PANEL_LINKS_FEATURE_KEY, panelLinksReducer, PanelLinksState } from './panel-links.reducer'
 import { provideEffects } from '@ngrx/effects'
 import * as panelLinksEffects from './panel-links.effects'
+import { CurvedNumberLine } from '@canvas/shared'
 
 export function providePanelLinksFeature() {
 	return makeEnvironmentProviders([
@@ -38,15 +49,23 @@ export function injectPanelLinksStore() {
 		get hoveringOverPanelLinkInLinkMenu() {
 			return store.selectSignal(selectHoveringOverPanelLinkInLinkMenu)()
 		},
+		get requestingLink() {
+			return store.selectSignal(selectRequestingLink)()
+			// return state().requestingLink
+		},
+		get getPanelLinkOrderIfStringIsSelected() {
+			return store.selectSignal(selectSelectedStringCircuit)()
+		},
+		get getHoveringOverPanelLinkInApp() {
+			return store.selectSignal(selectHoveringOverPanelLinkInApp)()
+		},
 		getById(id: string) {
 			return entities()[id]
 		},
 		getByIds(ids: string[]) {
 			return ids.map((id) => entities()[id]).filter(isNotNull)
 		},
-		requestingLink() {
-			return state().requestingLink
-		},
+
 		getByStringId(stringId: string) {
 			return allPanelLinks().filter((panelLink) => panelLink.stringId === stringId)
 		},
@@ -68,9 +87,17 @@ export function injectPanelLinksStore() {
 					(panelLink.positivePanelId === panelId && polarity === 'positive') ||
 					(panelLink.negativePanelId === panelId && polarity === 'negative'),
 			)
-		} /*		panelLinksForSelectedString() {
+		},
+
+		/*		panelLinksForSelectedString() {
 		 return store.selectSignal(selectPanelLinksForSelectedString)()
-		 },*/,
+		 },*/
+		startPanelLink(panelLinkRequest: PanelLinkRequest) {
+			store.dispatch(PanelLinksActions.startPanelLink({ panelLinkRequest }))
+		},
+		endPanelLink() {
+			store.dispatch(PanelLinksActions.endPanelLink())
+		},
 		addPanelLink(panelLink: PanelLinkModel) {
 			store.dispatch(PanelLinksActions.addPanelLink({ panelLink }))
 		},
@@ -106,6 +133,27 @@ export function injectPanelLinksStore() {
 		},
 		clearHoveringOverPanelLinkInLinkMenu() {
 			store.dispatch(PanelLinksActions.clearHoveringOverPanelLinkInLinkMenu())
+		},
+		setSelectedStringLinkCircuit(selectedStringCircuit: {
+			openCircuitChains: OpenCircuitChain[]
+			closedCircuitChains: ClosedCircuitChain[]
+			circuitCurvedLines: CurvedNumberLine[][]
+			circuitLinkLineTuples: [PanelLinkId, CurvedNumberLine][][]
+		}) {
+			store.dispatch(PanelLinksActions.setSelectedStringLinkCircuit({ selectedStringCircuit }))
+		},
+		clearSelectedStringLinkCircuit() {
+			store.dispatch(PanelLinksActions.clearSelectedStringLinkCircuit())
+		},
+		setHoveringOverPanelLinkInApp(panelLinkId: string) {
+			store.dispatch(
+				PanelLinksActions.setHoveringOverPanelLinkInApp({
+					panelLinkId,
+				}),
+			)
+		},
+		clearHoveringOverPanelLinkInApp() {
+			store.dispatch(PanelLinksActions.clearHoveringOverPanelLinkInApp())
 		},
 		clearPanelLinksState() {
 			store.dispatch(PanelLinksActions.clearPanelLinksState())

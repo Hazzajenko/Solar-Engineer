@@ -8,6 +8,8 @@ export const prepareStringPanelLinkCircuitChain = (panelLinks: PanelLinkModel[])
 	}
 
 	const openCircuitChains = circuitChains.openCircuitChains.map((chain) => sortPanelLinks(chain))
+	// console.log('openCircuitChains', openCircuitChains)
+	// const openCircuitChains = circuitChains.openCircuitChains.map((chain) => sortPanelLinks(chain))
 	const closedCircuitChains = circuitChains.closedCircuitChains.map((chain) =>
 		sortPanelLinks(chain),
 	)
@@ -66,7 +68,7 @@ const getPanelLinkOrderSeparateChainsV2 = (panelLinks: PanelLinkModel[]) => {
 	)
 
 	if (unknownCircuitChains.length > 0) {
-		console.log('unknownCircuitChains', unknownCircuitChains)
+		// console.log('unknownCircuitChains', unknownCircuitChains)
 	}
 
 	return {
@@ -101,7 +103,7 @@ const handleClosedCircuitChains = (possibleClosedCircuitLinks: PanelLinkModel[])
 			panelLinkChainOrderInProcess = false
 			chain.push(nextPanelLink)
 			closedCircuitChains.push(chain)
-			console.log('closedCircuitChains', closedCircuitChains)
+			// console.log('closedCircuitChains', closedCircuitChains)
 			return
 		}
 

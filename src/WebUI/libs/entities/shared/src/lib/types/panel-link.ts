@@ -11,16 +11,26 @@ export type PanelLinkModel = {
 	linePoints: Point[]
 }
 
+export type PanelLinkModelWithIndex = PanelLinkModel & {
+	index: number
+}
+
 export type PanelLinkChain = PanelLinkModel[]
 
 export type StringCircuitChains = {
 	openCircuitChains: OpenCircuitChain[]
 	closedCircuitChains: ClosedCircuitChain[]
 }
+/*
+ export type StringCircuitChains = {
+ openCircuitChains: OpenCircuitChain[]
+ closedCircuitChains: ClosedCircuitChain[]
+ }*/
 
 export type OpenOrClosedCircuitChain = OpenCircuitChain | ClosedCircuitChain
 
-export type OpenCircuitChain = PanelLinkChain & {
+export type OpenCircuitChain = PanelLinkModelWithIndex[] & {
+	index: number
 	__type: 'OpenCircuitChain'
 }
 

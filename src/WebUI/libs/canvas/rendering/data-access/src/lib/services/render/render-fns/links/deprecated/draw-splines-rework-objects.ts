@@ -2,7 +2,10 @@ import { Point } from '@shared/data-access/models'
 
 export function drawSplinesReworkObjects(
 	ctx: CanvasRenderingContext2D,
-	points: { x: number; y: number }[],
+	points: {
+		x: number
+		y: number
+	}[],
 ) {
 	let cps: number[] = []
 
@@ -12,13 +15,12 @@ export function drawSplinesReworkObjects(
 		const { x: x3, y: y3 } = points[i + 2]
 
 		cps = cps.concat(
-			calculateControlPoints(points[i], points[i + 1], points[i + 2]),
-			// calculateControlPoints(x1, y1, x2, y2, x3, y3),
+			calculateControlPoints(points[i], points[i + 1], points[i + 2]), // calculateControlPoints(x1, y1, x2, y2, x3, y3),
 		)
 	}
 
-	console.log('cps', cps)
-	console.log('points', points)
+	// console.log('cps', cps)
+	// console.log('points', points)
 	drawControlPoints(ctx, cps)
 	drawPoints(ctx, cps)
 	drawCurvedPath(ctx, cps, points)
@@ -35,7 +37,14 @@ function calculateControlPoints(p1: Point, p2: Point, p3: Point): [number, numbe
 	return [...c1, ...c2] as [number, number, number, number]
 }
 
-function calculateVector(arr: { x: number; y: number }[], i: number, j: number) {
+function calculateVector(
+	arr: {
+		x: number
+		y: number
+	}[],
+	i: number,
+	j: number,
+) {
 	const { x: xj, y: yj } = arr[j]
 	const { x: xi, y: yi } = arr[i]
 	return [xj - xi, yj - yi]

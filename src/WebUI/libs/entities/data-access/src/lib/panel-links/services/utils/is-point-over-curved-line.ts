@@ -22,6 +22,7 @@ export const isPointOverCurvedLineNoCtx = (
 			 }*/
 		}
 	}
+	return
 	/*for (let i = 0; i < circuitCurvedLines.length; i++) {
 	 const curvedLines = circuitCurvedLines[i]
 	 for (let j = 0; j < curvedLines.length; j++) {
@@ -66,7 +67,7 @@ export const isPointOverCurvedLineNoCtx = (
 	 }
 	 }
 	 }*/
-	return false
+	// return false
 }
 
 const handleLineSwitch = (lines: CurvedNumberLine, currentPoint: TransformedPoint) => {

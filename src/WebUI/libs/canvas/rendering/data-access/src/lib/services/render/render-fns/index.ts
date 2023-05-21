@@ -9,6 +9,7 @@ export * from './preview/index'
 export * from './entities/index'
 export * from './links/index'
 export * from './drag-box/index'
+export * from './draw-tooltip-with-options.ctx'
 
 // export * from './draw-axis-grid-lines'
 // export * from './draw-preview-fn'

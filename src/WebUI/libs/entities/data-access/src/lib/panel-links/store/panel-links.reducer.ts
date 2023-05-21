@@ -1,7 +1,8 @@
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity'
 import { Action, createReducer, on } from '@ngrx/store'
-import { PanelLinkModel, PanelLinkRequest } from '@entities/shared'
+import { ClosedCircuitChain, OpenCircuitChain, PanelLinkId, PanelLinkModel, PanelLinkRequest } from '@entities/shared'
 import { PanelLinksActions } from './panel-links.actions'
+import { CurvedNumberLine } from '@canvas/shared'
 
 /*export type LinkPathLine = {
 
@@ -20,6 +21,14 @@ export interface PanelLinksState extends EntityState<PanelLinkModel> {
 				panelLinkId: string
 		  }
 		| undefined
+	hoveringOverPanelLinkInApp: string | undefined
+	selectedStringCircuit: {
+		openCircuitChains: OpenCircuitChain[]
+		closedCircuitChains: ClosedCircuitChain[]
+		circuitCurvedLines: CurvedNumberLine[][]
+		circuitLinkLineTuples: [PanelLinkId, CurvedNumberLine][][]
+	}
+	// | undefined
 }
 
 export const panelLinksAdapter: EntityAdapter<PanelLinkModel> = createEntityAdapter<PanelLinkModel>(
@@ -33,6 +42,13 @@ export const initialPanelLinksState: PanelLinksState = panelLinksAdapter.getInit
 	requestingLink: undefined,
 	hoveringOverPanelInLinkMenuId: undefined,
 	hoveringOverPanelLinkInLinkMenu: undefined,
+	hoveringOverPanelLinkInApp: undefined,
+	selectedStringCircuit: {
+		openCircuitChains: [],
+		closedCircuitChains: [],
+		circuitCurvedLines: [],
+		circuitLinkLineTuples: [],
+	},
 })
 
 const reducer = createReducer(
@@ -78,6 +94,22 @@ const reducer = createReducer(
 	on(PanelLinksActions.clearHoveringOverPanelLinkInLinkMenu, (state) => ({
 		...state,
 		hoveringOverPanelLinkInLinkMenu: undefined,
+	})),
+	on(PanelLinksActions.setSelectedStringLinkCircuit, (state, { selectedStringCircuit }) => ({
+		...state,
+		selectedStringCircuit,
+	})),
+	on(PanelLinksActions.clearSelectedStringLinkCircuit, (state) => ({
+		...state,
+		selectedStringCircuit: initialPanelLinksState.selectedStringCircuit,
+	})),
+	on(PanelLinksActions.setHoveringOverPanelLinkInApp, (state, { panelLinkId }) => ({
+		...state,
+		hoveringOverPanelLinkInApp: panelLinkId,
+	})),
+	on(PanelLinksActions.clearHoveringOverPanelLinkInApp, (state) => ({
+		...state,
+		hoveringOverPanelLinkInApp: undefined,
 	})),
 	on(PanelLinksActions.clearPanelLinksState, () => initialPanelLinksState),
 )

@@ -6,8 +6,10 @@ import {
 	BezierAPointLine,
 	BezierNumberLine,
 	CurvedLine,
+	DrawOptions,
 	QuadraticBezierAPointLine,
 } from '@canvas/shared'
+import { setDrawOptions } from '../ctx'
 
 export const createBezierNumberLine = (
 	points: number[],
@@ -23,6 +25,25 @@ export const createBezierNumberLine = (
 	points[i * 2],
 	points[i * 2 + 1],
 ]
+
+export const drawBezierLineNumbersWithOptions = (
+	ctx: CanvasRenderingContext2D,
+	line: BezierNumberLine,
+	isStart = false,
+	isFinish = false,
+	options?: Partial<DrawOptions>,
+) => {
+	ctx.save()
+	setDrawOptions(ctx, options)
+	const [startX, startY, control1X, control1Y, control2X, control2Y, endX, endY] = line
+	if (isStart) {
+		// ctx.beginPath()
+		ctx.moveTo(startX, startY)
+	}
+	ctx.bezierCurveTo(control1X, control1Y, control2X, control2Y, endX, endY)
+	if (isFinish) ctx.stroke()
+	ctx.restore()
+}
 
 export const drawBezierLineNumbers = (
 	ctx: CanvasRenderingContext2D,

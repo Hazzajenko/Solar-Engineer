@@ -41,6 +41,10 @@ export const separatePanelLinkChains = (panelLinks: PanelLinkModel[]) => {
 	return chains
 }
 
+/*export const sortPanelLinksAndMapIndex = <T extends PanelLinkModel[]>(panelLinkChain: T) =>
+ panelLinkChain
+ .sort(sortPanelLinksCompareFn)
+ .map((panelLink, index) => ({ ...panelLink, index } as PanelLinkModelWithIndex))*/
 export const sortPanelLinks = <T extends PanelLinkModel[]>(panelLinkChain: T) =>
 	panelLinkChain.sort(sortPanelLinksCompareFn)
 

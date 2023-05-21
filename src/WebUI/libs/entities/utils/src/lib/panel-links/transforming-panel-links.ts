@@ -84,7 +84,15 @@ export const reduceLinkChainToNumberArrayOptimised = (
 		return [...acc, ...link[1]]
 	}, [] as number[])
 }
+// linkLineTuple: [PanelLinkId, CurvedNumberLine][]
 
+export const mapLinkChainToCurvedNumberLine = (
+	linkLineTuples: [PanelLinkId, CurvedNumberLine][],
+) => {
+	return linkLineTuples.map((linkPointTuple) => {
+		return linkPointTuple[1] as CurvedNumberLine
+	})
+}
 export const mapStringLinkChainToDoubleNumberArray = (
 	chainLinkLineTuples: [PanelLinkId, CurvedNumberLine][][],
 ) => {

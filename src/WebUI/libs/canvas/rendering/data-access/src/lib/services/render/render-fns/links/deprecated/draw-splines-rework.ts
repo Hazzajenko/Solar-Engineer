@@ -92,7 +92,7 @@ function createCurvedPaths(points: number[]): BezierCurve[] {
 			continue
 		}
 		// curve.inflections()
-		console.log('curve', curve)
+		// console.log('curve', curve)
 		curves.push(curve)
 	}
 	// console.log('curves', curves)
@@ -105,7 +105,7 @@ function createCurvedPaths(points: number[]): BezierCurve[] {
 		),
 	)
 	// cachedBeziers = curves.map((curve) => new Bezier(...curve))
-	console.log('cachedBeziers', cachedBeziers)
+	// console.log('cachedBeziers', cachedBeziers)
 	return curves
 }
 
@@ -129,7 +129,7 @@ function getLineIntersectionsForBezier() {
 		const curve = cachedBeziers[i]
 		const nextCurve = cachedBeziers[i + 1]
 		const intersections = curve.intersects(nextCurve)
-		console.log('intersections', intersections)
+		// console.log('intersections', intersections)
 	}
 }
 
@@ -183,7 +183,7 @@ function drawCurvedPath(ctx: CanvasRenderingContext2D, controlPoints: number[], 
 			points[i * 2 + 1],
 		)
 		ctx.stroke()
-		console.log('cachedLines', cachedLines)
+		// console.log('cachedLines', cachedLines)
 		if (cachedLines.length > 0) {
 			/*const t = 0.5
 			 cachedLines.forEach((line) => {
@@ -353,7 +353,7 @@ export const isPointOnCurvedPathV4 = (point: Point) => {
 			)
 			const far = distance(point, { x: point2[0], y: point2[1] })
 			if (far < 50) {
-				console.log('far', far)
+				// console.log('far', far)
 			}
 			if (far < 5) {
 				result = true
@@ -404,7 +404,7 @@ export function isPointOnCurvedPathV2(point: Point) {
 		const distanceFromMouse = curve.project({ x: point.x, y: point.y }).d
 		if (!distanceFromMouse) return false
 		if (distanceFromMouse < tolerance) {
-			console.log('distanceFromMouse', distanceFromMouse)
+			// console.log('distanceFromMouse', distanceFromMouse)
 			return true
 		}
 		// const bez = new Bezier(curve[0], curve[1], curve[2], curve[3], curve[4], curve[5])
@@ -457,7 +457,7 @@ export function isPointOnCurvedPath(
 			ctx.isPointInStroke(curve, point.x, point.y) ||
 			ctx.isPointInPath(curve, point.x, point.y)
 		) {
-			console.log('isPointInStroke', ctx)
+			// console.log('isPointInStroke', ctx)
 			return true
 		}
 		// let ctx: CanvasRenderingContext2D

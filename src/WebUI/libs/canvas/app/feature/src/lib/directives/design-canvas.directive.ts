@@ -50,6 +50,7 @@ import { isPanel, isPointInsideSelectedStringPanelsByStringIdNgrxWithPanels } fr
 import {
 	CANVAS_COLORS,
 	CanvasEntity,
+	CanvasPanel,
 	ENTITY_TYPE,
 	SizeByType,
 	UndefinedStringId,
@@ -283,7 +284,42 @@ export class DesignCanvasDirective implements OnInit {
 		if (this._appState.state.mode === MODE_STATE.LINK_MODE) {
 			// const isPointOnPath = isPointOnCurvedPath(currentPoint, linkPathNumberArray)
 			// this._panelLinks.isMouseOverLinkPathV3(event, currentPoint, this.ctx)
-			this._panelLinks.isMouseOverLinkPath(event, currentPoint, this.ctx)
+			const panelLinkUnderMouse = this._panelLinks.isMouseOverLinkPath(event, currentPoint)
+			if (panelLinkUnderMouse) {
+				this._entities.panelLinks.setHoveringOverPanelLinkInApp(panelLinkUnderMouse.id)
+				// this._appState.dispatch.setHoveringOverLinkState(panelLinkUnderMouse.id)
+				/*	this._render.renderCanvasApp({
+				 panelLinkUnderMouse,
+				 })*/
+				return
+			}
+
+			if (this._entities.panelLinks.getHoveringOverPanelLinkInApp) {
+				this._entities.panelLinks.clearHoveringOverPanelLinkInApp()
+				this._render.renderCanvasApp()
+			}
+
+			const entityUnderMouse = this.getEntityUnderMouse(event)
+			if (entityUnderMouse) {
+				const hoveringEntityId = this._appState.state.pointer.hoveringOverEntityId
+				if (hoveringEntityId === entityUnderMouse.id) return
+				this._appState.dispatch.setHoveringOverEntityState(entityUnderMouse.id)
+				this._render.renderCanvasApp({
+					panelUnderMouse: entityUnderMouse as CanvasPanel,
+				})
+				return
+			}
+
+			if (appState.pointer.hoverState === 'HoveringOverEntity') {
+				changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
+				this._appState.dispatch.liftHoveringOverEntity()
+				this._render.renderCanvasApp()
+				return
+			}
+			/*			const entityUnderMouse = this.getEntityUnderMouse(event)
+			 if (entityUnderMouse) {
+
+			 }*/
 			// this._panelLinks.handleMouseInLinkMode(event, currentPoint)
 			return
 		}
@@ -570,11 +606,7 @@ export class DesignCanvasDirective implements OnInit {
 
 		const mode = this._appState.state.mode
 		if (mode === 'LinkMode') {
-			const panelLinkUnderMouse = this._panelLinks.isMouseOverLinkPath(
-				event,
-				currentPoint,
-				this.ctx,
-			)
+			const panelLinkUnderMouse = this._panelLinks.isMouseOverLinkPath(event, currentPoint)
 			if (panelLinkUnderMouse) {
 				this._uiStore.dispatch.openContextMenu({
 					component: CONTEXT_MENU_COMPONENT.PANEL_LINK_MENU,

@@ -1,5 +1,6 @@
-import { QuadraticBezierAPointLine, QuadraticNumberLine } from '@canvas/shared'
+import { DrawOptions, QuadraticBezierAPointLine, QuadraticNumberLine } from '@canvas/shared'
 import { APoint } from '@shared/utils'
+import { setDrawOptions } from '../ctx'
 
 export const createQuadraticNumberLine = (
 	points: number[],
@@ -13,6 +14,25 @@ export const createQuadraticNumberLine = (
 	points[i * 2],
 	points[i * 2 + 1],
 ]
+
+export const drawQuadraticLineNumbersWithOptions = (
+	ctx: CanvasRenderingContext2D,
+	line: QuadraticNumberLine,
+	isStart = false,
+	isFinish = false,
+	options?: Partial<DrawOptions>,
+) => {
+	ctx.save()
+	setDrawOptions(ctx, options)
+	const [startX, startY, controlX, controlY, endX, endY] = line
+	if (isStart) {
+		// ctx.beginPath()
+		ctx.moveTo(startX, startY)
+	}
+	ctx.quadraticCurveTo(controlX, controlY, endX, endY)
+	if (isFinish) ctx.stroke()
+	ctx.restore()
+}
 export const drawQuadraticLineNumbers = (
 	ctx: CanvasRenderingContext2D,
 	line: QuadraticNumberLine,

@@ -13,12 +13,15 @@ import {
 	drawClickNearEntityBounds,
 	drawCreationDragBox,
 	drawEntityCreationPreview,
+	drawLinkModeOrderNumbers,
 	drawLinkModePathLinesCurvedAlreadyMappedV6,
+	drawLinkModeSymbols,
 	drawNearbyLineDrawCtxFnFromNearbyLinesStateOptimisedV2,
 	drawSelectedBox,
 	drawSelectedStringBoxV3,
 	drawSelectedStringBoxWithStats,
 	drawSelectionDragBox,
+	drawTooltipWithOptionsCtx,
 } from './render-fns'
 import { inject, Injectable } from '@angular/core'
 import { assertNotNull, shadeColor } from '@shared/utils'
@@ -29,19 +32,13 @@ import {
 	PanelLinksStoreService,
 	StringsStatsService,
 } from '@entities/data-access'
-import {
-	getNegativeSymbolLocation,
-	getPositiveSymbolLocation,
-	getSymbolLocations,
-	isPanel,
-} from '@entities/utils'
-import { AngleDegrees, Point } from '@shared/data-access/models'
-import { toRadians } from '@canvas/utils'
+import { getNegativeSymbolLocation, getPositiveSymbolLocation, isPanel } from '@entities/utils'
+import { Point } from '@shared/data-access/models'
 import {
 	CANVAS_COLORS,
 	CanvasEntity,
 	CanvasPanel,
-	CanvasString,
+	OpenCircuitChain,
 	PANEL_STROKE_STYLE,
 	PanelLinkModel,
 	UndefinedStringId,
@@ -191,7 +188,7 @@ export class RenderService {
 							return true
 						})
 			const { openCircuitChains, closedCircuitChains, circuitCurvedLines, circuitLinkLineTuples } =
-				this._panelLinks.getPanelLinkOrderIfStringIsSelected()
+				this._panelLinks.getPanelLinkOrderIfStringIsSelected() // this._entities.panelLinks.getPanelLinkOrderIfStringIsSelected
 			// const linksInOrder = this._panelLinks.getPanelLinkOrderIfStringIsSelected()
 			this.drawEntities(ctx, entities, openCircuitChains)
 			ctx.restore()
@@ -207,12 +204,19 @@ export class RenderService {
 					this._entities.panelLinks.hoveringOverPanelLinkInLinkMenu
 				// drawLinkModePathLinesCurvedAlreadyMappedV4(
 				// drawLinkModePathLinesCurvedAlreadyMappedV5(
+				const panelLinkUnderMouse = this._entities.panelLinks.getHoveringOverPanelLinkInApp
+
+				// const panelLinkUnderMouse = this._entities.panelLinks.getById(panelLinkUnderMouseId)
+
+				// const panelLinkUnderMouse = options?.panelLinkUnderMouse
+
 				drawLinkModePathLinesCurvedAlreadyMappedV6(
 					ctx,
 					entities,
 					circuitLinkLineTuples,
 					selectedPanelLinkId,
 					hoveringOverPanelLinkInLinkMenu,
+					panelLinkUnderMouse,
 				)
 				/*	drawLinkModePathLinesCurvedAlreadyMappedV3(
 				 ctx,
@@ -399,6 +403,15 @@ export class RenderService {
 			if (options?.creationPreviewBounds) {
 				drawEntityCreationPreview(ctx, options.creationPreviewBounds)
 			}
+
+			if (options?.panelUnderMouse) {
+				const panel = options.panelUnderMouse
+				const point = {
+					x: panel.location.x + panel.width * 2,
+					y: panel.location.y - panel.width * 2,
+				}
+				drawTooltipWithOptionsCtx(ctx, point, panel.id)
+			}
 		})
 	}
 
@@ -542,10 +555,12 @@ export class RenderService {
 			// draw drawLinkModeGraphics
 			if (isStringSelected && this._appStore.state.mode === 'LinkMode') {
 				if (this._graphicsStore.state.linkModeSymbols) {
-					this.drawLinkModeSymbols(ctx, entity)
+					drawLinkModeSymbols(ctx, entity)
+					// this.drawLinkModeSymbols(ctx, entity)
 				}
 				if (this._graphicsStore.state.linkModeOrderNumbers && linksInOrder.length) {
-					this.drawLinkModeOrderNumbers(ctx, entity, linksInOrder)
+					drawLinkModeOrderNumbers(ctx, entity, linksInOrder as OpenCircuitChain[])
+					// this.drawLinkModeOrderNumbers(ctx, entity, linksInOrder as OpenCircuitChain[])
 				}
 			}
 			/*				if (
@@ -558,251 +573,7 @@ export class RenderService {
 			ctx.restore()
 		})
 	}
-
-	private drawLinkModeSymbols(ctx: CanvasRenderingContext2D, panel: CanvasPanel) {
-		const lineLength = 5
-		ctx.save()
-
-		// draw negative symbol
-		ctx.save()
-		ctx.translate(-panel.width / 2, 0)
-		ctx.save()
-		ctx.rotate(toRadians(45 as AngleDegrees))
-		ctx.strokeStyle = 'black'
-		ctx.strokeRect(-lineLength / 2, -lineLength / 2, lineLength, lineLength)
-		ctx.fillStyle = 'blue'
-		ctx.fillRect(-lineLength / 2, -lineLength / 2, lineLength, lineLength)
-		ctx.restore()
-
-		ctx.strokeStyle = 'white'
-		ctx.beginPath()
-		ctx.moveTo(-lineLength / 2, 0)
-		ctx.lineTo(lineLength / 2, 0)
-		ctx.stroke()
-		ctx.restore()
-
-		// draw positive symbol
-		ctx.save()
-		ctx.translate(panel.width / 2, 0)
-		ctx.save()
-		ctx.rotate(toRadians(45 as AngleDegrees))
-		ctx.strokeStyle = 'black'
-		ctx.strokeRect(-lineLength / 2, -lineLength / 2, lineLength, lineLength)
-		ctx.fillStyle = 'red'
-		ctx.fillRect(-lineLength / 2, -lineLength / 2, lineLength, lineLength)
-		ctx.restore()
-
-		ctx.strokeStyle = 'white'
-		ctx.beginPath()
-		ctx.moveTo(-lineLength / 2, 0)
-		ctx.lineTo(lineLength / 2, 0)
-		ctx.moveTo(0, -lineLength / 2)
-		ctx.lineTo(0, lineLength / 2)
-		ctx.stroke()
-		ctx.restore()
-
-		ctx.restore()
-	}
-
-	private drawLinkModeOrderNumbers(
-		ctx: CanvasRenderingContext2D,
-		panel: CanvasPanel,
-		linksInOrder: PanelLinkModel[][],
-	) {
-		if (!linksInOrder.length) {
-			return
-		}
-		const chain = linksInOrder.findIndex((linkChain) =>
-			linkChain.some(
-				(link) => link?.positivePanelId === panel.id || link?.negativePanelId === panel.id,
-			),
-		)
-
-		if (chain === -1) {
-			return
-		}
-
-		const chainSorted = getChainSorted(linksInOrder[chain])
-		const linkIndex = chainSorted.findIndex((link) => link?.positivePanelId === panel.id)
-		const properIndex = linkIndex !== -1 ? linkIndex : chainSorted.length
-		ctx.save()
-		const fontSize = 10
-		ctx.font = `${fontSize}px Consolas, sans-serif`
-		const text = `${properIndex + 1}`
-		const metrics = ctx.measureText(text)
-		const x = -metrics.width / 2
-		const y = fontSize / 4
-		ctx.fillStyle = 'black'
-		ctx.fillText(text, x, y)
-		ctx.restore()
-
-		/*		const panelLinkChain = linksInOrder.find((linkChain) => {
-		 const chainSorted = getChainSorted(linkChain)
-		 return (
-		 chainSorted.some((link) => link?.positivePanelId === panel.id) ||
-		 chainSorted[chainSorted.length - 1]?.negativePanelId === panel.id
-		 )
-		 })
-		 if (!panelLinkChain) {
-		 return
-		 }*/
-
-		/*linksInOrder.forEach((linkChain) => {
-		 const chainSorted = getChainSorted(linkChain)
-		 const isPanelInThisChain =
-		 chainSorted.some((link) => link?.positivePanelId === panel.id) ||
-		 chainSorted[chainSorted.length - 1]?.negativePanelId === panel.id
-		 if (!isPanelInThisChain) {
-		 return
-		 }
-		 const linkIndex = chainSorted.findIndex((link) => link?.positivePanelId === panel.id)
-		 const chainIndex = linkIndex !== -1 ? linkIndex : chainSorted.length
-		 ctx.save()
-		 const fontSize = 10
-		 ctx.font = `${fontSize}px Consolas, sans-serif`
-		 const text = `${chainIndex + 1}`
-		 const metrics = ctx.measureText(text)
-		 const x = 0 - metrics.width / 2
-		 const y = fontSize / 4
-
-		 ctx.fillStyle = 'black'
-
-		 ctx.fillText(text, x, y)
-		 ctx.restore()
-		 })*/
-	}
-
-	private drawLinkModeOrderNumbersOld(ctx: CanvasRenderingContext2D, panel: CanvasPanel) {
-		const linksInOrder = this._panelLinks.getPanelLinkOrderForSelectedString()
-		if (!linksInOrder.length) {
-			return
-		}
-		const linkIndex = linksInOrder.findIndex((link) => link?.positivePanelId === panel.id)
-		if (linkIndex !== -1) {
-			ctx.save()
-			const fontSize = 10
-			ctx.font = `${fontSize}px Consolas, sans-serif`
-			const text = `${linkIndex + 1}`
-			const metrics = ctx.measureText(text)
-			const x = 0 - metrics.width / 2
-			const y = fontSize / 4
-			ctx.fillStyle = 'black'
-			ctx.fillText(text, x, y)
-			ctx.restore()
-		} else if (linksInOrder[linksInOrder.length - 1].negativePanelId === panel.id) {
-			ctx.save()
-			const fontSize = 10
-			ctx.font = `${fontSize}px Consolas, sans-serif`
-			const text = `${linksInOrder.length + 1}`
-			const metrics = ctx.measureText(text)
-			const x = 0 - metrics.width / 2
-			const y = fontSize / 4
-			ctx.fillStyle = 'black'
-			ctx.fillText(text, x, y)
-			ctx.restore()
-		}
-	}
-
-	private drawLinkModePathLines(
-		ctx: CanvasRenderingContext2D,
-		customEntities: CanvasEntity[] | undefined,
-	) {
-		const customIds = customEntities?.map((entity) => entity.id) ?? []
-		const linksInOrder = this._panelLinks.getPanelLinkOrderForSelectedString().map((link) => ({
-			positivePanel: this._entities.panels.getById(link.positivePanelId),
-			negativePanel: this._entities.panels.getById(link.negativePanelId),
-		}))
-		if (!linksInOrder.length) {
-			return
-		}
-		ctx.save()
-		ctx.strokeStyle = 'black'
-		ctx.lineWidth = 1
-
-		let firstHasBeenSet = false
-		linksInOrder.forEach((link) => {
-			const panel = link.positivePanel
-			assertNotNull(panel, 'panel')
-
-			const [p1, p2] = customIds.includes(panel.id)
-				? getSymbolLocations(
-						customEntities?.find((entity) => entity.id === panel.id) as CanvasPanel,
-				  )
-				: getSymbolLocations(panel)
-			if (!firstHasBeenSet) {
-				firstHasBeenSet = true
-			} else {
-				ctx.lineTo(p1.x, p1.y)
-			}
-			ctx.moveTo(p2.x, p2.y)
-		})
-		const lastPanel = linksInOrder[linksInOrder.length - 1].negativePanel
-		assertNotNull(lastPanel, 'lastPanel')
-		const { x: lastX, y: lastY } = customIds.includes(lastPanel.id)
-			? getNegativeSymbolLocation(
-					customEntities?.find((entity) => entity.id === lastPanel.id) as CanvasPanel,
-			  )
-			: getNegativeSymbolLocation(lastPanel)
-		ctx.lineTo(lastX, lastY)
-		ctx.stroke()
-		ctx.restore()
-	}
-
-	private drawLinkModePathLinesV2(
-		ctx: CanvasRenderingContext2D,
-		customEntities: CanvasEntity[] | undefined,
-	) {
-		const customIds = customEntities?.map((entity) => entity.id) ?? []
-		const linksInOrder = this._panelLinks.getPanelLinkOrderForSelectedStringWithPoints()
-		if (!linksInOrder.length) {
-			return
-		}
-		ctx.save()
-		ctx.strokeStyle = 'black'
-		ctx.lineWidth = 1
-
-		linksInOrder.forEach((link) => {
-			ctx.save()
-			ctx.beginPath()
-
-			if (this._selectedStore.selectedPanelLinkId === link.id) {
-				ctx.strokeStyle = 'red'
-				ctx.lineWidth = 2
-			}
-
-			if (this._entities.panelLinks.hoveringOverPanelLinkInLinkMenu?.panelLinkId === link.id) {
-				ctx.strokeStyle = 'red'
-				ctx.lineWidth = 2
-			}
-			link.linePoints.forEach((linePoint, index) => {
-				const drawFn = index === 0 ? ctx.moveTo : ctx.lineTo
-				const currentPanelId = index === 0 ? link.positivePanelId : link.negativePanelId
-				const point = customIds.includes(currentPanelId)
-					? getSymbolLocationBasedOnIndex(index, customEntities, currentPanelId)
-					: linePoint
-				drawFn.call(ctx, point.x, point.y)
-			})
-
-			/*			if (this._selectedStore.selectedPanelLinkId === link.id) {
-			 ctx.strokeStyle = 'red'
-			 ctx.lineWidth = 2
-			 }
-
-			 if (this._entities.panelLinks.hoveringOverPanelLinkInLinkMenu?.panelLinkId === link.id) {
-			 ctx.strokeStyle = 'red'
-			 ctx.lineWidth = 2
-			 }*/
-
-			ctx.stroke()
-			ctx.restore()
-		})
-		ctx.restore()
-	}
 }
-
-const FRAMES_PER_SECOND = 30 // Valid values are 60,30,20,15,10...
-// set the mim time to render the next frame
-const FRAME_MIN_TIME = (1000 / 60) * (60 / FRAMES_PER_SECOND) - (1000 / 60) * 0.5
 
 export const getSymbolLocationBasedOnIndex = (
 	index: number,
@@ -817,44 +588,4 @@ export const getSymbolLocationBasedOnIndex = (
 		return getPositiveSymbolLocation(panel)
 	}
 	return getNegativeSymbolLocation(panel)
-}
-
-/*
- function getSymbolLocations(panel: CanvasPanel): [Point, Point] {
- const { x, y, width, height } = panel
- const p1 = { x: x + width / 2, y }
- const p2 = { x: x + width / 2, y: y + height }
- return [p1, p2]
- }*/
-
-function getStringsWithPanelsBasedOffSelectedString(
-	selectedStringId: string | undefined,
-	entityStore: EntityStoreService,
-): {
-	string: CanvasString
-	panels: CanvasPanel[]
-}[] {
-	if (selectedStringId) {
-		const string = entityStore.strings.getById(selectedStringId)
-		assertNotNull(string, 'selectedString')
-		return [
-			{
-				string,
-				panels: entityStore.panels.getByStringId(string.id),
-			},
-		]
-	}
-	return entityStore.strings.allStrings.map((string) => ({
-		string,
-		panels: entityStore.panels.getByStringId(string.id),
-	}))
-}
-
-function getChainSorted(linkChain: PanelLinkModel[]) {
-	return linkChain.sort((a, b) => {
-		if (!a || !b) {
-			return 0
-		}
-		return a.positivePanelId === b.negativePanelId ? 1 : -1
-	})
 }

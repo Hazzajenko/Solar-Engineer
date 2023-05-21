@@ -1,6 +1,6 @@
 import { AppStateStoreService, CanvasElementService } from '@canvas/app/data-access'
 import { inject, Injectable, signal } from '@angular/core'
-import { PanelLinksStoreService } from '../store'
+import { injectPanelLinksStore } from '../store'
 import {
 	CanvasPanel,
 	ClosedCircuitChain,
@@ -21,17 +21,14 @@ import { TransformedPoint } from '@shared/data-access/models'
 import {
 	changeCanvasCursor,
 	isPointInsideMiddleRightOfEntityWithRotationV2,
-	isPointOnLine,
 	setCanvasCursorToAuto,
 } from '@canvas/utils'
 import { calculateLinkLinesBetweenTwoPanelCenters } from '@entities/utils'
 import {
 	isPointOverCurvedLineNoCtx,
-	panelLinksToNumberArray,
 	preparePanelLinksForRenderV3,
 	prepareStringPanelLinkCircuitChain,
 } from './utils'
-import { isPointOnCurvedPath } from '../../../../../../canvas/rendering/data-access/src/lib/services/render/render-fns/links/deprecated/draw-splines-rework'
 import { CurvedNumberLine } from '@canvas/shared'
 
 @Injectable({
@@ -40,9 +37,11 @@ import { CurvedNumberLine } from '@canvas/shared'
 export class PanelLinksService {
 	private _entities = inject(EntityStoreService)
 	private _appStore = inject(AppStateStoreService)
-	private _panelLinksStore = inject(PanelLinksStoreService)
+	private _panelLinksStore = injectPanelLinksStore()
+	// private _panelLinksStore = inject(PanelLinksStoreService)
 	private _selectedStore = injectSelectedStore()
 	private _canvasElementStore = inject(CanvasElementService)
+	// private _render = inject(RenderService)
 	// private _selectedId = this._store.selectSignal(selectSelectedStringId)
 	// private _selectedStringId = selectSignalFromStore((state) => state.selected.selectedStringId)
 	private _selectedStringId = selectSignalFromStore(selectSelectedStringId)
@@ -95,13 +94,22 @@ export class PanelLinksService {
 			return
 		}
 		const panelLinks = this._panelLinksStore.getByStringId(selectedStringId)
-		const stringCircuitChains = prepareStringPanelLinkCircuitChain(panelLinks)
+		const stringCircuitChains = prepareStringPanelLinkCircuitChain(
+			panelLinks,
+		) as StringCircuitChains
+		// console.log('PanelLinksService: stringCircuitChains', stringCircuitChains)
 		this._selectedStringCircuitChains.set(stringCircuitChains)
 		const { stringCircuitChain, stringPanelLinkLines } =
 			preparePanelLinksForRenderV3(stringCircuitChains)
 		// const { curvedLinesCombined, microLinePoints } = preparePanelLinksForRender(stringCircuitChains)
 		this._selectedStringLinkToLinesTuple.set(stringCircuitChain)
 		this._selectedStringFlatLines.set(stringPanelLinkLines)
+		/*		this._panelLinksStore.setSelectedStringLinkCircuit({
+		 circuitCurvedLines: stringPanelLinkLines,
+		 circuitLinkLineTuples: stringCircuitChain,
+		 closedCircuitChains: stringCircuitChains.closedCircuitChains,
+		 openCircuitChains: stringCircuitChains.openCircuitChains,
+		 })*/
 		// this._selectedStringFlatLines.set(stringCircuitChain)
 		// this._selectedStringMicroLinePoints.set(microLinePoints)
 	}
@@ -113,7 +121,7 @@ export class PanelLinksService {
 				openCircuitChains: [] as OpenCircuitChain[],
 				closedCircuitChains: [] as ClosedCircuitChain[],
 				circuitCurvedLines: [] as CurvedNumberLine[][],
-				circuitLinkLineTuples: [] as [PanelLinkId, CurvedNumberLine][][], // circuitCurvedLines: [] as [PanelLinkId, CurvedNumberLine[]][][],
+				circuitLinkLineTuples: [] as [PanelLinkId, CurvedNumberLine][][],
 			}
 		}
 		const { openCircuitChains, closedCircuitChains } = this._selectedStringCircuitChains()
@@ -125,20 +133,6 @@ export class PanelLinksService {
 			circuitCurvedLines,
 			circuitLinkLineTuples,
 		}
-		/*		const panelLinks = this._panelLinksStore.getByStringId(stringId)
-		 const circuitChains = getPanelLinkOrderSeparateChainsV2(panelLinks) as {
-		 openCircuitChains: OpenCircuitChain[]
-		 closedCircuitChains: ClosedCircuitChain[]
-		 }
-
-		 const openCircuitChains = circuitChains.openCircuitChains.map((chain) => sortPanelLinks(chain))
-		 const closedCircuitChains = circuitChains.closedCircuitChains.map((chain) =>
-		 sortPanelLinks(chain),
-		 )
-		 return {
-		 openCircuitChains,
-		 closedCircuitChains,
-		 }*/
 	}
 
 	handlePanelLinksClick(event: PointerEvent, panel: CanvasPanel) {
@@ -150,7 +144,7 @@ export class PanelLinksService {
 			console.error('panel must be in a string to link it')
 			return
 		}
-		const requestingLink = this._panelLinksStore.state.requestingLink
+		const requestingLink = this._panelLinksStore.requestingLink
 		if (requestingLink) {
 			this.endPanelLink(event, panel, requestingLink)
 			return
@@ -171,6 +165,7 @@ export class PanelLinksService {
 			panelId: panel.id,
 		}
 		this._panelLinksStore.startPanelLink(panelLinkRequest)
+		// this._panelLinksStore.startPanelLink(panelLinkRequest)
 	}
 
 	endPanelLink(event: PointerEvent, panel: CanvasPanel, requestingLink: PanelLinkRequest) {
@@ -212,42 +207,19 @@ export class PanelLinksService {
 		return getPanelLinkOrderSeparateChains(panelLinks)
 	}
 
-	getPanelLinkOrderForSelectedStringV2() {
-		const stringId = this._selectedStore.selectedStringId
-		assertNotNull(stringId)
-		const panelLinks = this._panelLinksStore.getByStringId(stringId)
-		return getPanelLinkOrderSeparateChains(panelLinks)
-	}
-
-	getPanelLinkOrderForSelectedString() {
-		const stringId = this._selectedStore.selectedStringId
-		assertNotNull(stringId)
-		const panelLinks = this._panelLinksStore.getByStringId(stringId)
-
-		return panelLinks
-			.map((panelLink) => ({
-				positivePanelId: panelLink.positivePanelId,
-				negativePanelId: panelLink.negativePanelId,
-			}))
-			.sort((a, b) => {
-				if (!a || !b) {
-					return 0
-				}
-				return a.positivePanelId === b.negativePanelId ? 1 : -1
-			})
-	}
-
-	getPanelLinkOrderForSelectedStringWithPoints() {
-		const stringId = this._selectedStore.selectedStringId
-		assertNotNull(stringId)
-		const panelLinks = this._panelLinksStore.getByStringId(stringId)
-		return panelLinks.sort((a, b) => {
-			if (!a || !b) {
-				return 0
-			}
-			return a.positivePanelId === b.negativePanelId ? 1 : -1
-		})
-	}
+	/*
+	 getPanelLinkOrderForSelectedStringWithPoints() {
+	 const stringId = this._selectedStore.selectedStringId
+	 assertNotNull(stringId)
+	 const panelLinks = this._panelLinksStore.getByStringId(stringId)
+	 return panelLinks.sort((a, b) => {
+	 if (!a || !b) {
+	 return 0
+	 }
+	 return a.positivePanelId === b.negativePanelId ? 1 : -1
+	 })
+	 }
+	 */
 
 	clearPanelLinkRequest() {
 		this._panelLinksStore.endPanelLink()
@@ -272,16 +244,12 @@ export class PanelLinksService {
 			return
 		}
 
-		const selectedStringPanelLinks = this.getPanelLinkOrderForSelectedStringWithPoints()
-		const linkPathNumberArray = panelLinksToNumberArray(selectedStringPanelLinks)
-		const isPointOnPath = isPointOnCurvedPath(ctx, currentPoint, linkPathNumberArray)
+		// const selectedStringPanelLinks = this.getPanelLinkOrderForSelectedStringWithPoints()
+		// const linkPathNumberArray = panelLinksToNumberArray(selectedStringPanelLinks)
+		// const isPointOnPath = isPointOnCurvedPath(ctx, currentPoint, linkPathNumberArray)
 	}
 
-	isMouseOverLinkPath(
-		event: PointerEvent,
-		currentPoint: TransformedPoint,
-		ctx: CanvasRenderingContext2D,
-	) {
+	isMouseOverLinkPath(event: PointerEvent, currentPoint: TransformedPoint) {
 		if (!this._selectedStore.selectedStringId) {
 			console.error('a string must be selected to be in link mode')
 			return
@@ -289,6 +257,8 @@ export class PanelLinksService {
 
 		const panelLinks = this._entities.panelLinks.getByStringId(this._selectedStore.selectedStringId)
 		if (!panelLinks.length) {
+			// console.error('no panel links found')
+			//
 			return
 		}
 		/*		const microPoints = this._selectedStringMicroLinePoints()
@@ -298,28 +268,37 @@ export class PanelLinksService {
 		const panelLinkIdPointsTuple = this._selectedStringLinkToLinesTuple()
 		// const flatCurvedLines = this._selectedStringFlatLines()
 		// todo fix
-		const isPointOnPath = isPointOverCurvedLineNoCtx(panelLinkIdPointsTuple, currentPoint)
-		console.log('isPointOnPath!!', isPointOnPath)
-		// const isPointOnPath = isPointOverCurvedLineV2(curvedLines, currentPoint, ctx)
-		// const isPointOnPath = isPointOverCurvedLine(microPoints, currentPoint, ctx)
-		// const selectedStringPanelLinks = this.getPanelLinkOrderForSelectedStringWithPoints()
-		// const linkPathNumberArray = panelLinksToNumberArray(selectedStringPanelLinks)
-		// const isPointOnPath = isPointOnCurvedPath(currentPoint, linkPathNumberArray)
-		// const isPointOnPath = isPointOnCurvedPathV4(currentPoint)
-		// const isPointOnPath = isPointOnCurvedPathV3(currentPoint)
-		// console.log('isPointOnPath!!', isPointOnPath)
-		// const isPointOnPath = isPointOnCurvedPathV2(currentPoint)
-		// const isPointOnPath = isPointOnCurvedPath(currentPoint, linkPathNumberArray)
-		// console.log('panelLink', isPointOnPath)
+		const panelLinkIdForPoint = isPointOverCurvedLineNoCtx(panelLinkIdPointsTuple, currentPoint)
+		// console.log('panelLinkIdForPoint', panelLinkIdForPoint)
 
-		const panelLink = panelLinks.find((panelLink) => {
-			return isPointOnLine(currentPoint, panelLink.linePoints)
-		})
-
-		if (!panelLink) {
+		if (!panelLinkIdForPoint) {
 			setCanvasCursorToAuto(this._canvasElementStore.canvas)
 			return
 		}
+
+		const panelLink = panelLinks.find((panelLink) => panelLink.id === panelLinkIdForPoint)
+		assertNotNull(panelLink)
+		/*
+		 const panelUnderMouse = this._entities.panels.getEntityUnderMouse(currentPoint)
+		 if (panelUnderMouse) {
+		 /!*			this._render.renderCanvasApp({
+		 panelUnderMouse,
+		 })*!/
+		 }*/
+
+		/*		if (!panelLink) {
+		 console.error('panelLink not found')
+		 setCanvasCursorToAuto(this._canvasElementStore.canvas)
+		 return
+		 }*/
+		/*		const panelLink = panelLinks.find((panelLink) => {
+		 return isPointOnLine(currentPoint, panelLink.linePoints)
+		 })
+
+		 if (!panelLink) {
+		 setCanvasCursorToAuto(this._canvasElementStore.canvas)
+		 return
+		 }*/
 
 		if (this._canvasElementStore.canvas.style.cursor !== 'pointer') {
 			changeCanvasCursor(this._canvasElementStore.canvas, 'pointer')
@@ -335,9 +314,9 @@ export class PanelLinksService {
 		 return
 		 }*/
 
-		const panelLink = this.isMouseOverLinkPath(event, currentPoint, this._canvasElementStore.ctx)
+		const panelLink = this.isMouseOverLinkPath(event, currentPoint)
 		if (!panelLink) {
-			if (this._panelLinksStore.state.requestingLink) {
+			if (this._panelLinksStore.requestingLink) {
 				this.clearPanelLinkRequest()
 			}
 			if (this._selectedStore.state.selectedPanelLinkId) {

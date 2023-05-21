@@ -152,9 +152,9 @@ export class DragBoxService {
 			 ctx.lineWidth = 1
 			 ctx.stroke()
 			 })*/
-			console.log('boundsFromPoints', boundsFromPoints)
+			// console.log('boundsFromPoints', boundsFromPoints)
 		} else {
-			console.log('no panels in area')
+			// console.log('no panels in area')
 			this._app.dispatch.setDragBoxState('NoDragBox')
 			// this._app.sendEvent({ type: 'StopDragBox' })
 			// this._machine.sendEvent(new StopDragBox())
@@ -178,7 +178,7 @@ export class DragBoxService {
 		if (!spots || !spots.length) return
 		const takenSpots = spots.filter((spot) => !spot.vacant)
 		if (takenSpots.length) {
-			console.log('taken spots', takenSpots)
+			// console.log('taken spots', takenSpots)
 			return
 		}
 		const newPanels = spots.map((spot) => createPanel({ x: spot.x, y: spot.y }))

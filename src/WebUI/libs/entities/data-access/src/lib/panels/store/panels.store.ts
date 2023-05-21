@@ -8,6 +8,8 @@ import { CanvasPanel } from '@entities/shared'
 import { provideEffects } from '@ngrx/effects'
 import { removeSelectedIfDeleted$, updatePanelLinkPaths$ } from './panels.effects'
 import { PANELS_FEATURE_KEY, panelsReducer } from './panels.reducer'
+import { TransformedPoint } from '@shared/data-access/models'
+import { isPointInsideEntity } from '@canvas/utils'
 
 export function providePanelsFeature() {
 	return makeEnvironmentProviders([
@@ -37,6 +39,9 @@ export function injectPanelsStore() {
 		},
 		getByStringId(stringId: string) {
 			return allPanels().filter((panel) => panel.stringId === stringId)
+		},
+		getEntityUnderMouse(point: TransformedPoint) {
+			return this.allPanels.find((entity) => isPointInsideEntity(point, entity))
 		},
 		addPanel(panel: CanvasPanel) {
 			store.dispatch(PanelsActions.addPanel({ panel }))

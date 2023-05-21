@@ -22,7 +22,7 @@ export const drawLinkModePathLinesCurvedV20 = (
 	ctx.strokeStyle = 'black'
 	ctx.lineWidth = 1
 	const pointsToDraw = xyPoints[0]
-	console.log('pointsToDraw', pointsToDraw)
+	// console.log('pointsToDraw', pointsToDraw)
 
 	/*	const pointsMappedToCenter = linksInOrder.map((link) => {
 	 const firstPoint = link.linePoints[0]
@@ -80,8 +80,8 @@ export function drawSplinesWithAPoints(ctx: CanvasRenderingContext2D, linePointC
 		// if ($('showControlLines').checked) drawControlPoints(cps)
 		// if ($('showPoints').checked) drawPoints(cps)
 
-		console.log('cps', cps)
-		console.log('points', points)
+		// console.log('cps', cps)
+		// console.log('points', points)
 		drawControlPoints(ctx, cps)
 		drawPoints(ctx, cps)
 		drawCurvedPath(ctx, cps, points)
