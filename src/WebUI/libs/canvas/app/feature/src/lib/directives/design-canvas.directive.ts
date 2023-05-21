@@ -48,7 +48,6 @@ import {
 } from '@canvas/utils'
 import { isPanel, isPointInsideSelectedStringPanelsByStringIdNgrxWithPanels } from '@entities/utils'
 import {
-	CANVAS_COLORS,
 	CanvasEntity,
 	CanvasPanel,
 	ENTITY_TYPE,
@@ -576,7 +575,6 @@ export class DesignCanvasDirective implements OnInit {
 		this.ctx.scale(zoom, zoom)
 		this.ctx.translate(-currentTransformedCursor.x, -currentTransformedCursor.y)
 		this.scaleElement.innerText = `Scale: ${currentScaleX.toFixed(1)}`
-		// this.scaleElement.innerText = `Scale: ${currentScaleX}`
 
 		this._render.renderCanvasApp()
 		event.preventDefault()
@@ -788,17 +786,6 @@ export class DesignCanvasDirective implements OnInit {
 			return false
 		}
 
-		const drawFunction = (ctx: CanvasRenderingContext2D) => {
-			ctx.save()
-			ctx.beginPath()
-			ctx.globalAlpha = 0.4
-			ctx.fillStyle = CANVAS_COLORS.TakenSpotFillStyle
-			ctx.rect(mouseBoxBounds.left, mouseBoxBounds.top, size.width, size.height)
-			ctx.fill()
-			ctx.stroke()
-			ctx.restore()
-		}
-
 		const clickNearEntityBounds = {
 			top: mouseBoxBounds.top,
 			left: mouseBoxBounds.left,
@@ -809,16 +796,6 @@ export class DesignCanvasDirective implements OnInit {
 		this._render.renderCanvasApp({
 			clickNearEntityBounds,
 		})
-		/*
-		 this._render.renderCanvasApp({
-		 clickNearEntityBounds,
-		 drawFns:               [drawFunction],
-		 })*/
-		/*
-		 const interval = setInterval(() => {
-		 this._render.renderCanvasApp()
-		 clearInterval(interval)
-		 }, 1000)*/
 		return true
 	}
 }

@@ -249,7 +249,7 @@ export function getBezierXYByTOld(
 	}
 }
 
-function getBezierAngle(
+export const getBezierAngle = (
 	t: number,
 	sx: number,
 	sy: number,
@@ -259,7 +259,7 @@ function getBezierAngle(
 	cp2y: number,
 	ex: number,
 	ey: number,
-) {
+) => {
 	const dx =
 		Math.pow(1 - t, 2) * (cp1x - sx) + 2 * t * (1 - t) * (cp2x - cp1x) + t * t * (ex - cp2x)
 	const dy =

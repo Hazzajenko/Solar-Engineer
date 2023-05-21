@@ -47,8 +47,8 @@ const createCurvedLinkPathLinesReworkV2 = (linkPointTuples: [PanelLinkId, number
 		)
 	}
 	const lines = createCurvedNumberLines(points, controlPoints)
-	console.log(points.length)
-	console.log(lines.length)
+	// console.log(points.length)
+	// console.log(lines.length)
 	// let pointIndex = 0
 
 	/*	const linesForLinks = lines.map((line) => {

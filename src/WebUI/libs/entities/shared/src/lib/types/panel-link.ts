@@ -72,3 +72,9 @@ export const getEnderPolarityFromDirection = (direction: PolarityDirection): Pol
 			return 'positive'
 	}
 }
+
+export type PanelLinkFromMenu = {
+	panelId: string
+	polarity: 'positive' | 'negative'
+	panelLinkId: string
+}

@@ -105,3 +105,23 @@ function getQuadraticXY(
 		y: (1 - t) * (1 - t) * sy + 2 * (1 - t) * t * cp1y + t * t * ey,
 	}
 }
+
+export const getQuadraticAngleAtPoint = (
+	quadraticBezierAPointLine: QuadraticBezierAPointLine,
+	t: number,
+): number => {
+	const [p0, p1, p2] = quadraticBezierAPointLine
+	const dx = 2 * (1 - t) * (p1[0] - p0[0]) + 2 * t * (p2[0] - p1[0])
+	const dy = 2 * (1 - t) * (p1[1] - p0[1]) + 2 * t * (p2[1] - p1[1])
+	return Math.atan2(dy, dx)
+}
+
+export const getQuadraticAngleAtPointUsingNumberLine = (
+	quadraticLine: QuadraticNumberLine,
+	t: number,
+): number => {
+	const [p0x, p0y, p1x, p1y, p2x, p2y] = quadraticLine
+	const dx = 2 * (1 - t) * (p1x - p0x) + 2 * t * (p2x - p1x)
+	const dy = 2 * (1 - t) * (p1y - p0y) + 2 * t * (p2y - p1y)
+	return Math.atan2(dy, dx)
+}

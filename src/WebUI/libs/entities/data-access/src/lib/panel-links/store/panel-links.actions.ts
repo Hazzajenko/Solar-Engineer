@@ -3,11 +3,11 @@ import { createActionGroup, emptyProps, props } from '@ngrx/store'
 import {
 	ClosedCircuitChain,
 	OpenCircuitChain,
+	PanelLinkFromMenu,
 	PanelLinkId,
 	PanelLinkModel,
 	PanelLinkRequest,
 } from '@entities/shared'
-import { PanelLinksState } from './panel-links.reducer'
 import { CurvedNumberLine } from '@canvas/shared'
 
 export const PanelLinksActions = createActionGroup({
@@ -40,7 +40,7 @@ export const PanelLinksActions = createActionGroup({
 		}>(),
 		'Clear Hovering Over Panel In Link Menu Id': emptyProps(),
 		'Set Hovering Over Panel Link In Link Menu': props<{
-			hoveringOverPanelLink: NonNullable<PanelLinksState['hoveringOverPanelLinkInLinkMenu']>
+			hoveringOverPanelLink: PanelLinkFromMenu
 		}>(),
 		'Clear Hovering Over Panel Link In Link Menu': emptyProps(),
 		'Selected String Link Lines Updated': emptyProps(),

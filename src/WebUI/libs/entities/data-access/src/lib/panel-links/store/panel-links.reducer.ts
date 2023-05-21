@@ -1,6 +1,6 @@
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity'
 import { Action, createReducer, on } from '@ngrx/store'
-import { ClosedCircuitChain, OpenCircuitChain, PanelLinkId, PanelLinkModel, PanelLinkRequest } from '@entities/shared'
+import { ClosedCircuitChain, OpenCircuitChain, PanelLinkFromMenu, PanelLinkId, PanelLinkModel, PanelLinkRequest } from '@entities/shared'
 import { PanelLinksActions } from './panel-links.actions'
 import { CurvedNumberLine } from '@canvas/shared'
 
@@ -14,13 +14,7 @@ export interface PanelLinksState extends EntityState<PanelLinkModel> {
 	error?: string | null
 	requestingLink: PanelLinkRequest | undefined
 	hoveringOverPanelInLinkMenuId: string | undefined
-	hoveringOverPanelLinkInLinkMenu:
-		| {
-				panelId: string
-				polarity: 'positive' | 'negative'
-				panelLinkId: string
-		  }
-		| undefined
+	hoveringOverPanelLinkInLinkMenu: PanelLinkFromMenu | undefined
 	hoveringOverPanelLinkInApp: string | undefined
 	selectedStringCircuit: {
 		openCircuitChains: OpenCircuitChain[]

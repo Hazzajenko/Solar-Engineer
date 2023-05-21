@@ -1,4 +1,5 @@
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
+import { PanelLinkId } from '@entities/shared'
 
 export const SelectedActions = createActionGroup({
 	source: 'Selected Store',
@@ -23,7 +24,7 @@ export const SelectedActions = createActionGroup({
 			entityIds: string[]
 		}>(),
 		'Select Panel Link': props<{
-			panelLinkId: string
+			panelLinkId: PanelLinkId
 		}>(),
 		'Clear Selected Panel Link': emptyProps(),
 		'Clear Single Selected': emptyProps(),

@@ -10,6 +10,7 @@ import { SelectedState } from './selected.reducer'
  } from './selected.selectors'*/
 import { SelectedActions } from './selected.actions'
 import { selectedFeature } from './selected.feature'
+import { PanelLinkId } from '@entities/shared'
 
 export function injectSelectedStore() {
 	const store = inject(Store<SelectedState>)
@@ -83,7 +84,7 @@ export function injectSelectedStore() {
 		removeEntitiesFromMultiSelect(entityIds: string[]) {
 			store.dispatch(SelectedActions.removeEntitiesFromMultiSelect({ entityIds }))
 		},
-		selectPanelLink(panelLinkId: string) {
+		selectPanelLink(panelLinkId: PanelLinkId) {
 			store.dispatch(SelectedActions.selectPanelLink({ panelLinkId }))
 		},
 		clearPanelLink() {

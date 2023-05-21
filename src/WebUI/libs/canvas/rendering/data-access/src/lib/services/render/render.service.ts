@@ -76,7 +76,6 @@ export class RenderService {
 	private framesThisSecond = 0
 	// private _panelsStore = injectPanelsFeature()
 	private _previousFpsStats = [0, 0, 0]
-
 	private _clickNearEntityTimer: ReturnType<typeof setTimeout> | undefined
 	private _clickNearEntityBounds:
 		| {
@@ -100,6 +99,7 @@ export class RenderService {
 		return this._previousFpsStats.reduce((a, b) => a + b) / this._previousFpsStats.length
 	}
 
+	offset = 0
 	_svgs = injectSvgs()
 	_svgs2 = injectSvgsV2()
 	_imageElement: HTMLImageElement | undefined
@@ -108,6 +108,8 @@ export class RenderService {
 
 	constructor() {
 		this.checkFps()
+		// this.ctx.setLineDash([4, 2])
+		// this.ctx.lineDashOffset = -this.offset
 		/*		this._svgs2.then((data) => {
 		 this._imageElement = data
 		 // console.log('data', data)
@@ -402,6 +404,16 @@ export class RenderService {
 			this.framesThisSecond = 0
 			this.lastRenderTime = currentTime
 		}
+		/*		const animate = () => {
+
+		 requestAnimationFrame(animate)
+		 }*/
+		/*		this.offset += 0.5
+		 if (this.offset > 16) {
+		 this.offset = 0
+		 }*/
+
+		// requestAnimationFrame(animate)
 		requestAnimationFrame(() => this.checkFps())
 	}
 
