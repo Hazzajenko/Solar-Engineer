@@ -1,6 +1,6 @@
-import { CanvasEntity, ClosedCircuitChain, OpenCircuitChain, PanelLinkModel } from '@entities/shared'
+import { CanvasEntity, ClosedCircuitChain, OpenCircuitChain, PanelLinkId, PanelLinkModel } from '@entities/shared'
 import { PanelLinksStore } from '@entities/data-access'
-import { reduceLinkPointsToNumberArray, reduceLinkPointsToNumberArrayOptimised, separatePanelLinkChains, sortOpenCircuitPanelLinks } from '@entities/utils'
+import { mapStringLinkChainToDoubleNumberArray, reduceLinkPointsToNumberArray, reduceLinkPointsToNumberArrayOptimised, separatePanelLinkChains, sortOpenCircuitPanelLinks } from '@entities/utils'
 import { BezierNumberLine, CurvedNumberLine, LineToLineNumberLine, QuadraticNumberLine } from '@canvas/shared'
 import { drawBezierLineNumbers, drawQuadraticLineNumbers, drawStraightLineNumbers } from '@canvas/utils'
 
@@ -127,6 +127,100 @@ export const drawLinkModePathLinesCurvedAlreadyMappedV3 = (
 	circuitCurvedLines.forEach((curvedLines) => {
 		drawCurvedNumberLines(ctx, curvedLines)
 	})
+}
+
+export const drawLinkModePathLinesCurvedAlreadyMappedV4 = (
+	ctx: CanvasRenderingContext2D,
+	customEntities: CanvasEntity[] | undefined,
+	circuitCurvedLines: [PanelLinkId, CurvedNumberLine[]][][],
+	selectedPanelLinkId: string | undefined,
+	hoveringOverPanelLinkInLinkMenu: PanelLinksStore['hoveringOverPanelLinkInLinkMenu'],
+) => {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const ignore = selectedPanelLinkId || hoveringOverPanelLinkInLinkMenu
+
+	// const customIds = customEntities?.map((entity) => entity.id) ?? []
+	if (!circuitCurvedLines.length) {
+		return
+	}
+	ctx.save()
+	ctx.strokeStyle = 'black'
+	ctx.lineWidth = 1
+
+	for (let i = 0; i < circuitCurvedLines.length; i += 1) {
+		const linesByLinkIdTuple = circuitCurvedLines[i]
+		for (let j = 0; j < linesByLinkIdTuple.length; j += 1) {
+			const id = linesByLinkIdTuple[j][0]
+			const lines = linesByLinkIdTuple[j][1]
+			drawCurvedNumberLines(ctx, lines)
+			console.log('drawCurvedNumberLines', id, lines)
+		}
+		/*		const id = linesByLinkIdTuple[0][0]
+		 drawCurvedNumberLines(ctx, linesByLinkIdTuple[0][1])
+		 drawCurvedNumberLines(ctx, linesByLinkIdTuple[1])*/
+	}
+
+	/*	console.log('circuitCurvedLines', circuitCurvedLines)
+	 circuitCurvedLines.forEach((curvedLines) => {
+	 // const id = curvedLines[0][0]
+	 drawCurvedNumberLines(ctx, curvedLines[0][1])
+	 // drawCurvedNumberLines(ctx, curvedLines[1])
+	 })*/
+}
+
+export const drawLinkModePathLinesCurvedAlreadyMappedV5 = (
+	ctx: CanvasRenderingContext2D,
+	customEntities: CanvasEntity[] | undefined,
+	circuitCurvedLines: CurvedNumberLine[][],
+	selectedPanelLinkId: string | undefined,
+	hoveringOverPanelLinkInLinkMenu: PanelLinksStore['hoveringOverPanelLinkInLinkMenu'],
+) => {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const ignore = selectedPanelLinkId || hoveringOverPanelLinkInLinkMenu
+
+	// const customIds = customEntities?.map((entity) => entity.id) ?? []
+	if (!circuitCurvedLines.length) {
+		return
+	}
+	ctx.save()
+	ctx.strokeStyle = 'black'
+	ctx.lineWidth = 1
+	console.log('circuitCurvedLines', circuitCurvedLines)
+	for (let i = 0; i < circuitCurvedLines.length; i += 1) {
+		const lines = circuitCurvedLines[i]
+		drawCurvedNumberLines(ctx, lines)
+	}
+}
+
+export const drawLinkModePathLinesCurvedAlreadyMappedV6 = (
+	ctx: CanvasRenderingContext2D,
+	customEntities: CanvasEntity[] | undefined,
+	circuitLinkLineTuples: [PanelLinkId, CurvedNumberLine][][],
+	selectedPanelLinkId: string | undefined,
+	hoveringOverPanelLinkInLinkMenu: PanelLinksStore['hoveringOverPanelLinkInLinkMenu'],
+) => {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const ignore = selectedPanelLinkId || hoveringOverPanelLinkInLinkMenu
+
+	// const customIds = customEntities?.map((entity) => entity.id) ?? []
+	if (!circuitLinkLineTuples.length) {
+		return
+	}
+	ctx.save()
+	ctx.strokeStyle = 'black'
+	ctx.lineWidth = 1
+
+	const stringPanelLinkLines = mapStringLinkChainToDoubleNumberArray(circuitLinkLineTuples)
+
+	for (let i = 0; i < stringPanelLinkLines.length; i += 1) {
+		const lines = stringPanelLinkLines[i]
+		drawCurvedNumberLines(ctx, lines)
+	}
+	// console.log('circuitCurvedLines', circuitCurvedLines)
+	/*	for (let i = 0; i < circuitLinkLineTuples.length; i += 1) {
+	 const lines = circuitLinkLineTuples[i][1]
+	 drawCurvedNumberLines(ctx, lines)
+	 }*/
 }
 
 const drawLinkChainCurvedPath = (ctx: CanvasRenderingContext2D, points: number[]) => {

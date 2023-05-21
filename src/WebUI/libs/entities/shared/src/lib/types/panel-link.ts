@@ -1,7 +1,10 @@
 import { Point } from '@shared/data-access/models'
 
+export type PanelLinkId = string & {
+	__type: 'PanelLinkId'
+}
 export type PanelLinkModel = {
-	id: string
+	id: PanelLinkId
 	stringId: string
 	negativePanelId: string
 	positivePanelId: string

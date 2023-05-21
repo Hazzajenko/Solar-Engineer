@@ -7,13 +7,14 @@ import {
 	getEnderPolarityFromDirection,
 	getStarterPolarityFromDirection,
 	OpenCircuitChain,
+	PanelLinkId,
 	PanelLinkModel,
 	PanelLinkRequest,
 	PolarityDirection,
 	StringCircuitChains,
 	UndefinedStringId,
 } from '@entities/shared'
-import { APoint, assertNotNull, newGuid, selectSignalFromStore } from '@shared/utils'
+import { assertNotNull, newGuid, selectSignalFromStore } from '@shared/utils'
 import { injectSelectedStore, selectSelectedStringId } from '@canvas/selected/data-access'
 import { EntityStoreService } from '../../shared'
 import { TransformedPoint } from '@shared/data-access/models'
@@ -27,7 +28,7 @@ import { calculateLinkLinesBetweenTwoPanelCenters } from '@entities/utils'
 import {
 	isPointOverCurvedLineNoCtx,
 	panelLinksToNumberArray,
-	preparePanelLinksForRender,
+	preparePanelLinksForRenderV3,
 	prepareStringPanelLinkCircuitChain,
 } from './utils'
 import { isPointOnCurvedPath } from '../../../../../../canvas/rendering/data-access/src/lib/services/render/render-fns/links/deprecated/draw-splines-rework'
@@ -56,8 +57,12 @@ export class PanelLinksService {
 	 })*/
 	private _selectedStringLinkPaths = signal<number[][]>([])
 	// private _selectedStringLinkLines: CurvedNumberLine[][] = []
-	private _selectedStringLinkLines = signal<CurvedNumberLine[][]>([])
-	private _selectedStringMicroLinePoints = signal<APoint[][][]>([])
+	private _selectedStringLinkToLinesTuple = signal<[PanelLinkId, CurvedNumberLine][][]>([])
+	// private _selectedStringFlatLines = signal<[PanelLinkId, CurvedNumberLine][][]>([])
+	private _selectedStringFlatLines = signal<CurvedNumberLine[][]>([])
+	// private _selectedStringFlatLines = signal<CurvedNumberLine[]>([])
+	// private _selectedStringLinkLines = signal<CurvedNumberLine[][]>([])
+	// private _selectedStringMicroLinePoints = signal<APoint[][][]>([])
 	private _selectedStringCircuitChains = signal<StringCircuitChains>({
 		openCircuitChains: [],
 		closedCircuitChains: [],
@@ -70,19 +75,19 @@ export class PanelLinksService {
 
 	polarityDirection: PolarityDirection = 'positive-to-negative'
 
-	constructor() {
-		/*		effect(() => {
-		 const selectedStringId = this._selectedStringId()
-		 if (selectedStringId) {
-		 console.log('PanelLinksService: selectedStringId', selectedStringId)
-		 const panelLinks = this._panelLinksStore.getByStringId(selectedStringId)
-		 const curvedLines = preparePanelLinksForRender(panelLinks)
-		 console.log('PanelLinksService: curvedLines', curvedLines)
-		 this._selectedStringLinkLines = curvedLines
-		 // this._selectedStringLinkLines.set(curvedLines)
-		 }
-		 })*/
-	}
+	/*	constructor() {
+	 /!*		effect(() => {
+	 const selectedStringId = this._selectedStringId()
+	 if (selectedStringId) {
+	 console.log('PanelLinksService: selectedStringId', selectedStringId)
+	 const panelLinks = this._panelLinksStore.getByStringId(selectedStringId)
+	 const curvedLines = preparePanelLinksForRender(panelLinks)
+	 console.log('PanelLinksService: curvedLines', curvedLines)
+	 this._selectedStringLinkLines = curvedLines
+	 // this._selectedStringLinkLines.set(curvedLines)
+	 }
+	 })*!/
+	 }*/
 
 	updateSelectedStringLinkLines() {
 		const selectedStringId = this._selectedStringId()
@@ -92,9 +97,48 @@ export class PanelLinksService {
 		const panelLinks = this._panelLinksStore.getByStringId(selectedStringId)
 		const stringCircuitChains = prepareStringPanelLinkCircuitChain(panelLinks)
 		this._selectedStringCircuitChains.set(stringCircuitChains)
-		const { curvedLinesCombined, microLinePoints } = preparePanelLinksForRender(stringCircuitChains)
-		this._selectedStringLinkLines.set(curvedLinesCombined)
-		this._selectedStringMicroLinePoints.set(microLinePoints)
+		const { stringCircuitChain, stringPanelLinkLines } =
+			preparePanelLinksForRenderV3(stringCircuitChains)
+		// const { curvedLinesCombined, microLinePoints } = preparePanelLinksForRender(stringCircuitChains)
+		this._selectedStringLinkToLinesTuple.set(stringCircuitChain)
+		this._selectedStringFlatLines.set(stringPanelLinkLines)
+		// this._selectedStringFlatLines.set(stringCircuitChain)
+		// this._selectedStringMicroLinePoints.set(microLinePoints)
+	}
+
+	getPanelLinkOrderIfStringIsSelected() {
+		const stringId = this._selectedStore.selectedStringId
+		if (!stringId) {
+			return {
+				openCircuitChains: [] as OpenCircuitChain[],
+				closedCircuitChains: [] as ClosedCircuitChain[],
+				circuitCurvedLines: [] as CurvedNumberLine[][],
+				circuitLinkLineTuples: [] as [PanelLinkId, CurvedNumberLine][][], // circuitCurvedLines: [] as [PanelLinkId, CurvedNumberLine[]][][],
+			}
+		}
+		const { openCircuitChains, closedCircuitChains } = this._selectedStringCircuitChains()
+		const circuitLinkLineTuples = this._selectedStringLinkToLinesTuple()
+		const circuitCurvedLines = this._selectedStringFlatLines()
+		return {
+			openCircuitChains,
+			closedCircuitChains,
+			circuitCurvedLines,
+			circuitLinkLineTuples,
+		}
+		/*		const panelLinks = this._panelLinksStore.getByStringId(stringId)
+		 const circuitChains = getPanelLinkOrderSeparateChainsV2(panelLinks) as {
+		 openCircuitChains: OpenCircuitChain[]
+		 closedCircuitChains: ClosedCircuitChain[]
+		 }
+
+		 const openCircuitChains = circuitChains.openCircuitChains.map((chain) => sortPanelLinks(chain))
+		 const closedCircuitChains = circuitChains.closedCircuitChains.map((chain) =>
+		 sortPanelLinks(chain),
+		 )
+		 return {
+		 openCircuitChains,
+		 closedCircuitChains,
+		 }*/
 	}
 
 	handlePanelLinksClick(event: PointerEvent, panel: CanvasPanel) {
@@ -147,7 +191,7 @@ export class PanelLinksService {
 			return
 		}
 		const panelLink: PanelLinkModel = {
-			id: newGuid(),
+			id: newGuid() as PanelLinkId,
 			stringId: panel.stringId,
 			positivePanelId:
 				requestingLink.direction === 'positive-to-negative' ? requestingLink.panelId : panel.id,
@@ -191,38 +235,6 @@ export class PanelLinksService {
 				}
 				return a.positivePanelId === b.negativePanelId ? 1 : -1
 			})
-	}
-
-	getPanelLinkOrderIfStringIsSelected() {
-		const stringId = this._selectedStore.selectedStringId
-		if (!stringId) {
-			return {
-				openCircuitChains: [] as OpenCircuitChain[],
-				closedCircuitChains: [] as ClosedCircuitChain[],
-				circuitCurvedLines: [] as CurvedNumberLine[][],
-			}
-		}
-		const { openCircuitChains, closedCircuitChains } = this._selectedStringCircuitChains()
-		const circuitCurvedLines = this._selectedStringLinkLines()
-		return {
-			openCircuitChains,
-			closedCircuitChains,
-			circuitCurvedLines,
-		}
-		/*		const panelLinks = this._panelLinksStore.getByStringId(stringId)
-		 const circuitChains = getPanelLinkOrderSeparateChainsV2(panelLinks) as {
-		 openCircuitChains: OpenCircuitChain[]
-		 closedCircuitChains: ClosedCircuitChain[]
-		 }
-
-		 const openCircuitChains = circuitChains.openCircuitChains.map((chain) => sortPanelLinks(chain))
-		 const closedCircuitChains = circuitChains.closedCircuitChains.map((chain) =>
-		 sortPanelLinks(chain),
-		 )
-		 return {
-		 openCircuitChains,
-		 closedCircuitChains,
-		 }*/
 	}
 
 	getPanelLinkOrderForSelectedStringWithPoints() {
@@ -279,12 +291,15 @@ export class PanelLinksService {
 		if (!panelLinks.length) {
 			return
 		}
-		const microPoints = this._selectedStringMicroLinePoints()
-		if (!microPoints) {
-			return
-		}
-		const curvedLines = this._selectedStringLinkLines()
-		const isPointOnPath = isPointOverCurvedLineNoCtx(curvedLines, currentPoint)
+		/*		const microPoints = this._selectedStringMicroLinePoints()
+		 if (!microPoints) {
+		 return
+		 }*/
+		const panelLinkIdPointsTuple = this._selectedStringLinkToLinesTuple()
+		// const flatCurvedLines = this._selectedStringFlatLines()
+		// todo fix
+		const isPointOnPath = isPointOverCurvedLineNoCtx(panelLinkIdPointsTuple, currentPoint)
+		console.log('isPointOnPath!!', isPointOnPath)
 		// const isPointOnPath = isPointOverCurvedLineV2(curvedLines, currentPoint, ctx)
 		// const isPointOnPath = isPointOverCurvedLine(microPoints, currentPoint, ctx)
 		// const selectedStringPanelLinks = this.getPanelLinkOrderForSelectedStringWithPoints()
@@ -292,7 +307,7 @@ export class PanelLinksService {
 		// const isPointOnPath = isPointOnCurvedPath(currentPoint, linkPathNumberArray)
 		// const isPointOnPath = isPointOnCurvedPathV4(currentPoint)
 		// const isPointOnPath = isPointOnCurvedPathV3(currentPoint)
-		console.log('isPointOnPath!!', isPointOnPath)
+		// console.log('isPointOnPath!!', isPointOnPath)
 		// const isPointOnPath = isPointOnCurvedPathV2(currentPoint)
 		// const isPointOnPath = isPointOnCurvedPath(currentPoint, linkPathNumberArray)
 		// console.log('panelLink', isPointOnPath)

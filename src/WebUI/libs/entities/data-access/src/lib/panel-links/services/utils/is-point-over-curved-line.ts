@@ -3,89 +3,112 @@ import { isPointOnLineUsingAPoints } from '@canvas/utils'
 import { Point, TransformedPoint } from '@shared/data-access/models'
 import { CurvedNumberLine } from '@canvas/shared'
 import { Bezier } from 'bezier-js'
+import { PanelLinkId } from '@entities/shared'
 
 export const isPointOverCurvedLineNoCtx = (
-	circuitCurvedLines: CurvedNumberLine[][],
+	panelLinkIdPointsTuple: [PanelLinkId, CurvedNumberLine][][],
 	currentPoint: TransformedPoint,
 ) => {
-	for (let i = 0; i < circuitCurvedLines.length; i++) {
-		const curvedLines = circuitCurvedLines[i]
-		for (let j = 0; j < curvedLines.length; j++) {
-			const lines = curvedLines[j]
-			switch (lines.length) {
-				case 4: {
-					const d = getDistanceToLine(
-						currentPoint,
-						{ x: lines[0], y: lines[1] },
-						{ x: lines[2], y: lines[3] },
-					)
-					if (d < 10) {
-						return true
-					}
-					break
-				}
-				case 6: {
-					const bezier = new Bezier(lines[0], lines[1], lines[2], lines[3], lines[4], lines[5])
-					const project = bezier.project(currentPoint)
-					if (project.d && project.d < 10) {
-						return true
-					}
-					break
-				}
-				case 8: {
-					const bezier = new Bezier(
-						lines[0],
-						lines[1],
-						lines[2],
-						lines[3],
-						lines[4],
-						lines[5],
-						lines[6],
-						lines[7],
-					)
-					const project = bezier.project(currentPoint)
-					if (project.d && project.d < 10) {
-						return true
-					}
-					break
-				}
+	for (let i = 0; i < panelLinkIdPointsTuple.length; i++) {
+		const panelLinkIdPoints = panelLinkIdPointsTuple[i]
+		for (let j = 0; j < panelLinkIdPoints.length; j++) {
+			const [panelLinkId, curvedLines] = panelLinkIdPoints[j]
+			if (handleLineSwitch(curvedLines, currentPoint)) {
+				return panelLinkId
 			}
-			/*	if (lines.length === 4) {
-			 const d = getDistanceToLine(
-			 currentPoint,
-			 { x: lines[0], y: lines[1] },
-			 { x: lines[2], y: lines[3] },
-			 )
-			 if (d < 10) {
-			 return true
-			 }
-			 }
-			 if (lines.length === 6) {
-			 const bezier = new Bezier(lines[0], lines[1], lines[2], lines[3], lines[4], lines[5])
-			 const project = bezier.project(currentPoint)
-			 if (project.d && project.d < 10) {
-			 return true
-			 }
-			 }
-			 if (lines.length === 8) {
-			 const bezier = new Bezier(
-			 lines[0],
-			 lines[1],
-			 lines[2],
-			 lines[3],
-			 lines[4],
-			 lines[5],
-			 lines[6],
-			 lines[7],
-			 )
-			 const project = bezier.project(currentPoint)
-			 if (project.d && project.d < 10) {
-			 return true
-			 }
+			/*
+			 if (isPointOverCurvedLine(circuitCurvedLines, curvedLines, currentPoint)) {
+			 return panelLinkId
 			 }*/
 		}
 	}
+	/*for (let i = 0; i < circuitCurvedLines.length; i++) {
+	 const curvedLines = circuitCurvedLines[i]
+	 for (let j = 0; j < curvedLines.length; j++) {
+	 const lines = curvedLines[j]
+	 switch (lines.length) {
+	 case 4: {
+	 const d = getDistanceToLine(
+	 currentPoint,
+	 { x: lines[0], y: lines[1] },
+	 { x: lines[2], y: lines[3] },
+	 )
+	 if (d < 10) {
+	 return true
+	 }
+	 break
+	 }
+	 case 6: {
+	 const bezier = new Bezier(lines[0], lines[1], lines[2], lines[3], lines[4], lines[5])
+	 const project = bezier.project(currentPoint)
+	 if (project.d && project.d < 10) {
+	 return true
+	 }
+	 break
+	 }
+	 case 8: {
+	 const bezier = new Bezier(
+	 lines[0],
+	 lines[1],
+	 lines[2],
+	 lines[3],
+	 lines[4],
+	 lines[5],
+	 lines[6],
+	 lines[7],
+	 )
+	 const project = bezier.project(currentPoint)
+	 if (project.d && project.d < 10) {
+	 return true
+	 }
+	 break
+	 }
+	 }
+	 }
+	 }*/
 	return false
+}
+
+const handleLineSwitch = (lines: CurvedNumberLine, currentPoint: TransformedPoint) => {
+	switch (lines.length) {
+		case 4: {
+			const d = getDistanceToLine(
+				currentPoint,
+				{ x: lines[0], y: lines[1] },
+				{ x: lines[2], y: lines[3] },
+			)
+			if (d < 10) {
+				return true
+			}
+			break
+		}
+		case 6: {
+			const bezier = new Bezier(lines[0], lines[1], lines[2], lines[3], lines[4], lines[5])
+			const project = bezier.project(currentPoint)
+			if (project.d && project.d < 10) {
+				return true
+			}
+			break
+		}
+		case 8: {
+			const bezier = new Bezier(
+				lines[0],
+				lines[1],
+				lines[2],
+				lines[3],
+				lines[4],
+				lines[5],
+				lines[6],
+				lines[7],
+			)
+			const project = bezier.project(currentPoint)
+			if (project.d && project.d < 10) {
+				return true
+			}
+			break
+		}
+	}
+	return
 }
 
 export const isPointOverCurvedLine = (
@@ -99,7 +122,6 @@ export const isPointOverCurvedLine = (
 			const microPoint2 = microPoint[j]
 			for (let k = 0; k < microPoint2.length; k++) {
 				if (isPointOnLineUsingAPoints(currentPoint, microPoint2, ctx)) {
-					// drawPathForMicroPoints(microPoint2, ctx)
 					return true
 				}
 			}
@@ -130,14 +152,6 @@ export const isPointOverCurvedLineV2 = (
 					ctx.stroke()
 					return true
 				}
-				/*				isPointOnLineUsingAPoints(
-				 currentPoint,
-				 [
-				 [lines[0], lines[1]],
-				 [lines[2], lines[3]],
-				 ],
-				 ctx,
-				 )*/
 			}
 			if (lines.length === 6) {
 				const bezier = new Bezier(lines[0], lines[1], lines[2], lines[3], lines[4], lines[5])
@@ -169,10 +183,6 @@ export const isPointOverCurvedLineV2 = (
 					ctx.stroke()
 					return true
 				}
-				// project.
-				/*		if (bezier.project(currentPoint)) {
-				 return true
-				 }*/
 			}
 		}
 	}

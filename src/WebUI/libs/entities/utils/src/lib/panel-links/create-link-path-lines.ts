@@ -18,7 +18,7 @@ export const createCurvedLinkPathLines = (points: number[]) => {
 	return createCurvedNumberLines(points, controlPoints)
 }
 
-const calculateControlPoints = (
+export const calculateControlPoints = (
 	x1: number,
 	y1: number,
 	x2: number,
@@ -41,7 +41,7 @@ const calculateControlPoints = (
 	]
 }
 
-const calculateVector = (arr: number[], i: number, j: number) => {
+export const calculateVector = (arr: number[], i: number, j: number) => {
 	const x1 = arr[2 * i]
 	const y1 = arr[2 * i + 1]
 	const x2 = arr[2 * j]
@@ -51,13 +51,13 @@ const calculateVector = (arr: number[], i: number, j: number) => {
 	return [dx, dy]
 }
 
-const calculateDistance = (arr: number[], i: number, j: number) => {
+export const calculateDistance = (arr: number[], i: number, j: number) => {
 	const dx = arr[2 * i] - arr[2 * j]
 	const dy = arr[2 * i + 1] - arr[2 * j + 1]
 	return Math.sqrt(dx * dx + dy * dy)
 }
 
-const createCurvedNumberLines = (points: number[], controlPoints: number[]) => {
+export const createCurvedNumberLines = (points: number[], controlPoints: number[]) => {
 	const lines: CurvedNumberLine[] = []
 	const amountOfPoints = points.length / 2
 	if (amountOfPoints < 2) return []
