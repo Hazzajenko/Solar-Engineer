@@ -29,19 +29,15 @@ export const createBezierNumberLine = (
 export const drawBezierLineNumbersWithOptions = (
 	ctx: CanvasRenderingContext2D,
 	line: BezierNumberLine,
-	isStart = false,
-	isFinish = false,
 	options?: Partial<DrawOptions>,
 ) => {
 	ctx.save()
 	setDrawOptions(ctx, options)
 	const [startX, startY, control1X, control1Y, control2X, control2Y, endX, endY] = line
-	if (isStart) {
-		// ctx.beginPath()
-		ctx.moveTo(startX, startY)
-	}
+	ctx.beginPath()
+	ctx.moveTo(startX, startY)
 	ctx.bezierCurveTo(control1X, control1Y, control2X, control2Y, endX, endY)
-	if (isFinish) ctx.stroke()
+	ctx.stroke()
 	ctx.restore()
 }
 

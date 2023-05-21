@@ -8,8 +8,6 @@ export const prepareStringPanelLinkCircuitChain = (panelLinks: PanelLinkModel[])
 	}
 
 	const openCircuitChains = circuitChains.openCircuitChains.map((chain) => sortPanelLinks(chain))
-	// console.log('openCircuitChains', openCircuitChains)
-	// const openCircuitChains = circuitChains.openCircuitChains.map((chain) => sortPanelLinks(chain))
 	const closedCircuitChains = circuitChains.closedCircuitChains.map((chain) =>
 		sortPanelLinks(chain),
 	)
@@ -17,14 +15,6 @@ export const prepareStringPanelLinkCircuitChain = (panelLinks: PanelLinkModel[])
 		openCircuitChains,
 		closedCircuitChains,
 	}
-	/*	const groupedByLinkChain = separatePanelLinkChains(panelLinks)
-	 const groupedByLinkChainSorted = groupedByLinkChain.map((chain) =>
-	 sortOpenCircuitPanelLinks(chain as OpenCircuitChain),
-	 )
-	 const flatNumberArray = groupedByLinkChainSorted.map((chain) =>
-	 reduceLinkPointsToNumberArrayOptimised(chain),
-	 )
-	 return flatNumberArray.map((chain) => createCurvedLinkPathLines(chain))*/
 }
 
 const getPanelLinkOrderSeparateChainsV2 = (panelLinks: PanelLinkModel[]) => {

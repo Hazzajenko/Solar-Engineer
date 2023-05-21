@@ -18,19 +18,15 @@ export const createQuadraticNumberLine = (
 export const drawQuadraticLineNumbersWithOptions = (
 	ctx: CanvasRenderingContext2D,
 	line: QuadraticNumberLine,
-	isStart = false,
-	isFinish = false,
 	options?: Partial<DrawOptions>,
 ) => {
 	ctx.save()
 	setDrawOptions(ctx, options)
 	const [startX, startY, controlX, controlY, endX, endY] = line
-	if (isStart) {
-		// ctx.beginPath()
-		ctx.moveTo(startX, startY)
-	}
+	ctx.beginPath()
+	ctx.moveTo(startX, startY)
 	ctx.quadraticCurveTo(controlX, controlY, endX, endY)
-	if (isFinish) ctx.stroke()
+	ctx.stroke()
 	ctx.restore()
 }
 export const drawQuadraticLineNumbers = (

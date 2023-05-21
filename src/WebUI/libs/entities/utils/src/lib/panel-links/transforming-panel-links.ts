@@ -67,6 +67,29 @@ export const reduceLinkPointsToNumberArrayOptimisedKeepIdsV2 = (links: PanelLink
 		return [...acc, [link.id, points]] as [PanelLinkId, number[]][]
 	}, [] as [PanelLinkId, number[]][])
 
+export const reduceLinkPointsToNumberArrayOptimisedKeepIdsKeepOriginalStart = (
+	links: PanelLinkModel[],
+) =>
+	links.reduce((acc, link, index) => {
+		if (index === 0) {
+			const points = [
+				link.linePoints[0].x,
+				link.linePoints[0].y,
+				link.linePoints[1].x,
+				link.linePoints[1].y,
+			] as number[]
+			return [[link.id, points]] as [PanelLinkId, number[]][]
+		}
+		const points = [
+			link.linePoints[0].x,
+			link.linePoints[0].y,
+			link.linePoints[1].x,
+			link.linePoints[1].y,
+		]
+		// const points = [link.linePoints[1].x, link.linePoints[1].y]
+		return [...acc, [link.id, points]] as [PanelLinkId, number[]][]
+	}, [] as [PanelLinkId, number[]][])
+
 export const reduceLinkChainToNumberArray = (
 	linkChain: ReturnType<typeof groupLinkPointsByChain>[number],
 ): number[] => {

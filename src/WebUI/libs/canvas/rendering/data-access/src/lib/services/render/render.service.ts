@@ -193,116 +193,48 @@ export class RenderService {
 			this.drawEntities(ctx, entities, openCircuitChains)
 			ctx.restore()
 
-			if (
-				this._graphicsStore.state.linkModePathLines &&
-				this._selectedStore.state.selectedStringId &&
-				this._appStore.state.mode === 'LinkMode'
-			) {
-				// const linksInOrder = this._panelLinks.getPanelLinkOrderForSelectedStringWithPoints()
-				const selectedPanelLinkId = this._selectedStore.selectedPanelLinkId
-				const hoveringOverPanelLinkInLinkMenu =
-					this._entities.panelLinks.hoveringOverPanelLinkInLinkMenu
-				// drawLinkModePathLinesCurvedAlreadyMappedV4(
-				// drawLinkModePathLinesCurvedAlreadyMappedV5(
-				const panelLinkUnderMouse = this._entities.panelLinks.getHoveringOverPanelLinkInApp
+			/*			if (
+			 this._graphicsStore.state.linkModePathLines &&
+			 this._selectedStore.state.selectedStringId &&
+			 this._appStore.state.mode === 'LinkMode'
+			 ) {
+			 const selectedPanelLinkId = this._selectedStore.selectedPanelLinkId
+			 const hoveringOverPanelLinkInLinkMenu =
+			 this._entities.panelLinks.hoveringOverPanelLinkInLinkMenu
+			 const panelLinkUnderMouse = this._entities.panelLinks.getHoveringOverPanelLinkInApp
+			 drawLinkModePathLinesCurvedAlreadyMappedV6(
+			 ctx,
+			 entities,
+			 circuitLinkLineTuples,
+			 selectedPanelLinkId,
+			 hoveringOverPanelLinkInLinkMenu,
+			 panelLinkUnderMouse,
+			 )
+			 }
 
-				// const panelLinkUnderMouse = this._entities.panelLinks.getById(panelLinkUnderMouseId)
+			 if (this._entities.panelLinks.hoveringOverPanelInLinkMenuId) {
+			 const panel = this._entities.panels.getById(
+			 this._entities.panelLinks.hoveringOverPanelInLinkMenuId,
+			 )
+			 assertNotNull(panel, 'panel')
+			 drawBoxWithOptionsCtx(ctx, [panel], {
+			 color: CANVAS_COLORS.HoveringOverPanelInLinkMenuStrokeStyle,
+			 lineWidth: 2,
+			 padding: 5,
+			 })
+			 }
 
-				// const panelLinkUnderMouse = options?.panelLinkUnderMouse
-
-				drawLinkModePathLinesCurvedAlreadyMappedV6(
-					ctx,
-					entities,
-					circuitLinkLineTuples,
-					selectedPanelLinkId,
-					hoveringOverPanelLinkInLinkMenu,
-					panelLinkUnderMouse,
-				)
-				/*	drawLinkModePathLinesCurvedAlreadyMappedV3(
-				 ctx,
-				 entities,
-				 circuitCurvedLines,
-				 selectedPanelLinkId,
-				 hoveringOverPanelLinkInLinkMenu,
-				 )*/
-				/*				drawLinkModePathLinesCurvedAlreadyMappedV2(
-				 ctx,
-				 entities,
-				 openCircuitChains,
-				 closedCircuitChains,
-				 selectedPanelLinkId,
-				 hoveringOverPanelLinkInLinkMenu,
-				 )*/
-				// drawLinkModePathLinesCurvedV20(ctx, entities, linksInOrder)
-				// const aPoints = getPanelLinksChainContinuedLineInAPoints(linksInOrder)
-				// drawSplinesWithAPoints(ctx, aPoints)
-				/*				drawLinkModePathLinesCurvedWithAPoints(
-				 ctx,
-				 entities,
-				 linksInOrder,
-				 selectedPanelLinkId,
-				 hoveringOverPanelLinkInLinkMenu,
-				 )*/
-				/*				this._linkRender.drawLinkModePathLinesCurved(
-				 ctx,
-				 entities,
-				 linksInOrder,
-				 selectedPanelLinkId,
-				 hoveringOverPanelLinkInLinkMenu,
-				 )*/
-				/*				drawLinkModePathLinesCurvedAlreadyMapped(
-				 ctx,
-				 entities,
-				 linksInOrder,
-				 selectedPanelLinkId,
-				 hoveringOverPanelLinkInLinkMenu,
-				 )*/
-				/*				drawLinkModePathLinesCurved(
-				 ctx,
-				 entities,
-				 linksInOrder,
-				 selectedPanelLinkId,
-				 hoveringOverPanelLinkInLinkMenu,
-				 )*/
-				/*				drawLinkModePathLinesCurved(
-				 ctx,
-				 entities,
-				 linksInOrder,
-				 selectedPanelLinkId,
-				 hoveringOverPanelLinkInLinkMenu,
-				 )*/
-				/*				drawLinkModePathLines(
-				 ctx,
-				 entities,
-				 linksInOrder,
-				 selectedPanelLinkId,
-				 hoveringOverPanelLinkInLinkMenu,
-				 )*/
-			}
-
-			if (this._entities.panelLinks.hoveringOverPanelInLinkMenuId) {
-				const panel = this._entities.panels.getById(
-					this._entities.panelLinks.hoveringOverPanelInLinkMenuId,
-				)
-				assertNotNull(panel, 'panel')
-				drawBoxWithOptionsCtx(ctx, [panel], {
-					color: CANVAS_COLORS.HoveringOverPanelInLinkMenuStrokeStyle,
-					lineWidth: 2,
-					padding: 5,
-				})
-			}
-
-			if (this._entities.panelLinks.hoveringOverPanelLinkInLinkMenu) {
-				const panel = this._entities.panels.getById(
-					this._entities.panelLinks.hoveringOverPanelLinkInLinkMenu.panelId,
-				)
-				assertNotNull(panel, 'panel')
-				drawBoxWithOptionsCtx(ctx, [panel], {
-					color: CANVAS_COLORS.HoveringOverPanelInLinkMenuStrokeStyle,
-					lineWidth: 2,
-					padding: 5,
-				})
-			}
+			 if (this._entities.panelLinks.hoveringOverPanelLinkInLinkMenu) {
+			 const panel = this._entities.panels.getById(
+			 this._entities.panelLinks.hoveringOverPanelLinkInLinkMenu.panelId,
+			 )
+			 assertNotNull(panel, 'panel')
+			 drawBoxWithOptionsCtx(ctx, [panel], {
+			 color: CANVAS_COLORS.HoveringOverPanelInLinkMenuStrokeStyle,
+			 lineWidth: 2,
+			 padding: 5,
+			 })
+			 }*/
 
 			const shouldRenderSelectedEntitiesBox = options?.shouldRenderSelectedEntitiesBox ?? true
 			const shouldRenderSelectedStringBox = options?.shouldRenderSelectedStringBox ?? true
@@ -402,6 +334,49 @@ export class RenderService {
 
 			if (options?.creationPreviewBounds) {
 				drawEntityCreationPreview(ctx, options.creationPreviewBounds)
+			}
+
+			if (
+				this._graphicsStore.state.linkModePathLines &&
+				this._selectedStore.state.selectedStringId &&
+				this._appStore.state.mode === 'LinkMode'
+			) {
+				const selectedPanelLinkId = this._selectedStore.selectedPanelLinkId
+				const hoveringOverPanelLinkInLinkMenu =
+					this._entities.panelLinks.hoveringOverPanelLinkInLinkMenu
+				const panelLinkUnderMouse = this._entities.panelLinks.getHoveringOverPanelLinkInApp
+				drawLinkModePathLinesCurvedAlreadyMappedV6(
+					ctx,
+					entities,
+					circuitLinkLineTuples,
+					selectedPanelLinkId,
+					hoveringOverPanelLinkInLinkMenu,
+					panelLinkUnderMouse,
+				)
+			}
+
+			if (this._entities.panelLinks.hoveringOverPanelInLinkMenuId) {
+				const panel = this._entities.panels.getById(
+					this._entities.panelLinks.hoveringOverPanelInLinkMenuId,
+				)
+				assertNotNull(panel, 'panel')
+				drawBoxWithOptionsCtx(ctx, [panel], {
+					color: CANVAS_COLORS.HoveringOverPanelInLinkMenuStrokeStyle,
+					lineWidth: 2,
+					padding: 5,
+				})
+			}
+
+			if (this._entities.panelLinks.hoveringOverPanelLinkInLinkMenu) {
+				const panel = this._entities.panels.getById(
+					this._entities.panelLinks.hoveringOverPanelLinkInLinkMenu.panelId,
+				)
+				assertNotNull(panel, 'panel')
+				drawBoxWithOptionsCtx(ctx, [panel], {
+					color: CANVAS_COLORS.HoveringOverPanelInLinkMenuStrokeStyle,
+					lineWidth: 2,
+					padding: 5,
+				})
 			}
 
 			if (options?.panelUnderMouse) {

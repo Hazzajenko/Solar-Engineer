@@ -203,7 +203,6 @@ export const drawLinkModePathLinesCurvedAlreadyMappedV6 = (
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const ignore = selectedPanelLinkId || hoveringOverPanelLinkInLinkMenu
 
-	// const customIds = customEntities?.map((entity) => entity.id) ?? []
 	if (!circuitLinkLineTuples.length) {
 		return
 	}
@@ -212,17 +211,10 @@ export const drawLinkModePathLinesCurvedAlreadyMappedV6 = (
 	ctx.lineWidth = 1
 
 	for (let i = 0; i < circuitLinkLineTuples.length; i += 1) {
-		// const id = circuitLinkLineTuples[i][0][0]
 		const linkLineTuple = circuitLinkLineTuples[i]
 		for (let j = 0; j < linkLineTuple.length; j += 1) {
 			const id = linkLineTuple[j][0]
 			const lines = linkLineTuple[j][1]
-			const isStart = j === 0
-			const isEnd = j === linkLineTuple.length - 1
-			/*		drawStraightLineNumbers(ctx, line, i === 0, i === 0)
-			 break
-			 case 6:
-			 drawQuadraticLineNumbers(ctx, line, i === 0, i === lines.length - 1)*/
 			const options: Partial<DrawOptions> | undefined =
 				panelLinkUnderMouse?.id === id
 					? {
@@ -232,14 +224,23 @@ export const drawLinkModePathLinesCurvedAlreadyMappedV6 = (
 					: undefined
 
 			ctx.save()
-			// ctx
-			drawCurvedNumberLinesWithOptions(ctx, lines, isStart, isEnd, options)
+			drawCurvedNumberLinesWithOptions(ctx, lines, options)
 			ctx.restore()
-			// console.log('drawCurvedNumberLines', id, lines)
 		}
-		// const lines = mapLinkChainToCurvedNumberLine(linkLineTuple)
-		// drawCurvedNumberLinesWithOptions(ctx, lines)
 	}
+	ctx.restore()
+	/*	if (panelLinkUnderMouseLine) {
+	 ctx.save()
+	 // ctx.strokeStyle = 'red'
+	 // ctx.lineWidth = 2
+	 const options: Partial<DrawOptions> = {
+	 strokeStyle: 'red',
+	 lineWidth: 2,
+	 }
+	 drawCurvedNumberLinesWithOptions(ctx, panelLinkUnderMouseLine, true, true, options)
+	 // drawACurvedLine(ctx, panelLinkUnderMouseLine)
+	 ctx.restore()
+	 }*/
 
 	/*const stringPanelLinkLines = mapStringLinkChainToDoubleNumberArray(circuitLinkLineTuples)
 	 /!*	const indexOfPanelLinkUnderMouse = panelLinkUnderMouse
@@ -348,6 +349,20 @@ const createCurvedNumberLines = (points: number[], controlPoints: number[]) => {
 	return lines
 }
 
+const drawACurvedLine = (ctx: CanvasRenderingContext2D, line: CurvedNumberLine) => {
+	switch (line.length) {
+		case 4:
+			drawStraightLineNumbers(ctx, line, false, false)
+			break
+		case 6:
+			drawQuadraticLineNumbers(ctx, line, false, false)
+			break
+		case 8:
+			drawBezierLineNumbers(ctx, line)
+			break
+	}
+}
+
 const drawCurvedNumberLines = (ctx: CanvasRenderingContext2D, lines: CurvedNumberLine[]) => {
 	for (let i = 0; i < lines.length; i += 1) {
 		const line = lines[i]
@@ -380,51 +395,19 @@ export type DrawCurvedNumberLinesOptions = {
 const drawCurvedNumberLinesWithOptions = (
 	ctx: CanvasRenderingContext2D,
 	line: CurvedNumberLine,
-	isStart: boolean,
-	isFinish: boolean,
 	options?: Partial<DrawOptions>,
 ) => {
-	/*	const options = {
-
-	 }*/
-	// ctx.save()
-	// ctx.beginPath()
-	// ctx.
 	switch (line.length) {
 		case 4:
-			drawStraightLineNumbersWithOptions(ctx, line, isStart, isFinish, options)
+			drawStraightLineNumbersWithOptions(ctx, line, options)
 			break
 		case 6:
-			drawQuadraticLineNumbersWithOptions(ctx, line, isStart, isFinish, options)
+			drawQuadraticLineNumbersWithOptions(ctx, line, options)
 			break
 		case 8:
-			drawBezierLineNumbersWithOptions(ctx, line, false, false, options)
+			drawBezierLineNumbersWithOptions(ctx, line, options)
 			break
 	}
-	// ctx.closePath()
-	// ctx.stroke()
-	// ctx.restore()
-	// ctx.save()
-	// ctx.beginPath()
-	/*
-	 if (options?.isHovered) {
-	 ctx.lineWidth = 4
-	 ctx.strokeStyle = 'red'
-	 }
-	 */
-
-	/*	switch (line.length) {
-	 case 4:
-	 drawStraightLineNumbers(ctx, line, isStart, isFinish)
-	 break
-	 case 6:
-	 drawQuadraticLineNumbers(ctx, line, isStart, isFinish)
-	 break
-	 case 8:
-	 drawBezierLineNumbers(ctx, line)
-	 break
-	 }*/
-	// ctx.restore()
 }
 
 const drawCurvedNumberLinesWithOptionsOld = (
