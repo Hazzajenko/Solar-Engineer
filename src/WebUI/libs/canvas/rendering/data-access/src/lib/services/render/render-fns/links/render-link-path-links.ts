@@ -1,13 +1,22 @@
-import { CanvasEntity, PanelLinkFromMenu, PanelLinkId, PanelLinkModel } from '@entities/shared'
+import {
+	CanvasEntity,
+	CanvasPanel,
+	PanelLinkFromMenu,
+	PanelLinkId,
+	PanelLinkModel,
+} from '@entities/shared'
 import { CurvedNumberLine, DrawOptions, QuadraticNumberLine } from '@canvas/shared'
 import {
 	drawBezierLineNumbersWithOptions,
 	drawQuadraticLineNumbersWithOptions,
 	drawStraightLineNumbersWithOptions,
+	getAngleInRadiansBetweenTwoPoints,
 	getQuadraticAngleAtPointUsingNumberLine,
 } from '@canvas/utils'
+import { injectArrowHeadSvg } from '../../../../svgs'
 
 let offset = 0
+let image: HTMLImageElement | undefined
 export const drawLinkModePathLinesCurvedAlreadyMappedV6 = (
 	ctx: CanvasRenderingContext2D,
 	customEntities: CanvasEntity[] | undefined,
@@ -15,9 +24,27 @@ export const drawLinkModePathLinesCurvedAlreadyMappedV6 = (
 	selectedPanelLinkId: PanelLinkId | undefined,
 	hoveringOverPanelLinkInLinkMenu: PanelLinkFromMenu | undefined,
 	panelLinkUnderMouse: PanelLinkModel | undefined,
+	// singleToMovePanel: CanvasPanel | undefined,
 ) => {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const ignore = selectedPanelLinkId || hoveringOverPanelLinkInLinkMenu
+	const customEntityIds = new Set(customEntities?.map((e) => e.id) || [])
+	// const customEntityIds2 = customEntities?.map((e) => e.id)
+	// const customEntityIdsSet = new Set(customEntityIds)
+	// const isCustomEntity = (id: string) => customEntityIdsSet.has(id)
+
+	/*	const animateLineDash = (ctx: CanvasRenderingContext2D) => {
+	 offset++
+	 if (offset > 16) {
+	 offset = 0
+	 }
+	 ctx.lineDashOffset = -offset
+	 requestAnimationFrame(() => animateLineDash(ctx))
+	 }*/
+
+	injectArrowHeadSvg().then((img) => {
+		image = img
+	})
 
 	if (!circuitLinkLineTuples.length) {
 		return
@@ -37,6 +64,11 @@ export const drawLinkModePathLinesCurvedAlreadyMappedV6 = (
 		for (let j = 0; j < linkLineTuple.length; j += 1) {
 			const id = linkLineTuple[j][0]
 			const lines = linkLineTuple[j][1]
+
+			/*			if (customEntityIds.has(id)) {
+
+			 }*/
+
 			const options: Partial<DrawOptions> | undefined = getDrawOptionsBasedOnInputs(
 				id,
 				panelLinkUnderMouse,
@@ -49,8 +81,9 @@ export const drawLinkModePathLinesCurvedAlreadyMappedV6 = (
 			ctx.restore()
 			if (j === linkLineTuple.length - 1) {
 				ctx.save()
-				drawArrowheadV5(ctx, lines as QuadraticNumberLine, 5)
+				// drawArrowheadV5(ctx, lines as QuadraticNumberLine, 5)
 				// drawArrowhead(ctx, lines as QuadraticNumberLine, 5)
+				// drawArrowheadSvg(ctx, lines as QuadraticNumberLine)
 				// const from = { x: lines[0], y: lines[1] }
 				// const to = { x: lines[lines.length - 2], y: lines[lines.length - 1] }
 				// drawArrowheadV2(ctx, lines as QuadraticNumberLine)
@@ -134,6 +167,24 @@ const drawCurvedNumberLinesWithOptions = (
 	}
 }
 
+export const checkIfManyPanelIdsAreWithPanelLink = (
+	panelIds: string[],
+	panelLinks: PanelLinkModel[],
+) => {
+	return panelIds.some((id) => checkIfPanelIdIsWithPanelLink(id, panelLinks))
+}
+
+export const checkIfPanelIdIsWithPanelLink = (panelId: string, panelLinks: PanelLinkModel[]) => {
+	return panelLinks.some((l) => l.positivePanelId === panelId || l.negativePanelId === panelId)
+}
+
+export const checkIfPanelIsWithPanelLink = (
+	panelId: CanvasPanel['id'],
+	panelLinks: PanelLinkModel[],
+) => {
+	return panelLinks.some((l) => l.positivePanelId === panelId || l.negativePanelId === panelId)
+}
+
 export const drawArrowheadV2 = (
 	ctx: CanvasRenderingContext2D, // point: Point,
 	line: QuadraticNumberLine, // radius: number,
@@ -185,13 +236,13 @@ export const drawArrowhead = (
 
 	angle += (1.0 / 3.0) * (2 * Math.PI)
 	x = radius * Math.cos(angle) + x_center
-	y = radius * Math.sin(angle) + y_center
+	y = radius * Math.sin(angle) + y_center + 10
 
 	ctx.lineTo(x, y)
 
 	angle += (1.0 / 3.0) * (2 * Math.PI)
 	x = radius * Math.cos(angle) + x_center
-	y = radius * Math.sin(angle) + y_center
+	y = radius * Math.sin(angle) + y_center + 10
 
 	ctx.lineTo(x, y)
 
@@ -249,5 +300,22 @@ export const drawArrowheadV5 = (
 	ctx.lineTo(-10, 20)
 	ctx.closePath()
 	ctx.fill()
+	ctx.restore()
+}
+
+export const drawArrowheadSvg = (ctx: CanvasRenderingContext2D, line: QuadraticNumberLine) => {
+	if (!image) return
+	const from = { x: line[2], y: line[3] }
+	// const from = { x: line[0], y: line[1] }
+	const to = { x: line[4], y: line[5] }
+	const angle = getAngleInRadiansBetweenTwoPoints(from, to)
+	// const angle = getQuadraticAngleAtPointUsingNumberLine(line, 1)
+	const x = line[4]
+	const y = line[5]
+	ctx.save()
+	ctx.beginPath()
+	ctx.translate(x, y)
+	ctx.rotate(angle)
+	ctx.drawImage(image, -10, -10, 20, 20)
 	ctx.restore()
 }

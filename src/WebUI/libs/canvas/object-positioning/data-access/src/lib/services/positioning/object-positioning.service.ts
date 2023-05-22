@@ -109,6 +109,7 @@ export class ObjectPositioningService {
 			this._render.renderCanvasApp({
 				customPanels: [customEntity],
 				singleToMoveId: this.singleToMoveId,
+				singleToMovePanel: customEntity,
 			})
 			return
 		}
@@ -144,6 +145,7 @@ export class ObjectPositioningService {
 		this._render.renderCanvasApp({
 			customPanels: [customEntity],
 			singleToMoveId: this.singleToMoveId,
+			singleToMovePanel: customEntity,
 			nearby: {
 				axisPreviewRect,
 				mouseBounds,
@@ -257,6 +259,8 @@ export class ObjectPositioningService {
 		this._render.renderCanvasApp({
 			// excludedEntityIds: multipleToMoveIds,
 			// drawFns: [drawMultipleToMove],
+			multipleToMoveIds,
+			multipleToMovePanels: updates,
 			multipleToMoveSpotsTakenIds: spotTakenIds,
 			customPanels: updates,
 			shouldRenderSelectedEntitiesBox: false,

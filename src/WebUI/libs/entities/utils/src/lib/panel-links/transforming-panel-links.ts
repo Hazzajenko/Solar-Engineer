@@ -1,6 +1,7 @@
-import { PanelLinkId, PanelLinkModel } from '@entities/shared'
+import { CanvasPanel, getEntityCenter, PanelLinkId, PanelLinkModel } from '@entities/shared'
 import { groupLinkPointsByChain } from './sorting-panel-links'
 import { CurvedNumberLine } from '@canvas/shared'
+import { assertNotNull } from '@shared/utils'
 
 export const reduceLinkPointsToNumberArray = (links: PanelLinkModel[]): number[] =>
 	links.reduce((acc, link, index) => {
@@ -66,6 +67,74 @@ export const reduceLinkPointsToNumberArrayOptimisedKeepIdsV2 = (links: PanelLink
 		const points = [link.linePoints[1].x, link.linePoints[1].y]
 		return [...acc, [link.id, points]] as [PanelLinkId, number[]][]
 	}, [] as [PanelLinkId, number[]][])
+
+export const updatePanelLinkPointForOnePanel = (
+	link: PanelLinkModel,
+	panel: CanvasPanel,
+): PanelLinkModel => {
+	const linePoints = [...link.linePoints]
+	if (link.positivePanelId === panel.id) {
+		linePoints[0] = panel.location
+	}
+	if (link.negativePanelId === panel.id) {
+		linePoints[1] = panel.location
+	}
+	return {
+		...link,
+		linePoints,
+	}
+}
+
+export const updatePanelLinkPoints = (links: PanelLinkModel[], panels: CanvasPanel[]) => {
+	const panelIds = new Set(panels.map((panel) => panel.id))
+	return links.map((link) => {
+		let hasChanged = false
+		const linePoints = [...link.linePoints]
+		if (panelIds.has(link.positivePanelId)) {
+			const positivePanel = panels.find((panel) => panel.id === link.positivePanelId)
+			assertNotNull(positivePanel)
+			linePoints[0] = getEntityCenter(positivePanel)
+			hasChanged = true
+		}
+		if (panelIds.has(link.negativePanelId)) {
+			const negativePanel = panels.find((panel) => panel.id === link.negativePanelId)
+			assertNotNull(negativePanel)
+			linePoints[1] = getEntityCenter(negativePanel)
+			hasChanged = true
+		}
+		if (!hasChanged) {
+			return link
+		}
+		return {
+			...link,
+			linePoints,
+		}
+	})
+}
+
+/*export const reduceLinkPointsToPanelLinkIdToPanelLocationMap = (links: PanelLinkModel[], panels: CanvasPanel[]) => {
+ // const panelIds = Set.from(panels.map((panel) => panel.id))
+ const panelIds = new Set(panels.map((panel) => panel.id))
+
+ return links.reduce((acc: Map<PanelLinkModel['id'], number[]>, element) => {
+ acc.set(typeof element === 'string' ? element : element.id, element.linePoints)
+ return acc
+ }, new Map())
+ }*/
+// arrayToMap(links)
+/*	links.reduce((acc, link, index) => {
+ if (index === 0) {
+ const points = [
+ link.linePoints[0].x,
+ link.linePoints[0].y,
+ link.linePoints[1].x,
+ link.linePoints[1].y,
+ ] as number[]
+ return [[link.id, points]] as [PanelLinkId, number[]][]
+ }
+ const points = [link.linePoints[1].x, link.linePoints[1].y]
+ return [...acc, [link.id, points]] as [PanelLinkId, number[]][]
+ }, [] as [PanelLinkId, number[]][])*/
 
 export const reduceLinkPointsToNumberArrayOptimisedKeepIdsKeepOriginalStart = (
 	links: PanelLinkModel[],

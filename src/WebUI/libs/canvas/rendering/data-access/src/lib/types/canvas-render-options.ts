@@ -19,6 +19,13 @@ export type CanvasRenderOptions = {
 	shouldRenderSelectedStringBox: boolean
 	customPanels: CanvasPanel[]
 	singleToMoveId: string
+	singleToMovePanel: CanvasPanel
+	multipleToMoveIds: string[]
+	multipleToMovePanels: CanvasPanel[]
+	singleToRotateId: string
+	singleToRotatePanel: CanvasPanel
+	multipleToRotateIds: string[]
+	multipleToRotatePanels: CanvasPanel[]
 	selectionBox: {
 		x: number
 		y: number

@@ -1,4 +1,5 @@
 import { Point } from '@shared/data-access/models'
+import { PanelId } from './panel.entity'
 
 export type PanelLinkId = string & {
 	__type: 'PanelLinkId'
@@ -6,8 +7,8 @@ export type PanelLinkId = string & {
 export type PanelLinkModel = {
 	id: PanelLinkId
 	stringId: string
-	negativePanelId: string
-	positivePanelId: string
+	negativePanelId: PanelId
+	positivePanelId: PanelId
 	linePoints: Point[]
 }
 
@@ -49,7 +50,7 @@ export type ClosedCircuitPanelLink = PanelLinkModel & {
 export type PanelLinkRequest = {
 	direction: PolarityDirection
 	stringId: string
-	panelId: string
+	panelId: PanelId
 }
 
 export type PolarityDirection = 'positive-to-negative' | 'negative-to-positive'

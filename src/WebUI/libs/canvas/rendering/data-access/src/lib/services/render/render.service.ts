@@ -22,6 +22,7 @@ import {
 	drawSelectedStringBoxWithStats,
 	drawSelectionDragBox,
 	drawTooltipWithOptionsCtx,
+	handleCustomEntitiesBeforeLinkRender,
 } from './render-fns'
 import { inject, Injectable } from '@angular/core'
 import { assertNotNull, shadeColor } from '@shared/utils'
@@ -189,7 +190,7 @@ export class RenderService {
 							}
 							return true
 						})
-			const { openCircuitChains, closedCircuitChains, circuitCurvedLines, circuitLinkLineTuples } =
+			const { stringPanelLinks, openCircuitChains, closedCircuitChains, circuitLinkLineTuples } =
 				this._panelLinks.getPanelLinkOrderIfStringIsSelected() // this._entities.panelLinks.getPanelLinkOrderIfStringIsSelected
 			// const linksInOrder = this._panelLinks.getPanelLinkOrderIfStringIsSelected()
 			this.drawEntities(ctx, entities, openCircuitChains)
@@ -347,13 +348,51 @@ export class RenderService {
 				const hoveringOverPanelLinkInLinkMenu =
 					this._entities.panelLinks.hoveringOverPanelLinkInLinkMenu
 				const panelLinkUnderMouse = this._entities.panelLinks.getHoveringOverPanelLinkInApp
+				// const singleToMoveId = options?.singleToMoveId
+
+				// let customLinkLineTuples: [PanelLinkId, CurvedNumberLine][][] = circuitLinkLineTuples
+				const customLinkLineTuples = handleCustomEntitiesBeforeLinkRender(
+					circuitLinkLineTuples,
+					stringPanelLinks,
+					options?.singleToMoveId,
+					options?.singleToMovePanel,
+					options?.multipleToMoveIds,
+					options?.multipleToMovePanels,
+				)
+
+				/*
+				 if (options?.singleToMoveId && options.singleToMovePanel) {
+				 const check = checkIfPanelIdIsWithPanelLink(options.singleToMoveId, stringPanelLinks)
+				 if (check) {
+				 const updatedPanelLinks = updatePanelLinkPoints(stringPanelLinks, [
+				 options.singleToMovePanel,
+				 ])
+				 customLinkLineTuples = getUpdatedPanelLinksForRender(updatedPanelLinks)
+				 }
+				 }
+				 if (options?.multipleToMoveIds && options.multipleToMovePanels) {
+				 const check = checkIfManyPanelIdsAreWithPanelLink(
+				 options.multipleToMoveIds,
+				 stringPanelLinks,
+				 )
+				 if (check) {
+				 const updatedPanelLinks = updatePanelLinkPoints(
+				 stringPanelLinks,
+				 options.multipleToMovePanels,
+				 )
+				 customLinkLineTuples = getUpdatedPanelLinksForRender(updatedPanelLinks)
+				 }
+				 }
+
+				 const singleToMovePanel = options?.singleToMovePanel*/
+
 				drawLinkModePathLinesCurvedAlreadyMappedV6(
 					ctx,
 					entities,
-					circuitLinkLineTuples,
+					customLinkLineTuples, // circuitLinkLineTuples,
 					selectedPanelLinkId,
 					hoveringOverPanelLinkInLinkMenu,
-					panelLinkUnderMouse,
+					panelLinkUnderMouse, // singleToMovePanel,
 				)
 			}
 

@@ -65,7 +65,6 @@ export function injectPanelLinksStore() {
 		getByIds(ids: string[]) {
 			return ids.map((id) => entities()[id]).filter(isNotNull)
 		},
-
 		getByStringId(stringId: string) {
 			return allPanelLinks().filter((panelLink) => panelLink.stringId === stringId)
 		},
@@ -73,6 +72,13 @@ export function injectPanelLinksStore() {
 			return allPanelLinks().filter(
 				(panelLink) =>
 					panelLink.positivePanelId === panelId || panelLink.negativePanelId === panelId,
+			)
+		},
+		getByPanelIds(panelIds: string[]) {
+			return allPanelLinks().filter(
+				(panelLink) =>
+					panelIds.includes(panelLink.positivePanelId) ||
+					panelIds.includes(panelLink.negativePanelId),
 			)
 		},
 		getLinksMappedByPanelId(panelId: string) {

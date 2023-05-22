@@ -26,7 +26,7 @@ import {
 import { calculateLinkLinesBetweenTwoPanelCenters } from '@entities/utils'
 import {
 	isPointOverCurvedLineNoCtx,
-	preparePanelLinksForRenderV3,
+	preparePanelLinksForRender,
 	prepareStringPanelLinkCircuitChain,
 } from './utils'
 import { CurvedNumberLine } from '@canvas/shared'
@@ -58,7 +58,8 @@ export class PanelLinksService {
 	// private _selectedStringLinkLines: CurvedNumberLine[][] = []
 	private _selectedStringLinkToLinesTuple = signal<[PanelLinkId, CurvedNumberLine][][]>([])
 	// private _selectedStringFlatLines = signal<[PanelLinkId, CurvedNumberLine][][]>([])
-	private _selectedStringFlatLines = signal<CurvedNumberLine[][]>([])
+	// private _selectedStringFlatLines = signal<CurvedNumberLine[][]>([])
+	private _selectedStringPanelLinks = signal<PanelLinkModel[]>([])
 	// private _selectedStringFlatLines = signal<CurvedNumberLine[]>([])
 	// private _selectedStringLinkLines = signal<CurvedNumberLine[][]>([])
 	// private _selectedStringMicroLinePoints = signal<APoint[][][]>([])
@@ -94,16 +95,17 @@ export class PanelLinksService {
 			return
 		}
 		const panelLinks = this._panelLinksStore.getByStringId(selectedStringId)
+		this._selectedStringPanelLinks.set(panelLinks)
 		const stringCircuitChains = prepareStringPanelLinkCircuitChain(
 			panelLinks,
 		) as StringCircuitChains
 		// console.log('PanelLinksService: stringCircuitChains', stringCircuitChains)
 		this._selectedStringCircuitChains.set(stringCircuitChains)
-		const { stringCircuitChain, stringPanelLinkLines } =
-			preparePanelLinksForRenderV3(stringCircuitChains)
+		const stringCircuitChain = preparePanelLinksForRender(stringCircuitChains)
+		// const { stringCircuitChain } = preparePanelLinksForRender(stringCircuitChains)
 		// const { curvedLinesCombined, microLinePoints } = preparePanelLinksForRender(stringCircuitChains)
 		this._selectedStringLinkToLinesTuple.set(stringCircuitChain)
-		this._selectedStringFlatLines.set(stringPanelLinkLines)
+		// this._selectedStringFlatLines.set(stringPanelLinkLines)
 		/*		this._panelLinksStore.setSelectedStringLinkCircuit({
 		 circuitCurvedLines: stringPanelLinkLines,
 		 circuitLinkLineTuples: stringCircuitChain,
@@ -118,19 +120,20 @@ export class PanelLinksService {
 		const stringId = this._selectedStore.selectedStringId
 		if (!stringId) {
 			return {
+				stringPanelLinks: [] as PanelLinkModel[],
 				openCircuitChains: [] as OpenCircuitChain[],
-				closedCircuitChains: [] as ClosedCircuitChain[],
-				circuitCurvedLines: [] as CurvedNumberLine[][],
+				closedCircuitChains: [] as ClosedCircuitChain[], // circuitCurvedLines: [] as CurvedNumberLine[][],
 				circuitLinkLineTuples: [] as [PanelLinkId, CurvedNumberLine][][],
 			}
 		}
+		const stringPanelLinks = this._selectedStringPanelLinks()
 		const { openCircuitChains, closedCircuitChains } = this._selectedStringCircuitChains()
 		const circuitLinkLineTuples = this._selectedStringLinkToLinesTuple()
-		const circuitCurvedLines = this._selectedStringFlatLines()
+		// const circuitCurvedLines = this._selectedStringFlatLines()
 		return {
+			stringPanelLinks,
 			openCircuitChains,
-			closedCircuitChains,
-			circuitCurvedLines,
+			closedCircuitChains, // circuitCurvedLines,
 			circuitLinkLineTuples,
 		}
 	}

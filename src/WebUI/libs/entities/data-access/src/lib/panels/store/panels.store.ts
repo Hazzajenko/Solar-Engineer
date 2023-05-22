@@ -6,15 +6,15 @@ import { PanelsActions } from './panels.actions'
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { CanvasPanel } from '@entities/shared'
 import { provideEffects } from '@ngrx/effects'
-import { removeSelectedIfDeleted$, updatePanelLinkPaths$ } from './panels.effects'
 import { PANELS_FEATURE_KEY, panelsReducer } from './panels.reducer'
 import { TransformedPoint } from '@shared/data-access/models'
 import { isPointInsideEntity } from '@canvas/utils'
+import * as panelsEffects from './panels.effects'
 
 export function providePanelsFeature() {
 	return makeEnvironmentProviders([
 		provideState(PANELS_FEATURE_KEY, panelsReducer),
-		provideEffects({ removeSelectedIfDeleted$, updatePanelLinkPaths$ }),
+		provideEffects(panelsEffects),
 	])
 }
 

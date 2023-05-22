@@ -2,7 +2,7 @@ import { sortPanelLinks } from '@entities/utils'
 import { ClosedCircuitChain, OpenCircuitChain, PanelLinkModel } from '@entities/shared'
 
 export const prepareStringPanelLinkCircuitChain = (panelLinks: PanelLinkModel[]) => {
-	const circuitChains = getPanelLinkOrderSeparateChainsV2(panelLinks) as {
+	const circuitChains = getPanelLinkOrderSeparateChains(panelLinks) as {
 		openCircuitChains: OpenCircuitChain[]
 		closedCircuitChains: ClosedCircuitChain[]
 	}
@@ -17,7 +17,7 @@ export const prepareStringPanelLinkCircuitChain = (panelLinks: PanelLinkModel[])
 	}
 }
 
-const getPanelLinkOrderSeparateChainsV2 = (panelLinks: PanelLinkModel[]) => {
+const getPanelLinkOrderSeparateChains = (panelLinks: PanelLinkModel[]) => {
 	const positivePanelIds = new Set(panelLinks.map((pl) => pl.positivePanelId))
 	const startOfChains = panelLinks.filter(
 		(panelLink) => !positivePanelIds.has(panelLink.negativePanelId),

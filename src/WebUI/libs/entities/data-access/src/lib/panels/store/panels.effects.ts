@@ -70,33 +70,41 @@ export const updatePanelLinkPaths$ = createEffect(
 					const negativePanel = panelsStore.getById(panelLink.negativePanelId)
 					assertNotNull(negativePanel)
 					const linePoints = calculateLinkLinesBetweenTwoPanelCenters(positivePanel, negativePanel)
-					// const linePoints = calculateLinkLinesBetweenTwoPanels(positivePanel, negativePanel)
 					return { id: panelLink.id, changes: { linePoints } }
 				})
 
 				return PanelLinksActions.updateManyPanelLinks({ updates })
+			}),
+		)
+	},
+	{ functional: true },
+)
 
-				/*linkForPanel.forEach((panelLink) => {
-		 const positivePanel = panelsStore.getById(panelLink.positivePanelId)
-		 assertNotNull(positivePanel)
-		 const negativePanel = panelsStore.getById(panelLink.negativePanelId)
-		 assertNotNull(negativePanel)
-		 const linePoints = calculateLinkLinesBetweenTwoPanels(positivePanel, negativePanel)
-		 panelLinksStore.updatePanelLink({ id: panelLink.id, changes: { linePoints } })
+export const updateManyPanelLinksPaths$ = createEffect(
+	(
+		actions$ = inject(Actions),
+		panelLinksStore = injectPanelLinksStore(),
+		panelsStore = injectPanelsStore(),
+	) => {
+		return actions$.pipe(
+			ofType(PanelsActions.updateManyPanels),
+			map(({ updates }) => {
+				const updatesWithLocation = updates.filter((update) => update.changes.location)
+				if (updatesWithLocation.length === 0) {
+					return PanelLinksActions.noop()
+				}
+				const panelIds = updatesWithLocation.map((update) => update.id)
+				const linksForPanels = panelLinksStore.getByPanelIds(panelIds)
+				const updatedLinks = linksForPanels.map((panelLink) => {
+					const positivePanel = panelsStore.getById(panelLink.positivePanelId)
+					assertNotNull(positivePanel)
+					const negativePanel = panelsStore.getById(panelLink.negativePanelId)
+					assertNotNull(negativePanel)
+					const linePoints = calculateLinkLinesBetweenTwoPanelCenters(positivePanel, negativePanel)
+					return { id: panelLink.id, changes: { linePoints } }
+				})
 
-		 /!*	if (panelLink.positivePanelId === update.id) {
-		 const positivePanel = panelsStore.getById(panelLink.positivePanelId)
-		 assertNotNull(positivePanel)
-		 const negativePanel = panelsStore.getById(panelLink.negativePanelId)
-		 const linkLines = calculateLinkLinesBetweenTwoPanels(positivePanel, negativePanel)
-		 panelLinksStore.updatePanelLink({ id: panelLink.id, changes: { linkLines } })
-		 } else {
-		 const requestingPanel = panelLinksStore.getById(panelLink.positivePanelId)
-		 const panel = update.changes
-		 const linkLines = calculateLinkLinesBetweenTwoPanels(requestingPanel, panel)
-		 panelLinksStore.updatePanelLink({ id: panelLink.id, changes: { linkLines } })
-		 }*!/
-		 })*/
+				return PanelLinksActions.updateManyPanelLinks({ updates: updatedLinks })
 			}),
 		)
 	},
