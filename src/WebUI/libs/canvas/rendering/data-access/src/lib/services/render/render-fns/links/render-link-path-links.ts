@@ -141,6 +141,13 @@ const getDrawOptionsBasedOnInputs = (
 	if (panelLinkUnderMouse?.id === panelLinkId) {
 		return PanelLinkHoverDefaultDrawOptions
 	}
+	if (selectedPanelLinkId === panelLinkId) {
+		return PanelLinkHoverDefaultDrawOptions
+		/*		return {
+		 strokeStyle: CANVAS_COLORS.HoveringOverPanelInLinkMenuStrokeStyle,
+		 lineWidth: 2,
+		 }*/
+	}
 	return
 }
 

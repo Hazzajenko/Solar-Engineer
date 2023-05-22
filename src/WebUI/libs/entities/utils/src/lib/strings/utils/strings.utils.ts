@@ -1,4 +1,4 @@
-import { CanvasString } from '@entities/shared'
+import { CanvasString, PanelId } from '@entities/shared'
 // import { EntityStore } from '@entities/data-access'
 import { createString } from './strings'
 
@@ -30,4 +30,14 @@ export const createStringWithPanelsV2 = (selectedPanelIds: string[], amountOfStr
 	}))
 
 	return { string, panelUpdates }
+}
+
+export const setPanelAsDisconnectionPointForString = (
+	string: CanvasString,
+	panelId: PanelId,
+): CanvasString => {
+	return {
+		...string,
+		disconnectionPointId: panelId,
+	}
 }

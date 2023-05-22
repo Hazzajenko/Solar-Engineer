@@ -13,6 +13,8 @@ import { injectSelectedStore } from '@canvas/selected/data-access'
 import { LetDirective } from '@ngrx/component'
 import { NgIconComponent, provideIcons } from '@ng-icons/core'
 import { heroMinusCircle } from '@ng-icons/heroicons/outline'
+import { UpdateStr } from '@ngrx/entity/src/models'
+import { assertNotNull } from '@shared/utils'
 
 // import {default}  from '@ng-icons/heroicons'
 
@@ -124,5 +126,16 @@ export class SinglePanelMenuComponent implements OnInit {
 	leavePolarityPanel(event: PointerEvent) {
 		event.stopPropagation()
 		this._entityStore.panelLinks.clearHoveringOverPanelLinkInLinkMenu()
+	}
+
+	setPanelAsDisconnectionPoint() {
+		assertNotNull(this.string)
+		const update: UpdateStr<CanvasString> = {
+			id: this.string.id,
+			changes: {
+				disconnectionPointId: this.panel.id,
+			},
+		}
+		this._entityStore.strings.updateString(update)
 	}
 }

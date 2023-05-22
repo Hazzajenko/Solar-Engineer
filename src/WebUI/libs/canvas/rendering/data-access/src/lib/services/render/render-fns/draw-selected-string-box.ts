@@ -115,13 +115,6 @@ export const drawSelectedStringBoxWithStats = (
 	const stringNameTextHeight = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent
 	ctx.fillStyle = 'black'
 	ctx.fillText(stringNameText, left, top - 2)
-	/*	const statsTextLines = [
-	 `VOC: ${stringStats.totalVoc} V`,
-	 `VMP: ${stringStats.totalVmp} V`,
-	 `ISC: ${stringStats.totalIsc} A`,
-	 `IMP: ${stringStats.totalImp} A`,
-	 `PMAX: ${stringStats.totalPmax} W`,
-	 ]*/
 	const {
 		totalVoc,
 		totalVmp,

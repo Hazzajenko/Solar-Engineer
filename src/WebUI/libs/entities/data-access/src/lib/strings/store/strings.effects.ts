@@ -1,6 +1,6 @@
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { inject } from '@angular/core'
-import { map } from 'rxjs'
+import { map, tap } from 'rxjs'
 import { StringsActions } from './strings.actions'
 import { getGuid } from '@ngrx/data'
 import { ActionNotificationModel, NotificationsActions } from '@overlays/notifications/data-access'
@@ -39,9 +39,8 @@ export const calculateSelectedStringTotals$ = createEffect(
 	(actions$ = inject(Actions), stringStats = inject(StringsStatsService)) => {
 		return actions$.pipe(
 			ofType(SelectedActions.selectString),
-			map(() => {
+			tap(() => {
 				stringStats.calculateStringStatsForSelectedString()
-				// return NotificationsActions.addNotification({ notification })
 			}),
 		)
 	},

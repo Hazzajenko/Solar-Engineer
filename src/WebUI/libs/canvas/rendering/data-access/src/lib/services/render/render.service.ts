@@ -12,6 +12,8 @@ import {
 	drawBoxWithOptionsCtx,
 	drawClickNearEntityBounds,
 	drawCreationDragBox,
+	drawDisconnectionPoint,
+	drawDisconnectionPointBox,
 	drawEntityCreationPreview,
 	drawLinkModeOrderNumbers,
 	drawLinkModePathLinesCurvedAlreadyMappedV6,
@@ -39,6 +41,7 @@ import {
 	CANVAS_COLORS,
 	CanvasEntity,
 	CanvasPanel,
+	CanvasString,
 	OpenCircuitChain,
 	PANEL_STROKE_STYLE,
 	PanelLinkModel,
@@ -193,7 +196,11 @@ export class RenderService {
 			const { stringPanelLinks, openCircuitChains, closedCircuitChains, circuitLinkLineTuples } =
 				this._panelLinks.getPanelLinkOrderIfStringIsSelected() // this._entities.panelLinks.getPanelLinkOrderIfStringIsSelected
 			// const linksInOrder = this._panelLinks.getPanelLinkOrderIfStringIsSelected()
-			this.drawEntities(ctx, entities, openCircuitChains)
+			const selectedStringId = this._selectedStore.state.selectedStringId
+			const selectedString = selectedStringId
+				? this._entities.strings.getById(selectedStringId)
+				: undefined
+			this.drawEntities(ctx, entities, openCircuitChains, selectedString)
 			ctx.restore()
 
 			const appStateMode = this._appStore.state.mode
@@ -201,8 +208,6 @@ export class RenderService {
 			const hoveringOverEntityId = this._appStore.state.pointer.hoveringOverEntityId
 
 			const singleSelectedEntityId = this._selectedStore.state.singleSelectedEntityId
-
-			const selectedStringId = this._selectedStore.state.selectedStringId
 
 			const selectedStringPanels = selectedStringId
 				? this._entities.panels.getByStringId(selectedStringId)
@@ -216,6 +221,7 @@ export class RenderService {
 			const hoveringOverPanelInLinkMenuId = this._entities.panelLinks.hoveringOverPanelInLinkMenuId
 			const hoveringOverPanelLinkInLinkMenu =
 				this._entities.panelLinks.hoveringOverPanelLinkInLinkMenu
+			const hoveringOverPanelLinkInApp = this._entities.panelLinks.getHoveringOverPanelLinkInApp
 
 			const toMoveMultipleSpotTakenIds =
 				this._objectPositioningStore.state.toMoveMultipleSpotTakenIds
@@ -335,6 +341,20 @@ export class RenderService {
 				)
 			}
 
+			if (selectedString && selectedString.disconnectionPointId) {
+				const disconnectionPointPanel = this._entities.panels.getById(
+					selectedString.disconnectionPointId,
+				)
+				assertNotNull(disconnectionPointPanel, 'disconnectionPointPanel')
+				// drawDisconnectionPoint(ctx, disconnectionPointPanel)
+				drawDisconnectionPointBox(ctx, disconnectionPointPanel)
+				/*		drawBoxWithOptionsCtx(ctx, [disconnectionPointPanel], {
+				 color: CANVAS_COLORS.HoveringOverPanelInLinkMenuStrokeStyle,
+				 lineWidth: 2,
+				 padding: 5,
+				 })*/
+			}
+
 			if (hoveringOverPanelInLinkMenuId) {
 				const panel = this._entities.panels.getById(hoveringOverPanelInLinkMenuId)
 				assertNotNull(panel, 'panel')
@@ -353,6 +373,15 @@ export class RenderService {
 					lineWidth: 2,
 					padding: 5,
 				})
+			}
+
+			if (hoveringOverPanelLinkInApp && options?.transformedPoint) {
+				const panelLink = hoveringOverPanelLinkInApp
+				const point = {
+					x: options?.transformedPoint.x + 50,
+					y: options?.transformedPoint.y - 50,
+				}
+				drawTooltipWithOptionsCtx(ctx, point, panelLink.id)
 			}
 
 			if (hoveringOverEntityId) {
@@ -412,8 +441,10 @@ export class RenderService {
 		ctx: CanvasRenderingContext2D,
 		entities: CanvasPanel[],
 		linksInOrder: PanelLinkModel[][] = [],
+		selectedString: CanvasString | undefined,
 	) {
 		const selectedStringId = this._selectedStore.state.selectedStringId
+		// const selectedString ?
 		/*		const linksInOrder = selectedStringId
 		 ? this._panelLinks.getPanelLinkOrderForSelectedStringV2()
 		 : []*/
@@ -429,6 +460,8 @@ export class RenderService {
 			const strokeStyle: string = PANEL_STROKE_STYLE.DEFAULT
 
 			const graphicsState = this._graphicsStore.state
+			const selectedState = this._selectedStore.state
+			const isStringSelected = selectedStringId && selectedStringId === entity.stringId
 
 			if (graphicsState.colouredStrings) {
 				if (entity.stringId !== UndefinedStringId) {
@@ -437,8 +470,6 @@ export class RenderService {
 					fillStyle = string.color
 				}
 			}
-
-			const selectedState = this._selectedStore.state
 
 			if (graphicsState.selectedPanelFill) {
 				const isSingleSelected =
@@ -454,8 +485,6 @@ export class RenderService {
 					fillStyle = CANVAS_COLORS.SelectedPanelFillStyle
 				}
 			}
-
-			const isStringSelected = selectedStringId && selectedStringId === entity.stringId
 
 			if (isStringSelected && graphicsState.selectedStringPanelFill) {
 				fillStyle = CANVAS_COLORS.StringSelectedPanelFillStyle
@@ -527,6 +556,14 @@ export class RenderService {
 
 			// draw drawLinkModeGraphics
 			if (isStringSelected && this._appStore.state.mode === 'LinkMode') {
+				if (selectedString && selectedString.disconnectionPointId === entity.id) {
+					drawDisconnectionPoint(ctx, entity)
+					/*			drawBoxWithOptionsCtx(ctx, [entity], {
+					 color: CANVAS_COLORS.HoveringOverPanelInLinkMenuStrokeStyle,
+					 lineWidth: 2,
+					 padding: 5,
+					 })*/
+				}
 				if (this._graphicsStore.state.linkModeSymbols) {
 					drawLinkModeSymbols(ctx, entity)
 					// this.drawLinkModeSymbols(ctx, entity)

@@ -1,8 +1,11 @@
+import { PanelId } from './panel.entity'
+
 export type CanvasString = {
 	id: StringId
 	color: string
 	name: string
 	parallel: boolean
+	disconnectionPointId: PanelId | undefined
 }
 
 export type StringId = string & {

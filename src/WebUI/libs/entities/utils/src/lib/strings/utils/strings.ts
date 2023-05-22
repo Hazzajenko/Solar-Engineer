@@ -22,6 +22,7 @@ export const createString = (
 		name,
 		color,
 		parallel,
+		disconnectionPointId: undefined,
 	}
 }
 
@@ -32,6 +33,7 @@ export const CanvasStringFactory = {
 			name,
 			color,
 			parallel,
+			disconnectionPointId: undefined,
 		}
 	},
 	update: (string: CanvasString, changes: Partial<CanvasString>): CanvasString => {

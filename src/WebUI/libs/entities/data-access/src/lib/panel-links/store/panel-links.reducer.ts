@@ -22,6 +22,7 @@ export interface PanelLinksState extends EntityState<PanelLinkModel> {
 		circuitCurvedLines: CurvedNumberLine[][]
 		circuitLinkLineTuples: [PanelLinkId, CurvedNumberLine][][]
 	}
+
 	// | undefined
 }
 

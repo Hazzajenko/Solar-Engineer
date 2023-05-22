@@ -305,7 +305,9 @@ export class DesignCanvasDirective implements OnInit {
 				)
 					return
 				this._entities.panelLinks.setHoveringOverPanelLinkInApp(panelLinkUnderMouse.id)
-				this._render.renderCanvasApp()
+				this._render.renderCanvasApp({
+					transformedPoint: currentPoint,
+				})
 				// this._appState.dispatch.setHoveringOverLinkState(panelLinkUnderMouse.id)
 				/*	this._render.renderCanvasApp({
 				 panelLinkUnderMouse,

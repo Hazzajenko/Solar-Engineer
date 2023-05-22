@@ -8,6 +8,8 @@ export * from './nearby/index'
 export * from './preview/index'
 export * from './entities/index'
 export * from './links/index'
+export * from './html/index'
+export * from './strings/index'
 export * from './drag-box/index'
 export * from './draw-tooltip-with-options.ctx'
 

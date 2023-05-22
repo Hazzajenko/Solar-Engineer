@@ -22,4 +22,5 @@ export const drawBoxWithOptionsCtx = (
 	ctx.lineWidth = lineWidth
 	ctx.strokeRect(left, top, width, height)
 	ctx.restore()
+	return selectionBoxBounds
 }
