@@ -24,6 +24,7 @@ export const drawLinkModeOrderNumbers = (
 	const properIndex = linkIndex !== -1 ? linkIndex : chainSorted.length
 
 	ctx.save()
+	ctx.rotate(-panel.angle)
 	const fontSize = 10
 	ctx.font = `${fontSize}px Consolas, sans-serif`
 	const text = `${properIndex + 1}`

@@ -196,67 +196,40 @@ export class RenderService {
 			this.drawEntities(ctx, entities, openCircuitChains)
 			ctx.restore()
 
-			/*			if (
-			 this._graphicsStore.state.linkModePathLines &&
-			 this._selectedStore.state.selectedStringId &&
-			 this._appStore.state.mode === 'LinkMode'
-			 ) {
-			 const selectedPanelLinkId = this._selectedStore.selectedPanelLinkId
-			 const hoveringOverPanelLinkInLinkMenu =
-			 this._entities.panelLinks.hoveringOverPanelLinkInLinkMenu
-			 const panelLinkUnderMouse = this._entities.panelLinks.getHoveringOverPanelLinkInApp
-			 drawLinkModePathLinesCurvedAlreadyMappedV6(
-			 ctx,
-			 entities,
-			 circuitLinkLineTuples,
-			 selectedPanelLinkId,
-			 hoveringOverPanelLinkInLinkMenu,
-			 panelLinkUnderMouse,
-			 )
-			 }
+			const appStateMode = this._appStore.state.mode
 
-			 if (this._entities.panelLinks.hoveringOverPanelInLinkMenuId) {
-			 const panel = this._entities.panels.getById(
-			 this._entities.panelLinks.hoveringOverPanelInLinkMenuId,
-			 )
-			 assertNotNull(panel, 'panel')
-			 drawBoxWithOptionsCtx(ctx, [panel], {
-			 color: CANVAS_COLORS.HoveringOverPanelInLinkMenuStrokeStyle,
-			 lineWidth: 2,
-			 padding: 5,
-			 })
-			 }
+			const hoveringOverEntityId = this._appStore.state.pointer.hoveringOverEntityId
 
-			 if (this._entities.panelLinks.hoveringOverPanelLinkInLinkMenu) {
-			 const panel = this._entities.panels.getById(
-			 this._entities.panelLinks.hoveringOverPanelLinkInLinkMenu.panelId,
-			 )
-			 assertNotNull(panel, 'panel')
-			 drawBoxWithOptionsCtx(ctx, [panel], {
-			 color: CANVAS_COLORS.HoveringOverPanelInLinkMenuStrokeStyle,
-			 lineWidth: 2,
-			 padding: 5,
-			 })
-			 }*/
+			const singleSelectedEntityId = this._selectedStore.state.singleSelectedEntityId
+
+			const selectedStringId = this._selectedStore.state.selectedStringId
+
+			const selectedStringPanels = selectedStringId
+				? this._entities.panels.getByStringId(selectedStringId)
+				: []
 
 			const shouldRenderSelectedEntitiesBox = options?.shouldRenderSelectedEntitiesBox ?? true
 			const shouldRenderSelectedStringBox = options?.shouldRenderSelectedStringBox ?? true
 
 			const multipleSelectedEntityIds = this._selectedStore.state.multipleSelectedEntityIds
+
+			const hoveringOverPanelInLinkMenuId = this._entities.panelLinks.hoveringOverPanelInLinkMenuId
+			const hoveringOverPanelLinkInLinkMenu =
+				this._entities.panelLinks.hoveringOverPanelLinkInLinkMenu
+
+			const toMoveMultipleSpotTakenIds =
+				this._objectPositioningStore.state.toMoveMultipleSpotTakenIds
+
+			const selectedPanelLinkId = this._selectedStore.selectedPanelLinkId
+			const panelLinkUnderMouse = this._entities.panelLinks.getHoveringOverPanelLinkInApp
+
 			if (shouldRenderSelectedEntitiesBox && multipleSelectedEntityIds.length) {
 				drawSelectedBox(ctx, this._entities.panels.getByIds(multipleSelectedEntityIds))
-			} else if (
-				shouldRenderSelectedEntitiesBox &&
-				this._selectedStore.state.singleSelectedEntityId
-			) {
-				const selectedEntity = this._entities.panels.getById(
-					this._selectedStore.state.singleSelectedEntityId,
-				)
+			} else if (shouldRenderSelectedEntitiesBox && singleSelectedEntityId) {
+				const selectedEntity = this._entities.panels.getById(singleSelectedEntityId)
 				assertNotNull(selectedEntity, 'selectedEntity')
 				drawSelectedBox(ctx, [selectedEntity])
 			}
-
-			const selectedStringId = this._selectedStore.state.selectedStringId
 
 			if (shouldRenderSelectedStringBox && selectedStringId) {
 				const selectedString = this._entities.strings.getById(selectedStringId)
@@ -277,9 +250,9 @@ export class RenderService {
 				if (selectedStringId) {
 					const string = this._entities.strings.getById(selectedStringId)
 					assertNotNull(string, 'selectedString')
-					const panels = this._entities.panels.getByStringId(string.id)
+					// const panels = this._entities.panels.getByStringId(string.id)
 					const stringStats = this._stringStats.calculateStringStatsForSelectedString()
-					drawSelectedStringBoxWithStats(ctx, string, panels, stringStats)
+					drawSelectedStringBoxWithStats(ctx, string, selectedStringPanels, stringStats)
 				} else {
 					const stringsWithPanels = this._entities.strings.allStrings.map((string) => ({
 						string,
@@ -325,8 +298,8 @@ export class RenderService {
 				drawClickNearEntityBounds(ctx, this._clickNearEntityBounds)
 			}
 
-			if (this._objectPositioningStore.state.toMoveMultipleSpotTakenIds.length) {
-				const spotTakenIds = this._objectPositioningStore.state.toMoveMultipleSpotTakenIds
+			if (toMoveMultipleSpotTakenIds.length) {
+				const spotTakenIds = toMoveMultipleSpotTakenIds
 				const spotTakenPanels = entities.filter((panel) => spotTakenIds.includes(panel.id))
 				drawBoxWithOptionsCtx(ctx, spotTakenPanels, {
 					color: CANVAS_COLORS.SpotTakenStrokeStyle,
@@ -341,65 +314,29 @@ export class RenderService {
 
 			if (
 				this._graphicsStore.state.linkModePathLines &&
-				this._selectedStore.state.selectedStringId &&
-				this._appStore.state.mode === 'LinkMode'
+				selectedStringId &&
+				appStateMode === 'LinkMode'
 			) {
-				const selectedPanelLinkId = this._selectedStore.selectedPanelLinkId
-				const hoveringOverPanelLinkInLinkMenu =
-					this._entities.panelLinks.hoveringOverPanelLinkInLinkMenu
-				const panelLinkUnderMouse = this._entities.panelLinks.getHoveringOverPanelLinkInApp
-				// const singleToMoveId = options?.singleToMoveId
-
-				// let customLinkLineTuples: [PanelLinkId, CurvedNumberLine][][] = circuitLinkLineTuples
+				// const selectedPanelLinkId = this._selectedStore.selectedPanelLinkId
+				// const panelLinkUnderMouse = this._entities.panelLinks.getHoveringOverPanelLinkInApp
 				const customLinkLineTuples = handleCustomEntitiesBeforeLinkRender(
 					circuitLinkLineTuples,
 					stringPanelLinks,
-					options?.singleToMoveId,
-					options?.singleToMovePanel,
-					options?.multipleToMoveIds,
-					options?.multipleToMovePanels,
+					options,
 				)
-
-				/*
-				 if (options?.singleToMoveId && options.singleToMovePanel) {
-				 const check = checkIfPanelIdIsWithPanelLink(options.singleToMoveId, stringPanelLinks)
-				 if (check) {
-				 const updatedPanelLinks = updatePanelLinkPoints(stringPanelLinks, [
-				 options.singleToMovePanel,
-				 ])
-				 customLinkLineTuples = getUpdatedPanelLinksForRender(updatedPanelLinks)
-				 }
-				 }
-				 if (options?.multipleToMoveIds && options.multipleToMovePanels) {
-				 const check = checkIfManyPanelIdsAreWithPanelLink(
-				 options.multipleToMoveIds,
-				 stringPanelLinks,
-				 )
-				 if (check) {
-				 const updatedPanelLinks = updatePanelLinkPoints(
-				 stringPanelLinks,
-				 options.multipleToMovePanels,
-				 )
-				 customLinkLineTuples = getUpdatedPanelLinksForRender(updatedPanelLinks)
-				 }
-				 }
-
-				 const singleToMovePanel = options?.singleToMovePanel*/
 
 				drawLinkModePathLinesCurvedAlreadyMappedV6(
 					ctx,
 					entities,
-					customLinkLineTuples, // circuitLinkLineTuples,
+					customLinkLineTuples,
 					selectedPanelLinkId,
 					hoveringOverPanelLinkInLinkMenu,
-					panelLinkUnderMouse, // singleToMovePanel,
+					panelLinkUnderMouse,
 				)
 			}
 
-			if (this._entities.panelLinks.hoveringOverPanelInLinkMenuId) {
-				const panel = this._entities.panels.getById(
-					this._entities.panelLinks.hoveringOverPanelInLinkMenuId,
-				)
+			if (hoveringOverPanelInLinkMenuId) {
+				const panel = this._entities.panels.getById(hoveringOverPanelInLinkMenuId)
 				assertNotNull(panel, 'panel')
 				drawBoxWithOptionsCtx(ctx, [panel], {
 					color: CANVAS_COLORS.HoveringOverPanelInLinkMenuStrokeStyle,
@@ -408,10 +345,8 @@ export class RenderService {
 				})
 			}
 
-			if (this._entities.panelLinks.hoveringOverPanelLinkInLinkMenu) {
-				const panel = this._entities.panels.getById(
-					this._entities.panelLinks.hoveringOverPanelLinkInLinkMenu.panelId,
-				)
+			if (hoveringOverPanelLinkInLinkMenu) {
+				const panel = this._entities.panels.getById(hoveringOverPanelLinkInLinkMenu.panelId)
 				assertNotNull(panel, 'panel')
 				drawBoxWithOptionsCtx(ctx, [panel], {
 					color: CANVAS_COLORS.HoveringOverPanelInLinkMenuStrokeStyle,
@@ -420,14 +355,24 @@ export class RenderService {
 				})
 			}
 
-			if (options?.panelUnderMouse) {
-				const panel = options.panelUnderMouse
+			if (hoveringOverEntityId) {
+				const panel = this._entities.panels.getById(hoveringOverEntityId)
+				assertNotNull(panel, 'panel')
 				const point = {
 					x: panel.location.x + panel.width * 2,
 					y: panel.location.y - panel.width * 2,
 				}
 				drawTooltipWithOptionsCtx(ctx, point, panel.id)
 			}
+			/*
+			 if (options?.panelUnderMouse) {
+			 const panel = options.panelUnderMouse
+			 const point = {
+			 x: panel.location.x + panel.width * 2,
+			 y: panel.location.y - panel.width * 2,
+			 }
+			 drawTooltipWithOptionsCtx(ctx, point, panel.id)
+			 }*/
 		})
 	}
 
@@ -472,12 +417,14 @@ export class RenderService {
 		/*		const linksInOrder = selectedStringId
 		 ? this._panelLinks.getPanelLinkOrderForSelectedStringV2()
 		 : []*/
-		entities.forEach((entity) => {
+		for (let i = 0; i < entities.length; i++) {
+			const entity = entities[i]
+			// entities.forEach((entity) => {
 			/**
 			 * Draw Entity
 			 */
 
-			if (!isPanel(entity)) return
+			if (!isPanel(entity)) continue
 			let fillStyle: string = CANVAS_COLORS.DefaultPanelFillStyle
 			const strokeStyle: string = PANEL_STROKE_STYLE.DEFAULT
 
@@ -597,7 +544,7 @@ export class RenderService {
 			 this.drawLinkModeSymbols(ctx, entity)
 			 }*/
 			ctx.restore()
-		})
+		}
 	}
 }
 

@@ -1,4 +1,4 @@
-import { CanvasPanel, PanelLinkId, PanelLinkModel } from '@entities/shared'
+import { PanelLinkId, PanelLinkModel } from '@entities/shared'
 import { CurvedNumberLine } from '@canvas/shared'
 import { updatePanelLinkPoints } from '@entities/utils'
 import { getUpdatedPanelLinksForRender } from '@entities/data-access'
@@ -6,15 +6,36 @@ import {
 	checkIfManyPanelIdsAreWithPanelLink,
 	checkIfPanelIdIsWithPanelLink,
 } from './render-link-path-links'
+import { CanvasRenderOptions } from '../../../../types'
 
+type CustomRenderingOptions = Partial<
+	Pick<
+		CanvasRenderOptions,
+		| 'singleToMoveId'
+		| 'multipleToMoveIds'
+		| 'singleToRotateId'
+		| 'multipleToRotateIds'
+		| 'singleToMovePanel'
+		| 'multipleToMovePanels'
+		| 'singleToRotatePanel'
+		| 'multipleToRotatePanels'
+	>
+>
 export const handleCustomEntitiesBeforeLinkRender = (
 	circuitLinkLineTuples: [PanelLinkId, CurvedNumberLine][][],
 	stringPanelLinks: PanelLinkModel[],
-	singleToMoveId: string | undefined,
-	singleToMovePanel: CanvasPanel | undefined,
-	multipleToMoveIds: string[] | undefined,
-	multipleToMovePanels: CanvasPanel[] | undefined,
+	options: CustomRenderingOptions | undefined,
 ) => {
+	const {
+		singleToMoveId,
+		multipleToMoveIds,
+		singleToMovePanel,
+		multipleToMovePanels,
+		singleToRotateId,
+		singleToRotatePanel,
+		multipleToRotateIds,
+		multipleToRotatePanels,
+	} = options || {}
 	let customLinkLineTuples: [PanelLinkId, CurvedNumberLine][][] = circuitLinkLineTuples
 
 	if (singleToMoveId && singleToMovePanel) {
@@ -31,5 +52,22 @@ export const handleCustomEntitiesBeforeLinkRender = (
 			customLinkLineTuples = getUpdatedPanelLinksForRender(updatedPanelLinks)
 		}
 	}
+
+	if (singleToRotateId && singleToRotatePanel) {
+		const check = checkIfPanelIdIsWithPanelLink(singleToRotateId, stringPanelLinks)
+		if (check) {
+			const updatedPanelLinks = updatePanelLinkPoints(stringPanelLinks, [singleToRotatePanel])
+			customLinkLineTuples = getUpdatedPanelLinksForRender(updatedPanelLinks)
+		}
+	}
+
+	if (multipleToRotateIds && multipleToRotatePanels) {
+		const check = checkIfManyPanelIdsAreWithPanelLink(multipleToRotateIds, stringPanelLinks)
+		if (check) {
+			const updatedPanelLinks = updatePanelLinkPoints(stringPanelLinks, multipleToRotatePanels)
+			customLinkLineTuples = getUpdatedPanelLinksForRender(updatedPanelLinks)
+		}
+	}
+
 	return customLinkLineTuples
 }

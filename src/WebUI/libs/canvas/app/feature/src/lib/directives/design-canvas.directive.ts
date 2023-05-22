@@ -283,9 +283,29 @@ export class DesignCanvasDirective implements OnInit {
 		if (this._appState.state.mode === MODE_STATE.LINK_MODE) {
 			// const isPointOnPath = isPointOnCurvedPath(currentPoint, linkPathNumberArray)
 			// this._panelLinks.isMouseOverLinkPathV3(event, currentPoint, this.ctx)
+			const entityUnderMouseInLineMode = this.getEntityUnderMouse(event)
+			if (entityUnderMouseInLineMode) {
+				const hoveringEntityId = this._appState.state.pointer.hoveringOverEntityId
+				if (hoveringEntityId === entityUnderMouseInLineMode.id) return
+				this._appState.dispatch.setHoveringOverEntityState(entityUnderMouseInLineMode.id)
+				if (this._entities.panelLinks.getHoveringOverPanelLinkInApp) {
+					this._entities.panelLinks.clearHoveringOverPanelLinkInApp()
+				}
+				this._render.renderCanvasApp({
+					panelUnderMouse: entityUnderMouseInLineMode as CanvasPanel,
+				})
+				return
+			}
 			const panelLinkUnderMouse = this._panelLinks.isMouseOverLinkPath(event, currentPoint)
 			if (panelLinkUnderMouse) {
+				const existingPanelLinkUnderMouse = this._entities.panelLinks.getHoveringOverPanelLinkInApp
+				if (
+					existingPanelLinkUnderMouse &&
+					existingPanelLinkUnderMouse.id === panelLinkUnderMouse.id
+				)
+					return
 				this._entities.panelLinks.setHoveringOverPanelLinkInApp(panelLinkUnderMouse.id)
+				this._render.renderCanvasApp()
 				// this._appState.dispatch.setHoveringOverLinkState(panelLinkUnderMouse.id)
 				/*	this._render.renderCanvasApp({
 				 panelLinkUnderMouse,

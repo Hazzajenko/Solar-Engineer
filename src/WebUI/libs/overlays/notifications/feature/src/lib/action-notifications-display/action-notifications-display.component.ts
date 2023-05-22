@@ -49,7 +49,7 @@ export class ActionNotificationsDisplayComponent implements AfterViewInit {
 					const progressBarEl = this.progressBarEls.find(
 						(p) => p.nativeElement.id === `progressBar-${notification.id}`,
 					)
-					console.log('progressBarEl', progressBarEl)
+					// console.log('progressBarEl', progressBarEl)
 					if (!progressBarEl) {
 						return
 					}

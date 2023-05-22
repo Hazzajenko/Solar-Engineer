@@ -1,9 +1,9 @@
 import { APoint } from '@shared/utils'
 import { isPointOnLineUsingAPoints } from '@canvas/utils'
 import { Point, TransformedPoint } from '@shared/data-access/models'
-import { CurvedNumberLine } from '@canvas/shared'
+import { BezierNumberLine, CurvedNumberLine } from '@canvas/shared'
 import { Bezier } from 'bezier-js'
-import { PanelLinkId } from '@entities/shared'
+import { PanelLinkId, SizeByType } from '@entities/shared'
 
 export const isPointOverCurvedLineNoCtx = (
 	panelLinkIdPointsTuple: [PanelLinkId, CurvedNumberLine][][],
@@ -86,12 +86,18 @@ const handleLineSwitch = (lines: CurvedNumberLine, currentPoint: TransformedPoin
 		case 6: {
 			const bezier = new Bezier(lines[0], lines[1], lines[2], lines[3], lines[4], lines[5])
 			const project = bezier.project(currentPoint)
-			if (project.d && project.d < 10) {
+
+			if (project.d && project.d < 10 && project.t && project.t > 0.1 && project.t < 0.9) {
 				return true
 			}
+			// project.t
+			/*			if (project.d && project.d < 10) {
+			 return true
+			 }*/
 			break
 		}
 		case 8: {
+			// return isPointWithinAllowedT(currentPoint, lines)
 			const bezier = new Bezier(
 				lines[0],
 				lines[1],
@@ -102,14 +108,145 @@ const handleLineSwitch = (lines: CurvedNumberLine, currentPoint: TransformedPoin
 				lines[6],
 				lines[7],
 			)
+
+			// const [aStart, aFinish] = adjustLineBySizeOfPanel(lines[0], lines[1], lines[6], lines[7])
+			// const adjustedProjectStart = bezier.project({ x: aStart[0], y: aStart[1] }).t
+			// const adjustedProjectFinish = bezier.project({ x: aFinish[0], y: aFinish[1] }).t
+
+			/*		const bezier = new Bezier(
+			 aStart[0],
+			 aStart[1],
+			 lines[2],
+			 lines[3],
+			 lines[4],
+			 lines[5],
+			 aFinish[0],
+			 aFinish[1],
+			 )*/
+			/*			const calculateAllowedTBasedOnLength = (length: number) => {
+			 return 0.2 + (0.6 * length) / bezier.length()
+			 }*/
+
+			// const lineLength = bezier.length()
+			// const allowedT = 0.2 + (0.6 * lineLength) / bezier.length()
+			// console.log('allowedT', allowedT)
+			/*			const lineLength = bezier.length()
+			 const adjustFromPanelSize = lineLength - SizeByType['panel'].height * 2
+			 const percentage = (adjustFromPanelSize / lineLength) * 100
+			 console.log('percentage', percentage)*/
 			const project = bezier.project(currentPoint)
-			if (project.d && project.d < 10) {
+			if (project.d && project.d < 10 && project.t && project.t > 0.1 && project.t < 0.9) {
 				return true
 			}
+			/*	if (
+			 project.d &&
+			 project.d < 10 &&
+			 project.t &&
+			 adjustedProjectStart &&
+			 adjustedProjectFinish &&
+			 project.t > adjustedProjectStart &&
+			 project.t < adjustedProjectFinish
+			 ) {
+			 return true
+			 }*/
+			/*	if (project.d && project.d < 10 && project.t && project.t > 0.1 && project.t < 0.9) {
+			 return true
+			 }*/
 			break
 		}
 	}
 	return
+}
+
+const adjustLineBySizeOfPanel = (
+	point1X: number,
+	point1Y: number,
+	point2X: number,
+	point2Y: number,
+) => {
+	const size = SizeByType['panel']
+	const { width, height } = size
+	const dx = point2X - point1X
+	const dy = point2Y - point1Y
+	const length = Math.sqrt(dx * dx + dy * dy)
+	const unitX = dx / length
+	const unitY = dy / length
+
+	const newPoint1 = {
+		x: point1X + width * unitY,
+		y: point1Y - height * unitX,
+	}
+	const newPoint2 = {
+		x: point2X + width * unitY,
+		y: point2Y - height * unitX,
+	}
+
+	return [
+		[newPoint1.x, newPoint1.y],
+		[newPoint2.x, newPoint2.y],
+	]
+}
+const adjustLineByWidthAndHeight = (
+	point1: Point,
+	point2: Point,
+	width: number,
+	height: number,
+) => {
+	const dx = point2.x - point1.x
+	const dy = point2.y - point1.y
+	const length = Math.sqrt(dx * dx + dy * dy)
+	const unitX = dx / length
+	const unitY = dy / length
+
+	const newPoint1 = {
+		x: point1.x + width * unitY,
+		y: point1.y - height * unitX,
+	}
+	const newPoint2 = {
+		x: point2.x + width * unitY,
+		y: point2.y - height * unitX,
+	}
+
+	return [
+		[newPoint1.x, newPoint1.y],
+		[newPoint2.x, newPoint2.y],
+	]
+}
+
+const isPointWithinAllowedT = (
+	point: Point,
+	lines: BezierNumberLine, // minT: number,
+	// maxT: number,
+): boolean => {
+	const bezier = new Bezier(
+		lines[0],
+		lines[1],
+		lines[2],
+		lines[3],
+		lines[4],
+		lines[5],
+		lines[6],
+		lines[7],
+	)
+
+	const minT = 0.1
+	const maxT = 0.9
+
+	const length = bezier.length()
+	const allowedT = [
+		minT + (0.6 * length * minT) / length,
+		maxT - (0.6 * length * (1 - maxT)) / length,
+	]
+
+	const project = bezier.project(point)
+
+	return (
+		project.d !== undefined &&
+		project.d < 10 &&
+		project.t !== undefined &&
+		project.t >= allowedT[0] &&
+		project.t <= allowedT[1]
+	)
 }
 
 export const isPointOverCurvedLine = (

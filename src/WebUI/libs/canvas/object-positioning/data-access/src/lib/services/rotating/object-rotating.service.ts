@@ -19,7 +19,7 @@ import {
 	rotatingKeysDown,
 	updateObjectByIdForStore,
 } from '@canvas/utils'
-import { CANVAS_COLORS, CanvasPanel, SizeByType } from '@entities/shared'
+import { CanvasPanel, SizeByType } from '@entities/shared'
 
 @Injectable({
 	providedIn: 'root',
@@ -107,18 +107,18 @@ export class ObjectRotatingService {
 
 		const entity = this._entities.panels.getById(singleToRotateId)
 		assertNotNull(entity)
-
-		const singleRotateDrawFn = (ctx: CanvasRenderingContext2D) => {
-			ctx.save()
-			ctx.translate(entity.location.x + entity.width / 2, entity.location.y + entity.height / 2)
-			ctx.rotate(angle)
-			ctx.fillStyle = CANVAS_COLORS.MultiSelectedPanelFillStyle
-			ctx.beginPath()
-			ctx.rect(-entity.width / 2, -entity.height / 2, entity.width, entity.height)
-			ctx.fill()
-			ctx.stroke()
-			ctx.restore()
-		}
+		/*
+		 const singleRotateDrawFn = (ctx: CanvasRenderingContext2D) => {
+		 ctx.save()
+		 ctx.translate(entity.location.x + entity.width / 2, entity.location.y + entity.height / 2)
+		 ctx.rotate(angle)
+		 ctx.fillStyle = CANVAS_COLORS.MultiSelectedPanelFillStyle
+		 ctx.beginPath()
+		 ctx.rect(-entity.width / 2, -entity.height / 2, entity.width, entity.height)
+		 ctx.fill()
+		 ctx.stroke()
+		 ctx.restore()
+		 }*/
 
 		const customPanel = {
 			...entity,
@@ -126,6 +126,8 @@ export class ObjectRotatingService {
 		} as CanvasPanel
 
 		this._render.renderCanvasApp({
+			singleToRotateId,
+			singleToRotatePanel: customPanel,
 			customPanels: [customPanel], // excludedEntityIds: [singleToRotateId],
 			// drawFns: [singleRotateDrawFn],
 		})
@@ -195,33 +197,35 @@ export class ObjectRotatingService {
 				height,
 			}
 		})
+		/*
+		 const multipleRotateDrawFn = (ctx: CanvasRenderingContext2D) => {
+		 ctx.save()
 
-		const multipleRotateDrawFn = (ctx: CanvasRenderingContext2D) => {
-			ctx.save()
+		 entities.forEach((entity) => {
+		 const angle = entity.angle
+		 const location = entity.location
+		 assertNotNull(angle)
+		 assertNotNull(location)
 
-			entities.forEach((entity) => {
-				const angle = entity.angle
-				const location = entity.location
-				assertNotNull(angle)
-				assertNotNull(location)
+		 ctx.save()
+		 // ctx.translate(location.x, location.y)
+		 ctx.translate(location.x + entity.width / 2, location.y + entity.height / 2)
+		 ctx.rotate(angle)
 
-				ctx.save()
-				// ctx.translate(location.x, location.y)
-				ctx.translate(location.x + entity.width / 2, location.y + entity.height / 2)
-				ctx.rotate(angle)
+		 ctx.beginPath()
+		 // ctx.rect(0, 0, entity.width, entity.height)
+		 ctx.rect(-entity.width / 2, -entity.height / 2, entity.width, entity.height)
+		 ctx.fill()
+		 ctx.stroke()
+		 ctx.restore()
+		 })
 
-				ctx.beginPath()
-				// ctx.rect(0, 0, entity.width, entity.height)
-				ctx.rect(-entity.width / 2, -entity.height / 2, entity.width, entity.height)
-				ctx.fill()
-				ctx.stroke()
-				ctx.restore()
-			})
-
-			ctx.restore()
-		}
+		 ctx.restore()
+		 }*/
 
 		this._render.renderCanvasApp({
+			multipleToRotateIds,
+			multipleToRotatePanels: entities,
 			customPanels: entities,
 			shouldRenderSelectedEntitiesBox: false,
 			shouldRenderSelectedStringBox: false,
