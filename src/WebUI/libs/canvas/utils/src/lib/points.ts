@@ -1,4 +1,5 @@
 import {
+	Axis,
 	EventPoint,
 	EventWithOffsets,
 	Point,
@@ -40,4 +41,88 @@ export function getTransformedPointFromEvent(ctx: CanvasRenderingContext2D, even
 	const originalPoint = new DOMPoint(event.offsetX, event.offsetY)
 
 	return ctx.getTransform().invertSelf().transformPoint(originalPoint) as TransformedPoint
+}
+
+export const adjustTwoPointCoorsByValue = (
+	point1: Point,
+	point2: Point,
+	value: number,
+): [Point, Point] => {
+	const dx = point2.x - point1.x
+	const dy = point2.y - point1.y
+	const length = Math.sqrt(dx * dx + dy * dy)
+	const unitX = dx / length
+	const unitY = dy / length
+
+	const newPoint1 = {
+		x: point1.x + value * unitY,
+		y: point1.y - value * unitX,
+	}
+	const newPoint2 = {
+		x: point2.x + value * unitY,
+		y: point2.y - value * unitX,
+	}
+
+	return [newPoint1, newPoint2]
+}
+
+export const adjustTwoPointTuplesByValueAndAxis = (
+	point1X: number,
+	point1Y: number,
+	point2X: number,
+	point2Y: number,
+	value: number,
+	axis: Axis,
+) => {
+	const dx = point2X - point1X
+	const dy = point2Y - point1Y
+	const length = Math.sqrt(dx * dx + dy * dy)
+	const unitX = dx / length
+	const unitY = dy / length
+
+	const newPoint1 = {
+		x: point1X + value * unitY,
+		y: point1Y - value * unitX,
+	}
+	const newPoint2 = {
+		x: point2X + value * unitY,
+		y: point2Y - value * unitX,
+	}
+
+	if (axis === 'x') {
+		return [newPoint1.x, point1Y, newPoint2.x, point2Y]
+	}
+	return [point1X, newPoint1.y, point2X, newPoint2.y]
+	/*	if (axis === 'y') {
+	 return [point1X, newPoint1.y, point2X, newPoint2.y]
+	 }*/
+
+	// return [axis === 'x' ? newPoint1.x : newPoint1.y, axis === 'x' ? newPoint2.x : newPoint2.y]
+}
+export const adjustTwoPointTuplesByValue = (
+	point1X: number,
+	point1Y: number,
+	point2X: number,
+	point2Y: number,
+	value: number,
+) => {
+	const dx = point2X - point1X
+	const dy = point2Y - point1Y
+	const length = Math.sqrt(dx * dx + dy * dy)
+	const unitX = dx / length
+	const unitY = dy / length
+
+	const newPoint1 = {
+		x: point1X + value * unitY,
+		y: point1Y - value * unitX,
+	}
+	const newPoint2 = {
+		x: point2X + value * unitY,
+		y: point2Y - value * unitX,
+	}
+
+	return [
+		[newPoint1.x, newPoint1.y],
+		[newPoint2.x, newPoint2.y],
+	]
 }

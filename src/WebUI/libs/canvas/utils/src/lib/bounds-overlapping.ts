@@ -1,4 +1,10 @@
-import { getBoundsFromTwoPoints, getCompleteEntityBounds, getEntityBounds } from './bounds'
+import {
+	getBoundsFromTwoPoints,
+	getCompleteEntityBounds,
+	getCompleteEntityBoundsFromEntity,
+	getEntityBounds,
+	getStretchedEntityBoundsByValue,
+} from './bounds'
 import { EntityBounds, Point } from '@shared/data-access/models'
 import { CanvasEntity } from '@entities/shared'
 
@@ -65,6 +71,15 @@ export const isPointInsideEntity = (point: Point, entity: CanvasEntity): boolean
 	return isPointInsideBounds(point, bounds)
 }
 
+export const isPointInsideStretchedEntityByValue = (
+	point: Point,
+	entity: CanvasEntity,
+	value: number,
+): boolean => {
+	const bounds = getStretchedEntityBoundsByValue(entity, value)
+	return isPointInsideBounds(point, bounds)
+}
+
 const ENTITY_LEFT_SIDE_THRESHOLD = 10
 const ENTITY_RIGHT_SIDE_THRESHOLD = 10
 
@@ -101,6 +116,70 @@ export const isPointInsideMiddleRightOfEntityWithRotationV2 = (
 		rotatedPoint.y >= bounds.centerY - bounds.height / 4 &&
 		rotatedPoint.y <= bounds.centerY + bounds.height / 4
 	)
+}
+
+export const isPointInsidePanelSymbols = (point: Point, entity: CanvasEntity) => {
+	const bounds = getCompleteEntityBoundsFromEntity(entity)
+	if (isPointWithinPointByValue(point, { x: bounds.left, y: bounds.centerY }, 5)) {
+		return 'negative'
+	}
+	if (isPointWithinPointByValue(point, { x: bounds.right, y: bounds.centerY }, 5)) {
+		return 'positive'
+	}
+	return false
+	// if (point.x)
+	// const bounds = getEntityBounds(entity)
+	/*	const [x1, y1, x2, y2] = adjustTwoPointTuplesByValueAndAxis(
+	 bounds.left,
+	 bounds.top,
+	 bounds.left,
+	 bounds.bottom,
+	 bounds.height / 4,
+	 'y',
+	 )
+	 const leftBoundary = bounds.left + bounds.width / 4
+
+	 return (
+	 /!*		isPointBetweenTwoPoints(
+	 point,
+	 { x: bounds.left, y: bounds.top },
+	 { x: bounds.left, y: bounds.bottom },
+	 ) &&
+	 point.x >= bounds.left + ENTITY_LEFT_SIDE_THRESHOLD &&
+	 point.x <= bounds.right - ENTITY_RIGHT_SIDE_THRESHOLD &&
+	 isPointInsideBounds(point, bounds) &&*!/
+	 point.y >= y1 &&
+	 point.y <= y2 &&
+	 point.x <= leftBoundary &&
+	 point.x >= bounds.left - bounds.width / 4
+	 // point.x <= bounds.right - ENTITY_RIGHT_SIDE_THRESHOLD
+	 )*/
+}
+/*
+ // const heightBoundary = bounds.top + bounds.height / 4
+ return (
+ isPointBetweenTwoPoints(
+ point,
+ { x: bounds.left, y: bounds.top },
+ { x: bounds.left, y: bounds.bottom },
+ ) &&
+ point.x >= bounds.left + ENTITY_LEFT_SIDE_THRESHOLD &&
+ point.x <= bounds.right - ENTITY_RIGHT_SIDE_THRESHOLD &&
+ isPointInsideBounds(point, bounds)
+ )
+ }*/
+
+const isPointWithinPointByValue = (point: Point, center: Point, value: number): boolean => {
+	return (
+		point.x >= center.x - value &&
+		point.x <= center.x + value &&
+		point.y >= center.y - value &&
+		point.y <= center.y + value
+	)
+}
+
+const isPointBetweenTwoPoints = (point: Point, start: Point, end: Point): boolean => {
+	return (point.x >= start.x && point.x <= end.x) || (point.x >= end.x && point.x <= start.x)
 }
 
 const rotatePoint = (point: Point, angle: number, center: Point): Point => {

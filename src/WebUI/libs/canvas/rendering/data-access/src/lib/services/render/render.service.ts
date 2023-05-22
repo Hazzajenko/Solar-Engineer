@@ -12,7 +12,6 @@ import {
 	drawBoxWithOptionsCtx,
 	drawClickNearEntityBounds,
 	drawCreationDragBox,
-	drawDisconnectionPoint,
 	drawDisconnectionPointBox,
 	drawEntityCreationPreview,
 	drawLinkModeOrderNumbers,
@@ -194,8 +193,7 @@ export class RenderService {
 							return true
 						})
 			const { stringPanelLinks, openCircuitChains, closedCircuitChains, circuitLinkLineTuples } =
-				this._panelLinks.getPanelLinkOrderIfStringIsSelected() // this._entities.panelLinks.getPanelLinkOrderIfStringIsSelected
-			// const linksInOrder = this._panelLinks.getPanelLinkOrderIfStringIsSelected()
+				this._panelLinks.getPanelLinkOrderIfStringIsSelected()
 			const selectedStringId = this._selectedStore.state.selectedStringId
 			const selectedString = selectedStringId
 				? this._entities.strings.getById(selectedStringId)
@@ -240,23 +238,15 @@ export class RenderService {
 			if (shouldRenderSelectedStringBox && selectedStringId) {
 				const selectedString = this._entities.strings.getById(selectedStringId)
 				assertNotNull(selectedString, 'selectedString')
-				// const selectedStringPanels = this._entities.panels.getByStringId(selectedString.id)
-
-				// drawSelectedStringBoxV3(ctx, selectedString, selectedStringPanels)
 				if (shouldRenderSelectedEntitiesBox && multipleSelectedEntityIds.length) {
 					drawSelectedBox(ctx, this._entities.panels.getByIds(multipleSelectedEntityIds))
 				}
 			}
 
 			if (this._graphicsStore.state.stringBoxes) {
-				/*				const stringsWithPanels = getStringsWithPanelsBasedOffSelectedString(
-				 selectedStringId,
-				 this._entities,
-				 )*/
 				if (selectedStringId) {
 					const string = this._entities.strings.getById(selectedStringId)
 					assertNotNull(string, 'selectedString')
-					// const panels = this._entities.panels.getByStringId(string.id)
 					const stringStats = this._stringStats.calculateStringStatsForSelectedString()
 					drawSelectedStringBoxWithStats(ctx, string, selectedStringPanels, stringStats)
 				} else {
@@ -323,8 +313,6 @@ export class RenderService {
 				selectedStringId &&
 				appStateMode === 'LinkMode'
 			) {
-				// const selectedPanelLinkId = this._selectedStore.selectedPanelLinkId
-				// const panelLinkUnderMouse = this._entities.panelLinks.getHoveringOverPanelLinkInApp
 				const customLinkLineTuples = handleCustomEntitiesBeforeLinkRender(
 					circuitLinkLineTuples,
 					stringPanelLinks,
@@ -346,13 +334,7 @@ export class RenderService {
 					selectedString.disconnectionPointId,
 				)
 				assertNotNull(disconnectionPointPanel, 'disconnectionPointPanel')
-				// drawDisconnectionPoint(ctx, disconnectionPointPanel)
 				drawDisconnectionPointBox(ctx, disconnectionPointPanel)
-				/*		drawBoxWithOptionsCtx(ctx, [disconnectionPointPanel], {
-				 color: CANVAS_COLORS.HoveringOverPanelInLinkMenuStrokeStyle,
-				 lineWidth: 2,
-				 padding: 5,
-				 })*/
 			}
 
 			if (hoveringOverPanelInLinkMenuId) {
@@ -556,22 +538,26 @@ export class RenderService {
 
 			// draw drawLinkModeGraphics
 			if (isStringSelected && this._appStore.state.mode === 'LinkMode') {
-				if (selectedString && selectedString.disconnectionPointId === entity.id) {
-					drawDisconnectionPoint(ctx, entity)
-					/*			drawBoxWithOptionsCtx(ctx, [entity], {
-					 color: CANVAS_COLORS.HoveringOverPanelInLinkMenuStrokeStyle,
-					 lineWidth: 2,
-					 padding: 5,
-					 })*/
-				}
+				/*				if (selectedString && selectedString.disconnectionPointId === entity.id) {
+				 drawDisconnectionPoint(ctx, entity)
+				 /!*			drawBoxWithOptionsCtx(ctx, [entity], {
+				 color: CANVAS_COLORS.HoveringOverPanelInLinkMenuStrokeStyle,
+				 lineWidth: 2,
+				 padding: 5,
+				 })*!/
+				 }*/
 				if (this._graphicsStore.state.linkModeSymbols) {
 					drawLinkModeSymbols(ctx, entity)
 					// this.drawLinkModeSymbols(ctx, entity)
 				}
-				if (this._graphicsStore.state.linkModeOrderNumbers && linksInOrder.length) {
-					drawLinkModeOrderNumbers(ctx, entity, linksInOrder as OpenCircuitChain[])
-					// this.drawLinkModeOrderNumbers(ctx, entity, linksInOrder as OpenCircuitChain[])
-				}
+			}
+			if (
+				isStringSelected &&
+				this._graphicsStore.state.linkModeOrderNumbers &&
+				linksInOrder.length
+			) {
+				drawLinkModeOrderNumbers(ctx, entity, linksInOrder as OpenCircuitChain[])
+				// this.drawLinkModeOrderNumbers(ctx, entity, linksInOrder as OpenCircuitChain[])
 			}
 			/*				if (
 			 isStringSelected &&

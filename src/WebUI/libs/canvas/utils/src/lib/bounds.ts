@@ -11,6 +11,9 @@ import {
 } from '@shared/data-access/models'
 import { CanvasEntity } from '@entities/shared'
 
+export const getCompleteEntityBoundsFromEntity = (entity: CanvasEntity): CompleteEntityBounds => {
+	return getCompleteEntityBounds(getEntityBounds(entity))
+}
 export const getCompleteEntityBounds = (bounds: EntityBounds): CompleteEntityBounds => ({
 	...bounds,
 	width: bounds.right - bounds.left,
@@ -23,6 +26,20 @@ export const getEntityBounds = (entity: CanvasEntity): EntityBounds => {
 		top: entity.location.y,
 		right: entity.location.x + entity.width,
 		bottom: entity.location.y + entity.height,
+		centerX: entity.location.x + entity.width / 2,
+		centerY: entity.location.y + entity.height / 2,
+	}
+}
+
+export const getStretchedEntityBoundsByValue = (
+	entity: CanvasEntity,
+	value: number,
+): EntityBounds => {
+	return {
+		left: entity.location.x - value,
+		top: entity.location.y - value,
+		right: entity.location.x + entity.width + value,
+		bottom: entity.location.y + entity.height + value,
 		centerX: entity.location.x + entity.width / 2,
 		centerY: entity.location.y + entity.height / 2,
 	}

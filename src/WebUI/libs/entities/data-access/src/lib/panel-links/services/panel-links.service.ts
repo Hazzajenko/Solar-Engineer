@@ -210,46 +210,8 @@ export class PanelLinksService {
 		return getPanelLinkOrderSeparateChains(panelLinks)
 	}
 
-	/*
-	 getPanelLinkOrderForSelectedStringWithPoints() {
-	 const stringId = this._selectedStore.selectedStringId
-	 assertNotNull(stringId)
-	 const panelLinks = this._panelLinksStore.getByStringId(stringId)
-	 return panelLinks.sort((a, b) => {
-	 if (!a || !b) {
-	 return 0
-	 }
-	 return a.positivePanelId === b.negativePanelId ? 1 : -1
-	 })
-	 }
-	 */
-
 	clearPanelLinkRequest() {
 		this._panelLinksStore.endPanelLink()
-	}
-
-	handleMouseInLinkMode(event: PointerEvent, currentPoint: TransformedPoint) {
-		// this.isMouseOverLinkPath(event, currentPoint)
-	}
-
-	isMouseOverLinkPathV3(
-		event: PointerEvent,
-		currentPoint: TransformedPoint,
-		ctx: CanvasRenderingContext2D,
-	) {
-		if (!this._selectedStore.selectedStringId) {
-			console.error('a string must be selected to be in link mode')
-			return
-		}
-
-		const panelLinks = this._entities.panelLinks.getByStringId(this._selectedStore.selectedStringId)
-		if (!panelLinks.length) {
-			return
-		}
-
-		// const selectedStringPanelLinks = this.getPanelLinkOrderForSelectedStringWithPoints()
-		// const linkPathNumberArray = panelLinksToNumberArray(selectedStringPanelLinks)
-		// const isPointOnPath = isPointOnCurvedPath(ctx, currentPoint, linkPathNumberArray)
 	}
 
 	isMouseOverLinkPath(event: PointerEvent, currentPoint: TransformedPoint) {
@@ -260,19 +222,10 @@ export class PanelLinksService {
 
 		const panelLinks = this._entities.panelLinks.getByStringId(this._selectedStore.selectedStringId)
 		if (!panelLinks.length) {
-			// console.error('no panel links found')
-			//
 			return
 		}
-		/*		const microPoints = this._selectedStringMicroLinePoints()
-		 if (!microPoints) {
-		 return
-		 }*/
 		const panelLinkIdPointsTuple = this._selectedStringLinkToLinesTuple()
-		// const flatCurvedLines = this._selectedStringFlatLines()
-		// todo fix
 		const panelLinkIdForPoint = isPointOverCurvedLineNoCtx(panelLinkIdPointsTuple, currentPoint)
-		// console.log('panelLinkIdForPoint', panelLinkIdForPoint)
 
 		if (!panelLinkIdForPoint) {
 			setCanvasCursorToAuto(this._canvasElementStore.canvas)
@@ -281,42 +234,15 @@ export class PanelLinksService {
 
 		const panelLink = panelLinks.find((panelLink) => panelLink.id === panelLinkIdForPoint)
 		assertNotNull(panelLink)
-		/*
-		 const panelUnderMouse = this._entities.panels.getEntityUnderMouse(currentPoint)
-		 if (panelUnderMouse) {
-		 /!*			this._render.renderCanvasApp({
-		 panelUnderMouse,
-		 })*!/
-		 }*/
-
-		/*		if (!panelLink) {
-		 console.error('panelLink not found')
-		 setCanvasCursorToAuto(this._canvasElementStore.canvas)
-		 return
-		 }*/
-		/*		const panelLink = panelLinks.find((panelLink) => {
-		 return isPointOnLine(currentPoint, panelLink.linePoints)
-		 })
-
-		 if (!panelLink) {
-		 setCanvasCursorToAuto(this._canvasElementStore.canvas)
-		 return
-		 }*/
 
 		if (this._canvasElementStore.canvas.style.cursor !== 'pointer') {
 			changeCanvasCursor(this._canvasElementStore.canvas, 'pointer')
 		}
 
-		// console.log('panelLink', panelLink)
 		return panelLink
 	}
 
 	handleLinkModeClickOnCanvas(event: PointerEvent, currentPoint: TransformedPoint) {
-		/*		if (!this._selectedStore.selectedStringId) {
-		 console.error('a string must be selected to be in link mode')
-		 return
-		 }*/
-
 		const panelLink = this.isMouseOverLinkPath(event, currentPoint)
 		if (!panelLink) {
 			if (this._panelLinksStore.requestingLink) {
