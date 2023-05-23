@@ -11,19 +11,31 @@ export const drawLinkModeSymbols = (
 	const isHovered = panel.id === mouseOverSymbol?.panelId
 	const isPositive = isHovered && mouseOverSymbol?.symbol === 'positive'
 	const isNegative = isHovered && mouseOverSymbol?.symbol === 'negative'
+
 	ctx.save()
 	// draw negative symbol
+	const negativeLineLength = isNegative ? lineLength * 1.25 : lineLength
 	ctx.save()
 	ctx.translate(-panel.width / 2, 0)
 	ctx.save()
 	ctx.rotate(toRadians(45 as AngleDegrees))
 	ctx.strokeStyle = 'black'
-	ctx.strokeRect(-lineLength / 2, -lineLength / 2, lineLength, lineLength)
-	ctx.fillStyle = isNegative ? '#4FC3F7' : 'blue'
-	// ctx.fillStyle = 'blue'
+	ctx.strokeRect(
+		-negativeLineLength / 2,
+		-negativeLineLength / 2,
+		negativeLineLength,
+		negativeLineLength,
+	)
+	// ctx.fillStyle = isNegative ? '#4FC3F7' : 'blue'
+	ctx.fillStyle = 'blue'
 	// #E57373
 	// #4FC3F7
-	ctx.fillRect(-lineLength / 2, -lineLength / 2, lineLength, lineLength)
+	ctx.fillRect(
+		-negativeLineLength / 2,
+		-negativeLineLength / 2,
+		negativeLineLength,
+		negativeLineLength,
+	)
 	ctx.restore()
 	ctx.strokeStyle = 'white'
 	ctx.beginPath()
@@ -33,15 +45,26 @@ export const drawLinkModeSymbols = (
 	ctx.restore()
 
 	// draw positive symbol
+	const positiveLineLength = isPositive ? lineLength * 1.25 : lineLength
 	ctx.save()
 	ctx.translate(panel.width / 2, 0)
 	ctx.save()
 	ctx.rotate(toRadians(45 as AngleDegrees))
 	ctx.strokeStyle = 'black'
-	ctx.strokeRect(-lineLength / 2, -lineLength / 2, lineLength, lineLength)
-	// ctx.fillStyle = 'red'
-	ctx.fillStyle = isPositive ? '#E57373' : 'red'
-	ctx.fillRect(-lineLength / 2, -lineLength / 2, lineLength, lineLength)
+	ctx.strokeRect(
+		-positiveLineLength / 2,
+		-positiveLineLength / 2,
+		positiveLineLength,
+		positiveLineLength,
+	)
+	ctx.fillStyle = 'red'
+	// ctx.fillStyle = isPositive ? '#E57373' : 'red'
+	ctx.fillRect(
+		-positiveLineLength / 2,
+		-positiveLineLength / 2,
+		positiveLineLength,
+		positiveLineLength,
+	)
 	ctx.restore()
 
 	ctx.strokeStyle = 'white'

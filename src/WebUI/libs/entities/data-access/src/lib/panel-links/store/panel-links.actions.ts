@@ -63,6 +63,11 @@ export const PanelLinksActions = createActionGroup({
 			symbol: 'positive' | 'negative'
 		}>(),
 		'Clear Hovering Over Panel Polarity Symbol': emptyProps(),
+		'Set Mouse Down On Panel Polarity Symbol': props<{
+			panelId: PanelId
+			symbol: 'positive' | 'negative'
+		}>(),
+		'Clear Mouse Down On Panel Polarity Symbol': emptyProps(),
 		'Clear Panel Links State': emptyProps(),
 		Noop: emptyProps(),
 	},

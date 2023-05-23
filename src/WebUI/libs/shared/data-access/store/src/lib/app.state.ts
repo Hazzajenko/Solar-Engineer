@@ -25,6 +25,8 @@ const mutedActionTypes = [
 	'[App State Store] Lift Hovering Over Entity',
 	'[PanelLinks Store] Set Hovering Over Panel Link In App',
 	'[PanelLinks Store] Clear Hovering Over Panel Link In App',
+	'[PanelLinks Store] Set Hovering Over Panel Polarity Symbol',
+	'[PanelLinks Store] Clear Hovering Over Panel Polarity Symbol',
 ]
 export const logger =
 	(reducer: ActionReducer<any>): ActionReducer<any> =>

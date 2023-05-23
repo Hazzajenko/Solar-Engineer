@@ -42,6 +42,7 @@ import {
 	isPointInsideBounds,
 	isPointInsideEntity,
 	isPointInsidePanelSymbols,
+	isPointInsidePanelSymbolsV2,
 	isPointInsideStretchedEntityByValue,
 	isReadyToMultiDrag,
 	isWheelButton,
@@ -181,6 +182,11 @@ export class DesignCanvasDirective implements OnInit {
 			return
 		}
 
+		if (this._appState.state.mode === 'LinkMode') {
+			this._panelLinks.handleLinkMouseDown(event, currentPoint)
+			// return
+		}
+
 		this.entityPressed = this.getPanelUnderMouse(event)
 	}
 
@@ -291,7 +297,7 @@ export class DesignCanvasDirective implements OnInit {
 			// this._panelLinks.isMouseOverLinkPathV3(event, currentPoint, this.ctx)
 			const symbolOrPanel = this.getPanelOrLinkSymbolUnderMouse(currentPoint)
 			if (symbolOrPanel) {
-				console.log('symbolOrPanel', symbolOrPanel)
+				// console.log('symbolOrPanel', symbolOrPanel)
 				if (isPanelSymbol(symbolOrPanel)) {
 					const { panelId, symbol } = symbolOrPanel
 					this._entities.panelLinks.setHoveringOverPanelPolaritySymbol(panelId, symbol)
@@ -305,6 +311,11 @@ export class DesignCanvasDirective implements OnInit {
 
 				// this._panelLinks.isMouseOverLinkPathV4(event, currentPoint, symbolOrPanel)
 				// return
+			} else {
+				if (this._entities.panelLinks.hoveringOverPanelPolaritySymbol) {
+					this._entities.panelLinks.clearHoveringOverPanelPolaritySymbol()
+					return
+				}
 			}
 			const entityUnderMouseInLineMode = this.getPanelUnderMouse(event)
 			if (entityUnderMouseInLineMode) {
@@ -507,6 +518,39 @@ export class DesignCanvasDirective implements OnInit {
 			return
 		}
 		const mode = this._appState.state.mode
+		if (mode === 'LinkMode') {
+			const symbolUnderMouse = this.getPanelSymbolUnderMouse(currentPoint)
+			if (symbolUnderMouse) {
+				console.log('symbolUnderMouse', symbolUnderMouse)
+			}
+			/*			const symbolOrPanel = this.getPanelOrLinkSymbolUnderMouse(currentPoint)
+			 if (symbolOrPanel) {
+			 // console.log('symbolOrPanel', symbolOrPanel)
+			 if (isPanelSymbol(symbolOrPanel)) {
+			 const { panelId, symbol } = symbolOrPanel
+			 this._entities.panelLinks.setHoveringOverPanelPolaritySymbol(panelId, symbol)
+			 return
+			 } else {
+			 if (this._entities.panelLinks.hoveringOverPanelPolaritySymbol) {
+			 this._entities.panelLinks.clearHoveringOverPanelPolaritySymbol()
+			 return
+			 }
+			 }
+
+			 // this._panelLinks.isMouseOverLinkPathV4(event, currentPoint, symbolOrPanel)
+			 // return
+			 }*/
+		}
+		// todo: move to mode handler
+		/*		if (mode === 'LinkMode') {
+		 if (isPanel(entityUnderMouse)) {
+		 this._panelLinks.handlePanelLinksClick(event, entityUnderMouse)
+		 return
+		 }
+		 this._appState.dispatch.setModeState('SelectMode')
+		 // this._panelLinks.clearPanelLinkRequest()
+		 return
+		 }*/
 		const entityUnderMouse = this.getPanelUnderMouse(currentPoint)
 		if (entityUnderMouse) {
 			if (mode === 'SelectMode') {
@@ -830,6 +874,18 @@ export class DesignCanvasDirective implements OnInit {
 		return this.allPanels.find((entity) => isPointInsideEntity(point, entity))
 		// const entitiesUnderMouse = this.allPanels.filter((entity) => isPointInsideEntity(point, entity))
 		// return entitiesUnderMouse[entitiesUnderMouse.length - 1] as CanvasEntity | undefined
+	}
+
+	private getPanelSymbolUnderMouse(point: TransformedPoint) {
+		const entitiesUnderMouse = this.allPanels.filter((entity) =>
+			isPointInsideStretchedEntityByValue(point, entity, 5),
+		)
+		if (entitiesUnderMouse.length === 0) return undefined
+		const polaritySymbol = entitiesUnderMouse.find((entity) =>
+			isPointInsidePanelSymbols(point, entity),
+		)
+		if (polaritySymbol) return isPointInsidePanelSymbolsV2(point, polaritySymbol)
+		return
 	}
 
 	private getPanelOrLinkSymbolUnderMouse(point: TransformedPoint) {

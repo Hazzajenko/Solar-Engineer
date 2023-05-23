@@ -94,6 +94,11 @@ export const selectHoveringOverPanelPolaritySymbol = createSelector(
 	(state: PanelLinksState) => state.hoveringOverPanelPolaritySymbol,
 )
 
+export const selectMouseDownOnPanelPolaritySymbol = createSelector(
+	selectPanelLinksState,
+	(state: PanelLinksState) => state.mouseDownOnPanelPolaritySymbol,
+)
+
 /*
  export const selectPanelLinksForSelectedString = createSelector(
  selectAllPanelLinks,

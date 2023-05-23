@@ -21,6 +21,9 @@ import { TransformedPoint } from '@shared/data-access/models'
 import {
 	changeCanvasCursor,
 	isPointInsideMiddleRightOfEntityWithRotationV2,
+	isPointInsidePanelSymbols,
+	isPointInsidePanelSymbolsV2,
+	isPointInsideStretchedEntityByValue,
 	setCanvasCursorToAuto,
 } from '@canvas/utils'
 import { calculateLinkLinesBetweenTwoPanelCenters } from '@entities/utils'
@@ -270,6 +273,36 @@ export class PanelLinksService {
 		if (!entitiesUnderMouse) {
 			return
 		}
+	}
+
+	handleLinkMouseDown(event: PointerEvent, currentPoint: TransformedPoint) {
+		const symbolUnderMouse = this.getPanelSymbolUnderMouse(currentPoint)
+		if (symbolUnderMouse) {
+			const { panelId, symbol } = symbolUnderMouse
+			this._entities.panelLinks.setMouseDownOnPanelPolaritySymbol(panelId, symbol)
+			// this._selectedStore.selectPanelLink(symbolUnderMouse.id)
+		} else {
+			const panelUnderMouse = this._entities.panels.getEntityUnderMouse(currentPoint)
+			if (!panelUnderMouse) {
+				return
+			}
+		}
+		/*		if (!symbolUnderMouse) {
+		 return
+		 }
+		 this._selectedStore.selectPanelLink(symbolUnderMouse.id)*/
+	}
+
+	private getPanelSymbolUnderMouse(point: TransformedPoint) {
+		const entitiesUnderMouse = this._entities.panels.allPanels.filter((entity) =>
+			isPointInsideStretchedEntityByValue(point, entity, 5),
+		)
+		if (entitiesUnderMouse.length === 0) return undefined
+		const polaritySymbol = entitiesUnderMouse.find((entity) =>
+			isPointInsidePanelSymbols(point, entity),
+		)
+		if (polaritySymbol) return isPointInsidePanelSymbolsV2(point, polaritySymbol)
+		return
 	}
 }
 

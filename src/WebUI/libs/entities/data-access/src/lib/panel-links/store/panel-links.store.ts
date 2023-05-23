@@ -6,8 +6,8 @@ import {
 	selectHoveringOverPanelLinkInApp,
 	selectHoveringOverPanelLinkInLinkMenu,
 	selectHoveringOverPanelPolaritySymbol,
+	selectMouseDownOnPanelPolaritySymbol,
 	selectPanelLinksEntities,
-	selectPanelLinksState,
 	selectRequestingLink,
 	selectSelectedStringCircuit,
 } from './panel-links.selectors'
@@ -37,7 +37,7 @@ export function providePanelLinksFeature() {
 
 export function injectPanelLinksStore() {
 	const store = inject(Store)
-	const state = store.selectSignal(selectPanelLinksState)
+	// const state = store.selectSignal(selectPanelLinksState)
 	const allPanelLinks = store.selectSignal(selectAllPanelLinks)
 	const entities = store.selectSignal(selectPanelLinksEntities)
 
@@ -63,6 +63,9 @@ export function injectPanelLinksStore() {
 		},
 		get hoveringOverPanelPolaritySymbol() {
 			return store.selectSignal(selectHoveringOverPanelPolaritySymbol)()
+		},
+		get mouseDownOnPanelPolaritySymbol() {
+			return store.selectSignal(selectMouseDownOnPanelPolaritySymbol)()
 		},
 		getById(id: string) {
 			return entities()[id]
@@ -176,6 +179,17 @@ export function injectPanelLinksStore() {
 		},
 		clearHoveringOverPanelPolaritySymbol() {
 			store.dispatch(PanelLinksActions.clearHoveringOverPanelPolaritySymbol())
+		},
+		setMouseDownOnPanelPolaritySymbol(panelId: PanelId, symbol: Polarity) {
+			store.dispatch(
+				PanelLinksActions.setMouseDownOnPanelPolaritySymbol({
+					panelId,
+					symbol,
+				}),
+			)
+		},
+		clearMouseDownOnPanelPolaritySymbol() {
+			store.dispatch(PanelLinksActions.clearMouseDownOnPanelPolaritySymbol())
 		},
 		clearPanelLinksState() {
 			store.dispatch(PanelLinksActions.clearPanelLinksState())

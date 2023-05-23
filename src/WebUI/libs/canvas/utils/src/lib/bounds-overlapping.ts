@@ -6,7 +6,7 @@ import {
 	getStretchedEntityBoundsByValue,
 } from './bounds'
 import { EntityBounds, Point } from '@shared/data-access/models'
-import { CanvasEntity } from '@entities/shared'
+import { CanvasEntity, PanelSymbol } from '@entities/shared'
 
 export const isEntityInsideTwoPoints = (entity: CanvasEntity, point1: Point, point2: Point) => {
 	const bounds = getEntityBounds(entity)
@@ -125,57 +125,32 @@ export const isPointInsidePanelSymbols = (point: Point, entity: CanvasEntity) =>
 			panelId: entity.id,
 			symbol: 'negative',
 		}
-		// return 'negative'
 	}
 	if (isPointWithinPointByValue(point, { x: bounds.right, y: bounds.centerY }, 5)) {
 		return {
 			panelId: entity.id,
 			symbol: 'positive',
 		}
-		// return 'positive'
 	}
 	return false
-	// if (point.x)
-	// const bounds = getEntityBounds(entity)
-	/*	const [x1, y1, x2, y2] = adjustTwoPointTuplesByValueAndAxis(
-	 bounds.left,
-	 bounds.top,
-	 bounds.left,
-	 bounds.bottom,
-	 bounds.height / 4,
-	 'y',
-	 )
-	 const leftBoundary = bounds.left + bounds.width / 4
-
-	 return (
-	 /!*		isPointBetweenTwoPoints(
-	 point,
-	 { x: bounds.left, y: bounds.top },
-	 { x: bounds.left, y: bounds.bottom },
-	 ) &&
-	 point.x >= bounds.left + ENTITY_LEFT_SIDE_THRESHOLD &&
-	 point.x <= bounds.right - ENTITY_RIGHT_SIDE_THRESHOLD &&
-	 isPointInsideBounds(point, bounds) &&*!/
-	 point.y >= y1 &&
-	 point.y <= y2 &&
-	 point.x <= leftBoundary &&
-	 point.x >= bounds.left - bounds.width / 4
-	 // point.x <= bounds.right - ENTITY_RIGHT_SIDE_THRESHOLD
-	 )*/
 }
-/*
- // const heightBoundary = bounds.top + bounds.height / 4
- return (
- isPointBetweenTwoPoints(
- point,
- { x: bounds.left, y: bounds.top },
- { x: bounds.left, y: bounds.bottom },
- ) &&
- point.x >= bounds.left + ENTITY_LEFT_SIDE_THRESHOLD &&
- point.x <= bounds.right - ENTITY_RIGHT_SIDE_THRESHOLD &&
- isPointInsideBounds(point, bounds)
- )
- }*/
+
+export const isPointInsidePanelSymbolsV2 = (point: Point, entity: CanvasEntity) => {
+	const bounds = getCompleteEntityBoundsFromEntity(entity)
+	if (isPointWithinPointByValue(point, { x: bounds.left, y: bounds.centerY }, 5)) {
+		return {
+			panelId: entity.id,
+			symbol: 'negative',
+		} as PanelSymbol
+	}
+	if (isPointWithinPointByValue(point, { x: bounds.right, y: bounds.centerY }, 5)) {
+		return {
+			panelId: entity.id,
+			symbol: 'positive',
+		} as PanelSymbol
+	}
+	return
+}
 
 const isPointWithinPointByValue = (point: Point, center: Point, value: number): boolean => {
 	return (

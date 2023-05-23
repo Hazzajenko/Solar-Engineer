@@ -17,6 +17,7 @@ export interface PanelLinksState extends EntityState<PanelLinkModel> {
 	hoveringOverPanelLinkInLinkMenu: PanelLinkFromMenu | undefined
 	hoveringOverPanelLinkInApp: string | undefined
 	hoveringOverPanelPolaritySymbol: PanelSymbol | undefined
+	mouseDownOnPanelPolaritySymbol: PanelSymbol | undefined
 	selectedStringCircuit: {
 		openCircuitChains: OpenCircuitChain[]
 		closedCircuitChains: ClosedCircuitChain[]
@@ -40,6 +41,7 @@ export const initialPanelLinksState: PanelLinksState = panelLinksAdapter.getInit
 	hoveringOverPanelLinkInLinkMenu: undefined,
 	hoveringOverPanelLinkInApp: undefined,
 	hoveringOverPanelPolaritySymbol: undefined,
+	mouseDownOnPanelPolaritySymbol: undefined,
 	selectedStringCircuit: {
 		openCircuitChains: [],
 		closedCircuitChains: [],
@@ -118,6 +120,17 @@ const reducer = createReducer(
 	on(PanelLinksActions.clearHoveringOverPanelPolaritySymbol, (state) => ({
 		...state,
 		hoveringOverPanelPolaritySymbol: undefined,
+	})),
+	on(PanelLinksActions.setMouseDownOnPanelPolaritySymbol, (state, { panelId, symbol }) => ({
+		...state,
+		mouseDownOnPanelPolaritySymbol: {
+			panelId,
+			symbol,
+		},
+	})),
+	on(PanelLinksActions.clearMouseDownOnPanelPolaritySymbol, (state) => ({
+		...state,
+		mouseDownOnPanelPolaritySymbol: undefined,
 	})),
 	on(PanelLinksActions.clearPanelLinksState, () => initialPanelLinksState),
 )
