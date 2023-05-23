@@ -5,6 +5,7 @@ import {
 	selectHoveringOverPanelInLinkMenuId,
 	selectHoveringOverPanelLinkInApp,
 	selectHoveringOverPanelLinkInLinkMenu,
+	selectHoveringOverPanelPolaritySymbol,
 	selectPanelLinksEntities,
 	selectPanelLinksState,
 	selectRequestingLink,
@@ -16,6 +17,7 @@ import { UpdateStr } from '@ngrx/entity/src/models'
 import {
 	ClosedCircuitChain,
 	OpenCircuitChain,
+	PanelId,
 	PanelLinkId,
 	PanelLinkModel,
 	PanelLinkRequest,
@@ -58,6 +60,9 @@ export function injectPanelLinksStore() {
 		},
 		get getHoveringOverPanelLinkInApp() {
 			return store.selectSignal(selectHoveringOverPanelLinkInApp)()
+		},
+		get hoveringOverPanelPolaritySymbol() {
+			return store.selectSignal(selectHoveringOverPanelPolaritySymbol)()
 		},
 		getById(id: string) {
 			return entities()[id]
@@ -160,6 +165,17 @@ export function injectPanelLinksStore() {
 		},
 		clearHoveringOverPanelLinkInApp() {
 			store.dispatch(PanelLinksActions.clearHoveringOverPanelLinkInApp())
+		},
+		setHoveringOverPanelPolaritySymbol(panelId: PanelId, symbol: Polarity) {
+			store.dispatch(
+				PanelLinksActions.setHoveringOverPanelPolaritySymbol({
+					panelId,
+					symbol,
+				}),
+			)
+		},
+		clearHoveringOverPanelPolaritySymbol() {
+			store.dispatch(PanelLinksActions.clearHoveringOverPanelPolaritySymbol())
 		},
 		clearPanelLinksState() {
 			store.dispatch(PanelLinksActions.clearPanelLinksState())

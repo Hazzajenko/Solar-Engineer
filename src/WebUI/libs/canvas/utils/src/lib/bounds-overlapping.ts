@@ -121,10 +121,18 @@ export const isPointInsideMiddleRightOfEntityWithRotationV2 = (
 export const isPointInsidePanelSymbols = (point: Point, entity: CanvasEntity) => {
 	const bounds = getCompleteEntityBoundsFromEntity(entity)
 	if (isPointWithinPointByValue(point, { x: bounds.left, y: bounds.centerY }, 5)) {
-		return 'negative'
+		return {
+			panelId: entity.id,
+			symbol: 'negative',
+		}
+		// return 'negative'
 	}
 	if (isPointWithinPointByValue(point, { x: bounds.right, y: bounds.centerY }, 5)) {
-		return 'positive'
+		return {
+			panelId: entity.id,
+			symbol: 'positive',
+		}
+		// return 'positive'
 	}
 	return false
 	// if (point.x)

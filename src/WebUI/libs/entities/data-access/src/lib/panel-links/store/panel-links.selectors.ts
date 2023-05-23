@@ -89,6 +89,11 @@ export const selectSelectedStringCircuit = createSelector(
 	(state: PanelLinksState) => state.selectedStringCircuit,
 )
 
+export const selectHoveringOverPanelPolaritySymbol = createSelector(
+	selectPanelLinksState,
+	(state: PanelLinksState) => state.hoveringOverPanelPolaritySymbol,
+)
+
 /*
  export const selectPanelLinksForSelectedString = createSelector(
  selectAllPanelLinks,

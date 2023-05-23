@@ -1,6 +1,6 @@
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity'
 import { Action, createReducer, on } from '@ngrx/store'
-import { ClosedCircuitChain, OpenCircuitChain, PanelLinkFromMenu, PanelLinkId, PanelLinkModel, PanelLinkRequest } from '@entities/shared'
+import { ClosedCircuitChain, OpenCircuitChain, PanelLinkFromMenu, PanelLinkId, PanelLinkModel, PanelLinkRequest, PanelSymbol } from '@entities/shared'
 import { PanelLinksActions } from './panel-links.actions'
 import { CurvedNumberLine } from '@canvas/shared'
 
@@ -16,6 +16,7 @@ export interface PanelLinksState extends EntityState<PanelLinkModel> {
 	hoveringOverPanelInLinkMenuId: string | undefined
 	hoveringOverPanelLinkInLinkMenu: PanelLinkFromMenu | undefined
 	hoveringOverPanelLinkInApp: string | undefined
+	hoveringOverPanelPolaritySymbol: PanelSymbol | undefined
 	selectedStringCircuit: {
 		openCircuitChains: OpenCircuitChain[]
 		closedCircuitChains: ClosedCircuitChain[]
@@ -38,6 +39,7 @@ export const initialPanelLinksState: PanelLinksState = panelLinksAdapter.getInit
 	hoveringOverPanelInLinkMenuId: undefined,
 	hoveringOverPanelLinkInLinkMenu: undefined,
 	hoveringOverPanelLinkInApp: undefined,
+	hoveringOverPanelPolaritySymbol: undefined,
 	selectedStringCircuit: {
 		openCircuitChains: [],
 		closedCircuitChains: [],
@@ -105,6 +107,17 @@ const reducer = createReducer(
 	on(PanelLinksActions.clearHoveringOverPanelLinkInApp, (state) => ({
 		...state,
 		hoveringOverPanelLinkInApp: undefined,
+	})),
+	on(PanelLinksActions.setHoveringOverPanelPolaritySymbol, (state, { panelId, symbol }) => ({
+		...state,
+		hoveringOverPanelPolaritySymbol: {
+			panelId,
+			symbol,
+		},
+	})),
+	on(PanelLinksActions.clearHoveringOverPanelPolaritySymbol, (state) => ({
+		...state,
+		hoveringOverPanelPolaritySymbol: undefined,
 	})),
 	on(PanelLinksActions.clearPanelLinksState, () => initialPanelLinksState),
 )

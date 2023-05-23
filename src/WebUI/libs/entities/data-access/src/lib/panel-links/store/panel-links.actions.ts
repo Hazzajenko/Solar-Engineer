@@ -3,6 +3,7 @@ import { createActionGroup, emptyProps, props } from '@ngrx/store'
 import {
 	ClosedCircuitChain,
 	OpenCircuitChain,
+	PanelId,
 	PanelLinkFromMenu,
 	PanelLinkId,
 	PanelLinkModel,
@@ -57,6 +58,11 @@ export const PanelLinksActions = createActionGroup({
 			panelLinkId: string
 		}>(),
 		'Clear Hovering Over Panel Link In App': emptyProps(),
+		'Set Hovering Over Panel Polarity Symbol': props<{
+			panelId: PanelId
+			symbol: 'positive' | 'negative'
+		}>(),
+		'Clear Hovering Over Panel Polarity Symbol': emptyProps(),
 		'Clear Panel Links State': emptyProps(),
 		Noop: emptyProps(),
 	},

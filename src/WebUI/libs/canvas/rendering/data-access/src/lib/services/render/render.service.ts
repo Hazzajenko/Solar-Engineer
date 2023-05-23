@@ -425,7 +425,15 @@ export class RenderService {
 		linksInOrder: PanelLinkModel[][] = [],
 		selectedString: CanvasString | undefined,
 	) {
-		const selectedStringId = this._selectedStore.state.selectedStringId
+		const selectedStringId = selectedString?.id
+		// const selectedStringId = this._selectedStore.state.selectedStringId
+		const graphicsState = this._graphicsStore.state
+		const selectedState = this._selectedStore.state
+
+		const pointerState = this._appStore.state.pointer
+		const hoveringOverEntityId = pointerState.hoveringOverEntityId
+
+		const mouseOverSymbol = this._entities.panelLinks.hoveringOverPanelPolaritySymbol
 		// const selectedString ?
 		/*		const linksInOrder = selectedStringId
 		 ? this._panelLinks.getPanelLinkOrderForSelectedStringV2()
@@ -437,12 +445,11 @@ export class RenderService {
 			 * Draw Entity
 			 */
 
+			const isBeingHovered = !!hoveringOverEntityId && hoveringOverEntityId === entity.id
+
 			if (!isPanel(entity)) continue
 			let fillStyle: string = CANVAS_COLORS.DefaultPanelFillStyle
 			const strokeStyle: string = PANEL_STROKE_STYLE.DEFAULT
-
-			const graphicsState = this._graphicsStore.state
-			const selectedState = this._selectedStore.state
 			const isStringSelected = selectedStringId && selectedStringId === entity.stringId
 
 			if (graphicsState.colouredStrings) {
@@ -504,10 +511,6 @@ export class RenderService {
 				 }*/
 			}
 
-			const pointerState = this._appStore.state.pointer
-			const hoveringOverEntityId = pointerState.hoveringOverEntityId
-			const isBeingHovered = !!hoveringOverEntityId && hoveringOverEntityId === entity.id
-
 			if (selectedStringId) {
 				if (selectedStringId !== entity.stringId || !isStringSelected) {
 					fillStyle = CANVAS_COLORS.UnselectedPanelFillStyle
@@ -547,7 +550,7 @@ export class RenderService {
 				 })*!/
 				 }*/
 				if (this._graphicsStore.state.linkModeSymbols) {
-					drawLinkModeSymbols(ctx, entity)
+					drawLinkModeSymbols(ctx, entity, mouseOverSymbol)
 					// this.drawLinkModeSymbols(ctx, entity)
 				}
 			}

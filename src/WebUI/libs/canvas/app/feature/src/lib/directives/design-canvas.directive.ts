@@ -48,7 +48,11 @@ import {
 	multiSelectDraggingKeysDownAndIdsNotEmpty,
 	rotatingKeysDown,
 } from '@canvas/utils'
-import { isPanel, isPointInsideSelectedStringPanelsByStringIdNgrxWithPanels } from '@entities/utils'
+import {
+	isPanel,
+	isPanelSymbol,
+	isPointInsideSelectedStringPanelsByStringIdNgrxWithPanels,
+} from '@entities/utils'
 import {
 	CanvasEntity,
 	CanvasPanel,
@@ -288,6 +292,17 @@ export class DesignCanvasDirective implements OnInit {
 			const symbolOrPanel = this.getPanelOrLinkSymbolUnderMouse(currentPoint)
 			if (symbolOrPanel) {
 				console.log('symbolOrPanel', symbolOrPanel)
+				if (isPanelSymbol(symbolOrPanel)) {
+					const { panelId, symbol } = symbolOrPanel
+					this._entities.panelLinks.setHoveringOverPanelPolaritySymbol(panelId, symbol)
+					return
+				} else {
+					if (this._entities.panelLinks.hoveringOverPanelPolaritySymbol) {
+						this._entities.panelLinks.clearHoveringOverPanelPolaritySymbol()
+						return
+					}
+				}
+
 				// this._panelLinks.isMouseOverLinkPathV4(event, currentPoint, symbolOrPanel)
 				// return
 			}
