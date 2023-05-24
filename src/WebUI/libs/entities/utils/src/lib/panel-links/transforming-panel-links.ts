@@ -5,6 +5,8 @@ import {
 	PanelLinkModel,
 	PanelModel,
 	PanelSymbol,
+	PanelWithSymbol,
+	StringId,
 } from '@entities/shared'
 import { groupLinkPointsByChain } from './sorting-panel-links'
 import { CurvedNumberLine } from '@canvas/shared'
@@ -125,19 +127,28 @@ export const pushCustomPanelLinkPoint = (
 	links: PanelLinkModel[],
 	mouseDownPanelSymbol: PanelSymbol,
 	point: Point,
+	selectedStringId: StringId,
+	draggingSymbolLinkLinePanelWithSymbol: PanelWithSymbol,
 ) => {
+	if (!links.length) {
+		return [
+			{
+				id: 'custom' as PanelLinkId,
+				positivePanelId: draggingSymbolLinkLinePanelWithSymbol.id,
+				negativePanelId: getGuid() as PanelId,
+				linePoints: [getEntityCenter(draggingSymbolLinkLinePanelWithSymbol), point],
+				stringId: selectedStringId,
+			},
+		]
+	}
 	const lastLink = links[links.length - 1]
 	const link: PanelLinkModel = {
-		id: getGuid() as PanelLinkId,
+		id: 'custom' as PanelLinkId,
 		positivePanelId: lastLink.negativePanelId,
 		negativePanelId: getGuid() as PanelId,
 		linePoints: [lastLink.linePoints[1], point],
 		stringId: lastLink.stringId,
 	}
-	/*	const newLink = {
-	 ...lastLink,
-	 linePoints: [lastLink.linePoints[1], point],
-	 }*/
 	return [...links, link]
 }
 

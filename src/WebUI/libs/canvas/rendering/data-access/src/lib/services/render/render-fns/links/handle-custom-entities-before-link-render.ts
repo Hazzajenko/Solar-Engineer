@@ -1,4 +1,4 @@
-import { PanelLinkId, PanelLinkModel } from '@entities/shared'
+import { PanelLinkId, PanelLinkModel, PanelWithSymbol, StringId } from '@entities/shared'
 import { CurvedNumberLine } from '@canvas/shared'
 import { pushCustomPanelLinkPoint, updatePanelLinkPoints } from '@entities/utils'
 import { getUpdatedPanelLinksForRender } from '@entities/data-access'
@@ -25,9 +25,11 @@ type CustomRenderingOptions = Partial<
 export const handleCustomEntitiesBeforeLinkRender = (
 	circuitLinkLineTuples: [PanelLinkId, CurvedNumberLine][][],
 	stringPanelLinks: PanelLinkModel[],
+	selectedStringId: StringId,
 	options: CustomRenderingOptions | undefined,
+	draggingSymbolLinkLinePanelWithSymbol: PanelWithSymbol | undefined,
 ) => {
-	if (!stringPanelLinks.length) return circuitLinkLineTuples
+	// if (!stringPanelLinks.length) return circuitLinkLineTuples
 
 	const {
 		singleToMoveId,
@@ -73,12 +75,14 @@ export const handleCustomEntitiesBeforeLinkRender = (
 		}
 	}
 
-	if (draggingSymbolLinkLine) {
+	if (draggingSymbolLinkLine && draggingSymbolLinkLinePanelWithSymbol) {
 		const { mouseDownPanelSymbol, transformedPoint } = draggingSymbolLinkLine
 		const updatedPanelLinks = pushCustomPanelLinkPoint(
 			stringPanelLinks,
 			mouseDownPanelSymbol,
 			transformedPoint,
+			selectedStringId,
+			draggingSymbolLinkLinePanelWithSymbol,
 		)
 		customLinkLineTuples = getUpdatedPanelLinksForRender(updatedPanelLinks)
 	}

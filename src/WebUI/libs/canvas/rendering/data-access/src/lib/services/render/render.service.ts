@@ -43,6 +43,7 @@ import {
 	PANEL_STROKE_STYLE,
 	PanelLinkModel,
 	PanelModel,
+	PanelWithSymbol,
 	StringModel,
 	UndefinedStringId,
 } from '@entities/shared'
@@ -315,10 +316,28 @@ export class RenderService {
 				selectedStringId &&
 				appStateMode === 'LinkMode'
 			) {
+				let draggingSymbolLinkLinePanelWithSymbol: PanelWithSymbol | undefined
+				if (options?.draggingSymbolLinkLine) {
+					const draggingSymbolLinkLine = options.draggingSymbolLinkLine
+					const draggingSymbolLinkLinePanel = draggingSymbolLinkLine
+						? this._entities.panels.getById(draggingSymbolLinkLine.mouseDownPanelSymbol.panelId)
+						: undefined
+					draggingSymbolLinkLinePanelWithSymbol = draggingSymbolLinkLinePanel
+						? {
+								...draggingSymbolLinkLinePanel,
+								symbol: draggingSymbolLinkLine.mouseDownPanelSymbol.symbol,
+						  }
+						: undefined
+				}
+				// const draggingSymbolLinkLine = options?.draggingSymbolLinkLine
+				// const draggingSymbolLinkLinePanel = draggingSymbolLinkLine ? this._entities.panels.getById(draggingSymbolLinkLine.mouseDownPanelSymbol.panelId) : undefined
+				// const draggingSymbolLinkLinePanelWithSymbol = draggingSymbolLinkLinePanel ? { ...draggingSymbolLinkLinePanel, symbol: draggingSymbolLinkLine.mouseDownPanelSymbol.symbol } : undefined
 				const customLinkLineTuples = handleCustomEntitiesBeforeLinkRender(
 					circuitLinkLineTuples,
 					stringPanelLinks,
+					selectedStringId,
 					options,
+					draggingSymbolLinkLinePanelWithSymbol,
 				)
 
 				drawLinkModePathLinesCurvedAlreadyMappedV6(
@@ -328,6 +347,7 @@ export class RenderService {
 					selectedPanelLinkId,
 					hoveringOverPanelLinkInLinkMenu,
 					panelLinkUnderMouse,
+					options?.draggingSymbolLinkLine?.mouseDownPanelSymbol,
 				)
 
 				/*		if (options?.draggingSymbolLinkLine) {

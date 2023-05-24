@@ -67,6 +67,7 @@ export type CanvasRenderOptions = {
 	draggingSymbolLinkLine: {
 		mouseDownPanelSymbol: PanelSymbol
 		transformedPoint: TransformedPoint
+		possibleSymbolLink?: PanelSymbol
 	}
 
 	// singleToMove

@@ -4,6 +4,7 @@ import {
 	PanelLinkId,
 	PanelLinkModel,
 	PanelModel,
+	PanelSymbol,
 	PanelWithSymbol,
 } from '@entities/shared'
 import {
@@ -31,7 +32,7 @@ export const drawLinkModePathLinesCurvedAlreadyMappedV6 = (
 	selectedPanelLinkId: PanelLinkId | undefined,
 	hoveringOverPanelLinkInLinkMenu: PanelLinkFromMenu | undefined,
 	panelLinkUnderMouse: PanelLinkModel | undefined,
-	// singleToMovePanel: CanvasPanel | undefined,
+	finalDrawLineSymbol: PanelSymbol | undefined, // singleToMovePanel: CanvasPanel | undefined,
 ) => {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const ignore = selectedPanelLinkId || hoveringOverPanelLinkInLinkMenu
@@ -81,30 +82,18 @@ export const drawLinkModePathLinesCurvedAlreadyMappedV6 = (
 				panelLinkUnderMouse,
 				hoveringOverPanelLinkInLinkMenu,
 				selectedPanelLinkId,
+				finalDrawLineSymbol,
+				j === linkLineTuple.length - 1,
 			)
 
 			ctx.save()
-			drawCurvedNumberLinesWithOptions(ctx, lines, options)
-			ctx.restore()
-			if (j === linkLineTuple.length - 1) {
+			if (j === linkLineTuple.length - 1 && finalDrawLineSymbol) {
 				ctx.save()
-				// drawArrowheadV5(ctx, lines as QuadraticNumberLine, 5)
-				// drawArrowhead(ctx, lines as QuadraticNumberLine, 5)
-				// drawArrowheadSvg(ctx, lines as QuadraticNumberLine)
-				// const from = { x: lines[0], y: lines[1] }
-				// const to = { x: lines[lines.length - 2], y: lines[lines.length - 1] }
-				// drawArrowheadV2(ctx, lines as QuadraticNumberLine)
-				// drawArrowhead(ctx, from, to, 10)
-				// ctx.fillStyle = 'white'
-
-				/*	ctx.font = '12px serif'
-				 ctx.fillText(
-				 `${lines[0].x},${lines[0].y}`,
-				 lines[0].x + 10,
-				 lines[0].y + 10,
-				 )*/
 				ctx.restore()
 			}
+			drawCurvedNumberLinesWithOptions(ctx, lines, options)
+			ctx.restore()
+
 			/*		if (customEntities) {
 			 const entity = customEntities.find((e) => e.id === id)
 			 if (entity) {
@@ -141,6 +130,8 @@ const getDrawOptionsBasedOnInputs = (
 	panelLinkUnderMouse: PanelLinkModel | undefined,
 	hoveringOverPanelLinkInLinkMenu: PanelLinkFromMenu | undefined,
 	selectedPanelLinkId: PanelLinkId | undefined,
+	finalDrawLineSymbol: PanelSymbol | undefined,
+	endOfArray: boolean,
 ): Partial<DrawOptions> | undefined => {
 	if (hoveringOverPanelLinkInLinkMenu?.panelLinkId === panelLinkId) {
 		return PanelLinkHoverDefaultDrawOptions
@@ -154,6 +145,18 @@ const getDrawOptionsBasedOnInputs = (
 		 strokeStyle: CANVAS_COLORS.HoveringOverPanelInLinkMenuStrokeStyle,
 		 lineWidth: 2,
 		 }*/
+	}
+	if (endOfArray && finalDrawLineSymbol) {
+		if (finalDrawLineSymbol.symbol === 'positive') {
+			return {
+				strokeStyle: 'red',
+				lineWidth: 2,
+			}
+		}
+		return {
+			strokeStyle: 'blue',
+			lineWidth: 2,
+		}
 	}
 	return
 }
