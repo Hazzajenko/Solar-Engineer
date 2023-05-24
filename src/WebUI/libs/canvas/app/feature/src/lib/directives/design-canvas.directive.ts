@@ -180,12 +180,12 @@ export class DesignCanvasDirective implements OnInit {
 			return
 		}
 
-		const mode = this._appState.mode()
+		// const mode = this._appState.mode()
 
-		if (mode === 'LinkMode') {
-			this._panelLinks.handleLinkMouseDown(event, currentPoint)
-			// return
-		}
+		/*		if (mode === 'LinkMode') {
+		 this._panelLinks.handleLinkMouseDown(event, currentPoint)
+		 // return
+		 }*/
 		/*
 		 if (this._appState.state.mode === 'LinkMode') {
 		 this._panelLinks.handleLinkMouseDown(event, currentPoint)
@@ -314,34 +314,68 @@ export class DesignCanvasDirective implements OnInit {
 		 }*/
 
 		if (mode === MODE_STATE.LINK_MODE) {
-			const mouseDownOnPanelPolaritySymbol =
-				this._entities.panelLinks.getMouseDownOnPanelPolaritySymbol
-			if (mouseDownOnPanelPolaritySymbol) {
-				// const
-				this._render.renderCanvasApp({
-					draggingSymbolLinkLine: {
-						mouseDownPanelSymbol: mouseDownOnPanelPolaritySymbol,
-						transformedPoint: currentPoint,
-					},
-				})
-				// this._panelLinks.handleLinkMouseMove(event, currentPoint, mouseDownOnPanelPolaritySymbol)
-				return
-			}
+			/*			if (panelWithSymbol) {
+			 this._entities.panelLinks.setHoveringOverPanelPolaritySymbol({
+			 panelId: panelWithSymbol.id,
+			 symbol: panelWithSymbol.symbol,
+			 })
+			 }*/
 
+			/*	const mouseDownOnPanelPolaritySymbol =
+			 this._entities.panelLinks.getMouseDownOnPanelPolaritySymbol
+			 if (mouseDownOnPanelPolaritySymbol) {
+			 // const
+			 this._render.renderCanvasApp({
+			 draggingSymbolLinkLine: {
+			 mouseDownPanelSymbol: mouseDownOnPanelPolaritySymbol,
+			 transformedPoint: currentPoint,
+			 },
+			 })
+			 // this._panelLinks.handleLinkMouseMove(event, currentPoint, mouseDownOnPanelPolaritySymbol)
+			 return
+			 }*/
+			const drawingPanelPolaritySymbolLine =
+				this._entities.panelLinks.drawingPanelPolaritySymbolLine
 			const panelWithSymbol = this._entities.panels.getPanelWithSymbolUnderMouse(currentPoint)
 			if (panelWithSymbol) {
 				const existingHoveringSymbol = this._entities.panelLinks.getHoveringOverPanelPolaritySymbol
 				if (existingHoveringSymbol && existingHoveringSymbol.panelId === panelWithSymbol.id) {
+					if (!drawingPanelPolaritySymbolLine) return
+					this._render.renderCanvasApp({
+						draggingSymbolLinkLine: {
+							mouseDownPanelSymbol: drawingPanelPolaritySymbolLine,
+							transformedPoint: currentPoint,
+						},
+					})
 					return
 				}
 				this._entities.panelLinks.setHoveringOverPanelPolaritySymbol({
 					panelId: panelWithSymbol.id,
 					symbol: panelWithSymbol.symbol,
 				})
+				if (drawingPanelPolaritySymbolLine) {
+					this._render.renderCanvasApp({
+						draggingSymbolLinkLine: {
+							mouseDownPanelSymbol: drawingPanelPolaritySymbolLine,
+							transformedPoint: currentPoint,
+						},
+					})
+					return
+				}
 				this._render.renderCanvasApp()
 				return
 			} else if (this._entities.panelLinks.getHoveringOverPanelPolaritySymbol) {
 				this._entities.panelLinks.clearHoveringOverPanelPolaritySymbol()
+				return
+			}
+
+			if (drawingPanelPolaritySymbolLine) {
+				this._render.renderCanvasApp({
+					draggingSymbolLinkLine: {
+						mouseDownPanelSymbol: drawingPanelPolaritySymbolLine,
+						transformedPoint: currentPoint,
+					},
+				})
 				return
 			}
 
@@ -541,20 +575,20 @@ export class DesignCanvasDirective implements OnInit {
 			return
 		}
 
-		if (mode === 'LinkMode') {
-			const mouseDownOnPanelPolaritySymbol =
-				this._entities.panelLinks.getMouseDownOnPanelPolaritySymbol
-			if (mouseDownOnPanelPolaritySymbol) {
-				this._panelLinks.handleMouseUpFromPanelPolaritySymbol(
-					event,
-					currentPoint,
-					mouseDownOnPanelPolaritySymbol,
-				)
-			}
+		/*		if (mode === 'LinkMode') {
+		 const mouseDownOnPanelPolaritySymbol =
+		 this._entities.panelLinks.getMouseDownOnPanelPolaritySymbol
+		 if (mouseDownOnPanelPolaritySymbol) {
+		 this._panelLinks.handleMouseUpFromPanelPolaritySymbol(
+		 event,
+		 currentPoint,
+		 mouseDownOnPanelPolaritySymbol,
+		 )
+		 }
 
-			// this._panelLinks.handleMouseUpInLinkMode(event, currentPoint)
-			return
-		}
+		 // this._panelLinks.handleMouseUpInLinkMode(event, currentPoint)
+		 return
+		 }*/
 
 		this._render.renderCanvasApp()
 	}
@@ -592,12 +626,20 @@ export class DesignCanvasDirective implements OnInit {
 		const { mode } = this._appState.appState()
 		// const mode = this._appState.state.mode
 		if (mode === 'LinkMode') {
+			const currentDrawingSymbolLine = this._entities.panelLinks.drawingPanelPolaritySymbolLine
 			const symbolUnderMouse = this.getPanelSymbolUnderMouse(currentPoint)
 			if (symbolUnderMouse) {
-				console.log('symbolUnderMouse', symbolUnderMouse)
-				this._entities.panelLinks.setDrawingPanelPolaritySymbolLine(symbolUnderMouse)
+				if (currentDrawingSymbolLine) {
+					this._panelLinks.handleMouseUpFromPanelPolaritySymbol(
+						event,
+						currentPoint,
+						currentDrawingSymbolLine,
+					)
+				} else {
+					this._entities.panelLinks.setDrawingPanelPolaritySymbolLine(symbolUnderMouse)
+				}
 				return
-			} else if (this._entities.panelLinks.drawingPanelPolaritySymbolLine) {
+			} else if (currentDrawingSymbolLine) {
 				this._entities.panelLinks.clearDrawingPanelPolaritySymbolLine()
 				return
 			}

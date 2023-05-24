@@ -1,7 +1,16 @@
-import { getEntityCenter, PanelLinkId, PanelLinkModel, PanelModel } from '@entities/shared'
+import {
+	getEntityCenter,
+	PanelId,
+	PanelLinkId,
+	PanelLinkModel,
+	PanelModel,
+	PanelSymbol,
+} from '@entities/shared'
 import { groupLinkPointsByChain } from './sorting-panel-links'
 import { CurvedNumberLine } from '@canvas/shared'
 import { assertNotNull } from '@shared/utils'
+import { Point } from '@shared/data-access/models'
+import { getGuid } from '@ngrx/data'
 
 export const reduceLinkPointsToNumberArray = (links: PanelLinkModel[]): number[] =>
 	links.reduce((acc, link, index) => {
@@ -110,6 +119,26 @@ export const updatePanelLinkPoints = (links: PanelLinkModel[], panels: PanelMode
 			linePoints,
 		}
 	})
+}
+
+export const pushCustomPanelLinkPoint = (
+	links: PanelLinkModel[],
+	mouseDownPanelSymbol: PanelSymbol,
+	point: Point,
+) => {
+	const lastLink = links[links.length - 1]
+	const link: PanelLinkModel = {
+		id: getGuid() as PanelLinkId,
+		positivePanelId: lastLink.negativePanelId,
+		negativePanelId: getGuid() as PanelId,
+		linePoints: [lastLink.linePoints[1], point],
+		stringId: lastLink.stringId,
+	}
+	/*	const newLink = {
+	 ...lastLink,
+	 linePoints: [lastLink.linePoints[1], point],
+	 }*/
+	return [...links, link]
 }
 
 /*export const reduceLinkPointsToPanelLinkIdToPanelLocationMap = (links: PanelLinkModel[], panels: CanvasPanel[]) => {

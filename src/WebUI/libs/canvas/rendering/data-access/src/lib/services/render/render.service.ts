@@ -13,7 +13,6 @@ import {
 	drawClickNearEntityBounds,
 	drawCreationDragBox,
 	drawDisconnectionPointBox,
-	drawDraggingSymbolLinkLine,
 	drawEntityCreationPreview,
 	drawLinkModeOrderNumbers,
 	drawLinkModePathLinesCurvedAlreadyMappedV6,
@@ -331,16 +330,16 @@ export class RenderService {
 					panelLinkUnderMouse,
 				)
 
-				if (options?.draggingSymbolLinkLine) {
-					const { mouseDownPanelSymbol, transformedPoint } = options.draggingSymbolLinkLine
-					const panel = this._entities.panels.getById(mouseDownPanelSymbol.panelId)
-					assertNotNull(panel, 'panel')
-					const panelWithSymbol = {
-						...panel,
-						symbol: mouseDownPanelSymbol.symbol,
-					}
-					drawDraggingSymbolLinkLine(ctx, panelWithSymbol, transformedPoint)
-				}
+				/*		if (options?.draggingSymbolLinkLine) {
+				 const { mouseDownPanelSymbol, transformedPoint } = options.draggingSymbolLinkLine
+				 const panel = this._entities.panels.getById(mouseDownPanelSymbol.panelId)
+				 assertNotNull(panel, 'panel')
+				 const panelWithSymbol = {
+				 ...panel,
+				 symbol: mouseDownPanelSymbol.symbol,
+				 }
+				 drawDraggingSymbolLinkLine(ctx, panelWithSymbol, transformedPoint)
+				 }*/
 			}
 
 			if (selectedString && selectedString.disconnectionPointId) {

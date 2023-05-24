@@ -19,7 +19,7 @@ import {
 	getAngleInRadiansBetweenTwoPoints,
 	getQuadraticAngleAtPointUsingNumberLine,
 } from '@canvas/utils'
-import { TransformedPoint } from '@shared/data-access/models'
+import { Point, TransformedPoint } from '@shared/data-access/models'
 import { getPanelSymbolLocationBasedOnPolarity } from '@entities/utils'
 
 let offset = 0
@@ -225,6 +225,44 @@ const drawArrowheadV3 = (ctx: CanvasRenderingContext2D, x: number, y: number, an
 	ctx.restore()
 }
 
+export const drawToFromArrowhead = (
+	ctx: CanvasRenderingContext2D,
+	from: Point,
+	to: Point,
+	radius: number,
+) => {
+	const x_center = to.x
+	const y_center = to.y
+
+	let angle
+	let x
+	let y
+
+	ctx.beginPath()
+
+	angle = Math.atan2(to.y - from.y, to.x - from.x)
+	x = radius * Math.cos(angle) + x_center
+	y = radius * Math.sin(angle) + y_center
+
+	ctx.moveTo(x, y)
+
+	angle += (1.0 / 3.0) * (2 * Math.PI)
+	x = radius * Math.cos(angle) + x_center
+	y = radius * Math.sin(angle) + y_center
+
+	ctx.lineTo(x, y)
+
+	angle += (1.0 / 3.0) * (2 * Math.PI)
+	x = radius * Math.cos(angle) + x_center
+	y = radius * Math.sin(angle) + y_center
+
+	ctx.lineTo(x, y)
+
+	ctx.closePath()
+
+	ctx.fill()
+}
+
 export const drawArrowhead = (
 	ctx: CanvasRenderingContext2D, // from: Point,
 	line: QuadraticNumberLine, // to: Point,
@@ -250,13 +288,13 @@ export const drawArrowhead = (
 
 	angle += (1.0 / 3.0) * (2 * Math.PI)
 	x = radius * Math.cos(angle) + x_center
-	y = radius * Math.sin(angle) + y_center + 10
+	y = radius * Math.sin(angle) + y_center
 
 	ctx.lineTo(x, y)
 
 	angle += (1.0 / 3.0) * (2 * Math.PI)
 	x = radius * Math.cos(angle) + x_center
-	y = radius * Math.sin(angle) + y_center + 10
+	y = radius * Math.sin(angle) + y_center
 
 	ctx.lineTo(x, y)
 
@@ -347,11 +385,5 @@ export const drawDraggingSymbolLinkLine = (
 		mousePoint.y,
 	]
 	drawStraightLineNumbersWithOptions(ctx, straightLine)
-	/*	const line = getQuadraticNumberLineFromPanelWithSymbol(panelWithSymbol)
-	 const line2 = getQuadraticNumberLineFromPanelWithSymbol(panelWithSymbol)
-	 line2[4] = mousePoint.x
-	 line2[5] = mousePoint.y
-	 drawQuadraticNumberLine(ctx, line2)
-	 drawArrowhead(ctx, line2, 10)*/
+	drawToFromArrowhead(ctx, startPoint, mousePoint, 2)
 }
-// line: QuadraticNumberLine,

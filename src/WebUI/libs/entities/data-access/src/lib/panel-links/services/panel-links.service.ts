@@ -310,7 +310,8 @@ export class PanelLinksService {
 		currentPoint: TransformedPoint,
 		mouseDownOnPanelPolaritySymbol: PanelSymbol,
 	) {
-		this._entities.panelLinks.clearMouseDownOnPanelPolaritySymbol()
+		this._entities.panelLinks.clearDrawingPanelPolaritySymbolLine()
+		// this._entities.panelLinks.clearMouseDownOnPanelPolaritySymbol()
 		const panelWithSymbolUnderMouse =
 			this._entities.panels.getPanelWithSymbolUnderMouse(currentPoint)
 		if (!panelWithSymbolUnderMouse) {
