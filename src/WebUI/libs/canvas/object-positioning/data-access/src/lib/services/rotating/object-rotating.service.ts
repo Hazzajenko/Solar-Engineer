@@ -19,7 +19,7 @@ import {
 	rotatingKeysDown,
 	updateObjectByIdForStore,
 } from '@canvas/utils'
-import { CanvasPanel, SizeByType } from '@entities/shared'
+import { PanelModel, SizeByType } from '@entities/shared'
 
 @Injectable({
 	providedIn: 'root',
@@ -123,7 +123,7 @@ export class ObjectRotatingService {
 		const customPanel = {
 			...entity,
 			angle,
-		} as CanvasPanel
+		} as PanelModel
 
 		this._render.renderCanvasApp({
 			singleToRotateId,
@@ -284,7 +284,7 @@ export class ObjectRotatingService {
 
 				return updateObjectByIdForStore(id, { location, angle })
 			})
-			this._entities.panels.updateManyPanels(storeUpdates as UpdateStr<CanvasPanel>[])
+			this._entities.panels.updateManyPanels(storeUpdates as UpdateStr<PanelModel>[])
 			this._positioningStore.dispatch.stopRotating()
 			// this._app.sendEvent({ type: 'StopMultipleRotate' })
 		}
@@ -322,7 +322,7 @@ export class ObjectRotatingService {
 
 				return updateObjectByIdForStore(id, { location, angle })
 			})
-			this._entities.panels.updateManyPanels(storeUpdates as UpdateStr<CanvasPanel>[])
+			this._entities.panels.updateManyPanels(storeUpdates as UpdateStr<PanelModel>[])
 			this._positioningStore.dispatch.stopRotating()
 			// this._app.sendEvent({ type: 'StopMultipleRotate' })
 		}

@@ -1,5 +1,5 @@
 import { inject, Pipe, PipeTransform } from '@angular/core'
-import { CanvasPanel } from '@entities/shared'
+import { PanelModel } from '@entities/shared'
 import { EntityStoreService } from '@entities/data-access'
 
 @Pipe({
@@ -11,7 +11,7 @@ export class GetPanelsByStringIdPipe implements PipeTransform {
 
 	// private _entityStore = inject(EntityStoreService)
 
-	transform(stringId: string): CanvasPanel[] {
+	transform(stringId: string): PanelModel[] {
 		return this._entityStore.panels.getByStringId(stringId)
 	}
 }

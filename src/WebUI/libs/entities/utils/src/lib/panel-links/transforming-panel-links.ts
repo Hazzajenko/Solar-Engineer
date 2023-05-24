@@ -1,4 +1,4 @@
-import { CanvasPanel, getEntityCenter, PanelLinkId, PanelLinkModel } from '@entities/shared'
+import { getEntityCenter, PanelLinkId, PanelLinkModel, PanelModel } from '@entities/shared'
 import { groupLinkPointsByChain } from './sorting-panel-links'
 import { CurvedNumberLine } from '@canvas/shared'
 import { assertNotNull } from '@shared/utils'
@@ -70,7 +70,7 @@ export const reduceLinkPointsToNumberArrayOptimisedKeepIdsV2 = (links: PanelLink
 
 export const updatePanelLinkPointForOnePanel = (
 	link: PanelLinkModel,
-	panel: CanvasPanel,
+	panel: PanelModel,
 ): PanelLinkModel => {
 	const linePoints = [...link.linePoints]
 	if (link.positivePanelId === panel.id) {
@@ -85,7 +85,7 @@ export const updatePanelLinkPointForOnePanel = (
 	}
 }
 
-export const updatePanelLinkPoints = (links: PanelLinkModel[], panels: CanvasPanel[]) => {
+export const updatePanelLinkPoints = (links: PanelLinkModel[], panels: PanelModel[]) => {
 	const panelIds = new Set(panels.map((panel) => panel.id))
 	return links.map((link) => {
 		let hasChanged = false

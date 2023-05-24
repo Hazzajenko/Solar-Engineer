@@ -18,6 +18,7 @@ export interface PanelLinksState extends EntityState<PanelLinkModel> {
 	hoveringOverPanelLinkInApp: string | undefined
 	hoveringOverPanelPolaritySymbol: PanelSymbol | undefined
 	mouseDownOnPanelPolaritySymbol: PanelSymbol | undefined
+	drawingPanelPolaritySymbolLine: PanelSymbol | undefined
 	selectedStringCircuit: {
 		openCircuitChains: OpenCircuitChain[]
 		closedCircuitChains: ClosedCircuitChain[]
@@ -42,6 +43,7 @@ export const initialPanelLinksState: PanelLinksState = panelLinksAdapter.getInit
 	hoveringOverPanelLinkInApp: undefined,
 	hoveringOverPanelPolaritySymbol: undefined,
 	mouseDownOnPanelPolaritySymbol: undefined,
+	drawingPanelPolaritySymbolLine: undefined,
 	selectedStringCircuit: {
 		openCircuitChains: [],
 		closedCircuitChains: [],
@@ -110,27 +112,29 @@ const reducer = createReducer(
 		...state,
 		hoveringOverPanelLinkInApp: undefined,
 	})),
-	on(PanelLinksActions.setHoveringOverPanelPolaritySymbol, (state, { panelId, symbol }) => ({
+	on(PanelLinksActions.setHoveringOverPanelPolaritySymbol, (state, { panelSymbol }) => ({
 		...state,
-		hoveringOverPanelPolaritySymbol: {
-			panelId,
-			symbol,
-		},
+		hoveringOverPanelPolaritySymbol: panelSymbol,
 	})),
 	on(PanelLinksActions.clearHoveringOverPanelPolaritySymbol, (state) => ({
 		...state,
 		hoveringOverPanelPolaritySymbol: undefined,
 	})),
-	on(PanelLinksActions.setMouseDownOnPanelPolaritySymbol, (state, { panelId, symbol }) => ({
+	on(PanelLinksActions.setMouseDownOnPanelPolaritySymbol, (state, { panelSymbol }) => ({
 		...state,
-		mouseDownOnPanelPolaritySymbol: {
-			panelId,
-			symbol,
-		},
+		mouseDownOnPanelPolaritySymbol: panelSymbol,
 	})),
 	on(PanelLinksActions.clearMouseDownOnPanelPolaritySymbol, (state) => ({
 		...state,
 		mouseDownOnPanelPolaritySymbol: undefined,
+	})),
+	on(PanelLinksActions.setDrawingPanelPolaritySymbolLine, (state, { panelSymbol }) => ({
+		...state,
+		drawingPanelPolaritySymbolLine: panelSymbol,
+	})),
+	on(PanelLinksActions.clearDrawingPanelPolaritySymbolLine, (state) => ({
+		...state,
+		drawingPanelPolaritySymbolLine: undefined,
 	})),
 	on(PanelLinksActions.clearPanelLinksState, () => initialPanelLinksState),
 )

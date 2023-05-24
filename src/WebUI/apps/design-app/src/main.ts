@@ -22,7 +22,7 @@ import { MatSnackBarModule, MatSnackBarRef } from '@angular/material/snack-bar'
 import { DatePipe } from '@angular/common'
 import { storeDevtoolsModule } from '@shared/config'
 import { metaReducers, reducers } from '@shared/data-access/store'
-import { APP_STATE_FEATURE_KEY, appStateReducer } from '@canvas/app/data-access'
+import { provideAppStateFeature } from '@canvas/app/data-access'
 import { UI_FEATURE_KEY, uiReducer } from '@overlays/ui-store/data-access'
 import { provideSelectedFeature } from '@canvas/selected/data-access'
 import {
@@ -92,7 +92,8 @@ export function provideCanvasAppStores() {
 		// provideStringsFeature(),
 		// providePanelConfigsFeature(),
 		// providePanelLinksFeature(),
-		provideState(APP_STATE_FEATURE_KEY, appStateReducer),
+		// provideState(APP_STATE_FEATURE_KEY, appStateReducer),
+		provideAppStateFeature(),
 		provideState(UI_FEATURE_KEY, uiReducer),
 		// provideState(SELECTED_FEATURE_KEY, selectedReducer),
 		provideState(OBJECT_POSITIONING_FEATURE_KEY, objectPositioningReducer),

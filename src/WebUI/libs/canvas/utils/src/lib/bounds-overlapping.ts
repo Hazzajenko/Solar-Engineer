@@ -6,7 +6,7 @@ import {
 	getStretchedEntityBoundsByValue,
 } from './bounds'
 import { EntityBounds, Point } from '@shared/data-access/models'
-import { CanvasEntity, PanelSymbol } from '@entities/shared'
+import { CanvasEntity, PanelModel, PanelSymbol, PanelWithSymbol } from '@entities/shared'
 
 export const isEntityInsideTwoPoints = (entity: CanvasEntity, point1: Point, point2: Point) => {
 	const bounds = getEntityBounds(entity)
@@ -151,6 +151,25 @@ export const isPointInsidePanelSymbolsV2 = (point: Point, entity: CanvasEntity) 
 	}
 	return
 }
+
+export const isPointInsidePanelSymbolsV3 = (point: Point, panel: PanelModel) => {
+	const bounds = getCompleteEntityBoundsFromEntity(panel)
+	if (isPointWithinPointByValue(point, { x: bounds.left, y: bounds.centerY }, 5)) {
+		return {
+			...panel,
+			symbol: 'negative',
+		} as PanelWithSymbol
+	}
+	if (isPointWithinPointByValue(point, { x: bounds.right, y: bounds.centerY }, 5)) {
+		return {
+			...panel,
+			symbol: 'positive',
+		} as PanelWithSymbol
+	}
+	return
+}
+
+// export const
 
 const isPointWithinPointByValue = (point: Point, center: Point, value: number): boolean => {
 	return (

@@ -1,7 +1,7 @@
-import { CANVAS_COLORS, CanvasPanel } from '@entities/shared'
+import { CANVAS_COLORS, PanelModel } from '@entities/shared'
 import { drawBoxWithOptionsCtx } from '../draw-box-with-options.ctx'
 
-export const drawDisconnectionPoint = (ctx: CanvasRenderingContext2D, panel: CanvasPanel): void => {
+export const drawDisconnectionPoint = (ctx: CanvasRenderingContext2D, panel: PanelModel): void => {
 	ctx.save()
 	ctx.strokeStyle = 'orange'
 	ctx.lineWidth = 2
@@ -13,7 +13,7 @@ export const drawDisconnectionPoint = (ctx: CanvasRenderingContext2D, panel: Can
 
 export const drawDisconnectionPointBox = (
 	ctx: CanvasRenderingContext2D,
-	panel: CanvasPanel,
+	panel: PanelModel,
 ): void => {
 	const { left, top } = drawBoxWithOptionsCtx(ctx, [panel], {
 		color: CANVAS_COLORS.HoveringOverPanelInLinkMenuStrokeStyle,

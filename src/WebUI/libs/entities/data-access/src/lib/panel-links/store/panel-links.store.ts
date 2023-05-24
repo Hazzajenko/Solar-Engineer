@@ -2,6 +2,7 @@ import { inject, makeEnvironmentProviders } from '@angular/core'
 import { provideState, Store } from '@ngrx/store'
 import {
 	selectAllPanelLinks,
+	selectDrawingPanelPolaritySymbolLine,
 	selectHoveringOverPanelInLinkMenuId,
 	selectHoveringOverPanelLinkInApp,
 	selectHoveringOverPanelLinkInLinkMenu,
@@ -17,10 +18,10 @@ import { UpdateStr } from '@ngrx/entity/src/models'
 import {
 	ClosedCircuitChain,
 	OpenCircuitChain,
-	PanelId,
 	PanelLinkId,
 	PanelLinkModel,
 	PanelLinkRequest,
+	PanelSymbol,
 	Polarity,
 } from '@entities/shared'
 import { PANEL_LINKS_FEATURE_KEY, panelLinksReducer, PanelLinksState } from './panel-links.reducer'
@@ -61,11 +62,14 @@ export function injectPanelLinksStore() {
 		get getHoveringOverPanelLinkInApp() {
 			return store.selectSignal(selectHoveringOverPanelLinkInApp)()
 		},
-		get hoveringOverPanelPolaritySymbol() {
+		get getHoveringOverPanelPolaritySymbol() {
 			return store.selectSignal(selectHoveringOverPanelPolaritySymbol)()
 		},
-		get mouseDownOnPanelPolaritySymbol() {
+		get getMouseDownOnPanelPolaritySymbol() {
 			return store.selectSignal(selectMouseDownOnPanelPolaritySymbol)()
+		},
+		get drawingPanelPolaritySymbolLine() {
+			return store.selectSignal(selectDrawingPanelPolaritySymbolLine)()
 		},
 		getById(id: string) {
 			return entities()[id]
@@ -169,27 +173,23 @@ export function injectPanelLinksStore() {
 		clearHoveringOverPanelLinkInApp() {
 			store.dispatch(PanelLinksActions.clearHoveringOverPanelLinkInApp())
 		},
-		setHoveringOverPanelPolaritySymbol(panelId: PanelId, symbol: Polarity) {
-			store.dispatch(
-				PanelLinksActions.setHoveringOverPanelPolaritySymbol({
-					panelId,
-					symbol,
-				}),
-			)
+		setHoveringOverPanelPolaritySymbol(panelSymbol: PanelSymbol) {
+			store.dispatch(PanelLinksActions.setHoveringOverPanelPolaritySymbol({ panelSymbol }))
 		},
 		clearHoveringOverPanelPolaritySymbol() {
 			store.dispatch(PanelLinksActions.clearHoveringOverPanelPolaritySymbol())
 		},
-		setMouseDownOnPanelPolaritySymbol(panelId: PanelId, symbol: Polarity) {
-			store.dispatch(
-				PanelLinksActions.setMouseDownOnPanelPolaritySymbol({
-					panelId,
-					symbol,
-				}),
-			)
+		setMouseDownOnPanelPolaritySymbol(panelSymbol: PanelSymbol) {
+			store.dispatch(PanelLinksActions.setMouseDownOnPanelPolaritySymbol({ panelSymbol }))
 		},
 		clearMouseDownOnPanelPolaritySymbol() {
 			store.dispatch(PanelLinksActions.clearMouseDownOnPanelPolaritySymbol())
+		},
+		setDrawingPanelPolaritySymbolLine(panelSymbol: PanelSymbol) {
+			store.dispatch(PanelLinksActions.setDrawingPanelPolaritySymbolLine({ panelSymbol }))
+		},
+		clearDrawingPanelPolaritySymbolLine() {
+			store.dispatch(PanelLinksActions.clearDrawingPanelPolaritySymbolLine())
 		},
 		clearPanelLinksState() {
 			store.dispatch(PanelLinksActions.clearPanelLinksState())

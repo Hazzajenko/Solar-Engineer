@@ -5,7 +5,7 @@ import { ContextMenuTemplateComponent } from '../context-menu-template/context-m
 import { EntityStoreService } from '@entities/data-access'
 import { RenderService } from '@canvas/rendering/data-access'
 import { ContextMenuSinglePanelMenu, UiStoreService } from '@overlays/ui-store/data-access'
-import { CanvasPanel, CanvasString, PanelLinkModel } from '@entities/shared'
+import { PanelLinkModel, PanelModel, StringModel } from '@entities/shared'
 import { contextMenuInputInjectionToken } from '../context-menu-renderer'
 import { ContextMenuDirective } from '../directives'
 import { AppStateStoreService } from '@canvas/app/data-access'
@@ -51,14 +51,14 @@ export class SinglePanelMenuComponent implements OnInit {
 
 	contextMenu = inject(Injector).get(contextMenuInputInjectionToken) as ContextMenuSinglePanelMenu
 
-	panel!: CanvasPanel
-	string: CanvasString | undefined
+	panel!: PanelModel
+	string: StringModel | undefined
 	inLinkMode = signal(false)
 	panelLinks = signal<{
 		positiveToLink: PanelLinkModel | undefined
-		positiveToPanel: CanvasPanel | undefined
+		positiveToPanel: PanelModel | undefined
 		negativeToLink: PanelLinkModel | undefined
-		negativeToPanel: CanvasPanel | undefined
+		negativeToPanel: PanelModel | undefined
 	}>({
 		positiveToLink: undefined,
 		positiveToPanel: undefined,
@@ -112,7 +112,7 @@ export class SinglePanelMenuComponent implements OnInit {
 	enterPolarityLink(
 		event: PointerEvent,
 		polarityToLink: PanelLinkModel,
-		polarityToPanel: CanvasPanel,
+		polarityToPanel: PanelModel,
 	) {
 		event.stopPropagation()
 		const polarity = polarityToLink.positivePanelId === polarityToPanel.id ? 'negative' : 'positive'
@@ -130,7 +130,7 @@ export class SinglePanelMenuComponent implements OnInit {
 
 	setPanelAsDisconnectionPoint() {
 		assertNotNull(this.string)
-		const update: UpdateStr<CanvasString> = {
+		const update: UpdateStr<StringModel> = {
 			id: this.string.id,
 			changes: {
 				disconnectionPointId: this.panel.id,

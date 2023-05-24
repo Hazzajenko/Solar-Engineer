@@ -6,7 +6,7 @@ import { GetStringWithPanelIdsPipe } from '@entities/utils'
 import { EntityStoreService } from '@entities/data-access'
 import { RenderService } from '@canvas/rendering/data-access'
 import { ContextMenuStringMenu, UiStoreService } from '@overlays/ui-store/data-access'
-import { CanvasString } from '@entities/shared'
+import { StringModel } from '@entities/shared'
 import { contextMenuInputInjectionToken } from '../context-menu-renderer'
 import { ContextMenuDirective } from '../directives'
 
@@ -31,7 +31,7 @@ export class StringMenuComponent implements OnInit {
 
 	contextMenu = inject(Injector).get(contextMenuInputInjectionToken) as ContextMenuStringMenu
 
-	string!: CanvasString
+	string!: StringModel
 	panelIds: string[] = []
 
 	ngOnInit() {

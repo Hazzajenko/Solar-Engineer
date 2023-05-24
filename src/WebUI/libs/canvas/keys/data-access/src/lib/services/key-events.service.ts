@@ -10,7 +10,7 @@ import { KeysStoreService } from '../store'
 import { KEY_MAP_ACTION } from '../types'
 import { toSignal } from '@angular/core/rxjs-interop'
 import { updateObjectByIdForStoreV3 } from '@canvas/utils'
-import { CanvasPanel } from '@entities/shared'
+import { PanelModel } from '@entities/shared'
 import { EntityStoreService } from '@entities/data-access'
 
 // const DEFAULT_UNCHANGEABLE_KEYS = [KEYS.ESCAPE, KEYS.SHIFT, KEYS.ALT, KEYS.CTRL_OR_CMD] as const
@@ -225,12 +225,12 @@ export class KeyEventsService {
 					const string = createString(name)
 
 					const entities = this._entities.panels.getByIds(multipleSelectedIds)
-					const panels = entities.filter((entity) => entity.type === 'panel') as CanvasPanel[]
+					const panels = entities.filter((entity) => entity.type === 'panel') as PanelModel[]
 					/*				const panelUpdates = panels.map((panel) =>
 				 updateObjectByIdForStore<CanvasPanel>(panel.id, { stringId: string.id }),
 				 )*/
 					const panelUpdates = panels.map(
-						updateObjectByIdForStoreV3<CanvasPanel>({ stringId: string.id }),
+						updateObjectByIdForStoreV3<PanelModel>({ stringId: string.id }),
 					)
 					this._entities.strings.addString(string)
 					this._entities.panels.updateManyPanels(panelUpdates)

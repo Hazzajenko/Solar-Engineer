@@ -1,8 +1,8 @@
 import {
-	AppStateStoreService,
 	CanvasElementService,
 	DIV_ELEMENT,
 	DivElementsService,
+	injectAppStateStore,
 	MODE_STATE,
 } from '@canvas/app/data-access'
 // import { EntityStoreService } from '../entities'
@@ -13,6 +13,7 @@ import {
 	drawClickNearEntityBounds,
 	drawCreationDragBox,
 	drawDisconnectionPointBox,
+	drawDraggingSymbolLinkLine,
 	drawEntityCreationPreview,
 	drawLinkModeOrderNumbers,
 	drawLinkModePathLinesCurvedAlreadyMappedV6,
@@ -39,11 +40,11 @@ import { Point } from '@shared/data-access/models'
 import {
 	CANVAS_COLORS,
 	CanvasEntity,
-	CanvasPanel,
-	CanvasString,
 	OpenCircuitChain,
 	PANEL_STROKE_STYLE,
 	PanelLinkModel,
+	PanelModel,
+	StringModel,
 	UndefinedStringId,
 } from '@entities/shared'
 import { injectSvgs, injectSvgsV2 } from './svg-injector'
@@ -62,7 +63,8 @@ export class RenderService {
 	// private _entities = inject(EntityStoreService)
 	// private _app = inject(AppStoreService)
 	// private _appStore = inject(AppNgrxStateStore)
-	private _appStore = inject(AppStateStoreService)
+	private _appState = injectAppStateStore()
+	// private _appState = inject(AppStateStoreService)
 	private _selectedStore = injectSelectedStore()
 	// private _selectedStore = inject(SelectedStoreService)
 	private _graphicsStore = inject(GraphicsStoreService)
@@ -201,9 +203,10 @@ export class RenderService {
 			this.drawEntities(ctx, entities, openCircuitChains, selectedString)
 			ctx.restore()
 
-			const appStateMode = this._appStore.state.mode
+			const { mode, pointer } = this._appState.appState()
+			const appStateMode = mode
 
-			const hoveringOverEntityId = this._appStore.state.pointer.hoveringOverEntityId
+			const hoveringOverEntityId = pointer.hoveringOverEntityId
 
 			const singleSelectedEntityId = this._selectedStore.state.singleSelectedEntityId
 
@@ -327,6 +330,17 @@ export class RenderService {
 					hoveringOverPanelLinkInLinkMenu,
 					panelLinkUnderMouse,
 				)
+
+				if (options?.draggingSymbolLinkLine) {
+					const { mouseDownPanelSymbol, transformedPoint } = options.draggingSymbolLinkLine
+					const panel = this._entities.panels.getById(mouseDownPanelSymbol.panelId)
+					assertNotNull(panel, 'panel')
+					const panelWithSymbol = {
+						...panel,
+						symbol: mouseDownPanelSymbol.symbol,
+					}
+					drawDraggingSymbolLinkLine(ctx, panelWithSymbol, transformedPoint)
+				}
 			}
 
 			if (selectedString && selectedString.disconnectionPointId) {
@@ -421,19 +435,19 @@ export class RenderService {
 
 	private drawEntities(
 		ctx: CanvasRenderingContext2D,
-		entities: CanvasPanel[],
+		entities: PanelModel[],
 		linksInOrder: PanelLinkModel[][] = [],
-		selectedString: CanvasString | undefined,
+		selectedString: StringModel | undefined,
 	) {
 		const selectedStringId = selectedString?.id
 		// const selectedStringId = this._selectedStore.state.selectedStringId
 		const graphicsState = this._graphicsStore.state
 		const selectedState = this._selectedStore.state
 
-		const pointerState = this._appStore.state.pointer
+		const pointerState = this._appState.pointer()
 		const hoveringOverEntityId = pointerState.hoveringOverEntityId
 
-		const mouseOverSymbol = this._entities.panelLinks.hoveringOverPanelPolaritySymbol
+		const mouseOverSymbol = this._entities.panelLinks.getHoveringOverPanelPolaritySymbol
 		// const selectedString ?
 		/*		const linksInOrder = selectedStringId
 		 ? this._panelLinks.getPanelLinkOrderForSelectedStringV2()
@@ -480,7 +494,7 @@ export class RenderService {
 			}
 
 			// let panelLinkOrderDrawFn: ((ctx: CanvasRenderingContext2D) => void) | undefined = undefined
-			if (this._appStore.state.mode === MODE_STATE.LINK_MODE) {
+			if (this._appState.mode() === MODE_STATE.LINK_MODE) {
 				if (this._panelLinksStore.requestingLink) {
 					if (this._panelLinksStore.requestingLink.panelId === entity.id) {
 						fillStyle = CANVAS_COLORS.RequestingLinkPanelFillStyle
@@ -540,7 +554,7 @@ export class RenderService {
 			 }*/
 
 			// draw drawLinkModeGraphics
-			if (isStringSelected && this._appStore.state.mode === 'LinkMode') {
+			if (isStringSelected && this._appState.mode() === 'LinkMode') {
 				/*				if (selectedString && selectedString.disconnectionPointId === entity.id) {
 				 drawDisconnectionPoint(ctx, entity)
 				 /!*			drawBoxWithOptionsCtx(ctx, [entity], {
@@ -550,6 +564,7 @@ export class RenderService {
 				 })*!/
 				 }*/
 				if (this._graphicsStore.state.linkModeSymbols) {
+					// console.log('mouseOverSymbol', mouseOverSymbol)
 					drawLinkModeSymbols(ctx, entity, mouseOverSymbol)
 					// this.drawLinkModeSymbols(ctx, entity)
 				}
@@ -582,7 +597,7 @@ export const getSymbolLocationBasedOnIndex = (
 	if (!customEntities) {
 		throw new Error('customEntities is undefined')
 	}
-	const panel = customEntities?.find((entity) => entity.id === panelId) as CanvasPanel
+	const panel = customEntities?.find((entity) => entity.id === panelId) as PanelModel
 	if (index === 0) {
 		return getPositiveSymbolLocation(panel)
 	}

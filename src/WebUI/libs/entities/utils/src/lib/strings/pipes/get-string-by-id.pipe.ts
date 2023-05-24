@@ -1,7 +1,7 @@
 import { inject, Pipe, PipeTransform } from '@angular/core'
 
 import { EntityStoreService } from '@entities/data-access'
-import { CanvasString } from '@entities/shared'
+import { StringModel } from '@entities/shared'
 
 @Pipe({
 	name: 'getStringById',
@@ -12,7 +12,7 @@ export class GetStringByIdPipe implements PipeTransform {
 
 	// private _entityStore = inject(EntityStoreService)
 
-	transform(stringId: string): CanvasString | undefined {
+	transform(stringId: string): StringModel | undefined {
 		return this._entityStore.strings.getById(stringId)
 	}
 }

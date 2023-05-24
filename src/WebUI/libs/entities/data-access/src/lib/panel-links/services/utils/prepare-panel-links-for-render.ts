@@ -4,7 +4,7 @@ import {
 	reduceLinkChainToNumberArrayOptimised,
 	reduceLinkPointsToNumberArrayOptimisedKeepIdsV2,
 } from '@entities/utils'
-import { CanvasPanel, PanelLinkId, PanelLinkModel, StringCircuitChains } from '@entities/shared'
+import { PanelLinkId, PanelLinkModel, PanelModel, StringCircuitChains } from '@entities/shared'
 import { CurvedNumberLine } from '@canvas/shared'
 import { prepareStringPanelLinkCircuitChain } from './prepare-string-panel-link-circuit-chain'
 import { APoint } from '@shared/utils'
@@ -64,7 +64,7 @@ export const createCircuitCurvedLinkPathLines = (linkPointTuples: [PanelLinkId, 
 
 export const preparePanelLinksForRenderUsingPanelLocations = (
 	stringCircuitChains: StringCircuitChains,
-	panels: CanvasPanel[],
+	panels: PanelModel[],
 ) => {
 	const { openCircuitChains, closedCircuitChains } = stringCircuitChains
 	const openCircuitCurvedLines = openCircuitChains.map((chain) => {
@@ -89,7 +89,7 @@ export const preparePanelLinksForRenderUsingPanelLocations = (
 }
 export const createCircuitCurvedLinkPathLinesUsingPanelLocations = (
 	linkPointTuples: [PanelLinkId, number[]][],
-	panelIdToLocationMap: Map<CanvasPanel['id'], APoint>,
+	panelIdToLocationMap: Map<PanelModel['id'], APoint>,
 ) => {
 	const points = reduceLinkChainToNumberArrayOptimised(linkPointTuples)
 	let controlPoints: number[] = []

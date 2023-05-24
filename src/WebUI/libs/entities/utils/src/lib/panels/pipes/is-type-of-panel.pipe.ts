@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core'
-import { CanvasPanel } from '@entities/shared'
+import { PanelModel } from '@entities/shared'
 import { isTypeOfPanel } from '../utils'
 
 @Pipe({
@@ -7,7 +7,7 @@ import { isTypeOfPanel } from '../utils'
 	standalone: true,
 })
 export class IsTypeOfPanelPipe implements PipeTransform {
-	transform(value: unknown): CanvasPanel | undefined {
+	transform(value: unknown): PanelModel | undefined {
 		return isTypeOfPanel(value) ? value : undefined
 	}
 }

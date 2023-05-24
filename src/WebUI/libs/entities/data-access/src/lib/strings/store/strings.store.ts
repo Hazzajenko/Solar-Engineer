@@ -2,7 +2,7 @@ import { inject, makeEnvironmentProviders } from '@angular/core'
 import { provideState, Store } from '@ngrx/store'
 import { isNotNull } from '@shared/utils'
 import { UpdateStr } from '@ngrx/entity/src/models'
-import { CanvasString } from '@entities/shared'
+import { StringModel } from '@entities/shared'
 import {
 	selectAllStrings,
 	selectAllStringsWithPanels,
@@ -47,16 +47,16 @@ export function injectStringsStore() {
 		getStringByIdWithPanels(stringId: string) {
 			return store.selectSignal(selectStringByIdWithPanels({ stringId }))()
 		},
-		addString(string: CanvasString) {
+		addString(string: StringModel) {
 			store.dispatch(StringsActions.addString({ string }))
 		},
-		addManyStrings(strings: CanvasString[]) {
+		addManyStrings(strings: StringModel[]) {
 			store.dispatch(StringsActions.addManyStrings({ strings }))
 		},
-		updateString(update: UpdateStr<CanvasString>) {
+		updateString(update: UpdateStr<StringModel>) {
 			store.dispatch(StringsActions.updateString({ update }))
 		},
-		updateManyStrings(updates: UpdateStr<CanvasString>[]) {
+		updateManyStrings(updates: UpdateStr<StringModel>[]) {
 			store.dispatch(StringsActions.updateManyStrings({ updates }))
 		},
 		deleteString(id: string) {

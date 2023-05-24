@@ -1,16 +1,16 @@
 import { PanelsActions } from './panels.actions'
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity'
 import { Action, createReducer, on } from '@ngrx/store'
-import { CanvasPanel } from '@entities/shared'
+import { PanelModel } from '@entities/shared'
 
 export const PANELS_FEATURE_KEY = 'panels'
 
-export interface PanelsState extends EntityState<CanvasPanel> {
+export interface PanelsState extends EntityState<PanelModel> {
 	loaded: boolean
 	error?: string | null
 }
 
-export const panelsAdapter: EntityAdapter<CanvasPanel> = createEntityAdapter<CanvasPanel>({
+export const panelsAdapter: EntityAdapter<PanelModel> = createEntityAdapter<PanelModel>({
 	selectId: (string) => string.id,
 })
 

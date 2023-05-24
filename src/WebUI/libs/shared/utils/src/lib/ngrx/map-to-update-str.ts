@@ -1,4 +1,4 @@
-import { CanvasEntity, CanvasPanel } from '@entities/shared'
+import { CanvasEntity, PanelModel } from '@entities/shared'
 import { UpdateStr } from '@ngrx/entity/src/models'
 
 export const updateMany = (array: CanvasEntity[], key: keyof CanvasEntity) => {
@@ -9,7 +9,7 @@ export const updateMany = (array: CanvasEntity[], key: keyof CanvasEntity) => {
 				changes: {
 					[key]: entity[key],
 				},
-			} as UpdateStr<CanvasPanel>),
+			} as UpdateStr<PanelModel>),
 	)
 }
 

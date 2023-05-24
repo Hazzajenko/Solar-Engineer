@@ -1,8 +1,8 @@
-import { CanvasPanel, OpenCircuitChain } from '@entities/shared'
+import { OpenCircuitChain, PanelModel } from '@entities/shared'
 
 export const drawLinkModeOrderNumbers = (
 	ctx: CanvasRenderingContext2D,
-	panel: CanvasPanel,
+	panel: PanelModel,
 	linksInOrder: OpenCircuitChain[], // linksInOrder: PanelLinkModel[][],
 ) => {
 	if (!linksInOrder.length) {

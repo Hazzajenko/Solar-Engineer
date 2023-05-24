@@ -1,21 +1,21 @@
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
-import { CanvasString } from '@entities/shared'
+import { StringModel } from '@entities/shared'
 
 export const StringsActions = createActionGroup({
 	source: 'Strings Store',
 	events: {
 		'Add String': props<{
-			string: CanvasString
+			string: StringModel
 		}>(),
 		'Add Many Strings': props<{
-			strings: CanvasString[]
+			strings: StringModel[]
 		}>(),
 		'Update String': props<{
-			update: UpdateStr<CanvasString>
+			update: UpdateStr<StringModel>
 		}>(),
 		'Update Many Strings': props<{
-			updates: UpdateStr<CanvasString>[]
+			updates: UpdateStr<StringModel>[]
 		}>(),
 		'Delete String': props<{
 			stringId: string

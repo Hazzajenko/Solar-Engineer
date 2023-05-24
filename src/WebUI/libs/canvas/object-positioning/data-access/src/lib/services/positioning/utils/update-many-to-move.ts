@@ -1,11 +1,11 @@
 import { EventPoint, Point } from '@shared/data-access/models'
-import { CanvasPanel } from '@entities/shared'
+import { PanelModel } from '@entities/shared'
 
 export const updateManyToMove = (
 	multiToMoveStart: EventPoint,
 	dragStopPoint: Point,
 	scale: number,
-	entities: CanvasPanel[],
+	entities: PanelModel[],
 ) => {
 	const offset = {
 		x: (dragStopPoint.x - multiToMoveStart.x) / scale,

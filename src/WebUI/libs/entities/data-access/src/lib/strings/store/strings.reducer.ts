@@ -1,16 +1,16 @@
 import { StringsActions } from './strings.actions'
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity'
 import { Action, createReducer, on } from '@ngrx/store'
-import { CanvasString } from '@entities/shared'
+import { StringModel } from '@entities/shared'
 
 export const STRINGS_FEATURE_KEY = 'strings'
 
-export interface StringsState extends EntityState<CanvasString> {
+export interface StringsState extends EntityState<StringModel> {
 	loaded: boolean
 	error?: string | null
 }
 
-export const stringsAdapter: EntityAdapter<CanvasString> = createEntityAdapter<CanvasString>({
+export const stringsAdapter: EntityAdapter<StringModel> = createEntityAdapter<StringModel>({
 	selectId: (string) => string.id,
 })
 

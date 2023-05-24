@@ -12,10 +12,10 @@ import { select, Store } from '@ngrx/store'
 export class AppStateStoreService {
 	private readonly _store = inject(Store)
 	private readonly _state$ = this._store.pipe(select(selectAppStateState))
-	// private readonly _dialog$ = this._store.pipe(select(selectDialogState))
 	private readonly _state = toSignal(this._state$, { initialValue: initialAppState })
-	// public select = inject(AppStateQueries)
 	private _mousePos = signal({ x: 0, y: 0 })
+	public dispatch = new AppNgrxRepository(this._store)
+
 	get mousePos() {
 		return this._mousePos()
 	}
@@ -23,8 +23,6 @@ export class AppStateStoreService {
 	set mousePos(mousePos: { x: number; y: number }) {
 		this._mousePos.set(mousePos)
 	}
-
-	public dispatch = new AppNgrxRepository(this._store)
 
 	get state() {
 		return this._state()

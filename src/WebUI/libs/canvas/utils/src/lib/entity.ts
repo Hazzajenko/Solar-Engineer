@@ -1,7 +1,7 @@
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { AngleRadians, Point } from '@shared/data-access/models'
 import { newGuid } from '@shared/utils'
-import { CanvasEntity, CanvasPanel, CanvasString, EntityType, SizeByType } from '@entities/shared'
+import { CanvasEntity, EntityType, PanelModel, SizeByType, StringModel } from '@entities/shared'
 
 export const EntityFactory = {
 	create: (type: EntityType, location: Point): CanvasEntity => {
@@ -79,7 +79,7 @@ export const updateObjects = <T>(entities: T[], changes: Partial<T>): T[] => {
  return updateObjectById(entity, { location: newLocation })
  })*/
 
-export const updateObjectById = <T extends CanvasPanel | CanvasString>(
+export const updateObjectById = <T extends PanelModel | StringModel>(
 	entity: T,
 	changes: Partial<T>,
 ): T => {
@@ -102,7 +102,7 @@ export const updateObjectByIdForStoreV2 = <
 		changes,
 	}
 }
-export const updateObjectByIdForStore = <T extends CanvasEntity | CanvasString>(
+export const updateObjectByIdForStore = <T extends CanvasEntity | StringModel>(
 	id: T['id'],
 	changes: Partial<T>,
 ): UpdateStr<T> => {
@@ -113,7 +113,7 @@ export const updateObjectByIdForStore = <T extends CanvasEntity | CanvasString>(
 }
 
 export const updateObjectByIdForStoreV3 =
-	<T extends CanvasEntity | CanvasString>( // id: T['id'],
+	<T extends CanvasEntity | StringModel>( // id: T['id'],
 		changes: Partial<T>,
 	) =>
 	(entity: T): UpdateStr<T> => {

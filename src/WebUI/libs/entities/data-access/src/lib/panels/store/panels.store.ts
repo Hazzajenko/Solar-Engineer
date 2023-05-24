@@ -4,12 +4,13 @@ import { selectAllPanels, selectPanelsEntities } from './panels.selectors'
 import { isNotNull } from '@shared/utils'
 import { PanelsActions } from './panels.actions'
 import { UpdateStr } from '@ngrx/entity/src/models'
-import { CanvasPanel } from '@entities/shared'
+import { PanelModel } from '@entities/shared'
 import { provideEffects } from '@ngrx/effects'
 import { PANELS_FEATURE_KEY, panelsReducer } from './panels.reducer'
 import { TransformedPoint } from '@shared/data-access/models'
 import { isPointInsideEntity } from '@canvas/utils'
 import * as panelsEffects from './panels.effects'
+import { getPanelWithSymbolUnderMouse } from '@entities/utils'
 
 export function providePanelsFeature() {
 	return makeEnvironmentProviders([
@@ -40,19 +41,29 @@ export function injectPanelsStore() {
 		getByStringId(stringId: string) {
 			return allPanels().filter((panel) => panel.stringId === stringId)
 		},
-		getEntityUnderMouse(point: TransformedPoint) {
+		getPanelUnderMouse(point: TransformedPoint) {
 			return this.allPanels.find((entity) => isPointInsideEntity(point, entity))
 		},
-		addPanel(panel: CanvasPanel) {
+		getPanelWithSymbolUnderMouse(point: TransformedPoint) {
+			return getPanelWithSymbolUnderMouse(this.allPanels, point)
+			// return getPanelSymbolUnderMouse(this.allPanels, point)
+			/*			const panelSymbolUnderMouse = this.allPanels.find((entity) =>
+			 isPointInsidePanelSymbolsV3(point, entity),
+			 )
+			 return panelSymbolUnderMouse
+			 ? isPointInsidePanelSymbolsV3(point, panelSymbolUnderMouse)
+			 : undefined*/
+		},
+		addPanel(panel: PanelModel) {
 			store.dispatch(PanelsActions.addPanel({ panel }))
 		},
-		addManyPanels(panels: CanvasPanel[]) {
+		addManyPanels(panels: PanelModel[]) {
 			store.dispatch(PanelsActions.addManyPanels({ panels }))
 		},
-		updatePanel(update: UpdateStr<CanvasPanel>) {
+		updatePanel(update: UpdateStr<PanelModel>) {
 			store.dispatch(PanelsActions.updatePanel({ update }))
 		},
-		updateManyPanels(updates: UpdateStr<CanvasPanel>[]) {
+		updateManyPanels(updates: UpdateStr<PanelModel>[]) {
 			store.dispatch(PanelsActions.updateManyPanels({ updates }))
 		},
 		deletePanel(id: string) {

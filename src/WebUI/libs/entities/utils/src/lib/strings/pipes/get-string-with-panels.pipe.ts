@@ -1,9 +1,9 @@
 import { inject, Pipe, PipeTransform } from '@angular/core'
-import { CanvasString } from '@entities/shared'
+import { StringModel } from '@entities/shared'
 import { EntityStoreService } from '@entities/data-access'
 // import { EntityStoreService } from '../../entity-store.service'
 
-export type StringWithPanelIds = CanvasString & {
+export type StringWithPanelIds = StringModel & {
 	panelIds: string[]
 }
 

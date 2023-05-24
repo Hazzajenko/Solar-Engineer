@@ -3,11 +3,11 @@ import { createActionGroup, emptyProps, props } from '@ngrx/store'
 import {
 	ClosedCircuitChain,
 	OpenCircuitChain,
-	PanelId,
 	PanelLinkFromMenu,
 	PanelLinkId,
 	PanelLinkModel,
 	PanelLinkRequest,
+	PanelSymbol,
 } from '@entities/shared'
 import { CurvedNumberLine } from '@canvas/shared'
 
@@ -59,15 +59,17 @@ export const PanelLinksActions = createActionGroup({
 		}>(),
 		'Clear Hovering Over Panel Link In App': emptyProps(),
 		'Set Hovering Over Panel Polarity Symbol': props<{
-			panelId: PanelId
-			symbol: 'positive' | 'negative'
+			panelSymbol: PanelSymbol
 		}>(),
 		'Clear Hovering Over Panel Polarity Symbol': emptyProps(),
 		'Set Mouse Down On Panel Polarity Symbol': props<{
-			panelId: PanelId
-			symbol: 'positive' | 'negative'
+			panelSymbol: PanelSymbol
 		}>(),
 		'Clear Mouse Down On Panel Polarity Symbol': emptyProps(),
+		'Set Drawing Panel Polarity Symbol Line': props<{
+			panelSymbol: PanelSymbol
+		}>(),
+		'Clear Drawing Panel Polarity Symbol Line': emptyProps(),
 		'Clear Panel Links State': emptyProps(),
 		Noop: emptyProps(),
 	},

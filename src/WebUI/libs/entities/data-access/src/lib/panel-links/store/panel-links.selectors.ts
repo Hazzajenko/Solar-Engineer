@@ -99,6 +99,34 @@ export const selectMouseDownOnPanelPolaritySymbol = createSelector(
 	(state: PanelLinksState) => state.mouseDownOnPanelPolaritySymbol,
 )
 
+// type Projector<T> = (s1: PanelLinksState) => T
+/*const panelLinksSelector = <T>(projector: Projector<T>) =>
+ createSelector(selectPanelLinksState, projector)*/
+
+/*type Example = {
+ [K in keyof PanelLinksState]: {
+ key: K
+ }
+ }[keyof PanelLinksState]*/
+/*
+ const exx: Example = {
+ key: 'drawingPanelPolaritySymbolLine',
+ }*/
+
+const createPanelLinksSelector = <T extends keyof PanelLinksState>(projectorReturn: { key: T }) =>
+	createSelector(selectPanelLinksState, (state: PanelLinksState) => state[projectorReturn.key])
+
+export const selectDrawingPanelPolaritySymbolLine = createPanelLinksSelector({
+	key: 'drawingPanelPolaritySymbolLine',
+})
+/*export const selectDrawingPanelPolaritySymbolLine = panelLinksSelector(
+ (state: PanelLinksState) => state.drawingPanelPolaritySymbolLine,
+ )*/
+/*export const selectDrawingPanelPolaritySymbolLine = createSelector(
+ selectPanelLinksState,
+ (state: PanelLinksState) => state.drawingPanelPolaritySymbolLine,
+ )*/
+
 /*
  export const selectPanelLinksForSelectedString = createSelector(
  selectAllPanelLinks,

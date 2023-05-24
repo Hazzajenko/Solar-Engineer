@@ -10,7 +10,7 @@ import { SelectedState } from './selected.reducer'
  } from './selected.selectors'*/
 import { SelectedActions } from './selected.actions'
 import { selectedFeature } from './selected.feature'
-import { PanelLinkId } from '@entities/shared'
+import { PanelLinkId, StringId } from '@entities/shared'
 
 export function injectSelectedStore() {
 	const store = inject(Store<SelectedState>)
@@ -57,7 +57,7 @@ export function injectSelectedStore() {
 		get selectedPanelLinkId$() {
 			return store.select(selectSelectedPanelLinkId)
 		},
-		selectString(stringId: string) {
+		selectString(stringId: StringId) {
 			store.dispatch(SelectedActions.selectString({ stringId }))
 		},
 		clearSelectedString() {

@@ -33,10 +33,10 @@ import {
 } from '@canvas/utils'
 import {
 	CanvasEntity,
-	CanvasPanel,
 	ENTITY_TYPE,
 	getEntitySize,
 	PanelId,
+	PanelModel,
 	SizeByType,
 } from '@entities/shared'
 
@@ -100,7 +100,7 @@ export class ObjectPositioningService {
 		)
 
 		const nearbyLinesState = this._graphicsStore.state.nearbyLinesState
-		const customEntity: CanvasPanel = {
+		const customEntity: PanelModel = {
 			...entity,
 			id: this.singleToMoveId as PanelId,
 			location: getTopLeftPointFromTransformedPoint(currentPoint, SizeByType[ENTITY_TYPE.Panel]),
@@ -292,7 +292,7 @@ export class ObjectPositioningService {
 		}))
 
 		const storeUpdates = updateMany(multiSelectedUpdated, 'location')
-		this._entities.panels.updateManyPanels(storeUpdates as UpdateStr<CanvasPanel>[])
+		this._entities.panels.updateManyPanels(storeUpdates as UpdateStr<PanelModel>[])
 
 		this._positioningStore.dispatch.stopMoving()
 

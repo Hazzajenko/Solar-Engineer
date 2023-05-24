@@ -1,5 +1,5 @@
 import { PANELS_FEATURE_KEY, panelsAdapter, PanelsState } from './panels.reducer'
-import { CanvasPanel } from '@entities/shared'
+import { PanelModel } from '@entities/shared'
 import { Dictionary } from '@ngrx/entity'
 import { createFeatureSelector, createSelector } from '@ngrx/store'
 
@@ -16,14 +16,14 @@ export const selectPanelsEntities = createSelector(selectPanelsState, (state: Pa
 )
 
 export const selectPanelById = (props: { id: string }) =>
-	createSelector(selectPanelsEntities, (panels: Dictionary<CanvasPanel>) => panels[props.id])
+	createSelector(selectPanelsEntities, (panels: Dictionary<PanelModel>) => panels[props.id])
 
 export const selectPanelsByStringId = (props: { stringId: string }) =>
-	createSelector(selectAllPanels, (panels: CanvasPanel[]) =>
+	createSelector(selectAllPanels, (panels: PanelModel[]) =>
 		panels.filter((panel) => panel.stringId === props.stringId),
 	)
 
 export const selectPanelsByIdArray = (props: { ids: string[] }) =>
-	createSelector(selectAllPanels, (panels: CanvasPanel[]) =>
+	createSelector(selectAllPanels, (panels: PanelModel[]) =>
 		panels.filter((panel) => props.ids.includes(panel.id)),
 	)

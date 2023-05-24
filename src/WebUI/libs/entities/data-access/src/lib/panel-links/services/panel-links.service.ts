@@ -2,7 +2,6 @@ import { AppStateStoreService, CanvasElementService } from '@canvas/app/data-acc
 import { inject, Injectable, signal } from '@angular/core'
 import { injectPanelLinksStore } from '../store'
 import {
-	CanvasPanel,
 	ClosedCircuitChain,
 	getEnderPolarityFromDirection,
 	getStarterPolarityFromDirection,
@@ -10,6 +9,8 @@ import {
 	PanelLinkId,
 	PanelLinkModel,
 	PanelLinkRequest,
+	PanelModel,
+	PanelSymbol,
 	PolarityDirection,
 	StringCircuitChains,
 	UndefinedStringId,
@@ -26,7 +27,11 @@ import {
 	isPointInsideStretchedEntityByValue,
 	setCanvasCursorToAuto,
 } from '@canvas/utils'
-import { calculateLinkLinesBetweenTwoPanelCenters } from '@entities/utils'
+import {
+	calculateLinkLinesBetweenTwoPanelCenters,
+	createPanelLink,
+	panelWithSymbolToPanelSymbol,
+} from '@entities/utils'
 import {
 	isPointOverCurvedLineNoCtx,
 	preparePanelLinksForRender,
@@ -141,7 +146,7 @@ export class PanelLinksService {
 		}
 	}
 
-	handlePanelLinksClick(event: PointerEvent, panel: CanvasPanel) {
+	handlePanelLinksClick(event: PointerEvent, panel: PanelModel) {
 		if (!this._selectedStore.selectedStringId) {
 			console.error('a string must be selected to link panels')
 			return
@@ -158,7 +163,7 @@ export class PanelLinksService {
 		this.startPanelLink(event, panel)
 	}
 
-	startPanelLink(event: PointerEvent, panel: CanvasPanel) {
+	startPanelLink(event: PointerEvent, panel: PanelModel) {
 		const polarity = getStarterPolarityFromDirection(this.polarityDirection)
 		if (this._panelLinksStore.isPanelLinkExisting(panel.id, polarity)) {
 			console.error('panel already has a positive link')
@@ -174,7 +179,7 @@ export class PanelLinksService {
 		// this._panelLinksStore.startPanelLink(panelLinkRequest)
 	}
 
-	endPanelLink(event: PointerEvent, panel: CanvasPanel, requestingLink: PanelLinkRequest) {
+	endPanelLink(event: PointerEvent, panel: PanelModel, requestingLink: PanelLinkRequest) {
 		if (requestingLink.stringId !== panel.stringId) {
 			console.error(
 				'panels need to be in the same string to link them, requestingLink.stringId !== panel.stringId',
@@ -276,21 +281,78 @@ export class PanelLinksService {
 	}
 
 	handleLinkMouseDown(event: PointerEvent, currentPoint: TransformedPoint) {
-		const symbolUnderMouse = this.getPanelSymbolUnderMouse(currentPoint)
-		if (symbolUnderMouse) {
-			const { panelId, symbol } = symbolUnderMouse
-			this._entities.panelLinks.setMouseDownOnPanelPolaritySymbol(panelId, symbol)
-			// this._selectedStore.selectPanelLink(symbolUnderMouse.id)
-		} else {
-			const panelUnderMouse = this._entities.panels.getEntityUnderMouse(currentPoint)
-			if (!panelUnderMouse) {
-				return
-			}
+		const panelWithSymbol = this._entities.panels.getPanelWithSymbolUnderMouse(currentPoint)
+		if (!panelWithSymbol) {
+			return
 		}
+
+		const panelSymbol = panelWithSymbolToPanelSymbol(panelWithSymbol)
+		this._entities.panelLinks.setMouseDownOnPanelPolaritySymbol(panelSymbol)
+		/*		const symbolUnderMouse = this.getPanelSymbolUnderMouse(currentPoint)
+		 if (symbolUnderMouse) {
+		 const { panelId, symbol } = symbolUnderMouse
+		 this._entities.panelLinks.setMouseDownOnPanelPolaritySymbol(panelId, symbol)
+		 // this._selectedStore.selectPanelLink(symbolUnderMouse.id)
+		 } else {
+		 const panelUnderMouse = this._entities.panels.getEntityUnderMouse(currentPoint)
+		 if (!panelUnderMouse) {
+		 return
+		 }
+		 }*/
 		/*		if (!symbolUnderMouse) {
 		 return
 		 }
 		 this._selectedStore.selectPanelLink(symbolUnderMouse.id)*/
+	}
+
+	handleMouseUpFromPanelPolaritySymbol(
+		event: PointerEvent,
+		currentPoint: TransformedPoint,
+		mouseDownOnPanelPolaritySymbol: PanelSymbol,
+	) {
+		this._entities.panelLinks.clearMouseDownOnPanelPolaritySymbol()
+		const panelWithSymbolUnderMouse =
+			this._entities.panels.getPanelWithSymbolUnderMouse(currentPoint)
+		if (!panelWithSymbolUnderMouse) {
+			// this._entities.panelLinks.clearMouseDownOnPanelPolaritySymbol()
+			return
+		}
+
+		if (mouseDownOnPanelPolaritySymbol.panelId === panelWithSymbolUnderMouse.id) {
+			// this._entities.panelLinks.clearMouseDownOnPanelPolaritySymbol()
+			return
+		}
+
+		const mouseDownPanel = this._entities.panels.getById(mouseDownOnPanelPolaritySymbol.panelId)
+		assertNotNull(mouseDownPanel)
+
+		const selectedStringId = this._selectedStore.selectedStringId
+		assertNotNull(selectedStringId)
+
+		if (mouseDownOnPanelPolaritySymbol.symbol === panelWithSymbolUnderMouse.symbol) {
+			console.error('cannot link to same polarity')
+			// this._entities.panelLinks.clearMouseDownOnPanelPolaritySymbol()
+			return
+		}
+
+		const positivePanel =
+			panelWithSymbolUnderMouse.symbol === 'positive' ? panelWithSymbolUnderMouse : mouseDownPanel
+		const negativePanel =
+			panelWithSymbolUnderMouse.symbol === 'negative' ? panelWithSymbolUnderMouse : mouseDownPanel
+
+		const panelLink = createPanelLink(selectedStringId, {
+			positivePanel,
+			negativePanel,
+		})
+		this._entities.panelLinks.addPanelLink(panelLink)
+	}
+
+	handleLinkMouseMove(
+		event: PointerEvent,
+		currentPoint: TransformedPoint,
+		mouseDownOnPanelPolaritySymbol: PanelSymbol,
+	) {
+		// this._re
 	}
 
 	private getPanelSymbolUnderMouse(point: TransformedPoint) {

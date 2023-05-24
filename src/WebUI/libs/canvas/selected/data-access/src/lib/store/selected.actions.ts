@@ -1,5 +1,5 @@
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
-import { PanelLinkId } from '@entities/shared'
+import { PanelLinkId, StringId } from '@entities/shared'
 
 export const SelectedActions = createActionGroup({
 	source: 'Selected Store',
@@ -11,7 +11,7 @@ export const SelectedActions = createActionGroup({
 			entityIds: string[]
 		}>(),
 		'Select String': props<{
-			stringId: string
+			stringId: StringId
 		}>(),
 		'Clear Selected String': emptyProps(),
 		'Start MultiSelect': props<{

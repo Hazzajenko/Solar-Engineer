@@ -9,7 +9,7 @@ import {
 	TransformedPoint,
 } from '@shared/data-access/models'
 import { assertNotNull, OnDestroyDirective } from '@shared/utils'
-import { AppStateStoreService, CanvasElementService, MODE_STATE } from '@canvas/app/data-access'
+import { CanvasElementService, injectAppStateStore, MODE_STATE } from '@canvas/app/data-access'
 import { GraphicsStoreService } from '@canvas/graphics/data-access'
 import {
 	DomPointService,
@@ -49,15 +49,11 @@ import {
 	multiSelectDraggingKeysDownAndIdsNotEmpty,
 	rotatingKeysDown,
 } from '@canvas/utils'
-import {
-	isPanel,
-	isPanelSymbol,
-	isPointInsideSelectedStringPanelsByStringIdNgrxWithPanels,
-} from '@entities/utils'
+import { isPanel, isPointInsideSelectedStringPanelsByStringIdNgrxWithPanels } from '@entities/utils'
 import {
 	CanvasEntity,
-	CanvasPanel,
 	ENTITY_TYPE,
+	PanelModel,
 	SizeByType,
 	UndefinedStringId,
 } from '@entities/shared'
@@ -68,7 +64,8 @@ import {
 	standalone: true,
 })
 export class DesignCanvasDirective implements OnInit {
-	private _appState = inject(AppStateStoreService)
+	private _appState = injectAppStateStore()
+	// private _appState = inject(AppStateStoreService)
 	private _graphicsState = inject(GraphicsStoreService)
 	private _positioningStore = inject(ObjectPositioningStoreService)
 	private _selectedStore = inject(SelectedStoreService)
@@ -106,6 +103,7 @@ export class DesignCanvasDirective implements OnInit {
 	private panelStats!: HTMLDivElement
 	private menu!: HTMLDivElement
 	private keyMap!: HTMLDivElement
+
 	private mouseDownTimeOutFn = () => {
 		this.mouseDownTimeOut = setTimeout(() => {
 			this.mouseDownTimeOut = undefined
@@ -182,10 +180,17 @@ export class DesignCanvasDirective implements OnInit {
 			return
 		}
 
-		if (this._appState.state.mode === 'LinkMode') {
+		const mode = this._appState.mode()
+
+		if (mode === 'LinkMode') {
 			this._panelLinks.handleLinkMouseDown(event, currentPoint)
 			// return
 		}
+		/*
+		 if (this._appState.state.mode === 'LinkMode') {
+		 this._panelLinks.handleLinkMouseDown(event, currentPoint)
+		 // return
+		 }*/
 
 		this.entityPressed = this.getPanelUnderMouse(event)
 	}
@@ -268,22 +273,38 @@ export class DesignCanvasDirective implements OnInit {
 			return
 		}
 
-		const appState = this._appState.state
+		const { view, dragBox, mode, pointer } = this._appState.appState()
+		// const appState = this._appState.state
 
-		if (appState.view === 'ViewDraggingInProgress') {
+		if (view === 'ViewDraggingInProgress') {
 			this._view.handleDragScreenMouseMove(event, currentPoint)
 			return
 		}
 
-		if (appState.dragBox === 'SelectionBoxInProgress') {
+		if (dragBox === 'SelectionBoxInProgress') {
 			this._drag.selectionBoxMouseMove(event, currentPoint)
 			return
 		}
 
-		if (appState.dragBox === 'CreationBoxInProgress') {
+		if (dragBox === 'CreationBoxInProgress') {
 			this._drag.creationBoxMouseMove(event, currentPoint)
 			return
 		}
+
+		/*		if (appState.view === 'ViewDraggingInProgress') {
+		 this._view.handleDragScreenMouseMove(event, currentPoint)
+		 return
+		 }
+
+		 if (appState.dragBox === 'SelectionBoxInProgress') {
+		 this._drag.selectionBoxMouseMove(event, currentPoint)
+		 return
+		 }
+
+		 if (appState.dragBox === 'CreationBoxInProgress') {
+		 this._drag.creationBoxMouseMove(event, currentPoint)
+		 return
+		 }*/
 
 		// TODO - fix
 		/*		const dragBoxAxisLineStart = this._app.appCtx.dragBox.axisLineBoxStart
@@ -292,62 +313,102 @@ export class DesignCanvasDirective implements OnInit {
 		 return
 		 }*/
 
-		if (this._appState.state.mode === MODE_STATE.LINK_MODE) {
-			// const isPointOnPath = isPointOnCurvedPath(currentPoint, linkPathNumberArray)
-			// this._panelLinks.isMouseOverLinkPathV3(event, currentPoint, this.ctx)
-			const symbolOrPanel = this.getPanelOrLinkSymbolUnderMouse(currentPoint)
-			if (symbolOrPanel) {
-				// console.log('symbolOrPanel', symbolOrPanel)
-				if (isPanelSymbol(symbolOrPanel)) {
-					const { panelId, symbol } = symbolOrPanel
-					this._entities.panelLinks.setHoveringOverPanelPolaritySymbol(panelId, symbol)
-					return
-				} else {
-					if (this._entities.panelLinks.hoveringOverPanelPolaritySymbol) {
-						this._entities.panelLinks.clearHoveringOverPanelPolaritySymbol()
-						return
-					}
-				}
-
-				// this._panelLinks.isMouseOverLinkPathV4(event, currentPoint, symbolOrPanel)
-				// return
-			} else {
-				if (this._entities.panelLinks.hoveringOverPanelPolaritySymbol) {
-					this._entities.panelLinks.clearHoveringOverPanelPolaritySymbol()
-					return
-				}
+		if (mode === MODE_STATE.LINK_MODE) {
+			const mouseDownOnPanelPolaritySymbol =
+				this._entities.panelLinks.getMouseDownOnPanelPolaritySymbol
+			if (mouseDownOnPanelPolaritySymbol) {
+				// const
+				this._render.renderCanvasApp({
+					draggingSymbolLinkLine: {
+						mouseDownPanelSymbol: mouseDownOnPanelPolaritySymbol,
+						transformedPoint: currentPoint,
+					},
+				})
+				// this._panelLinks.handleLinkMouseMove(event, currentPoint, mouseDownOnPanelPolaritySymbol)
+				return
 			}
-			const entityUnderMouseInLineMode = this.getPanelUnderMouse(event)
-			if (entityUnderMouseInLineMode) {
-				const hoveringEntityId = this._appState.state.pointer.hoveringOverEntityId
-				const overSymbol = isPointInsidePanelSymbols(
-					// const overSymbol = isPointInsideMiddleRightOfEntityWithRotationV2(
-					currentPoint,
-					entityUnderMouseInLineMode,
-				)
-				if (overSymbol) {
-					console.log('over symbol', overSymbol)
 
-					/*					if (hoveringEntityId === entityUnderMouseInLineMode.id) return
-					 this._appState.dispatch.setHoveringOverEntityState(entityUnderMouseInLineMode.id)
-					 if (this._entities.panelLinks.getHoveringOverPanelLinkInApp) {
-					 this._entities.panelLinks.clearHoveringOverPanelLinkInApp()
-					 }
-					 this._render.renderCanvasApp({
-					 panelUnderMouse: entityUnderMouseInLineMode as CanvasPanel,
-					 })
-					 return*/
+			const panelWithSymbol = this._entities.panels.getPanelWithSymbolUnderMouse(currentPoint)
+			if (panelWithSymbol) {
+				const existingHoveringSymbol = this._entities.panelLinks.getHoveringOverPanelPolaritySymbol
+				if (existingHoveringSymbol && existingHoveringSymbol.panelId === panelWithSymbol.id) {
+					return
 				}
-				if (hoveringEntityId === entityUnderMouseInLineMode.id) return
-				this._appState.dispatch.setHoveringOverEntityState(entityUnderMouseInLineMode.id)
+				this._entities.panelLinks.setHoveringOverPanelPolaritySymbol({
+					panelId: panelWithSymbol.id,
+					symbol: panelWithSymbol.symbol,
+				})
+				this._render.renderCanvasApp()
+				return
+			} else if (this._entities.panelLinks.getHoveringOverPanelPolaritySymbol) {
+				this._entities.panelLinks.clearHoveringOverPanelPolaritySymbol()
+				return
+			}
+
+			const panelUnderMouse = this._entities.panels.getPanelUnderMouse(currentPoint)
+			if (panelUnderMouse) {
+				const hoveringEntityId = pointer.hoveringOverEntityId
+				if (hoveringEntityId === panelUnderMouse.id) return
+				this._appState.setHoveringOverEntityState(panelUnderMouse.id)
 				if (this._entities.panelLinks.getHoveringOverPanelLinkInApp) {
 					this._entities.panelLinks.clearHoveringOverPanelLinkInApp()
 				}
-				this._render.renderCanvasApp({
-					panelUnderMouse: entityUnderMouseInLineMode as CanvasPanel,
-				})
 				return
 			}
+
+			/*const symbolOrPanel = this.getPanelOrLinkSymbolUnderMouse(currentPoint)
+			 if (symbolOrPanel) {
+			 // console.log('symbolOrPanel', symbolOrPanel)
+			 if (isPanelSymbol(symbolOrPanel)) {
+			 const { panelId, symbol } = symbolOrPanel
+			 this._entities.panelLinks.setHoveringOverPanelPolaritySymbol(panelId, symbol)
+			 return
+			 } else {
+			 if (this._entities.panelLinks.getHoveringOverPanelPolaritySymbol) {
+			 this._entities.panelLinks.clearHoveringOverPanelPolaritySymbol()
+			 return
+			 }
+			 }
+
+			 // this._panelLinks.isMouseOverLinkPathV4(event, currentPoint, symbolOrPanel)
+			 // return
+			 } else {
+			 if (this._entities.panelLinks.getHoveringOverPanelPolaritySymbol) {
+			 this._entities.panelLinks.clearHoveringOverPanelPolaritySymbol()
+			 return
+			 }
+			 }
+			 const entityUnderMouseInLineMode = this.getPanelUnderMouse(event)
+			 if (entityUnderMouseInLineMode) {
+			 const hoveringEntityId = pointer.hoveringOverEntityId
+			 const overSymbol = isPointInsidePanelSymbols(
+			 // const overSymbol = isPointInsideMiddleRightOfEntityWithRotationV2(
+			 currentPoint,
+			 entityUnderMouseInLineMode,
+			 )
+			 if (overSymbol) {
+			 console.log('over symbol', overSymbol)
+
+			 /!*					if (hoveringEntityId === entityUnderMouseInLineMode.id) return
+			 this._appState.dispatch.setHoveringOverEntityState(entityUnderMouseInLineMode.id)
+			 if (this._entities.panelLinks.getHoveringOverPanelLinkInApp) {
+			 this._entities.panelLinks.clearHoveringOverPanelLinkInApp()
+			 }
+			 this._render.renderCanvasApp({
+			 panelUnderMouse: entityUnderMouseInLineMode as CanvasPanel,
+			 })
+			 return*!/
+			 }
+			 if (hoveringEntityId === entityUnderMouseInLineMode.id) return
+			 this._appState.setHoveringOverEntityState(entityUnderMouseInLineMode.id)
+			 if (this._entities.panelLinks.getHoveringOverPanelLinkInApp) {
+			 this._entities.panelLinks.clearHoveringOverPanelLinkInApp()
+			 }
+			 this._render.renderCanvasApp({
+			 panelUnderMouse: entityUnderMouseInLineMode as CanvasPanel,
+			 })
+			 return
+			 }*/
 			const panelLinkUnderMouse = this._panelLinks.isMouseOverLinkPath(event, currentPoint)
 			if (panelLinkUnderMouse) {
 				const existingPanelLinkUnderMouse = this._entities.panelLinks.getHoveringOverPanelLinkInApp
@@ -360,10 +421,6 @@ export class DesignCanvasDirective implements OnInit {
 				this._render.renderCanvasApp({
 					transformedPoint: currentPoint,
 				})
-				// this._appState.dispatch.setHoveringOverLinkState(panelLinkUnderMouse.id)
-				/*	this._render.renderCanvasApp({
-				 panelLinkUnderMouse,
-				 })*/
 				return
 			}
 
@@ -374,18 +431,18 @@ export class DesignCanvasDirective implements OnInit {
 
 			const entityUnderMouse = this.getPanelUnderMouse(event)
 			if (entityUnderMouse) {
-				const hoveringEntityId = this._appState.state.pointer.hoveringOverEntityId
+				const hoveringEntityId = pointer.hoveringOverEntityId
 				if (hoveringEntityId === entityUnderMouse.id) return
-				this._appState.dispatch.setHoveringOverEntityState(entityUnderMouse.id)
+				this._appState.setHoveringOverEntityState(entityUnderMouse.id)
 				this._render.renderCanvasApp({
-					panelUnderMouse: entityUnderMouse as CanvasPanel,
+					panelUnderMouse: entityUnderMouse as PanelModel,
 				})
 				return
 			}
 
-			if (appState.pointer.hoverState === 'HoveringOverEntity') {
+			if (pointer.hoverState === 'HoveringOverEntity') {
 				changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
-				this._appState.dispatch.liftHoveringOverEntity()
+				this._appState.liftHoveringOverEntity()
 				this._render.renderCanvasApp()
 				return
 			}
@@ -399,16 +456,16 @@ export class DesignCanvasDirective implements OnInit {
 
 		const entityUnderMouse = this.getPanelUnderMouse(event)
 		if (entityUnderMouse) {
-			const hoveringEntityId = this._appState.state.pointer.hoveringOverEntityId
+			const hoveringEntityId = pointer.hoveringOverEntityId
 			if (hoveringEntityId === entityUnderMouse.id) return
-			this._appState.dispatch.setHoveringOverEntityState(entityUnderMouse.id)
+			this._appState.setHoveringOverEntityState(entityUnderMouse.id)
 			this._render.renderCanvasApp()
 			return
 		}
 
-		if (appState.pointer.hoverState === 'HoveringOverEntity') {
+		if (pointer.hoverState === 'HoveringOverEntity') {
 			changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
-			this._appState.dispatch.liftHoveringOverEntity()
+			this._appState.liftHoveringOverEntity()
 			this._render.renderCanvasApp()
 			return
 		}
@@ -458,12 +515,12 @@ export class DesignCanvasDirective implements OnInit {
 			return
 		}
 
-		const viewState = this._appState.state.view
+		const { view, dragBox, mode } = this._appState.appState()
 
 		/**
 		 * ! View Positioning
 		 */
-		if (viewState === 'ViewDraggingInProgress') {
+		if (view === 'ViewDraggingInProgress') {
 			this._view.handleDragScreenMouseUp()
 			return
 		}
@@ -472,15 +529,30 @@ export class DesignCanvasDirective implements OnInit {
 		 * ! Drag Box
 		 */
 
-		const dragBoxState = this._appState.state.dragBox
+		// const dragBoxState = this._appState.state.dragBox
 
-		if (dragBoxState === 'SelectionBoxInProgress') {
+		if (dragBox === 'SelectionBoxInProgress') {
 			this._drag.selectionBoxMouseUp(event, currentPoint)
 			return
 		}
 
-		if (dragBoxState === 'CreationBoxInProgress') {
+		if (dragBox === 'CreationBoxInProgress') {
 			this._drag.creationBoxMouseUp(event, currentPoint)
+			return
+		}
+
+		if (mode === 'LinkMode') {
+			const mouseDownOnPanelPolaritySymbol =
+				this._entities.panelLinks.getMouseDownOnPanelPolaritySymbol
+			if (mouseDownOnPanelPolaritySymbol) {
+				this._panelLinks.handleMouseUpFromPanelPolaritySymbol(
+					event,
+					currentPoint,
+					mouseDownOnPanelPolaritySymbol,
+				)
+			}
+
+			// this._panelLinks.handleMouseUpInLinkMode(event, currentPoint)
 			return
 		}
 
@@ -517,11 +589,17 @@ export class DesignCanvasDirective implements OnInit {
 			this._objPositioning.resetObjectPositioning(event, currentPoint)
 			return
 		}
-		const mode = this._appState.state.mode
+		const { mode } = this._appState.appState()
+		// const mode = this._appState.state.mode
 		if (mode === 'LinkMode') {
 			const symbolUnderMouse = this.getPanelSymbolUnderMouse(currentPoint)
 			if (symbolUnderMouse) {
 				console.log('symbolUnderMouse', symbolUnderMouse)
+				this._entities.panelLinks.setDrawingPanelPolaritySymbolLine(symbolUnderMouse)
+				return
+			} else if (this._entities.panelLinks.drawingPanelPolaritySymbolLine) {
+				this._entities.panelLinks.clearDrawingPanelPolaritySymbolLine()
+				return
 			}
 			/*			const symbolOrPanel = this.getPanelOrLinkSymbolUnderMouse(currentPoint)
 			 if (symbolOrPanel) {
@@ -558,7 +636,7 @@ export class DesignCanvasDirective implements OnInit {
 				return
 			}
 			if (mode == 'CreateMode') {
-				this._appState.dispatch.setModeState('SelectMode')
+				this._appState.setModeState('SelectMode')
 				this._selected.handleEntityUnderMouse(event, entityUnderMouse)
 				return
 			}
@@ -568,7 +646,7 @@ export class DesignCanvasDirective implements OnInit {
 					this._panelLinks.handlePanelLinksClick(event, entityUnderMouse)
 					return
 				}
-				this._appState.dispatch.setModeState('SelectMode')
+				this._appState.setModeState('SelectMode')
 				// this._panelLinks.clearPanelLinkRequest()
 				return
 			}
@@ -709,7 +787,8 @@ export class DesignCanvasDirective implements OnInit {
 			return
 		}
 
-		const mode = this._appState.state.mode
+		const { mode } = this._appState.appState()
+		// const mode = this._appState.state.mode
 		if (mode === 'LinkMode') {
 			const panelLinkUnderMouse = this._panelLinks.isMouseOverLinkPath(event, currentPoint)
 			if (panelLinkUnderMouse) {
@@ -807,7 +886,7 @@ export class DesignCanvasDirective implements OnInit {
 		this._renderer.listen(this.canvas, EVENT_TYPE.POINTER_MOVE, (event: PointerEvent) => {
 			this.rawMousePos = eventToPointLocation(event)
 			this.currentPoint = this._domPoint.getTransformedPointFromEvent(event)
-			this._appState.mousePos = this.currentPoint
+			// this._appState.mousePos = this.currentPoint
 			this.onMouseMoveHandler(event, this.currentPoint)
 			event.stopPropagation()
 			event.preventDefault()

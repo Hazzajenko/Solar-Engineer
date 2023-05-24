@@ -3,7 +3,7 @@ import { initialPanelsState, PanelsState } from './panels.reducer'
 import { selectAllPanels, selectPanelsState } from './panels.selectors'
 import { inject, Injectable } from '@angular/core'
 import { toSignal } from '@angular/core/rxjs-interop'
-import { CanvasPanel } from '@entities/shared'
+import { PanelModel } from '@entities/shared'
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { select, Store } from '@ngrx/store'
 import { isNotNull } from '@shared/utils'
@@ -55,19 +55,19 @@ export class PanelsStoreService {
 		// return this.panelsByStringId()[stringId] ?? []
 	}
 
-	addPanel(panel: CanvasPanel) {
+	addPanel(panel: PanelModel) {
 		this._store.dispatch(PanelsActions.addPanel({ panel }))
 	}
 
-	addManyPanels(panels: CanvasPanel[]) {
+	addManyPanels(panels: PanelModel[]) {
 		this._store.dispatch(PanelsActions.addManyPanels({ panels }))
 	}
 
-	updatePanel(update: UpdateStr<CanvasPanel>) {
+	updatePanel(update: UpdateStr<PanelModel>) {
 		this._store.dispatch(PanelsActions.updatePanel({ update }))
 	}
 
-	updateManyPanels(updates: UpdateStr<CanvasPanel>[]) {
+	updateManyPanels(updates: UpdateStr<PanelModel>[]) {
 		this._store.dispatch(PanelsActions.updateManyPanels({ updates }))
 	}
 
@@ -87,19 +87,19 @@ export class PanelsStoreService {
 class PanelsRepository {
 	constructor(private readonly _store: Store<PanelsState>) {}
 
-	addPanel(panel: CanvasPanel) {
+	addPanel(panel: PanelModel) {
 		this._store.dispatch(PanelsActions.addPanel({ panel }))
 	}
 
-	addManyPanels(panels: CanvasPanel[]) {
+	addManyPanels(panels: PanelModel[]) {
 		this._store.dispatch(PanelsActions.addManyPanels({ panels }))
 	}
 
-	updatePanel(update: UpdateStr<CanvasPanel>) {
+	updatePanel(update: UpdateStr<PanelModel>) {
 		this._store.dispatch(PanelsActions.updatePanel({ update }))
 	}
 
-	updateManyPanels(updates: UpdateStr<CanvasPanel>[]) {
+	updateManyPanels(updates: UpdateStr<PanelModel>[]) {
 		this._store.dispatch(PanelsActions.updateManyPanels({ updates }))
 	}
 

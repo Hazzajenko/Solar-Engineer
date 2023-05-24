@@ -1,4 +1,4 @@
-import { CanvasPanel, getEntityCenter } from '@entities/shared'
+import { getEntityCenter, PanelModel, PanelWithSymbol } from '@entities/shared'
 import { Point } from '@shared/data-access/models'
 
 /**
@@ -10,8 +10,8 @@ import { Point } from '@shared/data-access/models'
 export type LinkLinePoints = [Point, Point]
 
 export const calculateLinkLinesBetweenTwoPanelCenters = (
-	positivePanel: CanvasPanel,
-	negativePanel: CanvasPanel,
+	positivePanel: PanelModel,
+	negativePanel: PanelModel,
 ): LinkLinePoints => {
 	return [getEntityCenter(positivePanel), getEntityCenter(negativePanel)]
 	/*	return [
@@ -21,31 +21,37 @@ export const calculateLinkLinesBetweenTwoPanelCenters = (
 }
 // getEntityCenter()
 export const calculateLinkLinesBetweenTwoPanels = (
-	positivePanel: CanvasPanel,
-	negativePanel: CanvasPanel,
+	positivePanel: PanelModel,
+	negativePanel: PanelModel,
 ): LinkLinePoints => {
 	return [getPositiveSymbolLocation(positivePanel), getNegativeSymbolLocation(negativePanel)]
 }
 
-export const getSymbolLocations = (panel: CanvasPanel) => {
+export const getSymbolLocations = (panel: PanelModel) => {
 	return [getNegativeSymbolLocation(panel), getPositiveSymbolLocation(panel)]
 }
 
-export const getSymbolLocationPoints = (panel: CanvasPanel) => {
+export const getSymbolLocationPoints = (panel: PanelModel) => {
 	return {
 		negative: getNegativeSymbolLocation(panel),
 		positive: getPositiveSymbolLocation(panel),
 	}
 }
 
-export const getPositiveSymbolLocation = (panel: CanvasPanel) => {
+export const getPositiveSymbolLocation = (panel: PanelModel) => {
 	const x = panel.location.x + panel.width
 	const y = panel.location.y + panel.height / 2
 	return { x, y }
 }
 
-export const getNegativeSymbolLocation = (panel: CanvasPanel) => {
+export const getNegativeSymbolLocation = (panel: PanelModel) => {
 	const x = panel.location.x
 	const y = panel.location.y + panel.height / 2
 	return { x, y }
+}
+
+export const getPanelSymbolLocationBasedOnPolarity = (panel: PanelWithSymbol) => {
+	return panel.symbol === 'positive'
+		? getPositiveSymbolLocation(panel)
+		: getNegativeSymbolLocation(panel)
 }

@@ -1,14 +1,10 @@
 import { SelectedActions } from './selected.actions'
 import { initialSelectedState, SelectedState } from './selected.reducer'
-import {
-	selectMultiSelectedEntities,
-	selectSelectedState,
-	selectSelectedStringId,
-	selectSingleSelectedEntity,
-} from './selected.selectors'
+import { selectMultiSelectedEntities, selectSelectedState, selectSelectedStringId, selectSingleSelectedEntity } from './selected.selectors'
 import { inject, Injectable } from '@angular/core'
 import { toSignal } from '@angular/core/rxjs-interop'
 import { select, Store } from '@ngrx/store'
+import { StringId } from '@entities/shared'
 
 //
 //
@@ -71,7 +67,7 @@ export class SelectedStoreService {
 class SelectedRepository {
 	constructor(private readonly _store: Store<SelectedState>) {}
 
-	selectString(stringId: string) {
+	selectString(stringId: StringId) {
 		this._store.dispatch(SelectedActions.selectString({ stringId }))
 	}
 

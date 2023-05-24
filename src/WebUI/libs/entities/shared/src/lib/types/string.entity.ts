@@ -1,6 +1,6 @@
 import { PanelId } from './panel.entity'
 
-export type CanvasString = {
+export type StringModel = {
 	id: StringId
 	color: string
 	name: string

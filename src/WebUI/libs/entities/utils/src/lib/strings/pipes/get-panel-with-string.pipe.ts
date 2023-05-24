@@ -6,11 +6,11 @@ import {
 	isSingleEntityContextMenuTemplate,
 } from '@canvas/view-positioning/data-access'
 import { isPanel } from '../../panels'
-import { CanvasEntity, CanvasString } from '@entities/shared'
+import { CanvasEntity, StringModel } from '@entities/shared'
 import { EntityStoreService } from '@entities/data-access'
 
 export type PanelWithString = CanvasEntity & {
-	string: CanvasString | undefined
+	string: StringModel | undefined
 }
 
 @Pipe({

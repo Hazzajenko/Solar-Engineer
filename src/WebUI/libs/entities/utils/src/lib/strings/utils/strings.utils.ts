@@ -1,8 +1,8 @@
-import { CanvasString, PanelId } from '@entities/shared'
+import { PanelId, StringModel } from '@entities/shared'
 // import { EntityStore } from '@entities/data-access'
 import { createString } from './strings'
 
-export const genStringNameV2 = (strings: CanvasString[]): string => {
+export const genStringNameV2 = (strings: StringModel[]): string => {
 	const name = 'String'
 	const count = strings.filter((s) => s.name === name).length
 	return `${name}_${count}`
@@ -33,9 +33,9 @@ export const createStringWithPanelsV2 = (selectedPanelIds: string[], amountOfStr
 }
 
 export const setPanelAsDisconnectionPointForString = (
-	string: CanvasString,
+	string: StringModel,
 	panelId: PanelId,
-): CanvasString => {
+): StringModel => {
 	return {
 		...string,
 		disconnectionPointId: panelId,

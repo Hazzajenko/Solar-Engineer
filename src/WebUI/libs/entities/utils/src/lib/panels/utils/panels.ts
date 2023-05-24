@@ -3,20 +3,20 @@ import { Point } from '@shared/data-access/models'
 import { EntityFactory } from '@canvas/utils'
 import {
 	CanvasEntity,
-	CanvasPanel,
 	DefaultPanelConfigId,
 	ENTITY_TYPE,
 	PanelConfigId,
 	PanelId,
+	PanelModel,
 	StringId,
 	UndefinedStringId,
 } from '@entities/shared'
 
-export function isPanel(entity: CanvasEntity | CanvasPanel): entity is CanvasPanel {
+export function isPanel(entity: CanvasEntity | PanelModel): entity is PanelModel {
 	return entity.type === ENTITY_TYPE.Panel
 }
 
-export function assertIsPanel(entity: CanvasEntity | CanvasPanel): asserts entity is CanvasPanel {
+export function assertIsPanel(entity: CanvasEntity | PanelModel): asserts entity is PanelModel {
 	if (!isPanel(entity)) {
 		throw new Error(`Expected entity to be a panel, but was ${entity.type}`)
 	}
@@ -26,37 +26,37 @@ export const createPanel = (
 	location: Point,
 	stringId: string = UndefinedStringId,
 	panelConfigId: PanelConfigId = DefaultPanelConfigId,
-): CanvasPanel => {
+): PanelModel => {
 	return {
 		...EntityFactory.create(ENTITY_TYPE.Panel, location),
 		stringId,
 		panelConfigId,
-	} as CanvasPanel
+	} as PanelModel
 }
 
-export const createManyPanels = (locations: Point[], stringIds: StringId[] = []): CanvasPanel[] => {
+export const createManyPanels = (locations: Point[], stringIds: StringId[] = []): PanelModel[] => {
 	return locations.map((location, index) => {
 		return createPanel(location, stringIds[index])
 	})
 }
 
 export const PanelFactory = {
-	create: (stringId: StringId, location: Point): CanvasPanel => {
+	create: (stringId: StringId, location: Point): PanelModel => {
 		return {
 			...EntityFactory.create(ENTITY_TYPE.Panel, location),
 			stringId,
-		} as CanvasPanel
+		} as PanelModel
 	},
-	update: (panel: CanvasPanel, changes: Partial<CanvasPanel>): CanvasPanel => {
+	update: (panel: PanelModel, changes: Partial<PanelModel>): PanelModel => {
 		return {
 			...EntityFactory.update(panel, changes),
 			...changes,
-		} as CanvasPanel
+		} as PanelModel
 	},
 	updateForStore: (
 		panelId: PanelId | string,
-		changes: Partial<CanvasPanel>,
-	): UpdateStr<CanvasPanel> => {
+		changes: Partial<PanelModel>,
+	): UpdateStr<PanelModel> => {
 		return {
 			id: panelId,
 			changes,

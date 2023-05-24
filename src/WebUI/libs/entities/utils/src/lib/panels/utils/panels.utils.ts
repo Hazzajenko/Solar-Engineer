@@ -1,7 +1,7 @@
 import { assertNotNull } from '@shared/utils'
 import { getCompleteBoundsFromMultipleEntitiesWithPadding, isPointInsideBounds } from '@canvas/utils'
 import { TransformedPoint } from '@shared/data-access/models'
-import { CanvasPanel } from '@entities/shared'
+import { PanelModel, PanelSymbol, PanelWithSymbol } from '@entities/shared'
 import { EntityStoreService } from '@entities/data-access'
 
 /*export const getSelectedStringPanelBounds = (
@@ -41,7 +41,7 @@ export const isPointInsideSelectedStringPanelsByStringIdNgrx = (
 }
 
 export const isPointInsideSelectedStringPanelsByStringIdNgrxWithPanels = (
-	panels: CanvasPanel[],
+	panels: PanelModel[],
 	selectedStringId: string,
 	point: TransformedPoint,
 ) => {
@@ -82,7 +82,14 @@ export const getSelectedStringPanelBoundsByStringIdNgrx = (
  return isPointInsideBounds(point, multipleSelectedPanelBounds)
  }*/
 
-export const isTypeOfPanel = (panel: unknown): panel is CanvasPanel => {
+export const isTypeOfPanel = (panel: unknown): panel is PanelModel => {
 	if (!panel) return false
-	return (panel as CanvasPanel).type === 'panel'
+	return (panel as PanelModel).type === 'panel'
+}
+
+export const panelWithSymbolToPanelSymbol = (panel: PanelWithSymbol): PanelSymbol => {
+	return {
+		panelId: panel.id,
+		symbol: panel.symbol,
+	}
 }

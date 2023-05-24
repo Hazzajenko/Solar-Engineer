@@ -1,11 +1,17 @@
 import {
 	CanvasEntity,
-	CanvasPanel,
 	PanelLinkFromMenu,
 	PanelLinkId,
 	PanelLinkModel,
+	PanelModel,
+	PanelWithSymbol,
 } from '@entities/shared'
-import { CurvedNumberLine, DrawOptions, QuadraticNumberLine } from '@canvas/shared'
+import {
+	CurvedNumberLine,
+	DrawOptions,
+	LineToLineNumberLine,
+	QuadraticNumberLine,
+} from '@canvas/shared'
 import {
 	drawBezierLineNumbersWithOptions,
 	drawQuadraticLineNumbersWithOptions,
@@ -13,7 +19,8 @@ import {
 	getAngleInRadiansBetweenTwoPoints,
 	getQuadraticAngleAtPointUsingNumberLine,
 } from '@canvas/utils'
-import { injectArrowHeadSvg } from '../../../../svgs'
+import { TransformedPoint } from '@shared/data-access/models'
+import { getPanelSymbolLocationBasedOnPolarity } from '@entities/utils'
 
 let offset = 0
 let image: HTMLImageElement | undefined
@@ -28,23 +35,23 @@ export const drawLinkModePathLinesCurvedAlreadyMappedV6 = (
 ) => {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const ignore = selectedPanelLinkId || hoveringOverPanelLinkInLinkMenu
-	const customEntityIds = new Set(customEntities?.map((e) => e.id) || [])
-	// const customEntityIds2 = customEntities?.map((e) => e.id)
-	// const customEntityIdsSet = new Set(customEntityIds)
-	// const isCustomEntity = (id: string) => customEntityIdsSet.has(id)
+	/*	const customEntityIds = new Set(customEntities?.map((e) => e.id) || [])
+	 // const customEntityIds2 = customEntities?.map((e) => e.id)
+	 // const customEntityIdsSet = new Set(customEntityIds)
+	 // const isCustomEntity = (id: string) => customEntityIdsSet.has(id)
 
-	/*	const animateLineDash = (ctx: CanvasRenderingContext2D) => {
+	 /!*	const animateLineDash = (ctx: CanvasRenderingContext2D) => {
 	 offset++
 	 if (offset > 16) {
 	 offset = 0
 	 }
 	 ctx.lineDashOffset = -offset
 	 requestAnimationFrame(() => animateLineDash(ctx))
-	 }*/
+	 }*!/
 
-	injectArrowHeadSvg().then((img) => {
-		image = img
-	})
+	 injectArrowHeadSvg().then((img) => {
+	 image = img
+	 })*/
 
 	if (!circuitLinkLineTuples.length) {
 		return
@@ -186,7 +193,7 @@ export const checkIfPanelIdIsWithPanelLink = (panelId: string, panelLinks: Panel
 }
 
 export const checkIfPanelIsWithPanelLink = (
-	panelId: CanvasPanel['id'],
+	panelId: PanelModel['id'],
 	panelLinks: PanelLinkModel[],
 ) => {
 	return panelLinks.some((l) => l.positivePanelId === panelId || l.negativePanelId === panelId)
@@ -326,3 +333,25 @@ export const drawArrowheadSvg = (ctx: CanvasRenderingContext2D, line: QuadraticN
 	ctx.drawImage(image, -10, -10, 20, 20)
 	ctx.restore()
 }
+
+export const drawDraggingSymbolLinkLine = (
+	ctx: CanvasRenderingContext2D,
+	panelWithSymbol: PanelWithSymbol,
+	mousePoint: TransformedPoint,
+) => {
+	const startPoint = getPanelSymbolLocationBasedOnPolarity(panelWithSymbol)
+	const straightLine: LineToLineNumberLine = [
+		startPoint.x,
+		startPoint.y,
+		mousePoint.x,
+		mousePoint.y,
+	]
+	drawStraightLineNumbersWithOptions(ctx, straightLine)
+	/*	const line = getQuadraticNumberLineFromPanelWithSymbol(panelWithSymbol)
+	 const line2 = getQuadraticNumberLineFromPanelWithSymbol(panelWithSymbol)
+	 line2[4] = mousePoint.x
+	 line2[5] = mousePoint.y
+	 drawQuadraticNumberLine(ctx, line2)
+	 drawArrowhead(ctx, line2, 10)*/
+}
+// line: QuadraticNumberLine,

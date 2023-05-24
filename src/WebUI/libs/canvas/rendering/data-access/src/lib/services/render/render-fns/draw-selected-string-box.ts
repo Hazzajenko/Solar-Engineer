@@ -2,7 +2,7 @@
 
 import { assertNotNull } from '@shared/utils'
 import { getCompleteBoundsFromMultipleEntitiesWithPadding } from '@canvas/utils'
-import { CANVAS_COLORS, CanvasPanel, CanvasString } from '@entities/shared'
+import { CANVAS_COLORS, PanelModel, StringModel } from '@entities/shared'
 import { EntityStoreService, StringsStatsService } from '@entities/data-access'
 // import { SelectedStateSnapshot } from '../../../../../../deprecated/design-app/feature-design-canvas/src/lib/services/canvas-client-state/+xstate/selected-state.machine'
 
@@ -69,8 +69,8 @@ export const drawSelectedStringBoxV2 = (
 
 export const drawSelectedStringBoxV3 = (
 	ctx: CanvasRenderingContext2D,
-	selectedString: CanvasString,
-	selectedStringPanels: CanvasPanel[],
+	selectedString: StringModel,
+	selectedStringPanels: PanelModel[],
 ) => {
 	const selectionBoxBounds = getCompleteBoundsFromMultipleEntitiesWithPadding(
 		selectedStringPanels,
@@ -94,8 +94,8 @@ export const drawSelectedStringBoxV3 = (
 
 export const drawSelectedStringBoxWithStats = (
 	ctx: CanvasRenderingContext2D,
-	selectedString: CanvasString,
-	selectedStringPanels: CanvasPanel[],
+	selectedString: StringModel,
+	selectedStringPanels: PanelModel[],
 	stringStats: ReturnType<StringsStatsService['calculateStringStatsForSelectedString']>, // stringStats: StringStatStrings,
 ) => {
 	const selectionBoxBounds = getCompleteBoundsFromMultipleEntitiesWithPadding(

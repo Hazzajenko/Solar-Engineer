@@ -1,17 +1,20 @@
-import { CanvasPanel, PanelSymbol } from '@entities/shared'
+import { PanelModel, PanelSymbol } from '@entities/shared'
 import { toRadians } from '@canvas/utils'
 import { AngleDegrees } from '@shared/data-access/models'
 
 const lineLength = 5
 export const drawLinkModeSymbols = (
 	ctx: CanvasRenderingContext2D,
-	panel: CanvasPanel,
+	panel: PanelModel,
 	mouseOverSymbol: PanelSymbol | undefined,
 ) => {
 	const isHovered = panel.id === mouseOverSymbol?.panelId
 	const isPositive = isHovered && mouseOverSymbol?.symbol === 'positive'
 	const isNegative = isHovered && mouseOverSymbol?.symbol === 'negative'
 
+	// if (isHovered) {
+	// 	console.log('isHovered', isHovered)
+	// }
 	ctx.save()
 	// draw negative symbol
 	const negativeLineLength = isNegative ? lineLength * 1.25 : lineLength

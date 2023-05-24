@@ -1,21 +1,21 @@
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
-import { CanvasPanel } from '@entities/shared'
+import { PanelModel } from '@entities/shared'
 
 export const PanelsActions = createActionGroup({
 	source: 'Panels Store',
 	events: {
 		'Add Panel': props<{
-			panel: CanvasPanel
+			panel: PanelModel
 		}>(),
 		'Add Many Panels': props<{
-			panels: CanvasPanel[]
+			panels: PanelModel[]
 		}>(),
 		'Update Panel': props<{
-			update: UpdateStr<CanvasPanel>
+			update: UpdateStr<PanelModel>
 		}>(),
 		'Update Many Panels': props<{
-			updates: UpdateStr<CanvasPanel>[]
+			updates: UpdateStr<PanelModel>[]
 		}>(),
 		'Delete Panel': props<{
 			panelId: string

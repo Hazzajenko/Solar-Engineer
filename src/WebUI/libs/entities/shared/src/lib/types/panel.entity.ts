@@ -3,7 +3,7 @@ import { PanelConfigId } from './panel-config'
 import { StringId } from './string.entity'
 import { Polarity } from './panel-link'
 
-export type CanvasPanel = Omit<CanvasEntity, 'id' | 'type'> & {
+export type PanelModel = Omit<CanvasEntity, 'id' | 'type'> & {
 	id: PanelId
 	stringId: StringId
 	panelConfigId: PanelConfigId
@@ -16,5 +16,9 @@ export type PanelId = string & {
 
 export type PanelSymbol = {
 	panelId: PanelId
+	symbol: Polarity
+}
+
+export type PanelWithSymbol = PanelModel & {
 	symbol: Polarity
 }

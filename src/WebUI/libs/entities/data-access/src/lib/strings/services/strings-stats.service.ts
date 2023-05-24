@@ -3,7 +3,7 @@ import { injectSelectedStore } from '@canvas/selected/data-access'
 import { injectStringsStore } from '../store'
 import { assertNotNull } from '@shared/utils'
 import { injectPanelConfigsStore } from '../../panel-configs'
-import { CanvasPanel, PanelConfig } from '@entities/shared'
+import { PanelConfig, PanelModel } from '@entities/shared'
 import { injectPanelsStore } from '../../panels'
 import { injectPanelLinksStore, PanelLinksService } from '../../panel-links'
 
@@ -48,7 +48,7 @@ export class StringsStatsService {
 		}
 	}
 
-	calculateStringPanelLinkStatsForString(stringId: string, stringPanels: CanvasPanel[]) {
+	calculateStringPanelLinkStatsForString(stringId: string, stringPanels: PanelModel[]) {
 		const stringPanelLinkChains = this._panelLinks.getPanelLinkOrderForString(stringId)
 		const amountOfChains = stringPanelLinkChains.length
 		const amountOfLinks = stringPanelLinkChains.reduce((acc, chain) => acc + chain.length, 0)
@@ -95,7 +95,7 @@ export class StringsStatsService {
 	}
 }
 
-export type PanelWithConfig = Pick<CanvasPanel, 'id'> &
+export type PanelWithConfig = Pick<PanelModel, 'id'> &
 	Omit<PanelConfig, 'name' | 'id' | 'brand' | 'model'>
 
 export type StringStats = {
@@ -114,7 +114,7 @@ export type StringStatStrings = {
 	totalPmax: string
 }
 
-function mapPanelToPanelWithConfig(panel: CanvasPanel, panelConfig: PanelConfig): PanelWithConfig {
+function mapPanelToPanelWithConfig(panel: PanelModel, panelConfig: PanelConfig): PanelWithConfig {
 	const {
 		maximumPowerTemp,
 		openCircuitVoltage,

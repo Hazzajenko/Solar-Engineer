@@ -1,6 +1,6 @@
 import { SelectedActions } from './selected.actions'
 import { Action, createReducer, on } from '@ngrx/store'
-import { PanelLinkId } from '@entities/shared'
+import { PanelLinkId, StringId } from '@entities/shared'
 
 export const SELECTED_FEATURE_KEY = 'selected'
 
@@ -15,7 +15,7 @@ export type EntitySelectedState = (typeof ENTITY_SELECTED_STATE)[keyof typeof EN
 export interface SelectedState {
 	singleSelectedEntityId: string | undefined
 	multipleSelectedEntityIds: string[]
-	selectedStringId: string | undefined
+	selectedStringId: StringId | undefined
 	selectedPanelLinkId: PanelLinkId | undefined
 	entityState: EntitySelectedState
 }

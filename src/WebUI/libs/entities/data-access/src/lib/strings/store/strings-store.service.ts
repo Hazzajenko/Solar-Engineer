@@ -5,7 +5,7 @@ import { inject, Injectable } from '@angular/core'
 import { toSignal } from '@angular/core/rxjs-interop'
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { select, Store } from '@ngrx/store'
-import { CanvasString } from '@entities/shared'
+import { StringModel } from '@entities/shared'
 
 @Injectable({
 	providedIn: 'root',
@@ -50,19 +50,19 @@ export class StringsStoreService {
 		return this.entities[id]
 	}
 
-	addString(freeString: CanvasString) {
+	addString(freeString: StringModel) {
 		this._store.dispatch(StringsActions.addString({ string: freeString }))
 	}
 
-	addManyStrings(strings: CanvasString[]) {
+	addManyStrings(strings: StringModel[]) {
 		this._store.dispatch(StringsActions.addManyStrings({ strings }))
 	}
 
-	updateString(update: UpdateStr<CanvasString>) {
+	updateString(update: UpdateStr<StringModel>) {
 		this._store.dispatch(StringsActions.updateString({ update }))
 	}
 
-	updateManyStrings(updates: UpdateStr<CanvasString>[]) {
+	updateManyStrings(updates: UpdateStr<StringModel>[]) {
 		this._store.dispatch(StringsActions.updateManyStrings({ updates }))
 	}
 
@@ -82,19 +82,19 @@ export class StringsStoreService {
 class StringsRepository {
 	constructor(private readonly _store: Store<StringsState>) {}
 
-	addString(freeString: CanvasString) {
+	addString(freeString: StringModel) {
 		this._store.dispatch(StringsActions.addString({ string: freeString }))
 	}
 
-	addManyStrings(strings: CanvasString[]) {
+	addManyStrings(strings: StringModel[]) {
 		this._store.dispatch(StringsActions.addManyStrings({ strings }))
 	}
 
-	updateString(update: UpdateStr<CanvasString>) {
+	updateString(update: UpdateStr<StringModel>) {
 		this._store.dispatch(StringsActions.updateString({ update }))
 	}
 
-	updateManyStrings(updates: UpdateStr<CanvasString>[]) {
+	updateManyStrings(updates: UpdateStr<StringModel>[]) {
 		this._store.dispatch(StringsActions.updateManyStrings({ updates }))
 	}
 
