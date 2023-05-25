@@ -13,6 +13,12 @@ export const getUpdatedPanelLinksForRender = (links: PanelLinkModel[]) => {
 	const circuitChains = prepareStringPanelLinkCircuitChain(links)
 	return preparePanelLinksForRender(circuitChains)
 }
+
+export const prepareStringCircuitChainForRender = (links: PanelLinkModel[]) => {
+	const { openCircuitChains, closedCircuitChains } = prepareStringPanelLinkCircuitChain(links)
+	const circuitLinkLines = preparePanelLinksForRender({ openCircuitChains, closedCircuitChains })
+	return { openCircuitChains, closedCircuitChains, circuitLinkLines }
+}
 export const preparePanelLinksForRender = (stringCircuitChains: StringCircuitChains) => {
 	const { openCircuitChains, closedCircuitChains } = stringCircuitChains
 	const openCircuitCurvedLines = openCircuitChains.map((chain) => {

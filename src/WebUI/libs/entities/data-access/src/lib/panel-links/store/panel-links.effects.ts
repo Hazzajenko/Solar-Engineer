@@ -2,24 +2,64 @@ import { injectSelectedStore } from '@canvas/selected/data-access'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { inject } from '@angular/core'
 import { tap } from 'rxjs'
-import { PanelLinksActions, PanelLinksService } from '../../panel-links'
+import { injectPanelLinksStore, PanelLinksActions, prepareStringCircuitChainForRender } from '../../panel-links'
 import { getAllActions } from '@shared/utils'
 import { PanelsActions } from '../../panels'
+import { StringCircuit } from '@entities/shared'
 
-export const updatePanelLinkLinesOnChange$ = createEffect(
+/*export const updatePanelLinkLinesOnChange$ = createEffect(
+ (
+ actions$ = inject(Actions),
+ _panelLinks = inject(PanelLinksService),
+ _selectedStore = injectSelectedStore(),
+ ) => {
+ return actions$.pipe(
+ ofType(...getAllActions(PanelsActions), ...getAllActions(PanelLinksActions)),
+ tap(() => {
+ if (_selectedStore.selectedStringId) {
+ _panelLinks.updateSelectedStringLinkLines()
+ }
+ }),
+ )
+ },
+ { functional: true, dispatch: false },
+ )*/
+
+export const updateSelectedStringCircuitOnChange$ = createEffect(
 	(
 		actions$ = inject(Actions),
-		_panelLinks = inject(PanelLinksService),
+		_panelLinksStore = injectPanelLinksStore(),
 		_selectedStore = injectSelectedStore(),
 	) => {
 		return actions$.pipe(
 			ofType(...getAllActions(PanelsActions), ...getAllActions(PanelLinksActions)),
 			tap(() => {
-				if (_selectedStore.selectedStringId) {
-					_panelLinks.updateSelectedStringLinkLines()
+				const selectedStringId = _selectedStore.selectedStringId
+				if (!selectedStringId) {
+					return PanelLinksActions.noop()
 				}
+				const panelLinks = _panelLinksStore.getByStringId(selectedStringId)
+				const selectedStringCircuit: StringCircuit = prepareStringCircuitChainForRender(panelLinks)
+				return PanelLinksActions.setSelectedStringCircuit({
+					selectedStringCircuit,
+				})
 			}),
 		)
 	},
-	{ functional: true, dispatch: false },
+	{ functional: true },
 )
+/*
+
+ const updateSelectedStringLinkLines = () => {
+ const selectedStringId = this._selectedStringId()
+ if (!selectedStringId) {
+ return
+ }
+ const panelLinks = this._panelLinksStore.getByStringId(selectedStringId)
+ this._selectedStringPanelLinks.set(panelLinks)
+ const stringCircuitChains = prepareStringPanelLinkCircuitChain(panelLinks) as StringCircuitChains
+ this._selectedStringCircuitChains.set(stringCircuitChains)
+ const stringCircuitChain = preparePanelLinksForRender(stringCircuitChains)
+ this._selectedStringLinkToLinesTuple.set(stringCircuitChain)
+ }
+ */

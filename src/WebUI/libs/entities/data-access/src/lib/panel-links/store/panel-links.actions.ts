@@ -1,15 +1,12 @@
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
 import {
-	ClosedCircuitChain,
-	OpenCircuitChain,
 	PanelLinkFromMenu,
-	PanelLinkId,
 	PanelLinkModel,
 	PanelLinkRequest,
 	PanelSymbol,
+	StringCircuit,
 } from '@entities/shared'
-import { CurvedNumberLine } from '@canvas/shared'
 
 export const PanelLinksActions = createActionGroup({
 	source: 'PanelLinks Store',
@@ -45,15 +42,10 @@ export const PanelLinksActions = createActionGroup({
 		}>(),
 		'Clear Hovering Over Panel Link In Link Menu': emptyProps(),
 		'Selected String Link Lines Updated': emptyProps(),
-		'Set Selected String Link Circuit': props<{
-			selectedStringCircuit: {
-				openCircuitChains: OpenCircuitChain[]
-				closedCircuitChains: ClosedCircuitChain[]
-				circuitCurvedLines: CurvedNumberLine[][]
-				circuitLinkLineTuples: [PanelLinkId, CurvedNumberLine][][]
-			}
+		'Set Selected String Circuit': props<{
+			selectedStringCircuit: StringCircuit
 		}>(),
-		'Clear Selected String Link Circuit': emptyProps(),
+		'Clear Selected String Circuit': emptyProps(),
 		'Set Hovering Over Panel Link In App': props<{
 			panelLinkId: string
 		}>(),

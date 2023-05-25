@@ -23,6 +23,7 @@ import {
 	PanelLinkRequest,
 	PanelSymbol,
 	Polarity,
+	StringCircuit,
 } from '@entities/shared'
 import { PANEL_LINKS_FEATURE_KEY, panelLinksReducer, PanelLinksState } from './panel-links.reducer'
 import { provideEffects } from '@ngrx/effects'
@@ -56,8 +57,14 @@ export function injectPanelLinksStore() {
 			return store.selectSignal(selectRequestingLink)()
 			// return state().requestingLink
 		},
-		get getPanelLinkOrderIfStringIsSelected() {
-			return store.selectSignal(selectSelectedStringCircuit)()
+		get getSelectedStringCircuit() {
+			return (
+				store.selectSignal(selectSelectedStringCircuit)() ?? {
+					openCircuitChains: [] as OpenCircuitChain[],
+					closedCircuitChains: [] as ClosedCircuitChain[],
+					circuitLinkLines: [] as [PanelLinkId, CurvedNumberLine][][],
+				}
+			)
 		},
 		get getHoveringOverPanelLinkInApp() {
 			return store.selectSignal(selectHoveringOverPanelLinkInApp)()
@@ -152,16 +159,15 @@ export function injectPanelLinksStore() {
 		clearHoveringOverPanelLinkInLinkMenu() {
 			store.dispatch(PanelLinksActions.clearHoveringOverPanelLinkInLinkMenu())
 		},
-		setSelectedStringLinkCircuit(selectedStringCircuit: {
-			openCircuitChains: OpenCircuitChain[]
-			closedCircuitChains: ClosedCircuitChain[]
-			circuitCurvedLines: CurvedNumberLine[][]
-			circuitLinkLineTuples: [PanelLinkId, CurvedNumberLine][][]
-		}) {
-			store.dispatch(PanelLinksActions.setSelectedStringLinkCircuit({ selectedStringCircuit }))
+		setSelectedStringLinkCircuit(selectedStringCircuit: StringCircuit) {
+			store.dispatch(
+				PanelLinksActions.setSelectedStringCircuit({
+					selectedStringCircuit,
+				}),
+			)
 		},
 		clearSelectedStringLinkCircuit() {
-			store.dispatch(PanelLinksActions.clearSelectedStringLinkCircuit())
+			store.dispatch(PanelLinksActions.clearSelectedStringCircuit())
 		},
 		setHoveringOverPanelLinkInApp(panelLinkId: string) {
 			store.dispatch(

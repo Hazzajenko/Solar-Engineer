@@ -1,4 +1,4 @@
-import { AppStateStoreService, CanvasElementService } from '@canvas/app/data-access'
+import { CanvasElementService, injectAppStateStore, PointerState } from '@canvas/app/data-access'
 import { inject, Injectable, signal } from '@angular/core'
 import { injectPanelLinksStore } from '../store'
 import {
@@ -18,7 +18,7 @@ import {
 import { assertNotNull, newGuid, selectSignalFromStore } from '@shared/utils'
 import { injectSelectedStore, selectSelectedStringId } from '@canvas/selected/data-access'
 import { EntityStoreService } from '../../shared'
-import { CURSOR_TYPE, TransformedPoint } from '@shared/data-access/models'
+import { TransformedPoint } from '@shared/data-access/models'
 import {
 	changeCanvasCursor,
 	isPointInsideMiddleRightOfEntityWithRotationV2,
@@ -32,20 +32,18 @@ import {
 	createPanelLink,
 	panelWithSymbolToPanelSymbol,
 } from '@entities/utils'
-import {
-	isPointOverCurvedLineNoCtx,
-	preparePanelLinksForRender,
-	prepareStringPanelLinkCircuitChain,
-} from './utils'
+import { isPointOverCurvedLineNoCtx } from './utils'
 import { CurvedNumberLine } from '@canvas/shared'
+import { RenderService } from '@canvas/rendering/data-access'
 
 @Injectable({
 	providedIn: 'root',
 })
 export class PanelLinksService {
 	private _entities = inject(EntityStoreService)
-	private _appStore = inject(AppStateStoreService)
+	private _appState = injectAppStateStore()
 	private _panelLinksStore = injectPanelLinksStore()
+	private _render = inject(RenderService)
 	// private _panelLinksStore = inject(PanelLinksStoreService)
 	private _selectedStore = injectSelectedStore()
 	private _canvasElementStore = inject(CanvasElementService)
@@ -97,32 +95,20 @@ export class PanelLinksService {
 	 })*!/
 	 }*/
 
-	updateSelectedStringLinkLines() {
-		const selectedStringId = this._selectedStringId()
-		if (!selectedStringId) {
-			return
-		}
-		const panelLinks = this._panelLinksStore.getByStringId(selectedStringId)
-		this._selectedStringPanelLinks.set(panelLinks)
-		const stringCircuitChains = prepareStringPanelLinkCircuitChain(
-			panelLinks,
-		) as StringCircuitChains
-		// console.log('PanelLinksService: stringCircuitChains', stringCircuitChains)
-		this._selectedStringCircuitChains.set(stringCircuitChains)
-		const stringCircuitChain = preparePanelLinksForRender(stringCircuitChains)
-		// const { stringCircuitChain } = preparePanelLinksForRender(stringCircuitChains)
-		// const { curvedLinesCombined, microLinePoints } = preparePanelLinksForRender(stringCircuitChains)
-		this._selectedStringLinkToLinesTuple.set(stringCircuitChain)
-		// this._selectedStringFlatLines.set(stringPanelLinkLines)
-		/*		this._panelLinksStore.setSelectedStringLinkCircuit({
-		 circuitCurvedLines: stringPanelLinkLines,
-		 circuitLinkLineTuples: stringCircuitChain,
-		 closedCircuitChains: stringCircuitChains.closedCircuitChains,
-		 openCircuitChains: stringCircuitChains.openCircuitChains,
-		 })*/
-		// this._selectedStringFlatLines.set(stringCircuitChain)
-		// this._selectedStringMicroLinePoints.set(microLinePoints)
-	}
+	/*	updateSelectedStringLinkLines() {
+	 const selectedStringId = this._selectedStringId()
+	 if (!selectedStringId) {
+	 return
+	 }
+	 const panelLinks = this._panelLinksStore.getByStringId(selectedStringId)
+	 this._selectedStringPanelLinks.set(panelLinks)
+	 const stringCircuitChains = prepareStringPanelLinkCircuitChain(
+	 panelLinks,
+	 ) as StringCircuitChains
+	 this._selectedStringCircuitChains.set(stringCircuitChains)
+	 const stringCircuitChain = preparePanelLinksForRender(stringCircuitChains)
+	 this._selectedStringLinkToLinesTuple.set(stringCircuitChain)
+	 }*/
 
 	getPanelLinkOrderIfStringIsSelected() {
 		const stringId = this._selectedStore.selectedStringId
@@ -130,7 +116,7 @@ export class PanelLinksService {
 			return {
 				stringPanelLinks: [] as PanelLinkModel[],
 				openCircuitChains: [] as OpenCircuitChain[],
-				closedCircuitChains: [] as ClosedCircuitChain[], // circuitCurvedLines: [] as CurvedNumberLine[][],
+				closedCircuitChains: [] as ClosedCircuitChain[],
 				circuitLinkLineTuples: [] as [PanelLinkId, CurvedNumberLine][][],
 			}
 		}
@@ -307,7 +293,8 @@ export class PanelLinksService {
 
 	handleLinkModeMouseMove(
 		event: PointerEvent,
-		currentPoint: TransformedPoint, // pointer,
+		currentPoint: TransformedPoint,
+		pointer: PointerState, // pointer,
 	) {
 		const drawingPanelPolaritySymbolLine = this._entities.panelLinks.drawingPanelPolaritySymbolLine
 		const panelWithSymbol = this._entities.panels.getPanelWithSymbolUnderMouse(currentPoint)
@@ -385,60 +372,7 @@ export class PanelLinksService {
 			return
 		}
 
-		/*const symbolOrPanel = this.getPanelOrLinkSymbolUnderMouse(currentPoint)
-		 if (symbolOrPanel) {
-		 // console.log('symbolOrPanel', symbolOrPanel)
-		 if (isPanelSymbol(symbolOrPanel)) {
-		 const { panelId, symbol } = symbolOrPanel
-		 this._entities.panelLinks.setHoveringOverPanelPolaritySymbol(panelId, symbol)
-		 return
-		 } else {
-		 if (this._entities.panelLinks.getHoveringOverPanelPolaritySymbol) {
-		 this._entities.panelLinks.clearHoveringOverPanelPolaritySymbol()
-		 return
-		 }
-		 }
-
-		 // this._panelLinks.isMouseOverLinkPathV4(event, currentPoint, symbolOrPanel)
-		 // return
-		 } else {
-		 if (this._entities.panelLinks.getHoveringOverPanelPolaritySymbol) {
-		 this._entities.panelLinks.clearHoveringOverPanelPolaritySymbol()
-		 return
-		 }
-		 }
-		 const entityUnderMouseInLineMode = this.getPanelUnderMouse(event)
-		 if (entityUnderMouseInLineMode) {
-		 const hoveringEntityId = pointer.hoveringOverEntityId
-		 const overSymbol = isPointInsidePanelSymbols(
-		 // const overSymbol = isPointInsideMiddleRightOfEntityWithRotationV2(
-		 currentPoint,
-		 entityUnderMouseInLineMode,
-		 )
-		 if (overSymbol) {
-		 console.log('over symbol', overSymbol)
-
-		 /!*					if (hoveringEntityId === entityUnderMouseInLineMode.id) return
-		 this._appState.dispatch.setHoveringOverEntityState(entityUnderMouseInLineMode.id)
-		 if (this._entities.panelLinks.getHoveringOverPanelLinkInApp) {
-		 this._entities.panelLinks.clearHoveringOverPanelLinkInApp()
-		 }
-		 this._render.renderCanvasApp({
-		 panelUnderMouse: entityUnderMouseInLineMode as CanvasPanel,
-		 })
-		 return*!/
-		 }
-		 if (hoveringEntityId === entityUnderMouseInLineMode.id) return
-		 this._appState.setHoveringOverEntityState(entityUnderMouseInLineMode.id)
-		 if (this._entities.panelLinks.getHoveringOverPanelLinkInApp) {
-		 this._entities.panelLinks.clearHoveringOverPanelLinkInApp()
-		 }
-		 this._render.renderCanvasApp({
-		 panelUnderMouse: entityUnderMouseInLineMode as CanvasPanel,
-		 })
-		 return
-		 }*/
-		const panelLinkUnderMouse = this._panelLinks.isMouseOverLinkPath(event, currentPoint)
+		const panelLinkUnderMouse = this.isMouseOverLinkPath(event, currentPoint)
 		if (panelLinkUnderMouse) {
 			const existingPanelLinkUnderMouse = this._entities.panelLinks.getHoveringOverPanelLinkInApp
 			if (existingPanelLinkUnderMouse && existingPanelLinkUnderMouse.id === panelLinkUnderMouse.id)
@@ -455,7 +389,7 @@ export class PanelLinksService {
 			this._render.renderCanvasApp()
 		}
 
-		const entityUnderMouse = this.getPanelUnderMouse(event)
+		const entityUnderMouse = this._entities.panels.getPanelUnderMouse(currentPoint)
 		if (entityUnderMouse) {
 			const hoveringEntityId = pointer.hoveringOverEntityId
 			if (hoveringEntityId === entityUnderMouse.id) return
@@ -467,16 +401,12 @@ export class PanelLinksService {
 		}
 
 		if (pointer.hoverState === 'HoveringOverEntity') {
-			changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
+			// changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
 			this._appState.liftHoveringOverEntity()
 			this._render.renderCanvasApp()
 			return
 		}
-		/*			const entityUnderMouse = this.getEntityUnderMouse(event)
-		 if (entityUnderMouse) {
 
-		 }*/
-		// this._panelLinks.handleMouseInLinkMode(event, currentPoint)
 		return
 	}
 

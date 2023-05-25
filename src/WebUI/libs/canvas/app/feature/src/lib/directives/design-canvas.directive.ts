@@ -50,13 +50,8 @@ import {
 	rotatingKeysDown,
 } from '@canvas/utils'
 import { isPanel, isPointInsideSelectedStringPanelsByStringIdNgrxWithPanels } from '@entities/utils'
-import {
-	CanvasEntity,
-	ENTITY_TYPE,
-	PanelModel,
-	SizeByType,
-	UndefinedStringId,
-} from '@entities/shared'
+import { CanvasEntity, ENTITY_TYPE, SizeByType, UndefinedStringId } from '@entities/shared'
+import { dragBoxOnMouseDownHandler } from '../utils/drag-box'
 
 @Directive({
 	selector: '[appDesignCanvas]',
@@ -170,7 +165,9 @@ export class DesignCanvasDirective implements OnInit {
 
 		if (dragBoxKeysDown(event)) {
 			console.log('drag box keys down')
-			this._drag.handleDragBoxMouseDown(event, currentPoint)
+			// this._drag.handleDragBoxMouseDown(event, currentPoint)
+			const newMode = dragBoxOnMouseDownHandler(event, currentPoint, this._appState.mode())
+			this._appState.setDragBoxState(newMode)
 			return
 		}
 
@@ -314,7 +311,7 @@ export class DesignCanvasDirective implements OnInit {
 		 }*/
 
 		if (mode === MODE_STATE.LINK_MODE) {
-			this.extracted(currentPoint, pointer, event)
+			this._panelLinks.handleLinkModeMouseMove(event, currentPoint, pointer)
 		}
 
 		const entityUnderMouse = this.getPanelUnderMouse(event)
@@ -729,183 +726,183 @@ export class DesignCanvasDirective implements OnInit {
 		}
 	}
 
-	private extracted(
-		currentPoint: DOMPoint & {
-			_type: 'TransformedPoint'
-		},
-		pointer,
-		event: PointerEvent,
-	) {
-		const drawingPanelPolaritySymbolLine = this._entities.panelLinks.drawingPanelPolaritySymbolLine
-		const panelWithSymbol = this._entities.panels.getPanelWithSymbolUnderMouse(currentPoint)
-		if (panelWithSymbol) {
-			const existingHoveringSymbol = this._entities.panelLinks.getHoveringOverPanelPolaritySymbol
-			if (existingHoveringSymbol && existingHoveringSymbol.panelId === panelWithSymbol.id) {
-				if (!drawingPanelPolaritySymbolLine) return
-				const anyPanelNearby = this._entities.panels.getNearbyPanelInLinkModeExcludingOne(
-					currentPoint,
-					drawingPanelPolaritySymbolLine.panelId,
-				)
-				this._render.renderCanvasApp({
-					draggingSymbolLinkLine: {
-						mouseDownPanelSymbol: drawingPanelPolaritySymbolLine,
-						transformedPoint: currentPoint,
-						nearbyPanelToLinkLine: anyPanelNearby,
-					},
-				})
-				return
-			}
-			this._entities.panelLinks.setHoveringOverPanelPolaritySymbol({
-				panelId: panelWithSymbol.id,
-				symbol: panelWithSymbol.symbol,
-			})
-			if (drawingPanelPolaritySymbolLine) {
-				const anyPanelNearby = this._entities.panels.getNearbyPanelInLinkModeExcludingOne(
-					currentPoint,
-					drawingPanelPolaritySymbolLine.panelId,
-				)
+	/*private extracted(
+	 currentPoint: DOMPoint & {
+	 _type: 'TransformedPoint'
+	 },
+	 pointer,
+	 event: PointerEvent,
+	 ) {
+	 const drawingPanelPolaritySymbolLine = this._entities.panelLinks.drawingPanelPolaritySymbolLine
+	 const panelWithSymbol = this._entities.panels.getPanelWithSymbolUnderMouse(currentPoint)
+	 if (panelWithSymbol) {
+	 const existingHoveringSymbol = this._entities.panelLinks.getHoveringOverPanelPolaritySymbol
+	 if (existingHoveringSymbol && existingHoveringSymbol.panelId === panelWithSymbol.id) {
+	 if (!drawingPanelPolaritySymbolLine) return
+	 const anyPanelNearby = this._entities.panels.getNearbyPanelInLinkModeExcludingOne(
+	 currentPoint,
+	 drawingPanelPolaritySymbolLine.panelId,
+	 )
+	 this._render.renderCanvasApp({
+	 draggingSymbolLinkLine: {
+	 mouseDownPanelSymbol: drawingPanelPolaritySymbolLine,
+	 transformedPoint: currentPoint,
+	 nearbyPanelToLinkLine: anyPanelNearby,
+	 },
+	 })
+	 return
+	 }
+	 this._entities.panelLinks.setHoveringOverPanelPolaritySymbol({
+	 panelId: panelWithSymbol.id,
+	 symbol: panelWithSymbol.symbol,
+	 })
+	 if (drawingPanelPolaritySymbolLine) {
+	 const anyPanelNearby = this._entities.panels.getNearbyPanelInLinkModeExcludingOne(
+	 currentPoint,
+	 drawingPanelPolaritySymbolLine.panelId,
+	 )
 
-				this._render.renderCanvasApp({
-					draggingSymbolLinkLine: {
-						mouseDownPanelSymbol: drawingPanelPolaritySymbolLine,
-						transformedPoint: currentPoint,
-						nearbyPanelToLinkLine: anyPanelNearby,
-					},
-				})
-				return
-			}
-			this._render.renderCanvasApp()
-			return
-		} else if (this._entities.panelLinks.getHoveringOverPanelPolaritySymbol) {
-			this._entities.panelLinks.clearHoveringOverPanelPolaritySymbol()
-			return
-		}
+	 this._render.renderCanvasApp({
+	 draggingSymbolLinkLine: {
+	 mouseDownPanelSymbol: drawingPanelPolaritySymbolLine,
+	 transformedPoint: currentPoint,
+	 nearbyPanelToLinkLine: anyPanelNearby,
+	 },
+	 })
+	 return
+	 }
+	 this._render.renderCanvasApp()
+	 return
+	 } else if (this._entities.panelLinks.getHoveringOverPanelPolaritySymbol) {
+	 this._entities.panelLinks.clearHoveringOverPanelPolaritySymbol()
+	 return
+	 }
 
-		if (drawingPanelPolaritySymbolLine) {
-			const anyPanelNearby = this._entities.panels.getNearbyPanelInLinkModeExcludingOne(
-				currentPoint,
-				drawingPanelPolaritySymbolLine.panelId,
-			)
+	 if (drawingPanelPolaritySymbolLine) {
+	 const anyPanelNearby = this._entities.panels.getNearbyPanelInLinkModeExcludingOne(
+	 currentPoint,
+	 drawingPanelPolaritySymbolLine.panelId,
+	 )
 
-			if (anyPanelNearby) {
-				console.log('anyPanelNearby', anyPanelNearby)
-			}
+	 if (anyPanelNearby) {
+	 console.log('anyPanelNearby', anyPanelNearby)
+	 }
 
-			this._render.renderCanvasApp({
-				draggingSymbolLinkLine: {
-					mouseDownPanelSymbol: drawingPanelPolaritySymbolLine,
-					transformedPoint: currentPoint,
-					nearbyPanelToLinkLine: anyPanelNearby,
-				},
-			})
-			return
-		}
+	 this._render.renderCanvasApp({
+	 draggingSymbolLinkLine: {
+	 mouseDownPanelSymbol: drawingPanelPolaritySymbolLine,
+	 transformedPoint: currentPoint,
+	 nearbyPanelToLinkLine: anyPanelNearby,
+	 },
+	 })
+	 return
+	 }
 
-		const panelUnderMouse = this._entities.panels.getPanelUnderMouse(currentPoint)
-		if (panelUnderMouse) {
-			const hoveringEntityId = pointer.hoveringOverEntityId
-			if (hoveringEntityId === panelUnderMouse.id) return
-			this._appState.setHoveringOverEntityState(panelUnderMouse.id)
-			if (this._entities.panelLinks.getHoveringOverPanelLinkInApp) {
-				this._entities.panelLinks.clearHoveringOverPanelLinkInApp()
-			}
-			return
-		}
+	 const panelUnderMouse = this._entities.panels.getPanelUnderMouse(currentPoint)
+	 if (panelUnderMouse) {
+	 const hoveringEntityId = pointer.hoveringOverEntityId
+	 if (hoveringEntityId === panelUnderMouse.id) return
+	 this._appState.setHoveringOverEntityState(panelUnderMouse.id)
+	 if (this._entities.panelLinks.getHoveringOverPanelLinkInApp) {
+	 this._entities.panelLinks.clearHoveringOverPanelLinkInApp()
+	 }
+	 return
+	 }
 
-		/*const symbolOrPanel = this.getPanelOrLinkSymbolUnderMouse(currentPoint)
-		 if (symbolOrPanel) {
-		 // console.log('symbolOrPanel', symbolOrPanel)
-		 if (isPanelSymbol(symbolOrPanel)) {
-		 const { panelId, symbol } = symbolOrPanel
-		 this._entities.panelLinks.setHoveringOverPanelPolaritySymbol(panelId, symbol)
-		 return
-		 } else {
-		 if (this._entities.panelLinks.getHoveringOverPanelPolaritySymbol) {
-		 this._entities.panelLinks.clearHoveringOverPanelPolaritySymbol()
-		 return
-		 }
-		 }
+	 /!*const symbolOrPanel = this.getPanelOrLinkSymbolUnderMouse(currentPoint)
+	 if (symbolOrPanel) {
+	 // console.log('symbolOrPanel', symbolOrPanel)
+	 if (isPanelSymbol(symbolOrPanel)) {
+	 const { panelId, symbol } = symbolOrPanel
+	 this._entities.panelLinks.setHoveringOverPanelPolaritySymbol(panelId, symbol)
+	 return
+	 } else {
+	 if (this._entities.panelLinks.getHoveringOverPanelPolaritySymbol) {
+	 this._entities.panelLinks.clearHoveringOverPanelPolaritySymbol()
+	 return
+	 }
+	 }
 
-		 // this._panelLinks.isMouseOverLinkPathV4(event, currentPoint, symbolOrPanel)
-		 // return
-		 } else {
-		 if (this._entities.panelLinks.getHoveringOverPanelPolaritySymbol) {
-		 this._entities.panelLinks.clearHoveringOverPanelPolaritySymbol()
-		 return
-		 }
-		 }
-		 const entityUnderMouseInLineMode = this.getPanelUnderMouse(event)
-		 if (entityUnderMouseInLineMode) {
-		 const hoveringEntityId = pointer.hoveringOverEntityId
-		 const overSymbol = isPointInsidePanelSymbols(
-		 // const overSymbol = isPointInsideMiddleRightOfEntityWithRotationV2(
-		 currentPoint,
-		 entityUnderMouseInLineMode,
-		 )
-		 if (overSymbol) {
-		 console.log('over symbol', overSymbol)
+	 // this._panelLinks.isMouseOverLinkPathV4(event, currentPoint, symbolOrPanel)
+	 // return
+	 } else {
+	 if (this._entities.panelLinks.getHoveringOverPanelPolaritySymbol) {
+	 this._entities.panelLinks.clearHoveringOverPanelPolaritySymbol()
+	 return
+	 }
+	 }
+	 const entityUnderMouseInLineMode = this.getPanelUnderMouse(event)
+	 if (entityUnderMouseInLineMode) {
+	 const hoveringEntityId = pointer.hoveringOverEntityId
+	 const overSymbol = isPointInsidePanelSymbols(
+	 // const overSymbol = isPointInsideMiddleRightOfEntityWithRotationV2(
+	 currentPoint,
+	 entityUnderMouseInLineMode,
+	 )
+	 if (overSymbol) {
+	 console.log('over symbol', overSymbol)
 
-		 /!*					if (hoveringEntityId === entityUnderMouseInLineMode.id) return
-		 this._appState.dispatch.setHoveringOverEntityState(entityUnderMouseInLineMode.id)
-		 if (this._entities.panelLinks.getHoveringOverPanelLinkInApp) {
-		 this._entities.panelLinks.clearHoveringOverPanelLinkInApp()
-		 }
-		 this._render.renderCanvasApp({
-		 panelUnderMouse: entityUnderMouseInLineMode as CanvasPanel,
-		 })
-		 return*!/
-		 }
-		 if (hoveringEntityId === entityUnderMouseInLineMode.id) return
-		 this._appState.setHoveringOverEntityState(entityUnderMouseInLineMode.id)
-		 if (this._entities.panelLinks.getHoveringOverPanelLinkInApp) {
-		 this._entities.panelLinks.clearHoveringOverPanelLinkInApp()
-		 }
-		 this._render.renderCanvasApp({
-		 panelUnderMouse: entityUnderMouseInLineMode as CanvasPanel,
-		 })
-		 return
-		 }*/
-		const panelLinkUnderMouse = this._panelLinks.isMouseOverLinkPath(event, currentPoint)
-		if (panelLinkUnderMouse) {
-			const existingPanelLinkUnderMouse = this._entities.panelLinks.getHoveringOverPanelLinkInApp
-			if (existingPanelLinkUnderMouse && existingPanelLinkUnderMouse.id === panelLinkUnderMouse.id)
-				return
-			this._entities.panelLinks.setHoveringOverPanelLinkInApp(panelLinkUnderMouse.id)
-			this._render.renderCanvasApp({
-				transformedPoint: currentPoint,
-			})
-			return
-		}
+	 /!*					if (hoveringEntityId === entityUnderMouseInLineMode.id) return
+	 this._appState.dispatch.setHoveringOverEntityState(entityUnderMouseInLineMode.id)
+	 if (this._entities.panelLinks.getHoveringOverPanelLinkInApp) {
+	 this._entities.panelLinks.clearHoveringOverPanelLinkInApp()
+	 }
+	 this._render.renderCanvasApp({
+	 panelUnderMouse: entityUnderMouseInLineMode as CanvasPanel,
+	 })
+	 return*!/
+	 }
+	 if (hoveringEntityId === entityUnderMouseInLineMode.id) return
+	 this._appState.setHoveringOverEntityState(entityUnderMouseInLineMode.id)
+	 if (this._entities.panelLinks.getHoveringOverPanelLinkInApp) {
+	 this._entities.panelLinks.clearHoveringOverPanelLinkInApp()
+	 }
+	 this._render.renderCanvasApp({
+	 panelUnderMouse: entityUnderMouseInLineMode as CanvasPanel,
+	 })
+	 return
+	 }*!/
+	 const panelLinkUnderMouse = this._panelLinks.isMouseOverLinkPath(event, currentPoint)
+	 if (panelLinkUnderMouse) {
+	 const existingPanelLinkUnderMouse = this._entities.panelLinks.getHoveringOverPanelLinkInApp
+	 if (existingPanelLinkUnderMouse && existingPanelLinkUnderMouse.id === panelLinkUnderMouse.id)
+	 return
+	 this._entities.panelLinks.setHoveringOverPanelLinkInApp(panelLinkUnderMouse.id)
+	 this._render.renderCanvasApp({
+	 transformedPoint: currentPoint,
+	 })
+	 return
+	 }
 
-		if (this._entities.panelLinks.getHoveringOverPanelLinkInApp) {
-			this._entities.panelLinks.clearHoveringOverPanelLinkInApp()
-			this._render.renderCanvasApp()
-		}
+	 if (this._entities.panelLinks.getHoveringOverPanelLinkInApp) {
+	 this._entities.panelLinks.clearHoveringOverPanelLinkInApp()
+	 this._render.renderCanvasApp()
+	 }
 
-		const entityUnderMouse = this.getPanelUnderMouse(event)
-		if (entityUnderMouse) {
-			const hoveringEntityId = pointer.hoveringOverEntityId
-			if (hoveringEntityId === entityUnderMouse.id) return
-			this._appState.setHoveringOverEntityState(entityUnderMouse.id)
-			this._render.renderCanvasApp({
-				panelUnderMouse: entityUnderMouse as PanelModel,
-			})
-			return
-		}
+	 const entityUnderMouse = this.getPanelUnderMouse(event)
+	 if (entityUnderMouse) {
+	 const hoveringEntityId = pointer.hoveringOverEntityId
+	 if (hoveringEntityId === entityUnderMouse.id) return
+	 this._appState.setHoveringOverEntityState(entityUnderMouse.id)
+	 this._render.renderCanvasApp({
+	 panelUnderMouse: entityUnderMouse as PanelModel,
+	 })
+	 return
+	 }
 
-		if (pointer.hoverState === 'HoveringOverEntity') {
-			changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
-			this._appState.liftHoveringOverEntity()
-			this._render.renderCanvasApp()
-			return
-		}
-		/*			const entityUnderMouse = this.getEntityUnderMouse(event)
-		 if (entityUnderMouse) {
+	 if (pointer.hoverState === 'HoveringOverEntity') {
+	 changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
+	 this._appState.liftHoveringOverEntity()
+	 this._render.renderCanvasApp()
+	 return
+	 }
+	 /!*			const entityUnderMouse = this.getEntityUnderMouse(event)
+	 if (entityUnderMouse) {
 
-		 }*/
-		// this._panelLinks.handleMouseInLinkMode(event, currentPoint)
-		return
-	}
+	 }*!/
+	 // this._panelLinks.handleMouseInLinkMode(event, currentPoint)
+	 return
+	 }*/
 
 	private setupCanvas() {
 		const { canvas, ctx } = setupCanvas(this.canvas)

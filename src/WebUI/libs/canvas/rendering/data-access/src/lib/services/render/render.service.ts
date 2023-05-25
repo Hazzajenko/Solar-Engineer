@@ -30,7 +30,6 @@ import { assertNotNull, shadeColor } from '@shared/utils'
 import { GraphicsStoreService } from '@canvas/graphics/data-access'
 import {
 	EntityStoreService,
-	PanelLinksService,
 	PanelLinksStoreService,
 	StringsStatsService,
 } from '@entities/data-access'
@@ -69,7 +68,7 @@ export class RenderService {
 	// private _selectedStore = inject(SelectedStoreService)
 	private _graphicsStore = inject(GraphicsStoreService)
 	private _panelLinksStore = inject(PanelLinksStoreService)
-	private _panelLinks = inject(PanelLinksService)
+	// private _panelLinks = inject(PanelLinksService)
 	private _objectPositioningStore = inject(ObjectPositioningStoreService)
 	private _stringStats = inject(StringsStatsService)
 	// private _linkRender = new LinkPathRenderService()
@@ -194,9 +193,14 @@ export class RenderService {
 							}
 							return true
 						})
-			const { stringPanelLinks, openCircuitChains, closedCircuitChains, circuitLinkLineTuples } =
-				this._panelLinks.getPanelLinkOrderIfStringIsSelected()
+			/*			const { stringPanelLinks, openCircuitChains, closedCircuitChains, circuitLinkLineTuples } =
+			 this._panelLinks.getPanelLinkOrderIfStringIsSelected()*/
+			const { openCircuitChains, closedCircuitChains, circuitLinkLines } =
+				this._entities.panelLinks.getSelectedStringCircuit
 			const selectedStringId = this._selectedStore.state.selectedStringId
+			const stringPanelLinks = selectedStringId
+				? this._entities.panelLinks.getByStringId(selectedStringId)
+				: []
 			const selectedString = selectedStringId
 				? this._entities.strings.getById(selectedStringId)
 				: undefined
@@ -335,7 +339,7 @@ export class RenderService {
 				// const draggingSymbolLinkLinePanel = draggingSymbolLinkLine ? this._entities.panels.getById(draggingSymbolLinkLine.mouseDownPanelSymbol.panelId) : undefined
 				// const draggingSymbolLinkLinePanelWithSymbol = draggingSymbolLinkLinePanel ? { ...draggingSymbolLinkLinePanel, symbol: draggingSymbolLinkLine.mouseDownPanelSymbol.symbol } : undefined
 				const customLinkLineTuples = handleCustomEntitiesBeforeLinkRender(
-					circuitLinkLineTuples,
+					circuitLinkLines,
 					stringPanelLinks,
 					selectedStringId,
 					options,

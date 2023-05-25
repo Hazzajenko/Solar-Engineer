@@ -1,8 +1,7 @@
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity'
 import { Action, createReducer, on } from '@ngrx/store'
-import { ClosedCircuitChain, OpenCircuitChain, PanelLinkFromMenu, PanelLinkId, PanelLinkModel, PanelLinkRequest, PanelSymbol } from '@entities/shared'
+import { PanelLinkFromMenu, PanelLinkModel, PanelLinkRequest, PanelSymbol, StringCircuit } from '@entities/shared'
 import { PanelLinksActions } from './panel-links.actions'
-import { CurvedNumberLine } from '@canvas/shared'
 
 /*export type LinkPathLine = {
 
@@ -19,12 +18,7 @@ export interface PanelLinksState extends EntityState<PanelLinkModel> {
 	hoveringOverPanelPolaritySymbol: PanelSymbol | undefined
 	mouseDownOnPanelPolaritySymbol: PanelSymbol | undefined
 	drawingPanelPolaritySymbolLine: PanelSymbol | undefined
-	selectedStringCircuit: {
-		openCircuitChains: OpenCircuitChain[]
-		closedCircuitChains: ClosedCircuitChain[]
-		circuitCurvedLines: CurvedNumberLine[][]
-		circuitLinkLineTuples: [PanelLinkId, CurvedNumberLine][][]
-	}
+	selectedStringCircuit: StringCircuit | undefined
 
 	// | undefined
 }
@@ -44,12 +38,7 @@ export const initialPanelLinksState: PanelLinksState = panelLinksAdapter.getInit
 	hoveringOverPanelPolaritySymbol: undefined,
 	mouseDownOnPanelPolaritySymbol: undefined,
 	drawingPanelPolaritySymbolLine: undefined,
-	selectedStringCircuit: {
-		openCircuitChains: [],
-		closedCircuitChains: [],
-		circuitCurvedLines: [],
-		circuitLinkLineTuples: [],
-	},
+	selectedStringCircuit: undefined,
 })
 
 const reducer = createReducer(
@@ -96,13 +85,13 @@ const reducer = createReducer(
 		...state,
 		hoveringOverPanelLinkInLinkMenu: undefined,
 	})),
-	on(PanelLinksActions.setSelectedStringLinkCircuit, (state, { selectedStringCircuit }) => ({
+	on(PanelLinksActions.setSelectedStringCircuit, (state, { selectedStringCircuit }) => ({
 		...state,
-		selectedStringCircuit,
+		getSelectedStringCircuit: selectedStringCircuit,
 	})),
-	on(PanelLinksActions.clearSelectedStringLinkCircuit, (state) => ({
+	on(PanelLinksActions.clearSelectedStringCircuit, (state) => ({
 		...state,
-		selectedStringCircuit: initialPanelLinksState.selectedStringCircuit,
+		getSelectedStringCircuit: initialPanelLinksState.selectedStringCircuit,
 	})),
 	on(PanelLinksActions.setHoveringOverPanelLinkInApp, (state, { panelLinkId }) => ({
 		...state,

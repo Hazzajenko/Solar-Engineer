@@ -1,5 +1,4 @@
-import { AppStateStoreService, CanvasElementService, MODE_STATE } from '@canvas/app/data-access'
-import { DomPointService } from '@canvas/object-positioning/data-access'
+import { CanvasElementService, injectAppStateStore, MODE_STATE } from '@canvas/app/data-access'
 import { RenderService } from '../render'
 import { SelectedStoreService } from '@canvas/selected/data-access'
 import { inject, Injectable } from '@angular/core'
@@ -20,13 +19,14 @@ import { createPanel } from '@entities/utils'
 })
 export class DragBoxService {
 	private _canvasElementService = inject(CanvasElementService)
-	private _domPointService = inject(DomPointService)
+	// private _domPointService = inject(DomPointService)
 	private _entities = inject(EntityStoreService)
 	// private _entities = inject(EntityStoreService)
 	// private _state = inject(CanvasClientStateService)
 	private _render = inject(RenderService)
 	// private _render = inject(CanvasRenderService)
-	private _app = inject(AppStateStoreService)
+	private _appStore = injectAppStateStore()
+	// private _app = inject(AppStateStoreService)
 	private _selectedStore = inject(SelectedStoreService)
 	// private _app = inject(AppStoreService)
 
@@ -45,15 +45,18 @@ export class DragBoxService {
 	}
 
 	handleDragBoxMouseDown(event: PointerEvent, currentPoint: TransformedPoint) {
-		const modeState = this._app.state.mode
+		const modeState = this._appStore.mode()
 		if (modeState === MODE_STATE.SELECT_MODE) {
-			this._app.dispatch.setDragBoxState('SelectionBoxInProgress')
+			// const idk = toFunc(this._appStore.setDragBoxState)
+			// const randomFn = (one: number, two: number) => one + two
+			// const randomFn2 = toFunc(randomFn)
+			this._appStore.setDragBoxState('SelectionBoxInProgress')
 		}
 		if (modeState === MODE_STATE.LINK_MODE) {
-			this._app.dispatch.setDragBoxState('SelectionBoxInProgress')
+			this._appStore.setDragBoxState('SelectionBoxInProgress')
 		}
 		if (modeState === MODE_STATE.CREATE_MODE) {
-			this._app.dispatch.setDragBoxState('CreationBoxInProgress')
+			this._appStore.setDragBoxState('CreationBoxInProgress')
 		}
 		this.dragBoxStart = currentPoint
 		// const clickMode = this._machine.state[GRID_STATE_KEY]
@@ -122,7 +125,7 @@ export class DragBoxService {
 			// const boundsFromPoints = getCompleteBoundsFromMultipleEntities(panelsInArea)
 			// const boundsFromPoints = getCompleteBoundsFromBoundsArray(panelPoints)
 			// const boundsFromPoints = getCompleteBoundsFromPoints(panelPoints)
-			this._app.dispatch.setDragBoxState('NoDragBox')
+			this._appStore.setDragBoxState('NoDragBox')
 			this._selectedStore.dispatch.selectMultipleEntities(entitiesInAreaIds)
 			/*			this._app.sendEvent({ type: 'StopDragBox' })
 			 this._app.sendSelectedEvent({
@@ -155,7 +158,7 @@ export class DragBoxService {
 			// console.log('boundsFromPoints', boundsFromPoints)
 		} else {
 			// console.log('no panels in area')
-			this._app.dispatch.setDragBoxState('NoDragBox')
+			this._appStore.setDragBoxState('NoDragBox')
 			// this._app.sendEvent({ type: 'StopDragBox' })
 			// this._machine.sendEvent(new StopDragBox())
 		}
@@ -189,7 +192,7 @@ export class DragBoxService {
 		 })*/
 		this._entities.panels.addManyPanels(newPanels)
 		// this._state.entities.panels.addManyEntities(newPanels)
-		this._app.dispatch.setDragBoxState('NoDragBox')
+		this._appStore.setDragBoxState('NoDragBox')
 		// this._app.sendEvent({ type: 'StopDragBox' })
 
 		// this._machine.sendEvent(new StopDragBox())
@@ -197,7 +200,7 @@ export class DragBoxService {
 
 	selectionBoxMouseMove(event: PointerEvent, currentPoint: TransformedPoint) {
 		if (!dragBoxKeysDown(event)) {
-			this._app.dispatch.setDragBoxState('NoDragBox')
+			this._appStore.setDragBoxState('NoDragBox')
 			// this._app.sendEvent({ type: 'StopDragBox' })
 			// this._machine.sendEvent(new StopDragBox())
 			changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
@@ -239,7 +242,7 @@ export class DragBoxService {
 
 	creationBoxMouseMove(event: PointerEvent, currentPoint: TransformedPoint) {
 		if (!dragBoxKeysDown(event)) {
-			this._app.dispatch.setDragBoxState('NoDragBox')
+			this._appStore.setDragBoxState('NoDragBox')
 			// this._app.sendEvent({ type: 'StopDragBox' })
 			// this._machine.sendEvent(new StopDragBox())
 			changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)

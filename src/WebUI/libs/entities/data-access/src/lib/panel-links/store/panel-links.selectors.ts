@@ -84,10 +84,10 @@ export const selectHoveringOverPanelLinkInApp = createSelector(
 		hoveringOverPanelLinkIdInApp ? panelLinks[hoveringOverPanelLinkIdInApp] : undefined,
 )
 
-export const selectSelectedStringCircuit = createSelector(
-	selectPanelLinksState,
-	(state: PanelLinksState) => state.selectedStringCircuit,
-)
+/*export const selectSelectedStringCircuit = createSelector(
+ selectPanelLinksState,
+ (state: PanelLinksState) => state.selectedStringCircuit,
+ )*/
 
 export const selectHoveringOverPanelPolaritySymbol = createSelector(
 	selectPanelLinksState,
@@ -118,6 +118,10 @@ const createPanelLinksSelector = <T extends keyof PanelLinksState>(projectorRetu
 
 export const selectDrawingPanelPolaritySymbolLine = createPanelLinksSelector({
 	key: 'drawingPanelPolaritySymbolLine',
+})
+
+export const selectSelectedStringCircuit = createPanelLinksSelector({
+	key: 'selectedStringCircuit',
 })
 /*export const selectDrawingPanelPolaritySymbolLine = panelLinksSelector(
  (state: PanelLinksState) => state.drawingPanelPolaritySymbolLine,

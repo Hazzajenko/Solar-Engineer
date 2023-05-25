@@ -1,5 +1,6 @@
 import { Point } from '@shared/data-access/models'
 import { PanelId } from './panel.entity'
+import { CurvedNumberLine } from '@canvas/shared'
 
 export type PanelLinkId = string & {
 	__type: 'PanelLinkId'
@@ -17,6 +18,12 @@ export type PanelLinkModelWithIndex = PanelLinkModel & {
 }
 
 export type PanelLinkChain = PanelLinkModel[]
+
+export type StringCircuit = {
+	openCircuitChains: OpenCircuitChain[]
+	closedCircuitChains: ClosedCircuitChain[]
+	circuitLinkLines: [PanelLinkId, CurvedNumberLine][][]
+}
 
 export type StringCircuitChains = {
 	openCircuitChains: OpenCircuitChain[]
