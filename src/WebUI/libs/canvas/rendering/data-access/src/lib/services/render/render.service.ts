@@ -35,7 +35,7 @@ import {
 	StringsStatsService,
 } from '@entities/data-access'
 import { getNegativeSymbolLocation, getPositiveSymbolLocation, isPanel } from '@entities/utils'
-import { Point } from '@shared/data-access/models'
+import { Point, TransformedPoint } from '@shared/data-access/models'
 import {
 	CANVAS_COLORS,
 	CanvasEntity,
@@ -200,7 +200,7 @@ export class RenderService {
 			const selectedString = selectedStringId
 				? this._entities.strings.getById(selectedStringId)
 				: undefined
-			this.drawEntities(ctx, entities, openCircuitChains, selectedString)
+			this.drawEntities(ctx, entities, openCircuitChains, selectedString, options)
 			ctx.restore()
 
 			const { mode, pointer } = this._appState.appState()
@@ -317,6 +317,7 @@ export class RenderService {
 				appStateMode === 'LinkMode'
 			) {
 				let draggingSymbolLinkLinePanelWithSymbol: PanelWithSymbol | undefined
+				let transformedPoint: TransformedPoint | undefined
 				if (options?.draggingSymbolLinkLine) {
 					const draggingSymbolLinkLine = options.draggingSymbolLinkLine
 					const draggingSymbolLinkLinePanel = draggingSymbolLinkLine
@@ -328,6 +329,7 @@ export class RenderService {
 								symbol: draggingSymbolLinkLine.mouseDownPanelSymbol.symbol,
 						  }
 						: undefined
+					transformedPoint = draggingSymbolLinkLine.transformedPoint
 				}
 				// const draggingSymbolLinkLine = options?.draggingSymbolLinkLine
 				// const draggingSymbolLinkLinePanel = draggingSymbolLinkLine ? this._entities.panels.getById(draggingSymbolLinkLine.mouseDownPanelSymbol.panelId) : undefined
@@ -338,7 +340,10 @@ export class RenderService {
 					selectedStringId,
 					options,
 					draggingSymbolLinkLinePanelWithSymbol,
+					transformedPoint,
 				)
+
+				const mouseDownPanelSymbol = options?.draggingSymbolLinkLine?.mouseDownPanelSymbol
 
 				drawLinkModePathLinesCurvedAlreadyMappedV6(
 					ctx,
@@ -347,7 +352,7 @@ export class RenderService {
 					selectedPanelLinkId,
 					hoveringOverPanelLinkInLinkMenu,
 					panelLinkUnderMouse,
-					options?.draggingSymbolLinkLine?.mouseDownPanelSymbol,
+					mouseDownPanelSymbol,
 				)
 
 				/*		if (options?.draggingSymbolLinkLine) {
@@ -457,6 +462,7 @@ export class RenderService {
 		entities: PanelModel[],
 		linksInOrder: PanelLinkModel[][] = [],
 		selectedString: StringModel | undefined,
+		options?: Partial<CanvasRenderOptions>,
 	) {
 		const selectedStringId = selectedString?.id
 		// const selectedStringId = this._selectedStore.state.selectedStringId
@@ -467,6 +473,8 @@ export class RenderService {
 		const hoveringOverEntityId = pointerState.hoveringOverEntityId
 
 		const mouseOverSymbol = this._entities.panelLinks.getHoveringOverPanelPolaritySymbol
+		const mouseDownPanelSymbol = options?.draggingSymbolLinkLine?.mouseDownPanelSymbol
+
 		// const selectedString ?
 		/*		const linksInOrder = selectedStringId
 		 ? this._panelLinks.getPanelLinkOrderForSelectedStringV2()
@@ -584,7 +592,7 @@ export class RenderService {
 				 }*/
 				if (this._graphicsStore.state.linkModeSymbols) {
 					// console.log('mouseOverSymbol', mouseOverSymbol)
-					drawLinkModeSymbols(ctx, entity, mouseOverSymbol)
+					drawLinkModeSymbols(ctx, entity, mouseOverSymbol, mouseDownPanelSymbol)
 					// this.drawLinkModeSymbols(ctx, entity)
 				}
 			}

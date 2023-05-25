@@ -13,6 +13,7 @@ import { CurvedNumberLine } from '@canvas/shared'
 import { assertNotNull } from '@shared/utils'
 import { Point } from '@shared/data-access/models'
 import { getGuid } from '@ngrx/data'
+import { getPanelLocationBasedOnOppositePolarity } from './link-lines'
 
 export const reduceLinkPointsToNumberArray = (links: PanelLinkModel[]): number[] =>
 	links.reduce((acc, link, index) => {
@@ -129,8 +130,26 @@ export const pushCustomPanelLinkPoint = (
 	point: Point,
 	selectedStringId: StringId,
 	draggingSymbolLinkLinePanelWithSymbol: PanelWithSymbol,
+	nearbyPanelToLinkLine: PanelModel | undefined,
 ) => {
 	if (!links.length) {
+		if (nearbyPanelToLinkLine) {
+			return [
+				{
+					id: 'custom' as PanelLinkId,
+					positivePanelId: draggingSymbolLinkLinePanelWithSymbol.id,
+					negativePanelId: nearbyPanelToLinkLine.id,
+					linePoints: [
+						getEntityCenter(draggingSymbolLinkLinePanelWithSymbol),
+						getPanelLocationBasedOnOppositePolarity(
+							nearbyPanelToLinkLine,
+							draggingSymbolLinkLinePanelWithSymbol.symbol,
+						),
+					],
+					stringId: selectedStringId,
+				},
+			]
+		}
 		return [
 			{
 				id: 'custom' as PanelLinkId,
@@ -142,6 +161,22 @@ export const pushCustomPanelLinkPoint = (
 		]
 	}
 	const lastLink = links[links.length - 1]
+	if (nearbyPanelToLinkLine) {
+		const link: PanelLinkModel = {
+			id: 'custom' as PanelLinkId,
+			positivePanelId: draggingSymbolLinkLinePanelWithSymbol.id,
+			negativePanelId: nearbyPanelToLinkLine.id,
+			linePoints: [
+				getEntityCenter(draggingSymbolLinkLinePanelWithSymbol),
+				getPanelLocationBasedOnOppositePolarity(
+					nearbyPanelToLinkLine,
+					draggingSymbolLinkLinePanelWithSymbol.symbol,
+				),
+			],
+			stringId: selectedStringId,
+		}
+		return [...links, link]
+	}
 	const link: PanelLinkModel = {
 		id: 'custom' as PanelLinkId,
 		positivePanelId: lastLink.negativePanelId,

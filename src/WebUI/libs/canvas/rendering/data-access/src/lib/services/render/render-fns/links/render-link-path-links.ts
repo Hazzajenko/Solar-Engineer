@@ -21,7 +21,7 @@ import {
 	getQuadraticAngleAtPointUsingNumberLine,
 } from '@canvas/utils'
 import { Point, TransformedPoint } from '@shared/data-access/models'
-import { getPanelSymbolLocationBasedOnPolarity } from '@entities/utils'
+import { getPanelWithSymbolLocationBasedOnPolarity } from '@entities/utils'
 
 let offset = 0
 let image: HTMLImageElement | undefined
@@ -380,7 +380,7 @@ export const drawDraggingSymbolLinkLine = (
 	panelWithSymbol: PanelWithSymbol,
 	mousePoint: TransformedPoint,
 ) => {
-	const startPoint = getPanelSymbolLocationBasedOnPolarity(panelWithSymbol)
+	const startPoint = getPanelWithSymbolLocationBasedOnPolarity(panelWithSymbol)
 	const straightLine: LineToLineNumberLine = [
 		startPoint.x,
 		startPoint.y,

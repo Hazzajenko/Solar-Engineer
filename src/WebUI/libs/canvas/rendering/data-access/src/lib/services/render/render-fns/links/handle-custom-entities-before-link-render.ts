@@ -7,6 +7,7 @@ import {
 	checkIfPanelIdIsWithPanelLink,
 } from './render-link-path-links'
 import { CanvasRenderOptions } from '../../../../types'
+import { TransformedPoint } from '@shared/data-access/models'
 
 type CustomRenderingOptions = Partial<
 	Pick<
@@ -28,6 +29,7 @@ export const handleCustomEntitiesBeforeLinkRender = (
 	selectedStringId: StringId,
 	options: CustomRenderingOptions | undefined,
 	draggingSymbolLinkLinePanelWithSymbol: PanelWithSymbol | undefined,
+	transformedPoint: TransformedPoint | undefined,
 ) => {
 	// if (!stringPanelLinks.length) return circuitLinkLineTuples
 
@@ -76,13 +78,15 @@ export const handleCustomEntitiesBeforeLinkRender = (
 	}
 
 	if (draggingSymbolLinkLine && draggingSymbolLinkLinePanelWithSymbol) {
-		const { mouseDownPanelSymbol, transformedPoint } = draggingSymbolLinkLine
+		const { mouseDownPanelSymbol, transformedPoint, nearbyPanelToLinkLine } = draggingSymbolLinkLine
+
 		const updatedPanelLinks = pushCustomPanelLinkPoint(
 			stringPanelLinks,
 			mouseDownPanelSymbol,
 			transformedPoint,
 			selectedStringId,
 			draggingSymbolLinkLinePanelWithSymbol,
+			nearbyPanelToLinkLine,
 		)
 		customLinkLineTuples = getUpdatedPanelLinksForRender(updatedPanelLinks)
 	}

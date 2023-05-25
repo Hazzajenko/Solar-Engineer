@@ -4,13 +4,13 @@ import { selectAllPanels, selectPanelsEntities } from './panels.selectors'
 import { isNotNull } from '@shared/utils'
 import { PanelsActions } from './panels.actions'
 import { UpdateStr } from '@ngrx/entity/src/models'
-import { PanelModel } from '@entities/shared'
+import { PanelId, PanelModel } from '@entities/shared'
 import { provideEffects } from '@ngrx/effects'
 import { PANELS_FEATURE_KEY, panelsReducer } from './panels.reducer'
 import { TransformedPoint } from '@shared/data-access/models'
 import { isPointInsideEntity } from '@canvas/utils'
 import * as panelsEffects from './panels.effects'
-import { getPanelWithSymbolUnderMouse } from '@entities/utils'
+import { getPanelNearbyInLinkModeExcludingOne, getPanelWithSymbolUnderMouse } from '@entities/utils'
 
 export function providePanelsFeature() {
 	return makeEnvironmentProviders([
@@ -53,6 +53,9 @@ export function injectPanelsStore() {
 			 return panelSymbolUnderMouse
 			 ? isPointInsidePanelSymbolsV3(point, panelSymbolUnderMouse)
 			 : undefined*/
+		},
+		getNearbyPanelInLinkModeExcludingOne(point: TransformedPoint, panelId: PanelId) {
+			return getPanelNearbyInLinkModeExcludingOne(this.allPanels, point, panelId)
 		},
 		addPanel(panel: PanelModel) {
 			store.dispatch(PanelsActions.addPanel({ panel }))
