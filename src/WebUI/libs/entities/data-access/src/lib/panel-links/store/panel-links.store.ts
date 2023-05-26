@@ -10,12 +10,14 @@ import {
 	selectMouseDownOnPanelPolaritySymbol,
 	selectPanelLinksEntities,
 	selectRequestingLink,
+	selectSelectedLinkModePanelId,
 	selectSelectedStringCircuit,
 } from './panel-links.selectors'
 import { isNotNull } from '@shared/utils'
 import { PanelLinksActions } from './panel-links.actions'
 import { UpdateStr } from '@ngrx/entity/src/models'
 import {
+	PanelId,
 	PanelLinkModel,
 	PanelLinkRequest,
 	PanelSymbol,
@@ -38,6 +40,7 @@ export function injectPanelLinksStore() {
 	// const state = store.selectSignal(selectPanelLinksState)
 	const allPanelLinks = store.selectSignal(selectAllPanelLinks)
 	const entities = store.selectSignal(selectPanelLinksEntities)
+	// const {} = allPanelLinksSelectors()
 
 	return {
 		get allPanelLinks() {
@@ -67,6 +70,9 @@ export function injectPanelLinksStore() {
 		},
 		get drawingPanelPolaritySymbolLine() {
 			return store.selectSignal(selectDrawingPanelPolaritySymbolLine)()
+		},
+		get selectedLinkModePanelId() {
+			return store.selectSignal(selectSelectedLinkModePanelId)()
 		},
 		getById(id: string) {
 			return entities()[id]
@@ -186,6 +192,12 @@ export function injectPanelLinksStore() {
 		},
 		clearDrawingPanelPolaritySymbolLine() {
 			store.dispatch(PanelLinksActions.clearDrawingPanelPolaritySymbolLine())
+		},
+		setSelectedLinkModePanelId(panelId: PanelId) {
+			store.dispatch(PanelLinksActions.setSelectedLinkModePanelId({ panelId }))
+		},
+		clearSelectedLinkModePanelId() {
+			store.dispatch(PanelLinksActions.clearSelectedLinkModePanelId())
 		},
 		clearPanelLinksState() {
 			store.dispatch(PanelLinksActions.clearPanelLinksState())

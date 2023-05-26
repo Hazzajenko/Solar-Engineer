@@ -571,6 +571,12 @@ export class DesignCanvasDirective implements OnInit {
 				return
 			}
 
+			// todo move link mode method to strings or selected
+			if (this._selectedStore.selectedStringId) {
+				this._entities.panelLinks.setSelectedLinkModePanelId(entityUnderMouse.id)
+				return
+			}
+
 			// }
 			/*			this._selected.handleEntityUnderMouse(event, entityUnderMouse)
 			 console.log('entityUnderMouse', entityUnderMouse)
@@ -591,6 +597,7 @@ export class DesignCanvasDirective implements OnInit {
 			this._panelLinks.clearPanelLinkRequest()
 			return
 		}
+
 		// const selectedSnapshot = this._app.selectedSnapshot
 		this._selected.handleNotClickedOnEntity()
 		if (this.anyEntitiesNearAreaOfClick(event)) {

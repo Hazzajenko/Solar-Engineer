@@ -1,6 +1,7 @@
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
 import {
+	PanelId,
 	PanelLinkFromMenu,
 	PanelLinkModel,
 	PanelLinkRequest,
@@ -62,6 +63,10 @@ export const PanelLinksActions = createActionGroup({
 			panelSymbol: PanelSymbol
 		}>(),
 		'Clear Drawing Panel Polarity Symbol Line': emptyProps(),
+		'Set Selected Link Mode Panel Id': props<{
+			panelId: PanelId
+		}>(),
+		'Clear Selected Link Mode Panel Id': emptyProps(),
 		'Clear Panel Links State': emptyProps(),
 		Noop: emptyProps(),
 	},

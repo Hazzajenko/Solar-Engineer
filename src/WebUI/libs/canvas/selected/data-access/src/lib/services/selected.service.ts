@@ -23,7 +23,7 @@ export class SelectedService {
 			return
 		}
 		this.setSelected(entityUnderMouse.id)
-		this._selectedStore.fetchByKey('selectedStringId')
+		// this._selectedStore.fetchByKey('selectedStringId')
 		// const yo = this._selectedStore.fetchByKeys(['selectedStringId', 'multipleSelectedEntityIds'])
 		// // yo
 		/*	const yo = this._selectedStore.fetchByKeysAsObject(['selectedStringId', 'multipleSelectedEntityIds'])

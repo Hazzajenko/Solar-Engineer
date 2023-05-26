@@ -1,7 +1,7 @@
 import { PANEL_LINKS_FEATURE_KEY, panelLinksAdapter, PanelLinksState } from './panel-links.reducer'
 import { PanelLinkModel, Polarity } from '@entities/shared'
 import { Dictionary } from '@ngrx/entity'
-import { createFeatureSelector, createSelector } from '@ngrx/store'
+import { createFeatureSelector, createSelector, MemoizedSelector } from '@ngrx/store'
 
 export const selectPanelLinksState = createFeatureSelector<PanelLinksState>(PANEL_LINKS_FEATURE_KEY)
 
@@ -128,6 +128,46 @@ export const selectSelectedStringCircuit = createSelector(
 	selectPanelLinksState,
 	(state: PanelLinksState) => state.selectedStringCircuit,
 )
+
+export const selectSelectedLinkModePanelId = createPanelLinksSelector({
+	key: 'selectedLinkModePanelId',
+})
+
+// const createPanelLinkSelector
+
+// type Selector = ReturnType<typeof createSelector>
+
+export type AllPanelLinksSelectors = {
+	[T in keyof PanelLinksState]: MemoizedSelector<
+		object,
+		PanelLinksState[T],
+		(s1: PanelLinksState) => PanelLinksState[T]
+	>
+}
+/*export const allPanelLinksSelectors = () => {
+ const res: AllPanelLinksSelectors = {} as AllPanelLinksSelectors
+ Object.keys(initialPanelLinksState).forEach((key) => {
+ const selector = createSelector(
+ selectPanelLinksState,
+ (state: PanelLinksState) => state[key as keyof PanelLinksState],
+ )
+ const k = key as keyof PanelLinksState
+ res[k] = selector as MemoizedSelector<
+ object,
+ PanelLinksState[k],
+ (s1: PanelLinksState) => PanelLinksState[k]
+ >
+ })
+ // PanelLinksState['']
+ /!*	Object.keys(initialPanelLinksState).map(
+ (key) =>
+ createSelector(
+ selectPanelLinksState,
+ (state: PanelLinksState) => state[key as keyof PanelLinksState],
+ ),
+ )*!/
+ }*/
+
 /*export const selectDrawingPanelPolaritySymbolLine = panelLinksSelector(
  (state: PanelLinksState) => state.drawingPanelPolaritySymbolLine,
  )*/

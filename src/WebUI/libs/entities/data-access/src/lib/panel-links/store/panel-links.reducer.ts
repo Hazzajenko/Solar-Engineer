@@ -1,6 +1,6 @@
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity'
 import { Action, createReducer, on } from '@ngrx/store'
-import { PanelLinkFromMenu, PanelLinkModel, PanelLinkRequest, PanelSymbol, StringCircuit } from '@entities/shared'
+import { PanelId, PanelLinkFromMenu, PanelLinkModel, PanelLinkRequest, PanelSymbol, StringCircuit } from '@entities/shared'
 import { PanelLinksActions } from './panel-links.actions'
 
 /*export type LinkPathLine = {
@@ -19,6 +19,7 @@ export interface PanelLinksState extends EntityState<PanelLinkModel> {
 	mouseDownOnPanelPolaritySymbol: PanelSymbol | undefined
 	drawingPanelPolaritySymbolLine: PanelSymbol | undefined
 	selectedStringCircuit: StringCircuit | undefined
+	selectedLinkModePanelId: PanelId | undefined
 	/*	linkPaint:{
 
 	 }*/
@@ -42,6 +43,7 @@ export const initialPanelLinksState: PanelLinksState = panelLinksAdapter.getInit
 	mouseDownOnPanelPolaritySymbol: undefined,
 	drawingPanelPolaritySymbolLine: undefined,
 	selectedStringCircuit: undefined,
+	selectedLinkModePanelId: undefined,
 })
 
 const reducer = createReducer(
@@ -127,6 +129,14 @@ const reducer = createReducer(
 	on(PanelLinksActions.clearDrawingPanelPolaritySymbolLine, (state) => ({
 		...state,
 		drawingPanelPolaritySymbolLine: undefined,
+	})),
+	on(PanelLinksActions.setSelectedLinkModePanelId, (state, { panelId }) => ({
+		...state,
+		selectedLinkModePanelId: panelId,
+	})),
+	on(PanelLinksActions.clearSelectedLinkModePanelId, (state) => ({
+		...state,
+		selectedLinkModePanelId: undefined,
 	})),
 	on(PanelLinksActions.clearPanelLinksState, () => initialPanelLinksState),
 )

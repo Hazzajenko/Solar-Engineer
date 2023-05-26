@@ -238,6 +238,7 @@ export class RenderService {
 
 			const selectedPanelLinkId = this._selectedStore.selectedPanelLinkId
 			const panelLinkUnderMouse = this._entities.panelLinks.getHoveringOverPanelLinkInApp
+			const panelLinkRequest = options?.panelLinkRequest
 
 			if (shouldRenderSelectedEntitiesBox && multipleSelectedEntityIds.length) {
 				drawSelectedBox(ctx, this._entities.panels.getByIds(multipleSelectedEntityIds))
@@ -340,7 +341,7 @@ export class RenderService {
 				 : undefined
 				 transformedPoint = draggingSymbolLinkLine.transformedPoint
 				 }*/
-				const panelLinkRequest = options?.panelLinkRequest
+				// const panelLinkRequest = options?.panelLinkRequest
 
 				// console.log('circuitLinkLines', circuitLinkLines)
 				// const draggingSymbolLinkLine = options?.draggingSymbolLinkLine
@@ -376,6 +377,21 @@ export class RenderService {
 				 }
 				 drawDraggingSymbolLinkLine(ctx, panelWithSymbol, transformedPoint)
 				 }*/
+			}
+
+			if (panelLinkRequest) {
+				// const panel = this._entities.panels.getById(panelLinkRequest.panel)
+				/*				assertNotNull(panel, 'panel')
+				 const panelWithSymbol = {
+				 ...panel,
+				 symbol: panelLinkRequest.symbol,
+				 }*/
+				// drawPanelLinkRequest(ctx, panelWithSymbol, panelLinkRequest.transformedPoint)
+				drawBoxWithOptionsCtx(ctx, [panelLinkRequest.panel], {
+					color: CANVAS_COLORS.HoveringOverPanelInLinkMenuStrokeStyle,
+					lineWidth: 2,
+					padding: 5,
+				})
 			}
 
 			if (selectedString && selectedString.disconnectionPointId) {
@@ -479,12 +495,19 @@ export class RenderService {
 		// const selectedStringId = this._selectedStore.state.selectedStringId
 		const graphicsState = this._graphicsStore.state
 		const selectedState = this._selectedStore.state
+		const { singleSelectedEntityId, multipleSelectedEntityIds, selectedPanelLinkId } = selectedState
+		const singleSelectedEntity = singleSelectedEntityId
+			? this._entities.panels.getById(singleSelectedEntityId)
+			: undefined
 
 		const pointerState = this._appState.pointer()
 		const hoveringOverEntityId = pointerState.hoveringOverEntityId
 
 		const mouseOverSymbol = this._entities.panelLinks.getHoveringOverPanelPolaritySymbol
 		const mouseDownPanelSymbol = options?.draggingSymbolLinkLine?.mouseDownPanelSymbol
+		const selectedStringPanel = this._entities.panelLinks.selectedLinkModePanelId
+			? this._entities.panels.getById(this._entities.panelLinks.selectedLinkModePanelId)
+			: undefined
 
 		// const selectedString ?
 		/*		const linksInOrder = selectedStringId
@@ -612,7 +635,12 @@ export class RenderService {
 				this._graphicsStore.state.linkModeOrderNumbers &&
 				linksInOrder.length
 			) {
-				drawLinkModeOrderNumbers(ctx, entity, linksInOrder as OpenCircuitChain[])
+				drawLinkModeOrderNumbers(
+					ctx,
+					entity,
+					linksInOrder as OpenCircuitChain[],
+					singleSelectedEntity,
+				)
 				// this.drawLinkModeOrderNumbers(ctx, entity, linksInOrder as OpenCircuitChain[])
 			}
 			/*				if (

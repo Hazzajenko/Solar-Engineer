@@ -128,3 +128,74 @@ const handleClosedCircuitChains = (possibleClosedCircuitLinks: PanelLinkModel[])
 		unknownCircuitChains,
 	}
 }
+
+/*export const reorderPanelLinkChainsBasedOnSelectedPanel = (
+ openCircuitChains: OpenCircuitChain[],
+ selectedPanel: PanelModel,
+ ) => {
+ /!*	const positivePanelIds = new Set(panelLinks.map((pl) => pl.positivePanelId))
+ const startOfChains = panelLinks.filter(
+ (panelLink) => !positivePanelIds.has(panelLink.negativePanelId),
+ )
+
+ const completeLinkIds: string[] = []*!/
+
+ let indexOfPanel = openCircuitChains.findIndex((chain) => {
+ return chain.some((panelLink) => panelLink.positivePanelId === selectedPanel.id)
+ })
+
+ if (indexOfPanel === -1) {
+ indexOfPanel = openCircuitChains.findIndex((chain) => {
+ return chain.some((panelLink) => panelLink.negativePanelId === selectedPanel.id)
+ })
+ }
+
+ if (indexOfPanel === -1) {
+ return openCircuitChains
+ }
+
+ const reorderedChains = openCircuitChains
+ .slice(indexOfPanel)
+ .concat(openCircuitChains.slice(0, indexOfPanel))
+
+ /!*	const openCircuitChains = startOfChains.map((panelLink) => {
+ const panelLinkChain = [panelLink]
+ completeLinkIds.push(panelLink.id)
+ let currentPanelLink = panelLink
+ let panelLinkChainOrderInProcess = true
+ while (panelLinkChainOrderInProcess) {
+ const nextPanelLink = panelLinks.find(
+ (pl) => pl.negativePanelId === currentPanelLink.positivePanelId,
+ )
+ if (!nextPanelLink) {
+ panelLinkChainOrderInProcess = false
+ return panelLinkChain
+ }
+ panelLinkChain.push(nextPanelLink)
+ currentPanelLink = nextPanelLink
+ }
+ return panelLinkChain
+ })*!/
+
+ /!*	const possibleClosedCircuitLinks = panelLinks.filter((pl) => !completeLinkIds.includes(pl.id))
+
+ if (possibleClosedCircuitLinks.length === 0) {
+ return {
+ openCircuitChains,
+ closedCircuitChains: [],
+ }
+ }
+
+ const { closedCircuitChains, unknownCircuitChains } = handleClosedCircuitChains(
+ possibleClosedCircuitLinks,
+ )
+
+ if (unknownCircuitChains.length > 0) {
+ // console.log('unknownCircuitChains', unknownCircuitChains)
+ }
+
+ return {
+ openCircuitChains,
+ closedCircuitChains,
+ }*!/
+ }*/
