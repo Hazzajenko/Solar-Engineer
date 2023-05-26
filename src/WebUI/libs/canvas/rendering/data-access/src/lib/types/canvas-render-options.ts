@@ -6,12 +6,19 @@ import {
 	SpotInBox,
 	TransformedPoint,
 } from '@shared/data-access/models'
-import { CanvasEntity, PanelLinkModel, PanelModel, PanelSymbol } from '@entities/shared'
+import {
+	CanvasEntity,
+	PanelLinkModel,
+	PanelLinkRequest,
+	PanelModel,
+	PanelSymbol,
+} from '@entities/shared'
+
+export const createRenderOptions = (options: PartialRenderOptions): PartialRenderOptions => options
+
+export type PartialRenderOptions = Partial<CanvasRenderOptions>
 
 export type CanvasRenderOptions = {
-	// drawFns: ((ctx: CanvasRenderingContext2D) => void)[]
-	// drawFnsAtMiddle: ((ctx: CanvasRenderingContext2D) => void)[]
-	// drawFnsAtEnd: ((ctx: CanvasRenderingContext2D) => void)[]
 	excludedEntityIds: string[]
 	customEntities: CanvasEntity[]
 	currentLocation: TransformedPoint
@@ -70,8 +77,12 @@ export type CanvasRenderOptions = {
 		nearbyPanelToLinkLine: PanelModel | undefined
 		possibleSymbolLink?: PanelSymbol
 	}
-
-	// singleToMove
+	panelLinkRequest: {
+		request: PanelLinkRequest
+		currentPoint: TransformedPoint
+		panel: PanelModel
+		nearbyPanelToLinkLine: PanelModel | undefined
+	}
 }
 /*export type CanvasRenderOptions = {
  drawFns?: ((ctx: CanvasRenderingContext2D) => void)[]

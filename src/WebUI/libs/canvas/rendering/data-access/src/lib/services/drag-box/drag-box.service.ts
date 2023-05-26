@@ -50,13 +50,22 @@ export class DragBoxService {
 			// const idk = toFunc(this._appStore.setDragBoxState)
 			// const randomFn = (one: number, two: number) => one + two
 			// const randomFn2 = toFunc(randomFn)
-			this._appStore.setDragBoxState('SelectionBoxInProgress')
+			this._appStore.setDragBoxState({
+				state: 'SelectionBoxInProgress',
+				start: currentPoint,
+			})
 		}
 		if (modeState === MODE_STATE.LINK_MODE) {
-			this._appStore.setDragBoxState('SelectionBoxInProgress')
+			this._appStore.setDragBoxState({
+				state: 'SelectionBoxInProgress',
+				start: currentPoint,
+			})
 		}
 		if (modeState === MODE_STATE.CREATE_MODE) {
-			this._appStore.setDragBoxState('CreationBoxInProgress')
+			this._appStore.setDragBoxState({
+				state: 'CreationBoxInProgress',
+				start: currentPoint,
+			})
 		}
 		this.dragBoxStart = currentPoint
 		// const clickMode = this._machine.state[GRID_STATE_KEY]
@@ -125,7 +134,9 @@ export class DragBoxService {
 			// const boundsFromPoints = getCompleteBoundsFromMultipleEntities(panelsInArea)
 			// const boundsFromPoints = getCompleteBoundsFromBoundsArray(panelPoints)
 			// const boundsFromPoints = getCompleteBoundsFromPoints(panelPoints)
-			this._appStore.setDragBoxState('NoDragBox')
+			this._appStore.setDragBoxState({
+				state: 'NoDragBox',
+			})
 			this._selectedStore.dispatch.selectMultipleEntities(entitiesInAreaIds)
 			/*			this._app.sendEvent({ type: 'StopDragBox' })
 			 this._app.sendSelectedEvent({
@@ -158,7 +169,9 @@ export class DragBoxService {
 			// console.log('boundsFromPoints', boundsFromPoints)
 		} else {
 			// console.log('no panels in area')
-			this._appStore.setDragBoxState('NoDragBox')
+			this._appStore.setDragBoxState({
+				state: 'NoDragBox',
+			})
 			// this._app.sendEvent({ type: 'StopDragBox' })
 			// this._machine.sendEvent(new StopDragBox())
 		}
@@ -192,7 +205,9 @@ export class DragBoxService {
 		 })*/
 		this._entities.panels.addManyPanels(newPanels)
 		// this._state.entities.panels.addManyEntities(newPanels)
-		this._appStore.setDragBoxState('NoDragBox')
+		this._appStore.setDragBoxState({
+			state: 'NoDragBox',
+		})
 		// this._app.sendEvent({ type: 'StopDragBox' })
 
 		// this._machine.sendEvent(new StopDragBox())
@@ -200,7 +215,9 @@ export class DragBoxService {
 
 	selectionBoxMouseMove(event: PointerEvent, currentPoint: TransformedPoint) {
 		if (!dragBoxKeysDown(event)) {
-			this._appStore.setDragBoxState('NoDragBox')
+			this._appStore.setDragBoxState({
+				state: 'NoDragBox',
+			})
 			// this._app.sendEvent({ type: 'StopDragBox' })
 			// this._machine.sendEvent(new StopDragBox())
 			changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
@@ -242,7 +259,9 @@ export class DragBoxService {
 
 	creationBoxMouseMove(event: PointerEvent, currentPoint: TransformedPoint) {
 		if (!dragBoxKeysDown(event)) {
-			this._appStore.setDragBoxState('NoDragBox')
+			this._appStore.setDragBoxState({
+				state: 'NoDragBox',
+			})
 			// this._app.sendEvent({ type: 'StopDragBox' })
 			// this._machine.sendEvent(new StopDragBox())
 			changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)

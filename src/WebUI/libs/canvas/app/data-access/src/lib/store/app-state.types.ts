@@ -1,5 +1,7 @@
 // import { ContextMenuType } from '@canvas/view-positioning/data-access'
 
+import { TransformedPoint } from '@shared/data-access/models'
+
 export const DRAG_BOX_STATE = {
 	CREATION_BOX_IN_PROGRESS: 'CreationBoxInProgress',
 	NO_DRAG_BOX: 'NoDragBox',
@@ -7,6 +9,22 @@ export const DRAG_BOX_STATE = {
 } as const
 
 export type DragBoxState = (typeof DRAG_BOX_STATE)[keyof typeof DRAG_BOX_STATE]
+
+export type SelectionBoxInProgress = {
+	state: typeof DRAG_BOX_STATE.SELECTION_BOX_IN_PROGRESS
+	start: TransformedPoint
+}
+
+export type CreationBoxInProgress = {
+	state: typeof DRAG_BOX_STATE.CREATION_BOX_IN_PROGRESS
+	start: TransformedPoint
+}
+
+export type NoDragBox = {
+	state: typeof DRAG_BOX_STATE.NO_DRAG_BOX
+}
+
+export type DragBox = SelectionBoxInProgress | CreationBoxInProgress | NoDragBox
 
 export const MODE_STATE = {
 	CREATE_MODE: 'CreateMode',

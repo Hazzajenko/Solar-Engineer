@@ -1,29 +1,61 @@
 import { TransformedPoint } from '@shared/data-access/models'
-import { MODE_STATE, ModeState } from '@canvas/app/data-access'
-import { getAllEntitiesBetweenTwoPoints } from '@canvas/utils'
+import { AppStateStore, MODE_STATE } from '@canvas/app/data-access'
+import {
+	dragBoxKeysDown,
+	getAllAvailableEntitySpotsBetweenTwoPoints,
+	getAllEntitiesBetweenTwoPoints,
+} from '@canvas/utils'
 import { PanelModel } from '@entities/shared'
-// import { V } from '@angular/cdk/keycodes'
-// import { V } from 'vitest/dist/types-71ccd11d'
+import { SelectedStore } from '@canvas/selected/data-access'
+import { createPanel } from '@entities/utils'
+import { PanelsStore } from '@entities/data-access'
+import { createRenderOptions } from '@canvas/rendering/data-access'
 
-// type ArgumentTypes<F extends (...args: any) => any> = F extends (...args: infer A) => any ? A : never
-/*
- type ReturnType<F extends Function> = F extends (...args: any[]) => infer R ? R : never
-
- type idk = Parameters<typeof dragBoxOnMouseDownHandler>*/
-// export const toFunc = <V, U extends (...args: any) => any>(func: (param: ArgumentTypes<U>) => V) => func
 export const dragBoxOnMouseDownHandler = (
 	event: PointerEvent,
 	currentPoint: TransformedPoint,
-	appMode: ModeState,
+	_appStore: AppStateStore,
 ) => {
-	switch (appMode) {
+	switch (_appStore.mode()) {
 		case MODE_STATE.SELECT_MODE:
-			return 'SelectionBoxInProgress'
+			return _appStore.setDragBoxState({
+				state: 'SelectionBoxInProgress',
+				start: currentPoint,
+			})
 		case MODE_STATE.LINK_MODE:
-			return 'SelectionBoxInProgress'
+			return _appStore.setDragBoxState({
+				state: 'SelectionBoxInProgress',
+				start: currentPoint,
+			})
 		case MODE_STATE.CREATE_MODE:
-			return 'CreationBoxInProgress'
+			return _appStore.setDragBoxState({
+				state: 'CreationBoxInProgress',
+				start: currentPoint,
+			})
 	}
+}
+
+export const selectionBoxMouseMove = (
+	event: PointerEvent,
+	currentPoint: TransformedPoint,
+	dragBoxStart: TransformedPoint, // panels: PanelModel[],
+	_appStore: AppStateStore,
+) => {
+	if (!dragBoxKeysDown(event)) {
+		_appStore.setDragBoxState({
+			state: 'NoDragBox',
+		})
+		return
+	}
+
+	return createRenderOptions({
+		selectionBox: {
+			x: dragBoxStart.x,
+			y: dragBoxStart.y,
+			width: currentPoint.x - dragBoxStart.x,
+			height: currentPoint.y - dragBoxStart.y,
+		},
+	})
 }
 
 export const selectionBoxMouseUp = (
@@ -31,18 +63,60 @@ export const selectionBoxMouseUp = (
 	currentPoint: TransformedPoint,
 	dragBoxStart: TransformedPoint,
 	panels: PanelModel[],
+	_appStore: AppStateStore,
+	_selectedStore: SelectedStore,
 ) => {
-	// const start = this.dragBoxStart
-	// assertNotNull(start)
-	// const currentPoint = this._domPointService.getTransformedPointFromEvent(event)
 	const panelsInArea = getAllEntitiesBetweenTwoPoints(dragBoxStart, currentPoint, panels)
 	if (panelsInArea) {
 		const entitiesInAreaIds = panelsInArea.map((panel) => panel.id)
-		this._appStore.setDragBoxState('NoDragBox')
-		this._selectedStore.dispatch.selectMultipleEntities(entitiesInAreaIds)
+		_appStore.setDragBoxState({ state: 'NoDragBox' })
+		_selectedStore.selectMultipleEntities(entitiesInAreaIds)
 	} else {
-		this._appStore.setDragBoxState('NoDragBox')
+		_appStore.setDragBoxState({ state: 'NoDragBox' })
 	}
-	// this._render.renderCanvasApp()
-	// this.dragBoxStart = undefined
+}
+
+export const creationBoxMouseMove = (
+	event: PointerEvent,
+	currentPoint: TransformedPoint,
+	dragBoxStart: TransformedPoint,
+	panels: PanelModel[],
+	_appStore: AppStateStore,
+) => {
+	if (!dragBoxKeysDown(event)) {
+		_appStore.setDragBoxState({
+			state: 'NoDragBox',
+		})
+		return
+	}
+	return createRenderOptions({
+		creationBox: {
+			x: dragBoxStart.x,
+			y: dragBoxStart.y,
+			width: currentPoint.x - dragBoxStart.x,
+			height: currentPoint.y - dragBoxStart.y,
+			spots: getAllAvailableEntitySpotsBetweenTwoPoints(dragBoxStart, currentPoint, panels),
+		},
+	})
+}
+
+export const creationBoxMouseUp = (
+	event: PointerEvent,
+	currentPoint: TransformedPoint,
+	dragBoxStart: TransformedPoint,
+	panels: PanelModel[],
+	_appStore: AppStateStore,
+	_panelsStore: PanelsStore,
+) => {
+	const spots = getAllAvailableEntitySpotsBetweenTwoPoints(dragBoxStart, currentPoint, panels)
+	if (!spots || !spots.length) return
+	const takenSpots = spots.filter((spot) => !spot.vacant)
+	if (takenSpots.length) {
+		return
+	}
+	const newPanels = spots.map((spot) => createPanel({ x: spot.x, y: spot.y }))
+	_panelsStore.addManyPanels(newPanels)
+	_appStore.setDragBoxState({
+		state: 'NoDragBox',
+	})
 }

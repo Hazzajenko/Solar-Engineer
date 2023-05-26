@@ -1,7 +1,7 @@
 import { AppStateActions } from './app-state.actions'
 import {
 	DRAG_BOX_STATE,
-	DragBoxState,
+	DragBox,
 	HOVERING_OVER_ENTITY_STATE,
 	InitialPointerState,
 	MODE_STATE,
@@ -17,7 +17,7 @@ import { Action, createReducer, on } from '@ngrx/store'
 export const APP_STATE_FEATURE_KEY = 'appState'
 
 export type AppState = {
-	dragBox: DragBoxState
+	dragBox: DragBox
 	pointer: PointerState
 	view: ViewPositioningState
 	previewAxis: PreviewAxisState
@@ -25,7 +25,7 @@ export type AppState = {
 }
 
 export const initialAppState: AppState = {
-	dragBox: DRAG_BOX_STATE.NO_DRAG_BOX,
+	dragBox: { state: DRAG_BOX_STATE.NO_DRAG_BOX },
 	pointer: InitialPointerState,
 	view: VIEW_POSITIONING_STATE.VIEW_NOT_MOVING,
 	previewAxis: PREVIEW_AXIS_STATE.NONE,

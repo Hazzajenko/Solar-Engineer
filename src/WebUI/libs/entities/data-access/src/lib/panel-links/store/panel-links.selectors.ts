@@ -120,9 +120,14 @@ export const selectDrawingPanelPolaritySymbolLine = createPanelLinksSelector({
 	key: 'drawingPanelPolaritySymbolLine',
 })
 
-export const selectSelectedStringCircuit = createPanelLinksSelector({
-	key: 'selectedStringCircuit',
-})
+/*export const selectSelectedStringCircuit = createPanelLinksSelector({
+ key: 'selectedStringCircuit',
+ })*/
+
+export const selectSelectedStringCircuit = createSelector(
+	selectPanelLinksState,
+	(state: PanelLinksState) => state.selectedStringCircuit,
+)
 /*export const selectDrawingPanelPolaritySymbolLine = panelLinksSelector(
  (state: PanelLinksState) => state.drawingPanelPolaritySymbolLine,
  )*/

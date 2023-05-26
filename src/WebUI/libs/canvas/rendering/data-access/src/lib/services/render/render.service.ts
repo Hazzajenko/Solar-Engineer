@@ -34,7 +34,7 @@ import {
 	StringsStatsService,
 } from '@entities/data-access'
 import { getNegativeSymbolLocation, getPositiveSymbolLocation, isPanel } from '@entities/utils'
-import { Point, TransformedPoint } from '@shared/data-access/models'
+import { Point } from '@shared/data-access/models'
 import {
 	CANVAS_COLORS,
 	CanvasEntity,
@@ -42,7 +42,6 @@ import {
 	PANEL_STROKE_STYLE,
 	PanelLinkModel,
 	PanelModel,
-	PanelWithSymbol,
 	StringModel,
 	UndefinedStringId,
 } from '@entities/shared'
@@ -195,8 +194,14 @@ export class RenderService {
 						})
 			/*			const { stringPanelLinks, openCircuitChains, closedCircuitChains, circuitLinkLineTuples } =
 			 this._panelLinks.getPanelLinkOrderIfStringIsSelected()*/
-			const { openCircuitChains, closedCircuitChains, circuitLinkLines } =
-				this._entities.panelLinks.getSelectedStringCircuit
+			/*			const { openCircuitChains, closedCircuitChains, circuitLinkLines } =
+			 this._entities.panelLinks.getSelectedStringCircuit*/
+			const selectedStringCircuit = this._entities.panelLinks.getSelectedStringCircuit
+			const openCircuitChains = selectedStringCircuit ? selectedStringCircuit.openCircuitChains : []
+			/*			const closedCircuitChains = selectedStringCircuit
+			 ? selectedStringCircuit.closedCircuitChains
+			 : []*/
+			const circuitLinkLines = selectedStringCircuit ? selectedStringCircuit.circuitLinkLines : []
 			const selectedStringId = this._selectedStore.state.selectedStringId
 			const stringPanelLinks = selectedStringId
 				? this._entities.panelLinks.getByStringId(selectedStringId)
@@ -320,21 +325,24 @@ export class RenderService {
 				selectedStringId &&
 				appStateMode === 'LinkMode'
 			) {
-				let draggingSymbolLinkLinePanelWithSymbol: PanelWithSymbol | undefined
-				let transformedPoint: TransformedPoint | undefined
-				if (options?.draggingSymbolLinkLine) {
-					const draggingSymbolLinkLine = options.draggingSymbolLinkLine
-					const draggingSymbolLinkLinePanel = draggingSymbolLinkLine
-						? this._entities.panels.getById(draggingSymbolLinkLine.mouseDownPanelSymbol.panelId)
-						: undefined
-					draggingSymbolLinkLinePanelWithSymbol = draggingSymbolLinkLinePanel
-						? {
-								...draggingSymbolLinkLinePanel,
-								symbol: draggingSymbolLinkLine.mouseDownPanelSymbol.symbol,
-						  }
-						: undefined
-					transformedPoint = draggingSymbolLinkLine.transformedPoint
-				}
+				/*			let draggingSymbolLinkLinePanelWithSymbol: PanelWithSymbol | undefined
+				 let transformedPoint: TransformedPoint | undefined
+				 if (options?.draggingSymbolLinkLine) {
+				 const draggingSymbolLinkLine = options.draggingSymbolLinkLine
+				 const draggingSymbolLinkLinePanel = draggingSymbolLinkLine
+				 ? this._entities.panels.getById(draggingSymbolLinkLine.mouseDownPanelSymbol.panelId)
+				 : undefined
+				 draggingSymbolLinkLinePanelWithSymbol = draggingSymbolLinkLinePanel
+				 ? {
+				 ...draggingSymbolLinkLinePanel,
+				 symbol: draggingSymbolLinkLine.mouseDownPanelSymbol.symbol,
+				 }
+				 : undefined
+				 transformedPoint = draggingSymbolLinkLine.transformedPoint
+				 }*/
+				const panelLinkRequest = options?.panelLinkRequest
+
+				// console.log('circuitLinkLines', circuitLinkLines)
 				// const draggingSymbolLinkLine = options?.draggingSymbolLinkLine
 				// const draggingSymbolLinkLinePanel = draggingSymbolLinkLine ? this._entities.panels.getById(draggingSymbolLinkLine.mouseDownPanelSymbol.panelId) : undefined
 				// const draggingSymbolLinkLinePanelWithSymbol = draggingSymbolLinkLinePanel ? { ...draggingSymbolLinkLinePanel, symbol: draggingSymbolLinkLine.mouseDownPanelSymbol.symbol } : undefined
@@ -342,9 +350,8 @@ export class RenderService {
 					circuitLinkLines,
 					stringPanelLinks,
 					selectedStringId,
-					options,
-					draggingSymbolLinkLinePanelWithSymbol,
-					transformedPoint,
+					options, // draggingSymbolLinkLinePanelWithSymbol,
+					panelLinkRequest,
 				)
 
 				const mouseDownPanelSymbol = options?.draggingSymbolLinkLine?.mouseDownPanelSymbol

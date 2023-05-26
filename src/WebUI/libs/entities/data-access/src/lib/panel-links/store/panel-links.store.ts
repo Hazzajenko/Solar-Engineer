@@ -16,9 +16,6 @@ import { isNotNull } from '@shared/utils'
 import { PanelLinksActions } from './panel-links.actions'
 import { UpdateStr } from '@ngrx/entity/src/models'
 import {
-	ClosedCircuitChain,
-	OpenCircuitChain,
-	PanelLinkId,
 	PanelLinkModel,
 	PanelLinkRequest,
 	PanelSymbol,
@@ -26,9 +23,8 @@ import {
 	StringCircuit,
 } from '@entities/shared'
 import { PANEL_LINKS_FEATURE_KEY, panelLinksReducer, PanelLinksState } from './panel-links.reducer'
-import { provideEffects } from '@ngrx/effects'
 import * as panelLinksEffects from './panel-links.effects'
-import { CurvedNumberLine } from '@canvas/shared'
+import { provideEffects } from '@ngrx/effects'
 
 export function providePanelLinksFeature() {
 	return makeEnvironmentProviders([
@@ -58,13 +54,7 @@ export function injectPanelLinksStore() {
 			// return state().requestingLink
 		},
 		get getSelectedStringCircuit() {
-			return (
-				store.selectSignal(selectSelectedStringCircuit)() ?? {
-					openCircuitChains: [] as OpenCircuitChain[],
-					closedCircuitChains: [] as ClosedCircuitChain[],
-					circuitLinkLines: [] as [PanelLinkId, CurvedNumberLine][][],
-				}
-			)
+			return store.selectSignal(selectSelectedStringCircuit)()
 		},
 		get getHoveringOverPanelLinkInApp() {
 			return store.selectSignal(selectHoveringOverPanelLinkInApp)()

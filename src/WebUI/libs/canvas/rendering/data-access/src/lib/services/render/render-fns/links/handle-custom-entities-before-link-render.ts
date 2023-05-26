@@ -1,6 +1,12 @@
-import { PanelLinkId, PanelLinkModel, PanelWithSymbol, StringId } from '@entities/shared'
+import {
+	PanelLinkId,
+	PanelLinkModel,
+	PanelLinkRequest,
+	PanelModel,
+	StringId,
+} from '@entities/shared'
 import { CurvedNumberLine } from '@canvas/shared'
-import { pushCustomPanelLinkPoint, updatePanelLinkPoints } from '@entities/utils'
+import { pushCustomPanelLinkPointV2, updatePanelLinkPoints } from '@entities/utils'
 import { getUpdatedPanelLinksForRender } from '@entities/data-access'
 import {
 	checkIfManyPanelIdsAreWithPanelLink,
@@ -27,9 +33,15 @@ export const handleCustomEntitiesBeforeLinkRender = (
 	circuitLinkLineTuples: [PanelLinkId, CurvedNumberLine][][],
 	stringPanelLinks: PanelLinkModel[],
 	selectedStringId: StringId,
-	options: CustomRenderingOptions | undefined,
-	draggingSymbolLinkLinePanelWithSymbol: PanelWithSymbol | undefined,
-	transformedPoint: TransformedPoint | undefined,
+	options: CustomRenderingOptions | undefined, // draggingSymbolLinkLinePanelWithSymbol: PanelWithSymbol | undefined,
+	panelLinkRequest:
+		| {
+				request: PanelLinkRequest
+				currentPoint: TransformedPoint
+				panel: PanelModel
+				nearbyPanelToLinkLine: PanelModel | undefined
+		  }
+		| undefined,
 ) => {
 	// if (!stringPanelLinks.length) return circuitLinkLineTuples
 
@@ -77,18 +89,39 @@ export const handleCustomEntitiesBeforeLinkRender = (
 		}
 	}
 
-	if (draggingSymbolLinkLine && draggingSymbolLinkLinePanelWithSymbol) {
-		const { mouseDownPanelSymbol, transformedPoint, nearbyPanelToLinkLine } = draggingSymbolLinkLine
+	/*	if (draggingSymbolLinkLine && draggingSymbolLinkLinePanelWithSymbol) {
+	 const { transformedPoint, nearbyPanelToLinkLine } = draggingSymbolLinkLine
 
-		const updatedPanelLinks = pushCustomPanelLinkPoint(
-			stringPanelLinks,
-			mouseDownPanelSymbol,
-			transformedPoint,
+	 const updatedPanelLinks = pushCustomPanelLinkPoint(
+	 stringPanelLinks, // mouseDownPanelSymbol,
+	 transformedPoint,
+	 selectedStringId,
+	 draggingSymbolLinkLinePanelWithSymbol,
+	 nearbyPanelToLinkLine,
+	 )
+	 customLinkLineTuples = getUpdatedPanelLinksForRender(updatedPanelLinks)
+	 }*/
+
+	if (panelLinkRequest) {
+		const { panel, nearbyPanelToLinkLine, currentPoint } = panelLinkRequest
+		const updatedPanelLinks = pushCustomPanelLinkPointV2(
+			stringPanelLinks, // mouseDownPanelSymbol,
+			currentPoint,
 			selectedStringId,
-			draggingSymbolLinkLinePanelWithSymbol,
+			panel,
 			nearbyPanelToLinkLine,
 		)
 		customLinkLineTuples = getUpdatedPanelLinksForRender(updatedPanelLinks)
+		/*		const { panelLink, transformedPoint, nearbyPanelToLinkLine } = panelLinkRequest
+		 const updatedPanelLinks = pushCustomPanelLinkPoint(
+		 stringPanelLinks,
+		 panelLink,
+		 transformedPoint,
+		 selectedStringId,
+		 draggingSymbolLinkLinePanelWithSymbol,
+		 nearbyPanelToLinkLine,
+		 )*/
+		// customLinkLineTuples = getUpdatedPanelLinksForRender(updatedPanelLinks)
 	}
 
 	return customLinkLineTuples

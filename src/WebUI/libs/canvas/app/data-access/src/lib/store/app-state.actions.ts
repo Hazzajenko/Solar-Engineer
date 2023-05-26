@@ -1,11 +1,11 @@
-import { DragBoxState, ModeState, PreviewAxisState, ViewPositioningState } from './app-state.types'
+import { DragBox, ModeState, PreviewAxisState, ViewPositioningState } from './app-state.types'
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
 
 export const AppStateActions = createActionGroup({
 	source: 'App State Store',
 	events: {
 		'Set Drag Box State': props<{
-			dragBox: DragBoxState
+			dragBox: DragBox
 		}>(),
 		'Set Hovering Over Entity': props<{
 			hoveringOverEntityId: string
@@ -27,8 +27,7 @@ export const AppStateActions = createActionGroup({
 		 }>(),
 		 'Close Context Menu': emptyProps()*/ /*		'Set Dialog State': props<{
 		 dialog: boolean
-		 }>(),*/,
-		/*		'Toggle Dialog State': emptyProps(),
+		 }>(),*/ /*		'Toggle Dialog State': emptyProps(),
 		 'Add Dialog': props<{
 		 dialog: DialogInput
 		 }>(),
@@ -37,7 +36,7 @@ export const AppStateActions = createActionGroup({
 		 }>(),
 		 'Remove Dialog': props<{
 		 dialogId: string
-		 }>(),*/
+		 }>(),*/,
 		'Clear State': emptyProps(),
 	},
 })

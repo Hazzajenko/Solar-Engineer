@@ -4,7 +4,6 @@ import {
 	PanelLinkId,
 	PanelLinkModel,
 	PanelModel,
-	PanelSymbol,
 	PanelWithSymbol,
 	StringId,
 } from '@entities/shared'
@@ -125,8 +124,7 @@ export const updatePanelLinkPoints = (links: PanelLinkModel[], panels: PanelMode
 }
 
 export const pushCustomPanelLinkPoint = (
-	links: PanelLinkModel[],
-	mouseDownPanelSymbol: PanelSymbol,
+	links: PanelLinkModel[], // mouseDownPanelSymbol: PanelSymbol,
 	point: Point,
 	selectedStringId: StringId,
 	draggingSymbolLinkLinePanelWithSymbol: PanelWithSymbol,
@@ -172,6 +170,62 @@ export const pushCustomPanelLinkPoint = (
 					nearbyPanelToLinkLine,
 					draggingSymbolLinkLinePanelWithSymbol.symbol,
 				),
+			],
+			stringId: selectedStringId,
+		}
+		return [...links, link]
+	}
+	const link: PanelLinkModel = {
+		id: 'custom' as PanelLinkId,
+		positivePanelId: lastLink.negativePanelId,
+		negativePanelId: getGuid() as PanelId,
+		linePoints: [lastLink.linePoints[1], point],
+		stringId: lastLink.stringId,
+	}
+	return [...links, link]
+}
+
+export const pushCustomPanelLinkPointV2 = (
+	links: PanelLinkModel[], // mouseDownPanelSymbol: PanelSymbol,
+	point: Point,
+	selectedStringId: StringId,
+	draggingSymbolLinkLinePanelWithSymbol: PanelModel,
+	nearbyPanelToLinkLine: PanelModel | undefined,
+) => {
+	if (!links.length) {
+		if (nearbyPanelToLinkLine) {
+			return [
+				{
+					id: 'custom' as PanelLinkId,
+					positivePanelId: draggingSymbolLinkLinePanelWithSymbol.id,
+					negativePanelId: nearbyPanelToLinkLine.id,
+					linePoints: [
+						getEntityCenter(draggingSymbolLinkLinePanelWithSymbol),
+						getEntityCenter(nearbyPanelToLinkLine),
+					],
+					stringId: selectedStringId,
+				},
+			]
+		}
+		return [
+			{
+				id: 'custom' as PanelLinkId,
+				positivePanelId: draggingSymbolLinkLinePanelWithSymbol.id,
+				negativePanelId: getGuid() as PanelId,
+				linePoints: [getEntityCenter(draggingSymbolLinkLinePanelWithSymbol), point],
+				stringId: selectedStringId,
+			},
+		]
+	}
+	const lastLink = links[links.length - 1]
+	if (nearbyPanelToLinkLine) {
+		const link: PanelLinkModel = {
+			id: 'custom' as PanelLinkId,
+			positivePanelId: draggingSymbolLinkLinePanelWithSymbol.id,
+			negativePanelId: nearbyPanelToLinkLine.id,
+			linePoints: [
+				getEntityCenter(draggingSymbolLinkLinePanelWithSymbol),
+				getEntityCenter(nearbyPanelToLinkLine),
 			],
 			stringId: selectedStringId,
 		}

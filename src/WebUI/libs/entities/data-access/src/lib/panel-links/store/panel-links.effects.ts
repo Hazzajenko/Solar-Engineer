@@ -1,12 +1,3 @@
-import { injectSelectedStore } from '@canvas/selected/data-access'
-import { Actions, createEffect, ofType } from '@ngrx/effects'
-import { inject } from '@angular/core'
-import { tap } from 'rxjs'
-import { injectPanelLinksStore, PanelLinksActions, prepareStringCircuitChainForRender } from '../../panel-links'
-import { getAllActions } from '@shared/utils'
-import { PanelsActions } from '../../panels'
-import { StringCircuit } from '@entities/shared'
-
 /*export const updatePanelLinkLinesOnChange$ = createEffect(
  (
  actions$ = inject(Actions),
@@ -25,6 +16,14 @@ import { StringCircuit } from '@entities/shared'
  { functional: true, dispatch: false },
  )*/
 
+import { Actions, createEffect, ofType } from '@ngrx/effects'
+import { inject } from '@angular/core'
+import { map } from 'rxjs'
+import { injectPanelLinksStore, PanelLinksActions, PanelsActions, prepareStringCircuitChainForRender } from '@entities/data-access'
+import { StringCircuit } from '@entities/shared'
+import { getAllActions } from '@shared/utils'
+import { injectSelectedStore } from '@canvas/selected/data-access'
+
 export const updateSelectedStringCircuitOnChange$ = createEffect(
 	(
 		actions$ = inject(Actions),
@@ -32,11 +31,21 @@ export const updateSelectedStringCircuitOnChange$ = createEffect(
 		_selectedStore = injectSelectedStore(),
 	) => {
 		return actions$.pipe(
-			ofType(...getAllActions(PanelsActions), ...getAllActions(PanelLinksActions)),
-			tap(() => {
+			ofType(
+				...getAllActions(PanelsActions),
+				PanelLinksActions.addPanelLink,
+				PanelLinksActions.updatePanelLink,
+				PanelLinksActions.updateManyPanelLinks,
+				PanelLinksActions.deletePanelLink, // PanelLinksActions.deletePanelLink,
+				// PanelLinksActions.removePanelLink,
+				// PanelLinksActions.updatePanelLink,
+				// ...getAllActionsExcept(PanelLinksActions, ['setSelectedStringCircuit', 'noop']),
+			), // ofType(...getAllActions(PanelsActions), ...getAllActions(PanelLinksActions)),
+			map(() => {
 				const selectedStringId = _selectedStore.selectedStringId
 				if (!selectedStringId) {
 					return PanelLinksActions.noop()
+					// return
 				}
 				const panelLinks = _panelLinksStore.getByStringId(selectedStringId)
 				const selectedStringCircuit: StringCircuit = prepareStringCircuitChainForRender(panelLinks)

@@ -18,7 +18,7 @@ import {
 	ObjectPositioningStoreService,
 	ObjectRotatingService,
 } from '@canvas/object-positioning/data-access'
-import { SelectedService, SelectedStoreService } from '@canvas/selected/data-access'
+import { injectSelectedStore, SelectedService } from '@canvas/selected/data-access'
 import {
 	EntityFactoryService,
 	EntityStoreService,
@@ -51,7 +51,13 @@ import {
 } from '@canvas/utils'
 import { isPanel, isPointInsideSelectedStringPanelsByStringIdNgrxWithPanels } from '@entities/utils'
 import { CanvasEntity, ENTITY_TYPE, SizeByType, UndefinedStringId } from '@entities/shared'
-import { dragBoxOnMouseDownHandler } from '../utils/drag-box'
+import {
+	creationBoxMouseMove,
+	creationBoxMouseUp,
+	dragBoxOnMouseDownHandler,
+	selectionBoxMouseMove,
+	selectionBoxMouseUp,
+} from '../utils/drag-box'
 
 @Directive({
 	selector: '[appDesignCanvas]',
@@ -63,7 +69,8 @@ export class DesignCanvasDirective implements OnInit {
 	// private _appState = inject(AppStateStoreService)
 	private _graphicsState = inject(GraphicsStoreService)
 	private _positioningStore = inject(ObjectPositioningStoreService)
-	private _selectedStore = inject(SelectedStoreService)
+	private _selectedStore = injectSelectedStore()
+	// private _selectedStore = inject(SelectedStoreService)
 	private canvas = inject(ElementRef<HTMLCanvasElement>).nativeElement
 	private ctx!: CanvasRenderingContext2D
 	private _ngZone = inject(NgZone)
@@ -87,6 +94,7 @@ export class DesignCanvasDirective implements OnInit {
 	// private _divElements = inject(DivElementsService)
 
 	private mouseDownTimeOut: ReturnType<typeof setTimeout> | undefined
+	private mouseDownTimeOutForMove: ReturnType<typeof setTimeout> | undefined
 	private mouseUpTimeOut: ReturnType<typeof setTimeout> | undefined
 
 	private fpsEl!: HTMLDivElement
@@ -101,8 +109,13 @@ export class DesignCanvasDirective implements OnInit {
 
 	private mouseDownTimeOutFn = () => {
 		this.mouseDownTimeOut = setTimeout(() => {
+			clearTimeout(this.mouseDownTimeOut)
 			this.mouseDownTimeOut = undefined
 		}, 300)
+		this.mouseDownTimeOutForMove = setTimeout(() => {
+			clearTimeout(this.mouseDownTimeOutForMove)
+			this.mouseDownTimeOutForMove = undefined
+		}, 100)
 	}
 	private mouseUpTimeOutFn = () => {
 		this.mouseUpTimeOut = setTimeout(() => {
@@ -166,8 +179,8 @@ export class DesignCanvasDirective implements OnInit {
 		if (dragBoxKeysDown(event)) {
 			console.log('drag box keys down')
 			// this._drag.handleDragBoxMouseDown(event, currentPoint)
-			const newMode = dragBoxOnMouseDownHandler(event, currentPoint, this._appState.mode())
-			this._appState.setDragBoxState(newMode)
+			dragBoxOnMouseDownHandler(event, currentPoint, this._appState)
+			// this._appState.setDragBoxState(newMode)
 			return
 		}
 
@@ -199,6 +212,13 @@ export class DesignCanvasDirective implements OnInit {
 	 */
 
 	onMouseMoveHandler(event: PointerEvent, currentPoint: TransformedPoint) {
+		if (this.mouseDownTimeOutForMove) {
+			console.log('mouseDownTimeOutForMove', this.mouseDownTimeOutForMove)
+			// clearTimeout(this.mouseDownTimeOut)
+			// this.mouseDownTimeOut = undefined
+			// this.mouseClickHandler(event, currentPoint)
+			return
+		}
 		this.currentTransformedCursor = currentPoint
 
 		/**
@@ -278,13 +298,28 @@ export class DesignCanvasDirective implements OnInit {
 			return
 		}
 
-		if (dragBox === 'SelectionBoxInProgress') {
-			this._drag.selectionBoxMouseMove(event, currentPoint)
+		if (dragBox.state === 'SelectionBoxInProgress') {
+			// this._drag.selectionBoxMouseMove(event, currentPoint)
+			const renderOptions = selectionBoxMouseMove(
+				event,
+				currentPoint,
+				dragBox.start,
+				this._appState, // this._entities.panels.allPanels,
+			)
+			if (renderOptions) this._render.renderCanvasApp(renderOptions)
 			return
 		}
 
-		if (dragBox === 'CreationBoxInProgress') {
-			this._drag.creationBoxMouseMove(event, currentPoint)
+		if (dragBox.state === 'CreationBoxInProgress') {
+			// this._drag.creationBoxMouseMove(event, currentPoint)
+			const renderOptions = creationBoxMouseMove(
+				event,
+				currentPoint,
+				dragBox.start,
+				this._entities.panels.allPanels,
+				this._appState,
+			)
+			if (renderOptions) this._render.renderCanvasApp(renderOptions)
 			return
 		}
 
@@ -311,7 +346,8 @@ export class DesignCanvasDirective implements OnInit {
 		 }*/
 
 		if (mode === MODE_STATE.LINK_MODE) {
-			this._panelLinks.handleLinkModeMouseMove(event, currentPoint, pointer)
+			const renderOptions = this._panelLinks.handleLinkModeMouseMove(event, currentPoint, pointer)
+			if (renderOptions) return this._render.renderCanvasApp(renderOptions)
 		}
 
 		const entityUnderMouse = this.getPanelUnderMouse(event)
@@ -358,6 +394,7 @@ export class DesignCanvasDirective implements OnInit {
 			this.mouseClickHandler(event, currentPoint)
 			return
 		}
+		console.log('onMouseUpHandler', this.mouseDownTimeOut)
 
 		/**
 		 * ! Object Positioning
@@ -391,13 +428,28 @@ export class DesignCanvasDirective implements OnInit {
 
 		// const dragBoxState = this._appState.state.dragBox
 
-		if (dragBox === 'SelectionBoxInProgress') {
-			this._drag.selectionBoxMouseUp(event, currentPoint)
+		if (dragBox.state === 'SelectionBoxInProgress') {
+			selectionBoxMouseUp(
+				event,
+				currentPoint,
+				dragBox.start,
+				this._entities.panels.allPanels,
+				this._appState,
+				this._selectedStore,
+			)
 			return
 		}
 
-		if (dragBox === 'CreationBoxInProgress') {
-			this._drag.creationBoxMouseUp(event, currentPoint)
+		if (dragBox.state === 'CreationBoxInProgress') {
+			// this._drag.creationBoxMouseUp(event, currentPoint)
+			creationBoxMouseUp(
+				event,
+				currentPoint,
+				dragBox.start,
+				this._entities.panels.allPanels,
+				this._appState,
+				this._entities.panels,
+			)
 			return
 		}
 
@@ -452,23 +504,23 @@ export class DesignCanvasDirective implements OnInit {
 		const { mode } = this._appState.appState()
 		// const mode = this._appState.state.mode
 		if (mode === 'LinkMode') {
-			const currentDrawingSymbolLine = this._entities.panelLinks.drawingPanelPolaritySymbolLine
-			const symbolUnderMouse = this.getPanelSymbolUnderMouse(currentPoint)
-			if (symbolUnderMouse) {
-				if (currentDrawingSymbolLine) {
-					this._panelLinks.handleMouseUpFromPanelPolaritySymbol(
-						event,
-						currentPoint,
-						currentDrawingSymbolLine,
-					)
-				} else {
-					this._entities.panelLinks.setDrawingPanelPolaritySymbolLine(symbolUnderMouse)
-				}
-				return
-			} else if (currentDrawingSymbolLine) {
-				this._entities.panelLinks.clearDrawingPanelPolaritySymbolLine()
-				return
-			}
+			/*const currentDrawingSymbolLine = this._entities.panelLinks.drawingPanelPolaritySymbolLine
+			 const symbolUnderMouse = this.getPanelSymbolUnderMouse(currentPoint)
+			 if (symbolUnderMouse) {
+			 if (currentDrawingSymbolLine) {
+			 this._panelLinks.handleMouseUpFromPanelPolaritySymbol(
+			 event,
+			 currentPoint,
+			 currentDrawingSymbolLine,
+			 )
+			 } else {
+			 this._entities.panelLinks.setDrawingPanelPolaritySymbolLine(symbolUnderMouse)
+			 }
+			 return
+			 } else if (currentDrawingSymbolLine) {
+			 this._entities.panelLinks.clearDrawingPanelPolaritySymbolLine()
+			 return
+			 }*/
 			/*			const symbolOrPanel = this.getPanelOrLinkSymbolUnderMouse(currentPoint)
 			 if (symbolOrPanel) {
 			 // console.log('symbolOrPanel', symbolOrPanel)
@@ -602,7 +654,7 @@ export class DesignCanvasDirective implements OnInit {
 			const belongsToString = this._entities.strings.getById(entityUnderMouse.stringId)
 
 			if (!belongsToString) return
-			this._selectedStore.dispatch.selectString(belongsToString.id)
+			this._selectedStore.selectString(belongsToString.id)
 			this._render.renderCanvasApp()
 		}
 	}

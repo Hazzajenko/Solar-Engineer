@@ -19,6 +19,9 @@ export interface PanelLinksState extends EntityState<PanelLinkModel> {
 	mouseDownOnPanelPolaritySymbol: PanelSymbol | undefined
 	drawingPanelPolaritySymbolLine: PanelSymbol | undefined
 	selectedStringCircuit: StringCircuit | undefined
+	/*	linkPaint:{
+
+	 }*/
 
 	// | undefined
 }
@@ -87,11 +90,11 @@ const reducer = createReducer(
 	})),
 	on(PanelLinksActions.setSelectedStringCircuit, (state, { selectedStringCircuit }) => ({
 		...state,
-		getSelectedStringCircuit: selectedStringCircuit,
+		selectedStringCircuit,
 	})),
 	on(PanelLinksActions.clearSelectedStringCircuit, (state) => ({
 		...state,
-		getSelectedStringCircuit: initialPanelLinksState.selectedStringCircuit,
+		selectedStringCircuit: initialPanelLinksState.selectedStringCircuit,
 	})),
 	on(PanelLinksActions.setHoveringOverPanelLinkInApp, (state, { panelLinkId }) => ({
 		...state,

@@ -1,7 +1,7 @@
 import { AppStateActions } from './app-state.actions'
 import { initialAppState } from './app-state.reducer'
 import { selectAppStateState } from './app-state.selectors'
-import { DragBoxState, ModeState, PreviewAxisState, ViewPositioningState } from './app-state.types'
+import { DragBox, ModeState, PreviewAxisState, ViewPositioningState } from './app-state.types'
 import { inject, Injectable, signal } from '@angular/core'
 import { toSignal } from '@angular/core/rxjs-interop'
 import { select, Store } from '@ngrx/store'
@@ -60,7 +60,7 @@ class AppNgrxRepository {
 		this._store.dispatch(AppStateActions.liftHoveringOverEntity())
 	}
 
-	setDragBoxState(dragBox: DragBoxState) {
+	setDragBoxState(dragBox: DragBox) {
 		this._store.dispatch(AppStateActions.setDragBoxState({ dragBox }))
 	}
 
