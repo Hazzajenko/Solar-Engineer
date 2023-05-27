@@ -1,6 +1,7 @@
 // import { ContextMenuType } from '@canvas/view-positioning/data-access'
 
 import { TransformedPoint } from '@shared/data-access/models'
+import { PanelId } from '@entities/shared'
 
 export const DRAG_BOX_STATE = {
 	CREATION_BOX_IN_PROGRESS: 'CreationBoxInProgress',
@@ -58,12 +59,12 @@ export type HoveringOverEntityState =
 
 export type PointerState = {
 	hoverState: HoveringOverEntityState
-	hoveringOverEntityId: string | undefined
+	hoveringOverPanelId: PanelId | undefined
 }
 
 export const InitialPointerState: PointerState = {
 	hoverState: HOVERING_OVER_ENTITY_STATE.NO_HOVER,
-	hoveringOverEntityId: undefined,
+	hoveringOverPanelId: undefined,
 }
 
 /*

@@ -38,17 +38,17 @@ const reducer = createReducer(
 		...state,
 		dragBox,
 	})),
-	on(AppStateActions.setHoveringOverEntity, (state, { hoveringOverEntityId }) => ({
+	on(AppStateActions.setHoveringOverPanel, (state, { hoveringOverPanelId }) => ({
 		...state,
 		pointer: {
-			hoveringOverEntityId,
+			hoveringOverPanelId,
 			hoverState: HOVERING_OVER_ENTITY_STATE.HOVERING_OVER_ENTITY,
 		},
 	})),
 	on(AppStateActions.liftHoveringOverEntity, (state) => ({
 		...state,
 		pointer: {
-			hoveringOverEntityId: undefined,
+			hoveringOverPanelId: undefined,
 			hoverState: HOVERING_OVER_ENTITY_STATE.NO_HOVER,
 		},
 	})),

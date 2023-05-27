@@ -21,7 +21,7 @@ const mutedActionTypes = [
 	'@ngrx/store-devtools/recompute',
 	'@ngrx/router-store/navigation',
 	'@ngrx/router-store/navigated',
-	'[App State Store] Set Hovering Over Entity',
+	'[App State Store] Set Hovering Over Panel',
 	'[App State Store] Lift Hovering Over Entity',
 	'[PanelLinks Store] Set Hovering Over Panel Link In App',
 	'[PanelLinks Store] Clear Hovering Over Panel Link In App',

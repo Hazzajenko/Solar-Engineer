@@ -20,47 +20,12 @@ export const drawLinkModeOrderNumbers = (
 	}
 
 	const chainSorted = linksInOrder[chain]
-	/*	let linkIndex = chainSorted.findIndex((link) => link?.positivePanelId === panel.id)
-	 if (linkIndex === -1) {
-	 const maybeLastIndex = chainSorted.findIndex((link) => link?.negativePanelId === panel.id)
-	 if (maybeLastIndex !== -1) {
-	 if (maybeLastIndex === chainSorted.length - 1) {
-	 linkIndex = chainSorted.length
-	 } else {
-	 linkIndex = maybeLastIndex
-	 }
-	 }
-	 }*/
 	let linkIndex = chainSorted.panelIndexMap.get(panel.id) ?? -1
-	// let linkIndex = getIndexOfPanelInPanelLinks(panel.id, chainSorted)
 	if (linkIndex === -1) {
 		return
 	}
 	if (selectedStringPanel) {
-		/*		let selectedPanelIndex = chainSorted.findIndex(
-		 (link) => link?.positivePanelId === selectedStringPanel.id,
-		 )
-		 if (chainSorted[chainSorted.length - 1].negativePanelId === selectedStringPanel.id) {
-		 selectedPanelIndex = chainSorted.length
-		 }
-		 if (selectedPanelIndex === -1) {
-		 const maybeLastIndex = chainSorted.findIndex((link) => link?.negativePanelId === panel.id)
-		 if (maybeLastIndex !== -1) {
-		 if (maybeLastIndex === chainSorted.length - 1) {
-		 selectedPanelIndex = chainSorted.length
-		 } else {
-		 selectedPanelIndex = maybeLastIndex
-		 }
-		 }
-		 }*/
-
 		const selectedPanelIndex = chainSorted.panelIndexMap.get(selectedStringPanel.id) ?? -1
-		// console.log('selectedPanelIndex', selectedPanelIndex)
-		// throttleLog('chainSorted', chainSorted)
-		// console.log('chainSorted.panelIndexMap', chainSorted.panelIndexMap)
-		// throttleLog('selectedPanelIndex', selectedPanelIndex)
-		// const selectedPanelIndex = getIndexOfPanelInPanelLinks(selectedStringPanel.id, chainSorted)
-
 		if (selectedPanelIndex !== -1) {
 			if (linkIndex === selectedPanelIndex) {
 				linkIndex = 0
@@ -75,7 +40,6 @@ export const drawLinkModeOrderNumbers = (
 	const fontSize = 10
 	ctx.font = `${fontSize}px Consolas, sans-serif`
 	const text = `${linkIndex}`
-	// const text = `${indexToEdit + 1}`
 	const metrics = ctx.measureText(text)
 	const x = -metrics.width / 2
 	const y = fontSize / 4

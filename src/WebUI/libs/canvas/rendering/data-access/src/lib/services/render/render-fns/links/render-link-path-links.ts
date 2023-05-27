@@ -23,7 +23,6 @@ import {
 } from '@canvas/utils'
 import { Point, TransformedPoint } from '@shared/data-access/models'
 import { getPanelWithSymbolLocationBasedOnPolarity } from '@entities/utils'
-import { throttleLog } from '@shared/utils'
 
 const offset = 0
 let image: HTMLImageElement | undefined
@@ -31,18 +30,6 @@ export const drawLinkModePathLinesCurvedAlreadyMappedV6 = (
 	ctx: CanvasRenderingContext2D,
 	customEntities: CanvasEntity[] | undefined,
 	circuitLinkLineTuples: [PanelLinkId, CurvedNumberLine][][],
-	/*	featureState: FeatureState,
-	 hoveringOverPanelLinkInLinkMenu1: PanelLinkFromMenu | undefined,
-	 panelLinkUnderMouse1: PanelLinkModel | undefined,
-	 mouseDownPanelSymbol: PanelSymbol | undefined,
-	 singleSelectedPanel:
-	 | (Omit<CanvasEntity, 'id' | 'type'> & {
-	 id: PanelId
-	 stringId: StringId
-	 panelConfigId: PanelConfigId
-	 type: 'panel'
-	 })
-	 | undefined, // singleToMovePanel: CanvasPanel | undefined,*/
 	panelLinkUnderMouse: PanelLinkModel | undefined,
 	hoveringOverPanelLinkInLinkMenu: PanelLinkFromMenu | undefined,
 	selectedPanelLinkId: PanelLinkId | undefined,
@@ -56,9 +43,6 @@ export const drawLinkModePathLinesCurvedAlreadyMappedV6 = (
 		| undefined,
 	openCircuitChains: OpenCircuitChainWithIndex[],
 ) => {
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	// const ignore = selectedPanelLinkId || hoveringOverPanelLinkInLinkMenu
-
 	if (!circuitLinkLineTuples.length) {
 		return
 	}
@@ -70,13 +54,6 @@ export const drawLinkModePathLinesCurvedAlreadyMappedV6 = (
 	ctx.setLineDash([4, 2])
 	ctx.lineDashOffset = -offset
 
-	/*	const selectedStringPanelIndex = selectedStringPanel
-	 ? circuitLinkLineTuples.findIndex((tuple) =>
-	 tuple.some((tuple) => tuple[0] === selectedStringPanel?.id),
-	 )
-	 : -1*/
-
-	// const
 	let selectedPanelChainIndex = -1
 	let selectedPanelPathIndex = -1
 	if (singleSelectedPanel) {
@@ -88,95 +65,19 @@ export const drawLinkModePathLinesCurvedAlreadyMappedV6 = (
 				? openCircuitChains[selectedPanelChainIndex].panelIndexMap.get(singleSelectedPanel?.id) ??
 				  -1
 				: -1
-
-		if (selectedPanelChainIndex !== -1) {
-			if (openCircuitChains[selectedPanelChainIndex].panelIndexMap.size > 1) {
-				throttleLog(
-					'openCircuitChains[selectedPanelChainIndex].panelIndexMap',
-					openCircuitChains[selectedPanelChainIndex].panelIndexMap,
-				)
-			}
-		}
 	}
 
-	/*	const selectedPanelChainIndex = singleSelectedPanel
-	 ? openCircuitChains.find((chain) => chain.panelIndexMap.has(singleSelectedPanel?.id))
-	 : undefined*/
+	for (
+		let linkCircuitIndex = 0;
+		linkCircuitIndex < circuitLinkLineTuples.length;
+		linkCircuitIndex += 1
+	) {
+		const linkLineTuple = circuitLinkLineTuples[linkCircuitIndex]
 
-	// const selectedPanelPathIndex = selectedPanelChainIndex ? selectedPanelChainIndex.panelIndexMap.get(singleSelectedPanel?.id) : undefined
-	/*	const selectedPanelPositiveToIndex = panelLinkForSelectedPanel?.positiveToLink
-	 ? circuitLinkLineTuples.findIndex((tuple) =>
-	 tuple.some((tuple) => tuple[0] === panelLinkForSelectedPanel?.positiveToLink?.id),
-	 )
-	 : -1
-
-	 const selectedPanelNegativeToIndex = panelLinkForSelectedPanel?.negativeToLink
-	 ? circuitLinkLineTuples.findIndex((tuple) =>
-	 tuple.some((tuple) => tuple[0] === panelLinkForSelectedPanel?.negativeToLink?.id),
-	 )
-	 : -1*/
-
-	// console.log('selectedPanelPositiveToIndex', selectedPanelPositiveToIndex)
-	// console.log('selectedPanelNegativeToIndex', selectedPanelNegativeToIndex)
-
-	// const
-	/*	let selectedPanelCommonIndex = -1
-	 let panelLinkForSelectedPanelId: PanelLinkId | undefined
-	 if (selectedPanelPositiveToIndex !== -1 && selectedPanelNegativeToIndex !== -1) {
-	 panelLinkForSelectedPanelId = panelLinkForSelectedPanel?.positiveToLink?.id
-	 selectedPanelCommonIndex = Math.min(selectedPanelPositiveToIndex, selectedPanelNegativeToIndex)
-	 }
-
-	 if (selectedPanelPositiveToIndex !== -1 && selectedPanelNegativeToIndex === -1) {
-	 panelLinkForSelectedPanelId = panelLinkForSelectedPanel?.positiveToLink?.id
-	 selectedPanelCommonIndex = selectedPanelPositiveToIndex
-	 }
-
-	 if (selectedPanelPositiveToIndex === -1 && selectedPanelNegativeToIndex !== -1) {
-	 panelLinkForSelectedPanelId = panelLinkForSelectedPanel?.negativeToLink?.id
-	 selectedPanelCommonIndex = selectedPanelNegativeToIndex
-	 }
-
-	 if (selectedPanelPositiveToIndex === -1 && selectedPanelNegativeToIndex === -1) {
-	 panelLinkForSelectedPanelId = undefined
-	 selectedPanelCommonIndex = -1
-	 }*/
-
-	// const selectedPanelCommonIndex = selectedPanelPositiveToIndex
-
-	/*	const selectedPanelCommonIndex = Math.max(
-	 selectedPanelPositiveToIndex,
-	 selectedPanelNegativeToIndex,
-	 )*/
-
-	// console.log('selectedPanelCommonIndex', selectedPanelCommonIndex)
-
-	/*	const selectedPanelChainIndex =
-	 selectedPanelCommonIndex === -1
-	 ? -1
-	 : panelLinkForSelectedPanelId
-	 ? getIndexOfPanelLinkCurvedLineTuple(
-	 panelLinkForSelectedPanelId,
-	 circuitLinkLineTuples[selectedPanelCommonIndex],
-	 )
-	 : -1*/
-	/*			: circuitLinkLineTuples[selectedPanelCommonIndex].findIndex(
-	 (tuple) => tuple[0] === panelLinkForSelectedPanelId,
-	 )*/
-	// getIndexOfPanelInPanelLinks
-	// console.log('selectedPanelChainIndex', selectedPanelChainIndex)
-
-	for (let i = 0; i < circuitLinkLineTuples.length; i += 1) {
-		const linkLineTuple = circuitLinkLineTuples[i]
-
-		const selectedPanelInThisChain = selectedPanelChainIndex === i
-		// const selectedPanelInThisChain = selectedPanelCommonIndex === i
-		for (let j = 0; j < linkLineTuple.length; j += 1) {
-			const id = linkLineTuple[j][0]
-			const lines = linkLineTuple[j][1]
-			/*			if (selectedPanelInThisChain) {
-
-			 }*/
+		const selectedPanelInThisChain = selectedPanelChainIndex === linkCircuitIndex
+		for (let linkLineIndex = 0; linkLineIndex < linkLineTuple.length; linkLineIndex += 1) {
+			const id = linkLineTuple[linkLineIndex][0]
+			const lines = linkLineTuple[linkLineIndex][1]
 
 			const selectedPanelIndexConfig =
 				selectedPanelInThisChain && selectedPanelPathIndex !== -1
@@ -189,16 +90,12 @@ export const drawLinkModePathLinesCurvedAlreadyMappedV6 = (
 				hoveringOverPanelLinkInLinkMenu,
 				selectedPanelLinkId,
 				finalDrawLineSymbol,
-				j,
+				linkLineIndex,
 				linkLineTuple.length,
 				selectedPanelIndexConfig,
 			)
 
 			ctx.save()
-			/*		if (j === linkLineTuple.length - 1 && finalDrawLineSymbol) {
-			 ctx.save()
-			 ctx.restore()
-			 }*/
 			drawCurvedNumberLinesWithOptions(ctx, lines, options)
 			ctx.restore()
 		}
@@ -236,10 +133,6 @@ const getDrawOptionsBasedOnInputs = (
 	}
 	if (selectedPanelLinkId === panelLinkId) {
 		return PanelLinkHoverDefaultDrawOptions
-		/*		return {
-		 strokeStyle: CANVAS_COLORS.HoveringOverPanelInLinkMenuStrokeStyle,
-		 lineWidth: 2,
-		 }*/
 	}
 	if (index === linkLineTupleLength - 1 && finalDrawLineSymbol) {
 		if (finalDrawLineSymbol.symbol === 'positive') {
@@ -265,12 +158,7 @@ const getDrawOptionsBasedOnInputs = (
 				strokeStyle: 'red',
 				lineWidth: 2,
 			}
-		} /* else if (p.selectedPanelChainIndex <= index) {
-		 return {
-		 strokeStyle: 'blue',
-		 lineWidth: 2,
-		 }
-		 }*/
+		}
 		return {
 			strokeStyle: 'blue',
 			lineWidth: 2,

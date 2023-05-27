@@ -7,7 +7,7 @@ import {
 } from '@canvas/app/data-access'
 // import { EntityStoreService } from '../entities'
 import { injectSelectedStore } from '@canvas/selected/data-access'
-import { CanvasRenderOptions } from '../../types'
+import { CanvasRenderOptions, DrawPanelsOptions } from '../../types'
 import {
 	drawBoxWithOptionsCtx,
 	drawClickNearEntityBounds,
@@ -38,14 +38,10 @@ import { Point } from '@shared/data-access/models'
 import {
 	CANVAS_COLORS,
 	CanvasEntity,
-	OpenCircuitChainWithIndex,
 	PANEL_STROKE_STYLE,
 	PanelModel,
-	StringModel,
 	UndefinedStringId,
 } from '@entities/shared'
-import { injectSvgs, injectSvgsV2 } from './svg-injector'
-import { SvgCursorImageRecord } from '../../svgs'
 import { throttle } from 'lodash'
 import { ObjectPositioningStoreService } from '@canvas/object-positioning/data-access'
 
@@ -101,24 +97,15 @@ export class RenderService {
 		return this._previousFpsStats.reduce((a, b) => a + b) / this._previousFpsStats.length
 	}
 
-	offset = 0
-	_svgs = injectSvgs()
-	_svgs2 = injectSvgsV2()
-	_imageElement: HTMLImageElement | undefined
-	_svgCursorImages: SvgCursorImageRecord | undefined
+	offset = 0 /*
+	 _svgs = injectSvgs()
+	 _svgs2 = injectSvgsV2()
+	 _imageElement: HTMLImageElement | undefined
+	 _svgCursorImages: SvgCursorImageRecord | undefined*/
 	throttledRenderCanvasApp = throttle(this.renderFn, 1000 / 60)
 
 	constructor() {
 		this.checkFps()
-		// this.ctx.setLineDash([4, 2])
-		// this.ctx.lineDashOffset = -this.offset
-		/*		this._svgs2.then((data) => {
-		 this._imageElement = data
-		 // console.log('data', data)
-		 })
-		 initSvgCursorImages().then((r) => (this._svgCursorImages = r))*/
-		// this.renderAt60FPS()
-		// this.renderCanvasAppAt60FPS()
 	}
 
 	get renderOptions() {
@@ -175,7 +162,7 @@ export class RenderService {
 			ctx.save()
 			ctx.beginPath()
 			const customPanels = options?.customPanels
-			const entities = !customPanels
+			const panels = !customPanels
 				? this.allPanels
 				: this.allPanels
 						.filter((entity) => {
@@ -191,44 +178,36 @@ export class RenderService {
 							}
 							return true
 						})
-			/*			const { stringPanelLinks, openCircuitChains, closedCircuitChains, circuitLinkLineTuples } =
-			 this._panelLinks.getPanelLinkOrderIfStringIsSelected()*/
-			/*			const { openCircuitChains, closedCircuitChains, circuitLinkLines } =
-			 this._entities.panelLinks.getSelectedStringCircuit*/
-			const selectedStringCircuit = this._entities.panelLinks.getSelectedStringCircuit
-			const openCircuitChains = selectedStringCircuit ? selectedStringCircuit.openCircuitChains : []
-			/*			const closedCircuitChains = selectedStringCircuit
-			 ? selectedStringCircuit.closedCircuitChains
-			 : []*/
-			const circuitLinkLines = selectedStringCircuit ? selectedStringCircuit.circuitLinkLines : []
-			const selectedStringId = this._selectedStore.state.selectedStringId
-			const stringPanelLinks = selectedStringId
-				? this._entities.panelLinks.getByStringId(selectedStringId)
+
+			const appState = this._appState.appState()
+			const graphicsState = this._graphicsStore.state
+
+			const singleSelectedPanelId = this._selectedStore.state.singleSelectedPanelId
+			const singleSelectedPanel = this._entities.panels.getByIdOrUndefined(singleSelectedPanelId)
+
+			const multipleSelectedPanelIds = this._selectedStore.state.multipleSelectedPanelIds
+			const multipleSelectedPanels = multipleSelectedPanelIds.length
+				? panels.filter((panel) => multipleSelectedPanelIds.includes(panel.id))
 				: []
+
+			const selectedState = this._selectedStore.state
+			const selectedStringId = selectedState.selectedStringId
 			const selectedString = selectedStringId
 				? this._entities.strings.getById(selectedStringId)
 				: undefined
-			this.drawEntities(ctx, entities, openCircuitChains, selectedString, options)
-			ctx.restore()
-
-			const { mode, pointer } = this._appState.appState()
-			const appStateMode = mode
-
-			const hoveringOverEntityId = pointer.hoveringOverEntityId
-
-			const singleSelectedPanelId = this._selectedStore.state.singleSelectedPanelId
-
-			const singleSelectedPanel = this._entities.panels.getByIdOrUndefined(singleSelectedPanelId)
-
 			const selectedStringPanels = selectedStringId
-				? this._entities.panels.getByStringId(selectedStringId)
+				? panels.filter((panel) => panel.stringId === selectedStringId)
+				: []
+			const selectedStringPanelLinks = selectedStringId
+				? this._entities.panelLinks.getByStringId(selectedStringId)
 				: []
 
-			const shouldRenderSelectedEntitiesBox = options?.shouldRenderSelectedEntitiesBox ?? true
-			const shouldRenderSelectedStringBox = options?.shouldRenderSelectedStringBox ?? true
+			const selectedStringCircuit = this._entities.panelLinks.getSelectedStringCircuit
+			const openCircuitChains = selectedStringCircuit ? selectedStringCircuit.openCircuitChains : []
+			const circuitLinkLines = selectedStringCircuit ? selectedStringCircuit.circuitLinkLines : []
 
-			const multipleSelectedEntityIds = this._selectedStore.state.multipleSelectedPanelIds
-
+			const hoveringOverPanelId = appState.pointer.hoveringOverPanelId
+			const hoveringOverPanel = this._entities.panels.getByIdOrUndefined(hoveringOverPanelId)
 			const hoveringOverPanelInLinkMenuId = this._entities.panelLinks.hoveringOverPanelInLinkMenuId
 			const hoveringOverPanelLinkInLinkMenu =
 				this._entities.panelLinks.hoveringOverPanelLinkInLinkMenu
@@ -240,29 +219,48 @@ export class RenderService {
 			const selectedPanelLinkId = this._selectedStore.selectedPanelLinkId
 			const panelLinkUnderMouse = this._entities.panelLinks.getHoveringOverPanelLinkInApp
 			const panelLinkRequest = options?.panelLinkRequest
+			const requestingLink = this._entities.panelLinks.requestingLink
 
-			if (shouldRenderSelectedEntitiesBox && multipleSelectedEntityIds.length) {
-				drawSelectedBox(ctx, this._entities.panels.getByIds(multipleSelectedEntityIds))
-			} else if (shouldRenderSelectedEntitiesBox && singleSelectedPanelId) {
-				const selectedEntity = this._entities.panels.getById(singleSelectedPanelId)
-				assertNotNull(selectedEntity, 'selectedEntity')
-				drawSelectedBox(ctx, [selectedEntity])
+			const shouldRenderSelectedEntitiesBox = options?.shouldRenderSelectedEntitiesBox ?? true
+			const shouldRenderSelectedStringBox = options?.shouldRenderSelectedStringBox ?? true
+
+			const drawPanelsOptions: DrawPanelsOptions = {
+				panels,
+				openCircuitChains,
+				graphicsState,
+				appState,
+				selectedString,
+				singleSelectedPanel,
+				hoveringOverPanelId,
+				requestingLink,
+				selectedState,
 			}
 
-			if (shouldRenderSelectedStringBox && selectedStringId) {
-				const selectedString = this._entities.strings.getById(selectedStringId)
-				assertNotNull(selectedString, 'selectedString')
-				if (shouldRenderSelectedEntitiesBox && multipleSelectedEntityIds.length) {
-					drawSelectedBox(ctx, this._entities.panels.getByIds(multipleSelectedEntityIds))
+			this.drawPanels(ctx, drawPanelsOptions)
+			ctx.restore()
+
+			if (shouldRenderSelectedEntitiesBox && multipleSelectedPanels.length) {
+				drawSelectedBox(ctx, multipleSelectedPanels)
+			} else if (shouldRenderSelectedEntitiesBox && singleSelectedPanel) {
+				// const selectedEntity = this._entities.panels.getById(singleSelectedPanelId)
+				assertNotNull(singleSelectedPanel, 'selectedEntity')
+				drawSelectedBox(ctx, [singleSelectedPanel])
+			}
+
+			if (shouldRenderSelectedStringBox && selectedString) {
+				// const selectedString = this._entities.strings.getById(selectedStringId)
+				// assertNotNull(selectedString, 'selectedString')
+				if (shouldRenderSelectedEntitiesBox && multipleSelectedPanels.length) {
+					drawSelectedBox(ctx, multipleSelectedPanels)
 				}
 			}
 
-			if (this._graphicsStore.state.stringBoxes) {
-				if (selectedStringId) {
-					const string = this._entities.strings.getById(selectedStringId)
-					assertNotNull(string, 'selectedString')
+			if (graphicsState.stringBoxes) {
+				if (selectedString) {
+					// const string = this._entities.strings.getById(selectedStringId)
+					// assertNotNull(string, 'selectedString')
 					const stringStats = this._stringStats.calculateStringStatsForSelectedString()
-					drawSelectedStringBoxWithStats(ctx, string, selectedStringPanels, stringStats)
+					drawSelectedStringBoxWithStats(ctx, selectedString, selectedStringPanels, stringStats)
 				} else {
 					const stringsWithPanels = this._entities.strings.allStrings.map((string) => ({
 						string,
@@ -274,9 +272,9 @@ export class RenderService {
 				}
 			}
 
-			if (options?.nearby && this._graphicsStore.state.nearbyLines) {
+			if (options?.nearby && graphicsState.nearbyLines) {
 				const nearbyOpts = options.nearby
-				const nearbyLinesState = this._graphicsStore.state.nearbyLinesState
+				const nearbyLinesState = graphicsState.nearbyLinesState
 
 				drawNearbyLineDrawCtxFnFromNearbyLinesStateOptimisedV2(
 					ctx,
@@ -310,7 +308,7 @@ export class RenderService {
 
 			if (toMoveMultipleSpotTakenIds.length) {
 				const spotTakenIds = toMoveMultipleSpotTakenIds
-				const spotTakenPanels = entities.filter((panel) => spotTakenIds.includes(panel.id))
+				const spotTakenPanels = panels.filter((panel) => spotTakenIds.includes(panel.id))
 				drawBoxWithOptionsCtx(ctx, spotTakenPanels, {
 					color: CANVAS_COLORS.SpotTakenStrokeStyle,
 					lineWidth: 1,
@@ -327,35 +325,13 @@ export class RenderService {
 			/**
 			 * * Draw the link lines
 			 */
-			if (this._graphicsStore.state.linkModePathLines && selectedStringId) {
-				/*			let draggingSymbolLinkLinePanelWithSymbol: PanelWithSymbol | undefined
-				 let transformedPoint: TransformedPoint | undefined
-				 if (options?.draggingSymbolLinkLine) {
-				 const draggingSymbolLinkLine = options.draggingSymbolLinkLine
-				 const draggingSymbolLinkLinePanel = draggingSymbolLinkLine
-				 ? this._entities.panels.getById(draggingSymbolLinkLine.mouseDownPanelSymbol.panelId)
-				 : undefined
-				 draggingSymbolLinkLinePanelWithSymbol = draggingSymbolLinkLinePanel
-				 ? {
-				 ...draggingSymbolLinkLinePanel,
-				 symbol: draggingSymbolLinkLine.mouseDownPanelSymbol.symbol,
-				 }
-				 : undefined
-				 transformedPoint = draggingSymbolLinkLine.transformedPoint
-				 }*/
-				// const panelLinkRequest = options?.panelLinkRequest
-
-				// console.log('circuitLinkLines', circuitLinkLines)
-				// const draggingSymbolLinkLine = options?.draggingSymbolLinkLine
-				// const draggingSymbolLinkLinePanel = draggingSymbolLinkLine ? this._entities.panels.getById(draggingSymbolLinkLine.mouseDownPanelSymbol.panelId) : undefined
-				// const draggingSymbolLinkLinePanelWithSymbol = draggingSymbolLinkLinePanel ? { ...draggingSymbolLinkLinePanel, symbol: draggingSymbolLinkLine.mouseDownPanelSymbol.symbol } : undefined
+			if (graphicsState.linkModePathLines && selectedStringId) {
 				const customLinkLineTuples = handleCustomEntitiesBeforeLinkRender(
 					circuitLinkLines,
-					stringPanelLinks,
+					selectedStringPanelLinks,
 					selectedStringId,
-					options, // draggingSymbolLinkLinePanelWithSymbol,
+					options,
 					panelLinkRequest,
-					singleSelectedPanel,
 				)
 
 				const mouseDownPanelSymbol = options?.draggingSymbolLinkLine?.mouseDownPanelSymbol
@@ -366,7 +342,7 @@ export class RenderService {
 
 				drawLinkModePathLinesCurvedAlreadyMappedV6(
 					ctx,
-					entities,
+					panels,
 					customLinkLineTuples,
 					panelLinkUnderMouse,
 					hoveringOverPanelLinkInLinkMenu,
@@ -377,27 +353,9 @@ export class RenderService {
 					panelLinkForSelectedPanel,
 					openCircuitChains,
 				)
-
-				/*		if (options?.draggingSymbolLinkLine) {
-				 const { mouseDownPanelSymbol, transformedPoint } = options.draggingSymbolLinkLine
-				 const panel = this._entities.panels.getById(mouseDownPanelSymbol.panelId)
-				 assertNotNull(panel, 'panel')
-				 const panelWithSymbol = {
-				 ...panel,
-				 symbol: mouseDownPanelSymbol.symbol,
-				 }
-				 drawDraggingSymbolLinkLine(ctx, panelWithSymbol, transformedPoint)
-				 }*/
 			}
 
 			if (panelLinkRequest) {
-				// const panel = this._entities.panels.getById(panelLinkRequest.panel)
-				/*				assertNotNull(panel, 'panel')
-				 const panelWithSymbol = {
-				 ...panel,
-				 symbol: panelLinkRequest.symbol,
-				 }*/
-				// drawPanelLinkRequest(ctx, panelWithSymbol, panelLinkRequest.transformedPoint)
 				drawBoxWithOptionsCtx(ctx, [panelLinkRequest.panel], {
 					color: CANVAS_COLORS.HoveringOverPanelInLinkMenuStrokeStyle,
 					lineWidth: 2,
@@ -442,24 +400,13 @@ export class RenderService {
 				drawTooltipWithOptionsCtx(ctx, point, panelLink.id)
 			}
 
-			if (hoveringOverEntityId) {
-				const panel = this._entities.panels.getById(hoveringOverEntityId)
-				assertNotNull(panel, 'panel')
+			if (hoveringOverPanel) {
 				const point = {
-					x: panel.location.x + panel.width * 2,
-					y: panel.location.y - panel.width * 2,
+					x: hoveringOverPanel.location.x + hoveringOverPanel.width * 2,
+					y: hoveringOverPanel.location.y - hoveringOverPanel.width * 2,
 				}
-				drawTooltipWithOptionsCtx(ctx, point, panel.id)
+				drawTooltipWithOptionsCtx(ctx, point, hoveringOverPanel.id)
 			}
-			/*
-			 if (options?.panelUnderMouse) {
-			 const panel = options.panelUnderMouse
-			 const point = {
-			 x: panel.location.x + panel.width * 2,
-			 y: panel.location.y - panel.width * 2,
-			 }
-			 drawTooltipWithOptionsCtx(ctx, point, panel.id)
-			 }*/
 		})
 	}
 
@@ -495,43 +442,36 @@ export class RenderService {
 		this.ctx.restore()
 	}
 
-	private drawEntities(
-		ctx: CanvasRenderingContext2D,
-		entities: PanelModel[],
-		linksInOrder: OpenCircuitChainWithIndex[] = [],
-		selectedString: StringModel | undefined,
-		options?: Partial<CanvasRenderOptions>,
-	) {
+	private drawPanels(ctx: CanvasRenderingContext2D, options: DrawPanelsOptions) {
+		const {
+			panels,
+			singleSelectedPanel,
+			openCircuitChains,
+			hoveringOverPanelId,
+			selectedState,
+			selectedString,
+			graphicsState,
+			appState,
+			requestingLink,
+		} = options
 		const selectedStringId = selectedString?.id
 		// const selectedStringId = this._selectedStore.state.selectedStringId
-		const graphicsState = this._graphicsStore.state
-		const selectedState = this._selectedStore.state
-		const { singleSelectedPanelId, multipleSelectedPanelIds, selectedPanelLinkId } = selectedState
-		const singleSelectedEntity = singleSelectedPanelId
-			? this._entities.panels.getById(singleSelectedPanelId)
-			: undefined
-
-		const pointerState = this._appState.pointer()
-		const hoveringOverEntityId = pointerState.hoveringOverEntityId
+		// const graphicsState = this._graphicsStore.state
+		// const selectedState = this._selectedStore.state
+		// const { singleSelectedPanelId, multipleSelectedPanelIds, selectedPanelLinkId } = selectedState
+		/*		const selectedPanel = singleSelectedPanelId
+		 ? this._entities.panels.getById(singleSelectedPanelId)
+		 : undefined*/
 
 		const mouseOverSymbol = this._entities.panelLinks.getHoveringOverPanelPolaritySymbol
-		const mouseDownPanelSymbol = options?.draggingSymbolLinkLine?.mouseDownPanelSymbol
-		const selectedStringPanel = this._entities.panelLinks.selectedLinkModePanelId
-			? this._entities.panels.getById(this._entities.panelLinks.selectedLinkModePanelId)
-			: undefined
 
-		// const selectedString ?
-		/*		const linksInOrder = selectedStringId
-		 ? this._panelLinks.getPanelLinkOrderForSelectedStringV2()
-		 : []*/
-		for (let i = 0; i < entities.length; i++) {
-			const entity = entities[i]
-			// entities.forEach((entity) => {
+		for (let i = 0; i < panels.length; i++) {
+			const entity = panels[i]
 			/**
-			 * Draw Entity
+			 * Draw Panel
 			 */
 
-			const isBeingHovered = !!hoveringOverEntityId && hoveringOverEntityId === entity.id
+			const isBeingHovered = !!hoveringOverPanelId && hoveringOverPanelId === entity.id
 
 			if (!isPanel(entity)) continue
 			let fillStyle: string = CANVAS_COLORS.DefaultPanelFillStyle
@@ -565,36 +505,12 @@ export class RenderService {
 				fillStyle = CANVAS_COLORS.StringSelectedPanelFillStyle
 			}
 
-			// let panelLinkOrderDrawFn: ((ctx: CanvasRenderingContext2D) => void) | undefined = undefined
-			if (this._appState.mode() === MODE_STATE.LINK_MODE) {
-				if (this._panelLinksStore.requestingLink) {
-					if (this._panelLinksStore.requestingLink.panelId === entity.id) {
+			if (appState.mode === MODE_STATE.LINK_MODE) {
+				if (requestingLink) {
+					if (requestingLink.panelId === entity.id) {
 						fillStyle = CANVAS_COLORS.RequestingLinkPanelFillStyle
 					}
 				}
-				/*
-				 if (isStringSelected) {
-				 assertNotNull(selectedState.selectedStringId)
-
-				 const linksInOrder = this._panelLinks.getPanelLinkOrderForString(
-				 selectedState.selectedStringId,
-				 )
-				 const linkIndex = linksInOrder.findIndex((link) => link?.positivePanel.id === entity.id)
-				 if (linkIndex !== -1) {
-				 panelLinkOrderDrawFn = (ctx) => {
-				 ctx.save()
-				 const fontSize = 10
-				 ctx.font = `${fontSize}px Consolas, sans-serif`
-				 const text = `${linkIndex + 1}`
-				 const metrics = ctx.measureText(text)
-				 const x = 0 - metrics.width / 2
-				 const y = fontSize / 4
-				 ctx.fillStyle = 'black'
-				 ctx.fillText(text, x, y)
-				 ctx.restore()
-				 }
-				 }
-				 }*/
 			}
 
 			if (selectedStringId) {
@@ -604,7 +520,6 @@ export class RenderService {
 			}
 
 			if (isBeingHovered) {
-				// fillStyle = '#17fff3'
 				if (isStringSelected && graphicsState.selectedStringPanelFill) {
 					fillStyle = shadeColor(CANVAS_COLORS.StringSelectedPanelFillStyle, 50)
 				}
@@ -621,12 +536,11 @@ export class RenderService {
 			ctx.fill()
 			ctx.stroke()
 			ctx.closePath()
-			/*			if (panelLinkOrderDrawFn) {
-			 panelLinkOrderDrawFn(ctx)
-			 }*/
 
-			// draw drawLinkModeGraphics
-			if (isStringSelected && this._appState.mode() === 'LinkMode') {
+			/**
+			 * * Draw Link Symbols/Numbers
+			 */
+			if (isStringSelected && appState.mode === 'LinkMode') {
 				/*				if (selectedString && selectedString.disconnectionPointId === entity.id) {
 				 drawDisconnectionPoint(ctx, entity)
 				 /!*			drawBoxWithOptionsCtx(ctx, [entity], {
@@ -635,27 +549,17 @@ export class RenderService {
 				 padding: 5,
 				 })*!/
 				 }*/
-				if (this._graphicsStore.state.linkModeSymbols) {
-					// console.log('mouseOverSymbol', mouseOverSymbol)
-					drawLinkModeSymbols(ctx, entity, mouseOverSymbol, mouseDownPanelSymbol)
-					// this.drawLinkModeSymbols(ctx, entity)
+				if (graphicsState.linkModeSymbols) {
+					drawLinkModeSymbols(ctx, entity, mouseOverSymbol)
 				}
 			}
 			if (
 				isStringSelected &&
 				this._graphicsStore.state.linkModeOrderNumbers &&
-				linksInOrder.length
+				openCircuitChains.length
 			) {
-				drawLinkModeOrderNumbers(ctx, entity, linksInOrder, singleSelectedEntity)
-				// this.drawLinkModeOrderNumbers(ctx, entity, linksInOrder as OpenCircuitChain[])
+				drawLinkModeOrderNumbers(ctx, entity, openCircuitChains, singleSelectedPanel)
 			}
-			/*				if (
-			 isStringSelected &&
-			 this._graphicsStore.state.linkModeSymbols &&
-			 this._appStore.state.mode === 'LinkMode'
-			 ) {
-			 this.drawLinkModeSymbols(ctx, entity)
-			 }*/
 			ctx.restore()
 		}
 	}

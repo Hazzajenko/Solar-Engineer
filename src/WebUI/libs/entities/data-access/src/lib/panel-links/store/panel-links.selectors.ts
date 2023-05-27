@@ -129,9 +129,9 @@ export const selectSelectedStringCircuit = createSelector(
 	(state: PanelLinksState) => state.selectedStringCircuit,
 )
 
-export const selectSelectedLinkModePanelId = createPanelLinksSelector({
-	key: 'selectedLinkModePanelId',
-})
+/*export const selectSelectedLinkModePanelId = createPanelLinksSelector({
+ key: 'selectedLinkModePanelId',
+ })*/
 
 // const createPanelLinkSelector
 

@@ -7,15 +7,11 @@ export const drawLinkModeSymbols = (
 	ctx: CanvasRenderingContext2D,
 	panel: PanelModel,
 	mouseOverSymbol: PanelSymbol | undefined,
-	mouseDownPanelSymbol: PanelSymbol | undefined,
 ) => {
 	const isHovered = panel.id === mouseOverSymbol?.panelId
 	const isPositive = isHovered && mouseOverSymbol?.symbol === 'positive'
 	const isNegative = isHovered && mouseOverSymbol?.symbol === 'negative'
 
-	// if (isHovered) {
-	// 	console.log('isHovered', isHovered)
-	// }
 	ctx.save()
 	// draw negative symbol
 	const negativeLineLength = isNegative ? lineLength * 1.25 : lineLength

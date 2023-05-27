@@ -5,6 +5,7 @@ import { appStateFeature } from './app-state.feature'
 import { AppStateActions } from './app-state.actions'
 import { DragBox, ModeState, PreviewAxisState, ViewPositioningState } from './app-state.types'
 import { FunctionKeys } from 'utility-types'
+import { PanelId } from '@entities/shared'
 
 export type AppStateStore = ReturnType<typeof injectAppStateStore>
 
@@ -19,8 +20,8 @@ export function injectAppStateStore() {
 	const pointer = () => store.selectSignal(appStateFeature.selectPointer)()
 	const view = () => store.selectSignal(appStateFeature.selectView)()
 	const previewAxis = () => store.selectSignal(appStateFeature.selectPreviewAxis)()
-	const setHoveringOverEntityState = (hoveringOverEntityId: string) =>
-		store.dispatch(AppStateActions.setHoveringOverEntity({ hoveringOverEntityId }))
+	const setHoveringOverEntityState = (hoveringOverPanelId: PanelId) =>
+		store.dispatch(AppStateActions.setHoveringOverPanel({ hoveringOverPanelId }))
 	const liftHoveringOverEntity = () => store.dispatch(AppStateActions.liftHoveringOverEntity())
 
 	const setDragBoxState = (dragBox: DragBox) =>
@@ -154,10 +155,10 @@ type ActionsV2 = {
 	}
 }[keyof AppStoreActions]
 
-const asdas: ActionsV2 = {
-	key: 'setHoveringOverEntity',
-	params: [{ hoveringOverEntityId: 'test' }],
-}
+/*const asdas: ActionsV2 = {
+ key: 'setHoveringOverEntity',
+ params: [{ hoveringOverEntityId: 'test' }],
+ }*/
 
 type ActionsV2ToFunc<T extends keyof AppStoreActions> = (
 	key: T,

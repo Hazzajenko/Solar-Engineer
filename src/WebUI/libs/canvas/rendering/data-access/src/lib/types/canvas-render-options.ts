@@ -8,11 +8,17 @@ import {
 } from '@shared/data-access/models'
 import {
 	CanvasEntity,
+	OpenCircuitChainWithIndex,
+	PanelId,
 	PanelLinkModel,
 	PanelLinkRequest,
 	PanelModel,
 	PanelSymbol,
+	StringModel,
 } from '@entities/shared'
+import { GraphicsState } from '@canvas/graphics/data-access'
+import { AppState } from '@canvas/app/data-access'
+import { SelectedState } from '@canvas/selected/data-access'
 
 export const createRenderOptions = (options: PartialRenderOptions): PartialRenderOptions => options
 
@@ -84,7 +90,21 @@ export type CanvasRenderOptions = {
 		nearbyPanelToLinkLine: PanelModel | undefined
 	}
 }
-/*export type CanvasRenderOptions = {
+
+export type DrawPanelsOptions = {
+	panels: PanelModel[]
+	openCircuitChains: OpenCircuitChainWithIndex[]
+	selectedString: StringModel | undefined
+	singleSelectedPanel: PanelModel | undefined
+	hoveringOverPanelId: PanelId | undefined
+	requestingLink: PanelLinkRequest | undefined
+	appState: AppState
+	graphicsState: GraphicsState
+	selectedState: SelectedState
+}
+
+/*
+ export type CanvasRenderOptionsV2 = {
  drawFns?: ((ctx: CanvasRenderingContext2D) => void)[]
  drawFnsAtMiddle?: ((ctx: CanvasRenderingContext2D) => void)[]
  drawFnsAtEnd?: ((ctx: CanvasRenderingContext2D) => void)[]
@@ -93,40 +113,5 @@ export type CanvasRenderOptions = {
  currentLocation?: TransformedPoint
  shouldRenderSelectedEntitiesBox?: boolean
  shouldRenderSelectedStringBox?: boolean
- customPanels?: CanvasPanel[]
- singleToMoveId?: string
- selectionBox?: {
- x: number
- y: number
- width: number
- height: number
  }
- creationBox?: {
- x: number
- y: number
- width: number
- height: number
- spots: SpotInBox[]
- }
- nearby?: {
- axisPreviewRect: CompleteEntityBounds
- mouseBounds: CompleteEntityBounds
- closestEntity: NearbyEntity
- snapToGridBool: boolean
- entityToMove: CanvasEntity
- // isMovingExistingEntity: boolean
- }
-
- // singleToMove
- }*/
-
-export type CanvasRenderOptionsV2 = {
-	drawFns?: ((ctx: CanvasRenderingContext2D) => void)[]
-	drawFnsAtMiddle?: ((ctx: CanvasRenderingContext2D) => void)[]
-	drawFnsAtEnd?: ((ctx: CanvasRenderingContext2D) => void)[]
-	excludedEntityIds?: string[]
-	customEntities?: CanvasEntity[]
-	currentLocation?: TransformedPoint
-	shouldRenderSelectedEntitiesBox?: boolean
-	shouldRenderSelectedStringBox?: boolean
-}
+ */

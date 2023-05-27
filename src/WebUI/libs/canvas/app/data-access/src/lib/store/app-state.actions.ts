@@ -1,5 +1,6 @@
 import { DragBox, ModeState, PreviewAxisState, ViewPositioningState } from './app-state.types'
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
+import { PanelId } from '@entities/shared'
 
 export const AppStateActions = createActionGroup({
 	source: 'App State Store',
@@ -7,8 +8,8 @@ export const AppStateActions = createActionGroup({
 		'Set Drag Box State': props<{
 			dragBox: DragBox
 		}>(),
-		'Set Hovering Over Entity': props<{
-			hoveringOverEntityId: string
+		'Set Hovering Over Panel': props<{
+			hoveringOverPanelId: PanelId
 		}>(),
 		'Lift Hovering Over Entity': emptyProps(),
 		'Set View Positioning State': props<{

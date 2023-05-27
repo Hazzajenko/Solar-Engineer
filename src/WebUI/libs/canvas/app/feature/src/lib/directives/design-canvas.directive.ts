@@ -348,7 +348,7 @@ export class DesignCanvasDirective implements OnInit {
 
 		const entityUnderMouse = this.getPanelUnderMouse(event)
 		if (entityUnderMouse) {
-			const hoveringEntityId = pointer.hoveringOverEntityId
+			const hoveringEntityId = pointer.hoveringOverPanelId
 			if (hoveringEntityId === entityUnderMouse.id) return
 			this._appState.setHoveringOverEntityState(entityUnderMouse.id)
 			this._render.renderCanvasApp()
@@ -567,11 +567,11 @@ export class DesignCanvasDirective implements OnInit {
 				return
 			}
 
-			// todo move link mode method to strings or selected
-			if (this._selectedStore.selectedStringId) {
-				this._entities.panelLinks.setSelectedLinkModePanelId(entityUnderMouse.id)
-				return
-			}
+			/*	// todo move link mode method to strings or selected
+			 if (this._selectedStore.selectedStringId) {
+			 // this._entities.panelLinks.set(entityUnderMouse.id)
+			 return
+			 }*/
 
 			// }
 			/*			this._selected.handleEntityUnderMouse(event, entityUnderMouse)
@@ -1023,7 +1023,7 @@ export class DesignCanvasDirective implements OnInit {
 			this.wheelScrollHandler(event)
 			event.stopPropagation()
 			event.preventDefault()
-		})
+		}) // { passive: false } is required to prevent default
 		this._renderer.listen(window, 'resize', (event: Event) => {
 			this.ctx.canvas.width = window.innerWidth
 			this.ctx.canvas.height = window.innerHeight

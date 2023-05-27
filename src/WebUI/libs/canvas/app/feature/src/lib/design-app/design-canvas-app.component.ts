@@ -13,6 +13,7 @@ import {
 	NgZone,
 	OnInit,
 	Renderer2,
+	signal,
 	ViewChild,
 } from '@angular/core'
 import { toSignal } from '@angular/core/rxjs-interop'
@@ -81,7 +82,6 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 	private _uiStore = inject(UiStoreService)
 	private _graphicsStore = inject(GraphicsStoreService)
 	private _dialog = toSignal(this._uiStore.dialog$, { initialValue: this._uiStore.dialog })
-	// @ViewChildren('canvas') canvas: ElementRef<HTMLDivElement>
 	private _contextMenu = toSignal(this._uiStore.contextMenu$, {
 		initialValue: this._uiStore.contextMenu,
 	})
@@ -106,6 +106,9 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 			rotateEntityState: this._objectPositioningStore.state.rotateEntityState,
 		},
 	})
+	// @ViewChildren('canvas') canvas: ElementRef<HTMLDivElement>
+	version = signal('1.0.1')
+	// version = '0.0.1'
 	showFpsState = toSignal(this._graphicsStore.state$.pipe(map((state) => state.showFps)), {
 		initialValue: this._graphicsStore.state.showFps,
 	})

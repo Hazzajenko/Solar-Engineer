@@ -5,6 +5,7 @@ import { DragBox, ModeState, PreviewAxisState, ViewPositioningState } from './ap
 import { inject, Injectable, signal } from '@angular/core'
 import { toSignal } from '@angular/core/rxjs-interop'
 import { select, Store } from '@ngrx/store'
+import { PanelId } from '@entities/shared'
 
 @Injectable({
 	providedIn: 'root',
@@ -52,8 +53,8 @@ export class AppStateStoreService {
 class AppNgrxRepository {
 	constructor(private _store: Store) {}
 
-	setHoveringOverEntityState(hoveringOverEntityId: string) {
-		this._store.dispatch(AppStateActions.setHoveringOverEntity({ hoveringOverEntityId }))
+	setHoveringOverEntityState(hoveringOverPanelId: PanelId) {
+		this._store.dispatch(AppStateActions.setHoveringOverPanel({ hoveringOverPanelId }))
 	}
 
 	liftHoveringOverEntity() {
