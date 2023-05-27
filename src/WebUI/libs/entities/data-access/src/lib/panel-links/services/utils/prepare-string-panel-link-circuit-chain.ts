@@ -1,13 +1,25 @@
 import { sortPanelLinks } from '@entities/utils'
-import { ClosedCircuitChain, OpenCircuitChain, PanelLinkModel } from '@entities/shared'
+import {
+	OpenCircuitChain,
+	OpenCircuitChainWithIndex,
+	PanelId,
+	PanelLinkModel,
+	StringCircuitChainsWithIndex,
+} from '@entities/shared'
 
 export const prepareStringPanelLinkCircuitChain = (panelLinks: PanelLinkModel[]) => {
-	const circuitChains = getPanelLinkOrderSeparateChains(panelLinks) as {
-		openCircuitChains: OpenCircuitChain[]
-		closedCircuitChains: ClosedCircuitChain[]
-	}
+	/*	const circuitChains = getPanelLinkOrderSeparateChains(panelLinks) as {
+	 openCircuitChains: OpenCircuitChain[]
+	 closedCircuitChains: ClosedCircuitChain[]
+	 }*/
 
-	const openCircuitChains = circuitChains.openCircuitChains
+	const circuitChains = getPanelLinkOrderSeparateChainsWithIndexMap(
+		panelLinks,
+	) as StringCircuitChainsWithIndex
+
+	const openCircuitChains = circuitChains.openCircuitChainsWithIndexMap
+	// const openCircuitChains = circuitChains.openCircuitChains
+	// const openCircuitChainIndexMap = new Map<string, number>()
 	// const openCircuitChains = circuitChains.openCircuitChains.map((chain) => sortPanelLinks(chain))
 	const closedCircuitChains = circuitChains.closedCircuitChains.map((chain) =>
 		sortPanelLinks(chain),
@@ -69,6 +81,69 @@ const getPanelLinkOrderSeparateChains = (panelLinks: PanelLinkModel[]) => {
 
 	return {
 		openCircuitChains,
+		closedCircuitChains,
+	}
+}
+
+const getPanelLinkOrderSeparateChainsWithIndexMap = (panelLinks: PanelLinkModel[]) => {
+	const positivePanelIds = new Set(panelLinks.map((pl) => pl.positivePanelId))
+	const startOfChains = panelLinks.filter(
+		(panelLink) => !positivePanelIds.has(panelLink.negativePanelId),
+	)
+
+	const completeLinkIds: string[] = []
+
+	const openCircuitChainsWithIndexMap: OpenCircuitChainWithIndex[] = startOfChains
+		.map((panelLink) => {
+			const panelLinkChain = [panelLink]
+			const panelIndexMap = new Map<PanelId, number>()
+			panelIndexMap.set(panelLink.positivePanelId, 0)
+			panelIndexMap.set(panelLink.negativePanelId, 1)
+			completeLinkIds.push(panelLink.id)
+			let currentPanelLink = panelLink
+			let panelLinkChainOrderInProcess = true
+			while (panelLinkChainOrderInProcess) {
+				const nextPanelLink = panelLinks.find(
+					(pl) => pl.negativePanelId === currentPanelLink.positivePanelId,
+				)
+				if (!nextPanelLink) {
+					panelLinkChainOrderInProcess = false
+					return { panelLinkChain, panelIndexMap }
+				}
+				panelLinkChain.push(nextPanelLink)
+				panelIndexMap.set(nextPanelLink.negativePanelId, panelLinkChain.length)
+				currentPanelLink = nextPanelLink
+			}
+			return { panelLinkChain, panelIndexMap }
+		})
+		.map(({ panelLinkChain, panelIndexMap }) => {
+			sortPanelLinks(panelLinkChain)
+			const openCircuitChains = panelLinkChain.map((link, index) => ({
+				...link,
+				index,
+			})) as OpenCircuitChain
+			return { openCircuitChains, panelIndexMap } as OpenCircuitChainWithIndex
+		})
+
+	const possibleClosedCircuitLinks = panelLinks.filter((pl) => !completeLinkIds.includes(pl.id))
+
+	if (possibleClosedCircuitLinks.length === 0) {
+		return {
+			openCircuitChainsWithIndexMap,
+			closedCircuitChains: [],
+		}
+	}
+
+	const { closedCircuitChains, unknownCircuitChains } = handleClosedCircuitChains(
+		possibleClosedCircuitLinks,
+	)
+
+	if (unknownCircuitChains.length > 0) {
+		// console.log('unknownCircuitChains', unknownCircuitChains)
+	}
+
+	return {
+		openCircuitChainsWithIndexMap,
 		closedCircuitChains,
 	}
 }

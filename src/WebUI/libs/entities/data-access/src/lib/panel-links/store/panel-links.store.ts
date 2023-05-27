@@ -22,7 +22,7 @@ import {
 	PanelLinkRequest,
 	PanelSymbol,
 	Polarity,
-	StringCircuit,
+	StringCircuitWithIndex,
 } from '@entities/shared'
 import { PANEL_LINKS_FEATURE_KEY, panelLinksReducer, PanelLinksState } from './panel-links.reducer'
 import * as panelLinksEffects from './panel-links.effects'
@@ -155,7 +155,7 @@ export function injectPanelLinksStore() {
 		clearHoveringOverPanelLinkInLinkMenu() {
 			store.dispatch(PanelLinksActions.clearHoveringOverPanelLinkInLinkMenu())
 		},
-		setSelectedStringLinkCircuit(selectedStringCircuit: StringCircuit) {
+		setSelectedStringLinkCircuit(selectedStringCircuit: StringCircuitWithIndex) {
 			store.dispatch(
 				PanelLinksActions.setSelectedStringCircuit({
 					selectedStringCircuit,

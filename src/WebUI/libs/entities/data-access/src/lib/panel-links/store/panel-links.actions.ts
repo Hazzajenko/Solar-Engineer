@@ -6,7 +6,7 @@ import {
 	PanelLinkModel,
 	PanelLinkRequest,
 	PanelSymbol,
-	StringCircuit,
+	StringCircuitWithIndex,
 } from '@entities/shared'
 
 export const PanelLinksActions = createActionGroup({
@@ -44,7 +44,7 @@ export const PanelLinksActions = createActionGroup({
 		'Clear Hovering Over Panel Link In Link Menu': emptyProps(),
 		'Selected String Link Lines Updated': emptyProps(),
 		'Set Selected String Circuit': props<{
-			selectedStringCircuit: StringCircuit
+			selectedStringCircuit: StringCircuitWithIndex
 		}>(),
 		'Clear Selected String Circuit': emptyProps(),
 		'Set Hovering Over Panel Link In App': props<{

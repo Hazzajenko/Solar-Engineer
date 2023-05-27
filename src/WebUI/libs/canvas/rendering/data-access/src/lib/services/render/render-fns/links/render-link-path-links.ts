@@ -21,9 +21,12 @@ import {
 	getQuadraticAngleAtPointUsingNumberLine,
 } from '@canvas/utils'
 import { Point, TransformedPoint } from '@shared/data-access/models'
-import { getPanelWithSymbolLocationBasedOnPolarity } from '@entities/utils'
+import {
+	getIndexOfPanelLinkCurvedLineTuple,
+	getPanelWithSymbolLocationBasedOnPolarity,
+} from '@entities/utils'
 
-let offset = 0
+const offset = 0
 let image: HTMLImageElement | undefined
 export const drawLinkModePathLinesCurvedAlreadyMappedV6 = (
 	ctx: CanvasRenderingContext2D,
@@ -84,8 +87,8 @@ export const drawLinkModePathLinesCurvedAlreadyMappedV6 = (
 		  )
 		: -1
 
-	console.log('selectedPanelPositiveToIndex', selectedPanelPositiveToIndex)
-	console.log('selectedPanelNegativeToIndex', selectedPanelNegativeToIndex)
+	// console.log('selectedPanelPositiveToIndex', selectedPanelPositiveToIndex)
+	// console.log('selectedPanelNegativeToIndex', selectedPanelNegativeToIndex)
 
 	// const
 	let selectedPanelCommonIndex = -1
@@ -117,16 +120,22 @@ export const drawLinkModePathLinesCurvedAlreadyMappedV6 = (
 	 selectedPanelNegativeToIndex,
 	 )*/
 
-	console.log('selectedPanelCommonIndex', selectedPanelCommonIndex)
+	// console.log('selectedPanelCommonIndex', selectedPanelCommonIndex)
 
 	const selectedPanelChainIndex =
 		selectedPanelCommonIndex === -1
 			? -1
-			: circuitLinkLineTuples[selectedPanelCommonIndex].findIndex(
-					(tuple) => tuple[0] === panelLinkForSelectedPanelId,
+			: panelLinkForSelectedPanelId
+			? getIndexOfPanelLinkCurvedLineTuple(
+					panelLinkForSelectedPanelId,
+					circuitLinkLineTuples[selectedPanelCommonIndex],
 			  )
-
-	console.log('selectedPanelChainIndex', selectedPanelChainIndex)
+			: -1
+	/*			: circuitLinkLineTuples[selectedPanelCommonIndex].findIndex(
+	 (tuple) => tuple[0] === panelLinkForSelectedPanelId,
+	 )*/
+	// getIndexOfPanelInPanelLinks
+	// console.log('selectedPanelChainIndex', selectedPanelChainIndex)
 
 	for (let i = 0; i < circuitLinkLineTuples.length; i += 1) {
 		const linkLineTuple = circuitLinkLineTuples[i]
@@ -216,12 +225,23 @@ const getDrawOptionsBasedOnInputs = (
 		}
 	}
 	if (p.selectedPanelInThisChain) {
+		if (index === linkLineTupleLength - 1) {
+			return {
+				strokeStyle: 'blue',
+				lineWidth: 2,
+			}
+		}
 		if (p.selectedPanelChainIndex > index) {
 			return {
 				strokeStyle: 'red',
 				lineWidth: 2,
 			}
-		}
+		} /* else if (p.selectedPanelChainIndex <= index) {
+		 return {
+		 strokeStyle: 'blue',
+		 lineWidth: 2,
+		 }
+		 }*/
 		return {
 			strokeStyle: 'blue',
 			lineWidth: 2,

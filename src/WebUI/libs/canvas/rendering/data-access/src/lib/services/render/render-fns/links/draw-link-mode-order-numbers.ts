@@ -1,16 +1,16 @@
-import { OpenCircuitChain, PanelModel } from '@entities/shared'
+import { OpenCircuitChainWithIndex, PanelModel } from '@entities/shared'
 
 export const drawLinkModeOrderNumbers = (
 	ctx: CanvasRenderingContext2D,
 	panel: PanelModel,
-	linksInOrder: OpenCircuitChain[],
+	linksInOrder: OpenCircuitChainWithIndex[],
 	selectedStringPanel: PanelModel | undefined,
 ) => {
 	if (!linksInOrder.length) {
 		return
 	}
 	const chain = linksInOrder.findIndex((linkChain) =>
-		linkChain.some(
+		linkChain.openCircuitChains.some(
 			(link) => link?.positivePanelId === panel.id || link?.negativePanelId === panel.id,
 		),
 	)
@@ -20,38 +20,42 @@ export const drawLinkModeOrderNumbers = (
 	}
 
 	const chainSorted = linksInOrder[chain]
-	let linkIndex = chainSorted.findIndex((link) => link?.positivePanelId === panel.id)
-	if (linkIndex === -1) {
-		const maybeLastIndex = chainSorted.findIndex((link) => link?.negativePanelId === panel.id)
-		if (maybeLastIndex !== -1) {
-			if (maybeLastIndex === chainSorted.length - 1) {
-				linkIndex = chainSorted.length
-			} else {
-				linkIndex = maybeLastIndex
-			}
-		}
-	}
+	/*	let linkIndex = chainSorted.findIndex((link) => link?.positivePanelId === panel.id)
+	 if (linkIndex === -1) {
+	 const maybeLastIndex = chainSorted.findIndex((link) => link?.negativePanelId === panel.id)
+	 if (maybeLastIndex !== -1) {
+	 if (maybeLastIndex === chainSorted.length - 1) {
+	 linkIndex = chainSorted.length
+	 } else {
+	 linkIndex = maybeLastIndex
+	 }
+	 }
+	 }*/
+	let linkIndex = linksInOrder[chain].panelIndexMap.get(panel.id) ?? -1
+	// let linkIndex = getIndexOfPanelInPanelLinks(panel.id, chainSorted)
 	if (linkIndex === -1) {
 		return
 	}
 	if (selectedStringPanel) {
-		let selectedPanelIndex = -1
-		selectedPanelIndex = chainSorted.findIndex(
-			(link) => link?.positivePanelId === selectedStringPanel.id,
-		)
-		if (chainSorted[chainSorted.length - 1].negativePanelId === selectedStringPanel.id) {
-			selectedPanelIndex = chainSorted.length
-		}
-		if (selectedPanelIndex === -1) {
-			const maybeLastIndex = chainSorted.findIndex((link) => link?.negativePanelId === panel.id)
-			if (maybeLastIndex !== -1) {
-				if (maybeLastIndex === chainSorted.length - 1) {
-					selectedPanelIndex = chainSorted.length
-				} else {
-					selectedPanelIndex = maybeLastIndex
-				}
-			}
-		}
+		/*		let selectedPanelIndex = chainSorted.findIndex(
+		 (link) => link?.positivePanelId === selectedStringPanel.id,
+		 )
+		 if (chainSorted[chainSorted.length - 1].negativePanelId === selectedStringPanel.id) {
+		 selectedPanelIndex = chainSorted.length
+		 }
+		 if (selectedPanelIndex === -1) {
+		 const maybeLastIndex = chainSorted.findIndex((link) => link?.negativePanelId === panel.id)
+		 if (maybeLastIndex !== -1) {
+		 if (maybeLastIndex === chainSorted.length - 1) {
+		 selectedPanelIndex = chainSorted.length
+		 } else {
+		 selectedPanelIndex = maybeLastIndex
+		 }
+		 }
+		 }*/
+
+		const selectedPanelIndex = linksInOrder[chain].panelIndexMap.get(selectedStringPanel.id) ?? -1
+		// const selectedPanelIndex = getIndexOfPanelInPanelLinks(selectedStringPanel.id, chainSorted)
 
 		if (selectedPanelIndex !== -1) {
 			if (linkIndex === selectedPanelIndex) {

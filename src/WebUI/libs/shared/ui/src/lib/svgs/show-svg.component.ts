@@ -27,6 +27,7 @@ export class ShowSvgComponent {
 	}
 
 	initIcon(path: string) {
+		// createTrustedHTML
 		return (this.svgIcon$ = this.http
 			.get(`assets/${path}.svg`, {
 				responseType: 'text',

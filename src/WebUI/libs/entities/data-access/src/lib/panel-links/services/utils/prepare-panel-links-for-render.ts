@@ -4,42 +4,67 @@ import {
 	reduceLinkChainToNumberArrayOptimised,
 	reduceLinkPointsToNumberArrayOptimisedKeepIdsV2,
 } from '@entities/utils'
-import { PanelLinkId, PanelLinkModel, PanelModel, StringCircuitChains } from '@entities/shared'
+import {
+	ClosedCircuitChain,
+	OpenCircuitChainWithIndex,
+	PanelLinkId,
+	PanelLinkModel,
+	PanelModel,
+	StringCircuitChains,
+} from '@entities/shared'
 import { CurvedNumberLine } from '@canvas/shared'
 import { prepareStringPanelLinkCircuitChain } from './prepare-string-panel-link-circuit-chain'
 import { APoint } from '@shared/utils'
 
 export const getUpdatedPanelLinksForRender = (links: PanelLinkModel[]) => {
-	const circuitChains = prepareStringPanelLinkCircuitChain(links)
-	return preparePanelLinksForRender(circuitChains)
+	// const circuitChains = prepareStringPanelLinkCircuitChain(links)
+	// return preparePanelLinksForRender(circuitChains)
+	const { openCircuitChains, closedCircuitChains } = prepareStringPanelLinkCircuitChain(links)
+	return preparePanelLinksForRenderWithIndexMap(openCircuitChains, closedCircuitChains)
 }
 
 export const prepareStringCircuitChainForRender = (links: PanelLinkModel[]) => {
 	const { openCircuitChains, closedCircuitChains } = prepareStringPanelLinkCircuitChain(links)
-	const circuitLinkLines = preparePanelLinksForRender({ openCircuitChains, closedCircuitChains })
+	const circuitLinkLines = preparePanelLinksForRenderWithIndexMap(
+		openCircuitChains,
+		closedCircuitChains,
+	)
+	// const {} = openCircuitChains
+
+	// const circuitLinkLines = preparePanelLinksForRender({ openCircuitChains, closedCircuitChains })
 	return { openCircuitChains, closedCircuitChains, circuitLinkLines }
 }
-export const preparePanelLinksForRender = (stringCircuitChains: StringCircuitChains) => {
-	const { openCircuitChains, closedCircuitChains } = stringCircuitChains
+
+export const preparePanelLinksForRenderWithIndexMap = (
+	openCircuitChains: OpenCircuitChainWithIndex[],
+	closedCircuitChains: ClosedCircuitChain[],
+) => {
+	// const { openCircuitChains, closedCircuitChains } = stringCircuitChains
 	const openCircuitCurvedLines = openCircuitChains.map((chain) => {
-		// const flatPoints = reduceLinkPointsToNumberArrayOptimisedKeepIdsKeepOriginalStart(chain)
-		const flatPoints = reduceLinkPointsToNumberArrayOptimisedKeepIdsV2(chain)
+		const flatPoints = reduceLinkPointsToNumberArrayOptimisedKeepIdsV2(chain.openCircuitChains)
 		return createCircuitCurvedLinkPathLines(flatPoints)
 	})
 
 	const closedCircuitCurvedLines = closedCircuitChains.map((chain) => {
-		// const flatPoints = reduceLinkPointsToNumberArrayOptimisedKeepIdsKeepOriginalStart(chain)
 		const flatPoints = reduceLinkPointsToNumberArrayOptimisedKeepIdsV2(chain)
 		return createCircuitCurvedLinkPathLines(flatPoints)
 	})
 
 	return openCircuitCurvedLines.concat(closedCircuitCurvedLines)
-	// const stringCircuitChain = openCircuitCurvedLines.concat(closedCircuitCurvedLines)
-	// const stringPanelLinkLines = mapStringLinkChainToDoubleNumberArray(stringCircuitChain)
-	/*
-	 return {
-	 stringCircuitChain, // stringPanelLinkLines,
-	 }*/
+}
+export const preparePanelLinksForRender = (stringCircuitChains: StringCircuitChains) => {
+	const { openCircuitChains, closedCircuitChains } = stringCircuitChains
+	const openCircuitCurvedLines = openCircuitChains.map((chain) => {
+		const flatPoints = reduceLinkPointsToNumberArrayOptimisedKeepIdsV2(chain)
+		return createCircuitCurvedLinkPathLines(flatPoints)
+	})
+
+	const closedCircuitCurvedLines = closedCircuitChains.map((chain) => {
+		const flatPoints = reduceLinkPointsToNumberArrayOptimisedKeepIdsV2(chain)
+		return createCircuitCurvedLinkPathLines(flatPoints)
+	})
+
+	return openCircuitCurvedLines.concat(closedCircuitCurvedLines)
 }
 
 export const createCircuitCurvedLinkPathLines = (linkPointTuples: [PanelLinkId, number[]][]) => {

@@ -20,7 +20,7 @@ import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { inject } from '@angular/core'
 import { map } from 'rxjs'
 import { injectPanelLinksStore, PanelLinksActions, PanelsActions, prepareStringCircuitChainForRender } from '@entities/data-access'
-import { StringCircuit } from '@entities/shared'
+import { StringCircuitWithIndex } from '@entities/shared'
 import { getAllActions } from '@shared/utils'
 import { injectSelectedStore } from '@canvas/selected/data-access'
 
@@ -48,7 +48,8 @@ export const updateSelectedStringCircuitOnChange$ = createEffect(
 					// return
 				}
 				const panelLinks = _panelLinksStore.getByStringId(selectedStringId)
-				const selectedStringCircuit: StringCircuit = prepareStringCircuitChainForRender(panelLinks)
+				const selectedStringCircuit: StringCircuitWithIndex =
+					prepareStringCircuitChainForRender(panelLinks)
 				return PanelLinksActions.setSelectedStringCircuit({
 					selectedStringCircuit,
 				})

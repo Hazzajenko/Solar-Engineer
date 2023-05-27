@@ -38,9 +38,8 @@ import { Point } from '@shared/data-access/models'
 import {
 	CANVAS_COLORS,
 	CanvasEntity,
-	OpenCircuitChain,
+	OpenCircuitChainWithIndex,
 	PANEL_STROKE_STYLE,
-	PanelLinkModel,
 	PanelModel,
 	StringModel,
 	UndefinedStringId,
@@ -495,7 +494,7 @@ export class RenderService {
 	private drawEntities(
 		ctx: CanvasRenderingContext2D,
 		entities: PanelModel[],
-		linksInOrder: PanelLinkModel[][] = [],
+		linksInOrder: OpenCircuitChainWithIndex[] = [],
 		selectedString: StringModel | undefined,
 		options?: Partial<CanvasRenderOptions>,
 	) {
@@ -643,12 +642,7 @@ export class RenderService {
 				this._graphicsStore.state.linkModeOrderNumbers &&
 				linksInOrder.length
 			) {
-				drawLinkModeOrderNumbers(
-					ctx,
-					entity,
-					linksInOrder as OpenCircuitChain[],
-					singleSelectedEntity,
-				)
+				drawLinkModeOrderNumbers(ctx, entity, linksInOrder, singleSelectedEntity)
 				// this.drawLinkModeOrderNumbers(ctx, entity, linksInOrder as OpenCircuitChain[])
 			}
 			/*				if (

@@ -19,6 +19,17 @@ export type PanelLinkModelWithIndex = PanelLinkModel & {
 
 export type PanelLinkChain = PanelLinkModel[]
 
+export type StringCircuitWithIndex = {
+	openCircuitChains: OpenCircuitChainWithIndex[]
+	closedCircuitChains: ClosedCircuitChain[]
+	circuitLinkLines: [PanelLinkId, CurvedNumberLine][][]
+}
+
+export type StringCircuitChainsWithIndex = {
+	openCircuitChainsWithIndexMap: OpenCircuitChainWithIndex[]
+	closedCircuitChains: ClosedCircuitChain[]
+}
+
 export type StringCircuit = {
 	openCircuitChains: OpenCircuitChain[]
 	closedCircuitChains: ClosedCircuitChain[]
@@ -38,8 +49,14 @@ export type StringCircuitChains = {
 export type OpenOrClosedCircuitChain = OpenCircuitChain | ClosedCircuitChain
 
 export type OpenCircuitChain = PanelLinkModelWithIndex[] & {
-	index: number
+	// index: number
 	__type: 'OpenCircuitChain'
+}
+// {index: number, id: PanelLinkId, stringId: string, negativePanelId: PanelId, positivePanelId: PanelId, linePoints: Point[]}[]
+// {openCircuitChainsWithIndexMap: {panelIndexMap: Map<PanelId, number>, openCircuitChains: {stringId: string, linePoints: Point[], index: number, id: PanelLinkId, positivePanelId: PanelId, negativePanelId: PanelId}[]}[]
+export type OpenCircuitChainWithIndex = {
+	openCircuitChains: OpenCircuitChain
+	panelIndexMap: Map<PanelId, number>
 }
 
 export type OpenCircuitPanelLink = PanelLinkModel & {
