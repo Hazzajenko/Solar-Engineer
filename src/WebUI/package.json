@@ -18,7 +18,7 @@
     "start-ssl-certs": "nx serve web --ssl --ssl-key /ssl/localhost.key --ssl-cert /ssl/localhost.crt",
     "proxy": "nx serve --proxy-config src/proxy.conf.json",
     "inspect": "nx serve --inspect",
-    "build": "nx build",
+    "build": "nx build design-app --configuration=production --verbose",
     "watch": "nx build --watch --configuration development",
     "test": "xo && nx test",
     "postinstall": "node ./decorate-angular-cli.js",

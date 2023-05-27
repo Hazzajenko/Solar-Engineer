@@ -64,8 +64,36 @@ cache:
 docker-build-client:
 	docker build . -t angularclient:1.0.0
 
+docker-build-app:
+	docker build . -t solarengineer-client:1.0.1
+
+docker-build-app-nocache:
+	docker build . -t solarengineer-client:1.0.1  --no-cache --pull
+
+#docker-build-app-nocache-v2:
+#	docker build . -t solarengineer-client:1.0.1  --no-cache --pull -f pnpm-v2.Dockerfile
+
+docker-build-app-nocache-v2:
+	docker build . -t solarengineer-client:1.0.1  --no-cache --pull -f pnpm-v3.Dockerfile
+
+docker-build-app-nocache-v3:
+	docker build . -t solarengineer-client:1.0.1  --no-cache --pull -f opti.Dockerfile
+
+docker-run-app:
+	docker run --name solarengineer-client:1.0.1 -it -p 4200:80 solarengineer-client:1.0.1
+
+docker-run-appV3:
+	docker run solarengineer-client:1.0.1 --name solarengineer-client -it -p 4200:80
+
+docker-tag-app:
+	docker image tag solarengineer-client:1.0.1 hazzajenko/solarengineer-client:1.0.1
+
+push-app:
+	docker image push hazzajenko/solarengineer-client:1.0.1
+
 build-nocache:
 	docker build . -t angularclient:1.0.0  --no-cache --pull
+
 
 
 tag:

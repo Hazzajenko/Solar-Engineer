@@ -994,6 +994,27 @@ export class DesignCanvasDirective implements OnInit {
 			event.stopPropagation()
 			event.preventDefault()
 		})
+		this._renderer.listen(this.canvas, 'touchstart', (event: TouchEvent) => {
+			console.log('touch start', event)
+			// const touches = event.changedTouches;
+			event.stopPropagation()
+			event.preventDefault()
+		})
+		this._renderer.listen(this.canvas, 'touchend', (event: TouchEvent) => {
+			console.log('touch end', event)
+			event.stopPropagation()
+			event.preventDefault()
+		})
+		this._renderer.listen(this.canvas, 'touchcancel', (event: TouchEvent) => {
+			console.log('touch cancel', event)
+			event.stopPropagation()
+			event.preventDefault()
+		})
+		this._renderer.listen(this.canvas, 'touchmove', (event: TouchEvent) => {
+			console.log('touch move', event)
+			event.stopPropagation()
+			event.preventDefault()
+		})
 		/*		const throttledPointerMove = throttle((event: PointerEvent) => {
 		 event.stopPropagation()
 		 event.preventDefault()
