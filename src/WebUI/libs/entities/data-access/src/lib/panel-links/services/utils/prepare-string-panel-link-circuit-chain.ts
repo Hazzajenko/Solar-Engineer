@@ -86,6 +86,7 @@ const getPanelLinkOrderSeparateChains = (panelLinks: PanelLinkModel[]) => {
 }
 
 const getPanelLinkOrderSeparateChainsWithIndexMap = (panelLinks: PanelLinkModel[]) => {
+	console.log('panelLinks', panelLinks)
 	const positivePanelIds = new Set(panelLinks.map((pl) => pl.positivePanelId))
 	const startOfChains = panelLinks.filter(
 		(panelLink) => !positivePanelIds.has(panelLink.negativePanelId),
@@ -93,12 +94,20 @@ const getPanelLinkOrderSeparateChainsWithIndexMap = (panelLinks: PanelLinkModel[
 
 	const completeLinkIds: string[] = []
 
+	const setMap = (panelIndexMap: Map<PanelId, number>, panelId: PanelId, index: number) => {
+		if (panelIndexMap.has(panelId)) {
+			return
+		}
+		if (panelIndexMap.size === 0 && index !== 0) {
+			console.error('panelIndexMap', panelIndexMap)
+			throw new Error('panelIndexMap.size === 0 && index !== 0')
+		}
+		panelIndexMap.set(panelId, index)
+	}
+
 	const openCircuitChainsWithIndexMap: OpenCircuitChainWithIndex[] = startOfChains
 		.map((panelLink) => {
 			const panelLinkChain = [panelLink]
-			const panelIndexMap = new Map<PanelId, number>()
-			panelIndexMap.set(panelLink.positivePanelId, 0)
-			panelIndexMap.set(panelLink.negativePanelId, 1)
 			completeLinkIds.push(panelLink.id)
 			let currentPanelLink = panelLink
 			let panelLinkChainOrderInProcess = true
@@ -108,22 +117,72 @@ const getPanelLinkOrderSeparateChainsWithIndexMap = (panelLinks: PanelLinkModel[
 				)
 				if (!nextPanelLink) {
 					panelLinkChainOrderInProcess = false
-					return { panelLinkChain, panelIndexMap }
+					return panelLinkChain
 				}
 				panelLinkChain.push(nextPanelLink)
-				panelIndexMap.set(nextPanelLink.negativePanelId, panelLinkChain.length)
 				currentPanelLink = nextPanelLink
 			}
-			return { panelLinkChain, panelIndexMap }
+			return panelLinkChain
 		})
-		.map(({ panelLinkChain, panelIndexMap }) => {
-			sortPanelLinks(panelLinkChain)
-			const openCircuitChains = panelLinkChain.map((link, index) => ({
+		.map((panelLinkChain) => {
+			const openCircuitChains = sortPanelLinks([...panelLinkChain]).map((link, index) => ({
 				...link,
 				index,
 			})) as OpenCircuitChain
+			console.log('openCircuitChains', openCircuitChains)
+			const panelIndexMap = new Map<PanelId, number>()
+			openCircuitChains.forEach((link, index) => {
+				setMap(panelIndexMap, link.positivePanelId, index)
+				setMap(panelIndexMap, link.negativePanelId, index + 1)
+			})
+			// console.log('panelIndexMap', panelIndexMap)
 			return { openCircuitChains, panelIndexMap } as OpenCircuitChainWithIndex
 		})
+
+	/*const openCircuitChainsWithIndexMap: OpenCircuitChainWithIndex[] = startOfChains
+	 .map((panelLink) => {
+	 const panelLinkChain = [panelLink]
+	 const panelIndexMap = new Map<PanelId, number>()
+	 // panelIndexMap.set(panelLink.positivePanelId, 0)
+	 // panelIndexMap.set(panelLink.negativePanelId, 1)
+	 setMap(panelIndexMap, panelLink.positivePanelId, 0)
+	 setMap(panelIndexMap, panelLink.negativePanelId, 1)
+	 console.log('panelIndexMapINIT', panelIndexMap)
+	 completeLinkIds.push(panelLink.id)
+	 let currentPanelLink = panelLink
+	 let panelLinkChainOrderInProcess = true
+	 while (panelLinkChainOrderInProcess) {
+	 const nextPanelLink = panelLinks.find(
+	 (pl) => pl.negativePanelId === currentPanelLink.positivePanelId,
+	 )
+	 if (!nextPanelLink) {
+	 panelLinkChainOrderInProcess = false
+	 // panelIndexMap.set(currentPanelLink.positivePanelId, panelLinkChain.length + 1)
+	 setMap(panelIndexMap, currentPanelLink.positivePanelId, panelLinkChain.length + 1)
+	 /!*	if (!panelIndexMap.has(panelLinkChain[0].positivePanelId)) {
+	 console.error('panelIndexMap', panelIndexMap)
+	 }*!/
+	 return { panelLinkChain, panelIndexMap }
+	 }
+	 panelLinkChain.push(nextPanelLink)
+	 // completeLinkIds.push(nextPanelLink.id)
+	 setMap(panelIndexMap, nextPanelLink.positivePanelId, panelLinkChain.length)
+	 // panelIndexMap.set(nextPanelLink.negativePanelId, panelLinkChain.length)
+	 currentPanelLink = nextPanelLink
+	 }
+	 // console.log('panelLinkChain', panelLinkChain)
+	 // console.log('panelIndexMap', panelIndexMap)
+	 return { panelLinkChain, panelIndexMap }
+	 })
+	 .map(({ panelLinkChain, panelIndexMap }) => {
+	 const openCircuitChains = sortPanelLinks([...panelLinkChain]).map((link, index) => ({
+	 ...link,
+	 index,
+	 })) as OpenCircuitChain
+	 console.log('openCircuitChains', openCircuitChains)
+	 console.log('panelIndexMap', panelIndexMap)
+	 return { openCircuitChains, panelIndexMap } as OpenCircuitChainWithIndex
+	 })*/
 
 	const possibleClosedCircuitLinks = panelLinks.filter((pl) => !completeLinkIds.includes(pl.id))
 

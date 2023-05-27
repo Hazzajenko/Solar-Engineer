@@ -324,6 +324,9 @@ export class RenderService {
 
 			// &&
 			// 	appStateMode === 'LinkMode'
+			/**
+			 * * Draw the link lines
+			 */
 			if (this._graphicsStore.state.linkModePathLines && selectedStringId) {
 				/*			let draggingSymbolLinkLinePanelWithSymbol: PanelWithSymbol | undefined
 				 let transformedPoint: TransformedPoint | undefined
@@ -370,8 +373,9 @@ export class RenderService {
 					selectedPanelLinkId,
 					mouseDownPanelSymbol,
 
-					// singleSelectedPanel,
+					singleSelectedPanel,
 					panelLinkForSelectedPanel,
+					openCircuitChains,
 				)
 
 				/*		if (options?.draggingSymbolLinkLine) {

@@ -25,6 +25,7 @@ export const getUpdatedPanelLinksForRender = (links: PanelLinkModel[]) => {
 
 export const prepareStringCircuitChainForRender = (links: PanelLinkModel[]) => {
 	const { openCircuitChains, closedCircuitChains } = prepareStringPanelLinkCircuitChain(links)
+	// const
 	const circuitLinkLines = preparePanelLinksForRenderWithIndexMap(
 		openCircuitChains,
 		closedCircuitChains,

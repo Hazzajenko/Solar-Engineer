@@ -31,7 +31,7 @@ export const drawLinkModeOrderNumbers = (
 	 }
 	 }
 	 }*/
-	let linkIndex = linksInOrder[chain].panelIndexMap.get(panel.id) ?? -1
+	let linkIndex = chainSorted.panelIndexMap.get(panel.id) ?? -1
 	// let linkIndex = getIndexOfPanelInPanelLinks(panel.id, chainSorted)
 	if (linkIndex === -1) {
 		return
@@ -54,7 +54,11 @@ export const drawLinkModeOrderNumbers = (
 		 }
 		 }*/
 
-		const selectedPanelIndex = linksInOrder[chain].panelIndexMap.get(selectedStringPanel.id) ?? -1
+		const selectedPanelIndex = chainSorted.panelIndexMap.get(selectedStringPanel.id) ?? -1
+		// console.log('selectedPanelIndex', selectedPanelIndex)
+		// throttleLog('chainSorted', chainSorted)
+		// console.log('chainSorted.panelIndexMap', chainSorted.panelIndexMap)
+		// throttleLog('selectedPanelIndex', selectedPanelIndex)
 		// const selectedPanelIndex = getIndexOfPanelInPanelLinks(selectedStringPanel.id, chainSorted)
 
 		if (selectedPanelIndex !== -1) {

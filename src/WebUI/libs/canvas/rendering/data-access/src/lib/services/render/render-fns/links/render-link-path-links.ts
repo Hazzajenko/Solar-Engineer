@@ -1,5 +1,6 @@
 import {
 	CanvasEntity,
+	OpenCircuitChainWithIndex,
 	PanelLinkFromMenu,
 	PanelLinkId,
 	PanelLinkModel,
@@ -21,10 +22,8 @@ import {
 	getQuadraticAngleAtPointUsingNumberLine,
 } from '@canvas/utils'
 import { Point, TransformedPoint } from '@shared/data-access/models'
-import {
-	getIndexOfPanelLinkCurvedLineTuple,
-	getPanelWithSymbolLocationBasedOnPolarity,
-} from '@entities/utils'
+import { getPanelWithSymbolLocationBasedOnPolarity } from '@entities/utils'
+import { throttleLog } from '@shared/utils'
 
 const offset = 0
 let image: HTMLImageElement | undefined
@@ -48,12 +47,14 @@ export const drawLinkModePathLinesCurvedAlreadyMappedV6 = (
 	hoveringOverPanelLinkInLinkMenu: PanelLinkFromMenu | undefined,
 	selectedPanelLinkId: PanelLinkId | undefined,
 	finalDrawLineSymbol: PanelSymbol | undefined,
+	singleSelectedPanel: PanelModel | undefined,
 	panelLinkForSelectedPanel:
 		| {
 				negativeToLink: PanelLinkModel | undefined
 				positiveToLink: PanelLinkModel | undefined
 		  }
 		| undefined,
+	openCircuitChains: OpenCircuitChainWithIndex[],
 ) => {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	// const ignore = selectedPanelLinkId || hoveringOverPanelLinkInLinkMenu
@@ -75,43 +76,71 @@ export const drawLinkModePathLinesCurvedAlreadyMappedV6 = (
 	 )
 	 : -1*/
 
-	const selectedPanelPositiveToIndex = panelLinkForSelectedPanel?.positiveToLink
-		? circuitLinkLineTuples.findIndex((tuple) =>
-				tuple.some((tuple) => tuple[0] === panelLinkForSelectedPanel?.positiveToLink?.id),
-		  )
-		: -1
+	// const
+	let selectedPanelChainIndex = -1
+	let selectedPanelPathIndex = -1
+	if (singleSelectedPanel) {
+		selectedPanelChainIndex = openCircuitChains.findIndex((chain) =>
+			chain.panelIndexMap.has(singleSelectedPanel?.id),
+		)
+		selectedPanelPathIndex =
+			selectedPanelChainIndex !== -1
+				? openCircuitChains[selectedPanelChainIndex].panelIndexMap.get(singleSelectedPanel?.id) ??
+				  -1
+				: -1
 
-	const selectedPanelNegativeToIndex = panelLinkForSelectedPanel?.negativeToLink
-		? circuitLinkLineTuples.findIndex((tuple) =>
-				tuple.some((tuple) => tuple[0] === panelLinkForSelectedPanel?.negativeToLink?.id),
-		  )
-		: -1
+		if (selectedPanelChainIndex !== -1) {
+			if (openCircuitChains[selectedPanelChainIndex].panelIndexMap.size > 1) {
+				throttleLog(
+					'openCircuitChains[selectedPanelChainIndex].panelIndexMap',
+					openCircuitChains[selectedPanelChainIndex].panelIndexMap,
+				)
+			}
+		}
+	}
+
+	/*	const selectedPanelChainIndex = singleSelectedPanel
+	 ? openCircuitChains.find((chain) => chain.panelIndexMap.has(singleSelectedPanel?.id))
+	 : undefined*/
+
+	// const selectedPanelPathIndex = selectedPanelChainIndex ? selectedPanelChainIndex.panelIndexMap.get(singleSelectedPanel?.id) : undefined
+	/*	const selectedPanelPositiveToIndex = panelLinkForSelectedPanel?.positiveToLink
+	 ? circuitLinkLineTuples.findIndex((tuple) =>
+	 tuple.some((tuple) => tuple[0] === panelLinkForSelectedPanel?.positiveToLink?.id),
+	 )
+	 : -1
+
+	 const selectedPanelNegativeToIndex = panelLinkForSelectedPanel?.negativeToLink
+	 ? circuitLinkLineTuples.findIndex((tuple) =>
+	 tuple.some((tuple) => tuple[0] === panelLinkForSelectedPanel?.negativeToLink?.id),
+	 )
+	 : -1*/
 
 	// console.log('selectedPanelPositiveToIndex', selectedPanelPositiveToIndex)
 	// console.log('selectedPanelNegativeToIndex', selectedPanelNegativeToIndex)
 
 	// const
-	let selectedPanelCommonIndex = -1
-	let panelLinkForSelectedPanelId: PanelLinkId | undefined
-	if (selectedPanelPositiveToIndex !== -1 && selectedPanelNegativeToIndex !== -1) {
-		panelLinkForSelectedPanelId = panelLinkForSelectedPanel?.positiveToLink?.id
-		selectedPanelCommonIndex = Math.min(selectedPanelPositiveToIndex, selectedPanelNegativeToIndex)
-	}
+	/*	let selectedPanelCommonIndex = -1
+	 let panelLinkForSelectedPanelId: PanelLinkId | undefined
+	 if (selectedPanelPositiveToIndex !== -1 && selectedPanelNegativeToIndex !== -1) {
+	 panelLinkForSelectedPanelId = panelLinkForSelectedPanel?.positiveToLink?.id
+	 selectedPanelCommonIndex = Math.min(selectedPanelPositiveToIndex, selectedPanelNegativeToIndex)
+	 }
 
-	if (selectedPanelPositiveToIndex !== -1 && selectedPanelNegativeToIndex === -1) {
-		panelLinkForSelectedPanelId = panelLinkForSelectedPanel?.positiveToLink?.id
-		selectedPanelCommonIndex = selectedPanelPositiveToIndex
-	}
+	 if (selectedPanelPositiveToIndex !== -1 && selectedPanelNegativeToIndex === -1) {
+	 panelLinkForSelectedPanelId = panelLinkForSelectedPanel?.positiveToLink?.id
+	 selectedPanelCommonIndex = selectedPanelPositiveToIndex
+	 }
 
-	if (selectedPanelPositiveToIndex === -1 && selectedPanelNegativeToIndex !== -1) {
-		panelLinkForSelectedPanelId = panelLinkForSelectedPanel?.negativeToLink?.id
-		selectedPanelCommonIndex = selectedPanelNegativeToIndex
-	}
+	 if (selectedPanelPositiveToIndex === -1 && selectedPanelNegativeToIndex !== -1) {
+	 panelLinkForSelectedPanelId = panelLinkForSelectedPanel?.negativeToLink?.id
+	 selectedPanelCommonIndex = selectedPanelNegativeToIndex
+	 }
 
-	if (selectedPanelPositiveToIndex === -1 && selectedPanelNegativeToIndex === -1) {
-		panelLinkForSelectedPanelId = undefined
-		selectedPanelCommonIndex = -1
-	}
+	 if (selectedPanelPositiveToIndex === -1 && selectedPanelNegativeToIndex === -1) {
+	 panelLinkForSelectedPanelId = undefined
+	 selectedPanelCommonIndex = -1
+	 }*/
 
 	// const selectedPanelCommonIndex = selectedPanelPositiveToIndex
 
@@ -122,15 +151,15 @@ export const drawLinkModePathLinesCurvedAlreadyMappedV6 = (
 
 	// console.log('selectedPanelCommonIndex', selectedPanelCommonIndex)
 
-	const selectedPanelChainIndex =
-		selectedPanelCommonIndex === -1
-			? -1
-			: panelLinkForSelectedPanelId
-			? getIndexOfPanelLinkCurvedLineTuple(
-					panelLinkForSelectedPanelId,
-					circuitLinkLineTuples[selectedPanelCommonIndex],
-			  )
-			: -1
+	/*	const selectedPanelChainIndex =
+	 selectedPanelCommonIndex === -1
+	 ? -1
+	 : panelLinkForSelectedPanelId
+	 ? getIndexOfPanelLinkCurvedLineTuple(
+	 panelLinkForSelectedPanelId,
+	 circuitLinkLineTuples[selectedPanelCommonIndex],
+	 )
+	 : -1*/
 	/*			: circuitLinkLineTuples[selectedPanelCommonIndex].findIndex(
 	 (tuple) => tuple[0] === panelLinkForSelectedPanelId,
 	 )*/
@@ -140,13 +169,19 @@ export const drawLinkModePathLinesCurvedAlreadyMappedV6 = (
 	for (let i = 0; i < circuitLinkLineTuples.length; i += 1) {
 		const linkLineTuple = circuitLinkLineTuples[i]
 
-		const selectedPanelInThisChain = selectedPanelCommonIndex === i
+		const selectedPanelInThisChain = selectedPanelChainIndex === i
+		// const selectedPanelInThisChain = selectedPanelCommonIndex === i
 		for (let j = 0; j < linkLineTuple.length; j += 1) {
 			const id = linkLineTuple[j][0]
 			const lines = linkLineTuple[j][1]
 			/*			if (selectedPanelInThisChain) {
 
 			 }*/
+
+			const selectedPanelIndexConfig =
+				selectedPanelInThisChain && selectedPanelPathIndex !== -1
+					? selectedPanelPathIndex
+					: undefined
 
 			const options: Partial<DrawOptions> | undefined = getDrawOptionsBasedOnInputs(
 				id,
@@ -156,17 +191,14 @@ export const drawLinkModePathLinesCurvedAlreadyMappedV6 = (
 				finalDrawLineSymbol,
 				j,
 				linkLineTuple.length,
-				{
-					selectedPanelInThisChain,
-					selectedPanelChainIndex,
-				},
+				selectedPanelIndexConfig,
 			)
 
 			ctx.save()
-			if (j === linkLineTuple.length - 1 && finalDrawLineSymbol) {
-				ctx.save()
-				ctx.restore()
-			}
+			/*		if (j === linkLineTuple.length - 1 && finalDrawLineSymbol) {
+			 ctx.save()
+			 ctx.restore()
+			 }*/
 			drawCurvedNumberLinesWithOptions(ctx, lines, options)
 			ctx.restore()
 		}
@@ -194,10 +226,7 @@ const getDrawOptionsBasedOnInputs = (
 	finalDrawLineSymbol: PanelSymbol | undefined,
 	index: number,
 	linkLineTupleLength: number,
-	p: {
-		selectedPanelInThisChain: boolean
-		selectedPanelChainIndex: number
-	},
+	selectedPanelIndexConfig: number | undefined,
 ): Partial<DrawOptions> | undefined => {
 	if (hoveringOverPanelLinkInLinkMenu?.panelLinkId === panelLinkId) {
 		return PanelLinkHoverDefaultDrawOptions
@@ -224,14 +253,14 @@ const getDrawOptionsBasedOnInputs = (
 			lineWidth: 2,
 		}
 	}
-	if (p.selectedPanelInThisChain) {
+	if (selectedPanelIndexConfig) {
 		if (index === linkLineTupleLength - 1) {
 			return {
 				strokeStyle: 'blue',
 				lineWidth: 2,
 			}
 		}
-		if (p.selectedPanelChainIndex > index) {
+		if (selectedPanelIndexConfig > index) {
 			return {
 				strokeStyle: 'red',
 				lineWidth: 2,

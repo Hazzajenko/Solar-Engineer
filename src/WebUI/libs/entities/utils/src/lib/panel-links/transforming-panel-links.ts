@@ -1,18 +1,12 @@
-import {
-	getEntityCenter,
-	PanelId,
-	PanelLinkId,
-	PanelLinkModel,
-	PanelModel,
-	PanelWithSymbol,
-	StringId,
-} from '@entities/shared'
+import { getEntityCenter, PanelId, PanelLinkId, PanelLinkModel, PanelLinkRequest, PanelModel, PanelWithSymbol, StringId } from '@entities/shared'
 import { groupLinkPointsByChain } from './sorting-panel-links'
 import { CurvedNumberLine } from '@canvas/shared'
-import { assertNotNull } from '@shared/utils'
-import { Point } from '@shared/data-access/models'
-import { getGuid } from '@ngrx/data'
+import { assertNotNull, newGuid } from '@shared/utils'
+import { Point, TransformedPoint } from '@shared/data-access/models'
+// import { getGuid } from '@ngrx/data'
 import { getPanelLocationBasedOnOppositePolarity } from './link-lines'
+import { getGuid } from '@ngrx/data'
+// import { getGuid } from '@ngrx/data'
 
 export const reduceLinkPointsToNumberArray = (links: PanelLinkModel[]): number[] =>
 	links.reduce((acc, link, index) => {
@@ -186,23 +180,24 @@ export const pushCustomPanelLinkPoint = (
 }
 
 export const pushCustomPanelLinkPointV2 = (
-	links: PanelLinkModel[], // mouseDownPanelSymbol: PanelSymbol,
-	point: Point,
+	links: PanelLinkModel[],
 	selectedStringId: StringId,
-	draggingSymbolLinkLinePanelWithSymbol: PanelModel,
-	nearbyPanelToLinkLine: PanelModel | undefined,
+	panelLinkRequest: {
+		request: PanelLinkRequest
+		currentPoint: TransformedPoint
+		panel: PanelModel
+		nearbyPanelToLinkLine: PanelModel | undefined
+	},
 ) => {
+	const { currentPoint, panel, nearbyPanelToLinkLine } = panelLinkRequest
 	if (!links.length) {
 		if (nearbyPanelToLinkLine) {
 			return [
 				{
 					id: 'custom' as PanelLinkId,
-					positivePanelId: draggingSymbolLinkLinePanelWithSymbol.id,
+					positivePanelId: panel.id,
 					negativePanelId: nearbyPanelToLinkLine.id,
-					linePoints: [
-						getEntityCenter(draggingSymbolLinkLinePanelWithSymbol),
-						getEntityCenter(nearbyPanelToLinkLine),
-					],
+					linePoints: [getEntityCenter(panel), getEntityCenter(nearbyPanelToLinkLine)],
 					stringId: selectedStringId,
 				},
 			]
@@ -210,9 +205,9 @@ export const pushCustomPanelLinkPointV2 = (
 		return [
 			{
 				id: 'custom' as PanelLinkId,
-				positivePanelId: draggingSymbolLinkLinePanelWithSymbol.id,
-				negativePanelId: getGuid() as PanelId,
-				linePoints: [getEntityCenter(draggingSymbolLinkLinePanelWithSymbol), point],
+				positivePanelId: panel.id,
+				negativePanelId: newGuid() as PanelId,
+				linePoints: [getEntityCenter(panel), currentPoint],
 				stringId: selectedStringId,
 			},
 		]
@@ -221,24 +216,25 @@ export const pushCustomPanelLinkPointV2 = (
 	if (nearbyPanelToLinkLine) {
 		const link: PanelLinkModel = {
 			id: 'custom' as PanelLinkId,
-			positivePanelId: draggingSymbolLinkLinePanelWithSymbol.id,
+			positivePanelId: panel.id,
 			negativePanelId: nearbyPanelToLinkLine.id,
-			linePoints: [
-				getEntityCenter(draggingSymbolLinkLinePanelWithSymbol),
-				getEntityCenter(nearbyPanelToLinkLine),
-			],
+			linePoints: [getEntityCenter(panel), getEntityCenter(nearbyPanelToLinkLine)],
 			stringId: selectedStringId,
 		}
-		return [...links, link]
+		links.push(link)
+		return links
+		// return [...links, link]
 	}
 	const link: PanelLinkModel = {
 		id: 'custom' as PanelLinkId,
 		positivePanelId: lastLink.negativePanelId,
-		negativePanelId: getGuid() as PanelId,
-		linePoints: [lastLink.linePoints[1], point],
+		negativePanelId: newGuid() as PanelId,
+		linePoints: [lastLink.linePoints[1], currentPoint],
 		stringId: lastLink.stringId,
 	}
-	return [...links, link]
+	links.push(link)
+	return links
+	// return [...links, link]
 }
 
 /*export const reduceLinkPointsToPanelLinkIdToPanelLocationMap = (links: PanelLinkModel[], panels: CanvasPanel[]) => {

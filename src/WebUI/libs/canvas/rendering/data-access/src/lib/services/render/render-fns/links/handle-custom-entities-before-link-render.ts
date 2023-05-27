@@ -103,13 +103,11 @@ export const handleCustomEntitiesBeforeLinkRender = (
 	 }*/
 
 	if (panelLinkRequest) {
-		const { panel, nearbyPanelToLinkLine, currentPoint } = panelLinkRequest
+		// const { panel, nearbyPanelToLinkLine, currentPoint } = panelLinkRequest
 		const updatedPanelLinks = pushCustomPanelLinkPointV2(
-			stringPanelLinks, // mouseDownPanelSymbol,
-			currentPoint,
+			stringPanelLinks,
 			selectedStringId,
-			panel,
-			nearbyPanelToLinkLine,
+			panelLinkRequest,
 		)
 		customLinkLineTuples = getUpdatedPanelLinksForRender(updatedPanelLinks)
 		/*		const { panelLink, transformedPoint, nearbyPanelToLinkLine } = panelLinkRequest
