@@ -10,6 +10,7 @@ import { UiStoreService } from '@overlays/ui-store/data-access'
 import { GraphicsStoreService } from '@canvas/graphics/data-access'
 import { NgIconComponent, provideIcons } from '@ng-icons/core'
 import { heroUsers } from '@ng-icons/heroicons/outline'
+import { goBottom } from '@shared/animations'
 
 // import { ZippyTooltipDirective } from '@canvas/app/feature'
 // NG_ICON_DIRECTIVES
@@ -31,6 +32,7 @@ import { heroUsers } from '@ng-icons/heroicons/outline'
 	],
 	providers: [provideIcons({ heroUsers })],
 	hostDirectives: [MouseOverRenderDirective],
+	animations: [goBottom],
 })
 export class OverlayToolBarComponent {
 	private _uiStore = inject(UiStoreService)

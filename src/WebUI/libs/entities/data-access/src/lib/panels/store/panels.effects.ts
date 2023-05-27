@@ -1,4 +1,4 @@
-import { SelectedActions, SelectedStoreService } from '@canvas/selected/data-access'
+import { injectSelectedStore, SelectedActions } from '@canvas/selected/data-access'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { inject } from '@angular/core'
 import { PanelsActions } from './panels.actions'
@@ -13,8 +13,8 @@ import { injectPanelsStore } from './panels.store'
  return actions$.pipe(
  ofType(PanelsActions.deletePanel),
  map(({ panelId }) => {
- // const selected = store.selectSignal(state => state.selected.singleSelectedEntityId)
- const selected = selectedStore.singleSelectedEntityId
+ // const selected = store.selectSignal(state => state.selected.singleSelectedPanelId)
+ const selected = selectedStore.singleSelectedPanelId
  if (selected === panelId) {
  return SelectedActions.clearSingleSelected()
  }
@@ -30,17 +30,17 @@ import { injectPanelsStore } from './panels.store'
  )*/
 
 export const removeSelectedIfDeleted$ = createEffect(
-	(actions$ = inject(Actions), selectedStore = inject(SelectedStoreService)) => {
+	(actions$ = inject(Actions), selectedStore = injectSelectedStore()) => {
 		return actions$.pipe(
 			ofType(PanelsActions.deletePanel),
 			map(({ panelId }) => {
-				const selected = selectedStore.singleSelectedEntityId
+				const selected = selectedStore.selectSingleSelectedPanelId
 				if (selected === panelId) {
 					return SelectedActions.clearSingleSelected()
 				}
-				const multiSelectedIds = selectedStore.multipleSelectedEntityIds
+				const multiSelectedIds = selectedStore.selectMultipleSelectedPanelIds
 				if (multiSelectedIds.includes(panelId)) {
-					return SelectedActions.removeEntitiesFromMultiSelect({ entityIds: [panelId] })
+					return SelectedActions.removePanelsFromMultiSelect({ panelIds: [panelId] })
 				}
 				return SelectedActions.noop()
 			}),

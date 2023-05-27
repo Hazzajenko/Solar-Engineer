@@ -10,7 +10,7 @@ import { SelectedState } from './selected.reducer'
  } from './selected.selectors'*/
 import { SelectedActions } from './selected.actions'
 import { selectedFeature } from './selected.feature'
-import { PanelLinkId, StringId } from '@entities/shared'
+import { PanelId, PanelLinkId, StringId } from '@entities/shared'
 
 export function injectSelectedStore() {
 	const store = inject(Store<SelectedState>)
@@ -19,11 +19,8 @@ export function injectSelectedStore() {
 		selectSelectedState,
 		selectSelectedStringId,
 		selectSelectedPanelLinkId,
-		selectSingleSelectedEntityId,
-		selectMultipleSelectedEntityIds,
-		selectEntityState,
-		selectMultiSelectedEntities,
-		selectSingleSelectedEntity,
+		selectSingleSelectedPanelId,
+		selectMultipleSelectedPanelIds,
 	} = selectedFeature
 
 	return {
@@ -33,17 +30,17 @@ export function injectSelectedStore() {
 		get state$() {
 			return store.select(selectSelectedState)
 		},
-		get singleSelectedEntityId() {
-			return store.selectSignal(selectSingleSelectedEntity)()
+		get selectSingleSelectedPanelId() {
+			return store.selectSignal(selectSingleSelectedPanelId)()
 		},
-		get singleSelectedEntityId$() {
-			return store.select(selectSingleSelectedEntity)
+		get singleSelectedPanelId$() {
+			return store.select(selectSingleSelectedPanelId)
 		},
 		get multipleSelectedEntityIds$() {
-			return store.select(selectMultiSelectedEntities)
+			return store.select(selectMultipleSelectedPanelIds)
 		},
-		get multipleSelectedEntityIds() {
-			return store.selectSignal(selectMultiSelectedEntities)()
+		get selectMultipleSelectedPanelIds() {
+			return store.selectSignal(selectMultipleSelectedPanelIds)()
 		},
 		get selectedStringId() {
 			return store.selectSignal(selectSelectedStringId)()
@@ -63,11 +60,11 @@ export function injectSelectedStore() {
 		clearSelectedString() {
 			store.dispatch(SelectedActions.clearSelectedString())
 		},
-		selectEntity(entityId: string) {
-			store.dispatch(SelectedActions.selectEntity({ entityId }))
+		selectPanel(panelId: PanelId) {
+			store.dispatch(SelectedActions.selectPanel({ panelId }))
 		},
-		selectMultipleEntities(entityIds: string[]) {
-			store.dispatch(SelectedActions.selectMultipleEntities({ entityIds }))
+		selectMultipleEntities(panelIds: PanelId[]) {
+			store.dispatch(SelectedActions.selectMultiplePanels({ panelIds }))
 		},
 		clearSingleSelected() {
 			store.dispatch(SelectedActions.clearSingleSelected())
@@ -75,14 +72,14 @@ export function injectSelectedStore() {
 		clearMultiSelected() {
 			store.dispatch(SelectedActions.clearMultiSelected())
 		},
-		startMultiSelect(entityId: string) {
-			store.dispatch(SelectedActions.startMultiSelect({ entityId }))
+		startMultiSelect(panelId: PanelId) {
+			store.dispatch(SelectedActions.startPanelMultiSelect({ panelId }))
 		},
-		addEntitiesToMultiSelect(entityIds: string[]) {
-			store.dispatch(SelectedActions.addEntitiesToMultiSelect({ entityIds }))
+		addPanelsToMultiSelect(panelIds: PanelId[]) {
+			store.dispatch(SelectedActions.addPanelsToMultiSelect({ panelIds }))
 		},
-		removeEntitiesFromMultiSelect(entityIds: string[]) {
-			store.dispatch(SelectedActions.removeEntitiesFromMultiSelect({ entityIds }))
+		removePanelsFromMultiSelect(panelIds: PanelId[]) {
+			store.dispatch(SelectedActions.removePanelsFromMultiSelect({ panelIds }))
 		},
 		selectPanelLink(panelLinkId: PanelLinkId) {
 			store.dispatch(SelectedActions.selectPanelLink({ panelLinkId }))

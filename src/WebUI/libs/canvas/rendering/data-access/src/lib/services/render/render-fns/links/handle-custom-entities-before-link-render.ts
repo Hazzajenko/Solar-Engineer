@@ -42,6 +42,7 @@ export const handleCustomEntitiesBeforeLinkRender = (
 				nearbyPanelToLinkLine: PanelModel | undefined
 		  }
 		| undefined,
+	selectedStringPanel: PanelModel | undefined,
 ) => {
 	// if (!stringPanelLinks.length) return circuitLinkLineTuples
 
@@ -54,7 +55,6 @@ export const handleCustomEntitiesBeforeLinkRender = (
 		singleToRotatePanel,
 		multipleToRotateIds,
 		multipleToRotatePanels,
-		draggingSymbolLinkLine,
 	} = options || {}
 	let customLinkLineTuples: [PanelLinkId, CurvedNumberLine][][] = circuitLinkLineTuples
 
@@ -123,6 +123,22 @@ export const handleCustomEntitiesBeforeLinkRender = (
 		 )*/
 		// customLinkLineTuples = getUpdatedPanelLinksForRender(updatedPanelLinks)
 	}
+
+	/*	if (selectedStringPanel) {
+	 const check = checkIfManyPanelIdsAreWithPanelLink([selectedStringPanel.id], stringPanelLinks)
+	 if (check) {
+	 const updatedPanelLinks = updatePanelLinkPoints(stringPanelLinks, [selectedStringPanel])
+	 customLinkLineTuples = getUpdatedPanelLinksForRender(updatedPanelLinks)
+	 }
+	 /!*const updatedPanelLinks = pushCustomPanelLinkPointV2(
+	 stringPanelLinks, // mouseDownPanelSymbol,
+	 selectedStringPanel,
+	 selectedStringId,
+	 selectedStringPanel,
+	 undefined,
+	 )
+	 customLinkLineTuples = getUpdatedPanelLinksForRender(updatedPanelLinks)*!/
+	 }*/
 
 	return customLinkLineTuples
 }

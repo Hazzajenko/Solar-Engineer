@@ -10,7 +10,7 @@ import { GetStringByIdPipe, GetStringWithPanelIdsPipe, IsTypeOfPanelPipe } from 
 import { EntityStoreService } from '@entities/data-access'
 import { UiStoreService } from '@overlays/ui-store/data-access'
 import { RenderService } from '@canvas/rendering/data-access'
-import { SelectedStoreService } from '@canvas/selected/data-access'
+import { injectSelectedStore } from '@canvas/selected/data-access'
 import { PanelId, StringId, UndefinedStringId } from '@entities/shared'
 import { groupBy } from 'lodash'
 import { map } from 'rxjs'
@@ -46,7 +46,8 @@ export class SideUiDataViewComponent {
 	private _entityStore = inject(EntityStoreService)
 	private _uiStore = inject(UiStoreService)
 	private _render = inject(RenderService)
-	private _selectedStore = inject(SelectedStoreService)
+	private _selectedStore = injectSelectedStore()
+	// private _selectedStore = inject(SelectedStoreService)
 	private _panels = toSignal(this._entityStore.panels.allPanels$, {
 		initialValue: this._entityStore.panels.allPanels,
 	})
@@ -54,43 +55,15 @@ export class SideUiDataViewComponent {
 	private _strings = toSignal(this._entityStore.strings.allStrings$, {
 		initialValue: this._entityStore.strings.allStrings,
 	})
-
-	protected readonly UndefinedStringId = UndefinedStringId
-
-	get panels() {
-		return this._panels()
-	}
-
 	private _multipleSelectedPanelIds = toSignal(this._selectedStore.multipleSelectedEntityIds$, {
-		initialValue: this._selectedStore.multipleSelectedEntityIds,
+		initialValue: this._selectedStore.selectMultipleSelectedPanelIds,
 	})
-
-	get multipleSelectedPanelIds() {
-		return this._multipleSelectedPanelIds()
-	}
-
-	private _singleSelectedPanelId = toSignal(this._selectedStore.singleSelectedEntityId$, {
-		initialValue: this._selectedStore.singleSelectedEntityId,
+	private _singleSelectedPanelId = toSignal(this._selectedStore.singleSelectedPanelId$, {
+		initialValue: this._selectedStore.selectSingleSelectedPanelId,
 	})
-
-	get singleSelectedPanelId() {
-		return this._singleSelectedPanelId()
-	}
-
 	private _selectedStringId = toSignal(this._selectedStore.selectedStringId$, {
 		initialValue: this._selectedStore.selectedStringId,
 	})
-
-	get selectedStringId() {
-		return this._selectedStringId()
-	}
-
-	_openedStrings = signal<Map<StringId, boolean>>(new Map().set(UndefinedStringId, true))
-
-	get openedStrings() {
-		return this._openedStrings()
-	}
-
 	private _panelsGroupedByStringId$ = this._entityStore.panels.allPanels$.pipe(
 		map((panels) => {
 			const grouped = groupBy(panels, 'stringId')
@@ -103,21 +76,9 @@ export class SideUiDataViewComponent {
 			})
 		}),
 	)
-
 	private _panelsGroupedByStringId = toSignal(this._panelsGroupedByStringId$)
-	get panelsGroupedByStringId() {
-		/*		return this.panels.flatMap((panels) => {
-		 const grouped = groupBy(panels, 'stringId')
-		 const entries = Object.entries(grouped)
-		 return entries.map(([stringId, panels]) => {
-		 return {
-		 string: this._entityStore.strings.getById(stringId),
-		 panels,
-		 }
-		 })
-		 })*/
-		return this._panelsGroupedByStringId()
-	}
+	_openedStrings = signal<Map<StringId, boolean>>(new Map().set(UndefinedStringId, true))
+	protected readonly UndefinedStringId = UndefinedStringId
 
 	constructor() {
 		effect(
@@ -137,7 +98,41 @@ export class SideUiDataViewComponent {
 		)
 	}
 
-	openStringContextMenu(event: MouseEvent, stringId: string) {
+	get panels() {
+		return this._panels()
+	}
+
+	get multipleSelectedPanelIds() {
+		return this._multipleSelectedPanelIds()
+	}
+
+	get singleSelectedPanelId() {
+		return this._singleSelectedPanelId()
+	}
+
+	get selectedStringId() {
+		return this._selectedStringId()
+	}
+
+	get openedStrings() {
+		return this._openedStrings()
+	}
+
+	get panelsGroupedByStringId() {
+		/*		return this.panels.flatMap((panels) => {
+		 const grouped = groupBy(panels, 'stringId')
+		 const entries = Object.entries(grouped)
+		 return entries.map(([stringId, panels]) => {
+		 return {
+		 string: this._entityStore.strings.getById(stringId),
+		 panels,
+		 }
+		 })
+		 })*/
+		return this._panelsGroupedByStringId()
+	}
+
+	openStringContextMenu(event: MouseEvent, stringId: StringId) {
 		this._uiStore.dispatch.openContextMenu({
 			location: {
 				x: event.clientX + 10,
@@ -153,7 +148,7 @@ export class SideUiDataViewComponent {
 	}
 
 	selectPanel(id: PanelId) {
-		this._selectedStore.dispatch.selectEntity(id)
+		this._selectedStore.selectPanel(id)
 		this._render.renderCanvasApp()
 	}
 

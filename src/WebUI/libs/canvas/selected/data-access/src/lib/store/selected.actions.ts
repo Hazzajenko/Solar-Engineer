@@ -1,27 +1,27 @@
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
-import { PanelLinkId, StringId } from '@entities/shared'
+import { PanelId, PanelLinkId, StringId } from '@entities/shared'
 
 export const SelectedActions = createActionGroup({
 	source: 'Selected Store',
 	events: {
-		'Select Entity': props<{
-			entityId: string
+		'Select Panel': props<{
+			panelId: PanelId
 		}>(),
-		'Select Multiple Entities': props<{
-			entityIds: string[]
+		'Select Multiple Panels': props<{
+			panelIds: PanelId[]
 		}>(),
 		'Select String': props<{
 			stringId: StringId
 		}>(),
 		'Clear Selected String': emptyProps(),
-		'Start MultiSelect': props<{
-			entityId: string
+		'Start Panel MultiSelect': props<{
+			panelId: PanelId
 		}>(),
-		'Add Entities To MultiSelect': props<{
-			entityIds: string[]
+		'Add Panels To MultiSelect': props<{
+			panelIds: PanelId[]
 		}>(),
-		'Remove Entities From MultiSelect': props<{
-			entityIds: string[]
+		'Remove Panels From MultiSelect': props<{
+			panelIds: PanelId[]
 		}>(),
 		'Select Panel Link': props<{
 			panelLinkId: PanelLinkId

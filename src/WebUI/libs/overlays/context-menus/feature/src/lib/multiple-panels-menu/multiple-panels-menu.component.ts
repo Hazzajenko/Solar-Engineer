@@ -11,6 +11,7 @@ import {
 } from '@overlays/ui-store/data-access'
 import { contextMenuInputInjectionToken } from '../context-menu-renderer'
 import { ContextMenuDirective } from '../directives'
+import { PanelId } from '@entities/shared'
 
 @Component({
 	selector: 'app-multiple-panels-menu',
@@ -29,7 +30,7 @@ export class MultiplePanelsMenuComponent implements OnInit {
 		contextMenuInputInjectionToken,
 	) as ContextMenuMultiplePanelsMenu
 
-	panelIds: string[] = []
+	panelIds: PanelId[] = []
 
 	ngOnInit() {
 		if (this.contextMenu.data.panelIds.length < 1) {

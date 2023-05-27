@@ -48,48 +48,15 @@ export class DataViewPanelsComponent {
 	private _panels = toSignal(this._entityStore.panels.allPanels$, {
 		initialValue: this._entityStore.panels.allPanels,
 	})
-	get panels() {
-		return this._panels()
-	}
-
 	private _multipleSelectedPanelIds = toSignal(this._selectedStore.multipleSelectedEntityIds$, {
 		initialValue: this._selectedStore.multipleSelectedEntityIds,
 	})
-
-	get multipleSelectedPanelIds() {
-		return this._multipleSelectedPanelIds()
-	}
-
-	private _singleSelectedPanelId = toSignal(this._selectedStore.singleSelectedEntityId$, {
-		initialValue: this._selectedStore.singleSelectedEntityId,
+	private _singleSelectedPanelId = toSignal(this._selectedStore.singleSelectedPanelId$, {
+		initialValue: this._selectedStore.singleSelectedPanelId,
 	})
-
-	get singleSelectedPanelId() {
-		return this._singleSelectedPanelId()
-	}
-
 	private _selectedStringId = toSignal(this._selectedStore.selectedStringId$, {
 		initialValue: this._selectedStore.selectedStringId,
 	})
-
-	get selectedStringId() {
-		return this._selectedStringId()
-	}
-
-	_openedStrings = signal<Map<StringId, boolean>>(
-		(() => {
-			const map = new Map<StringId, boolean>()
-			this._entityStore.strings.allStrings.forEach((string) => map.set(string.id, false))
-			return map
-		})(),
-	)
-	get openedStrings() {
-		return this._openedStrings()
-	}
-
-	menuTopLeftPosition = { x: '0', y: '0' }
-	@ViewChild(MatMenuTrigger, { static: true }) matMenuTrigger!: MatMenuTrigger
-
 	private _panelsGroupedByStringId$ = this._entityStore.panels.allPanels$.pipe(
 		map((panels) => {
 			const grouped = groupBy(panels, 'stringId')
@@ -102,8 +69,37 @@ export class DataViewPanelsComponent {
 			})
 		}),
 	)
-
 	private _panelsGroupedByStringId = toSignal(this._panelsGroupedByStringId$)
+	_openedStrings = signal<Map<StringId, boolean>>(
+		(() => {
+			const map = new Map<StringId, boolean>()
+			this._entityStore.strings.allStrings.forEach((string) => map.set(string.id, false))
+			return map
+		})(),
+	)
+	menuTopLeftPosition = { x: '0', y: '0' }
+	@ViewChild(MatMenuTrigger, { static: true }) matMenuTrigger!: MatMenuTrigger
+
+	get panels() {
+		return this._panels()
+	}
+
+	get multipleSelectedPanelIds() {
+		return this._multipleSelectedPanelIds()
+	}
+
+	get singleSelectedPanelId() {
+		return this._singleSelectedPanelId()
+	}
+
+	get selectedStringId() {
+		return this._selectedStringId()
+	}
+
+	get openedStrings() {
+		return this._openedStrings()
+	}
+
 	get panelsGroupedByStringId() {
 		return this._panelsGroupedByStringId()
 	}

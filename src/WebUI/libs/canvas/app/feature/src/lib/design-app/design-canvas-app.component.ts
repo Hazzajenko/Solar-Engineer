@@ -29,7 +29,7 @@ import { CdkDrag } from '@angular/cdk/drag-drop'
 import { CommonModule } from '@angular/common'
 import { ActionNotificationsDisplayComponent } from '@overlays/notifications/feature'
 import { SideUiNavBarComponent } from '@overlays/side-uis/feature'
-import { OverlayToolBarComponent } from '@overlays/toolbars/feature'
+import { OverlayToolBarComponent, SelectedStringToolBarComponent } from '@overlays/toolbars/feature'
 import { AppStateStoreService, DivElementsService } from '@canvas/app/data-access'
 import { UiStoreService } from '@overlays/ui-store/data-access'
 import { DraggableWindow } from '@shared/data-access/models'
@@ -37,6 +37,8 @@ import { ContextMenuRendererComponent } from '@overlays/context-menus/feature'
 import { ObjectPositioningStoreService } from '@canvas/object-positioning/data-access'
 import { map } from 'rxjs'
 import { GraphicsStoreService } from '@canvas/graphics/data-access'
+import { selectSignalFromStore } from '@shared/utils'
+import { selectSelectedStringId } from '@canvas/selected/data-access'
 
 @Component({
 	changeDetection: ChangeDetectionStrategy.OnPush,
@@ -56,6 +58,7 @@ import { GraphicsStoreService } from '@canvas/graphics/data-access'
 		SideUiNavBarComponent,
 		OverlayToolBarComponent,
 		ContextMenuRendererComponent,
+		SelectedStringToolBarComponent,
 	],
 	selector: 'app-design-canvas-app',
 	standalone: true,
@@ -106,6 +109,8 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 	showFpsState = toSignal(this._graphicsStore.state$.pipe(map((state) => state.showFps)), {
 		initialValue: this._graphicsStore.state.showFps,
 	})
+	stringIsSelected = selectSignalFromStore(selectSelectedStringId)
+	// stringIsSelected2 = selectSignalFromKnownStoreV2<SelectedState>(state => state.selectedStringId)
 	@ViewChild('appStats', { static: true }) appStats!: ElementRef<HTMLDivElement>
 	cursorState = computed(() => {
 		const { moveEntityState, toMoveSpotTaken, rotateEntityState } = this._objectPositioningState()

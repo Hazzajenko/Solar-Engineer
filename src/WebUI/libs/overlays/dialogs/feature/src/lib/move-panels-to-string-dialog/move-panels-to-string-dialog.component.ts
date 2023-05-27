@@ -6,7 +6,7 @@ import { MatDialogModule } from '@angular/material/dialog'
 import { LetDirective } from '@ngrx/component'
 import { DialogBackdropTemplateComponent } from '../dialog-backdrop-template/dialog-backdrop-template.component'
 import { EntityStoreService } from '@entities/data-access'
-import { SelectedStoreService } from '@canvas/selected/data-access'
+import { injectSelectedStore } from '@canvas/selected/data-access'
 import { RenderService } from '@canvas/rendering/data-access'
 import { AppStateStoreService } from '@canvas/app/data-access'
 import { UiStoreService } from '@overlays/ui-store/data-access'
@@ -31,7 +31,7 @@ export class MovePanelsToStringDialogComponent {
 	private _entities = inject(EntityStoreService)
 	private _renderer = inject(Renderer2)
 	private _ngZone = inject(NgZone)
-	private _selectedStore = inject(SelectedStoreService)
+	private _selectedStore = injectSelectedStore()
 	private _render = inject(RenderService)
 	private _appStore = inject(AppStateStoreService)
 	private _uiStore = inject(UiStoreService)
@@ -49,7 +49,7 @@ export class MovePanelsToStringDialogComponent {
 	}
 
 	createStringWithSelected() {
-		const multipleSelectedIds = this._selectedStore.state.multipleSelectedEntityIds
+		const multipleSelectedIds = this._selectedStore.state.multipleSelectedPanelIds
 		if (multipleSelectedIds.length < 1) {
 			throw new Error('multipleSelectedIds.length < 1')
 		}
@@ -57,7 +57,7 @@ export class MovePanelsToStringDialogComponent {
 		const { string, panelUpdates } = createStringWithPanelsV2(multipleSelectedIds, amountOfStrings)
 		this._entities.strings.addString(string)
 		this._entities.panels.updateManyPanels(panelUpdates)
-		this._selectedStore.dispatch.selectString(string.id)
+		this._selectedStore.selectString(string.id)
 		this._render.renderCanvasApp()
 		this._uiStore.dispatch.closeDialog()
 		// this._appStore.dispatch.updateDialog({ id: this.dialogId, changes: { open: false } })

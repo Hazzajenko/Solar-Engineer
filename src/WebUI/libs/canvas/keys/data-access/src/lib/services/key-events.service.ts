@@ -2,7 +2,7 @@ import { AppStateStoreService, MODE_STATE } from '@canvas/app/data-access'
 import { createString, createStringWithPanelsV2, genStringNameV2 } from '@entities/utils'
 import { MOVE_ENTITY_STATE, ObjectPositioningService, ObjectPositioningStoreService, ObjectRotatingService, ROTATE_ENTITY_STATE } from '@canvas/object-positioning/data-access'
 import { RenderService } from '@canvas/rendering/data-access'
-import { SelectedService, SelectedStoreService } from '@canvas/selected/data-access'
+import { injectSelectedStore, SelectedService } from '@canvas/selected/data-access'
 import { VIEW_STATE, ViewPositioningService } from '@canvas/view-positioning/data-access'
 import { inject, Injectable } from '@angular/core'
 import { Key, KEYS, Point, TransformedPoint } from '@shared/data-access/models'
@@ -24,7 +24,8 @@ const isDefaultUnchangeableKey = (key: KeyboardEvent['key']) =>
 })
 export class KeyEventsService {
 	private _selected = inject(SelectedService)
-	private _selectedStore = inject(SelectedStoreService)
+	private _selectedStore = injectSelectedStore()
+	// private _selectedStore = inject(SelectedStoreService)
 	private _entities = inject(EntityStoreService)
 	private _positioningStore = inject(ObjectPositioningStoreService)
 	private _objRotating = inject(ObjectRotatingService)
@@ -36,96 +37,6 @@ export class KeyEventsService {
 	_keyMapValues = toSignal(this._keyMapStore.keyMapValues$, {
 		initialValue: this._keyMapStore.keyMapValues,
 	})
-	keyUpHandlerV2 = (event: KeyboardEvent, rawMousePos: Point, currentPoint: TransformedPoint) => {
-		return (
-			{
-				[KEYS.ESCAPE]: () => {
-					this._selected.clearSelectedInOrder()
-					this._render.renderCanvasApp()
-				},
-				[KEYS.X]: () => {
-					const multipleSelectedIds = this._selectedStore.state.multipleSelectedEntityIds
-					if (multipleSelectedIds.length <= 1) return
-					const amountOfStrings = this._entities.strings.allStrings.length
-					const { string, panelUpdates } = createStringWithPanelsV2(
-						multipleSelectedIds,
-						amountOfStrings,
-					)
-					this._entities.strings.addString(string)
-					this._entities.panels.updateManyPanels(panelUpdates)
-
-					// this._selectedStore.dispatch.selectString(string.id)
-					this._render.renderCanvasApp()
-				},
-				[KEYS.R]: () => {
-					const rotateState = this._positioningStore.state.rotateEntityState
-					if (rotateState === ROTATE_ENTITY_STATE.ROTATING_SINGLE_ENTITY) {
-						this._objRotating.clearSingleToRotate()
-						return
-					}
-					if (rotateState === ROTATE_ENTITY_STATE.ROTATING_MULTIPLE_ENTITIES) {
-						this._objRotating.clearMultipleToRotate()
-						return
-					}
-				},
-				[KEYS.C]: () => {
-					const mode = this._appState.state.mode
-					const newMode =
-						mode === MODE_STATE.CREATE_MODE ? MODE_STATE.SELECT_MODE : MODE_STATE.CREATE_MODE
-					this._appState.dispatch.setModeState(newMode)
-				},
-				[KEYS.SHIFT]: () => {
-					const moveState = this._positioningStore.state.moveEntityState
-					if (moveState === MOVE_ENTITY_STATE.MOVING_MULTIPLE_ENTITIES) {
-						this._objPositioning.stopMultipleEntitiesToMove(rawMousePos)
-						return
-					}
-					if (moveState === MOVE_ENTITY_STATE.MOVING_SINGLE_ENTITY) {
-						this._objPositioning.singleEntityToMoveMouseUp(event.altKey, currentPoint)
-
-						return
-					}
-				},
-				[KEYS.ALT]: () => {
-					const rotateState = this._positioningStore.state.rotateEntityState
-					if (rotateState === ROTATE_ENTITY_STATE.ROTATING_SINGLE_ENTITY) {
-						this._objRotating.clearSingleToRotate()
-						return
-					}
-					if (rotateState === ROTATE_ENTITY_STATE.ROTATING_MULTIPLE_ENTITIES) {
-						this._objRotating.clearMultipleToRotate()
-						return
-					}
-				},
-				[KEYS.CTRL_OR_CMD]: () => {
-					const { moveEntityState, rotateEntityState } = this._positioningStore.state
-					if (moveEntityState === MOVE_ENTITY_STATE.MOVING_MULTIPLE_ENTITIES) {
-						this._objPositioning.stopMultipleEntitiesToMove(rawMousePos)
-					}
-					if (moveEntityState === MOVE_ENTITY_STATE.MOVING_SINGLE_ENTITY) {
-						this._objPositioning.singleEntityToMoveMouseUp(event.altKey, currentPoint)
-					}
-
-					if (rotateEntityState === ROTATE_ENTITY_STATE.ROTATING_SINGLE_ENTITY) {
-						this._objRotating.clearSingleToRotate()
-					}
-
-					if (rotateEntityState === ROTATE_ENTITY_STATE.ROTATING_MULTIPLE_ENTITIES) {
-						this._objRotating.clearMultipleToRotate()
-					}
-
-					if (this._appState.state.view === VIEW_STATE.VIEW_DRAGGING_IN_PROGRESS) {
-						this._view.handleDragScreenMouseUp()
-					}
-				},
-			}[event.key] ||
-			(() => {
-				console.log('unknown key', event)
-			})
-		)()
-	}
-
-	// keyMapValues = this._keyMapStore.keyMapValues
 
 	get keyMapValues() {
 		return this._keyMapValues()
@@ -217,7 +128,7 @@ export class KeyEventsService {
 				break
 			case KEYS.X:
 				{
-					const multipleSelectedIds = this._selectedStore.state.multipleSelectedEntityIds
+					const multipleSelectedIds = this._selectedStore.state.multipleSelectedPanelIds
 					// const multipleSelectedIds = this._app.selectedCtx.multipleSelectedIds
 					// const multipleSelectedIds = this._app.selectedCtx.multipleSelectedIds
 					if (multipleSelectedIds.length <= 1) return
@@ -235,7 +146,7 @@ export class KeyEventsService {
 					this._entities.strings.addString(string)
 					this._entities.panels.updateManyPanels(panelUpdates)
 
-					this._selectedStore.dispatch.selectString(string.id)
+					this._selectedStore.selectString(string.id)
 					this._render.renderCanvasApp()
 				}
 				break
@@ -312,12 +223,13 @@ export class KeyEventsService {
 	}
 
 	private createStringWithSelected() {
-		const multipleSelectedIds = this._selectedStore.state.multipleSelectedEntityIds
+		const multipleSelectedIds = this._selectedStore.selectMultipleSelectedPanelIds
 		if (multipleSelectedIds.length <= 1) return
 		const amountOfStrings = this._entities.strings.allStrings.length
 		const { string, panelUpdates } = createStringWithPanelsV2(multipleSelectedIds, amountOfStrings)
 		this._entities.strings.addString(string)
 		this._entities.panels.updateManyPanels(panelUpdates)
+		this._selectedStore.selectString(string.id)
 	}
 
 	private startRotateMode() {

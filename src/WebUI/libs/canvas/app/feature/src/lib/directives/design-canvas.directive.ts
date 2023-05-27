@@ -26,7 +26,7 @@ import {
 	PanelLinksStoreService,
 } from '@entities/data-access'
 import { ViewPositioningService } from '@canvas/view-positioning/data-access'
-import { DragBoxService, RenderService } from '@canvas/rendering/data-access'
+import { RenderService } from '@canvas/rendering/data-access'
 import { CONTEXT_MENU_COMPONENT, UiStoreService } from '@overlays/ui-store/data-access'
 import { KeyEventsService } from '@canvas/keys/data-access'
 import {
@@ -82,7 +82,6 @@ export class DesignCanvasDirective implements OnInit {
 	private _objPositioning = inject(ObjectPositioningService)
 	private _entityFactory = inject(EntityFactoryService)
 	private _view = inject(ViewPositioningService)
-	private _drag = inject(DragBoxService)
 	private _render = inject(RenderService)
 	private _entities = inject(EntityStoreService)
 	private _uiStore = inject(UiStoreService)
@@ -91,12 +90,10 @@ export class DesignCanvasDirective implements OnInit {
 	private _nearby = inject(NearbyService)
 	private _domPoint = inject(DomPointService)
 	private _keys = inject(KeyEventsService)
-	// private _divElements = inject(DivElementsService)
-
 	private mouseDownTimeOut: ReturnType<typeof setTimeout> | undefined
+	// private _divElements = inject(DivElementsService)
 	private mouseDownTimeOutForMove: ReturnType<typeof setTimeout> | undefined
 	private mouseUpTimeOut: ReturnType<typeof setTimeout> | undefined
-
 	private fpsEl!: HTMLDivElement
 	private canvasMenu!: HTMLDivElement
 	private mousePos!: HTMLDivElement
@@ -106,7 +103,6 @@ export class DesignCanvasDirective implements OnInit {
 	private panelStats!: HTMLDivElement
 	private menu!: HTMLDivElement
 	private keyMap!: HTMLDivElement
-
 	private mouseDownTimeOutFn = () => {
 		this.mouseDownTimeOut = setTimeout(() => {
 			clearTimeout(this.mouseDownTimeOut)
@@ -184,7 +180,7 @@ export class DesignCanvasDirective implements OnInit {
 			return
 		}
 
-		const multipleSelectedIds = this._selectedStore.state.multipleSelectedEntityIds
+		const multipleSelectedIds = this._selectedStore.state.multipleSelectedPanelIds
 		if (multiSelectDraggingKeysDownAndIdsNotEmpty(event, multipleSelectedIds)) {
 			this._objPositioning.multipleEntitiesToMoveMouseDown(event, multipleSelectedIds)
 			return
@@ -249,7 +245,7 @@ export class DesignCanvasDirective implements OnInit {
 			return
 		}
 
-		const multipleSelectedIds = this._selectedStore.state.multipleSelectedEntityIds
+		const multipleSelectedIds = this._selectedStore.state.multipleSelectedPanelIds
 		if (multiSelectDraggingKeysDownAndIdsNotEmpty(event, multipleSelectedIds)) {
 			this._objPositioning.setMultipleEntitiesToMove(event, multipleSelectedIds)
 			this._objPositioning.multipleEntitiesToMoveMouseMove(event)
@@ -656,8 +652,10 @@ export class DesignCanvasDirective implements OnInit {
 		console.log('double click', event)
 		const entityUnderMouse = this.getPanelUnderMouse(currentPoint)
 		if (entityUnderMouse) {
-			if (!isPanel(entityUnderMouse)) return
+			// if (!isPanel(entityUnderMouse)) return
+
 			if (entityUnderMouse.stringId === UndefinedStringId) return
+			const selectedStringId = this._selectedStore.selectedStringId
 			const belongsToString = this._entities.strings.getById(entityUnderMouse.stringId)
 
 			if (!belongsToString) return
@@ -759,9 +757,9 @@ export class DesignCanvasDirective implements OnInit {
 			}
 		}
 
-		if (this._selectedStore.state.multipleSelectedEntityIds.length > 0) {
+		if (this._selectedStore.state.multipleSelectedPanelIds.length > 0) {
 			const selectedPanels = this._entities.panels.getByIds(
-				this._selectedStore.state.multipleSelectedEntityIds,
+				this._selectedStore.state.multipleSelectedPanelIds,
 			)
 			const selectionBoxBounds = getCompleteBoundsFromMultipleEntitiesWithPadding(
 				selectedPanels,

@@ -48,7 +48,7 @@ export const separatePanelLinkChains = (panelLinks: PanelLinkModel[]) => {
 export const sortPanelLinks = <T extends PanelLinkModel[]>(panelLinkChain: T) =>
 	panelLinkChain.sort(sortPanelLinksCompareFn)
 
-const sortPanelLinksCompareFn = (a: PanelLinkModel, b: PanelLinkModel) => {
+export const sortPanelLinksCompareFn = (a: PanelLinkModel, b: PanelLinkModel) => {
 	if (!a || !b) {
 		return 0
 	}

@@ -35,6 +35,9 @@ export function injectPanelsStore() {
 		getById(id: string) {
 			return entities()[id]
 		},
+		getByIdOrUndefined(id: string | undefined) {
+			return id ? entities()[id] : undefined
+		},
 		getByIds(ids: string[]) {
 			return ids.map((id) => entities()[id]).filter(isNotNull)
 		},
@@ -69,11 +72,11 @@ export function injectPanelsStore() {
 		updateManyPanels(updates: UpdateStr<PanelModel>[]) {
 			store.dispatch(PanelsActions.updateManyPanels({ updates }))
 		},
-		deletePanel(id: string) {
-			store.dispatch(PanelsActions.deletePanel({ panelId: id }))
+		deletePanel(panelId: PanelId) {
+			store.dispatch(PanelsActions.deletePanel({ panelId }))
 		},
-		deleteManyPanels(ids: string[]) {
-			store.dispatch(PanelsActions.deleteManyPanels({ panelIds: ids }))
+		deleteManyPanels(panelIds: PanelId[]) {
+			store.dispatch(PanelsActions.deleteManyPanels({ panelIds }))
 		},
 		clearPanelsState() {
 			store.dispatch(PanelsActions.clearPanelsState())

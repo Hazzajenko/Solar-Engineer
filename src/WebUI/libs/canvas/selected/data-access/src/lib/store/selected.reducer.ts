@@ -1,6 +1,6 @@
 import { SelectedActions } from './selected.actions'
 import { Action, createReducer, on } from '@ngrx/store'
-import { PanelLinkId, StringId } from '@entities/shared'
+import { PanelId, PanelLinkId, StringId } from '@entities/shared'
 
 export const SELECTED_FEATURE_KEY = 'selected'
 
@@ -13,16 +13,16 @@ export const ENTITY_SELECTED_STATE = {
 export type EntitySelectedState = (typeof ENTITY_SELECTED_STATE)[keyof typeof ENTITY_SELECTED_STATE]
 
 export interface SelectedState {
-	singleSelectedEntityId: string | undefined
-	multipleSelectedEntityIds: string[]
+	singleSelectedPanelId: PanelId | undefined
+	multipleSelectedPanelIds: PanelId[]
 	selectedStringId: StringId | undefined
 	selectedPanelLinkId: PanelLinkId | undefined
 	entityState: EntitySelectedState
 }
 
 export const initialSelectedState: SelectedState = {
-	singleSelectedEntityId: undefined,
-	multipleSelectedEntityIds: [],
+	singleSelectedPanelId: undefined,
+	multipleSelectedPanelIds: [],
 	selectedStringId: undefined,
 	selectedPanelLinkId: undefined,
 	entityState: ENTITY_SELECTED_STATE.NONE_SELECTED,
@@ -34,16 +34,16 @@ const reducer = createReducer(
 	/**
 	 * * Single Selected Entity
 	 */
-	on(SelectedActions.selectEntity, (state, { entityId }) => ({
+	on(SelectedActions.selectPanel, (state, { panelId }) => ({
 		...state,
-		singleSelectedEntityId: entityId,
-		multipleSelectedEntityIds: [],
+		singleSelectedPanelId: panelId,
+		multipleSelectedPanelIds: [],
 		entityState: ENTITY_SELECTED_STATE.SINGLE_ENTITY_SELECTED,
 	})),
 
 	on(SelectedActions.clearSingleSelected, (state) => ({
 		...state,
-		singleSelectedEntityId: undefined,
+		singleSelectedPanelId: undefined,
 		entityState: ENTITY_SELECTED_STATE.NONE_SELECTED,
 	})),
 
@@ -51,29 +51,27 @@ const reducer = createReducer(
 	 * * Multi Selected Entities
 	 */
 
-	on(SelectedActions.selectMultipleEntities, (state, { entityIds }) => ({
+	on(SelectedActions.selectMultiplePanels, (state, { panelIds }) => ({
 		...state,
-		multipleSelectedEntityIds: entityIds,
-		singleSelectedEntity: undefined,
+		multipleSelectedPanelIds: panelIds,
+		singleSelectedPanelId: undefined,
 		entityState: ENTITY_SELECTED_STATE.MULTIPLE_ENTITIES_SELECTED,
 	})),
 
-	on(SelectedActions.addEntitiesToMultiSelect, (state, { entityIds }) => ({
+	on(SelectedActions.addPanelsToMultiSelect, (state, { panelIds }) => ({
 		...state,
-		multipleSelectedEntityIds: [...state.multipleSelectedEntityIds, ...entityIds],
+		multipleSelectedPanelIds: [...state.multipleSelectedPanelIds, ...panelIds],
 		entityState: ENTITY_SELECTED_STATE.MULTIPLE_ENTITIES_SELECTED,
-		singleSelectedEntityId: undefined,
+		singleSelectedPanelId: undefined,
 	})),
 
-	on(SelectedActions.removeEntitiesFromMultiSelect, (state, { entityIds }) => ({
+	on(SelectedActions.removePanelsFromMultiSelect, (state, { panelIds }) => ({
 		...state,
-		multipleSelectedEntityIds: state.multipleSelectedEntityIds.filter(
-			(id) => !entityIds.includes(id),
-		),
+		multipleSelectedPanelIds: state.multipleSelectedPanelIds.filter((id) => !panelIds.includes(id)),
 		get entityState() {
-			if (state.multipleSelectedEntityIds.length === 0) {
+			if (state.multipleSelectedPanelIds.length === 0) {
 				return ENTITY_SELECTED_STATE.NONE_SELECTED
-			} else if (state.multipleSelectedEntityIds.length === 1) {
+			} else if (state.multipleSelectedPanelIds.length === 1) {
 				return ENTITY_SELECTED_STATE.SINGLE_ENTITY_SELECTED
 			} else {
 				return ENTITY_SELECTED_STATE.MULTIPLE_ENTITIES_SELECTED
@@ -85,8 +83,8 @@ const reducer = createReducer(
 		...state,
 		entityState:
 			ENTITY_SELECTED_STATE.SINGLE_ENTITY_SELECTED || ENTITY_SELECTED_STATE.NONE_SELECTED,
-		multipleSelectedEntityIds: [],
-		singleSelectedEntityId: undefined,
+		multipleSelectedPanelIds: [],
+		singleSelectedPanelId: undefined,
 	})),
 
 	/**

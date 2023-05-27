@@ -7,7 +7,8 @@ export const prepareStringPanelLinkCircuitChain = (panelLinks: PanelLinkModel[])
 		closedCircuitChains: ClosedCircuitChain[]
 	}
 
-	const openCircuitChains = circuitChains.openCircuitChains.map((chain) => sortPanelLinks(chain))
+	const openCircuitChains = circuitChains.openCircuitChains
+	// const openCircuitChains = circuitChains.openCircuitChains.map((chain) => sortPanelLinks(chain))
 	const closedCircuitChains = circuitChains.closedCircuitChains.map((chain) =>
 		sortPanelLinks(chain),
 	)
@@ -25,24 +26,29 @@ const getPanelLinkOrderSeparateChains = (panelLinks: PanelLinkModel[]) => {
 
 	const completeLinkIds: string[] = []
 
-	const openCircuitChains = startOfChains.map((panelLink) => {
-		const panelLinkChain = [panelLink]
-		completeLinkIds.push(panelLink.id)
-		let currentPanelLink = panelLink
-		let panelLinkChainOrderInProcess = true
-		while (panelLinkChainOrderInProcess) {
-			const nextPanelLink = panelLinks.find(
-				(pl) => pl.negativePanelId === currentPanelLink.positivePanelId,
-			)
-			if (!nextPanelLink) {
-				panelLinkChainOrderInProcess = false
-				return panelLinkChain
+	const openCircuitChains = startOfChains
+		.map((panelLink) => {
+			const panelLinkChain = [panelLink]
+			completeLinkIds.push(panelLink.id)
+			let currentPanelLink = panelLink
+			let panelLinkChainOrderInProcess = true
+			while (panelLinkChainOrderInProcess) {
+				const nextPanelLink = panelLinks.find(
+					(pl) => pl.negativePanelId === currentPanelLink.positivePanelId,
+				)
+				if (!nextPanelLink) {
+					panelLinkChainOrderInProcess = false
+					return panelLinkChain
+				}
+				panelLinkChain.push(nextPanelLink)
+				currentPanelLink = nextPanelLink
 			}
-			panelLinkChain.push(nextPanelLink)
-			currentPanelLink = nextPanelLink
-		}
-		return panelLinkChain
-	})
+			return panelLinkChain
+		})
+		.map((chain) => {
+			sortPanelLinks(chain)
+			return chain.map((link, index) => ({ ...link, index }))
+		})
 
 	const possibleClosedCircuitLinks = panelLinks.filter((pl) => !completeLinkIds.includes(pl.id))
 

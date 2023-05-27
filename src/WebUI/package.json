@@ -21,7 +21,8 @@
     "build": "nx build",
     "watch": "nx build --watch --configuration development",
     "test": "xo && nx test",
-    "postinstall": "node ./decorate-angular-cli.js"
+    "postinstall": "node ./decorate-angular-cli.js",
+    "dead-code": "ts-prune -p tsconfig.base.json -s '*.test.ts?' | grep -v cssExports | grep -v 'used in module'"
   },
   "private": true,
   "dependencies": {
@@ -160,6 +161,7 @@
     "tailwindcss": "3.3.1",
     "ts-jest": "29.1.0",
     "ts-node": "10.9.1",
+    "ts-prune": "^0.10.3",
     "tsconfig-paths-webpack-plugin": "^4.0.1",
     "typescript": "^5.0.4",
     "vite": "^4.3.5",

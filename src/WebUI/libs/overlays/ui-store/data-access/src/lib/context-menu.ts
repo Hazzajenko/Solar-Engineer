@@ -1,4 +1,5 @@
 import { Point } from '@shared/data-access/models'
+import { PanelId, PanelLinkId, StringId } from '@entities/shared'
 
 export const CONTEXT_MENU_COMPONENT = {
 	MULTIPLE_PANELS_MENU: 'app-multiple-panels-menu',
@@ -15,25 +16,25 @@ type ContextMenuTemplate = {
 export type ContextMenuSinglePanelMenu = ContextMenuTemplate & {
 	component: typeof CONTEXT_MENU_COMPONENT.SINGLE_PANEL_MENU
 	data: {
-		panelId: string
+		panelId: PanelId
 	}
 }
 export type ContextMenuMultiplePanelsMenu = ContextMenuTemplate & {
 	component: typeof CONTEXT_MENU_COMPONENT.MULTIPLE_PANELS_MENU
 	data: {
-		panelIds: string[]
+		panelIds: PanelId[]
 	}
 }
 export type ContextMenuStringMenu = ContextMenuTemplate & {
 	component: typeof CONTEXT_MENU_COMPONENT.STRING_MENU
 	data: {
-		stringId: string
+		stringId: StringId
 	}
 }
 export type ContextMenuPanelLinkMenu = ContextMenuTemplate & {
 	component: typeof CONTEXT_MENU_COMPONENT.PANEL_LINK_MENU
 	data: {
-		panelLinkId: string
+		panelLinkId: PanelLinkId
 	}
 }
 

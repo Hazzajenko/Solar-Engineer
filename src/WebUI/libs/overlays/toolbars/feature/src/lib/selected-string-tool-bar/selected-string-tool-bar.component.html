@@ -1,0 +1,104 @@
+<div
+	#toolBar
+	@goBottom
+	[ngClass]='{
+    "hidden": !showToolbar,
+  }'
+	class="overflow-hidden bg-gray-100 shadow-md dark:bg-gray-800 md:rounded-lg z-50 absolute top-28 left-1/2 -translate-x-1/2"
+>
+	<div
+		class="flex flex-col items-center justify-between p-4 space-y-3 md:flex-row md:space-y-0 md:space-x-4"
+	>
+		<div class="flex items-center space-x-1">
+			<button
+				(click)="toggleLinkMode()"
+				[ngClass]='{
+							"outline-none": appMode() !== "LinkMode",
+							"outline outline-blue-500/50 outline-2 outline-offset-2": appMode() === "LinkMode",
+							}'
+				class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+				type="button"
+			>
+				<app-show-svg-no-styles inputClass="w-5 h-5" svgPath="links/link" />
+				<span class="sr-only">Toggle Link Mode</span>
+			</button>
+		</div>
+		<!--	<button class="btn btn-square">
+				<svg
+					class="h-6 w-6"
+					fill="none"
+					stroke="currentColor"
+					viewBox="0 0 24 24"
+					xmlns="http://www.w3.org/2000/svg"
+				>
+					<path
+						d="M6 18L18 6M6 6l12 12"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+					/>
+				</svg>
+			</button>
+			<button class="btn btn-square btn-outline">
+				<svg
+					class="h-6 w-6"
+					fill="none"
+					stroke="currentColor"
+					viewBox="0 0 24 24"
+					xmlns="http://www.w3.org/2000/svg"
+				>
+					<path
+						d="M6 18L18 6M6 6l12 12"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+					/>
+				</svg>
+			</button>
+			<button class="btn btn-circle">
+				<svg
+					class="h-6 w-6"
+					fill="none"
+					stroke="currentColor"
+					viewBox="0 0 24 24"
+					xmlns="http://www.w3.org/2000/svg"
+				>
+					<path
+						d="M6 18L18 6M6 6l12 12"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+					/>
+				</svg>
+			</button>
+			<button class="btn btn-circle btn-outline">
+				<svg
+					class="h-6 w-6"
+					fill="none"
+					stroke="currentColor"
+					viewBox="0 0 24 24"
+					xmlns="http://www.w3.org/2000/svg"
+				>
+					<path
+						d="M6 18L18 6M6 6l12 12"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+					/>
+				</svg>
+			</button>
+			<div class="tooltip" data-tip="hello">
+				<button class="btn">Hover me</button>
+			</div>-->
+
+		<!--		<div class="flex-wrap items-center space-x-1 sm:pl-4 hidden sm:flex">
+					<button
+						class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+						type="button"
+					>
+						<app-show-svg-no-styles inputClass="w-5 h-5" svgPath="toolbar/settings" />
+						<span class="sr-only">Settings</span>
+					</button>
+				</div>-->
+	</div>
+</div>

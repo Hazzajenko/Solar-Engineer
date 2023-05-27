@@ -3,7 +3,7 @@ import { OpenCircuitChain, PanelModel } from '@entities/shared'
 export const drawLinkModeOrderNumbers = (
 	ctx: CanvasRenderingContext2D,
 	panel: PanelModel,
-	linksInOrder: OpenCircuitChain[], // linksInOrder: PanelLinkModel[][],
+	linksInOrder: OpenCircuitChain[],
 	selectedStringPanel: PanelModel | undefined,
 ) => {
 	if (!linksInOrder.length) {
@@ -20,41 +20,45 @@ export const drawLinkModeOrderNumbers = (
 	}
 
 	const chainSorted = linksInOrder[chain]
-	// const chainSorted = getChainSorted(linksInOrder[chain])
-	const linkIndex = chainSorted.findIndex((link) => link?.negativePanelId === panel.id)
-	const properIndex = linkIndex !== -1 ? linkIndex : chainSorted.length
-	let indexToEdit = properIndex
-
-	if (selectedStringPanel) {
-		const selectedPanelIndex =
-			chainSorted.findIndex((link) => link?.positivePanelId === selectedStringPanel.id) ??
-			chainSorted.findIndex((link) => link?.negativePanelId === selectedStringPanel.id)
-		if (selectedPanelIndex !== -1) {
-			// const selectedPanelIndexProper = selectedPanelIndex + 1
-			if (properIndex === selectedPanelIndex) {
-				// ctx.fillStyle = 'red'
-				indexToEdit = 0
+	let linkIndex = chainSorted.findIndex((link) => link?.positivePanelId === panel.id)
+	if (linkIndex === -1) {
+		const maybeLastIndex = chainSorted.findIndex((link) => link?.negativePanelId === panel.id)
+		if (maybeLastIndex !== -1) {
+			if (maybeLastIndex === chainSorted.length - 1) {
+				linkIndex = chainSorted.length
 			} else {
-				indexToEdit -= selectedPanelIndex
-				/*				if (properIndex === selectedPanelIndex + 1) {
-				 ctx.fillStyle = 'green'
-				 }
-				 if (properIndex === selectedPanelIndex - 1) {
-				 ctx.fillStyle = 'blue'
-				 }*/
+				linkIndex = maybeLastIndex
 			}
+		}
+	}
+	if (linkIndex === -1) {
+		return
+	}
+	if (selectedStringPanel) {
+		let selectedPanelIndex = -1
+		selectedPanelIndex = chainSorted.findIndex(
+			(link) => link?.positivePanelId === selectedStringPanel.id,
+		)
+		if (chainSorted[chainSorted.length - 1].negativePanelId === selectedStringPanel.id) {
+			selectedPanelIndex = chainSorted.length
+		}
+		if (selectedPanelIndex === -1) {
+			const maybeLastIndex = chainSorted.findIndex((link) => link?.negativePanelId === panel.id)
+			if (maybeLastIndex !== -1) {
+				if (maybeLastIndex === chainSorted.length - 1) {
+					selectedPanelIndex = chainSorted.length
+				} else {
+					selectedPanelIndex = maybeLastIndex
+				}
+			}
+		}
 
-			/*		if (properIndex === selectedPanelIndex + 1) {
-			 ctx.fillStyle = 'green'
-			 }
-
-			 if (properIndex === selectedPanelIndex - 1) {
-			 ctx.fillStyle = 'blue'
-			 }*/
-
-			/*	if (properIndex === selectedPanelIndex + 2) {
-			 ctx.fillStyle = 'yellow'
-			 }*/
+		if (selectedPanelIndex !== -1) {
+			if (linkIndex === selectedPanelIndex) {
+				linkIndex = 0
+			} else {
+				linkIndex -= selectedPanelIndex
+			}
 		}
 	}
 
@@ -62,7 +66,8 @@ export const drawLinkModeOrderNumbers = (
 	ctx.rotate(-panel.angle)
 	const fontSize = 10
 	ctx.font = `${fontSize}px Consolas, sans-serif`
-	const text = `${indexToEdit + 1}`
+	const text = `${linkIndex}`
+	// const text = `${indexToEdit + 1}`
 	const metrics = ctx.measureText(text)
 	const x = -metrics.width / 2
 	const y = fontSize / 4

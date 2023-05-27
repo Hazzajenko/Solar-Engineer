@@ -5,12 +5,12 @@ export const selectSelectedState = createFeatureSelector<SelectedState>(SELECTED
 
 export const selectSingleSelectedEntity = createSelector(
 	selectSelectedState,
-	(state: SelectedState) => state.singleSelectedEntityId,
+	(state: SelectedState) => state.singleSelectedPanelId,
 )
 
 export const selectMultiSelectedEntities = createSelector(
 	selectSelectedState,
-	(state: SelectedState) => state.multipleSelectedEntityIds,
+	(state: SelectedState) => state.multipleSelectedPanelIds,
 )
 
 export const selectSingleAndMultiSelectedEntities = createSelector(

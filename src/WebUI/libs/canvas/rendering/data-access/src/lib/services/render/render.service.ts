@@ -217,7 +217,9 @@ export class RenderService {
 
 			const hoveringOverEntityId = pointer.hoveringOverEntityId
 
-			const singleSelectedEntityId = this._selectedStore.state.singleSelectedEntityId
+			const singleSelectedPanelId = this._selectedStore.state.singleSelectedPanelId
+
+			const singleSelectedPanel = this._entities.panels.getByIdOrUndefined(singleSelectedPanelId)
 
 			const selectedStringPanels = selectedStringId
 				? this._entities.panels.getByStringId(selectedStringId)
@@ -226,7 +228,7 @@ export class RenderService {
 			const shouldRenderSelectedEntitiesBox = options?.shouldRenderSelectedEntitiesBox ?? true
 			const shouldRenderSelectedStringBox = options?.shouldRenderSelectedStringBox ?? true
 
-			const multipleSelectedEntityIds = this._selectedStore.state.multipleSelectedEntityIds
+			const multipleSelectedEntityIds = this._selectedStore.state.multipleSelectedPanelIds
 
 			const hoveringOverPanelInLinkMenuId = this._entities.panelLinks.hoveringOverPanelInLinkMenuId
 			const hoveringOverPanelLinkInLinkMenu =
@@ -242,8 +244,8 @@ export class RenderService {
 
 			if (shouldRenderSelectedEntitiesBox && multipleSelectedEntityIds.length) {
 				drawSelectedBox(ctx, this._entities.panels.getByIds(multipleSelectedEntityIds))
-			} else if (shouldRenderSelectedEntitiesBox && singleSelectedEntityId) {
-				const selectedEntity = this._entities.panels.getById(singleSelectedEntityId)
+			} else if (shouldRenderSelectedEntitiesBox && singleSelectedPanelId) {
+				const selectedEntity = this._entities.panels.getById(singleSelectedPanelId)
 				assertNotNull(selectedEntity, 'selectedEntity')
 				drawSelectedBox(ctx, [selectedEntity])
 			}
@@ -321,11 +323,9 @@ export class RenderService {
 				drawEntityCreationPreview(ctx, options.creationPreviewBounds)
 			}
 
-			if (
-				this._graphicsStore.state.linkModePathLines &&
-				selectedStringId &&
-				appStateMode === 'LinkMode'
-			) {
+			// &&
+			// 	appStateMode === 'LinkMode'
+			if (this._graphicsStore.state.linkModePathLines && selectedStringId) {
 				/*			let draggingSymbolLinkLinePanelWithSymbol: PanelWithSymbol | undefined
 				 let transformedPoint: TransformedPoint | undefined
 				 if (options?.draggingSymbolLinkLine) {
@@ -353,18 +353,26 @@ export class RenderService {
 					selectedStringId,
 					options, // draggingSymbolLinkLinePanelWithSymbol,
 					panelLinkRequest,
+					singleSelectedPanel,
 				)
 
 				const mouseDownPanelSymbol = options?.draggingSymbolLinkLine?.mouseDownPanelSymbol
+
+				const panelLinkForSelectedPanel = singleSelectedPanel
+					? this._entities.panelLinks.getLinksMappedByPanelId(singleSelectedPanel.id)
+					: undefined
 
 				drawLinkModePathLinesCurvedAlreadyMappedV6(
 					ctx,
 					entities,
 					customLinkLineTuples,
-					selectedPanelLinkId,
-					hoveringOverPanelLinkInLinkMenu,
 					panelLinkUnderMouse,
+					hoveringOverPanelLinkInLinkMenu,
+					selectedPanelLinkId,
 					mouseDownPanelSymbol,
+
+					// singleSelectedPanel,
+					panelLinkForSelectedPanel,
 				)
 
 				/*		if (options?.draggingSymbolLinkLine) {
@@ -495,9 +503,9 @@ export class RenderService {
 		// const selectedStringId = this._selectedStore.state.selectedStringId
 		const graphicsState = this._graphicsStore.state
 		const selectedState = this._selectedStore.state
-		const { singleSelectedEntityId, multipleSelectedEntityIds, selectedPanelLinkId } = selectedState
-		const singleSelectedEntity = singleSelectedEntityId
-			? this._entities.panels.getById(singleSelectedEntityId)
+		const { singleSelectedPanelId, multipleSelectedPanelIds, selectedPanelLinkId } = selectedState
+		const singleSelectedEntity = singleSelectedPanelId
+			? this._entities.panels.getById(singleSelectedPanelId)
 			: undefined
 
 		const pointerState = this._appState.pointer()
@@ -537,14 +545,14 @@ export class RenderService {
 
 			if (graphicsState.selectedPanelFill) {
 				const isSingleSelected =
-					selectedState.singleSelectedEntityId && selectedState.singleSelectedEntityId === entity.id
+					selectedState.singleSelectedPanelId && selectedState.singleSelectedPanelId === entity.id
 				if (isSingleSelected) {
 					fillStyle = CANVAS_COLORS.SelectedPanelFillStyle
 				}
 
 				const isMultipleSelected =
-					selectedState.multipleSelectedEntityIds.length &&
-					selectedState.multipleSelectedEntityIds.includes(entity.id)
+					selectedState.multipleSelectedPanelIds.length &&
+					selectedState.multipleSelectedPanelIds.includes(entity.id)
 				if (isMultipleSelected) {
 					fillStyle = CANVAS_COLORS.SelectedPanelFillStyle
 				}

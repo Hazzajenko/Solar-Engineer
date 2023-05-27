@@ -1,3 +1,5 @@
+import { PanelId, StringId } from '@entities/shared'
+
 export const CONTEXT_MENU_TYPE = {
 	SINGLE_ENTITY: 'SingleEntity',
 	MULTIPLE_ENTITIES: 'MultipleEntities',
@@ -13,12 +15,12 @@ export type SingleEntityContextMenuTemplate = ContextMenuTemplate & {
 	type: typeof CONTEXT_MENU_TYPE.SINGLE_ENTITY
 }
 export type MultipleEntitiesContextMenuTemplate = ContextMenuTemplate & {
-	ids: string[]
+	ids: PanelId[]
 	type: typeof CONTEXT_MENU_TYPE.MULTIPLE_ENTITIES
 }
 export type StringContextMenuTemplate = ContextMenuTemplate & {
-	stringId: string
-	panelIds: string[]
+	stringId: StringId
+	panelIds: PanelId[]
 	type: typeof CONTEXT_MENU_TYPE.STRING
 }
 export type ContextMenuType =

@@ -4,6 +4,19 @@ import { Store } from '@ngrx/store'
 export const selectSignalFromStore = <T>(selector: (state: any) => T): Signal<T> =>
 	inject(Store).selectSignal<T>(selector)
 
+export const selectSignalFromKnownStore = <TState, TModel extends TState[keyof TState]>(
+	selector: (state: TState) => TModel,
+): Signal<TModel> => inject(Store<TState>).selectSignal<TModel>(selector)
+
+export const selectSignalFromKnownStoreV2 = <TState>(
+	selector: (state: TState) => TState[keyof TState],
+): Signal<TState[keyof TState]> =>
+	inject(Store<TState>).selectSignal<TState[keyof TState]>(selector)
+
+export const selectSignalFromKnownStoreV3 = <TState>(
+	selector: (state: TState) => TState[keyof TState],
+): Signal<TState[keyof TState]> =>
+	inject(Store<TState>).selectSignal<TState[keyof TState]>(selector)
 /*
  export const selectSignalFromKnownStore = <TState, TModel extends TState[keyof TState]>(
  selector: (state: TState) => TModel,
@@ -23,7 +36,7 @@ export const selectSignalFromStore = <T>(selector: (state: any) => T): Signal<T>
 
  /
  const idk: VariableOf<SelectedState> = {
- singleSelectedEntityId: undefined,
+ singleSelectedPanelId: undefined,
  multipleSelectedEntityIds: [],
  selectedStringId: undefined,
  }*!/
@@ -34,7 +47,7 @@ export const selectSignalFromStore = <T>(selector: (state: any) => T): Signal<T>
  const uhm: ValueFromKey<SelectedState, 'selectedStringId'> = 'test'
 
  const idk: ValuesOfObject<SelectedState> = undefined
- const idk3: KeysOfObject<SelectedState> = 'singleSelectedEntityId'
+ const idk3: KeysOfObject<SelectedState> = 'singleSelectedPanelId'
  type ValuesOf<T> = T extends object ? ValuesOfObject<T> : never
 
  const idk2: ValuesOf<SelectedState> = 'MultipleEntitiesSelected'

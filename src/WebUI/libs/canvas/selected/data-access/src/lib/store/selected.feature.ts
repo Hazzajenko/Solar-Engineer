@@ -1,5 +1,5 @@
-import { createFeature, createSelector, provideState } from '@ngrx/store'
-import { SELECTED_FEATURE_KEY, selectedReducer, SelectedState } from './selected.reducer'
+import { createFeature, provideState } from '@ngrx/store'
+import { SELECTED_FEATURE_KEY, selectedReducer } from './selected.reducer'
 import { makeEnvironmentProviders } from '@angular/core'
 import { provideEffects } from '@ngrx/effects'
 import * as SelectedEffects from './selected.effects'
@@ -11,24 +11,23 @@ export const selectedFeature = createFeature({
 		selectSelectedState,
 		selectSelectedStringId,
 		selectSelectedPanelLinkId,
-		selectSingleSelectedEntityId,
-		selectMultipleSelectedEntityIds,
+		selectSingleSelectedPanelId,
+		selectMultipleSelectedPanelIds,
 		selectEntityState,
 	}) => ({
 		selectSelectedState,
 		selectSelectedStringId,
 		selectSelectedPanelLinkId,
-		selectSingleSelectedEntityId,
-		selectMultipleSelectedEntityIds,
-		selectEntityState,
-		selectSingleSelectedEntity: createSelector(
-			selectSelectedState,
-			(state: SelectedState) => state.singleSelectedEntityId,
-		),
-		selectMultiSelectedEntities: createSelector(
-			selectSelectedState,
-			(state: SelectedState) => state.multipleSelectedEntityIds,
-		),
+		selectSingleSelectedPanelId,
+		selectMultipleSelectedPanelIds,
+		selectEntityState /*		selectSingleSelectedEntity: createSelector(
+		 selectSelectedState,
+		 (state: SelectedState) => state.singleSelectedPanelId,
+		 ),
+		 selectMultiSelectedEntities: createSelector(
+		 selectSelectedState,
+		 (state: SelectedState) => state.multipleSelectedPanelIds,
+		 ),*/,
 	}),
 })
 

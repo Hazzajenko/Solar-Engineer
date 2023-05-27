@@ -29,30 +29,31 @@ export const drawLinkModePathLinesCurvedAlreadyMappedV6 = (
 	ctx: CanvasRenderingContext2D,
 	customEntities: CanvasEntity[] | undefined,
 	circuitLinkLineTuples: [PanelLinkId, CurvedNumberLine][][],
-	selectedPanelLinkId: PanelLinkId | undefined,
-	hoveringOverPanelLinkInLinkMenu: PanelLinkFromMenu | undefined,
+	/*	featureState: FeatureState,
+	 hoveringOverPanelLinkInLinkMenu1: PanelLinkFromMenu | undefined,
+	 panelLinkUnderMouse1: PanelLinkModel | undefined,
+	 mouseDownPanelSymbol: PanelSymbol | undefined,
+	 singleSelectedPanel:
+	 | (Omit<CanvasEntity, 'id' | 'type'> & {
+	 id: PanelId
+	 stringId: StringId
+	 panelConfigId: PanelConfigId
+	 type: 'panel'
+	 })
+	 | undefined, // singleToMovePanel: CanvasPanel | undefined,*/
 	panelLinkUnderMouse: PanelLinkModel | undefined,
-	finalDrawLineSymbol: PanelSymbol | undefined, // singleToMovePanel: CanvasPanel | undefined,
+	hoveringOverPanelLinkInLinkMenu: PanelLinkFromMenu | undefined,
+	selectedPanelLinkId: PanelLinkId | undefined,
+	finalDrawLineSymbol: PanelSymbol | undefined,
+	panelLinkForSelectedPanel:
+		| {
+				negativeToLink: PanelLinkModel | undefined
+				positiveToLink: PanelLinkModel | undefined
+		  }
+		| undefined,
 ) => {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const ignore = selectedPanelLinkId || hoveringOverPanelLinkInLinkMenu
-	/*	const customEntityIds = new Set(customEntities?.map((e) => e.id) || [])
-	 // const customEntityIds2 = customEntities?.map((e) => e.id)
-	 // const customEntityIdsSet = new Set(customEntityIds)
-	 // const isCustomEntity = (id: string) => customEntityIdsSet.has(id)
-
-	 /!*	const animateLineDash = (ctx: CanvasRenderingContext2D) => {
-	 offset++
-	 if (offset > 16) {
-	 offset = 0
-	 }
-	 ctx.lineDashOffset = -offset
-	 requestAnimationFrame(() => animateLineDash(ctx))
-	 }*!/
-
-	 injectArrowHeadSvg().then((img) => {
-	 image = img
-	 })*/
+	// const ignore = selectedPanelLinkId || hoveringOverPanelLinkInLinkMenu
 
 	if (!circuitLinkLineTuples.length) {
 		return
@@ -65,15 +66,76 @@ export const drawLinkModePathLinesCurvedAlreadyMappedV6 = (
 	ctx.setLineDash([4, 2])
 	ctx.lineDashOffset = -offset
 
-	// animateLineDash(ctx)
+	/*	const selectedStringPanelIndex = selectedStringPanel
+	 ? circuitLinkLineTuples.findIndex((tuple) =>
+	 tuple.some((tuple) => tuple[0] === selectedStringPanel?.id),
+	 )
+	 : -1*/
+
+	const selectedPanelPositiveToIndex = panelLinkForSelectedPanel?.positiveToLink
+		? circuitLinkLineTuples.findIndex((tuple) =>
+				tuple.some((tuple) => tuple[0] === panelLinkForSelectedPanel?.positiveToLink?.id),
+		  )
+		: -1
+
+	const selectedPanelNegativeToIndex = panelLinkForSelectedPanel?.negativeToLink
+		? circuitLinkLineTuples.findIndex((tuple) =>
+				tuple.some((tuple) => tuple[0] === panelLinkForSelectedPanel?.negativeToLink?.id),
+		  )
+		: -1
+
+	console.log('selectedPanelPositiveToIndex', selectedPanelPositiveToIndex)
+	console.log('selectedPanelNegativeToIndex', selectedPanelNegativeToIndex)
+
+	// const
+	let selectedPanelCommonIndex = -1
+	let panelLinkForSelectedPanelId: PanelLinkId | undefined
+	if (selectedPanelPositiveToIndex !== -1 && selectedPanelNegativeToIndex !== -1) {
+		panelLinkForSelectedPanelId = panelLinkForSelectedPanel?.positiveToLink?.id
+		selectedPanelCommonIndex = Math.min(selectedPanelPositiveToIndex, selectedPanelNegativeToIndex)
+	}
+
+	if (selectedPanelPositiveToIndex !== -1 && selectedPanelNegativeToIndex === -1) {
+		panelLinkForSelectedPanelId = panelLinkForSelectedPanel?.positiveToLink?.id
+		selectedPanelCommonIndex = selectedPanelPositiveToIndex
+	}
+
+	if (selectedPanelPositiveToIndex === -1 && selectedPanelNegativeToIndex !== -1) {
+		panelLinkForSelectedPanelId = panelLinkForSelectedPanel?.negativeToLink?.id
+		selectedPanelCommonIndex = selectedPanelNegativeToIndex
+	}
+
+	if (selectedPanelPositiveToIndex === -1 && selectedPanelNegativeToIndex === -1) {
+		panelLinkForSelectedPanelId = undefined
+		selectedPanelCommonIndex = -1
+	}
+
+	// const selectedPanelCommonIndex = selectedPanelPositiveToIndex
+
+	/*	const selectedPanelCommonIndex = Math.max(
+	 selectedPanelPositiveToIndex,
+	 selectedPanelNegativeToIndex,
+	 )*/
+
+	console.log('selectedPanelCommonIndex', selectedPanelCommonIndex)
+
+	const selectedPanelChainIndex =
+		selectedPanelCommonIndex === -1
+			? -1
+			: circuitLinkLineTuples[selectedPanelCommonIndex].findIndex(
+					(tuple) => tuple[0] === panelLinkForSelectedPanelId,
+			  )
+
+	console.log('selectedPanelChainIndex', selectedPanelChainIndex)
 
 	for (let i = 0; i < circuitLinkLineTuples.length; i += 1) {
 		const linkLineTuple = circuitLinkLineTuples[i]
+
+		const selectedPanelInThisChain = selectedPanelCommonIndex === i
 		for (let j = 0; j < linkLineTuple.length; j += 1) {
 			const id = linkLineTuple[j][0]
 			const lines = linkLineTuple[j][1]
-
-			/*			if (customEntityIds.has(id)) {
+			/*			if (selectedPanelInThisChain) {
 
 			 }*/
 
@@ -83,7 +145,12 @@ export const drawLinkModePathLinesCurvedAlreadyMappedV6 = (
 				hoveringOverPanelLinkInLinkMenu,
 				selectedPanelLinkId,
 				finalDrawLineSymbol,
-				j === linkLineTuple.length - 1,
+				j,
+				linkLineTuple.length,
+				{
+					selectedPanelInThisChain,
+					selectedPanelChainIndex,
+				},
 			)
 
 			ctx.save()
@@ -93,37 +160,22 @@ export const drawLinkModePathLinesCurvedAlreadyMappedV6 = (
 			}
 			drawCurvedNumberLinesWithOptions(ctx, lines, options)
 			ctx.restore()
-
-			/*		if (customEntities) {
-			 const entity = customEntities.find((e) => e.id === id)
-			 if (entity) {
-			 ctx.save()
-			 ctx.fillStyle = 'white'
-			 ctx.font = '12px serif'
-			 ctx.fillText(
-			 entity.name,
-			 lines[0].x + 10,
-			 lines[0].y + 10,
-			 )
-			 ctx.restore()
-			 }
-			 }*/
 		}
 	}
 	ctx.restore()
 }
 
-const animateLineDash = (ctx: CanvasRenderingContext2D) => {
-	const animate = () => {
-		offset += 0.5
-		if (offset > 16) {
-			offset = 0
-		}
-		ctx.setLineDash([4, 2])
-		requestAnimationFrame(animate)
-	}
-	requestAnimationFrame(animate)
-}
+/*const animateLineDash = (ctx: CanvasRenderingContext2D) => {
+ const animate = () => {
+ offset += 0.5
+ if (offset > 16) {
+ offset = 0
+ }
+ ctx.setLineDash([4, 2])
+ requestAnimationFrame(animate)
+ }
+ requestAnimationFrame(animate)
+ }*/
 
 const getDrawOptionsBasedOnInputs = (
 	panelLinkId: PanelLinkId,
@@ -131,7 +183,12 @@ const getDrawOptionsBasedOnInputs = (
 	hoveringOverPanelLinkInLinkMenu: PanelLinkFromMenu | undefined,
 	selectedPanelLinkId: PanelLinkId | undefined,
 	finalDrawLineSymbol: PanelSymbol | undefined,
-	endOfArray: boolean,
+	index: number,
+	linkLineTupleLength: number,
+	p: {
+		selectedPanelInThisChain: boolean
+		selectedPanelChainIndex: number
+	},
 ): Partial<DrawOptions> | undefined => {
 	if (hoveringOverPanelLinkInLinkMenu?.panelLinkId === panelLinkId) {
 		return PanelLinkHoverDefaultDrawOptions
@@ -146,8 +203,20 @@ const getDrawOptionsBasedOnInputs = (
 		 lineWidth: 2,
 		 }*/
 	}
-	if (endOfArray && finalDrawLineSymbol) {
+	if (index === linkLineTupleLength - 1 && finalDrawLineSymbol) {
 		if (finalDrawLineSymbol.symbol === 'positive') {
+			return {
+				strokeStyle: 'red',
+				lineWidth: 2,
+			}
+		}
+		return {
+			strokeStyle: 'blue',
+			lineWidth: 2,
+		}
+	}
+	if (p.selectedPanelInThisChain) {
+		if (p.selectedPanelChainIndex > index) {
 			return {
 				strokeStyle: 'red',
 				lineWidth: 2,

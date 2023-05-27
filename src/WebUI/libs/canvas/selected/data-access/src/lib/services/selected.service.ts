@@ -1,9 +1,9 @@
 import { AppStateStoreService } from '@canvas/app/data-access'
-import { ENTITY_SELECTED_STATE, SelectedStoreService } from '../store'
+import { ENTITY_SELECTED_STATE, injectSelectedStore } from '../store'
 import { inject, Injectable } from '@angular/core'
 import { assertNotNull } from '@shared/utils'
 import { EntityStoreService } from '@entities/data-access'
-import { CanvasEntity } from '@entities/shared'
+import { CanvasEntity, PanelId, PanelModel } from '@entities/shared'
 
 @Injectable({
 	providedIn: 'root',
@@ -13,11 +13,12 @@ export class SelectedService {
 	private _entities = inject(EntityStoreService)
 	// private _app = inject(AppStoreService)
 	private _appStore = inject(AppStateStoreService)
-	private _selectedStore = inject(SelectedStoreService)
+	private _selectedStore = injectSelectedStore()
+	// private _selectedStore = inject(SelectedStoreService)
 
 	// private _appState = inject(AppSt)
 
-	handleEntityUnderMouse(event: MouseEvent, entityUnderMouse: CanvasEntity) {
+	handleEntityUnderMouse(event: MouseEvent, entityUnderMouse: PanelModel) {
 		if (event.shiftKey) {
 			this.addToMultiSelected(entityUnderMouse.id)
 			return
@@ -31,7 +32,7 @@ export class SelectedService {
 		return
 	}
 
-	setSelected(selectedId: string) {
+	setSelected(selectedId: PanelId) {
 		// const ev = SELECTED_EVENT_V2('SetMultipleSelectedEntities', { ids: [selectedId] })
 		// this._app.sendEvent(SELECTED_EVENT('SetMultipleSelectedEntities', payload: { ids: [selectedId] }))
 		/*		this._app.sendSelectedEvent({
@@ -40,7 +41,7 @@ export class SelectedService {
 		 })*/
 		const currentSelected = this._appStore.state
 		console.log('currentSelected', currentSelected)
-		this._selectedStore.dispatch.selectEntity(selectedId)
+		this._selectedStore.selectPanel(selectedId)
 		// this._appStore.dispatch.setSelectedState(SELECTED_STATE.MULTIPLE_ENTITIES_SELECTED)
 		// this._app.sendEvent({ type: 'SetMultipleSelectedEntities', payload: { ids: [selectedId] } })
 		// this._app.sendEvent({ type: 'SelectedSingleEntity', payload: { id: selectedId } })
@@ -48,7 +49,7 @@ export class SelectedService {
 		console.log('set selected', selectedId)
 	}
 
-	addToMultiSelected(selectedId: string) {
+	addToMultiSelected(selectedId: PanelId) {
 		/*		const singleSelectedId = this._app.selectedCtx.singleSelectedId
 		 // const singleSelectedId = this._app.appCtx.selected.singleSelectedId
 		 if (singleSelectedId && singleSelectedId === selectedId) {
@@ -57,11 +58,11 @@ export class SelectedService {
 		 return
 		 }*/
 
-		const multipleSelectedIds = this._selectedStore.state.multipleSelectedEntityIds
+		const multipleSelectedIds = this._selectedStore.state.multipleSelectedPanelIds
 		// const multipleSelectedIds = this._app.selectedCtx.multipleSelectedIds
 		// const multipleSelectedIds = this._app.appCtx.selected.multipleSelectedIds
 		if (multipleSelectedIds.includes(selectedId)) {
-			this._selectedStore.dispatch.removeEntitiesFromMultiSelect([selectedId])
+			this._selectedStore.removePanelsFromMultiSelect([selectedId])
 			// this._app.sendEvent(
 			// 	{
 			/*			this._app.sendSelectedEvent({
@@ -91,7 +92,7 @@ export class SelectedService {
 		 type: 'AddEntitiesToMultipleSelected',
 		 payload: { ids: [...multipleSelectedIds, selectedId] },
 		 })*/
-		this._selectedStore.dispatch.addEntitiesToMultiSelect([...multipleSelectedIds, selectedId])
+		this._selectedStore.addPanelsToMultiSelect([...multipleSelectedIds, selectedId])
 		/*		this._app.sendStateEvent(
 		 STATE_MACHINE.SELECTED,
 		 {
@@ -131,12 +132,12 @@ export class SelectedService {
 
 		const entitySelectedState = this._selectedStore.state.entityState
 		if (entitySelectedState === ENTITY_SELECTED_STATE.MULTIPLE_ENTITIES_SELECTED) {
-			this._selectedStore.dispatch.clearMultiSelected()
+			this._selectedStore.clearMultiSelected()
 			return
 		}
 
 		if (entitySelectedState === ENTITY_SELECTED_STATE.SINGLE_ENTITY_SELECTED) {
-			this._selectedStore.dispatch.clearSingleSelected()
+			this._selectedStore.clearSingleSelected()
 			return
 		}
 		/*
@@ -161,7 +162,7 @@ export class SelectedService {
 	// clear
 
 	clearSelectedState() {
-		this._selectedStore.dispatch.clearSelectedState()
+		this._selectedStore.clearSelectedState()
 		// this._app.sendSelectedEvent({ type: 'ClearSelectedState' })
 		// this._app.sendSelectedEvent({ type: 'ClearEntitySelected' })
 		/*	this._app.sendStateEvent(STATE_MACHINE.SELECTED, {
@@ -172,8 +173,8 @@ export class SelectedService {
 	}
 
 	clearSingleOrMultipleSelected() {
-		this._selectedStore.dispatch.clearSingleSelected()
-		this._selectedStore.dispatch.clearMultiSelected()
+		this._selectedStore.clearSingleSelected()
+		this._selectedStore.clearMultiSelected()
 	}
 
 	clearSelectedInOrder() {
@@ -184,19 +185,19 @@ export class SelectedService {
 		 }*/
 
 		if (this._selectedStore.state.selectedStringId) {
-			this._selectedStore.dispatch.clearSelectedString()
+			this._selectedStore.clearSelectedString()
 			return
 		}
 
 		if (
 			this._selectedStore.state.entityState === ENTITY_SELECTED_STATE.MULTIPLE_ENTITIES_SELECTED
 		) {
-			this._selectedStore.dispatch.clearMultiSelected()
+			this._selectedStore.clearMultiSelected()
 			return
 		}
 
 		if (this._selectedStore.state.entityState === ENTITY_SELECTED_STATE.SINGLE_ENTITY_SELECTED) {
-			this._selectedStore.dispatch.clearSingleSelected()
+			this._selectedStore.clearSingleSelected()
 			return
 		}
 

@@ -1,6 +1,6 @@
 import { ObjectPositioningStoreService } from '../../store'
 import { RenderService } from '@canvas/rendering/data-access'
-import { SelectedStoreService } from '@canvas/selected/data-access'
+import { injectSelectedStore } from '@canvas/selected/data-access'
 import { inject, Injectable } from '@angular/core'
 import { Dictionary } from '@ngrx/entity'
 import { UpdateStr } from '@ngrx/entity/src/models'
@@ -30,7 +30,7 @@ export class ObjectRotatingService {
 	private _render = inject(RenderService)
 	// private _app = inject(AppStoreService)
 	private _positioningStore = inject(ObjectPositioningStoreService)
-	private _selectedStore = inject(SelectedStoreService)
+	private _selectedStore = injectSelectedStore()
 
 	singleToRotateId: string | undefined = undefined
 	singleToRotateStartPoint: TransformedPoint | undefined = undefined
@@ -48,7 +48,7 @@ export class ObjectRotatingService {
 	centerPoint: Point | undefined = undefined
 
 	handleSetEntitiesToRotate(event: PointerEvent, currentPoint: TransformedPoint) {
-		const multiSelectIds = this._selectedStore.state.multipleSelectedEntityIds
+		const multiSelectIds = this._selectedStore.state.multipleSelectedPanelIds
 		// const multiSelectIds = this._app.selectedCtx.multipleSelectedIds
 		// const selectedId = this._machine.appCtx.selected.singleSelectedId
 		// const selectedId = this._state.selected.singleSelectedId

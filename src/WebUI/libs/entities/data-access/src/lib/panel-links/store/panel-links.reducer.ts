@@ -6,7 +6,7 @@ import { PanelLinksActions } from './panel-links.actions'
 /*export type LinkPathLine = {
 
  }*/
-export const PANEL_LINKS_FEATURE_KEY = 'panel-links'
+export const PANEL_LINKS_FEATURE_KEY = 'panelLinks'
 
 export interface PanelLinksState extends EntityState<PanelLinkModel> {
 	loaded: boolean
@@ -29,9 +29,11 @@ export interface PanelLinksState extends EntityState<PanelLinkModel> {
 
 export const panelLinksAdapter: EntityAdapter<PanelLinkModel> = createEntityAdapter<PanelLinkModel>(
 	{
-		selectId: (panelLink) => panelLink.id,
+		selectId: (panelLink) => panelLink.id, // sortComparer: sortPanelLinksCompareFn,
 	},
 )
+
+// const adapter = createEntityAdapter<PanelLinkModel>()
 
 export const initialPanelLinksState: PanelLinksState = panelLinksAdapter.getInitialState({
 	loaded: false,
@@ -144,6 +146,12 @@ const reducer = createReducer(
 export function panelLinksReducer(state: PanelLinksState | undefined, action: Action) {
 	return reducer(state, action)
 }
+
+/*export const selectedFeature = createFeature({
+ name: 'panelLinks',
+ reducer,
+ // extraSelectors: ({ selectPanelLinksState }) => adapter.getSelectors(selectPanelLinksState),
+ })*/
 
 /*
 
