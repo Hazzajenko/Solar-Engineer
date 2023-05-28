@@ -21,6 +21,11 @@ export function eventToPointLocation(event: MouseEvent): Point {
 	return { x: event.offsetX, y: event.offsetY }
 }
 
+export const singleTouchEventToPointLocation = (event: TouchEvent): Point => {
+	const touch = event.touches[0]
+	return { x: touch.clientX, y: touch.clientY }
+}
+
 export const eventToEventPoint = (event: MouseEvent | PointerEvent): EventPoint => ({
 	x: event.offsetX,
 	y: event.offsetY,

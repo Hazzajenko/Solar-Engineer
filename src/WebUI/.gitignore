@@ -1,5 +1,8 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
+start-ngrok.ps1
+start-ngrok-no-domain.ps1
+
 # Compiled output
 /dist
 /tmp

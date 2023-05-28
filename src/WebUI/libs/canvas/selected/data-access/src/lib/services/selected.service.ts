@@ -24,11 +24,15 @@ export class SelectedService {
 			return
 		}
 		this.setSelected(entityUnderMouse.id)
-		// this._selectedStore.fetchByKey('selectedStringId')
-		// const yo = this._selectedStore.fetchByKeys(['selectedStringId', 'multipleSelectedEntityIds'])
-		// // yo
-		/*	const yo = this._selectedStore.fetchByKeysAsObject(['selectedStringId', 'multipleSelectedEntityIds'])
-		 yo*/
+		return
+	}
+
+	handleEntityUnderTouch(event: TouchEvent, entityUnderMouse: PanelModel) {
+		/*		if (event.shiftKey) {
+		 this.addToMultiSelected(entityUnderMouse.id)
+		 return
+		 }*/
+		this.setSelected(entityUnderMouse.id)
 		return
 	}
 

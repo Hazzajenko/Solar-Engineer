@@ -5,10 +5,14 @@ import {
 	CURSOR_TYPE,
 	DoubleClickEvent,
 	EVENT_TYPE,
+	Gesture,
+	getCurrentPlatform,
+	PLATFORM,
+	Platform,
 	Point,
 	TransformedPoint,
 } from '@shared/data-access/models'
-import { assertNotNull, OnDestroyDirective } from '@shared/utils'
+import { assertNotNull, getCenter, getDistance, OnDestroyDirective } from '@shared/utils'
 import { CanvasElementService, injectAppStateStore, MODE_STATE } from '@canvas/app/data-access'
 import { GraphicsStoreService } from '@canvas/graphics/data-access'
 import {
@@ -48,9 +52,16 @@ import {
 	isWheelButton,
 	multiSelectDraggingKeysDownAndIdsNotEmpty,
 	rotatingKeysDown,
+	singleTouchEventToPointLocation,
 } from '@canvas/utils'
 import { isPanel, isPointInsideSelectedStringPanelsByStringIdNgrxWithPanels } from '@entities/utils'
-import { CanvasEntity, ENTITY_TYPE, SizeByType, UndefinedStringId } from '@entities/shared'
+import {
+	CanvasEntity,
+	ENTITY_TYPE,
+	PanelModel,
+	SizeByType,
+	UndefinedStringId,
+} from '@entities/shared'
 import {
 	creationBoxMouseMove,
 	creationBoxMouseUp,
@@ -127,10 +138,21 @@ export class DesignCanvasDirective implements OnInit {
 		return this._entities.strings.allStrings
 	}
 
+	platform: Platform = getCurrentPlatform()
+
 	currentTransformedCursor!: TransformedPoint
+	initialPinchedDistance: number | undefined
 	rawMousePos: Point = { x: 0, y: 0 }
 	currentPoint: TransformedPoint = { x: 0, y: 0 } as TransformedPoint
-	entityPressed: CanvasEntity | undefined
+	panelPressed: PanelModel | undefined
+
+	gesture: Gesture = {
+		pointers: new Map(),
+		lastCenter: null,
+		initialDistance: null,
+		initialScale: null,
+		lastDistance: null,
+	}
 
 	/**
 	 * ! Lifecycle Hooks
@@ -141,7 +163,8 @@ export class DesignCanvasDirective implements OnInit {
 		this.fpsEl = document.getElementById('fps') as HTMLDivElement
 		this.scaleElement = document.getElementById('scale-element') as HTMLDivElement
 		this._ngZone.runOutsideAngular(() => {
-			this.setupEventListeners()
+			this.setupEventListenersBasedOnPlatform()
+			// this.setupEventListeners()
 		})
 		/*		this.canvasMenu = document.getElementById('canvas-menu') as HTMLDivElement
 		 this.mousePos = document.getElementById('mouse-pos') as HTMLDivElement
@@ -173,10 +196,7 @@ export class DesignCanvasDirective implements OnInit {
 		}
 
 		if (dragBoxKeysDown(event)) {
-			console.log('drag box keys down')
-			// this._drag.handleDragBoxMouseDown(event, currentPoint)
 			dragBoxOnMouseDownHandler(event, currentPoint, this._appState)
-			// this._appState.setDragBoxState(newMode)
 			return
 		}
 
@@ -186,19 +206,7 @@ export class DesignCanvasDirective implements OnInit {
 			return
 		}
 
-		// const mode = this._appState.mode()
-
-		/*		if (mode === 'LinkMode') {
-		 this._panelLinks.handleLinkMouseDown(event, currentPoint)
-		 // return
-		 }*/
-		/*
-		 if (this._appState.state.mode === 'LinkMode') {
-		 this._panelLinks.handleLinkMouseDown(event, currentPoint)
-		 // return
-		 }*/
-
-		this.entityPressed = this.getPanelUnderMouse(event)
+		this.panelPressed = this.getPanelUnderMouse(event)
 	}
 
 	/**
@@ -280,9 +288,9 @@ export class DesignCanvasDirective implements OnInit {
 			return
 		}
 
-		if (this.entityPressed && isDraggingEntity(event, this.entityPressed.id)) {
-			this._objPositioning.setSingleToMoveEntity(event, this.entityPressed.id)
-			this.entityPressed = undefined
+		if (this.panelPressed && isDraggingEntity(event, this.panelPressed.id)) {
+			this._objPositioning.setSingleToMoveEntity(event, this.panelPressed.id)
+			this.panelPressed = undefined
 			return
 		}
 
@@ -687,7 +695,7 @@ export class DesignCanvasDirective implements OnInit {
 		this.scaleElement.innerText = `Scale: ${currentScaleX.toFixed(1)}`
 
 		this._render.renderCanvasApp()
-		event.preventDefault()
+		// event.preventDefault()
 	}
 
 	/**
@@ -783,183 +791,168 @@ export class DesignCanvasDirective implements OnInit {
 		}
 	}
 
-	/*private extracted(
-	 currentPoint: DOMPoint & {
-	 _type: 'TransformedPoint'
-	 },
-	 pointer,
-	 event: PointerEvent,
-	 ) {
-	 const drawingPanelPolaritySymbolLine = this._entities.panelLinks.drawingPanelPolaritySymbolLine
-	 const panelWithSymbol = this._entities.panels.getPanelWithSymbolUnderMouse(currentPoint)
-	 if (panelWithSymbol) {
-	 const existingHoveringSymbol = this._entities.panelLinks.getHoveringOverPanelPolaritySymbol
-	 if (existingHoveringSymbol && existingHoveringSymbol.panelId === panelWithSymbol.id) {
-	 if (!drawingPanelPolaritySymbolLine) return
-	 const anyPanelNearby = this._entities.panels.getNearbyPanelInLinkModeExcludingOne(
-	 currentPoint,
-	 drawingPanelPolaritySymbolLine.panelId,
-	 )
-	 this._render.renderCanvasApp({
-	 draggingSymbolLinkLine: {
-	 mouseDownPanelSymbol: drawingPanelPolaritySymbolLine,
-	 transformedPoint: currentPoint,
-	 nearbyPanelToLinkLine: anyPanelNearby,
-	 },
-	 })
-	 return
-	 }
-	 this._entities.panelLinks.setHoveringOverPanelPolaritySymbol({
-	 panelId: panelWithSymbol.id,
-	 symbol: panelWithSymbol.symbol,
-	 })
-	 if (drawingPanelPolaritySymbolLine) {
-	 const anyPanelNearby = this._entities.panels.getNearbyPanelInLinkModeExcludingOne(
-	 currentPoint,
-	 drawingPanelPolaritySymbolLine.panelId,
-	 )
+	onTouchStartHandler(event: TouchEvent) {
+		if (event.touches.length === 1) {
+			this.gesture.pointers.clear()
+			const touch = event.touches[0]
+			const pointerId = touch.identifier
+			this.gesture.pointers.set(pointerId, {
+				x: touch.clientX,
+				y: touch.clientY,
+			})
+			this.rawMousePos = singleTouchEventToPointLocation(event)
+			this.currentPoint = this._domPoint.getTransformedPointFromSingleTouchEvent(event)
+			// this.mouseClickHandler(event as unknown as PointerEvent, currentPoint)
+			return
+		}
+		for (let i = 0; i < event.touches.length; i++) {
+			const touch = event.touches[i]
+			const pointerId = touch.identifier
+			this.gesture.pointers.set(pointerId, {
+				x: touch.clientX,
+				y: touch.clientY,
+			})
+		}
 
-	 this._render.renderCanvasApp({
-	 draggingSymbolLinkLine: {
-	 mouseDownPanelSymbol: drawingPanelPolaritySymbolLine,
-	 transformedPoint: currentPoint,
-	 nearbyPanelToLinkLine: anyPanelNearby,
-	 },
-	 })
-	 return
-	 }
-	 this._render.renderCanvasApp()
-	 return
-	 } else if (this._entities.panelLinks.getHoveringOverPanelPolaritySymbol) {
-	 this._entities.panelLinks.clearHoveringOverPanelPolaritySymbol()
-	 return
-	 }
+		if (this.gesture.pointers.size === 2) {
+			this.gesture.lastCenter = getCenter(this.gesture.pointers)
+			this.gesture.initialScale = this.ctx.getTransform().a
+			this.gesture.initialDistance = getDistance(Array.from(this.gesture.pointers.values()))
+			this.gesture.lastDistance = this.gesture.initialDistance
+		}
 
-	 if (drawingPanelPolaritySymbolLine) {
-	 const anyPanelNearby = this._entities.panels.getNearbyPanelInLinkModeExcludingOne(
-	 currentPoint,
-	 drawingPanelPolaritySymbolLine.panelId,
-	 )
+		console.log('touch start gesture', this.gesture)
+		/*	const pointerId = this.gesture.pointers.size + 1
+		 this.gesture.pointers.set(pointerId, {
+		 x: event.,
+		 y: event.clientY,
+		 });*/
 
-	 if (anyPanelNearby) {
-	 console.log('anyPanelNearby', anyPanelNearby)
-	 }
+		/*if (event.touches.length === 1) {
+		 this.rawMousePos = singleTouchEventToPointLocation(event)
+		 this.currentPoint = this._domPoint.getTransformedPointFromSingleTouchEvent(event)
+		 this.mouseDownTimeOutFn()
+		 this.panelPressed = this.getPanelUnderMouse(this.currentPoint)
+		 if (this.panelPressed) {
+		 console.log('panel pressed', this.panelPressed)
+		 this._appState.setHoveringOverEntityState(this.panelPressed.id)
+		 this._render.renderCanvasApp()
+		 return
+		 }
+		 } else {
+		 console.log('multiple touches', event.touches)
+		 /!**
+		 * * Pinch to zoom
+		 *!/
+		 if (event.touches.length === 2) {
+		 const touch1 = event.touches[0]
+		 const touch2 = event.touches[1]
+		 const distance = distance2d(touch1.clientX, touch1.clientY, touch2.clientX, touch2.clientY)
+		 console.log('distance', distance)
+		 if (!this.initialPinchedDistance) {
+		 this.initialPinchedDistance = distance
+		 }
+		 const delta = distance - this.initialPinchedDistance
+		 console.log('delta', delta)
+		 const zoom = delta < 0 ? 1.1 : 0.9
+		 console.log('zoom', zoom)
+		 this.ctx.scale(zoom, zoom)
+		 this._render.renderCanvasApp()
+		 }
+		 }*/
+	}
 
-	 this._render.renderCanvasApp({
-	 draggingSymbolLinkLine: {
-	 mouseDownPanelSymbol: drawingPanelPolaritySymbolLine,
-	 transformedPoint: currentPoint,
-	 nearbyPanelToLinkLine: anyPanelNearby,
-	 },
-	 })
-	 return
-	 }
+	onTouchMoveHandler(event: TouchEvent) {
+		/*		if (event.touches.length == 1) {
+		 this.rawMousePos = singleTouchEventToPointLocation(event)
+		 this.currentPoint = this._domPoint.getTransformedPointFromSingleTouchEvent(event)
+		 // this.onMouseMoveHandler(event, this.currentPoint)
+		 } else {*/
+		// console.log('multiple touches', event.touches)
+		if (event.touches.length === 2) {
+			console.log('multiple touches', this.gesture, event.touches)
+		}
+		/**
+		 * * Pinch to zoom
+		 */
+		const gesture = this.gesture
+		const initialScale = gesture.initialScale
+		if (
+			gesture.pointers.size === 2 &&
+			gesture.lastCenter &&
+			initialScale &&
+			gesture.initialDistance &&
+			gesture.lastDistance
+		) {
+			const touches = event.touches
+			for (let i = 0; i < touches.length; i++) {
+				const touch = touches[i]
+				const pointerId = touch.identifier
+				const pointer = gesture.pointers.get(pointerId)
+				if (pointer) {
+					console.log('pointer', pointer)
+					pointer.x = touch.clientX
+					pointer.y = touch.clientY
+				}
+			}
+			const center = getCenter(gesture.pointers)
+			const deltaX = center.x - gesture.lastCenter.x
+			const deltaY = center.y - gesture.lastCenter.y
+			gesture.lastCenter = center
 
-	 const panelUnderMouse = this._entities.panels.getPanelUnderMouse(currentPoint)
-	 if (panelUnderMouse) {
-	 const hoveringEntityId = pointer.hoveringOverEntityId
-	 if (hoveringEntityId === panelUnderMouse.id) return
-	 this._appState.setHoveringOverEntityState(panelUnderMouse.id)
-	 if (this._entities.panelLinks.getHoveringOverPanelLinkInApp) {
-	 this._entities.panelLinks.clearHoveringOverPanelLinkInApp()
-	 }
-	 return
-	 }
+			const distance = getDistance(Array.from(gesture.pointers.values()))
+			const scaleFactor = distance / gesture.lastDistance
+			gesture.lastDistance = distance
+			// const scaleFactor = distance / gesture.initialDistance
+			// const adjustedScaleFactor = scaleFactor * 0.1
+			this.ctx.translate(center.x, center.y)
+			// this.ctx.scale(zoom, zoom)
+			// this.ctx.scale(scaleFactor, scaleFactor)
+			this.ctx.scale(scaleFactor, scaleFactor)
+			console.log('scaleFactor', scaleFactor)
+			// console.log('adjustedScaleFactor', adjustedScaleFactor)
+			// console.log('zoom', zoom)
+			this.ctx.translate(-center.x, -center.y)
 
-	 /!*const symbolOrPanel = this.getPanelOrLinkSymbolUnderMouse(currentPoint)
-	 if (symbolOrPanel) {
-	 // console.log('symbolOrPanel', symbolOrPanel)
-	 if (isPanelSymbol(symbolOrPanel)) {
-	 const { panelId, symbol } = symbolOrPanel
-	 this._entities.panelLinks.setHoveringOverPanelPolaritySymbol(panelId, symbol)
-	 return
-	 } else {
-	 if (this._entities.panelLinks.getHoveringOverPanelPolaritySymbol) {
-	 this._entities.panelLinks.clearHoveringOverPanelPolaritySymbol()
-	 return
-	 }
-	 }
+			this._render.renderCanvasApp()
+		}
+	}
 
-	 // this._panelLinks.isMouseOverLinkPathV4(event, currentPoint, symbolOrPanel)
-	 // return
-	 } else {
-	 if (this._entities.panelLinks.getHoveringOverPanelPolaritySymbol) {
-	 this._entities.panelLinks.clearHoveringOverPanelPolaritySymbol()
-	 return
-	 }
-	 }
-	 const entityUnderMouseInLineMode = this.getPanelUnderMouse(event)
-	 if (entityUnderMouseInLineMode) {
-	 const hoveringEntityId = pointer.hoveringOverEntityId
-	 const overSymbol = isPointInsidePanelSymbols(
-	 // const overSymbol = isPointInsideMiddleRightOfEntityWithRotationV2(
-	 currentPoint,
-	 entityUnderMouseInLineMode,
-	 )
-	 if (overSymbol) {
-	 console.log('over symbol', overSymbol)
+	onTouchEndHandler(event: TouchEvent) {
+		if (this.gesture.pointers.size === 0) {
+			console.log('touch end', this.gesture)
+			this.gesture.initialDistance = null
+			this.gesture.lastCenter = null
+		}
+		if (this.gesture.pointers.size === 1) {
+			console.log('touch end', this.gesture)
+			// this.rawMousePos = singleTouchEventToPointLocation(event)
+			// this.currentPoint = this._domPoint.getTransformedPointFromSingleTouchEvent(event)
+			const entityUnderMouse = this.getPanelUnderMouse(this.currentPoint)
+			if (entityUnderMouse) {
+				const mode = this._appState.mode()
+				if (mode === 'SelectMode') {
+					this._selected.handleEntityUnderTouch(event, entityUnderMouse)
+					return
+				}
+				this._selected.handleNotClickedOnEntity()
+				if (this.anyEntitiesNearAreaOfTouch(event)) {
+					return
+				}
+			}
+			this._entityFactory.createEntityFromTouch(event, this.currentPoint)
+		}
+	}
 
-	 /!*					if (hoveringEntityId === entityUnderMouseInLineMode.id) return
-	 this._appState.dispatch.setHoveringOverEntityState(entityUnderMouseInLineMode.id)
-	 if (this._entities.panelLinks.getHoveringOverPanelLinkInApp) {
-	 this._entities.panelLinks.clearHoveringOverPanelLinkInApp()
-	 }
-	 this._render.renderCanvasApp({
-	 panelUnderMouse: entityUnderMouseInLineMode as CanvasPanel,
-	 })
-	 return*!/
-	 }
-	 if (hoveringEntityId === entityUnderMouseInLineMode.id) return
-	 this._appState.setHoveringOverEntityState(entityUnderMouseInLineMode.id)
-	 if (this._entities.panelLinks.getHoveringOverPanelLinkInApp) {
-	 this._entities.panelLinks.clearHoveringOverPanelLinkInApp()
-	 }
-	 this._render.renderCanvasApp({
-	 panelUnderMouse: entityUnderMouseInLineMode as CanvasPanel,
-	 })
-	 return
-	 }*!/
-	 const panelLinkUnderMouse = this._panelLinks.isMouseOverLinkPath(event, currentPoint)
-	 if (panelLinkUnderMouse) {
-	 const existingPanelLinkUnderMouse = this._entities.panelLinks.getHoveringOverPanelLinkInApp
-	 if (existingPanelLinkUnderMouse && existingPanelLinkUnderMouse.id === panelLinkUnderMouse.id)
-	 return
-	 this._entities.panelLinks.setHoveringOverPanelLinkInApp(panelLinkUnderMouse.id)
-	 this._render.renderCanvasApp({
-	 transformedPoint: currentPoint,
-	 })
-	 return
-	 }
-
-	 if (this._entities.panelLinks.getHoveringOverPanelLinkInApp) {
-	 this._entities.panelLinks.clearHoveringOverPanelLinkInApp()
-	 this._render.renderCanvasApp()
-	 }
-
-	 const entityUnderMouse = this.getPanelUnderMouse(event)
-	 if (entityUnderMouse) {
-	 const hoveringEntityId = pointer.hoveringOverEntityId
-	 if (hoveringEntityId === entityUnderMouse.id) return
-	 this._appState.setHoveringOverEntityState(entityUnderMouse.id)
-	 this._render.renderCanvasApp({
-	 panelUnderMouse: entityUnderMouse as PanelModel,
-	 })
-	 return
-	 }
-
-	 if (pointer.hoverState === 'HoveringOverEntity') {
-	 changeCanvasCursor(this.canvas, CURSOR_TYPE.AUTO)
-	 this._appState.liftHoveringOverEntity()
-	 this._render.renderCanvasApp()
-	 return
-	 }
-	 /!*			const entityUnderMouse = this.getEntityUnderMouse(event)
-	 if (entityUnderMouse) {
-
-	 }*!/
-	 // this._panelLinks.handleMouseInLinkMode(event, currentPoint)
-	 return
-	 }*/
+	onTouchCancelHandler(event: TouchEvent) {
+		if (event.touches.length == 1) {
+			this.rawMousePos = singleTouchEventToPointLocation(event)
+			this.currentPoint = this._domPoint.getTransformedPointFromSingleTouchEvent(event)
+			// this.onMouseUpHandler(event, this.currentPoint)
+		} else {
+			console.log('multiple touches', event.touches)
+		}
+	}
 
 	private setupCanvas() {
 		const { canvas, ctx } = setupCanvas(this.canvas)
@@ -968,53 +961,164 @@ export class DesignCanvasDirective implements OnInit {
 		this._canvasEl.init(this.canvas, this.ctx)
 	}
 
+	private setupEventListenersBasedOnPlatform() {
+		switch (this.platform) {
+			case PLATFORM.DARWIN:
+			case PLATFORM.WINDOWS: {
+				this._renderer.listen(this.canvas, EVENT_TYPE.POINTER_UP, (event: PointerEvent) => {
+					event.stopPropagation()
+					event.preventDefault()
+					console.log('mouse up', event)
+					this.rawMousePos = eventToPointLocation(event)
+					this.currentPoint = this._domPoint.getTransformedPointFromEvent(event)
+					if (isContextMenu(event)) return
+					this.onMouseUpHandler(event, this.currentPoint)
+				})
+				this._renderer.listen(this.canvas, EVENT_TYPE.POINTER_DOWN, (event: PointerEvent) => {
+					event.stopPropagation()
+					event.preventDefault()
+					console.log('mouse down', event)
+					this.rawMousePos = eventToPointLocation(event)
+					this.currentPoint = this._domPoint.getTransformedPointFromEvent(event)
+					this.onMouseDownHandler(event, this.currentPoint)
+				})
+				this._renderer.listen(this.canvas, EVENT_TYPE.POINTER_MOVE, (event: PointerEvent) => {
+					event.stopPropagation()
+					event.preventDefault()
+					this.rawMousePos = eventToPointLocation(event)
+					this.currentPoint = this._domPoint.getTransformedPointFromEvent(event)
+					this.onMouseMoveHandler(event, this.currentPoint)
+				})
+				this._renderer.listen(this.canvas, ContextMenuEvent, (event: PointerEvent) => {
+					event.stopPropagation()
+					event.preventDefault()
+					this.rawMousePos = eventToPointLocation(event)
+					console.log('context menu', event)
+					this.currentPoint = this._domPoint.getTransformedPointFromEvent(event)
+					this.contextMenuHandler(event, this.currentPoint)
+				})
+				this._renderer.listen(this.canvas, DoubleClickEvent, (event: PointerEvent) => {
+					event.stopPropagation()
+					event.preventDefault()
+					this.rawMousePos = eventToPointLocation(event)
+					this.currentPoint = this._domPoint.getTransformedPointFromEvent(event)
+					this.doubleClickHandler(event, this.currentPoint)
+				})
+				this._renderer.listen(this.canvas, EVENT_TYPE.WHEEL, (event: WheelEvent) => {
+					event.stopPropagation()
+					event.preventDefault()
+					this.wheelScrollHandler(event)
+				}) // { passive: false } is required to prevent default
+				this._renderer.listen(window, 'resize', (event: Event) => {
+					event.stopPropagation()
+					event.preventDefault()
+					this.ctx.canvas.width = window.innerWidth
+					this.ctx.canvas.height = window.innerHeight
+					this._renderer.setStyle(this.canvas, 'width', '100%')
+					this._renderer.setStyle(this.canvas, 'height', '100%')
+					this._render.renderCanvasApp()
+				})
+				this._renderer.listen(window, EVENT_TYPE.KEY_UP, (event: KeyboardEvent) => {
+					event.stopPropagation()
+					event.preventDefault()
+					console.log('keyup menu', event)
+					this._keys.keyUpHandlerV4(event, this.rawMousePos, this.currentPoint)
+				})
+				break
+			}
+			case PLATFORM.ANDROID: {
+				this._renderer.listen(this.canvas, EVENT_TYPE.TOUCH_START, (event: TouchEvent) => {
+					event.stopPropagation()
+					event.preventDefault()
+					console.log('touch start', event)
+					this.onTouchStartHandler(event)
+				})
+				this._renderer.listen(this.canvas, EVENT_TYPE.TOUCH_MOVE, (event: TouchEvent) => {
+					event.stopPropagation()
+					event.preventDefault()
+					console.log('touch move', event)
+					this.onTouchMoveHandler(event)
+				})
+				this._renderer.listen(this.canvas, EVENT_TYPE.TOUCH_END, (event: TouchEvent) => {
+					event.stopPropagation()
+					event.preventDefault()
+					console.log('touch end', event)
+					this.onTouchEndHandler(event)
+				})
+				this._renderer.listen(this.canvas, EVENT_TYPE.TOUCH_CANCEL, (event: TouchEvent) => {
+					event.stopPropagation()
+					event.preventDefault()
+					console.log('touch cancel', event)
+					this.onTouchCancelHandler(event)
+				})
+				this._renderer.listen(this.canvas, EVENT_TYPE.GESTURE_START, (event: TouchEvent) => {
+					event.stopPropagation()
+					event.preventDefault()
+					console.log('gesturestart', event)
+					this.onTouchStartHandler(event)
+				})
+				break
+			}
+		}
+	}
+
 	private setupEventListeners() {
 		this._renderer.listen(this.canvas, EVENT_TYPE.POINTER_UP, (event: PointerEvent) => {
+			event.stopPropagation()
+			event.preventDefault()
 			console.log('mouse up', event)
 			this.rawMousePos = eventToPointLocation(event)
 			this.currentPoint = this._domPoint.getTransformedPointFromEvent(event)
 			if (isContextMenu(event)) return
 			this.onMouseUpHandler(event, this.currentPoint)
-			event.stopPropagation()
-			event.preventDefault()
 		})
 		this._renderer.listen(this.canvas, EVENT_TYPE.POINTER_DOWN, (event: PointerEvent) => {
+			event.stopPropagation()
+			event.preventDefault()
 			console.log('mouse down', event)
 			this.rawMousePos = eventToPointLocation(event)
 			this.currentPoint = this._domPoint.getTransformedPointFromEvent(event)
 			this.onMouseDownHandler(event, this.currentPoint)
-			event.stopPropagation()
-			event.preventDefault()
 		})
 		this._renderer.listen(this.canvas, EVENT_TYPE.POINTER_MOVE, (event: PointerEvent) => {
+			event.stopPropagation()
+			event.preventDefault()
 			this.rawMousePos = eventToPointLocation(event)
 			this.currentPoint = this._domPoint.getTransformedPointFromEvent(event)
 			// this._appState.mousePos = this.currentPoint
 			this.onMouseMoveHandler(event, this.currentPoint)
-			event.stopPropagation()
-			event.preventDefault()
 		})
 		this._renderer.listen(this.canvas, 'touchstart', (event: TouchEvent) => {
+			event.stopPropagation()
+			event.preventDefault()
 			console.log('touch start', event)
-			// const touches = event.changedTouches;
-			event.stopPropagation()
-			event.preventDefault()
+			this.onTouchStartHandler(event)
 		})
-		this._renderer.listen(this.canvas, 'touchend', (event: TouchEvent) => {
-			console.log('touch end', event)
+		this._renderer.listen(this.canvas, 'gesturestart', (event: TouchEvent) => {
 			event.stopPropagation()
 			event.preventDefault()
-		})
-		this._renderer.listen(this.canvas, 'touchcancel', (event: TouchEvent) => {
-			console.log('touch cancel', event)
-			event.stopPropagation()
-			event.preventDefault()
+			console.log('gesturestart', event)
+			this.onTouchStartHandler(event)
 		})
 		this._renderer.listen(this.canvas, 'touchmove', (event: TouchEvent) => {
-			console.log('touch move', event)
 			event.stopPropagation()
 			event.preventDefault()
+			console.log('touch move', event)
+			this.onTouchMoveHandler(event)
 		})
+		this._renderer.listen(this.canvas, 'touchend', (event: TouchEvent) => {
+			event.stopPropagation()
+			event.preventDefault()
+			console.log('touch end', event)
+			this.onTouchEndHandler(event)
+		})
+		this._renderer.listen(this.canvas, 'touchcancel', (event: TouchEvent) => {
+			event.stopPropagation()
+			event.preventDefault()
+			console.log('touch cancel', event)
+			this.onTouchCancelHandler(event)
+		})
+
 		/*		const throttledPointerMove = throttle((event: PointerEvent) => {
 		 event.stopPropagation()
 		 event.preventDefault()
@@ -1026,33 +1130,33 @@ export class DesignCanvasDirective implements OnInit {
 		 event.preventDefault()
 		 }, 1000 / 60)*/
 		this._renderer.listen(this.canvas, ContextMenuEvent, (event: PointerEvent) => {
+			event.stopPropagation()
+			event.preventDefault()
 			this.rawMousePos = eventToPointLocation(event)
 			console.log('context menu', event)
 			this.currentPoint = this._domPoint.getTransformedPointFromEvent(event)
 			this.contextMenuHandler(event, this.currentPoint)
-			event.stopPropagation()
-			event.preventDefault()
 		})
 		this._renderer.listen(this.canvas, DoubleClickEvent, (event: PointerEvent) => {
+			event.stopPropagation()
+			event.preventDefault()
 			this.rawMousePos = eventToPointLocation(event)
 			this.currentPoint = this._domPoint.getTransformedPointFromEvent(event)
 			this.doubleClickHandler(event, this.currentPoint)
-			event.stopPropagation()
-			event.preventDefault()
 		})
 		this._renderer.listen(this.canvas, EVENT_TYPE.WHEEL, (event: WheelEvent) => {
-			this.wheelScrollHandler(event)
 			event.stopPropagation()
 			event.preventDefault()
+			this.wheelScrollHandler(event)
 		}) // { passive: false } is required to prevent default
 		this._renderer.listen(window, 'resize', (event: Event) => {
+			event.stopPropagation()
+			event.preventDefault()
 			this.ctx.canvas.width = window.innerWidth
 			this.ctx.canvas.height = window.innerHeight
 			this._renderer.setStyle(this.canvas, 'width', '100%')
 			this._renderer.setStyle(this.canvas, 'height', '100%')
 			this._render.renderCanvasApp()
-			event.stopPropagation()
-			event.preventDefault()
 		})
 		this._renderer.listen(window, EVENT_TYPE.KEY_UP, (event: KeyboardEvent) => {
 			event.stopPropagation()
@@ -1112,6 +1216,37 @@ export class DesignCanvasDirective implements OnInit {
 		}
 
 		const center = this._domPoint.getTransformedPointFromEvent(event)
+		const mouseBoxBounds = getBoundsFromCenterPoint(center, size)
+		const anyNearClick = !!this.allPanels.find((entity) =>
+			isEntityOverlappingWithBounds(entity, mouseBoxBounds),
+		)
+		if (!anyNearClick) {
+			this._render.renderCanvasApp()
+			return false
+		}
+
+		const clickNearEntityBounds = {
+			top: mouseBoxBounds.top,
+			left: mouseBoxBounds.left,
+			width: size.width,
+			height: size.height,
+		}
+
+		this._render.renderCanvasApp({
+			clickNearEntityBounds,
+		})
+		return true
+	}
+
+	private anyEntitiesNearAreaOfTouch(event: TouchEvent) {
+		let size = SizeByType[ENTITY_TYPE.Panel]
+		const midSpacing = 2
+		size = {
+			width: size.width + midSpacing,
+			height: size.height + midSpacing,
+		}
+
+		const center = this._domPoint.getTransformedPointFromSingleTouchEvent(event)
 		const mouseBoxBounds = getBoundsFromCenterPoint(center, size)
 		const anyNearClick = !!this.allPanels.find((entity) =>
 			isEntityOverlappingWithBounds(entity, mouseBoxBounds),

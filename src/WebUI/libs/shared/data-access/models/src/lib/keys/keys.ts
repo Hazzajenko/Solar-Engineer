@@ -1,6 +1,5 @@
-export const isDarwin = /Mac|iPod|iPhone|iPad/.test(window.navigator.platform)
-export const isWindows = /^Win/.test(window.navigator.platform)
-export const isAndroid = /\b(android)\b/i.test(navigator.userAgent)
+import { isDarwin } from '../platform'
+
 export const KEYS = {
 	ARROW_DOWN: 'ArrowDown',
 	ARROW_LEFT: 'ArrowLeft',

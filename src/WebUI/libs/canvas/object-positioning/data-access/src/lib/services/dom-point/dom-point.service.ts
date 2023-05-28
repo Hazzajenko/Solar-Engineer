@@ -11,6 +11,7 @@ import {
 	eventOffsetsToPointLocation,
 	eventToPointLocation,
 	getTopLeftPointFromTransformedPoint,
+	singleTouchEventToPointLocation,
 } from '@canvas/utils'
 import { ENTITY_TYPE, EntityType, SizeByType } from '@entities/shared'
 
@@ -51,6 +52,12 @@ export class DomPointService {
 
 	getTransformedPointFromEvent(event: PointerEvent) {
 		const point = eventToPointLocation(event)
+		const originalPoint = new DOMPoint(point.x, point.y)
+		return this.ctx.getTransform().invertSelf().transformPoint(originalPoint) as TransformedPoint
+	}
+
+	getTransformedPointFromSingleTouchEvent(event: TouchEvent) {
+		const point = singleTouchEventToPointLocation(event)
 		const originalPoint = new DOMPoint(point.x, point.y)
 		return this.ctx.getTransform().invertSelf().transformPoint(originalPoint) as TransformedPoint
 	}

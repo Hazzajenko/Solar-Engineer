@@ -58,4 +58,44 @@ export class EntityFactoryService {
 
 		this._render.renderCanvasApp()
 	}
+
+	createEntityFromTouch(event: TouchEvent, currentPoint: TransformedPoint) {
+		const previewAxisState = this._appStore.state.previewAxis
+		if (previewAxisState === 'AxisCreatePreviewInProgress') {
+			if (!event.altKey || !this._nearby.axisPreviewRect) {
+				this._appStore.dispatch.setPreviewAxisState('None')
+				this._nearby.axisPreviewRect = undefined
+				this._render.renderCanvasApp()
+				return
+			}
+
+			const previewRectLocation = {
+				x: this._nearby.axisPreviewRect.left,
+				y: this._nearby.axisPreviewRect.top,
+			}
+
+			const selectedStringId = this._selectedStore.state.selectedStringId
+			const entity = selectedStringId
+				? createPanel(previewRectLocation, selectedStringId)
+				: createPanel(previewRectLocation)
+			this._entities.panels.addPanel(entity)
+			this._nearby.axisPreviewRect = undefined
+			this._appStore.dispatch.setPreviewAxisState('None')
+
+			this._render.renderCanvasApp()
+			return
+		}
+
+		const location = getTopLeftPointFromTransformedPoint(
+			currentPoint,
+			SizeByType[ENTITY_TYPE.Panel],
+		)
+		const selectedStringId = this._selectedStore.state.selectedStringId
+		const entity = selectedStringId
+			? createPanel(location, selectedStringId)
+			: createPanel(location)
+		this._entities.panels.addPanel(entity)
+
+		this._render.renderCanvasApp()
+	}
 }
