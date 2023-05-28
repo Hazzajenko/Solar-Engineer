@@ -65,16 +65,18 @@ export class ObjectPositioningService {
 		return document.getElementById('canvas') as HTMLCanvasElement
 	}
 
-	setSingleToMoveEntity(event: PointerEvent, singleToMoveId: string) {
+	setSingleToMoveEntity(event: PointerEvent | TouchEvent, singleToMoveId: string) {
 		this.singleToMoveId = singleToMoveId
 		this._positioningStore.dispatch.startMovingSingleEntity(singleToMoveId)
 		changeCanvasCursor(this.canvas, CURSOR_TYPE.GRABBING)
 	}
 
-	singleEntityToMoveMouseMove(event: PointerEvent, currentPoint: TransformedPoint) {
-		if (!isHoldingClick(event)) {
-			this.singleEntityToMoveMouseUp(event, currentPoint)
-			return
+	singleEntityToMoveMouseMove(event: PointerEvent | TouchEvent, currentPoint: TransformedPoint) {
+		if (event instanceof PointerEvent) {
+			if (!isHoldingClick(event)) {
+				this.singleEntityToMoveMouseUp(event, currentPoint)
+				return
+			}
 		}
 		assertNotNull(this.singleToMoveId)
 		const isSpotTaken = this.areAnyEntitiesNearbyExcludingGrabbed(currentPoint, this.singleToMoveId)
@@ -156,7 +158,10 @@ export class ObjectPositioningService {
 		})
 	}
 
-	singleEntityToMoveMouseUp(event: PointerEvent | boolean, currentPoint: TransformedPoint) {
+	singleEntityToMoveMouseUp(
+		event: PointerEvent | TouchEvent | boolean,
+		currentPoint: TransformedPoint,
+	) {
 		assertNotNull(this.singleToMoveId)
 
 		if (this._positioningStore.state.toMoveSpotTaken) {

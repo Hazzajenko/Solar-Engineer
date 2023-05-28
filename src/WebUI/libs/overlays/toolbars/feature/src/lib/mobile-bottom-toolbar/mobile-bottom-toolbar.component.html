@@ -1,22 +1,17 @@
 <div
-	@goBottom
-	class="overflow-hidden bg-gray-100 shadow-md dark:bg-gray-800 md:rounded-lg z-50 absolute top-28 left-1/2 -translate-x-1/2"
+	@goTop
+	class="overflow-hidden bg-gray-100 shadow-md dark:bg-gray-800 md:rounded-lg z-50 absolute top-8 left-1/2 -translate-x-1/2"
 >
 	<div
 		class="flex flex-col items-center justify-between p-4 space-y-3 md:flex-row md:space-y-0 md:space-x-4"
 	>
 		<div class="flex items-center space-x-1">
 			<button
-				(click)="toggleLinkMode()"
-				[ngClass]='{
-							"outline-none": appMode() !== "LinkMode",
-							"outline outline-blue-500/50 outline-2 outline-offset-2": appMode() === "LinkMode",
-							}'
 				class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
 				type="button"
 			>
 				<app-show-svg-no-styles inputClass="w-5 h-5" svgPath="links/link" />
-				<span class="sr-only">Toggle Link Mode</span>
+				<span class="sr-only">Create String With Selected</span>
 			</button>
 		</div>
 	</div>

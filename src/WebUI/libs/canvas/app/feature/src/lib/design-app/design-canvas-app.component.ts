@@ -30,15 +30,19 @@ import { CdkDrag } from '@angular/cdk/drag-drop'
 import { CommonModule } from '@angular/common'
 import { ActionNotificationsDisplayComponent } from '@overlays/notifications/feature'
 import { SideUiNavBarComponent } from '@overlays/side-uis/feature'
-import { OverlayToolBarComponent, SelectedStringToolBarComponent } from '@overlays/toolbars/feature'
+import {
+	MobileBottomToolbarComponent,
+	OverlayToolBarComponent,
+	SelectedStringToolBarComponent,
+} from '@overlays/toolbars/feature'
 import { AppStateStoreService, DivElementsService } from '@canvas/app/data-access'
 import { UiStoreService } from '@overlays/ui-store/data-access'
-import { DraggableWindow } from '@shared/data-access/models'
+import { DraggableWindow, SCREEN_SIZE } from '@shared/data-access/models'
 import { ContextMenuRendererComponent } from '@overlays/context-menus/feature'
 import { ObjectPositioningStoreService } from '@canvas/object-positioning/data-access'
 import { map } from 'rxjs'
 import { GraphicsStoreService } from '@canvas/graphics/data-access'
-import { selectSignalFromStore } from '@shared/utils'
+import { getScreenSize, selectSignalFromStore } from '@shared/utils'
 import { selectSelectedStringId } from '@canvas/selected/data-access'
 
 @Component({
@@ -60,6 +64,7 @@ import { selectSelectedStringId } from '@canvas/selected/data-access'
 		OverlayToolBarComponent,
 		ContextMenuRendererComponent,
 		SelectedStringToolBarComponent,
+		MobileBottomToolbarComponent,
 	],
 	selector: 'app-design-canvas-app',
 	standalone: true,
@@ -106,6 +111,8 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 			rotateEntityState: this._objectPositioningStore.state.rotateEntityState,
 		},
 	})
+
+	screenSize = getScreenSize()
 	// @ViewChildren('canvas') canvas: ElementRef<HTMLDivElement>
 	version = signal('1.0.1')
 	// version = '0.0.1'
@@ -149,6 +156,32 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 			isOpen: true,
 		},
 	]
+	/*	pushWindow(event: MouseEvent) {
+	 this._windows.dispatch.addWindow({
+	 id: getGuid(),
+	 title: 'Window 2',
+	 location: { x: event.clientX, y: event.clientY },
+	 size: { width: 200, height: 200 },
+	 isOpen: true,
+	 })
+	 /!*		this.windows.push({
+	 id: 'window2',
+	 title: 'Window 2',
+	 location: { x: event.clientX, y: event.clientY },
+	 size: { width: 200, height: 200 },
+	 isOpen: true,
+	 })*!/
+	 }
+
+	 openWindow(window: DraggableWindow) {
+	 // const update = updateObjectForStore(window, { isOpen: true })
+	 // this._windows.dispatch.updateWindow(update)
+	 }
+
+	 closeWindow(window: DraggableWindow) {
+	 this._windows.dispatch.deleteWindow(window.id)
+	 }*/
+	protected readonly SCREEN_SIZE = SCREEN_SIZE
 
 	constructor() {
 		this.waitForElements()
@@ -184,30 +217,4 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 			this._divElements.initElements()
 		})
 	}
-
-	/*	pushWindow(event: MouseEvent) {
-	 this._windows.dispatch.addWindow({
-	 id: getGuid(),
-	 title: 'Window 2',
-	 location: { x: event.clientX, y: event.clientY },
-	 size: { width: 200, height: 200 },
-	 isOpen: true,
-	 })
-	 /!*		this.windows.push({
-	 id: 'window2',
-	 title: 'Window 2',
-	 location: { x: event.clientX, y: event.clientY },
-	 size: { width: 200, height: 200 },
-	 isOpen: true,
-	 })*!/
-	 }
-
-	 openWindow(window: DraggableWindow) {
-	 // const update = updateObjectForStore(window, { isOpen: true })
-	 // this._windows.dispatch.updateWindow(update)
-	 }
-
-	 closeWindow(window: DraggableWindow) {
-	 this._windows.dispatch.deleteWindow(window.id)
-	 }*/
 }

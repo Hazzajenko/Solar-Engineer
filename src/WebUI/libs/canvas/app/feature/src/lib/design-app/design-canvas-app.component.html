@@ -30,6 +30,8 @@
 <overlay-tool-bar-component />
 <overlay-selected-string-tool-bar *ngIf="stringIsSelected()" />
 
+<overlay-mobile-bottom-toolbar *ngIf="screenSize === SCREEN_SIZE.SMALL" />
+
 <app-action-notifications-display />
 
 <div

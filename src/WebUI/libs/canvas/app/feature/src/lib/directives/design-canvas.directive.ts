@@ -1,4 +1,4 @@
-import { setupCanvas } from '../utils'
+import { handlePinchToZoom, isReadyForPinchToZoom, setupCanvas } from '../utils'
 import { Directive, ElementRef, inject, NgZone, OnInit, Renderer2 } from '@angular/core'
 import {
 	ContextMenuEvent,
@@ -814,8 +814,7 @@ export class DesignCanvasDirective implements OnInit {
 	}
 
 	/**
-	 * * Mouse Move handler
-	 * @param event
+	 * * Touch Start handler
 	 */
 	onTouchStartHandler(event: TouchEvent) {
 		// * If there is only one touch, handle as a click
@@ -829,7 +828,7 @@ export class DesignCanvasDirective implements OnInit {
 			})
 			this.rawMousePos = singleTouchEventToPointLocation(event)
 			this.currentPoint = this._domPoint.getTransformedPointFromSingleTouchEvent(event)
-			this.touchStartTimeOutFn()
+			// this.touchStartTimeOutFn()
 			return
 		}
 
@@ -854,51 +853,22 @@ export class DesignCanvasDirective implements OnInit {
 
 	/**
 	 * * Touch move handler
-	 * @param event
 	 */
 	onTouchMoveHandler(event: TouchEvent) {
+		this.rawMousePos = singleTouchEventToPointLocation(event)
+		this.currentPoint = this._domPoint.getTransformedPointFromSingleTouchEvent(event)
+
 		// * Handle pinch to zoom
 		const gesture = this.gesture
-		if (
-			gesture.pointers.size === 2 &&
-			gesture.lastCenter &&
-			gesture.initialScale &&
-			gesture.initialDistance &&
-			gesture.initialCenter &&
-			gesture.lastDistance
-		) {
-			if (event.touches.length < 2) {
+		if (isReadyForPinchToZoom(gesture)) {
+			const zoomed = handlePinchToZoom(event, this.ctx, gesture)
+			if (!zoomed) {
 				this.clearGesture()
 				return
 			}
-			const touches = event.touches
-			for (let i = 0; i < touches.length; i++) {
-				const touch = touches[i]
-				const pointerId = touch.identifier
-				const pointer = gesture.pointers.get(pointerId)
-				if (pointer) {
-					pointer.x = touch.clientX
-					pointer.y = touch.clientY
-				}
-			}
-			const center = getCenter(gesture.pointers)
-			const deltaX = center.x - gesture.lastCenter.x
-			const deltaY = center.y - gesture.lastCenter.y
-			gesture.lastCenter = center
-
-			const distance = getDistance(Array.from(gesture.pointers.values()))
-			const scaleFactor = distance / gesture.lastDistance
-			gesture.lastDistance = distance
-
-			const transformedInitialCenter = this._domPoint.getTransformedPointFromXy(
-				gesture.initialCenter,
-			)
-			this.ctx.translate(transformedInitialCenter.x, transformedInitialCenter.y)
-			this.ctx.scale(scaleFactor, scaleFactor)
-			this.ctx.translate(-transformedInitialCenter.x, -transformedInitialCenter.y)
-			this.ctx.translate(deltaX, deltaY)
 
 			this._render.renderCanvasApp()
+			return
 		}
 
 		// * Handle touch hold
@@ -912,44 +882,22 @@ export class DesignCanvasDirective implements OnInit {
 				return
 			}
 			if (this.touchHolding) {
-				this.singleTouchHoldHandler(event)
+				this.singleTouchHoldHandler(event, this.currentPoint)
 				return
 			}
 			setTimeout(() => {
-				if (gesture.pointers.get(pointerId)) {
+				if (this.gesture.pointers.get(pointerId)) {
 					this.touchHolding = true
-					this.singleTouchHoldHandler(event)
+					this.singleTouchHoldHandler(event, this.currentPoint)
 				}
-			}, 300)
-			/*			if (this.touchStartTimeOut) {
-			 console.log('touchStartTimeOut', this.touchStartTimeOut)
-			 clearTimeout(this.touchStartTimeOut)
-			 this.touchStartTimeOut = undefined
-			 this.singleTouchHoldHandler(event)
-			 return
-			 }*/
-			/*const touch = event.touches[0]
-			 const pointerId = touch.identifier
-			 const pointer = this.gesture.pointers.get(pointerId)
-			 if (pointer) {
-			 pointer.x = touch.clientX
-			 pointer.y = touch.clientY
-			 }
-			 const distance = getDistance(Array.from(this.gesture.pointers.values()))
-			 if (distance > 10) {
-			 this.clearGesture()
-			 return
-			 }
-			 this.rawMousePos = singleTouchEventToPointLocation(event)
-			 this.currentPoint = this._domPoint.getTransformedPointFromSingleTouchEvent(event)*/
-			// this.touchStartTimeOutFn()
+			}, 50)
 		}
 	}
 
 	/**
 	 * * Single touch hold handler
 	 */
-	singleTouchHoldHandler(event: TouchEvent) {
+	singleTouchHoldHandler(event: TouchEvent, currentPoint: TransformedPoint) {
 		const touch = event.touches[0]
 		const pointerId = touch.identifier
 		const pointer = this.gesture.pointers.get(pointerId)
@@ -957,18 +905,30 @@ export class DesignCanvasDirective implements OnInit {
 			console.error('Pointer not found')
 			return
 		}
-		this.rawMousePos = singleTouchEventToPointLocation(event)
-		this.currentPoint = this._domPoint.getTransformedPointFromSingleTouchEvent(event)
-		// this.currentPoint = this._domPoint.getTransformedPointFromXy(pointer)
-		const currentPoint = this.currentPoint
+		// this.rawMousePos = singleTouchEventToPointLocation(event)
+		// this.currentPoint = this._domPoint.getTransformedPointFromSingleTouchEvent(event)
+		// const currentPoint = this.currentPoint
+
+		// * Handle move single entity
+		const moveEntityState = this._positioningStore.state.moveEntityState
+		const panelUnderMouse = this.getPanelUnderMouse(this.currentPoint)
+		if (panelUnderMouse && moveEntityState !== 'MovingSingleEntity') {
+			this._objPositioning.setSingleToMoveEntity(event, panelUnderMouse.id)
+			this._objPositioning.singleEntityToMoveMouseMove(event, currentPoint)
+			return
+		}
+		if (moveEntityState === 'MovingSingleEntity') {
+			this._objPositioning.singleEntityToMoveMouseMove(event, currentPoint)
+			return
+		}
+
+		// * Handle drag box
 		const dragBox = this._appState.dragBox()
 		if (dragBox.state === 'NoDragBox') {
 			dragBoxOnMouseDownHandler(currentPoint, this._appState)
 		}
-		// if (!isSelectionBoxInProgressState(dragBox) || !isSelectionBoxInProgressState(dragBox)) return
 		if (isNoDragBoxState(dragBox)) return
 		const start = dragBox.start
-		// const distance = getDistance([pointer, start])
 		const renderOptions = dragBoxOnMouseMoveHandler(
 			event,
 			currentPoint,
@@ -979,18 +939,10 @@ export class DesignCanvasDirective implements OnInit {
 		if (renderOptions) {
 			this._render.renderCanvasApp(renderOptions)
 		}
-
-		// if (this._appState.dragBox().state === 'NoDragBox') {
-		// 	this.clearGesture()
-		// 	return
-		// }
-		// pointer.x = touch.clientX
-		// pointer.y = touch.clientY
 	}
 
 	/**
 	 * * Touch end handler
-	 * @param event
 	 */
 
 	onTouchEndHandler(event: TouchEvent) {
@@ -1011,6 +963,15 @@ export class DesignCanvasDirective implements OnInit {
 				this._selectedStore,
 				this._entities.panels,
 			)
+			this.clearGesture()
+			this.touchHolding = false
+			return
+		}
+
+		// * Handle end move single entity
+		const moveEntityState = this._positioningStore.state.moveEntityState
+		if (moveEntityState === 'MovingSingleEntity') {
+			this._objPositioning.singleEntityToMoveMouseUp(event, currentPoint)
 			this.clearGesture()
 			this.touchHolding = false
 			return
