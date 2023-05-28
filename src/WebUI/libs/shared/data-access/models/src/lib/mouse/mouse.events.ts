@@ -124,13 +124,10 @@ export type EventType = (typeof EVENT_TYPE)[keyof typeof EVENT_TYPE]
 
 export type Gesture = {
 	pointers: Map<number, Point>
-	lastCenter: {
-		x: number
-		y: number
-	} | null
-	lastDistance: number | null
-	// lastScale: number | null
+	lastCenter: Point | null
+	initialCenter: Point | null
 	initialDistance: number | null
+	lastDistance: number | null
 	initialScale: number | null
 }
 

@@ -12,7 +12,6 @@ import { PanelsStore } from '@entities/data-access'
 import { createRenderOptions } from '@canvas/rendering/data-access'
 
 export const dragBoxOnMouseDownHandler = (
-	event: PointerEvent,
 	currentPoint: TransformedPoint,
 	_appStore: AppStateStore,
 ) => {
@@ -35,17 +34,54 @@ export const dragBoxOnMouseDownHandler = (
 	}
 }
 
-export const selectionBoxMouseMove = (
-	event: PointerEvent,
+export const dragBoxOnMouseMoveHandler = (
+	event: PointerEvent | TouchEvent,
 	currentPoint: TransformedPoint,
-	dragBoxStart: TransformedPoint, // panels: PanelModel[],
+	dragBoxStart: TransformedPoint,
+	panels: PanelModel[],
 	_appStore: AppStateStore,
 ) => {
-	if (!dragBoxKeysDown(event)) {
-		_appStore.setDragBoxState({
-			state: 'NoDragBox',
-		})
-		return
+	switch (_appStore.mode()) {
+		case MODE_STATE.SELECT_MODE:
+			return selectionBoxMouseMove(event, currentPoint, dragBoxStart, _appStore)
+		case MODE_STATE.LINK_MODE:
+			return selectionBoxMouseMove(event, currentPoint, dragBoxStart, _appStore)
+		case MODE_STATE.CREATE_MODE:
+			return creationBoxMouseMove(event, currentPoint, dragBoxStart, panels, _appStore)
+	}
+}
+
+export const dragBoxOnMouseUpHandler = (
+	currentPoint: TransformedPoint,
+	dragBoxStart: TransformedPoint,
+	panels: PanelModel[],
+	_appStore: AppStateStore,
+	_selectedStore: SelectedStore,
+	_panelsStore: PanelsStore,
+) => {
+	switch (_appStore.mode()) {
+		case MODE_STATE.SELECT_MODE:
+			return selectionBoxMouseUp(currentPoint, dragBoxStart, panels, _appStore, _selectedStore)
+		case MODE_STATE.LINK_MODE:
+			return selectionBoxMouseUp(currentPoint, dragBoxStart, panels, _appStore, _selectedStore)
+		case MODE_STATE.CREATE_MODE:
+			return creationBoxMouseUp(currentPoint, dragBoxStart, panels, _appStore, _panelsStore)
+	}
+}
+
+export const selectionBoxMouseMove = (
+	event: PointerEvent | TouchEvent,
+	currentPoint: TransformedPoint,
+	dragBoxStart: TransformedPoint,
+	_appStore: AppStateStore,
+) => {
+	if (event instanceof PointerEvent) {
+		if (!dragBoxKeysDown(event)) {
+			_appStore.setDragBoxState({
+				state: 'NoDragBox',
+			})
+			return
+		}
 	}
 
 	return createRenderOptions({
@@ -59,7 +95,6 @@ export const selectionBoxMouseMove = (
 }
 
 export const selectionBoxMouseUp = (
-	event: PointerEvent,
 	currentPoint: TransformedPoint,
 	dragBoxStart: TransformedPoint,
 	panels: PanelModel[],
@@ -77,17 +112,19 @@ export const selectionBoxMouseUp = (
 }
 
 export const creationBoxMouseMove = (
-	event: PointerEvent,
+	event: PointerEvent | TouchEvent,
 	currentPoint: TransformedPoint,
 	dragBoxStart: TransformedPoint,
 	panels: PanelModel[],
 	_appStore: AppStateStore,
 ) => {
-	if (!dragBoxKeysDown(event)) {
-		_appStore.setDragBoxState({
-			state: 'NoDragBox',
-		})
-		return
+	if (event instanceof PointerEvent) {
+		if (!dragBoxKeysDown(event)) {
+			_appStore.setDragBoxState({
+				state: 'NoDragBox',
+			})
+			return
+		}
 	}
 	return createRenderOptions({
 		creationBox: {
@@ -101,7 +138,6 @@ export const creationBoxMouseMove = (
 }
 
 export const creationBoxMouseUp = (
-	event: PointerEvent,
 	currentPoint: TransformedPoint,
 	dragBoxStart: TransformedPoint,
 	panels: PanelModel[],

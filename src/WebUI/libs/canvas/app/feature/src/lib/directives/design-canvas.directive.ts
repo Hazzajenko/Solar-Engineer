@@ -13,7 +13,12 @@ import {
 	TransformedPoint,
 } from '@shared/data-access/models'
 import { assertNotNull, getCenter, getDistance, OnDestroyDirective } from '@shared/utils'
-import { CanvasElementService, injectAppStateStore, MODE_STATE } from '@canvas/app/data-access'
+import {
+	CanvasElementService,
+	injectAppStateStore,
+	isNoDragBoxState,
+	MODE_STATE,
+} from '@canvas/app/data-access'
 import { GraphicsStoreService } from '@canvas/graphics/data-access'
 import {
 	DomPointService,
@@ -66,6 +71,8 @@ import {
 	creationBoxMouseMove,
 	creationBoxMouseUp,
 	dragBoxOnMouseDownHandler,
+	dragBoxOnMouseMoveHandler,
+	dragBoxOnMouseUpHandler,
 	selectionBoxMouseMove,
 	selectionBoxMouseUp,
 } from '../utils/drag-box'
@@ -101,6 +108,7 @@ export class DesignCanvasDirective implements OnInit {
 	private _nearby = inject(NearbyService)
 	private _domPoint = inject(DomPointService)
 	private _keys = inject(KeyEventsService)
+
 	private mouseDownTimeOut: ReturnType<typeof setTimeout> | undefined
 	// private _divElements = inject(DivElementsService)
 	private mouseDownTimeOutForMove: ReturnType<typeof setTimeout> | undefined
@@ -139,19 +147,37 @@ export class DesignCanvasDirective implements OnInit {
 	}
 
 	platform: Platform = getCurrentPlatform()
-
 	currentTransformedCursor!: TransformedPoint
-	initialPinchedDistance: number | undefined
 	rawMousePos: Point = { x: 0, y: 0 }
 	currentPoint: TransformedPoint = { x: 0, y: 0 } as TransformedPoint
 	panelPressed: PanelModel | undefined
 
+	touchStartTimeOut: ReturnType<typeof setTimeout> | undefined
+	touchStartTimeOutFn = () => {
+		this.touchStartTimeOut = setTimeout(() => {
+			clearTimeout(this.touchStartTimeOut)
+			this.touchStartTimeOut = undefined
+		}, 300)
+	}
+	touchHolding = false
 	gesture: Gesture = {
 		pointers: new Map(),
 		lastCenter: null,
+		initialCenter: null,
 		initialDistance: null,
 		initialScale: null,
 		lastDistance: null,
+	}
+
+	clearGesture() {
+		this.gesture = {
+			pointers: new Map(),
+			lastCenter: null,
+			initialCenter: null,
+			initialDistance: null,
+			initialScale: null,
+			lastDistance: null,
+		}
 	}
 
 	/**
@@ -196,7 +222,7 @@ export class DesignCanvasDirective implements OnInit {
 		}
 
 		if (dragBoxKeysDown(event)) {
-			dragBoxOnMouseDownHandler(event, currentPoint, this._appState)
+			dragBoxOnMouseDownHandler(currentPoint, this._appState)
 			return
 		}
 
@@ -434,7 +460,6 @@ export class DesignCanvasDirective implements OnInit {
 
 		if (dragBox.state === 'SelectionBoxInProgress') {
 			selectionBoxMouseUp(
-				event,
 				currentPoint,
 				dragBox.start,
 				this._entities.panels.allPanels,
@@ -445,9 +470,7 @@ export class DesignCanvasDirective implements OnInit {
 		}
 
 		if (dragBox.state === 'CreationBoxInProgress') {
-			// this._drag.creationBoxMouseUp(event, currentPoint)
 			creationBoxMouseUp(
-				event,
 				currentPoint,
 				dragBox.start,
 				this._entities.panels.allPanels,
@@ -721,7 +744,6 @@ export class DesignCanvasDirective implements OnInit {
 		}
 
 		const { mode } = this._appState.appState()
-		// const mode = this._appState.state.mode
 		if (mode === 'LinkMode') {
 			const panelLinkUnderMouse = this._panelLinks.isMouseOverLinkPath(event, currentPoint)
 			if (panelLinkUnderMouse) {
@@ -791,7 +813,12 @@ export class DesignCanvasDirective implements OnInit {
 		}
 	}
 
+	/**
+	 * * Mouse Move handler
+	 * @param event
+	 */
 	onTouchStartHandler(event: TouchEvent) {
+		// * If there is only one touch, handle as a click
 		if (event.touches.length === 1) {
 			this.gesture.pointers.clear()
 			const touch = event.touches[0]
@@ -802,9 +829,11 @@ export class DesignCanvasDirective implements OnInit {
 			})
 			this.rawMousePos = singleTouchEventToPointLocation(event)
 			this.currentPoint = this._domPoint.getTransformedPointFromSingleTouchEvent(event)
-			// this.mouseClickHandler(event as unknown as PointerEvent, currentPoint)
+			this.touchStartTimeOutFn()
 			return
 		}
+
+		// * If there are two touches, handle as a gesture
 		for (let i = 0; i < event.touches.length; i++) {
 			const touch = event.touches[i]
 			const pointerId = touch.identifier
@@ -815,82 +844,39 @@ export class DesignCanvasDirective implements OnInit {
 		}
 
 		if (this.gesture.pointers.size === 2) {
-			this.gesture.lastCenter = getCenter(this.gesture.pointers)
+			this.gesture.initialCenter = getCenter(this.gesture.pointers)
+			this.gesture.lastCenter = this.gesture.initialCenter
 			this.gesture.initialScale = this.ctx.getTransform().a
 			this.gesture.initialDistance = getDistance(Array.from(this.gesture.pointers.values()))
 			this.gesture.lastDistance = this.gesture.initialDistance
 		}
-
-		console.log('touch start gesture', this.gesture)
-		/*	const pointerId = this.gesture.pointers.size + 1
-		 this.gesture.pointers.set(pointerId, {
-		 x: event.,
-		 y: event.clientY,
-		 });*/
-
-		/*if (event.touches.length === 1) {
-		 this.rawMousePos = singleTouchEventToPointLocation(event)
-		 this.currentPoint = this._domPoint.getTransformedPointFromSingleTouchEvent(event)
-		 this.mouseDownTimeOutFn()
-		 this.panelPressed = this.getPanelUnderMouse(this.currentPoint)
-		 if (this.panelPressed) {
-		 console.log('panel pressed', this.panelPressed)
-		 this._appState.setHoveringOverEntityState(this.panelPressed.id)
-		 this._render.renderCanvasApp()
-		 return
-		 }
-		 } else {
-		 console.log('multiple touches', event.touches)
-		 /!**
-		 * * Pinch to zoom
-		 *!/
-		 if (event.touches.length === 2) {
-		 const touch1 = event.touches[0]
-		 const touch2 = event.touches[1]
-		 const distance = distance2d(touch1.clientX, touch1.clientY, touch2.clientX, touch2.clientY)
-		 console.log('distance', distance)
-		 if (!this.initialPinchedDistance) {
-		 this.initialPinchedDistance = distance
-		 }
-		 const delta = distance - this.initialPinchedDistance
-		 console.log('delta', delta)
-		 const zoom = delta < 0 ? 1.1 : 0.9
-		 console.log('zoom', zoom)
-		 this.ctx.scale(zoom, zoom)
-		 this._render.renderCanvasApp()
-		 }
-		 }*/
 	}
 
+	/**
+	 * * Touch move handler
+	 * @param event
+	 */
 	onTouchMoveHandler(event: TouchEvent) {
-		/*		if (event.touches.length == 1) {
-		 this.rawMousePos = singleTouchEventToPointLocation(event)
-		 this.currentPoint = this._domPoint.getTransformedPointFromSingleTouchEvent(event)
-		 // this.onMouseMoveHandler(event, this.currentPoint)
-		 } else {*/
-		// console.log('multiple touches', event.touches)
-		if (event.touches.length === 2) {
-			console.log('multiple touches', this.gesture, event.touches)
-		}
-		/**
-		 * * Pinch to zoom
-		 */
+		// * Handle pinch to zoom
 		const gesture = this.gesture
-		const initialScale = gesture.initialScale
 		if (
 			gesture.pointers.size === 2 &&
 			gesture.lastCenter &&
-			initialScale &&
+			gesture.initialScale &&
 			gesture.initialDistance &&
+			gesture.initialCenter &&
 			gesture.lastDistance
 		) {
+			if (event.touches.length < 2) {
+				this.clearGesture()
+				return
+			}
 			const touches = event.touches
 			for (let i = 0; i < touches.length; i++) {
 				const touch = touches[i]
 				const pointerId = touch.identifier
 				const pointer = gesture.pointers.get(pointerId)
 				if (pointer) {
-					console.log('pointer', pointer)
 					pointer.x = touch.clientX
 					pointer.y = touch.clientY
 				}
@@ -903,31 +889,135 @@ export class DesignCanvasDirective implements OnInit {
 			const distance = getDistance(Array.from(gesture.pointers.values()))
 			const scaleFactor = distance / gesture.lastDistance
 			gesture.lastDistance = distance
-			// const scaleFactor = distance / gesture.initialDistance
-			// const adjustedScaleFactor = scaleFactor * 0.1
-			this.ctx.translate(center.x, center.y)
-			// this.ctx.scale(zoom, zoom)
-			// this.ctx.scale(scaleFactor, scaleFactor)
+
+			const transformedInitialCenter = this._domPoint.getTransformedPointFromXy(
+				gesture.initialCenter,
+			)
+			this.ctx.translate(transformedInitialCenter.x, transformedInitialCenter.y)
 			this.ctx.scale(scaleFactor, scaleFactor)
-			console.log('scaleFactor', scaleFactor)
-			// console.log('adjustedScaleFactor', adjustedScaleFactor)
-			// console.log('zoom', zoom)
-			this.ctx.translate(-center.x, -center.y)
+			this.ctx.translate(-transformedInitialCenter.x, -transformedInitialCenter.y)
+			this.ctx.translate(deltaX, deltaY)
 
 			this._render.renderCanvasApp()
 		}
+
+		// * Handle touch hold
+		if (gesture.pointers.size === 1) {
+			const touch = event.touches[0]
+			const pointerId = touch.identifier
+			const pointer = gesture.pointers.get(pointerId)
+			if (!pointer) {
+				this.touchHolding = false
+				console.error('Pointer not found')
+				return
+			}
+			if (this.touchHolding) {
+				this.singleTouchHoldHandler(event)
+				return
+			}
+			setTimeout(() => {
+				if (gesture.pointers.get(pointerId)) {
+					this.touchHolding = true
+					this.singleTouchHoldHandler(event)
+				}
+			}, 300)
+			/*			if (this.touchStartTimeOut) {
+			 console.log('touchStartTimeOut', this.touchStartTimeOut)
+			 clearTimeout(this.touchStartTimeOut)
+			 this.touchStartTimeOut = undefined
+			 this.singleTouchHoldHandler(event)
+			 return
+			 }*/
+			/*const touch = event.touches[0]
+			 const pointerId = touch.identifier
+			 const pointer = this.gesture.pointers.get(pointerId)
+			 if (pointer) {
+			 pointer.x = touch.clientX
+			 pointer.y = touch.clientY
+			 }
+			 const distance = getDistance(Array.from(this.gesture.pointers.values()))
+			 if (distance > 10) {
+			 this.clearGesture()
+			 return
+			 }
+			 this.rawMousePos = singleTouchEventToPointLocation(event)
+			 this.currentPoint = this._domPoint.getTransformedPointFromSingleTouchEvent(event)*/
+			// this.touchStartTimeOutFn()
+		}
 	}
+
+	/**
+	 * * Single touch hold handler
+	 */
+	singleTouchHoldHandler(event: TouchEvent) {
+		const touch = event.touches[0]
+		const pointerId = touch.identifier
+		const pointer = this.gesture.pointers.get(pointerId)
+		if (!pointer) {
+			console.error('Pointer not found')
+			return
+		}
+		this.rawMousePos = singleTouchEventToPointLocation(event)
+		this.currentPoint = this._domPoint.getTransformedPointFromSingleTouchEvent(event)
+		// this.currentPoint = this._domPoint.getTransformedPointFromXy(pointer)
+		const currentPoint = this.currentPoint
+		const dragBox = this._appState.dragBox()
+		if (dragBox.state === 'NoDragBox') {
+			dragBoxOnMouseDownHandler(currentPoint, this._appState)
+		}
+		// if (!isSelectionBoxInProgressState(dragBox) || !isSelectionBoxInProgressState(dragBox)) return
+		if (isNoDragBoxState(dragBox)) return
+		const start = dragBox.start
+		// const distance = getDistance([pointer, start])
+		const renderOptions = dragBoxOnMouseMoveHandler(
+			event,
+			currentPoint,
+			start,
+			this._entities.panels.allPanels,
+			this._appState,
+		)
+		if (renderOptions) {
+			this._render.renderCanvasApp(renderOptions)
+		}
+
+		// if (this._appState.dragBox().state === 'NoDragBox') {
+		// 	this.clearGesture()
+		// 	return
+		// }
+		// pointer.x = touch.clientX
+		// pointer.y = touch.clientY
+	}
+
+	/**
+	 * * Touch end handler
+	 * @param event
+	 */
 
 	onTouchEndHandler(event: TouchEvent) {
 		if (this.gesture.pointers.size === 0) {
-			console.log('touch end', this.gesture)
-			this.gesture.initialDistance = null
-			this.gesture.lastCenter = null
+			this.clearGesture()
+			return
 		}
+
+		// * Handle touch drag box
+		const dragBox = this._appState.dragBox()
+		const currentPoint = this.currentPoint
+		if (dragBox.state !== 'NoDragBox') {
+			dragBoxOnMouseUpHandler(
+				currentPoint,
+				dragBox.start,
+				this._entities.panels.allPanels,
+				this._appState,
+				this._selectedStore,
+				this._entities.panels,
+			)
+			this.clearGesture()
+			this.touchHolding = false
+			return
+		}
+
+		// * If there is only one touch, handle as a click
 		if (this.gesture.pointers.size === 1) {
-			console.log('touch end', this.gesture)
-			// this.rawMousePos = singleTouchEventToPointLocation(event)
-			// this.currentPoint = this._domPoint.getTransformedPointFromSingleTouchEvent(event)
 			const entityUnderMouse = this.getPanelUnderMouse(this.currentPoint)
 			if (entityUnderMouse) {
 				const mode = this._appState.mode()
@@ -941,17 +1031,13 @@ export class DesignCanvasDirective implements OnInit {
 				}
 			}
 			this._entityFactory.createEntityFromTouch(event, this.currentPoint)
+			this.clearGesture()
 		}
 	}
 
 	onTouchCancelHandler(event: TouchEvent) {
-		if (event.touches.length == 1) {
-			this.rawMousePos = singleTouchEventToPointLocation(event)
-			this.currentPoint = this._domPoint.getTransformedPointFromSingleTouchEvent(event)
-			// this.onMouseUpHandler(event, this.currentPoint)
-		} else {
-			console.log('multiple touches', event.touches)
-		}
+		this.clearGesture()
+		console.log('touch cancel -- clear gesture', event)
 	}
 
 	private setupCanvas() {
@@ -1036,7 +1122,7 @@ export class DesignCanvasDirective implements OnInit {
 				this._renderer.listen(this.canvas, EVENT_TYPE.TOUCH_MOVE, (event: TouchEvent) => {
 					event.stopPropagation()
 					event.preventDefault()
-					console.log('touch move', event)
+					// console.log('touch move', event)
 					this.onTouchMoveHandler(event)
 				})
 				this._renderer.listen(this.canvas, EVENT_TYPE.TOUCH_END, (event: TouchEvent) => {
@@ -1045,18 +1131,18 @@ export class DesignCanvasDirective implements OnInit {
 					console.log('touch end', event)
 					this.onTouchEndHandler(event)
 				})
-				this._renderer.listen(this.canvas, EVENT_TYPE.TOUCH_CANCEL, (event: TouchEvent) => {
-					event.stopPropagation()
-					event.preventDefault()
-					console.log('touch cancel', event)
-					this.onTouchCancelHandler(event)
-				})
-				this._renderer.listen(this.canvas, EVENT_TYPE.GESTURE_START, (event: TouchEvent) => {
-					event.stopPropagation()
-					event.preventDefault()
-					console.log('gesturestart', event)
-					this.onTouchStartHandler(event)
-				})
+				/*				this._renderer.listen(this.canvas, EVENT_TYPE.TOUCH_CANCEL, (event: TouchEvent) => {
+				 event.stopPropagation()
+				 event.preventDefault()
+				 console.log('touch cancel', event)
+				 this.onTouchCancelHandler(event)
+				 })
+				 this._renderer.listen(this.canvas, EVENT_TYPE.GESTURE_START, (event: TouchEvent) => {
+				 event.stopPropagation()
+				 event.preventDefault()
+				 console.log('gesturestart', event)
+				 this.onTouchStartHandler(event)
+				 })*/
 				break
 			}
 		}

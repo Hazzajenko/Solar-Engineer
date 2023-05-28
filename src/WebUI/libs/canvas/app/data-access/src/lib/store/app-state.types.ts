@@ -25,6 +25,17 @@ export type NoDragBox = {
 	state: typeof DRAG_BOX_STATE.NO_DRAG_BOX
 }
 
+export const isNoDragBoxState = (dragBox: DragBox): dragBox is NoDragBox =>
+	dragBox.state === DRAG_BOX_STATE.NO_DRAG_BOX && !('start' in dragBox)
+
+export const isSelectionBoxInProgressState = (
+	dragBox: DragBox,
+): dragBox is SelectionBoxInProgress =>
+	dragBox.state === DRAG_BOX_STATE.SELECTION_BOX_IN_PROGRESS && 'start' in dragBox
+
+export const isCreationBoxInProgressState = (dragBox: DragBox): dragBox is CreationBoxInProgress =>
+	dragBox.state === DRAG_BOX_STATE.CREATION_BOX_IN_PROGRESS && 'start' in dragBox
+
 export type DragBox = SelectionBoxInProgress | CreationBoxInProgress | NoDragBox
 
 export const MODE_STATE = {
