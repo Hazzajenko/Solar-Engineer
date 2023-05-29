@@ -1,18 +1,157 @@
 <div
+	#mobileToolbar
 	@goTop
-	class="overflow-hidden bg-gray-100 shadow-md dark:bg-gray-800 md:rounded-lg z-50 absolute top-8 left-1/2 -translate-x-1/2"
+	class="overflow-hidden bg-gray-100 shadow-md dark:bg-gray-800 md:rounded-lg z-50 absolute bottom-8 left-1/2 -translate-x-1/2"
+	id="mobile-toolbar"
 >
-	<div
-		class="flex flex-col items-center justify-between p-4 space-y-3 md:flex-row md:space-y-0 md:space-x-4"
-	>
+	<div class="flex items-center justify-between p-2 flex-row space-y-0 space-x-4">
+		<div class="flex items-center space-x-1">
+			<!--			(touchstart)="openMenuTouch($event, menu)"-->
+			<!--			(touchstart)="openMenuTouch($event, menu)"-->
+			<button
+				#menuButton
+				(touchstart)="toggleContextMenu($event, menuButton)"
+				class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+				type="button"
+			>
+				<app-show-svg-no-styles inputClass="w-5 h-5" svgPath="menus/bars-arrow-up" />
+				<span class="sr-only">Menu Up</span>
+			</button>
+		</div>
+
 		<div class="flex items-center space-x-1">
 			<button
 				class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
 				type="button"
 			>
-				<app-show-svg-no-styles inputClass="w-5 h-5" svgPath="links/link" />
-				<span class="sr-only">Create String With Selected</span>
+				<app-show-svg-no-styles inputClass="w-5 h-5" svgPath="menus/arrow-uturn-left" />
+				<span class="sr-only">Undo</span>
 			</button>
 		</div>
+		<div class="flex items-center space-x-1">
+			<button
+				class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+				type="button"
+			>
+				<app-show-svg-no-styles inputClass="w-5 h-5" svgPath="menus/arrow-uturn-right" />
+				<span class="sr-only">Redo</span>
+			</button>
+		</div>
+		<div class="flex items-center space-x-1">
+			<button
+				class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+				type="button"
+			>
+				<app-show-svg-no-styles inputClass="w-5 h-5" svgPath="menus/paint-brush" />
+				<span class="sr-only">Change Colour</span>
+			</button>
+		</div>
+		<div class="flex items-center space-x-1">
+			<button
+				class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+				type="button"
+			>
+				<app-show-svg-no-styles inputClass="w-5 h-5" svgPath="menus/wrench" />
+				<span class="sr-only">Change Mode</span>
+			</button>
+		</div>
+
+		<!--		<div class="flex items-center space-x-1">
+					<button
+						class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+						type="button"
+					>
+						<app-show-svg-no-styles inputClass="w-5 h-5" svgPath="links/link" />
+						<span class="sr-only">Create String With Selected</span>
+					</button>
+				</div>-->
 	</div>
 </div>
+<!--*ngIf='contextMenuOpen()'-->
+<div #testMenu *ngIf="contextMenuOpen()" class="absolute" id="menu-container">
+	<!--	{{ initDiv(listElement) }}-->
+	<!--	<div #thisDIV id="menu-container">-->
+	<ul
+		#listElement
+		(divInit)="initDiv(listElement)"
+		@goTop
+		class="py-1 text-sm text-gray-700 dark:text-gray-200 absolute z-50 mt-2 w-56 bg-gray-200 divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+	>
+		<div class="px-4 py-3" role="none">
+			<p class="truncate text-sm font-medium text-gray-900" role="none">Selected Panels</p>
+		</div>
+		<li>
+			<a
+				class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+				role="menuitem"
+				tabindex="-1"
+			>
+				<app-show-svg-no-styles
+					class="mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500"
+					svgPath="rotate"
+				/>
+				Move Selected To String
+			</a>
+		</li>
+		<li>
+			<a
+				class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+				role="menuitem"
+				tabindex="-1"
+			>
+				<app-show-svg-no-styles
+					class="mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500"
+					svgPath="bin"
+				/>
+				Delete Selected
+			</a>
+		</li>
+	</ul>
+	<!--	</div>-->
+</div>
+
+<div
+	[matMenuTriggerFor]="menu"
+	[style.left]="menuTopLeftPosition.x"
+	[style.top]="menuTopLeftPosition.y"
+	style="visibility: hidden; position: fixed"
+></div>
+
+<mat-menu #menu="matMenu">
+	<div class="absolute">
+		<ul
+			class="py-1 text-sm text-gray-700 dark:text-gray-200 absolute z-50 mt-2 w-56 bg-gray-200 divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+			id="menu-list"
+		>
+			<div class="px-4 py-3" role="none">
+				<p class="truncate text-sm font-medium text-gray-900" role="none">Selected Panels</p>
+			</div>
+			<li>
+				<a
+					class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+					role="menuitem"
+					tabindex="-1"
+				>
+					<app-show-svg-no-styles
+						class="mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500"
+						svgPath="rotate"
+					/>
+					Move Selected To String
+				</a>
+			</li>
+			<li>
+				<a
+					class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+					role="menuitem"
+					tabindex="-1"
+				>
+					<app-show-svg-no-styles
+						class="mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500"
+						svgPath="bin"
+					/>
+					Delete Selected
+				</a>
+			</li>
+		</ul>
+	</div>
+</mat-menu>

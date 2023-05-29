@@ -196,7 +196,7 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 	}
 
 	ngOnInit() {
-		// console.log(this.constructor.name, 'ngOnInit')
+		console.log(this.constructor.name, 'ngOnInit')
 	}
 
 	ngAfterViewInit() {
