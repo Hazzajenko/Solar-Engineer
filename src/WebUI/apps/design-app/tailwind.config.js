@@ -14,6 +14,4 @@ module.exports = {
 		join('libs/shared/ui/src/lib/**/*.{ts,html}'),
 		...createGlobPatternsForDependencies(__dirname),
 	],
-	// important: true,
-	// plugins: [require('@tailwindcss/forms'), require('@tailwindcss/typography')],
 }

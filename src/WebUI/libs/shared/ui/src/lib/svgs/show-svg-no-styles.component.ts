@@ -17,17 +17,16 @@ export class ShowSvgNoStylesComponent {
 	private sanitizer = inject(DomSanitizer)
 	private _svgPath!: string
 	svgIcon$: Observable<SafeHtml> = this.initIcon(this._svgPath)
+	@Input() inputClass?: string
 
 	@Input({ required: true }) set svgPath(value: string) {
 		this._svgPath = value
 		this.svgIcon$ = this.initIcon(value)
 	}
 
-	@Input() inputClass?: string
-
 	initIcon(path: string) {
 		return (this.svgIcon$ = this.http
-			.get(`assets/${path}.svg`, {
+			.get(`assets/svgs/${path}.svg`, {
 				responseType: 'text',
 			})
 			.pipe(map((value) => this.sanitizer.bypassSecurityTrustHtml(value))))

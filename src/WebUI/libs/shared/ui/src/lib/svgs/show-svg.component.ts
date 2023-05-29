@@ -29,7 +29,7 @@ export class ShowSvgComponent {
 	initIcon(path: string) {
 		// createTrustedHTML
 		return (this.svgIcon$ = this.http
-			.get(`assets/${path}.svg`, {
+			.get(`assets/svgs/${path}.svg`, {
 				responseType: 'text',
 			})
 			.pipe(map((value) => this.sanitizer.bypassSecurityTrustHtml(value))))

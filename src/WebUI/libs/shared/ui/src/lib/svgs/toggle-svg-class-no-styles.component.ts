@@ -72,7 +72,7 @@ export class ToggleSvgClassNoStylesComponent {
 	initIcon(path: string) {
 		if (!path) return of(undefined)
 		return this.http
-			.get(`assets/${path}.svg`, {
+			.get(`assets/svgs/${path}.svg`, {
 				responseType: 'text',
 			})
 			.pipe(map((value) => this.sanitizer.bypassSecurityTrustHtml(value)))

@@ -33,7 +33,12 @@
 				"tsConfig": "apps/design-app/tsconfig.app.json",
 				"assets": [
 					"apps/design-app/src/favicon.ico",
-					"apps/design-app/src/assets"
+					"apps/design-app/src/assets",
+					{
+						"input": "libs/shared/svgs/src/lib",
+						"glob": "**/*",
+						"output": "assets/svgs"
+					}
 				],
 				"styles": [
 					"apps/design-app/src/styles.css",

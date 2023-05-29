@@ -18,6 +18,7 @@ export class ToggleSvgNoStylesComponent {
 	private _trueSvgPath!: string
 	private _falseSvgPath!: string
 	svgIcon$: Observable<SafeHtml> = this.initIcon(this._trueSvgPath)
+	@Input() inputClass?: string
 
 	set booleanValue(value: boolean) {
 		this.svgIcon$ = this.initIcon(value ? this._trueSvgPath : this._falseSvgPath)
@@ -39,11 +40,9 @@ export class ToggleSvgNoStylesComponent {
 		this.booleanValue = !!predicate
 	}
 
-	@Input() inputClass?: string
-
 	initIcon(path: string) {
 		return (this.svgIcon$ = this.http
-			.get(`assets/${path}.svg`, {
+			.get(`assets/svgs/${path}.svg`, {
 				responseType: 'text',
 			})
 			.pipe(map((value) => this.sanitizer.bypassSecurityTrustHtml(value))))

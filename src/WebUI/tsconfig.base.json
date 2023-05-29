@@ -55,7 +55,6 @@
 			"@auth/interceptors": ["libs/auth/interceptors/src/index.ts"],
 			"@auth/shared/models": ["libs/auth/shared/models/src/index.ts"],
 			"@auth/utils": ["libs/auth/utils/src/index.ts"],
-			"@canvas/shared": ["libs/canvas/shared/src/index.ts"],
 			"@canvas/app/data-access": ["libs/canvas/app/data-access/src/index.ts"],
 			"@canvas/app/feature": ["libs/canvas/app/feature/src/index.ts"],
 			"@canvas/graphics/data-access": ["libs/canvas/graphics/data-access/src/index.ts"],
@@ -65,6 +64,7 @@
 			],
 			"@canvas/rendering/data-access": ["libs/canvas/rendering/data-access/src/index.ts"],
 			"@canvas/selected/data-access": ["libs/canvas/selected/data-access/src/index.ts"],
+			"@canvas/shared": ["libs/canvas/shared/src/index.ts"],
 			"@canvas/utils": ["libs/canvas/utils/src/index.ts"],
 			"@canvas/view-positioning/data-access": [
 				"libs/canvas/view-positioning/data-access/src/index.ts"
@@ -120,6 +120,7 @@
 			"@shared/interceptors": ["libs/shared/interceptors/src/index.ts"],
 			"@shared/logger": ["libs/shared/logger/src/index.ts"],
 			"@shared/pipes": ["libs/shared/pipes/src/index.ts"],
+			"@shared/svgs": ["libs/shared/svgs/src/index.ts"],
 			"@shared/types": ["libs/shared/types/src/index.ts"],
 			"@shared/ui": ["libs/shared/ui/src/index.ts"],
 			"@shared/ui/app-bar": ["libs/shared/ui/app-bar/src/index.ts"],

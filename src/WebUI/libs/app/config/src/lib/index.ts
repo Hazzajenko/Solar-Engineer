@@ -1,3 +1,4 @@
-export * from './main-ts.providers'
-export * from './routes/app.routes'
-// export * from './web-app.providers'
+export * from './app.component'
+export * from './main.config'
+export * from './main.effects'
+export * from './main.routes'

@@ -1,7 +1,11 @@
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity'
-import { Action, createReducer, on } from '@ngrx/store'
+import { Action, createReducer, on, provideState } from '@ngrx/store'
 import { ActionNotificationModel } from '../types'
 import { NotificationsActions } from './notifications.actions'
+import { Actions, createEffect, ofType, provideEffects } from '@ngrx/effects'
+import { inject, makeEnvironmentProviders } from '@angular/core'
+import { tap } from 'rxjs'
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 export const NOTIFICATIONS_FEATURE_KEY = 'notifications'
 
@@ -45,3 +49,25 @@ const reducer = createReducer(
 export function notificationsReducer(state: NotificationsState | undefined, action: Action) {
 	return reducer(state, action)
 }
+
+export function provideNotificationsFeature() {
+	return makeEnvironmentProviders([
+		provideState(NOTIFICATIONS_FEATURE_KEY, notificationsReducer),
+		provideEffects({ displayNotification$ }),
+	])
+}
+
+export const displayNotification$ = createEffect(
+	(actions$ = inject(Actions), _snackBar = inject(MatSnackBar)) => {
+		return actions$.pipe(
+			ofType(NotificationsActions.addNotification),
+			tap(({ notification }) => {
+				_snackBar.open(notification.title, 'Splash', {
+					horizontalPosition: 'start',
+					verticalPosition: 'bottom',
+				})
+			}),
+		)
+	},
+	{ functional: true, dispatch: false },
+)

@@ -20,6 +20,7 @@ import {
 	DEFAULT_NOTIFICATION_DURATION,
 	NotificationsStoreService,
 } from '@overlays/notifications/data-access'
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
 	selector: 'app-action-notifications-display',
@@ -36,6 +37,9 @@ export class ActionNotificationsDisplayComponent implements AfterViewInit {
 	private _notifications = toSignal(this._notificationsStore.allNotifications$, {
 		initialValue: this._notificationsStore.allNotifications,
 	})
+	private _snackBar = inject(MatSnackBar)
+	private _notificationStartTimeMap = signal(new Map<string, number>())
+	private _notificationTimeLeftMap = signal(new Map<string, number>())
 	@ViewChildren('notificationEl') notificationEls!: QueryList<HTMLDivElement>
 	@ViewChildren('progressBar') progressBarEls!: QueryList<ElementRef<HTMLDivElement>>
 
@@ -54,6 +58,14 @@ export class ActionNotificationsDisplayComponent implements AfterViewInit {
 						return
 					}
 					this.triggerNotificationTimer(notification, progressBarEl.nativeElement as HTMLDivElement)
+					this._snackBar.open(notification.title, 'Ok', {
+						horizontalPosition: 'start',
+						verticalPosition: 'bottom',
+						duration: DEFAULT_NOTIFICATION_DURATION,
+						direction: 'ltr',
+						politeness: 'assertive',
+						announcementMessage: notification.title,
+					})
 				}, 100)
 			})
 		})
@@ -63,8 +75,6 @@ export class ActionNotificationsDisplayComponent implements AfterViewInit {
 		return this._notifications()
 	}
 
-	private _notificationStartTimeMap = signal(new Map<string, number>())
-
 	get notificationStartTimeMap() {
 		return this._notificationStartTimeMap()
 	}
@@ -72,8 +82,6 @@ export class ActionNotificationsDisplayComponent implements AfterViewInit {
 	set notificationStartTimeMap(value) {
 		this._notificationStartTimeMap.set(value)
 	}
-
-	private _notificationTimeLeftMap = signal(new Map<string, number>())
 
 	get notificationTimeLeftMap() {
 		return this._notificationTimeLeftMap()
