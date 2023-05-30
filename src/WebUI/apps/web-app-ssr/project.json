@@ -8,15 +8,24 @@
 	"targets": {
 		"build": {
 			"executor": "@angular-devkit/build-angular:browser",
-			"outputs": ["{options.outputPath}"],
+			"outputs": [
+				"{options.outputPath}"
+			],
 			"options": {
 				"outputPath": "dist/apps/web-app-ssr",
 				"index": "apps/web-app-ssr/src/index.html",
 				"main": "apps/web-app-ssr/src/main.ts",
-				"polyfills": ["zone.js"],
+				"polyfills": [
+					"zone.js"
+				],
 				"tsConfig": "apps/web-app-ssr/tsconfig.app.json",
-				"assets": ["apps/web-app-ssr/src/favicon.ico", "apps/web-app-ssr/src/assets"],
-				"styles": ["apps/web-app-ssr/src/styles.scss"],
+				"assets": [
+					"apps/web-app-ssr/src/favicon.ico",
+					"apps/web-app-ssr/src/assets"
+				],
+				"styles": [
+					"apps/web-app-ssr/src/styles.scss"
+				],
 				"scripts": []
 			},
 			"configurations": {
@@ -69,14 +78,21 @@
 		},
 		"lint": {
 			"executor": "@nx/linter:eslint",
-			"outputs": ["{options.outputFile}"],
+			"outputs": [
+				"{options.outputFile}"
+			],
 			"options": {
-				"lintFilePatterns": ["apps/web-app-ssr/**/*.ts", "apps/web-app-ssr/**/*.html"]
+				"lintFilePatterns": [
+					"apps/web-app-ssr/**/*.ts",
+					"apps/web-app-ssr/**/*.html"
+				]
 			}
 		},
 		"test": {
 			"executor": "@nx/jest:jest",
-			"outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+			"outputs": [
+				"{workspaceRoot}/coverage/{projectRoot}"
+			],
 			"options": {
 				"jestConfig": "apps/web-app-ssr/jest.config.ts",
 				"passWithNoTests": true
@@ -87,6 +103,59 @@
 					"codeCoverage": true
 				}
 			}
+		},
+		"server": {
+			"executor": "@angular-devkit/build-angular:server",
+			"options": {
+				"outputPath": "dist/apps/web-app-ssr/server",
+				"main": "apps/web-app-ssr/server.ts",
+				"tsConfig": "apps/web-app-ssr/tsconfig.server.json"
+			},
+			"configurations": {
+				"production": {
+					"outputHashing": "media"
+				},
+				"development": {
+					"optimization": false,
+					"sourceMap": true,
+					"extractLicenses": false,
+					"vendorChunk": true
+				}
+			},
+			"defaultConfiguration": "production"
+		},
+		"serve-ssr": {
+			"executor": "@nguniversal/builders:ssr-dev-server",
+			"configurations": {
+				"development": {
+					"browserTarget": "web-app-ssr:build:development",
+					"serverTarget": "web-app-ssr:server:development"
+				},
+				"production": {
+					"browserTarget": "web-app-ssr:build:production",
+					"serverTarget": "web-app-ssr:server:production"
+				}
+			},
+			"defaultConfiguration": "development"
+		},
+		"prerender": {
+			"executor": "@nguniversal/builders:prerender",
+			"options": {
+				"routes": [
+					"/"
+				]
+			},
+			"configurations": {
+				"production": {
+					"browserTarget": "web-app-ssr:build:production",
+					"serverTarget": "web-app-ssr:server:production"
+				},
+				"development": {
+					"browserTarget": "web-app-ssr:build:development",
+					"serverTarget": "web-app-ssr:server:development"
+				}
+			},
+			"defaultConfiguration": "production"
 		}
 	}
 }

@@ -26,7 +26,11 @@
     "test": "xo && nx test",
     "postinstall": "node ./decorate-angular-cli.js",
     "dead-code": "ts-prune -p tsconfig.base.json -s '*.test.ts?' | grep -v cssExports | grep -v 'used in module'",
-    "generate-icons": "svg-to-ts"
+    "generate-icons": "svg-to-ts",
+    "dev:ssr": "nx run web-app-ssr:serve-ssr",
+    "serve:ssr": "node dist/apps/web-app-ssr/server/main.js",
+    "build:ssr": "nx build web-app-ssr && nx run web-app-ssr:server",
+    "prerender": "nx run web-app-ssr:prerender"
   },
   "svg-to-ts": {
     "srcFiles": [

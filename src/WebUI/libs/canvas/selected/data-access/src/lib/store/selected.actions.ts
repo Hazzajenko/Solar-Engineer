@@ -34,9 +34,9 @@ export const SelectedActions = createActionGroup({
 	},
 })
 
-export const allSelectedActions = Object.keys(SelectedActions).map(
-	(key) => SelectedActions[key as keyof typeof SelectedActions],
-)
+/*export const allSelectedActions = Object.keys(SelectedActions).map(
+ (key) => SelectedActions[key as keyof typeof SelectedActions],
+ )*/
 
 // export type SelectedActions = typeof SelectedActions
 /*export type SelectedActions = typeof SelectedActions

@@ -1,6 +1,7 @@
 import {
 	ChangeDetectionStrategy,
 	Component,
+	computed,
 	ElementRef,
 	inject,
 	QueryList,
@@ -10,12 +11,17 @@ import {
 	ViewChildren,
 } from '@angular/core'
 import { ShowSvgNoStylesComponent } from '@shared/ui'
-import { goTop } from '@shared/animations'
+import { goTop, increaseTop } from '@shared/animations'
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
-import { NgClass, NgIf } from '@angular/common'
+import { NgClass, NgIf, NgStyle, NgSwitch, NgSwitchCase, NgTemplateOutlet } from '@angular/common'
 import { ContextMenuDirective } from '@overlays/context-menus/feature'
 import { Point } from '@shared/data-access/models'
-import { DivInitDirective } from '@shared/directives'
+import {
+	ConsoleLogDirective,
+	DivInitDirective,
+	ExpandableAbsoluteDirective,
+	ExpandDivWithElementsDirective,
+} from '@shared/directives'
 import { injectAppStateStore, ModeState } from '@canvas/app/data-access'
 
 @Component({
@@ -28,36 +34,56 @@ import { injectAppStateStore, ModeState } from '@canvas/app/data-access'
 		ContextMenuDirective,
 		DivInitDirective,
 		NgClass,
+		NgStyle,
+		ConsoleLogDirective,
+		ExpandableAbsoluteDirective,
+		NgSwitch,
+		NgSwitchCase,
+		NgTemplateOutlet,
+		ExpandDivWithElementsDirective,
 	],
 	templateUrl: './mobile-bottom-toolbar.component.html',
 	styles: [],
-	animations: [goTop],
+	animations: [goTop, increaseTop],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MobileBottomToolbarComponent {
 	private _appStore = injectAppStateStore()
 	@ViewChild(MatMenuTrigger) trigger!: MatMenuTrigger
-	@ViewChildren('contextMenu') contextMenu!: QueryList<ElementRef<HTMLDivElement>>
+	@ViewChildren('contextMenu') contextMenus!: QueryList<ElementRef<HTMLDivElement>>
 	// @ViewChild('contextMenu') contextMenu!: ElementRef<HTMLDivElement>
-	@ViewChild('mobileToolbar') mobileToolbar!: ElementRef<HTMLDivElement>
+	@ViewChild('mobileToolbar') mobileToolbarRef!: ElementRef<HTMLDivElement>
 	menuTopLeftPosition = { x: '0', y: '0' }
 	contextMenuLocation = { x: 0, y: 0 } as Point
 	_renderer = inject(Renderer2)
 	_element = inject(ElementRef).nativeElement
 	contextMenuOpen = signal<string | undefined>(undefined)
+	/*	cssSignal = signal<string>(
+	 `bottom-[calc(${this.mobileToolbarRef.nativeElement.getBoundingClientRect().top}px - ${
+	 this.contextMenus.get(0)?.nativeElement.getBoundingClientRect().height
+	 }px)]`,
+	 )*/
+
+	cssSignal = computed(() => {
+		const top = this.mobileToolbarRef.nativeElement.getBoundingClientRect().top
+		const contextMenuHeight = this.contextMenus
+			.find((contextMenu) => contextMenu.nativeElement.id === 'main-context-menu')
+			?.nativeElement.getBoundingClientRect().height
+		if (!contextMenuHeight) return `bottom-[calc(${top}px_-_0px)]`
+		// main-context-menu
+		return `bottom-[calc(${top}px_-_${contextMenuHeight}px)]`
+	})
 
 	get mode() {
 		return this._appStore.mode()
 	}
 
-	// contextMenuOpen = signal(false)
-
 	toggleContextMenu(event: TouchEvent, contextMenuId: string) {
 		event.preventDefault()
 		event.stopPropagation()
 
-		console.log('contextMenu', this.contextMenu)
-		const toolbarRect = this.mobileToolbar.nativeElement.getBoundingClientRect()
+		console.log('contextMenu', this.contextMenus)
+		const toolbarRect = this.mobileToolbarRef.nativeElement.getBoundingClientRect()
 		const top = toolbarRect.top
 		const button = event.target as HTMLButtonElement
 
@@ -87,12 +113,50 @@ export class MobileBottomToolbarComponent {
 				kill()
 			}
 		})
+
+		/*const observer = new MutationObserver((mutations) => {
+		 // Loop through the mutations and check if a new component has been added
+		 mutations.forEach((mutation) => {
+		 if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+		 // Get the height of the new component
+		 const component = mutation.addedNodes[0] as HTMLDivElement
+		 console.log('component', component)
+		 if (component.id !== 'main-context-menu') return
+
+		 // component.
+		 const componentHeight = component.getBoundingClientRect().height
+		 console.log('componentHeight', componentHeight)
+		 // Get the current height of the div
+		 // const divHeight = div.getBoundingClientRect().height
+
+		 // Calculate the new height of the div
+		 const newDivHeight = toolbarRect.height + componentHeight
+		 console.log('newDivHeight', newDivHeight)
+		 this._renderer.setStyle(
+		 this.mobileToolbarRef.nativeElement,
+		 'height',
+		 `${newDivHeight}px`,
+		 )
+
+		 // Set the new height of the div
+		 // div.style.height = `${newDivHeight}px`
+		 }
+		 if (mutation.type === 'childList' && mutation.removedNodes.length > 0) {
+		 console.log('mutation.removedNodes', mutation.removedNodes)
+		 }
+		 })
+		 })
+
+		 // Configure the observer to watch for changes to the toolbar
+		 const config = { childList: true, subtree: true }
+		 observer.observe(this.mobileToolbarRef.nativeElement, config)*/
 	}
 
 	initDiv(div: HTMLDivElement | HTMLUListElement) {
 		const rect = div.getBoundingClientRect()
 		// const top = this.contextMenuLocation.y
-		const top = this.contextMenuLocation.y - rect.height
+		/*		const top = this.contextMenuLocation.y - rect.height
+		 console.log(`top: ${top} = ${this.contextMenuLocation.y} - ${rect.height}`)*/
 		// const top = this.contextMenuLocation.y - rect.height
 		let left = this.contextMenuLocation.x
 		// let right = this.contextMenuLocation.x + rect.width
@@ -104,7 +168,7 @@ export class MobileBottomToolbarComponent {
 		if (left + rect.width > window.innerWidth) {
 			left = window.innerWidth - rect.width - screenOffset
 		}
-		const toolbarRect = this.mobileToolbar.nativeElement.getBoundingClientRect()
+		const toolbarRect = this.mobileToolbarRef.nativeElement.getBoundingClientRect()
 		// right = left + toolbarRect.right
 		const width = toolbarRect.width
 		/*		if (isRectInLastQuarter(rect)) {
@@ -116,16 +180,21 @@ export class MobileBottomToolbarComponent {
 		 }*/
 		// const top = this.contextMenuLocation.y - rect.height
 		// const left = this.contextMenuLocation.x
-		this._renderer.setStyle(div, 'top', top + 'px')
+		const toolbarTop = toolbarRect.top
+		const top = toolbarTop - rect.height
+		// const height = top - this.mobileToolbar.nativeElement.getBoundingClientRect().top
+		// const top = this.contextMenuLocation.y - rect.height
+		console.log(`top: ${top} = ${toolbarTop} - ${rect.height}`)
+		// this._renderer.setStyle(div, 'top', top + 'px')
 		this._renderer.setStyle(div, 'left', left + 'px')
 		this._renderer.setStyle(div, 'width', width + 'px')
-		const container = this.contextMenu.find((c) => c.nativeElement.id === 'main-context-menu')
+		const container = this.contextMenus.find((c) => c.nativeElement.id === 'main-context-menu')
 		if (container) {
 			this._renderer.setStyle(div, 'width', width + 'px')
 		}
 
-		const height = top - this.mobileToolbar.nativeElement.getBoundingClientRect().top
-		this._renderer.setStyle(div, 'height', height + 'px')
+		// const height = top - this.mobileToolbar.nativeElement.getBoundingClientRect().top
+		// this._renderer.setStyle(div, 'height', height + 'px')
 	}
 
 	selectMode(mode: ModeState) {

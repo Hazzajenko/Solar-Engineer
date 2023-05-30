@@ -1,24 +1,23 @@
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { inject } from '@angular/core'
-import { map, tap } from 'rxjs'
-import { RenderService } from '@canvas/rendering/data-access'
-import { allSelectedActions, SelectedActions } from './selected.actions'
+import { map } from 'rxjs'
+import { SelectedActions } from './selected.actions'
 import { injectStringsStore } from '@entities/data-access'
 import { ActionNotificationModel, NotificationsActions } from '@overlays/notifications/data-access'
 import { getGuid } from '@ngrx/data'
 import { assertNotNull } from '@shared/utils'
 
-export const renderCanvasOnStateChange$ = createEffect(
-	(actions$ = inject(Actions), renderService = inject(RenderService)) => {
-		return actions$.pipe(
-			ofType(...allSelectedActions),
-			tap(() => {
-				renderService.renderCanvasApp()
-			}),
-		)
-	},
-	{ functional: true, dispatch: false },
-)
+/*export const renderCanvasOnStateChange$ = createEffect(
+ (actions$ = inject(Actions), renderService = inject(RenderService)) => {
+ return actions$.pipe(
+ ofType(...allSelectedActions),
+ tap(() => {
+ renderService.renderCanvasApp()
+ }),
+ )
+ },
+ { functional: true, dispatch: false },
+ )*/
 
 export const selectStringNotification$ = createEffect(
 	(actions$ = inject(Actions), stringsStore = injectStringsStore()) => {

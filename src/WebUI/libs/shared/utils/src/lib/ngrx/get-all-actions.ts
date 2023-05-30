@@ -1,14 +1,17 @@
 import { createActionGroup } from '@ngrx/store'
-// import { AppState, AppStateActions, DragBox } from '@canvas/app/data-access'
 import { getObjectPropertyKeys } from '../objects'
-import { OmitByValue } from 'utility-types'
-import { AppStateActions } from '@canvas/app/data-access'
 
 export type ActionGroup = ReturnType<typeof createActionGroup>
 
-export const getAllActions = (actionGroup: ActionGroup) => {
-	return Object.keys(actionGroup).map((key) => actionGroup[key as keyof typeof actionGroup])
+export function getAllActions(actionGroup: ActionGroup) {
+	return getObjectPropertyKeys(actionGroup)
+		.map((key) => actionGroup[key as keyof typeof actionGroup])
+		.filter((action) => typeof action === 'function')
 }
+
+/*export const getAllActions = (actionGroup: ActionGroup) => {
+ return Object.keys(actionGroup).map((key) => actionGroup[key as keyof typeof actionGroup])
+ }*/
 
 export const getAllActionsExcept = <
 	TActionGroup extends ActionGroup,
@@ -29,11 +32,13 @@ export const getAllActionsExcept = <
  >[0]
  */
 
-type AppStateActionsExceptUndefined = OmitByValue<typeof AppStateActions, undefined>
+// type AppStateActionsExceptUndefined = OmitByValue<typeof AppStateActions, undefined>
+/*
 
-export type GetActionParametersByKeyV2<T extends keyof AppStateActionsExceptUndefined> = Parameters<
-	AppStateActionsExceptUndefined[T]
->[0]
+ export type GetActionParametersByKeyV2<T extends keyof AppStateActionsExceptUndefined> = Parameters<
+ AppStateActionsExceptUndefined[T]
+ >[0]
+ */
 
 /*export type GetActionParametersByKeyV2WithoutUndefined<T extends keyof typeof AppStateActions> =
  NonNullable<GetActionParametersByKey<T>>
@@ -77,11 +82,11 @@ export type GetActionParametersByKeyV2<T extends keyof AppStateActionsExceptUnde
  }
  */
 
-const getKeyByType = (type: string) => {
-	return getObjectPropertyKeys(AppStateActions).find((key) => {
-		return AppStateActions[key as keyof typeof AppStateActions].type === type
-	})
-}
+/*const getKeyByType = (type: string) => {
+ return getObjectPropertyKeys(AppStateActions).find((key) => {
+ return AppStateActions[key as keyof typeof AppStateActions].type === type
+ })
+ }*/
 /*const store = inject(Store<AppState>)
  const actionFns2 = getObjectPropertyKeys(AppStateActions).map((key) => {
  const action = AppStateActions[key as keyof typeof AppStateActions]
