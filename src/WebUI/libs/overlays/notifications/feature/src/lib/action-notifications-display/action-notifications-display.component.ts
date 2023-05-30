@@ -69,6 +69,10 @@ export class ActionNotificationsDisplayComponent implements AfterViewInit {
 				}, 100)
 			})
 		})
+		// const wat : AppIconNameSubset<'add'> =
+		// type emojiIcons = AppIconNameSubset<[typeof appIconAdd]>
+		// appIconAdd.data
+		// const wat : emojiIcons[0] = '';
 	}
 
 	get notifications() {

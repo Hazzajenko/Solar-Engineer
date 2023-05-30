@@ -67,6 +67,10 @@ export class MobileBottomToolbarComponent {
 		 }*/
 		this.contextMenuLocation.x = rect.left
 		this.contextMenuLocation.y = top
+		if (contextMenuId === 'main-context-menu') {
+			this.contextMenuLocation.x = toolbarRect.left
+			// this.contextMenuLocation.x = toolbarRect.left
+		}
 
 		// const div = this.contextMenu.find((c) => c.nativeElement.id === contextMenuId)
 		const isOpen = this.contextMenuOpen() === contextMenuId
@@ -87,8 +91,12 @@ export class MobileBottomToolbarComponent {
 
 	initDiv(div: HTMLDivElement | HTMLUListElement) {
 		const rect = div.getBoundingClientRect()
+		// const top = this.contextMenuLocation.y
 		const top = this.contextMenuLocation.y - rect.height
-		let left = this.contextMenuLocation.x - rect.width / 2
+		// const top = this.contextMenuLocation.y - rect.height
+		let left = this.contextMenuLocation.x
+		// let right = this.contextMenuLocation.x + rect.width
+		// let left = this.contextMenuLocation.x - rect.width / 2
 		const screenOffset = window.innerWidth * 0.1
 		if (left < 0) {
 			left = screenOffset
@@ -96,6 +104,9 @@ export class MobileBottomToolbarComponent {
 		if (left + rect.width > window.innerWidth) {
 			left = window.innerWidth - rect.width - screenOffset
 		}
+		const toolbarRect = this.mobileToolbar.nativeElement.getBoundingClientRect()
+		// right = left + toolbarRect.right
+		const width = toolbarRect.width
 		/*		if (isRectInLastQuarter(rect)) {
 		 console.log('isRectRightSide')
 		 left = this.contextMenuLocation.x - rect.width
@@ -107,6 +118,14 @@ export class MobileBottomToolbarComponent {
 		// const left = this.contextMenuLocation.x
 		this._renderer.setStyle(div, 'top', top + 'px')
 		this._renderer.setStyle(div, 'left', left + 'px')
+		this._renderer.setStyle(div, 'width', width + 'px')
+		const container = this.contextMenu.find((c) => c.nativeElement.id === 'main-context-menu')
+		if (container) {
+			this._renderer.setStyle(div, 'width', width + 'px')
+		}
+
+		const height = top - this.mobileToolbar.nativeElement.getBoundingClientRect().top
+		this._renderer.setStyle(div, 'height', height + 'px')
 	}
 
 	selectMode(mode: ModeState) {

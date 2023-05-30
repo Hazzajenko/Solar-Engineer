@@ -40,6 +40,7 @@
 		</div>
 		<div class="flex items-center space-x-1">
 			<button
+				[matMenuTriggerFor]="aboveMenu"
 				class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
 				type="button"
 			>
@@ -71,7 +72,7 @@
 		#listElement
 		(divInit)="initDiv(listElement)"
 		@goTop
-		class="py-1 text-sm text-gray-700 dark:text-gray-200 absolute z-50 mt-2 w-56 bg-gray-200 divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+		class="py-1 text-sm text-gray-700 dark:text-gray-200 absolute h-fit z-50 mt-2 bg-gray-200 divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
 	>
 		<li>
 			<a
@@ -117,6 +118,36 @@
 		</div>
 	</ul>
 </div>
+
+<mat-menu #aboveMenu="matMenu" yPosition="above">
+	<li class="flex items-center">
+		<button
+			(touchstart)="selectMode('SelectMode')"
+			[ngClass]="{
+				'bg-gray-100 dark:bg-gray-600': mode === 'SelectMode',
+				'hover:bg-gray-100 dark:hover:bg-gray-600': mode !== 'SelectMode'
+			}"
+			class="ml-1.5 flex items-center text-sm font-medium text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-600 w-full px-1.5 py-1 rounded-md"
+			type="button"
+		>
+			Select
+		</button>
+	</li>
+
+	<li class="flex items-center">
+		<button
+			(touchstart)="selectMode('CreateMode')"
+			[ngClass]="{
+				'bg-gray-100 dark:bg-gray-600': mode === 'CreateMode',
+				'hover:bg-gray-100 dark:hover:bg-gray-600': mode !== 'CreateMode'
+			}"
+			class="ml-1.5 flex items-center text-sm font-medium text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-600 w-full px-1.5 py-1 rounded-md"
+			type="button"
+		>
+			Create
+		</button>
+	</li>
+</mat-menu>
 
 <div
 	#contextMenu
