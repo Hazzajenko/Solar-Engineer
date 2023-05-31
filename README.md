@@ -20,7 +20,7 @@
   <a href="#license">License</a>
 </p>
 <p align="center">
-<img src="./img/solar-engineer-v2.gif" width="80%"/>
+<img src="./img/solar-engineer-v3.gif" width="80%"/>
 </p>
 
 
