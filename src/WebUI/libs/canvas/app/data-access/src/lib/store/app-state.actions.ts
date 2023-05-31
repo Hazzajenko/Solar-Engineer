@@ -1,6 +1,6 @@
 import { DragBox, ModeState, PreviewAxisState, ViewPositioningState } from './app-state.types'
 import { createActionGroup, emptyProps, props } from '@ngrx/store'
-import { PanelId } from '@entities/shared'
+import { PanelId, StringColor } from '@entities/shared'
 
 export const AppStateActions = createActionGroup({
 	source: 'App State Store',
@@ -20,24 +20,10 @@ export const AppStateActions = createActionGroup({
 		}>(),
 		'Set Preview Axis State': props<{
 			previewAxis: PreviewAxisState
-		}>() /*		'Set Context Menu State': props<{
-		 contextMenu: ContextMenuOpenState
-		 }>(),
-		 'Open Context Menu': props<{
-		 contextMenuType: ContextMenuType
-		 }>(),
-		 'Close Context Menu': emptyProps()*/ /*		'Set Dialog State': props<{
-		 dialog: boolean
-		 }>(),*/ /*		'Toggle Dialog State': emptyProps(),
-		 'Add Dialog': props<{
-		 dialog: DialogInput
-		 }>(),
-		 'Update Dialog': props<{
-		 update: UpdateStr<DialogInput>
-		 }>(),
-		 'Remove Dialog': props<{
-		 dialogId: string
-		 }>(),*/,
+		}>(),
+		'Set String Color': props<{
+			stringColor: StringColor
+		}>(),
 		'Clear State': emptyProps(),
 	},
 })

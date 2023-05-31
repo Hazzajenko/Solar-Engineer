@@ -31,7 +31,7 @@ import {
 } from '@shared/directives'
 import { injectAppStateStore, ModeState } from '@canvas/app/data-access'
 import { MobileBottomToolbarDirective } from './mobile-bottom-toolbar.directive'
-import { STRING_COLOR, StringColor, stringColors } from '@shared/utils'
+import { StringColor, stringColors } from '@entities/shared'
 
 @Component({
 	selector: 'overlay-mobile-bottom-toolbar',
@@ -69,12 +69,31 @@ export class MobileBottomToolbarComponent {
 	contextMenuOpen = signal<string | undefined>(undefined)
 	currentContextMenuDiv = signal<ElementRef<HTMLDivElement> | undefined>(undefined)
 
-	stringColors = stringColors
-	selectedStringColor = signal<StringColor>(STRING_COLOR.ORANGE)
+	stringColors = stringColors as StringColor[]
+	selectedStringColor = this._appStore.stringColor
+	mode = this._appStore.mode
+	// selectedStringColor = signal<StringColor>(STRING_COLOR.ORANGE)
 	killContextMenu: (() => void) | undefined = undefined
 
-	get mode() {
-		return this._appStore.mode()
+	/*	constructor() {
+	 effect(
+	 () => {
+	 this.selectedStringColor()
+	 this._appStore.setStringColor(this.selectedStringColor())
+	 },
+	 { allowSignalWrites: true },
+	 )
+	 }*/
+
+	/*	get mode() {
+	 return this._appStore.mode()
+	 }*/
+
+	// protected readonly setMode = setMode
+
+	setStringColor(color: StringColor) {
+		// this.selectedStringColor.set(color)
+		this._appStore.setStringColor(color)
 	}
 
 	toggleContextMenu(event: TouchEvent, contextMenuId: string) {
@@ -122,7 +141,7 @@ export class MobileBottomToolbarComponent {
 	finishMenuFunction() {
 		this.killContextMenu = this._renderer.listen(document, 'touchstart', (event: TouchEvent) => {
 			const target = event.target as HTMLElement
-			console.log('target', target)
+			// console.log('target', target)
 			const currentContextMenuDiv = this.currentContextMenuDiv()
 			if (!currentContextMenuDiv) {
 				this.setContextMenuToUndefined()
@@ -165,6 +184,6 @@ export class MobileBottomToolbarComponent {
 
 	selectMode(mode: ModeState) {
 		this._appStore.setModeState(mode)
-		this.contextMenuOpen.set(undefined)
+		// this.setContextMenuToUndefined()
 	}
 }

@@ -17,6 +17,7 @@ import { SinglePanelMenuComponent } from '../single-panel-menu/single-panel-menu
 import { MultiplePanelsMenuComponent } from '../multiple-panels-menu/multiple-panels-menu.component'
 import { StringMenuComponent } from '../string-menu/string-menu.component'
 import { PanelLinkMenuComponent } from '../panel-link-menu'
+import { ColourPickerMenuComponent } from '../colour-picker-menu/colour-picker-menu.component'
 
 export const contextMenuInputInjectionToken = new InjectionToken<ContextMenuInput>('')
 
@@ -84,6 +85,8 @@ export class ContextMenuRendererComponent {
 				return StringMenuComponent
 			case CONTEXT_MENU_COMPONENT.PANEL_LINK_MENU:
 				return PanelLinkMenuComponent
+			case CONTEXT_MENU_COMPONENT.COLOUR_PICKER_MENU:
+				return ColourPickerMenuComponent
 			default:
 				throw new Error('Unknown context menu component')
 		}

@@ -13,6 +13,7 @@ import {
 	ViewPositioningState,
 } from './app-state.types'
 import { Action, createReducer, on } from '@ngrx/store'
+import { STRING_COLOR, StringColor } from '@entities/shared'
 
 export const APP_STATE_FEATURE_KEY = 'appState'
 
@@ -22,6 +23,7 @@ export type AppState = {
 	view: ViewPositioningState
 	previewAxis: PreviewAxisState
 	mode: ModeState
+	stringColor: StringColor
 }
 
 export const initialAppState: AppState = {
@@ -30,6 +32,7 @@ export const initialAppState: AppState = {
 	view: VIEW_POSITIONING_STATE.VIEW_NOT_MOVING,
 	previewAxis: PREVIEW_AXIS_STATE.NONE,
 	mode: MODE_STATE.SELECT_MODE,
+	stringColor: STRING_COLOR.ORANGE,
 }
 
 const reducer = createReducer(
@@ -63,6 +66,10 @@ const reducer = createReducer(
 	on(AppStateActions.setModeState, (state, { mode }) => ({
 		...state,
 		mode,
+	})),
+	on(AppStateActions.setStringColor, (state, { stringColor }) => ({
+		...state,
+		stringColor,
 	})),
 	on(AppStateActions.clearState, () => initialAppState),
 )

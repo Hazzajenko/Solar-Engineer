@@ -52,6 +52,17 @@ export class OverlayToolBarComponent {
 		// heroAcademicCapSolid
 	}
 
+	openColourPicker(changeColourButton: HTMLButtonElement) {
+		const rect = changeColourButton.getBoundingClientRect()
+
+		const location = { x: rect.left, y: rect.top + rect.height }
+
+		this._uiStore.dispatch.openContextMenu({
+			component: 'app-colour-picker-menu',
+			location,
+		})
+	}
+
 	toggleSideUi() {
 		this._uiStore.dispatch.toggleSideUiNav()
 	}

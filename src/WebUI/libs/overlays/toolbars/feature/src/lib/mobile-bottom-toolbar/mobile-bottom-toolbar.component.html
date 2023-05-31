@@ -68,8 +68,9 @@ height: mobileToolbarHeight()
 		class="pt-4 pb-4 text-sm text-gray-700 dark:text-gray-200 absolute h-fit w-full divide-y divide-gray-100 ring-1 ring-black ring-opacity-5 focus:outline-none"
 		id="color-picker-context-menu"
 	>
+		<div class="grid grid-cols-4 gap-4 justify-items-center">
 			<div
-				(touchstart)="selectedStringColor.set(color)"
+				(touchstart)="setStringColor(color)"
 				*ngFor="let color of stringColors"
 				[ngStyle]="{
 				'background-color': color,
@@ -78,6 +79,51 @@ height: mobileToolbarHeight()
 				style="width: 25px; height: 25px; border-radius: 50%"
 			></div>
 		</div>
+	</div>
+
+	<div
+		#contextMenu
+		*ngIf="contextMenuOpen() === 'mode-picker-context-menu'"
+		@goTop
+		class="pt-4 pb-4 text-sm text-gray-700 dark:text-gray-200 absolute h-fit w-full divide-y divide-gray-100 ring-1 ring-black ring-opacity-5 focus:outline-none"
+		id="mode-picker-context-menu"
+	>
+		<!--		SelectMode-->
+		<!--		CreateMode-->
+		<!--		<div class="grid grid-cols-2 gap-4 justify-items-center">-->
+		<div class="flex flex-row items-center justify-around">
+			<div>
+				<div
+					(touchstart)="selectMode('SelectMode')"
+					[ngStyle]="{
+					'background-color': mode() === 'SelectMode' ? 'black' : 'white',
+					'border': mode() === 'SelectMode' ? '1px solid black' : 'none',
+					'color': mode() === 'SelectMode' ? 'white' : 'black',
+					}"
+					class="flex items-center justify-center"
+					style="width: 25px; height: 25px; border-radius: 50%"
+				>
+					<app-show-svg-no-styles inputClass="w-4 h-4" svgPath="hero-icons/cursor-arrow-ripple" />
+				</div>
+				<span class="text-xs">SelectMode</span>
+			</div>
+			<div>
+				<div
+					(touchstart)="selectMode('CreateMode')"
+					[ngStyle]="{
+					'background-color': mode() === 'CreateMode' ? 'black' : 'white',
+					'border': mode() === 'CreateMode' ? '1px solid black' : 'none',
+					'color': mode() === 'CreateMode' ? 'white' : 'black',
+					}"
+					class="flex items-center justify-center"
+					style="width: 25px; height: 25px; border-radius: 50%"
+				>
+					<app-show-svg-no-styles inputClass="w-4 h-4" svgPath="hero-icons/plus-circle" />
+				</div>
+				<span class="text-xs">CreateMode</span>
+			</div>
+		</div>
+		<!--		</div>-->
 	</div>
 
 	<div class="flex overflow-hidden bg-gray-100 shadow-md dark:bg-gray-800 rounded-lg">
@@ -122,39 +168,10 @@ height: mobileToolbarHeight()
 					<span class="sr-only">Change Colour</span>
 				</button>
 			</div>
-			<mat-menu #aboveMenu="matMenu" class="bottom-0" yPosition="above">
-				<li class="flex items-center">
-					<button
-						(touchstart)="selectMode('SelectMode')"
-						[ngClass]="{
-							'bg-gray-100 dark:bg-gray-600': mode === 'SelectMode',
-							'hover:bg-gray-100 dark:hover:bg-gray-600': mode !== 'SelectMode'
-						}"
-						class="ml-1.5 flex items-center text-sm font-medium text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-600 w-full px-1.5 py-1 rounded-md"
-						type="button"
-					>
-						Select
-					</button>
-				</li>
-
-				<li class="flex items-center">
-					<button
-						(touchstart)="selectMode('CreateMode')"
-						[ngClass]="{
-							'bg-gray-100 dark:bg-gray-600': mode === 'CreateMode',
-							'hover:bg-gray-100 dark:hover:bg-gray-600': mode !== 'CreateMode'
-						}"
-						class="ml-1.5 flex items-center text-sm font-medium text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-600 w-full px-1.5 py-1 rounded-md"
-						type="button"
-					>
-						Create
-					</button>
-				</li>
-			</mat-menu>
 			<div class="flex items-center space-x-1">
 				<button
 					#menuButton
-					(touchstart)="toggleContextMenu($event, 'wrench-context-menu')"
+					(touchstart)="toggleContextMenu($event, 'mode-picker-context-menu')"
 					class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
 					type="button"
 				>
@@ -468,8 +485,8 @@ height: mobileToolbarHeight()
 			<button
 				(touchstart)="selectMode('SelectMode')"
 				[ngClass]="{
-					'bg-gray-100 dark:bg-gray-600': mode === 'SelectMode',
-					'hover:bg-gray-100 dark:hover:bg-gray-600': mode !== 'SelectMode'
+					'bg-gray-100 dark:bg-gray-600': mode() === 'SelectMode',
+					'hover:bg-gray-100 dark:hover:bg-gray-600': mode() !== 'SelectMode'
 				}"
 				class="ml-1.5 flex items-center text-sm font-medium text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-600 w-full px-1.5 py-1 rounded-md"
 				type="button"
@@ -482,8 +499,8 @@ height: mobileToolbarHeight()
 			<button
 				(touchstart)="selectMode('CreateMode')"
 				[ngClass]="{
-					'bg-gray-100 dark:bg-gray-600': mode === 'CreateMode',
-					'hover:bg-gray-100 dark:hover:bg-gray-600': mode !== 'CreateMode'
+					'bg-gray-100 dark:bg-gray-600': mode() === 'CreateMode',
+					'hover:bg-gray-100 dark:hover:bg-gray-600': mode() !== 'CreateMode'
 				}"
 				class="ml-1.5 flex items-center text-sm font-medium text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-600 w-full px-1.5 py-1 rounded-md"
 				type="button"
@@ -496,8 +513,8 @@ height: mobileToolbarHeight()
 			<button
 				(touchstart)="selectMode('LinkMode')"
 				[ngClass]="{
-					'bg-gray-100 dark:bg-gray-600': mode === 'LinkMode',
-					'hover:bg-gray-100 dark:hover:bg-gray-600': mode !== 'LinkMode'
+					'bg-gray-100 dark:bg-gray-600': mode() === 'LinkMode',
+					'hover:bg-gray-100 dark:hover:bg-gray-600': mode() !== 'LinkMode'
 				}"
 				class="ml-1.5 flex items-center text-sm font-medium text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-600 w-full px-1.5 py-1 rounded-md"
 				type="button"

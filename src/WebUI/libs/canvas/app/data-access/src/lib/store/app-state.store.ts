@@ -5,7 +5,7 @@ import { appStateFeature } from './app-state.feature'
 import { AppStateActions } from './app-state.actions'
 import { DragBox, ModeState, PreviewAxisState, ViewPositioningState } from './app-state.types'
 import { FunctionKeys } from 'utility-types'
-import { PanelId } from '@entities/shared'
+import { PanelId, StringColor } from '@entities/shared'
 
 export type AppStateStore = ReturnType<typeof injectAppStateStore>
 
@@ -20,6 +20,11 @@ export function injectAppStateStore() {
 	const pointer = () => store.selectSignal(appStateFeature.selectPointer)()
 	const view = () => store.selectSignal(appStateFeature.selectView)()
 	const previewAxis = () => store.selectSignal(appStateFeature.selectPreviewAxis)()
+
+	const stringColor = () => store.selectSignal(appStateFeature.selectStringColor)()
+
+	const setStringColor = (stringColor: StringColor) =>
+		store.dispatch(AppStateActions.setStringColor({ stringColor }))
 	const setHoveringOverEntityState = (hoveringOverPanelId: PanelId) =>
 		store.dispatch(AppStateActions.setHoveringOverPanel({ hoveringOverPanelId }))
 	const liftHoveringOverEntity = () => store.dispatch(AppStateActions.liftHoveringOverEntity())
@@ -47,6 +52,8 @@ export function injectAppStateStore() {
 		setViewPositioningState,
 		setModeState,
 		setPreviewAxisState,
+		stringColor,
+		setStringColor,
 	}
 }
 

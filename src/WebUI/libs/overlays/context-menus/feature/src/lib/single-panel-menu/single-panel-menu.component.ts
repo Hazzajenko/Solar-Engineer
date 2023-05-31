@@ -15,6 +15,7 @@ import { NgIconComponent, provideIcons } from '@ng-icons/core'
 import { heroMinusCircle } from '@ng-icons/heroicons/outline'
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { assertNotNull } from '@shared/utils'
+import { transitionContextMenu } from '../animations/context-menu.animation'
 
 // import {default}  from '@ng-icons/heroicons'
 
@@ -40,6 +41,7 @@ import { assertNotNull } from '@shared/utils'
 			}
 		`,
 	],
+	animations: [transitionContextMenu],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SinglePanelMenuComponent implements OnInit {

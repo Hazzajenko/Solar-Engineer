@@ -12,6 +12,7 @@ export const appStateFeature = createFeature({
 		selectPointer,
 		selectView,
 		selectPreviewAxis,
+		selectStringColor,
 	}) => ({
 		selectAppStateState,
 		selectDragBox,
@@ -19,6 +20,7 @@ export const appStateFeature = createFeature({
 		selectPointer,
 		selectView,
 		selectPreviewAxis,
+		selectStringColor,
 	}),
 })
 
