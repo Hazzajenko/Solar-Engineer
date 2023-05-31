@@ -62,9 +62,12 @@ export const displayNotification$ = createEffect(
 		return actions$.pipe(
 			ofType(NotificationsActions.addNotification),
 			tap(({ notification }) => {
-				_snackBar.open(notification.title, 'Splash', {
+				_snackBar.open(notification.title, 'Ok', {
 					horizontalPosition: 'start',
 					verticalPosition: 'bottom',
+					duration: 2000,
+					direction: 'ltr',
+					politeness: 'assertive',
 				})
 			}),
 		)

@@ -1,7 +1,6 @@
 import {
 	ChangeDetectionStrategy,
 	Component,
-	computed,
 	ElementRef,
 	inject,
 	QueryList,
@@ -23,6 +22,7 @@ import {
 	ExpandDivWithElementsDirective,
 } from '@shared/directives'
 import { injectAppStateStore, ModeState } from '@canvas/app/data-access'
+import { MobileBottomToolbarDirective } from './mobile-bottom-toolbar.directive'
 
 @Component({
 	selector: 'overlay-mobile-bottom-toolbar',
@@ -41,6 +41,7 @@ import { injectAppStateStore, ModeState } from '@canvas/app/data-access'
 		NgSwitchCase,
 		NgTemplateOutlet,
 		ExpandDivWithElementsDirective,
+		MobileBottomToolbarDirective,
 	],
 	templateUrl: './mobile-bottom-toolbar.component.html',
 	styles: [],
@@ -51,6 +52,7 @@ export class MobileBottomToolbarComponent {
 	private _appStore = injectAppStateStore()
 	@ViewChild(MatMenuTrigger) trigger!: MatMenuTrigger
 	@ViewChildren('contextMenu') contextMenus!: QueryList<ElementRef<HTMLDivElement>>
+	@ViewChildren('temps') temps!: QueryList<ElementRef<HTMLDivElement>>
 	// @ViewChild('contextMenu') contextMenu!: ElementRef<HTMLDivElement>
 	@ViewChild('mobileToolbar') mobileToolbarRef!: ElementRef<HTMLDivElement>
 	menuTopLeftPosition = { x: '0', y: '0' }
@@ -58,33 +60,86 @@ export class MobileBottomToolbarComponent {
 	_renderer = inject(Renderer2)
 	_element = inject(ElementRef).nativeElement
 	contextMenuOpen = signal<string | undefined>(undefined)
-	currentContextMenuDiv = computed(() => {
-		const contextMenuId = this.contextMenuOpen()
-		return this.contextMenus.find((c) => c.nativeElement.id === contextMenuId)
-	})
+	currentContextMenuDiv = signal<ElementRef<HTMLDivElement> | undefined>(undefined)
+
+	killContextMenu: (() => void) | undefined = undefined
+
+	/*	currentContextMenuDiv = computed(() => {
+	 const contextMenuId = this.contextMenuOpen()
+	 if (!contextMenuId) {
+	 console.log('contextMenuId', contextMenuId)
+	 return undefined
+	 }
+	 if (!this.contextMenus) {
+	 console.log('this.contextMenus', this.contextMenus)
+	 return undefined
+	 }
+	 return this.contextMenus.find((c) => c.nativeElement.id === contextMenuId)
+	 })*/
 	/*	cssSignal = signal<string>(
 	 `bottom-[calc(${this.mobileToolbarRef.nativeElement.getBoundingClientRect().top}px - ${
 	 this.contextMenus.get(0)?.nativeElement.getBoundingClientRect().height
 	 }px)]`,
 	 )*/
 
-	cssSignal = computed(() => {
-		const top = this.mobileToolbarRef.nativeElement.getBoundingClientRect().top
-		const contextMenuHeight = this.contextMenus
-			.find((contextMenu) => contextMenu.nativeElement.id === 'main-context-menu')
-			?.nativeElement.getBoundingClientRect().height
-		if (!contextMenuHeight) return `bottom-[calc(${top}px_-_0px)]`
-		// main-context-menu
-		return `bottom-[calc(${top}px_-_${contextMenuHeight}px)]`
-	})
+	/*	cssSignal = computed(() => {
+	 const top = this.mobileToolbarRef.nativeElement.getBoundingClientRect().top
+	 const contextMenuHeight = this.contextMenus
+	 .find((contextMenu) => contextMenu.nativeElement.id === 'main-context-menu')
+	 ?.nativeElement.getBoundingClientRect().height
+	 if (!contextMenuHeight) return `bottom-[calc(${top}px_-_0px)]`
+	 // main-context-menu
+	 return `bottom-[calc(${top}px_-_${contextMenuHeight}px)]`
+	 })
 
-	mobileToolbarHeight = computed(() => {
-		if (!this.mobileToolbarRef) setTimeout(() => this.mobileToolbarHeight(), 100)
-		const toolbarHeight = this.mobileToolbarRef.nativeElement.getBoundingClientRect().height
-		const contextMenuHeight =
-			this.currentContextMenuDiv()?.nativeElement.getBoundingClientRect().height ?? 0
-		return `${toolbarHeight + contextMenuHeight}px}`
-	})
+	 mobileToolbarHeight = computed(() => {
+	 if (getScreenSize() !== 640) return '0px'
+	 if (!this.mobileToolbarRef) {
+	 // setTimeout(() => this.mobileToolbarHeight(), 100)
+	 return '0px'
+	 }
+	 const toolbarHeight = this.mobileToolbarRef.nativeElement.getBoundingClientRect().height
+	 const contextMenuHeight =
+	 this.currentContextMenuDiv()?.nativeElement.getBoundingClientRect().height ?? 0
+	 return `${toolbarHeight + contextMenuHeight}px}`
+	 })*/
+
+	/*	constructor() {
+	 const observer = new MutationObserver((mutations) => {
+	 console.log(mutations)
+	 mutations.forEach((mutation) => {
+	 if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+	 const component = mutation.addedNodes[0] as HTMLDivElement
+	 if (component instanceof SVGElement) {
+	 console.log('svg')
+	 return
+	 }
+	 if (!(component instanceof HTMLDivElement)) {
+	 console.log('HTMLDivElement')
+	 return
+	 }
+
+	 if (component.id === element.id) return
+	 console.log('component', component)
+	 const componentHeight = component.getBoundingClientRect().height
+	 const elementRectHeight = this._element.getBoundingClientRect().height
+	 const spaceY = 10
+	 // const spaceY = 5
+	 const newDivHeight = elementRectHeight + componentHeight + spaceY
+	 console.log('component', component)
+	 this.initialHeight = this._element.getBoundingClientRect().height
+	 console.log(this.initialHeight)
+	 this._renderer.setStyle(this._element, 'height', `${newDivHeight}px`)
+	 }
+	 if (mutation.type === 'childList' && mutation.removedNodes.length > 0) {
+	 this._renderer.setStyle(this._element, 'height', `${this.initialHeight}px`)
+	 }
+	 })
+	 })
+
+	 const config = { childList: true, subtree: true }
+	 observer.observe(this._element, config)
+	 }*/
 
 	get mode() {
 		return this._appStore.mode()
@@ -113,18 +168,44 @@ export class MobileBottomToolbarComponent {
 		// const div = this.contextMenu.find((c) => c.nativeElement.id === contextMenuId)
 		const isOpen = this.contextMenuOpen() === contextMenuId
 		if (isOpen) {
-			this.contextMenuOpen.set(undefined)
+			this.setContextMenuToUndefined()
+			// this.contextMenuOpen.set(undefined)
+			// if (this.killContextMenu) this.killContextMenu()
+			console.log('isOpen', isOpen)
 			return
 		}
 		this.contextMenuOpen.set(contextMenuId)
+		console.log('this.contextMenuOpen.set(contextMenuId)', contextMenuId)
+		console.log('this.contextMenus', this.contextMenus)
 
-		const kill = this._renderer.listen(document, 'touchstart', (event: TouchEvent) => {
-			const target = event.target as HTMLElement
-			if (target.role !== 'menuitem') {
-				this.contextMenuOpen.set(undefined)
-				kill()
-			}
-		})
+		// const menu = this.contextMenus.first
+		const menu = this.contextMenus.find((c) => c.nativeElement.id === contextMenuId)
+		if (!menu) {
+			setTimeout(() => this.reFetchMenu(contextMenuId), 100)
+			return
+		}
+		this.currentContextMenuDiv.set(menu)
+		this.finishMenuFunction()
+		/*console.log('menu', menu)
+		 this.currentContextMenuDiv.set(
+		 this.contextMenus.find((c) => c.nativeElement.id === contextMenuId),
+		 )
+
+		 const kill = this._renderer.listen(document, 'touchstart', (event: TouchEvent) => {
+		 const target = event.target as HTMLElement
+		 if (target.role !== 'menuitem') {
+		 this.contextMenuOpen.set(undefined)
+		 console.log('kill')
+		 kill()
+		 }
+		 })
+
+		 const current = this.currentContextMenuDiv()
+		 console.log('current', current)
+
+		 if (this.temps) {
+		 console.log('temps', this.temps)
+		 }*/
 
 		/*const observer = new MutationObserver((mutations) => {
 		 // Loop through the mutations and check if a new component has been added
@@ -162,6 +243,41 @@ export class MobileBottomToolbarComponent {
 		 // Configure the observer to watch for changes to the toolbar
 		 const config = { childList: true, subtree: true }
 		 observer.observe(this.mobileToolbarRef.nativeElement, config)*/
+	}
+
+	reFetchMenu(contextMenuId: string) {
+		const menu = this.contextMenus.find((c) => c.nativeElement.id === contextMenuId)
+		if (!menu) {
+			this.reFetchMenu(contextMenuId)
+			return
+		}
+		console.log('menu', menu)
+		this.currentContextMenuDiv.set(menu)
+
+		this.finishMenuFunction()
+	}
+
+	finishMenuFunction() {
+		this.killContextMenu = this._renderer.listen(document, 'touchstart', (event: TouchEvent) => {
+			const target = event.target as HTMLElement
+			console.log('target', target)
+			if (target.role !== 'menuitem') {
+				this.setContextMenuToUndefined()
+			}
+		})
+		/*
+		 const current = this.currentContextMenuDiv()
+		 console.log('current', current)
+
+		 if (this.temps) {
+		 console.log('temps', this.temps)
+		 }*/
+	}
+
+	setContextMenuToUndefined() {
+		this.contextMenuOpen.set(undefined)
+		this.currentContextMenuDiv.set(undefined)
+		if (this.killContextMenu) this.killContextMenu()
 	}
 
 	initDiv(div: HTMLDivElement | HTMLUListElement) {

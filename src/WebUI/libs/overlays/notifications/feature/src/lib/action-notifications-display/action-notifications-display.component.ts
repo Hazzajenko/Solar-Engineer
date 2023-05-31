@@ -49,6 +49,13 @@ export class ActionNotificationsDisplayComponent implements AfterViewInit {
 				if (!notification) {
 					return
 				}
+				/*				this._snackBar.open(notification.title, 'Ok', {
+					 horizontalPosition: 'start',
+					 verticalPosition: 'bottom', // duration: DEFAULT_NOTIFICATION_DURATION,
+					 direction: 'ltr', // politeness: 'assertive',
+					 announcementMessage: notification.title,
+
+					 })*/
 				setTimeout(() => {
 					const progressBarEl = this.progressBarEls.find(
 						(p) => p.nativeElement.id === `progressBar-${notification.id}`,
@@ -58,14 +65,12 @@ export class ActionNotificationsDisplayComponent implements AfterViewInit {
 						return
 					}
 					this.triggerNotificationTimer(notification, progressBarEl.nativeElement as HTMLDivElement)
-					this._snackBar.open(notification.title, 'Ok', {
-						horizontalPosition: 'start',
-						verticalPosition: 'bottom',
-						duration: DEFAULT_NOTIFICATION_DURATION,
-						direction: 'ltr',
-						politeness: 'assertive',
-						announcementMessage: notification.title,
-					})
+					/*					this._snackBar.open(notification.title, 'Ok', {
+						 horizontalPosition: 'start',
+						 verticalPosition: 'bottom', // duration: DEFAULT_NOTIFICATION_DURATION,
+						 direction: 'ltr', // politeness: 'assertive',
+						 announcementMessage: notification.title,
+						 })*/
 				}, 100)
 			})
 		})
