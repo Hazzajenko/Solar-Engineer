@@ -68,17 +68,17 @@ Project Link: [https://github.com/Hazzajenko/Angular-Go-App](https://github.com/
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: 
+[contributors-shield]:
 [contributors-url]: https://github.com/Hazzajenko/Angular-Go-App/graphs/contributors
-[forks-shield]: 
+[forks-shield]:
 [forks-url]: https://github.com/Hazzajenko/Angular-Go-App/network/members
-[stars-shield]: 
+[stars-shield]:
 [stars-url]: https://github.com/Hazzajenko/Angular-Go-App/stargazers
-[issues-shield]: 
+[issues-shield]:
 [issues-url]: https://github.com/Hazzajenko/Angular-Go-App/issues
-[license-shield]: 
+[license-shield]:
 [license-url]: https://github.com/Hazzajenko/Angular-Go-App/blob/master/LICENSE.txt
-[product-screenshot]: 
+[product-screenshot]:
 [Angular.io]: https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white
 [Angular-url]: https://angular.io/
 [Go.dev]: https://img.shields.io/badge/Golang-blue?style=for-the-badge&logo=go&logoColor=white

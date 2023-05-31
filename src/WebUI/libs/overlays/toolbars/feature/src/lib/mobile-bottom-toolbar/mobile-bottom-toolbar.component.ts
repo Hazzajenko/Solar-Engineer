@@ -58,6 +58,10 @@ export class MobileBottomToolbarComponent {
 	_renderer = inject(Renderer2)
 	_element = inject(ElementRef).nativeElement
 	contextMenuOpen = signal<string | undefined>(undefined)
+	currentContextMenuDiv = computed(() => {
+		const contextMenuId = this.contextMenuOpen()
+		return this.contextMenus.find((c) => c.nativeElement.id === contextMenuId)
+	})
 	/*	cssSignal = signal<string>(
 	 `bottom-[calc(${this.mobileToolbarRef.nativeElement.getBoundingClientRect().top}px - ${
 	 this.contextMenus.get(0)?.nativeElement.getBoundingClientRect().height
@@ -72,6 +76,14 @@ export class MobileBottomToolbarComponent {
 		if (!contextMenuHeight) return `bottom-[calc(${top}px_-_0px)]`
 		// main-context-menu
 		return `bottom-[calc(${top}px_-_${contextMenuHeight}px)]`
+	})
+
+	mobileToolbarHeight = computed(() => {
+		if (!this.mobileToolbarRef) setTimeout(() => this.mobileToolbarHeight(), 100)
+		const toolbarHeight = this.mobileToolbarRef.nativeElement.getBoundingClientRect().height
+		const contextMenuHeight =
+			this.currentContextMenuDiv()?.nativeElement.getBoundingClientRect().height ?? 0
+		return `${toolbarHeight + contextMenuHeight}px}`
 	})
 
 	get mode() {
