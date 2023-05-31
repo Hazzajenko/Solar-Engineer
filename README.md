@@ -5,7 +5,7 @@
   <img src="./img/logo-name.png"/>
 </h1>
 
-<h4 align="center">A web app for design solar system installs built on top of <a href="https://angular.io/" target="_blank">Angular</a>.</h4>
+<h4 align="center">A web app for designing solar system installs built on top of <a href="https://angular.io/" target="_blank">Angular</a>.</h4>
 
 
 <p align="center">
