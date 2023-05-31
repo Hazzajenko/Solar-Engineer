@@ -1,3 +1,4 @@
+<a name="readme-top"></a>
 
 <h1 align="center">
   <br>
@@ -9,15 +10,10 @@
 		d="M132.923 38.035c-1.298 0-2.502.213-3.612.638a8.721 8.721 0 00-2.832 1.77c-.78.708-1.393 1.605-1.842 2.691a8.887 8.887 0 00-.637 3.01v1.062h3.116v-1.062c.047-.803.177-1.452.39-1.948a6.258 6.258 0 011.168-1.84c.59-.544 1.204-.945 1.841-1.205.732-.283 1.535-.424 2.408-.424h4.461v-2.692h-4.461zm1.346 7.967v.673h.035a7.296 7.296 0 01-.425 2.09c-.307.73-.696 1.333-1.168 1.805-.52.52-1.133.92-1.842 1.204-.731.283-1.534.425-2.407.425H124v2.69h4.462c1.298 0 2.502-.212 3.611-.637a8.721 8.721 0 002.833-1.77c.826-.826 1.44-1.723 1.841-2.691.425-.944.638-1.983.638-3.116v-.673h-3.116zm13.349 6.197a4.43 4.43 0 01-.992-.319 5.417 5.417 0 01-1.735-1.274c-.472-.496-.85-1.11-1.133-1.842a6.627 6.627 0 01-.39-2.23v-.178c0-.779.13-1.534.39-2.266.307-.755.685-1.357 1.133-1.805a4.653 4.653 0 011.7-1.24c.401-.189.743-.307 1.027-.354v-2.655c-.827.118-1.558.318-2.196.601-1.038.449-1.924 1.05-2.655 1.806s-1.31 1.653-1.735 2.691-.638 2.125-.638 3.258v.177a8.35 8.35 0 00.638 3.258 7.32 7.32 0 001.7 2.655 7.916 7.916 0 002.655 1.806c.637.283 1.38.484 2.23.602v-2.691zm9.63-5.736v-.106a8.35 8.35 0 00-.637-3.258 8.38 8.38 0 00-1.735-2.691c-.708-.755-1.581-1.346-2.62-1.77-.59-.284-1.31-.484-2.16-.602v2.69l.425.142c.212.071.378.13.496.177.66.307 1.239.732 1.735 1.275.472.496.85 1.11 1.133 1.841.26.732.39 1.476.39 2.231v.177c0 .779-.13 1.534-.39 2.266-.307.755-.685 1.357-1.133 1.806a4.653 4.653 0 01-1.7 1.24 4.549 4.549 0 01-.956.318v2.691a7.987 7.987 0 002.125-.602c.967-.401 1.853-1.003 2.655-1.806.78-.826 1.358-1.723 1.735-2.69a8.522 8.522 0 00.638-3.258v-.071zm3.825-8.428h2.903V52.2h8.852v2.69h-11.756V38.036zM189.93 54.89h3.187L186.956 38h-3.222l3.576 10.092zm-13.03 0h3.116l3.682-8.994-1.522-4.036zm33.46 0l-4.567-6.374a8.668 8.668 0 001.629-.673c.52-.33.944-.696 1.275-1.097a4.24 4.24 0 00.814-1.452c.213-.566.319-1.204.319-1.912 0-.826-.142-1.57-.425-2.23a4.733 4.733 0 00-1.24-1.665c-.519-.448-1.18-.803-1.982-1.062a8.69 8.69 0 00-2.62-.39h-7.507v2.691h7.259c1.109 0 1.97.236 2.584.709s.92 1.18.92 2.124c0 .873-.306 1.558-.92 2.054-.613.52-1.463.779-2.55.779h-7.293v8.498h2.939v-5.878h3.717l4.143 5.878h3.506zm19.05-16.855h12.606v2.692h-12.605v-2.692zm0 14.164h12.57v2.69h-12.57V52.2zm0-7.153h11.367v2.656H229.41v-2.656zm17.103 9.844h2.939v-9.03l-2.94-4.142V54.89zm11.756-16.855v11.65l-8.321-11.65h-3.187L258.73 54.89h2.443V38.035h-2.903zm14.552 9.738h6.268v-2.62h-6.268v2.62zm6.268 2.054h-2.62v2.407h-2.586c-.897 0-1.7-.141-2.407-.424a5.35 5.35 0 01-1.877-1.169 6.257 6.257 0 01-1.168-1.841c-.284-.661-.425-1.428-.425-2.302 0-.826.141-1.593.425-2.301.306-.756.696-1.37 1.168-1.841a5.781 5.781 0 011.877-1.24c.708-.283 1.51-.425 2.408-.425l5.169.036v-2.691l-5.17-.036c-1.321 0-2.537.213-3.647.638a8.721 8.721 0 00-2.832 1.77 8.747 8.747 0 00-1.877 2.691c-.425 1.015-.637 2.125-.637 3.329s.212 2.325.637 3.363c.472 1.086 1.098 1.983 1.877 2.691.708.709 1.652 1.31 2.832 1.806 1.133.425 2.35.638 3.647.638h5.205v-5.1zm12.499-4.78V38h-2.975v16.925h2.975v-9.879zm9.312 9.843h2.939v-9.03l-2.939-4.142V54.89zm11.756-16.855v11.65l-8.321-11.65h-3.187l11.968 16.855h2.443V38.035h-2.903zm7.4 0h12.606v2.692h-12.606v-2.692zm0 14.164h12.57v2.69h-12.57V52.2zm0-7.153h11.366v2.656h-11.366v-2.656zm18.13-7.01h12.605v2.69h-12.606v-2.69zm0 14.163h12.569v2.69h-12.57V52.2zm0-7.153h11.365v2.656h-11.366v-2.656zm31.583 9.844l-4.567-6.374a8.668 8.668 0 001.628-.673c.52-.33.945-.696 1.275-1.097a4.24 4.24 0 00.814-1.452c.213-.566.32-1.204.32-1.912 0-.826-.142-1.57-.426-2.23a4.733 4.733 0 00-1.239-1.665c-.52-.448-1.18-.803-1.983-1.062a8.69 8.69 0 00-2.62-.39h-7.507v2.691h7.259c1.11 0 1.97.236 2.585.709s.92 1.18.92 2.124c0 .873-.307 1.558-.92 2.054-.614.52-1.464.779-2.55.779h-7.294v8.498h2.939v-5.878h3.718l4.143 5.878h3.505z"
 		fill="#b469ff" />
 </svg>
-  <!-- <br>
-  Markdownify
-  <br> -->
 </h1>
 
 <h4 align="center">A web app for design solar system installs built on top of <a href="https://angular.io/" target="_blank">Angular</a>.</h4>
 
-
-<!-- <h4 align="center">A minimal Markdown Editor desktop app built on top of <a href="http://electron.atom.io" target="_blank">Electron</a>.</h4> -->
 
 <p align="center">
   <!-- <a href="https://badge.fury.io/js/electron-markdownify">
@@ -34,78 +30,95 @@
 </p>
 
 <p align="center">
-  <a href="#key-features">Key Features</a> •
   <a href="#how-to-use">How To Use</a> •
-  <!-- <a href="#download">Download</a> • -->
+  <a href="#key-features">Key Features</a> •
+  <a href="#release-history">Release History</a> •
+  <a href="#roadmap">Roadmap</a> •
   <a href="#credits">Credits</a> •
-  <a href="#related">Related</a> •
   <a href="#license">License</a>
 </p>
-<!-- img/solar-engineer.gif -->
-<!-- /Hazzajenko/Solar-Enginner/blob/main/img/solar-engineer.gif -->
-<!-- ![plot](./directory_1/directory_2/.../directory_n/plot.png) -->
+<p align="center">
+<img src="./img/solar-engineer.gif" width="80%"/>
+</p>
 
-
-![screenshot](./img/solar-engineer.gif)
-
-
-<!-- ![screenshot](https://github.com/Hazzajenko/Solar-Enginner/main/img/solar-engineer.gif)
-img/solar-engineer.gif
-/Hazzajenko/Solar-Enginner/blob/main/img/solar-engineer.gif
-
-![screenshot](https://raw.githubusercontent.com/amitmerchant1990/electron-markdownify/master/app/img/markdownify.gif) -->
-
-## Key Features
-
-<!-- * LivePreview - Make changes, See changes
-  - Instantly see what your Markdown documents look like in HTML as you create them.
-* Sync Scrolling
-  - While you type, LivePreview will automatically scroll to the current location you're editing.
-* GitHub Flavored Markdown
-* Syntax highlighting
-* [KaTeX](https://khan.github.io/KaTeX/) Support
-* Dark/Light mode
-* Toolbar for basic Markdown formatting
-* Supports multiple cursors
-* Save the Markdown preview as PDF
-* Emoji support in preview :tada:
-* App will keep alive in tray for quick usage
-* Full screen mode
-  - Write distraction free.
-* Cross platform
-  - Windows, macOS and Linux ready. -->
 
 ## How To Use
 
 Visit <a href="https://solarengineer.app/" target="_blank">SolarEngineer.App</a>
 
-<!-- To clone and run this application, you'll need [Git](https://git-scm.com) and [Node.js](https://nodejs.org/en/download/) (which comes with [npm](http://npmjs.com)) installed on your computer. From your command line:
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-```bash
-# Clone this repository
-$ git clone https://github.com/amitmerchant1990/electron-markdownify
-
-# Go into the repository
-$ cd electron-markdownify
-
-# Install dependencies
-$ npm install
-
-# Run the app
-$ npm start
-```
-
-> **Note**
-> If you're using Linux Bash for Windows, [see this guide](https://www.howtogeek.com/261575/how-to-run-graphical-linux-desktop-applications-from-windows-10s-bash-shell/) or use `node` from the command prompt. -->
+## Key Features
 
 
-<!-- ## Download
+* Panels
+  - Click to create
+  - Alt click drag to multi select
+  - Alt click drag in create mode to multi create
+  - Create String with selected
+  <!-- -  -->
+* Strings
+  - View string stats next to selected string
+  - Link panels in link mode
+  - View links with line graphics
+* Options
+  - Change key bindings
+  - Toggle graphics settings
 
-You can [download](https://github.com/amitmerchant1990/electron-markdownify/releases/tag/v1.2.0) the latest installable version of Markdownify for Windows, macOS and Linux.
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## Emailware
 
-Markdownify is an [emailware](https://en.wiktionary.org/wiki/emailware). Meaning, if you liked using this app or it has helped you in any way, I'd like you send me an email at <bullredeyes@gmail.com> about anything you'd want to say about this software. I'd really appreciate it! -->
+## Release History
+
+* 1.0.1
+  - Add in Link mode when string is selected
+  - Link up panels in a string
+  - Render lines between panels to show links
+  - Display string stats next to selected string
+  - New menu options
+  - Change graphics settings for canvas
+  - Able to edit keybinds for app
+* 1.0.0
+  - Initial release
+  - Create panels
+  - Create strings
+  - Switch between select and create mode
+  - Multi create dragging in create mode
+  - Multi select dragging in select mode
+  - Zooming in and out
+  - Dragging screen position
+  - Moving panels
+  - Rotating panels
+  - Moving multiple panels while selected
+  - Rotating multiple panels while selected
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+<!-- ROADMAP -->
+## Roadmap
+
+- [x] Add Changelog
+- [x] Add in multiple panel dragging and rotation
+- [x] Add in settings menu
+    - [x] Add change graphics settings
+    - [x] Add edit keybinds
+- [ ] Add in UI for mobile
+    - [ ] Add all actions in mobile menu for doing everything you can do with a mouse and keyboard
+- [ ] More strings edit functionality
+    - [ ] Open a dialog to display string settings
+    - [ ] Option to change string colour
+    - [ ] Edit string name
+- [ ] More panels edit functionality
+    - [ ] Edit panel config
+    - [ ] Change panel data values that will change the total string stats
+- [ ] Implement backend for app
+    - [ ] Add auth
+    - [ ] Add save/load
+    - [ ] Add share projects with other users
+    - [ ] Multiple users on the same project at the same time via signalr
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Credits
 
@@ -115,41 +128,30 @@ This software uses the following open source packages:
 - [Nx](https://nx.dev/)
 - [Ngrx](https://ngrx.io/)
 - [DotNet](https://dotnet.microsoft.com/en-us/)
-<!-- - [Node.js](https://nodejs.org/) -->
-<!-- - [Electron](http://electron.atom.io/) -->
-<!-- - [Marked - a markdown parser](https://github.com/chjj/marked) -->
-<!-- - [showdown](http://showdownjs.github.io/showdown/) -->
-<!-- - [CodeMirror](http://codemirror.net/) -->
-<!-- - Emojis are taken from [here](https://github.com/arvida/emoji-cheat-sheet.com) -->
-<!-- - [highlight.js](https://highlightjs.org/) -->
+<!-- - [![Angular][Angular.io]][Angular-url] -->
 
-<!-- ## Related
-
-[markdownify-web](https://github.com/amitmerchant1990/markdownify-web) - Web version of Markdownify -->
-<!--
-## Support
-
-<a href="https://www.buymeacoffee.com/5Zn8Xh3l9" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/purple_img.png" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" ></a>
-
-<p>Or</p>
-
-<a href="https://www.patreon.com/amitmerchant">
-	<img src="https://c5.patreon.com/external/logo/become_a_patron_button@2x.png" width="160">
-</a>
-
-## You may also like...
-
-- [Pomolectron](https://github.com/amitmerchant1990/pomolectron) - A pomodoro app
-- [Correo](https://github.com/amitmerchant1990/correo) - A menubar/taskbar Gmail App for Windows and macOS -->
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## License
 
-<!-- Apache -->
 Distributed under the Apache License. See LICENSE for more information.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ---
 
 > [solarengineer.app](https://solarengineer.app) &nbsp;&middot;&nbsp;
 > GitHub [@hazzajenko](https://github.com/Hazzajenko) &nbsp;&middot;&nbsp;
-<!-- > Twitter [@amit_merchant](https://twitter.com/amit_merchant) -->
 
+[contributors-shield]: https://img.shields.io/github/contributors/hazzajenko/solar-engineer.svg?style=for-the-badge
+[contributors-url]: https://github.com/hazzajenko/solar-engineer/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/hazzajenko/solar-engineer.svg?style=for-the-badge
+[forks-url]: https://github.com/hazzajenko/solar-engineer/network/members
+[stars-shield]: https://img.shields.io/github/stars/hazzajenko/solar-engineer.svg?style=for-the-badge
+[stars-url]: https://github.com/hazzajenko/solar-engineer/stargazers
+[issues-shield]: https://img.shields.io/github/issues/hazzajenko/solar-engineer.svg?style=for-the-badge
+[issues-url]: https://github.com/hazzajenko/solar-engineer/issues
+[license-shield]: https://img.shields.io/github/license/hazzajenko/solar-engineer.svg?style=for-the-badge
+[license-url]: https://github.com/hazzajenko/solar-engineer/blob/master/LICENSE.txt
+[Angular.io]: https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white
+[Angular-url]: https://angular.io/
