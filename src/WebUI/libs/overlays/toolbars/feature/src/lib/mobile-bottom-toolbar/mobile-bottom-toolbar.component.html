@@ -13,7 +13,6 @@ height: mobileToolbarHeight()
 	class="flex overflow-hidden bg-gray-100 shadow-md dark:bg-gray-800 rounded-lg z-50 absolute bottom-8 left-1/2 -translate-x-1/2"
 	id="mobile-toolbar"
 >
-	<!--	<div>-->
 	<ul
 		#contextMenu
 		*ngIf="contextMenuOpen() === 'main-context-menu'"
@@ -60,122 +59,30 @@ height: mobileToolbarHeight()
 				Option 3
 			</a>
 		</li>
-		<!--		<div class="px-4 py-3" role="none">
-					<p class="truncate text-sm font-medium text-gray-900" role="none">Menu</p>
-				</div>-->
 	</ul>
-	<!--	</div>-->
-	<!--<ng-container [ngSwitch]="contextMenuOpen()">
-		<ng-container *ngSwitchCase="'main-context-menu'">
-			<div #contextMenu>
-				<ul
-					#listElement
-					@goTop
-					class="pt-1 text-sm text-gray-700 dark:text-gray-200 absolute h-fit w-full divide-y divide-gray-100 ring-1 ring-black ring-opacity-5 focus:outline-none"
-					id="main-context-menu"
-				>
-					<li>
-						<a
-							class="group w-full flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-							role="menuitem"
-							tabindex="-1"
-						>
-							<app-show-svg-no-styles
-								class="mr-1 text-gray-400 group-hover:text-gray-500"
-								svgPath="links/link"
-							/>
-							Option 1
-						</a>
-					</li>
-					<li>
-						<a
-							class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-							role="menuitem"
-							tabindex="-1"
-						>
-							<app-show-svg-no-styles
-								class="mr-1 text-gray-400 group-hover:text-gray-500"
-								svgPath="hero-icons/bell"
-							/>
-							Option 2
-						</a>
-					</li>
-					<li>
-						<a
-							class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-							role="menuitem"
-							tabindex="-1"
-						>
-							<app-show-svg-no-styles
-								class="mr-1 text-gray-400 group-hover:text-gray-500"
-								svgPath="hero-icons/data"
-							/>
-							Option 3
-						</a>
-					</li>
-					&lt;!&ndash;		<div class="px-4 py-3" role="none">
-								<p class="truncate text-sm font-medium text-gray-900" role="none">Menu</p>
-							</div>&ndash;&gt;
-				</ul>
-			</div>-->
-	<!--			<ng-container #temps *ngTemplateOutlet="mainContextMenu" />-->
-	<!--		</ng-container>-->
-	<!--	</ng-container>-->
-	<!--<ul
-		#listElement
-		*ngIf="contextMenuOpen() === 'main-context-menu'"
+
+	<div
+		#contextMenu
+		*ngIf="contextMenuOpen() === 'color-picker-context-menu'"
 		@goTop
-		class="pt-1 text-sm text-gray-700 dark:text-gray-200 absolute h-fit w-full divide-y divide-gray-100 ring-1 ring-black ring-opacity-5 focus:outline-none"
-		id="main-context-menu"
+		class="pt-4 pb-4 text-sm text-gray-700 dark:text-gray-200 absolute h-fit w-full divide-y divide-gray-100 ring-1 ring-black ring-opacity-5 focus:outline-none"
+		id="color-picker-context-menu"
 	>
-		<li>
-			<a
-				class="group w-full flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-				role="menuitem"
-				tabindex="-1"
-			>
-				<app-show-svg-no-styles
-					class="mr-1 text-gray-400 group-hover:text-gray-500"
-					svgPath="links/link"
-				/>
-				Option 1
-			</a>
-		</li>
-		<li>
-			<a
-				class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-				role="menuitem"
-				tabindex="-1"
-			>
-				<app-show-svg-no-styles
-					class="mr-1 text-gray-400 group-hover:text-gray-500"
-					svgPath="hero-icons/bell"
-				/>
-				Option 2
-			</a>
-		</li>
-		<li>
-			<a
-				class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-				role="menuitem"
-				tabindex="-1"
-			>
-				<app-show-svg-no-styles
-					class="mr-1 text-gray-400 group-hover:text-gray-500"
-					svgPath="hero-icons/data"
-				/>
-				Option 3
-			</a>
-		</li>
-		&lt;!&ndash;		<div class="px-4 py-3" role="none">
-					<p class="truncate text-sm font-medium text-gray-900" role="none">Menu</p>
-				</div>&ndash;&gt;
-	</ul>-->
+			<div
+				(touchstart)="selectedStringColor.set(color)"
+				*ngFor="let color of stringColors"
+				[ngStyle]="{
+				'background-color': color,
+				'border': selectedStringColor() === color ? '1px solid black' : 'none',
+				 }"
+				style="width: 25px; height: 25px; border-radius: 50%"
+			></div>
+		</div>
+	</div>
+
 	<div class="flex overflow-hidden bg-gray-100 shadow-md dark:bg-gray-800 rounded-lg">
 		<div class="flex items-end justify-between p-2 flex-row space-y-0 space-x-4" id="button-group">
 			<div class="flex items-center space-x-1">
-				<!--			(touchstart)="openMenuTouch($event, menu)"-->
-				<!--			(touchstart)="openMenuTouch($event, menu)"-->
 				<button
 					#menuButton
 					(touchstart)="toggleContextMenu($event, 'main-context-menu')"
@@ -187,11 +94,6 @@ height: mobileToolbarHeight()
 					<span class="sr-only">Menu Up</span>
 				</button>
 			</div>
-			<!--			<div class="flex justify-center space-x-2">
-							<input id="head" name="head" type="color" value="#e66465" />
-							<label for="head">Head</label>
-						</div>-->
-
 			<div class="flex items-center space-x-1">
 				<button
 					class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
@@ -212,7 +114,7 @@ height: mobileToolbarHeight()
 			</div>
 			<div class="flex items-center space-x-1">
 				<button
-					[matMenuTriggerFor]="aboveMenu"
+					(touchstart)="toggleContextMenu($event, 'color-picker-context-menu')"
 					class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
 					type="button"
 				>

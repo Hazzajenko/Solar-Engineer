@@ -1,4 +1,4 @@
-const vibrantColors: string[] = [
+export const vibrantColors: string[] = [
 	'#FF6633',
 	'#FFB399',
 	'#FF33FF',
@@ -105,6 +105,38 @@ const vibrantColors: string[] = [
 	'#66E64D',
 	'#4D80CC',
 ]
+
+export const STRING_COLOR = {
+	RED: '#f94144',
+	PINK: '#FF99E6', // PINK: '#FF3380',
+	ORANGE: '#f3722c',
+	YELLOW: '#f8961e',
+	GREEN: '#90be6d',
+	BLUE: '#277da1',
+	PURPLE: '#991AFF',
+} as const
+
+export type StringColor = (typeof STRING_COLOR)[keyof typeof STRING_COLOR]
+
+export const stringColors = Object.values(STRING_COLOR)
+
+/*
+ export const stringColors: string[] = [
+ '#f94144',
+ '#f3722c',
+ '#f8961e',
+ '#f9844a',
+ '#f9c74f',
+ '#90be6d',
+ '#43aa8b',
+ '#4d908e',
+ '#577590',
+ '#277da1',
+ ] as string[]
+ */
+
+// export type StringColor = (typeof stringColors)[number]
+// export
 
 export const getRandomVibrantColorHex = (): string => {
 	return vibrantColors[Math.floor(Math.random() * vibrantColors.length)]
