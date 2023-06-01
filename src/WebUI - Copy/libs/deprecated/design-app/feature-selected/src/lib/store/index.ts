@@ -1,5 +1,0 @@
-export * from './selected.actions'
-export * from './selected.reducer'
-export * from '../services/facade/selected-store.service'
-export * as SelectedSelectors from './selected.selectors'
-export * from './selected.selectors'
