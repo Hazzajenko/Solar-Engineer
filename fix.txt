@@ -1,5 +1,0 @@
-https://solarengineer.net/api/users?filter=friends
-https://solarengineer.net/auth-api/user
-https://solarengineer.net/api/group-chats/data
-'/users-api/hubs/connections'
-'/messages'

@@ -109,7 +109,8 @@ This software uses the following open source packages:
 - [Angular](https://angular.io/)
 - [Nx](https://nx.dev/)
 - [Ngrx](https://ngrx.io/)
-- [DotNet](https://dotnet.microsoft.com/en-us/)
+- [Tailwind](https://tailwindcss.com/)
+- [.Net](https://dotnet.microsoft.com/en-us/)
 <!-- - [![Angular][Angular.io]][Angular-url] -->
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
