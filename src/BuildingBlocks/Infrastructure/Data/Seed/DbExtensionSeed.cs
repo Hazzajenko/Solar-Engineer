@@ -11,4 +11,11 @@ public class DbExtensionSeed<TContext>
             $"CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\""
         );
     }
+
+    public static async Task<int> CreateDatabaseIfNotExists(TContext context, string databaseName)
+    {
+        return await context.Database.ExecuteSqlRawAsync(
+            $"CREATE DATABASE IF NOT EXISTS {databaseName}"
+        );
+    }
 }

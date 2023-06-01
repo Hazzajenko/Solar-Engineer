@@ -1,10 +1,8 @@
 <div
 	#toolBar
 	@goBottom
-	[ngClass]='{
-    "hidden": !showToolbar,
-  }'
-	class="overflow-hidden bg-gray-100 shadow-md dark:bg-gray-800 md:rounded-lg z-50 absolute top-8 left-1/2 -translate-x-1/2"
+	class="bg-gray-100 shadow-md dark:bg-gray-800 md:rounded-lg z-50 absolute top-8 left-1/2 -translate-x-1/2"
+	id="overlay-toolbar"
 >
 	<div class="flex items-center justify-between p-2 flex-row space-y-0 space-x-4">
 		<div class="flex items-center space-x-1">
@@ -42,16 +40,27 @@
 			</button>
 		</div>
 
-		<div class="flex items-center space-x-1">
+		<div class="flex items-center space-x-1 relative">
 			<button
 				#changeColourButton
-				(click)="openColourPicker(changeColourButton)"
+				(click)="openColourPicker(changeColourButton, toolBar)"
 				class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+				id="change-colour-button"
 				type="button"
 			>
 				<app-show-svg-no-styles inputClass="w-5 h-5" svgPath="menus/paint-brush" />
 				<span class="sr-only">Change Colour</span>
 			</button>
+			<!--			appDynamicWidth-->
+			<!--[ngStyle]='{
+			width: toolBar.getBoundingClientRect().right - changeColourButton.getBoundingClientRect().left  + "px",
+			}'-->
+			<!--	<app-colour-picker-menu-v2
+					[leftAndRightElements]="{ left: changeColourButton, right: toolBar }"
+					appDynamicWidth
+					class="absolute top-10 z-50"
+				></app-colour-picker-menu-v2>-->
+			<!--			}' />-->
 		</div>
 
 		<div class="flex items-center space-x-1">
@@ -74,5 +83,35 @@
 				<span class="sr-only">Settings</span>
 			</button>
 		</div>
+		<div class="flex-wrap items-center space-x-1">
+			<button
+				(click)="openProfileDialog()"
+				class="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
+				type="button"
+			>
+				<app-show-svg-no-styles inputClass="w-5 h-5" svgPath="profile/user-circle" />
+				<span class="sr-only">User Profile</span>
+			</button>
+		</div>
+		<!--		<div class="flex-wrap items-center space-x-1">
+					<div class="avatar online placeholder">
+						<div class="bg-neutral-focus text-neutral-content rounded-full w-5">
+							<span class="text-xs">JO</span>
+						</div>
+					</div>
+				</div>-->
+		<!--		<div class="flex-wrap items-center space-x-1">
+					<span class="relative inline-block">
+						<img
+							alt=""
+							class="h-6 w-6 rounded-full"
+							src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+						/>
+
+						<span
+							class="absolute right-0 top-0 block h-2.5 w-2.5 rounded-full bg-green-400 ring-2 ring-white"
+						></span>
+					</span>
+				</div>-->
 	</div>
 </div>

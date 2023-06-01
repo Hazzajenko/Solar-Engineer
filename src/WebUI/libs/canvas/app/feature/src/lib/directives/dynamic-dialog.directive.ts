@@ -1,6 +1,7 @@
 import {
 	AppSettingsDialogComponent,
 	MovePanelsToStringDialogComponent,
+	ProfileSettingsDialogComponent,
 } from '@overlays/dialogs/feature'
 import {
 	ComponentRef,
@@ -30,10 +31,6 @@ export class DynamicDialogDirective implements OnDestroy {
 	private _killEvent?: () => void
 	dialogRef?: ComponentRef<unknown>
 
-	get dialog() {
-		return this._dialog()
-	}
-
 	constructor() {
 		effect(() => {
 			if (!this.dialog || !this.dialog.currentDialog || !this.dialog.dialogOpen) {
@@ -57,6 +54,10 @@ export class DynamicDialogDirective implements OnDestroy {
 		})
 	}
 
+	get dialog() {
+		return this._dialog()
+	}
+
 	/*	@Input() set dialog(dialog: DialogInput) {
 	 if (!dialog) {
 	 this.dialogRef?.destroy()
@@ -65,6 +66,12 @@ export class DynamicDialogDirective implements OnDestroy {
 	 this._viewContainerRef.clear()
 	 this.dialogRef = this.componentSwitch(dialog)
 	 }*/
+
+	ngOnDestroy(): void {
+		this._killEvent?.()
+		this.dialogRef?.destroy()
+		this._uiStore.dispatch.closeDialog()
+	}
 
 	private componentSwitch(dialog: DialogInput) {
 		switch (dialog.component) {
@@ -82,16 +89,16 @@ export class DynamicDialogDirective implements OnDestroy {
 						AppSettingsDialogComponent,
 					)
 				})()
+			case DIALOG_COMPONENT.PROFILE_SETTINGS:
+				return (() => {
+					return this._viewContainerRef.createComponent<ProfileSettingsDialogComponent>(
+						ProfileSettingsDialogComponent,
+					)
+				})()
 			default:
 				return (() => {
 					throw new Error('Invalid dialog component')
 				})()
 		}
-	}
-
-	ngOnDestroy(): void {
-		this._killEvent?.()
-		this.dialogRef?.destroy()
-		this._uiStore.dispatch.closeDialog()
 	}
 }

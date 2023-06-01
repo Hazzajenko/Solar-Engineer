@@ -32,6 +32,7 @@ import {
 import { injectAppStateStore, ModeState } from '@canvas/app/data-access'
 import { MobileBottomToolbarDirective } from './mobile-bottom-toolbar.directive'
 import { StringColor, stringColors } from '@entities/shared'
+import { UiStoreService } from '@overlays/ui-store/data-access'
 
 @Component({
 	selector: 'overlay-mobile-bottom-toolbar',
@@ -59,6 +60,7 @@ import { StringColor, stringColors } from '@entities/shared'
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MobileBottomToolbarComponent {
+	private _uiStore = inject(UiStoreService)
 	private _appStore = injectAppStateStore()
 	@ViewChild(MatMenuTrigger) trigger!: MatMenuTrigger
 	@ViewChildren('contextMenu') contextMenus!: QueryList<ElementRef<HTMLDivElement>>
@@ -94,6 +96,13 @@ export class MobileBottomToolbarComponent {
 	setStringColor(color: StringColor) {
 		// this.selectedStringColor.set(color)
 		this._appStore.setStringColor(color)
+	}
+
+	openSettingsDialog() {
+		this._uiStore.dispatch.openDialog({
+			component: 'AppSettingsDialogComponent',
+		})
+		// heroAcademicCapSolid
 	}
 
 	toggleContextMenu(event: TouchEvent, contextMenuId: string) {

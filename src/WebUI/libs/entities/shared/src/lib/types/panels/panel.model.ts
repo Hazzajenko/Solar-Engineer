@@ -1,7 +1,7 @@
-import { CanvasEntity } from './canvas-entity'
-import { PanelConfigId } from './panel-config'
-import { StringId } from './string.entity'
-import { Polarity } from './panel-link'
+import { CanvasEntity } from '../canvas-entity'
+import { PanelConfigId } from '../panel-config'
+import { StringId } from '../string.entity'
+import { Polarity } from '../panel-link'
 
 export type PanelModel = Omit<CanvasEntity, 'id' | 'type'> & {
 	id: PanelId

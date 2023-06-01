@@ -44,4 +44,15 @@ export class ColourPickerMenuComponent {
 	setStringColor(color: StringColor) {
 		this._appStore.setStringColor(color)
 	}
+
+	/*	fixLeftPosition(event: UIEvent) {
+	 const toolbar = document.getElementById('overlay-toolbar')
+	 if (!toolbar) {
+	 console.error('no toolbar')
+	 return
+	 }
+	 const toolbarRect = toolbar.getBoundingClientRect()
+	 const left = toolbarRect.left
+
+	 }*/
 }

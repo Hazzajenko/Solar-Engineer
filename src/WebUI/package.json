@@ -79,6 +79,7 @@
     "@nguniversal/express-engine": "^16.0.2",
     "@nx/angular": "16.0.3",
     "@nx/plugin": "16.0.3",
+    "@supabase/supabase-js": "^2.24.0",
     "@swc/helpers": "0.5.1",
     "@tailwindcss/forms": "^0.5.3",
     "@tailwindcss/typography": "^0.5.9",

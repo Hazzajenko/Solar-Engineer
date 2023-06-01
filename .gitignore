@@ -3,6 +3,16 @@
 /ssl/
 **/ssl
 
+db-data
+**/db-data
+db-data/**
+
+supabase.ts
+supabase.js
+supabase.d.ts
+
+
+
 .env
 **/.env
 **.env

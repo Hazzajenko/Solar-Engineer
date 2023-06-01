@@ -41,6 +41,10 @@ export type ContextMenuPanelLinkMenu = ContextMenuTemplate & {
 
 export type ContextMenuColourPickerMenu = ContextMenuTemplate & {
 	component: typeof CONTEXT_MENU_COMPONENT.COLOUR_PICKER_MENU
+	data: {
+		left: number
+		right: number
+	}
 }
 
 export type ContextMenuInput =

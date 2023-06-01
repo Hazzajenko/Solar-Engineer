@@ -44,6 +44,7 @@ import { map } from 'rxjs'
 import { GraphicsStoreService } from '@canvas/graphics/data-access'
 import { getScreenSize, selectSignalFromStore } from '@shared/utils'
 import { selectSelectedStringId } from '@canvas/selected/data-access'
+import { SupabaseAccountComponent, SupabaseAuthComponent } from '@auth/feature'
 
 @Component({
 	changeDetection: ChangeDetectionStrategy.OnPush,
@@ -65,6 +66,8 @@ import { selectSelectedStringId } from '@canvas/selected/data-access'
 		ContextMenuRendererComponent,
 		SelectedStringToolBarComponent,
 		MobileBottomToolbarComponent,
+		SupabaseAuthComponent,
+		SupabaseAccountComponent,
 	],
 	selector: 'app-design-canvas-app',
 	standalone: true,
@@ -78,6 +81,8 @@ import { selectSelectedStringId } from '@canvas/selected/data-access'
 	templateUrl: './design-canvas-app.component.html',
 })
 export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
+	// private _supabase = inject(SupabaseService)
+	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 	private _ngZone = inject(NgZone)
 	private _renderer = inject(Renderer2)
 	private _divElements = inject(DivElementsService)
@@ -112,6 +117,7 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 		},
 	})
 
+	// session = this._supabase.session
 	screenSize = getScreenSize()
 	// @ViewChildren('canvas') canvas: ElementRef<HTMLDivElement>
 	version = signal('1.0.1')
@@ -197,6 +203,7 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 
 	ngOnInit() {
 		console.log(this.constructor.name, 'ngOnInit')
+		// this._supabase.authChanges((_, session) => (this.session = session))
 	}
 
 	ngAfterViewInit() {

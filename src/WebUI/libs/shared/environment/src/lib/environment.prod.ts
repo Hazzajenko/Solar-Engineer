@@ -1,3 +1,6 @@
+import { supabaseConf } from './supabase'
+
 export const environment = {
-  production: true,
+	production: true,
+	...supabaseConf,
 }

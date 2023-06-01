@@ -7,6 +7,14 @@
 	class="absolute inset-0 bg-white"
 	id="canvas"
 ></canvas>
+
+<!--<div class="absolute z-50 top-28 left-28">
+	<app-supabase-account *ngIf="session; else auth" [session]="session" />
+	<ng-template #auth>
+		<app-supabase-auth />
+	</ng-template>
+</div>-->
+
 <!--cursor: toMoveState === "MovingSingleEntity" ? "grabbing" : "",-->
 
 <div #appStats class="absolute z-50">
@@ -27,7 +35,7 @@
 <app-context-menu-renderer />
 
 <side-ui-nav-bar />
-<overlay-tool-bar-component />
+<overlay-tool-bar-component class="hidden md:block" />
 <overlay-selected-string-tool-bar *ngIf="stringIsSelected()" />
 
 <overlay-mobile-bottom-toolbar class="md:hidden" />

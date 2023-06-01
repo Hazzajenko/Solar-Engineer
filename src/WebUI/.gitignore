@@ -3,6 +3,11 @@
 start-ngrok.ps1
 start-ngrok-no-domain.ps1
 
+supabase.ts
+supabase.js
+supabase.d.ts
+
+
 # Compiled output
 /dist
 /tmp

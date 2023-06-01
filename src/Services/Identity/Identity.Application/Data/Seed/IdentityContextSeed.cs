@@ -17,6 +17,28 @@ public static class IdentityContextSeed
         using var serviceScope = getService.CreateScope();
 
         var context = serviceScope.ServiceProvider.GetRequiredService<IdentityContext>();
+        await context.Database.EnsureCreatedAsync();
+
+        await DbExtensionSeed<IdentityContext>.CreateUuidOsspIfNotExists(context);
+        await DbExtensionSeed<IdentityContext>.CreateDatabaseIfNotExists(context, "identity-db");
+
+        await context.Database.MigrateAsync();
+        /*if (context.PanelConfigs.Any() is false)
+        {
+            foreach (var panelConfig in DefaultPanelConfigs.PanelConfigs)
+                context.PanelConfigs.Add(panelConfig);
+            await context.SaveChangesAsync();
+        }*/
+    }
+
+    public static async void InitializeDatabaseTable(IApplicationBuilder app)
+    {
+        var getService =
+            app.ApplicationServices.GetService<IServiceScopeFactory>()
+            ?? throw new ArgumentNullException(nameof(IServiceScopeFactory));
+        using var serviceScope = getService.CreateScope();
+
+        var context = serviceScope.ServiceProvider.GetRequiredService<IdentityContext>();
 
         await DbExtensionSeed<IdentityContext>.CreateUuidOsspIfNotExists(context);
 
