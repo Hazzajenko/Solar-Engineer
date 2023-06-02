@@ -1,8 +1,13 @@
 <dialog-backdrop-template-component>
+	<link href="https://solarengineer.net" rel="preconnect" />
 	<div
 		class="relative w-1/2 h-3/4 left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 overflow-y-auto p-4"
 	>
-		<div #dialog class="relative bg-slate-100 rounded-lg shadow dark:bg-gray-700">
+		<div
+			#dialog
+			@transitionContextMenu
+			class="relative bg-slate-100 rounded-lg shadow dark:bg-gray-700"
+		>
 			<!--      <div class='overflow-y-auto'>-->
 			<button
 				(click)="closeDialog()"
@@ -31,12 +36,17 @@
 							<h3 class="text-base font-semibold text-gray-900 lg:text-xl dark:text-white">Settings</h3>
 						</div>-->
 			<!-- Modal content -->
+			<!--			src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"-->
 			<div class="sm:mx-auto sm:w-full sm:max-w-md">
 				<img
 					alt="Your Company"
-					class="mx-auto h-12 w-auto"
-					src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+					class="mx-auto h-16 w-auto mt-4"
+					height="92"
+					ngSrc="assets/imgs/logo-name.png"
+					priority
+					width="370"
 				/>
+				<!--				3913043478-->
 				<h2
 					class="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900 dark:text-white"
 				>

@@ -202,11 +202,11 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 
 	ngOnInit() {
 		console.log(this.constructor.name, 'ngOnInit')
-		setTimeout(() => {
-			this._uiStore.dispatch.openDialog({
-				component: 'SignInDialogComponent',
-			})
-		}, 1000)
+		/*		setTimeout(() => {
+		 this._uiStore.dispatch.openDialog({
+		 component: 'SignInDialogComponent',
+		 })
+		 }, 1000)*/
 		/*		this._uiStore.dispatch.openDialog({
 		 component: 'SignInDialogComponent',
 		 })*/

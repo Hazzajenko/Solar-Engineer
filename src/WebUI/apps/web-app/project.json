@@ -36,6 +36,11 @@
 						"input": "libs/shared/svgs/src/lib",
 						"glob": "**/*",
 						"output": "assets/svgs"
+					},
+					{
+						"input": "libs/shared/assets/src/lib",
+						"glob": "**/*",
+						"output": "assets"
 					}
 				],
 				"styles": [

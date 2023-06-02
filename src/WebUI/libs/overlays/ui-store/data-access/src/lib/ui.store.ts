@@ -91,6 +91,9 @@ export type GetActionParametersByKey<T> = T extends keyof ActionParameters<UiSto
  firstName: 'string',
  }
  }*/
+
+export type UiStore = ReturnType<typeof injectUiStore>
+
 export function injectUiStore() {
 	const store = inject(Store<UiState>)
 	const feature = uiFeature

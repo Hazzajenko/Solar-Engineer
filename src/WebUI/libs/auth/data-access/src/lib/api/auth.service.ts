@@ -18,6 +18,10 @@ export class AuthService {
 		return this.http.post<AuthorizeResponse>('/auth/authorize', {}, { withCredentials: true })
 	}
 
+	signInWithGoogle() {
+		return this.http.post<AuthorizeResponse>('/auth/google', {}, { withCredentials: true })
+	}
+
 	isTokenExpired(token: string) {
 		return this.jwtHelperService.isTokenExpired(token)
 	}

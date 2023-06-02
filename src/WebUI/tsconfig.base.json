@@ -108,6 +108,7 @@
 			"@project-id/data-access/services": ["libs/project-id/data-access/services/src/index.ts"],
 			"@projects/data-access": ["libs/projects/data-access/src/index.ts"],
 			"@shared/animations": ["libs/shared/animations/src/index.ts"],
+			"@shared/assets": ["libs/shared/assets/src/index.ts"],
 			"@shared/config": ["libs/shared/config/src/index.ts"],
 			"@shared/data-access/models": ["libs/shared/data-access/models/src/index.ts"],
 			"@shared/data-access/router": ["libs/shared/data-access/router/src/index.ts"],

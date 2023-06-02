@@ -16,6 +16,7 @@ import { heightInOut } from '@shared/animations'
 import { UiStoreService } from '@overlays/ui-store/data-access'
 import { IsTypeOfPanelPipe } from '@entities/utils'
 import { injectAuthStore } from '@auth/data-access'
+import { transitionContextMenu } from '../../../../../context-menus/feature/src/lib/animations/context-menu.animation'
 
 @Component({
 	selector: 'dialog-sign-in',
@@ -39,7 +40,7 @@ import { injectAuthStore } from '@auth/data-access'
 		ToggleSvgNoStylesComponent,
 		NgOptimizedImage,
 	],
-	animations: [heightInOut],
+	animations: [heightInOut, transitionContextMenu],
 })
 export class SignInDialogComponent {
 	private _uiStore = inject(UiStoreService)

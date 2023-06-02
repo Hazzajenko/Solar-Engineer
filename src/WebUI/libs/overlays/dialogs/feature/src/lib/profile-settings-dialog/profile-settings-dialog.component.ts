@@ -24,6 +24,8 @@ import { heightInOut } from '@shared/animations'
 import { UiStoreService } from '@overlays/ui-store/data-access'
 import { IsTypeOfPanelPipe } from '@entities/utils'
 import { FormBuilder } from '@angular/forms'
+import { injectAuthStore } from '@auth/data-access'
+import { AuthUserModel } from '@shared/data-access/models'
 
 @Component({
 	selector: 'dialog-profile-settings',
@@ -52,6 +54,8 @@ import { FormBuilder } from '@angular/forms'
 export class ProfileSettingsDialogComponent implements AfterViewInit {
 	// private _supabase = inject(SupabaseService)
 	private _uiStore = inject(UiStoreService)
+	private _auth = injectAuthStore()
+	private _user = this._auth.select('selectUser')
 	private _formBuilder = inject(FormBuilder)
 	loading = false
 	/*	profile!: Profile
@@ -66,6 +70,10 @@ export class ProfileSettingsDialogComponent implements AfterViewInit {
 	@ViewChild('dialog') dialog!: ElementRef<HTMLDivElement>
 	@ViewChildren('accordion') accordions!: ElementRef<HTMLDivElement>[]
 	openedAccordions = signal(new Map<string, boolean>())
+
+	get user(): AuthUserModel | undefined {
+		return this._user()
+	}
 
 	/*
 	 async ngOnInit() {

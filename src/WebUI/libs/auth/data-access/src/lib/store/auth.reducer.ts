@@ -16,6 +16,11 @@ export const initialAuthState: AuthState = {
 export const reducer = createReducer(
 	initialAuthState,
 
+	on(AuthActions.signInSuccess, (state, { user }) => ({
+		...state,
+		user,
+	})),
+
 	on(AuthActions.signInFetchUserSuccess, (state, { user }) => ({
 		...state,
 		user,

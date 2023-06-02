@@ -79,6 +79,9 @@ export type StoreActionDispatcherFunctions = GetActionDispatchers<AuthStoreActio
  firstName: 'string',
  }
  }*/
+
+export type AuthStore = ReturnType<typeof injectAuthStore>
+
 export function injectAuthStore() {
 	const store = inject(Store<AuthState>)
 	const feature = authFeature

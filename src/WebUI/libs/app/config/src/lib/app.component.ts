@@ -1,7 +1,6 @@
-import { Component, inject } from '@angular/core'
+import { Component } from '@angular/core'
 import { RouterOutlet } from '@angular/router'
-import { checkIfIsAuthorizeQuery } from './is-authorize-query.selector'
-import { HttpClient } from '@angular/common/http'
+import { checkAuthFlow } from './check-auth-flow'
 
 @Component({
 	standalone: true,
@@ -19,10 +18,10 @@ import { HttpClient } from '@angular/common/http'
 	styles: [''],
 })
 export class AppComponent {
-	private _http = inject(HttpClient)
+	// private _http = inject(HttpClient)
 	title = 'solar-engineer'
 	// isAuthorizeQuery = provideIsAuthorizeQuery()
-	isAuthorizeQuery = checkIfIsAuthorizeQuery()
+	checkAuthFlow = checkAuthFlow()
 
 	// ngOnInit() {
 	/*	const query = this.isAuthorizeQuery()
