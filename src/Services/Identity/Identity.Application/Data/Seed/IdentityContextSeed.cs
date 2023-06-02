@@ -17,10 +17,12 @@ public static class IdentityContextSeed
         using var serviceScope = getService.CreateScope();
 
         var context = serviceScope.ServiceProvider.GetRequiredService<IdentityContext>();
-        await context.Database.EnsureCreatedAsync();
+        // await context.Database.EnsureCreatedAsync();
+        // var sql = context.Database.GenerateCreateScript();
 
-        await DbExtensionSeed<IdentityContext>.CreateUuidOsspIfNotExists(context);
-        await DbExtensionSeed<IdentityContext>.CreateDatabaseIfNotExists(context, "identity-db");
+
+        // await DbExtensionSeed<IdentityContext>.CreateDatabaseIfNotExists(context, "identity-db");
+        // await DbExtensionSeed<IdentityContext>.CreateUuidOsspIfNotExists(context);
 
         await context.Database.MigrateAsync();
         /*if (context.PanelConfigs.Any() is false)

@@ -5,7 +5,6 @@ using Identity.Application.Services.Jwt;
 using Identity.Application.Settings;
 using Identity.SignalR.Services;
 using Infrastructure.Services;
-using Infrastructure.Settings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -18,7 +17,7 @@ public static class ServiceExtensions
         IConfiguration config
     )
     {
-        services.Configure<QueueSettings>(config.GetSection("Queues"));
+        // services.Configure<QueueSettings>(config.GetSection("Queues"));
         services.AddSingleton<ConnectionsService>();
         services.AddScoped<IIdentityUnitOfWork, IdentityUnitOfWork>();
         services.AddScoped<IAppUserRepository, AppUserRepository>();

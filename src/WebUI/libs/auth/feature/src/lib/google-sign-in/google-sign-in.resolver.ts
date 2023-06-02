@@ -3,12 +3,12 @@ import { Resolve } from '@angular/router'
 import { HttpClient } from '@angular/common/http'
 
 @Injectable({
-  providedIn: 'root',
+	providedIn: 'root',
 })
 export class GoogleSignInResolver implements Resolve<object> {
-  private http = inject(HttpClient)
+	private http = inject(HttpClient)
 
-  resolve() {
-    return this.http.get('/auth-api/login/google')
-  }
+	resolve() {
+		return this.http.get('/auth/login/google')
+	}
 }

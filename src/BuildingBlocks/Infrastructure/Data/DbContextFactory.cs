@@ -53,6 +53,8 @@ public static class DbContextFactory
                 options.UseNpgsql(connectionString, x => x.MigrationsAssembly(migrationsAssembly));
             else
                 options.UseNpgsql(connectionString);
+
+            // options.
         });
 
         return services;

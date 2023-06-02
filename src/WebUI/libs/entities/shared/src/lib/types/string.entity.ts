@@ -1,4 +1,4 @@
-import { PanelId } from './panels/panel.entity'
+import { PanelId } from './panels'
 
 export type StringModel = {
 	id: StringId

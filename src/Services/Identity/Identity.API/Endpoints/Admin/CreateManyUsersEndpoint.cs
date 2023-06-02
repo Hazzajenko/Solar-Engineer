@@ -7,10 +7,7 @@ using Identity.Application.Services.Images;
 using Identity.Contracts.Data;
 using Identity.Domain.Auth;
 using Infrastructure.Mapping;
-using Marten;
 using Microsoft.AspNetCore.Identity;
-using Wolverine;
-using Wolverine.Marten;
 
 namespace Identity.API.Endpoints.Admin;
 
@@ -26,25 +23,26 @@ public class CreateManyUsersResponse
 
 public class CreateManyUsersEndpoint : Endpoint<CreateManyUsersRequest, CreateManyUsersResponse>
 {
-    private readonly IMessageBus _bus;
+    // private readonly IMessageBus _bus;
     private readonly IImagesService _imagesService;
-    private readonly IMartenOutbox _outbox;
-    private readonly IDocumentSession _session;
+
+    // private readonly IMartenOutbox _outbox;
+    // private readonly IDocumentSession _session;
     private readonly UserManager<AppUser> _userManager;
 
     public CreateManyUsersEndpoint(
         UserManager<AppUser> userManager,
-        IImagesService imagesService,
-        IMessageBus bus,
-        IMartenOutbox outbox,
-        IDocumentSession session
+        IImagesService imagesService
+        // IMessageBus bus,
+        // IMartenOutbox outbox,
+        // IDocumentSession session
     )
     {
         _userManager = userManager;
         _imagesService = imagesService;
-        _bus = bus;
-        _outbox = outbox;
-        _session = session;
+        // _bus = bus;
+        // _outbox = outbox;
+        // _session = session;
     }
 
     public override void Configure()
@@ -92,8 +90,8 @@ public class CreateManyUsersEndpoint : Endpoint<CreateManyUsersRequest, CreateMa
             var userDto = appUser.ToDto();
             var appUserCreated = new AppUserCreated(guidId, userDto);
             var appUserEventV2 = new AppUserEventV2(guidId, appUserCreated);
-            _session.Store(appUserEventV2);
-            await _outbox.SendAsync(appUserCreated);
+            // _session.Store(appUserEventV2);
+            // await _outbox.SendAsync(appUserCreated);
             // appUser.PhotoUrl = getRobotImage;
             // await _userManager.UpdateAsync(appUser);
             /*var appUserEvent = new AppUserEvent(
@@ -104,7 +102,7 @@ public class CreateManyUsersEndpoint : Endpoint<CreateManyUsersRequest, CreateMa
             await _bus.SendAsync(appUserEvent);*/
         }
 
-        await _session.SaveChangesAsync(cT);
+        // await _session.SaveChangesAsync(cT);
         Response.Users = appUsers.Select(x => x.ToCurrentUserDto());
 
         await SendOkAsync(Response, cT);

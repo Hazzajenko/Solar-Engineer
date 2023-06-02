@@ -19,6 +19,7 @@ import { provideNgrx } from './ngrx.config'
 import { MatDialogModule } from '@angular/material/dialog'
 import { MatSnackBarModule, MatSnackBarRef } from '@angular/material/snack-bar'
 import { DatePipe } from '@angular/common'
+import { JwtModule } from '@auth0/angular-jwt'
 
 export function initMainTs() {
 	if (environment.production) {
@@ -41,6 +42,10 @@ export const appConfig: ApplicationConfig = {
 	providers: [provideWebAppProviders()],
 }
 
+export function tokenGetter() {
+	return localStorage.getItem('access_token')
+}
+
 function provideWebAppProviders() {
 	return makeEnvironmentProviders([
 		provideZoneChangeDetection({ eventCoalescing: true }),
@@ -56,6 +61,27 @@ function provideWebAppProviders() {
 			MatSnackBarModule,
 			MatSnackBarRef,
 			DatePipe,
-		),
+			JwtModule.forRoot({
+				config: {
+					tokenGetter: tokenGetter,
+				},
+			}),
+		) /*		{
+		 provide: 'SocialAuthServiceConfig',
+		 useValue: {
+		 autoLogin: false,
+		 providers: [
+		 {
+		 id: GoogleLoginProvider.PROVIDER_ID,
+		 provider: new GoogleLoginProvider(
+		 '1060507997816-fa53go38giju7jkohf046fkdhjg5rd47.apps.googleusercontent.com',
+		 ),
+		 },
+		 ],
+		 onError: (err) => {
+		 console.error(err)
+		 },
+		 } as SocialAuthServiceConfig,
+		 },*/,
 	])
 }

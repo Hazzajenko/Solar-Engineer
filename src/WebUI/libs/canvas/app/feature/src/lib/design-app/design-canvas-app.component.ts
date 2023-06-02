@@ -44,7 +44,6 @@ import { map } from 'rxjs'
 import { GraphicsStoreService } from '@canvas/graphics/data-access'
 import { getScreenSize, selectSignalFromStore } from '@shared/utils'
 import { selectSelectedStringId } from '@canvas/selected/data-access'
-import { SupabaseAccountComponent, SupabaseAuthComponent } from '@auth/feature'
 
 @Component({
 	changeDetection: ChangeDetectionStrategy.OnPush,
@@ -66,8 +65,6 @@ import { SupabaseAccountComponent, SupabaseAuthComponent } from '@auth/feature'
 		ContextMenuRendererComponent,
 		SelectedStringToolBarComponent,
 		MobileBottomToolbarComponent,
-		SupabaseAuthComponent,
-		SupabaseAccountComponent,
 	],
 	selector: 'app-design-canvas-app',
 	standalone: true,

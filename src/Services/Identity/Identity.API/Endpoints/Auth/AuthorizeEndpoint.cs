@@ -8,10 +8,8 @@ using Identity.Domain.Auth;
 using Infrastructure.Contracts.Data;
 using Infrastructure.Extensions;
 using Mapster;
-using Marten;
 using Mediator;
 using Microsoft.AspNetCore.Identity;
-using Wolverine.Marten;
 
 // using GetTokenCommand = Identity.API.Handlers.GetTokenCommand;
 
@@ -20,29 +18,31 @@ namespace Identity.API.Endpoints.Auth;
 public class AuthorizeEndpoint : EndpointWithoutRequest<AuthorizeResponse>
 {
     private readonly IJwtTokenGenerator _jwtTokenGenerator;
+
     private readonly IMediator _mediator;
-    private readonly IMartenOutbox _outbox;
-    private readonly IDocumentSession _session;
+
+    // private readonly IMartenOutbox _outbox;
+    // private readonly IDocumentSession _session;
     private readonly UserManager<AppUser> _userManager;
 
     public AuthorizeEndpoint(
         IMediator mediator,
         UserManager<AppUser> userManager,
-        IJwtTokenGenerator jwtTokenGenerator,
-        IMartenOutbox outbox,
-        IDocumentSession session
+        IJwtTokenGenerator jwtTokenGenerator
+        // IMartenOutbox outbox,
+        // IDocumentSession session
     )
     {
         _mediator = mediator;
         _userManager = userManager;
         _jwtTokenGenerator = jwtTokenGenerator;
-        _outbox = outbox;
-        _session = session;
+        // _outbox = outbox;
+        // _session = session;
     }
 
     public override void Configure()
     {
-        Post("/auth/authorize");
+        Post("/authorize");
         AuthSchemes(IdentityConstants.ExternalScheme);
         Summary(x =>
         {
@@ -101,9 +101,9 @@ public class AuthorizeEndpoint : EndpointWithoutRequest<AuthorizeResponse>
         var userDto = user.Adapt<UserDto>();
         var appUserCreated = new AppUserCreated(guidId, userDto);
         var appUserEventV2 = new AppUserEventV2(guidId, appUserCreated);
-        _session.Store(appUserEventV2);
-        await _outbox.SendAsync(appUserCreated);
-        await _session.SaveChangesAsync(cT);
+        // _session.Store(appUserEventV2);
+        // await _outbox.SendAsync(appUserCreated);
+        // await _session.SaveChangesAsync(cT);
 
         Response.Token = token;
         Response.User = user;

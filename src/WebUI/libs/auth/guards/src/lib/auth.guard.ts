@@ -5,35 +5,35 @@ import { Observable, of } from 'rxjs'
 import { switchMap } from 'rxjs/operators'
 
 @Injectable({
-  providedIn: 'root',
+	providedIn: 'root',
 })
 export class AuthGuard implements CanMatch {
-  private auth = inject(AuthFacade)
-  private router = inject(Router)
+	private auth = inject(AuthFacade)
+	private router = inject(Router)
 
-  canMatch(
-    route: Route,
-    segments: UrlSegment[],
-  ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    return this._check(segments)
-  }
+	canMatch(
+		route: Route,
+		segments: UrlSegment[],
+	): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+		return this._check(segments)
+	}
 
-  private _check(segments: UrlSegment[]): Observable<boolean | UrlTree> {
-    // Check the authentication status
-    return this.auth.isLoggedIn$.pipe(
-      switchMap((authenticated) => {
-        if (!authenticated) {
-          // Redirect to the sign-in page with a redirectUrl param
-          const redirectURL = `/${segments.join('/')}`
-          const urlTree = this.router.parseUrl(`/auth-api/login/google?redirectURL=${redirectURL}`)
-          // const urlTree = this.router.parseUrl(`sign-in?redirectURL=${redirectURL}`);
+	private _check(segments: UrlSegment[]): Observable<boolean | UrlTree> {
+		// Check the authentication status
+		return this.auth.isLoggedIn$.pipe(
+			switchMap((authenticated) => {
+				if (!authenticated) {
+					// Redirect to the sign-in page with a redirectUrl param
+					const redirectURL = `/${segments.join('/')}`
+					const urlTree = this.router.parseUrl(`/auth/login/google?redirectURL=${redirectURL}`)
+					// const urlTree = this.router.parseUrl(`sign-in?redirectURL=${redirectURL}`);
 
-          return of(urlTree)
-        }
+					return of(urlTree)
+				}
 
-        // Allow the access
-        return of(true)
-      }),
-    )
-  }
+				// Allow the access
+				return of(true)
+			}),
+		)
+	}
 }

@@ -1,4 +1,4 @@
-﻿using EventBus.Domain.AppUserEvents;
+﻿/*using EventBus.Domain.AppUserEvents;
 using FastEndpoints;
 using Marten;
 
@@ -38,4 +38,5 @@ public class GetEventByIdEndpoint : Endpoint<GetEventByIdRequest, AppUserEventV2
 
         await SendOkAsync(appUserEvent, cT);
     }
-}
+}*/
+

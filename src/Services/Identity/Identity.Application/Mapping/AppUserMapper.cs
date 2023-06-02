@@ -2,6 +2,7 @@
 using Identity.Contracts.Data;
 using Identity.Domain.Auth;
 using Infrastructure.Authentication;
+using Microsoft.VisualBasic;
 
 namespace Identity.Application.Mapping;
 
@@ -22,11 +23,15 @@ public static class AppUserMapper
         if (photoUrl is null)
             throw new ArgumentNullException(nameof(photoUrl));
 
+        var userName = Strings.Split(email, "@")[0];
+
+
         return new AppUser
         {
             FirstName = firstName,
             LastName = lastName,
             Email = email,
+            UserName = userName,
             DisplayName = $"{firstName} {lastName}",
             PhotoUrl = photoUrl
         };

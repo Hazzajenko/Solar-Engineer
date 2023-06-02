@@ -107,6 +107,8 @@ public class AuthorizeHandler : IRequestHandler<AuthorizeCommand, AppUser>
 
         var appUser = user.ToAppUser();
 
+        _logger.LogError("Unable to find user {@User}", appUser);
+
         var createUserResult = await _userManager.CreateAsync(appUser);
 
         if (!createUserResult.Succeeded)

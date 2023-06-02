@@ -16,7 +16,7 @@
       <PackageReference Include="MassTransit.RabbitMQ" Version="8.0.12" />
       <PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
       <PackageReference Include="Polly" Version="7.2.3" />
-      <PackageReference Include="RabbitMQ.Client" Version="6.4.0" />
+      <PackageReference Include="RabbitMQ.Client" Version="6.5.0" />
       <PackageReference Include="System.Linq.Async" Version="6.0.1" />
       <PackageReference Include="WolverineFx" Version="0.9.15" />
       <PackageReference Include="WolverineFx.EntityFrameworkCore" Version="0.9.15" />

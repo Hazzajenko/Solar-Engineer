@@ -47,7 +47,6 @@ static_resources:
         protocol: TCP
         address: 0.0.0.0
         port_value: 443
-        # port_value: 10001
     filter_chains:
     - filters:
       - name: envoy.filters.network.http_connection_manager
@@ -65,12 +64,12 @@ static_resources:
               domains: ["*"]
               routes:
               - match:
-                  prefix: "/auth-api/"
+                  prefix: "/auth/"
                 route:
                   # auto_host_rewrite: true
                   host_rewrite: solarengineer.net
                   prefix_rewrite: "/"
-                  cluster: auth-api
+                  cluster: identity-api
               - match:
                   # prefix: "/signin-google"
                   prefix: "/login/google"
@@ -78,23 +77,23 @@ static_resources:
                   # auto_host_rewrite: true
                   host_rewrite: solarengineer.net
                   # prefix_rewrite: "/signin-google"
-                  cluster: auth-api
+                  cluster: identity-api
               - match:
                   prefix: "/signin-google"
                 route:
                   # auto_host_rewrite: true
                   # host_rewrite: solarengineer.net
                   # prefix_rewrite: "/signin-google"
-                  cluster: auth-api
+                  cluster: identity-api
               # - match:
               #     prefix: "/signin"
               #   route:
               #     # auto_host_rewrite: true
               #     host_rewrite: solarengineer.net
               #     # prefix_rewrite: "/signin"
-              #     cluster: auth-api
+              #     cluster: identity-api
               - match:
-                  prefix: "/users-api/"
+                  prefix: "/users/"
                 route:
                   prefix_rewrite: "/"
                   cluster: users-api
@@ -104,19 +103,19 @@ static_resources:
                   # auto_host_rewrite: true
                   prefix_rewrite: "/hubs/connections"
                   # prefix_rewrite: "/hubs/connections"
-                  cluster: auth-api
+                  cluster: identity-api
                   # cluster: users-api
                   timeout: 300s
                   upgrade_configs:
                     upgrade_type: "websocket"
                     enabled: true
               - match:
-                  prefix: "/messages-api/"
+                  prefix: "/messages/"
                 route:
                   prefix_rewrite: "/"
                   cluster: messages-api
               - match:
-                  prefix: "/projects-api/"
+                  prefix: "/projects/"
                 route:
                   prefix_rewrite: "/"
                   cluster: projects-api
@@ -185,13 +184,13 @@ static_resources:
               socket_address:
                 address: host.docker.internal
                 port_value: 4200
-  - name: auth-api
+  - name: identity-api
     connect_timeout: 0.25s
     type: LOGICAL_DNS
     dns_lookup_family: V4_ONLY
     lb_policy: ROUND_ROBIN
     load_assignment:
-      cluster_name: auth-api
+      cluster_name: identity-api
       endpoints:
       - lb_endpoints:
         - endpoint:

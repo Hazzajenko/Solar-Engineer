@@ -1,5 +1,5 @@
 import { Point } from '@shared/data-access/models'
-import { PanelId } from './panels/panel.entity'
+import { PanelId } from './panels'
 import { CurvedNumberLine } from '@canvas/shared'
 
 export type PanelLinkId = string & {

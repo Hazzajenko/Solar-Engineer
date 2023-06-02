@@ -1,17 +1,4 @@
-﻿using System.Diagnostics.Metrics;
-using Bogus;
-using EventBus.Domain.AppUserEvents;
-using FastEndpoints;
-using Identity.Application.Extensions.ServiceCollection;
-using Identity.Application.Services.Pinger;
-using Identity.Domain.Auth;
-using Infrastructure.Contracts.Data;
-using Infrastructure.Logging;
-using Mapster;
-using Marten;
-using Microsoft.AspNetCore.Http.Features;
-using Wolverine;
-using Wolverine.Marten;
+﻿
 
 // using MassTransit.Mediator;
 
@@ -19,7 +6,7 @@ namespace Identity.API.Endpoints;
 
 // public class PingEndpoint : EndpointWithoutRequest<Acknowledgement>
 // public class PingEndpoint : EndpointWithoutRequest<string>
-public class PingEndpoint : EndpointWithoutRequest<AppUserEventV2>
+/*public class PingEndpoint : EndpointWithoutRequest<AppUserEventV2>
 {
     private readonly IMessageBus _bus;
 
@@ -112,11 +99,11 @@ public class PingEndpoint : EndpointWithoutRequest<AppUserEventV2>
         /*var test2 = await _bus.EndpointFor(
                 new Uri($"rabbitmq://queue/{MessageQueues.AppUsers.EventsQueue}")
             )
-            .InvokeAsync(appUserEvent, cT);*/
+            .InvokeAsync(appUserEvent, cT);#1#
 
         // await _dbContextOutbox.InvokeAsync<AppUserEventResponse>(appUserEvent, cT);
         // await _dbContextOutbox.PublishAsync(appUserEvent);
 
         // await _dbContextOutbox.SaveChangesAndFlushMessagesAsync(cT);
     }
-}
+}*/

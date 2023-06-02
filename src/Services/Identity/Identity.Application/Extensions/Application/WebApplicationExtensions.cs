@@ -16,7 +16,7 @@ public static partial class WebApplicationExtensions
 {
     public static WebApplication ConfigurePipeline(this WebApplication app)
     {
-        IdentityContextSeed.InitializeDatabase(app);
+        // IdentityContextSeed.InitializeDatabase(app);
         app.UseForwardedHeaders();
         app.UseFastEndpoints(options =>
         {
@@ -153,7 +153,7 @@ public static partial class WebApplicationExtensions
 
         app.UseMiddleware<ValidationMappingMiddleware>();
 
-        // IdentityContextSeed.InitializeDatabase(app);
+        IdentityContextSeed.InitializeDatabase(app);
 
         return app;
     }

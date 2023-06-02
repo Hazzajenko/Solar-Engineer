@@ -8,9 +8,9 @@
 
     <ItemGroup>
       <PackageReference Include="Azure.Monitor.OpenTelemetry.Exporter" Version="1.0.0-beta.9" />
-      <PackageReference Include="Azure.Storage.Blobs" Version="12.15.0" />
+      <PackageReference Include="Azure.Storage.Blobs" Version="12.16.0" />
       <PackageReference Include="Bogus" Version="34.0.2" />
-      <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.5.1" />
+      <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.5.2" />
       <PackageReference Include="Mapster" Version="7.3.0" />
       <PackageReference Include="Marten" Version="6.0.0-alpha.11" />
       <PackageReference Include="Marten.AspNetCore" Version="6.0.0-alpha.11" />
@@ -22,7 +22,7 @@
       </PackageReference>
       <PackageReference Include="Microsoft.ApplicationInsights.PerfCounterCollector" Version="2.22.0-beta2" />
       <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.4" />
-      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.4">
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.5">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>

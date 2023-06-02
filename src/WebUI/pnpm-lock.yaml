@@ -4,6 +4,9 @@ importers:
 
   .:
     dependencies:
+      '@abacritt/angularx-social-login':
+        specifier: ^2.1.0
+        version: 2.1.0(@angular/common@16.0.0)(@angular/core@16.0.0)
       '@angular-devkit/schematics':
         specifier: ^16.0.0
         version: 16.0.0
@@ -462,6 +465,17 @@ importers:
   libs/ngrx-pull: {}
 
 packages:
+
+  /@abacritt/angularx-social-login@2.1.0(@angular/common@16.0.0)(@angular/core@16.0.0):
+    resolution: {integrity: sha512-wjKiwLhA0j/exrb17unRveAkjxYTf1qRYKXZqJfD4jSzHkODKjVpOVDmt7Q+T2m8fLJBGc304hRBuUVVEtl8xg==}
+    peerDependencies:
+      '@angular/common': '>=16.0.0'
+      '@angular/core': '>=16.0.0'
+    dependencies:
+      '@angular/common': 16.0.0(@angular/core@16.0.0)(rxjs@7.8.0)
+      '@angular/core': 16.0.0(rxjs@7.8.0)(zone.js@0.13.0)
+      tslib: 2.5.0
+    dev: false
 
   /@ampproject/remapping@2.2.1:
     resolution: {integrity: sha512-lFMjJTrFL3j7L9yBxwYfCq2k6qqwHyzuUl/XBnif78PWTJYyL/dfowQHWE3sp6U6ZzqWiiIZnpTMO96zhkjwtg==}

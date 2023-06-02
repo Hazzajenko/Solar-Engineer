@@ -20,7 +20,7 @@ public class IsReturningUserEndpoint : EndpointWithoutRequest<AuthorizeResponse>
 
     public override void Configure()
     {
-        Post("/auth/returning-user");
+        Post("/returning-user");
         AuthSchemes("bearer");
         Summary(x =>
         {

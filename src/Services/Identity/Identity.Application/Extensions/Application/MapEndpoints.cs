@@ -1,6 +1,4 @@
-﻿using Identity.Contracts.Data;
-using Marten;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 
 namespace Identity.Application.Extensions.Application;
@@ -62,7 +60,7 @@ public static partial class WebApplicationExtensions
             // )
         );*/
 
-        app.MapGet(
+        /*app.MapGet(
             "/load/{guid}",
             (string guid, IDocumentSession session) =>
             {
@@ -91,7 +89,7 @@ public static partial class WebApplicationExtensions
                 await session.SaveChangesAsync();
                 return Results.Ok(user);
             }
-        );
+        );*/
 
         return app;
     }

@@ -1,11 +1,8 @@
-using EventBus.Wolverine;
 using FastEndpoints;
 using FastEndpoints.ClientGen;
 using FluentValidation;
 using Identity.API.Auth;
 using Identity.API.Extensions;
-using Identity.API.Queues;
-using Identity.Application;
 using Identity.Application.Data;
 using Identity.Application.Extensions.Application;
 using Identity.Application.Extensions.ServiceCollection;
@@ -41,12 +38,12 @@ config.AddEnvironmentVariables("solarengineer_");
     new("projects-events")
 };
 var senderQueues = new[] { new SenderQueue("appuser-events", typeof(AppUserEvent)) };*/
-builder.Host.InitWolverine(
+/*builder.Host.InitWolverine(
     config,
     QueueConfig.ListenerQueues,
     QueueConfig.SenderQueues,
     typeof(IIdentityApplicationAssemblyMarker).Assembly
-);
+);*/
 
 // builder.Host.InitIdentityWolverine(config);
 
@@ -82,20 +79,21 @@ builder.Services.AddHttpClient(
     }
 );
 
-/*builder.Services.InitDbContext<IdentityContext>(
-    config,
-    builder.Environment,
-    "Identity.Application"
-);*/
-builder.Services.InitDbContextWithWolverine<IdentityContext>(
+builder.Services.InitDbContext<IdentityContext>(
     config,
     builder.Environment,
     "Identity.Application"
 );
+/*builder.Services.InitDbContextWithWolverine<IdentityContext>(
+    config,
+    builder.Environment,
+    "Identity.Application"
+);*/
 
 builder.Services.InitCors("corsPolicy");
 
-builder.Services.AddFastEndpoints(options => { options.SourceGeneratorDiscoveredTypes = DiscoveredTypes.All; });
+builder.Services.AddFastEndpoints();
+// builder.Services.AddFastEndpoints(options => { options.SourceGeneratorDiscoveredTypes = DiscoveredTypes.All; });
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
@@ -188,7 +186,8 @@ loginEndpoints.MapGet(
     (SignInManager<AppUser> signInManager) =>
     {
         var provider = "google";
-        var redirectUrl = "https://solarengineer.net/?authorize=true";
+        var redirectUrl = "/?authorize=true";
+        // var redirectUrl = "http://localhost:4200/?authorize=true";
         var properties = signInManager.ConfigureExternalAuthenticationProperties(
             provider,
             redirectUrl
@@ -197,6 +196,7 @@ loginEndpoints.MapGet(
         return Results.Challenge(properties, new List<string> { "google" });
     }
 );
+// var redirectUrl = "https://solarengineer.net/?authorize=true";
 
 /*using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;

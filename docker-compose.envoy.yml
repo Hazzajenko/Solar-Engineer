@@ -11,7 +11,8 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: SolarEngineer.Root
     volumes:
-      - ./src/db-data/postgres/:/var/lib/postgresql/data/
+      - ./db-data/postgres/:/var/lib/postgresql/data/
+      # - ./src/db-data/postgres/:/var/lib/postgresql/data/
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -36,7 +37,7 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./src/ApiGateways/EnvoyGateway/envoy.yaml:/etc/envoy/envoy.yaml
+      - ./api-gateway/envoy.yaml:/etc/envoy/envoy.yaml
       # - ./envoy/envoy.yaml:/etc/envoy/envoy.yaml
       - ./etc/ssl/solarengineer.net/solarengineer.net.crt:/etc/ssl/certs/solarengineer.net.crt
       - ./etc/ssl/solarengineer.net/solarengineer.net.rsa:/etc/ssl/certs/solarengineer.net.rsa

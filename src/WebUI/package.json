@@ -14,7 +14,7 @@
     "start-no-ssl": "nx serve web --ssl false",
     "start-nginx": "nx serve web --ssl false --host solarengineer.local",
     "start-solarengineer.net": "nx serve web --ssl false --host solarengineer.net",
-    "start-design-solarengineer.net": "nx serve design-app --ssl false --host solarengineer.net",
+    "start-design-solarengineer.net": "nx serve web-app --ssl false --host solarengineer.net",
     "start-svelte": "nx serve svelte-design-app --ssl false --host solarengineer.net",
     "start-solid": "nx serve solid-design-app --ssl --host solarengineer.net",
     "start-ssl": "nx serve --ssl",
@@ -51,6 +51,7 @@
   },
   "private": true,
   "dependencies": {
+    "@abacritt/angularx-social-login": "^2.1.0",
     "@angular-devkit/schematics": "^16.0.0",
     "@angular/animations": "^16.0.0",
     "@angular/cdk": "^16.0.0",
