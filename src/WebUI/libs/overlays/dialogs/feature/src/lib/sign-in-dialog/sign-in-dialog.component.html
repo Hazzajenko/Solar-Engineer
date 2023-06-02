@@ -1,0 +1,181 @@
+<dialog-backdrop-template-component>
+	<div
+		class="relative w-1/2 h-3/4 left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 overflow-y-auto p-4"
+	>
+		<div #dialog class="relative bg-slate-100 rounded-lg shadow dark:bg-gray-700">
+			<!--      <div class='overflow-y-auto'>-->
+			<button
+				(click)="closeDialog()"
+				class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-800 dark:hover:text-white"
+				data-modal-hide="crypto-modal"
+				type="button"
+			>
+				<svg
+					aria-hidden="true"
+					class="w-5 h-5"
+					fill="currentColor"
+					viewBox="0 0 20 20"
+					xmlns="http://www.w3.org/2000/svg"
+				>
+					<path
+						clip-rule="evenodd"
+						d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+						fill-rule="evenodd"
+					></path>
+				</svg>
+				<span class="sr-only">Close modal</span>
+			</button>
+			<!-- Modal header -->
+
+			<!--			<div cdkDragHandle class="px-6 py-4 border-b rounded-t dark:border-gray-600">
+							<h3 class="text-base font-semibold text-gray-900 lg:text-xl dark:text-white">Settings</h3>
+						</div>-->
+			<!-- Modal content -->
+			<div class="sm:mx-auto sm:w-full sm:max-w-md">
+				<img
+					alt="Your Company"
+					class="mx-auto h-12 w-auto"
+					src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+				/>
+				<h2
+					class="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900 dark:text-white"
+				>
+					Sign in to your account
+				</h2>
+				<!--    <p class="mt-2 text-center text-sm text-gray-600 dark:text-gray-300">
+							Or
+							<a href="#" class="font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400"
+								>start your 14-day free trial</a
+							>
+						</p>-->
+			</div>
+
+			<div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+				<div class="bg-white py-8 px-4 shadow dark:bg-slate-700 sm:rounded-lg sm:px-10">
+					<form action="#" class="space-y-6" method="POST">
+						<div>
+							<label
+								class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
+								for="email"
+								>Email address</label
+							>
+							<div class="mt-2">
+								<input
+									autocomplete="email"
+									class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 dark:bg-slate-600 dark:text-white dark:placeholder-gray-400 dark:focus:ring-indigo-500 sm:text-sm sm:leading-6"
+									id="email"
+									name="email"
+									required
+									type="email"
+								/>
+							</div>
+						</div>
+
+						<div>
+							<label
+								class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
+								for="password"
+								>Password</label
+							>
+							<div class="mt-2">
+								<input
+									autocomplete="current-password"
+									class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 dark:bg-slate-600 dark:text-white dark:placeholder-gray-400 dark:focus:ring-indigo-500 sm:text-sm sm:leading-6"
+									id="password"
+									name="password"
+									required
+									type="password"
+								/>
+							</div>
+						</div>
+
+						<div class="flex items-center justify-between">
+							<div class="flex items-center">
+								<input
+									class="h-4 w-4 rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-600 focus:ring-indigo-600 dark:border-gray-400 dark:bg-slate-600 dark:focus:ring-indigo-500"
+									id="remember-me"
+									name="remember-me"
+									type="checkbox"
+								/>
+								<label class="ml-2 block text-sm text-gray-900 dark:text-white" for="remember-me"
+									>Remember me</label
+								>
+							</div>
+
+							<div class="text-sm">
+								<a
+									class="font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400"
+									href="#"
+									>Forgot your password?</a
+								>
+							</div>
+						</div>
+
+						<div>
+							<button
+								class="flex w-full justify-center rounded-md bg-indigo-600 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:focus:outline-indigo-500"
+								type="submit"
+							>
+								Sign in
+							</button>
+						</div>
+					</form>
+
+					<div class="mt-6">
+						<div class="relative">
+							<div class="absolute inset-0 flex items-center">
+								<div class="w-full border-t border-gray-300 dark:border-gray-500"></div>
+							</div>
+							<div class="relative flex justify-center text-sm">
+								<span class="bg-white px-2 text-gray-500 dark:bg-slate-600 dark:text-gray-300"
+									>Or continue with</span
+								>
+							</div>
+						</div>
+
+						<div class="mt-6 grid grid-cols-3 gap-3">
+							<div>
+								<a
+									(click)="signInWithGoogle()"
+									class="inline-flex w-full cursor-pointer justify-center rounded-md bg-white py-2 px-3 text-gray-500 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-offset-0 dark:bg-gray-800 dark:text-gray-300 dark:ring-gray-700 dark:hover:bg-gray-700"
+								>
+									<span class="sr-only">Sign in with Google</span>
+									<svg
+										aria-hidden="true"
+										class="h-5 w-5"
+										data-icon="google"
+										data-prefix="fab"
+										focusable="false"
+										role="img"
+										viewBox="0 0 488 512"
+										xmlns="http://www.w3.org/2000/svg"
+									>
+										<path
+											d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"
+											fill="currentColor"
+										></path>
+									</svg>
+								</a>
+							</div>
+							<div>
+								<a
+									class="focus:outline-offset-gray-300 inline-flex w-full justify-center rounded-md bg-white py-2 px-4 text-gray-500 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-offset-0 focus:outline-offset-2 focus:outline-indigo-600 focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 dark:bg-gray-800 dark:text-gray-300 dark:ring-gray-700 dark:hover:bg-gray-700"
+									href="#"
+								>
+									<span class="sr-only">Sign in with GitHub</span>
+									<svg aria-hidden="true" class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+										<path
+											clip-rule="evenodd"
+											d="M10 0C4.477 0 0 4.484 0 10.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0110 4.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.942.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0020 10.017C20 4.484 15.522 0 10 0z"
+											fill-rule="evenodd"
+										/>
+									</svg>
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</dialog-backdrop-template-component>

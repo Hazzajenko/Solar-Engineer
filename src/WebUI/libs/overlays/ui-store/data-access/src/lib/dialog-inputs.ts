@@ -14,6 +14,7 @@ export const DIALOG_COMPONENT = {
 	MOVE_PANELS_TO_STRING: 'MovePanelsToStringV4Component',
 	APP_SETTINGS: 'AppSettingsDialogComponent',
 	PROFILE_SETTINGS: 'ProfileSettingsDialogComponent',
+	SIGN_IN: 'SignInDialogComponent',
 } as const
 
 export type DialogComponent = (typeof DIALOG_COMPONENT)[keyof typeof DIALOG_COMPONENT]
@@ -44,6 +45,10 @@ export type DialogInputProfileSettings = DialogInputTemplate & {
 	component: typeof DIALOG_COMPONENT.PROFILE_SETTINGS
 }
 
+export type DialogInputSignIn = DialogInputTemplate & {
+	component: typeof DIALOG_COMPONENT.SIGN_IN
+}
+
 /*
  export const isDialogMovePanelsToString = (
  dialogInput: DialogInput,
@@ -72,6 +77,7 @@ export type DialogInput =
 	| DialogInputMovePanelsToString
 	| DialogInputAppSettings
 	| DialogInputProfileSettings
+	| DialogInputSignIn
 
 // type ContextMenuTemplate = {
 // 	x: number

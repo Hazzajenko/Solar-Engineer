@@ -44,6 +44,7 @@ import { map } from 'rxjs'
 import { GraphicsStoreService } from '@canvas/graphics/data-access'
 import { getScreenSize, selectSignalFromStore } from '@shared/utils'
 import { selectSelectedStringId } from '@canvas/selected/data-access'
+import { DialogRendererComponent } from '@overlays/dialogs/feature'
 
 @Component({
 	changeDetection: ChangeDetectionStrategy.OnPush,
@@ -65,6 +66,7 @@ import { selectSelectedStringId } from '@canvas/selected/data-access'
 		ContextMenuRendererComponent,
 		SelectedStringToolBarComponent,
 		MobileBottomToolbarComponent,
+		DialogRendererComponent,
 	],
 	selector: 'app-design-canvas-app',
 	standalone: true,
@@ -200,6 +202,14 @@ export class DesignCanvasAppComponent implements OnInit, AfterViewInit {
 
 	ngOnInit() {
 		console.log(this.constructor.name, 'ngOnInit')
+		setTimeout(() => {
+			this._uiStore.dispatch.openDialog({
+				component: 'SignInDialogComponent',
+			})
+		}, 1000)
+		/*		this._uiStore.dispatch.openDialog({
+		 component: 'SignInDialogComponent',
+		 })*/
 		// this._supabase.authChanges((_, session) => (this.session = session))
 	}
 

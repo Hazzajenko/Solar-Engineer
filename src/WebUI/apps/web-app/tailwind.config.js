@@ -11,6 +11,7 @@ module.exports = {
 		join('libs/design-app/feature-design-layout/src/lib/**/*.{ts,html}'),
 		join('libs/design-app/feature-panel/src/lib/**/*.{ts,html}'),
 		join('libs/design-app/feature/src/lib/**/*.{ts,html}'),
+		join('libs/auth/feature/src/lib/**/*.{ts,html}'),
 		join('libs/shared/ui/src/lib/**/*.{ts,html}'),
 		...createGlobPatternsForDependencies(__dirname),
 	],

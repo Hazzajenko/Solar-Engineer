@@ -8,9 +8,13 @@ import { HttpClient } from '@angular/common/http'
 	imports: [RouterOutlet],
 	selector: 'app-root',
 	template: `
-		<div class="h-full min-h-full w-full min-w-full bg-slate-100">
-			<router-outlet />
-		</div>
+		<html class="h-full">
+			<body class="h-full">
+				<div class="h-full min-h-full w-full min-w-full bg-slate-100">
+					<router-outlet />
+				</div>
+			</body>
+		</html>
 	`,
 	styles: [''],
 })

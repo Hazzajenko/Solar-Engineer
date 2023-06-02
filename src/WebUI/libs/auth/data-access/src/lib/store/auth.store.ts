@@ -94,27 +94,37 @@ export function injectAuthStore() {
 		return store.selectSignal(element) as Signal<X>
 	}
 
-	const store_dispatch = <T extends keyof AuthStoreActions>(key: T) => {
-		const element = feature[key as keyof typeof feature] as AuthStoreActions[T]
-		// element.
-		return (props: GetActionParametersByKey<T>) => {
-			if (props) {
-				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-				// @ts-ignore
-				return store.dispatch(element(props))
-			}
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			return store.dispatch(element())
-		}
-		// return store.dispatch(element)
-	}
+	/*	const store_dispatch = <T extends keyof AuthStoreActions>(key: T) => {
+	 const element = feature[key as keyof typeof feature] as AuthStoreActions[T]
+	 // element.
+	 return (props: GetActionParametersByKey<T>) => {
+	 if (props) {
+	 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+	 // @ts-ignore
+	 return store.dispatch(element(props))
+	 }
+	 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+	 // @ts-ignore
+	 return store.dispatch(element())
+	 }
+	 // return store.dispatch(element)
+	 }*/
 
-	const dispatch = () => {
-		return Object.keys(feature).reduce((acc, key) => {
-			acc[key as keyof AuthStoreActions] = store_dispatch(key as keyof AuthStoreActions)
-			return acc
-		}, {} as Record<keyof AuthStoreActions, (props: GetActionParametersByKey<keyof AuthStoreActions>) => void>)
+	/*	const dispatch = () => {
+	 return Object.keys(feature).reduce((acc, key) => {
+	 acc[key as keyof AuthStoreActions] = store_dispatch(key as keyof AuthStoreActions)
+	 return acc
+	 }, {} as Record<keyof AuthStoreActions, (props: GetActionParametersByKey<keyof AuthStoreActions>) => void>)
+	 }*/
+
+	const dispatch = <T extends keyof AuthStoreActions>(
+		key: T,
+		props: GetActionParametersByKey<T>,
+	) => {
+		const action = AuthActions[key as keyof typeof AuthActions] as AuthStoreActions[T]
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		return store.dispatch(action(props))
 	}
 
 	return {
