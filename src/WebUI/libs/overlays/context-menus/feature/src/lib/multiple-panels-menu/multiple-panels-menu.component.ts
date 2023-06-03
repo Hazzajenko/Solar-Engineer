@@ -5,6 +5,7 @@ import { ContextMenuTemplateComponent } from '../context-menu-template/context-m
 import { EntityStoreService } from '@entities/data-access'
 import { RenderService } from '@canvas/rendering/data-access'
 import {
+	CONTEXT_MENU_COMPONENT,
 	ContextMenuMultiplePanelsMenu,
 	DIALOG_COMPONENT,
 	UiStoreService,
@@ -25,6 +26,8 @@ export class MultiplePanelsMenuComponent implements OnInit {
 	private _entityStore = inject(EntityStoreService)
 	private _render = inject(RenderService)
 	private _uiStore = inject(UiStoreService)
+
+	id = CONTEXT_MENU_COMPONENT.MULTIPLE_PANELS_MENU
 
 	contextMenu = inject(Injector).get(
 		contextMenuInputInjectionToken,

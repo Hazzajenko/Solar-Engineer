@@ -5,7 +5,7 @@ export const AuthActions = createActionGroup({
 	source: 'Auth Store',
 	events: {
 		Login: emptyProps(),
-		'Login With Google': emptyProps(),
+		'Sign In With Google': emptyProps(),
 		'Is Returning User': emptyProps(),
 		'Authorize Request': emptyProps(),
 		'Sign In Success': props<{

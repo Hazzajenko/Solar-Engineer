@@ -3,6 +3,15 @@ import { getObjectPropertyKeys } from '../objects'
 
 export type ActionGroup = ReturnType<typeof createActionGroup>
 
+export type GetActionParametersByAction<TAction> = TAction extends (params: infer P) => void
+	? P
+	: never
+
+export type GetActionParametersByActionKey<
+	TActions extends ActionGroup,
+	TKey extends keyof TActions,
+> = TKey extends keyof TActions ? GetActionParametersByAction<TActions[TKey]> : never
+
 export function getAllActions(actionGroup: ActionGroup) {
 	return getObjectPropertyKeys(actionGroup)
 		.map((key) => actionGroup[key as keyof typeof actionGroup])

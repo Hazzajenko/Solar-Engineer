@@ -47,7 +47,7 @@ export class SignInDialogComponent {
 	private _auth = injectAuthStore()
 
 	signInWithGoogle() {
-		this._auth.dispatch('loginWithGoogle', undefined)
+		this._auth.dispatch.signInWithGoogle()
 	}
 
 	closeDialog() {

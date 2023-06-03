@@ -6,6 +6,7 @@ import { StringColor, stringColors } from '@entities/shared'
 import { ContextMenuDirective } from '../directives'
 import { injectAppStateStore } from '@canvas/app/data-access'
 import { transitionContextMenu } from '../animations/context-menu.animation'
+import { CONTEXT_MENU_COMPONENT } from '@overlays/ui-store/data-access'
 
 @Component({
 	selector: 'app-colour-picker-menu-v2',
@@ -33,6 +34,9 @@ import { transitionContextMenu } from '../animations/context-menu.animation'
 })
 export class ColourPickerMenuV2Component {
 	private _appStore = injectAppStateStore()
+
+	id = CONTEXT_MENU_COMPONENT.COLOUR_PICKER_MENU
+
 	stringColors = stringColors as StringColor[]
 	selectedStringColor = this._appStore.stringColor
 

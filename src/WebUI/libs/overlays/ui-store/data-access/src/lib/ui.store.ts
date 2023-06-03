@@ -1,7 +1,7 @@
-import { inject, Signal } from '@angular/core'
+import { inject } from '@angular/core'
 import { MemoizedSelector, Store } from '@ngrx/store'
 import { UiActions, uiFeature, UiState } from '@overlays/ui-store/data-access'
-import { omit } from '@shared/utils'
+import { GetActionParametersByActionKey } from '@shared/utils'
 
 export type UiStoreSelectors = Omit<typeof uiFeature, 'name' | 'reducer'>
 
@@ -98,87 +98,24 @@ export function injectUiStore() {
 	const store = inject(Store<UiState>)
 	const feature = uiFeature
 
-	const selectors = omit(feature, 'name', 'reducer')
-
-	/*	const select = () => {
-	 return Object.keys(selectors).reduce((acc, key) => {
-	 const selectorKey = key as keyof typeof selectors
-	 type SelectorReturn = SelectorReturnTypes<UiStoreSelectors>[typeof selectorKey]
-	 const selector = feature[key as keyof typeof feature] as MemoizedSelector<
-	 Record<string, any>,
-	 SelectorReturn,
-	 (featureState: AuthState) => SelectorReturn
-	 >
-	 acc[key as keyof UiStoreSelectors] = store.selectSignal(selector) as Signal<SelectorReturn>
-	 return acc
-	 }, {} as Record<keyof UiStoreSelectors, Signal<SelectorReturnTypes<UiStoreSelectors>[keyof UiStoreSelectors]>>)
-	 }*/
-
-	const select = <
-		T extends keyof UiStoreSelectors,
-		X extends SelectorReturnTypes<UiStoreSelectors>[T],
-	>(
-		key: T,
-	) => {
-		const selector = feature[key as keyof typeof feature] as MemoizedSelector<
-			Record<string, any>,
-			X,
-			(featureState: UiState) => X
-		>
-		/*		const selector = selectors[key] as MemoizedSelector<
-		 Record<string, any>,
-		 X,
-		 (featureState: UiState) => X
-		 >*/
-		return store.selectSignal(selector) as Signal<X>
+	const select = {
+		state: store.selectSignal(feature.selectUiState),
+		currentDialog: store.selectSignal(feature.selectCurrentDialog),
+		currentContextMenu: store.selectSignal(feature.selectCurrentContextMenu),
+		sideUiNavOpen: store.selectSignal(feature.selectSideUiNavOpen),
 	}
 
-	const dispatch = <T extends keyof UiStoreActions>(key: T, props: GetActionParametersByKey<T>) => {
-		const action = UiActions[key as keyof typeof UiActions] as UiStoreActions[T]
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
-		return store.dispatch(action(props))
+	const dispatch = {
+		openDialog: ({ dialog }: GetActionParametersByActionKey<UiStoreActions, 'openDialog'>) =>
+			store.dispatch(UiActions.openDialog({ dialog })),
+		closeDialog: () => store.dispatch(UiActions.closeDialog()),
+		openContextMenu: ({
+			contextMenu,
+		}: GetActionParametersByActionKey<UiStoreActions, 'openContextMenu'>) =>
+			store.dispatch(UiActions.openContextMenu({ contextMenu })),
+		closeContextMenu: () => store.dispatch(UiActions.closeContextMenu()),
+		toggleSideUiNav: () => store.dispatch(UiActions.toggleSideUiNav()),
 	}
-
-	/*const store_dispatch = <T extends keyof UiStoreActions>(key: T) => {
-	 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-	 // @ts-ignore
-	 const element = feature[key as keyof typeof feature] as UiStoreActions[T]
-
-	 UiActions.clearUiState
-	 // element.
-	 const res = (props: UiStoreActions[T]) => {
-	 return store.dispatch(props)
-	 }
-
-	 res(UiActions.clearUiState)
-	 /!*		return (props: GetActionParametersByKey<T>) => {
-	 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-	 // @ts-ignore
-	 return store.dispatch(element(props))
-	 }*!/
-	 }*/
-
-	/*	const dispatch = () => {
-	 return Object.keys(UiActions).reduce((acc, key) => {
-	 const k = key as keyof typeof UiActions
-	 acc[k] = (props: UiStoreActions[typeof k]) => {
-	 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-	 // @ts-ignore
-	 return store.dispatch(UiActions[key as keyof typeof UiActions](props))
-	 }
-	 return acc
-	 }, {} as Record<keyof UiStoreActions, (props: GetActionParametersByKey<keyof UiStoreActions>) => void>)
-	 }*/
-
-	/*	dispatch('closeContextMenu', undefined)
-
-	 dispatch('openDialog', {dialog: {
-	 component: 'MovePanelsToStringV4Component',
-	 data: {
-	 panelIds: ['test'],
-	 }
-	 }})*/
 
 	return {
 		select,

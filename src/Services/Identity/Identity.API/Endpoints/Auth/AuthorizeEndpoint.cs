@@ -1,13 +1,10 @@
-﻿using EventBus.Domain.AppUserEvents;
-using FastEndpoints;
+﻿using FastEndpoints;
 using Identity.Application.Handlers.AppUsers.GetAppUserDto;
 using Identity.Application.Handlers.Auth.Authorize;
 using Identity.Application.Services.Jwt;
 using Identity.Contracts.Responses;
 using Identity.Domain.Auth;
-using Infrastructure.Contracts.Data;
 using Infrastructure.Extensions;
-using Mapster;
 using Mediator;
 using Microsoft.AspNetCore.Identity;
 
@@ -29,15 +26,11 @@ public class AuthorizeEndpoint : EndpointWithoutRequest<AuthorizeResponse>
         IMediator mediator,
         UserManager<AppUser> userManager,
         IJwtTokenGenerator jwtTokenGenerator
-        // IMartenOutbox outbox,
-        // IDocumentSession session
     )
     {
         _mediator = mediator;
         _userManager = userManager;
         _jwtTokenGenerator = jwtTokenGenerator;
-        // _outbox = outbox;
-        // _session = session;
     }
 
     public override void Configure()
@@ -56,14 +49,7 @@ public class AuthorizeEndpoint : EndpointWithoutRequest<AuthorizeResponse>
     public override async Task HandleAsync(CancellationToken cT)
     {
         var appUser = await _mediator.Send(new AuthorizeCommand(HttpContext), cT);
-        /*if (appUser is null)
-        {
-            Logger.LogError("Unable to find user {UserId}", User.GetUserId());
-            await SendUnauthorizedAsync(cT);
-            return;
-        }*/
         var token = _jwtTokenGenerator.GenerateToken(appUser.Id.ToString(), appUser.UserName);
-        // var token = await _mediator.Send(new GetTokenCommand(appUser.Id, appUser.UserName), cT);
 
         var storedToken = await _userManager.GetAuthenticationTokenAsync(
             appUser,
@@ -71,13 +57,11 @@ public class AuthorizeEndpoint : EndpointWithoutRequest<AuthorizeResponse>
             "token"
         );
         if (storedToken is not null)
-        {
-            var removeTokenResult = await _userManager.RemoveAuthenticationTokenAsync(
+            await _userManager.RemoveAuthenticationTokenAsync(
                 appUser,
                 "google",
                 "token"
             );
-        }
 
         var tokenResult = await _userManager.SetAuthenticationTokenAsync(
             appUser,
@@ -97,10 +81,11 @@ public class AuthorizeEndpoint : EndpointWithoutRequest<AuthorizeResponse>
             return;
         }
 
+        /*
         var guidId = Guid.NewGuid();
         var userDto = user.Adapt<UserDto>();
         var appUserCreated = new AppUserCreated(guidId, userDto);
-        var appUserEventV2 = new AppUserEventV2(guidId, appUserCreated);
+        var appUserEventV2 = new AppUserEventV2(guidId, appUserCreated);*/
         // _session.Store(appUserEventV2);
         // await _outbox.SendAsync(appUserCreated);
         // await _session.SaveChangesAsync(cT);

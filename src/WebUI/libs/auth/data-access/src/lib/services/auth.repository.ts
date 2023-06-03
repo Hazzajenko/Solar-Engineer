@@ -21,8 +21,8 @@ export class AuthRepository {
 		this.store.dispatch(AuthActions.signInFetchUserSuccess({ token, user }))
 	}
 
-	loginWithGoogle() {
-		this.store.dispatch(AuthActions.loginWithGoogle())
+	signInWithGoogle() {
+		this.store.dispatch(AuthActions.signInWithGoogle())
 	}
 
 	authorizeRequest() {

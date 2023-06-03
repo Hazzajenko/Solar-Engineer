@@ -29,7 +29,7 @@ import {
 import { CdkDrag } from '@angular/cdk/drag-drop'
 import { CommonModule } from '@angular/common'
 import { ActionNotificationsDisplayComponent } from '@overlays/notifications/feature'
-import { SideUiNavBarComponent } from '@overlays/side-uis/feature'
+import { SideUiAuthViewComponent, SideUiNavBarComponent } from '@overlays/side-uis/feature'
 import {
 	MobileBottomToolbarComponent,
 	OverlayToolBarComponent,
@@ -67,6 +67,7 @@ import { DialogRendererComponent } from '@overlays/dialogs/feature'
 		SelectedStringToolBarComponent,
 		MobileBottomToolbarComponent,
 		DialogRendererComponent,
+		SideUiAuthViewComponent,
 	],
 	selector: 'app-design-canvas-app',
 	standalone: true,

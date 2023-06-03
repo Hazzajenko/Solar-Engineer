@@ -46,7 +46,8 @@ public static class AppUserMapper
             UserName = request.UserName!,
             FirstName = request.FirstName,
             LastName = request.LastName,
-            PhotoUrl = request.PhotoUrl
+            PhotoUrl = request.PhotoUrl,
+            Email = request.Email!
         };
     }
 }

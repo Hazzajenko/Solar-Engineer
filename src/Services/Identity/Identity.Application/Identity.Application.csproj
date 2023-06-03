@@ -35,6 +35,7 @@
       <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.4.0" />
       <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.0.0-rc9.14" />
       <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.0.0-rc9.14" />
+      <PackageReference Include="SkiaSharp" Version="2.88.3" />
       <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.27.0" />
       <PackageReference Include="WolverineFx" Version="0.9.15" />
       <PackageReference Include="WolverineFx.EntityFrameworkCore" Version="0.9.15" />

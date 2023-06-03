@@ -5,7 +5,11 @@ import { ContextMenuTemplateComponent } from '../context-menu-template/context-m
 import { GetStringWithPanelIdsPipe } from '@entities/utils'
 import { EntityStoreService } from '@entities/data-access'
 import { RenderService } from '@canvas/rendering/data-access'
-import { ContextMenuStringMenu, UiStoreService } from '@overlays/ui-store/data-access'
+import {
+	CONTEXT_MENU_COMPONENT,
+	ContextMenuStringMenu,
+	UiStoreService,
+} from '@overlays/ui-store/data-access'
 import { StringModel } from '@entities/shared'
 import { contextMenuInputInjectionToken } from '../context-menu-renderer'
 import { ContextMenuDirective } from '../directives'
@@ -28,6 +32,8 @@ export class StringMenuComponent implements OnInit {
 	private _entityStore = inject(EntityStoreService)
 	private _render = inject(RenderService)
 	private _uiStore = inject(UiStoreService)
+
+	id = CONTEXT_MENU_COMPONENT.STRING_MENU
 
 	contextMenu = inject(Injector).get(contextMenuInputInjectionToken) as ContextMenuStringMenu
 

@@ -3,7 +3,7 @@ import { provideSelectedFeature } from '@canvas/selected/data-access'
 import { provideEntityStores } from '@entities/data-access'
 import { provideAppStateFeature } from '@canvas/app/data-access'
 import { provideState, provideStore } from '@ngrx/store'
-import { UI_FEATURE_KEY, uiReducer } from '@overlays/ui-store/data-access'
+import { provideUiFeature } from '@overlays/ui-store/data-access'
 import {
 	OBJECT_POSITIONING_FEATURE_KEY,
 	objectPositioningReducer,
@@ -26,7 +26,7 @@ export function provideNgrx() {
 		provideSelectedFeature(),
 		provideEntityStores(),
 		provideAppStateFeature(),
-		provideState(UI_FEATURE_KEY, uiReducer),
+		provideUiFeature(),
 		provideState(OBJECT_POSITIONING_FEATURE_KEY, objectPositioningReducer),
 		provideState(GRAPHICS_FEATURE_KEY, graphicsReducer),
 		provideState(WINDOWS_FEATURE_KEY, windowsReducer),

@@ -8,7 +8,7 @@ import { Location } from '@angular/common'
 export const getRedirect$ = createEffect(
 	(actions$ = inject(Actions)) => {
 		return actions$.pipe(
-			ofType(AuthActions.loginWithGoogle),
+			ofType(AuthActions.signInWithGoogle),
 			map(() => {
 				window.location.href = '/auth/login/google'
 			}),

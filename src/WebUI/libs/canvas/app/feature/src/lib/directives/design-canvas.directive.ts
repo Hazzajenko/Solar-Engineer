@@ -1,4 +1,15 @@
-import { handlePinchToZoom, isReadyForPinchToZoom, setupCanvas } from '../utils'
+import {
+	creationBoxMouseMove,
+	creationBoxMouseUp,
+	dragBoxOnMouseDownHandler,
+	dragBoxOnMouseMoveHandler,
+	dragBoxOnMouseUpHandler,
+	handlePinchToZoom,
+	isReadyForPinchToZoom,
+	selectionBoxMouseMove,
+	selectionBoxMouseUp,
+	setupCanvas,
+} from '../utils'
 import { Directive, ElementRef, inject, NgZone, OnInit, Renderer2 } from '@angular/core'
 import {
 	ContextMenuEvent,
@@ -67,15 +78,6 @@ import {
 	SizeByType,
 	UndefinedStringId,
 } from '@entities/shared'
-import {
-	creationBoxMouseMove,
-	creationBoxMouseUp,
-	dragBoxOnMouseDownHandler,
-	dragBoxOnMouseMoveHandler,
-	dragBoxOnMouseUpHandler,
-	selectionBoxMouseMove,
-	selectionBoxMouseUp,
-} from '../utils/drag-box'
 
 @Directive({
 	selector: '[appDesignCanvas]',
@@ -506,9 +508,8 @@ export class DesignCanvasDirective implements OnInit {
 
 	mouseClickHandler(event: PointerEvent, currentPoint: TransformedPoint) {
 		if (isWheelButton(event)) return
-
 		if (this._uiStore.contextMenu.contextMenuOpen) {
-			this._uiStore.dispatch.closeContextMenu()
+			// this._uiStore.dispatch.closeContextMenu()
 			return
 		}
 

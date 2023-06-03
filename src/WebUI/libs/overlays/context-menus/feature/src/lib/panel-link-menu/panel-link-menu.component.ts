@@ -2,7 +2,11 @@ import { ChangeDetectionStrategy, Component, inject, Injector, OnInit } from '@a
 import { ContextMenuDirective } from '../directives'
 import { EntityStoreService } from '@entities/data-access'
 import { RenderService } from '@canvas/rendering/data-access'
-import { ContextMenuPanelLinkMenu, UiStoreService } from '@overlays/ui-store/data-access'
+import {
+	CONTEXT_MENU_COMPONENT,
+	ContextMenuPanelLinkMenu,
+	UiStoreService,
+} from '@overlays/ui-store/data-access'
 import { contextMenuInputInjectionToken } from '../context-menu-renderer'
 import { PanelLinkModel } from '@entities/shared'
 import { ShowSvgComponent, ShowSvgNoStylesComponent } from '@shared/ui'
@@ -22,6 +26,8 @@ export class PanelLinkMenuComponent implements OnInit {
 	private _render = inject(RenderService)
 	private _uiStore = inject(UiStoreService)
 	private _appStore = inject(AppStateStoreService)
+
+	id = CONTEXT_MENU_COMPONENT.PANEL_LINK_MENU
 
 	contextMenu = inject(Injector).get(contextMenuInputInjectionToken) as ContextMenuPanelLinkMenu
 

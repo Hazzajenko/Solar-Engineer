@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, Injector } from '@angular/c
 import { JsonPipe, NgForOf, NgIf, NgStyle } from '@angular/common'
 import { ShowSvgComponent, ShowSvgNoStylesComponent } from '@shared/ui'
 import { ContextMenuTemplateComponent } from '../context-menu-template/context-menu-template.component'
-import { ContextMenuColourPickerMenu } from '@overlays/ui-store/data-access'
+import { CONTEXT_MENU_COMPONENT, ContextMenuColourPickerMenu } from '@overlays/ui-store/data-access'
 import { StringColor, stringColors } from '@entities/shared'
 import { contextMenuInputInjectionToken } from '../context-menu-renderer'
 import { ContextMenuDirective } from '../directives'
@@ -35,6 +35,8 @@ import { transitionContextMenu } from '../animations/context-menu.animation'
 })
 export class ColourPickerMenuComponent {
 	private _appStore = injectAppStateStore()
+
+	id = CONTEXT_MENU_COMPONENT.COLOUR_PICKER_MENU
 
 	contextMenu = inject(Injector).get(contextMenuInputInjectionToken) as ContextMenuColourPickerMenu
 

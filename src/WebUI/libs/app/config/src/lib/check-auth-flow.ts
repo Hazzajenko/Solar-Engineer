@@ -15,7 +15,7 @@ export function checkAuthFlow() {
 	const jwt = inject(JwtHelperService)
 	const uiStore = injectUiStore()
 
-	const user = authStore.select('selectUser')()
+	const user = authStore.select.user()
 	if (user) {
 		return true
 	}
@@ -29,7 +29,7 @@ export function checkAuthFlow() {
 	}
 
 	setTimeout(() => {
-		uiStore.dispatch('openDialog', {
+		uiStore.dispatch.openDialog({
 			dialog: {
 				component: 'SignInDialogComponent',
 			},
@@ -43,10 +43,10 @@ function handleCheckLocalToken(authStore: AuthStore, jwt: JwtHelperService, uiSt
 	if (token) {
 		const isTokenExpired = jwt.isTokenExpired(token)
 		if (!isTokenExpired) {
-			authStore.dispatch('isReturningUser', undefined)
+			authStore.dispatch.isReturningUser()
 			return true
 		}
-		uiStore.dispatch('openDialog', {
+		uiStore.dispatch.openDialog({
 			dialog: {
 				component: 'SignInDialogComponent',
 			},

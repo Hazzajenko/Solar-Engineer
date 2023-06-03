@@ -9,7 +9,7 @@ import {
 } from '@angular/core'
 import { provideRouter, withEnabledBlockingInitialNavigation } from '@angular/router'
 import { appRoutes } from './main.routes'
-import { provideHttpClient } from '@angular/common/http'
+import { provideHttpClient, withInterceptors } from '@angular/common/http'
 import {
 	BrowserAnimationsModule,
 	provideAnimations,
@@ -20,6 +20,7 @@ import { MatDialogModule } from '@angular/material/dialog'
 import { MatSnackBarModule, MatSnackBarRef } from '@angular/material/snack-bar'
 import { DatePipe } from '@angular/common'
 import { JwtModule } from '@auth0/angular-jwt'
+import { jwtInterceptor } from './interceptors'
 
 export function initMainTs() {
 	if (environment.production) {
@@ -51,7 +52,7 @@ function provideWebAppProviders() {
 		provideZoneChangeDetection({ eventCoalescing: true }),
 		provideRouter(appRoutes, withEnabledBlockingInitialNavigation()),
 		provideNgrx(),
-		provideHttpClient(), // provideClientHydration(),
+		provideHttpClient(withInterceptors([jwtInterceptor()])), // provideClientHydration(),
 		provideAnimations(),
 		provideNoopAnimations(),
 		importProvidersFrom(

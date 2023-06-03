@@ -5,19 +5,21 @@ import {
 	inject,
 	InjectionToken,
 	Injector,
+	OnDestroy,
+	Renderer2,
 } from '@angular/core'
 import {
 	CONTEXT_MENU_COMPONENT,
 	ContextMenuInput,
-	UiStoreService,
+	injectUiStore,
 } from '@overlays/ui-store/data-access'
-import { toSignal } from '@angular/core/rxjs-interop'
 import { NgComponentOutlet, NgIf } from '@angular/common'
 import { SinglePanelMenuComponent } from '../single-panel-menu/single-panel-menu.component'
 import { MultiplePanelsMenuComponent } from '../multiple-panels-menu/multiple-panels-menu.component'
 import { StringMenuComponent } from '../string-menu/string-menu.component'
 import { PanelLinkMenuComponent } from '../panel-link-menu'
 import { ColourPickerMenuComponent } from '../colour-picker-menu/colour-picker-menu.component'
+import { getElementByIdWithRetry, initBackdropEventWithRenderer } from '@shared/utils'
 
 export const contextMenuInputInjectionToken = new InjectionToken<ContextMenuInput>('')
 
@@ -26,23 +28,21 @@ export const contextMenuInputInjectionToken = new InjectionToken<ContextMenuInpu
 	standalone: true,
 	imports: [NgIf, NgComponentOutlet],
 	template: `
-		<ng-container
-			*ngIf="contextMenu && contextMenu.currentContextMenu && contextMenu.contextMenuOpen"
-		>
-			<ng-container *ngIf="component && contextMenuInjector">
-				<ng-container *ngComponentOutlet="component; injector: contextMenuInjector" />
-			</ng-container>
+		<ng-container *ngIf="contextMenu && component && contextMenuInjector">
+			<ng-container *ngComponentOutlet="component; injector: contextMenuInjector" />
 		</ng-container>
 	`,
 	styles: [],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ContextMenuRendererComponent {
-	private _uiStore = inject(UiStoreService)
-	private _contextMenu = toSignal(this._uiStore.contextMenu$, {
-		initialValue: this._uiStore.contextMenu,
-	})
+export class ContextMenuRendererComponent implements OnDestroy {
+	private _uiStore = injectUiStore()
+	private _renderer = inject(Renderer2)
+	private _contextMenu = this._uiStore.select.currentContextMenu
 	private _injector = inject(Injector)
+
+	private killClickListener?: () => void
+
 	contextMenuInjector: Injector | undefined
 
 	component: ReturnType<typeof this.switchFn> | undefined
@@ -50,29 +50,43 @@ export class ContextMenuRendererComponent {
 	constructor() {
 		effect(() => {
 			if (
-				!this.contextMenu ||
-				!this.contextMenu.currentContextMenu ||
-				!this.contextMenu.contextMenuOpen
+				!this.contextMenu
+				/*				!this.contextMenu ||
+				 !this.contextMenu.currentContextMenu ||
+				 !this.contextMenu.contextMenuOpen*/
 			) {
 				return
 			}
 
-			this.component = this.switchFn(this.contextMenu.currentContextMenu)
+			this.component = this.switchFn(this.contextMenu)
 
 			this.contextMenuInjector = Injector.create({
 				providers: [
 					{
 						provide: contextMenuInputInjectionToken,
-						useValue: this.contextMenu.currentContextMenu,
+						useValue: this.contextMenu,
 					},
 				],
 				parent: this._injector,
 			})
+
+			const componentId = this.contextMenu.component
+
+			setTimeout(() => {
+				const div = getElementByIdWithRetry(componentId)
+				this.killClickListener = initBackdropEventWithRenderer(this._renderer, div, () => {
+					this._uiStore.dispatch.closeContextMenu()
+				})
+			}, 100)
 		})
 	}
 
 	get contextMenu() {
 		return this._contextMenu()
+	}
+
+	ngOnDestroy() {
+		this.killClickListener?.()
 	}
 
 	private switchFn(contextMenu: ContextMenuInput) {

@@ -4,7 +4,7 @@ import { ShowSvgComponent, ShowSvgNoStylesComponent } from '@shared/ui'
 import { ContextMenuTemplateComponent } from '../context-menu-template/context-menu-template.component'
 import { EntityStoreService } from '@entities/data-access'
 import { RenderService } from '@canvas/rendering/data-access'
-import { ContextMenuSinglePanelMenu, UiStoreService } from '@overlays/ui-store/data-access'
+import { CONTEXT_MENU_COMPONENT, ContextMenuSinglePanelMenu, UiStoreService } from '@overlays/ui-store/data-access'
 import { PanelLinkModel, PanelModel, StringModel } from '@entities/shared'
 import { contextMenuInputInjectionToken } from '../context-menu-renderer'
 import { ContextMenuDirective } from '../directives'
@@ -50,6 +50,8 @@ export class SinglePanelMenuComponent implements OnInit {
 	private _uiStore = inject(UiStoreService)
 	private _appStore = inject(AppStateStoreService)
 	private _selectedStore = injectSelectedStore()
+
+	id = CONTEXT_MENU_COMPONENT.SINGLE_PANEL_MENU
 
 	contextMenu = inject(Injector).get(contextMenuInputInjectionToken) as ContextMenuSinglePanelMenu
 

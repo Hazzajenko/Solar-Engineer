@@ -8,4 +8,5 @@ public class CurrentUserDto
     public string FirstName { get; init; } = default!;
     public string LastName { get; init; } = default!;
     public string PhotoUrl { get; set; } = default!;
+    public string Email { get; set; } = default!;
 }

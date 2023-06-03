@@ -10,6 +10,9 @@ export type SelectorReturnTypes<T> = {
 }
 
 export type AuthStoreSelectorsReturnTypes = SelectorReturnTypes<AuthStoreSelectors>
+/*const what : AuthStoreSelectorsReturnTypes['selectUser'] = {
+
+ }*/
 export type AuthStoreActions = typeof AuthActions
 export type ActionReturnTypes<T> = {
 	[K in keyof T]: T[K] extends (...args: any[]) => infer R ? R : never
@@ -38,6 +41,8 @@ export type GetActionParametersByAction<T> = T extends (params: infer P) => void
 export type GetActionParametersByActionKey<T> = T extends keyof AuthStoreActions
 	? GetActionParametersByAction<AuthStoreActions[T]>
 	: never
+
+// const whattt: GetActionParametersByActionKey<'signInSuccess'>
 
 export type GetActionDispatchers<T> = {
 	[K in keyof T]: T[K] extends (...args: any[]) => void ? (...args: any[]) => void : never
@@ -83,51 +88,29 @@ export type StoreActionDispatcherFunctions = GetActionDispatchers<AuthStoreActio
 export type AuthStore = ReturnType<typeof injectAuthStore>
 
 export function injectAuthStore() {
-	const store = inject(Store<AuthState>)
+	const store = inject(Store)
 	const feature = authFeature
+	/*
+	 const select = <T extends (typeof selectors)[keyof typeof selectors] & Parameters<typeof store.selectSignal>[0]>(selector: T) => {
+	 // const selector = selectors[key]
+	 // assertIsMemoizedSelector(selector)
+	 selector.setResult
+	 return store.selectSignal(selector) as Signal<ReturnType<T>>
+	 }
+	 */
 
-	const select = <T extends keyof AuthStoreSelectors, X extends AuthStoreSelectorsReturnTypes[T]>(
-		key: T,
-	) => {
-		const element = feature[key as keyof typeof feature] as MemoizedSelector<
-			Record<string, any>,
-			X,
-			(featureState: AuthState) => X
-		>
-		return store.selectSignal(element) as Signal<X>
+	const state = store.selectSignal(feature.selectAuthState) as Signal<AuthState>
+
+	const user = store.selectSignal(feature.selectUser) as Signal<AuthUserModel | undefined>
+
+	const select = {
+		state,
+		user,
 	}
 
-	/*	const store_dispatch = <T extends keyof AuthStoreActions>(key: T) => {
-	 const element = feature[key as keyof typeof feature] as AuthStoreActions[T]
-	 // element.
-	 return (props: GetActionParametersByKey<T>) => {
-	 if (props) {
-	 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-	 // @ts-ignore
-	 return store.dispatch(element(props))
-	 }
-	 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-	 // @ts-ignore
-	 return store.dispatch(element())
-	 }
-	 // return store.dispatch(element)
-	 }*/
-
-	/*	const dispatch = () => {
-	 return Object.keys(feature).reduce((acc, key) => {
-	 acc[key as keyof AuthStoreActions] = store_dispatch(key as keyof AuthStoreActions)
-	 return acc
-	 }, {} as Record<keyof AuthStoreActions, (props: GetActionParametersByKey<keyof AuthStoreActions>) => void>)
-	 }*/
-
-	const dispatch = <T extends keyof AuthStoreActions>(
-		key: T,
-		props: GetActionParametersByKey<T>,
-	) => {
-		const action = AuthActions[key as keyof typeof AuthActions] as AuthStoreActions[T]
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
-		return store.dispatch(action(props))
+	const dispatch = {
+		signInWithGoogle: () => store.dispatch(AuthActions.signInWithGoogle()),
+		isReturningUser: () => store.dispatch(AuthActions.isReturningUser()), // signIn: (props: GetActionParametersByKey<'signIn'>) => store.dispatch(AuthActions.signInSuccess(props)),
 	}
 
 	return {
@@ -135,7 +118,3 @@ export function injectAuthStore() {
 		dispatch,
 	}
 }
-
-// const meow = injectAuthStore()
-// const user = meow.select('selectUser')()
-// const user2 = meow.dispatch().modifiedUser({})

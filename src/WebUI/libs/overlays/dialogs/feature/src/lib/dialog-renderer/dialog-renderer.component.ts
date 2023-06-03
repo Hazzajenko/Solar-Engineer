@@ -40,7 +40,7 @@ export const dialogInputInjectionToken = new InjectionToken<ContextMenuInput>(''
 })
 export class DialogRendererComponent implements OnDestroy {
 	private _uiStore = injectUiStore()
-	private _dialog = this._uiStore.select('selectCurrentDialog')
+	private _dialog = this._uiStore.select.currentDialog
 	private _injector = inject(Injector)
 	private _killEvent?: () => void
 	private _renderer = inject(Renderer2)
@@ -90,7 +90,7 @@ export class DialogRendererComponent implements OnDestroy {
 
 	ngOnDestroy() {
 		this._killEvent?.()
-		this._uiStore.dispatch('closeDialog', undefined)
+		this._uiStore.dispatch.closeDialog()
 	}
 
 	private switchFn(component: DialogInput['component']) {
