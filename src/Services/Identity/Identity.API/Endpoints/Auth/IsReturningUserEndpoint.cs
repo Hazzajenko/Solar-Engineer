@@ -2,20 +2,24 @@
 using Identity.Application.Handlers.AppUsers.GetAppUserDto;
 using Identity.Application.Services.Jwt;
 using Identity.Contracts.Responses;
+using Infrastructure.Contracts.Events;
 using Infrastructure.Extensions;
+using MassTransit;
 using Mediator;
 
 namespace Identity.API.Endpoints.Auth;
 
 public class IsReturningUserEndpoint : EndpointWithoutRequest<AuthorizeResponse>
 {
+    private readonly IBus _bus;
     private readonly IJwtTokenGenerator _jwtTokenGenerator;
     private readonly IMediator _mediator;
 
-    public IsReturningUserEndpoint(IMediator mediator, IJwtTokenGenerator jwtTokenGenerator)
+    public IsReturningUserEndpoint(IMediator mediator, IJwtTokenGenerator jwtTokenGenerator, IBus bus)
     {
         _mediator = mediator;
         _jwtTokenGenerator = jwtTokenGenerator;
+        _bus = bus;
     }
 
     public override void Configure()
@@ -43,10 +47,9 @@ public class IsReturningUserEndpoint : EndpointWithoutRequest<AuthorizeResponse>
 
         var token = _jwtTokenGenerator.GenerateToken(appUser.Id, appUser.UserName);
 
-        /*var token = await _mediator.Send(
-            new GetTokenCommand(appUser.Id.ToGuid(), appUser.UserName),
-            cT
-        );*/
+        var message = new UserLoggedIn(appUser.Id.ToGuid(), appUser.UserName, appUser.DisplayName, appUser.PhotoUrl);
+        await _bus.Publish(message, cT);
+
         Response.Token = token;
         Response.User = appUser;
         await SendOkAsync(Response, cT);

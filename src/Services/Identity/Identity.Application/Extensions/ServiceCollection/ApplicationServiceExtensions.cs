@@ -27,7 +27,10 @@ public static class ServiceExtensions
         services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
         services.Configure<StorageSettings>(config.GetSection("Azure:Storage"));
 
+
         services.AddMediator(options => { options.ServiceLifetime = ServiceLifetime.Transient; });
+
+        services.InitMassTransit();
 
         // services.UseWolverine();
 

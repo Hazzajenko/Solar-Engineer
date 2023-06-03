@@ -120,6 +120,11 @@ static_resources:
                   prefix_rewrite: "/"
                   cluster: projects-api
               - match:
+                  prefix: "/projects"
+                route:
+                  prefix_rewrite: "/projects"
+                  cluster: projects-api
+              - match:
                   prefix: "/hubs/projects"
                 route:
                   # auto_host_rewrite: true

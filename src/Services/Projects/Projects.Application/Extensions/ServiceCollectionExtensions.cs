@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Projects.Application.Data.UnitOfWork;
 using Projects.Application.Repositories.AppUserProjects;
 using Projects.Application.Repositories.Projects;
+using Projects.Application.Repositories.ProjectUsers;
 using Projects.Application.Services.Strings;
 
 namespace Projects.Application.Extensions;
@@ -24,7 +25,9 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IProjectsRepository, ProjectsRepository>();
         services.AddScoped<IStringsService, StringsService>();
         services.AddScoped<IAppUserProjectsRepository, AppUserProjectsRepository>();
+        services.AddScoped<IProjectUsersRepository, ProjectUsersRepository>();
         services.AddMediator(options => { options.ServiceLifetime = ServiceLifetime.Transient; });
+        // services.InitMassTransit();
         // services.AddAutoMapper(typeof(Program));
         services.AddMappings();
         // services.InitMediator();

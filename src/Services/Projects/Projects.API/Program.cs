@@ -1,6 +1,3 @@
-using EventBus.Common;
-using EventBus.Domain.AppUserEvents.Responses;
-using EventBus.Wolverine;
 using FastEndpoints;
 using Infrastructure.Authentication;
 using Infrastructure.Data;
@@ -8,10 +5,8 @@ using Infrastructure.Logging;
 using Infrastructure.OpenTelemetry;
 using Infrastructure.Swagger;
 using Infrastructure.Web;
-using Marten;
+using MassTransit;
 using Microsoft.AspNetCore.HttpOverrides;
-using Oakton;
-using Projects.API.Queues;
 using Projects.Application;
 using Projects.Application.Data;
 using Projects.Application.Extensions;
@@ -20,7 +15,7 @@ var builder = WebApplication.CreateBuilder(
     new WebApplicationOptions { Args = args, ContentRootPath = Directory.GetCurrentDirectory() }
 );
 
-builder.Host.ApplyOaktonExtensions();
+// builder.Host.ApplyOaktonExtensions();
 
 // var webHost = WebHost.CreateDefaultBuilder(args)
 /*.UseStartup<Startup>()*/
@@ -42,18 +37,42 @@ config.AddEnvironmentVariables("solarengineer_");
 };
 var senderQueues = new SenderQueue[] { new("project-events", typeof(ProjectEvent)) };*/
 
-builder.Host.InitWolverine(
+/*builder.Host.InitWolverine(
     config,
     QueueConfig.ListenerQueues,
     QueueConfig.SenderQueues,
     typeof(IProjectsApplicationAssemblyMarker).Assembly
-);
+);*/
 
 // builder.Host.InitProjectsWolverine(config);
 builder.Services.InitOpenTelemetry(config);
 
 /*builder.Services.AddMediator(options => { options.ServiceLifetime = ServiceLifetime.Transient; });*/
 builder.Services.AddApplicationServices(config);
+
+builder.Services.AddMassTransit(x =>
+{
+    x.SetKebabCaseEndpointNameFormatter();
+    x.SetInMemorySagaRepositoryProvider();
+
+    var assembly = typeof(IProjectsApplicationAssemblyMarker).Assembly;
+
+    x.AddConsumers(assembly);
+    x.AddSagaStateMachines(assembly);
+    x.AddSagas(assembly);
+    x.AddActivities(assembly);
+
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        cfg.Host("localhost", "/", h =>
+        {
+            h.Username("guest");
+            h.Password("guest");
+        });
+        cfg.ConfigureEndpoints(context);
+    });
+});
+
 
 // Register(typeof(IUserIdProvider), () => new HubsUserIdProvider());
 // builder.WebHost.
@@ -100,7 +119,8 @@ builder.Services.ConfigureSignalRWithRedis(builder.Environment);
 builder.Services.InitCors("corsPolicy");
 
 // builder.Services.AddFastEndpoints(options => { options.SourceGeneratorDiscoveredTypes = DiscoveredTypes.All; });
-builder.Services.AddFastEndpoints(options => { options.SourceGeneratorDiscoveredTypes = DiscoveredTypes.All; });
+builder.Services.AddFastEndpoints();
+// builder.Services.AddFastEndpoints(options => { options.SourceGeneratorDiscoveredTypes = DiscoveredTypes.All; });
 
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
@@ -121,6 +141,7 @@ app.ConfigurePipeline();
     return stream;
 });*/
 
+/*
 app.MapGet(
     "/rebuild",
     async (IDocumentStore store) =>
@@ -146,7 +167,7 @@ app.MapGet(
 app.MapGet(
     "/stream/{guid}",
     (Guid guid, IQuerySession session) => { return session.LoadAsync<UserSummary>(guid); }
-);
+);*/
 
 /*app.Use(
     async (context, next) =>

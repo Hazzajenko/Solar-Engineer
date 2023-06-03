@@ -1,4 +1,3 @@
-using Infrastructure.Data.Seed;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,7 +15,7 @@ public static class ProjectsSeeder
 
         var context = serviceScope.ServiceProvider.GetRequiredService<ProjectsContext>();
 
-        await DbExtensionSeed<ProjectsContext>.CreateUuidOsspIfNotExists(context);
+        // await DbExtensionSeed<ProjectsContext>.CreateUuidOsspIfNotExists(context);
 
         await context.Database.MigrateAsync();
         if (context.PanelConfigs.Any() is false)

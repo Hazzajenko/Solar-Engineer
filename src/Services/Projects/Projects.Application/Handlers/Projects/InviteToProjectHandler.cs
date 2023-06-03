@@ -12,14 +12,12 @@ using Projects.Domain.Commands.Projects;
 using Projects.Domain.Contracts.Responses.Projects;
 using Projects.Domain.Entities;
 using Projects.SignalR.Hubs;
-using Wolverine;
 
 namespace Projects.Application.Handlers.Projects;
 
 public class InviteToProjectHandler
     : ICommandHandler<InviteToProjectCommand, InviteToProjectResponse?>
 {
-    private readonly IMessageBus _bus;
     private readonly IHubContext<ProjectsHub, IProjectsHub> _hubContext;
     private readonly ILogger _logger;
     private readonly IProjectsUnitOfWork _unitOfWork;
@@ -27,14 +25,12 @@ public class InviteToProjectHandler
     public InviteToProjectHandler(
         ILogger<InviteToProjectHandler> logger,
         IProjectsUnitOfWork unitOfWork,
-        IHubContext<ProjectsHub, IProjectsHub> hubContext,
-        IMessageBus bus
+        IHubContext<ProjectsHub, IProjectsHub> hubContext
     )
     {
         _logger = logger;
         _unitOfWork = unitOfWork;
         _hubContext = hubContext;
-        _bus = bus;
     }
 
     public async ValueTask<InviteToProjectResponse?> Handle(
@@ -157,7 +153,7 @@ public class InviteToProjectHandler
 
         var projectEvent = new ProjectEvent(projectIdGuid, ProjectEventType.Invited, userIds);
         projectEvent.DumpObjectJson();
-        await _bus.SendAsync(projectEvent);
+        // await _bus.SendAsync(projectEvent);
         // return
 
         // await _unitOfWork.ProjectEventsRepository.AddAsync(projectEvent);
