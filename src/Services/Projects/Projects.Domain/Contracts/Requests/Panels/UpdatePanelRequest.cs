@@ -37,7 +37,7 @@ public class UpdatePanelRequestValidator : AbstractValidator<UpdatePanelRequest>
             .NotEmpty()
             .WithMessage("Changes cannot be empty")
             .Must(
-                x => x.Location is not null || x.PanelConfigId is not null || x.Rotation is not null
+                x => x.Location is not null || x.PanelConfigId is not null || x.Angle is not null
             )
             .WithMessage("Changes cannot be empty");
 

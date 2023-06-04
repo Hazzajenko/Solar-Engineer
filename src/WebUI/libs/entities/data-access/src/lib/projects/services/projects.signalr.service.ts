@@ -71,7 +71,7 @@ export class ProjectsSignalrService {
 			PROJECTS_SIGNALR_EVENT.RECEIVE_PROJECT_EVENT,
 			(response: SignalrEventResponse) => {
 				console.log(PROJECTS_SIGNALR_EVENT.RECEIVE_PROJECT_EVENT, response)
-				this._projectsStore.dispatch.deleteProject(response.projectId)
+				this.receiveProjectEvent(response)
 			},
 		)
 

@@ -39,13 +39,13 @@ public class CreateManyPanelsHandler : ICommandHandler<CreateManyPanelsCommand, 
             );
         appUserProject.ThrowExceptionIfNull(new HubException("User is not apart of this project"));
 
-        var locations = command.Request.Panels.Select(x => x.Location).ToList();
-        var existingPanels = await _unitOfWork.PanelsRepository.ArePanelLocationsUniqueAsync(
+        // var locations = command.Request.Panels.Select(x => x.Location).ToList();
+        /*var existingPanels = await _unitOfWork.PanelsRepository.ArePanelLocationsUniqueAsync(
             projectId,
             locations
         );
         if (existingPanels)
-            throw new HubException("Panel already exists at this location");
+            throw new HubException("Panel already exists at this location");*/
 
         var panelStringId = command.Request.StringId;
         var panelHasString = panelStringId.Equals("undefined") is false;
@@ -86,7 +86,7 @@ public class CreateManyPanelsHandler : ICommandHandler<CreateManyPanelsCommand, 
                     panelString.Id,
                     panelConfig.Id,
                     x.Location,
-                    command.Request.Rotation,
+                    command.Request.Angle,
                     appUserId
                 )
         );

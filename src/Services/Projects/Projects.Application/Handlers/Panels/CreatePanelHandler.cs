@@ -14,6 +14,7 @@ namespace Projects.Application.Handlers.Panels;
 
 public class CreatePanelHandler : ICommandHandler<CreatePanelCommand, bool>
 {
+    private const string UndefinedStringId = "undefinedStringId";
     private readonly IHubContext<ProjectsHub, IProjectsHub> _hubContext;
     private readonly ILogger<CreatePanelHandler> _logger;
     private readonly IMapper _mapper;
@@ -43,12 +44,12 @@ public class CreatePanelHandler : ICommandHandler<CreatePanelCommand, bool>
             );
         appUserProject.ThrowExceptionIfNull(new HubException("User is not apart of this project"));
 
-        var existingPanel = await _unitOfWork.PanelsRepository.ArePanelLocationsUniqueAsync(
+        /*var existingPanel = await _unitOfWork.PanelsRepository.ArePanelLocationsUniqueAsync(
             projectId,
             new[] { command.Request.Location }
         );
         if (existingPanel)
-            throw new HubException("Panel already exists at this location");
+            throw new HubException("Panel already exists at this location");*/
 
         /*var existingPanel = await _unitOfWork.PanelsRepository.GetPanelByLocationAsync(
             appUserId,
@@ -58,7 +59,12 @@ public class CreatePanelHandler : ICommandHandler<CreatePanelCommand, bool>
         if (existingPanel is not null) throw new HubException("Panel already exists at this location");*/
 
         var panelStringId = command.Request.StringId;
-        var panelHasString = panelStringId.Equals("undefined") is false;
+        var panelHasString = panelStringId.Equals(UndefinedStringId) is false;
+
+        /*if (panelHasString)
+        {
+            
+        }*/
 
         var panelString = panelHasString
             ? await _unitOfWork.StringsRepository.GetByIdAndProjectIdAsync(
@@ -82,9 +88,42 @@ public class CreatePanelHandler : ICommandHandler<CreatePanelCommand, bool>
         var panelConfigId = command.Request.PanelConfigId;
         var doesPanelHaveConfig = panelConfigId.Equals("undefined") is false;
 
+        /*panelConfigId = doesPanelHaveConfig
+            ? panelConfigId
+            : UndefinedStringId;*/
+
         var panelConfig = doesPanelHaveConfig is false
             ? await _unitOfWork.PanelConfigsRepository.GetDefaultPanelConfigAsync()
-            : await _unitOfWork.PanelConfigsRepository.GetByIdAsync(panelConfigId.ToGuid());
+            : panelConfigId.Equals("Longi-Himo555m")
+                ? await _unitOfWork.PanelConfigsRepository.GetByBrandAndModel("Longi", "Himo555m")
+                : await _unitOfWork.PanelConfigsRepository.GetByIdAsync(panelConfigId.ToGuid());
+
+
+        /*PanelConfig? panelConfig;
+        if (doesPanelHaveConfig)
+        {
+            if (panelConfigId.Equals("Longi-Himo555m"))
+            {
+                var brand = "Longi";
+                var model = "Himo555m";
+                panelConfig = await _unitOfWork.PanelConfigsRepository.GetByBrandAndModel(brand, model);
+            }
+            else
+            {
+                panelConfig = await _unitOfWork.PanelConfigsRepository.GetByIdNotNullAsync(
+                    panelConfigId.ToGuid()
+                );
+            }
+        }
+        else
+        {
+            panelConfig = await _unitOfWork.PanelConfigsRepository.GetDefaultPanelConfigAsync();
+        }*/
+
+
+        /*panelConfig = doesPanelHaveConfig is false
+            ? await _unitOfWork.PanelConfigsRepository.GetDefaultPanelConfigAsync()
+            : await _unitOfWork.PanelConfigsRepository.GetByIdAsync(panelConfigId.ToGuid());*/
         panelConfig.ThrowExceptionIfNull(new HubException("Panel config does not exist"));
 
         var panel = Panel.Create(
@@ -93,7 +132,7 @@ public class CreatePanelHandler : ICommandHandler<CreatePanelCommand, bool>
             panelString.Id,
             panelConfig.Id,
             command.Request.Location,
-            command.Request.Rotation,
+            command.Request.Angle,
             appUserId
         );
 

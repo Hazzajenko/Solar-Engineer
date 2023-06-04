@@ -1,5 +1,6 @@
 ﻿// using Projects.API.Handlers;
 
+using Infrastructure.Logging;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using Projects.Domain.Commands.Projects;
@@ -79,6 +80,7 @@ public class ProjectsHub : Hub<IProjectsHub>
 
     public async Task SendProjectEvent(ProjectGridEvent projectGridEvent)
     {
+        projectGridEvent.DumpObjectJson();
         var eventRequest = projectGridEvent.ToCommandObject(Context);
         await _mediator.Send(eventRequest);
     }

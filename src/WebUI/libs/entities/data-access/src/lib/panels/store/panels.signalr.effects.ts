@@ -6,7 +6,7 @@ import { CreateManyPanelsRequest, DeleteManyPanelsRequest, DeletePanelRequest, S
 import { PanelsSignalrService } from '../services'
 import { ProjectsSignalrService } from '../../projects'
 import { assertNotNull, newGuidT } from '@shared/utils'
-import { injectCurrentProject } from '@entities/utils'
+import { addProjectId, injectCurrentProject } from '@entities/utils'
 
 /*export const addPanelSignalr$ = createEffect(
  (actions$ = inject(Actions), _panelsSignalr = inject(PanelsSignalrService)) => {
@@ -39,11 +39,12 @@ export const addPanelSignalr$ = createEffect(
 				const project = projectGetter()
 				assertNotNull(project)
 				const request: Omit<SignalrEventRequest, 'timeStamp'> = {
+					// requestId: newGuid() as RequestId,
 					requestId: newGuidT(),
 					projectId: project.id,
 					action: SIGNALR_EVENT_ACTION.CREATE,
 					model: SIGNALR_EVENT_MODEL.PANEL,
-					data: JSON.stringify(panel),
+					data: JSON.stringify(addProjectId(project, panel)),
 				}
 				return request
 			}),

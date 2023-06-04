@@ -10,8 +10,8 @@ public class Panel : IEntity, IProjectItem, IUserObject
         Guid projectId,
         Guid stringId,
         Guid panelConfigId,
-        string location,
-        int rotation,
+        Point location,
+        int angle,
         Guid createdById
     )
     {
@@ -20,7 +20,7 @@ public class Panel : IEntity, IProjectItem, IUserObject
         StringId = stringId;
         PanelConfigId = panelConfigId;
         Location = location;
-        Rotation = rotation;
+        Angle = angle;
         CreatedById = createdById;
     }
 
@@ -28,8 +28,8 @@ public class Panel : IEntity, IProjectItem, IUserObject
         Guid projectId,
         Guid stringId,
         Guid panelConfigId,
-        string location,
-        int rotation,
+        Point location,
+        int angle,
         Guid createdById
     )
     {
@@ -37,7 +37,7 @@ public class Panel : IEntity, IProjectItem, IUserObject
         StringId = stringId;
         PanelConfigId = panelConfigId;
         Location = location;
-        Rotation = rotation;
+        Angle = angle;
         CreatedById = createdById;
     }
 
@@ -48,9 +48,11 @@ public class Panel : IEntity, IProjectItem, IUserObject
     public String String { get; set; } = default!;
     public Guid StringId { get; set; }
     public PanelConfig PanelConfig { get; set; } = default!;
+
     public Guid PanelConfigId { get; set; }
-    public string Location { get; set; } = default!;
-    public int Rotation { get; set; }
+
+    public Point Location { get; set; } = default!;
+    public int Angle { get; set; }
     public PanelLink? LinkPositiveTo { get; set; }
     public PanelLink? LinkNegativeTo { get; set; }
     public Guid? LinkPositiveToId { get; set; }
@@ -67,16 +69,13 @@ public class Panel : IEntity, IProjectItem, IUserObject
         Guid projectId,
         Guid stringId,
         Guid panelConfigId,
-        string location,
-        int rotation,
+        Point location,
+        int angle,
         Guid createdById
     )
     {
-        return new Panel(id, projectId, stringId, panelConfigId, location, rotation, createdById);
+        return new Panel(id, projectId, stringId, panelConfigId, location, angle, createdById);
     }
-
-    // public
-    // method that changes the stringId
 
     public static Panel AddStringId(Panel panel, Guid stringId)
     {
@@ -84,29 +83,18 @@ public class Panel : IEntity, IProjectItem, IUserObject
         return panel;
     }
 
-    /*
-    public static Panel CreateV2(PanelOptions options)
+    public class Point
     {
-        return new Panel(
-            options.Id,
-            options.ProjectId,
-            options.StringId,
-            options.PanelConfigId,
-            options.Location,
-            options.Rotation,
-            options.CreatedById
-        );
-        // return new Panel(id, projectId, stringId, panelConfigId, location, rotation, createdById);
-    }
+        public Point(double x, double y)
+        {
+            X = x;
+            Y = y;
+        }
 
-    public class PanelOptions
-    {
-        public Guid Id { get; set; }
-        public Guid ProjectId { get; set; }
-        public Guid StringId { get; set; }
-        public Guid PanelConfigId { get; set; }
-        public string Location { get; set; } = default!;
-        public int Rotation { get; set; }
-        public Guid CreatedById { get; set; }
-    }*/
+        // [JsonConverter(typeof(IntToStringConverter))]
+        public double X { get; set; }
+
+        // [JsonConverter(typeof(IntToStringConverter))]
+        public double Y { get; set; }
+    }
 }

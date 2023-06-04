@@ -51,18 +51,16 @@ public class UpdateManyPanelsHandler : ICommandHandler<UpdateManyPanelsCommand, 
         {
             var changes = updates.FirstOrDefault(x => x.Id == x.Id.ToString())!.Changes;
             if (changes.Location is not null)
-            {
-                var existingPanel = await _unitOfWork.PanelsRepository.ArePanelLocationsUniqueAsync(
+                /*var existingPanel = await _unitOfWork.PanelsRepository.ArePanelLocationsUniqueAsync(
                     projectId,
                     new[] { changes.Location }
                 );
                 if (existingPanel)
-                    throw new HubException("Panel already exists at this location");
+                    throw new HubException("Panel already exists at this location");*/
                 panel.Location = changes.Location;
-            }
 
-            if (changes.Rotation is not null)
-                panel.Rotation = (int)changes.Rotation;
+            if (changes.Angle is not null)
+                panel.Angle = (int)changes.Angle;
 
             if (changes.PanelConfigId is not null)
             {
@@ -103,18 +101,16 @@ public class UpdateManyPanelsHandler : ICommandHandler<UpdateManyPanelsCommand, 
         {
             var changes = updates.FirstOrDefault(x => x.Id == panel.Id.ToString())!.Changes;
             if (changes.Location is not null)
-            {
-                var existingPanel = await _unitOfWork.PanelsRepository.ArePanelLocationsUniqueAsync(
+                /*var existingPanel = await _unitOfWork.PanelsRepository.ArePanelLocationsUniqueAsync(
                     projectId,
                     new[] { changes.Location }
                 );
                 if (existingPanel)
-                    throw new HubException("Panel already exists at this location");
+                    throw new HubException("Panel already exists at this location");*/
                 panel.Location = changes.Location;
-            }
 
-            if (changes.Rotation is not null)
-                panel.Rotation = (int)changes.Rotation;
+            if (changes.Angle is not null)
+                panel.Angle = (int)changes.Angle;
 
             if (changes.PanelConfigId is not null)
             {

@@ -10,6 +10,8 @@ public class PanelsConfig : IEntityTypeConfiguration<Panel>
     {
         builder.HasKey(x => new { x.Id, x.ProjectId });
 
+        builder.OwnsOne(x => x.Location);
+
         builder.Property(x => x.Id).HasDefaultValueSql("uuid_generate_v4()");
 
         /*builder

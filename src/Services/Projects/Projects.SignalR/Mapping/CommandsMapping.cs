@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 using Humanizer;
 using Microsoft.AspNetCore.SignalR;
 using Projects.Domain.Common;
@@ -18,7 +19,11 @@ public static class CommandsMapping
             JsonSerializer.Deserialize(
                 projectGridEvent.Data,
                 requestType,
-                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+                new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                    NumberHandling = JsonNumberHandling.AllowReadingFromString | JsonNumberHandling.WriteAsString
+                }
             )!;
 
         var commandType = projectGridEvent.ToCommandType();

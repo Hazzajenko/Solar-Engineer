@@ -96,7 +96,7 @@ public class PanelsMappingConfig : IRegister
         config
             .NewConfig<Panel, PanelDto>()
             .Map(dest => dest.Id, src => src.Id.ToString())
-            .Map(dest => dest.ProjectId, src => src.ProjectId.ToString())
+            // .Map(dest => dest.ProjectId, src => src.ProjectId.ToString())
             .Map(dest => dest.PanelConfigId, src => src.PanelConfigId.ToString())
             .Map(dest => dest.StringId, src => src.StringId.ToString())
             .Map(dest => dest.CreatedById, src => src.CreatedById.ToString())
@@ -105,7 +105,7 @@ public class PanelsMappingConfig : IRegister
                 src => src.CreatedTime.ToString(CultureInfo.CurrentCulture)
             )
             .Map(dest => dest.Location, src => src.Location)
-            .Map(dest => dest.Rotation, src => src.Rotation)
+            .Map(dest => dest.Angle, src => src.Angle)
             .Map(
                 dest => dest.LastModifiedTime,
                 src => src.LastModifiedTime.ToString(CultureInfo.CurrentCulture)

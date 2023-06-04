@@ -25,7 +25,7 @@ public static class PanelsMapping
         return new PanelDto
         {
             Id = panel.Id.ToString(),
-            ProjectId = panel.ProjectId.ToString(),
+            // ProjectId = panel.ProjectId.ToString(),
             CreatedTime = panel.CreatedTime,
             PanelConfigId = panel.PanelConfigId.ToString(),
             StringId = panel.StringId.ToString(),
