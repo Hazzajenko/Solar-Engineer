@@ -1,6 +1,10 @@
 import { makeEnvironmentProviders } from '@angular/core'
 import { provideSelectedFeature } from '@canvas/selected/data-access'
-import { provideEntityStores, provideProjectsFeature } from '@entities/data-access'
+import {
+	provideEntityStores,
+	provideProjectsFeature,
+	provideSignalrEventsFeature,
+} from '@entities/data-access'
 import { provideAppStateFeature } from '@canvas/app/data-access'
 import { provideState, provideStore } from '@ngrx/store'
 import { provideUiFeature } from '@overlays/ui-store/data-access'
@@ -24,6 +28,7 @@ export function provideNgrx() {
 		provideRouterStore(),
 		provideAuthFeature(),
 		provideProjectsFeature(),
+		provideSignalrEventsFeature(),
 		provideSelectedFeature(),
 		provideEntityStores(),
 		provideAppStateFeature(),

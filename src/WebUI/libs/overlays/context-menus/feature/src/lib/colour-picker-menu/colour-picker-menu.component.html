@@ -1,6 +1,6 @@
 <div
+	[contextMenuInput]="contextMenu"
 	[leftAndRight]="{ left: contextMenu.data.left, right: contextMenu.data.right }"
-	[location]="contextMenu.location"
 	[trackLeftOfDiv]="{ divId: 'change-colour-button' }"
 	appContextMenu
 	class="absolute"
@@ -9,7 +9,6 @@
 	<!--	-->
 	<div
 		@transitionContextMenu
-		[id]="id"
 		class="py-1 text-sm text-gray-700 dark:text-gray-200 absolute z-[100] mt-2 bg-gray-200 divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
 	>
 		<div class="grid grid-cols-3 gap-2 justify-items-center">

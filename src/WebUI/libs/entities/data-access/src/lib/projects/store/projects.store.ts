@@ -22,19 +22,6 @@ export function provideProjectsFeature() {
 	])
 }
 
-// export const PROJECTS_STORE = new InjectionToken<ProjectsStoreFactory>('ProjectsStore')
-/*export const PROJECTS_STORE = new InjectionToken<ProjectsStoreFactory>(PROJECTS_FEATURE_KEY, {
- factory: () => projectsStoreFactory(inject(Store)),
- })
-
- export function provideProjectsStore() {
- return {
- provide: PROJECTS_STORE,
- useFactory: projectsStoreFactory,
- deps: [Store],
- }
- }*/
-
 export function injectProjectsStore(): ProjectsStoreFactory {
 	return projectsStoreInjector()
 }
@@ -53,7 +40,7 @@ export function projectsStoreFactory(store: Store) {
 		selectedProjectId: store.selectSignal(selectSelectedProjectId),
 		selectedProject: store.selectSignal(selectSelectedProject),
 		getById: (id: string) => entities()[id],
-		getById2: (id: string) => store.selectSignal(selectProjectById({ id })),
+		selectById: (id: string) => store.selectSignal(selectProjectById({ id })),
 	}
 
 	const dispatch = {
@@ -80,45 +67,3 @@ export function projectsStoreFactory(store: Store) {
 		dispatch,
 	}
 }
-
-/*
-
- export type ProjectsStore = ReturnType<typeof injectProjectsStore>
-
- export function injectProjectsStore() {
- const store = inject(Store)
- const entities = store.selectSignal(selectProjectsEntities)
-
- const select = {
- allProjects: store.selectSignal(selectAllProjects),
- selectedProjectId: store.selectSignal(selectSelectedProjectId),
- selectedProject: store.selectSignal(selectSelectedProject),
- getById: (id: string) => entities()[id],
- getById2: (id: string) => store.selectSignal(selectProjectById({ id })),
- }
-
- const dispatch = {
- createProjectHttp: (request: CreateProjectRequest) =>
- store.dispatch(ProjectsActions.createProjectHttp(request)),
- selectProject: (projectId: ProjectId) =>
- store.dispatch(ProjectsActions.selectProject({ projectId })),
- addProject: (project: ProjectModel) => store.dispatch(ProjectsActions.addProject({ project })),
- addManyProjects: (projects: ProjectModel[]) =>
- store.dispatch(ProjectsActions.addManyProjects({ projects })),
- updateProject: (update: UpdateStr<ProjectModel>) =>
- store.dispatch(ProjectsActions.updateProject({ update })),
- updateManyProjects: (updates: UpdateStr<ProjectModel>[]) =>
- store.dispatch(ProjectsActions.updateManyProjects({ updates })),
- deleteProject: (projectId: ProjectId) =>
- store.dispatch(ProjectsActions.deleteProject({ projectId })),
- deleteManyProjects: (projectIds: ProjectId[]) =>
- store.dispatch(ProjectsActions.deleteManyProjects({ projectIds })),
- clearProjectsState: () => store.dispatch(ProjectsActions.clearProjectsState()),
- }
-
- return {
- select,
- dispatch,
- }
- }
- */

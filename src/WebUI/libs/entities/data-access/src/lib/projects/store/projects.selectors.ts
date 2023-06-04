@@ -18,6 +18,11 @@ export const selectProjectsEntities = createSelector(selectProjectsState, (state
 export const selectProjectById = (props: { id: string }) =>
 	createSelector(selectProjectsEntities, (projects: Dictionary<ProjectModel>) => projects[props.id])
 
+export const selectProjectByIdV2 = (props: { id: string }) =>
+	createSelector(selectAllProjects, (projects: ProjectModel[]) =>
+		projects.find((p) => p.id === props.id),
+	)
+
 export const selectSelectedProjectId = createSelector(
 	selectProjectsState,
 	(state: ProjectsState) => state.selectedProjectId,

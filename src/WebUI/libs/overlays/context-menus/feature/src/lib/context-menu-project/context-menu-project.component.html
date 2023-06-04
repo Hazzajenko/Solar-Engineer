@@ -1,0 +1,84 @@
+<div *ngIf="project() as project" [contextMenuInput]="contextMenu" appContextMenu class="absolute">
+	<ul
+		@increaseScaleAndOpacity
+		class="py-1 text-sm text-gray-700 dark:text-gray-200 absolute z-50 mt-2 w-56 bg-gray-200 divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+	>
+		<div class="px-4 py-3" role="none">
+			<p class="truncate capitalize text-sm font-medium text-gray-900" role="none">
+				{{ project.name }}
+			</p>
+		</div>
+		<li class="relative">
+			<ul
+				#childMenu
+				@increaseScaleAndOpacity
+				class="py-1 top-0 left-[105%] text-sm text-gray-700 dark:text-gray-200 absolute z-50 mt-2 w-44 bg-gray-200 divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+				style="display: none"
+			>
+				<li>
+					<a
+						class="group flex items-center px-4 py-2 text-sm text-gray-700"
+						role="menuitem"
+						tabindex="-1"
+					>
+						<div class="grid grid-cols-4 gap-4 justify-items-center">
+							<button
+								(click)="setProjectColour(colour)"
+								*ngFor="let colour of TAILWIND_COLOUR_500_VALUES"
+								[ngClass]="{
+									'ring-2 ring-black': project.colour === colour
+								}"
+								[ngStyle]="{
+									'background-color': colour,
+									'border-color': colour
+								}"
+								class="w-6 h-6 rounded-sm"
+								type="button"
+							></button>
+						</div>
+					</a>
+				</li>
+			</ul>
+
+			<div
+				class="flex justify-between group text-sm text-gray-700 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+			>
+				<a class="group flex justify-start items-center px-4 py-2" role="menuitem" tabindex="-1">
+					<app-show-svg-no-styles
+						class="mr-1 group-hover:text-gray-600"
+						svgPath="menus/paint-brush"
+					/>
+					Edit Project Colour
+				</a>
+				<a
+					(mouseenter)="childMenu.style.display = 'block'"
+					class="group flex justify-end items-center pr-1 text-sm"
+					role="menuitem"
+					tabindex="-1"
+				>
+					<app-show-svg-no-styles class="group-hover:text-gray-600" svgPath="arrows/right" />
+				</a>
+			</div>
+		</li>
+		<li>
+			<a
+				class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+				role="menuitem"
+				tabindex="-1"
+			>
+				<app-show-svg-no-styles class="mr-1 group-hover:text-gray-600" svgPath="toolbar/settings" />
+				Open Project Settings
+			</a>
+		</li>
+		<li>
+			<a
+				class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+				role="menuitem"
+				tabindex="-1"
+			>
+				<app-show-svg-no-styles class="mr-1 group-hover:text-gray-600" svgPath="menus/trash" />
+				Delete Project
+			</a>
+		</li>
+	</ul>
+</div>

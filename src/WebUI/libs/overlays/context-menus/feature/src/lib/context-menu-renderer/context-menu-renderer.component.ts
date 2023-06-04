@@ -19,7 +19,12 @@ import { MultiplePanelsMenuComponent } from '../multiple-panels-menu/multiple-pa
 import { StringMenuComponent } from '../string-menu/string-menu.component'
 import { PanelLinkMenuComponent } from '../panel-link-menu'
 import { ColourPickerMenuComponent } from '../colour-picker-menu/colour-picker-menu.component'
-import { getElementByIdWithRetry, initBackdropEventWithRenderer } from '@shared/utils'
+import {
+	getElementByIdWithRetry,
+	handleAllSwitchCases,
+	initBackdropEventWithRenderer,
+} from '@shared/utils'
+import { ContextMenuProjectComponent } from '../context-menu-project'
 
 export const contextMenuInputInjectionToken = new InjectionToken<ContextMenuInput>('')
 
@@ -49,16 +54,11 @@ export class ContextMenuRendererComponent implements OnDestroy {
 
 	constructor() {
 		effect(() => {
-			if (
-				!this.contextMenu
-				/*				!this.contextMenu ||
-				 !this.contextMenu.currentContextMenu ||
-				 !this.contextMenu.contextMenuOpen*/
-			) {
+			if (!this.contextMenu) {
 				return
 			}
 
-			this.component = this.switchFn(this.contextMenu)
+			this.component = this.switchFn(this.contextMenu.component)
 
 			this.contextMenuInjector = Injector.create({
 				providers: [
@@ -89,8 +89,8 @@ export class ContextMenuRendererComponent implements OnDestroy {
 		this.killClickListener?.()
 	}
 
-	private switchFn(contextMenu: ContextMenuInput) {
-		switch (contextMenu.component) {
+	private switchFn(component: ContextMenuInput['component']) {
+		switch (component) {
 			case CONTEXT_MENU_COMPONENT.SINGLE_PANEL_MENU:
 				return SinglePanelMenuComponent
 			case CONTEXT_MENU_COMPONENT.MULTIPLE_PANELS_MENU:
@@ -101,8 +101,10 @@ export class ContextMenuRendererComponent implements OnDestroy {
 				return PanelLinkMenuComponent
 			case CONTEXT_MENU_COMPONENT.COLOUR_PICKER_MENU:
 				return ColourPickerMenuComponent
+			case CONTEXT_MENU_COMPONENT.PROJECT_MENU:
+				return ContextMenuProjectComponent
 			default:
-				throw new Error('Unknown context menu component')
+				return handleAllSwitchCases(component)
 		}
 	}
 }

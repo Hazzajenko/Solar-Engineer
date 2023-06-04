@@ -4,6 +4,7 @@ import { catchError, EMPTY, map, of, switchMap, tap } from 'rxjs'
 import { AuthActions } from '@auth/data-access'
 import { ProjectsHttpService, ProjectsSignalrService } from '../services'
 import { ProjectsActions } from './projects.actions'
+import { PanelsSignalrService } from '../../panels'
 
 export const createProject$ = createEffect(
 	(actions$ = inject(Actions), projectsHttp = inject(ProjectsHttpService)) => {
@@ -20,10 +21,17 @@ export const createProject$ = createEffect(
 )
 
 export const initProjectsSignalr$ = createEffect(
-	(actions$ = inject(Actions), projectsSignalr = inject(ProjectsSignalrService)) => {
+	(
+		actions$ = inject(Actions),
+		projectsSignalr = inject(ProjectsSignalrService),
+		panelsSignalr = inject(PanelsSignalrService),
+	) => {
 		return actions$.pipe(
 			ofType(AuthActions.signInSuccess),
-			tap(({ token }) => projectsSignalr.init(token)),
+			tap(({ token }) => {
+				const hubConnection = projectsSignalr.init(token)
+				panelsSignalr.init(hubConnection)
+			}),
 		)
 	},
 	{ functional: true, dispatch: false },

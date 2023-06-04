@@ -42,7 +42,8 @@ export class DialogBackdropTemplateComponent implements AfterViewInit {
 				this.backdrop.nativeElement,
 				'click',
 				(event: MouseEvent) => {
-					if (event.target !== this.backdrop.nativeElement) return
+					console.log('backdrop click', event.target)
+					if (event.target !== this.backdrop.nativeElement.children[0]) return
 					this.backdropClick.emit()
 					this.closeDialog()
 				},

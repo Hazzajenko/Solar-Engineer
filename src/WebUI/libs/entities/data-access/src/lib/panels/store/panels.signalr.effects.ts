@@ -2,30 +2,52 @@ import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { inject } from '@angular/core'
 import { PanelsActions } from './panels.actions'
 import { map, tap } from 'rxjs'
-import {
-	CreateManyPanelsRequest,
-	CreatePanelRequest,
-	DeleteManyPanelsRequest,
-	DeletePanelRequest,
-	UpdateManyPanelsRequest,
-	UpdatePanelRequest,
-} from '@entities/shared'
-import { PanelsSignalrService } from '@entities/data-access'
+import { CreateManyPanelsRequest, DeleteManyPanelsRequest, DeletePanelRequest, SIGNALR_EVENT_ACTION, SIGNALR_EVENT_MODEL, SignalrEventRequest, UpdateManyPanelsRequest, UpdatePanelRequest } from '@entities/shared'
+import { PanelsSignalrService } from '../services'
+import { ProjectsSignalrService } from '../../projects'
+import { assertNotNull, newGuidT } from '@shared/utils'
+import { injectCurrentProject } from '@entities/utils'
+
+/*export const addPanelSignalr$ = createEffect(
+ (actions$ = inject(Actions), _panelsSignalr = inject(PanelsSignalrService)) => {
+ return actions$.pipe(
+ ofType(PanelsActions.addPanel),
+ map(({ panel }) => {
+ const request: CreatePanelRequest = {
+ requestId: 'create-panel',
+ projectId: 'panel.projectId',
+ type: 'CreatePanel',
+ payload: panel,
+ }
+ return request
+ }),
+ tap((request) => _panelsSignalr.addPanel(request)),
+ )
+ },
+ { functional: true, dispatch: false },
+ )*/
 
 export const addPanelSignalr$ = createEffect(
-	(actions$ = inject(Actions), _panelsSignalr = inject(PanelsSignalrService)) => {
+	(
+		actions$ = inject(Actions),
+		_projectsSignalr = inject(ProjectsSignalrService),
+		projectGetter = injectCurrentProject(),
+	) => {
 		return actions$.pipe(
 			ofType(PanelsActions.addPanel),
 			map(({ panel }) => {
-				const request: CreatePanelRequest = {
-					requestId: 'create-panel',
-					projectId: 'panel.projectId',
-					type: 'CreatePanel',
-					payload: panel,
+				const project = projectGetter()
+				assertNotNull(project)
+				const request: Omit<SignalrEventRequest, 'timeStamp'> = {
+					requestId: newGuidT(),
+					projectId: project.id,
+					action: SIGNALR_EVENT_ACTION.CREATE,
+					model: SIGNALR_EVENT_MODEL.PANEL,
+					data: JSON.stringify(panel),
 				}
 				return request
 			}),
-			tap((request) => _panelsSignalr.addPanel(request)),
+			tap((request) => _projectsSignalr.invokeSignalrEvent(request)),
 		)
 	},
 	{ functional: true, dispatch: false },
@@ -47,6 +69,7 @@ export const addManyPanelsSignalr$ = createEffect(
 			tap((request) => _panelsSignalr.addManyPanels(request)),
 		)
 	},
+	{ functional: true, dispatch: false },
 )
 
 export const updatePanelSignalr$ = createEffect(
@@ -65,6 +88,7 @@ export const updatePanelSignalr$ = createEffect(
 			tap((request) => _panelsSignalr.updatePanel(request)),
 		)
 	},
+	{ functional: true, dispatch: false },
 )
 
 export const updateManyPanelsSignalr$ = createEffect(
@@ -83,6 +107,7 @@ export const updateManyPanelsSignalr$ = createEffect(
 			tap((request) => _panelsSignalr.updateManyPanels(request)),
 		)
 	},
+	{ functional: true, dispatch: false },
 )
 
 export const deletePanelSignalr$ = createEffect(
@@ -101,6 +126,7 @@ export const deletePanelSignalr$ = createEffect(
 			tap((request) => _panelsSignalr.deletePanel(request)),
 		)
 	},
+	{ functional: true, dispatch: false },
 )
 
 export const deleteManyPanelsSignalr$ = createEffect(
@@ -119,4 +145,5 @@ export const deleteManyPanelsSignalr$ = createEffect(
 			tap((request) => _panelsSignalr.deleteManyPanels(request)),
 		)
 	},
+	{ functional: true, dispatch: false },
 )

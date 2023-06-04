@@ -4,7 +4,11 @@ import { ShowSvgComponent, ShowSvgNoStylesComponent } from '@shared/ui'
 import { ContextMenuTemplateComponent } from '../context-menu-template/context-menu-template.component'
 import { EntityStoreService } from '@entities/data-access'
 import { RenderService } from '@canvas/rendering/data-access'
-import { CONTEXT_MENU_COMPONENT, ContextMenuSinglePanelMenu, UiStoreService } from '@overlays/ui-store/data-access'
+import {
+	CONTEXT_MENU_COMPONENT,
+	ContextMenuSinglePanelMenu,
+	UiStoreService,
+} from '@overlays/ui-store/data-access'
 import { PanelLinkModel, PanelModel, StringModel } from '@entities/shared'
 import { contextMenuInputInjectionToken } from '../context-menu-renderer'
 import { ContextMenuDirective } from '../directives'
@@ -16,8 +20,6 @@ import { heroMinusCircle } from '@ng-icons/heroicons/outline'
 import { UpdateStr } from '@ngrx/entity/src/models'
 import { assertNotNull } from '@shared/utils'
 import { transitionContextMenu } from '../animations/context-menu.animation'
-
-// import {default}  from '@ng-icons/heroicons'
 
 @Component({
 	selector: 'app-single-panel-menu',

@@ -3,7 +3,11 @@ import { NgClass, NgForOf, NgIf, NgStyle, NgTemplateOutlet } from '@angular/comm
 import { injectAuthStore } from '@auth/data-access'
 import { injectProjectsStore } from '@entities/data-access'
 import { ProjectId, ProjectModel } from '@entities/shared'
-import { DIALOG_COMPONENT, injectUiStore } from '@overlays/ui-store/data-access'
+import {
+	CONTEXT_MENU_COMPONENT,
+	DIALOG_COMPONENT,
+	injectUiStore,
+} from '@overlays/ui-store/data-access'
 import { ShowSvgNoStylesComponent } from '@shared/ui'
 import { TruncatePipe } from '@shared/pipes'
 
@@ -46,18 +50,15 @@ export class SideUiProjectsViewComponent {
 	toggleProjectView(project: ProjectModel) {
 		const id = project.id
 		this.openedProjects.set(new Map(this.openedProjects()).set(id, !this.openedProjects().get(id)))
-		/*	this.openedProjects.mutate((map) => {
-		 const newMap = new Map(map)
-		 const current = map.get(id)
-		 if (current === undefined) {
-		 newMap.set(id, true)
-		 return newMap
-		 }
-		 newMap.set(id, !map.get(id))
-		 return newMap
-		 })*/
-		// this.openedProjects.mutate((map) => new Map(map).set(id, !map.get(id)))
 	}
 
-	openProjectContextMenu(event: MouseEvent, project: ProjectModel) {}
+	openProjectContextMenu(event: MouseEvent, project: ProjectModel) {
+		this._uiStore.dispatch.openContextMenu({
+			contextMenu: {
+				component: CONTEXT_MENU_COMPONENT.PROJECT_MENU,
+				data: { projectId: project.id },
+				location: { x: event.clientX, y: event.clientY },
+			},
+		})
+	}
 }

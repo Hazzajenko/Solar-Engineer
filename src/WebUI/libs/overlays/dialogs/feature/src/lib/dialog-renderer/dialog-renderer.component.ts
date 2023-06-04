@@ -15,6 +15,7 @@ import { MovePanelsToStringDialogComponent } from '../move-panels-to-string-dial
 import { ProfileSettingsDialogComponent } from '../profile-settings-dialog/profile-settings-dialog.component'
 import { SignInDialogComponent } from '../sign-in-dialog/sign-in-dialog.component'
 import { DialogCreateProjectComponent } from '../dialog-create-project'
+import { handleAllSwitchCases } from '@shared/utils'
 
 export const dialogInputInjectionToken = new InjectionToken<DialogInput>('')
 
@@ -102,15 +103,7 @@ export class DialogRendererComponent implements OnDestroy {
 			case DIALOG_COMPONENT.CREATE_PROJECT:
 				return DialogCreateProjectComponent
 			default:
-				return throwBadDialogInput(component)
-			// throw new Error('Unknown context menu component')
+				return handleAllSwitchCases(component)
 		}
 	}
-}
-
-// Externally-visible signature
-function throwBadDialogInput(component: never): never
-// Implementation signature
-function throwBadDialogInput(component: DialogInput['component']) {
-	throw new Error('Unknown component kind: ' + component)
 }

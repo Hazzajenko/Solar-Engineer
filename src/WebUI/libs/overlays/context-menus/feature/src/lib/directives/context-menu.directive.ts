@@ -1,6 +1,6 @@
 import { Directive, ElementRef, inject, Input, Renderer2 } from '@angular/core'
-import { Point } from '@shared/data-access/models'
 import { MouseOverRenderDirective } from '@canvas/rendering/data-access'
+import { ContextMenuInput } from '@overlays/ui-store/data-access'
 
 @Directive({
 	selector: '[appContextMenu]',
@@ -11,15 +11,29 @@ export class ContextMenuDirective {
 	private _element = inject(ElementRef).nativeElement
 	private _renderer = inject(Renderer2)
 
-	@Input({ required: true }) set location(location: Point) {
-		if (!location) {
-			console.error('no location')
+	// @Input({ required: true }) set location(location: Point) {
+
+	@Input({ required: true }) set contextMenuInput(contextMenuInput: ContextMenuInput) {
+		if (!contextMenuInput) {
+			console.error('no contextMenuInput')
 			return
 		}
-		const { x, y } = location
+		const { x, y } = contextMenuInput.location
 		this._renderer.setStyle(this._element, 'top', `${y}px`)
 		this._renderer.setStyle(this._element, 'left', `${x}px`)
+
+		this._renderer.setProperty(this._element, 'id', contextMenuInput.component)
 	}
+
+	/*	@Input({ required: true }) set location(location: Point) {
+	 if (!location) {
+	 console.error('no location')
+	 return
+	 }
+	 const { x, y } = location
+	 this._renderer.setStyle(this._element, 'top', `${y}px`)
+	 this._renderer.setStyle(this._element, 'left', `${x}px`)
+	 }*/
 
 	@Input() set leftAndRight(leftAndRight: { left: number; right: number }) {
 		if (!leftAndRight) {

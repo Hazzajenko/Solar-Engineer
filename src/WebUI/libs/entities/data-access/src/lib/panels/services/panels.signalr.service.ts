@@ -1,6 +1,4 @@
 import { Injectable } from '@angular/core'
-import { createHubConnection, HubConnectionRequest } from '@app/data-access/signalr'
-import { HubConnection } from '@microsoft/signalr'
 import {
 	CreateManyPanelsRequest,
 	CreatePanelRequest,
@@ -10,15 +8,16 @@ import {
 	UpdateManyPanelsRequest,
 	UpdatePanelRequest,
 } from '@entities/shared'
+import { ProjectsHubConnection } from '../../projects'
 
 @Injectable({
 	providedIn: 'root',
 })
 export class PanelsSignalrService {
-	hubConnection: HubConnection | undefined
+	hubConnection: ProjectsHubConnection | undefined
 
-	init(request: HubConnectionRequest) {
-		this.hubConnection = createHubConnection(request)
+	init(hubConnection: ProjectsHubConnection) {
+		this.hubConnection = hubConnection
 	}
 
 	addPanel(request: CreatePanelRequest) {

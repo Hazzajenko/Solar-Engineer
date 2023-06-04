@@ -1,10 +1,13 @@
+import { ProjectId } from './project.model'
+import { CustomIdType } from '@shared/utils'
+
 export const PROJECTS_SIGNALR_METHOD = {
 	CREATE_PROJECT: 'CreateProject',
 	UPDATE_PROJECT: 'UpdateProject',
 	DELETE_PROJECT: 'DeleteProject',
 	DELETE_MANY_PROJECTS: 'DeleteManyProjects',
+	SEND_PROJECT_EVENT: 'SendProjectEvent',
 } as const
-
 export type ProjectsSignalrMethod =
 	(typeof PROJECTS_SIGNALR_METHOD)[keyof typeof PROJECTS_SIGNALR_METHOD]
 
@@ -13,7 +16,55 @@ export const PROJECTS_SIGNALR_EVENT = {
 	PROJECT_CREATED: 'ProjectCreated',
 	PROJECT_UPDATED: 'ProjectUpdated',
 	PROJECT_DELETED: 'ProjectDeleted',
+	RECEIVE_PROJECT_EVENT: 'ReceiveProjectEvent',
 } as const
 
 export type ProjectsSignalrEvent =
 	(typeof PROJECTS_SIGNALR_EVENT)[keyof typeof PROJECTS_SIGNALR_EVENT]
+
+export type RequestId = CustomIdType<'requestId'>
+
+export type SignalrEventRequest = {
+	requestId: RequestId
+	projectId: ProjectId
+	action: SignalrEventAction
+	model: SignalrEventModel
+	data: string
+	timeStamp: string
+}
+
+export type SignalrEventResponse = SignalrEventRequest & {
+	byAppUserId: string
+	isSuccess: boolean
+	error?: string
+	timeStamp: string
+	serverTime: string
+	timeDiff: number
+}
+
+export const SIGNALR_EVENT_ACTION = {
+	CREATE: 'Create',
+	UPDATE: 'Update',
+	DELETE: 'Delete',
+	CREATE_MANY: 'CreateMany',
+	UPDATE_MANY: 'UpdateMany',
+	DELETE_MANY: 'DeleteMany',
+} as const
+
+export type SignalrEventAction = (typeof SIGNALR_EVENT_ACTION)[keyof typeof SIGNALR_EVENT_ACTION]
+
+export const SIGNALR_EVENT_MODEL = {
+	UNDEFINED: 'Undefined',
+	INVERTER: 'Inverter',
+	PANEL: 'Panel',
+	CABLE: 'Cable',
+	DISCONNECTIONPOINT: 'DisconnectionPoint',
+	TRAY: 'Tray',
+	RAIL: 'Rail',
+	TRACKER: 'Tracker',
+	STRING: 'String',
+	PANEL_LINK: 'PanelLink',
+	PANEL_CONFIG: 'PanelConfig',
+} as const
+
+export type SignalrEventModel = (typeof SIGNALR_EVENT_MODEL)[keyof typeof SIGNALR_EVENT_MODEL]

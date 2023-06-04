@@ -1,5 +1,5 @@
 import { Point } from '@shared/data-access/models'
-import { PanelId, PanelLinkId, StringId } from '@entities/shared'
+import { PanelId, PanelLinkId, ProjectId, StringId } from '@entities/shared'
 
 export const CONTEXT_MENU_COMPONENT = {
 	MULTIPLE_PANELS_MENU: 'app-multiple-panels-menu',
@@ -7,6 +7,7 @@ export const CONTEXT_MENU_COMPONENT = {
 	SINGLE_PANEL_MENU: 'app-single-panel-menu',
 	PANEL_LINK_MENU: 'app-panel-link-menu',
 	COLOUR_PICKER_MENU: 'app-colour-picker-menu',
+	PROJECT_MENU: 'context-menu-project',
 } as const
 export type ContextMenuComponent =
 	(typeof CONTEXT_MENU_COMPONENT)[keyof typeof CONTEXT_MENU_COMPONENT]
@@ -47,12 +48,20 @@ export type ContextMenuColourPickerMenu = ContextMenuTemplate & {
 	}
 }
 
+export type ContextMenuProjectMenu = ContextMenuTemplate & {
+	component: typeof CONTEXT_MENU_COMPONENT.PROJECT_MENU
+	data: {
+		projectId: ProjectId
+	}
+}
+
 export type ContextMenuInput =
 	| ContextMenuSinglePanelMenu
 	| ContextMenuMultiplePanelsMenu
 	| ContextMenuStringMenu
 	| ContextMenuPanelLinkMenu
 	| ContextMenuColourPickerMenu
+	| ContextMenuProjectMenu
 
 // export const
 /*

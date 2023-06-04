@@ -1,7 +1,10 @@
-import { inject } from '@angular/core'
 import { MemoizedSelector, Store } from '@ngrx/store'
-import { UiActions, uiFeature, UiState } from '@overlays/ui-store/data-access'
-import { GetActionParametersByActionKey, GetActionParametersByActionKeyDeep } from '@shared/utils'
+import { UiActions, uiFeature } from '@overlays/ui-store/data-access'
+import {
+	createRootServiceInjector,
+	GetActionParametersByActionKey,
+	GetActionParametersByActionKeyDeep,
+} from '@shared/utils'
 
 export type UiStoreSelectors = Omit<typeof uiFeature, 'name' | 'reducer'>
 
@@ -91,11 +94,18 @@ export type GetActionParametersByKey<T> = T extends keyof ActionParameters<UiSto
  firstName: 'string',
  }
  }*/
+export function injectUiStore(): UiStore {
+	return uiStoreInjector()
+}
 
-export type UiStore = ReturnType<typeof injectUiStore>
+const uiStoreInjector = createRootServiceInjector(uiStoreFactory, {
+	deps: [Store],
+})
 
-export function injectUiStore() {
-	const store = inject(Store<UiState>)
+export type UiStore = ReturnType<typeof uiStoreFactory>
+
+export function uiStoreFactory(store: Store) {
+	// const store = inject(Store<UiState>)
 	const feature = uiFeature
 
 	const select = {

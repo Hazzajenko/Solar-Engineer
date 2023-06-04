@@ -26,6 +26,7 @@ const reducer = createReducer(
 		...state,
 		...projectsAdapter.setAll(projects, state),
 		loaded: true,
+		selectedProjectId: projects[0]?.id,
 	})),
 	on(ProjectsActions.loadUserProjectsFailure, (state, { error }) => ({
 		...state,

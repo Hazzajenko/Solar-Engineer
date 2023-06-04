@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core'
 import { DialogBackdropTemplateComponent } from '../dialog-backdrop-template/dialog-backdrop-template.component'
 import { NgClass, NgForOf, NgIf, NgOptimizedImage, NgStyle } from '@angular/common'
-import { increaseScaleAndOpacity, visibleHidden } from '@shared/animations'
+import { increaseScaleAndOpacity } from '@shared/animations'
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms'
 import {
 	TAILWIND_COLOUR_500,
@@ -10,6 +10,8 @@ import {
 } from '@shared/data-access/models'
 import { LetDirective } from '@ngrx/component'
 import { injectProjectsStore } from '@entities/data-access'
+import { injectUiStore } from '@overlays/ui-store/data-access'
+import { SpinnerComponent } from '@shared/ui'
 
 @Component({
 	selector: 'dialog-create-project',
@@ -23,18 +25,22 @@ import { injectProjectsStore } from '@entities/data-access'
 		LetDirective,
 		NgClass,
 		NgIf,
+		SpinnerComponent,
 	],
 	templateUrl: './dialog-create-project.component.html',
 	styles: [],
-	animations: [increaseScaleAndOpacity, visibleHidden],
+	animations: [increaseScaleAndOpacity],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DialogCreateProjectComponent {
 	private _fb = inject(FormBuilder)
 	private _projects = injectProjectsStore()
+	private _uiStore = injectUiStore()
+
+	loading = signal(false)
 
 	createProjectForm = this._fb.group({
-		name: [null, [Validators.required, Validators.minLength(4)]],
+		name: ['', [Validators.required, Validators.minLength(4)]],
 		colour: [TAILWIND_COLOUR_500.blue as string, [Validators.required]],
 	})
 
@@ -63,5 +69,24 @@ export class DialogCreateProjectComponent {
 			colour,
 			memberIds,
 		})
+
+		this.loading.set(true)
+		setTimeout(() => {
+			this._uiStore.dispatch.closeDialog()
+		}, 100)
+	}
+
+	inputChange() {
+		const name = this.createProjectForm.get('name')?.value
+		if (!name) {
+			return
+		}
+
+		if (name.length < 4) {
+			return
+		}
+
+		this.createProjectForm.controls.name.markAsTouched()
+		this.createProjectForm.controls.name.updateValueAndValidity()
 	}
 }

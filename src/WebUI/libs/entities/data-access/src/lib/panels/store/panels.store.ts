@@ -10,12 +10,14 @@ import { PANELS_FEATURE_KEY, panelsReducer } from './panels.reducer'
 import { TransformedPoint } from '@shared/data-access/models'
 import { isPointInsideEntity } from '@canvas/utils'
 import * as panelsEffects from './panels.effects'
+import * as panelsSignalrEffects from './panels.signalr.effects'
 import { getPanelNearbyInLinkModeExcludingOne, getPanelWithSymbolUnderMouse } from '@entities/utils'
 
 export function providePanelsFeature() {
 	return makeEnvironmentProviders([
 		provideState(PANELS_FEATURE_KEY, panelsReducer),
 		provideEffects(panelsEffects),
+		provideEffects(panelsSignalrEffects),
 	])
 }
 
